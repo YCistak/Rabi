@@ -79,13 +79,52 @@ keyPassword=...
 | `lib/ses.ts` | Pomodoro ortam sesleri — Web Audio ile üretilir, dosya yok |
 | `public/ses/` | Lo-fi parçalar (CC0) + `LISANS.md` |
 
-## Sıralama tahmini hakkında
+## Sıralama tahmini nasıl çalışıyor
 
-Uygulamanın verdiği sıralama **tahmindir**. ÖSYM gerçek puanı, o yıl sınava girenlerin
-ortalama ve standart sapmasına göre hesaplar; bu veri sınavdan önce yoktur. Rabi bunun
-yerine yayınlanmış ders katsayılarıyla yaklaşık bir puan üretir ve son üç yılın ÖSYM
-puan dağılımı tablolarıyla sıralamaya çevirir. Bu yüzden tek sayı değil **aralık**
-gösterilir ve ekrandaki uyarı kapatılamaz.
+Uygulamanın verdiği sıralama **tahmindir** — ama uydurma katsayılara değil, ÖSYM'nin
+kendi yöntemine ve kendi yayınlarına dayanıyor.
+
+**Puan hesabı** (`lib/puan.ts`), 2026-YKS Kılavuzu madde 3.10.1'deki yolu izler:
+
+1. Ham puan = doğru − yanlış/4
+2. Standart puan = 50 + 10 × (ham − ortalama) / standart sapma
+   Ortalama ve standart sapma, ÖSYM'nin her yıl yayınladığı *Sayısal Bilgiler*
+   belgesinden geliyor (son sınıfta okuyan adaylar).
+3. Ağırlıklı puan = Σ (ağırlık × standart puan). Ağırlıklar kılavuzdaki
+   **Tablo 1C** (TYT) ve **Tablo 1E** (SAY/EA/SÖZ/DİL) tablolarının aynısı.
+4. Ağırlıklı puan 100–500 aralığına doğrusal ölçeklenir.
+
+**Sıralama** (`lib/siralama.ts`), ÖSYM'nin *Yerleştirme Puanlarının Yığınsal Dağılımı*
+tablosundan okunur: her 20 puanlık eşik için o puanın üstündeki aday sayısı. Ara
+değerler logaritmik iç değerle bulunur (aday sayısı puanla üstel değiştiği için
+doğrusal iç değer üst uçlarda sırayı kat kat şişiriyor).
+
+### Nerede tahmin devreye giriyor
+
+Tek bilinmeyen 4. adımdaki ölçeğin uçları: ÖSYM o yılın gerçek en küçük/en büyük
+ağırlıklı puanını kullanıyor ama bunlar yayınlanmıyor. Rabi üst ucu "tam net yapan
+aday" kabul ediyor, alt ucu ise yayınlanmış puan dağılımının ortalamasına oturtarak
+çözüyor. SAY, EA ve SÖZ için bağımsız çözüldüğünde birbirine çok yakın değerler
+çıkması (2026: 35,2 – 35,9) modelin tutarlı olduğunu gösteriyor; `lib/puan.test.ts`
+bunu test olarak da kilitliyor.
+
+Bunun üstüne, gerçek YKS puanı sınav yılının istatistiklerine bağlı — o veri sınavdan
+önce yok. Bu yüzden ekranda tek sayı değil **üç yılın bandı** gösteriliyor ve uyarı
+kapatılamıyor.
+
+### Veriyi güncelleme
+
+ÖSYM yeni yılın *Sayısal Bilgiler* belgesini yayınladığında:
+
+```bash
+# PDF'i indir (dokuman.osym.gov.tr referer istiyor)
+curl -L -A "Mozilla/5.0" -e "https://www.osym.gov.tr/" <pdf-adresi> -o sb2027.pdf
+pdftotext -layout sb2027.pdf sb2027.txt
+python3 scripts/veri-uret.py lib/veri/yks-veri.json
+```
+
+`scripts/veri-uret.py` içindeki yıl listesini genişletmeyi unutma. Betik eksik test
+istatistiği bulursa hata verip durur — sessizce yarım veri üretmez.
 
 ## Android izinleri
 

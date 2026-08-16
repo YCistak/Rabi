@@ -24,6 +24,7 @@ import {
   useYerelDepo,
 } from '@/lib/depo'
 import { sablonlariBirlestir } from '@/lib/sablonlar'
+import { guncelTahmin } from '@/lib/tahmin'
 import { egitimYili, ilerlemisSinif } from '@/lib/hesap'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import { Buton } from '@/components/ui'
@@ -39,6 +40,8 @@ import { AyarlarEkrani } from '@/components/ekranlar/ayarlar'
 import { SoruTakibiEkrani } from '@/components/ekranlar/soru-takibi'
 import { DevamsizlikEkrani } from '@/components/ekranlar/devamsizlik'
 import { PomodoroEkrani } from '@/components/ekranlar/pomodoro'
+import { SiralamaEkrani } from '@/components/ekranlar/siralama'
+import { HedefEkrani } from '@/components/ekranlar/hedef'
 import { Yakinda } from '@/components/ekranlar/yakinda'
 
 export function AppShell() {
@@ -72,7 +75,7 @@ export function AppShell() {
     [],
   )
   const [rozetler] = useYerelDepo<KazanilanRozet[]>(ANAHTARLAR.rozetler, [])
-  const [hedef] = useYerelDepo<Hedef | null>(ANAHTARLAR.hedef, null)
+  const [hedef, setHedef] = useYerelDepo<Hedef | null>(ANAHTARLAR.hedef, null)
   const [pomodoroAyar, setPomodoroAyar] = useYerelDepo<PomodoroAyar>(
     ANAHTARLAR.pomodoroAyar,
     VARSAYILAN_POMODORO,
@@ -83,6 +86,16 @@ export function AppShell() {
   )
 
   const sablonlar = sablonlariBirlestir(kayitliSablonlar)
+
+  // Hedef kartı ve ana sayfa, en yeni denemelerden çıkan tahmini gösteriyor.
+  const tahmin = guncelTahmin(
+    denemeler,
+    sablonlar,
+    okulDersleri,
+    gecmisYillar,
+    ayarlar.puanTuru,
+  )
+  const guncelSiralama = tahmin?.siralama.enKotu ?? null
 
   // Eylülde yeni ders yılı başlayınca kullanıcı bir üst sınıfa kendiliğinden geçer.
   useEffect(() => {
@@ -194,6 +207,23 @@ export function AppShell() {
               hazir={okulHazir}
             />
           )}
+          {ekran === 'siralama' && (
+            <SiralamaEkrani
+              denemeler={denemeler}
+              sablonlar={sablonlar}
+              okulDersleri={okulDersleri}
+              gecmisYillar={gecmisYillar}
+              ayarlar={ayarlar}
+            />
+          )}
+          {ekran === 'hedef' && (
+            <HedefEkrani
+              hedef={hedef}
+              setHedef={setHedef}
+              varsayilanTur={ayarlar.puanTuru}
+              guncelSiralama={guncelSiralama}
+            />
+          )}
           {ekran === 'devamsizlik' && (
             <DevamsizlikEkrani kayitlar={devamsizlik} setKayitlar={setDevamsizlik} />
           )}
@@ -222,7 +252,9 @@ export function AppShell() {
               }}
             />
           )}
-          {!['okul', 'devamsizlik', 'istatistik', 'ayarlar'].includes(ekran) && (
+          {!['siralama', 'hedef', 'okul', 'devamsizlik', 'istatistik', 'ayarlar'].includes(
+            ekran,
+          ) && (
             <Yakinda ekran={ekran} />
           )}
         </>
@@ -234,6 +266,7 @@ export function AppShell() {
               gunlukKayitlar={gunlukKayitlar}
               devamsizlik={devamsizlik}
               hedef={hedef}
+              guncelSiralama={guncelSiralama}
               onKartAc={setEkran}
             />
           )}

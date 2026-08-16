@@ -4,8 +4,9 @@ import { useMemo } from 'react'
 import { AlertTriangle, Flame, Target } from 'lucide-react'
 import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef } from '@/lib/types'
 import { devamsizlikOzeti, gunOzeti, hedefSerisi, netYaz } from '@/lib/hesap'
-import { bugun } from '@/lib/utils'
+import { bugun, cn } from '@/lib/utils'
 import { sozSec } from '@/lib/sozler'
+import { siraYaz } from '@/lib/siralama'
 import type { Ekran } from '@/lib/gezinme'
 import { Halka, Kart, Not } from '@/components/ui'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
@@ -16,12 +17,15 @@ export function AnaSayfa({
   gunlukKayitlar,
   devamsizlik,
   hedef,
+  guncelSiralama,
   onKartAc,
 }: {
   ayarlar: Ayarlar
   gunlukKayitlar: GunlukKayit[]
   devamsizlik: Devamsizlik[]
   hedef: Hedef | null
+  /** Son denemelerden çıkan tahmini sıralama; deneme yoksa null. */
+  guncelSiralama: number | null
   onKartAc: (ekran: Ekran) => void
 }) {
   const tarih = bugun()
@@ -127,7 +131,19 @@ export function AnaSayfa({
             <span className="block text-sm text-muted-foreground">{hedef.universite}</span>
             {hedef.basariSirasi !== null && (
               <span className="rakam mt-1 block text-sm text-muted-foreground">
-                Gereken sıralama: {hedef.basariSirasi.toLocaleString('tr-TR')}
+                Gereken sıralama: {siraYaz(hedef.basariSirasi)}
+              </span>
+            )}
+            {hedef.basariSirasi !== null && guncelSiralama !== null && (
+              <span
+                className={cn(
+                  'mt-1 block text-sm font-medium',
+                  guncelSiralama <= hedef.basariSirasi ? 'text-success' : 'text-primary',
+                )}
+              >
+                {guncelSiralama <= hedef.basariSirasi
+                  ? 'Şu an hedefinin içindesin.'
+                  : `${siraYaz(guncelSiralama - hedef.basariSirasi)} sıra uzaktasın.`}
               </span>
             )}
           </>
