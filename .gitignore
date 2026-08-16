@@ -1,0 +1,37 @@
+# bağımlılıklar
+node_modules/
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Capacitor'ın ürettikleri (cap sync her seferinde yeniden yazar)
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json
+android/app/src/main/res/xml/config.xml
+android/capacitor-cordova-android-plugins/
+
+# Android build çıktıları
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+
+# İmza anahtarları ve şifreleri asla depoya girmemeli
+*.jks
+*.keystore
+android/keystore.properties
+
+# işletim sistemi / editör
+.DS_Store
+.vscode/
+
+# kişisel notlar — uzantılı/uzantısız her hâli
+eklenecekler
+eklenecekler.*
+notlar
+notlar.*

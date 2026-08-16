@@ -1,0 +1,19 @@
+{
+  "name": "Rabi — YKS Çalışma Asistanı",
+  "short_name": "Rabi",
+  "description": "Pomodoro, soru takibi, deneme netleri ve tahmini YKS sıralaması.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fbf9f6",
+  "theme_color": "#fbf9f6",
+  "lang": "tr",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

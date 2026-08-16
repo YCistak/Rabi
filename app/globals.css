@@ -1,0 +1,144 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-ikincil: var(--ikincil);
+  --color-ikincil-soft: var(--ikincil-soft);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-grid: var(--grid);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.9);
+}
+
+/* ---------------------------------------------------------------------------
+   Rabi paleti. Tek palet — uygulamanın kimliği maskota bağlı olduğu için
+   kullanıcıya renk seçtirilmiyor, yalnızca açık/koyu mod var.
+
+   Vurgu: havuç turuncusu. İkincil: yonca yeşili. Zemin nötr ama hafif sıcak
+   (tavşan tüyü) — saf griye göre daha yumuşak görünüyor.
+--------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+  --background: oklch(0.98 0.006 70);
+  --foreground: oklch(0.25 0.012 60);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.25 0.012 60);
+  --muted: oklch(0.955 0.008 70);
+  --muted-foreground: oklch(0.52 0.012 60);
+  --border: oklch(0.9 0.008 70);
+  --input: oklch(0.9 0.008 70);
+  --grid: oklch(0.915 0.008 70);
+  --radius: 0.9rem;
+
+  --primary: oklch(0.62 0.16 45);
+  --primary-soft: oklch(0.945 0.04 55);
+  --primary-foreground: oklch(0.99 0.004 70);
+
+  --ikincil: oklch(0.55 0.12 148);
+  --ikincil-soft: oklch(0.945 0.035 150);
+
+  --ring: var(--primary);
+  --success: oklch(0.53 0.14 150);
+  --warning: oklch(0.66 0.14 75);
+  --danger: oklch(0.54 0.21 25);
+
+  /* Maskot renkleri — Rabi'nin kürkü zeminden hafifçe ayrışır. */
+  --maskot-kurk: oklch(0.93 0.014 70);
+  --maskot-kulak-ic: oklch(0.88 0.05 30);
+  --maskot-yanak: oklch(0.86 0.07 35);
+  --maskot-burun: oklch(0.68 0.14 30);
+  --maskot-agiz: oklch(0.55 0.13 25);
+  --maskot-cizgi: oklch(0.32 0.02 60);
+  --maskot-parlak: oklch(1 0 0);
+}
+
+.dark {
+  color-scheme: dark;
+  --background: oklch(0.19 0.008 60);
+  --foreground: oklch(0.95 0.006 70);
+  --card: oklch(0.24 0.01 60);
+  --card-foreground: oklch(0.95 0.006 70);
+  --muted: oklch(0.285 0.01 60);
+  --muted-foreground: oklch(0.74 0.008 70);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --grid: oklch(1 0 0 / 10%);
+
+  --primary: oklch(0.76 0.14 55);
+  --primary-soft: oklch(0.32 0.05 45);
+  --primary-foreground: oklch(0.2 0.014 60);
+
+  --ikincil: oklch(0.75 0.12 150);
+  --ikincil-soft: oklch(0.3 0.04 150);
+
+  --success: oklch(0.75 0.14 150);
+  --warning: oklch(0.8 0.13 80);
+  --danger: oklch(0.7 0.17 25);
+
+  --maskot-kurk: oklch(0.82 0.014 70);
+  --maskot-kulak-ic: oklch(0.72 0.06 30);
+  --maskot-yanak: oklch(0.76 0.08 35);
+  --maskot-burun: oklch(0.6 0.14 30);
+  --maskot-agiz: oklch(0.45 0.12 25);
+  --maskot-cizgi: oklch(0.26 0.02 60);
+  --maskot-parlak: oklch(0.98 0.005 70);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Sayı girişlerindeki artır/azalt okları mobilde yer kaplıyor, kapatıldı */
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+  /* Sütun halindeki sayılar hizalansın diye; büyük tek sayılarda kullanılmaz */
+  .rakam {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Alt menü, sistem gezinme çubuğunun altında kalmasın */
+  .guvenli-alt {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
