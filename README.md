@@ -76,6 +76,8 @@ keyPassword=...
 | `lib/siralama.ts` | Puandan tahmini sıralama |
 | `lib/veri/` | ÖSYM katsayıları ve puan-sıralama tabloları |
 | `lib/depo.ts` | localStorage hook'u, yedekleme |
+| `lib/ses.ts` | Pomodoro ortam sesleri — Web Audio ile üretilir, dosya yok |
+| `public/ses/` | Lo-fi parçalar (CC0) + `LISANS.md` |
 
 ## Sıralama tahmini hakkında
 
@@ -84,3 +86,25 @@ ortalama ve standart sapmasına göre hesaplar; bu veri sınavdan önce yoktur. 
 yerine yayınlanmış ders katsayılarıyla yaklaşık bir puan üretir ve son üç yılın ÖSYM
 puan dağılımı tablolarıyla sıralamaya çevirir. Bu yüzden tek sayı değil **aralık**
 gösterilir ve ekrandaki uyarı kapatılamaz.
+
+## Android izinleri
+
+Capacitor eklentileri kendi manifestlerini birleştiriyor; `android/app/src/main/AndroidManifest.xml`
+elle düzenlenmiyor. Derlenen APK'da şunlar var:
+
+| İzin | Nereden | Ne için |
+|---|---|---|
+| `POST_NOTIFICATIONS` | local-notifications | Android 13+ bildirim izni |
+| `WAKE_LOCK` | keep-awake | Pomodoro sırasında ekranı açık tutma |
+| `VIBRATE` | haptics | Rozet kutlamasında titreşim |
+| `SCHEDULE_EXACT_ALARM` | local-notifications | Pomodoro bitişinin dakikası şaşmasın |
+| `RECEIVE_BOOT_COMPLETED` | local-notifications | Yeniden başlatmadan sonra planlı bildirim |
+| `INTERNET` | Capacitor şablonu | **Kullanılmıyor** — uygulama tamamen çevrimdışı |
+
+İki not:
+
+- `SCHEDULE_EXACT_ALARM`, Google Play'e yüklenecek olursa gerekçe ister. Kişisel kullanımda
+  sorun değil; yayınlanacaksa ya gerekçe yazılmalı ya da manifestten `tools:node="remove"`
+  ile çıkarılıp pomodoro bildiriminin birkaç dakika gecikebileceği kabul edilmeli.
+- `INTERNET` Capacitor şablonundan geliyor ve hiçbir yerde kullanılmıyor. Çıkarılabilir ama
+  önce cihazda denenmeli.

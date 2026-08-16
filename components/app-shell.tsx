@@ -12,9 +12,17 @@ import type {
   Hedef,
   KazanilanRozet,
   OkulDersi,
+  PomodoroAyar,
+  PomodoroSeans,
   Sablon,
 } from '@/lib/types'
-import { ANAHTARLAR, VARSAYILAN_AYARLAR, ayarlariNormalize, useYerelDepo } from '@/lib/depo'
+import {
+  ANAHTARLAR,
+  VARSAYILAN_AYARLAR,
+  VARSAYILAN_POMODORO,
+  ayarlariNormalize,
+  useYerelDepo,
+} from '@/lib/depo'
 import { sablonlariBirlestir } from '@/lib/sablonlar'
 import { egitimYili, ilerlemisSinif } from '@/lib/hesap'
 import type { Ekran, Sekme } from '@/lib/gezinme'
@@ -30,6 +38,7 @@ import { OkulEkrani } from '@/components/ekranlar/okul'
 import { AyarlarEkrani } from '@/components/ekranlar/ayarlar'
 import { SoruTakibiEkrani } from '@/components/ekranlar/soru-takibi'
 import { DevamsizlikEkrani } from '@/components/ekranlar/devamsizlik'
+import { PomodoroEkrani } from '@/components/ekranlar/pomodoro'
 import { Yakinda } from '@/components/ekranlar/yakinda'
 
 export function AppShell() {
@@ -64,6 +73,14 @@ export function AppShell() {
   )
   const [rozetler] = useYerelDepo<KazanilanRozet[]>(ANAHTARLAR.rozetler, [])
   const [hedef] = useYerelDepo<Hedef | null>(ANAHTARLAR.hedef, null)
+  const [pomodoroAyar, setPomodoroAyar] = useYerelDepo<PomodoroAyar>(
+    ANAHTARLAR.pomodoroAyar,
+    VARSAYILAN_POMODORO,
+  )
+  const [, setPomodoroGecmis] = useYerelDepo<PomodoroSeans[]>(
+    ANAHTARLAR.pomodoroGecmis,
+    [],
+  )
 
   const sablonlar = sablonlariBirlestir(kayitliSablonlar)
 
@@ -220,7 +237,13 @@ export function AppShell() {
               onKartAc={setEkran}
             />
           )}
-          {sekme === 'pomodoro' && <Yakinda ekran="pomodoro" />}
+          {sekme === 'pomodoro' && (
+            <PomodoroEkrani
+              ayar={{ ...VARSAYILAN_POMODORO, ...pomodoroAyar }}
+              setAyar={setPomodoroAyar}
+              onSeansBitti={(seans) => setPomodoroGecmis((o) => [...o, seans])}
+            />
+          )}
           {sekme === 'soru' && (
             <SoruTakibiEkrani
               kayitlar={gunlukKayitlar}
