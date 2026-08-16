@@ -4,7 +4,7 @@ import type { OsymTest, Sablon } from './types'
  * ÖSYM test bloklarının gerçek soru sayıları (2026 YKS).
  * Kaynak: ÖSYM YKS kılavuzu — TYT 120, AYT 160 (4 test × 40), YDT 80.
  *
- * Puan hesabı bu sayıları kullanır: okul denemesi gibi kısaltılmış bir sınavın neti
+ * Puan hesabı bu sayıları kullanır: seviye tespit sınavı gibi kısaltılmış bir sınavın neti
  * gerçek sınav ölçeğine oranlanır (bkz. `lib/puan.ts`).
  */
 export const OSYM_TEST_SORU: Record<OsymTest, number> = {
@@ -47,8 +47,11 @@ export const OSYM_TEST_ADI: Record<OsymTest, string> = {
 
 /**
  * Hazır şablonlar. Ders dağılımları 2026 YKS'nin resmî soru sayılarına göredir;
- * "Okul Denemesi" ise Asaf'ın okulunun uyguladığı 120 soruluk eşit ağırlık formatı
- * (TYT ile aynı soru sayısı ama tamamen farklı dağılım — karıştırılmamalı).
+ * "Seviye Tespit Sınavı" ise Asaf'ın okulunun uyguladığı 120 soruluk eşit ağırlık
+ * formatı (TYT ile aynı soru sayısı ama tamamen farklı dağılım — karıştırılmamalı).
+ *
+ * Şablonun kimliği bilerek `okul` kaldı: kayıtlı denemeler `sablonId` ile buna
+ * bağlı, kimlik değişseydi hepsi şablonsuz kalır ve net dökümleri kaybolurdu.
  *
  * Bu liste her açılışta koddan gelir — güncelleme yayınlandığında kullanıcının
  * kendi şablonlarına dokunmadan yenilenir (bkz. `sablonlariBirlestir`).
@@ -56,7 +59,7 @@ export const OSYM_TEST_ADI: Record<OsymTest, string> = {
 export const HAZIR_SABLONLAR: Sablon[] = [
   {
     id: 'okul',
-    ad: 'Okul Denemesi',
+    ad: 'Seviye Tespit Sınavı',
     tur: 'okul',
     yanlisKatsayi: 4,
     hazir: true,

@@ -5,12 +5,10 @@ import type {
   Ayarlar,
   Deneme,
   Devamsizlik,
-  DonemNotlari,
-  GecmisYil,
   GunlukKayit,
   Hedef,
   KazanilanRozet,
-  OkulDersi,
+  OkulYili,
   PomodoroAyar,
   Sablon,
   YanlisSoru,
@@ -23,8 +21,7 @@ import { yeniId } from './utils'
 export const ANAHTARLAR = {
   denemeler: 'rabi-denemeler',
   sablonlar: 'rabi-sablonlar',
-  okulDersleri: 'rabi-okul-dersleri',
-  gecmisYillar: 'rabi-gecmis-yillar',
+  okulYillari: 'rabi-okul-yillari',
   gunlukKayitlar: 'rabi-gunluk-kayitlar',
   devamsizlik: 'rabi-devamsizlik',
   yanlisSorular: 'rabi-yanlis-sorular',
@@ -39,6 +36,39 @@ export const ANAHTARLAR = {
 
 /** Görünüm tercihleri veriye dahil değildir; sıfırlama ve yedekleme bunlara dokunmaz. */
 const GORUNUM_ANAHTARLARI: string[] = [ANAHTARLAR.tema]
+
+/**
+ * Artık yazılmayan ama eski kurulumlarda kalmış olabilecek anahtarlar.
+ * "Tüm veriyi sil" bunları da temizlemeli, yoksa sıfırlanmış bir uygulamada
+ * eski veri artıkları kalırdı.
+ */
+const ESKI_ANAHTARLAR = ['rabi-gecmis-yillar', 'rabi-okul-dersleri']
+
+/**
+ * Tek seferlik taşıma: okul notları ders ders girilirken bitmiş yılların
+ * ortalamaları `rabi-gecmis-yillar` altında duruyordu. Yeni sistemde hepsi
+ * `rabi-okul-yillari` altında; kullanıcı 9, 10, 11. sınıf notlarını yeniden
+ * girmek zorunda kalmasın diye kayıtlar olduğu gibi taşınıyor.
+ *
+ * Ders ders girilmiş **bu yılın** notları taşınmıyor: yeni sistemde onun yerine
+ * tek bir "1. dönem sonu" notu yazılıyor, kullanıcı zaten karnesinden biliyor.
+ * Eski anahtar silinmiyor — taşıma yanlış giderse veri elde kalsın.
+ */
+function okulNotlariniTasi() {
+  if (typeof window === 'undefined') return
+  try {
+    if (localStorage.getItem(ANAHTARLAR.okulYillari) !== null) return
+    const eski = localStorage.getItem('rabi-gecmis-yillar')
+    if (!eski) return
+    const yillar = JSON.parse(eski)
+    if (!Array.isArray(yillar) || yillar.length === 0) return
+    localStorage.setItem(ANAHTARLAR.okulYillari, JSON.stringify(yillar))
+  } catch {
+    // Bozuk veri taşımayı engellemesin; kullanıcı notlarını yeniden girer.
+  }
+}
+
+okulNotlariniTasi()
 
 export const VARSAYILAN_AYARLAR: Ayarlar = {
   varsayilanSablonId: VARSAYILAN_SABLON_ID,
@@ -61,14 +91,6 @@ export const VARSAYILAN_POMODORO: PomodoroAyar = {
   ekraniAcikTut: false,
 }
 
-export const BOS_DONEM: DonemNotlari = {
-  yazili1: null,
-  yazili2: null,
-  sozlu1: null,
-  sozlu2: null,
-  proje: null,
-}
-
 /**
  * Kayıtlı ayarları güncel şemaya taşır. Sürüm yükseltmesinde eksik alan kalırsa
  * (örn. `gunlukHedef`) hesaplar NaN üretir; varsayılanlarla doldurulur.
@@ -81,16 +103,6 @@ export function ayarlariNormalize(ham: Partial<Ayarlar> | null | undefined): Aya
     gunlukHedef: Number.isFinite(birlesik.gunlukHedef) && birlesik.gunlukHedef > 0
       ? birlesik.gunlukHedef
       : VARSAYILAN_AYARLAR.gunlukHedef,
-  }
-}
-
-/** Kayıtlı dersi güncel şemaya taşır. */
-function dersiNormalize(ham: OkulDersi): OkulDersi {
-  return {
-    ...ham,
-    projeVar: ham.projeVar ?? false,
-    donem1: { ...BOS_DONEM, ...(ham.donem1 ?? {}) },
-    donem2: { ...BOS_DONEM, ...(ham.donem2 ?? {}) },
   }
 }
 
@@ -173,14 +185,25 @@ function dizi<T>(deger: unknown): T[] {
 }
 
 /**
- * Geçmiş yıl kaydına eksikse kimlik verir.
+ * Yedekten okul yıllarını çıkarır.
  *
- * Kimlik yalnızca liste anahtarı değil, **silme ölçütü**: elle düzenlenmiş ya da
- * eski şemadan gelen bir yedekte kimlikler boş olsaydı, bir yılı silmek
- * `filter((y) => y.id !== silinen.id)` ile hepsini birden silerdi.
+ * Eski yedeklerde alan `gecmisYillar` adındaydı ve yalnızca bitmiş yılları
+ * tutuyordu (o zamanlar içinde bulunulan yıl ders ders giriliyordu, `okulDersleri`
+ * altında). Ders sistemi kaldırıldığı için o alan artık okunmuyor; geçmiş yıllar
+ * ise birebir taşınıyor, kullanıcı onları yeniden girmek zorunda kalmasın.
+ *
+ * Kimlik eksikse üretiliyor. Kimlik yalnızca liste anahtarı değil **silme ölçütü**:
+ * boş kalsaydı bir yılı silmek `filter((y) => y.id !== silinen.id)` ile hepsini
+ * birden silerdi.
  */
-function yiliNormalize(ham: GecmisYil): GecmisYil {
-  return { ...ham, id: ham.id || yeniId() }
+function okulYillariniCoz(nesne: Record<string, unknown>): OkulYili[] {
+  const ham = Array.isArray(nesne.okulYillari)
+    ? (nesne.okulYillari as OkulYili[])
+    : dizi<OkulYili>(nesne.gecmisYillar)
+
+  return ham
+    .filter((y) => Number.isFinite(y?.sinif) && Number.isFinite(y?.ortalama))
+    .map((y) => ({ ...y, id: y.id || yeniId() }))
 }
 
 /**
@@ -211,8 +234,7 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       tarih: typeof nesne.tarih === 'string' ? nesne.tarih : new Date().toISOString(),
       denemeler: dizi<Deneme>(nesne.denemeler),
       sablonlar: dizi<Sablon>(nesne.sablonlar),
-      okulDersleri: dizi<OkulDersi>(nesne.okulDersleri).map(dersiNormalize),
-      gecmisYillar: dizi<GecmisYil>(nesne.gecmisYillar).map(yiliNormalize),
+      okulYillari: okulYillariniCoz(nesne),
       gunlukKayitlar: dizi<GunlukKayit>(nesne.gunlukKayitlar),
       devamsizlik: dizi<Devamsizlik>(nesne.devamsizlik),
       yanlisSorular: dizi<YanlisSoru>(nesne.yanlisSorular),
@@ -247,8 +269,7 @@ export function yedegiUygula(yedek: Yedek) {
 
   yaz(ANAHTARLAR.denemeler, yedek.denemeler)
   yaz(ANAHTARLAR.sablonlar, yedek.sablonlar)
-  yaz(ANAHTARLAR.okulDersleri, yedek.okulDersleri)
-  yaz(ANAHTARLAR.gecmisYillar, yedek.gecmisYillar)
+  yaz(ANAHTARLAR.okulYillari, yedek.okulYillari)
   yaz(ANAHTARLAR.gunlukKayitlar, yedek.gunlukKayitlar)
   yaz(ANAHTARLAR.devamsizlik, yedek.devamsizlik)
   yaz(
@@ -267,7 +288,7 @@ export function elenenSoruSayisi(yedek: Yedek): number {
 }
 
 export function tumVeriyiSil() {
-  for (const anahtar of Object.values(ANAHTARLAR)) {
+  for (const anahtar of [...Object.values(ANAHTARLAR), ...ESKI_ANAHTARLAR]) {
     if (GORUNUM_ANAHTARLARI.includes(anahtar)) continue
     try {
       localStorage.removeItem(anahtar)

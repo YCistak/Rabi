@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { Info, TriangleAlert } from 'lucide-react'
-import type { Ayarlar, Deneme, GecmisYil, OkulDersi, PuanTuru, Sablon } from '@/lib/types'
+import type { Ayarlar, Deneme, OkulYili, PuanTuru, Sablon } from '@/lib/types'
 import { netYaz, tarihYaz } from '@/lib/hesap'
 import { OSYM_TEST_ADI } from '@/lib/sablonlar'
 import { VERI_YILLARI } from '@/lib/puan'
@@ -21,19 +21,17 @@ const PUAN_TURU_ADI: Record<PuanTuru, string> = {
 export function SiralamaEkrani({
   denemeler,
   sablonlar,
-  okulDersleri,
-  gecmisYillar,
+  okulYillari,
   ayarlar,
 }: {
   denemeler: Deneme[]
   sablonlar: Sablon[]
-  okulDersleri: OkulDersi[]
-  gecmisYillar: GecmisYil[]
+  okulYillari: OkulYili[]
   ayarlar: Ayarlar
 }) {
   const tur = ayarlar.puanTuru
 
-  // TYT ve AYT ayrı denemelerden geliyor; okul denemesi ikisini de kapsadığı
+  // TYT ve AYT ayrı denemelerden geliyor; seviye tespit sınavı ikisini de kapsadığı
   // için her iki listede de görünür.
   const tytListesi = useMemo(() => tytAdaylari(denemeler, sablonlar), [denemeler, sablonlar])
   const aytListesi = useMemo(() => aytAdaylari(denemeler, sablonlar), [denemeler, sablonlar])
@@ -41,10 +39,7 @@ export function SiralamaEkrani({
   const [tytId, setTytId] = useState<string>(() => enYeni(tytListesi)?.id ?? '')
   const [aytId, setAytId] = useState<string>(() => enYeni(aytListesi)?.id ?? '')
 
-  const obpSonucu = useMemo(
-    () => obpHesapla(okulDersleri, gecmisYillar),
-    [okulDersleri, gecmisYillar],
-  )
+  const obpSonucu = useMemo(() => obpHesapla(okulYillari), [okulYillari])
 
   const tahmin = useMemo(
     () =>

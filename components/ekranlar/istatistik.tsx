@@ -86,7 +86,7 @@ export function IstatistikEkrani({
         aciklama={`${sablon.ad} · ${sablonDenemeleri.length} deneme`}
       />
 
-      {/* Her deneme türü kendi içinde hesaplanır: TYT ile okul denemesinin
+      {/* Her deneme türü kendi içinde hesaplanır: TYT ile seviye tespit sınavının
           soru sayısı farklı olduğu için netleri aynı ortalamaya girmez. */}
       {secilebilir.length > 1 && (
         <div className="mb-4">
@@ -101,7 +101,7 @@ export function IstatistikEkrani({
             ))}
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            Her deneme türünün istatistiği ayrı tutulur; TYT netleriyle okul denemesi
+            Her deneme türünün istatistiği ayrı tutulur; TYT netleriyle seviye tespit sınavı
             netleri birbirine karışmaz.
           </p>
         </div>

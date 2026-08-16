@@ -76,7 +76,7 @@ keyPassword=...
 | `lib/siralama.ts` | Puandan tahmini sıralama |
 | `lib/veri/` | ÖSYM katsayıları ve puan-sıralama tabloları |
 | `lib/depo.ts` | localStorage hook'u, yedekleme |
-| `lib/ses.ts` | Pomodoro ortam sesleri — Web Audio ile üretilir, dosya yok |
+| `lib/ses.ts` | Pomodoro müziği — `public/ses/` altındaki CC0 lo-fi parçalar |
 | `public/ses/` | Lo-fi parçalar (CC0) + `LISANS.md` |
 
 ## Sıralama tahmini nasıl çalışıyor
@@ -152,6 +152,25 @@ elle düzenlenmiyor. Derlenen APK'da şunlar var:
   erişmiyor. Android'in kuralı ters yönde işliyor: izni manifestte **tanımlayan**
   uygulamalardan `IMAGE_CAPTURE` için çalışma anında izin istenir. İzni eklemek fotoğraf
   çekmeyi düzeltmez, gereksiz bir izin ekranı ekler.
+
+## Okul notları ve OBP
+
+Her lise yılı için **tek bir ortalama** giriliyor — karnedeki sayı. Ders ders yazılı/sözlü/proje
+girme sistemi kaldırıldı: öğrenci o sayıyı zaten biliyor, on beş dersin notunu tek tek girmek
+aynı sonucu daha çok emekle veriyor ve yarım kalırsa yanlış veriyordu.
+
+- **Bitmiş yıllar** → yıl sonu notu.
+- **İçinde bulunulan yıl** → 1. dönem sonu notu (`donemSonu: true`). Yıl bitmediği için o
+  yılın tamamı adına tahmin sayılıyor; arayüz bunu ayrıca yazıyor.
+
+OBP = diploma notu × 5, `[250, 500]` aralığına kırpılır. Diploma notu dört yılın aritmetik
+ortalamasıdır (MEB Ortaöğretim Kurumları Yönetmeliği MADDE 65); eksik yıllarda girilenlerin
+ortalaması varsayılır. `tamMi` yalnızca **dört yıl da girili ve hiçbiri dönem sonu notu değilse**
+true döner — yani "tahmin değil" demek için iki koşul birden aranıyor.
+
+Eski kurulumlardaki `rabi-gecmis-yillar` kaydı `rabi-okul-yillari`ne bir kez taşınıyor
+(`okulNotlariniTasi`), kullanıcı 9–11. sınıf notlarını yeniden girmek zorunda kalmasın diye.
+Eski anahtar silinmiyor: taşıma yanlış giderse veri elde kalsın.
 
 ## Rozetler ve bildirim
 

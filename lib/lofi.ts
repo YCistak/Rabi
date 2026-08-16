@@ -20,6 +20,12 @@ export const LOFI_PARCALAR: LofiParca[] = [
   { dosya: 'almost-floating.mp3', ad: 'Almost Floating' },
   { dosya: 'after-school-rain.mp3', ad: 'After School Rain' },
   { dosya: '2-am-debug-loop.mp3', ad: '2 AM Debug Loop' },
+  { dosya: 'graphite-in-the-quiet.mp3', ad: 'Graphite in the Quiet' },
+  { dosya: 'stacks-of-quiet-hours.mp3', ad: 'Stacks of Quiet Hours' },
+  { dosya: 'chapter-by-lamplight.mp3', ad: 'Chapter by Lamplight' },
+  { dosya: 'coffee-ring-notebook.mp3', ad: 'Coffee Ring Notebook' },
+  { dosya: 'margin-notes-at-dusk.mp3', ad: 'Margin Notes at Dusk' },
+  { dosya: 'stacks-of-quiet-books.mp3', ad: 'Stacks of Quiet Books' },
 ]
 
 /** Ses seçiminden parçayı bulur; `lofi:<dosya>` biçimini çözer. */

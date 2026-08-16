@@ -79,32 +79,22 @@ export type Deneme = {
 // Okul notları / OBP
 // ---------------------------------------------------------------------------
 
-/** Bir dönemin notları. Girilmeyen not null'dır ve ortalamaya katılmaz. */
-export type DonemNotlari = {
-  yazili1: number | null
-  yazili2: number | null
-  sozlu1: number | null
-  sozlu2: number | null
-  /** Yalnızca dersten proje alındıysa girilir. */
-  proje: number | null
-}
-
-/** Okul dersi. Haftalık ders saati, yıl sonu ortalamasında ağırlık katsayısıdır. */
-export type OkulDersi = {
-  id: string
-  ad: string
-  haftalikSaat: number
-  /** Bu dersten proje ödevi alındı mı — birden fazla dersten alınabilir. */
-  projeVar: boolean
-  donem1: DonemNotlari
-  donem2: DonemNotlari
-}
-
-/** Önceki sınıfların yıl sonu ortalaması — OBP dört yılın ortalamasından çıkar. */
-export type GecmisYil = {
+/**
+ * Bir lise yılının başarı ortalaması. OBP dört yılın (9–12) ortalamasından çıkar.
+ *
+ * Bitmiş yıllar için bu **yıl sonu** notudur. İçinde bulunulan yıl için henüz yıl
+ * sonu notu yoktur; oraya **1. dönem sonu** notu yazılır ve yılın tamamı için
+ * tahmin olarak kullanılır (`donemSonu` bunu işaretler, arayüz de böyle yazar).
+ *
+ * Not: ders ders yazılı/sözlü girme sistemi kaldırıldı — kullanıcı zaten karnesindeki
+ * tek sayıyı biliyor, on beş dersin notunu tek tek girmek gereksiz emek çıkarıyordu.
+ */
+export type OkulYili = {
   id: string
   sinif: number
   ortalama: number
+  /** Yıl bitmediği için girilen değer 1. dönem sonu notu mu. */
+  donemSonu?: boolean
 }
 
 // ---------------------------------------------------------------------------
@@ -162,14 +152,12 @@ export type YanlisSoru = {
 // Pomodoro
 // ---------------------------------------------------------------------------
 
-/** Üretilen ortam sesleri (dosyasız) ve gömülü lo-fi parçalar. */
-export type SesSecimi =
-  | 'yok'
-  | 'beyaz-gurultu'
-  | 'kahverengi-gurultu'
-  | 'yagmur'
-  | 'kafe'
-  | `lofi:${string}`
+/**
+ * Pomodoro sesi. Üretilen ortam sesleri (yağmur, kafe, gürültü) kaldırıldı;
+ * eski bir kayıtta kalmışlarsa `lofi:` önekiyle eşleşmedikleri için sessize
+ * düşüyorlar — ayrı bir taşıma koduna gerek yok.
+ */
+export type SesSecimi = 'yok' | `lofi:${string}`
 
 export type PomodoroAyar = {
   /** Dakika cinsinden. */
@@ -253,8 +241,7 @@ export type Yedek = {
   tarih: string
   denemeler: Deneme[]
   sablonlar: Sablon[]
-  okulDersleri: OkulDersi[]
-  gecmisYillar: GecmisYil[]
+  okulYillari: OkulYili[]
   gunlukKayitlar: GunlukKayit[]
   devamsizlik: Devamsizlik[]
   yanlisSorular: YanlisSoru[]

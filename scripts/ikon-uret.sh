@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Rabi'nin Android ikonlarını ve açılış ekranını üretir.
+# Rabi'nin Android uygulama ikonlarını üretir.
 #
 #   ./scripts/ikon-uret.sh
 #
@@ -16,16 +16,14 @@ set -euo pipefail
 
 kok="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 res="$kok/android/app/src/main/res"
-gecici="$(mktemp -d)"
-trap 'rm -rf "$gecici"' EXIT
-
 for arac in rsvg-convert magick; do
   command -v "$arac" >/dev/null || { echo "eksik araç: $arac" >&2; exit 1; }
 done
 
-# Havuç turuncusu — uygulama temasının vurgu rengi. Uyarlanabilir ikonun arka
-# planı ve açılış ekranının zemini bununla aynı olmalı.
-VURGU="#c2622a"
+# Not: açılış ekranı burada üretilmiyor. Sistem açılış ekranı (Android 12+ ve
+# androidx uyumluluk katmanı) tam ekran görsel değil, zemin rengi + vektör ikon
+# istiyor: `values/colors.xml` içindeki `acilis_zemin` ve
+# `drawable/acilis_maskot.xml`. İkisi de elle tutuluyor.
 
 echo "» Uyarlanabilir ikon ön planı"
 # Yoğunluklar: mdpi 108 birim taban, her kademe katsayısıyla çarpılıyor.
@@ -48,31 +46,6 @@ for kademe in "mdpi 48" "hdpi 72" "xhdpi 96" "xxhdpi 144" "xxxhdpi 192"; do
   rsvg-convert -w "$boy" -h "$boy" "$kok/assets/icon-yuvarlak.svg" \
     -o "$res/mipmap-$1/ic_launcher_round.png"
 done
-
-echo "» Açılış ekranı"
-# Capacitor'ın şablonu dikey/yatay ve yoğunluk başına ayrı dosya bekliyor.
-# Görsel ortalanıp zemin renkle dolduruluyor; oranı bozulmasın diye tavşan
-# sabit boyda kalıp tuval büyütülüyor.
-acilis() {
-  local en="$1" boy="$2" hedef="$3"
-  local kucuk=$(( en < boy ? en : boy ))
-  local maskot=$(( kucuk * 40 / 100 ))
-  rsvg-convert -w "$maskot" -h "$maskot" "$kok/assets/acilis-maskot.svg" -o "$gecici/m.png"
-  # PNG8 + 64 renk: görsel düz zemin üstünde tek bir maskot, 24 bit renk gereksiz.
-  # Kayıpsız 24 bit bırakılınca dosyalar üç katına çıkıyor ve APK'yı boşuna şişiriyor.
-  magick -size "${en}x${boy}" "xc:$VURGU" "$gecici/m.png" -gravity center -composite \
-    -colors 128 "PNG8:$hedef"
-}
-
-# Yoğunluk × yön. Ölçüler Capacitor şablonundaki dosyalarla aynı.
-for kademe in "mdpi 320 480" "hdpi 480 800" "xhdpi 720 1280" "xxhdpi 960 1600" "xxxhdpi 1280 1920"; do
-  set -- $kademe
-  acilis "$2" "$3" "$res/drawable-port-$1/splash.png"
-  acilis "$3" "$2" "$res/drawable-land-$1/splash.png"
-done
-
-# Yönü olmayan yedek (eski cihazlar bunu kullanıyor).
-acilis 480 320 "$res/drawable/splash.png"
 
 echo "» Web ikonları"
 rsvg-convert -w 512 -h 512 "$kok/assets/icon-kare.svg" -o "$kok/public/icon-512.png"

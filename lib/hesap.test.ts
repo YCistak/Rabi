@@ -71,30 +71,54 @@ describe('osymNetleri', () => {
 })
 
 describe('obpTahmini', () => {
+  const yil = (sinif: number, ortalama: number, donemSonu = false) => ({
+    id: String(sinif),
+    sinif,
+    ortalama,
+    donemSonu,
+  })
+
   it('diploma notunu beşle çarpar', () => {
-    const sonuc = obpTahmini(90, [
-      { id: '1', sinif: 9, ortalama: 90 },
-      { id: '2', sinif: 10, ortalama: 90 },
-      { id: '3', sinif: 11, ortalama: 90 },
-    ])
+    const sonuc = obpTahmini([yil(9, 90), yil(10, 90), yil(11, 90), yil(12, 90)])
     expect(sonuc?.diplomaNotu).toBe(90)
     expect(sonuc?.obp).toBe(450)
     expect(sonuc?.tamMi).toBe(true)
   })
 
   it('eksik yılda tamMi false döner', () => {
-    const sonuc = obpTahmini(85, [{ id: '1', sinif: 9, ortalama: 95 }])
+    const sonuc = obpTahmini([yil(9, 95), yil(10, 85)])
     expect(sonuc?.diplomaNotu).toBe(90)
     expect(sonuc?.tamMi).toBe(false)
     expect(sonuc?.girilenYil).toBe(2)
   })
 
+  /**
+   * Dört yıl da girili olsa bile, biri 1. dönem sonu notuysa yıl bitmemiş
+   * demektir; sonuç kesin OBP değil, tahmindir.
+   */
+  it('dönem sonu notu varsa tamMi false döner', () => {
+    const sonuc = obpTahmini([yil(9, 90), yil(10, 90), yil(11, 90), yil(12, 90, true)])
+    expect(sonuc?.tamMi).toBe(false)
+    expect(sonuc?.tahminiYil).toBe(1)
+    expect(sonuc?.girilenYil).toBe(4)
+  })
+
   it('OBP alt sınırı 250', () => {
-    expect(obpTahmini(40, [])?.obp).toBe(250)
+    expect(obpTahmini([yil(9, 40)])?.obp).toBe(250)
+  })
+
+  it('OBP üst sınırı 500', () => {
+    expect(obpTahmini([yil(9, 100), yil(10, 100)])?.obp).toBe(500)
+  })
+
+  it('sayı olmayan ortalamalar atlanır', () => {
+    const sonuc = obpTahmini([yil(9, 90), { id: 'x', sinif: 10, ortalama: NaN }])
+    expect(sonuc?.diplomaNotu).toBe(90)
+    expect(sonuc?.girilenYil).toBe(1)
   })
 
   it('veri yoksa null döner', () => {
-    expect(obpTahmini(null, [])).toBeNull()
+    expect(obpTahmini([])).toBeNull()
   })
 })
 

@@ -2,10 +2,8 @@ import type {
   Deneme,
   DersSonuc,
   Devamsizlik,
-  DonemNotlari,
-  GecmisYil,
+  OkulYili,
   GunlukKayit,
-  OkulDersi,
   OsymTest,
   Sablon,
   SablonDers,
@@ -210,84 +208,6 @@ export function yilSayisiYaz(sayi: number): string {
   return yaziyla[sayi] ?? `${sayi} tanesi`
 }
 
-/** Dönemde girilmiş notlar (yazılı, sözlü, varsa proje) — boş bırakılanlar atlanır. */
-export function donemdekiNotlar(donem: DonemNotlari, projeVar: boolean): number[] {
-  const hepsi = [
-    donem.yazili1,
-    donem.yazili2,
-    donem.sozlu1,
-    donem.sozlu2,
-    projeVar ? donem.proje : null,
-  ]
-  return hepsi.filter((not): not is number => not !== null && Number.isFinite(not))
-}
-
-/**
- * Dönem puanı — MEB Ortaöğretim Kurumları Yönetmeliği MADDE 51: sınav, performans ve
- * varsa proje puanlarının aritmetik ortalaması. Aynı madde bölme işleminin virgülden
- * sonra dört basamak yürütülmesini şart koşar; ara hesaplar bu yüzden 4 basamakta tutulur
- * (ekranda 2 basamak gösterilir).
- */
-export function donemOrtalamasi(donem: DonemNotlari, projeVar = false): number | null {
-  const notlar = donemdekiNotlar(donem, projeVar)
-  if (notlar.length === 0) return null
-  return yuvarla(notlar.reduce((a, b) => a + b, 0) / notlar.length, MEB_BASAMAK)
-}
-
-/**
- * Bir dersin belirtilen dönem puanı. Proje yalnızca ikinci dönemde verildiği için
- * birinci dönem hesabına hiçbir zaman katılmaz.
- */
-export function dersDonemPuani(ders: OkulDersi, donemNo: 1 | 2): number | null {
-  const donem = donemNo === 1 ? ders.donem1 : ders.donem2
-  return donemOrtalamasi(donem, donemNo === 2 && ders.projeVar)
-}
-
-/**
- * Bir dersin yıl sonu puanı (MADDE 53): birinci ve ikinci dönem puanlarının aritmetik
- * ortalaması. Tek dönem doluysa o dönem kullanılır — yıl ortasında da tahmin verebilmek
- * için; yönetmelikteki telafi programı durumu uygulama kapsamı dışında.
- */
-export function dersYilSonuNotu(ders: OkulDersi): number | null {
-  const d1 = dersDonemPuani(ders, 1)
-  const d2 = dersDonemPuani(ders, 2)
-  if (d1 === null && d2 === null) return null
-  if (d1 === null) return d2
-  if (d2 === null) return d1
-  return yuvarla((d1 + d2) / 2, MEB_BASAMAK)
-}
-
-export type AgirlikliSonuc = {
-  ortalama: number | null
-  toplamSaat: number
-  /** Notu girilmiş ders sayısı. */
-  dersSayisi: number
-}
-
-/**
- * Yıl sonu başarı puanı (MADDE 54–55): her dersin yıl sonu puanı haftalık ders saatiyle
- * çarpılıp (ağırlıklı puan) toplanır, haftalık ders saatleri toplamına bölünür.
- */
-export function agirlikliOrtalama(dersler: OkulDersi[]): AgirlikliSonuc {
-  let agirlikliToplam = 0
-  let toplamSaat = 0
-  let dersSayisi = 0
-
-  for (const ders of dersler) {
-    const notu = dersYilSonuNotu(ders)
-    if (notu === null || ders.haftalikSaat <= 0) continue
-    agirlikliToplam += notu * ders.haftalikSaat
-    toplamSaat += ders.haftalikSaat
-    dersSayisi++
-  }
-
-  return {
-    ortalama: toplamSaat > 0 ? yuvarla(agirlikliToplam / toplamSaat, MEB_BASAMAK) : null,
-    toplamSaat,
-    dersSayisi,
-  }
-}
-
 export type ObpSonucu = {
   /** Mezuniyet puanı = diploma notu (MADDE 65). */
   diplomaNotu: number
@@ -296,41 +216,43 @@ export type ObpSonucu = {
   girilenYil: number
   /** Diploma notunun dayandığı yıl sayısı — her zaman 4. */
   toplamYil: number
-  /** Dört yılın dördü de girildi mi; değilse sonuç eksik veriye dayanan bir tahmindir. */
+  /**
+   * Sonuç kesin mi: dört yıl da girili **ve** hiçbiri dönem sonu notuna dayanmıyor.
+   * Aksi hâlde eksik ya da yarım veriye dayanan bir tahmindir.
+   */
   tamMi: boolean
+  /** Kaç yılın notu 1. dönem sonundan geliyor (yıl sonu değil). */
+  tahminiYil: number
 }
 
 /**
  * OBP tahmini = diploma notu × 5, 250–500 aralığına kırpılır (ÖSYM).
  *
  * Diploma notu **dört yılın** (9, 10, 11, 12) yıl sonu başarı puanlarının aritmetik
- * ortalamasıdır — MADDE 65. Dört yılın hepsi girilmediyse eksik yılların, girilmiş
- * yılların ortalamasıyla aynı olacağı varsayılır; bu durumda `tamMi` false döner ve
- * arayüz sonucun eksik veriye dayandığını yazar. Sonuç dört yıl tamamlanınca kesinleşir.
+ * ortalamasıdır — MEB Ortaöğretim Kurumları Yönetmeliği MADDE 65. Dört yılın hepsi
+ * girilmediyse eksik yılların, girilmiş yılların ortalamasıyla aynı olacağı varsayılır;
+ * bu durumda `tamMi` false döner ve arayüz sonucun eksik veriye dayandığını yazar.
+ *
+ * İçinde bulunulan yılın notu 1. dönem sonu notu olabilir (`donemSonu`); o da yılın
+ * tamamı için tahmin sayılır, bu yüzden `tahminiYil` ile ayrıca bildiriliyor.
  */
-export function obpTahmini(
-  buYilOrtalamasi: number | null,
-  gecmisYillar: GecmisYil[],
-): ObpSonucu | null {
-  const ortalamalar = [
-    ...gecmisYillar.map((y) => y.ortalama),
-    ...(buYilOrtalamasi !== null ? [buYilOrtalamasi] : []),
-  ]
-  if (ortalamalar.length === 0) return null
+export function obpTahmini(yillar: OkulYili[]): ObpSonucu | null {
+  const gecerli = yillar.filter((y) => Number.isFinite(y.ortalama))
+  if (gecerli.length === 0) return null
 
-  const girilenYil = Math.min(ortalamalar.length, ORTAOGRETIM_YIL_SAYISI)
-  const toplam = ortalamalar.reduce((a, b) => a + b, 0)
+  const toplam = gecerli.reduce((a, y) => a + y.ortalama, 0)
   // Eksik yıl varsa girilenlerin ortalaması o yıllara da yazılır; dört yıla bölmek
   // matematiksel olarak girilenlerin ortalamasına eşittir.
-  const diplomaNotu = yuvarla(toplam / ortalamalar.length, MEB_BASAMAK)
+  const diplomaNotu = yuvarla(toplam / gecerli.length, MEB_BASAMAK)
   const obp = Math.min(500, Math.max(250, yuvarla(diplomaNotu * 5)))
 
   return {
     diplomaNotu,
     obp,
-    girilenYil,
+    girilenYil: Math.min(gecerli.length, ORTAOGRETIM_YIL_SAYISI),
     toplamYil: ORTAOGRETIM_YIL_SAYISI,
-    tamMi: ortalamalar.length >= ORTAOGRETIM_YIL_SAYISI,
+    tamMi: gecerli.length >= ORTAOGRETIM_YIL_SAYISI && !gecerli.some((y) => y.donemSonu),
+    tahminiYil: gecerli.filter((y) => y.donemSonu).length,
   }
 }
 

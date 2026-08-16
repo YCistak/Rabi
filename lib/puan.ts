@@ -218,7 +218,7 @@ export type OlcekliNetler = {
 /**
  * Denemenin netlerini gerçek sınav ölçeğine çevirir.
  *
- * Okul denemesinde Matematik 30 soru, AYT'de 40. Neti doğrudan kullanmak puanı
+ * Seviye tespit sınavında Matematik 30 soru, AYT'de 40. Neti doğrudan kullanmak puanı
  * olduğundan düşük gösterirdi; net, soru sayısı oranıyla büyütülüyor
  * (30 soruda 24 net → 40 soruda 32 net varsayımı). Bu bir varsayım olduğu için
  * hangi testlerin oranlandığı geri döndürülüyor ve arayüzde yazılıyor.

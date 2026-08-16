@@ -36,11 +36,10 @@ import type {
   Ayarlar,
   Deneme,
   Devamsizlik,
-  GecmisYil,
   GunlukKayit,
   Hedef,
   KazanilanRozet,
-  OkulDersi,
+  OkulYili,
   PuanTuru,
   Sablon,
   YanlisSoru,
@@ -78,8 +77,7 @@ export function AyarlarEkrani({
   /** Yedeğe girecek bütün veri — fotoğraflar hariç. */
   yedeklenecek: {
     denemeler: Deneme[]
-    okulDersleri: OkulDersi[]
-    gecmisYillar: GecmisYil[]
+    okulYillari: OkulYili[]
     gunlukKayitlar: GunlukKayit[]
     devamsizlik: Devamsizlik[]
     yanlisSorular: YanlisSoru[]

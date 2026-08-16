@@ -1,5 +1,5 @@
-import type { Deneme, GecmisYil, OkulDersi, OsymTest, PuanTuru, Sablon } from './types'
-import { agirlikliOrtalama, obpTahmini, osymNetleri, type ObpSonucu } from './hesap'
+import type { Deneme, OkulYili, OsymTest, PuanTuru, Sablon } from './types'
+import { obpTahmini, osymNetleri, type ObpSonucu } from './hesap'
 import { sablonBul } from './sablonlar'
 import {
   SON_VERI_YILI,
@@ -31,7 +31,7 @@ export type Tahmin = {
  * Denemenin hangi tarafta seçilebileceği, şablonun `tur` alanına değil **gerçekten
  * hangi ÖSYM testlerini kapsadığına** bakılarak belirleniyor.
  *
- * Okul denemesi buna iyi bir örnek: türü "okul" ama dersleri yalnızca AYT
+ * Seviye tespit sınavı buna iyi bir örnek: türü "okul" ama dersleri yalnızca AYT
  * testlerine bağlı, içinde tek bir TYT testi yok. Tür üzerinden filtrelenseydi
  * TYT tarafında da seçilebilir ve seçildiğinde bütün TYT netleri sıfır sayılıp
  * puan gerçeğin çok altına düşerdi.
@@ -59,16 +59,13 @@ export function enYeni(denemeler: Deneme[]): Deneme | undefined {
   return [...denemeler].sort((a, b) => b.tarih.localeCompare(a.tarih))[0]
 }
 
-export function obpHesapla(
-  okulDersleri: OkulDersi[],
-  gecmisYillar: GecmisYil[],
-): ObpSonucu | null {
-  return obpTahmini(agirlikliOrtalama(okulDersleri).ortalama, gecmisYillar)
+export function obpHesapla(okulYillari: OkulYili[]): ObpSonucu | null {
+  return obpTahmini(okulYillari)
 }
 
 /**
  * Seçilen TYT ve AYT denemesinden tahmin üretir. İkisi de yoksa null döner.
- * Aynı deneme her iki tarafta da seçilebilir (okul denemesi gibi ikisini de
+ * Aynı deneme her iki tarafta da seçilebilir (seviye tespit sınavı gibi ikisini de
  * kapsayan şablonlarda bu normaldir).
  */
 export function tahminUret({
@@ -135,8 +132,7 @@ export function tahminUret({
 export function guncelTahmin(
   denemeler: Deneme[],
   sablonlar: Sablon[],
-  okulDersleri: OkulDersi[],
-  gecmisYillar: GecmisYil[],
+  okulYillari: OkulYili[],
   tur: PuanTuru,
 ): Tahmin | null {
   return tahminUret({
@@ -144,6 +140,6 @@ export function guncelTahmin(
     aytDenemesi: enYeni(aytAdaylari(denemeler, sablonlar)),
     sablonlar,
     tur,
-    obp: obpHesapla(okulDersleri, gecmisYillar)?.obp ?? null,
+    obp: obpHesapla(okulYillari)?.obp ?? null,
   })
 }

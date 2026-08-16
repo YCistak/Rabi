@@ -5,8 +5,7 @@ import type { Yedek } from './types'
 const bos: Omit<Yedek, 'uygulama' | 'surum' | 'tarih'> = {
   denemeler: [],
   sablonlar: [],
-  okulDersleri: [],
-  gecmisYillar: [],
+  okulYillari: [],
   gunlukKayitlar: [],
   devamsizlik: [],
   yanlisSorular: [],
@@ -48,16 +47,16 @@ describe('yedegiDogrula', () => {
    * Elle düzenlenmiş bir yedekte kimlikler boş kalsaydı, bir yılı silmek
    * hepsini birden silerdi.
    */
-  it('kimliksiz geçmiş yıllara kimlik verir', () => {
+  it('kimliksiz okul yıllarına kimlik verir', () => {
     const yedek = coz({
       ...yedekOlustur(bos),
-      gecmisYillar: [
+      okulYillari: [
         { sinif: 9, ortalama: 93.2 },
         { sinif: 10, ortalama: 94.1 },
       ],
     })
 
-    const kimlikler = yedek.gecmisYillar.map((y) => y.id)
+    const kimlikler = yedek.okulYillari.map((y) => y.id)
     expect(kimlikler.every(Boolean)).toBe(true)
     expect(new Set(kimlikler).size).toBe(2)
   })
@@ -65,27 +64,33 @@ describe('yedegiDogrula', () => {
   it('var olan kimliği korur', () => {
     const yedek = coz({
       ...yedekOlustur(bos),
-      gecmisYillar: [{ id: 'abc', sinif: 9, ortalama: 90 }],
+      okulYillari: [{ id: 'abc', sinif: 9, ortalama: 90 }],
     })
-    expect(yedek.gecmisYillar[0].id).toBe('abc')
+    expect(yedek.okulYillari[0].id).toBe('abc')
   })
 
-  /** Eski şemadan gelen ders, dönem alanları eksik olsa da hesaba girebilmeli. */
-  it('eksik dönem alanlarını doldurur', () => {
+  /**
+   * Eski yedeklerde alan `gecmisYillar` adındaydı. Kullanıcı okul notlarını
+   * yeniden girmek zorunda kalmasın diye o ad da okunuyor.
+   */
+  it('eski gecmisYillar alanını da okur', () => {
+    const eski = { ...yedekOlustur(bos) } as Record<string, unknown>
+    delete eski.okulYillari
+    eski.gecmisYillar = [{ id: 'y9', sinif: 9, ortalama: 91 }]
+
+    expect(coz(eski).okulYillari).toEqual([{ id: 'y9', sinif: 9, ortalama: 91 }])
+  })
+
+  it('sınıfı veya notu olmayan yıl kaydını atar', () => {
     const yedek = coz({
       ...yedekOlustur(bos),
-      okulDersleri: [{ id: 'd1', ad: 'Matematik', haftalikSaat: 6 }],
+      okulYillari: [
+        { id: 'a', sinif: 9, ortalama: 90 },
+        { id: 'b', sinif: 10 },
+        { id: 'c', ortalama: 80 },
+      ],
     })
-    const ders = yedek.okulDersleri[0]
-    expect(ders.projeVar).toBe(false)
-    expect(ders.donem1).toEqual({
-      yazili1: null,
-      yazili2: null,
-      sozlu1: null,
-      sozlu2: null,
-      proje: null,
-    })
-    expect(ders.donem2).toBeDefined()
+    expect(yedek.okulYillari.map((y) => y.id)).toEqual(['a'])
   })
 
   it('kurulum tamamlanmış sayılır', () => {

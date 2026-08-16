@@ -14,7 +14,7 @@ import {
   sureYaz,
   type Asama,
 } from '@/lib/pomodoro'
-import { SesCalar, URETILEN_SESLER } from '@/lib/ses'
+import { SesCalar } from '@/lib/ses'
 import { LOFI_PARCALAR } from '@/lib/lofi'
 import { CALISMA_DERSLERI } from '@/lib/dersler'
 import { pomodoroIptal, pomodoroPlanla } from '@/lib/bildirim'
@@ -36,6 +36,12 @@ export function PomodoroEkrani({
   const [ders, setDers] = useState<string | null>(null)
   const [bitisZamani, setBitisZamani] = useState<number | null>(null)
   const [kalan, setKalan] = useState(ayar.calisma * 60)
+  /**
+   * Bu aşama hiç başlatılmadı mı. Süre ayarı değiştiğinde sayacın yeni süreye
+   * atlaması gerekiyor — ama yalnızca dokunulmamış aşamada: duraklatılmış bir
+   * sayaç sıfırdan başlatılırsa kullanıcı çalıştığı süreyi kaybeder.
+   */
+  const [dokunulmadi, setDokunulmadi] = useState(true)
   const [sesPaneli, setSesPaneli] = useState(false)
 
   const calarRef = useRef<SesCalar | null>(null)
@@ -82,8 +88,16 @@ export function PomodoroEkrani({
     }
 
     setBitisZamani(null)
+    setDokunulmadi(true)
     baslangicRef.current = null
   }, [asama, ayar, calarAl, ders, onSeansBitti, tur])
+
+  // Ayarlardan süre değiştirildiğinde ekrandaki sayaç da değişmeli. Bu olmadan
+  // "60 dakika" seçilip Başlat'a basılınca sayaç eski süreyle çalışıyordu.
+  useEffect(() => {
+    if (calisiyor || !dokunulmadi) return
+    setKalan(toplamDakika * 60)
+  }, [toplamDakika, calisiyor, dokunulmadi])
 
   // Sayaç: hedef zaman damgasından okunuyor, saniye saymıyor.
   useEffect(() => {
@@ -111,6 +125,7 @@ export function PomodoroEkrani({
   const baslat = () => {
     const bitis = Date.now() + kalan * 1000
     setBitisZamani(bitis)
+    setDokunulmadi(false)
     baslangicRef.current = new Date().toISOString()
 
     const calar = calarAl()
@@ -133,6 +148,7 @@ export function PomodoroEkrani({
   const sifirla = () => {
     duraklat()
     setKalan(toplamDakika * 60)
+    setDokunulmadi(true)
     baslangicRef.current = null
   }
 
@@ -144,6 +160,7 @@ export function PomodoroEkrani({
     if (asama !== 'calisma') setTur((t) => t + 1)
     setAsama(yeniAsama)
     setKalan(asamaSuresi(yeniAsama, ayar) * 60)
+    setDokunulmadi(true)
   }
 
   const sesSec = (secim: SesSecimi) => {
@@ -226,23 +243,14 @@ export function PomodoroEkrani({
 
         {sesPaneli && (
           <div className="border-t border-border p-4">
-            <p className="mb-2 text-xs font-medium text-muted-foreground">Ortam sesi</p>
-            <div className="mb-4 flex flex-wrap gap-2">
-              <Cip secili={ayar.ses === 'yok'} onClick={() => sesSec('yok')}>
-                Sessiz
-              </Cip>
-              {URETILEN_SESLER.map((s) => (
-                <Cip key={s.id} secili={ayar.ses === s.id} onClick={() => sesSec(s.id)}>
-                  {s.ad}
-                </Cip>
-              ))}
-            </div>
-
             <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
               <Music size={13} aria-hidden />
               Lo-fi
             </p>
             <div className="mb-4 flex flex-wrap gap-2">
+              <Cip secili={ayar.ses === 'yok'} onClick={() => sesSec('yok')}>
+                Sessiz
+              </Cip>
               {LOFI_PARCALAR.map((p) => (
                 <Cip
                   key={p.dosya}
@@ -273,8 +281,8 @@ export function PomodoroEkrani({
             </label>
 
             <p className="mt-3 text-xs text-muted-foreground">
-              Ortam sesleri koddan üretiliyor, dosya yok. Lo-fi parçalar kamu malı (CC0);
-              biri bitince sıradaki başlar.
+              Parçalar kamu malı (CC0), uygulamanın içinde — internet gerekmiyor. Biri
+              bitince sıradaki başlar.
             </p>
           </div>
         )}
@@ -339,10 +347,21 @@ function SureAyarlari({
   setAyar: (guncelleyici: PomodoroAyar | ((onceki: PomodoroAyar) => PomodoroAyar)) => void
   kilitli: boolean
 }) {
-  const alanlar: { anahtar: keyof PomodoroAyar; etiket: string; secenekler: number[] }[] = [
-    { anahtar: 'calisma', etiket: 'Çalışma', secenekler: [15, 25, 30, 45, 50] },
-    { anahtar: 'kisaMola', etiket: 'Kısa mola', secenekler: [3, 5, 10] },
-    { anahtar: 'uzunMola', etiket: 'Uzun mola', secenekler: [15, 20, 30] },
+  const alanlar: {
+    anahtar: keyof PomodoroAyar
+    etiket: string
+    secenekler: number[]
+    /** Serbest giriş sınırı; yoksa yalnızca hazır seçenekler kullanılır. */
+    sinir?: { enAz: number; enCok: number }
+  }[] = [
+    {
+      anahtar: 'calisma',
+      etiket: 'Çalışma',
+      secenekler: [15, 25, 30, 45, 50, 60],
+      sinir: { enAz: 1, enCok: 180 },
+    },
+    { anahtar: 'kisaMola', etiket: 'Kısa mola', secenekler: [3, 5, 10], sinir: { enAz: 1, enCok: 60 } },
+    { anahtar: 'uzunMola', etiket: 'Uzun mola', secenekler: [15, 20, 30], sinir: { enAz: 1, enCok: 120 } },
     { anahtar: 'turSayisi', etiket: 'Uzun moladan önce', secenekler: [2, 3, 4, 5] },
   ]
 
@@ -350,13 +369,13 @@ function SureAyarlari({
     <Kart>
       <p className="mb-3 font-medium">Süreler</p>
       <div className={cn('space-y-3', kilitli && 'pointer-events-none opacity-50')}>
-        {alanlar.map(({ anahtar, etiket, secenekler }) => (
+        {alanlar.map(({ anahtar, etiket, secenekler, sinir }) => (
           <div key={anahtar}>
             <p className="mb-1.5 text-xs text-muted-foreground">
               {etiket}
               {anahtar === 'turSayisi' ? ' (tur)' : ' (dakika)'}
             </p>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {secenekler.map((deger) => (
                 <Cip
                   key={deger}
@@ -366,6 +385,14 @@ function SureAyarlari({
                   {deger}
                 </Cip>
               ))}
+              {sinir && (
+                <SerbestSure
+                  deger={ayar[anahtar] as number}
+                  hazirlar={secenekler}
+                  sinir={sinir}
+                  onDegis={(deger) => setAyar((o) => ({ ...o, [anahtar]: deger }))}
+                />
+              )}
             </div>
           </div>
         ))}
@@ -395,10 +422,70 @@ function SureAyarlari({
   )
 }
 
+/**
+ * Hazır seçeneklerin dışında bir süre yazmak için.
+ *
+ * Kutu, yalnızca hazır seçeneklerden biri **seçili değilken** dolu görünüyor;
+ * böylece hangi değerin geçerli olduğu tek bakışta anlaşılıyor (çip mi, kutu mu).
+ * Yazarken anında uygulanmıyor: "6" yazıp "60" yapmaya giderken sayaç 6 dakikaya
+ * düşerdi. Değer odaktan çıkınca ya da Enter'a basınca işleniyor.
+ */
+function SerbestSure({
+  deger,
+  hazirlar,
+  sinir,
+  onDegis,
+}: {
+  deger: number
+  hazirlar: number[]
+  sinir: { enAz: number; enCok: number }
+  onDegis: (deger: number) => void
+}) {
+  const ozel = !hazirlar.includes(deger)
+  const [metin, setMetin] = useState(ozel ? String(deger) : '')
+
+  // Çipe basıldığında kutu boşalmalı; dışarıdan gelen değer değişimini izliyor.
+  useEffect(() => {
+    setMetin(ozel ? String(deger) : '')
+  }, [deger, ozel])
+
+  const uygula = () => {
+    const sayi = Number(metin)
+    if (!Number.isFinite(sayi) || sayi <= 0) {
+      setMetin(ozel ? String(deger) : '')
+      return
+    }
+    onDegis(Math.min(sinir.enCok, Math.max(sinir.enAz, Math.round(sayi))))
+  }
+
+  return (
+    <input
+      type="text"
+      inputMode="numeric"
+      value={metin}
+      onChange={(e) => setMetin(e.target.value.replace(/[^0-9]/g, '').slice(0, 3))}
+      onBlur={uygula}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault()
+          e.currentTarget.blur()
+        }
+      }}
+      placeholder="Diğer"
+      aria-label={`Serbest süre (${sinir.enAz}–${sinir.enCok} dakika)`}
+      className={cn(
+        'rakam h-[34px] w-[68px] rounded-full border bg-card px-3 text-center text-sm font-medium',
+        'placeholder:font-normal placeholder:text-muted-foreground/70',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+        ozel ? 'border-primary text-primary' : 'border-border text-muted-foreground',
+      )}
+    />
+  )
+}
+
 function sesAdi(secim: SesSecimi): string {
-  if (secim === 'yok') return 'Sessiz'
-  const uretilen = URETILEN_SESLER.find((s) => s.id === secim)
-  if (uretilen) return uretilen.ad
   const parca = LOFI_PARCALAR.find((p) => `lofi:${p.dosya}` === secim)
+  // Eski kayıtlarda kaldırılmış ortam sesleri (yağmur, kafe…) olabilir;
+  // tanınmayan her seçim sessize düşer.
   return parca ? `Lo-fi · ${parca.ad}` : 'Sessiz'
 }

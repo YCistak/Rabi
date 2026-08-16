@@ -7,11 +7,10 @@ import type {
   Ayarlar,
   Deneme,
   Devamsizlik,
-  GecmisYil,
   GunlukKayit,
   Hedef,
   KazanilanRozet,
-  OkulDersi,
+  OkulYili,
   PomodoroAyar,
   PomodoroSeans,
   Sablon,
@@ -71,11 +70,10 @@ export function AppShell() {
     [],
   )
   const [kayitliSablonlar, setSablonlar] = useYerelDepo<Sablon[]>(ANAHTARLAR.sablonlar, [])
-  const [okulDersleri, setOkulDersleri, okulHazir] = useYerelDepo<OkulDersi[]>(
-    ANAHTARLAR.okulDersleri,
+  const [okulYillari, setOkulYillari, okulHazir] = useYerelDepo<OkulYili[]>(
+    ANAHTARLAR.okulYillari,
     [],
   )
-  const [gecmisYillar, setGecmisYillar] = useYerelDepo<GecmisYil[]>(ANAHTARLAR.gecmisYillar, [])
   const [gunlukKayitlar, setGunlukKayitlar, gunlukHazir] = useYerelDepo<GunlukKayit[]>(
     ANAHTARLAR.gunlukKayitlar,
     [],
@@ -106,15 +104,9 @@ export function AppShell() {
   const sablonlar = sablonlariBirlestir(kayitliSablonlar)
 
   // Hedef kartı ve ana sayfa, en yeni denemelerden çıkan tahmini gösteriyor.
-  const tahmin = guncelTahmin(
-    denemeler,
-    sablonlar,
-    okulDersleri,
-    gecmisYillar,
-    ayarlar.puanTuru,
-  )
+  const tahmin = guncelTahmin(denemeler, sablonlar, okulYillari, ayarlar.puanTuru)
   const guncelSiralama = tahmin?.siralama.enKotu ?? null
-  const diplomaNotu = obpHesapla(okulDersleri, gecmisYillar)?.diplomaNotu ?? null
+  const diplomaNotu = obpHesapla(okulYillari)?.diplomaNotu ?? null
 
   // Eylülde yeni ders yılı başlayınca kullanıcı bir üst sınıfa kendiliğinden geçer.
   useEffect(() => {
@@ -276,10 +268,8 @@ export function AppShell() {
 
           {ekran === 'okul' && (
             <OkulEkrani
-              dersler={okulDersleri}
-              setDersler={setOkulDersleri}
-              gecmisYillar={gecmisYillar}
-              setGecmisYillar={setGecmisYillar}
+              yillar={okulYillari}
+              setYillar={setOkulYillari}
               ayarlar={ayarlar}
               hazir={okulHazir}
             />
@@ -288,8 +278,7 @@ export function AppShell() {
             <SiralamaEkrani
               denemeler={denemeler}
               sablonlar={sablonlar}
-              okulDersleri={okulDersleri}
-              gecmisYillar={gecmisYillar}
+              okulYillari={okulYillari}
               ayarlar={ayarlar}
             />
           )}
@@ -331,8 +320,7 @@ export function AppShell() {
               setAyarlar={setAyarlar}
               yedeklenecek={{
                 denemeler,
-                okulDersleri,
-                gecmisYillar,
+                okulYillari,
                 gunlukKayitlar,
                 devamsizlik,
                 yanlisSorular,
