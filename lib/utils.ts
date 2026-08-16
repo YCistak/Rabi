@@ -29,6 +29,15 @@ export function tariheCevir(iso: string): Date {
   return new Date(yil, ay - 1, gun)
 }
 
+/** 'YYYY-AA-GG' → "16 Ağustos Pazar" — yıl yazılmaz, takvimde zaten görünüyor. */
+export function tarihYaziKisa(iso: string): string {
+  return tariheCevir(iso).toLocaleDateString('tr-TR', {
+    day: 'numeric',
+    month: 'long',
+    weekday: 'long',
+  })
+}
+
 /**
  * Tarihin ait olduğu haftanın pazartesi günü, 'YYYY-AA-GG'.
  * Haftalık soru rozetleri bu anahtarla gruplanır (Türkiye'de hafta pazartesi başlar).

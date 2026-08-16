@@ -28,6 +28,8 @@ import { YeniDenemeEkrani } from '@/components/ekranlar/yeni-deneme'
 import { IstatistikEkrani } from '@/components/ekranlar/istatistik'
 import { OkulEkrani } from '@/components/ekranlar/okul'
 import { AyarlarEkrani } from '@/components/ekranlar/ayarlar'
+import { SoruTakibiEkrani } from '@/components/ekranlar/soru-takibi'
+import { DevamsizlikEkrani } from '@/components/ekranlar/devamsizlik'
 import { Yakinda } from '@/components/ekranlar/yakinda'
 
 export function AppShell() {
@@ -52,8 +54,14 @@ export function AppShell() {
     [],
   )
   const [gecmisYillar, setGecmisYillar] = useYerelDepo<GecmisYil[]>(ANAHTARLAR.gecmisYillar, [])
-  const [gunlukKayitlar] = useYerelDepo<GunlukKayit[]>(ANAHTARLAR.gunlukKayitlar, [])
-  const [devamsizlik] = useYerelDepo<Devamsizlik[]>(ANAHTARLAR.devamsizlik, [])
+  const [gunlukKayitlar, setGunlukKayitlar] = useYerelDepo<GunlukKayit[]>(
+    ANAHTARLAR.gunlukKayitlar,
+    [],
+  )
+  const [devamsizlik, setDevamsizlik] = useYerelDepo<Devamsizlik[]>(
+    ANAHTARLAR.devamsizlik,
+    [],
+  )
   const [rozetler] = useYerelDepo<KazanilanRozet[]>(ANAHTARLAR.rozetler, [])
   const [hedef] = useYerelDepo<Hedef | null>(ANAHTARLAR.hedef, null)
 
@@ -169,6 +177,9 @@ export function AppShell() {
               hazir={okulHazir}
             />
           )}
+          {ekran === 'devamsizlik' && (
+            <DevamsizlikEkrani kayitlar={devamsizlik} setKayitlar={setDevamsizlik} />
+          )}
           {ekran === 'istatistik' && (
             <IstatistikEkrani
               denemeler={denemeler}
@@ -194,7 +205,9 @@ export function AppShell() {
               }}
             />
           )}
-          {!['okul', 'istatistik', 'ayarlar'].includes(ekran) && <Yakinda ekran={ekran} />}
+          {!['okul', 'devamsizlik', 'istatistik', 'ayarlar'].includes(ekran) && (
+            <Yakinda ekran={ekran} />
+          )}
         </>
       ) : (
         <>
@@ -208,7 +221,13 @@ export function AppShell() {
             />
           )}
           {sekme === 'pomodoro' && <Yakinda ekran="pomodoro" />}
-          {sekme === 'soru' && <Yakinda ekran="soru" />}
+          {sekme === 'soru' && (
+            <SoruTakibiEkrani
+              kayitlar={gunlukKayitlar}
+              setKayitlar={setGunlukKayitlar}
+              ayarlar={ayarlar}
+            />
+          )}
           {sekme === 'deneme' && (
             <DenemelerEkrani
               denemeler={denemeler}
