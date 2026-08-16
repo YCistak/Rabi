@@ -47,7 +47,8 @@ export const OSYM_TEST_ADI: Record<OsymTest, string> = {
 
 /**
  * Hazır şablonlar. Ders dağılımları 2026 YKS'nin resmî soru sayılarına göredir;
- * "Okul Denemesi" ise Asaf'ın okulunun uyguladığı 110 soruluk eşit ağırlık formatı.
+ * "Okul Denemesi" ise Asaf'ın okulunun uyguladığı 120 soruluk eşit ağırlık formatı
+ * (TYT ile aynı soru sayısı ama tamamen farklı dağılım — karıştırılmamalı).
  *
  * Bu liste her açılışta koddan gelir — güncelleme yayınlandığında kullanıcının
  * kendi şablonlarına dokunmadan yenilenir (bkz. `sablonlariBirlestir`).
@@ -141,6 +142,11 @@ export const HAZIR_SABLONLAR: Sablon[] = [
 ]
 
 export const VARSAYILAN_SABLON_ID = 'okul'
+
+/** Şablonun toplam soru sayısı. */
+export function toplamSoru(sablon: Sablon): number {
+  return sablon.dersler.reduce((toplam, ders) => toplam + ders.soruSayisi, 0)
+}
 
 /** Kimliğe göre şablon; bilinmeyen kimlikte varsayılana düşer. */
 export function sablonBul(sablonlar: Sablon[], id: string): Sablon {

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { App as CapacitorApp } from '@capacitor/app'
+import { ArrowLeft } from 'lucide-react'
 import type {
   Ayarlar,
   Deneme,
@@ -17,15 +18,23 @@ import { ANAHTARLAR, VARSAYILAN_AYARLAR, ayarlariNormalize, useYerelDepo } from 
 import { sablonlariBirlestir } from '@/lib/sablonlar'
 import { egitimYili, ilerlemisSinif } from '@/lib/hesap'
 import type { Ekran, Sekme } from '@/lib/gezinme'
+import { Buton } from '@/components/ui'
 import { BottomNav } from '@/components/bottom-nav'
 import { Kurulum } from '@/components/kurulum'
 import { AnaSayfa } from '@/components/ekranlar/ana-sayfa'
 import { KartMenusu } from '@/components/ekranlar/kart-menusu'
+import { DenemelerEkrani } from '@/components/ekranlar/denemeler'
+import { YeniDenemeEkrani } from '@/components/ekranlar/yeni-deneme'
+import { IstatistikEkrani } from '@/components/ekranlar/istatistik'
+import { OkulEkrani } from '@/components/ekranlar/okul'
+import { AyarlarEkrani } from '@/components/ekranlar/ayarlar'
 import { Yakinda } from '@/components/ekranlar/yakinda'
 
 export function AppShell() {
   const [sekme, setSekme] = useState<Sekme>('ana')
   const [ekran, setEkran] = useState<Ekran | null>(null)
+  /** Deneme ekleme/düzenleme, sekmenin üstünde açılan bir alt ekran. */
+  const [denemeFormu, setDenemeFormu] = useState<{ duzenlenen: Deneme | null } | null>(null)
 
   const [ayarlarHam, setAyarlar, ayarlarHazir] = useYerelDepo<Ayarlar>(
     ANAHTARLAR.ayarlar,
@@ -33,17 +42,20 @@ export function AppShell() {
   )
   const ayarlar = ayarlariNormalize(ayarlarHam)
 
-  const [denemeler, setDenemeler] = useYerelDepo<Deneme[]>(ANAHTARLAR.denemeler, [])
-  const [kayitliSablonlar, setSablonlar] = useYerelDepo<Sablon[]>(ANAHTARLAR.sablonlar, [])
-  const [okulDersleri, setOkulDersleri] = useYerelDepo<OkulDersi[]>(ANAHTARLAR.okulDersleri, [])
-  const [gecmisYillar, setGecmisYillar] = useYerelDepo<GecmisYil[]>(ANAHTARLAR.gecmisYillar, [])
-  const [gunlukKayitlar, setGunlukKayitlar] = useYerelDepo<GunlukKayit[]>(
-    ANAHTARLAR.gunlukKayitlar,
+  const [denemeler, setDenemeler, denemelerHazir] = useYerelDepo<Deneme[]>(
+    ANAHTARLAR.denemeler,
     [],
   )
-  const [devamsizlik, setDevamsizlik] = useYerelDepo<Devamsizlik[]>(ANAHTARLAR.devamsizlik, [])
-  const [rozetler, setRozetler] = useYerelDepo<KazanilanRozet[]>(ANAHTARLAR.rozetler, [])
-  const [hedef, setHedef] = useYerelDepo<Hedef | null>(ANAHTARLAR.hedef, null)
+  const [kayitliSablonlar, setSablonlar] = useYerelDepo<Sablon[]>(ANAHTARLAR.sablonlar, [])
+  const [okulDersleri, setOkulDersleri, okulHazir] = useYerelDepo<OkulDersi[]>(
+    ANAHTARLAR.okulDersleri,
+    [],
+  )
+  const [gecmisYillar, setGecmisYillar] = useYerelDepo<GecmisYil[]>(ANAHTARLAR.gecmisYillar, [])
+  const [gunlukKayitlar] = useYerelDepo<GunlukKayit[]>(ANAHTARLAR.gunlukKayitlar, [])
+  const [devamsizlik] = useYerelDepo<Devamsizlik[]>(ANAHTARLAR.devamsizlik, [])
+  const [rozetler] = useYerelDepo<KazanilanRozet[]>(ANAHTARLAR.rozetler, [])
+  const [hedef] = useYerelDepo<Hedef | null>(ANAHTARLAR.hedef, null)
 
   const sablonlar = sablonlariBirlestir(kayitliSablonlar)
 
@@ -55,10 +67,20 @@ export function AppShell() {
     if (yeniSinif !== ayarlarHam.buYilSinif || buYil !== ayarlarHam.sinifYili) {
       setAyarlar((o) => ({ ...o, buYilSinif: yeniSinif, sinifYili: buYil }))
     }
-  }, [ayarlarHazir, ayarlarHam.kurulumTamamlandi, ayarlarHam.buYilSinif, ayarlarHam.sinifYili, setAyarlar])
+  }, [
+    ayarlarHazir,
+    ayarlarHam.kurulumTamamlandi,
+    ayarlarHam.buYilSinif,
+    ayarlarHam.sinifYili,
+    setAyarlar,
+  ])
 
   const geriGit = useCallback(() => {
-    // Önce alt ekran kapanır, sonra ana sekmeye dönülür; ana sayfadaysak uygulamadan çıkılır.
+    // En içteki katmandan dışa doğru: form → alt ekran → ana sekme → uygulamadan çık.
+    if (denemeFormu !== null) {
+      setDenemeFormu(null)
+      return true
+    }
     if (ekran !== null) {
       setEkran(null)
       return true
@@ -68,7 +90,7 @@ export function AppShell() {
       return true
     }
     return false
-  }, [ekran, sekme])
+  }, [denemeFormu, ekran, sekme])
 
   // Android donanım geri tuşu
   useEffect(() => {
@@ -80,10 +102,19 @@ export function AppShell() {
     }
   }, [geriGit])
 
-  const kartAc = useCallback((yeni: Ekran) => setEkran(yeni), [])
+  const denemeKaydet = useCallback(
+    (deneme: Deneme) => {
+      setDenemeler((onceki) => {
+        const varMi = onceki.some((d) => d.id === deneme.id)
+        return varMi ? onceki.map((d) => (d.id === deneme.id ? deneme : d)) : [...onceki, deneme]
+      })
+      setDenemeFormu(null)
+    },
+    [setDenemeler],
+  )
 
   // Veri okunmadan ekran çizilirse "kayıt yok" bir an yanıp söner.
-  if (!ayarlarHazir) return <Yukleniyor />
+  if (!ayarlarHazir) return <div className="min-h-dvh" aria-busy="true" />
 
   if (!ayarlar.kurulumTamamlandi) {
     return (
@@ -100,10 +131,71 @@ export function AppShell() {
     )
   }
 
+  if (denemeFormu !== null) {
+    return (
+      <div className="mx-auto min-h-dvh max-w-md px-4 pb-8 pt-5">
+        <YeniDenemeEkrani
+          sablonlar={sablonlar}
+          varsayilanSablonId={ayarlar.varsayilanSablonId}
+          duzenlenen={denemeFormu.duzenlenen}
+          denemeSayisi={denemeler.length}
+          onKaydet={denemeKaydet}
+          onVazgec={() => setDenemeFormu(null)}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="mx-auto min-h-dvh max-w-md px-4 pb-24 pt-5">
       {ekran !== null ? (
-        <Yakinda ekran={ekran} onGeri={() => setEkran(null)} />
+        <>
+          <Buton
+            bicim="hayalet"
+            boy="kucuk"
+            onClick={() => setEkran(null)}
+            className="-ml-2 mb-3"
+          >
+            <ArrowLeft size={16} aria-hidden /> Geri
+          </Buton>
+
+          {ekran === 'okul' && (
+            <OkulEkrani
+              dersler={okulDersleri}
+              setDersler={setOkulDersleri}
+              gecmisYillar={gecmisYillar}
+              setGecmisYillar={setGecmisYillar}
+              ayarlar={ayarlar}
+              hazir={okulHazir}
+            />
+          )}
+          {ekran === 'istatistik' && (
+            <IstatistikEkrani
+              denemeler={denemeler}
+              sablonlar={sablonlar}
+              varsayilanSablonId={ayarlar.varsayilanSablonId}
+            />
+          )}
+          {ekran === 'ayarlar' && (
+            <AyarlarEkrani
+              sablonlar={sablonlar}
+              kayitliSablonlar={kayitliSablonlar}
+              setKayitliSablonlar={setSablonlar}
+              ayarlar={ayarlar}
+              setAyarlar={setAyarlar}
+              yedeklenecek={{
+                denemeler,
+                okulDersleri,
+                gecmisYillar,
+                gunlukKayitlar,
+                devamsizlik,
+                rozetler,
+                hedef,
+              }}
+            />
+          )}
+          {!['okul', 'istatistik', 'ayarlar'].includes(ekran) && <Yakinda ekran={ekran} />}
+        </>
       ) : (
         <>
           {sekme === 'ana' && (
@@ -112,13 +204,22 @@ export function AppShell() {
               gunlukKayitlar={gunlukKayitlar}
               devamsizlik={devamsizlik}
               hedef={hedef}
-              onKartAc={kartAc}
+              onKartAc={setEkran}
             />
           )}
           {sekme === 'pomodoro' && <Yakinda ekran="pomodoro" />}
           {sekme === 'soru' && <Yakinda ekran="soru" />}
-          {sekme === 'deneme' && <Yakinda ekran="deneme" />}
-          {sekme === 'daha' && <KartMenusu onKartAc={kartAc} />}
+          {sekme === 'deneme' && (
+            <DenemelerEkrani
+              denemeler={denemeler}
+              sablonlar={sablonlar}
+              hazir={denemelerHazir}
+              onSil={(id) => setDenemeler((onceki) => onceki.filter((d) => d.id !== id))}
+              onDuzenle={(deneme) => setDenemeFormu({ duzenlenen: deneme })}
+              onYeniyeGit={() => setDenemeFormu({ duzenlenen: null })}
+            />
+          )}
+          {sekme === 'daha' && <KartMenusu onKartAc={setEkran} />}
         </>
       )}
 
@@ -131,8 +232,4 @@ export function AppShell() {
       />
     </div>
   )
-}
-
-function Yukleniyor() {
-  return <div className="min-h-dvh" aria-busy="true" />
 }
