@@ -237,7 +237,16 @@ export type Ayarlar = {
   kurulumTamamlandi: boolean
 }
 
-/** Yedek dosyasının biçimi. Fotoğraflar boyutu yüzünden yedeğe girmez. */
+/**
+ * Yedek dosyasının biçimi.
+ *
+ * Fotoğraflar `resimler` alanına **isteğe bağlı** giriyor: dosyayı onlarca MB
+ * yapıyorlar, ama en zor yerine konan veri de onlar (elinde artık olmayan bir
+ * denemenin sorusunu yeniden fotoğraflayamazsın). Seçimi kullanıcı yapıyor.
+ *
+ * `yanlisSorular` kayıtları her zaman yedekte; geri yüklemede fotoğrafı
+ * bulunmayanlar eleniyor, yoksa görüntüsüz kartlar kalırdı.
+ */
 export type Yedek = {
   uygulama: 'rabi'
   surum: 1
@@ -248,7 +257,10 @@ export type Yedek = {
   gecmisYillar: GecmisYil[]
   gunlukKayitlar: GunlukKayit[]
   devamsizlik: Devamsizlik[]
+  yanlisSorular: YanlisSoru[]
   rozetler: KazanilanRozet[]
   hedef: Hedef | null
   ayarlar: Ayarlar
+  /** Fotoğraf kimliği → `data:` adresi. Fotoğrafsız yedekte alan hiç yok. */
+  resimler?: Record<string, string>
 }

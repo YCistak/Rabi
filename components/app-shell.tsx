@@ -335,6 +335,7 @@ export function AppShell() {
                 gecmisYillar,
                 gunlukKayitlar,
                 devamsizlik,
+                yanlisSorular,
                 rozetler,
                 hedef,
               }}

@@ -96,3 +96,58 @@ export function useResimUrl(resimId: string | null | undefined): string | null {
 
   return url
 }
+
+// ---------------------------------------------------------------------------
+// Yedekleme
+// ---------------------------------------------------------------------------
+
+/**
+ * Fotoğrafları yedeğe konabilecek biçime çevirir (`data:` adresi).
+ *
+ * Boyutu yaklaşık üçte bir şişiriyor (base64), o yüzden yalnızca kullanıcı
+ * fotoğraflı yedek istediğinde çağrılıyor. Depoda bulunamayan kimlikler
+ * atlanıyor — eksik bir kayıt yüzünden bütün yedek başarısız olmasın.
+ */
+export async function resimleriDisaAktar(
+  idler: string[],
+): Promise<Record<string, string>> {
+  const harita: Record<string, string> = {}
+  for (const id of idler) {
+    const blob = await resimOku(id)
+    if (!blob) continue
+    harita[id] = await blobdanDataUrl(blob)
+  }
+  return harita
+}
+
+/**
+ * Yedekteki fotoğrafları depoya yazar. Geri yükleme bütün veriyi değiştirdiği
+ * için önce mevcut fotoğraflar siliniyor; yoksa eski yedeğin fotoğrafları
+ * kayıtsız kalıp yer işgal ederdi.
+ */
+export async function resimleriIceAktar(harita: Record<string, string>): Promise<void> {
+  await tumResimleriSil()
+  for (const [id, dataUrl] of Object.entries(harita)) {
+    const blob = await (await fetch(dataUrl)).blob()
+    await resimYaz(id, blob)
+  }
+}
+
+/** Toplam fotoğraf boyutu (bayt) — yedek almadan önce kullanıcıya gösterilir. */
+export async function resimBoyutu(idler: string[]): Promise<number> {
+  let toplam = 0
+  for (const id of idler) {
+    const blob = await resimOku(id)
+    if (blob) toplam += blob.size
+  }
+  return toplam
+}
+
+function blobdanDataUrl(blob: Blob): Promise<string> {
+  return new Promise((coz, sik) => {
+    const okuyucu = new FileReader()
+    okuyucu.onload = () => coz(String(okuyucu.result))
+    okuyucu.onerror = () => sik(okuyucu.error)
+    okuyucu.readAsDataURL(blob)
+  })
+}

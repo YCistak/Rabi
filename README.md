@@ -188,6 +188,24 @@ etmenin yolu yok, dolayısıyla "bugün girdiysen sesini çıkarma" davranışı
 için sorulduğu belliyken. Reddedilirse uygulama çalışmaya devam eder; Ayarlar'daki anahtar
 tekrar dener ve kalıcı ret durumunda ne yapılacağını yazar.
 
+## İkonlar ve açılış ekranı
+
+Kaynak SVG'ler `assets/` altında, üretilen PNG'ler `android/app/src/main/res/` altında:
+
+```
+./scripts/ikon-uret.sh      # rsvg-convert + ImageMagick gerekir
+```
+
+Üretilen dosyalar depoya giriyor (`cap sync` onları silmiyor) ama **elle düzenlenmemeli** —
+ikon değişecekse `assets/` içindeki SVG düzenlenip betik yeniden çalıştırılmalı.
+
+Uyarlanabilir (adaptive) ikonun ön planında tavşan, 108 birimlik tuvalin ortadaki **72
+birimlik** güvenli alanına sığdırıldı; dışarısını cihaz üreticisinin maskesi (daire, kare,
+damla) kırpabiliyor. Arka plan `@color/ic_launcher_background` = `#C2622A`, uygulamanın vurgu
+rengiyle aynı. Android 8 öncesi uyarlanabilir ikonu tanımadığı için `ic_launcher.png` ve
+`ic_launcher_round.png` ayrıca üretiliyor — yuvarlak olana maskeyi sistem uygulamıyor, daire
+görselin içinde.
+
 ## Fotoğraf deposu
 
 Yanlış soru fotoğrafları **IndexedDB**'de (`rabi-resimler` veritabanı), ikili blob olarak
@@ -201,8 +219,25 @@ Kayıt ile blob iki ayrı depoda olduğu için ayrık düşebiliyorlar. İki kor
   galeride görüntüsüz kart kalırdı.
 - Banka ekranı her açılışında, kaydı olmayan blob'lar (`oksuzResimleriSil`) temizlenir.
 
-Fotoğraflar boyutları yüzünden yedeğe **girmiyor**; yedek dosyası paylaşılabilir kalsın diye.
-Telefon değiştirirken fotoğraflar taşınmaz, bu bilinçli.
+### Yedekte fotoğraflar
+
+İki yedek düğmesi var:
+
+| Düğme | İçerik | Boyut |
+|---|---|---|
+| **Yedeği indir** | Fotoğraflar hariç her şey | birkaç KB |
+| **Fotoğraflarla yedekle** | Fotoğraflar dahil her şey | fotoğraf boyutu × ~1,33 |
+
+Fotoğraflar `data:` adresi olarak gömülüyor; base64 boyutu üçte bir şişirdiği için ayrı
+düğmede duruyor ve tahmini boyut düğmenin üstünde yazıyor.
+
+Yanlış soru **kayıtları** her iki yedekte de var, ama geri yüklemede fotoğrafı bulunmayanlar
+**eleniyor** (`elenenSoruSayisi` bunu sayıp kullanıcıya söylüyor). Elenmeselerdi galeride
+görüntüsüz boş kareler kalırdı. Fotoğrafsız yedeği geri yüklersen banka boş gelir — düğmenin
+altında bu da yazıyor.
+
+Geri yüklemede fotoğraflar localStorage'dan **önce** yazılıyor: localStorage yazıldıktan
+sonra sayfa yenilendiği için, sonraya bırakılsaydı yarısı yazılmadan yenilenebilirdi.
 
 Bilinen sınır: Android, kamera ekranı açıkken belleği daraltıp uygulamayı öldürürse çekilen
 fotoğraf kaybolur (Capacitor'ın `appRestoredResult` akışı kurulmadı). Kullanıcı açısından

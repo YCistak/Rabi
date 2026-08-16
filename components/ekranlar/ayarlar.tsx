@@ -1,13 +1,35 @@
 'use client'
 
-import { useRef, useState } from 'react'
-import { ChevronDown, Copy, Download, FileUp, Moon, Plus, Sun, Trash2, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import {
+  ChevronDown,
+  Copy,
+  Download,
+  FileUp,
+  Images,
+  Moon,
+  Plus,
+  Sun,
+  Trash2,
+  X,
+} from 'lucide-react'
 import { Alan, BaslikSatiri, Buton, Cip, Etiket, Kart, Not, Onay } from '@/components/ui'
 import { useTema } from '@/components/theme-provider'
 import { SINIFLAR, egitimYili, katsayiYaz } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
-import { tumVeriyiSil, yedegiDogrula, yedegiUygula, yedekOlustur } from '@/lib/depo'
-import { tumResimleriSil } from '@/lib/resim-depo'
+import {
+  elenenSoruSayisi,
+  tumVeriyiSil,
+  yedegiDogrula,
+  yedegiUygula,
+  yedekOlustur,
+} from '@/lib/depo'
+import {
+  resimBoyutu,
+  resimleriDisaAktar,
+  resimleriIceAktar,
+  tumResimleriSil,
+} from '@/lib/resim-depo'
 import { izinIste } from '@/lib/bildirim'
 import { cn, yeniId } from '@/lib/utils'
 import type {
@@ -21,6 +43,7 @@ import type {
   OkulDersi,
   PuanTuru,
   Sablon,
+  YanlisSoru,
 } from '@/lib/types'
 
 const PUAN_TURU_ADI: Record<PuanTuru, string> = {
@@ -32,6 +55,12 @@ const PUAN_TURU_ADI: Record<PuanTuru, string> = {
 
 const HAZIR_HEDEFLER = [100, 200, 300, 400, 500]
 const HATIRLATMA_SAATLERI = [18, 19, 20, 21, 22]
+
+/** Bayt sayısını okunur hâle getirir: 5242880 → "5,0 MB". */
+function boyutYaz(bayt: number): string {
+  if (bayt < 1024 * 1024) return `${Math.max(1, Math.round(bayt / 1024))} KB`
+  return `${(bayt / (1024 * 1024)).toFixed(1).replace('.', ',')} MB`
+}
 
 export function AyarlarEkrani({
   sablonlar,
@@ -53,6 +82,7 @@ export function AyarlarEkrani({
     gecmisYillar: GecmisYil[]
     gunlukKayitlar: GunlukKayit[]
     devamsizlik: Devamsizlik[]
+    yanlisSorular: YanlisSoru[]
     rozetler: KazanilanRozet[]
     hedef: Hedef | null
   }
@@ -64,6 +94,7 @@ export function AyarlarEkrani({
   const [durum, setDurum] = useState<string | null>(null)
   const [hedefMetni, setHedefMetni] = useState(String(ayarlar.gunlukHedef))
   const [izinReddedildi, setIzinReddedildi] = useState(false)
+  const [fotoBoyut, setFotoBoyut] = useState(0)
   const dosyaRef = useRef<HTMLInputElement>(null)
 
   /**
@@ -82,32 +113,68 @@ export function AyarlarEkrani({
     if (izinli) setAyarlar((o) => ({ ...o, bildirimAcik: true }))
   }
 
-  const yedekJson = () =>
-    JSON.stringify(
-      yedekOlustur({ ...yedeklenecek, sablonlar: kayitliSablonlar, ayarlar }),
+  const resimIdleri = yedeklenecek.yanlisSorular.map((s) => s.resimId)
+
+  // Fotoğrafların toplam boyutu, kullanıcı "fotoğrafları da ekle" derken ne
+  // kadar büyük bir dosya çıkacağını bilsin diye önceden ölçülüyor.
+  useEffect(() => {
+    if (resimIdleri.length === 0) {
+      setFotoBoyut(0)
+      return
+    }
+    let iptal = false
+    void resimBoyutu(resimIdleri).then((b) => {
+      if (!iptal) setFotoBoyut(b)
+    })
+    return () => {
+      iptal = true
+    }
+    // Kimlik listesi her çizimde yeniden oluşuyor; uzunluğu yeterli bir ölçü.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resimIdleri.length])
+
+  const yedekJson = async (fotograflarla: boolean) => {
+    const resimler = fotograflarla ? await resimleriDisaAktar(resimIdleri) : undefined
+    return JSON.stringify(
+      yedekOlustur({ ...yedeklenecek, sablonlar: kayitliSablonlar, ayarlar, resimler }),
       null,
       2,
     )
+  }
 
-  const dosyayaIndir = () => {
-    const bag = URL.createObjectURL(new Blob([yedekJson()], { type: 'application/json' }))
+  const dosyayaIndir = async (fotograflarla: boolean) => {
+    setDurum('Yedek hazırlanıyor…')
+    const json = await yedekJson(fotograflarla)
+    const bag = URL.createObjectURL(new Blob([json], { type: 'application/json' }))
     const link = document.createElement('a')
     link.href = bag
-    link.download = `rabi-yedek-${new Date().toISOString().slice(0, 10)}.json`
+    link.download = `rabi-yedek-${new Date().toISOString().slice(0, 10)}${
+      fotograflarla ? '-fotografli' : ''
+    }.json`
     link.click()
     URL.revokeObjectURL(bag)
     setDurum('Yedek dosyası indirildi (İndirilenler klasörüne bak).')
   }
 
-  const geriYukle = (ham: string) => {
+  const geriYukle = async (ham: string) => {
     const sonuc = yedegiDogrula(ham)
     if ('hata' in sonuc) {
       setDurum(sonuc.hata)
       return
     }
+
+    // Fotoğraflar önce yazılıyor: localStorage yazıldıktan sonra sayfa
+    // yenilendiği için, sonraya bırakılsa yarısı yazılmadan yenilenebilirdi.
+    const elenen = elenenSoruSayisi(sonuc.yedek)
+    await resimleriIceAktar(sonuc.yedek.resimler ?? {}).catch(() => {})
     yedegiUygula(sonuc.yedek)
-    setDurum('Yedek yüklendi, uygulama yenileniyor…')
-    setTimeout(() => window.location.reload(), 600)
+
+    setDurum(
+      elenen > 0
+        ? `Yedek yüklendi. ${elenen} yanlış soru kaydı atlandı — bu yedek fotoğrafsız alınmış.`
+        : 'Yedek yüklendi, uygulama yenileniyor…',
+    )
+    setTimeout(() => window.location.reload(), elenen > 0 ? 2500 : 600)
   }
 
   const sablonGuncelle = (id: string, degistir: (sablon: Sablon) => Sablon) => {
@@ -487,11 +554,11 @@ export function AyarlarEkrani({
         <p className="font-medium">Yedekleme</p>
         <p className="mb-3 mt-0.5 text-xs text-muted-foreground">
           Bütün veriler yalnızca bu cihazda duruyor. Telefon değiştirmeden veya uygulamayı
-          silmeden önce yedek al. Yanlış soru fotoğrafları boyutları yüzünden yedeğe girmez.
+          silmeden önce yedek al.
         </p>
 
         <div className="grid grid-cols-2 gap-2">
-          <Buton bicim="ikincil" boy="kucuk" onClick={dosyayaIndir}>
+          <Buton bicim="ikincil" boy="kucuk" onClick={() => void dosyayaIndir(false)}>
             <Download size={15} />
             Yedeği indir
           </Buton>
@@ -501,6 +568,24 @@ export function AyarlarEkrani({
           </Buton>
         </div>
 
+        {fotoBoyut > 0 && (
+          <Buton
+            bicim="ikincil"
+            boy="kucuk"
+            className="mt-2 w-full"
+            onClick={() => void dosyayaIndir(true)}
+          >
+            <Images size={15} />
+            Fotoğraflarla yedekle (~{boyutYaz(fotoBoyut * 4 / 3)})
+          </Buton>
+        )}
+
+        <p className="mt-2 text-xs text-muted-foreground">
+          Normal yedek küçüktür ama yanlış soru fotoğraflarını içermez; o yedeği geri
+          yüklersen banka boş gelir. Fotoğraflı yedek her şeyi taşır, karşılığında dosya
+          büyür.
+        </p>
+
         <input
           ref={dosyaRef}
           type="file"
@@ -509,7 +594,7 @@ export function AyarlarEkrani({
           onChange={async (e) => {
             const dosya = e.target.files?.[0]
             if (!dosya) return
-            geriYukle(await dosya.text())
+            await geriYukle(await dosya.text())
             e.target.value = ''
           }}
         />

@@ -13,10 +13,12 @@ import type {
   OkulDersi,
   PomodoroAyar,
   Sablon,
+  YanlisSoru,
   Yedek,
 } from './types'
 import { VARSAYILAN_SABLON_ID } from './sablonlar'
 import { egitimYili } from './hesap'
+import { yeniId } from './utils'
 
 export const ANAHTARLAR = {
   denemeler: 'rabi-denemeler',
@@ -83,7 +85,7 @@ export function ayarlariNormalize(ham: Partial<Ayarlar> | null | undefined): Aya
 }
 
 /** Kayıtlı dersi güncel şemaya taşır. */
-export function dersiNormalize(ham: OkulDersi): OkulDersi {
+function dersiNormalize(ham: OkulDersi): OkulDersi {
   return {
     ...ham,
     projeVar: ham.projeVar ?? false,
@@ -155,7 +157,6 @@ export const depo = { oku, yaz }
 
 // ---------------------------------------------------------------------------
 // Yedekleme
-// Fotoğraflar (IndexedDB) yedeğe girmez — dosya boyutu paylaşılamaz hâle getirir.
 // ---------------------------------------------------------------------------
 
 export function yedekOlustur(veri: Omit<Yedek, 'uygulama' | 'surum' | 'tarih'>): Yedek {
@@ -169,6 +170,17 @@ export function yedekOlustur(veri: Omit<Yedek, 'uygulama' | 'surum' | 'tarih'>):
 
 function dizi<T>(deger: unknown): T[] {
   return Array.isArray(deger) ? (deger as T[]) : []
+}
+
+/**
+ * Geçmiş yıl kaydına eksikse kimlik verir.
+ *
+ * Kimlik yalnızca liste anahtarı değil, **silme ölçütü**: elle düzenlenmiş ya da
+ * eski şemadan gelen bir yedekte kimlikler boş olsaydı, bir yılı silmek
+ * `filter((y) => y.id !== silinen.id)` ile hepsini birden silerdi.
+ */
+function yiliNormalize(ham: GecmisYil): GecmisYil {
+  return { ...ham, id: ham.id || yeniId() }
 }
 
 /**
@@ -199,29 +211,59 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       tarih: typeof nesne.tarih === 'string' ? nesne.tarih : new Date().toISOString(),
       denemeler: dizi<Deneme>(nesne.denemeler),
       sablonlar: dizi<Sablon>(nesne.sablonlar),
-      okulDersleri: dizi<OkulDersi>(nesne.okulDersleri),
-      gecmisYillar: dizi<GecmisYil>(nesne.gecmisYillar),
+      okulDersleri: dizi<OkulDersi>(nesne.okulDersleri).map(dersiNormalize),
+      gecmisYillar: dizi<GecmisYil>(nesne.gecmisYillar).map(yiliNormalize),
       gunlukKayitlar: dizi<GunlukKayit>(nesne.gunlukKayitlar),
       devamsizlik: dizi<Devamsizlik>(nesne.devamsizlik),
+      yanlisSorular: dizi<YanlisSoru>(nesne.yanlisSorular),
       rozetler: dizi<KazanilanRozet>(nesne.rozetler),
       hedef: (nesne.hedef as Hedef | null) ?? null,
       // Yedek yükleyen kullanıcı uygulamayı zaten kurmuş demektir; kurulum tekrar sorulmaz
       ayarlar: { ...ayarlariNormalize(nesne.ayarlar as Ayarlar), kurulumTamamlandi: true },
+      resimler: resimHaritasi(nesne.resimler),
     },
   }
 }
 
-/** Yedeği doğrudan localStorage'a yazar; çağıran taraf sayfayı yeniler. */
+/** Yedekteki fotoğraf haritasını süzer — yalnızca `data:` ile başlayan değerler. */
+function resimHaritasi(ham: unknown): Record<string, string> | undefined {
+  if (typeof ham !== 'object' || ham === null) return undefined
+  const temiz: Record<string, string> = {}
+  for (const [anahtar, deger] of Object.entries(ham as Record<string, unknown>)) {
+    if (typeof deger === 'string' && deger.startsWith('data:')) temiz[anahtar] = deger
+  }
+  return Object.keys(temiz).length > 0 ? temiz : undefined
+}
+
+/**
+ * Yedeği localStorage'a yazar; çağıran taraf sayfayı yeniler.
+ *
+ * Fotoğraflar burada değil, `yedegiUygulaResimler` ile ayrı yazılıyor
+ * (IndexedDB eşzamansız). Bu fonksiyon, fotoğrafı gelmemiş yanlış soru
+ * kayıtlarını **eliyor**: görüntüsü olmayan kart galeride boş bir kare olurdu.
+ */
 export function yedegiUygula(yedek: Yedek) {
+  const gelenResimler = new Set(Object.keys(yedek.resimler ?? {}))
+
   yaz(ANAHTARLAR.denemeler, yedek.denemeler)
   yaz(ANAHTARLAR.sablonlar, yedek.sablonlar)
   yaz(ANAHTARLAR.okulDersleri, yedek.okulDersleri)
   yaz(ANAHTARLAR.gecmisYillar, yedek.gecmisYillar)
   yaz(ANAHTARLAR.gunlukKayitlar, yedek.gunlukKayitlar)
   yaz(ANAHTARLAR.devamsizlik, yedek.devamsizlik)
+  yaz(
+    ANAHTARLAR.yanlisSorular,
+    yedek.yanlisSorular.filter((s) => gelenResimler.has(s.resimId)),
+  )
   yaz(ANAHTARLAR.rozetler, yedek.rozetler)
   yaz(ANAHTARLAR.hedef, yedek.hedef)
   yaz(ANAHTARLAR.ayarlar, yedek.ayarlar)
+}
+
+/** Geri yüklemede elenen yanlış soru sayısı — kullanıcıya söylemek için. */
+export function elenenSoruSayisi(yedek: Yedek): number {
+  const gelen = new Set(Object.keys(yedek.resimler ?? {}))
+  return yedek.yanlisSorular.filter((s) => !gelen.has(s.resimId)).length
 }
 
 export function tumVeriyiSil() {
