@@ -6,6 +6,7 @@ import type { Ayarlar, PuanTuru } from '@/lib/types'
 import { SINIFLAR } from '@/lib/hesap'
 import { Alan, Buton, Cip, Etiket, Kart } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
+import { izinIste } from '@/lib/bildirim'
 
 /** Kurulumun ürettiği ayarlar — geri kalanı varsayılanlardan gelir. */
 export type KurulumSecimleri = Pick<
@@ -35,14 +36,19 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
   const ilerle = () => setAdim((a) => Math.min(sonAdim, a + 1))
   const geri = () => setAdim((a) => Math.max(0, a - 1))
 
-  const bitir = () =>
+  const bitir = async () => {
+    // Android 13+ izni burada isteniyor: kullanıcı hatırlatmayı açtıktan hemen
+    // sonra, ne için sorulduğu belliyken. Reddederse kurulum yine tamamlanır,
+    // yalnızca hatırlatma kapalı kaydedilir — Ayarlar'dan tekrar denenebilir.
+    const izinli = bildirim ? await izinIste() : false
     onBitir({
       buYilSinif: sinif,
       puanTuru,
       gunlukHedef: hedef,
       hatirlatmaSaati: saat,
-      bildirimAcik: bildirim,
+      bildirimAcik: izinli,
     })
+  }
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 py-8">
@@ -181,7 +187,7 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
             <ArrowLeft size={18} aria-hidden />
           </Buton>
         )}
-        <Buton className="flex-1" onClick={adim === sonAdim ? bitir : ilerle}>
+        <Buton className="flex-1" onClick={() => (adim === sonAdim ? void bitir() : ilerle())}>
           {adim === sonAdim ? 'Başlayalım' : 'Devam'}
           {adim === sonAdim ? (
             <Check size={18} aria-hidden />

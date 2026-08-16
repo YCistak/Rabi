@@ -25,8 +25,11 @@ import {
   useYerelDepo,
 } from '@/lib/depo'
 import { sablonlariBirlestir } from '@/lib/sablonlar'
-import { guncelTahmin } from '@/lib/tahmin'
-import { egitimYili, ilerlemisSinif } from '@/lib/hesap'
+import { guncelTahmin, obpHesapla } from '@/lib/tahmin'
+import { egitimYili, gunlukToplam, ilerlemisSinif } from '@/lib/hesap'
+import { rozetDurumu, yeniRozetler, type Rozet } from '@/lib/rozetler'
+import { hatirlatmaIptal, hatirlatmaPlanla } from '@/lib/bildirim'
+import { bugun } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import { ustKatmaniKapat } from '@/lib/geri'
 import { Buton } from '@/components/ui'
@@ -45,7 +48,11 @@ import { PomodoroEkrani } from '@/components/ekranlar/pomodoro'
 import { SiralamaEkrani } from '@/components/ekranlar/siralama'
 import { HedefEkrani } from '@/components/ekranlar/hedef'
 import { YanlisBankaEkrani } from '@/components/ekranlar/yanlis-banka'
-import { Yakinda } from '@/components/ekranlar/yakinda'
+import { RozetlerEkrani } from '@/components/ekranlar/rozetler'
+import { RozetKutlama } from '@/components/rozet-kutlama'
+
+/** Rozet kontrolünün, veri durulana kadar beklediği süre (ms). */
+const ROZET_BEKLEME = 1200
 
 export function AppShell() {
   const [sekme, setSekme] = useState<Sekme>('ana')
@@ -69,7 +76,7 @@ export function AppShell() {
     [],
   )
   const [gecmisYillar, setGecmisYillar] = useYerelDepo<GecmisYil[]>(ANAHTARLAR.gecmisYillar, [])
-  const [gunlukKayitlar, setGunlukKayitlar] = useYerelDepo<GunlukKayit[]>(
+  const [gunlukKayitlar, setGunlukKayitlar, gunlukHazir] = useYerelDepo<GunlukKayit[]>(
     ANAHTARLAR.gunlukKayitlar,
     [],
   )
@@ -81,7 +88,11 @@ export function AppShell() {
     ANAHTARLAR.yanlisSorular,
     [],
   )
-  const [rozetler] = useYerelDepo<KazanilanRozet[]>(ANAHTARLAR.rozetler, [])
+  const [rozetler, setRozetler, rozetlerHazir] = useYerelDepo<KazanilanRozet[]>(
+    ANAHTARLAR.rozetler,
+    [],
+  )
+  const [kutlanan, setKutlanan] = useState<Rozet[]>([])
   const [hedef, setHedef] = useYerelDepo<Hedef | null>(ANAHTARLAR.hedef, null)
   const [pomodoroAyar, setPomodoroAyar] = useYerelDepo<PomodoroAyar>(
     ANAHTARLAR.pomodoroAyar,
@@ -103,6 +114,7 @@ export function AppShell() {
     ayarlar.puanTuru,
   )
   const guncelSiralama = tahmin?.siralama.enKotu ?? null
+  const diplomaNotu = obpHesapla(okulDersleri, gecmisYillar)?.diplomaNotu ?? null
 
   // Eylülde yeni ders yılı başlayınca kullanıcı bir üst sınıfa kendiliğinden geçer.
   useEffect(() => {
@@ -118,6 +130,62 @@ export function AppShell() {
     ayarlarHam.buYilSinif,
     ayarlarHam.sinifYili,
     setAyarlar,
+  ])
+
+  // ---- Rozetler ----
+  // Kazanılanlar yazılmadan önce hepsinin okunmuş olması şart. `useYerelDepo`
+  // bir kez yazıldıktan sonra ilk okumayı atlıyor; hazır olmadan rozet
+  // eklenseydi kayıtlı rozetler silinir, kutlama her açılışta tekrarlanırdı.
+  const rozetVerisiHazir =
+    rozetlerHazir && denemelerHazir && gunlukHazir && okulHazir && ayarlarHazir
+
+  useEffect(() => {
+    if (!rozetVerisiHazir) return
+
+    // Kontrol bilerek geciktiriliyor. Soru sayısı yazılırken her tuş bir
+    // değişiklik: "420" yazarken 4 → 42 → 420 geçilir ve kutlama daha alan
+    // doldurulmadan ekranı kapatırdı. Yazma durunca bir kez çalışıyor.
+    const zamanlayici = setTimeout(() => {
+      const durum = rozetDurumu({ denemeler, gunlukKayitlar, diplomaNotu })
+      const yeniler = yeniRozetler(durum, rozetler)
+      if (yeniler.length === 0) return
+
+      const tarih = bugun()
+      setRozetler((onceki) => [...onceki, ...yeniler.map((r) => ({ rozetId: r.id, tarih }))])
+      setKutlanan(yeniler)
+    }, ROZET_BEKLEME)
+
+    return () => clearTimeout(zamanlayici)
+  }, [
+    rozetVerisiHazir,
+    denemeler,
+    gunlukKayitlar,
+    diplomaNotu,
+    rozetler,
+    setRozetler,
+  ])
+
+  // ---- Günlük hatırlatma ----
+  // Her açılışta ve veri değiştikçe yeniden planlanır: bugün soru girildiyse
+  // bekleyen bildirim silinip yarına kayar. "Günde en fazla bir bildirim"
+  // kuralı, tek bir bildirimin sürekli yeniden planlanmasından geliyor.
+  useEffect(() => {
+    if (!ayarlarHazir || !gunlukHazir || !ayarlar.kurulumTamamlandi) return
+    if (!ayarlar.bildirimAcik) {
+      void hatirlatmaIptal()
+      return
+    }
+    void hatirlatmaPlanla({
+      saat: ayarlar.hatirlatmaSaati,
+      bugunGirdiVar: gunlukToplam(gunlukKayitlar, bugun()) > 0,
+    })
+  }, [
+    ayarlarHazir,
+    gunlukHazir,
+    ayarlar.kurulumTamamlandi,
+    ayarlar.bildirimAcik,
+    ayarlar.hatirlatmaSaati,
+    gunlukKayitlar,
   ])
 
   const geriGit = useCallback(() => {
@@ -236,6 +304,14 @@ export function AppShell() {
           {ekran === 'yanlis-banka' && (
             <YanlisBankaEkrani sorular={yanlisSorular} setSorular={setYanlisSorular} />
           )}
+          {ekran === 'rozetler' && (
+            <RozetlerEkrani
+              denemeler={denemeler}
+              gunlukKayitlar={gunlukKayitlar}
+              diplomaNotu={diplomaNotu}
+              kazanilmis={rozetler}
+            />
+          )}
           {ekran === 'devamsizlik' && (
             <DevamsizlikEkrani kayitlar={devamsizlik} setKayitlar={setDevamsizlik} />
           )}
@@ -263,17 +339,6 @@ export function AppShell() {
                 hedef,
               }}
             />
-          )}
-          {![
-            'siralama',
-            'hedef',
-            'okul',
-            'yanlis-banka',
-            'devamsizlik',
-            'istatistik',
-            'ayarlar',
-          ].includes(ekran) && (
-            <Yakinda ekran={ekran} />
           )}
         </>
       ) : (
@@ -323,6 +388,8 @@ export function AppShell() {
           setSekme(yeni)
         }}
       />
+
+      <RozetKutlama rozetler={kutlanan} onKapat={() => setKutlanan([])} />
     </div>
   )
 }

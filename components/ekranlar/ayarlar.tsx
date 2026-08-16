@@ -8,6 +8,7 @@ import { SINIFLAR, egitimYili, katsayiYaz } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
 import { tumVeriyiSil, yedegiDogrula, yedegiUygula, yedekOlustur } from '@/lib/depo'
 import { tumResimleriSil } from '@/lib/resim-depo'
+import { izinIste } from '@/lib/bildirim'
 import { cn, yeniId } from '@/lib/utils'
 import type {
   Ayarlar,
@@ -30,6 +31,7 @@ const PUAN_TURU_ADI: Record<PuanTuru, string> = {
 }
 
 const HAZIR_HEDEFLER = [100, 200, 300, 400, 500]
+const HATIRLATMA_SAATLERI = [18, 19, 20, 21, 22]
 
 export function AyarlarEkrani({
   sablonlar,
@@ -61,7 +63,24 @@ export function AyarlarEkrani({
   const [sifirlamaAcik, setSifirlamaAcik] = useState(false)
   const [durum, setDurum] = useState<string | null>(null)
   const [hedefMetni, setHedefMetni] = useState(String(ayarlar.gunlukHedef))
+  const [izinReddedildi, setIzinReddedildi] = useState(false)
   const dosyaRef = useRef<HTMLInputElement>(null)
+
+  /**
+   * Hatırlatmayı açarken izin de istenir. Android'de izin bir kez kalıcı olarak
+   * reddedildiyse `izinIste` sistem penceresini bile açmadan false döner —
+   * bu yüzden anahtar sessizce kapalı kalmak yerine ne yapması gerektiğini yazıyor.
+   */
+  const hatirlatmaDegistir = async () => {
+    if (ayarlar.bildirimAcik) {
+      setAyarlar((o) => ({ ...o, bildirimAcik: false }))
+      setIzinReddedildi(false)
+      return
+    }
+    const izinli = await izinIste()
+    setIzinReddedildi(!izinli)
+    if (izinli) setAyarlar((o) => ({ ...o, bildirimAcik: true }))
+  }
 
   const yedekJson = () =>
     JSON.stringify(
@@ -159,6 +178,64 @@ export function AyarlarEkrani({
           }}
           className="h-10"
         />
+      </Kart>
+
+      <Kart className="mb-3">
+        <button
+          type="button"
+          onClick={() => void hatirlatmaDegistir()}
+          aria-pressed={ayarlar.bildirimAcik}
+          className="flex w-full items-center justify-between gap-3 text-left"
+        >
+          <span>
+            <span className="block font-medium">Günlük hatırlatma</span>
+            <span className="block text-xs text-muted-foreground">
+              Soru girmediğin günlerde tek bir bildirim
+            </span>
+          </span>
+          <span
+            className={cn(
+              'relative h-6 w-11 shrink-0 rounded-full transition',
+              ayarlar.bildirimAcik ? 'bg-primary' : 'bg-border',
+            )}
+          >
+            <span
+              className={cn(
+                'absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all',
+                ayarlar.bildirimAcik ? 'left-[22px]' : 'left-0.5',
+              )}
+            />
+          </span>
+        </button>
+
+        {ayarlar.bildirimAcik && (
+          <div className="mt-4">
+            <Etiket>Saat kaçta?</Etiket>
+            <div className="flex flex-wrap gap-2">
+              {HATIRLATMA_SAATLERI.map((h) => (
+                <Cip
+                  key={h}
+                  secili={ayarlar.hatirlatmaSaati === h}
+                  onClick={() => setAyarlar((o) => ({ ...o, hatirlatmaSaati: h }))}
+                >
+                  {String(h).padStart(2, '0')}.00
+                </Cip>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {izinReddedildi && (
+          <Not tur="uyari" className="mt-3">
+            Bildirim izni verilmedi. Telefonun Ayarlar → Uygulamalar → Rabi → Bildirimler
+            bölümünden açman gerekiyor; sonra buraya dönüp tekrar dene.
+          </Not>
+        )}
+
+        <p className="mt-3 text-xs text-muted-foreground">
+          Günde en fazla bir bildirim gönderilir; o gün soru girdiysen hiç gönderilmez.
+          Bildirim gelmiyorsa telefonun pil optimizasyonu Rabi'yi kısıtlıyor olabilir.
+        </p>
       </Kart>
 
       <Kart className="mb-3">

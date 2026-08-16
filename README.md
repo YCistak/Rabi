@@ -153,6 +153,41 @@ elle düzenlenmiyor. Derlenen APK'da şunlar var:
   uygulamalardan `IMAGE_CAPTURE` için çalışma anında izin istenir. İzni eklemek fotoğraf
   çekmeyi düzeltmez, gereksiz bir izin ekranı ekler.
 
+## Rozetler ve bildirim
+
+**Rozet bir kez kazanılınca kalıcı.** Deneme silinip sayı eşiğin altına düşse bile rozet geri
+alınmaz — kazanılmış bir şeyin elden gitmesi cezalandırıcı olurdu. Kazanılanlar tarihiyle
+`rabi-rozetler` altında duruyor; ekrandaki ilerleme çubukları güncel veriyi gösterir.
+
+Günlük ve haftalık eşiklerde **en iyi** değer kullanılıyor, güncel değil: rozet "bir gün 500
+soru çözdün" diyor, "bugün 500 soru çözüyorsun" değil.
+
+Diploma rozetleri: istek "OBP 90 ve 95" diyordu ama OBP 250–500 aralığında bir sayı; 90/95
+ancak **diploma notu** ölçeğinde anlamlı. Rozet diploma notu üzerine kuruldu, açıklamasında
+OBP karşılığı da yazıyor (diploma × 5 → 450+ / 475+).
+
+Kutlama penceresi, veri **durulduktan** ~1,2 sn sonra çıkıyor. Anında çıksaydı soru sayısı
+yazılırken araya girerdi: "420" yazarken 4 → 42 → 420 geçilir ve pencere daha alan
+doldurulmadan ekranı kapatırdı.
+
+### Günde en fazla bir bildirim
+
+Bu kural, tekrarlayan bildirim kurup sonra iptal etmeye çalışarak değil, her zaman **yalnızca
+bir sonraki** hatırlatmayı planlayarak sağlanıyor (`lib/hatirlatma.ts` + `lib/bildirim.ts`).
+Uygulama her açıldığında ve veri değiştikçe plan yeniden hesaplanıyor:
+
+- Bugün soru girildiyse → bildirim yarına kayar, bugünkü hak harcanmaz.
+- Girilmediyse ve saat henüz gelmediyse → bugüne planlanır.
+- Saat geçtiyse → yarına. "Hemen gönder" yapılmıyor; kullanıcı 21'de uygulamayı açtığında
+  20:00 hatırlatması, üstelik uygulama elindeyken patlardı.
+
+`repeats: true` kullanılmadı: tekrarlayan bir bildirimin yalnızca **bugünkü** örneğini iptal
+etmenin yolu yok, dolayısıyla "bugün girdiysen sesini çıkarma" davranışı kurulamazdı.
+
+İzin, kurulum sihirbazının son adımında isteniyor — hatırlatma açıldıktan hemen sonra, ne
+için sorulduğu belliyken. Reddedilirse uygulama çalışmaya devam eder; Ayarlar'daki anahtar
+tekrar dener ve kalıcı ret durumunda ne yapılacağını yazar.
+
 ## Fotoğraf deposu
 
 Yanlış soru fotoğrafları **IndexedDB**'de (`rabi-resimler` veritabanı), ikili blob olarak

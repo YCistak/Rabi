@@ -2,6 +2,7 @@
 
 import { LocalNotifications } from '@capacitor/local-notifications'
 import { Capacitor } from '@capacitor/core'
+import { hatirlatmaPlani } from './hatirlatma'
 
 /**
  * Yerel bildirimler. Tarayıcıda (npm run dev) eklenti yok; bütün çağrılar
@@ -10,6 +11,12 @@ import { Capacitor } from '@capacitor/core'
 
 /** Pomodoro seans bitişi. Her seans yeniden planlandığı için tek kimlik yeter. */
 const POMODORO_ID = 1
+
+/**
+ * Günlük hatırlatma. Aynı kimlik yeniden kullanılıyor: her planlama öncekini
+ * eziyor, böylece ortada asla birden fazla bekleyen hatırlatma olmuyor.
+ */
+const HATIRLATMA_ID = 2
 
 function eklentiVar(): boolean {
   return Capacitor.isNativePlatform() && Capacitor.isPluginAvailable('LocalNotifications')
@@ -72,6 +79,62 @@ export async function pomodoroIptal() {
   if (!eklentiVar()) return
   try {
     await LocalNotifications.cancel({ notifications: [{ id: POMODORO_ID }] })
+  } catch {
+    // yoksay
+  }
+}
+
+/**
+ * Günlük hatırlatmayı kurar.
+ *
+ * **Günde en fazla bir bildirim** kuralı buradan geliyor: tekrarlayan bildirim
+ * kurulmuyor, her seferinde yalnızca **bir sonraki** hatırlatma planlanıyor ve
+ * eskisi iptal ediliyor. Uygulama her açıldığında yeniden çağrıldığı için,
+ * kullanıcı o gün soru girdiyse bekleyen bildirim silinip yarına kayıyor.
+ *
+ * `Local Notifications` eklentisinin `repeats: true` seçeneği kullanılmadı:
+ * tekrarlayan bir bildirimin yalnızca **bugünkü** örneğini iptal etmenin yolu
+ * yok, dolayısıyla "bugün girdiysen sesini çıkarma" davranışı kurulamazdı.
+ */
+export async function hatirlatmaPlanla({
+  saat,
+  bugunGirdiVar,
+  simdi = new Date(),
+}: {
+  saat: number
+  bugunGirdiVar: boolean
+  simdi?: Date
+}) {
+  if (!(await izinVarMi())) return
+
+  const { zaman, baslik, metin } = hatirlatmaPlani(simdi, saat, bugunGirdiVar)
+
+  try {
+    await LocalNotifications.cancel({ notifications: [{ id: HATIRLATMA_ID }] })
+    await LocalNotifications.schedule({
+      notifications: [
+        {
+          id: HATIRLATMA_ID,
+          title: baslik,
+          body: metin,
+          schedule: {
+            at: zaman,
+            // Tam saatli alarm istenmiyor: günlük hatırlatmada dakika hassasiyeti
+            // gereksiz, karşılığında SCHEDULE_EXACT_ALARM gerekçesi gerekiyor.
+            allowWhileIdle: false,
+          },
+        },
+      ],
+    })
+  } catch {
+    // Bildirim kurulamasa da uygulama çalışmaya devam etsin.
+  }
+}
+
+export async function hatirlatmaIptal() {
+  if (!eklentiVar()) return
+  try {
+    await LocalNotifications.cancel({ notifications: [{ id: HATIRLATMA_ID }] })
   } catch {
     // yoksay
   }
