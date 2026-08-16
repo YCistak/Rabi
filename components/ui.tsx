@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useGeriKatmani } from '@/lib/geri'
 
 export function Kart({
   className,
@@ -235,6 +236,9 @@ export function Onay({
   onOnayla: () => void
   onIptal: () => void
 }) {
+  // Geri tuşu onayı iptal etsin; yoksa ekrandan tamamen çıkardı.
+  useGeriKatmani(acik, onIptal)
+
   if (!acik) return null
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4">

@@ -15,6 +15,7 @@ import type {
   PomodoroAyar,
   PomodoroSeans,
   Sablon,
+  YanlisSoru,
 } from '@/lib/types'
 import {
   ANAHTARLAR,
@@ -27,6 +28,7 @@ import { sablonlariBirlestir } from '@/lib/sablonlar'
 import { guncelTahmin } from '@/lib/tahmin'
 import { egitimYili, ilerlemisSinif } from '@/lib/hesap'
 import type { Ekran, Sekme } from '@/lib/gezinme'
+import { ustKatmaniKapat } from '@/lib/geri'
 import { Buton } from '@/components/ui'
 import { BottomNav } from '@/components/bottom-nav'
 import { Kurulum } from '@/components/kurulum'
@@ -42,6 +44,7 @@ import { DevamsizlikEkrani } from '@/components/ekranlar/devamsizlik'
 import { PomodoroEkrani } from '@/components/ekranlar/pomodoro'
 import { SiralamaEkrani } from '@/components/ekranlar/siralama'
 import { HedefEkrani } from '@/components/ekranlar/hedef'
+import { YanlisBankaEkrani } from '@/components/ekranlar/yanlis-banka'
 import { Yakinda } from '@/components/ekranlar/yakinda'
 
 export function AppShell() {
@@ -72,6 +75,10 @@ export function AppShell() {
   )
   const [devamsizlik, setDevamsizlik] = useYerelDepo<Devamsizlik[]>(
     ANAHTARLAR.devamsizlik,
+    [],
+  )
+  const [yanlisSorular, setYanlisSorular] = useYerelDepo<YanlisSoru[]>(
+    ANAHTARLAR.yanlisSorular,
     [],
   )
   const [rozetler] = useYerelDepo<KazanilanRozet[]>(ANAHTARLAR.rozetler, [])
@@ -114,7 +121,9 @@ export function AppShell() {
   ])
 
   const geriGit = useCallback(() => {
-    // En içteki katmandan dışa doğru: form → alt ekran → ana sekme → uygulamadan çık.
+    // En içteki katmandan dışa doğru: ekranın kendi açtığı katman (fotoğraf
+    // görüntüleyici, onay kutusu) → form → alt ekran → ana sekme → çıkış.
+    if (ustKatmaniKapat()) return true
     if (denemeFormu !== null) {
       setDenemeFormu(null)
       return true
@@ -224,6 +233,9 @@ export function AppShell() {
               guncelSiralama={guncelSiralama}
             />
           )}
+          {ekran === 'yanlis-banka' && (
+            <YanlisBankaEkrani sorular={yanlisSorular} setSorular={setYanlisSorular} />
+          )}
           {ekran === 'devamsizlik' && (
             <DevamsizlikEkrani kayitlar={devamsizlik} setKayitlar={setDevamsizlik} />
           )}
@@ -252,9 +264,15 @@ export function AppShell() {
               }}
             />
           )}
-          {!['siralama', 'hedef', 'okul', 'devamsizlik', 'istatistik', 'ayarlar'].includes(
-            ekran,
-          ) && (
+          {![
+            'siralama',
+            'hedef',
+            'okul',
+            'yanlis-banka',
+            'devamsizlik',
+            'istatistik',
+            'ayarlar',
+          ].includes(ekran) && (
             <Yakinda ekran={ekran} />
           )}
         </>

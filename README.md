@@ -140,10 +140,35 @@ elle düzenlenmiyor. Derlenen APK'da şunlar var:
 | `RECEIVE_BOOT_COMPLETED` | local-notifications | Yeniden başlatmadan sonra planlı bildirim |
 | `INTERNET` | Capacitor şablonu | **Kullanılmıyor** — uygulama tamamen çevrimdışı |
 
-İki not:
+Üç not:
 
 - `SCHEDULE_EXACT_ALARM`, Google Play'e yüklenecek olursa gerekçe ister. Kişisel kullanımda
   sorun değil; yayınlanacaksa ya gerekçe yazılmalı ya da manifestten `tools:node="remove"`
   ile çıkarılıp pomodoro bildiriminin birkaç dakika gecikebileceği kabul edilmeli.
 - `INTERNET` Capacitor şablonundan geliyor ve hiçbir yerde kullanılmıyor. Çıkarılabilir ama
   önce cihazda denenmeli.
+- **`CAMERA` izni listede yok ve olmamalı.** Yanlış soru bankası fotoğrafı sistemin kendi
+  kamera ekranını (`IMAGE_CAPTURE`) ve fotoğraf seçicisini açarak alıyor, kameraya kendisi
+  erişmiyor. Android'in kuralı ters yönde işliyor: izni manifestte **tanımlayan**
+  uygulamalardan `IMAGE_CAPTURE` için çalışma anında izin istenir. İzni eklemek fotoğraf
+  çekmeyi düzeltmez, gereksiz bir izin ekranı ekler.
+
+## Fotoğraf deposu
+
+Yanlış soru fotoğrafları **IndexedDB**'de (`rabi-resimler` veritabanı), ikili blob olarak
+duruyor. localStorage'a base64 yazılmıyor: kota ~5 MB ve base64 boyutu %33 şişirir; birkaç
+fotoğrafta kota dolar ve o andan sonra **bütün** localStorage yazmaları (denemeler, notlar,
+ayarlar) sessizce başarısız olurdu.
+
+Kayıt ile blob iki ayrı depoda olduğu için ayrık düşebiliyorlar. İki koruma var:
+
+- Kaydetmede önce blob yazılır, sonra kayıt eklenir — ters sırada, yazma başarısız olursa
+  galeride görüntüsüz kart kalırdı.
+- Banka ekranı her açılışında, kaydı olmayan blob'lar (`oksuzResimleriSil`) temizlenir.
+
+Fotoğraflar boyutları yüzünden yedeğe **girmiyor**; yedek dosyası paylaşılabilir kalsın diye.
+Telefon değiştirirken fotoğraflar taşınmaz, bu bilinçli.
+
+Bilinen sınır: Android, kamera ekranı açıkken belleği daraltıp uygulamayı öldürürse çekilen
+fotoğraf kaybolur (Capacitor'ın `appRestoredResult` akışı kurulmadı). Kullanıcı açısından
+sonucu, fotoğrafın tekrar çekilmesi.

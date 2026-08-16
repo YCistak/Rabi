@@ -7,6 +7,7 @@ import { useTema } from '@/components/theme-provider'
 import { SINIFLAR, egitimYili, katsayiYaz } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
 import { tumVeriyiSil, yedegiDogrula, yedegiUygula, yedekOlustur } from '@/lib/depo'
+import { tumResimleriSil } from '@/lib/resim-depo'
 import { cn, yeniId } from '@/lib/utils'
 import type {
   Ayarlar,
@@ -442,7 +443,8 @@ export function AyarlarEkrani({
       <Kart className="mb-3">
         <p className="font-medium">Tüm veriyi sil</p>
         <p className="mb-3 mt-0.5 text-xs text-muted-foreground">
-          Denemeler, okul notları, soru kayıtların ve kendi şablonların silinir. Geri alınamaz.
+          Denemeler, okul notları, soru kayıtların, yanlış soru fotoğrafların ve kendi
+          şablonların silinir. Geri alınamaz.
         </p>
         <Buton bicim="tehlike" boy="kucuk" onClick={() => setSifirlamaAcik(true)}>
           <Trash2 size={15} />
@@ -468,9 +470,12 @@ export function AyarlarEkrani({
       <Onay
         acik={sifirlamaAcik}
         baslik="Her şey silinsin mi?"
-        aciklama="Bütün denemeler, okul notların, soru kayıtların ve şablonların kalıcı olarak silinecek. Önce yedek almadıysan geri dönüşü yok."
+        aciklama="Bütün denemeler, okul notların, soru kayıtların, yanlış soru fotoğrafların ve şablonların kalıcı olarak silinecek. Önce yedek almadıysan geri dönüşü yok."
         onayMetni="Hepsini sil"
-        onOnayla={() => {
+        onOnayla={async () => {
+          // Fotoğraflar ayrı depoda (IndexedDB); localStorage temizliği onlara
+          // dokunmuyor. Silinmezlerse kayıtsız blob olarak yer işgal ederler.
+          await tumResimleriSil().catch(() => {})
           tumVeriyiSil()
           window.location.reload()
         }}
