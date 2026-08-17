@@ -136,7 +136,13 @@ export function YanlisBankaEkrani({
 
   const cozulduDegistir = (soru: YanlisSoru) => {
     setSorular((onceki) =>
-      onceki.map((s) => (s.id === soru.id ? { ...s, cozuldu: !s.cozuldu } : s)),
+      onceki.map((s) => {
+        if (s.id !== soru.id) return s
+        const cozuldu = !s.cozuldu
+        // İşareti kaldırınca tarih de siliniyor: kalsaydı soru "çözülmemiş"
+        // görünürken haftalık özetin çözülenler sayısına girmeye devam ederdi.
+        return { ...s, cozuldu, cozulmeTarihi: cozuldu ? bugun() : undefined }
+      }),
     )
   }
 

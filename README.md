@@ -79,8 +79,12 @@ keyPassword=...
 | `lib/veri/` | ÖSYM katsayıları ve puan-sıralama tabloları |
 | `lib/depo.ts` | localStorage hook'u, yedekleme |
 | `lib/oyunlar/` | Mini oyunlar — ortak tur mantığı (`tur.ts`), tanım listesi, oyun havuzları |
-| `lib/ses.ts` | Pomodoro müziği — `public/ses/` altındaki CC0 lo-fi parçalar |
-| `public/ses/` | Lo-fi parçalar (CC0) + `LISANS.md` |
+| `lib/ozet.ts` | Haftalık özet hesabı — **saf fonksiyonlar** |
+| `lib/ozet-gorsel.ts` | Özetin paylaşılabilir PNG'si (tuvale çizim) |
+| `lib/paylas.ts` | Capacitor Share / `navigator.share` sarmalayıcısı |
+| `lib/ses.ts` | Pomodoro ve mini oyun müziği — `public/ses/` altındaki CC0 lo-fi parçalar |
+| `public/ses/` | Lo-fi parçalar (CC0) + `LISANS.md`, `oyun/` altında ses efektleri |
+| `components/acilis.tsx` | Uygulamanın açılış ekranı (zıplayan tavşan + Rabi + çark) |
 
 ## Sıralama tahmini nasıl çalışıyor
 
@@ -139,8 +143,27 @@ Aşma payı bilerek küçük: daha fazlası ikonu güvenli dairenin dışına ta
 Daha eski sürümlerde uyumluluk katmanı animasyonu oynatmayabiliyor — o durumda altındaki
 vektör olduğu gibi çiziliyor (kendi alpha'sı 1), ikon görünür ama hareketsiz kalır.
 
-Sistem açılışı kapandıktan sonra uygulama da `.acilis-girisi` ile kısa bir giriş yapıyor;
-ikisi tek harekete benzesin diye. `prefers-reduced-motion` açıksa animasyon çalışmıyor.
+Sistem açılış ekranı kapanınca sıra **uygulamanın kendi açılış ekranına** geliyor
+(`components/acilis.tsx`): aynı turuncu zeminde zıplayan beyaz çizgi tavşan, altında
+"Rabi" yazısı, altında dönen çark. Bunun ayrı bir ekran olmasının sebebi, sistem açılış
+ekranının **tek bir simgeden** ibaret olması — altına yazı, yanına çark koyulamıyor ve
+animasyonu ~1 saniyeyle sınırlı, hızlı açılan bir uygulamada çoğu zaman hiç görünmüyor.
+
+Zemin rengi (`#C2622A`) `colors.xml` içindeki `acilis_zemin` ile birebir aynı; iki ekran
+arasındaki geçiş böylece görünmüyor. Süre veri okumasına bağlanmadı (`ACILIS_SURESI`,
+1,6 sn): localStorage neredeyse anında dönüyor, bağlansaydı ekran bir kare görünüp
+kaybolurdu.
+
+Tavşan burada uygulamanın dolu maskotu değil, ayrı bir **çizgi** çizim: turuncu zeminde
+açık renkli dolgular birbirine karışıp bulanık bir leke gibi duruyordu.
+
+> **`position: fixed` uyarısı.** Uygulamanın kök `div`ine giriş animasyonu **konulmamalı**.
+> `.acilis-girisi` içinde `transform` var ve `both` dolgusuyla animasyon bittikten sonra
+> bile hesaplanan değer `none` değil birim matris kalıyor. Transformlu bir öğe, içindeki
+> `position: fixed` katmanların kapsayıcı bloğu olur: alt menü, oyun katmanı ve haftalık
+> özet ekrana değil o `div`e göre konumlanır. `min-h-dvh` içerikle büyüdüğü için alt menü
+> sayfanın en üstündeyken ekranın altından taşıyor, yarısı görünmez oluyordu. Sınıfın
+> dolgusu bu yüzden `backwards`.
 
 ## Android izinleri
 
@@ -220,6 +243,50 @@ Eski kurulumlardaki `rabi-gecmis-yillar` kaydı `rabi-okul-yillari`ne bir kez ta
 (`okulNotlariniTasi`), kullanıcı 9–11. sınıf notlarını yeniden girmek zorunda kalmasın diye.
 Eski anahtar silinmiyor: taşıma yanlış giderse veri elde kalsın.
 
+## Haftalık özet
+
+Hafta kapanışı, "yıllık özet" tarzı kart destesi: `lib/ozet.ts` (saf hesap) +
+`components/ekranlar/haftalik-ozet.tsx` (14 kart) + `lib/ozet-gorsel.ts` (paylaşılabilir
+PNG) + `lib/paylas.ts` (Capacitor Share).
+
+**Hafta pazartesi–pazar.** Özet pazar günü doğuyor ve sonraki pazara kadar duruyor —
+yalnızca pazar gösterilseydi o gün uygulamayı açmayan kullanıcı özeti tamamen kaçırırdı.
+`bekleyenOzetHaftasi` her iki durumda da "en son tamamlanmış hafta"yı veriyor. İzlenen
+haftalar `rabi-ozet-gorulen` altında; ana sayfadaki davet kartı yalnızca izlenmemiş ve
+**boş olmayan** bir özet varsa çıkıyor.
+
+Kart sırası sabit: giriş → haftalık soru hedefi → seri → devamsızlık → pomodoro dakikası →
+pomodoro dersi → mini oyun → yanlış soru bankası → deneme sayısı → deneme netleri →
+3. ders → 2. ders → 1. ders → kapanış. Üç dersin **geri sayımla** verilmesi bilinçli:
+hepsi tek kartta gösterilseydi hiçbir merak uyandırmazdı. Kartlar kendiliğinden ilerliyor
+ama dokunmak beklemeden geçiriyor.
+
+Veri boşlukları bu iş için kapatıldı:
+
+- **Mini oyun süresi.** `OyunIstatistigi` her şeyi toplayarak tuttuğu için "bu hafta ne
+  kadar oynadın" sorusuna cevap veremiyordu. Turlar artık `rabi-oyun-gecmisi` altında
+  tarihiyle tutuluyor (son `OYUN_GECMIS_SINIRI` = 400 kayıt). Turun süresi için ayrı
+  kronometre yok: tur `TUR_SURESI` saniyelik bir hedef damgayla başlıyor ve her yanlış
+  cevap damgadan `YANLIS_CEZASI` düşüyor, yani süre tam olarak
+  `TUR_SURESI − YANLIS_CEZASI × yanlış`. Tur bitmeden çıkılırsa kayıt düşmüyor.
+- **Yanlış soru çözülme tarihi.** `cozuldu` tek başına yetmiyordu; `cozulmeTarihi` eklendi.
+  Bu alan gelmeden önce işaretlenmiş kayıtlar hiçbir haftaya sayılmaz — geçmişe dönük
+  uydurulmuş bir tarihten iyidir.
+
+**Pomodoro seansları yerel tarihe çevriliyor.** `baslangic` UTC bir damga; ilk on
+karakterini kesmek yanlış gün verir. Türkiye'de gece 01.30'da başlayan seans UTC'de bir
+önceki günde görünür ve pazartesi gecesi çalışan biri o seansı geçen haftanın özetinde
+bulurdu.
+
+**Paylaşım görseli ekran görüntüsü değil, yeniden çizim** (1080×1920 tuval). Ekran
+görüntüsü alan kütüphaneler birkaç yüz KB geliyor ve CSS'in yarısını yanlış yorumluyor;
+ayrıca paylaşılan görselin telefonun ekran oranından bağımsız olması gerekiyor. Yazı tipi
+adları sayfadan okunuyor — `next/font` üretilen aile adını rastgele bir sınıfın arkasına
+sakladığı için elle "Space Grotesk" yazmak tutmuyordu.
+
+Yüzdelerin eki `sayiEki` ile seçiliyor: %49 "kırk dokuz" okunduğu için "%49'u", %40
+"kırk" olduğu için "%40'ı". Sabit bir ek hepsinde yanlış olurdu.
+
 ## Rozetler ve bildirim
 
 **Rozet bir kez kazanılınca kalıcı.** Deneme silinip sayı eşiğin altına düşse bile rozet geri
@@ -267,6 +334,12 @@ bir kez çalıyor ve onun için dosya yok. Ayarlardan kapatılabiliyor (`oyunSes
 
 Dosyalar `ffmpeg` ile tepe noktası −1 dB'ye çekildi ve 1,0 kazançla çalınıyor: eski tonlar
 0,18 seviyesindeydi ve kullanıcı "duyulmuyor" dedi.
+
+**Arka plan müziği** pomodoro ile aynı CC0 lo-fi listesinden (`SesCalar` yeniden
+kullanılıyor). Yalnızca bir oyun açıkken çalıyor — liste ekranında başlaması, menüde
+gezinen kullanıcıyı şaşırtırdı. Ses seviyesi 0,22: efektlerin altında kalmalı, yoksa
+doğru/yanlış geri bildirimi duyulmaz ve oyunun tek geri bildirimi kaybolur. Ayrı bir
+ayarı var (`oyunMuzigi`) çünkü "müzik istemiyorum ama efekt istiyorum" makul bir tercih.
 
 **Seri puanı etkilemiyor.** Ardışık doğru sayısı ayrı bir ölçü olarak duruyor; seri çarpanı
 olsaydı eski turlarda kurulan rekorlar yenileriyle karşılaştırılamaz hâle gelirdi.

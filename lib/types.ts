@@ -146,6 +146,15 @@ export type YanlisSoru = {
   konu?: string
   not?: string
   cozuldu: boolean
+  /**
+   * Sorunun "çözdüm" olarak işaretlendiği gün, 'YYYY-AA-GG'.
+   *
+   * `cozuldu` tek başına yetmiyordu: haftalık özet "bu hafta bankadan kaç soru
+   * çözdün" diye soruyor, bunun cevabı işaretin **ne zaman** konduğuna bağlı.
+   * Bu alan eklenmeden önce işaretlenmiş kayıtlarda boş kalır — o sorular
+   * hiçbir haftanın sayısına girmez, geçmişe dönük uydurulmuş bir tarihten iyidir.
+   */
+  cozulmeTarihi?: string
 }
 
 // ---------------------------------------------------------------------------
@@ -212,6 +221,26 @@ export type OyunIstatistigi = {
 /** Bütün oyunların istatistikleri, oyun kimliğine göre. */
 export type OyunKayitlari = Partial<Record<OyunId, OyunIstatistigi>>
 
+/**
+ * Oynanan tek bir tur.
+ *
+ * `OyunIstatistigi` her şeyi toplayarak tuttuğu için "bu hafta oyunda ne kadar
+ * vakit geçirdin" sorusuna cevap veremiyordu — haftalık özet bunu istiyor.
+ * Turlar bu yüzden ayrıca, tarihiyle birlikte tutuluyor.
+ *
+ * Liste `OYUN_GECMIS_SINIRI` kadar tutuluyor; eskiler düşüyor. Haftalık özet
+ * yalnızca son haftaya bakıyor, sınırsız büyütmek localStorage kotasını
+ * gereksiz yere yiyor.
+ */
+export type OyunTurKaydi = {
+  /** 'YYYY-AA-GG' */
+  tarih: string
+  oyun: OyunId
+  /** Turda geçen süre, saniye. Erken çıkılırsa turun tamamı sayılmaz. */
+  saniye: number
+  dogru: number
+}
+
 // ---------------------------------------------------------------------------
 // Hedef ve rozetler
 // ---------------------------------------------------------------------------
@@ -255,6 +284,8 @@ export type Ayarlar = {
   bildirimAcik: boolean
   /** Mini oyunlarda doğru/yanlış/bitiş ses efektleri. */
   oyunSesi: boolean
+  /** Mini oyunlarda arkada çalan lo-fi müzik. Sesten ayrı: biri kapalı, öteki açık olabilir. */
+  oyunMuzigi: boolean
   /** İlk açılış kurulumu tamamlandı mı; false ise kurulum ekranı gösterilir. */
   kurulumTamamlandi: boolean
 }
@@ -281,6 +312,8 @@ export type Yedek = {
   yanlisSorular: YanlisSoru[]
   rozetler: KazanilanRozet[]
   oyunlar: OyunKayitlari
+  oyunGecmisi: OyunTurKaydi[]
+  pomodoroGecmis: PomodoroSeans[]
   hedef: Hedef | null
   ayarlar: Ayarlar
   /** Fotoğraf kimliği → `data:` adresi. Fotoğrafsız yedekte alan hiç yok. */

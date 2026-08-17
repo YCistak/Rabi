@@ -42,6 +42,8 @@ import type {
   KazanilanRozet,
   OkulYili,
   OyunKayitlari,
+  OyunTurKaydi,
+  PomodoroSeans,
   PuanTuru,
   Sablon,
   YanlisSoru,
@@ -89,6 +91,8 @@ export function AyarlarEkrani({
     yanlisSorular: YanlisSoru[]
     rozetler: KazanilanRozet[]
     oyunlar: OyunKayitlari
+    oyunGecmisi: OyunTurKaydi[]
+    pomodoroGecmis: PomodoroSeans[]
     hedef: Hedef | null
   }
 }) {
@@ -340,33 +344,19 @@ export function AyarlarEkrani({
         </p>
       </Kart>
 
-      <Kart className="mb-3">
-        <button
-          type="button"
-          onClick={() => setAyarlar((o) => ({ ...o, oyunSesi: !o.oyunSesi }))}
-          aria-pressed={ayarlar.oyunSesi}
-          className="flex w-full items-center justify-between gap-3 text-left"
-        >
-          <span>
-            <span className="block font-medium">Mini oyun sesleri</span>
-            <span className="block text-xs text-muted-foreground">
-              Doğru, yanlış ve tur bitişi efektleri
-            </span>
-          </span>
-          <span
-            className={cn(
-              'relative h-6 w-11 shrink-0 rounded-full transition',
-              ayarlar.oyunSesi ? 'bg-primary' : 'bg-border',
-            )}
-          >
-            <span
-              className={cn(
-                'absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all',
-                ayarlar.oyunSesi ? 'left-[22px]' : 'left-0.5',
-              )}
-            />
-          </span>
-        </button>
+      <Kart className="mb-3 space-y-4">
+        <Anahtar
+          baslik="Mini oyun sesleri"
+          aciklama="Doğru, yanlış ve tur bitişi efektleri. Haftalık özetin sesleri de buna bakar."
+          acik={ayarlar.oyunSesi}
+          onDegis={() => setAyarlar((o) => ({ ...o, oyunSesi: !o.oyunSesi }))}
+        />
+        <Anahtar
+          baslik="Mini oyun müziği"
+          aciklama="Oyun oynarken arkada çalan lo-fi. Ses efektlerinden ayrı kapatılabiliyor."
+          acik={ayarlar.oyunMuzigi}
+          onDegis={() => setAyarlar((o) => ({ ...o, oyunMuzigi: !o.oyunMuzigi }))}
+        />
       </Kart>
 
       <Kart className="mb-3">
@@ -708,5 +698,49 @@ export function AyarlarEkrani({
         onIptal={() => setSifirlamaAcik(false)}
       />
     </div>
+  )
+}
+
+/**
+ * Aç/kapa anahtarı. Ayarlar ekranında birden fazla yerde aynı işaretleme
+ * kutusu çizildiği için ayrıldı; `components/ui.tsx` yerine burada duruyor
+ * çünkü başka ekranda kullanılmıyor.
+ */
+function Anahtar({
+  baslik,
+  aciklama,
+  acik,
+  onDegis,
+}: {
+  baslik: string
+  aciklama: string
+  acik: boolean
+  onDegis: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onDegis}
+      aria-pressed={acik}
+      className="flex w-full items-center justify-between gap-3 text-left"
+    >
+      <span>
+        <span className="block font-medium">{baslik}</span>
+        <span className="block text-xs leading-snug text-muted-foreground">{aciklama}</span>
+      </span>
+      <span
+        className={cn(
+          'relative h-6 w-11 shrink-0 rounded-full transition',
+          acik ? 'bg-primary' : 'bg-border',
+        )}
+      >
+        <span
+          className={cn(
+            'absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all',
+            acik ? 'left-[22px]' : 'left-0.5',
+          )}
+        />
+      </span>
+    </button>
   )
 }

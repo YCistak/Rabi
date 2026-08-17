@@ -12,11 +12,14 @@ import type {
   OyunId,
   OyunIstatistigi,
   OyunKayitlari,
+  OyunTurKaydi,
   PomodoroAyar,
+  PomodoroSeans,
   Sablon,
   YanlisSoru,
   Yedek,
 } from './types'
+import { TUR_SURESI } from './oyunlar/tur'
 import { VARSAYILAN_SABLON_ID } from './sablonlar'
 import { egitimYili } from './hesap'
 import { dakikayiKirp, saatiKirp } from './hatirlatma'
@@ -34,6 +37,9 @@ export const ANAHTARLAR = {
   hedef: 'rabi-hedef',
   rozetler: 'rabi-rozetler',
   oyunlar: 'rabi-oyunlar',
+  oyunGecmisi: 'rabi-oyun-gecmisi',
+  /** Haftalık özetin hangi haftalarının izlendiği — hafta başı tarihlerinin listesi. */
+  ozetGorulen: 'rabi-ozet-gorulen',
   /** Zihinden İşlem'de seçili işlem türleri — yedeğe girmeyen küçük bir tercih. */
   islemSecimi: 'rabi-islem-secimi',
   ayarlar: 'rabi-ayarlar',
@@ -87,8 +93,18 @@ export const VARSAYILAN_AYARLAR: Ayarlar = {
   hatirlatmaDakikasi: 0,
   bildirimAcik: false,
   oyunSesi: true,
+  oyunMuzigi: true,
   kurulumTamamlandi: false,
 }
+
+/**
+ * Saklanan tur kaydı sayısı.
+ *
+ * Haftalık özet yalnızca son yedi güne bakıyor; günde on tur oynansa bile 400
+ * kayıt iki aydan uzunu kapsıyor. Sınırsız büyütmenin tek etkisi localStorage
+ * kotasını yemek olurdu.
+ */
+export const OYUN_GECMIS_SINIRI = 400
 
 export const VARSAYILAN_POMODORO: PomodoroAyar = {
   calisma: 25,
@@ -251,6 +267,8 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       yanlisSorular: dizi<YanlisSoru>(nesne.yanlisSorular),
       rozetler: dizi<KazanilanRozet>(nesne.rozetler),
       oyunlar: oyunKayitlariniCoz(nesne.oyunlar),
+      oyunGecmisi: oyunGecmisiniCoz(nesne.oyunGecmisi),
+      pomodoroGecmis: dizi<PomodoroSeans>(nesne.pomodoroGecmis),
       hedef: (nesne.hedef as Hedef | null) ?? null,
       // Yedek yükleyen kullanıcı uygulamayı zaten kurmuş demektir; kurulum tekrar sorulmaz
       ayarlar: { ...ayarlariNormalize(nesne.ayarlar as Ayarlar), kurulumTamamlandi: true },
@@ -284,6 +302,28 @@ function oyunKayitlariniCoz(ham: unknown): OyunKayitlari {
     }
   }
   return temiz
+}
+
+/**
+ * Yedekteki tur geçmişini süzer.
+ *
+ * Yalnızca tarihi ve oyunu tanınan kayıtlar geçiyor. Süre `TUR_SURESI`ni aşamaz:
+ * bozuk tek bir kayıt haftalık özette "oyunda 9 saat geçirdin" gibi saçma bir
+ * sayıya dönüşürdü.
+ */
+function oyunGecmisiniCoz(ham: unknown): OyunTurKaydi[] {
+  if (!Array.isArray(ham)) return []
+  const oyunlar: OyunId[] = ['yazim', 'islem', 'edebiyat']
+
+  return (ham as Partial<OyunTurKaydi>[])
+    .filter((k) => typeof k?.tarih === 'string' && oyunlar.includes(k.oyun as OyunId))
+    .map((k) => ({
+      tarih: k.tarih as string,
+      oyun: k.oyun as OyunId,
+      saniye: Math.min(TUR_SURESI, sayi(k.saniye)),
+      dogru: sayi(k.dogru),
+    }))
+    .slice(-OYUN_GECMIS_SINIRI)
 }
 
 function sayi(deger: unknown): number {
@@ -321,6 +361,8 @@ export function yedegiUygula(yedek: Yedek) {
   )
   yaz(ANAHTARLAR.rozetler, yedek.rozetler)
   yaz(ANAHTARLAR.oyunlar, yedek.oyunlar)
+  yaz(ANAHTARLAR.oyunGecmisi, yedek.oyunGecmisi)
+  yaz(ANAHTARLAR.pomodoroGecmis, yedek.pomodoroGecmis)
   yaz(ANAHTARLAR.hedef, yedek.hedef)
   yaz(ANAHTARLAR.ayarlar, yedek.ayarlar)
 }

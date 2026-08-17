@@ -1,11 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ChevronRight } from 'lucide-react'
-import type { OyunId, OyunKayitlari } from '@/lib/types'
+import type { OyunId, OyunKayitlari, OyunTurKaydi } from '@/lib/types'
 import { OYUNLAR, istatistikAl, oyunToplami } from '@/lib/oyunlar/tanim'
-import { istatistigiGuncelle, type TurSayilari } from '@/lib/oyunlar/tur'
+import {
+  TUR_SURESI,
+  YANLIS_CEZASI,
+  istatistigiGuncelle,
+  type TurSayilari,
+} from '@/lib/oyunlar/tur'
 import { sesleriHazirla } from '@/lib/oyunlar/oyun-sesi'
+import { OYUN_GECMIS_SINIRI } from '@/lib/depo'
+import { LOFI_PARCALAR } from '@/lib/lofi'
+import { SesCalar } from '@/lib/ses'
 import { tarihYaz } from '@/lib/hesap'
 import { bugun } from '@/lib/utils'
 import { BaslikSatiri, Deger, Not } from '@/components/ui'
@@ -20,23 +28,67 @@ import { EdebiyatOyunuEkrani } from '@/components/ekranlar/oyun-edebiyat'
  * çıkışta olduğu gibi geri geliyor. Ayrı bir `Ekran` değeri yapılmadı çünkü
  * oyundan çıkınca listeye değil kart menüsüne dönerdi.
  */
+/** Mini oyunların arka plan müziği — pomodoro ile aynı CC0 lo-fi listesinden. */
+const OYUN_PARCASI = LOFI_PARCALAR[5]
+
 export function MiniOyunlarEkrani({
   kayitlar,
   setKayitlar,
+  setGecmis,
   sesAcik,
+  muzikAcik,
 }: {
   kayitlar: OyunKayitlari
   setKayitlar: (guncelleyici: OyunKayitlari | ((onceki: OyunKayitlari) => OyunKayitlari)) => void
+  setGecmis: (guncelleyici: (onceki: OyunTurKaydi[]) => OyunTurKaydi[]) => void
   sesAcik: boolean
+  muzikAcik: boolean
 }) {
   const [acikOyun, setAcikOyun] = useState<OyunId | null>(null)
   const toplam = oyunToplami(kayitlar)
+
+  // --- Arka plan müziği ---
+  // Yalnızca bir oyun açıkken çalıyor; liste ekranında müzik başlaması,
+  // menüde gezinen kullanıcıyı şaşırtırdı.
+  const calarRef = useRef<SesCalar | null>(null)
+  useEffect(() => {
+    if (acikOyun === null || !muzikAcik) {
+      calarRef.current?.kapat()
+      calarRef.current = null
+      return
+    }
+    const calar = new SesCalar()
+    // Ses efektlerinin altında kalmalı: müzik yüksek olursa doğru/yanlış
+    // geri bildirimi duyulmuyor ve oyunun tek geri bildirimi kayboluyor.
+    calar.sesSeviyesi(0.22)
+    calar.cal(`lofi:${OYUN_PARCASI.dosya}`)
+    calarRef.current = calar
+    return () => {
+      calar.kapat()
+      calarRef.current = null
+    }
+  }, [acikOyun, muzikAcik])
 
   const turBitti = (id: OyunId, ozet: TurSayilari) => {
     setKayitlar((onceki) => ({
       ...onceki,
       [id]: istatistigiGuncelle(onceki[id], ozet, bugun()),
     }))
+
+    /*
+      Turun gerçek süresi.
+
+      Ayrı bir kronometre tutulmuyor çünkü gerekmiyor: tur `TUR_SURESI` saniyelik
+      bir hedef zaman damgasıyla başlıyor ve her yanlış cevap bu damgadan
+      `YANLIS_CEZASI` saniye düşüyor. Turun duvar saatindeki uzunluğu tam olarak
+      bu fark. (Tur bitmeden çıkılırsa hiç kayıt düşmüyor — o süre sayılmıyor.)
+    */
+    const saniye = Math.max(0, TUR_SURESI - YANLIS_CEZASI * ozet.yanlis)
+    setGecmis((onceki) =>
+      [...onceki, { tarih: bugun(), oyun: id, saniye, dogru: ozet.dogru }].slice(
+        -OYUN_GECMIS_SINIRI,
+      ),
+    )
   }
 
   return (

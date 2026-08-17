@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { AlertTriangle, Flame, Target } from 'lucide-react'
+import { AlertTriangle, ChevronRight, Flame, Sparkles, Target } from 'lucide-react'
 import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef } from '@/lib/types'
 import { devamsizlikOzeti, gunOzeti, hedefSerisi, netYaz } from '@/lib/hesap'
 import { bugun, cn } from '@/lib/utils'
@@ -18,6 +18,7 @@ export function AnaSayfa({
   devamsizlik,
   hedef,
   guncelSiralama,
+  ozetBekliyor,
   onKartAc,
 }: {
   ayarlar: Ayarlar
@@ -26,6 +27,8 @@ export function AnaSayfa({
   hedef: Hedef | null
   /** Son denemelerden çıkan tahmini sıralama; deneme yoksa null. */
   guncelSiralama: number | null
+  /** Biten haftanın özeti henüz izlenmediyse davet kartı gösterilir. */
+  ozetBekliyor: boolean
   onKartAc: (ekran: Ekran) => void
 }) {
   const tarih = bugun()
@@ -68,6 +71,27 @@ export function AnaSayfa({
           )}
         </div>
       </div>
+
+      {/* Haftalık özet daveti — biten haftanın özeti izlenmediyse en üstte.
+          Ana sayfanın en görünür yeri burası; kart menüsüne konsaydı özet
+          çıktığından haberi olmayan kullanıcı hiç açmazdı. */}
+      {ozetBekliyor && (
+        <button
+          type="button"
+          onClick={() => onKartAc('haftalik-ozet')}
+          className="acilis-girisi flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-left text-white transition active:brightness-95"
+          style={{ background: 'linear-gradient(120deg, #C2622A 0%, #8C3D14 100%)' }}
+        >
+          <Sparkles size={22} className="shrink-0" aria-hidden />
+          <span className="min-w-0 flex-1">
+            <span className="block font-display font-semibold">Haftalık özetin hazır</span>
+            <span className="block text-xs text-white/80">
+              Geçen haftanı kart kart izle, paylaş
+            </span>
+          </span>
+          <ChevronRight size={18} className="shrink-0 text-white/80" aria-hidden />
+        </button>
+      )}
 
       {/* Günlük hedef */}
       <Kart className="flex items-center gap-4">

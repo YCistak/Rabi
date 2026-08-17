@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { App as CapacitorApp } from '@capacitor/app'
 import { ArrowLeft } from 'lucide-react'
 import type {
@@ -12,6 +12,7 @@ import type {
   KazanilanRozet,
   OkulYili,
   OyunKayitlari,
+  OyunTurKaydi,
   PomodoroAyar,
   PomodoroSeans,
   Sablon,
@@ -29,9 +30,12 @@ import { guncelTahmin, obpHesapla } from '@/lib/tahmin'
 import { egitimYili, gunlukToplam, ilerlemisSinif } from '@/lib/hesap'
 import { rozetDurumu, yeniRozetler, type Rozet } from '@/lib/rozetler'
 import { hatirlatmaIptal, hatirlatmaPlanla } from '@/lib/bildirim'
+import { bekleyenOzetHaftasi, haftalikOzet } from '@/lib/ozet'
 import { bugun } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import { ustKatmaniKapat } from '@/lib/geri'
+import { Acilis, ACILIS_SURESI } from '@/components/acilis'
+import { HaftalikOzetEkrani } from '@/components/ekranlar/haftalik-ozet'
 import { Buton } from '@/components/ui'
 import { BottomNav } from '@/components/bottom-nav'
 import { Kurulum } from '@/components/kurulum'
@@ -96,23 +100,85 @@ export function AppShell() {
     ANAHTARLAR.oyunlar,
     {},
   )
+  const [oyunGecmisi, setOyunGecmisi] = useYerelDepo<OyunTurKaydi[]>(ANAHTARLAR.oyunGecmisi, [])
+  /** İzlenmiş haftalık özetlerin hafta başı tarihleri. */
+  const [ozetGorulen, setOzetGorulen] = useYerelDepo<string[]>(ANAHTARLAR.ozetGorulen, [])
   const [kutlanan, setKutlanan] = useState<Rozet[]>([])
+  /**
+   * Açılış ekranının hâli. Üç adım: görünür → soluyor → kaldırıldı. Ortadaki
+   * adım olmadan ekran bir anda kayboluyor ve sistem açılış ekranından gelen
+   * yumuşak geçiş bozuluyordu.
+   */
+  const [acilis, setAcilis] = useState<'acik' | 'kapaniyor' | 'bitti'>('acik')
   const [hedef, setHedef] = useYerelDepo<Hedef | null>(ANAHTARLAR.hedef, null)
   const [pomodoroAyar, setPomodoroAyar] = useYerelDepo<PomodoroAyar>(
     ANAHTARLAR.pomodoroAyar,
     VARSAYILAN_POMODORO,
   )
-  const [, setPomodoroGecmis] = useYerelDepo<PomodoroSeans[]>(
+  const [pomodoroGecmis, setPomodoroGecmis] = useYerelDepo<PomodoroSeans[]>(
     ANAHTARLAR.pomodoroGecmis,
     [],
   )
 
   const sablonlar = sablonlariBirlestir(kayitliSablonlar)
 
+  // ---- Haftalık özet ----
+  // Biten haftanın özeti. Pazar günü doğuyor ve sonraki pazara kadar duruyor:
+  // yalnızca pazar gösterilseydi o gün uygulamayı açmayan kullanıcı kaçırırdı.
+  const ozetHaftasi = bekleyenOzetHaftasi(bugun())
+  const ozet = useMemo(
+    () =>
+      haftalikOzet({
+        haftaBasiIso: ozetHaftasi,
+        gunlukKayitlar,
+        gunlukHedef: ayarlar.gunlukHedef,
+        devamsizlik,
+        pomodoroGecmis,
+        oyunGecmisi,
+        yanlisSorular,
+        denemeler,
+        sablonlar,
+      }),
+    [
+      ozetHaftasi,
+      gunlukKayitlar,
+      ayarlar.gunlukHedef,
+      devamsizlik,
+      pomodoroGecmis,
+      oyunGecmisi,
+      yanlisSorular,
+      denemeler,
+      sablonlar,
+    ],
+  )
+  /** Özet henüz izlenmediyse ana sayfada davet kartı çıkar. */
+  const ozetBekliyor = !ozet.bosMu && !ozetGorulen.includes(ozetHaftasi)
+
+  const ozetiKapat = useCallback(() => {
+    setEkran(null)
+    // İzlenen hafta işaretleniyor; liste son sekiz haftayla sınırlı — daha
+    // eskisini bilmenin bir faydası yok, davet kartı zaten yalnızca sona bakıyor.
+    setOzetGorulen((onceki) =>
+      onceki.includes(ozetHaftasi) ? onceki : [...onceki, ozetHaftasi].slice(-8),
+    )
+  }, [ozetHaftasi, setOzetGorulen])
+
   // Hedef kartı ve ana sayfa, en yeni denemelerden çıkan tahmini gösteriyor.
   const tahmin = guncelTahmin(denemeler, sablonlar, okulYillari, ayarlar.puanTuru)
   const guncelSiralama = tahmin?.siralama.enKotu ?? null
   const diplomaNotu = obpHesapla(okulYillari)?.diplomaNotu ?? null
+
+  // ---- Açılış ekranı ----
+  // Süre veri okumasına bağlanmadı: localStorage neredeyse anında dönüyor,
+  // bağlansaydı ekran bir kare görünüp kaybolur ve animasyon hiç izlenmezdi.
+  useEffect(() => {
+    const solma = setTimeout(() => setAcilis('kapaniyor'), ACILIS_SURESI)
+    const kaldirma = setTimeout(() => setAcilis('bitti'), ACILIS_SURESI + 320)
+    return () => {
+      clearTimeout(solma)
+      clearTimeout(kaldirma)
+    }
+  }, [])
 
   // Eylülde yeni ders yılı başlayınca kullanıcı bir üst sınıfa kendiliğinden geçer.
   useEffect(() => {
@@ -229,21 +295,36 @@ export function AppShell() {
     [setDenemeler],
   )
 
+  // Açılış ekranı bütün dönüşlerin üstünde duruyor: kurulum sihirbazı ve veri
+  // beklenirken gösterilen boş ekran da onun altında kalmalı.
+  const acilisKatmani =
+    acilis === 'bitti' ? null : <Acilis kapaniyor={acilis === 'kapaniyor'} />
+
   // Veri okunmadan ekran çizilirse "kayıt yok" bir an yanıp söner.
-  if (!ayarlarHazir) return <div className="min-h-dvh" aria-busy="true" />
+  if (!ayarlarHazir) {
+    return (
+      <>
+        <div className="min-h-dvh" aria-busy="true" />
+        {acilisKatmani}
+      </>
+    )
+  }
 
   if (!ayarlar.kurulumTamamlandi) {
     return (
-      <Kurulum
-        onBitir={(secimler) =>
-          setAyarlar((o) => ({
-            ...ayarlariNormalize(o),
-            ...secimler,
-            sinifYili: egitimYili(),
-            kurulumTamamlandi: true,
-          }))
-        }
-      />
+      <>
+        <Kurulum
+          onBitir={(secimler) =>
+            setAyarlar((o) => ({
+              ...ayarlariNormalize(o),
+              ...secimler,
+              sinifYili: egitimYili(),
+              kurulumTamamlandi: true,
+            }))
+          }
+        />
+        {acilisKatmani}
+      </>
     )
   }
 
@@ -262,9 +343,23 @@ export function AppShell() {
     )
   }
 
+  /*
+    Kök `div`de giriş animasyonu **yok** ve olmamalı.
+
+    `.acilis-girisi` içinde `transform` var; animasyon bittikten sonra bile
+    hesaplanan değer `none` değil **birim matris** olarak kalıyor ve transformlu
+    bir öğe, içindeki `position: fixed` katmanların *kapsayıcı bloğu* olur.
+    Sonuç: alt menü, oyun katmanı ve haftalık özet ekrana değil bu `div`e göre
+    konumlanıyordu. `min-h-dvh` içerikle birlikte büyüdüğü için alt menü,
+    sayfanın en üstündeyken ekranın altından taşıyor ve yarısı görünmez oluyordu.
+
+    Açılıştaki yumuşak geçişi artık `components/acilis.tsx` hallediyor.
+  */
   return (
-    <div className="acilis-girisi mx-auto min-h-dvh max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(6rem+var(--guvenli-alt))]">
-      {ekran !== null ? (
+    <div className="mx-auto min-h-dvh max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(6rem+var(--guvenli-alt))]">
+      {/* Haftalık özet bir ekran değil, tam ekran bir katman: kendi kapatma
+          düğmesi var ve "Geri" çubuğu kartların üstünde durmamalı. */}
+      {ekran !== null && ekran !== 'haftalik-ozet' ? (
         <>
           <Buton
             bicim="hayalet"
@@ -306,7 +401,9 @@ export function AppShell() {
             <MiniOyunlarEkrani
               kayitlar={oyunlar}
               setKayitlar={setOyunlar}
+              setGecmis={setOyunGecmisi}
               sesAcik={ayarlar.oyunSesi}
+              muzikAcik={ayarlar.oyunMuzigi}
             />
           )}
           {ekran === 'rozetler' && (
@@ -343,6 +440,8 @@ export function AppShell() {
                 yanlisSorular,
                 rozetler,
                 oyunlar,
+                oyunGecmisi,
+                pomodoroGecmis,
                 hedef,
               }}
             />
@@ -357,6 +456,7 @@ export function AppShell() {
               devamsizlik={devamsizlik}
               hedef={hedef}
               guncelSiralama={guncelSiralama}
+              ozetBekliyor={ozetBekliyor}
               onKartAc={setEkran}
             />
           )}
@@ -396,7 +496,13 @@ export function AppShell() {
         }}
       />
 
+      {ekran === 'haftalik-ozet' && (
+        <HaftalikOzetEkrani ozet={ozet} sesAcik={ayarlar.oyunSesi} onKapat={ozetiKapat} />
+      )}
+
       <RozetKutlama rozetler={kutlanan} onKapat={() => setKutlanan([])} />
+
+      {acilisKatmani}
     </div>
   )
 }

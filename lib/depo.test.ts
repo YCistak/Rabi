@@ -11,6 +11,8 @@ const bos: Omit<Yedek, 'uygulama' | 'surum' | 'tarih'> = {
   yanlisSorular: [],
   rozetler: [],
   oyunlar: {},
+  oyunGecmisi: [],
+  pomodoroGecmis: [],
   hedef: null,
   ayarlar: {
     varsayilanSablonId: 'okul',
@@ -22,6 +24,7 @@ const bos: Omit<Yedek, 'uygulama' | 'surum' | 'tarih'> = {
     hatirlatmaDakikasi: 0,
     bildirimAcik: false,
     oyunSesi: true,
+    oyunMuzigi: true,
     kurulumTamamlandi: true,
   },
 }

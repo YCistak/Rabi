@@ -52,9 +52,22 @@ export const viewport: Viewport = {
   ],
 }
 
+/*
+  Yazı tipi değişkenleri `<html>` üzerinde, `<body>` üzerinde **değil**.
+
+  Tailwind teması `--font-display`i `:root` üzerinde
+  `var(--font-space-grotesk), …` olarak tanımlıyor. Değişkenler `<body>`de
+  dururken bu tanım `:root`ta çözülemiyor, geçersiz değere düşüyor ve
+  `font-display` sınıfı hiçbir işe yaramıyordu — uygulama başlık yazı tipini
+  (Space Grotesk) hiç kullanmıyor, bütün başlıklar gövde yazı tipiyle çıkıyordu.
+*/
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="tr" suppressHydrationWarning>
+    <html
+      lang="tr"
+      suppressHydrationWarning
+      className={`${inter.variable} ${spaceGrotesk.variable}`}
+    >
       <head>
         {/* Tema sınıfı ilk boyamadan önce uygulanmazsa uygulama açılırken
             bir an yanlış renkte parlıyor (FOUC). */}
@@ -64,7 +77,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           }}
         />
       </head>
-      <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
+      <body className="font-sans antialiased">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

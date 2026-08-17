@@ -7,6 +7,7 @@ import {
   GraduationCap,
   Images,
   Settings,
+  Sparkles,
   Target,
   TrendingUp,
 } from 'lucide-react'
@@ -21,6 +22,7 @@ export type Sekme = 'ana' | 'pomodoro' | 'soru' | 'deneme' | 'daha'
 export type Ekran =
   | 'siralama'
   | 'yanlis-banka'
+  | 'haftalik-ozet'
   | 'mini-oyunlar'
   | 'devamsizlik'
   | 'okul'
@@ -58,6 +60,12 @@ export const KARTLAR: KartTanimi[] = [
     ad: 'Devamsızlık',
     aciklama: 'Kalan gün hakkın',
     Simge: CalendarX2,
+  },
+  {
+    id: 'haftalik-ozet',
+    ad: 'Haftalık Özet',
+    aciklama: 'Haftanı kart kart izle',
+    Simge: Sparkles,
   },
   {
     id: 'mini-oyunlar',
