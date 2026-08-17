@@ -313,7 +313,7 @@ function Goruntuleyici({
   return (
     // Tam ekran katman: uygulamanın geri kalanı `max-w-md` olduğu için iç sütun
     // da öyle tutuluyor, yoksa geniş ekranda düğmeler kenarlara savruluyor.
-    <div className="fixed inset-0 z-50 flex flex-col items-center bg-black guvenli-alt">
+    <div className="guvenli-ust guvenli-alt fixed inset-0 z-50 flex flex-col items-center bg-black">
       <div className="flex w-full max-w-md items-center justify-between px-4 py-3 text-white">
         <div className="min-w-0">
           <p className="truncate font-medium">{soru.ders}</p>

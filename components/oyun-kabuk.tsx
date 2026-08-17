@@ -44,7 +44,7 @@ export function OyunKabugu({
 }) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-background">
-      <div className="guvenli-alt mx-auto flex w-full max-w-md flex-1 flex-col overflow-y-auto px-4 pt-3">
+      <div className="guvenli-alt mx-auto flex w-full max-w-md flex-1 flex-col overflow-y-auto px-4 pt-[calc(0.75rem+var(--guvenli-ust))]">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center">
             <YuvarlakDugme etiket="Oyundan çık" onClick={onCik}>

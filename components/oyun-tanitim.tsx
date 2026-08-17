@@ -40,7 +40,7 @@ export function OyunTanitim({
   if (!acik) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/55 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/55 px-4 pt-[calc(1rem+var(--guvenli-ust))] pb-[calc(1rem+var(--guvenli-alt))]">
       <div className="my-auto w-full max-w-sm rounded-2xl border border-border bg-card p-5">
         <div className="flex items-center gap-3">
           <Rabi durum="calisiyor" boyut={64} />

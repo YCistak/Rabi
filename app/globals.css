@@ -40,6 +40,23 @@
    (tavşan tüyü) — saf griye göre daha yumuşak görünüyor.
 --------------------------------------------------------------------------- */
 
+/*
+  Sistem çubuklarının kapladığı güvenli alan.
+
+  İki kaynak birleştiriliyor çünkü hangisinin dolu geleceği cihaza göre değişiyor:
+  `--safe-area-inset-*` Capacitor'ın yerel taraftan enjekte ettiği değerler,
+  `env(safe-area-inset-*)` ise WebView'ın kendi bildirdiği değer. Capacitor
+  pencereyi yerel tarafta zaten boşlukladığı durumlarda kendi değişkenlerini
+  sıfırlıyor, o yüzden `max()` iki kez boşluk eklemiyor — hangisi gerçekse o kalıyor.
+
+  `viewport-fit=cover` olmadan ikisi de 0 gelir; o yüzden `app/layout.tsx`
+  içindeki viewport tanımında bu şart.
+*/
+:root {
+  --guvenli-ust: max(var(--safe-area-inset-top, 0px), env(safe-area-inset-top, 0px));
+  --guvenli-alt: max(var(--safe-area-inset-bottom, 0px), env(safe-area-inset-bottom, 0px));
+}
+
 :root {
   color-scheme: light;
   --background: oklch(0.98 0.006 70);
@@ -137,9 +154,21 @@
   .rakam {
     font-variant-numeric: tabular-nums;
   }
-  /* Alt menü, sistem gezinme çubuğunun altında kalmasın */
+  /*
+    Sistem çubuklarının (üstte saat şeridi, altta gezinme çubuğu) altında kalan
+    yüzeyler için. Değerler `--guvenli-ust` / `--guvenli-alt` değişkenlerinden
+    gelir; tanımları dosyanın başında.
+
+    Tek başına `env(safe-area-inset-*)` yetmiyordu: Android 15'ten sonra
+    uygulama pencereleri zorunlu olarak çubukların **arkasına** çiziliyor ve
+    `viewport-fit=cover` verilmediği sürece WebView bu değerleri 0 bildiriyor.
+    Sonuç: alt menünün yazıları sistem gezinme çubuğunun altında kalıyordu.
+  */
+  .guvenli-ust {
+    padding-top: var(--guvenli-ust);
+  }
   .guvenli-alt {
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: var(--guvenli-alt);
   }
 
   /*

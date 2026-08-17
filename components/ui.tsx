@@ -257,7 +257,7 @@ export function Onay({
 
   if (!acik) return null
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 px-4 pt-[calc(1rem+var(--guvenli-ust))] pb-[calc(1rem+var(--guvenli-alt))]">
       <div className="w-full max-w-md rounded-2xl border border-border bg-card p-5">
         <p className="font-display text-lg font-semibold">{baslik}</p>
         <p className="mt-1 text-sm text-muted-foreground">{aciklama}</p>

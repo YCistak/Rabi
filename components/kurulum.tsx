@@ -51,7 +51,7 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 py-8">
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
       <div className="mb-6 flex flex-col items-center text-center">
         <Rabi durum={adim === sonAdim ? 'mutlu' : 'normal'} boyut={110} />
         <h1 className="mt-3 font-display text-2xl font-semibold tracking-tight">

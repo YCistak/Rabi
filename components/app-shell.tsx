@@ -249,7 +249,7 @@ export function AppShell() {
 
   if (denemeFormu !== null) {
     return (
-      <div className="mx-auto min-h-dvh max-w-md px-4 pb-8 pt-5">
+      <div className="mx-auto min-h-dvh max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
         <YeniDenemeEkrani
           sablonlar={sablonlar}
           varsayilanSablonId={ayarlar.varsayilanSablonId}
@@ -263,7 +263,7 @@ export function AppShell() {
   }
 
   return (
-    <div className="acilis-girisi mx-auto min-h-dvh max-w-md px-4 pb-24 pt-5">
+    <div className="acilis-girisi mx-auto min-h-dvh max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(6rem+var(--guvenli-alt))]">
       {ekran !== null ? (
         <>
           <Buton

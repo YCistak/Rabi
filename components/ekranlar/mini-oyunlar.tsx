@@ -5,6 +5,7 @@ import { ChevronRight } from 'lucide-react'
 import type { OyunId, OyunKayitlari } from '@/lib/types'
 import { OYUNLAR, istatistikAl, oyunToplami } from '@/lib/oyunlar/tanim'
 import { istatistigiGuncelle, type TurSayilari } from '@/lib/oyunlar/tur'
+import { sesleriHazirla } from '@/lib/oyunlar/oyun-sesi'
 import { tarihYaz } from '@/lib/hesap'
 import { bugun } from '@/lib/utils'
 import { BaslikSatiri, Deger, Not } from '@/components/ui'
@@ -58,7 +59,13 @@ export function MiniOyunlarEkrani({
             <li key={oyun.id}>
               <button
                 type="button"
-                onClick={() => setAcikOyun(oyun.id)}
+                onClick={() => {
+                  // Ses dosyaları tanıtım açılırken çözülüyor; oyun başlayınca
+                  // yüklenseydi ilk cevabın sesi geç gelirdi. Dokunma aynı
+                  // zamanda AudioContext'i açan kullanıcı etkileşimi oluyor.
+                  sesleriHazirla(sesAcik)
+                  setAcikOyun(oyun.id)
+                }}
                 className="flex w-full items-center gap-3 rounded-2xl border border-border bg-card p-4 text-left transition active:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
                 <span className="text-3xl leading-none" aria-hidden>

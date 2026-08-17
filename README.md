@@ -169,6 +169,38 @@ elle düzenlenmiyor. Derlenen APK'da şunlar var:
   uygulamalardan `IMAGE_CAPTURE` için çalışma anında izin istenir. İzni eklemek fotoğraf
   çekmeyi düzeltmez, gereksiz bir izin ekranı ekler.
 
+## Sistem çubukları (güvenli alan)
+
+Android 15'ten (SDK 35) sonra uygulama pencereleri **zorunlu olarak** sistem çubuklarının
+arkasına çiziliyor; `targetSdk` 36 olduğu için Rabi de öyle. Bu, alt menünün yazılarının
+gezinme çubuğunun altında kalmasına yol açıyordu — ekranda sadece simgeler görünüyordu.
+
+Çözüm iki parçalı:
+
+1. `app/layout.tsx` içindeki viewport tanımına **`viewportFit: 'cover'`**. Bu olmadan WebView
+   `env(safe-area-inset-*)` değerlerini 0 bildiriyor; boşluk vermek isteseniz de veremezsiniz.
+2. `app/globals.css` içinde iki değişken:
+
+   ```css
+   --guvenli-ust: max(var(--safe-area-inset-top, 0px), env(safe-area-inset-top, 0px));
+   --guvenli-alt: max(var(--safe-area-inset-bottom, 0px), env(safe-area-inset-bottom, 0px));
+   ```
+
+   İki kaynak birleştiriliyor çünkü hangisinin dolu geleceği cihaza göre değişiyor:
+   `--safe-area-inset-*` Capacitor'ın yerel taraftan enjekte ettiği değerler (bkz.
+   `SystemBars.java`), `env(...)` ise WebView'ın kendi bildirdiği değer. Capacitor pencereyi
+   yerel tarafta zaten boşukladığı durumlarda **kendi değişkenlerini sıfırlıyor**, o yüzden
+   `max()` iki kez boşluk eklemiyor.
+
+Kullanımı: yalnızca güvenli alan gerekiyorsa `guvenli-ust` / `guvenli-alt` sınıfları; başka
+bir boşlukla birleşiyorsa Tailwind'in serbest değeri —
+`pt-[calc(1.25rem+var(--guvenli-ust))]`. Ekleneceği yerler `position: fixed` olan her yüzey
+(alt menü, oyun katmanı, onay/kutlama kutuları, fotoğraf görüntüleyici) ve sayfa gövdesi.
+
+Masaüstü tarayıcıda iki değişken de 0 çıkar, yani geliştirmede hiçbir şey değişmez; cihazda
+doğrulamak için tarayıcı konsolundan `document.documentElement.style.setProperty(
+'--safe-area-inset-bottom', '48px')` verip alt menünün yükselip yükselmediğine bakılabilir.
+
 ## Okul notları ve OBP
 
 Her lise yılı için **tek bir ortalama** giriliyor — karnedeki sayı. Ders ders yazılı/sözlü/proje
@@ -223,10 +255,18 @@ de anlamını yitirirdi. Arayüzün üst bilgisi (kapat, süre halkası, çubuk,
 bileşende — `components/oyun-kabuk.tsx`. Her oyun tam ekran bir katman olarak açılıyor
 (`z-50`, alt menünün üstünde): süreli bir turda yanlışlıkla sekmeye basmak turu bitirirdi.
 
-**Ses efektleri** (`lib/oyunlar/oyun-sesi.ts`) dosyadan değil Web Audio ile üretiliyor: üçü de
-birkaç yüz milisaniyelik basit tonlar, mp3 karşılıkları APK'ya boşuna yer kaplardı ve ilk
-çalışta yükleneceği için ilk doğru cevabın sesi geç gelirdi. Ayarlardan kapatılabiliyor
-(`oyunSesi`); kapalıyken `AudioContext` hiç kurulmuyor.
+**Ses efektleri** (`lib/oyunlar/oyun-sesi.ts`): doğru ve yanlış sesleri `public/ses/oyun/`
+altındaki kısa mp3'ler (toplam ~35 KB, kaynakları `KAYNAK.md`). Önce Web Audio ile ton
+üretiliyordu; sentetik sinüs tonu telefon hoparlöründe gerçek bir efektin yanında hep cılız
+kalıyor. Dosyalar `decodeAudioData` ile **bir kez** çözülüp bellekte tutuluyor — `new Audio()`
+ile her çalışta yeni eleman kurmak Android WebView'da gecikme yaratıyor ve arka arkaya gelen
+cevaplarda ses kırpılıyordu. Tampon (buffer) oyun kartına dokunulduğu anda hazırlanıyor
+(`sesleriHazirla`), böylece ilk cevabın sesi gecikmiyor. Tur bitiş sesi hâlâ üretiliyor: turda
+bir kez çalıyor ve onun için dosya yok. Ayarlardan kapatılabiliyor (`oyunSesi`); kapalıyken
+`AudioContext` hiç kurulmuyor, dosya da indirilmiyor.
+
+Dosyalar `ffmpeg` ile tepe noktası −1 dB'ye çekildi ve 1,0 kazançla çalınıyor: eski tonlar
+0,18 seviyesindeydi ve kullanıcı "duyulmuyor" dedi.
 
 **Seri puanı etkilemiyor.** Ardışık doğru sayısı ayrı bir ölçü olarak duruyor; seri çarpanı
 olsaydı eski turlarda kurulan rekorlar yenileriyle karşılaştırılamaz hâle gelirdi.

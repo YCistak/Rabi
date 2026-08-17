@@ -40,6 +40,11 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  // Android 15'ten sonra uygulama penceresi sistem çubuklarının arkasına
+  // çiziliyor ve bu ayar olmadan WebView `env(safe-area-inset-*)` değerlerini
+  // 0 bildiriyordu — alt menünün yazıları gezinme çubuğunun altında kalıyordu.
+  // Boşluklar `--guvenli-ust` / `--guvenli-alt` ile elle veriliyor.
+  viewportFit: 'cover',
   colorScheme: 'light dark',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#fbf9f6' },
