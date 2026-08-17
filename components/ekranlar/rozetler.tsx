@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import { Lock } from 'lucide-react'
-import type { Deneme, GunlukKayit, KazanilanRozet } from '@/lib/types'
+import type { Deneme, GunlukKayit, KazanilanRozet, OyunKayitlari } from '@/lib/types'
 import {
   ROZETLER,
   TUR_ADI,
@@ -16,7 +16,16 @@ import { cn } from '@/lib/utils'
 import { BaslikSatiri, Deger, Kart, Not } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 
-const TUR_SIRASI: RozetTuru[] = ['deneme', 'gunluk-soru', 'haftalik-soru', 'diploma']
+const TUR_SIRASI: RozetTuru[] = [
+  'deneme',
+  'gunluk-soru',
+  'haftalik-soru',
+  'diploma',
+  'oyun-tur',
+  'oyun-rekor',
+  'oyun-hatasiz',
+  'oyun-dogru',
+]
 
 /**
  * İlerleme sayısı. Diploma notu ondalıklı (94,30 gibi); tam sayıya yuvarlanırsa
@@ -31,16 +40,18 @@ export function RozetlerEkrani({
   denemeler,
   gunlukKayitlar,
   diplomaNotu,
+  oyunlar,
   kazanilmis,
 }: {
   denemeler: Deneme[]
   gunlukKayitlar: GunlukKayit[]
   diplomaNotu: number | null
+  oyunlar: OyunKayitlari
   kazanilmis: KazanilanRozet[]
 }) {
   const durum = useMemo(
-    () => rozetDurumu({ denemeler, gunlukKayitlar, diplomaNotu }),
-    [denemeler, gunlukKayitlar, diplomaNotu],
+    () => rozetDurumu({ denemeler, gunlukKayitlar, diplomaNotu, oyunlar }),
+    [denemeler, gunlukKayitlar, diplomaNotu, oyunlar],
   )
   const liste = useMemo(() => rozetListesi(durum, kazanilmis), [durum, kazanilmis])
   const kazanilanSayi = liste.filter((s) => s.kazanildi).length
@@ -83,6 +94,9 @@ export function RozetlerEkrani({
         <Deger etiket="Deneme" deger={String(durum.denemeSayisi)} />
         <Deger etiket="En iyi gün" deger={String(durum.enIyiGun)} altNot="soru" />
         <Deger etiket="En iyi hafta" deger={String(durum.enIyiHafta)} altNot="soru" />
+        <Deger etiket="Oyun turu" deger={String(durum.oyunTuru)} />
+        <Deger etiket="Oyun rekoru" deger={String(durum.oyunRekoru)} altNot="doğru" />
+        <Deger etiket="Oyunda doğru" deger={String(durum.oyunDogru)} />
       </div>
 
       {durum.diplomaNotu === null && (

@@ -3,6 +3,7 @@ import {
   Award,
   BarChart3,
   CalendarX2,
+  Gamepad2,
   GraduationCap,
   Images,
   Settings,
@@ -20,6 +21,7 @@ export type Sekme = 'ana' | 'pomodoro' | 'soru' | 'deneme' | 'daha'
 export type Ekran =
   | 'siralama'
   | 'yanlis-banka'
+  | 'mini-oyunlar'
   | 'devamsizlik'
   | 'okul'
   | 'hedef'
@@ -56,6 +58,12 @@ export const KARTLAR: KartTanimi[] = [
     ad: 'Devamsızlık',
     aciklama: 'Kalan gün hakkın',
     Simge: CalendarX2,
+  },
+  {
+    id: 'mini-oyunlar',
+    ad: 'Mini Oyunlar',
+    aciklama: 'Kısa turlarla bilgi tazele',
+    Simge: Gamepad2,
   },
   {
     id: 'okul',

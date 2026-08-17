@@ -49,7 +49,58 @@ describe('rozetDurumu', () => {
       diplomaNotu: null,
       enIyiGun: 0,
       enIyiHafta: 0,
+      oyunTuru: 0,
+      oyunRekoru: 0,
+      oyunHatasiz: 0,
+      oyunDogru: 0,
     })
+  })
+
+  it('mini oyun ölçüleri bütün oyunların toplamı', () => {
+    const durum = rozetDurumu({
+      denemeler: [],
+      gunlukKayitlar: [],
+      diplomaNotu: null,
+      oyunlar: {
+        yazim: {
+          enIyiDogru: 23,
+          oynananTur: 4,
+          toplamDogru: 61,
+          toplamYanlis: 9,
+          hatasizTur: 1,
+          sonTarih: '2026-08-17',
+        },
+      },
+    })
+    expect(durum.oyunTuru).toBe(4)
+    expect(durum.oyunRekoru).toBe(23)
+    expect(durum.oyunHatasiz).toBe(1)
+    expect(durum.oyunDogru).toBe(61)
+  })
+
+  it('mini oyun rozetleri eşiği geçince hak edilir', () => {
+    const durum = rozetDurumu({
+      denemeler: [],
+      gunlukKayitlar: [],
+      diplomaNotu: null,
+      oyunlar: {
+        yazim: {
+          enIyiDogru: 16,
+          oynananTur: 1,
+          toplamDogru: 16,
+          toplamYanlis: 0,
+          hatasizTur: 1,
+          sonTarih: '2026-08-17',
+        },
+      },
+    })
+    const idler = hakEdilenler(durum).map((r) => r.id)
+    expect(idler).toContain('oyun-tur-1')
+    expect(idler).toContain('oyun-rekor-15')
+    expect(idler).toContain('oyun-hatasiz-1')
+    // Tek tur 25 doğruya yetmez, toplam 250'ye de.
+    expect(idler).not.toContain('oyun-rekor-25')
+    expect(idler).not.toContain('oyun-dogru-250')
   })
 })
 

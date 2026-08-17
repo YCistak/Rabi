@@ -1,5 +1,6 @@
-import type { Deneme, GunlukKayit, KazanilanRozet } from './types'
+import type { Deneme, GunlukKayit, KazanilanRozet, OyunKayitlari } from './types'
 import { gunOzeti, haftalikToplamlar } from './hesap'
+import { oyunToplami } from './oyunlar/tanim'
 
 /**
  * Rozetler — saf mantık.
@@ -10,7 +11,15 @@ import { gunOzeti, haftalikToplamlar } from './hesap'
  * olurdu. Kazanılanlar `rabi-rozetler` altında tarihiyle saklanıyor.
  */
 
-export type RozetTuru = 'deneme' | 'diploma' | 'gunluk-soru' | 'haftalik-soru'
+export type RozetTuru =
+  | 'deneme'
+  | 'diploma'
+  | 'gunluk-soru'
+  | 'haftalik-soru'
+  | 'oyun-tur'
+  | 'oyun-rekor'
+  | 'oyun-hatasiz'
+  | 'oyun-dogru'
 
 export type Rozet = {
   id: string
@@ -52,6 +61,23 @@ export const ROZETLER: Rozet[] = [
   { id: 'hafta-2000', tur: 'haftalik-soru', esik: 2000, ikon: '🌿', ad: 'Haftada 2000', aciklama: 'Bir haftada 2000 soru çözdün' },
   { id: 'hafta-2500', tur: 'haftalik-soru', esik: 2500, ikon: '💪', ad: 'Haftada 2500', aciklama: 'Bir haftada 2500 soru çözdün' },
   { id: 'hafta-5000', tur: 'haftalik-soru', esik: 5000, ikon: '🏆', ad: 'Haftada 5000', aciklama: 'Bir haftada 5000 soru çözdün' },
+
+  // --- Mini oyunlar ---
+  // Ölçüler tek bir oyuna değil **bütün** mini oyunların toplamına bakıyor;
+  // yeni oyun eklendiğinde rozetler kendiliğinden onu da sayar.
+  { id: 'oyun-tur-1', tur: 'oyun-tur', esik: 1, ikon: '🎮', ad: 'Oyuna başladın', aciklama: 'İlk mini oyun turunu bitirdin' },
+  { id: 'oyun-tur-10', tur: 'oyun-tur', esik: 10, ikon: '🕹️', ad: '10 tur', aciklama: 'Mini oyunlarda 10 tur oynadın' },
+  { id: 'oyun-tur-50', tur: 'oyun-tur', esik: 50, ikon: '🎲', ad: '50 tur', aciklama: 'Mini oyunlarda 50 tur oynadın' },
+
+  { id: 'oyun-rekor-15', tur: 'oyun-rekor', esik: 15, ikon: '✏️', ad: 'Tek turda 15', aciklama: 'Bir turda 15 doğru bildin' },
+  { id: 'oyun-rekor-25', tur: 'oyun-rekor', esik: 25, ikon: '📖', ad: 'Tek turda 25', aciklama: 'Bir turda 25 doğru bildin' },
+  { id: 'oyun-rekor-40', tur: 'oyun-rekor', esik: 40, ikon: '🧠', ad: 'Tek turda 40', aciklama: 'Bir turda 40 doğru bildin' },
+
+  { id: 'oyun-hatasiz-1', tur: 'oyun-hatasiz', esik: 1, ikon: '🎯', ad: 'Hatasız tur', aciklama: 'Bir turu hiç yanlış yapmadan bitirdin' },
+  { id: 'oyun-hatasiz-5', tur: 'oyun-hatasiz', esik: 5, ikon: '💎', ad: '5 hatasız tur', aciklama: 'Beş turu hiç yanlış yapmadan bitirdin' },
+
+  { id: 'oyun-dogru-250', tur: 'oyun-dogru', esik: 250, ikon: '🔤', ad: '250 doğru', aciklama: 'Mini oyunlarda toplam 250 doğru cevap' },
+  { id: 'oyun-dogru-1000', tur: 'oyun-dogru', esik: 1000, ikon: '📜', ad: '1000 doğru', aciklama: 'Mini oyunlarda toplam 1000 doğru cevap' },
 ]
 
 export const TUR_ADI: Record<RozetTuru, string> = {
@@ -59,6 +85,10 @@ export const TUR_ADI: Record<RozetTuru, string> = {
   diploma: 'Okul notu',
   'gunluk-soru': 'Günlük soru',
   'haftalik-soru': 'Haftalık soru',
+  'oyun-tur': 'Mini oyun — oynanan tur',
+  'oyun-rekor': 'Mini oyun — tek tur rekoru',
+  'oyun-hatasiz': 'Mini oyun — hatasız tur',
+  'oyun-dogru': 'Mini oyun — toplam doğru',
 }
 
 /**
@@ -71,25 +101,36 @@ export type RozetDurumu = {
   diplomaNotu: number | null
   enIyiGun: number
   enIyiHafta: number
+  oyunTuru: number
+  oyunRekoru: number
+  oyunHatasiz: number
+  oyunDogru: number
 }
 
 export function rozetDurumu({
   denemeler,
   gunlukKayitlar,
   diplomaNotu,
+  oyunlar = {},
 }: {
   denemeler: Deneme[]
   gunlukKayitlar: GunlukKayit[]
   diplomaNotu: number | null
+  oyunlar?: OyunKayitlari
 }): RozetDurumu {
   const gunler = gunlukKayitlar.map((k) => gunOzeti(k).toplam)
   const haftalar = [...haftalikToplamlar(gunlukKayitlar).values()]
+  const oyun = oyunToplami(oyunlar)
 
   return {
     denemeSayisi: denemeler.length,
     diplomaNotu,
     enIyiGun: gunler.length > 0 ? Math.max(...gunler) : 0,
     enIyiHafta: haftalar.length > 0 ? Math.max(...haftalar) : 0,
+    oyunTuru: oyun.oynananTur,
+    oyunRekoru: oyun.enIyiDogru,
+    oyunHatasiz: oyun.hatasizTur,
+    oyunDogru: oyun.toplamDogru,
   }
 }
 
@@ -104,6 +145,14 @@ export function rozetDegeri(rozet: Rozet, durum: RozetDurumu): number {
       return durum.enIyiGun
     case 'haftalik-soru':
       return durum.enIyiHafta
+    case 'oyun-tur':
+      return durum.oyunTuru
+    case 'oyun-rekor':
+      return durum.oyunRekoru
+    case 'oyun-hatasiz':
+      return durum.oyunHatasiz
+    case 'oyun-dogru':
+      return durum.oyunDogru
   }
 }
 

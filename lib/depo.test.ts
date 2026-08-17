@@ -10,6 +10,7 @@ const bos: Omit<Yedek, 'uygulama' | 'surum' | 'tarih'> = {
   devamsizlik: [],
   yanlisSorular: [],
   rozetler: [],
+  oyunlar: {},
   hedef: null,
   ayarlar: {
     varsayilanSablonId: 'okul',
@@ -59,6 +60,48 @@ describe('yedegiDogrula', () => {
     const kimlikler = yedek.okulYillari.map((y) => y.id)
     expect(kimlikler.every(Boolean)).toBe(true)
     expect(new Set(kimlikler).size).toBe(2)
+  })
+
+  it('mini oyun istatistiklerini taşır', () => {
+    const yedek = coz({
+      ...yedekOlustur(bos),
+      oyunlar: {
+        yazim: {
+          enIyiDogru: 23,
+          oynananTur: 4,
+          toplamDogru: 61,
+          toplamYanlis: 9,
+          hatasizTur: 1,
+          sonTarih: '2026-08-17',
+        },
+      },
+    })
+    expect(yedek.oyunlar.yazim?.enIyiDogru).toBe(23)
+    expect(yedek.oyunlar.yazim?.sonTarih).toBe('2026-08-17')
+  })
+
+  it('mini oyunları olmayan eski yedeği kabul eder', () => {
+    const { oyunlar: _atilan, ...oyunsuz } = yedekOlustur(bos)
+    expect(coz(oyunsuz).oyunlar).toEqual({})
+  })
+
+  /**
+   * Bozuk sayı sessizce NaN'a dönüşseydi rozet eşiği hiç sağlanmaz, kullanıcı
+   * kazandığı rozeti bir daha göremezdi.
+   */
+  it('bozuk mini oyun sayılarını sıfırlar', () => {
+    const yedek = coz({
+      ...yedekOlustur(bos),
+      oyunlar: { yazim: { enIyiDogru: 'çok', oynananTur: -3, toplamDogru: null } },
+    })
+    expect(yedek.oyunlar.yazim).toEqual({
+      enIyiDogru: 0,
+      oynananTur: 0,
+      toplamDogru: 0,
+      toplamYanlis: 0,
+      hatasizTur: 0,
+      sonTarih: '',
+    })
   })
 
   it('var olan kimliği korur', () => {

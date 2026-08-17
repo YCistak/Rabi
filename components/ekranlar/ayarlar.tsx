@@ -40,6 +40,7 @@ import type {
   Hedef,
   KazanilanRozet,
   OkulYili,
+  OyunKayitlari,
   PuanTuru,
   Sablon,
   YanlisSoru,
@@ -82,6 +83,7 @@ export function AyarlarEkrani({
     devamsizlik: Devamsizlik[]
     yanlisSorular: YanlisSoru[]
     rozetler: KazanilanRozet[]
+    oyunlar: OyunKayitlari
     hedef: Hedef | null
   }
 }) {

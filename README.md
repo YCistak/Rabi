@@ -18,7 +18,9 @@ Android SDK gerekiyor (`ANDROID_HOME=~/Android/Sdk`).
 ```bash
 npm run dev        # tarayıcıda, http://localhost:3000
 npm run typecheck  # tsc --noEmit
-npm run test       # vitest — hesap/puan/sıralama birim testleri
+npm run test       # vitest — hesap/puan/sıralama/oyun birim testleri
+
+node scripts/havuz-dogrula.mjs   # yazım oyunu havuzunu TDK sözlüğüne sorar (ağ gerekir)
 ```
 
 Tarayıcıda test ederken mobil görünüme geç (390×844). Arayüz `max-w-md` tek sütun.
@@ -76,6 +78,7 @@ keyPassword=...
 | `lib/siralama.ts` | Puandan tahmini sıralama |
 | `lib/veri/` | ÖSYM katsayıları ve puan-sıralama tabloları |
 | `lib/depo.ts` | localStorage hook'u, yedekleme |
+| `lib/oyunlar/` | Mini oyunlar — tanım listesi, yazım havuzu, tur mantığı |
 | `lib/ses.ts` | Pomodoro müziği — `public/ses/` altındaki CC0 lo-fi parçalar |
 | `public/ses/` | Lo-fi parçalar (CC0) + `LISANS.md` |
 
@@ -188,6 +191,32 @@ OBP karşılığı da yazıyor (diploma × 5 → 450+ / 475+).
 Kutlama penceresi, veri **durulduktan** ~1,2 sn sonra çıkıyor. Anında çıksaydı soru sayısı
 yazılırken araya girerdi: "420" yazarken 4 → 42 → 420 geçilir ve pencere daha alan
 doldurulmadan ekranı kapatırdı.
+
+### Mini oyun rozetleri
+
+Mini oyun rozetleri tek bir oyuna değil **bütün oyunların toplamına** bakıyor (oynanan tur,
+tek tur rekoru, hatasız tur, toplam doğru). Yeni bir oyun `lib/oyunlar/tanim.ts` içindeki
+listeye eklenip bir ekran yazıldığında rozetler onu kendiliğinden sayar; rozet mantığına
+dokunmak gerekmez.
+
+## Mini oyunlar
+
+Her oyunun istatistiği `rabi-oyunlar` altında oyun kimliğine göre tutuluyor; tek tek turlar
+saklanmıyor, yalnızca özet (rekor, oynanan tur, toplam doğru/yanlış, hatasız tur).
+
+**Yazım Ustası.** 60 saniyelik tur, iki şıktan doğru yazılışı seçme. Doğru cevap süre
+kazandırmaz, yanlış cevap **3 saniye** götürür: cezasız bir turda rastgele dokunmak da aynı
+puanı getirirdi (iki şık var, %50 tutturulur).
+
+Havuz (`lib/oyunlar/yazim-havuzu.ts`) TDK Yazım Kılavuzu ve ÖSYM'nin sık sorduğu başlıklardan
+derlendi; tek kelimelik girişlerin tamamı `scripts/havuz-dogrula.mjs` ile sozluk.gov.tr'ye
+karşı doğrulandı — doğru şık sözlükte olmalı, yanlış şık olmamalı. Betiğin `BEKLENEN` listesi
+iki bilinen yanlış alarmı susturuyor: çekimli biçimler ("burada" madde başı değil) ve sözlük
+aramasının düzeltme işaretini yok sayması ("kağıt" arayınca "kâğıt" gelir).
+
+Belirsiz çiftler havuzdan **çıkarıldı**: "grup/gurup", "ekstra/ekstre", "böyle/böle" gibi
+çiftlerde yanlış sanılan şık aslında başka bir kelime. Aynı sebeple "hâlâ" ve "bekâr" tek
+kelime olarak değil cümle içinde soruluyor — şapkasız yazılışları da gerçek kelime.
 
 ### Günde en fazla bir bildirim
 

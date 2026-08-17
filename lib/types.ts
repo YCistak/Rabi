@@ -183,6 +183,34 @@ export type PomodoroSeans = {
 }
 
 // ---------------------------------------------------------------------------
+// Mini oyunlar
+// ---------------------------------------------------------------------------
+
+/** Mini oyun kimliği. Oyun tanımları `lib/oyunlar/tanim.ts` içinde. */
+export type OyunId = 'yazim'
+
+/**
+ * Bir mini oyunun kalıcı istatistiği.
+ *
+ * Tek tek turlar saklanmıyor, yalnızca özet: yüz turdan sonra bile kayıt bir
+ * satır kalıyor ve rozetlerin ihtiyaç duyduğu her ölçü burada mevcut.
+ */
+export type OyunIstatistigi = {
+  /** Tek turda çıkarılan en yüksek doğru sayısı — oyunun rekoru. */
+  enIyiDogru: number
+  oynananTur: number
+  toplamDogru: number
+  toplamYanlis: number
+  /** Hiç yanlış yapılmadan bitirilen tur sayısı. */
+  hatasizTur: number
+  /** Son oynama tarihi, 'YYYY-AA-GG'. */
+  sonTarih: string
+}
+
+/** Bütün oyunların istatistikleri, oyun kimliğine göre. */
+export type OyunKayitlari = Partial<Record<OyunId, OyunIstatistigi>>
+
+// ---------------------------------------------------------------------------
 // Hedef ve rozetler
 // ---------------------------------------------------------------------------
 
@@ -246,6 +274,7 @@ export type Yedek = {
   devamsizlik: Devamsizlik[]
   yanlisSorular: YanlisSoru[]
   rozetler: KazanilanRozet[]
+  oyunlar: OyunKayitlari
   hedef: Hedef | null
   ayarlar: Ayarlar
   /** Fotoğraf kimliği → `data:` adresi. Fotoğrafsız yedekte alan hiç yok. */

@@ -11,6 +11,7 @@ import type {
   Hedef,
   KazanilanRozet,
   OkulYili,
+  OyunKayitlari,
   PomodoroAyar,
   PomodoroSeans,
   Sablon,
@@ -48,6 +49,7 @@ import { SiralamaEkrani } from '@/components/ekranlar/siralama'
 import { HedefEkrani } from '@/components/ekranlar/hedef'
 import { YanlisBankaEkrani } from '@/components/ekranlar/yanlis-banka'
 import { RozetlerEkrani } from '@/components/ekranlar/rozetler'
+import { MiniOyunlarEkrani } from '@/components/ekranlar/mini-oyunlar'
 import { RozetKutlama } from '@/components/rozet-kutlama'
 
 /** Rozet kontrolünün, veri durulana kadar beklediği süre (ms). */
@@ -90,6 +92,10 @@ export function AppShell() {
     ANAHTARLAR.rozetler,
     [],
   )
+  const [oyunlar, setOyunlar, oyunlarHazir] = useYerelDepo<OyunKayitlari>(
+    ANAHTARLAR.oyunlar,
+    {},
+  )
   const [kutlanan, setKutlanan] = useState<Rozet[]>([])
   const [hedef, setHedef] = useYerelDepo<Hedef | null>(ANAHTARLAR.hedef, null)
   const [pomodoroAyar, setPomodoroAyar] = useYerelDepo<PomodoroAyar>(
@@ -129,7 +135,7 @@ export function AppShell() {
   // bir kez yazıldıktan sonra ilk okumayı atlıyor; hazır olmadan rozet
   // eklenseydi kayıtlı rozetler silinir, kutlama her açılışta tekrarlanırdı.
   const rozetVerisiHazir =
-    rozetlerHazir && denemelerHazir && gunlukHazir && okulHazir && ayarlarHazir
+    rozetlerHazir && denemelerHazir && gunlukHazir && okulHazir && ayarlarHazir && oyunlarHazir
 
   useEffect(() => {
     if (!rozetVerisiHazir) return
@@ -138,7 +144,7 @@ export function AppShell() {
     // değişiklik: "420" yazarken 4 → 42 → 420 geçilir ve kutlama daha alan
     // doldurulmadan ekranı kapatırdı. Yazma durunca bir kez çalışıyor.
     const zamanlayici = setTimeout(() => {
-      const durum = rozetDurumu({ denemeler, gunlukKayitlar, diplomaNotu })
+      const durum = rozetDurumu({ denemeler, gunlukKayitlar, diplomaNotu, oyunlar })
       const yeniler = yeniRozetler(durum, rozetler)
       if (yeniler.length === 0) return
 
@@ -153,6 +159,7 @@ export function AppShell() {
     denemeler,
     gunlukKayitlar,
     diplomaNotu,
+    oyunlar,
     rozetler,
     setRozetler,
   ])
@@ -293,11 +300,15 @@ export function AppShell() {
           {ekran === 'yanlis-banka' && (
             <YanlisBankaEkrani sorular={yanlisSorular} setSorular={setYanlisSorular} />
           )}
+          {ekran === 'mini-oyunlar' && (
+            <MiniOyunlarEkrani kayitlar={oyunlar} setKayitlar={setOyunlar} />
+          )}
           {ekran === 'rozetler' && (
             <RozetlerEkrani
               denemeler={denemeler}
               gunlukKayitlar={gunlukKayitlar}
               diplomaNotu={diplomaNotu}
+              oyunlar={oyunlar}
               kazanilmis={rozetler}
             />
           )}
@@ -325,6 +336,7 @@ export function AppShell() {
                 devamsizlik,
                 yanlisSorular,
                 rozetler,
+                oyunlar,
                 hedef,
               }}
             />

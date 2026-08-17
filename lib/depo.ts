@@ -9,6 +9,9 @@ import type {
   Hedef,
   KazanilanRozet,
   OkulYili,
+  OyunId,
+  OyunIstatistigi,
+  OyunKayitlari,
   PomodoroAyar,
   Sablon,
   YanlisSoru,
@@ -29,6 +32,7 @@ export const ANAHTARLAR = {
   pomodoroGecmis: 'rabi-pomodoro-gecmis',
   hedef: 'rabi-hedef',
   rozetler: 'rabi-rozetler',
+  oyunlar: 'rabi-oyunlar',
   ayarlar: 'rabi-ayarlar',
   tema: 'rabi-tema',
   sonBildirim: 'rabi-son-bildirim',
@@ -239,12 +243,43 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       devamsizlik: dizi<Devamsizlik>(nesne.devamsizlik),
       yanlisSorular: dizi<YanlisSoru>(nesne.yanlisSorular),
       rozetler: dizi<KazanilanRozet>(nesne.rozetler),
+      oyunlar: oyunKayitlariniCoz(nesne.oyunlar),
       hedef: (nesne.hedef as Hedef | null) ?? null,
       // Yedek yükleyen kullanıcı uygulamayı zaten kurmuş demektir; kurulum tekrar sorulmaz
       ayarlar: { ...ayarlariNormalize(nesne.ayarlar as Ayarlar), kurulumTamamlandi: true },
       resimler: resimHaritasi(nesne.resimler),
     },
   }
+}
+
+/**
+ * Yedekteki mini oyun istatistiklerini süzer.
+ *
+ * Mini oyunlar yedeğe sonradan eklendi; eski yedeklerde alan hiç yok, o zaman
+ * boş kayıt dönüyor. Sayı olmayan alanlar 0'a çekiliyor: bozuk bir sayı rozet
+ * eşiklerinde NaN karşılaştırmasına dönüşür, rozet sessizce hiç gelmezdi.
+ */
+function oyunKayitlariniCoz(ham: unknown): OyunKayitlari {
+  if (typeof ham !== 'object' || ham === null) return {}
+  const temiz: OyunKayitlari = {}
+
+  for (const [id, deger] of Object.entries(ham as Record<string, unknown>)) {
+    if (typeof deger !== 'object' || deger === null) continue
+    const i = deger as Partial<OyunIstatistigi>
+    temiz[id as OyunId] = {
+      enIyiDogru: sayi(i.enIyiDogru),
+      oynananTur: sayi(i.oynananTur),
+      toplamDogru: sayi(i.toplamDogru),
+      toplamYanlis: sayi(i.toplamYanlis),
+      hatasizTur: sayi(i.hatasizTur),
+      sonTarih: typeof i.sonTarih === 'string' ? i.sonTarih : '',
+    }
+  }
+  return temiz
+}
+
+function sayi(deger: unknown): number {
+  return typeof deger === 'number' && Number.isFinite(deger) && deger > 0 ? Math.floor(deger) : 0
 }
 
 /** Yedekteki fotoğraf haritasını süzer — yalnızca `data:` ile başlayan değerler. */
@@ -277,6 +312,7 @@ export function yedegiUygula(yedek: Yedek) {
     yedek.yanlisSorular.filter((s) => gelenResimler.has(s.resimId)),
   )
   yaz(ANAHTARLAR.rozetler, yedek.rozetler)
+  yaz(ANAHTARLAR.oyunlar, yedek.oyunlar)
   yaz(ANAHTARLAR.hedef, yedek.hedef)
   yaz(ANAHTARLAR.ayarlar, yedek.ayarlar)
 }
