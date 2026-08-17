@@ -4,11 +4,12 @@ import { useState } from 'react'
 import { ChevronRight } from 'lucide-react'
 import type { OyunId, OyunKayitlari } from '@/lib/types'
 import { OYUNLAR, istatistikAl, oyunToplami } from '@/lib/oyunlar/tanim'
-import { istatistigiGuncelle, type TurOzeti } from '@/lib/oyunlar/yazim-oyunu'
+import { istatistigiGuncelle, type TurSayilari } from '@/lib/oyunlar/tur'
 import { tarihYaz } from '@/lib/hesap'
 import { bugun } from '@/lib/utils'
 import { BaslikSatiri, Deger, Not } from '@/components/ui'
 import { YazimOyunuEkrani } from '@/components/ekranlar/oyun-yazim'
+import { IslemOyunuEkrani } from '@/components/ekranlar/oyun-islem'
 
 /**
  * Mini oyun listesi.
@@ -27,7 +28,7 @@ export function MiniOyunlarEkrani({
   const [acikOyun, setAcikOyun] = useState<OyunId | null>(null)
   const toplam = oyunToplami(kayitlar)
 
-  const turBitti = (id: OyunId, ozet: TurOzeti) => {
+  const turBitti = (id: OyunId, ozet: TurSayilari) => {
     setKayitlar((onceki) => ({
       ...onceki,
       [id]: istatistigiGuncelle(onceki[id], ozet, bugun()),
@@ -87,6 +88,13 @@ export function MiniOyunlarEkrani({
         <YazimOyunuEkrani
           istatistik={istatistikAl(kayitlar, 'yazim')}
           onTurBitti={(ozet) => turBitti('yazim', ozet)}
+          onCik={() => setAcikOyun(null)}
+        />
+      )}
+      {acikOyun === 'islem' && (
+        <IslemOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'islem')}
+          onTurBitti={(ozet) => turBitti('islem', ozet)}
           onCik={() => setAcikOyun(null)}
         />
       )}

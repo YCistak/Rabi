@@ -5,20 +5,19 @@ import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
 import { Check, HelpCircle, RotateCcw, X } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
+import type { YazimSorusu } from '@/lib/oyunlar/yazim-havuzu'
 import { KURAL_ACIKLAMASI, KURAL_ADI } from '@/lib/oyunlar/yazim-havuzu'
+import { turHazirla, type OyunSorusu, type Sik } from '@/lib/oyunlar/yazim-oyunu'
 import {
   TUR_SURESI,
   YANLIS_CEZASI,
   kalanSaniye,
   rekorKirildiMi,
   sureOrani,
-  turHazirla,
   turOzeti,
   type Cevap,
-  type OyunSorusu,
-  type Sik,
   type TurOzeti,
-} from '@/lib/oyunlar/yazim-oyunu'
+} from '@/lib/oyunlar/tur'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
@@ -48,7 +47,7 @@ export function YazimOyunuEkrani({
   onCik,
 }: {
   istatistik: OyunIstatistigi
-  onTurBitti: (ozet: TurOzeti) => void
+  onTurBitti: (ozet: TurOzeti<YazimSorusu>) => void
   onCik: () => void
 }) {
   const oyun = oyunBul('yazim')
@@ -58,7 +57,7 @@ export function YazimOyunuEkrani({
 
   const [sorular, setSorular] = useState<OyunSorusu[]>([])
   const [sira, setSira] = useState(0)
-  const [cevaplar, setCevaplar] = useState<Cevap[]>([])
+  const [cevaplar, setCevaplar] = useState<Cevap<YazimSorusu>[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
 
   const [bitisZamani, setBitisZamani] = useState(0)
@@ -66,7 +65,7 @@ export function YazimOyunuEkrani({
   /** Yardım açıkken sayaç durur; kalan saniye burada bekletilir. */
   const [duraklatilan, setDuraklatilan] = useState<number | null>(null)
 
-  const [sonuc, setSonuc] = useState<{ ozet: TurOzeti; yeniRekor: boolean } | null>(null)
+  const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<YazimSorusu>; yeniRekor: boolean } | null>(null)
 
   // Tur başındaki rekor: sonuç ekranı "yeni rekor" derken güncellenmiş değerle
   // değil, tura girerken geçerli olan değerle karşılaştırmalı.
@@ -74,7 +73,7 @@ export function YazimOyunuEkrani({
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   /** Sayaç bittiğinde o ana kadarki cevaplar lazım; efekt `cevaplar`a bağlanırsa
    *  her cevapta yeniden kurulur ve sayaç zıplar. */
-  const cevaplarRef = useRef<Cevap[]>([])
+  const cevaplarRef = useRef<Cevap<YazimSorusu>[]>([])
   cevaplarRef.current = cevaplar
   /** Tur bir kez bitirilir: 250 ms'lik sayaç, `asama` değişmeden önce ikinci kez
    *  tetiklenirse istatistik iki kat sayılırdı. */
@@ -98,7 +97,7 @@ export function YazimOyunuEkrani({
   }, [istatistik.enIyiDogru])
 
   const turBitir = useCallback(
-    (verilenler: Cevap[]) => {
+    (verilenler: Cevap<YazimSorusu>[]) => {
       if (bittiRef.current) return
       bittiRef.current = true
       const ozet = turOzeti(verilenler)
@@ -320,7 +319,7 @@ function SonucGorunumu({
   onTekrar,
   onCik,
 }: {
-  sonuc: { ozet: TurOzeti; yeniRekor: boolean }
+  sonuc: { ozet: TurOzeti<YazimSorusu>; yeniRekor: boolean }
   rekor: number
   onTekrar: () => void
   onCik: () => void

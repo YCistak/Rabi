@@ -1,5 +1,5 @@
 import type { OyunId, OyunIstatistigi, OyunKayitlari } from '../types'
-import { BOS_ISTATISTIK, TUR_SURESI, YANLIS_CEZASI } from './yazim-oyunu'
+import { BOS_ISTATISTIK, TUR_SURESI, YANLIS_CEZASI } from './tur'
 import { HAVUZ_BOYUTU } from './yazim-havuzu'
 
 /**
@@ -34,6 +34,19 @@ export const OYUNLAR: OyunTanimi[] = [
       `Tur bitince yanlış bildiğin kelimeler kuralıyla birlikte listelenir — asıl öğrenme orada.`,
     ],
   },
+  {
+    id: 'islem',
+    ad: 'Zihinden İşlem',
+    kisaAciklama: 'İşlem hızını aç, sonucu tuşla yaz',
+    ikon: '🧮',
+    nasilOynanir: [
+      `Önce hangi işlemlerle çalışacağını seç — hepsi ya da yalnızca zorlandıkların.`,
+      `Ekranda bir işlem çıkar, sonucu alttaki tuş takımıyla yazıp onaylarsın.`,
+      `Turun süresi ${TUR_SURESI} saniye. Doğru cevap süreyi uzatmaz, ${YANLIS_CEZASI} saniyeyi yanlış cevap götürür. Takıldığında “pas geç” de aynı cezayı verir.`,
+      `Bütün sonuçlar tam sayı ve eksi değil; bölmede kalan çıkmaz, kök hep tam çıkar.`,
+      `Sorular her turda yeniden üretilir — ezberlenecek bir liste yok.`,
+    ],
+  },
 ]
 
 export function oyunBul(id: OyunId): OyunTanimi {
@@ -49,6 +62,8 @@ export type OyunToplami = {
   hatasizTur: number
   /** Bütün oyunlardaki en yüksek tek tur puanı. */
   enIyiDogru: number
+  /** En az bir tur oynanmış oyun sayısı. */
+  denenenOyun: number
 }
 
 /** Rozetlerin baktığı toplam. Oyun ayrımı yok: hepsi "mini oyun" sayılıyor. */
@@ -59,6 +74,9 @@ export function oyunToplami(kayitlar: OyunKayitlari): OyunToplami {
     toplamDogru: hepsi.reduce((t, i) => t + i.toplamDogru, 0),
     hatasizTur: hepsi.reduce((t, i) => t + i.hatasizTur, 0),
     enIyiDogru: hepsi.reduce((t, i) => Math.max(t, i.enIyiDogru), 0),
+    // Kayıt var ama hiç tur bitmemiş olabilir (oyun açılıp çıkılmış);
+    // "denedin" demek için en az bir tamamlanmış tur şart.
+    denenenOyun: hepsi.filter((i) => i.oynananTur > 0).length,
   }
 }
 

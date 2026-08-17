@@ -20,6 +20,7 @@ export type RozetTuru =
   | 'oyun-rekor'
   | 'oyun-hatasiz'
   | 'oyun-dogru'
+  | 'oyun-cesit'
 
 export type Rozet = {
   id: string
@@ -78,6 +79,8 @@ export const ROZETLER: Rozet[] = [
 
   { id: 'oyun-dogru-250', tur: 'oyun-dogru', esik: 250, ikon: '🔤', ad: '250 doğru', aciklama: 'Mini oyunlarda toplam 250 doğru cevap' },
   { id: 'oyun-dogru-1000', tur: 'oyun-dogru', esik: 1000, ikon: '📜', ad: '1000 doğru', aciklama: 'Mini oyunlarda toplam 1000 doğru cevap' },
+
+  { id: 'oyun-cesit-2', tur: 'oyun-cesit', esik: 2, ikon: '🎪', ad: 'İki oyun', aciklama: 'İki farklı mini oyunda tur bitirdin' },
 ]
 
 export const TUR_ADI: Record<RozetTuru, string> = {
@@ -89,6 +92,7 @@ export const TUR_ADI: Record<RozetTuru, string> = {
   'oyun-rekor': 'Mini oyun — tek tur rekoru',
   'oyun-hatasiz': 'Mini oyun — hatasız tur',
   'oyun-dogru': 'Mini oyun — toplam doğru',
+  'oyun-cesit': 'Mini oyun — çeşitlilik',
 }
 
 /**
@@ -105,6 +109,7 @@ export type RozetDurumu = {
   oyunRekoru: number
   oyunHatasiz: number
   oyunDogru: number
+  oyunCesidi: number
 }
 
 export function rozetDurumu({
@@ -131,6 +136,7 @@ export function rozetDurumu({
     oyunRekoru: oyun.enIyiDogru,
     oyunHatasiz: oyun.hatasizTur,
     oyunDogru: oyun.toplamDogru,
+    oyunCesidi: oyun.denenenOyun,
   }
 }
 
@@ -153,6 +159,8 @@ export function rozetDegeri(rozet: Rozet, durum: RozetDurumu): number {
       return durum.oyunHatasiz
     case 'oyun-dogru':
       return durum.oyunDogru
+    case 'oyun-cesit':
+      return durum.oyunCesidi
   }
 }
 

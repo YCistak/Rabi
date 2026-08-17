@@ -53,6 +53,7 @@ describe('rozetDurumu', () => {
       oyunRekoru: 0,
       oyunHatasiz: 0,
       oyunDogru: 0,
+      oyunCesidi: 0,
     })
   })
 
@@ -101,6 +102,31 @@ describe('rozetDurumu', () => {
     // Tek tur 25 doğruya yetmez, toplam 250'ye de.
     expect(idler).not.toContain('oyun-rekor-25')
     expect(idler).not.toContain('oyun-dogru-250')
+  })
+
+  /**
+   * Çeşitlilik rozeti tamamlanmış tura bakıyor: oyunu açıp çıkmak kayıt
+   * yaratmaz, ama bozuk/eski bir kayıtta 0 turlu bir satır bulunabilir.
+   */
+  it('çeşitlilik rozeti yalnızca tur bitirilen oyunları sayar', () => {
+    const bir = {
+      enIyiDogru: 5,
+      oynananTur: 1,
+      toplamDogru: 5,
+      toplamYanlis: 0,
+      hatasizTur: 1,
+      sonTarih: '2026-08-17',
+    }
+    const bosKayit = { ...bir, oynananTur: 0, enIyiDogru: 0, toplamDogru: 0, hatasizTur: 0 }
+    const durumla = (oyunlar: Parameters<typeof rozetDurumu>[0]['oyunlar']) =>
+      rozetDurumu({ denemeler: [], gunlukKayitlar: [], diplomaNotu: null, oyunlar })
+
+    expect(durumla({ yazim: bir, islem: bosKayit }).oyunCesidi).toBe(1)
+    expect(durumla({ yazim: bir, islem: bir }).oyunCesidi).toBe(2)
+    expect(hakEdilenler(durumla({ yazim: bir, islem: bir })).map((r) => r.id)).toContain(
+      'oyun-cesit-2',
+    )
+    expect(hakEdilenler(durumla({ yazim: bir })).map((r) => r.id)).not.toContain('oyun-cesit-2')
   })
 })
 

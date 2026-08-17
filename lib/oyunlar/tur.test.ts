@@ -9,10 +9,10 @@ import {
   karistir,
   rekorKirildiMi,
   sureOrani,
-  turHazirla,
   turOzeti,
   type Cevap,
-} from './yazim-oyunu'
+} from './tur'
+import { turHazirla } from './yazim-oyunu'
 
 /** Sabit sıra üreten sahte rastgele — testler tekrarlanabilir olsun. */
 function sahteRastgele(degerler: number[]): () => number {
@@ -93,7 +93,7 @@ describe('turHazirla', () => {
 })
 
 describe('turOzeti', () => {
-  const cevaplar: Cevap[] = [
+  const cevaplar: Cevap<YazimSorusu>[] = [
     { soru: ornek[0], dogruMu: true },
     { soru: ornek[1], dogruMu: false },
     { soru: ornek[2], dogruMu: true },

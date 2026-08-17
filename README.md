@@ -78,7 +78,7 @@ keyPassword=...
 | `lib/siralama.ts` | Puandan tahmini sıralama |
 | `lib/veri/` | ÖSYM katsayıları ve puan-sıralama tabloları |
 | `lib/depo.ts` | localStorage hook'u, yedekleme |
-| `lib/oyunlar/` | Mini oyunlar — tanım listesi, yazım havuzu, tur mantığı |
+| `lib/oyunlar/` | Mini oyunlar — ortak tur mantığı (`tur.ts`), tanım listesi, oyun havuzları |
 | `lib/ses.ts` | Pomodoro müziği — `public/ses/` altındaki CC0 lo-fi parçalar |
 | `public/ses/` | Lo-fi parçalar (CC0) + `LISANS.md` |
 
@@ -195,18 +195,38 @@ doldurulmadan ekranı kapatırdı.
 ### Mini oyun rozetleri
 
 Mini oyun rozetleri tek bir oyuna değil **bütün oyunların toplamına** bakıyor (oynanan tur,
-tek tur rekoru, hatasız tur, toplam doğru). Yeni bir oyun `lib/oyunlar/tanim.ts` içindeki
-listeye eklenip bir ekran yazıldığında rozetler onu kendiliğinden sayar; rozet mantığına
-dokunmak gerekmez.
+tek tur rekoru, hatasız tur, toplam doğru, tur bitirilen farklı oyun sayısı). Yeni bir oyun
+`lib/oyunlar/tanim.ts` içindeki listeye eklenip bir ekran yazıldığında rozetler onu
+kendiliğinden sayar; rozet mantığına dokunmak gerekmez.
 
 ## Mini oyunlar
 
 Her oyunun istatistiği `rabi-oyunlar` altında oyun kimliğine göre tutuluyor; tek tek turlar
 saklanmıyor, yalnızca özet (rekor, oynanan tur, toplam doğru/yanlış, hatasız tur).
 
-**Yazım Ustası.** 60 saniyelik tur, iki şıktan doğru yazılışı seçme. Doğru cevap süre
-kazandırmaz, yanlış cevap **3 saniye** götürür: cezasız bir turda rastgele dokunmak da aynı
-puanı getirirdi (iki şık var, %50 tutturulur).
+Süre (60 sn), yanlış cezası (3 sn) ve rekor kuralları `lib/oyunlar/tur.ts` içinde, **tek
+yerde**: oyunlar farklı süreyle çalışsaydı rekorlar karşılaştırılamaz, ortak rozetler de
+anlamını yitirirdi. Her oyun tam ekran bir katman olarak açılıyor (`z-50`, alt menünün
+üstünde) — süreli bir turda yanlışlıkla sekmeye basmak turu bitirirdi.
+
+**Yazım Ustası.** İki şıktan doğru yazılışı seçme. Doğru cevap süre kazandırmaz, yanlış cevap
+3 saniye götürür: cezasız bir turda rastgele dokunmak da aynı puanı getirirdi (iki şık var,
+%50 tutturulur).
+
+**Zihinden İşlem.** Toplama, çıkarma, çarpma, bölme, köklü ve üslü sorularından istenenler
+seçiliyor (seçim `rabi-islem-secimi` altında saklanıyor, son işlem kapatılamıyor). Cevap
+ekrandaki tuş takımından giriliyor; gerçek bir `<input>` kullanılsaydı Android'de sistem
+klavyesi açılıp hem soruyu hem tuşları örterdi.
+
+Sorular kayıtlı bir havuzdan gelmiyor, **üretiliyor** (`lib/oyunlar/islem.ts`) — ezberlenecek
+bir şey yok, sabit liste birkaç turda tekrara düşerdi. Bütün sonuçlar negatif olmayan tam
+sayı: tuş takımında eksi ve virgül yok, yazılamayan bir cevap soruyu cevapsız bırakırdı.
+Bölünen çarpımdan kuruluyor (kalanlı bölme hiç çıkmaz), kökler tam kare. Son 12 soruda
+görülen bir ifade tekrar üretilmiyor; arka arkaya gelen aynı işlem hesap değil hatırlama
+olurdu.
+
+Testler ekrandaki ifadeyi **bağımsız olarak** hesaplayıp `sonuc` ile karşılaştırıyor: üreteç
+metni ve cevabı ayrı ürettiği için ikisi ayrışırsa oyun sessizce yanlış cevap isterdi.
 
 Havuz (`lib/oyunlar/yazim-havuzu.ts`) TDK Yazım Kılavuzu ve ÖSYM'nin sık sorduğu başlıklardan
 derlendi; tek kelimelik girişlerin tamamı `scripts/havuz-dogrula.mjs` ile sozluk.gov.tr'ye

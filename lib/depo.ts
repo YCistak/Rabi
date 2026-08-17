@@ -33,6 +33,8 @@ export const ANAHTARLAR = {
   hedef: 'rabi-hedef',
   rozetler: 'rabi-rozetler',
   oyunlar: 'rabi-oyunlar',
+  /** Zihinden İşlem'de seçili işlem türleri — yedeğe girmeyen küçük bir tercih. */
+  islemSecimi: 'rabi-islem-secimi',
   ayarlar: 'rabi-ayarlar',
   tema: 'rabi-tema',
   sonBildirim: 'rabi-son-bildirim',

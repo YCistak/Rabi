@@ -187,7 +187,7 @@ export type PomodoroSeans = {
 // ---------------------------------------------------------------------------
 
 /** Mini oyun kimliği. Oyun tanımları `lib/oyunlar/tanim.ts` içinde. */
-export type OyunId = 'yazim'
+export type OyunId = 'yazim' | 'islem'
 
 /**
  * Bir mini oyunun kalıcı istatistiği.

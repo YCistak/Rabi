@@ -17,6 +17,7 @@ export function OyunTanitim({
   acik,
   rekor,
   baslatir,
+  ekstra,
   onBasla,
   onKapat,
 }: {
@@ -26,6 +27,11 @@ export function OyunTanitim({
   rekor: number
   /** Düğme turu başlatıyor mu, yoksa yalnızca pencereyi mi kapatıyor. */
   baslatir: boolean
+  /**
+   * Oyuna özgü başlangıç seçimi (Zihinden İşlem'de işlem türleri). Tur devam
+   * ederken "?" ile açılan pencerede verilmez — ayar tur ortasında değişmemeli.
+   */
+  ekstra?: React.ReactNode
   onBasla: () => void
   onKapat: () => void
 }) {
@@ -57,6 +63,8 @@ export function OyunTanitim({
             </li>
           ))}
         </ol>
+
+        {ekstra && <div className="mt-4 border-t border-border pt-4">{ekstra}</div>}
 
         {rekor > 0 && (
           <p className="mt-4 rounded-xl bg-muted/70 px-3 py-2.5 text-sm text-muted-foreground">
