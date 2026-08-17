@@ -10,6 +10,7 @@ import { bugun } from '@/lib/utils'
 import { BaslikSatiri, Deger, Not } from '@/components/ui'
 import { YazimOyunuEkrani } from '@/components/ekranlar/oyun-yazim'
 import { IslemOyunuEkrani } from '@/components/ekranlar/oyun-islem'
+import { EdebiyatOyunuEkrani } from '@/components/ekranlar/oyun-edebiyat'
 
 /**
  * Mini oyun listesi.
@@ -45,7 +46,7 @@ export function MiniOyunlarEkrani({
       <div className="mb-4 grid grid-cols-3 gap-3">
         <Deger etiket="Oynanan tur" deger={String(toplam.oynananTur)} />
         <Deger etiket="Toplam doğru" deger={String(toplam.toplamDogru)} vurgu />
-        <Deger etiket="Hatasız tur" deger={String(toplam.hatasizTur)} />
+        <Deger etiket="En iyi seri" deger={String(toplam.enIyiSeri)} />
       </div>
 
       <ul className="space-y-3">
@@ -95,6 +96,13 @@ export function MiniOyunlarEkrani({
         <IslemOyunuEkrani
           istatistik={istatistikAl(kayitlar, 'islem')}
           onTurBitti={(ozet) => turBitti('islem', ozet)}
+          onCik={() => setAcikOyun(null)}
+        />
+      )}
+      {acikOyun === 'edebiyat' && (
+        <EdebiyatOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'edebiyat')}
+          onTurBitti={(ozet) => turBitti('edebiyat', ozet)}
           onCik={() => setAcikOyun(null)}
         />
       )}

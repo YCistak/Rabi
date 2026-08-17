@@ -54,6 +54,7 @@ describe('rozetDurumu', () => {
       oyunHatasiz: 0,
       oyunDogru: 0,
       oyunCesidi: 0,
+      oyunSerisi: 0,
     })
   })
 
@@ -65,6 +66,7 @@ describe('rozetDurumu', () => {
       oyunlar: {
         yazim: {
           enIyiDogru: 23,
+          enIyiSeri: 7,
           oynananTur: 4,
           toplamDogru: 61,
           toplamYanlis: 9,
@@ -87,6 +89,7 @@ describe('rozetDurumu', () => {
       oyunlar: {
         yazim: {
           enIyiDogru: 16,
+          enIyiSeri: 16,
           oynananTur: 1,
           toplamDogru: 16,
           toplamYanlis: 0,
@@ -111,13 +114,14 @@ describe('rozetDurumu', () => {
   it('çeşitlilik rozeti yalnızca tur bitirilen oyunları sayar', () => {
     const bir = {
       enIyiDogru: 5,
+      enIyiSeri: 5,
       oynananTur: 1,
       toplamDogru: 5,
       toplamYanlis: 0,
       hatasizTur: 1,
       sonTarih: '2026-08-17',
     }
-    const bosKayit = { ...bir, oynananTur: 0, enIyiDogru: 0, toplamDogru: 0, hatasizTur: 0 }
+    const bosKayit = { ...bir, oynananTur: 0, enIyiDogru: 0, enIyiSeri: 0, toplamDogru: 0, hatasizTur: 0 }
     const durumla = (oyunlar: Parameters<typeof rozetDurumu>[0]['oyunlar']) =>
       rozetDurumu({ denemeler: [], gunlukKayitlar: [], diplomaNotu: null, oyunlar })
 

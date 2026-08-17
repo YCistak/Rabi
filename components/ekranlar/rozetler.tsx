@@ -25,6 +25,7 @@ const TUR_SIRASI: RozetTuru[] = [
   'oyun-rekor',
   'oyun-hatasiz',
   'oyun-dogru',
+  'oyun-seri',
   'oyun-cesit',
 ]
 

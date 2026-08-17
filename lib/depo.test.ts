@@ -96,6 +96,7 @@ describe('yedegiDogrula', () => {
     })
     expect(yedek.oyunlar.yazim).toEqual({
       enIyiDogru: 0,
+      enIyiSeri: 0,
       oynananTur: 0,
       toplamDogru: 0,
       toplamYanlis: 0,

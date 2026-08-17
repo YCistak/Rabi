@@ -34,6 +34,8 @@ export type TurOzeti<T> = {
   yanlislar: T[]
   /** Hiç yanlış yapılmadı mı. En az bir cevap gerekiyor. */
   hatasiz: boolean
+  /** Tur içindeki en uzun ardışık doğru dizisi. */
+  enIyiSeri: number
 }
 
 /** İstatistiğe yazılan asgari özet; hangi oyun olduğu bu noktada önemli değil. */
@@ -41,6 +43,7 @@ export type TurSayilari = {
   dogru: number
   yanlis: number
   hatasiz: boolean
+  enIyiSeri: number
 }
 
 export function turOzeti<T>(cevaplar: readonly Cevap<T>[]): TurOzeti<T> {
@@ -53,7 +56,33 @@ export function turOzeti<T>(cevaplar: readonly Cevap<T>[]): TurOzeti<T> {
     oran: cevaplar.length > 0 ? dogru / cevaplar.length : 0,
     yanlislar: cevaplar.filter((c) => !c.dogruMu).map((c) => c.soru),
     hatasiz: cevaplar.length > 0 && yanlis === 0,
+    enIyiSeri: enIyiSeri(cevaplar),
   }
+}
+
+/**
+ * Seri = arka arkaya verilen doğru cevap sayısı.
+ *
+ * Puanı etkilemiyor, ayrı bir ölçü olarak duruyor: seri çarpanı olsaydı eski
+ * turlarda kurulan rekorlar yeni turlarla karşılaştırılamaz hâle gelirdi.
+ * Yine de "kaç tanesini üst üste bildim" sorusu, toplam doğrudan farklı ve
+ * gerçek bir beceri göstergesi.
+ */
+export function enIyiSeri(cevaplar: readonly { dogruMu: boolean }[]): number {
+  let enIyi = 0
+  let simdiki = 0
+  for (const cevap of cevaplar) {
+    simdiki = cevap.dogruMu ? simdiki + 1 : 0
+    if (simdiki > enIyi) enIyi = simdiki
+  }
+  return enIyi
+}
+
+/** Şu an devam eden seri — sondan geriye kaç doğru üst üste. */
+export function guncelSeri(cevaplar: readonly { dogruMu: boolean }[]): number {
+  let sayi = 0
+  for (let i = cevaplar.length - 1; i >= 0 && cevaplar[i].dogruMu; i--) sayi++
+  return sayi
 }
 
 /**
@@ -101,11 +130,24 @@ export function sureOrani(kalan: number, toplam = TUR_SURESI): number {
 
 export const BOS_ISTATISTIK: OyunIstatistigi = {
   enIyiDogru: 0,
+  enIyiSeri: 0,
   oynananTur: 0,
   toplamDogru: 0,
   toplamYanlis: 0,
   hatasizTur: 0,
   sonTarih: '',
+}
+
+/**
+ * Kayıtlı istatistiği güncel şemaya tamamlar.
+ *
+ * Gerekli, çünkü kayıtlar `useYerelDepo` ile ham JSON olarak okunuyor: sürüm
+ * yükseltmesinde eklenen bir alan (`enIyiSeri` gibi) eski kayıtlarda yok ve
+ * `Math.max(0, undefined)` NaN veriyor. NaN bir kez toplama karışınca hem ekranda
+ * "NaN" yazıyor hem de her rozet eşiği sessizce sağlanamaz hâle geliyor.
+ */
+export function istatistigiTamamla(ham: Partial<OyunIstatistigi> | undefined): OyunIstatistigi {
+  return { ...BOS_ISTATISTIK, ...ham }
 }
 
 /** Biten turu istatistiğe işler. Rekor kırılmadıysa `enIyiDogru` korunur. */
@@ -114,9 +156,10 @@ export function istatistigiGuncelle(
   ozet: TurSayilari,
   tarih: string,
 ): OyunIstatistigi {
-  const onceki = mevcut ?? BOS_ISTATISTIK
+  const onceki = istatistigiTamamla(mevcut)
   return {
     enIyiDogru: Math.max(onceki.enIyiDogru, ozet.dogru),
+    enIyiSeri: Math.max(onceki.enIyiSeri, ozet.enIyiSeri),
     oynananTur: onceki.oynananTur + 1,
     toplamDogru: onceki.toplamDogru + ozet.dogru,
     toplamYanlis: onceki.toplamYanlis + ozet.yanlis,

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
-import { Check, Delete, HelpCircle, RotateCcw, SkipForward, X } from 'lucide-react'
+import { Check, Delete, RotateCcw, SkipForward } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
 import {
   ISLEM_ADI,
@@ -16,9 +16,9 @@ import {
 import {
   TUR_SURESI,
   YANLIS_CEZASI,
+  guncelSeri,
   kalanSaniye,
   rekorKirildiMi,
-  sureOrani,
   turOzeti,
   type Cevap,
   type TurOzeti,
@@ -29,6 +29,7 @@ import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
 import { Buton, Cip, Deger } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
+import { OyunKabugu } from '@/components/oyun-kabuk'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
 /** Doğru cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms). */
@@ -236,29 +237,24 @@ export function IslemOyunuEkrani({
   const soru = sorular[sira]
 
   return (
-    // z-50: alt menü z-40'ta duruyor, oyun onun da üstünde olmalı.
-    <div className="fixed inset-0 z-50 flex flex-col bg-background">
-      <div className="guvenli-alt mx-auto flex w-full max-w-md flex-1 flex-col overflow-y-auto px-4 pt-4">
-        <div className="flex items-center justify-between">
-          <button
-            type="button"
-            onClick={onCik}
-            aria-label="Oyundan çık"
-            className="-ml-2 rounded-full p-2 text-muted-foreground active:bg-muted"
-          >
-            <X size={20} aria-hidden />
-          </button>
-          <p className="font-display text-base font-semibold">{oyun.ad}</p>
-          <button
-            type="button"
-            onClick={yardimAc}
-            aria-label="Nasıl oynanır"
-            className="-mr-2 rounded-full p-2 text-muted-foreground active:bg-muted"
-          >
-            <HelpCircle size={20} aria-hidden />
-          </button>
-        </div>
-
+    <>
+      <OyunKabugu
+        baslik={oyun.ad}
+        sayac={
+          asama === 'bitti'
+            ? null
+            : {
+                kalan: gorunenKalan,
+                seri: guncelSeri(cevaplar),
+                dogru: dogruSayisi,
+                yanlis: cevaplar.length - dogruSayisi,
+                enIyiSeri: turOzeti(cevaplar).enIyiSeri,
+                rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
+              }
+        }
+        onCik={onCik}
+        onYardim={yardimAc}
+      >
         {asama === 'bitti' && sonuc ? (
           <SonucGorunumu
             sonuc={sonuc}
@@ -267,47 +263,31 @@ export function IslemOyunuEkrani({
             onCik={onCik}
           />
         ) : (
-          <>
-            <div className="mt-4 grid grid-cols-4 gap-1.5">
-              <Deger className="px-2" etiket="Doğru" deger={String(dogruSayisi)} vurgu />
-              <Deger className="px-2" etiket="Yanlış" deger={String(yanlisSayisi)} />
-              <Deger className="px-2" etiket="Süre" deger={String(gorunenKalan)} altNot="sn" />
-              <Deger className="px-2" etiket="Rekor" deger={String(rekor)} />
-            </div>
+          asama === 'oynaniyor' &&
+          soru && (
+            <>
+              {/* İşlem türü ("Çarpma", "Bölme") bilerek yazılmıyor: köklü ve
+                  üslü sorularda hangi işlemin sorulduğunu söylemek, sorunun
+                  yarısını söylemek olurdu. */}
+              <div className="flex flex-1 flex-col items-center justify-center py-6">
+                <p className="rakam font-display text-5xl font-semibold tracking-tight">
+                  {soru.metin}
+                </p>
+                <CevapAlani girilen={girilen} geriBildirim={geriBildirim} />
+              </div>
 
-            <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
-              <div
-                className={cn(
-                  'h-full rounded-full transition-[width] duration-200',
-                  gorunenKalan <= 10 ? 'bg-danger' : 'bg-primary',
-                )}
-                style={{ width: `${sureOrani(gorunenKalan) * 100}%` }}
+              <TusTakimi
+                kilitli={geriBildirim !== null}
+                bosMu={girilen === ''}
+                onRakam={rakamYaz}
+                onSil={sil}
+                onOnayla={() => cevapla(false)}
+                onPas={() => cevapla(true)}
               />
-            </div>
-
-            {asama === 'oynaniyor' && soru && (
-              <>
-                <div className="flex flex-1 flex-col items-center justify-center py-6">
-                  <p className="rakam font-display text-5xl font-semibold tracking-tight">
-                    {soru.metin}
-                  </p>
-                  <CevapAlani girilen={girilen} geriBildirim={geriBildirim} />
-                  <p className="mt-3 text-xs text-muted-foreground">{ISLEM_ADI[soru.tur]}</p>
-                </div>
-
-                <TusTakimi
-                  kilitli={geriBildirim !== null}
-                  bosMu={girilen === ''}
-                  onRakam={rakamYaz}
-                  onSil={sil}
-                  onOnayla={() => cevapla(false)}
-                  onPas={() => cevapla(true)}
-                />
-              </>
-            )}
-          </>
+            </>
+          )
         )}
-      </div>
+      </OyunKabugu>
 
       <OyunTanitim
         oyun={oyun}
@@ -316,13 +296,9 @@ export function IslemOyunuEkrani({
         baslatir={asama === 'tanitim'}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
-        ekstra={
-          asama === 'tanitim' ? (
-            <IslemSecimi secili={secili} onDegis={turDegistir} />
-          ) : null
-        }
+        ekstra={asama === 'tanitim' ? <IslemSecimi secili={secili} onDegis={turDegistir} /> : null}
       />
-    </div>
+    </>
   )
 }
 
@@ -520,10 +496,11 @@ function SonucGorunumu({
         )}
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-2">
-        <Deger etiket="Doğru" deger={String(ozet.dogru)} vurgu />
-        <Deger etiket="Yanlış" deger={String(ozet.yanlis)} />
-        <Deger etiket="Başarı" deger={`%${yuzde}`} altNot={`rekor ${rekor}`} />
+      <div className="mt-4 grid grid-cols-4 gap-2">
+        <Deger className="px-2" etiket="Doğru" deger={String(ozet.dogru)} vurgu />
+        <Deger className="px-2" etiket="Yanlış" deger={String(ozet.yanlis)} />
+        <Deger className="px-2" etiket="Seri" deger={String(ozet.enIyiSeri)} />
+        <Deger className="px-2" etiket="Başarı" deger={`%${yuzde}`} altNot={`rekor ${rekor}`} />
       </div>
 
       {ozet.yanlislar.length > 0 && (

@@ -187,7 +187,7 @@ export type PomodoroSeans = {
 // ---------------------------------------------------------------------------
 
 /** Mini oyun kimliği. Oyun tanımları `lib/oyunlar/tanim.ts` içinde. */
-export type OyunId = 'yazim' | 'islem'
+export type OyunId = 'yazim' | 'islem' | 'edebiyat'
 
 /**
  * Bir mini oyunun kalıcı istatistiği.
@@ -198,6 +198,8 @@ export type OyunId = 'yazim' | 'islem'
 export type OyunIstatistigi = {
   /** Tek turda çıkarılan en yüksek doğru sayısı — oyunun rekoru. */
   enIyiDogru: number
+  /** Şimdiye kadarki en uzun ardışık doğru dizisi. */
+  enIyiSeri: number
   oynananTur: number
   toplamDogru: number
   toplamYanlis: number

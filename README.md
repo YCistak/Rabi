@@ -204,10 +204,24 @@ kendiliğinden sayar; rozet mantığına dokunmak gerekmez.
 Her oyunun istatistiği `rabi-oyunlar` altında oyun kimliğine göre tutuluyor; tek tek turlar
 saklanmıyor, yalnızca özet (rekor, oynanan tur, toplam doğru/yanlış, hatasız tur).
 
-Süre (60 sn), yanlış cezası (3 sn) ve rekor kuralları `lib/oyunlar/tur.ts` içinde, **tek
-yerde**: oyunlar farklı süreyle çalışsaydı rekorlar karşılaştırılamaz, ortak rozetler de
-anlamını yitirirdi. Her oyun tam ekran bir katman olarak açılıyor (`z-50`, alt menünün
-üstünde) — süreli bir turda yanlışlıkla sekmeye basmak turu bitirirdi.
+Süre (60 sn), yanlış cezası (3 sn), seri ve rekor kuralları `lib/oyunlar/tur.ts` içinde,
+**tek yerde**: oyunlar farklı süreyle çalışsaydı rekorlar karşılaştırılamaz, ortak rozetler
+de anlamını yitirirdi. Arayüzün üst bilgisi (kapat, süre halkası, çubuk, dört sayaç) de tek
+bileşende — `components/oyun-kabuk.tsx`. Her oyun tam ekran bir katman olarak açılıyor
+(`z-50`, alt menünün üstünde): süreli bir turda yanlışlıkla sekmeye basmak turu bitirirdi.
+
+**Seri puanı etkilemiyor.** Ardışık doğru sayısı ayrı bir ölçü olarak duruyor; seri çarpanı
+olsaydı eski turlarda kurulan rekorlar yenileriyle karşılaştırılamaz hâle gelirdi.
+
+Oynarken sorunun **kuralı/türü yazılmıyor**. Yazılıyordu ve cevabı ele veriyordu: "Bitişik
+yazılır" notunun altında biri ayrı biri bitişik iki şık varsa okumaya gerek kalmıyor, "Bölme"
+yazısı da köklü/üslü sorularda sorunun yarısını söylüyordu. Kural, tur bitince yanlışların
+listesinde çıkıyor — öğretmesi gereken yer orası.
+
+`OyunIstatistigi`'ne alan eklerken `istatistigiTamamla()` üzerinden okuyun: kayıtlar
+localStorage'dan ham JSON geliyor, eski kayıtta olmayan bir alan `Math.max(0, undefined)`
+ile NaN üretiyor ve NaN bir kez toplama karışınca hem ekranda görünüyor hem de bütün rozet
+eşiklerini sessizce sağlanamaz yapıyor.
 
 **Yazım Ustası.** İki şıktan doğru yazılışı seçme. Doğru cevap süre kazandırmaz, yanlış cevap
 3 saniye götürür: cezasız bir turda rastgele dokunmak da aynı puanı getirirdi (iki şık var,
@@ -227,6 +241,20 @@ olurdu.
 
 Testler ekrandaki ifadeyi **bağımsız olarak** hesaplayıp `sonuc` ile karşılaştırıyor: üreteç
 metni ve cevabı ayrı ürettiği için ikisi ayrışırsa oyun sessizce yanlış cevap isterdi.
+
+**Edebiyat Eşleştirme.** Altı eser, altı yazar; eşleşen çift yeşile döner ve **yerinde kalır**
+— silinselerdi ızgara her eşleşmede yeniden dizilir, parmak gitmek istediği kutuyu kaybederdi.
+Altısı bitince yeni altılı geliyor, arada ekran yok.
+
+Bir elde aynı yazardan iki eser olmuyor: olsaydı o yazarın tuşu iki esere birden uyar, doğru
+cevap yanlış sayılırdı. Eller mümkün oldukça **tek dönemden** kuruluyor; dönemler karışsaydı
+öğrenci esere değil çağrışıma bakardı ("bu isim eski duruyor"). Yeterli yazar kalmayınca
+karışık ele düşülüyor, oyun soru bulamayıp durmuyor.
+
+Anonim eserler (Dede Korkut, Battalname, halk destanları) havuza **alınmadı**: karşılığında
+bir yazar tuşu olmayan eser, cevabı olmayan soru demek. Ekranın altında tur boyunca kurulan
+eşleşmeler birikiyor — boşluk doldurmak için değil, doğru bildiğin çifti dönemiyle bir kez
+daha göstermek için.
 
 Havuz (`lib/oyunlar/yazim-havuzu.ts`) TDK Yazım Kılavuzu ve ÖSYM'nin sık sorduğu başlıklardan
 derlendi; tek kelimelik girişlerin tamamı `scripts/havuz-dogrula.mjs` ile sozluk.gov.tr'ye

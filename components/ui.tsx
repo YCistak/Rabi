@@ -270,12 +270,15 @@ export function Halka({
   hedef,
   boyut = 132,
   kalinlik = 10,
+  renk,
   children,
 }: {
   deger: number
   hedef: number
   boyut?: number
   kalinlik?: number
+  /** Rengi sabitler. Verilmezse dolunca yeşile döner (günlük hedef davranışı). */
+  renk?: string
   children?: React.ReactNode
 }) {
   const yaricap = (boyut - kalinlik) / 2
@@ -298,7 +301,7 @@ export function Halka({
           cy={boyut / 2}
           r={yaricap}
           fill="none"
-          stroke={oran >= 1 ? 'var(--ikincil)' : 'var(--primary)'}
+          stroke={renk ?? (oran >= 1 ? 'var(--ikincil)' : 'var(--primary)')}
           strokeWidth={kalinlik}
           strokeLinecap="round"
           strokeDasharray={cevre}

@@ -4,6 +4,8 @@ import { YAZIM_HAVUZU } from './yazim-havuzu'
 import {
   BOS_ISTATISTIK,
   TUR_SURESI,
+  enIyiSeri,
+  guncelSeri,
   istatistigiGuncelle,
   kalanSaniye,
   karistir,
@@ -120,6 +122,29 @@ describe('turOzeti', () => {
   })
 })
 
+describe('seri', () => {
+  const dizi = (desen: string): Cevap<YazimSorusu>[] =>
+    [...desen].map((k) => ({ soru: ornek[0], dogruMu: k === 'd' }))
+
+  it('en uzun ardışık doğruyu bulur', () => {
+    expect(enIyiSeri(dizi('ddyddd'))).toBe(3)
+    expect(enIyiSeri(dizi('yyy'))).toBe(0)
+    expect(enIyiSeri(dizi(''))).toBe(0)
+    expect(enIyiSeri(dizi('dddd'))).toBe(4)
+  })
+
+  it('güncel seri sondan sayılır', () => {
+    expect(guncelSeri(dizi('dddyd'))).toBe(1)
+    expect(guncelSeri(dizi('ydd'))).toBe(2)
+    // Son cevap yanlışsa seri sıfırlanır — ekrandaki ateş söner.
+    expect(guncelSeri(dizi('dddy'))).toBe(0)
+  })
+
+  it('tur özeti en iyi seriyi taşır', () => {
+    expect(turOzeti(dizi('ddydddd')).enIyiSeri).toBe(4)
+  })
+})
+
 describe('sayaç', () => {
   it('kalan saniye hedef zamandan hesaplanır', () => {
     expect(kalanSaniye(10_000, 0)).toBe(10)
@@ -153,6 +178,7 @@ describe('istatistik', () => {
     const sonuc = istatistigiGuncelle(undefined, iyiTur, '2026-08-17')
     expect(sonuc).toEqual({
       enIyiDogru: 2,
+      enIyiSeri: 2,
       oynananTur: 1,
       toplamDogru: 2,
       toplamYanlis: 0,
@@ -169,6 +195,8 @@ describe('istatistik', () => {
     expect(sonra.toplamDogru).toBe(3)
     expect(sonra.toplamYanlis).toBe(1)
     expect(sonra.hatasizTur).toBe(1)
+    // Seri de rekor gibi: daha kısa bir tur onu düşürmez.
+    expect(sonra.enIyiSeri).toBe(2)
   })
 
   it('rekor yalnızca gerçekten geçilince kırılır', () => {

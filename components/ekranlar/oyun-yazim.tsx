@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
-import { Check, HelpCircle, RotateCcw, X } from 'lucide-react'
+import { Check, RotateCcw, X } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
 import type { YazimSorusu } from '@/lib/oyunlar/yazim-havuzu'
 import { KURAL_ACIKLAMASI, KURAL_ADI } from '@/lib/oyunlar/yazim-havuzu'
@@ -11,9 +11,9 @@ import { turHazirla, type OyunSorusu, type Sik } from '@/lib/oyunlar/yazim-oyunu
 import {
   TUR_SURESI,
   YANLIS_CEZASI,
+  guncelSeri,
   kalanSaniye,
   rekorKirildiMi,
-  sureOrani,
   turOzeti,
   type Cevap,
   type TurOzeti,
@@ -22,7 +22,8 @@ import { oyunBul } from '@/lib/oyunlar/tanim'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
 import { Buton, Deger } from '@/components/ui'
-import { Rabi } from '@/components/maskot/rabi'
+import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
+import { OyunKabugu } from '@/components/oyun-kabuk'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
 /** Doğru cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms). */
@@ -37,9 +38,10 @@ type GeriBildirim = { secilenMetin: string; dogruMu: boolean }
 /**
  * Yazım Ustası — mini oyun.
  *
- * Tam ekran bir katman olarak açılıyor (alt menü ve "Geri" düğmesi dahil her
- * şeyin üstüne): süreli bir oyunda yanlışlıkla sekmeye basmak turu mahveder.
- * Android geri tuşu `useGeriKatmani` ile oyundan çıkarıyor.
+ * Oynarken kelimenin **kuralı yazılmıyor**. Yazılıyordu ve cevabı ele veriyordu:
+ * "Bitişik yazılır" notunun altında biri ayrı biri bitişik iki şık varsa okumaya
+ * bile gerek kalmıyordu. Kural, tur bitince yanlışların listesinde çıkıyor —
+ * öğretmesi gereken yer orası.
  */
 export function YazimOyunuEkrani({
   istatistik,
@@ -65,7 +67,9 @@ export function YazimOyunuEkrani({
   /** Yardım açıkken sayaç durur; kalan saniye burada bekletilir. */
   const [duraklatilan, setDuraklatilan] = useState<number | null>(null)
 
-  const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<YazimSorusu>; yeniRekor: boolean } | null>(null)
+  const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<YazimSorusu>; yeniRekor: boolean } | null>(
+    null,
+  )
 
   // Tur başındaki rekor: sonuç ekranı "yeni rekor" derken güncellenmiş değerle
   // değil, tura girerken geçerli olan değerle karşılaştırmalı.
@@ -101,7 +105,10 @@ export function YazimOyunuEkrani({
       if (bittiRef.current) return
       bittiRef.current = true
       const ozet = turOzeti(verilenler)
-      setSonuc({ ozet, yeniRekor: rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet) })
+      setSonuc({
+        ozet,
+        yeniRekor: rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
+      })
       setAsama('bitti')
       onTurBitti(ozet)
     },
@@ -179,36 +186,34 @@ export function YazimOyunuEkrani({
   }
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
-  const yanlisSayisi = cevaplar.length - dogruSayisi
   const gorunenKalan = duraklatilan ?? kalan
-  const rekor = Math.max(istatistik.enIyiDogru, dogruSayisi)
   const soru = sorular[sira]
 
-  return (
-    // z-50: alt menü z-40'ta duruyor, oyun onun da üstünde olmalı — süreli bir
-    // turda yanlışlıkla sekmeye basmak turu bitirirdi.
-    <div className="fixed inset-0 z-50 flex flex-col bg-background">
-      <div className="guvenli-alt mx-auto flex w-full max-w-md flex-1 flex-col overflow-y-auto px-4 pt-4">
-        <div className="flex items-center justify-between">
-          <button
-            type="button"
-            onClick={onCik}
-            aria-label="Oyundan çık"
-            className="-ml-2 rounded-full p-2 text-muted-foreground active:bg-muted"
-          >
-            <X size={20} aria-hidden />
-          </button>
-          <p className="font-display text-base font-semibold">{oyun.ad}</p>
-          <button
-            type="button"
-            onClick={yardimAc}
-            aria-label="Nasıl oynanır"
-            className="-mr-2 rounded-full p-2 text-muted-foreground active:bg-muted"
-          >
-            <HelpCircle size={20} aria-hidden />
-          </button>
-        </div>
+  const maskotDurumu: MaskotDurumu = geriBildirim
+    ? geriBildirim.dogruMu
+      ? 'kutlama'
+      : 'uzgun'
+    : 'calisiyor'
 
+  return (
+    <>
+      <OyunKabugu
+        baslik={oyun.ad}
+        sayac={
+          asama === 'bitti'
+            ? null
+            : {
+                kalan: gorunenKalan,
+                seri: guncelSeri(cevaplar),
+                dogru: dogruSayisi,
+                yanlis: cevaplar.length - dogruSayisi,
+                enIyiSeri: turOzeti(cevaplar).enIyiSeri,
+                rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
+              }
+        }
+        onCik={onCik}
+        onYardim={yardimAc}
+      >
         {asama === 'bitti' && sonuc ? (
           <SonucGorunumu
             sonuc={sonuc}
@@ -217,47 +222,26 @@ export function YazimOyunuEkrani({
             onCik={onCik}
           />
         ) : (
-          <>
-            <div className="mt-4 grid grid-cols-4 gap-1.5">
-              <Deger className="px-2" etiket="Doğru" deger={String(dogruSayisi)} vurgu />
-              <Deger className="px-2" etiket="Yanlış" deger={String(yanlisSayisi)} />
-              <Deger className="px-2" etiket="Süre" deger={String(gorunenKalan)} altNot="sn" />
-              <Deger className="px-2" etiket="Rekor" deger={String(rekor)} />
-            </div>
+          asama === 'oynaniyor' &&
+          soru && (
+            <div className="flex flex-1 flex-col items-center justify-center py-5">
+              <Rabi durum={maskotDurumu} boyut={84} />
+              <p className="mb-4 mt-2 font-display text-lg font-semibold">Doğru yazımı seç</p>
 
-            <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
-              <div
-                className={cn(
-                  'h-full rounded-full transition-[width] duration-200',
-                  gorunenKalan <= 10 ? 'bg-danger' : 'bg-primary',
-                )}
-                style={{ width: `${sureOrani(gorunenKalan) * 100}%` }}
-              />
-            </div>
-
-            {asama === 'oynaniyor' && soru && (
-              <div className="flex flex-1 flex-col justify-center py-6">
-                <p className="mb-4 text-center text-sm text-muted-foreground">
-                  Hangisi doğru yazılmış?
-                </p>
-                <div className="space-y-3">
-                  {soru.siklar.map((sik) => (
-                    <SikDugmesi
-                      key={sik.metin}
-                      sik={sik}
-                      geriBildirim={geriBildirim}
-                      onSec={() => cevapla(sik)}
-                    />
-                  ))}
-                </div>
-                <p className="mt-5 text-center text-xs text-muted-foreground">
-                  {KURAL_ADI[soru.soru.kural]}
-                </p>
+              <div className="w-full space-y-3">
+                {soru.siklar.map((sik) => (
+                  <SikDugmesi
+                    key={sik.metin}
+                    sik={sik}
+                    geriBildirim={geriBildirim}
+                    onSec={() => cevapla(sik)}
+                  />
+                ))}
               </div>
-            )}
-          </>
+            </div>
+          )
         )}
-      </div>
+      </OyunKabugu>
 
       <OyunTanitim
         oyun={oyun}
@@ -267,7 +251,7 @@ export function YazimOyunuEkrani({
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
       />
-    </div>
+    </>
   )
 }
 
@@ -330,7 +314,10 @@ function SonucGorunumu({
   return (
     <div className="flex-1 py-4">
       <div className="flex flex-col items-center text-center">
-        <Rabi durum={yeniRekor || ozet.hatasiz ? 'kutlama' : ozet.oran >= 0.6 ? 'mutlu' : 'normal'} boyut={104} />
+        <Rabi
+          durum={yeniRekor || ozet.hatasiz ? 'kutlama' : ozet.oran >= 0.6 ? 'mutlu' : 'normal'}
+          boyut={104}
+        />
         <p className="mt-2 font-display text-2xl font-semibold tracking-tight">
           {yeniRekor ? 'Yeni rekor!' : 'Süre bitti'}
         </p>
@@ -339,23 +326,24 @@ function SonucGorunumu({
         )}
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-2">
-        <Deger etiket="Doğru" deger={String(ozet.dogru)} vurgu />
-        <Deger etiket="Yanlış" deger={String(ozet.yanlis)} />
-        <Deger etiket="Başarı" deger={`%${yuzde}`} altNot={`rekor ${rekor}`} />
+      <div className="mt-4 grid grid-cols-4 gap-2">
+        <Deger className="px-2" etiket="Doğru" deger={String(ozet.dogru)} vurgu />
+        <Deger className="px-2" etiket="Yanlış" deger={String(ozet.yanlis)} />
+        <Deger className="px-2" etiket="Seri" deger={String(ozet.enIyiSeri)} />
+        <Deger className="px-2" etiket="Başarı" deger={`%${yuzde}`} altNot={`rekor ${rekor}`} />
       </div>
 
       {ozet.yanlislar.length > 0 && (
         <section className="mt-5">
-          <h2 className="mb-2 text-sm font-medium text-muted-foreground">
-            Yanlış bildiklerin
-          </h2>
+          <h2 className="mb-2 text-sm font-medium text-muted-foreground">Yanlış bildiklerin</h2>
           <ul className="space-y-2">
             {ozet.yanlislar.map((yanlis) => (
               <li key={yanlis.dogru} className="rounded-2xl border border-border bg-card p-3">
                 <p className="font-medium">
                   <span className="text-success">{yanlis.dogru}</span>{' '}
-                  <span className="text-sm text-muted-foreground line-through">{yanlis.yanlis}</span>
+                  <span className="text-sm text-muted-foreground line-through">
+                    {yanlis.yanlis}
+                  </span>
                 </p>
                 <p className="mt-1 text-xs leading-snug text-muted-foreground">
                   {KURAL_ADI[yanlis.kural]} — {KURAL_ACIKLAMASI[yanlis.kural]}

@@ -270,6 +270,7 @@ function oyunKayitlariniCoz(ham: unknown): OyunKayitlari {
     const i = deger as Partial<OyunIstatistigi>
     temiz[id as OyunId] = {
       enIyiDogru: sayi(i.enIyiDogru),
+      enIyiSeri: sayi(i.enIyiSeri),
       oynananTur: sayi(i.oynananTur),
       toplamDogru: sayi(i.toplamDogru),
       toplamYanlis: sayi(i.toplamYanlis),
