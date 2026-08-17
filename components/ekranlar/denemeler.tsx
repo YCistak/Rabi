@@ -55,6 +55,7 @@ export function DenemelerEkrani({
   return (
     <div>
       <BaslikSatiri
+        ortala
         baslik="Denemeler"
         aciklama={
           denemeler.length > 0
@@ -62,9 +63,8 @@ export function DenemelerEkrani({
             : 'Henüz deneme eklemedin'
         }
         sag={
-          <Buton boy="kucuk" onClick={onYeniyeGit}>
-            <Plus size={16} />
-            Deneme
+          <Buton boy="simge" onClick={onYeniyeGit} aria-label="Deneme ekle" className="rounded-full">
+            <Plus size={20} />
           </Buton>
         }
       />

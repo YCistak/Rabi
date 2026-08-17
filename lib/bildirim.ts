@@ -98,16 +98,18 @@ export async function pomodoroIptal() {
  */
 export async function hatirlatmaPlanla({
   saat,
+  dakika,
   bugunGirdiVar,
   simdi = new Date(),
 }: {
   saat: number
+  dakika: number
   bugunGirdiVar: boolean
   simdi?: Date
 }) {
   if (!(await izinVarMi())) return
 
-  const { zaman, baslik, metin } = hatirlatmaPlani(simdi, saat, bugunGirdiVar)
+  const { zaman, baslik, metin } = hatirlatmaPlani(simdi, saat, dakika, bugunGirdiVar)
 
   try {
     await LocalNotifications.cancel({ notifications: [{ id: HATIRLATMA_ID }] })

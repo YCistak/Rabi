@@ -19,6 +19,7 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { oyunBul } from '@/lib/oyunlar/tanim'
+import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
 import { Buton, Deger } from '@/components/ui'
@@ -45,10 +46,13 @@ type GeriBildirim = { secilenMetin: string; dogruMu: boolean }
  */
 export function YazimOyunuEkrani({
   istatistik,
+  sesAcik,
   onTurBitti,
   onCik,
 }: {
   istatistik: OyunIstatistigi
+  /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
+  sesAcik: boolean
   onTurBitti: (ozet: TurOzeti<YazimSorusu>) => void
   onCik: () => void
 }) {
@@ -109,10 +113,11 @@ export function YazimOyunuEkrani({
         ozet,
         yeniRekor: rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
       })
+      oyunSesiCal('bitis', sesAcik)
       setAsama('bitti')
       onTurBitti(ozet)
     },
-    [istatistik, onTurBitti],
+    [istatistik, onTurBitti, sesAcik],
   )
 
   // Sayaç. Hedef zaman damgasından okunuyor; arka plana atılan WebView'da
@@ -141,7 +146,9 @@ export function YazimOyunuEkrani({
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
   }, [])
 
-  const titre = (dogruMu: boolean) => {
+  /** Cevabın geri bildirimi: titreşim (yalnızca cihazda) + ses efekti. */
+  const geriBildir = (dogruMu: boolean) => {
+    oyunSesiCal(dogruMu ? 'dogru' : 'yanlis', sesAcik)
     if (!Capacitor.isNativePlatform()) return
     void (dogruMu
       ? Haptics.impact({ style: ImpactStyle.Light })
@@ -160,7 +167,7 @@ export function YazimOyunuEkrani({
     const dogruMu = sik.dogruMu
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu }])
     setGeriBildirim({ secilenMetin: sik.metin, dogruMu })
-    titre(dogruMu)
+    geriBildir(dogruMu)
 
     if (!dogruMu) setBitisZamani((b) => b - YANLIS_CEZASI * 1000)
 

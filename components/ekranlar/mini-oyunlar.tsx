@@ -22,9 +22,11 @@ import { EdebiyatOyunuEkrani } from '@/components/ekranlar/oyun-edebiyat'
 export function MiniOyunlarEkrani({
   kayitlar,
   setKayitlar,
+  sesAcik,
 }: {
   kayitlar: OyunKayitlari
   setKayitlar: (guncelleyici: OyunKayitlari | ((onceki: OyunKayitlari) => OyunKayitlari)) => void
+  sesAcik: boolean
 }) {
   const [acikOyun, setAcikOyun] = useState<OyunId | null>(null)
   const toplam = oyunToplami(kayitlar)
@@ -88,6 +90,7 @@ export function MiniOyunlarEkrani({
       {acikOyun === 'yazim' && (
         <YazimOyunuEkrani
           istatistik={istatistikAl(kayitlar, 'yazim')}
+          sesAcik={sesAcik}
           onTurBitti={(ozet) => turBitti('yazim', ozet)}
           onCik={() => setAcikOyun(null)}
         />
@@ -95,6 +98,7 @@ export function MiniOyunlarEkrani({
       {acikOyun === 'islem' && (
         <IslemOyunuEkrani
           istatistik={istatistikAl(kayitlar, 'islem')}
+          sesAcik={sesAcik}
           onTurBitti={(ozet) => turBitti('islem', ozet)}
           onCik={() => setAcikOyun(null)}
         />
@@ -102,6 +106,7 @@ export function MiniOyunlarEkrani({
       {acikOyun === 'edebiyat' && (
         <EdebiyatOyunuEkrani
           istatistik={istatistikAl(kayitlar, 'edebiyat')}
+          sesAcik={sesAcik}
           onTurBitti={(ozet) => turBitti('edebiyat', ozet)}
           onCik={() => setAcikOyun(null)}
         />

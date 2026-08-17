@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hedefi biraz aşıp geri oturan yumuşama. Tension varsayılanı 2.0; 1.6
+     ikonun güvenli dairenin dışına taşıp kırpılmaması için düşürüldü. -->
+<overshootInterpolator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:tension="1.6" />

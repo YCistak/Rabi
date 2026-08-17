@@ -19,6 +19,7 @@ import type {
 } from './types'
 import { VARSAYILAN_SABLON_ID } from './sablonlar'
 import { egitimYili } from './hesap'
+import { dakikayiKirp, saatiKirp } from './hatirlatma'
 import { yeniId } from './utils'
 
 export const ANAHTARLAR = {
@@ -83,7 +84,9 @@ export const VARSAYILAN_AYARLAR: Ayarlar = {
   puanTuru: 'ea',
   gunlukHedef: 200,
   hatirlatmaSaati: 20,
+  hatirlatmaDakikasi: 0,
   bildirimAcik: false,
+  oyunSesi: true,
   kurulumTamamlandi: false,
 }
 
@@ -106,6 +109,8 @@ export function ayarlariNormalize(ham: Partial<Ayarlar> | null | undefined): Aya
   return {
     ...birlesik,
     sinifYili: Number.isFinite(birlesik.sinifYili) ? birlesik.sinifYili : egitimYili(),
+    hatirlatmaSaati: saatiKirp(birlesik.hatirlatmaSaati),
+    hatirlatmaDakikasi: dakikayiKirp(birlesik.hatirlatmaDakikasi),
     gunlukHedef: Number.isFinite(birlesik.gunlukHedef) && birlesik.gunlukHedef > 0
       ? birlesik.gunlukHedef
       : VARSAYILAN_AYARLAR.gunlukHedef,

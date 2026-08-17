@@ -33,7 +33,8 @@
     -->
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/acilis_zemin</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/acilis_maskot</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/acilis_maskot_animasyon</item>
+        <item name="windowSplashScreenAnimationDuration">600</item>
         <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
     </style>
 </resources>

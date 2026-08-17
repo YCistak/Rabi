@@ -19,6 +19,7 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { oyunBul } from '@/lib/oyunlar/tanim'
+import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
 import { Buton, Deger } from '@/components/ui'
@@ -45,10 +46,13 @@ const BOS_SECIM: Secim = { eser: null, yazar: null }
  */
 export function EdebiyatOyunuEkrani({
   istatistik,
+  sesAcik,
   onTurBitti,
   onCik,
 }: {
   istatistik: OyunIstatistigi
+  /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
+  sesAcik: boolean
   onTurBitti: (ozet: TurOzeti<EdebiyatEsi>) => void
   onCik: () => void
 }) {
@@ -107,10 +111,11 @@ export function EdebiyatOyunuEkrani({
         ozet,
         yeniRekor: rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
       })
+      oyunSesiCal('bitis', sesAcik)
       setAsama('bitti')
       onTurBitti(ozet)
     },
-    [istatistik, onTurBitti],
+    [istatistik, onTurBitti, sesAcik],
   )
 
   useEffect(() => {
@@ -134,7 +139,9 @@ export function EdebiyatOyunuEkrani({
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
   }, [])
 
-  const titre = (dogruMu: boolean) => {
+  /** Cevabın geri bildirimi: titreşim (yalnızca cihazda) + ses efekti. */
+  const geriBildir = (dogruMu: boolean) => {
+    oyunSesiCal(dogruMu ? 'dogru' : 'yanlis', sesAcik)
     if (!Capacitor.isNativePlatform()) return
     void (dogruMu
       ? Haptics.impact({ style: ImpactStyle.Light })
@@ -154,7 +161,7 @@ export function EdebiyatOyunuEkrani({
     if (!es) return
 
     setCevaplar((onceki) => [...onceki, { soru: es, dogruMu }])
-    titre(dogruMu)
+    geriBildir(dogruMu)
 
     if (!dogruMu) {
       setBitisZamani((b) => b - YANLIS_CEZASI * 1000)

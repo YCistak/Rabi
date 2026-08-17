@@ -19,7 +19,9 @@ const bos: Omit<Yedek, 'uygulama' | 'surum' | 'tarih'> = {
     puanTuru: 'ea',
     gunlukHedef: 200,
     hatirlatmaSaati: 20,
+    hatirlatmaDakikasi: 0,
     bildirimAcik: false,
+    oyunSesi: true,
     kurulumTamamlandi: true,
   },
 }

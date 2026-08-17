@@ -11,11 +11,18 @@
   Kaynak `assets/acilis-maskot.svg`; ikisi değişirse birlikte değişmeli.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:name="kok"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+  <!--
+    `maskot` grubu açılış animasyonunun hedefi (acilis_maskot_animasyon.xml).
+    Ölçek bu grupta uygulanıyor çünkü translate(54,54) sayesinde grubun kendi
+    başlangıç noktası tuvalin tam ortasına düşüyor: büyüme merkezden oluyor.
+  -->
   <group
+    android:name="maskot"
     android:translateX="54"
     android:translateY="54">
     <group

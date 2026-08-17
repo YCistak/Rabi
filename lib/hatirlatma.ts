@@ -40,10 +40,11 @@ export function hatirlatmaMesaji(isoTarih: string): { baslik: string; metin: str
 export function sonrakiHatirlatma(
   simdi: Date,
   saat: number,
+  dakika: number,
   bugunGirdiVar: boolean,
 ): Date {
   const hedef = new Date(simdi)
-  hedef.setHours(saat, 0, 0, 0)
+  hedef.setHours(saatiKirp(saat), dakikayiKirp(dakika), 0, 0)
 
   if (bugunGirdiVar || hedef.getTime() <= simdi.getTime()) {
     hedef.setDate(hedef.getDate() + 1)
@@ -51,12 +52,49 @@ export function sonrakiHatirlatma(
   return hedef
 }
 
+/**
+ * Saat ve dakikayı geçerli aralığa çeker.
+ *
+ * Kullanıcı saati elle yazabiliyor; bozuk bir değer `setHours`'a girerse tarih
+ * sessizce kayar (25 → ertesi günün 01'i) ve hatırlatma yanlış güne planlanırdı.
+ */
+export function saatiKirp(saat: number): number {
+  if (!Number.isFinite(saat)) return 20
+  return Math.min(23, Math.max(0, Math.floor(saat)))
+}
+
+export function dakikayiKirp(dakika: number): number {
+  if (!Number.isFinite(dakika)) return 0
+  return Math.min(59, Math.max(0, Math.floor(dakika)))
+}
+
+/** "20.30" biçiminde okunur saat. */
+export function saatYaz(saat: number, dakika: number): string {
+  return `${String(saatiKirp(saat)).padStart(2, '0')}.${String(dakikayiKirp(dakika)).padStart(2, '0')}`
+}
+
+/** `<input type="time">` için "HH:MM". */
+export function saatDegeri(saat: number, dakika: number): string {
+  return `${String(saatiKirp(saat)).padStart(2, '0')}:${String(dakikayiKirp(dakika)).padStart(2, '0')}`
+}
+
+/** "HH:MM" metnini saat/dakikaya çözer. Bozuk girdide null. */
+export function saatiCoz(metin: string): { saat: number; dakika: number } | null {
+  const parca = metin.match(/^(\d{1,2}):(\d{2})$/)
+  if (!parca) return null
+  const saat = Number(parca[1])
+  const dakika = Number(parca[2])
+  if (saat > 23 || dakika > 59) return null
+  return { saat, dakika }
+}
+
 /** Planlanacak bildirimin tamamı: zamanı ve o güne düşen metni. */
 export function hatirlatmaPlani(
   simdi: Date,
   saat: number,
+  dakika: number,
   bugunGirdiVar: boolean,
 ): { zaman: Date; baslik: string; metin: string } {
-  const zaman = sonrakiHatirlatma(simdi, saat, bugunGirdiVar)
+  const zaman = sonrakiHatirlatma(simdi, saat, dakika, bugunGirdiVar)
   return { zaman, ...hatirlatmaMesaji(tariheYaz(zaman)) }
 }

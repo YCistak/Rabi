@@ -176,6 +176,7 @@ export function AppShell() {
     }
     void hatirlatmaPlanla({
       saat: ayarlar.hatirlatmaSaati,
+      dakika: ayarlar.hatirlatmaDakikasi,
       bugunGirdiVar: gunlukToplam(gunlukKayitlar, bugun()) > 0,
     })
   }, [
@@ -184,6 +185,7 @@ export function AppShell() {
     ayarlar.kurulumTamamlandi,
     ayarlar.bildirimAcik,
     ayarlar.hatirlatmaSaati,
+    ayarlar.hatirlatmaDakikasi,
     gunlukKayitlar,
   ])
 
@@ -261,7 +263,7 @@ export function AppShell() {
   }
 
   return (
-    <div className="mx-auto min-h-dvh max-w-md px-4 pb-24 pt-5">
+    <div className="acilis-girisi mx-auto min-h-dvh max-w-md px-4 pb-24 pt-5">
       {ekran !== null ? (
         <>
           <Buton
@@ -301,7 +303,11 @@ export function AppShell() {
             <YanlisBankaEkrani sorular={yanlisSorular} setSorular={setYanlisSorular} />
           )}
           {ekran === 'mini-oyunlar' && (
-            <MiniOyunlarEkrani kayitlar={oyunlar} setKayitlar={setOyunlar} />
+            <MiniOyunlarEkrani
+              kayitlar={oyunlar}
+              setKayitlar={setOyunlar}
+              sesAcik={ayarlar.oyunSesi}
+            />
           )}
           {ekran === 'rozetler' && (
             <RozetlerEkrani

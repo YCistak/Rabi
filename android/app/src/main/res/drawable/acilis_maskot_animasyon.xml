@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Açılış ekranı animasyonu (windowSplashScreenAnimatedIcon).
+
+  Android 12+ açılış ekranında ikon olarak bir AnimatedVectorDrawable kabul
+  ediyor ve `windowSplashScreenAnimationDuration` kadar oynatıyor. Daha eski
+  sürümlerde (androidx core-splashscreen uyumluluk katmanı) animasyon
+  oynatılmayabiliyor; o durumda altındaki vektör olduğu gibi çiziliyor —
+  `acilis_maskot.xml` kendi alpha'sı 1 olduğu için ikon yine görünüyor,
+  yalnızca hareketsiz.
+-->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/acilis_maskot">
+  <target android:name="maskot" android:animation="@animator/acilis_buyume" />
+  <target android:name="kok" android:animation="@animator/acilis_belirme" />
+</animated-vector>

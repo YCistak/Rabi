@@ -250,7 +250,11 @@ export type Ayarlar = {
   gunlukHedef: number
   /** Günlük hatırlatma saati, 0–23. */
   hatirlatmaSaati: number
+  /** Hatırlatma dakikası, 0–59. Kullanıcı "21.30" gibi bir saat seçebiliyor. */
+  hatirlatmaDakikasi: number
   bildirimAcik: boolean
+  /** Mini oyunlarda doğru/yanlış/bitiş ses efektleri. */
+  oyunSesi: boolean
   /** İlk açılış kurulumu tamamlandı mı; false ise kurulum ekranı gösterilir. */
   kurulumTamamlandi: boolean
 }

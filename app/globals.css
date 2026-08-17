@@ -141,4 +141,31 @@
   .guvenli-alt {
     padding-bottom: env(safe-area-inset-bottom);
   }
+
+  /*
+    Sistemin açılış ekranı kapandıktan sonra uygulama aniden belirmesin diye
+    kısa bir giriş. Açılış ekranındaki maskot da büyüyerek geldiği için ikisi
+    tek bir harekete benziyor.
+  */
+  .acilis-girisi {
+    animation: acilis-girisi 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+@keyframes acilis-girisi {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Hareket azaltma tercihi açıksa animasyon yok — giriş süslemesi, işlev değil. */
+@media (prefers-reduced-motion: reduce) {
+  .acilis-girisi {
+    animation: none;
+  }
 }

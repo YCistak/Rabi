@@ -129,6 +129,19 @@ python3 scripts/veri-uret.py lib/veri/yks-veri.json
 `scripts/veri-uret.py` içindeki yıl listesini genişletmeyi unutma. Betik eksik test
 istatistiği bulursa hata verip durur — sessizce yarım veri üretmez.
 
+## Açılış ekranı animasyonu
+
+Android 12+ açılış ekranında ikon olarak bir AnimatedVectorDrawable kabul ediyor:
+`acilis_maskot_animasyon.xml`, maskotu ortadan büyüterek (`overshoot`, tension 1.6) ve
+belirerek getiriyor; süre `windowSplashScreenAnimationDuration` ile 600 ms.
+
+Aşma payı bilerek küçük: daha fazlası ikonu güvenli dairenin dışına taşırıp kırptırıyor.
+Daha eski sürümlerde uyumluluk katmanı animasyonu oynatmayabiliyor — o durumda altındaki
+vektör olduğu gibi çiziliyor (kendi alpha'sı 1), ikon görünür ama hareketsiz kalır.
+
+Sistem açılışı kapandıktan sonra uygulama da `.acilis-girisi` ile kısa bir giriş yapıyor;
+ikisi tek harekete benzesin diye. `prefers-reduced-motion` açıksa animasyon çalışmıyor.
+
 ## Android izinleri
 
 Capacitor eklentileri kendi manifestlerini birleştiriyor; `android/app/src/main/AndroidManifest.xml`
@@ -210,6 +223,11 @@ de anlamını yitirirdi. Arayüzün üst bilgisi (kapat, süre halkası, çubuk,
 bileşende — `components/oyun-kabuk.tsx`. Her oyun tam ekran bir katman olarak açılıyor
 (`z-50`, alt menünün üstünde): süreli bir turda yanlışlıkla sekmeye basmak turu bitirirdi.
 
+**Ses efektleri** (`lib/oyunlar/oyun-sesi.ts`) dosyadan değil Web Audio ile üretiliyor: üçü de
+birkaç yüz milisaniyelik basit tonlar, mp3 karşılıkları APK'ya boşuna yer kaplardı ve ilk
+çalışta yükleneceği için ilk doğru cevabın sesi geç gelirdi. Ayarlardan kapatılabiliyor
+(`oyunSesi`); kapalıyken `AudioContext` hiç kurulmuyor.
+
 **Seri puanı etkilemiyor.** Ardışık doğru sayısı ayrı bir ölçü olarak duruyor; seri çarpanı
 olsaydı eski turlarda kurulan rekorlar yenileriyle karşılaştırılamaz hâle gelirdi.
 
@@ -265,6 +283,12 @@ aramasının düzeltme işaretini yok sayması ("kağıt" arayınca "kâğıt" g
 Belirsiz çiftler havuzdan **çıkarıldı**: "grup/gurup", "ekstra/ekstre", "böyle/böle" gibi
 çiftlerde yanlış sanılan şık aslında başka bir kelime. Aynı sebeple "hâlâ" ve "bekâr" tek
 kelime olarak değil cümle içinde soruluyor — şapkasız yazılışları da gerçek kelime.
+
+Hatırlatma saati **dakikalı** girilebiliyor (`hatirlatmaSaati` + `hatirlatmaDakikasi`). Çipler
+sık istenen tam saatler; "21.30" gibi bir saat için yanındaki `<input type="time">` kutusu var
+— Android'de sistemin kendi saat seçicisini açıyor, elle rakam yazdırmıyor. Girilen değer
+`saatiKirp`/`dakikayiKirp` ile kırpılıyor: bozuk bir sayı `setHours`'a girerse tarih sessizce
+kayar (25 → ertesi günün 01'i) ve hatırlatma yanlış güne planlanırdı.
 
 ### Günde en fazla bir bildirim
 

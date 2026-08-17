@@ -24,6 +24,7 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { oyunBul } from '@/lib/oyunlar/tanim'
+import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
@@ -54,10 +55,13 @@ type GeriBildirim = { dogruMu: boolean; girilen: string; beklenen: number }
  */
 export function IslemOyunuEkrani({
   istatistik,
+  sesAcik,
   onTurBitti,
   onCik,
 }: {
   istatistik: OyunIstatistigi
+  /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
+  sesAcik: boolean
   onTurBitti: (ozet: TurOzeti<IslemSorusu>) => void
   onCik: () => void
 }) {
@@ -119,10 +123,11 @@ export function IslemOyunuEkrani({
         ozet,
         yeniRekor: rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
       })
+      oyunSesiCal('bitis', sesAcik)
       setAsama('bitti')
       onTurBitti(ozet)
     },
-    [istatistik, onTurBitti],
+    [istatistik, onTurBitti, sesAcik],
   )
 
   useEffect(() => {
@@ -149,7 +154,9 @@ export function IslemOyunuEkrani({
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
   }, [])
 
-  const titre = (dogruMu: boolean) => {
+  /** Cevabın geri bildirimi: titreşim (yalnızca cihazda) + ses efekti. */
+  const geriBildir = (dogruMu: boolean) => {
+    oyunSesiCal(dogruMu ? 'dogru' : 'yanlis', sesAcik)
     if (!Capacitor.isNativePlatform()) return
     void (dogruMu
       ? Haptics.impact({ style: ImpactStyle.Light })
@@ -168,7 +175,7 @@ export function IslemOyunuEkrani({
       const dogruMu = !pas && Number(girilen) === soru.sonuc
       setCevaplar((onceki) => [...onceki, { soru, dogruMu }])
       setGeriBildirim({ dogruMu, girilen: pas ? '' : girilen, beklenen: soru.sonuc })
-      titre(dogruMu)
+      geriBildir(dogruMu)
 
       if (!dogruMu) setBitisZamani((b) => b - YANLIS_CEZASI * 1000)
 

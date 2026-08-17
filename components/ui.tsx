@@ -153,11 +153,27 @@ export function BaslikSatiri({
   baslik,
   aciklama,
   sag,
+  ortala,
 }: {
   baslik: string
   aciklama?: string
   sag?: React.ReactNode
+  /**
+   * Başlık ve açıklamayı sayfanın ortasına alır; `sag` sağ üst köşeye konumlanır.
+   * Sağdaki düğme akışta kalsaydı metni ortalamaz, yana iterdi.
+   */
+  ortala?: boolean
 }) {
+  if (ortala) {
+    return (
+      <div className="relative mb-4 px-12 text-center">
+        <h1 className="font-display text-2xl font-semibold tracking-tight">{baslik}</h1>
+        {aciklama && <p className="mt-0.5 text-sm text-muted-foreground">{aciklama}</p>}
+        {sag && <div className="absolute right-0 top-0">{sag}</div>}
+      </div>
+    )
+  }
+
   return (
     <div className="mb-4 flex items-end justify-between gap-3">
       <div>

@@ -31,6 +31,7 @@ import {
   tumResimleriSil,
 } from '@/lib/resim-depo'
 import { izinIste } from '@/lib/bildirim'
+import { saatDegeri, saatYaz, saatiCoz } from '@/lib/hatirlatma'
 import { cn, yeniId } from '@/lib/utils'
 import type {
   Ayarlar,
@@ -54,7 +55,11 @@ const PUAN_TURU_ADI: Record<PuanTuru, string> = {
 }
 
 const HAZIR_HEDEFLER = [100, 200, 300, 400, 500]
-const HATIRLATMA_SAATLERI = [18, 19, 20, 21, 22]
+/**
+ * Hızlı seçim saatleri. Yanındaki saat kutusu her değeri kabul ettiği için bu
+ * liste "en sık istenenler"; tam liste 24 çip olurdu ve okunmazdı.
+ */
+const HATIRLATMA_SAATLERI = [8, 12, 16, 18, 19, 20, 21, 22, 23]
 
 /** Bayt sayısını okunur hâle getirir: 5242880 → "5,0 MB". */
 function boyutYaz(bayt: number): string {
@@ -282,13 +287,43 @@ export function AyarlarEkrani({
               {HATIRLATMA_SAATLERI.map((h) => (
                 <Cip
                   key={h}
-                  secili={ayarlar.hatirlatmaSaati === h}
-                  onClick={() => setAyarlar((o) => ({ ...o, hatirlatmaSaati: h }))}
+                  secili={ayarlar.hatirlatmaSaati === h && ayarlar.hatirlatmaDakikasi === 0}
+                  onClick={() =>
+                    setAyarlar((o) => ({ ...o, hatirlatmaSaati: h, hatirlatmaDakikasi: 0 }))
+                  }
                 >
-                  {String(h).padStart(2, '0')}.00
+                  {saatYaz(h, 0)}
                 </Cip>
               ))}
             </div>
+
+            {/* Çipler tam saatler; dakikalı bir saat ("21.30") ancak buradan
+                girilebiliyor. Sistemin kendi saat seçicisini açtığı için
+                telefonda elle rakam yazmak gerekmiyor. */}
+            <div className="mt-3 flex items-center gap-2">
+              <Etiket className="mb-0 shrink-0">Başka saat</Etiket>
+              <Alan
+                type="time"
+                value={saatDegeri(ayarlar.hatirlatmaSaati, ayarlar.hatirlatmaDakikasi)}
+                onChange={(e) => {
+                  const cozulen = saatiCoz(e.target.value)
+                  if (!cozulen) return
+                  setAyarlar((o) => ({
+                    ...o,
+                    hatirlatmaSaati: cozulen.saat,
+                    hatirlatmaDakikasi: cozulen.dakika,
+                  }))
+                }}
+                aria-label="Hatırlatma saati"
+                className="rakam h-10 w-32"
+              />
+            </div>
+
+            <p className="mt-2 text-xs text-muted-foreground">
+              Şu an seçili: <strong className="rakam text-foreground">
+                {saatYaz(ayarlar.hatirlatmaSaati, ayarlar.hatirlatmaDakikasi)}
+              </strong>
+            </p>
           </div>
         )}
 
@@ -303,6 +338,35 @@ export function AyarlarEkrani({
           Günde en fazla bir bildirim gönderilir; o gün soru girdiysen hiç gönderilmez.
           Bildirim gelmiyorsa telefonun pil optimizasyonu Rabi'yi kısıtlıyor olabilir.
         </p>
+      </Kart>
+
+      <Kart className="mb-3">
+        <button
+          type="button"
+          onClick={() => setAyarlar((o) => ({ ...o, oyunSesi: !o.oyunSesi }))}
+          aria-pressed={ayarlar.oyunSesi}
+          className="flex w-full items-center justify-between gap-3 text-left"
+        >
+          <span>
+            <span className="block font-medium">Mini oyun sesleri</span>
+            <span className="block text-xs text-muted-foreground">
+              Doğru, yanlış ve tur bitişi efektleri
+            </span>
+          </span>
+          <span
+            className={cn(
+              'relative h-6 w-11 shrink-0 rounded-full transition',
+              ayarlar.oyunSesi ? 'bg-primary' : 'bg-border',
+            )}
+          >
+            <span
+              className={cn(
+                'absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all',
+                ayarlar.oyunSesi ? 'left-[22px]' : 'left-0.5',
+              )}
+            />
+          </span>
+        </button>
       </Kart>
 
       <Kart className="mb-3">
