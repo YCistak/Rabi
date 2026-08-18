@@ -135,6 +135,21 @@ export const OYUNLAR: OyunTanimi[] = [
     ],
   },
   {
+    id: 'bolunme',
+    ders: 'matematik',
+    ad: 'Bölünebilme',
+    kisaAciklama: 'Bölünür mü, kalan kaç?',
+    ikon: '➗',
+    nasilOynanir: [
+      `Ekrana dört ya da beş basamaklı bir sayı gelir. Soru iki türlü olabilir: **kalan kaç** (tuş takımından yazarsın) ya da **bölünür mü** (Evet / Hayır).`,
+      `Bölenler 2'den 10'a kadar, ikisi de dahil. Tanıtımda hangilerinin geleceğini seçebilirsin — sadece 7 ve 8 açıp onlara çalışabilirsin.`,
+      `Turun süresi ${TUR_SURESI} saniye. Doğru cevap süreyi uzatmaz, ${YANLIS_CEZASI} saniyeyi yanlış cevap götürür.`,
+      `Sayılar rastgele değil, **cevaba göre** üretiliyor: her bölende Evet ile Hayır yarı yarıya. Hep "hayır" diyerek tur kazanılmıyor.`,
+      `Kalan sorusu 6 ve 7'de sorulmuyor: onların kuralı sayının bölünüp bölünmediğini söylüyor ama kalanı vermiyor. Diğer yedi bölende kural kalanı da veriyor.`,
+      `Tur bitince yanlışların, kuralın o sayıdaki karşılığıyla listelenir — "son üç hane 536" gibi.`,
+    ],
+  },
+  {
     id: 'islem',
     ders: 'matematik',
     ad: 'Zihinden İşlem',

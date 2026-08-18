@@ -59,6 +59,14 @@ const AILE: Record<
     kenar: 'border-l-yzm-koyu',
     degisken: 'var(--yzm-koyu)',
   },
+  // Matematik dersinin oyunları İşlem'le aynı aileyi paylaşıyor.
+  bolunme: {
+    zemin: 'bg-isl',
+    yazi: 'text-isl-koyu',
+    dolgu: 'bg-isl-koyu',
+    kenar: 'border-l-isl-koyu',
+    degisken: 'var(--isl-koyu)',
+  },
   islem: {
     zemin: 'bg-isl',
     yazi: 'text-isl-koyu',

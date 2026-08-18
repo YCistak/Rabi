@@ -60,6 +60,8 @@ export const ANAHTARLAR = {
   islemSecimi: 'rabi-islem-secimi',
   /** Yazım Ustası'nda seçili soru türleri (yazım / noktalama). */
   yazimSecimi: 'rabi-yazim-secimi',
+  /** Bölünebilme Kuralları'nda seçili bölenler. */
+  bolenSecimi: 'rabi-bolen-secimi',
   ayarlar: 'rabi-ayarlar',
   tema: 'rabi-tema',
   sonBildirim: 'rabi-son-bildirim',
@@ -402,6 +404,13 @@ function bankayiCoz(ham: unknown): BankaKaydi[] {
           typeof s.anlam === 'string' &&
           typeof s.sozTuru === 'string' &&
           typeof s.konu === 'string'
+        )
+      if (s.oyun === 'bolunme')
+        return (
+          typeof s.sayi === 'number' &&
+          typeof s.bolen === 'number' &&
+          s.bolen > 1 &&
+          (s.bolunmeTipi === 'kalan' || s.bolunmeTipi === 'bolunur')
         )
       if (s.oyun === 'oge')
         return (

@@ -10,6 +10,7 @@ import {
   bankaCevabiMetni,
   bankaSorusuMetni,
   sestenBanka,
+  bolunmedenBanka,
   dusenSayisi,
   enKalabalikOyun,
   type BankaKaydi,
@@ -204,5 +205,60 @@ describe('ses kolu', () => {
     )
     expect(banka).toHaveLength(1)
     expect(banka[0].kacKez).toBe(2)
+  })
+})
+
+describe('bölünebilme kolu', () => {
+  const kalanSorusu = bolunmedenBanka({ tip: 'kalan', sayi: 4537, bolen: 8 })
+  const bolunurSorusu = bolunmedenBanka({ tip: 'bolunur', sayi: 4536, bolen: 8 })
+
+  it('bankaya çevirir', () => {
+    expect(kalanSorusu).toEqual({ oyun: 'bolunme', sayi: 4537, bolen: 8, bolunmeTipi: 'kalan' })
+  })
+
+  /** Cevap kayıtta durmuyor, sayıdan hesaplanıyor: 4537 = 8·567 + 1. */
+  it('cevabı sayıdan hesaplar', () => {
+    expect(bankaCevabiMetni(kalanSorusu)).toBe('1')
+    expect(bankaCevabiMetni(bolunurSorusu)).toBe('Evet')
+    expect(bankaCevabiMetni(bolunmedenBanka({ tip: 'bolunur', sayi: 4537, bolen: 8 }))).toBe(
+      'Hayır',
+    )
+  })
+
+  it('listede soru okunur görünür', () => {
+    expect(bankaSorusuMetni(kalanSorusu)).toBe('4537 ÷ 8 · kalan?')
+    expect(bankaSorusuMetni(bolunurSorusu)).toBe('4536 · 8’e bölünür mü?')
+  })
+
+  /**
+   * Aynı sayı hem "bölünür mü" hem "kalan kaç" olarak sorulabiliyor. Kimlik
+   * yalnız sayıdan üretilseydi ikisi tek kayda düşer, birini bilmek diğerini de
+   * bankadan düşürürdü.
+   */
+  it('aynı sayının iki soru tipi ayrı kayıt açar', () => {
+    const ayni = bolunmedenBanka({ tip: 'kalan', sayi: 4536, bolen: 8 })
+    expect(bankaKimligi(ayni)).not.toBe(bankaKimligi(bolunurSorusu))
+
+    const banka = bankayiGuncelle(
+      [],
+      [
+        { soru: ayni, dogruMu: false },
+        { soru: bolunurSorusu, dogruMu: false },
+      ],
+      '2026-08-19',
+    )
+    expect(banka).toHaveLength(2)
+  })
+
+  it('aynı bölen farklı sayıda ayrı kayıt açar', () => {
+    const banka = bankayiGuncelle(
+      [],
+      [
+        { soru: kalanSorusu, dogruMu: false },
+        { soru: bolunmedenBanka({ tip: 'kalan', sayi: 1234, bolen: 8 }), dogruMu: false },
+      ],
+      '2026-08-19',
+    )
+    expect(banka).toHaveLength(2)
   })
 })

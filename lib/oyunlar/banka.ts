@@ -16,6 +16,7 @@ import type { IslemTuru } from './islem'
 import type { NoktalamaIsareti, NoktalamaSorusu } from './noktalama-havuzu'
 import { OLAY_ADI, type SesOlayi } from './ses-havuzu'
 import { OGE_ADI, type OgeTuru } from './oge-havuzu'
+import type { BolunmeTipi } from './bolunme'
 import type { SozKonusu, SozTuru } from './soz-havuzu'
 
 /** Bir kaydın bankadan düşmesi için gereken üst üste doğru sayısı. */
@@ -49,6 +50,9 @@ export type BankaSorusu =
   | { oyun: 'edebiyat'; eser: string; yazar: string }
   | { oyun: 'ses'; kelime: string; olusum: string; olay: SesOlayi }
   | { oyun: 'oge'; once: string; oge: string; sonra: string; ogeTuru: OgeTuru }
+  // Cevap saklanmıyor, `sayi % bolen` ile hesaplanıyor: kayıtta duran bir
+  // cevap sayıyla çelişebilirdi, türetilen cevap çelişemez.
+  | { oyun: 'bolunme'; sayi: number; bolen: number; bolunmeTipi: BolunmeTipi }
   | { oyun: 'soz'; soz: string; anlam: string; sozTuru: SozTuru; konu: SozKonusu }
 
 export type BankaKaydi = {
@@ -141,6 +145,14 @@ export function ogedenBanka(soru: {
   }
 }
 
+export function bolunmedenBanka(soru: {
+  tip: BolunmeTipi
+  sayi: number
+  bolen: number
+}): BankaSorusu {
+  return { oyun: 'bolunme', sayi: soru.sayi, bolen: soru.bolen, bolunmeTipi: soru.tip }
+}
+
 /**
  * Kayıt kimliği.
  *
@@ -163,6 +175,10 @@ export function bankaKimligi(soru: BankaSorusu): string {
       return `oge:${soru.once}[${soru.oge}]${soru.sonra}`
     case 'soz':
       return `soz:${soru.soz}`
+    // Aynı sayı hem "bölünür mü" hem "kalan kaç" olarak sorulabiliyor; tip
+    // kimliğe girmeseydi ikisi tek kayda düşer, biri diğerini düşürürdü.
+    case 'bolunme':
+      return `bolunme:${soru.bolunmeTipi}:${soru.sayi}/${soru.bolen}`
   }
 }
 
@@ -181,6 +197,10 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
       return `“${soru.oge}” · ${soru.once}${soru.oge}${soru.sonra}`
     case 'soz':
       return soru.soz
+    case 'bolunme':
+      return soru.bolunmeTipi === 'kalan'
+        ? `${soru.sayi} ÷ ${soru.bolen} · kalan?`
+        : `${soru.sayi} · ${soru.bolen}’e bölünür mü?`
   }
 }
 
@@ -199,6 +219,12 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
       return OGE_ADI[soru.ogeTuru]
     case 'soz':
       return soru.anlam
+    case 'bolunme':
+      return soru.bolunmeTipi === 'kalan'
+        ? String(soru.sayi % soru.bolen)
+        : soru.sayi % soru.bolen === 0
+          ? 'Evet'
+          : 'Hayır'
   }
 }
 
@@ -295,6 +321,7 @@ const BOS_DAGILIM: Record<OyunId, number> = {
   oge: 0,
   soz: 0,
   islem: 0,
+  bolunme: 0,
   edebiyat: 0,
 }
 

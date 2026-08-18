@@ -38,6 +38,7 @@ const OYUN_RENGI: Record<OyunId, string> = {
   oge: 'bg-yzm',
   soz: 'bg-yzm',
   islem: 'bg-isl',
+  bolunme: 'bg-isl',
   edebiyat: 'bg-edb',
 }
 
