@@ -12,8 +12,59 @@ import { EDEBIYAT_BOYUTU } from './edebiyat-havuzu'
  * depo ve rozet mantığına dokunmak gerekmiyor.
  */
 
+/**
+ * Oyun kategorisi = ders.
+ *
+ * Oyunlar sekmesi önce dersleri gösteriyor, ders seçilince o dersin oyunları
+ * geliyor. Üç oyunla bu fazladan bir dokunuş demek; ama oyun sayısı arttıkça
+ * tek bir ızgaraya sığmayacak ve hangi oyunun hangi derse çalıştığı
+ * kaybolacaktı. Sınıflandırma sonradan değil, şimdi kuruluyor.
+ */
+export type DersId = 'turkce' | 'matematik' | 'edebiyat'
+
+export type DersTanimi = {
+  id: DersId
+  ad: string
+  aciklama: string
+  ikon: string
+  /**
+   * Tema renk ailesi.
+   *
+   * Renk artık oyuna değil **derse** bağlı: aynı derse çalışan bütün oyunlar
+   * aynı rengi paylaşıyor, böylece renk bir kimlik taşıyor. (Ailelerin adları
+   * ilk üç oyundan geliyor: yzm=yazım, isl=işlem, edb=edebiyat.)
+   */
+  aile: 'yzm' | 'isl' | 'edb'
+}
+
+export const DERSLER: DersTanimi[] = [
+  {
+    id: 'turkce',
+    ad: 'Türkçe',
+    aciklama: 'Yazım, dil bilgisi, anlam',
+    ikon: '✍️',
+    aile: 'yzm',
+  },
+  {
+    id: 'matematik',
+    ad: 'Matematik',
+    aciklama: 'İşlem hızı, denklem',
+    ikon: '🧮',
+    aile: 'isl',
+  },
+  {
+    id: 'edebiyat',
+    ad: 'Edebiyat',
+    aciklama: 'Eser, yazar, dönem',
+    ikon: '📚',
+    aile: 'edb',
+  },
+]
+
 export type OyunTanimi = {
   id: OyunId
+  /** Hangi derse çalışıyor — Oyunlar sekmesi bu alana göre grupluyor. */
+  ders: DersId
   ad: string
   kisaAciklama: string
   ikon: string
@@ -24,6 +75,7 @@ export type OyunTanimi = {
 export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'yazim',
+    ders: 'turkce',
     ad: 'Yazım Ustası',
     kisaAciklama: 'Doğru yazılışı seç, süreye karşı yarış',
     ikon: '✍️',
@@ -37,6 +89,7 @@ export const OYUNLAR: OyunTanimi[] = [
   },
   {
     id: 'islem',
+    ders: 'matematik',
     ad: 'Zihinden İşlem',
     kisaAciklama: 'İşlem hızını aç, sonucu tuşla yaz',
     ikon: '🧮',
@@ -50,6 +103,7 @@ export const OYUNLAR: OyunTanimi[] = [
   },
   {
     id: 'edebiyat',
+    ders: 'edebiyat',
     ad: 'Edebiyat Eşleştirme',
     kisaAciklama: 'Eseri yazarıyla eşleştir',
     ikon: '📚',
@@ -62,6 +116,27 @@ export const OYUNLAR: OyunTanimi[] = [
     ],
   },
 ]
+
+export function dersBul(id: DersId): DersTanimi {
+  const ders = DERSLER.find((d) => d.id === id)
+  if (!ders) throw new Error(`Bilinmeyen ders: ${id}`)
+  return ders
+}
+
+/** Bir dersin oyunları, listedeki sırayla. */
+export function dersinOyunlari(id: DersId): OyunTanimi[] {
+  return OYUNLAR.filter((o) => o.ders === id)
+}
+
+/**
+ * Ekranda gösterilecek dersler — oyunu olmayan ders listelenmiyor.
+ *
+ * Boş bir kategori "yakında" vaadi gibi duruyor; oyunu olmayan ders hiç
+ * görünmesin, eklendiği gün kendiliğinden çıksın.
+ */
+export function doluDersler(): DersTanimi[] {
+  return DERSLER.filter((d) => dersinOyunlari(d.id).length > 0)
+}
 
 export function oyunBul(id: OyunId): OyunTanimi {
   const oyun = OYUNLAR.find((o) => o.id === id)
