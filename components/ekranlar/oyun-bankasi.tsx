@@ -14,6 +14,7 @@ import {
   type BankaKaydi,
 } from '@/lib/oyunlar/banka'
 import { KURAL_ACIKLAMASI, type YazimKurali } from '@/lib/oyunlar/yazim-havuzu'
+import { NOKTALAMA_ACIKLAMASI, type NoktalamaKurali } from '@/lib/oyunlar/noktalama-havuzu'
 import { cn } from '@/lib/utils'
 import { BosDurum, Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
@@ -221,9 +222,13 @@ function KayitKarti({ kayit }: { kayit: BankaKaydi }) {
           <p className="mt-1 text-[13px] font-semibold text-success">
             {bankaCevabiMetni(kayit.soru)}
           </p>
+          {/* Kural metni iki havuzdan gelebiliyor: noktalama kayıtları da
+              bankada 'yazim' kimliğiyle duruyor, ayıran alan `isaretler`. */}
           {kayit.soru.oyun === 'yazim' && (
             <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-              {KURAL_ACIKLAMASI[kayit.soru.kural as YazimKurali] ?? ''}
+              {(kayit.soru.isaretler
+                ? NOKTALAMA_ACIKLAMASI[kayit.soru.kural as NoktalamaKurali]
+                : KURAL_ACIKLAMASI[kayit.soru.kural as YazimKurali]) ?? ''}
             </p>
           )}
         </div>

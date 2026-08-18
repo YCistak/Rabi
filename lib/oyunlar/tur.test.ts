@@ -66,14 +66,19 @@ describe('karistir', () => {
 })
 
 describe('turHazirla', () => {
+  /** Yalnızca yazım sorusu içeren havuz — noktalama `noktalama.test.ts` içinde. */
+  const yazimHavuzu = (sorular: YazimSorusu[]) => ({ yazim: sorular, noktalama: [] })
+
   it('havuzdaki her soruyu bir kez kullanır', () => {
-    const tur = turHazirla(ornek, sahteRastgele([0.2, 0.7, 0.4, 0.9, 0.1]))
+    const tur = turHazirla(yazimHavuzu(ornek), sahteRastgele([0.2, 0.7, 0.4, 0.9, 0.1]))
     expect(tur).toHaveLength(ornek.length)
-    expect(new Set(tur.map((s) => s.soru.dogru)).size).toBe(ornek.length)
+    const kelimeler = tur.map((s) => (s.tur === 'yazim' ? s.soru.dogru : ''))
+    expect(new Set(kelimeler).size).toBe(ornek.length)
   })
 
   it('her soruda tam olarak bir doğru şık var', () => {
-    for (const soru of turHazirla(ornek)) {
+    for (const soru of turHazirla(yazimHavuzu(ornek))) {
+      if (soru.tur !== 'yazim') throw new Error('yazım havuzundan noktalama sorusu çıktı')
       expect(soru.siklar.filter((s) => s.dogruMu)).toHaveLength(1)
       expect(soru.siklar.map((s) => s.metin).sort()).toEqual(
         [soru.soru.dogru, soru.soru.yanlis].sort(),
@@ -88,7 +93,7 @@ describe('turHazirla', () => {
       yanlis: `y${i}`,
       kural: 'ses' as const,
     }))
-    const ustte = turHazirla(uzunHavuz).filter((s) => s.siklar[0].dogruMu).length
+    const ustte = turHazirla(yazimHavuzu(uzunHavuz)).filter((s) => s.siklar[0].dogruMu).length
     expect(ustte).toBeGreaterThan(0)
     expect(ustte).toBeLessThan(uzunHavuz.length)
   })

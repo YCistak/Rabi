@@ -13,6 +13,7 @@
 
 import type { OyunId } from '../types'
 import type { IslemTuru } from './islem'
+import type { NoktalamaIsareti, NoktalamaSorusu } from './noktalama-havuzu'
 import { OLAY_ADI, type SesOlayi } from './ses-havuzu'
 import { OGE_ADI, type OgeTuru } from './oge-havuzu'
 import type { SozKonusu, SozTuru } from './soz-havuzu'
@@ -30,7 +31,20 @@ export const DUSME_ESIGI = 3
 export const BANKA_SINIRI = 100
 
 export type BankaSorusu =
-  | { oyun: 'yazim'; dogru: string; yanlis: string; kural: string }
+  | {
+      oyun: 'yazim'
+      dogru: string
+      yanlis: string
+      kural: string
+      /**
+       * Noktalama sorusuysa cümledeki iki işaret; yazım sorusunda yok.
+       *
+       * Aynı `oyun` kimliği altındalar çünkü ikisi de Yazım Ustası turunda
+       * çıkıyor: banka turu oyuna göre açılıyor, ayrı kimlik verilseydi bu
+       * kayıtlar bankada durur ama hiçbir turda tekrar sorulamazdı.
+       */
+      isaretler?: { yanlis: NoktalamaIsareti; dogru: NoktalamaIsareti }
+    }
   | { oyun: 'islem'; islemTuru: IslemTuru; metin: string; sonuc: number }
   | { oyun: 'edebiyat'; eser: string; yazar: string }
   | { oyun: 'ses'; kelime: string; olusum: string; olay: SesOlayi }
@@ -70,6 +84,17 @@ export function yazimdanBanka(soru: {
   kural: string
 }): BankaSorusu {
   return { oyun: 'yazim', dogru: soru.dogru, yanlis: soru.yanlis, kural: soru.kural }
+}
+
+export function noktalamadanBanka(soru: NoktalamaSorusu): BankaSorusu {
+  return {
+    oyun: 'yazim',
+    // Cümlenin doğru hâli "doğru cevap", hatalı hâli sorunun kendisi.
+    dogru: soru.duzeltme,
+    yanlis: soru.cumle,
+    kural: soru.kural,
+    isaretler: { yanlis: soru.yanlisIsaret, dogru: soru.dogruIsaret },
+  }
 }
 
 export function islemdenBanka(soru: {
