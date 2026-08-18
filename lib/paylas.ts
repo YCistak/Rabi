@@ -41,6 +41,12 @@ export async function gorseliPaylas(
   blob: Blob,
   dosyaAdi: string,
   baslik: string,
+  /**
+   * Görselin yanında gidecek yazı. Ayrı veriliyor çünkü paylaşım penceresinde
+   * bazı uygulamalar (mesajlaşma, not) görseli değil yalnızca yazıyı alıyor;
+   * o durumda "rabi-haftalik-ozet-2026-08-17.png" yerine haftanın özeti gitsin.
+   */
+  metin: string = baslik,
 ): Promise<PaylasimSonucu> {
   if (Capacitor.isNativePlatform()) {
     try {
@@ -52,7 +58,7 @@ export async function gorseliPaylas(
         // galerisi her hafta bir dosyayla dolardı.
         directory: Directory.Cache,
       })
-      await Share.share({ title: baslik, text: baslik, files: [yazma.uri] })
+      await Share.share({ title: baslik, text: metin, files: [yazma.uri] })
       return 'paylasildi'
     } catch (hata) {
       // Kullanıcı paylaş penceresini kapattığında da hata fırlıyor; ayırt
@@ -64,7 +70,7 @@ export async function gorseliPaylas(
   const dosya = new File([blob], dosyaAdi, { type: 'image/png' })
   if (navigator.canShare?.({ files: [dosya] })) {
     try {
-      await navigator.share({ files: [dosya], title: baslik, text: baslik })
+      await navigator.share({ files: [dosya], title: baslik, text: metin })
       return 'paylasildi'
     } catch (hata) {
       return iptalMi(hata) ? 'iptal' : 'hata'

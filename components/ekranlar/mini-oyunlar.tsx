@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { ChevronRight } from 'lucide-react'
-import type { OyunId, OyunKayitlari, OyunTurKaydi } from '@/lib/types'
+import type { OyunId, OyunKayitlari, OyunMuzikTuru, OyunTurKaydi } from '@/lib/types'
 import { OYUNLAR, istatistikAl, oyunToplami } from '@/lib/oyunlar/tanim'
 import {
   TUR_SURESI,
@@ -12,8 +12,10 @@ import {
 } from '@/lib/oyunlar/tur'
 import { sesleriHazirla } from '@/lib/oyunlar/oyun-sesi'
 import { OYUN_GECMIS_SINIRI } from '@/lib/depo'
+import { OyunMuzigi } from '@/lib/oyunlar/oyun-muzigi'
 import { LOFI_PARCALAR } from '@/lib/lofi'
 import { SesCalar } from '@/lib/ses'
+import { useUygulamaGorunur } from '@/lib/gorunurluk'
 import { tarihYaz } from '@/lib/hesap'
 import { bugun } from '@/lib/utils'
 import { BaslikSatiri, Deger, Not } from '@/components/ui'
@@ -28,46 +30,76 @@ import { EdebiyatOyunuEkrani } from '@/components/ekranlar/oyun-edebiyat'
  * çıkışta olduğu gibi geri geliyor. Ayrı bir `Ekran` değeri yapılmadı çünkü
  * oyundan çıkınca listeye değil kart menüsüne dönerdi.
  */
-/** Mini oyunların arka plan müziği — pomodoro ile aynı CC0 lo-fi listesinden. */
-const OYUN_PARCASI = LOFI_PARCALAR[5]
-
 export function MiniOyunlarEkrani({
   kayitlar,
   setKayitlar,
   setGecmis,
   sesAcik,
   muzikAcik,
+  muzikTuru,
 }: {
   kayitlar: OyunKayitlari
   setKayitlar: (guncelleyici: OyunKayitlari | ((onceki: OyunKayitlari) => OyunKayitlari)) => void
   setGecmis: (guncelleyici: (onceki: OyunTurKaydi[]) => OyunTurKaydi[]) => void
   sesAcik: boolean
   muzikAcik: boolean
+  muzikTuru: OyunMuzikTuru
 }) {
   const [acikOyun, setAcikOyun] = useState<OyunId | null>(null)
   const toplam = oyunToplami(kayitlar)
 
   // --- Arka plan müziği ---
-  // Yalnızca bir oyun açıkken çalıyor; liste ekranında müzik başlaması,
-  // menüde gezinen kullanıcıyı şaşırtırdı.
-  const calarRef = useRef<SesCalar | null>(null)
+  // Yalnızca bir oyun açıkken ve uygulama öndeyken çalıyor. Liste ekranında
+  // müzik başlaması menüde gezinen kullanıcıyı şaşırtırdı; ana tuşa basıldıktan
+  // sonra çalmaya devam etmesi ise uygulama görev listesinden silinene kadar
+  // sürüyordu.
+  const gorunur = useUygulamaGorunur()
+  const arcadeRef = useRef<OyunMuzigi | null>(null)
+  const lofiRef = useRef<SesCalar | null>(null)
+
+  const muzikCalsin = acikOyun !== null && muzikAcik
+
   useEffect(() => {
-    if (acikOyun === null || !muzikAcik) {
-      calarRef.current?.kapat()
-      calarRef.current = null
+    if (!muzikCalsin || muzikTuru !== 'arcade') {
+      arcadeRef.current?.kapat()
+      arcadeRef.current = null
       return
     }
-    const calar = new SesCalar()
+    const muzik = arcadeRef.current ?? new OyunMuzigi()
+    arcadeRef.current = muzik
     // Ses efektlerinin altında kalmalı: müzik yüksek olursa doğru/yanlış
     // geri bildirimi duyulmuyor ve oyunun tek geri bildirimi kayboluyor.
-    calar.sesSeviyesi(0.22)
-    calar.cal(`lofi:${OYUN_PARCASI.dosya}`)
-    calarRef.current = calar
-    return () => {
-      calar.kapat()
-      calarRef.current = null
+    muzik.sesSeviyesi(0.42)
+    if (gorunur) muzik.basla()
+    else muzik.duraklat()
+  }, [muzikCalsin, muzikTuru, gorunur])
+
+  useEffect(() => {
+    if (!muzikCalsin || muzikTuru !== 'lofi') {
+      lofiRef.current?.kapat()
+      lofiRef.current = null
+      return
     }
-  }, [acikOyun, muzikAcik])
+    if (!lofiRef.current) {
+      const calar = new SesCalar()
+      calar.sesSeviyesi(0.22)
+      calar.cal(`lofi:${LOFI_PARCALAR[5].dosya}`)
+      lofiRef.current = calar
+    }
+    if (gorunur) lofiRef.current.devam()
+    else lofiRef.current.duraklat()
+  }, [muzikCalsin, muzikTuru, gorunur])
+
+  // Ekrandan çıkarken bağlamlar da kapanmalı; yukarıdaki efektler duraklatmakla yetiniyor.
+  useEffect(
+    () => () => {
+      arcadeRef.current?.kapat()
+      arcadeRef.current = null
+      lofiRef.current?.kapat()
+      lofiRef.current = null
+    },
+    [],
+  )
 
   const turBitti = (id: OyunId, ozet: TurSayilari) => {
     setKayitlar((onceki) => ({

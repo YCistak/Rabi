@@ -222,6 +222,18 @@
   .ozet-nabiz {
     animation: ozet-nabiz 1300ms ease-out both;
   }
+  /*
+    Üstteki hikâye çubuğu. Süre `style` ile veriliyor çünkü her kartın kendi
+    süresi var. Dolu/boş iki durum varken kartın ne zaman geçeceği belli
+    olmuyordu; dolan çubuk "ne kadar kaldı"yı gösteren asıl parça.
+    `animation-play-state` ile duraklatılıyor: parmak basılıyken ya da uygulama
+    arka plandayken çubuk da beklemeli, yoksa sayaçla arası açılırdı.
+  */
+  .ozet-cubuk {
+    animation-name: ozet-cubuk;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+  }
 }
 
 @keyframes acilis-girisi {
@@ -316,6 +328,15 @@
   Hareket azaltma tercihi açıksa süslemeler durur. Açılış çarkı istisna: dönmeyen
   bir bekleme göstergesi "donmuş" izlenimi veriyor, o yüzden yavaşlatılıyor.
 */
+@keyframes ozet-cubuk {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .acilis-girisi,
   .acilis-ziplama,
@@ -325,6 +346,8 @@
   .ozet-nabiz {
     animation: none;
   }
+  /* `ozet-cubuk` bilerek listede yok: süsleme değil, kartın ne zaman
+     geçeceğini gösteren tek işaret. */
   .acilis-cark {
     animation-duration: 3.4s;
   }

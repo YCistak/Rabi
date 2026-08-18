@@ -94,6 +94,7 @@ export const VARSAYILAN_AYARLAR: Ayarlar = {
   bildirimAcik: false,
   oyunSesi: true,
   oyunMuzigi: true,
+  oyunMuzikTuru: 'arcade',
   kurulumTamamlandi: false,
 }
 
@@ -130,6 +131,9 @@ export function ayarlariNormalize(ham: Partial<Ayarlar> | null | undefined): Aya
     gunlukHedef: Number.isFinite(birlesik.gunlukHedef) && birlesik.gunlukHedef > 0
       ? birlesik.gunlukHedef
       : VARSAYILAN_AYARLAR.gunlukHedef,
+    // Eski kurulumlarda bu alan yok; bilinmeyen bir değer gelirse müzik hiç
+    // çalmazdı, o yüzden bilinen ikiliye zorlanıyor.
+    oyunMuzikTuru: birlesik.oyunMuzikTuru === 'lofi' ? 'lofi' : 'arcade',
   }
 }
 

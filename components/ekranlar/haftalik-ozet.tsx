@@ -19,10 +19,11 @@ import { dakikaYaz, gunYaz, haftaYaz, yuzdeYaz } from '@/lib/ozet'
 import { netYaz } from '@/lib/hesap'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { geriSayimSesi, kapanisSesi, kartSesi, ozetSesiCal, zaferSesi } from '@/lib/ozet-sesi'
-import { ozetGorseliUret } from '@/lib/ozet-gorsel'
+import { kartGorseliUret, ozetGorseliUret, type OzetKartVerisi } from '@/lib/ozet-gorsel'
 import { gorseliPaylas } from '@/lib/paylas'
 import { SesCalar } from '@/lib/ses'
 import { LOFI_PARCALAR } from '@/lib/lofi'
+import { useUygulamaGorunur } from '@/lib/gorunurluk'
 import { useGeriKatmani } from '@/lib/geri'
 import { Rabi } from '@/components/maskot/rabi'
 import { cn } from '@/lib/utils'
@@ -47,10 +48,21 @@ type Kart = {
   id: string
   /** Kendiliğinden geçmeden önce ekranda kalma süresi (ms). 0 = geçmez. */
   sure: number
-  zemin: string
+  /** Zemin geçişinin iki ucu. Paylaşılan görsel de aynı renkleri kullanıyor. */
+  renkler: readonly [string, string]
   ses?: () => void
   icerik: React.ReactNode
+  /** Kartın paylaşılabilir hâli — ekrandakiyle aynı sayı ve cümle. */
+  paylasim: OzetKartVerisi
 }
+
+/** Kartın CSS zemini. Renkler tek yerde dursun diye buradan türetiliyor. */
+function zeminCss(renkler: readonly [string, string]): string {
+  return `linear-gradient(160deg, ${renkler[0]} 0%, ${renkler[1]} 100%)`
+}
+
+/** Basılı tutma kaç ms sonra "duraklat" sayılıyor. Altındakiler dokunuş. */
+const BASILI_ESIGI = 220
 
 export function HaftalikOzetEkrani({
   ozet,
@@ -65,12 +77,19 @@ export function HaftalikOzetEkrani({
   const [sira, setSira] = useState(0)
   const [sesli, setSesli] = useState(sesAcik)
   const [paylasimDurumu, setPaylasimDurumu] = useState<'hazir' | 'uretiliyor' | 'hata'>('hazir')
+  /** Parmak ekranda basılı tutuluyor mu — hikâye o sırada beklemeli. */
+  const [basili, setBasili] = useState(false)
 
   const kartlar = useMemo(() => kartlariKur(ozet), [ozet])
   const kart = kartlar[Math.min(sira, kartlar.length - 1)]
   const sonKart = sira >= kartlar.length - 1
 
   useGeriKatmani(true, onKapat)
+
+  // Ana tuşa basıldığında WebView durmuyor: müzik çalmaya, kartlar ilerlemeye
+  // devam ediyordu ve kullanıcı geri döndüğünde özet çoktan bitmiş oluyordu.
+  const gorunur = useUygulamaGorunur()
+  const bekliyor = basili || !gorunur
 
   // --- Müzik ---
   const calarRef = useRef<SesCalar | null>(null)
@@ -91,12 +110,20 @@ export function HaftalikOzetEkrani({
     }
   }, [sesli])
 
-  // --- Kartın kendi sesi ---
   useEffect(() => {
-    if (!kart?.ses) return
-    ozetSesiCal(kart.ses, sesli)
-    // `sira` bilerek bağımlılıkta: aynı karta geri dönülürse ses yeniden çalsın.
-  }, [kart, sira, sesli])
+    if (gorunur) calarRef.current?.devam()
+    else calarRef.current?.duraklat()
+  }, [gorunur])
+
+  // --- Kartın kendi sesi ---
+  // Yalnızca **kart değişince** çalıyor. Bağımlılıkta `sesli` de olsaydı
+  // hoparlör düğmesine her dokunuşta o kartın sesi baştan çalardı.
+  const sonSesliKartRef = useRef(-1)
+  useEffect(() => {
+    if (sonSesliKartRef.current === sira) return
+    sonSesliKartRef.current = sira
+    if (kart?.ses) ozetSesiCal(kart.ses, sesli)
+  }, [sira, kart, sesli])
 
   const ilerle = useCallback(() => {
     setSira((s) => Math.min(s + 1, kartlar.length - 1))
@@ -105,31 +132,88 @@ export function HaftalikOzetEkrani({
   const geri = useCallback(() => setSira((s) => Math.max(0, s - 1)), [])
 
   // --- Kendiliğinden ilerleme ---
+  // Kalan süre ayrı tutuluyor: basılı tutup bırakınca kart baştan değil,
+  // kaldığı yerden devam ediyor — hikâye uygulamalarının davranışı bu.
+  const kalanRef = useRef(0)
   useEffect(() => {
-    if (!kart || kart.sure <= 0) return
-    const zamanlayici = setTimeout(ilerle, kart.sure)
-    return () => clearTimeout(zamanlayici)
-  }, [kart, sira, ilerle])
+    kalanRef.current = kart?.sure ?? 0
+  }, [kart, sira])
 
-  const paylas = async () => {
+  useEffect(() => {
+    if (!kart || kart.sure <= 0 || bekliyor) return
+    const baslangic = Date.now()
+    const zamanlayici = setTimeout(ilerle, kalanRef.current)
+    return () => {
+      clearTimeout(zamanlayici)
+      kalanRef.current = Math.max(0, kalanRef.current - (Date.now() - baslangic))
+    }
+  }, [kart, sira, bekliyor, ilerle])
+
+  // --- Basılı tutma ---
+  // Dokunuş ile basılı tutmayı ayıran tek şey süre. Eşiğin altında kalan
+  // dokunuşlar geçiş düğmelerine gidiyor, üstündekiler kartı durduruyor.
+  const olcerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const tutulduRef = useRef(false)
+
+  const basmaBasladi = () => {
+    tutulduRef.current = false
+    olcerRef.current = setTimeout(() => {
+      tutulduRef.current = true
+      setBasili(true)
+    }, BASILI_ESIGI)
+  }
+
+  const basmaBitti = () => {
+    if (olcerRef.current) clearTimeout(olcerRef.current)
+    olcerRef.current = null
+    setBasili(false)
+  }
+
+  // Basılı tutmadan sonra gelen tıklama yutuluyor; yoksa parmağı kaldırınca
+  // kart hem devam eder hem de bir sonrakine atlardı.
+  const dokunus = (islem: () => void) => () => {
+    if (tutulduRef.current) return
+    islem()
+  }
+
+  const paylasilan = async (uret: () => Promise<Blob | null>, dosyaAdi: string, metin: string) => {
     setPaylasimDurumu('uretiliyor')
-    const gorsel = await ozetGorseliUret(ozet)
+    const gorsel = await uret()
     if (!gorsel) {
       setPaylasimDurumu('hata')
       return
     }
     const sonuc = await gorseliPaylas(
       gorsel,
-      `rabi-haftalik-ozet-${ozet.hafta.baslangic}.png`,
+      dosyaAdi,
       `Rabi haftalık özetim — ${haftaYaz(ozet.hafta)}`,
+      metin,
     )
     setPaylasimDurumu(sonuc === 'hata' ? 'hata' : 'hazir')
   }
 
+  const kartiPaylas = () =>
+    paylasilan(
+      () => kartGorseliUret(kart.paylasim, haftaYaz(ozet.hafta), sira, kartlar.length),
+      `rabi-${kart.id}-${ozet.hafta.baslangic}.png`,
+      `${kart.paylasim.ustluk}: ${kart.paylasim.dev} — Rabi haftalık özeti (${haftaYaz(ozet.hafta)})`,
+    )
+
+  const haftayiPaylas = () =>
+    paylasilan(
+      () => ozetGorseliUret(ozet),
+      `rabi-haftalik-ozet-${ozet.hafta.baslangic}.png`,
+      `Bu hafta ${ozet.toplamSoru} soru çözdüm — Rabi haftalık özeti (${haftaYaz(ozet.hafta)})`,
+    )
+
   return (
     <div
       className="fixed inset-0 z-50 flex flex-col overflow-hidden text-white"
-      style={{ background: kart.zemin }}
+      style={{ background: zeminCss(kart.renkler) }}
+      onPointerDown={basmaBasladi}
+      onPointerUp={basmaBitti}
+      onPointerCancel={basmaBitti}
+      onPointerLeave={basmaBitti}
     >
       {/* Zemin geçişi yumuşasın diye kartın rengi üstüne ince bir karartma */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
@@ -137,9 +221,14 @@ export function HaftalikOzetEkrani({
       {/* İçerik sütunu uygulamanın geri kalanıyla aynı genişlikte tutuluyor;
           geniş ekranda kartlar kenarlara savrulmasın. */}
       <div className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col px-5 pt-[calc(0.75rem+var(--guvenli-ust))] pb-[calc(1rem+var(--guvenli-alt))]">
-        <IlerlemeCubuklari toplam={kartlar.length} sira={sira} />
+        <IlerlemeCubuklari
+          toplam={kartlar.length}
+          sira={sira}
+          sure={kart.sure}
+          durdu={bekliyor}
+        />
 
-        <div className="mt-3 flex items-center justify-between">
+        <div className="mt-3 flex items-center justify-between gap-2">
           <button
             type="button"
             onClick={onKapat}
@@ -149,19 +238,32 @@ export function HaftalikOzetEkrani({
             <X size={22} aria-hidden />
           </button>
 
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/70">
+          <p className="min-w-0 flex-1 truncate text-center text-xs font-medium uppercase tracking-[0.2em] text-white/70">
             {haftaYaz(ozet.hafta)}
           </p>
 
-          <button
-            type="button"
-            onClick={() => setSesli((s) => !s)}
-            aria-label={sesli ? 'Sesi kapat' : 'Sesi aç'}
-            aria-pressed={sesli}
-            className="rounded-full p-2 text-white/80 active:bg-white/15"
-          >
-            {sesli ? <Volume2 size={20} aria-hidden /> : <VolumeX size={20} aria-hidden />}
-          </button>
+          <div className="flex items-center">
+            {/* Hikâyede ne bakıyorsan onu paylaşırsın: bu düğme açık kartın
+                görselini üretiyor, sondaki düğme haftanın tamamını. */}
+            <button
+              type="button"
+              onClick={() => void kartiPaylas()}
+              disabled={paylasimDurumu === 'uretiliyor'}
+              aria-label="Bu kartı paylaş"
+              className="rounded-full p-2 text-white/80 active:bg-white/15 disabled:opacity-50"
+            >
+              <Share2 size={19} aria-hidden />
+            </button>
+            <button
+              type="button"
+              onClick={() => setSesli((s) => !s)}
+              aria-label={sesli ? 'Sesi kapat' : 'Sesi aç'}
+              aria-pressed={sesli}
+              className="rounded-full p-2 text-white/80 active:bg-white/15"
+            >
+              {sesli ? <Volume2 size={20} aria-hidden /> : <VolumeX size={20} aria-hidden />}
+            </button>
+          </div>
         </div>
 
         {/* Kartın kendisi. `key` sıra: her geçişte animasyonlar baştan oynasın. */}
@@ -170,9 +272,11 @@ export function HaftalikOzetEkrani({
         </div>
 
         {sonKart ? (
-          <PaylasCubugu durum={paylasimDurumu} onPaylas={paylas} onKapat={onKapat} />
+          <PaylasCubugu durum={paylasimDurumu} onPaylas={() => void haftayiPaylas()} onKapat={onKapat} />
         ) : (
-          <p className="pb-1 text-center text-xs text-white/55">Devam etmek için dokun</p>
+          <p className="pb-1 text-center text-xs text-white/55">
+            {basili ? 'Bıraktığında devam eder' : 'Dokun geç · basılı tut beklet'}
+          </p>
         )}
       </div>
 
@@ -181,30 +285,49 @@ export function HaftalikOzetEkrani({
       <button
         type="button"
         aria-label="Önceki kart"
-        onClick={geri}
+        onClick={dokunus(geri)}
         className="absolute inset-y-0 left-0 z-0 w-1/3"
       />
       <button
         type="button"
         aria-label="Sonraki kart"
-        onClick={ilerle}
+        onClick={dokunus(ilerle)}
         className="absolute inset-y-0 right-0 z-0 w-2/3"
       />
     </div>
   )
 }
 
-function IlerlemeCubuklari({ toplam, sira }: { toplam: number; sira: number }) {
+function IlerlemeCubuklari({
+  toplam,
+  sira,
+  sure,
+  durdu,
+}: {
+  toplam: number
+  sira: number
+  /** Açık kartın süresi — çubuk tam bu sürede doluyor. */
+  sure: number
+  durdu: boolean
+}) {
   return (
     <div className="flex gap-1" aria-hidden>
       {Array.from({ length: toplam }, (_, i) => (
-        <span
-          key={i}
-          className={cn(
-            'h-[3px] flex-1 rounded-full transition-colors duration-300',
-            i <= sira ? 'bg-white' : 'bg-white/25',
-          )}
-        />
+        <span key={i} className="h-[3px] flex-1 overflow-hidden rounded-full bg-white/25">
+          {/* Geçmiş kartlar dolu, açık kart süresince doluyor, sıradakiler boş.
+              Dolan çubuk hikâyenin "ne kadar kaldı" duygusunu veren asıl parça;
+              dolu/boş iki durum varken kartın ne zaman geçeceği belli olmuyordu. */}
+          <span
+            className={cn('block h-full rounded-full bg-white', i === sira && sure > 0 && 'ozet-cubuk')}
+            style={
+              i < sira || sure <= 0
+                ? { width: i <= sira ? '100%' : '0%' }
+                : i === sira
+                  ? { animationDuration: `${sure}ms`, animationPlayState: durdu ? 'paused' : 'running' }
+                  : { width: '0%' }
+            }
+          />
+        </span>
       ))}
     </div>
   )
@@ -238,7 +361,7 @@ function PaylasCubugu({
           </>
         ) : (
           <>
-            <Share2 size={18} aria-hidden /> Özeti paylaş
+            <Share2 size={18} aria-hidden /> Tüm haftayı paylaş
           </>
         )}
       </button>
@@ -302,30 +425,43 @@ function Sahne({ children }: { children: React.ReactNode }) {
 // Kartlar
 // ---------------------------------------------------------------------------
 
+/**
+ * Kartların zemin renkleri — geçişin iki ucu.
+ *
+ * CSS metni olarak değil çift olarak tutuluyor: paylaşılan görsel tuvale
+ * çiziliyor ve `linear-gradient(...)` metnini ayrıştıramıyor. Renkler tek
+ * yerde durunca ekrandaki kartla paylaşılan görsel birbirinden ayrılamıyor.
+ */
 const ZEMINLER = {
-  giris: 'linear-gradient(160deg, #C2622A 0%, #8C3D14 100%)',
-  hedef: 'linear-gradient(160deg, #B8541F 0%, #6E2E0E 100%)',
-  seri: 'linear-gradient(160deg, #C24E1F 0%, #7A2410 100%)',
-  devamsizlik: 'linear-gradient(160deg, #4A5568 0%, #232B38 100%)',
-  pomodoro: 'linear-gradient(160deg, #2F6D4F 0%, #16382A 100%)',
-  ders: 'linear-gradient(160deg, #3B6E64 0%, #1B3831 100%)',
-  oyun: 'linear-gradient(160deg, #5B4A9E 0%, #2C2354 100%)',
-  banka: 'linear-gradient(160deg, #9E4A6B 0%, #4E2036 100%)',
-  deneme: 'linear-gradient(160deg, #2E5C8A 0%, #142B44 100%)',
-  net: 'linear-gradient(160deg, #1F6E7A 0%, #0E343A 100%)',
-  ucuncu: 'linear-gradient(160deg, #6B5B4A 0%, #33291F 100%)',
-  ikinci: 'linear-gradient(160deg, #8A6B33 0%, #46340F 100%)',
-  birinci: 'linear-gradient(160deg, #D08A2C 0%, #8A4A10 100%)',
-  kapanis: 'linear-gradient(160deg, #C2622A 0%, #5E2A0C 100%)',
-} as const
+  giris: ['#C2622A', '#8C3D14'],
+  hedef: ['#B8541F', '#6E2E0E'],
+  seri: ['#C24E1F', '#7A2410'],
+  devamsizlik: ['#4A5568', '#232B38'],
+  pomodoro: ['#2F6D4F', '#16382A'],
+  ders: ['#3B6E64', '#1B3831'],
+  oyun: ['#5B4A9E', '#2C2354'],
+  banka: ['#9E4A6B', '#4E2036'],
+  deneme: ['#2E5C8A', '#142B44'],
+  net: ['#1F6E7A', '#0E343A'],
+  ucuncu: ['#6B5B4A', '#33291F'],
+  ikinci: ['#8A6B33', '#46340F'],
+  birinci: ['#D08A2C', '#8A4A10'],
+  kapanis: ['#C2622A', '#5E2A0C'],
+} as const satisfies Record<string, readonly [string, string]>
 
 function kartlariKur(ozet: HaftalikOzet): Kart[] {
   const kartlar: Kart[] = [
     {
       id: 'giris',
       sure: 3400,
-      zemin: ZEMINLER.giris,
+      renkler: ZEMINLER.giris,
       ses: () => kartSesi(0),
+      paylasim: {
+        ustluk: 'Haftalık özet',
+        dev: 'Haftan bitti',
+        alt: 'Bakalım ne yapmışsın.',
+        renkler: ZEMINLER.giris,
+      },
       icerik: (
         <Sahne>
           <div className="ozet-vurgu flex justify-center">
@@ -350,8 +486,14 @@ function kartlariKur(ozet: HaftalikOzet): Kart[] {
     {
       id: 'hedef',
       sure: 4600,
-      zemin: ZEMINLER.hedef,
+      renkler: ZEMINLER.hedef,
       ses: () => kartSesi(1),
+      paylasim: {
+        ustluk: 'Bu hafta çözdüğüm soru',
+        dev: String(ozet.toplamSoru),
+        alt: hedefCumlesi(ozet),
+        renkler: ZEMINLER.hedef,
+      },
       icerik: (
         <Sahne>
           <Ustluk simge={<Target size={16} aria-hidden />}>Bu hafta çözdüğün soru</Ustluk>
@@ -379,8 +521,14 @@ function kartlariKur(ozet: HaftalikOzet): Kart[] {
     {
       id: 'seri',
       sure: 4200,
-      zemin: ZEMINLER.seri,
+      renkler: ZEMINLER.seri,
       ses: () => kartSesi(2),
+      paylasim: {
+        ustluk: 'Serim',
+        dev: ozet.seri === 0 ? '—' : `${ozet.seri} gün`,
+        alt: seriCumlesi(ozet),
+        renkler: ZEMINLER.seri,
+      },
       icerik: (
         <Sahne>
           <Ustluk simge={<Flame size={16} aria-hidden />}>Serin</Ustluk>
@@ -394,8 +542,14 @@ function kartlariKur(ozet: HaftalikOzet): Kart[] {
     {
       id: 'devamsizlik',
       sure: 4200,
-      zemin: ZEMINLER.devamsizlik,
+      renkler: ZEMINLER.devamsizlik,
       ses: () => kartSesi(3),
+      paylasim: {
+        ustluk: 'Bu haftaki devamsızlığım',
+        dev: ozet.devamsizlikToplam === 0 ? 'Tam gün' : `${gunYaz(ozet.devamsizlikToplam)} gün`,
+        alt: devamsizlikCumlesi(ozet),
+        renkler: ZEMINLER.devamsizlik,
+      },
       icerik: (
         <Sahne>
           <Ustluk simge={<CalendarX2 size={16} aria-hidden />}>Bu haftaki devamsızlığın</Ustluk>
@@ -411,8 +565,14 @@ function kartlariKur(ozet: HaftalikOzet): Kart[] {
     {
       id: 'pomodoro-dakika',
       sure: 4200,
-      zemin: ZEMINLER.pomodoro,
+      renkler: ZEMINLER.pomodoro,
       ses: () => kartSesi(4),
+      paylasim: {
+        ustluk: 'Pomodoro ile çalıştığım süre',
+        dev: ozet.pomodoroDakika === 0 ? '—' : dakikaYaz(ozet.pomodoroDakika),
+        alt: pomodoroCumlesi(ozet),
+        renkler: ZEMINLER.pomodoro,
+      },
       icerik: (
         <Sahne>
           <Ustluk simge={<Timer size={16} aria-hidden />}>Pomodoro ile çalıştığın süre</Ustluk>
@@ -426,8 +586,16 @@ function kartlariKur(ozet: HaftalikOzet): Kart[] {
     {
       id: 'pomodoro-ders',
       sure: 4200,
-      zemin: ZEMINLER.ders,
+      renkler: ZEMINLER.ders,
       ses: () => kartSesi(5),
+      paylasim: {
+        ustluk: 'En çok vakit ayırdığım ders',
+        dev: ozet.pomodoroDers?.ders ?? 'Ders seçilmemiş',
+        alt: ozet.pomodoroDers
+          ? `${dakikaYaz(ozet.pomodoroDers.dakika)} — haftanın en çok emek verdiğim dersi bu.`
+          : 'Pomodoro başlatırken ders seçilmemiş.',
+        renkler: ZEMINLER.ders,
+      },
       icerik: (
         <Sahne>
           <Ustluk simge={<Timer size={16} aria-hidden />}>En çok vakit ayırdığın ders</Ustluk>
@@ -445,8 +613,14 @@ function kartlariKur(ozet: HaftalikOzet): Kart[] {
     {
       id: 'oyun',
       sure: 4200,
-      zemin: ZEMINLER.oyun,
+      renkler: ZEMINLER.oyun,
       ses: () => kartSesi(6),
+      paylasim: {
+        ustluk: 'Mini oyunlarda geçen süre',
+        dev: ozet.oyunTur === 0 ? '—' : dakikaYaz(ozet.oyunDakika),
+        alt: oyunCumlesi(ozet),
+        renkler: ZEMINLER.oyun,
+      },
       icerik: (
         <Sahne>
           <Ustluk simge={<Gamepad2 size={16} aria-hidden />}>Mini oyunlarda geçen süre</Ustluk>
@@ -460,8 +634,14 @@ function kartlariKur(ozet: HaftalikOzet): Kart[] {
     {
       id: 'banka',
       sure: 4200,
-      zemin: ZEMINLER.banka,
+      renkler: ZEMINLER.banka,
       ses: () => kartSesi(7),
+      paylasim: {
+        ustluk: 'Bankadan kapattığım soru',
+        dev: String(ozet.bankaCozulen),
+        alt: bankaCumlesi(ozet),
+        renkler: ZEMINLER.banka,
+      },
       icerik: (
         <Sahne>
           <Ustluk simge={<Images size={16} aria-hidden />}>Bankadan kapattığın soru</Ustluk>
@@ -475,8 +655,14 @@ function kartlariKur(ozet: HaftalikOzet): Kart[] {
     {
       id: 'deneme-sayisi',
       sure: 4200,
-      zemin: ZEMINLER.deneme,
+      renkler: ZEMINLER.deneme,
       ses: () => kartSesi(8),
+      paylasim: {
+        ustluk: 'Bu hafta girdiğim deneme',
+        dev: String(ozet.denemeSayisi),
+        alt: denemeCumlesi(ozet),
+        renkler: ZEMINLER.deneme,
+      },
       icerik: (
         <Sahne>
           <Ustluk>Bu hafta girdiğin deneme</Ustluk>
@@ -491,8 +677,25 @@ function kartlariKur(ozet: HaftalikOzet): Kart[] {
   kartlar.push({
     id: 'deneme-net',
     sure: 5000,
-    zemin: ZEMINLER.net,
+    renkler: ZEMINLER.net,
     ses: () => kartSesi(9),
+    paylasim: ozet.denemeEnYuksek
+      ? {
+          ustluk: 'En yüksek deneme netim',
+          dev: netYaz(ozet.denemeEnYuksek.net),
+          alt: ozet.denemeEnYuksek.ad,
+          ekstra: [
+            `En düşük ${netYaz(ozet.denemeEnDusuk?.net ?? 0)}`,
+            `Ortalama ${netYaz(ozet.denemeOrtalama ?? 0)}`,
+          ],
+          renkler: ZEMINLER.net,
+        }
+      : {
+          ustluk: 'Deneme netlerim',
+          dev: 'Bu hafta deneme yok',
+          alt: 'Deneme, gidişatı gösteren tek ölçü.',
+          renkler: ZEMINLER.net,
+        },
     icerik: ozet.denemeEnYuksek ? (
       <Sahne>
         <Ustluk>Deneme netlerin</Ustluk>
@@ -524,8 +727,14 @@ function kartlariKur(ozet: HaftalikOzet): Kart[] {
     kartlar.push({
       id: 'ders-yok',
       sure: 4200,
-      zemin: ZEMINLER.ucuncu,
+      renkler: ZEMINLER.ucuncu,
       ses: () => kartSesi(10),
+      paylasim: {
+        ustluk: 'En çok soru çözdüğüm dersler',
+        dev: 'Ders girilmemiş',
+        alt: 'Soru takibine ders ders girilirse haftanın zirvesi burada çıkıyor.',
+        renkler: ZEMINLER.ucuncu,
+      },
       icerik: (
         <Sahne>
           <Ustluk>En çok soru çözdüğün dersler</Ustluk>
@@ -551,7 +760,17 @@ function kartlariKur(ozet: HaftalikOzet): Kart[] {
         sure: birinciMi ? 6000 : 4000,
         // Birincilik altın rengi; üçüncü ve ikinci daha sönük. Renk sıcaklığının
         // artması, geri sayımın yaklaştığını sayıyı okumadan hissettiriyor.
-        zemin: zeminler[Math.min(2, 3 - sira)],
+        renkler: zeminler[Math.min(2, 3 - sira)],
+        paylasim: {
+          ustluk: birinciMi
+            ? 'Haftanın dersi'
+            : `En çok soru çözdüğüm ${sira}. ders`,
+          dev: `${sira}. ${ders.ders}`,
+          alt: `${ders.soru} soru · haftanın ${yuzdeYaz(ders.oran)}${
+            birinciMi ? ' — bu hafta beni en çok bu ders yordu.' : ''
+          }`,
+          renkler: zeminler[Math.min(2, 3 - sira)],
+        },
         ses: () => (birinciMi ? zaferSesi() : geriSayimSesi(sira)),
         icerik: (
           <Sahne>
@@ -587,8 +806,16 @@ function kartlariKur(ozet: HaftalikOzet): Kart[] {
   kartlar.push({
     id: 'kapanis',
     sure: 0,
-    zemin: ZEMINLER.kapanis,
+    renkler: ZEMINLER.kapanis,
     ses: kapanisSesi,
+    paylasim: {
+      ustluk: `Rabi haftalık özeti`,
+      dev: kapanisCumlesi(ozet),
+      alt: `${ozet.toplamSoru} soru · ${dakikaYaz(ozet.pomodoroDakika)} pomodoro · ${
+        ozet.denemeSayisi
+      } deneme`,
+      renkler: ZEMINLER.kapanis,
+    },
     icerik: (
       <Sahne>
         <div className="ozet-vurgu flex justify-center">

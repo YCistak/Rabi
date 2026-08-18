@@ -42,6 +42,7 @@ import type {
   KazanilanRozet,
   OkulYili,
   OyunKayitlari,
+  OyunMuzikTuru,
   OyunTurKaydi,
   PomodoroSeans,
   PuanTuru,
@@ -62,6 +63,21 @@ const HAZIR_HEDEFLER = [100, 200, 300, 400, 500]
  * liste "en sık istenenler"; tam liste 24 çip olurdu ve okunmazdı.
  */
 const HATIRLATMA_SAATLERI = [8, 12, 16, 18, 19, 20, 21, 22, 23]
+
+/**
+ * Mini oyun müziği seçenekleri. Hangisinin "iyi" olduğu tamamen zevk meselesi
+ * olduğu için seçim kullanıcıda bırakıldı; tek bir parça dayatmak, beğenmeyen
+ * için müziği tamamen kapatmaktan başka yol bırakmıyordu.
+ */
+const OYUN_MUZIK_ADI: Record<OyunMuzikTuru, string> = {
+  arcade: 'Arcade',
+  lofi: 'Lo-fi',
+}
+
+const OYUN_MUZIK_ACIKLAMA: Record<OyunMuzikTuru, string> = {
+  arcade: 'Hızlı chiptune döngüsü — turun temposuyla aynı, acele ettiriyor.',
+  lofi: 'Pomodoro’nun sakin parçaları. Yavaş; oyunun hızını taşımıyor.',
+}
 
 /** Bayt sayısını okunur hâle getirir: 5242880 → "5,0 MB". */
 function boyutYaz(bayt: number): string {
@@ -353,10 +369,30 @@ export function AyarlarEkrani({
         />
         <Anahtar
           baslik="Mini oyun müziği"
-          aciklama="Oyun oynarken arkada çalan lo-fi. Ses efektlerinden ayrı kapatılabiliyor."
+          aciklama="Oyun oynarken arkada çalan müzik. Ses efektlerinden ayrı kapatılabiliyor."
           acik={ayarlar.oyunMuzigi}
           onDegis={() => setAyarlar((o) => ({ ...o, oyunMuzigi: !o.oyunMuzigi }))}
         />
+
+        {ayarlar.oyunMuzigi && (
+          <div>
+            <Etiket>Hangi müzik?</Etiket>
+            <div className="flex flex-wrap gap-2">
+              {(Object.keys(OYUN_MUZIK_ADI) as OyunMuzikTuru[]).map((tur) => (
+                <Cip
+                  key={tur}
+                  secili={ayarlar.oyunMuzikTuru === tur}
+                  onClick={() => setAyarlar((o) => ({ ...o, oyunMuzikTuru: tur }))}
+                >
+                  {OYUN_MUZIK_ADI[tur]}
+                </Cip>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {OYUN_MUZIK_ACIKLAMA[ayarlar.oyunMuzikTuru]}
+            </p>
+          </div>
+        )}
       </Kart>
 
       <Kart className="mb-3">

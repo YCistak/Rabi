@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sistem açılış ekranının "ikonu" — bilerek **saydam**.
+
+  Android 12+ açılış ekranı kapatılamıyor; `windowSplashScreenAnimatedIcon`
+  verilmezse sistem uygulama simgesini koyuyor. Uygulamanın kendi açılış ekranı
+  (components/acilis.tsx) artık tavşanı, "Rabi" yazısını ve çarkı gösterdiği
+  için burada ikinci bir maskot arka arkaya iki açılış ekranı gibi görünüyordu.
+
+  Saydam bir şekil konunca sistem ekranından geriye yalnızca zemin rengi kalıyor;
+  o renk de uygulamanınkiyle aynı olduğu için tek bir açılış görünüyor.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+  <size android:width="1dp" android:height="1dp" />
+  <solid android:color="@android:color/transparent" />
+</shape>

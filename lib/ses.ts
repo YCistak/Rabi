@@ -76,6 +76,23 @@ export class SesCalar {
     this.eleman = eleman
   }
 
+  /**
+   * Sesi keser ama parçayı ve konumunu korur. Uygulama arka plana geçtiğinde
+   * kullanılıyor: `durdur()` çağrılsaydı geri dönüşte parça baştan başlardı.
+   */
+  duraklat() {
+    this.eleman?.pause()
+    void this.ctx?.suspend()
+  }
+
+  /** `duraklat()`ın karşılığı — kaldığı yerden devam eder. */
+  devam() {
+    void this.ctx?.resume()
+    void this.eleman?.play().catch(() => {
+      // Otomatik oynatma engellendiyse sessizce geç.
+    })
+  }
+
   durdur() {
     if (this.kaynak) {
       this.kaynak.stop()

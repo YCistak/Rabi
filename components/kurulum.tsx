@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Moon, Sun } from 'lucide-react'
 import type { Ayarlar, PuanTuru } from '@/lib/types'
 import { SINIFLAR } from '@/lib/hesap'
+import { saatDegeri, saatYaz, saatiCoz } from '@/lib/hatirlatma'
+import { useTema, type Tema } from '@/components/theme-provider'
 import { Alan, Buton, Cip, Etiket, Kart } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { izinIste } from '@/lib/bildirim'
@@ -11,7 +13,12 @@ import { izinIste } from '@/lib/bildirim'
 /** Kurulumun ürettiği ayarlar — geri kalanı varsayılanlardan gelir. */
 export type KurulumSecimleri = Pick<
   Ayarlar,
-  'buYilSinif' | 'puanTuru' | 'gunlukHedef' | 'hatirlatmaSaati' | 'bildirimAcik'
+  | 'buYilSinif'
+  | 'puanTuru'
+  | 'gunlukHedef'
+  | 'hatirlatmaSaati'
+  | 'hatirlatmaDakikasi'
+  | 'bildirimAcik'
 >
 
 const PUAN_TURLERI: { id: PuanTuru; ad: string; aciklama: string }[] = [
@@ -23,6 +30,14 @@ const PUAN_TURLERI: { id: PuanTuru; ad: string; aciklama: string }[] = [
 
 const HAZIR_HEDEFLER = [100, 200, 300, 400, 500]
 
+/**
+ * Hatırlatma için hızlı seçim saatleri — Ayarlar ekranındakilerle **aynı**.
+ * Burada beş saatlik kısa bir liste vardı; kurulumda 08.00'i seçmek isteyen
+ * kullanıcı önce kurulumu bitirip sonra Ayarlar'a girmek zorunda kalıyordu.
+ * Yanındaki saat kutusu, listede olmayan her saati ve dakikayı kabul ediyor.
+ */
+const HATIRLATMA_SAATLERI = [8, 12, 16, 18, 19, 20, 21, 22, 23]
+
 export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => void }) {
   const [adim, setAdim] = useState(0)
   const [sinif, setSinif] = useState(12)
@@ -30,9 +45,14 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
   const [hedef, setHedef] = useState(200)
   const [hedefMetni, setHedefMetni] = useState('200')
   const [saat, setSaat] = useState(20)
+  const [dakika, setDakika] = useState(0)
   const [bildirim, setBildirim] = useState(true)
 
-  const sonAdim = 3
+  // Tema seçimi anında uygulanıyor (kaydetmeye gerek yok): kullanıcı iki
+  // seçeneği de dokunarak görebilsin, sonra devam etsin.
+  const { tema, temaDegistir } = useTema()
+
+  const sonAdim = 4
   const ilerle = () => setAdim((a) => Math.min(sonAdim, a + 1))
   const geri = () => setAdim((a) => Math.max(0, a - 1))
 
@@ -41,11 +61,16 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
     // sonra, ne için sorulduğu belliyken. Reddederse kurulum yine tamamlanır,
     // yalnızca hatırlatma kapalı kaydedilir — Ayarlar'dan tekrar denenebilir.
     const izinli = bildirim ? await izinIste() : false
+    // Tema adımına hiç dokunulmadıysa ekranda gösterilen (telefonun tercihi)
+    // seçenek kaydedilir. Yazılmasaydı uygulama sistem temasını izlemeye devam
+    // eder, kullanıcı gece telefonu koyuya alınca Rabi de habersiz kararırdı.
+    temaDegistir(tema)
     onBitir({
       buYilSinif: sinif,
       puanTuru,
       gunlukHedef: hedef,
       hatirlatmaSaati: saat,
+      hatirlatmaDakikasi: dakika,
       bildirimAcik: izinli,
     })
   }
@@ -79,6 +104,35 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
 
         {adim === 1 && (
           <div className="space-y-2">
+            {TEMALAR.map((secenek) => (
+              <button
+                key={secenek.id}
+                type="button"
+                onClick={() => temaDegistir(secenek.id)}
+                aria-pressed={tema === secenek.id}
+                className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left transition ${
+                  tema === secenek.id
+                    ? 'border-primary bg-primary-soft'
+                    : 'border-border active:bg-muted'
+                }`}
+              >
+                <secenek.Simge size={20} className="shrink-0 text-primary" aria-hidden />
+                <span className="flex-1">
+                  <span className="block font-medium">{secenek.ad}</span>
+                  <span className="block text-xs text-muted-foreground">{secenek.aciklama}</span>
+                </span>
+                {tema === secenek.id && <Check size={18} className="shrink-0 text-primary" />}
+              </button>
+            ))}
+            <p className="pt-1 text-xs text-muted-foreground">
+              Şu an telefonunun tercihi seçili. Dokunduğun anda değişiyor; beğenmezsen diğerine
+              dön. Sonradan Ayarlar'dan da değiştirebilirsin.
+            </p>
+          </div>
+        )}
+
+        {adim === 2 && (
+          <div className="space-y-2">
             {PUAN_TURLERI.map((tur) => (
               <button
                 key={tur.id}
@@ -101,7 +155,7 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
           </div>
         )}
 
-        {adim === 2 && (
+        {adim === 3 && (
           <div>
             <Etiket>Günde kaç soru çözmeyi hedefliyorsun?</Etiket>
             <div className="flex flex-wrap gap-2">
@@ -139,7 +193,7 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
           </div>
         )}
 
-        {adim === 3 && (
+        {adim === 4 && (
           <div>
             <button
               type="button"
@@ -162,12 +216,43 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
               <div className="mt-4">
                 <Etiket>Saat kaçta hatırlatayım?</Etiket>
                 <div className="flex flex-wrap gap-2">
-                  {[18, 19, 20, 21, 22].map((s) => (
-                    <Cip key={s} secili={saat === s} onClick={() => setSaat(s)}>
-                      {String(s).padStart(2, '0')}.00
+                  {HATIRLATMA_SAATLERI.map((h) => (
+                    <Cip
+                      key={h}
+                      secili={saat === h && dakika === 0}
+                      onClick={() => {
+                        setSaat(h)
+                        setDakika(0)
+                      }}
+                    >
+                      {saatYaz(h, 0)}
                     </Cip>
                   ))}
                 </div>
+
+                {/* Çipler tam saatler; "21.30" gibi bir saat ancak buradan
+                    girilebiliyor. Telefonun kendi saat seçicisi açıldığı için
+                    elle rakam yazmak gerekmiyor. */}
+                <div className="mt-3 flex items-center gap-2">
+                  <Etiket className="mb-0 shrink-0">Başka saat</Etiket>
+                  <Alan
+                    type="time"
+                    value={saatDegeri(saat, dakika)}
+                    onChange={(e) => {
+                      const cozulen = saatiCoz(e.target.value)
+                      if (!cozulen) return
+                      setSaat(cozulen.saat)
+                      setDakika(cozulen.dakika)
+                    }}
+                    aria-label="Hatırlatma saati"
+                    className="rakam h-10 w-32"
+                  />
+                </div>
+
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Şu an seçili:{' '}
+                  <strong className="rakam text-foreground">{saatYaz(saat, dakika)}</strong>
+                </p>
               </div>
             )}
 
@@ -212,10 +297,22 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
   )
 }
 
-const BASLIKLAR = ['Merhaba, ben Rabi', 'Hangi alandasın?', 'Günlük hedefin', 'Hatırlatma']
+const TEMALAR: { id: Tema; ad: string; aciklama: string; Simge: typeof Sun }[] = [
+  { id: 'acik', ad: 'Açık tema', aciklama: 'Gündüz ve aydınlık odalarda okunaklı', Simge: Sun },
+  { id: 'koyu', ad: 'Koyu tema', aciklama: 'Gece çalışırken gözü yormaz', Simge: Moon },
+]
+
+const BASLIKLAR = [
+  'Merhaba, ben Rabi',
+  'Nasıl görünelim?',
+  'Hangi alandasın?',
+  'Günlük hedefin',
+  'Hatırlatma',
+]
 
 const ACIKLAMALAR = [
   'Seninle YKS yolunda çalışacağım. Önce birkaç şey sorayım.',
+  'Açık mı koyu mu? İstediğin an değiştirebilirsin.',
   'Sıralama tahmini ve deneme şablonları buna göre ayarlanır.',
   'Her günü buna göre takip edeceğim.',
   'Son adım — istersen atlayabilirsin.',

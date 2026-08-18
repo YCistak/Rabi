@@ -82,7 +82,9 @@ keyPassword=...
 | `lib/ozet.ts` | Haftalık özet hesabı — **saf fonksiyonlar** |
 | `lib/ozet-gorsel.ts` | Özetin paylaşılabilir PNG'si (tuvale çizim) |
 | `lib/paylas.ts` | Capacitor Share / `navigator.share` sarmalayıcısı |
-| `lib/ses.ts` | Pomodoro ve mini oyun müziği — `public/ses/` altındaki CC0 lo-fi parçalar |
+| `lib/ses.ts` | Pomodoro müziği — `public/ses/` altındaki CC0 lo-fi parçalar |
+| `lib/oyunlar/oyun-muzigi.ts` | Mini oyunların üretilen arcade döngüsü (dosyasız) |
+| `lib/gorunurluk.ts` | Uygulama önde mi — arka planda müzik ve özet sayacı duruyor |
 | `public/ses/` | Lo-fi parçalar (CC0) + `LISANS.md`, `oyun/` altında ses efektleri |
 | `components/acilis.tsx` | Uygulamanın açılış ekranı (zıplayan tavşan + Rabi + çark) |
 
@@ -135,27 +137,24 @@ istatistiği bulursa hata verip durur — sessizce yarım veri üretmez.
 
 ## Açılış ekranı animasyonu
 
-Android 12+ açılış ekranında ikon olarak bir AnimatedVectorDrawable kabul ediyor:
-`acilis_maskot_animasyon.xml`, maskotu ortadan büyüterek (`overshoot`, tension 1.6) ve
-belirerek getiriyor; süre `windowSplashScreenAnimationDuration` ile 600 ms.
+Android 12+ sistemin kendi açılış ekranını çizmek zorunda; kapatılamıyor. Uygulama artık
+oradan **hiçbir şey** göstermiyor: `windowSplashScreenAnimatedIcon` saydam bir şekle
+(`acilis_bos.xml`) bağlı, animasyon yok. Geriye yalnızca `acilis_zemin` (`#C2622A`) kalıyor.
 
-Aşma payı bilerek küçük: daha fazlası ikonu güvenli dairenin dışına taşırıp kırptırıyor.
-Daha eski sürümlerde uyumluluk katmanı animasyonu oynatmayabiliyor — o durumda altındaki
-vektör olduğu gibi çiziliyor (kendi alpha'sı 1), ikon görünür ama hareketsiz kalır.
+Sebep: sistem ekranında maskot, hemen arkasından uygulamanın kendi açılış ekranında yine
+maskot çıkınca arka arkaya iki açılış ekranı izleniyordu. Önceki maskot animasyonu
+(`acilis_maskot_animasyon.xml` ve `animator/` altındaki iki animatör) bu yüzden silindi.
 
-Sistem açılış ekranı kapanınca sıra **uygulamanın kendi açılış ekranına** geliyor
-(`components/acilis.tsx`): aynı turuncu zeminde zıplayan beyaz çizgi tavşan, altında
-"Rabi" yazısı, altında dönen çark. Bunun ayrı bir ekran olmasının sebebi, sistem açılış
-ekranının **tek bir simgeden** ibaret olması — altına yazı, yanına çark koyulamıyor ve
-animasyonu ~1 saniyeyle sınırlı, hızlı açılan bir uygulamada çoğu zaman hiç görünmüyor.
+Görünen açılış **uygulamanın kendi ekranı** (`components/acilis.tsx`): aynı turuncu
+zeminde zıplayan beyaz çizgi tavşan, altında "Rabi" yazısı, altında dönen çark. Sistem
+ekranıyla aynı zemin rengi kullanıldığı için ikisi arasındaki geçiş görünmüyor.
 
-Zemin rengi (`#C2622A`) `colors.xml` içindeki `acilis_zemin` ile birebir aynı; iki ekran
-arasındaki geçiş böylece görünmüyor. Süre veri okumasına bağlanmadı (`ACILIS_SURESI`,
-1,6 sn): localStorage neredeyse anında dönüyor, bağlansaydı ekran bir kare görünüp
-kaybolurdu.
+Süre veri okumasına bağlanmadı (`ACILIS_SURESI`, 1,6 sn): localStorage neredeyse anında
+dönüyor, bağlansaydı ekran bir kare görünüp kaybolurdu.
 
 Tavşan burada uygulamanın dolu maskotu değil, ayrı bir **çizgi** çizim: turuncu zeminde
-açık renkli dolgular birbirine karışıp bulanık bir leke gibi duruyordu.
+açık renkli dolgular birbirine karışıp bulanık bir leke gibi duruyordu. Aynı yollar
+paylaşılan özet görselinin alt imzasında da kullanılıyor (`tavsanCiz`).
 
 > **`position: fixed` uyarısı.** Uygulamanın kök `div`ine giriş animasyonu **konulmamalı**.
 > `.acilis-girisi` içinde `transform` var ve `both` dolgusuyla animasyon bittikten sonra
@@ -164,6 +163,33 @@ açık renkli dolgular birbirine karışıp bulanık bir leke gibi duruyordu.
 > özet ekrana değil o `div`e göre konumlanır. `min-h-dvh` içerikle büyüdüğü için alt menü
 > sayfanın en üstündeyken ekranın altından taşıyor, yarısı görünmez oluyordu. Sınıfın
 > dolgusu bu yüzden `backwards`.
+
+## Uygulama arka plana geçince
+
+Android'de ana tuşa basıldığında WebView **durdurulmuyor**: `<audio>` çalmaya, `setTimeout`
+işlemeye devam ediyor. Uygulama görev listesinden silinene kadar arkadan müzik geliyor ve
+haftalık özet kimse bakmazken kart kart ilerleyip bitiyordu.
+
+`lib/gorunurluk.ts` iki kaynağı birlikte dinliyor: `visibilitychange` (ekran kilidinde de
+tetikleniyor) ve Capacitor'ın `appStateChange` olayı (bazı Android sürümlerinde
+`visibilitychange` gecikmeli geliyor). Kullananlar: haftalık özet (müzik + kart sayacı +
+ilerleme çubuğu) ve mini oyun müziği.
+
+**Pomodoro bilerek bunu kullanmıyor.** Orada müziğin ekran kapalıyken de sürmesi isteniyor;
+sayaç zaten hedef zaman damgasıyla çalıştığı için arka planda doğru kalıyor.
+
+## Kurulum sihirbazı
+
+Beş adım: sınıf → **tema** → alan → günlük hedef → hatırlatma.
+
+Tema adımı, uygulama telefonun tercihine bakıp sessizce koyu başladığı için eklendi.
+Seçim dokunulduğu anda uygulanıyor (`useTema`), "Başlayalım"da ekranda görünen seçenek
+kaydediliyor — adıma hiç dokunulmasa bile. Yazılmasaydı uygulama sistem temasını izlemeye
+devam eder, kullanıcı gece telefonu koyuya alınca Rabi de habersiz kararırdı.
+
+Hatırlatma adımındaki saat listesi Ayarlar ekranıyla **aynı** (`HATIRLATMA_SAATLERI`) ve
+yanında `<input type="time">` var; kurulumda beş saatlik kısa bir liste vardı, 08.00'i
+seçmek isteyen kullanıcı önce kurulumu bitirip Ayarlar'a girmek zorunda kalıyordu.
 
 ## Android izinleri
 
@@ -258,8 +284,19 @@ haftalar `rabi-ozet-gorulen` altında; ana sayfadaki davet kartı yalnızca izle
 Kart sırası sabit: giriş → haftalık soru hedefi → seri → devamsızlık → pomodoro dakikası →
 pomodoro dersi → mini oyun → yanlış soru bankası → deneme sayısı → deneme netleri →
 3. ders → 2. ders → 1. ders → kapanış. Üç dersin **geri sayımla** verilmesi bilinçli:
-hepsi tek kartta gösterilseydi hiçbir merak uyandırmazdı. Kartlar kendiliğinden ilerliyor
-ama dokunmak beklemeden geçiriyor.
+hepsi tek kartta gösterilseydi hiçbir merak uyandırmazdı.
+
+**Hikâye (story) davranışı.** Üstteki çubuk kartın süresince doluyor (`.ozet-cubuk`,
+süresi `style` ile veriliyor); dolu/boş iki durum varken kartın ne zaman geçeceği belli
+olmuyordu. Ekrana **basılı tutmak** kartı bekletiyor, parmağı kaldırınca kaldığı yerden
+devam ediyor — kalan süre `kalanRef` içinde tutulduğu için kart baştan başlamıyor.
+Basılı tutmayı dokunuştan ayıran tek şey süre (`BASILI_ESIGI`, 220 ms); eşiğin
+üstündeki basıştan sonra gelen tıklama yutuluyor, yoksa parmağı kaldırınca kart hem devam
+eder hem bir sonrakine atlardı. Uygulama arka plana geçtiğinde de aynı bekleme uygulanıyor
+(`lib/gorunurluk.ts`).
+
+Kartın sesi **yalnızca kart değişince** çalıyor. Efektin bağımlılığında `sesli` de olsaydı
+hoparlör düğmesine her dokunuşta o kartın sesi baştan çalardı.
 
 Veri boşlukları bu iş için kapatıldı:
 
@@ -278,11 +315,23 @@ karakterini kesmek yanlış gün verir. Türkiye'de gece 01.30'da başlayan sean
 önceki günde görünür ve pazartesi gecesi çalışan biri o seansı geçen haftanın özetinde
 bulurdu.
 
-**Paylaşım görseli ekran görüntüsü değil, yeniden çizim** (1080×1920 tuval). Ekran
-görüntüsü alan kütüphaneler birkaç yüz KB geliyor ve CSS'in yarısını yanlış yorumluyor;
-ayrıca paylaşılan görselin telefonun ekran oranından bağımsız olması gerekiyor. Yazı tipi
-adları sayfadan okunuyor — `next/font` üretilen aile adını rastgele bir sınıfın arkasına
-sakladığı için elle "Space Grotesk" yazmak tutmuyordu.
+**İki ayrı paylaşım var.** Başlıktaki paylaş düğmesi **açık kartın** görselini üretiyor
+(`kartGorseliUret`), son karttaki düğme haftanın tamamını tek afişte
+(`ozetGorseliUret`). Kart paylaşımı sonradan eklendi: hikâyede ne bakıyorsan onu
+paylaşırsın, tek bir toplu afiş "gördüğüm şey bu değil" duygusu veriyordu. Her kart
+`paylasim: OzetKartVerisi` alanıyla kendi görselini tarif ediyor — zemin renkleri de
+`ZEMINLER` içinde CSS metni olarak değil **çift** olarak duruyor, çünkü tuval
+`linear-gradient(...)` metnini ayrıştıramıyor.
+
+Görsel **ekran görüntüsü değil, yeniden çizim** (1080×1920). Ekran görüntüsü alan
+kütüphaneler birkaç yüz KB geliyor ve CSS'in yarısını yanlış yorumluyor; ayrıca paylaşılan
+görselin telefonun ekran oranından bağımsız olması gerekiyor. Yazı tipi adları sayfadan
+okunuyor — `next/font` üretilen aile adını rastgele bir sınıfın arkasına sakladığı için
+elle "Space Grotesk" yazmak tutmuyordu.
+
+`gorseliPaylas` görselin yanına ayrı bir **metin** de veriyor: paylaşım penceresinde bazı
+uygulamalar görseli değil yalnızca yazıyı alıyor, o durumda dosya adı yerine haftanın
+özeti gitsin.
 
 Yüzdelerin eki `sayiEki` ile seçiliyor: %49 "kırk dokuz" okunduğu için "%49'u", %40
 "kırk" olduğu için "%40'ı". Sabit bir ek hepsinde yanlış olurdu.
@@ -335,11 +384,27 @@ bir kez çalıyor ve onun için dosya yok. Ayarlardan kapatılabiliyor (`oyunSes
 Dosyalar `ffmpeg` ile tepe noktası −1 dB'ye çekildi ve 1,0 kazançla çalınıyor: eski tonlar
 0,18 seviyesindeydi ve kullanıcı "duyulmuyor" dedi.
 
-**Arka plan müziği** pomodoro ile aynı CC0 lo-fi listesinden (`SesCalar` yeniden
-kullanılıyor). Yalnızca bir oyun açıkken çalıyor — liste ekranında başlaması, menüde
-gezinen kullanıcıyı şaşırtırdı. Ses seviyesi 0,22: efektlerin altında kalmalı, yoksa
-doğru/yanlış geri bildirimi duyulmaz ve oyunun tek geri bildirimi kaybolur. Ayrı bir
-ayarı var (`oyunMuzigi`) çünkü "müzik istemiyorum ama efekt istiyorum" makul bir tercih.
+**Arka plan müziği** yalnızca bir oyun açıkken ve uygulama öndeyken çalıyor — liste
+ekranında başlaması menüde gezinen kullanıcıyı şaşırtırdı. Ayrı bir ayarı var
+(`oyunMuzigi`) çünkü "müzik istemiyorum ama efekt istiyorum" makul bir tercih.
+
+İki seçenek var (`oyunMuzikTuru`), varsayılan **Arcade**:
+
+- **Arcade** — `lib/oyunlar/oyun-muzigi.ts`, koddan üretilen chiptune döngüsü. Önce
+  pomodoro'nun lo-fi parçaları kullanılıyordu; oyunla hiç uyuşmadı. Lo-fi yavaş ve dikkat
+  dağıtmamak için yapılmış, 60 saniyede olabildiğince çok soru çözdüren bir oyunun altında
+  uyku getiriyor. 126 BPM'de on altılık arpej + bas + tepme/trampet/hi-hat: acele etme
+  duygusunu müziğin kendisi veriyor. Dosya olmadığı için APK büyümüyor ve döngü dikişi
+  duyulmuyor — parça bitip baştan başlamıyor, notalar sürekli üretiliyor.
+- **Lo-fi** — `SesCalar` üzerinden pomodoro parçaları, 0,22 seviyesinde.
+
+Zamanlama `setTimeout` ile **değil** AudioContext'in kendi saatiyle: JS zamanlayıcıları
+arka planda kısılıyor, ritim ilk takılmada dağılırdı. Planlayıcı 30 ms'de bir uyanıp
+sonraki 150 ms'lik dilimi önden yazıyor.
+
+Ana seviye 0,42; ölçülen tepe −14 dB, ortalama −34 dB. Efektler −1 dB'de olduğu için
+müzik onların yaklaşık 13 dB altında kalıyor: duyuluyor ama doğru/yanlış geri bildirimini
+bastırmıyor.
 
 **Seri puanı etkilemiyor.** Ardışık doğru sayısı ayrı bir ölçü olarak duruyor; seri çarpanı
 olsaydı eski turlarda kurulan rekorlar yenileriyle karşılaştırılamaz hâle gelirdi.

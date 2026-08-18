@@ -263,6 +263,8 @@ export type KazanilanRozet = {
 // Ayarlar ve yedek
 // ---------------------------------------------------------------------------
 
+export type OyunMuzikTuru = 'arcade' | 'lofi'
+
 export type Ayarlar = {
   varsayilanSablonId: string
   /** Bu yılın hangi sınıf olduğu — ilk açılışta sorulur, OBP hesabında kullanılır. */
@@ -284,8 +286,13 @@ export type Ayarlar = {
   bildirimAcik: boolean
   /** Mini oyunlarda doğru/yanlış/bitiş ses efektleri. */
   oyunSesi: boolean
-  /** Mini oyunlarda arkada çalan lo-fi müzik. Sesten ayrı: biri kapalı, öteki açık olabilir. */
+  /** Mini oyunlarda arkada müzik çalsın mı. Sesten ayrı: biri kapalı, öteki açık olabilir. */
   oyunMuzigi: boolean
+  /**
+   * Hangi müzik: `arcade` koddan üretilen hızlı chiptune döngüsü, `lofi`
+   * pomodoro'nun sakin parçaları. Zevk meselesi olduğu için seçim kullanıcıda.
+   */
+  oyunMuzikTuru: OyunMuzikTuru
   /** İlk açılış kurulumu tamamlandı mı; false ise kurulum ekranı gösterilir. */
   kurulumTamamlandi: boolean
 }

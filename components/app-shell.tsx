@@ -404,6 +404,7 @@ export function AppShell() {
               setGecmis={setOyunGecmisi}
               sesAcik={ayarlar.oyunSesi}
               muzikAcik={ayarlar.oyunMuzigi}
+              muzikTuru={ayarlar.oyunMuzikTuru}
             />
           )}
           {ekran === 'rozetler' && (
