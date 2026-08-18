@@ -70,10 +70,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     >
       <head>
         {/* Tema sınıfı ilk boyamadan önce uygulanmazsa uygulama açılırken
-            bir an yanlış renkte parlıyor (FOUC). */}
+            bir an yanlış renkte parlıyor (FOUC).
+
+            Kayıtlı tercih yoksa ya da `sistem` ise cihazın gece modu izlenir —
+            uygulama telefon hangi temadaysa o temada açılır. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('rabi-tema');if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'koyu':'acik'}if(t==='koyu'){document.documentElement.classList.add('dark')}}catch(e){}})()`,
+            __html: `(function(){try{var t=localStorage.getItem('rabi-tema');var koyu=t==='koyu'||(t!=='acik'&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(koyu){document.documentElement.classList.add('dark')}}catch(e){}})()`,
           }}
         />
       </head>
