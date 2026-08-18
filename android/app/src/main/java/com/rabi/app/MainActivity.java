@@ -24,4 +24,21 @@ public class MainActivity extends BridgeActivity {
         SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
     }
+
+    /**
+     * Uygulama kapatılınca — geri tuşuyla çıkma ya da görev listesinden silme —
+     * pomodoro turu biter: bekleyen seans bildirimi ve odak kilidi kaldırılır.
+     * Aşağıya alma bu yoldan geçmiyor, orada sayaç çalışmaya devam ediyor.
+     *
+     * Ekran döndürme, tema ve dil değişimi manifest'teki `configChanges`
+     * sayesinde etkinliği yeniden kurmuyor; yine de o listeden bir gün bir şey
+     * çıkarsa diye ayar değişimi elenip geçiliyor.
+     */
+    @Override
+    public void onDestroy() {
+        if (!isChangingConfigurations()) {
+            PomodoroKapanis.temizle(this);
+        }
+        super.onDestroy();
+    }
 }

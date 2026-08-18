@@ -32,7 +32,8 @@ import { sablonlariBirlestir } from '@/lib/sablonlar'
 import { guncelTahmin, obpHesapla } from '@/lib/tahmin'
 import { egitimYili, gunlukToplam, ilerlemisSinif } from '@/lib/hesap'
 import { rozetDurumu, yeniRozetler, type Rozet } from '@/lib/rozetler'
-import { hatirlatmaIptal, hatirlatmaPlanla } from '@/lib/bildirim'
+import { hatirlatmaIptal, hatirlatmaPlanla, pomodoroIptal } from '@/lib/bildirim'
+import { odakKilidiniBitir } from '@/lib/odak-kilidi'
 import { bekleyenOzetHaftasi, haftalikOzet } from '@/lib/ozet'
 import { bugun } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
@@ -313,6 +314,21 @@ export function AppShell() {
     }
     return false
   }, [bankaTuru, denemeFormu, ekran, sekme])
+
+  /**
+   * Açılışta kapanmış bir turdan artakalanları temizler.
+   *
+   * Pomodoro sayacı bilerek hiçbir yere yazılmıyor: uygulama kapatıldığında tur
+   * da biter. Ama sayaçtan geriye kalan iki şey uygulamadan bağımsız yaşıyor —
+   * bekleyen seans bildirimi ve odak kilidinin servisi. Yerli taraf bunları
+   * kapanış anında kaldırıyor; kaldıramadığı durum (uygulama zorla durdurulmuş,
+   * telefon yeniden başlamış) için burası ikinci süzgeç: uygulama yeni açıldığına
+   * göre ortada çalışan bir tur yoktur.
+   */
+  useEffect(() => {
+    void pomodoroIptal()
+    void odakKilidiniBitir()
+  }, [])
 
   // Android donanım geri tuşu
   useEffect(() => {
