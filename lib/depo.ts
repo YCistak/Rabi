@@ -58,6 +58,8 @@ export const ANAHTARLAR = {
   ozetGorulen: 'rabi-ozet-gorulen',
   /** Zihinden İşlem'de seçili işlem türleri — yedeğe girmeyen küçük bir tercih. */
   islemSecimi: 'rabi-islem-secimi',
+  /** Yazım Ustası'nda seçili soru türleri (yazım / noktalama). */
+  yazimSecimi: 'rabi-yazim-secimi',
   ayarlar: 'rabi-ayarlar',
   tema: 'rabi-tema',
   sonBildirim: 'rabi-son-bildirim',

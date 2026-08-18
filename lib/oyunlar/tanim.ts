@@ -1,6 +1,7 @@
 import type { OyunId, OyunIstatistigi, OyunKayitlari } from '../types'
 import { TUR_SURESI, YANLIS_CEZASI, istatistigiTamamla } from './tur'
 import { HAVUZ_BOYUTU } from './yazim-havuzu'
+import { NOKTALAMA_BOYUTU } from './noktalama-havuzu'
 import { SES_BOYUTU } from './ses-havuzu'
 import { OGE_BOYUTU } from './oge-havuzu'
 import { SOZ_BOYUTU } from './soz-havuzu'
@@ -80,14 +81,15 @@ export const OYUNLAR: OyunTanimi[] = [
     id: 'yazim',
     ders: 'turkce',
     ad: 'Yazım Ustası',
-    kisaAciklama: 'Doğru yazılışı seç, süreye karşı yarış',
+    kisaAciklama: 'Yazım ve noktalama hatalarını yakala',
     ikon: '✍️',
     nasilOynanir: [
-      `Ekrana bir kelime iki farklı yazılışıyla gelir; biri doğru, biri yaygın hatadır. Doğrusuna dokun.`,
+      `Önce hangi hatalarla çalışacağını seç: yazım, noktalama ya da ikisi birden. İkisi de seçiliyse sorular sırayla karışık gelir.`,
+      `Yazım hatasında kelime iki farklı yazılışıyla gelir; biri doğru, biri yaygın hatadır. Doğrusuna dokun.`,
+      `Noktalama hatasında en az iki işaret taşıyan bir cümle gelir ve işaretlerden biri yanlış kullanılmıştır. Şıklardaki iki işaretten yanlış olanına dokun.`,
       `Turun süresi ${TUR_SURESI} saniye. Doğru cevap süreyi uzatmaz, ${YANLIS_CEZASI} saniyeyi yanlış cevap götürür — emin değilsen okumadan dokunma.`,
-      `Puanın tek turda bildiğin doğru sayısı. En yüksek puanın rekor olarak saklanır.`,
-      `Havuzda ${HAVUZ_BOYUTU} soru var: TDK Yazım Kılavuzu'ndan ve ÖSYM'nin sık sorduğu başlıklardan derlendi.`,
-      `Tur bitince yanlış bildiğin kelimeler kuralıyla birlikte listelenir — asıl öğrenme orada.`,
+      `Havuzda ${HAVUZ_BOYUTU} yazım, ${NOKTALAMA_BOYUTU} noktalama sorusu var: TDK Yazım Kılavuzu'ndan ve ÖSYM'nin sık sorduğu başlıklardan derlendi.`,
+      `Tur bitince yanlış bildiklerin kuralıyla birlikte listelenir — asıl öğrenme orada.`,
     ],
   },
   {
