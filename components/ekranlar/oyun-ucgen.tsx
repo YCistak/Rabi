@@ -1,0 +1,444 @@
+'use client'
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Capacitor } from '@capacitor/core'
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
+import { Check, X } from 'lucide-react'
+import type { OyunIstatistigi } from '@/lib/types'
+import {
+  UCGEN_ACIKLAMASI,
+  UCGEN_ADI,
+  kenarEsit,
+  kenarMetni,
+  ucgenCevabi,
+  ucgenOzeti,
+  ucgenSekli,
+  ucgenSiklari,
+  ucgenTuruHazirla,
+  type Kenar,
+  type UcgenSorusu,
+} from '@/lib/oyunlar/ucgen'
+import {
+  TUR_SURESI,
+  YANLIS_CEZASI,
+  guncelSeri,
+  kalanSaniye,
+  karistir,
+  rekorKirildiMi,
+  turOzeti,
+  type Cevap,
+  type TurOzeti,
+} from '@/lib/oyunlar/tur'
+import { ucgendenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { oyunBul } from '@/lib/oyunlar/tanim'
+import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
+import { useGeriKatmani } from '@/lib/geri'
+import { cn } from '@/lib/utils'
+import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
+import {
+  Bildirim,
+  EN_COK_YANLIS,
+  KalanHapi,
+  OyunKabugu,
+  TurSonu,
+  YanlisKarti,
+  rekorCumlesi,
+} from '@/components/oyun-kabuk'
+import { OyunSekli } from '@/components/oyun-sekil'
+import { OyunTanitim } from '@/components/oyun-tanitim'
+
+/**
+ * Özel Üçgenler — Geometri Ustası'nın dik üçgen oyunu.
+ *
+ * İki şık var, çünkü ölçülen şey hesap değil **tanıma**: 8-15-17'yi gördüğünde
+ * hipotenüsü hesaplamadan bilmek. Dört şık olsaydı tur içinde okunacak metin
+ * ikiye katlanır, oyun hız oyunu olmaktan çıkardı.
+ */
+
+/** Cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms). */
+const CEVAP_BEKLEMESI = 900
+/** Bir turda üretilen soru sayısı — tükenmeyecek kadar. */
+const TUR_SORUSU = 120
+
+type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
+
+/** Ekrana gelen tek soru: şekil verisi + karıştırılmış iki şık. */
+type TurSorusu = { soru: UcgenSorusu; siklar: [Kenar, Kenar] }
+
+type GeriBildirim = { secilen: Kenar; dogruMu: boolean; soru: UcgenSorusu }
+
+/** Banka kayıtlarından tur soruları; şekil sorudan yeniden kuruluyor. */
+function bankaSorulariniCoz(kayitlar: readonly BankaKaydi[]): UcgenSorusu[] {
+  const sorular: UcgenSorusu[] = []
+  for (const kayit of kayitlar) {
+    if (kayit.soru.oyun !== 'ucgen') continue
+    sorular.push(kayit.soru.ucgen)
+  }
+  return sorular
+}
+
+/** Şıklar tur kurulurken bir kez karışıyor; her çizimde karışsaydı yerleri oynardı. */
+function siklariEkle(sorular: readonly UcgenSorusu[]): TurSorusu[] {
+  return sorular.map((soru) => ({ soru, siklar: ucgenSiklari(soru) }))
+}
+
+export function UcgenOyunuEkrani({
+  istatistik,
+  sesAcik,
+  bankaSorulari,
+  onTurBitti,
+  onCik,
+}: {
+  istatistik: OyunIstatistigi
+  /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
+  sesAcik: boolean
+  /** Boş değilse tur yalnızca bu sorularla kurulur (Oyun Bankası turu). */
+  bankaSorulari: BankaKaydi[]
+  onTurBitti: (ozet: TurOzeti<UcgenSorusu>, bankaCevaplari: BankaCevabi[]) => void
+  onCik: () => void
+}) {
+  const oyun = oyunBul('ucgen')
+
+  const [asama, setAsama] = useState<Asama>('tanitim')
+  const [yardimAcik, setYardimAcik] = useState(false)
+
+  const [sorular, setSorular] = useState<TurSorusu[]>([])
+  const [sira, setSira] = useState(0)
+  const [cevaplar, setCevaplar] = useState<Cevap<UcgenSorusu>[]>([])
+  const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
+
+  const [bitisZamani, setBitisZamani] = useState(0)
+  const [kalan, setKalan] = useState(TUR_SURESI)
+  /** Yardım açıkken sayaç durur; kalan saniye burada bekletilir. */
+  const [duraklatilan, setDuraklatilan] = useState<number | null>(null)
+
+  const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<UcgenSorusu>; yeniRekor: boolean } | null>(
+    null,
+  )
+
+  const bankaHavuzu = useMemo(() => bankaSorulariniCoz(bankaSorulari), [bankaSorulari])
+  const bankaTuru = bankaHavuzu.length > 0
+
+  const turBasiRekor = useRef(istatistik.enIyiDogru)
+  const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const cevaplarRef = useRef<Cevap<UcgenSorusu>[]>([])
+  cevaplarRef.current = cevaplar
+  const bittiRef = useRef(false)
+
+  useGeriKatmani(asama !== 'tanitim' && !yardimAcik, onCik)
+
+  const turBaslat = useCallback(() => {
+    turBasiRekor.current = istatistik.enIyiDogru
+    bittiRef.current = false
+    if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
+    setSorular(siklariEkle(bankaTuru ? karistir(bankaHavuzu) : ucgenTuruHazirla(TUR_SORUSU)))
+    setSira(0)
+    setCevaplar([])
+    setGeriBildirim(null)
+    setSonuc(null)
+    setDuraklatilan(null)
+    setKalan(TUR_SURESI)
+    setBitisZamani(Date.now() + TUR_SURESI * 1000)
+    setAsama('oynaniyor')
+  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru])
+
+  const turBitir = useCallback(
+    (verilenler: Cevap<UcgenSorusu>[]) => {
+      if (bittiRef.current) return
+      bittiRef.current = true
+      const ozet = turOzeti(verilenler)
+      setSonuc({
+        ozet,
+        yeniRekor:
+          !bankaTuru &&
+          rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
+      })
+      oyunSesiCal('bitis', sesAcik)
+      setAsama('bitti')
+      // Doğrular da bildiriliyor: banka, üst üste üç kez doğru bilinen kaydı düşürüyor.
+      onTurBitti(
+        ozet,
+        verilenler.map((cevap) => ({
+          soru: ucgendenBanka(cevap.soru),
+          dogruMu: cevap.dogruMu,
+        })),
+      )
+    },
+    [bankaTuru, istatistik, onTurBitti, sesAcik],
+  )
+
+  useEffect(() => {
+    if (asama !== 'oynaniyor' || duraklatilan !== null) return
+
+    const oku = () => {
+      const yeni = kalanSaniye(bitisZamani)
+      setKalan(yeni)
+      if (yeni <= 0) turBitir(cevaplarRef.current)
+    }
+    oku()
+    const isaret = setInterval(oku, 250)
+    return () => clearInterval(isaret)
+  }, [asama, bitisZamani, duraklatilan, turBitir])
+
+  // Banka turunda liste bankadaki kayıt kadar; tükenirse tur erken biter.
+  useEffect(() => {
+    if (asama !== 'oynaniyor' || sorular.length === 0) return
+    if (sira >= sorular.length) turBitir(cevaplarRef.current)
+  }, [asama, sira, sorular.length, turBitir])
+
+  useEffect(() => () => {
+    if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
+  }, [])
+
+  /** Cevabın geri bildirimi: titreşim (yalnızca cihazda) + ses efekti. */
+  const geriBildir = (dogruMu: boolean) => {
+    oyunSesiCal(dogruMu ? 'dogru' : 'yanlis', sesAcik)
+    if (!Capacitor.isNativePlatform()) return
+    void (dogruMu
+      ? Haptics.impact({ style: ImpactStyle.Light })
+      : Haptics.notification({ type: NotificationType.Error })
+    ).catch(() => {})
+  }
+
+  const cevapla = (secilen: Kenar) => {
+    // Geri bildirim gösterilirken ikinci dokunuş yok sayılıyor; yoksa aynı
+    // soruya iki cevap yazılır ve süre iki kez cezalandırılırdı.
+    if (asama !== 'oynaniyor' || geriBildirim !== null) return
+
+    const gecerli = sorular[sira]
+    if (!gecerli) return
+
+    const dogruMu = kenarEsit(secilen, ucgenCevabi(gecerli.soru))
+    setCevaplar((onceki) => [...onceki, { soru: gecerli.soru, dogruMu }])
+    setGeriBildirim({ secilen, dogruMu, soru: gecerli.soru })
+    geriBildir(dogruMu)
+
+    if (!dogruMu) setBitisZamani((b) => b - YANLIS_CEZASI * 1000)
+
+    zamanlayiciRef.current = setTimeout(() => {
+      setGeriBildirim(null)
+      setSira((s) => s + 1)
+    }, CEVAP_BEKLEMESI)
+  }
+
+  const yardimAc = () => {
+    setDuraklatilan(kalanSaniye(bitisZamani))
+    setYardimAcik(true)
+  }
+
+  const yardimKapat = () => {
+    if (duraklatilan !== null) setBitisZamani(Date.now() + duraklatilan * 1000)
+    setDuraklatilan(null)
+    setYardimAcik(false)
+  }
+
+  const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
+  const gorunenKalan = duraklatilan ?? kalan
+  const gecerli = sorular[sira]
+
+  const maskotDurumu: MaskotDurumu = geriBildirim
+    ? geriBildirim.dogruMu
+      ? 'kutlama'
+      : 'uzgun'
+    : 'calisiyor'
+
+  return (
+    <>
+      <OyunKabugu
+        oyunId="ucgen"
+        baslik={oyun.ad}
+        sayac={
+          asama === 'bitti'
+            ? null
+            : {
+                kalan: gorunenKalan,
+                seri: guncelSeri(cevaplar),
+                dogru: dogruSayisi,
+                yanlis: cevaplar.length - dogruSayisi,
+                enIyiSeri: turOzeti(cevaplar).enIyiSeri,
+                rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
+                cezaGorunur: geriBildirim !== null && !geriBildirim.dogruMu,
+              }
+        }
+        onCik={onCik}
+        onYardim={yardimAc}
+      >
+        {asama === 'bitti' && sonuc ? (
+          <SonucGorunumu
+            sonuc={sonuc}
+            rekor={turBasiRekor.current}
+            bankaTuru={bankaTuru}
+            onTekrar={turBaslat}
+            onCik={onCik}
+          />
+        ) : (
+          asama === 'oynaniyor' &&
+          gecerli && (
+            <>
+              <div className="flex min-h-0 flex-1 flex-col gap-3 py-2">
+                {/* Üçgenin ailesi ("30-60-90") yazmıyor: yazsaydı oranı
+                    hatırlamak yerine okumak yeterdi. Şekilde açılar var. */}
+                <div className="golge-kart flex min-h-0 flex-1 flex-col rounded-3xl bg-card px-3 pb-2.5 pt-3">
+                  <div className="flex flex-none items-center gap-2 text-[12.5px] font-bold text-muted-foreground">
+                    <Rabi durum={maskotDurumu} boyut={26} />x kaç birim?
+                  </div>
+
+                  {/* Şekil kalan yere göre büyüyüp küçülüyor; alt sınır olmasa
+                      dar ekranlarda kenar uzunlukları okunmaz olurdu. */}
+                  <div className="grid min-h-[96px] flex-1 place-items-center">
+                    <OyunSekli
+                      sekil={ucgenSekli(gecerli.soru)}
+                      className="mx-auto h-full max-h-[190px] w-auto"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  {gecerli.siklar.map((sik) => (
+                    <SikDugmesi
+                      key={kenarMetni(sik)}
+                      sik={sik}
+                      dogruMu={kenarEsit(sik, ucgenCevabi(gecerli.soru))}
+                      geriBildirim={geriBildirim}
+                      onSec={() => cevapla(sik)}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {geriBildirim && (
+                <Bildirim
+                  iyi={geriBildirim.dogruMu}
+                  baslik={geriBildirim.dogruMu ? 'Aynen böyle!' : 'Olmadı'}
+                  aciklama={
+                    geriBildirim.dogruMu
+                      ? UCGEN_ADI[geriBildirim.soru.tur]
+                      : `— doğrusu ${kenarMetni(ucgenCevabi(geriBildirim.soru))}`
+                  }
+                />
+              )}
+            </>
+          )
+        )}
+      </OyunKabugu>
+
+      <OyunTanitim
+        oyun={oyun}
+        acik={asama === 'tanitim' || yardimAcik}
+        rekor={istatistik.enIyiDogru}
+        baslatir={asama === 'tanitim'}
+        onBasla={turBaslat}
+        onKapat={asama === 'tanitim' ? onCik : yardimKapat}
+      />
+    </>
+  )
+}
+
+/**
+ * Tek şık.
+ *
+ * Cevaptan sonra iki şık da renklenir: yanlış seçildiğinde doğrusunun hangisi
+ * olduğu aynı anda yeşille gösteriliyor — yoksa oyuncu hatasını görür ama
+ * doğrusunu öğrenemezdi.
+ */
+function SikDugmesi({
+  sik,
+  dogruMu,
+  geriBildirim,
+  onSec,
+}: {
+  sik: Kenar
+  dogruMu: boolean
+  geriBildirim: GeriBildirim | null
+  onSec: () => void
+}) {
+  const acikta = geriBildirim !== null
+  const secilen = acikta && kenarEsit(geriBildirim.secilen, sik)
+  const dogruSecim = secilen && dogruMu
+  const yanlisSecim = secilen && !dogruMu
+  const isaretli = acikta && !secilen && dogruMu
+
+  return (
+    <button
+      type="button"
+      onClick={onSec}
+      disabled={acikta}
+      className={cn(
+        'golge-kart flex min-h-[60px] w-full items-center justify-center gap-2 rounded-[20px] border-2 px-4 py-3',
+        'rakam font-display text-[26px] font-extrabold leading-none transition',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+        !acikta && 'border-border bg-card active:brightness-95',
+        dogruSecim && 'border-success bg-success text-white',
+        yanlisSecim && 'border-ikincil bg-ikincil text-white',
+        isaretli && 'border-success bg-card text-success',
+        acikta && !secilen && !dogruMu && 'border-border bg-card opacity-45',
+      )}
+    >
+      {kenarMetni(sik)}
+      {(dogruSecim || isaretli) && <Check size={19} className="shrink-0" aria-hidden />}
+      {yanlisSecim && <X size={19} className="shrink-0" aria-hidden />}
+    </button>
+  )
+}
+
+function SonucGorunumu({
+  sonuc,
+  rekor,
+  bankaTuru,
+  onTekrar,
+  onCik,
+}: {
+  sonuc: { ozet: TurOzeti<UcgenSorusu>; yeniRekor: boolean }
+  rekor: number
+  bankaTuru: boolean
+  onTekrar: () => void
+  onCik: () => void
+}) {
+  const { ozet, yeniRekor } = sonuc
+  const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
+  const kalan = ozet.yanlislar.length - gorunen.length
+
+  return (
+    <TurSonu
+      oyunId="ucgen"
+      dogru={ozet.dogru}
+      yanlis={ozet.yanlis}
+      enIyiSeri={ozet.enIyiSeri}
+      rekor={rekor}
+      yeniRekor={yeniRekor}
+      bankaTuru={bankaTuru}
+      altBaslik={
+        bankaTuru
+          ? 'Banka soruları — üst üste üç doğruda düşerler.'
+          : rekorCumlesi(ozet.dogru, rekor, yeniRekor, 'doğru')
+      }
+      bolumBasligi="Karıştırdığın üçgenler"
+      bolumAltYazisi="Oranıyla birlikte — asıl öğrenme burada."
+      onTekrar={onTekrar}
+      onCik={onCik}
+    >
+      {ozet.yanlislar.length > 0 && (
+        <div className="flex flex-none flex-col gap-2">
+          {gorunen.map((yanlis, sira) => (
+            <YanlisKarti key={`${ucgenOzeti(yanlis)}-${sira}`} oyunId="ucgen">
+              {/* Üç kenar sırayla, eksik olan "x" ile: hangi kenarın sorulduğu
+                  ancak öteki ikisinin yanında anlaşılıyor. */}
+              <b className="rakam block font-display text-[14px] font-extrabold leading-tight">
+                {ucgenOzeti(yanlis)}
+              </b>
+              <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
+                <span className="rakam text-success">x = {kenarMetni(ucgenCevabi(yanlis))}</span> ·{' '}
+                {UCGEN_ADI[yanlis.tur]}
+              </span>
+              <span className="mt-1.5 block border-t border-border pt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
+                {UCGEN_ACIKLAMASI[yanlis.tur]}
+              </span>
+            </YanlisKarti>
+          ))}
+
+          {kalan > 0 && <KalanHapi kalan={kalan} />}
+        </div>
+      )}
+    </TurSonu>
+  )
+}
