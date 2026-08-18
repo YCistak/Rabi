@@ -16,6 +16,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import com.rabi.app.PomodoroKapanis
 import kotlin.math.max
 
 /**
@@ -93,6 +94,24 @@ class OdakServisi : Service() {
         // Sistem servisi öldürürse yeniden başlatmasın: tur bilgisi elde kalmıyor,
         // boş bir kilit kullanıcıyı uygulamadan soğutur.
         return START_NOT_STICKY
+    }
+
+    /**
+     * Uygulama görev listesinden silinince kilit kalkar.
+     *
+     * Ön plan servisi görev silinmesinden sağ çıkıyor: kullanıcı Rabi'yi
+     * kapattıktan sonra da uygulamalar engelli kalıyor, bildirimde dakika saymaya
+     * devam ediyordu. Kapalı bir uygulamanın telefonu kilitli tutması kabul
+     * edilemez — kilit, açık bir uygulamanın verdiği sözdür.
+     *
+     * `stopWithTask` bayrağı bilerek kullanılmadı: o bayrakla sistem servisi
+     * doğrudan öldürüyor ve bu geri çağrı hiç gelmiyor, bekleyen seans bildirimi
+     * de iptal edilemiyordu.
+     */
+    override fun onTaskRemoved(kokNiyet: Intent?) {
+        PomodoroKapanis.temizle(this)
+        durdurKendini()
+        super.onTaskRemoved(kokNiyet)
     }
 
     override fun onDestroy() {
