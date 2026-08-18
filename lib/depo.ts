@@ -20,7 +20,13 @@ import type {
   Yedek,
 } from './types'
 import { TUR_SURESI } from './oyunlar/tur'
-import { BANKA_SINIRI, DUSME_ESIGI, type BankaKaydi, type BankaSorusu } from './oyunlar/banka'
+import {
+  BANKA_SINIRI,
+  DUSME_ESIGI,
+  OYUN_KIMLIKLERI,
+  type BankaKaydi,
+  type BankaSorusu,
+} from './oyunlar/banka'
 import { VARSAYILAN_SABLON_ID } from './sablonlar'
 import { egitimYili } from './hesap'
 import { dakikayiKirp, saatiKirp } from './hatirlatma'
@@ -329,10 +335,8 @@ function oyunKayitlariniCoz(ham: unknown): OyunKayitlari {
  */
 function oyunGecmisiniCoz(ham: unknown): OyunTurKaydi[] {
   if (!Array.isArray(ham)) return []
-  const oyunlar: OyunId[] = ['yazim', 'islem', 'edebiyat']
-
   return (ham as Partial<OyunTurKaydi>[])
-    .filter((k) => typeof k?.tarih === 'string' && oyunlar.includes(k.oyun as OyunId))
+    .filter((k) => typeof k?.tarih === 'string' && OYUN_KIMLIKLERI.includes(k.oyun as OyunId))
     .map((k) => ({
       tarih: k.tarih as string,
       oyun: k.oyun as OyunId,
@@ -360,6 +364,8 @@ function bankayiCoz(ham: unknown): BankaKaydi[] {
       if (s.oyun === 'yazim') return typeof s.dogru === 'string' && typeof s.yanlis === 'string'
       if (s.oyun === 'islem') return typeof s.metin === 'string' && typeof s.sonuc === 'number'
       if (s.oyun === 'edebiyat') return typeof s.eser === 'string' && typeof s.yazar === 'string'
+      if (s.oyun === 'ses')
+        return typeof s.kelime === 'string' && typeof s.olusum === 'string' && typeof s.olay === 'string'
       return false
     })
     .map((k) => ({

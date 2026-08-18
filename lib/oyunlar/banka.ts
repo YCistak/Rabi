@@ -13,6 +13,7 @@
 
 import type { OyunId } from '../types'
 import type { IslemTuru } from './islem'
+import { OLAY_ADI, type SesOlayi } from './ses-havuzu'
 
 /** Bir kaydın bankadan düşmesi için gereken üst üste doğru sayısı. */
 export const DUSME_ESIGI = 3
@@ -30,6 +31,7 @@ export type BankaSorusu =
   | { oyun: 'yazim'; dogru: string; yanlis: string; kural: string }
   | { oyun: 'islem'; islemTuru: IslemTuru; metin: string; sonuc: number }
   | { oyun: 'edebiyat'; eser: string; yazar: string }
+  | { oyun: 'ses'; kelime: string; olusum: string; olay: SesOlayi }
 
 export type BankaKaydi = {
   /** Soru içeriğinden türetilen kimlik; aynı soru iki kez eklenmez. */
@@ -78,6 +80,14 @@ export function edebiyattanBanka(es: { eser: string; yazar: string }): BankaSoru
   return { oyun: 'edebiyat', eser: es.eser, yazar: es.yazar }
 }
 
+export function sestenBanka(soru: {
+  kelime: string
+  olusum: string
+  olay: SesOlayi
+}): BankaSorusu {
+  return { oyun: 'ses', kelime: soru.kelime, olusum: soru.olusum, olay: soru.olay }
+}
+
 /**
  * Kayıt kimliği.
  *
@@ -92,6 +102,8 @@ export function bankaKimligi(soru: BankaSorusu): string {
       return `islem:${soru.metin}`
     case 'edebiyat':
       return `edebiyat:${soru.eser}`
+    case 'ses':
+      return `ses:${soru.kelime}`
   }
 }
 
@@ -104,6 +116,8 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
       return soru.metin
     case 'edebiyat':
       return soru.eser
+    case 'ses':
+      return soru.kelime
   }
 }
 
@@ -116,6 +130,8 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
       return String(soru.sonuc)
     case 'edebiyat':
       return soru.yazar
+    case 'ses':
+      return OLAY_ADI[soru.olay]
   }
 }
 
@@ -194,8 +210,24 @@ export function dusenSayisi(
   return onceki.filter((k) => !kalan.has(k.id)).length
 }
 
+/**
+ * Bütün oyunların kimlikleri — **tek kaynak**.
+ *
+ * Bu liste dört ayrı yerde elle yazılıydı (banka dağılımı, en kalabalık oyun,
+ * banka ekranının süzgeci, oyun geçmişi doğrulaması) ve dördüncü oyun
+ * eklendiğinde hiçbiri güncellenmedi: yeni oyunun soruları bankaya giriyor ama
+ * tur açılamıyor, süzgeçte görünmüyor, tur geçmişi sessizce siliniyordu.
+ *
+ * Kaynak bir `Record<OyunId, …>` olduğu için TypeScript eksik kalanı derleme
+ * anında yakalıyor — yeni bir oyun kimliği eklenince burası hata verene kadar
+ * proje derlenmiyor.
+ */
+const BOS_DAGILIM: Record<OyunId, number> = { yazim: 0, ses: 0, islem: 0, edebiyat: 0 }
+
+export const OYUN_KIMLIKLERI = Object.keys(BOS_DAGILIM) as OyunId[]
+
 export function bankaDagilimi(banka: readonly BankaKaydi[]): Record<OyunId, number> {
-  const dagilim: Record<OyunId, number> = { yazim: 0, islem: 0, edebiyat: 0 }
+  const dagilim = { ...BOS_DAGILIM }
   for (const kayit of banka) dagilim[kayit.soru.oyun]++
   return dagilim
 }
@@ -217,7 +249,7 @@ export function bankaSuz(banka: readonly BankaKaydi[], oyun: OyunId | 'tumu'): B
 export function enKalabalikOyun(banka: readonly BankaKaydi[]): OyunId | null {
   const dagilim = bankaDagilimi(banka)
   let enIyi: OyunId | null = null
-  for (const oyun of ['yazim', 'islem', 'edebiyat'] as const) {
+  for (const oyun of OYUN_KIMLIKLERI) {
     if (dagilim[oyun] > 0 && (enIyi === null || dagilim[oyun] > dagilim[enIyi])) enIyi = oyun
   }
   return enIyi

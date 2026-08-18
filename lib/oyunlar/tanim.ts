@@ -1,6 +1,7 @@
 import type { OyunId, OyunIstatistigi, OyunKayitlari } from '../types'
 import { TUR_SURESI, YANLIS_CEZASI, istatistigiTamamla } from './tur'
 import { HAVUZ_BOYUTU } from './yazim-havuzu'
+import { SES_BOYUTU } from './ses-havuzu'
 import { EDEBIYAT_BOYUTU } from './edebiyat-havuzu'
 
 /**
@@ -85,6 +86,20 @@ export const OYUNLAR: OyunTanimi[] = [
       `Puanın tek turda bildiğin doğru sayısı. En yüksek puanın rekor olarak saklanır.`,
       `Havuzda ${HAVUZ_BOYUTU} soru var: TDK Yazım Kılavuzu'ndan ve ÖSYM'nin sık sorduğu başlıklardan derlendi.`,
       `Tur bitince yanlış bildiğin kelimeler kuralıyla birlikte listelenir — asıl öğrenme orada.`,
+    ],
+  },
+  {
+    id: 'ses',
+    ders: 'turkce',
+    ad: 'Ses Olayları',
+    kisaAciklama: 'Sözcükteki ses olayını bul',
+    ikon: '🔤',
+    nasilOynanir: [
+      `Ekrana bir sözcük ve nasıl oluştuğu gelir (**kitabı** · kitap + ı). Dört şıktan hangi ses olayının yaşandığını seçersin.`,
+      `Turun süresi ${TUR_SURESI} saniye. Doğru cevap süreyi uzatmaz, ${YANLIS_CEZASI} saniyeyi yanlış cevap götürür.`,
+      `Oluşum satırı ipucu değil, sorunun parçası: kökünü bilmeden *hakkı* sözcüğünde ünsüz türemesiyle yumuşamayı ayıramazsın.`,
+      `Havuzda ${SES_BOYUTU} sözcük var ve her biri **tek** bir ses olayı içeriyor — iki olayın birden görüldüğü sözcükler bilerek alınmadı.`,
+      `Tur bitince yanlış bildiklerin kuralıyla listelenir — asıl öğrenme orada.`,
     ],
   },
   {

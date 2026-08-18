@@ -9,6 +9,7 @@ import {
   bankaDagilimi,
   bankaSorusuMetni,
   bankaSuz,
+  OYUN_KIMLIKLERI,
   enKalabalikOyun,
   type BankaKaydi,
 } from '@/lib/oyunlar/banka'
@@ -30,12 +31,14 @@ import { Rabi } from '@/components/maskot/rabi'
 
 const AILE: Record<OyunId, { zemin: string; yazi: string; dolgu: string }> = {
   yazim: { zemin: 'bg-yzm', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
+  ses: { zemin: 'bg-yzm', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
   islem: { zemin: 'bg-isl', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
   edebiyat: { zemin: 'bg-edb', yazi: 'text-edb-koyu', dolgu: 'bg-edb-ok' },
 }
 
 const KISA_AD: Record<OyunId, string> = {
   yazim: 'Yazım',
+  ses: 'Ses Olayı',
   islem: 'İşlem',
   edebiyat: 'Edebiyat',
 }
@@ -88,7 +91,7 @@ export function OyunBankasiEkrani({
         <p className="text-sm font-medium leading-relaxed text-muted-foreground">
           <b className="rakam font-extrabold text-foreground">{banka.length} soru</b> tekrar
           bekliyor
-          {(['yazim', 'islem', 'edebiyat'] as const)
+          {OYUN_KIMLIKLERI
             .filter((o) => dagilim[o] > 0)
             .map((o) => ` · ${dagilim[o]} ${KISA_AD[o].toLocaleLowerCase('tr')}`)
             .join('')}
@@ -120,7 +123,7 @@ export function OyunBankasiEkrani({
         >
           Tümü
         </SuzgecCipi>
-        {(['yazim', 'islem', 'edebiyat'] as const)
+        {OYUN_KIMLIKLERI
           .filter((o) => dagilim[o] > 0)
           .map((o) => (
             <SuzgecCipi

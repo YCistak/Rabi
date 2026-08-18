@@ -34,6 +34,7 @@ const KUTUCUK_RENGI: Record<KartRengi, string> = {
 /** Oyunların kendi aileleri var; ana sayfadaki kutucuk da aynı rengi taşımalı. */
 const OYUN_RENGI: Record<OyunId, string> = {
   yazim: 'bg-yzm',
+  ses: 'bg-yzm',
   islem: 'bg-isl',
   edebiyat: 'bg-edb',
 }

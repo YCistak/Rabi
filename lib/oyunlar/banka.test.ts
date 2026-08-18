@@ -6,6 +6,9 @@ import {
   bankaKimligi,
   bankaSuz,
   bankayiGuncelle,
+  bankaCevabiMetni,
+  bankaSorusuMetni,
+  sestenBanka,
   dusenSayisi,
   enKalabalikOyun,
   type BankaKaydi,
@@ -103,7 +106,7 @@ describe('dağılım ve süzme', () => {
   )
 
   it('oyun başına sayar', () => {
-    expect(bankaDagilimi(banka)).toEqual({ yazim: 2, islem: 1, edebiyat: 0 })
+    expect(bankaDagilimi(banka)).toEqual({ yazim: 2, ses: 0, islem: 1, edebiyat: 0 })
   })
 
   it('tek oyuna süzer', () => {
@@ -149,5 +152,42 @@ describe('dusenSayisi', () => {
   it('boş listelerle çalışır', () => {
     expect(dusenSayisi([], [])).toBe(0)
     expect(dusenSayisi([], [kayit('a')])).toBe(0)
+  })
+})
+
+describe('ses kolu', () => {
+  const soru = sestenBanka({ kelime: 'burnu', olusum: 'burun + u', olay: 'unluDusmesi' })
+
+  it('bankaya çevirir', () => {
+    expect(soru).toEqual({
+      oyun: 'ses',
+      kelime: 'burnu',
+      olusum: 'burun + u',
+      olay: 'unluDusmesi',
+    })
+  })
+
+  /** Kimlik sözcükten üretiliyor: aynı sözcük ikinci kez karıştırılınca yeni
+   *  kayıt açılmamalı, mevcut kaydın sayacı artmalı. */
+  it('kimliği sözcükten üretir', () => {
+    expect(bankaKimligi(soru)).toBe('ses:burnu')
+  })
+
+  it('listede sözcük ve olay adı görünür', () => {
+    expect(bankaSorusuMetni(soru)).toBe('burnu')
+    expect(bankaCevabiMetni(soru)).toBe('Ünlü düşmesi')
+  })
+
+  it('aynı sözcük iki kayıt açmaz', () => {
+    const banka = bankayiGuncelle(
+      [],
+      [
+        { soru, dogruMu: false },
+        { soru, dogruMu: false },
+      ],
+      '2026-08-18',
+    )
+    expect(banka).toHaveLength(1)
+    expect(banka[0].kacKez).toBe(2)
   })
 })
