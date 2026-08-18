@@ -12,6 +12,7 @@ import {
   Download,
   GraduationCap,
   Images,
+  Lock,
   Moon,
   Music,
   Plus,
@@ -26,6 +27,13 @@ import {
 } from 'lucide-react'
 import { Alan, Buton, Cip, Etiket, Not, Onay } from '@/components/ui'
 import { useTema, type TemaTercihi } from '@/components/theme-provider'
+import {
+  odakDurumu,
+  odakIzniIste,
+  odakKilidiDesteklenir,
+  type OdakDurumu,
+} from '@/lib/odak-kilidi'
+import { UygulamaSecici } from '@/components/odak/uygulama-secici'
 import { SINIFLAR, egitimYili, katsayiYaz } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
 import {
@@ -56,6 +64,7 @@ import type {
   OyunKayitlari,
   OyunMuzikTuru,
   OyunTurKaydi,
+  PomodoroAyar,
   PomodoroSeans,
   PuanTuru,
   Sablon,
@@ -113,6 +122,8 @@ export function AyarlarEkrani({
   setKayitliSablonlar,
   ayarlar,
   setAyarlar,
+  pomodoroAyar,
+  setPomodoroAyar,
   yedeklenecek,
 }: {
   sablonlar: Sablon[]
@@ -120,6 +131,11 @@ export function AyarlarEkrani({
   setKayitliSablonlar: (guncelleyici: Sablon[] | ((onceki: Sablon[]) => Sablon[])) => void
   ayarlar: Ayarlar
   setAyarlar: (guncelleyici: Ayarlar | ((onceki: Ayarlar) => Ayarlar)) => void
+  /** Odak kilidi ayarları pomodoro ayarının içinde duruyor. */
+  pomodoroAyar: PomodoroAyar
+  setPomodoroAyar: (
+    guncelleyici: PomodoroAyar | ((onceki: PomodoroAyar) => PomodoroAyar),
+  ) => void
   /** Yedeğe girecek bütün veri — fotoğraflar hariç. */
   yedeklenecek: {
     denemeler: Deneme[]
@@ -134,6 +150,8 @@ export function AyarlarEkrani({
     oyunBankasi?: BankaKaydi[]
     bankaDusen?: number
     pomodoroGecmis: PomodoroSeans[]
+    /** Kilitli uygulama listesi burada; yedekten dönen kullanıcı yeniden seçmesin. */
+    pomodoroAyar: PomodoroAyar
     hedef: Hedef | null
   }
 }) {
@@ -142,6 +160,23 @@ export function AyarlarEkrani({
   const [acikSablonId, setAcikSablonId] = useState<string | null>(null)
   const [silinecekSablon, setSilinecekSablon] = useState<Sablon | null>(null)
   const [sifirlamaAcik, setSifirlamaAcik] = useState(false)
+  const [odakIzinleri, setOdakIzinleri] = useState<OdakDurumu>({
+    kullanimVerisi: false,
+    katman: false,
+    calisiyor: false,
+  })
+  const [seciciAcik, setSeciciAcik] = useState(false)
+
+  // Odak izinleri sistem ayarlarından veriliyor; kullanıcı Rabi'ye döndüğünde
+  // durum yeniden sorulmalı, yoksa kart hâlâ "izin eksik" derdi.
+  useEffect(() => {
+    if (!odakKilidiDesteklenir()) return
+    const tazele = () => void odakDurumu().then(setOdakIzinleri)
+    tazele()
+    const gorunurluk = () => document.visibilityState === 'visible' && tazele()
+    document.addEventListener('visibilitychange', gorunurluk)
+    return () => document.removeEventListener('visibilitychange', gorunurluk)
+  }, [])
   const [durum, setDurum] = useState<string | null>(null)
   const [hedefMetni, setHedefMetni] = useState(String(ayarlar.gunlukHedef))
   // Kutu yalnızca hazır çiplerden biri seçili değilken ya da kullanıcı "Kendin
@@ -623,6 +658,72 @@ export function AyarlarEkrani({
                 })}
               </ul>
             </GenisAlan>
+          )}
+          {/* ---- Odak kilidi. Tarayıcıda özellik yok, kart da görünmüyor. ---- */}
+          {odakKilidiDesteklenir() && (
+            <>
+              <Satir
+                Simge={Lock}
+                renk="lavanta"
+                baslik="Odak kilidi"
+                aciklama="Çalışma turunda seçtiğin uygulamaların üstüne çıkarım"
+                onClick={() => setPomodoroAyar((o) => ({ ...o, odakKilidi: !o.odakKilidi }))}
+                basiliMi={pomodoroAyar.odakKilidi}
+                sag={<Anahtar acik={pomodoroAyar.odakKilidi} />}
+              />
+
+              {pomodoroAyar.odakKilidi && (
+                <GenisAlan>
+                  {(!odakIzinleri.kullanimVerisi || !odakIzinleri.katman) && (
+                    <Not tur="uyari" className="mb-2.5">
+                      İzin eksik olduğu sürece kilit çalışmaz.
+                      <span className="mt-2 flex flex-wrap gap-1.5">
+                        {!odakIzinleri.kullanimVerisi && (
+                          <Buton
+                            bicim="ikincil"
+                            boy="kucuk"
+                            onClick={() => void odakIzniIste('kullanimVerisi')}
+                          >
+                            Kullanım verisi izni
+                          </Buton>
+                        )}
+                        {!odakIzinleri.katman && (
+                          <Buton
+                            bicim="ikincil"
+                            boy="kucuk"
+                            onClick={() => void odakIzniIste('katman')}
+                          >
+                            Üste çizme izni
+                          </Buton>
+                        )}
+                      </span>
+                    </Not>
+                  )}
+
+                  <Buton bicim="ikincil" boy="kucuk" onClick={() => setSeciciAcik((a) => !a)}>
+                    {seciciAcik
+                      ? 'Listeyi kapat'
+                      : `Uygulamaları seç (${pomodoroAyar.kilitliUygulamalar.length})`}
+                  </Buton>
+
+                  {seciciAcik && (
+                    <div className="mt-3">
+                      <UygulamaSecici
+                        secili={pomodoroAyar.kilitliUygulamalar}
+                        onDegis={(paketler) =>
+                          setPomodoroAyar((o) => ({ ...o, kilitliUygulamalar: paketler }))
+                        }
+                      />
+                    </div>
+                  )}
+
+                  <AlanNotu>
+                    Kilit bir engel, kilit değil: istediğin an kapatabilirsin. Molada
+                    kendiliğinden açılır.
+                  </AlanNotu>
+                </GenisAlan>
+              )}
+            </>
           )}
         </Bolum>
 

@@ -10,4 +10,8 @@
       yanıp sönüyor.
     -->
     <color name="uygulama_zemin">#EDF1FD</color>
+
+    <!-- Engel katmanının yazı renkleri; koyu karşılıkları values-night altında. -->
+    <color name="odak_metin">#12141C</color>
+    <color name="odak_soluk">#5B6478</color>
 </resources>

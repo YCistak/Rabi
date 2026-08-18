@@ -24,6 +24,7 @@ import {
   VARSAYILAN_AYARLAR,
   VARSAYILAN_POMODORO,
   ayarlariNormalize,
+  pomodoroAyariniNormalize,
   useYerelDepo,
 } from '@/lib/depo'
 import type { BankaKaydi } from '@/lib/oyunlar/banka'
@@ -125,10 +126,12 @@ export function AppShell() {
    */
   const [acilis, setAcilis] = useState<'acik' | 'kapaniyor' | 'bitti'>('acik')
   const [hedef, setHedef] = useYerelDepo<Hedef | null>(ANAHTARLAR.hedef, null)
-  const [pomodoroAyar, setPomodoroAyar] = useYerelDepo<PomodoroAyar>(
+  const [pomodoroAyarHam, setPomodoroAyar] = useYerelDepo<PomodoroAyar>(
     ANAHTARLAR.pomodoroAyar,
     VARSAYILAN_POMODORO,
   )
+  // Odak kilidi alanları sonradan eklendi; eski kurulumlarda eksik geliyor.
+  const pomodoroAyar = pomodoroAyariniNormalize(pomodoroAyarHam)
   const [pomodoroGecmis, setPomodoroGecmis] = useYerelDepo<PomodoroSeans[]>(
     ANAHTARLAR.pomodoroGecmis,
     [],
@@ -449,7 +452,7 @@ export function AppShell() {
           )}
           {ekran === 'pomodoro' && (
             <PomodoroEkrani
-              ayar={{ ...VARSAYILAN_POMODORO, ...pomodoroAyar }}
+              ayar={pomodoroAyar}
               setAyar={setPomodoroAyar}
               onSeansBitti={(seans) => setPomodoroGecmis((o) => [...o, seans])}
             />
@@ -536,6 +539,8 @@ export function AppShell() {
               setKayitliSablonlar={setSablonlar}
               ayarlar={ayarlar}
               setAyarlar={setAyarlar}
+              pomodoroAyar={pomodoroAyar}
+              setPomodoroAyar={setPomodoroAyar}
               yedeklenecek={{
                 denemeler,
                 okulYillari,
@@ -548,6 +553,7 @@ export function AppShell() {
                 oyunBankasi,
                 bankaDusen,
                 pomodoroGecmis,
+                pomodoroAyar,
                 hedef,
               }}
             />
