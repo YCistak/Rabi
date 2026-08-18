@@ -66,6 +66,21 @@ const AILE: Record<
     kenar: 'border-l-isl-koyu',
     degisken: 'var(--isl-koyu)',
   },
+  // Geometri oyunları da matematik dersinin altında; renk derse ait.
+  aci: {
+    zemin: 'bg-isl',
+    yazi: 'text-isl-koyu',
+    dolgu: 'bg-isl-koyu',
+    kenar: 'border-l-isl-koyu',
+    degisken: 'var(--isl-koyu)',
+  },
+  ucgen: {
+    zemin: 'bg-isl',
+    yazi: 'text-isl-koyu',
+    dolgu: 'bg-isl-koyu',
+    kenar: 'border-l-isl-koyu',
+    degisken: 'var(--isl-koyu)',
+  },
   edebiyat: {
     zemin: 'bg-edb',
     yazi: 'text-edb-koyu',

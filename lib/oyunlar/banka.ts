@@ -12,11 +12,13 @@
  */
 
 import type { OyunId } from '../types'
+import { ACI_KURALI_ADI, type AciSorusu } from './aci'
 import type { IslemTuru } from './islem'
 import type { NoktalamaIsareti, NoktalamaSorusu } from './noktalama-havuzu'
 import { OLAY_ADI, type SesOlayi } from './ses-havuzu'
 import { OGE_ADI, type OgeTuru } from './oge-havuzu'
 import type { SozKonusu, SozTuru } from './soz-havuzu'
+import { ucgenCevabi, ucgenKimligi, ucgenOzeti, kenarMetni, type UcgenSorusu } from './ucgen'
 
 /** Bir kaydın bankadan düşmesi için gereken üst üste doğru sayısı. */
 export const DUSME_ESIGI = 3
@@ -50,6 +52,15 @@ export type BankaSorusu =
   | { oyun: 'ses'; kelime: string; olusum: string; olay: SesOlayi }
   | { oyun: 'oge'; once: string; oge: string; sonra: string; ogeTuru: OgeTuru }
   | { oyun: 'soz'; soz: string; anlam: string; sozTuru: SozTuru; konu: SozKonusu }
+  /**
+   * Geometri soruları sorunun kendisini olduğu gibi taşıyor.
+   *
+   * Ötekiler gibi alanlara açılmadılar çünkü ikisi de zaten küçük ve **kendi
+   * şekillerini üretebilen** veri: `aciSekli`/`ucgenSekli` bu nesneden çizimi
+   * yeniden kuruyor, bankaya koordinat yazmak gerekmiyor.
+   */
+  | { oyun: 'aci'; aci: AciSorusu }
+  | { oyun: 'ucgen'; ucgen: UcgenSorusu }
 
 export type BankaKaydi = {
   /** Soru içeriğinden türetilen kimlik; aynı soru iki kez eklenmez. */
@@ -141,6 +152,14 @@ export function ogedenBanka(soru: {
   }
 }
 
+export function acidanBanka(soru: AciSorusu): BankaSorusu {
+  return { oyun: 'aci', aci: soru }
+}
+
+export function ucgendenBanka(soru: UcgenSorusu): BankaSorusu {
+  return { oyun: 'ucgen', ucgen: soru }
+}
+
 /**
  * Kayıt kimliği.
  *
@@ -163,6 +182,12 @@ export function bankaKimligi(soru: BankaSorusu): string {
       return `oge:${soru.once}[${soru.oge}]${soru.sonra}`
     case 'soz':
       return `soz:${soru.soz}`
+    // Şekil sorularında kimlik verilen açılardan/kenarlardan geliyor: aynı
+    // kuralın 40°'lik hâli ile 65°'lik hâli ayrı sorular.
+    case 'aci':
+      return `aci:${soru.aci.kural}:${soru.aci.a}:${soru.aci.b ?? ''}`
+    case 'ucgen':
+      return `ucgen:${ucgenKimligi(soru.ucgen)}`
   }
 }
 
@@ -181,6 +206,10 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
       return `“${soru.oge}” · ${soru.once}${soru.oge}${soru.sonra}`
     case 'soz':
       return soru.soz
+    case 'aci':
+      return `${ACI_KURALI_ADI[soru.aci.kural]} · ${soru.aci.a}°${soru.aci.b === null ? '' : ` · ${soru.aci.b}°`}`
+    case 'ucgen':
+      return ucgenOzeti(soru.ucgen)
   }
 }
 
@@ -199,6 +228,10 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
       return OGE_ADI[soru.ogeTuru]
     case 'soz':
       return soru.anlam
+    case 'aci':
+      return `${soru.aci.cevap}°`
+    case 'ucgen':
+      return kenarMetni(ucgenCevabi(soru.ucgen))
   }
 }
 
@@ -296,6 +329,8 @@ const BOS_DAGILIM: Record<OyunId, number> = {
   soz: 0,
   islem: 0,
   edebiyat: 0,
+  aci: 0,
+  ucgen: 0,
 }
 
 export const OYUN_KIMLIKLERI = Object.keys(BOS_DAGILIM) as OyunId[]

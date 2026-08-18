@@ -8,11 +8,18 @@ import type {
   OyunTurKaydi,
 } from '@/lib/types'
 import {
+  bolumBul,
+  bolumsuzOyunlar,
+  bolumunOyunlari,
   dersBul,
+  dersinBolumleri,
   dersinOyunlari,
   doluDersler,
   istatistikAl,
+  type BolumId,
+  type BolumTanimi,
   type DersId,
+  type OyunTanimi,
 } from '@/lib/oyunlar/tanim'
 import {
   TUR_SURESI,
@@ -42,6 +49,8 @@ import { OgeOyunuEkrani } from '@/components/ekranlar/oyun-oge'
 import { SozOyunuEkrani } from '@/components/ekranlar/oyun-soz'
 import { IslemOyunuEkrani } from '@/components/ekranlar/oyun-islem'
 import { EdebiyatOyunuEkrani } from '@/components/ekranlar/oyun-edebiyat'
+import { AciOyunuEkrani } from '@/components/ekranlar/oyun-aci'
+import { UcgenOyunuEkrani } from '@/components/ekranlar/oyun-ucgen'
 
 /**
  * Oyunlar sekmesi.
@@ -66,6 +75,11 @@ const AILE: Record<'yzm' | 'isl' | 'edb', { zemin: string; yazi: string; ok: str
   edb: { zemin: 'bg-edb', yazi: 'text-edb-koyu', ok: 'bg-edb-ok' },
 }
 
+/** Ders ızgarasındaki tek hücre: ya bir oyun ya da bir bölüm kapağı. */
+type Kart = { tip: 'oyun'; oyun: OyunTanimi } | { tip: 'bolum'; bolum: BolumTanimi }
+
+type Aile = { zemin: string; yazi: string; ok: string }
+
 /** Kart başlığındaki satır kırma — iki kelimelik adlar iki satıra iniyor. */
 const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   yazim: ['Yazım', 'Ustası'],
@@ -73,6 +87,8 @@ const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   oge: ['Cümlenin', 'Ögeleri'],
   soz: ['Deyim ve', 'Atasözü'],
   islem: ['Zihinden', 'İşlem'],
+  aci: ['Açı', 'Tamamlama'],
+  ucgen: ['Özel', 'Üçgenler'],
   edebiyat: ['Edebiyat', 'Eşleştirme'],
 }
 
@@ -108,6 +124,8 @@ export function OyunlarEkrani({
   const [secilenOyun, setSecilenOyun] = useState<OyunId | null>(null)
   /** Açık kategori; null ise ders ızgarası görünüyor. */
   const [secilenDers, setSecilenDers] = useState<DersId | null>(null)
+  /** Açık bölüm; null ise dersin kendi ızgarası görünüyor. */
+  const [secilenBolum, setSecilenBolum] = useState<BolumId | null>(null)
   const acikOyun = bankaTuru ?? secilenOyun
   const dagilim = useMemo(() => bankaDagilimi(banka), [banka])
 
@@ -205,7 +223,10 @@ export function OyunlarEkrani({
   // Donanım geri tuşu. Oyun katmanı bunu kaydetmiyordu: oyunun içindeyken geri
   // basmak arkadaki sekmeyi değiştiriyor, oyun açık kalıyordu.
   useGeriKatmani(secilenOyun !== null && bankaTuru === null, () => setSecilenOyun(null))
-  useGeriKatmani(secilenDers !== null, () => setSecilenDers(null))
+  useGeriKatmani(secilenDers !== null, () => dersiKapat())
+  // Bölüm katmanı sonra açıldığı için yığında üstte kalıyor: geri tuşu önce
+  // bölümü kapatıp dersin ızgarasına dönüyor.
+  useGeriKatmani(secilenBolum !== null, () => setSecilenBolum(null))
 
   const oyunuKapat = () => {
     if (bankaTuru !== null) onBankaTuruBitti()
@@ -213,6 +234,30 @@ export function OyunlarEkrani({
   }
 
   /** Banka turunda oyunun havuzu bankadaki sorularla sınırlanıyor. */
+  /** Ders kapanırken bölüm de kapanmalı; yoksa ders yeniden açıldığında eski
+   *  bölümün içinde açılırdı. */
+  const dersiKapat = () => {
+    setSecilenBolum(null)
+    setSecilenDers(null)
+  }
+
+  /**
+   * Açık dersin ızgarasındaki kartlar.
+   *
+   * Bölüm kartı oyun kartıyla aynı ızgarada duruyor: ayrı bir başlık altına
+   * alınsaydı iki oyunluk bir bölüm için ekranın yarısı başlığa giderdi.
+   * Bölümün içindeyken yalnızca o bölümün oyunları listeleniyor.
+   */
+  const kartlar: Kart[] =
+    secilenDers === null
+      ? []
+      : secilenBolum !== null
+        ? bolumunOyunlari(secilenBolum).map((oyun) => ({ tip: 'oyun' as const, oyun }))
+        : [
+            ...bolumsuzOyunlar(secilenDers).map((oyun) => ({ tip: 'oyun' as const, oyun })),
+            ...dersinBolumleri(secilenDers).map((bolum) => ({ tip: 'bolum' as const, bolum })),
+          ]
+
   const bankaSorulari = bankaTuru === null ? [] : banka.filter((k) => k.soru.oyun === bankaTuru)
 
   return (
@@ -306,89 +351,57 @@ export function OyunlarEkrani({
           <div className="mt-5 mb-3 flex items-center gap-2 px-0.5">
             <button
               type="button"
-              onClick={() => setSecilenDers(null)}
-              aria-label="Derslere dön"
+              onClick={() => (secilenBolum === null ? dersiKapat() : setSecilenBolum(null))}
+              aria-label={secilenBolum === null ? 'Derslere dön' : 'Derse dön'}
               className="-ml-1 grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted-foreground transition active:bg-muted"
             >
               <GeriSimgesi />
             </button>
             <h2 className="font-display text-lg font-extrabold tracking-tight">
-              {dersBul(secilenDers).ad}
+              {secilenBolum === null ? dersBul(secilenDers).ad : bolumBul(secilenBolum).ad}
             </h2>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            {dersinOyunlari(secilenDers).map((oyun, sira, liste) => {
-              const istatistik = istatistikAl(kayitlar, oyun.id)
-              const aile = AILE[dersBul(oyun.ders).aile]
-              const [ustSatir, altSatir] = BASLIK_SATIRLARI[oyun.id]
-              // Tek sayıda oyun varsa sonuncusu iki sütunu birden kaplıyor;
+            {kartlar.map((kart, sira, liste) => {
+              // Tek sayıda kart varsa sonuncusu iki sütunu birden kaplıyor;
               // yoksa ızgarada boş bir hücre kalırdı. Yatay düzen aynı kartın
               // geniş hâli.
               const genis = liste.length % 2 === 1 && sira === liste.length - 1
 
+              if (kart.tip === 'bolum') {
+                const bolumOyunlari = bolumunOyunlari(kart.bolum.id)
+                return (
+                  <BolumKarti
+                    key={kart.bolum.id}
+                    bolum={kart.bolum}
+                    aile={AILE[dersBul(kart.bolum.ders).aile]}
+                    oyunSayisi={bolumOyunlari.length}
+                    oynananTur={bolumOyunlari.reduce(
+                      (toplam, o) => toplam + istatistikAl(kayitlar, o.id).oynananTur,
+                      0,
+                    )}
+                    genis={genis}
+                    onAc={() => setSecilenBolum(kart.bolum.id)}
+                  />
+                )
+              }
+
               return (
-                <button
-                  key={oyun.id}
-                  type="button"
-                  onClick={() => {
+                <OyunKarti
+                  key={kart.oyun.id}
+                  oyun={kart.oyun}
+                  aile={AILE[dersBul(kart.oyun.ders).aile]}
+                  rekor={istatistikAl(kayitlar, kart.oyun.id).enIyiDogru}
+                  genis={genis}
+                  onAc={() => {
                     // Ses dosyaları tanıtım açılırken çözülüyor; oyun başlayınca
                     // yüklenseydi ilk cevabın sesi geç gelirdi. Dokunma aynı
                     // zamanda AudioContext'i açan kullanıcı etkileşimi oluyor.
                     sesleriHazirla(sesAcik)
-                    setSecilenOyun(oyun.id)
+                    setSecilenOyun(kart.oyun.id)
                   }}
-                  className={cn(
-                    'relative rounded-2xl p-4 text-left transition active:brightness-[0.97]',
-                    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-                    aile.zemin,
-                    genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[186px] flex-col',
-                  )}
-                >
-                  {istatistik.enIyiDogru > 0 && (
-                    <span
-                      className={cn(
-                        // Zemin `bg-card`: koyu temada aile rengi açılıyor, beyaz
-                        // hapın üstünde okunmuyordu. Kart zemini iki temada da
-                        // yazının karşıt tarafında kalıyor.
-                        'rakam rounded-full bg-card/85 px-2.5 py-1 text-[10.5px] font-extrabold',
-                        aile.yazi,
-                        genis ? 'order-3 shrink-0' : 'absolute right-3.5 top-3.5',
-                      )}
-                    >
-                      Rekor {istatistik.enIyiDogru}
-                    </span>
-                  )}
-
-                  <span
-                    className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80 text-[23px] leading-none"
-                    aria-hidden
-                  >
-                    {oyun.ikon}
-                  </span>
-
-                  <span className={cn('min-w-0', genis ? 'flex-1' : 'mt-2.5')}>
-                    <span className="block font-display text-[16.5px] font-extrabold leading-[1.15] tracking-tight text-foreground">
-                      {ustSatir}
-                      {genis ? ' ' : <br />}
-                      {altSatir}
-                    </span>
-                    <span className="mt-1.5 block text-[12.5px] font-medium leading-snug text-foreground/60">
-                      {oyun.kisaAciklama}
-                    </span>
-                  </span>
-
-                  <span
-                    className={cn(
-                      'grid h-8 w-8 shrink-0 place-items-center rounded-full text-white',
-                      aile.ok,
-                      genis ? 'order-4' : 'mt-auto self-end',
-                    )}
-                    aria-hidden
-                  >
-                    <OkSimgesi />
-                  </span>
-                </button>
+                />
               )
             })}
           </div>
@@ -437,6 +450,24 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar) => turBitti('islem', ozet, cevaplar)}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'aci' && (
+        <AciOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'aci')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar) => turBitti('aci', ozet, cevaplar)}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'ucgen' && (
+        <UcgenOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'ucgen')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar) => turBitti('ucgen', ozet, cevaplar)}
           onCik={oyunuKapat}
         />
       )}
@@ -548,6 +579,152 @@ function BankaDestesi({
         )}
       </button>
     </div>
+  )
+}
+
+/**
+ * Oyun kartı.
+ *
+ * Rekor hapı yalnızca oynanmış oyunlarda çıkıyor: "Rekor 0" yazan bir hap, hiç
+ * denememiş oyuncuya geride kaldığını söylerdi.
+ */
+function OyunKarti({
+  oyun,
+  aile,
+  rekor,
+  genis,
+  onAc,
+}: {
+  oyun: OyunTanimi
+  aile: Aile
+  rekor: number
+  /** İki sütunu birden kaplayan yatay hâl. */
+  genis: boolean
+  onAc: () => void
+}) {
+  const [ustSatir, altSatir] = BASLIK_SATIRLARI[oyun.id]
+
+  return (
+    <button
+      type="button"
+      onClick={onAc}
+      className={cn(
+        'relative rounded-2xl p-4 text-left transition active:brightness-[0.97]',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+        aile.zemin,
+        genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[186px] flex-col',
+      )}
+    >
+      {rekor > 0 && (
+        <span
+          className={cn(
+            // Zemin `bg-card`: koyu temada aile rengi açılıyor, beyaz hapın
+            // üstünde okunmuyordu. Kart zemini iki temada da yazının karşıt
+            // tarafında kalıyor.
+            'rakam rounded-full bg-card/85 px-2.5 py-1 text-[10.5px] font-extrabold',
+            aile.yazi,
+            genis ? 'order-3 shrink-0' : 'absolute right-3.5 top-3.5',
+          )}
+        >
+          Rekor {rekor}
+        </span>
+      )}
+
+      <span
+        className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80 text-[23px] leading-none"
+        aria-hidden
+      >
+        {oyun.ikon}
+      </span>
+
+      <span className={cn('min-w-0', genis ? 'flex-1' : 'mt-2.5')}>
+        <span className="block font-display text-[16.5px] font-extrabold leading-[1.15] tracking-tight text-foreground">
+          {ustSatir}
+          {genis ? ' ' : <br />}
+          {altSatir}
+        </span>
+        <span className="mt-1.5 block text-[12.5px] font-medium leading-snug text-foreground/60">
+          {oyun.kisaAciklama}
+        </span>
+      </span>
+
+      <span
+        className={cn(
+          'grid h-8 w-8 shrink-0 place-items-center rounded-full text-white',
+          aile.ok,
+          genis ? 'order-4' : 'mt-auto self-end',
+        )}
+        aria-hidden
+      >
+        <OkSimgesi />
+      </span>
+    </button>
+  )
+}
+
+/**
+ * Bölüm kartı — açılınca içindeki oyunlar geliyor.
+ *
+ * Oyun kartıyla aynı ölçüde ama rekor yerine kaç oyun taşıdığını yazıyor:
+ * dokunmadan önce ekranın değişeceği anlaşılmalı, yoksa tur başlıyor sanılır.
+ */
+function BolumKarti({
+  bolum,
+  aile,
+  oyunSayisi,
+  oynananTur,
+  genis,
+  onAc,
+}: {
+  bolum: BolumTanimi
+  aile: Aile
+  oyunSayisi: number
+  oynananTur: number
+  genis: boolean
+  onAc: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onAc}
+      className={cn(
+        'relative rounded-2xl p-4 text-left transition active:brightness-[0.97]',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+        aile.zemin,
+        genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[186px] flex-col',
+      )}
+    >
+      <span
+        className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80 text-[23px] leading-none"
+        aria-hidden
+      >
+        {bolum.ikon}
+      </span>
+
+      <span className={cn('min-w-0', genis ? 'flex-1' : 'mt-2.5')}>
+        <span className="block font-display text-[16.5px] font-extrabold leading-[1.15] tracking-tight text-foreground">
+          {bolum.ad}
+        </span>
+        <span className="mt-1.5 block text-[12.5px] font-medium leading-snug text-foreground/60">
+          {bolum.aciklama}
+        </span>
+        <span className={cn('mt-1.5 block text-[11.5px] font-bold', aile.yazi)}>
+          {oyunSayisi} oyun
+          {oynananTur > 0 && <> · {oynananTur} tur</>}
+        </span>
+      </span>
+
+      <span
+        className={cn(
+          'grid h-8 w-8 shrink-0 place-items-center rounded-full text-white',
+          aile.ok,
+          genis ? 'order-4' : 'mt-auto self-end',
+        )}
+        aria-hidden
+      >
+        <OkSimgesi />
+      </span>
+    </button>
   )
 }
 

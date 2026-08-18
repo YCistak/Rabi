@@ -1,7 +1,19 @@
 import { describe, expect, it } from 'vitest'
 import { OYUN_KIMLIKLERI } from './banka'
 import type { OyunIstatistigi, OyunKayitlari } from '../types'
-import { DERSLER, OYUNLAR, istatistikAl, oyunBul, oyunToplami } from './tanim'
+import {
+  BOLUMLER,
+  DERSLER,
+  OYUNLAR,
+  bolumBul,
+  bolumsuzOyunlar,
+  bolumunOyunlari,
+  dersinBolumleri,
+  dersinOyunlari,
+  istatistikAl,
+  oyunBul,
+  oyunToplami,
+} from './tanim'
 import { BOS_ISTATISTIK, istatistigiGuncelle, istatistigiTamamla } from './tur'
 
 const tam: OyunIstatistigi = {
@@ -45,6 +57,41 @@ describe('oyun listesi', () => {
 
   it('kimlikten oyunu bulur', () => {
     expect(oyunBul('edebiyat').ad).toBe('Edebiyat Eşleştirme')
+  })
+})
+
+describe('bölümler', () => {
+  it('her bölümün kimliği benzersiz ve en az bir oyunu var', () => {
+    expect(new Set(BOLUMLER.map((b) => b.id)).size).toBe(BOLUMLER.length)
+    for (const bolum of BOLUMLER) {
+      expect(bolumunOyunlari(bolum.id).length, bolum.id).toBeGreaterThan(0)
+    }
+  })
+
+  /*
+    Bölüm dersin altında duruyor; oyunu başka bir derse yazılmış bir bölüm
+    ekranda hiç görünmezdi — kart dersin ızgarasında, oyun başka ızgarada
+    kalırdı.
+  */
+  it('bölümdeki oyunlar bölümle aynı derse ait', () => {
+    for (const bolum of BOLUMLER) {
+      for (const oyun of bolumunOyunlari(bolum.id)) {
+        expect(oyun.ders, oyun.id).toBe(bolum.ders)
+      }
+    }
+  })
+
+  it('dersin ızgarası bölüme giren oyunları tekrar göstermiyor', () => {
+    for (const ders of DERSLER) {
+      const dogrudan = bolumsuzOyunlar(ders.id)
+      const bolumdekiler = dersinBolumleri(ders.id).flatMap((b) => bolumunOyunlari(b.id))
+      expect(dogrudan.length + bolumdekiler.length, ders.id).toBe(dersinOyunlari(ders.id).length)
+      for (const oyun of dogrudan) expect(bolumdekiler).not.toContain(oyun)
+    }
+  })
+
+  it('kimlikten bölümü bulur', () => {
+    expect(bolumBul('geometri').ad).toBe('Geometri Ustası')
   })
 })
 

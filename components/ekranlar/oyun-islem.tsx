@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
-import { Delete } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
 import {
   ISLEM_ADI,
@@ -45,6 +44,7 @@ import {
   YanlisKarti,
   rekorCumlesi,
 } from '@/components/oyun-kabuk'
+import { CevapAlani, TusTakimi, rakamEkle } from '@/components/oyun-tus-takimi'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
 /**
@@ -57,8 +57,6 @@ import { OyunTanitim } from '@/components/oyun-tanitim'
 const CEVAP_BEKLEMESI = 1100
 /** Bir turda üretilen soru sayısı — en hızlı oyuncunun bile tüketemeyeceği kadar. */
 const TUR_SORUSU = 120
-/** Cevap alanına yazılabilecek en fazla rakam. En büyük sonuç dört basamaklı. */
-const EN_COK_RAKAM = 5
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
@@ -285,12 +283,7 @@ export function IslemOyunuEkrani({
   )
 
   const rakamYaz = useCallback((rakam: string) => {
-    setGirilen((onceki) => {
-      // Baştaki sıfır anlamsız: "0" yazıp 5'e basınca 5 olmalı, 05 değil.
-      const temel = onceki === '0' ? '' : onceki
-      if (temel.length >= EN_COK_RAKAM) return temel
-      return temel + rakam
-    })
+    setGirilen((onceki) => rakamEkle(onceki, rakam))
   }, [])
 
   const sil = useCallback(() => setGirilen((o) => o.slice(0, -1)), [])
@@ -391,7 +384,13 @@ export function IslemOyunuEkrani({
                   </div>
                 </div>
 
-                <CevapAlani girilen={girilen} geriBildirim={geriBildirim} />
+                <CevapAlani
+                  girilen={geriBildirim ? geriBildirim.girilen : girilen}
+                  durum={
+                    geriBildirim ? (geriBildirim.dogruMu ? 'dogru' : 'yanlis') : 'yaziliyor'
+                  }
+                  bosYazi={geriBildirim && !geriBildirim.dogruMu ? 'pas' : 'sonucu yaz'}
+                />
 
                 <TusTakimi
                   kilitli={geriBildirim !== null}
@@ -471,130 +470,6 @@ function IslemSecimi({
         Seçimin saklanır; en az bir işlem açık kalmalı.
       </p>
     </div>
-  )
-}
-
-/**
- * Yazılan sayının göründüğü alan.
- *
- * Yanlış cevapta doğru sonuç alttaki bildirimde yazıyor: yalnızca "yanlış"
- * denseydi oyuncu hatasını görür ama doğrusunu öğrenemezdi.
- */
-function CevapAlani({
-  girilen,
-  geriBildirim,
-}: {
-  girilen: string
-  geriBildirim: GeriBildirim | null
-}) {
-  const yanlisMi = geriBildirim !== null && !geriBildirim.dogruMu
-  const dogruMu = geriBildirim?.dogruMu === true
-  const gosterilen = geriBildirim ? geriBildirim.girilen : girilen
-
-  return (
-    <div
-      aria-live="polite"
-      className={cn(
-        'golge-kart flex h-[54px] flex-none items-center justify-center rounded-[18px] px-4',
-        'rakam font-display text-[27px] font-extrabold tracking-[3px]',
-        !geriBildirim && 'bg-card',
-        dogruMu && 'bg-success text-white',
-        yanlisMi && 'bg-ikincil text-white',
-      )}
-    >
-      {gosterilen === '' ? (
-        <span className="text-[19px] font-bold tracking-normal opacity-60">
-          {yanlisMi ? 'pas' : 'sonucu yaz'}
-        </span>
-      ) : (
-        <>
-          {gosterilen}
-          {!geriBildirim && <span className="ml-0.5 h-6 w-[2px] animate-pulse bg-isl-koyu" />}
-        </>
-      )}
-    </div>
-  )
-}
-
-const TUSLAR = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
-
-function TusTakimi({
-  kilitli,
-  bosMu,
-  onRakam,
-  onSil,
-  onOnayla,
-  onPas,
-}: {
-  kilitli: boolean
-  bosMu: boolean
-  onRakam: (rakam: string) => void
-  onSil: () => void
-  onOnayla: () => void
-  onPas: () => void
-}) {
-  return (
-    <div className="flex flex-none flex-col gap-2">
-      <div className="grid grid-cols-3 gap-[7px]">
-        {TUSLAR.map((rakam) => (
-          <Tus key={rakam} kilitli={kilitli} onClick={() => onRakam(rakam)}>
-            {rakam}
-          </Tus>
-        ))}
-
-        <Tus kilitli={kilitli || bosMu} onClick={onSil} etiket="Sil" bicim="sil">
-          <Delete size={21} aria-hidden />
-        </Tus>
-        <Tus kilitli={kilitli} onClick={() => onRakam('0')}>
-          0
-        </Tus>
-        <Tus kilitli={kilitli || bosMu} onClick={onOnayla} bicim="onay">
-          Onayla
-        </Tus>
-      </div>
-
-      {/* Pas geçmenin bedeli düğmenin üstünde yazıyor: aynı yanlış cezası. */}
-      <button
-        type="button"
-        onClick={onPas}
-        disabled={kilitli}
-        className="mx-auto rounded-lg px-2.5 py-1 text-[12.5px] font-extrabold text-muted-foreground transition active:bg-foreground/10 disabled:opacity-45"
-      >
-        Pas geç · −{YANLIS_CEZASI} sn
-      </button>
-    </div>
-  )
-}
-
-function Tus({
-  kilitli,
-  bicim = 'rakam',
-  etiket,
-  onClick,
-  children,
-}: {
-  kilitli: boolean
-  bicim?: 'rakam' | 'sil' | 'onay'
-  etiket?: string
-  onClick: () => void
-  children: React.ReactNode
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={kilitli}
-      aria-label={etiket}
-      className={cn(
-        'grid h-12 place-items-center rounded-2xl font-display transition disabled:opacity-40',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        bicim === 'rakam' && 'golge-kart rakam bg-card text-[21px] font-extrabold',
-        bicim === 'sil' && 'bg-ikincil/12 text-ikincil',
-        bicim === 'onay' && 'bg-isl-koyu text-sm font-extrabold text-white active:brightness-95',
-      )}
-    >
-      {children}
-    </button>
   )
 }
 

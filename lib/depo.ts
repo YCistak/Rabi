@@ -410,6 +410,21 @@ function bankayiCoz(ham: unknown): BankaKaydi[] {
           typeof s.sonra === 'string' &&
           typeof s.ogeTuru === 'string'
         )
+      // Geometri kayıtları şekli kendileri üretiyor; eksik bir açı ya da kenar
+      // çizim sırasında NaN koordinat demek olurdu.
+      if (s.oyun === 'aci')
+        return (
+          typeof s.aci?.kural === 'string' &&
+          typeof s.aci?.a === 'number' &&
+          typeof s.aci?.cevap === 'number'
+        )
+      if (s.oyun === 'ucgen')
+        return (
+          typeof s.ucgen?.tur === 'string' &&
+          typeof s.ucgen?.bilinmeyen === 'string' &&
+          typeof s.ucgen?.hipotenus?.kat === 'number' &&
+          typeof s.ucgen?.celdirici?.kat === 'number'
+        )
       return false
     })
     .map((k) => ({

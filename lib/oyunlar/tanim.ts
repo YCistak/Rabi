@@ -65,10 +65,43 @@ export const DERSLER: DersTanimi[] = [
   },
 ]
 
+/**
+ * Ders içindeki alt bölüm.
+ *
+ * Bir dersin oyunları çoğaldıkça hepsi tek ızgarada yan yana duruyordu ve
+ * aralarındaki akrabalık kayboluyordu: "Açı Tamamlama" ile "Özel Üçgenler"
+ * aynı konunun iki yüzü, "Zihinden İşlem" ise bambaşka bir şey. Bölüm bu
+ * yakınlığı taşıyor — açılınca içindeki oyunlar geliyor.
+ *
+ * Bölümün kendi kaydı yok: rekor da istatistik de oyunlara ait, bölüm yalnızca
+ * bir kapak.
+ */
+export type BolumId = 'geometri'
+
+export type BolumTanimi = {
+  id: BolumId
+  ders: DersId
+  ad: string
+  aciklama: string
+  ikon: string
+}
+
+export const BOLUMLER: BolumTanimi[] = [
+  {
+    id: 'geometri',
+    ders: 'matematik',
+    ad: 'Geometri Ustası',
+    aciklama: 'Açı ve dik üçgen',
+    ikon: '📐',
+  },
+]
+
 export type OyunTanimi = {
   id: OyunId
   /** Hangi derse çalışıyor — Oyunlar sekmesi bu alana göre grupluyor. */
   ders: DersId
+  /** Varsa dersin hangi bölümünün altında duruyor. */
+  bolum?: BolumId
   ad: string
   kisaAciklama: string
   ikon: string
@@ -149,6 +182,38 @@ export const OYUNLAR: OyunTanimi[] = [
     ],
   },
   {
+    id: 'aci',
+    ders: 'matematik',
+    bolum: 'geometri',
+    ad: 'Açı Tamamlama',
+    kisaAciklama: 'Şekildeki x kaç derece?',
+    ikon: '📐',
+    nasilOynanir: [
+      `Ekrana ya paralel iki doğruyu kesen bir doğru ya da bir üçgen gelir; aranan açı şekilde "x" ile gösterilir. Kaç derece olduğunu tuş takımıyla yazarsın.`,
+      `Şekiller ölçekli: yayın açıklığı gerçekten yazan açı kadar, üçgenin köşeleri gerçekten o açılarda. Takıldığında şekle bakmak işe yarar.`,
+      `Kurallar dönüşümlü gelir: Z (iç ters açılar eşit), U (aynı yandaki iç açılar 180°), M (ortadaki açı yanlardakilerin toplamı), üçgende iç açılar toplamı, dış açı ve ikizkenar üçgen.`,
+      `Turun süresi ${TUR_SURESI} saniye. Doğru cevap süreyi uzatmaz, ${YANLIS_CEZASI} saniyeyi yanlış cevap götürür — “pas geç” de aynı cezayı verir.`,
+      `Sorular her turda yeniden üretilir; ezberlenecek bir liste yok.`,
+      `Tur bitince yanlış bildiklerin kuralıyla birlikte listelenir — asıl öğrenme orada.`,
+    ],
+  },
+  {
+    id: 'ucgen',
+    ders: 'matematik',
+    bolum: 'geometri',
+    ad: 'Özel Üçgenler',
+    kisaAciklama: 'İki kenar verili, üçüncüsü kaç?',
+    ikon: '📏',
+    nasilOynanir: [
+      `Ekrana bir dik üçgen gelir; iki kenarı yazılıdır, üçüncüsünde “x” durur. İki şıktan doğru uzunluğa dokunursun.`,
+      `Üç aile dönüşümlü gelir: Pisagor üçlüleri (3-4-5, 5-12-13, 8-15-17, 7-24-25 ve katları), 30-60-90 (a, a√3, 2a) ve ikizkenar dik üçgen 45-45-90 (a, a, a√2).`,
+      `Kenarlar ölçekli çizilir, açılar da şekilde yazar — hangi ailede olduğunu şekilden tanıman yeterli, hesap yapman gerekmez.`,
+      `Turun süresi ${TUR_SURESI} saniye. Doğru cevap süreyi uzatmaz, ${YANLIS_CEZASI} saniyeyi yanlış cevap götürür.`,
+      `Yanlış şık rastgele değil: iki dik kenarı toplamak ya da hipotenüsten çıkarmak gibi en sık yapılan hatanın sonucu.`,
+      `Tur bitince yanlış bildiklerin oranıyla birlikte listelenir.`,
+    ],
+  },
+  {
     id: 'edebiyat',
     ders: 'edebiyat',
     ad: 'Edebiyat Eşleştirme',
@@ -170,9 +235,29 @@ export function dersBul(id: DersId): DersTanimi {
   return ders
 }
 
-/** Bir dersin oyunları, listedeki sırayla. */
+/** Bir dersin bütün oyunları (bölüm içindekiler dahil), listedeki sırayla. */
 export function dersinOyunlari(id: DersId): OyunTanimi[] {
   return OYUNLAR.filter((o) => o.ders === id)
+}
+
+export function bolumBul(id: BolumId): BolumTanimi {
+  const bolum = BOLUMLER.find((b) => b.id === id)
+  if (!bolum) throw new Error(`Bilinmeyen bölüm: ${id}`)
+  return bolum
+}
+
+/** Dersin ızgarasında kart olarak duran bölümler. */
+export function dersinBolumleri(id: DersId): BolumTanimi[] {
+  return BOLUMLER.filter((b) => b.ders === id)
+}
+
+export function bolumunOyunlari(id: BolumId): OyunTanimi[] {
+  return OYUNLAR.filter((o) => o.bolum === id)
+}
+
+/** Dersin doğrudan altındaki oyunlar — bölüme girenler burada görünmüyor. */
+export function bolumsuzOyunlar(id: DersId): OyunTanimi[] {
+  return OYUNLAR.filter((o) => o.ders === id && o.bolum === undefined)
 }
 
 /**
