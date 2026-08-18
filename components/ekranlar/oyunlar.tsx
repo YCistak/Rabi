@@ -39,6 +39,7 @@ import { cn } from '@/lib/utils'
 import { YazimOyunuEkrani } from '@/components/ekranlar/oyun-yazim'
 import { SesOyunuEkrani } from '@/components/ekranlar/oyun-ses'
 import { OgeOyunuEkrani } from '@/components/ekranlar/oyun-oge'
+import { SozOyunuEkrani } from '@/components/ekranlar/oyun-soz'
 import { IslemOyunuEkrani } from '@/components/ekranlar/oyun-islem'
 import { EdebiyatOyunuEkrani } from '@/components/ekranlar/oyun-edebiyat'
 
@@ -70,6 +71,7 @@ const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   yazim: ['Yazım', 'Ustası'],
   ses: ['Ses', 'Olayları'],
   oge: ['Cümlenin', 'Ögeleri'],
+  soz: ['Deyim ve', 'Atasözü'],
   islem: ['Zihinden', 'İşlem'],
   edebiyat: ['Edebiyat', 'Eşleştirme'],
 }
@@ -417,6 +419,15 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar) => turBitti('oge', ozet, cevaplar)}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'soz' && (
+        <SozOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'soz')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar) => turBitti('soz', ozet, cevaplar)}
           onCik={oyunuKapat}
         />
       )}

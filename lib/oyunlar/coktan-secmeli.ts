@@ -38,11 +38,29 @@ export function siklariKur<T>(
   tumSecenekler: readonly T[],
   ad: (deger: T) => string,
   rastgele: () => number = Math.random,
+  /**
+   * Bir adayın çeldirici olmaya uygun olup olmadığı.
+   *
+   * Sabit seçenekli oyunlarda (Ses Olayları, Cümlenin Ögeleri) "doğru olmasın"
+   * yetiyor. Ama şıklar havuzun kendisinden geliyorsa yetmiyor: iki deyimin
+   * anlamı aynı olabilir ve o zaman iki şık birden doğru olur. Deyimler
+   * oyununda bu yüzden "farklı konudan olsun" kuralı geçiliyor.
+   */
+  celdiriciUygunMu: (aday: T, dogru: T) => boolean = (aday, d) => aday !== d,
 ): Sik<T>[] {
-  const celdiriciler = karistir(
-    tumSecenekler.filter((s) => s !== dogru),
-    rastgele,
-  ).slice(0, SIK_SAYISI - 1)
+  const uygunlar = tumSecenekler.filter((s) => s !== dogru && celdiriciUygunMu(s, dogru))
+  let celdiriciler = karistir(uygunlar, rastgele).slice(0, SIK_SAYISI - 1)
+
+  // Uygun aday üçe yetmezse şık sayısı düşerdi; kalanı elemeye takılanlardan
+  // tamamlanıyor. Dar bir havuzda dört şık, kusursuz çeldiriciden önemli.
+  if (celdiriciler.length < SIK_SAYISI - 1) {
+    const secilen = new Set(celdiriciler)
+    const yedek = karistir(
+      tumSecenekler.filter((s) => s !== dogru && !secilen.has(s)),
+      rastgele,
+    )
+    celdiriciler = [...celdiriciler, ...yedek].slice(0, SIK_SAYISI - 1)
+  }
 
   return karistir([dogru, ...celdiriciler], rastgele).map((deger) => ({
     deger,
@@ -63,9 +81,10 @@ export function turHazirla<S, T>(
   tumSecenekler: readonly T[],
   ad: (deger: T) => string,
   rastgele: () => number = Math.random,
+  celdiriciUygunMu?: (aday: T, dogru: T) => boolean,
 ): CoktanSecmeliSoru<S, T>[] {
   return karistir(havuz, rastgele).map((soru) => ({
     soru,
-    siklar: siklariKur(dogruyuAl(soru), tumSecenekler, ad, rastgele),
+    siklar: siklariKur(dogruyuAl(soru), tumSecenekler, ad, rastgele, celdiriciUygunMu),
   }))
 }
