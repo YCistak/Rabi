@@ -11,6 +11,7 @@ import type {
   Hedef,
   KazanilanRozet,
   OkulYili,
+  OyunId,
   OyunKayitlari,
   OyunTurKaydi,
   PomodoroAyar,
@@ -25,6 +26,7 @@ import {
   ayarlariNormalize,
   useYerelDepo,
 } from '@/lib/depo'
+import type { BankaKaydi } from '@/lib/oyunlar/banka'
 import { sablonlariBirlestir } from '@/lib/sablonlar'
 import { guncelTahmin, obpHesapla } from '@/lib/tahmin'
 import { egitimYili, gunlukToplam, ilerlemisSinif } from '@/lib/hesap'
@@ -53,7 +55,8 @@ import { SiralamaEkrani } from '@/components/ekranlar/siralama'
 import { HedefEkrani } from '@/components/ekranlar/hedef'
 import { YanlisBankaEkrani } from '@/components/ekranlar/yanlis-banka'
 import { RozetlerEkrani } from '@/components/ekranlar/rozetler'
-import { MiniOyunlarEkrani } from '@/components/ekranlar/mini-oyunlar'
+import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
+import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
 import { RozetKutlama } from '@/components/rozet-kutlama'
 
 /** Rozet kontrolünün, veri durulana kadar beklediği süre (ms). */
@@ -101,6 +104,12 @@ export function AppShell() {
     {},
   )
   const [oyunGecmisi, setOyunGecmisi] = useYerelDepo<OyunTurKaydi[]>(ANAHTARLAR.oyunGecmisi, [])
+  const [oyunBankasi, setOyunBankasi] = useYerelDepo<BankaKaydi[]>(ANAHTARLAR.oyunBankasi, [])
+  /**
+   * Bankadan açılan tur. Oyun kimliği burada duruyor çünkü turu Oyunlar sekmesi
+   * çiziyor ama başlatan Oyun Bankası ekranı — ikisi kardeş, ortak sahibi bu.
+   */
+  const [bankaTuru, setBankaTuru] = useState<OyunId | null>(null)
   /** İzlenmiş haftalık özetlerin hafta başı tarihleri. */
   const [ozetGorulen, setOzetGorulen] = useYerelDepo<string[]>(ANAHTARLAR.ozetGorulen, [])
   const [kutlanan, setKutlanan] = useState<Rozet[]>([])
@@ -259,6 +268,12 @@ export function AppShell() {
     // En içteki katmandan dışa doğru: ekranın kendi açtığı katman (fotoğraf
     // görüntüleyici, onay kutusu) → form → alt ekran → ana sekme → çıkış.
     if (ustKatmaniKapat()) return true
+    // Banka turu tam ekran bir katman; geri tuşu önce onu kapatmalı, yoksa
+    // tur açıkken geri basmak arkadaki sekmeyi değiştirirdi.
+    if (bankaTuru !== null) {
+      setBankaTuru(null)
+      return true
+    }
     if (denemeFormu !== null) {
       setDenemeFormu(null)
       return true
@@ -272,7 +287,7 @@ export function AppShell() {
       return true
     }
     return false
-  }, [denemeFormu, ekran, sekme])
+  }, [bankaTuru, denemeFormu, ekran, sekme])
 
   // Android donanım geri tuşu
   useEffect(() => {
@@ -397,14 +412,41 @@ export function AppShell() {
           {ekran === 'yanlis-banka' && (
             <YanlisBankaEkrani sorular={yanlisSorular} setSorular={setYanlisSorular} />
           )}
-          {ekran === 'mini-oyunlar' && (
-            <MiniOyunlarEkrani
-              kayitlar={oyunlar}
-              setKayitlar={setOyunlar}
-              setGecmis={setOyunGecmisi}
-              sesAcik={ayarlar.oyunSesi}
-              muzikAcik={ayarlar.oyunMuzigi}
-              muzikTuru={ayarlar.oyunMuzikTuru}
+          {ekran === 'oyun-bankasi' && (
+            <OyunBankasiEkrani
+              banka={oyunBankasi}
+              onTurBaslat={(oyun) => {
+                // Turu Oyunlar sekmesi çiziyor; oyun katmanı tam ekran açıldığı
+                // için arkada hangi sekmenin durduğu görünmüyor, ama turdan
+                // çıkınca kullanıcı oyunların yanında kalmalı.
+                setBankaTuru(oyun)
+                setEkran(null)
+                setSekme('oyunlar')
+              }}
+            />
+          )}
+          {ekran === 'pomodoro' && (
+            <PomodoroEkrani
+              ayar={{ ...VARSAYILAN_POMODORO, ...pomodoroAyar }}
+              setAyar={setPomodoroAyar}
+              onSeansBitti={(seans) => setPomodoroGecmis((o) => [...o, seans])}
+            />
+          )}
+          {ekran === 'soru' && (
+            <SoruTakibiEkrani
+              kayitlar={gunlukKayitlar}
+              setKayitlar={setGunlukKayitlar}
+              ayarlar={ayarlar}
+            />
+          )}
+          {ekran === 'deneme' && (
+            <DenemelerEkrani
+              denemeler={denemeler}
+              sablonlar={sablonlar}
+              hazir={denemelerHazir}
+              onSil={(id) => setDenemeler((onceki) => onceki.filter((d) => d.id !== id))}
+              onDuzenle={(deneme) => setDenemeFormu({ duzenlenen: deneme })}
+              onYeniyeGit={() => setDenemeFormu({ duzenlenen: null })}
             />
           )}
           {ekran === 'rozetler' && (
@@ -426,7 +468,39 @@ export function AppShell() {
               varsayilanSablonId={ayarlar.varsayilanSablonId}
             />
           )}
-          {ekran === 'ayarlar' && (
+        </>
+      ) : (
+        <>
+          {sekme === 'ana' && (
+            <AnaSayfa
+              ayarlar={ayarlar}
+              gunlukKayitlar={gunlukKayitlar}
+              devamsizlik={devamsizlik}
+              hedef={hedef}
+              guncelSiralama={guncelSiralama}
+              ozetBekliyor={ozetBekliyor}
+              onKartAc={setEkran}
+              onDahaGit={() => setSekme('daha')}
+              onOyunlaraGit={() => setSekme('oyunlar')}
+            />
+          )}
+          {sekme === 'oyunlar' && (
+            <OyunlarEkrani
+              kayitlar={oyunlar}
+              setKayitlar={setOyunlar}
+              setGecmis={setOyunGecmisi}
+              banka={oyunBankasi}
+              setBanka={setOyunBankasi}
+              sesAcik={ayarlar.oyunSesi}
+              muzikAcik={ayarlar.oyunMuzigi}
+              muzikTuru={ayarlar.oyunMuzikTuru}
+              onBankayaGit={() => setEkran('oyun-bankasi')}
+              bankaTuru={bankaTuru}
+              onBankaTuruBitti={() => setBankaTuru(null)}
+            />
+          )}
+          {sekme === 'daha' && <KartMenusu onKartAc={setEkran} />}
+          {sekme === 'ayarlar' && (
             <AyarlarEkrani
               sablonlar={sablonlar}
               kayitliSablonlar={kayitliSablonlar}
@@ -442,50 +516,12 @@ export function AppShell() {
                 rozetler,
                 oyunlar,
                 oyunGecmisi,
+                oyunBankasi,
                 pomodoroGecmis,
                 hedef,
               }}
             />
           )}
-        </>
-      ) : (
-        <>
-          {sekme === 'ana' && (
-            <AnaSayfa
-              ayarlar={ayarlar}
-              gunlukKayitlar={gunlukKayitlar}
-              devamsizlik={devamsizlik}
-              hedef={hedef}
-              guncelSiralama={guncelSiralama}
-              ozetBekliyor={ozetBekliyor}
-              onKartAc={setEkran}
-            />
-          )}
-          {sekme === 'pomodoro' && (
-            <PomodoroEkrani
-              ayar={{ ...VARSAYILAN_POMODORO, ...pomodoroAyar }}
-              setAyar={setPomodoroAyar}
-              onSeansBitti={(seans) => setPomodoroGecmis((o) => [...o, seans])}
-            />
-          )}
-          {sekme === 'soru' && (
-            <SoruTakibiEkrani
-              kayitlar={gunlukKayitlar}
-              setKayitlar={setGunlukKayitlar}
-              ayarlar={ayarlar}
-            />
-          )}
-          {sekme === 'deneme' && (
-            <DenemelerEkrani
-              denemeler={denemeler}
-              sablonlar={sablonlar}
-              hazir={denemelerHazir}
-              onSil={(id) => setDenemeler((onceki) => onceki.filter((d) => d.id !== id))}
-              onDuzenle={(deneme) => setDenemeFormu({ duzenlenen: deneme })}
-              onYeniyeGit={() => setDenemeFormu({ duzenlenen: null })}
-            />
-          )}
-          {sekme === 'daha' && <KartMenusu onKartAc={setEkran} />}
         </>
       )}
 

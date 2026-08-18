@@ -79,6 +79,7 @@ keyPassword=...
 | `lib/veri/` | ÖSYM katsayıları ve puan-sıralama tabloları |
 | `lib/depo.ts` | localStorage hook'u, yedekleme |
 | `lib/oyunlar/` | Mini oyunlar — ortak tur mantığı (`tur.ts`), tanım listesi, oyun havuzları |
+| `lib/oyunlar/banka.ts` | Oyun Bankası — karıştırılan soruların biriktiği havuz, **saf** |
 | `lib/ozet.ts` | Haftalık özet hesabı — **saf fonksiyonlar** |
 | `lib/ozet-gorsel.ts` | Özetin paylaşılabilir PNG'si (tuvale çizim) |
 | `lib/paylas.ts` | Capacitor Share / `navigator.share` sarmalayıcısı |
@@ -139,20 +140,20 @@ istatistiği bulursa hata verip durur — sessizce yarım veri üretmez.
 
 Android 12+ sistemin kendi açılış ekranını çizmek zorunda; kapatılamıyor. Uygulama artık
 oradan **hiçbir şey** göstermiyor: `windowSplashScreenAnimatedIcon` saydam bir şekle
-(`acilis_bos.xml`) bağlı, animasyon yok. Geriye yalnızca `acilis_zemin` (`#C2622A`) kalıyor.
+(`acilis_bos.xml`) bağlı, animasyon yok. Geriye yalnızca `acilis_zemin` (`#4A8FE7`) kalıyor.
 
 Sebep: sistem ekranında maskot, hemen arkasından uygulamanın kendi açılış ekranında yine
 maskot çıkınca arka arkaya iki açılış ekranı izleniyordu. Önceki maskot animasyonu
 (`acilis_maskot_animasyon.xml` ve `animator/` altındaki iki animatör) bu yüzden silindi.
 
-Görünen açılış **uygulamanın kendi ekranı** (`components/acilis.tsx`): aynı turuncu
+Görünen açılış **uygulamanın kendi ekranı** (`components/acilis.tsx`): aynı mavi
 zeminde zıplayan beyaz çizgi tavşan, altında "Rabi" yazısı, altında dönen çark. Sistem
 ekranıyla aynı zemin rengi kullanıldığı için ikisi arasındaki geçiş görünmüyor.
 
 Süre veri okumasına bağlanmadı (`ACILIS_SURESI`, 1,6 sn): localStorage neredeyse anında
 dönüyor, bağlansaydı ekran bir kare görünüp kaybolurdu.
 
-Tavşan burada uygulamanın dolu maskotu değil, ayrı bir **çizgi** çizim: turuncu zeminde
+Tavşan burada uygulamanın dolu maskotu değil, ayrı bir **çizgi** çizim: mavi zeminde
 açık renkli dolgular birbirine karışıp bulanık bir leke gibi duruyordu. Aynı yollar
 paylaşılan özet görselinin alt imzasında da kullanılıyor (`tavsanCiz`).
 
@@ -327,7 +328,7 @@ Görsel **ekran görüntüsü değil, yeniden çizim** (1080×1920). Ekran gör�
 kütüphaneler birkaç yüz KB geliyor ve CSS'in yarısını yanlış yorumluyor; ayrıca paylaşılan
 görselin telefonun ekran oranından bağımsız olması gerekiyor. Yazı tipi adları sayfadan
 okunuyor — `next/font` üretilen aile adını rastgele bir sınıfın arkasına sakladığı için
-elle "Space Grotesk" yazmak tutmuyordu.
+elle "Nunito" yazmak tutmuyordu.
 
 `gorseliPaylas` görselin yanına ayrı bir **metin** de veriyor: paylaşım penceresinde bazı
 uygulamalar görseli değil yalnızca yazıyı alıyor, o durumda dosya adı yerine haftanın
@@ -364,6 +365,32 @@ kendiliğinden sayar; rozet mantığına dokunmak gerekmez.
 
 Her oyunun istatistiği `rabi-oyunlar` altında oyun kimliğine göre tutuluyor; tek tek turlar
 saklanmıyor, yalnızca özet (rekor, oynanan tur, toplam doğru/yanlış, hatasız tur).
+
+### Oyun Bankası
+
+Mini oyunlarda **yanlış bilinen** sorular `lib/oyunlar/banka.ts` altındaki havuza düşüyor
+ve Oyunlar sekmesinden yeniden oynanabiliyor. Fotoğraflı Yanlış Soru Bankası'ndan
+(`lib/resim-depo.ts`) bilerek ayrı: oradaki kayıt bakılacak bir görüntü, buradaki
+çözülecek bir soru. Adları, ikonları ve yerleri de ayrı tutuldu.
+
+Kayıt, soruyu yeniden kurmak için gereken her şeyi kendi içinde taşıyor — havuzdaki
+sıraya bağlanmadı, çünkü havuza yeni soru eklenince bütün banka kayardı.
+
+Bir kayıt ancak **üst üste üç kez** doğru bilinince düşüyor (`DUSME_ESIGI`): tek doğru
+bilmek değil hatırlamak olabilir. Araya bir yanlış girerse sayaç sıfırlanıyor. Banka
+en fazla `BANKA_SINIRI` (100) kayıt tutuyor; sınır aşılınca en eskisi düşüyor.
+
+`bankayiGuncelle` hem ekliyor hem düşürüyor, çünkü ikisi aynı kuralın iki yüzü. Normal
+turda verilen doğru cevap da bankayı ilerletiyor — soruyu nerede bilirsen bil, öğrenmiş
+sayılıyorsun.
+
+Banka turları **rekora ve istatistiğe sayılmıyor** (`components/ekranlar/oyunlar.tsx`):
+sorular zaten bir kez yanlış bilinip kenara ayrılmış sorular, sayılsaydı bankayı birkaç
+kez oynayan herkesin rekoru şişer ve rekor "ne kadar biliyorum" ölçüsü olmaktan çıkardı.
+
+Tur mantığı oyuna özgü olduğu için (yazımda iki şık, işlemde tuş takımı, edebiyatta
+eşleştirme) bir banka turu tek oyundan kuruluyor; süzgeçte "Tümü" seçiliyken en çok
+kaydı olan oyun açılıyor.
 
 Süre (60 sn), yanlış cezası (3 sn), seri ve rekor kuralları `lib/oyunlar/tur.ts` içinde,
 **tek yerde**: oyunlar farklı süreyle çalışsaydı rekorlar karşılaştırılamaz, ortak rozetler
@@ -499,7 +526,7 @@ ikon değişecekse `assets/` içindeki SVG düzenlenip betik yeniden çalıştı
 
 Uyarlanabilir (adaptive) ikonun ön planında tavşan, 108 birimlik tuvalin ortadaki **72
 birimlik** güvenli alanına sığdırıldı; dışarısını cihaz üreticisinin maskesi (daire, kare,
-damla) kırpabiliyor. Arka plan `@color/ic_launcher_background` = `#C2622A`, uygulamanın vurgu
+damla) kırpabiliyor. Arka plan `@color/ic_launcher_background` = `#4A8FE7`, uygulamanın vurgu
 rengiyle aynı. Android 8 öncesi uyarlanabilir ikonu tanımadığı için `ic_launcher.png` ve
 `ic_launcher_round.png` ayrıca üretiliyor — yuvarlak olana maskeyi sistem uygulamıyor, daire
 görselin içinde.

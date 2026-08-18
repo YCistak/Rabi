@@ -1,9 +1,9 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
-import { Check, Delete, RotateCcw, SkipForward } from 'lucide-react'
+import { Delete } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
 import {
   ISLEM_ADI,
@@ -18,19 +18,33 @@ import {
   YANLIS_CEZASI,
   guncelSeri,
   kalanSaniye,
+  karistir,
   rekorKirildiMi,
   turOzeti,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
+import {
+  islemdenBanka,
+  type BankaCevabi,
+  type BankaKaydi,
+} from '@/lib/oyunlar/banka'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
-import { Buton, Cip, Deger } from '@/components/ui'
+import { Cip } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
-import { OyunKabugu } from '@/components/oyun-kabuk'
+import {
+  Bildirim,
+  EN_COK_YANLIS,
+  KalanHapi,
+  OyunKabugu,
+  TurSonu,
+  YanlisKarti,
+  rekorCumlesi,
+} from '@/components/oyun-kabuk'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
 /** Doğru cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms). */
@@ -46,6 +60,63 @@ type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
 type GeriBildirim = { dogruMu: boolean; girilen: string; beklenen: number }
 
+/** İşlem ifadesindeki işaretler — ekranda mercan renginde duruyorlar. */
+const ISARETLER = new Set(['+', '−', '-', '×', '÷', '·', '/'])
+
+/** İfadeyi ekrana çizmek için parçalara ayırır: "93 − 21" → 93 · − · 21. */
+function islemParcalari(metin: string): { parca: string; isaret: boolean }[] {
+  return metin
+    .split(' ')
+    .filter((parca) => parca !== '')
+    .map((parca) => ({ parca, isaret: ISARETLER.has(parca) }))
+}
+
+/**
+ * Banka kayıtlarından tur soruları.
+ *
+ * Normal turda sorular üretiliyor; banka turunda üretilmiyor — bankadaki
+ * sorunun kendisi tekrar edilecek soru. Karıştırılıyor ki iki banka turu
+ * arka arkaya aynı sırayla gelmesin.
+ */
+function bankaSorulariniCoz(kayitlar: readonly BankaKaydi[]): IslemSorusu[] {
+  const sorular: IslemSorusu[] = []
+  for (const kayit of kayitlar) {
+    if (kayit.soru.oyun !== 'islem') continue
+    sorular.push({ tur: kayit.soru.islemTuru, metin: kayit.soru.metin, sonuc: kayit.soru.sonuc })
+  }
+  return sorular
+}
+
+/**
+ * Yanlışların işlem türüne göre dağılımı, çoktan aza.
+ *
+ * Hangi işlemde zorlandığını göstermek tek tek soruları saymaktan daha çok işe
+ * yarıyor: "bölmede takılıyorsun" bir sonraki turda ne seçeceğini söylüyor.
+ */
+function turDagilimi(
+  yanlislar: readonly IslemSorusu[],
+  turler: readonly IslemTuru[],
+): { tur: IslemTuru; sayi: number }[] {
+  return turler
+    .map((tur) => ({ tur, sayi: yanlislar.filter((y) => y.tur === tur).length }))
+    .sort((a, b) => b.sayi - a.sayi)
+}
+
+/**
+ * Bulunma hâli eki ("bölme" → "bölmede", "toplama" → "toplamada").
+ *
+ * Kalınlık uyumu son ünlüye bakıyor; havuzdaki işlem adlarının hepsi ünlü ya da
+ * yumuşak ünsüzle bittiği için sertleşme (-ta/-te) durumu çıkmıyor.
+ */
+function bulunmaEki(kelime: string): string {
+  const kalin = 'aıou'
+  for (let i = kelime.length - 1; i >= 0; i--) {
+    const harf = kelime[i].toLocaleLowerCase('tr')
+    if ('aeıioöuü'.includes(harf)) return kalin.includes(harf) ? 'da' : 'de'
+  }
+  return 'de'
+}
+
 /**
  * Zihinden İşlem — mini oyun.
  *
@@ -56,13 +127,16 @@ type GeriBildirim = { dogruMu: boolean; girilen: string; beklenen: number }
 export function IslemOyunuEkrani({
   istatistik,
   sesAcik,
+  bankaSorulari,
   onTurBitti,
   onCik,
 }: {
   istatistik: OyunIstatistigi
   /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
   sesAcik: boolean
-  onTurBitti: (ozet: TurOzeti<IslemSorusu>) => void
+  /** Boş değilse tur yalnızca bu sorularla kurulur (Oyun Bankası turu). */
+  bankaSorulari: BankaKaydi[]
+  onTurBitti: (ozet: TurOzeti<IslemSorusu>, bankaCevaplari: BankaCevabi[]) => void
   onCik: () => void
 }) {
   const oyun = oyunBul('islem')
@@ -79,6 +153,9 @@ export function IslemOyunuEkrani({
   const [sira, setSira] = useState(0)
   const [girilen, setGirilen] = useState('')
   const [cevaplar, setCevaplar] = useState<Cevap<IslemSorusu>[]>([])
+  /** Yanlış cevaplarda oyuncunun yazdığı sayı, yanlışlarla aynı sırada.
+   *  Tur sonunda "sen 16 yazdın" demek için tutuluyor; pas geçildiyse boş. */
+  const [yanlisGirdileri, setYanlisGirdileri] = useState<string[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
 
   const [bitisZamani, setBitisZamani] = useState(0)
@@ -89,6 +166,9 @@ export function IslemOyunuEkrani({
   const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<IslemSorusu>; yeniRekor: boolean } | null>(
     null,
   )
+
+  const bankaHavuzu = useMemo(() => bankaSorulariniCoz(bankaSorulari), [bankaSorulari])
+  const bankaTuru = bankaHavuzu.length > 0
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -102,17 +182,18 @@ export function IslemOyunuEkrani({
     turBasiRekor.current = istatistik.enIyiDogru
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
-    setSorular(islemTuruHazirla(secili, TUR_SORUSU))
+    setSorular(bankaTuru ? karistir(bankaHavuzu) : islemTuruHazirla(secili, TUR_SORUSU))
     setSira(0)
     setGirilen('')
     setCevaplar([])
+    setYanlisGirdileri([])
     setGeriBildirim(null)
     setSonuc(null)
     setDuraklatilan(null)
     setKalan(TUR_SURESI)
     setBitisZamani(Date.now() + TUR_SURESI * 1000)
     setAsama('oynaniyor')
-  }, [istatistik.enIyiDogru, secili])
+  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru, secili])
 
   const turBitir = useCallback(
     (verilenler: Cevap<IslemSorusu>[]) => {
@@ -121,13 +202,23 @@ export function IslemOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
-        yeniRekor: rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
+        yeniRekor:
+          !bankaTuru &&
+          rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
       })
       oyunSesiCal('bitis', sesAcik)
       setAsama('bitti')
-      onTurBitti(ozet)
+      // Doğrular da bildiriliyor: banka, üst üste üç kez doğru bilinen kaydı
+      // düşürüyor.
+      onTurBitti(
+        ozet,
+        verilenler.map((cevap) => ({
+          soru: islemdenBanka(cevap.soru),
+          dogruMu: cevap.dogruMu,
+        })),
+      )
     },
-    [istatistik, onTurBitti, sesAcik],
+    [bankaTuru, istatistik, onTurBitti, sesAcik],
   )
 
   useEffect(() => {
@@ -144,7 +235,7 @@ export function IslemOyunuEkrani({
   }, [asama, bitisZamani, duraklatilan, turBitir])
 
   // Seçilen tür az sayıda farklı soru üretebiliyorsa liste kısa dönebiliyor;
-  // o zaman tur süre dolmadan biter.
+  // banka turunda da liste bankadaki kayıt kadar. O zaman tur erken biter.
   useEffect(() => {
     if (asama !== 'oynaniyor' || sorular.length === 0) return
     if (sira >= sorular.length) turBitir(cevaplarRef.current)
@@ -174,6 +265,7 @@ export function IslemOyunuEkrani({
 
       const dogruMu = !pas && Number(girilen) === soru.sonuc
       setCevaplar((onceki) => [...onceki, { soru, dogruMu }])
+      if (!dogruMu) setYanlisGirdileri((onceki) => [...onceki, pas ? '' : girilen])
       setGeriBildirim({ dogruMu, girilen: pas ? '' : girilen, beklenen: soru.sonuc })
       geriBildir(dogruMu)
 
@@ -238,14 +330,15 @@ export function IslemOyunuEkrani({
   }
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
-  const yanlisSayisi = cevaplar.length - dogruSayisi
   const gorunenKalan = duraklatilan ?? kalan
-  const rekor = Math.max(istatistik.enIyiDogru, dogruSayisi)
   const soru = sorular[sira]
+  /** Tur sonundaki dağılım yalnızca bu turda çıkan türleri gösteriyor. */
+  const turdekiTurler = TUM_ISLEMLER.filter((tur) => sorular.some((s) => s.tur === tur))
 
   return (
     <>
       <OyunKabugu
+        oyunId="islem"
         baslik={oyun.ad}
         sayac={
           asama === 'bitti'
@@ -257,6 +350,7 @@ export function IslemOyunuEkrani({
                 yanlis: cevaplar.length - dogruSayisi,
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
+                cezaGorunur: geriBildirim !== null && !geriBildirim.dogruMu,
               }
         }
         onCik={onCik}
@@ -265,7 +359,10 @@ export function IslemOyunuEkrani({
         {asama === 'bitti' && sonuc ? (
           <SonucGorunumu
             sonuc={sonuc}
-            rekor={Math.max(istatistik.enIyiDogru, sonuc.ozet.dogru)}
+            girdiler={yanlisGirdileri}
+            turler={turdekiTurler}
+            rekor={turBasiRekor.current}
+            bankaTuru={bankaTuru}
             onTekrar={turBaslat}
             onCik={onCik}
           />
@@ -273,24 +370,47 @@ export function IslemOyunuEkrani({
           asama === 'oynaniyor' &&
           soru && (
             <>
-              {/* İşlem türü ("Çarpma", "Bölme") bilerek yazılmıyor: köklü ve
-                  üslü sorularda hangi işlemin sorulduğunu söylemek, sorunun
-                  yarısını söylemek olurdu. */}
-              <div className="flex flex-1 flex-col items-center justify-center py-6">
-                <p className="rakam font-display text-5xl font-semibold tracking-tight">
-                  {soru.metin}
-                </p>
+              <div className="flex flex-1 flex-col gap-2.5 pt-3">
+                {/* İşlem türü ("Çarpma", "Bölme") bilerek yazılmıyor: köklü ve
+                    üslü sorularda hangi işlemin sorulduğunu söylemek, sorunun
+                    yarısını söylemek olurdu. */}
+                <div className="golge-kart rounded-3xl bg-card px-5 pb-5 pt-4">
+                  <div className="flex items-center gap-2 text-[12.5px] font-bold text-muted-foreground">
+                    <Rabi durum="calisiyor" boyut={26} />
+                    Kaç eder?
+                  </div>
+
+                  <div className="rakam mt-2.5 flex items-center justify-center gap-3 font-display text-[40px] font-extrabold leading-tight">
+                    {islemParcalari(soru.metin).map(({ parca, isaret }, i) => (
+                      <span key={`${parca}-${i}`} className={cn(isaret && 'text-ikincil')}>
+                        {parca}
+                      </span>
+                    ))}
+                    <span className="text-border">=</span>
+                  </div>
+                </div>
+
                 <CevapAlani girilen={girilen} geriBildirim={geriBildirim} />
+
+                <TusTakimi
+                  kilitli={geriBildirim !== null}
+                  bosMu={girilen === ''}
+                  onRakam={rakamYaz}
+                  onSil={sil}
+                  onOnayla={() => cevapla(false)}
+                  onPas={() => cevapla(true)}
+                />
               </div>
 
-              <TusTakimi
-                kilitli={geriBildirim !== null}
-                bosMu={girilen === ''}
-                onRakam={rakamYaz}
-                onSil={sil}
-                onOnayla={() => cevapla(false)}
-                onPas={() => cevapla(true)}
-              />
+              {geriBildirim && (
+                <Bildirim
+                  iyi={geriBildirim.dogruMu}
+                  baslik={geriBildirim.dogruMu ? 'Aynen böyle!' : 'Olmadı'}
+                  aciklama={
+                    geriBildirim.dogruMu ? undefined : `— doğrusu ${geriBildirim.beklenen}`
+                  }
+                />
+              )}
             </>
           )
         )}
@@ -303,7 +423,13 @@ export function IslemOyunuEkrani({
         baslatir={asama === 'tanitim'}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
-        ekstra={asama === 'tanitim' ? <IslemSecimi secili={secili} onDegis={turDegistir} /> : null}
+        // Banka turunda tür seçimi gösterilmiyor: sorular bankadan geliyor,
+        // seçim onları değiştirmiyor.
+        ekstra={
+          asama === 'tanitim' && !bankaTuru ? (
+            <IslemSecimi secili={secili} onDegis={turDegistir} />
+          ) : null
+        }
       />
     </>
   )
@@ -350,7 +476,7 @@ function IslemSecimi({
 /**
  * Yazılan sayının göründüğü alan.
  *
- * Yanlış cevapta doğru sonuç hemen altında yeşille yazılıyor: yalnızca "yanlış"
+ * Yanlış cevapta doğru sonuç alttaki bildirimde yazıyor: yalnızca "yanlış"
  * denseydi oyuncu hatasını görür ama doğrusunu öğrenemezdi.
  */
 function CevapAlani({
@@ -365,29 +491,26 @@ function CevapAlani({
   const gosterilen = geriBildirim ? geriBildirim.girilen : girilen
 
   return (
-    <div className="mt-6 w-full">
-      <div
-        aria-live="polite"
-        className={cn(
-          'flex h-16 w-full items-center justify-center rounded-2xl border-2 px-4',
-          'rakam font-display text-4xl font-semibold',
-          !geriBildirim && 'border-border bg-card',
-          dogruMu && 'border-success bg-success/12 text-success',
-          yanlisMi && 'border-danger bg-danger/12 text-danger',
-        )}
-      >
-        {gosterilen === '' ? (
-          <span className="text-2xl font-normal text-muted-foreground/60">
-            {yanlisMi ? 'pas' : 'sonucu yaz'}
-          </span>
-        ) : (
-          gosterilen
-        )}
-      </div>
-
-      <p className="mt-2 h-5 text-center text-sm font-medium text-success">
-        {yanlisMi ? `Doğrusu ${geriBildirim.beklenen}` : ''}
-      </p>
+    <div
+      aria-live="polite"
+      className={cn(
+        'golge-kart flex h-[54px] flex-none items-center justify-center rounded-[18px] px-4',
+        'rakam font-display text-[27px] font-extrabold tracking-[3px]',
+        !geriBildirim && 'bg-card',
+        dogruMu && 'bg-success text-white',
+        yanlisMi && 'bg-ikincil text-white',
+      )}
+    >
+      {gosterilen === '' ? (
+        <span className="text-[19px] font-bold tracking-normal opacity-60">
+          {yanlisMi ? 'pas' : 'sonucu yaz'}
+        </span>
+      ) : (
+        <>
+          {gosterilen}
+          {!geriBildirim && <span className="ml-0.5 h-6 w-[2px] animate-pulse bg-isl-koyu" />}
+        </>
+      )}
     </div>
   )
 }
@@ -410,46 +533,47 @@ function TusTakimi({
   onPas: () => void
 }) {
   return (
-    <div className="pb-3">
-      <button
-        type="button"
-        onClick={onPas}
-        disabled={kilitli}
-        className="mx-auto mb-2 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm text-muted-foreground active:bg-muted disabled:opacity-45"
-      >
-        <SkipForward size={15} aria-hidden /> Pas geç (−{YANLIS_CEZASI} sn)
-      </button>
-
-      <div className="grid grid-cols-3 gap-2">
+    <div className="flex flex-none flex-col gap-2">
+      <div className="grid grid-cols-3 gap-[7px]">
         {TUSLAR.map((rakam) => (
           <Tus key={rakam} kilitli={kilitli} onClick={() => onRakam(rakam)}>
             {rakam}
           </Tus>
         ))}
 
-        <Tus kilitli={kilitli || bosMu} onClick={onSil} etiket="Sil">
-          <Delete size={22} aria-hidden />
+        <Tus kilitli={kilitli || bosMu} onClick={onSil} etiket="Sil" bicim="sil">
+          <Delete size={21} aria-hidden />
         </Tus>
         <Tus kilitli={kilitli} onClick={() => onRakam('0')}>
           0
         </Tus>
-        <Tus kilitli={kilitli || bosMu} onClick={onOnayla} etiket="Onayla" vurgu>
-          <Check size={24} aria-hidden />
+        <Tus kilitli={kilitli || bosMu} onClick={onOnayla} bicim="onay">
+          Onayla
         </Tus>
       </div>
+
+      {/* Pas geçmenin bedeli düğmenin üstünde yazıyor: aynı yanlış cezası. */}
+      <button
+        type="button"
+        onClick={onPas}
+        disabled={kilitli}
+        className="mx-auto rounded-lg px-2.5 py-1 text-[12.5px] font-extrabold text-muted-foreground transition active:bg-foreground/10 disabled:opacity-45"
+      >
+        Pas geç · −{YANLIS_CEZASI} sn
+      </button>
     </div>
   )
 }
 
 function Tus({
   kilitli,
-  vurgu,
+  bicim = 'rakam',
   etiket,
   onClick,
   children,
 }: {
   kilitli: boolean
-  vurgu?: boolean
+  bicim?: 'rakam' | 'sil' | 'onay'
   etiket?: string
   onClick: () => void
   children: React.ReactNode
@@ -461,12 +585,11 @@ function Tus({
       disabled={kilitli}
       aria-label={etiket}
       className={cn(
-        'flex h-14 items-center justify-center rounded-2xl border text-2xl font-semibold transition',
-        'rakam font-display disabled:opacity-40',
+        'grid h-12 place-items-center rounded-2xl font-display transition disabled:opacity-40',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        vurgu
-          ? 'border-primary bg-primary text-primary-foreground active:brightness-95'
-          : 'border-border bg-card active:bg-muted',
+        bicim === 'rakam' && 'golge-kart rakam bg-card text-[21px] font-extrabold',
+        bicim === 'sil' && 'bg-ikincil/12 text-ikincil',
+        bicim === 'onay' && 'bg-isl-koyu text-sm font-extrabold text-white active:brightness-95',
       )}
     >
       {children}
@@ -476,73 +599,123 @@ function Tus({
 
 function SonucGorunumu({
   sonuc,
+  girdiler,
+  turler,
   rekor,
+  bankaTuru,
   onTekrar,
   onCik,
 }: {
   sonuc: { ozet: TurOzeti<IslemSorusu>; yeniRekor: boolean }
+  /** Yanlışlarla aynı sıradaki girdiler; boş dize pas geçildiğini gösterir. */
+  girdiler: string[]
+  turler: IslemTuru[]
   rekor: number
+  bankaTuru: boolean
   onTekrar: () => void
   onCik: () => void
 }) {
   const { ozet, yeniRekor } = sonuc
-  const yuzde = Math.round(ozet.oran * 100)
+  const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
+  const kalan = ozet.yanlislar.length - gorunen.length
+
+  const dagilim = turDagilimi(ozet.yanlislar, turler)
+  const enCok = dagilim[0]
+  const dolular = dagilim.filter((s) => s.sayi > 0)
+  const boslar = dagilim.filter((s) => s.sayi === 0)
+  /** Tek bir türde yığılma var mı — başlıktaki cümle buradan geliyor. */
+  const yigilma = enCok && enCok.sayi >= 2 ? enCok : null
 
   return (
-    <div className="flex-1 py-4">
-      <div className="flex flex-col items-center text-center">
-        <Rabi
-          durum={yeniRekor || ozet.hatasiz ? 'kutlama' : ozet.oran >= 0.6 ? 'mutlu' : 'normal'}
-          boyut={104}
-        />
-        <p className="mt-2 font-display text-2xl font-semibold tracking-tight">
-          {yeniRekor ? 'Yeni rekor!' : 'Süre bitti'}
-        </p>
-        {ozet.hatasiz && (
-          <p className="mt-1 text-sm text-success">Hiç yanlışın yok — hatasız tur.</p>
-        )}
-      </div>
-
-      <div className="mt-4 grid grid-cols-4 gap-2">
-        <Deger className="px-2" etiket="Doğru" deger={String(ozet.dogru)} vurgu />
-        <Deger className="px-2" etiket="Yanlış" deger={String(ozet.yanlis)} />
-        <Deger className="px-2" etiket="Seri" deger={String(ozet.enIyiSeri)} />
-        <Deger className="px-2" etiket="Başarı" deger={`%${yuzde}`} altNot={`rekor ${rekor}`} />
-      </div>
-
+    <TurSonu
+      oyunId="islem"
+      dogru={ozet.dogru}
+      yanlis={ozet.yanlis}
+      enIyiSeri={ozet.enIyiSeri}
+      rekor={rekor}
+      yeniRekor={yeniRekor}
+      bankaTuru={bankaTuru}
+      altBaslik={
+        yigilma
+          ? `${ISLEM_ADI[yigilma.tur]} seni yavaşlatıyor.`
+          : bankaTuru
+            ? 'Banka soruları — üst üste üç doğruda düşerler.'
+            : rekorCumlesi(ozet.dogru, rekor, yeniRekor, 'doğru')
+      }
+      bolumBasligi="Nerede takıldın"
+      bolumAltYazisi={
+        yigilma
+          ? `${ozet.yanlis} yanlıştan ${yigilma.sayi} tanesi ${ISLEM_ADI[
+              yigilma.tur
+            ].toLocaleLowerCase('tr')}${bulunmaEki(ISLEM_ADI[yigilma.tur])}.`
+          : 'Yanlışların işlem türüne göre dağılımı.'
+      }
+      onTekrar={onTekrar}
+      onCik={onCik}
+    >
       {ozet.yanlislar.length > 0 && (
-        <section className="mt-5">
-          <h2 className="mb-2 text-sm font-medium text-muted-foreground">Kaçırdıkların</h2>
-          <ul className="space-y-2">
-            {ozet.yanlislar.map((yanlis, sira) => (
-              <li
-                key={`${yanlis.metin}-${sira}`}
-                className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card px-3 py-2.5"
-              >
-                <span className="rakam font-display text-lg">{yanlis.metin}</span>
-                <span className="rakam font-display text-lg font-semibold text-success">
-                  {yanlis.sonuc}
-                </span>
-              </li>
+        <div className="flex flex-none flex-col gap-2">
+          <div className="golge-kart flex flex-col gap-[7px] rounded-2xl bg-card px-3.5 py-3">
+            {dolular.map(({ tur, sayi }) => (
+              <TurSatiri
+                key={tur}
+                ad={ISLEM_ADI[tur]}
+                sayi={sayi}
+                oran={enCok && enCok.sayi > 0 ? sayi / enCok.sayi : 0}
+              />
             ))}
-          </ul>
-        </section>
-      )}
+            {/* Hiç yanlış yapılmayan türler tek satırda toplanıyor: her biri
+                ayrı boş çubuk olsaydı dağılım okunmaz olurdu. */}
+            {boslar.length > 0 && (
+              <TurSatiri
+                ad={boslar.map((s) => ISLEM_ADI[s.tur]).join(' · ')}
+                sayi={0}
+                oran={0}
+              />
+            )}
+          </div>
 
-      {ozet.toplam === 0 && (
-        <p className="mt-5 text-center text-sm text-muted-foreground">
-          Hiç cevap vermedin. Bir daha dene, süre {TUR_SURESI} saniye.
-        </p>
-      )}
+          {gorunen.map((yanlis, sira) => (
+            <YanlisKarti key={`${yanlis.metin}-${sira}`} oyunId="islem">
+              <b className="rakam block font-display text-[15px] font-extrabold leading-tight">
+                {yanlis.metin} = <em className="not-italic text-success">{yanlis.sonuc}</em>
+              </b>
+              <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
+                {girdiler[sira] ? (
+                  <>
+                    Sen <s className="rakam text-ikincil">{girdiler[sira]}</s> yazdın
+                  </>
+                ) : (
+                  'Pas geçtin'
+                )}
+              </span>
+            </YanlisKarti>
+          ))}
 
-      <div className="mt-6 flex gap-2 pb-2">
-        <Buton bicim="ikincil" className="flex-1" onClick={onCik}>
-          Çık
-        </Buton>
-        <Buton className="flex-1" onClick={onTekrar}>
-          <RotateCcw size={16} aria-hidden /> Tekrar oyna
-        </Buton>
-      </div>
+          {kalan > 0 && <KalanHapi kalan={kalan} />}
+        </div>
+      )}
+    </TurSonu>
+  )
+}
+
+function TurSatiri({ ad, sayi, oran }: { ad: string; sayi: number; oran: number }) {
+  const bos = sayi === 0
+  return (
+    <div
+      className={cn(
+        'flex items-center gap-2.5 text-[11.5px] font-bold',
+        bos ? 'text-muted-foreground/75' : 'text-foreground',
+      )}
+    >
+      <span className={cn('w-24 shrink-0 leading-tight', bos && 'font-semibold')}>{ad}</span>
+      <span className="h-[7px] flex-1 overflow-hidden rounded-full bg-muted">
+        <span
+          className="block h-full rounded-full bg-ikincil"
+          style={{ width: `${Math.round(oran * 100)}%` }}
+        />
+      </span>
+      <span className="rakam w-3.5 shrink-0 text-right">{sayi}</span>
     </div>
   )
 }

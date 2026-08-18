@@ -1,0 +1,693 @@
+<title>Rabi Daha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap">
+
+<style>
+  /* ----------------------------------------------------------------------
+     Sayfa zemini — mockup'ın *etrafı*. Okuyanın temasına uyuyor.
+     Telefonun içi (uygulama ekranı) bilerek sabit: incelediğimiz tasarım o.
+     Değişkenler ana sayfa ve oyunlar mockup'larıyla birebir aynı.
+     ---------------------------------------------------------------------- */
+  :root {
+    --sayfa: #E4E8F3;
+    --sayfa-kart: #FFFFFF;
+    --sayfa-metin: #232A3D;
+    --sayfa-soluk: #67708A;
+    --sayfa-cizgi: #D2D8E8;
+    --sayfa-vurgu: #4A8FE7;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --sayfa: #14161D;
+      --sayfa-kart: #1C1F29;
+      --sayfa-metin: #E6E9F2;
+      --sayfa-soluk: #99A1B5;
+      --sayfa-cizgi: #2B3040;
+      --sayfa-vurgu: #7FB2F0;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --sayfa: #14161D;
+    --sayfa-kart: #1C1F29;
+    --sayfa-metin: #E6E9F2;
+    --sayfa-soluk: #99A1B5;
+    --sayfa-cizgi: #2B3040;
+    --sayfa-vurgu: #7FB2F0;
+  }
+
+  /* ---------------------------- Uygulama paleti ------------------------ */
+  :root {
+    --zemin: #EDF1FD;
+    --kart: #FFFFFF;
+    --metin: #1B2440;
+    --soluk: #7A8399;
+    --nav-gri: #59637A;
+    --mavi: #4A8FE7;
+    --mavi-soft: #E4EEFC;
+    --mercan: #EF5A52;
+    --pembe: #FCE7EA;
+    --krem: #FBF2DC;
+    --nane: #E3F3E7;
+    --lavanta: #ECE7FB;
+    --kart-golge: 0 6px 20px rgba(38, 58, 110, 0.07);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--sayfa);
+    color: var(--sayfa-metin);
+    font-family: Nunito, "Segoe UI", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sahne {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 40px 24px 64px;
+    display: grid;
+    grid-template-columns: minmax(0, 390px) minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+  }
+
+  @media (max-width: 860px) {
+    .sahne {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+      gap: 36px;
+      padding: 28px 18px 56px;
+    }
+  }
+
+  /* ---------------------------- Telefon çerçevesi ---------------------- */
+
+  .telefon {
+    width: min(390px, 100%);
+    height: min(844px, 82vh);
+    background: var(--zemin);
+    border: 9px solid #10131C;
+    border-radius: 46px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 26px 60px rgba(20, 30, 60, 0.24);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ekran {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding: 28px 18px 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .ekran::-webkit-scrollbar { display: none; }
+
+  /* ---------------------------- Sekme başlığı -------------------------- */
+
+  .tab-baslik { padding: 4px 2px 0; }
+
+  .marka {
+    margin: 0 0 4px;
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--mercan);
+    letter-spacing: 2.4px;
+  }
+
+  .tab-baslik h1 {
+    margin: 0 0 4px;
+    font-size: 27px;
+    font-weight: 800;
+    color: var(--metin);
+    letter-spacing: -0.6px;
+  }
+
+  .tab-baslik p {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--soluk);
+  }
+
+  /* ---------------------------- Bölüm ---------------------------------- */
+
+  .bolum { display: flex; flex-direction: column; gap: 8px; }
+
+  .bolum > h2 {
+    margin: 0 0 0 4px;
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+    color: #9AA2B6;
+  }
+
+  /* Bir bölümün satırları tek bir kartın içinde; aralarında ince ayraç.
+     Her satır ayrı kart olsaydı on bir gölge alt alta dizilir, ekran
+     kalabalık görünürdü. */
+  .liste {
+    background: var(--kart);
+    border-radius: 22px;
+    box-shadow: var(--kart-golge);
+    overflow: hidden;
+  }
+
+  .satir {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    text-decoration: none;
+  }
+  .satir + .satir { border-top: 1px solid #EEF1F8; }
+  .satir:focus-visible { outline: 2px solid var(--mavi); outline-offset: -3px; }
+
+  .satir-ikon {
+    flex: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+  }
+  .satir-ikon svg { width: 22px; height: 22px; display: block; }
+
+  .satir-yazi { min-width: 0; flex: 1; }
+
+  .satir-yazi b {
+    display: block;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: var(--metin);
+    letter-spacing: -0.15px;
+  }
+
+  .satir-yazi span {
+    display: block;
+    margin-top: 1px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--soluk);
+  }
+
+  /* Sağdaki değer — menüyü bilgi taşıyan bir ekrana çeviren kısım. */
+  .deger {
+    flex: none;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--soluk);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .deger.uyari { color: var(--mercan); }
+
+  .sayac {
+    flex: none;
+    min-width: 26px;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: var(--mercan);
+    color: #FFFFFF;
+    font-size: 12.5px;
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ok { flex: none; width: 18px; height: 18px; color: #C2C9D8; }
+
+  /* İkon renkleri */
+  .i-pembe { background: var(--pembe); }
+  .i-krem { background: var(--krem); }
+  .i-nane { background: var(--nane); }
+  .i-lavanta { background: var(--lavanta); }
+  .i-mavi { background: var(--mavi-soft); }
+
+  /* ---------------------------- Alt not -------------------------------- */
+
+  .altnot {
+    margin: 2px 6px 0;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #A2AABC;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* ---------------------------- Alt menü ------------------------------- */
+
+  .altmenu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(8px);
+    border-radius: 26px 26px 38px 38px;
+    box-shadow: 0 -4px 18px rgba(38, 58, 110, 0.07);
+    padding: 10px 12px 22px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .sekme {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--nav-gri);
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 0;
+    border-radius: 12px;
+  }
+  .sekme svg { width: 24px; height: 24px; display: block; }
+  .sekme.etkin { color: var(--mavi); }
+  .sekme:focus-visible { outline: 2px solid var(--mavi); outline-offset: 2px; }
+
+  /* ---------------------------- Not paneli ----------------------------- */
+
+  .notlar {
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .notlar h2 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+  }
+
+  .notlar .giris {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--sayfa-soluk);
+    font-weight: 500;
+    max-width: 62ch;
+  }
+
+  .blok {
+    background: var(--sayfa-kart);
+    border: 1px solid var(--sayfa-cizgi);
+    border-radius: 18px;
+    padding: 18px 20px;
+  }
+
+  .blok h3 {
+    margin: 0 0 12px;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: var(--sayfa-vurgu);
+  }
+
+  .blok ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 11px; }
+
+  .blok li {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--sayfa-metin);
+    font-weight: 500;
+    padding-left: 16px;
+    position: relative;
+    max-width: 60ch;
+  }
+
+  .blok li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--sayfa-vurgu);
+  }
+
+  .blok li b { font-weight: 800; }
+  .blok li span { color: var(--sayfa-soluk); }
+
+  .yerlesim {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+
+  .yerlesim th,
+  .yerlesim td {
+    text-align: left;
+    padding: 7px 10px 7px 0;
+    border-bottom: 1px solid var(--sayfa-cizgi);
+    vertical-align: top;
+  }
+
+  .yerlesim th {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--sayfa-soluk);
+  }
+
+  .yerlesim td { color: var(--sayfa-metin); font-weight: 500; }
+  .yerlesim td:first-child { font-weight: 700; white-space: nowrap; }
+  .yerlesim tr:last-child td { border-bottom: 0; }
+
+  .ipucu {
+    margin: 0;
+    font-size: 13px;
+    color: var(--sayfa-soluk);
+    font-weight: 600;
+    text-align: center;
+  }
+</style>
+
+<div class="sahne">
+  <div>
+    <div class="telefon">
+      <div class="ekran">
+
+        <!-- ------------------------------ Başlık ------------------------- -->
+        <header class="tab-baslik">
+          <p class="marka">RABİ</p>
+          <h1>Daha 🗂️</h1>
+          <p>Her şey burada.</p>
+        </header>
+
+        <!-- ------------------------------ Çalışma ------------------------ -->
+        <section class="bolum">
+          <h2>Çalışma</h2>
+          <div class="liste">
+
+            <a class="satir" href="#">
+              <span class="satir-ikon i-krem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#C08A2E" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                  <circle cx="12" cy="13" r="8"/>
+                  <path d="M12 9.5V13l2.4 1.6M9 2h6"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Pomodoro</b>
+                <span>25 dakikalık odak turları</span>
+              </span>
+              <span class="deger">Bugün 0 dk</span>
+              <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </a>
+
+            <a class="satir" href="#">
+              <span class="satir-ikon i-mavi">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#4A8FE7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L9 17l-4 1 1-4Z"/>
+                  <path d="M4 21h16"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Soru Takibi</b>
+                <span>Günlük çözdüğün soruları gir</span>
+              </span>
+              <span class="deger">0 / 200</span>
+              <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </a>
+
+            <a class="satir" href="#">
+              <span class="satir-ikon i-pembe">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#D4586C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.2l1.3-2h7l1.3 2h2.2A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5v-9Z"/>
+                  <circle cx="12" cy="13" r="3.4"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Yanlış Soru Bankası</b>
+                <span>Zorlandığın soruların fotoğrafı</span>
+              </span>
+              <span class="sayac">12</span>
+              <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </a>
+          </div>
+        </section>
+
+        <!-- ------------------------------ Denemeler ---------------------- -->
+        <section class="bolum">
+          <h2>Denemeler</h2>
+          <div class="liste">
+
+            <a class="satir" href="#">
+              <span class="satir-ikon i-nane">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#3E8C5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M8 4h8a1.5 1.5 0 0 1 1.5 1.5v14A1.5 1.5 0 0 1 16 21H8a1.5 1.5 0 0 1-1.5-1.5v-14A1.5 1.5 0 0 1 8 4Z"/>
+                  <path d="M9.5 3h5v2.5h-5zM9.5 11h5M9.5 15h3"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Denemeler</b>
+                <span>Net gir, gidişatını gör</span>
+              </span>
+              <span class="deger">2 deneme</span>
+              <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </a>
+
+            <a class="satir" href="#">
+              <span class="satir-ikon i-lavanta">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#6C55C4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 16.5 9 11l3.5 3.5L20 7"/>
+                  <path d="M15 7h5v5"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Sıralama Hesapla</b>
+                <span>Denemeden tahmini YKS sırası</span>
+              </span>
+              <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </a>
+
+            <a class="satir" href="#">
+              <span class="satir-ikon i-mavi">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#4A8FE7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 19h16"/>
+                  <rect x="5" y="11" width="3.6" height="6" rx="1.2"/>
+                  <rect x="10.2" y="6.5" width="3.6" height="10.5" rx="1.2"/>
+                  <rect x="15.4" y="9" width="3.6" height="8" rx="1.2"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>İstatistik</b>
+                <span>Ders bazlı gidişat</span>
+              </span>
+              <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </a>
+          </div>
+        </section>
+
+        <!-- ------------------------------ Okul --------------------------- -->
+        <section class="bolum">
+          <h2>Okul</h2>
+          <div class="liste">
+
+            <a class="satir" href="#">
+              <span class="satir-ikon i-krem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#C08A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 4 2.5 9 12 14l9.5-5L12 4Z"/>
+                  <path d="M6.5 11.2V16c0 1.4 2.5 2.6 5.5 2.6s5.5-1.2 5.5-2.6v-4.8"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Okul Notları</b>
+                <span>Dönem notları ve OBP</span>
+              </span>
+              <span class="deger">OBP 478</span>
+              <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </a>
+
+            <a class="satir" href="#">
+              <span class="satir-ikon i-nane">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#3E8C5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3.5" y="5" width="17" height="15" rx="3"/>
+                  <path d="M3.5 10h17M8 3v4m8-4v4M9.5 14.5l5 3.5m0-3.5-5 3.5"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Devamsızlık</b>
+                <span>Kalan gün hakkın</span>
+              </span>
+              <span class="deger uyari">8,5 gün</span>
+              <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </a>
+          </div>
+        </section>
+
+        <!-- ------------------------------ Motivasyon --------------------- -->
+        <section class="bolum">
+          <h2>Motivasyon</h2>
+          <div class="liste">
+
+            <a class="satir" href="#">
+              <span class="satir-ikon i-pembe">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#D4586C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="m12 3 2 5.2 5.2 2-5.2 2-2 5.2-2-5.2-5.2-2 5.2-2L12 3Z"/>
+                  <path d="M18.5 15.5 19.4 18l2.5.9-2.5.9-.9 2.5-.9-2.5-2.5-.9 2.5-.9.9-2.5Z"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Haftalık Özet</b>
+                <span>Haftanı kart kart izle</span>
+              </span>
+              <span class="sayac">1</span>
+              <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </a>
+
+            <a class="satir" href="#">
+              <span class="satir-ikon i-lavanta">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#6C55C4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="8.5"/>
+                  <circle cx="12" cy="12" r="4.6"/>
+                  <circle cx="12" cy="12" r="1"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Hedefim</b>
+                <span>Üniversite ve bölüm</span>
+              </span>
+              <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </a>
+
+            <a class="satir" href="#">
+              <span class="satir-ikon i-krem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#C08A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="9" r="5.5"/>
+                  <path d="M8.4 13.6 7 21.5l5-2.6 5 2.6-1.4-7.9"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Rozetler</b>
+                <span>Kazandıkların</span>
+              </span>
+              <span class="deger">8 / 28</span>
+              <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </a>
+          </div>
+        </section>
+
+        <p class="altnot">Rabi · sürüm 0.1</p>
+      </div>
+
+      <!-- ------------------------------ Alt menü ------------------------- -->
+      <nav class="altmenu">
+        <a class="sekme" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 10.5 12 4l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19v-8.5Z"/>
+            <path d="M9.5 20.5V14h5v6.5"/>
+          </svg>
+          Ana Sayfa
+        </a>
+
+        <a class="sekme" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9.3 4.6h5.4a5.7 5.7 0 0 1 5.7 5.7v2a2.4 2.4 0 0 1-.1.8l-1.7 5a3.2 3.2 0 0 1-6-.3l-.5-1.7h-1.6l-.5 1.7a3.2 3.2 0 0 1-6 .3l-1.7-5a2.4 2.4 0 0 1-.1-.8v-2a5.7 5.7 0 0 1 5.7-5.7Z"/>
+            <path d="M8.4 9.4v3.2M6.8 11h3.2"/>
+            <path d="M15.4 9.9h.01M17.2 12.1h.01"/>
+          </svg>
+          Oyunlar
+        </a>
+
+        <a class="sekme etkin" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3.5" y="3.5" width="7" height="7" rx="2"/>
+            <rect x="13.5" y="3.5" width="7" height="7" rx="2"/>
+            <rect x="3.5" y="13.5" width="7" height="7" rx="2"/>
+            <rect x="13.5" y="13.5" width="7" height="7" rx="2"/>
+          </svg>
+          Daha
+        </a>
+
+        <a class="sekme" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3.2"/>
+            <path d="M19.4 14.5a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-2.8-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7h-.3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.1-2.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1v-.3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 2.8 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7h.3a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.4.9Z"/>
+          </svg>
+          Ayarlar
+        </a>
+      </nav>
+    </div>
+
+    <p class="ipucu">Ekranın içinde aşağı kaydırabilirsin</p>
+  </div>
+
+  <aside class="notlar">
+    <div>
+      <h2>Daha sekmesi</h2>
+      <p class="giris">
+        Alt menü beşten dörde inince Pomodoro, Soru ve Deneme sekmesiz kaldı. Bu ekran
+        onların ve kart menüsündeki her şeyin yeni evi — on bir giriş, dört başlık altında.
+      </p>
+    </div>
+
+    <section class="blok">
+      <h3>Neden ızgara değil de liste</h3>
+      <ul>
+        <li><b>On bir giriş var.</b> Ana sayfadaki gibi kutucuk ızgarası olsaydı üç sıra kutucuk çıkardı; açıklamalar sığmaz, sadece adlar kalırdı — “İstatistik” ile “Sıralama Hesapla” arasındaki farkı ad tek başına anlatmıyor.</li>
+        <li><b>Satırlar sağ tarafta bilgi taşıyor.</b> Menü açmadan öğreniyorsun: bugün 0 dakika pomodoro, 0/200 soru, bankada 12 soru, devamsızlıkta 8,5 gün hakkın kaldı, 8/28 rozet. Kutucukta bu sayılara yer yok.</li>
+        <li><b>Bölümler kalabalığı kırıyor.</b> Çalışma · Denemeler · Okul · Motivasyon. Düz on bir satır, tek bir uzun listede kaybolurdu.</li>
+        <li><b>Bir bölüm tek kart.</b> Her satır ayrı kart olsaydı on bir gölge alt alta dizilir, ekran huzursuz görünürdü.</li>
+      </ul>
+    </section>
+
+    <section class="blok">
+      <h3>Beş sekme dörde inince ne oldu</h3>
+      <table class="yerlesim">
+        <tr>
+          <th>Eski sekme</th>
+          <th>Yeni yeri</th>
+        </tr>
+        <tr>
+          <td>Pomodoro</td>
+          <td>Daha → Çalışma</td>
+        </tr>
+        <tr>
+          <td>Soru</td>
+          <td>Daha → Çalışma <span>(ana sayfadaki hedef halkası da buraya gidiyor)</span></td>
+        </tr>
+        <tr>
+          <td>Deneme</td>
+          <td>Daha → Denemeler</td>
+        </tr>
+        <tr>
+          <td>Mini Oyunlar</td>
+          <td>Kendi sekmesi oldu</td>
+        </tr>
+        <tr>
+          <td>Ayarlar</td>
+          <td>Kendi sekmesi oldu — bu yüzden listede yok</td>
+        </tr>
+      </table>
+    </section>
+
+    <section class="blok">
+      <h3>Kararını beklediklerim</h3>
+      <ul>
+        <li><b>Pomodoro günde birkaç kez açılıyor.</b> Sekmesi giderse iki dokunuş uzaklaşıyor. Alt menüde ona yer açmak istersen “Daha”yı ana sayfadaki “Tümü →” düğmesine devredip sekmeyi Pomodoro’ya verebiliriz.</li>
+        <li><b>Devamsızlık sayısı ters okunabiliyor.</b> Burada <b>kalan hak</b> yazıyor (8,5 gün); ana sayfada <b>kullanılan</b> gün yazıyordu. İkisi aynı şeyi göstermeli — hangisi olsun?</li>
+        <li><b>Yanlış Soru Bankası hâlâ iki yerde.</b> Oyunlar sekmesinin üstünde ve burada. Oradan kaldıralım mı?</li>
+        <li><b>Sürüm satırı</b> en altta duruyor. Yedekleme ve “tüm veriyi sil” Ayarlar’da kalıyor.</li>
+      </ul>
+    </section>
+  </aside>
+</div>

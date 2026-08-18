@@ -1,0 +1,791 @@
+<title>Rabi Ayarlar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap">
+
+<style>
+  /* ----------------------------------------------------------------------
+     Sayfa zemini — mockup'ın *etrafı*. Okuyanın temasına uyuyor.
+     Telefonun içi (uygulama ekranı) bilerek sabit: incelediğimiz tasarım o.
+     Değişkenler diğer üç mockup'la birebir aynı.
+     ---------------------------------------------------------------------- */
+  :root {
+    --sayfa: #E4E8F3;
+    --sayfa-kart: #FFFFFF;
+    --sayfa-metin: #232A3D;
+    --sayfa-soluk: #67708A;
+    --sayfa-cizgi: #D2D8E8;
+    --sayfa-vurgu: #4A8FE7;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --sayfa: #14161D;
+      --sayfa-kart: #1C1F29;
+      --sayfa-metin: #E6E9F2;
+      --sayfa-soluk: #99A1B5;
+      --sayfa-cizgi: #2B3040;
+      --sayfa-vurgu: #7FB2F0;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --sayfa: #14161D;
+    --sayfa-kart: #1C1F29;
+    --sayfa-metin: #E6E9F2;
+    --sayfa-soluk: #99A1B5;
+    --sayfa-cizgi: #2B3040;
+    --sayfa-vurgu: #7FB2F0;
+  }
+
+  /* ---------------------------- Uygulama paleti ------------------------ */
+  :root {
+    --zemin: #EDF1FD;
+    --kart: #FFFFFF;
+    --metin: #1B2440;
+    --soluk: #7A8399;
+    --nav-gri: #59637A;
+    --mavi: #4A8FE7;
+    --mavi-soft: #E4EEFC;
+    --mercan: #EF5A52;
+    --mercan-soft: #FDE9E8;
+    --pembe: #FCE7EA;
+    --krem: #FBF2DC;
+    --nane: #E3F3E7;
+    --lavanta: #ECE7FB;
+    --ayrac: #EEF1F8;
+    --kart-golge: 0 6px 20px rgba(38, 58, 110, 0.07);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--sayfa);
+    color: var(--sayfa-metin);
+    font-family: Nunito, "Segoe UI", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sahne {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 40px 24px 64px;
+    display: grid;
+    grid-template-columns: minmax(0, 390px) minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+  }
+
+  @media (max-width: 860px) {
+    .sahne {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+      gap: 36px;
+      padding: 28px 18px 56px;
+    }
+  }
+
+  /* ---------------------------- Telefon çerçevesi ---------------------- */
+
+  .telefon {
+    width: min(390px, 100%);
+    height: min(844px, 82vh);
+    background: var(--zemin);
+    border: 9px solid #10131C;
+    border-radius: 46px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 26px 60px rgba(20, 30, 60, 0.24);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ekran {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding: 28px 18px 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .ekran::-webkit-scrollbar { display: none; }
+
+  /* ---------------------------- Sekme başlığı -------------------------- */
+
+  .tab-baslik { padding: 4px 2px 0; }
+
+  .marka {
+    margin: 0 0 4px;
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--mercan);
+    letter-spacing: 2.4px;
+  }
+
+  .tab-baslik h1 {
+    margin: 0 0 4px;
+    font-size: 27px;
+    font-weight: 800;
+    color: var(--metin);
+    letter-spacing: -0.6px;
+  }
+
+  .tab-baslik p {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--soluk);
+  }
+
+  /* ---------------------------- Bölüm ---------------------------------- */
+
+  .bolum { display: flex; flex-direction: column; gap: 8px; }
+
+  .bolum > h2 {
+    margin: 0 0 0 4px;
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+    color: #9AA2B6;
+  }
+
+  .liste {
+    background: var(--kart);
+    border-radius: 22px;
+    box-shadow: var(--kart-golge);
+    overflow: hidden;
+  }
+
+  .satir {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    text-decoration: none;
+    width: 100%;
+    border: 0;
+    background: none;
+    font: inherit;
+    text-align: left;
+  }
+  .satir + .satir,
+  .satir + .genis-alan,
+  .genis-alan + .satir { border-top: 1px solid var(--ayrac); }
+  .satir:focus-visible { outline: 2px solid var(--mavi); outline-offset: -3px; }
+
+  .satir-ikon {
+    flex: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+  }
+  .satir-ikon svg { width: 22px; height: 22px; display: block; }
+
+  .satir-yazi { min-width: 0; flex: 1; }
+
+  .satir-yazi b {
+    display: block;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: var(--metin);
+    letter-spacing: -0.15px;
+  }
+
+  .satir-yazi span {
+    display: block;
+    margin-top: 1px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--soluk);
+  }
+
+  .deger {
+    flex: none;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--soluk);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .ok { flex: none; width: 18px; height: 18px; color: #C2C9D8; }
+
+  /* İkon renkleri */
+  .i-pembe { background: var(--pembe); }
+  .i-krem { background: var(--krem); }
+  .i-nane { background: var(--nane); }
+  .i-lavanta { background: var(--lavanta); }
+  .i-mavi { background: var(--mavi-soft); }
+  .i-mercan { background: var(--mercan-soft); }
+
+  /* ---------------------------- Anahtar (toggle) ----------------------- */
+
+  .anahtar {
+    flex: none;
+    width: 46px;
+    height: 27px;
+    border-radius: 999px;
+    background: #DDE2ED;
+    position: relative;
+    transition: background 160ms;
+  }
+
+  .anahtar::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 21px;
+    height: 21px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    box-shadow: 0 1px 3px rgba(20, 30, 60, 0.22);
+    transition: left 160ms;
+  }
+
+  .anahtar.acik { background: var(--mavi); }
+  .anahtar.acik::after { left: 22px; }
+
+  /* ---------------------------- Çipler --------------------------------- */
+
+  /* Seçenek satırı ikonlu satırın altında, aynı kartın içinde: seçim o satıra
+     ait olduğu için ayrı bir kart açmak bağı koparırdı. */
+  .genis-alan { padding: 2px 14px 14px 68px; }
+  .genis-alan.tam { padding-left: 14px; }
+
+  .cipler { display: flex; flex-wrap: wrap; gap: 7px; }
+
+  .cip {
+    border: 1.5px solid #E1E6F0;
+    background: #FFFFFF;
+    color: var(--nav-gri);
+    border-radius: 999px;
+    padding: 6px 13px;
+    font-size: 12.5px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .cip.secili {
+    background: var(--mavi);
+    border-color: var(--mavi);
+    color: #FFFFFF;
+  }
+  .cip:focus-visible { outline: 2px solid var(--mavi); outline-offset: 2px; }
+
+  .alan-not {
+    margin: 9px 0 0;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--soluk);
+  }
+
+  /* ---------------------------- Satır içi düğme ------------------------ */
+
+  /* Tek düğme kaldı: "Sıfırla". Satırın içinde, yazının sağında duruyor —
+     altında ayrı bir alan olduğunda araya ayırıcı çizgi giriyor ve düğme
+     başka bir ayara aitmiş gibi görünüyordu. */
+  .dugme {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 34px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--mercan);
+    color: #FFFFFF;
+    font-size: 12.5px;
+    font-weight: 800;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .dugme svg { width: 14px; height: 14px; }
+  .dugme:focus-visible { outline: 2px solid var(--mercan); outline-offset: 2px; }
+
+  /* ---------------------------- Alt not -------------------------------- */
+
+  .altnot {
+    margin: 2px 6px 0;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #A2AABC;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* ---------------------------- Alt menü ------------------------------- */
+
+  .altmenu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(8px);
+    border-radius: 26px 26px 38px 38px;
+    box-shadow: 0 -4px 18px rgba(38, 58, 110, 0.07);
+    padding: 10px 12px 22px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .sekme {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--nav-gri);
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 0;
+    border-radius: 12px;
+  }
+  .sekme svg { width: 24px; height: 24px; display: block; }
+  .sekme.etkin { color: var(--mavi); }
+  .sekme:focus-visible { outline: 2px solid var(--mavi); outline-offset: 2px; }
+
+  /* ---------------------------- Not paneli ----------------------------- */
+
+  .notlar {
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .notlar h2 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+  }
+
+  .notlar .giris {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--sayfa-soluk);
+    font-weight: 500;
+    max-width: 62ch;
+  }
+
+  .blok {
+    background: var(--sayfa-kart);
+    border: 1px solid var(--sayfa-cizgi);
+    border-radius: 18px;
+    padding: 18px 20px;
+  }
+
+  .blok h3 {
+    margin: 0 0 12px;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: var(--sayfa-vurgu);
+  }
+
+  .blok ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 11px; }
+
+  .blok li {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--sayfa-metin);
+    font-weight: 500;
+    padding-left: 16px;
+    position: relative;
+    max-width: 60ch;
+  }
+
+  .blok li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--sayfa-vurgu);
+  }
+
+  .blok li b { font-weight: 800; }
+  .blok li span { color: var(--sayfa-soluk); }
+
+  .ipucu {
+    margin: 0;
+    font-size: 13px;
+    color: var(--sayfa-soluk);
+    font-weight: 600;
+    text-align: center;
+  }
+</style>
+
+<div class="sahne">
+  <div>
+    <div class="telefon">
+      <div class="ekran">
+
+        <!-- ------------------------------ Başlık ------------------------- -->
+        <header class="tab-baslik">
+          <p class="marka">RABİ</p>
+          <h1>Ayarlar ⚙️</h1>
+          <p>Rabi’yi kendine göre kur.</p>
+        </header>
+
+        <!-- ------------------------------ Görünüm ------------------------ -->
+        <section class="bolum">
+          <h2>Görünüm</h2>
+          <div class="liste">
+            <div class="satir">
+              <span class="satir-ikon i-lavanta">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#6C55C4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20.5 14.2A8.6 8.6 0 0 1 9.8 3.5a8.6 8.6 0 1 0 10.7 10.7Z"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Koyu tema</b>
+                <span>Gece çalışırken gözü yormaz</span>
+              </span>
+              <span class="anahtar" role="switch" aria-checked="false" aria-label="Koyu tema"></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ------------------------------ Çalışma ------------------------ -->
+        <section class="bolum">
+          <h2>Çalışma</h2>
+          <div class="liste">
+
+            <div class="satir">
+              <span class="satir-ikon i-mavi">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#4A8FE7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="8.5"/>
+                  <circle cx="12" cy="12" r="4.6"/>
+                  <circle cx="12" cy="12" r="1"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Günlük soru hedefim</b>
+                <span>Her günü buna göre takip ediyorum</span>
+              </span>
+              <span class="deger">200</span>
+            </div>
+
+            <div class="genis-alan">
+              <div class="cipler">
+                <button class="cip" type="button">100</button>
+                <button class="cip secili" type="button">200</button>
+                <button class="cip" type="button">300</button>
+                <button class="cip" type="button">400</button>
+                <button class="cip" type="button">500</button>
+                <button class="cip" type="button">Kendin yaz</button>
+              </div>
+            </div>
+
+            <div class="satir">
+              <span class="satir-ikon i-nane">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#3E8C5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 4 2.5 9 12 14l9.5-5L12 4Z"/>
+                  <path d="M6.5 11.2V16c0 1.4 2.5 2.6 5.5 2.6s5.5-1.2 5.5-2.6v-4.8"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Alanım</b>
+                <span>Sıralama tahmini buna göre hesaplanır</span>
+              </span>
+              <span class="deger">Sayısal</span>
+            </div>
+
+            <div class="satir">
+              <span class="satir-ikon i-krem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#C08A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M8 4h8a1.5 1.5 0 0 1 1.5 1.5v14A1.5 1.5 0 0 1 16 21H8a1.5 1.5 0 0 1-1.5-1.5v-14A1.5 1.5 0 0 1 8 4Z"/>
+                  <path d="M9.5 3h5v2.5h-5zM9.5 11h5M9.5 15h3"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Sınıfım</b>
+                <span>Her eylülde kendiliğinden ilerler</span>
+              </span>
+              <span class="deger">12. sınıf</span>
+            </div>
+
+            <a class="satir" href="#">
+              <span class="satir-ikon i-pembe">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#D4586C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3.5" y="4.5" width="17" height="15" rx="3"/>
+                  <path d="M3.5 9.5h17M9 4.5v15"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Deneme şablonları</b>
+                <span>TYT, AYT, YDT ve kendi şablonların</span>
+              </span>
+              <span class="deger">6</span>
+              <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </a>
+          </div>
+        </section>
+
+        <!-- ------------------------------ Hatırlatma --------------------- -->
+        <section class="bolum">
+          <h2>Hatırlatma</h2>
+          <div class="liste">
+
+            <div class="satir">
+              <span class="satir-ikon i-mercan">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#D4586C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M6 9.5a6 6 0 1 1 12 0c0 4.2 1.3 5.8 2 6.5H4c.7-.7 2-2.3 2-6.5Z"/>
+                  <path d="M10 19.5a2.2 2.2 0 0 0 4 0"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Günlük hatırlatma</b>
+                <span>Soru girmediğin günlerde tek bildirim</span>
+              </span>
+              <span class="anahtar acik" role="switch" aria-checked="true" aria-label="Günlük hatırlatma"></span>
+            </div>
+
+            <div class="genis-alan">
+              <div class="cipler">
+                <button class="cip" type="button">08.00</button>
+                <button class="cip" type="button">12.00</button>
+                <button class="cip" type="button">16.00</button>
+                <button class="cip" type="button">18.00</button>
+                <button class="cip" type="button">19.00</button>
+                <button class="cip secili" type="button">20.00</button>
+                <button class="cip" type="button">21.00</button>
+                <button class="cip" type="button">22.00</button>
+                <button class="cip" type="button">Başka saat</button>
+              </div>
+              <p class="alan-not">
+                Günde en fazla bir bildirim gönderilir; o gün soru girdiysen hiç gönderilmez.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ------------------------------ Ses ---------------------------- -->
+        <section class="bolum">
+          <h2>Ses</h2>
+          <div class="liste">
+
+            <div class="satir">
+              <span class="satir-ikon i-krem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#C08A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M11 5 6.5 8.8H3.5v6.4h3L11 19V5Z"/>
+                  <path d="M15 9.5a3.4 3.4 0 0 1 0 5M17.8 7a7 7 0 0 1 0 10"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Mini oyun sesleri</b>
+                <span>Doğru, yanlış ve tur bitişi efektleri</span>
+              </span>
+              <span class="anahtar acik" role="switch" aria-checked="true" aria-label="Mini oyun sesleri"></span>
+            </div>
+
+            <div class="satir">
+              <span class="satir-ikon i-lavanta">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#6C55C4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 18V6l10-2v12"/>
+                  <circle cx="6.5" cy="18" r="2.6"/>
+                  <circle cx="16.5" cy="16" r="2.6"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Mini oyun müziği</b>
+                <span>Ses efektlerinden ayrı kapatılabilir</span>
+              </span>
+              <span class="anahtar acik" role="switch" aria-checked="true" aria-label="Mini oyun müziği"></span>
+            </div>
+
+            <div class="genis-alan">
+              <div class="cipler">
+                <button class="cip secili" type="button">Arcade</button>
+                <button class="cip" type="button">Lo-fi</button>
+              </div>
+              <p class="alan-not">
+                Hızlı chiptune döngüsü — turun temposuyla aynı, acele ettiriyor.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ------------------------------ Veri --------------------------- -->
+        <section class="bolum">
+          <h2>Veri</h2>
+          <div class="liste">
+
+            <!-- Bu üç işlem önce tek satırın altında, çerçeveli düğmelerden
+                 oluşan ayrı bir blok hâlindeydi. Ekranın geri kalanı satır
+                 diliyle konuşurken orası gri bir levha gibi duruyordu; her
+                 işlem kendi satırı oldu. Fotoğraf uyarısı da ayrı bir not
+                 olmaktan çıkıp ilgili satırların açıklamasına girdi. -->
+            <button class="satir" type="button">
+              <span class="satir-ikon i-mavi">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#4A8FE7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 3.5v11M8 11l4 3.5 4-3.5"/>
+                  <path d="M4.5 16v3a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-3"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Yedeği indir</b>
+                <span>Küçük dosya — yanlış soru fotoğrafları hariç</span>
+              </span>
+              <span class="deger">18 KB</span>
+            </button>
+
+            <button class="satir" type="button">
+              <span class="satir-ikon i-pembe">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#D4586C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3.5" y="5" width="17" height="14" rx="3"/>
+                  <circle cx="9" cy="10" r="1.8"/>
+                  <path d="m4.5 17 4.2-4 3.3 3 3-2.6 4.5 4"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Fotoğraflarla yedekle</b>
+                <span>Her şeyi taşır, dosya büyür</span>
+              </span>
+              <span class="deger">2,4 MB</span>
+            </button>
+
+            <button class="satir" type="button">
+              <span class="satir-ikon i-nane">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#3E8C5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 17V6M8 9.5 12 6l4 3.5"/>
+                  <path d="M4.5 16v3a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-3"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Yedeği yükle</b>
+                <span>Kaydettiğin dosyadan geri getir</span>
+              </span>
+              <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </button>
+
+            <div class="satir">
+              <span class="satir-ikon i-mercan">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#D4586C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4.5 6.5h15M9.5 6.5V4.8A1.3 1.3 0 0 1 10.8 3.5h2.4a1.3 1.3 0 0 1 1.3 1.3v1.7"/>
+                  <path d="M6.5 6.5 7.4 20a1.4 1.4 0 0 0 1.4 1.3h6.4a1.4 1.4 0 0 0 1.4-1.3l.9-13.5"/>
+                </svg>
+              </span>
+              <span class="satir-yazi">
+                <b>Tüm veriyi sil</b>
+                <span>Geri alınamaz</span>
+              </span>
+
+              <!-- Düğme satırın kendi içinde: altında ayrı bir alan olduğunda
+                   araya ayırıcı çizgi giriyor ve düğme başka bir ayara aitmiş
+                   gibi duruyordu. -->
+              <button class="dugme" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4.5 6.5h15M6.5 6.5 7.4 20a1.4 1.4 0 0 0 1.4 1.3h6.4a1.4 1.4 0 0 0 1.4-1.3l.9-13.5M9.5 6.5V4.8A1.3 1.3 0 0 1 10.8 3.5h2.4a1.3 1.3 0 0 1 1.3 1.3v1.7"/>
+                </svg>
+                Sıfırla
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <p class="altnot">Rabi · çevrimdışı çalışır · veri cihazdan çıkmaz</p>
+      </div>
+
+      <!-- ------------------------------ Alt menü ------------------------- -->
+      <nav class="altmenu">
+        <a class="sekme" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 10.5 12 4l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19v-8.5Z"/>
+            <path d="M9.5 20.5V14h5v6.5"/>
+          </svg>
+          Ana Sayfa
+        </a>
+
+        <a class="sekme" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9.3 4.6h5.4a5.7 5.7 0 0 1 5.7 5.7v2a2.4 2.4 0 0 1-.1.8l-1.7 5a3.2 3.2 0 0 1-6-.3l-.5-1.7h-1.6l-.5 1.7a3.2 3.2 0 0 1-6 .3l-1.7-5a2.4 2.4 0 0 1-.1-.8v-2a5.7 5.7 0 0 1 5.7-5.7Z"/>
+            <path d="M8.4 9.4v3.2M6.8 11h3.2"/>
+            <path d="M15.4 9.9h.01M17.2 12.1h.01"/>
+          </svg>
+          Oyunlar
+        </a>
+
+        <a class="sekme" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3.5" y="3.5" width="7" height="7" rx="2"/>
+            <rect x="13.5" y="3.5" width="7" height="7" rx="2"/>
+            <rect x="3.5" y="13.5" width="7" height="7" rx="2"/>
+            <rect x="13.5" y="13.5" width="7" height="7" rx="2"/>
+          </svg>
+          Daha
+        </a>
+
+        <a class="sekme etkin" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3.2"/>
+            <path d="M19.4 14.5a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-2.8-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7h-.3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.1-2.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1v-.3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 2.8 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7h.3a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.4.9Z"/>
+          </svg>
+          Ayarlar
+        </a>
+      </nav>
+    </div>
+
+    <p class="ipucu">Ekranın içinde aşağı kaydırabilirsin</p>
+  </div>
+
+  <aside class="notlar">
+    <div>
+      <h2>Ayarlar sekmesi</h2>
+      <p class="giris">
+        Uygulamadaki bütün ayarlar burada — hiçbiri düşmedi, hiçbiri uydurulmadı. Değişen
+        tek şey düzen: dokuz ayrı kart yerine beş bölüm, “Daha” sekmesiyle aynı satır dili.
+      </p>
+    </div>
+
+    <section class="blok">
+      <h3>Düzen kararları</h3>
+      <ul>
+        <li><b>Beş bölüm.</b> Görünüm · Çalışma · Hatırlatma · Ses · Veri. Uygulamada dokuz kart alt alta diziliydi ve hangi ayarın nerede olduğu ancak kaydırarak bulunuyordu.</li>
+        <li><b>Seçenekler ait oldukları satırın altında.</b> Hedef çipleri, saat çipleri ve müzik seçimi ayrı kart açmıyor; seçim hangi ayara aitse onun altında, girintili duruyor.</li>
+        <li><b>Sağdaki değer seçili olanı söylüyor.</b> Çiplere bakmadan “200 · Sayısal · 12. sınıf · 6 şablon” okunuyor. Kapalı bir ayarın ne olduğunu öğrenmek için açmak gerekmiyor.</li>
+        <li><b>Tehlikeli olan en altta ve kırmızı.</b> “Tüm veriyi sil” yanlışlıkla basılacak yerde değil; Sıfırla düğmesi tek kırmızı öğe, onay penceresi de duruyor.</li>
+        <li><b>Sıfırla düğmesi satırın içinde</b> <span>(sayfaya bıraktığın yorum).</span> Altında ayrı bir alan olduğunda araya ayırıcı çizgi giriyor ve düğme başka bir ayara aitmiş gibi duruyordu. Şimdi “Tüm veriyi sil” yazısının sağında, hap biçiminde.</li>
+        <li><b>Yedekleme de satırlara döndü</b> <span>(ikinci yorumun).</span> Üç işlem tek satırın altında çerçeveli düğmelerden oluşan gri bir levha hâlindeydi; ekranın geri kalanı satır diliyle konuşurken orası yabancı duruyordu. Artık her işlem kendi satırı: indir · fotoğraflarla yedekle · yükle. Fotoğraf uyarısı ayrı bir not olmaktan çıkıp satırların açıklamasına girdi, dosya boyutları da sağda görünüyor.</li>
+      </ul>
+    </section>
+
+    <section class="blok">
+      <h3>Uygulamadan birebir gelenler</h3>
+      <ul>
+        <li><b>Hatırlatma saatleri</b> gerçek liste: 08 · 12 · 16 · 18 · 19 · 20 · 21 · 22 · 23 ve “Başka saat” (dakikalı saat için telefonun kendi seçicisi).</li>
+        <li><b>Arcade / Lo-fi</b> seçimi ve altındaki açıklama, geçen hafta eklediğimiz ayarın aynısı.</li>
+        <li><b>Yedekleme uyarısı</b> uygulamadaki metnin kendisi: normal yedek fotoğrafları taşımıyor, fotoğraflı yedek her şeyi taşıyor ama dosya büyüyor.</li>
+        <li><b>“Fotoğraflarla yedekle”</b> uygulamada yalnızca bankada fotoğraf varken çıkıyor. Bu mockup’ta bankada 12 soru olduğu için görünüyor.</li>
+        <li><b>Alt satır</b> — “çevrimdışı çalışır · veri cihazdan çıkmaz” — uygulamada da orada duruyor.</li>
+      </ul>
+    </section>
+
+    <section class="blok">
+      <h3>Kararını beklediklerim</h3>
+      <ul>
+        <li><b>Koyu tema anahtarı iki durumlu.</b> Şu an “açık/koyu”. Telefonun tercihini izleyen üçüncü bir “Sistem” seçeneği ister misin? Kurulumda da aynı soruyu soruyoruz.</li>
+        <li><b>Ayarlar sekmesi çok mu yer kaplıyor?</b> Alt menüde dört sekmeden biri ayarlara gidiyor. Ayarlar günde bir açılmıyor — istersen “Daha”nın en altına alıp sekmeyi Pomodoro’ya verebiliriz.</li>
+        <li><b>Dört ekran bitti.</b> Ana Sayfa · Oyunlar · Daha · Ayarlar. Sıradaki oyun içi ekranlar mı, yoksa entegrasyona mı geçiyoruz?</li>
+      </ul>
+    </section>
+  </aside>
+</div>

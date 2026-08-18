@@ -1,30 +1,41 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
-import { RotateCcw } from 'lucide-react'
+import { BookOpen, Check } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
 import type { EdebiyatEsi } from '@/lib/oyunlar/edebiyat-havuzu'
-import { DONEM_ADI } from '@/lib/oyunlar/edebiyat-havuzu'
+import { DONEM_ADI, EDEBIYAT_HAVUZU } from '@/lib/oyunlar/edebiyat-havuzu'
 import { EL_BOYUTU, elHazirla, eslesiyorMu, type EdebiyatEli } from '@/lib/oyunlar/edebiyat'
 import {
   TUR_SURESI,
   YANLIS_CEZASI,
   guncelSeri,
   kalanSaniye,
+  karistir,
   rekorKirildiMi,
   turOzeti,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
+import {
+  edebiyattanBanka,
+  type BankaCevabi,
+  type BankaKaydi,
+} from '@/lib/oyunlar/banka'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
-import { Buton, Deger } from '@/components/ui'
-import { Rabi } from '@/components/maskot/rabi'
-import { OyunKabugu } from '@/components/oyun-kabuk'
+import {
+  EN_COK_YANLIS,
+  KalanHapi,
+  OyunKabugu,
+  TurSonu,
+  YanlisKarti,
+  rekorCumlesi,
+} from '@/components/oyun-kabuk'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
 /** Yanlış eşleştirmenin kırmızı kaldığı süre (ms). */
@@ -37,6 +48,81 @@ type Secim = { eser: string | null; yazar: string | null }
 const BOS_SECIM: Secim = { eser: null, yazar: null }
 
 /**
+ * Banka kayıtlarını havuzdaki eşlere bağlar.
+ *
+ * Kayıt yalnızca eser ve yazar tutuyor; ele dönem de gerekiyor (ekranın
+ * başlığında yazıyor, tek dönemli el kuralını da o belirliyor). Havuzdan
+ * kalkmış bir eser sessizce eleniyor — sorusu olmayan bir kaydı ele koymak
+ * cevabı olmayan bir soru demek.
+ */
+function bankaEsleri(
+  kayitlar: readonly BankaKaydi[],
+  havuz: readonly EdebiyatEsi[] = EDEBIYAT_HAVUZU,
+): EdebiyatEsi[] {
+  const esler: EdebiyatEsi[] = []
+  for (const kayit of kayitlar) {
+    if (kayit.soru.oyun !== 'edebiyat') continue
+    const aranan = kayit.soru.eser
+    const es = havuz.find((h) => h.eser === aranan)
+    if (es) esler.push(es)
+  }
+  return esler
+}
+
+/**
+ * Banka turunun eli.
+ *
+ * `elHazirla` kullanılamıyor: o, havuzdan rastgele bir el kuruyor: banka
+ * sorularını **öne alması** gerekiyor. Kuralları aynen taşınıyor — bir elde
+ * aynı yazardan iki eser olamaz (yazarın tuşu iki esere birden uyar ve doğru
+ * cevap yanlış sayılırdı), aynı eser tur içinde iki kez sorulmaz.
+ *
+ * El altı eser istiyor; banka altıyı doldurmuyorsa geri kalanı havuz
+ * tamamlıyor. Banka tarafından tek eser bile kalmadıysa `null` dönüyor ve tur
+ * erken bitiyor: banka turu bankadaki soruları bitirince amacına ulaşmış olur.
+ */
+function bankaEliHazirla(
+  esler: readonly EdebiyatEsi[],
+  kullanilan: ReadonlySet<string>,
+  havuz: readonly EdebiyatEsi[] = EDEBIYAT_HAVUZU,
+  rastgele: () => number = Math.random,
+): EdebiyatEli | null {
+  const secilen: EdebiyatEsi[] = []
+  const yazarlar = new Set<string>()
+  const eserler = new Set<string>()
+
+  const topla = (kaynak: readonly EdebiyatEsi[]) => {
+    for (const es of karistir(kaynak, rastgele)) {
+      if (secilen.length >= EL_BOYUTU) return
+      if (kullanilan.has(es.eser) || eserler.has(es.eser) || yazarlar.has(es.yazar)) continue
+      secilen.push(es)
+      eserler.add(es.eser)
+      yazarlar.add(es.yazar)
+    }
+  }
+
+  topla(esler)
+  if (secilen.length === 0) return null
+
+  topla(havuz)
+  if (secilen.length < EL_BOYUTU) return null
+
+  // El tek dönemden çıktıysa dönem yazılıyor; banka karışık olduğu için bu
+  // çoğunlukla olmuyor ve ekran "Karışık dönem" diyor.
+  const ilk = secilen[0].donem
+  const donem = secilen.every((es) => es.donem === ilk) ? ilk : null
+
+  return {
+    donem,
+    esler: secilen,
+    // İki sütun ayrı karıştırılıyor: aynı sırada dursalardı eşleştirme
+    // okumadan, konuma bakarak yapılırdı.
+    eserler: karistir(secilen.map((e) => e.eser), rastgele),
+    yazarlar: karistir(secilen.map((e) => e.yazar), rastgele),
+  }
+}
+
+/**
  * Edebiyat Eşleştirme — mini oyun.
  *
  * Altı eser ve altı yazar; birine sonra ötekine dokunarak eşleştiriliyor.
@@ -47,13 +133,16 @@ const BOS_SECIM: Secim = { eser: null, yazar: null }
 export function EdebiyatOyunuEkrani({
   istatistik,
   sesAcik,
+  bankaSorulari,
   onTurBitti,
   onCik,
 }: {
   istatistik: OyunIstatistigi
   /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
   sesAcik: boolean
-  onTurBitti: (ozet: TurOzeti<EdebiyatEsi>) => void
+  /** Boş değilse eller önce bu sorulardan kurulur (Oyun Bankası turu). */
+  bankaSorulari: BankaKaydi[]
+  onTurBitti: (ozet: TurOzeti<EdebiyatEsi>, bankaCevaplari: BankaCevabi[]) => void
   onCik: () => void
 }) {
   const oyun = oyunBul('edebiyat')
@@ -66,6 +155,8 @@ export function EdebiyatOyunuEkrani({
   const [eslesenler, setEslesenler] = useState<EdebiyatEsi[]>([])
   const [yanlisCift, setYanlisCift] = useState<Secim | null>(null)
   const [cevaplar, setCevaplar] = useState<Cevap<EdebiyatEsi>[]>([])
+  /** Yanlışlarla aynı sıradaki seçimler — tur sonunda "sen X dedin" için. */
+  const [yanlisGirdileri, setYanlisGirdileri] = useState<string[]>([])
 
   const [bitisZamani, setBitisZamani] = useState(0)
   const [kalan, setKalan] = useState(TUR_SURESI)
@@ -74,6 +165,9 @@ export function EdebiyatOyunuEkrani({
   const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<EdebiyatEsi>; yeniRekor: boolean } | null>(
     null,
   )
+
+  const bankaHavuzu = useMemo(() => bankaEsleri(bankaSorulari), [bankaSorulari])
+  const bankaTuru = bankaHavuzu.length > 0
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -85,22 +179,32 @@ export function EdebiyatOyunuEkrani({
 
   useGeriKatmani(asama !== 'tanitim' && !yardimAcik, onCik)
 
+  /** Sıradaki el: banka turunda banka öncelikli, normal turda havuzdan. */
+  const sonrakiEl = useCallback(
+    () =>
+      bankaTuru
+        ? bankaEliHazirla(bankaHavuzu, kullanilanRef.current)
+        : elHazirla(kullanilanRef.current),
+    [bankaHavuzu, bankaTuru],
+  )
+
   const turBaslat = useCallback(() => {
     turBasiRekor.current = istatistik.enIyiDogru
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
     kullanilanRef.current = new Set()
-    setEl(elHazirla(kullanilanRef.current))
+    setEl(sonrakiEl())
     setSecim(BOS_SECIM)
     setEslesenler([])
     setYanlisCift(null)
     setCevaplar([])
+    setYanlisGirdileri([])
     setSonuc(null)
     setDuraklatilan(null)
     setKalan(TUR_SURESI)
     setBitisZamani(Date.now() + TUR_SURESI * 1000)
     setAsama('oynaniyor')
-  }, [istatistik.enIyiDogru])
+  }, [istatistik.enIyiDogru, sonrakiEl])
 
   const turBitir = useCallback(
     (verilenler: Cevap<EdebiyatEsi>[]) => {
@@ -109,13 +213,23 @@ export function EdebiyatOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
-        yeniRekor: rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
+        yeniRekor:
+          !bankaTuru &&
+          rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
       })
       oyunSesiCal('bitis', sesAcik)
       setAsama('bitti')
-      onTurBitti(ozet)
+      // Doğrular da bildiriliyor: banka, üst üste üç kez doğru bilinen kaydı
+      // düşürüyor.
+      onTurBitti(
+        ozet,
+        verilenler.map((cevap) => ({
+          soru: edebiyattanBanka(cevap.soru),
+          dogruMu: cevap.dogruMu,
+        })),
+      )
     },
-    [istatistik, onTurBitti, sesAcik],
+    [bankaTuru, istatistik, onTurBitti, sesAcik],
   )
 
   useEffect(() => {
@@ -130,7 +244,8 @@ export function EdebiyatOyunuEkrani({
     return () => clearInterval(isaret)
   }, [asama, bitisZamani, duraklatilan, turBitir])
 
-  // Havuz tükenip yeni el kurulamazsa tur süre dolmadan biter.
+  // Havuz (banka turunda banka) tükenip yeni el kurulamazsa tur süre dolmadan
+  // biter.
   useEffect(() => {
     if (asama === 'oynaniyor' && el === null) turBitir(cevaplarRef.current)
   }, [asama, el, turBitir])
@@ -164,6 +279,7 @@ export function EdebiyatOyunuEkrani({
     geriBildir(dogruMu)
 
     if (!dogruMu) {
+      setYanlisGirdileri((onceki) => [...onceki, yazar])
       setBitisZamani((b) => b - YANLIS_CEZASI * 1000)
       setYanlisCift({ eser, yazar })
       zamanlayiciRef.current = setTimeout(() => {
@@ -186,7 +302,7 @@ export function EdebiyatOyunuEkrani({
 
     // El bitti: hemen yenisi kuruluyor, arada bir "devam" ekranı yok.
     for (const e of el.esler) kullanilanRef.current.add(e.eser)
-    setEl(elHazirla(kullanilanRef.current))
+    setEl(sonrakiEl())
     setEslesenler([])
   }
 
@@ -218,11 +334,11 @@ export function EdebiyatOyunuEkrani({
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
   const gorunenKalan = duraklatilan ?? kalan
-  const cozulenler = cevaplar.filter((c) => c.dogruMu).map((c) => c.soru)
 
   return (
     <>
       <OyunKabugu
+        oyunId="edebiyat"
         baslik={oyun.ad}
         sayac={
           asama === 'bitti'
@@ -234,6 +350,7 @@ export function EdebiyatOyunuEkrani({
                 yanlis: cevaplar.length - dogruSayisi,
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
+                cezaGorunur: yanlisCift !== null,
               }
         }
         onCik={onCik}
@@ -242,16 +359,22 @@ export function EdebiyatOyunuEkrani({
         {asama === 'bitti' && sonuc ? (
           <SonucGorunumu
             sonuc={sonuc}
-            rekor={Math.max(istatistik.enIyiDogru, sonuc.ozet.dogru)}
+            girdiler={yanlisGirdileri}
+            rekor={turBasiRekor.current}
+            bankaTuru={bankaTuru}
             onTekrar={turBaslat}
             onCik={onCik}
           />
         ) : (
           asama === 'oynaniyor' &&
           el && (
-            <div className="pb-3">
-              <p className="mt-3 text-center text-xs text-muted-foreground">
-                {el.donem ? DONEM_ADI[el.donem] : 'Karışık dönem'} · eseri yazarıyla eşleştir
+            <div className="flex flex-1 flex-col gap-2.5 pb-1">
+              {/* Elin dönemi. El mümkün olduğunca tek dönemden kuruluyor;
+                  bunu söylemek öğrenciye bağlam veriyor ve oyunun neden zor
+                  olduğunu açıklıyor: aynı dönemden altı isim. */}
+              <p className="mt-3 flex flex-none items-center justify-center gap-1.5 text-[11.5px] font-extrabold uppercase tracking-wide text-edb-koyu">
+                <BookOpen size={13} aria-hidden />
+                {el.donem ? DONEM_ADI[el.donem] : 'Karışık dönem'}
               </p>
 
               <Bolum
@@ -271,7 +394,15 @@ export function EdebiyatOyunuEkrani({
                 onSec={yazarSec}
               />
 
-              <EslesenlerListesi esler={cozulenler} />
+              {/* İki adımlı bir işlemde ilk adımdan sonra ne olacağını söylemek
+                  gerekiyor. */}
+              <p className="mt-auto flex-none pt-1 text-center text-[11.5px] font-bold text-muted-foreground">
+                {secim.eser
+                  ? 'Şimdi yazarına dokun'
+                  : secim.yazar
+                    ? 'Şimdi eserine dokun'
+                    : 'Bir esere dokun'}
+              </p>
             </div>
           )
         )}
@@ -305,13 +436,15 @@ function Bolum({
   onSec: (deger: string) => void
 }) {
   return (
-    <section className="mt-3">
-      <h2 className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+    <section className="flex-none">
+      <h2 className="mb-1.5 pl-0.5 text-[11px] font-extrabold uppercase tracking-wide text-muted-foreground/75">
         {baslik}
       </h2>
-      <ul className="grid grid-cols-2 gap-2">
+      <ul className="grid grid-cols-2 gap-[7px]">
         {secenekler.map((deger) => {
           const eslesti = eslesenler.has(deger)
+          const hatali = !eslesti && yanlis === deger
+          const secildi = !eslesti && !hatali && secili === deger
           return (
             <li key={deger}>
               <button
@@ -319,16 +452,17 @@ function Bolum({
                 onClick={() => onSec(deger)}
                 disabled={eslesti}
                 className={cn(
-                  'flex min-h-16 w-full items-center justify-center rounded-2xl border-2 px-2 py-2.5',
-                  'text-center text-[13px] font-medium leading-tight transition',
+                  'flex min-h-[54px] w-full items-center justify-center gap-1 rounded-[15px] border-2 px-2 py-1.5',
+                  'text-center text-[12.5px] font-extrabold leading-tight transition',
                   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-                  eslesti && 'border-success/40 bg-success/10 text-success/70',
-                  !eslesti && yanlis === deger && 'border-danger bg-danger/15 text-danger',
-                  !eslesti && yanlis !== deger && secili === deger && 'border-primary bg-primary/12 text-primary',
-                  !eslesti && yanlis !== deger && secili !== deger && 'border-border bg-card active:bg-muted',
+                  eslesti && 'border-transparent bg-success-soft text-success',
+                  hatali && 'border-ikincil bg-ikincil-soft text-ikincil',
+                  secildi && 'border-edb-koyu bg-edb text-edb-koyu',
+                  !eslesti && !hatali && !secildi && 'golge-kart border-border bg-card',
                 )}
               >
-                {deger}
+                <span className="min-w-0">{deger}</span>
+                {eslesti && <Check size={13} className="shrink-0" aria-hidden />}
               </button>
             </li>
           )
@@ -338,114 +472,67 @@ function Bolum({
   )
 }
 
-/**
- * Tur boyunca kurulan eşleşmeler.
- *
- * Ekranın altı boş kalmasın diye konmadı — asıl işi öğretmek: doğru eşleştirdiğin
- * çift yazıyla bir kez daha karşına çıkıyor, dönemiyle birlikte. En yenisi üstte.
- */
-function EslesenlerListesi({ esler }: { esler: EdebiyatEsi[] }) {
-  if (esler.length === 0) {
-    return (
-      <p className="mt-5 rounded-2xl border border-dashed border-border px-4 py-5 text-center text-xs leading-relaxed text-muted-foreground">
-        Eşleştirdiğin çiftler burada birikecek — tur boyunca göz ucuyla tekrar edebilirsin.
-      </p>
-    )
-  }
-
-  return (
-    <section className="mt-5">
-      <h2 className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-        Eşleştirdiklerin ({esler.length})
-      </h2>
-      <ul className="space-y-1.5">
-        {[...esler].reverse().map((es) => (
-          <li
-            key={es.eser}
-            className="rounded-xl bg-muted/50 px-3 py-2 text-[13px] leading-snug"
-          >
-            <span className="font-medium">{es.eser}</span>
-            <span className="text-muted-foreground"> — {es.yazar}</span>
-            <span className="block text-[11px] text-muted-foreground/70">
-              {DONEM_ADI[es.donem]}
-            </span>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )
-}
-
 function SonucGorunumu({
   sonuc,
+  girdiler,
   rekor,
+  bankaTuru,
   onTekrar,
   onCik,
 }: {
   sonuc: { ozet: TurOzeti<EdebiyatEsi>; yeniRekor: boolean }
+  /** Yanlışlarla aynı sıradaki yazar seçimleri. */
+  girdiler: string[]
   rekor: number
+  bankaTuru: boolean
   onTekrar: () => void
   onCik: () => void
 }) {
   const { ozet, yeniRekor } = sonuc
-  const yuzde = Math.round(ozet.oran * 100)
+  const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
+  const kalan = ozet.yanlislar.length - gorunen.length
 
   return (
-    <div className="flex-1 py-4">
-      <div className="flex flex-col items-center text-center">
-        <Rabi
-          durum={yeniRekor || ozet.hatasiz ? 'kutlama' : ozet.oran >= 0.6 ? 'mutlu' : 'normal'}
-          boyut={104}
-        />
-        <p className="mt-2 font-display text-2xl font-semibold tracking-tight">
-          {yeniRekor ? 'Yeni rekor!' : 'Süre bitti'}
-        </p>
-        {ozet.hatasiz && (
-          <p className="mt-1 text-sm text-success">Hiç yanlışın yok — hatasız tur.</p>
-        )}
-      </div>
-
-      <div className="mt-4 grid grid-cols-4 gap-2">
-        <Deger className="px-2" etiket="Eşleşme" deger={String(ozet.dogru)} vurgu />
-        <Deger className="px-2" etiket="Yanlış" deger={String(ozet.yanlis)} />
-        <Deger className="px-2" etiket="Seri" deger={String(ozet.enIyiSeri)} />
-        <Deger className="px-2" etiket="Başarı" deger={`%${yuzde}`} altNot={`rekor ${rekor}`} />
-      </div>
-
+    <TurSonu
+      oyunId="edebiyat"
+      dogru={ozet.dogru}
+      yanlis={ozet.yanlis}
+      enIyiSeri={ozet.enIyiSeri}
+      rekor={rekor}
+      yeniRekor={yeniRekor}
+      bankaTuru={bankaTuru}
+      altBaslik={
+        bankaTuru
+          ? 'Banka soruları — üst üste üç doğruda düşerler.'
+          : rekorCumlesi(ozet.dogru, rekor, yeniRekor, 'eşleştirme')
+      }
+      bolumBasligi="Karıştırdıkların"
+      bolumAltYazisi="Eser, doğru yazarı ve senin dediğin."
+      onTekrar={onTekrar}
+      onCik={onCik}
+    >
       {ozet.yanlislar.length > 0 && (
-        <section className="mt-5">
-          <h2 className="mb-2 text-sm font-medium text-muted-foreground">Karıştırdıkların</h2>
-          <ul className="space-y-2">
-            {ozet.yanlislar.map((es, sira) => (
-              <li
-                key={`${es.eser}-${sira}`}
-                className="rounded-2xl border border-border bg-card px-3 py-2.5"
-              >
-                <p className="text-sm leading-snug">
-                  <span className="font-medium">{es.eser}</span>
-                  <span className="text-success"> — {es.yazar}</span>
-                </p>
-                <p className="mt-0.5 text-xs text-muted-foreground">{DONEM_ADI[es.donem]}</p>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+        <div className="flex flex-none flex-col gap-2">
+          {gorunen.map((es, sira) => (
+            <YanlisKarti key={`${es.eser}-${sira}`} oyunId="edebiyat">
+              <b className="block font-display text-[13.5px] font-extrabold leading-tight">
+                {es.eser}
+              </b>
+              <span className="mt-1 flex items-center gap-1.5 text-xs font-bold text-success">
+                <Check size={13} className="shrink-0" aria-hidden />
+                {es.yazar}
+              </span>
+              {girdiler[sira] && (
+                <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
+                  Sen <s className="text-ikincil">{girdiler[sira]}</s> dedin
+                </span>
+              )}
+            </YanlisKarti>
+          ))}
 
-      {ozet.toplam === 0 && (
-        <p className="mt-5 text-center text-sm text-muted-foreground">
-          Hiç eşleştirme yapmadın. Bir daha dene, süre {TUR_SURESI} saniye.
-        </p>
+          {kalan > 0 && <KalanHapi kalan={kalan} />}
+        </div>
       )}
-
-      <div className="mt-6 flex gap-2 pb-2">
-        <Buton bicim="ikincil" className="flex-1" onClick={onCik}>
-          Çık
-        </Buton>
-        <Buton className="flex-1" onClick={onTekrar}>
-          <RotateCcw size={16} aria-hidden /> Tekrar oyna
-        </Buton>
-      </div>
-    </div>
+    </TurSonu>
   )
 }

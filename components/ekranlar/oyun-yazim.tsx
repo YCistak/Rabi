@@ -1,11 +1,11 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
-import { Check, RotateCcw, X } from 'lucide-react'
+import { Check, X } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
-import type { YazimSorusu } from '@/lib/oyunlar/yazim-havuzu'
+import type { YazimKurali, YazimSorusu } from '@/lib/oyunlar/yazim-havuzu'
 import { KURAL_ACIKLAMASI, KURAL_ADI } from '@/lib/oyunlar/yazim-havuzu'
 import { turHazirla, type OyunSorusu, type Sik } from '@/lib/oyunlar/yazim-oyunu'
 import {
@@ -18,13 +18,25 @@ import {
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
+import {
+  yazimdanBanka,
+  type BankaCevabi,
+  type BankaKaydi,
+} from '@/lib/oyunlar/banka'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
-import { Buton, Deger } from '@/components/ui'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
-import { OyunKabugu } from '@/components/oyun-kabuk'
+import {
+  Bildirim,
+  EN_COK_YANLIS,
+  KalanHapi,
+  OyunKabugu,
+  TurSonu,
+  YanlisKarti,
+  rekorCumlesi,
+} from '@/components/oyun-kabuk'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
 /** Doğru cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms). */
@@ -34,7 +46,27 @@ const YANLIS_BEKLEME = 900
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
-type GeriBildirim = { secilenMetin: string; dogruMu: boolean }
+type GeriBildirim = { secilenMetin: string; dogruMu: boolean; soru: YazimSorusu }
+
+/**
+ * Banka kayıtlarından yazım havuzu.
+ *
+ * Saf ve küçük: banka kaydı ekranda göstermek için gereken her şeyi taşıyor,
+ * tek eksik oyunun beklediği biçim. Yazım dışındaki kayıtlar eleniyor —
+ * "sadece bunlardan bir tur" akışında bankanın tamamı geliyor.
+ */
+function bankaHavuzu(kayitlar: readonly BankaKaydi[]): YazimSorusu[] {
+  const havuz: YazimSorusu[] = []
+  for (const kayit of kayitlar) {
+    if (kayit.soru.oyun !== 'yazim') continue
+    havuz.push({
+      dogru: kayit.soru.dogru,
+      yanlis: kayit.soru.yanlis,
+      kural: kayit.soru.kural as YazimKurali,
+    })
+  }
+  return havuz
+}
 
 /**
  * Yazım Ustası — mini oyun.
@@ -47,13 +79,16 @@ type GeriBildirim = { secilenMetin: string; dogruMu: boolean }
 export function YazimOyunuEkrani({
   istatistik,
   sesAcik,
+  bankaSorulari,
   onTurBitti,
   onCik,
 }: {
   istatistik: OyunIstatistigi
   /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
   sesAcik: boolean
-  onTurBitti: (ozet: TurOzeti<YazimSorusu>) => void
+  /** Boş değilse tur yalnızca bu sorularla kurulur (Oyun Bankası turu). */
+  bankaSorulari: BankaKaydi[]
+  onTurBitti: (ozet: TurOzeti<YazimSorusu>, bankaCevaplari: BankaCevabi[]) => void
   onCik: () => void
 }) {
   const oyun = oyunBul('yazim')
@@ -75,6 +110,10 @@ export function YazimOyunuEkrani({
     null,
   )
 
+  /** Banka turunda havuz bankadaki kayıtlar; normal turda oyunun kendi havuzu. */
+  const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
+  const bankaTuru = havuz.length > 0
+
   // Tur başındaki rekor: sonuç ekranı "yeni rekor" derken güncellenmiş değerle
   // değil, tura girerken geçerli olan değerle karşılaştırmalı.
   const turBasiRekor = useRef(istatistik.enIyiDogru)
@@ -93,7 +132,7 @@ export function YazimOyunuEkrani({
     turBasiRekor.current = istatistik.enIyiDogru
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
-    setSorular(turHazirla())
+    setSorular(havuz.length > 0 ? turHazirla(havuz) : turHazirla())
     setSira(0)
     setCevaplar([])
     setGeriBildirim(null)
@@ -102,7 +141,7 @@ export function YazimOyunuEkrani({
     setKalan(TUR_SURESI)
     setBitisZamani(Date.now() + TUR_SURESI * 1000)
     setAsama('oynaniyor')
-  }, [istatistik.enIyiDogru])
+  }, [havuz, istatistik.enIyiDogru])
 
   const turBitir = useCallback(
     (verilenler: Cevap<YazimSorusu>[]) => {
@@ -111,13 +150,23 @@ export function YazimOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
-        yeniRekor: rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
+        yeniRekor:
+          !bankaTuru &&
+          rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
       })
       oyunSesiCal('bitis', sesAcik)
       setAsama('bitti')
-      onTurBitti(ozet)
+      // Doğrular da bankaya bildiriliyor: banka, üst üste üç kez doğru bilinen
+      // kaydı düşürüyor — soruyu nerede bilirsen bil, öğrenmiş sayılıyorsun.
+      onTurBitti(
+        ozet,
+        verilenler.map((cevap) => ({
+          soru: yazimdanBanka(cevap.soru),
+          dogruMu: cevap.dogruMu,
+        })),
+      )
     },
-    [istatistik, onTurBitti, sesAcik],
+    [bankaTuru, istatistik, onTurBitti, sesAcik],
   )
 
   // Sayaç. Hedef zaman damgasından okunuyor; arka plana atılan WebView'da
@@ -135,8 +184,8 @@ export function YazimOyunuEkrani({
     return () => clearInterval(isaret)
   }, [asama, bitisZamani, duraklatilan, turBitir])
 
-  // Havuz tükenirse (262 soru — pratikte imkânsız ama tur uzatılabilir) tur
-  // süre dolmadan biter; yoksa ekranda soru kalmaz ve sayaç boşa işlerdi.
+  // Havuz tükenirse tur süre dolmadan biter; yoksa ekranda soru kalmaz ve sayaç
+  // boşa işlerdi. Banka turunda bu sık oluyor: banka birkaç soruluk olabilir.
   useEffect(() => {
     if (asama !== 'oynaniyor' || sorular.length === 0) return
     if (sira >= sorular.length) turBitir(cevaplarRef.current)
@@ -166,7 +215,7 @@ export function YazimOyunuEkrani({
 
     const dogruMu = sik.dogruMu
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu }])
-    setGeriBildirim({ secilenMetin: sik.metin, dogruMu })
+    setGeriBildirim({ secilenMetin: sik.metin, dogruMu, soru: soru.soru })
     geriBildir(dogruMu)
 
     if (!dogruMu) setBitisZamani((b) => b - YANLIS_CEZASI * 1000)
@@ -205,6 +254,7 @@ export function YazimOyunuEkrani({
   return (
     <>
       <OyunKabugu
+        oyunId="yazim"
         baslik={oyun.ad}
         sayac={
           asama === 'bitti'
@@ -216,6 +266,7 @@ export function YazimOyunuEkrani({
                 yanlis: cevaplar.length - dogruSayisi,
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
+                cezaGorunur: geriBildirim !== null && !geriBildirim.dogruMu,
               }
         }
         onCik={onCik}
@@ -224,28 +275,47 @@ export function YazimOyunuEkrani({
         {asama === 'bitti' && sonuc ? (
           <SonucGorunumu
             sonuc={sonuc}
-            rekor={Math.max(istatistik.enIyiDogru, sonuc.ozet.dogru)}
+            rekor={turBasiRekor.current}
+            bankaTuru={bankaTuru}
             onTekrar={turBaslat}
             onCik={onCik}
           />
         ) : (
           asama === 'oynaniyor' &&
           soru && (
-            <div className="flex flex-1 flex-col items-center justify-center py-5">
-              <Rabi durum={maskotDurumu} boyut={84} />
-              <p className="mb-4 mt-2 font-display text-lg font-semibold">Doğru yazımı seç</p>
+            <>
+              <div className="flex flex-1 flex-col justify-center gap-3.5 py-3">
+                <div className="grid place-items-center">
+                  <Rabi durum={maskotDurumu} boyut={62} />
+                </div>
+                <p className="text-center font-display text-[15px] font-extrabold">
+                  Doğru yazılışı seç
+                </p>
 
-              <div className="w-full space-y-3">
-                {soru.siklar.map((sik) => (
-                  <SikDugmesi
-                    key={sik.metin}
-                    sik={sik}
-                    geriBildirim={geriBildirim}
-                    onSec={() => cevapla(sik)}
-                  />
-                ))}
+                <div className="flex flex-col gap-2.5">
+                  {soru.siklar.map((sik) => (
+                    <SikDugmesi
+                      key={sik.metin}
+                      sik={sik}
+                      geriBildirim={geriBildirim}
+                      onSec={() => cevapla(sik)}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+
+              {geriBildirim && (
+                <Bildirim
+                  iyi={geriBildirim.dogruMu}
+                  baslik={geriBildirim.dogruMu ? 'Aynen böyle!' : 'Olmadı'}
+                  aciklama={
+                    geriBildirim.dogruMu
+                      ? `“${geriBildirim.soru.yanlis}” değil`
+                      : `— doğrusu “${geriBildirim.soru.dogru}”`
+                  }
+                />
+              )}
+            </>
           )
         )}
       </OyunKabugu>
@@ -280,7 +350,10 @@ function SikDugmesi({
 }) {
   const acikta = geriBildirim !== null
   const secilen = acikta && geriBildirim.secilenMetin === sik.metin
+  const dogruSecim = secilen && sik.dogruMu
   const yanlisSecim = secilen && !sik.dogruMu
+  /** Yanlış seçildiğinde doğrusu da işaretleniyor — öğrenme burada oluyor. */
+  const isaretli = acikta && !secilen && sik.dogruMu
 
   return (
     <button
@@ -288,18 +361,19 @@ function SikDugmesi({
       onClick={onSec}
       disabled={acikta}
       className={cn(
-        'flex w-full items-center justify-center gap-2 rounded-2xl border-2 px-4 py-6 text-center',
-        'font-display text-xl font-semibold leading-snug transition',
+        'golge-kart flex min-h-[62px] w-full items-center justify-center gap-2 rounded-[20px] border-2 px-4 py-3',
+        'font-display text-lg font-extrabold leading-snug transition',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        !acikta && 'border-border bg-card active:bg-muted',
-        acikta && sik.dogruMu && 'border-success bg-success/12 text-success',
-        yanlisSecim && 'border-danger bg-danger/12 text-danger',
-        acikta && !sik.dogruMu && !secilen && 'border-border bg-card opacity-45',
+        !acikta && 'border-border bg-card active:brightness-95',
+        dogruSecim && 'border-success bg-success text-white',
+        yanlisSecim && 'border-ikincil bg-ikincil text-white',
+        isaretli && 'border-success bg-card text-success',
+        acikta && !secilen && !sik.dogruMu && 'border-border bg-card opacity-45',
       )}
     >
       <span className="min-w-0 break-words">{sik.metin}</span>
-      {acikta && sik.dogruMu && <Check size={20} className="shrink-0" aria-hidden />}
-      {yanlisSecim && <X size={20} className="shrink-0" aria-hidden />}
+      {(dogruSecim || isaretli) && <Check size={19} className="shrink-0" aria-hidden />}
+      {yanlisSecim && <X size={19} className="shrink-0" aria-hidden />}
     </button>
   )
 }
@@ -307,74 +381,61 @@ function SikDugmesi({
 function SonucGorunumu({
   sonuc,
   rekor,
+  bankaTuru,
   onTekrar,
   onCik,
 }: {
   sonuc: { ozet: TurOzeti<YazimSorusu>; yeniRekor: boolean }
   rekor: number
+  bankaTuru: boolean
   onTekrar: () => void
   onCik: () => void
 }) {
   const { ozet, yeniRekor } = sonuc
-  const yuzde = Math.round(ozet.oran * 100)
+  const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
+  const kalan = ozet.yanlislar.length - gorunen.length
 
   return (
-    <div className="flex-1 py-4">
-      <div className="flex flex-col items-center text-center">
-        <Rabi
-          durum={yeniRekor || ozet.hatasiz ? 'kutlama' : ozet.oran >= 0.6 ? 'mutlu' : 'normal'}
-          boyut={104}
-        />
-        <p className="mt-2 font-display text-2xl font-semibold tracking-tight">
-          {yeniRekor ? 'Yeni rekor!' : 'Süre bitti'}
-        </p>
-        {ozet.hatasiz && (
-          <p className="mt-1 text-sm text-success">Hiç yanlışın yok — hatasız tur.</p>
-        )}
-      </div>
-
-      <div className="mt-4 grid grid-cols-4 gap-2">
-        <Deger className="px-2" etiket="Doğru" deger={String(ozet.dogru)} vurgu />
-        <Deger className="px-2" etiket="Yanlış" deger={String(ozet.yanlis)} />
-        <Deger className="px-2" etiket="Seri" deger={String(ozet.enIyiSeri)} />
-        <Deger className="px-2" etiket="Başarı" deger={`%${yuzde}`} altNot={`rekor ${rekor}`} />
-      </div>
-
+    <TurSonu
+      oyunId="yazim"
+      dogru={ozet.dogru}
+      yanlis={ozet.yanlis}
+      enIyiSeri={ozet.enIyiSeri}
+      rekor={rekor}
+      yeniRekor={yeniRekor}
+      bankaTuru={bankaTuru}
+      altBaslik={
+        bankaTuru
+          ? 'Banka soruları — üst üste üç doğruda düşerler.'
+          : rekorCumlesi(ozet.dogru, rekor, yeniRekor, 'doğru')
+      }
+      bolumBasligi="Karıştırdıkların"
+      bolumAltYazisi="Yazım kuralıyla birlikte — asıl öğrenme burada."
+      onTekrar={onTekrar}
+      onCik={onCik}
+    >
       {ozet.yanlislar.length > 0 && (
-        <section className="mt-5">
-          <h2 className="mb-2 text-sm font-medium text-muted-foreground">Yanlış bildiklerin</h2>
-          <ul className="space-y-2">
-            {ozet.yanlislar.map((yanlis) => (
-              <li key={yanlis.dogru} className="rounded-2xl border border-border bg-card p-3">
-                <p className="font-medium">
-                  <span className="text-success">{yanlis.dogru}</span>{' '}
-                  <span className="text-sm text-muted-foreground line-through">
-                    {yanlis.yanlis}
-                  </span>
-                </p>
-                <p className="mt-1 text-xs leading-snug text-muted-foreground">
-                  {KURAL_ADI[yanlis.kural]} — {KURAL_ACIKLAMASI[yanlis.kural]}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+        <div className="flex flex-none flex-col gap-2">
+          {gorunen.map((yanlis, sira) => (
+            <YanlisKarti key={`${yanlis.dogru}-${sira}`} oyunId="yazim">
+              <b className="block font-display text-[13.5px] font-extrabold leading-tight">
+                {yanlis.dogru}
+              </b>
+              <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
+                Sen <s className="text-ikincil">{yanlis.yanlis}</s> dedin
+              </span>
+              {/* Kuralın kendisi: doğrusunu ezberlemek yerine neden öyle
+                  yazıldığını bilmek, havuzdaki benzer kelimelerin hepsini
+                  birden çözüyor. */}
+              <span className="mt-1.5 block border-t border-border pt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
+                {KURAL_ADI[yanlis.kural]} · {KURAL_ACIKLAMASI[yanlis.kural]}
+              </span>
+            </YanlisKarti>
+          ))}
 
-      {ozet.toplam === 0 && (
-        <p className="mt-5 text-center text-sm text-muted-foreground">
-          Hiç cevap vermedin. Bir daha dene, süre {TUR_SURESI} saniye.
-        </p>
+          {kalan > 0 && <KalanHapi kalan={kalan} />}
+        </div>
       )}
-
-      <div className="mt-6 flex gap-2 pb-2">
-        <Buton bicim="ikincil" className="flex-1" onClick={onCik}>
-          Çık
-        </Buton>
-        <Buton className="flex-1" onClick={onTekrar}>
-          <RotateCcw size={16} aria-hidden /> Tekrar oyna
-        </Buton>
-      </div>
-    </div>
+    </TurSonu>
   )
 }

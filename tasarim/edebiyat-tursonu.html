@@ -1,0 +1,1230 @@
+<title>Edebiyat ve Tur Sonu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap">
+
+<style>
+  /* ----------------------------------------------------------------------
+     Sayfa zemini — mockup'ın *etrafı*. Okuyanın temasına uyuyor.
+     Telefonların içi bilerek sabit: incelediğimiz tasarım o.
+     ---------------------------------------------------------------------- */
+  :root {
+    --sayfa: #E4E8F3;
+    --sayfa-kart: #FFFFFF;
+    --sayfa-metin: #232A3D;
+    --sayfa-soluk: #67708A;
+    --sayfa-cizgi: #D2D8E8;
+    --sayfa-vurgu: #4A8FE7;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --sayfa: #14161D;
+      --sayfa-kart: #1C1F29;
+      --sayfa-metin: #E6E9F2;
+      --sayfa-soluk: #99A1B5;
+      --sayfa-cizgi: #2B3040;
+      --sayfa-vurgu: #7FB2F0;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --sayfa: #14161D;
+    --sayfa-kart: #1C1F29;
+    --sayfa-metin: #E6E9F2;
+    --sayfa-soluk: #99A1B5;
+    --sayfa-cizgi: #2B3040;
+    --sayfa-vurgu: #7FB2F0;
+  }
+
+  /* ---------------------------- Uygulama paleti ------------------------ */
+  :root {
+    --kart: #FFFFFF;
+    --metin: #1B2440;
+    --soluk: #7A8399;
+    --mavi: #4A8FE7;
+    --mercan: #EF5A52;
+    --yesil: #3E9B63;
+    --yesil-soft: #E3F3E7;
+    --ayrac: #EEF1F8;
+    --kart-golge: 0 6px 20px rgba(38, 58, 110, 0.07);
+
+    /* Oyun aileleri — Oyunlar sekmesindeki kart renkleriyle aynı */
+    --edb-koyu: #6C55C4;
+    --edb-orta: #8570DA;
+    --edb-acik: #F0ECFB;
+    --yzm-koyu: #C24A60;
+    --yzm-acik: #FCE7EA;
+    --isl-koyu: #B57D1E;
+    --isl-acik: #FBF2DC;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--sayfa);
+    color: var(--sayfa-metin);
+    font-family: Nunito, "Segoe UI", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sayfa {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 40px 24px 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+  }
+
+  .ust h1 {
+    margin: 0 0 6px;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .ust p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    font-weight: 500;
+    color: var(--sayfa-soluk);
+    max-width: 68ch;
+  }
+
+  .telefonlar {
+    display: flex;
+    gap: 26px;
+    overflow-x: auto;
+    padding: 4px 4px 14px;
+    scrollbar-width: thin;
+  }
+
+  .yuva { flex: none; display: flex; flex-direction: column; gap: 10px; }
+
+  .yuva-ad {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--sayfa-soluk);
+    text-align: center;
+  }
+
+  /* ---------------------------- Telefon çerçevesi ---------------------- */
+
+  .telefon {
+    width: 372px;
+    height: 780px;
+    border: 9px solid #10131C;
+    border-radius: 46px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 26px 60px rgba(20, 30, 60, 0.24);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ekran {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 26px 18px 22px;
+  }
+
+  /* ---------------------------- Oyun üst çubuğu ------------------------ */
+
+  .oyun-ust {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .kapat {
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 0;
+    background: rgba(27, 36, 64, 0.07);
+    color: var(--metin);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .kapat svg { width: 17px; height: 17px; }
+  .kapat:focus-visible { outline: 2px solid var(--metin); outline-offset: 2px; }
+
+  .oyun-ad {
+    flex: 1;
+    text-align: center;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: var(--metin);
+    letter-spacing: -0.2px;
+  }
+
+  .seri {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 30px;
+    padding: 0 11px;
+    border-radius: 999px;
+    background: var(--mercan);
+    color: #FFFFFF;
+    font-size: 12.5px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------------------------- Süre satırı ---------------------------- */
+
+  .sure-satiri {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .halka { flex: none; position: relative; width: 54px; height: 54px; }
+  .halka svg { width: 54px; height: 54px; transform: rotate(-90deg); display: block; }
+
+  .halka b {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 17px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cubuk {
+    flex: 1;
+    height: 9px;
+    border-radius: 999px;
+    background: rgba(27, 36, 64, 0.09);
+    overflow: hidden;
+  }
+  .cubuk span { display: block; height: 100%; border-radius: 999px; }
+
+  .sayilar {
+    flex: none;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--ayrac);
+  }
+
+  .sayi { text-align: center; }
+
+  .sayi b {
+    display: block;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--metin);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+
+  .sayi span {
+    display: block;
+    margin-top: 2px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #A2AABC;
+  }
+
+  .sayi.dogru b { color: var(--yesil); }
+  .sayi.yanlis b { color: var(--mercan); }
+
+  /* ---------------------------- Edebiyat: dönem ------------------------ */
+
+  .donem {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 11.5px;
+    font-weight: 800;
+    color: var(--edb-koyu);
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+  }
+  .donem svg { width: 13px; height: 13px; }
+
+  /* ---------------------------- Edebiyat: ızgaralar -------------------- */
+
+  .edb-govde {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 10px;
+  }
+
+  .grup-ad {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    color: #A2AABC;
+    padding-left: 2px;
+  }
+
+  .izgara {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  /* Kart yüksekliği sabit: eser adları çok farklı uzunlukta ("Bomba" ile
+     "Türkçülüğün Esasları") ve serbest bıraksaydım ızgara her elde
+     zıplardı. */
+  .parca {
+    min-height: 54px;
+    border-radius: 15px;
+    border: 2px solid var(--ayrac);
+    background: var(--kart);
+    color: var(--metin);
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 800;
+    line-height: 1.25;
+    padding: 6px 9px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(38, 58, 110, 0.05);
+  }
+  .parca:focus-visible { outline: 2px solid var(--edb-koyu); outline-offset: 2px; }
+
+  /* Seçili eser: yazarı bekliyor. */
+  .parca.secili {
+    border-color: var(--edb-koyu);
+    background: var(--edb-acik);
+    color: var(--edb-koyu);
+  }
+
+  /* Eşleşmiş çift: yerinde kalıyor, sönüyor ve tıklanamaz oluyor. */
+  .parca.eslesti {
+    border-color: transparent;
+    background: var(--yesil-soft);
+    color: #2C7548;
+    box-shadow: none;
+    cursor: default;
+  }
+
+  .parca.eslesti::after {
+    content: "✓";
+    margin-left: 5px;
+    font-size: 12px;
+  }
+
+  /* Yanlış eşleştirme — kısa bir an kırmızı yanıp sönüyor. */
+  .parca.hatali {
+    border-color: var(--mercan);
+    background: #FDE9E8;
+    color: #B9382F;
+  }
+
+  .edb-ipucu {
+    margin: 0;
+    text-align: center;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--soluk);
+  }
+
+  /* ---------------------------- TUR SONU ------------------------------- */
+
+  .sonuc {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .sonuc::-webkit-scrollbar { display: none; }
+
+  .sonuc-ust {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 2px 2px 0;
+  }
+
+  .sonuc-ust svg.maskot { flex: none; width: 52px; height: 52px; }
+
+  .sonuc-ust h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--metin);
+    letter-spacing: -0.4px;
+  }
+
+  .sonuc-ust p {
+    margin: 2px 0 0;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--soluk);
+  }
+
+  /* Puan, rekorla birlikte tek bir çubukta.
+     Rakamı tek başına göstermek "iyi mi kötü mü" sorusunu cevapsız
+     bırakıyordu; rekor çizgisi ölçüyü veriyor. */
+  .puan-kart {
+    flex: none;
+    background: var(--kart);
+    border-radius: 20px;
+    padding: 14px 16px 16px;
+    box-shadow: var(--kart-golge);
+  }
+
+  .puan-satir {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .puan-satir b {
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--metin);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .puan-satir b span {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--soluk);
+    margin-left: 5px;
+  }
+
+  .rozet-rekor {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: #FDF3E0;
+    color: #A9781F;
+    font-size: 11.5px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  /* Rekor kırıldığında rozet doluyor — tek kutlama işareti bu. */
+  .rozet-rekor.yeni {
+    background: #E9A227;
+    color: #FFFFFF;
+  }
+
+  .olcek {
+    margin-top: 12px;
+    height: 10px;
+    border-radius: 999px;
+    background: var(--ayrac);
+    position: relative;
+    overflow: visible;
+  }
+
+  .olcek .dolu {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--edb-orta);
+  }
+
+  /* Rekor çizgisi — bu turun rekorun neresinde durduğunu gösteriyor. */
+  .olcek .cizgi {
+    position: absolute;
+    top: -5px;
+    bottom: -5px;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--metin);
+  }
+
+  /* Rekor kırılınca çizgi geride kalıyor ve soluyor — artık hedef değil. */
+  .olcek .cizgi.eski { background: #C2C9D8; }
+
+  .olcek-yazi {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--soluk);
+  }
+
+  .sonuc-sayilar {
+    flex: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .kutu {
+    background: var(--kart);
+    border-radius: 16px;
+    padding: 11px 8px;
+    text-align: center;
+    box-shadow: var(--kart-golge);
+  }
+
+  .kutu b {
+    display: block;
+    font-size: 18px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+
+  .kutu span {
+    display: block;
+    margin-top: 2px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #A2AABC;
+  }
+
+  /* --- Yanlış listesi: ekranın asıl işi --- */
+
+  .bolum-ad {
+    flex: none;
+    margin: 4px 0 0;
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--metin);
+  }
+
+  .bolum-ad span {
+    display: block;
+    margin-top: 1px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--soluk);
+  }
+
+  .yanlis-liste {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .yanlis-kart {
+    background: var(--kart);
+    border-radius: 16px;
+    padding: 11px 13px;
+    box-shadow: var(--kart-golge);
+    border-left: 4px solid var(--mercan);
+  }
+
+  .yanlis-kart b {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--metin);
+    line-height: 1.25;
+  }
+
+  .yanlis-kart .dogrusu {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #2C7548;
+  }
+  .yanlis-kart .dogrusu svg { flex: none; width: 13px; height: 13px; }
+
+  .yanlis-kart .secilen {
+    display: block;
+    margin-top: 2px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--soluk);
+  }
+
+  .yanlis-kart .secilen s { color: #B9382F; text-decoration-thickness: 1.5px; }
+
+  /* Yazımda kartın altına kuralın kendisi giriyor. */
+  .yanlis-kart .kural {
+    display: block;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--ayrac);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--soluk);
+  }
+
+  /* İşlemde soru bir ifade; doğru sonuç ifadenin içinde yeşil. */
+  .yanlis-kart b.islem {
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+  }
+  .yanlis-kart b.islem em { font-style: normal; color: #2C7548; }
+
+  /* --- İşlem türü dağılımı --- */
+
+  .tur-dagilim {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    background: var(--kart);
+    border-radius: 16px;
+    padding: 12px 13px;
+    box-shadow: var(--kart-golge);
+  }
+
+  .tur-satir {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--metin);
+  }
+
+  .tur-ad {
+    flex: none;
+    width: 96px;
+    line-height: 1.2;
+  }
+
+  .tur-cubuk {
+    flex: 1;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--ayrac);
+    overflow: hidden;
+  }
+  .tur-cubuk span { display: block; height: 100%; border-radius: 999px; }
+
+  .tur-sayi {
+    flex: none;
+    width: 14px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tur-satir.sifir { color: #A2AABC; }
+  .tur-satir.sifir .tur-ad { font-weight: 600; }
+
+  /* "ve N tane daha" — listenin devamı Oyun Bankası'nda. */
+  .kalan {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    height: 40px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1.5px dashed #CFD5E2;
+    color: var(--soluk);
+    font-size: 12.5px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+  .kalan svg { width: 14px; height: 14px; }
+  .kalan:focus-visible { outline: 2px solid var(--soluk); outline-offset: 2px; }
+
+  .sonuc-dugmeler {
+    flex: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+    padding-top: 4px;
+  }
+
+  .dugme {
+    height: 48px;
+    border-radius: 17px;
+    border: 0;
+    font-family: inherit;
+    font-size: 14.5px;
+    font-weight: 800;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+  .dugme:focus-visible { outline: 2px solid var(--edb-koyu); outline-offset: 2px; }
+
+  .dugme.ana {
+    background: var(--edb-koyu);
+    color: #FFFFFF;
+    box-shadow: 0 8px 18px rgba(108, 85, 196, 0.28);
+  }
+
+  .dugme.yan {
+    background: var(--kart);
+    color: var(--metin);
+    box-shadow: var(--kart-golge);
+  }
+
+  /* ---------------------------- Not panelleri -------------------------- */
+
+  .notlar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+  }
+
+  .blok {
+    background: var(--sayfa-kart);
+    border: 1px solid var(--sayfa-cizgi);
+    border-radius: 18px;
+    padding: 18px 20px;
+  }
+
+  .blok h3 {
+    margin: 0 0 12px;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: var(--sayfa-vurgu);
+  }
+
+  .blok ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 11px; }
+
+  .blok li {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--sayfa-metin);
+    font-weight: 500;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .blok li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--sayfa-vurgu);
+  }
+
+  .blok li b { font-weight: 800; }
+  .blok li span { color: var(--sayfa-soluk); }
+</style>
+
+<div class="sayfa">
+
+  <header class="ust">
+    <h1>Edebiyat Eşleştirme ve tur sonu</h1>
+    <p>
+      İkisi de videoda yok. Eşleştirme altılı bir ızgara, tur sonu ise bambaşka bir iş —
+      ikisini de sıfırdan kurdum; diğer oyunlarla ortak olan tek şey üst çubuk ve süre
+      satırı.
+    </p>
+  </header>
+
+  <div class="telefonlar">
+
+    <!-- =================== 1. Edebiyat Eşleştirme =================== -->
+    <div class="yuva">
+      <p class="yuva-ad">Edebiyat Eşleştirme</p>
+      <div class="telefon" style="background: var(--edb-acik);">
+        <div class="ekran">
+
+          <div class="oyun-ust">
+            <button class="kapat" type="button" aria-label="Turdan çık">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true">
+                <path d="m6 6 12 12M18 6 6 18"/>
+              </svg>
+            </button>
+            <span class="oyun-ad">Edebiyat Eşleştirme</span>
+            <span class="seri">🔥 3</span>
+          </div>
+
+          <div class="sure-satiri">
+            <div class="halka">
+              <svg viewBox="0 0 54 54" aria-hidden="true">
+                <circle cx="27" cy="27" r="23" fill="none" stroke="rgba(27,36,64,0.10)" stroke-width="5"/>
+                <circle cx="27" cy="27" r="23" fill="none" stroke="#6C55C4" stroke-width="5"
+                        stroke-linecap="round" stroke-dasharray="144.5" stroke-dashoffset="53"/>
+              </svg>
+              <b style="color: #6C55C4;">38</b>
+            </div>
+            <div class="cubuk"><span style="width: 63%; background: #6C55C4;"></span></div>
+          </div>
+
+          <div class="sayilar">
+            <div class="sayi dogru"><b>3</b><span>Doğru</span></div>
+            <div class="sayi yanlis"><b>1</b><span>Yanlış</span></div>
+            <div class="sayi"><b>3</b><span>Seri</span></div>
+            <div class="sayi"><b>11</b><span>Rekor</span></div>
+          </div>
+
+          <!-- Elin dönemi. Uygulamada el mümkün olduğunca tek dönemden
+               kuruluyor; bunu söylemek öğrenciye bağlam veriyor. -->
+          <p class="donem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H5.5A1.5 1.5 0 0 1 4 15.5v-10Z"/>
+              <path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H14a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h4.5a1.5 1.5 0 0 0 1.5-1.5v-10Z"/>
+            </svg>
+            Millî Edebiyat
+          </p>
+
+          <div class="edb-govde">
+
+            <p class="grup-ad">Eserler</p>
+            <div class="izgara">
+              <button class="parca eslesti" type="button">Kaşağı</button>
+              <button class="parca" type="button">Yaban</button>
+              <button class="parca secili" type="button">Çalıkuşu</button>
+              <button class="parca eslesti" type="button">Safahat</button>
+              <button class="parca" type="button">Türkçülüğün Esasları</button>
+              <button class="parca eslesti" type="button">Ateşten Gömlek</button>
+            </div>
+
+            <p class="grup-ad">Yazarlar</p>
+            <div class="izgara">
+              <button class="parca" type="button">Yakup Kadri Karaosmanoğlu</button>
+              <button class="parca eslesti" type="button">Ömer Seyfettin</button>
+              <button class="parca" type="button">Reşat Nuri Güntekin</button>
+              <button class="parca eslesti" type="button">Halide Edib Adıvar</button>
+              <button class="parca eslesti" type="button">Mehmet Âkif Ersoy</button>
+              <button class="parca" type="button">Ziya Gökalp</button>
+            </div>
+
+            <p class="edb-ipucu">Şimdi yazarına dokun</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== 2. Tur sonu =================== -->
+    <div class="yuva">
+      <p class="yuva-ad">Tur sonu</p>
+      <div class="telefon" style="background: var(--edb-acik);">
+        <div class="ekran">
+
+          <div class="oyun-ust">
+            <button class="kapat" type="button" aria-label="Kapat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true">
+                <path d="m6 6 12 12M18 6 6 18"/>
+              </svg>
+            </button>
+            <span class="oyun-ad">Edebiyat Eşleştirme</span>
+            <span style="width: 36px;" aria-hidden="true"></span>
+          </div>
+
+          <div class="sonuc">
+
+            <div class="sonuc-ust">
+              <svg class="maskot" viewBox="0 0 64 64" aria-label="Rabi">
+                <ellipse cx="24" cy="17" rx="6" ry="13" fill="#FFFFFF" stroke="#1B2440" stroke-width="2.4" transform="rotate(-9 24 17)"/>
+                <ellipse cx="40" cy="17" rx="6" ry="13" fill="#FFFFFF" stroke="#1B2440" stroke-width="2.4" transform="rotate(9 40 17)"/>
+                <ellipse cx="24" cy="18" rx="2.6" ry="7.5" fill="#F6D2DA" transform="rotate(-9 24 18)"/>
+                <ellipse cx="40" cy="18" rx="2.6" ry="7.5" fill="#F6D2DA" transform="rotate(9 40 18)"/>
+                <circle cx="32" cy="41" r="17" fill="#FFFFFF" stroke="#1B2440" stroke-width="2.4"/>
+                <circle cx="20" cy="45" r="4" fill="#F9DDE3"/>
+                <circle cx="44" cy="45" r="4" fill="#F9DDE3"/>
+                <path d="M22 39.5q3.2 4 6.4 0" fill="none" stroke="#1B2440" stroke-width="2.6" stroke-linecap="round"/>
+                <path d="M35.6 39.5q3.2 4 6.4 0" fill="none" stroke="#1B2440" stroke-width="2.6" stroke-linecap="round"/>
+                <path d="M32 46.5 29.6 44h4.8Z" fill="#EF8C9E"/>
+                <path d="M32 46.5v2.2m0 0q-2.4 2.4-4.6 0m4.6 0q2.4 2.4 4.6 0" fill="none" stroke="#1B2440" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div>
+                <h2>Süre bitti</h2>
+                <p>Rekoruna 2 eşleştirme kaldı.</p>
+              </div>
+            </div>
+
+            <div class="puan-kart">
+              <div class="puan-satir">
+                <b>9<span>doğru</span></b>
+                <span class="rozet-rekor">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/>
+                    <path d="M7 5.5H4.5V7a3.5 3.5 0 0 0 3 3.4M17 5.5h2.5V7a3.5 3.5 0 0 1-3 3.4"/>
+                    <path d="M9.5 20h5M12 14v6"/>
+                  </svg>
+                  Rekor 11
+                </span>
+              </div>
+
+              <div class="olcek">
+                <span class="dolu" style="width: 62%;"></span>
+                <span class="cizgi" style="left: 76%;"></span>
+              </div>
+
+              <div class="olcek-yazi">
+                <span>Bu tur 9</span>
+                <span>Rekorun 11</span>
+              </div>
+            </div>
+
+            <div class="sonuc-sayilar">
+              <div class="kutu">
+                <b style="color: var(--yesil);">9</b>
+                <span>Doğru</span>
+              </div>
+              <div class="kutu">
+                <b style="color: var(--mercan);">3</b>
+                <span>Yanlış</span>
+              </div>
+              <div class="kutu">
+                <b style="color: var(--metin);">5</b>
+                <span>En iyi seri</span>
+              </div>
+            </div>
+
+            <!-- Ekranın asıl işi. Puan bir turluk, yanlışlar kalıcı. -->
+            <p class="bolum-ad">
+              Karıştırdıkların
+              <span>Hepsi Oyun Bankası’na eklendi.</span>
+            </p>
+
+            <div class="yanlis-liste">
+              <div class="yanlis-kart">
+                <b>Kiralık Konak</b>
+                <span class="dogrusu">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m5 12.5 4.5 4.5L19 7"/>
+                  </svg>
+                  Yakup Kadri Karaosmanoğlu
+                </span>
+                <span class="secilen">Sen <s>Reşat Nuri Güntekin</s> dedin</span>
+              </div>
+
+              <div class="yanlis-kart">
+                <b>Yalnız Efe</b>
+                <span class="dogrusu">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m5 12.5 4.5 4.5L19 7"/>
+                  </svg>
+                  Ömer Seyfettin
+                </span>
+                <span class="secilen">Sen <s>Refik Halit Karay</s> dedin</span>
+              </div>
+
+              <div class="yanlis-kart">
+                <b>Kendi Gök Kubbemiz</b>
+                <span class="dogrusu">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m5 12.5 4.5 4.5L19 7"/>
+                  </svg>
+                  Yahya Kemal Beyatlı
+                </span>
+                <span class="secilen">Sen <s>Mehmet Âkif Ersoy</s> dedin</span>
+              </div>
+
+              <!-- Liste beşte kesiliyor. On yanlıştan sonrası okunmuyor zaten;
+                   tamamı Oyun Bankası'nda duruyor. -->
+              <a class="kalan" href="#">
+                ve 5 tane daha
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="m9 5 7 7-7 7"/>
+                </svg>
+              </a>
+            </div>
+
+            <div class="sonuc-dugmeler">
+              <button class="dugme yan" type="button">Bitir</button>
+              <button class="dugme ana" type="button">Bir tur daha</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== 3. Yazım Ustası — tur sonu =================== -->
+    <div class="yuva">
+      <p class="yuva-ad">Yazım Ustası · tur sonu</p>
+      <div class="telefon" style="background: var(--yzm-acik);">
+        <div class="ekran">
+
+          <div class="oyun-ust">
+            <button class="kapat" type="button" aria-label="Kapat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true">
+                <path d="m6 6 12 12M18 6 6 18"/>
+              </svg>
+            </button>
+            <span class="oyun-ad">Yazım Ustası</span>
+            <span style="width: 36px;" aria-hidden="true"></span>
+          </div>
+
+          <div class="sonuc">
+
+            <div class="sonuc-ust">
+              <svg class="maskot" viewBox="0 0 64 64" aria-label="Rabi">
+                <ellipse cx="24" cy="17" rx="6" ry="13" fill="#FFFFFF" stroke="#1B2440" stroke-width="2.4" transform="rotate(-9 24 17)"/>
+                <ellipse cx="40" cy="17" rx="6" ry="13" fill="#FFFFFF" stroke="#1B2440" stroke-width="2.4" transform="rotate(9 40 17)"/>
+                <ellipse cx="24" cy="18" rx="2.6" ry="7.5" fill="#F6D2DA" transform="rotate(-9 24 18)"/>
+                <ellipse cx="40" cy="18" rx="2.6" ry="7.5" fill="#F6D2DA" transform="rotate(9 40 18)"/>
+                <circle cx="32" cy="41" r="17" fill="#FFFFFF" stroke="#1B2440" stroke-width="2.4"/>
+                <circle cx="20" cy="45" r="4" fill="#F9DDE3"/>
+                <circle cx="44" cy="45" r="4" fill="#F9DDE3"/>
+                <path d="M23 39.5 27.5 42 23 44.5" fill="none" stroke="#1B2440" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M41 39.5 36.5 42 41 44.5" fill="none" stroke="#1B2440" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M32 47.5 29.6 45h4.8Z" fill="#EF8C9E"/>
+                <path d="M27 50q5 4 10 0" fill="none" stroke="#1B2440" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+              <div>
+                <h2>Yeni rekor!</h2>
+                <p>Önceki rekorun 21’di.</p>
+              </div>
+            </div>
+
+            <div class="puan-kart">
+              <div class="puan-satir">
+                <b>24<span>doğru</span></b>
+                <span class="rozet-rekor yeni">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/>
+                    <path d="M7 5.5H4.5V7a3.5 3.5 0 0 0 3 3.4M17 5.5h2.5V7a3.5 3.5 0 0 1-3 3.4"/>
+                    <path d="M9.5 20h5M12 14v6"/>
+                  </svg>
+                  +3 rekor
+                </span>
+              </div>
+
+              <div class="olcek">
+                <span class="dolu" style="width: 83%; background: #C24A60;"></span>
+                <span class="cizgi eski" style="left: 72%;"></span>
+              </div>
+
+              <div class="olcek-yazi">
+                <span>Bu tur 24</span>
+                <span>Eski rekorun 21</span>
+              </div>
+            </div>
+
+            <div class="sonuc-sayilar">
+              <div class="kutu"><b style="color: var(--yesil);">24</b><span>Doğru</span></div>
+              <div class="kutu"><b style="color: var(--mercan);">2</b><span>Yanlış</span></div>
+              <div class="kutu"><b style="color: var(--metin);">14</b><span>En iyi seri</span></div>
+            </div>
+
+            <p class="bolum-ad">
+              Karıştırdıkların
+              <span>Yazım kuralıyla birlikte — asıl öğrenme burada.</span>
+            </p>
+
+            <div class="yanlis-liste">
+              <!-- Yazımda yanlış kartı bir fazlasını taşıyor: kuralın kendisi.
+                   Doğrusunu ezberlemek yerine neden öyle yazıldığını bilmek,
+                   havuzdaki benzer kelimelerin hepsini birden çözüyor. -->
+              <div class="yanlis-kart" style="border-left-color: var(--yzm-koyu);">
+                <b>herkes</b>
+                <span class="secilen">Sen <s>herkez</s> dedin</span>
+                <span class="kural">Ses ve harf · Kelime söylendiği gibi değil, kökündeki sesle yazılır.</span>
+              </div>
+
+              <div class="yanlis-kart" style="border-left-color: var(--yzm-koyu);">
+                <b>yalnız</b>
+                <span class="secilen">Sen <s>yanlız</s> dedin</span>
+                <span class="kural">Ses ve harf · “Yalnız” ile “yanlış” ayrı kelimeler; harfleri yer değiştirmiyor.</span>
+              </div>
+            </div>
+
+            <div class="sonuc-dugmeler">
+              <button class="dugme yan" type="button">Bitir</button>
+              <button class="dugme ana" type="button" style="background: var(--yzm-koyu); box-shadow: 0 8px 18px rgba(194, 74, 96, 0.28);">Bir tur daha</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== 4. Zihinden İşlem — tur sonu =================== -->
+    <div class="yuva">
+      <p class="yuva-ad">Zihinden İşlem · tur sonu</p>
+      <div class="telefon" style="background: var(--isl-acik);">
+        <div class="ekran">
+
+          <div class="oyun-ust">
+            <button class="kapat" type="button" aria-label="Kapat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true">
+                <path d="m6 6 12 12M18 6 6 18"/>
+              </svg>
+            </button>
+            <span class="oyun-ad">Zihinden İşlem</span>
+            <span style="width: 36px;" aria-hidden="true"></span>
+          </div>
+
+          <div class="sonuc">
+
+            <div class="sonuc-ust">
+              <svg class="maskot" viewBox="0 0 64 64" aria-label="Rabi">
+                <ellipse cx="24" cy="17" rx="6" ry="13" fill="#FFFFFF" stroke="#1B2440" stroke-width="2.4" transform="rotate(-9 24 17)"/>
+                <ellipse cx="40" cy="17" rx="6" ry="13" fill="#FFFFFF" stroke="#1B2440" stroke-width="2.4" transform="rotate(9 40 17)"/>
+                <ellipse cx="24" cy="18" rx="2.6" ry="7.5" fill="#F6D2DA" transform="rotate(-9 24 18)"/>
+                <ellipse cx="40" cy="18" rx="2.6" ry="7.5" fill="#F6D2DA" transform="rotate(9 40 18)"/>
+                <circle cx="32" cy="41" r="17" fill="#FFFFFF" stroke="#1B2440" stroke-width="2.4"/>
+                <circle cx="20" cy="45" r="4" fill="#F9DDE3"/>
+                <circle cx="44" cy="45" r="4" fill="#F9DDE3"/>
+                <circle cx="26" cy="40" r="2.2" fill="#1B2440"/>
+                <circle cx="38" cy="40" r="2.2" fill="#1B2440"/>
+                <path d="M32 46.5 29.6 44h4.8Z" fill="#EF8C9E"/>
+                <path d="M28.5 50.5h7" fill="none" stroke="#1B2440" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+              <div>
+                <h2>Süre bitti</h2>
+                <p>Bölme seni yavaşlatıyor.</p>
+              </div>
+            </div>
+
+            <div class="puan-kart">
+              <div class="puan-satir">
+                <b>14<span>doğru</span></b>
+                <span class="rozet-rekor">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/>
+                    <path d="M7 5.5H4.5V7a3.5 3.5 0 0 0 3 3.4M17 5.5h2.5V7a3.5 3.5 0 0 1-3 3.4"/>
+                    <path d="M9.5 20h5M12 14v6"/>
+                  </svg>
+                  Rekor 18
+                </span>
+              </div>
+
+              <div class="olcek">
+                <span class="dolu" style="width: 59%; background: #B57D1E;"></span>
+                <span class="cizgi" style="left: 76%;"></span>
+              </div>
+
+              <div class="olcek-yazi">
+                <span>Bu tur 14</span>
+                <span>Rekorun 18</span>
+              </div>
+            </div>
+
+            <div class="sonuc-sayilar">
+              <div class="kutu"><b style="color: var(--yesil);">14</b><span>Doğru</span></div>
+              <div class="kutu"><b style="color: var(--mercan);">4</b><span>Yanlış</span></div>
+              <div class="kutu"><b style="color: var(--metin);">7</b><span>En iyi seri</span></div>
+            </div>
+
+            <!-- İşlemde yanlışlar türe göre dağılıyor; hangi işlemde
+                 zorlandığını göstermek tek tek soruları saymaktan daha çok
+                 işe yarıyor. Başlıktaki cümle de buradan geliyor. -->
+            <p class="bolum-ad">
+              Nerede takıldın
+              <span>Dört yanlışın üçü bölmede.</span>
+            </p>
+
+            <div class="tur-dagilim">
+              <div class="tur-satir">
+                <span class="tur-ad">Bölme</span>
+                <span class="tur-cubuk"><span style="width: 75%; background: var(--mercan);"></span></span>
+                <span class="tur-sayi">3</span>
+              </div>
+              <div class="tur-satir">
+                <span class="tur-ad">Üslü sayılar</span>
+                <span class="tur-cubuk"><span style="width: 25%; background: var(--mercan);"></span></span>
+                <span class="tur-sayi">1</span>
+              </div>
+              <div class="tur-satir sifir">
+                <span class="tur-ad">Toplama · Çıkarma · Çarpma · Köklü</span>
+                <span class="tur-cubuk"><span style="width: 0;"></span></span>
+                <span class="tur-sayi">0</span>
+              </div>
+            </div>
+
+            <div class="yanlis-liste">
+              <div class="yanlis-kart" style="border-left-color: var(--isl-koyu);">
+                <b class="islem">156 ÷ 12 = <em>13</em></b>
+                <span class="secilen">Sen <s>16</s> yazdın</span>
+              </div>
+
+              <div class="yanlis-kart" style="border-left-color: var(--isl-koyu);">
+                <b class="islem">2³ · 2⁴ = <em>128</em></b>
+                <span class="secilen">Sen <s>64</s> yazdın</span>
+              </div>
+
+              <a class="kalan" href="#">
+                ve 2 tane daha
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="m9 5 7 7-7 7"/>
+                </svg>
+              </a>
+            </div>
+
+            <div class="sonuc-dugmeler">
+              <button class="dugme yan" type="button">Bitir</button>
+              <button class="dugme ana" type="button" style="background: var(--isl-koyu); box-shadow: 0 8px 18px rgba(181, 125, 30, 0.28);">Bir tur daha</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notlar">
+
+    <section class="blok">
+      <h3>Edebiyat Eşleştirme</h3>
+      <ul>
+        <li><b>Altı eser üstte, altı yazar altta.</b> Bir esere, sonra yazarına dokunuyorsun; sıra fark etmiyor.</li>
+        <li><b>Eşleşen çift yerinde kalıyor</b>, yeşile dönüyor ve tıklanamaz oluyor. Kaybolsaydı ızgara her doğruda yeniden dizilir, gözün yerini kaybederdi.</li>
+        <li><b>Dönem başlıkta yazıyor.</b> Uygulamada el mümkün olduğunca tek dönemden kuruluyor — “Millî Edebiyat” demek öğrenciye bağlam veriyor, aynı zamanda oyunun neden zor olduğunu açıklıyor: aynı dönemden altı isim, çağrışımla değil bilerek eşleştirmeyi gerektiriyor.</li>
+        <li><b>Kart yüksekliği sabit.</b> Eser adları çok farklı uzunlukta — “Bomba” ile “Muhakemetü’l-Lugateyn” yan yana geliyor. Serbest bıraksaydım ızgara her elde zıplardı.</li>
+        <li><b>Seçili eser mor.</b> Alttaki ipucu “Şimdi yazarına dokun” diyor; iki adımlı bir işlemde ilk adımdan sonra ne olacağını söylemek gerekiyor.</li>
+      </ul>
+    </section>
+
+    <section class="blok">
+      <h3>Tur sonu — neden böyle</h3>
+      <ul>
+        <li><b>Puan tek başına bir şey söylemiyor.</b> “9 doğru” iyi mi kötü mü? Rekor çizgisi ölçüyü veriyor: çubuk bu turu, siyah çizgi rekoru gösteriyor. Aradaki boşluk “2 eşleştirme kaldı” demek.</li>
+        <li><b>Asıl iş yanlış listesi.</b> Puan bir turluk, yanlışlar kalıcı. O yüzden ekranın en büyük payı orada ve her kart üçünü birden söylüyor: soru, doğru cevap, senin dediğin.</li>
+        <li><b>“Sen … dedin” üstü çizili.</b> Yalnızca doğruyu göstermek yetmiyor; yanlışı da görmek hatanın nereden geldiğini anlatıyor.</li>
+        <li><b>Kutlama abartılmadı.</b> Konfeti, kupa yağmuru, büyük rozet yok. Her turda patlayan bir kutlama üçüncü turda anlamını yitiriyor; rekor kırılınca başlık ve rozet değişiyor, o kadar.</li>
+        <li><b>“Bir tur daha” sağda ve dolu.</b> Oyunun devamı asıl istenen; “Bitir” yanında sade duruyor.</li>
+      </ul>
+    </section>
+
+    <section class="blok">
+      <h3>Videodan ayrılan yerler</h3>
+      <ul>
+        <li>Videoda tur sonu ekranı <b>hiç yok</b> — bu tamamen yeni.</li>
+        <li>Eşleştirme de yok; oradaki iki oyun tek soru–iki şık ve tuş takımı düzenindeydi, bu ise on iki parçalı bir ızgara.</li>
+        <li>Ortak bıraktığım tek şey <b>üst çubuk ve süre satırı</b>: aynı uygulamanın üç oyunu, oynarken aynı yerde aynı bilgiyi göstermeli.</li>
+      </ul>
+    </section>
+
+    <section class="blok">
+      <h3>Kararını beklediklerim</h3>
+      <ul>
+        <li><b>Yanlış listesi uzayabilir.</b> Burada üç tane var; on yanlış yapılırsa liste uzuyor. İlk beşi gösterip “ve 5 tane daha” demek ister misin?</li>
+        <li><b>Yanlışlar bankaya gitsin mi?</b> Oyunda karıştırdığın eser–yazar çiftini Yanlış Soru Bankası’na eklemek mantıklı olabilir — ama banka şu an fotoğraf tutuyor, metin tutmuyor.</li>
+        <li><b>Rekor kırıldığında</b> başlık “Yeni rekor!” oluyor ve maskot kutlama hâline geçiyor. Ayrıca bir ses/titreşim ister misin?</li>
+        <li><b>Beş ekran bitti.</b> Ana Sayfa · Oyunlar · Daha · Ayarlar · oyun ekranları. Entegrasyona geçelim mi?</li>
+      </ul>
+    </section>
+  </div>
+</div>

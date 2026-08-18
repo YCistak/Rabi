@@ -14,19 +14,19 @@
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="432" height="432">
   <g transform="translate(54 54) scale(0.53) translate(-60 -59)">
-    <ellipse cx="44" cy="34" rx="11" ry="30" fill="#f5ece2" transform="rotate(-8 44 34)"/>
-    <ellipse cx="44" cy="36" rx="5.5" ry="21" fill="#e6b9a2" transform="rotate(-8 44 36)"/>
-    <ellipse cx="76" cy="34" rx="11" ry="30" fill="#f5ece2" transform="rotate(8 76 34)"/>
-    <ellipse cx="76" cy="36" rx="5.5" ry="21" fill="#e6b9a2" transform="rotate(8 76 36)"/>
-    <ellipse cx="60" cy="82" rx="36" ry="32" fill="#f5ece2"/>
-    <ellipse cx="34" cy="90" rx="8" ry="5.5" fill="#eec2ad" opacity=".8"/>
-    <ellipse cx="86" cy="90" rx="8" ry="5.5" fill="#eec2ad" opacity=".8"/>
-    <ellipse cx="47" cy="77" rx="5.5" ry="6.5" fill="#3a2f26"/>
-    <ellipse cx="73" cy="77" rx="5.5" ry="6.5" fill="#3a2f26"/>
+    <ellipse cx="44" cy="34" rx="11" ry="30" fill="#ffffff" transform="rotate(-8 44 34)"/>
+    <ellipse cx="44" cy="36" rx="5.5" ry="21" fill="#f6d2da" transform="rotate(-8 44 36)"/>
+    <ellipse cx="76" cy="34" rx="11" ry="30" fill="#ffffff" transform="rotate(8 76 34)"/>
+    <ellipse cx="76" cy="36" rx="5.5" ry="21" fill="#f6d2da" transform="rotate(8 76 36)"/>
+    <ellipse cx="60" cy="82" rx="36" ry="32" fill="#ffffff"/>
+    <ellipse cx="34" cy="90" rx="8" ry="5.5" fill="#f9dde3" opacity=".8"/>
+    <ellipse cx="86" cy="90" rx="8" ry="5.5" fill="#f9dde3" opacity=".8"/>
+    <ellipse cx="47" cy="77" rx="5.5" ry="6.5" fill="#1b2440"/>
+    <ellipse cx="73" cy="77" rx="5.5" ry="6.5" fill="#1b2440"/>
     <circle cx="49" cy="74.5" r="2" fill="#fff"/>
     <circle cx="75" cy="74.5" r="2" fill="#fff"/>
-    <path d="M60 84 l-5 -4.5 h10 z" fill="#c46a4a"/>
-    <g stroke="#3a2f26" stroke-width="2" stroke-linecap="round" fill="none">
+    <path d="M60 84 l-5 -4.5 h10 z" fill="#ef8c9e"/>
+    <g stroke="#1b2440" stroke-width="2" stroke-linecap="round" fill="none">
       <path d="M60 84 v5"/>
       <path d="M60 89 q-7 4 -11 0"/>
       <path d="M60 89 q7 4 11 0"/>

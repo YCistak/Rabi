@@ -1,17 +1,14 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Space_Grotesk } from 'next/font/google'
+import { Nunito } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
-const inter = Inter({
+// Tasarımın tek yazı tipi. 400-900 arası kalınlıkların hepsi isteniyor:
+// başlıklar 800/900, gövde 500/600, ince yardımcı metinler 400.
+const nunito = Nunito({
   subsets: ['latin', 'latin-ext'],
-  variable: '--font-inter',
-  display: 'swap',
-})
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-space-grotesk',
+  weight: ['400', '500', '600', '700', '800', '900'],
+  variable: '--font-nunito',
   display: 'swap',
 })
 
@@ -47,26 +44,25 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
   colorScheme: 'light dark',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#fbf9f6' },
-    { media: '(prefers-color-scheme: dark)', color: '#131211' },
+    { media: '(prefers-color-scheme: light)', color: '#edf1fd' },
+    { media: '(prefers-color-scheme: dark)', color: '#12141c' },
   ],
 }
 
 /*
   Yazı tipi değişkenleri `<html>` üzerinde, `<body>` üzerinde **değil**.
 
-  Tailwind teması `--font-display`i `:root` üzerinde
-  `var(--font-space-grotesk), …` olarak tanımlıyor. Değişkenler `<body>`de
-  dururken bu tanım `:root`ta çözülemiyor, geçersiz değere düşüyor ve
-  `font-display` sınıfı hiçbir işe yaramıyordu — uygulama başlık yazı tipini
-  (Space Grotesk) hiç kullanmıyor, bütün başlıklar gövde yazı tipiyle çıkıyordu.
+  Tailwind teması `--font-display`i `:root` üzerinde `var(--font-nunito), …`
+  olarak tanımlıyor. Değişkenler `<body>`de dururken bu tanım `:root`ta
+  çözülemiyor, geçersiz değere düşüyor ve yazı tipi hiç uygulanmıyordu.
+  Nunito'ya geçince iki aile tek aileye indi ama kural değişmedi.
 */
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="tr"
       suppressHydrationWarning
-      className={`${inter.variable} ${spaceGrotesk.variable}`}
+      className={nunito.variable}
     >
       <head>
         {/* Tema sınıfı ilk boyamadan önce uygulanmazsa uygulama açılırken

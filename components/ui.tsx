@@ -11,10 +11,7 @@ export function Kart({
 }: React.ComponentProps<'div'>) {
   return (
     <div
-      className={cn(
-        'rounded-2xl border border-border bg-card p-4 text-card-foreground',
-        className,
-      )}
+      className={cn('golge-kart rounded-2xl bg-card p-4 text-card-foreground', className)}
       {...props}
     />
   )
@@ -45,7 +42,7 @@ export function Buton({
   return (
     <button
       className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-xl font-medium transition',
+        'inline-flex items-center justify-center gap-2 rounded-xl font-bold transition',
         'disabled:pointer-events-none disabled:opacity-45',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         butonBicimleri[bicim],
@@ -167,7 +164,7 @@ export function BaslikSatiri({
   if (ortala) {
     return (
       <div className="relative mb-4 px-12 text-center">
-        <h1 className="font-display text-2xl font-semibold tracking-tight">{baslik}</h1>
+        <h1 className="font-display text-2xl font-extrabold tracking-tight">{baslik}</h1>
         {aciklama && <p className="mt-0.5 text-sm text-muted-foreground">{aciklama}</p>}
         {sag && <div className="absolute right-0 top-0">{sag}</div>}
       </div>
@@ -177,7 +174,7 @@ export function BaslikSatiri({
   return (
     <div className="mb-4 flex items-end justify-between gap-3">
       <div>
-        <h1 className="font-display text-2xl font-semibold tracking-tight">{baslik}</h1>
+        <h1 className="font-display text-2xl font-extrabold tracking-tight">{baslik}</h1>
         {aciklama && <p className="mt-0.5 text-sm text-muted-foreground">{aciklama}</p>}
       </div>
       {sag}
@@ -225,7 +222,7 @@ export function Deger({
       <p className="text-xs text-muted-foreground">{etiket}</p>
       <p
         className={cn(
-          'font-display text-xl font-semibold',
+          'font-display text-xl font-extrabold',
           vurgu ? 'text-primary' : 'text-foreground',
         )}
       >
@@ -259,7 +256,7 @@ export function Onay({
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 px-4 pt-[calc(1rem+var(--guvenli-ust))] pb-[calc(1rem+var(--guvenli-alt))]">
       <div className="w-full max-w-md rounded-2xl border border-border bg-card p-5">
-        <p className="font-display text-lg font-semibold">{baslik}</p>
+        <p className="font-display text-lg font-extrabold">{baslik}</p>
         <p className="mt-1 text-sm text-muted-foreground">{aciklama}</p>
         <div className="mt-5 flex gap-2">
           <Buton bicim="ikincil" className="flex-1" onClick={onIptal}>
@@ -366,7 +363,7 @@ export function Cip({
       type="button"
       aria-pressed={secili}
       className={cn(
-        'rounded-full border px-3 py-1.5 text-sm font-medium transition',
+        'rounded-full border px-3 py-1.5 text-sm font-bold transition',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         secili
           ? 'border-primary bg-primary text-primary-foreground'
