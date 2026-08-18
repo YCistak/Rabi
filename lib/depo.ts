@@ -41,6 +41,13 @@ export const ANAHTARLAR = {
   oyunGecmisi: 'rabi-oyun-gecmisi',
   /** Oyun Bankası — mini oyunlarda karıştırılan sorular. */
   oyunBankasi: 'rabi-oyun-bankasi',
+  /**
+   * Oyun Bankası'ndan şimdiye kadar düşen toplam soru.
+   *
+   * Düşen kayıt bankadan siliniyor, yani geriye dönük sayılamıyor; rozet bu
+   * sayıya baktığı için ayrı bir sayaç olarak birikiyor.
+   */
+  bankaDusen: 'rabi-banka-dusen',
   /** Haftalık özetin hangi haftalarının izlendiği — hafta başı tarihlerinin listesi. */
   ozetGorulen: 'rabi-ozet-gorulen',
   /** Zihinden İşlem'de seçili işlem türleri — yedeğe girmeyen küçük bir tercih. */
@@ -276,6 +283,7 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       oyunlar: oyunKayitlariniCoz(nesne.oyunlar),
       oyunGecmisi: oyunGecmisiniCoz(nesne.oyunGecmisi),
       oyunBankasi: bankayiCoz(nesne.oyunBankasi),
+      bankaDusen: sayi(nesne.bankaDusen),
       pomodoroGecmis: dizi<PomodoroSeans>(nesne.pomodoroGecmis),
       hedef: (nesne.hedef as Hedef | null) ?? null,
       // Yedek yükleyen kullanıcı uygulamayı zaten kurmuş demektir; kurulum tekrar sorulmaz
@@ -401,6 +409,7 @@ export function yedegiUygula(yedek: Yedek) {
   yaz(ANAHTARLAR.oyunlar, yedek.oyunlar)
   yaz(ANAHTARLAR.oyunGecmisi, yedek.oyunGecmisi)
   yaz(ANAHTARLAR.oyunBankasi, yedek.oyunBankasi ?? [])
+  yaz(ANAHTARLAR.bankaDusen, yedek.bankaDusen ?? 0)
   yaz(ANAHTARLAR.pomodoroGecmis, yedek.pomodoroGecmis)
   yaz(ANAHTARLAR.hedef, yedek.hedef)
   yaz(ANAHTARLAR.ayarlar, yedek.ayarlar)

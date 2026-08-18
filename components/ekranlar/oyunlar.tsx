@@ -17,6 +17,7 @@ import {
 import {
   bankaDagilimi,
   bankayiGuncelle,
+  dusenSayisi,
   type BankaCevabi,
   type BankaKaydi,
 } from '@/lib/oyunlar/banka'
@@ -67,6 +68,7 @@ export function OyunlarEkrani({
   muzikAcik,
   muzikTuru,
   onBankayaGit,
+  onBankadanDustu,
   /** Bankadan "sadece bunlardan bir tur" ile açılan oyun; yoksa null. */
   bankaTuru,
   onBankaTuruBitti,
@@ -80,6 +82,8 @@ export function OyunlarEkrani({
   muzikAcik: boolean
   muzikTuru: OyunMuzikTuru
   onBankayaGit: () => void
+  /** Turda bankadan düşen soru sayısı — rozet sayacını besliyor. */
+  onBankadanDustu: (adet: number) => void
   bankaTuru: OyunId | null
   onBankaTuruBitti: () => void
 }) {
@@ -150,7 +154,10 @@ export function OyunlarEkrani({
    * asıl istenen o: soruyu nerede bilirsen bil, öğrenmiş sayılırsın.
    */
   const turBitti = (id: OyunId, ozet: TurSayilari, cevaplar: BankaCevabi[]) => {
-    setBanka((onceki) => bankayiGuncelle(onceki, cevaplar, bugun()))
+    const yeniBanka = bankayiGuncelle(banka, cevaplar, bugun())
+    const dusen = dusenSayisi(banka, yeniBanka)
+    setBanka(() => yeniBanka)
+    if (dusen > 0) onBankadanDustu(dusen)
 
     if (bankaTuru !== null) return
 

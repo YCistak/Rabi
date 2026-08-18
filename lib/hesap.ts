@@ -8,7 +8,7 @@ import type {
   Sablon,
   SablonDers,
 } from './types'
-import { haftaBasi } from './utils'
+import { haftaBasi, tariheCevir, tariheYaz } from './utils'
 
 /** Ondalık gösterimde kayan nokta artıklarını temizler (0.30000000000000004 gibi). */
 export function yuvarla(sayi: number, basamak = 2): number {
@@ -343,6 +343,71 @@ export function hedefSerisi(kayitlar: GunlukKayit[], hedef: number, bugunIso: st
 // MEB Ortaöğretim Kurumları Yönetmeliği MADDE 36: özürsüz 10, özürlü dahil
 // toplam 20 gün devamsızlık hakkı. Aşılırsa öğrenci başarısız sayılır.
 // ---------------------------------------------------------------------------
+
+/**
+ * Şimdiye kadarki **en uzun** kesintisiz hedef serisi.
+ *
+ * `hedefSerisi` bugünden geriye bakıp *güncel* seriyi veriyor; rozet ise
+ * "bir kez 30 gün üst üste tutturdun" diyor. Seri kırılınca rozet geri
+ * alınmadığı gibi, kırılmadan önceki en iyi hâlin de unutulmaması gerekiyor.
+ *
+ * Hedef sonradan değişirse geçmiş **yeni** hedefe göre yeniden ölçülür; eski
+ * hedefin ne olduğu saklanmıyor. Hedefi yükselten kişinin serisi kısalabilir,
+ * ama kazanılmış rozet zaten duruyor.
+ */
+export function enUzunSeri(kayitlar: GunlukKayit[], hedef: number): number {
+  if (hedef <= 0) return 0
+
+  const gunler = kayitlar
+    .filter((k) => gunOzeti(k).toplam >= hedef)
+    .map((k) => k.tarih)
+    .sort()
+  if (gunler.length === 0) return 0
+
+  const ertesiGun = (iso: string) => {
+    const t = tariheCevir(iso)
+    t.setDate(t.getDate() + 1)
+    return tariheYaz(t)
+  }
+
+  let enIyi = 1
+  let mevcut = 1
+  for (let i = 1; i < gunler.length; i++) {
+    mevcut = ertesiGun(gunler[i - 1]) === gunler[i] ? mevcut + 1 : 1
+    if (mevcut > enIyi) enIyi = mevcut
+  }
+  return enIyi
+}
+
+/**
+ * Netin üst üste kaç deneme yükseldiği — en uzun yükseliş dizisi.
+ *
+ * Karşılaştırma **aynı şablon** içinde yapılıyor: TYT neti ile AYT neti
+ * kıyaslanamaz, farklı sayıda soru üzerinden hesaplanıyorlar. Şablonu silinmiş
+ * denemeler ölçüye girmez.
+ *
+ * Dizi uzunluğu deneme sayısıdır, artış sayısı değil: iki denemede bir kez
+ * yükselmek "iki deneme üst üste yükseldin" demek.
+ */
+export function enUzunYukselis(denemeler: Deneme[], sablonlar: Sablon[]): number {
+  let enIyi = 0
+
+  for (const sablon of sablonlar) {
+    const netler = tarihSirala(denemeler.filter((d) => d.sablonId === sablon.id)).map(
+      (d) => denemeOzeti(d, sablon).toplamNet,
+    )
+    if (netler.length === 0) continue
+
+    let mevcut = 1
+    if (mevcut > enIyi) enIyi = mevcut
+    for (let i = 1; i < netler.length; i++) {
+      mevcut = netler[i] > netler[i - 1] ? mevcut + 1 : 1
+      if (mevcut > enIyi) enIyi = mevcut
+    }
+  }
+
+  return enIyi
+}
 
 export const OZURSUZ_SINIR = 10
 export const OZURLU_SINIR = 20
