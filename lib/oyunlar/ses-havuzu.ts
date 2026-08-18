@@ -29,7 +29,13 @@ export type SesOlayi =
 export type SesSorusu = {
   /** Ses olayının görüldüğü sözcük — ekranda büyük yazılan. */
   kelime: string
-  /** Nasıl oluştuğu: "kitap + ı". Şıkların üstünde ipucu olarak duruyor. */
+  /**
+   * Nasıl oluştuğu: "kitap + ı".
+   *
+   * Soruda **gösterilmiyor**: kökü yan yana koymak olayı doğrudan ele veriyor
+   * ("burun + u" ünlü düşmesini, "his + etmek" ünsüz türemesini okutuyor).
+   * Cevaptan sonra geri bildirimde ve tur sonu listesinde çıkıyor.
+   */
   olusum: string
   olay: SesOlayi
 }

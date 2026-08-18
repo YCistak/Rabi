@@ -266,14 +266,12 @@ export function SesOyunuEkrani({
                   <Rabi durum={maskotDurumu} boyut={54} />
                 </div>
 
-                {/* Sözcük ve oluşumu: dört şık uzun metinler olduğu için soru
-                    kısmı bilerek tek bakışta okunacak kadar sade tutuldu. */}
-                <div className="golge-kart rounded-[20px] bg-card px-4 py-3.5 text-center">
+                {/* Yalnızca sözcük: oluşumu ("burun + u") burada göstermek
+                    cevabı ele veriyordu — ses olayı zaten orada görünüyor.
+                    Oluşum, cevaptan sonra geri bildirimde ve tur sonunda çıkar. */}
+                <div className="golge-kart rounded-[20px] bg-card px-4 py-4 text-center">
                   <p className="font-display text-[26px] font-extrabold leading-none tracking-tight">
                     {soru.soru.kelime}
-                  </p>
-                  <p className="mt-1.5 text-[13px] font-semibold text-muted-foreground">
-                    {soru.soru.olusum}
                   </p>
                 </div>
 
@@ -300,7 +298,9 @@ export function SesOyunuEkrani({
                   aciklama={
                     geriBildirim.dogruMu
                       ? soru.soru.olusum
-                      : `— doğrusu ${OLAY_ADI[geriBildirim.soru.olay].toLocaleLowerCase('tr')}`
+                      : `${geriBildirim.soru.olusum} — doğrusu ${OLAY_ADI[
+                          geriBildirim.soru.olay
+                        ].toLocaleLowerCase('tr')}`
                   }
                 />
               )}
