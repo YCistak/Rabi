@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Plus, X } from 'lucide-react'
 import type { Ayarlar, GunlukKayit, SoruKaydi } from '@/lib/types'
 import { bosSayisi, gunOzeti, haftalikToplamlar, netYaz } from '@/lib/hesap'
@@ -19,10 +19,30 @@ export function SoruTakibiEkrani({
   setKayitlar: (guncelleyici: GunlukKayit[] | ((onceki: GunlukKayit[]) => GunlukKayit[])) => void
   ayarlar: Ayarlar
 }) {
-  const bugunIso = bugun()
+  const [bugunIso, setBugunIso] = useState(bugun)
   const [secili, setSecili] = useState(bugunIso)
   const [ay, setAy] = useState(() => tariheCevir(bugunIso))
   const [yeniDers, setYeniDers] = useState('')
+
+  /**
+   * "Bugün" ekran açılırken bir kez hesaplanıyordu; uygulama gece yarısını açık
+   * geçirdiğinde saat 00.05'te hâlâ düne yazılabiliyordu. Uygulama öne her
+   * geldiğinde tarih yeniden soruluyor, seçim de yeni güne taşınıyor.
+   */
+  useEffect(() => {
+    const tazele = () => {
+      if (document.visibilityState !== 'visible') return
+      const yeniGun = bugun()
+      if (yeniGun === bugunIso) return
+      setBugunIso(yeniGun)
+      if (secili === bugunIso) {
+        setSecili(yeniGun)
+        setAy(tariheCevir(yeniGun))
+      }
+    }
+    document.addEventListener('visibilitychange', tazele)
+    return () => document.removeEventListener('visibilitychange', tazele)
+  }, [bugunIso, secili])
 
   const seciliKayit = kayitlar.find((k) => k.tarih === secili)
   const ozet = gunOzeti(seciliKayit)
