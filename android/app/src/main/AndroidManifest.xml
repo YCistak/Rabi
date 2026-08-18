@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:allowBackup="true"
@@ -24,6 +25,23 @@
 
         </activity>
 
+        <!--
+          Odak kilidinin ön plan servisi.
+
+          `specialUse` seçildi: Android 14'ten beri tip bildirimi zorunlu ve
+          listedeki tiplerin hiçbiri (konum, medya, senkronizasyon…) pomodoro
+          süresince ön uygulamayı izlemeye uymuyor. Play Console'da ayrıca
+          gerekçe bildirilecek.
+        -->
+        <service
+            android:name=".odak.OdakServisi"
+            android:foregroundServiceType="specialUse"
+            android:exported="false">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="pomodoro_odak_kilidi" />
+        </service>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -38,4 +56,100 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--
+      Odak kilidi izinleri.
+
+      `PACKAGE_USAGE_STATS` normal izin değil; kullanıcı Ayarlar'dan elle açıyor.
+      Manifest'te bildirilmesi şart, lint bunu "korumalı izin" diye işaretliyor
+      ama kullanım verisi erişimi için tek yol bu.
+
+      `AccessibilityService` bilinçli olarak kullanılmıyor: Play politikası
+      erişilebilirlik API'sini yalnızca erişilebilirlik amacıyla kullanmayı şart
+      koşuyor ve engelleme uygulamalarının mağazadan silinme sebebi #1 bu.
+    -->
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
+    <!--
+      Hangi uygulamaların kurulu olduğunu görebilmek için.
+
+      `QUERY_ALL_PACKAGES` **kullanılmıyor** — Play'in kısıtlı izinler listesinde,
+      gerekçe formu istiyor ve onay garantisi yok. Bunun yerine iki katman:
+
+      A) Adı yazılı paketler — hiçbir izin gerektirmiyor, politika riski sıfır.
+      B) MAIN/LAUNCHER sorgusu — Google'ın önerdiği yöntem, başlatıcısı olan tüm
+         uygulamaları görünür kılıyor. İncelemede geniş bulunursa yalnızca bu
+         blok çıkarılır; özellik A ile çalışmaya devam eder, sadece listede
+         olmayan uygulama eklenemez.
+    -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+
+        <!-- Sosyal medya ve mesajlaşma -->
+        <package android:name="com.instagram.android" />
+        <package android:name="com.zhiliaoapp.musically" />
+        <package android:name="com.ss.android.ugc.trill" />
+        <package android:name="com.google.android.youtube" />
+        <package android:name="com.google.android.apps.youtube.music" />
+        <package android:name="com.snapchat.android" />
+        <package android:name="com.twitter.android" />
+        <package android:name="com.facebook.katana" />
+        <package android:name="com.facebook.lite" />
+        <package android:name="com.facebook.orca" />
+        <package android:name="com.whatsapp" />
+        <package android:name="org.telegram.messenger" />
+        <package android:name="com.discord" />
+        <package android:name="com.reddit.frontpage" />
+        <package android:name="com.pinterest" />
+        <package android:name="com.linkedin.android" />
+        <package android:name="com.tumblr" />
+        <package android:name="com.ninegag.android.app" />
+        <package android:name="com.wattpad" />
+        <package android:name="com.tinder" />
+        <package android:name="com.bumble.app" />
+
+        <!-- Video ve müzik -->
+        <package android:name="com.netflix.mediaclient" />
+        <package android:name="com.spotify.music" />
+        <package android:name="tv.twitch.android.app" />
+        <package android:name="com.disney.disneyplus" />
+        <package android:name="com.amazon.avod.thirdpartyclient" />
+
+        <!-- Oyunlar -->
+        <package android:name="com.roblox.client" />
+        <package android:name="com.mojang.minecraftpe" />
+        <package android:name="com.tencent.ig" />
+        <package android:name="com.dts.freefireth" />
+        <package android:name="com.activision.callofduty.shooter" />
+        <package android:name="com.supercell.clashofclans" />
+        <package android:name="com.supercell.clashroyale" />
+        <package android:name="com.supercell.brawlstars" />
+        <package android:name="com.king.candycrushsaga" />
+        <package android:name="com.miniclip.eightballpool" />
+        <package android:name="com.innersloth.spacemafia" />
+        <package android:name="com.riotgames.league.wildrift" />
+        <package android:name="com.ea.gp.fifamobile" />
+        <package android:name="com.playrix.homescapes" />
+        <package android:name="com.playrix.gardenscapes" />
+
+        <!-- Tarayıcı ve alışveriş -->
+        <package android:name="com.android.chrome" />
+        <package android:name="org.mozilla.firefox" />
+        <package android:name="com.opera.browser" />
+        <package android:name="com.trendyol.app" />
+        <package android:name="com.pozitron.hepsiburada" />
+        <package android:name="com.n11" />
+        <package android:name="com.sahibinden" />
+        <package android:name="com.amazon.mShop.android.shopping" />
+        <package android:name="com.getir" />
+        <package android:name="com.inovel.app.yemeksepeti" />
+    </queries>
 </manifest>

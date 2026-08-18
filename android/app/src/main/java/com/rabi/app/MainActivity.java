@@ -3,6 +3,7 @@ package com.rabi.app;
 import android.os.Bundle;
 import androidx.core.splashscreen.SplashScreen;
 import com.getcapacitor.BridgeActivity;
+import com.rabi.app.odak.OdakKilidiEklentisi;
 
 public class MainActivity extends BridgeActivity {
 
@@ -17,6 +18,9 @@ public class MainActivity extends BridgeActivity {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // Uygulamanın kendi eklentisi; npm paketi olmadığı için Capacitor onu
+        // kendiliğinden bulamıyor, elle kaydedilmesi gerekiyor.
+        registerPlugin(OdakKilidiEklentisi.class);
         SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
     }

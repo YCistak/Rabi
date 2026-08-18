@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Engel katmanının düzeni.
+
+  Zemin donuk (@color/uygulama_zemin): arkadaki uygulama görünmemeli, yoksa
+  engel işe yaramaz. Renkler uygulamanınkiyle aynı değişkenlerden geliyor,
+  values-night karşılıkları sayesinde koyu temada da doğru çıkıyor.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/uygulama_zemin">
+
+    <LinearLayout
+        android:id="@+id/odak_ana"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🐰"
+            android:textSize="64sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Odaktasın."
+            android:textColor="@color/odak_metin"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/odak_sure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/acilis_zemin"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/odak_ders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/odak_soluk"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/odak_don"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:backgroundTint="@color/acilis_zemin"
+            android:paddingHorizontal="28dp"
+            android:text="Rabi'ye dön"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/odak_kapat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:padding="12dp"
+            android:text="kilidi kapat"
+            android:textColor="@color/odak_soluk"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Kilidi kapatmanın bedeli var: tur iptal olur, seri kırılır. Bedeli
+         olmayan engel engel değildir; onay bu yüzden ayrı bir adım. -->
+    <LinearLayout
+        android:id="@+id/odak_onay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Bu turu iptal edecek.\nSeri sayacın kırılacak."
+            android:textColor="@color/odak_metin"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/odak_vazgec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/acilis_zemin"
+            android:paddingHorizontal="28dp"
+            android:text="Çalışmaya devam"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/odak_kapat_onay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:padding="12dp"
+            android:text="kilidi yine de kapat"
+            android:textColor="@color/odak_soluk"
+            android:textSize="14sp" />
+    </LinearLayout>
+</FrameLayout>

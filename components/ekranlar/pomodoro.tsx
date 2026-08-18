@@ -18,6 +18,13 @@ import { SesCalar } from '@/lib/ses'
 import { LOFI_PARCALAR } from '@/lib/lofi'
 import { CALISMA_DERSLERI } from '@/lib/dersler'
 import { pomodoroIptal, pomodoroPlanla } from '@/lib/bildirim'
+import {
+  odakKilidiDesteklenir,
+  odakKilidiKapatilinca,
+  odakKilidiniBaslat,
+  odakKilidiniBitir,
+} from '@/lib/odak-kilidi'
+import { OdakKurulum } from '@/components/ekranlar/odak-kurulum'
 import { cn, yeniId } from '@/lib/utils'
 import { BaslikSatiri, Buton, Cip, Kart, Not } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
@@ -52,6 +59,14 @@ export function PomodoroEkrani({
    */
   const [dokunulmadi, setDokunulmadi] = useState(true)
   const [sesPaneli, setSesPaneli] = useState(false)
+  /**
+   * Odak kilidi tanıtımı pomodoroya ilk girişte bir kez çıkıyor. Tarayıcıda
+   * özellik hiç yok; orada tanıtım da gösterilmiyor.
+   */
+  const [kurulumAcik, setKurulumAcik] = useState(false)
+  useEffect(() => {
+    if (odakKilidiDesteklenir() && !ayar.kilitTanitimiGoruldu) setKurulumAcik(true)
+  }, [ayar.kilitTanitimiGoruldu])
 
   const calarRef = useRef<SesCalar | null>(null)
   const baslangicRef = useRef<string | null>(null)
@@ -71,6 +86,7 @@ export function PomodoroEkrani({
       calarRef.current = null
       if (Capacitor.isNativePlatform()) void KeepAwake.allowSleep().catch(() => {})
       void pomodoroIptal()
+      void odakKilidiniBitir()
     }
   }, [])
 
@@ -79,6 +95,7 @@ export function PomodoroEkrani({
     calar.durdur()
     calar.zilCal()
     void pomodoroIptal()
+    void odakKilidiniBitir()
 
     if (asama === 'calisma') {
       onSeansBitti({
@@ -142,6 +159,11 @@ export function PomodoroEkrani({
     calar.cal(ayar.ses)
 
     void pomodoroPlanla(bitis, asama !== 'calisma')
+    // Kilit yalnızca çalışma turunda; molada kendiliğinden açılıyor. İzin yoksa
+    // yerli taraf sessizce "başlamadı" diyor, sayaç normal çalışmaya devam ediyor.
+    if (asama === 'calisma' && ayar.odakKilidi) {
+      void odakKilidiniBaslat(ayar.kilitliUygulamalar, bitis, ders ?? undefined)
+    }
     if (ayar.ekraniAcikTut && Capacitor.isNativePlatform()) {
       void KeepAwake.keepAwake().catch(() => {})
     }
@@ -151,6 +173,7 @@ export function PomodoroEkrani({
     setBitisZamani(null)
     calarRef.current?.durdur()
     void pomodoroIptal()
+    void odakKilidiniBitir()
     if (Capacitor.isNativePlatform()) void KeepAwake.allowSleep().catch(() => {})
   }
 
@@ -172,6 +195,23 @@ export function PomodoroEkrani({
     setDokunulmadi(true)
   }
 
+  /**
+   * Engel katmanındaki "kilidi kapat" turu iptal ediyor — bedeli olmayan engel,
+   * engel değil. Geri çağrı ref üzerinden okunuyor: dinleyici bir kez kuruluyor
+   * ama iptalin güncel aşamayı görmesi gerekiyor.
+   */
+  const iptalRef = useRef<() => void>(() => {})
+  useEffect(() => {
+    iptalRef.current = sifirla
+  })
+  useEffect(() => {
+    let birak: () => void = () => {}
+    void odakKilidiKapatilinca(() => iptalRef.current()).then((kaldir) => {
+      birak = kaldir
+    })
+    return () => birak()
+  }, [])
+
   const sesSec = (secim: SesSecimi) => {
     setAyar((o) => ({ ...o, ses: secim }))
     const calar = calarAl()
@@ -182,6 +222,15 @@ export function PomodoroEkrani({
 
   const oran = bitisZamani !== null ? ilerlemeOrani(bitisZamani, toplamDakika) : 0
   const molaMi = asama !== 'calisma'
+
+  if (kurulumAcik) {
+    return (
+      <div>
+        <BaslikSatiri baslik="Pomodoro" aciklama="Odak kilidi" />
+        <OdakKurulum ayar={ayar} setAyar={setAyar} onBitir={() => setKurulumAcik(false)} />
+      </div>
+    )
+  }
 
   return (
     <div>

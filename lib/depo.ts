@@ -125,6 +125,29 @@ export const VARSAYILAN_POMODORO: PomodoroAyar = {
   ses: 'yok',
   sesSeviyesi: 0.5,
   ekraniAcikTut: false,
+  odakKilidi: false,
+  kilitliUygulamalar: [],
+  kilitTanitimiGoruldu: false,
+}
+
+/**
+ * Kayıtlı pomodoro ayarını güncel şemaya taşır.
+ *
+ * Odak kilidi alanları sonradan eklendi; eski kurulumlarda hiç yok ve
+ * kilitliUygulamalar undefined kalırsa ekran uzunluğunu okurken çöker.
+ */
+export function pomodoroAyariniNormalize(
+  ham: Partial<PomodoroAyar> | null | undefined,
+): PomodoroAyar {
+  const birlesik = { ...VARSAYILAN_POMODORO, ...(ham ?? {}) }
+  return {
+    ...birlesik,
+    odakKilidi: birlesik.odakKilidi === true,
+    kilitliUygulamalar: Array.isArray(birlesik.kilitliUygulamalar)
+      ? birlesik.kilitliUygulamalar.filter((paket) => typeof paket === 'string')
+      : [],
+    kilitTanitimiGoruldu: birlesik.kilitTanitimiGoruldu === true,
+  }
 }
 
 /**
@@ -285,6 +308,11 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       oyunBankasi: bankayiCoz(nesne.oyunBankasi),
       bankaDusen: sayi(nesne.bankaDusen),
       pomodoroGecmis: dizi<PomodoroSeans>(nesne.pomodoroGecmis),
+      // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
+      // kullanıcının mevcut pomodoro ayarına dokunulmuyor.
+      pomodoroAyar: nesne.pomodoroAyar
+        ? pomodoroAyariniNormalize(nesne.pomodoroAyar as Partial<PomodoroAyar>)
+        : undefined,
       hedef: (nesne.hedef as Hedef | null) ?? null,
       // Yedek yükleyen kullanıcı uygulamayı zaten kurmuş demektir; kurulum tekrar sorulmaz
       ayarlar: { ...ayarlariNormalize(nesne.ayarlar as Ayarlar), kurulumTamamlandi: true },
@@ -411,6 +439,8 @@ export function yedegiUygula(yedek: Yedek) {
   yaz(ANAHTARLAR.oyunBankasi, yedek.oyunBankasi ?? [])
   yaz(ANAHTARLAR.bankaDusen, yedek.bankaDusen ?? 0)
   yaz(ANAHTARLAR.pomodoroGecmis, yedek.pomodoroGecmis)
+  // Eski yedeklerde alan yok; o zaman kullanıcının mevcut ayarı korunuyor.
+  if (yedek.pomodoroAyar) yaz(ANAHTARLAR.pomodoroAyar, yedek.pomodoroAyar)
   yaz(ANAHTARLAR.hedef, yedek.hedef)
   yaz(ANAHTARLAR.ayarlar, yedek.ayarlar)
 }

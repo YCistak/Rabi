@@ -182,6 +182,12 @@ export type PomodoroAyar = {
   sesSeviyesi: number
   /** Çalışma sırasında ekran açık kalsın mı. */
   ekraniAcikTut: boolean
+  /** Çalışma turunda seçili uygulamalar engellensin mi. */
+  odakKilidi: boolean
+  /** Engellenecek uygulamaların paket adları. */
+  kilitliUygulamalar: string[]
+  /** Odak kilidi tanıtımı bir kez gösterilir; kullanıcı geçtiyse bir daha sorulmaz. */
+  kilitTanitimiGoruldu: boolean
 }
 
 export type PomodoroSeans = {
@@ -330,6 +336,12 @@ export type Yedek = {
   /** Oyun Bankası'ndan düşen toplam soru sayısı. */
   bankaDusen?: number
   pomodoroGecmis: PomodoroSeans[]
+  /**
+   * Pomodoro ayarı. Eski yedeklerde yok — o zaman geri yüklemede yazılmıyor,
+   * kullanıcının mevcut ayarı olduğu gibi kalıyor. Kilitli uygulama listesi de
+   * burada; telefon değiştiren kullanıcı seçimini yeniden yapmak zorunda kalmasın.
+   */
+  pomodoroAyar?: PomodoroAyar
   hedef: Hedef | null
   ayarlar: Ayarlar
   /** Fotoğraf kimliği → `data:` adresi. Fotoğrafsız yedekte alan hiç yok. */

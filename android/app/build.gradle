@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 // İmza bilgisi önce ortam değişkeninden (CI), yoksa keystore.properties'ten (yerel) okunur.
 // İkisi de yoksa release imzasız derlenir — build çökmez.
