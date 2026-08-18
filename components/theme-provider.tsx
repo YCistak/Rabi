@@ -3,20 +3,44 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { ANAHTARLAR } from '@/lib/depo'
 
+/** Ekrana uygulanan tema. `sistem` tercihi de bunlardan birine çözülür. */
 export type Tema = 'acik' | 'koyu'
 
+/** Kullanıcının seçimi. `sistem` = cihazın gece modunu izle (varsayılan). */
+export type TemaTercihi = Tema | 'sistem'
+
 type TemaBaglami = {
+  /** Kullanıcının seçtiği tercih — Ayarlar ve kurulum bunu işaretler. */
+  tercih: TemaTercihi
+  /** Ekranda gerçekten geçerli olan tema; `tercih === 'sistem'` iken cihazdan gelir. */
   tema: Tema
-  temaDegistir: (tema: Tema) => void
+  temaDegistir: (tercih: TemaTercihi) => void
   /** İlk okuma bitene kadar false — tema düğmesi yanlış durumu göstermesin. */
   hazir: boolean
 }
 
 const Baglam = createContext<TemaBaglami | null>(null)
 
+const KOYU_SORGUSU = '(prefers-color-scheme: dark)'
+
 function sistemTemasi(): Tema {
   if (typeof window === 'undefined') return 'acik'
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'koyu' : 'acik'
+  return window.matchMedia(KOYU_SORGUSU).matches ? 'koyu' : 'acik'
+}
+
+function cozumle(tercih: TemaTercihi): Tema {
+  return tercih === 'sistem' ? sistemTemasi() : tercih
+}
+
+/** Kayıtlı tercih; hiç yazılmamışsa ya da okunamıyorsa cihazın ayarı izlenir. */
+function tercihOku(): TemaTercihi {
+  try {
+    const kayitli = localStorage.getItem(ANAHTARLAR.tema)
+    if (kayitli === 'acik' || kayitli === 'koyu' || kayitli === 'sistem') return kayitli
+  } catch {
+    // gizli sekme — sistem tercihine düş
+  }
+  return 'sistem'
 }
 
 function uygula(tema: Tema) {
@@ -24,25 +48,45 @@ function uygula(tema: Tema) {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [tercih, setTercih] = useState<TemaTercihi>('sistem')
   const [tema, setTema] = useState<Tema>('acik')
   const [hazir, setHazir] = useState(false)
 
   useEffect(() => {
     // layout.tsx'teki senkron script sınıfı zaten uyguladı; burada yalnızca
     // React tarafındaki durum onunla eşitleniyor.
-    let kayitli: string | null = null
-    try {
-      kayitli = localStorage.getItem(ANAHTARLAR.tema)
-    } catch {
-      // gizli sekme — sistem tercihine düş
-    }
-    setTema(kayitli === 'acik' || kayitli === 'koyu' ? kayitli : sistemTemasi())
+    const okunan = tercihOku()
+    setTercih(okunan)
+    setTema(cozumle(okunan))
     setHazir(true)
   }, [])
 
-  const temaDegistir = useCallback((yeni: Tema) => {
-    setTema(yeni)
-    uygula(yeni)
+  // Cihaz gece moduna geçtiğinde uygulama anında onu izlemeli — kullanıcı
+  // uygulamayı kapatıp açmak zorunda kalmasın. Yalnızca `sistem` tercihinde:
+  // açık/koyu seçen kullanıcının seçimi telefon ayarıyla bozulmaz.
+  useEffect(() => {
+    if (!hazir || tercih !== 'sistem') return
+    const sorgu = window.matchMedia(KOYU_SORGUSU)
+    const degisti = () => {
+      const yeni: Tema = sorgu.matches ? 'koyu' : 'acik'
+      setTema(yeni)
+      uygula(yeni)
+    }
+    sorgu.addEventListener('change', degisti)
+    // Uygulama arka plandayken tema değişirse WebView `change` olayını her zaman
+    // vermiyor; öne dönüldüğünde sorgu yeniden okunuyor.
+    document.addEventListener('visibilitychange', degisti)
+    return () => {
+      sorgu.removeEventListener('change', degisti)
+      document.removeEventListener('visibilitychange', degisti)
+    }
+  }, [hazir, tercih])
+
+  const temaDegistir = useCallback((yeni: TemaTercihi) => {
+    setTercih(yeni)
+    const etkin = cozumle(yeni)
+    setTema(etkin)
+    uygula(etkin)
     try {
       // Düz metin olarak yazılır (JSON değil): layout.tsx'teki senkron script bunu
       // JSON.parse etmeden, ilk boyamadan önce okumak zorunda.
@@ -52,7 +96,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  return <Baglam.Provider value={{ tema, temaDegistir, hazir }}>{children}</Baglam.Provider>
+  return (
+    <Baglam.Provider value={{ tercih, tema, temaDegistir, hazir }}>{children}</Baglam.Provider>
+  )
 }
 
 export function useTema(): TemaBaglami {

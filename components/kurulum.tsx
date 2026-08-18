@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, ArrowRight, Check, Moon, Sun } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Moon, Smartphone, Sun } from 'lucide-react'
 import type { Ayarlar, PuanTuru } from '@/lib/types'
 import { SINIFLAR } from '@/lib/hesap'
 import { saatDegeri, saatYaz, saatiCoz } from '@/lib/hatirlatma'
-import { useTema, type Tema } from '@/components/theme-provider'
+import { useTema, type TemaTercihi } from '@/components/theme-provider'
 import { Alan, Buton, Cip, Etiket, Kart } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { izinIste } from '@/lib/bildirim'
@@ -50,7 +50,7 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
 
   // Tema seçimi anında uygulanıyor (kaydetmeye gerek yok): kullanıcı iki
   // seçeneği de dokunarak görebilsin, sonra devam etsin.
-  const { tema, temaDegistir } = useTema()
+  const { tercih, temaDegistir } = useTema()
 
   const sonAdim = 4
   const ilerle = () => setAdim((a) => Math.min(sonAdim, a + 1))
@@ -61,10 +61,6 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
     // sonra, ne için sorulduğu belliyken. Reddederse kurulum yine tamamlanır,
     // yalnızca hatırlatma kapalı kaydedilir — Ayarlar'dan tekrar denenebilir.
     const izinli = bildirim ? await izinIste() : false
-    // Tema adımına hiç dokunulmadıysa ekranda gösterilen (telefonun tercihi)
-    // seçenek kaydedilir. Yazılmasaydı uygulama sistem temasını izlemeye devam
-    // eder, kullanıcı gece telefonu koyuya alınca Rabi de habersiz kararırdı.
-    temaDegistir(tema)
     onBitir({
       buYilSinif: sinif,
       puanTuru,
@@ -109,9 +105,9 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
                 key={secenek.id}
                 type="button"
                 onClick={() => temaDegistir(secenek.id)}
-                aria-pressed={tema === secenek.id}
+                aria-pressed={tercih === secenek.id}
                 className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left transition ${
-                  tema === secenek.id
+                  tercih === secenek.id
                     ? 'border-primary bg-primary-soft'
                     : 'border-border active:bg-muted'
                 }`}
@@ -121,12 +117,12 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
                   <span className="block font-medium">{secenek.ad}</span>
                   <span className="block text-xs text-muted-foreground">{secenek.aciklama}</span>
                 </span>
-                {tema === secenek.id && <Check size={18} className="shrink-0 text-primary" />}
+                {tercih === secenek.id && <Check size={18} className="shrink-0 text-primary" />}
               </button>
             ))}
             <p className="pt-1 text-xs text-muted-foreground">
-              Şu an telefonunun tercihi seçili. Dokunduğun anda değişiyor; beğenmezsen diğerine
-              dön. Sonradan Ayarlar'dan da değiştirebilirsin.
+              Dokunmazsan telefonunun temasını izlemeye devam ederim: gece moduna geçince Rabi
+              de kararır. Dokunduğun anda değişiyor; sonradan Ayarlar'dan da değiştirebilirsin.
             </p>
           </div>
         )}
@@ -297,7 +293,13 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
   )
 }
 
-const TEMALAR: { id: Tema; ad: string; aciklama: string; Simge: typeof Sun }[] = [
+const TEMALAR: { id: TemaTercihi; ad: string; aciklama: string; Simge: typeof Sun }[] = [
+  {
+    id: 'sistem',
+    ad: 'Cihazımla aynı',
+    aciklama: 'Telefonun gece moduna göre kendiliğinden değişir',
+    Simge: Smartphone,
+  },
   { id: 'acik', ad: 'Açık tema', aciklama: 'Gündüz ve aydınlık odalarda okunaklı', Simge: Sun },
   { id: 'koyu', ad: 'Koyu tema', aciklama: 'Gece çalışırken gözü yormaz', Simge: Moon },
 ]
@@ -312,7 +314,7 @@ const BASLIKLAR = [
 
 const ACIKLAMALAR = [
   'Seninle YKS yolunda çalışacağım. Önce birkaç şey sorayım.',
-  'Açık mı koyu mu? İstediğin an değiştirebilirsin.',
+  'Telefonunla aynı mı, hep açık mı, hep koyu mu? İstediğin an değiştirebilirsin.',
   'Sıralama tahmini ve deneme şablonları buna göre ayarlanır.',
   'Her günü buna göre takip edeceğim.',
   'Son adım — istersen atlayabilirsin.',

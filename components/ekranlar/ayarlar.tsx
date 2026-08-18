@@ -9,12 +9,13 @@ import {
   Images,
   Moon,
   Plus,
+  Smartphone,
   Sun,
   Trash2,
   X,
 } from 'lucide-react'
 import { Alan, BaslikSatiri, Buton, Cip, Etiket, Kart, Not, Onay } from '@/components/ui'
-import { useTema } from '@/components/theme-provider'
+import { useTema, type TemaTercihi } from '@/components/theme-provider'
 import { SINIFLAR, egitimYili, katsayiYaz } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
 import {
@@ -56,6 +57,16 @@ const PUAN_TURU_ADI: Record<PuanTuru, string> = {
   soz: 'Sözel',
   dil: 'Dil',
 }
+
+/**
+ * Tema seçenekleri. Varsayılan `sistem`: uygulama, telefon hangi temadaysa o
+ * temada açılır ve telefon gece moduna geçtiğinde kendiliğinden onu izler.
+ */
+const TEMA_SECENEKLERI: { id: TemaTercihi; ad: string; Simge: typeof Sun }[] = [
+  { id: 'sistem', ad: 'Cihazımla aynı', Simge: Smartphone },
+  { id: 'acik', ad: 'Açık', Simge: Sun },
+  { id: 'koyu', ad: 'Koyu', Simge: Moon },
+]
 
 const HAZIR_HEDEFLER = [100, 200, 300, 400, 500]
 /**
@@ -112,7 +123,7 @@ export function AyarlarEkrani({
     hedef: Hedef | null
   }
 }) {
-  const { tema, temaDegistir } = useTema()
+  const { tercih, tema, temaDegistir } = useTema()
   const [acikSablonId, setAcikSablonId] = useState<string | null>(null)
   const [silinecekSablon, setSilinecekSablon] = useState<Sablon | null>(null)
   const [sifirlamaAcik, setSifirlamaAcik] = useState(false)
@@ -223,22 +234,24 @@ export function AyarlarEkrani({
       <BaslikSatiri baslik="Ayarlar" />
 
       <Kart className="mb-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="font-medium">Koyu tema</p>
-            <p className="text-xs text-muted-foreground">
-              {tema === 'koyu' ? 'Etkin' : 'Kapalı'}
-            </p>
-          </div>
-          <Buton
-            bicim="ikincil"
-            boy="simge"
-            onClick={() => temaDegistir(tema === 'koyu' ? 'acik' : 'koyu')}
-            aria-label="Temayı değiştir"
-          >
-            {tema === 'koyu' ? <Sun size={18} /> : <Moon size={18} />}
-          </Buton>
+        <p className="mb-2 font-medium">Tema</p>
+        <div className="flex flex-wrap gap-2">
+          {TEMA_SECENEKLERI.map((secenek) => (
+            <Cip
+              key={secenek.id}
+              secili={tercih === secenek.id}
+              onClick={() => temaDegistir(secenek.id)}
+            >
+              <secenek.Simge size={14} className="mr-1.5 inline align-[-2px]" aria-hidden />
+              {secenek.ad}
+            </Cip>
+          ))}
         </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          {tercih === 'sistem'
+            ? `Telefonunun ayarını izliyorum — şu an ${tema === 'koyu' ? 'koyu' : 'açık'}.`
+            : 'Telefonun gece moduna geçse bile bu seçim değişmez.'}
+        </p>
       </Kart>
 
       <Kart className="mb-3">
