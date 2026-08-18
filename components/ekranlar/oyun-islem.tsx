@@ -47,10 +47,14 @@ import {
 } from '@/components/oyun-kabuk'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
-/** Doğru cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms). */
-const DOGRU_BEKLEME = 300
-/** Yanlışta daha uzun bekleniyor: doğru sonuç okunabilsin. */
-const YANLIS_BEKLEME = 1100
+/**
+ * Cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms).
+ *
+ * Doğru ve yanlış için **aynı**. Doğruda çok daha kısaydı (300 ms) ve işlem
+ * bir anda değişiyordu; tuş takımına bakan oyuncu yeni sorunun ne zaman
+ * geldiğini kaçırıyordu. Tek süre ritmi sabitliyor.
+ */
+const CEVAP_BEKLEMESI = 1100
 /** Bir turda üretilen soru sayısı — en hızlı oyuncunun bile tüketemeyeceği kadar. */
 const TUR_SORUSU = 120
 /** Cevap alanına yazılabilecek en fazla rakam. En büyük sonuç dört basamaklı. */
@@ -271,14 +275,11 @@ export function IslemOyunuEkrani({
 
       if (!dogruMu) setBitisZamani((b) => b - YANLIS_CEZASI * 1000)
 
-      zamanlayiciRef.current = setTimeout(
-        () => {
-          setGeriBildirim(null)
-          setGirilen('')
-          setSira((s) => s + 1)
-        },
-        dogruMu ? DOGRU_BEKLEME : YANLIS_BEKLEME,
-      )
+      zamanlayiciRef.current = setTimeout(() => {
+        setGeriBildirim(null)
+        setGirilen('')
+        setSira((s) => s + 1)
+      }, CEVAP_BEKLEMESI)
     },
     [asama, geriBildirim, girilen, sira, sorular],
   )

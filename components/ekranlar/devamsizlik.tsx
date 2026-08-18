@@ -51,7 +51,16 @@ export function DevamsizlikEkrani({
 
   const seciliGunun = kayitlar.filter((k) => k.tarih === secili)
 
+  /**
+   * Gelecek güne devamsızlık girilemez.
+   *
+   * Takvim o günleri zaten kapatıyor; buradaki ikinci kontrol, ekran açıkken
+   * gece yarısının geçtiği (seçili gün bugünken yarına dönüştüğü) durum için.
+   */
+  const gelecekGun = secili > bugunIso
+
   const ekle = () => {
+    if (gelecekGun) return
     setKayitlar((onceki) => [
       ...onceki,
       { id: yeniId(), tarih: secili, tur, yarimGun, not: not.trim() || undefined },
@@ -117,6 +126,7 @@ export function DevamsizlikEkrani({
           onSec={setSecili}
           isaretler={isaretler}
           bugunIso={bugunIso}
+          enGecIso={bugunIso}
         />
         <div className="mt-3 flex items-center justify-center gap-4 text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
@@ -178,7 +188,9 @@ export function DevamsizlikEkrani({
             aria-label="Devamsızlık notu"
             className="flex-1"
           />
-          <Buton onClick={ekle}>Ekle</Buton>
+          <Buton onClick={ekle} disabled={gelecekGun}>
+            Ekle
+          </Buton>
         </div>
       </Kart>
 
