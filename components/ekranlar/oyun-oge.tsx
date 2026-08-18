@@ -5,9 +5,9 @@ import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
 import { Check, X } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
-import type { SesOlayi, SesSorusu } from '@/lib/oyunlar/ses-havuzu'
-import { OLAY_ACIKLAMASI, OLAY_ADI } from '@/lib/oyunlar/ses-havuzu'
-import { turHazirla, type SesOyunSorusu, type SesSikki } from '@/lib/oyunlar/ses'
+import type { OgeSorusu, OgeTuru } from '@/lib/oyunlar/oge-havuzu'
+import { OGE_ACIKLAMASI, OGE_ADI } from '@/lib/oyunlar/oge-havuzu'
+import { cumleMetni, turHazirla, type OgeOyunSorusu, type OgeSikki } from '@/lib/oyunlar/oge'
 import {
   TUR_SURESI,
   YANLIS_CEZASI,
@@ -18,7 +18,7 @@ import {
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
-import { sestenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { ogedenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
@@ -40,7 +40,7 @@ const CEVAP_BEKLEMESI = 1100
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
-type GeriBildirim = { secilen: SesOlayi; dogruMu: boolean; soru: SesSorusu }
+type GeriBildirim = { secilen: OgeTuru; dogruMu: boolean; soru: OgeSorusu }
 
 /**
  * Banka kayıtlarından ses havuzu.
@@ -48,28 +48,29 @@ type GeriBildirim = { secilen: SesOlayi; dogruMu: boolean; soru: SesSorusu }
  * Banka kaydı ekranda göstermek için gereken her şeyi taşıyor; tek eksik oyunun
  * beklediği biçim. Ses dışındaki kayıtlar eleniyor.
  */
-function bankaHavuzu(kayitlar: readonly BankaKaydi[]): SesSorusu[] {
-  const havuz: SesSorusu[] = []
+function bankaHavuzu(kayitlar: readonly BankaKaydi[]): OgeSorusu[] {
+  const havuz: OgeSorusu[] = []
   for (const kayit of kayitlar) {
-    if (kayit.soru.oyun !== 'ses') continue
+    if (kayit.soru.oyun !== 'oge') continue
     havuz.push({
-      kelime: kayit.soru.kelime,
-      olusum: kayit.soru.olusum,
-      olay: kayit.soru.olay,
+      once: kayit.soru.once,
+      oge: kayit.soru.oge,
+      sonra: kayit.soru.sonra,
+      tur: kayit.soru.ogeTuru,
     })
   }
   return havuz
 }
 
 /**
- * Ses Olayları — mini oyun.
+ * Cümlenin Ögeleri — mini oyun.
  *
- * Sözcüğün nasıl oluştuğu (**kitap + ı**) ekranda yazıyor, olayın adı yazmıyor.
- * Oluşum olmadan bazı sözcükler iki olaya birden uyuyormuş gibi görünüyor —
- * *hakkı* sözcüğüne kökünü bilmeden bakan ünsüz türemesiyle yumuşamayı
- * ayıramaz. Oluşum ipucu değil, sorunun bir parçası.
+ * Sorulan bölüm cümlenin içinde **vurgulanarak** gösteriliyor, ayrıca
+ * yazılmıyor. Cümleden koparılıp tek başına sorulsaydı öge belirsizleşirdi:
+ * "kitabı" tek başına belirtili nesne gibi durur ama "Kitabı okudum" ile
+ * "Kitabı güzeldi" cümlelerinde farklı ögelerdir.
  */
-export function SesOyunuEkrani({
+export function OgeOyunuEkrani({
   istatistik,
   sesAcik,
   bankaSorulari,
@@ -80,17 +81,17 @@ export function SesOyunuEkrani({
   sesAcik: boolean
   /** Boş değilse tur yalnızca bu sorularla kurulur (Oyun Bankası turu). */
   bankaSorulari: BankaKaydi[]
-  onTurBitti: (ozet: TurOzeti<SesSorusu>, bankaCevaplari: BankaCevabi[]) => void
+  onTurBitti: (ozet: TurOzeti<OgeSorusu>, bankaCevaplari: BankaCevabi[]) => void
   onCik: () => void
 }) {
-  const oyun = oyunBul('ses')
+  const oyun = oyunBul('oge')
 
   const [asama, setAsama] = useState<Asama>('tanitim')
   const [yardimAcik, setYardimAcik] = useState(false)
 
-  const [sorular, setSorular] = useState<SesOyunSorusu[]>([])
+  const [sorular, setSorular] = useState<OgeOyunSorusu[]>([])
   const [sira, setSira] = useState(0)
-  const [cevaplar, setCevaplar] = useState<Cevap<SesSorusu>[]>([])
+  const [cevaplar, setCevaplar] = useState<Cevap<OgeSorusu>[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
 
   const [bitisZamani, setBitisZamani] = useState(0)
@@ -98,7 +99,7 @@ export function SesOyunuEkrani({
   /** Yardım açıkken sayaç durur; kalan saniye burada bekletilir. */
   const [duraklatilan, setDuraklatilan] = useState<number | null>(null)
 
-  const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<SesSorusu>; yeniRekor: boolean } | null>(
+  const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<OgeSorusu>; yeniRekor: boolean } | null>(
     null,
   )
 
@@ -107,7 +108,7 @@ export function SesOyunuEkrani({
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const cevaplarRef = useRef<Cevap<SesSorusu>[]>([])
+  const cevaplarRef = useRef<Cevap<OgeSorusu>[]>([])
   cevaplarRef.current = cevaplar
   const bittiRef = useRef(false)
 
@@ -129,7 +130,7 @@ export function SesOyunuEkrani({
   }, [havuz, istatistik.enIyiDogru])
 
   const turBitir = useCallback(
-    (verilenler: Cevap<SesSorusu>[]) => {
+    (verilenler: Cevap<OgeSorusu>[]) => {
       if (bittiRef.current) return
       bittiRef.current = true
       const ozet = turOzeti(verilenler)
@@ -144,7 +145,7 @@ export function SesOyunuEkrani({
       onTurBitti(
         ozet,
         verilenler.map((cevap) => ({
-          soru: sestenBanka(cevap.soru),
+          soru: ogedenBanka(cevap.soru),
           dogruMu: cevap.dogruMu,
         })),
       )
@@ -186,7 +187,7 @@ export function SesOyunuEkrani({
     ).catch(() => {})
   }
 
-  const cevapla = (sik: SesSikki) => {
+  const cevapla = (sik: OgeSikki) => {
     // Geri bildirim gösterilirken ikinci dokunuş yok sayılıyor; yoksa aynı
     // soruya iki cevap yazılır ve süre iki kez cezalandırılırdı.
     if (asama !== 'oynaniyor' || geriBildirim !== null) return
@@ -231,7 +232,7 @@ export function SesOyunuEkrani({
   return (
     <>
       <OyunKabugu
-        oyunId="ses"
+        oyunId="oge"
         baslik={oyun.ad}
         sayac={
           asama === 'bitti'
@@ -266,19 +267,21 @@ export function SesOyunuEkrani({
                   <Rabi durum={maskotDurumu} boyut={54} />
                 </div>
 
-                {/* Sözcük ve oluşumu: dört şık uzun metinler olduğu için soru
-                    kısmı bilerek tek bakışta okunacak kadar sade tutuldu. */}
-                <div className="golge-kart rounded-[20px] bg-card px-4 py-3.5 text-center">
-                  <p className="font-display text-[26px] font-extrabold leading-none tracking-tight">
-                    {soru.soru.kelime}
-                  </p>
-                  <p className="mt-1.5 text-[13px] font-semibold text-muted-foreground">
-                    {soru.soru.olusum}
+                {/* Cümle, sorulan öge vurgulu. Vurgu rengi oyunun ailesinden
+                    geliyor; kalın yazı tek başına yeterli değil, uzun
+                    cümlelerde gözden kaçıyordu. */}
+                <div className="golge-kart rounded-[20px] bg-card px-4 py-4">
+                  <p className="text-center font-display text-[19px] font-bold leading-snug">
+                    {soru.soru.once}
+                    <mark className="rounded-md bg-yzm px-1.5 py-0.5 font-extrabold text-yzm-koyu">
+                      {soru.soru.oge}
+                    </mark>
+                    {soru.soru.sonra}
                   </p>
                 </div>
 
                 <p className="text-center font-display text-[14px] font-extrabold">
-                  Hangi ses olayı var?
+                  Vurgulu bölüm hangi öge?
                 </p>
 
                 <div className="flex flex-col gap-2">
@@ -299,8 +302,8 @@ export function SesOyunuEkrani({
                   baslik={geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
                   aciklama={
                     geriBildirim.dogruMu
-                      ? soru.soru.olusum
-                      : `— doğrusu ${OLAY_ADI[geriBildirim.soru.olay].toLocaleLowerCase('tr')}`
+                      ? `“${geriBildirim.soru.oge}”`
+                      : `— doğrusu ${OGE_ADI[geriBildirim.soru.tur].toLocaleLowerCase('tr')}`
                   }
                 />
               )}
@@ -332,7 +335,7 @@ function SikDugmesi({
   geriBildirim,
   onSec,
 }: {
-  sik: SesSikki
+  sik: OgeSikki
   geriBildirim: GeriBildirim | null
   onSec: () => void
 }) {
@@ -372,7 +375,7 @@ function SonucGorunumu({
   onTekrar,
   onCik,
 }: {
-  sonuc: { ozet: TurOzeti<SesSorusu>; yeniRekor: boolean }
+  sonuc: { ozet: TurOzeti<OgeSorusu>; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
   onTekrar: () => void
@@ -384,7 +387,7 @@ function SonucGorunumu({
 
   return (
     <TurSonu
-      oyunId="ses"
+      oyunId="oge"
       dogru={ozet.dogru}
       yanlis={ozet.yanlis}
       enIyiSeri={ozet.enIyiSeri}
@@ -397,22 +400,26 @@ function SonucGorunumu({
           : rekorCumlesi(ozet.dogru, rekor, yeniRekor, 'doğru')
       }
       bolumBasligi="Karıştırdıkların"
-      bolumAltYazisi="Kuralıyla birlikte — asıl öğrenme burada."
+      bolumAltYazisi="Ögenin kuralıyla birlikte — asıl öğrenme burada."
       onTekrar={onTekrar}
       onCik={onCik}
     >
       {ozet.yanlislar.length > 0 && (
         <div className="flex flex-none flex-col gap-2">
           {gorunen.map((yanlis, sira) => (
-            <YanlisKarti key={`${yanlis.kelime}-${sira}`} oyunId="ses">
-              <b className="block font-display text-[13.5px] font-extrabold leading-tight">
-                {yanlis.kelime}
+            <YanlisKarti key={`${cumleMetni(yanlis)}-${sira}`} oyunId="oge">
+              <b className="block font-display text-[13px] font-bold leading-snug">
+                {yanlis.once}
+                <mark className="rounded bg-yzm px-1 font-extrabold text-yzm-koyu">
+                  {yanlis.oge}
+                </mark>
+                {yanlis.sonra}
               </b>
-              <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
-                {yanlis.olusum} · {OLAY_ADI[yanlis.olay]}
+              <span className="mt-1 block text-[11.5px] font-extrabold text-yzm-koyu">
+                {OGE_ADI[yanlis.tur]}
               </span>
               <span className="mt-1.5 block border-t border-border pt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
-                {OLAY_ACIKLAMASI[yanlis.olay]}
+                {OGE_ACIKLAMASI[yanlis.tur]}
               </span>
             </YanlisKarti>
           ))}

@@ -1,65 +1,33 @@
 import type { SesOlayi, SesSorusu } from './ses-havuzu'
 import { OLAY_ADI, SES_HAVUZU } from './ses-havuzu'
-import { karistir } from './tur'
+import {
+  SIK_SAYISI,
+  turHazirla as coktanSecmeliTur,
+  type CoktanSecmeliSoru,
+  type Sik,
+} from './coktan-secmeli'
 
 /**
- * Ses Olayları'na özgü mantık. Süre, ceza, rekor gibi bütün oyunlarda ortak
- * olan her şey `tur.ts` içinde.
+ * Ses Olayları'na özgü kısım. Şık kurma ve tur sırası `coktan-secmeli.ts`
+ * içinde; burada yalnız hangi havuzdan, hangi seçenek kümesinden çekildiği
+ * duruyor.
  */
 
-/** Bir soruda gösterilen şık sayısı. */
-export const SIK_SAYISI = 4
+export { SIK_SAYISI }
 
-export type SesSikki = {
-  olay: SesOlayi
-  metin: string
-  dogruMu: boolean
-}
-
-/** Ekrana gelen tek soru: kaynak sözcük + karıştırılmış dört şık. */
-export type SesOyunSorusu = {
-  soru: SesSorusu
-  siklar: SesSikki[]
-}
+export type SesSikki = Sik<SesOlayi>
+export type SesOyunSorusu = CoktanSecmeliSoru<SesSorusu, SesOlayi>
 
 /** Havuzda geçen bütün ses olayları — çeldiriciler buradan seçiliyor. */
 export const OLAYLAR = Object.keys(OLAY_ADI) as SesOlayi[]
 
-/**
- * Bir sorunun şıkları: doğru olay + üç çeldirici.
- *
- * Çeldiriciler **rastgele** seçiliyor ama sabit bir sırayla dizilmiyor: doğru
- * şık hep aynı yerde olsaydı oyuncu birkaç soruda konumu ezberler, sözcüğe
- * bakmayı bırakırdı.
- */
-export function siklariKur(
-  soru: SesSorusu,
-  rastgele: () => number = Math.random,
-): SesSikki[] {
-  const celdiriciler = karistir(
-    OLAYLAR.filter((o) => o !== soru.olay),
-    rastgele,
-  ).slice(0, SIK_SAYISI - 1)
-
-  return karistir([soru.olay, ...celdiriciler], rastgele).map((olay) => ({
-    olay,
-    metin: OLAY_ADI[olay],
-    dogruMu: olay === soru.olay,
-  }))
+export function siklariKur(soru: SesSorusu, rastgele: () => number = Math.random): SesSikki[] {
+  return coktanSecmeliTur([soru], (s) => s.olay, OLAYLAR, (o) => OLAY_ADI[o], rastgele)[0].siklar
 }
 
-/**
- * Bir turun soru sırası.
- *
- * Havuz baştan bir kez karıştırılıp sırayla tüketiliyor; her soruda rastgele
- * çekilseydi aynı sözcük tur içinde iki kez çıkabilirdi.
- */
 export function turHazirla(
   havuz: readonly SesSorusu[] = SES_HAVUZU,
   rastgele: () => number = Math.random,
 ): SesOyunSorusu[] {
-  return karistir(havuz, rastgele).map((soru) => ({
-    soru,
-    siklar: siklariKur(soru, rastgele),
-  }))
+  return coktanSecmeliTur(havuz, (s) => s.olay, OLAYLAR, (o) => OLAY_ADI[o], rastgele)
 }

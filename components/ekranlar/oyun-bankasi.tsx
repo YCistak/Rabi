@@ -32,6 +32,7 @@ import { Rabi } from '@/components/maskot/rabi'
 const AILE: Record<OyunId, { zemin: string; yazi: string; dolgu: string }> = {
   yazim: { zemin: 'bg-yzm', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
   ses: { zemin: 'bg-yzm', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
+  oge: { zemin: 'bg-yzm', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
   islem: { zemin: 'bg-isl', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
   edebiyat: { zemin: 'bg-edb', yazi: 'text-edb-koyu', dolgu: 'bg-edb-ok' },
 }
@@ -39,6 +40,7 @@ const AILE: Record<OyunId, { zemin: string; yazi: string; dolgu: string }> = {
 const KISA_AD: Record<OyunId, string> = {
   yazim: 'Yazım',
   ses: 'Ses Olayı',
+  oge: 'Cümle Ögesi',
   islem: 'İşlem',
   edebiyat: 'Edebiyat',
 }

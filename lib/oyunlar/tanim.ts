@@ -2,6 +2,7 @@ import type { OyunId, OyunIstatistigi, OyunKayitlari } from '../types'
 import { TUR_SURESI, YANLIS_CEZASI, istatistigiTamamla } from './tur'
 import { HAVUZ_BOYUTU } from './yazim-havuzu'
 import { SES_BOYUTU } from './ses-havuzu'
+import { OGE_BOYUTU } from './oge-havuzu'
 import { EDEBIYAT_BOYUTU } from './edebiyat-havuzu'
 
 /**
@@ -100,6 +101,20 @@ export const OYUNLAR: OyunTanimi[] = [
       `Oluşum satırı ipucu değil, sorunun parçası: kökünü bilmeden *hakkı* sözcüğünde ünsüz türemesiyle yumuşamayı ayıramazsın.`,
       `Havuzda ${SES_BOYUTU} sözcük var ve her biri **tek** bir ses olayı içeriyor — iki olayın birden görüldüğü sözcükler bilerek alınmadı.`,
       `Tur bitince yanlış bildiklerin kuralıyla listelenir — asıl öğrenme orada.`,
+    ],
+  },
+  {
+    id: 'oge',
+    ders: 'turkce',
+    ad: 'Cümlenin Ögeleri',
+    kisaAciklama: 'Vurgulu bölüm hangi öge?',
+    ikon: '🧩',
+    nasilOynanir: [
+      `Ekrana bir cümle gelir ve bir bölümü vurgulanır. Dört şıktan o bölümün hangi öge olduğunu seçersin.`,
+      `Turun süresi ${TUR_SURESI} saniye. Doğru cevap süreyi uzatmaz, ${YANLIS_CEZASI} saniyeyi yanlış cevap götürür.`,
+      `Şaşırınca önce yüklemi bul, sonra ona soruyu sor: “kim” özneyi, “neyi” belirtili nesneyi, “nereye” dolaylı tümleci verir.`,
+      `Havuzda ${OGE_BOYUTU} cümle var. Aynı cümle farklı ögesi sorularak tekrar çıkabilir — ögeyi cümleden bağımsız düşünmen için.`,
+      `Edat tümleci şıklarda yok: güncel müfredat onu ayrı öge saymıyor, olsaydı bazı cümlelerde iki cevap birden doğru olurdu.`,
     ],
   },
   {

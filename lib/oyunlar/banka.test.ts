@@ -3,6 +3,7 @@ import {
   BANKA_SINIRI,
   DUSME_ESIGI,
   bankaDagilimi,
+  OYUN_KIMLIKLERI,
   bankaKimligi,
   bankaSuz,
   bankayiGuncelle,
@@ -105,8 +106,22 @@ describe('dağılım ve süzme', () => {
     '2026-08-18',
   )
 
+  /**
+   * Dağılımın **tamamı** karşılaştırılmıyor: her yeni oyun eklendiğinde bu test
+   * kırılıyordu ve kırılması bir şey öğretmiyordu. İlgilendiği sayılar tek tek,
+   * gerisi toplamla doğrulanıyor.
+   */
   it('oyun başına sayar', () => {
-    expect(bankaDagilimi(banka)).toEqual({ yazim: 2, ses: 0, islem: 1, edebiyat: 0 })
+    const dagilim = bankaDagilimi(banka)
+    expect(dagilim.yazim).toBe(2)
+    expect(dagilim.islem).toBe(1)
+    expect(dagilim.edebiyat).toBe(0)
+    // Kaydı olmayan bütün oyunlar sıfır kalmalı.
+    expect(Object.values(dagilim).reduce((t, n) => t + n, 0)).toBe(3)
+  })
+
+  it('dağılım bütün oyunları kapsıyor', () => {
+    expect(Object.keys(bankaDagilimi([])).sort()).toEqual([...OYUN_KIMLIKLERI].sort())
   })
 
   it('tek oyuna süzer', () => {

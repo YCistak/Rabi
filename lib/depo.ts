@@ -366,6 +366,13 @@ function bankayiCoz(ham: unknown): BankaKaydi[] {
       if (s.oyun === 'edebiyat') return typeof s.eser === 'string' && typeof s.yazar === 'string'
       if (s.oyun === 'ses')
         return typeof s.kelime === 'string' && typeof s.olusum === 'string' && typeof s.olay === 'string'
+      if (s.oyun === 'oge')
+        return (
+          typeof s.once === 'string' &&
+          typeof s.oge === 'string' &&
+          typeof s.sonra === 'string' &&
+          typeof s.ogeTuru === 'string'
+        )
       return false
     })
     .map((k) => ({

@@ -17,14 +17,14 @@ describe('siklariKur', () => {
     for (let i = 0; i < 50; i++) {
       const siklar = siklariKur(soru('burnu', 'unluDusmesi'))
       expect(siklar.filter((s) => s.dogruMu)).toHaveLength(1)
-      expect(siklar.find((s) => s.dogruMu)?.olay).toBe('unluDusmesi')
+      expect(siklar.find((s) => s.dogruMu)?.deger).toBe('unluDusmesi')
     }
   })
 
   it('aynı olay iki şıkta çıkmaz', () => {
     for (let i = 0; i < 50; i++) {
       const siklar = siklariKur(soru('bekliyor', 'unluDaralmasi'))
-      expect(new Set(siklar.map((s) => s.olay)).size).toBe(SIK_SAYISI)
+      expect(new Set(siklar.map((s) => s.deger)).size).toBe(SIK_SAYISI)
     }
   })
 

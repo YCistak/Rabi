@@ -37,8 +37,15 @@ const AILE: Record<
     kenar: 'border-l-yzm-koyu',
     degisken: 'var(--yzm-koyu)',
   },
-  // Ses Olayları da Türkçe dersi: Yazım'la aynı aileyi paylaşıyor.
+  // Türkçe dersinin oyunları Yazım'la aynı aileyi paylaşıyor.
   ses: {
+    zemin: 'bg-yzm',
+    yazi: 'text-yzm-koyu',
+    dolgu: 'bg-yzm-koyu',
+    kenar: 'border-l-yzm-koyu',
+    degisken: 'var(--yzm-koyu)',
+  },
+  oge: {
     zemin: 'bg-yzm',
     yazi: 'text-yzm-koyu',
     dolgu: 'bg-yzm-koyu',
