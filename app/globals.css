@@ -18,12 +18,32 @@
   --color-ikincil-soft: var(--ikincil-soft);
   --color-ring: var(--ring);
   --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
   --color-danger: var(--danger);
   --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
   --color-grid: var(--grid);
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  /* Mini oyun aileleri */
+  --color-yzm: var(--yzm);
+  --color-yzm-koyu: var(--yzm-koyu);
+  --color-yzm-ok: var(--yzm-ok);
+  --color-isl: var(--isl);
+  --color-isl-koyu: var(--isl-koyu);
+  --color-isl-ok: var(--isl-ok);
+  --color-edb: var(--edb);
+  --color-edb-koyu: var(--edb-koyu);
+  --color-edb-ok: var(--edb-ok);
+
+  /* Tasarımın tek yazı tipi Nunito. Başlık ve gövde ayrı aile değil, ayrı
+     kalınlık: gövde 500-600, başlık 800-900. */
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+
+  /* Kartlar tasarımda çerçeveyle değil gölgeyle ayrılıyor: mavimsi zeminin
+     üstünde yüzen beyaz yüzeyler. Koyu temada gölge okunmadığı için oradaki
+     ayrım ince çerçeveye düşüyor (bkz. `.dark .golge-kart`). */
+  --shadow-kart: 0 6px 20px rgba(38, 58, 110, 0.07);
 
   --radius-sm: calc(var(--radius) * 0.5);
   --radius-md: calc(var(--radius) * 0.75);
@@ -33,11 +53,16 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Rabi paleti. Tek palet — uygulamanın kimliği maskota bağlı olduğu için
-   kullanıcıya renk seçtirilmiyor, yalnızca açık/koyu mod var.
+   Rabi paleti — tasarim/ altındaki mockup'lardan geliyor.
 
-   Vurgu: havuç turuncusu. İkincil: yonca yeşili. Zemin nötr ama hafif sıcak
-   (tavşan tüyü) — saf griye göre daha yumuşak görünüyor.
+   Vurgu mavi (#4A8FE7), ikinci kimlik rengi mercan (#EF5A52). Zemin saf beyaz
+   değil, hafif mavimsi bir kâğıt (#EDF1FD): beyaz kartlar üstünde yüzüyor gibi
+   dursun diye. Tek palet — kullanıcıya renk seçtirilmiyor, yalnızca açık/koyu.
+
+   Mini oyunların kendi aileleri var (yzm/isl/edb): her oyunun pastel zemini ve
+   o zeminin üstünde okunan koyu tonu. Oyun kartı, tur sonu ekranı ve Oyun
+   Bankası aynı üçlüyü kullanıyor — kullanıcı rengi görünce hangi oyun olduğunu
+   yazıyı okumadan biliyor.
 --------------------------------------------------------------------------- */
 
 /*
@@ -59,69 +84,97 @@
 
 :root {
   color-scheme: light;
-  --background: oklch(0.98 0.006 70);
-  --foreground: oklch(0.25 0.012 60);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.25 0.012 60);
-  --muted: oklch(0.955 0.008 70);
-  --muted-foreground: oklch(0.52 0.012 60);
-  --border: oklch(0.9 0.008 70);
-  --input: oklch(0.9 0.008 70);
-  --grid: oklch(0.915 0.008 70);
-  --radius: 0.9rem;
+  --background: #edf1fd;
+  --foreground: #1b2440;
+  --card: #ffffff;
+  --card-foreground: #1b2440;
+  --muted: #e6ebf8;
+  --muted-foreground: #7a8399;
+  --border: #e1e6f0;
+  --input: #e1e6f0;
+  --grid: #dde3f1;
+  --radius: 0.8rem;
 
-  --primary: oklch(0.62 0.16 45);
-  --primary-soft: oklch(0.945 0.04 55);
-  --primary-foreground: oklch(0.99 0.004 70);
+  --primary: #4a8fe7;
+  --primary-soft: #e4eefc;
+  --primary-foreground: #ffffff;
 
-  --ikincil: oklch(0.55 0.12 148);
-  --ikincil-soft: oklch(0.945 0.035 150);
+  /* İkinci kimlik rengi: marka yazısı, yanlışlar, dikkat çeken eylem */
+  --ikincil: #ef5a52;
+  --ikincil-soft: #fde7e4;
 
   --ring: var(--primary);
-  --success: oklch(0.53 0.14 150);
-  --warning: oklch(0.66 0.14 75);
-  --danger: oklch(0.54 0.21 25);
+  --success: #3e9b63;
+  --success-soft: #e3f3e7;
+  --warning: #cf9420;
+  --warning-soft: #fbf2dc;
+  --danger: #e0413a;
+
+  /* Oyun aileleri — pastel zemin + üstünde okunan koyu ton */
+  --yzm: #fce7ea;
+  --yzm-koyu: #c24a60;
+  --yzm-ok: #e4708a;
+  --isl: #fbf2dc;
+  --isl-koyu: #b57d1e;
+  --isl-ok: #e0a233;
+  --edb: #ece7fb;
+  --edb-koyu: #6c55c4;
+  --edb-ok: #8570da;
 
   /* Maskot renkleri — Rabi'nin kürkü zeminden hafifçe ayrışır. */
-  --maskot-kurk: oklch(0.93 0.014 70);
-  --maskot-kulak-ic: oklch(0.88 0.05 30);
-  --maskot-yanak: oklch(0.86 0.07 35);
-  --maskot-burun: oklch(0.68 0.14 30);
-  --maskot-agiz: oklch(0.55 0.13 25);
-  --maskot-cizgi: oklch(0.32 0.02 60);
-  --maskot-parlak: oklch(1 0 0);
+  --maskot-kurk: #ffffff;
+  --maskot-kulak-ic: #f6d2da;
+  --maskot-yanak: #f9dde3;
+  --maskot-burun: #ef8c9e;
+  --maskot-agiz: #d4586c;
+  --maskot-cizgi: #1b2440;
+  --maskot-parlak: #ffffff;
 }
 
 .dark {
   color-scheme: dark;
-  --background: oklch(0.19 0.008 60);
-  --foreground: oklch(0.95 0.006 70);
-  --card: oklch(0.24 0.01 60);
-  --card-foreground: oklch(0.95 0.006 70);
-  --muted: oklch(0.285 0.01 60);
-  --muted-foreground: oklch(0.74 0.008 70);
+  --background: #12141c;
+  --foreground: #e6e9f2;
+  --card: #1c1f29;
+  --card-foreground: #e6e9f2;
+  --muted: #252a37;
+  --muted-foreground: #99a1b5;
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 16%);
   --grid: oklch(1 0 0 / 10%);
 
-  --primary: oklch(0.76 0.14 55);
-  --primary-soft: oklch(0.32 0.05 45);
-  --primary-foreground: oklch(0.2 0.014 60);
+  --primary: #7fb2f0;
+  --primary-soft: #22304a;
+  --primary-foreground: #10131c;
 
-  --ikincil: oklch(0.75 0.12 150);
-  --ikincil-soft: oklch(0.3 0.04 150);
+  --ikincil: #ff7b73;
+  --ikincil-soft: #3a2320;
 
-  --success: oklch(0.75 0.14 150);
-  --warning: oklch(0.8 0.13 80);
-  --danger: oklch(0.7 0.17 25);
+  --success: #63c489;
+  --success-soft: #1e3327;
+  --warning: #e5b355;
+  --warning-soft: #35301f;
+  --danger: #ff6f66;
 
-  --maskot-kurk: oklch(0.82 0.014 70);
-  --maskot-kulak-ic: oklch(0.72 0.06 30);
-  --maskot-yanak: oklch(0.76 0.08 35);
-  --maskot-burun: oklch(0.6 0.14 30);
-  --maskot-agiz: oklch(0.45 0.12 25);
-  --maskot-cizgi: oklch(0.26 0.02 60);
-  --maskot-parlak: oklch(0.98 0.005 70);
+  /* Koyu temada pastel zeminler okunmuyor; aynı aileler koyulaştırılmış
+     karşılıklarıyla duruyor — renk kimliği korunuyor, kontrast geri geliyor. */
+  --yzm: #3a2028;
+  --yzm-koyu: #f2a2b3;
+  --yzm-ok: #e4708a;
+  --isl: #33291a;
+  --isl-koyu: #e8bf74;
+  --isl-ok: #e0a233;
+  --edb: #272044;
+  --edb-koyu: #b9a9f2;
+  --edb-ok: #8570da;
+
+  --maskot-kurk: #e9ecf5;
+  --maskot-kulak-ic: #c99aa6;
+  --maskot-yanak: #d3a8b2;
+  --maskot-burun: #e07f92;
+  --maskot-agiz: #b8465c;
+  --maskot-cizgi: #1b2440;
+  --maskot-parlak: #ffffff;
 }
 
 @layer base {
@@ -149,6 +202,17 @@
 @layer utilities {
   .font-display {
     font-family: var(--font-display);
+  }
+  /*
+    Kart yüzeyi. Açık temada gölge, koyu temada ince çerçeve — koyu zeminde
+    gölge görünmüyor, kart zeminden hiç ayrılmıyordu.
+  */
+  .golge-kart {
+    box-shadow: var(--shadow-kart);
+  }
+  .dark .golge-kart {
+    box-shadow: none;
+    border: 1px solid var(--border);
   }
   /* Sütun halindeki sayılar hizalansın diye; büyük tek sayılarda kullanılmaz */
   .rakam {

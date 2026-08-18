@@ -8,13 +8,13 @@
  * açılan bir uygulamada çoğu zaman hiç görünmüyor. İstenen ekran (zıplayan
  * tavşan + "Rabi" yazısı + dönen çark) bu yüzden uygulamanın içinde kuruldu.
  *
- * Zemin rengi sistemin açılış ekranıyla **birebir aynı** (`#C2622A`,
+ * Zemin rengi sistemin açılış ekranıyla **birebir aynı** (`#4A8FE7`,
  * `android/app/src/main/res/values/colors.xml` içindeki `acilis_zemin`). İkisi
  * arasındaki geçiş böylece görünmüyor; farklı olsaydı açılışta bir renk sıçraması
  * olurdu.
  */
 
-const ZEMIN = '#C2622A'
+const ZEMIN = '#4A8FE7'
 
 /**
  * Ekranın en az ne kadar kalacağı (ms).

@@ -26,6 +26,14 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
 - Mobil öncelikli, `max-w-md` tek sütun. Hover yerine `active:` — dokunmatik cihaz.
 - Renkler doğrudan yazılmaz, tema değişkenlerinden gelir (`var(--primary)` /
   Tailwind `text-primary`). Tek palet var, kullanıcıya renk seçtirilmiyor.
+  Vurgu mavi (`--primary` #4A8FE7), ikinci kimlik rengi mercan (`--ikincil` #EF5A52),
+  zemin mavimsi kâğıt (`--background` #EDF1FD). Mini oyunların kendi aileleri var:
+  `yzm` (pembe) · `isl` (krem) · `edb` (lavanta), her biri `-koyu` ve `-ok` tonuyla.
+  Kart yüzeyi `golge-kart` sınıfıyla: açık temada gölge, koyu temada ince çerçeve.
+- Yazı tipi tek: **Nunito**. Başlık ayrı aile değil ayrı kalınlık — `font-display`
+  hâlâ var ama Nunito'ya çözülüyor; başlıklar `font-extrabold`, gövde `font-medium`.
+- Tasarım kaynağı `tasarim/` altındaki HTML mockup'lar. Derlemeye girmiyorlar,
+  uygulama onlardan hiçbir şey import etmiyor — ekran değiştirirken oraya bak.
 - Sütun hâlindeki sayılara `rakam` sınıfı (tabular-nums), başlıklara `font-display`.
 - Alt menünün altında kalan içerik için `guvenli-alt`.
 

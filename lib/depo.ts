@@ -20,6 +20,7 @@ import type {
   Yedek,
 } from './types'
 import { TUR_SURESI } from './oyunlar/tur'
+import { BANKA_SINIRI, DUSME_ESIGI, type BankaKaydi, type BankaSorusu } from './oyunlar/banka'
 import { VARSAYILAN_SABLON_ID } from './sablonlar'
 import { egitimYili } from './hesap'
 import { dakikayiKirp, saatiKirp } from './hatirlatma'
@@ -38,6 +39,8 @@ export const ANAHTARLAR = {
   rozetler: 'rabi-rozetler',
   oyunlar: 'rabi-oyunlar',
   oyunGecmisi: 'rabi-oyun-gecmisi',
+  /** Oyun Bankası — mini oyunlarda karıştırılan sorular. */
+  oyunBankasi: 'rabi-oyun-bankasi',
   /** Haftalık özetin hangi haftalarının izlendiği — hafta başı tarihlerinin listesi. */
   ozetGorulen: 'rabi-ozet-gorulen',
   /** Zihinden İşlem'de seçili işlem türleri — yedeğe girmeyen küçük bir tercih. */
@@ -272,6 +275,7 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       rozetler: dizi<KazanilanRozet>(nesne.rozetler),
       oyunlar: oyunKayitlariniCoz(nesne.oyunlar),
       oyunGecmisi: oyunGecmisiniCoz(nesne.oyunGecmisi),
+      oyunBankasi: bankayiCoz(nesne.oyunBankasi),
       pomodoroGecmis: dizi<PomodoroSeans>(nesne.pomodoroGecmis),
       hedef: (nesne.hedef as Hedef | null) ?? null,
       // Yedek yükleyen kullanıcı uygulamayı zaten kurmuş demektir; kurulum tekrar sorulmaz
@@ -330,6 +334,36 @@ function oyunGecmisiniCoz(ham: unknown): OyunTurKaydi[] {
     .slice(-OYUN_GECMIS_SINIRI)
 }
 
+/**
+ * Yedekteki Oyun Bankası'nı süzer.
+ *
+ * Kayıt kendi soru nesnesini taşıdığı için doğrulama soru tipine iniyor:
+ * `soru.oyun` tanınmıyorsa ya da içindeki alanlar eksikse kayıt atılıyor.
+ * Yarım bir kayıt bankada duruyor ama açılınca ekranı çökertirdi.
+ */
+function bankayiCoz(ham: unknown): BankaKaydi[] {
+  if (!Array.isArray(ham)) return []
+
+  return (ham as Partial<BankaKaydi>[])
+    .filter((k): k is BankaKaydi => {
+      if (typeof k?.id !== 'string') return false
+      const s = k.soru as BankaSorusu | undefined
+      if (!s) return false
+      if (s.oyun === 'yazim') return typeof s.dogru === 'string' && typeof s.yanlis === 'string'
+      if (s.oyun === 'islem') return typeof s.metin === 'string' && typeof s.sonuc === 'number'
+      if (s.oyun === 'edebiyat') return typeof s.eser === 'string' && typeof s.yazar === 'string'
+      return false
+    })
+    .map((k) => ({
+      ...k,
+      kacKez: Math.max(1, sayi(k.kacKez)),
+      ardisikDogru: Math.min(DUSME_ESIGI - 1, sayi(k.ardisikDogru)),
+      eklenme: typeof k.eklenme === 'string' ? k.eklenme : '',
+      sonYanlis: typeof k.sonYanlis === 'string' ? k.sonYanlis : '',
+    }))
+    .slice(-BANKA_SINIRI)
+}
+
 function sayi(deger: unknown): number {
   return typeof deger === 'number' && Number.isFinite(deger) && deger > 0 ? Math.floor(deger) : 0
 }
@@ -366,6 +400,7 @@ export function yedegiUygula(yedek: Yedek) {
   yaz(ANAHTARLAR.rozetler, yedek.rozetler)
   yaz(ANAHTARLAR.oyunlar, yedek.oyunlar)
   yaz(ANAHTARLAR.oyunGecmisi, yedek.oyunGecmisi)
+  yaz(ANAHTARLAR.oyunBankasi, yedek.oyunBankasi ?? [])
   yaz(ANAHTARLAR.pomodoroGecmis, yedek.pomodoroGecmis)
   yaz(ANAHTARLAR.hedef, yedek.hedef)
   yaz(ANAHTARLAR.ayarlar, yedek.ayarlar)

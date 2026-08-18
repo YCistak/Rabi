@@ -2,6 +2,8 @@
 // Tüm veri kullanıcının cihazında durur (localStorage + fotoğraflar için IndexedDB);
 // sunucu, hesap, senkronizasyon yoktur.
 
+import type { BankaKaydi } from './oyunlar/banka'
+
 // ---------------------------------------------------------------------------
 // Deneme
 // ---------------------------------------------------------------------------
@@ -320,6 +322,11 @@ export type Yedek = {
   rozetler: KazanilanRozet[]
   oyunlar: OyunKayitlari
   oyunGecmisi: OyunTurKaydi[]
+  /**
+   * Oyun Bankası. Eski yedeklerde yok — geri yüklemede boş dizi sayılıyor,
+   * yoksa yedek geri alınca banka `undefined` olur ve ekran çöker.
+   */
+  oyunBankasi?: BankaKaydi[]
   pomodoroGecmis: PomodoroSeans[]
   hedef: Hedef | null
   ayarlar: Ayarlar
