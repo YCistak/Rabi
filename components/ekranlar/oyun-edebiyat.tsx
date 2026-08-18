@@ -38,8 +38,15 @@ import {
 } from '@/components/oyun-kabuk'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
-/** Yanlış eşleştirmenin kırmızı kaldığı süre (ms). */
-const YANLIS_BEKLEME = 800
+/**
+ * Bir cevaptan sonra ekranın beklediği süre (ms).
+ *
+ * Yanlışta kırmızı çift bu kadar duruyor. Altıncı doğru eşleşmede de aynı süre
+ * bekleniyor: el bitince yenisi **anında** dağıtılıyordu ve oyuncu son
+ * eşleştirdiği çiftin yeşile döndüğünü göremeden ekran tamamen değişiyordu.
+ * Doğru ile yanlış arasında ritim farkı kalmasın diye tek sabit.
+ */
+const CEVAP_BEKLEMESI = 800
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
@@ -154,6 +161,8 @@ export function EdebiyatOyunuEkrani({
   const [secim, setSecim] = useState<Secim>(BOS_SECIM)
   const [eslesenler, setEslesenler] = useState<EdebiyatEsi[]>([])
   const [yanlisCift, setYanlisCift] = useState<Secim | null>(null)
+  /** El tamamlandı, yenisi dağıtılmayı bekliyor — bu sırada dokunuşlar yok sayılır. */
+  const [elBekliyor, setElBekliyor] = useState(false)
   const [cevaplar, setCevaplar] = useState<Cevap<EdebiyatEsi>[]>([])
   /** Yanlışlarla aynı sıradaki seçimler — tur sonunda "sen X dedin" için. */
   const [yanlisGirdileri, setYanlisGirdileri] = useState<string[]>([])
@@ -197,6 +206,9 @@ export function EdebiyatOyunuEkrani({
     setSecim(BOS_SECIM)
     setEslesenler([])
     setYanlisCift(null)
+    // Tur, el dağıtımı beklenirken bittiyse bayrak açık kalırdı ve yeni tur
+    // dokunuşları yok sayardı.
+    setElBekliyor(false)
     setCevaplar([])
     setYanlisGirdileri([])
     setSonuc(null)
@@ -285,7 +297,7 @@ export function EdebiyatOyunuEkrani({
       zamanlayiciRef.current = setTimeout(() => {
         setYanlisCift(null)
         setSecim(BOS_SECIM)
-      }, YANLIS_BEKLEME)
+      }, CEVAP_BEKLEMESI)
       return
     }
 
@@ -300,14 +312,20 @@ export function EdebiyatOyunuEkrani({
       return
     }
 
-    // El bitti: hemen yenisi kuruluyor, arada bir "devam" ekranı yok.
-    for (const e of el.esler) kullanilanRef.current.add(e.eser)
-    setEl(sonrakiEl())
-    setEslesenler([])
+    // El bitti. Altıncı çift önce yeşile dönsün, sonra yenisi dağıtılsın —
+    // arada bir "devam" ekranı yok, yalnızca okunacak kadar bir duraklama.
+    setEslesenler(yeniEslesenler)
+    setElBekliyor(true)
+    zamanlayiciRef.current = setTimeout(() => {
+      for (const e of el.esler) kullanilanRef.current.add(e.eser)
+      setEl(sonrakiEl())
+      setEslesenler([])
+      setElBekliyor(false)
+    }, CEVAP_BEKLEMESI)
   }
 
   const eserSec = (eser: string) => {
-    if (asama !== 'oynaniyor' || yanlisCift !== null || eslesenEserler.has(eser)) return
+    if (asama !== 'oynaniyor' || yanlisCift !== null || elBekliyor || eslesenEserler.has(eser)) return
     // Aynı kutuya ikinci dokunuş seçimi geri alır; yanlış dokunan kilitlenmesin.
     if (secim.eser === eser) return setSecim({ ...secim, eser: null })
     if (secim.yazar) return denetle(eser, secim.yazar)
@@ -315,7 +333,7 @@ export function EdebiyatOyunuEkrani({
   }
 
   const yazarSec = (yazar: string) => {
-    if (asama !== 'oynaniyor' || yanlisCift !== null || eslesenYazarlar.has(yazar)) return
+    if (asama !== 'oynaniyor' || yanlisCift !== null || elBekliyor || eslesenYazarlar.has(yazar)) return
     if (secim.yazar === yazar) return setSecim({ ...secim, yazar: null })
     if (secim.eser) return denetle(secim.eser, yazar)
     setSecim({ ...secim, yazar })

@@ -43,8 +43,19 @@ export function SoruTakibiEkrani({
     [kayitlar, secili],
   )
 
+  /**
+   * Soru yalnızca **bugüne** girilebilir.
+   *
+   * Geçmiş günler açılıyor ama okunur: sonradan doldurulan bir gün tahmine
+   * dayanır, oysa günlük hedef, seri ve haftalık özet bu sayıların o gün
+   * gerçekten çözüldüğünü varsayıyor. Gelecek günler takvimde hiç
+   * seçilemiyor — orada bakılacak bir şey de yok.
+   */
+  const duzenlenebilir = secili === bugunIso
+
   /** Seçili günün kayıt satırlarını değiştirir; gün boşalırsa kaydı tamamen siler. */
   const gunuGuncelle = (degistir: (satirlar: SoruKaydi[]) => SoruKaydi[]) => {
+    if (!duzenlenebilir) return
     setKayitlar((onceki) => {
       const mevcut = onceki.find((k) => k.tarih === secili)
       const yeniSatirlar = degistir(mevcut?.kayitlar ?? [])
@@ -99,6 +110,7 @@ export function SoruTakibiEkrani({
           }}
           isaretler={isaretler}
           bugunIso={bugunIso}
+          enGecIso={bugunIso}
         />
       </Kart>
 
@@ -109,11 +121,15 @@ export function SoruTakibiEkrani({
             {secili === bugunIso ? 'Bugün' : tarihYaziKisa(secili)}
           </p>
           <p className="text-sm text-muted-foreground">
-            {ozet.toplam === 0
-              ? 'Henüz soru girmedin.'
-              : hedefTuttu
-                ? 'Günlük hedefi tutturdun.'
-                : `Hedefe ${ayarlar.gunlukHedef - ozet.toplam} soru kaldı.`}
+            {!duzenlenebilir
+              ? ozet.toplam === 0
+                ? 'O gün soru girilmemiş.'
+                : `O gün ${ozet.toplam} soru çözmüşsün.`
+              : ozet.toplam === 0
+                ? 'Henüz soru girmedin.'
+                : hedefTuttu
+                  ? 'Günlük hedefi tutturdun.'
+                  : `Hedefe ${ayarlar.gunlukHedef - ozet.toplam} soru kaldı.`}
           </p>
         </div>
       </div>
@@ -128,7 +144,9 @@ export function SoruTakibiEkrani({
       <Kart className="mb-3 p-0">
         {(seciliKayit?.kayitlar ?? []).length === 0 ? (
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-            Bu güne henüz ders eklemedin. Aşağıdan bir ders seç.
+            {duzenlenebilir
+              ? 'Bu güne henüz ders eklemedin. Aşağıdan bir ders seç.'
+              : 'O gün hiç ders girilmemiş.'}
           </p>
         ) : (
           <ul>
@@ -136,32 +154,37 @@ export function SoruTakibiEkrani({
               <li key={satir.ders} className="border-b border-border px-3 py-2.5 last:border-b-0">
                 <div className="mb-1.5 flex items-center justify-between gap-2">
                   <p className="truncate text-sm font-medium">{satir.ders}</p>
-                  <button
-                    type="button"
-                    aria-label={`${satir.ders} satırını sil`}
-                    onClick={() =>
-                      gunuGuncelle((satirlar) => satirlar.filter((_, i) => i !== indeks))
-                    }
-                    className="shrink-0 text-muted-foreground active:text-danger"
-                  >
-                    <X size={16} aria-hidden />
-                  </button>
+                  {duzenlenebilir && (
+                    <button
+                      type="button"
+                      aria-label={`${satir.ders} satırını sil`}
+                      onClick={() =>
+                        gunuGuncelle((satirlar) => satirlar.filter((_, i) => i !== indeks))
+                      }
+                      className="shrink-0 text-muted-foreground active:text-danger"
+                    >
+                      <X size={16} aria-hidden />
+                    </button>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-4 gap-2">
                   <SayiKutusu
                     etiket="Toplam"
                     deger={satir.toplam}
+                    okunur={!duzenlenebilir}
                     onDegis={(ham) => satirGuncelle(indeks, 'toplam', ham)}
                   />
                   <SayiKutusu
                     etiket="Doğru"
                     deger={satir.dogru}
+                    okunur={!duzenlenebilir}
                     onDegis={(ham) => satirGuncelle(indeks, 'dogru', ham)}
                   />
                   <SayiKutusu
                     etiket="Yanlış"
                     deger={satir.yanlis}
+                    okunur={!duzenlenebilir}
                     onDegis={(ham) => satirGuncelle(indeks, 'yanlis', ham)}
                   />
                   {/* Boş girilmez, hesaplanır — istenen davranış bu. */}
@@ -191,8 +214,27 @@ export function SoruTakibiEkrani({
         )}
       </Kart>
 
-      <div className="mb-4">
-        <div className="mb-2 flex flex-wrap gap-2">
+      {!duzenlenebilir && (
+        <Not className="mb-4">
+          Geçmiş günler okunur. Soru yalnızca <b className="font-bold">bugüne</b> girilir —
+          sonradan doldurulan bir gün tahmine dayanır, oysa günlük hedef, seri ve haftalık özet bu
+          sayıların o gün gerçekten çözüldüğünü sayıyor.{' '}
+          <button
+            type="button"
+            onClick={() => {
+              setSecili(bugunIso)
+              setAy(tariheCevir(bugunIso))
+            }}
+            className="font-bold text-primary underline underline-offset-2"
+          >
+            Bugüne dön
+          </button>
+        </Not>
+      )}
+
+      {duzenlenebilir && (
+        <div className="mb-4">
+          <div className="mb-2 flex flex-wrap gap-2">
           {CALISMA_DERSLERI.filter(
             (d) => !kullanilanDersler.some((k) => sadelestir(k) === sadelestir(d)),
           )
@@ -220,7 +262,8 @@ export function SoruTakibiEkrani({
             Ekle
           </Buton>
         </div>
-      </div>
+        </div>
+      )}
 
       <Not>
         Bu hafta toplam <strong className="rakam">{haftaToplami}</strong> soru
@@ -239,10 +282,13 @@ export function SoruTakibiEkrani({
 function SayiKutusu({
   etiket,
   deger,
+  okunur,
   onDegis,
 }: {
   etiket: string
   deger: number
+  /** Geçmiş gün: sayı görünüyor ama değiştirilemiyor. */
+  okunur?: boolean
   onDegis: (ham: string) => void
 }) {
   return (
@@ -250,11 +296,12 @@ function SayiKutusu({
       <span className="mb-1 block text-center text-xs text-muted-foreground">{etiket}</span>
       <Alan
         inputMode="numeric"
+        readOnly={okunur}
         // 0 yerine boş gösteriliyor: kutuya dokunup yazmaya başlayınca
         // önce sıfırı silmek gerekmesin.
         value={deger === 0 ? '' : String(deger)}
         onChange={(e) => onDegis(e.target.value)}
-        className="rakam h-10 px-1 text-center"
+        className={cn('rakam h-10 px-1 text-center', okunur && 'bg-muted/60 text-muted-foreground')}
       />
     </label>
   )

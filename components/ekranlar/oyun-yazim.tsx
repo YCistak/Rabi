@@ -39,10 +39,15 @@ import {
 } from '@/components/oyun-kabuk'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
-/** Doğru cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms). */
-const DOGRU_BEKLEME = 320
-/** Yanlışta daha uzun bekleniyor: doğrusunun hangisi olduğu okunabilsin. */
-const YANLIS_BEKLEME = 900
+/**
+ * Cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms).
+ *
+ * Doğru ve yanlış için **aynı**. Önce doğruda çok daha kısaydı (320 ms) ama
+ * soru bir anda değişiyordu: oyuncu doğru bildiğini göremeden ekran kayıyor,
+ * hızlı gidince de yanlışa basma ihtimali artıyordu. Tek süre, cevabın
+ * doğruluğundan bağımsız olarak aynı ritmi kuruyor.
+ */
+const CEVAP_BEKLEMESI = 900
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
@@ -220,13 +225,10 @@ export function YazimOyunuEkrani({
 
     if (!dogruMu) setBitisZamani((b) => b - YANLIS_CEZASI * 1000)
 
-    zamanlayiciRef.current = setTimeout(
-      () => {
-        setGeriBildirim(null)
-        setSira((s) => s + 1)
-      },
-      dogruMu ? DOGRU_BEKLEME : YANLIS_BEKLEME,
-    )
+    zamanlayiciRef.current = setTimeout(() => {
+      setGeriBildirim(null)
+      setSira((s) => s + 1)
+    }, CEVAP_BEKLEMESI)
   }
 
   const yardimAc = () => {

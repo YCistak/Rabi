@@ -51,7 +51,25 @@ export function DevamsizlikEkrani({
 
   const seciliGunun = kayitlar.filter((k) => k.tarih === secili)
 
+  /**
+   * Gelecek güne devamsızlık girilemez.
+   *
+   * Takvim o günleri zaten kapatıyor; buradaki ikinci kontrol, ekran açıkken
+   * gece yarısının geçtiği (seçili gün bugünken yarına dönüştüğü) durum için.
+   */
+  const gelecekGun = secili > bugunIso
+
+  /**
+   * Bir güne yalnızca bir kayıt.
+   *
+   * İkincisi eklenebiliyordu ve sayaç aynı günü iki kez düşüyordu: yarım gün +
+   * yarım gün "bir gün" değil, aynı günün iki kaydı. Değiştirmek isteyen
+   * mevcut kaydı siliyor — kaydın kendi çöp kutusu satırın yanında duruyor.
+   */
+  const gunDolu = seciliGunun.length > 0
+
   const ekle = () => {
+    if (gelecekGun || gunDolu) return
     setKayitlar((onceki) => [
       ...onceki,
       { id: yeniId(), tarih: secili, tur, yarimGun, not: not.trim() || undefined },
@@ -117,6 +135,7 @@ export function DevamsizlikEkrani({
           onSec={setSecili}
           isaretler={isaretler}
           bugunIso={bugunIso}
+          enGecIso={bugunIso}
         />
         <div className="mt-3 flex items-center justify-center gap-4 text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
@@ -158,28 +177,41 @@ export function DevamsizlikEkrani({
           </ul>
         )}
 
-        <div className="mb-2 flex flex-wrap gap-2">
-          <Cip secili={tur === 'ozursuz'} onClick={() => setTur('ozursuz')}>
-            Özürsüz
-          </Cip>
-          <Cip secili={tur === 'ozurlu'} onClick={() => setTur('ozurlu')}>
-            Özürlü (raporlu)
-          </Cip>
-          <Cip secili={yarimGun} onClick={() => setYarimGun((y) => !y)}>
-            Yarım gün
-          </Cip>
-        </div>
+        {gunDolu ? (
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            Bu güne devamsızlık girilmiş. Bir güne yalnızca bir kayıt düşüyor — değiştirmek
+            istersen üstteki kaydı sil, sonra yenisini ekle.
+          </p>
+        ) : gelecekGun ? (
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            Bu gün henüz gelmedi. Devamsızlık ancak yaşanmış bir güne girilir.
+          </p>
+        ) : (
+          <>
+            <div className="mb-2 flex flex-wrap gap-2">
+              <Cip secili={tur === 'ozursuz'} onClick={() => setTur('ozursuz')}>
+                Özürsüz
+              </Cip>
+              <Cip secili={tur === 'ozurlu'} onClick={() => setTur('ozurlu')}>
+                Özürlü (raporlu)
+              </Cip>
+              <Cip secili={yarimGun} onClick={() => setYarimGun((y) => !y)}>
+                Yarım gün
+              </Cip>
+            </div>
 
-        <div className="flex gap-2">
-          <Alan
-            value={not}
-            onChange={(e) => setNot(e.target.value)}
-            placeholder="Not (isteğe bağlı)"
-            aria-label="Devamsızlık notu"
-            className="flex-1"
-          />
-          <Buton onClick={ekle}>Ekle</Buton>
-        </div>
+            <div className="flex gap-2">
+              <Alan
+                value={not}
+                onChange={(e) => setNot(e.target.value)}
+                placeholder="Not (isteğe bağlı)"
+                aria-label="Devamsızlık notu"
+                className="flex-1"
+              />
+              <Buton onClick={ekle}>Ekle</Buton>
+            </div>
+          </>
+        )}
       </Kart>
 
       {siraliKayitlar.length > 0 && (

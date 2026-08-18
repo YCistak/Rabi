@@ -13,8 +13,19 @@ export const CALISMA_DERSLERI: string[] = [
   'Tarih',
   'Coğrafya',
   'Felsefe',
+  'Psikoloji',
+  'Sosyoloji',
+  'Mantık',
   'Din Kültürü',
   'İngilizce',
+  'Almanca',
+  'Fransızca',
+  // Ders değil ama çalışma seansının gerçekten geçtiği yerler. Pomodoro'da
+  // "hangi derse çalışıyorsun" sorusunun en sık cevabı bunlar oluyor ve
+  // listede yoklarsa seans dersiz kaydediliyordu.
+  'Deneme Çözümü',
+  'Soru Çözümü',
+  'Tekrar',
 ]
 
 /** Türkçe harfleri de doğru karşılaştırmak için sadeleştirir: "İNGİLİZCE" → "ingilizce". */

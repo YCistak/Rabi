@@ -22,6 +22,9 @@ import { cn, yeniId } from '@/lib/utils'
 import { BaslikSatiri, Buton, Cip, Kart, Not } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 
+/** Ders çipleri baştan bu kadar gösteriliyor; gerisi "+N ders" ile açılıyor. */
+const KISA_DERS_SAYISI = 8
+
 export function PomodoroEkrani({
   ayar,
   setAyar,
@@ -34,6 +37,12 @@ export function PomodoroEkrani({
   const [asama, setAsama] = useState<Asama>('calisma')
   const [tur, setTur] = useState(1)
   const [ders, setDers] = useState<string | null>(null)
+  const [hepsiAcik, setHepsiAcik] = useState(false)
+  const kisaListe = CALISMA_DERSLERI.slice(0, KISA_DERS_SAYISI)
+  // Seçili ders kısa listede yoksa liste tamamen açılıyor; yoksa kullanıcı
+  // az önce seçtiği dersin nereye gittiğini göremezdi.
+  const gorunenDersler =
+    hepsiAcik || (ders !== null && !kisaListe.includes(ders)) ? CALISMA_DERSLERI : kisaListe
   const [bitisZamani, setBitisZamani] = useState<number | null>(null)
   const [kalan, setKalan] = useState(ayar.calisma * 60)
   /**
@@ -212,11 +221,23 @@ export function PomodoroEkrani({
         <div className="mb-4">
           <p className="mb-2 text-sm font-medium">Hangi derse çalışıyorsun?</p>
           <div className="flex flex-wrap gap-2">
-            {CALISMA_DERSLERI.slice(0, 8).map((d) => (
+            {gorunenDersler.map((d) => (
               <Cip key={d} secili={ders === d} onClick={() => setDers(ders === d ? null : d)}>
                 {d}
               </Cip>
             ))}
+
+            {/*
+              Liste baştan açık gelmiyor: yirmi çip sayacın üstünde beş satır
+              kaplıyor ve asıl işi (başlat düğmesini) aşağı itiyordu. Seçili
+              ders zaten görünen sekizin dışındaysa liste açık başlıyor, yoksa
+              kullanıcı seçtiği dersi göremezdi.
+            */}
+            {!hepsiAcik && CALISMA_DERSLERI.length > KISA_DERS_SAYISI && (
+              <Cip onClick={() => setHepsiAcik(true)}>
+                +{CALISMA_DERSLERI.length - KISA_DERS_SAYISI} ders
+              </Cip>
+            )}
           </div>
         </div>
       )}

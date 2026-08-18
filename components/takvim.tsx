@@ -43,6 +43,7 @@ export function Takvim({
   onSec,
   isaretler,
   bugunIso,
+  enGecIso,
 }: {
   /** Gösterilen ayın herhangi bir günü. */
   ay: Date
@@ -52,6 +53,12 @@ export function Takvim({
   onSec: (tarih: string) => void
   isaretler: Map<string, GunIsareti>
   bugunIso: string
+  /**
+   * Bu günden sonrası seçilemez. Devamsızlık için `bugunIso` veriliyor:
+   * olmamış bir gün için devamsızlık girilemez, girilseydi kalan hak sayacı
+   * gerçekte kullanılmamış günleri de düşerdi.
+   */
+  enGecIso?: string
 }) {
   const hucreler = useMemo(() => ayHucreleri(ay), [ay])
   const ayBasligi = `${AY_ADLARI[ay.getMonth()]} ${ay.getFullYear()}`
@@ -89,19 +96,26 @@ export function Takvim({
           const seciliMi = iso === secili
           const bugunMu = iso === bugunIso
           const doluluk = isaret?.doluluk ?? 0
+          // ISO tarihler sözlük sırasına göre karşılaştırılabiliyor; ayrıca
+          // Date kurmaya gerek yok.
+          const kapali = enGecIso !== undefined && iso > enGecIso
 
           return (
             <button
               key={iso}
               type="button"
               onClick={() => onSec(iso)}
+              disabled={kapali}
               aria-pressed={seciliMi}
-              aria-label={`${hucre.getDate()} ${AY_ADLARI[hucre.getMonth()]}`}
+              aria-label={`${hucre.getDate()} ${AY_ADLARI[hucre.getMonth()]}${
+                kapali ? ' — henüz gelmedi' : ''
+              }`}
               className={cn(
                 'relative flex aspect-square items-center justify-center rounded-lg text-sm transition',
                 'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring',
                 seciliMi && 'ring-2 ring-primary',
                 bugunMu && !seciliMi && 'ring-1 ring-border',
+                kapali && 'text-muted-foreground/35',
               )}
               style={
                 doluluk > 0
