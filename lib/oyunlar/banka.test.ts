@@ -6,6 +6,7 @@ import {
   bankaKimligi,
   bankaSuz,
   bankayiGuncelle,
+  dusenSayisi,
   enKalabalikOyun,
   type BankaKaydi,
   type BankaSorusu,
@@ -113,5 +114,40 @@ describe('dağılım ve süzme', () => {
   it('en kalabalık oyunu bulur', () => {
     expect(enKalabalikOyun(banka)).toBe('yazim')
     expect(enKalabalikOyun([])).toBeNull()
+  })
+})
+
+describe('dusenSayisi', () => {
+  const kayit = (id: string): BankaKaydi => ({
+    id,
+    soru: { oyun: 'yazim', dogru: 'herkes', yanlis: 'herkez', kural: 'k' },
+    kacKez: 1,
+    ardisikDogru: 0,
+    eklenme: '2026-08-10',
+    sonYanlis: '2026-08-10',
+  })
+
+  it('listeden çıkan kayıtları sayar', () => {
+    expect(dusenSayisi([kayit('a'), kayit('b'), kayit('c')], [kayit('b')])).toBe(2)
+  })
+
+  it('hiç düşmediyse sıfır', () => {
+    const once = [kayit('a'), kayit('b')]
+    expect(dusenSayisi(once, once)).toBe(0)
+  })
+
+  /**
+   * Aynı turda hem düşme hem ekleme olabilir; boyut farkına bakmak yanıltır.
+   * Burada bir kayıt düşüp iki yenisi geliyor, liste büyüyor ama düşen bir.
+   */
+  it('aynı turda eklenen kayıtlar düşeni gizlemez', () => {
+    const once = [kayit('a')]
+    const sonra = [kayit('b'), kayit('c')]
+    expect(dusenSayisi(once, sonra)).toBe(1)
+  })
+
+  it('boş listelerle çalışır', () => {
+    expect(dusenSayisi([], [])).toBe(0)
+    expect(dusenSayisi([], [kayit('a')])).toBe(0)
   })
 })

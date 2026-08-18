@@ -327,6 +327,8 @@ export type Yedek = {
    * yoksa yedek geri alınca banka `undefined` olur ve ekran çöker.
    */
   oyunBankasi?: BankaKaydi[]
+  /** Oyun Bankası'ndan düşen toplam soru sayısı. */
+  bankaDusen?: number
   pomodoroGecmis: PomodoroSeans[]
   hedef: Hedef | null
   ayarlar: Ayarlar

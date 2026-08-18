@@ -132,6 +132,7 @@ export function AyarlarEkrani({
     oyunGecmisi: OyunTurKaydi[]
     /** Eski yedeklerde yok; `Yedek` tipinde de isteğe bağlı. */
     oyunBankasi?: BankaKaydi[]
+    bankaDusen?: number
     pomodoroGecmis: PomodoroSeans[]
     hedef: Hedef | null
   }

@@ -106,6 +106,11 @@ export function AppShell() {
   const [oyunGecmisi, setOyunGecmisi] = useYerelDepo<OyunTurKaydi[]>(ANAHTARLAR.oyunGecmisi, [])
   const [oyunBankasi, setOyunBankasi] = useYerelDepo<BankaKaydi[]>(ANAHTARLAR.oyunBankasi, [])
   /**
+   * Bankadan düşen toplam soru. Düşen kayıt silindiği için sonradan
+   * sayılamıyor; rozet buna baktığından ayrı bir sayaç olarak birikiyor.
+   */
+  const [bankaDusen, setBankaDusen] = useYerelDepo<number>(ANAHTARLAR.bankaDusen, 0)
+  /**
    * Bankadan açılan tur. Oyun kimliği burada duruyor çünkü turu Oyunlar sekmesi
    * çiziyor ama başlatan Oyun Bankası ekranı — ikisi kardeş, ortak sahibi bu.
    */
@@ -219,7 +224,18 @@ export function AppShell() {
     // değişiklik: "420" yazarken 4 → 42 → 420 geçilir ve kutlama daha alan
     // doldurulmadan ekranı kapatırdı. Yazma durunca bir kez çalışıyor.
     const zamanlayici = setTimeout(() => {
-      const durum = rozetDurumu({ denemeler, gunlukKayitlar, diplomaNotu, oyunlar })
+      const durum = rozetDurumu({
+        denemeler,
+        sablonlar,
+        gunlukKayitlar,
+        gunlukHedef: ayarlar.gunlukHedef,
+        diplomaNotu,
+        pomodoroGecmis,
+        yanlisSorular,
+        oyunlar,
+        bankaDusen,
+        bankaBoyutu: oyunBankasi.length,
+      })
       const yeniler = yeniRozetler(durum, rozetler)
       if (yeniler.length === 0) return
 
@@ -232,9 +248,15 @@ export function AppShell() {
   }, [
     rozetVerisiHazir,
     denemeler,
+    sablonlar,
     gunlukKayitlar,
+    ayarlar.gunlukHedef,
     diplomaNotu,
+    pomodoroGecmis,
+    yanlisSorular,
     oyunlar,
+    bankaDusen,
+    oyunBankasi.length,
     rozetler,
     setRozetler,
   ])
@@ -452,9 +474,15 @@ export function AppShell() {
           {ekran === 'rozetler' && (
             <RozetlerEkrani
               denemeler={denemeler}
+              sablonlar={sablonlar}
               gunlukKayitlar={gunlukKayitlar}
+              gunlukHedef={ayarlar.gunlukHedef}
               diplomaNotu={diplomaNotu}
+              pomodoroGecmis={pomodoroGecmis}
+              yanlisSorular={yanlisSorular}
               oyunlar={oyunlar}
+              bankaDusen={bankaDusen}
+              bankaBoyutu={oyunBankasi.length}
               kazanilmis={rozetler}
             />
           )}
@@ -490,6 +518,7 @@ export function AppShell() {
               setKayitlar={setOyunlar}
               setGecmis={setOyunGecmisi}
               banka={oyunBankasi}
+              onBankadanDustu={(adet) => setBankaDusen((onceki) => onceki + adet)}
               setBanka={setOyunBankasi}
               sesAcik={ayarlar.oyunSesi}
               muzikAcik={ayarlar.oyunMuzigi}
@@ -517,6 +546,7 @@ export function AppShell() {
                 oyunlar,
                 oyunGecmisi,
                 oyunBankasi,
+                bankaDusen,
                 pomodoroGecmis,
                 hedef,
               }}
