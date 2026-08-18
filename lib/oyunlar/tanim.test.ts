@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
+import { OYUN_KIMLIKLERI } from './banka'
 import type { OyunIstatistigi, OyunKayitlari } from '../types'
-import { OYUNLAR, istatistikAl, oyunBul, oyunToplami } from './tanim'
+import { DERSLER, OYUNLAR, istatistikAl, oyunBul, oyunToplami } from './tanim'
 import { BOS_ISTATISTIK, istatistigiGuncelle, istatistigiTamamla } from './tur'
 
 const tam: OyunIstatistigi = {
@@ -111,5 +112,28 @@ describe('istatistikAl', () => {
 
   it('eksik alanlı kaydı tamamlayarak verir', () => {
     expect(istatistikAl({ yazim: eksikKayit }, 'yazim').enIyiSeri).toBe(0)
+  })
+})
+
+describe('oyun listesi bütünlüğü', () => {
+  /**
+   * `OYUN_KIMLIKLERI` bankanın tarafında, `OYUNLAR` oyun tanımlarının
+   * tarafında duruyor. İkisi ayrışırsa oyun ya bankada görünmez ya da
+   * bankada görünüp ekranı olmaz — dördüncü oyun eklenirken tam bu oldu.
+   */
+  it('tanımlı oyunlarla banka kimlikleri örtüşüyor', () => {
+    expect([...OYUN_KIMLIKLERI].sort()).toEqual(OYUNLAR.map((o) => o.id).sort())
+  })
+
+  it('her oyunun dersi tanımlı bir ders', () => {
+    const dersler = new Set(DERSLER.map((d) => d.id))
+    for (const oyun of OYUNLAR) {
+      expect(dersler.has(oyun.ders), `${oyun.id} → ${oyun.ders}`).toBe(true)
+    }
+  })
+
+  it('her oyun tam olarak bir kez listeleniyor', () => {
+    const kimlikler = OYUNLAR.map((o) => o.id)
+    expect(new Set(kimlikler).size).toBe(kimlikler.length)
   })
 })

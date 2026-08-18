@@ -37,6 +37,7 @@ import { useUygulamaGorunur } from '@/lib/gorunurluk'
 import { bugun } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 import { YazimOyunuEkrani } from '@/components/ekranlar/oyun-yazim'
+import { SesOyunuEkrani } from '@/components/ekranlar/oyun-ses'
 import { IslemOyunuEkrani } from '@/components/ekranlar/oyun-islem'
 import { EdebiyatOyunuEkrani } from '@/components/ekranlar/oyun-edebiyat'
 
@@ -66,6 +67,7 @@ const AILE: Record<'yzm' | 'isl' | 'edb', { zemin: string; yazi: string; ok: str
 /** Kart başlığındaki satır kırma — iki kelimelik adlar iki satıra iniyor. */
 const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   yazim: ['Yazım', 'Ustası'],
+  ses: ['Ses', 'Olayları'],
   islem: ['Zihinden', 'İşlem'],
   edebiyat: ['Edebiyat', 'Eşleştirme'],
 }
@@ -395,6 +397,15 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar) => turBitti('yazim', ozet, cevaplar)}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'ses' && (
+        <SesOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'ses')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar) => turBitti('ses', ozet, cevaplar)}
           onCik={oyunuKapat}
         />
       )}
