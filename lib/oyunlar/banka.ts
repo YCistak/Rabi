@@ -14,6 +14,8 @@
 import type { OyunId } from '../types'
 import type { IslemTuru } from './islem'
 import { OLAY_ADI, type SesOlayi } from './ses-havuzu'
+import { OGE_ADI, type OgeTuru } from './oge-havuzu'
+import type { SozKonusu, SozTuru } from './soz-havuzu'
 
 /** Bir kaydın bankadan düşmesi için gereken üst üste doğru sayısı. */
 export const DUSME_ESIGI = 3
@@ -32,6 +34,8 @@ export type BankaSorusu =
   | { oyun: 'islem'; islemTuru: IslemTuru; metin: string; sonuc: number }
   | { oyun: 'edebiyat'; eser: string; yazar: string }
   | { oyun: 'ses'; kelime: string; olusum: string; olay: SesOlayi }
+  | { oyun: 'oge'; once: string; oge: string; sonra: string; ogeTuru: OgeTuru }
+  | { oyun: 'soz'; soz: string; anlam: string; sozTuru: SozTuru; konu: SozKonusu }
 
 export type BankaKaydi = {
   /** Soru içeriğinden türetilen kimlik; aynı soru iki kez eklenmez. */
@@ -88,6 +92,30 @@ export function sestenBanka(soru: {
   return { oyun: 'ses', kelime: soru.kelime, olusum: soru.olusum, olay: soru.olay }
 }
 
+export function sozdenBanka(soru: {
+  soz: string
+  anlam: string
+  tur: SozTuru
+  konu: SozKonusu
+}): BankaSorusu {
+  return { oyun: 'soz', soz: soru.soz, anlam: soru.anlam, sozTuru: soru.tur, konu: soru.konu }
+}
+
+export function ogedenBanka(soru: {
+  once: string
+  oge: string
+  sonra: string
+  tur: OgeTuru
+}): BankaSorusu {
+  return {
+    oyun: 'oge',
+    once: soru.once,
+    oge: soru.oge,
+    sonra: soru.sonra,
+    ogeTuru: soru.tur,
+  }
+}
+
 /**
  * Kayıt kimliği.
  *
@@ -104,6 +132,12 @@ export function bankaKimligi(soru: BankaSorusu): string {
       return `edebiyat:${soru.eser}`
     case 'ses':
       return `ses:${soru.kelime}`
+    // Aynı cümle farklı ögesi sorularak iki kez geçebiliyor; kimlik yalnız
+    // cümleden üretilseydi ikisi tek kayda düşerdi.
+    case 'oge':
+      return `oge:${soru.once}[${soru.oge}]${soru.sonra}`
+    case 'soz':
+      return `soz:${soru.soz}`
   }
 }
 
@@ -118,6 +152,10 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
       return soru.eser
     case 'ses':
       return soru.kelime
+    case 'oge':
+      return `“${soru.oge}” · ${soru.once}${soru.oge}${soru.sonra}`
+    case 'soz':
+      return soru.soz
   }
 }
 
@@ -132,6 +170,10 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
       return soru.yazar
     case 'ses':
       return OLAY_ADI[soru.olay]
+    case 'oge':
+      return OGE_ADI[soru.ogeTuru]
+    case 'soz':
+      return soru.anlam
   }
 }
 
@@ -222,7 +264,14 @@ export function dusenSayisi(
  * anında yakalıyor — yeni bir oyun kimliği eklenince burası hata verene kadar
  * proje derlenmiyor.
  */
-const BOS_DAGILIM: Record<OyunId, number> = { yazim: 0, ses: 0, islem: 0, edebiyat: 0 }
+const BOS_DAGILIM: Record<OyunId, number> = {
+  yazim: 0,
+  ses: 0,
+  oge: 0,
+  soz: 0,
+  islem: 0,
+  edebiyat: 0,
+}
 
 export const OYUN_KIMLIKLERI = Object.keys(BOS_DAGILIM) as OyunId[]
 
