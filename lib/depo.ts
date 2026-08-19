@@ -62,6 +62,16 @@ export const ANAHTARLAR = {
   yazimSecimi: 'rabi-yazim-secimi',
   /** Bölünebilme Kuralları'nda seçili bölenler. */
   bolenSecimi: 'rabi-bolen-secimi',
+  /**
+   * Bildirilen hatalı sorular — gönderim kuyruğu.
+   *
+   * Yedeğe **girmiyor**: yedek başka bir cihaza yüklenseydi aynı bildirimler
+   * ikinci bir cihaz numarasıyla yeniden gönderilir, tabloda kopya satırlar
+   * açardı.
+   */
+  hataBildirimleri: 'rabi-hata-bildirimleri',
+  /** Bildirimleri gruplamaya yarayan anonim cihaz numarası; yedeğe girmiyor. */
+  cihazKimligi: 'rabi-cihaz-kimligi',
   ayarlar: 'rabi-ayarlar',
   tema: 'rabi-tema',
   sonBildirim: 'rabi-son-bildirim',
@@ -112,6 +122,7 @@ export const VARSAYILAN_AYARLAR: Ayarlar = {
   hatirlatmaSaati: 20,
   hatirlatmaDakikasi: 0,
   bildirimAcik: false,
+  hataBildirimiAcik: true,
   oyunSesi: true,
   oyunMuzigi: true,
   oyunMuzikTuru: 'arcade',

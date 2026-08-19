@@ -41,6 +41,7 @@ import {
   type BankaCevabi,
   type BankaKaydi,
 } from '@/lib/oyunlar/banka'
+import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
@@ -131,6 +132,7 @@ export function YazimOyunuEkrani({
   bankaSorulari,
   onTurBitti,
   onCik,
+  bildir,
 }: {
   istatistik: OyunIstatistigi
   /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
@@ -139,6 +141,7 @@ export function YazimOyunuEkrani({
   bankaSorulari: BankaKaydi[]
   onTurBitti: (ozet: TurOzeti<SoruIcerigi>, bankaCevaplari: BankaCevabi[]) => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const oyun = oyunBul('yazim')
 
@@ -343,6 +346,7 @@ export function YazimOyunuEkrani({
             bankaTuru={bankaTuru}
             onTekrar={turBaslat}
             onCik={onCik}
+            bildir={bildir}
           />
         ) : (
           asama === 'oynaniyor' &&
@@ -529,12 +533,14 @@ function SonucGorunumu({
   bankaTuru,
   onTekrar,
   onCik,
+  bildir,
 }: {
   sonuc: { ozet: TurOzeti<SoruIcerigi>; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
   onTekrar: () => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const { ozet, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
@@ -565,6 +571,8 @@ function SonucGorunumu({
             <YanlisKarti
               key={`${yanlis.tur === 'yazim' ? yanlis.soru.dogru : yanlis.soru.cumle}-${sira}`}
               oyunId="yazim"
+              soru={bankayaCevir(yanlis)}
+              bildir={bildir}
             >
               {yanlis.tur === 'yazim' ? (
                 <YazimYanlisi soru={yanlis.soru} />

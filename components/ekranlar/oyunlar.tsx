@@ -36,6 +36,7 @@ import { useGeriKatmani } from '@/lib/geri'
 import { useUygulamaGorunur } from '@/lib/gorunurluk'
 import { bugun } from '@/lib/utils'
 import { cn } from '@/lib/utils'
+import type { BildirimKolu } from '@/components/hata-bildir'
 import { YazimOyunuEkrani } from '@/components/ekranlar/oyun-yazim'
 import { SesOyunuEkrani } from '@/components/ekranlar/oyun-ses'
 import { OgeOyunuEkrani } from '@/components/ekranlar/oyun-oge'
@@ -92,6 +93,7 @@ export function OyunlarEkrani({
   /** Bankadan "sadece bunlardan bir tur" ile açılan oyun; yoksa null. */
   bankaTuru,
   onBankaTuruBitti,
+  bildir,
 }: {
   kayitlar: OyunKayitlari
   setKayitlar: (guncelleyici: OyunKayitlari | ((onceki: OyunKayitlari) => OyunKayitlari)) => void
@@ -106,6 +108,7 @@ export function OyunlarEkrani({
   onBankadanDustu: (adet: number) => void
   bankaTuru: OyunId | null
   onBankaTuruBitti: () => void
+  bildir: BildirimKolu
 }) {
   const [secilenOyun, setSecilenOyun] = useState<OyunId | null>(null)
   /** Açık kategori; null ise ders ızgarası görünüyor. */
@@ -403,6 +406,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar) => turBitti('yazim', ozet, cevaplar)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}
@@ -412,6 +416,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar) => turBitti('ses', ozet, cevaplar)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}
@@ -421,6 +426,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar) => turBitti('oge', ozet, cevaplar)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}
@@ -430,6 +436,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar) => turBitti('soz', ozet, cevaplar)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}
@@ -439,6 +446,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar) => turBitti('islem', ozet, cevaplar)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}
@@ -448,6 +456,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar) => turBitti('bolunme', ozet, cevaplar)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}
@@ -457,6 +466,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar) => turBitti('edebiyat', ozet, cevaplar)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}

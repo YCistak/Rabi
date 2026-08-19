@@ -19,6 +19,7 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { ogedenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
@@ -76,6 +77,7 @@ export function OgeOyunuEkrani({
   bankaSorulari,
   onTurBitti,
   onCik,
+  bildir,
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
@@ -83,6 +85,7 @@ export function OgeOyunuEkrani({
   bankaSorulari: BankaKaydi[]
   onTurBitti: (ozet: TurOzeti<OgeSorusu>, bankaCevaplari: BankaCevabi[]) => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const oyun = oyunBul('oge')
 
@@ -257,6 +260,7 @@ export function OgeOyunuEkrani({
             bankaTuru={bankaTuru}
             onTekrar={turBaslat}
             onCik={onCik}
+            bildir={bildir}
           />
         ) : (
           asama === 'oynaniyor' &&
@@ -374,12 +378,14 @@ function SonucGorunumu({
   bankaTuru,
   onTekrar,
   onCik,
+  bildir,
 }: {
   sonuc: { ozet: TurOzeti<OgeSorusu>; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
   onTekrar: () => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const { ozet, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
@@ -407,7 +413,12 @@ function SonucGorunumu({
       {ozet.yanlislar.length > 0 && (
         <div className="flex flex-none flex-col gap-2">
           {gorunen.map((yanlis, sira) => (
-            <YanlisKarti key={`${cumleMetni(yanlis)}-${sira}`} oyunId="oge">
+            <YanlisKarti
+              key={`${cumleMetni(yanlis)}-${sira}`}
+              oyunId="oge"
+              soru={ogedenBanka(yanlis)}
+              bildir={bildir}
+            >
               <b className="block font-display text-[13px] font-bold leading-snug">
                 {yanlis.once}
                 <mark className="rounded bg-yzm px-1 font-extrabold text-yzm-koyu">

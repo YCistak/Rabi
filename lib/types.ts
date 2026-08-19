@@ -292,6 +292,14 @@ export type Ayarlar = {
   /** Hatırlatma dakikası, 0–59. Kullanıcı "21.30" gibi bir saat seçebiliyor. */
   hatirlatmaDakikasi: number
   bildirimAcik: boolean
+  /**
+   * Bildirilen hatalı soruların geliştiriciye gönderilmesi.
+   *
+   * Uygulamanın ağa çıktığı **tek** yer bu; kapatılırsa bildirim yalnızca
+   * cihazda kalır. Varsayılan açık, çünkü havuzdaki hataları başka türlü
+   * öğrenmenin yolu yok.
+   */
+  hataBildirimiAcik: boolean
   /** Mini oyunlarda doğru/yanlış/bitiş ses efektleri. */
   oyunSesi: boolean
   /** Mini oyunlarda arkada müzik çalsın mı. Sesten ayrı: biri kapalı, öteki açık olabilir. */

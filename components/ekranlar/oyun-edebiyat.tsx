@@ -24,6 +24,7 @@ import {
   type BankaCevabi,
   type BankaKaydi,
 } from '@/lib/oyunlar/banka'
+import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
@@ -143,6 +144,7 @@ export function EdebiyatOyunuEkrani({
   bankaSorulari,
   onTurBitti,
   onCik,
+  bildir,
 }: {
   istatistik: OyunIstatistigi
   /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
@@ -151,6 +153,7 @@ export function EdebiyatOyunuEkrani({
   bankaSorulari: BankaKaydi[]
   onTurBitti: (ozet: TurOzeti<EdebiyatEsi>, bankaCevaplari: BankaCevabi[]) => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const oyun = oyunBul('edebiyat')
 
@@ -382,6 +385,7 @@ export function EdebiyatOyunuEkrani({
             bankaTuru={bankaTuru}
             onTekrar={turBaslat}
             onCik={onCik}
+            bildir={bildir}
           />
         ) : (
           asama === 'oynaniyor' &&
@@ -497,6 +501,7 @@ function SonucGorunumu({
   bankaTuru,
   onTekrar,
   onCik,
+  bildir,
 }: {
   sonuc: { ozet: TurOzeti<EdebiyatEsi>; yeniRekor: boolean }
   /** Yanlışlarla aynı sıradaki yazar seçimleri. */
@@ -505,6 +510,7 @@ function SonucGorunumu({
   bankaTuru: boolean
   onTekrar: () => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const { ozet, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
@@ -532,7 +538,12 @@ function SonucGorunumu({
       {ozet.yanlislar.length > 0 && (
         <div className="flex flex-none flex-col gap-2">
           {gorunen.map((es, sira) => (
-            <YanlisKarti key={`${es.eser}-${sira}`} oyunId="edebiyat">
+            <YanlisKarti
+              key={`${es.eser}-${sira}`}
+              oyunId="edebiyat"
+              soru={edebiyattanBanka(es)}
+              bildir={bildir}
+            >
               <b className="block font-display text-[13.5px] font-extrabold leading-tight">
                 {es.eser}
               </b>

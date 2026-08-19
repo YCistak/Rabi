@@ -11,8 +11,14 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
 
 ## Mimari
 
-- **Sunucu yok.** Statik export; her şey istemcide çalışır. `fetch` ile dış servise
-  çıkma, veri toplamaya çalışma.
+- **Sunucu yok.** Statik export; her şey istemcide çalışır. Dış servise çıkma, veri
+  toplamaya çalışma.
+  - **Tek istisna: hatalı soru bildirimi.** Soru havuzları elle yazıldı; içlerindeki
+    hataları öğrenmenin başka yolu yok. Ağa çıkan tek dosya `lib/hata-gonder.ts`;
+    gönderilen veri `formVerisi()` içinde tek tek sayılan yedi alandan ibaret (soru
+    kimliği, oyun, soru metni, doğru sanılan cevap, sebep, sürüm, anonim cihaz
+    numarası). Kullanıcı Ayarlar'dan kapatabiliyor, ne gönderildiği orada yazıyor.
+    Bu istisnayı genişletme — başka hiçbir yerden ağa çıkılmıyor.
 - **State kütüphanesi yok.** `AppShell` üst düzey state'in sahibi, props ile aşağı geçer.
   Yeni bir global state ihtiyacı çıkarsa önce prop ile çözmeyi dene.
 - **Saf mantık `lib/` altında.** React'e bağlı olmayan her hesap `lib/`'e; bileşenler

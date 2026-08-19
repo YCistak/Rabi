@@ -27,6 +27,7 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { bolunmedenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
@@ -127,12 +128,14 @@ export function BolunmeOyunuEkrani({
   bankaSorulari,
   onTurBitti,
   onCik,
+  bildir,
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
   bankaSorulari: BankaKaydi[]
   onTurBitti: (ozet: TurOzeti<BolunmeSorusu>, bankaCevaplari: BankaCevabi[]) => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const oyun = oyunBul('bolunme')
 
@@ -355,6 +358,7 @@ export function BolunmeOyunuEkrani({
             bankaTuru={bankaTuru}
             onTekrar={turBaslat}
             onCik={onCik}
+            bildir={bildir}
           />
         ) : (
           asama === 'oynaniyor' &&
@@ -636,6 +640,7 @@ function SonucGorunumu({
   bankaTuru,
   onTekrar,
   onCik,
+  bildir,
 }: {
   sonuc: { ozet: TurOzeti<BolunmeSorusu>; yeniRekor: boolean }
   girdiler: (Girdi | null)[]
@@ -644,6 +649,7 @@ function SonucGorunumu({
   bankaTuru: boolean
   onTekrar: () => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const { ozet, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
@@ -704,7 +710,12 @@ function SonucGorunumu({
                 ? (KALAN_KURALI[yanlis.bolen] ?? BOLEN_KURALI[yanlis.bolen])
                 : BOLEN_KURALI[yanlis.bolen]
             return (
-              <YanlisKarti key={`${yanlis.tip}-${yanlis.sayi}-${yanlis.bolen}-${sira}`} oyunId="bolunme">
+              <YanlisKarti
+                key={`${yanlis.tip}-${yanlis.sayi}-${yanlis.bolen}-${sira}`}
+                oyunId="bolunme"
+                soru={bolunmedenBanka(yanlis)}
+                bildir={bildir}
+              >
                 <b className="rakam block font-display text-[15px] font-extrabold leading-tight">
                   {yanlis.sayi} · {soruMetni(yanlis)}{' '}
                   <em className="not-italic text-success">{cevapMetni(yanlis)}</em>

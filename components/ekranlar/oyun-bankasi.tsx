@@ -15,6 +15,7 @@ import {
 } from '@/lib/oyunlar/banka'
 import { KURAL_ACIKLAMASI, type YazimKurali } from '@/lib/oyunlar/yazim-havuzu'
 import { NOKTALAMA_ACIKLAMASI, type NoktalamaKurali } from '@/lib/oyunlar/noktalama-havuzu'
+import { BildirimDugmesi, type BildirimKolu } from '@/components/hata-bildir'
 import { cn } from '@/lib/utils'
 import { BosDurum, Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
@@ -55,10 +56,12 @@ type Suzgec = OyunId | 'tumu'
 export function OyunBankasiEkrani({
   banka,
   onTurBaslat,
+  bildir,
 }: {
   banka: BankaKaydi[]
   /** Seçilen oyunun bankadaki sorularıyla bir tur açar. */
   onTurBaslat: (oyun: OyunId) => void
+  bildir: BildirimKolu
 }) {
   const [suzgec, setSuzgec] = useState<Suzgec>('tumu')
   const dagilim = useMemo(() => bankaDagilimi(banka), [banka])
@@ -147,7 +150,7 @@ export function OyunBankasiEkrani({
       <ul className="space-y-2.5">
         {gorunen.map((kayit) => (
           <li key={kayit.id}>
-            <KayitKarti kayit={kayit} />
+            <KayitKarti kayit={kayit} bildir={bildir} />
           </li>
         ))}
       </ul>
@@ -201,7 +204,7 @@ function SuzgecCipi({
   )
 }
 
-function KayitKarti({ kayit }: { kayit: BankaKaydi }) {
+function KayitKarti({ kayit, bildir }: { kayit: BankaKaydi; bildir: BildirimKolu }) {
   const aile = AILE[kayit.soru.oyun]
 
   return (
@@ -260,6 +263,8 @@ function KayitKarti({ kayit }: { kayit: BankaKaydi }) {
             : `${kayit.ardisikDogru}/${DUSME_ESIGI} üst üste doğru`}
         </span>
       </div>
+
+      <BildirimDugmesi soru={kayit.soru} kol={bildir} />
     </div>
   )
 }

@@ -19,6 +19,7 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { sozdenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
@@ -76,6 +77,7 @@ export function SozOyunuEkrani({
   bankaSorulari,
   onTurBitti,
   onCik,
+  bildir,
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
@@ -83,6 +85,7 @@ export function SozOyunuEkrani({
   bankaSorulari: BankaKaydi[]
   onTurBitti: (ozet: TurOzeti<SozSorusu>, bankaCevaplari: BankaCevabi[]) => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const oyun = oyunBul('soz')
 
@@ -257,6 +260,7 @@ export function SozOyunuEkrani({
             bankaTuru={bankaTuru}
             onTekrar={turBaslat}
             onCik={onCik}
+            bildir={bildir}
           />
         ) : (
           asama === 'oynaniyor' &&
@@ -370,12 +374,14 @@ function SonucGorunumu({
   bankaTuru,
   onTekrar,
   onCik,
+  bildir,
 }: {
   sonuc: { ozet: TurOzeti<SozSorusu>; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
   onTekrar: () => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const { ozet, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
@@ -403,7 +409,12 @@ function SonucGorunumu({
       {ozet.yanlislar.length > 0 && (
         <div className="flex flex-none flex-col gap-2">
           {gorunen.map((yanlis, sira) => (
-            <YanlisKarti key={`${yanlis.soz}-${sira}`} oyunId="soz">
+            <YanlisKarti
+              key={`${yanlis.soz}-${sira}`}
+              oyunId="soz"
+              soru={sozdenBanka(yanlis)}
+              bildir={bildir}
+            >
               <b className="block font-display text-[13.5px] font-extrabold leading-tight">
                 {yanlis.soz}
               </b>

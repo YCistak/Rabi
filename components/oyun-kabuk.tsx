@@ -6,6 +6,8 @@ import { TUR_SURESI, YANLIS_CEZASI, sureOrani } from '@/lib/oyunlar/tur'
 import { cn } from '@/lib/utils'
 import { Halka } from '@/components/ui'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
+import { BildirimDugmesi, type BildirimKolu } from '@/components/hata-bildir'
+import type { BankaSorusu } from '@/lib/oyunlar/banka'
 
 /**
  * Bütün mini oyunların ortak çerçevesi: kapatma, başlık, süre halkası, süre
@@ -503,12 +505,22 @@ function Kutu({ deger, etiket, renk }: { deger: number; etiket: string; renk?: s
   )
 }
 
-/** Tur sonundaki tek yanlış kartı; sol kenarı oyunun rengiyle çizgili. */
+/**
+ * Tur sonundaki tek yanlış kartı; sol kenarı oyunun rengiyle çizgili.
+ *
+ * `soru` ve `bildir` birlikte verilirse altına "Bu soru hatalı" düğmesi
+ * geliyor. Yeri burası: kullanıcı tam da az önce yanlış sayılan soruya bakıyor,
+ * "ama bu doğruydu" diyeceği an bu an — ve süre işlemiyor.
+ */
 export function YanlisKarti({
   oyunId,
+  soru,
+  bildir,
   children,
 }: {
   oyunId: OyunId
+  soru?: BankaSorusu
+  bildir?: BildirimKolu
   children: React.ReactNode
 }) {
   return (
@@ -519,6 +531,7 @@ export function YanlisKarti({
       )}
     >
       {children}
+      {soru && bildir && <BildirimDugmesi soru={soru} kol={bildir} />}
     </div>
   )
 }

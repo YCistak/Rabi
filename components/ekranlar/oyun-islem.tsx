@@ -29,6 +29,7 @@ import {
   type BankaCevabi,
   type BankaKaydi,
 } from '@/lib/oyunlar/banka'
+import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
@@ -134,6 +135,7 @@ export function IslemOyunuEkrani({
   bankaSorulari,
   onTurBitti,
   onCik,
+  bildir,
 }: {
   istatistik: OyunIstatistigi
   /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
@@ -142,6 +144,7 @@ export function IslemOyunuEkrani({
   bankaSorulari: BankaKaydi[]
   onTurBitti: (ozet: TurOzeti<IslemSorusu>, bankaCevaplari: BankaCevabi[]) => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const oyun = oyunBul('islem')
 
@@ -366,6 +369,7 @@ export function IslemOyunuEkrani({
             bankaTuru={bankaTuru}
             onTekrar={turBaslat}
             onCik={onCik}
+            bildir={bildir}
           />
         ) : (
           asama === 'oynaniyor' &&
@@ -606,6 +610,7 @@ function SonucGorunumu({
   bankaTuru,
   onTekrar,
   onCik,
+  bildir,
 }: {
   sonuc: { ozet: TurOzeti<IslemSorusu>; yeniRekor: boolean }
   /** Yanlışlarla aynı sıradaki girdiler; boş dize pas geçildiğini gösterir. */
@@ -615,6 +620,7 @@ function SonucGorunumu({
   bankaTuru: boolean
   onTekrar: () => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const { ozet, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
@@ -677,7 +683,12 @@ function SonucGorunumu({
           </div>
 
           {gorunen.map((yanlis, sira) => (
-            <YanlisKarti key={`${yanlis.metin}-${sira}`} oyunId="islem">
+            <YanlisKarti
+              key={`${yanlis.metin}-${sira}`}
+              oyunId="islem"
+              soru={islemdenBanka(yanlis)}
+              bildir={bildir}
+            >
               <b className="rakam block font-display text-[15px] font-extrabold leading-tight">
                 {yanlis.metin} = <em className="not-italic text-success">{yanlis.sonuc}</em>
               </b>
