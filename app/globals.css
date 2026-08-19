@@ -154,10 +154,13 @@
   --trh-kart: var(--trh);
   --trh-koyu: #1d7a86;
   --trh-ok: #3ba3ae;
-  --byl: #e2f2e2;
+  /* Biyoloji yaprak yeşili sarıya çalıyor: Coğrafya'nın mavimsi yeşilinden
+     ayrılsın diye. İkisi aynı listede yan yana duruyor ve birleşmeden önce
+     neredeyse aynı tondaydılar. */
+  --byl: #eef4dd;
   --byl-kart: var(--byl);
-  --byl-koyu: #3f8149;
-  --byl-ok: #5aa864;
+  --byl-koyu: #5f7d28;
+  --byl-ok: #86ac3e;
 
   /* Boss sorusunda oyun ekranının zemini. */
   --boss-zemin: var(--ikincil-soft);
@@ -236,8 +239,8 @@
   --trh-ok: #3ba3ae;
   --byl: color-mix(in srgb, var(--byl-ok) 9%, var(--background));
   --byl-kart: color-mix(in srgb, var(--byl-koyu) 26%, var(--card));
-  --byl-koyu: #93d59c;
-  --byl-ok: #5aa864;
+  --byl-koyu: #bcd98a;
+  --byl-ok: #86ac3e;
 
   /* Boss zemini de aynı kuralla: sayfa zemininin kırmızıya çalan hâli. Eski
      sabit ton (#3a2320) kartlardan açıktı ve kahverengiye kaçıyordu. */
