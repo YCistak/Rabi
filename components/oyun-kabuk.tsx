@@ -113,6 +113,42 @@ const AILE: Record<
     kenar: 'border-l-trh-koyu',
     degisken: 'var(--trh-koyu)',
   },
+  anlatim: {
+    zemin: 'bg-yzm',
+    yazi: 'text-yzm-koyu',
+    dolgu: 'bg-yzm-koyu',
+    kenar: 'border-l-yzm-koyu',
+    degisken: 'var(--yzm-koyu)',
+  },
+  koklu: {
+    zemin: 'bg-isl',
+    yazi: 'text-isl-koyu',
+    dolgu: 'bg-isl-koyu',
+    kenar: 'border-l-isl-koyu',
+    degisken: 'var(--isl-koyu)',
+  },
+  // Biyoloji dersinin üç oyunu aynı aileyi paylaşıyor.
+  ortak: {
+    zemin: 'bg-byl',
+    yazi: 'text-byl-koyu',
+    dolgu: 'bg-byl-koyu',
+    kenar: 'border-l-byl-koyu',
+    degisken: 'var(--byl-koyu)',
+  },
+  siniflandirma: {
+    zemin: 'bg-byl',
+    yazi: 'text-byl-koyu',
+    dolgu: 'bg-byl-koyu',
+    kenar: 'border-l-byl-koyu',
+    degisken: 'var(--byl-koyu)',
+  },
+  hucre: {
+    zemin: 'bg-byl',
+    yazi: 'text-byl-koyu',
+    dolgu: 'bg-byl-koyu',
+    kenar: 'border-l-byl-koyu',
+    degisken: 'var(--byl-koyu)',
+  },
 }
 
 /** Tur sonunda listelenen en fazla yanlış. Gerisi Oyun Bankası'nda. */
@@ -138,6 +174,15 @@ export type SayacBilgisi = {
   yanlis: number
   enIyiSeri: number
   rekor: number
+  /**
+   * Turun puanı — yalnızca doğru sayısıyla ölçülemeyen oyunlarda.
+   *
+   * Organel Kartı'nda cevabı kaçıncı ipucunda bulduğun, Köklü Sayı'da bonusu
+   * bilip bilmediğin doğru/yanlış ayrımına sığmıyor. Verilmezse sütun hiç
+   * çıkmıyor: öteki oyunlarda gösterilecek bir puan yok, sıfır yazan bir
+   * sütun ise yanlış bilgi olurdu.
+   */
+  puan?: number
 }
 
 export function OyunKabugu({
@@ -234,10 +279,18 @@ export function OyunKabugu({
               )}
             </div>
 
-            <div className="mt-3.5 grid flex-none grid-cols-4 gap-1.5 border-b border-border pb-3">
+            <div
+              className={cn(
+                'mt-3.5 grid flex-none gap-1.5 border-b border-border pb-3',
+                sayac.puan === undefined ? 'grid-cols-4' : 'grid-cols-5',
+              )}
+            >
               <Sayac deger={sayac.dogru} etiket="Doğru" renk="text-success" />
               <Sayac deger={sayac.yanlis} etiket="Yanlış" renk="text-ikincil" />
               <Sayac deger={sayac.enIyiSeri} etiket="Seri" />
+              {sayac.puan !== undefined && (
+                <Sayac deger={sayac.puan} etiket="Puan" renk="text-primary" />
+              )}
               <Sayac deger={sayac.rekor} etiket="Rekor" />
             </div>
           </>
@@ -415,6 +468,7 @@ export function TurSonu({
   yeniRekor,
   bankaTuru,
   elendi,
+  puan,
   altBaslik,
   bolumBasligi,
   bolumAltYazisi,
@@ -438,6 +492,14 @@ export function TurSonu({
    * bitiren şey boss'ta yanılmaktı ve oyuncunun bunu net görmesi gerekiyor.
    */
   elendi?: boolean
+  /**
+   * Turun puanı ve etiketi — yalnızca puanlı oyunlarda (bkz. `SayacBilgisi`).
+   *
+   * Verilirse alttaki kutulara dördüncü olarak ekleniyor. Büyük sayı yine
+   * doğru sayısı: rekor bütün oyunlarda onunla tutuluyor ve iki farklı "asıl
+   * sayı" olsaydı hangisinin rekora gittiği belirsizleşirdi.
+   */
+  puan?: { deger: number; etiket: string }
   altBaslik: string
   bolumBasligi: string
   bolumAltYazisi: string
@@ -521,10 +583,18 @@ export function TurSonu({
         </div>
       </div>
 
-      <div className="grid flex-none grid-cols-3 gap-2">
+      <div
+        className={cn(
+          'grid flex-none gap-2',
+          puan === undefined ? 'grid-cols-3' : 'grid-cols-4',
+        )}
+      >
         <Kutu deger={dogru} etiket="Doğru" renk="text-success" />
         <Kutu deger={yanlis} etiket="Yanlış" renk="text-ikincil" />
         <Kutu deger={enIyiSeri} etiket="En iyi seri" />
+        {puan !== undefined && (
+          <Kutu deger={puan.deger} etiket={puan.etiket} renk="text-primary" />
+        )}
       </div>
 
       {children && (

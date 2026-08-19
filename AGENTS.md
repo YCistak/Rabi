@@ -35,7 +35,8 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   Vurgu mavi (`--primary` #4A8FE7), ikinci kimlik rengi mercan (`--ikincil` #EF5A52),
   zemin mavimsi kâğıt (`--background` #EDF1FD). Renk **derse** ait, oyuna değil:
   `yzm` (Türkçe, pembe) · `isl` (Matematik, krem) · `edb` (Edebiyat, lavanta) ·
-  `trh` (Tarih, deniz mavisi), her biri `-koyu` ve `-ok` tonuyla.
+  `trh` (Tarih, deniz mavisi) · `byl` (Biyoloji, yeşil), her biri `-koyu` ve
+  `-ok` tonuyla.
   Kart yüzeyi `golge-kart` sınıfıyla: açık temada gölge, koyu temada ince çerçeve.
 - Yazı tipi tek: **Nunito**. Başlık ayrı aile değil ayrı kalınlık — `font-display`
   hâlâ var ama Nunito'ya çözülüyor; başlıklar `font-extrabold`, gövde `font-medium`.

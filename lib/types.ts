@@ -216,6 +216,11 @@ export type OyunId =
   | 'ucgen'
   | 'antlasma'
   | 'kavram'
+  | 'anlatim'
+  | 'koklu'
+  | 'ortak'
+  | 'siniflandirma'
+  | 'hucre'
 
 /**
  * Bir mini oyunun kalıcı istatistiği.
