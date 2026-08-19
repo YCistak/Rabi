@@ -100,6 +100,52 @@ export function aciEtiketi(
   ]
 }
 
+/** Bir noktanın doğru parçasına en kısa uzaklığı. */
+export function noktaCizgiUzakligi(nokta: Nokta, bas: Nokta, son: Nokta): number {
+  const dx = son.x - bas.x
+  const dy = son.y - bas.y
+  const kare = dx * dx + dy * dy
+  // Sıfır uzunluklu parçada "en yakın nokta" başlangıcın kendisi.
+  const t = kare === 0 ? 0 : Math.max(0, Math.min(1, ((nokta.x - bas.x) * dx + (nokta.y - bas.y) * dy) / kare))
+  return Math.hypot(nokta.x - (bas.x + t * dx), nokta.y - (bas.y + t * dy))
+}
+
+/**
+ * Etiketin köşeden karşı kenara olan yolun en çok ne kadarını kullanabileceği.
+ *
+ * Basık üçgende köşe ile karşı kenar arasında 45 piksel kalabiliyor; sabit
+ * uzaklıkla yazılan etiket orada kenarın üstüne biniyordu (25°-25°-130° üçgeni,
+ * `sekil.test.ts`). Pay bırakmak yerine oran kullanılıyor: üçgen ne kadar basık
+ * olursa etiket o kadar içeri çekiliyor, geniş üçgende ise hiçbir şey değişmiyor.
+ */
+const KARSI_KENAR_PAYI = 0.6
+
+/**
+ * Üçgen köşesindeki açı etiketi: yay ve yazı, karşı kenara binmeden.
+ *
+ * `aciEtiketi`den farkı karşı kenarı bilmesi. Paralel doğru şekillerinde
+ * "karşı kenar" diye bir şey yok, orada `aciEtiketi` kullanılmaya devam ediyor.
+ */
+export function koseEtiketi(
+  kose: Nokta,
+  uc1: Nokta,
+  uc2: Nokta,
+  metin: string,
+  vurgu = false,
+  yaricap = YAY_YARICAPI,
+): SekilParcasi[] {
+  const { ilk, son } = koseYayi(kose, uc1, uc2)
+  const derinlik = noktaCizgiUzakligi(kose, uc1, uc2)
+  const uzaklik = Math.min(yaricap + ETIKET_UZAKLIGI, derinlik * KARSI_KENAR_PAYI)
+  // Yay yazının içinde kalmalı: dışına taşarsa etiket yayı işaret etmez olur.
+  const gercekYaricap = Math.min(yaricap, uzaklik - 12)
+
+  return [
+    { tur: 'yay', merkez: kose, ilk, son, yaricap: gercekYaricap, vurgu },
+    { tur: 'yazi', konum: yonde(kose, (ilk + son) / 2, uzaklik), metin, vurgu },
+  ]
+}
+
 /**
  * Kenarın ortasına, kenardan dışarı kaçmış etiket.
  *

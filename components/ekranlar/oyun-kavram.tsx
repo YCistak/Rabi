@@ -47,6 +47,7 @@ import {
   TurSonu,
   YanlisKarti,
   rekorCumlesi,
+  type Eleme,
 } from '@/components/oyun-kabuk'
 import {
   EslestirmeDugmesi,
@@ -61,7 +62,7 @@ const CEVAP_BEKLEMESI = 800
 /** Seçili kutunun rengi — Tarih dersinin ailesi. */
 const RENK: EslestirmeRengi = {
   kenar: 'border-trh-koyu',
-  zemin: 'bg-trh',
+  zemin: 'bg-trh-kart',
   yazi: 'text-trh-koyu',
 }
 
@@ -182,8 +183,8 @@ export function KavramOyunuEkrani({
   const [bossTahta, setBossTahta] = useState(false)
   /** Kaç boss tahta verildi — sıradakinin boss olup olmayacağı buna bakıyor. */
   const [verilenBoss, setVerilenBoss] = useState(0)
-  /** Boss tahtasında yanılıp elendi mi. */
-  const [elendi, setElendi] = useState(false)
+  /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
+  const [elendi, setElendi] = useState<Eleme>(false)
   /** Kaçıncı tahta — sayaç her tahtada sıfırlansın diye. */
   const [tahtaSayisi, setTahtaSayisi] = useState(0)
 
@@ -318,7 +319,7 @@ export function KavramOyunuEkrani({
    * Tahta süresi dolunca.
    *
    * Eşleştirilmemiş kavramlar cevaplanmamış sayılıyor — süre dolması bilememekle
-   * aynı. Boss tahtasında bu doğrudan eleme demek.
+   * aynı, dolayısıyla tur da orada bitiyor. Banka turunda eleme yok.
    */
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || !tahta) return
@@ -326,14 +327,14 @@ export function KavramOyunuEkrani({
     setCevaplar((onceki) => [...onceki, ...kalanEsler.map((soru) => ({ soru, dogruMu: false }))])
     setYanlisGirdileri((onceki) => [...onceki, ...kalanEsler.map(() => 'süre doldu')])
     geriBildir(false)
-    if (bossTahta) {
-      setElendi(true)
+    if (elerMi(false, bankaTuru)) {
+      setElendi(bossTahta ? 'boss' : 'yanlis')
       zamanlayiciRef.current = setTimeout(() => turBitir(cevaplarRef.current), CEVAP_BEKLEMESI)
       return
     }
     zamanlayiciRef.current = setTimeout(tahtaDagit, CEVAP_BEKLEMESI)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asama, bossTahta, tahta, eslesenler])
+  }, [asama, bankaTuru, bossTahta, tahta, eslesenler])
 
   const { kalan, toplam } = useSoruSayaci({
     aktif: asama === 'oynaniyor' && !duraklatilan && !tahtaBekliyor && tahta !== null,
@@ -361,9 +362,9 @@ export function KavramOyunuEkrani({
       zamanlayiciRef.current = setTimeout(() => {
         setYanlisCift(null)
         setSecim(BOS_SECIM)
-        // Boss tahtasında tek yanlış yetiyor: eleyici olan bu.
-        if (elerMi(bossTahta, false)) {
-          setElendi(true)
+        // Tek yanlış eşleştirme turu bitiriyor; banka turu bunun dışında.
+        if (elerMi(false, bankaTuru)) {
+          setElendi(bossTahta ? 'boss' : 'yanlis')
           turBitir(cevaplarRef.current)
         }
       }, CEVAP_BEKLEMESI)
@@ -571,7 +572,7 @@ function SonucGorunumu({
   girdiler: string[]
   rekor: number
   bankaTuru: boolean
-  elendi: boolean
+  elendi: Eleme
   onTekrar: () => void
   onCik: () => void
   bildir: BildirimKolu

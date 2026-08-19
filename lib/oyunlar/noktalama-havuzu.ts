@@ -79,6 +79,12 @@ export type NoktalamaKurali =
   | 'kesme-yapim-eki'
   | 'kesme-cokluk'
   | 'hitap-virgul'
+  | 'unlem-duygu'
+  | 'tirnak-eser-adi'
+  | 'parantez-ek-bilgi'
+  | 'kesme-kurum'
+  | 'noktali-virgul-tur'
+  | 'uc-nokta-eksiltme'
 
 /** Sonuç ekranında, yanlış bilinen cümlenin altında görünen kural. */
 export const NOKTALAMA_ACIKLAMASI: Record<NoktalamaKurali, string> = {
@@ -97,6 +103,17 @@ export const NOKTALAMA_ACIKLAMASI: Record<NoktalamaKurali, string> = {
   'kesme-cokluk':
     'Özel adlara getirilen çokluk eki ve sonrasındaki ekler kesme işaretiyle ayrılmaz.',
   'hitap-virgul': 'Hitap ve seslenme sözlerinden sonra virgül konur.',
+  'unlem-duygu':
+    'Sevinç, kıvanç, acı, korku, şaşma gibi duyguları anlatan cümlelerin sonuna ünlem konur.',
+  'tirnak-eser-adi':
+    'Cümle içinde eserlerin ve yazıların adları ile bölüm başlıkları tırnak içine alınır.',
+  'parantez-ek-bilgi':
+    'Cümledeki anlamı tamamlayan, cümlenin dışında kalan ek bilgiler yay ayraç içine alınır.',
+  'kesme-kurum':
+    'Kurum, kuruluş, kurul, birleşim, oturum ve iş yeri adlarına gelen ekler kesme işaretiyle ayrılmaz.',
+  'noktali-virgul-tur':
+    'Cümle içinde virgüllerle ayrılmış tür veya takımları birbirinden ayırmak için noktalı virgül konur.',
+  'uc-nokta-eksiltme': 'Anlam bakımından tamamlanmamış cümlelerin sonuna üç nokta konur.',
 }
 
 export type NoktalamaSorusu = {
@@ -382,6 +399,626 @@ export const NOKTALAMA_HAVUZU: NoktalamaSorusu[] = [
       'Sayın Öğretmenim, dersinize katılamayacağım.',
       'noktali-virgul',
       'nokta',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // “ve, veya, yahut, ile” bağlacının çevresinde virgül
+  // -------------------------------------------------------------------------
+  ...grup('ve-virgul', 'kolay', [
+    [
+      'Defterini açtı, ve notlarını gözden geçirdi.',
+      'Defterini açtı ve notlarını gözden geçirdi.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Ahmet’in kalemi, ve silgisi çantasında kalmış.',
+      'Ahmet’in kalemi ve silgisi çantasında kalmış.',
+      'virgul',
+      'kesme',
+    ],
+    [
+      'Yağmur başladı, ve maç yarıda kesildi.',
+      'Yağmur başladı ve maç yarıda kesildi.',
+      'virgul',
+      'nokta',
+    ],
+    ['Kahve, veya çay içmek ister misin?', 'Kahve veya çay içmek ister misin?', 'virgul', 'soru'],
+    [
+      'Deneme sonuçlarını öğretmenim ile, ben inceledik.',
+      'Deneme sonuçlarını öğretmenim ile ben inceledik.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Ne kadar hızlı koşuyor, ve hiç yorulmuyor!',
+      'Ne kadar hızlı koşuyor ve hiç yorulmuyor!',
+      'virgul',
+      'unlem',
+    ],
+    [
+      'Bugün, yahut yarın size uğrayıp konuyu anlatırım.',
+      'Bugün yahut yarın size uğrayıp konuyu anlatırım.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Kitabı okudu, ve raftaki yerine kaldırdı.',
+      'Kitabı okudu ve raftaki yerine kaldırdı.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Süre doldu, ve herkes kâğıdını teslim etti.',
+      'Süre doldu ve herkes kâğıdını teslim etti.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Öğretmen “Kalemleri bırakın.” dedi, ve salondan çıktı.',
+      'Öğretmen “Kalemleri bırakın.” dedi ve salondan çıktı.',
+      'virgul',
+      'tirnak',
+    ],
+    [
+      'Sınavda ilk oturum (TYT), ve ikinci oturum aynı gün yapılacak.',
+      'Sınavda ilk oturum (TYT) ve ikinci oturum aynı gün yapılacak.',
+      'virgul',
+      'parantez',
+    ],
+    [
+      'Odasını topladı, ve ders çalışmaya oturdu.',
+      'Odasını topladı ve ders çalışmaya oturdu.',
+      'virgul',
+      'nokta',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Soru cümlesinin sonunda nokta
+  // -------------------------------------------------------------------------
+  ...grup('soru-cumlesi', 'kolay', [
+    [
+      'Bu konuyu kaç kere tekrar ettin, Ayşe.',
+      'Bu konuyu kaç kere tekrar ettin, Ayşe?',
+      'nokta',
+      'virgul',
+    ],
+    [
+      'ÖSYM’nin sınav takvimi ne zaman açıklanacak.',
+      'ÖSYM’nin sınav takvimi ne zaman açıklanacak?',
+      'nokta',
+      'kesme',
+    ],
+    [
+      'Kütüphane saat kaçta kapanıyor, biliyor musun.',
+      'Kütüphane saat kaçta kapanıyor, biliyor musun?',
+      'nokta',
+      'virgul',
+    ],
+    ['Bunu Ahmet’e kim söylemiş.', 'Bunu Ahmet’e kim söylemiş?', 'nokta', 'kesme'],
+    [
+      'Yarın deneme mi var, yoksa ders mi işleyeceğiz.',
+      'Yarın deneme mi var, yoksa ders mi işleyeceğiz?',
+      'nokta',
+      'virgul',
+    ],
+    [
+      'Sen de mi bu soruyu boş bıraktın, Mehmet.',
+      'Sen de mi bu soruyu boş bıraktın, Mehmet?',
+      'nokta',
+      'virgul',
+    ],
+    [
+      'Kaç sorunun doğru olduğunu Ahmet’e mi soracaksın.',
+      'Kaç sorunun doğru olduğunu Ahmet’e mi soracaksın?',
+      'nokta',
+      'kesme',
+    ],
+    [
+      'İstanbul-Ankara treni kaçta kalkıyor.',
+      'İstanbul-Ankara treni kaçta kalkıyor?',
+      'nokta',
+      'kisa-cizgi',
+    ],
+    [
+      'Toplantıya Millî Eğitim Bakanlığı (MEB) da katılacak mı.',
+      'Toplantıya Millî Eğitim Bakanlığı (MEB) da katılacak mı?',
+      'nokta',
+      'parantez',
+    ],
+    [
+      'Ne demek istediğini anlamadım; sen anladın mı.',
+      'Ne demek istediğini anlamadım; sen anladın mı?',
+      'nokta',
+      'noktali-virgul',
+    ],
+    [
+      'Kalem, silgi, defter… hepsini aldın mı.',
+      'Kalem, silgi, defter… hepsini aldın mı?',
+      'nokta',
+      'uc-nokta',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Hitap ve seslenmeden sonra virgül
+  // -------------------------------------------------------------------------
+  ...grup('hitap-virgul', 'kolay', [
+    [
+      'Sevgili arkadaşlar; bugünkü konumuz noktalama işaretleri.',
+      'Sevgili arkadaşlar, bugünkü konumuz noktalama işaretleri.',
+      'noktali-virgul',
+      'nokta',
+    ],
+    [
+      'Çocuklar: sıralarınızı düzeltin lütfen.',
+      'Çocuklar, sıralarınızı düzeltin lütfen.',
+      'iki-nokta',
+      'nokta',
+    ],
+    [
+      'Arkadaşlar; sınava yalnızca iki gün kaldı!',
+      'Arkadaşlar, sınava yalnızca iki gün kaldı!',
+      'noktali-virgul',
+      'unlem',
+    ],
+    [
+      'Hocam; bu soruyu bir daha anlatır mısınız?',
+      'Hocam, bu soruyu bir daha anlatır mısınız?',
+      'noktali-virgul',
+      'soru',
+    ],
+    [
+      'Sayın veliler: toplantı yarın saat 14.00’te yapılacak.',
+      'Sayın veliler, toplantı yarın saat 14.00’te yapılacak.',
+      'iki-nokta',
+      'kesme',
+    ],
+    ['Ali: şu pencereyi kapatır mısın?', 'Ali, şu pencereyi kapatır mısın?', 'iki-nokta', 'soru'],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Duygu bildiren cümlenin sonunda ünlem
+  // -------------------------------------------------------------------------
+  ...grup('unlem-duygu', 'kolay', [
+    ['Aman, dikkat et.', 'Aman, dikkat et!', 'nokta', 'virgul'],
+    ['Vay canına, ne büyük bir balık.', 'Vay canına, ne büyük bir balık!', 'nokta', 'virgul'],
+    ['Eyvah, son otobüsü de kaçırdık.', 'Eyvah, son otobüsü de kaçırdık!', 'nokta', 'virgul'],
+    ['Ne kadar da büyümüşsün Ayşe’ciğim.', 'Ne kadar da büyümüşsün Ayşe’ciğim!', 'nokta', 'kesme'],
+    [
+      'Öf, bu soruyu yine çözemedim; iyice sinirlendim.',
+      'Öf, bu soruyu yine çözemedim; iyice sinirlendim!',
+      'nokta',
+      'noktali-virgul',
+    ],
+    ['Ah, o günler… ne güzeldi.', 'Ah, o günler… ne güzeldi!', 'nokta', 'uc-nokta'],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Eş görevli kelimeler arasında virgül
+  // -------------------------------------------------------------------------
+  ...grup('sirali-virgul', 'orta', [
+    [
+      'Bahçede gül; lale ve karanfil açmıştı.',
+      'Bahçede gül, lale ve karanfil açmıştı.',
+      'noktali-virgul',
+      'nokta',
+    ],
+    [
+      'Çantasında kitap: defter ve kalemlik vardı.',
+      'Çantasında kitap, defter ve kalemlik vardı.',
+      'iki-nokta',
+      'nokta',
+    ],
+    [
+      'Ahmet’in odasında masa; sandalye ve kitaplık vardı.',
+      'Ahmet’in odasında masa, sandalye ve kitaplık vardı.',
+      'noktali-virgul',
+      'kesme',
+    ],
+    [
+      'Sınavda Türkçe: matematik ve fen soruları mı çıkacak?',
+      'Sınavda Türkçe, matematik ve fen soruları mı çıkacak?',
+      'iki-nokta',
+      'soru',
+    ],
+    [
+      'Yorgun; bitkin ve umutsuz bir hâlde eve döndü.',
+      'Yorgun, bitkin ve umutsuz bir hâlde eve döndü.',
+      'noktali-virgul',
+      'nokta',
+    ],
+    [
+      'Buzdolabında süt: peynir ve zeytin vardı; ekmek yoktu.',
+      'Buzdolabında süt, peynir ve zeytin vardı; ekmek yoktu.',
+      'iki-nokta',
+      'noktali-virgul',
+    ],
+    [
+      'Ne güzel; ne temiz ve ne aydınlık bir sınıf!',
+      'Ne güzel, ne temiz ve ne aydınlık bir sınıf!',
+      'noktali-virgul',
+      'unlem',
+    ],
+    [
+      'Toplantıya müdür: müdür yardımcısı ve rehber öğretmen katıldı.',
+      'Toplantıya müdür, müdür yardımcısı ve rehber öğretmen katıldı.',
+      'iki-nokta',
+      'nokta',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Saat ile dakika arasında nokta
+  // -------------------------------------------------------------------------
+  ...grup('saat-nokta', 'orta', [
+    ['Ders 08:30’da başlıyor.', 'Ders 08.30’da başlıyor.', 'iki-nokta', 'kesme'],
+    [
+      'Otobüs 17:20’de kalkacak, sakın geç kalma.',
+      'Otobüs 17.20’de kalkacak, sakın geç kalma.',
+      'iki-nokta',
+      'virgul',
+    ],
+    [
+      'Film 21:15’te başlıyor, hazır mısın?',
+      'Film 21.15’te başlıyor, hazır mısın?',
+      'iki-nokta',
+      'soru',
+    ],
+    [
+      'Ankara-İzmir uçağı 06:45’te kalkıyor.',
+      'Ankara-İzmir uçağı 06.45’te kalkıyor.',
+      'iki-nokta',
+      'kisa-cizgi',
+    ],
+    [
+      'Maç 19:00’da başlayacak; stat şimdiden doldu.',
+      'Maç 19.00’da başlayacak; stat şimdiden doldu.',
+      'iki-nokta',
+      'noktali-virgul',
+    ],
+    [
+      'Öğretmen “Sınav 10:30’da bitecek.” dedi.',
+      'Öğretmen “Sınav 10.30’da bitecek.” dedi.',
+      'iki-nokta',
+      'tirnak',
+    ],
+    [
+      'Servis her sabah 06:50’de kapının önünde oluyor.',
+      'Servis her sabah 06.50’de kapının önünde oluyor.',
+      'iki-nokta',
+      'kesme',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Açıklama ve örnek öncesinde iki nokta
+  // -------------------------------------------------------------------------
+  ...grup('iki-nokta-aciklama', 'orta', [
+    [
+      'Çantamda üç şey vardı; kalem, silgi, defter.',
+      'Çantamda üç şey vardı: kalem, silgi, defter.',
+      'noktali-virgul',
+      'virgul',
+    ],
+    [
+      'Şunu unutma, düzenli tekrar her şeyi değiştirir.',
+      'Şunu unutma: düzenli tekrar her şeyi değiştirir.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Sınavın iki bölümü var; TYT ve AYT.',
+      'Sınavın iki bölümü var: TYT ve AYT.',
+      'noktali-virgul',
+      'nokta',
+    ],
+    [
+      'Kararımı verdim, bu yıl sayısal bölümü seçiyorum.',
+      'Kararımı verdim: bu yıl sayısal bölümü seçiyorum.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Ahmet’in tek isteği şuydu; herkesin onu dinlemesi.',
+      'Ahmet’in tek isteği şuydu: herkesin onu dinlemesi.',
+      'noktali-virgul',
+      'kesme',
+    ],
+    [
+      'Öğretmen sordu; “Bu kuralı kim açıklayabilir?”',
+      'Öğretmen sordu: “Bu kuralı kim açıklayabilir?”',
+      'noktali-virgul',
+      'tirnak',
+    ],
+    [
+      'Aklımda tek bir soru vardı; bu konu sınavda çıkar mı?',
+      'Aklımda tek bir soru vardı: bu konu sınavda çıkar mı?',
+      'noktali-virgul',
+      'soru',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Eser ve yazı adları tırnak içinde
+  // -------------------------------------------------------------------------
+  ...grup('tirnak-eser-adi', 'orta', [
+    [
+      'Yahya Kemal’in (Sessiz Gemi) şiirini ezberledik.',
+      'Yahya Kemal’in “Sessiz Gemi” şiirini ezberledik.',
+      'parantez',
+      'kesme',
+    ],
+    [
+      'Bu hafta (Çalıkuşu) romanını bitirdim.',
+      'Bu hafta “Çalıkuşu” romanını bitirdim.',
+      'parantez',
+      'nokta',
+    ],
+    [
+      'Öğretmen (Han Duvarları) şiirini okudu, sınıf sessizce dinledi.',
+      'Öğretmen “Han Duvarları” şiirini okudu, sınıf sessizce dinledi.',
+      'parantez',
+      'virgul',
+    ],
+    [
+      'Sen (Kürk Mantolu Madonna) romanını okudun mu?',
+      'Sen “Kürk Mantolu Madonna” romanını okudun mu?',
+      'parantez',
+      'soru',
+    ],
+    [
+      'Kitabın (Giriş) bölümünü iki kez okudum; yine de anlamadım.',
+      'Kitabın “Giriş” bölümünü iki kez okudum; yine de anlamadım.',
+      'parantez',
+      'noktali-virgul',
+    ],
+    [
+      'Bu akşam (Beyaz Diş) romanını bitireceğim!',
+      'Bu akşam “Beyaz Diş” romanını bitireceğim!',
+      'parantez',
+      'unlem',
+    ],
+    [
+      'Safahat’ın (Küfe) bölümünü ezberledim.',
+      'Safahat’ın “Küfe” bölümünü ezberledim.',
+      'parantez',
+      'kesme',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Cümlenin dışında kalan ek bilgi parantez içinde
+  // -------------------------------------------------------------------------
+  ...grup('parantez-ek-bilgi', 'orta', [
+    [
+      'Türk Dil Kurumu “TDK” yeni bir kılavuz yayımladı.',
+      'Türk Dil Kurumu (TDK) yeni bir kılavuz yayımladı.',
+      'tirnak',
+      'nokta',
+    ],
+    [
+      'Anadolu Ajansı “AA”, haberi akşam saatlerinde doğruladı.',
+      'Anadolu Ajansı (AA), haberi akşam saatlerinde doğruladı.',
+      'tirnak',
+      'virgul',
+    ],
+    [
+      'Necip Fazıl Kısakürek “1904-1983” bu şiiri gençken yazmış.',
+      'Necip Fazıl Kısakürek (1904-1983) bu şiiri gençken yazmış.',
+      'tirnak',
+      'kisa-cizgi',
+    ],
+    [
+      'Sınavı Millî Eğitim Bakanlığı “MEB” mi düzenliyor?',
+      'Sınavı Millî Eğitim Bakanlığı (MEB) mi düzenliyor?',
+      'tirnak',
+      'soru',
+    ],
+    [
+      'Bu kitabı Halide Edip Adıvar “Ateşten Gömlek’in yazarı” kaleme almış.',
+      'Bu kitabı Halide Edip Adıvar (Ateşten Gömlek’in yazarı) kaleme almış.',
+      'tirnak',
+      'kesme',
+    ],
+    [
+      'Kardeşim “on iki yaşında” bu yıl ortaokulu bitiriyor; ben de liseyi.',
+      'Kardeşim (on iki yaşında) bu yıl ortaokulu bitiriyor; ben de liseyi.',
+      'tirnak',
+      'noktali-virgul',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Soru anlamı olmayan cümlede soru işareti
+  // -------------------------------------------------------------------------
+  ...grup('soru-anlami', 'zor', [
+    [
+      'Ahmet’in neden geç kaldığını sormadım?',
+      'Ahmet’in neden geç kaldığını sormadım.',
+      'soru',
+      'kesme',
+    ],
+    [
+      'Hangi kitabı okuyacağıma karar veremedim, listeyi de kaybettim?',
+      'Hangi kitabı okuyacağıma karar veremedim, listeyi de kaybettim.',
+      'soru',
+      'virgul',
+    ],
+    [
+      'Nereye gittiğini kimseye söylememiş; annesi bile bilmiyor?',
+      'Nereye gittiğini kimseye söylememiş; annesi bile bilmiyor.',
+      'soru',
+      'noktali-virgul',
+    ],
+    [
+      'Öğretmen, sınavın ne zaman olacağını “Haftaya.” diye yanıtladı?',
+      'Öğretmen, sınavın ne zaman olacağını “Haftaya.” diye yanıtladı.',
+      'soru',
+      'tirnak',
+    ],
+    [
+      'Ölçme, Seçme ve Yerleştirme Merkezi (ÖSYM) kaç adayın başvurduğunu açıklamadı?',
+      'Ölçme, Seçme ve Yerleştirme Merkezi (ÖSYM) kaç adayın başvurduğunu açıklamadı.',
+      'soru',
+      'parantez',
+    ],
+    [
+      'Ne yaptığını, ne söylediğini, kime gittiğini… hiçbirini bilmiyorum?',
+      'Ne yaptığını, ne söylediğini, kime gittiğini… hiçbirini bilmiyorum.',
+      'soru',
+      'uc-nokta',
+    ],
+    [
+      'İstanbul-Ankara arasının kaç saat sürdüğünü unutmuşum?',
+      'İstanbul-Ankara arasının kaç saat sürdüğünü unutmuşum.',
+      'soru',
+      'kisa-cizgi',
+    ],
+    [
+      'Neyi kaçırdığımı sonradan anladım; artık geri dönüş yoktu?',
+      'Neyi kaçırdığımı sonradan anladım; artık geri dönüş yoktu.',
+      'soru',
+      'noktali-virgul',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Yapım eki kesmeyle ayrılmaz
+  // -------------------------------------------------------------------------
+  ...grup('kesme-yapim-eki', 'zor', [
+    ['Konya’lı öğrenciler geziye katıldı.', 'Konyalı öğrenciler geziye katıldı.', 'kesme', 'nokta'],
+    ['Almanca’dan Türkçeye çeviri yaptı.', 'Almancadan Türkçeye çeviri yaptı.', 'kesme', 'nokta'],
+    [
+      'Bu sözcük Farsça’dan dilimize geçmiş, çok eskiden.',
+      'Bu sözcük Farsçadan dilimize geçmiş, çok eskiden.',
+      'kesme',
+      'virgul',
+    ],
+    [
+      'İzmir’li arkadaşım sınavı kazandı; hepimiz sevindik.',
+      'İzmirli arkadaşım sınavı kazandı; hepimiz sevindik.',
+      'kesme',
+      'noktali-virgul',
+    ],
+    ['Sen de mi Bursa’lısın?', 'Sen de mi Bursalısın?', 'kesme', 'soru'],
+    [
+      'Karadeniz’li olduğunu şivesinden hemen anladım!',
+      'Karadenizli olduğunu şivesinden hemen anladım!',
+      'kesme',
+      'unlem',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Çokluk eki kesmeyle ayrılmaz
+  // -------------------------------------------------------------------------
+  ...grup('kesme-cokluk', 'zor', [
+    ['Bu akşam Ayşe’lere gideceğiz.', 'Bu akşam Ayşelere gideceğiz.', 'kesme', 'nokta'],
+    [
+      'Ahmet’ler yeni bir ev almış; taşınma haftaya.',
+      'Ahmetler yeni bir ev almış; taşınma haftaya.',
+      'kesme',
+      'noktali-virgul',
+    ],
+    ['Yarın Mehmet’lerde toplanalım mı?', 'Yarın Mehmetlerde toplanalım mı?', 'kesme', 'soru'],
+    [
+      'Çantamı Zeynep’lerde unutmuşum, sabah alırım.',
+      'Çantamı Zeyneplerde unutmuşum, sabah alırım.',
+      'kesme',
+      'virgul',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Kurum ve kuruluş adlarına gelen ekler kesmeyle ayrılmaz
+  // -------------------------------------------------------------------------
+  ...grup('kesme-kurum', 'zor', [
+    [
+      'Türk Dil Kurumu’nun sözlüğünü kullanıyorum.',
+      'Türk Dil Kurumunun sözlüğünü kullanıyorum.',
+      'kesme',
+      'nokta',
+    ],
+    [
+      'Millî Eğitim Bakanlığı’na dilekçe verdim, cevap bekliyorum.',
+      'Millî Eğitim Bakanlığına dilekçe verdim, cevap bekliyorum.',
+      'kesme',
+      'virgul',
+    ],
+    [
+      'Türkiye Büyük Millet Meclisi’nde bu yasa görüşüldü mü?',
+      'Türkiye Büyük Millet Meclisinde bu yasa görüşüldü mü?',
+      'kesme',
+      'soru',
+    ],
+    [
+      'Ankara Üniversitesi’ni kazandı; ailesi çok sevindi.',
+      'Ankara Üniversitesini kazandı; ailesi çok sevindi.',
+      'kesme',
+      'noktali-virgul',
+    ],
+    [
+      'Öğretmen “Yazıyı Türk Dil Kurumu’na gönderin.” dedi.',
+      'Öğretmen “Yazıyı Türk Dil Kurumuna gönderin.” dedi.',
+      'kesme',
+      'tirnak',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Virgülle ayrılmış türleri ayırmak için noktalı virgül
+  // -------------------------------------------------------------------------
+  ...grup('noktali-virgul-tur', 'zor', [
+    [
+      'Sözel derslerde Türkçe, tarih, coğrafya: sayısal derslerde matematik, fizik, kimya var.',
+      'Sözel derslerde Türkçe, tarih, coğrafya; sayısal derslerde matematik, fizik, kimya var.',
+      'iki-nokta',
+      'virgul',
+    ],
+    [
+      'Odada masa, sandalye, dolap… salonda koltuk, sehpa vardı.',
+      'Odada masa, sandalye, dolap; salonda koltuk, sehpa vardı.',
+      'uc-nokta',
+      'virgul',
+    ],
+    [
+      'Yazın deniz, güneş, tatil - kışın kar, soğuk, okul akla gelir.',
+      'Yazın deniz, güneş, tatil; kışın kar, soğuk, okul akla gelir.',
+      'kisa-cizgi',
+      'virgul',
+    ],
+    [
+      'Meyvelerden elma, armut, kiraz: sebzelerden domates, biber aldım.',
+      'Meyvelerden elma, armut, kiraz; sebzelerden domates, biber aldım.',
+      'iki-nokta',
+      'nokta',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Tamamlanmamış cümlenin sonunda üç nokta
+  // -------------------------------------------------------------------------
+  ...grup('uc-nokta-eksiltme', 'zor', [
+    [
+      'Ne yapsam, nereye gitsem, kime sorsam.',
+      'Ne yapsam, nereye gitsem, kime sorsam…',
+      'nokta',
+      'virgul',
+    ],
+    [
+      'Bir varmış, bir yokmuş; evvel zaman içinde.',
+      'Bir varmış, bir yokmuş; evvel zaman içinde…',
+      'nokta',
+      'noktali-virgul',
+    ],
+    [
+      'Sait Faik’in anlattığı o eski İstanbul.',
+      'Sait Faik’in anlattığı o eski İstanbul…',
+      'nokta',
+      'kesme',
     ],
   ]),
 ]

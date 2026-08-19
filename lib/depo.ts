@@ -76,6 +76,7 @@ export const ANAHTARLAR = {
   zorlukBolunme: 'rabi-zorluk-bolunme',
   zorlukAci: 'rabi-zorluk-aci',
   zorlukUcgen: 'rabi-zorluk-ucgen',
+  zorlukHarita: 'rabi-zorluk-harita',
   zorlukAntlasma: 'rabi-zorluk-antlasma',
   zorlukKavram: 'rabi-zorluk-kavram',
   zorlukAnlatim: 'rabi-zorluk-anlatim',
@@ -136,6 +137,7 @@ okulNotlariniTasi()
 export const VARSAYILAN_AYARLAR: Ayarlar = {
   varsayilanSablonId: VARSAYILAN_SABLON_ID,
   buYilSinif: 12,
+  elleObp: null,
   sinifYili: egitimYili(),
   puanTuru: 'ea',
   gunlukHedef: 200,
@@ -209,6 +211,8 @@ export function ayarlariNormalize(ham: Partial<Ayarlar> | null | undefined): Aya
   return {
     ...birlesik,
     sinifYili: Number.isFinite(birlesik.sinifYili) ? birlesik.sinifYili : egitimYili(),
+    // Eski kurulumlarda alan yok; sayı olmayan her şey "girilmemiş" sayılıyor.
+    elleObp: Number.isFinite(birlesik.elleObp as number) ? (birlesik.elleObp as number) : null,
     hatirlatmaSaati: saatiKirp(birlesik.hatirlatmaSaati),
     hatirlatmaDakikasi: dakikayiKirp(birlesik.hatirlatmaDakikasi),
     gunlukHedef: Number.isFinite(birlesik.gunlukHedef) && birlesik.gunlukHedef > 0
@@ -445,7 +449,12 @@ function bankayiCoz(ham: unknown): BankaKaydi[] {
           typeof s.sozTuru === 'string' &&
           typeof s.konu === 'string'
         )
-      if (s.oyun === 'bolunme')
+      if (s.oyun === 'harita')
+      return (
+        typeof s.il === 'string' &&
+        (s.haritaTipi === 'bul' || s.haritaTipi === 'sec')
+      )
+    if (s.oyun === 'bolunme')
         return (
           typeof s.sayi === 'number' &&
           typeof s.bolen === 'number' &&

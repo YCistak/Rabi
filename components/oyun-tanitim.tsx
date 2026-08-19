@@ -1,6 +1,7 @@
 'use client'
 
 import type { OyunTanimi } from '@/lib/oyunlar/tanim'
+import { vurgulariAyir } from '@/lib/metin'
 import { useGeriKatmani } from '@/lib/geri'
 import { Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
@@ -91,23 +92,25 @@ export function OyunTanitim({
 }
 
 /**
- * `**...**` arasını kalın yazar.
+ * Maddedeki `**kalın**` ve `*eğik*` bölümleri.
  *
- * Tanıtım metinleri en başından beri yıldızlı yazılıyordu ama kimse
- * çözmüyordu: ekranda "**boss eli**" diye görünüyordu. Tam bir markdown
- * ayrıştırıcısına gerek yok — metinler bizim, kullandıkları tek işaret bu.
+ * Metinler elle yazılıyor, dolayısıyla kullanıcıdan gelen bir şey yok; yine de
+ * biçimlendirme HTML üretmeden, parça parça çiziliyor.
  */
 function Vurgulu({ metin }: { metin: string }) {
   return (
     <>
-      {metin.split(/\*\*(.+?)\*\*/g).map((parca, sira) =>
-        // Ayırıcının yakaladığı gruplar tek indislere düşüyor: kalın olanlar bunlar.
-        sira % 2 === 1 ? (
-          <b key={sira} className="font-extrabold text-foreground">
-            {parca}
-          </b>
+      {vurgulariAyir(metin).map((parca, sira) =>
+        parca.tur === 'kalin' ? (
+          <strong key={sira} className="font-extrabold text-foreground">
+            {parca.metin}
+          </strong>
+        ) : parca.tur === 'egik' ? (
+          <em key={sira} className="italic">
+            {parca.metin}
+          </em>
         ) : (
-          parca
+          <span key={sira}>{parca.metin}</span>
         ),
       )}
     </>

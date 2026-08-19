@@ -189,9 +189,9 @@ export function AppShell() {
   }, [ozetHaftasi, setOzetGorulen])
 
   // Hedef kartı ve ana sayfa, en yeni denemelerden çıkan tahmini gösteriyor.
-  const tahmin = guncelTahmin(denemeler, sablonlar, okulYillari, ayarlar.puanTuru)
+  const tahmin = guncelTahmin(denemeler, sablonlar, okulYillari, ayarlar.puanTuru, ayarlar.elleObp)
   const guncelSiralama = tahmin?.siralama.enKotu ?? null
-  const diplomaNotu = obpHesapla(okulYillari)?.diplomaNotu ?? null
+  const diplomaNotu = obpHesapla(okulYillari, ayarlar.elleObp)?.diplomaNotu ?? null
 
   // ---- Açılış ekranı ----
   // Süre veri okumasına bağlanmadı: localStorage neredeyse anında dönüyor,
@@ -377,14 +377,17 @@ export function AppShell() {
     return (
       <>
         <Kurulum
-          onBitir={(secimler) =>
+          onBitir={({ ayarlar: secimler, okulYillari: girilenler }) => {
             setAyarlar((o) => ({
               ...ayarlariNormalize(o),
               ...secimler,
               sinifYili: egitimYili(),
               kurulumTamamlandi: true,
             }))
-          }
+            // Mezun kurulumda yıl sonu notlarını girmiş olabilir; atladıysa
+            // liste boş geliyor ve kayıtlı veriye dokunulmuyor.
+            if (girilenler.length > 0) setOkulYillari(girilenler)
+          }}
         />
         {acilisKatmani}
       </>
@@ -437,6 +440,7 @@ export function AppShell() {
             <OkulEkrani
               yillar={okulYillari}
               setYillar={setOkulYillari}
+              setAyarlar={setAyarlar}
               ayarlar={ayarlar}
               hazir={okulHazir}
             />

@@ -48,6 +48,7 @@ import {
   TurSonu,
   YanlisKarti,
   rekorCumlesi,
+  type Eleme,
 } from '@/components/oyun-kabuk'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
@@ -144,8 +145,8 @@ export function HucreOyunuEkrani({
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
   /** Turun toplam puanı; doğru sayısından ayrı ilerliyor. */
   const [puan, setPuan] = useState(0)
-  /** Boss'ta yanılıp elendi mi — tur sonu ekranı bunu ayrıca söylüyor. */
-  const [elendi, setElendi] = useState(false)
+  /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
+  const [elendi, setElendi] = useState<Eleme>(false)
 
   const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukHucre, 'kolay')
   /** Yardım açıkken sayaç duruyor. */
@@ -247,8 +248,8 @@ export function HucreOyunuEkrani({
   const ilerle = (dogruMu: boolean, bossMuydu: boolean) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
-      if (elerMi(bossMuydu, dogruMu)) {
-        setElendi(true)
+      if (elerMi(dogruMu, bankaTuru)) {
+        setElendi(bossMuydu ? 'boss' : 'yanlis')
         turBitir(cevaplarRef.current)
       } else {
         setSira((s) => s + 1)
@@ -573,7 +574,7 @@ function SonucGorunumu({
   sonuc: { ozet: TurOzeti<OrganelSorusu>; yeniRekor: boolean; puan: number }
   rekor: number
   bankaTuru: boolean
-  elendi: boolean
+  elendi: Eleme
   onTekrar: () => void
   onCik: () => void
   bildir: BildirimKolu

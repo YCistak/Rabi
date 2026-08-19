@@ -18,6 +18,7 @@ import type { NoktalamaIsareti, NoktalamaSorusu } from './noktalama-havuzu'
 import { OLAY_ADI, type SesOlayi } from './ses-havuzu'
 import { OGE_ADI, type OgeTuru } from './oge-havuzu'
 import type { BolunmeTipi } from './bolunme'
+import type { HaritaTipi } from './harita'
 import type { SozKonusu, SozTuru } from './soz-havuzu'
 import { ucgenCevabi, ucgenKimligi, ucgenOzeti, kenarMetni, type UcgenSorusu } from './ucgen'
 import { BOZUKLUK_ADI, type BozuklukTuru } from './anlatim-havuzu'
@@ -60,6 +61,9 @@ export type BankaSorusu =
   // cevap sayıyla çelişebilirdi, türetilen cevap çelişemez.
   | { oyun: 'bolunme'; sayi: number; bolen: number; bolunmeTipi: BolunmeTipi }
   | { oyun: 'soz'; soz: string; anlam: string; sozTuru: SozTuru; konu: SozKonusu }
+  // İlin yalnızca adı saklanıyor: sınırı, merkezi ve zorluğu havuzda duruyor ve
+  // harita yenilendiğinde kayıtla çelişmemeleri gerekiyor.
+  | { oyun: 'harita'; il: string; haritaTipi: HaritaTipi }
   /**
    * Geometri soruları sorunun kendisini olduğu gibi taşıyor.
    *
@@ -202,6 +206,10 @@ export function ucgendenBanka(soru: UcgenSorusu): BankaSorusu {
   return { oyun: 'ucgen', ucgen: soru }
 }
 
+export function haritadanBanka(soru: { tip: HaritaTipi; il: { ad: string } }): BankaSorusu {
+  return { oyun: 'harita', il: soru.il.ad, haritaTipi: soru.tip }
+}
+
 export function antlasmadanBanka(es: { madde: string; antlasma: string }): BankaSorusu {
   return { oyun: 'antlasma', madde: es.madde, antlasma: es.antlasma }
 }
@@ -271,6 +279,10 @@ export function bankaKimligi(soru: BankaSorusu): string {
       return `aci:${soru.aci.kural}:${soru.aci.a}:${soru.aci.b ?? ''}`
     case 'ucgen':
       return `ucgen:${ucgenKimligi(soru.ucgen)}`
+    // Aynı il hem "haritada bul" hem "adını seç" olarak geçebiliyor; ikisi
+    // ayrı beceri, ayrı kayıt.
+    case 'harita':
+      return `harita:${soru.haritaTipi}:${soru.il}`
     // Eşleştirme oyunlarında kimlik sorulan taraftan geliyor: aynı antlaşmanın
     // iki farklı maddesi iki ayrı soru.
     case 'antlasma':
@@ -314,6 +326,8 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
       return `${ACI_KURALI_ADI[soru.aci.kural]} · ${soru.aci.a}°${soru.aci.b === null ? '' : ` · ${soru.aci.b}°`}`
     case 'ucgen':
       return ucgenOzeti(soru.ucgen)
+    case 'harita':
+      return soru.haritaTipi === 'bul' ? `${soru.il} nerede?` : 'Haritada işaretlenen il'
     case 'antlasma':
       return soru.madde
     case 'kavram':
@@ -358,6 +372,8 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
       return `${soru.aci.cevap}°`
     case 'ucgen':
       return kenarMetni(ucgenCevabi(soru.ucgen))
+    case 'harita':
+      return soru.il
     case 'antlasma':
       return soru.antlasma
     case 'kavram':
@@ -469,6 +485,7 @@ const BOS_DAGILIM: Record<OyunId, number> = {
   islem: 0,
   bolunme: 0,
   edebiyat: 0,
+  harita: 0,
   aci: 0,
   ucgen: 0,
   antlasma: 0,

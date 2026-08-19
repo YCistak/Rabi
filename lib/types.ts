@@ -214,6 +214,7 @@ export type OyunId =
   | 'bolunme'
   | 'aci'
   | 'ucgen'
+  | 'harita'
   | 'antlasma'
   | 'kavram'
   | 'anlatim'
@@ -291,8 +292,18 @@ export type OyunMuzikTuru = 'arcade' | 'lofi'
 
 export type Ayarlar = {
   varsayilanSablonId: string
-  /** Bu yılın hangi sınıf olduğu — ilk açılışta sorulur, OBP hesabında kullanılır. */
+  /**
+   * Bu yılın hangi sınıf olduğu — ilk açılışta sorulur, OBP hesabında kullanılır.
+   * Mezun için `MEZUN` (13); ayrı bir bayrak yok (bkz. `lib/hesap.ts`).
+   */
   buYilSinif: number
+  /**
+   * Mezunun elle girdiği OBP (250–500), yoksa `null`.
+   *
+   * Girildiğinde yıl ortalamalarından hesaplanan tahminin önüne geçiyor. Yalnız
+   * mezuna sorulur: okuyan öğrencinin OBP'si zaten kesin değil.
+   */
+  elleObp: number | null
   /**
    * `buYilSinif`'in hangi eğitim-öğretim yılına ait olduğu, yılın başladığı
    * takvim yılıyla yazılır (2025-2026 ders yılı → 2025). Yeni ders yılı

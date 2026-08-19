@@ -189,10 +189,14 @@ describe('sonSoruMu', () => {
 })
 
 describe('elerMi', () => {
-  it('yalnızca boss eliyor', () => {
-    expect(elerMi(true, false)).toBe(true)
-    expect(elerMi(true, true)).toBe(false)
-    expect(elerMi(false, false)).toBe(false)
+  it('her yanlış eliyor, doğru elemiyor', () => {
+    expect(elerMi(false)).toBe(true)
+    expect(elerMi(true)).toBe(false)
+  })
+
+  /** Banka turu tekrar turu: ilk yanlışta kapansa soru bankadan hiç düşmezdi. */
+  it('banka turunda eleme yok', () => {
     expect(elerMi(false, true)).toBe(false)
+    expect(elerMi(true, true)).toBe(false)
   })
 })

@@ -5,8 +5,9 @@ import { Info, X } from 'lucide-react'
 import type { Ayarlar, OkulYili } from '@/lib/types'
 import {
   ILK_SINIF,
+  mezunMu,
   netYaz,
-  obpTahmini,
+  obpSonucu,
   ORTAOGRETIM_YIL_SAYISI,
   yilSayisiYaz,
   type ObpSonucu,
@@ -26,16 +27,24 @@ export function OkulEkrani({
   yillar,
   setYillar,
   ayarlar,
+  setAyarlar,
   hazir,
 }: {
   yillar: OkulYili[]
   setYillar: (guncelleyici: OkulYili[] | ((onceki: OkulYili[]) => OkulYili[])) => void
   ayarlar: Ayarlar
+  setAyarlar: (guncelleyici: Ayarlar | ((onceki: Ayarlar) => Ayarlar)) => void
   hazir: boolean
 }) {
-  const obp = useMemo(() => obpTahmini(yillar), [yillar])
+  const mezun = mezunMu(ayarlar.buYilSinif)
+  const obp = useMemo(
+    () => obpSonucu(yillar, ayarlar.elleObp),
+    [yillar, ayarlar.elleObp],
+  )
+  const elleGirildi = ayarlar.elleObp !== null
 
   // 9'dan bu yılki sınıfa kadar. Henüz okunmamış sınıflar gösterilmiyor.
+  // 9'dan bu yılki sınıfa kadar; mezunda dördü birden görünüyor.
   const siniflar = useMemo(() => {
     const son = Math.max(ILK_SINIF, Math.min(12, ayarlar.buYilSinif))
     return Array.from({ length: son - ILK_SINIF + 1 }, (_, i) => ILK_SINIF + i)
@@ -74,27 +83,50 @@ export function OkulEkrani({
     <div>
       <BaslikSatiri
         baslik="Okul Notları"
-        aciklama="Her yıl için tek bir ortalama — karnendeki sayı"
+        aciklama={
+          mezun
+            ? 'Dört yılın yıl sonu ortalaması — ya da doğrudan OBP’n'
+            : 'Her yıl için tek bir ortalama — karnendeki sayı'
+        }
       />
 
       <Kart className="mb-3 border-primary/30 bg-primary-soft/50">
-        <p className="text-sm font-medium text-muted-foreground">OBP tahmini</p>
+        {/* Elle girilen puan tahmin değil; başlık da öyle demiyor. */}
+        <p className="text-sm font-medium text-muted-foreground">
+          {elleGirildi ? 'OBP’n' : 'OBP tahmini'}
+        </p>
         <p className="font-display text-5xl font-semibold text-primary">
           {obp ? netYaz(obp.obp, obp.obp % 1 === 0 ? 0 : 2) : '—'}
         </p>
         {obp ? (
           <p className="mt-1 text-xs text-muted-foreground">
-            Diploma notu {netYaz(obp.diplomaNotu)} × 5.{' '}
-            {obp.tamMi
-              ? 'Dört yılın hepsi yıl sonu notuyla girili — tahmin değil, gerçek OBP.'
-              : aciklama(obp.girilenYil, obp.tahminiYil)}
+            {elleGirildi
+              ? `Kendin girdin; diploma notu ${netYaz(obp.diplomaNotu)} olarak geri hesaplandı.`
+              : `Diploma notu ${netYaz(obp.diplomaNotu)} × 5. ${
+                  obp.tamMi
+                    ? 'Dört yılın hepsi yıl sonu notuyla girili — tahmin değil, gerçek OBP.'
+                    : aciklama(obp.girilenYil, obp.tahminiYil)
+                }`}
           </p>
         ) : (
           <p className="mt-1 text-xs text-muted-foreground">
-            Aşağıya yıl ortalamalarını yazdığında burada hesaplanır.
+            {mezun
+              ? 'OBP’ni biliyorsan doğrudan yaz, bilmiyorsan yıl ortalamalarını gir.'
+              : 'Aşağıya yıl ortalamalarını yazdığında burada hesaplanır.'}
           </p>
         )}
       </Kart>
+
+      {/* Doğrudan OBP yalnızca mezuna soruluyor: okuyan öğrencinin OBP'si zaten
+          kesinleşmemiş oluyor, oraya bir sayı yazdırmak yanlış bir kesinlik
+          duygusu verirdi. Mezun ise puanını ÖSYM'den biliyor ve nakil, sınıf
+          tekrarı gibi durumlarda o sayı okul ortalamalarından ayrışabiliyor. */}
+      {mezun && (
+        <ElleObpKarti
+          deger={ayarlar.elleObp}
+          onDegis={(yeni) => setAyarlar((onceki) => ({ ...onceki, elleObp: yeni }))}
+        />
+      )}
 
       <div className="mb-4 grid grid-cols-2 gap-3">
         <Deger
@@ -109,7 +141,9 @@ export function OkulEkrani({
         />
       </div>
 
-      <p className="mb-2 font-display text-lg font-semibold">Yıl ortalamaların</p>
+      <p className="mb-2 font-display text-lg font-semibold">
+        {mezun ? 'Yıl sonu notların' : 'Yıl ortalamaların'}
+      </p>
 
       <ul className="space-y-2">
         {siniflar.map((sinif) => (
@@ -128,14 +162,24 @@ export function OkulEkrani({
         <span className="flex items-start gap-2">
           <Info size={15} className="mt-0.5 shrink-0" aria-hidden />
           <span>
-            Bitmiş yıllar için <strong>yıl sonu</strong> notunu yaz. İçinde bulunduğun yıl
-            henüz bitmediği için oraya <strong>1. dönem sonu</strong> notun giriliyor ve o
-            yılın tamamı için tahmin sayılıyor — karne gelince yıl sonu notunla değiştir.
+            {mezun ? (
+              <>
+                Dört yılın da <strong>yıl sonu</strong> notunu yaz; hepsi bittiği için
+                hiçbiri tahmin değil. Karnende yoksa e-Okul’dan görebilirsin.
+              </>
+            ) : (
+              <>
+                Bitmiş yıllar için <strong>yıl sonu</strong> notunu yaz. İçinde bulunduğun
+                yıl henüz bitmediği için oraya <strong>1. dönem sonu</strong> notun
+                giriliyor ve o yılın tamamı için tahmin sayılıyor — karne gelince yıl sonu
+                notunla değiştir.
+              </>
+            )}
           </span>
         </span>
       </Not>
 
-      {obp && !obp.tamMi && (
+      {obp && !obp.tamMi && !elleGirildi && (
         <Not className="mt-2">
           Girilmeyen yıllar için, girdiklerinin ortalamasını tutturacağın varsayılıyor.
           Dört yıl da girilince OBP kesinleşir.
@@ -229,5 +273,74 @@ function YilSatiri({
         </button>
       )}
     </div>
+  )
+}
+
+/**
+ * Doğrudan OBP girişi (yalnız mezun).
+ *
+ * Yıl notlarını silmiyor, yalnızca önüne geçiyor: kullanıcı buradaki sayıyı
+ * temizlediğinde notlarından hesaplanan tahmine geri dönülüyor. Alt sınır 250,
+ * üst sınır 500 — ÖSYM'nin OBP aralığı; arada olmayan bir sayı yazılırsa
+ * kırpılıyor ve bu ekranda söyleniyor.
+ */
+function ElleObpKarti({
+  deger,
+  onDegis,
+}: {
+  deger: number | null
+  onDegis: (yeni: number | null) => void
+}) {
+  const [metin, setMetin] = useState(deger === null ? '' : String(deger))
+
+  const yaz = (ham: string) => {
+    const temiz = ham.replace(',', '.').replace(/[^0-9.]/g, '').slice(0, 6)
+    setMetin(temiz)
+    if (temiz === '') {
+      onDegis(null)
+      return
+    }
+    const sayi = Number(temiz)
+    if (Number.isFinite(sayi)) onDegis(sayi)
+  }
+
+  const sayi = Number(metin)
+  const aralikDisi = metin !== '' && Number.isFinite(sayi) && (sayi < 250 || sayi > 500)
+
+  return (
+    <Kart className="mb-4">
+      <div className="flex items-center gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="font-medium">OBP’ni biliyorsan</p>
+          <p className="text-xs text-muted-foreground">
+            Doğrudan yaz; yıl notlarından hesaplamam gerekmez.
+          </p>
+        </div>
+
+        <Alan
+          inputMode="decimal"
+          value={metin}
+          onChange={(e) => yaz(e.target.value)}
+          placeholder="—"
+          aria-label="Elle girilen OBP"
+          className="rakam h-11 w-24 shrink-0 text-center text-lg font-semibold"
+        />
+
+        {metin !== '' && (
+          <button
+            type="button"
+            onClick={() => yaz('')}
+            aria-label="Girdiğin OBP'yi sil"
+            className="-ml-1 shrink-0 rounded-full p-1.5 text-muted-foreground active:bg-muted"
+          >
+            <X size={16} aria-hidden />
+          </button>
+        )}
+      </div>
+
+      {aralikDisi && (
+        <Not className="mt-3">OBP 250 ile 500 arasında olur; girdiğin sayı bu aralığa çekildi.</Not>
+      )}
+    </Kart>
   )
 }

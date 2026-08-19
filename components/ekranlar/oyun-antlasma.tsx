@@ -43,6 +43,7 @@ import {
   TurSonu,
   YanlisKarti,
   rekorCumlesi,
+  type Eleme,
 } from '@/components/oyun-kabuk'
 import {
   EslestirmeDugmesi,
@@ -62,7 +63,7 @@ const CEVAP_BEKLEMESI = 800
 /** Seçili kutunun rengi — Tarih dersinin ailesi. */
 const RENK: EslestirmeRengi = {
   kenar: 'border-trh-koyu',
-  zemin: 'bg-trh',
+  zemin: 'bg-trh-kart',
   yazi: 'text-trh-koyu',
 }
 
@@ -188,8 +189,8 @@ export function AntlasmaOyunuEkrani({
   const [bossEl, setBossEl] = useState(false)
   /** Kaç boss el verildi — sıradakinin boss olup olmayacağı buna bakıyor. */
   const [verilenBoss, setVerilenBoss] = useState(0)
-  /** Boss elinde yanılıp elendi mi. */
-  const [elendi, setElendi] = useState(false)
+  /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
+  const [elendi, setElendi] = useState<Eleme>(false)
   /** Kaçıncı el — sayaç her elde sıfırlansın diye. */
   const [elSayisi, setElSayisi] = useState(0)
 
@@ -320,7 +321,7 @@ export function AntlasmaOyunuEkrani({
    * El süresi dolunca.
    *
    * Eşleştirilmemiş maddeler cevaplanmamış sayılıyor — süre dolması bilememekle
-   * aynı. Boss elinde bu doğrudan eleme demek.
+   * aynı, dolayısıyla tur da orada bitiyor. Banka turunda eleme yok.
    */
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || !el) return
@@ -328,14 +329,14 @@ export function AntlasmaOyunuEkrani({
     setCevaplar((onceki) => [...onceki, ...kalanEsler.map((soru) => ({ soru, dogruMu: false }))])
     setYanlisGirdileri((onceki) => [...onceki, ...kalanEsler.map(() => 'süre doldu')])
     geriBildir(false)
-    if (bossEl) {
-      setElendi(true)
+    if (elerMi(false, bankaTuru)) {
+      setElendi(bossEl ? 'boss' : 'yanlis')
       zamanlayiciRef.current = setTimeout(() => turBitir(cevaplarRef.current), CEVAP_BEKLEMESI)
       return
     }
     zamanlayiciRef.current = setTimeout(elDagit, CEVAP_BEKLEMESI)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asama, bossEl, el, eslesenler])
+  }, [asama, bankaTuru, bossEl, el, eslesenler])
 
   const { kalan, toplam } = useSoruSayaci({
     aktif: asama === 'oynaniyor' && !duraklatilan && !elBekliyor && el !== null,
@@ -363,9 +364,9 @@ export function AntlasmaOyunuEkrani({
       zamanlayiciRef.current = setTimeout(() => {
         setYanlisCift(null)
         setSecim(BOS_SECIM)
-        // Boss elinde tek yanlış yetiyor: eleyici olan bu.
-        if (elerMi(bossEl, false)) {
-          setElendi(true)
+        // Tek yanlış eşleştirme turu bitiriyor; banka turu bunun dışında.
+        if (elerMi(false, bankaTuru)) {
+          setElendi(bossEl ? 'boss' : 'yanlis')
           turBitir(cevaplarRef.current)
         }
       }, CEVAP_BEKLEMESI)
@@ -561,7 +562,7 @@ function SonucGorunumu({
   girdiler: string[]
   rekor: number
   bankaTuru: boolean
-  elendi: boolean
+  elendi: Eleme
   onTekrar: () => void
   onCik: () => void
   bildir: BildirimKolu

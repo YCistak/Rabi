@@ -45,6 +45,7 @@ import {
   TurSonu,
   YanlisKarti,
   rekorCumlesi,
+  type Eleme,
 } from '@/components/oyun-kabuk'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
@@ -132,8 +133,8 @@ export function AnlatimOyunuEkrani({
   const [sira, setSira] = useState(0)
   const [cevaplar, setCevaplar] = useState<Cevap<AnlatimSorusu>[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
-  /** Boss'ta yanılıp elendi mi — tur sonu ekranı bunu ayrıca söylüyor. */
-  const [elendi, setElendi] = useState(false)
+  /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
+  const [elendi, setElendi] = useState<Eleme>(false)
 
   const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukAnlatim, 'kolay')
   /** Yardım açıkken sayaç duruyor. */
@@ -236,8 +237,8 @@ export function AnlatimOyunuEkrani({
   const ilerle = (dogruMu: boolean, bossMuydu: boolean) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
-      if (elerMi(bossMuydu, dogruMu)) {
-        setElendi(true)
+      if (elerMi(dogruMu, bankaTuru)) {
+        setElendi(bossMuydu ? 'boss' : 'yanlis')
         turBitir(cevaplarRef.current)
       } else {
         setSira((s) => s + 1)
@@ -443,7 +444,7 @@ function SonucGorunumu({
   sonuc: { ozet: TurOzeti<AnlatimSorusu>; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
-  elendi: boolean
+  elendi: Eleme
   onTekrar: () => void
   onCik: () => void
   bildir: BildirimKolu

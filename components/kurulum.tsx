@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { ArrowLeft, ArrowRight, Check, Moon, Smartphone, Sun } from 'lucide-react'
-import type { Ayarlar, PuanTuru } from '@/lib/types'
-import { SINIFLAR } from '@/lib/hesap'
+import type { Ayarlar, OkulYili, PuanTuru } from '@/lib/types'
+import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
+import { yeniId } from '@/lib/utils'
 import { saatDegeri, saatYaz, saatiCoz } from '@/lib/hatirlatma'
 import { useTema, type TemaTercihi } from '@/components/theme-provider'
 import { Alan, Buton, Cip, Etiket, Kart } from '@/components/ui'
@@ -14,12 +15,59 @@ import { izinIste } from '@/lib/bildirim'
 export type KurulumSecimleri = Pick<
   Ayarlar,
   | 'buYilSinif'
+  | 'elleObp'
   | 'puanTuru'
   | 'gunlukHedef'
   | 'hatirlatmaSaati'
   | 'hatirlatmaDakikasi'
   | 'bildirimAcik'
 >
+
+/**
+ * Kurulumun çıktısı.
+ *
+ * Ayarların yanında okul yılları da dönüyor: mezuna yıl sonu notları burada
+ * soruluyor ve onlar ayar değil, veri. Atlanmışsa liste boş geliyor.
+ */
+export type KurulumSonucu = {
+  ayarlar: KurulumSecimleri
+  okulYillari: OkulYili[]
+}
+
+/**
+ * Adımlar.
+ *
+ * Liste sabit değil: `notlar` adımı yalnızca mezun seçildiğinde araya giriyor.
+ * Okuyan öğrenciye dört yılın notunu sormak anlamsız — yılı bitmemiş bile.
+ */
+type AdimId = 'sinif' | 'notlar' | 'tema' | 'alan' | 'hedef' | 'hatirlatma'
+
+const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
+  sinif: {
+    baslik: 'Merhaba, ben Rabi',
+    aciklama: 'Seninle YKS yolunda çalışacağım. Önce birkaç şey sorayım.',
+  },
+  notlar: {
+    baslik: 'Okul notların',
+    aciklama: 'OBP’n sıralama tahminine giriyor. İstersen bu adımı atla.',
+  },
+  tema: {
+    baslik: 'Nasıl görünelim?',
+    aciklama: 'Telefonunla aynı mı, hep açık mı, hep koyu mu? İstediğin an değiştirebilirsin.',
+  },
+  alan: {
+    baslik: 'Hangi alandasın?',
+    aciklama: 'Sıralama tahmini ve deneme şablonları buna göre ayarlanır.',
+  },
+  hedef: {
+    baslik: 'Günlük hedefin',
+    aciklama: 'Her günü buna göre takip edeceğim.',
+  },
+  hatirlatma: {
+    baslik: 'Hatırlatma',
+    aciklama: 'Son adım — istersen atlayabilirsin.',
+  },
+}
 
 const PUAN_TURLERI: { id: PuanTuru; ad: string; aciklama: string }[] = [
   { id: 'say', ad: 'Sayısal', aciklama: 'Matematik · Fizik · Kimya · Biyoloji' },
@@ -38,9 +86,12 @@ const HAZIR_HEDEFLER = [100, 200, 300, 400, 500]
  */
 const HATIRLATMA_SAATLERI = [8, 12, 16, 18, 19, 20, 21, 22, 23]
 
-export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => void }) {
+export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }) {
   const [adim, setAdim] = useState(0)
   const [sinif, setSinif] = useState(12)
+  /** Mezunun yıl sonu notları: sınıf → yazılan metin. Boşlar hesaba girmiyor. */
+  const [notlar, setNotlar] = useState<Record<number, string>>({})
+  const [obpMetni, setObpMetni] = useState('')
   const [puanTuru, setPuanTuru] = useState<PuanTuru>('ea')
   const [hedef, setHedef] = useState(200)
   const [hedefMetni, setHedefMetni] = useState('200')
@@ -52,53 +103,124 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
   // seçeneği de dokunarak görebilsin, sonra devam etsin.
   const { tercih, temaDegistir } = useTema()
 
-  const sonAdim = 4
-  const ilerle = () => setAdim((a) => Math.min(sonAdim, a + 1))
-  const geri = () => setAdim((a) => Math.max(0, a - 1))
+  const mezun = mezunMu(sinif)
+  // Sınıf geri dönülüp değiştirilebildiği için liste her çizimde kuruluyor;
+  // sıra numarası da listenin boyuna kırpılıyor.
+  const adimlar: AdimId[] = [
+    'sinif',
+    ...(mezun ? (['notlar'] as AdimId[]) : []),
+    'tema',
+    'alan',
+    'hedef',
+    'hatirlatma',
+  ]
+  const sonAdim = adimlar.length - 1
+  const siradaki = Math.min(adim, sonAdim)
+  const suanki = adimlar[siradaki]
+
+  const ilerle = () => setAdim(Math.min(sonAdim, siradaki + 1))
+  const geri = () => setAdim(Math.max(0, siradaki - 1))
+
+  /** Notları ve OBP'yi boşaltıp geçer — "şimdilik atla" düğmesi. */
+  const notlariAtla = () => {
+    setNotlar({})
+    setObpMetni('')
+    ilerle()
+  }
 
   const bitir = async () => {
     // Android 13+ izni burada isteniyor: kullanıcı hatırlatmayı açtıktan hemen
     // sonra, ne için sorulduğu belliyken. Reddederse kurulum yine tamamlanır,
     // yalnızca hatırlatma kapalı kaydedilir — Ayarlar'dan tekrar denenebilir.
     const izinli = bildirim ? await izinIste() : false
+    const obp = Number(obpMetni.replace(',', '.'))
     onBitir({
-      buYilSinif: sinif,
-      puanTuru,
-      gunlukHedef: hedef,
-      hatirlatmaSaati: saat,
-      hatirlatmaDakikasi: dakika,
-      bildirimAcik: izinli,
+      ayarlar: {
+        buYilSinif: sinif,
+        // Mezun değilse elle OBP hiç sorulmuyor; yazılmış bir sayı kalmışsa da
+        // (sınıf sonradan değiştirildiyse) geçersiz sayılıyor.
+        elleObp: mezun && obpMetni.trim() !== '' && Number.isFinite(obp) ? obp : null,
+        puanTuru,
+        gunlukHedef: hedef,
+        hatirlatmaSaati: saat,
+        hatirlatmaDakikasi: dakika,
+        bildirimAcik: izinli,
+      },
+      okulYillari: mezun ? okulYillariKur(notlar) : [],
     })
   }
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
       <div className="mb-6 flex flex-col items-center text-center">
-        <Rabi durum={adim === sonAdim ? 'mutlu' : 'normal'} boyut={110} />
+        <Rabi durum={siradaki === sonAdim ? 'mutlu' : 'normal'} boyut={110} />
         <h1 className="mt-3 font-display text-2xl font-semibold tracking-tight">
-          {adim === 0 ? 'Merhaba, ben Rabi' : BASLIKLAR[adim]}
+          {ADIM_BILGISI[suanki].baslik}
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">{ACIKLAMALAR[adim]}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{ADIM_BILGISI[suanki].aciklama}</p>
       </div>
 
       <Kart>
-        {adim === 0 && (
+        {suanki === 'sinif' && (
           <div>
             <Etiket>Bu yıl kaçıncı sınıftasın?</Etiket>
             <div className="flex flex-wrap gap-2">
-              {SINIFLAR.map((s) => (
+              {SINIF_SECENEKLERI.map((s) => (
                 <Cip key={s} secili={sinif === s} onClick={() => setSinif(s)}>
-                  {s}. sınıf
+                  {sinifAdi(s)}
                 </Cip>
               ))}
             </div>
             <p className="mt-3 text-xs text-muted-foreground">
-              Her eylülde bir üst sınıfa kendiliğinden geçersin; tekrar sormam gerekmez.
+              {mezun
+                ? 'Mezunsan sınıf ilerlemez. Sıradaki adımda yıl sonu notlarını sorayım — istersen atlarsın.'
+                : 'Her eylülde bir üst sınıfa kendiliğinden geçersin; tekrar sormam gerekmez.'}
             </p>
           </div>
         )}
 
-        {adim === 1 && (
+        {suanki === 'notlar' && (
+          <div>
+            <Etiket>Yıl sonu notların</Etiket>
+            <div className="grid grid-cols-2 gap-2">
+              {SINIFLAR.map((s) => (
+                <label key={s} className="flex items-center gap-2 rounded-xl border border-border p-2.5">
+                  <span className="flex-1 text-sm font-medium">{s}. sınıf</span>
+                  <Alan
+                    inputMode="decimal"
+                    value={notlar[s] ?? ''}
+                    onChange={(e) =>
+                      setNotlar((onceki) => ({
+                        ...onceki,
+                        [s]: e.target.value.replace(/[^0-9,.]/g, '').slice(0, 6),
+                      }))
+                    }
+                    placeholder="—"
+                    aria-label={`${s}. sınıf yıl sonu notu`}
+                    className="rakam h-9 w-16 text-center font-semibold"
+                  />
+                </label>
+              ))}
+            </div>
+
+            <Etiket className="mt-4">Ya da OBP’ni biliyorsan</Etiket>
+            <Alan
+              inputMode="decimal"
+              value={obpMetni}
+              onChange={(e) => setObpMetni(e.target.value.replace(/[^0-9,.]/g, '').slice(0, 6))}
+              placeholder="örn. 412,5"
+              aria-label="Elle girilen OBP"
+              className="rakam"
+            />
+
+            <p className="mt-3 text-xs text-muted-foreground">
+              OBP yazarsan notlara hiç gerek yok — doğrudan o kullanılır. İkisini de boş
+              bırakabilirsin; sonradan Okul Notları ekranından girersin.
+            </p>
+          </div>
+        )}
+
+        {suanki === 'tema' && (
           <div className="space-y-2">
             {TEMALAR.map((secenek) => (
               <button
@@ -127,7 +249,7 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
           </div>
         )}
 
-        {adim === 2 && (
+        {suanki === 'alan' && (
           <div className="space-y-2">
             {PUAN_TURLERI.map((tur) => (
               <button
@@ -151,7 +273,7 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
           </div>
         )}
 
-        {adim === 3 && (
+        {suanki === 'hedef' && (
           <div>
             <Etiket>Günde kaç soru çözmeyi hedefliyorsun?</Etiket>
             <div className="flex flex-wrap gap-2">
@@ -189,7 +311,7 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
           </div>
         )}
 
-        {adim === 4 && (
+        {suanki === 'hatirlatma' && (
           <div>
             <button
               type="button"
@@ -263,14 +385,21 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
       <div className="flex-1" aria-hidden />
 
       <div className="mt-5 flex items-center gap-2">
-        {adim > 0 && (
+        {siradaki > 0 && (
           <Buton bicim="ikincil" boy="simge" onClick={geri} aria-label="Geri">
             <ArrowLeft size={18} aria-hidden />
           </Buton>
         )}
-        <Buton className="flex-1" onClick={() => (adim === sonAdim ? void bitir() : ilerle())}>
-          {adim === sonAdim ? 'Başlayalım' : 'Devam'}
-          {adim === sonAdim ? (
+        {/* Notlar adımı atlanabilir olmalı: dört yılın notunu hatırlamayan
+            kullanıcı kurulumda takılıp kalmasın. */}
+        {suanki === 'notlar' && (
+          <Buton bicim="ikincil" onClick={notlariAtla}>
+            Şimdilik atla
+          </Buton>
+        )}
+        <Buton className="flex-1" onClick={() => (siradaki === sonAdim ? void bitir() : ilerle())}>
+          {siradaki === sonAdim ? 'Başlayalım' : 'Devam'}
+          {siradaki === sonAdim ? (
             <Check size={18} aria-hidden />
           ) : (
             <ArrowRight size={18} aria-hidden />
@@ -280,11 +409,11 @@ export function Kurulum({ onBitir }: { onBitir: (secimler: KurulumSecimleri) => 
 
       {/* Adım göstergesi */}
       <div className="mt-4 flex justify-center gap-1.5" aria-hidden>
-        {Array.from({ length: sonAdim + 1 }, (_, i) => (
+        {adimlar.map((id, i) => (
           <span
-            key={i}
+            key={id}
             className={`h-1.5 rounded-full transition-all ${
-              i === adim ? 'w-5 bg-primary' : 'w-1.5 bg-border'
+              i === siradaki ? 'w-5 bg-primary' : 'w-1.5 bg-border'
             }`}
           />
         ))}
@@ -304,18 +433,21 @@ const TEMALAR: { id: TemaTercihi; ad: string; aciklama: string; Simge: typeof Su
   { id: 'koyu', ad: 'Koyu tema', aciklama: 'Gece çalışırken gözü yormaz', Simge: Moon },
 ]
 
-const BASLIKLAR = [
-  'Merhaba, ben Rabi',
-  'Nasıl görünelim?',
-  'Hangi alandasın?',
-  'Günlük hedefin',
-  'Hatırlatma',
-]
-
-const ACIKLAMALAR = [
-  'Seninle YKS yolunda çalışacağım. Önce birkaç şey sorayım.',
-  'Telefonunla aynı mı, hep açık mı, hep koyu mu? İstediğin an değiştirebilirsin.',
-  'Sıralama tahmini ve deneme şablonları buna göre ayarlanır.',
-  'Her günü buna göre takip edeceğim.',
-  'Son adım — istersen atlayabilirsin.',
-]
+/** Girilen yıl notlarını kayda çevirir; boş ve geçersiz olanlar atlanır. */
+function okulYillariKur(notlar: Record<number, string>): OkulYili[] {
+  return SINIFLAR.flatMap((sinif) => {
+    const ham = (notlar[sinif] ?? '').replace(',', '.').trim()
+    if (ham === '') return []
+    const sayi = Number(ham)
+    if (!Number.isFinite(sayi)) return []
+    return [
+      {
+        id: yeniId(),
+        sinif,
+        ortalama: Math.min(100, Math.max(0, sayi)),
+        // Mezunun bütün yılları bitti; hiçbiri dönem sonu notu değil.
+        donemSonu: false,
+      },
+    ]
+  })
+}

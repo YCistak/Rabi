@@ -41,6 +41,7 @@ import {
   TurSonu,
   YanlisKarti,
   rekorCumlesi,
+  type Eleme,
 } from '@/components/oyun-kabuk'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
@@ -128,8 +129,8 @@ export function OgeOyunuEkrani({
   const [sira, setSira] = useState(0)
   const [cevaplar, setCevaplar] = useState<Cevap<OgeSorusu>[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
-  /** Boss'ta yanılıp elendi mi — tur sonu ekranı bunu ayrıca söylüyor. */
-  const [elendi, setElendi] = useState(false)
+  /** Turu ne bitirdi — tur sonu ekranı boss ile sıradan yanlışı ayrı söylüyor. */
+  const [elendi, setElendi] = useState<Eleme>(false)
 
   const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukOge, 'kolay')
   /** Yardım açıkken sayaç duruyor. */
@@ -230,15 +231,15 @@ export function OgeOyunuEkrani({
   /**
    * Cevaptan sonraki geçiş.
    *
-   * Boss'ta yanılmak turu bitiriyor; normal soruda yanılmak yalnızca yanlış
-   * sayılıyor. Bekleme süresi ikisinde de aynı: doğrusunu okumadan ekranın
-   * değişmesi, elenirken bile öğretmeyi bırakmak olurdu.
+   * Yanlış cevap turu bitiriyor (banka turu hariç); boss'un farkı sorunun bir
+   * üst zorluktan gelmesi. Bekleme süresi ikisinde de aynı: doğrusunu okumadan
+   * ekranın değişmesi, elenirken bile öğretmeyi bırakmak olurdu.
    */
   const ilerle = (dogruMu: boolean, bossMuydu: boolean) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
-      if (elerMi(bossMuydu, dogruMu)) {
-        setElendi(true)
+      if (elerMi(dogruMu, bankaTuru)) {
+        setElendi(bossMuydu ? 'boss' : 'yanlis')
         turBitir(cevaplarRef.current)
       } else {
         setSira((s) => s + 1)
@@ -258,7 +259,7 @@ export function OgeOyunuEkrani({
     ilerle(dogruMu, boss)
   }
 
-  /** Süre dolması cevap vermemekle aynı: yanlış sayılıyor, boss'ta eliyor. */
+  /** Süre dolması cevap vermemekle aynı: yanlış sayılıyor ve turu bitiriyor. */
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false }])
@@ -343,7 +344,7 @@ export function OgeOyunuEkrani({
                 <div className="golge-kart rounded-[20px] bg-card px-4 py-4">
                   <p className="text-center font-display text-[19px] font-bold leading-snug">
                     {soru.soru.once}
-                    <mark className="rounded-md bg-yzm px-1.5 py-0.5 font-extrabold text-yzm-koyu">
+                    <mark className="rounded-md bg-yzm-kart px-1.5 py-0.5 font-extrabold text-yzm-koyu">
                       {soru.soru.oge}
                     </mark>
                     {soru.soru.sonra}
@@ -455,7 +456,7 @@ function SonucGorunumu({
   sonuc: { ozet: TurOzeti<OgeSorusu>; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
-  elendi: boolean
+  elendi: Eleme
   onTekrar: () => void
   onCik: () => void
   bildir: BildirimKolu
@@ -495,7 +496,7 @@ function SonucGorunumu({
             >
               <b className="block font-display text-[13px] font-bold leading-snug">
                 {yanlis.once}
-                <mark className="rounded bg-yzm px-1 font-extrabold text-yzm-koyu">
+                <mark className="rounded bg-yzm-kart px-1 font-extrabold text-yzm-koyu">
                   {yanlis.oge}
                 </mark>
                 {yanlis.sonra}

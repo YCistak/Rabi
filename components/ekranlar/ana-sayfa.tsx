@@ -26,30 +26,31 @@ const GUN_ADLARI = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt']
 /** Kutucuk yüzleri — `KARTLAR`'daki pastel aile adları tema değişkenlerine bağlanıyor. */
 const KUTUCUK_RENGI: Record<KartRengi, string> = {
   mavi: 'bg-primary-soft text-primary',
-  pembe: 'bg-yzm text-yzm-koyu',
-  krem: 'bg-isl text-isl-koyu',
+  pembe: 'bg-yzm-kart text-yzm-koyu',
+  krem: 'bg-isl-kart text-isl-koyu',
   nane: 'bg-success-soft text-success',
-  lavanta: 'bg-edb text-edb-koyu',
+  lavanta: 'bg-edb-kart text-edb-koyu',
 }
 
 /** Oyunların kendi aileleri var; ana sayfadaki kutucuk da aynı rengi taşımalı. */
 const OYUN_RENGI: Record<OyunId, string> = {
-  yazim: 'bg-yzm',
-  ses: 'bg-yzm',
-  oge: 'bg-yzm',
-  soz: 'bg-yzm',
-  islem: 'bg-isl',
-  bolunme: 'bg-isl',
-  aci: 'bg-isl',
-  ucgen: 'bg-isl',
-  edebiyat: 'bg-edb',
-  antlasma: 'bg-trh',
-  kavram: 'bg-trh',
-  anlatim: 'bg-yzm',
-  koklu: 'bg-isl',
-  ortak: 'bg-byl',
-  siniflandirma: 'bg-byl',
-  hucre: 'bg-byl',
+  yazim: 'bg-yzm-kart',
+  ses: 'bg-yzm-kart',
+  oge: 'bg-yzm-kart',
+  soz: 'bg-yzm-kart',
+  anlatim: 'bg-yzm-kart',
+  islem: 'bg-isl-kart',
+  bolunme: 'bg-isl-kart',
+  aci: 'bg-isl-kart',
+  ucgen: 'bg-isl-kart',
+  koklu: 'bg-isl-kart',
+  edebiyat: 'bg-edb-kart',
+  harita: 'bg-cog-kart',
+  antlasma: 'bg-trh-kart',
+  kavram: 'bg-trh-kart',
+  ortak: 'bg-byl-kart',
+  siniflandirma: 'bg-byl-kart',
+  hucre: 'bg-byl-kart',
 }
 
 export function AnaSayfa({

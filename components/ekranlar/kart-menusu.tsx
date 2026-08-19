@@ -7,10 +7,10 @@ import { cn } from '@/lib/utils'
 /** Kart ikonunun pastel zemini ve üstünde okunan koyu tonu. */
 const RENK_SINIFI: Record<KartRengi, string> = {
   mavi: 'bg-primary-soft text-primary',
-  pembe: 'bg-yzm text-yzm-koyu',
-  krem: 'bg-isl text-isl-koyu',
+  pembe: 'bg-yzm-kart text-yzm-koyu',
+  krem: 'bg-isl-kart text-isl-koyu',
   nane: 'bg-success-soft text-success',
-  lavanta: 'bg-edb text-edb-koyu',
+  lavanta: 'bg-edb-kart text-edb-koyu',
 }
 
 /**
