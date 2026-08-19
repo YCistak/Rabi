@@ -35,7 +35,7 @@ import {
   type OdakDurumu,
 } from '@/lib/odak-kilidi'
 import { UygulamaSecici } from '@/components/odak/uygulama-secici'
-import { SINIFLAR, egitimYili, katsayiYaz } from '@/lib/hesap'
+import { SINIF_SECENEKLERI, egitimYili, katsayiYaz, mezunMu, sinifAdi } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
 import {
   elenenSoruSayisi,
@@ -404,12 +404,16 @@ export function AyarlarEkrani({
             Simge={ClipboardList}
             renk="krem"
             baslik="Sınıfım"
-            aciklama="Her eylülde kendiliğinden ilerler"
-            deger={`${ayarlar.buYilSinif}. sınıf`}
+            aciklama={
+              mezunMu(ayarlar.buYilSinif)
+                ? 'Mezunda ilerleme durur'
+                : 'Her eylülde kendiliğinden ilerler'
+            }
+            deger={sinifAdi(ayarlar.buYilSinif)}
           />
           <GenisAlan>
             <Cipler>
-              {SINIFLAR.map((sinif) => (
+              {SINIF_SECENEKLERI.map((sinif) => (
                 <Cip
                   key={sinif}
                   secili={sinif === ayarlar.buYilSinif}
@@ -420,14 +424,22 @@ export function AyarlarEkrani({
                       // Elle seçim, bulunduğumuz ders yılına sabitlenir; otomatik
                       // ilerleme bundan sonraki eylülde devreye girer
                       sinifYili: egitimYili(),
+                      // Mezunluktan çıkılıyorsa elle girilen OBP de kalkıyor:
+                      // okuyan öğrencinin OBP'si henüz kesin değil, orada elle
+                      // girilmiş bir sayıyı taşımak yanlış kesinlik olurdu.
+                      elleObp: mezunMu(sinif) ? onceki.elleObp : null,
                     }))
                   }
                 >
-                  {sinif}. sınıf
+                  {sinifAdi(sinif)}
                 </Cip>
               ))}
             </Cipler>
-            <AlanNotu>Her eylülde bir üst sınıfa kendiliğinden geçer, 12’de durur.</AlanNotu>
+            <AlanNotu>
+              {mezunMu(ayarlar.buYilSinif)
+                ? 'Mezunda ilerleme durur. OBP’ni Okul Notları ekranından doğrudan girebilirsin.'
+                : 'Her eylülde bir üst sınıfa kendiliğinden geçer, 12’de durur.'}
+            </AlanNotu>
           </GenisAlan>
 
           <Satir

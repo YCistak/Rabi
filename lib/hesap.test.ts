@@ -4,9 +4,15 @@ import {
   denemeOzeti,
   gunOzeti,
   hedefSerisi,
+  ilerlemisSinif,
+  MEZUN,
+  mezunMu,
   net,
+  obpBildirilen,
+  obpSonucu,
   obpTahmini,
   osymNetleri,
+  sinifAdi,
 } from './hesap'
 import { HAZIR_SABLONLAR } from './sablonlar'
 import type { Deneme, Devamsizlik, GunlukKayit } from './types'
@@ -198,5 +204,55 @@ describe('devamsizlikOzeti', () => {
     const ozet = devamsizlikOzeti([])
     expect(ozet.uyari).toBe(false)
     expect(ozet.ozurluKalan).toBe(20)
+  })
+})
+
+describe('mezun', () => {
+  it('yalnızca mezun değeri mezun sayılıyor', () => {
+    expect(mezunMu(12)).toBe(false)
+    expect(mezunMu(MEZUN)).toBe(true)
+  })
+
+  it('seçenek adı sınıflarda numara, mezunda yazı', () => {
+    expect(sinifAdi(9)).toBe('9. sınıf')
+    expect(sinifAdi(MEZUN)).toBe('Mezun')
+  })
+
+  /** Asıl tuzak: 12'ye kırpan eski kural mezunu her eylül son sınıfa düşürürdü. */
+  it('mezun yıl geçse de mezun kalıyor', () => {
+    expect(ilerlemisSinif(MEZUN, 2024, 2027)).toBe(MEZUN)
+  })
+
+  it('okuyan öğrenci 12’de duruyor', () => {
+    expect(ilerlemisSinif(11, 2025, 2026)).toBe(12)
+    expect(ilerlemisSinif(12, 2025, 2030)).toBe(12)
+  })
+})
+
+describe('elle girilen OBP', () => {
+  const yil = (sinif: number, ortalama: number) => ({ id: String(sinif), sinif, ortalama })
+
+  it('girilen puan olduğu gibi geçerli, diploma notu geri türetiliyor', () => {
+    const sonuc = obpBildirilen(412.5)
+    expect(sonuc.obp).toBe(412.5)
+    expect(sonuc.diplomaNotu).toBe(82.5)
+    expect(sonuc.tamMi).toBe(true)
+    expect(sonuc.tahminiYil).toBe(0)
+  })
+
+  it('aralık dışı puanlar 250–500’e kırpılıyor', () => {
+    expect(obpBildirilen(100).obp).toBe(250)
+    expect(obpBildirilen(900).obp).toBe(500)
+  })
+
+  it('elle girilen puan yıl notlarının önüne geçiyor', () => {
+    const yillar = [yil(9, 60), yil(10, 60), yil(11, 60), yil(12, 60)]
+    expect(obpSonucu(yillar, null)?.obp).toBe(300)
+    expect(obpSonucu(yillar, 480)?.obp).toBe(480)
+  })
+
+  it('elle giriş silinince yıl notlarına dönülüyor', () => {
+    expect(obpSonucu([yil(9, 80)], null)?.obp).toBe(400)
+    expect(obpSonucu([], null)).toBeNull()
   })
 })
