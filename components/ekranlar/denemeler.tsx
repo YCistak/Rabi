@@ -1,12 +1,32 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { ChevronDown, Pencil, Plus, Trash2, TrendingDown, TrendingUp } from 'lucide-react'
-import { BaslikSatiri, BosDurum, Buton, Kart, Onay } from '@/components/ui'
+import {
+  ArrowUpDown,
+  Check,
+  ChevronDown,
+  Pencil,
+  Plus,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+} from 'lucide-react'
+import { BaslikSatiri, BosDurum, Buton, Cip, Kart, Onay } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
-import { denemeOzeti, netYaz, tarihSirala, tarihYaz, yuvarla } from '@/lib/hesap'
+import { netYaz, tarihYaz } from '@/lib/hesap'
+import {
+  denemeSatirlari,
+  mevcutTurler,
+  suzVeSirala,
+  SIRALAMA_ADLARI,
+  SIRALAMA_SIRASI,
+  TUR_ADLARI,
+  type DenemeSatiri,
+  type DenemeSiralamasi,
+  type DenemeSuzgeci,
+} from '@/lib/deneme-liste'
 import { cn } from '@/lib/utils'
-import type { Deneme, Sablon } from '@/lib/types'
+import type { Deneme, Sablon, SablonTuru } from '@/lib/types'
 
 export function DenemelerEkrani({
   denemeler,
@@ -25,28 +45,16 @@ export function DenemelerEkrani({
 }) {
   const [acikId, setAcikId] = useState<string | null>(null)
   const [silinecek, setSilinecek] = useState<Deneme | null>(null)
+  const [suzgec, setSuzgec] = useState<DenemeSuzgeci>('hepsi')
+  const [sira, setSira] = useState<DenemeSiralamasi>('yeni')
 
-  const kartlar = useMemo(() => {
-    // Değişim, aynı türdeki bir önceki denemeye göre hesaplanır
-    const sonNetler = new Map<string, number>()
-    const sirali = tarihSirala(denemeler).map((deneme) => {
-      const sablon = sablonlar.find((s) => s.id === deneme.sablonId)
-      if (!sablon) return { deneme, sablon: null, ozet: null, degisim: null }
+  // Değişim tarih sırasına göre çıkar; süzme ve sıralama bunun üstüne uygulanır.
+  const satirlar = useMemo(() => denemeSatirlari(denemeler, sablonlar), [denemeler, sablonlar])
+  const turler = useMemo(() => mevcutTurler(satirlar), [satirlar])
+  const kartlar = useMemo(() => suzVeSirala(satirlar, suzgec, sira), [satirlar, suzgec, sira])
 
-      const ozet = denemeOzeti(deneme, sablon)
-      const onceki = sonNetler.get(deneme.sablonId)
-      sonNetler.set(deneme.sablonId, ozet.toplamNet)
-
-      return {
-        deneme,
-        sablon,
-        ozet,
-        degisim: onceki === undefined ? null : yuvarla(ozet.toplamNet - onceki),
-      }
-    })
-
-    return sirali.reverse() // en yeni üstte
-  }, [denemeler, sablonlar])
+  // Kayıtlı tek tür varsa çipler seçim sunmuyor; boş yere yer kaplamasın.
+  const suzgecGorunsun = turler.length > 1
 
   if (!hazir) {
     return <div className="h-40 animate-pulse rounded-2xl bg-muted" />
@@ -59,7 +67,7 @@ export function DenemelerEkrani({
         baslik="Denemeler"
         aciklama={
           denemeler.length > 0
-            ? `${denemeler.length} deneme kayıtlı · en yenisi üstte`
+            ? `${denemeler.length} deneme kayıtlı · ${SIRALAMA_ADLARI[sira].toLocaleLowerCase('tr-TR')}`
             : 'Henüz deneme eklemedin'
         }
         sag={
@@ -69,7 +77,26 @@ export function DenemelerEkrani({
         }
       />
 
-      {kartlar.length === 0 ? (
+      {satirlar.length > 0 && (
+        <SuzgecCubugu
+          turler={turler}
+          turlerGorunsun={suzgecGorunsun}
+          suzgec={suzgec}
+          sira={sira}
+          sayilar={satirlar}
+          onSuzgec={setSuzgec}
+          onSira={setSira}
+        />
+      )}
+
+      {suzgec !== 'hepsi' && satirlar.length > 0 && kartlar.length === 0 ? (
+        <BosDurum
+          simge={<Rabi durum="normal" boyut={96} />}
+          baslik="Bu türde deneme yok"
+          aciklama={`${TUR_ADLARI[suzgec]} denemesi kaydetmemişsin. Süzgeci kaldırıp hepsine bakabilirsin.`}
+          eylem={<Buton onClick={() => setSuzgec('hepsi')}>Tümünü göster</Buton>}
+        />
+      ) : kartlar.length === 0 ? (
         <BosDurum
           simge={<Rabi durum="uykulu" boyut={96} />}
           baslik="Kayıtlı deneme yok"
@@ -213,6 +240,119 @@ export function DenemelerEkrani({
         onOnayla={() => silinecek && onSil(silinecek.id)}
         onIptal={() => setSilinecek(null)}
       />
+    </div>
+  )
+}
+
+/**
+ * Liste başındaki süzgeç ve sıralama çubuğu.
+ *
+ * Süzgeç çip olarak duruyor (tek dokunuş, hep görünür), sıralama ise açılır bir
+ * listede: dört seçeneğin dördü de çip olsaydı satır iki kat yer kaplar ve
+ * hangisinin açık olduğu kalabalıkta kaybolurdu.
+ */
+function SuzgecCubugu({
+  turler,
+  turlerGorunsun,
+  suzgec,
+  sira,
+  sayilar,
+  onSuzgec,
+  onSira,
+}: {
+  turler: SablonTuru[]
+  turlerGorunsun: boolean
+  suzgec: DenemeSuzgeci
+  sira: DenemeSiralamasi
+  /** Çiplerin yanındaki sayıyı çıkarmak için tüm satırlar. */
+  sayilar: DenemeSatiri[]
+  onSuzgec: (suzgec: DenemeSuzgeci) => void
+  onSira: (sira: DenemeSiralamasi) => void
+}) {
+  const [menuAcik, setMenuAcik] = useState(false)
+
+  return (
+    <div className="mb-3 space-y-2">
+      {turlerGorunsun && (
+        // Tür sayısı arttıkça çipler taşabilir; alt alta sarmak yerine yatay
+        // kaydırma tercih edildi — sıralama düğmesi hep aynı hizada kalsın.
+        <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-0.5">
+          <Cip secili={suzgec === 'hepsi'} onClick={() => onSuzgec('hepsi')} className="shrink-0">
+            Tümü
+            <span className="rakam ml-1 opacity-70">{sayilar.length}</span>
+          </Cip>
+          {turler.map((tur) => (
+            <Cip
+              key={tur}
+              secili={suzgec === tur}
+              onClick={() => onSuzgec(tur)}
+              className="shrink-0"
+            >
+              {TUR_ADLARI[tur]}
+              <span className="rakam ml-1 opacity-70">
+                {sayilar.filter((s) => s.sablon?.tur === tur).length}
+              </span>
+            </Cip>
+          ))}
+        </div>
+      )}
+
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setMenuAcik((a) => !a)}
+          aria-expanded={menuAcik}
+          className={cn(
+            'flex w-full items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-left text-sm font-bold transition',
+            'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring active:bg-muted',
+          )}
+        >
+          <ArrowUpDown size={16} className="shrink-0 text-muted-foreground" aria-hidden />
+          <span className="min-w-0 flex-1 truncate">{SIRALAMA_ADLARI[sira]}</span>
+          <ChevronDown
+            size={16}
+            aria-hidden
+            className={cn('shrink-0 text-muted-foreground transition-transform', menuAcik && 'rotate-180')}
+          />
+        </button>
+
+        {menuAcik && (
+          <>
+            {/* Dışarı dokunuş menüyü kapatsın; mobilde "başka yere bas" beklenen davranış. */}
+            <button
+              type="button"
+              aria-hidden
+              tabIndex={-1}
+              onClick={() => setMenuAcik(false)}
+              className="fixed inset-0 z-20 cursor-default"
+            />
+            <ul className="absolute inset-x-0 top-[calc(100%+4px)] z-30 overflow-hidden rounded-xl border border-border bg-card py-1 shadow-lg">
+              {SIRALAMA_SIRASI.map((secenek) => (
+                <li key={secenek}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onSira(secenek)
+                      setMenuAcik(false)
+                    }}
+                    className={cn(
+                      'flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm active:bg-muted',
+                      secenek === sira ? 'font-bold text-primary' : 'font-medium',
+                    )}
+                  >
+                    <Check
+                      size={16}
+                      aria-hidden
+                      className={cn('shrink-0', secenek === sira ? 'opacity-100' : 'opacity-0')}
+                    />
+                    {SIRALAMA_ADLARI[secenek]}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
     </div>
   )
 }

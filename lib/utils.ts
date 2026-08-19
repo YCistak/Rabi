@@ -49,3 +49,17 @@ export function haftaBasi(iso: string): string {
   t.setDate(t.getDate() - gunSirasi)
   return tariheYaz(t)
 }
+
+/**
+ * Bir listeden tohuma göre kararlı seçim yapar: aynı tohum aynı öğeyi verir.
+ * Günün sözü gibi "gün boyu sabit, ertesi gün başka" olması istenen yerlerde
+ * tarih tohum olarak veriliyor — yoksa her yeniden çizimde metin zıplardı.
+ */
+export function tohumlaSec<T>(liste: readonly T[], tohum: string): T {
+  // Basit ve kararlı bir karma (djb2) — kriptografik değil, dağılım için yeterli.
+  let karma = 5381
+  for (let i = 0; i < tohum.length; i++) {
+    karma = (karma * 33) ^ tohum.charCodeAt(i)
+  }
+  return liste[Math.abs(karma) % liste.length]
+}
