@@ -131,6 +131,7 @@ okulNotlariniTasi()
 export const VARSAYILAN_AYARLAR: Ayarlar = {
   varsayilanSablonId: VARSAYILAN_SABLON_ID,
   buYilSinif: 12,
+  elleObp: null,
   sinifYili: egitimYili(),
   puanTuru: 'ea',
   gunlukHedef: 200,
@@ -204,6 +205,8 @@ export function ayarlariNormalize(ham: Partial<Ayarlar> | null | undefined): Aya
   return {
     ...birlesik,
     sinifYili: Number.isFinite(birlesik.sinifYili) ? birlesik.sinifYili : egitimYili(),
+    // Eski kurulumlarda alan yok; sayı olmayan her şey "girilmemiş" sayılıyor.
+    elleObp: Number.isFinite(birlesik.elleObp as number) ? (birlesik.elleObp as number) : null,
     hatirlatmaSaati: saatiKirp(birlesik.hatirlatmaSaati),
     hatirlatmaDakikasi: dakikayiKirp(birlesik.hatirlatmaDakikasi),
     gunlukHedef: Number.isFinite(birlesik.gunlukHedef) && birlesik.gunlukHedef > 0

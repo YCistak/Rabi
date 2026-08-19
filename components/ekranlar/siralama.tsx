@@ -39,7 +39,10 @@ export function SiralamaEkrani({
   const [tytId, setTytId] = useState<string>(() => enYeni(tytListesi)?.id ?? '')
   const [aytId, setAytId] = useState<string>(() => enYeni(aytListesi)?.id ?? '')
 
-  const obpSonucu = useMemo(() => obpHesapla(okulYillari), [okulYillari])
+  const obpSonucu = useMemo(
+    () => obpHesapla(okulYillari, ayarlar.elleObp),
+    [okulYillari, ayarlar.elleObp],
+  )
 
   const tahmin = useMemo(
     () =>

@@ -185,6 +185,28 @@ export const SON_SINIF = 12
 export const SINIFLAR = [9, 10, 11, 12]
 
 /**
+ * Mezun.
+ *
+ * Ayrı bir alan değil, sınıf değerinin devamı: 12'den sonraki basamak. Ayrı
+ * bir `mezun` bayrağı tutulsaydı "12. sınıf **ve** mezun" gibi imkânsız bir
+ * durum temsil edilebilir olurdu; tek sayı bunu baştan engelliyor ve sınıf
+ * soran her yer (kurulum, ayarlar, okul notları) tek listeyi kullanıyor.
+ */
+export const MEZUN = 13
+
+/** Sınıf seçiminde gösterilen bütün seçenekler. */
+export const SINIF_SECENEKLERI = [...SINIFLAR, MEZUN]
+
+export function mezunMu(sinif: number): boolean {
+  return sinif >= MEZUN
+}
+
+/** Seçenek metni: 9 → "9. sınıf", mezun → "Mezun". */
+export function sinifAdi(sinif: number): string {
+  return mezunMu(sinif) ? 'Mezun' : `${sinif}. sınıf`
+}
+
+/**
  * Verilen tarihin ait olduğu eğitim-öğretim yılı, başladığı takvim yılıyla:
  * 2025-2026 ders yılı → 2025. Yeni ders yılı eylülde başladığı kabul edilir.
  */
@@ -195,8 +217,14 @@ export function egitimYili(tarih: Date = new Date()): number {
 /**
  * Kayıtlı sınıfı aradan geçen ders yılı kadar ilerletir: 10. sınıf bir sonraki
  * eylülde 11 olur. 12'de durur, geriye gitmez (telefon saati şaşarsa diye).
+ *
+ * Mezun da olduğu yerde kalıyor: 12'ye çekilseydi mezun bir kullanıcı her
+ * eylülde son sınıfa geri düşerdi. Mezuniyet 12'nin **sonrası**, ilerlemenin
+ * son durağı; oraya kendiliğinden geçilmiyor çünkü sınavı kazanıp bırakmakla
+ * bir yıl daha hazırlanmak arasındaki farkı uygulama bilemez, kullanıcı bilir.
  */
 export function ilerlemisSinif(sinif: number, kayitliYil: number, buYil: number): number {
+  if (mezunMu(sinif)) return MEZUN
   const gecen = buYil - kayitliYil
   if (gecen <= 0) return sinif
   return Math.min(SON_SINIF, sinif + gecen)
@@ -254,6 +282,39 @@ export function obpTahmini(yillar: OkulYili[]): ObpSonucu | null {
     tamMi: gecerli.length >= ORTAOGRETIM_YIL_SAYISI && !gecerli.some((y) => y.donemSonu),
     tahminiYil: gecerli.filter((y) => y.donemSonu).length,
   }
+}
+
+/**
+ * Elle girilen OBP.
+ *
+ * Mezun kendi puanını ÖSYM'den biliyor; onu dört yılın notundan yeniden
+ * hesaplatmak hem gereksiz hem de hatalı: nakil, sınıf tekrarı ya da açık
+ * öğretim gibi durumlarda diploma notu okul ortalamalarından ayrışıyor.
+ * Girilen sayı olduğu gibi geçerli sayılıyor, diploma notu ondan geri
+ * türetiliyor (OBP = diploma notu × 5).
+ */
+export function obpBildirilen(obp: number): ObpSonucu {
+  const kirpilmis = Math.min(500, Math.max(250, obp))
+  return {
+    diplomaNotu: yuvarla(kirpilmis / 5, MEB_BASAMAK),
+    obp: yuvarla(kirpilmis, 2),
+    girilenYil: ORTAOGRETIM_YIL_SAYISI,
+    toplamYil: ORTAOGRETIM_YIL_SAYISI,
+    // Tahmin değil, bildirilen puan.
+    tamMi: true,
+    tahminiYil: 0,
+  }
+}
+
+/**
+ * Kullanılacak OBP: elle girildiyse o, yoksa yıl notlarından tahmin.
+ *
+ * Elle giriş yıl notlarını silmiyor, yalnızca öne geçiyor — kullanıcı elle
+ * girdiğini temizlediğinde notlarından hesaplanan değere geri dönülüyor.
+ */
+export function obpSonucu(yillar: OkulYili[], elleGirilen: number | null): ObpSonucu | null {
+  if (elleGirilen !== null && Number.isFinite(elleGirilen)) return obpBildirilen(elleGirilen)
+  return obpTahmini(yillar)
 }
 
 // ---------------------------------------------------------------------------

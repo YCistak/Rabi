@@ -1,5 +1,5 @@
 import type { Deneme, OkulYili, OsymTest, PuanTuru, Sablon } from './types'
-import { obpTahmini, osymNetleri, type ObpSonucu } from './hesap'
+import { obpSonucu, osymNetleri, type ObpSonucu } from './hesap'
 import { sablonBul } from './sablonlar'
 import {
   SON_VERI_YILI,
@@ -59,8 +59,12 @@ export function enYeni(denemeler: Deneme[]): Deneme | undefined {
   return [...denemeler].sort((a, b) => b.tarih.localeCompare(a.tarih))[0]
 }
 
-export function obpHesapla(okulYillari: OkulYili[]): ObpSonucu | null {
-  return obpTahmini(okulYillari)
+/** Elle girilen OBP varsa o kullanılır; yoksa yıl notlarından tahmin edilir. */
+export function obpHesapla(
+  okulYillari: OkulYili[],
+  elleObp: number | null = null,
+): ObpSonucu | null {
+  return obpSonucu(okulYillari, elleObp)
 }
 
 /**
@@ -134,12 +138,13 @@ export function guncelTahmin(
   sablonlar: Sablon[],
   okulYillari: OkulYili[],
   tur: PuanTuru,
+  elleObp: number | null = null,
 ): Tahmin | null {
   return tahminUret({
     tytDenemesi: enYeni(tytAdaylari(denemeler, sablonlar)),
     aytDenemesi: enYeni(aytAdaylari(denemeler, sablonlar)),
     sablonlar,
     tur,
-    obp: obpHesapla(okulYillari)?.obp ?? null,
+    obp: obpHesapla(okulYillari, elleObp)?.obp ?? null,
   })
 }
