@@ -28,6 +28,7 @@ export function siklariKur(soru: SesSorusu, rastgele: () => number = Math.random
 export function turHazirla(
   havuz: readonly SesSorusu[] = SES_HAVUZU,
   rastgele: () => number = Math.random,
+  karistirilsin = true,
 ): SesOyunSorusu[] {
-  return coktanSecmeliTur(havuz, (s) => s.olay, OLAYLAR, (o) => OLAY_ADI[o], rastgele)
+  return coktanSecmeliTur(havuz, (s) => s.olay, OLAYLAR, (o) => OLAY_ADI[o], rastgele, undefined, karistirilsin)
 }

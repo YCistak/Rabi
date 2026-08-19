@@ -60,7 +60,7 @@ describe('NOKTALAMA_HAVUZU', () => {
 
 describe('havuzlariSec', () => {
   const tumu: Havuzlar = {
-    yazim: [{ dogru: 'yalnız', yanlis: 'yanlız', kural: 'ses' }],
+    yazim: [{ dogru: 'yalnız', yanlis: 'yanlız', kural: 'ses', zorluk: 'orta' as const }],
     noktalama: NOKTALAMA_HAVUZU.slice(0, 2),
   }
 
@@ -100,6 +100,7 @@ describe('turHazirla — noktalama', () => {
     const yazim: YazimSorusu[] = Array.from({ length: 20 }, (_, i) => ({
       dogru: `d${i}`,
       yanlis: `y${i}`,
+      zorluk: 'orta' as const,
       kural: 'ses' as const,
     }))
     const tur = turHazirla({ yazim, noktalama })

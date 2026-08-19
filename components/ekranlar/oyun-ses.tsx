@@ -6,19 +6,28 @@ import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
 import { Check, X } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
 import type { SesOlayi, SesSorusu } from '@/lib/oyunlar/ses-havuzu'
-import { OLAY_ACIKLAMASI, OLAY_ADI } from '@/lib/oyunlar/ses-havuzu'
+import { SES_HAVUZU, OLAY_ACIKLAMASI, OLAY_ADI } from '@/lib/oyunlar/ses-havuzu'
 import { turHazirla, type SesOyunSorusu, type SesSikki } from '@/lib/oyunlar/ses'
 import {
-  TUR_SURESI,
-  YANLIS_CEZASI,
   guncelSeri,
-  kalanSaniye,
   rekorKirildiMi,
   turOzeti,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { sestenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import {
+  bossZorlugu,
+  elerMi,
+  soruSuresi,
+  turSirasi,
+  type SiradakiSoru,
+  type Zorluk,
+} from '@/lib/oyunlar/ritim'
+import { useSoruSayaci } from '@/lib/oyunlar/soru-sayaci'
+import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
+import { ZorlukSecimi } from '@/components/zorluk-secimi'
+import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
@@ -40,7 +49,23 @@ const CEVAP_BEKLEMESI = 1100
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
-type GeriBildirim = { secilen: SesOlayi; dogruMu: boolean; soru: SesSorusu }
+/** `secilen` süre dolduğunda `null`: oyuncu bir şık işaretlemedi. */
+/**
+ * `ritim.ts`'in kurduğu sıraya şıkları ekler.
+ *
+ * Sıra korunmalı: boss soruları belirli konumlara yerleştirilmiş durumda,
+ * `turHazirla` varsayılan hâlinde yeniden karıştırıp o yerleşimi bozardı.
+ */
+function sirayiKur(sira: SiradakiSoru<SesSorusu>[]): SiradakiSoru<SesOyunSorusu>[] {
+  const sorular = turHazirla(
+    sira.map((s) => s.soru),
+    Math.random,
+    false,
+  )
+  return sorular.map((soru, i) => ({ soru, boss: sira[i].boss }))
+}
+
+type GeriBildirim = { secilen: SesOlayi | null; dogruMu: boolean; soru: SesSorusu }
 
 /**
  * Banka kayıtlarından ses havuzu.
@@ -56,6 +81,10 @@ function bankaHavuzu(kayitlar: readonly BankaKaydi[]): SesSorusu[] {
       kelime: kayit.soru.kelime,
       olusum: kayit.soru.olusum,
       olay: kayit.soru.olay,
+      // Banka turunda zorluk seçilmiyor ve boss gelmiyor — sorular zaten
+      // kullanıcının kendi yanlışları, seviyesi ne olursa olsun tekrar
+      // edilecek. Alan tipin gereği doldurulmuş durumda.
+      zorluk: 'orta',
     })
   }
   return havuz
@@ -75,28 +104,36 @@ export function SesOyunuEkrani({
   bankaSorulari,
   onTurBitti,
   onCik,
+  bildir,
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
   /** Boş değilse tur yalnızca bu sorularla kurulur (Oyun Bankası turu). */
   bankaSorulari: BankaKaydi[]
-  onTurBitti: (ozet: TurOzeti<SesSorusu>, bankaCevaplari: BankaCevabi[]) => void
+  onTurBitti: (
+    ozet: TurOzeti<SesSorusu>,
+    bankaCevaplari: BankaCevabi[],
+    /** Turun gerçek uzunluğu — tur artık sabit süreli değil. */
+    gecenSaniye: number,
+  ) => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const oyun = oyunBul('ses')
 
   const [asama, setAsama] = useState<Asama>('tanitim')
   const [yardimAcik, setYardimAcik] = useState(false)
 
-  const [sorular, setSorular] = useState<SesOyunSorusu[]>([])
+  const [sorular, setSorular] = useState<SiradakiSoru<SesOyunSorusu>[]>([])
   const [sira, setSira] = useState(0)
   const [cevaplar, setCevaplar] = useState<Cevap<SesSorusu>[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
+  /** Boss'ta yanılıp elendi mi — tur sonu ekranı bunu ayrıca söylüyor. */
+  const [elendi, setElendi] = useState(false)
 
-  const [bitisZamani, setBitisZamani] = useState(0)
-  const [kalan, setKalan] = useState(TUR_SURESI)
-  /** Yardım açıkken sayaç durur; kalan saniye burada bekletilir. */
-  const [duraklatilan, setDuraklatilan] = useState<number | null>(null)
+  const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukSes, 'kolay')
+  /** Yardım açıkken sayaç duruyor. */
+  const [duraklatilan, setDuraklatilan] = useState(false)
 
   const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<SesSorusu>; yeniRekor: boolean } | null>(
     null,
@@ -106,6 +143,14 @@ export function SesOyunuEkrani({
   const bankaTuru = havuz.length > 0
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
+  /**
+   * Turun başladığı an.
+   *
+   * Tur artık sabit uzunlukta değil — sınırsız sürüyor ve boss'ta bitiyor. Eski
+   * hesap "tur süresi eksi yanlış cezası" formülüyle türetiliyordu, o formülün
+   * karşılığı kalmadı; süre gerçekten ölçülüyor.
+   */
+  const turBasladiRef = useRef(0)
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const cevaplarRef = useRef<Cevap<SesSorusu>[]>([])
   cevaplarRef.current = cevaplar
@@ -115,18 +160,24 @@ export function SesOyunuEkrani({
 
   const turBaslat = useCallback(() => {
     turBasiRekor.current = istatistik.enIyiDogru
+    turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
-    setSorular(havuz.length > 0 ? turHazirla(havuz) : turHazirla())
+    // Banka turunda zorluk ve boss yok: sorular kullanıcının kendi yanlışları,
+    // hepsi bir kez sorulup tur bitiyor.
+    setSorular(
+      bankaTuru
+        ? turHazirla(havuz).map((soru) => ({ soru, boss: false }))
+        : sirayiKur(turSirasi(SES_HAVUZU, 'ses', zorluk)),
+    )
     setSira(0)
     setCevaplar([])
     setGeriBildirim(null)
     setSonuc(null)
-    setDuraklatilan(null)
-    setKalan(TUR_SURESI)
-    setBitisZamani(Date.now() + TUR_SURESI * 1000)
+    setElendi(false)
+    setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [havuz, istatistik.enIyiDogru])
+  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluk])
 
   const turBitir = useCallback(
     (verilenler: Cevap<SesSorusu>[]) => {
@@ -147,27 +198,13 @@ export function SesOyunuEkrani({
           soru: sestenBanka(cevap.soru),
           dogruMu: cevap.dogruMu,
         })),
+        Math.round((Date.now() - turBasladiRef.current) / 1000),
       )
     },
     [bankaTuru, istatistik, onTurBitti, sesAcik],
   )
 
-  // Sayaç hedef zaman damgasından okunuyor; arka plana atılan WebView'da sayarak
-  // ilerleyen bir sayaç donup kalırdı.
-  useEffect(() => {
-    if (asama !== 'oynaniyor' || duraklatilan !== null) return
-
-    const oku = () => {
-      const yeni = kalanSaniye(bitisZamani)
-      setKalan(yeni)
-      if (yeni <= 0) turBitir(cevaplarRef.current)
-    }
-    oku()
-    const isaret = setInterval(oku, 250)
-    return () => clearInterval(isaret)
-  }, [asama, bitisZamani, duraklatilan, turBitir])
-
-  // Havuz tükenirse tur süre dolmadan biter — banka turunda sık oluyor.
+  // Havuz tükenirse tur biter — banka turunda ve soru sınırına varılınca.
   useEffect(() => {
     if (asama !== 'oynaniyor' || sorular.length === 0) return
     if (sira >= sorular.length) turBitir(cevaplarRef.current)
@@ -186,41 +223,71 @@ export function SesOyunuEkrani({
     ).catch(() => {})
   }
 
+  const sirali = sorular[sira]
+  const soru = sirali?.soru
+  const boss = sirali?.boss ?? false
+
+  /**
+   * Cevaptan sonraki geçiş.
+   *
+   * Boss'ta yanılmak turu bitiriyor; normal soruda yanılmak yalnızca yanlış
+   * sayılıyor. Bekleme süresi ikisinde de aynı: doğrusunu okumadan ekranın
+   * değişmesi, elenirken bile öğretmeyi bırakmak olurdu.
+   */
+  const ilerle = (dogruMu: boolean, bossMuydu: boolean) => {
+    zamanlayiciRef.current = setTimeout(() => {
+      setGeriBildirim(null)
+      if (elerMi(bossMuydu, dogruMu)) {
+        setElendi(true)
+        turBitir(cevaplarRef.current)
+      } else {
+        setSira((s) => s + 1)
+      }
+    }, CEVAP_BEKLEMESI)
+  }
+
   const cevapla = (sik: SesSikki) => {
     // Geri bildirim gösterilirken ikinci dokunuş yok sayılıyor; yoksa aynı
-    // soruya iki cevap yazılır ve süre iki kez cezalandırılırdı.
-    if (asama !== 'oynaniyor' || geriBildirim !== null) return
-
-    const soru = sorular[sira]
-    if (!soru) return
+    // soruya iki cevap yazılırdı.
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
 
     const dogruMu = sik.dogruMu
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu }])
     setGeriBildirim({ secilen: sik.deger, dogruMu, soru: soru.soru })
     geriBildir(dogruMu)
-
-    if (!dogruMu) setBitisZamani((b) => b - YANLIS_CEZASI * 1000)
-
-    zamanlayiciRef.current = setTimeout(() => {
-      setGeriBildirim(null)
-      setSira((s) => s + 1)
-    }, CEVAP_BEKLEMESI)
+    ilerle(dogruMu, boss)
   }
 
+  /** Süre dolması cevap vermemekle aynı: yanlış sayılıyor, boss'ta eliyor. */
+  const sureDoldu = useCallback(() => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false }])
+    setGeriBildirim({ secilen: null, dogruMu: false, soru: soru.soru })
+    geriBildir(false)
+    ilerle(false, boss)
+    // `ilerle` ve `geriBildir` her renderda yeniden kuruluyor; sayaç yalnızca
+    // güncel olanı çağırsın diye bağımlılıklar bilerek dar tutuldu.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [asama, geriBildirim, soru, boss])
+
+  const { kalan, toplam } = useSoruSayaci({
+    aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
+    sure: soruSuresi('ses', boss ? bossZorlugu(zorluk) : null),
+    anahtar: sira,
+    onBitti: sureDoldu,
+  })
+
   const yardimAc = () => {
-    setDuraklatilan(kalanSaniye(bitisZamani))
+    setDuraklatilan(true)
     setYardimAcik(true)
   }
 
   const yardimKapat = () => {
-    if (duraklatilan !== null) setBitisZamani(Date.now() + duraklatilan * 1000)
-    setDuraklatilan(null)
+    setDuraklatilan(false)
     setYardimAcik(false)
   }
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
-  const gorunenKalan = duraklatilan ?? kalan
-  const soru = sorular[sira]
 
   const maskotDurumu: MaskotDurumu = geriBildirim
     ? geriBildirim.dogruMu
@@ -237,13 +304,15 @@ export function SesOyunuEkrani({
           asama === 'bitti'
             ? null
             : {
-                kalan: gorunenKalan,
+                kalan,
+                toplam,
+                sira: sira + 1,
+                boss,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
                 yanlis: cevaplar.length - dogruSayisi,
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
-                cezaGorunur: geriBildirim !== null && !geriBildirim.dogruMu,
               }
         }
         onCik={onCik}
@@ -254,8 +323,10 @@ export function SesOyunuEkrani({
             sonuc={sonuc}
             rekor={turBasiRekor.current}
             bankaTuru={bankaTuru}
+            elendi={elendi}
             onTekrar={turBaslat}
             onCik={onCik}
+            bildir={bildir}
           />
         ) : (
           asama === 'oynaniyor' &&
@@ -266,14 +337,12 @@ export function SesOyunuEkrani({
                   <Rabi durum={maskotDurumu} boyut={54} />
                 </div>
 
-                {/* Sözcük ve oluşumu: dört şık uzun metinler olduğu için soru
-                    kısmı bilerek tek bakışta okunacak kadar sade tutuldu. */}
-                <div className="golge-kart rounded-[20px] bg-card px-4 py-3.5 text-center">
+                {/* Yalnızca sözcük: oluşumu ("burun + u") burada göstermek
+                    cevabı ele veriyordu — ses olayı zaten orada görünüyor.
+                    Oluşum, cevaptan sonra geri bildirimde ve tur sonunda çıkar. */}
+                <div className="golge-kart rounded-[20px] bg-card px-4 py-4 text-center">
                   <p className="font-display text-[26px] font-extrabold leading-none tracking-tight">
                     {soru.soru.kelime}
-                  </p>
-                  <p className="mt-1.5 text-[13px] font-semibold text-muted-foreground">
-                    {soru.soru.olusum}
                   </p>
                 </div>
 
@@ -300,7 +369,9 @@ export function SesOyunuEkrani({
                   aciklama={
                     geriBildirim.dogruMu
                       ? soru.soru.olusum
-                      : `— doğrusu ${OLAY_ADI[geriBildirim.soru.olay].toLocaleLowerCase('tr')}`
+                      : `${geriBildirim.soru.olusum} — doğrusu ${OLAY_ADI[
+                          geriBildirim.soru.olay
+                        ].toLocaleLowerCase('tr')}`
                   }
                 />
               )}
@@ -316,6 +387,11 @@ export function SesOyunuEkrani({
         baslatir={asama === 'tanitim'}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
+        ekstra={
+          asama === 'tanitim' && !bankaTuru ? (
+            <ZorlukSecimi secili={zorluk} onSec={setZorluk} bossVar />
+          ) : null
+        }
       />
     </>
   )
@@ -369,14 +445,18 @@ function SonucGorunumu({
   sonuc,
   rekor,
   bankaTuru,
+  elendi,
   onTekrar,
   onCik,
+  bildir,
 }: {
   sonuc: { ozet: TurOzeti<SesSorusu>; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
+  elendi: boolean
   onTekrar: () => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const { ozet, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
@@ -391,6 +471,7 @@ function SonucGorunumu({
       rekor={rekor}
       yeniRekor={yeniRekor}
       bankaTuru={bankaTuru}
+      elendi={elendi}
       altBaslik={
         bankaTuru
           ? 'Banka soruları — üst üste üç doğruda düşerler.'
@@ -404,7 +485,12 @@ function SonucGorunumu({
       {ozet.yanlislar.length > 0 && (
         <div className="flex flex-none flex-col gap-2">
           {gorunen.map((yanlis, sira) => (
-            <YanlisKarti key={`${yanlis.kelime}-${sira}`} oyunId="ses">
+            <YanlisKarti
+              key={`${yanlis.kelime}-${sira}`}
+              oyunId="ses"
+              soru={sestenBanka(yanlis)}
+              bildir={bildir}
+            >
               <b className="block font-display text-[13.5px] font-extrabold leading-tight">
                 {yanlis.kelime}
               </b>

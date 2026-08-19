@@ -29,6 +29,7 @@ export function celdiriciUygunMu(aday: SozSorusu, dogru: SozSorusu): boolean {
 export function turHazirla(
   havuz: readonly SozSorusu[] = SOZ_HAVUZU,
   rastgele: () => number = Math.random,
+  karistirilsin = true,
 ): SozOyunSorusu[] {
   // Çeldiriciler her zaman **tam havuzdan** çekiliyor, turun havuzundan değil:
   // banka turunda elde iki soru olabiliyor ve o iki sorudan dört şık çıkmaz.
@@ -39,5 +40,6 @@ export function turHazirla(
     (s) => s.anlam,
     rastgele,
     celdiriciUygunMu,
+    karistirilsin,
   )
 }

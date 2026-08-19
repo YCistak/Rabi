@@ -22,8 +22,6 @@ import {
   type OyunTanimi,
 } from '@/lib/oyunlar/tanim'
 import {
-  TUR_SURESI,
-  YANLIS_CEZASI,
   istatistigiGuncelle,
   type TurSayilari,
 } from '@/lib/oyunlar/tur'
@@ -35,7 +33,7 @@ import {
   type BankaKaydi,
 } from '@/lib/oyunlar/banka'
 import { sesleriHazirla } from '@/lib/oyunlar/oyun-sesi'
-import { OYUN_GECMIS_SINIRI } from '@/lib/depo'
+import { OYUN_GECMIS_SINIRI, TUR_EN_UZUN } from '@/lib/depo'
 import { OyunMuzigi } from '@/lib/oyunlar/oyun-muzigi'
 import { LOFI_PARCALAR } from '@/lib/lofi'
 import { SesCalar } from '@/lib/ses'
@@ -43,11 +41,13 @@ import { useGeriKatmani } from '@/lib/geri'
 import { useUygulamaGorunur } from '@/lib/gorunurluk'
 import { bugun } from '@/lib/utils'
 import { cn } from '@/lib/utils'
+import type { BildirimKolu } from '@/components/hata-bildir'
 import { YazimOyunuEkrani } from '@/components/ekranlar/oyun-yazim'
 import { SesOyunuEkrani } from '@/components/ekranlar/oyun-ses'
 import { OgeOyunuEkrani } from '@/components/ekranlar/oyun-oge'
 import { SozOyunuEkrani } from '@/components/ekranlar/oyun-soz'
 import { IslemOyunuEkrani } from '@/components/ekranlar/oyun-islem'
+import { BolunmeOyunuEkrani } from '@/components/ekranlar/oyun-bolunme'
 import { EdebiyatOyunuEkrani } from '@/components/ekranlar/oyun-edebiyat'
 import { AciOyunuEkrani } from '@/components/ekranlar/oyun-aci'
 import { UcgenOyunuEkrani } from '@/components/ekranlar/oyun-ucgen'
@@ -87,6 +87,7 @@ const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   oge: ['Cümlenin', 'Ögeleri'],
   soz: ['Deyim ve', 'Atasözü'],
   islem: ['Zihinden', 'İşlem'],
+  bolunme: ['Bölünebilme', 'Kuralları'],
   aci: ['Açı', 'Tamamlama'],
   ucgen: ['Özel', 'Üçgenler'],
   edebiyat: ['Edebiyat', 'Eşleştirme'],
@@ -106,6 +107,7 @@ export function OyunlarEkrani({
   /** Bankadan "sadece bunlardan bir tur" ile açılan oyun; yoksa null. */
   bankaTuru,
   onBankaTuruBitti,
+  bildir,
 }: {
   kayitlar: OyunKayitlari
   setKayitlar: (guncelleyici: OyunKayitlari | ((onceki: OyunKayitlari) => OyunKayitlari)) => void
@@ -120,6 +122,7 @@ export function OyunlarEkrani({
   onBankadanDustu: (adet: number) => void
   bankaTuru: OyunId | null
   onBankaTuruBitti: () => void
+  bildir: BildirimKolu
 }) {
   const [secilenOyun, setSecilenOyun] = useState<OyunId | null>(null)
   /** Açık kategori; null ise ders ızgarası görünüyor. */
@@ -191,7 +194,12 @@ export function OyunlarEkrani({
    * ölçüsü olmaktan çıkardı. Bankaya işleme ise her iki turda da yapılıyor —
    * asıl istenen o: soruyu nerede bilirsen bil, öğrenmiş sayılırsın.
    */
-  const turBitti = (id: OyunId, ozet: TurSayilari, cevaplar: BankaCevabi[]) => {
+  const turBitti = (
+    id: OyunId,
+    ozet: TurSayilari,
+    cevaplar: BankaCevabi[],
+    gecenSaniye: number,
+  ) => {
     const yeniBanka = bankayiGuncelle(banka, cevaplar, bugun())
     const dusen = dusenSayisi(banka, yeniBanka)
     setBanka(() => yeniBanka)
@@ -207,12 +215,13 @@ export function OyunlarEkrani({
     /*
       Turun gerçek süresi.
 
-      Ayrı bir kronometre tutulmuyor çünkü gerekmiyor: tur `TUR_SURESI` saniyelik
-      bir hedef zaman damgasıyla başlıyor ve her yanlış cevap bu damgadan
-      `YANLIS_CEZASI` saniye düşüyor. Turun duvar saatindeki uzunluğu tam olarak
-      bu fark. (Tur bitmeden çıkılırsa hiç kayıt düşmüyor — o süre sayılmıyor.)
+      Eskiden formülle türetiliyordu (sabit tur süresi eksi yanlış cezası); tur
+      artık sınırsız ve boss'ta bittiği için o formülün karşılığı kalmadı. Süreyi
+      oyun ekranı ölçüp gönderiyor. Üst sınır bozuk kayda karşı: tek bir saçma
+      değer haftalık özette "oyunda 9 saat geçirdin" yazdırırdı.
+      (Tur bitmeden çıkılırsa hiç kayıt düşmüyor — o süre sayılmıyor.)
     */
-    const saniye = Math.max(0, TUR_SURESI - YANLIS_CEZASI * ozet.yanlis)
+    const saniye = Math.min(TUR_EN_UZUN, Math.max(0, gecenSaniye))
     setGecmis((onceki) =>
       [...onceki, { tarih: bugun(), oyun: id, saniye, dogru: ozet.dogru }].slice(
         -OYUN_GECMIS_SINIRI,
@@ -413,7 +422,8 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'yazim')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar) => turBitti('yazim', ozet, cevaplar)}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('yazim', ozet, cevaplar, saniye)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}
@@ -422,7 +432,8 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'ses')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar) => turBitti('ses', ozet, cevaplar)}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('ses', ozet, cevaplar, saniye)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}
@@ -431,7 +442,8 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'oge')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar) => turBitti('oge', ozet, cevaplar)}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('oge', ozet, cevaplar, saniye)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}
@@ -440,7 +452,8 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'soz')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar) => turBitti('soz', ozet, cevaplar)}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('soz', ozet, cevaplar, saniye)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}
@@ -449,7 +462,18 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'islem')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar) => turBitti('islem', ozet, cevaplar)}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('islem', ozet, cevaplar, saniye)}
+          bildir={bildir}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'bolunme' && (
+        <BolunmeOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'bolunme')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('bolunme', ozet, cevaplar, saniye)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}
@@ -458,7 +482,8 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'aci')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar) => turBitti('aci', ozet, cevaplar)}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('aci', ozet, cevaplar, saniye)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}
@@ -467,7 +492,8 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'ucgen')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar) => turBitti('ucgen', ozet, cevaplar)}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('ucgen', ozet, cevaplar, saniye)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}
@@ -476,7 +502,8 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'edebiyat')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar) => turBitti('edebiyat', ozet, cevaplar)}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('edebiyat', ozet, cevaplar, saniye)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}

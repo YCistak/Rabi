@@ -1,7 +1,6 @@
 'use client'
 
 import { Delete } from 'lucide-react'
-import { YANLIS_CEZASI } from '@/lib/oyunlar/tur'
 import { cn } from '@/lib/utils'
 
 /**
@@ -98,7 +97,7 @@ export function TusTakimi({
         disabled={kilitli}
         className="mx-auto rounded-lg px-2.5 py-1 text-[12.5px] font-extrabold text-muted-foreground transition active:bg-foreground/10 disabled:opacity-45"
       >
-        Pas geç · −{YANLIS_CEZASI} sn
+        Pas geç
       </button>
     </div>
   )

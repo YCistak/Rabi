@@ -20,6 +20,7 @@ import {
   Sun,
   Table,
   Target,
+  Flag,
   Trash2,
   Upload,
   Volume2,
@@ -122,6 +123,7 @@ export function AyarlarEkrani({
   setKayitliSablonlar,
   ayarlar,
   setAyarlar,
+  bekleyenBildirim,
   pomodoroAyar,
   setPomodoroAyar,
   yedeklenecek,
@@ -130,6 +132,8 @@ export function AyarlarEkrani({
   kayitliSablonlar: Sablon[]
   setKayitliSablonlar: (guncelleyici: Sablon[] | ((onceki: Sablon[]) => Sablon[])) => void
   ayarlar: Ayarlar
+  /** Gönderilmeyi bekleyen hatalı soru bildirimi sayısı. */
+  bekleyenBildirim: number
   setAyarlar: (guncelleyici: Ayarlar | ((onceki: Ayarlar) => Ayarlar)) => void
   /** Odak kilidi ayarları pomodoro ayarının içinde duruyor. */
   pomodoroAyar: PomodoroAyar
@@ -837,6 +841,41 @@ export function AyarlarEkrani({
           )}
         </Bolum>
 
+        {/* --------------------- Hatalı soru bildirimi -------------------- */}
+        {/* Kendi bölümü değil, Veri'nin başı: gönderilen şey de veri ve
+            kullanıcının "cihazdan ne çıkıyor" sorusunun cevabı burada. */}
+        <Bolum baslik="Hatalı soru bildirimi">
+          <Satir
+            Simge={Flag}
+            renk="mercan"
+            baslik="Bildirdiğim soruları gönder"
+            aciklama="Mini oyunlarda hatalı bulduğun soruları geliştiriciye ulaştırır"
+            onClick={() =>
+              setAyarlar((o) => ({ ...o, hataBildirimiAcik: !o.hataBildirimiAcik }))
+            }
+            basiliMi={ayarlar.hataBildirimiAcik}
+            sag={<Anahtar acik={ayarlar.hataBildirimiAcik} />}
+          />
+          <GenisAlan tam>
+            <AlanNotu>
+              Uygulamanın internete çıktığı tek yer burası. Bir soruyu
+              bildirdiğinde şunlar gönderilir: sorunun kendisi, hangi oyundan
+              geldiği, uygulamanın doğru saydığı cevap, seçtiğin sebep, uygulama
+              sürümü ve cihazına verilen rastgele bir numara.
+            </AlanNotu>
+            <AlanNotu ust>
+              Adın, e-postan, denemelerin, notların, fotoğrafların ve puanların{' '}
+              <b>gönderilmez</b>. Bildirim önce cihaza kaydedilir; internet yoksa
+              bekler, bağlanınca kendiliğinden gider.
+            </AlanNotu>
+            {bekleyenBildirim > 0 && (
+              <AlanNotu ust>
+                {bekleyenBildirim} bildirim gönderilmeyi bekliyor.
+              </AlanNotu>
+            )}
+          </GenisAlan>
+        </Bolum>
+
         {/* ------------------------------ Veri ---------------------------- */}
         {/* Yedekleme işlemleri önce tek satırın altında çerçeveli düğmelerden
             oluşan ayrı bir blok hâlindeydi; ekranın geri kalanı satır diliyle
@@ -881,8 +920,9 @@ export function AyarlarEkrani({
 
           <GenisAlan tam>
             <AlanNotu ust={false}>
-              Bütün veriler yalnızca bu cihazda duruyor. Telefon değiştirmeden veya uygulamayı
-              silmeden önce yedek al. Fotoğrafsız bir yedeği geri yüklersen yanlış soru bankası
+              Denemelerin, notların ve fotoğrafların yalnızca bu cihazda duruyor — yedek
+              dosyası da buradan çıkmıyor. Telefon değiştirmeden veya uygulamayı silmeden
+              önce yedek al. Fotoğrafsız bir yedeği geri yüklersen yanlış soru bankası
               boş gelir.
             </AlanNotu>
             {durum && <Not className="mt-2">{durum}</Not>}
@@ -924,7 +964,8 @@ export function AyarlarEkrani({
       />
 
       <p className="mt-4 pb-2 text-center text-[11.5px] font-semibold text-muted-foreground">
-        Rabi · çevrimdışı çalışır · veri cihazdan çıkmaz
+        Rabi · çevrimdışı çalışır · bildirdiğin hatalı sorular dışında veri cihazdan
+        çıkmaz
       </p>
 
       <Onay

@@ -13,10 +13,7 @@ import {
   type IslemTuru,
 } from '@/lib/oyunlar/islem'
 import {
-  TUR_SURESI,
-  YANLIS_CEZASI,
   guncelSeri,
-  kalanSaniye,
   karistir,
   rekorKirildiMi,
   turOzeti,
@@ -28,6 +25,9 @@ import {
   type BankaCevabi,
   type BankaKaydi,
 } from '@/lib/oyunlar/banka'
+import { MATEMATIK_TUR_SORUSU, soruSuresi } from '@/lib/oyunlar/ritim'
+import { useSoruSayaci } from '@/lib/oyunlar/soru-sayaci'
+import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
@@ -55,8 +55,14 @@ import { OyunTanitim } from '@/components/oyun-tanitim'
  * geldiğini kaçırıyordu. Tek süre ritmi sabitliyor.
  */
 const CEVAP_BEKLEMESI = 1100
-/** Bir turda üretilen soru sayısı — en hızlı oyuncunun bile tüketemeyeceği kadar. */
-const TUR_SORUSU = 120
+/**
+ * Turdaki soru sayısı.
+ *
+ * Matematik oyunlarında boss yok, dolayısıyla eleme de yok — turu bitirecek
+ * bir şey gerekiyor. Yirmi soru boss aralığının iki katı: sözel oyunlarla aynı
+ * ritim, yalnızca sonunda kesiliyor. (`ritim.ts`)
+ */
+const TUR_SORUSU = MATEMATIK_TUR_SORUSU
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
@@ -132,14 +138,21 @@ export function IslemOyunuEkrani({
   bankaSorulari,
   onTurBitti,
   onCik,
+  bildir,
 }: {
   istatistik: OyunIstatistigi
   /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
   sesAcik: boolean
   /** Boş değilse tur yalnızca bu sorularla kurulur (Oyun Bankası turu). */
   bankaSorulari: BankaKaydi[]
-  onTurBitti: (ozet: TurOzeti<IslemSorusu>, bankaCevaplari: BankaCevabi[]) => void
+  onTurBitti: (
+    ozet: TurOzeti<IslemSorusu>,
+    bankaCevaplari: BankaCevabi[],
+    /** Turun gerçek uzunluğu — tur artık sabit süreli değil. */
+    gecenSaniye: number,
+  ) => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const oyun = oyunBul('islem')
 
@@ -160,10 +173,8 @@ export function IslemOyunuEkrani({
   const [yanlisGirdileri, setYanlisGirdileri] = useState<string[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
 
-  const [bitisZamani, setBitisZamani] = useState(0)
-  const [kalan, setKalan] = useState(TUR_SURESI)
-  /** Yardım açıkken sayaç durur; kalan saniye burada bekletilir. */
-  const [duraklatilan, setDuraklatilan] = useState<number | null>(null)
+  /** Yardım açıkken sayaç duruyor. */
+  const [duraklatilan, setDuraklatilan] = useState(false)
 
   const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<IslemSorusu>; yeniRekor: boolean } | null>(
     null,
@@ -173,6 +184,14 @@ export function IslemOyunuEkrani({
   const bankaTuru = bankaHavuzu.length > 0
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
+  /**
+   * Turun başladığı an.
+   *
+   * Tur artık sabit uzunlukta değil — sınırsız sürüyor ve boss'ta bitiyor. Eski
+   * hesap "tur süresi eksi yanlış cezası" formülüyle türetiliyordu, o formülün
+   * karşılığı kalmadı; süre gerçekten ölçülüyor.
+   */
+  const turBasladiRef = useRef(0)
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const cevaplarRef = useRef<Cevap<IslemSorusu>[]>([])
   cevaplarRef.current = cevaplar
@@ -182,6 +201,7 @@ export function IslemOyunuEkrani({
 
   const turBaslat = useCallback(() => {
     turBasiRekor.current = istatistik.enIyiDogru
+    turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
     setSorular(bankaTuru ? karistir(bankaHavuzu) : islemTuruHazirla(secili, TUR_SORUSU))
@@ -191,9 +211,7 @@ export function IslemOyunuEkrani({
     setYanlisGirdileri([])
     setGeriBildirim(null)
     setSonuc(null)
-    setDuraklatilan(null)
-    setKalan(TUR_SURESI)
-    setBitisZamani(Date.now() + TUR_SURESI * 1000)
+    setDuraklatilan(false)
     setAsama('oynaniyor')
   }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru, secili])
 
@@ -218,23 +236,11 @@ export function IslemOyunuEkrani({
           soru: islemdenBanka(cevap.soru),
           dogruMu: cevap.dogruMu,
         })),
+        Math.round((Date.now() - turBasladiRef.current) / 1000),
       )
     },
     [bankaTuru, istatistik, onTurBitti, sesAcik],
   )
-
-  useEffect(() => {
-    if (asama !== 'oynaniyor' || duraklatilan !== null) return
-
-    const oku = () => {
-      const yeni = kalanSaniye(bitisZamani)
-      setKalan(yeni)
-      if (yeni <= 0) turBitir(cevaplarRef.current)
-    }
-    oku()
-    const isaret = setInterval(oku, 250)
-    return () => clearInterval(isaret)
-  }, [asama, bitisZamani, duraklatilan, turBitir])
 
   // Seçilen tür az sayıda farklı soru üretebiliyorsa liste kısa dönebiliyor;
   // banka turunda da liste bankadaki kayıt kadar. O zaman tur erken biter.
@@ -271,7 +277,6 @@ export function IslemOyunuEkrani({
       setGeriBildirim({ dogruMu, girilen: pas ? '' : girilen, beklenen: soru.sonuc })
       geriBildir(dogruMu)
 
-      if (!dogruMu) setBitisZamani((b) => b - YANLIS_CEZASI * 1000)
 
       zamanlayiciRef.current = setTimeout(() => {
         setGeriBildirim(null)
@@ -281,6 +286,24 @@ export function IslemOyunuEkrani({
     },
     [asama, geriBildirim, girilen, sira, sorular],
   )
+
+
+  /**
+   * Süre dolması cevap vermemekle aynı: soru pas geçilmiş sayılıyor.
+   *
+   * Matematik oyunlarında boss yok, dolayısıyla eleme de yok — süre dolunca
+   * tur bitmiyor, sıradaki soruya geçiliyor.
+   */
+  const sureDoldu = useCallback(() => {
+    cevapla(true)
+  }, [cevapla])
+
+  const { kalan, toplam } = useSoruSayaci({
+    aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan,
+    sure: soruSuresi('islem', null),
+    anahtar: sira,
+    onBitti: sureDoldu,
+  })
 
   const rakamYaz = useCallback((rakam: string) => {
     setGirilen((onceki) => rakamEkle(onceki, rakam))
@@ -304,13 +327,12 @@ export function IslemOyunuEkrani({
   }, [asama, yardimAcik, rakamYaz, sil, cevapla])
 
   const yardimAc = () => {
-    setDuraklatilan(kalanSaniye(bitisZamani))
+    setDuraklatilan(true)
     setYardimAcik(true)
   }
 
   const yardimKapat = () => {
-    if (duraklatilan !== null) setBitisZamani(Date.now() + duraklatilan * 1000)
-    setDuraklatilan(null)
+    setDuraklatilan(false)
     setYardimAcik(false)
   }
 
@@ -324,7 +346,6 @@ export function IslemOyunuEkrani({
   }
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
-  const gorunenKalan = duraklatilan ?? kalan
   const soru = sorular[sira]
   /** Tur sonundaki dağılım yalnızca bu turda çıkan türleri gösteriyor. */
   const turdekiTurler = TUM_ISLEMLER.filter((tur) => sorular.some((s) => s.tur === tur))
@@ -338,13 +359,15 @@ export function IslemOyunuEkrani({
           asama === 'bitti'
             ? null
             : {
-                kalan: gorunenKalan,
+                kalan,
+                toplam,
+                sira: sira + 1,
+                boss: false,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
                 yanlis: cevaplar.length - dogruSayisi,
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
-                cezaGorunur: geriBildirim !== null && !geriBildirim.dogruMu,
               }
         }
         onCik={onCik}
@@ -359,6 +382,7 @@ export function IslemOyunuEkrani({
             bankaTuru={bankaTuru}
             onTekrar={turBaslat}
             onCik={onCik}
+            bildir={bildir}
           />
         ) : (
           asama === 'oynaniyor' &&
@@ -481,6 +505,7 @@ function SonucGorunumu({
   bankaTuru,
   onTekrar,
   onCik,
+  bildir,
 }: {
   sonuc: { ozet: TurOzeti<IslemSorusu>; yeniRekor: boolean }
   /** Yanlışlarla aynı sıradaki girdiler; boş dize pas geçildiğini gösterir. */
@@ -490,6 +515,7 @@ function SonucGorunumu({
   bankaTuru: boolean
   onTekrar: () => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const { ozet, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
@@ -552,7 +578,12 @@ function SonucGorunumu({
           </div>
 
           {gorunen.map((yanlis, sira) => (
-            <YanlisKarti key={`${yanlis.metin}-${sira}`} oyunId="islem">
+            <YanlisKarti
+              key={`${yanlis.metin}-${sira}`}
+              oyunId="islem"
+              soru={islemdenBanka(yanlis)}
+              bildir={bildir}
+            >
               <b className="rakam block font-display text-[15px] font-extrabold leading-tight">
                 {yanlis.metin} = <em className="not-italic text-success">{yanlis.sonuc}</em>
               </b>

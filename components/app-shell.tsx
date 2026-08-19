@@ -35,6 +35,8 @@ import { rozetDurumu, yeniRozetler, type Rozet } from '@/lib/rozetler'
 import { hatirlatmaIptal, hatirlatmaPlanla, pomodoroIptal } from '@/lib/bildirim'
 import { odakKilidiniBitir } from '@/lib/odak-kilidi'
 import { bekleyenOzetHaftasi, haftalikOzet } from '@/lib/ozet'
+import { bekleyenSayisi } from '@/lib/hata-bildirimi'
+import { useHataBildirimi } from '@/lib/hata-kuyrugu'
 import { bugun } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import { ustKatmaniKapat } from '@/lib/geri'
@@ -117,6 +119,11 @@ export function AppShell() {
    * çiziyor ama başlatan Oyun Bankası ekranı — ikisi kardeş, ortak sahibi bu.
    */
   const [bankaTuru, setBankaTuru] = useState<OyunId | null>(null)
+  /**
+   * Bildirilen hatalı sorular. Kuyruk, gönderim ve arayüzün kolu hook'un
+   * içinde; buradan yalnızca ayarın açık olup olmadığı geçiyor.
+   */
+  const hataBildirimi = useHataBildirimi(ayarlar.hataBildirimiAcik)
   /** İzlenmiş haftalık özetlerin hafta başı tarihleri. */
   const [ozetGorulen, setOzetGorulen] = useYerelDepo<string[]>(ANAHTARLAR.ozetGorulen, [])
   const [kutlanan, setKutlanan] = useState<Rozet[]>([])
@@ -456,6 +463,7 @@ export function AppShell() {
           {ekran === 'oyun-bankasi' && (
             <OyunBankasiEkrani
               banka={oyunBankasi}
+              bildir={hataBildirimi}
               onTurBaslat={(oyun) => {
                 // Turu Oyunlar sekmesi çiziyor; oyun katmanı tam ekran açıldığı
                 // için arkada hangi sekmenin durduğu görünmüyor, ama turdan
@@ -545,6 +553,7 @@ export function AppShell() {
               onBankayaGit={() => setEkran('oyun-bankasi')}
               bankaTuru={bankaTuru}
               onBankaTuruBitti={() => setBankaTuru(null)}
+              bildir={hataBildirimi}
             />
           )}
           {sekme === 'daha' && <KartMenusu onKartAc={setEkran} />}
@@ -555,6 +564,7 @@ export function AppShell() {
               setKayitliSablonlar={setSablonlar}
               ayarlar={ayarlar}
               setAyarlar={setAyarlar}
+              bekleyenBildirim={bekleyenSayisi(hataBildirimi.bildirimler)}
               pomodoroAyar={pomodoroAyar}
               setPomodoroAyar={setPomodoroAyar}
               yedeklenecek={{

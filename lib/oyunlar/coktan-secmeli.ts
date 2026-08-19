@@ -74,6 +74,10 @@ export function siklariKur<T>(
  *
  * Havuz baştan bir kez karıştırılıp sırayla tüketiliyor; her soruda rastgele
  * çekilseydi aynı soru tur içinde iki kez çıkabilirdi.
+ *
+ * `karistirilsin` yalnızca sıra **dışarıda** kurulduğunda kapatılıyor:
+ * `ritim.ts` boss sorularını belirli konumlara yerleştiriyor, burada yeniden
+ * karıştırmak o yerleşimi bozardı.
  */
 export function turHazirla<S, T>(
   havuz: readonly S[],
@@ -82,8 +86,10 @@ export function turHazirla<S, T>(
   ad: (deger: T) => string,
   rastgele: () => number = Math.random,
   celdiriciUygunMu?: (aday: T, dogru: T) => boolean,
+  karistirilsin = true,
 ): CoktanSecmeliSoru<S, T>[] {
-  return karistir(havuz, rastgele).map((soru) => ({
+  const sira = karistirilsin ? karistir(havuz, rastgele) : havuz
+  return sira.map((soru) => ({
     soru,
     siklar: siklariKur(dogruyuAl(soru), tumSecenekler, ad, rastgele, celdiriciUygunMu),
   }))

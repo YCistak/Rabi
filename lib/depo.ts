@@ -19,7 +19,6 @@ import type {
   YanlisSoru,
   Yedek,
 } from './types'
-import { TUR_SURESI } from './oyunlar/tur'
 import {
   BANKA_SINIRI,
   DUSME_ESIGI,
@@ -60,6 +59,33 @@ export const ANAHTARLAR = {
   islemSecimi: 'rabi-islem-secimi',
   /** Yazım Ustası'nda seçili soru türleri (yazım / noktalama). */
   yazimSecimi: 'rabi-yazim-secimi',
+  /** Bölünebilme Kuralları'nda seçili bölenler. */
+  bolenSecimi: 'rabi-bolen-secimi',
+  /**
+   * Mini oyunlarda seçili zorluk — oyun başına ayrı.
+   *
+   * Tek bir ortak anahtar olsaydı edebiyatta kolayda kalmak isteyen biri sesi
+   * de kolaya düşürürdü; seviyeler oyundan oyuna gerçekten farklı.
+   */
+  zorlukYazim: 'rabi-zorluk-yazim',
+  zorlukSes: 'rabi-zorluk-ses',
+  zorlukOge: 'rabi-zorluk-oge',
+  zorlukSoz: 'rabi-zorluk-soz',
+  zorlukEdebiyat: 'rabi-zorluk-edebiyat',
+  zorlukIslem: 'rabi-zorluk-islem',
+  zorlukBolunme: 'rabi-zorluk-bolunme',
+  zorlukAci: 'rabi-zorluk-aci',
+  zorlukUcgen: 'rabi-zorluk-ucgen',
+  /**
+   * Bildirilen hatalı sorular — gönderim kuyruğu.
+   *
+   * Yedeğe **girmiyor**: yedek başka bir cihaza yüklenseydi aynı bildirimler
+   * ikinci bir cihaz numarasıyla yeniden gönderilir, tabloda kopya satırlar
+   * açardı.
+   */
+  hataBildirimleri: 'rabi-hata-bildirimleri',
+  /** Bildirimleri gruplamaya yarayan anonim cihaz numarası; yedeğe girmiyor. */
+  cihazKimligi: 'rabi-cihaz-kimligi',
   ayarlar: 'rabi-ayarlar',
   tema: 'rabi-tema',
   sonBildirim: 'rabi-son-bildirim',
@@ -110,6 +136,7 @@ export const VARSAYILAN_AYARLAR: Ayarlar = {
   hatirlatmaSaati: 20,
   hatirlatmaDakikasi: 0,
   bildirimAcik: false,
+  hataBildirimiAcik: true,
   oyunSesi: true,
   oyunMuzigi: true,
   oyunMuzikTuru: 'arcade',
@@ -123,6 +150,15 @@ export const VARSAYILAN_AYARLAR: Ayarlar = {
  * kayıt iki aydan uzunu kapsıyor. Sınırsız büyütmenin tek etkisi localStorage
  * kotasını yemek olurdu.
  */
+/**
+ * Bir tura yazılabilecek en uzun süre, saniye.
+ *
+ * Tur artık sınırsız: boss'ta elenene kadar sürüyor ve iyi bir oyuncuda
+ * dakikalarca gidebiliyor. Bu sınır turu kısıtlamıyor, yalnızca bozuk ya da
+ * elle kurcalanmış bir kaydın istatistiği uçurmasını engelliyor.
+ */
+export const TUR_EN_UZUN = 3600
+
 export const OYUN_GECMIS_SINIRI = 400
 
 export const VARSAYILAN_POMODORO: PomodoroAyar = {
@@ -359,7 +395,7 @@ function oyunKayitlariniCoz(ham: unknown): OyunKayitlari {
 /**
  * Yedekteki tur geçmişini süzer.
  *
- * Yalnızca tarihi ve oyunu tanınan kayıtlar geçiyor. Süre `TUR_SURESI`ni aşamaz:
+ * Yalnızca tarihi ve oyunu tanınan kayıtlar geçiyor. Süre `TUR_EN_UZUN`u aşamaz:
  * bozuk tek bir kayıt haftalık özette "oyunda 9 saat geçirdin" gibi saçma bir
  * sayıya dönüşürdü.
  */
@@ -370,7 +406,7 @@ function oyunGecmisiniCoz(ham: unknown): OyunTurKaydi[] {
     .map((k) => ({
       tarih: k.tarih as string,
       oyun: k.oyun as OyunId,
-      saniye: Math.min(TUR_SURESI, sayi(k.saniye)),
+      saniye: Math.min(TUR_EN_UZUN, sayi(k.saniye)),
       dogru: sayi(k.dogru),
     }))
     .slice(-OYUN_GECMIS_SINIRI)
@@ -402,6 +438,13 @@ function bankayiCoz(ham: unknown): BankaKaydi[] {
           typeof s.anlam === 'string' &&
           typeof s.sozTuru === 'string' &&
           typeof s.konu === 'string'
+        )
+      if (s.oyun === 'bolunme')
+        return (
+          typeof s.sayi === 'number' &&
+          typeof s.bolen === 'number' &&
+          s.bolen > 1 &&
+          (s.bolunmeTipi === 'kalan' || s.bolunmeTipi === 'bolunur')
         )
       if (s.oyun === 'oge')
         return (

@@ -1,5 +1,6 @@
 import type { OyunId, OyunIstatistigi, OyunKayitlari } from '../types'
-import { TUR_SURESI, YANLIS_CEZASI, istatistigiTamamla } from './tur'
+import { BOSS_ARALIGI, MATEMATIK_TUR_SORUSU, SORU_SURESI } from './ritim'
+import { istatistigiTamamla } from './tur'
 import { HAVUZ_BOYUTU } from './yazim-havuzu'
 import { NOKTALAMA_BOYUTU } from './noktalama-havuzu'
 import { SES_BOYUTU } from './ses-havuzu'
@@ -120,7 +121,8 @@ export const OYUNLAR: OyunTanimi[] = [
       `Önce hangi hatalarla çalışacağını seç: yazım, noktalama ya da ikisi birden. İkisi de seçiliyse sorular sırayla karışık gelir.`,
       `Yazım hatasında kelime iki farklı yazılışıyla gelir; biri doğru, biri yaygın hatadır. Doğrusuna dokun.`,
       `Noktalama hatasında en az iki işaret taşıyan bir cümle gelir ve işaretlerden biri yanlış kullanılmıştır. Şıklardaki iki işaretten yanlış olanına dokun.`,
-      `Turun süresi ${TUR_SURESI} saniye. Doğru cevap süreyi uzatmaz, ${YANLIS_CEZASI} saniyeyi yanlış cevap götürür — emin değilsen okumadan dokunma.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.yazim} saniye. Süre dolarsa soru yanlış sayılır ve sıradakine geçilir.`,
+      `Tur sınırsız: ${BOSS_ARALIGI} soruda bir **boss** gelir, seçtiğin seviyenin bir üstünden. Ekran kızarır, süre uzar ama hakkın tektir — orada yanılırsan tur biter.`,
       `Havuzda ${HAVUZ_BOYUTU} yazım, ${NOKTALAMA_BOYUTU} noktalama sorusu var: TDK Yazım Kılavuzu'ndan ve ÖSYM'nin sık sorduğu başlıklardan derlendi.`,
       `Tur bitince yanlış bildiklerin kuralıyla birlikte listelenir — asıl öğrenme orada.`,
     ],
@@ -132,9 +134,10 @@ export const OYUNLAR: OyunTanimi[] = [
     kisaAciklama: 'Sözcükteki ses olayını bul',
     ikon: '🔤',
     nasilOynanir: [
-      `Ekrana bir sözcük ve nasıl oluştuğu gelir (**kitabı** · kitap + ı). Dört şıktan hangi ses olayının yaşandığını seçersin.`,
-      `Turun süresi ${TUR_SURESI} saniye. Doğru cevap süreyi uzatmaz, ${YANLIS_CEZASI} saniyeyi yanlış cevap götürür.`,
-      `Oluşum satırı ipucu değil, sorunun parçası: kökünü bilmeden *hakkı* sözcüğünde ünsüz türemesiyle yumuşamayı ayıramazsın.`,
+      `Ekrana tek bir sözcük gelir (**kitabı**). Dört şıktan hangi ses olayının yaşandığını seçersin.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.ses} saniye. Süre dolarsa soru yanlış sayılır ve sıradakine geçilir.`,
+      `Tur sınırsız: ${BOSS_ARALIGI} soruda bir **boss** gelir, seçtiğin seviyenin bir üstünden. Ekran kızarır, süre uzar ama hakkın tektir — orada yanılırsan tur biter.`,
+      `Şaşırınca kökü bul: *kitabı* → **kitap + ı**. Olayı gösteren şey kökle sözcük arasındaki fark — kök cevabı verdiği için soruda gösterilmiyor, cevabından sonra çıkıyor.`,
       `Havuzda ${SES_BOYUTU} sözcük var ve her biri **tek** bir ses olayı içeriyor — iki olayın birden görüldüğü sözcükler bilerek alınmadı.`,
       `Tur bitince yanlış bildiklerin kuralıyla listelenir — asıl öğrenme orada.`,
     ],
@@ -147,7 +150,8 @@ export const OYUNLAR: OyunTanimi[] = [
     ikon: '🧩',
     nasilOynanir: [
       `Ekrana bir cümle gelir ve bir bölümü vurgulanır. Dört şıktan o bölümün hangi öge olduğunu seçersin.`,
-      `Turun süresi ${TUR_SURESI} saniye. Doğru cevap süreyi uzatmaz, ${YANLIS_CEZASI} saniyeyi yanlış cevap götürür.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.oge} saniye. Süre dolarsa soru yanlış sayılır ve sıradakine geçilir.`,
+      `Tur sınırsız: ${BOSS_ARALIGI} soruda bir **boss** gelir, seçtiğin seviyenin bir üstünden. Ekran kızarır, süre uzar ama hakkın tektir — orada yanılırsan tur biter.`,
       `Şaşırınca önce yüklemi bul, sonra ona soruyu sor: “kim” özneyi, “neyi” belirtili nesneyi, “nereye” dolaylı tümleci verir.`,
       `Havuzda ${OGE_BOYUTU} cümle var. Aynı cümle farklı ögesi sorularak tekrar çıkabilir — ögeyi cümleden bağımsız düşünmen için.`,
       `Edat tümleci şıklarda yok: güncel müfredat onu ayrı öge saymıyor, olsaydı bazı cümlelerde iki cevap birden doğru olurdu.`,
@@ -161,10 +165,26 @@ export const OYUNLAR: OyunTanimi[] = [
     ikon: '💬',
     nasilOynanir: [
       `Ekrana bir deyim ya da atasözü gelir; dört şıktan anlamını seçersin. Hangisi olduğu üstte yazıyor.`,
-      `Turun süresi ${TUR_SURESI} saniye. Doğru cevap süreyi uzatmaz, ${YANLIS_CEZASI} saniyeyi yanlış cevap götürür.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.soz} saniye. Süre dolarsa soru yanlış sayılır ve sıradakine geçilir.`,
+      `Tur sınırsız: ${BOSS_ARALIGI} soruda bir **boss** gelir, seçtiğin seviyenin bir üstünden. Ekran kızarır, süre uzar ama hakkın tektir — orada yanılırsan tur biter.`,
       `Şıklar başka sözlerin anlamlarından geliyor ama hepsi **farklı konudan** seçiliyor — iki eşanlamlı deyim aynı soruda karşılaşmıyor.`,
       `Havuzda ${SOZ_BOYUTU} söz var: TDK Atasözleri ve Deyimler Sözlüğü'nden, ÖSYM'nin sık sorduklarından derlendi.`,
       `Tur bitince yanlış bildiklerin, deyim ile atasözünün farkıyla birlikte listelenir.`,
+    ],
+  },
+  {
+    id: 'bolunme',
+    ders: 'matematik',
+    ad: 'Bölünebilme',
+    kisaAciklama: 'Bölünür mü, kalan kaç?',
+    ikon: '➗',
+    nasilOynanir: [
+      `Ekrana dört ya da beş basamaklı bir sayı gelir. Soru iki türlü olabilir: **kalan kaç** (tuş takımından yazarsın) ya da **bölünür mü** (Evet / Hayır).`,
+      `Bölenler 2'den 10'a kadar, ikisi de dahil. Tanıtımda hangilerinin geleceğini seçebilirsin — sadece 7 ve 8 açıp onlara çalışabilirsin.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.bolunme} saniye. Süre dolarsa soru yanlış sayılır ve sıradakine geçilir. Tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
+      `Sayılar rastgele değil, **cevaba göre** üretiliyor: her bölende Evet ile Hayır yarı yarıya. Hep "hayır" diyerek tur kazanılmıyor.`,
+      `Kalan sorusu 6 ve 7'de sorulmuyor: onların kuralı sayının bölünüp bölünmediğini söylüyor ama kalanı vermiyor. Diğer yedi bölende kural kalanı da veriyor.`,
+      `Tur bitince yanlışların, kuralın o sayıdaki karşılığıyla listelenir — "son üç hane 536" gibi.`,
     ],
   },
   {
@@ -176,7 +196,7 @@ export const OYUNLAR: OyunTanimi[] = [
     nasilOynanir: [
       `Önce hangi işlemlerle çalışacağını seç — hepsi ya da yalnızca zorlandıkların.`,
       `Ekranda bir işlem çıkar, sonucu alttaki tuş takımıyla yazıp onaylarsın.`,
-      `Turun süresi ${TUR_SURESI} saniye. Doğru cevap süreyi uzatmaz, ${YANLIS_CEZASI} saniyeyi yanlış cevap götürür. Takıldığında “pas geç” de aynı cezayı verir.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.islem} saniye. Süre dolarsa soru yanlış sayılır ve sıradakine geçilir. Tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
       `Bütün sonuçlar tam sayı ve eksi değil; bölmede kalan çıkmaz, kök hep tam çıkar.`,
       `Sorular her turda yeniden üretilir — ezberlenecek bir liste yok.`,
     ],
@@ -192,7 +212,7 @@ export const OYUNLAR: OyunTanimi[] = [
       `Ekrana ya paralel iki doğruyu kesen bir doğru ya da bir üçgen gelir; aranan açı şekilde "x" ile gösterilir. Kaç derece olduğunu tuş takımıyla yazarsın.`,
       `Şekiller ölçekli: yayın açıklığı gerçekten yazan açı kadar, üçgenin köşeleri gerçekten o açılarda. Takıldığında şekle bakmak işe yarar.`,
       `Kurallar dönüşümlü gelir: Z (iç ters açılar eşit), U (aynı yandaki iç açılar 180°), M (ortadaki açı yanlardakilerin toplamı), üçgende iç açılar toplamı, dış açı ve ikizkenar üçgen.`,
-      `Turun süresi ${TUR_SURESI} saniye. Doğru cevap süreyi uzatmaz, ${YANLIS_CEZASI} saniyeyi yanlış cevap götürür — “pas geç” de aynı cezayı verir.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.aci} saniye. Süre dolarsa soru yanlış sayılır ve sıradakine geçilir. Tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
       `Sorular her turda yeniden üretilir; ezberlenecek bir liste yok.`,
       `Tur bitince yanlış bildiklerin kuralıyla birlikte listelenir — asıl öğrenme orada.`,
     ],
@@ -208,7 +228,7 @@ export const OYUNLAR: OyunTanimi[] = [
       `Ekrana bir dik üçgen gelir; iki kenarı yazılıdır, üçüncüsünde “x” durur. İki şıktan doğru uzunluğa dokunursun.`,
       `Üç aile dönüşümlü gelir: Pisagor üçlüleri (3-4-5, 5-12-13, 8-15-17, 7-24-25 ve katları), 30-60-90 (a, a√3, 2a) ve ikizkenar dik üçgen 45-45-90 (a, a, a√2).`,
       `Kenarlar ölçekli çizilir, açılar da şekilde yazar — hangi ailede olduğunu şekilden tanıman yeterli, hesap yapman gerekmez.`,
-      `Turun süresi ${TUR_SURESI} saniye. Doğru cevap süreyi uzatmaz, ${YANLIS_CEZASI} saniyeyi yanlış cevap götürür.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.ucgen} saniye. Süre dolarsa soru yanlış sayılır ve sıradakine geçilir. Tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
       `Yanlış şık rastgele değil: iki dik kenarı toplamak ya da hipotenüsten çıkarmak gibi en sık yapılan hatanın sonucu.`,
       `Tur bitince yanlış bildiklerin oranıyla birlikte listelenir.`,
     ],
@@ -222,7 +242,8 @@ export const OYUNLAR: OyunTanimi[] = [
     nasilOynanir: [
       `Üstte altı eser, altta altı yazar. Bir esere, sonra yazarına dokun — sıra fark etmez.`,
       `Doğru eşleşen çift yeşile döner ve yerinde kalır. Altısı da bitince yeni altılı gelir.`,
-      `Turun süresi ${TUR_SURESI} saniye. Yanlış eşleştirme ${YANLIS_CEZASI} saniye götürür.`,
+      `Her elin kendi süresi var: ${SORU_SURESI.edebiyat} saniye. Süre dolarsa eşleştirilmemiş eserler yanlış sayılır.`,
+      `Her ${BOSS_ARALIGI} eşleştirmede bir **boss eli** gelir: bir üst seviyeden kurulur, ekran kızarır ve tek yanlışta tur biter.`,
       `Eller mümkün oldukça tek dönemden kurulur — aynı dönemden altı isim, çağrışımla değil bilerek eşleştirmeyi gerektirir.`,
       `Havuzda ${EDEBIYAT_BOYUTU} eser var: ÖSYM'nin AYT Edebiyat'ta en sık sorduğu eser–yazar eşleştirmeleri.`,
     ],

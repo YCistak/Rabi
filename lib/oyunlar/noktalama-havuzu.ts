@@ -67,6 +67,8 @@ export const ISARET_ADI: Record<NoktalamaIsareti, string> = {
   parantez: 'parantez',
 }
 
+import type { Zorluk } from './ritim'
+
 export type NoktalamaKurali =
   | 've-virgul'
   | 'sirali-virgul'
@@ -107,11 +109,20 @@ export type NoktalamaSorusu = {
   /** Cümlede doğru kullanılmış bir işaret: çeldirici şık. */
   dogruIsaret: NoktalamaIsareti
   kural: NoktalamaKurali
+  /**
+   * Zorluk — kuralın kendisinden geliyor.
+   *
+   * Noktalamada soruyu zorlaştıran şey cümle değil kural: "ve"den önce virgül
+   * konmaz herkesin bildiği hata, "soru eki var ama cümle soru değil" ise
+   * ÖSYM'nin klasik tuzağı. O yüzden burada tek tek istisna yok.
+   */
+  zorluk: Zorluk
 }
 
 /** Satırları tek kurala bağlar — havuzu okunur tutmak için. */
 function grup(
   kural: NoktalamaKurali,
+  zorluk: Zorluk,
   satirlar: [string, string, NoktalamaIsareti, NoktalamaIsareti][],
 ): NoktalamaSorusu[] {
   return satirlar.map(([cumle, duzeltme, yanlisIsaret, dogruIsaret]) => ({
@@ -120,6 +131,7 @@ function grup(
     yanlisIsaret,
     dogruIsaret,
     kural,
+    zorluk,
   }))
 }
 
@@ -127,7 +139,7 @@ export const NOKTALAMA_HAVUZU: NoktalamaSorusu[] = [
   // -------------------------------------------------------------------------
   // “ve, veya, ile” bağlaçlarından önce virgül — en sık yapılan hata
   // -------------------------------------------------------------------------
-  ...grup('ve-virgul', [
+  ...grup('ve-virgul', 'kolay', [
     [
       'Ali, ve Ayşe sabah erkenden yola çıktı.',
       'Ali ve Ayşe sabah erkenden yola çıktı.',
@@ -163,7 +175,7 @@ export const NOKTALAMA_HAVUZU: NoktalamaSorusu[] = [
   // -------------------------------------------------------------------------
   // Eş görevli kelimeler arasında virgül
   // -------------------------------------------------------------------------
-  ...grup('sirali-virgul', [
+  ...grup('sirali-virgul', 'orta', [
     [
       'Sepette elma; armut ve üzüm vardı.',
       'Sepette elma, armut ve üzüm vardı.',
@@ -187,7 +199,7 @@ export const NOKTALAMA_HAVUZU: NoktalamaSorusu[] = [
   // -------------------------------------------------------------------------
   // Soru anlamı olmayan cümlede soru işareti — ÖSYM'nin klasiği
   // -------------------------------------------------------------------------
-  ...grup('soru-anlami', [
+  ...grup('soru-anlami', 'zor', [
     [
       'Ayşe’nin sınava nasıl hazırlandığını bilmiyorum?',
       'Ayşe’nin sınava nasıl hazırlandığını bilmiyorum.',
@@ -247,7 +259,7 @@ export const NOKTALAMA_HAVUZU: NoktalamaSorusu[] = [
   // -------------------------------------------------------------------------
   // Soru cümlesinin sonunda nokta
   // -------------------------------------------------------------------------
-  ...grup('soru-cumlesi', [
+  ...grup('soru-cumlesi', 'kolay', [
     [
       'Ayşe’nin sınavı ne zaman başlıyor.',
       'Ayşe’nin sınavı ne zaman başlıyor?',
@@ -278,7 +290,7 @@ export const NOKTALAMA_HAVUZU: NoktalamaSorusu[] = [
   // -------------------------------------------------------------------------
   // Saat ile dakika arasında nokta
   // -------------------------------------------------------------------------
-  ...grup('saat-nokta', [
+  ...grup('saat-nokta', 'orta', [
     [
       'Tren istasyondan tam 09:45’te kalkacak.',
       'Tren istasyondan tam 09.45’te kalkacak.',
@@ -302,7 +314,7 @@ export const NOKTALAMA_HAVUZU: NoktalamaSorusu[] = [
   // -------------------------------------------------------------------------
   // Açıklama ve örnek öncesinde iki nokta
   // -------------------------------------------------------------------------
-  ...grup('iki-nokta-aciklama', [
+  ...grup('iki-nokta-aciklama', 'orta', [
     [
       'Çantamda şunlar vardı; kalem, silgi ve defter.',
       'Çantamda şunlar vardı: kalem, silgi ve defter.',
@@ -320,7 +332,7 @@ export const NOKTALAMA_HAVUZU: NoktalamaSorusu[] = [
   // -------------------------------------------------------------------------
   // Kesme işareti — yapım eki ve sonrasındaki ekler ayrılmaz
   // -------------------------------------------------------------------------
-  ...grup('kesme-yapim-eki', [
+  ...grup('kesme-yapim-eki', 'zor', [
     [
       'Ankara’lı arkadaşım yarın bize gelecek.',
       'Ankaralı arkadaşım yarın bize gelecek.',
@@ -345,7 +357,7 @@ export const NOKTALAMA_HAVUZU: NoktalamaSorusu[] = [
   // -------------------------------------------------------------------------
   // Kesme işareti — çokluk eki ayrılmaz
   // -------------------------------------------------------------------------
-  ...grup('kesme-cokluk', [
+  ...grup('kesme-cokluk', 'zor', [
     ['Ali’ler bu akşam bize gelecek.', 'Aliler bu akşam bize gelecek.', 'kesme', 'nokta'],
     [
       'Kitabı Ahmet’lerde unutmuşum, yarın alırım.',
@@ -358,7 +370,7 @@ export const NOKTALAMA_HAVUZU: NoktalamaSorusu[] = [
   // -------------------------------------------------------------------------
   // Hitap ve seslenmeden sonra virgül
   // -------------------------------------------------------------------------
-  ...grup('hitap-virgul', [
+  ...grup('hitap-virgul', 'kolay', [
     [
       'Aman Allah’ım; ne kadar da büyümüşsün!',
       'Aman Allah’ım, ne kadar da büyümüşsün!',

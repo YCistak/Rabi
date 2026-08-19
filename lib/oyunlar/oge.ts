@@ -29,6 +29,7 @@ export function cumleMetni(soru: OgeSorusu): string {
 export function turHazirla(
   havuz: readonly OgeSorusu[] = OGE_HAVUZU,
   rastgele: () => number = Math.random,
+  karistirilsin = true,
 ): OgeOyunSorusu[] {
-  return coktanSecmeliTur(havuz, (s) => s.tur, OGE_TURLERI, (t) => OGE_ADI[t], rastgele)
+  return coktanSecmeliTur(havuz, (s) => s.tur, OGE_TURLERI, (t) => OGE_ADI[t], rastgele, undefined, karistirilsin)
 }

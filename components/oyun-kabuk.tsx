@@ -2,10 +2,12 @@
 
 import { Check, HelpCircle, Trophy, X } from 'lucide-react'
 import type { OyunId } from '@/lib/types'
-import { TUR_SURESI, YANLIS_CEZASI, sureOrani } from '@/lib/oyunlar/tur'
+import { sureOrani } from '@/lib/oyunlar/tur'
 import { cn } from '@/lib/utils'
 import { Halka } from '@/components/ui'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
+import { BildirimDugmesi, type BildirimKolu } from '@/components/hata-bildir'
+import type { BankaSorusu } from '@/lib/oyunlar/banka'
 
 /**
  * Bütün mini oyunların ortak çerçevesi: kapatma, başlık, süre halkası, süre
@@ -59,6 +61,14 @@ const AILE: Record<
     kenar: 'border-l-yzm-koyu',
     degisken: 'var(--yzm-koyu)',
   },
+  // Matematik dersinin oyunları İşlem'le aynı aileyi paylaşıyor.
+  bolunme: {
+    zemin: 'bg-isl',
+    yazi: 'text-isl-koyu',
+    dolgu: 'bg-isl-koyu',
+    kenar: 'border-l-isl-koyu',
+    degisken: 'var(--isl-koyu)',
+  },
   islem: {
     zemin: 'bg-isl',
     yazi: 'text-isl-koyu',
@@ -96,14 +106,23 @@ export const EN_COK_YANLIS = 5
 export type SayacBilgisi = {
   /** Kalan saniye. */
   kalan: number
+  /**
+   * Bu sorunun toplam süresi.
+   *
+   * Halkanın ve çubuğun doluluğu buna göre. Sabit tur süresi yerine soru
+   * süresi kullanılıyor: boss'un süresi uzun, halka yine dolu başlamalı.
+   */
+  toplam: number
+  /** Kaçıncı soru — boss uyarısında görünüyor. */
+  sira: number
+  /** Bu soru boss mu: eleyici olan, ekranın rengini değiştiren. */
+  boss: boolean
   /** Şu anki ardışık doğru sayısı. */
   seri: number
   dogru: number
   yanlis: number
   enIyiSeri: number
   rekor: number
-  /** Az önce yanlış yapıldı mı — süreden düşen 3 saniye görünsün diye. */
-  cezaGorunur?: boolean
 }
 
 export function OyunKabugu({
@@ -125,7 +144,15 @@ export function OyunKabugu({
   const aile = AILE[oyunId]
 
   return (
-    <div className={cn('fixed inset-0 z-50 flex flex-col', aile.zemin)}>
+    <div
+      className={cn(
+        'fixed inset-0 z-50 flex flex-col transition-colors duration-300',
+        // Boss'ta ekranın zemini oyunun kendi pastelinden çıkıp kırmızıya
+        // dönüyor. Ayrı bir ekran açmak yerine aynı ekranın rengini
+        // değiştirmek, sorunun akışını kesmeden gerginliği taşıyor.
+        sayac?.boss ? 'bg-ikincil-soft' : aile.zemin,
+      )}
+    >
       <div className="guvenli-alt mx-auto flex w-full max-w-md flex-1 flex-col overflow-y-auto px-4 pb-3 pt-[calc(0.9rem+var(--guvenli-ust))]">
         <div className="flex flex-none items-center gap-2">
           <YuvarlakDugme etiket="Oyundan çık" onClick={onCik}>
@@ -145,7 +172,14 @@ export function OyunKabugu({
 
           {/* Seri rozeti sağda: yerini hep koruyor, yoksa başlık her doğru
               cevapta yana kayardı. */}
-          <SeriRozeti seri={sayac?.seri ?? 0} gorunur={sayac !== null} />
+          {sayac?.boss ? (
+            <span className="rakam flex h-[30px] shrink-0 items-center gap-1 rounded-full bg-danger px-2.5 text-[12.5px] font-extrabold text-white">
+              <span aria-hidden>⚔️</span>
+              {sayac.sira}
+            </span>
+          ) : (
+            <SeriRozeti seri={sayac?.seri ?? 0} gorunur={sayac !== null} />
+          )}
         </div>
 
         {sayac && (
@@ -153,14 +187,14 @@ export function OyunKabugu({
             <div className="relative mt-4 flex flex-none items-center gap-3">
               <Halka
                 deger={sayac.kalan}
-                hedef={TUR_SURESI}
+                hedef={sayac.toplam}
                 boyut={54}
                 kalinlik={5}
-                renk={sureRengi(sayac.kalan)}
+                renk={sureRengi(sayac.kalan, sayac.toplam, sayac.boss)}
               >
                 <span
                   className="rakam font-display text-[17px] font-extrabold"
-                  style={{ color: sureRengi(sayac.kalan) }}
+                  style={{ color: sureRengi(sayac.kalan, sayac.toplam, sayac.boss) }}
                 >
                   {sayac.kalan}
                 </span>
@@ -170,17 +204,17 @@ export function OyunKabugu({
                 <div
                   className="h-full rounded-full transition-[width] duration-200"
                   style={{
-                    width: `${sureOrani(sayac.kalan) * 100}%`,
-                    background: sureRengi(sayac.kalan),
+                    width: `${sureOrani(sayac.kalan, sayac.toplam) * 100}%`,
+                    background: sureRengi(sayac.kalan, sayac.toplam, sayac.boss),
                   }}
                 />
               </div>
 
-              {/* Yanlışta süreden düşen 3 saniye. Rabi'nin tek cezası bu;
-                  görünmezse kullanıcı sürenin neden hızlı bittiğini anlamıyor. */}
-              {sayac.cezaGorunur && (
-                <span className="rakam absolute -top-3 left-[66px] rounded-full bg-ikincil px-2.5 py-0.5 text-[12.5px] font-black text-white">
-                  −{YANLIS_CEZASI} sn
+              {/* Boss rozeti süre çubuğunun üstünde: gözün zaten baktığı yer
+                  burası, uyarı da oradan çıkıyor. */}
+              {sayac.boss && (
+                <span className="absolute -top-3 left-[66px] rounded-full bg-danger px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wide text-white">
+                  Boss · elenirsin
                 </span>
               )}
             </div>
@@ -207,9 +241,15 @@ export function OyunKabugu({
  * burada durum bildiriyor — oyunun ailesi zaten ekranın zemininde duruyor,
  * halkayı da aileye boyamak "az kaldı" uyarısını yutardı.
  */
-function sureRengi(kalan: number): string {
-  if (kalan <= 10) return 'var(--danger)'
-  if (kalan <= 20) return 'var(--ikincil)'
+function sureRengi(kalan: number, toplam: number, boss = false): string {
+  // Boss'ta renk bilgi taşımıyor, gerginlik taşıyor: baştan sona kırmızı.
+  if (boss) return 'var(--danger)'
+  // Eşikler orana bağlı, saniyeye değil: soru süreleri oyundan oyuna değişiyor
+  // (sözelde 12, üçgende 22) ve sabit "10 saniye kaldı" eşiği birinde turun
+  // yarısı, ötekinde sonu demek olurdu.
+  const oran = toplam > 0 ? kalan / toplam : 0
+  if (oran <= 0.25) return 'var(--danger)'
+  if (oran <= 0.5) return 'var(--ikincil)'
   return 'var(--success)'
 }
 
@@ -359,6 +399,7 @@ export function TurSonu({
   rekor,
   yeniRekor,
   bankaTuru,
+  elendi,
   altBaslik,
   bolumBasligi,
   bolumAltYazisi,
@@ -375,6 +416,13 @@ export function TurSonu({
   yeniRekor: boolean
   /** Banka turunda rekor ve istatistik yazılmıyor; ekran bunu söylüyor. */
   bankaTuru: boolean
+  /**
+   * Tur boss'ta elenerek mi bitti.
+   *
+   * Başlığı değiştiriyor: "Süre bitti" artık doğru değil — tur sonsuzdu, onu
+   * bitiren şey boss'ta yanılmaktı ve oyuncunun bunu net görmesi gerekiyor.
+   */
+  elendi?: boolean
   altBaslik: string
   bolumBasligi: string
   bolumAltYazisi: string
@@ -387,7 +435,7 @@ export function TurSonu({
 
   const maskot: MaskotDurumu = yeniRekor
     ? 'kutlama'
-    : dogru === 0
+    : elendi || dogru === 0
       ? 'uzgun'
       : yanlis === 0
         ? 'mutlu'
@@ -399,7 +447,9 @@ export function TurSonu({
         <Rabi durum={maskot} boyut={52} />
         <div className="min-w-0">
           <h2 className="font-display text-xl font-extrabold tracking-tight">
-            {yeniRekor ? 'Yeni rekor!' : 'Süre bitti'}
+            {/* Eleme rekorun önünde: oyuncunun ilk sorusu "tur neden bitti".
+                Rekor zaten hemen altındaki rozette duruyor. */}
+            {elendi ? 'Boss’a takıldın' : yeniRekor ? 'Yeni rekor!' : 'Tur bitti'}
           </h2>
           <p className="mt-0.5 text-[12.5px] font-semibold text-muted-foreground">{altBaslik}</p>
         </div>
@@ -510,12 +560,22 @@ function Kutu({ deger, etiket, renk }: { deger: number; etiket: string; renk?: s
   )
 }
 
-/** Tur sonundaki tek yanlış kartı; sol kenarı oyunun rengiyle çizgili. */
+/**
+ * Tur sonundaki tek yanlış kartı; sol kenarı oyunun rengiyle çizgili.
+ *
+ * `soru` ve `bildir` birlikte verilirse altına "Bu soru hatalı" düğmesi
+ * geliyor. Yeri burası: kullanıcı tam da az önce yanlış sayılan soruya bakıyor,
+ * "ama bu doğruydu" diyeceği an bu an — ve süre işlemiyor.
+ */
 export function YanlisKarti({
   oyunId,
+  soru,
+  bildir,
   children,
 }: {
   oyunId: OyunId
+  soru?: BankaSorusu
+  bildir?: BildirimKolu
   children: React.ReactNode
 }) {
   return (
@@ -526,6 +586,7 @@ export function YanlisKarti({
       )}
     >
       {children}
+      {soru && bildir && <BildirimDugmesi soru={soru} kol={bildir} />}
     </div>
   )
 }
