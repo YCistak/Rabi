@@ -1,7 +1,24 @@
 import { describe, expect, it } from 'vitest'
-import { aciDerece, koseYayi, ortaNokta, yonde, type Nokta, type Sekil } from './sekil'
-import { aciSekli, aciTuruHazirla } from './aci'
+import {
+  aciDerece,
+  koseYayi,
+  noktaCizgiUzakligi,
+  ortaNokta,
+  yonde,
+  type Nokta,
+  type Sekil,
+} from './sekil'
+import { TUM_ACI_SORULARI, aciSekli } from './aci'
 import { ucgenSekli, ucgenTuruHazirla } from './ucgen'
+
+/** Sabit üreteç: üçgen soruları rastgele üretiliyor, tarama tekrarlanabilir olsun. */
+function uretec(tohum: number): () => number {
+  let x = tohum
+  return () => {
+    x = (x * 1103515245 + 12345) % 2147483648
+    return x / 2147483648
+  }
+}
 
 describe('yonde', () => {
   it('0° sağa, 90° yukarı bakar — SVG y ekseni ters olduğu için', () => {
@@ -38,21 +55,6 @@ describe('ortaNokta', () => {
   })
 })
 
-/** Noktanın bir doğru parçasına uzaklığı. */
-function cizgiyeUzaklik(nokta: Nokta, bas: Nokta, son: Nokta): number {
-  const dx = son.x - bas.x
-  const dy = son.y - bas.y
-  const uzunlukKare = dx * dx + dy * dy
-  const oran =
-    uzunlukKare === 0
-      ? 0
-      : Math.max(
-          0,
-          Math.min(1, ((nokta.x - bas.x) * dx + (nokta.y - bas.y) * dy) / uzunlukKare),
-        )
-  return Math.hypot(nokta.x - (bas.x + oran * dx), nokta.y - (bas.y + oran * dy))
-}
-
 /** Şekildeki en yakın etiket–çizgi mesafesi. */
 function enYakinEtiket(sekil: Sekil): number {
   let enYakin = Infinity
@@ -60,7 +62,7 @@ function enYakinEtiket(sekil: Sekil): number {
     if (etiket.tur !== 'yazi') continue
     for (const cizgi of sekil.parcalar) {
       if (cizgi.tur !== 'cizgi') continue
-      enYakin = Math.min(enYakin, cizgiyeUzaklik(etiket.konum, cizgi.bas, cizgi.son))
+      enYakin = Math.min(enYakin, noktaCizgiUzakligi(etiket.konum, cizgi.bas, cizgi.son))
     }
   }
   return enYakin
@@ -73,19 +75,32 @@ function enYakinEtiket(sekil: Sekil): number {
   çizildiği için üçgen tuvale sığmak üzere daralıyor, "80°" yazısı kenarın tam
   üstüne biniyordu. Sayı ile çizgi çakışınca soru okunamaz oluyor, ama hiçbir
   hesap testi bunu yakalamıyor — ölçü tutuyor, şekil okunmuyor.
+
+  İkinci ders, testin kendisiyle ilgili: burası eskiden 500 **rastgele** soru
+  tarıyordu. Açı oyununun 471 kombinasyonundan yalnızca biri (25°-25°-130°)
+  bozuktu; test o yüzden bazen kırmızı bazen yeşil yandı ve gerçek bir kusur
+  "kararsız test" sanıldı. Artık kombinasyonların tamamı taranıyor: kapsam da
+  tam, sonuç da her koşuda aynı.
 */
 describe('etiketler çizgilerin üstüne binmiyor', () => {
   const ESIK = 7
 
-  it('açı şekillerinde', () => {
-    for (const soru of aciTuruHazirla(500)) {
+  it('açı şekillerinin tamamında', () => {
+    for (const soru of TUM_ACI_SORULARI) {
       expect(enYakinEtiket(aciSekli(soru)), JSON.stringify(soru)).toBeGreaterThan(ESIK)
     }
   })
 
+  /*
+    Üçgen oyununda sorular listelenebilir değil (Pisagor üçlüleri katsayılarıyla
+    çarpılıyor), o yüzden burada geniş bir örnekleme var: sabit tohumlarla
+    üretiliyor, dolayısıyla her koşuda aynı sorular taranıyor.
+  */
   it('üçgen şekillerinde', () => {
-    for (const soru of ucgenTuruHazirla(500)) {
-      expect(enYakinEtiket(ucgenSekli(soru)), JSON.stringify(soru)).toBeGreaterThan(ESIK)
+    for (let tohum = 1; tohum <= 40; tohum++) {
+      for (const soru of ucgenTuruHazirla(200, uretec(tohum))) {
+        expect(enYakinEtiket(ucgenSekli(soru)), JSON.stringify(soru)).toBeGreaterThan(ESIK)
+      }
     }
   })
 })

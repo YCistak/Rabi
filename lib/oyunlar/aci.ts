@@ -1,9 +1,10 @@
-import { arasinda, sec } from './tur'
+import { sec } from './tur'
 import {
   TUVAL_GENISLIK,
   TUVAL_YUKSEKLIK,
   aciEtiketi,
   kenarTiki,
+  koseEtiketi,
   koseYayi,
   paralelIsareti,
   yonde,
@@ -222,9 +223,9 @@ function ucgenSekliIcAci(alfa: number, beta: number): Sekil {
       { tur: 'cizgi', bas: a, son: b },
       { tur: 'cizgi', bas: b, son: c },
       { tur: 'cizgi', bas: c, son: a },
-      ...aciEtiketi(a, 0, alfa, `${alfa}°`, false, 22),
-      ...aciEtiketi(b, 180 - beta, 180, `${beta}°`, false, 22),
-      ...aciEtiketi(c, tepe.ilk, tepe.son, 'x', true, 22),
+      ...koseEtiketi(a, b, c, `${alfa}°`, false, 22),
+      ...koseEtiketi(b, c, a, `${beta}°`, false, 22),
+      ...koseEtiketi(c, a, b, 'x', true, 22),
     ],
   }
 }
@@ -244,8 +245,8 @@ function disAciSekli(alfa: number, gama: number): Sekil {
       { tur: 'cizgi', bas: b, son: c },
       { tur: 'cizgi', bas: c, son: a },
       { tur: 'cizgi', bas: b, son: uzanti, sonuk: true },
-      ...aciEtiketi(a, 0, alfa, `${alfa}°`, false, 22),
-      ...aciEtiketi(c, tepe.ilk, tepe.son, `${gama}°`, false, 22),
+      ...koseEtiketi(a, b, c, `${alfa}°`, false, 22),
+      ...koseEtiketi(c, a, b, `${gama}°`, false, 22),
       // Dış açı: uzantı ile kenar arasında, üçgenin dışında kalıyor.
       ...aciEtiketi(b, 0, 180 - beta, 'x', true, 22),
     ],
@@ -272,12 +273,12 @@ function ikizkenarSekli(tabanAcisi: number, aranan: 'taban' | 'tepe'): Sekil {
       kenarTiki(b, c),
       ...(aranan === 'taban'
         ? [
-            ...aciEtiketi(c, tepe.ilk, tepe.son, `${tepeAcisi}°`, false, 22),
-            ...aciEtiketi(a, 0, tabanAcisi, 'x', true, 22),
+            ...koseEtiketi(c, a, b, `${tepeAcisi}°`, false, 22),
+            ...koseEtiketi(a, b, c, 'x', true, 22),
           ]
         : [
-            ...aciEtiketi(a, 0, tabanAcisi, `${tabanAcisi}°`, false, 22),
-            ...aciEtiketi(c, tepe.ilk, tepe.son, 'x', true, 22),
+            ...koseEtiketi(a, b, c, `${tabanAcisi}°`, false, 22),
+            ...koseEtiketi(c, a, b, 'x', true, 22),
           ]),
     ],
   }
@@ -316,43 +317,75 @@ export function aciSekli(soru: AciSorusu): Sekil {
  */
 const TABAN_TOPLAMI = 135
 
-/** Beşin katı açı. Sınavdaki şekiller de yuvarlak değerlerle kuruluyor. */
-function besinKati(enAz: number, enCok: number, r: () => number): number {
-  return arasinda(enAz / 5, enCok / 5, r) * 5
+/** Beşin katı açılar, iki uç dahil. Sınavdaki şekiller de yuvarlak değerlerle kuruluyor. */
+function besinKatlari(enAz: number, enCok: number): number[] {
+  const liste: number[] = []
+  for (let aci = enAz; aci <= enCok; aci += 5) liste.push(aci)
+  return liste
 }
 
-const URETECLER: Record<AciKurali, (r: () => number) => AciSorusu> = {
-  // 90°'ye yakın açılar elenmiyor ama tam 90 alınmıyor: dik kesende Z ile U
-  // aynı sonucu verir, soru kuralı ayırt etmez olurdu.
-  z: (r) => {
-    const a = besinKati(30, 150, r)
-    return soruKur('z', a === 90 ? 95 : a, null)
-  },
-  u: (r) => {
-    const a = besinKati(30, 150, r)
-    return soruKur('u', a === 90 ? 65 : a, null)
-  },
-  m: (r) => soruKur('m', besinKati(20, 70, r), besinKati(20, 70, r)),
-  ucgen: (r) => {
-    const a = besinKati(25, 105, r)
+/**
+ * Bir kuralın üretebileceği **bütün** sorular.
+ *
+ * Üreteç eskiden açıyı yerinde rastgele seçiyordu; liste hâline getirilmesinin
+ * sebebi test: şeklin okunur olduğu ancak bütün kombinasyonlar taranarak
+ * doğrulanabiliyor. Rastgele örneklemeyle bozuk tek bir kombinasyon
+ * (25°-25°-130° üçgeninde "x" tabanın üstüne biniyordu) aylarca gözden kaçtı ve
+ * testi ara sıra kırılan bir teste çevirdi. Liste toplam birkaç yüz soru,
+ * hepsini taramak milisaniye sürüyor.
+ */
+export function kuralinSorulari(kural: AciKurali): AciSorusu[] {
+  switch (kural) {
+    // Tam 90 alınmıyor: dik kesende Z ile U aynı sonucu verir, soru kuralı
+    // ayırt etmez olurdu.
+    case 'z':
+      return besinKatlari(30, 150)
+        .filter((a) => a !== 90)
+        .map((a) => soruKur('z', a, null))
+    case 'u':
+      return besinKatlari(30, 150)
+        .filter((a) => a !== 90)
+        .map((a) => soruKur('u', a, null))
+    case 'm':
+      return besinKatlari(20, 70).flatMap((a) =>
+        besinKatlari(20, 70).map((b) => soruKur('m', a, b)),
+      )
     // İki taban açısının toplamı sınırlı: ikisi de büyük olduğunda üçgen uzayıp
     // inceliyor, tuvale sığması için de daralıyor ve açılar okunmaz oluyor.
-    const b = besinKati(25, Math.min(105, TABAN_TOPLAMI - a), r)
-    return soruKur('ucgen', a, b)
-  },
-  disaci: (r) => {
-    const a = besinKati(25, 85, r)
+    case 'ucgen':
+      return besinKatlari(25, 105).flatMap((a) =>
+        besinKatlari(25, Math.min(105, TABAN_TOPLAMI - a)).map((b) => soruKur('ucgen', a, b)),
+      )
     // Dış açı şeklinde taban açıları alfa ile (180 − alfa − gama); aynı incelme
     // sınırı gamanın alt sınırına dönüşüyor.
-    const b = besinKati(180 - TABAN_TOPLAMI, Math.min(95, 145 - a), r)
-    return soruKur('disaci', a, b)
-  },
-  // Tepe açısı çift seçiliyor: taban açısı (180 − tepe) / 2 tam sayı çıksın diye.
-  // Alt sınır yine incelme yüzünden: 20°lik tepe, tuvale sığmayacak kadar dar
-  // bir üçgen demek.
-  'ikizkenar-taban': (r) => soruKur('ikizkenar-taban', arasinda(5, 12, r) * 10, null),
-  'ikizkenar-tepe': (r) => soruKur('ikizkenar-tepe', besinKati(30, 65, r), null),
+    case 'disaci':
+      return besinKatlari(25, 85).flatMap((a) =>
+        besinKatlari(180 - TABAN_TOPLAMI, Math.min(95, 145 - a)).map((b) =>
+          soruKur('disaci', a, b),
+        ),
+      )
+    // Tepe açısı çift seçiliyor: taban açısı (180 − tepe) / 2 tam sayı çıksın
+    // diye. Alt sınır yine incelme yüzünden: 20°lik tepe, tuvale sığmayacak
+    // kadar dar bir üçgen demek.
+    case 'ikizkenar-taban': {
+      const tepeler: number[] = []
+      for (let tepe = 50; tepe <= 120; tepe += 10) tepeler.push(tepe)
+      return tepeler.map((tepe) => soruKur('ikizkenar-taban', tepe, null))
+    }
+    case 'ikizkenar-tepe':
+      return besinKatlari(30, 65).map((a) => soruKur('ikizkenar-tepe', a, null))
+  }
 }
+
+/** Kural başına hazır liste — her soruda yeniden kurulmasın. */
+const KURAL_SORULARI: Record<AciKurali, AciSorusu[]> = Object.fromEntries(
+  TUM_ACI_KURALLARI.map((kural) => [kural, kuralinSorulari(kural)]),
+) as Record<AciKurali, AciSorusu[]>
+
+/** Oyunun üretebileceği bütün sorular — testler bunun tamamını tarıyor. */
+export const TUM_ACI_SORULARI: AciSorusu[] = TUM_ACI_KURALLARI.flatMap(
+  (kural) => KURAL_SORULARI[kural],
+)
 
 /** Aynı sorunun kaç soru içinde tekrarlanmayacağı. */
 const TEKRAR_PENCERESI = 10
@@ -371,7 +404,9 @@ export function aciTuruHazirla(
   const sonGorulen: string[] = []
 
   for (let deneme = 0; deneme < adet * 20 && sorular.length < adet; deneme++) {
-    const soru = URETECLER[sec(TUM_ACI_KURALLARI, rastgele)](rastgele)
+    // Önce kural, sonra o kuralın soruları arasından biri: kurallar eşit
+    // olasılıkla geliyor, yoksa çok kombinasyonlu üçgen ötekileri bastırırdı.
+    const soru = sec(KURAL_SORULARI[sec(TUM_ACI_KURALLARI, rastgele)], rastgele)
     const kimlik = `${soru.kural}:${soru.a}:${soru.b ?? ''}`
     if (sonGorulen.includes(kimlik)) continue
 
