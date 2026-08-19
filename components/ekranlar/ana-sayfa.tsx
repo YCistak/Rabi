@@ -10,6 +10,7 @@ import { siraYaz } from '@/lib/siralama'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
 import { OYUNLAR } from '@/lib/oyunlar/tanim'
 import { Halka, Kart, Not } from '@/components/ui'
+import { GeriSayim } from '@/components/geri-sayim'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
 
 /** Seride gösterilen gün sayısı. Tasarımda kart "7 günlük seri" diye adlandırılıyor. */
@@ -150,6 +151,10 @@ export function AnaSayfa({
           <ChevronRight size={18} className="shrink-0 text-white/85" aria-hidden />
         </button>
       )}
+
+      {/* YKS geri sayımı — haftalık özet davetinin hemen altında, sayfanın en
+          görünür yerinde. Kalan gün, sayfadaki her sayının bağlamı. */}
+      <GeriSayim tarih={tarih} />
 
       {/* 7 günlük seri */}
       <Kart>

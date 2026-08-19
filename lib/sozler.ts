@@ -5,6 +5,8 @@
  * çoğu yanlış kişiye atfediliyor. Buradakiler ya kaynağı belli ya da anonim/atıfsız
  * cümleler; hiçbiri gerçek bir kişiye asılsız biçimde mal edilmiyor.
  */
+import { tohumlaSec } from './utils'
+
 export type Soz = {
   metin: string
   kaynak?: string
@@ -45,11 +47,5 @@ export const SOZLER: Soz[] = [
  */
 export function sozSec(tohum?: string): Soz {
   if (tohum === undefined) return SOZLER[Math.floor(Math.random() * SOZLER.length)]
-
-  // Basit ve kararlı bir karma (djb2) — kriptografik değil, dağılım için yeterli.
-  let karma = 5381
-  for (let i = 0; i < tohum.length; i++) {
-    karma = (karma * 33) ^ tohum.charCodeAt(i)
-  }
-  return SOZLER[Math.abs(karma) % SOZLER.length]
+  return tohumlaSec(SOZLER, tohum)
 }
