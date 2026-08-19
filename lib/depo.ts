@@ -78,6 +78,10 @@ export const ANAHTARLAR = {
   zorlukUcgen: 'rabi-zorluk-ucgen',
   zorlukAntlasma: 'rabi-zorluk-antlasma',
   zorlukKavram: 'rabi-zorluk-kavram',
+  zorlukAnlatim: 'rabi-zorluk-anlatim',
+  zorlukOrtak: 'rabi-zorluk-ortak',
+  zorlukSiniflandirma: 'rabi-zorluk-siniflandirma',
+  zorlukHucre: 'rabi-zorluk-hucre',
   /**
    * Bildirilen hatalı sorular — gönderim kuyruğu.
    *
@@ -467,6 +471,35 @@ function bankayiCoz(ham: unknown): BankaKaydi[] {
         return typeof s.madde === 'string' && typeof s.antlasma === 'string'
       if (s.oyun === 'kavram')
         return typeof s.kavram === 'string' && typeof s.tanim === 'string'
+      if (s.oyun === 'anlatim')
+        return (
+          typeof s.cumle === 'string' &&
+          typeof s.duzeltme === 'string' &&
+          typeof s.bozuklukTuru === 'string'
+        )
+      // Sayı tam kare olmamalı: olsaydı aralık sorusunun cevabı yok demektir.
+      if (s.oyun === 'koklu')
+        return (
+          typeof s.sayi === 'number' &&
+          s.sayi > 1 &&
+          !Number.isInteger(Math.sqrt(s.sayi))
+        )
+      // Şıklar kayıttan yeniden kuruluyor; eksik çeldirici üç şıklı bir soru
+      // demek olurdu.
+      if (s.oyun === 'ortak' || s.oyun === 'siniflandirma')
+        return (
+          typeof s.biyoloji?.soru === 'string' &&
+          typeof s.biyoloji?.dogru === 'string' &&
+          Array.isArray(s.biyoloji?.celdiriciler) &&
+          s.biyoloji.celdiriciler.length === 3
+        )
+      // İpuçları olmadan kart açılamaz; üçü de yerinde olmalı.
+      if (s.oyun === 'hucre')
+        return (
+          typeof s.hucre?.organel === 'string' &&
+          Array.isArray(s.hucre?.ipuclari) &&
+          s.hucre.ipuclari.length === 3
+        )
       if (s.oyun === 'ucgen')
         return (
           typeof s.ucgen?.tur === 'string' &&

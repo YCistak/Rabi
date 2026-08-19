@@ -45,6 +45,11 @@ const OYUN_RENGI: Record<OyunId, string> = {
   edebiyat: 'bg-edb',
   antlasma: 'bg-trh',
   kavram: 'bg-trh',
+  anlatim: 'bg-yzm',
+  koklu: 'bg-isl',
+  ortak: 'bg-byl',
+  siniflandirma: 'bg-byl',
+  hucre: 'bg-byl',
 }
 
 export function AnaSayfa({

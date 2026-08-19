@@ -21,6 +21,10 @@ android/app/build/
 android/local.properties
 android/.idea/
 
+# Derlenmiş APK'lar — her güncellemede kök dizine bir tane çıkıyor, 20 MB'ın
+# üstündeler ve depoda tutulacak bir şey değiller
+*.apk
+
 # İmza anahtarları ve şifreleri asla depoya girmemeli
 *.jks
 *.keystore

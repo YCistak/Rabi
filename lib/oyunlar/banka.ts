@@ -20,6 +20,10 @@ import { OGE_ADI, type OgeTuru } from './oge-havuzu'
 import type { BolunmeTipi } from './bolunme'
 import type { SozKonusu, SozTuru } from './soz-havuzu'
 import { ucgenCevabi, ucgenKimligi, ucgenOzeti, kenarMetni, type UcgenSorusu } from './ucgen'
+import { BOZUKLUK_ADI, type BozuklukTuru } from './anlatim-havuzu'
+import { altSinir, ustSinir, type KokluSorusu } from './koklu'
+import type { BiyolojiSorusu } from './biyoloji'
+import type { OrganelSorusu } from './hucre-havuzu'
 
 /** Bir kaydın bankadan düşmesi için gereken üst üste doğru sayısı. */
 export const DUSME_ESIGI = 3
@@ -67,6 +71,30 @@ export type BankaSorusu =
   | { oyun: 'ucgen'; ucgen: UcgenSorusu }
   | { oyun: 'antlasma'; madde: string; antlasma: string }
   | { oyun: 'kavram'; kavram: string; tanim: string }
+  | {
+      oyun: 'anlatim'
+      cumle: string
+      duzeltme: string
+      bozuklukTuru: BozuklukTuru
+    }
+  // Cevap saklanmıyor, √sayı'dan hesaplanıyor: kayıtta duran bir aralık
+  // sayıyla çelişebilirdi, türetilen aralık çelişemez.
+  | { oyun: 'koklu'; sayi: number }
+  /**
+   * Biyolojinin iki çoktan seçmeli oyunu tek dalda duruyor.
+   *
+   * Soru şekilleri birebir aynı (soru, doğru, üç çeldirici, açıklama); ayrı
+   * dallar yazılsaydı aynı alanlar iki kez sıralanır ve her yeni alan iki
+   * yerde birden güncellenmeyi beklerdi. Kimlik yine ayrı: banka turu oyuna
+   * göre açıldığı için `oyun` alanı ikisini ayırmaya yetiyor.
+   *
+   * Soru nesnesi olduğu gibi taşınıyor — şıkları yeniden kurmak için hepsi
+   * gerekiyor ve şıklar soruya ait, ortak bir listeden gelmiyor.
+   */
+  | { oyun: 'ortak' | 'siniflandirma'; biyoloji: BiyolojiSorusu }
+  // İpuçları da kayıtta: banka turunda kart yeniden açılıyor ve ipuçları
+  // olmadan oyun oynanamaz.
+  | { oyun: 'hucre'; hucre: OrganelSorusu }
 
 export type BankaKaydi = {
   /** Soru içeriğinden türetilen kimlik; aynı soru iki kez eklenmez. */
@@ -182,6 +210,35 @@ export function kavramdanBanka(es: { kavram: string; tanim: string }): BankaSoru
   return { oyun: 'kavram', kavram: es.kavram, tanim: es.tanim }
 }
 
+export function anlatimdanBanka(soru: {
+  cumle: string
+  duzeltme: string
+  tur: BozuklukTuru
+}): BankaSorusu {
+  return {
+    oyun: 'anlatim',
+    cumle: soru.cumle,
+    duzeltme: soru.duzeltme,
+    bozuklukTuru: soru.tur,
+  }
+}
+
+export function kokludenBanka(soru: KokluSorusu): BankaSorusu {
+  return { oyun: 'koklu', sayi: soru.sayi }
+}
+
+/** Oyun kimliği dışarıdan geliyor: aynı soru şeklini iki oyun paylaşıyor. */
+export function biyolojidenBanka(
+  oyun: 'ortak' | 'siniflandirma',
+  soru: BiyolojiSorusu,
+): BankaSorusu {
+  return { oyun, biyoloji: soru }
+}
+
+export function hucredenBanka(soru: OrganelSorusu): BankaSorusu {
+  return { oyun: 'hucre', hucre: soru }
+}
+
 /**
  * Kayıt kimliği.
  *
@@ -220,6 +277,17 @@ export function bankaKimligi(soru: BankaSorusu): string {
       return `antlasma:${soru.madde}`
     case 'kavram':
       return `kavram:${soru.kavram}`
+    case 'anlatim':
+      return `anlatim:${soru.cumle}`
+    case 'koklu':
+      return `koklu:${soru.sayi}`
+    // İki biyoloji oyunu tek dalda; kimlik oyun adıyla başlıyor ki aynı soru
+    // metni iki oyunda da geçse kayıtlar karışmasın.
+    case 'ortak':
+    case 'siniflandirma':
+      return `${soru.oyun}:${soru.biyoloji.soru}`
+    case 'hucre':
+      return `hucre:${soru.hucre.organel}`
   }
 }
 
@@ -250,6 +318,18 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
       return soru.madde
     case 'kavram':
       return soru.kavram
+    case 'anlatim':
+      return soru.cumle
+    case 'koklu':
+      return `√${soru.sayi}`
+    case 'ortak':
+    case 'siniflandirma':
+      return soru.biyoloji.soru
+    // Üç ipucundan sonuncusu: listede okunacak olan, cevabı en çok anlatan.
+    // İlk ipucu tek başına birkaç organele birden uyduğu için tekrar ederken
+    // hiçbir şey öğretmezdi.
+    case 'hucre':
+      return soru.hucre.ipuclari[soru.hucre.ipuclari.length - 1]
   }
 }
 
@@ -282,6 +362,15 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
       return soru.antlasma
     case 'kavram':
       return soru.tanim
+    case 'anlatim':
+      return BOZUKLUK_ADI[soru.bozuklukTuru]
+    case 'koklu':
+      return `${altSinir(soru)} – ${ustSinir(soru)}`
+    case 'ortak':
+    case 'siniflandirma':
+      return soru.biyoloji.dogru
+    case 'hucre':
+      return soru.hucre.organel
   }
 }
 
@@ -384,6 +473,11 @@ const BOS_DAGILIM: Record<OyunId, number> = {
   ucgen: 0,
   antlasma: 0,
   kavram: 0,
+  anlatim: 0,
+  koklu: 0,
+  ortak: 0,
+  siniflandirma: 0,
+  hucre: 0,
 }
 
 export const OYUN_KIMLIKLERI = Object.keys(BOS_DAGILIM) as OyunId[]

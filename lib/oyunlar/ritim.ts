@@ -79,7 +79,7 @@ export function bossMu(oyun: OyunId, sira: number): boolean {
  * derse uygun kaldığını `ritim.test.ts` denetliyor — matematiğe yeni bir oyun
  * eklenip buraya yazılmazsa test kırılıyor.
  */
-export const BOSSSUZ_OYUNLAR: readonly OyunId[] = ['islem', 'bolunme', 'aci', 'ucgen']
+export const BOSSSUZ_OYUNLAR: readonly OyunId[] = ['islem', 'bolunme', 'aci', 'ucgen', 'koklu']
 
 /** Bu oyunda boss var mı. */
 export function bossluMu(oyun: OyunId): boolean {
@@ -119,6 +119,21 @@ export const SORU_SURESI: Record<OyunId, number> = {
    */
   antlasma: 45,
   kavram: 35,
+  // Anlatım bozukluğunda önce cümleyi okumak, sonra sebebi seçmek gerekiyor;
+  // şıklar da kısa değil. Öge sorusundan iki saniye fazla.
+  anlatim: 16,
+  // Köklü sayıda cevap çubuğu daraltarak veriliyor: düşünmek kadar sürüklemek
+  // de vakit alıyor.
+  koklu: 20,
+  ortak: 14,
+  siniflandirma: 14,
+  /**
+   * Organel Kartı'nın süresi mekaniğin kendisi.
+   *
+   * Üç ipucu süreyi eşit üçe bölüyor (`hucre.ts`): dokuz saniye, ipucu başına
+   * üç saniye demek. Süre değişirse ipucu ritmi de değişir.
+   */
+  hucre: 9,
 }
 
 /** Boss sorusuna verilen ek süre çarpanı. */

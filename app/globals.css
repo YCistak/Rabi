@@ -37,6 +37,9 @@
   --color-trh: var(--trh);
   --color-trh-koyu: var(--trh-koyu);
   --color-trh-ok: var(--trh-ok);
+  --color-byl: var(--byl);
+  --color-byl-koyu: var(--byl-koyu);
+  --color-byl-ok: var(--byl-ok);
 
   /* Tasarımın tek yazı tipi Nunito. Başlık ve gövde ayrı aile değil, ayrı
      kalınlık: gövde 500-600, başlık 800-900. */
@@ -62,7 +65,7 @@
    değil, hafif mavimsi bir kâğıt (#EDF1FD): beyaz kartlar üstünde yüzüyor gibi
    dursun diye. Tek palet — kullanıcıya renk seçtirilmiyor, yalnızca açık/koyu.
 
-   Mini oyunların kendi aileleri var (yzm/isl/edb/trh): her oyunun pastel zemini ve
+   Mini oyunların kendi aileleri var (yzm/isl/edb/trh/byl): her oyunun pastel zemini ve
    o zeminin üstünde okunan koyu tonu. Oyun kartı, tur sonu ekranı ve Oyun
    Bankası aynı üçlüyü kullanıyor — kullanıcı rengi görünce hangi oyun olduğunu
    yazıyı okumadan biliyor.
@@ -126,6 +129,9 @@
   --trh: #dceef0;
   --trh-koyu: #1d7a86;
   --trh-ok: #3ba3ae;
+  --byl: #e2f2e2;
+  --byl-koyu: #3f8149;
+  --byl-ok: #5aa864;
 
   /* Maskot renkleri — Rabi'nin kürkü zeminden hafifçe ayrışır. */
   --maskot-kurk: #ffffff;
@@ -176,6 +182,9 @@
   --trh: #16323a;
   --trh-koyu: #86cfda;
   --trh-ok: #3ba3ae;
+  --byl: #1a3020;
+  --byl-koyu: #93d59c;
+  --byl-ok: #5aa864;
 
   --maskot-kurk: #e9ecf5;
   --maskot-kulak-ic: #c99aa6;

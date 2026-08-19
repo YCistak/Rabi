@@ -11,6 +11,16 @@ import { ANTLASMA_BOYUTU } from './antlasma-havuzu'
 import { KAVRAM_BOYUTU } from './kavram-havuzu'
 import { EL_BOYUTU as ANTLASMA_EL_BOYUTU } from './antlasma'
 import { CELDIRICI_SAYISI, KAVRAM_SAYISI } from './kavram'
+import { ANLATIM_BOYUTU } from './anlatim-havuzu'
+import { ORTAK_BOYUTU } from './ortak-havuzu'
+import { SINIFLANDIRMA_BOYUTU } from './siniflandirma-havuzu'
+import { HUCRE_BOYUTU } from './hucre-havuzu'
+import { IPUCU_SAYISI } from './hucre'
+import {
+  BONUS_SURESI as KOKLU_BONUS_SURESI,
+  CUBUK_EN_AZ as KOKLU_EN_AZ,
+  CUBUK_EN_COK as KOKLU_EN_COK,
+} from './koklu'
 
 /**
  * Mini oyun listesi.
@@ -29,7 +39,7 @@ import { CELDIRICI_SAYISI, KAVRAM_SAYISI } from './kavram'
  * tek bir ızgaraya sığmayacak ve hangi oyunun hangi derse çalıştığı
  * kaybolacaktı. Sınıflandırma sonradan değil, şimdi kuruluyor.
  */
-export type DersId = 'turkce' | 'matematik' | 'edebiyat' | 'tarih'
+export type DersId = 'turkce' | 'matematik' | 'edebiyat' | 'tarih' | 'biyoloji'
 
 export type DersTanimi = {
   id: DersId
@@ -41,9 +51,10 @@ export type DersTanimi = {
    *
    * Renk artık oyuna değil **derse** bağlı: aynı derse çalışan bütün oyunlar
    * aynı rengi paylaşıyor, böylece renk bir kimlik taşıyor. (Ailelerin adları
-   * ilk oyunlardan geliyor: yzm=yazım, isl=işlem, edb=edebiyat, trh=tarih.)
+   * ilk oyunlardan geliyor: yzm=yazım, isl=işlem, edb=edebiyat, trh=tarih,
+   * byl=biyoloji.)
    */
-  aile: 'yzm' | 'isl' | 'edb' | 'trh'
+  aile: 'yzm' | 'isl' | 'edb' | 'trh' | 'byl'
 }
 
 export const DERSLER: DersTanimi[] = [
@@ -74,6 +85,13 @@ export const DERSLER: DersTanimi[] = [
     aciklama: 'Antlaşma, madde, kavram',
     ikon: '🏛️',
     aile: 'trh',
+  },
+  {
+    id: 'biyoloji',
+    ad: 'Biyoloji',
+    aciklama: 'Canlılar, sınıflandırma, hücre',
+    ikon: '🧬',
+    aile: 'byl',
   },
 ]
 
@@ -287,6 +305,81 @@ export const OYUNLAR: OyunTanimi[] = [
       `Her ${BOSS_ARALIGI} eşleştirmede bir **boss tahtası** gelir: kavramlar bir üst seviyeden, süre kısa ve tek yanlışta tur biter.`,
       `Çeldiriciler hep aynı konudan seçilir; başka konudan gelselerdi okunmadan elenirlerdi.`,
       `Havuzda ${KAVRAM_BOYUTU} kavram var: İslamiyet öncesi Türk devletleri, ilk Türk-İslam devletleri, Osmanlı düzeni, yenileşme dönemi ve Cumhuriyet.`,
+    ],
+  },
+  {
+    id: 'anlatim',
+    ders: 'turkce',
+    ad: 'Anlatım Bozukluğu',
+    kisaAciklama: 'Cümle bozuk — sebebi hangisi?',
+    ikon: '🚧',
+    nasilOynanir: [
+      `Ekrana **bozuk** bir cümle gelir. Dört şıktan bozukluğun sebebini seçersin — cümleyi düzeltmen istenmiyor, hatayı adlandırman isteniyor.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.anlatim} saniye. Süre dolarsa soru yanlış sayılır ve sıradakine geçilir.`,
+      `Tur sınırsız: ${BOSS_ARALIGI} soruda bir **boss** gelir, seçtiğin seviyenin bir üstünden. Ekran kızarır, süre uzar ama hakkın tektir — orada yanılırsan tur biter.`,
+      `Şaşırınca önce yüklemi bul ve ona sorularını sor: cevabı olmayan soru (“kimi?”, “neye?”) eksik ögeyi verir. Yüklem sağlamsa hata anlamdadır.`,
+      `Her cümlede **tek** bozukluk var; iki sebebin birden savunulabildiği cümleler havuza alınmadı.`,
+      `Havuzda ${ANLATIM_BOYUTU} cümle var. Tur bitince yanlış bildiklerin, cümlenin düzeltilmiş hâliyle birlikte listelenir — asıl öğrenme orada.`,
+    ],
+  },
+  {
+    id: 'koklu',
+    ders: 'matematik',
+    ad: 'Köklü Sayı Aralığı',
+    kisaAciklama: 'Köklü sayı hangi iki sayı arasında?',
+    ikon: '🔢',
+    nasilOynanir: [
+      `Üstte bir köklü sayı, altta ${KOKLU_EN_AZ}'den ${KOKLU_EN_COK}'e bir sayı çubuğu var. Çubuğun iki ucunu sürükleyerek sayının hangi aralıkta olduğunu gösterirsin.`,
+      `Yalnızca **en dar** aralık doğru sayılır: √50 için "7 – 8". "1 – 25" de doğrudur ama hiçbir şey söylemez.`,
+      `Doğru bilirsen hemen ardından ${KOKLU_BONUS_SURESI} saniyelik bir **bonus** gelir: sayı hangi uca daha yakın? Bilirsen bir puan daha alırsın.`,
+      `Bonusu kaçırmak temel puanı götürmez — soruyu zaten bilmişsindir, bonus üstüne konandır.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.koklu} saniye. Süre dolarsa soru yanlış sayılır. Tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
+      `Sorular her turda yeniden üretilir; ezberlenecek bir liste yok. Tam kareler hiç gelmez — onların cevabı aralık değil, sayının kendisi olurdu.`,
+    ],
+  },
+  {
+    id: 'ortak',
+    ders: 'biyoloji',
+    ad: 'Ortak Özellikler',
+    kisaAciklama: 'Canlıları canlı yapan nedir?',
+    ikon: '🌱',
+    nasilOynanir: [
+      `Ekrana bir soru gelir, dört şıktan doğrusuna dokunursun.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.ortak} saniye. Süre dolarsa soru yanlış sayılır ve sıradakine geçilir.`,
+      `Tur sınırsız: ${BOSS_ARALIGI} soruda bir **boss** gelir, seçtiğin seviyenin bir üstünden. Ekran kızarır, süre uzar ama hakkın tektir — orada yanılırsan tur biter.`,
+      `Konu 9. sınıfın ilk ünitesi: hücresel yapı, beslenme, solunum, boşaltım, hareket, uyarılara tepki, üreme, büyüme-gelişme, metabolizma, homeostazi, uyum ve organizasyon.`,
+      `Havuzda ${ORTAK_BOYUTU} soru var. Çeldiriciler rastgele değil, aynı konudan ve akla yatkın seçildi — okumadan elenen şık yok.`,
+      `Tur bitince yanlış bildiklerin, doğrusunun neden doğru olduğuyla birlikte listelenir.`,
+    ],
+  },
+  {
+    id: 'siniflandirma',
+    ders: 'biyoloji',
+    ad: 'Canlıları Sınıflandır',
+    kisaAciklama: 'Âlemler, birimler, ikili adlandırma',
+    ikon: '🔬',
+    nasilOynanir: [
+      `Ekrana bir soru gelir, dört şıktan doğrusuna dokunursun.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.siniflandirma} saniye. Süre dolarsa soru yanlış sayılır ve sıradakine geçilir.`,
+      `Tur sınırsız: ${BOSS_ARALIGI} soruda bir **boss** gelir, seçtiğin seviyenin bir üstünden. Ekran kızarır, süre uzar ama hakkın tektir — orada yanılırsan tur biter.`,
+      `Konu 9. sınıfın "Canlılar Dünyası" ünitesi: sınıflandırma çeşitleri, taksonomik birimler, tür kavramı, ikili adlandırma ve altı âlem.`,
+      `Havuzda ${SINIFLANDIRMA_BOYUTU} soru var. Birim sırası (âlem → şube → sınıf → takım → familya → cins → tür) neredeyse her turda bir kez sorulur; ezberlemeye değer.`,
+      `Tur bitince yanlış bildiklerin kısa açıklamasıyla listelenir — asıl öğrenme orada.`,
+    ],
+  },
+  {
+    id: 'hucre',
+    ders: 'biyoloji',
+    ad: 'Organel Kartı',
+    kisaAciklama: 'İpuçlarından organeli bul',
+    ikon: '🧫',
+    nasilOynanir: [
+      `Ekranda arkası dönük bir kart var; arkasında bir organel yazıyor. Kart sana ipucu verir, sen dört şıktan hangisi olduğunu bulursun.`,
+      `İpuçları üç saniyede bir açılır, en fazla ${IPUCU_SAYISI} tane. Sırayla daralırlar: birincisi birkaç organele birden uyar, üçüncüsü tek bir cevabı gösterir.`,
+      `Puan ne kadar erken bildiğine bağlı: **1. ipucuyla 3**, 2. ipucuyla 2, 3. ipucuyla 1 puan. Üçüncü ipucundan sonraki üç saniye de dolarsa puan alamazsın.`,
+      `Şıkka dokununca kart çevrilir ve arkası görünür. Dokunmazsan kart kapalı kalır — cevabı görmeden geçmiş olursun.`,
+      `Doğru/yanlış sayacı puandan ayrı işler: geç bilmek de doğrudur, yalnızca daha az puan getirir. Rekor yine doğru sayısına göre tutulur.`,
+      `Havuzda ${HUCRE_BOYUTU} organel var: 9. sınıf hücre ünitesinin tamamı. Tur bitince bilemediklerin görevleriyle birlikte listelenir.`,
     ],
   },
 ]
