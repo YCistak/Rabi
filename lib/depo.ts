@@ -19,7 +19,6 @@ import type {
   YanlisSoru,
   Yedek,
 } from './types'
-import { TUR_SURESI } from './oyunlar/tur'
 import {
   BANKA_SINIRI,
   DUSME_ESIGI,
@@ -62,6 +61,21 @@ export const ANAHTARLAR = {
   yazimSecimi: 'rabi-yazim-secimi',
   /** Bölünebilme Kuralları'nda seçili bölenler. */
   bolenSecimi: 'rabi-bolen-secimi',
+  /**
+   * Mini oyunlarda seçili zorluk — oyun başına ayrı.
+   *
+   * Tek bir ortak anahtar olsaydı edebiyatta kolayda kalmak isteyen biri sesi
+   * de kolaya düşürürdü; seviyeler oyundan oyuna gerçekten farklı.
+   */
+  zorlukYazim: 'rabi-zorluk-yazim',
+  zorlukSes: 'rabi-zorluk-ses',
+  zorlukOge: 'rabi-zorluk-oge',
+  zorlukSoz: 'rabi-zorluk-soz',
+  zorlukEdebiyat: 'rabi-zorluk-edebiyat',
+  zorlukIslem: 'rabi-zorluk-islem',
+  zorlukBolunme: 'rabi-zorluk-bolunme',
+  zorlukAci: 'rabi-zorluk-aci',
+  zorlukUcgen: 'rabi-zorluk-ucgen',
   /**
    * Bildirilen hatalı sorular — gönderim kuyruğu.
    *
@@ -136,6 +150,15 @@ export const VARSAYILAN_AYARLAR: Ayarlar = {
  * kayıt iki aydan uzunu kapsıyor. Sınırsız büyütmenin tek etkisi localStorage
  * kotasını yemek olurdu.
  */
+/**
+ * Bir tura yazılabilecek en uzun süre, saniye.
+ *
+ * Tur artık sınırsız: boss'ta elenene kadar sürüyor ve iyi bir oyuncuda
+ * dakikalarca gidebiliyor. Bu sınır turu kısıtlamıyor, yalnızca bozuk ya da
+ * elle kurcalanmış bir kaydın istatistiği uçurmasını engelliyor.
+ */
+export const TUR_EN_UZUN = 3600
+
 export const OYUN_GECMIS_SINIRI = 400
 
 export const VARSAYILAN_POMODORO: PomodoroAyar = {
@@ -372,7 +395,7 @@ function oyunKayitlariniCoz(ham: unknown): OyunKayitlari {
 /**
  * Yedekteki tur geçmişini süzer.
  *
- * Yalnızca tarihi ve oyunu tanınan kayıtlar geçiyor. Süre `TUR_SURESI`ni aşamaz:
+ * Yalnızca tarihi ve oyunu tanınan kayıtlar geçiyor. Süre `TUR_EN_UZUN`u aşamaz:
  * bozuk tek bir kayıt haftalık özette "oyunda 9 saat geçirdin" gibi saçma bir
  * sayıya dönüşürdü.
  */
@@ -383,7 +406,7 @@ function oyunGecmisiniCoz(ham: unknown): OyunTurKaydi[] {
     .map((k) => ({
       tarih: k.tarih as string,
       oyun: k.oyun as OyunId,
-      saniye: Math.min(TUR_SURESI, sayi(k.saniye)),
+      saniye: Math.min(TUR_EN_UZUN, sayi(k.saniye)),
       dogru: sayi(k.dogru),
     }))
     .slice(-OYUN_GECMIS_SINIRI)
@@ -429,6 +452,21 @@ function bankayiCoz(ham: unknown): BankaKaydi[] {
           typeof s.oge === 'string' &&
           typeof s.sonra === 'string' &&
           typeof s.ogeTuru === 'string'
+        )
+      // Geometri kayıtları şekli kendileri üretiyor; eksik bir açı ya da kenar
+      // çizim sırasında NaN koordinat demek olurdu.
+      if (s.oyun === 'aci')
+        return (
+          typeof s.aci?.kural === 'string' &&
+          typeof s.aci?.a === 'number' &&
+          typeof s.aci?.cevap === 'number'
+        )
+      if (s.oyun === 'ucgen')
+        return (
+          typeof s.ucgen?.tur === 'string' &&
+          typeof s.ucgen?.bilinmeyen === 'string' &&
+          typeof s.ucgen?.hipotenus?.kat === 'number' &&
+          typeof s.ucgen?.celdirici?.kat === 'number'
         )
       return false
     })

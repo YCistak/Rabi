@@ -6,19 +6,27 @@ import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
 import { Check, X } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
 import type { OgeSorusu, OgeTuru } from '@/lib/oyunlar/oge-havuzu'
-import { OGE_ACIKLAMASI, OGE_ADI } from '@/lib/oyunlar/oge-havuzu'
+import { OGE_HAVUZU, OGE_ACIKLAMASI, OGE_ADI } from '@/lib/oyunlar/oge-havuzu'
 import { cumleMetni, turHazirla, type OgeOyunSorusu, type OgeSikki } from '@/lib/oyunlar/oge'
 import {
-  TUR_SURESI,
-  YANLIS_CEZASI,
   guncelSeri,
-  kalanSaniye,
   rekorKirildiMi,
   turOzeti,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { ogedenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import {
+  bossZorlugu,
+  elerMi,
+  soruSuresi,
+  turSirasi,
+  type SiradakiSoru,
+  type Zorluk,
+} from '@/lib/oyunlar/ritim'
+import { useSoruSayaci } from '@/lib/oyunlar/soru-sayaci'
+import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
+import { ZorlukSecimi } from '@/components/zorluk-secimi'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
@@ -41,7 +49,23 @@ const CEVAP_BEKLEMESI = 1100
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
-type GeriBildirim = { secilen: OgeTuru; dogruMu: boolean; soru: OgeSorusu }
+/**
+ * `ritim.ts`'in kurduğu sıraya şıkları ekler.
+ *
+ * Sıra korunmalı: boss soruları belirli konumlara yerleştirilmiş durumda,
+ * `turHazirla` varsayılan hâlinde yeniden karıştırıp o yerleşimi bozardı.
+ */
+function sirayiKur(sira: SiradakiSoru<OgeSorusu>[]): SiradakiSoru<OgeOyunSorusu>[] {
+  const sorular = turHazirla(
+    sira.map((s) => s.soru),
+    Math.random,
+    false,
+  )
+  return sorular.map((soru, i) => ({ soru, boss: sira[i].boss }))
+}
+
+/** `secilen` süre dolduğunda `null`: oyuncu bir şık işaretlemedi. */
+type GeriBildirim = { secilen: OgeTuru | null; dogruMu: boolean; soru: OgeSorusu }
 
 /**
  * Banka kayıtlarından ses havuzu.
@@ -58,6 +82,9 @@ function bankaHavuzu(kayitlar: readonly BankaKaydi[]): OgeSorusu[] {
       oge: kayit.soru.oge,
       sonra: kayit.soru.sonra,
       tur: kayit.soru.ogeTuru,
+      // Banka turunda zorluk seçilmiyor, boss da gelmiyor: sorular zaten
+      // kullanıcının kendi yanlışları. Alan tipin gereği doldurulmuş.
+      zorluk: 'orta' as const,
     })
   }
   return havuz
@@ -83,7 +110,12 @@ export function OgeOyunuEkrani({
   sesAcik: boolean
   /** Boş değilse tur yalnızca bu sorularla kurulur (Oyun Bankası turu). */
   bankaSorulari: BankaKaydi[]
-  onTurBitti: (ozet: TurOzeti<OgeSorusu>, bankaCevaplari: BankaCevabi[]) => void
+  onTurBitti: (
+    ozet: TurOzeti<OgeSorusu>,
+    bankaCevaplari: BankaCevabi[],
+    /** Turun gerçek uzunluğu — tur artık sabit süreli değil. */
+    gecenSaniye: number,
+  ) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -92,15 +124,16 @@ export function OgeOyunuEkrani({
   const [asama, setAsama] = useState<Asama>('tanitim')
   const [yardimAcik, setYardimAcik] = useState(false)
 
-  const [sorular, setSorular] = useState<OgeOyunSorusu[]>([])
+  const [sorular, setSorular] = useState<SiradakiSoru<OgeOyunSorusu>[]>([])
   const [sira, setSira] = useState(0)
   const [cevaplar, setCevaplar] = useState<Cevap<OgeSorusu>[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
+  /** Boss'ta yanılıp elendi mi — tur sonu ekranı bunu ayrıca söylüyor. */
+  const [elendi, setElendi] = useState(false)
 
-  const [bitisZamani, setBitisZamani] = useState(0)
-  const [kalan, setKalan] = useState(TUR_SURESI)
-  /** Yardım açıkken sayaç durur; kalan saniye burada bekletilir. */
-  const [duraklatilan, setDuraklatilan] = useState<number | null>(null)
+  const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukOge, 'kolay')
+  /** Yardım açıkken sayaç duruyor. */
+  const [duraklatilan, setDuraklatilan] = useState(false)
 
   const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<OgeSorusu>; yeniRekor: boolean } | null>(
     null,
@@ -110,6 +143,14 @@ export function OgeOyunuEkrani({
   const bankaTuru = havuz.length > 0
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
+  /**
+   * Turun başladığı an.
+   *
+   * Tur artık sabit uzunlukta değil — sınırsız sürüyor ve boss'ta bitiyor. Eski
+   * hesap "tur süresi eksi yanlış cezası" formülüyle türetiliyordu, o formülün
+   * karşılığı kalmadı; süre gerçekten ölçülüyor.
+   */
+  const turBasladiRef = useRef(0)
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const cevaplarRef = useRef<Cevap<OgeSorusu>[]>([])
   cevaplarRef.current = cevaplar
@@ -119,18 +160,24 @@ export function OgeOyunuEkrani({
 
   const turBaslat = useCallback(() => {
     turBasiRekor.current = istatistik.enIyiDogru
+    turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
-    setSorular(havuz.length > 0 ? turHazirla(havuz) : turHazirla())
+    // Banka turunda zorluk ve boss yok: sorular kullanıcının kendi yanlışları,
+    // hepsi bir kez sorulup tur bitiyor.
+    setSorular(
+      bankaTuru
+        ? turHazirla(havuz).map((soru) => ({ soru, boss: false }))
+        : sirayiKur(turSirasi(OGE_HAVUZU, 'oge', zorluk)),
+    )
     setSira(0)
     setCevaplar([])
     setGeriBildirim(null)
     setSonuc(null)
-    setDuraklatilan(null)
-    setKalan(TUR_SURESI)
-    setBitisZamani(Date.now() + TUR_SURESI * 1000)
+    setElendi(false)
+    setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [havuz, istatistik.enIyiDogru])
+  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluk])
 
   const turBitir = useCallback(
     (verilenler: Cevap<OgeSorusu>[]) => {
@@ -151,25 +198,11 @@ export function OgeOyunuEkrani({
           soru: ogedenBanka(cevap.soru),
           dogruMu: cevap.dogruMu,
         })),
+        Math.round((Date.now() - turBasladiRef.current) / 1000),
       )
     },
     [bankaTuru, istatistik, onTurBitti, sesAcik],
   )
-
-  // Sayaç hedef zaman damgasından okunuyor; arka plana atılan WebView'da sayarak
-  // ilerleyen bir sayaç donup kalırdı.
-  useEffect(() => {
-    if (asama !== 'oynaniyor' || duraklatilan !== null) return
-
-    const oku = () => {
-      const yeni = kalanSaniye(bitisZamani)
-      setKalan(yeni)
-      if (yeni <= 0) turBitir(cevaplarRef.current)
-    }
-    oku()
-    const isaret = setInterval(oku, 250)
-    return () => clearInterval(isaret)
-  }, [asama, bitisZamani, duraklatilan, turBitir])
 
   // Havuz tükenirse tur süre dolmadan biter — banka turunda sık oluyor.
   useEffect(() => {
@@ -190,41 +223,71 @@ export function OgeOyunuEkrani({
     ).catch(() => {})
   }
 
+  const sirali = sorular[sira]
+  const soru = sirali?.soru
+  const boss = sirali?.boss ?? false
+
+  /**
+   * Cevaptan sonraki geçiş.
+   *
+   * Boss'ta yanılmak turu bitiriyor; normal soruda yanılmak yalnızca yanlış
+   * sayılıyor. Bekleme süresi ikisinde de aynı: doğrusunu okumadan ekranın
+   * değişmesi, elenirken bile öğretmeyi bırakmak olurdu.
+   */
+  const ilerle = (dogruMu: boolean, bossMuydu: boolean) => {
+    zamanlayiciRef.current = setTimeout(() => {
+      setGeriBildirim(null)
+      if (elerMi(bossMuydu, dogruMu)) {
+        setElendi(true)
+        turBitir(cevaplarRef.current)
+      } else {
+        setSira((s) => s + 1)
+      }
+    }, CEVAP_BEKLEMESI)
+  }
+
   const cevapla = (sik: OgeSikki) => {
     // Geri bildirim gösterilirken ikinci dokunuş yok sayılıyor; yoksa aynı
-    // soruya iki cevap yazılır ve süre iki kez cezalandırılırdı.
-    if (asama !== 'oynaniyor' || geriBildirim !== null) return
-
-    const soru = sorular[sira]
-    if (!soru) return
+    // soruya iki cevap yazılırdı.
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
 
     const dogruMu = sik.dogruMu
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu }])
     setGeriBildirim({ secilen: sik.deger, dogruMu, soru: soru.soru })
     geriBildir(dogruMu)
-
-    if (!dogruMu) setBitisZamani((b) => b - YANLIS_CEZASI * 1000)
-
-    zamanlayiciRef.current = setTimeout(() => {
-      setGeriBildirim(null)
-      setSira((s) => s + 1)
-    }, CEVAP_BEKLEMESI)
+    ilerle(dogruMu, boss)
   }
 
+  /** Süre dolması cevap vermemekle aynı: yanlış sayılıyor, boss'ta eliyor. */
+  const sureDoldu = useCallback(() => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false }])
+    setGeriBildirim({ secilen: null, dogruMu: false, soru: soru.soru })
+    geriBildir(false)
+    ilerle(false, boss)
+    // `ilerle` ve `geriBildir` her renderda yeniden kuruluyor; sayaç yalnızca
+    // güncel olanı çağırsın diye bağımlılıklar bilerek dar tutuldu.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [asama, geriBildirim, soru, boss])
+
+  const { kalan, toplam } = useSoruSayaci({
+    aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
+    sure: soruSuresi('oge', boss ? bossZorlugu(zorluk) : null),
+    anahtar: sira,
+    onBitti: sureDoldu,
+  })
+
   const yardimAc = () => {
-    setDuraklatilan(kalanSaniye(bitisZamani))
+    setDuraklatilan(true)
     setYardimAcik(true)
   }
 
   const yardimKapat = () => {
-    if (duraklatilan !== null) setBitisZamani(Date.now() + duraklatilan * 1000)
-    setDuraklatilan(null)
+    setDuraklatilan(false)
     setYardimAcik(false)
   }
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
-  const gorunenKalan = duraklatilan ?? kalan
-  const soru = sorular[sira]
 
   const maskotDurumu: MaskotDurumu = geriBildirim
     ? geriBildirim.dogruMu
@@ -241,13 +304,15 @@ export function OgeOyunuEkrani({
           asama === 'bitti'
             ? null
             : {
-                kalan: gorunenKalan,
+                kalan,
+                toplam,
+                sira: sira + 1,
+                boss,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
                 yanlis: cevaplar.length - dogruSayisi,
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
-                cezaGorunur: geriBildirim !== null && !geriBildirim.dogruMu,
               }
         }
         onCik={onCik}
@@ -258,6 +323,7 @@ export function OgeOyunuEkrani({
             sonuc={sonuc}
             rekor={turBasiRekor.current}
             bankaTuru={bankaTuru}
+            elendi={elendi}
             onTekrar={turBaslat}
             onCik={onCik}
             bildir={bildir}
@@ -323,6 +389,11 @@ export function OgeOyunuEkrani({
         baslatir={asama === 'tanitim'}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
+        ekstra={
+          asama === 'tanitim' && !bankaTuru ? (
+            <ZorlukSecimi secili={zorluk} onSec={setZorluk} bossVar />
+          ) : null
+        }
       />
     </>
   )
@@ -376,6 +447,7 @@ function SonucGorunumu({
   sonuc,
   rekor,
   bankaTuru,
+  elendi,
   onTekrar,
   onCik,
   bildir,
@@ -383,6 +455,7 @@ function SonucGorunumu({
   sonuc: { ozet: TurOzeti<OgeSorusu>; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
+  elendi: boolean
   onTekrar: () => void
   onCik: () => void
   bildir: BildirimKolu
@@ -400,6 +473,7 @@ function SonucGorunumu({
       rekor={rekor}
       yeniRekor={yeniRekor}
       bankaTuru={bankaTuru}
+      elendi={elendi}
       altBaslik={
         bankaTuru
           ? 'Banka soruları — üst üste üç doğruda düşerler.'

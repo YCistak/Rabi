@@ -22,6 +22,8 @@
  * dolaylı tümleçler yer-yön bildiriyor.
  */
 
+import type { Zorluk } from './ritim'
+
 export type OgeTuru =
   | 'yuklem'
   | 'ozne'
@@ -38,6 +40,15 @@ export type OgeSorusu = {
   /** Ögeden sonraki kısım, noktalama dahil. */
   sonra: string
   tur: OgeTuru
+  /**
+   * Zorluk.
+   *
+   * Taban zorluk ögenin türünden geliyor: yüklem ve özne önce bulunuyor,
+   * belirtisiz nesne ile zarf tümleci en çok karıştırılanlar. Cümlenin kendisi
+   * de etkiliyor — edilgen çatıda "sözde özne" (*Camlar temizlendi*) gerçek
+   * özneden belirgin şekilde zor, o yüzden tek tek işaretli.
+   */
+  zorluk: Zorluk
 }
 
 /** Şıklarda görünen ad. */
@@ -66,20 +77,30 @@ export const OGE_ACIKLAMASI: Record<OgeTuru, string> = {
 }
 
 /** Havuzu okunur tutmak için: bir ögeye ait bütün cümleler tek yerde. */
-function grup(tur: OgeTuru, cumleler: [string, string, string][]): OgeSorusu[] {
-  return cumleler.map(([once, oge, sonra]) => ({ once, oge, sonra, tur }))
+function grup(
+  tur: OgeTuru,
+  taban: Zorluk,
+  cumleler: ([string, string, string] | [string, string, string, Zorluk])[],
+): OgeSorusu[] {
+  return cumleler.map(([once, oge, sonra, zorluk]) => ({
+    once,
+    oge,
+    sonra,
+    tur,
+    zorluk: zorluk ?? taban,
+  }))
 }
 
 export const OGE_HAVUZU: readonly OgeSorusu[] = [
-  ...grup('yuklem', [
+  ...grup('yuklem', 'kolay', [
     ['Çocuklar bahçede ', 'oynuyor', '.'],
     ['Yarın sınava ', 'gireceğim', '.'],
     ['Bu kitabı geçen yaz ', 'okumuştum', '.'],
     ['Hava birden ', 'soğudu', '.'],
     ['Kapı yavaşça ', 'açıldı', '.'],
     ['Annem bize kek ', 'yaptı', '.'],
-    ['En sevdiğim ders ', 'matematiktir', '.'],
-    ['O gün herkes çok ', 'mutluydu', '.'],
+    ['En sevdiğim ders ', 'matematiktir', '.', 'orta'],
+    ['O gün herkes çok ', 'mutluydu', '.', 'orta'],
     ['Trenler bugün ', 'kalkmadı', '.'],
     ['Bütün gece ders ', 'çalıştım', '.'],
     ['Köyde büyük bir yangın ', 'çıktı', '.'],
@@ -94,37 +115,37 @@ export const OGE_HAVUZU: readonly OgeSorusu[] = [
     ['Bahçedeki ağaçlar çiçek ', 'açtı', '.'],
   ]),
 
-  ...grup('ozne', [
+  ...grup('ozne', 'kolay', [
     ['', 'Ali', ' ödevini bitirdi.'],
     ['', 'Küçük çocuk', ' parkta koşuyordu.'],
-    ['', 'Kapı', ' rüzgârdan açıldı.'],
+    ['', 'Kapı', ' rüzgârdan açıldı.', 'zor'],
     ['Dün akşam ', 'misafirler', ' geldi.'],
     ['', 'Bu roman', ' bana çok şey öğretti.'],
     ['Sabahleyin ', 'kuşlar', ' ötmeye başladı.'],
     ['', 'Öğretmenimiz', ' bize masal anlattı.'],
     ['Bahçedeki ', 'ağaçlar', ' çiçek açtı.'],
-    ['', 'Camlar', ' baştan sona temizlendi.'],
-    ['Yarın ', 'sınav sonuçları', ' açıklanacak.'],
+    ['', 'Camlar', ' baştan sona temizlendi.', 'zor'],
+    ['Yarın ', 'sınav sonuçları', ' açıklanacak.', 'zor'],
     ['', 'Herkes', ' bu haberi duydu.'],
-    ['Uzun yoldan gelen ', 'yolcular', ' çok yorulmuştu.'],
+    ['Uzun yoldan gelen ', 'yolcular', ' çok yorulmuştu.', 'orta'],
     ['', 'Babam', ' akşamları kitap okur.'],
     ['Az önce ', 'telefonum', ' çaldı.'],
     ['', 'Rüzgâr', ' bütün gece esti.'],
     ['Sokaktaki ', 'kediler', ' acıkmış.'],
     ['', 'Arkadaşlarım', ' beni kapıda bekledi.'],
-    ['Bu şiiri ', 'Orhan Veli', ' yazmış.'],
+    ['Bu şiiri ', 'Orhan Veli', ' yazmış.', 'orta'],
     ['', 'Kar', ' sabaha kadar yağdı.'],
-    ['', 'Bütün sınıf', ' sessizce dinliyordu.'],
+    ['', 'Bütün sınıf', ' sessizce dinliyordu.', 'orta'],
   ]),
 
-  ...grup('belirtiliNesne', [
-    ['Ali ', 'ödevini', ' bitirdi.'],
-    ['Annem ', 'camları', ' sildi.'],
-    ['Çocuk ', 'topu', ' uzağa fırlattı.'],
-    ['Öğretmen ', 'defterleri', ' topladı.'],
+  ...grup('belirtiliNesne', 'orta', [
+    ['Ali ', 'ödevini', ' bitirdi.', 'kolay'],
+    ['Annem ', 'camları', ' sildi.', 'kolay'],
+    ['Çocuk ', 'topu', ' uzağa fırlattı.', 'kolay'],
+    ['Öğretmen ', 'defterleri', ' topladı.', 'kolay'],
     ['Kardeşim ', 'bisikletini', ' tamir etti.'],
     ['Herkes ', 'bu haberi', ' merakla bekliyordu.'],
-    ['Dedem ', 'gazeteyi', ' okudu.'],
+    ['Dedem ', 'gazeteyi', ' okudu.', 'kolay'],
     ['Ben ', 'seni', ' çok özledim.'],
     ['Rüzgâr ', 'şapkamı', ' uçurdu.'],
     ['Aşçı ', 'çorbayı', ' tuzladı.'],
@@ -140,72 +161,72 @@ export const OGE_HAVUZU: readonly OgeSorusu[] = [
     ['Biz ', 'onu', ' çok sevdik.'],
   ]),
 
-  ...grup('belirtisizNesne', [
-    ['Annem bize ', 'kek', ' yaptı.'],
-    ['Dedem her sabah ', 'gazete', ' okur.'],
-    ['Çocuklar bahçede ', 'top', ' oynuyor.'],
+  ...grup('belirtisizNesne', 'zor', [
+    ['Annem bize ', 'kek', ' yaptı.', 'orta'],
+    ['Dedem her sabah ', 'gazete', ' okur.', 'orta'],
+    ['Çocuklar bahçede ', 'top', ' oynuyor.', 'orta'],
     ['Kardeşim odasına ', 'poster', ' astı.'],
     ['Öğretmen tahtaya ', 'soru', ' yazdı.'],
     ['Yolda ', 'para', ' bulmuş.'],
     ['Akşamları ', 'kitap', ' okurum.'],
     ['Bize uzun uzun ', 'masal', ' anlattı.'],
-    ['Marketten ', 'ekmek', ' aldık.'],
+    ['Marketten ', 'ekmek', ' aldık.', 'orta'],
     ['Duvara ', 'resim', ' çizdiler.'],
     ['Bahçeye ', 'fidan', ' diktik.'],
     ['Kışın ', 'kazak', ' örer.'],
-    ['Sabahları ', 'süt', ' içerim.'],
+    ['Sabahları ', 'süt', ' içerim.', 'orta'],
     ['Ustadan ', 'iş', ' öğrendi.'],
     ['Herkese ', 'davetiye', ' gönderdik.'],
     ['Odaya ', 'halı', ' serdiler.'],
     ['Bize ', 'şarkı', ' söyledi.'],
     ['Çantasına ', 'defter', ' koydu.'],
     ['Balkonda ', 'çiçek', ' yetiştiriyor.'],
-    ['Öğlen ', 'çorba', ' içtik.'],
+    ['Öğlen ', 'çorba', ' içtik.', 'orta'],
   ]),
 
-  ...grup('dolayliTumlec', [
-    ['Çocuklar ', 'bahçede', ' oynuyor.'],
-    ['Yolcular ', 'otobüse', ' bindi.'],
-    ['Kitabı ', 'çantama', ' koydum.'],
+  ...grup('dolayliTumlec', 'orta', [
+    ['Çocuklar ', 'bahçede', ' oynuyor.', 'kolay'],
+    ['Yolcular ', 'otobüse', ' bindi.', 'kolay'],
+    ['Kitabı ', 'çantama', ' koydum.', 'kolay'],
     ['Dün ', 'İstanbul’dan', ' döndük.'],
     ['Öğretmen ', 'tahtaya', ' bir soru yazdı.'],
-    ['Anahtarı ', 'kapının altına', ' bıraktım.'],
+    ['Anahtarı ', 'kapının altına', ' bıraktım.', 'zor'],
     ['Kuşlar ', 'dallara', ' kondu.'],
     ['Bu haberi ', 'arkadaşımdan', ' duydum.'],
-    ['Yarın ', 'okula', ' gitmeyeceğim.'],
-    ['Çiçekleri ', 'vazoya', ' koydu.'],
+    ['Yarın ', 'okula', ' gitmeyeceğim.', 'kolay'],
+    ['Çiçekleri ', 'vazoya', ' koydu.', 'kolay'],
     ['Herkes ', 'salonda', ' toplandı.'],
     ['Mektubu ', 'postaneye', ' verdim.'],
     ['Balıklar ', 'gölde', ' yüzüyor.'],
     ['Misafirler ', 'salona', ' geçti.'],
     ['Parayı ', 'cebinden', ' çıkardı.'],
-    ['Köpek ', 'kapının önünde', ' yatıyordu.'],
+    ['Köpek ', 'kapının önünde', ' yatıyordu.', 'zor'],
     ['Bize ', 'köyden', ' haber geldi.'],
-    ['Eşyaları ', 'dolaba', ' yerleştirdim.'],
+    ['Eşyaları ', 'dolaba', ' yerleştirdim.', 'kolay'],
     ['Uçak ', 'havaalanına', ' indi.'],
     ['Çocuk ', 'annesine', ' sarıldı.'],
   ]),
 
-  ...grup('zarfTumleci', [
-    ['Çocuk ', 'hızlıca', ' koştu.'],
-    ['', 'Dün', ' sinemaya gittik.'],
-    ['Bu soruyu ', 'kolayca', ' çözdü.'],
+  ...grup('zarfTumleci', 'zor', [
+    ['Çocuk ', 'hızlıca', ' koştu.', 'orta'],
+    ['', 'Dün', ' sinemaya gittik.', 'orta'],
+    ['Bu soruyu ', 'kolayca', ' çözdü.', 'orta'],
     ['Kar ', 'sabaha kadar', ' yağdı.'],
     ['Beni ', 'çok', ' sevindirdin.'],
-    ['Kapı ', 'yavaşça', ' açıldı.'],
-    ['', 'Yarın', ' sınava gireceğim.'],
+    ['Kapı ', 'yavaşça', ' açıldı.', 'orta'],
+    ['', 'Yarın', ' sınava gireceğim.', 'orta'],
     ['Toplantı ', 'geç', ' başladı.'],
-    ['Yemeği ', 'aceleyle', ' yedi.'],
+    ['Yemeği ', 'aceleyle', ' yedi.', 'orta'],
     ['Bu filmi ', 'iki kez', ' izledim.'],
-    ['', 'Sabahleyin', ' kuşlar ötüyordu.'],
+    ['', 'Sabahleyin', ' kuşlar ötüyordu.', 'orta'],
     ['Hava ', 'birden', ' soğudu.'],
-    ['Ödevini ', 'dikkatle', ' yaptı.'],
-    ['Bizi ', 'sessizce', ' dinledi.'],
+    ['Ödevini ', 'dikkatle', ' yaptı.', 'orta'],
+    ['Bizi ', 'sessizce', ' dinledi.', 'orta'],
     ['Otobüs ', 'erken', ' kalktı.'],
     ['', 'Her akşam', ' yürüyüşe çıkarım.'],
     ['Sınava ', 'iyi', ' hazırlandım.'],
     ['Bu işi ', 'yarın', ' bitiririm.'],
-    ['Rüzgâr ', 'şiddetle', ' esiyordu.'],
+    ['Rüzgâr ', 'şiddetle', ' esiyordu.', 'orta'],
     ['Konuyu ', 'tekrar', ' anlattı.'],
   ]),
 ] as const

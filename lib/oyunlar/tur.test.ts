@@ -23,9 +23,9 @@ function sahteRastgele(degerler: number[]): () => number {
 }
 
 const ornek: YazimSorusu[] = [
-  { dogru: 'yalnız', yanlis: 'yanlız', kural: 'ses' },
-  { dogru: 'her şey', yanlis: 'herşey', kural: 'ayri' },
-  { dogru: 'birçok', yanlis: 'bir çok', kural: 'bitisik' },
+  { dogru: 'yalnız', yanlis: 'yanlız', kural: 'ses', zorluk: 'kolay' },
+  { dogru: 'her şey', yanlis: 'herşey', kural: 'ayri', zorluk: 'kolay' },
+  { dogru: 'birçok', yanlis: 'bir çok', kural: 'bitisik', zorluk: 'kolay' },
 ]
 
 describe('yazım havuzu', () => {
@@ -92,6 +92,7 @@ describe('turHazirla', () => {
       dogru: `d${i}`,
       yanlis: `y${i}`,
       kural: 'ses' as const,
+      zorluk: 'orta' as const,
     }))
     const ustte = turHazirla(yazimHavuzu(uzunHavuz)).filter((s) => s.siklar[0].dogruMu).length
     expect(ustte).toBeGreaterThan(0)

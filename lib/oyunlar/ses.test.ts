@@ -6,6 +6,7 @@ const soru = (kelime: string, olay: SesSorusu['olay']): SesSorusu => ({
   kelime,
   olusum: 'kök + ek',
   olay,
+  zorluk: 'orta',
 })
 
 describe('siklariKur', () => {

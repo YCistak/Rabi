@@ -107,12 +107,12 @@ describe('elHazirla', () => {
   it('tek dönem yetmezse karışık el kurar', () => {
     // Yapay bir havuz: her dönemde el kuracak kadar yazar yok, ama toplamda var.
     const havuz: EdebiyatEsi[] = [
-      { eser: 'a1', yazar: 'y1', donem: 'ilk' },
-      { eser: 'a2', yazar: 'y2', donem: 'ilk' },
-      { eser: 'b1', yazar: 'y3', donem: 'divan' },
-      { eser: 'b2', yazar: 'y4', donem: 'divan' },
-      { eser: 'c1', yazar: 'y5', donem: 'halk' },
-      { eser: 'c2', yazar: 'y6', donem: 'halk' },
+      { eser: 'a1', yazar: 'y1', donem: 'ilk' , zorluk: 'orta' as const },
+      { eser: 'a2', yazar: 'y2', donem: 'ilk' , zorluk: 'orta' as const },
+      { eser: 'b1', yazar: 'y3', donem: 'divan' , zorluk: 'orta' as const },
+      { eser: 'b2', yazar: 'y4', donem: 'divan' , zorluk: 'orta' as const },
+      { eser: 'c1', yazar: 'y5', donem: 'halk' , zorluk: 'orta' as const },
+      { eser: 'c2', yazar: 'y6', donem: 'halk' , zorluk: 'orta' as const },
     ]
     const el = elHazirla(new Set(), havuz)!
     expect(el.donem).toBeNull()
@@ -124,6 +124,7 @@ describe('elHazirla', () => {
       eser: `e${i}`,
       yazar: 'tek yazar',
       donem: 'divan' as const,
+      zorluk: 'orta' as const,
     }))
     expect(elHazirla(new Set(), havuz, sahteRastgele([0.3, 0.7]))).toBeNull()
   })

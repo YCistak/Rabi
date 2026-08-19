@@ -16,10 +16,7 @@ import {
   type BolunmeSorusu,
 } from '@/lib/oyunlar/bolunme'
 import {
-  TUR_SURESI,
-  YANLIS_CEZASI,
   guncelSeri,
-  kalanSaniye,
   karistir,
   rekorKirildiMi,
   turOzeti,
@@ -27,6 +24,8 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { bolunmedenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { MATEMATIK_TUR_SORUSU, soruSuresi } from '@/lib/oyunlar/ritim'
+import { useSoruSayaci } from '@/lib/oyunlar/soru-sayaci'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
@@ -48,8 +47,14 @@ import { OyunTanitim } from '@/components/oyun-tanitim'
 
 /** Cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms). İşlem oyunuyla aynı ritim. */
 const CEVAP_BEKLEMESI = 1100
-/** Bir turda üretilen soru sayısı — en hızlı oyuncunun bile tüketemeyeceği kadar. */
-const TUR_SORUSU = 120
+/**
+ * Turdaki soru sayısı.
+ *
+ * Matematik oyunlarında boss yok, dolayısıyla eleme de yok — turu bitirecek
+ * bir şey gerekiyor. Yirmi soru boss aralığının iki katı: sözel oyunlarla aynı
+ * ritim, yalnızca sonunda kesiliyor. (`ritim.ts`)
+ */
+const TUR_SORUSU = MATEMATIK_TUR_SORUSU
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
@@ -133,7 +138,12 @@ export function BolunmeOyunuEkrani({
   istatistik: OyunIstatistigi
   sesAcik: boolean
   bankaSorulari: BankaKaydi[]
-  onTurBitti: (ozet: TurOzeti<BolunmeSorusu>, bankaCevaplari: BankaCevabi[]) => void
+  onTurBitti: (
+    ozet: TurOzeti<BolunmeSorusu>,
+    bankaCevaplari: BankaCevabi[],
+    /** Turun gerçek uzunluğu — tur artık sabit süreli değil. */
+    gecenSaniye: number,
+  ) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -152,9 +162,8 @@ export function BolunmeOyunuEkrani({
   const [yanlisGirdileri, setYanlisGirdileri] = useState<(Girdi | null)[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
 
-  const [bitisZamani, setBitisZamani] = useState(0)
-  const [kalan, setKalan] = useState(TUR_SURESI)
-  const [duraklatilan, setDuraklatilan] = useState<number | null>(null)
+  /** Yardım açıkken sayaç duruyor. */
+  const [duraklatilan, setDuraklatilan] = useState(false)
 
   const [sonuc, setSonuc] = useState<{
     ozet: TurOzeti<BolunmeSorusu>
@@ -165,6 +174,14 @@ export function BolunmeOyunuEkrani({
   const bankaTuru = bankaHavuzu.length > 0
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
+  /**
+   * Turun başladığı an.
+   *
+   * Tur artık sabit uzunlukta değil — sınırsız sürüyor ve boss'ta bitiyor. Eski
+   * hesap "tur süresi eksi yanlış cezası" formülüyle türetiliyordu, o formülün
+   * karşılığı kalmadı; süre gerçekten ölçülüyor.
+   */
+  const turBasladiRef = useRef(0)
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const cevaplarRef = useRef<Cevap<BolunmeSorusu>[]>([])
   cevaplarRef.current = cevaplar
@@ -174,6 +191,7 @@ export function BolunmeOyunuEkrani({
 
   const turBaslat = useCallback(() => {
     turBasiRekor.current = istatistik.enIyiDogru
+    turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
     setSorular(bankaTuru ? karistir(bankaHavuzu) : bolunmeTuruHazirla(secili, TUR_SORUSU))
@@ -183,9 +201,7 @@ export function BolunmeOyunuEkrani({
     setYanlisGirdileri([])
     setGeriBildirim(null)
     setSonuc(null)
-    setDuraklatilan(null)
-    setKalan(TUR_SURESI)
-    setBitisZamani(Date.now() + TUR_SURESI * 1000)
+    setDuraklatilan(false)
     setAsama('oynaniyor')
   }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru, secili])
 
@@ -204,23 +220,11 @@ export function BolunmeOyunuEkrani({
       onTurBitti(
         ozet,
         verilenler.map((cevap) => ({ soru: bolunmedenBanka(cevap.soru), dogruMu: cevap.dogruMu })),
+        Math.round((Date.now() - turBasladiRef.current) / 1000),
       )
     },
     [bankaTuru, istatistik, onTurBitti, sesAcik],
   )
-
-  useEffect(() => {
-    if (asama !== 'oynaniyor' || duraklatilan !== null) return
-
-    const oku = () => {
-      const yeni = kalanSaniye(bitisZamani)
-      setKalan(yeni)
-      if (yeni <= 0) turBitir(cevaplarRef.current)
-    }
-    oku()
-    const isaret = setInterval(oku, 250)
-    return () => clearInterval(isaret)
-  }, [asama, bitisZamani, duraklatilan, turBitir])
 
   // Banka turunda liste bankadaki kayıt kadar; tükenince tur erken biter.
   useEffect(() => {
@@ -264,7 +268,6 @@ export function BolunmeOyunuEkrani({
       setGeriBildirim({ dogruMu, girdi, soru })
       geriBildir(dogruMu)
 
-      if (!dogruMu) setBitisZamani((b) => b - YANLIS_CEZASI * 1000)
 
       zamanlayiciRef.current = setTimeout(() => {
         setGeriBildirim(null)
@@ -277,6 +280,24 @@ export function BolunmeOyunuEkrani({
 
   // Kalan tek basamaklı (bölen en çok 10), o yüzden yazılan rakam eskisini
   // değiştiriyor: yanlış tuşa basan önce silmek zorunda kalmasın.
+
+  /**
+   * Süre dolması cevap vermemekle aynı: soru pas geçilmiş sayılıyor.
+   *
+   * Matematik oyunlarında boss yok, dolayısıyla eleme de yok — süre dolunca
+   * tur bitmiyor, sıradaki soruya geçiliyor.
+   */
+  const sureDoldu = useCallback(() => {
+    cevapla(null)
+  }, [cevapla])
+
+  const { kalan, toplam } = useSoruSayaci({
+    aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan,
+    sure: soruSuresi('bolunme', null),
+    anahtar: sira,
+    onBitti: sureDoldu,
+  })
+
   const rakamYaz = useCallback((rakam: string) => setGirilen(rakam), [])
   const sil = useCallback(() => setGirilen(''), [])
 
@@ -305,13 +326,12 @@ export function BolunmeOyunuEkrani({
   }, [asama, yardimAcik, soru, girilen, rakamYaz, sil, cevapla])
 
   const yardimAc = () => {
-    setDuraklatilan(kalanSaniye(bitisZamani))
+    setDuraklatilan(true)
     setYardimAcik(true)
   }
 
   const yardimKapat = () => {
-    if (duraklatilan !== null) setBitisZamani(Date.now() + duraklatilan * 1000)
-    setDuraklatilan(null)
+    setDuraklatilan(false)
     setYardimAcik(false)
   }
 
@@ -325,7 +345,6 @@ export function BolunmeOyunuEkrani({
   }
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
-  const gorunenKalan = duraklatilan ?? kalan
   const turdekiBolenler = TUM_BOLENLER.filter((b) => sorular.some((s) => s.bolen === b))
 
   return (
@@ -337,13 +356,15 @@ export function BolunmeOyunuEkrani({
           asama === 'bitti'
             ? null
             : {
-                kalan: gorunenKalan,
+                kalan,
+                toplam,
+                sira: sira + 1,
+                boss: false,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
                 yanlis: cevaplar.length - dogruSayisi,
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
-                cezaGorunur: geriBildirim !== null && !geriBildirim.dogruMu,
               }
         }
         onCik={onCik}
@@ -403,14 +424,14 @@ export function BolunmeOyunuEkrani({
                     />
                   )}
 
-                  {/* Pas geçmenin bedeli düğmenin üstünde yazıyor: aynı yanlış cezası. */}
+                  {/* Pas geçmek soruyu yanlış sayıyor; bedeli yalnızca bu. */}
                   <button
                     type="button"
                     onClick={() => cevapla(null)}
                     disabled={geriBildirim !== null}
                     className="mx-auto rounded-lg px-2.5 py-1 text-[12.5px] font-extrabold text-muted-foreground transition active:bg-foreground/10 disabled:opacity-45"
                   >
-                    Pas geç · −{YANLIS_CEZASI} sn
+                    Pas geç
                   </button>
                 </div>
               </div>

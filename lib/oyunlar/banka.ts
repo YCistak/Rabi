@@ -12,12 +12,14 @@
  */
 
 import type { OyunId } from '../types'
+import { ACI_KURALI_ADI, type AciSorusu } from './aci'
 import type { IslemTuru } from './islem'
 import type { NoktalamaIsareti, NoktalamaSorusu } from './noktalama-havuzu'
 import { OLAY_ADI, type SesOlayi } from './ses-havuzu'
 import { OGE_ADI, type OgeTuru } from './oge-havuzu'
 import type { BolunmeTipi } from './bolunme'
 import type { SozKonusu, SozTuru } from './soz-havuzu'
+import { ucgenCevabi, ucgenKimligi, ucgenOzeti, kenarMetni, type UcgenSorusu } from './ucgen'
 
 /** Bir kaydın bankadan düşmesi için gereken üst üste doğru sayısı. */
 export const DUSME_ESIGI = 3
@@ -54,6 +56,15 @@ export type BankaSorusu =
   // cevap sayıyla çelişebilirdi, türetilen cevap çelişemez.
   | { oyun: 'bolunme'; sayi: number; bolen: number; bolunmeTipi: BolunmeTipi }
   | { oyun: 'soz'; soz: string; anlam: string; sozTuru: SozTuru; konu: SozKonusu }
+  /**
+   * Geometri soruları sorunun kendisini olduğu gibi taşıyor.
+   *
+   * Ötekiler gibi alanlara açılmadılar çünkü ikisi de zaten küçük ve **kendi
+   * şekillerini üretebilen** veri: `aciSekli`/`ucgenSekli` bu nesneden çizimi
+   * yeniden kuruyor, bankaya koordinat yazmak gerekmiyor.
+   */
+  | { oyun: 'aci'; aci: AciSorusu }
+  | { oyun: 'ucgen'; ucgen: UcgenSorusu }
 
 export type BankaKaydi = {
   /** Soru içeriğinden türetilen kimlik; aynı soru iki kez eklenmez. */
@@ -153,6 +164,14 @@ export function bolunmedenBanka(soru: {
   return { oyun: 'bolunme', sayi: soru.sayi, bolen: soru.bolen, bolunmeTipi: soru.tip }
 }
 
+export function acidanBanka(soru: AciSorusu): BankaSorusu {
+  return { oyun: 'aci', aci: soru }
+}
+
+export function ucgendenBanka(soru: UcgenSorusu): BankaSorusu {
+  return { oyun: 'ucgen', ucgen: soru }
+}
+
 /**
  * Kayıt kimliği.
  *
@@ -179,7 +198,12 @@ export function bankaKimligi(soru: BankaSorusu): string {
     // kimliğe girmeseydi ikisi tek kayda düşer, biri diğerini düşürürdü.
     case 'bolunme':
       return `bolunme:${soru.bolunmeTipi}:${soru.sayi}/${soru.bolen}`
-  }
+    // Şekil sorularında kimlik verilen açılardan/kenarlardan geliyor: aynı
+    // kuralın 40°'lik hâli ile 65°'lik hâli ayrı sorular.
+    case 'aci':
+      return `aci:${soru.aci.kural}:${soru.aci.a}:${soru.aci.b ?? ''}`
+    case 'ucgen':
+      return `ucgen:${ucgenKimligi(soru.ucgen)}`  }
 }
 
 /** Listede görünen soru metni. */
@@ -201,7 +225,10 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
       return soru.bolunmeTipi === 'kalan'
         ? `${soru.sayi} ÷ ${soru.bolen} · kalan?`
         : `${soru.sayi} · ${soru.bolen}’e bölünür mü?`
-  }
+    case 'aci':
+      return `${ACI_KURALI_ADI[soru.aci.kural]} · ${soru.aci.a}°${soru.aci.b === null ? '' : ` · ${soru.aci.b}°`}`
+    case 'ucgen':
+      return ucgenOzeti(soru.ucgen)  }
 }
 
 /** Listede görünen doğru cevap. */
@@ -225,7 +252,10 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
         : soru.sayi % soru.bolen === 0
           ? 'Evet'
           : 'Hayır'
-  }
+    case 'aci':
+      return `${soru.aci.cevap}°`
+    case 'ucgen':
+      return kenarMetni(ucgenCevabi(soru.ucgen))  }
 }
 
 /**
@@ -323,6 +353,8 @@ const BOS_DAGILIM: Record<OyunId, number> = {
   islem: 0,
   bolunme: 0,
   edebiyat: 0,
+  aci: 0,
+  ucgen: 0,
 }
 
 export const OYUN_KIMLIKLERI = Object.keys(BOS_DAGILIM) as OyunId[]

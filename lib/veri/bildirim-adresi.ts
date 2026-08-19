@@ -21,17 +21,17 @@
  * Boş bırakıldığı sürece hiçbir şey gönderilmiyor: bildirimler cihazda
  * birikiyor, uygulama ağa hiç çıkmıyor.
  */
-export const FORM_KIMLIGI = ''
+export const FORM_KIMLIGI: string = '1FAIpQLSeLmPYIDs4RSGxpqRnC-LhhmKhifwZfO_ihmuRxEel-rvJMWQ'
 
 /** Alan adı → formdaki `entry` numarası. */
 export const ALANLAR: Record<string, string> = {
-  kimlik: '',
-  oyun: '',
-  soru: '',
-  cevap: '',
-  sebep: '',
-  surum: '',
-  cihaz: '',
+  kimlik: 'entry.583695316',
+  oyun: 'entry.1290091604',
+  soru: 'entry.53840930',
+  cevap: 'entry.667274758',
+  sebep: 'entry.1577263308',
+  surum: 'entry.239853441',
+  cihaz: 'entry.338085962',
 }
 
 /** Adres eksikse gönderim hiç denenmiyor. */

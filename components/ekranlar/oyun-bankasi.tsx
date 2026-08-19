@@ -38,6 +38,8 @@ const AILE: Record<OyunId, { zemin: string; yazi: string; dolgu: string }> = {
   soz: { zemin: 'bg-yzm', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
   islem: { zemin: 'bg-isl', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
   bolunme: { zemin: 'bg-isl', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
+  aci: { zemin: 'bg-isl', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
+  ucgen: { zemin: 'bg-isl', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
   edebiyat: { zemin: 'bg-edb', yazi: 'text-edb-koyu', dolgu: 'bg-edb-ok' },
 }
 
@@ -48,6 +50,8 @@ const KISA_AD: Record<OyunId, string> = {
   soz: 'Deyim',
   islem: 'İşlem',
   bolunme: 'Bölünebilme',
+  aci: 'Açı',
+  ucgen: 'Üçgen',
   edebiyat: 'Edebiyat',
 }
 
