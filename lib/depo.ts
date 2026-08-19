@@ -76,6 +76,8 @@ export const ANAHTARLAR = {
   zorlukBolunme: 'rabi-zorluk-bolunme',
   zorlukAci: 'rabi-zorluk-aci',
   zorlukUcgen: 'rabi-zorluk-ucgen',
+  zorlukAntlasma: 'rabi-zorluk-antlasma',
+  zorlukKavram: 'rabi-zorluk-kavram',
   /**
    * Bildirilen hatalı sorular — gönderim kuyruğu.
    *

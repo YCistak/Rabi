@@ -51,9 +51,18 @@ export function tahtaHazirla(
   kullanilan: ReadonlySet<string> = new Set(),
   havuz: readonly KavramEsi[] = KAVRAM_HAVUZU,
   rastgele: () => number = Math.random,
+  /**
+   * Çeldiricilerin geldiği havuz — varsayılan olarak soruların havuzu.
+   *
+   * Ayrı verilebiliyor çünkü zorluk süzgeci **sorulan** kavramlar için var,
+   * çeldiriciler için değil: çeldirici cevaplanmıyor, yalnızca yanıltıyor.
+   * Süzülmüş havuzla kurulsalardı küçük konularda beş kavram kalmaz, tahta
+   * konu bütünlüğünü kaybederdi — asıl zorluk oradan geliyor.
+   */
+  celdiriciHavuzu: readonly KavramEsi[] = havuz,
 ): KavramTahtasi | null {
   const kalan = havuz.filter((e) => !kullanilan.has(e.kavram))
-  if (kalan.length < KAVRAM_SAYISI || havuz.length < TANIM_SAYISI) return null
+  if (kalan.length < KAVRAM_SAYISI || celdiriciHavuzu.length < TANIM_SAYISI) return null
 
   // Konu bazında: sorulacak üç kavram için yeterli **kullanılmamış** kavram,
   // çeldiriciler için de yeterli toplam kavram olmalı.
@@ -67,7 +76,7 @@ export function tahtaHazirla(
   const uygunKonular = [...konular.entries()].filter(
     ([konu, esler]) =>
       esler.length >= KAVRAM_SAYISI &&
-      havuz.filter((e) => e.konu === konu).length >= TANIM_SAYISI,
+      celdiriciHavuzu.filter((e) => e.konu === konu).length >= TANIM_SAYISI,
   )
 
   const [konu, kaynak] =
@@ -79,7 +88,7 @@ export function tahtaHazirla(
   // Çeldiriciler: aynı konudan, tahtadaki üç kavramın dışından. Konu tek başına
   // yetmezse (karışık tahta) bütün havuz kullanılıyor.
   const secilenKavramlar = new Set(esler.map((e) => e.kavram))
-  const celdiriciKaynak = havuz.filter(
+  const celdiriciKaynak = celdiriciHavuzu.filter(
     (e) => (konu === null || e.konu === konu) && !secilenKavramlar.has(e.kavram),
   )
   const celdiriciler = karistir(celdiriciKaynak, rastgele).slice(0, CELDIRICI_SAYISI)

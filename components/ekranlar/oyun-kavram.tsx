@@ -16,10 +16,7 @@ import {
   type KavramTahtasi,
 } from '@/lib/oyunlar/kavram'
 import {
-  TUR_SURESI,
-  YANLIS_CEZASI,
   guncelSeri,
-  kalanSaniye,
   karistir,
   rekorKirildiMi,
   turOzeti,
@@ -27,6 +24,18 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { kavramdanBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import {
+  bossElMi,
+  bossZorlugu,
+  elerMi,
+  soruSuresi,
+  zorluktaSuz,
+  type Zorluk,
+} from '@/lib/oyunlar/ritim'
+import { useSoruSayaci } from '@/lib/oyunlar/soru-sayaci'
+import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
+import { ZorlukSecimi } from '@/components/zorluk-secimi'
+import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
@@ -139,13 +148,20 @@ export function KavramOyunuEkrani({
   bankaSorulari,
   onTurBitti,
   onCik,
+  bildir,
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
   /** Boş değilse tahtalar önce bu sorulardan kurulur (Oyun Bankası turu). */
   bankaSorulari: BankaKaydi[]
-  onTurBitti: (ozet: TurOzeti<KavramEsi>, bankaCevaplari: BankaCevabi[]) => void
+  onTurBitti: (
+    ozet: TurOzeti<KavramEsi>,
+    bankaCevaplari: BankaCevabi[],
+    /** Turun gerçek uzunluğu — tur artık sabit süreli değil. */
+    gecenSaniye: number,
+  ) => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const oyun = oyunBul('kavram')
 
@@ -162,9 +178,18 @@ export function KavramOyunuEkrani({
   /** Yanlışlarla aynı sıradaki tanım seçimleri — "sen bunu dedin" için. */
   const [yanlisGirdileri, setYanlisGirdileri] = useState<string[]>([])
 
-  const [bitisZamani, setBitisZamani] = useState(0)
-  const [kalan, setKalan] = useState(TUR_SURESI)
-  const [duraklatilan, setDuraklatilan] = useState<number | null>(null)
+  /** Bu tahta boss mu — kısa süre, tek yanlışta eleme. */
+  const [bossTahta, setBossTahta] = useState(false)
+  /** Kaç boss tahta verildi — sıradakinin boss olup olmayacağı buna bakıyor. */
+  const [verilenBoss, setVerilenBoss] = useState(0)
+  /** Boss tahtasında yanılıp elendi mi. */
+  const [elendi, setElendi] = useState(false)
+  /** Kaçıncı tahta — sayaç her tahtada sıfırlansın diye. */
+  const [tahtaSayisi, setTahtaSayisi] = useState(0)
+
+  const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukKavram, 'kolay')
+  /** Yardım açıkken sayaç duruyor. */
+  const [duraklatilan, setDuraklatilan] = useState(false)
 
   const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<KavramEsi>; yeniRekor: boolean } | null>(
     null,
@@ -174,6 +199,8 @@ export function KavramOyunuEkrani({
   const bankaTuru = bankaHavuzu.length > 0
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
+  /** Turun başladığı an — tur sınırsız olduğu için süre gerçekten ölçülüyor. */
+  const turBasladiRef = useRef(0)
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const cevaplarRef = useRef<Cevap<KavramEsi>[]>([])
   cevaplarRef.current = cevaplar
@@ -183,20 +210,39 @@ export function KavramOyunuEkrani({
 
   useGeriKatmani(asama !== 'tanitim' && !yardimAcik, onCik)
 
+  /**
+   * Sıradaki tahta: banka turunda banka öncelikli, normal turda seçilen
+   * zorluktan.
+   *
+   * Zorluk süzgeci yalnızca **sorulan** üç kavrama uygulanıyor; çeldiriciler
+   * tüm havuzdan geliyor (dördüncü argüman). Çeldirici cevaplanmıyor, tek işi
+   * aynı konudan inandırıcı bir tanım olmak — süzülseydi küçük konularda beş
+   * kavram kalmaz, tahta konu bütünlüğünü kaybederdi.
+   */
   const sonrakiTahta = useCallback(
-    () =>
-      bankaTuru
-        ? bankaTahtasiHazirla(bankaHavuzu, kullanilanRef.current)
-        : tahtaHazirla(kullanilanRef.current),
-    [bankaHavuzu, bankaTuru],
+    (boss: boolean) => {
+      if (bankaTuru) return bankaTahtasiHazirla(bankaHavuzu, kullanilanRef.current)
+      const seviye = boss ? bossZorlugu(zorluk).zorluk : zorluk
+      const suzulmus = zorluktaSuz(KAVRAM_HAVUZU, seviye)
+      return (
+        tahtaHazirla(kullanilanRef.current, suzulmus, Math.random, KAVRAM_HAVUZU) ??
+        tahtaHazirla(kullanilanRef.current)
+      )
+    },
+    [bankaHavuzu, bankaTuru, zorluk],
   )
 
   const turBaslat = useCallback(() => {
     turBasiRekor.current = istatistik.enIyiDogru
+    turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
     kullanilanRef.current = new Set()
-    setTahta(sonrakiTahta())
+    setTahta(sonrakiTahta(false))
+    setBossTahta(false)
+    setVerilenBoss(0)
+    setElendi(false)
+    setTahtaSayisi(0)
     setSecim(BOS_SECIM)
     setEslesenler([])
     setYanlisCift(null)
@@ -204,9 +250,7 @@ export function KavramOyunuEkrani({
     setCevaplar([])
     setYanlisGirdileri([])
     setSonuc(null)
-    setDuraklatilan(null)
-    setKalan(TUR_SURESI)
-    setBitisZamani(Date.now() + TUR_SURESI * 1000)
+    setDuraklatilan(false)
     setAsama('oynaniyor')
   }, [istatistik.enIyiDogru, sonrakiTahta])
 
@@ -229,22 +273,11 @@ export function KavramOyunuEkrani({
           soru: kavramdanBanka(cevap.soru),
           dogruMu: cevap.dogruMu,
         })),
+        Math.round((Date.now() - turBasladiRef.current) / 1000),
       )
     },
     [bankaTuru, istatistik, onTurBitti, sesAcik],
   )
-
-  useEffect(() => {
-    if (asama !== 'oynaniyor' || duraklatilan !== null) return
-    const oku = () => {
-      const yeni = kalanSaniye(bitisZamani)
-      setKalan(yeni)
-      if (yeni <= 0) turBitir(cevaplarRef.current)
-    }
-    oku()
-    const isaret = setInterval(oku, 250)
-    return () => clearInterval(isaret)
-  }, [asama, bitisZamani, duraklatilan, turBitir])
 
   // Havuz tükenip yeni tahta kurulamazsa tur süre dolmadan biter.
   useEffect(() => {
@@ -264,6 +297,51 @@ export function KavramOyunuEkrani({
     ).catch(() => {})
   }
 
+  /**
+   * Sıradaki tahtayı dağıtır.
+   *
+   * Boss kararı burada: on eşleştirme tamamlandıysa bu tahta boss olur ve bir
+   * üst seviyeden kurulur.
+   */
+  const tahtaDagit = () => {
+    for (const e of tahta?.esler ?? []) kullanilanRef.current.add(e.kavram)
+    const boss = bossElMi(cevaplarRef.current.length, verilenBoss)
+    if (boss) setVerilenBoss((v) => v + 1)
+    setBossTahta(boss)
+    setTahta(sonrakiTahta(boss))
+    setEslesenler([])
+    setTahtaBekliyor(false)
+    setTahtaSayisi((n) => n + 1)
+  }
+
+  /**
+   * Tahta süresi dolunca.
+   *
+   * Eşleştirilmemiş kavramlar cevaplanmamış sayılıyor — süre dolması bilememekle
+   * aynı. Boss tahtasında bu doğrudan eleme demek.
+   */
+  const sureDoldu = useCallback(() => {
+    if (asama !== 'oynaniyor' || !tahta) return
+    const kalanEsler = tahta.esler.filter((e) => !eslesenler.some((s) => s.kavram === e.kavram))
+    setCevaplar((onceki) => [...onceki, ...kalanEsler.map((soru) => ({ soru, dogruMu: false }))])
+    setYanlisGirdileri((onceki) => [...onceki, ...kalanEsler.map(() => 'süre doldu')])
+    geriBildir(false)
+    if (bossTahta) {
+      setElendi(true)
+      zamanlayiciRef.current = setTimeout(() => turBitir(cevaplarRef.current), CEVAP_BEKLEMESI)
+      return
+    }
+    zamanlayiciRef.current = setTimeout(tahtaDagit, CEVAP_BEKLEMESI)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [asama, bossTahta, tahta, eslesenler])
+
+  const { kalan, toplam } = useSoruSayaci({
+    aktif: asama === 'oynaniyor' && !duraklatilan && !tahtaBekliyor && tahta !== null,
+    sure: soruSuresi('kavram', bossTahta ? bossZorlugu(zorluk) : null),
+    anahtar: tahtaSayisi,
+    onBitti: sureDoldu,
+  })
+
   const eslesenKavramlar = new Set(eslesenler.map((e) => e.kavram))
   const eslesenTanimlar = new Set(eslesenler.map((e) => e.tanim))
 
@@ -279,11 +357,15 @@ export function KavramOyunuEkrani({
 
     if (!dogruMu) {
       setYanlisGirdileri((onceki) => [...onceki, tanim])
-      setBitisZamani((b) => b - YANLIS_CEZASI * 1000)
       setYanlisCift({ kavram, tanim })
       zamanlayiciRef.current = setTimeout(() => {
         setYanlisCift(null)
         setSecim(BOS_SECIM)
+        // Boss tahtasında tek yanlış yetiyor: eleyici olan bu.
+        if (elerMi(bossTahta, false)) {
+          setElendi(true)
+          turBitir(cevaplarRef.current)
+        }
       }, CEVAP_BEKLEMESI)
       return
     }
@@ -300,12 +382,7 @@ export function KavramOyunuEkrani({
     // görülsün; sonra yenisi geliyor.
     setEslesenler(yeniEslesenler)
     setTahtaBekliyor(true)
-    zamanlayiciRef.current = setTimeout(() => {
-      for (const e of tahta.esler) kullanilanRef.current.add(e.kavram)
-      setTahta(sonrakiTahta())
-      setEslesenler([])
-      setTahtaBekliyor(false)
-    }, CEVAP_BEKLEMESI)
+    zamanlayiciRef.current = setTimeout(tahtaDagit, CEVAP_BEKLEMESI)
   }
 
   const kavramSec = (kavram: string) => {
@@ -335,18 +412,16 @@ export function KavramOyunuEkrani({
   }
 
   const yardimAc = () => {
-    setDuraklatilan(kalanSaniye(bitisZamani))
+    setDuraklatilan(true)
     setYardimAcik(true)
   }
 
   const yardimKapat = () => {
-    if (duraklatilan !== null) setBitisZamani(Date.now() + duraklatilan * 1000)
-    setDuraklatilan(null)
+    setDuraklatilan(false)
     setYardimAcik(false)
   }
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
-  const gorunenKalan = duraklatilan ?? kalan
 
   return (
     <>
@@ -357,13 +432,15 @@ export function KavramOyunuEkrani({
           asama === 'bitti'
             ? null
             : {
-                kalan: gorunenKalan,
+                kalan,
+                toplam,
+                sira: tahtaSayisi + 1,
+                boss: bossTahta,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
                 yanlis: cevaplar.length - dogruSayisi,
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
-                cezaGorunur: yanlisCift !== null,
               }
         }
         onCik={onCik}
@@ -375,8 +452,10 @@ export function KavramOyunuEkrani({
             girdiler={yanlisGirdileri}
             rekor={turBasiRekor.current}
             bankaTuru={bankaTuru}
+            elendi={elendi}
             onTekrar={turBaslat}
             onCik={onCik}
+            bildir={bildir}
           />
         ) : (
           asama === 'oynaniyor' &&
@@ -422,7 +501,9 @@ export function KavramOyunuEkrani({
                     // Tahta bitince karşılığı olmayan iki tanım soluyor: oyuncu
                     // hangilerinin boşuna durduğunu görmeden ekran değişmesin.
                     const acikta =
-                      tahtaBekliyor && !eslesenTanimlar.has(tanim) && tanimSahibi(tahta, tanim) === null
+                      tahtaBekliyor &&
+                      !eslesenTanimlar.has(tanim) &&
+                      tanimSahibi(tahta, tanim) === null
                     return (
                       <li key={tanim}>
                         <EslestirmeDugmesi
@@ -465,6 +546,11 @@ export function KavramOyunuEkrani({
         baslatir={asama === 'tanitim'}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
+        ekstra={
+          asama === 'tanitim' && !bankaTuru ? (
+            <ZorlukSecimi secili={zorluk} onSec={setZorluk} bossVar />
+          ) : null
+        }
       />
     </>
   )
@@ -475,16 +561,20 @@ function SonucGorunumu({
   girdiler,
   rekor,
   bankaTuru,
+  elendi,
   onTekrar,
   onCik,
+  bildir,
 }: {
   sonuc: { ozet: TurOzeti<KavramEsi>; yeniRekor: boolean }
   /** Yanlışlarla aynı sıradaki tanım seçimleri. */
   girdiler: string[]
   rekor: number
   bankaTuru: boolean
+  elendi: boolean
   onTekrar: () => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const { ozet, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
@@ -499,6 +589,7 @@ function SonucGorunumu({
       rekor={rekor}
       yeniRekor={yeniRekor}
       bankaTuru={bankaTuru}
+      elendi={elendi}
       altBaslik={
         bankaTuru
           ? 'Banka soruları — üst üste üç doğruda düşerler.'
@@ -512,7 +603,12 @@ function SonucGorunumu({
       {ozet.yanlislar.length > 0 && (
         <div className="flex flex-none flex-col gap-2">
           {gorunen.map((es, sira) => (
-            <YanlisKarti key={`${es.kavram}-${sira}`} oyunId="kavram">
+            <YanlisKarti
+              key={`${es.kavram}-${sira}`}
+              oyunId="kavram"
+              soru={kavramdanBanka(es)}
+              bildir={bildir}
+            >
               <b className="block font-display text-[13.5px] font-extrabold leading-tight">
                 {es.kavram}
               </b>

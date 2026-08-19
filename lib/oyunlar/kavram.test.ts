@@ -9,6 +9,7 @@ import {
   tanimSahibi,
   taniminiBul,
 } from './kavram'
+import { ZORLUKLAR, zorluktaSuz } from './ritim'
 
 describe('kavram havuzu', () => {
   it('aynı kavram iki kez geçmiyor', () => {
@@ -73,6 +74,42 @@ describe('kavram havuzu', () => {
 
   it('bir turu doldurmaya yetecek kadar kavram var', () => {
     expect(KAVRAM_HAVUZU.length).toBeGreaterThan(KAVRAM_SAYISI * 10)
+  })
+})
+
+describe('zorluk dağılımı', () => {
+  it('her seviyede tahta kurmaya yetecek kavram var', () => {
+    for (const zorluk of ZORLUKLAR) {
+      expect(zorluktaSuz(KAVRAM_HAVUZU, zorluk).length, zorluk).toBeGreaterThan(KAVRAM_SAYISI * 3)
+    }
+  })
+
+  it('her seviyede tek konudan tahta kurulabiliyor', () => {
+    for (const zorluk of ZORLUKLAR) {
+      const konular = new Map<string, number>()
+      for (const es of zorluktaSuz(KAVRAM_HAVUZU, zorluk)) {
+        konular.set(es.konu, (konular.get(es.konu) ?? 0) + 1)
+      }
+      const yeterli = [...konular.values()].filter((adet) => adet >= KAVRAM_SAYISI)
+      expect(yeterli.length, zorluk).toBeGreaterThan(0)
+    }
+  })
+
+  /*
+    Çeldiriciler süzgecin dışında kalmalı: zor seviyede bir konuda beş kavram
+    kalmayabiliyor, çeldirici de süzülseydi tahta konu bütünlüğünü kaybederdi.
+  */
+  it('çeldiriciler süzülmüş havuzun dışından gelebiliyor', () => {
+    for (const zorluk of ZORLUKLAR) {
+      const suzulmus = zorluktaSuz(KAVRAM_HAVUZU, zorluk)
+      for (let i = 0; i < 50; i++) {
+        const tahta = tahtaHazirla(new Set(), suzulmus, Math.random, KAVRAM_HAVUZU)
+        expect(tahta, zorluk).not.toBeNull()
+        // Sorulan kavramlar süzgeçten, tahtanın tamamı değil.
+        for (const es of tahta!.esler) expect(es.zorluk, es.kavram).toBe(zorluk)
+        expect(tahta!.tanimlar).toHaveLength(TANIM_SAYISI)
+      }
+    }
   })
 })
 
@@ -151,9 +188,9 @@ describe('tahtaHazirla', () => {
 
   it('çeldiriciye yer olmayan havuzda tahta kurulamaz', () => {
     const havuz: KavramEsi[] = [
-      { kavram: 'a', tanim: 'a tanımı', konu: 'inkilap' },
-      { kavram: 'b', tanim: 'b tanımı', konu: 'inkilap' },
-      { kavram: 'c', tanim: 'c tanımı', konu: 'inkilap' },
+      { kavram: 'a', tanim: 'a tanımı', konu: 'inkilap', zorluk: 'orta' },
+      { kavram: 'b', tanim: 'b tanımı', konu: 'inkilap', zorluk: 'orta' },
+      { kavram: 'c', tanim: 'c tanımı', konu: 'inkilap', zorluk: 'orta' },
     ]
     expect(tahtaHazirla(new Set(), havuz)).toBeNull()
   })

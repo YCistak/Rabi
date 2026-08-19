@@ -507,7 +507,8 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'antlasma')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar) => turBitti('antlasma', ozet, cevaplar)}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('antlasma', ozet, cevaplar, saniye)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}
@@ -516,7 +517,8 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'kavram')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar) => turBitti('kavram', ozet, cevaplar)}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('kavram', ozet, cevaplar, saniye)}
+          bildir={bildir}
           onCik={oyunuKapat}
         />
       )}

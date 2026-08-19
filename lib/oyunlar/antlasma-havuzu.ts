@@ -18,6 +18,8 @@
  * birlikte tarihi de ezberletiyor.
  */
 
+import type { Zorluk } from './ritim'
+
 export type TarihDonemi =
   | 'klasik'
   | 'gerileme'
@@ -33,6 +35,7 @@ export type AntlasmaMaddesi = {
   /** Doğru cevap: maddenin geçtiği antlaşma ya da belge. */
   antlasma: string
   donem: TarihDonemi
+  zorluk: Zorluk
 }
 
 export const TARIH_DONEM_ADI: Record<TarihDonemi, string> = {
@@ -58,13 +61,28 @@ export function sutunBasligi(donem: TarihDonemi | null): string {
   return 'Antlaşmalar'
 }
 
-/** `[madde, antlaşma]` çiftlerini tek döneme bağlar — havuzu okunur tutmak için. */
-function donem(donem: TarihDonemi, ciftler: [string, string][]): AntlasmaMaddesi[] {
-  return ciftler.map(([madde, antlasma]) => ({ madde, antlasma, donem }))
+/**
+ * `[madde, antlaşma]` çiftlerini bir döneme ve o dönemin zorluğuna bağlar.
+ *
+ * Zorluk **döneme** ait, tek tek maddelere değil. İki sebeple: birincisi gerçek
+ * zorluk büyük ölçüde dönemin kendisi — Millî Mücadele antlaşmalarını herkes
+ * duymuştur, Osmanlı-İran antlaşmalarını birbirinden ayırmak gerçekten zordur.
+ * İkincisi mekanik: el tek dönemden kuruluyor ve dört farklı antlaşma istiyor;
+ * zorluk madde madde dağılsaydı süzülmüş havuzda tek dönemden dört antlaşma
+ * kalmaz, eller sürekli karışık kurulurdu.
+ */
+function donem(
+  donem: TarihDonemi,
+  zorluk: Zorluk,
+  ciftler: [string, string][],
+): AntlasmaMaddesi[] {
+  return ciftler.map(([madde, antlasma]) => ({ madde, antlasma, donem, zorluk }))
 }
 
 export const ANTLASMA_HAVUZU: AntlasmaMaddesi[] = [
-  ...donem('klasik', [
+  // Zor: klasik dönemin Doğu ve Orta Avrupa antlaşmaları — adları birbirine en
+  // çok karışanlar.
+  ...donem('klasik', 'zor', [
     [
       'Bağdat ve Doğu Anadolu Osmanlı’da kaldı; Tebriz İran’a bırakıldı.',
       'Amasya Antlaşması (1555)',
@@ -111,7 +129,7 @@ export const ANTLASMA_HAVUZU: AntlasmaMaddesi[] = [
     ],
   ]),
 
-  ...donem('gerileme', [
+  ...donem('gerileme', 'zor', [
     [
       'Mora ve Dalmaçya Venedik’e, Podolya Lehistan’a, Macaristan ve Erdel Avusturya’ya bırakıldı.',
       'Karlofça Antlaşması (1699)',
@@ -158,7 +176,8 @@ export const ANTLASMA_HAVUZU: AntlasmaMaddesi[] = [
     ],
   ]),
 
-  ...donem('dagilma', [
+  // Orta: Dağılma dönemi ve Cumhuriyet dış politikası.
+  ...donem('dagilma', 'orta', [
     [
       'Sırplara ayrıcalık verildi; Prut Nehri iki devlet arasında sınır kabul edildi.',
       'Bükreş Antlaşması (1812)',
@@ -213,7 +232,8 @@ export const ANTLASMA_HAVUZU: AntlasmaMaddesi[] = [
     ],
   ]),
 
-  ...donem('kurtulus', [
+  // Kolay: TYT'nin en çok sorduğu yer — Millî Mücadele ve inkılap.
+  ...donem('kurtulus', 'kolay', [
     [
       'İtilaf Devletleri güvenliklerini tehdit eden bir durumda istedikleri stratejik noktayı işgal edebilecekti.',
       'Mondros Ateşkes Antlaşması (1918)',
@@ -285,7 +305,7 @@ export const ANTLASMA_HAVUZU: AntlasmaMaddesi[] = [
     ],
   ]),
 
-  ...donem('belgeler', [
+  ...donem('belgeler', 'kolay', [
     [
       'Vatanın bütünlüğü, milletin bağımsızlığı tehlikededir; milleti yine milletin azim ve kararı kurtaracaktır.',
       'Amasya Genelgesi (1919)',
@@ -341,7 +361,7 @@ export const ANTLASMA_HAVUZU: AntlasmaMaddesi[] = [
     ],
   ]),
 
-  ...donem('inkilap', [
+  ...donem('inkilap', 'kolay', [
     [
       'Ülkedeki bütün okullar Maarif Vekâleti’ne bağlandı, medreseler kapatıldı.',
       'Tevhid-i Tedrisat Kanunu (1924)',
@@ -380,7 +400,7 @@ export const ANTLASMA_HAVUZU: AntlasmaMaddesi[] = [
     ],
   ]),
 
-  ...donem('cumhuriyet', [
+  ...donem('cumhuriyet', 'orta', [
     [
       'Musul Irak’a bırakıldı; petrol gelirinin yüzde onu yirmi beş yıl Türkiye’ye verilecekti.',
       'Ankara Antlaşması (1926)',

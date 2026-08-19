@@ -6,6 +6,7 @@ import {
   type AntlasmaMaddesi,
 } from './antlasma-havuzu'
 import { EL_BOYUTU, antlasmasiniBul, elHazirla, eslesiyorMu } from './antlasma'
+import { ZORLUKLAR, zorluktaSuz } from './ritim'
 
 /** Sabit sıra üreten sahte rastgele — testler tekrarlanabilir olsun. */
 function sahteRastgele(degerler: number[]): () => number {
@@ -81,6 +82,41 @@ describe('antlaşma havuzu', () => {
   })
 })
 
+/*
+  Zorluk burada döneme bağlı; testin işi bunun **mekanik** karşılığını korumak.
+  Süzülmüş havuzda tek dönemden dört antlaşma kalmazsa eller karışık kurulur ve
+  oyunun asıl zorluğu (aynı dönemden dört antlaşma) kaybolur.
+*/
+describe('zorluk dağılımı', () => {
+  it('her seviyede el kurmaya yetecek madde var', () => {
+    for (const zorluk of ZORLUKLAR) {
+      expect(zorluktaSuz(ANTLASMA_HAVUZU, zorluk).length, zorluk).toBeGreaterThan(EL_BOYUTU * 2)
+    }
+  })
+
+  it('her seviyede tek dönemden el kurulabiliyor', () => {
+    for (const zorluk of ZORLUKLAR) {
+      const donemler = new Map<string, Set<string>>()
+      for (const es of zorluktaSuz(ANTLASMA_HAVUZU, zorluk)) {
+        const kume = donemler.get(es.donem) ?? new Set<string>()
+        kume.add(es.antlasma)
+        donemler.set(es.donem, kume)
+      }
+      const yeterli = [...donemler.values()].filter((k) => k.size >= EL_BOYUTU)
+      expect(yeterli.length, zorluk).toBeGreaterThan(0)
+    }
+  })
+
+  it('bir dönemin bütün maddeleri aynı seviyede', () => {
+    const seviye = new Map<string, string>()
+    for (const es of ANTLASMA_HAVUZU) {
+      const onceki = seviye.get(es.donem)
+      if (onceki === undefined) seviye.set(es.donem, es.zorluk)
+      else expect(es.zorluk, es.donem).toBe(onceki)
+    }
+  })
+})
+
 describe('sutunBasligi', () => {
   it('belge dönemlerinde antlaşma demiyor', () => {
     expect(sutunBasligi('belgeler')).toBe('Belgeler')
@@ -142,10 +178,10 @@ describe('elHazirla', () => {
 
   it('tek dönem yetmezse karışık el kurar', () => {
     const havuz: AntlasmaMaddesi[] = [
-      { madde: 'a1', antlasma: 'A (1900)', donem: 'klasik' },
-      { madde: 'a2', antlasma: 'B (1901)', donem: 'klasik' },
-      { madde: 'b1', antlasma: 'C (1902)', donem: 'kurtulus' },
-      { madde: 'b2', antlasma: 'D (1903)', donem: 'kurtulus' },
+      { madde: 'a1', antlasma: 'A (1900)', donem: 'klasik', zorluk: 'orta' },
+      { madde: 'a2', antlasma: 'B (1901)', donem: 'klasik', zorluk: 'orta' },
+      { madde: 'b1', antlasma: 'C (1902)', donem: 'kurtulus', zorluk: 'orta' },
+      { madde: 'b2', antlasma: 'D (1903)', donem: 'kurtulus', zorluk: 'orta' },
     ]
     const el = elHazirla(new Set(), havuz)!
     expect(el.donem).toBeNull()
@@ -162,6 +198,7 @@ describe('elHazirla', () => {
       madde: `m${i}`,
       antlasma: 'Tek Antlaşma (1900)',
       donem: 'klasik' as const,
+      zorluk: 'orta' as const,
     }))
     expect(elHazirla(new Set(), havuz, sahteRastgele([0.3, 0.7]))).toBeNull()
   })

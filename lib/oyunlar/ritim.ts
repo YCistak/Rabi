@@ -110,6 +110,15 @@ export const SORU_SURESI: Record<OyunId, number> = {
   aci: 20,
   // Üçgende kenar hesabı en uzun süren iş.
   ucgen: 22,
+  /**
+   * Tarih oyunlarında da süre el/tahta başına.
+   *
+   * Antlaşma'da dört madde okunuyor ve maddeler bir cümlelik: altı kısa eser
+   * adından uzun sürüyor, o yüzden edebiyattan fazla. Kavram'da üç eşleştirme
+   * var ama beş tanım okunuyor — iki tanesi boşuna.
+   */
+  antlasma: 45,
+  kavram: 35,
 }
 
 /** Boss sorusuna verilen ek süre çarpanı. */

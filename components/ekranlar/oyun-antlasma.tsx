@@ -13,10 +13,7 @@ import {
 } from '@/lib/oyunlar/antlasma-havuzu'
 import { EL_BOYUTU, elHazirla, eslesiyorMu, type AntlasmaEli } from '@/lib/oyunlar/antlasma'
 import {
-  TUR_SURESI,
-  YANLIS_CEZASI,
   guncelSeri,
-  kalanSaniye,
   karistir,
   rekorKirildiMi,
   turOzeti,
@@ -24,6 +21,18 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { antlasmadanBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import {
+  bossElMi,
+  bossZorlugu,
+  elerMi,
+  soruSuresi,
+  zorluktaSuz,
+  type Zorluk,
+} from '@/lib/oyunlar/ritim'
+import { useSoruSayaci } from '@/lib/oyunlar/soru-sayaci'
+import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
+import { ZorlukSecimi } from '@/components/zorluk-secimi'
+import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
@@ -145,13 +154,20 @@ export function AntlasmaOyunuEkrani({
   bankaSorulari,
   onTurBitti,
   onCik,
+  bildir,
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
   /** Boş değilse eller önce bu sorulardan kurulur (Oyun Bankası turu). */
   bankaSorulari: BankaKaydi[]
-  onTurBitti: (ozet: TurOzeti<AntlasmaMaddesi>, bankaCevaplari: BankaCevabi[]) => void
+  onTurBitti: (
+    ozet: TurOzeti<AntlasmaMaddesi>,
+    bankaCevaplari: BankaCevabi[],
+    /** Turun gerçek uzunluğu — tur artık sabit süreli değil. */
+    gecenSaniye: number,
+  ) => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const oyun = oyunBul('antlasma')
 
@@ -168,9 +184,18 @@ export function AntlasmaOyunuEkrani({
   /** Yanlışlarla aynı sıradaki seçimler — tur sonunda "sen X dedin" için. */
   const [yanlisGirdileri, setYanlisGirdileri] = useState<string[]>([])
 
-  const [bitisZamani, setBitisZamani] = useState(0)
-  const [kalan, setKalan] = useState(TUR_SURESI)
-  const [duraklatilan, setDuraklatilan] = useState<number | null>(null)
+  /** Bu el boss mu — kısa süre, tek yanlışta eleme. */
+  const [bossEl, setBossEl] = useState(false)
+  /** Kaç boss el verildi — sıradakinin boss olup olmayacağı buna bakıyor. */
+  const [verilenBoss, setVerilenBoss] = useState(0)
+  /** Boss elinde yanılıp elendi mi. */
+  const [elendi, setElendi] = useState(false)
+  /** Kaçıncı el — sayaç her elde sıfırlansın diye. */
+  const [elSayisi, setElSayisi] = useState(0)
+
+  const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukAntlasma, 'kolay')
+  /** Yardım açıkken sayaç duruyor. */
+  const [duraklatilan, setDuraklatilan] = useState(false)
 
   const [sonuc, setSonuc] = useState<{
     ozet: TurOzeti<AntlasmaMaddesi>
@@ -181,6 +206,8 @@ export function AntlasmaOyunuEkrani({
   const bankaTuru = bankaHavuzu.length > 0
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
+  /** Turun başladığı an — tur sınırsız olduğu için süre gerçekten ölçülüyor. */
+  const turBasladiRef = useRef(0)
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const cevaplarRef = useRef<Cevap<AntlasmaMaddesi>[]>([])
   cevaplarRef.current = cevaplar
@@ -190,21 +217,30 @@ export function AntlasmaOyunuEkrani({
 
   useGeriKatmani(asama !== 'tanitim' && !yardimAcik, onCik)
 
-  /** Sıradaki el: banka turunda banka öncelikli, normal turda havuzdan. */
+  /** Sıradaki el: banka turunda banka öncelikli, normal turda seçilen zorluktan. */
   const sonrakiEl = useCallback(
-    () =>
-      bankaTuru
-        ? bankaEliHazirla(bankaHavuzu, kullanilanRef.current)
-        : elHazirla(kullanilanRef.current),
-    [bankaHavuzu, bankaTuru],
+    (boss: boolean) => {
+      if (bankaTuru) return bankaEliHazirla(bankaHavuzu, kullanilanRef.current)
+      const seviye = boss ? bossZorlugu(zorluk).zorluk : zorluk
+      const suzulmus = zorluktaSuz(ANTLASMA_HAVUZU, seviye)
+      // Seçilen seviyede el kuracak kadar madde kalmadıysa tüm havuza düşülüyor:
+      // turun ortasında durmak, bir sorunun fazla kolay gelmesinden kötü.
+      return elHazirla(kullanilanRef.current, suzulmus) ?? elHazirla(kullanilanRef.current)
+    },
+    [bankaHavuzu, bankaTuru, zorluk],
   )
 
   const turBaslat = useCallback(() => {
     turBasiRekor.current = istatistik.enIyiDogru
+    turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
     kullanilanRef.current = new Set()
-    setEl(sonrakiEl())
+    setEl(sonrakiEl(false))
+    setBossEl(false)
+    setVerilenBoss(0)
+    setElendi(false)
+    setElSayisi(0)
     setSecim(BOS_SECIM)
     setEslesenler([])
     setYanlisCift(null)
@@ -212,9 +248,7 @@ export function AntlasmaOyunuEkrani({
     setCevaplar([])
     setYanlisGirdileri([])
     setSonuc(null)
-    setDuraklatilan(null)
-    setKalan(TUR_SURESI)
-    setBitisZamani(Date.now() + TUR_SURESI * 1000)
+    setDuraklatilan(false)
     setAsama('oynaniyor')
   }, [istatistik.enIyiDogru, sonrakiEl])
 
@@ -239,22 +273,11 @@ export function AntlasmaOyunuEkrani({
           soru: antlasmadanBanka(cevap.soru),
           dogruMu: cevap.dogruMu,
         })),
+        Math.round((Date.now() - turBasladiRef.current) / 1000),
       )
     },
     [bankaTuru, istatistik, onTurBitti, sesAcik],
   )
-
-  useEffect(() => {
-    if (asama !== 'oynaniyor' || duraklatilan !== null) return
-    const oku = () => {
-      const yeni = kalanSaniye(bitisZamani)
-      setKalan(yeni)
-      if (yeni <= 0) turBitir(cevaplarRef.current)
-    }
-    oku()
-    const isaret = setInterval(oku, 250)
-    return () => clearInterval(isaret)
-  }, [asama, bitisZamani, duraklatilan, turBitir])
 
   // Havuz (banka turunda banka) tükenip yeni el kurulamazsa tur süre dolmadan
   // biter.
@@ -276,6 +299,51 @@ export function AntlasmaOyunuEkrani({
     ).catch(() => {})
   }
 
+  /**
+   * Sıradaki eli dağıtır.
+   *
+   * Boss kararı burada veriliyor: on eşleştirme tamamlandıysa bu el boss olur ve
+   * bir üst seviyeden kurulur.
+   */
+  const elDagit = () => {
+    for (const e of el?.esler ?? []) kullanilanRef.current.add(e.madde)
+    const boss = bossElMi(cevaplarRef.current.length, verilenBoss)
+    if (boss) setVerilenBoss((v) => v + 1)
+    setBossEl(boss)
+    setEl(sonrakiEl(boss))
+    setEslesenler([])
+    setElBekliyor(false)
+    setElSayisi((n) => n + 1)
+  }
+
+  /**
+   * El süresi dolunca.
+   *
+   * Eşleştirilmemiş maddeler cevaplanmamış sayılıyor — süre dolması bilememekle
+   * aynı. Boss elinde bu doğrudan eleme demek.
+   */
+  const sureDoldu = useCallback(() => {
+    if (asama !== 'oynaniyor' || !el) return
+    const kalanEsler = el.esler.filter((e) => !eslesenler.some((s) => s.madde === e.madde))
+    setCevaplar((onceki) => [...onceki, ...kalanEsler.map((soru) => ({ soru, dogruMu: false }))])
+    setYanlisGirdileri((onceki) => [...onceki, ...kalanEsler.map(() => 'süre doldu')])
+    geriBildir(false)
+    if (bossEl) {
+      setElendi(true)
+      zamanlayiciRef.current = setTimeout(() => turBitir(cevaplarRef.current), CEVAP_BEKLEMESI)
+      return
+    }
+    zamanlayiciRef.current = setTimeout(elDagit, CEVAP_BEKLEMESI)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [asama, bossEl, el, eslesenler])
+
+  const { kalan, toplam } = useSoruSayaci({
+    aktif: asama === 'oynaniyor' && !duraklatilan && !elBekliyor && el !== null,
+    sure: soruSuresi('antlasma', bossEl ? bossZorlugu(zorluk) : null),
+    anahtar: elSayisi,
+    onBitti: sureDoldu,
+  })
+
   const eslesenMaddeler = new Set(eslesenler.map((e) => e.madde))
   const eslesenAntlasmalar = new Set(eslesenler.map((e) => e.antlasma))
 
@@ -291,11 +359,15 @@ export function AntlasmaOyunuEkrani({
 
     if (!dogruMu) {
       setYanlisGirdileri((onceki) => [...onceki, antlasma])
-      setBitisZamani((b) => b - YANLIS_CEZASI * 1000)
       setYanlisCift({ madde, antlasma })
       zamanlayiciRef.current = setTimeout(() => {
         setYanlisCift(null)
         setSecim(BOS_SECIM)
+        // Boss elinde tek yanlış yetiyor: eleyici olan bu.
+        if (elerMi(bossEl, false)) {
+          setElendi(true)
+          turBitir(cevaplarRef.current)
+        }
       }, CEVAP_BEKLEMESI)
       return
     }
@@ -312,12 +384,7 @@ export function AntlasmaOyunuEkrani({
 
     setEslesenler(yeniEslesenler)
     setElBekliyor(true)
-    zamanlayiciRef.current = setTimeout(() => {
-      for (const e of el.esler) kullanilanRef.current.add(e.madde)
-      setEl(sonrakiEl())
-      setEslesenler([])
-      setElBekliyor(false)
-    }, CEVAP_BEKLEMESI)
+    zamanlayiciRef.current = setTimeout(elDagit, CEVAP_BEKLEMESI)
   }
 
   const maddeSec = (madde: string) => {
@@ -343,18 +410,16 @@ export function AntlasmaOyunuEkrani({
   }
 
   const yardimAc = () => {
-    setDuraklatilan(kalanSaniye(bitisZamani))
+    setDuraklatilan(true)
     setYardimAcik(true)
   }
 
   const yardimKapat = () => {
-    if (duraklatilan !== null) setBitisZamani(Date.now() + duraklatilan * 1000)
-    setDuraklatilan(null)
+    setDuraklatilan(false)
     setYardimAcik(false)
   }
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
-  const gorunenKalan = duraklatilan ?? kalan
 
   return (
     <>
@@ -365,13 +430,15 @@ export function AntlasmaOyunuEkrani({
           asama === 'bitti'
             ? null
             : {
-                kalan: gorunenKalan,
+                kalan,
+                toplam,
+                sira: elSayisi + 1,
+                boss: bossEl,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
                 yanlis: cevaplar.length - dogruSayisi,
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
-                cezaGorunur: yanlisCift !== null,
               }
         }
         onCik={onCik}
@@ -383,8 +450,10 @@ export function AntlasmaOyunuEkrani({
             girdiler={yanlisGirdileri}
             rekor={turBasiRekor.current}
             bankaTuru={bankaTuru}
+            elendi={elendi}
             onTekrar={turBaslat}
             onCik={onCik}
+            bildir={bildir}
           />
         ) : (
           asama === 'oynaniyor' &&
@@ -467,6 +536,11 @@ export function AntlasmaOyunuEkrani({
         baslatir={asama === 'tanitim'}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
+        ekstra={
+          asama === 'tanitim' && !bankaTuru ? (
+            <ZorlukSecimi secili={zorluk} onSec={setZorluk} bossVar />
+          ) : null
+        }
       />
     </>
   )
@@ -477,16 +551,20 @@ function SonucGorunumu({
   girdiler,
   rekor,
   bankaTuru,
+  elendi,
   onTekrar,
   onCik,
+  bildir,
 }: {
   sonuc: { ozet: TurOzeti<AntlasmaMaddesi>; yeniRekor: boolean }
   /** Yanlışlarla aynı sıradaki antlaşma seçimleri. */
   girdiler: string[]
   rekor: number
   bankaTuru: boolean
+  elendi: boolean
   onTekrar: () => void
   onCik: () => void
+  bildir: BildirimKolu
 }) {
   const { ozet, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
@@ -501,6 +579,7 @@ function SonucGorunumu({
       rekor={rekor}
       yeniRekor={yeniRekor}
       bankaTuru={bankaTuru}
+      elendi={elendi}
       altBaslik={
         bankaTuru
           ? 'Banka soruları — üst üste üç doğruda düşerler.'
@@ -514,7 +593,12 @@ function SonucGorunumu({
       {ozet.yanlislar.length > 0 && (
         <div className="flex flex-none flex-col gap-2">
           {gorunen.map((es, sira) => (
-            <YanlisKarti key={`${es.madde}-${sira}`} oyunId="antlasma">
+            <YanlisKarti
+              key={`${es.madde}-${sira}`}
+              oyunId="antlasma"
+              soru={antlasmadanBanka(es)}
+              bildir={bildir}
+            >
               <b className="block text-[12.5px] font-bold leading-snug">{es.madde}</b>
               <span className="mt-1 flex items-center gap-1.5 text-xs font-extrabold text-success">
                 <Check size={13} className="shrink-0" aria-hidden />
