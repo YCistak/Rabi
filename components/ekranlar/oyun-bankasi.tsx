@@ -32,16 +32,16 @@ import { Rabi } from '@/components/maskot/rabi'
  */
 
 const AILE: Record<OyunId, { zemin: string; yazi: string; dolgu: string }> = {
-  yazim: { zemin: 'bg-yzm', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
-  ses: { zemin: 'bg-yzm', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
-  oge: { zemin: 'bg-yzm', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
-  soz: { zemin: 'bg-yzm', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
-  islem: { zemin: 'bg-isl', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
-  bolunme: { zemin: 'bg-isl', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
-  aci: { zemin: 'bg-isl', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
-  ucgen: { zemin: 'bg-isl', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
-  edebiyat: { zemin: 'bg-edb', yazi: 'text-edb-koyu', dolgu: 'bg-edb-ok' },
-  harita: { zemin: 'bg-cog', yazi: 'text-cog-koyu', dolgu: 'bg-cog-ok' },
+  yazim: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
+  ses: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
+  oge: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
+  soz: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
+  islem: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
+  bolunme: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
+  aci: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
+  ucgen: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
+  edebiyat: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu', dolgu: 'bg-edb-ok' },
+  harita: { zemin: 'bg-cog-kart', yazi: 'text-cog-koyu', dolgu: 'bg-cog-ok' },
 }
 
 const KISA_AD: Record<OyunId, string> = {

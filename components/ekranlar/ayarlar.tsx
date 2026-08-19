@@ -1002,10 +1002,10 @@ type SatirRengi = 'mavi' | 'pembe' | 'krem' | 'nane' | 'lavanta' | 'mercan'
 
 const IKON_RENGI: Record<SatirRengi, string> = {
   mavi: 'bg-primary-soft text-primary',
-  pembe: 'bg-yzm text-yzm-koyu',
-  krem: 'bg-isl text-isl-koyu',
+  pembe: 'bg-yzm-kart text-yzm-koyu',
+  krem: 'bg-isl-kart text-isl-koyu',
   nane: 'bg-success-soft text-success',
-  lavanta: 'bg-edb text-edb-koyu',
+  lavanta: 'bg-edb-kart text-edb-koyu',
   mercan: 'bg-ikincil-soft text-ikincil',
 }
 

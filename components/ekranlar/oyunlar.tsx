@@ -71,11 +71,16 @@ import { UcgenOyunuEkrani } from '@/components/ekranlar/oyun-ucgen'
  * Aynı derse çalışan bütün oyunlar aynı rengi paylaşıyor; renk böylece süs
  * değil, "bu ne dersi" bilgisini taşıyor. Aile adlarını `DERSLER` veriyor.
  */
+/**
+ * Burada `-kart` yüzeyi kullanılıyor, oyun ekranının zemini değil: bunlar
+ * sayfanın üstünde duran kartlar ve koyu temada zeminden **açık** olmaları
+ * gerekiyor (bkz. `globals.css`, aile renkleri).
+ */
 const AILE: Record<DersTanimi['aile'], { zemin: string; yazi: string; ok: string }> = {
-  yzm: { zemin: 'bg-yzm', yazi: 'text-yzm-koyu', ok: 'bg-yzm-ok' },
-  isl: { zemin: 'bg-isl', yazi: 'text-isl-koyu', ok: 'bg-isl-ok' },
-  edb: { zemin: 'bg-edb', yazi: 'text-edb-koyu', ok: 'bg-edb-ok' },
-  cog: { zemin: 'bg-cog', yazi: 'text-cog-koyu', ok: 'bg-cog-ok' },
+  yzm: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu', ok: 'bg-yzm-ok' },
+  isl: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', ok: 'bg-isl-ok' },
+  edb: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu', ok: 'bg-edb-ok' },
+  cog: { zemin: 'bg-cog-kart', yazi: 'text-cog-koyu', ok: 'bg-cog-ok' },
 }
 
 /** Ders ızgarasındaki tek hücre: ya bir oyun ya da bir bölüm kapağı. */
@@ -273,6 +278,9 @@ export function OyunlarEkrani({
 
   const bankaSorulari = bankaTuru === null ? [] : banka.filter((k) => k.soru.oyun === bankaTuru)
 
+  /** Açık dersin ailesi — başlıktaki geri tuşu bu renkte duruyor. */
+  const acikAile = secilenDers === null ? AILE.yzm : AILE[dersBul(secilenDers).aile]
+
   return (
     <div>
       <header className="px-0.5 pt-1">
@@ -361,12 +369,21 @@ export function OyunlarEkrani({
         </>
       ) : (
         <>
-          <div className="mt-5 mb-3 flex items-center gap-2 px-0.5">
+          <div className="mt-5 mb-3 flex items-center gap-2.5 px-0.5">
+            {/* Geri tuşu, dersin kendi renginde dolu bir daire.
+                Önce çıplak bir oktu ve fark edilmiyordu: gri, çerçevesiz ve
+                başlığın yanında kaybolan bir işaretti. Dolu daire hem dokunma
+                hedefini (36 px) görünür kılıyor hem de hangi dersten
+                çıkılacağını renkten söylüyor. */}
             <button
               type="button"
               onClick={() => (secilenBolum === null ? dersiKapat() : setSecilenBolum(null))}
               aria-label={secilenBolum === null ? 'Derslere dön' : 'Derse dön'}
-              className="-ml-1 grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted-foreground transition active:bg-muted"
+              className={cn(
+                'golge-kart grid h-9 w-9 shrink-0 place-items-center rounded-full transition active:scale-95',
+                acikAile.zemin,
+                acikAile.yazi,
+              )}
             >
               <GeriSimgesi />
             </button>
@@ -544,9 +561,9 @@ function BankaDestesi({
   className?: string
 }) {
   const cipler = [
-    { id: 'yazim' as const, ikon: '✍️', ad: 'yazım', zemin: 'bg-yzm', yazi: 'text-yzm-koyu' },
-    { id: 'islem' as const, ikon: '🧮', ad: 'işlem', zemin: 'bg-isl', yazi: 'text-isl-koyu' },
-    { id: 'edebiyat' as const, ikon: '📚', ad: 'edebiyat', zemin: 'bg-edb', yazi: 'text-edb-koyu' },
+    { id: 'yazim' as const, ikon: '✍️', ad: 'yazım', zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu' },
+    { id: 'islem' as const, ikon: '🧮', ad: 'işlem', zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
+    { id: 'edebiyat' as const, ikon: '📚', ad: 'edebiyat', zemin: 'bg-edb-kart', yazi: 'text-edb-koyu' },
   ].filter((c) => dagilim[c.id] > 0)
 
   return (
@@ -557,11 +574,11 @@ function BankaDestesi({
         <>
           <span
             aria-hidden
-            className="absolute inset-x-2.5 bottom-0 top-4 -rotate-[1.4deg] rounded-2xl bg-edb"
+            className="absolute inset-x-2.5 bottom-0 top-4 -rotate-[1.4deg] rounded-2xl bg-edb-kart"
           />
           <span
             aria-hidden
-            className="absolute inset-x-1.5 bottom-2 top-2 rounded-2xl bg-isl"
+            className="absolute inset-x-1.5 bottom-2 top-2 rounded-2xl bg-isl-kart"
           />
         </>
       )}
