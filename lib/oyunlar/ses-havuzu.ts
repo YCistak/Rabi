@@ -9,7 +9,11 @@
  * - *tıbbı* (p→b yumuşaması **ve** ünsüz türemesi),
  * - *gideceğim* (t→d ve k→ğ, iki yumuşama bir arada sayılıyor),
  * - *gencecik* (ünlü türemesi ama ç→c değişimi de tartışmalı),
- * - *niçin* (ünlü daralması mı hece düşmesi mi, kaynaklar ayrışıyor).
+ * - *niçin* (ünlü daralması mı hece düşmesi mi, kaynaklar ayrışıyor),
+ * - *zıddı*, *reddi* (t→d yumuşaması **ve** ikizleşme),
+ * - *küçümsemek* (k düşmesi ve ünlü düşmesi bir arada),
+ * - *çoğalmak* (k düşer mi ğ'ye mi yumuşar, kaynaklar ayrışıyor),
+ * - *çırılçıplak*, *sırılsıklam* (türeyen ses yalnız ünlü mü, tartışmalı).
  *
  * "Hece düşmesi" ayrı bir şık değil: müfredatta çoğunlukla ünlü düşmesinin
  * altında anlatılıyor ve ayrı şık yapılsaydı *kahvaltı* için iki doğru cevap
@@ -87,7 +91,7 @@ export const OLAY_ACIKLAMASI: Record<SesOlayi, string> = {
  * Havuzu okunur tutmak için: bir olaya ait bütün örnekler tek yerde.
  *
  * `taban` grubun zorluğu; bir örnek üçüncü eleman verirse onunki geçerli.
- * Böylece 125 satırın her birine zorluk yazmak gerekmiyor, yalnızca gruptan
+ * Böylece 225 satırın her birine zorluk yazmak gerekmiyor, yalnızca gruptan
  * ayrılanlar işaretleniyor — ve ayrıldıkları göze çarpıyor.
  */
 function grup(
@@ -125,6 +129,27 @@ export const SES_HAVUZU: readonly SesSorusu[] = [
     ['küreği', 'kürek + i'],
     ['tarağı', 'tarak + ı'],
     ['balığı', 'balık + ı'],
+    ['ekmeği', 'ekmek + i'],
+    ['yaprağı', 'yaprak + ı'],
+    ['toprağı', 'toprak + ı'],
+    ['bardağı', 'bardak + ı'],
+    ['yatağı', 'yatak + ı'],
+    ['köpeği', 'köpek + i'],
+    ['bebeği', 'bebek + i'],
+    ['çorabı', 'çorap + ı'],
+    ['cevabı', 'cevap + ı'],
+    ['hesabı', 'hesap + ı'],
+    ['amacı', 'amaç + ı'],
+    ['sebebi', 'sebep + i'],
+    ['ümidi', 'ümit + i', 'orta'],
+    ['senedi', 'senet + i', 'orta'],
+    ['kilidi', 'kilit + i', 'orta'],
+    ['tadı', 'tat + ı', 'orta'],
+    ['yoğurdu', 'yoğurt + u', 'orta'],
+    ['gencin', 'genç + in', 'orta'],
+    ['ahengi', 'ahenk + i', 'zor'],
+    ['dengi', 'denk + i', 'zor'],
+    ['öğüdü', 'öğüt + ü', 'zor'],
   ]),
 
   ...grup('benzesme', 'orta', [
@@ -146,6 +171,22 @@ export const SES_HAVUZU: readonly SesSorusu[] = [
     ['kaçtı', 'kaç + dı', 'kolay'],
     ['topçu', 'top + cu'],
     ['ağaçtan', 'ağaç + dan', 'kolay'],
+    ['yaptı', 'yap + dı', 'kolay'],
+    ['baktı', 'bak + dı', 'kolay'],
+    ['seçti', 'seç + di', 'kolay'],
+    ['kuştan', 'kuş + dan', 'kolay'],
+    ['ipten', 'ip + den', 'kolay'],
+    ['sokaktan', 'sokak + dan', 'kolay'],
+    ['işçi', 'iş + ci'],
+    ['sütçü', 'süt + cü'],
+    ['balıkçı', 'balık + cı'],
+    ['kitapçı', 'kitap + cı'],
+    ['saatçi', 'saat + ci'],
+    ['çöpçü', 'çöp + cü'],
+    ['bitki', 'bit + gi', 'zor'],
+    ['içki', 'iç + gi', 'zor'],
+    ['coşku', 'coş + gu', 'zor'],
+    ['yatkın', 'yat + gın', 'zor'],
   ]),
 
   ...grup('unluDusmesi', 'kolay', [
@@ -170,6 +211,20 @@ export const SES_HAVUZU: readonly SesSorusu[] = [
     ['devrim', 'devir + im', 'zor'],
     ['sıyrık', 'sıyır + ık', 'zor'],
     ['kıvrım', 'kıvır + ım', 'zor'],
+    ['ismi', 'isim + i', 'orta'],
+    ['emri', 'emir + i', 'orta'],
+    ['nehri', 'nehir + i', 'orta'],
+    ['zehri', 'zehir + i', 'orta'],
+    ['sabrı', 'sabır + ı', 'orta'],
+    ['ömrü', 'ömür + ü', 'orta'],
+    ['hükmü', 'hüküm + ü', 'orta'],
+    ['kısmı', 'kısım + ı', 'orta'],
+    ['asrı', 'asır + ı', 'zor'],
+    ['bağrı', 'bağır + ı', 'zor'],
+    ['pazartesi', 'pazar + ertesi', 'zor'],
+    ['kaynana', 'kayın + ana', 'zor'],
+    ['yumurtlamak', 'yumurta + lamak', 'zor'],
+    ['sızlamak', 'sızı + lamak', 'zor'],
   ]),
 
   ...grup('unluDaralmasi', 'kolay', [
@@ -189,6 +244,18 @@ export const SES_HAVUZU: readonly SesSorusu[] = [
     ['topluyor', 'topla + yor'],
     ['özlüyor', 'özle + yor'],
     ['uğruyor', 'uğra + yor'],
+    ['ağlıyor', 'ağla + yor'],
+    ['bağlıyor', 'bağla + yor'],
+    ['saklıyor', 'sakla + yor'],
+    ['dinliyor', 'dinle + yor'],
+    ['temizliyor', 'temizle + yor'],
+    ['kapıyor', 'kapa + yor'],
+    ['okşuyor', 'okşa + yor'],
+    ['gelmiyor', 'gelme + yor', 'orta'],
+    ['bakmıyor', 'bakma + yor', 'orta'],
+    ['diyerek', 'de + erek', 'zor'],
+    ['diyecek', 'de + ecek', 'zor'],
+    ['yiyecek', 'ye + ecek', 'zor'],
   ]),
 
   ...grup('unsuzTuremesi', 'zor', [
@@ -204,6 +271,20 @@ export const SES_HAVUZU: readonly SesSorusu[] = [
     ['zannı', 'zan + ı'],
     ['hallolmak', 'hal + olmak'],
     ['hakkında', 'hak + ında'],
+    ['hissi', 'his + i', 'orta'],
+    ['affı', 'af + ı', 'orta'],
+    ['affa', 'af + a', 'orta'],
+    ['zammı', 'zam + ı', 'orta'],
+    ['zamma', 'zam + a', 'orta'],
+    ['sırra', 'sır + a', 'orta'],
+    ['hakka', 'hak + a', 'orta'],
+    ['hazzı', 'haz + ı'],
+    ['hazza', 'haz + a'],
+    ['hazzetmek', 'haz + etmek'],
+    ['halletmek', 'hal + etmek'],
+    ['fenni', 'fen + i'],
+    ['hacca', 'hac + a'],
+    ['şerri', 'şer + i'],
   ]),
 
   ...grup('unluTuremesi', 'zor', [
@@ -216,6 +297,12 @@ export const SES_HAVUZU: readonly SesSorusu[] = [
     ['çepeçevre', 'çevre + pekiştirme', 'orta'],
     ['yapayalnız', 'yalnız + pekiştirme', 'orta'],
     ['düpedüz', 'düz + pekiştirme', 'orta'],
+    ['apaçık', 'açık + pekiştirme', 'orta'],
+    ['apayrı', 'ayrı + pekiştirme', 'orta'],
+    ['upuzun', 'uzun + pekiştirme', 'orta'],
+    ['paramparça', 'parça + pekiştirme', 'orta'],
+    ['gepegenç', 'genç + pekiştirme', 'orta'],
+    ['apansız', 'ansız + pekiştirme', 'orta'],
   ]),
 
   ...grup('kaynastirma', 'kolay', [
@@ -235,6 +322,15 @@ export const SES_HAVUZU: readonly SesSorusu[] = [
     ['kediye', 'kedi + e'],
     ['sürüsü', 'sürü + ü'],
     ['yirmişer', 'yirmi + er', 'orta'],
+    ['annesi', 'anne + i'],
+    ['çantası', 'çanta + ı'],
+    ['perdeyi', 'perde + i'],
+    ['tarlaya', 'tarla + a'],
+    ['köprüsü', 'köprü + ü'],
+    ['ablası', 'abla + ı'],
+    ['sıranın', 'sıra + ın'],
+    ['kapıya', 'kapı + a'],
+    ['sorusu', 'soru + u', 'orta'],
   ]),
 
   ...grup('unsuzDusmesi', 'orta', [
@@ -251,6 +347,14 @@ export const SES_HAVUZU: readonly SesSorusu[] = [
     ['ufalmak', 'ufak + l + mak', 'zor'],
     ['seyrelmek', 'seyrek + l + mek', 'zor'],
     ['çabucak', 'çabuk + cak', 'zor'],
+    ['ıslacık', 'ıslak + cık'],
+    ['küçültmek', 'küçük + l + t + mek', 'zor'],
+    ['alçaltmak', 'alçak + l + t + mak', 'zor'],
+    ['ufaltmak', 'ufak + l + t + mak', 'zor'],
+    ['yükseltmek', 'yüksek + l + t + mek', 'zor'],
+    ['seyreltmek', 'seyrek + l + t + mek', 'zor'],
+    ['ufalamak', 'ufak + la + mak', 'zor'],
+    ['yükselti', 'yüksek + l + ti', 'zor'],
   ]),
 ] as const
 

@@ -132,7 +132,7 @@ export const YAZIM_HAVUZU: YazimSorusu[] = [
     ['mağaza', 'magaza', 'orta'],
     ['tehdit', 'tehdid', 'zor'],
     ['iddia', 'iddaa', 'zor'],
-    ['herhalde', 'heralde', 'orta'],
+    ['herhâlde', 'heralde', 'orta'],
     ['ait', 'ayit', 'orta'],
     ['çare', 'çağre'],
     ['çünkü', 'çünki'],
@@ -163,6 +163,29 @@ export const YAZIM_HAVUZU: YazimSorusu[] = [
     ['hoparlör', 'oparlör', 'orta'],
     ['ıspanak', 'ispanak', 'orta'],
     ['şeftali', 'şevtali', 'orta'],
+
+    // ---- Yazıya taşınan söyleyiş ----
+    // Bu kelimelerde hata gözden değil kulaktan geliyor: konuşurken kayan ses
+    // olduğu gibi yazılıyor. Yaygın oldukları için tabanı kolay bıraktık.
+    ['heyecan', 'heycan'],
+    ['sandalye', 'sandelye'],
+    ['dinozor', 'dinazor'],
+    ['motosiklet', 'motorsiklet'],
+    ['egzoz', 'eksoz'],
+    ['makine', 'makina'],
+    ['egzersiz', 'eksersiz', 'orta'],
+    ['nüfus', 'nufüs', 'orta'],
+    ['aferin', 'afferin', 'orta'],
+    ['röntgen', 'röngen', 'orta'],
+    ['stajyer', 'stajer', 'orta'],
+    // Aşağıdakiler ÖSYM'nin sevdiği ayrıntılar: doğru yazılış söyleyişe ters
+    // düştüğü için doğrusunu bilmek ezber gerektiriyor.
+    ['unvan', 'ünvan', 'zor'],
+    // "mütevazi" de sözlükte var (koşut, paralel) — soru tek doğru cevaplı
+    // kalsın diye tamlama hâlinde soruluyor.
+    ['mütevazı bir ev', 'mütevazi bir ev', 'zor'],
+    ['ıstakoz', 'istakoz', 'zor'],
+    ['aksesuar', 'aksesuvar', 'zor'],
   ]),
 
   // -------------------------------------------------------------------------
@@ -203,6 +226,24 @@ export const YAZIM_HAVUZU: YazimSorusu[] = [
     ['asansör', 'asansor', 'orta'],
     ['ceket', 'çeket', 'kolay'],
     ['klasik', 'klâsik', 'kolay'],
+
+    // ---- Aslından uzaklaşan biçimler ----
+    // Kelime Türkçeye girerken bir ses kaybetmiş ya da kazanmış; yanlış şık
+    // çoğu zaman kaynak dildeki söyleyişe daha yakın olduğu için inandırıcı.
+    ['tornavida', 'tornovida', 'kolay'],
+    ['fren', 'firen', 'kolay'],
+    ['gardırop', 'gardrop', 'kolay'],
+    ['ambalaj', 'anbalaj'],
+    ['kapüşon', 'kapişon'],
+    ['metot', 'metod'],
+    ['pardösü', 'pardesü'],
+    ['kalorifer', 'kalörifer'],
+    // Bu dördünde yanlış yazılış o kadar yerleşmiş ki doğrusu kulağa yanlış
+    // geliyor — havuzun en zor yabancı kelimeleri.
+    ['ampul', 'ampül', 'zor'],
+    ['fanila', 'fanile', 'zor'],
+    ['şezlong', 'şazlong', 'zor'],
+    ['aperitif', 'aperatif', 'zor'],
   ]),
 
   // -------------------------------------------------------------------------
@@ -273,6 +314,24 @@ export const YAZIM_HAVUZU: YazimSorusu[] = [
     ['vazgeçmek', 'vaz geçmek', 'orta'],
     ['zeytinyağı', 'zeytin yağı', 'orta'],
     ['kaynanadili', 'kaynana dili'],
+
+    // ---- Kalıplaşmış birleşikler ----
+    // Kelimeler birleşince yeni bir kavram doğduğu için bitişik: "büyük anne"
+    // boyu büyük anne, "büyükanne" ise babaannedir.
+    ['yılbaşı', 'yıl başı', 'kolay'],
+    ['büyükanne', 'büyük anne', 'kolay'],
+    ['büyükbaba', 'büyük baba', 'kolay'],
+    ['sivrisinek', 'sivri sinek', 'kolay'],
+    ['atasözü', 'ata sözü', 'kolay'],
+    ['anayasa', 'ana yasa', 'orta'],
+    ['hoşgörü', 'hoş görü', 'orta'],
+    ['ateşkes', 'ateş kes'],
+    ['başrol', 'baş rol'],
+    ['sırtüstü', 'sırt üstü'],
+    ['yüzüstü', 'yüz üstü'],
+    // Renk adları birleşik yazılır; "kavun içi" meyvenin içi, "kavuniçi" renktir.
+    ['kavuniçi', 'kavun içi'],
+    ['boşboğaz', 'boş boğaz'],
   ]),
 
   // -------------------------------------------------------------------------
@@ -314,6 +373,27 @@ export const YAZIM_HAVUZU: YazimSorusu[] = [
     ['güle güle', 'gülegüle', 'kolay'],
     ['bir an önce', 'biranönce', 'orta'],
     ['peki ama', 'pekiama', 'orta'],
+
+    // ---- Kalıp gibi görünen ama ayrı yazılanlar ----
+    ['hiç kimse', 'hiçkimse', 'kolay'],
+    ['hiçbir şey', 'hiçbirşey', 'kolay'],
+    ['hoş bulduk', 'hoşbulduk', 'kolay'],
+    // Sayılar ayrı yazılır; bitişik yazım yalnızca para/çek gibi belgelerde.
+    ['on beş', 'onbeş', 'kolay'],
+    ['yüz elli', 'yüzelli', 'orta'],
+    // Böcek adlarının çoğu bitişik (kaynanadili) ama bu ayrı; TDK Yazım
+    // Kılavuzu'nda madde başı "uğur böceği".
+    ['uğur böceği', 'uğurböceği', 'orta'],
+    // ---- Tekrar grupları ----
+    // İki kelime aynı ya da yakın anlamda tekrarlanınca kalıp bitişmez.
+    ['yan yana', 'yanyana', 'kolay'],
+    ['el ele', 'elele', 'orta'],
+    ['üst üste', 'üstüste'],
+    ['baş başa', 'başbaşa'],
+    ['peş peşe', 'peşpeşe'],
+    ['art arda', 'artarda'],
+    // "sarf" ad, ses düşmesi/türemesi yok — bu yüzden yardımcı fiil ayrı.
+    ['sarf etmek', 'sarfetmek'],
   ]),
 
   // -------------------------------------------------------------------------
@@ -334,6 +414,26 @@ export const YAZIM_HAVUZU: YazimSorusu[] = [
     // kelimeler. Şapkasız hâli tek başına yanlış olmadığı için cümleyle soruluyor.
     ['Hâlâ bekliyorum.', 'Hala bekliyorum.'],
     ['Bekâr bir öğretmen.', 'Bekar bir öğretmen.'],
+
+    // ---- Uzun okunan ünlüler ----
+    ['hikâye', 'hikaye', 'orta'],
+    ['kâbus', 'kabus', 'orta'],
+    ['nikâh', 'nikah', 'orta'],
+    ['kâse', 'kase', 'orta'],
+    // ---- Nispet (aitlik) eki ----
+    // Sondaki "-i" aitlik bildiriyorsa uzun okunur ve şapka alır; şapkasız hâli
+    // iyelik eki sayılır, anlam değişir: "millî takım" / "milli takım".
+    ['millî takım', 'milli takım', 'orta'],
+    ['resmî tatil', 'resmi tatil', 'orta'],
+    ['tarihî eser', 'tarihi eser'],
+    // ---- Şapkasız hâli başka kelime ----
+    // Aşağıdakilerde şapka atılınca cümle bambaşka bir şey söylüyor; bu yüzden
+    // tek kelime değil cümleyle soruluyorlar.
+    ['Şirket kâr etti.', 'Şirket kar etti.'],
+    ['Ona âşık oldu.', 'Ona aşık oldu.'],
+    ['Bu bizim âdetimizdir.', 'Bu bizim adetimizdir.'],
+    ['Hayvanlar âlemi geniştir.', 'Hayvanlar alemi geniştir.'],
+    ['hâlbuki', 'halbuki'],
   ]),
 
   // -------------------------------------------------------------------------
@@ -352,6 +452,18 @@ export const YAZIM_HAVUZU: YazimSorusu[] = [
     ['Bende kalem yok.', 'Ben de kalem yok.'],
     ['Sende bir tuhaflık var.', 'Sen de bir tuhaflık var.'],
     ['Kitapta yazıyor.', 'Kitap ta yazıyor.'],
+
+    ['Kitabı da getir.', 'Kitabıda getir.'],
+    ['Annem de biliyor.', 'Annemde biliyor.'],
+    ['Bahçede oynuyorlar.', 'Bahçe de oynuyorlar.'],
+    ['Masada telefon var.', 'Masa da telefon var.'],
+    ['Sınavda başarılar.', 'Sınav da başarılar.'],
+    ['Bir de bunu dinle.', 'Birde bunu dinle.', 'orta'],
+    ['Bu soruyu da çözdüm.', 'Bu soruyuda çözdüm.', 'orta'],
+    ['Onda hiç sabır yok.', 'On da hiç sabır yok.', 'orta'],
+    ['Ne kadar da çok konuşuyor.', 'Ne kadarda çok konuşuyor.', 'orta'],
+    // "gitsem de" bağlaç: cümleden çıkarılabiliyor, o hâlde ayrı yazılır.
+    ['Gitsem de olur.', 'Gitsemde olur.', 'zor'],
   ]),
 
   // -------------------------------------------------------------------------
@@ -368,6 +480,18 @@ export const YAZIM_HAVUZU: YazimSorusu[] = [
     ['Mademki geldin, otur.', 'Madem ki geldin, otur.', 'zor'],
     ['Oysaki haberim yoktu.', 'Oysa ki haberim yoktu.', 'zor'],
     ['Yarınki sınava çalıştım.', 'Yarın ki sınava çalıştım.'],
+
+    ['Görüyorum ki çalışmışsın.', 'Görüyorumki çalışmışsın.', 'kolay'],
+    ['Umarım ki geçersin.', 'Umarımki geçersin.', 'kolay'],
+    ['Seninki nerede?', 'Senin ki nerede?', 'kolay'],
+    ['Bugünkü ders iptal.', 'Bugün ki ders iptal.'],
+    ['Dünkü sınav zordu.', 'Dün ki sınav zordu.'],
+    ['Masadaki kitap benim.', 'Masada ki kitap benim.'],
+    ['Sabahki toplantı uzun sürdü.', 'Sabah ki toplantı uzun sürdü.'],
+    ['Öyle bir baktı ki korktum.', 'Öyle bir baktıki korktum.'],
+    // "belki" ve "meğerki" kalıplaşmış sözler — ayırmak yanlış.
+    ['Belki yarın gelirim.', 'Bel ki yarın gelirim.', 'zor'],
+    ['Gelmez, meğerki çağırasın.', 'Gelmez, meğer ki çağırasın.', 'zor'],
   ]),
 
   // -------------------------------------------------------------------------
@@ -381,6 +505,15 @@ export const YAZIM_HAVUZU: YazimSorusu[] = [
     ['Güzel mi güzel.', 'Güzelmi güzel.'],
     ['Bitti mi haber ver.', 'Bittimi haber ver.'],
     ['Çalıştın mı?', 'Çalıştınmı?'],
+
+    ['Gördün mü?', 'Gördünmü?'],
+    ['Yağmur yağıyor mu?', 'Yağmur yağıyormu?'],
+    ['Anladın mı?', 'Anladınmı?'],
+    ['Öğrenci misin?', 'Öğrencimisin?'],
+    ['Yorgun musun?', 'Yorgunmusun?'],
+    ['Bakar mısın?', 'Bakarmısın?'],
+    // Soru anlamı olmasa da (burada sitem var) ek yine ayrı yazılır.
+    ['Bilmez miyim?', 'Bilmezmiyim?', 'orta'],
   ]),
 
   // -------------------------------------------------------------------------
@@ -399,6 +532,18 @@ export const YAZIM_HAVUZU: YazimSorusu[] = [
     ['Ahmetlerde', 'Ahmet’lerde', 'zor'],
     ['Aliler geldi.', 'Ali’ler geldi.', 'zor'],
     ['Avrupalılar', 'Avrupa’lılar', 'zor'],
+
+    ['Mehmet’in', 'Mehmetin', 'kolay'],
+    ['Zeynep’le', 'Zeyneple', 'kolay'],
+    ['Kızılırmak’ın', 'Kızılırmakın'],
+    ['Marmara Denizi’nde', 'Marmara Denizinde'],
+    ['Nutuk’u', 'Nutuku'],
+    ['Kurtuluş Savaşı’nda', 'Kurtuluş Savaşında'],
+    // ---- Kurum adları ----
+    // Kurum, kuruluş ve iş yeri adlarına gelen ekler kesmeyle ayrılmaz; özel ad
+    // olmalarına rağmen. ÖSYM bu istisnayı sık soruyor.
+    ['Türk Dil Kurumuna', 'Türk Dil Kurumu’na', 'zor'],
+    ['Ziraat Bankasına', 'Ziraat Bankası’na', 'zor'],
   ]),
 ]
 
