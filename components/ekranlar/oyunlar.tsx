@@ -51,6 +51,8 @@ import { BolunmeOyunuEkrani } from '@/components/ekranlar/oyun-bolunme'
 import { EdebiyatOyunuEkrani } from '@/components/ekranlar/oyun-edebiyat'
 import { AciOyunuEkrani } from '@/components/ekranlar/oyun-aci'
 import { UcgenOyunuEkrani } from '@/components/ekranlar/oyun-ucgen'
+import { AntlasmaOyunuEkrani } from '@/components/ekranlar/oyun-antlasma'
+import { KavramOyunuEkrani } from '@/components/ekranlar/oyun-kavram'
 
 /**
  * Oyunlar sekmesi.
@@ -69,10 +71,11 @@ import { UcgenOyunuEkrani } from '@/components/ekranlar/oyun-ucgen'
  * Aynı derse çalışan bütün oyunlar aynı rengi paylaşıyor; renk böylece süs
  * değil, "bu ne dersi" bilgisini taşıyor. Aile adlarını `DERSLER` veriyor.
  */
-const AILE: Record<'yzm' | 'isl' | 'edb', { zemin: string; yazi: string; ok: string }> = {
+const AILE: Record<'yzm' | 'isl' | 'edb' | 'trh', { zemin: string; yazi: string; ok: string }> = {
   yzm: { zemin: 'bg-yzm', yazi: 'text-yzm-koyu', ok: 'bg-yzm-ok' },
   isl: { zemin: 'bg-isl', yazi: 'text-isl-koyu', ok: 'bg-isl-ok' },
   edb: { zemin: 'bg-edb', yazi: 'text-edb-koyu', ok: 'bg-edb-ok' },
+  trh: { zemin: 'bg-trh', yazi: 'text-trh-koyu', ok: 'bg-trh-ok' },
 }
 
 /** Ders ızgarasındaki tek hücre: ya bir oyun ya da bir bölüm kapağı. */
@@ -91,6 +94,8 @@ const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   aci: ['Açı', 'Tamamlama'],
   ucgen: ['Özel', 'Üçgenler'],
   edebiyat: ['Edebiyat', 'Eşleştirme'],
+  antlasma: ['Antlaşma', 'Eşleştirme'],
+  kavram: ['Kavram', 'Eşleştirme'],
 }
 
 export function OyunlarEkrani({
@@ -494,6 +499,24 @@ export function OyunlarEkrani({
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('ucgen', ozet, cevaplar, saniye)}
           bildir={bildir}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'antlasma' && (
+        <AntlasmaOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'antlasma')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar) => turBitti('antlasma', ozet, cevaplar)}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'kavram' && (
+        <KavramOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'kavram')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar) => turBitti('kavram', ozet, cevaplar)}
           onCik={oyunuKapat}
         />
       )}

@@ -36,7 +36,6 @@ import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
-import { cn } from '@/lib/utils'
 import {
   EN_COK_YANLIS,
   KalanHapi,
@@ -45,6 +44,11 @@ import {
   YanlisKarti,
   rekorCumlesi,
 } from '@/components/oyun-kabuk'
+import {
+  EslestirmeDugmesi,
+  eslestirmeDurumu,
+  type EslestirmeRengi,
+} from '@/components/oyun-eslestirme'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
 /**
@@ -56,6 +60,13 @@ import { OyunTanitim } from '@/components/oyun-tanitim'
  * Doğru ile yanlış arasında ritim farkı kalmasın diye tek sabit.
  */
 const CEVAP_BEKLEMESI = 800
+
+/** Seçili kutunun rengi — Edebiyat dersinin ailesi. */
+const RENK: EslestirmeRengi = {
+  kenar: 'border-edb-koyu',
+  zemin: 'bg-edb',
+  yazi: 'text-edb-koyu',
+}
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
@@ -541,32 +552,22 @@ function Bolum({
         {baslik}
       </h2>
       <ul className="grid grid-cols-2 gap-[7px]">
-        {secenekler.map((deger) => {
-          const eslesti = eslesenler.has(deger)
-          const hatali = !eslesti && yanlis === deger
-          const secildi = !eslesti && !hatali && secili === deger
-          return (
-            <li key={deger}>
-              <button
-                type="button"
-                onClick={() => onSec(deger)}
-                disabled={eslesti}
-                className={cn(
-                  'flex min-h-[54px] w-full items-center justify-center gap-1 rounded-[15px] border-2 px-2 py-1.5',
-                  'text-center text-[12.5px] font-extrabold leading-tight transition',
-                  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-                  eslesti && 'border-transparent bg-success-soft text-success',
-                  hatali && 'border-ikincil bg-ikincil-soft text-ikincil',
-                  secildi && 'border-edb-koyu bg-edb text-edb-koyu',
-                  !eslesti && !hatali && !secildi && 'golge-kart border-border bg-card',
-                )}
-              >
-                <span className="min-w-0">{deger}</span>
-                {eslesti && <Check size={13} className="shrink-0" aria-hidden />}
-              </button>
-            </li>
-          )
-        })}
+        {secenekler.map((deger) => (
+          <li key={deger}>
+            <EslestirmeDugmesi
+              durum={eslestirmeDurumu({
+                eslesti: eslesenler.has(deger),
+                hatali: yanlis === deger,
+                secili: secili === deger,
+              })}
+              renk={RENK}
+              onSec={() => onSec(deger)}
+              className="min-h-[54px] justify-center px-2 text-center"
+            >
+              {deger}
+            </EslestirmeDugmesi>
+          </li>
+        ))}
       </ul>
     </section>
   )

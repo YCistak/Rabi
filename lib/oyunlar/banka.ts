@@ -65,6 +65,8 @@ export type BankaSorusu =
    */
   | { oyun: 'aci'; aci: AciSorusu }
   | { oyun: 'ucgen'; ucgen: UcgenSorusu }
+  | { oyun: 'antlasma'; madde: string; antlasma: string }
+  | { oyun: 'kavram'; kavram: string; tanim: string }
 
 export type BankaKaydi = {
   /** Soru içeriğinden türetilen kimlik; aynı soru iki kez eklenmez. */
@@ -172,6 +174,14 @@ export function ucgendenBanka(soru: UcgenSorusu): BankaSorusu {
   return { oyun: 'ucgen', ucgen: soru }
 }
 
+export function antlasmadanBanka(es: { madde: string; antlasma: string }): BankaSorusu {
+  return { oyun: 'antlasma', madde: es.madde, antlasma: es.antlasma }
+}
+
+export function kavramdanBanka(es: { kavram: string; tanim: string }): BankaSorusu {
+  return { oyun: 'kavram', kavram: es.kavram, tanim: es.tanim }
+}
+
 /**
  * Kayıt kimliği.
  *
@@ -203,7 +213,14 @@ export function bankaKimligi(soru: BankaSorusu): string {
     case 'aci':
       return `aci:${soru.aci.kural}:${soru.aci.a}:${soru.aci.b ?? ''}`
     case 'ucgen':
-      return `ucgen:${ucgenKimligi(soru.ucgen)}`  }
+      return `ucgen:${ucgenKimligi(soru.ucgen)}`
+    // Eşleştirme oyunlarında kimlik sorulan taraftan geliyor: aynı antlaşmanın
+    // iki farklı maddesi iki ayrı soru.
+    case 'antlasma':
+      return `antlasma:${soru.madde}`
+    case 'kavram':
+      return `kavram:${soru.kavram}`
+  }
 }
 
 /** Listede görünen soru metni. */
@@ -228,7 +245,12 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
     case 'aci':
       return `${ACI_KURALI_ADI[soru.aci.kural]} · ${soru.aci.a}°${soru.aci.b === null ? '' : ` · ${soru.aci.b}°`}`
     case 'ucgen':
-      return ucgenOzeti(soru.ucgen)  }
+      return ucgenOzeti(soru.ucgen)
+    case 'antlasma':
+      return soru.madde
+    case 'kavram':
+      return soru.kavram
+  }
 }
 
 /** Listede görünen doğru cevap. */
@@ -255,7 +277,12 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
     case 'aci':
       return `${soru.aci.cevap}°`
     case 'ucgen':
-      return kenarMetni(ucgenCevabi(soru.ucgen))  }
+      return kenarMetni(ucgenCevabi(soru.ucgen))
+    case 'antlasma':
+      return soru.antlasma
+    case 'kavram':
+      return soru.tanim
+  }
 }
 
 /**
@@ -355,6 +382,8 @@ const BOS_DAGILIM: Record<OyunId, number> = {
   edebiyat: 0,
   aci: 0,
   ucgen: 0,
+  antlasma: 0,
+  kavram: 0,
 }
 
 export const OYUN_KIMLIKLERI = Object.keys(BOS_DAGILIM) as OyunId[]

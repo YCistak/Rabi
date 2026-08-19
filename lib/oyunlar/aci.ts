@@ -316,6 +316,16 @@ export function aciSekli(soru: AciSorusu): Sekil {
  */
 const TABAN_TOPLAMI = 135
 
+/**
+ * İki taban açısının toplayabileceği en küçük değer.
+ *
+ * Üst sınırın aynası: taban açıları küçükken tepe açısı çok geniş oluyor, üçgen
+ * yayvanlaşıyor ve tepedeki "x" etiketi tabanın üstüne biniyor (25°+25° hâlinde
+ * arada 4,6 piksel kalıyordu). 55°de yazı ile çizgi arasında okunur bir boşluk
+ * kalıyor.
+ */
+const TABAN_EN_AZ = 55
+
 /** Beşin katı açı. Sınavdaki şekiller de yuvarlak değerlerle kuruluyor. */
 function besinKati(enAz: number, enCok: number, r: () => number): number {
   return arasinda(enAz / 5, enCok / 5, r) * 5
@@ -337,7 +347,7 @@ const URETECLER: Record<AciKurali, (r: () => number) => AciSorusu> = {
     const a = besinKati(25, 105, r)
     // İki taban açısının toplamı sınırlı: ikisi de büyük olduğunda üçgen uzayıp
     // inceliyor, tuvale sığması için de daralıyor ve açılar okunmaz oluyor.
-    const b = besinKati(25, Math.min(105, TABAN_TOPLAMI - a), r)
+    const b = besinKati(Math.max(25, TABAN_EN_AZ - a), Math.min(105, TABAN_TOPLAMI - a), r)
     return soruKur('ucgen', a, b)
   },
   disaci: (r) => {
