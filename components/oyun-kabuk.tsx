@@ -98,6 +98,13 @@ const AILE: Record<
     kenar: 'border-l-edb-koyu',
     degisken: 'var(--edb-koyu)',
   },
+  harita: {
+    zemin: 'bg-cog',
+    yazi: 'text-cog-koyu',
+    dolgu: 'bg-cog-koyu',
+    kenar: 'border-l-cog-koyu',
+    degisken: 'var(--cog-koyu)',
+  },
 }
 
 /** Tur sonunda listelenen en fazla yanlış. Gerisi Oyun Bankası'nda. */

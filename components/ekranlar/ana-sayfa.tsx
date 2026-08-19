@@ -42,6 +42,7 @@ const OYUN_RENGI: Record<OyunId, string> = {
   aci: 'bg-isl',
   ucgen: 'bg-isl',
   edebiyat: 'bg-edb',
+  harita: 'bg-cog',
 }
 
 export function AnaSayfa({

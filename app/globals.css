@@ -34,6 +34,9 @@
   --color-edb: var(--edb);
   --color-edb-koyu: var(--edb-koyu);
   --color-edb-ok: var(--edb-ok);
+  --color-cog: var(--cog);
+  --color-cog-koyu: var(--cog-koyu);
+  --color-cog-ok: var(--cog-ok);
 
   /* Tasarımın tek yazı tipi Nunito. Başlık ve gövde ayrı aile değil, ayrı
      kalınlık: gövde 500-600, başlık 800-900. */
@@ -59,7 +62,7 @@
    değil, hafif mavimsi bir kâğıt (#EDF1FD): beyaz kartlar üstünde yüzüyor gibi
    dursun diye. Tek palet — kullanıcıya renk seçtirilmiyor, yalnızca açık/koyu.
 
-   Mini oyunların kendi aileleri var (yzm/isl/edb): her oyunun pastel zemini ve
+   Mini oyunların kendi aileleri var (yzm/isl/edb/cog): her oyunun pastel zemini ve
    o zeminin üstünde okunan koyu tonu. Oyun kartı, tur sonu ekranı ve Oyun
    Bankası aynı üçlüyü kullanıyor — kullanıcı rengi görünce hangi oyun olduğunu
    yazıyı okumadan biliyor.
@@ -120,6 +123,10 @@
   --edb: #ece7fb;
   --edb-koyu: #6c55c4;
   --edb-ok: #8570da;
+  /* Coğrafya yeşili: haritanın kendi rengi, öteki üç aileyle karışmıyor. */
+  --cog: #e0f1e7;
+  --cog-koyu: #2f7a52;
+  --cog-ok: #4fa87a;
 
   /* Maskot renkleri — Rabi'nin kürkü zeminden hafifçe ayrışır. */
   --maskot-kurk: #ffffff;
@@ -167,6 +174,9 @@
   --edb: #272044;
   --edb-koyu: #b9a9f2;
   --edb-ok: #8570da;
+  --cog: #17301f;
+  --cog-koyu: #8ad3a8;
+  --cog-ok: #4fa87a;
 
   --maskot-kurk: #e9ecf5;
   --maskot-kulak-ic: #c99aa6;
@@ -414,5 +424,27 @@
      geçeceğini gösteren tek işaret. */
   .acilis-cark {
     animation-duration: 3.4s;
+  }
+}
+
+/*
+  "Adını seç" sorusunda hedef ilin yanıp sönmesi.
+
+  Sabit koyu renk de olurdu ama harita kalabalık: göz nereye bakacağını
+  hareketle çok daha çabuk buluyor. `prefers-reduced-motion` açıksa yanıp
+  sönme duruyor, il koyu renkte sabit kalıyor — bilgi kaybolmuyor.
+*/
+@keyframes isaretYanip {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.isaretli-il {
+  animation: isaretYanip 1.1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .isaretli-il {
+    animation: none;
   }
 }

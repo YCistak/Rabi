@@ -19,6 +19,7 @@ import {
   type BolumId,
   type BolumTanimi,
   type DersId,
+  type DersTanimi,
   type OyunTanimi,
 } from '@/lib/oyunlar/tanim'
 import {
@@ -49,6 +50,7 @@ import { SozOyunuEkrani } from '@/components/ekranlar/oyun-soz'
 import { IslemOyunuEkrani } from '@/components/ekranlar/oyun-islem'
 import { BolunmeOyunuEkrani } from '@/components/ekranlar/oyun-bolunme'
 import { EdebiyatOyunuEkrani } from '@/components/ekranlar/oyun-edebiyat'
+import { HaritaOyunuEkrani } from '@/components/ekranlar/oyun-harita'
 import { AciOyunuEkrani } from '@/components/ekranlar/oyun-aci'
 import { UcgenOyunuEkrani } from '@/components/ekranlar/oyun-ucgen'
 
@@ -69,10 +71,11 @@ import { UcgenOyunuEkrani } from '@/components/ekranlar/oyun-ucgen'
  * Aynı derse çalışan bütün oyunlar aynı rengi paylaşıyor; renk böylece süs
  * değil, "bu ne dersi" bilgisini taşıyor. Aile adlarını `DERSLER` veriyor.
  */
-const AILE: Record<'yzm' | 'isl' | 'edb', { zemin: string; yazi: string; ok: string }> = {
+const AILE: Record<DersTanimi['aile'], { zemin: string; yazi: string; ok: string }> = {
   yzm: { zemin: 'bg-yzm', yazi: 'text-yzm-koyu', ok: 'bg-yzm-ok' },
   isl: { zemin: 'bg-isl', yazi: 'text-isl-koyu', ok: 'bg-isl-ok' },
   edb: { zemin: 'bg-edb', yazi: 'text-edb-koyu', ok: 'bg-edb-ok' },
+  cog: { zemin: 'bg-cog', yazi: 'text-cog-koyu', ok: 'bg-cog-ok' },
 }
 
 /** Ders ızgarasındaki tek hücre: ya bir oyun ya da bir bölüm kapağı. */
@@ -91,6 +94,7 @@ const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   aci: ['Açı', 'Tamamlama'],
   ucgen: ['Özel', 'Üçgenler'],
   edebiyat: ['Edebiyat', 'Eşleştirme'],
+  harita: ['Harita', 'Avı'],
 }
 
 export function OyunlarEkrani({
@@ -495,6 +499,16 @@ export function OyunlarEkrani({
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('ucgen', ozet, cevaplar, saniye)}
           bildir={bildir}
           onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'harita' && (
+        <HaritaOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'harita')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('harita', ozet, cevaplar, saniye)}
+          onCik={oyunuKapat}
+          bildir={bildir}
         />
       )}
       {acikOyun === 'edebiyat' && (

@@ -76,6 +76,7 @@ export const ANAHTARLAR = {
   zorlukBolunme: 'rabi-zorluk-bolunme',
   zorlukAci: 'rabi-zorluk-aci',
   zorlukUcgen: 'rabi-zorluk-ucgen',
+  zorlukHarita: 'rabi-zorluk-harita',
   /**
    * Bildirilen hatalı sorular — gönderim kuyruğu.
    *
@@ -439,7 +440,12 @@ function bankayiCoz(ham: unknown): BankaKaydi[] {
           typeof s.sozTuru === 'string' &&
           typeof s.konu === 'string'
         )
-      if (s.oyun === 'bolunme')
+      if (s.oyun === 'harita')
+      return (
+        typeof s.il === 'string' &&
+        (s.haritaTipi === 'bul' || s.haritaTipi === 'sec')
+      )
+    if (s.oyun === 'bolunme')
         return (
           typeof s.sayi === 'number' &&
           typeof s.bolen === 'number' &&

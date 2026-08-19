@@ -25,7 +25,7 @@ import { EDEBIYAT_BOYUTU } from './edebiyat-havuzu'
  * tek bir ızgaraya sığmayacak ve hangi oyunun hangi derse çalıştığı
  * kaybolacaktı. Sınıflandırma sonradan değil, şimdi kuruluyor.
  */
-export type DersId = 'turkce' | 'matematik' | 'edebiyat'
+export type DersId = 'turkce' | 'matematik' | 'edebiyat' | 'cografya'
 
 export type DersTanimi = {
   id: DersId
@@ -39,7 +39,7 @@ export type DersTanimi = {
    * aynı rengi paylaşıyor, böylece renk bir kimlik taşıyor. (Ailelerin adları
    * ilk üç oyundan geliyor: yzm=yazım, isl=işlem, edb=edebiyat.)
    */
-  aile: 'yzm' | 'isl' | 'edb'
+  aile: 'yzm' | 'isl' | 'edb' | 'cog'
 }
 
 export const DERSLER: DersTanimi[] = [
@@ -63,6 +63,13 @@ export const DERSLER: DersTanimi[] = [
     aciklama: 'Eser, yazar, dönem',
     ikon: '📚',
     aile: 'edb',
+  },
+  {
+    id: 'cografya',
+    ad: 'Coğrafya',
+    aciklama: 'Harita, yer şekilleri',
+    ikon: '🗺️',
+    aile: 'cog',
   },
 ]
 
@@ -246,6 +253,21 @@ export const OYUNLAR: OyunTanimi[] = [
       `Her ${BOSS_ARALIGI} eşleştirmede bir **boss eli** gelir: bir üst seviyeden kurulur, ekran kızarır ve tek yanlışta tur biter.`,
       `Eller mümkün oldukça tek dönemden kurulur — aynı dönemden altı isim, çağrışımla değil bilerek eşleştirmeyi gerektirir.`,
       `Havuzda ${EDEBIYAT_BOYUTU} eser var: ÖSYM'nin AYT Edebiyat'ta en sık sorduğu eser–yazar eşleştirmeleri.`,
+    ],
+  },
+  {
+    id: 'harita',
+    ders: 'cografya',
+    ad: 'Harita Avı',
+    kisaAciklama: 'İli haritada bul',
+    ikon: '🗺️',
+    nasilOynanir: [
+      `Türkiye haritası gelir. Sorular iki türlü: **“Ankara’yı bul”** dendiğinde haritada ile dokunursun, **il yanıp söndüğünde** dört şıktan adını seçersin.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.harita} saniye. Süre dolarsa soru yanlış sayılır ve sıradakine geçilir.`,
+      `Tur sınırsız: ${BOSS_ARALIGI} soruda bir **boss** gelir, seçtiğin seviyenin bir üstünden. Ekran kızarır, süre uzar ama hakkın tektir — orada yanılırsan tur biter.`,
+      `Küçük iller (Yalova, Kilis, Bartın…) “bul” olarak sorulmaz: telefonda birkaç piksel kalıyorlar, orada dokunmak beceriden çok şans olurdu. Onlar işaretlenip adları sorulur.`,
+      `Şıklar rastgele değil, **komşu illerden** gelir — Kırşehir'in şıkkı Nevşehir olur, Edirne olmaz.`,
+      `Tur bitince bilemediğin iller haritadaki yerleriyle listelenir.`,
     ],
   },
 ]

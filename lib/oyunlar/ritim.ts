@@ -110,6 +110,11 @@ export const SORU_SURESI: Record<OyunId, number> = {
   aci: 20,
   // Üçgende kenar hesabı en uzun süren iş.
   ucgen: 22,
+  /**
+   * Haritada gözle taramak okumaktan uzun sürüyor: soruyu anlamak bir saniye,
+   * ili bulmak on saniye.
+   */
+  harita: 16,
 }
 
 /** Boss sorusuna verilen ek süre çarpanı. */
