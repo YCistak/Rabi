@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import type { OyunId } from '../types'
 import {
   BOSS_ARALIGI,
   bossElMi,
@@ -134,13 +135,20 @@ describe('bossluMu', () => {
   })
 })
 
+/**
+ * Süresi tek soruya değil bütün bir ele/tahtaya ait olan oyunlar.
+ *
+ * Eşleştirme oyunlarında bir "soru" tek eşleştirme ama süre elin tamamına
+ * veriliyor; üst sınırları da doğal olarak yüksek.
+ */
+const EL_SURELI: OyunId[] = ['edebiyat', 'antlasma', 'kavram']
+
 describe('soruSuresi', () => {
   it('her oyun için süre tanımlı ve makul', () => {
     for (const oyun of OYUNLAR) {
       const sure = SORU_SURESI[oyun.id]
       expect(sure).toBeGreaterThanOrEqual(8)
-      // Edebiyat'ta süre el başına (altı eşleştirme), ötekilerde soru başına.
-      expect(sure).toBeLessThanOrEqual(oyun.id === 'edebiyat' ? 60 : 30)
+      expect(sure, oyun.id).toBeLessThanOrEqual(EL_SURELI.includes(oyun.id) ? 60 : 30)
     }
   })
 

@@ -42,6 +42,13 @@ const AILE: Record<OyunId, { zemin: string; yazi: string; dolgu: string }> = {
   ucgen: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
   edebiyat: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu', dolgu: 'bg-edb-ok' },
   harita: { zemin: 'bg-cog-kart', yazi: 'text-cog-koyu', dolgu: 'bg-cog-ok' },
+  antlasma: { zemin: 'bg-trh-kart', yazi: 'text-trh-koyu', dolgu: 'bg-trh-ok' },
+  kavram: { zemin: 'bg-trh-kart', yazi: 'text-trh-koyu', dolgu: 'bg-trh-ok' },
+  anlatim: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
+  koklu: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
+  ortak: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu', dolgu: 'bg-byl-ok' },
+  siniflandirma: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu', dolgu: 'bg-byl-ok' },
+  hucre: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu', dolgu: 'bg-byl-ok' },
 }
 
 const KISA_AD: Record<OyunId, string> = {
@@ -55,6 +62,13 @@ const KISA_AD: Record<OyunId, string> = {
   ucgen: 'Üçgen',
   edebiyat: 'Edebiyat',
   harita: 'Harita',
+  antlasma: 'Antlaşma',
+  kavram: 'Kavram',
+  anlatim: 'Anlatım',
+  koklu: 'Köklü Sayı',
+  ortak: 'Ortak Özellik',
+  siniflandirma: 'Sınıflandırma',
+  hucre: 'Organel',
 }
 
 type Suzgec = OyunId | 'tumu'

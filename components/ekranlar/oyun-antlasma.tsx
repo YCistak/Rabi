@@ -3,11 +3,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
-import { BookOpen, Check } from 'lucide-react'
+import { Check, ScrollText } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
-import type { EdebiyatEsi } from '@/lib/oyunlar/edebiyat-havuzu'
-import { DONEM_ADI, EDEBIYAT_HAVUZU } from '@/lib/oyunlar/edebiyat-havuzu'
-import { EL_BOYUTU, elHazirla, eslesiyorMu, type EdebiyatEli } from '@/lib/oyunlar/edebiyat'
+import type { AntlasmaMaddesi } from '@/lib/oyunlar/antlasma-havuzu'
+import {
+  ANTLASMA_HAVUZU,
+  TARIH_DONEM_ADI,
+  sutunBasligi,
+} from '@/lib/oyunlar/antlasma-havuzu'
+import { EL_BOYUTU, elHazirla, eslesiyorMu, type AntlasmaEli } from '@/lib/oyunlar/antlasma'
 import {
   guncelSeri,
   karistir,
@@ -16,11 +20,7 @@ import {
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
-import {
-  edebiyattanBanka,
-  type BankaCevabi,
-  type BankaKaydi,
-} from '@/lib/oyunlar/banka'
+import { antlasmadanBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
 import {
   bossElMi,
   bossZorlugu,
@@ -55,43 +55,40 @@ import { OyunTanitim } from '@/components/oyun-tanitim'
 /**
  * Bir cevaptan sonra ekranın beklediği süre (ms).
  *
- * Yanlışta kırmızı çift bu kadar duruyor. Altıncı doğru eşleşmede de aynı süre
- * bekleniyor: el bitince yenisi **anında** dağıtılıyordu ve oyuncu son
- * eşleştirdiği çiftin yeşile döndüğünü göremeden ekran tamamen değişiyordu.
- * Doğru ile yanlış arasında ritim farkı kalmasın diye tek sabit.
+ * Yanlışta kırmızı çift bu kadar duruyor; son doğru eşleşmede de aynı süre
+ * bekleniyor ki oyuncu yeşile döndüğünü görsün, ekran altından değişmesin.
  */
 const CEVAP_BEKLEMESI = 800
 
-/** Seçili kutunun rengi — Edebiyat dersinin ailesi. */
+/** Seçili kutunun rengi — Tarih dersinin ailesi. */
 const RENK: EslestirmeRengi = {
-  kenar: 'border-edb-koyu',
-  zemin: 'bg-edb-kart',
-  yazi: 'text-edb-koyu',
+  kenar: 'border-trh-koyu',
+  zemin: 'bg-trh-kart',
+  yazi: 'text-trh-koyu',
 }
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
-type Secim = { eser: string | null; yazar: string | null }
+type Secim = { madde: string | null; antlasma: string | null }
 
-const BOS_SECIM: Secim = { eser: null, yazar: null }
+const BOS_SECIM: Secim = { madde: null, antlasma: null }
 
 /**
- * Banka kayıtlarını havuzdaki eşlere bağlar.
+ * Banka kayıtlarını havuzdaki maddelere bağlar.
  *
- * Kayıt yalnızca eser ve yazar tutuyor; ele dönem de gerekiyor (ekranın
- * başlığında yazıyor, tek dönemli el kuralını da o belirliyor). Havuzdan
- * kalkmış bir eser sessizce eleniyor — sorusu olmayan bir kaydı ele koymak
- * cevabı olmayan bir soru demek.
+ * Kayıt yalnızca madde ve antlaşma tutuyor; ele dönem de gerekiyor (başlıkta
+ * yazıyor, tek dönemli el kuralını da o belirliyor). Havuzdan kalkmış bir madde
+ * sessizce eleniyor.
  */
 function bankaEsleri(
   kayitlar: readonly BankaKaydi[],
-  havuz: readonly EdebiyatEsi[] = EDEBIYAT_HAVUZU,
-): EdebiyatEsi[] {
-  const esler: EdebiyatEsi[] = []
+  havuz: readonly AntlasmaMaddesi[] = ANTLASMA_HAVUZU,
+): AntlasmaMaddesi[] {
+  const esler: AntlasmaMaddesi[] = []
   for (const kayit of kayitlar) {
-    if (kayit.soru.oyun !== 'edebiyat') continue
-    const aranan = kayit.soru.eser
-    const es = havuz.find((h) => h.eser === aranan)
+    if (kayit.soru.oyun !== 'antlasma') continue
+    const aranan = kayit.soru.madde
+    const es = havuz.find((h) => h.madde === aranan)
     if (es) esler.push(es)
   }
   return esler
@@ -100,32 +97,30 @@ function bankaEsleri(
 /**
  * Banka turunun eli.
  *
- * `elHazirla` kullanılamıyor: o, havuzdan rastgele bir el kuruyor: banka
- * sorularını **öne alması** gerekiyor. Kuralları aynen taşınıyor — bir elde
- * aynı yazardan iki eser olamaz (yazarın tuşu iki esere birden uyar ve doğru
- * cevap yanlış sayılırdı), aynı eser tur içinde iki kez sorulmaz.
- *
- * El altı eser istiyor; banka altıyı doldurmuyorsa geri kalanı havuz
- * tamamlıyor. Banka tarafından tek eser bile kalmadıysa `null` dönüyor ve tur
- * erken bitiyor: banka turu bankadaki soruları bitirince amacına ulaşmış olur.
+ * `elHazirla` kullanılamıyor: o havuzdan rastgele bir el kuruyor, banka turunun
+ * ise bankadaki maddeleri **öne alması** gerekiyor. Kurallar aynen taşınıyor:
+ * bir elde aynı antlaşmadan iki madde olamaz, aynı madde tur içinde iki kez
+ * sorulmaz. Banka dördü doldurmuyorsa gerisini havuz tamamlıyor; bankadan tek
+ * madde bile kalmadıysa `null` dönüyor ve tur erken bitiyor.
  */
 function bankaEliHazirla(
-  esler: readonly EdebiyatEsi[],
+  esler: readonly AntlasmaMaddesi[],
   kullanilan: ReadonlySet<string>,
-  havuz: readonly EdebiyatEsi[] = EDEBIYAT_HAVUZU,
+  havuz: readonly AntlasmaMaddesi[] = ANTLASMA_HAVUZU,
   rastgele: () => number = Math.random,
-): EdebiyatEli | null {
-  const secilen: EdebiyatEsi[] = []
-  const yazarlar = new Set<string>()
-  const eserler = new Set<string>()
+): AntlasmaEli | null {
+  const secilen: AntlasmaMaddesi[] = []
+  const antlasmalar = new Set<string>()
+  const maddeler = new Set<string>()
 
-  const topla = (kaynak: readonly EdebiyatEsi[]) => {
+  const topla = (kaynak: readonly AntlasmaMaddesi[]) => {
     for (const es of karistir(kaynak, rastgele)) {
       if (secilen.length >= EL_BOYUTU) return
-      if (kullanilan.has(es.eser) || eserler.has(es.eser) || yazarlar.has(es.yazar)) continue
+      if (kullanilan.has(es.madde) || maddeler.has(es.madde) || antlasmalar.has(es.antlasma))
+        continue
       secilen.push(es)
-      eserler.add(es.eser)
-      yazarlar.add(es.yazar)
+      maddeler.add(es.madde)
+      antlasmalar.add(es.antlasma)
     }
   }
 
@@ -135,30 +130,26 @@ function bankaEliHazirla(
   topla(havuz)
   if (secilen.length < EL_BOYUTU) return null
 
-  // El tek dönemden çıktıysa dönem yazılıyor; banka karışık olduğu için bu
-  // çoğunlukla olmuyor ve ekran "Karışık dönem" diyor.
   const ilk = secilen[0].donem
   const donem = secilen.every((es) => es.donem === ilk) ? ilk : null
 
   return {
     donem,
     esler: secilen,
-    // İki sütun ayrı karıştırılıyor: aynı sırada dursalardı eşleştirme
-    // okumadan, konuma bakarak yapılırdı.
-    eserler: karistir(secilen.map((e) => e.eser), rastgele),
-    yazarlar: karistir(secilen.map((e) => e.yazar), rastgele),
+    maddeler: karistir(secilen.map((e) => e.madde), rastgele),
+    antlasmalar: karistir(secilen.map((e) => e.antlasma), rastgele),
   }
 }
 
 /**
- * Edebiyat Eşleştirme — mini oyun.
+ * Antlaşma Eşleştirme — mini oyun.
  *
- * Altı eser ve altı yazar; birine sonra ötekine dokunarak eşleştiriliyor.
- * Eşleşen kutular ekrandan **kaldırılmıyor**, yeşile dönüp yerinde kalıyor:
- * silinselerdi ızgara her eşleşmede yeniden dizilir, oyuncunun parmağı
- * gitmek istediği kutuyu kaybederdi.
+ * Dört madde ve dört antlaşma; birine sonra ötekine dokunarak eşleştiriliyor.
+ * Eşleşen kutular ekrandan kaldırılmıyor, yeşile dönüp yerinde kalıyor:
+ * silinselerdi ızgara her eşleşmede yeniden dizilir, parmak gitmek istediği
+ * kutuyu kaybederdi.
  */
-export function EdebiyatOyunuEkrani({
+export function AntlasmaOyunuEkrani({
   istatistik,
   sesAcik,
   bankaSorulari,
@@ -167,12 +158,11 @@ export function EdebiyatOyunuEkrani({
   bildir,
 }: {
   istatistik: OyunIstatistigi
-  /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
   sesAcik: boolean
   /** Boş değilse eller önce bu sorulardan kurulur (Oyun Bankası turu). */
   bankaSorulari: BankaKaydi[]
   onTurBitti: (
-    ozet: TurOzeti<EdebiyatEsi>,
+    ozet: TurOzeti<AntlasmaMaddesi>,
     bankaCevaplari: BankaCevabi[],
     /** Turun gerçek uzunluğu — tur artık sabit süreli değil. */
     gecenSaniye: number,
@@ -180,70 +170,63 @@ export function EdebiyatOyunuEkrani({
   onCik: () => void
   bildir: BildirimKolu
 }) {
-  const oyun = oyunBul('edebiyat')
+  const oyun = oyunBul('antlasma')
 
   const [asama, setAsama] = useState<Asama>('tanitim')
   const [yardimAcik, setYardimAcik] = useState(false)
 
-  const [el, setEl] = useState<EdebiyatEli | null>(null)
+  const [el, setEl] = useState<AntlasmaEli | null>(null)
   const [secim, setSecim] = useState<Secim>(BOS_SECIM)
-  const [eslesenler, setEslesenler] = useState<EdebiyatEsi[]>([])
+  const [eslesenler, setEslesenler] = useState<AntlasmaMaddesi[]>([])
   const [yanlisCift, setYanlisCift] = useState<Secim | null>(null)
   /** El tamamlandı, yenisi dağıtılmayı bekliyor — bu sırada dokunuşlar yok sayılır. */
   const [elBekliyor, setElBekliyor] = useState(false)
-  const [cevaplar, setCevaplar] = useState<Cevap<EdebiyatEsi>[]>([])
+  const [cevaplar, setCevaplar] = useState<Cevap<AntlasmaMaddesi>[]>([])
   /** Yanlışlarla aynı sıradaki seçimler — tur sonunda "sen X dedin" için. */
   const [yanlisGirdileri, setYanlisGirdileri] = useState<string[]>([])
 
-  /** Bu el boss mu — kırmızı ekran, kısa süre, tek yanlışta eleme. */
+  /** Bu el boss mu — kısa süre, tek yanlışta eleme. */
   const [bossEl, setBossEl] = useState(false)
   /** Kaç boss el verildi — sıradakinin boss olup olmayacağı buna bakıyor. */
   const [verilenBoss, setVerilenBoss] = useState(0)
-  /** Boss elinde yanılıp elendi mi. */
+  /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
   const [elendi, setElendi] = useState<Eleme>(false)
   /** Kaçıncı el — sayaç her elde sıfırlansın diye. */
   const [elSayisi, setElSayisi] = useState(0)
 
-  const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukEdebiyat, 'kolay')
+  const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukAntlasma, 'kolay')
   /** Yardım açıkken sayaç duruyor. */
   const [duraklatilan, setDuraklatilan] = useState(false)
 
-  const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<EdebiyatEsi>; yeniRekor: boolean } | null>(
-    null,
-  )
+  const [sonuc, setSonuc] = useState<{
+    ozet: TurOzeti<AntlasmaMaddesi>
+    yeniRekor: boolean
+  } | null>(null)
 
   const bankaHavuzu = useMemo(() => bankaEsleri(bankaSorulari), [bankaSorulari])
   const bankaTuru = bankaHavuzu.length > 0
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
-  /**
-   * Turun başladığı an.
-   *
-   * Tur artık sabit uzunlukta değil — sınırsız sürüyor ve boss'ta bitiyor. Eski
-   * hesap "tur süresi eksi yanlış cezası" formülüyle türetiliyordu, o formülün
-   * karşılığı kalmadı; süre gerçekten ölçülüyor.
-   */
+  /** Turun başladığı an — tur sınırsız olduğu için süre gerçekten ölçülüyor. */
   const turBasladiRef = useRef(0)
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const cevaplarRef = useRef<Cevap<EdebiyatEsi>[]>([])
+  const cevaplarRef = useRef<Cevap<AntlasmaMaddesi>[]>([])
   cevaplarRef.current = cevaplar
-  /** Tur boyunca sorulmuş eserler — aynı eser iki kez gelmesin. */
+  /** Tur boyunca sorulmuş maddeler — aynı madde iki kez gelmesin. */
   const kullanilanRef = useRef<Set<string>>(new Set())
   const bittiRef = useRef(false)
 
   useGeriKatmani(asama !== 'tanitim' && !yardimAcik, onCik)
 
-  /** Sıradaki el: banka turunda banka öncelikli, normal turda havuzdan. */
+  /** Sıradaki el: banka turunda banka öncelikli, normal turda seçilen zorluktan. */
   const sonrakiEl = useCallback(
     (boss: boolean) => {
       if (bankaTuru) return bankaEliHazirla(bankaHavuzu, kullanilanRef.current)
       const seviye = boss ? bossZorlugu(zorluk).zorluk : zorluk
-      const suzulmus = zorluktaSuz(EDEBIYAT_HAVUZU, seviye)
-      // Seçilen seviyede el kuracak kadar eser kalmadıysa tüm havuza düşülüyor:
-      // turun ortasında durmak, bir soru fazla kolay gelmesinden kötü.
-      return (
-        elHazirla(kullanilanRef.current, suzulmus) ?? elHazirla(kullanilanRef.current)
-      )
+      const suzulmus = zorluktaSuz(ANTLASMA_HAVUZU, seviye)
+      // Seçilen seviyede el kuracak kadar madde kalmadıysa tüm havuza düşülüyor:
+      // turun ortasında durmak, bir sorunun fazla kolay gelmesinden kötü.
+      return elHazirla(kullanilanRef.current, suzulmus) ?? elHazirla(kullanilanRef.current)
     },
     [bankaHavuzu, bankaTuru, zorluk],
   )
@@ -262,8 +245,6 @@ export function EdebiyatOyunuEkrani({
     setSecim(BOS_SECIM)
     setEslesenler([])
     setYanlisCift(null)
-    // Tur, el dağıtımı beklenirken bittiyse bayrak açık kalırdı ve yeni tur
-    // dokunuşları yok sayardı.
     setElBekliyor(false)
     setCevaplar([])
     setYanlisGirdileri([])
@@ -273,7 +254,7 @@ export function EdebiyatOyunuEkrani({
   }, [istatistik.enIyiDogru, sonrakiEl])
 
   const turBitir = useCallback(
-    (verilenler: Cevap<EdebiyatEsi>[]) => {
+    (verilenler: Cevap<AntlasmaMaddesi>[]) => {
       if (bittiRef.current) return
       bittiRef.current = true
       const ozet = turOzeti(verilenler)
@@ -290,7 +271,7 @@ export function EdebiyatOyunuEkrani({
       onTurBitti(
         ozet,
         verilenler.map((cevap) => ({
-          soru: edebiyattanBanka(cevap.soru),
+          soru: antlasmadanBanka(cevap.soru),
           dogruMu: cevap.dogruMu,
         })),
         Math.round((Date.now() - turBasladiRef.current) / 1000),
@@ -322,11 +303,11 @@ export function EdebiyatOyunuEkrani({
   /**
    * Sıradaki eli dağıtır.
    *
-   * Boss kararı burada veriliyor: on eşleştirme tamamlandıysa bu el boss olur
-   * ve bir üst seviyeden kurulur.
+   * Boss kararı burada veriliyor: on eşleştirme tamamlandıysa bu el boss olur ve
+   * bir üst seviyeden kurulur.
    */
   const elDagit = () => {
-    for (const e of el?.esler ?? []) kullanilanRef.current.add(e.eser)
+    for (const e of el?.esler ?? []) kullanilanRef.current.add(e.madde)
     const boss = bossElMi(cevaplarRef.current.length, verilenBoss)
     if (boss) setVerilenBoss((v) => v + 1)
     setBossEl(boss)
@@ -339,12 +320,12 @@ export function EdebiyatOyunuEkrani({
   /**
    * El süresi dolunca.
    *
-   * Kalan eşleşmeler cevaplanmamış sayılıyor — süre dolması bilememekle aynı,
-   * dolayısıyla tur da orada bitiyor. Banka turunda eleme yok: yeni el dağıtılıyor.
+   * Eşleştirilmemiş maddeler cevaplanmamış sayılıyor — süre dolması bilememekle
+   * aynı, dolayısıyla tur da orada bitiyor. Banka turunda eleme yok.
    */
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || !el) return
-    const kalanEsler = el.esler.filter((e) => !eslesenler.some((s) => s.eser === e.eser))
+    const kalanEsler = el.esler.filter((e) => !eslesenler.some((s) => s.madde === e.madde))
     setCevaplar((onceki) => [...onceki, ...kalanEsler.map((soru) => ({ soru, dogruMu: false }))])
     setYanlisGirdileri((onceki) => [...onceki, ...kalanEsler.map(() => 'süre doldu')])
     geriBildir(false)
@@ -359,28 +340,27 @@ export function EdebiyatOyunuEkrani({
 
   const { kalan, toplam } = useSoruSayaci({
     aktif: asama === 'oynaniyor' && !duraklatilan && !elBekliyor && el !== null,
-    sure: soruSuresi('edebiyat', bossEl ? bossZorlugu(zorluk) : null),
+    sure: soruSuresi('antlasma', bossEl ? bossZorlugu(zorluk) : null),
     anahtar: elSayisi,
     onBitti: sureDoldu,
   })
 
-  /** Eşleşmişleri hızlı sorgulamak için ad kümeleri. */
-  const eslesenEserler = new Set(eslesenler.map((e) => e.eser))
-  const eslesenYazarlar = new Set(eslesenler.map((e) => e.yazar))
+  const eslesenMaddeler = new Set(eslesenler.map((e) => e.madde))
+  const eslesenAntlasmalar = new Set(eslesenler.map((e) => e.antlasma))
 
-  const denetle = (eser: string, yazar: string) => {
+  const denetle = (madde: string, antlasma: string) => {
     if (!el) return
 
-    const dogruMu = eslesiyorMu(el, eser, yazar)
-    const es = el.esler.find((e) => e.eser === eser)
+    const dogruMu = eslesiyorMu(el, madde, antlasma)
+    const es = el.esler.find((e) => e.madde === madde)
     if (!es) return
 
     setCevaplar((onceki) => [...onceki, { soru: es, dogruMu }])
     geriBildir(dogruMu)
 
     if (!dogruMu) {
-      setYanlisGirdileri((onceki) => [...onceki, yazar])
-      setYanlisCift({ eser, yazar })
+      setYanlisGirdileri((onceki) => [...onceki, antlasma])
+      setYanlisCift({ madde, antlasma })
       zamanlayiciRef.current = setTimeout(() => {
         setYanlisCift(null)
         setSecim(BOS_SECIM)
@@ -396,34 +376,38 @@ export function EdebiyatOyunuEkrani({
     setSecim(BOS_SECIM)
 
     // Yeni el kurmak bir yan etki; `setEslesenler`in güncelleyicisi içinde
-    // yapılamaz. React güncelleyicileri geliştirmede iki kez çağırıyor, el iki
-    // kez dağıtılırdı.
+    // yapılamaz — React güncelleyicileri geliştirmede iki kez çağırıyor.
     const yeniEslesenler = [...eslesenler, es]
     if (yeniEslesenler.length < EL_BOYUTU) {
       setEslesenler(yeniEslesenler)
       return
     }
 
-    // El bitti. Altıncı çift önce yeşile dönsün, sonra yenisi dağıtılsın —
-    // arada bir "devam" ekranı yok, yalnızca okunacak kadar bir duraklama.
     setEslesenler(yeniEslesenler)
     setElBekliyor(true)
     zamanlayiciRef.current = setTimeout(elDagit, CEVAP_BEKLEMESI)
   }
 
-  const eserSec = (eser: string) => {
-    if (asama !== 'oynaniyor' || yanlisCift !== null || elBekliyor || eslesenEserler.has(eser)) return
+  const maddeSec = (madde: string) => {
+    if (asama !== 'oynaniyor' || yanlisCift !== null || elBekliyor || eslesenMaddeler.has(madde))
+      return
     // Aynı kutuya ikinci dokunuş seçimi geri alır; yanlış dokunan kilitlenmesin.
-    if (secim.eser === eser) return setSecim({ ...secim, eser: null })
-    if (secim.yazar) return denetle(eser, secim.yazar)
-    setSecim({ ...secim, eser })
+    if (secim.madde === madde) return setSecim({ ...secim, madde: null })
+    if (secim.antlasma) return denetle(madde, secim.antlasma)
+    setSecim({ ...secim, madde })
   }
 
-  const yazarSec = (yazar: string) => {
-    if (asama !== 'oynaniyor' || yanlisCift !== null || elBekliyor || eslesenYazarlar.has(yazar)) return
-    if (secim.yazar === yazar) return setSecim({ ...secim, yazar: null })
-    if (secim.eser) return denetle(secim.eser, yazar)
-    setSecim({ ...secim, yazar })
+  const antlasmaSec = (antlasma: string) => {
+    if (
+      asama !== 'oynaniyor' ||
+      yanlisCift !== null ||
+      elBekliyor ||
+      eslesenAntlasmalar.has(antlasma)
+    )
+      return
+    if (secim.antlasma === antlasma) return setSecim({ ...secim, antlasma: null })
+    if (secim.madde) return denetle(secim.madde, antlasma)
+    setSecim({ ...secim, antlasma })
   }
 
   const yardimAc = () => {
@@ -441,7 +425,7 @@ export function EdebiyatOyunuEkrani({
   return (
     <>
       <OyunKabugu
-        oyunId="edebiyat"
+        oyunId="antlasma"
         baslik={oyun.ad}
         sayac={
           asama === 'bitti'
@@ -475,40 +459,71 @@ export function EdebiyatOyunuEkrani({
         ) : (
           asama === 'oynaniyor' &&
           el && (
-            <div className="flex flex-1 flex-col gap-2.5 pb-1">
+            <div className="flex flex-1 flex-col gap-2 pb-1">
               {/* Elin dönemi. El mümkün olduğunca tek dönemden kuruluyor;
-                  bunu söylemek öğrenciye bağlam veriyor ve oyunun neden zor
-                  olduğunu açıklıyor: aynı dönemden altı isim. */}
-              <p className="mt-3 flex flex-none items-center justify-center gap-1.5 text-[11.5px] font-extrabold uppercase tracking-wide text-edb-koyu">
-                <BookOpen size={13} aria-hidden />
-                {el.donem ? DONEM_ADI[el.donem] : 'Karışık dönem'}
+                  bunu söylemek bağlam veriyor ve oyunun neden zor olduğunu
+                  açıklıyor: aynı dönemden dört antlaşma. */}
+              <p className="mt-2.5 flex flex-none items-center justify-center gap-1.5 text-[11.5px] font-extrabold uppercase tracking-wide text-trh-koyu">
+                <ScrollText size={13} aria-hidden />
+                {el.donem ? TARIH_DONEM_ADI[el.donem] : 'Karışık dönem'}
               </p>
 
-              <Bolum
-                baslik="Eserler"
-                secenekler={el.eserler}
-                secili={secim.eser}
-                eslesenler={eslesenEserler}
-                yanlis={yanlisCift?.eser ?? null}
-                onSec={eserSec}
-              />
-              <Bolum
-                baslik="Yazarlar"
-                secenekler={el.yazarlar}
-                secili={secim.yazar}
-                eslesenler={eslesenYazarlar}
-                yanlis={yanlisCift?.yazar ?? null}
-                onSec={yazarSec}
-              />
+              <section className="flex-none">
+                <h2 className="mb-1.5 pl-0.5 text-[11px] font-extrabold uppercase tracking-wide text-muted-foreground/75">
+                  Maddeler
+                </h2>
+                <ul className="flex flex-col gap-[7px]">
+                  {el.maddeler.map((madde) => (
+                    <li key={madde}>
+                      <EslestirmeDugmesi
+                        durum={eslestirmeDurumu({
+                          eslesti: eslesenMaddeler.has(madde),
+                          hatali: yanlisCift?.madde === madde,
+                          secili: secim.madde === madde,
+                        })}
+                        renk={RENK}
+                        onSec={() => maddeSec(madde)}
+                        className="min-h-[52px] items-start py-2 text-left text-[11.5px] font-bold leading-[1.35]"
+                      >
+                        {madde}
+                      </EslestirmeDugmesi>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+
+              <section className="flex-none">
+                <h2 className="mb-1.5 pl-0.5 text-[11px] font-extrabold uppercase tracking-wide text-muted-foreground/75">
+                  {sutunBasligi(el.donem)}
+                </h2>
+                <ul className="grid grid-cols-2 gap-[7px]">
+                  {el.antlasmalar.map((antlasma) => (
+                    <li key={antlasma}>
+                      <EslestirmeDugmesi
+                        durum={eslestirmeDurumu({
+                          eslesti: eslesenAntlasmalar.has(antlasma),
+                          hatali: yanlisCift?.antlasma === antlasma,
+                          secili: secim.antlasma === antlasma,
+                        })}
+                        renk={RENK}
+                        onSec={() => antlasmaSec(antlasma)}
+                        className="min-h-[50px] justify-center text-center text-[12px]"
+                      >
+                        {antlasma}
+                      </EslestirmeDugmesi>
+                    </li>
+                  ))}
+                </ul>
+              </section>
 
               {/* İki adımlı bir işlemde ilk adımdan sonra ne olacağını söylemek
                   gerekiyor. */}
               <p className="mt-auto flex-none pt-1 text-center text-[11.5px] font-bold text-muted-foreground">
-                {secim.eser
-                  ? 'Şimdi yazarına dokun'
-                  : secim.yazar
-                    ? 'Şimdi eserine dokun'
-                    : 'Bir esere dokun'}
+                {secim.madde
+                  ? 'Şimdi antlaşmasına dokun'
+                  : secim.antlasma
+                    ? 'Şimdi maddesine dokun'
+                    : 'Bir maddeye dokun'}
               </p>
             </div>
           )
@@ -532,48 +547,6 @@ export function EdebiyatOyunuEkrani({
   )
 }
 
-function Bolum({
-  baslik,
-  secenekler,
-  secili,
-  eslesenler,
-  yanlis,
-  onSec,
-}: {
-  baslik: string
-  secenekler: string[]
-  secili: string | null
-  eslesenler: ReadonlySet<string>
-  yanlis: string | null
-  onSec: (deger: string) => void
-}) {
-  return (
-    <section className="flex-none">
-      <h2 className="mb-1.5 pl-0.5 text-[11px] font-extrabold uppercase tracking-wide text-muted-foreground/75">
-        {baslik}
-      </h2>
-      <ul className="grid grid-cols-2 gap-[7px]">
-        {secenekler.map((deger) => (
-          <li key={deger}>
-            <EslestirmeDugmesi
-              durum={eslestirmeDurumu({
-                eslesti: eslesenler.has(deger),
-                hatali: yanlis === deger,
-                secili: secili === deger,
-              })}
-              renk={RENK}
-              onSec={() => onSec(deger)}
-              className="min-h-[54px] justify-center px-2 text-center"
-            >
-              {deger}
-            </EslestirmeDugmesi>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )
-}
-
 function SonucGorunumu({
   sonuc,
   girdiler,
@@ -584,8 +557,8 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
-  sonuc: { ozet: TurOzeti<EdebiyatEsi>; yeniRekor: boolean }
-  /** Yanlışlarla aynı sıradaki yazar seçimleri. */
+  sonuc: { ozet: TurOzeti<AntlasmaMaddesi>; yeniRekor: boolean }
+  /** Yanlışlarla aynı sıradaki antlaşma seçimleri. */
   girdiler: string[]
   rekor: number
   bankaTuru: boolean
@@ -600,7 +573,7 @@ function SonucGorunumu({
 
   return (
     <TurSonu
-      oyunId="edebiyat"
+      oyunId="antlasma"
       dogru={ozet.dogru}
       yanlis={ozet.yanlis}
       enIyiSeri={ozet.enIyiSeri}
@@ -614,7 +587,7 @@ function SonucGorunumu({
           : rekorCumlesi(ozet.dogru, rekor, yeniRekor, 'eşleştirme')
       }
       bolumBasligi="Karıştırdıkların"
-      bolumAltYazisi="Eser, doğru yazarı ve senin dediğin."
+      bolumAltYazisi="Madde, ait olduğu antlaşma ve senin dediğin."
       onTekrar={onTekrar}
       onCik={onCik}
     >
@@ -622,17 +595,15 @@ function SonucGorunumu({
         <div className="flex flex-none flex-col gap-2">
           {gorunen.map((es, sira) => (
             <YanlisKarti
-              key={`${es.eser}-${sira}`}
-              oyunId="edebiyat"
-              soru={edebiyattanBanka(es)}
+              key={`${es.madde}-${sira}`}
+              oyunId="antlasma"
+              soru={antlasmadanBanka(es)}
               bildir={bildir}
             >
-              <b className="block font-display text-[13.5px] font-extrabold leading-tight">
-                {es.eser}
-              </b>
-              <span className="mt-1 flex items-center gap-1.5 text-xs font-bold text-success">
+              <b className="block text-[12.5px] font-bold leading-snug">{es.madde}</b>
+              <span className="mt-1 flex items-center gap-1.5 text-xs font-extrabold text-success">
                 <Check size={13} className="shrink-0" aria-hidden />
-                {es.yazar}
+                {es.antlasma}
               </span>
               {girdiler[sira] && (
                 <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">

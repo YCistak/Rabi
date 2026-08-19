@@ -53,6 +53,12 @@ import { EdebiyatOyunuEkrani } from '@/components/ekranlar/oyun-edebiyat'
 import { HaritaOyunuEkrani } from '@/components/ekranlar/oyun-harita'
 import { AciOyunuEkrani } from '@/components/ekranlar/oyun-aci'
 import { UcgenOyunuEkrani } from '@/components/ekranlar/oyun-ucgen'
+import { AntlasmaOyunuEkrani } from '@/components/ekranlar/oyun-antlasma'
+import { KavramOyunuEkrani } from '@/components/ekranlar/oyun-kavram'
+import { AnlatimOyunuEkrani } from '@/components/ekranlar/oyun-anlatim'
+import { KokluOyunuEkrani } from '@/components/ekranlar/oyun-koklu'
+import { BiyolojiOyunuEkrani } from '@/components/ekranlar/oyun-biyoloji'
+import { HucreOyunuEkrani } from '@/components/ekranlar/oyun-hucre'
 
 /**
  * Oyunlar sekmesi.
@@ -81,6 +87,8 @@ const AILE: Record<DersTanimi['aile'], { zemin: string; yazi: string; ok: string
   isl: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', ok: 'bg-isl-ok' },
   edb: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu', ok: 'bg-edb-ok' },
   cog: { zemin: 'bg-cog-kart', yazi: 'text-cog-koyu', ok: 'bg-cog-ok' },
+  trh: { zemin: 'bg-trh-kart', yazi: 'text-trh-koyu', ok: 'bg-trh-ok' },
+  byl: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu', ok: 'bg-byl-ok' },
 }
 
 /** Ders ızgarasındaki tek hücre: ya bir oyun ya da bir bölüm kapağı. */
@@ -100,6 +108,13 @@ const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   ucgen: ['Özel', 'Üçgenler'],
   edebiyat: ['Edebiyat', 'Eşleştirme'],
   harita: ['Harita', 'Avı'],
+  antlasma: ['Antlaşma', 'Eşleştirme'],
+  kavram: ['Kavram', 'Eşleştirme'],
+  anlatim: ['Anlatım', 'Bozukluğu'],
+  koklu: ['Köklü Sayı', 'Aralığı'],
+  ortak: ['Ortak', 'Özellikler'],
+  siniflandirma: ['Canlıları', 'Sınıflandır'],
+  hucre: ['Organel', 'Kartı'],
 }
 
 export function OyunlarEkrani({
@@ -526,6 +541,68 @@ export function OyunlarEkrani({
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('harita', ozet, cevaplar, saniye)}
           onCik={oyunuKapat}
           bildir={bildir}
+        />
+      )}
+      {acikOyun === 'antlasma' && (
+        <AntlasmaOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'antlasma')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('antlasma', ozet, cevaplar, saniye)}
+          bildir={bildir}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'kavram' && (
+        <KavramOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'kavram')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('kavram', ozet, cevaplar, saniye)}
+          bildir={bildir}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'anlatim' && (
+        <AnlatimOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'anlatim')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('anlatim', ozet, cevaplar, saniye)}
+          bildir={bildir}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'koklu' && (
+        <KokluOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'koklu')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('koklu', ozet, cevaplar, saniye)}
+          bildir={bildir}
+          onCik={oyunuKapat}
+        />
+      )}
+      {/* İki biyoloji çoktan seçmelisi aynı ekranı paylaşıyor; farkları havuz. */}
+      {(acikOyun === 'ortak' || acikOyun === 'siniflandirma') && (
+        <BiyolojiOyunuEkrani
+          oyunId={acikOyun}
+          istatistik={istatistikAl(kayitlar, acikOyun)}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti(acikOyun, ozet, cevaplar, saniye)}
+          bildir={bildir}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'hucre' && (
+        <HucreOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'hucre')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('hucre', ozet, cevaplar, saniye)}
+          bildir={bildir}
+          onCik={oyunuKapat}
         />
       )}
       {acikOyun === 'edebiyat' && (
