@@ -222,6 +222,7 @@ export type OyunId =
   | 'ortak'
   | 'siniflandirma'
   | 'hucre'
+  | 'periyodik'
 
 /**
  * Bir mini oyunun kalıcı istatistiği.

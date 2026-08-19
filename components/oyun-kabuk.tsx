@@ -157,6 +157,13 @@ const AILE: Record<
     kenar: 'border-l-byl-koyu',
     degisken: 'var(--byl-koyu)',
   },
+  periyodik: {
+    zemin: 'bg-kmy',
+    yazi: 'text-kmy-koyu',
+    dolgu: 'bg-kmy-koyu',
+    kenar: 'border-l-kmy-koyu',
+    degisken: 'var(--kmy-koyu)',
+  },
 }
 
 /** Tur sonunda listelenen en fazla yanlış. Gerisi Oyun Bankası'nda. */

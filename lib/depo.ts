@@ -30,6 +30,7 @@ import { VARSAYILAN_SABLON_ID } from './sablonlar'
 import { egitimYili } from './hesap'
 import { dakikayiKirp, saatiKirp } from './hatirlatma'
 import { yeniId } from './utils'
+import { ELEMENT_SAYISI } from './oyunlar/periyodik-havuzu'
 
 export const ANAHTARLAR = {
   denemeler: 'rabi-denemeler',
@@ -83,6 +84,7 @@ export const ANAHTARLAR = {
   zorlukOrtak: 'rabi-zorluk-ortak',
   zorlukSiniflandirma: 'rabi-zorluk-siniflandirma',
   zorlukHucre: 'rabi-zorluk-hucre',
+  zorlukPeriyodik: 'rabi-zorluk-periyodik',
   /**
    * Bildirilen hatalı sorular — gönderim kuyruğu.
    *
@@ -508,6 +510,14 @@ function bankayiCoz(ham: unknown): BankaKaydi[] {
           typeof s.hucre?.organel === 'string' &&
           Array.isArray(s.hucre?.ipuclari) &&
           s.hucre.ipuclari.length === 3
+        )
+      // Numara tablonun dışına düşerse element bulunamaz ve soru kurulamaz.
+      if (s.oyun === 'periyodik')
+        return (
+          typeof s.numara === 'number' &&
+          s.numara >= 1 &&
+          s.numara <= ELEMENT_SAYISI &&
+          (s.asama === 'ad' || s.asama === 'sembol')
         )
       if (s.oyun === 'ucgen')
         return (

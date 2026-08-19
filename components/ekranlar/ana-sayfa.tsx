@@ -51,6 +51,7 @@ const OYUN_RENGI: Record<OyunId, string> = {
   ortak: 'bg-byl-kart',
   siniflandirma: 'bg-byl-kart',
   hucre: 'bg-byl-kart',
+  periyodik: 'bg-kmy-kart',
 }
 
 export function AnaSayfa({

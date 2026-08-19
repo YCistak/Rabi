@@ -59,6 +59,7 @@ import { AnlatimOyunuEkrani } from '@/components/ekranlar/oyun-anlatim'
 import { KokluOyunuEkrani } from '@/components/ekranlar/oyun-koklu'
 import { BiyolojiOyunuEkrani } from '@/components/ekranlar/oyun-biyoloji'
 import { HucreOyunuEkrani } from '@/components/ekranlar/oyun-hucre'
+import { PeriyodikOyunuEkrani } from '@/components/ekranlar/oyun-periyodik'
 
 /**
  * Oyunlar sekmesi.
@@ -89,6 +90,7 @@ const AILE: Record<DersTanimi['aile'], { zemin: string; yazi: string; ok: string
   cog: { zemin: 'bg-cog-kart', yazi: 'text-cog-koyu', ok: 'bg-cog-ok' },
   trh: { zemin: 'bg-trh-kart', yazi: 'text-trh-koyu', ok: 'bg-trh-ok' },
   byl: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu', ok: 'bg-byl-ok' },
+  kmy: { zemin: 'bg-kmy-kart', yazi: 'text-kmy-koyu', ok: 'bg-kmy-ok' },
 }
 
 /** Ders ızgarasındaki tek hücre: ya bir oyun ya da bir bölüm kapağı. */
@@ -115,6 +117,7 @@ const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   ortak: ['Ortak', 'Özellikler'],
   siniflandirma: ['Canlıları', 'Sınıflandır'],
   hucre: ['Organel', 'Kartı'],
+  periyodik: ['Periyodik', 'Tablo'],
 }
 
 export function OyunlarEkrani({
@@ -601,6 +604,16 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('hucre', ozet, cevaplar, saniye)}
+          bildir={bildir}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'periyodik' && (
+        <PeriyodikOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'periyodik')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('periyodik', ozet, cevaplar, saniye)}
           bildir={bildir}
           onCik={oyunuKapat}
         />
