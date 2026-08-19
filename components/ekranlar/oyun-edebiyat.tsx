@@ -44,6 +44,7 @@ import {
   TurSonu,
   YanlisKarti,
   rekorCumlesi,
+  type Eleme,
 } from '@/components/oyun-kabuk'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
@@ -188,7 +189,7 @@ export function EdebiyatOyunuEkrani({
   /** Kaç boss el verildi — sıradakinin boss olup olmayacağı buna bakıyor. */
   const [verilenBoss, setVerilenBoss] = useState(0)
   /** Boss elinde yanılıp elendi mi. */
-  const [elendi, setElendi] = useState(false)
+  const [elendi, setElendi] = useState<Eleme>(false)
   /** Kaçıncı el — sayaç her elde sıfırlansın diye. */
   const [elSayisi, setElSayisi] = useState(0)
 
@@ -327,8 +328,8 @@ export function EdebiyatOyunuEkrani({
   /**
    * El süresi dolunca.
    *
-   * Kalan eşleşmeler cevaplanmamış sayılıyor — süre dolması bilememekle aynı.
-   * Boss elinde bu doğrudan eleme demek; normal elde yeni el dağıtılıyor.
+   * Kalan eşleşmeler cevaplanmamış sayılıyor — süre dolması bilememekle aynı,
+   * dolayısıyla tur da orada bitiyor. Banka turunda eleme yok: yeni el dağıtılıyor.
    */
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || !el) return
@@ -336,14 +337,14 @@ export function EdebiyatOyunuEkrani({
     setCevaplar((onceki) => [...onceki, ...kalanEsler.map((soru) => ({ soru, dogruMu: false }))])
     setYanlisGirdileri((onceki) => [...onceki, ...kalanEsler.map(() => 'süre doldu')])
     geriBildir(false)
-    if (bossEl) {
-      setElendi(true)
+    if (elerMi(false, bankaTuru)) {
+      setElendi(bossEl ? 'boss' : 'yanlis')
       zamanlayiciRef.current = setTimeout(() => turBitir(cevaplarRef.current), CEVAP_BEKLEMESI)
       return
     }
     zamanlayiciRef.current = setTimeout(elDagit, CEVAP_BEKLEMESI)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asama, bossEl, el, eslesenler])
+  }, [asama, bankaTuru, bossEl, el, eslesenler])
 
   const { kalan, toplam } = useSoruSayaci({
     aktif: asama === 'oynaniyor' && !duraklatilan && !elBekliyor && el !== null,
@@ -372,9 +373,9 @@ export function EdebiyatOyunuEkrani({
       zamanlayiciRef.current = setTimeout(() => {
         setYanlisCift(null)
         setSecim(BOS_SECIM)
-        // Boss elinde tek yanlış yetiyor: eleyici olan bu.
-        if (elerMi(bossEl, false)) {
-          setElendi(true)
+        // Tek yanlış eşleştirme turu bitiriyor; banka turu bunun dışında.
+        if (elerMi(false, bankaTuru)) {
+          setElendi(bossEl ? 'boss' : 'yanlis')
           turBitir(cevaplarRef.current)
         }
       }, CEVAP_BEKLEMESI)
@@ -557,7 +558,7 @@ function Bolum({
                   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                   eslesti && 'border-transparent bg-success-soft text-success',
                   hatali && 'border-ikincil bg-ikincil-soft text-ikincil',
-                  secildi && 'border-edb-koyu bg-edb text-edb-koyu',
+                  secildi && 'border-edb-koyu bg-edb-kart text-edb-koyu',
                   !eslesti && !hatali && !secildi && 'golge-kart border-border bg-card',
                 )}
               >
@@ -587,7 +588,7 @@ function SonucGorunumu({
   girdiler: string[]
   rekor: number
   bankaTuru: boolean
-  elendi: boolean
+  elendi: Eleme
   onTekrar: () => void
   onCik: () => void
   bildir: BildirimKolu

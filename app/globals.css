@@ -26,15 +26,20 @@
 
   /* Mini oyun aileleri */
   --color-yzm: var(--yzm);
+  --color-yzm-kart: var(--yzm-kart);
   --color-yzm-koyu: var(--yzm-koyu);
   --color-yzm-ok: var(--yzm-ok);
   --color-isl: var(--isl);
+  --color-isl-kart: var(--isl-kart);
   --color-isl-koyu: var(--isl-koyu);
   --color-isl-ok: var(--isl-ok);
   --color-edb: var(--edb);
+  --color-edb-kart: var(--edb-kart);
   --color-edb-koyu: var(--edb-koyu);
   --color-edb-ok: var(--edb-ok);
   --color-cog: var(--cog);
+  --color-cog-kart: var(--cog-kart);
+  --color-boss-zemin: var(--boss-zemin);
   --color-cog-koyu: var(--cog-koyu);
   --color-cog-ok: var(--cog-ok);
 
@@ -113,20 +118,33 @@
   --warning-soft: #fbf2dc;
   --danger: #e0413a;
 
-  /* Oyun aileleri — pastel zemin + üstünde okunan koyu ton */
+  /*
+    Oyun aileleri — pastel zemin + üstünde okunan koyu ton.
+
+    İki ayrı yüzey var: `--yzm` oyun ekranının **zemini** (tam ekran), `--yzm-kart`
+    ise listedeki **kart** yüzeyi. Açık temada ikisi aynı pastel; koyu temada
+    ayrışıyorlar, çünkü orada zemin karttan koyu olmak zorunda (bkz. `.dark`).
+  */
   --yzm: #fce7ea;
+  --yzm-kart: var(--yzm);
   --yzm-koyu: #c24a60;
   --yzm-ok: #e4708a;
   --isl: #fbf2dc;
+  --isl-kart: var(--isl);
   --isl-koyu: #b57d1e;
   --isl-ok: #e0a233;
   --edb: #ece7fb;
+  --edb-kart: var(--edb);
   --edb-koyu: #6c55c4;
   --edb-ok: #8570da;
   /* Coğrafya yeşili: haritanın kendi rengi, öteki üç aileyle karışmıyor. */
   --cog: #e0f1e7;
+  --cog-kart: var(--cog);
   --cog-koyu: #2f7a52;
   --cog-ok: #4fa87a;
+
+  /* Boss sorusunda oyun ekranının zemini. */
+  --boss-zemin: var(--ikincil-soft);
 
   /* Maskot renkleri — Rabi'nin kürkü zeminden hafifçe ayrışır. */
   --maskot-kurk: #ffffff;
@@ -163,20 +181,43 @@
   --warning-soft: #35301f;
   --danger: #ff6f66;
 
-  /* Koyu temada pastel zeminler okunmuyor; aynı aileler koyulaştırılmış
-     karşılıklarıyla duruyor — renk kimliği korunuyor, kontrast geri geliyor. */
-  --yzm: #3a2028;
+  /*
+    Koyu temada aile renkleri.
+
+    Önceki sürüm pastelleri koyulaştırılmış sabit tonlarla değiştiriyordu
+    (#3a2028 gibi) ve iki sorun çıkıyordu: (1) o tonlar zemin renginden **daha
+    açıktı**, yani oyun ekranında zemin kartlardan parlak kalıyor, kartlar
+    çukur gibi görünüyordu — açık temadaki hiyerarşinin tam tersi; (2) sıcak
+    kahve-bordo tonlar soğuk lacivert zeminle çakışıp çamurlaşıyordu.
+
+    Şimdi ikisi de aynı yerden türüyor: zemin, sayfa zemininin üstüne ailenin
+    ara tonundan bir tutam; kart ise kart yüzeyinin üstüne ailenin açık tonundan
+    daha fazlası. Böylece zemin zeminden koyu, kart karttan açık kalıyor ve renk
+    kimliği duruyor.
+
+    Kartta ara ton değil açık ton (`-koyu`) kullanılıyor: matematiğin ara tonu
+    amber ve lacivert kart yüzeyiyle karışınca zeytin yeşiline kaçıyordu.
+  */
+  --yzm: color-mix(in srgb, var(--yzm-ok) 9%, var(--background));
+  --yzm-kart: color-mix(in srgb, var(--yzm-koyu) 26%, var(--card));
   --yzm-koyu: #f2a2b3;
   --yzm-ok: #e4708a;
-  --isl: #33291a;
+  --isl: color-mix(in srgb, var(--isl-ok) 9%, var(--background));
+  --isl-kart: color-mix(in srgb, var(--isl-koyu) 26%, var(--card));
   --isl-koyu: #e8bf74;
   --isl-ok: #e0a233;
-  --edb: #272044;
+  --edb: color-mix(in srgb, var(--edb-ok) 9%, var(--background));
+  --edb-kart: color-mix(in srgb, var(--edb-koyu) 26%, var(--card));
   --edb-koyu: #b9a9f2;
   --edb-ok: #8570da;
-  --cog: #17301f;
+  --cog: color-mix(in srgb, var(--cog-ok) 9%, var(--background));
+  --cog-kart: color-mix(in srgb, var(--cog-koyu) 26%, var(--card));
   --cog-koyu: #8ad3a8;
   --cog-ok: #4fa87a;
+
+  /* Boss zemini de aynı kuralla: sayfa zemininin kırmızıya çalan hâli. Eski
+     sabit ton (#3a2320) kartlardan açıktı ve kahverengiye kaçıyordu. */
+  --boss-zemin: color-mix(in srgb, var(--ikincil) 13%, var(--background));
 
   --maskot-kurk: #e9ecf5;
   --maskot-kulak-ic: #c99aa6;
@@ -445,6 +486,55 @@
 
 @media (prefers-reduced-motion: reduce) {
   .isaretli-il {
+    animation: none;
+  }
+}
+
+/*
+  Boss sorusunun hissiyatı.
+
+  Kural değişikliğinden sonra her yanlış turu bitiriyor; boss'u ayıran şey artık
+  "elenirsin" uyarısı değil, sorunun bir üst zorluktan gelmesi. Bunu yazıyla
+  söylemek yetmiyor — oyuncu ekrana bakınca **hissetmeli**. Üç katman var:
+  ekranın içine doğru atan kırmızı çerçeve, soru gelirken bir kez çarpan rozet
+  ve zeminin koyulaşması.
+
+  Nabız yavaş (1.8s) ve düşük genlikli: hızlı yanıp sönen bir çerçeve soruyu
+  okumayı zorlaştırırdı, amaç dikkat dağıtmak değil gerginlik.
+*/
+@keyframes bossNabiz {
+  0%, 100% { box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--danger) 55%, transparent), inset 0 0 22px color-mix(in srgb, var(--danger) 18%, transparent); }
+  50% { box-shadow: inset 0 0 0 4px var(--danger), inset 0 0 46px color-mix(in srgb, var(--danger) 34%, transparent); }
+}
+
+.boss-alan::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  animation: bossNabiz 1.8s ease-in-out infinite;
+}
+
+/* Rozet her boss sorusunda bir kez çarpıyor: sıra numarası anahtar olduğu için
+   animasyon yeniden başlıyor. */
+@keyframes bossGirisi {
+  0% { transform: scale(0.4); opacity: 0; }
+  55% { transform: scale(1.18); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.boss-rozet {
+  animation: bossGirisi 520ms cubic-bezier(0.2, 1.3, 0.4, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boss-alan::after {
+    animation: none;
+    box-shadow: inset 0 0 0 3px var(--danger);
+  }
+
+  .boss-rozet {
     animation: none;
   }
 }

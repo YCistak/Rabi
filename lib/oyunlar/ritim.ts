@@ -151,12 +151,21 @@ export function sonSoruMu(oyun: OyunId, sira: number): boolean {
 /**
  * Bu cevap turu bitirir mi.
  *
- * Yalnızca boss eliyor: normal soruda yanılmak turu bitirmiyor, yoksa bir
- * dalgınlıkla üçüncü soruda biten turlar çıkardı. Süre dolması da yanlış
- * sayılıyor — boss'ta beklemek kaçmakla aynı şey.
+ * **Her yanlış eliyor**, yalnızca boss değil. Eskiden normal soruda yanılmak
+ * serbestti; tur ancak boss'ta kaybediliyordu. Sonuç, sorunun ağırlığının
+ * kaybolmasıydı: bilmediğin soruyu rastgele işaretleyip geçmek bedava oluyor,
+ * on soruda bir gelen boss dışında hiçbir cevap gerçekten önemli olmuyordu.
+ * Artık her soru turun devamını belirliyor — bilmediğinde tur biter ve sonuç
+ * (rekor, istatistik, yanlışların bankaya düşmesi) olduğu gibi kaydedilir.
+ *
+ * Süre dolması da yanlış sayılıyor: beklemek de bilmemek.
+ *
+ * Tek istisna **Oyun Bankası turu**. Orada sorular zaten bir kez yanlış
+ * bilinmiş olanlar ve turun amacı onları üç kez doğru bilip düşürmek; ilk
+ * yanlışta kapanan bir tur o işi imkânsız kılardı.
  */
-export function elerMi(boss: boolean, dogruMu: boolean): boolean {
-  return boss && !dogruMu
+export function elerMi(dogruMu: boolean, bankaTuru = false): boolean {
+  return !dogruMu && !bankaTuru
 }
 
 // ---------------------------------------------------------------------------

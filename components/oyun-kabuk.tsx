@@ -3,6 +3,7 @@
 import { Check, HelpCircle, Trophy, X } from 'lucide-react'
 import type { OyunId } from '@/lib/types'
 import { sureOrani } from '@/lib/oyunlar/tur'
+import { BOSS_ARALIGI, bossluMu } from '@/lib/oyunlar/ritim'
 import { cn } from '@/lib/utils'
 import { Halka } from '@/components/ui'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
@@ -110,6 +111,16 @@ const AILE: Record<
 /** Tur sonunda listelenen en fazla yanlış. Gerisi Oyun Bankası'nda. */
 export const EN_COK_YANLIS = 5
 
+/**
+ * Turu ne bitirdi.
+ *
+ * `false`: eleme yok — soru sınırına gelindi ya da banka turu tükendi.
+ * `'boss'` ve `'yanlis'` ikisi de yanlış cevap, ama tur sonu ekranı ikisini
+ * ayrı söylüyor: boss'a takılmak ile sıradan bir soruda takılmak oyuncu için
+ * aynı his değil.
+ */
+export type Eleme = false | 'boss' | 'yanlis'
+
 export type SayacBilgisi = {
   /** Kalan saniye. */
   kalan: number
@@ -157,7 +168,8 @@ export function OyunKabugu({
         // Boss'ta ekranın zemini oyunun kendi pastelinden çıkıp kırmızıya
         // dönüyor. Ayrı bir ekran açmak yerine aynı ekranın rengini
         // değiştirmek, sorunun akışını kesmeden gerginliği taşıyor.
-        sayac?.boss ? 'bg-ikincil-soft' : aile.zemin,
+        // `boss-alan` üstüne içeri doğru atan kırmızı çerçeveyi koyuyor.
+        sayac?.boss ? 'boss-alan bg-boss-zemin' : aile.zemin,
       )}
     >
       <div className="guvenli-alt mx-auto flex w-full max-w-md flex-1 flex-col overflow-y-auto px-4 pb-3 pt-[calc(0.9rem+var(--guvenli-ust))]">
@@ -180,7 +192,11 @@ export function OyunKabugu({
           {/* Seri rozeti sağda: yerini hep koruyor, yoksa başlık her doğru
               cevapta yana kayardı. */}
           {sayac?.boss ? (
-            <span className="rakam flex h-[30px] shrink-0 items-center gap-1 rounded-full bg-danger px-2.5 text-[12.5px] font-extrabold text-white">
+            <span
+              // Sıra anahtar: her boss sorusunda rozet yeniden çarpıyor.
+              key={sayac.sira}
+              className="boss-rozet rakam flex h-[30px] shrink-0 items-center gap-1 rounded-full bg-danger px-2.5 text-[12.5px] font-extrabold text-white"
+            >
               <span aria-hidden>⚔️</span>
               {sayac.sira}
             </span>
@@ -217,26 +233,64 @@ export function OyunKabugu({
                 />
               </div>
 
-              {/* Boss rozeti süre çubuğunun üstünde: gözün zaten baktığı yer
-                  burası, uyarı da oradan çıkıyor. */}
+              {/* Boss uyarısı süre çubuğunun üstünde: gözün zaten baktığı yer
+                  burası. Metin artık "elenirsin" demiyor — her yanlış eliyor,
+                  boss'u ayıran şey sorunun bir üst zorluktan gelmesi. */}
               {sayac.boss && (
-                <span className="absolute -top-3 left-[66px] rounded-full bg-danger px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wide text-white">
-                  Boss · elenirsin
+                <span
+                  key={sayac.sira}
+                  className="boss-rozet absolute -top-3 left-[66px] rounded-full bg-danger px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wide text-white"
+                >
+                  Boss · bir üst seviye
                 </span>
               )}
             </div>
 
-            <div className="mt-3.5 grid flex-none grid-cols-4 gap-1.5 border-b border-border pb-3">
-              <Sayac deger={sayac.dogru} etiket="Doğru" renk="text-success" />
-              <Sayac deger={sayac.yanlis} etiket="Yanlış" renk="text-ikincil" />
-              <Sayac deger={sayac.enIyiSeri} etiket="Seri" />
-              <Sayac deger={sayac.rekor} etiket="Rekor" />
-            </div>
+            <SayacSeridi oyunId={oyunId} sayac={sayac} />
           </>
         )}
 
         {children}
       </div>
+    </div>
+  )
+}
+
+/**
+ * Tur sayaçları.
+ *
+ * Boss'lu oyunlarda "Yanlış" ve "Seri" kaldırıldı: her yanlış turu bitirdiği
+ * için yanlış sayısı hep 0, seri de doğru sayısının aynısı — üç hücrenin ikisi
+ * aynı sayıyı gösteriyordu. Yerlerine boss'a kaç soru kaldığı geldi; oyuncunun
+ * turda gerçekten merak ettiği şey bu, gerilim de oradan geliyor.
+ *
+ * Matematik oyunlarında boss yok ve yanlış turu bitirmiyor; orada eski dörtlü
+ * duruyor.
+ */
+function SayacSeridi({ oyunId, sayac }: { oyunId: OyunId; sayac: SayacBilgisi }) {
+  if (!bossluMu(oyunId)) {
+    return (
+      <div className="mt-3.5 grid flex-none grid-cols-4 gap-1.5 border-b border-border pb-3">
+        <Sayac deger={sayac.dogru} etiket="Doğru" renk="text-success" />
+        <Sayac deger={sayac.yanlis} etiket="Yanlış" renk="text-ikincil" />
+        <Sayac deger={sayac.enIyiSeri} etiket="Seri" />
+        <Sayac deger={sayac.rekor} etiket="Rekor" />
+      </div>
+    )
+  }
+
+  // Bu soru boss'un kendisiyse geri sayım bitti; sayı yerine işaret duruyor.
+  const kalan = sayac.boss ? 0 : BOSS_ARALIGI - (sayac.sira % BOSS_ARALIGI)
+
+  return (
+    <div className="mt-3.5 grid flex-none grid-cols-3 gap-1.5 border-b border-border pb-3">
+      <Sayac deger={sayac.dogru} etiket="Doğru" renk="text-success" />
+      <Sayac
+        deger={kalan}
+        etiket={kalan === 0 ? 'Boss burada' : 'Boss’a kalan'}
+        renk={kalan === 0 ? 'text-danger' : kalan <= 2 ? 'text-ikincil' : undefined}
+      />
+      <Sayac deger={sayac.rekor} etiket="Rekor" />
     </div>
   )
 }
@@ -424,12 +478,12 @@ export function TurSonu({
   /** Banka turunda rekor ve istatistik yazılmıyor; ekran bunu söylüyor. */
   bankaTuru: boolean
   /**
-   * Tur boss'ta elenerek mi bitti.
+   * Turu ne bitirdi.
    *
    * Başlığı değiştiriyor: "Süre bitti" artık doğru değil — tur sonsuzdu, onu
-   * bitiren şey boss'ta yanılmaktı ve oyuncunun bunu net görmesi gerekiyor.
+   * bitiren şey yanlış cevaptı ve oyuncunun bunu net görmesi gerekiyor.
    */
-  elendi?: boolean
+  elendi?: Eleme
   altBaslik: string
   bolumBasligi: string
   bolumAltYazisi: string
@@ -456,7 +510,13 @@ export function TurSonu({
           <h2 className="font-display text-xl font-extrabold tracking-tight">
             {/* Eleme rekorun önünde: oyuncunun ilk sorusu "tur neden bitti".
                 Rekor zaten hemen altındaki rozette duruyor. */}
-            {elendi ? 'Boss’a takıldın' : yeniRekor ? 'Yeni rekor!' : 'Tur bitti'}
+            {elendi === 'boss'
+              ? 'Boss’a takıldın'
+              : elendi === 'yanlis'
+                ? 'Bir yanlış yetti'
+                : yeniRekor
+                  ? 'Yeni rekor!'
+                  : 'Tur bitti'}
           </h2>
           <p className="mt-0.5 text-[12.5px] font-semibold text-muted-foreground">{altBaslik}</p>
         </div>

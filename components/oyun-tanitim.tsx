@@ -1,6 +1,7 @@
 'use client'
 
 import type { OyunTanimi } from '@/lib/oyunlar/tanim'
+import { vurgulariAyir } from '@/lib/metin'
 import { useGeriKatmani } from '@/lib/geri'
 import { Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
@@ -59,7 +60,9 @@ export function OyunTanitim({
               >
                 {sira + 1}
               </span>
-              <span className="text-sm leading-snug text-muted-foreground">{madde}</span>
+              <span className="text-sm leading-snug text-muted-foreground">
+                <Vurgulu metin={madde} />
+              </span>
             </li>
           ))}
         </ol>
@@ -85,5 +88,31 @@ export function OyunTanitim({
         </div>
       </div>
     </div>
+  )
+}
+
+/**
+ * Maddedeki `**kalın**` ve `*eğik*` bölümleri.
+ *
+ * Metinler elle yazılıyor, dolayısıyla kullanıcıdan gelen bir şey yok; yine de
+ * biçimlendirme HTML üretmeden, parça parça çiziliyor.
+ */
+function Vurgulu({ metin }: { metin: string }) {
+  return (
+    <>
+      {vurgulariAyir(metin).map((parca, sira) =>
+        parca.tur === 'kalin' ? (
+          <strong key={sira} className="font-extrabold text-foreground">
+            {parca.metin}
+          </strong>
+        ) : parca.tur === 'egik' ? (
+          <em key={sira} className="italic">
+            {parca.metin}
+          </em>
+        ) : (
+          <span key={sira}>{parca.metin}</span>
+        ),
+      )}
+    </>
   )
 }

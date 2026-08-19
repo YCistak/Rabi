@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Minus, Plus } from 'lucide-react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
 import type { OyunIstatistigi } from '@/lib/types'
@@ -11,6 +12,12 @@ import {
   type Il,
 } from '@/lib/oyunlar/harita-havuzu'
 import { ilBul, soruKur, type HaritaSorusu } from '@/lib/oyunlar/harita'
+import {
+  EN_COK_OLCEK,
+  gorunumBoyu,
+  useHaritaYakinlastirma,
+  type Yakinlastirma,
+} from '@/lib/oyunlar/harita-yakinlastirma'
 import {
   guncelSeri,
   rekorKirildiMi,
@@ -43,6 +50,7 @@ import {
   TurSonu,
   YanlisKarti,
   rekorCumlesi,
+  type Eleme,
 } from '@/components/oyun-kabuk'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
@@ -104,8 +112,8 @@ export function HaritaOyunuEkrani({
   const [sira, setSira] = useState(0)
   const [cevaplar, setCevaplar] = useState<Cevap<HaritaSorusu>[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
-  /** Boss'ta yanılıp elendi mi. */
-  const [elendi, setElendi] = useState(false)
+  /** Turu ne bitirdi — tur sonu ekranı boss ile sıradan yanlışı ayrı söylüyor. */
+  const [elendi, setElendi] = useState<Eleme>(false)
 
   const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukHarita, 'kolay')
   /** Yardım açıkken sayaç duruyor. */
@@ -201,8 +209,8 @@ export function HaritaOyunuEkrani({
   const ilerle = (dogruMu: boolean, bossMuydu: boolean) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
-      if (elerMi(bossMuydu, dogruMu)) {
-        setElendi(true)
+      if (elerMi(dogruMu, bankaTuru)) {
+        setElendi(bossMuydu ? 'boss' : 'yanlis')
         turBitir(cevaplarRef.current)
       } else {
         setSira((s) => s + 1)
@@ -220,7 +228,7 @@ export function HaritaOyunuEkrani({
     ilerle(dogruMu, boss)
   }
 
-  /** Süre dolması cevap vermemekle aynı: yanlış sayılıyor, boss'ta eliyor. */
+  /** Süre dolması cevap vermemekle aynı: yanlış sayılıyor ve turu bitiriyor. */
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     setCevaplar((onceki) => [...onceki, { soru, dogruMu: false }])
@@ -357,6 +365,10 @@ function SoruMetni({ soru }: { soru: HaritaSorusu }) {
  * Dokunma denetimini tarayıcı yapıyor: her il kendi `<path>`'i, tıklama
  * doğrudan o ile gidiyor. Elle nokta-poligon hesabı yazmaya gerek yok ve
  * sınırlar piksel piksel doğru.
+ *
+ * Yakınlaştırma iki parmakla, fare tekerleğiyle ya da köşedeki düğmelerle;
+ * yakınken tek parmak haritayı kaydırıyor. Sürükleme il seçmiyor —
+ * `secimSayilirMi()` ayrımı orada.
  */
 function Harita({
   soru,
@@ -370,6 +382,18 @@ function Harita({
   secilebilir: boolean
 }) {
   const acikta = geriBildirim !== null
+  const yakinlastirma = useHaritaYakinlastirma()
+  const { gorunum, olcek, svgRef, isleyiciler, secimSayilirMi, sifirla } = yakinlastirma
+
+  /**
+   * Yeni soruda ve cevap açıldığında görünüm tamamına dönüyor.
+   *
+   * Cevabın doğrusu haritanın öbür ucunda olabilir; yakınlaşmış bir görünümde
+   * yeşil il ekran dışında kalır ve tur sonunda öğrenilecek şey kaçardı.
+   */
+  useEffect(() => {
+    sifirla()
+  }, [soru, acikta, sifirla])
 
   const boya = (il: Il): string => {
     // Cevaptan sonra: doğrusu yeşil, yanlış seçim kırmızı.
@@ -383,13 +407,18 @@ function Harita({
     return 'fill-cog-ok/15'
   }
 
+  const secilir = secilebilir && soru.tip === 'bul'
+
   return (
-    <div className="golge-kart flex-none overflow-hidden rounded-[20px] bg-card p-1.5">
+    <div className="golge-kart relative flex-none overflow-hidden rounded-[20px] bg-card p-1.5">
       <svg
-        viewBox={`0 0 ${HARITA_GENISLIK} ${HARITA_YUKSEKLIK}`}
-        className="w-full"
+        ref={svgRef}
+        viewBox={`${gorunum.x} ${gorunum.y} ${gorunum.en} ${gorunumBoyu(gorunum)}`}
+        // `touch-none`: tarayıcı sayfayı kaydırmaya kalkarsa jest yarıda kalıyor.
+        className="w-full touch-none select-none"
         role="img"
         aria-label="Türkiye haritası"
+        {...isleyiciler}
       >
         {ILLER.map((il) => (
           <path
@@ -398,16 +427,81 @@ function Harita({
             className={cn(
               'stroke-cog-koyu/50 transition-[fill] duration-200',
               boya(il),
-              secilebilir && soru.tip === 'bul' && 'cursor-pointer',
+              secilir && 'cursor-pointer',
             )}
-            strokeWidth={1}
-            onClick={secilebilir && soru.tip === 'bul' ? () => onSec(il.ad) : undefined}
+            // Çizgi kalınlığı ölçeğe bölünüyor: yakınlaşınca sınırlar
+            // kalınlaşıp küçük illeri yutmasın.
+            strokeWidth={1 / olcek}
+            onClick={secilir ? () => secimSayilirMi() && onSec(il.ad) : undefined}
           >
             <title>{il.ad}</title>
           </path>
         ))}
       </svg>
+
+      <YakinlastirmaDugmeleri yakinlastirma={yakinlastirma} />
     </div>
+  )
+}
+
+/**
+ * Yakınlaştırma düğmeleri.
+ *
+ * Parmakla sıkıştırmak asıl yol ama tek yol olmamalı: küçük ekranda iki parmak
+ * haritanın yarısını kapatıyor, bazı kullanıcılar da jesti hiç denemiyor.
+ * Düğmeler görünümün ortasına yakınlaştırıyor.
+ */
+function YakinlastirmaDugmeleri({ yakinlastirma }: { yakinlastirma: Yakinlastirma }) {
+  const { olcek, yakinlas, uzaklas, sifirla } = yakinlastirma
+  const uzak = olcek <= 1.001
+  const yakin = olcek >= EN_COK_OLCEK - 0.001
+
+  return (
+    <div className="absolute bottom-2 right-2 flex items-center gap-1.5">
+      {!uzak && (
+        <button
+          type="button"
+          onClick={sifirla}
+          className="golge-kart rakam rounded-full bg-card/90 px-2.5 py-1 text-[11.5px] font-extrabold text-muted-foreground backdrop-blur-sm transition active:scale-95"
+        >
+          ×{olcek.toFixed(1)} · sıfırla
+        </button>
+      )}
+      <DugmeKutusu etiket="Uzaklaştır" edilgin={uzak} onBas={uzaklas}>
+        <Minus className="h-4 w-4" strokeWidth={3} />
+      </DugmeKutusu>
+      <DugmeKutusu etiket="Yakınlaştır" edilgin={yakin} onBas={yakinlas}>
+        <Plus className="h-4 w-4" strokeWidth={3} />
+      </DugmeKutusu>
+    </div>
+  )
+}
+
+function DugmeKutusu({
+  etiket,
+  edilgin,
+  onBas,
+  children,
+}: {
+  etiket: string
+  /** Sınıra gelindi: düğme duruyor ama iş yapmıyor. */
+  edilgin: boolean
+  onBas: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={etiket}
+      disabled={edilgin}
+      onClick={onBas}
+      className={cn(
+        'golge-kart flex h-9 w-9 items-center justify-center rounded-full bg-card/90 text-foreground backdrop-blur-sm transition active:scale-95',
+        edilgin && 'opacity-40',
+      )}
+    >
+      {children}
+    </button>
   )
 }
 
@@ -430,8 +524,10 @@ function CevapAlani({
   if (soru.tip === 'bul') {
     return (
       <div className="flex h-[108px] flex-none flex-col items-center justify-center gap-2.5 rounded-[18px] border-[1.5px] border-dashed border-border px-4">
-        <p className="text-[12.5px] font-semibold text-muted-foreground">
+        <p className="text-center text-[12.5px] font-semibold text-muted-foreground">
           Haritada dokun — yanlış il de bir cevaptır.
+          <br />
+          <span className="text-[11.5px]">Küçük iller için yakınlaştır.</span>
         </p>
         {/* Pas, bilmediğini kabul etmenin yolu: rastgele bir ile dokunup şansa
             bırakmaktansa geçmek hem daha dürüst hem tur sonunda doğru ders. */}
@@ -487,7 +583,7 @@ function SonucGorunumu({
   sonuc: { ozet: TurOzeti<HaritaSorusu>; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
-  elendi: boolean
+  elendi: Eleme
   onTekrar: () => void
   onCik: () => void
   bildir: BildirimKolu
