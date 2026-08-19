@@ -41,6 +41,8 @@ const AILE: Record<OyunId, { zemin: string; yazi: string; dolgu: string }> = {
   aci: { zemin: 'bg-isl', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
   ucgen: { zemin: 'bg-isl', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
   edebiyat: { zemin: 'bg-edb', yazi: 'text-edb-koyu', dolgu: 'bg-edb-ok' },
+  antlasma: { zemin: 'bg-trh', yazi: 'text-trh-koyu', dolgu: 'bg-trh-ok' },
+  kavram: { zemin: 'bg-trh', yazi: 'text-trh-koyu', dolgu: 'bg-trh-ok' },
 }
 
 const KISA_AD: Record<OyunId, string> = {
@@ -53,6 +55,8 @@ const KISA_AD: Record<OyunId, string> = {
   aci: 'Açı',
   ucgen: 'Üçgen',
   edebiyat: 'Edebiyat',
+  antlasma: 'Antlaşma',
+  kavram: 'Kavram',
 }
 
 type Suzgec = OyunId | 'tumu'

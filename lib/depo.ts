@@ -76,6 +76,8 @@ export const ANAHTARLAR = {
   zorlukBolunme: 'rabi-zorluk-bolunme',
   zorlukAci: 'rabi-zorluk-aci',
   zorlukUcgen: 'rabi-zorluk-ucgen',
+  zorlukAntlasma: 'rabi-zorluk-antlasma',
+  zorlukKavram: 'rabi-zorluk-kavram',
   /**
    * Bildirilen hatalı sorular — gönderim kuyruğu.
    *
@@ -461,6 +463,10 @@ function bankayiCoz(ham: unknown): BankaKaydi[] {
           typeof s.aci?.a === 'number' &&
           typeof s.aci?.cevap === 'number'
         )
+      if (s.oyun === 'antlasma')
+        return typeof s.madde === 'string' && typeof s.antlasma === 'string'
+      if (s.oyun === 'kavram')
+        return typeof s.kavram === 'string' && typeof s.tanim === 'string'
       if (s.oyun === 'ucgen')
         return (
           typeof s.ucgen?.tur === 'string' &&

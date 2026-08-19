@@ -98,6 +98,21 @@ const AILE: Record<
     kenar: 'border-l-edb-koyu',
     degisken: 'var(--edb-koyu)',
   },
+  // Tarih dersinin iki eşleştirme oyunu aynı aileyi paylaşıyor.
+  antlasma: {
+    zemin: 'bg-trh',
+    yazi: 'text-trh-koyu',
+    dolgu: 'bg-trh-koyu',
+    kenar: 'border-l-trh-koyu',
+    degisken: 'var(--trh-koyu)',
+  },
+  kavram: {
+    zemin: 'bg-trh',
+    yazi: 'text-trh-koyu',
+    dolgu: 'bg-trh-koyu',
+    kenar: 'border-l-trh-koyu',
+    degisken: 'var(--trh-koyu)',
+  },
 }
 
 /** Tur sonunda listelenen en fazla yanlış. Gerisi Oyun Bankası'nda. */

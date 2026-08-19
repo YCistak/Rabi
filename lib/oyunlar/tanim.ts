@@ -7,6 +7,10 @@ import { SES_BOYUTU } from './ses-havuzu'
 import { OGE_BOYUTU } from './oge-havuzu'
 import { SOZ_BOYUTU } from './soz-havuzu'
 import { EDEBIYAT_BOYUTU } from './edebiyat-havuzu'
+import { ANTLASMA_BOYUTU } from './antlasma-havuzu'
+import { KAVRAM_BOYUTU } from './kavram-havuzu'
+import { EL_BOYUTU as ANTLASMA_EL_BOYUTU } from './antlasma'
+import { CELDIRICI_SAYISI, KAVRAM_SAYISI } from './kavram'
 
 /**
  * Mini oyun listesi.
@@ -25,7 +29,7 @@ import { EDEBIYAT_BOYUTU } from './edebiyat-havuzu'
  * tek bir ızgaraya sığmayacak ve hangi oyunun hangi derse çalıştığı
  * kaybolacaktı. Sınıflandırma sonradan değil, şimdi kuruluyor.
  */
-export type DersId = 'turkce' | 'matematik' | 'edebiyat'
+export type DersId = 'turkce' | 'matematik' | 'edebiyat' | 'tarih'
 
 export type DersTanimi = {
   id: DersId
@@ -37,9 +41,9 @@ export type DersTanimi = {
    *
    * Renk artık oyuna değil **derse** bağlı: aynı derse çalışan bütün oyunlar
    * aynı rengi paylaşıyor, böylece renk bir kimlik taşıyor. (Ailelerin adları
-   * ilk üç oyundan geliyor: yzm=yazım, isl=işlem, edb=edebiyat.)
+   * ilk oyunlardan geliyor: yzm=yazım, isl=işlem, edb=edebiyat, trh=tarih.)
    */
-  aile: 'yzm' | 'isl' | 'edb'
+  aile: 'yzm' | 'isl' | 'edb' | 'trh'
 }
 
 export const DERSLER: DersTanimi[] = [
@@ -63,6 +67,13 @@ export const DERSLER: DersTanimi[] = [
     aciklama: 'Eser, yazar, dönem',
     ikon: '📚',
     aile: 'edb',
+  },
+  {
+    id: 'tarih',
+    ad: 'Tarih',
+    aciklama: 'Antlaşma, madde, kavram',
+    ikon: '🏛️',
+    aile: 'trh',
   },
 ]
 
@@ -246,6 +257,36 @@ export const OYUNLAR: OyunTanimi[] = [
       `Her ${BOSS_ARALIGI} eşleştirmede bir **boss eli** gelir: bir üst seviyeden kurulur, ekran kızarır ve tek yanlışta tur biter.`,
       `Eller mümkün oldukça tek dönemden kurulur — aynı dönemden altı isim, çağrışımla değil bilerek eşleştirmeyi gerektirir.`,
       `Havuzda ${EDEBIYAT_BOYUTU} eser var: ÖSYM'nin AYT Edebiyat'ta en sık sorduğu eser–yazar eşleştirmeleri.`,
+    ],
+  },
+  {
+    id: 'antlasma',
+    ders: 'tarih',
+    ad: 'Antlaşma Eşleştirme',
+    kisaAciklama: 'Bu madde hangi antlaşmadan?',
+    ikon: '📜',
+    nasilOynanir: [
+      `Üstte ${ANTLASMA_EL_BOYUTU} kart, altta ${ANTLASMA_EL_BOYUTU} antlaşma. Kartta ya antlaşmanın bir maddesi ya da o antlaşmayı tanımlayan sonuç yazar; hangisine ait olduğuna dokun — sıra fark etmez.`,
+      `Doğru eşleşen çift yeşile döner ve yerinde kalır. Dördü de bitince yeni dörtlü gelir.`,
+      `Her elin kendi süresi var: ${SORU_SURESI.antlasma} saniye. Süre dolarsa eşleştirilmemiş maddeler yanlış sayılır.`,
+      `Her ${BOSS_ARALIGI} eşleştirmede bir **boss eli** gelir: bir üst seviyeden kurulur, ekran kızarır ve tek yanlışta tur biter.`,
+      `El mümkün oldukça tek dönemden kurulur: aynı dönemden dört antlaşma, tarihe bakıp tahmin etmeyi değil maddeyi okumayı gerektirir.`,
+      `Havuzda ${ANTLASMA_BOYUTU} madde var. Seviyeler dönemlere göre: kolayda Millî Mücadele ve inkılap, ortada Dağılma dönemi, zorda klasik dönem Osmanlı antlaşmaları.`,
+    ],
+  },
+  {
+    id: 'kavram',
+    ders: 'tarih',
+    ad: 'Kavram Eşleştirme',
+    kisaAciklama: 'Kavramı tanımıyla eşleştir',
+    ikon: '🧭',
+    nasilOynanir: [
+      `Solda ${KAVRAM_SAYISI} kavram, sağda ${KAVRAM_SAYISI + CELDIRICI_SAYISI} tanım. Bir kavrama, sonra tanımına dokun.`,
+      `Tanımların ${CELDIRICI_SAYISI} tanesinin karşılığı yok: üç eşleşme bitince o ikisi açıkta kalır ve yeni tahta gelir.`,
+      `Her tahtanın kendi süresi var: ${SORU_SURESI.kavram} saniye. Süre dolarsa eşleştirilmemiş kavramlar yanlış sayılır.`,
+      `Her ${BOSS_ARALIGI} eşleştirmede bir **boss tahtası** gelir: kavramlar bir üst seviyeden, süre kısa ve tek yanlışta tur biter.`,
+      `Çeldiriciler hep aynı konudan seçilir; başka konudan gelselerdi okunmadan elenirlerdi.`,
+      `Havuzda ${KAVRAM_BOYUTU} kavram var: İslamiyet öncesi Türk devletleri, ilk Türk-İslam devletleri, Osmanlı düzeni, yenileşme dönemi ve Cumhuriyet.`,
     ],
   },
 ]

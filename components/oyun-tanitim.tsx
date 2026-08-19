@@ -59,7 +59,9 @@ export function OyunTanitim({
               >
                 {sira + 1}
               </span>
-              <span className="text-sm leading-snug text-muted-foreground">{madde}</span>
+              <span className="text-sm leading-snug text-muted-foreground">
+                <Vurgulu metin={madde} />
+              </span>
             </li>
           ))}
         </ol>
@@ -85,5 +87,29 @@ export function OyunTanitim({
         </div>
       </div>
     </div>
+  )
+}
+
+/**
+ * `**...**` arasını kalın yazar.
+ *
+ * Tanıtım metinleri en başından beri yıldızlı yazılıyordu ama kimse
+ * çözmüyordu: ekranda "**boss eli**" diye görünüyordu. Tam bir markdown
+ * ayrıştırıcısına gerek yok — metinler bizim, kullandıkları tek işaret bu.
+ */
+function Vurgulu({ metin }: { metin: string }) {
+  return (
+    <>
+      {metin.split(/\*\*(.+?)\*\*/g).map((parca, sira) =>
+        // Ayırıcının yakaladığı gruplar tek indislere düşüyor: kalın olanlar bunlar.
+        sira % 2 === 1 ? (
+          <b key={sira} className="font-extrabold text-foreground">
+            {parca}
+          </b>
+        ) : (
+          parca
+        ),
+      )}
+    </>
   )
 }

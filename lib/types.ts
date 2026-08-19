@@ -214,6 +214,8 @@ export type OyunId =
   | 'bolunme'
   | 'aci'
   | 'ucgen'
+  | 'antlasma'
+  | 'kavram'
 
 /**
  * Bir mini oyunun kalıcı istatistiği.
