@@ -6,7 +6,8 @@ import {
   type Element,
   type SorulanElement,
 } from './periyodik-havuzu'
-import { karistir, sec } from './tur'
+import { siklariDiz } from './sik-dizilimi'
+import { sec } from './tur'
 
 /**
  * Periyodik Tablo oyununun soru mantığı.
@@ -158,7 +159,9 @@ export function asamaKur(
   const dogru = asama === 'ad' ? element.ad : element.sembol
   const celdirici =
     asama === 'ad' ? adCeldiricisi(element, havuz, rastgele) : sembolCeldiricisi(element, rastgele)
-  return { element, asama, siklar: karistir([dogru, celdirici], rastgele) }
+  // Havuz dar, elementler tur içinde tekrar geliyor: `siklariDiz` aynı ikilinin
+  // üst üste aynı sırayla çıkmasını engelliyor.
+  return { element, asama, siklar: siklariDiz([dogru, celdirici], (s) => s, rastgele) }
 }
 
 /** Bir elementin bütün aşamaları, sorulacak sırayla. */

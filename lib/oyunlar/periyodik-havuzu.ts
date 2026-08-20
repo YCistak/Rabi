@@ -328,8 +328,8 @@ export function konumMetni(numara: number): string {
  * Müfredatın ezberlenmesini istediği aralık bu ve oyunun soru biçimi de burada
  * değişiyor: ilk 20'de yalnızca atom numarası verilip **adı**, doğru bilinirse
  * hemen ardından **sembolü** soruluyor; sonrasında ad da verilip yalnızca
- * sembol soruluyor. Sebebi gerçekçilik: kimse 74'ün volfram olduğunu
- * ezberlemez, ama volframın sembolünün W olduğunu bilmek gerekir.
+ * sembol soruluyor. Sebebi gerçekçilik: kimse 47'nin gümüş olduğunu
+ * ezberlemez, ama gümüşün sembolünün Ag olduğunu bilmek gerekir.
  */
 export const ILK_YIRMI = 20
 
@@ -338,18 +338,25 @@ export type SorulanElement = Element & { zorluk: Zorluk }
 /**
  * TYT'de sorulan elementler.
  *
- * Liste TYT Kimya'nın element geçen konularından derlendi: periyodik sistem,
- * atomun yapısı, bileşikler ve adlandırma, karışımlar, asit-baz-tuz. Soru
- * metinlerinde geçenler bunlar — 118'in tamamı sorulsaydı oyun sınavın
- * ölçtüğü şeyi değil, ezber gücünü ölçerdi.
+ * Liste bilerek dar: TYT Kimya'nın element geçen konularında (periyodik
+ * sistem, atomun yapısı, bileşikler ve adlandırma, karışımlar, asit-baz)
+ * gerçekten dönüp duran elementler bunlar. 118'in tamamı sorulsaydı oyun
+ * sınavın ölçtüğü şeyi değil, ezber gücünü ölçerdi.
  *
  * Seviyeler:
  * - **kolay**: ilk 20 elementin tamamı. Müfredat bu aralığın hepsini istiyor
  *   ve iki aşamalı soru biçimi de buraya ait.
- * - **orta**: günlük hayattan tanınan metaller ve ametaller — demir, bakır,
- *   çinko, gümüş, altın, iyot.
- * - **zor**: sembolü adından tahmin edilemeyenler ve seyrek geçenler —
- *   volfram (W), antimon (Sb), platin (Pt), sezyum (Cs).
+ * - **orta**: ilk 20'nin dışında kalıp sembolü Türkçe adından okunabilenler —
+ *   Brom Br, Nikel Ni, Platin Pt, Uranyum U.
+ * - **zor**: sembolü **Latince** adından gelenler. Demir Fe (ferrum), Bakır Cu
+ *   (cuprum), Gümüş Ag (argentum), Kalay Sn (stannum), Altın Au (aurum), Cıva
+ *   Hg (hydrargyrum), Kurşun Pb (plumbum). Türkçe adına bakarak bulunamayan
+ *   tek küme bu; oyunun asıl öğrettiği yer de burası.
+ *
+ * Havuz on soruluk boss aralığından kısa olduğu için tur içinde elementler
+ * tekrar geliyor. Tekrar eden soruda şıkların yeri değişiyor
+ * (`sik-dizilimi.ts`) — yoksa ikinci gösterimde soru değil konum
+ * hatırlanırdı.
  */
 const SORULANLAR: readonly [numara: number, zorluk: Zorluk][] = [
   [1, 'kolay'],
@@ -373,39 +380,20 @@ const SORULANLAR: readonly [numara: number, zorluk: Zorluk][] = [
   [19, 'kolay'],
   [20, 'kolay'],
   [24, 'orta'],
-  [25, 'orta'],
-  [26, 'orta'],
-  [27, 'orta'],
+  [26, 'zor'],
   [28, 'orta'],
-  [29, 'orta'],
+  [29, 'zor'],
   [30, 'orta'],
   [35, 'orta'],
-  [36, 'orta'],
-  [38, 'orta'],
-  [47, 'orta'],
-  [50, 'orta'],
+  [47, 'zor'],
+  [50, 'zor'],
   [53, 'orta'],
-  [54, 'orta'],
-  [56, 'orta'],
-  [79, 'orta'],
-  [80, 'orta'],
-  [82, 'orta'],
-  [22, 'zor'],
-  [31, 'zor'],
-  [32, 'zor'],
-  [33, 'zor'],
-  [34, 'zor'],
-  [37, 'zor'],
-  [48, 'zor'],
-  [51, 'zor'],
-  [52, 'zor'],
-  [55, 'zor'],
-  [74, 'zor'],
-  [78, 'zor'],
-  [83, 'zor'],
-  [86, 'zor'],
-  [88, 'zor'],
-  [92, 'zor'],
+  [78, 'orta'],
+  [79, 'zor'],
+  [80, 'zor'],
+  [82, 'zor'],
+  [88, 'orta'],
+  [92, 'orta'],
 ]
 
 export const SORU_HAVUZU: readonly SorulanElement[] = SORULANLAR.map(([numara, zorluk]) => {

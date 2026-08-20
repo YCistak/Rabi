@@ -436,7 +436,7 @@ export const OYUNLAR: OyunTanimi[] = [
     nasilOynanir: [
       `Ekranda periyodik tablonun tamamı var ama hücrelerde **yalnızca atom numarası** yazıyor: sembolü de adı da yazsaydı cevap ekranda dururdu.`,
       `Sorulan element tabloda yanıp söner. Nerede durduğuna bak — grubu ve periyodu, cevabı çoğu zaman kendi başına veriyor.`,
-      `İlk ${ILK_YIRMI} elementte önce **adı** sorulur; doğru bilirsen hemen ardından **sembolü** gelir. Sonrasında ad da verilir, yalnızca sembol sorulur — kimse 74'ün volfram olduğunu ezberlemez, ama sembolünün W olduğunu bilmek gerekir.`,
+      `İlk ${ILK_YIRMI} elementte önce **adı** sorulur; doğru bilirsen hemen ardından **sembolü** gelir. Sonrasında ad da verilir, yalnızca sembol sorulur — kimse 47'nin gümüş olduğunu ezberlemez, ama sembolünün Ag olduğunu bilmek gerekir.`,
       `Her soruda ${PERIYODIK_SIK} şık var ve yanlış şık rastgele değil: adı sorulurken **aynı gruptan** bir element, sembolü sorulurken adından türetilebilecek yanlış sembol geliyor — bakıra "Ba", altına "Al" demek gibi.`,
       `Renkler bölgeleri gösteriyor: alkali metaller, toprak alkaliler, geçiş metalleri, zayıf metaller, yarı metaller, ametaller, halojenler, soy gazlar, lantanitler ve aktinitler. Alttaki şeritte hangi rengin ne olduğu yazıyor.`,
       `Her aşamanın kendi süresi var: ${SORU_SURESI.periyodik} saniye. Süre dolarsa yanlış sayılır.`,

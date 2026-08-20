@@ -212,10 +212,30 @@ describe('soru havuzu', () => {
     }
   })
 
-  it('her seviyede bir turu doldurmaya yetecek element var', () => {
+  /*
+    Havuz bilerek dar: ilk 20'nin dışında yalnızca TYT'nin gerçekten sorduğu
+    on beş element var, dolayısıyla orta ve zor seviye on soruluk boss
+    aralığını tek turda dolduramıyor. Tur içindeki tekrar kabul edilmiş bir
+    sonuç; şıkların yeri her gösterimde değiştiği için tekrar eden soru yine
+    soru olarak kalıyor. Alt sınır bir turun ilk yarısını taşıyacak kadar.
+  */
+  it('her seviyede turu taşıyacak kadar element var', () => {
     for (const zorluk of ZORLUKLAR) {
-      expect(zorluktaSuz(SORU_HAVUZU, zorluk).length, zorluk).toBeGreaterThanOrEqual(10)
+      expect(zorluktaSuz(SORU_HAVUZU, zorluk).length, zorluk).toBeGreaterThanOrEqual(5)
     }
+  })
+
+  /*
+    Havuzun tamamı burada yazılı. Liste elle daraltıldı: ilk 20 element ve
+    TYT'nin gerçekten dönüp durduğu on beş element. Yeni bir element eklemek
+    serbest ama sessizce olmamalı — bu test onu görünür kılıyor.
+  */
+  it('havuz ilk 20 ile seçilmiş on beş elementten ibaret', () => {
+    const beklenen = [
+      ...Array.from({ length: ILK_YIRMI }, (_, i) => i + 1),
+      24, 26, 28, 29, 30, 35, 47, 50, 53, 78, 79, 80, 82, 88, 92,
+    ]
+    expect(SORU_HAVUZU.map((e) => e.numara).sort((a, b) => a - b)).toEqual(beklenen)
   })
 
   it('sorulan elementi numarasıyla bulur', () => {
@@ -319,6 +339,23 @@ describe('sembol çeldiricisi', () => {
     const adaylar = new Set(['In', 'Ir'])
     for (let i = 0; i < 20; i++) {
       expect(adaylar.has(sembolCeldiricisi(sembolle('I')))).toBe(true)
+    }
+  })
+})
+
+/*
+  Havuz on soruluk boss aralığından kısa: zor seviyede yedi element var ve tur
+  sınırsız. Aynı element ikinci kez sorulduğunda şıklar aynı yerde kalsaydı
+  oyuncu soruyu okumadan geçen sefer dokunduğu yere dokunurdu.
+*/
+describe('tekrar eden element', () => {
+  it('aynı elementi üst üste aynı dizilimle sormuyor', () => {
+    const element = sorulan('Au')
+    let onceki = asamaKur(element, 'sembol').siklar.join('|')
+    for (let i = 0; i < 20; i++) {
+      const simdiki = asamaKur(element, 'sembol').siklar.join('|')
+      expect(simdiki).not.toBe(onceki)
+      onceki = simdiki
     }
   })
 })

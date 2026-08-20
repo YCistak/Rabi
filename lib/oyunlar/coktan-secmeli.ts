@@ -1,3 +1,4 @@
+import { siklariDiz } from './sik-dizilimi'
 import { karistir } from './tur'
 
 /**
@@ -31,7 +32,8 @@ export type CoktanSecmeliSoru<S, T> = {
  *
  * Çeldiriciler rastgele seçiliyor ve dizilim de her soruda yeniden atılıyor:
  * doğru şık hep aynı yerde olsaydı oyuncu birkaç soruda konumu ezberler,
- * soruya bakmayı bırakırdı.
+ * soruya bakmayı bırakırdı. Dizilimi `siklariDiz` kuruyor — aynı şık kümesi
+ * tekrar geldiğinde bir öncekiyle aynı sıraya düşmesin diye.
  */
 export function siklariKur<T>(
   dogru: T,
@@ -62,7 +64,7 @@ export function siklariKur<T>(
     celdiriciler = [...celdiriciler, ...yedek].slice(0, SIK_SAYISI - 1)
   }
 
-  return karistir([dogru, ...celdiriciler], rastgele).map((deger) => ({
+  return siklariDiz([dogru, ...celdiriciler], ad, rastgele).map((deger) => ({
     deger,
     metin: ad(deger),
     dogruMu: deger === dogru,
