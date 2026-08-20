@@ -20,7 +20,7 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { acidanBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
-import { MATEMATIK_TUR_SORUSU, soruSuresi } from '@/lib/oyunlar/ritim'
+import { TUR_SORU_SINIRI, elerMi, soruSuresi } from '@/lib/oyunlar/ritim'
 import { useSoruSayaci } from '@/lib/oyunlar/soru-sayaci'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
@@ -35,6 +35,7 @@ import {
   TurSonu,
   YanlisKarti,
   rekorCumlesi,
+  type Eleme,
 } from '@/components/oyun-kabuk'
 import { CevapAlani, TusTakimi, rakamEkle } from '@/components/oyun-tus-takimi'
 import { OyunSekli } from '@/components/oyun-sekil'
@@ -51,13 +52,12 @@ import { OyunTanitim } from '@/components/oyun-tanitim'
 /** Cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms) — Zihinden İşlem'le aynı. */
 const CEVAP_BEKLEMESI = 1100
 /**
- * Turdaki soru sayısı.
+ * Turda hazırlanan en fazla soru.
  *
- * Matematik oyunlarında boss yok, dolayısıyla eleme de yok — turu bitirecek
- * bir şey gerekiyor. Yirmi soru boss aralığının iki katı: sözel oyunlarla aynı
- * ritim, yalnızca sonunda kesiliyor. (`ritim.ts`)
+ * Tur sınırsız: yanlış cevap turu bitiriyor (`ritim.ts`), o yüzden bir soru
+ * sayısı hedefi yok — bu sabit yalnızca sonsuz dizi üretilemediği için var.
  */
-const TUR_SORUSU = MATEMATIK_TUR_SORUSU
+const TUR_SORUSU = TUR_SORU_SINIRI
 /** Açı üç basamağı geçmiyor; dördüncü rakam yazdırmak yanlış cevabı uzatırdı. */
 const EN_COK_RAKAM = 3
 
@@ -110,6 +110,8 @@ export function AciOyunuEkrani({
   const [yanlisGirdileri, setYanlisGirdileri] = useState<string[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
 
+  /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
+  const [elendi, setElendi] = useState<Eleme>(false)
   /** Yardım açıkken sayaç duruyor. */
   const [duraklatilan, setDuraklatilan] = useState(false)
 
@@ -148,6 +150,7 @@ export function AciOyunuEkrani({
     setYanlisGirdileri([])
     setGeriBildirim(null)
     setSonuc(null)
+    setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
   }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru])
@@ -216,10 +219,15 @@ export function AciOyunuEkrani({
       zamanlayiciRef.current = setTimeout(() => {
         setGeriBildirim(null)
         setGirilen('')
-        setSira((s) => s + 1)
+        if (elerMi(dogruMu, bankaTuru)) {
+          setElendi('yanlis')
+          turBitir(cevaplarRef.current)
+        } else {
+          setSira((s) => s + 1)
+        }
       }, CEVAP_BEKLEMESI)
     },
-    [asama, geriBildirim, girilen, sira, sorular],
+    [asama, bankaTuru, geriBildirim, girilen, sira, sorular, turBitir],
   )
 
 
@@ -302,6 +310,7 @@ export function AciOyunuEkrani({
             girdiler={yanlisGirdileri}
             rekor={turBasiRekor.current}
             bankaTuru={bankaTuru}
+            elendi={elendi}
             onTekrar={turBaslat}
             onCik={onCik}
             bildir={bildir}
@@ -381,6 +390,7 @@ function SonucGorunumu({
   girdiler,
   rekor,
   bankaTuru,
+  elendi,
   onTekrar,
   onCik,
   bildir,
@@ -390,6 +400,7 @@ function SonucGorunumu({
   girdiler: string[]
   rekor: number
   bankaTuru: boolean
+  elendi: Eleme
   onTekrar: () => void
   onCik: () => void
   bildir: BildirimKolu
@@ -407,6 +418,7 @@ function SonucGorunumu({
       rekor={rekor}
       yeniRekor={yeniRekor}
       bankaTuru={bankaTuru}
+      elendi={elendi}
       altBaslik={
         bankaTuru
           ? 'Banka soruları — üst üste üç doğruda düşerler.'

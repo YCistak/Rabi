@@ -3,14 +3,12 @@ import type { OyunId } from '../types'
 import {
   BOSS_ARALIGI,
   bossElMi,
-  MATEMATIK_TUR_SORUSU,
   SORU_SURESI,
   ZORLUKLAR,
   bossMu,
   bossZorlugu,
   bossluMu,
   elerMi,
-  sonSoruMu,
   soruSuresi,
 } from './ritim'
 import { TUR_SORU_SINIRI, turSirasi, zorluktaSuz, type Zorluk } from './ritim'
@@ -170,22 +168,6 @@ describe('soruSuresi', () => {
     for (const oyun of OYUNLAR) {
       expect(Number.isInteger(soruSuresi(oyun.id, { zorluk: 'zor', cetin: true }))).toBe(true)
     }
-  })
-})
-
-describe('sonSoruMu', () => {
-  it('bosslu oyunda tur kendiliğinden bitmiyor', () => {
-    expect(sonSoruMu('ses', MATEMATIK_TUR_SORUSU)).toBe(false)
-    expect(sonSoruMu('ses', 500)).toBe(false)
-  })
-
-  it('matematikte soru sayısı dolunca bitiyor', () => {
-    expect(sonSoruMu('islem', MATEMATIK_TUR_SORUSU - 1)).toBe(false)
-    expect(sonSoruMu('islem', MATEMATIK_TUR_SORUSU)).toBe(true)
-  })
-
-  it('tur uzunluğu boss aralığının katı', () => {
-    expect(MATEMATIK_TUR_SORUSU % BOSS_ARALIGI).toBe(0)
   })
 })
 

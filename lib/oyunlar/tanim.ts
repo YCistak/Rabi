@@ -1,5 +1,5 @@
 import type { OyunId, OyunIstatistigi, OyunKayitlari } from '../types'
-import { BOSS_ARALIGI, MATEMATIK_TUR_SORUSU, SORU_SURESI } from './ritim'
+import { BOSS_ARALIGI, SORU_SURESI } from './ritim'
 import { istatistigiTamamla } from './tur'
 import { HAVUZ_BOYUTU } from './yazim-havuzu'
 import { NOKTALAMA_BOYUTU } from './noktalama-havuzu'
@@ -224,7 +224,8 @@ export const OYUNLAR: OyunTanimi[] = [
     nasilOynanir: [
       `Ekrana dört ya da beş basamaklı bir sayı gelir. Soru iki türlü olabilir: **kalan kaç** (tuş takımından yazarsın) ya da **bölünür mü** (Evet / Hayır).`,
       `Bölenler 2'den 10'a kadar, ikisi de dahil. Tanıtımda hangilerinin geleceğini seçebilirsin — sadece 7 ve 8 açıp onlara çalışabilirsin.`,
-      `Her sorunun kendi süresi var: ${SORU_SURESI.bolunme} saniye. Süre dolarsa soru yanlış sayılır ve sıradakine geçilir — bu oyunda yanlış turu bitirmiyor, tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.bolunme} saniye. Süre dolarsa soru yanlış sayılır — beklemek de bilmemek.`,
+      `**Tek yanlış turu bitirir.** Tur sınırsız: hata yapana kadar sürüyor, o yüzden rekorun tavanı yok. Bu oyunda boss gelmiyor — sorular üretiliyor, "bir üst zorluk havuzu" diye bir karşılığı yok.`,
       `Sayılar rastgele değil, **cevaba göre** üretiliyor: her bölende Evet ile Hayır yarı yarıya. Hep "hayır" diyerek tur kazanılmıyor.`,
       `Kalan sorusu 6 ve 7'de sorulmuyor: onların kuralı sayının bölünüp bölünmediğini söylüyor ama kalanı vermiyor. Diğer yedi bölende kural kalanı da veriyor.`,
       `Tur bitince yanlışların, kuralın o sayıdaki karşılığıyla listelenir — "son üç hane 536" gibi.`,
@@ -239,7 +240,8 @@ export const OYUNLAR: OyunTanimi[] = [
     nasilOynanir: [
       `Önce hangi işlemlerle çalışacağını seç — hepsi ya da yalnızca zorlandıkların.`,
       `Ekranda bir işlem çıkar, sonucu alttaki tuş takımıyla yazıp onaylarsın.`,
-      `Her sorunun kendi süresi var: ${SORU_SURESI.islem} saniye. Süre dolarsa soru yanlış sayılır ve sıradakine geçilir — bu oyunda yanlış turu bitirmiyor, tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.islem} saniye. Süre dolarsa soru yanlış sayılır — beklemek de bilmemek.`,
+      `**Tek yanlış turu bitirir.** Tur sınırsız: hata yapana kadar sürüyor, o yüzden rekorun tavanı yok. Bu oyunda boss gelmiyor — sorular üretiliyor, "bir üst zorluk havuzu" diye bir karşılığı yok.`,
       `Bütün sonuçlar tam sayı ve eksi değil; bölmede kalan çıkmaz, kök hep tam çıkar.`,
       `Sorular her turda yeniden üretilir — ezberlenecek bir liste yok.`,
     ],
@@ -255,7 +257,8 @@ export const OYUNLAR: OyunTanimi[] = [
       `Ekrana ya paralel iki doğruyu kesen bir doğru ya da bir üçgen gelir; aranan açı şekilde "x" ile gösterilir. Kaç derece olduğunu tuş takımıyla yazarsın.`,
       `Şekiller ölçekli: yayın açıklığı gerçekten yazan açı kadar, üçgenin köşeleri gerçekten o açılarda. Takıldığında şekle bakmak işe yarar.`,
       `Kurallar dönüşümlü gelir: Z (iç ters açılar eşit), U (aynı yandaki iç açılar 180°), M (ortadaki açı yanlardakilerin toplamı), üçgende iç açılar toplamı, dış açı ve ikizkenar üçgen.`,
-      `Her sorunun kendi süresi var: ${SORU_SURESI.aci} saniye. Süre dolarsa soru yanlış sayılır ve sıradakine geçilir — bu oyunda yanlış turu bitirmiyor, tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.aci} saniye. Süre dolarsa soru yanlış sayılır — beklemek de bilmemek.`,
+      `**Tek yanlış turu bitirir.** Tur sınırsız: hata yapana kadar sürüyor, o yüzden rekorun tavanı yok. Bu oyunda boss gelmiyor — sorular üretiliyor, "bir üst zorluk havuzu" diye bir karşılığı yok.`,
       `Sorular her turda yeniden üretilir; ezberlenecek bir liste yok.`,
       `Tur bitince yanlış bildiklerin kuralıyla birlikte listelenir — asıl öğrenme orada.`,
     ],
@@ -271,7 +274,8 @@ export const OYUNLAR: OyunTanimi[] = [
       `Ekrana bir dik üçgen gelir; iki kenarı yazılıdır, üçüncüsünde “x” durur. İki şıktan doğru uzunluğa dokunursun.`,
       `Üç aile dönüşümlü gelir: Pisagor üçlüleri (3-4-5, 5-12-13, 8-15-17, 7-24-25 ve katları), 30-60-90 (a, a√3, 2a) ve ikizkenar dik üçgen 45-45-90 (a, a, a√2).`,
       `Kenarlar ölçekli çizilir, açılar da şekilde yazar — hangi ailede olduğunu şekilden tanıman yeterli, hesap yapman gerekmez.`,
-      `Her sorunun kendi süresi var: ${SORU_SURESI.ucgen} saniye. Süre dolarsa soru yanlış sayılır ve sıradakine geçilir — bu oyunda yanlış turu bitirmiyor, tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.ucgen} saniye. Süre dolarsa soru yanlış sayılır — beklemek de bilmemek.`,
+      `**Tek yanlış turu bitirir.** Tur sınırsız: hata yapana kadar sürüyor, o yüzden rekorun tavanı yok. Bu oyunda boss gelmiyor — sorular üretiliyor, "bir üst zorluk havuzu" diye bir karşılığı yok.`,
       `Yanlış şık rastgele değil: iki dik kenarı toplamak ya da hipotenüsten çıkarmak gibi en sık yapılan hatanın sonucu.`,
       `Tur bitince yanlış bildiklerin oranıyla birlikte listelenir.`,
     ],
@@ -365,7 +369,8 @@ export const OYUNLAR: OyunTanimi[] = [
       `Yalnızca **en dar** aralık doğru sayılır: √50 için "7 – 8". "1 – 25" de doğrudur ama hiçbir şey söylemez.`,
       `Doğru bilirsen hemen ardından ${KOKLU_BONUS_SURESI} saniyelik bir **bonus** gelir: sayı hangi uca daha yakın? Bilirsen bir puan daha alırsın.`,
       `Bonusu kaçırmak temel puanı götürmez — soruyu zaten bilmişsindir, bonus üstüne konandır.`,
-      `Her sorunun kendi süresi var: ${SORU_SURESI.koklu} saniye. Süre dolarsa soru yanlış sayılır. Tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.koklu} saniye. Süre dolarsa soru yanlış sayılır.`,
+      `**Tek yanlış turu bitirir** ama yalnızca aralık sorusunda: bonusu kaçırmak turu bitirmez, çünkü aralığı zaten bilmişsindir. Tur sınırsız, hata yapana kadar sürer.`,
       `Sorular her turda yeniden üretilir; ezberlenecek bir liste yok. Tam kareler hiç gelmez — onların cevabı aralık değil, sayının kendisi olurdu.`,
     ],
   },
@@ -442,7 +447,7 @@ export const OYUNLAR: OyunTanimi[] = [
       `Ekrana tek bir eşitlik gelir. Doğruysa kartı **sağa**, yanlışsa **sola** atarsın. Kaydırmak istemezsen alttaki iki düğme de aynı işi görür.`,
       `Kartı biraz itip bırakmak cevap sayılmaz — yerine döner ve süre işlemeye devam eder. Kararsızlık cevap değil.`,
       `Her sorunun kendi süresi var: ${SORU_SURESI.tuzak} saniye. Kısa, çünkü ölçülen şey hız: kuralı bilen bir saniyede karar verir.`,
-      `Süre dolarsa soru yanlış sayılır ve sıradakine geçilir — bu oyunda yanlış turu bitirmiyor, tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
+      `Süre dolarsa soru yanlış sayılır. **Tek yanlış turu bitirir** — tur sınırsız, hata yapana kadar sürüyor. Cevap ikili olduğu için şansın payı var, ama sekiz saniyede sağlama yapılamıyor: atılan yazı tura uzun vadede tutmuyor.`,
       `Her kuralın doğru hâli ve öğrencilerin sık düştüğü yanlış hâli havuzda yan yana duruyor; hangisinin geleceği her soruda yazı turayla belirlenir. Cevaplar yarı yarıya — "hep yanlış de" diyerek tur kazanılmaz.`,
       `Yanlış hâller uydurma değil: (a+b)² açılımını a²+b² sanmak, kökü terim terim dağıtmak gibi sınavda gerçekten yapılan hatalar.`,
       `Havuzda ${TUZAK_BOYUTU} kural var: özdeşlikler, üslü ve köklü sayılar, mutlak değer, rasyonel ifadeler, eşitsizlikler ve fonksiyonlar.`,

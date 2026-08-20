@@ -21,7 +21,7 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { tuzaktanBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
-import { MATEMATIK_TUR_SORUSU, soruSuresi, type Zorluk } from '@/lib/oyunlar/ritim'
+import { TUR_SORU_SINIRI, elerMi, soruSuresi, type Zorluk } from '@/lib/oyunlar/ritim'
 import { useSoruSayaci } from '@/lib/oyunlar/soru-sayaci'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { ZorlukSecimi } from '@/components/zorluk-secimi'
@@ -38,6 +38,7 @@ import {
   TurSonu,
   YanlisKarti,
   rekorCumlesi,
+  type Eleme,
 } from '@/components/oyun-kabuk'
 import { KaydirmaKarti } from '@/components/oyun-kaydirma-karti'
 import { OyunTanitim } from '@/components/oyun-tanitim'
@@ -45,22 +46,22 @@ import { OyunTanitim } from '@/components/oyun-tanitim'
 /**
  * Kural Tuzağı — mini oyun.
  *
- * Matematik oyunu olduğu için boss yok ve yanlış turu bitirmiyor; tur
- * `MATEMATIK_TUR_SORUSU` soru sürüyor (`ritim.ts`). Bu oyunda bu kural
- * fazladan bir sebeple doğru: cevap ikili, yani şansın payı var ve tek yanlışta
- * kapanan bir tur beceriyi değil kura sonucunu ölçerdi.
+ * Matematik oyunu olduğu için boss yok, ama tur öteki oyunlarla aynı kurala
+ * uyuyor: **her yanlış turu bitiriyor** (`ritim.ts`). Cevap ikili olduğu için
+ * şansın payı var; buna karşılık süre sekiz saniye ve kural bilinmiyorsa o
+ * sürede sağlaması yapılamıyor — atılan yazı tura uzun vadede tutmuyor.
  */
 
 /** Cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms). */
 const CEVAP_BEKLEMESI = 1500
 
 /**
- * Turdaki soru sayısı.
+ * Turda hazırlanan en fazla soru.
  *
- * Matematik oyunlarında boss yok, dolayısıyla eleme de yok — turu bitirecek bir
- * şey gerekiyor. (`ritim.ts`)
+ * Tur sınırsız: yanlış cevap turu bitiriyor (`ritim.ts`), o yüzden bir soru
+ * sayısı hedefi yok — bu sabit yalnızca sonsuz dizi üretilemediği için var.
  */
-const TUR_SORUSU = MATEMATIK_TUR_SORUSU
+const TUR_SORUSU = TUR_SORU_SINIRI
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
@@ -108,6 +109,8 @@ export function TuzakOyunuEkrani({
   const [cevaplar, setCevaplar] = useState<Cevap<TuzakSorusu>[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
 
+  /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
+  const [elendi, setElendi] = useState<Eleme>(false)
   /** Yardım açıkken sayaç duruyor. */
   const [duraklatilan, setDuraklatilan] = useState(false)
   const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukTuzak, 'kolay')
@@ -139,6 +142,7 @@ export function TuzakOyunuEkrani({
     setCevaplar([])
     setGeriBildirim(null)
     setSonuc(null)
+    setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
   }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluk])
@@ -193,10 +197,16 @@ export function TuzakOyunuEkrani({
 
   const soru = sorular[sira]
 
-  const ilerle = () => {
+  /** Cevaptan sonra: yanlışsa tur biter, doğruysa sıradaki soru gelir. */
+  const ilerle = (dogruMu: boolean) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
-      setSira((s) => s + 1)
+      if (elerMi(dogruMu, bankaTuru)) {
+        setElendi('yanlis')
+        turBitir(cevaplarRef.current)
+      } else {
+        setSira((s) => s + 1)
+      }
     }, CEVAP_BEKLEMESI)
   }
 
@@ -209,16 +219,16 @@ export function TuzakOyunuEkrani({
     setCevaplar((onceki) => [...onceki, { soru, dogruMu }])
     setGeriBildirim({ dogruDedi, dogruMu, soru })
     geriBildir(dogruMu)
-    ilerle()
+    ilerle(dogruMu)
   }
 
-  /** Süre dolması cevap vermemekle aynı: yanlış sayılıyor. */
+  /** Süre dolması cevap vermemekle aynı: yanlış sayılıyor, turu bitiriyor. */
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     setCevaplar((onceki) => [...onceki, { soru, dogruMu: false }])
     setGeriBildirim({ dogruDedi: null, dogruMu: false, soru })
     geriBildir(false)
-    ilerle()
+    ilerle(false)
     // `ilerle` ve `geriBildir` her renderda yeniden kuruluyor; sayaç yalnızca
     // güncel olanı çağırsın diye bağımlılıklar bilerek dar tutuldu.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -277,6 +287,7 @@ export function TuzakOyunuEkrani({
             sonuc={sonuc}
             rekor={turBasiRekor.current}
             bankaTuru={bankaTuru}
+            elendi={elendi}
             onTekrar={turBaslat}
             onCik={onCik}
             bildir={bildir}
@@ -361,6 +372,7 @@ function SonucGorunumu({
   sonuc,
   rekor,
   bankaTuru,
+  elendi,
   onTekrar,
   onCik,
   bildir,
@@ -368,6 +380,7 @@ function SonucGorunumu({
   sonuc: { ozet: TurOzeti<TuzakSorusu>; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
+  elendi: Eleme
   onTekrar: () => void
   onCik: () => void
   bildir: BildirimKolu
@@ -385,6 +398,7 @@ function SonucGorunumu({
       rekor={rekor}
       yeniRekor={yeniRekor}
       bankaTuru={bankaTuru}
+      elendi={elendi}
       altBaslik={
         bankaTuru
           ? 'Banka soruları — üst üste üç doğruda düşerler.'

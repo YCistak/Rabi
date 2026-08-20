@@ -182,19 +182,22 @@ export function soruSuresi(oyun: OyunId, boss: BossZorlugu | null): number {
   return Math.round(taban * (boss.cetin ? CETIN_SURE_CARPANI : BOSS_SURE_CARPANI))
 }
 
-/**
- * Bosssuz oyunlarda turun soru sayısı.
- *
- * Boss yoksa eleme de yok, eleme yoksa sınırsız tur hiç bitmezdi. Yirmi soru
- * boss aralığının iki katı: matematik turu da sözel turla aynı ritimde
- * ilerliyor, yalnızca sonunda kesiliyor.
- */
-export const MATEMATIK_TUR_SORUSU = 20
+/*
+  Matematik oyunlarında da tur artık sabit soru sayısıyla bitmiyor.
 
-/** Tur bu soruyla biter mi — bosssuz oyunlarda soru sayısı dolduğunda. */
-export function sonSoruMu(oyun: OyunId, sira: number): boolean {
-  return !bossluMu(oyun) && sira >= MATEMATIK_TUR_SORUSU
-}
+  Eskiden bosssuz oyunlar yirmi soru sürer, yanlış cevap turu bitirmezdi:
+  hesap hatası "sıradaki soruya geç" demekti ve yirmi sorunun sonunda tur
+  kendiliğinden kapanırdı. Bunun iki sonucu vardı. Birincisi, bilmediğin
+  soruyu rastgele denemek bedavaydı — bir tuş takımına gelişigüzel sayı
+  yazmanın maliyeti yoktu. İkincisi, rekor yirmide tavan yapıyordu: yirmi
+  doğruyu bir kez çıkaran oyuncunun bir daha kıracak rekoru kalmıyordu ve
+  ilerlemeyi ölçen sayı ölü bir sayıya dönüyordu.
+
+  Artık bütün oyunlarda tek kural var: **her yanlış turu bitirir** ve tur
+  sınırsız (`TUR_SORU_SINIRI`'na kadar). Matematiği ayıran tek şey boss'un
+  olmaması — sorular üretiliyor, "bir üst zorluk havuzu" diye bir karşılığı
+  yok. (`bossluMu`)
+*/
 
 /**
  * Bu cevap turu bitirir mi.
