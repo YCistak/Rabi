@@ -1032,16 +1032,25 @@ function Bolum({ baslik, children }: { baslik: string; children: React.ReactNode
       <h2 className="mb-2 ml-1 text-[11.5px] font-extrabold uppercase tracking-[0.09em] text-muted-foreground">
         {baslik}
       </h2>
-      {/* Ayraç ilk çocuk dışındaki her çocuğa: satırlar koşullu çizildiği için
-          (kapalı hatırlatmanın çipleri yok) sabit bir sınıf listesi tutmuyor. */}
-      <div className="golge-kart overflow-hidden rounded-[22px] bg-card [&>*+*]:border-t [&>*+*]:border-border">
-        {children}
-      </div>
+      {/* Ayracı `Satir` kendi çiziyor (bkz. aşağısı). Burada "ilk hariç her
+          çocuğa çizgi" kuralı vardı ama `GenisAlan` da bir çocuk: çizgi ayarı
+          bir sonrakinden değil, kendi seçeneklerinden ayırıyordu. */}
+      <div className="golge-kart overflow-hidden rounded-[22px] bg-card">{children}</div>
     </section>
   )
 }
 
-/** Bir ayar satırı: ikon · başlık/açıklama · sağda değer ya da denetim. */
+/** Satırın üstündeki ayraç; bölümün ilk satırında çizilmiyor. */
+const AYRAC = 'border-t border-border first:border-t-0'
+
+/**
+ * Bir ayar satırı: ikon · başlık/açıklama · sağda değer ya da denetim.
+ *
+ * Ayraç çizgisi burada: her satır **kendi üstüne** çiziyor, bölümün ilki hariç.
+ * Böylece çizgi hep iki ayarın arasına düşüyor; bir ayarın kendi seçenekleri
+ * (`GenisAlan`) ise çizgisiz kalıp satıra bağlı görünüyor. Koşullu satırlarda
+ * da doğru çalışıyor: baştaki satır çizilmezse `:first-child` sonrakine geçer.
+ */
 function Satir({
   Simge,
   renk,
@@ -1096,7 +1105,7 @@ function Satir({
   )
 
   if (!onClick) {
-    return <div className="flex items-center gap-3 px-3.5 py-2.5">{icerik}</div>
+    return <div className={cn(AYRAC, 'flex items-center gap-3 px-3.5 py-2.5')}>{icerik}</div>
   }
 
   return (
@@ -1105,7 +1114,11 @@ function Satir({
       onClick={onClick}
       aria-pressed={basiliMi}
       aria-expanded={acikMi}
-      className="flex w-full items-center gap-3 px-3.5 py-2.5 text-left transition active:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+      className={cn(
+        AYRAC,
+        'flex w-full items-center gap-3 px-3.5 py-2.5 text-left transition active:bg-muted',
+        'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring',
+      )}
     >
       {icerik}
     </button>
