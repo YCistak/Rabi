@@ -37,8 +37,10 @@ export type KurulumSonucu = {
 /**
  * Adımlar.
  *
- * Liste sabit değil: `notlar` adımı yalnızca mezun seçildiğinde araya giriyor.
- * Okuyan öğrenciye dört yılın notunu sormak anlamsız — yılı bitmemiş bile.
+ * Liste sabit değil: `notlar` adımı yalnızca **girilecek notu olan** kullanıcıda
+ * araya giriyor. Mezunun dört yılı da bitmiştir; okuyan öğrencinin yalnızca
+ * kendinden önceki sınıfları bitmiştir, 9. sınıftakinin ise hiçbiri — ona bu
+ * adımı göstermek boş bir form göstermek olurdu.
  */
 type AdimId = 'sinif' | 'notlar' | 'tema' | 'alan' | 'hedef' | 'hatirlatma'
 
@@ -104,11 +106,19 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
   const { tercih, temaDegistir } = useTema()
 
   const mezun = mezunMu(sinif)
+  /**
+   * Notu sorulacak sınıflar: **bitmiş** yıllar.
+   *
+   * Mezunda dördü de bitmiştir. Okuyan öğrencide yalnızca kendinden küçükler:
+   * 11'deki öğrencinin 9 ve 10'u bitti, 11'i sürüyor. Yarım yılın notu OBP'ye
+   * girmiyor, sorulması da kafa karıştırırdı.
+   */
+  const notluSiniflar = mezun ? SINIFLAR : SINIFLAR.filter((s) => s < sinif)
   // Sınıf geri dönülüp değiştirilebildiği için liste her çizimde kuruluyor;
   // sıra numarası da listenin boyuna kırpılıyor.
   const adimlar: AdimId[] = [
     'sinif',
-    ...(mezun ? (['notlar'] as AdimId[]) : []),
+    ...(notluSiniflar.length > 0 ? (['notlar'] as AdimId[]) : []),
     'tema',
     'alan',
     'hedef',
@@ -146,7 +156,10 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
         hatirlatmaDakikasi: dakika,
         bildirimAcik: izinli,
       },
-      okulYillari: mezun ? okulYillariKur(notlar) : [],
+      // Sınıf geri dönülüp değiştirilmiş olabilir: 12'yken girilen 11. sınıf
+      // notu, sonradan 10 seçildiğinde artık bitmemiş bir yılın notu olur.
+      // O yüzden kayda yalnızca güncel sınıfa göre bitmiş yıllar giriyor.
+      okulYillari: okulYillariKur(notlar, notluSiniflar),
     })
   }
 
@@ -157,7 +170,11 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
         <h1 className="mt-3 font-display text-2xl font-semibold tracking-tight">
           {ADIM_BILGISI[suanki].baslik}
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">{ADIM_BILGISI[suanki].aciklama}</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {suanki === 'notlar' && !mezun
+            ? 'Biten yılların notu OBP tahminine giriyor. İstersen bu adımı atla.'
+            : ADIM_BILGISI[suanki].aciklama}
+        </p>
       </div>
 
       <Kart>
@@ -174,7 +191,9 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
             <p className="mt-3 text-xs text-muted-foreground">
               {mezun
                 ? 'Mezunsan sınıf ilerlemez. Sıradaki adımda yıl sonu notlarını sorayım — istersen atlarsın.'
-                : 'Her eylülde bir üst sınıfa kendiliğinden geçersin; tekrar sormam gerekmez.'}
+                : notluSiniflar.length > 0
+                  ? `Her eylülde bir üst sınıfa kendiliğinden geçersin. Sıradaki adımda biten ${notluSiniflar.length === 1 ? 'yılının' : 'yıllarının'} notunu sorayım — istersen atlarsın.`
+                  : 'Her eylülde bir üst sınıfa kendiliğinden geçersin; tekrar sormam gerekmez.'}
             </p>
           </div>
         )}
@@ -183,7 +202,7 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
           <div>
             <Etiket>Yıl sonu notların</Etiket>
             <div className="grid grid-cols-2 gap-2">
-              {SINIFLAR.map((s) => (
+              {notluSiniflar.map((s) => (
                 <label key={s} className="flex items-center gap-2 rounded-xl border border-border p-2.5">
                   <span className="flex-1 text-sm font-medium">{s}. sınıf</span>
                   <Alan
@@ -203,19 +222,31 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
               ))}
             </div>
 
-            <Etiket className="mt-4">Ya da OBP’ni biliyorsan</Etiket>
-            <Alan
-              inputMode="decimal"
-              value={obpMetni}
-              onChange={(e) => setObpMetni(e.target.value.replace(/[^0-9,.]/g, '').slice(0, 6))}
-              placeholder="örn. 412,5"
-              aria-label="Elle girilen OBP"
-              className="rakam"
-            />
+            {/* OBP kutusu yalnızca mezunda.
+
+                OBP diploma notunun beş katı ve ancak **bütün** yıllar bitince
+                oluşuyor; okuyan öğrencinin bilebileceği bir sayı değil. Kutuyu
+                herkese göstermek, henüz var olmayan bir sayıyı soruyor olurdu. */}
+            {mezun && (
+              <>
+                <Etiket className="mt-4">Ya da OBP’ni biliyorsan</Etiket>
+                <Alan
+                  inputMode="decimal"
+                  value={obpMetni}
+                  onChange={(e) =>
+                    setObpMetni(e.target.value.replace(/[^0-9,.]/g, '').slice(0, 6))
+                  }
+                  placeholder="örn. 412,5"
+                  aria-label="Elle girilen OBP"
+                  className="rakam"
+                />
+              </>
+            )}
 
             <p className="mt-3 text-xs text-muted-foreground">
-              OBP yazarsan notlara hiç gerek yok — doğrudan o kullanılır. İkisini de boş
-              bırakabilirsin; sonradan Okul Notları ekranından girersin.
+              {mezun
+                ? 'OBP yazarsan notlara hiç gerek yok — doğrudan o kullanılır. İkisini de boş bırakabilirsin; sonradan Okul Notları ekranından girersin.'
+                : 'Boş bırakabilirsin; sonradan Okul Notları ekranından girersin. Yıllar tamamlanmadığı için buradan çıkan OBP bir tahmindir.'}
             </p>
           </div>
         )}
@@ -433,9 +464,15 @@ const TEMALAR: { id: TemaTercihi; ad: string; aciklama: string; Simge: typeof Su
   { id: 'koyu', ad: 'Koyu tema', aciklama: 'Gece çalışırken gözü yormaz', Simge: Moon },
 ]
 
-/** Girilen yıl notlarını kayda çevirir; boş ve geçersiz olanlar atlanır. */
-function okulYillariKur(notlar: Record<number, string>): OkulYili[] {
-  return SINIFLAR.flatMap((sinif) => {
+/**
+ * Girilen yıl notlarını kayda çevirir; boş ve geçersiz olanlar atlanır.
+ *
+ * `siniflar` yalnızca bitmiş yılları taşıyor — hangi yılların sorulduğunu
+ * belirleyen liste ile kayda geçen liste aynı olmak zorunda, yoksa ekranda
+ * görünmeyen bir sınıfın eski notu sessizce kaydedilirdi.
+ */
+function okulYillariKur(notlar: Record<number, string>, siniflar: number[]): OkulYili[] {
+  return siniflar.flatMap((sinif) => {
     const ham = (notlar[sinif] ?? '').replace(',', '.').trim()
     if (ham === '') return []
     const sayi = Number(ham)
@@ -445,7 +482,7 @@ function okulYillariKur(notlar: Record<number, string>): OkulYili[] {
         id: yeniId(),
         sinif,
         ortalama: Math.min(100, Math.max(0, sayi)),
-        // Mezunun bütün yılları bitti; hiçbiri dönem sonu notu değil.
+        // Buraya yalnızca bitmiş yıllar geliyor; hiçbiri dönem sonu notu değil.
         donemSonu: false,
       },
     ]
