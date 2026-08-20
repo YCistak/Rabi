@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { AlertTriangle, Check, ChevronRight, Sparkles, Target } from 'lucide-react'
+import { AlertTriangle, Carrot, Check, ChevronRight, Sparkles, Store, Target } from 'lucide-react'
 import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef, OyunId } from '@/lib/types'
 import { devamsizlikOzeti, gunOzeti, kayitHaritasi, netYaz } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
@@ -63,6 +63,7 @@ export function AnaSayfa({
   ozetBekliyor,
   sonAraclar,
   sonOyunlar,
+  havuc,
   onKartAc,
   onDahaGit,
   onOyunlaraGit,
@@ -78,6 +79,8 @@ export function AnaSayfa({
   /** En son açılan araçlar ve oynanan oyunlar — kısayol kutucuklarının sırası. */
   sonAraclar: string[]
   sonOyunlar: string[]
+  /** Havuç bakiyesi — sağ üstteki mağaza düğmesinde yazıyor. */
+  havuc: number
   onKartAc: (ekran: Ekran) => void
   /** "Araçlar" başlığındaki "Tümü" — kart menüsünün tamamına götürür. */
   onDahaGit: () => void
@@ -135,7 +138,7 @@ export function AnaSayfa({
       {/* Selamlama — tasarımda ad sorulmuyor, kurulumda ad adımı yok. */}
       <header className="flex items-center gap-3 px-0.5 pt-2 pb-1">
         <Rabi durum={maskotDurumu} boyut={58} />
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="text-[13px] font-extrabold tracking-wide text-ikincil">Rabi</p>
           <h1 className="mt-px font-display text-xl font-extrabold tracking-tight text-balance">
             Merhaba 👋
@@ -144,6 +147,22 @@ export function AnaSayfa({
             {durumCumlesi(bugunku.toplam, kalan, hedefTuttu, tamamlanan)}
           </p>
         </div>
+
+        {/* Havuç ve mağaza tek düğmede: sayı bakiyeyi söylüyor, mağaza simgesi
+            nereye götürdüğünü. İkisi ayrı düğme olsaydı ikisi de aynı yere
+            giden iki hedef olurdu. */}
+        <button
+          type="button"
+          onClick={() => onKartAc('magaza')}
+          aria-label={`Havuç Mağazası — ${havuc} havucun var`}
+          className="flex shrink-0 items-center gap-1.5 self-start rounded-full bg-isl-kart py-1 pr-1 pl-2.5 text-isl-koyu transition active:brightness-95"
+        >
+          <Carrot size={16} strokeWidth={2.6} aria-hidden />
+          <span className="rakam text-sm font-extrabold">{havuc}</span>
+          <span className="grid size-7 place-items-center rounded-full bg-primary text-primary-foreground">
+            <Store size={15} aria-hidden />
+          </span>
+        </button>
       </header>
 
       {/* Haftalık özet daveti — biten haftanın özeti izlenmediyse en üstte.

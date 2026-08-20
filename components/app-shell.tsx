@@ -60,6 +60,13 @@ import { SiralamaEkrani } from '@/components/ekranlar/siralama'
 import { HedefEkrani } from '@/components/ekranlar/hedef'
 import { YanlisBankaEkrani } from '@/components/ekranlar/yanlis-banka'
 import { RozetlerEkrani } from '@/components/ekranlar/rozetler'
+import { MagazaEkrani } from '@/components/ekranlar/magaza'
+import {
+  BASLANGIC_HAVUCU,
+  BOS_MAGAZA,
+  magazayiNormalize,
+  type MagazaDurumu,
+} from '@/lib/magaza/magaza'
 import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
 import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
 import { RozetKutlama } from '@/components/rozet-kutlama'
@@ -136,6 +143,15 @@ export function AppShell() {
    * sayılamıyor; rozet buna baktığından ayrı bir sayaç olarak birikiyor.
    */
   const [bankaDusen, setBankaDusen] = useYerelDepo<number>(ANAHTARLAR.bankaDusen, 0)
+  /**
+   * Havuç bakiyesi ve mağaza koleksiyonu.
+   *
+   * Kayıt güncel katalogla uyumlanıyor (`magazayiNormalize`): katalogdan
+   * kalkmış bir eşya kayıtta kalırsa avatar çizilirken patlar.
+   */
+  const [havuc, setHavuc] = useYerelDepo<number>(ANAHTARLAR.havuc, BASLANGIC_HAVUCU)
+  const [magazaHam, setMagaza] = useYerelDepo<MagazaDurumu>(ANAHTARLAR.magaza, BOS_MAGAZA)
+  const magaza = magazayiNormalize(magazaHam)
   /**
    * Bankadan açılan tur. Oyun kimliği burada duruyor çünkü turu Oyunlar sekmesi
    * çiziyor ama başlatan Oyun Bankası ekranı — ikisi kardeş, ortak sahibi bu.
@@ -486,6 +502,9 @@ export function AppShell() {
           {ekran === 'yanlis-banka' && (
             <YanlisBankaEkrani sorular={yanlisSorular} setSorular={setYanlisSorular} />
           )}
+          {ekran === 'magaza' && (
+            <MagazaEkrani havuc={havuc} setHavuc={setHavuc} durum={magaza} setDurum={setMagaza} />
+          )}
           {ekran === 'oyun-bankasi' && (
             <OyunBankasiEkrani
               banka={oyunBankasi}
@@ -562,6 +581,7 @@ export function AppShell() {
               ozetBekliyor={ozetBekliyor}
               sonAraclar={sonAraclar}
               sonOyunlar={sonOyunlar}
+              havuc={havuc}
               onKartAc={aracAc}
               onDahaGit={() => setSekme('daha')}
               onOyunlaraGit={() => setSekme('oyunlar')}
@@ -607,6 +627,8 @@ export function AppShell() {
                 oyunGecmisi,
                 oyunBankasi,
                 bankaDusen,
+                havuc,
+                magaza,
                 pomodoroGecmis,
                 pomodoroAyar,
                 hedef,

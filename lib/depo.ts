@@ -30,6 +30,7 @@ import { VARSAYILAN_SABLON_ID } from './sablonlar'
 import { egitimYili } from './hesap'
 import { dakikayiKirp, saatiKirp } from './hatirlatma'
 import { yeniId } from './utils'
+import { magazayiNormalize, type MagazaDurumu } from './magaza/magaza'
 
 export const ANAHTARLAR = {
   denemeler: 'rabi-denemeler',
@@ -101,6 +102,16 @@ export const ANAHTARLAR = {
   hataBildirimleri: 'rabi-hata-bildirimleri',
   /** Bildirimleri gruplamaya yarayan anonim cihaz numarası; yedeğe girmiyor. */
   cihazKimligi: 'rabi-cihaz-kimligi',
+  /**
+   * Havuç bakiyesi.
+   *
+   * Kazanma mekaniği henüz yok; şimdilik yalnızca mağaza harcıyor. Ayrı bir
+   * anahtar çünkü bakiye ayarlardan da mağazadan da bağımsız — ileride
+   * çalışma, oyun ve seri hepsi buraya yazacak.
+   */
+  havuc: 'rabi-havuc',
+  /** Satın alınan ve giyilen eşyalar. */
+  magaza: 'rabi-magaza',
   ayarlar: 'rabi-ayarlar',
   tema: 'rabi-tema',
   sonBildirim: 'rabi-son-bildirim',
@@ -369,6 +380,8 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       oyunGecmisi: oyunGecmisiniCoz(nesne.oyunGecmisi),
       oyunBankasi: bankayiCoz(nesne.oyunBankasi),
       bankaDusen: sayi(nesne.bankaDusen),
+      havuc: sayi(nesne.havuc),
+      magaza: magazayiNormalize(nesne.magaza as Partial<MagazaDurumu> | undefined),
       pomodoroGecmis: dizi<PomodoroSeans>(nesne.pomodoroGecmis),
       // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
       // kullanıcının mevcut pomodoro ayarına dokunulmuyor.
@@ -574,6 +587,9 @@ export function yedegiUygula(yedek: Yedek) {
   yaz(ANAHTARLAR.oyunGecmisi, yedek.oyunGecmisi)
   yaz(ANAHTARLAR.oyunBankasi, yedek.oyunBankasi ?? [])
   yaz(ANAHTARLAR.bankaDusen, yedek.bankaDusen ?? 0)
+  // Eski yedeklerde havuç yok; o zaman kullanıcının mevcut bakiyesi korunuyor.
+  if (yedek.havuc !== undefined) yaz(ANAHTARLAR.havuc, yedek.havuc)
+  if (yedek.magaza) yaz(ANAHTARLAR.magaza, yedek.magaza)
   yaz(ANAHTARLAR.pomodoroGecmis, yedek.pomodoroGecmis)
   // Eski yedeklerde alan yok; o zaman kullanıcının mevcut ayarı korunuyor.
   if (yedek.pomodoroAyar) yaz(ANAHTARLAR.pomodoroAyar, yedek.pomodoroAyar)
