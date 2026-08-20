@@ -39,6 +39,7 @@ import { bekleyenSayisi } from '@/lib/hata-bildirimi'
 import { useHataBildirimi } from '@/lib/hata-kuyrugu'
 import { bugun } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
+import { kullanildi } from '@/lib/son-kullanilan'
 import { ustKatmaniKapat } from '@/lib/geri'
 import { Acilis, ACILIS_SURESI } from '@/components/acilis'
 import { HaftalikOzetEkrani } from '@/components/ekranlar/haftalik-ozet'
@@ -71,6 +72,27 @@ export function AppShell() {
   const [ekran, setEkran] = useState<Ekran | null>(null)
   /** Deneme ekleme/düzenleme, sekmenin üstünde açılan bir alt ekran. */
   const [denemeFormu, setDenemeFormu] = useState<{ duzenlenen: Deneme | null } | null>(null)
+
+  // Ana sayfadaki kısayolların sırası. Kaydı bu katman tutuyor: açılışı ekranlar
+  // kendileri bildirseydi aynı olay birkaç yerden düşer, hangi yolun sayıldığı
+  // da ekrandan ekrana değişirdi.
+  const [sonAraclar, setSonAraclar] = useYerelDepo<string[]>(ANAHTARLAR.sonAraclar, [])
+  const [sonOyunlar, setSonOyunlar] = useYerelDepo<string[]>(ANAHTARLAR.sonOyunlar, [])
+
+  /** Bir aracı açar ve kısayol sırasında öne alır. */
+  const aracAc = useCallback(
+    (acilan: Ekran) => {
+      setEkran(acilan)
+      setSonAraclar((onceki) => kullanildi(onceki, acilan))
+    },
+    [setSonAraclar],
+  )
+
+  /** Oyun açıldı — Oyunlar sekmesi bildiriyor, banka turu da buraya düşüyor. */
+  const oyunAcildi = useCallback(
+    (oyun: OyunId) => setSonOyunlar((onceki) => kullanildi(onceki, oyun)),
+    [setSonOyunlar],
+  )
 
   const [ayarlarHam, setAyarlar, ayarlarHazir] = useYerelDepo<Ayarlar>(
     ANAHTARLAR.ayarlar,
@@ -538,7 +560,9 @@ export function AppShell() {
               hedef={hedef}
               guncelSiralama={guncelSiralama}
               ozetBekliyor={ozetBekliyor}
-              onKartAc={setEkran}
+              sonAraclar={sonAraclar}
+              sonOyunlar={sonOyunlar}
+              onKartAc={aracAc}
               onDahaGit={() => setSekme('daha')}
               onOyunlaraGit={() => setSekme('oyunlar')}
             />
@@ -557,10 +581,11 @@ export function AppShell() {
               onBankayaGit={() => setEkran('oyun-bankasi')}
               bankaTuru={bankaTuru}
               onBankaTuruBitti={() => setBankaTuru(null)}
+              onOyunAcildi={oyunAcildi}
               bildir={hataBildirimi}
             />
           )}
-          {sekme === 'daha' && <KartMenusu onKartAc={setEkran} />}
+          {sekme === 'daha' && <KartMenusu onKartAc={aracAc} />}
           {sekme === 'ayarlar' && (
             <AyarlarEkrani
               sablonlar={sablonlar}

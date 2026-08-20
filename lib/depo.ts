@@ -55,6 +55,14 @@ export const ANAHTARLAR = {
   bankaDusen: 'rabi-banka-dusen',
   /** Haftalık özetin hangi haftalarının izlendiği — hafta başı tarihlerinin listesi. */
   ozetGorulen: 'rabi-ozet-gorulen',
+  /**
+   * Ana sayfadaki kısayolların sırası — en son açılan başta.
+   *
+   * Yedeğe **girmiyor**: bunlar veri değil, bu cihazdaki kullanım alışkanlığı.
+   * Yedeği başka bir telefona yükleyen biri kendi kısayollarını kaybetmemeli.
+   */
+  sonAraclar: 'rabi-son-araclar',
+  sonOyunlar: 'rabi-son-oyunlar',
   /** Zihinden İşlem'de seçili işlem türleri — yedeğe girmeyen küçük bir tercih. */
   islemSecimi: 'rabi-islem-secimi',
   /** Yazım Ustası'nda seçili soru türleri (yazım / noktalama). */

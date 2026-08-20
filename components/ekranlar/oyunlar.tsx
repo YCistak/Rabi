@@ -131,6 +131,7 @@ export function OyunlarEkrani({
   /** Bankadan "sadece bunlardan bir tur" ile açılan oyun; yoksa null. */
   bankaTuru,
   onBankaTuruBitti,
+  onOyunAcildi,
   bildir,
 }: {
   kayitlar: OyunKayitlari
@@ -146,6 +147,8 @@ export function OyunlarEkrani({
   onBankadanDustu: (adet: number) => void
   bankaTuru: OyunId | null
   onBankaTuruBitti: () => void
+  /** Bir oyun açıldı — ana sayfadaki kısayol sırası bunu izliyor. */
+  onOyunAcildi: (oyun: OyunId) => void
   bildir: BildirimKolu
 }) {
   const [secilenOyun, setSecilenOyun] = useState<OyunId | null>(null)
@@ -154,6 +157,13 @@ export function OyunlarEkrani({
   /** Açık bölüm; null ise dersin kendi ızgarası görünüyor. */
   const [secilenBolum, setSecilenBolum] = useState<BolumId | null>(null)
   const acikOyun = bankaTuru ?? secilenOyun
+
+  // Kısayol sırası açılışta işaretleniyor, tur bitince değil: yarıda bırakılan
+  // oyun da "en son oynadığın" oluyor ve kullanıcı ona dönmek isteyecek.
+  useEffect(() => {
+    if (acikOyun) onOyunAcildi(acikOyun)
+  }, [acikOyun, onOyunAcildi])
+
   const dagilim = useMemo(() => bankaDagilimi(banka), [banka])
 
   // --- Arka plan müziği ---
