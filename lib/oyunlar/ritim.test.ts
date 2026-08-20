@@ -136,12 +136,13 @@ describe('bossluMu', () => {
 })
 
 /**
- * Süresi tek soruya değil bütün bir ele/tahtaya ait olan oyunlar.
+ * Süresi tek bir karara değil, bir yığın karara birden ait olan oyunlar.
  *
  * Eşleştirme oyunlarında bir "soru" tek eşleştirme ama süre elin tamamına
- * veriliyor; üst sınırları da doğal olarak yüksek.
+ * veriliyor. Zaman Şeridi'nde de bir soru beş kartın yerleştirilmesi demek.
+ * Üst sınırları doğal olarak yüksek.
  */
-const EL_SURELI: OyunId[] = ['edebiyat', 'antlasma', 'kavram']
+const EL_SURELI: OyunId[] = ['edebiyat', 'antlasma', 'kavram', 'sirala']
 
 describe('soruSuresi', () => {
   it('her oyun için süre tanımlı ve makul', () => {

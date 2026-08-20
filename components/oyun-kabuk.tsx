@@ -157,6 +157,21 @@ const AILE: Record<
     kenar: 'border-l-byl-koyu',
     degisken: 'var(--byl-koyu)',
   },
+  // Zaman Şeridi tarih dersinin üçüncü oyunu.
+  sirala: {
+    zemin: 'bg-trh',
+    yazi: 'text-trh-koyu',
+    dolgu: 'bg-trh-koyu',
+    kenar: 'border-l-trh-koyu',
+    degisken: 'var(--trh-koyu)',
+  },
+  tuzak: {
+    zemin: 'bg-isl',
+    yazi: 'text-isl-koyu',
+    dolgu: 'bg-isl-koyu',
+    kenar: 'border-l-isl-koyu',
+    degisken: 'var(--isl-koyu)',
+  },
 }
 
 /** Tur sonunda listelenen en fazla yanlış. Gerisi Oyun Bankası'nda. */

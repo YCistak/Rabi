@@ -16,6 +16,9 @@ import { ORTAK_BOYUTU } from './ortak-havuzu'
 import { SINIFLANDIRMA_BOYUTU } from './siniflandirma-havuzu'
 import { HUCRE_BOYUTU } from './hucre-havuzu'
 import { IPUCU_SAYISI } from './hucre'
+import { SIRALA_BOYUTU } from './sirala-havuzu'
+import { BOSS_KART_SAYISI, KART_SAYISI, TAM_BONUS } from './sirala'
+import { TUZAK_BOYUTU } from './tuzak-havuzu'
 import {
   BONUS_SURESI as KOKLU_BONUS_SURESI,
   CUBUK_EN_AZ as KOKLU_EN_AZ,
@@ -409,6 +412,41 @@ export const OYUNLAR: OyunTanimi[] = [
       `Şıkka dokununca kart çevrilir ve arkası görünür. Dokunmazsan kart kapalı kalır — cevabı görmeden geçmiş olursun.`,
       `Doğru/yanlış sayacı puandan ayrı işler: geç bilmek de doğrudur, yalnızca daha az puan getirir. Rekor yine doğru sayısına göre tutulur.`,
       `Havuzda ${HUCRE_BOYUTU} organel var: 9. sınıf hücre ünitesinin tamamı. Tur bitince bilemediklerin görevleriyle birlikte listelenir.`,
+    ],
+  },
+  {
+    id: 'sirala',
+    ders: 'tarih',
+    ad: 'Zaman Şeridi',
+    kisaAciklama: 'Olayları eskiden yeniye diz',
+    ikon: '⏳',
+    nasilOynanir: [
+      `Ekrana ${KART_SAYISI} olay karışık gelir. Kartları sürükleyerek **eskiden yeniye** dizer, sonra onaylarsın. Sürüklemek zorsa kartların yanındaki oklarla da taşıyabilirsin.`,
+      `Şık yok: ${KART_SAYISI} kartın ${KART_SAYISI === 5 ? '120' : 'yüzlerce'} olası dizilişi var. Rastgele denemenin bir karşılığı yok, bilmek gerekiyor.`,
+      `Puan kısmi: her doğru sıralanmış **komşu çift** bir puan, tamamını tutturursan ${TAM_BONUS} puan daha. Beşin dördü yerindeyse cevabın sıfır sayılmıyor.`,
+      `Doğru/yanlış sayacı ise yalnızca tam sıraya bakıyor — rekor öteki oyunlarla karşılaştırılabilir kalsın diye.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.sirala} saniye. Süre dolarsa kartların o anki hâli cevabın sayılır.`,
+      `**Tek yanlış turu bitirir.** Bilmediğin soruyu şansa bırakmak bedava değil; tur, ilk tam yanlışında kapanır.`,
+      `Tur sınırsız: ${BOSS_ARALIGI} soruda bir **boss** gelir, seçtiğin seviyenin bir üstünden ve **${BOSS_KART_SAYISI} kartla**. Ekran kızarır, süren uzar.`,
+      `Bir sorudaki olaylar hep aynı dönemden gelir: dönemler karışsaydı sıralamak tarih bilgisi değil çağrışım işi olurdu.`,
+      `Havuzda ${SIRALA_BOYUTU} olay var. Yıllar soruda gizli, cevaptan sonra kartların üstünde açılıyor — asıl öğrenme orada.`,
+    ],
+  },
+  {
+    id: 'tuzak',
+    ders: 'matematik',
+    ad: 'Kural Tuzağı',
+    kisaAciklama: 'Eşitlik doğru mu, yanlış mı?',
+    ikon: '🪤',
+    nasilOynanir: [
+      `Ekrana tek bir eşitlik gelir. Doğruysa kartı **sağa**, yanlışsa **sola** atarsın. Kaydırmak istemezsen alttaki iki düğme de aynı işi görür.`,
+      `Kartı biraz itip bırakmak cevap sayılmaz — yerine döner ve süre işlemeye devam eder. Kararsızlık cevap değil.`,
+      `Her sorunun kendi süresi var: ${SORU_SURESI.tuzak} saniye. Kısa, çünkü ölçülen şey hız: kuralı bilen bir saniyede karar verir.`,
+      `Süre dolarsa soru yanlış sayılır ve sıradakine geçilir — bu oyunda yanlış turu bitirmiyor, tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
+      `Her kuralın doğru hâli ve öğrencilerin sık düştüğü yanlış hâli havuzda yan yana duruyor; hangisinin geleceği her soruda yazı turayla belirlenir. Cevaplar yarı yarıya — "hep yanlış de" diyerek tur kazanılmaz.`,
+      `Yanlış hâller uydurma değil: (a+b)² açılımını a²+b² sanmak, kökü terim terim dağıtmak gibi sınavda gerçekten yapılan hatalar.`,
+      `Havuzda ${TUZAK_BOYUTU} kural var: özdeşlikler, üslü ve köklü sayılar, mutlak değer, rasyonel ifadeler, eşitsizlikler ve fonksiyonlar.`,
+      `Tur bitince yanlış bildiklerin, hatanın nerede doğru göründüğüyle birlikte listelenir.`,
     ],
   },
 ]

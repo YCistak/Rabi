@@ -79,7 +79,14 @@ export function bossMu(oyun: OyunId, sira: number): boolean {
  * derse uygun kaldığını `ritim.test.ts` denetliyor — matematiğe yeni bir oyun
  * eklenip buraya yazılmazsa test kırılıyor.
  */
-export const BOSSSUZ_OYUNLAR: readonly OyunId[] = ['islem', 'bolunme', 'aci', 'ucgen', 'koklu']
+export const BOSSSUZ_OYUNLAR: readonly OyunId[] = [
+  'islem',
+  'bolunme',
+  'aci',
+  'ucgen',
+  'koklu',
+  'tuzak',
+]
 
 /** Bu oyunda boss var mı. */
 export function bossluMu(oyun: OyunId): boolean {
@@ -139,6 +146,23 @@ export const SORU_SURESI: Record<OyunId, number> = {
    * üç saniye demek. Süre değişirse ipucu ritmi de değişir.
    */
   hucre: 9,
+  /**
+   * Zaman Şeridi'nde süre **soru** başına ama soru beş kart.
+   *
+   * Okumak, karar vermek ve sürüklemek üst üste biniyor: beş olayı okumak
+   * tek başına on saniye, dizmek bir o kadar. Eşleştirme oyunlarının el
+   * süresine (35–45 sn) yakın durması tesadüf değil — orada da tek "soru"
+   * birden çok karar demek.
+   */
+  sirala: 40,
+  /**
+   * Kural Tuzağı'nın süresi kısa, çünkü oyunun ölçtüğü şey **hız**.
+   *
+   * Kuralı bilen öğrenci bir saniyede karar veriyor; sekiz saniye sağlama
+   * yapmaya yetmiyor ama okumaya rahat rahat yetiyor. Uzun olsaydı oyun kural
+   * bilgisini değil, sayı tutup deneme becerisini ölçerdi.
+   */
+  tuzak: 8,
 }
 
 /** Boss sorusuna verilen ek süre çarpanı. */
