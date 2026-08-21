@@ -157,6 +157,21 @@ const AILE: Record<
     kenar: 'border-l-byl-koyu',
     degisken: 'var(--byl-koyu)',
   },
+  // Zaman Şeridi tarih dersinin üçüncü oyunu.
+  sirala: {
+    zemin: 'bg-trh',
+    yazi: 'text-trh-koyu',
+    dolgu: 'bg-trh-koyu',
+    kenar: 'border-l-trh-koyu',
+    degisken: 'var(--trh-koyu)',
+  },
+  tuzak: {
+    zemin: 'bg-isl',
+    yazi: 'text-isl-koyu',
+    dolgu: 'bg-isl-koyu',
+    kenar: 'border-l-isl-koyu',
+    degisken: 'var(--isl-koyu)',
+  },
 }
 
 /** Tur sonunda listelenen en fazla yanlış. Gerisi Oyun Bankası'nda. */
@@ -319,17 +334,18 @@ export function OyunKabugu({
 /**
  * Tur sayaçları.
  *
- * Boss'lu oyunlarda "Yanlış" ve "Seri" kaldırıldı: her yanlış turu bitirdiği
- * için yanlış sayısı hep 0, seri de doğru sayısının aynısı — üç hücrenin ikisi
- * aynı sayıyı gösteriyordu. Yerlerine boss'a kaç soru kaldığı geldi; oyuncunun
- * turda gerçekten merak ettiği şey bu, gerilim de oradan geliyor.
+ * "Yanlış" ve "Seri" hiçbir oyunda gösterilmiyor: artık her yanlış turu
+ * bitirdiği için yanlış sayısı tur boyunca hep 0, seri de doğru sayısının
+ * aynısı — üç hücrenin ikisi aynı sayıyı gösteriyordu.
  *
- * Matematik oyunlarında boss yok ve yanlış turu bitirmiyor; orada eski dörtlü
- * duruyor.
+ * Boss'lu oyunlarda yerlerine boss'a kaç soru kaldığı geldi; oyuncunun turda
+ * gerçekten merak ettiği şey bu. Matematik oyunlarında boss yok, orada şerit
+ * yalnızca doğru sayısı ve rekordan ibaret — gösterilecek üçüncü bir sayı
+ * uydurmak, boş bir sütuna sayı koymak olurdu.
  */
 function SayacSeridi({ oyunId, sayac }: { oyunId: OyunId; sayac: SayacBilgisi }) {
-  // Puan yalnızca puanlı oyunlarda var (köklü sayı, organel): sütun sayısı ona
-  // göre bir artıyor, boşluk bırakılmıyor.
+  // Puan yalnızca puanlı oyunlarda var (köklü sayı, organel, zaman şeridi):
+  // sütun sayısı ona göre bir artıyor, boşluk bırakılmıyor.
   const puanli = sayac.puan !== undefined
 
   if (!bossluMu(oyunId)) {
@@ -337,12 +353,10 @@ function SayacSeridi({ oyunId, sayac }: { oyunId: OyunId; sayac: SayacBilgisi })
       <div
         className={cn(
           'mt-3.5 grid flex-none gap-1.5 border-b border-border pb-3',
-          puanli ? 'grid-cols-5' : 'grid-cols-4',
+          puanli ? 'grid-cols-3' : 'grid-cols-2',
         )}
       >
         <Sayac deger={sayac.dogru} etiket="Doğru" renk="text-success" />
-        <Sayac deger={sayac.yanlis} etiket="Yanlış" renk="text-ikincil" />
-        <Sayac deger={sayac.enIyiSeri} etiket="Seri" />
         {sayac.puan !== undefined && (
           <Sayac deger={sayac.puan} etiket="Puan" renk="text-primary" />
         )}

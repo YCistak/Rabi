@@ -28,7 +28,7 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { kokludenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
-import { MATEMATIK_TUR_SORUSU, soruSuresi } from '@/lib/oyunlar/ritim'
+import { TUR_SORU_SINIRI, elerMi, soruSuresi } from '@/lib/oyunlar/ritim'
 import { useSoruSayaci } from '@/lib/oyunlar/soru-sayaci'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
@@ -44,6 +44,7 @@ import {
   TurSonu,
   YanlisKarti,
   rekorCumlesi,
+  type Eleme,
 } from '@/components/oyun-kabuk'
 import { SayiCubugu, type Aralik } from '@/components/oyun-sayi-cubugu'
 import { OyunTanitim } from '@/components/oyun-tanitim'
@@ -63,12 +64,12 @@ const CEVAP_BEKLEMESI = 1400
 const BONUS_BEKLEMESI = 850
 
 /**
- * Turdaki soru sayısı.
+ * Turda hazırlanan en fazla soru.
  *
- * Matematik oyunlarında boss yok, dolayısıyla eleme de yok — turu bitirecek
- * bir şey gerekiyor. (`ritim.ts`)
+ * Tur sınırsız: yanlış cevap turu bitiriyor (`ritim.ts`), o yüzden bir soru
+ * sayısı hedefi yok — bu sabit yalnızca sonsuz dizi üretilemediği için var.
  */
-const TUR_SORUSU = MATEMATIK_TUR_SORUSU
+const TUR_SORUSU = TUR_SORU_SINIRI
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 /** Sorunun hangi evresi ekranda. */
@@ -137,6 +138,8 @@ export function KokluOyunuEkrani({
    */
   const [aralik, setAralik] = useState<Aralik>({ alt: CUBUK_EN_AZ, ust: CUBUK_EN_COK })
 
+  /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
+  const [elendi, setElendi] = useState<Eleme>(false)
   /** Yardım açıkken sayaç duruyor. */
   const [duraklatilan, setDuraklatilan] = useState(false)
 
@@ -173,6 +176,7 @@ export function KokluOyunuEkrani({
     setGeriBildirim(null)
     setSonuc(null)
     setAralik({ alt: CUBUK_EN_AZ, ust: CUBUK_EN_COK })
+    setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
   }, [bankaTuru, havuz, istatistik.enIyiDogru])
@@ -257,6 +261,12 @@ export function KokluOyunuEkrani({
         if (dogruMu) {
           setGeriBildirim(null)
           setEvre('bonus')
+        } else if (elerMi(dogruMu, bankaTuru)) {
+          // Eleme yalnızca aralık evresinde: bonusu kaçırmak turu bitirmiyor,
+          // çünkü bonus ayrı bir soru değil, zaten bilinmiş sorunun devamı.
+          setGeriBildirim(null)
+          setElendi('yanlis')
+          turBitir(cevaplarRef.current)
         } else {
           sonrakiSoru()
         }
@@ -354,6 +364,7 @@ export function KokluOyunuEkrani({
             sonuc={sonuc}
             rekor={turBasiRekor.current}
             bankaTuru={bankaTuru}
+            elendi={elendi}
             onTekrar={turBaslat}
             onCik={onCik}
             bildir={bildir}
@@ -510,6 +521,7 @@ function SonucGorunumu({
   sonuc,
   rekor,
   bankaTuru,
+  elendi,
   onTekrar,
   onCik,
   bildir,
@@ -517,6 +529,7 @@ function SonucGorunumu({
   sonuc: { ozet: TurOzeti<KokluSorusu>; yeniRekor: boolean; puan: number }
   rekor: number
   bankaTuru: boolean
+  elendi: Eleme
   onTekrar: () => void
   onCik: () => void
   bildir: BildirimKolu
@@ -534,6 +547,7 @@ function SonucGorunumu({
       rekor={rekor}
       yeniRekor={yeniRekor}
       bankaTuru={bankaTuru}
+      elendi={elendi}
       puan={{ deger: sonuc.puan, etiket: 'Puan' }}
       altBaslik={
         bankaTuru

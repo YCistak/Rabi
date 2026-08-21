@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { App as CapacitorApp } from '@capacitor/app'
 import { ArrowLeft } from 'lucide-react'
 import type {
@@ -70,6 +70,17 @@ import { SeviyeKutlama } from '@/components/seviye-kutlama'
 
 /** Rozet ve seviye kontrolünün, veri durulana kadar beklediği süre (ms). */
 const ROZET_BEKLEME = 1200
+
+/*
+  Boyamadan **önce** çalışması gereken etki.
+
+  `useEffect` boyamadan sonra çalışıyor; sayfayı başa almak için kullanılırsa
+  yeni ekran bir kare boyunca eski kaydırma konumunda görünüyor, sonra
+  zıplıyor. `useLayoutEffect` bunu boyamadan halleder ama sunucuda çalışmıyor
+  ve statik dışa aktarım sayfayı sunucuda da bir kez çiziyor — orada uyarı
+  çıkmasın diye `useEffect`e düşülüyor. Sunucuda kaydırılacak pencere de yok.
+*/
+const useYerlesimEtkisi = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
 export function AppShell() {
   const [sekme, setSekme] = useState<Sekme>('ana')
@@ -422,6 +433,18 @@ export function AppShell() {
     void pomodoroIptal()
     void odakKilidiniBitir()
   }, [])
+
+  /*
+    Ekran değişince sayfa başa dönüyor.
+
+    Kaydırılan şey pencerenin kendisi ve ekranlar aynı kökün içinde yer
+    değiştiriyor: tarayıcı kaydırma konumunu koruduğu için ana sayfanın
+    dibindeyken açılan sekme de dibinden açılıyordu.
+  */
+  const formAcik = denemeFormu !== null
+  useYerlesimEtkisi(() => {
+    window.scrollTo(0, 0)
+  }, [sekme, ekran, formAcik])
 
   // Android donanım geri tuşu
   useEffect(() => {
