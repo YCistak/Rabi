@@ -31,7 +31,8 @@ import {
   type SiradakiSoru,
   type Zorluk,
 } from '@/lib/oyunlar/ritim'
-import { useSoruSayaci } from '@/lib/oyunlar/soru-sayaci'
+import { etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
+import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { ZorlukSecimi } from '@/components/zorluk-secimi'
 import type { BildirimKolu } from '@/components/hata-bildir'
@@ -118,6 +119,8 @@ export function HucreOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
+  mod,
+  setMod,
   onCik,
   bildir,
 }: {
@@ -128,9 +131,12 @@ export function HucreOyunuEkrani({
   onTurBitti: (
     ozet: TurOzeti<OrganelSorusu>,
     bankaCevaplari: BankaCevabi[],
-    /** Turun gerçek uzunluğu — tur artık sabit süreli değil. */
+    /** Turun gerçek uzunluğu — modlar arasında değişiyor. */
     gecenSaniye: number,
   ) => void
+  /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
+  mod: OyunModu
+  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -151,6 +157,13 @@ export function HucreOyunuEkrani({
   const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukHucre, 'kolay')
   /** Yardım açıkken sayaç duruyor. */
   const [duraklatilan, setDuraklatilan] = useState(false)
+  /**
+   * Kaçıncı tur.
+   *
+   * Tur saatli modlarda sayacı sıfırlayan tek şey bu: soru sırası bir turun
+   * ortasında da sıfır olabiliyor (`tur-sayaci.ts`).
+   */
+  const [turNo, setTurNo] = useState(0)
 
   const [sonuc, setSonuc] = useState<{
     ozet: TurOzeti<OrganelSorusu>
@@ -160,6 +173,8 @@ export function HucreOyunuEkrani({
 
   const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
+  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
+  const gecerliMod = etkinMod(mod, bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   const turBasladiRef = useRef(0)
@@ -174,6 +189,7 @@ export function HucreOyunuEkrani({
 
   const turBaslat = useCallback(() => {
     turBasiRekor.current = istatistik.enIyiDogru
+    setTurNo((n) => n + 1)
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
@@ -202,6 +218,7 @@ export function HucreOyunuEkrani({
         puan: puanRef.current,
         yeniRekor:
           !bankaTuru &&
+          modKayitliMi(gecerliMod) &&
           rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
       })
       oyunSesiCal('bitis', sesAcik)
@@ -215,7 +232,7 @@ export function HucreOyunuEkrani({
         Math.round((Date.now() - turBasladiRef.current) / 1000),
       )
     },
-    [bankaTuru, istatistik, onTurBitti, sesAcik],
+    [bankaTuru, gecerliMod, istatistik, onTurBitti, sesAcik],
   )
 
   // Havuz tükenirse tur biter — banka turunda ve soru sınırına varılınca.
@@ -248,7 +265,7 @@ export function HucreOyunuEkrani({
   const ilerle = (dogruMu: boolean, bossMuydu: boolean) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
-      if (elerMi(dogruMu, bankaTuru)) {
+      if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
         setElendi(bossMuydu ? 'boss' : 'yanlis')
         turBitir(cevaplarRef.current)
       } else {
@@ -257,7 +274,32 @@ export function HucreOyunuEkrani({
     }, CEVAP_BEKLEMESI)
   }
 
-  const { kalan, toplam } = useSoruSayaci({
+  /** Tur saati bitti: yanlış değil, tur biter. */
+  const turSuresiDoldu = () => {
+    setElendi('sure')
+    turBitir(cevaplarRef.current)
+  }
+
+  /*
+    Rahat turda çıkış turu bitiriyor.
+
+    Süre yok, yanlış elemiyor: turu bitirecek başka bir şey de yok. Doğrudan
+    çıkılsaydı o turda yanlış bilinen sorular Oyun Bankası'na hiç düşmezdi ve
+    modun tek amacı olan öğrenme kaybolurdu.
+  */
+  const turdanCik = () => {
+    if (asama === 'oynaniyor' && gecerliMod === 'rahat' && cevaplarRef.current.length > 0) {
+      turBitir(cevaplarRef.current)
+      return
+    }
+    onCik()
+  }
+
+  const { kalan, toplam } = useTurSayaci({
+    mod: gecerliMod,
+    turNo,
+    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure,
     anahtar: sira,
@@ -342,6 +384,7 @@ export function HucreOyunuEkrani({
                 toplam,
                 sira: sira + 1,
                 boss,
+                mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
                 yanlis: cevaplar.length - dogruSayisi,
@@ -350,7 +393,7 @@ export function HucreOyunuEkrani({
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
-        onCik={onCik}
+        onCik={turdanCik}
         onYardim={yardimAc}
       >
         {asama === 'bitti' && sonuc ? (
@@ -358,6 +401,7 @@ export function HucreOyunuEkrani({
             sonuc={sonuc}
             rekor={turBasiRekor.current}
             bankaTuru={bankaTuru}
+            mod={gecerliMod}
             elendi={elendi}
             onTekrar={turBaslat}
             onCik={onCik}
@@ -413,6 +457,8 @@ export function HucreOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
+        mod={mod}
+        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
         ekstra={
@@ -566,6 +612,7 @@ function SonucGorunumu({
   sonuc,
   rekor,
   bankaTuru,
+  mod,
   elendi,
   onTekrar,
   onCik,
@@ -574,6 +621,7 @@ function SonucGorunumu({
   sonuc: { ozet: TurOzeti<OrganelSorusu>; yeniRekor: boolean; puan: number }
   rekor: number
   bankaTuru: boolean
+  mod: OyunModu
   elendi: Eleme
   onTekrar: () => void
   onCik: () => void
@@ -592,6 +640,7 @@ function SonucGorunumu({
       rekor={rekor}
       yeniRekor={yeniRekor}
       bankaTuru={bankaTuru}
+      mod={mod}
       elendi={elendi}
       puan={{ deger: sonuc.puan, etiket: 'Puan' }}
       altBaslik={

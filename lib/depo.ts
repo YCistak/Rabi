@@ -31,6 +31,7 @@ import { egitimYili } from './hesap'
 import { dakikayiKirp, saatiKirp } from './hatirlatma'
 import { yeniId } from './utils'
 import { stoguNormalize, type JokerStogu } from './magaza/jokerler'
+import { notlariNormalize, type NotKagidi } from './yapilacaklar'
 
 export const ANAHTARLAR = {
   denemeler: 'rabi-denemeler',
@@ -119,6 +120,20 @@ export const ANAHTARLAR = {
   seviye: 'rabi-seviye',
   /** Joker çantası — kimlik başına adet. */
   jokerler: 'rabi-jokerler',
+  /**
+   * Yapılacaklar tahtasındaki not kâğıtları — metin, renk ve konum.
+   *
+   * Konum da veri: kullanıcının kâğıdı nereye yapıştırdığı onun verdiği bilgi.
+   */
+  notlar: 'rabi-notlar',
+  /**
+   * Mini oyunların modu — bütün oyunlarda ortak.
+   *
+   * Zorluk oyun başına ayrı duruyor (`zorlukYazim` ve arkadaşları) çünkü
+   * seviyeler oyundan oyuna gerçekten değişiyor; "bugün acele etmek
+   * istemiyorum" ise oyuna göre değişen bir şey değil.
+   */
+  oyunModu: 'rabi-oyun-modu',
   ayarlar: 'rabi-ayarlar',
   tema: 'rabi-tema',
   sonBildirim: 'rabi-son-bildirim',
@@ -395,6 +410,7 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       havuc: sayi(nesne.havuc),
       seviye: sayi(nesne.seviye),
       jokerler: stoguNormalize(nesne.jokerler as JokerStogu | undefined),
+      notlar: notlariNormalize(nesne.notlar),
       pomodoroGecmis: dizi<PomodoroSeans>(nesne.pomodoroGecmis),
       // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
       // kullanıcının mevcut pomodoro ayarına dokunulmuyor.
@@ -609,6 +625,8 @@ export function yedegiUygula(yedek: Yedek) {
   */
   if (yedek.seviye !== undefined) yaz(ANAHTARLAR.seviye, yedek.seviye)
   if (yedek.jokerler) yaz(ANAHTARLAR.jokerler, yedek.jokerler)
+  // Eski yedeklerde tahta yok; boş dizi yazmak kullanıcının kâğıtlarını silerdi.
+  if (yedek.notlar) yaz(ANAHTARLAR.notlar, yedek.notlar)
   yaz(ANAHTARLAR.pomodoroGecmis, yedek.pomodoroGecmis)
   // Eski yedeklerde alan yok; o zaman kullanıcının mevcut ayarı korunuyor.
   if (yedek.pomodoroAyar) yaz(ANAHTARLAR.pomodoroAyar, yedek.pomodoroAyar)

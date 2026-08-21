@@ -4,6 +4,7 @@
 
 import type { BankaKaydi } from './oyunlar/banka'
 import type { JokerStogu } from './magaza/jokerler'
+import type { NotKagidi } from './yapilacaklar'
 
 // ---------------------------------------------------------------------------
 // Deneme
@@ -386,6 +387,13 @@ export type Yedek = {
   seviye?: number
   /** Joker çantası — kimlik başına adet. */
   jokerler?: JokerStogu
+  /**
+   * Yapılacaklar tahtası. Eski yedeklerde yok — geri yüklemede yazılmıyor,
+   * kullanıcının mevcut kâğıtları olduğu gibi kalıyor.
+   *
+   * Oyun modu burada **yok**: o veri değil, bu cihazdaki tercih.
+   */
+  notlar?: NotKagidi[]
   pomodoroGecmis: PomodoroSeans[]
   /**
    * Pomodoro ayarı. Eski yedeklerde yok — o zaman geri yüklemede yazılmıyor,

@@ -38,6 +38,7 @@ import { UygulamaSecici } from '@/components/odak/uygulama-secici'
 import { SINIF_SECENEKLERI, egitimYili, katsayiYaz, mezunMu, sinifAdi } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
 import type { JokerStogu } from '@/lib/magaza/jokerler'
+import type { NotKagidi } from '@/lib/yapilacaklar'
 import {
   elenenSoruSayisi,
   tumVeriyiSil,
@@ -158,6 +159,8 @@ export function AyarlarEkrani({
     havuc?: number
     seviye?: number
     jokerler?: JokerStogu
+    /** Yapılacaklar tahtası — kâğıdın konumu da veri. */
+    notlar?: NotKagidi[]
     pomodoroGecmis: PomodoroSeans[]
     /** Kilitli uygulama listesi burada; yedekten dönen kullanıcı yeniden seçmesin. */
     pomodoroAyar: PomodoroAyar

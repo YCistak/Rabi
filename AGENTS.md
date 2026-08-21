@@ -60,11 +60,177 @@ oyun XP'sinin de ayrı bir toplam tavanı var — oyun mola aktivitesi, ana yol 
 Yeni bir XP kaynağı eklerken önce "bu uydurulabilir mi" diye sor; uydurulabiliyorsa
 tavanla.
 
-Havucun **tek** artma yolu seviye atlamak, tek eksilme yolu mağaza. Ömür boyu
-kazanılabilecek toplam `TOPLAM_HAVUC` ile sabit (≈10.000) ve joker fiyatları ona
-oranla konuldu — `lib/magaza/jokerler.ts` içindeki `denge` testleri bu oranı
-koruyor. Fiyatı ya da XP eğrisini değiştirirsen o testler kırılır; kırılmaları
-doğru, sayıyı güncellemeden geçme.
+Havucun akışları sayılıdır ve hepsi `lib/seviye.ts` ile `lib/havuc.ts` içinde:
+
+- **Artar:** seviye atlayınca (`birikenOdul`) ve Oyun Bankası'ndan soru düşünce
+  (`bankaOdulu`). İkincisinin ömür boyu tavanı var — bankaya bilerek yanlış
+  düşürüp düzelten biri yavaş ama sınırsız havuç basabilirdi. Ödül yalnızca
+  **kazanılan** düşüşün karşılığı: bankadaki tikle elle kaldırma `bankadanDustu`
+  yoluna hiç uğramıyor, yoksa havuç bir tuşa basmanın bedeli olurdu.
+- **Azalır:** mağaza ve **odak cezası** (`cezaDus`). Pomodoro sırasında odak
+  kilidini kıran kullanıcıdan en ucuz jokerin fiyatı kadar havuç gider. Kilit
+  kırılabilir olmak zorunda; caydırıcılığı o yüzden bedelin taşıması gerekiyor.
+  Bakiye eksiye inmiyor — borç yok.
+
+Ömür boyu kazanılabilecek toplam `TOPLAM_KAZANC` ile sabit (≈10.800) ve joker
+fiyatları ona oranla konuldu. `lib/magaza/jokerler.test.ts` ile `lib/havuc.test.ts`
+içindeki `denge` testleri bu oranı koruyor: bütün havuç toplansa bile çantayı her
+jokerden dokuzar tane doldurmaya yetmiyor. Fiyatı, XP eğrisini ya da ödül tavanını
+değiştirirsen o testler kırılır; kırılmaları doğru, sayıyı güncellemeden geçme.
+
+Yeni bir havuç kaynağı eklerken tavan sorusunu sor: kaynak tavansızsa mağaza bir
+süre sonra anlamsızlaşıyor.
+
+## Tur içi efektler
+
+Beş efekt var ve hepsi **ortak koddan** çıkıyor: ses `lib/oyunlar/oyun-sesi.ts`,
+görsel olanlar `components/oyun-kabuk.tsx` ile `app/globals.css`. Oyun
+dosyalarına hiç dokunmuyorlar.
+
+| Efekt | Ne zaman | Nerede |
+| --- | --- | --- |
+| Perde yükselmesi | her ardışık doğru, sekiz çeyrek tona kadar | `oyun-sesi.ts` |
+| Sarsıntı | yanlış cevap | kabuk + `oyun-sarsinti` |
+| Süre nabzı + tek uyarı | kalan süre toplamın ¼'ünün altına inince | kabuk + `sure-nabzi` |
+| Boss parlaması | boss sorusu bilinerek kapanınca | kabuk + `boss-parlama` |
+| Kart kalkması | bankada tike basınca | `oyun-bankasi.tsx` + `banka-kalkiyor` |
+| Konfeti | yalnızca yeni rekorda | `TurSonu` + `konfeti` |
+
+Kabuk olayları **sayaçtan türetiyor**, oyunlardan geri çağrı almıyor: `dogru`,
+`yanlis`, `boss` ve `kalan` zaten props olarak geliyor ve bir sayının artması
+"bir şey oldu" demek. 18 oyuna kanca eklemek aynı kuralı 18 kez yazmak olurdu;
+böyle yazınca yeni bir oyun hiçbir şey yapmadan efektlere kavuşuyor.
+
+Boss parlamasında tek incelik şu: oyunlar cevabı **hemen** sayıyor ama soruyu
+geri bildirim bittikten sonra değiştiriyor. Yani doğru sayısı boss hâlâ
+ekrandayken artıyor, boss kapandığı çizimde artmış olmuyor. O yüzden bir bayrak
+(`bossVuruldu`) iki anı birbirine bağlıyor; "kapanırken sayı arttı mı" diye
+bakan bir kural hiç çalışmaz.
+
+Perde sayacı da oyunlarda değil modülün içinde: seriyi 18 dosyadan parametre
+olarak geçirmek yerine `oyun-sesi.ts` ardışık `dogru` çağrılarını kendi sayıyor,
+yanlış ve tur bitişi sıfırlıyor. Tavan (`EN_COK_KADEME`) şart — sınırsız yükselen
+bir ses ödül olmaktan çıkıp rahatsız ediyor.
+
+Kademe **çeyrek ton** (`KADEME`), yarım ton değil. Yarım tonken kulakta bir tam
+ton gibi duyuluyordu: art arda gelen doğrularda basamaklar tek tek değil topluca
+işitiliyor ve üçüncü doğruda ses başkalaşıyordu.
+
+Efekt seviyesiyle oyun müziğinin seviyesi (`oyunlar.tsx`, `sesSeviyesi`) tek bir
+dengenin iki ucu: efekt 1'den 0.42'ye inince müzik altta kaldı ve o kadar geri
+verildi. Birine dokunursan ötekine de bak.
+
+Boss parlaması ilk denemede yerinde duran bir altın radyaldi ve iyi durmadı:
+boss zemini açık bir renk ve onun üstünde sabit bir sarı daire ışık gibi değil
+leke gibi görünüyor. Göz parlaklığı değil **yayılmayı** ışık sanıyor — şimdi
+dışa açılan bir halka ve onun arkasında büyüyen bir hâle var, halka ötekinden
+hızlı gidiyor. Yeni bir parlama eklersen aynı kural: büyümeyen ışık, ışık değil.
+
+Bankadaki tik kaydı anında silmiyor; kart önce onaylanıp süzülüyor
+(`KALKMA_SURESI`, CSS'teki süreyle eşleşmeli). Anında silmek dokunuşun
+karşılığını görünmez kılıyordu: liste kısalıyor ama hangi kartın gittiği
+anlaşılmıyordu.
+
+Efekt dosyalarının seviyesi 1 değil (`DOSYA_SEVIYESI`): tam seviyede çalıyorlardı
+ve kullanıcı "çok fazla geliyor" dedi. Efekt oyunun içinden gelen bir işaret,
+ortamı bastırması gerekmiyor; ama duyulmayan efekt de hiç olmamış demek, o yüzden
+sessize yaklaşmıyor — kapatmak isteyene ayarda anahtar zaten var.
+
+Hepsi `prefers-reduced-motion` altında susuyor. Yeni bir efekt eklersen o
+medya sorgusuna da ekle: buradaki hareketlerin hiçbiri bilgi taşımıyor, bilgi
+sayıda ve renkte duruyor.
+
+## Oyun Bankası
+
+Bir kayıt iki yoldan çıkıyor ve ikisi aynı şey değil. **Kazanılan çıkış**: soru
+turlarda üst üste `DUSME_ESIGI` kez doğru bilinince kendiliğinden düşüyor; havucu
+veren yol bu. **Elle kaldırma**: karttaki tik kaydı havuçsuz siliyor. İkincisi
+sonradan eklendi çünkü banka bir borç listesi — öğrendiğine kullanıcının kendisi
+karar veremiyorsa liste yalnızca büyüyor ve bir yerden sonra hiç açılmıyor.
+
+Tik havuç vermiyor; ölçtüğü tek şey kullanıcının tuşa basması. Bankaya yeni bir
+çıkış yolu eklersen aynı soruyu sor: bu yol uydurulabiliyor mu, uydurulabiliyorsa
+ödülü olmamalı.
+
+## Oyun modları
+
+Turun nasıl işleyeceğini **mod** belirliyor (`lib/oyunlar/mod.ts`); seçim bütün
+oyunlarda ortak (`rabi-oyun-modu`) ve tanıtım penceresinden yapılıyor. Zorluk
+oyun başına ayrı duruyor çünkü seviyeler oyundan oyuna gerçekten değişiyor;
+"bugün acele etmek istemiyorum" oyuna göre değişmiyor.
+
+| Mod | Saat | Yanlış | Kayıt |
+| --- | --- | --- | --- |
+| Sıradan | tura ait, 60 sn | süreden 3 sn götürür | var |
+| Turbo | tura ait, 30 sn | süreden 3 sn götürür | var |
+| Ani Ölüm | soruya ait (`SORU_SURESI`) | tur biter | var |
+| Rahat | yok | hiçbir şey | **yok** |
+
+Dört mod olmasının sebebi tek kuralın iki kullanıcıyı birden idare edememesi:
+her yanlışın turu bitirdiği tasarım bileni ödüllendiriyor ama yeni öğrenene
+öğretmeyi bırakıp onu eliyor. Rahat modun karşılığı yok — süresiz bir turda "kaç
+doğru yaptın" sabrı ölçer, bilgiyi değil; o yüzden rekora, istatistiğe ve oyun
+geçmişine yazılmıyor (yanlışlar yine bankaya düşüyor). Bunun tek kapısı
+`oyunlar.tsx` içindeki `turBitti`.
+
+İki kural moddan bağımsız:
+
+- **Oyun Bankası turu** modu dinlemiyor (`etkinMod`): süreli bir tur onu yarıda
+  keser, eleyen bir tur "üç kez doğru bil" işini imkânsız kılardı.
+- **Rahat turda çıkış turu bitiriyor**, doğrudan kapatmıyor; yoksa o turda
+  öğrenilen yanlışlar bankaya hiç düşmezdi.
+
+Sayaç tek yerde: `lib/oyunlar/tur-sayaci.ts`. Toplamı sıfır dönmesi "sayaç yok"
+demek ve arayüz halkayı ona bakarak gizliyor. Yeni bir mod eklersen saatin tura
+mı soruya mı ait olduğuna karar ver — ikisi birden olmaz, `mod.test.ts` bunu
+denetliyor.
+
+## Yapılacaklar tahtası
+
+Araçlardaki not kâğıtları (`lib/yapilacaklar.ts`). Liste değil tahta: kâğıtlar
+istenen yere sürükleniyor ve konum kullanıcının verdiği bilgi — bir listeye
+düzleştirmek onu atmak olurdu. En fazla on kâğıt; sınır tahtanın kendisinden
+geliyor, üst üste binen kâğıtlar okunmuyor.
+
+Tahta **günlük**: her kâğıt yerel günüyle (`gun`) duruyor ve gün dönünce
+`gununNotlari` onu eliyor. Dün yazdığını bugün de tahtada gören kullanıcı,
+biriken ve hiç bitmeyen bir listeye bakıyor demektir. Gün dönümü zamanlayıcıyla
+değil türetmeyle yakalanıyor — uygulama kapalıyken çalışmayan bir `setTimeout`'a
+güvenilmez; elenen kâğıtlar bir etkiyle kayıttan da siliniyor, yoksa yedeğe
+girerlerdi.
+
+`yeniKonum` iki sütun × beş satırlık bir ızgara: on kâğıdın **hepsine** ayrı
+yer. Önceki köşegen basamak beşte bir başa dönüyordu ve altıncı kâğıt birincinin
+üstüne oturuyordu. Tahtanın yüksekliği de buna bağlı — satır aralığı kâğıdın
+boyundan kısalırsa kâğıtlar daha ilk eklendikleri anda biner.
+
+Konum piksel değil **oran** (0–1) ve kâğıdın sığdığı boşluğa göre ölçülüyor;
+`left: X%` ile `translate(-X%)` eşleşmesi sayesinde çizim tarafı ekran ölçüsü
+bilmek zorunda değil ve kâğıt hiçbir zaman tahtadan taşmıyor. Yedeğe giriyor:
+başka telefona taşınan tahta aynı yerleşimi koruyor.
+
+Kâğıtlar yalnızca o sekmede; uygulamanın üstünde yüzen bir katman değiller. Her
+ekranda görünen bir yapılacak listesi kaygıyı hiç bırakmayan bir arayüz olurdu.
+
+Tahtanın yüksekliği ve kâğıdın genişliği Tailwind sınıfı değil, satır içi ölçü.
+Bu ikisi olmadan özellik ekranda **yok**: tahta sıfır yükseklikte, kâğıt sıfır
+genişlikte kalıyor ve "yeni kâğıt" tuşu çalışıyormuş gibi görünüp hiçbir şey
+göstermiyor. Görünüşe ait bir sınıfın taramadan düşmesi eksik bir gölge demek;
+ölçüye ait olanınki boş bir ekran.
+
+Tahtanın yüksekliği ve kâğıdın genişliği Tailwind sınıfı değil, satır içi ölçü.
+Bu ikisi olmadan özellik ekranda **yok**: tahta sıfır yükseklikte, kâğıt sıfır
+genişlikte kalıyor ve "yeni kâğıt" tuşu çalışıyormuş gibi görünüp hiçbir şey
+göstermiyor. Görünüşe ait bir sınıfın taramadan düşmesi eksik bir gölge demek;
+ölçüye ait olanınki boş bir ekran.
+
+> Dosya adı `notlar.ts` **olamaz**: `.gitignore` kişisel notlar için `notlar.*`
+> deseni taşıyor ve desen tüm ağaçta geçerli. Öyle adlandırılan bir kaynak dosya
+> hem depoya girmiyor hem Tailwind'in tarayıcısından düşüyor. Bir dosyayı yeniden
+> adlandırdıktan sonra `npm run build`'i **tekrar çalıştır**: Tailwind kaynak
+> listesini derleme başında kuruyor, eski çıktı hatasız ama sınıfsız kalıyor. Bir dosyayı yeniden
+> adlandırdıktan sonra `npm run build`'i **tekrar çalıştır**: Tailwind kaynak
+> listesini derleme başında kuruyor, eski çıktı hatasız ama sınıfsız kalıyor.
 
 ## Havuç Mağazası
 
