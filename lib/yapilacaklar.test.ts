@@ -3,6 +3,7 @@ import {
   EN_COK_NOT,
   EN_UZUN_NOT,
   NOT_RENKLERI,
+  gununNotlari,
   kalanIs,
   konumuSinirla,
   notEkle,
@@ -18,7 +19,7 @@ import {
   type NotKagidi,
 } from './yapilacaklar'
 
-const TARIH = '2026-08-21T10:00:00.000Z'
+const TARIH = '2026-08-21'
 
 /** `adet` kadar kâğıtlık dolu bir tahta. */
 function tahta(adet: number): NotKagidi[] {
@@ -31,7 +32,7 @@ describe('notEkle', () => {
   it('boş kâğıt ekliyor', () => {
     const notlar = notEkle([], 'a', TARIH)
     expect(notlar).toHaveLength(1)
-    expect(notlar?.[0]).toMatchObject({ id: 'a', metin: '', bitti: false, olusturma: TARIH })
+    expect(notlar?.[0]).toMatchObject({ id: 'a', metin: '', bitti: false, gun: TARIH })
   })
 
   /* Hepsi aynı yere yapışsaydı ikinci kâğıt birincisini örterdi. */
@@ -64,6 +65,51 @@ describe('yeniKonum', () => {
       expect(y, `y ${i}`).toBeGreaterThanOrEqual(0)
       expect(y, `y ${i}`).toBeLessThanOrEqual(1)
     }
+  })
+
+  /*
+    Asıl şikâyet buydu: eski basamak beşte bir başa dönüyordu ve altıncı kâğıt
+    birincinin üstüne oturuyordu. Sınıra kadar her kâğıdın ayrı yeri olmalı.
+  */
+  it('tahta sınırına kadar hiçbir konum tekrarlanmıyor', () => {
+    const konumlar = Array.from({ length: EN_COK_NOT }, (_, i) => {
+      const { x, y } = yeniKonum(i)
+      return `${x},${y}`
+    })
+    expect(new Set(konumlar).size).toBe(EN_COK_NOT)
+  })
+
+  /* Kenarda pay var: 0 ya da 1 kâğıdı tahtanın yuvarlak köşesine dayardı. */
+  it('kâğıtlar tahtanın kenarına yapışmıyor', () => {
+    for (let i = 0; i < EN_COK_NOT; i++) {
+      const { x, y } = yeniKonum(i)
+      expect(x).toBeGreaterThan(0)
+      expect(x).toBeLessThan(1)
+      expect(y).toBeGreaterThan(0)
+      expect(y).toBeLessThan(1)
+    }
+  })
+})
+
+describe('gununNotlari', () => {
+  it('yalnızca bugünün kâğıtlarını bırakıyor', () => {
+    const notlar = [
+      ...(notEkle([], 'dun', '2026-08-20') ?? []),
+      ...(notEkle([], 'bugun', TARIH) ?? []),
+    ]
+    expect(gununNotlari(notlar, TARIH).map((n) => n.id)).toEqual(['bugun'])
+  })
+
+  it('gün dönmediyse tahtaya dokunmuyor', () => {
+    const notlar = tahta(3)
+    expect(gununNotlari(notlar, TARIH)).toHaveLength(3)
+  })
+
+  /* Eski sürümden kalan kayıtta gün yok; bugüne ait sayılmamalı. */
+  it('günü olmayan kayıt temizleniyor', () => {
+    const eski = notlariNormalize([{ id: 'a', metin: 'eski' }])
+    expect(eski).toHaveLength(1)
+    expect(gununNotlari(eski, TARIH)).toHaveLength(0)
   })
 })
 

@@ -16,7 +16,7 @@ import {
   type NotKagidi,
   type NotRengi,
 } from '@/lib/yapilacaklar'
-import { cn, yeniId } from '@/lib/utils'
+import { bugun, cn, yeniId } from '@/lib/utils'
 import { BaslikSatiri, Buton, Not } from '@/components/ui'
 
 /**
@@ -37,6 +37,9 @@ import { BaslikSatiri, Buton, Not } from '@/components/ui'
  *
  * Sabit, çünkü konumlar orana çevrilirken tahtanın kendisi ölçü birimi:
  * içeriğe göre büyüyen bir tahtada kâğıt eklemek eskilerinin yerini kaydırırdı.
+ * Yükseklik on kâğıdın **sığmasına** göre seçildi: `yeniKonum` beş satır
+ * açıyor ve satır aralığı kâğıdın boyundan kısa kalırsa kâğıtlar daha ilk
+ * eklendikleri anda üst üste biner.
  *
  * Sınıf değil satır içi ölçü: bu iki sayı olmadan özellik ekranda **yok** —
  * tahta sıfır yükseklikte, kâğıt sıfır genişlikte kalıyor. Tailwind sınıfları
@@ -44,7 +47,7 @@ import { BaslikSatiri, Buton, Not } from '@/components/ui'
  * düşmüştü (bkz. AGENTS.md, "Yapılacaklar tahtası"). Görünüşe ait bir sınıfın
  * kaçması eksik bir gölge demek; ölçüye ait olanınki boş bir ekran.
  */
-const TAHTA_YUKSEKLIGI = 470
+const TAHTA_YUKSEKLIGI = 700
 const KAGIT_GENISLIGI = '46%'
 const KAGIT_EN_COK = 168
 
@@ -78,7 +81,7 @@ export function YapilacaklarEkrani({
   const doluMu = !yerVarMi(notlar)
 
   const kagitEkle = () => {
-    setNotlar((onceki) => notEkle(onceki, yeniId(), new Date().toISOString()) ?? onceki)
+    setNotlar((onceki) => notEkle(onceki, yeniId(), bugun()) ?? onceki)
   }
 
   return (
@@ -87,10 +90,10 @@ export function YapilacaklarEkrani({
         baslik="Yapılacaklar"
         aciklama={
           notlar.length === 0
-            ? 'Tahtan boş'
+            ? 'Bugünün tahtası boş'
             : bekleyen === 0
               ? `${notlar.length} kâğıt · hepsi bitti`
-              : `${bekleyen} iş bekliyor`
+              : `Bugün ${bekleyen} iş bekliyor`
         }
       />
 
@@ -105,8 +108,8 @@ export function YapilacaklarEkrani({
 
       {doluMu && (
         <Not tur="uyari" className="mb-3">
-          Tahta dolu. Yeni kâğıt için bitenlerden birini sil — sınır tahtanın kendisi,
-          üst üste binen kâğıtlar okunmuyor.
+          Tahta dolu ({EN_COK_NOT} kâğıt). Yeni kâğıt için bitenlerden birini sil — sınır
+          tahtanın kendisi, üst üste binen kâğıtlar okunmuyor.
         </Not>
       )}
 
@@ -128,7 +131,7 @@ export function YapilacaklarEkrani({
 
         {notlar.length === 0 && (
           <p className="absolute inset-0 grid place-items-center px-8 text-center text-[13px] font-semibold leading-snug text-muted-foreground">
-            Gününü kâğıt kâğıt yaz. Kâğıdı üst şeridinden tutup istediğin yere
+            Bugününü kâğıt kâğıt yaz. Kâğıdı üst şeridinden tutup istediğin yere
             sürükleyebilirsin.
           </p>
         )}
@@ -149,8 +152,8 @@ export function YapilacaklarEkrani({
       </div>
 
       <p className="mt-3 px-1 text-xs leading-snug text-muted-foreground">
-        Kâğıtlar yalnızca burada durur, yedeğe girer ve bu tahtanın dışına çıkmaz.
-        Bitirdiğin kâğıdı silmeden de işaretleyebilirsin.
+        Tahta günlük: kâğıtlar gün dönünce temizlenir, o yüzden buraya yarına
+        kalacak bir şey yazma. Bitirdiğin kâğıdı silmeden de işaretleyebilirsin.
       </p>
     </div>
   )

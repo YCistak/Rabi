@@ -63,7 +63,7 @@ import { RozetlerEkrani } from '@/components/ekranlar/rozetler'
 import { MagazaEkrani } from '@/components/ekranlar/magaza'
 import { BASLANGIC_HAVUCU, birikenOdul, seviyeDurumu, tabanla } from '@/lib/seviye'
 import { ODAK_CEZASI, bankaOdulu, cezaDus } from '@/lib/havuc'
-import { notlariNormalize, type NotKagidi } from '@/lib/yapilacaklar'
+import { gununNotlari, notlariNormalize, type NotKagidi } from '@/lib/yapilacaklar'
 import { BOS_STOK, stoguNormalize, type JokerStogu } from '@/lib/magaza/jokerler'
 import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
 import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
@@ -165,8 +165,27 @@ export function AppShell() {
   const [odullenen, setOdullenen, seviyeHazir] = useYerelDepo<number>(ANAHTARLAR.seviye, 1)
   const [stokHam, setStok] = useYerelDepo<JokerStogu>(ANAHTARLAR.jokerler, BOS_STOK)
   const jokerler = stoguNormalize(stokHam)
-  const [notlarHam, setNotlar] = useYerelDepo<NotKagidi[]>(ANAHTARLAR.notlar, [])
-  const notlar = notlariNormalize(notlarHam)
+  const [notlarHam, setNotlar, notlarHazir] = useYerelDepo<NotKagidi[]>(ANAHTARLAR.notlar, [])
+  /*
+    Tahta günlük ve gün her çizimde yeniden okunuyor.
+
+    Zamanlayıcı kurmak yerine türetmek: gece yarısını bekleyen bir `setTimeout`
+    uygulama kapalıyken çalışmaz, uyanan telefonda da geç çalışır. Gün dönmüşse
+    kâğıtlar zaten ilk çizimde eleniyor; aşağıdaki etki de kaydı buna eşitliyor.
+  */
+  const notlar = gununNotlari(notlariNormalize(notlarHam), bugun())
+  /*
+    Elenen kâğıtlar kayıttan da siliniyor.
+
+    Yalnızca çizimden düşselerdi dünün kâğıtları `localStorage`'da birikir,
+    yedeğe girer ve saati geri alan bir cihazda geri gelirdi. `notlarHazir`
+    şart: ilk okuma bitmeden yazmak, kayıtta duran kâğıtları boş varsayılanla
+    ezerdi.
+  */
+  useEffect(() => {
+    if (!notlarHazir || notlar.length === notlarHam.length) return
+    setNotlar(notlar)
+  })
   /**
    * Havuç kazancının kısa şeridi. Seviye kutlamasından ayrı: bu, turun
    * ortasında kazanılan küçük ödül ve tam ekran bir kutlamayı hak etmiyor.
@@ -634,6 +653,12 @@ export function AppShell() {
             <OyunBankasiEkrani
               banka={oyunBankasi}
               bildir={hataBildirimi}
+              /*
+                Elle kaldırma `bankadanDustu`'ya uğramıyor: havuç, soruyu üst
+                üste üç kez doğru bilmenin karşılığı. Tuşa basmakla kazanılan
+                bir ödül, ödül olmaktan çıkıp mağazayı anlamsızlaştırırdı.
+              */
+              onKaldir={(id) => setOyunBankasi((o) => o.filter((k) => k.id !== id))}
               onTurBaslat={(oyun) => {
                 // Turu Oyunlar sekmesi çiziyor; oyun katmanı tam ekran açıldığı
                 // için arkada hangi sekmenin durduğu görünmüyor, ama turdan

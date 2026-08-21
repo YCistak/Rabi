@@ -64,7 +64,9 @@ Havucun akışları sayılıdır ve hepsi `lib/seviye.ts` ile `lib/havuc.ts` iç
 
 - **Artar:** seviye atlayınca (`birikenOdul`) ve Oyun Bankası'ndan soru düşünce
   (`bankaOdulu`). İkincisinin ömür boyu tavanı var — bankaya bilerek yanlış
-  düşürüp düzelten biri yavaş ama sınırsız havuç basabilirdi.
+  düşürüp düzelten biri yavaş ama sınırsız havuç basabilirdi. Ödül yalnızca
+  **kazanılan** düşüşün karşılığı: bankadaki tikle elle kaldırma `bankadanDustu`
+  yoluna hiç uğramıyor, yoksa havuç bir tuşa basmanın bedeli olurdu.
 - **Azalır:** mağaza ve **odak cezası** (`cezaDus`). Pomodoro sırasında odak
   kilidini kıran kullanıcıdan en ucuz jokerin fiyatı kadar havuç gider. Kilit
   kırılabilir olmak zorunda; caydırıcılığı o yüzden bedelin taşıması gerekiyor.
@@ -78,6 +80,18 @@ değiştirirsen o testler kırılır; kırılmaları doğru, sayıyı güncellem
 
 Yeni bir havuç kaynağı eklerken tavan sorusunu sor: kaynak tavansızsa mağaza bir
 süre sonra anlamsızlaşıyor.
+
+## Oyun Bankası
+
+Bir kayıt iki yoldan çıkıyor ve ikisi aynı şey değil. **Kazanılan çıkış**: soru
+turlarda üst üste `DUSME_ESIGI` kez doğru bilinince kendiliğinden düşüyor; havucu
+veren yol bu. **Elle kaldırma**: karttaki tik kaydı havuçsuz siliyor. İkincisi
+sonradan eklendi çünkü banka bir borç listesi — öğrendiğine kullanıcının kendisi
+karar veremiyorsa liste yalnızca büyüyor ve bir yerden sonra hiç açılmıyor.
+
+Tik havuç vermiyor; ölçtüğü tek şey kullanıcının tuşa basması. Bankaya yeni bir
+çıkış yolu eklersen aynı soruyu sor: bu yol uydurulabiliyor mu, uydurulabiliyorsa
+ödülü olmamalı.
 
 ## Oyun modları
 
@@ -119,6 +133,18 @@ istenen yere sürükleniyor ve konum kullanıcının verdiği bilgi — bir list
 düzleştirmek onu atmak olurdu. En fazla on kâğıt; sınır tahtanın kendisinden
 geliyor, üst üste binen kâğıtlar okunmuyor.
 
+Tahta **günlük**: her kâğıt yerel günüyle (`gun`) duruyor ve gün dönünce
+`gununNotlari` onu eliyor. Dün yazdığını bugün de tahtada gören kullanıcı,
+biriken ve hiç bitmeyen bir listeye bakıyor demektir. Gün dönümü zamanlayıcıyla
+değil türetmeyle yakalanıyor — uygulama kapalıyken çalışmayan bir `setTimeout`'a
+güvenilmez; elenen kâğıtlar bir etkiyle kayıttan da siliniyor, yoksa yedeğe
+girerlerdi.
+
+`yeniKonum` iki sütun × beş satırlık bir ızgara: on kâğıdın **hepsine** ayrı
+yer. Önceki köşegen basamak beşte bir başa dönüyordu ve altıncı kâğıt birincinin
+üstüne oturuyordu. Tahtanın yüksekliği de buna bağlı — satır aralığı kâğıdın
+boyundan kısalırsa kâğıtlar daha ilk eklendikleri anda biner.
+
 Konum piksel değil **oran** (0–1) ve kâğıdın sığdığı boşluğa göre ölçülüyor;
 `left: X%` ile `translate(-X%)` eşleşmesi sayesinde çizim tarafı ekran ölçüsü
 bilmek zorunda değil ve kâğıt hiçbir zaman tahtadan taşmıyor. Yedeğe giriyor:
@@ -133,9 +159,17 @@ genişlikte kalıyor ve "yeni kâğıt" tuşu çalışıyormuş gibi görünüp 
 göstermiyor. Görünüşe ait bir sınıfın taramadan düşmesi eksik bir gölge demek;
 ölçüye ait olanınki boş bir ekran.
 
+Tahtanın yüksekliği ve kâğıdın genişliği Tailwind sınıfı değil, satır içi ölçü.
+Bu ikisi olmadan özellik ekranda **yok**: tahta sıfır yükseklikte, kâğıt sıfır
+genişlikte kalıyor ve "yeni kâğıt" tuşu çalışıyormuş gibi görünüp hiçbir şey
+göstermiyor. Görünüşe ait bir sınıfın taramadan düşmesi eksik bir gölge demek;
+ölçüye ait olanınki boş bir ekran.
+
 > Dosya adı `notlar.ts` **olamaz**: `.gitignore` kişisel notlar için `notlar.*`
 > deseni taşıyor ve desen tüm ağaçta geçerli. Öyle adlandırılan bir kaynak dosya
 > hem depoya girmiyor hem Tailwind'in tarayıcısından düşüyor. Bir dosyayı yeniden
+> adlandırdıktan sonra `npm run build`'i **tekrar çalıştır**: Tailwind kaynak
+> listesini derleme başında kuruyor, eski çıktı hatasız ama sınıfsız kalıyor. Bir dosyayı yeniden
 > adlandırdıktan sonra `npm run build`'i **tekrar çalıştır**: Tailwind kaynak
 > listesini derleme başında kuruyor, eski çıktı hatasız ama sınıfsız kalıyor.
 

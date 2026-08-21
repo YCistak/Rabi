@@ -28,8 +28,15 @@ export type NotKagidi = {
   y: number
   /** Üstü çizili mi — kâğıdı silmeden "bitti" demenin yolu. */
   bitti: boolean
-  /** Oluşturulma tarihi (ISO). Sıralama bunu izliyor: en yeni kâğıt en üstte. */
-  olusturma: string
+  /**
+   * Kâğıdın ait olduğu gün ('YYYY-AA-GG', **yerel** saat).
+   *
+   * Tahta günlük: gün dönünce kâğıtlar temizleniyor (`gununNotlari`). Tarih
+   * ISO damgası değil yerel gün, çünkü "bugün" kullanıcının takvimindeki gün;
+   * `toISOString` UTC'ye kaydırdığı için gece yarısına yakın yazılan kâğıt
+   * daha yazıldığı anda dünün kâğıdı sayılırdı.
+   */
+  gun: string
 }
 
 /**
@@ -52,16 +59,33 @@ export const EN_UZUN_NOT = 280
 /** Renk sırası — yeni kâğıt sıradaki rengi alıyor, hepsi aynı olmasın diye. */
 export const NOT_RENKLERI: readonly NotRengi[] = ['sari', 'pembe', 'mavi', 'yesil', 'mor']
 
+/** Kâğıtların ilk yerleştiği ızgara — iki sütun, beş satır. */
+const SUTUN_SAYISI = 2
+const SATIR_SAYISI = EN_COK_NOT / SUTUN_SAYISI
+
 /**
  * Yeni kâğıdın konumu.
  *
- * Hepsi aynı yere yapışsaydı ikinci kâğıt birincisini örterdi. Basamak basamak
- * sağa ve aşağı iniyor, beşte bir başa dönüyor: masaüstünde üst üste açılan
- * pencerelerin yaptığı şey, aynı sebeple.
+ * Önce köşegen bir basamaktı ve beşte bir başa dönüyordu: altıncı kâğıt
+ * birincinin üstüne oturuyor, tahta dolduğunda kâğıtlar okunmuyordu. Izgara
+ * `EN_COK_NOT` kadar ayrı yer tanımlıyor, yani sınıra kadar hiçbir kâğıt
+ * bir başkasının üstüne düşmüyor. Kullanıcı hepsini yine istediği yere
+ * taşıyabiliyor; burası yalnızca **ilk** yer.
  */
 export function yeniKonum(sira: number): { x: number; y: number } {
-  const basamak = sira % 5
-  return { x: Math.min(1, 0.08 + basamak * 0.14), y: Math.min(1, 0.04 + basamak * 0.16) }
+  const yer = ((sira % EN_COK_NOT) + EN_COK_NOT) % EN_COK_NOT
+  return {
+    // Kenar payı: 0 ile 1 tahtaya yapışık demek ve kâğıt yuvarlak köşeye
+    // dayanıyordu. Pay yatayda daha büyük, çünkü iki sütun yan yana sığıyor.
+    x: serit(yer % SUTUN_SAYISI, SUTUN_SAYISI, 0.06),
+    y: serit(Math.floor(yer / SUTUN_SAYISI), SATIR_SAYISI, 0.03),
+  }
+}
+
+/** `adet` yeri kenar payını koruyarak 0–1 aralığına eşit dağıtır. */
+function serit(indeks: number, adet: number, kenar: number): number {
+  if (adet <= 1) return 0.5
+  return kenar + (indeks * (1 - 2 * kenar)) / (adet - 1)
 }
 
 /** Sıradaki renk — art arda eklenen kâğıtlar farklı renk alıyor. */
@@ -99,7 +123,9 @@ export function notlariNormalize(ham: unknown): NotKagidi[] {
       x: konumuSinirla(typeof n.x === 'number' ? n.x : 0),
       y: konumuSinirla(typeof n.y === 'number' ? n.y : 0),
       bitti: n.bitti === true,
-      olusturma: typeof n.olusturma === 'string' ? n.olusturma : '',
+      // Günü olmayan kayıt eski sürümden kalmış demek; `gununNotlari` onu
+      // bugüne ait saymayıp temizliyor. Tahta zaten günlük, doğru davranış bu.
+      gun: typeof n.gun === 'string' ? n.gun : '',
     })
     if (notlar.length >= EN_COK_NOT) break
   }
@@ -120,11 +146,29 @@ export function yerVarMi(notlar: readonly NotKagidi[]): boolean {
 export function notEkle(
   notlar: readonly NotKagidi[],
   id: string,
-  olusturma: string,
+  gun: string,
 ): NotKagidi[] | null {
   if (!yerVarMi(notlar)) return null
   const { x, y } = yeniKonum(notlar.length)
-  return [...notlar, { id, metin: '', renk: siradakiRenk(notlar.length), x, y, bitti: false, olusturma }]
+  return [
+    ...notlar,
+    { id, metin: '', renk: siradakiRenk(notlar.length), x, y, bitti: false, gun },
+  ]
+}
+
+/**
+ * Tahtayı güne indirger — dünün kâğıtları kalmıyor.
+ *
+ * Yapılacaklar günlük bir şey: dün yazdığı "kimya tekrarı"nı bugün de tahtada
+ * gören kullanıcı, biriken ve hiç bitmeyen bir listeye bakıyor demektir. Kâğıt
+ * silmek zaten kullanıcının kararı, ama **günün sonu** ayrı bir karar değil;
+ * tahtanın kendisi o gün için kuruluyor.
+ *
+ * Saf tutuldu ve "bugün"ü dışarıdan alıyor: takvim saatine bakan bir mantık
+ * test edilemezdi ve gece yarısını beklemek gerekirdi.
+ */
+export function gununNotlari(notlar: readonly NotKagidi[], bugun: string): NotKagidi[] {
+  return notlar.filter((n) => n.gun === bugun)
 }
 
 export function notSil(notlar: readonly NotKagidi[], id: string): NotKagidi[] {

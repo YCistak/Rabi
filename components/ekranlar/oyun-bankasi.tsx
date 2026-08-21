@@ -16,6 +16,7 @@ import {
 import { KURAL_ACIKLAMASI, type YazimKurali } from '@/lib/oyunlar/yazim-havuzu'
 import { NOKTALAMA_ACIKLAMASI, type NoktalamaKurali } from '@/lib/oyunlar/noktalama-havuzu'
 import { BildirimDugmesi, type BildirimKolu } from '@/components/hata-bildir'
+import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { BosDurum, Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
@@ -27,8 +28,15 @@ import { Rabi } from '@/components/maskot/rabi'
  * oynanıyor** — fotoğraflı Yanlış Soru Bankası'ndan farkı bu: oradaki kayıt
  * bakılacak bir görüntü, buradaki çözülecek bir soru.
  *
- * Bir kayıt bankadan ancak üst üste `DUSME_ESIGI` kez doğru bilinince düşüyor.
- * Tek doğru yetmiyor: bir kez tutturmak bilmek değil, hatırlamak olabilir.
+ * Bir kaydın çıkmasının iki yolu var ve ikisi aynı şey değil:
+ *
+ * - **Kazanılan çıkış** — soru turlarda üst üste `DUSME_ESIGI` kez doğru
+ *   bilinir ve kendiliğinden düşer. Tek doğru yetmiyor: bir kez tutturmak
+ *   bilmek değil, hatırlamak olabilir. Havuç yalnızca bunun karşılığı.
+ * - **Elle kaldırma** — karttaki tik. Banka bir borç listesi; öğrendiğine
+ *   kullanıcının kendisi karar veremiyorsa liste büyümekten başka bir şey
+ *   yapmıyor ve bir yerden sonra hiç açılmıyor. Tik havuç vermiyor, çünkü
+ *   ölçtüğü tek şey kullanıcının tuşa basması.
  */
 
 const AILE: Record<OyunId, { zemin: string; yazi: string; dolgu: string }> = {
@@ -80,11 +88,14 @@ type Suzgec = OyunId | 'tumu'
 export function OyunBankasiEkrani({
   banka,
   onTurBaslat,
+  onKaldir,
   bildir,
 }: {
   banka: BankaKaydi[]
   /** Seçilen oyunun bankadaki sorularıyla bir tur açar. */
   onTurBaslat: (oyun: OyunId) => void
+  /** Kaydı elle bankadan çıkarır — "bunu öğrendim". */
+  onKaldir: (id: string) => void
   bildir: BildirimKolu
 }) {
   const [suzgec, setSuzgec] = useState<Suzgec>('tumu')
@@ -109,7 +120,7 @@ export function OyunBankasiEkrani({
         <BosDurum
           simge={<Rabi durum="mutlu" boyut={72} />}
           baslik="Banka boş — iyi haber"
-          aciklama="Mini oyunlarda yanlış bildiğin sorular buraya düşer. Üst üste üç kez doğru bilince kendiliğinden çıkarlar."
+          aciklama="Mini oyunlarda yanlış bildiğin sorular buraya düşer. Üst üste üç kez doğru bilince kendiliğinden çıkar, öğrendiğine karar verdiklerini de tikle kaldırırsın."
         />
       </div>
     )
@@ -174,7 +185,7 @@ export function OyunBankasiEkrani({
       <ul className="space-y-2.5">
         {gorunen.map((kayit) => (
           <li key={kayit.id}>
-            <KayitKarti kayit={kayit} bildir={bildir} />
+            <KayitKarti kayit={kayit} onKaldir={() => onKaldir(kayit.id)} bildir={bildir} />
           </li>
         ))}
       </ul>
@@ -191,7 +202,7 @@ function Baslik({ toplam }: { toplam: number }) {
       </h1>
       <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
         {toplam > 0
-          ? 'Oyunlarda karıştırdıkların. Üst üste üç doğruda düşer.'
+          ? 'Oyunlarda karıştırdıkların. Üst üste üç doğruda düşer, tikle sen de kaldırabilirsin.'
           : 'Oyunlarda karıştırdığın sorular burada birikir.'}
       </p>
     </header>
@@ -228,11 +239,19 @@ function SuzgecCipi({
   )
 }
 
-function KayitKarti({ kayit, bildir }: { kayit: BankaKaydi; bildir: BildirimKolu }) {
+function KayitKarti({
+  kayit,
+  onKaldir,
+  bildir,
+}: {
+  kayit: BankaKaydi
+  onKaldir: () => void
+  bildir: BildirimKolu
+}) {
   const aile = AILE[kayit.soru.oyun]
 
   return (
-    <div className="golge-kart rounded-2xl bg-card p-3.5">
+    <div className="golge-kart relative rounded-2xl bg-card p-3.5">
       <div className="flex items-start gap-2.5">
         <span
           className={cn(
@@ -288,7 +307,27 @@ function KayitKarti({ kayit, bildir }: { kayit: BankaKaydi; bildir: BildirimKolu
         </span>
       </div>
 
-      <BildirimDugmesi soru={kayit.soru} kol={bildir} />
+      {/* Sağ pay tikin yeri: bildirim satırının yazısı tuşun altına girmesin. */}
+      <div className="pr-11">
+        <BildirimDugmesi soru={kayit.soru} kol={bildir} />
+      </div>
+
+      {/*
+        Kaldırma tuşu kartın sağ alt köşesinde, akışın içinde değil.
+
+        Yeri kasıtlı olarak sıradan: kartın asıl işi soruyu göstermek, bu tuş
+        "bununla işim bitti" demenin yolu. Akışa konsaydı bildirim satırıyla
+        aynı ağırlıkta görünür, kart da iki eylemli bir forma dönerdi.
+      */}
+      <button
+        type="button"
+        onClick={onKaldir}
+        aria-label="Bu soruyu bankadan kaldır"
+        title="Öğrendim, bankadan kaldır"
+        className="absolute bottom-2.5 right-2.5 grid size-9 place-items-center rounded-full bg-success-soft text-success transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      >
+        <Check size={18} strokeWidth={3} aria-hidden />
+      </button>
     </div>
   )
 }

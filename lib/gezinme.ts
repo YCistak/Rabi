@@ -71,7 +71,7 @@ export const KARTLAR: KartTanimi[] = [
   {
     id: 'notlar',
     ad: 'Yapılacaklar',
-    aciklama: 'Gününü kâğıtlara yaz',
+    aciklama: 'Bugününü kâğıtlara yaz',
     Simge: StickyNote,
     renk: 'lavanta',
   },
