@@ -178,7 +178,7 @@ export const VARSAYILAN_AYARLAR: Ayarlar = {
   hataBildirimiAcik: true,
   oyunSesi: true,
   oyunMuzigi: true,
-  oyunMuzikTuru: 'arcade',
+  oyunMuzikTuru: 'sakin',
   kurulumTamamlandi: false,
 }
 
@@ -251,7 +251,7 @@ export function ayarlariNormalize(ham: Partial<Ayarlar> | null | undefined): Aya
       : VARSAYILAN_AYARLAR.gunlukHedef,
     // Eski kurulumlarda bu alan yok; bilinmeyen bir değer gelirse müzik hiç
     // çalmazdı, o yüzden bilinen ikiliye zorlanıyor.
-    oyunMuzikTuru: birlesik.oyunMuzikTuru === 'lofi' ? 'lofi' : 'arcade',
+    oyunMuzikTuru: birlesik.oyunMuzikTuru === 'lofi' ? 'lofi' : 'sakin',
   }
 }
 

@@ -103,13 +103,13 @@ const HATIRLATMA_SAATLERI = [8, 12, 16, 18, 19, 20, 21, 22, 23]
  * için müziği tamamen kapatmaktan başka yol bırakmıyordu.
  */
 const OYUN_MUZIK_ADI: Record<OyunMuzikTuru, string> = {
-  arcade: 'Arcade',
+  sakin: 'Sakin',
   lofi: 'Lo-fi',
 }
 
 const OYUN_MUZIK_ACIKLAMA: Record<OyunMuzikTuru, string> = {
-  arcade: 'Hızlı chiptune döngüsü — turun temposuyla aynı, acele ettiriyor.',
-  lofi: 'Pomodoro’nun sakin parçaları. Yavaş; oyunun hızını taşımıyor.',
+  sakin: 'Koddan üretilen yumuşak pad. Davulsuz, çok kısık; arkada durur.',
+  lofi: 'Pomodoro’nun parçaları. Daha dolu; müziğin çaldığı belli olur.',
 }
 
 /** Bayt sayısını okunur hâle getirir: 5242880 → "5,0 MB". */
