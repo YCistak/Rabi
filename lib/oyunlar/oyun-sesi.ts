@@ -46,16 +46,24 @@ const DOSYA_SEVIYESI = 0.42
 let seri = 0
 
 /**
- * Perdenin kaç yarım ton yükselebileceği.
+ * Perdenin kaç kademe yükselebileceği.
  *
  * Tavan şart: sınırsız yükselen bir ses on beşinci doğruda cıva gibi çıkıyor
- * ve ödül olmaktan çıkıp rahatsız ediyor. Sekiz yarım ton, aynı sesin hâlâ
- * aynı ses olarak tanındığı en üst nokta.
+ * ve ödül olmaktan çıkıp rahatsız ediyor. Sekiz kademe, aynı sesin hâlâ aynı
+ * ses olarak tanındığı en üst nokta.
  */
 const EN_COK_KADEME = 8
 
-/** Bir yarım tonun oranı — `playbackRate` çarpanı olarak. */
-const YARIM_TON = Math.pow(2, 1 / 12)
+/**
+ * Bir kademenin oranı — `playbackRate` çarpanı olarak.
+ *
+ * Çeyrek ton (yarım tonun yarısı). Önce yarım tondu ve kulakta bir tam ton
+ * gibi duyuluyordu: art arda gelen doğrularda basamaklar tek tek değil topluca
+ * işitiliyor, üçüncü doğruda ses gözle görülür biçimde başkalaşıyordu. Yarıya
+ * inince tırmanış duyuluyor ama sesin kimliği bozulmuyor — sekiz kademenin
+ * toplamı da bir tam sekizli değil, dört yarım ton.
+ */
+const KADEME = Math.pow(2, 1 / 24)
 
 /**
  * Ses ayarının son bilinen hâli.
@@ -146,7 +154,7 @@ function tamponCal(tur: DosyaliSes, hiz = 1): boolean {
 
 /** Şu anki serinin perde çarpanı. İlk doğru 1, sonrakiler birer yarım ton. */
 function seriPerdesi(): number {
-  return Math.pow(YARIM_TON, Math.min(Math.max(seri - 1, 0), EN_COK_KADEME))
+  return Math.pow(KADEME, Math.min(Math.max(seri - 1, 0), EN_COK_KADEME))
 }
 
 type Nota = {

@@ -204,12 +204,16 @@ export function OyunlarEkrani({
     }
     const muzik = sakinRef.current ?? new OyunMuzigi()
     sakinRef.current = muzik
-    // Ses efektlerinin altında kalmalı: müzik yüksek olursa doğru/yanlış
-    // geri bildirimi duyulmuyor ve oyunun tek geri bildirimi kayboluyor.
-    // Chiptune döneminde 0.42'ydi. Pad sürekli çaldığı için tepe değeri düşse
-    // bile ortalama seviyesi chiptune'un üstüne çıkıyordu; telefon hoparlörünün
-    // bastığı bantta (300 Hz üstü) ölçülüp eskinin ~6 dB altına indirildi.
-    muzik.sesSeviyesi(0.06)
+    /*
+      Ses efektlerinin altında kalmalı: müzik yüksek olursa doğru/yanlış geri
+      bildirimi duyulmuyor ve oyunun tek geri bildirimi kayboluyor.
+
+      Değer 0.06'ydı ve o denge efektler tam seviyedeyken kurulmuştu. Efekt
+      dosyaları 1'den 0.42'ye indirilince (`oyun-sesi.ts`) müzik altta kaldı;
+      aradaki farkı korumak için o kadar geri veriliyor. Efekt seviyesine
+      dokunursan buraya da bak — ikisi tek bir dengenin iki ucu.
+    */
+    muzik.sesSeviyesi(0.1)
     if (gorunur) muzik.basla()
     else muzik.duraklat()
   }, [muzikCalsin, muzikTuru, gorunur])
@@ -222,7 +226,7 @@ export function OyunlarEkrani({
     }
     if (!lofiRef.current) {
       const calar = new SesCalar()
-      calar.sesSeviyesi(0.22)
+      calar.sesSeviyesi(0.28)
       calar.cal(`lofi:${LOFI_PARCALAR[5].dosya}`)
       lofiRef.current = calar
     }

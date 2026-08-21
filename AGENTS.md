@@ -89,10 +89,11 @@ dosyalarına hiç dokunmuyorlar.
 
 | Efekt | Ne zaman | Nerede |
 | --- | --- | --- |
-| Perde yükselmesi | her ardışık doğru, sekiz yarım tona kadar | `oyun-sesi.ts` |
+| Perde yükselmesi | her ardışık doğru, sekiz çeyrek tona kadar | `oyun-sesi.ts` |
 | Sarsıntı | yanlış cevap | kabuk + `oyun-sarsinti` |
 | Süre nabzı + tek uyarı | kalan süre toplamın ¼'ünün altına inince | kabuk + `sure-nabzi` |
 | Boss parlaması | boss sorusu bilinerek kapanınca | kabuk + `boss-parlama` |
+| Kart kalkması | bankada tike basınca | `oyun-bankasi.tsx` + `banka-kalkiyor` |
 | Konfeti | yalnızca yeni rekorda | `TurSonu` + `konfeti` |
 
 Kabuk olayları **sayaçtan türetiyor**, oyunlardan geri çağrı almıyor: `dogru`,
@@ -110,6 +111,25 @@ Perde sayacı da oyunlarda değil modülün içinde: seriyi 18 dosyadan parametr
 olarak geçirmek yerine `oyun-sesi.ts` ardışık `dogru` çağrılarını kendi sayıyor,
 yanlış ve tur bitişi sıfırlıyor. Tavan (`EN_COK_KADEME`) şart — sınırsız yükselen
 bir ses ödül olmaktan çıkıp rahatsız ediyor.
+
+Kademe **çeyrek ton** (`KADEME`), yarım ton değil. Yarım tonken kulakta bir tam
+ton gibi duyuluyordu: art arda gelen doğrularda basamaklar tek tek değil topluca
+işitiliyor ve üçüncü doğruda ses başkalaşıyordu.
+
+Efekt seviyesiyle oyun müziğinin seviyesi (`oyunlar.tsx`, `sesSeviyesi`) tek bir
+dengenin iki ucu: efekt 1'den 0.42'ye inince müzik altta kaldı ve o kadar geri
+verildi. Birine dokunursan ötekine de bak.
+
+Boss parlaması ilk denemede yerinde duran bir altın radyaldi ve iyi durmadı:
+boss zemini açık bir renk ve onun üstünde sabit bir sarı daire ışık gibi değil
+leke gibi görünüyor. Göz parlaklığı değil **yayılmayı** ışık sanıyor — şimdi
+dışa açılan bir halka ve onun arkasında büyüyen bir hâle var, halka ötekinden
+hızlı gidiyor. Yeni bir parlama eklersen aynı kural: büyümeyen ışık, ışık değil.
+
+Bankadaki tik kaydı anında silmiyor; kart önce onaylanıp süzülüyor
+(`KALKMA_SURESI`, CSS'teki süreyle eşleşmeli). Anında silmek dokunuşun
+karşılığını görünmez kılıyordu: liste kısalıyor ama hangi kartın gittiği
+anlaşılmıyordu.
 
 Efekt dosyalarının seviyesi 1 değil (`DOSYA_SEVIYESI`): tam seviyede çalıyorlardı
 ve kullanıcı "çok fazla geliyor" dedi. Efekt oyunun içinden gelen bir işaret,

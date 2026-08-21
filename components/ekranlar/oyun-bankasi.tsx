@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { OyunId } from '@/lib/types'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import {
@@ -239,6 +239,9 @@ function SuzgecCipi({
   )
 }
 
+/** Kartın çıkış animasyonunun süresi (ms) — CSS'teki `bankaKalk` ile eşleşiyor. */
+const KALKMA_SURESI = 420
+
 function KayitKarti({
   kayit,
   onKaldir,
@@ -249,9 +252,35 @@ function KayitKarti({
   bildir: BildirimKolu
 }) {
   const aile = AILE[kayit.soru.oyun]
+  /**
+   * Kaldırma iki adımda.
+   *
+   * Kayıt anında yok olunca dokunuşun karşılığı görünmüyordu: liste kısalıyor
+   * ama hangi kartın gittiği anlaşılmıyor, yanlış karta bastığını fark eden
+   * kullanıcı da neyi kaybettiğini göremiyordu. Kart önce onaylanıp süzülüyor,
+   * silme ondan sonra.
+   */
+  const [kalkiyor, setKalkiyor] = useState(false)
+  const kaldirRef = useRef(onKaldir)
+  kaldirRef.current = onKaldir
+
+  useEffect(() => {
+    if (!kalkiyor) return
+    const zaman = setTimeout(() => kaldirRef.current(), KALKMA_SURESI)
+    return () => clearTimeout(zaman)
+  }, [kalkiyor])
 
   return (
-    <div className="golge-kart relative rounded-2xl bg-card p-3.5">
+    <div
+      className={cn(
+        'golge-kart relative rounded-2xl bg-card p-3.5',
+        kalkiyor && 'banka-kalkiyor',
+      )}
+      // Animasyon sürerken karta ikinci kez basılabilseydi `onKaldir` iki kez
+      // çağrılırdı; kimliğe göre süzüldüğü için zararsız ama tuş da yanıt
+      // vermiş gibi görünürdü.
+      aria-hidden={kalkiyor || undefined}
+    >
       <div className="flex items-start gap-2.5">
         <span
           className={cn(
@@ -321,10 +350,16 @@ function KayitKarti({
       */}
       <button
         type="button"
-        onClick={onKaldir}
+        onClick={() => setKalkiyor(true)}
+        disabled={kalkiyor}
         aria-label="Bu soruyu bankadan kaldır"
         title="Öğrendim, bankadan kaldır"
-        className="absolute bottom-2.5 right-2.5 grid size-9 place-items-center rounded-full bg-success-soft text-success transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        className={cn(
+          'absolute bottom-2.5 right-2.5 grid size-9 place-items-center rounded-full transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+          // Basılınca dolu yeşile dönüyor: kart gitmeden önce kararın alındığı
+          // görünüyor ve gidişin sebebi tikte kalıyor.
+          kalkiyor ? 'tik-dolu bg-success text-white' : 'bg-success-soft text-success',
+        )}
       >
         <Check size={18} strokeWidth={3} aria-hidden />
       </button>
