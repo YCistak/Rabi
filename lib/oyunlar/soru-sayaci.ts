@@ -60,6 +60,21 @@ export function useSoruSayaci({
   useEffect(() => {
     if (!aktif) return
 
+    /*
+      Süresi dolmuş bir soru yeniden işlemeye başlıyorsa yeni bir tur açılmıştır.
+
+      Sayaç `anahtar` değişince sıfırlanıyor ve anahtar genelde soru sırası; ama
+      tur **ilk soruda** bitip hemen yeniden başlatıldığında sıra yine 0 oluyor,
+      anahtar değişmiyor ve yukarıdaki efekt hiç çalışmıyordu. Sonuç: sayaç
+      sıfırda donuyor, süre işlemiyor ve soru sonsuza kadar açık kalıyordu. Her
+      yanlışın turu bitirdiği oyunlarda bu, "bir tur daha"nın en sık hâli.
+    */
+    if (haberVerildi.current) {
+      kalanRef.current = sure
+      haberVerildi.current = false
+      setKalan(sure)
+    }
+
     // Duraklamadan dönüş: hedef zaman, donmuş kalan süreye göre yeniden kuruluyor.
     // Yardım açıkken geçen saniyeler böylece oyuncudan götürülmüyor.
     bitisRef.current = Date.now() + kalanRef.current * 1000
