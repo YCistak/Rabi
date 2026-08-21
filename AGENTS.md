@@ -47,6 +47,26 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
 - Sütun hâlindeki sayılara `rakam` sınıfı (tabular-nums), başlıklara `font-display`.
 - Alt menünün altında kalan içerik için `guvenli-alt`.
 
+## Havuç Mağazası
+
+Eşyalar tamamen kozmetik: hiçbiri çalışmayı kolaylaştırmıyor, puanı etkilemiyor.
+Adlar ve çizimler **jenerik** — gerçek marka, takım, film ya da karakter yok.
+Katalog `lib/magaza/esyalar.ts`, saf mantık `lib/magaza/magaza.ts`, çizimler
+`components/maskot/parcalar/` altında; hepsi ölçülerini
+`components/maskot/olculer.ts` dosyasından okuyor. Yeni eşyanın kimliğini önce
+katalogda tanımla: çizim kayıtları katalogdan türeyen dar bir tiple yazıldığı için
+çizimi unutulan eşya mağazada boş kutucuk olarak değil, derlemede hata olarak çıkar.
+
+Mağazanın iki reyonu var. **Görünüş** kozmetik; **Jokerler** ise tükenen sarf
+malzemesi: katalog `lib/magaza/jokerler.ts`, çanta ayrı bir localStorage
+anahtarında (`rabi-jokerler`) ve kimlik başına adet tutuyor. Hiçbir joker doğru
+cevabı söylemiyor — sahayı daraltıyor, süreye ya da hakka dokunuyor. Cevabı veren
+bir joker rekoru da Oyun Bankası’nı da anlamsızlaştırırdı.
+
+Havuç kazanma mekaniği henüz yok; bakiye şimdilik yalnızca mağazada eksiliyor.
+Jokerlerin tur içinde kullanılması da yazılmadı: stok yalnızca `jokerKullan`
+üzerinden eksilmeli, oyun tarafı geldiğinde de o tek kapı kalmalı.
+
 ## Doğruluk
 
 Puan ve sıralama hesabı **tahmindir** ve arayüzde her zaman böyle sunulur. Tahmini

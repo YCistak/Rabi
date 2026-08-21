@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { AlertTriangle, Check, ChevronRight, Sparkles, Target } from 'lucide-react'
+import { AlertTriangle, Check, ChevronRight, Sparkles, Store, Target } from 'lucide-react'
 import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef, OyunId } from '@/lib/types'
 import { devamsizlikOzeti, gunOzeti, kayitHaritasi, netYaz } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
@@ -138,7 +138,7 @@ export function AnaSayfa({
       {/* Selamlama — tasarımda ad sorulmuyor, kurulumda ad adımı yok. */}
       <header className="flex items-center gap-3 px-0.5 pt-2 pb-1">
         <Rabi durum={maskotDurumu} boyut={58} />
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="text-[13px] font-extrabold tracking-wide text-ikincil">Rabi</p>
           <h1 className="mt-px font-display text-xl font-extrabold tracking-tight text-balance">
             Merhaba 👋
@@ -147,6 +147,19 @@ export function AnaSayfa({
             {durumCumlesi(bugunku.toplam, kalan, hedefTuttu, tamamlanan)}
           </p>
         </div>
+
+        {/* Yalnızca mağaza düğmesi; havuç sayısı mağazanın kendi başlığında.
+            Bakiye burada da yazsaydı ana sayfanın en tepesindeki selamlama
+            satırı iki sayıyla yarışırdı ve bakiye zaten harcanacağı yerde
+            görünüyor. */}
+        <button
+          type="button"
+          onClick={() => onKartAc('magaza')}
+          aria-label="Havuç Mağazası"
+          className="grid size-10 shrink-0 self-start place-items-center rounded-full bg-primary text-primary-foreground transition active:brightness-95"
+        >
+          <Store size={19} aria-hidden />
+        </button>
       </header>
 
       {/* Haftalık özet daveti — biten haftanın özeti izlenmediyse en üstte.

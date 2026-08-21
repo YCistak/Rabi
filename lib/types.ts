@@ -3,6 +3,8 @@
 // sunucu, hesap, senkronizasyon yoktur.
 
 import type { BankaKaydi } from './oyunlar/banka'
+import type { MagazaDurumu } from './magaza/magaza'
+import type { JokerStogu } from './magaza/jokerler'
 
 // ---------------------------------------------------------------------------
 // Deneme
@@ -373,6 +375,14 @@ export type Yedek = {
   oyunBankasi?: BankaKaydi[]
   /** Oyun Bankası'ndan düşen toplam soru sayısı. */
   bankaDusen?: number
+  /**
+   * Havuç bakiyesi ve mağaza koleksiyonu. Eski yedeklerde yok — geri
+   * yüklemede yazılmıyor, kullanıcının mevcut koleksiyonu olduğu gibi kalıyor.
+   */
+  havuc?: number
+  magaza?: MagazaDurumu
+  /** Joker çantası — kimlik başına adet. */
+  jokerler?: JokerStogu
   pomodoroGecmis: PomodoroSeans[]
   /**
    * Pomodoro ayarı. Eski yedeklerde yok — o zaman geri yüklemede yazılmıyor,
