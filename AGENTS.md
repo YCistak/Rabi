@@ -81,6 +81,45 @@ değiştirirsen o testler kırılır; kırılmaları doğru, sayıyı güncellem
 Yeni bir havuç kaynağı eklerken tavan sorusunu sor: kaynak tavansızsa mağaza bir
 süre sonra anlamsızlaşıyor.
 
+## Tur içi efektler
+
+Beş efekt var ve hepsi **ortak koddan** çıkıyor: ses `lib/oyunlar/oyun-sesi.ts`,
+görsel olanlar `components/oyun-kabuk.tsx` ile `app/globals.css`. Oyun
+dosyalarına hiç dokunmuyorlar.
+
+| Efekt | Ne zaman | Nerede |
+| --- | --- | --- |
+| Perde yükselmesi | her ardışık doğru, sekiz yarım tona kadar | `oyun-sesi.ts` |
+| Sarsıntı | yanlış cevap | kabuk + `oyun-sarsinti` |
+| Süre nabzı + tek uyarı | kalan süre toplamın ¼'ünün altına inince | kabuk + `sure-nabzi` |
+| Boss parlaması | boss sorusu bilinerek kapanınca | kabuk + `boss-parlama` |
+| Konfeti | yalnızca yeni rekorda | `TurSonu` + `konfeti` |
+
+Kabuk olayları **sayaçtan türetiyor**, oyunlardan geri çağrı almıyor: `dogru`,
+`yanlis`, `boss` ve `kalan` zaten props olarak geliyor ve bir sayının artması
+"bir şey oldu" demek. 18 oyuna kanca eklemek aynı kuralı 18 kez yazmak olurdu;
+böyle yazınca yeni bir oyun hiçbir şey yapmadan efektlere kavuşuyor.
+
+Boss parlamasında tek incelik şu: oyunlar cevabı **hemen** sayıyor ama soruyu
+geri bildirim bittikten sonra değiştiriyor. Yani doğru sayısı boss hâlâ
+ekrandayken artıyor, boss kapandığı çizimde artmış olmuyor. O yüzden bir bayrak
+(`bossVuruldu`) iki anı birbirine bağlıyor; "kapanırken sayı arttı mı" diye
+bakan bir kural hiç çalışmaz.
+
+Perde sayacı da oyunlarda değil modülün içinde: seriyi 18 dosyadan parametre
+olarak geçirmek yerine `oyun-sesi.ts` ardışık `dogru` çağrılarını kendi sayıyor,
+yanlış ve tur bitişi sıfırlıyor. Tavan (`EN_COK_KADEME`) şart — sınırsız yükselen
+bir ses ödül olmaktan çıkıp rahatsız ediyor.
+
+Efekt dosyalarının seviyesi 1 değil (`DOSYA_SEVIYESI`): tam seviyede çalıyorlardı
+ve kullanıcı "çok fazla geliyor" dedi. Efekt oyunun içinden gelen bir işaret,
+ortamı bastırması gerekmiyor; ama duyulmayan efekt de hiç olmamış demek, o yüzden
+sessize yaklaşmıyor — kapatmak isteyene ayarda anahtar zaten var.
+
+Hepsi `prefers-reduced-motion` altında susuyor. Yeni bir efekt eklersen o
+medya sorgusuna da ekle: buradaki hareketlerin hiçbiri bilgi taşımıyor, bilgi
+sayıda ve renkte duruyor.
+
 ## Oyun Bankası
 
 Bir kayıt iki yoldan çıkıyor ve ikisi aynı şey değil. **Kazanılan çıkış**: soru

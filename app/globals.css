@@ -565,3 +565,111 @@
     animation: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Tur içi efektler
+
+   Dördü de `oyun-kabuk.tsx`'te tetikleniyor, yani tek yerde yazılıp 18 oyuna
+   birden düşüyorlar. Hepsi `prefers-reduced-motion` altında susuyor: hareket
+   burada bilgi taşımıyor, bilgi zaten sayıda ve renkte duruyor.
+   --------------------------------------------------------------------------- */
+
+/*
+  Yanlış cevapta sarsıntı.
+
+  Yanlışın tek işareti ses ve titreşimdi; ekranda hiçbir şey kımıldamıyordu ve
+  sesi kapatan kullanıcı için yanlış ile doğru aynı görünüyordu. Yatay ve kısa:
+  dikey sarsıntı okuma satırını kaydırıyor, uzun olanı da bir sonraki soruya
+  geçişi geciktiriyor.
+*/
+@keyframes oyunSarsinti {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-7px); }
+  30% { transform: translateX(6px); }
+  45% { transform: translateX(-4px); }
+  60% { transform: translateX(3px); }
+  80% { transform: translateX(-1px); }
+}
+
+.oyun-sarsinti {
+  animation: oyunSarsinti 380ms ease-in-out both;
+}
+
+/*
+  Süre tükenirken halkanın nabzı.
+
+  Renk zaten kırmızıya dönüyor ama renk pasif bir işaret: ekranın başka yerine
+  bakan oyuncu onu görmüyor. Hareket görüş alanının kenarından da fark ediliyor.
+  Boss'ta çalışmıyor — orada zaten ekranın çerçevesi atıyor, iki nabız birbirini
+  bozar.
+*/
+@keyframes sureNabzi {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.sure-nabzi {
+  animation: sureNabzi 780ms ease-in-out infinite;
+}
+
+/*
+  Boss yenildiğinde ekrandan geçen parlama.
+
+  Boss'un girişi vardı, yenilişi yoktu: onuncu soruyu bilmek üçüncüyü bilmekle
+  aynı hissettiriyordu. Tek seferlik ve kısa; kalıcı bir kutlama sonraki sorunun
+  önünü keserdi.
+*/
+@keyframes bossParlama {
+  0% { opacity: 0; }
+  25% { opacity: 0.85; }
+  100% { opacity: 0; }
+}
+
+.boss-parlama {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 38%,
+    color-mix(in srgb, var(--warning) 70%, transparent) 0%,
+    transparent 62%
+  );
+  animation: bossParlama 620ms ease-out both;
+}
+
+/*
+  Yeni rekorda konfeti.
+
+  Yalnızca rekorda: her tur sonunda patlasaydı üç turda anlamını yitirirdi.
+  Konum ve gecikme sabit bir tablodan geliyor, rastgele değil — `Math.random`
+  çizim sırasında sunucu ve istemci çıktısını ayırır, statik dışa aktarımda da
+  her yeniden çizimde parçacıklar yerinden oynardı.
+*/
+@keyframes konfetiDus {
+  0% { transform: translateY(-14px) rotate(0deg); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translateY(190px) rotate(420deg); opacity: 0; }
+}
+
+.konfeti {
+  position: absolute;
+  top: 0;
+  width: 7px;
+  height: 11px;
+  border-radius: 2px;
+  animation: konfetiDus 1500ms ease-in forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oyun-sarsinti,
+  .sure-nabzi,
+  .boss-parlama,
+  .konfeti {
+    animation: none;
+  }
+
+  .konfeti {
+    display: none;
+  }
+}
