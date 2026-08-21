@@ -1,10 +1,12 @@
 'use client'
 
 import type { OyunTanimi } from '@/lib/oyunlar/tanim'
+import type { OyunModu } from '@/lib/oyunlar/mod'
 import { vurgulariAyir } from '@/lib/metin'
 import { useGeriKatmani } from '@/lib/geri'
 import { Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
+import { ModSecimi } from '@/components/mod-secimi'
 
 /**
  * Oyun tanıtım penceresi.
@@ -18,6 +20,8 @@ export function OyunTanitim({
   acik,
   rekor,
   baslatir,
+  mod,
+  setMod,
   ekstra,
   onBasla,
   onKapat,
@@ -28,6 +32,13 @@ export function OyunTanitim({
   rekor: number
   /** Düğme turu başlatıyor mu, yoksa yalnızca pencereyi mi kapatıyor. */
   baslatir: boolean
+  /** Seçili tur modu — bütün oyunlarda ortak. */
+  mod: OyunModu
+  /**
+   * Mod seçimi. `null` verilirse seçim hiç çıkmıyor: Oyun Bankası turu modu
+   * dinlemiyor (`lib/oyunlar/mod.ts`), orada seçim sunmak yalan olurdu.
+   */
+  setMod: ((mod: OyunModu) => void) | null
   /**
    * Oyuna özgü başlangıç seçimi (Zihinden İşlem'de işlem türleri). Tur devam
    * ederken "?" ile açılan pencerede verilmez — ayar tur ortasında değişmemeli.
@@ -66,6 +77,14 @@ export function OyunTanitim({
             </li>
           ))}
         </ol>
+
+        {/* Mod seçimi yalnızca turu başlatan pencerede: "?" ile açılan
+            pencerede tur zaten sürüyor ve kural tur ortasında değişmemeli. */}
+        {baslatir && setMod !== null && (
+          <div className="mt-4 border-t border-border pt-4">
+            <ModSecimi secili={mod} onSec={setMod} />
+          </div>
+        )}
 
         {ekstra && <div className="mt-4 border-t border-border pt-4">{ekstra}</div>}
 

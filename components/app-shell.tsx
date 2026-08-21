@@ -62,9 +62,13 @@ import { YanlisBankaEkrani } from '@/components/ekranlar/yanlis-banka'
 import { RozetlerEkrani } from '@/components/ekranlar/rozetler'
 import { MagazaEkrani } from '@/components/ekranlar/magaza'
 import { BASLANGIC_HAVUCU, birikenOdul, seviyeDurumu, tabanla } from '@/lib/seviye'
+import { ODAK_CEZASI, bankaOdulu, cezaDus } from '@/lib/havuc'
+import { notlariNormalize, type NotKagidi } from '@/lib/yapilacaklar'
 import { BOS_STOK, stoguNormalize, type JokerStogu } from '@/lib/magaza/jokerler'
 import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
 import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
+import { YapilacaklarEkrani } from '@/components/ekranlar/yapilacaklar'
+import { HavucKazanci, type HavucKazanciVerisi } from '@/components/havuc-kazanci'
 import { RozetKutlama } from '@/components/rozet-kutlama'
 import { SeviyeKutlama } from '@/components/seviye-kutlama'
 
@@ -161,6 +165,13 @@ export function AppShell() {
   const [odullenen, setOdullenen, seviyeHazir] = useYerelDepo<number>(ANAHTARLAR.seviye, 1)
   const [stokHam, setStok] = useYerelDepo<JokerStogu>(ANAHTARLAR.jokerler, BOS_STOK)
   const jokerler = stoguNormalize(stokHam)
+  const [notlarHam, setNotlar] = useYerelDepo<NotKagidi[]>(ANAHTARLAR.notlar, [])
+  const notlar = notlariNormalize(notlarHam)
+  /**
+   * Havuç kazancının kısa şeridi. Seviye kutlamasından ayrı: bu, turun
+   * ortasında kazanılan küçük ödül ve tam ekran bir kutlamayı hak etmiyor.
+   */
+  const [havucKazanci, setHavucKazanci] = useState<HavucKazanciVerisi | null>(null)
   /**
    * Bankadan açılan tur. Oyun kimliği burada duruyor çünkü turu Oyunlar sekmesi
    * çiziyor ama başlatan Oyun Bankası ekranı — ikisi kardeş, ortak sahibi bu.
@@ -311,6 +322,43 @@ export function AppShell() {
       oyunBankasi.length,
     ],
   )
+
+  /**
+   * Bankadan soru düştü: sayaç ilerliyor, karşılığında havuç veriliyor.
+   *
+   * Ödül aralıktan hesaplanıyor (`lib/havuc.ts`): ayrı bir "ödenmiş" sayacı
+   * tutmak yerine zaten var olan toplam sayacın iki hâli karşılaştırılıyor, tavan
+   * da orada uygulanıyor. Bankadan soru düşürmek uygulamadaki en zor uydurulan
+   * ölçü — bir soruyu üst üste üç kez doğru bilmek demek.
+   */
+  const bankadanDustu = useCallback(
+    (adet: number) => {
+      const yeniToplam = bankaDusen + adet
+      const odul = bankaOdulu(bankaDusen, yeniToplam)
+      setBankaDusen(yeniToplam)
+      if (odul > 0) {
+        setHavuc((onceki) => onceki + odul)
+        setHavucKazanci({
+          miktar: odul,
+          sebep: adet === 1 ? 'Bankadan bir soru düştü' : `Bankadan ${adet} soru düştü`,
+        })
+      }
+    },
+    [bankaDusen, setBankaDusen, setHavuc],
+  )
+
+  /**
+   * Odak kilidi çalışma turu sürerken kırıldı.
+   *
+   * Bakiyeden düşen miktar dönüyor: yetmiyorsa yetmediği kadarı gidiyor ve
+   * ekran "40 havuç gitti" diye yalan söylemiyor. Havucun mağaza dışındaki tek
+   * eksilme yolu burası.
+   */
+  const odakKilidiKirildi = useCallback(() => {
+    const sonuc = cezaDus(havuc, ODAK_CEZASI)
+    setHavuc(sonuc.havuc)
+    return sonuc.dusen
+  }, [havuc, setHavuc])
 
   /** Veriden türeyen seviye; gösterilen seviye daha önce ulaşılanın altına inmiyor. */
   const seviye = tabanla(seviyeDurumu(ilerleme), odullenen)
@@ -601,8 +649,10 @@ export function AppShell() {
               ayar={pomodoroAyar}
               setAyar={setPomodoroAyar}
               onSeansBitti={(seans) => setPomodoroGecmis((o) => [...o, seans])}
+              onKilitKirildi={odakKilidiKirildi}
             />
           )}
+          {ekran === 'notlar' && <YapilacaklarEkrani notlar={notlar} setNotlar={setNotlar} />}
           {ekran === 'soru' && (
             <SoruTakibiEkrani
               kayitlar={gunlukKayitlar}
@@ -671,7 +721,7 @@ export function AppShell() {
               setKayitlar={setOyunlar}
               setGecmis={setOyunGecmisi}
               banka={oyunBankasi}
-              onBankadanDustu={(adet) => setBankaDusen((onceki) => onceki + adet)}
+              onBankadanDustu={bankadanDustu}
               setBanka={setOyunBankasi}
               sesAcik={ayarlar.oyunSesi}
               muzikAcik={ayarlar.oyunMuzigi}
@@ -708,6 +758,7 @@ export function AppShell() {
                 havuc,
                 seviye: odullenen,
                 jokerler,
+                notlar,
                 pomodoroGecmis,
                 pomodoroAyar,
                 hedef,
@@ -728,6 +779,8 @@ export function AppShell() {
       {ekran === 'haftalik-ozet' && (
         <HaftalikOzetEkrani ozet={ozet} sesAcik={ayarlar.oyunSesi} onKapat={ozetiKapat} />
       )}
+
+      <HavucKazanci kazanc={havucKazanci} onKapat={() => setHavucKazanci(null)} />
 
       <RozetKutlama rozetler={kutlanan} onKapat={() => setKutlanan([])} />
 

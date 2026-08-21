@@ -17,11 +17,11 @@ const RENK_SINIFI: Record<KartRengi, string> = {
  * "Daha" sekmesinin bölümleri.
  *
  * Gruplama `lib/gezinme.ts` yerine burada, çünkü yalnızca bu ekrana ait: aynı
- * kart listesi ana sayfada başlıksız bir ızgara olarak çiziliyor. On bir giriş
- * düz bir liste hâlinde kaybolduğu için dört başlığa bölündü.
+ * kart listesi ana sayfada başlıksız bir ızgara olarak çiziliyor. Bir düzine
+ * giriş düz bir liste hâlinde kaybolduğu için dört başlığa bölündü.
  */
 const BOLUMLER: { baslik: string; kartlar: Ekran[] }[] = [
-  { baslik: 'Çalışma', kartlar: ['pomodoro', 'soru', 'yanlis-banka'] },
+  { baslik: 'Çalışma', kartlar: ['pomodoro', 'notlar', 'soru', 'yanlis-banka'] },
   { baslik: 'Denemeler', kartlar: ['deneme', 'siralama', 'istatistik'] },
   { baslik: 'Okul', kartlar: ['okul', 'devamsizlik'] },
   { baslik: 'Motivasyon', kartlar: ['haftalik-ozet', 'hedef', 'rozetler'] },
@@ -94,7 +94,7 @@ export function KartMenusu({
             </h2>
 
             {/* Bir bölümün satırları tek kartın içinde: her satır ayrı kart
-                olsaydı on bir gölge alt alta dizilir, ekran huzursuz olurdu. */}
+                olsaydı bir düzine gölge alt alta dizilir, ekran huzursuz olurdu. */}
             <ul className="golge-kart overflow-hidden rounded-[22px] bg-card">
               {kartlar.map(({ id, ad, aciklama, Simge, renk }) => (
                 <li key={id} className="border-t border-border first:border-t-0">

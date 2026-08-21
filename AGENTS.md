@@ -60,11 +60,76 @@ oyun XP'sinin de ayrı bir toplam tavanı var — oyun mola aktivitesi, ana yol 
 Yeni bir XP kaynağı eklerken önce "bu uydurulabilir mi" diye sor; uydurulabiliyorsa
 tavanla.
 
-Havucun **tek** artma yolu seviye atlamak, tek eksilme yolu mağaza. Ömür boyu
-kazanılabilecek toplam `TOPLAM_HAVUC` ile sabit (≈10.000) ve joker fiyatları ona
-oranla konuldu — `lib/magaza/jokerler.ts` içindeki `denge` testleri bu oranı
-koruyor. Fiyatı ya da XP eğrisini değiştirirsen o testler kırılır; kırılmaları
-doğru, sayıyı güncellemeden geçme.
+Havucun akışları sayılıdır ve hepsi `lib/seviye.ts` ile `lib/havuc.ts` içinde:
+
+- **Artar:** seviye atlayınca (`birikenOdul`) ve Oyun Bankası'ndan soru düşünce
+  (`bankaOdulu`). İkincisinin ömür boyu tavanı var — bankaya bilerek yanlış
+  düşürüp düzelten biri yavaş ama sınırsız havuç basabilirdi.
+- **Azalır:** mağaza ve **odak cezası** (`cezaDus`). Pomodoro sırasında odak
+  kilidini kıran kullanıcıdan en ucuz jokerin fiyatı kadar havuç gider. Kilit
+  kırılabilir olmak zorunda; caydırıcılığı o yüzden bedelin taşıması gerekiyor.
+  Bakiye eksiye inmiyor — borç yok.
+
+Ömür boyu kazanılabilecek toplam `TOPLAM_KAZANC` ile sabit (≈10.800) ve joker
+fiyatları ona oranla konuldu. `lib/magaza/jokerler.test.ts` ile `lib/havuc.test.ts`
+içindeki `denge` testleri bu oranı koruyor: bütün havuç toplansa bile çantayı her
+jokerden dokuzar tane doldurmaya yetmiyor. Fiyatı, XP eğrisini ya da ödül tavanını
+değiştirirsen o testler kırılır; kırılmaları doğru, sayıyı güncellemeden geçme.
+
+Yeni bir havuç kaynağı eklerken tavan sorusunu sor: kaynak tavansızsa mağaza bir
+süre sonra anlamsızlaşıyor.
+
+## Oyun modları
+
+Turun nasıl işleyeceğini **mod** belirliyor (`lib/oyunlar/mod.ts`); seçim bütün
+oyunlarda ortak (`rabi-oyun-modu`) ve tanıtım penceresinden yapılıyor. Zorluk
+oyun başına ayrı duruyor çünkü seviyeler oyundan oyuna gerçekten değişiyor;
+"bugün acele etmek istemiyorum" oyuna göre değişmiyor.
+
+| Mod | Saat | Yanlış | Kayıt |
+| --- | --- | --- | --- |
+| Sıradan | tura ait, 60 sn | süreden 3 sn götürür | var |
+| Turbo | tura ait, 30 sn | süreden 3 sn götürür | var |
+| Ani Ölüm | soruya ait (`SORU_SURESI`) | tur biter | var |
+| Rahat | yok | hiçbir şey | **yok** |
+
+Dört mod olmasının sebebi tek kuralın iki kullanıcıyı birden idare edememesi:
+her yanlışın turu bitirdiği tasarım bileni ödüllendiriyor ama yeni öğrenene
+öğretmeyi bırakıp onu eliyor. Rahat modun karşılığı yok — süresiz bir turda "kaç
+doğru yaptın" sabrı ölçer, bilgiyi değil; o yüzden rekora, istatistiğe ve oyun
+geçmişine yazılmıyor (yanlışlar yine bankaya düşüyor). Bunun tek kapısı
+`oyunlar.tsx` içindeki `turBitti`.
+
+İki kural moddan bağımsız:
+
+- **Oyun Bankası turu** modu dinlemiyor (`etkinMod`): süreli bir tur onu yarıda
+  keser, eleyen bir tur "üç kez doğru bil" işini imkânsız kılardı.
+- **Rahat turda çıkış turu bitiriyor**, doğrudan kapatmıyor; yoksa o turda
+  öğrenilen yanlışlar bankaya hiç düşmezdi.
+
+Sayaç tek yerde: `lib/oyunlar/tur-sayaci.ts`. Toplamı sıfır dönmesi "sayaç yok"
+demek ve arayüz halkayı ona bakarak gizliyor. Yeni bir mod eklersen saatin tura
+mı soruya mı ait olduğuna karar ver — ikisi birden olmaz, `mod.test.ts` bunu
+denetliyor.
+
+## Yapılacaklar tahtası
+
+Araçlardaki not kâğıtları (`lib/yapilacaklar.ts`). Liste değil tahta: kâğıtlar
+istenen yere sürükleniyor ve konum kullanıcının verdiği bilgi — bir listeye
+düzleştirmek onu atmak olurdu. En fazla on kâğıt; sınır tahtanın kendisinden
+geliyor, üst üste binen kâğıtlar okunmuyor.
+
+Konum piksel değil **oran** (0–1) ve kâğıdın sığdığı boşluğa göre ölçülüyor;
+`left: X%` ile `translate(-X%)` eşleşmesi sayesinde çizim tarafı ekran ölçüsü
+bilmek zorunda değil ve kâğıt hiçbir zaman tahtadan taşmıyor. Yedeğe giriyor:
+başka telefona taşınan tahta aynı yerleşimi koruyor.
+
+Kâğıtlar yalnızca o sekmede; uygulamanın üstünde yüzen bir katman değiller. Her
+ekranda görünen bir yapılacak listesi kaygıyı hiç bırakmayan bir arayüz olurdu.
+
+> Dosya adı `notlar.ts` **olamaz**: `.gitignore` kişisel notlar için `notlar.*`
+> deseni taşıyor ve desen tüm ağaçta geçerli. Öyle adlandırılan bir kaynak dosya
+> hem depoya girmiyor hem Tailwind'in tarayıcısından düşüyor.
 
 ## Havuç Mağazası
 
