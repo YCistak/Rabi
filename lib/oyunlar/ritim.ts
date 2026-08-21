@@ -79,7 +79,14 @@ export function bossMu(oyun: OyunId, sira: number): boolean {
  * derse uygun kaldığını `ritim.test.ts` denetliyor — matematiğe yeni bir oyun
  * eklenip buraya yazılmazsa test kırılıyor.
  */
-export const BOSSSUZ_OYUNLAR: readonly OyunId[] = ['islem', 'bolunme', 'aci', 'ucgen', 'koklu']
+export const BOSSSUZ_OYUNLAR: readonly OyunId[] = [
+  'islem',
+  'bolunme',
+  'aci',
+  'ucgen',
+  'koklu',
+  'tuzak',
+]
 
 /** Bu oyunda boss var mı. */
 export function bossluMu(oyun: OyunId): boolean {
@@ -147,6 +154,23 @@ export const SORU_SURESI: Record<OyunId, number> = {
    * aşamasında konumu aramak süreyi asıl harcayan iş.
    */
   periyodik: 15,
+  /**
+   * Zaman Şeridi'nde süre **soru** başına ama soru beş kart.
+   *
+   * Okumak, karar vermek ve sürüklemek üst üste biniyor: beş olayı okumak
+   * tek başına on saniye, dizmek bir o kadar. Eşleştirme oyunlarının el
+   * süresine (35–45 sn) yakın durması tesadüf değil — orada da tek "soru"
+   * birden çok karar demek.
+   */
+  sirala: 40,
+  /**
+   * Kural Tuzağı'nın süresi kısa, çünkü oyunun ölçtüğü şey **hız**.
+   *
+   * Kuralı bilen öğrenci bir saniyede karar veriyor; sekiz saniye sağlama
+   * yapmaya yetmiyor ama okumaya rahat rahat yetiyor. Uzun olsaydı oyun kural
+   * bilgisini değil, sayı tutup deneme becerisini ölçerdi.
+   */
+  tuzak: 8,
 }
 
 /** Boss sorusuna verilen ek süre çarpanı. */
@@ -166,19 +190,22 @@ export function soruSuresi(oyun: OyunId, boss: BossZorlugu | null): number {
   return Math.round(taban * (boss.cetin ? CETIN_SURE_CARPANI : BOSS_SURE_CARPANI))
 }
 
-/**
- * Bosssuz oyunlarda turun soru sayısı.
- *
- * Boss yoksa eleme de yok, eleme yoksa sınırsız tur hiç bitmezdi. Yirmi soru
- * boss aralığının iki katı: matematik turu da sözel turla aynı ritimde
- * ilerliyor, yalnızca sonunda kesiliyor.
- */
-export const MATEMATIK_TUR_SORUSU = 20
+/*
+  Matematik oyunlarında da tur artık sabit soru sayısıyla bitmiyor.
 
-/** Tur bu soruyla biter mi — bosssuz oyunlarda soru sayısı dolduğunda. */
-export function sonSoruMu(oyun: OyunId, sira: number): boolean {
-  return !bossluMu(oyun) && sira >= MATEMATIK_TUR_SORUSU
-}
+  Eskiden bosssuz oyunlar yirmi soru sürer, yanlış cevap turu bitirmezdi:
+  hesap hatası "sıradaki soruya geç" demekti ve yirmi sorunun sonunda tur
+  kendiliğinden kapanırdı. Bunun iki sonucu vardı. Birincisi, bilmediğin
+  soruyu rastgele denemek bedavaydı — bir tuş takımına gelişigüzel sayı
+  yazmanın maliyeti yoktu. İkincisi, rekor yirmide tavan yapıyordu: yirmi
+  doğruyu bir kez çıkaran oyuncunun bir daha kıracak rekoru kalmıyordu ve
+  ilerlemeyi ölçen sayı ölü bir sayıya dönüyordu.
+
+  Artık bütün oyunlarda tek kural var: **her yanlış turu bitirir** ve tur
+  sınırsız (`TUR_SORU_SINIRI`'na kadar). Matematiği ayıran tek şey boss'un
+  olmaması — sorular üretiliyor, "bir üst zorluk havuzu" diye bir karşılığı
+  yok. (`bossluMu`)
+*/
 
 /**
  * Bu cevap turu bitirir mi.

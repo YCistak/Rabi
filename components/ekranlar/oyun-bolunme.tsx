@@ -24,7 +24,7 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { bolunmedenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
-import { MATEMATIK_TUR_SORUSU, soruSuresi } from '@/lib/oyunlar/ritim'
+import { TUR_SORU_SINIRI, elerMi, soruSuresi } from '@/lib/oyunlar/ritim'
 import { useSoruSayaci } from '@/lib/oyunlar/soru-sayaci'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
@@ -42,19 +42,19 @@ import {
   TurSonu,
   YanlisKarti,
   rekorCumlesi,
+  type Eleme,
 } from '@/components/oyun-kabuk'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
 /** Cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms). İşlem oyunuyla aynı ritim. */
 const CEVAP_BEKLEMESI = 1100
 /**
- * Turdaki soru sayısı.
+ * Turda hazırlanan en fazla soru.
  *
- * Matematik oyunlarında boss yok, dolayısıyla eleme de yok — turu bitirecek
- * bir şey gerekiyor. Yirmi soru boss aralığının iki katı: sözel oyunlarla aynı
- * ritim, yalnızca sonunda kesiliyor. (`ritim.ts`)
+ * Tur sınırsız: yanlış cevap turu bitiriyor (`ritim.ts`), o yüzden bir soru
+ * sayısı hedefi yok — bu sabit yalnızca sonsuz dizi üretilemediği için var.
  */
-const TUR_SORUSU = MATEMATIK_TUR_SORUSU
+const TUR_SORUSU = TUR_SORU_SINIRI
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
@@ -162,6 +162,8 @@ export function BolunmeOyunuEkrani({
   const [yanlisGirdileri, setYanlisGirdileri] = useState<(Girdi | null)[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
 
+  /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
+  const [elendi, setElendi] = useState<Eleme>(false)
   /** Yardım açıkken sayaç duruyor. */
   const [duraklatilan, setDuraklatilan] = useState(false)
 
@@ -201,6 +203,7 @@ export function BolunmeOyunuEkrani({
     setYanlisGirdileri([])
     setGeriBildirim(null)
     setSonuc(null)
+    setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
   }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru, secili])
@@ -272,10 +275,15 @@ export function BolunmeOyunuEkrani({
       zamanlayiciRef.current = setTimeout(() => {
         setGeriBildirim(null)
         setGirilen('')
-        setSira((s) => s + 1)
+        if (elerMi(dogruMu, bankaTuru)) {
+          setElendi('yanlis')
+          turBitir(cevaplarRef.current)
+        } else {
+          setSira((s) => s + 1)
+        }
       }, CEVAP_BEKLEMESI)
     },
-    [asama, geriBildirim, sira, sorular],
+    [asama, bankaTuru, geriBildirim, sira, sorular, turBitir],
   )
 
   // Kalan tek basamaklı (bölen en çok 10), o yüzden yazılan rakam eskisini
@@ -377,6 +385,7 @@ export function BolunmeOyunuEkrani({
             bolenler={turdekiBolenler}
             rekor={turBasiRekor.current}
             bankaTuru={bankaTuru}
+            elendi={elendi}
             onTekrar={turBaslat}
             onCik={onCik}
             bildir={bildir}
@@ -659,6 +668,7 @@ function SonucGorunumu({
   bolenler,
   rekor,
   bankaTuru,
+  elendi,
   onTekrar,
   onCik,
   bildir,
@@ -668,6 +678,7 @@ function SonucGorunumu({
   bolenler: readonly number[]
   rekor: number
   bankaTuru: boolean
+  elendi: Eleme
   onTekrar: () => void
   onCik: () => void
   bildir: BildirimKolu
@@ -692,6 +703,7 @@ function SonucGorunumu({
       rekor={rekor}
       yeniRekor={yeniRekor}
       bankaTuru={bankaTuru}
+      elendi={elendi}
       altBaslik={
         yigilma
           ? `${YONELME[yigilma.bolen]} bölünmede takılıyorsun.`

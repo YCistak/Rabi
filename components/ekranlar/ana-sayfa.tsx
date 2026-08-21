@@ -8,6 +8,7 @@ import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
 import { sozSec } from '@/lib/sozler'
 import { siraYaz } from '@/lib/siralama'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
+import { kisayollar } from '@/lib/son-kullanilan'
 import { OYUNLAR } from '@/lib/oyunlar/tanim'
 import { Halka, Kart, Not } from '@/components/ui'
 import { GeriSayim } from '@/components/geri-sayim'
@@ -52,6 +53,8 @@ const OYUN_RENGI: Record<OyunId, string> = {
   siniflandirma: 'bg-byl-kart',
   hucre: 'bg-byl-kart',
   periyodik: 'bg-kmy-kart',
+  sirala: 'bg-trh-kart',
+  tuzak: 'bg-isl-kart',
 }
 
 export function AnaSayfa({
@@ -61,6 +64,8 @@ export function AnaSayfa({
   hedef,
   guncelSiralama,
   ozetBekliyor,
+  sonAraclar,
+  sonOyunlar,
   onKartAc,
   onDahaGit,
   onOyunlaraGit,
@@ -73,6 +78,9 @@ export function AnaSayfa({
   guncelSiralama: number | null
   /** Biten haftanın özeti henüz izlenmediyse davet kartı gösterilir. */
   ozetBekliyor: boolean
+  /** En son açılan araçlar ve oynanan oyunlar — kısayol kutucuklarının sırası. */
+  sonAraclar: string[]
+  sonOyunlar: string[]
   onKartAc: (ekran: Ekran) => void
   /** "Araçlar" başlığındaki "Tümü" — kart menüsünün tamamına götürür. */
   onDahaGit: () => void
@@ -84,6 +92,9 @@ export function AnaSayfa({
   // Söz gün boyunca sabit kalsın diye tohum olarak tarih verilir; her yeniden
   // çizimde değişse okunamadan kaybolurdu.
   const soz = useMemo(() => sozSec(tarih), [tarih])
+
+  const gosterilenAraclar = useMemo(() => kisayollar(KARTLAR, sonAraclar), [sonAraclar])
+  const gosterilenOyunlar = useMemo(() => kisayollar(OYUNLAR, sonOyunlar), [sonOyunlar])
 
   const bugunku = useMemo(
     () => gunOzeti(gunlukKayitlar.find((k) => k.tarih === tarih)),
@@ -245,14 +256,14 @@ export function AnaSayfa({
         </Not>
       )}
 
-      {/* Araçlar — kart menüsünün ilk dördü. Sıra `KARTLAR`'da belirleniyor. */}
+      {/* Araçlar — en son açılan dördü; hiç açılmamışsa `KARTLAR`'ın başı. */}
       <Kart>
         <KartUstu baslik="Araçlar 🧰" aciklama="Çalışmanı takip et">
           <TumuBaglantisi onSec={onDahaGit} />
         </KartUstu>
 
         <div className="grid grid-cols-4 gap-2.5">
-          {KARTLAR.slice(0, 4).map(({ id, ad, Simge, renk }) => (
+          {gosterilenAraclar.map(({ id, ad, Simge, renk }) => (
             <Kutucuk
               key={id}
               ad={ad}
@@ -266,19 +277,19 @@ export function AnaSayfa({
         </div>
       </Kart>
 
-      {/* Oyunlar */}
+      {/* Oyunlar — en son oynanan dördü; hiç oynanmamışsa `OYUNLAR`'ın başı. */}
       <Kart>
         <KartUstu baslik="Oyunlar 🎮" aciklama="Eğlenerek pratik yap">
           <TumuBaglantisi onSec={onOyunlaraGit} />
         </KartUstu>
 
-        <div className="grid grid-cols-3 gap-2.5">
-          {OYUNLAR.map((oyun) => (
+        <div className="grid grid-cols-4 gap-2.5">
+          {gosterilenOyunlar.map((oyun) => (
             <Kutucuk
               key={oyun.id}
               ad={oyun.ad}
               yuz={OYUN_RENGI[oyun.id]}
-              oran="aspect-[1/0.66]"
+              oran="aspect-[1/0.92]"
               onSec={onOyunlaraGit}
             >
               <span className="text-2xl leading-none" aria-hidden>

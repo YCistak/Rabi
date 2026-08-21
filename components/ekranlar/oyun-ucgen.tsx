@@ -27,7 +27,7 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { ucgendenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
-import { MATEMATIK_TUR_SORUSU, soruSuresi } from '@/lib/oyunlar/ritim'
+import { TUR_SORU_SINIRI, elerMi, soruSuresi } from '@/lib/oyunlar/ritim'
 import { useSoruSayaci } from '@/lib/oyunlar/soru-sayaci'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
@@ -43,6 +43,7 @@ import {
   TurSonu,
   YanlisKarti,
   rekorCumlesi,
+  type Eleme,
 } from '@/components/oyun-kabuk'
 import { OyunSekli } from '@/components/oyun-sekil'
 import { OyunTanitim } from '@/components/oyun-tanitim'
@@ -58,13 +59,12 @@ import { OyunTanitim } from '@/components/oyun-tanitim'
 /** Cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms). */
 const CEVAP_BEKLEMESI = 900
 /**
- * Turdaki soru sayısı.
+ * Turda hazırlanan en fazla soru.
  *
- * Matematik oyunlarında boss yok, dolayısıyla eleme de yok — turu bitirecek
- * bir şey gerekiyor. Yirmi soru boss aralığının iki katı: sözel oyunlarla aynı
- * ritim, yalnızca sonunda kesiliyor. (`ritim.ts`)
+ * Tur sınırsız: yanlış cevap turu bitiriyor (`ritim.ts`), o yüzden bir soru
+ * sayısı hedefi yok — bu sabit yalnızca sonsuz dizi üretilemediği için var.
  */
-const TUR_SORUSU = MATEMATIK_TUR_SORUSU
+const TUR_SORUSU = TUR_SORU_SINIRI
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
@@ -121,6 +121,8 @@ export function UcgenOyunuEkrani({
   const [cevaplar, setCevaplar] = useState<Cevap<UcgenSorusu>[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
 
+  /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
+  const [elendi, setElendi] = useState<Eleme>(false)
   /** Yardım açıkken sayaç duruyor. */
   const [duraklatilan, setDuraklatilan] = useState(false)
 
@@ -157,6 +159,7 @@ export function UcgenOyunuEkrani({
     setCevaplar([])
     setGeriBildirim(null)
     setSonuc(null)
+    setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
   }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru])
@@ -221,18 +224,26 @@ export function UcgenOyunuEkrani({
     geriBildir(dogruMu)
 
 
-    zamanlayiciRef.current = setTimeout(() => {
-      setGeriBildirim(null)
-      setSira((s) => s + 1)
-    }, CEVAP_BEKLEMESI)
+    ilerle(dogruMu)
   }
 
+  /** Cevaptan sonra: yanlışsa tur biter, doğruysa sıradaki soru gelir. */
+  const ilerle = (dogruMu: boolean) => {
+    zamanlayiciRef.current = setTimeout(() => {
+      setGeriBildirim(null)
+      if (elerMi(dogruMu, bankaTuru)) {
+        setElendi('yanlis')
+        turBitir(cevaplarRef.current)
+      } else {
+        setSira((s) => s + 1)
+      }
+    }, CEVAP_BEKLEMESI)
+  }
 
   /**
    * Süre dolması cevap vermemekle aynı: soru pas geçilmiş sayılıyor.
    *
-   * Matematik oyunlarında boss yok, dolayısıyla eleme de yok — süre dolunca
-   * tur bitmiyor, sıradaki soruya geçiliyor.
+   * Yanlış sayıldığı için turu da bitiriyor — beklemek de bilmemek.
    */
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || geriBildirim !== null) return
@@ -244,10 +255,10 @@ export function UcgenOyunuEkrani({
     setGeriBildirim({ secilen: null, dogruMu: false, soru: gecerli.soru })
     oyunSesiCal('yanlis', sesAcik)
 
-    zamanlayiciRef.current = setTimeout(() => {
-      setGeriBildirim(null)
-      setSira((s) => s + 1)
-    }, CEVAP_BEKLEMESI)
+    ilerle(false)
+    // `ilerle` her renderda yeniden kuruluyor; sayaç yalnızca güncel olanı
+    // çağırsın diye bağımlılıklar bilerek dar tutuldu.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asama, geriBildirim, sesAcik, sira, sorular])
 
   const { kalan, toplam } = useSoruSayaci({
@@ -304,6 +315,7 @@ export function UcgenOyunuEkrani({
             sonuc={sonuc}
             rekor={turBasiRekor.current}
             bankaTuru={bankaTuru}
+            elendi={elendi}
             onTekrar={turBaslat}
             onCik={onCik}
             bildir={bildir}
@@ -424,6 +436,7 @@ function SonucGorunumu({
   sonuc,
   rekor,
   bankaTuru,
+  elendi,
   onTekrar,
   onCik,
   bildir,
@@ -431,6 +444,7 @@ function SonucGorunumu({
   sonuc: { ozet: TurOzeti<UcgenSorusu>; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
+  elendi: Eleme
   onTekrar: () => void
   onCik: () => void
   bildir: BildirimKolu
@@ -448,6 +462,7 @@ function SonucGorunumu({
       rekor={rekor}
       yeniRekor={yeniRekor}
       bankaTuru={bankaTuru}
+      elendi={elendi}
       altBaslik={
         bankaTuru
           ? 'Banka soruları — üst üste üç doğruda düşerler.'
