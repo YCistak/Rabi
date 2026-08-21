@@ -18,6 +18,7 @@ import {
   SORU_TURU_ORNEGI,
   TUM_SORU_TURLERI,
   havuzlariSec,
+  siklariYenile,
   turHazirla,
   type Havuzlar,
   type OyunSorusu,
@@ -235,11 +236,13 @@ export function YazimOyunuEkrani({
     setSorular(
       bankaTuru
         ? turHazirla(bankaHavuzu).map((soru) => ({ soru, boss: false }))
-        : bossYerlestir(
+        : // Sıra havuzun sonuna gelince başa dönüyor; şıklar orada yeniden
+          // diziliyor ki tekrar eden soru aynı yerden cevaplanmasın.
+          bossYerlestir(
             turHazirla(zorluktaHavuz(secili, zorluk)),
             turHazirla(zorluktaHavuz(secili, bossZorlugu(zorluk).zorluk)),
             'yazim',
-          ),
+          ).map(({ soru, boss }) => ({ soru: siklariYenile(soru), boss })),
     )
     setSira(0)
     setCevaplar([])

@@ -2,6 +2,7 @@ import type { YazimSorusu } from './yazim-havuzu'
 import { YAZIM_HAVUZU } from './yazim-havuzu'
 import type { NoktalamaSorusu } from './noktalama-havuzu'
 import { ISARET_ADI, ISARET_SIMGESI, NOKTALAMA_HAVUZU } from './noktalama-havuzu'
+import { siklariDiz } from './sik-dizilimi'
 import { karistir } from './tur'
 
 /**
@@ -97,11 +98,8 @@ function harmanla<T>(bir: readonly T[], iki: readonly T[], rastgele: () => numbe
 function yazimdanSoru(soru: YazimSorusu, rastgele: () => number): OyunSorusu {
   const dogruSik: Sik = { metin: soru.dogru, dogruMu: true }
   const yanlisSik: Sik = { metin: soru.yanlis, dogruMu: false }
-  return {
-    tur: 'yazim',
-    soru,
-    siklar: rastgele() < 0.5 ? [dogruSik, yanlisSik] : [yanlisSik, dogruSik],
-  }
+  const [ilk, ikinci] = siklariDiz([dogruSik, yanlisSik], (s) => s.metin, rastgele)
+  return { tur: 'yazim', soru, siklar: [ilk, ikinci] }
 }
 
 /**
@@ -122,11 +120,8 @@ function noktalamadanSoru(soru: NoktalamaSorusu, rastgele: () => number): OyunSo
     altYazi: ISARET_ADI[soru.dogruIsaret],
     dogruMu: false,
   }
-  return {
-    tur: 'noktalama',
-    soru,
-    siklar: rastgele() < 0.5 ? [aranan, celdirici] : [celdirici, aranan],
-  }
+  const [ilk, ikinci] = siklariDiz([aranan, celdirici], (s) => s.metin, rastgele)
+  return { tur: 'noktalama', soru, siklar: [ilk, ikinci] }
 }
 
 /**
@@ -137,6 +132,23 @@ function noktalamadanSoru(soru: NoktalamaSorusu, rastgele: () => number): OyunSo
  * tarafa düşeceği de her soruda ayrıca atılıyor — sabit olsaydı oyuncu birkaç
  * soruda konumu ezberler, soruya bakmayı bırakırdı.
  */
+/**
+ * Şıkları yeniden kurar.
+ *
+ * `bossYerlestir` sıra havuzun sonuna gelince başa dönüyor ve aynı soru
+ * nesnesini olduğu gibi tekrar veriyor; şıklar soruyla birlikte bir kez
+ * kurulduğu için ikinci gösterimde aynı yerde kalırlardı. Sıra örüldükten
+ * sonra her soru buradan geçiriliyor.
+ */
+export function siklariYenile(
+  soru: OyunSorusu,
+  rastgele: () => number = Math.random,
+): OyunSorusu {
+  return soru.tur === 'yazim'
+    ? yazimdanSoru(soru.soru, rastgele)
+    : noktalamadanSoru(soru.soru, rastgele)
+}
+
 export function turHazirla(
   havuzlar: Havuzlar = VARSAYILAN_HAVUZLAR,
   rastgele: () => number = Math.random,

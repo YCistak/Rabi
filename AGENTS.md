@@ -35,8 +35,10 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   Vurgu mavi (`--primary` #4A8FE7), ikinci kimlik rengi mercan (`--ikincil` #EF5A52),
   zemin mavimsi kâğıt (`--background` #EDF1FD). Renk **derse** ait, oyuna değil:
   `yzm` (Türkçe, pembe) · `isl` (Matematik, krem) · `edb` (Edebiyat, lavanta) ·
-  `trh` (Tarih, deniz mavisi) · `byl` (Biyoloji, yeşil), her biri `-koyu` ve
-  `-ok` tonuyla.
+  `cog` (Coğrafya, yeşil) · `trh` (Tarih, deniz mavisi) · `byl` (Biyoloji, fıstık) ·
+  `kmy` (Kimya, morumsu pembe), her biri `-kart`, `-koyu` ve `-ok` tonuyla.
+  Periyodik tablonun bölge renkleri (`--pt-*`) ailelerden ayrı durur: aile
+  "hangi ders" der, onlar tablonun içindeki bilgiyi taşır.
   Kart yüzeyi `golge-kart` sınıfıyla: açık temada gölge, koyu temada ince çerçeve.
 - Yazı tipi tek: **Nunito**. Başlık ayrı aile değil ayrı kalınlık — `font-display`
   hâlâ var ama Nunito'ya çözülüyor; başlıklar `font-extrabold`, gövde `font-medium`.

@@ -147,6 +147,14 @@ export const SORU_SURESI: Record<OyunId, number> = {
    */
   hucre: 9,
   /**
+   * Periyodik tabloda süre soru başına değil **aşama** başına.
+   *
+   * On beş saniye, atom numarasını tabloda gözle bulup şıkka dokunmaya
+   * yetiyor: sembol aşamasında tabloya bakmak bile gerekmiyor, ad
+   * aşamasında konumu aramak süreyi asıl harcayan iş.
+   */
+  periyodik: 15,
+  /**
    * Zaman Şeridi'nde süre **soru** başına ama soru beş kart.
    *
    * Okumak, karar vermek ve sürüklemek üst üste biniyor: beş olayı okumak

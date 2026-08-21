@@ -16,6 +16,8 @@ import { ORTAK_BOYUTU } from './ortak-havuzu'
 import { SINIFLANDIRMA_BOYUTU } from './siniflandirma-havuzu'
 import { HUCRE_BOYUTU } from './hucre-havuzu'
 import { IPUCU_SAYISI } from './hucre'
+import { ILK_YIRMI, PERIYODIK_BOYUTU } from './periyodik-havuzu'
+import { SIK_SAYISI as PERIYODIK_SIK } from './periyodik'
 import { SIRALA_BOYUTU } from './sirala-havuzu'
 import { BOSS_KART_SAYISI, KART_SAYISI, TAM_BONUS } from './sirala'
 import { TUZAK_BOYUTU } from './tuzak-havuzu'
@@ -42,7 +44,14 @@ import {
  * tek bir ızgaraya sığmayacak ve hangi oyunun hangi derse çalıştığı
  * kaybolacaktı. Sınıflandırma sonradan değil, şimdi kuruluyor.
  */
-export type DersId = 'turkce' | 'matematik' | 'edebiyat' | 'cografya' | 'tarih' | 'biyoloji'
+export type DersId =
+  | 'turkce'
+  | 'matematik'
+  | 'edebiyat'
+  | 'cografya'
+  | 'tarih'
+  | 'biyoloji'
+  | 'kimya'
 
 export type DersTanimi = {
   id: DersId
@@ -54,10 +63,10 @@ export type DersTanimi = {
    *
    * Renk artık oyuna değil **derse** bağlı: aynı derse çalışan bütün oyunlar
    * aynı rengi paylaşıyor, böylece renk bir kimlik taşıyor. (Ailelerin adları
-   * ilk oyunlardan geliyor: yzm=yazım, isl=işlem, edb=edebiyat, trh=tarih,
-   * byl=biyoloji.)
+   * ilk oyunlardan geliyor: yzm=yazım, isl=işlem, edb=edebiyat, cog=coğrafya,
+   * trh=tarih, byl=biyoloji, kmy=kimya.)
    */
-  aile: 'yzm' | 'isl' | 'edb' | 'cog' | 'trh' | 'byl'
+  aile: 'yzm' | 'isl' | 'edb' | 'cog' | 'trh' | 'byl' | 'kmy'
 }
 
 export const DERSLER: DersTanimi[] = [
@@ -102,6 +111,13 @@ export const DERSLER: DersTanimi[] = [
     aciklama: 'Canlılar, sınıflandırma, hücre',
     ikon: '🧬',
     aile: 'byl',
+  },
+  {
+    id: 'kimya',
+    ad: 'Kimya',
+    aciklama: 'Periyodik tablo, element',
+    ikon: '🧪',
+    aile: 'kmy',
   },
 ]
 
@@ -417,6 +433,24 @@ export const OYUNLAR: OyunTanimi[] = [
       `Şıkka dokununca kart çevrilir ve arkası görünür. Dokunmazsan kart kapalı kalır — cevabı görmeden geçmiş olursun.`,
       `Doğru/yanlış sayacı puandan ayrı işler: geç bilmek de doğrudur, yalnızca daha az puan getirir. Rekor yine doğru sayısına göre tutulur.`,
       `Havuzda ${HUCRE_BOYUTU} organel var: 9. sınıf hücre ünitesinin tamamı. Tur bitince bilemediklerin görevleriyle birlikte listelenir.`,
+    ],
+  },
+  {
+    id: 'periyodik',
+    ders: 'kimya',
+    ad: 'Periyodik Tablo',
+    kisaAciklama: 'Atom numarasından elementi bul',
+    ikon: '⚗️',
+    nasilOynanir: [
+      `Ekranda periyodik tablonun tamamı var ama hücrelerde **yalnızca atom numarası** yazıyor: sembolü de adı da yazsaydı cevap ekranda dururdu.`,
+      `Sorulan element tabloda yanıp söner. Nerede durduğuna bak — grubu ve periyodu, cevabı çoğu zaman kendi başına veriyor.`,
+      `İlk ${ILK_YIRMI} elementte önce **adı** sorulur; doğru bilirsen hemen ardından **sembolü** gelir. Sonrasında ad da verilir, yalnızca sembol sorulur — kimse 47'nin gümüş olduğunu ezberlemez, ama sembolünün Ag olduğunu bilmek gerekir.`,
+      `Her soruda ${PERIYODIK_SIK} şık var ve yanlış şık rastgele değil: adı sorulurken **aynı gruptan** bir element, sembolü sorulurken adından türetilebilecek yanlış sembol geliyor — bakıra "Ba", altına "Al" demek gibi.`,
+      `Renkler bölgeleri gösteriyor: alkali metaller, toprak alkaliler, geçiş metalleri, zayıf metaller, yarı metaller, ametaller, halojenler, soy gazlar, lantanitler ve aktinitler. Alttaki şeritte hangi rengin ne olduğu yazıyor.`,
+      `Her aşamanın kendi süresi var: ${SORU_SURESI.periyodik} saniye. Süre dolarsa yanlış sayılır.`,
+      `**Tek yanlış turu bitirir.** Bilmediğin soruyu şansa bırakmak bedava değil; tur, ilk hatanda kapanır ve sonucun kaydedilir.`,
+      `Tur sınırsız: ${BOSS_ARALIGI} soruda bir **boss** gelir, seçtiğin seviyenin bir üstünden. Ekran kızarır, çerçeve atmaya başlar, süren uzar — soru daha zor, hakkın yine tek.`,
+      `Havuzda ${PERIYODIK_BOYUTU} element var: TYT'de gerçekten sorulanlar. Tablo 118'in tamamını çiziyor ama Oganesson hiç sorulmuyor.`,
     ],
   },
   {

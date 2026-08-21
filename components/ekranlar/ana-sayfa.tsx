@@ -52,6 +52,7 @@ const OYUN_RENGI: Record<OyunId, string> = {
   ortak: 'bg-byl-kart',
   siniflandirma: 'bg-byl-kart',
   hucre: 'bg-byl-kart',
+  periyodik: 'bg-kmy-kart',
   sirala: 'bg-trh-kart',
   tuzak: 'bg-isl-kart',
 }
