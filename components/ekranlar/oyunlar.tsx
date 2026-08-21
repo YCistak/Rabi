@@ -176,22 +176,25 @@ export function OyunlarEkrani({
   // sonra çalmaya devam etmesi ise uygulama görev listesinden silinene kadar
   // sürüyordu.
   const gorunur = useUygulamaGorunur()
-  const arcadeRef = useRef<OyunMuzigi | null>(null)
+  const sakinRef = useRef<OyunMuzigi | null>(null)
   const lofiRef = useRef<SesCalar | null>(null)
 
   const muzikCalsin = acikOyun !== null && muzikAcik
 
   useEffect(() => {
-    if (!muzikCalsin || muzikTuru !== 'arcade') {
-      arcadeRef.current?.kapat()
-      arcadeRef.current = null
+    if (!muzikCalsin || muzikTuru !== 'sakin') {
+      sakinRef.current?.kapat()
+      sakinRef.current = null
       return
     }
-    const muzik = arcadeRef.current ?? new OyunMuzigi()
-    arcadeRef.current = muzik
+    const muzik = sakinRef.current ?? new OyunMuzigi()
+    sakinRef.current = muzik
     // Ses efektlerinin altında kalmalı: müzik yüksek olursa doğru/yanlış
     // geri bildirimi duyulmuyor ve oyunun tek geri bildirimi kayboluyor.
-    muzik.sesSeviyesi(0.42)
+    // Chiptune döneminde 0.42'ydi. Pad sürekli çaldığı için tepe değeri düşse
+    // bile ortalama seviyesi chiptune'un üstüne çıkıyordu; telefon hoparlörünün
+    // bastığı bantta (300 Hz üstü) ölçülüp eskinin ~6 dB altına indirildi.
+    muzik.sesSeviyesi(0.06)
     if (gorunur) muzik.basla()
     else muzik.duraklat()
   }, [muzikCalsin, muzikTuru, gorunur])
@@ -215,8 +218,8 @@ export function OyunlarEkrani({
   // Ekrandan çıkarken bağlamlar da kapanmalı; yukarıdaki efektler duraklatmakla yetiniyor.
   useEffect(
     () => () => {
-      arcadeRef.current?.kapat()
-      arcadeRef.current = null
+      sakinRef.current?.kapat()
+      sakinRef.current = null
       lofiRef.current?.kapat()
       lofiRef.current = null
     },

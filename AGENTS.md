@@ -45,6 +45,39 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
 - Sütun hâlindeki sayılara `rakam` sınıfı (tabular-nums), başlıklara `font-display`.
 - Alt menünün altında kalan içerik için `guvenli-alt`.
 
+## Seviye ve havuç
+
+Seviye **türetilmiş**: kayıtta XP sayacı yok, her açılışta mevcut veriden yeniden
+hesaplanıyor (`lib/seviye.ts`). Böylece aylardır veri girmiş kullanıcı sistemi ilk
+gördüğünde hak ettiği seviyede başlıyor. `rabi-seviye` altında yalnızca **ulaşılan
+en yüksek seviye** duruyor; o sayı hem seviyenin geri gitmesini hem aynı ödülün
+ikinci kez dağıtılmasını engelliyor.
+
+XP'nin kuralı rozetlerinkiyle aynı (`lib/rozetler.ts`): soru sayısı elle giriliyor,
+o yüzden soru XP'sinin hem günlük hem ömür boyu tavanı var. Zaman isteyen ölçüler
+(pomodoro dakikası, seri günü, bankadan düşen soru) tavansız ve seviyenin omurgası;
+oyun XP'sinin de ayrı bir toplam tavanı var — oyun mola aktivitesi, ana yol değil.
+Yeni bir XP kaynağı eklerken önce "bu uydurulabilir mi" diye sor; uydurulabiliyorsa
+tavanla.
+
+Havucun **tek** artma yolu seviye atlamak, tek eksilme yolu mağaza. Ömür boyu
+kazanılabilecek toplam `TOPLAM_HAVUC` ile sabit (≈10.000) ve joker fiyatları ona
+oranla konuldu — `lib/magaza/jokerler.ts` içindeki `denge` testleri bu oranı
+koruyor. Fiyatı ya da XP eğrisini değiştirirsen o testler kırılır; kırılmaları
+doğru, sayıyı güncellemeden geçme.
+
+## Havuç Mağazası
+
+Satılan tek şey joker; tavşan özelleştirmesi kaldırıldı. Katalog
+`lib/magaza/jokerler.ts`, çanta `rabi-jokerler` anahtarında kimlik başına adet
+tutuyor. Hiçbir joker doğru cevabı söylemiyor — sahayı daraltıyor, süreye ya da
+hakka dokunuyor. Cevabı veren bir joker rekoru da Oyun Bankası'nı da
+anlamsızlaştırırdı. Güçlü jokerlerin ayrıca seviye şartı var (`enAzSeviye`);
+kilitli joker gizlenmiyor, kilitli gösteriliyor.
+
+Jokerlerin tur içinde kullanılması henüz yazılmadı: stok yalnızca `jokerKullan`
+üzerinden eksilmeli, oyun tarafı geldiğinde de o tek kapı kalmalı.
+
 ## Doğruluk
 
 Puan ve sıralama hesabı **tahmindir** ve arayüzde her zaman böyle sunulur. Tahmini

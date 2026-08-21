@@ -30,6 +30,7 @@ import { VARSAYILAN_SABLON_ID } from './sablonlar'
 import { egitimYili } from './hesap'
 import { dakikayiKirp, saatiKirp } from './hatirlatma'
 import { yeniId } from './utils'
+import { stoguNormalize, type JokerStogu } from './magaza/jokerler'
 
 export const ANAHTARLAR = {
   denemeler: 'rabi-denemeler',
@@ -103,6 +104,21 @@ export const ANAHTARLAR = {
   hataBildirimleri: 'rabi-hata-bildirimleri',
   /** Bildirimleri gruplamaya yarayan anonim cihaz numarası; yedeğe girmiyor. */
   cihazKimligi: 'rabi-cihaz-kimligi',
+  /**
+   * Havuç bakiyesi. Yalnızca seviye atlayarak artıyor, yalnızca mağazada
+   * eksiliyor.
+   */
+  havuc: 'rabi-havuc',
+  /**
+   * Ulaşılan en yüksek seviye — aynı zamanda "ödülü verilmiş" seviye.
+   *
+   * Seviyenin kendisi kayıtta durmuyor, her açılışta veriden türetiliyor
+   * (`lib/seviye.ts`). Bu sayı iki iş görüyor: veri silinince seviyenin geri
+   * gitmesini engelliyor ve aynı seviyenin havucunun ikinci kez dağıtılmasını.
+   */
+  seviye: 'rabi-seviye',
+  /** Joker çantası — kimlik başına adet. */
+  jokerler: 'rabi-jokerler',
   ayarlar: 'rabi-ayarlar',
   tema: 'rabi-tema',
   sonBildirim: 'rabi-son-bildirim',
@@ -116,7 +132,12 @@ const GORUNUM_ANAHTARLARI: string[] = [ANAHTARLAR.tema]
  * "Tüm veriyi sil" bunları da temizlemeli, yoksa sıfırlanmış bir uygulamada
  * eski veri artıkları kalırdı.
  */
-const ESKI_ANAHTARLAR = ['rabi-gecmis-yillar', 'rabi-okul-dersleri']
+const ESKI_ANAHTARLAR = [
+  'rabi-gecmis-yillar',
+  'rabi-okul-dersleri',
+  // Tavşan özelleştirmesi kaldırıldı; kayıt artık hiçbir yerde okunmuyor.
+  'rabi-magaza',
+]
 
 /**
  * Tek seferlik taşıma: okul notları ders ders girilirken bitmiş yılların
@@ -157,7 +178,7 @@ export const VARSAYILAN_AYARLAR: Ayarlar = {
   hataBildirimiAcik: true,
   oyunSesi: true,
   oyunMuzigi: true,
-  oyunMuzikTuru: 'arcade',
+  oyunMuzikTuru: 'sakin',
   kurulumTamamlandi: false,
 }
 
@@ -230,7 +251,7 @@ export function ayarlariNormalize(ham: Partial<Ayarlar> | null | undefined): Aya
       : VARSAYILAN_AYARLAR.gunlukHedef,
     // Eski kurulumlarda bu alan yok; bilinmeyen bir değer gelirse müzik hiç
     // çalmazdı, o yüzden bilinen ikiliye zorlanıyor.
-    oyunMuzikTuru: birlesik.oyunMuzikTuru === 'lofi' ? 'lofi' : 'arcade',
+    oyunMuzikTuru: birlesik.oyunMuzikTuru === 'lofi' ? 'lofi' : 'sakin',
   }
 }
 
@@ -371,6 +392,9 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       oyunGecmisi: oyunGecmisiniCoz(nesne.oyunGecmisi),
       oyunBankasi: bankayiCoz(nesne.oyunBankasi),
       bankaDusen: sayi(nesne.bankaDusen),
+      havuc: sayi(nesne.havuc),
+      seviye: sayi(nesne.seviye),
+      jokerler: stoguNormalize(nesne.jokerler as JokerStogu | undefined),
       pomodoroGecmis: dizi<PomodoroSeans>(nesne.pomodoroGecmis),
       // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
       // kullanıcının mevcut pomodoro ayarına dokunulmuyor.
@@ -576,6 +600,15 @@ export function yedegiUygula(yedek: Yedek) {
   yaz(ANAHTARLAR.oyunGecmisi, yedek.oyunGecmisi)
   yaz(ANAHTARLAR.oyunBankasi, yedek.oyunBankasi ?? [])
   yaz(ANAHTARLAR.bankaDusen, yedek.bankaDusen ?? 0)
+  // Eski yedeklerde havuç yok; o zaman kullanıcının mevcut bakiyesi korunuyor.
+  if (yedek.havuc !== undefined) yaz(ANAHTARLAR.havuc, yedek.havuc)
+  /*
+    Seviye kaydı yazılmazsa geri yükleyen kullanıcı yedekteki veriden yeniden
+    seviye atlar ve ödülü **ikinci kez** alırdı: yedek dosyasını tekrar tekrar
+    yüklemek havuç basmanın yolu olurdu.
+  */
+  if (yedek.seviye !== undefined) yaz(ANAHTARLAR.seviye, yedek.seviye)
+  if (yedek.jokerler) yaz(ANAHTARLAR.jokerler, yedek.jokerler)
   yaz(ANAHTARLAR.pomodoroGecmis, yedek.pomodoroGecmis)
   // Eski yedeklerde alan yok; o zaman kullanıcının mevcut ayarı korunuyor.
   if (yedek.pomodoroAyar) yaz(ANAHTARLAR.pomodoroAyar, yedek.pomodoroAyar)

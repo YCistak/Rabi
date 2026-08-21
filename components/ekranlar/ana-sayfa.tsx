@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { AlertTriangle, Check, ChevronRight, Sparkles, Target } from 'lucide-react'
+import { AlertTriangle, Carrot, Check, ChevronRight, Sparkles, Store, Target } from 'lucide-react'
 import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef, OyunId } from '@/lib/types'
 import { devamsizlikOzeti, gunOzeti, kayitHaritasi, netYaz } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
@@ -10,6 +10,7 @@ import { siraYaz } from '@/lib/siralama'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
 import { kisayollar } from '@/lib/son-kullanilan'
 import { OYUNLAR } from '@/lib/oyunlar/tanim'
+import { seviyeUnvani, type SeviyeDurumu } from '@/lib/seviye'
 import { Halka, Kart, Not } from '@/components/ui'
 import { GeriSayim } from '@/components/geri-sayim'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
@@ -61,6 +62,8 @@ export function AnaSayfa({
   gunlukKayitlar,
   devamsizlik,
   hedef,
+  seviye,
+  havuc,
   guncelSiralama,
   ozetBekliyor,
   sonAraclar,
@@ -73,6 +76,10 @@ export function AnaSayfa({
   gunlukKayitlar: GunlukKayit[]
   devamsizlik: Devamsizlik[]
   hedef: Hedef | null
+  /** Türetilen seviye durumu — şeritteki sayı ve ilerleme çubuğu. */
+  seviye: SeviyeDurumu
+  /** Havuç bakiyesi; seviyeyle aynı şeritte duruyor. */
+  havuc: number
   /** Son denemelerden çıkan tahmini sıralama; deneme yoksa null. */
   guncelSiralama: number | null
   /** Biten haftanın özeti henüz izlenmediyse davet kartı gösterilir. */
@@ -137,7 +144,7 @@ export function AnaSayfa({
       {/* Selamlama — tasarımda ad sorulmuyor, kurulumda ad adımı yok. */}
       <header className="flex items-center gap-3 px-0.5 pt-2 pb-1">
         <Rabi durum={maskotDurumu} boyut={58} />
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="text-[13px] font-extrabold tracking-wide text-ikincil">Rabi</p>
           <h1 className="mt-px font-display text-xl font-extrabold tracking-tight text-balance">
             Merhaba 👋
@@ -146,7 +153,51 @@ export function AnaSayfa({
             {durumCumlesi(bugunku.toplam, kalan, hedefTuttu, tamamlanan)}
           </p>
         </div>
+
+        {/* Yalnızca mağaza düğmesi. Sayılar selamlamanın değil, hemen altındaki
+            seviye şeridinin işi: burada da yazsalardı üç satırlık selamlama
+            iki sayıyla yarışırdı. */}
+        <button
+          type="button"
+          onClick={() => onKartAc('magaza')}
+          aria-label="Havuç Mağazası"
+          className="grid size-10 shrink-0 self-start place-items-center rounded-full bg-primary text-primary-foreground transition active:brightness-95"
+        >
+          <Store size={19} aria-hidden />
+        </button>
       </header>
+
+      {/* Seviye şeridi.
+          Selamlamanın hemen altında: kullanıcının kendi durumu, günün verisinden
+          önce gelir. Havuç bakiyesi de burada duruyor çünkü ikisi aynı şeyin iki
+          yüzü — havuç yalnızca seviye atlayınca kazanılıyor. Şeride dokunmak
+          mağazayı açıyor, kazanç ile harcama arasındaki yol tek dokunuş olsun. */}
+      <button
+        type="button"
+        onClick={() => onKartAc('magaza')}
+        className="golge-kart w-full rounded-2xl bg-card px-4 py-3 text-left transition active:brightness-95"
+        aria-label={`Seviye ${seviye.seviye}, ${havuc} havuç — Havuç Mağazası`}
+      >
+        <div className="flex items-baseline justify-between gap-2">
+          <span className="font-display font-extrabold">
+            <span className="rakam text-primary">Seviye {seviye.seviye}</span>
+            <span className="ml-1.5 text-[13px] font-bold text-muted-foreground">
+              {seviyeUnvani(seviye.seviye)}
+            </span>
+          </span>
+          <span className="inline-flex shrink-0 items-center gap-1 text-sm font-extrabold text-isl-koyu">
+            <Carrot size={15} strokeWidth={2.6} aria-hidden />
+            <span className="rakam">{havuc}</span>
+          </span>
+        </div>
+
+        <span className="mt-2 block h-1.5 overflow-hidden rounded-full bg-muted">
+          <span
+            className="block h-full rounded-full bg-primary transition-[width]"
+            style={{ width: `${Math.round(seviye.oran * 100)}%` }}
+          />
+        </span>
+      </button>
 
       {/* Haftalık özet daveti — biten haftanın özeti izlenmediyse en üstte.
           Ana sayfanın en görünür yeri burası; kart menüsüne konsaydı özet

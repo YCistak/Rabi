@@ -37,6 +37,7 @@ import {
 import { UygulamaSecici } from '@/components/odak/uygulama-secici'
 import { SINIF_SECENEKLERI, egitimYili, katsayiYaz, mezunMu, sinifAdi } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
+import type { JokerStogu } from '@/lib/magaza/jokerler'
 import {
   elenenSoruSayisi,
   tumVeriyiSil,
@@ -102,13 +103,13 @@ const HATIRLATMA_SAATLERI = [8, 12, 16, 18, 19, 20, 21, 22, 23]
  * için müziği tamamen kapatmaktan başka yol bırakmıyordu.
  */
 const OYUN_MUZIK_ADI: Record<OyunMuzikTuru, string> = {
-  arcade: 'Arcade',
+  sakin: 'Sakin',
   lofi: 'Lo-fi',
 }
 
 const OYUN_MUZIK_ACIKLAMA: Record<OyunMuzikTuru, string> = {
-  arcade: 'Hızlı chiptune döngüsü — turun temposuyla aynı, acele ettiriyor.',
-  lofi: 'Pomodoro’nun sakin parçaları. Yavaş; oyunun hızını taşımıyor.',
+  sakin: 'Koddan üretilen yumuşak pad. Davulsuz, çok kısık; arkada durur.',
+  lofi: 'Pomodoro’nun parçaları. Daha dolu; müziğin çaldığı belli olur.',
 }
 
 /** Bayt sayısını okunur hâle getirir: 5242880 → "5,0 MB". */
@@ -153,6 +154,10 @@ export function AyarlarEkrani({
     /** Eski yedeklerde yok; `Yedek` tipinde de isteğe bağlı. */
     oyunBankasi?: BankaKaydi[]
     bankaDusen?: number
+    /** Havuç bakiyesi ve ödülü verilmiş seviye — ikisi birlikte yedeğe giriyor. */
+    havuc?: number
+    seviye?: number
+    jokerler?: JokerStogu
     pomodoroGecmis: PomodoroSeans[]
     /** Kilitli uygulama listesi burada; yedekten dönen kullanıcı yeniden seçmesin. */
     pomodoroAyar: PomodoroAyar
