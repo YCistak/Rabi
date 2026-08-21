@@ -126,8 +126,25 @@ describe('ucgenSiklari', () => {
 
   it('doğru şık her iki tarafa da düşebiliyor', () => {
     const soru = ucgenTuruHazirla(1)[0]
-    expect(ucgenSiklari(soru, () => 0.2)[0]).toEqual(ucgenCevabi(soru))
-    expect(ucgenSiklari(soru, () => 0.8)[1]).toEqual(ucgenCevabi(soru))
+    const soldakiler = new Set<string>()
+    for (let i = 0; i < 40; i++) soldakiler.add(kenarMetni(ucgenSiklari(soru)[0]))
+    expect(soldakiler.size).toBe(2)
+  })
+
+  /*
+    Oyun Bankası aynı üçgeni üç kez doğru bilinene kadar soruyor. Cevap her
+    seferinde aynı tarafta dursaydı soru şekle değil konuma dönüşürdü;
+    `siklariDiz` art arda gelen iki gösterimin aynı sıraya düşmesini
+    engelliyor.
+  */
+  it('aynı soru üst üste aynı dizilimle gelmiyor', () => {
+    const soru = ucgenTuruHazirla(1)[0]
+    let onceki = kenarMetni(ucgenSiklari(soru)[0])
+    for (let i = 0; i < 20; i++) {
+      const simdiki = kenarMetni(ucgenSiklari(soru)[0])
+      expect(simdiki).not.toBe(onceki)
+      onceki = simdiki
+    }
   })
 })
 

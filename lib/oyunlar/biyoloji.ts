@@ -1,3 +1,4 @@
+import { siklariDiz } from './sik-dizilimi'
 import { karistir } from './tur'
 import { SIK_SAYISI, type Sik } from './coktan-secmeli'
 import type { Zorluk } from './ritim'
@@ -58,18 +59,21 @@ export function soruKur(
 /**
  * Bir sorunun şıkları.
  *
- * Dizilim her soruda yeniden atılıyor: doğru şık hep aynı yerde olsaydı oyuncu
+ * Dizilim her soruda yeniden atılıyor ve `siklariDiz` aynı kümenin üst üste
+ * aynı sıraya düşmesini de engelliyor: doğru şık hep aynı yerde olsaydı oyuncu
  * birkaç soruda konumu ezberler, soruyu okumayı bırakırdı.
  */
 export function siklariKur(
   soru: BiyolojiSorusu,
   rastgele: () => number = Math.random,
 ): BiyolojiSikki[] {
-  return karistir([soru.dogru, ...soru.celdiriciler], rastgele).map((metin) => ({
-    deger: metin,
-    metin,
-    dogruMu: metin === soru.dogru,
-  }))
+  return siklariDiz([soru.dogru, ...soru.celdiriciler], (metin) => metin, rastgele).map(
+    (metin) => ({
+      deger: metin,
+      metin,
+      dogruMu: metin === soru.dogru,
+    }),
+  )
 }
 
 /**

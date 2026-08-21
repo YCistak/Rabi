@@ -6,7 +6,7 @@
  */
 
 import { BULUNABILIR_ALAN, ILLER, type Il } from './harita-havuzu'
-import { karistir } from './tur'
+import { siklariDiz } from './sik-dizilimi'
 
 /**
  * Soru tipi.
@@ -55,7 +55,7 @@ export function siklariKur(
   havuz: readonly Il[] = ILLER,
 ): string[] {
   const celdiriciler = enYakinlar(il, SIK_SAYISI - 1, havuz)
-  return karistir([il, ...celdiriciler], rastgele).map((a) => a.ad)
+  return siklariDiz([il, ...celdiriciler], (a) => a.ad, rastgele).map((a) => a.ad)
 }
 
 /**

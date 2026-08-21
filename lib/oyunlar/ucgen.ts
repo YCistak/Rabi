@@ -1,3 +1,4 @@
+import { siklariDiz } from './sik-dizilimi'
 import { arasinda, sec } from './tur'
 import {
   TUVAL_GENISLIK,
@@ -100,13 +101,20 @@ export function ucgenCevabi(soru: UcgenSorusu): Kenar {
   return soru[soru.bilinmeyen]
 }
 
-/** Şıklar: doğru kenar ve çeldirici, karışık sırada. */
+/**
+ * Şıklar: doğru kenar ve çeldirici, karışık sırada.
+ *
+ * Dizilimi `siklariDiz` kuruyor: Oyun Bankası aynı üçgeni tekrar tekrar
+ * soruyor ve cevap her seferinde aynı tarafta dursaydı soru şekle değil
+ * konuma dönüşürdü.
+ */
 export function ucgenSiklari(
   soru: UcgenSorusu,
   rastgele: () => number = Math.random,
 ): [Kenar, Kenar] {
   const dogru = ucgenCevabi(soru)
-  return rastgele() < 0.5 ? [dogru, soru.celdirici] : [soru.celdirici, dogru]
+  const [ilk, ikinci] = siklariDiz([dogru, soru.celdirici], kenarMetni, rastgele)
+  return [ilk, ikinci]
 }
 
 /** Şekildeki açılar. Pisagor üçlüsünde açı verilmiyor — verilse soru ikiye bölünürdü. */

@@ -25,6 +25,8 @@ import { BOZUKLUK_ADI, type BozuklukTuru } from './anlatim-havuzu'
 import { altSinir, ustSinir, type KokluSorusu } from './koklu'
 import type { BiyolojiSorusu } from './biyoloji'
 import type { OrganelSorusu } from './hucre-havuzu'
+import type { PeriyodikAsamasi } from './periyodik'
+import { elementBul } from './periyodik-havuzu'
 import type { SiraliOlay } from './sirala-havuzu'
 import { dogruSira, yilMetni, type SiralamaSorusu } from './sirala'
 import type { TuzakKurali } from './tuzak-havuzu'
@@ -103,6 +105,12 @@ export type BankaSorusu =
   // İpuçları da kayıtta: banka turunda kart yeniden açılıyor ve ipuçları
   // olmadan oyun oynanamaz.
   | { oyun: 'hucre'; hucre: OrganelSorusu }
+  /**
+   * Elementin yalnızca atom numarası saklanıyor: adı da sembolü de tablodan
+   * okunuyor ve tabloyla çelişemiyorlar. `asama` kayıtta çünkü aynı element
+   * hem "adı ne" hem "sembolü ne" diye sorulabiliyor.
+   */
+  | { oyun: 'periyodik'; numara: number; asama: PeriyodikAsamasi }
   /**
    * Sıralama sorusu beş (boss'ta altı) olayı birden taşıyor.
    *
@@ -267,6 +275,14 @@ export function hucredenBanka(soru: OrganelSorusu): BankaSorusu {
   return { oyun: 'hucre', hucre: soru }
 }
 
+/** Aşama dışarıdan geliyor: soru elementin kendisi değil, elementin bir yüzü. */
+export function periyodiktenBanka(
+  element: { numara: number },
+  asama: PeriyodikAsamasi,
+): BankaSorusu {
+  return { oyun: 'periyodik', numara: element.numara, asama }
+}
+
 /** Kayıt doğru sırayla yazılıyor: listede okunan şey doğru cevap. */
 export function siraladanBanka(soru: SiralamaSorusu): BankaSorusu {
   return { oyun: 'sirala', olaylar: dogruSira(soru) }
@@ -329,6 +345,10 @@ export function bankaKimligi(soru: BankaSorusu): string {
       return `${soru.oyun}:${soru.biyoloji.soru}`
     case 'hucre':
       return `hucre:${soru.hucre.organel}`
+    // Aynı element hem adıyla hem sembolüyle sorulabiliyor; ikisi ayrı
+    // beceri, ayrı kayıt.
+    case 'periyodik':
+      return `periyodik:${soru.asama}:${soru.numara}`
     // Olay adları sıralanarak birleşiyor: aynı beş olay farklı karışık düzenle
     // gelse de aynı soru sayılmalı.
     case 'sirala':
@@ -380,6 +400,13 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
     // hiçbir şey öğretmezdi.
     case 'hucre':
       return soru.hucre.ipuclari[soru.hucre.ipuclari.length - 1]
+    case 'periyodik': {
+      const element = elementBul(soru.numara)
+      // Ad soruluyorsa ad yazılamaz: liste cevabı ele verirdi.
+      return soru.asama === 'ad'
+        ? `${soru.numara} numaralı element`
+        : `${element?.ad ?? soru.numara} · ${soru.numara}`
+    }
     // Listede olaylar yılsız duruyor: yıl cevabın kendisi.
     case 'sirala':
       return soru.olaylar.map((o) => o.olay).join(' · ')
@@ -430,6 +457,11 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
       return soru.biyoloji.dogru
     case 'hucre':
       return soru.hucre.organel
+    case 'periyodik': {
+      const element = elementBul(soru.numara)
+      if (!element) return String(soru.numara)
+      return soru.asama === 'ad' ? element.ad : element.sembol
+    }
     case 'sirala':
       return soru.olaylar.map((o) => yilMetni(o.yil)).join(' → ')
     case 'tuzak':
@@ -542,6 +574,7 @@ const BOS_DAGILIM: Record<OyunId, number> = {
   ortak: 0,
   siniflandirma: 0,
   hucre: 0,
+  periyodik: 0,
   sirala: 0,
   tuzak: 0,
 }
