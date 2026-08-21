@@ -4,6 +4,7 @@
 
 import type { BankaKaydi } from './oyunlar/banka'
 import type { MagazaDurumu } from './magaza/magaza'
+import type { JokerStogu } from './magaza/jokerler'
 
 // ---------------------------------------------------------------------------
 // Deneme
@@ -377,6 +378,8 @@ export type Yedek = {
    */
   havuc?: number
   magaza?: MagazaDurumu
+  /** Joker çantası — kimlik başına adet. */
+  jokerler?: JokerStogu
   pomodoroGecmis: PomodoroSeans[]
   /**
    * Pomodoro ayarı. Eski yedeklerde yok — o zaman geri yüklemede yazılmıyor,

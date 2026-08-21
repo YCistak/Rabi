@@ -67,6 +67,7 @@ import {
   magazayiNormalize,
   type MagazaDurumu,
 } from '@/lib/magaza/magaza'
+import { BOS_STOK, stoguNormalize, type JokerStogu } from '@/lib/magaza/jokerler'
 import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
 import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
 import { RozetKutlama } from '@/components/rozet-kutlama'
@@ -152,6 +153,9 @@ export function AppShell() {
   const [havuc, setHavuc] = useYerelDepo<number>(ANAHTARLAR.havuc, BASLANGIC_HAVUCU)
   const [magazaHam, setMagaza] = useYerelDepo<MagazaDurumu>(ANAHTARLAR.magaza, BOS_MAGAZA)
   const magaza = magazayiNormalize(magazaHam)
+  /** Joker çantası. Kozmetikten ayrı tutuluyor: bunlar tükenen sarf malzemesi. */
+  const [stokHam, setStok] = useYerelDepo<JokerStogu>(ANAHTARLAR.jokerler, BOS_STOK)
+  const jokerler = stoguNormalize(stokHam)
   /**
    * Bankadan açılan tur. Oyun kimliği burada duruyor çünkü turu Oyunlar sekmesi
    * çiziyor ama başlatan Oyun Bankası ekranı — ikisi kardeş, ortak sahibi bu.
@@ -503,7 +507,14 @@ export function AppShell() {
             <YanlisBankaEkrani sorular={yanlisSorular} setSorular={setYanlisSorular} />
           )}
           {ekran === 'magaza' && (
-            <MagazaEkrani havuc={havuc} setHavuc={setHavuc} durum={magaza} setDurum={setMagaza} />
+            <MagazaEkrani
+              havuc={havuc}
+              setHavuc={setHavuc}
+              durum={magaza}
+              setDurum={setMagaza}
+              stok={jokerler}
+              setStok={setStok}
+            />
           )}
           {ekran === 'oyun-bankasi' && (
             <OyunBankasiEkrani
@@ -581,7 +592,6 @@ export function AppShell() {
               ozetBekliyor={ozetBekliyor}
               sonAraclar={sonAraclar}
               sonOyunlar={sonOyunlar}
-              havuc={havuc}
               onKartAc={aracAc}
               onDahaGit={() => setSekme('daha')}
               onOyunlaraGit={() => setSekme('oyunlar')}
@@ -629,6 +639,7 @@ export function AppShell() {
                 bankaDusen,
                 havuc,
                 magaza,
+                jokerler,
                 pomodoroGecmis,
                 pomodoroAyar,
                 hedef,

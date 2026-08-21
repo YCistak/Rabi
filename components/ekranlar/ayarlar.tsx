@@ -38,6 +38,7 @@ import { UygulamaSecici } from '@/components/odak/uygulama-secici'
 import { SINIF_SECENEKLERI, egitimYili, katsayiYaz, mezunMu, sinifAdi } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
 import type { MagazaDurumu } from '@/lib/magaza/magaza'
+import type { JokerStogu } from '@/lib/magaza/jokerler'
 import {
   elenenSoruSayisi,
   tumVeriyiSil,
@@ -157,6 +158,7 @@ export function AyarlarEkrani({
     /** Havuç bakiyesi ve mağaza koleksiyonu — ikisi de yedeğe giriyor. */
     havuc?: number
     magaza?: MagazaDurumu
+    jokerler?: JokerStogu
     pomodoroGecmis: PomodoroSeans[]
     /** Kilitli uygulama listesi burada; yedekten dönen kullanıcı yeniden seçmesin. */
     pomodoroAyar: PomodoroAyar

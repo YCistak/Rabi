@@ -55,7 +55,15 @@ Katalog `lib/magaza/esyalar.ts`, saf mantık `lib/magaza/magaza.ts`, çizimler
 katalogda tanımla: çizim kayıtları katalogdan türeyen dar bir tiple yazıldığı için
 çizimi unutulan eşya mağazada boş kutucuk olarak değil, derlemede hata olarak çıkar.
 
+Mağazanın iki reyonu var. **Görünüş** kozmetik; **Jokerler** ise tükenen sarf
+malzemesi: katalog `lib/magaza/jokerler.ts`, çanta ayrı bir localStorage
+anahtarında (`rabi-jokerler`) ve kimlik başına adet tutuyor. Hiçbir joker doğru
+cevabı söylemiyor — sahayı daraltıyor, süreye ya da hakka dokunuyor. Cevabı veren
+bir joker rekoru da Oyun Bankası’nı da anlamsızlaştırırdı.
+
 Havuç kazanma mekaniği henüz yok; bakiye şimdilik yalnızca mağazada eksiliyor.
+Jokerlerin tur içinde kullanılması da yazılmadı: stok yalnızca `jokerKullan`
+üzerinden eksilmeli, oyun tarafı geldiğinde de o tek kapı kalmalı.
 
 ## Doğruluk
 

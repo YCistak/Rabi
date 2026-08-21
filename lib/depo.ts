@@ -31,6 +31,7 @@ import { egitimYili } from './hesap'
 import { dakikayiKirp, saatiKirp } from './hatirlatma'
 import { yeniId } from './utils'
 import { magazayiNormalize, type MagazaDurumu } from './magaza/magaza'
+import { stoguNormalize, type JokerStogu } from './magaza/jokerler'
 
 export const ANAHTARLAR = {
   denemeler: 'rabi-denemeler',
@@ -112,6 +113,14 @@ export const ANAHTARLAR = {
   havuc: 'rabi-havuc',
   /** Satın alınan ve giyilen eşyalar. */
   magaza: 'rabi-magaza',
+  /**
+   * Joker çantası — kimlik başına adet.
+   *
+   * Kozmetikten ayrı anahtar: jokerler tükeniyor ve tur bittikçe
+   * değişecekler, koleksiyon ise satın alındığı gibi duruyor. Aynı
+   * anahtarda toplansalardı her tur koleksiyonu da yeniden yazardı.
+   */
+  jokerler: 'rabi-jokerler',
   ayarlar: 'rabi-ayarlar',
   tema: 'rabi-tema',
   sonBildirim: 'rabi-son-bildirim',
@@ -382,6 +391,7 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       bankaDusen: sayi(nesne.bankaDusen),
       havuc: sayi(nesne.havuc),
       magaza: magazayiNormalize(nesne.magaza as Partial<MagazaDurumu> | undefined),
+      jokerler: stoguNormalize(nesne.jokerler as JokerStogu | undefined),
       pomodoroGecmis: dizi<PomodoroSeans>(nesne.pomodoroGecmis),
       // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
       // kullanıcının mevcut pomodoro ayarına dokunulmuyor.
@@ -590,6 +600,7 @@ export function yedegiUygula(yedek: Yedek) {
   // Eski yedeklerde havuç yok; o zaman kullanıcının mevcut bakiyesi korunuyor.
   if (yedek.havuc !== undefined) yaz(ANAHTARLAR.havuc, yedek.havuc)
   if (yedek.magaza) yaz(ANAHTARLAR.magaza, yedek.magaza)
+  if (yedek.jokerler) yaz(ANAHTARLAR.jokerler, yedek.jokerler)
   yaz(ANAHTARLAR.pomodoroGecmis, yedek.pomodoroGecmis)
   // Eski yedeklerde alan yok; o zaman kullanıcının mevcut ayarı korunuyor.
   if (yedek.pomodoroAyar) yaz(ANAHTARLAR.pomodoroAyar, yedek.pomodoroAyar)

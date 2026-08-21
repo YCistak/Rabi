@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { AlertTriangle, Carrot, Check, ChevronRight, Sparkles, Store, Target } from 'lucide-react'
+import { AlertTriangle, Check, ChevronRight, Sparkles, Store, Target } from 'lucide-react'
 import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef, OyunId } from '@/lib/types'
 import { devamsizlikOzeti, gunOzeti, kayitHaritasi, netYaz } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
@@ -63,7 +63,6 @@ export function AnaSayfa({
   ozetBekliyor,
   sonAraclar,
   sonOyunlar,
-  havuc,
   onKartAc,
   onDahaGit,
   onOyunlaraGit,
@@ -79,8 +78,6 @@ export function AnaSayfa({
   /** En son açılan araçlar ve oynanan oyunlar — kısayol kutucuklarının sırası. */
   sonAraclar: string[]
   sonOyunlar: string[]
-  /** Havuç bakiyesi — sağ üstteki mağaza düğmesinde yazıyor. */
-  havuc: number
   onKartAc: (ekran: Ekran) => void
   /** "Araçlar" başlığındaki "Tümü" — kart menüsünün tamamına götürür. */
   onDahaGit: () => void
@@ -148,20 +145,17 @@ export function AnaSayfa({
           </p>
         </div>
 
-        {/* Havuç ve mağaza tek düğmede: sayı bakiyeyi söylüyor, mağaza simgesi
-            nereye götürdüğünü. İkisi ayrı düğme olsaydı ikisi de aynı yere
-            giden iki hedef olurdu. */}
+        {/* Yalnızca mağaza düğmesi; havuç sayısı mağazanın kendi başlığında.
+            Bakiye burada da yazsaydı ana sayfanın en tepesindeki selamlama
+            satırı iki sayıyla yarışırdı ve bakiye zaten harcanacağı yerde
+            görünüyor. */}
         <button
           type="button"
           onClick={() => onKartAc('magaza')}
-          aria-label={`Havuç Mağazası — ${havuc} havucun var`}
-          className="flex shrink-0 items-center gap-1.5 self-start rounded-full bg-isl-kart py-1 pr-1 pl-2.5 text-isl-koyu transition active:brightness-95"
+          aria-label="Havuç Mağazası"
+          className="grid size-10 shrink-0 self-start place-items-center rounded-full bg-primary text-primary-foreground transition active:brightness-95"
         >
-          <Carrot size={16} strokeWidth={2.6} aria-hidden />
-          <span className="rakam text-sm font-extrabold">{havuc}</span>
-          <span className="grid size-7 place-items-center rounded-full bg-primary text-primary-foreground">
-            <Store size={15} aria-hidden />
-          </span>
+          <Store size={19} aria-hidden />
         </button>
       </header>
 

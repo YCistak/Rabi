@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Carrot, Check, Lock } from 'lucide-react'
+import { Carrot, Check, Lock, Plus } from 'lucide-react'
 import {
   KATEGORILER,
   KATEGORI_ADI,
@@ -19,6 +19,17 @@ import {
   satinAl,
   type MagazaDurumu,
 } from '@/lib/magaza/magaza'
+import {
+  JOKERLER,
+  STOK_SINIRI,
+  jokerAl,
+  jokerAlinabilirMi,
+  jokerDoluMu,
+  jokerSayisi,
+  jokerToplami,
+  type Joker,
+  type JokerStogu,
+} from '@/lib/magaza/jokerler'
 import { KADRAJ } from '@/components/maskot/olculer'
 import { TavsanBoy } from '@/components/maskot/tavsan-boy'
 import { Buton, Cip, Kart } from '@/components/ui'
@@ -27,32 +38,49 @@ import { cn } from '@/lib/utils'
 /**
  * Havuç Mağazası.
  *
- * Üstte tavşanın kendisi, altta eşyalar. Sıra bilerek böyle: satın alınan şey
- * bir liste öğesi değil, yukarıdaki tavşanın görünüşü. Bir eşyaya dokunmak
- * **satın almıyor**, yalnızca tavşanın üstünde gösteriyor; alma kararı
- * aşağıdaki düğmede ve fiyat orada yazıyor. Tek dokunuşla havuç harcatan bir
- * ekran, ilk yanlış dokunuşta güveni bitirirdi.
+ * İki reyon var ve bilerek ayrılar: **Görünüş** kozmetik (kalıcı, giyilir,
+ * oyuna dokunmaz), **Jokerler** sarf malzemesi (tükenir, tur içinde işe yarar).
+ * Tek listede toplansaydı "aldığım şey üstümde mi duruyor, yoksa harcanacak
+ * mı" sorusu her kutucukta yeniden sorulurdu.
  *
- * Havuç kazanma mekaniği henüz yok — bakiye şimdilik yalnızca burada
- * eksiliyor.
+ * Görünüş reyonunda üstte tavşanın kendisi duruyor: satın alınan şey bir liste
+ * öğesi değil, yukarıdaki tavşanın görünüşü. Bir eşyaya dokunmak **satın
+ * almıyor**, yalnızca tavşanın üstünde gösteriyor; alma kararı aşağıdaki
+ * düğmede ve fiyat orada yazıyor. Tek dokunuşla havuç harcatan bir ekran, ilk
+ * yanlış dokunuşta güveni bitirirdi.
+ *
+ * Havuç bakiyesi bu ekranın başlığında duruyor — ana sayfada yalnızca mağaza
+ * düğmesi var, sayı burada.
+ *
+ * Ne havuç kazanma ne de jokerlerin tur içinde kullanılması yazıldı; bakiye
+ * şimdilik yalnızca burada eksiliyor.
  */
+
+type BolumId = 'gorunus' | 'joker'
+
 export function MagazaEkrani({
   havuc,
   setHavuc,
   durum,
   setDurum,
+  stok,
+  setStok,
 }: {
   havuc: number
   setHavuc: (guncelleyici: number | ((onceki: number) => number)) => void
   durum: MagazaDurumu
   setDurum: (guncelleyici: MagazaDurumu | ((onceki: MagazaDurumu) => MagazaDurumu)) => void
+  stok: JokerStogu
+  setStok: (guncelleyici: JokerStogu | ((onceki: JokerStogu) => JokerStogu)) => void
 }) {
+  const [bolum, setBolum] = useState<BolumId>('gorunus')
   const [kategori, setKategori] = useState<EsyaKategorisi>('sapka')
   /** Vitrinde denenen eşya. Kategori değişince sıfırlanıyor. */
   const [secili, setSecili] = useState<Esya | null>(null)
 
   const esyalar = useMemo(() => kategorininEsyalari(kategori), [kategori])
   const koleksiyon = koleksiyonOrani(durum)
+  const cantadaki = jokerToplami(stok)
 
   const kategoriSec = (yeni: EsyaKategorisi) => {
     setKategori(yeni)
@@ -74,70 +102,98 @@ export function MagazaEkrani({
     setHavuc(sonuc.havuc)
   }
 
+  const jokerAlindi = (joker: Joker) => {
+    const sonuc = jokerAl(stok, havuc, joker)
+    if (!sonuc) return
+    setStok(sonuc.stok)
+    setHavuc(sonuc.havuc)
+  }
+
   return (
     <div className="space-y-3.5">
       <header className="flex items-center justify-between gap-3 px-0.5">
         <div className="min-w-0">
           <h1 className="font-display text-xl font-extrabold tracking-tight">Havuç Mağazası</h1>
           <p className="mt-0.5 text-[13px] font-medium text-muted-foreground">
-            {koleksiyon.sahip}/{koleksiyon.toplam} eşya senin
+            {bolum === 'gorunus'
+              ? `${koleksiyon.sahip}/${koleksiyon.toplam} eşya senin`
+              : cantadaki > 0
+                ? `Çantanda ${cantadaki} joker var`
+                : 'Çantan henüz boş'}
           </p>
         </div>
         <HavucRozeti havuc={havuc} />
       </header>
 
-      {/* Vitrin: tavşanın tamamı, denenen eşya üstünde. */}
-      <Kart className="relative overflow-hidden bg-primary-soft p-0">
-        <div className="flex justify-center pt-3 pb-1">
-          <TavsanBoy durum={durum} onizleme={secili} boyut={196} />
-        </div>
-        {koleksiyon.sahip > 0 && (
-          <Buton
-            bicim="hayalet"
-            boy="kucuk"
-            onClick={() => {
-              setDurum(hepsiniCikar)
-              setSecili(null)
-            }}
-            className="absolute top-2 right-2 text-primary"
-          >
-            Hepsini çıkar
-          </Buton>
-        )}
-      </Kart>
-
-      {/* Seçili eşyanın eylem çubuğu — fiyat ve karar burada. */}
-      <EylemCubugu esya={secili} durum={durum} havuc={havuc} onUygula={uygula} />
-
-      {/* Kategoriler */}
-      <div className="-mx-4 overflow-x-auto px-4">
-        <div className="flex w-max gap-2 pb-1">
-          {KATEGORILER.map((k) => (
-            <Cip key={k} secili={k === kategori} onClick={() => kategoriSec(k)}>
-              <span aria-hidden>{KATEGORI_SIMGESI[k]}</span> {KATEGORI_ADI[k]}
-            </Cip>
-          ))}
-        </div>
+      {/* Reyonlar. İki taneler ve ikisi de her zaman görünür duruyor:
+          açılır menüye gizlenselerdi joker reyonunun varlığı keşfedilmezdi. */}
+      <div className="grid grid-cols-2 gap-2">
+        <ReyonDugmesi secili={bolum === 'gorunus'} onClick={() => setBolum('gorunus')}>
+          🐰 Görünüş
+        </ReyonDugmesi>
+        <ReyonDugmesi secili={bolum === 'joker'} onClick={() => setBolum('joker')}>
+          🃏 Jokerler
+        </ReyonDugmesi>
       </div>
 
-      <ul className="grid grid-cols-3 gap-2.5">
-        {esyalar.map((esya) => (
-          <li key={esya.id}>
-            <EsyaKutucugu
-              esya={esya}
-              durum={durum}
-              havuc={havuc}
-              secili={secili?.id === esya.id}
-              onDokun={() => dokun(esya)}
-            />
-          </li>
-        ))}
-      </ul>
+      {bolum === 'gorunus' ? (
+        <>
+          {/* Vitrin: tavşanın tamamı, denenen eşya üstünde. */}
+          <Kart className="relative overflow-hidden bg-primary-soft p-0">
+            <div className="flex justify-center pt-3 pb-1">
+              <TavsanBoy durum={durum} onizleme={secili} boyut={196} />
+            </div>
+            {koleksiyon.sahip > 0 && (
+              <Buton
+                bicim="hayalet"
+                boy="kucuk"
+                onClick={() => {
+                  setDurum(hepsiniCikar)
+                  setSecili(null)
+                }}
+                className="absolute top-2 right-2 text-primary"
+              >
+                Hepsini çıkar
+              </Buton>
+            )}
+          </Kart>
+
+          {/* Seçili eşyanın eylem çubuğu — fiyat ve karar burada. */}
+          <EylemCubugu esya={secili} durum={durum} havuc={havuc} onUygula={uygula} />
+
+          {/* Kategoriler */}
+          <div className="-mx-4 overflow-x-auto px-4">
+            <div className="flex w-max gap-2 pb-1">
+              {KATEGORILER.map((k) => (
+                <Cip key={k} secili={k === kategori} onClick={() => kategoriSec(k)}>
+                  <span aria-hidden>{KATEGORI_SIMGESI[k]}</span> {KATEGORI_ADI[k]}
+                </Cip>
+              ))}
+            </div>
+          </div>
+
+          <ul className="grid grid-cols-3 gap-2.5">
+            {esyalar.map((esya) => (
+              <li key={esya.id}>
+                <EsyaKutucugu
+                  esya={esya}
+                  durum={durum}
+                  havuc={havuc}
+                  secili={secili?.id === esya.id}
+                  onDokun={() => dokun(esya)}
+                />
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <JokerReyonu stok={stok} havuc={havuc} onAl={jokerAlindi} />
+      )}
     </div>
   )
 }
 
-/** Havuç bakiyesi rozeti — ana sayfadaki ile aynı biçim. */
+/** Havuç bakiyesi rozeti. */
 export function HavucRozeti({ havuc, className }: { havuc: number; className?: string }) {
   return (
     <span
@@ -151,6 +207,124 @@ export function HavucRozeti({ havuc, className }: { havuc: number; className?: s
       <Carrot size={16} strokeWidth={2.6} aria-hidden />
       <span className="rakam">{havuc}</span>
     </span>
+  )
+}
+
+function ReyonDugmesi({
+  secili,
+  onClick,
+  children,
+}: {
+  secili: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={secili}
+      className={cn(
+        'h-10 rounded-xl text-sm font-extrabold transition active:brightness-95',
+        secili ? 'bg-primary text-primary-foreground' : 'golge-kart bg-card text-muted-foreground',
+      )}
+    >
+      {children}
+    </button>
+  )
+}
+
+/**
+ * Joker reyonu.
+ *
+ * Kozmetik ızgarasının aksine tek sütun: jokerin ne yaptığını bir cümle
+ * anlatıyor ve o cümle okunmadan alınması doğru olmaz. Üç sütunluk kutucuğa
+ * sığmazdı.
+ */
+function JokerReyonu({
+  stok,
+  havuc,
+  onAl,
+}: {
+  stok: JokerStogu
+  havuc: number
+  onAl: (joker: Joker) => void
+}) {
+  return (
+    <div className="space-y-2.5">
+      <p className="rounded-xl bg-muted/70 px-3 py-2.5 text-[13px] font-medium text-muted-foreground">
+        Jokerler tur içinde harcanır ve hiçbiri doğru cevabı söylemez. Aynı jokerden en fazla{' '}
+        <span className="rakam font-bold">{STOK_SINIRI}</span> tane taşıyabilirsin.
+        <span className="mt-1 block font-bold">
+          Turda kullanma henüz eklenmedi — şimdilik yalnızca çantana giriyorlar.
+        </span>
+      </p>
+
+      <ul className="space-y-2.5">
+        {JOKERLER.map((joker) => (
+          <li key={joker.id}>
+            <JokerSatiri joker={joker} stok={stok} havuc={havuc} onAl={() => onAl(joker)} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function JokerSatiri({
+  joker,
+  stok,
+  havuc,
+  onAl,
+}: {
+  joker: Joker
+  stok: JokerStogu
+  havuc: number
+  onAl: () => void
+}) {
+  const adet = jokerSayisi(stok, joker.id)
+  const dolu = jokerDoluMu(stok, joker)
+  const alinabilir = jokerAlinabilirMi(stok, havuc, joker)
+
+  return (
+    <Kart className="flex items-center gap-3 py-3">
+      <span className="relative grid size-11 shrink-0 place-items-center rounded-xl bg-muted/70 text-xl">
+        <span aria-hidden>{joker.simge}</span>
+        {adet > 0 && (
+          <span
+            className="rakam absolute -top-1.5 -right-1.5 grid min-w-5 place-items-center rounded-full bg-primary px-1 text-[11px] font-extrabold text-primary-foreground"
+            aria-label={`Çantanda ${adet} tane`}
+          >
+            {adet}
+          </span>
+        )}
+      </span>
+
+      <div className="min-w-0 flex-1">
+        <p className="font-display font-extrabold">{joker.ad}</p>
+        <p className="mt-0.5 text-[12.5px] leading-snug font-medium text-muted-foreground text-balance">
+          {joker.aciklama}
+        </p>
+      </div>
+
+      <Buton
+        boy="kucuk"
+        onClick={onAl}
+        disabled={!alinabilir}
+        className="shrink-0"
+        aria-label={dolu ? `${joker.ad} çantan dolu` : `${joker.ad} satın al, ${joker.fiyat} havuç`}
+      >
+        {dolu ? (
+          'Dolu'
+        ) : (
+          <>
+            <Plus size={14} strokeWidth={3} aria-hidden />
+            <Carrot size={14} aria-hidden />
+            <span className="rakam">{joker.fiyat}</span>
+          </>
+        )}
+      </Buton>
+    </Kart>
   )
 }
 
