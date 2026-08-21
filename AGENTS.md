@@ -45,24 +45,37 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
 - Sütun hâlindeki sayılara `rakam` sınıfı (tabular-nums), başlıklara `font-display`.
 - Alt menünün altında kalan içerik için `guvenli-alt`.
 
+## Seviye ve havuç
+
+Seviye **türetilmiş**: kayıtta XP sayacı yok, her açılışta mevcut veriden yeniden
+hesaplanıyor (`lib/seviye.ts`). Böylece aylardır veri girmiş kullanıcı sistemi ilk
+gördüğünde hak ettiği seviyede başlıyor. `rabi-seviye` altında yalnızca **ulaşılan
+en yüksek seviye** duruyor; o sayı hem seviyenin geri gitmesini hem aynı ödülün
+ikinci kez dağıtılmasını engelliyor.
+
+XP'nin kuralı rozetlerinkiyle aynı (`lib/rozetler.ts`): soru sayısı elle giriliyor,
+o yüzden soru XP'sinin hem günlük hem ömür boyu tavanı var. Zaman isteyen ölçüler
+(pomodoro dakikası, seri günü, bankadan düşen soru) tavansız ve seviyenin omurgası;
+oyun XP'sinin de ayrı bir toplam tavanı var — oyun mola aktivitesi, ana yol değil.
+Yeni bir XP kaynağı eklerken önce "bu uydurulabilir mi" diye sor; uydurulabiliyorsa
+tavanla.
+
+Havucun **tek** artma yolu seviye atlamak, tek eksilme yolu mağaza. Ömür boyu
+kazanılabilecek toplam `TOPLAM_HAVUC` ile sabit (≈10.000) ve joker fiyatları ona
+oranla konuldu — `lib/magaza/jokerler.ts` içindeki `denge` testleri bu oranı
+koruyor. Fiyatı ya da XP eğrisini değiştirirsen o testler kırılır; kırılmaları
+doğru, sayıyı güncellemeden geçme.
+
 ## Havuç Mağazası
 
-Eşyalar tamamen kozmetik: hiçbiri çalışmayı kolaylaştırmıyor, puanı etkilemiyor.
-Adlar ve çizimler **jenerik** — gerçek marka, takım, film ya da karakter yok.
-Katalog `lib/magaza/esyalar.ts`, saf mantık `lib/magaza/magaza.ts`, çizimler
-`components/maskot/parcalar/` altında; hepsi ölçülerini
-`components/maskot/olculer.ts` dosyasından okuyor. Yeni eşyanın kimliğini önce
-katalogda tanımla: çizim kayıtları katalogdan türeyen dar bir tiple yazıldığı için
-çizimi unutulan eşya mağazada boş kutucuk olarak değil, derlemede hata olarak çıkar.
+Satılan tek şey joker; tavşan özelleştirmesi kaldırıldı. Katalog
+`lib/magaza/jokerler.ts`, çanta `rabi-jokerler` anahtarında kimlik başına adet
+tutuyor. Hiçbir joker doğru cevabı söylemiyor — sahayı daraltıyor, süreye ya da
+hakka dokunuyor. Cevabı veren bir joker rekoru da Oyun Bankası'nı da
+anlamsızlaştırırdı. Güçlü jokerlerin ayrıca seviye şartı var (`enAzSeviye`);
+kilitli joker gizlenmiyor, kilitli gösteriliyor.
 
-Mağazanın iki reyonu var. **Görünüş** kozmetik; **Jokerler** ise tükenen sarf
-malzemesi: katalog `lib/magaza/jokerler.ts`, çanta ayrı bir localStorage
-anahtarında (`rabi-jokerler`) ve kimlik başına adet tutuyor. Hiçbir joker doğru
-cevabı söylemiyor — sahayı daraltıyor, süreye ya da hakka dokunuyor. Cevabı veren
-bir joker rekoru da Oyun Bankası’nı da anlamsızlaştırırdı.
-
-Havuç kazanma mekaniği henüz yok; bakiye şimdilik yalnızca mağazada eksiliyor.
-Jokerlerin tur içinde kullanılması da yazılmadı: stok yalnızca `jokerKullan`
+Jokerlerin tur içinde kullanılması henüz yazılmadı: stok yalnızca `jokerKullan`
 üzerinden eksilmeli, oyun tarafı geldiğinde de o tek kapı kalmalı.
 
 ## Doğruluk

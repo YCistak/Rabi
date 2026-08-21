@@ -61,18 +61,14 @@ import { HedefEkrani } from '@/components/ekranlar/hedef'
 import { YanlisBankaEkrani } from '@/components/ekranlar/yanlis-banka'
 import { RozetlerEkrani } from '@/components/ekranlar/rozetler'
 import { MagazaEkrani } from '@/components/ekranlar/magaza'
-import {
-  BASLANGIC_HAVUCU,
-  BOS_MAGAZA,
-  magazayiNormalize,
-  type MagazaDurumu,
-} from '@/lib/magaza/magaza'
+import { BASLANGIC_HAVUCU, birikenOdul, seviyeDurumu, tabanla } from '@/lib/seviye'
 import { BOS_STOK, stoguNormalize, type JokerStogu } from '@/lib/magaza/jokerler'
 import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
 import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
 import { RozetKutlama } from '@/components/rozet-kutlama'
+import { SeviyeKutlama } from '@/components/seviye-kutlama'
 
-/** Rozet kontrolünün, veri durulana kadar beklediği süre (ms). */
+/** Rozet ve seviye kontrolünün, veri durulana kadar beklediği süre (ms). */
 const ROZET_BEKLEME = 1200
 
 export function AppShell() {
@@ -145,15 +141,13 @@ export function AppShell() {
    */
   const [bankaDusen, setBankaDusen] = useYerelDepo<number>(ANAHTARLAR.bankaDusen, 0)
   /**
-   * Havuç bakiyesi ve mağaza koleksiyonu.
+   * Havuç bakiyesi ve ödülü verilmiş en yüksek seviye.
    *
-   * Kayıt güncel katalogla uyumlanıyor (`magazayiNormalize`): katalogdan
-   * kalkmış bir eşya kayıtta kalırsa avatar çizilirken patlar.
+   * İkisi birlikte gidiyor: bakiye yalnızca seviye atlayınca artıyor, `odullenen`
+   * de aynı seviyenin ikinci kez ödenmesini engelliyor.
    */
-  const [havuc, setHavuc] = useYerelDepo<number>(ANAHTARLAR.havuc, BASLANGIC_HAVUCU)
-  const [magazaHam, setMagaza] = useYerelDepo<MagazaDurumu>(ANAHTARLAR.magaza, BOS_MAGAZA)
-  const magaza = magazayiNormalize(magazaHam)
-  /** Joker çantası. Kozmetikten ayrı tutuluyor: bunlar tükenen sarf malzemesi. */
+  const [havuc, setHavuc, havucHazir] = useYerelDepo<number>(ANAHTARLAR.havuc, BASLANGIC_HAVUCU)
+  const [odullenen, setOdullenen, seviyeHazir] = useYerelDepo<number>(ANAHTARLAR.seviye, 1)
   const [stokHam, setStok] = useYerelDepo<JokerStogu>(ANAHTARLAR.jokerler, BOS_STOK)
   const jokerler = stoguNormalize(stokHam)
   /**
@@ -169,6 +163,10 @@ export function AppShell() {
   /** İzlenmiş haftalık özetlerin hafta başı tarihleri. */
   const [ozetGorulen, setOzetGorulen] = useYerelDepo<string[]>(ANAHTARLAR.ozetGorulen, [])
   const [kutlanan, setKutlanan] = useState<Rozet[]>([])
+  /** Yeni atlanan seviye ve ödülü; kutlama kapanınca temizleniyor. */
+  const [seviyeKutlamasi, setSeviyeKutlamasi] = useState<{ seviye: number; odul: number } | null>(
+    null,
+  )
   /**
    * Açılış ekranının hâli. Üç adım: görünür → soluyor → kaldırıldı. Ortadaki
    * adım olmadan ekran bir anda kayboluyor ve sistem açılış ekranından gelen
@@ -187,7 +185,12 @@ export function AppShell() {
     [],
   )
 
-  const sablonlar = sablonlariBirlestir(kayitliSablonlar)
+  /*
+    Memoize edilmesi şart: her çizimde yeni bir dizi dönseydi bu diziye bağlı
+    `useMemo`'ların hiçbiri tutmaz, altındaki ağır hesaplar (haftalık özet,
+    rozet/seviye ölçüleri) her çizimde yeniden çalışırdı.
+  */
+  const sablonlar = useMemo(() => sablonlariBirlestir(kayitliSablonlar), [kayitliSablonlar])
 
   // ---- Haftalık özet ----
   // Biten haftanın özeti. Pazar günü doğuyor ve sonraki pazara kadar duruyor:
@@ -263,21 +266,16 @@ export function AppShell() {
     setAyarlar,
   ])
 
-  // ---- Rozetler ----
-  // Kazanılanlar yazılmadan önce hepsinin okunmuş olması şart. `useYerelDepo`
-  // bir kez yazıldıktan sonra ilk okumayı atlıyor; hazır olmadan rozet
-  // eklenseydi kayıtlı rozetler silinir, kutlama her açılışta tekrarlanırdı.
-  const rozetVerisiHazir =
-    rozetlerHazir && denemelerHazir && gunlukHazir && okulHazir && ayarlarHazir && oyunlarHazir
-
-  useEffect(() => {
-    if (!rozetVerisiHazir) return
-
-    // Kontrol bilerek geciktiriliyor. Soru sayısı yazılırken her tuş bir
-    // değişiklik: "420" yazarken 4 → 42 → 420 geçilir ve kutlama daha alan
-    // doldurulmadan ekranı kapatırdı. Yazma durunca bir kez çalışıyor.
-    const zamanlayici = setTimeout(() => {
-      const durum = rozetDurumu({
+  // ---- Rozetler ve seviye ----
+  /*
+    İkisi aynı ölçü nesnesinden çıkıyor: rozet "eşiği geçtin mi", seviye
+    "toplamda ne kadar ilerledin" diye soruyor ama baktıkları veri aynı.
+    `RozetDurumu` alanları `XpGirdisi`'ni zaten karşıladığı için nesne olduğu
+    gibi seviyeye de veriliyor.
+  */
+  const ilerleme = useMemo(
+    () =>
+      rozetDurumu({
         denemeler,
         sablonlar,
         gunlukKayitlar,
@@ -288,30 +286,76 @@ export function AppShell() {
         oyunlar,
         bankaDusen,
         bankaBoyutu: oyunBankasi.length,
-      })
-      const yeniler = yeniRozetler(durum, rozetler)
-      if (yeniler.length === 0) return
+      }),
+    [
+      denemeler,
+      sablonlar,
+      gunlukKayitlar,
+      ayarlar.gunlukHedef,
+      diplomaNotu,
+      pomodoroGecmis,
+      yanlisSorular,
+      oyunlar,
+      bankaDusen,
+      oyunBankasi.length,
+    ],
+  )
 
-      const tarih = bugun()
-      setRozetler((onceki) => [...onceki, ...yeniler.map((r) => ({ rozetId: r.id, tarih }))])
-      setKutlanan(yeniler)
+  /** Veriden türeyen seviye; gösterilen seviye daha önce ulaşılanın altına inmiyor. */
+  const seviye = tabanla(seviyeDurumu(ilerleme), odullenen)
+
+  // Kayıt yazılmadan önce hepsinin okunmuş olması şart. `useYerelDepo` bir kez
+  // yazıldıktan sonra ilk okumayı atlıyor; hazır olmadan yazılsaydı kayıtlı
+  // rozetler silinir, havuç bakiyesi sıfırlanır ve ödül her açılışta yeniden
+  // dağıtılırdı.
+  const ilerlemeHazir =
+    rozetlerHazir &&
+    denemelerHazir &&
+    gunlukHazir &&
+    okulHazir &&
+    ayarlarHazir &&
+    oyunlarHazir &&
+    seviyeHazir &&
+    havucHazir
+
+  useEffect(() => {
+    if (!ilerlemeHazir) return
+
+    // Kontrol bilerek geciktiriliyor. Soru sayısı yazılırken her tuş bir
+    // değişiklik: "420" yazarken 4 → 42 → 420 geçilir ve kutlama daha alan
+    // doldurulmadan ekranı kapatırdı. Yazma durunca bir kez çalışıyor.
+    const zamanlayici = setTimeout(() => {
+      const yeniler = yeniRozetler(ilerleme, rozetler)
+      if (yeniler.length > 0) {
+        const tarih = bugun()
+        setRozetler((onceki) => [...onceki, ...yeniler.map((r) => ({ rozetId: r.id, tarih }))])
+        setKutlanan(yeniler)
+      }
+
+      /*
+        Havucun **tek** artma yolu burası. `odullenen` hem tavan hem makbuz:
+        aynı seviyenin ödülü ikinci kez dağıtılmıyor, veri sonradan düşse bile
+        geri alınmıyor. Sistemi ilk gören eski kullanıcı aradaki bütün
+        seviyeleri bir kerede atlıyor ve hepsinin ödülünü alıyor.
+      */
+      if (seviye.seviye > odullenen) {
+        const odul = birikenOdul(odullenen, seviye.seviye)
+        setOdullenen(seviye.seviye)
+        setHavuc((onceki) => onceki + odul)
+        setSeviyeKutlamasi({ seviye: seviye.seviye, odul })
+      }
     }, ROZET_BEKLEME)
 
     return () => clearTimeout(zamanlayici)
   }, [
-    rozetVerisiHazir,
-    denemeler,
-    sablonlar,
-    gunlukKayitlar,
-    ayarlar.gunlukHedef,
-    diplomaNotu,
-    pomodoroGecmis,
-    yanlisSorular,
-    oyunlar,
-    bankaDusen,
-    oyunBankasi.length,
+    ilerlemeHazir,
+    ilerleme,
+    seviye.seviye,
+    odullenen,
     rozetler,
     setRozetler,
+    setOdullenen,
+    setHavuc,
   ])
 
   // ---- Günlük hatırlatma ----
@@ -510,8 +554,7 @@ export function AppShell() {
             <MagazaEkrani
               havuc={havuc}
               setHavuc={setHavuc}
-              durum={magaza}
-              setDurum={setMagaza}
+              seviye={seviye}
               stok={jokerler}
               setStok={setStok}
             />
@@ -588,6 +631,8 @@ export function AppShell() {
               gunlukKayitlar={gunlukKayitlar}
               devamsizlik={devamsizlik}
               hedef={hedef}
+              seviye={seviye}
+              havuc={havuc}
               guncelSiralama={guncelSiralama}
               ozetBekliyor={ozetBekliyor}
               sonAraclar={sonAraclar}
@@ -638,7 +683,7 @@ export function AppShell() {
                 oyunBankasi,
                 bankaDusen,
                 havuc,
-                magaza,
+                seviye: odullenen,
                 jokerler,
                 pomodoroGecmis,
                 pomodoroAyar,
@@ -662,6 +707,11 @@ export function AppShell() {
       )}
 
       <RozetKutlama rozetler={kutlanan} onKapat={() => setKutlanan([])} />
+
+      {/* Rozet kutlaması varken bekliyor: iki tam ekran katman üst üste binerdi. */}
+      {kutlanan.length === 0 && (
+        <SeviyeKutlama kutlama={seviyeKutlamasi} onKapat={() => setSeviyeKutlamasi(null)} />
+      )}
 
       {acilisKatmani}
     </div>

@@ -3,7 +3,6 @@
 // sunucu, hesap, senkronizasyon yoktur.
 
 import type { BankaKaydi } from './oyunlar/banka'
-import type { MagazaDurumu } from './magaza/magaza'
 import type { JokerStogu } from './magaza/jokerler'
 
 // ---------------------------------------------------------------------------
@@ -373,11 +372,16 @@ export type Yedek = {
   /** Oyun Bankası'ndan düşen toplam soru sayısı. */
   bankaDusen?: number
   /**
-   * Havuç bakiyesi ve mağaza koleksiyonu. Eski yedeklerde yok — geri
-   * yüklemede yazılmıyor, kullanıcının mevcut koleksiyonu olduğu gibi kalıyor.
+   * Havuç bakiyesi. Eski yedeklerde yok — geri yüklemede yazılmıyor,
+   * kullanıcının mevcut bakiyesi olduğu gibi kalıyor.
    */
   havuc?: number
-  magaza?: MagazaDurumu
+  /**
+   * Ödülü verilmiş en yüksek seviye. Bakiyeyle birlikte gitmesi şart: yalnızca
+   * havuç taşınsaydı yedeği geri yükleyen kullanıcı aynı seviyelerin ödülünü
+   * ikinci kez alırdı.
+   */
+  seviye?: number
   /** Joker çantası — kimlik başına adet. */
   jokerler?: JokerStogu
   pomodoroGecmis: PomodoroSeans[]

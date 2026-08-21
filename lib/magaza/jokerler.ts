@@ -1,15 +1,25 @@
+import { TOPLAM_HAVUC } from '../seviye'
+
 /**
- * Jokerler — tur sırasında harcanan tek kullanımlık yardımlar.
- *
- * Kozmetik eşyalardan iki noktada ayrılıyorlar: **tükeniyorlar** (aynı jokerden
- * birden fazla bulundurulabiliyor) ve oyunun gidişatına dokunuyorlar. Bu yüzden
- * ayrı bir katalogda ve ayrı bir kayıtta duruyorlar — `MagazaDurumu` "hangi eşya
- * senin, hangisi üstünde" sorusunun cevabı; stok bambaşka bir soru.
+ * Jokerler — tur sırasında harcanan tek kullanımlık yardımlar. Havuç
+ * Mağazası'nda satılan tek şey.
  *
  * Hiçbir joker doğru cevabı **söylemiyor**. 50/50 iki yanlış şıkkı eliyor,
  * kalanı süreye ve hakka dokunuyor. Cevabı veren bir joker oyunların ölçtüğü
  * şeyi bozardı: rekor da banka da "biliyor muydun" sorusunun cevabı olmaktan
  * çıkardı.
+ *
+ * ## Fiyatlar ve seviye
+ *
+ * Havuç yalnızca seviye atlayarak kazanılıyor (`lib/seviye.ts`) ve ömür boyu
+ * kazanılabilecek toplam belli. Fiyatlar o toplama göre konuldu: bütün havucunu
+ * jokere yatıran biri kırk kadar joker alabiliyor — yani joker bir yılda birkaç
+ * düzine kez kullanılan bir şey, her turda açılan bir menü değil. `denge.test`
+ * bu oranı sabitliyor.
+ *
+ * Güçlü jokerlerin ayrıca **seviye şartı** var. Havuç tek başına kapı olsaydı
+ * ilk haftasında bir tur maratonu yapan biri en güçlü jokeri açardı; seviye
+ * şartı gücü zamana yayıyor.
  *
  * Jokerin tur içinde **kullanılması henüz yazılmadı**; burada yalnızca katalog
  * ve stok var. Oyun tarafı geldiğinde `jokerKullan` tek giriş noktası olmalı,
@@ -33,14 +43,16 @@ export type Joker = {
   aciklama: string
   /** Havuç cinsinden fiyat. */
   fiyat: number
+  /** Satılmaya başladığı seviye. 1 ise ilk günden açık. */
+  enAzSeviye: number
 }
 
 /**
  * Katalog.
  *
- * Fiyat sırası gücü izliyor: turu **kurtaran** joker en pahalı. Bu oyunlarda
- * tek yanlış turu bitirdiği için "çift cevap" tek başına bir tur daha demek;
- * süreye dokunanlar ise yalnızca rahatlatıyor.
+ * Fiyat ve seviye sırası gücü izliyor: turu **kurtaran** joker en pahalı ve en
+ * geç açılan. Bu oyunlarda tek yanlış turu bitirdiği için "çift cevap" tek
+ * başına bir tur daha demek; süreye dokunanlar ise yalnızca rahatlatıyor.
  */
 export const JOKERLER = [
   {
@@ -48,35 +60,40 @@ export const JOKERLER = [
     ad: 'Ek Süre',
     simge: '⏱️',
     aciklama: `Sayaca ${EK_SURE_SANIYE} saniye ekler.`,
-    fiyat: 40,
+    fiyat: 120,
+    enAzSeviye: 1,
   },
   {
     id: 'sure-dondur',
     ad: 'Süre Dondurma',
     simge: '❄️',
     aciklama: 'Sayacı o soru boyunca durdurur; acele etmeden düşünürsün.',
-    fiyat: 70,
+    fiyat: 180,
+    enAzSeviye: 4,
   },
   {
     id: 'elli-elli',
     ad: '50/50',
     simge: '✂️',
     aciklama: 'İki yanlış şıkkı eler. Doğruyu söylemez, sahayı daraltır.',
-    fiyat: 90,
+    fiyat: 240,
+    enAzSeviye: 8,
   },
   {
     id: 'puan-3x',
     ad: `${PUAN_KATSAYISI}x Puan`,
     simge: '✨',
     aciklama: `Yalnızca o sorunun puanını ${PUAN_KATSAYISI}'e katlar. Bildiğin soruda kullan.`,
-    fiyat: 110,
+    fiyat: 300,
+    enAzSeviye: 13,
   },
   {
     id: 'cift-cevap',
     ad: 'Çift Cevap',
     simge: '🎯',
     aciklama: 'O soruda ilk yanlışın turu bitirmez; ikinci bir hakkın olur.',
-    fiyat: 140,
+    fiyat: 400,
+    enAzSeviye: 20,
   },
 ] as const satisfies readonly Joker[]
 
@@ -130,25 +147,51 @@ export function jokerDoluMu(stok: JokerStogu, joker: Joker): boolean {
   return jokerSayisi(stok, joker.id) >= STOK_SINIRI
 }
 
-export function jokerAlinabilirMi(stok: JokerStogu, havuc: number, joker: Joker): boolean {
-  return !jokerDoluMu(stok, joker) && havuc >= joker.fiyat
+/** Seviye şartı sağlandı mı — kilitli joker vitrinde görünüyor ama satılmıyor. */
+export function jokerAcikMi(joker: Joker, seviye: number): boolean {
+  return seviye >= joker.enAzSeviye
+}
+
+export function jokerAlinabilirMi(
+  stok: JokerStogu,
+  havuc: number,
+  joker: Joker,
+  seviye: number,
+): boolean {
+  return jokerAcikMi(joker, seviye) && !jokerDoluMu(stok, joker) && havuc >= joker.fiyat
 }
 
 /**
- * Satın alma. Yetmiyorsa ya da stok doluysa `null` — çağıran taraf "olmadı"
- * durumunu tek yerden okusun, sessizce hiçbir şey yapılmasın.
+ * Satın alma. Havuç yetmiyorsa, stok doluysa ya da seviye tutmuyorsa `null` —
+ * çağıran taraf "olmadı" durumunu tek yerden okusun, sessizce hiçbir şey
+ * yapılmasın.
  */
 export function jokerAl(
   stok: JokerStogu,
   havuc: number,
   joker: Joker,
+  seviye: number,
 ): { stok: JokerStogu; havuc: number } | null {
-  if (!jokerAlinabilirMi(stok, havuc, joker)) return null
+  if (!jokerAlinabilirMi(stok, havuc, joker, seviye)) return null
   return {
     stok: { ...stok, [joker.id]: jokerSayisi(stok, joker.id) + 1 },
     havuc: havuc - joker.fiyat,
   }
 }
+
+/**
+ * Bütün jokerlerin fiyat toplamı — denge testinin ölçüsü.
+ *
+ * Ekonominin tavanına (`TOPLAM_HAVUC`) göre okunuyor: kaç joker alınabildiği
+ * bu ikisinin oranı.
+ */
+export const KATALOG_TUTARI = JOKERLER.reduce((t, j) => t + j.fiyat, 0)
+
+/** Ömür boyu kazanılan havuçla alınabilecek yaklaşık joker sayısı. */
+export const OMURLUK_JOKER = Math.floor(TOPLAM_HAVUC / (KATALOG_TUTARI / JOKERLER.length))
+
+/** En geç açılan jokerin seviyesi. Testte seviye tavanının altında tutuluyor. */
+export const EN_GEC_SEVIYE = Math.max(...JOKERLER.map((j) => j.enAzSeviye))
 
 /**
  * Bir joker harcar. Stokta yoksa durum değişmiyor.
