@@ -127,9 +127,17 @@ başka telefona taşınan tahta aynı yerleşimi koruyor.
 Kâğıtlar yalnızca o sekmede; uygulamanın üstünde yüzen bir katman değiller. Her
 ekranda görünen bir yapılacak listesi kaygıyı hiç bırakmayan bir arayüz olurdu.
 
+Tahtanın yüksekliği ve kâğıdın genişliği Tailwind sınıfı değil, satır içi ölçü.
+Bu ikisi olmadan özellik ekranda **yok**: tahta sıfır yükseklikte, kâğıt sıfır
+genişlikte kalıyor ve "yeni kâğıt" tuşu çalışıyormuş gibi görünüp hiçbir şey
+göstermiyor. Görünüşe ait bir sınıfın taramadan düşmesi eksik bir gölge demek;
+ölçüye ait olanınki boş bir ekran.
+
 > Dosya adı `notlar.ts` **olamaz**: `.gitignore` kişisel notlar için `notlar.*`
 > deseni taşıyor ve desen tüm ağaçta geçerli. Öyle adlandırılan bir kaynak dosya
-> hem depoya girmiyor hem Tailwind'in tarayıcısından düşüyor.
+> hem depoya girmiyor hem Tailwind'in tarayıcısından düşüyor. Bir dosyayı yeniden
+> adlandırdıktan sonra `npm run build`'i **tekrar çalıştır**: Tailwind kaynak
+> listesini derleme başında kuruyor, eski çıktı hatasız ama sınıfsız kalıyor.
 
 ## Havuç Mağazası
 

@@ -33,12 +33,20 @@ import { BaslikSatiri, Buton, Not } from '@/components/ui'
  */
 
 /**
- * Tahtanın yüksekliği.
+ * Tahtanın yüksekliği ve kâğıdın genişliği (piksel / yüzde).
  *
  * Sabit, çünkü konumlar orana çevrilirken tahtanın kendisi ölçü birimi:
  * içeriğe göre büyüyen bir tahtada kâğıt eklemek eskilerinin yerini kaydırırdı.
+ *
+ * Sınıf değil satır içi ölçü: bu iki sayı olmadan özellik ekranda **yok** —
+ * tahta sıfır yükseklikte, kâğıt sıfır genişlikte kalıyor. Tailwind sınıfları
+ * kaynak dosyası tarandığı sürece üretiliyor ve bu dosya bir kez taramadan
+ * düşmüştü (bkz. AGENTS.md, "Yapılacaklar tahtası"). Görünüşe ait bir sınıfın
+ * kaçması eksik bir gölge demek; ölçüye ait olanınki boş bir ekran.
  */
-const TAHTA_YUKSEKLIGI = 'h-[470px]'
+const TAHTA_YUKSEKLIGI = 470
+const KAGIT_GENISLIGI = '46%'
+const KAGIT_EN_COK = 168
 
 /**
  * Kâğıt renkleri — uygulamanın tek paletinden geliyor.
@@ -104,10 +112,8 @@ export function YapilacaklarEkrani({
 
       <div
         ref={tahtaRef}
-        className={cn(
-          'golge-kart relative w-full overflow-hidden rounded-[22px] bg-card',
-          TAHTA_YUKSEKLIGI,
-        )}
+        className="golge-kart relative w-full overflow-hidden rounded-[22px] bg-card"
+        style={{ height: TAHTA_YUKSEKLIGI }}
       >
         {/* Çizgili zemin: alan "yazılabilir bir yüzey" gibi dursun diye. Kâğıt
             yokken boş bir dikdörtgen, kırık bir ekran gibi görünüyordu. */}
@@ -258,12 +264,14 @@ function Kagit({
     <div
       ref={kagitRef}
       className={cn(
-        'absolute w-[46%] max-w-[168px] rounded-[14px] shadow-[0_5px_14px_rgba(38,58,110,0.16)]',
+        'absolute rounded-[14px] shadow-[0_5px_14px_rgba(38,58,110,0.16)]',
         RENK_SINIFI[not.renk],
         suruklenen !== null ? 'cursor-grabbing' : 'transition-transform',
         not.bitti && 'opacity-60',
       )}
       style={{
+        width: KAGIT_GENISLIGI,
+        maxWidth: KAGIT_EN_COK,
         left: `${konum.x * 100}%`,
         top: `${konum.y * 100}%`,
         /*
