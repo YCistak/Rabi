@@ -17,7 +17,8 @@ import {
   stoguNormalize,
   type JokerStogu,
 } from './jokerler'
-import { EN_YUKSEK_SEVIYE, TOPLAM_HAVUC } from '../seviye'
+import { TOPLAM_KAZANC } from '../havuc'
+import { EN_YUKSEK_SEVIYE } from '../seviye'
 
 const joker = (id: string) => {
   const bulunan = jokerBul(id)
@@ -188,8 +189,14 @@ describe('denge', () => {
     expect(OMURLUK_JOKER).toBeLessThan(60)
   })
 
-  /* Çantayı tepeleme doldurmak ömür boyu kazanılan havucun üstünde kalmalı. */
+  /*
+    Çantayı tepeleme doldurmak ömür boyu kazanılan havucun üstünde kalmalı.
+
+    Toplam yalnızca seviye ödülleri değil: Oyun Bankası'ndan soru düşürmek de
+    havuç getiriyor (`lib/havuc.ts`). Ödül tavanını büyüten biri önce buraya
+    çarpsın — sayıyı güncelleyerek geçme, ekonomiyi yeniden dengele.
+  */
   it('her jokerden dokuzar tane almak mümkün değil', () => {
-    expect(KATALOG_TUTARI * STOK_SINIRI).toBeGreaterThan(TOPLAM_HAVUC)
+    expect(KATALOG_TUTARI * STOK_SINIRI).toBeGreaterThan(TOPLAM_KAZANC)
   })
 })

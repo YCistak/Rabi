@@ -565,3 +565,197 @@
     animation: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Tur içi efektler
+
+   Dördü de `oyun-kabuk.tsx`'te tetikleniyor, yani tek yerde yazılıp 18 oyuna
+   birden düşüyorlar. Hepsi `prefers-reduced-motion` altında susuyor: hareket
+   burada bilgi taşımıyor, bilgi zaten sayıda ve renkte duruyor.
+   --------------------------------------------------------------------------- */
+
+/*
+  Yanlış cevapta sarsıntı.
+
+  Yanlışın tek işareti ses ve titreşimdi; ekranda hiçbir şey kımıldamıyordu ve
+  sesi kapatan kullanıcı için yanlış ile doğru aynı görünüyordu. Yatay ve kısa:
+  dikey sarsıntı okuma satırını kaydırıyor, uzun olanı da bir sonraki soruya
+  geçişi geciktiriyor.
+*/
+@keyframes oyunSarsinti {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-7px); }
+  30% { transform: translateX(6px); }
+  45% { transform: translateX(-4px); }
+  60% { transform: translateX(3px); }
+  80% { transform: translateX(-1px); }
+}
+
+.oyun-sarsinti {
+  animation: oyunSarsinti 380ms ease-in-out both;
+}
+
+/*
+  Süre tükenirken halkanın nabzı.
+
+  Renk zaten kırmızıya dönüyor ama renk pasif bir işaret: ekranın başka yerine
+  bakan oyuncu onu görmüyor. Hareket görüş alanının kenarından da fark ediliyor.
+  Boss'ta çalışmıyor — orada zaten ekranın çerçevesi atıyor, iki nabız birbirini
+  bozar.
+*/
+@keyframes sureNabzi {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.sure-nabzi {
+  animation: sureNabzi 780ms ease-in-out infinite;
+}
+
+/*
+  Boss yenildiğinde patlayan ışık.
+
+  Boss'un girişi vardı, yenilişi yoktu: onuncu soruyu bilmek üçüncüyü bilmekle
+  aynı hissettiriyordu.
+
+  İlk deneme yerinde duran bir altın radyaldi ve iyi durmadı: boss zemini açık
+  bir renk (`--boss-zemin`, mercanın soluğu) ve onun üstünde sabit bir sarı
+  daire ışık gibi değil leke gibi görünüyor. Işık olarak okunması için
+  **büyümesi** gerekiyor — göz parlaklığı değil, yayılmayı ışık sanıyor.
+
+  Üç katman: dışa açılan bir halka (her zeminde okunuyor, biçimi olan tek
+  katman), onun arkasında büyüyen yumuşak bir hâle ve içeriden gelen kısa bir
+  aydınlanma. Halka ötekilerden hızlı gidiyor; hepsi aynı hızda olsaydı tek bir
+  bulanık daire olurdu.
+*/
+@keyframes bossHale {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+  18% { opacity: 0.7; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.25); }
+}
+
+@keyframes bossHalka {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.12); border-width: 10px; }
+  15% { opacity: 0.95; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); border-width: 1px; }
+}
+
+.boss-parlama {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Hâle: sınırı olmayan yumuşak ışık. Merkez soru kartının hizasında (%42),
+   ekranın tam ortası değil — oyuncunun gözü orada. */
+.boss-parlama::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 150vmax;
+  height: 150vmax;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--warning) 85%, transparent) 0%,
+    color-mix(in srgb, var(--warning) 40%, transparent) 30%,
+    transparent 58%
+  );
+  animation: bossHale 760ms cubic-bezier(0.16, 0.9, 0.3, 1) both;
+}
+
+/* Halka: patlamanın kenarı. Çizgi kalınlığı büyürken inceliyor, yani halka
+   dağılıyormuş gibi duruyor — sabit kalınlıkta bir çember çember gibi görünür,
+   patlama gibi değil. */
+.boss-parlama::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 190vmin;
+  height: 190vmin;
+  border-radius: 50%;
+  border: 10px solid var(--warning);
+  animation: bossHalka 620ms cubic-bezier(0.1, 0.8, 0.25, 1) both;
+}
+
+/*
+  Yeni rekorda konfeti.
+
+  Yalnızca rekorda: her tur sonunda patlasaydı üç turda anlamını yitirirdi.
+  Konum ve gecikme sabit bir tablodan geliyor, rastgele değil — `Math.random`
+  çizim sırasında sunucu ve istemci çıktısını ayırır, statik dışa aktarımda da
+  her yeniden çizimde parçacıklar yerinden oynardı.
+*/
+@keyframes konfetiDus {
+  0% { transform: translateY(-14px) rotate(0deg); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translateY(190px) rotate(420deg); opacity: 0; }
+}
+
+.konfeti {
+  position: absolute;
+  top: 0;
+  width: 7px;
+  height: 11px;
+  border-radius: 2px;
+  animation: konfetiDus 1500ms ease-in forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oyun-sarsinti,
+  .sure-nabzi,
+  .konfeti {
+    animation: none;
+  }
+
+  /* Parlamanın animasyonu sözde öğelerde; kabı gizlemek üçünü birden susturuyor. */
+  .boss-parlama,
+  .konfeti {
+    display: none;
+  }
+}
+
+/*
+  Oyun Bankası'nda tikle kaldırılan kart.
+
+  Kayıt eskiden anında yok oluyordu ve dokunuşun karşılığı görünmüyordu: liste
+  kısalıyor ama hangi kartın gittiği anlaşılmıyordu. Kart önce onaylanıyor
+  (yeşile dönüp hafifçe büyüyor), sonra yana süzülüyor. Süre kısa — silme
+  kararı zaten verilmiş, burada sorulan bir şey yok.
+*/
+@keyframes bankaKalk {
+  0% { transform: scale(1); opacity: 1; }
+  22% { transform: scale(1.03); opacity: 1; }
+  100% { transform: scale(0.9) translateX(28%); opacity: 0; }
+}
+
+.banka-kalkiyor {
+  animation: bankaKalk 420ms cubic-bezier(0.4, 0, 0.9, 0.4) both;
+}
+
+/* Tik basılınca doluyor: kartın gideceğini kart gitmeden söylüyor. */
+@keyframes tikDol {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.tik-dolu {
+  animation: tikDol 320ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .banka-kalkiyor,
+  .tik-dolu {
+    animation: none;
+  }
+
+  /* Hareket kapalıyken de kart gitmeden önce görünür bir onay kalmalı. */
+  .banka-kalkiyor {
+    opacity: 0.4;
+  }
+}
