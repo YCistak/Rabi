@@ -224,6 +224,52 @@ export function AnaSayfa({
           görünür yerinde. Kalan gün, sayfadaki her sayının bağlamı. */}
       <GeriSayim tarih={tarih} />
 
+      {/* Hedef bölüm — tahmini sıralamayla birlikte.
+          Geri sayımın hemen altında: "kaç gün kaldı" ile "ne için" aynı
+          soruların iki yarısı. Eskiden sayfanın en altındaydı ve hedefini hiç
+          yazmamış kullanıcı oraya inmediği için özelliği hiç görmüyordu. */}
+      <button
+        type="button"
+        onClick={() => onKartAc('hedef')}
+        className="golge-kart w-full rounded-2xl bg-card p-4 text-left transition active:brightness-[0.98]"
+      >
+        <span className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground">
+          <Target size={14} aria-hidden />
+          Hedefim
+        </span>
+        {hedef ? (
+          <>
+            <span className="mt-1.5 block font-display text-base leading-tight font-extrabold">
+              {hedef.bolum}
+            </span>
+            <span className="block text-[13px] font-semibold text-muted-foreground">
+              {hedef.universite}
+            </span>
+            {hedef.basariSirasi !== null && (
+              <span className="rakam mt-1 block text-[13px] font-semibold text-muted-foreground">
+                Gereken sıralama: {siraYaz(hedef.basariSirasi)}
+              </span>
+            )}
+            {hedef.basariSirasi !== null && guncelSiralama !== null && (
+              <span
+                className={cn(
+                  'mt-1 block text-[13px] font-bold',
+                  guncelSiralama <= hedef.basariSirasi ? 'text-success' : 'text-primary',
+                )}
+              >
+                {guncelSiralama <= hedef.basariSirasi
+                  ? 'Şu an hedefinin içindesin.'
+                  : `${siraYaz(guncelSiralama - hedef.basariSirasi)} sıra uzaktasın.`}
+              </span>
+            )}
+          </>
+        ) : (
+          <span className="mt-1.5 block text-[13px] font-semibold text-muted-foreground">
+            Üniversiteni ve bölümünü seç — Rabi sıralamana ne kadar kaldığını takip etsin.
+          </span>
+        )}
+      </button>
+
       {/* 7 günlük seri */}
       <Kart>
         <KartUstu baslik={`${SERI_GUNU} günlük seri`} aciklama="Bugünkü hedefi tuttur, seriyi büyüt.">
@@ -349,49 +395,6 @@ export function AnaSayfa({
           ))}
         </div>
       </Kart>
-
-      {/* Hedef bölüm — tahmini sıralamayla birlikte */}
-      <button
-        type="button"
-        onClick={() => onKartAc('hedef')}
-        className="golge-kart w-full rounded-2xl bg-card p-4 text-left transition active:brightness-[0.98]"
-      >
-        <span className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground">
-          <Target size={14} aria-hidden />
-          Hedefim
-        </span>
-        {hedef ? (
-          <>
-            <span className="mt-1.5 block font-display text-base leading-tight font-extrabold">
-              {hedef.bolum}
-            </span>
-            <span className="block text-[13px] font-semibold text-muted-foreground">
-              {hedef.universite}
-            </span>
-            {hedef.basariSirasi !== null && (
-              <span className="rakam mt-1 block text-[13px] font-semibold text-muted-foreground">
-                Gereken sıralama: {siraYaz(hedef.basariSirasi)}
-              </span>
-            )}
-            {hedef.basariSirasi !== null && guncelSiralama !== null && (
-              <span
-                className={cn(
-                  'mt-1 block text-[13px] font-bold',
-                  guncelSiralama <= hedef.basariSirasi ? 'text-success' : 'text-primary',
-                )}
-              >
-                {guncelSiralama <= hedef.basariSirasi
-                  ? 'Şu an hedefinin içindesin.'
-                  : `${siraYaz(guncelSiralama - hedef.basariSirasi)} sıra uzaktasın.`}
-              </span>
-            )}
-          </>
-        ) : (
-          <span className="mt-1.5 block text-[13px] font-semibold text-muted-foreground">
-            Hedef bölümünü yaz — Rabi sıralamana ne kadar kaldığını takip etsin.
-          </span>
-        )}
-      </button>
 
       {/* Günün sözü. Tasarımda yeri yok ama uygulamada vardı; selamlamadaki
           cümle artık duruma bağlı olduğu için söz sayfanın sonuna, sessiz bir
