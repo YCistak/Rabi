@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import { AlertTriangle, ChevronRight, Sparkles, Store } from 'lucide-react'
 import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef, OyunId } from '@/lib/types'
-import { devamsizlikOzeti, gunOzeti, kayitHaritasi, netYaz } from '@/lib/hesap'
+import { devamsizlikOzeti, gunOzeti, kayitHaritasi } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
 import { sozSec } from '@/lib/sozler'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
@@ -14,7 +14,7 @@ import { Halka, Kart, Not } from '@/components/ui'
 import { GeriSayim } from '@/components/geri-sayim'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
 
-/** Seride gösterilen gün sayısı. Tasarımda kart "7 günlük seri" diye adlandırılıyor. */
+/** Seride gösterilen gün sayısı. Tasarımda hedef kartının altındaki yedi kutucuk. */
 const SERI_GUNU = 7
 
 /**
@@ -31,6 +31,7 @@ const KUTUCUK_RENGI: Record<KartRengi, string> = {
   krem: 'bg-isl-kart text-isl-koyu',
   nane: 'bg-success-soft text-success',
   lavanta: 'bg-edb-kart text-edb-koyu',
+  deniz: 'bg-trh-kart text-trh-koyu',
 }
 
 /** Oyunların kendi aileleri var; ana sayfadaki kutucuk da aynı rengi taşımalı. */
@@ -68,14 +69,13 @@ export function AnaSayfa({
   sonAraclar,
   sonOyunlar,
   onKartAc,
-  onDahaGit,
   onOyunlaraGit,
 }: {
   ayarlar: Ayarlar
   gunlukKayitlar: GunlukKayit[]
   devamsizlik: Devamsizlik[]
   hedef: Hedef | null
-  /** Türetilen seviye durumu — selamlamadaki sayı ve ince ilerleme çizgisi. */
+  /** Türetilen seviye durumu — selamlamanın alt satırındaki sayı. */
   seviye: SeviyeDurumu
   /** Havuç bakiyesi; seviyeyle aynı satırda duruyor. */
   havuc: number
@@ -87,8 +87,6 @@ export function AnaSayfa({
   sonAraclar: string[]
   sonOyunlar: string[]
   onKartAc: (ekran: Ekran) => void
-  /** "Araçlar" başlığındaki "Tümü" — kart menüsünün tamamına götürür. */
-  onDahaGit: () => void
   /** "Oyunlar" kartındaki her kutucuk oyun sekmesini açar. */
   onOyunlaraGit: () => void
 }) {
@@ -176,28 +174,11 @@ export function AnaSayfa({
           type="button"
           onClick={() => onKartAc('magaza')}
           aria-label="Havuç Mağazası"
-          className="grid size-11 shrink-0 self-start place-items-center rounded-full bg-primary-soft text-primary transition active:brightness-95"
+          className="grid size-11 shrink-0 self-start place-items-center rounded-full bg-primary text-primary-foreground transition active:brightness-95"
         >
           <Store size={19} aria-hidden />
         </button>
       </header>
-
-      {/* Seviye ilerlemesi selamlamanın altına inen ince bir çizgi. Kendi kartı
-          yok ama tamamen kaybolmamalı: bir sonraki seviyeye ne kadar kaldığı
-          havucun tek kaynağı. */}
-      <div
-        className="h-1 overflow-hidden rounded-full bg-muted"
-        role="progressbar"
-        aria-valuenow={Math.round(seviye.oran * 100)}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-label={`Seviye ${seviye.seviye} ilerlemesi`}
-      >
-        <div
-          className="h-full rounded-full bg-primary transition-[width]"
-          style={{ width: `${Math.round(seviye.oran * 100)}%` }}
-        />
-      </div>
 
       {/* Haftalık özet daveti — biten haftanın özeti izlenmediyse en üstte.
           Ana sayfanın en görünür yeri burası; kart menüsüne konsaydı özet
@@ -232,57 +213,51 @@ export function AnaSayfa({
       {/* Günlük hedef — halka, cümle ve yedi günlük seri tek kartta.
           Seri eskiden ayrı bir karttı; ikisi de aynı soruyu ("bugün hedefi
           tutturdun mu") farklı ölçekte cevapladığı için ayrı durmaları
-          sayfayı uzatmaktan başka bir işe yaramıyordu. */}
-      <Kart className="px-4 py-4">
-        <div className="flex items-center gap-4">
-          <Halka deger={bugunku.toplam} hedef={ayarlar.gunlukHedef} boyut={96} kalinlik={10}>
-            <span className="rakam font-display text-[28px] leading-none font-extrabold">
-              {bugunku.toplam}
-            </span>
-            <span className="rakam mt-1 text-[11px] font-bold text-muted-foreground">
-              / {ayarlar.gunlukHedef}
-            </span>
-          </Halka>
+          sayfayı uzatmaktan başka bir işe yaramıyordu.
 
-          <div className="min-w-0 flex-1">
-            <h2 className="font-display text-[17px] leading-tight font-extrabold tracking-tight">
-              Bugünkü soru hedefin
-            </h2>
-            <p className="mt-1 text-[13px] leading-snug font-medium text-muted-foreground">
-              {hedefCumlesi(ayarlar.gunlukHedef, kalan, hedefTuttu)}
-            </p>
-            {bugunku.toplam > 0 && (
-              <p className="rakam mt-1 text-[11.5px] font-medium text-muted-foreground/80">
-                {bugunku.dogru} doğru · {bugunku.yanlis} yanlış · {netYaz(bugunku.net)} net
-              </p>
-            )}
-          </div>
+          Halkanın içinde yalnızca çözülen sayı var, "/300" yok: hedef zaten
+          hemen yanında cümle olarak yazıyor ve iki sayı halkanın içine
+          sığdırılınca ikisi de küçülüyordu. */}
+      <Kart className="flex items-center gap-4 px-4 py-4">
+        <Halka deger={bugunku.toplam} hedef={ayarlar.gunlukHedef} boyut={104} kalinlik={11}>
+          <span className="rakam font-display text-[30px] leading-none font-extrabold">
+            {bugunku.toplam}
+          </span>
+        </Halka>
+
+        <div className="min-w-0 flex-1">
+          <h2 className="font-display text-[17px] leading-tight font-extrabold tracking-tight">
+            Bugünkü soru hedefin
+          </h2>
+          <p className="mt-1 text-[13px] leading-snug font-medium text-muted-foreground">
+            {hedefCumlesi(ayarlar.gunlukHedef, kalan, hedefTuttu)}
+          </p>
+
+          {/* Yedi gün, cümlenin altında tek şerit. Kutucuklar gün adının
+              kendisi: önce daire + altında ad vardı, iki kat yer kaplıyordu. */}
+          <ul
+            className="mt-3 flex gap-1"
+            aria-label={`Son ${SERI_GUNU} günde ${tamamlanan} gün hedef tuttu`}
+          >
+            {gunler.map((gun) => (
+              <li key={gun.iso} className="min-w-0 flex-1">
+                <span
+                  aria-label={`${gun.ad}: ${gun.tuttu ? 'hedef tuttu' : 'hedef tutmadı'}`}
+                  className={cn(
+                    'grid h-8 place-items-center rounded-[11px] text-[10px] font-extrabold',
+                    gun.tuttu
+                      ? 'bg-primary-soft text-primary'
+                      : 'bg-muted text-muted-foreground/55',
+                    // Bugün, dolu olsun olmasın halkasıyla ayrışır.
+                    gun.bugunMu && 'ring-2 ring-primary ring-inset',
+                  )}
+                >
+                  {gun.ad}
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
-
-        {/* Yedi gün, halkanın altında tek şerit. Kutucuklar gün adının kendisi:
-            önce daire + altında ad vardı, iki kat yer kaplıyordu. */}
-        <ul
-          className="mt-3.5 grid grid-cols-7 gap-1.5"
-          aria-label={`Son ${SERI_GUNU} günde ${tamamlanan} gün hedef tuttu`}
-        >
-          {gunler.map((gun) => (
-            <li key={gun.iso}>
-              <span
-                aria-label={`${gun.ad}: ${gun.tuttu ? 'hedef tuttu' : 'hedef tutmadı'}`}
-                className={cn(
-                  'grid h-9 place-items-center rounded-[13px] text-[11px] font-extrabold',
-                  gun.tuttu
-                    ? 'bg-primary-soft text-primary'
-                    : 'bg-muted text-muted-foreground/55',
-                  // Bugün, dolu olsun olmasın halkasıyla ayrışır.
-                  gun.bugunMu && 'ring-2 ring-primary ring-inset',
-                )}
-              >
-                {gun.ad}
-              </span>
-            </li>
-          ))}
-        </ul>
       </Kart>
 
       {/* Devamsızlık uyarısı — yalnızca gerektiğinde görünür */}
@@ -301,8 +276,9 @@ export function AnaSayfa({
 
       {/* Araçlar — en son açılan dördü; hiç açılmamışsa `KARTLAR`'ın başı.
           Kartın içinde değil doğrudan zeminin üstünde: tasarımda bunlar
-          kısayol, bir bölüm değil. Başlığı da yok, çünkü ikonların altındaki
-          adlar zaten ne olduklarını söylüyor. */}
+          kısayol, bir bölüm değil. Başlığı da yok, çünkü kutucuğun içindeki
+          ad zaten ne olduğunu söylüyor. Hepsine giden yol alt menüdeki
+          "Daha" sekmesi. */}
       <nav aria-label="Araç kısayolları" className="grid grid-cols-4 gap-2.5">
         {gosterilenAraclar.map(({ id, ad, Simge, renk }) => (
           <Kutucuk key={id} ad={ad} yuz={KUTUCUK_RENGI[renk]} onSec={() => onKartAc(id)}>
@@ -334,18 +310,6 @@ export function AnaSayfa({
           ))}
         </div>
       </Kart>
-
-      {/* Bütün araçlara giden yol. Kısayol ızgarasının başlığı kalkınca "Tümü"
-          bağlantısı da kalktı; alt menüdeki "Daha" sekmesi tek kapı olmasın diye
-          buraya sessiz bir satır kondu. */}
-      <button
-        type="button"
-        onClick={onDahaGit}
-        className="flex w-full items-center justify-center gap-1 rounded-xl py-1 text-[13px] font-extrabold text-primary transition active:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-      >
-        Bütün araçlar
-        <ChevronRight size={15} strokeWidth={2.8} aria-hidden />
-      </button>
 
       {/* Günün sözü. Tasarımda sayfanın en altında, sessiz bir satır. */}
       <p className="px-2 pt-1 text-center text-[12.5px] leading-relaxed font-medium text-muted-foreground">

@@ -736,7 +736,6 @@ export function AppShell() {
               sonAraclar={sonAraclar}
               sonOyunlar={sonOyunlar}
               onKartAc={aracAc}
-              onDahaGit={() => setSekme('daha')}
               onOyunlaraGit={() => setSekme('oyunlar')}
             />
           )}

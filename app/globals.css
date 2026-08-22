@@ -14,6 +14,7 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-soft: var(--primary-soft);
+  --color-primary-dolu: var(--primary-dolu);
   --color-ikincil: var(--ikincil);
   --color-ikincil-soft: var(--ikincil-soft);
   --color-ring: var(--ring);
@@ -127,6 +128,9 @@
   --primary: #6d3fe0;
   --primary-soft: #ece4ff;
   --primary-foreground: #ffffff;
+  /* Doygun eylem moru: dolu düğme, seçili çip, açık anahtar. Açık temada
+     `--primary` ile aynı; ayrı durmasının sebebi koyu tema (bkz. `.dark`). */
+  --primary-dolu: #6d3fe0;
 
   /* İkinci kimlik rengi: marka yazısı, yanlışlar, dikkat çeken eylem */
   --ikincil: #db2777;
@@ -202,6 +206,13 @@
 
   --primary: #a78bfa;
   --primary-soft: #2b2354;
+  /*
+    Koyu temada tek mor yetmiyor: `--primary` lavanta, yazı olarak koyu zeminde
+    okunuyor ama dolu bir yüzey olarak üstünde beyaz yazı taşıyamıyor. Doygun
+    eylem moru bu yüzden ayrı — düğme, seçili çip ve açık anahtar bunu kullanıyor
+    ve üstlerindeki yazı beyaz kalıyor.
+  */
+  --primary-dolu: #7c5cfc;
   /* Lavantanın üstüne beyaz yazı okunmuyor; dolu mor yüzeylerde yazı zeminin
      kendi koyu tonu. */
   --primary-foreground: #150c2e;

@@ -11,6 +11,7 @@ const RENK_SINIFI: Record<KartRengi, string> = {
   krem: 'bg-isl-kart text-isl-koyu',
   nane: 'bg-success-soft text-success',
   lavanta: 'bg-edb-kart text-edb-koyu',
+  deniz: 'bg-trh-kart text-trh-koyu',
 }
 
 /**
@@ -21,7 +22,7 @@ const RENK_SINIFI: Record<KartRengi, string> = {
  * giriş düz bir liste hâlinde kaybolduğu için dört başlığa bölündü.
  */
 const BOLUMLER: { baslik: string; kartlar: Ekran[] }[] = [
-  { baslik: 'Çalışma', kartlar: ['pomodoro', 'notlar', 'soru', 'yanlis-banka'] },
+  { baslik: 'Çalışma', kartlar: ['pomodoro', 'soru', 'yanlis-banka', 'notlar'] },
   { baslik: 'Denemeler', kartlar: ['deneme', 'siralama', 'istatistik'] },
   { baslik: 'Okul', kartlar: ['okul', 'devamsizlik'] },
   { baslik: 'Motivasyon', kartlar: ['haftalik-ozet', 'hedef', 'rozetler'] },

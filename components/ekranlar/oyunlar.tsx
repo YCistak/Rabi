@@ -415,11 +415,6 @@ export function OyunlarEkrani({
                     <span className="block font-display text-[16.5px] leading-[1.15] font-extrabold tracking-tight text-foreground">
                       {ders.ad}
                     </span>
-                    {oynanan > 0 && (
-                      <span className="rakam mt-0.5 block text-[11.5px] font-semibold text-foreground/55">
-                        {oynanan} tur oynadın
-                      </span>
-                    )}
                   </span>
                 </button>
               )
@@ -777,7 +772,7 @@ function BankaSatiri({
           </span>
         </span>
 
-        <span className="shrink-0 rounded-full bg-primary px-4 py-2 text-[13px] font-extrabold text-primary-foreground">
+        <span className="shrink-0 rounded-full bg-primary-dolu px-4 py-2 text-[13px] font-extrabold text-white">
           Oyna
         </span>
       </span>

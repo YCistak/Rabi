@@ -6,10 +6,18 @@ import type { Hedef } from '@/lib/types'
 import { geriSayim, sinavTarihiYaz } from '@/lib/sinav-tarihi'
 import { sinavSozu } from '@/lib/sinav-sozleri'
 import { siraYaz } from '@/lib/siralama'
+import { universiteKisaAdi } from '@/lib/hedef-katalog'
 import { cn } from '@/lib/utils'
 
 /**
  * Ana sayfanın üstündeki YKS geri sayımı.
+ *
+ * Kart dört parçadan ibaret ve sırası tasarımdan geliyor: yıl/oturum satırı ve
+ * yanında kalan süreyi tek kelimeyle adlandıran rozet, dev sayı ve devamındaki
+ * tarih, hazırlık yılının çubuğu, en altta hedef paneli. Kalan güne uygun uzun
+ * söz bilerek **yok**: rozetteki kelime ("Uzun yol") aynı havuzdan geliyor ve
+ * sayfanın altında zaten günün sözü duruyor — iki motivasyon cümlesi tek
+ * ekranda birbirini eziyordu.
  *
  * Renk kalan güne göre koyulaşıyor: uzaktayken sakin mor, son ayda fuşya,
  * son haftada kartın tamamı fuşya. Sayının yanında yazan "42 gün" ile "son
@@ -89,8 +97,10 @@ export function GeriSayim({
       {/* Sayının kendisi. Sınav günü sayı yerine "Bugün" yazıyor: "0 gün kaldı"
           hem tuhaf okunuyor hem de o sabah söylenecek şey bu değil.
 
-          Tarih artık ayrı bir satır değil, "gün kaldı"nın devamı: iki bilgi tek
-          cümle ("303 gün kaldı · 19 Haziran 2027") ve kart bir satır kısalıyor. */}
+          Tarih ayrı satır değil, "gün kaldı"nın devamı: iki bilgi tek cümle
+          ("303 gün kaldı · 19 Haziran 2027"). Tarih ÖSYM'den değil hesaptan
+          geliyorsa sonuna "(tahmini)" ekleniyor — tahmini bir sayıyı kesinmiş
+          gibi göstermeme kuralı, ayrı bir uyarı satırına gerek kalmadan. */}
       <p className="mt-1.5 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
         {sinavGunu ? (
           <span className="font-display text-[40px] leading-none font-extrabold">Bugün!</span>
@@ -106,23 +116,21 @@ export function GeriSayim({
               )}
             >
               gün kaldı · {sinavTarihiYaz(sayim.sinavTarihi)}
+              {sayim.tahmini && (
+                <span
+                  className={cn(
+                    'font-bold',
+                    doluKart ? 'text-white/70' : 'text-muted-foreground',
+                  )}
+                >
+                  {' '}
+                  (tahmini)
+                </span>
+              )}
             </span>
           </>
         )}
       </p>
-
-      {/* Tarih ÖSYM'den değil hesaptan geliyorsa bu her zaman yazılır —
-          tahmini bir sayıyı kesinmiş gibi gösterme kuralı. */}
-      {sayim.tahmini && (
-        <p
-          className={cn(
-            'mt-1 text-[11.5px] font-medium',
-            doluKart ? 'text-white/70' : 'text-muted-foreground/80',
-          )}
-        >
-          Tahmini tarih — ÖSYM takvimi açıklanınca netleşir.
-        </p>
-      )}
 
       {/* Hazırlık yılının çubuğu: geri sayım sayısı tek başına "ne kadar yol
           aldım" sorusunu cevaplamıyordu. */}
@@ -144,17 +152,6 @@ export function GeriSayim({
           />
         </div>
       )}
-
-      {/* Kalan güne uygun söz — havuzu `lib/sinav-sozleri.ts`'de. Rozetteki tek
-          kelimenin (soz.baslik) açılımı; ikisi aynı kademeden geliyor. */}
-      <p
-        className={cn(
-          'mt-3 text-[12.5px] leading-relaxed font-medium',
-          doluKart ? 'text-white/90' : 'text-muted-foreground',
-        )}
-      >
-        {soz.metin}
-      </p>
 
       <HedefPaneli
         hedef={hedef}
@@ -218,23 +215,21 @@ function HedefPaneli({
         >
           Hedefim
         </span>
+        {/* Kırpılan taraf bölüm, üniversite değil: dar telefonda satır taşınca
+            "Bilgisayar Mühen… · ODTÜ" okunuyor; tersi olsaydı hedefin hangi
+            üniversitede olduğu tamamen kaybolurdu. */}
         {hedef ? (
-          <>
-            {/* Bölüm ile üniversite ayrı satırda: tasarımda tek satırdaydılar ama
-                katalogdaki adlar uzun ("Orta Doğu Teknik Üniversitesi") ve tek
-                satırda üniversite hep kırpılıyordu — hedefin yarısı görünmüyordu. */}
-            <span className="mt-0.5 block truncate text-[14px] leading-tight font-extrabold">
-              {hedef.bolum}
-            </span>
+          <span className="mt-0.5 flex items-baseline gap-1 text-[13.5px] leading-tight font-extrabold">
+            <span className="truncate">{hedef.bolum}</span>
             <span
               className={cn(
-                'block truncate text-[12px] font-semibold',
+                'shrink-0 text-[12.5px] font-bold',
                 doluKart ? 'text-white/75' : 'text-muted-foreground',
               )}
             >
-              {hedef.universite}
+              · {universiteKisaAdi(hedef.universite)}
             </span>
-          </>
+          </span>
         ) : (
           <span
             className={cn(

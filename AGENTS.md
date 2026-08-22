@@ -43,9 +43,13 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   orada kart zeminden zaten bir tık açık.
 - **Koyu tema asıl tema.** Tasarım gece çalışan öğrenci için çizildi; açık tema
   aynı paletin gündüz hâli. Yeni bir renk eklerken önce koyuda bak.
-- Dolu mor yüzeylerde yazı beyaz değil `--primary-foreground`: koyu temada
-  `--primary` lavanta ve üstünde beyaz okunmuyor, orada yazı neredeyse siyah.
-  `bg-primary text-primary-foreground` ikilisini bozma.
+- **İki mor var, karıştırma.** `--primary` (koyu temada lavanta) *yazı* rengi
+  ve açık dolgular için: `text-primary`, `bg-primary-soft`, halkalar, çubuklar;
+  dolu hâlinde üstüne `text-primary-foreground` (neredeyse siyah) geliyor.
+  `--primary-dolu` (doygun mor) *eylem* yüzeyleri için: dolu düğme, seçili çip,
+  açık anahtar — üstündeki yazı her iki temada da beyaz. Lavantanın üstüne beyaz
+  okunmuyor, doygun morun üstüne koyu yazı okunmuyor; her biri kendi eşiyle
+  gidiyor (`bg-primary text-primary-foreground` / `bg-primary-dolu text-white`).
 - Yazı tipi tek: **Plus Jakarta Sans**. Başlık ayrı aile değil ayrı kalınlık —
   `font-display` hâlâ var ama aynı aileye çözülüyor; başlıklar `font-extrabold`,
   gövde `font-medium`. Ailenin en kalını **800**: `font-black` (900) kullanma,
@@ -68,18 +72,40 @@ Sıra tesadüf değil, "önce ben, sonra hedef, sonra bugün" diye okunuyor:
 
 1. **Selamlama** — maskot, "Merhaba", altında seviye · unvan · havuç. Seviye
    eskiden ayrı bir karttı; sayfanın en değerli yerini üç sayı için harcıyordu.
-   Satırın tamamı mağazaya gidiyor, altındaki ince çizgi de seviye ilerlemesi.
+   Satırın tamamı mağazaya gidiyor.
 2. **Geri sayım + hedef** — tek kart. "Kaç gün kaldı" ile "ne için" aynı sorunun
    iki yarısı; hedef ayrı kart olsaydı aradaki bağ görünmezdi. Hedef eskiden
    sayfanın en altındaydı ve hedefini hiç yazmamış kullanıcı oraya inmediği için
    özelliği hiç görmüyordu.
 3. **Günlük hedef + yedi günlük seri** — tek kart. İkisi de aynı soruyu farklı
-   ölçekte cevaplıyor.
+   ölçekte cevaplıyor. Halkanın içinde yalnızca çözülen sayı var ("/300" yok):
+   hedef zaten yanındaki cümlede yazıyor ve iki sayı halkaya sığmıyordu.
 4. **Araç kısayolları** — kartsız, doğrudan zeminin üstünde dört kutucuk. Bunlar
    bir bölüm değil kısayol; başlıkları da yok, çünkü kutucuğun içindeki ad zaten
    ne olduğunu söylüyor.
 5. **Oyunlar** — kartın içinde, çünkü bir bölüm.
-6. **Bütün araçlar** ve **günün sözü** — sessiz iki satır.
+6. **Günün sözü** — sessiz tek satır.
+
+Sayfada bilerek **olmayan** üç şey var; üçü de bir kez eklenip tasarıma bakılarak
+geri alındı: seviye ilerleme çubuğu (sayı zaten yazıyor), geri sayımın içindeki
+uzun sınav sözü (rozetteki kelime aynı havuzdan geliyor ve altta günün sözü zaten
+var) ve "Bütün araçlar" bağlantısı (alt menüdeki "Daha" sekmesi aynı yere
+gidiyor). Yeniden ekleyeceksen önce neyi ittiklerine bak.
+
+Hedef panelinde üniversite kısaltılıyor (`universiteKisaAdi`): "Bilgisayar
+Mühendisliği · Orta Doğu Teknik Üniversitesi" hiçbir telefonda tek satıra
+sığmıyor ve kırpılan yer tam da üniversitenin adı oluyordu. Satır yine taşarsa
+kırpılan taraf **bölüm**; üniversite `shrink-0`, çünkü hedefin hangi okulda
+olduğu kaybolmamalı.
+
+### Ayarlar satırları kapalı açılıyor
+
+Seçenek çipleri satırın altında sürekli açık dururken ekran üç ekran boyundaydı.
+Şimdi satır kapalı: solda ad, sağda seçili değer, uçta ok. Tek satır açık kalıyor
+(`acikSatir`), ikincisini açmak birincisini kapatıyor. Tema istisna — uygulamayı
+ilk açanın aradığı ayar o ve tasarımda da açık çizilmiş. Anahtarlı satırlar
+(hatırlatma, müzik) açılamaz: satıra dokunmak anahtarı çeviriyor, aynı satır hem
+anahtar hem liste olamaz — hatırlatma saati o yüzden **ayrı** bir satır.
 
 ## Seviye ve havuç
 
