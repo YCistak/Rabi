@@ -32,18 +32,54 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
 - Mobil öncelikli, `max-w-md` tek sütun. Hover yerine `active:` — dokunmatik cihaz.
 - Renkler doğrudan yazılmaz, tema değişkenlerinden gelir (`var(--primary)` /
   Tailwind `text-primary`). Tek palet var, kullanıcıya renk seçtirilmiyor.
-  Vurgu mavi (`--primary` #4A8FE7), ikinci kimlik rengi mercan (`--ikincil` #EF5A52),
-  zemin mavimsi kâğıt (`--background` #EDF1FD). Renk **derse** ait, oyuna değil:
-  `yzm` (Türkçe, pembe) · `isl` (Matematik, krem) · `edb` (Edebiyat, lavanta) ·
-  `trh` (Tarih, deniz mavisi) · `byl` (Biyoloji, yeşil), her biri `-koyu` ve
-  `-ok` tonuyla.
-  Kart yüzeyi `golge-kart` sınıfıyla: açık temada gölge, koyu temada ince çerçeve.
-- Yazı tipi tek: **Nunito**. Başlık ayrı aile değil ayrı kalınlık — `font-display`
-  hâlâ var ama Nunito'ya çözülüyor; başlıklar `font-extrabold`, gövde `font-medium`.
+  Vurgu mor: koyu temada lavanta (`--primary` #A78BFA), açık temada koyulaşmış
+  hâli (#6D3FE0). İkinci kimlik rengi fuşya (`--ikincil` #F472B6 / #DB2777).
+  Zemin koyuda neredeyse siyah mor (`--background` #0F0B1C), açıkta morumsu
+  kâğıt (#F5F3FF). Renk **derse** ait, oyuna değil: `yzm` (Türkçe, gül) ·
+  `isl` (Matematik, amber) · `edb` (Edebiyat, lavanta) · `cog` (Coğrafya, yeşil) ·
+  `trh` (Tarih, deniz mavisi) · `byl` (Biyoloji, yaprak yeşili), her biri `-koyu`
+  ve `-ok` tonuyla.
+  Kart yüzeyi `golge-kart` sınıfıyla: açık temada gölge, koyu temada hiçbiri —
+  orada kart zeminden zaten bir tık açık.
+- **Koyu tema asıl tema.** Tasarım gece çalışan öğrenci için çizildi; açık tema
+  aynı paletin gündüz hâli. Yeni bir renk eklerken önce koyuda bak.
+- Dolu mor yüzeylerde yazı beyaz değil `--primary-foreground`: koyu temada
+  `--primary` lavanta ve üstünde beyaz okunmuyor, orada yazı neredeyse siyah.
+  `bg-primary text-primary-foreground` ikilisini bozma.
+- Yazı tipi tek: **Plus Jakarta Sans**. Başlık ayrı aile değil ayrı kalınlık —
+  `font-display` hâlâ var ama aynı aileye çözülüyor; başlıklar `font-extrabold`,
+  gövde `font-medium`. Ailenin en kalını **800**: `font-black` (900) kullanma,
+  tarayıcı onu 800'e düşürüp sahte kalınlık üretir.
+- Marka rengi üç yerde daha yazılı ve hepsi birbirini tutmak zorunda: açılış
+  ekranı (`components/acilis.tsx` içindeki `ZEMIN`), Android açılış zemini
+  (`values/colors.xml` → `acilis_zemin`) ve uygulama ikonunun arka planı
+  (`ic_launcher_background.xml`, `public/icon.svg`, `assets/icon-*.svg`).
+  Birini değiştirirsen dördünü birden değiştir; yoksa açılışta renk sıçraması
+  olur. `mipmap-*/ic_launcher*.png` (Android 8 öncesi yedek ikon) elle
+  üretiliyor, renk değişince yeniden üretilmesi gerekiyor.
 - Tasarım kaynağı `tasarim/` altındaki HTML mockup'lar. Derlemeye girmiyorlar,
   uygulama onlardan hiçbir şey import etmiyor — ekran değiştirirken oraya bak.
 - Sütun hâlindeki sayılara `rakam` sınıfı (tabular-nums), başlıklara `font-display`.
 - Alt menünün altında kalan içerik için `guvenli-alt`.
+
+### Ana sayfanın düzeni
+
+Sıra tesadüf değil, "önce ben, sonra hedef, sonra bugün" diye okunuyor:
+
+1. **Selamlama** — maskot, "Merhaba", altında seviye · unvan · havuç. Seviye
+   eskiden ayrı bir karttı; sayfanın en değerli yerini üç sayı için harcıyordu.
+   Satırın tamamı mağazaya gidiyor, altındaki ince çizgi de seviye ilerlemesi.
+2. **Geri sayım + hedef** — tek kart. "Kaç gün kaldı" ile "ne için" aynı sorunun
+   iki yarısı; hedef ayrı kart olsaydı aradaki bağ görünmezdi. Hedef eskiden
+   sayfanın en altındaydı ve hedefini hiç yazmamış kullanıcı oraya inmediği için
+   özelliği hiç görmüyordu.
+3. **Günlük hedef + yedi günlük seri** — tek kart. İkisi de aynı soruyu farklı
+   ölçekte cevaplıyor.
+4. **Araç kısayolları** — kartsız, doğrudan zeminin üstünde dört kutucuk. Bunlar
+   bir bölüm değil kısayol; başlıkları da yok, çünkü kutucuğun içindeki ad zaten
+   ne olduğunu söylüyor.
+5. **Oyunlar** — kartın içinde, çünkü bir bölüm.
+6. **Bütün araçlar** ve **günün sözü** — sessiz iki satır.
 
 ## Seviye ve havuç
 

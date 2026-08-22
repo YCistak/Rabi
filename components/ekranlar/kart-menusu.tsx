@@ -81,8 +81,8 @@ export function KartMenusu({
   return (
     <div className={className}>
       <header className="px-0.5 pt-1">
-        <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
-        <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Daha 🗂️</h1>
+        <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
+        <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Daha 📋</h1>
         <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">Her şey burada.</p>
       </header>
 

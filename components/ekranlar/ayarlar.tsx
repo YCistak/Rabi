@@ -304,7 +304,7 @@ export function AyarlarEkrani({
     <div>
       {/* Ayarlar artık alt menüde kendi sekmesi; diğer sekmelerle aynı başlık deseni. */}
       <header className="px-0.5 pt-1">
-        <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
+        <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
         <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Ayarlar ⚙️</h1>
         <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
           Rabi’yi kendine göre kur.
@@ -1095,7 +1095,7 @@ function Satir({
 
       {/* Sağdaki değer seçili olanı söylüyor: çiplere bakmadan okunuyor. */}
       {deger !== undefined && (
-        <span className="rakam shrink-0 text-[13px] font-extrabold text-muted-foreground">
+        <span className="rakam shrink-0 text-[13px] font-extrabold text-primary">
           {deger}
         </span>
       )}

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <rect width="512" height="512" rx="112" fill="#4a8fe7"/>
+  <rect width="512" height="512" rx="112" fill="#6d3fe0"/>
   <g transform="translate(256 292) scale(3.05) translate(-60 -82)">
     <ellipse cx="44" cy="34" rx="11" ry="30" fill="#ffffff" transform="rotate(-8 44 34)"/>
     <ellipse cx="44" cy="36" rx="5.5" ry="21" fill="#f6d2da" transform="rotate(-8 44 36)"/>
