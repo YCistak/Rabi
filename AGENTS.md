@@ -144,7 +144,15 @@ maskottan önce ya da sonra gider.
 
 Çıkışta maskot ana sayfadaki maskotun **tam üstüne** süzülüyor; katman
 kalktığında ekranda zaten yalnızca o maskot duruyor ve altındaki ana sayfa
-görünür durumda, yani geçiş tek bir hareket gibi okunuyor. Üç şey buna bağlı:
+görünür durumda, yani geçiş tek bir hareket gibi okunuyor. Dört şey buna bağlı:
+
+- **Ekranda hep tek tavşan var.** Açılış sürerken ana sayfanın başlığındaki
+  maskot `visibility: hidden` (`AnaSayfa` → `acilisSuruyor`). Zemin son
+  saniyede saydamlaşıyor ve ana sayfa görünür oluyor; gizlenmeseydi biri
+  uçarken öteki yerinde dururken **iki** tavşan görünürdü. Katman kalkarken
+  gizlilik de kalkıyor, ikisi aynı çizimde olduğu için takas görünmüyor.
+  `display: none` olamaz: varış noktası bu öğe ölçülerek bulunuyor ve
+  düzenden çıkmış bir öğenin ölçüsü sıfırdır.
 
 - **Varış noktası ölçülüyor, yazılmıyor.** Tasarım `translate(-138px, -316px)
   scale(0.6)` diyor ama o sayılar 360×720'lik prototip çerçevesine ait.

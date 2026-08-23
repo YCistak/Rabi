@@ -70,6 +70,7 @@ export function AnaSayfa({
   sonOyunlar,
   onKartAc,
   onOyunlaraGit,
+  acilisSuruyor = false,
 }: {
   ayarlar: Ayarlar
   gunlukKayitlar: GunlukKayit[]
@@ -89,6 +90,13 @@ export function AnaSayfa({
   onKartAc: (ekran: Ekran) => void
   /** "Oyunlar" kartındaki her kutucuk oyun sekmesini açar. */
   onOyunlaraGit: () => void
+  /**
+   * Açılış ekranı hâlâ duruyor mu.
+   *
+   * Yalnızca başlıktaki maskotu ilgilendiriyor: açılış sürerken gizli
+   * kalıyor, yoksa ekranda iki tavşan birden görünüyor.
+   */
+  acilisSuruyor?: boolean
 }) {
   const tarih = bugun()
 
@@ -142,8 +150,12 @@ export function AnaSayfa({
             yerde, aynı boyda. Bu yüzden ruh hâline göre değişen çizim
             (components/maskot/rabi.tsx) burada kullanılmıyor — açılışta
             başka, ana sayfada başka bir tavşan geçişi bozardı. Çizilmiş
-            maskot boş ekranlarda ve kutlamalarda duruyor. */}
-        <TavsanYuzu boyut={58} yuvaMi />
+            maskot boş ekranlarda ve kutlamalarda duruyor.
+
+            Açılış sürerken gizli ama yerinde: ekranda tek tavşan olsun diye
+            gizli, açılış ekranı varışı bu öğeyi ölçerek bulduğu için
+            yerinde. */}
+        <TavsanYuzu boyut={58} yuvaMi gizli={acilisSuruyor} />
 
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>

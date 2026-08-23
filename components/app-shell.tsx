@@ -735,6 +735,7 @@ export function AppShell() {
               sonOyunlar={sonOyunlar}
               onKartAc={aracAc}
               onOyunlaraGit={() => setSekme('oyunlar')}
+              acilisSuruyor={!acilisBitti}
             />
           )}
           {sekme === 'oyunlar' && (
