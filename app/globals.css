@@ -58,6 +58,12 @@
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 
+  /* Açılış ekranının yazı tipi ayrı: tasarım Manrope ile çizildi ve "RABİ"
+     46 pikselde iki ailede belirgin biçimde farklı duruyor. Uygulamanın geri
+     kalanı Plus Jakarta Sans'ta kalıyor — bu istisna yalnızca marka anına
+     ait, `font-marka` başka hiçbir yerde kullanılmıyor. */
+  --font-marka: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+
   /* Kartlar tasarımda çerçeveyle değil gölgeyle ayrılıyor: morumsu zeminin
      üstünde yüzen beyaz yüzeyler. Koyu temada gölge de çerçeve de yok; orada
      kart zaten zeminden açık bir mor (bkz. `.dark .golge-kart`). */
@@ -364,72 +370,41 @@
   /* --- Açılış ekranı (components/acilis.tsx) --- */
 
   /*
-    Ekranın hareketleri katman katman yavaşlıyor: en arkadaki aurora 19–27
-    saniyede bir tur atıyor, maskot 9, hâle 4,6, yükleme parçaları 1,7–3,6.
-    Sıralama bilinçli — arka plan ne kadar yavaşsa gözün odağı o kadar öne,
-    yükleme bloğuna gidiyor.
-
-    Süreler `animation-duration` ile öğe üzerinden verilenler dışında burada;
-    her aurora bulutunun ve her kıvılcımın kendi süresi olduğu için o ikisinde
-    yalnızca ad ve eğri sınıfta duruyor.
+    Ekranın bütün parçaları tek bir 4,2 saniyelik zaman çizgisini paylaşıyor:
+    %0–34 iniş, %34–68 duruş, %68–100 çıkış. Süreler bu yüzden hepsinde aynı
+    ve ayrı ayrı değiştirilemez — biri kayarsa yazılar maskottan önce ya da
+    sonra gider, ekran dağılır. Süreyi `ACILIS_SURESI` ile birlikte değiştir.
   */
-  .rb-aurora {
-    animation-name: rb-aurora;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
-  }
-  .rb-tarama {
-    animation: rb-tarama 12s ease-in-out infinite 2s;
-  }
-  .rb-kivilcim {
+  .rb3-inis {
     opacity: 0;
-    animation-name: rb-kivilcim;
-    animation-timing-function: ease-out;
-    animation-iteration-count: infinite;
+    animation: rb3-inis 4.2s cubic-bezier(0.3, 0.8, 0.25, 1) forwards;
   }
-  .rb-hale {
-    animation: rb-hale 4.6s ease-in-out infinite;
-  }
-  /* Eğilme maskotun **çenesinden** dönüyor (`50% 88%`), ortasından değil:
-     ortadan dönen bir baş sallanmıyor, kayıyor gibi duruyordu. */
-  .rb-egil {
-    transform-origin: 50% 88%;
-    animation: rb-egil 9s ease-in-out infinite;
-  }
-  .rb-egil-golge {
-    animation: rb-egil-golge 9s ease-in-out infinite;
-  }
-  .rb-havuz {
-    animation: rb-havuz 6.5s ease-in-out infinite;
-  }
-  .rb-shimmer {
-    animation: rb-shimmer 6.5s ease-in-out infinite 1.2s;
-  }
-  /* Slogan harfleri ve yükleme yazıları görünmez başlıyor; ikisinin de
-     `prefers-reduced-motion` karşılığı aşağıda ayrıca yazılı, yoksa
-     animasyon kapanınca ekranda hiç çıkmazlardı. */
-  .rb-yaz {
+  .rb3-yazi {
     opacity: 0;
-    animation: rb-yaz 0.7s ease-out forwards;
+    animation: rb3-yazi 4.2s cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
   }
-  .rb-suzul {
-    animation: rb-suzul 5s ease-in-out infinite;
+  .rb3-slogan {
+    opacity: 0;
+    animation: rb3-slogan 4.2s ease-out forwards;
   }
-  .rb-cark {
-    animation: rb-cark 3.6s linear infinite;
-  }
-  .rb-yol {
-    animation: rb-yol 1.7s ease-in-out infinite;
+  .rb3-son {
+    animation: rb3-son 4.2s ease-out forwards;
   }
   /*
-    Yükleme yazılarının turu 4,5 saniye ve üçü 1,5 saniye arayla açılıyor:
-    tam bir tur, açılış ekranının ömrüne (`ACILIS_SURESI`) sığıyor. Tasarımın
-    kendi süresi 10,5 saniyeydi; o süreyle üçüncü yazı ekran kapanmadan hiç
-    görünmüyordu. Süreyi değiştirirsen `ACILIS_SURESI` ile birlikte değiştir.
+    Hâlelerin iki animasyonu var: sürekli nefes alma (`rb-hale`) ve çıkışta
+    sönme (`rb3-son`). İkisi ayrı sınıfa yazılamıyor — aynı öğede iki
+    `animation` bildirimi birleşmez, sonraki öncekini siler. Süreler ve
+    gecikmeler öğe üzerinden veriliyor çünkü iki hâle farklı hızda nefes
+    alıyor (8s ve 5,4s).
   */
-  .rb-durum {
-    opacity: 0;
-    animation: rb-durum 4.5s ease-in-out infinite;
+  .rb3-hale {
+    animation-name: rb-hale, rb3-son;
+    animation-timing-function: ease-in-out, ease-out;
+    animation-iteration-count: infinite, 1;
+    animation-fill-mode: none, forwards;
+  }
+  .rb-aurora {
+    animation: rb-aurora 23s ease-in-out infinite;
   }
 
   /* --- Haftalık özet (components/ekranlar/haftalik-ozet.tsx) --- */
@@ -476,31 +451,48 @@
 
 /* --- Açılış ekranının kareleri --- */
 
-@keyframes rb-aurora {
-  0%,
-  100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.55; }
-  33% { transform: translate3d(26px, -22px, 0) scale(1.12); opacity: 0.85; }
-  66% { transform: translate3d(-18px, 16px, 0) scale(0.95); opacity: 0.65; }
-}
-
 /*
-  Tarama ışığının bitiş noktası `100dvh`: tasarımda 720 pikseldi ama o sayı
-  prototipin telefon çerçevesinin boyu. Sabit kalsaydı uzun ekranlarda ışık
-  ekranın ortasında kaybolurdu.
+  Maskotun varış noktası koda sabit yazılamıyor: tasarım 360×720'lik çerçeve
+  için translate(-138px, -316px) scale(0.6) diyor, gerçek telefonlarda hem
+  ekranın ortası hem başlığın yeri başka. Açılış ekranı yuvayı ölçüp bu üç
+  değişkeni dolduruyor; ölçüm tutmazsa yedek değerler tasarımın kendi sayıları.
 */
-@keyframes rb-tarama {
-  0% { transform: translateY(-40%); opacity: 0; }
-  12% { opacity: 0.5; }
-  45% { opacity: 0.5; }
-  70%,
-  100% { transform: translateY(100dvh); opacity: 0; }
+@keyframes rb3-inis {
+  0% { opacity: 0; transform: translateY(-300px) scale(1.04); }
+  12% { opacity: 1; }
+  26% { transform: translateY(14px) scale(0.99); }
+  34% { opacity: 1; transform: translateY(0) scale(1); }
+  68% { opacity: 1; transform: translateY(0) scale(1); }
+  100% {
+    opacity: 1;
+    transform: translate(var(--rb3-dx, -138px), var(--rb3-dy, -316px))
+      scale(var(--rb3-olcek, 0.6));
+  }
 }
 
-@keyframes rb-kivilcim {
-  0% { opacity: 0; transform: translateY(14px) scale(0.6); }
-  25% { opacity: 1; }
-  70% { opacity: 0.7; }
-  100% { opacity: 0; transform: translateY(-58px) scale(1.1); }
+@keyframes rb3-yazi {
+  0%,
+  18% { opacity: 0; transform: translateY(18px); }
+  36% { opacity: 1; transform: translateY(0); }
+  68% { opacity: 1; transform: translateY(0); }
+  86%,
+  100% { opacity: 0; transform: translateY(-26px); }
+}
+
+@keyframes rb3-slogan {
+  0%,
+  30% { opacity: 0; transform: translateY(10px); }
+  46% { opacity: 1; transform: translateY(0); }
+  66% { opacity: 1; transform: translateY(0); }
+  82%,
+  100% { opacity: 0; transform: translateY(-16px); }
+}
+
+@keyframes rb3-son {
+  0%,
+  68% { opacity: 1; }
+  86%,
+  100% { opacity: 0; }
 }
 
 @keyframes rb-hale {
@@ -509,58 +501,11 @@
   50% { opacity: 0.85; transform: scale(1.08); }
 }
 
-@keyframes rb-egil {
+@keyframes rb-aurora {
   0%,
-  100% { transform: rotate(-1.6deg) translateY(0); }
-  28% { transform: rotate(-2.2deg) translateY(-1px); }
-  50% { transform: rotate(1.6deg) translateY(0); }
-  78% { transform: rotate(2.1deg) translateY(-1px); }
-}
-
-@keyframes rb-egil-golge {
-  0%,
-  100% { transform: translateX(-2px) scaleX(0.98); opacity: 0.42; }
-  50% { transform: translateX(2px) scaleX(1.02); opacity: 0.5; }
-}
-
-@keyframes rb-havuz {
-  0%,
-  100% { opacity: 0.45; transform: scaleX(1); }
-  50% { opacity: 0.75; transform: scaleX(1.08); }
-}
-
-@keyframes rb-shimmer {
-  0% { transform: translateX(-140%) skewX(-18deg); }
-  28%,
-  100% { transform: translateX(320%) skewX(-18deg); }
-}
-
-@keyframes rb-yaz {
-  0% { opacity: 0; transform: translateY(5px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes rb-durum {
-  0% { opacity: 0; transform: translateY(4px); }
-  7%,
-  28% { opacity: 1; transform: translateY(0); }
-  36%,
-  100% { opacity: 0; transform: translateY(-4px); }
-}
-
-@keyframes rb-suzul {
-  0%,
-  100% { transform: translateY(0); }
-  50% { transform: translateY(-7px); }
-}
-
-@keyframes rb-cark {
-  to { transform: rotate(360deg); }
-}
-
-@keyframes rb-yol {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(340%); }
+  100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.55; }
+  33% { transform: translate3d(26px, -22px, 0) scale(1.12); opacity: 0.85; }
+  66% { transform: translate3d(-18px, 16px, 0) scale(0.95); opacity: 0.65; }
 }
 
 @keyframes ozet-girisi {
@@ -622,46 +567,26 @@
   .acilis-girisi,
   .ozet-girisi,
   .ozet-vurgu,
-  .ozet-nabiz,
-  .rb-aurora,
-  .rb-tarama,
-  .rb-hale,
-  .rb-egil,
-  .rb-egil-golge,
-  .rb-havuz,
-  .rb-shimmer,
-  .rb-suzul,
-  .rb-yol {
+  .ozet-nabiz {
     animation: none;
   }
   /* `ozet-cubuk` bilerek listede yok: süsleme değil, kartın ne zaman
      geçeceğini gösteren tek işaret. */
 
   /*
-    Aşağıdaki üçü `opacity: 0` ile başlıyor; animasyonu kapatmak onları
-    silmek olurdu. Kıvılcımlar yerinde duran bir yıldız alanına, slogan
-    yazılmış hâline, yükleme yazılarından da yalnızca ilki görünüre çekiliyor —
-    ekranın durağan hâli de eksiksiz olmak zorunda.
+    Açılış ekranı tümüyle duruyor — tasarımın kendi kuralı. `opacity: 0` ile
+    başlayan üç parça (maskot, wordmark, slogan) burada görünüre çekiliyor,
+    yoksa animasyon kapanınca ekranda hiç çıkmazlardı. Maskot da ortada
+    kalıyor: hareket yoksa süzülecek bir yol da yok.
   */
-  .rb-kivilcim {
-    animation: none;
-    opacity: 0.55;
+  .rb3-acilis,
+  .rb3-acilis * {
+    animation: none !important;
   }
-  .rb-yaz {
-    animation: none;
+  .rb3-inis,
+  .rb3-yazi,
+  .rb3-slogan {
     opacity: 1;
-  }
-  .rb-durum {
-    animation: none;
-    opacity: 0;
-  }
-  .rb-durum:first-child {
-    opacity: 1;
-  }
-  /* Çark istisna: dönmeyen bir bekleme göstergesi "donmuş" izlenimi veriyor,
-     o yüzden duruyor değil yavaşlıyor. */
-  .rb-cark {
-    animation-duration: 9s;
   }
 }
 

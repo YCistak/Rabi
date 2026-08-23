@@ -12,7 +12,7 @@ import { OYUNLAR } from '@/lib/oyunlar/tanim'
 import { seviyeUnvani, type SeviyeDurumu } from '@/lib/seviye'
 import { Halka, Kart, Not } from '@/components/ui'
 import { GeriSayim } from '@/components/geri-sayim'
-import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
+import { TavsanYuzu } from '@/components/maskot/tavsan-yuz'
 
 /** Seride gösterilen gün sayısı. Tasarımda hedef kartının altındaki yedi kutucuk. */
 const SERI_GUNU = 7
@@ -128,13 +128,6 @@ export function AnaSayfa({
 
   const hedefTuttu = bugunku.toplam >= ayarlar.gunlukHedef && ayarlar.gunlukHedef > 0
   const kalan = Math.max(0, ayarlar.gunlukHedef - bugunku.toplam)
-  const maskotDurumu: MaskotDurumu = devamsizlikDurumu.asildi
-    ? 'uzgun'
-    : hedefTuttu
-      ? 'mutlu'
-      : bugunku.toplam > 0
-        ? 'normal'
-        : 'uykulu'
 
   return (
     <div className="space-y-3.5">
@@ -145,7 +138,12 @@ export function AnaSayfa({
           için harcıyordu. Satırın tamamı mağazaya götürüyor — kazanç ile
           harcama arasındaki yol tek dokunuş olsun. */}
       <header className="flex items-center gap-3 px-0.5 pt-1">
-        <Rabi durum={maskotDurumu} boyut={58} />
+        {/* Açılış ekranının maskotu tam buraya iniyor: aynı görsel, aynı
+            yerde, aynı boyda. Bu yüzden ruh hâline göre değişen çizim
+            (components/maskot/rabi.tsx) burada kullanılmıyor — açılışta
+            başka, ana sayfada başka bir tavşan geçişi bozardı. Çizilmiş
+            maskot boş ekranlarda ve kutlamalarda duruyor. */}
+        <TavsanYuzu boyut={58} yuvaMi />
 
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>

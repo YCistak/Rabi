@@ -1,374 +1,232 @@
 'use client'
 
-import { Settings } from 'lucide-react'
-import { Rabi } from '@/components/maskot/rabi'
+import { useEffect, useState } from 'react'
+import { MASKOT_YUVASI, TavsanYuzu } from '@/components/maskot/tavsan-yuz'
 
 /**
  * Açılış ekranı.
  *
- * Android'in kendi açılış ekranı (Android 12+) **tek bir simge** gösterebiliyor:
- * altına yazı, yanına çark koyulamıyor ve animasyonu ~1 saniyeyle sınırlı — hızlı
- * açılan bir uygulamada çoğu zaman hiç görünmüyor. İstenen ekran (maskot +
- * "RABİ" yazısı + yükleme bloğu) bu yüzden uygulamanın içinde kuruldu.
+ * Android'in kendi açılış ekranı (Android 12+) **tek bir simge** gösterebiliyor
+ * ve animasyonu ~1 saniyeyle sınırlı; istenen ekran (inen maskot, beliren
+ * "RABİ" yazısı, sonunda maskotun ana sayfadaki yerine süzülmesi) bu yüzden
+ * uygulamanın içinde kuruldu.
  *
  * Uygulamaya girerken **tek** bir ekran görünmesi için üç yüzeyin zemini aynı
  * olmak zorunda ve hepsi `ACILIS_ZEMINI`ne bağlı:
  *   1. sistemin açılış ekranı (`values/colors.xml` → `acilis_zemin`),
  *   2. WebView ilk kareyi boyayana kadar görünen pencere zemini
- *      (`values/styles.xml` → `AppTheme.NoActionBar`),
+ *      (`values/drawable/acilis_zemini.xml`),
  *   3. bu ekran.
- * Üçü farklıyken uygulama açılışta mor → siyah → mor diye üç kez renk
- * değiştiriyordu. Birini değiştirirsen üçünü birden değiştir.
+ * Renk, gradyanın **dış** durağı: gradyanın ışığı sol üst köşede, geri kalan
+ * her yeri tam bu renk. Sistem ekranı gradyan gösteremediği için eşitlenecek
+ * tek sayı bu — birini değiştirirsen üçünü birden değiştir.
  *
  * Ekran temadan bağımsız olarak **hep koyu**: bu bir marka anı, uygulamanın
- * ekranı değil. Maskotun renkleri de o yüzden aşağıda sabitleniyor — tema
- * değişkenlerinden gelseydi açık temada beyaz kürk koyu zeminde kaybolurdu.
+ * ekranı değil.
  */
 
 /** Ekranın taban rengi — üç yüzeyin de eşitlendiği renk. */
-export const ACILIS_ZEMINI = '#0D0C16'
+export const ACILIS_ZEMINI = '#0E0D16'
+
+/** Zeminin gradyanı; ışık kaynağı sol üst köşenin dışında. */
+const ZEMIN_GRADYANI = 'radial-gradient(130% 65% at 15% -10%, #221F3D 0%, #0E0D16 60%)'
 
 /**
- * Zeminin gradyanı. Işık kaynağı ekranın üst ortasında (`at 50% 8%`), yani tam
- * maskotun arkasında: ışığın merkezi maskotu buluyor, kenarlar taban rengine
- * (`ACILIS_ZEMINI`) iniyor. Sistem ekranı düz renk gösterebildiği için taban
- * rengi gradyanın **dış** durağıyla aynı — geçişte kenarlarda renk oynaması
- * olmuyor, yalnızca ortadaki ışık beliriyor.
- */
-const ZEMIN_GRADYANI =
-  'radial-gradient(120% 70% at 50% 8%, #2A2350 0%, #1A1730 38%, #0D0C16 78%)'
-
-/**
- * Ekranın en az ne kadar kalacağı (ms).
+ * Ekranın ömrü (ms) — tasarımın kendi süresi.
  *
- * Veri localStorage'dan neredeyse anında okunuyor; süre konulmasaydı ekran bir
- * kare görünüp kaybolur, animasyon hiç izlenmezdi. 4,6 saniye kullanıcının
- * isteği: ekranın izlenecek kadar durması. Sayı keyfi değil — maskotun
- * hâlesinin bir turu (4,6 sn) ve yükleme yazılarının üç durumu (3 × 1,5 sn)
- * tam bu sürede tamamlanıyor, ekran yarım kalmış bir animasyonla kapanmıyor.
+ * Bütün parçalar tek bir 4,2 saniyelik zaman çizgisini paylaşıyor: %0–34 iniş,
+ * %34–68 duruş, %68–100 çıkış. Süreyi değiştirirsen `.rb3-*` sınıflarının
+ * hepsini birlikte değiştir; yüzdeler kendiliğinden ölçeklenir ama süreler
+ * birbirinden ayrılırsa parçalar dağılır.
+ *
+ * Veri okumasına bağlanmadı: localStorage neredeyse anında dönüyor,
+ * bağlansaydı ekran bir kare görünüp kaybolur ve animasyon hiç izlenmezdi.
  */
-export const ACILIS_SURESI = 4600
+export const ACILIS_SURESI = 4200
 
-/** Maskotun koyu zemine göre sabitlenmiş renkleri. */
-const MASKOT_RENKLERI = {
-  '--maskot-kurk': '#E9E4F6',
-  '--maskot-kulak-ic': '#C295B0',
-  '--maskot-yanak': '#CFA4BB',
-  '--maskot-burun': '#DE7F9F',
-  '--maskot-agiz': '#B04468',
-  '--maskot-cizgi': '#1F1937',
-  '--maskot-parlak': '#FFFFFF',
-} as React.CSSProperties
-
-const SLOGAN = 'Sınav yolu arkadaşın'
+/** Maskotun açılıştaki boyu (px) — tasarımda 96. */
+const MASKOT_BOYU = 96
 
 /**
- * Yükleme yazıları. Üçü sırayla görünüp kayboluyor; hangisinin ne zaman
- * çıkacağını CSS gecikmesi belirliyor, sayaç tutan bir state yok — ekranın
- * ömrü zaten sabit, ikinci bir zamanlayıcı ikisini birbirinden ayırırdı.
+ * Tasarımın kendi varış değerleri (360×720 çerçeve için).
+ *
+ * Ölçüm tutmazsa buraya düşülüyor; ekran yine tasarımdaki gibi bitiyor,
+ * yalnızca maskot ana sayfadaki yuvasının birkaç piksel yanına oturuyor.
  */
-const DURUMLAR = ['Sorular hazırlanıyor', 'Serin kaydediliyor', 'Neredeyse hazır']
+const VARSAYILAN_VARIS = { dx: -138, dy: -316, olcek: 0.6 }
 
-export function Acilis({ kapaniyor }: { kapaniyor: boolean }) {
+type Varis = { dx: number; dy: number; olcek: number }
+
+/**
+ * Maskotun nereye süzüleceğini ana sayfadaki yuvadan ölçer.
+ *
+ * Tasarım bu mesafeyi `translate(-138px, -316px) scale(0.6)` diye sabit
+ * yazıyor ama o sayılar 360×720'lik prototip çerçevesine ait: gerçek
+ * telefonlarda ekranın ortası da başlığın yeri de başka yerde. Sabit kalsaydı
+ * maskot yuvanın yanına düşer ve katman kalkınca zıplardı — geçişin tamamı o
+ * zıplamada kaybolurdu.
+ *
+ * Ölçüm ilk boyamadan sonraya bırakılıyor ve tutmazsa yineleniyor: açılış
+ * katmanı ana sayfayla aynı anda çiziliyor, ilk karede yuva henüz yok olabilir
+ * (veri okunuyor) ya da ölçüsü sıfır dönebilir.
+ *
+ * Yineleme `requestAnimationFrame` ile değil zamanlayıcıyla: sayfa görünür
+ * değilken (uygulama arka planda açıldıysa, cihaz kareyi hiç çizmiyorsa) rAF
+ * hiç çağrılmıyor ve ölçüm sonsuza kadar bekliyor. Zamanlayıcı o durumda da
+ * işliyor; hesap zaten çizime değil düzene bakıyor.
+ */
+const OLCUM_ARALIGI = 16
+const OLCUM_DENEMESI = 60
+
+function useVaris(): Varis {
+  const [varis, setVaris] = useState<Varis>(VARSAYILAN_VARIS)
+
+  useEffect(() => {
+    let zamanlayici = 0
+    let kalanDeneme = OLCUM_DENEMESI
+
+    const olc = () => {
+      const yuva = document.getElementById(MASKOT_YUVASI)
+      const kutu = yuva?.getBoundingClientRect()
+
+      // Yuva henüz yok (veri okunuyor ya da kurulum sihirbazı açık) veya
+      // ölçüsü sıfır: birazdan yeniden bak, deneme hakkı biterse tasarımın
+      // kendi sayılarıyla devam et.
+      if (!kutu || kutu.width === 0) {
+        if (kalanDeneme-- > 0) zamanlayici = window.setTimeout(olc, OLCUM_ARALIGI)
+        return
+      }
+
+      // Açılış maskotu ekranın tam ortasında duruyor ve `MASKOT_BOYU` kadar.
+      const merkezX = window.innerWidth / 2
+      const merkezY = window.innerHeight / 2
+      setVaris({
+        dx: kutu.left + kutu.width / 2 - merkezX,
+        dy: kutu.top + kutu.height / 2 - merkezY,
+        olcek: kutu.width / MASKOT_BOYU,
+      })
+    }
+
+    olc()
+    return () => clearTimeout(zamanlayici)
+  }, [])
+
+  return varis
+}
+
+export function Acilis() {
+  const varis = useVaris()
+
+  // `pointer-events-none`: son yarım saniyede zemin çoktan saydam ve altta ana
+  // sayfa görünüyor. Katman dokunuşları yutsaydı kullanıcı gördüğü ekrana basıp
+  // hiçbir şey olmadığını sanırdı; ekranda dokunulacak bir şey zaten yok.
   return (
     <div
-      className="fixed inset-0 z-[60] overflow-hidden transition-opacity duration-300"
-      style={{
-        ...MASKOT_RENKLERI,
-        backgroundColor: ACILIS_ZEMINI,
-        backgroundImage: ZEMIN_GRADYANI,
-        opacity: kapaniyor ? 0 : 1,
-      }}
-      aria-hidden={kapaniyor}
+      className="rb3-acilis font-marka pointer-events-none fixed inset-0 z-[60] overflow-hidden"
       role="status"
       aria-label="Rabi açılıyor"
+      style={
+        {
+          '--rb3-dx': `${varis.dx}px`,
+          '--rb3-dy': `${varis.dy}px`,
+          '--rb3-olcek': varis.olcek,
+        } as React.CSSProperties
+      }
     >
-      <Aurora />
-      <Kivilcimlar />
-
-      {/* Tarama ışığı: ekranın üstünden aşağı geçen ince bir aydınlık. Duran
-          bir gradyan zemini ölü gösteriyordu; bu, hiçbir şey söylemeden
-          ekranın canlı olduğunu belli eden en ucuz hareket. */}
+      {/*
+        Zemin ayrı bir katman: tasarımda çerçevenin kendi arka planı ve hiç
+        solmuyor, çünkü prototipte arkasında hiçbir şey yok. Uygulamada arkada
+        ana sayfa duruyor ve zemin kalkmazsa katman sertçe siliniyor — maskotun
+        yerine oturması da o sertlikte kayboluyor. Bu yüzden zemin de ekranın
+        kendi çıkış eğrisini (`rb3-son`) izliyor: yazılar giderken zemin de
+        açılıyor, maskot son yarım saniyesini ana sayfanın üstünde uçarak
+        tamamlıyor.
+      */}
       <span
-        className="rb-tarama pointer-events-none absolute inset-x-0 top-0 h-[220px]"
+        className="rb3-son absolute inset-0"
+        style={{ backgroundColor: ACILIS_ZEMINI, backgroundImage: ZEMIN_GRADYANI }}
+        aria-hidden
+      />
+
+      {/* Arka plan parıltısı. */}
+      <span
+        className="rb-aurora absolute rounded-full blur-[9px]"
         style={{
-          background:
-            'linear-gradient(180deg, transparent, rgba(210,198,255,0.09) 45%, transparent)',
+          left: -60,
+          bottom: 190,
+          width: 240,
+          height: 240,
+          background: 'radial-gradient(circle, rgba(138,118,224,0.2), transparent 70%)',
         }}
         aria-hidden
       />
 
-      <div className="relative flex h-full flex-col items-center justify-center gap-10 px-6 py-14">
-        <MaskotBlogu />
-        <MarkaBlogu />
-        <YuklemeBlogu />
-      </div>
+      {/* Logonun arkasında nefes alan iki katmanlı hâle. Tek katmanken ışık
+          maskotun kenarında sert bir daire olarak bitiyordu. */}
+      <span
+        className="rb3-hale absolute top-1/2 left-1/2 rounded-full blur-[14px]"
+        style={{
+          width: 260,
+          height: 260,
+          margin: '-130px 0 0 -130px',
+          background:
+            'radial-gradient(circle, rgba(138,118,224,0.28), rgba(122,150,240,0.1) 45%, transparent 70%)',
+          animationDuration: '8s, 4.2s',
+        }}
+        aria-hidden
+      />
+      <span
+        className="rb3-hale absolute top-1/2 left-1/2 rounded-full blur-[6px]"
+        style={{
+          width: 170,
+          height: 170,
+          margin: '-85px 0 0 -85px',
+          background: 'radial-gradient(circle, rgba(170,150,240,0.42), transparent 68%)',
+          animationDuration: '5.4s, 4.2s',
+          animationDelay: '0.8s, 0s',
+        }}
+        aria-hidden
+      />
 
-      {/* Uygulamanın tek vaadi ve ekranın alt sınırı. Açılışta söylenmesinin
-          sebebi var: sunucusu olmayan bir uygulamada bu, kullanıcının ilk
-          merak ettiği şey. */}
-      <p className="absolute inset-x-0 bottom-[22px] text-center text-[9px] leading-none font-semibold tracking-[0.16em] uppercase text-[rgba(167,159,198,0.45)]">
+      {/* Wordmark. Satır yüksekliği 1.32: daha dar bir değerde "İ"nin noktası
+          kırpılıyor. */}
+      <p
+        className="rb3-yazi absolute inset-x-0 top-1/2 m-0 text-center text-[46px] leading-[1.32] font-extrabold tracking-[-0.05em] text-transparent"
+        style={{
+          marginTop: 64,
+          background: 'linear-gradient(160deg, #FFFFFF, #A493EE)',
+          backgroundClip: 'text',
+          WebkitBackgroundClip: 'text',
+          filter: 'drop-shadow(0 10px 24px rgba(138,118,224,0.5))',
+        }}
+      >
+        RABİ
+      </p>
+
+      <p
+        className="rb3-slogan absolute inset-x-0 top-1/2 m-0 text-center text-[9.5px] leading-none font-semibold tracking-[0.3em] uppercase"
+        style={{ marginTop: 132, color: 'rgba(195,180,251,0.7)' }}
+      >
+        Sınav yolu arkadaşın
+      </p>
+
+      {/* Maskot: yukarıdan iner, ortada durur, çıkışta ana sayfadaki yuvasına
+          süzülür. Katmanın en üstünde çünkü giderken zemin çoktan açılmış
+          oluyor ve son anlarını ana sayfanın üstünde geçiriyor. */}
+      <TavsanYuzu
+        boyut={MASKOT_BOYU}
+        className="rb3-inis absolute top-1/2 left-1/2"
+        style={{ margin: `${-MASKOT_BOYU / 2}px 0 0 ${-MASKOT_BOYU / 2}px` }}
+      />
+
+      {/* Uygulamanın tek vaadi. Açılışta söylenmesinin sebebi var: sunucusu
+          olmayan bir uygulamada bu, kullanıcının ilk merak ettiği şey. */}
+      <p
+        className="rb3-son absolute inset-x-0 bottom-[22px] m-0 text-center text-[10.5px] leading-none font-semibold tracking-[0.16em] uppercase"
+        style={{ color: 'rgba(195,180,251,0.72)' }}
+      >
         çevrimdışı çalışır
       </p>
-
-      {/* Çarkın gradyanı. Ayrı bir SVG'de duruyor çünkü `lucide-react` ikonu
-          kendi `<defs>`ini almıyor; aynı belgedeki tanıma `url(#…)` ile
-          erişilebiliyor. */}
-      <svg width="0" height="0" className="absolute" aria-hidden>
-        <defs>
-          <linearGradient id="rb-cark-gradyani" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#D3C8FD" />
-            <stop offset="100%" stopColor="#7F6CCD" />
-          </linearGradient>
-        </defs>
-      </svg>
-    </div>
-  )
-}
-
-/**
- * Üç aurora bulutu. Yavaş, farklı hızlarda ve farklı gecikmelerle sürükleniyor;
- * süreleri (19/24/27 sn) bilerek birbirinin katı değil — katı olsaydı üçü belli
- * aralıklarla aynı yerde buluşur ve döngü fark edilirdi.
- */
-function Aurora() {
-  return (
-    <div className="pointer-events-none absolute inset-0" aria-hidden>
-      <span
-        className="rb-aurora absolute size-[240px] rounded-full blur-[8px]"
-        style={{
-          left: -70,
-          top: 180,
-          background: 'radial-gradient(circle, rgba(138,118,224,0.24), transparent 70%)',
-          animationDuration: '19s',
-        }}
-      />
-      <span
-        className="rb-aurora absolute size-[260px] rounded-full blur-[8px]"
-        style={{
-          right: -80,
-          bottom: 120,
-          background: 'radial-gradient(circle, rgba(90,120,220,0.2), transparent 70%)',
-          animationDuration: '24s',
-          animationDelay: '3s',
-        }}
-      />
-      <span
-        className="rb-aurora absolute size-[200px] rounded-full blur-[10px]"
-        style={{
-          left: 40,
-          top: -40,
-          background: 'radial-gradient(circle, rgba(216,205,255,0.16), transparent 68%)',
-          animationDuration: '27s',
-          animationDelay: '8s',
-        }}
-      />
-    </div>
-  )
-}
-
-/**
- * Yukarı süzülen kıvılcımlar.
- *
- * Dağılım rastgele **değil**, indeksten türetiliyor: `Math.random()` sunucuda
- * ve tarayıcıda başka sayılar üretir, statik dışa aktarımda o fark hidrasyon
- * uyuşmazlığı olarak geri döner. Altın oran adımı, aynı sayıda parçacığı
- * yığılma yapmadan yayan en kısa deterministik yol.
- */
-const KIVILCIM_SAYISI = 26
-const ALTIN_ADIM = 0.6180339887
-
-const KIVILCIM_RENKLERI = [
-  'rgba(195,180,251,0.8)',
-  'rgba(150,180,250,0.7)',
-  'rgba(230,220,255,0.85)',
-  'rgba(170,150,240,0.65)',
-]
-
-const KIVILCIMLAR = Array.from({ length: KIVILCIM_SAYISI }, (_, i) => ({
-  sol: 4 + ((i * ALTIN_ADIM * 100) % 92),
-  alt: 2 + (((i + 1) * 37) % 88),
-  boy: 2 + (i % 4),
-  renk: KIVILCIM_RENKLERI[i % KIVILCIM_RENKLERI.length],
-  sure: 4.6 + (((i * 5) % 37) / 10),
-  gecikme: ((i * 11) % 53) / 10,
-}))
-
-function Kivilcimlar() {
-  return (
-    <div className="pointer-events-none absolute inset-0" aria-hidden>
-      {KIVILCIMLAR.map((k, i) => (
-        <span
-          key={i}
-          className="rb-kivilcim absolute rounded-full"
-          style={{
-            left: `${k.sol}%`,
-            bottom: `${k.alt}%`,
-            width: k.boy,
-            height: k.boy,
-            background: k.renk,
-            animationDuration: `${k.sure}s`,
-            animationDelay: `${k.gecikme}s`,
-          }}
-        />
-      ))}
-    </div>
-  )
-}
-
-/**
- * Maskot ve altındaki zemin.
- *
- * Maskot zıplamıyor, **eğiliyor**: 9 saniyede bir sağa sola ±2°. Zıplama
- * dikkati kendine çekiyor ve dört saniye boyunca izlenince yoruyordu; bu ekran
- * bir eylem değil bir karşılama, hareketin de o kadar sessiz olması gerekiyor.
- *
- * Gölge maskotla **aynı süreyi** paylaşıyor (ikisi de 9 sn): farklı olsalardı
- * gölge maskottan bağımsız kayar ve maskot havada duruyormuş gibi görünürdü.
- */
-function MaskotBlogu() {
-  return (
-    <div className="relative grid size-[212px] place-items-center">
-      {/* Arka parıltı: maskotu zeminden ayıran şey bu. Olmadan koyu zeminde
-          koyu bir siluet gibi duruyordu. */}
-      <span
-        className="rb-hale absolute size-[126px] rounded-full blur-[2px]"
-        style={{ background: 'radial-gradient(circle, rgba(138,118,224,0.4), transparent 68%)' }}
-        aria-hidden
-      />
-
-      <Rabi
-        durum="mutlu"
-        boyut={116}
-        className="rb-egil relative"
-        style={{ filter: 'drop-shadow(0 14px 24px rgba(16,12,32,0.7))' }}
-      />
-
-      {/* Maskotun kendi gölgesi. */}
-      <span
-        className="rb-egil-golge absolute bottom-[26px] h-[9px] w-[74px] rounded-full"
-        style={{ background: 'radial-gradient(ellipse, rgba(0,0,0,0.6), transparent 72%)' }}
-        aria-hidden
-      />
-      {/* Zemin ışık havuzu — maskotun bir yerde **durduğunu** söyleyen parça. */}
-      <span
-        className="rb-havuz absolute bottom-[14px] h-[26px] w-[150px] rounded-full blur-[3px]"
-        style={{ background: 'radial-gradient(ellipse, rgba(170,150,240,0.35), transparent 70%)' }}
-        aria-hidden
-      />
-      <span
-        className="absolute bottom-[24px] h-[2px] w-[118px] rounded-full"
-        style={{
-          background:
-            'linear-gradient(90deg, transparent, rgba(195,180,251,0.55), transparent)',
-        }}
-        aria-hidden
-      />
-    </div>
-  )
-}
-
-/**
- * "RABİ" yazısı ve sloganı.
- *
- * Harfler dönmüyor, kaymıyor: üzerlerinden geçen tek bir parıltı var. Dört
- * harfin ayrı ayrı hareket ettiği bir açılış denendi ve okunmaz oldu — marka
- * adı okunmak için var, gösteri için değil.
- */
-function MarkaBlogu() {
-  return (
-    <div className="flex flex-col items-center gap-3">
-      <div className="relative flex items-center gap-[7px] overflow-hidden px-2">
-        {['R', 'A', 'B', 'İ'].map((harf) => (
-          <span
-            key={harf}
-            className="font-display block text-[62px] leading-none font-extrabold tracking-[-0.05em] text-transparent"
-            style={{
-              background: 'linear-gradient(160deg, #FFFFFF 0%, #D8CFFC 48%, #A493EE 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              filter: 'drop-shadow(0 10px 26px rgba(138,118,224,0.5))',
-            }}
-          >
-            {harf}
-          </span>
-        ))}
-        {/* Yazının üzerinden geçen parıltı. `overflow-hidden` kapta duruyor,
-            yoksa ekranın yarısını tarardı. */}
-        <span
-          className="rb-shimmer absolute top-[-10%] left-0 h-[120%] w-[46px] blur-[3px]"
-          style={{
-            background:
-              'linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent)',
-            mixBlendMode: 'overlay',
-          }}
-          aria-hidden
-        />
-      </div>
-
-      {/* Slogan harf harf yazılıyor. `forwards`: animasyon bir kez oynayıp
-          harfleri yerinde bırakıyor, döngüye girmiyor. */}
-      <p
-        className="m-0 flex gap-px text-[10px] leading-none font-semibold tracking-[0.34em] uppercase text-[rgba(195,180,251,0.75)]"
-        aria-label={SLOGAN}
-      >
-        {[...SLOGAN].map((karakter, i) => (
-          <span
-            key={i}
-            aria-hidden
-            className="rb-yaz inline-block whitespace-pre"
-            style={{ animationDelay: `${0.5 + i * 0.055}s` }}
-          >
-            {karakter}
-          </span>
-        ))}
-      </p>
-    </div>
-  )
-}
-
-/**
- * Çark, şerit ve yükleme yazısı.
- *
- * Üçü de aynı şeyi söylüyor ama farklı hızda: çark sürekli döner (bir şey
- * çalışıyor), şerit gider gelir (ilerliyor), yazı değişir (ne yapılıyor).
- * Tek başına hiçbiri dört saniyeyi taşımıyordu.
- */
-function YuklemeBlogu() {
-  return (
-    <div className="rb-suzul flex flex-col items-center gap-[13px]">
-      <Settings
-        size={28}
-        strokeWidth={2}
-        className="rb-cark"
-        stroke="url(#rb-cark-gradyani)"
-        aria-hidden
-      />
-
-      <span
-        className="relative block h-[3px] w-[132px] overflow-hidden rounded-full"
-        style={{ background: 'rgba(255,255,255,0.09)' }}
-        aria-hidden
-      >
-        <span
-          className="rb-yol absolute top-0 left-0 h-full w-[38px] rounded-full"
-          style={{ background: 'linear-gradient(90deg, transparent, #C3B4FB, transparent)' }}
-        />
-      </span>
-
-      {/* Üç yazı üst üste duruyor ve sırayla açılıyor. Kapsayıcının yüksekliği
-          sabit: akışa girselerdi her geçişte blok bir piksel oynardı. */}
-      <span className="relative block h-3 w-[200px]" aria-hidden>
-        {DURUMLAR.map((metin, i) => (
-          <span
-            key={metin}
-            className="rb-durum absolute inset-x-0 top-0 text-center text-[9.5px] leading-none font-semibold tracking-[0.2em] uppercase text-[#A79FC6]"
-            style={{ animationDelay: `${i * 1.5}s` }}
-          >
-            {metin}
-          </span>
-        ))}
-      </span>
     </div>
   )
 }

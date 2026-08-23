@@ -10,11 +10,15 @@
       açılış ekranı (components/acilis.tsx → ACILIS_ZEMINI). Üçü farklıyken
       uygulama açılışta mor → siyah → mor diye üç kez renk değiştiriyordu.
 
-      Renk, açılış ekranındaki gradyanın **dış** durağı: gradyanın ortası daha
-      açık ama kenarları tam bu renk, geçişte kenarlarda oynama olmuyor.
+      Renk, açılış ekranındaki gradyanın **dış** durağı: gradyanın ışığı sol
+      üst köşenin dışında, ekranın geri kalanı tam bu renk. Sistem açılış
+      ekranı gradyan gösteremiyor (yalnızca renk kabul ediyor), o yüzden
+      eşitlenecek tek sayı bu. Aradaki pencere zemini ise gradyanı taklit
+      edebiliyor: drawable/acilis_zemini.xml.
+
       Değiştirirsen acilis.tsx içindeki ACILIS_ZEMINI ile birlikte değiştir.
     -->
-    <color name="acilis_zemin">#0D0C16</color>
+    <color name="acilis_zemin">#0E0D16</color>
 
     <!--
       Rabi moru — uygulamanın vurgu rengi ve simgesinin zemini. Açılış ekranının

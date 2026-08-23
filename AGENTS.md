@@ -50,7 +50,11 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   açık anahtar — üstündeki yazı her iki temada da beyaz. Lavantanın üstüne beyaz
   okunmuyor, doygun morun üstüne koyu yazı okunmuyor; her biri kendi eşiyle
   gidiyor (`bg-primary text-primary-foreground` / `bg-primary-dolu text-white`).
-- Yazı tipi tek: **Plus Jakarta Sans**. Başlık ayrı aile değil ayrı kalınlık —
+- Yazı tipi tek: **Plus Jakarta Sans**. Tek istisna açılış ekranı: orası
+  Manrope (`font-marka`), çünkü tasarım o ekranı Manrope ile çizdi ve "RABİ"
+  46 pikselde iki ailede belirgin biçimde farklı duruyor. `font-marka` başka
+  hiçbir yerde kullanılmıyor; yeni bir yerde kullanmadan önce bu istisnanın
+  neden açıldığına bak. Başlık ayrı aile değil ayrı kalınlık —
   `font-display` hâlâ var ama aynı aileye çözülüyor; başlıklar `font-extrabold`,
   gövde `font-medium`. Ailenin en kalını **800**: `font-black` (900) kullanma,
   tarayıcı onu 800'e düşürüp sahte kalınlık üretir.
@@ -73,6 +77,13 @@ Sıra tesadüf değil, "önce ben, sonra hedef, sonra bugün" diye okunuyor:
 1. **Selamlama** — maskot, "Merhaba", altında seviye · unvan · havuç. Seviye
    eskiden ayrı bir karttı; sayfanın en değerli yerini üç sayı için harcıyordu.
    Satırın tamamı mağazaya gidiyor.
+
+   Buradaki maskot çizim değil görsel (`TavsanYuzu`, `public/tavsan-yuz.png`)
+   ve açılış ekranının maskotu **tam buraya** iniyor. Ruh hâline göre değişen
+   çizim (`components/maskot/rabi.tsx`) bu satırdan kalktı: açılışta başka,
+   ana sayfada başka bir tavşan geçişi bozuyordu. Çizim boş ekranlarda ve
+   kutlamalarda duruyor. Bu satırın maskotunu değiştirirsen açılıştakini de
+   değiştir — ikisi aynı dosyayı gösteriyor ve aynı görünmek zorunda.
 2. **Geri sayım + hedef** — tek kart. "Kaç gün kaldı" ile "ne için" aynı sorunun
    iki yarısı; hedef ayrı kart olsaydı aradaki bağ görünmezdi. Hedef eskiden
    sayfanın en altındaydı ve hedefini hiç yazmamış kullanıcı oraya inmediği için
@@ -109,29 +120,56 @@ kare, sonra mor açılış ekranı. Üçü ayrı yüzey ve **zeminleri aynı olm
    `AppTheme.NoActionBar` → `android:windowBackground`
 3. uygulamanın kendi açılış ekranı — `components/acilis.tsx` → `ACILIS_ZEMINI`
 
-Üçü de `#0D0C16`. Ortadakinin temayı izlemesi (eski hâli) tam da siyah karenin
-sebebiydi. Birini değiştirirsen üçünü birden değiştir.
+Taban renk `#0E0D16` ve ekranın gradyanının **dış** durağı: ışık sol üst
+köşenin dışında, geri kalan her yer tam bu renk. Ortadaki yüzeyin temayı
+izlemesi (eski hâli) tam da siyah karenin sebebiydi.
 
-Renk, ekranın gradyanının **dış** durağı; ortası daha açık. Düz renkten
-gradyana geçişte kenarlarda oynama olmuyor, yalnızca ortadaki ışık beliriyor —
-sistem ekranı gradyan gösteremediği için tek çözüm bu.
+Sistem ekranı yalnızca **düz renk** kabul ediyor, gradyan gösteremiyor —
+eşitlenebilecek tek sayı bu yüzden dış durak. Ortadaki yüzey gradyan
+gösterebiliyor ve gösteriyor (`drawable/acilis_zemini.xml`): o kare bazen
+birkaç yüz milisaniye duruyor ve düz renkten gradyana geçiş, kısa da olsa
+"başka bir ekran geldi" diye okunuyordu. Android radyal gradyanı yalnızca
+daire çizebildiği için CSS'teki elips orada 500dp yarıçaplı bir daireye indi;
+kenar rengi birebir aynı olduğundan fark yalnızca köşedeki ışığın biçiminde.
 
 Ekran temadan bağımsız olarak hep koyu: bu bir marka anı, uygulamanın ekranı
-değil. Maskotun renkleri de o yüzden `acilis.tsx` içinde sabitleniyor; tema
-değişkenlerinden gelseydi açık temada beyaz kürk koyu zeminde kaybolurdu.
+değil.
 
-Ekran 4,6 saniye duruyor (`ACILIS_SURESI`) çünkü kullanıcı izlenecek kadar
-durmasını istedi. Sayı keyfi değil: hâlenin bir turu (4,6 sn) ve yükleme
-yazılarının üç durumu (3 × 1,5 sn) tam bu sürede tamamlanıyor. Tasarımın kendi
-yazı turu 10,5 saniyeydi ve o süreyle üçüncü yazı hiç görünmüyordu — süreyi
-değiştirirsen `.rb-durum` ile birlikte değiştir.
+### Açılışın son hareketi ana sayfaya bağlanıyor
 
-Hareketler `prefers-reduced-motion` altında susuyor ama ekran **eksilmiyor**:
-`opacity: 0` ile başlayan üç parça (kıvılcımlar, slogan harfleri, yükleme
-yazıları) orada görünüre çekiliyor, yoksa animasyon kapanınca ekranda hiç
-çıkmazlardı. Çark istisna, duruyor değil yavaşlıyor: dönmeyen bir bekleme
-göstergesi "donmuş" izlenimi veriyor.
+Ekran 4,2 saniye sürüyor (`ACILIS_SURESI`) ve bütün parçalar **tek** bir zaman
+çizgisini paylaşıyor: %0–34 iniş, %34–68 duruş, %68–100 çıkış. Süreler bu
+yüzden hepsinde aynı ve ayrı ayrı değiştirilemez — biri kayarsa yazılar
+maskottan önce ya da sonra gider.
 
+Çıkışta maskot ana sayfadaki maskotun **tam üstüne** süzülüyor; katman
+kalktığında ekranda zaten yalnızca o maskot duruyor ve altındaki ana sayfa
+görünür durumda, yani geçiş tek bir hareket gibi okunuyor. Üç şey buna bağlı:
+
+- **Varış noktası ölçülüyor, yazılmıyor.** Tasarım `translate(-138px, -316px)
+  scale(0.6)` diyor ama o sayılar 360×720'lik prototip çerçevesine ait.
+  Açılış ekranı `MASKOT_YUVASI` kimlikli öğeyi bulup mesafeyi kendi
+  hesaplıyor ve `--rb3-dx/dy/olcek` değişkenlerine yazıyor; bulamazsa
+  tasarımın kendi sayılarına düşüyor. Sabit kalsaydı maskot yuvanın yanına
+  düşer ve katman kalkınca zıplardı.
+- **Ölçüm zamanlayıcıyla yineleniyor, `requestAnimationFrame` ile değil.**
+  Sayfa görünür değilken rAF hiç çağrılmıyor ve ölçüm sonsuza kadar bekliyor.
+- **Zemin de çıkış eğrisini izliyor.** Tasarımda zemin hiç solmuyor çünkü
+  prototipte arkasında bir şey yok. Uygulamada arkada ana sayfa duruyor;
+  zemin kalkmazsa katman sertçe siliniyor ve maskotun yerine oturması o
+  sertlikte kayboluyor. Bu yüzden zemin de `rb3-son` ile açılıyor.
+
+Katmanda `pointer-events: none` var: son yarım saniyede zemin çoktan saydam
+ve altta ana sayfa görünüyor, dokunuşları yutan görünmez bir katman kullanıcıya
+"bastım, olmadı" dedirtiyordu.
+
+Solma yok: ekran kendi çıkışını kendi yapıyor, üstüne bir de opaklık geçişi
+koymak biten bir geçişin üstüne ikincisini koymak olurdu.
+
+Hareketler `prefers-reduced-motion` altında tümüyle susuyor — tasarımın kendi
+kuralı. `opacity: 0` ile başlayan üç parça (maskot, wordmark, slogan) orada
+görünüre çekiliyor, yoksa animasyon kapanınca ekranda hiç çıkmazlardı; maskot
+da ortada kalıyor, çünkü hareket yoksa süzülecek yol da yok.
 ### Ayarlar satırları kapalı açılıyor
 
 Seçenek çipleri satırın altında sürekli açık dururken ekran üç ekran boyundaydı.
