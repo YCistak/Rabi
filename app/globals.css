@@ -407,6 +407,24 @@
     animation: rb-aurora 23s ease-in-out infinite;
   }
 
+  /*
+    Ekran, uygulama penceresi gerçekten görünene kadar ilk karesinde duruyor.
+
+    CSS animasyonları sayfa çizilir çizilmez başlıyor; Android'in kendi açılış
+    ekranı ise o sırada hâlâ ekranı kaplıyor olabiliyor. Animasyon arkada akıp
+    bitiyor ve pencere açıldığında kullanıcı yalnızca son karesini görüyor —
+    "animasyon yok" diye okunan şey tam olarak bu. Sınıf, ilk kare üretildiği
+    an kalkıyor (bkz. acilis.tsx → `useBaslangic`).
+
+    Duraklatma `display: none` ya da gecikmeyle değil `animation-play-state`
+    ile: ekran o sırada görünmek zorunda (zemini sistem açılış ekranıyla aynı,
+    yani arada bir boşluk oluşmuyor), yalnızca zaman çizgisi beklemeli.
+  */
+  .rb3-bekliyor,
+  .rb3-bekliyor * {
+    animation-play-state: paused !important;
+  }
+
   /* --- Haftalık özet (components/ekranlar/haftalik-ozet.tsx) --- */
 
   /*
@@ -551,8 +569,8 @@
 }
 
 /*
-  Hareket azaltma tercihi açıksa süslemeler durur. Açılış çarkı istisna: dönmeyen
-  bir bekleme göstergesi "donmuş" izlenimi veriyor, o yüzden yavaşlatılıyor.
+  Hareket azaltma tercihi açıksa süslemeler durur — açılış ekranı hariç, sebebi
+  aşağıdaki blokta yazılı.
 */
 @keyframes ozet-cubuk {
   from {
@@ -574,20 +592,20 @@
      geçeceğini gösteren tek işaret. */
 
   /*
-    Açılış ekranı tümüyle duruyor — tasarımın kendi kuralı. `opacity: 0` ile
-    başlayan üç parça (maskot, wordmark, slogan) burada görünüre çekiliyor,
-    yoksa animasyon kapanınca ekranda hiç çıkmazlardı. Maskot da ortada
-    kalıyor: hareket yoksa süzülecek bir yol da yok.
+    Açılış ekranı bu listede bilerek **yok**.
+
+    Tasarımın kendi kuralı ekranı burada tümüyle susturuyordu ve uygulama bir
+    süre öyle çıktı; sonuç, animasyonu hiç görmeyen bir kullanıcı oldu.
+    Android'de bu tercih çoğu zaman erişilebilirlik ayarından değil geliştirici
+    seçeneklerindeki "animasyon ölçeği" ya da pil tasarrufundan geliyor — yani
+    hareketten rahatsız olduğu için değil telefonu hızlansın diye kapatan
+    kullanıcıda da açılış ekranı boş bir kareye dönüyordu.
+
+    Karar kullanıcının: açılış animasyonu her koşulda oynasın istedi. Hareket
+    dört saniyede bir kez, uygulama açılışında ve tek yönde — uygulamanın geri
+    kalanı (haftalık özet, harita, tur içi efektler) bu tercihi izlemeye devam
+    ediyor.
   */
-  .rb3-acilis,
-  .rb3-acilis * {
-    animation: none !important;
-  }
-  .rb3-inis,
-  .rb3-yazi,
-  .rb3-slogan {
-    opacity: 1;
-  }
 }
 
 /*

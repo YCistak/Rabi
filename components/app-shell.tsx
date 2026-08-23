@@ -41,7 +41,7 @@ import { bugun } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import { kullanildi } from '@/lib/son-kullanilan'
 import { ustKatmaniKapat } from '@/lib/geri'
-import { Acilis, ACILIS_SURESI } from '@/components/acilis'
+import { Acilis } from '@/components/acilis'
 import { HaftalikOzetEkrani } from '@/components/ekranlar/haftalik-ozet'
 import { Buton } from '@/components/ui'
 import { BottomNav } from '@/components/bottom-nav'
@@ -216,8 +216,12 @@ export function AppShell() {
    * süzülüyor; katman kalktığında ekranda zaten yalnızca o maskot duruyor ve
    * altındaki ana sayfa görünür durumda. Buraya bir de solma eklemek, biten
    * bir geçişin üstüne ikinci bir geçiş koymak olurdu.
+   *
+   * Ne zaman kalkacağını ekranın kendisi bildiriyor: sayaç animasyon gerçekten
+   * başlayınca işlemeye başlıyor ve o anı yalnızca o bileşen biliyor.
    */
   const [acilisBitti, setAcilisBitti] = useState(false)
+  const acilisiKapat = useCallback(() => setAcilisBitti(true), [])
   const [hedef, setHedef] = useYerelDepo<Hedef | null>(ANAHTARLAR.hedef, null)
   const [pomodoroAyarHam, setPomodoroAyar] = useYerelDepo<PomodoroAyar>(
     ANAHTARLAR.pomodoroAyar,
@@ -283,17 +287,6 @@ export function AppShell() {
   const guncelSiralama = tahmin?.siralama.enKotu ?? null
   const diplomaNotu = obpHesapla(okulYillari, ayarlar.elleObp)?.diplomaNotu ?? null
 
-  // ---- Açılış ekranı ----
-  // Süre veri okumasına bağlanmadı: localStorage neredeyse anında dönüyor,
-  // bağlansaydı ekran bir kare görünüp kaybolur ve animasyon hiç izlenmezdi.
-  // Sabit süre bu yüzden bir gecikme değil ekranın kendisi; ne kadar duracağı
-  // `ACILIS_SURESI` ile açılış ekranının yanında yazılı ve tasarımın
-  // zaman çizgisiyle bire bir aynı olmak zorunda: erken kalkarsa maskot
-  // yuvasına varmadan siliniyor, geç kalkarsa varmış maskot boşuna bekliyor.
-  useEffect(() => {
-    const kaldirma = setTimeout(() => setAcilisBitti(true), ACILIS_SURESI)
-    return () => clearTimeout(kaldirma)
-  }, [])
 
   // Eylülde yeni ders yılı başlayınca kullanıcı bir üst sınıfa kendiliğinden geçer.
   useEffect(() => {
@@ -542,7 +535,7 @@ export function AppShell() {
   // beklenirken gösterilen boş ekran da onun altında kalmalı. Ana sayfa da
   // altında çiziliyor — açılışın son hareketi maskotu ana sayfadaki yuvasına
   // taşıyor ve o yuvanın nerede olduğu ancak çizilmiş bir ana sayfada ölçülüyor.
-  const acilisKatmani = acilisBitti ? null : <Acilis />
+  const acilisKatmani = acilisBitti ? null : <Acilis onBitti={acilisiKapat} />
 
   // Veri okunmadan ekran çizilirse "kayıt yok" bir an yanıp söner.
   if (!ayarlarHazir) {

@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { cn } from '@/lib/utils'
 import { MASKOT_YUVASI, TavsanYuzu } from '@/components/maskot/tavsan-yuz'
 
 /**
@@ -114,15 +115,97 @@ function useVaris(): Varis {
   return varis
 }
 
-export function Acilis() {
+/**
+ * Ekran hiç kare üretilmeden başlarsa animasyonun görüleceği bir yer kalmıyor.
+ *
+ * CSS animasyonları sayfa çizilir çizilmez başlıyor. Uygulama açılırken o an
+ * ekranı hâlâ Android'in kendi açılış ekranı kaplıyor olabiliyor: animasyon
+ * arkada akıp bitiyor ve pencere açıldığında kullanıcı yalnızca son karesini
+ * görüyor. Dışarıdan bakınca "animasyon hiç oynamadı" gibi duruyor.
+ *
+ * Bu yüzden zaman çizgisi duraklatılmış başlıyor ve **kare üretildiği** an
+ * salınıyor: arka arkaya iki `requestAnimationFrame`, tarayıcının gerçekten
+ * çizdiğinin kanıtı. rAF sayfa görünür değilken hiç çağrılmadığı için
+ * `visibilitychange` de dinleniyor.
+ *
+ * Emniyet zamanlayıcısı şart: kare hiç gelmezse ekran sonsuza kadar donuk
+ * kalır ve uygulama açılış katmanının altında kilitlenirdi.
+ */
+const EMNIYET_SURESI = 800
+
+function useBaslangic(): boolean {
+  const [basladi, setBasladi] = useState(false)
+
+  useEffect(() => {
+    let bitti = false
+    let kare1 = 0
+    let kare2 = 0
+
+    const basla = () => {
+      if (bitti) return
+      bitti = true
+      setBasladi(true)
+    }
+
+    const kareBekle = () => {
+      cancelAnimationFrame(kare1)
+      cancelAnimationFrame(kare2)
+      kare1 = requestAnimationFrame(() => {
+        kare2 = requestAnimationFrame(basla)
+      })
+    }
+
+    const gorunurlukDegisti = () => {
+      if (document.visibilityState === 'visible') kareBekle()
+    }
+
+    kareBekle()
+    document.addEventListener('visibilitychange', gorunurlukDegisti)
+    const emniyet = window.setTimeout(basla, EMNIYET_SURESI)
+
+    return () => {
+      cancelAnimationFrame(kare1)
+      cancelAnimationFrame(kare2)
+      clearTimeout(emniyet)
+      document.removeEventListener('visibilitychange', gorunurlukDegisti)
+    }
+  }, [])
+
+  return basladi
+}
+
+/**
+ * @param onBitti Ekranın ömrü dolduğunda çağrılır.
+ *
+ * Sayaç bu bileşenin içinde, çağıranda değil: ekran ancak animasyon başlayınca
+ * yaşamaya başlıyor ve o anı yalnızca burası biliyor. Dışarıda tutulsaydı sayaç
+ * animasyondan önce işlemeye başlar, yavaş açılan bir telefonda katman maskot
+ * yuvasına varmadan kaldırılırdı.
+ */
+export function Acilis({ onBitti }: { onBitti: () => void }) {
   const varis = useVaris()
+  const basladi = useBaslangic()
+
+  // Geri çağrı her çizimde yeniden üretilebiliyor; sayacın ona bakması
+  // zamanlayıcıyı sıfırlardı.
+  const bitisRef = useRef(onBitti)
+  bitisRef.current = onBitti
+
+  useEffect(() => {
+    if (!basladi) return
+    const zamanlayici = window.setTimeout(() => bitisRef.current(), ACILIS_SURESI)
+    return () => clearTimeout(zamanlayici)
+  }, [basladi])
 
   // `pointer-events-none`: son yarım saniyede zemin çoktan saydam ve altta ana
   // sayfa görünüyor. Katman dokunuşları yutsaydı kullanıcı gördüğü ekrana basıp
   // hiçbir şey olmadığını sanırdı; ekranda dokunulacak bir şey zaten yok.
   return (
     <div
-      className="rb3-acilis font-marka pointer-events-none fixed inset-0 z-[60] overflow-hidden"
+      className={cn(
+        'rb3-acilis font-marka pointer-events-none fixed inset-0 z-[60] overflow-hidden',
+        !basladi && 'rb3-bekliyor',
+      )}
       role="status"
       aria-label="Rabi açılıyor"
       style={

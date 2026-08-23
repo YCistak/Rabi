@@ -166,10 +166,39 @@ ve altta ana sayfa görünüyor, dokunuşları yutan görünmez bir katman kulla
 Solma yok: ekran kendi çıkışını kendi yapıyor, üstüne bir de opaklık geçişi
 koymak biten bir geçişin üstüne ikincisini koymak olurdu.
 
-Hareketler `prefers-reduced-motion` altında tümüyle susuyor — tasarımın kendi
-kuralı. `opacity: 0` ile başlayan üç parça (maskot, wordmark, slogan) orada
-görünüre çekiliyor, yoksa animasyon kapanınca ekranda hiç çıkmazlardı; maskot
-da ortada kalıyor, çünkü hareket yoksa süzülecek yol da yok.
+### Açılış animasyonunu susturan iki tuzak
+
+İkisi de bir kez uygulamaya girdi ve ekranı "animasyonsuz" gösterdi. Yeni bir
+hareket eklerken ikisini de kontrol et.
+
+**1. Zaman çizgisi pencere görünmeden başlıyordu.** CSS animasyonları sayfa
+çizilir çizilmez başlıyor; uygulama açılırken ekranı o sırada hâlâ Android'in
+kendi açılış ekranı kaplıyor olabiliyor. Animasyon arkada akıp bitiyor ve
+pencere açıldığında kullanıcı yalnızca son karesini görüyor.
+
+Ekran bu yüzden `rb3-bekliyor` ile **duraklatılmış** başlıyor (sınıf sunucuda
+üretilen HTML'de de var, yani ilk boyanan karede zaten duruyor) ve arka arkaya
+iki `requestAnimationFrame` geldiğinde salınıyor — bu, tarayıcının gerçekten
+kare ürettiğinin kanıtı. rAF sayfa görünür değilken hiç çağrılmadığı için
+`visibilitychange` de dinleniyor, üstüne bir emniyet zamanlayıcısı var: kare
+hiç gelmezse ekran donuk kalır ve uygulama katmanın altında kilitlenirdi.
+
+Ekranın sayaç da bu yüzden `acilis.tsx` içinde, `AppShell` içinde değil: katman
+ancak animasyon başladıktan `ACILIS_SURESI` sonra kalkmalı. Dışarıda tutulsaydı
+sayaç animasyondan önce işlemeye başlar, yavaş açılan bir telefonda maskot
+yuvasına varmadan katman silinirdi.
+
+**2. `prefers-reduced-motion` ekranı tümüyle susturuyordu.** Tasarımın kendi
+kuralı buydu ve uygulama bir süre öyle çıktı. Android'de bu tercih çoğu zaman
+erişilebilirlik ayarından değil geliştirici seçeneklerindeki "animasyon ölçeği"
+ya da pil tasarrufundan geliyor — yani hareketten rahatsız olduğu için değil
+telefonu hızlansın diye kapatan kullanıcıda da açılış ekranı boş bir kareye
+dönüyordu.
+
+Karar kullanıcının: açılış animasyonu her koşulda oynuyor. Açılış ekranı o
+yüzden `@media (prefers-reduced-motion: reduce)` bloğunda **yok**; uygulamanın
+geri kalanı (haftalık özet, harita, tur içi efektler) tercihi izlemeye devam
+ediyor. Bu istisnayı geri almadan önce yukarıdaki sebebe bak.
 ### Ayarlar satırları kapalı açılıyor
 
 Seçenek çipleri satırın altında sürekli açık dururken ekran üç ekran boyundaydı.
