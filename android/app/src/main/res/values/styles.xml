@@ -13,11 +13,16 @@
         <!--
           Capacitor şablonunda burası @null'dı. Açılış ekranı kapandıktan sonra
           WebView ilk kareyi boyayana kadar arkada hiçbir şey olmadığı için
-          siyah bir kare yanıp sönüyordu. Uygulamanın kendi zemin rengi konuldu
-          (values-night altında koyu karşılığı var).
+          siyah bir kare yanıp sönüyordu.
+
+          Renk uygulamanın temasını değil **açılış ekranının** zeminini izliyor:
+          bu boşlukta ekranda hâlâ açılış görünüyor olmalı. Temaya bağlıyken
+          koyu modda o kare neredeyse siyahtı ve mor sistem ekranıyla mor açılış
+          ekranının arasına siyah bir kare giriyordu — kullanıcının gördüğü üç
+          ekranın ortadakiydi.
         -->
-        <item name="android:background">@color/uygulama_zemin</item>
-        <item name="android:windowBackground">@color/uygulama_zemin</item>
+        <item name="android:background">@color/acilis_zemin</item>
+        <item name="android:windowBackground">@color/acilis_zemin</item>
     </style>
 
     <!--

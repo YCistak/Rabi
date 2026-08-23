@@ -282,6 +282,11 @@ export function AppShell() {
   // ---- Açılış ekranı ----
   // Süre veri okumasına bağlanmadı: localStorage neredeyse anında dönüyor,
   // bağlansaydı ekran bir kare görünüp kaybolur ve animasyon hiç izlenmezdi.
+  // Sabit süre bu yüzden bir gecikme değil ekranın kendisi; ne kadar duracağı
+  // `ACILIS_SURESI` ile açılış ekranının yanında yazılı. Buradaki +320 ms
+  // solma süresi ve bileşendeki `duration-300` ile eşleşmek zorunda: kısa
+  // olursa ekran yarı saydamken siliniyor, uzun olursa kapanmış bir katman
+  // dokunuşları yiyor.
   useEffect(() => {
     const solma = setTimeout(() => setAcilis('kapaniyor'), ACILIS_SURESI)
     const kaldirma = setTimeout(() => setAcilis('bitti'), ACILIS_SURESI + 320)

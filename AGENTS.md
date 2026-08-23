@@ -54,13 +54,13 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   `font-display` hâlâ var ama aynı aileye çözülüyor; başlıklar `font-extrabold`,
   gövde `font-medium`. Ailenin en kalını **800**: `font-black` (900) kullanma,
   tarayıcı onu 800'e düşürüp sahte kalınlık üretir.
-- Marka rengi üç yerde daha yazılı ve hepsi birbirini tutmak zorunda: açılış
-  ekranı (`components/acilis.tsx` içindeki `ZEMIN`), Android açılış zemini
-  (`values/colors.xml` → `acilis_zemin`) ve uygulama ikonunun arka planı
-  (`ic_launcher_background.xml`, `public/icon.svg`, `assets/icon-*.svg`).
-  Birini değiştirirsen dördünü birden değiştir; yoksa açılışta renk sıçraması
-  olur. `mipmap-*/ic_launcher*.png` (Android 8 öncesi yedek ikon) elle
-  üretiliyor, renk değişince yeniden üretilmesi gerekiyor.
+- Marka moru (#6D3FE0) üç yerde daha yazılı ve hepsi birbirini tutmak zorunda:
+  `values/colors.xml` → `marka_mor` (son uygulamalar kartı, odak kilidi
+  düğmeleri) ve uygulama ikonunun arka planı (`ic_launcher_background.xml`,
+  `public/icon.svg`, `assets/icon-*.svg`). `mipmap-*/ic_launcher*.png`
+  (Android 8 öncesi yedek ikon) elle üretiliyor, renk değişince yeniden
+  üretilmesi gerekiyor. Açılış ekranının zemini bu listede **değil** — o ayrı
+  bir kural, aşağıda.
 - Tasarım kaynağı `tasarim/` altındaki HTML mockup'lar. Derlemeye girmiyorlar,
   uygulama onlardan hiçbir şey import etmiyor — ekran değiştirirken oraya bak.
 - Sütun hâlindeki sayılara `rakam` sınıfı (tabular-nums), başlıklara `font-display`.
@@ -97,6 +97,40 @@ Mühendisliği · Orta Doğu Teknik Üniversitesi" hiçbir telefonda tek satıra
 sığmıyor ve kırpılan yer tam da üniversitenin adı oluyordu. Satır yine taşarsa
 kırpılan taraf **bölüm**; üniversite `shrink-0`, çünkü hedefin hangi okulda
 olduğu kaybolmamalı.
+
+### Açılış ekranı tek ekran olmak zorunda
+
+Uygulamaya girerken kullanıcı üç ekran görüyordu: mor sistem ekranı, siyah bir
+kare, sonra mor açılış ekranı. Üçü ayrı yüzey ve **zeminleri aynı olmadıkça**
+üç ekran gibi görünüyorlar:
+
+1. sistemin açılış ekranı — `values/styles.xml` → `windowSplashScreenBackground`
+2. WebView ilk kareyi boyayana kadar görünen pencere zemini — aynı dosyada
+   `AppTheme.NoActionBar` → `android:windowBackground`
+3. uygulamanın kendi açılış ekranı — `components/acilis.tsx` → `ACILIS_ZEMINI`
+
+Üçü de `#0D0C16`. Ortadakinin temayı izlemesi (eski hâli) tam da siyah karenin
+sebebiydi. Birini değiştirirsen üçünü birden değiştir.
+
+Renk, ekranın gradyanının **dış** durağı; ortası daha açık. Düz renkten
+gradyana geçişte kenarlarda oynama olmuyor, yalnızca ortadaki ışık beliriyor —
+sistem ekranı gradyan gösteremediği için tek çözüm bu.
+
+Ekran temadan bağımsız olarak hep koyu: bu bir marka anı, uygulamanın ekranı
+değil. Maskotun renkleri de o yüzden `acilis.tsx` içinde sabitleniyor; tema
+değişkenlerinden gelseydi açık temada beyaz kürk koyu zeminde kaybolurdu.
+
+Ekran 4,6 saniye duruyor (`ACILIS_SURESI`) çünkü kullanıcı izlenecek kadar
+durmasını istedi. Sayı keyfi değil: hâlenin bir turu (4,6 sn) ve yükleme
+yazılarının üç durumu (3 × 1,5 sn) tam bu sürede tamamlanıyor. Tasarımın kendi
+yazı turu 10,5 saniyeydi ve o süreyle üçüncü yazı hiç görünmüyordu — süreyi
+değiştirirsen `.rb-durum` ile birlikte değiştir.
+
+Hareketler `prefers-reduced-motion` altında susuyor ama ekran **eksilmiyor**:
+`opacity: 0` ile başlayan üç parça (kıvılcımlar, slogan harfleri, yükleme
+yazıları) orada görünüre çekiliyor, yoksa animasyon kapanınca ekranda hiç
+çıkmazlardı. Çark istisna, duruyor değil yavaşlıyor: dönmeyen bir bekleme
+göstergesi "donmuş" izlenimi veriyor.
 
 ### Ayarlar satırları kapalı açılıyor
 
