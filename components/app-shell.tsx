@@ -41,7 +41,7 @@ import { bugun } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import { kullanildi } from '@/lib/son-kullanilan'
 import { ustKatmaniKapat } from '@/lib/geri'
-import { Acilis, ACILIS_SURESI } from '@/components/acilis'
+import { Acilis, ACILIS_SURESI, GECIS_SURESI, MaskotGecisi } from '@/components/acilis'
 import { HaftalikOzetEkrani } from '@/components/ekranlar/haftalik-ozet'
 import { Buton } from '@/components/ui'
 import { BottomNav } from '@/components/bottom-nav'
@@ -158,6 +158,12 @@ export function AppShell() {
    * yumuşak geçiş bozuluyordu.
    */
   const [acilis, setAcilis] = useState<'acik' | 'kapaniyor' | 'bitti'>('acik')
+  /**
+   * Kurulum bitince tavşanın başlığa uçuşu. Açılış ekranıyla aynı üç adım:
+   * uçuyor → soluyor → yok. Ortadaki adım olmadan katman bir anda kalkıyor ve
+   * varış noktasındaki tavşan zıplıyormuş gibi görünüyor.
+   */
+  const [gecis, setGecis] = useState<'yok' | 'ucuyor' | 'soluyor'>('yok')
   const [hedef, setHedef] = useYerelDepo<Hedef | null>(ANAHTARLAR.hedef, null)
   const [pomodoroAyarHam, setPomodoroAyar] = useYerelDepo<PomodoroAyar>(
     ANAHTARLAR.pomodoroAyar,
@@ -229,6 +235,18 @@ export function AppShell() {
       clearTimeout(kaldirma)
     }
   }, [])
+
+  useEffect(() => {
+    if (gecis !== 'ucuyor') return
+    const solma = setTimeout(() => setGecis('soluyor'), GECIS_SURESI)
+    return () => clearTimeout(solma)
+  }, [gecis])
+
+  useEffect(() => {
+    if (gecis !== 'soluyor') return
+    const kaldirma = setTimeout(() => setGecis('yok'), 320)
+    return () => clearTimeout(kaldirma)
+  }, [gecis])
 
   // Açılış ekranı `fixed`: kendisi kaydırılmıyor ama parmak hareketi altındaki
   // sayfaya geçiyordu ve ekran kalkınca ana sayfa ortasından başlıyordu.
@@ -409,8 +427,16 @@ export function AppShell() {
     [setDenemeler],
   )
 
-  // Açılış ekranı bütün dönüşlerin üstünde duruyor: kurulum sihirbazı ve veri
-  // beklenirken gösterilen boş ekran da onun altında kalmalı.
+  /**
+   * Açılış katmanı.
+   *
+   * Aşağıdaki dallar `icerik` değişkenine yazılıyor, ayrı ayrı `return`
+   * edilmiyor: açılış katmanı her dalda yeniden yazılsaydı React onu ayrı
+   * konumdaki ayrı bir öğe sayar, veri hazır olur olmaz söküp yeniden takar ve
+   * **CSS animasyonu baştan başlardı** — tavşan bir iniyor, sonra yukarı
+   * kaçıp bir daha iniyordu. Tek bir kökün altında sabit sırada durunca
+   * animasyon kesintisiz akıyor.
+   */
   const acilisKatmani = acilisGorunur ? (
     <Acilis
       kapaniyor={acilis === 'kapaniyor'}
@@ -420,52 +446,46 @@ export function AppShell() {
     />
   ) : null
 
+  /**
+   * Uçan tavşanın konacağı maskot bu sırada gizli: açılışta ve kurulum
+   * geçişinde varış noktasında zaten bir tavşan duruyor ve ikisi üst üste
+   * biniyordu. Uçuş bitip katman solmaya başlayınca gizlilik kalkıyor —
+   * ikisi tam olarak aynı yerde olduğu için değişim görünmüyor.
+   */
+  const maskotGizli = acilis === 'acik' || gecis === 'ucuyor'
+
   // Veri okunmadan ekran çizilirse "kayıt yok" bir an yanıp söner.
-  if (!ayarlarHazir) {
-    return (
-      <>
-        <div className="min-h-dvh" aria-busy="true" />
-        {acilisKatmani}
-      </>
-    )
-  }
-
-  if (!ayarlar.kurulumTamamlandi) {
-    return (
-      <>
-        <Kurulum
-          onBitir={({ ayarlar: secimler, okulYillari: girilenler }) => {
-            setAyarlar((o) => ({
-              ...ayarlariNormalize(o),
-              ...secimler,
-              sinifYili: egitimYili(),
-              kurulumTamamlandi: true,
-            }))
-            // Mezun kurulumda yıl sonu notlarını girmiş olabilir; atladıysa
-            // liste boş geliyor ve kayıtlı veriye dokunulmuyor.
-            if (girilenler.length > 0) setOkulYillari(girilenler)
-          }}
-        />
-        {acilisKatmani}
-      </>
-    )
-  }
-
-  if (denemeFormu !== null) {
-    return (
-      <div className="mx-auto min-h-dvh max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
-        <YeniDenemeEkrani
-          sablonlar={sablonlar}
-          varsayilanSablonId={ayarlar.varsayilanSablonId}
-          duzenlenen={denemeFormu.duzenlenen}
-          denemeSayisi={denemeler.length}
-          onKaydet={denemeKaydet}
-          onVazgec={() => setDenemeFormu(null)}
-        />
-      </div>
-    )
-  }
-
+  const icerik = !ayarlarHazir ? (
+    <div className="min-h-dvh" aria-busy="true" />
+  ) : !ayarlar.kurulumTamamlandi ? (
+    <Kurulum
+      maskotGizli={maskotGizli}
+      onBitir={({ ayarlar: secimler, okulYillari: girilenler }) => {
+        setAyarlar((o) => ({
+          ...ayarlariNormalize(o),
+          ...secimler,
+          sinifYili: egitimYili(),
+          kurulumTamamlandi: true,
+        }))
+        // Mezun kurulumda yıl sonu notlarını girmiş olabilir; atladıysa
+        // liste boş geliyor ve kayıtlı veriye dokunulmuyor.
+        if (girilenler.length > 0) setOkulYillari(girilenler)
+        // Kurulum ekranı bu karede kalkıyor; tavşan yerine uçarak gidiyor.
+        setGecis('ucuyor')
+      }}
+    />
+  ) : denemeFormu !== null ? (
+    <div className="mx-auto min-h-dvh max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
+      <YeniDenemeEkrani
+        sablonlar={sablonlar}
+        varsayilanSablonId={ayarlar.varsayilanSablonId}
+        duzenlenen={denemeFormu.duzenlenen}
+        denemeSayisi={denemeler.length}
+        onKaydet={denemeKaydet}
+        onVazgec={() => setDenemeFormu(null)}
+      />
+    </div>
+  ) : (
   /*
     Kök `div`de giriş animasyonu **yok** ve olmamalı.
 
@@ -478,7 +498,6 @@ export function AppShell() {
 
     Açılıştaki yumuşak geçişi artık `components/acilis.tsx` hallediyor.
   */
-  return (
     <div className="mx-auto min-h-dvh max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(6rem+var(--guvenli-alt))]">
       {/* Haftalık özet bir ekran değil, tam ekran bir katman: kendi kapatma
           düğmesi var ve "Geri" çubuğu kartların üstünde durmamalı. */}
@@ -589,6 +608,7 @@ export function AppShell() {
         <>
           {sekme === 'ana' && (
             <AnaSayfa
+              maskotGizli={maskotGizli}
               ayarlar={ayarlar}
               gunlukKayitlar={gunlukKayitlar}
               devamsizlik={devamsizlik}
@@ -666,8 +686,14 @@ export function AppShell() {
       )}
 
       <RozetKutlama rozetler={kutlanan} onKapat={() => setKutlanan([])} />
-
-      {acilisKatmani}
     </div>
+  )
+
+  return (
+    <>
+      {icerik}
+      {acilisKatmani}
+      {gecis !== 'yok' && <MaskotGecisi soluyor={gecis === 'soluyor'} />}
+    </>
   )
 }

@@ -286,9 +286,9 @@
   .acilis-inis {
     /* Varış noktası `components/acilis.tsx`'ten `style` ile geliyor; burada
        yalnızca yedek değerler duruyor (ana sayfa başlığındaki maskot). */
-    --acilis-x: -147px;
-    --acilis-y: -224px;
-    --acilis-olcek: 0.33;
+    --acilis-x: calc(max(0px, (100vw - 448px) / 2) + 47px - 50vw);
+    --acilis-y: calc(1.25rem + var(--guvenli-ust) + 138.7px - 50dvh);
+    --acilis-olcek: 0.518;
     animation: acilis-inis 4200ms cubic-bezier(0.3, 0.8, 0.25, 1) forwards;
   }
   /*
@@ -316,6 +316,23 @@
   }
   .acilis-cark {
     animation: acilis-cark 3600ms linear infinite;
+  }
+
+  /*
+    Kurulum bitince tavşanın başlığa uçuşu (components/acilis.tsx).
+    Varış değerleri açılıştakiyle aynı hesaptan çıkıyor; ikisi de ana sayfa
+    başlığındaki 58px'lik maskotun üstüne oturuyor.
+  */
+  .acilis-gecis {
+    display: block;
+    /* Kurulumun 110px'lik maskotundan ana sayfanın 58px'lik maskotuna.
+       Yatayda `acilis-inis` ile aynı hedef; dikeyde iki maskotun merkez farkı
+       sabit (20+8+31.4) − (32+59.58) = −32.2px, güvenli alan ikisinde de var
+       ve sadeleşiyor. */
+    --gecis-x: calc(max(0px, (100vw - 448px) / 2) + 47px - 50vw);
+    --gecis-y: -32.2px;
+    --gecis-olcek: 0.527;
+    animation: acilis-gecis 900ms cubic-bezier(0.45, 0, 0.2, 1) forwards;
   }
 
   /* Maskotun arkasındaki hale ve altındaki zemin gölgesi. İkisi de ortadan
@@ -486,6 +503,14 @@
   92%, 100% { opacity: 0; }
 }
 
+@keyframes acilis-gecis {
+  0% { transform: translate(0, 0) scale(1); }
+  100% {
+    transform: translate(var(--gecis-x, -147px), var(--gecis-y, 0px))
+      scale(var(--gecis-olcek, 0.527));
+  }
+}
+
 @keyframes acilis-cark {
   to { transform: rotate(360deg); }
 }
@@ -571,6 +596,13 @@
      asılı kalmasın. */
   .acilis-inis {
     animation: acilis-son 4200ms ease-out forwards;
+  }
+  /* Geçiş katmanı uçmuyor ama doğrudan varış noktasında duruyor: yerinde
+     kalsaydı ana sayfanın üstünde bir saniye boyunca kocaman bir tavşan
+     asılı kalırdı. */
+  .acilis-gecis {
+    animation: none;
+    transform: translate(var(--gecis-x), var(--gecis-y)) scale(var(--gecis-olcek));
   }
   .acilis-girisi,
   .acilis-yazi,

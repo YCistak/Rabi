@@ -15,6 +15,14 @@ type Props = {
   durum?: MaskotDurumu
   /** Piksel cinsinden genişlik; yükseklik oranla belirlenir. */
   boyut?: number
+  /**
+   * Yerini koruyarak görünmez olur.
+   *
+   * Açılış ve kurulum sonrası geçişlerinde uçan tavşan tam olarak bu maskotun
+   * üstüne konuyor. İkisi birden çizilseydi son karede tavşanın üstünde
+   * tavşan olurdu; `display: none` ise satırın hizasını bozardı.
+   */
+  gizli?: boolean
   className?: string
 }
 
@@ -31,14 +39,18 @@ type Props = {
  * ekranın yerleşimi ona göre kurulmuştu. Kare görsel `object-contain` ile bu
  * kutunun içine oturuyor, hiçbir ekranda boşluk kaymıyor.
  */
-export function Rabi({ durum = 'normal', boyut = 96, className }: Props) {
+export function Rabi({ durum = 'normal', boyut = 96, gizli = false, className }: Props) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src="/tavsan-yuz.png"
       width={boyut}
       height={(boyut * 130) / 120}
-      style={{ width: boyut, height: (boyut * 130) / 120 }}
+      style={{
+        width: boyut,
+        height: (boyut * 130) / 120,
+        visibility: gizli ? 'hidden' : undefined,
+      }}
       className={cn('shrink-0 object-contain', className)}
       alt={`Rabi — ${DURUM_ETIKETI[durum]}`}
       // Maskot her ekranda var ve hepsi aynı dosyayı gösteriyor: tarayıcı

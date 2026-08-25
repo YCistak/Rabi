@@ -44,15 +44,31 @@ export const ACILIS_SURESI = 4200
  */
 export type AcilisVarisi = 'kose' | 'kurulum'
 
+/*
+  Değerler tarayıcıda ölçülerek çıkarıldı, göz kararıyla değil: varış
+  noktasındaki maskot artık uçuş boyunca gizli olduğu için 1-2 piksellik
+  kayma bile son karede zıplama olarak görünüyor.
+
+  Uçan tavşanın durduğu yer: yatayda ekranın ortası, dikeyde `50dvh - 99.33px`
+  (kapsayıcı `top: 50%`, içerideki kutu `-160px`, kutunun yarısı 60.67px).
+  Ölçek, hedefteki maskotun genişliğinin 112'ye oranı.
+
+  Yatay hedef her iki varışta da sayfa kabının solundan 47px içeride
+  (`mx-auto max-w-md` + `px-4` + `px-0.5` + maskotun yarısı). Dar ekranda kap
+  ekranla aynı, geniş ekranda 448px'e oturuyor — `max()` ikisini de karşılıyor.
+*/
 const VARIS: Record<AcilisVarisi, React.CSSProperties> = {
-  // 390×844 ekranda ana sayfa başlığındaki 58px'lik maskotun yeri.
-  kose: { '--acilis-x': '-147px', '--acilis-y': '-224px', '--acilis-olcek': '0.33' },
-  // Kurulumun tepesindeki 110px'lik maskot: yatayda zaten ortada, dikeyde
-  // sayfanın üst boşluğuna (2rem + güvenli alan) çıkıyor.
+  // Ana sayfa başlığındaki 58px'lik maskot.
+  kose: {
+    '--acilis-x': 'calc(max(0px, (100vw - 448px) / 2) + 47px - 50vw)',
+    '--acilis-y': 'calc(1.25rem + var(--guvenli-ust) + 138.7px - 50dvh)',
+    '--acilis-olcek': '0.518',
+  },
+  // Kurulumun tepesindeki 110px'lik maskot: yatayda zaten ortada.
   kurulum: {
     '--acilis-x': '0px',
-    '--acilis-y': 'calc(2rem + var(--guvenli-ust) + 160px - 50dvh)',
-    '--acilis-olcek': '0.98',
+    '--acilis-y': 'calc(2rem + var(--guvenli-ust) + 158.9px - 50dvh)',
+    '--acilis-olcek': '0.982',
   },
 } as Record<AcilisVarisi, React.CSSProperties>
 
@@ -161,5 +177,44 @@ function DonenCark() {
       <circle cx="12" cy="12" r="3" />
       <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
     </svg>
+  )
+}
+
+/* ===========================================================================
+   Kurulum sonrası geçiş
+   =========================================================================== */
+
+/** Geçişin süresi (ms). `globals.css`'teki `acilis-gecis` ile aynı olmalı. */
+export const GECIS_SURESI = 900
+
+/**
+ * Kurulum bitince tavşanı yerine götüren katman.
+ *
+ * "Başlayalım"a basılınca kurulum ekranı kalkıp ana sayfa geliyor ve tavşan
+ * bir anda sihirbazın tepesinden sayfa başlığının yanına ışınlanıyordu.
+ * Açılıştaki hareketin aynısı: tavşan bulunduğu yerden başlığa uçuyor,
+ * arkasında ana sayfa duruyor.
+ *
+ * Katman yalnız tavşanı çiziyor; ana sayfanın kendi maskotu bu sırada gizli
+ * (`Rabi`nin `gizli` propu), yoksa varış noktasında iki tavşan olurdu.
+ */
+export function MaskotGecisi({ soluyor }: { soluyor: boolean }) {
+  return (
+    <div
+      className="pointer-events-none fixed inset-0 z-[60] overflow-hidden transition-opacity duration-300"
+      style={{ opacity: soluyor ? 0 : 1 }}
+      aria-hidden
+    >
+      {/* Başlangıç noktası kurulum sihirbazının maskotuyla birebir aynı:
+          sayfanın üst boşluğu (2rem + güvenli alan), yatayda ortada, 110px. */}
+      <div
+        className="absolute inset-x-0 flex justify-center"
+        style={{ top: 'calc(2rem + var(--guvenli-ust))' }}
+      >
+        <span className="acilis-gecis">
+          <Rabi durum="mutlu" boyut={110} />
+        </span>
+      </div>
+    </div>
   )
 }

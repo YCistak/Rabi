@@ -73,7 +73,14 @@ const PUAN_TURLERI: { id: PuanTuru; ad: string; aciklama: string }[] = [
 ]
 
 
-export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }) {
+export function Kurulum({
+  onBitir,
+  maskotGizli = false,
+}: {
+  onBitir: (sonuc: KurulumSonucu) => void
+  /** Açılış ekranındaki tavşan buranın üstüne konarken maskot gizleniyor. */
+  maskotGizli?: boolean
+}) {
   const [adim, setAdim] = useState(0)
   const [sinif, setSinif] = useState(12)
   /** Mezunun yıl sonu notları: sınıf → yazılan metin. Boşlar hesaba girmiyor. */
@@ -135,7 +142,7 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
       <div className="mb-6 flex flex-col items-center text-center">
-        <Rabi durum={siradaki === sonAdim ? 'mutlu' : 'normal'} boyut={110} />
+        <Rabi durum={siradaki === sonAdim ? 'mutlu' : 'normal'} boyut={110} gizli={maskotGizli} />
         <h1 className="mt-3 font-display text-2xl font-semibold tracking-tight">
           {ADIM_BILGISI[suanki].baslik}
         </h1>

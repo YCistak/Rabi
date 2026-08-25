@@ -54,6 +54,7 @@ const OYUN_RENGI: Record<OyunId, string> = {
 }
 
 export function AnaSayfa({
+  maskotGizli,
   ayarlar,
   gunlukKayitlar,
   devamsizlik,
@@ -67,6 +68,8 @@ export function AnaSayfa({
   onDahaGit,
   onOyunlaraGit,
 }: {
+  /** Açılış ya da kurulum geçişindeki tavşan buranın üstüne konarken gizlenir. */
+  maskotGizli: boolean
   ayarlar: Ayarlar
   gunlukKayitlar: GunlukKayit[]
   devamsizlik: Devamsizlik[]
@@ -144,7 +147,7 @@ export function AnaSayfa({
     <div className="space-y-3.5">
       {/* Selamlama — tasarımda ad sorulmuyor, kurulumda ad adımı yok. */}
       <header className="flex items-center gap-3 px-0.5 pt-2 pb-1">
-        <Rabi durum={maskotDurumu} boyut={58} />
+        <Rabi durum={maskotDurumu} boyut={58} gizli={maskotGizli} />
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-extrabold tracking-wide text-ikincil">Rabi</p>
           <h1 className="mt-px font-display text-[22px] font-extrabold tracking-tight text-balance">
