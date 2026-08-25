@@ -109,12 +109,14 @@ export function geriSayim(bugunIso: string): GeriSayim {
   }
 }
 
-/** 'YYYY-AA-GG' → "20 Haziran 2026 Cumartesi". Geri sayımın altındaki satır. */
+/**
+ * 'YYYY-AA-GG' → "20 Haziran 2026". Geri sayımda "gün kaldı"nın devamı olarak
+ * aynı satırda duruyor; gün adı da yazınca satır ikiye bölünüyordu.
+ */
 export function sinavTarihiYaz(iso: string): string {
   return tariheCevir(iso).toLocaleDateString('tr-TR', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
-    weekday: 'long',
   })
 }

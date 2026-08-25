@@ -11,6 +11,7 @@ const RENK_SINIFI: Record<KartRengi, string> = {
   krem: 'bg-isl-kart text-isl-koyu',
   nane: 'bg-success-soft text-success',
   lavanta: 'bg-edb-kart text-edb-koyu',
+  deniz: 'bg-trh-kart text-trh-koyu',
 }
 
 /**
@@ -21,7 +22,7 @@ const RENK_SINIFI: Record<KartRengi, string> = {
  * giriş düz bir liste hâlinde kaybolduğu için dört başlığa bölündü.
  */
 const BOLUMLER: { baslik: string; kartlar: Ekran[] }[] = [
-  { baslik: 'Çalışma', kartlar: ['pomodoro', 'notlar', 'soru', 'yanlis-banka'] },
+  { baslik: 'Çalışma', kartlar: ['pomodoro', 'soru', 'yanlis-banka', 'notlar'] },
   { baslik: 'Denemeler', kartlar: ['deneme', 'siralama', 'istatistik'] },
   { baslik: 'Okul', kartlar: ['okul', 'devamsizlik'] },
   { baslik: 'Motivasyon', kartlar: ['haftalik-ozet', 'hedef', 'rozetler'] },
@@ -81,8 +82,8 @@ export function KartMenusu({
   return (
     <div className={className}>
       <header className="px-0.5 pt-1">
-        <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
-        <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Daha 🗂️</h1>
+        <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
+        <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Daha 📋</h1>
         <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">Her şey burada.</p>
       </header>
 

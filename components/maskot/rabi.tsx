@@ -16,6 +16,8 @@ type Props = {
   /** Piksel cinsinden genişlik; yükseklik oranla belirlenir. */
   boyut?: number
   className?: string
+  /** Açılış ekranı maskota gölge veriyor; filtre sınıfla değil ölçüyle geliyor. */
+  style?: React.CSSProperties
 }
 
 /**
@@ -23,7 +25,7 @@ type Props = {
  * tutuluyor ki tema değiştiğinde renkler kendiliğinden uysun ve varyant eklemek
  * yeni dosya gerektirmesin. Renkler tema değişkenlerinden gelir.
  */
-export function Rabi({ durum = 'normal', boyut = 96, className }: Props) {
+export function Rabi({ durum = 'normal', boyut = 96, className, style }: Props) {
   const uzgunMu = durum === 'uzgun'
 
   return (
@@ -32,6 +34,7 @@ export function Rabi({ durum = 'normal', boyut = 96, className }: Props) {
       width={boyut}
       height={(boyut * 130) / 120}
       className={cn('shrink-0', className)}
+      style={style}
       role="img"
       aria-label={`Rabi — ${DURUM_ETIKETI[durum]}`}
     >

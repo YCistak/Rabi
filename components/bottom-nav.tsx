@@ -60,7 +60,7 @@ export function BottomNav({
       ekranın devamı değil, üstüne oturmuş ayrı bir parça. Yanlarda boşluk yok:
       telefonun alt kenarına yapışık duruyor, yalnızca köşeleri kırılıyor.
     */
-    <nav className="guvenli-alt fixed inset-x-0 bottom-0 z-40 rounded-t-[26px] bg-card/95 shadow-[0_-4px_18px_rgba(38,58,110,0.07)] backdrop-blur">
+    <nav className="guvenli-alt fixed inset-x-0 bottom-0 z-40 rounded-t-[26px] border-t border-border bg-card/95 shadow-[0_-6px_22px_rgba(54,33,112,0.12)] backdrop-blur">
       <ul className="mx-auto flex max-w-md px-3 pt-2.5 pb-1">
         {SEKMELER.map(({ id, ad }) => {
           const aktif = sekme === id

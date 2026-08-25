@@ -340,7 +340,7 @@ export function OyunlarEkrani({
   return (
     <div>
       <header className="px-0.5 pt-1">
-        <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
+        <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
         <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">
           Oyunlar 🎮
         </h1>
@@ -349,7 +349,7 @@ export function OyunlarEkrani({
         </p>
       </header>
 
-      <BankaDestesi
+      <BankaSatiri
         toplam={banka.length}
         dagilim={dagilim}
         onAc={onBankayaGit}
@@ -358,7 +358,7 @@ export function OyunlarEkrani({
 
       {secilenDers === null ? (
         <>
-          <h2 className="mt-5 mb-3 px-0.5 font-display text-lg font-extrabold tracking-tight">
+          <h2 className="mt-5 mb-3 px-0.5 font-display text-lg font-extrabold tracking-tight text-primary">
             Dersler
           </h2>
 
@@ -380,43 +380,41 @@ export function OyunlarEkrani({
                   type="button"
                   onClick={() => setSecilenDers(ders.id)}
                   className={cn(
-                    'rounded-2xl p-4 text-left transition active:brightness-[0.97]',
+                    'flex flex-col rounded-[22px] p-4 text-left transition active:brightness-95',
                     'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                     aile.zemin,
-                    genis
-                      ? 'col-span-2 flex items-center gap-3.5'
-                      : 'flex min-h-[150px] flex-col',
+                    genis ? 'col-span-2' : 'min-h-[152px]',
                   )}
                 >
                   <span
-                    className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80 text-[23px] leading-none"
+                    className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-[14px] bg-white/70 text-[21px] leading-none dark:bg-foreground/10"
                     aria-hidden
                   >
                     {ders.ikon}
                   </span>
 
-                  <span className={cn('min-w-0', genis ? 'flex-1' : 'mt-2.5')}>
-                    <span className="block font-display text-[16.5px] font-extrabold leading-[1.15] tracking-tight text-foreground">
-                      {ders.ad}
+                  {/* Oyun sayısı kartın en büyük yazısı: ızgarada gezinen
+                      kullanıcının aradığı şey "burada ne kadar var". Açıklama
+                      cümlesi kalktı — dersin adı zaten onu söylüyor ve iki
+                      satırlık metin sayıyı bastırıyordu. */}
+                  <span className={cn('block', genis ? 'mt-3' : 'mt-3.5')}>
+                    <span
+                      className={cn(
+                        'rakam block font-display text-[26px] leading-none font-extrabold',
+                        aile.yazi,
+                      )}
+                    >
+                      {oyunlar.length}
                     </span>
-                    <span className="mt-1.5 block text-[12.5px] font-medium leading-snug text-foreground/60">
-                      {ders.aciklama}
-                    </span>
-                    <span className={cn('mt-1.5 block text-[11.5px] font-bold', aile.yazi)}>
-                      {oyunlar.length} oyun
-                      {oynanan > 0 && <> · {oynanan} tur</>}
+                    <span className="mt-1 block text-[10px] font-extrabold uppercase tracking-[0.14em] text-foreground/50">
+                      oyun
                     </span>
                   </span>
 
-                  <span
-                    className={cn(
-                      'grid h-8 w-8 shrink-0 place-items-center rounded-full text-white',
-                      aile.ok,
-                      genis ? '' : 'mt-auto self-end',
-                    )}
-                    aria-hidden
-                  >
-                    <OkSimgesi />
+                  <span className={cn('pt-3', genis ? '' : 'mt-auto')}>
+                    <span className="block font-display text-[16.5px] leading-[1.15] font-extrabold tracking-tight text-foreground">
+                      {ders.ad}
+                    </span>
                   </span>
                 </button>
               )
@@ -717,13 +715,18 @@ export function OyunlarEkrani({
 }
 
 /**
- * Oyun Bankası girişi — bir kart destesi.
+ * Oyun Bankası girişi — tek satır.
  *
- * Liste satırı değil: arkadan sırıtan iki katman üç oyunun kendi renkleri,
- * yani deste onların sorularından oluşuyor. Sayı kırmızı bir rozet değil,
- * kartın en büyük yazısı — rozet uyarı gibi duruyordu, buradaki bilgi.
+ * Önce arkadan sırıtan iki katmanla bir kart destesiydi; tasarım düz yüzeylere
+ * geçince eğik katmanlar sayfadaki tek eğri parça olarak kaldı ve süs gibi
+ * durdu. Şimdi tasarımın kendi deseni: solda sayının rozeti, ortada ad, sağda
+ * eylem. Sayı kırmızı bir rozet değil, kartın en büyük yazısı — rozet uyarı
+ * gibi duruyordu, buradaki bilgi.
+ *
+ * Dokunma hedefi "Oyna" düğmesi değil kartın tamamı; düğme onun içinde bir
+ * yüzey, çünkü iç içe iki düğme olmaz.
  */
-function BankaDestesi({
+function BankaSatiri({
   toplam,
   dagilim,
   onAc,
@@ -741,76 +744,57 @@ function BankaDestesi({
   ].filter((c) => dagilim[c.id] > 0)
 
   return (
-    <div className={cn('relative pb-4', className)}>
-      {/* Destenin altındaki iki kart. Yalnızca dolu bankada çiziliyor: boş
-          bankada arkadan sırıtan katmanlar "içinde bir şey var" der, yalan olur. */}
-      {toplam > 0 && (
-        <>
-          <span
-            aria-hidden
-            className="absolute inset-x-2.5 bottom-0 top-4 -rotate-[1.4deg] rounded-2xl bg-edb-kart"
-          />
-          <span
-            aria-hidden
-            className="absolute inset-x-1.5 bottom-2 top-2 rounded-2xl bg-isl-kart"
-          />
-        </>
+    <button
+      type="button"
+      onClick={onAc}
+      className={cn(
+        'golge-kart w-full rounded-[22px] bg-card p-3.5 text-left transition',
+        'active:brightness-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+        className,
       )}
-
-      <button
-        type="button"
-        onClick={onAc}
-        className={cn(
-          'golge-kart relative flex w-full flex-col gap-2.5 rounded-2xl bg-card p-3.5 text-left transition',
-          'active:brightness-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        )}
-      >
-        <span className="flex items-center gap-3">
-          <span className="min-w-[56px] rounded-2xl bg-ikincil-soft px-2.5 py-2 text-center">
-            <span className="rakam block font-display text-2xl font-black leading-none tracking-tight text-ikincil">
-              {toplam}
-            </span>
-            <span className="mt-1 block text-[9.5px] font-extrabold uppercase tracking-wider text-ikincil">
-              soru
-            </span>
+    >
+      <span className="flex items-center gap-3">
+        <span className="min-w-[58px] shrink-0 rounded-[16px] bg-primary-soft px-2.5 py-2 text-center">
+          <span className="rakam block font-display text-[22px] leading-none font-extrabold text-primary">
+            {toplam}
           </span>
-
-          <span className="min-w-0 flex-1">
-            <span className="block font-display text-base font-extrabold tracking-tight">
-              Oyun Bankası
-            </span>
-            <span className="mt-0.5 block text-[12.5px] font-medium leading-snug text-muted-foreground">
-              {toplam > 0 ? 'Karıştırdıklarını tekrar oyna' : 'Karıştırdığın sorular burada birikir'}
-            </span>
-          </span>
-
-          <span
-            className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-ikincil text-white"
-            aria-hidden
-          >
-            <OkSimgesi />
+          <span className="mt-1 block text-[9.5px] font-extrabold uppercase tracking-[0.12em] text-primary">
+            soru
           </span>
         </span>
 
-        {cipler.length > 0 && (
-          <span className="flex gap-1.5">
-            {cipler.map((cip) => (
-              <span
-                key={cip.id}
-                className={cn(
-                  'rakam flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-extrabold',
-                  cip.zemin,
-                  cip.yazi,
-                )}
-              >
-                <span aria-hidden>{cip.ikon}</span>
-                {dagilim[cip.id]} <em className="not-italic font-semibold">{cip.ad}</em>
-              </span>
-            ))}
+        <span className="min-w-0 flex-1">
+          <span className="block font-display text-base font-extrabold tracking-tight">
+            Oyun Bankası
           </span>
-        )}
-      </button>
-    </div>
+          <span className="mt-0.5 block text-[12.5px] font-medium leading-snug text-muted-foreground">
+            {toplam > 0 ? 'Karıştırdıklarını tekrar oyna' : 'Karıştırdığın sorular burada birikir'}
+          </span>
+        </span>
+
+        <span className="shrink-0 rounded-full bg-primary-dolu px-4 py-2 text-[13px] font-extrabold text-white">
+          Oyna
+        </span>
+      </span>
+
+      {cipler.length > 0 && (
+        <span className="mt-3 flex gap-1.5">
+          {cipler.map((cip) => (
+            <span
+              key={cip.id}
+              className={cn(
+                'rakam flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-extrabold',
+                cip.zemin,
+                cip.yazi,
+              )}
+            >
+              <span aria-hidden>{cip.ikon}</span>
+              {dagilim[cip.id]} <em className="not-italic font-semibold">{cip.ad}</em>
+            </span>
+          ))}
+        </span>
+      )}
+    </button>
   )
 }
 
@@ -841,7 +825,7 @@ function OyunKarti({
       type="button"
       onClick={onAc}
       className={cn(
-        'relative rounded-2xl p-4 text-left transition active:brightness-[0.97]',
+        'relative rounded-[22px] p-4 text-left transition active:brightness-[0.97]',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         aile.zemin,
         genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[186px] flex-col',
@@ -863,7 +847,7 @@ function OyunKarti({
       )}
 
       <span
-        className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80 text-[23px] leading-none"
+        className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/70 text-[23px] leading-none dark:bg-foreground/10"
         aria-hidden
       >
         {oyun.ikon}
@@ -920,14 +904,14 @@ function BolumKarti({
       type="button"
       onClick={onAc}
       className={cn(
-        'relative rounded-2xl p-4 text-left transition active:brightness-[0.97]',
+        'relative rounded-[22px] p-4 text-left transition active:brightness-[0.97]',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         aile.zemin,
         genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[186px] flex-col',
       )}
     >
       <span
-        className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80 text-[23px] leading-none"
+        className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/70 text-[23px] leading-none dark:bg-foreground/10"
         aria-hidden
       >
         {bolum.ikon}

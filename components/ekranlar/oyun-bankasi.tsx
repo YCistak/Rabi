@@ -196,7 +196,7 @@ export function OyunBankasiEkrani({
 function Baslik({ toplam }: { toplam: number }) {
   return (
     <header className="mb-4 px-0.5">
-      <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
+      <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
       <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">
         Oyun Bankası 🗂️
       </h1>

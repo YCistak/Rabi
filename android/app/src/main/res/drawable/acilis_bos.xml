@@ -4,8 +4,8 @@
 
   Android 12+ açılış ekranı kapatılamıyor; `windowSplashScreenAnimatedIcon`
   verilmezse sistem uygulama simgesini koyuyor. Uygulamanın kendi açılış ekranı
-  (components/acilis.tsx) artık tavşanı, "Rabi" yazısını ve çarkı gösterdiği
-  için burada ikinci bir maskot arka arkaya iki açılış ekranı gibi görünüyordu.
+  (components/acilis.tsx) maskotu yukarıdan indirdiği için burada ikinci bir
+  maskot, inen tavşanın üstüne duran bir tavşan koymak olurdu.
 
   Saydam bir şekil konunca sistem ekranından geriye yalnızca zemin rengi kalıyor;
   o renk de uygulamanınkiyle aynı olduğu için tek bir açılış görünüyor.

@@ -10,6 +10,7 @@ import {
   tahminiSira,
   universiteAra,
   universiteBul,
+  universiteKisaAdi,
 } from './hedef-katalog'
 import { BOLUMLER } from './veri/bolumler'
 import { EN_DUSUK_KADEME, UNIVERSITELER, sadelestir } from './veri/universiteler'
@@ -179,5 +180,27 @@ describe('katalogda bulma', () => {
   it('katalog dışı ad null dönüyor — elle yazılmış eski hedefler bozulmasın', () => {
     expect(universiteBul('Rabi Üniversitesi')).toBeNull()
     expect(bolumBul('')).toBeNull()
+  })
+})
+
+describe('universiteKisaAdi', () => {
+  it('çok kelimeli adı baş harflere indiriyor', () => {
+    expect(universiteKisaAdi('Orta Doğu Teknik Üniversitesi')).toBe('ODTÜ')
+    expect(universiteKisaAdi('İstanbul Teknik Üniversitesi')).toBe('İTÜ')
+    expect(universiteKisaAdi('Yıldız Teknik Üniversitesi')).toBe('YTÜ')
+    expect(universiteKisaAdi('Doğu Akdeniz Üniversitesi')).toBe('DAÜ')
+  })
+
+  it('tek kelimeli adı olduğu gibi bırakıyor', () => {
+    // "Boğaziçi Üniversitesi" → "BÜ" adı tanınmaz hâle getirirdi.
+    expect(universiteKisaAdi('Boğaziçi Üniversitesi')).toBe('Boğaziçi')
+    expect(universiteKisaAdi('Hacettepe Üniversitesi')).toBe('Hacettepe')
+  })
+
+  it('katalogdaki her ad boş olmayan bir kısaltma veriyor', () => {
+    for (const u of UNIVERSITELER) {
+      expect(universiteKisaAdi(u.ad).length).toBeGreaterThan(0)
+      expect(universiteKisaAdi(u.ad).length).toBeLessThanOrEqual(u.ad.length)
+    }
   })
 })

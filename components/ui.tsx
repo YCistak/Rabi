@@ -18,7 +18,7 @@ export function Kart({
 }
 
 const butonBicimleri = {
-  birincil: 'bg-primary text-primary-foreground active:brightness-95',
+  birincil: 'bg-primary-dolu text-white active:brightness-95',
   ikincil: 'bg-muted text-foreground active:brightness-95',
   hayalet: 'bg-transparent text-muted-foreground active:bg-muted',
   tehlike: 'bg-transparent text-danger active:bg-danger/10',
@@ -366,7 +366,7 @@ export function Cip({
         'rounded-full border px-3 py-1.5 text-sm font-bold transition',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         secili
-          ? 'border-primary bg-primary text-primary-foreground'
+          ? 'border-primary-dolu bg-primary-dolu text-white'
           : 'border-border bg-card text-muted-foreground active:bg-muted',
         className,
       )}

@@ -160,3 +160,31 @@ export function turAdi(universite: Universite): string {
   if (universite.tur === 'kktc') return 'KKTC'
   return universite.tur === 'vakif' ? 'Vakıf' : 'Devlet'
 }
+
+/**
+ * Üniversitenin kısa adı — "Orta Doğu Teknik Üniversitesi" → "ODTÜ".
+ *
+ * Ana sayfadaki hedef panelinde bölüm ile üniversite tek satırda duruyor ve
+ * tasarımda üniversite kısa yazılı. Katalogdaki tam adlar o satıra sığmıyor:
+ * "Bilgisayar Mühendisliği · Orta Doğu Teknik Üniversitesi" en geniş telefonda
+ * bile kırpılıyor ve kırpılan yer tam da üniversitenin adı oluyordu.
+ *
+ * Kural, öğrencilerin kendi kullandığı kısaltmayı üretiyor: "Üniversitesi" eki
+ * atılıyor, geriye **birden çok** kelime kalıyorsa baş harfleri alınıp sonuna
+ * "Ü" ekleniyor (ODTÜ, İTÜ, YTÜ, DEÜ, KTÜ, DAÜ). Tek kelime kalıyorsa o kelime
+ * zaten kısa ve tanınan ad — "Boğaziçi Üniversitesi" için "BÜ" demek adı
+ * tanınmaz hâle getirirdi, o yüzden "Boğaziçi" kalıyor.
+ *
+ * Yalnızca **gösterim** için: kayıttaki ad tam hâliyle duruyor, çünkü katalog
+ * eşleşmesi (`universiteBul`) tam ada bakıyor.
+ */
+export function universiteKisaAdi(ad: string): string {
+  const govde = ad.replace(/\s*Üniversitesi\s*$/i, '').trim()
+  if (govde === '') return ad.trim()
+
+  const kelimeler = govde.split(/\s+/)
+  if (kelimeler.length < 2) return govde
+
+  // `toLocaleUpperCase('tr')` şart: "istanbul" → "İSTANBUL", "i" değil "İ".
+  return kelimeler.map((k) => k[0].toLocaleUpperCase('tr')).join('') + 'Ü'
+}
