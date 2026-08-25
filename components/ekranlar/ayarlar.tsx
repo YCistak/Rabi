@@ -168,6 +168,20 @@ export function AyarlarEkrani({
   }
 }) {
   const { tercih, tema, temaDegistir } = useTema()
+  /**
+   * Seçenekleri açık duran tek satır.
+   *
+   * Tasarımda ayar satırları kapalı: solda ad, sağda seçili değer. Çipler her
+   * satırın altında sürekli açık dururken ekran üç ekran boyunda oluyor ve
+   * "hangi ayar neredeydi" ancak kaydırarak bulunuyordu. Tek bir satır açık
+   * kalıyor — ikincisini açmak birincisini kapatıyor, yoksa kapalı düzenin
+   * anlamı kalmazdı.
+   *
+   * Tema bilerek bu düzende değil: uygulamayı ilk açan kullanıcının aradığı
+   * ayar o ve tasarımda da açık çizilmiş.
+   */
+  const [acikSatir, setAcikSatir] = useState<string | null>(null)
+  const satirAc = (id: string) => setAcikSatir((o) => (o === id ? null : id))
   const [sablonlarAcik, setSablonlarAcik] = useState(false)
   const [acikSablonId, setAcikSablonId] = useState<string | null>(null)
   const [silinecekSablon, setSilinecekSablon] = useState<Sablon | null>(null)
@@ -304,7 +318,7 @@ export function AyarlarEkrani({
     <div>
       {/* Ayarlar artık alt menüde kendi sekmesi; diğer sekmelerle aynı başlık deseni. */}
       <header className="px-0.5 pt-1">
-        <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
+        <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
         <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Ayarlar ⚙️</h1>
         <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
           Rabi’yi kendine göre kur.
@@ -350,7 +364,11 @@ export function AyarlarEkrani({
             baslik="Günlük soru hedefim"
             aciklama="Her günü buna göre takip ediyorum"
             deger={ayarlar.gunlukHedef}
+            onClick={() => satirAc('hedef')}
+            acikMi={acikSatir === 'hedef'}
+            sag={<AcOk acik={acikSatir === 'hedef'} />}
           />
+          {acikSatir === 'hedef' && (
           <GenisAlan>
             <Cipler>
               {HAZIR_HEDEFLER.map((h) => (
@@ -386,6 +404,7 @@ export function AyarlarEkrani({
               />
             )}
           </GenisAlan>
+          )}
 
           <Satir
             Simge={GraduationCap}
@@ -393,7 +412,11 @@ export function AyarlarEkrani({
             baslik="Alanım"
             aciklama="Sıralama tahmini buna göre hesaplanır"
             deger={PUAN_TURU_ADI[ayarlar.puanTuru]}
+            onClick={() => satirAc('alan')}
+            acikMi={acikSatir === 'alan'}
+            sag={<AcOk acik={acikSatir === 'alan'} />}
           />
+          {acikSatir === 'alan' && (
           <GenisAlan>
             <Cipler>
               {(Object.keys(PUAN_TURU_ADI) as PuanTuru[]).map((tur) => (
@@ -407,6 +430,7 @@ export function AyarlarEkrani({
               ))}
             </Cipler>
           </GenisAlan>
+          )}
 
           <Satir
             Simge={ClipboardList}
@@ -418,7 +442,11 @@ export function AyarlarEkrani({
                 : 'Her eylülde kendiliğinden ilerler'
             }
             deger={sinifAdi(ayarlar.buYilSinif)}
+            onClick={() => satirAc('sinif')}
+            acikMi={acikSatir === 'sinif'}
+            sag={<AcOk acik={acikSatir === 'sinif'} />}
           />
+          {acikSatir === 'sinif' && (
           <GenisAlan>
             <Cipler>
               {SINIF_SECENEKLERI.map((sinif) => (
@@ -449,6 +477,7 @@ export function AyarlarEkrani({
                 : 'Her eylülde bir üst sınıfa kendiliğinden geçer, 12’de durur.'}
             </AlanNotu>
           </GenisAlan>
+          )}
 
           <Satir
             Simge={Bookmark}
@@ -456,7 +485,11 @@ export function AyarlarEkrani({
             baslik="Varsayılan deneme türü"
             aciklama="Yeni deneme bu şablonla açılır"
             deger={varsayilanSablon?.ad}
+            onClick={() => satirAc('sablon-turu')}
+            acikMi={acikSatir === 'sablon-turu'}
+            sag={<AcOk acik={acikSatir === 'sablon-turu'} />}
           />
+          {acikSatir === 'sablon-turu' && (
           <GenisAlan>
             <Cipler>
               {sablonlar.map((s) => (
@@ -470,6 +503,7 @@ export function AyarlarEkrani({
               ))}
             </Cipler>
           </GenisAlan>
+          )}
 
           <Satir
             Simge={Table}
@@ -763,7 +797,22 @@ export function AyarlarEkrani({
             sag={<Anahtar acik={ayarlar.bildirimAcik} />}
           />
 
+          {/* Saat seçimi ayrı bir satırda: üstteki satıra dokunmak bildirimi
+              açıp kapatıyor, aynı satır hem anahtar hem açılır liste olamaz. */}
           {ayarlar.bildirimAcik && (
+            <Satir
+              Simge={Bell}
+              renk="lavanta"
+              baslik="Hatırlatma saati"
+              aciklama="Bildirimin geleceği saat"
+              deger={saatYaz(ayarlar.hatirlatmaSaati, ayarlar.hatirlatmaDakikasi)}
+              onClick={() => satirAc('saat')}
+              acikMi={acikSatir === 'saat'}
+              sag={<AcOk acik={acikSatir === 'saat'} />}
+            />
+          )}
+
+          {ayarlar.bildirimAcik && acikSatir === 'saat' && (
             <GenisAlan>
               <Cipler>
                 {HATIRLATMA_SAATLERI.map((h) => (
@@ -1095,7 +1144,7 @@ function Satir({
 
       {/* Sağdaki değer seçili olanı söylüyor: çiplere bakmadan okunuyor. */}
       {deger !== undefined && (
-        <span className="rakam shrink-0 text-[13px] font-extrabold text-muted-foreground">
+        <span className="rakam shrink-0 text-[13px] font-extrabold text-primary">
           {deger}
         </span>
       )}
@@ -1117,6 +1166,24 @@ function Satir({
     >
       {icerik}
     </button>
+  )
+}
+
+/**
+ * Açılır satırların sağındaki ok. Tasarımda çizilmemiş ama bir yeri olmalı:
+ * dokununca açılan bir satırın dokunulabildiği başka türlü anlaşılmıyor.
+ */
+function AcOk({ acik }: { acik: boolean }) {
+  return (
+    <ChevronDown
+      size={18}
+      strokeWidth={2.6}
+      aria-hidden
+      className={cn(
+        'shrink-0 text-muted-foreground/50 transition-transform',
+        acik && 'rotate-180',
+      )}
+    />
   )
 }
 
@@ -1155,7 +1222,7 @@ function Anahtar({ acik }: { acik: boolean }) {
     <span
       className={cn(
         'relative h-[27px] w-[46px] shrink-0 rounded-full transition',
-        acik ? 'bg-primary' : 'bg-muted',
+        acik ? 'bg-primary-dolu' : 'bg-muted',
       )}
     >
       <span

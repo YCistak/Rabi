@@ -45,8 +45,8 @@ export type Ekran =
   /** Havuç Mağazası — ana sayfanın sağ üstünden açılıyor, kart menüsünde yok. */
   | 'magaza'
 
-/** Kutucuk zeminleri — tasarımdaki pastel aileler. */
-export type KartRengi = 'mavi' | 'pembe' | 'krem' | 'nane' | 'lavanta'
+/** Kutucuk zeminleri — tasarımdaki aileler. */
+export type KartRengi = 'mavi' | 'pembe' | 'krem' | 'nane' | 'lavanta' | 'deniz'
 
 export type KartTanimi = {
   id: Ekran
@@ -57,8 +57,11 @@ export type KartTanimi = {
 }
 
 /**
- * "Daha" sekmesindeki kart menüsü. Sıra önem taşıyor: ana sayfadaki "Araçlar"
- * bölümü bu listenin ilk dördünü gösteriyor, o yüzden en sık açılanlar başta.
+ * "Daha" sekmesindeki kart menüsü. Sıra önem taşıyor: ana sayfadaki kısayol
+ * ızgarası bu listenin ilk dördünü gösteriyor (kullanıcı henüz hiçbirini
+ * açmadıysa), o yüzden başta tasarımdaki dört kutucuk duruyor.
+ *
+ * Renkler de tasarımdan: mor · fuşya · mavi · deniz sırasıyla dört kutucuk.
  */
 export const KARTLAR: KartTanimi[] = [
   {
@@ -66,13 +69,6 @@ export const KARTLAR: KartTanimi[] = [
     ad: 'Pomodoro',
     aciklama: 'Sayaçlı çalışma seansı',
     Simge: Timer,
-    renk: 'krem',
-  },
-  {
-    id: 'notlar',
-    ad: 'Yapılacaklar',
-    aciklama: 'Bugününü kâğıtlara yaz',
-    Simge: StickyNote,
     renk: 'lavanta',
   },
   {
@@ -87,14 +83,14 @@ export const KARTLAR: KartTanimi[] = [
     ad: 'Devamsızlık',
     aciklama: 'Kalan gün hakkın',
     Simge: CalendarX2,
-    renk: 'nane',
+    renk: 'mavi',
   },
   {
     id: 'siralama',
     ad: 'Sıralama',
     aciklama: 'Denemeden tahmini YKS sırası',
     Simge: TrendingUp,
-    renk: 'lavanta',
+    renk: 'deniz',
   },
   {
     id: 'soru',
@@ -102,6 +98,13 @@ export const KARTLAR: KartTanimi[] = [
     aciklama: 'Günlük çözdüğün sorular',
     Simge: PencilLine,
     renk: 'mavi',
+  },
+  {
+    id: 'notlar',
+    ad: 'Yapılacaklar',
+    aciklama: 'Bugününü kâğıtlara yaz',
+    Simge: StickyNote,
+    renk: 'lavanta',
   },
   {
     id: 'deneme',
@@ -131,6 +134,6 @@ export const KARTLAR: KartTanimi[] = [
     ad: 'İstatistik',
     aciklama: 'Ders bazlı gidişat',
     Simge: BarChart3,
-    renk: 'mavi',
+    renk: 'deniz',
   },
 ]

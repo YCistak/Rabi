@@ -175,7 +175,7 @@ function Damga({ yon, belirginlik }: { yon: 'dogru' | 'yanlis'; belirginlik: num
       }}
       className={cn(
         'pointer-events-none absolute top-5 rounded-xl border-[3px] px-3 py-1',
-        'font-display text-[19px] font-black uppercase tracking-wider',
+        'font-display text-[19px] font-extrabold uppercase tracking-wider',
         yon === 'dogru'
           ? 'right-4 border-success text-success'
           : 'left-4 border-ikincil text-ikincil',

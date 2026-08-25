@@ -41,7 +41,7 @@ import { bugun } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import { kullanildi } from '@/lib/son-kullanilan'
 import { ustKatmaniKapat } from '@/lib/geri'
-import { Acilis, ACILIS_SURESI } from '@/components/acilis'
+import { Acilis } from '@/components/acilis'
 import { HaftalikOzetEkrani } from '@/components/ekranlar/haftalik-ozet'
 import { Buton } from '@/components/ui'
 import { BottomNav } from '@/components/bottom-nav'
@@ -209,11 +209,19 @@ export function AppShell() {
     null,
   )
   /**
-   * Açılış ekranının hâli. Üç adım: görünür → soluyor → kaldırıldı. Ortadaki
-   * adım olmadan ekran bir anda kayboluyor ve sistem açılış ekranından gelen
-   * yumuşak geçiş bozuluyordu.
+   * Açılış ekranı kalktı mı.
+   *
+   * Ayrı bir "soluyor" adımı yok: ekran kendi çıkışını kendi yapıyor. Son
+   * saniyesinde zemin ve yazılar sönüyor, maskot ana sayfadaki yuvasına
+   * süzülüyor; katman kalktığında ekranda zaten yalnızca o maskot duruyor ve
+   * altındaki ana sayfa görünür durumda. Buraya bir de solma eklemek, biten
+   * bir geçişin üstüne ikinci bir geçiş koymak olurdu.
+   *
+   * Ne zaman kalkacağını ekranın kendisi bildiriyor: sayaç animasyon gerçekten
+   * başlayınca işlemeye başlıyor ve o anı yalnızca o bileşen biliyor.
    */
-  const [acilis, setAcilis] = useState<'acik' | 'kapaniyor' | 'bitti'>('acik')
+  const [acilisBitti, setAcilisBitti] = useState(false)
+  const acilisiKapat = useCallback(() => setAcilisBitti(true), [])
   const [hedef, setHedef] = useYerelDepo<Hedef | null>(ANAHTARLAR.hedef, null)
   const [pomodoroAyarHam, setPomodoroAyar] = useYerelDepo<PomodoroAyar>(
     ANAHTARLAR.pomodoroAyar,
@@ -279,17 +287,6 @@ export function AppShell() {
   const guncelSiralama = tahmin?.siralama.enKotu ?? null
   const diplomaNotu = obpHesapla(okulYillari, ayarlar.elleObp)?.diplomaNotu ?? null
 
-  // ---- Açılış ekranı ----
-  // Süre veri okumasına bağlanmadı: localStorage neredeyse anında dönüyor,
-  // bağlansaydı ekran bir kare görünüp kaybolur ve animasyon hiç izlenmezdi.
-  useEffect(() => {
-    const solma = setTimeout(() => setAcilis('kapaniyor'), ACILIS_SURESI)
-    const kaldirma = setTimeout(() => setAcilis('bitti'), ACILIS_SURESI + 320)
-    return () => {
-      clearTimeout(solma)
-      clearTimeout(kaldirma)
-    }
-  }, [])
 
   // Eylülde yeni ders yılı başlayınca kullanıcı bir üst sınıfa kendiliğinden geçer.
   useEffect(() => {
@@ -535,9 +532,10 @@ export function AppShell() {
   )
 
   // Açılış ekranı bütün dönüşlerin üstünde duruyor: kurulum sihirbazı ve veri
-  // beklenirken gösterilen boş ekran da onun altında kalmalı.
-  const acilisKatmani =
-    acilis === 'bitti' ? null : <Acilis kapaniyor={acilis === 'kapaniyor'} />
+  // beklenirken gösterilen boş ekran da onun altında kalmalı. Ana sayfa da
+  // altında çiziliyor — açılışın son hareketi maskotu ana sayfadaki yuvasına
+  // taşıyor ve o yuvanın nerede olduğu ancak çizilmiş bir ana sayfada ölçülüyor.
+  const acilisKatmani = acilisBitti ? null : <Acilis onBitti={acilisiKapat} />
 
   // Veri okunmadan ekran çizilirse "kayıt yok" bir an yanıp söner.
   if (!ayarlarHazir) {
@@ -736,8 +734,8 @@ export function AppShell() {
               sonAraclar={sonAraclar}
               sonOyunlar={sonOyunlar}
               onKartAc={aracAc}
-              onDahaGit={() => setSekme('daha')}
               onOyunlaraGit={() => setSekme('oyunlar')}
+              acilisSuruyor={!acilisBitti}
             />
           )}
           {sekme === 'oyunlar' && (

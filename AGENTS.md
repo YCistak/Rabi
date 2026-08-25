@@ -32,18 +32,189 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
 - Mobil öncelikli, `max-w-md` tek sütun. Hover yerine `active:` — dokunmatik cihaz.
 - Renkler doğrudan yazılmaz, tema değişkenlerinden gelir (`var(--primary)` /
   Tailwind `text-primary`). Tek palet var, kullanıcıya renk seçtirilmiyor.
-  Vurgu mavi (`--primary` #4A8FE7), ikinci kimlik rengi mercan (`--ikincil` #EF5A52),
-  zemin mavimsi kâğıt (`--background` #EDF1FD). Renk **derse** ait, oyuna değil:
-  `yzm` (Türkçe, pembe) · `isl` (Matematik, krem) · `edb` (Edebiyat, lavanta) ·
-  `trh` (Tarih, deniz mavisi) · `byl` (Biyoloji, yeşil), her biri `-koyu` ve
-  `-ok` tonuyla.
-  Kart yüzeyi `golge-kart` sınıfıyla: açık temada gölge, koyu temada ince çerçeve.
-- Yazı tipi tek: **Nunito**. Başlık ayrı aile değil ayrı kalınlık — `font-display`
-  hâlâ var ama Nunito'ya çözülüyor; başlıklar `font-extrabold`, gövde `font-medium`.
+  Vurgu mor: koyu temada lavanta (`--primary` #A78BFA), açık temada koyulaşmış
+  hâli (#6D3FE0). İkinci kimlik rengi fuşya (`--ikincil` #F472B6 / #DB2777).
+  Zemin koyuda neredeyse siyah mor (`--background` #0F0B1C), açıkta morumsu
+  kâğıt (#F5F3FF). Renk **derse** ait, oyuna değil: `yzm` (Türkçe, gül) ·
+  `isl` (Matematik, amber) · `edb` (Edebiyat, lavanta) · `cog` (Coğrafya, yeşil) ·
+  `trh` (Tarih, deniz mavisi) · `byl` (Biyoloji, yaprak yeşili), her biri `-koyu`
+  ve `-ok` tonuyla.
+  Kart yüzeyi `golge-kart` sınıfıyla: açık temada gölge, koyu temada hiçbiri —
+  orada kart zeminden zaten bir tık açık.
+- **Koyu tema asıl tema.** Tasarım gece çalışan öğrenci için çizildi; açık tema
+  aynı paletin gündüz hâli. Yeni bir renk eklerken önce koyuda bak.
+- **İki mor var, karıştırma.** `--primary` (koyu temada lavanta) *yazı* rengi
+  ve açık dolgular için: `text-primary`, `bg-primary-soft`, halkalar, çubuklar;
+  dolu hâlinde üstüne `text-primary-foreground` (neredeyse siyah) geliyor.
+  `--primary-dolu` (doygun mor) *eylem* yüzeyleri için: dolu düğme, seçili çip,
+  açık anahtar — üstündeki yazı her iki temada da beyaz. Lavantanın üstüne beyaz
+  okunmuyor, doygun morun üstüne koyu yazı okunmuyor; her biri kendi eşiyle
+  gidiyor (`bg-primary text-primary-foreground` / `bg-primary-dolu text-white`).
+- Yazı tipi tek: **Plus Jakarta Sans**. Tek istisna açılış ekranı: orası
+  Manrope (`font-marka`), çünkü tasarım o ekranı Manrope ile çizdi ve "RABİ"
+  46 pikselde iki ailede belirgin biçimde farklı duruyor. `font-marka` başka
+  hiçbir yerde kullanılmıyor; yeni bir yerde kullanmadan önce bu istisnanın
+  neden açıldığına bak. Başlık ayrı aile değil ayrı kalınlık —
+  `font-display` hâlâ var ama aynı aileye çözülüyor; başlıklar `font-extrabold`,
+  gövde `font-medium`. Ailenin en kalını **800**: `font-black` (900) kullanma,
+  tarayıcı onu 800'e düşürüp sahte kalınlık üretir.
+- Marka moru (#6D3FE0) üç yerde daha yazılı ve hepsi birbirini tutmak zorunda:
+  `values/colors.xml` → `marka_mor` (son uygulamalar kartı, odak kilidi
+  düğmeleri) ve uygulama ikonunun arka planı (`ic_launcher_background.xml`,
+  `public/icon.svg`, `assets/icon-*.svg`). `mipmap-*/ic_launcher*.png`
+  (Android 8 öncesi yedek ikon) elle üretiliyor, renk değişince yeniden
+  üretilmesi gerekiyor. Açılış ekranının zemini bu listede **değil** — o ayrı
+  bir kural, aşağıda.
 - Tasarım kaynağı `tasarim/` altındaki HTML mockup'lar. Derlemeye girmiyorlar,
   uygulama onlardan hiçbir şey import etmiyor — ekran değiştirirken oraya bak.
 - Sütun hâlindeki sayılara `rakam` sınıfı (tabular-nums), başlıklara `font-display`.
 - Alt menünün altında kalan içerik için `guvenli-alt`.
+
+### Ana sayfanın düzeni
+
+Sıra tesadüf değil, "önce ben, sonra hedef, sonra bugün" diye okunuyor:
+
+1. **Selamlama** — maskot, "Merhaba", altında seviye · unvan · havuç. Seviye
+   eskiden ayrı bir karttı; sayfanın en değerli yerini üç sayı için harcıyordu.
+   Satırın tamamı mağazaya gidiyor.
+
+   Buradaki maskot çizim değil görsel (`TavsanYuzu`, `public/tavsan-yuz.png`)
+   ve açılış ekranının maskotu **tam buraya** iniyor. Ruh hâline göre değişen
+   çizim (`components/maskot/rabi.tsx`) bu satırdan kalktı: açılışta başka,
+   ana sayfada başka bir tavşan geçişi bozuyordu. Çizim boş ekranlarda ve
+   kutlamalarda duruyor. Bu satırın maskotunu değiştirirsen açılıştakini de
+   değiştir — ikisi aynı dosyayı gösteriyor ve aynı görünmek zorunda.
+2. **Geri sayım + hedef** — tek kart. "Kaç gün kaldı" ile "ne için" aynı sorunun
+   iki yarısı; hedef ayrı kart olsaydı aradaki bağ görünmezdi. Hedef eskiden
+   sayfanın en altındaydı ve hedefini hiç yazmamış kullanıcı oraya inmediği için
+   özelliği hiç görmüyordu.
+3. **Günlük hedef + yedi günlük seri** — tek kart. İkisi de aynı soruyu farklı
+   ölçekte cevaplıyor. Halkanın içinde yalnızca çözülen sayı var ("/300" yok):
+   hedef zaten yanındaki cümlede yazıyor ve iki sayı halkaya sığmıyordu.
+4. **Araç kısayolları** — kartsız, doğrudan zeminin üstünde dört kutucuk. Bunlar
+   bir bölüm değil kısayol; başlıkları da yok, çünkü kutucuğun içindeki ad zaten
+   ne olduğunu söylüyor.
+5. **Oyunlar** — kartın içinde, çünkü bir bölüm.
+6. **Günün sözü** — sessiz tek satır.
+
+Sayfada bilerek **olmayan** üç şey var; üçü de bir kez eklenip tasarıma bakılarak
+geri alındı: seviye ilerleme çubuğu (sayı zaten yazıyor), geri sayımın içindeki
+uzun sınav sözü (rozetteki kelime aynı havuzdan geliyor ve altta günün sözü zaten
+var) ve "Bütün araçlar" bağlantısı (alt menüdeki "Daha" sekmesi aynı yere
+gidiyor). Yeniden ekleyeceksen önce neyi ittiklerine bak.
+
+Hedef panelinde üniversite kısaltılıyor (`universiteKisaAdi`): "Bilgisayar
+Mühendisliği · Orta Doğu Teknik Üniversitesi" hiçbir telefonda tek satıra
+sığmıyor ve kırpılan yer tam da üniversitenin adı oluyordu. Satır yine taşarsa
+kırpılan taraf **bölüm**; üniversite `shrink-0`, çünkü hedefin hangi okulda
+olduğu kaybolmamalı.
+
+### Açılış ekranı tek ekran olmak zorunda
+
+Uygulamaya girerken kullanıcı üç ekran görüyordu: mor sistem ekranı, siyah bir
+kare, sonra mor açılış ekranı. Üçü ayrı yüzey ve **zeminleri aynı olmadıkça**
+üç ekran gibi görünüyorlar:
+
+1. sistemin açılış ekranı — `values/styles.xml` → `windowSplashScreenBackground`
+2. WebView ilk kareyi boyayana kadar görünen pencere zemini — aynı dosyada
+   `AppTheme.NoActionBar` → `android:windowBackground`
+3. uygulamanın kendi açılış ekranı — `components/acilis.tsx` → `ACILIS_ZEMINI`
+
+Taban renk `#0E0D16` ve ekranın gradyanının **dış** durağı: ışık sol üst
+köşenin dışında, geri kalan her yer tam bu renk. Ortadaki yüzeyin temayı
+izlemesi (eski hâli) tam da siyah karenin sebebiydi.
+
+Sistem ekranı yalnızca **düz renk** kabul ediyor, gradyan gösteremiyor —
+eşitlenebilecek tek sayı bu yüzden dış durak. Ortadaki yüzey gradyan
+gösterebiliyor ve gösteriyor (`drawable/acilis_zemini.xml`): o kare bazen
+birkaç yüz milisaniye duruyor ve düz renkten gradyana geçiş, kısa da olsa
+"başka bir ekran geldi" diye okunuyordu. Android radyal gradyanı yalnızca
+daire çizebildiği için CSS'teki elips orada 500dp yarıçaplı bir daireye indi;
+kenar rengi birebir aynı olduğundan fark yalnızca köşedeki ışığın biçiminde.
+
+Ekran temadan bağımsız olarak hep koyu: bu bir marka anı, uygulamanın ekranı
+değil.
+
+### Açılışın son hareketi ana sayfaya bağlanıyor
+
+Ekran 4,2 saniye sürüyor (`ACILIS_SURESI`) ve bütün parçalar **tek** bir zaman
+çizgisini paylaşıyor: %0–34 iniş, %34–68 duruş, %68–100 çıkış. Süreler bu
+yüzden hepsinde aynı ve ayrı ayrı değiştirilemez — biri kayarsa yazılar
+maskottan önce ya da sonra gider.
+
+Çıkışta maskot ana sayfadaki maskotun **tam üstüne** süzülüyor; katman
+kalktığında ekranda zaten yalnızca o maskot duruyor ve altındaki ana sayfa
+görünür durumda, yani geçiş tek bir hareket gibi okunuyor. Dört şey buna bağlı:
+
+- **Ekranda hep tek tavşan var.** Açılış sürerken ana sayfanın başlığındaki
+  maskot `visibility: hidden` (`AnaSayfa` → `acilisSuruyor`). Zemin son
+  saniyede saydamlaşıyor ve ana sayfa görünür oluyor; gizlenmeseydi biri
+  uçarken öteki yerinde dururken **iki** tavşan görünürdü. Katman kalkarken
+  gizlilik de kalkıyor, ikisi aynı çizimde olduğu için takas görünmüyor.
+  `display: none` olamaz: varış noktası bu öğe ölçülerek bulunuyor ve
+  düzenden çıkmış bir öğenin ölçüsü sıfırdır.
+
+- **Varış noktası ölçülüyor, yazılmıyor.** Tasarım `translate(-138px, -316px)
+  scale(0.6)` diyor ama o sayılar 360×720'lik prototip çerçevesine ait.
+  Açılış ekranı `MASKOT_YUVASI` kimlikli öğeyi bulup mesafeyi kendi
+  hesaplıyor ve `--rb3-dx/dy/olcek` değişkenlerine yazıyor; bulamazsa
+  tasarımın kendi sayılarına düşüyor. Sabit kalsaydı maskot yuvanın yanına
+  düşer ve katman kalkınca zıplardı.
+- **Ölçüm zamanlayıcıyla yineleniyor, `requestAnimationFrame` ile değil.**
+  Sayfa görünür değilken rAF hiç çağrılmıyor ve ölçüm sonsuza kadar bekliyor.
+- **Zemin de çıkış eğrisini izliyor.** Tasarımda zemin hiç solmuyor çünkü
+  prototipte arkasında bir şey yok. Uygulamada arkada ana sayfa duruyor;
+  zemin kalkmazsa katman sertçe siliniyor ve maskotun yerine oturması o
+  sertlikte kayboluyor. Bu yüzden zemin de `rb3-son` ile açılıyor.
+
+Katmanda `pointer-events: none` var: son yarım saniyede zemin çoktan saydam
+ve altta ana sayfa görünüyor, dokunuşları yutan görünmez bir katman kullanıcıya
+"bastım, olmadı" dedirtiyordu.
+
+Solma yok: ekran kendi çıkışını kendi yapıyor, üstüne bir de opaklık geçişi
+koymak biten bir geçişin üstüne ikincisini koymak olurdu.
+
+### Açılış animasyonunu susturan iki tuzak
+
+İkisi de bir kez uygulamaya girdi ve ekranı "animasyonsuz" gösterdi. Yeni bir
+hareket eklerken ikisini de kontrol et.
+
+**1. Zaman çizgisi pencere görünmeden başlıyordu.** CSS animasyonları sayfa
+çizilir çizilmez başlıyor; uygulama açılırken ekranı o sırada hâlâ Android'in
+kendi açılış ekranı kaplıyor olabiliyor. Animasyon arkada akıp bitiyor ve
+pencere açıldığında kullanıcı yalnızca son karesini görüyor.
+
+Ekran bu yüzden `rb3-bekliyor` ile **duraklatılmış** başlıyor (sınıf sunucuda
+üretilen HTML'de de var, yani ilk boyanan karede zaten duruyor) ve arka arkaya
+iki `requestAnimationFrame` geldiğinde salınıyor — bu, tarayıcının gerçekten
+kare ürettiğinin kanıtı. rAF sayfa görünür değilken hiç çağrılmadığı için
+`visibilitychange` de dinleniyor, üstüne bir emniyet zamanlayıcısı var: kare
+hiç gelmezse ekran donuk kalır ve uygulama katmanın altında kilitlenirdi.
+
+Ekranın sayaç da bu yüzden `acilis.tsx` içinde, `AppShell` içinde değil: katman
+ancak animasyon başladıktan `ACILIS_SURESI` sonra kalkmalı. Dışarıda tutulsaydı
+sayaç animasyondan önce işlemeye başlar, yavaş açılan bir telefonda maskot
+yuvasına varmadan katman silinirdi.
+
+**2. `prefers-reduced-motion` ekranı tümüyle susturuyordu.** Tasarımın kendi
+kuralı buydu ve uygulama bir süre öyle çıktı. Android'de bu tercih çoğu zaman
+erişilebilirlik ayarından değil geliştirici seçeneklerindeki "animasyon ölçeği"
+ya da pil tasarrufundan geliyor — yani hareketten rahatsız olduğu için değil
+telefonu hızlansın diye kapatan kullanıcıda da açılış ekranı boş bir kareye
+dönüyordu.
+
+Karar kullanıcının: açılış animasyonu her koşulda oynuyor. Açılış ekranı o
+yüzden `@media (prefers-reduced-motion: reduce)` bloğunda **yok**; uygulamanın
+geri kalanı (haftalık özet, harita, tur içi efektler) tercihi izlemeye devam
+ediyor. Bu istisnayı geri almadan önce yukarıdaki sebebe bak.
+### Ayarlar satırları kapalı açılıyor
+
+Seçenek çipleri satırın altında sürekli açık dururken ekran üç ekran boyundaydı.
+Şimdi satır kapalı: solda ad, sağda seçili değer, uçta ok. Tek satır açık kalıyor
+(`acikSatir`), ikincisini açmak birincisini kapatıyor. Tema istisna — uygulamayı
+ilk açanın aradığı ayar o ve tasarımda da açık çizilmiş. Anahtarlı satırlar
+(hatırlatma, müzik) açılamaz: satıra dokunmak anahtarı çeviriyor, aynı satır hem
+anahtar hem liste olamaz — hatırlatma saati o yüzden **ayrı** bir satır.
 
 ## Seviye ve havuç
 
@@ -218,17 +389,9 @@ genişlikte kalıyor ve "yeni kâğıt" tuşu çalışıyormuş gibi görünüp 
 göstermiyor. Görünüşe ait bir sınıfın taramadan düşmesi eksik bir gölge demek;
 ölçüye ait olanınki boş bir ekran.
 
-Tahtanın yüksekliği ve kâğıdın genişliği Tailwind sınıfı değil, satır içi ölçü.
-Bu ikisi olmadan özellik ekranda **yok**: tahta sıfır yükseklikte, kâğıt sıfır
-genişlikte kalıyor ve "yeni kâğıt" tuşu çalışıyormuş gibi görünüp hiçbir şey
-göstermiyor. Görünüşe ait bir sınıfın taramadan düşmesi eksik bir gölge demek;
-ölçüye ait olanınki boş bir ekran.
-
 > Dosya adı `notlar.ts` **olamaz**: `.gitignore` kişisel notlar için `notlar.*`
 > deseni taşıyor ve desen tüm ağaçta geçerli. Öyle adlandırılan bir kaynak dosya
 > hem depoya girmiyor hem Tailwind'in tarayıcısından düşüyor. Bir dosyayı yeniden
-> adlandırdıktan sonra `npm run build`'i **tekrar çalıştır**: Tailwind kaynak
-> listesini derleme başında kuruyor, eski çıktı hatasız ama sınıfsız kalıyor. Bir dosyayı yeniden
 > adlandırdıktan sonra `npm run build`'i **tekrar çalıştır**: Tailwind kaynak
 > listesini derleme başında kuruyor, eski çıktı hatasız ama sınıfsız kalıyor.
 
@@ -243,6 +406,68 @@ kilitli joker gizlenmiyor, kilitli gösteriliyor.
 
 Jokerlerin tur içinde kullanılması henüz yazılmadı: stok yalnızca `jokerKullan`
 üzerinden eksilmeli, oyun tarafı geldiğinde de o tek kapı kalmalı.
+
+## Hedef kataloğu
+
+Kullanıcı eskiden hedef ekranında dört kutuyu da elle dolduruyordu: bölüm,
+üniversite, taban puan, başarı sırası. Son iki sayıyı bilen kimse yoktu — hedef
+ya boş kalıyordu ya rastgele bir sayıyla kaydediliyordu ve "hedefine ne kadar
+kaldı" cümlesi ölçtüğü şeyi kaybediyordu. Artık **arayıp seçiliyor**, sayıları
+katalog dolduruyor.
+
+Veri iki dosyada, mantık üçüncüde: `lib/veri/universiteler.ts` (205 üniversite),
+`lib/veri/bolumler.ts` (77 bölüm), `lib/hedef-katalog.ts` (saf, test edilebilir).
+
+### Katalogda sıra yazıyor, puan yazmıyor
+
+Her bölüm satırında **başarı sırası** var, taban puan yok. Puan `siralama.ts`
+içindeki `siralamadanPuan` ile o yılın gerçek ÖSYM yerleştirme dağılımından geri
+hesaplanıyor. Sebep: sıralama yıldan yıla neredeyse yerinde duruyor, puan
+sınavın zorluğuyla oynuyor. Böylece tahminin elle tutulan kısmı en yavaş
+bayatlayan sayıya iniyor ve puan yeni yıl verisi gelince kendiliğinden
+güncelleniyor.
+
+`siralamadanPuan` ile `yilSiralamasi` birbirinin **tersi** olmak zorunda; ikisi
+de logaritmik iç değer kullanıyor ve `hedef-katalog.test.ts` gidip gelen
+çevrimin başladığı puana döndüğünü denetliyor. Birine dokunursan ötekine de bak.
+
+### Kademe
+
+Her üniversitenin 1–5 arası bir kademesi var; bölümün iki ucu (`ustSira`,
+`altSira`) arasında **geometrik** iç değerle o kademenin sırası bulunuyor.
+Sıralamalar kademe kademe doğrusal değil katlanarak büyüyor (Tıp: 400 → 60.000)
+— doğrusal iç değer ortadaki kademeleri tek bir yere yığardı.
+
+200 × 77 satırlık gerçek YÖK Atlas tablosu bilerek taşınmıyor: hem uygulamayı
+şişirirdi hem her ağustos elde güncellenirdi. Model tek boyutlu olduğunu kabul
+ediyor — Tıp'ta önde olan üniversite Hukuk'ta da genelde önde.
+
+Vakıf üniversitelerinde kademe **tam burslu** kontenjanı anlatıyor; ücretliyle
+burslunun arası uçurum ve hedef koyan öğrencinin kovaladığı sayı burslununki.
+
+### İki ayrı süzgeç
+
+Bölüm listesi iki şeye birden bakıyor ve ikisi farklı soru: `alanlar`
+üniversitede o fakülte var mı, `sonKademe` o bölüm bu kademede açılıyor mu. Tıp
+fakültesi olmayan bir üniversitede Tıp seçtirmek tahminden çok daha kaba bir
+yanlış olurdu; Havacılık ve Uzay Mühendisliği'ni mühendislik fakültesi olan her
+üniversitede listelemek de ikinci soruyu atlamak olur.
+
+`hedef-katalog.test.ts` her üniversitenin **en az bir** bölüm açtığını
+denetliyor: boş liste, kullanıcıyı seçtiği üniversitede çıkmaz sokağa sokar.
+
+### Elle giriş kipi kalıyor
+
+Ekranın serbest metin kipi silinmedi. Katalog dışı bir hedef kayıtlıysa ekran o
+kiple açılıyor (`universiteBul` null dönüyor), çünkü eski sürümde herkes iki adı
+elle yazıyordu ve o kayıtlar duruyor. `Hedef` tipi de kimlik değil **ad**
+tutmaya devam ediyor — kimliğe geçmek o kayıtları geçersiz kılardı.
+
+Seçim ekranda ayrı bir state'te durmuyor, iki addan türetiliyor: iki kaynak
+olsaydı elle yazılan ad ile seçili kayıt birbiriyle çelişebilirdi.
+
+Çıkan sayılar tahmin ve aşağıdaki **Doğruluk** kuralına tabi: kutular
+düzenlenebilir, uyarı kaldırılamaz.
 
 ## Doğruluk
 

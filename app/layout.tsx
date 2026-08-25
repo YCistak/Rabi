@@ -1,15 +1,33 @@
 import type { Metadata, Viewport } from 'next'
-import { Nunito } from 'next/font/google'
+import { Manrope, Plus_Jakarta_Sans } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
-// Tasarımın tek yazı tipi. 400-900 arası kalınlıkların hepsi isteniyor:
-// başlıklar 800/900, gövde 500/600, ince yardımcı metinler 400.
-const nunito = Nunito({
+// Tasarımın tek yazı tipi. Ailenin en kalını 800; kodda `font-black` (900)
+// kullanılmıyor, olsaydı tarayıcı onu 800'e düşürüp sahte bir kalınlık üretirdi.
+// `latin-ext` şart: ğ/ş/İ olmadan uygulamanın yarısı yedek yazı tipine düşer.
+const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin', 'latin-ext'],
-  weight: ['400', '500', '600', '700', '800', '900'],
-  variable: '--font-nunito',
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-jakarta',
   display: 'swap',
+})
+
+// Yalnızca açılış ekranının yazı tipi (`font-marka`). Tasarım Manrope ile
+// çizildi ve "RABİ" 46 pikselde iki ailede belirgin biçimde farklı duruyor;
+// uygulamanın geri kalanı Plus Jakarta Sans'ta kalıyor.
+//
+// `display: 'block'` bilerek: açılış ekranı 4,2 saniye sürüyor ve wordmark o
+// ekranın tamamı. `swap` ile yazı önce yedek aileyle çizilip sonra yerine
+// oturuyordu — marka adının ilk yarım saniyede başka bir yazı tipinde
+// görünmesi, en çok bakılan anda gözden kaçmıyor. Yazı tipi zaten uygulamayla
+// birlikte geliyor (next/font derleme anında indirip gömüyor), yani beklenen
+// süre ağ değil yalnızca çözümleme.
+const manrope = Manrope({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['600', '800'],
+  variable: '--font-manrope',
+  display: 'block',
 })
 
 export const metadata: Metadata = {
@@ -44,25 +62,25 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
   colorScheme: 'light dark',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#edf1fd' },
-    { media: '(prefers-color-scheme: dark)', color: '#12141c' },
+    { media: '(prefers-color-scheme: light)', color: '#f5f3ff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0f0b1c' },
   ],
 }
 
 /*
   Yazı tipi değişkenleri `<html>` üzerinde, `<body>` üzerinde **değil**.
 
-  Tailwind teması `--font-display`i `:root` üzerinde `var(--font-nunito), …`
+  Tailwind teması `--font-display`i `:root` üzerinde `var(--font-jakarta), …`
   olarak tanımlıyor. Değişkenler `<body>`de dururken bu tanım `:root`ta
   çözülemiyor, geçersiz değere düşüyor ve yazı tipi hiç uygulanmıyordu.
-  Nunito'ya geçince iki aile tek aileye indi ama kural değişmedi.
+  Tek aileye inince de, Nunito'dan Plus Jakarta Sans'a geçince de kural değişmedi.
 */
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="tr"
       suppressHydrationWarning
-      className={nunito.variable}
+      className={`${jakarta.variable} ${manrope.variable}`}
     >
       <head>
         {/* Tema sınıfı ilk boyamadan önce uygulanmazsa uygulama açılırken

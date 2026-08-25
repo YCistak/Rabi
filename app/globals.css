@@ -14,6 +14,7 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-soft: var(--primary-soft);
+  --color-primary-dolu: var(--primary-dolu);
   --color-ikincil: var(--ikincil);
   --color-ikincil-soft: var(--ikincil-soft);
   --color-ring: var(--ring);
@@ -51,15 +52,22 @@
   --color-byl-ok: var(--byl-ok);
   --color-boss-zemin: var(--boss-zemin);
 
-  /* Tasarımın tek yazı tipi Nunito. Başlık ve gövde ayrı aile değil, ayrı
-     kalınlık: gövde 500-600, başlık 800-900. */
-  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  /* Tasarımın tek yazı tipi Plus Jakarta Sans. Başlık ve gövde ayrı aile
+     değil, ayrı kalınlık: gövde 500-600, başlık 700-800. Ailenin en kalını 800,
+     900 yok — o yüzden kodda `font-black` kullanılmıyor. */
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 
-  /* Kartlar tasarımda çerçeveyle değil gölgeyle ayrılıyor: mavimsi zeminin
-     üstünde yüzen beyaz yüzeyler. Koyu temada gölge okunmadığı için oradaki
-     ayrım ince çerçeveye düşüyor (bkz. `.dark .golge-kart`). */
-  --shadow-kart: 0 6px 20px rgba(38, 58, 110, 0.07);
+  /* Açılış ekranının yazı tipi ayrı: tasarım Manrope ile çizildi ve "RABİ"
+     46 pikselde iki ailede belirgin biçimde farklı duruyor. Uygulamanın geri
+     kalanı Plus Jakarta Sans'ta kalıyor — bu istisna yalnızca marka anına
+     ait, `font-marka` başka hiçbir yerde kullanılmıyor. */
+  --font-marka: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+
+  /* Kartlar tasarımda çerçeveyle değil gölgeyle ayrılıyor: morumsu zeminin
+     üstünde yüzen beyaz yüzeyler. Koyu temada gölge de çerçeve de yok; orada
+     kart zaten zeminden açık bir mor (bkz. `.dark .golge-kart`). */
+  --shadow-kart: 0 6px 22px rgba(54, 33, 112, 0.09);
 
   --radius-sm: calc(var(--radius) * 0.5);
   --radius-md: calc(var(--radius) * 0.75);
@@ -71,14 +79,26 @@
 /* ---------------------------------------------------------------------------
    Rabi paleti — tasarim/ altındaki mockup'lardan geliyor.
 
-   Vurgu mavi (#4A8FE7), ikinci kimlik rengi mercan (#EF5A52). Zemin saf beyaz
-   değil, hafif mavimsi bir kâğıt (#EDF1FD): beyaz kartlar üstünde yüzüyor gibi
-   dursun diye. Tek palet — kullanıcıya renk seçtirilmiyor, yalnızca açık/koyu.
+   Tek kimlik rengi mor. Koyu tema asıl tema: tasarım gece çalışan bir öğrenci
+   için çizildi, zemin neredeyse siyah ama mora çalıyor (#0F0B1C) ve kartlar o
+   zeminin üstünde bir tık açık mor yüzeyler. Vurgu lavanta (#A78BFA): hem yazı
+   olarak koyu zeminde okunuyor hem dolu yüzey olarak üstünde koyu yazı taşıyor,
+   böylece tek bir mor iki işi birden görüyor.
 
-   Mini oyunların kendi aileleri var (yzm/isl/edb/cog/trh/byl): her oyunun pastel zemini ve
-   o zeminin üstünde okunan koyu tonu. Oyun kartı, tur sonu ekranı ve Oyun
-   Bankası aynı üçlüyü kullanıyor — kullanıcı rengi görünce hangi oyun olduğunu
-   yazıyı okumadan biliyor.
+   Açık tema aynı ailenin gündüz hâli: zemin saf beyaz değil morumsu kâğıt
+   (#F5F3FF), vurgu ise koyulaşmış mor (#6D3FE0) — lavanta beyaz üstünde
+   okunmuyor. Tek palet, kullanıcıya renk seçtirilmiyor; yalnızca açık/koyu.
+
+   İkinci kimlik rengi fuşya (#F472B6): dikkat çeken eylem, yanlışlar ve
+   haftalık özet daveti. Morun karşısında duran ama onunla aynı soğuk ailede
+   kalan tek renk; eski mercan yeni zeminde kırmızı bir yara gibi duruyordu.
+
+   Mini oyunların kendi aileleri var (yzm/isl/edb/cog/trh/byl): her oyunun
+   zemini ve o zeminin üstünde okunan tonu. Koyu temada iki yüzey de sayfa
+   zemininden/karttan türetiliyor (bkz. `.dark`), yani aile rengi mor zemine
+   karışıyor ve kart mor ailenin bir üyesi gibi duruyor. Oyun kartı, tur sonu
+   ekranı ve Oyun Bankası aynı üçlüyü kullanıyor — kullanıcı rengi görünce
+   hangi oyun olduğunu yazıyı okumadan biliyor.
 --------------------------------------------------------------------------- */
 
 /*
@@ -100,31 +120,34 @@
 
 :root {
   color-scheme: light;
-  --background: #edf1fd;
-  --foreground: #1b2440;
+  --background: #f5f3ff;
+  --foreground: #1f1937;
   --card: #ffffff;
-  --card-foreground: #1b2440;
-  --muted: #e6ebf8;
-  --muted-foreground: #7a8399;
-  --border: #e1e6f0;
-  --input: #e1e6f0;
-  --grid: #dde3f1;
+  --card-foreground: #1f1937;
+  --muted: #ece7fb;
+  --muted-foreground: #736c8d;
+  --border: #e4defa;
+  --input: #e4defa;
+  --grid: #ded6f6;
   --radius: 0.8rem;
 
-  --primary: #4a8fe7;
-  --primary-soft: #e4eefc;
+  --primary: #6d3fe0;
+  --primary-soft: #ece4ff;
   --primary-foreground: #ffffff;
+  /* Doygun eylem moru: dolu düğme, seçili çip, açık anahtar. Açık temada
+     `--primary` ile aynı; ayrı durmasının sebebi koyu tema (bkz. `.dark`). */
+  --primary-dolu: #6d3fe0;
 
   /* İkinci kimlik rengi: marka yazısı, yanlışlar, dikkat çeken eylem */
-  --ikincil: #ef5a52;
-  --ikincil-soft: #fde7e4;
+  --ikincil: #db2777;
+  --ikincil-soft: #fce4f0;
 
   --ring: var(--primary);
-  --success: #3e9b63;
-  --success-soft: #e3f3e7;
-  --warning: #cf9420;
-  --warning-soft: #fbf2dc;
-  --danger: #e0413a;
+  --success: #2f9a68;
+  --success-soft: #e1f4ec;
+  --warning: #bd8317;
+  --warning-soft: #faf0da;
+  --danger: #dc3545;
 
   /*
     Oyun aileleri — pastel zemin + üstünde okunan koyu ton.
@@ -133,72 +156,81 @@
     ise listedeki **kart** yüzeyi. Açık temada ikisi aynı pastel; koyu temada
     ayrışıyorlar, çünkü orada zemin karttan koyu olmak zorunda (bkz. `.dark`).
   */
-  --yzm: #fce7ea;
+  --yzm: #fbe6ee;
   --yzm-kart: var(--yzm);
-  --yzm-koyu: #c24a60;
-  --yzm-ok: #e4708a;
-  --isl: #fbf2dc;
+  --yzm-koyu: #bf4470;
+  --yzm-ok: #de6d97;
+  --isl: #fbf0dc;
   --isl-kart: var(--isl);
-  --isl-koyu: #b57d1e;
-  --isl-ok: #e0a233;
-  --edb: #ece7fb;
+  --isl-koyu: #b0761c;
+  --isl-ok: #dc9c30;
+  --edb: #eae4fb;
   --edb-kart: var(--edb);
-  --edb-koyu: #6c55c4;
-  --edb-ok: #8570da;
+  --edb-koyu: #6a4fc8;
+  --edb-ok: #8468de;
   /* Coğrafya yeşili: haritanın kendi rengi, öteki ailelerle karışmıyor. */
-  --cog: #e0f1e7;
+  --cog: #ddf0ea;
   --cog-kart: var(--cog);
-  --cog-koyu: #2f7a52;
-  --cog-ok: #4fa87a;
-  --trh: #dceef0;
+  --cog-koyu: #2a7a63;
+  --cog-ok: #48a68a;
+  --trh: #dbecf3;
   --trh-kart: var(--trh);
-  --trh-koyu: #1d7a86;
-  --trh-ok: #3ba3ae;
+  --trh-koyu: #1c7490;
+  --trh-ok: #399db8;
   /* Biyoloji yaprak yeşili sarıya çalıyor: Coğrafya'nın mavimsi yeşilinden
      ayrılsın diye. İkisi aynı listede yan yana duruyor ve birleşmeden önce
      neredeyse aynı tondaydılar. */
-  --byl: #eef4dd;
+  --byl: #edf3dc;
   --byl-kart: var(--byl);
-  --byl-koyu: #5f7d28;
-  --byl-ok: #86ac3e;
+  --byl-koyu: #5c7c26;
+  --byl-ok: #83a93c;
 
   /* Boss sorusunda oyun ekranının zemini. */
   --boss-zemin: var(--ikincil-soft);
 
   /* Maskot renkleri — Rabi'nin kürkü zeminden hafifçe ayrışır. */
   --maskot-kurk: #ffffff;
-  --maskot-kulak-ic: #f6d2da;
-  --maskot-yanak: #f9dde3;
-  --maskot-burun: #ef8c9e;
-  --maskot-agiz: #d4586c;
-  --maskot-cizgi: #1b2440;
+  --maskot-kulak-ic: #f2d0e0;
+  --maskot-yanak: #f6dbe7;
+  --maskot-burun: #ed88a6;
+  --maskot-agiz: #cc5476;
+  --maskot-cizgi: #1f1937;
   --maskot-parlak: #ffffff;
 }
 
 .dark {
   color-scheme: dark;
-  --background: #12141c;
-  --foreground: #e6e9f2;
-  --card: #1c1f29;
-  --card-foreground: #e6e9f2;
-  --muted: #252a37;
-  --muted-foreground: #99a1b5;
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 16%);
-  --grid: oklch(1 0 0 / 10%);
+  --background: #0f0b1c;
+  --foreground: #f2eefc;
+  --card: #1a1534;
+  --card-foreground: #f2eefc;
+  --muted: #272049;
+  --muted-foreground: #9c93bd;
+  --border: #2d2554;
+  --input: #2d2554;
+  --grid: #2a2350;
 
-  --primary: #7fb2f0;
-  --primary-soft: #22304a;
-  --primary-foreground: #10131c;
+  --primary: #a78bfa;
+  --primary-soft: #2b2354;
+  /*
+    Koyu temada tek mor yetmiyor: `--primary` lavanta, yazı olarak koyu zeminde
+    okunuyor ama dolu bir yüzey olarak üstünde beyaz yazı taşıyamıyor. Doygun
+    eylem moru bu yüzden ayrı — düğme, seçili çip ve açık anahtar bunu kullanıyor
+    ve üstlerindeki yazı beyaz kalıyor.
+  */
+  --primary-dolu: #7c5cfc;
+  /* Lavantanın üstüne beyaz yazı okunmuyor; dolu mor yüzeylerde yazı zeminin
+     kendi koyu tonu. */
+  --primary-foreground: #150c2e;
 
-  --ikincil: #ff7b73;
-  --ikincil-soft: #3a2320;
+  --ikincil: #f472b6;
+  --ikincil-soft: #3a1c3c;
 
-  --success: #63c489;
-  --success-soft: #1e3327;
-  --warning: #e5b355;
-  --warning-soft: #35301f;
-  --danger: #ff6f66;
+  --success: #5ddba0;
+  --success-soft: #16332b;
+  --warning: #f0c05c;
+  --warning-soft: #352c1c;
+  --danger: #fb7185;
 
   /*
     Koyu temada aile renkleri.
@@ -207,51 +239,54 @@
     (#3a2028 gibi) ve iki sorun çıkıyordu: (1) o tonlar zemin renginden **daha
     açıktı**, yani oyun ekranında zemin kartlardan parlak kalıyor, kartlar
     çukur gibi görünüyordu — açık temadaki hiyerarşinin tam tersi; (2) sıcak
-    kahve-bordo tonlar soğuk lacivert zeminle çakışıp çamurlaşıyordu.
+    kahve-bordo tonlar soğuk zeminle çakışıp çamurlaşıyordu.
 
     Şimdi ikisi de aynı yerden türüyor: zemin, sayfa zemininin üstüne ailenin
     ara tonundan bir tutam; kart ise kart yüzeyinin üstüne ailenin açık tonundan
-    daha fazlası. Böylece zemin zeminden koyu, kart karttan açık kalıyor ve renk
-    kimliği duruyor.
+    daha fazlası. Böylece zemin zeminden koyu, kart karttan açık kalıyor, renk
+    kimliği duruyor ve hepsi mor zeminin ailesinden görünüyor.
 
     Kartta ara ton değil açık ton (`-koyu`) kullanılıyor: matematiğin ara tonu
-    amber ve lacivert kart yüzeyiyle karışınca zeytin yeşiline kaçıyordu.
+    amber ve mor kart yüzeyiyle karışınca zeytin yeşiline kaçıyordu.
+
+    Oran %26 değil %32: mor kart yüzeyi mavi ailelerin farkını yutuyordu ve
+    Coğrafya ile Tarih kartları yan yana neredeyse tek renk görünüyordu.
   */
   --yzm: color-mix(in srgb, var(--yzm-ok) 9%, var(--background));
-  --yzm-kart: color-mix(in srgb, var(--yzm-koyu) 26%, var(--card));
-  --yzm-koyu: #f2a2b3;
-  --yzm-ok: #e4708a;
+  --yzm-kart: color-mix(in srgb, var(--yzm-koyu) 32%, var(--card));
+  --yzm-koyu: #f4a3c0;
+  --yzm-ok: #e07099;
   --isl: color-mix(in srgb, var(--isl-ok) 9%, var(--background));
-  --isl-kart: color-mix(in srgb, var(--isl-koyu) 26%, var(--card));
-  --isl-koyu: #e8bf74;
-  --isl-ok: #e0a233;
+  --isl-kart: color-mix(in srgb, var(--isl-koyu) 32%, var(--card));
+  --isl-koyu: #e8bd74;
+  --isl-ok: #dc9c30;
   --edb: color-mix(in srgb, var(--edb-ok) 9%, var(--background));
-  --edb-kart: color-mix(in srgb, var(--edb-koyu) 26%, var(--card));
-  --edb-koyu: #b9a9f2;
-  --edb-ok: #8570da;
+  --edb-kart: color-mix(in srgb, var(--edb-koyu) 32%, var(--card));
+  --edb-koyu: #bbaaf4;
+  --edb-ok: #8468de;
   --cog: color-mix(in srgb, var(--cog-ok) 9%, var(--background));
-  --cog-kart: color-mix(in srgb, var(--cog-koyu) 26%, var(--card));
-  --cog-koyu: #8ad3a8;
-  --cog-ok: #4fa87a;
+  --cog-kart: color-mix(in srgb, var(--cog-koyu) 32%, var(--card));
+  --cog-koyu: #5fd79b;
+  --cog-ok: #48a68a;
   --trh: color-mix(in srgb, var(--trh-ok) 9%, var(--background));
-  --trh-kart: color-mix(in srgb, var(--trh-koyu) 26%, var(--card));
-  --trh-koyu: #86cfda;
-  --trh-ok: #3ba3ae;
+  --trh-kart: color-mix(in srgb, var(--trh-koyu) 32%, var(--card));
+  --trh-koyu: #84cde4;
+  --trh-ok: #399db8;
   --byl: color-mix(in srgb, var(--byl-ok) 9%, var(--background));
-  --byl-kart: color-mix(in srgb, var(--byl-koyu) 26%, var(--card));
-  --byl-koyu: #bcd98a;
-  --byl-ok: #86ac3e;
+  --byl-kart: color-mix(in srgb, var(--byl-koyu) 32%, var(--card));
+  --byl-koyu: #cae07f;
+  --byl-ok: #83a93c;
 
-  /* Boss zemini de aynı kuralla: sayfa zemininin kırmızıya çalan hâli. Eski
+  /* Boss zemini de aynı kuralla: sayfa zemininin fuşyaya çalan hâli. Eski
      sabit ton (#3a2320) kartlardan açıktı ve kahverengiye kaçıyordu. */
   --boss-zemin: color-mix(in srgb, var(--ikincil) 13%, var(--background));
 
-  --maskot-kurk: #e9ecf5;
-  --maskot-kulak-ic: #c99aa6;
-  --maskot-yanak: #d3a8b2;
-  --maskot-burun: #e07f92;
-  --maskot-agiz: #b8465c;
-  --maskot-cizgi: #1b2440;
+  --maskot-kurk: #e9e4f6;
+  --maskot-kulak-ic: #c295b0;
+  --maskot-yanak: #cfa4bb;
+  --maskot-burun: #de7f9f;
+  --maskot-agiz: #b04468;
+  --maskot-cizgi: #1f1937;
   --maskot-parlak: #ffffff;
 }
 
@@ -282,15 +317,16 @@
     font-family: var(--font-display);
   }
   /*
-    Kart yüzeyi. Açık temada gölge, koyu temada ince çerçeve — koyu zeminde
-    gölge görünmüyor, kart zeminden hiç ayrılmıyordu.
+    Kart yüzeyi. Açık temada gölge; koyu temada hiçbiri — orada kart zemininden
+    (#1A1534 / #0F0B1C) zaten bir tık açık ve çerçeve eklemek yüzeyi kutuya
+    çeviriyordu. Eski koyu palette kart ile zemin neredeyse aynı tondaydı, o
+    yüzden ince bir çerçeve gerekiyordu; artık gerekmiyor.
   */
   .golge-kart {
     box-shadow: var(--shadow-kart);
   }
   .dark .golge-kart {
     box-shadow: none;
-    border: 1px solid var(--border);
   }
   /* Sütun halindeki sayılar hizalansın diye; büyük tek sayılarda kullanılmaz */
   .rakam {
@@ -334,17 +370,59 @@
   /* --- Açılış ekranı (components/acilis.tsx) --- */
 
   /*
-    Zıplama. Yukarı çıkışta yavaşlayan, inişte hızlanan bir eğri kullanılıyor —
-    tek bir `ease-in-out` ile tavşan havada asılı kalmış gibi duruyordu.
+    Ekranın bütün parçaları tek bir 4,2 saniyelik zaman çizgisini paylaşıyor:
+    %0–34 iniş, %34–68 duruş, %68–100 çıkış. Süreler bu yüzden hepsinde aynı
+    ve ayrı ayrı değiştirilemez — biri kayarsa yazılar maskottan önce ya da
+    sonra gider, ekran dağılır. Süreyi `ACILIS_SURESI` ile birlikte değiştir.
   */
-  .acilis-ziplama {
-    animation: acilis-ziplama 760ms cubic-bezier(0.3, 0, 0.4, 1) infinite;
+  .rb3-inis {
+    opacity: 0;
+    animation: rb3-inis 4.2s cubic-bezier(0.3, 0.8, 0.25, 1) forwards;
   }
-  .acilis-yazi {
-    animation: acilis-yazi 700ms 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  .rb3-yazi {
+    opacity: 0;
+    animation: rb3-yazi 4.2s cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
   }
-  .acilis-cark {
-    animation: acilis-cark 1700ms linear infinite;
+  .rb3-slogan {
+    opacity: 0;
+    animation: rb3-slogan 4.2s ease-out forwards;
+  }
+  .rb3-son {
+    animation: rb3-son 4.2s ease-out forwards;
+  }
+  /*
+    Hâlelerin iki animasyonu var: sürekli nefes alma (`rb-hale`) ve çıkışta
+    sönme (`rb3-son`). İkisi ayrı sınıfa yazılamıyor — aynı öğede iki
+    `animation` bildirimi birleşmez, sonraki öncekini siler. Süreler ve
+    gecikmeler öğe üzerinden veriliyor çünkü iki hâle farklı hızda nefes
+    alıyor (8s ve 5,4s).
+  */
+  .rb3-hale {
+    animation-name: rb-hale, rb3-son;
+    animation-timing-function: ease-in-out, ease-out;
+    animation-iteration-count: infinite, 1;
+    animation-fill-mode: none, forwards;
+  }
+  .rb-aurora {
+    animation: rb-aurora 23s ease-in-out infinite;
+  }
+
+  /*
+    Ekran, uygulama penceresi gerçekten görünene kadar ilk karesinde duruyor.
+
+    CSS animasyonları sayfa çizilir çizilmez başlıyor; Android'in kendi açılış
+    ekranı ise o sırada hâlâ ekranı kaplıyor olabiliyor. Animasyon arkada akıp
+    bitiyor ve pencere açıldığında kullanıcı yalnızca son karesini görüyor —
+    "animasyon yok" diye okunan şey tam olarak bu. Sınıf, ilk kare üretildiği
+    an kalkıyor (bkz. acilis.tsx → `useBaslangic`).
+
+    Duraklatma `display: none` ya da gecikmeyle değil `animation-play-state`
+    ile: ekran o sırada görünmek zorunda (zemini sistem açılış ekranıyla aynı,
+    yani arada bir boşluk oluşmuyor), yalnızca zaman çizgisi beklemeli.
+  */
+  .rb3-bekliyor,
+  .rb3-bekliyor * {
+    animation-play-state: paused !important;
   }
 
   /* --- Haftalık özet (components/ekranlar/haftalik-ozet.tsx) --- */
@@ -389,39 +467,63 @@
   }
 }
 
-@keyframes acilis-ziplama {
-  0%,
+/* --- Açılış ekranının kareleri --- */
+
+/*
+  Maskotun varış noktası koda sabit yazılamıyor: tasarım 360×720'lik çerçeve
+  için translate(-138px, -316px) scale(0.6) diyor, gerçek telefonlarda hem
+  ekranın ortası hem başlığın yeri başka. Açılış ekranı yuvayı ölçüp bu üç
+  değişkeni dolduruyor; ölçüm tutmazsa yedek değerler tasarımın kendi sayıları.
+*/
+@keyframes rb3-inis {
+  0% { opacity: 0; transform: translateY(-300px) scale(1.04); }
+  12% { opacity: 1; }
+  26% { transform: translateY(14px) scale(0.99); }
+  34% { opacity: 1; transform: translateY(0) scale(1); }
+  68% { opacity: 1; transform: translateY(0) scale(1); }
   100% {
-    transform: translateY(0) scaleY(1);
-  }
-  18% {
-    transform: translateY(0) scaleY(0.9);
-  }
-  50% {
-    transform: translateY(-26px) scaleY(1.04);
-  }
-  82% {
-    transform: translateY(0) scaleY(0.94);
-  }
-}
-
-@keyframes acilis-yazi {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-    letter-spacing: 0.42em;
-  }
-  to {
     opacity: 1;
-    transform: none;
-    letter-spacing: 0.18em;
+    transform: translate(var(--rb3-dx, -138px), var(--rb3-dy, -316px))
+      scale(var(--rb3-olcek, 0.6));
   }
 }
 
-@keyframes acilis-cark {
-  to {
-    transform: rotate(360deg);
-  }
+@keyframes rb3-yazi {
+  0%,
+  18% { opacity: 0; transform: translateY(18px); }
+  36% { opacity: 1; transform: translateY(0); }
+  68% { opacity: 1; transform: translateY(0); }
+  86%,
+  100% { opacity: 0; transform: translateY(-26px); }
+}
+
+@keyframes rb3-slogan {
+  0%,
+  30% { opacity: 0; transform: translateY(10px); }
+  46% { opacity: 1; transform: translateY(0); }
+  66% { opacity: 1; transform: translateY(0); }
+  82%,
+  100% { opacity: 0; transform: translateY(-16px); }
+}
+
+@keyframes rb3-son {
+  0%,
+  68% { opacity: 1; }
+  86%,
+  100% { opacity: 0; }
+}
+
+@keyframes rb-hale {
+  0%,
+  100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.08); }
+}
+
+@keyframes rb-aurora {
+  0%,
+  100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.55; }
+  33% { transform: translate3d(26px, -22px, 0) scale(1.12); opacity: 0.85; }
+  66% { transform: translate3d(-18px, 16px, 0) scale(0.95); opacity: 0.65; }
 }
 
 @keyframes ozet-girisi {
@@ -467,8 +569,8 @@
 }
 
 /*
-  Hareket azaltma tercihi açıksa süslemeler durur. Açılış çarkı istisna: dönmeyen
-  bir bekleme göstergesi "donmuş" izlenimi veriyor, o yüzden yavaşlatılıyor.
+  Hareket azaltma tercihi açıksa süslemeler durur — açılış ekranı hariç, sebebi
+  aşağıdaki blokta yazılı.
 */
 @keyframes ozet-cubuk {
   from {
@@ -481,8 +583,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .acilis-girisi,
-  .acilis-ziplama,
-  .acilis-yazi,
   .ozet-girisi,
   .ozet-vurgu,
   .ozet-nabiz {
@@ -490,9 +590,22 @@
   }
   /* `ozet-cubuk` bilerek listede yok: süsleme değil, kartın ne zaman
      geçeceğini gösteren tek işaret. */
-  .acilis-cark {
-    animation-duration: 3.4s;
-  }
+
+  /*
+    Açılış ekranı bu listede bilerek **yok**.
+
+    Tasarımın kendi kuralı ekranı burada tümüyle susturuyordu ve uygulama bir
+    süre öyle çıktı; sonuç, animasyonu hiç görmeyen bir kullanıcı oldu.
+    Android'de bu tercih çoğu zaman erişilebilirlik ayarından değil geliştirici
+    seçeneklerindeki "animasyon ölçeği" ya da pil tasarrufundan geliyor — yani
+    hareketten rahatsız olduğu için değil telefonu hızlansın diye kapatan
+    kullanıcıda da açılış ekranı boş bir kareye dönüyordu.
+
+    Karar kullanıcının: açılış animasyonu her koşulda oynasın istedi. Hareket
+    dört saniyede bir kez, uygulama açılışında ve tek yönde — uygulamanın geri
+    kalanı (haftalık özet, harita, tur içi efektler) bu tercihi izlemeye devam
+    ediyor.
+  */
 }
 
 /*

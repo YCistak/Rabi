@@ -119,3 +119,47 @@ export function bantYaz(enIyi: number, enKotu: number): string {
   if (alt === ust) return siraYaz(alt)
   return `${siraYaz(Math.max(1, alt))} – ${siraYaz(ust)}`
 }
+
+export type PuanTahmini = {
+  puan: number
+  /** Sıralama tablonun kapsadığı aralığın dışındaysa sonuç güvenilir değil. */
+  tabloDisi: boolean
+}
+
+/**
+ * Sıralamadan yerleştirme puanı — `yilSiralamasi`'nın tersi.
+ *
+ * Hedef kataloğu bölümlerin **başarı sırasını** tutuyor, taban puanını değil:
+ * sıra yıldan yıla yerinde duruyor, puan sınavın zorluğuyla oynuyor. Taban
+ * puanı o yılın gerçek dağılımından geri hesaplamak, tahminin bayat kısmını
+ * en yavaş bayatlayan sayıya indiriyor.
+ *
+ * İç değer yine logaritmik, çünkü ileri yön öyle: aynı eğrinin tersi
+ * alınmazsa gidip gelen bir çevrim başladığı puana dönmezdi.
+ */
+export function siralamadanPuan(siralama: number, tur: PuanTuru, yil: number): PuanTahmini {
+  const noktalar = yilVerisi(yil).yerlestirme[tur]
+  if (!noktalar || noktalar.length === 0) return { puan: 0, tabloDisi: true }
+
+  const hedef = Math.max(1, siralama)
+  const enDusuk = noktalar[0]
+  const enYuksek = noktalar[noktalar.length - 1]
+
+  // Tablo puanla artıyor, aday sayısıyla azalıyor: kalabalık uç en düşük puan.
+  if (hedef >= enDusuk[1]) return { puan: enDusuk[0], tabloDisi: hedef > enDusuk[1] }
+  if (hedef <= enYuksek[1]) return { puan: enYuksek[0], tabloDisi: hedef < enYuksek[1] }
+
+  for (let i = 0; i < noktalar.length - 1; i++) {
+    const [altPuan, altSayi] = noktalar[i]
+    const [ustPuan, ustSayi] = noktalar[i + 1]
+    if (hedef <= altSayi && hedef >= ustSayi) {
+      if (altSayi <= 0 || ustSayi <= 0 || altSayi === ustSayi) {
+        return { puan: altPuan, tabloDisi: false }
+      }
+      const oran = (Math.log(hedef) - Math.log(altSayi)) / (Math.log(ustSayi) - Math.log(altSayi))
+      return { puan: altPuan + (ustPuan - altPuan) * oran, tabloDisi: false }
+    }
+  }
+
+  return { puan: enDusuk[0], tabloDisi: true }
+}
