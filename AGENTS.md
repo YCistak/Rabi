@@ -31,13 +31,22 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
 
 - Mobil öncelikli, `max-w-md` tek sütun. Hover yerine `active:` — dokunmatik cihaz.
 - Renkler doğrudan yazılmaz, tema değişkenlerinden gelir (`var(--primary)` /
-  Tailwind `text-primary`). Tek palet var, kullanıcıya renk seçtirilmiyor.
-  Vurgu mavi (`--primary` #4A8FE7), ikinci kimlik rengi mercan (`--ikincil` #EF5A52),
-  zemin mavimsi kâğıt (`--background` #EDF1FD). Renk **derse** ait, oyuna değil:
+  Tailwind `text-primary`). **Tek tema var** — koyu tema kaldırıldı, `dark:`
+  sınıfı kullanma, Ayarlar'da tema seçeneği yok.
+  Vurgu kavrulmuş amber: `--primary` #B3491F **yazı ve ikon** için,
+  `--primary-parlak` #D9622F **dolgu** için (halka, çubuk, düğme, büyük sayı).
+  İkinci kimlik rengi tuğla (`--ikincil` #A8432B), zemin kırık beyaz
+  (`--background` #F8F8F7). Renk **derse** ait, oyuna değil:
   `yzm` (Türkçe, pembe) · `isl` (Matematik, krem) · `edb` (Edebiyat, lavanta) ·
   `trh` (Tarih, deniz mavisi) · `byl` (Biyoloji, yeşil), her biri `-koyu` ve
   `-ok` tonuyla.
-  Kart yüzeyi `golge-kart` sınıfıyla: açık temada gölge, koyu temada ince çerçeve.
+  Kart yüzeyi `golge-kart` sınıfıyla: beyaz kart, sıcak gölge.
+  Maskotun kürkü beyaz olduğu için `--maskot-hat` konturu şart; zemin de
+  neredeyse beyaz, kontursuz siluet kayboluyor.
+- Zemin rengi üç yerde birden yazılı ve **birlikte** değişmeli:
+  `--background` (globals.css), `acilis.tsx`'teki `ZEMIN` ve Android'in
+  `acilis_zemin` / `uygulama_zemin` renkleri. Ayrılırlarsa açılışta renk
+  sıçraması olur.
 - Yazı tipi tek: **Nunito**. Başlık ayrı aile değil ayrı kalınlık — `font-display`
   hâlâ var ama Nunito'ya çözülüyor; başlıklar `font-extrabold`, gövde `font-medium`.
 - Tasarım kaynağı `tasarim/` altındaki HTML mockup'lar. Derlemeye girmiyorlar,
@@ -45,17 +54,12 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
 - Sütun hâlindeki sayılara `rakam` sınıfı (tabular-nums), başlıklara `font-display`.
 - Alt menünün altında kalan içerik için `guvenli-alt`.
 
-## Havuç Mağazası
+## Havuç
 
-Eşyalar tamamen kozmetik: hiçbiri çalışmayı kolaylaştırmıyor, puanı etkilemiyor.
-Adlar ve çizimler **jenerik** — gerçek marka, takım, film ya da karakter yok.
-Katalog `lib/magaza/esyalar.ts`, saf mantık `lib/magaza/magaza.ts`, çizimler
-`components/maskot/parcalar/` altında; hepsi ölçülerini
-`components/maskot/olculer.ts` dosyasından okuyor. Yeni eşyanın kimliğini önce
-katalogda tanımla: çizim kayıtları katalogdan türeyen dar bir tiple yazıldığı için
-çizimi unutulan eşya mağazada boş kutucuk olarak değil, derlemede hata olarak çıkar.
-
-Havuç kazanma mekaniği henüz yok; bakiye şimdilik yalnızca mağazada eksiliyor.
+Tek sayaç para birimi (`lib/havuc.ts`), ana sayfanın sağ üstünde duruyor.
+Kazandıran ya da harcatan mekanik **yok**: havuç için kurulan mağaza ve
+giydirilebilir avatar sistemi kaldırıldı, sayaç kaldı. Yeni bir harcama/kazanma
+yolu eklerken bakiyeyi tek yerden değiştir.
 
 ## Doğruluk
 

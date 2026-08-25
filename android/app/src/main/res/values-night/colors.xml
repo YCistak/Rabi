@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="uygulama_zemin">#12141C</color>
-    <color name="odak_metin">#EDF1FD</color>
-    <color name="odak_soluk">#9AA4BC</color>
+    <!--
+      Rabi'nin koyu teması yok: uygulama telefon gece modundayken de açık
+      renkte açılıyor. Bu dosya, sistemin gece modunda `values/colors.xml`
+      yerine buradaki değerleri okumasını engellemek için duruyor — değerler
+      bilerek `values/` ile birebir aynı. Silinirse Android gece modunda
+      kaynakları kendi varsayılanlarına düşürüp zemini karartıyor.
+    -->
+    <color name="acilis_zemin">#F8F8F7</color>
+    <color name="uygulama_zemin">#F8F8F7</color>
+    <color name="odak_metin">#1B1A19</color>
+    <color name="odak_soluk">#6B6764</color>
 </resources>

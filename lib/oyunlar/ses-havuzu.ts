@@ -91,7 +91,7 @@ export const OLAY_ACIKLAMASI: Record<SesOlayi, string> = {
  * Havuzu okunur tutmak için: bir olaya ait bütün örnekler tek yerde.
  *
  * `taban` grubun zorluğu; bir örnek üçüncü eleman verirse onunki geçerli.
- * Böylece 225 satırın her birine zorluk yazmak gerekmiyor, yalnızca gruptan
+ * Böylece 425 satırın her birine zorluk yazmak gerekmiyor, yalnızca gruptan
  * ayrılanlar işaretleniyor — ve ayrıldıkları göze çarpıyor.
  */
 function grup(
@@ -150,6 +150,57 @@ export const SES_HAVUZU: readonly SesSorusu[] = [
     ['ahengi', 'ahenk + i', 'zor'],
     ['dengi', 'denk + i', 'zor'],
     ['öğüdü', 'öğüt + ü', 'zor'],
+
+    // Gövde sonundaki p, ç, t, k ünlüyle başlayan ekten önce b, c, d, ğ oluyor.
+    // Kökü günlük dilden tanıdık olan örnekler burada: öğrenci sözcüğün yalın
+    // hâlini zaten biliyor, değişimi karşılaştırarak görüyor.
+    ['kabı', 'kap + ı'],
+    ['cebi', 'cep + i'],
+    ['mektubu', 'mektup + u'],
+    ['kulübü', 'kulüp + ü'],
+    ['bıçağı', 'bıçak + ı'],
+    ['ayağı', 'ayak + ı'],
+    ['kulağı', 'kulak + ı'],
+    ['dudağı', 'dudak + ı'],
+    ['durağı', 'durak + ı'],
+    ['oyuncağı', 'oyuncak + ı'],
+    ['çiçeği', 'çiçek + i'],
+    ['gerçeği', 'gerçek + i'],
+    ['dileği', 'dilek + i'],
+    ['emeği', 'emek + i'],
+    ['örneği', 'örnek + i'],
+    ['gömleği', 'gömlek + i'],
+    ['kelebeği', 'kelebek + i'],
+    ['erkeği', 'erkek + i'],
+    ['yemeği', 'yemek + i'],
+    ['tabağı', 'tabak + ı'],
+    ['kapağı', 'kapak + ı'],
+    ['kabuğu', 'kabuk + u'],
+    ['kılıcı', 'kılıç + ı'],
+    ['borcu', 'borç + u'],
+    // Kök tek heceli ya da alıntı olunca yalın hâli akla geç geliyor
+    // (*güç* → *gücü*), bu yüzden aynı kural bir kademe zorlaşıyor.
+    ['dibi', 'dip + i', 'orta'],
+    ['sahibi', 'sahip + i', 'orta'],
+    ['dördü', 'dört + ü', 'orta'],
+    ['umudu', 'umut + u', 'orta'],
+    ['vücudu', 'vücut + u', 'orta'],
+    ['inadı', 'inat + ı', 'orta'],
+    ['cildi', 'cilt + i', 'orta'],
+    ['tacı', 'taç + ı', 'orta'],
+    ['gücü', 'güç + ü', 'orta'],
+    ['burcu', 'burç + u', 'orta'],
+    ['sonucu', 'sonuç + u', 'orta'],
+    ['kurdu', 'kurt + u', 'orta'],
+    ['ihtiyacı', 'ihtiyaç + ı', 'orta'],
+    ['kirpiği', 'kirpik + i', 'orta'],
+    // En zor uç: k → g istisnası (nk ile bitenler *rengi* gibi ğ değil g olur)
+    // ve günlük dilde seyrek geçen alıntılar.
+    ['cengi', 'cenk + i', 'zor'],
+    ['çelengi', 'çelenk + i', 'zor'],
+    ['söğüdü', 'söğüt + ü', 'zor'],
+    ['kalbi', 'kalp + i', 'zor'],
+    ['nasibi', 'nasip + i', 'zor'],
   ]),
 
   ...grup('benzesme', 'orta', [
@@ -187,6 +238,49 @@ export const SES_HAVUZU: readonly SesSorusu[] = [
     ['içki', 'iç + gi', 'zor'],
     ['coşku', 'coş + gu', 'zor'],
     ['yatkın', 'yat + gın', 'zor'],
+
+    // Görme biçimi en kolay olan grup: ekin d'si t'ye dönüyor ve kök gözle
+    // ayrılıyor. Ünlü uyumu dışında hiçbir şey değişmediği için kolay.
+    ['koştu', 'koş + du', 'kolay'],
+    ['içti', 'iç + di', 'kolay'],
+    ['bastı', 'bas + dı', 'kolay'],
+    ['kesti', 'kes + di', 'kolay'],
+    ['düştü', 'düş + dü', 'kolay'],
+    ['uçtu', 'uç + du', 'kolay'],
+    ['çıktı', 'çık + dı', 'kolay'],
+    ['geçti', 'geç + di', 'kolay'],
+    ['açtı', 'aç + dı', 'kolay'],
+    ['taştan', 'taş + dan', 'kolay'],
+    ['ipekten', 'ipek + den', 'kolay'],
+    ['sınıfta', 'sınıf + da', 'kolay'],
+    ['hesaptan', 'hesap + dan', 'kolay'],
+    // c → ç grubu: ek yazıda hiç görünmediği için öğrenci ekin aslını
+    // hatırlamak zorunda, bu yüzden bir kademe yukarıda.
+    ['çiftçi', 'çift + ci'],
+    ['dişçi', 'diş + ci'],
+    ['gözlükçü', 'gözlük + cü'],
+    ['sepetçi', 'sepet + ci'],
+    ['halkçı', 'halk + cı'],
+    ['yenilikçi', 'yenilik + ci'],
+    ['Rusça', 'Rus + ca'],
+    ['Arapça', 'Arap + ca'],
+    ['çocukça', 'çocuk + ca'],
+    ['alçakça', 'alçak + ca'],
+    ['açıkça', 'açık + ca'],
+    ['genişçe', 'geniş + ce'],
+    ['hafifçe', 'hafif + ce'],
+    // g → k en zoru: türemiş sözcük kalıplaşmış, ek artık ek gibi durmuyor
+    // (*tutku*yu duyan *tut- + -gu* diye çözmüyor).
+    ['tutku', 'tut + gu', 'zor'],
+    ['atkı', 'at + gı', 'zor'],
+    ['askı', 'as + gı', 'zor'],
+    ['bıkkın', 'bık + gın', 'zor'],
+    ['kaçkın', 'kaç + gın', 'zor'],
+    ['şaşkın', 'şaş + gın', 'zor'],
+    ['küskün', 'küs + gün', 'zor'],
+    ['bitkin', 'bit + gin', 'zor'],
+    ['yetkin', 'yet + gin', 'zor'],
+    ['geçkin', 'geç + gin', 'zor'],
   ]),
 
   ...grup('unluDusmesi', 'kolay', [
@@ -225,6 +319,42 @@ export const SES_HAVUZU: readonly SesSorusu[] = [
     ['kaynana', 'kayın + ana', 'zor'],
     ['yumurtlamak', 'yumurta + lamak', 'zor'],
     ['sızlamak', 'sızı + lamak', 'zor'],
+
+    // Türkçe kökenli, gövdesi günlük dilde tek başına geçen örnekler.
+    ['koynu', 'koyun + u'],
+    ['oğlan', 'oğul + an'],
+    // Arapça alıntıların büyük bölümü bu kalıpta: iki heceli yalın hâlin dar
+    // ünlüsü ek gelince düşüyor. Yalın hâli bilinmezse olay görünmüyor.
+    ['genzi', 'geniz + i', 'orta'],
+    ['şükrü', 'şükür + ü', 'orta'],
+    ['kahrı', 'kahır + ı', 'orta'],
+    ['vakti', 'vakit + i', 'orta'],
+    ['şahsı', 'şahıs + ı', 'orta'],
+    ['nesli', 'nesil + i', 'orta'],
+    ['nakli', 'nakil + i', 'orta'],
+    ['seyri', 'seyir + i', 'orta'],
+    ['hüznü', 'hüzün + ü', 'orta'],
+    ['keşfi', 'keşif + i', 'orta'],
+    ['nutku', 'nutuk + u', 'orta'],
+    ['şekli', 'şekil + i', 'orta'],
+    ['hapsi', 'hapis + i', 'orta'],
+    ['nabzı', 'nabız + ı', 'orta'],
+    ['cismi', 'cisim + i', 'orta'],
+    // Zor uç: ya sözcük artık kalıplaşmış (*uyku*, *nasıl*, *yanlış*) ya da
+    // yalın hâli yazı dilinde neredeyse hiç geçmiyor.
+    ['benzi', 'beniz + i', 'zor'],
+    ['faslı', 'fasıl + ı', 'zor'],
+    ['kavmi', 'kavim + i', 'zor'],
+    ['lütfu', 'lütuf + u', 'zor'],
+    ['ilmi', 'ilim + i', 'zor'],
+    ['zulmü', 'zulüm + ü', 'zor'],
+    ['kabri', 'kabir + i', 'zor'],
+    ['ayrı', 'ayır + ı', 'zor'],
+    ['sıyrılmak', 'sıyır + ılmak', 'zor'],
+    ['uyku', 'uyu + ku', 'zor'],
+    ['nasıl', 'ne + asıl', 'zor'],
+    ['yanlış', 'yanıl + ış', 'zor'],
+    ['kaynata', 'kayın + ata', 'zor'],
   ]),
 
   ...grup('unluDaralmasi', 'kolay', [
@@ -256,6 +386,47 @@ export const SES_HAVUZU: readonly SesSorusu[] = [
     ['diyerek', 'de + erek', 'zor'],
     ['diyecek', 'de + ecek', 'zor'],
     ['yiyecek', 'ye + ecek', 'zor'],
+
+    // Sonu a/e ile biten fiil + “-yor”: en tanıdık kalıp, kolay.
+    ['ödüyor', 'öde + yor'],
+    ['istiyor', 'iste + yor'],
+    ['hazırlıyor', 'hazırla + yor'],
+    ['kutluyor', 'kutla + yor'],
+    ['besliyor', 'besle + yor'],
+    ['gözlüyor', 'gözle + yor'],
+    ['sıçrıyor', 'sıçra + yor'],
+    ['titriyor', 'titre + yor'],
+    ['deniyor', 'dene + yor'],
+    ['süslüyor', 'süsle + yor'],
+    ['bağışlıyor', 'bağışla + yor'],
+    ['yolluyor', 'yolla + yor'],
+    ['sallıyor', 'salla + yor'],
+    ['yakalıyor', 'yakala + yor'],
+    ['tekrarlıyor', 'tekrarla + yor'],
+    ['hatırlıyor', 'hatırla + yor'],
+    ['yaşıyor', 'yaşa + yor'],
+    ['boyuyor', 'boya + yor'],
+    ['harcıyor', 'harca + yor'],
+    ['avlıyor', 'avla + yor'],
+    // Daralan ünlü kökün değil olumsuzluk ekinin (-ma/-me) ünlüsü; kök
+    // ünsüzle bittiği için öğrenci olayı gözden kaçırıyor.
+    ['bilmiyor', 'bilme + yor', 'orta'],
+    ['görmüyor', 'görme + yor', 'orta'],
+    ['okumuyor', 'okuma + yor', 'orta'],
+    ['yapmıyor', 'yapma + yor', 'orta'],
+    ['gitmiyor', 'gitme + yor', 'orta'],
+    ['içmiyor', 'içme + yor', 'orta'],
+    ['sevmiyor', 'sevme + yor', 'orta'],
+    ['duymuyor', 'duyma + yor', 'orta'],
+    ['anlamıyor', 'anlama + yor', 'orta'],
+    // “de-” ve “ye-” istisnası: daralma yalnız “-yor” ile değil, ünlüyle
+    // başlayan başka eklerle de oluyor. Kural dışı olduğu için en zoru.
+    ['diyen', 'de + en', 'zor'],
+    ['diyelim', 'de + elim', 'zor'],
+    ['diyince', 'de + ince', 'zor'],
+    ['yiyerek', 'ye + erek', 'zor'],
+    ['yiyelim', 'ye + elim', 'zor'],
+    ['yiyip', 'ye + ip', 'zor'],
   ]),
 
   ...grup('unsuzTuremesi', 'zor', [
@@ -285,6 +456,20 @@ export const SES_HAVUZU: readonly SesSorusu[] = [
     ['fenni', 'fen + i'],
     ['hacca', 'hac + a'],
     ['şerri', 'şer + i'],
+
+    // Aynı köklerin başka çekimleri: havuzdaki kök sayısı az, çünkü ünsüzünü
+    // ikizleyen sözcükler sayılı. Ek değişince olay değişmiyor, tanıma
+    // alışkanlığı pekişiyor.
+    ['hisse', 'his + e', 'orta'],
+    ['hakkım', 'hak + ım', 'orta'],
+    ['sırrım', 'sır + ım', 'orta'],
+    ['şıkka', 'şık + a', 'orta'],
+    ['halletti', 'hal + etti'],
+    ['fenne', 'fen + e'],
+    ['haccı', 'hac + ı'],
+    ['zanna', 'zan + a'],
+    ['addetmek', 'ad + etmek'],
+    ['üssü', 'üs + ü'],
   ]),
 
   ...grup('unluTuremesi', 'zor', [
@@ -331,6 +516,53 @@ export const SES_HAVUZU: readonly SesSorusu[] = [
     ['sıranın', 'sıra + ın'],
     ['kapıya', 'kapı + a'],
     ['sorusu', 'soru + u', 'orta'],
+
+    // Ünlüyle biten ada ünlüyle başlayan ek gelince araya s ya da y giriyor.
+    // Kök günlük dilden tanıdık olduğu sürece olay gözle görünüyor.
+    ['dedesi', 'dede + i'],
+    ['teyzesi', 'teyze + i'],
+    ['amcası', 'amca + ı'],
+    ['halası', 'hala + ı'],
+    ['kuzusu', 'kuzu + u'],
+    ['kutusu', 'kutu + u'],
+    ['sobası', 'soba + ı'],
+    ['bahçesi', 'bahçe + i'],
+    ['gemisi', 'gemi + i'],
+    ['şişesi', 'şişe + i'],
+    ['örtüsü', 'örtü + ü'],
+    ['kapıyı', 'kapı + ı'],
+    ['arabayı', 'araba + ı'],
+    ['odaya', 'oda + a'],
+    ['bahçeye', 'bahçe + e'],
+    ['masaya', 'masa + a'],
+    ['gemiyi', 'gemi + i'],
+    ['kediyi', 'kedi + i'],
+    ['babaya', 'baba + a'],
+    ['çantayı', 'çanta + ı'],
+    // n kaynaştırması: ilgi eki “-ın” ve sıra sayı eki “-ncı”. Buradaki n
+    // ekin parçası sanıldığı için y/s'li örneklerden bir kademe zor.
+    ['babanın', 'baba + ın', 'orta'],
+    ['arabanın', 'araba + ın', 'orta'],
+    ['kedinin', 'kedi + in', 'orta'],
+    ['odanın', 'oda + ın', 'orta'],
+    ['kapının', 'kapı + ın', 'orta'],
+    ['teyzenin', 'teyze + in', 'orta'],
+    ['amcanın', 'amca + ın', 'orta'],
+    ['kutunun', 'kutu + un', 'orta'],
+    ['köprünün', 'köprü + ün', 'orta'],
+    ['ikinci', 'iki + nci', 'orta'],
+    ['altıncı', 'altı + ncı', 'orta'],
+    ['yedinci', 'yedi + nci', 'orta'],
+    ['yirminci', 'yirmi + nci', 'orta'],
+    ['ellişer', 'elli + er', 'orta'],
+    // Zor uç: o ile biten alıntılar ve “su” — ünlü uzun sanıldığı için
+    // araya giren ses ekin kendisiymiş gibi okunuyor.
+    ['paltosu', 'palto + u', 'zor'],
+    ['radyosu', 'radyo + u', 'zor'],
+    ['kilosu', 'kilo + u', 'zor'],
+    ['banyoya', 'banyo + a', 'zor'],
+    ['suya', 'su + a', 'zor'],
+    ['ellinci', 'elli + nci', 'zor'],
   ]),
 
   ...grup('unsuzDusmesi', 'orta', [
@@ -355,6 +587,15 @@ export const SES_HAVUZU: readonly SesSorusu[] = [
     ['seyreltmek', 'seyrek + l + t + mek', 'zor'],
     ['ufalamak', 'ufak + la + mak', 'zor'],
     ['yükselti', 'yüksek + l + ti', 'zor'],
+
+    // Aynı k düşmesinin fiilden türeme biçimleri. Sözcük kalıplaştığı için
+    // kökteki k'nın varlığı hiç sezilmiyor; hepsi zor uçta.
+    ['yumuşamak', 'yumuşak + a + mak', 'zor'],
+    ['yumuşatmak', 'yumuşak + a + t + mak', 'zor'],
+    ['ufalanmak', 'ufak + la + n + mak', 'zor'],
+    ['yükseliş', 'yüksek + l + iş', 'zor'],
+    ['alçalış', 'alçak + l + ış', 'zor'],
+    ['küçülüş', 'küçük + l + üş', 'zor'],
   ]),
 ] as const
 

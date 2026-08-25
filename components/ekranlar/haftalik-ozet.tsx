@@ -433,8 +433,8 @@ function Sahne({ children }: { children: React.ReactNode }) {
  * yerde durunca ekrandaki kartla paylaşılan görsel birbirinden ayrılamıyor.
  */
 const ZEMINLER = {
-  giris: ['#4A8FE7', '#1F4F92'],
-  hedef: ['#EF5A52', '#9E2A26'],
+  giris: ['#C05B2B', '#7A3316'],
+  hedef: ['#A8432B', '#661F13'],
   seri: ['#E4708A', '#8C2E48'],
   devamsizlik: ['#4A5568', '#232B38'],
   pomodoro: ['#2F6D4F', '#16382A'],
@@ -446,7 +446,7 @@ const ZEMINLER = {
   ucuncu: ['#6B5B4A', '#33291F'],
   ikinci: ['#8A6B33', '#46340F'],
   birinci: ['#D08A2C', '#8A4A10'],
-  kapanis: ['#4A8FE7', '#173A6E'],
+  kapanis: ['#C05B2B', '#6B2C13'],
 } as const satisfies Record<string, readonly [string, string]>
 
 function kartlariKur(ozet: HaftalikOzet): Kart[] {

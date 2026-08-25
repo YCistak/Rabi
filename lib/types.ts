@@ -3,7 +3,6 @@
 // sunucu, hesap, senkronizasyon yoktur.
 
 import type { BankaKaydi } from './oyunlar/banka'
-import type { MagazaDurumu } from './magaza/magaza'
 
 // ---------------------------------------------------------------------------
 // Deneme
@@ -372,11 +371,10 @@ export type Yedek = {
   /** Oyun Bankası'ndan düşen toplam soru sayısı. */
   bankaDusen?: number
   /**
-   * Havuç bakiyesi ve mağaza koleksiyonu. Eski yedeklerde yok — geri
-   * yüklemede yazılmıyor, kullanıcının mevcut koleksiyonu olduğu gibi kalıyor.
+   * Havuç bakiyesi. Eski yedeklerde yok — geri yüklemede yazılmıyor,
+   * kullanıcının mevcut bakiyesi olduğu gibi kalıyor.
    */
   havuc?: number
-  magaza?: MagazaDurumu
   pomodoroGecmis: PomodoroSeans[]
   /**
    * Pomodoro ayarı. Eski yedeklerde yok — o zaman geri yüklemede yazılmıyor,

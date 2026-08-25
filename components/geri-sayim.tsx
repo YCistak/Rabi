@@ -17,7 +17,20 @@ import { cn } from '@/lib/utils'
  * `tarih` dışarıdan geliyor (ana sayfa `bugun()`'ü zaten hesaplıyor); bileşen
  * kendi saatini okusaydı gece yarısı ekranın yarısı eski tarihte kalırdı.
  */
-export function GeriSayim({ tarih, className }: { tarih: string; className?: string }) {
+export function GeriSayim({
+  tarih,
+  className,
+  children,
+}: {
+  tarih: string
+  className?: string
+  /**
+   * Kartın en altına, zeminden ayrışan bir iç kutuya giren içerik — ana sayfa
+   * buraya hedef özetini koyuyor. Geri sayımla hedef aynı soruya bakıyor
+   * ("ne kadar kaldı"), ayrı kartlarda dururken aralarındaki bağ kayboluyordu.
+   */
+  children?: React.ReactNode
+}) {
   const sayim = useMemo(() => geriSayim(tarih), [tarih])
   const soz = useMemo(
     () => sinavSozu(sayim.kalanGun, sayim.oturum, tarih),
@@ -139,6 +152,17 @@ export function GeriSayim({ tarih, className }: { tarih: string; className?: str
       >
         {soz.metin}
       </p>
+
+      {children && (
+        <div
+          className={cn(
+            'mt-3 rounded-[18px] p-3',
+            doluKart ? 'bg-white/15' : 'bg-background',
+          )}
+        >
+          {children}
+        </div>
+      )}
     </section>
   )
 }

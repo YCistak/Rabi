@@ -43,7 +43,7 @@ const SIMGELER: Record<Sekme, React.ReactNode> = {
 const SEKMELER: { id: Sekme; ad: string }[] = [
   { id: 'ana', ad: 'Ana Sayfa' },
   { id: 'oyunlar', ad: 'Oyunlar' },
-  { id: 'daha', ad: 'Daha' },
+  { id: 'daha', ad: 'Araçlar' },
   { id: 'ayarlar', ad: 'Ayarlar' },
 ]
 

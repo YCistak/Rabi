@@ -46,8 +46,17 @@ export function Rabi({ durum = 'normal', boyut = 96, className }: Props) {
         <Kulak taraf="sag" dusuk={uzgunMu} />
       </g>
 
-      {/* Baş */}
-      <ellipse cx="60" cy="82" rx="36" ry="32" fill="var(--maskot-kurk)" />
+      {/* Baş. Kontur şart: kürk beyaz, zemin de kırık beyaz — konturu
+          olmayan siluet ikisinin arasında kayboluyor. */}
+      <ellipse
+        cx="60"
+        cy="82"
+        rx="36"
+        ry="32"
+        fill="var(--maskot-kurk)"
+        stroke="var(--maskot-hat)"
+        strokeWidth="1.6"
+      />
 
       {/* Yanaklar */}
       <ellipse cx="34" cy="90" rx="8" ry="5.5" fill="var(--maskot-yanak)" opacity="0.75" />
@@ -97,6 +106,8 @@ function Kulak({ taraf, dusuk }: { taraf: 'sol' | 'sag'; dusuk: boolean }) {
         rx="11"
         ry="30"
         fill="var(--maskot-kurk)"
+        stroke="var(--maskot-hat)"
+        strokeWidth="1.6"
         transform={`rotate(${sol ? -8 : 8} ${x} 34)`}
       />
       <ellipse

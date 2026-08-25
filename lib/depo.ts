@@ -30,7 +30,6 @@ import { VARSAYILAN_SABLON_ID } from './sablonlar'
 import { egitimYili } from './hesap'
 import { dakikayiKirp, saatiKirp } from './hatirlatma'
 import { yeniId } from './utils'
-import { magazayiNormalize, type MagazaDurumu } from './magaza/magaza'
 
 export const ANAHTARLAR = {
   denemeler: 'rabi-denemeler',
@@ -105,27 +104,21 @@ export const ANAHTARLAR = {
   /**
    * Havuç bakiyesi.
    *
-   * Kazanma mekaniği henüz yok; şimdilik yalnızca mağaza harcıyor. Ayrı bir
-   * anahtar çünkü bakiye ayarlardan da mağazadan da bağımsız — ileride
-   * çalışma, oyun ve seri hepsi buraya yazacak.
+   * Kazanma ve harcama mekaniği henüz yok (`lib/havuc.ts`); sayaç ileride
+   * çalışma, oyun ve seri tarafından beslenmek üzere duruyor.
    */
   havuc: 'rabi-havuc',
-  /** Satın alınan ve giyilen eşyalar. */
-  magaza: 'rabi-magaza',
   ayarlar: 'rabi-ayarlar',
-  tema: 'rabi-tema',
   sonBildirim: 'rabi-son-bildirim',
 } as const
-
-/** Görünüm tercihleri veriye dahil değildir; sıfırlama ve yedekleme bunlara dokunmaz. */
-const GORUNUM_ANAHTARLARI: string[] = [ANAHTARLAR.tema]
 
 /**
  * Artık yazılmayan ama eski kurulumlarda kalmış olabilecek anahtarlar.
  * "Tüm veriyi sil" bunları da temizlemeli, yoksa sıfırlanmış bir uygulamada
- * eski veri artıkları kalırdı.
+ * eski veri artıkları kalırdı. `rabi-tema` de burada: koyu tema kaldırıldı,
+ * anahtar eski kurulumlarda duruyor olabilir.
  */
-const ESKI_ANAHTARLAR = ['rabi-gecmis-yillar', 'rabi-okul-dersleri']
+const ESKI_ANAHTARLAR = ['rabi-gecmis-yillar', 'rabi-okul-dersleri', 'rabi-tema']
 
 /**
  * Tek seferlik taşıma: okul notları ders ders girilirken bitmiş yılların
@@ -152,6 +145,19 @@ function okulNotlariniTasi() {
 }
 
 okulNotlariniTasi()
+
+/**
+ * Günlük soru hedefinin sınırları — kurulumdaki ve Ayarlar'daki çubuk aynı
+ * aralığı kullanıyor.
+ *
+ * Üst sınır 500: günde 500 sorunun üstü bir lise öğrencisi için gerçekçi değil
+ * ve çubuğun tamamı o aralığa yayılınca 150 ile 200'ü ayırmak zorlaşıyordu.
+ * Elli'şer artıyor; daha ince bir basamak çubuğu parmakla isabet ettirilemez
+ * hâle getirir.
+ */
+export const HEDEF_EN_AZ = 50
+export const HEDEF_EN_COK = 500
+export const HEDEF_ADIMI = 50
 
 export const VARSAYILAN_AYARLAR: Ayarlar = {
   varsayilanSablonId: VARSAYILAN_SABLON_ID,
@@ -381,7 +387,6 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       oyunBankasi: bankayiCoz(nesne.oyunBankasi),
       bankaDusen: sayi(nesne.bankaDusen),
       havuc: sayi(nesne.havuc),
-      magaza: magazayiNormalize(nesne.magaza as Partial<MagazaDurumu> | undefined),
       pomodoroGecmis: dizi<PomodoroSeans>(nesne.pomodoroGecmis),
       // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
       // kullanıcının mevcut pomodoro ayarına dokunulmuyor.
@@ -589,7 +594,6 @@ export function yedegiUygula(yedek: Yedek) {
   yaz(ANAHTARLAR.bankaDusen, yedek.bankaDusen ?? 0)
   // Eski yedeklerde havuç yok; o zaman kullanıcının mevcut bakiyesi korunuyor.
   if (yedek.havuc !== undefined) yaz(ANAHTARLAR.havuc, yedek.havuc)
-  if (yedek.magaza) yaz(ANAHTARLAR.magaza, yedek.magaza)
   yaz(ANAHTARLAR.pomodoroGecmis, yedek.pomodoroGecmis)
   // Eski yedeklerde alan yok; o zaman kullanıcının mevcut ayarı korunuyor.
   if (yedek.pomodoroAyar) yaz(ANAHTARLAR.pomodoroAyar, yedek.pomodoroAyar)
@@ -605,7 +609,6 @@ export function elenenSoruSayisi(yedek: Yedek): number {
 
 export function tumVeriyiSil() {
   for (const anahtar of [...Object.values(ANAHTARLAR), ...ESKI_ANAHTARLAR]) {
-    if (GORUNUM_ANAHTARLARI.includes(anahtar)) continue
     try {
       localStorage.removeItem(anahtar)
     } catch {

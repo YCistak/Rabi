@@ -437,13 +437,15 @@ function SureAyarlari({
 
   return (
     <Kart>
-      <p className="mb-3 font-medium">Süreler</p>
+      <p className="mb-3 font-display text-base font-extrabold tracking-tight">Süreler</p>
       <div className={cn('space-y-3', kilitli && 'pointer-events-none opacity-50')}>
         {alanlar.map(({ anahtar, etiket, secenekler, sinir }) => (
           <div key={anahtar}>
-            <p className="mb-1.5 text-xs text-muted-foreground">
+            {/* Etiket küçük ve büyük harf: dört grup alt alta dizildiğinde
+                normal yazıyla çipler ile etiketler aynı ağırlıkta okunuyordu. */}
+            <p className="mb-1.5 text-[11px] font-extrabold uppercase tracking-[0.08em] text-muted-foreground">
               {etiket}
-              {anahtar === 'turSayisi' ? ' (tur)' : ' (dakika)'}
+              {anahtar === 'turSayisi' ? ' (tur)' : ' (dk)'}
             </p>
             <div className="flex flex-wrap items-center gap-2">
               {secenekler.map((deger) => (

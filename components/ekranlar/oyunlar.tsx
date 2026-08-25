@@ -348,44 +348,34 @@ export function OyunlarEkrani({
                   key={ders.id}
                   type="button"
                   onClick={() => setSecilenDers(ders.id)}
+                  /*
+                    Kart bilerek basık: altı ders yan yana dizildiğinde uzun
+                    kartlar listeyi üç ekran boyuna çıkarıyordu. Açıklama satırı
+                    ve sağ alttaki ok daire de bu yüzden yok — ders adı ile
+                    "kaç oyun · kaç tur" sayacı zaten kartın söylediği her şey.
+                  */
                   className={cn(
-                    'rounded-2xl p-4 text-left transition active:brightness-[0.97]',
+                    'rounded-2xl p-3.5 text-left transition active:brightness-[0.97]',
                     'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                     aile.zemin,
-                    genis
-                      ? 'col-span-2 flex items-center gap-3.5'
-                      : 'flex min-h-[150px] flex-col',
+                    genis ? 'col-span-2 flex items-center gap-3.5' : 'flex flex-col',
                   )}
                 >
                   <span
-                    className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80 text-[23px] leading-none"
+                    className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-[14px] bg-white/80 text-[21px] leading-none"
                     aria-hidden
                   >
                     {ders.ikon}
                   </span>
 
                   <span className={cn('min-w-0', genis ? 'flex-1' : 'mt-2.5')}>
-                    <span className="block font-display text-[16.5px] font-extrabold leading-[1.15] tracking-tight text-foreground">
+                    <span className="block font-display text-[16px] font-extrabold leading-[1.15] tracking-tight text-foreground">
                       {ders.ad}
-                    </span>
-                    <span className="mt-1.5 block text-[12.5px] font-medium leading-snug text-foreground/60">
-                      {ders.aciklama}
                     </span>
                     <span className={cn('mt-1.5 block text-[11.5px] font-bold', aile.yazi)}>
                       {oyunlar.length} oyun
                       {oynanan > 0 && <> · {oynanan} tur</>}
                     </span>
-                  </span>
-
-                  <span
-                    className={cn(
-                      'grid h-8 w-8 shrink-0 place-items-center rounded-full text-white',
-                      aile.ok,
-                      genis ? '' : 'mt-auto self-end',
-                    )}
-                    aria-hidden
-                  >
-                    <OkSimgesi />
                   </span>
                 </button>
               )
@@ -697,11 +687,13 @@ function BankaDestesi({
             </span>
           </span>
 
+          {/* Ok daire yerine yazılı düğme: bankaya girmek "ileri gitmek" değil,
+              biriken soruları **oynamak** — dokunulduğunda ne olacağı okunsun. */}
           <span
-            className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-ikincil text-white"
+            className="shrink-0 rounded-full bg-ikincil px-4 py-2 text-[13px] font-extrabold text-white"
             aria-hidden
           >
-            <OkSimgesi />
+            Oyna
           </span>
         </span>
 

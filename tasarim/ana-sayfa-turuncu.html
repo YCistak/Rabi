@@ -1,0 +1,1078 @@
+<title>Rabi Kavrulmuş Amber</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap">
+
+<style>
+  /* ======================================================================
+     Rabi ana ekranı — turuncu palet denemesi.
+
+     Kaynak: origin/master (d75062a), components/ekranlar/ana-sayfa.tsx.
+     Düzen, ölçüler, bileşen sırası ve maskot birebir oradan alındı; boşluklar
+     Tailwind sınıflarının piksel karşılığı (space-y-3.5 = 14px, size-9 = 36px,
+     rounded-2xl = 24.3px …). Değişen tek şey renk.
+     ====================================================================== */
+
+  /* --- Sayfanın kabuğu; okuyanın temasına uyuyor --- */
+  :root {
+    --sayfa: #EDE8E2;
+    --sayfa-kart: #FFFFFF;
+    --sayfa-metin: #2B2420;
+    --sayfa-soluk: #6E6259;
+    --sayfa-cizgi: #DED6CD;
+    --sayfa-vurgu: #A9542A;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --sayfa: #16130F;
+      --sayfa-kart: #201C18;
+      --sayfa-metin: #EFE9E3;
+      --sayfa-soluk: #A29790;
+      --sayfa-cizgi: #322C26;
+      --sayfa-vurgu: #E39A63;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --sayfa: #16130F;
+    --sayfa-kart: #201C18;
+    --sayfa-metin: #EFE9E3;
+    --sayfa-soluk: #A29790;
+    --sayfa-cizgi: #322C26;
+    --sayfa-vurgu: #E39A63;
+  }
+
+  /* ----------------------------------------------------------------------
+     UYGULAMA PALETİ — kavrulmuş amber.
+
+     Turuncu iki katmanda çalışıyor: `--primary` dolgular için (halka, dolu
+     günler, mağaza düğmesi), `--primary-metin` yazı ve ikonlar için. İkisi
+     aynı aileden ama metin tonu bir kademe koyu — #C96A34 beyaz üstünde
+     3,7:1 veriyor, küçük yazı için yetmiyor; #A9542A 5,2:1 veriyor.
+
+     Zemin krem değil, çok açık sıcak nötr: turuncuyla aynı sıcaklıkta ama
+     doygunluğu neredeyse sıfır, böylece turuncu tek başına konuşuyor.
+     ---------------------------------------------------------------------- */
+  :root {
+    --background: #F7F3EF;
+    --foreground: #2B2420;
+    --card: #FFFFFF;
+    --muted: #F1EBE4;
+    --muted-foreground: #7D7268;
+    --border: #EFE8E1;
+
+    --primary: #C96A34;
+    --primary-parlak: #DD8449;
+    --primary-metin: #A9542A;
+    --primary-soft: #FBEEE3;
+    --primary-foreground: #FFFFFF;
+
+    /* İkinci kimlik rengi: tuğla. Eski mercanın yerini alıyor — turuncudan
+       ayrışsın diye daha koyu ve kırmızıya yakın, ama aynı sıcaklıkta. */
+    --ikincil: #A8432B;
+    --ikincil-soft: #F8E6E0;
+
+    /* Semantik renkler de sıcak tarafa çekildi: mavi bias'lı yeşil bu
+       paletin içinde yabancı duruyordu. */
+    --success: #4F7A4A;
+    --success-soft: #E9F0E4;
+    --warning: #A87C24;
+    --danger: #B23B2B;
+
+    /* Ders aileleri — hepsi bir tık sıcaklaştırıldı ki turuncuyla
+       çakışmasınlar. Yapı aynı: pastel yüz + üstünde okunan koyu ton. */
+    --yzm-kart: #FAE7E2;  --yzm-koyu: #B4523C;
+    --isl-kart: #F9F0D9;  --isl-koyu: #A87C24;
+    --edb-kart: #EDE8F2;  --edb-koyu: #6B5CA5;
+    --cog-kart: #E5EFE3;  --cog-koyu: #4A7A52;
+
+    /* Maskot — çizim aynı, dolgular sıcaklaştı. Eski pembe burun ve yanak,
+       amber paletin içinde soğuk kalıyordu. */
+    --maskot-kurk: #FFFFFF;
+    --maskot-kulak-ic: #F2CFC2;
+    --maskot-yanak: #F7DACE;
+    --maskot-burun: #D9784F;
+    --maskot-cizgi: #2B2420;
+    --maskot-parlak: #FFFFFF;
+
+    /*
+      Gradientler. Uçlar arasındaki fark bilerek küçük: gradient bir efekt
+      gibi görünmemeli, yüzeye hafif bir yön vermeli. Hepsi 145-150° —
+      ışık sol üstten geliyormuş gibi.
+    */
+    --gr-primary: linear-gradient(145deg, #D9793E 0%, #C0632F 100%);
+    --gr-ikincil: linear-gradient(150deg, #B34C31 0%, #9C3D27 100%);
+    --gr-soft: linear-gradient(150deg, #FCF2E9 0%, #F8E8DA 100%);
+    --gr-kart: linear-gradient(180deg, #FFFDFB 0%, #FFFFFF 42%);
+
+    --golge-kart: 0 6px 20px rgba(90, 60, 35, 0.07);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--sayfa);
+    color: var(--sayfa-metin);
+    font-family: Nunito, "Segoe UI", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sahne {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 38px 22px 60px;
+    display: grid;
+    grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+    gap: 44px;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .sahne {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+      gap: 32px;
+      padding: 26px 16px 50px;
+    }
+  }
+
+  /* ---------------------------- Uygulama alanı ------------------------- */
+
+  .ekran {
+    width: min(400px, 100%);
+    /* Zeminin kendisi de çok hafif bir gradient taşıyor: üstte bir tık daha
+       sıcak, aşağı inerken nötrleşiyor. Fark 2-3 birim, fark edilmiyor ama
+       düz bir dolgunun ölülüğünü alıyor. */
+    background: linear-gradient(180deg, #F9F5F1 0%, #F6F2EE 46%, #F5F1EC 100%);
+    border-radius: 30px;
+    padding: 8px 16px 0;
+    box-shadow: 0 14px 40px rgba(60, 40, 25, 0.13);
+    color: var(--foreground);
+    overflow: hidden;
+  }
+
+  /* `space-y-3.5` — kardeşler arası 14px */
+  .akis { display: flex; flex-direction: column; gap: 14px; padding-bottom: 16px; }
+
+  /* ---------------------------- Selamlama ------------------------------ */
+
+  /* header: flex items-center gap-3 px-0.5 pt-2 pb-1 */
+  .selam {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 2px 4px;
+  }
+
+  .selam-yazi { min-width: 0; flex: 1; }
+
+  .marka {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    color: var(--ikincil);
+  }
+
+  .selam h1 {
+    margin: 1px 0 0;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    text-wrap: balance;
+  }
+
+  .selam .durum {
+    margin: 2px 0 0;
+    font-size: 13px;
+    line-height: 1.35;
+    color: var(--muted-foreground);
+    font-weight: 500;
+  }
+
+  /* Mağaza düğmesi — size-10, rounded-full, bg-primary */
+  .magaza {
+    flex: none;
+    align-self: flex-start;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: var(--gr-primary);
+    color: var(--primary-foreground);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(169, 84, 42, 0.26);
+  }
+  .magaza svg { width: 19px; height: 19px; display: block; }
+
+  /* ---------------------------- Seviye şeridi -------------------------- */
+
+  .seviye {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: var(--gr-kart);
+    border-radius: 24px;
+    box-shadow: var(--golge-kart);
+    padding: 12px 16px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .seviye-ust {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .seviye-ad { font-size: 16px; font-weight: 800; }
+  .seviye-ad .sayi { color: var(--primary-metin); font-variant-numeric: tabular-nums; }
+  .seviye-ad .unvan {
+    margin-left: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted-foreground);
+  }
+
+  .seviye-havuc {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--isl-koyu);
+    font-variant-numeric: tabular-nums;
+  }
+  .seviye-havuc svg { width: 15px; height: 15px; display: block; }
+
+  .seviye-cubuk {
+    margin-top: 8px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--muted);
+    overflow: hidden;
+  }
+  .seviye-cubuk i {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--gr-primary);
+  }
+
+  /* ---------------------------- Haftalık özet daveti ------------------- */
+
+  .ozet {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--gr-ikincil);
+    color: #FFFFFF;
+    border-radius: 24px;
+    padding: 14px 16px;
+    text-decoration: none;
+    box-shadow: 0 8px 22px rgba(168, 67, 43, 0.22);
+  }
+  .ozet > svg { flex: none; width: 22px; height: 22px; display: block; }
+  .ozet .metin { flex: 1; min-width: 0; }
+  .ozet b { display: block; font-size: 16px; font-weight: 800; }
+  .ozet small { display: block; margin-top: 1px; font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.85); }
+  .ozet .ok { flex: none; width: 18px; height: 18px; color: rgba(255,255,255,0.85); }
+
+  /* ---------------------------- Kart temeli ---------------------------- */
+
+  /* Kart: golge-kart rounded-2xl bg-card p-4 */
+  .kart {
+    background: var(--gr-kart);
+    border-radius: 24px;
+    padding: 16px;
+    box-shadow: var(--golge-kart);
+  }
+
+  .kart-ust {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .kart-ust h2 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
+  .kart-ust p { margin: 2px 0 0; font-size: 12px; color: var(--muted-foreground); font-weight: 500; line-height: 1.35; }
+
+  .rozet {
+    flex: none;
+    background: var(--gr-soft);
+    color: var(--primary-metin);
+    font-size: 12px;
+    font-weight: 800;
+    padding: 6px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tumu {
+    flex: none;
+    color: var(--ikincil);
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 2px 6px;
+    border-radius: 8px;
+  }
+  .tumu:focus-visible { outline: 2px solid var(--ikincil); outline-offset: 2px; }
+
+  /* ---------------------------- Geri sayım ----------------------------- */
+
+  .sayim-ust { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+
+  .sayim-etiket {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted-foreground);
+  }
+  .sayim-etiket svg { width: 14px; height: 14px; display: block; }
+
+  .sayim-rozet {
+    flex: none;
+    background: var(--gr-soft);
+    color: var(--primary-metin);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .sayim-rakam { margin: 8px 0 0; display: flex; align-items: baseline; gap: 8px; }
+  .sayim-rakam b {
+    font-size: 44px;
+    line-height: 1;
+    font-weight: 800;
+    color: var(--primary);
+    font-variant-numeric: tabular-nums;
+  }
+  .sayim-rakam span { font-size: 16px; font-weight: 800; }
+
+  .sayim-tarih { margin: 6px 0 0; font-size: 13px; font-weight: 600; color: var(--muted-foreground); line-height: 1.35; }
+  .sayim-tarih em { display: block; font-style: normal; color: #9C9188; }
+
+  .cubuk { margin-top: 12px; height: 6px; border-radius: 999px; background: var(--muted); overflow: hidden; }
+  .cubuk i { display: block; height: 100%; border-radius: 999px; background: var(--gr-primary); }
+  .cubuk-not { margin: 6px 0 0; font-size: 11px; font-weight: 700; color: #9C9188; font-variant-numeric: tabular-nums; }
+
+  .sayim-soz {
+    margin: 12px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    line-height: 1.6;
+    font-weight: 500;
+    color: #554B44;
+  }
+
+  /* ---------------------------- 7 günlük seri -------------------------- */
+
+  /* ul: grid grid-cols-7 gap-1 */
+  .gunler { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; list-style: none; margin: 0; padding: 0; }
+  .gun { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+
+  /* size-9 = 36px */
+  .gun-halka {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: var(--muted);
+    color: rgba(125, 114, 104, 0.5);
+  }
+  .gun-halka svg { width: 18px; height: 18px; display: block; }
+  .gun-halka i { width: 8px; height: 8px; border-radius: 999px; background: currentColor; display: block; }
+
+  .gun.dolu .gun-halka {
+    background: var(--gr-primary);
+    color: var(--primary-foreground);
+  }
+
+  /* ring-2 ring-primary ring-offset-2 ring-offset-card */
+  .gun.bugun .gun-halka {
+    box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--primary);
+  }
+
+  .gun-ad { font-size: 11px; font-weight: 700; color: rgba(125, 114, 104, 0.8); }
+  .gun.bugun .gun-ad { color: var(--primary-metin); }
+
+  /* ---------------------------- Günlük hedef --------------------------- */
+
+  /* Kart className="flex items-center gap-4 px-5 py-5" */
+  .hedef {
+    background: var(--gr-kart);
+    border-radius: 24px;
+    box-shadow: var(--golge-kart);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .halka { position: relative; flex: none; width: 92px; height: 92px; }
+  .halka svg { width: 92px; height: 92px; transform: rotate(-90deg); display: block; }
+  .halka-ic {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .halka-ic b { font-size: 27px; line-height: 1; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .halka-ic span { margin-top: 4px; font-size: 12px; font-weight: 700; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+
+  .hedef-yazi { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .hedef-yazi h2 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
+  .hedef-yazi p { margin: 0; font-size: 13px; font-weight: 600; color: var(--muted-foreground); line-height: 1.35; }
+  .hedef-yazi .dokum { font-size: 12px; font-weight: 500; color: rgba(125, 114, 104, 0.8); font-variant-numeric: tabular-nums; }
+
+  /* ---------------------------- Uyarı notu ----------------------------- */
+
+  /* Not tur="uyari": bg-warning/12 text-warning, rounded-xl px-3 py-2.5 text-sm */
+  .not {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: color-mix(in srgb, var(--warning) 12%, transparent);
+    color: var(--warning);
+    border-radius: 15px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.6;
+  }
+  .not svg { flex: none; width: 16px; height: 16px; margin-top: 2px; display: block; }
+
+  /* ---------------------------- Kutucuklar ----------------------------- */
+
+  /* grid grid-cols-4 gap-2.5 */
+  .izgara { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+
+  .kutucuk {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+  }
+
+  .kutucuk-yuz {
+    width: 100%;
+    aspect-ratio: 1 / 0.92;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    font-size: 24px;
+    line-height: 1;
+  }
+  .kutucuk-yuz svg { width: 26px; height: 26px; display: block; }
+
+  .kutucuk-ad {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(43, 36, 32, 0.7);
+    text-align: center;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  /* Pastel yüzler de birer adım gradient aldı — düz pastel, turuncu
+     gradientlerin yanında matlaşıyordu. Fark yine çok küçük. */
+  .y-yzm { background: linear-gradient(150deg, #FCEBE7, #F8E2DC); color: var(--yzm-koyu); }
+  .y-isl { background: linear-gradient(150deg, #FBF3E0, #F7EDD2); color: var(--isl-koyu); }
+  .y-edb { background: linear-gradient(150deg, #F0EBF5, #E9E3F0); color: var(--edb-koyu); }
+  .y-cog { background: linear-gradient(150deg, #E8F1E6, #E0EBDE); color: var(--cog-koyu); }
+  .y-nane { background: linear-gradient(150deg, #EBF2E7, #E3ECDF); color: var(--success); }
+
+  /* ---------------------------- Hedefim -------------------------------- */
+
+  .bolum {
+    display: block;
+    background: var(--gr-kart);
+    border-radius: 24px;
+    box-shadow: var(--golge-kart);
+    padding: 16px;
+    text-decoration: none;
+    color: var(--foreground);
+  }
+
+  .bolum-etiket {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted-foreground);
+  }
+  .bolum-etiket svg { width: 14px; height: 14px; display: block; }
+
+  .bolum b { display: block; margin-top: 6px; font-size: 16px; font-weight: 800; line-height: 1.25; }
+  .bolum .uni { display: block; font-size: 13px; font-weight: 600; color: var(--muted-foreground); }
+  .bolum .sira { display: block; margin-top: 4px; font-size: 13px; font-weight: 600; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+  .bolum .mesafe { display: block; margin-top: 4px; font-size: 13px; font-weight: 700; color: var(--primary-metin); font-variant-numeric: tabular-nums; }
+
+  /* ---------------------------- Günün sözü ----------------------------- */
+
+  .gunun-sozu {
+    margin: 0;
+    padding: 4px 8px 0;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.6;
+    font-weight: 500;
+    color: var(--muted-foreground);
+  }
+  .gunun-sozu span { display: block; color: rgba(125, 114, 104, 0.7); }
+
+  /* ---------------------------- Alt menü ------------------------------- */
+
+  /* rounded-t-[26px] bg-card/95 shadow backdrop-blur */
+  .altmenu {
+    margin: 0 -16px;
+    border-radius: 26px 26px 0 0;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 -4px 18px rgba(90, 60, 35, 0.07);
+    padding: 10px 12px 4px;
+    display: flex;
+  }
+
+  .sekme {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--muted-foreground);
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 0;
+    border-radius: 12px;
+  }
+  .sekme svg { width: 24px; height: 24px; display: block; }
+  .sekme.etkin { color: var(--primary-metin); }
+  .sekme:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  /* ---------------------------- Not paneli ----------------------------- */
+
+  .notlar { max-width: 520px; display: flex; flex-direction: column; gap: 20px; }
+
+  .notlar h2 { margin: 0 0 5px; font-size: 24px; font-weight: 800; letter-spacing: -0.4px; }
+  .notlar .giris {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--sayfa-soluk);
+    font-weight: 500;
+    max-width: 62ch;
+  }
+
+  .blok {
+    background: var(--sayfa-kart);
+    border: 1px solid var(--sayfa-cizgi);
+    border-radius: 18px;
+    padding: 17px 19px;
+  }
+
+  .blok h3 {
+    margin: 0 0 12px;
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: var(--sayfa-vurgu);
+  }
+
+  .blok ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .blok li {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--sayfa-metin);
+    font-weight: 500;
+    padding-left: 16px;
+    position: relative;
+    max-width: 60ch;
+  }
+  .blok li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 9px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--sayfa-vurgu);
+  }
+  .blok li b { font-weight: 800; }
+  .blok code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+
+  /* Palet tablosu */
+  .tablo-sar { overflow-x: auto; }
+  .palet-tablo { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .palet-tablo th {
+    text-align: left;
+    font-size: 10.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--sayfa-soluk);
+    padding: 0 8px 7px 0;
+    border-bottom: 1px solid var(--sayfa-cizgi);
+    white-space: nowrap;
+  }
+  .palet-tablo td {
+    padding: 7px 8px 7px 0;
+    border-bottom: 1px solid var(--sayfa-cizgi);
+    vertical-align: middle;
+  }
+  .palet-tablo tr:last-child td { border-bottom: none; }
+  .palet-tablo .yeni { display: flex; align-items: center; gap: 7px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .palet-tablo .yeni i {
+    width: 18px; height: 18px;
+    border-radius: 5px;
+    border: 1px solid rgba(0,0,0,0.12);
+    display: block;
+    flex: none;
+  }
+  .palet-tablo .eski { color: var(--sayfa-soluk); font-variant-numeric: tabular-nums; white-space: nowrap; }
+</style>
+
+<div class="sahne">
+  <div class="ekran">
+    <div class="akis">
+
+      <!-- ====================== Selamlama ====================== -->
+      <header class="selam">
+        <!--
+          Maskot birebir components/maskot/rabi.tsx'ten: viewBox 0 0 120 130,
+          boyut 58, durum "normal" (bugün soru çözülmüş). Kulaklar, yanaklar,
+          ışıltılı gözler, üçgen burun, üç parçalı ağız ve bıyıklar.
+        -->
+        <svg viewBox="0 0 120 130" width="58" height="62.8" role="img" aria-label="Rabi — selam veriyor" style="flex: none;">
+          <!-- Kulaklar -->
+          <g>
+            <ellipse cx="44" cy="34" rx="11" ry="30" fill="var(--maskot-kurk)" transform="rotate(-8 44 34)"/>
+            <ellipse cx="44" cy="36" rx="5.5" ry="21" fill="var(--maskot-kulak-ic)" transform="rotate(-8 44 36)"/>
+            <ellipse cx="76" cy="34" rx="11" ry="30" fill="var(--maskot-kurk)" transform="rotate(8 76 34)"/>
+            <ellipse cx="76" cy="36" rx="5.5" ry="21" fill="var(--maskot-kulak-ic)" transform="rotate(8 76 36)"/>
+          </g>
+
+          <!-- Baş -->
+          <ellipse cx="60" cy="82" rx="36" ry="32" fill="var(--maskot-kurk)"/>
+
+          <!-- Yanaklar -->
+          <ellipse cx="34" cy="90" rx="8" ry="5.5" fill="var(--maskot-yanak)" opacity="0.75"/>
+          <ellipse cx="86" cy="90" rx="8" ry="5.5" fill="var(--maskot-yanak)" opacity="0.75"/>
+
+          <!-- Gözler (normal) -->
+          <g fill="var(--maskot-cizgi)">
+            <ellipse cx="47" cy="77" rx="5.5" ry="6.5"/>
+            <ellipse cx="73" cy="77" rx="5.5" ry="6.5"/>
+            <circle cx="49" cy="74.5" r="2" fill="var(--maskot-parlak)"/>
+            <circle cx="75" cy="74.5" r="2" fill="var(--maskot-parlak)"/>
+          </g>
+
+          <!-- Burun -->
+          <path d="M60 84 l-5 -4.5 h10 z" fill="var(--maskot-burun)"/>
+
+          <!-- Ağız -->
+          <g stroke="var(--maskot-cizgi)" stroke-width="2" stroke-linecap="round" fill="none">
+            <path d="M60 84 v5"/>
+            <path d="M60 89 q-7 4 -11 0"/>
+            <path d="M60 89 q7 4 11 0"/>
+          </g>
+
+          <!-- Bıyıklar -->
+          <g stroke="var(--maskot-cizgi)" stroke-width="1.4" stroke-linecap="round" opacity="0.5">
+            <line x1="24" y1="82" x2="42" y2="85"/>
+            <line x1="24" y1="90" x2="42" y2="89"/>
+            <line x1="96" y1="82" x2="78" y2="85"/>
+            <line x1="96" y1="90" x2="78" y2="89"/>
+          </g>
+        </svg>
+
+        <div class="selam-yazi">
+          <p class="marka">Rabi</p>
+          <h1>Merhaba 👋</h1>
+          <p class="durum">Başladın bile — hedefe 128 soru kaldı.</p>
+        </div>
+
+        <button type="button" class="magaza" aria-label="Havuç Mağazası">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 6.5 5.2 3.5h13.6L20 6.5"/>
+            <path d="M4 6.5h16v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-4-2.8Z"/>
+            <path d="M5.5 11.2V19a1.5 1.5 0 0 0 1.5 1.5h10a1.5 1.5 0 0 0 1.5-1.5v-7.8"/>
+          </svg>
+        </button>
+      </header>
+
+      <!-- ====================== Seviye şeridi ====================== -->
+      <button type="button" class="seviye" aria-label="Seviye 12, 24 havuç — Havuç Mağazası">
+        <span class="seviye-ust">
+          <span class="seviye-ad">
+            <span class="sayi">Seviye 12</span><span class="unvan">Çırak</span>
+          </span>
+          <span class="seviye-havuc">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M2.5 21.5 12.8 11.2a4.5 4.5 0 0 0-6.4 6.4L2.5 21.5Z"/>
+              <path d="M14.5 9.5 16 4M15.5 10.5 21 9"/>
+            </svg>
+            <span>24</span>
+          </span>
+        </span>
+        <span class="seviye-cubuk"><i style="width: 46%"></i></span>
+      </button>
+
+      <!-- ====================== Haftalık özet daveti ====================== -->
+      <a class="ozet" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3.5 13.9 9l5.6 1.9-5.6 1.9L12 18.4 10.1 12.8 4.5 10.9 10.1 9 12 3.5Z"/>
+          <path d="M19 3v3M17.5 4.5h3"/>
+        </svg>
+        <span class="metin">
+          <b>Haftalık özetin hazır</b>
+          <small>Geçen haftanı kart kart izle, paylaş</small>
+        </span>
+        <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m9 5 7 7-7 7"/>
+        </svg>
+      </a>
+
+      <!-- ====================== YKS geri sayımı ====================== -->
+      <section class="kart" aria-label="2027 YKS geri sayımı">
+        <div class="sayim-ust">
+          <span class="sayim-etiket">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3.5" y="5" width="17" height="15.5" rx="3"/>
+              <path d="M3.5 10h17M8 3v4m8-4v4"/>
+            </svg>
+            2027 YKS · TYT
+          </span>
+          <span class="sayim-rozet">Uzun yol</span>
+        </div>
+
+        <p class="sayim-rakam"><b>298</b><span>gün kaldı</span></p>
+
+        <p class="sayim-tarih">
+          19 Haziran 2027, Cumartesi
+          <em>Tahmini tarih — ÖSYM takvimi açıklanınca netleşir.</em>
+        </p>
+
+        <div class="cubuk" role="progressbar" aria-valuenow="18" aria-valuemin="0" aria-valuemax="100" aria-label="Hazırlık yılında geçen süre">
+          <i style="width: 18%"></i>
+        </div>
+        <p class="cubuk-not">Sınav yılının %18 kadarı geçti</p>
+
+        <p class="sayim-soz">Bu mesafede kazanan hızlı koşan değil, her gün koşan. Bugünkü payını al, gerisi birikir.</p>
+      </section>
+
+      <!-- ====================== 7 günlük seri ====================== -->
+      <section class="kart">
+        <div class="kart-ust">
+          <div>
+            <h2>7 günlük seri</h2>
+            <p>Bugünkü hedefi tuttur, seriyi büyüt.</p>
+          </div>
+          <span class="rozet">3/7 tamamlandı</span>
+        </div>
+
+        <ul class="gunler">
+          <li class="gun dolu">
+            <span class="gun-halka"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+            <span class="gun-ad">Çar</span>
+          </li>
+          <li class="gun dolu">
+            <span class="gun-halka"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+            <span class="gun-ad">Per</span>
+          </li>
+          <li class="gun dolu">
+            <span class="gun-halka"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+            <span class="gun-ad">Cum</span>
+          </li>
+          <li class="gun"><span class="gun-halka"><i></i></span><span class="gun-ad">Cmt</span></li>
+          <li class="gun"><span class="gun-halka"><i></i></span><span class="gun-ad">Paz</span></li>
+          <li class="gun"><span class="gun-halka"><i></i></span><span class="gun-ad">Pzt</span></li>
+          <li class="gun bugun"><span class="gun-halka"><i></i></span><span class="gun-ad">Sal</span></li>
+        </ul>
+      </section>
+
+      <!-- ====================== Günlük hedef ====================== -->
+      <section class="hedef">
+        <div class="halka">
+          <!-- Halka bileşeni: yarıçap (92-9)/2 = 41,5 · çevre 260,75 · oran 72/200 -->
+          <svg viewBox="0 0 92 92" aria-hidden="true">
+            <defs>
+              <linearGradient id="halkaGr" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#DD8449"/>
+                <stop offset="100%" stop-color="#BF6130"/>
+              </linearGradient>
+            </defs>
+            <circle cx="46" cy="46" r="41.5" fill="none" stroke="var(--muted)" stroke-width="9"/>
+            <circle cx="46" cy="46" r="41.5" fill="none" stroke="url(#halkaGr)" stroke-width="9"
+                    stroke-linecap="round" stroke-dasharray="260.75" stroke-dashoffset="166.9"/>
+          </svg>
+          <div class="halka-ic">
+            <b>72</b>
+            <span>/ 200</span>
+          </div>
+        </div>
+
+        <div class="hedef-yazi">
+          <h2>Bugünkü soru hedefin</h2>
+          <p>128 soru kaldı, az kaldı bitirmeye.</p>
+          <p class="dokum">54 doğru · 18 yanlış · 49,50 net</p>
+        </div>
+      </section>
+
+      <!-- ====================== Devamsızlık uyarısı ====================== -->
+      <p class="not">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M10.3 3.9 2.5 17.4A2 2 0 0 0 4.2 20.5h15.6a2 2 0 0 0 1.7-3.1L13.7 3.9a2 2 0 0 0-3.4 0Z"/>
+          <path d="M12 9.5v4M12 17h.01"/>
+        </svg>
+        <span>Devamsızlık sınırına yaklaştın: özürsüz 3, özürlü 5 gün hakkın kaldı.</span>
+      </p>
+
+      <!-- ====================== Araçlar ====================== -->
+      <section class="kart">
+        <div class="kart-ust">
+          <div>
+            <h2>Araçlar 🧰</h2>
+            <p>Çalışmanı takip et</p>
+          </div>
+          <a class="tumu" href="#">Tümü →</a>
+        </div>
+
+        <div class="izgara">
+          <a class="kutucuk" href="#">
+            <span class="kutucuk-yuz y-isl">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="13" r="8"/>
+                <path d="M12 9.5V13l2.4 1.6M9 2h6"/>
+              </svg>
+            </span>
+            <span class="kutucuk-ad">Pomodoro</span>
+          </a>
+
+          <a class="kutucuk" href="#">
+            <span class="kutucuk-yuz y-edb">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M15.5 3.5H6A2.5 2.5 0 0 0 3.5 6v12A2.5 2.5 0 0 0 6 20.5h6.5l8-8V6a2.5 2.5 0 0 0-2.5-2.5Z"/>
+                <path d="M12.5 20.5v-6a2 2 0 0 1 2-2h6"/>
+              </svg>
+            </span>
+            <span class="kutucuk-ad">Yapılacaklar</span>
+          </a>
+
+          <a class="kutucuk" href="#">
+            <span class="kutucuk-yuz y-yzm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="6" y="3" width="15" height="13" rx="2.5"/>
+                <path d="M3 7v12.5A1.5 1.5 0 0 0 4.5 21H18"/>
+                <circle cx="13.5" cy="9.5" r="3"/>
+              </svg>
+            </span>
+            <span class="kutucuk-ad">Yanlış Soru</span>
+          </a>
+
+          <a class="kutucuk" href="#">
+            <span class="kutucuk-yuz y-nane">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3.5" y="5" width="17" height="15" rx="3"/>
+                <path d="M3.5 10h17M8 3v4m8-4v4M9.5 14.5l5 3.5m0-3.5-5 3.5"/>
+              </svg>
+            </span>
+            <span class="kutucuk-ad">Devamsızlık</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ====================== Oyunlar ====================== -->
+      <section class="kart">
+        <div class="kart-ust">
+          <div>
+            <h2>Oyunlar 🎮</h2>
+            <p>Eğlenerek pratik yap</p>
+          </div>
+          <a class="tumu" href="#">Tümü →</a>
+        </div>
+
+        <div class="izgara">
+          <a class="kutucuk" href="#">
+            <span class="kutucuk-yuz y-yzm" aria-hidden="true">✍️</span>
+            <span class="kutucuk-ad">Yazım Ustası</span>
+          </a>
+          <a class="kutucuk" href="#">
+            <span class="kutucuk-yuz y-isl" aria-hidden="true">🧮</span>
+            <span class="kutucuk-ad">Zihinden İşlem</span>
+          </a>
+          <a class="kutucuk" href="#">
+            <span class="kutucuk-yuz y-edb" aria-hidden="true">📚</span>
+            <span class="kutucuk-ad">Edebiyat Eşleştirme</span>
+          </a>
+          <a class="kutucuk" href="#">
+            <span class="kutucuk-yuz y-cog" aria-hidden="true">🗺️</span>
+            <span class="kutucuk-ad">Harita Avı</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ====================== Hedefim ====================== -->
+      <a class="bolum" href="#">
+        <span class="bolum-etiket">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.5"/>
+            <circle cx="12" cy="12" r="4.5"/>
+            <circle cx="12" cy="12" r="1"/>
+          </svg>
+          Hedefim
+        </span>
+        <b>Bilgisayar Mühendisliği</b>
+        <span class="uni">Hacettepe Üniversitesi</span>
+        <span class="sira">Gereken sıralama: 12.400</span>
+        <span class="mesafe">4.100 sıra uzaktasın.</span>
+      </a>
+
+      <!-- ====================== Günün sözü ====================== -->
+      <p class="gunun-sozu">
+        Bilgi güç değildir; uygulanan bilgi güçtür.
+        <span>— Dale Carnegie</span>
+      </p>
+
+      <!-- ====================== Alt menü ====================== -->
+      <nav class="altmenu">
+        <a class="sekme etkin" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 10.5 12 4l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19v-8.5Z"/>
+            <path d="M9.5 20.5V14h5v6.5"/>
+          </svg>
+          Ana Sayfa
+        </a>
+        <a class="sekme" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9.3 4.6h5.4a5.7 5.7 0 0 1 5.7 5.7v2a2.4 2.4 0 0 1-.1.8l-1.7 5a3.2 3.2 0 0 1-6-.3l-.5-1.7h-1.6l-.5 1.7a3.2 3.2 0 0 1-6 .3l-1.7-5a2.4 2.4 0 0 1-.1-.8v-2a5.7 5.7 0 0 1 5.7-5.7Z"/>
+            <path d="M8.4 9.4v3.2M6.8 11h3.2"/>
+            <path d="M15.4 9.9h.01M17.2 12.1h.01"/>
+          </svg>
+          Oyunlar
+        </a>
+        <a class="sekme" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3.5" y="3.5" width="7" height="7" rx="2"/>
+            <rect x="13.5" y="3.5" width="7" height="7" rx="2"/>
+            <rect x="3.5" y="13.5" width="7" height="7" rx="2"/>
+            <rect x="13.5" y="13.5" width="7" height="7" rx="2"/>
+          </svg>
+          Daha
+        </a>
+        <a class="sekme" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3.2"/>
+            <path d="M19.4 14.5a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-2.8-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7h-.3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.1-2.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1v-.3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 2.8 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7h.3a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.4.9Z"/>
+          </svg>
+          Ayarlar
+        </a>
+      </nav>
+    </div>
+  </div>
+
+  <aside class="notlar">
+    <div>
+      <h2>Kavrulmuş amber</h2>
+      <p class="giris">
+        Kaynak <code>origin/master</code> (d75062a) — gerçek maskot, seviye
+        şeridi, mağaza düğmesi ve güncel araç listesi burada. Düzen, ölçüler ve
+        bileşen sırası kodun aynısı; değişen tek şey renk. Yalnızca ana ekran
+        için; uygulamaya dokunulmadı.
+      </p>
+    </div>
+
+    <section class="blok">
+      <h3>Turuncuyu nasıl kullandım</h3>
+      <ul>
+        <li><b>Ana ton <code>#C96A34</code>.</b> Doygunluğu düşürülmüş, kırmızıya değil toprağa çalan bir amber. Neon aralığının epey altında.</li>
+        <li><b>Yazı için ayrı bir ton: <code>#A9542A</code>.</b> Zorunluluktan — <code>#C96A34</code> beyaz üstünde 3,7:1 kontrast veriyor, küçük yazı için yetmiyor. Koyu ton 5,2:1 veriyor. Dolgular parlak tonu (mağaza düğmesi, dolu seri günleri, halka), yazı ve ikonlar koyu tonu kullanıyor.</li>
+        <li><b>Turuncu ekranın altıda birini kaplıyor.</b> Mağaza düğmesi, seviye çubuğu, geri sayım sayısı, hedef halkası, dolu günler, rozetler ve etkin sekme. Zemin ile kartlar nötr — turuncu vurgu, tema değil.</li>
+        <li><b>Zemin krem değil.</b> <code>#F7F3EF</code> ile başlayıp aşağı doğru nötrleşen çok hafif bir gradient; turuncuyla aynı sıcaklıkta ama doygunluğu neredeyse sıfır, o yüzden onunla yarışmıyor.</li>
+        <li><b>İkinci kimlik rengi tuğlaya döndü</b> (<code>#A8432B</code>). Eski mercan turuncuyla karışıyordu. "Rabi" yazısı, "Tümü →" ve haftalık özet daveti bu rengi taşıyor — üçü de kodda <code>text-ikincil</code>.</li>
+      </ul>
+    </section>
+
+    <section class="blok">
+      <h3>Gradientler</h3>
+      <ul>
+        <li><b>Uçlar arası fark bilerek küçük.</b> Ana gradient <code>#D9793E → #C0632F</code>; iki ton arasında yaklaşık %8 parlaklık farkı var. Efekt olarak fark edilmiyor, düz dolgunun ölülüğünü alıyor.</li>
+        <li><b>Hepsi 145–150°</b>, yani ışık hep sol üstten geliyor. Farklı açılardaki gradientler bir arada durunca yön kayboluyor ve yapay görünüyor.</li>
+        <li><b>Kartların üstünde de bir tane var</b> ama neredeyse görünmez: <code>#FFFDFB → #FFFFFF</code>, ilk %42'de bitiyor. Beyaz kart, sıcak zeminin üstünde tamamen düz durduğunda soğuk görünüyordu.</li>
+        <li><b>Halkanınki SVG gradienti</b>, yay boyunca açılıyor. Pastel ders yüzleri de birer adım gradient aldı — düz pastel, yanındaki turuncunun yanında mat kalıyordu.</li>
+      </ul>
+    </section>
+
+    <section class="blok">
+      <h3>Entegrasyon: <code>app/globals.css</code></h3>
+      <div class="tablo-sar">
+        <table class="palet-tablo">
+          <thead>
+            <tr><th>Değişken</th><th>Eski</th><th>Yeni</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>--background</code></td><td class="eski">#edf1fd</td><td><span class="yeni"><i style="background:#F7F3EF"></i>#F7F3EF</span></td></tr>
+            <tr><td><code>--foreground</code></td><td class="eski">#1b2440</td><td><span class="yeni"><i style="background:#2B2420"></i>#2B2420</span></td></tr>
+            <tr><td><code>--muted</code></td><td class="eski">#e6ebf8</td><td><span class="yeni"><i style="background:#F1EBE4"></i>#F1EBE4</span></td></tr>
+            <tr><td><code>--muted-foreground</code></td><td class="eski">#7a8399</td><td><span class="yeni"><i style="background:#7D7268"></i>#7D7268</span></td></tr>
+            <tr><td><code>--border</code></td><td class="eski">#e1e6f0</td><td><span class="yeni"><i style="background:#EFE8E1"></i>#EFE8E1</span></td></tr>
+            <tr><td><code>--primary</code></td><td class="eski">#4a8fe7</td><td><span class="yeni"><i style="background:#C96A34"></i>#C96A34</span></td></tr>
+            <tr><td><code>--primary-soft</code></td><td class="eski">#e4eefc</td><td><span class="yeni"><i style="background:#FBEEE3"></i>#FBEEE3</span></td></tr>
+            <tr><td><code>--ikincil</code></td><td class="eski">#ef5a52</td><td><span class="yeni"><i style="background:#A8432B"></i>#A8432B</span></td></tr>
+            <tr><td><code>--ikincil-soft</code></td><td class="eski">#fde7e4</td><td><span class="yeni"><i style="background:#F8E6E0"></i>#F8E6E0</span></td></tr>
+            <tr><td><code>--success</code></td><td class="eski">#3e9b63</td><td><span class="yeni"><i style="background:#4F7A4A"></i>#4F7A4A</span></td></tr>
+            <tr><td><code>--warning</code></td><td class="eski">#cf9420</td><td><span class="yeni"><i style="background:#A87C24"></i>#A87C24</span></td></tr>
+            <tr><td><code>--danger</code></td><td class="eski">#e0413a</td><td><span class="yeni"><i style="background:#B23B2B"></i>#B23B2B</span></td></tr>
+            <tr><td><code>--maskot-burun</code></td><td class="eski">#ef8c9e</td><td><span class="yeni"><i style="background:#D9784F"></i>#D9784F</span></td></tr>
+            <tr><td><code>--maskot-yanak</code></td><td class="eski">#f9dde3</td><td><span class="yeni"><i style="background:#F7DACE"></i>#F7DACE</span></td></tr>
+            <tr><td><code>--maskot-kulak-ic</code></td><td class="eski">#f6d2da</td><td><span class="yeni"><i style="background:#F2CFC2"></i>#F2CFC2</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="blok">
+      <h3>Uygularsak dikkat</h3>
+      <ul>
+        <li><b>Yeni bir değişken gerekiyor: <code>--primary-metin</code>.</b> Turuncu maviden koyu; kodda <code>text-primary</code> yazan yerler (seviye sayısı, seri rozeti, hedefim mesafesi, etkin sekme) bu koyu tonu kullanmalı, yoksa kontrast 4,5:1'in altına düşer. <code>bg-primary</code> yazan yerler parlak tonda kalır.</li>
+        <li><b>Koyu tema ayrı bir iş.</b> <code>.dark</code> bloğu çizilmedi; turuncu koyu zeminde parlıyor, orada <code>#E39A63</code> civarına açılması gerekir.</li>
+        <li><b>Ders renkleri tüm uygulamada ortak.</b> Sıcaklaştırdığım pasteller oyun ekranlarında ve Oyun Bankası'nda da kullanılıyor — "sadece ana ekran" istiyorsan ya bu satırları hiç değiştirmeyiz ya da ana ekrana özel ayrı bir set gerekir.</li>
+        <li><b>Oyun kutucukları en son oynananları gösteriyor.</b> Mockup'ta dört farklı dersten örnek koydum ki renkler görünsün; ilk kurulumda dördü de Türkçe olduğu için hepsi pembe çıkar.</li>
+      </ul>
+    </section>
+
+    <section class="blok">
+      <h3>Depo durumu</h3>
+      <ul>
+        <li><b><code>git pull</code> çalıştırmadım</b> — <code>ozellik/havuc-magazasi</code> dalındasın ve çalışma ağacında commit edilmemiş değişiklikler var (mağaza dosyaları silinmiş görünüyor). Onları riske atmamak için <code>git fetch</code> yapıp dosyaları doğrudan <code>origin/master</code>'dan okudum; çalışma ağacına hiç dokunulmadı.</li>
+        <li><b>Bulunduğun dal geride.</b> <code>ozellik/havuc-magazasi</code> uzağından 1 commit geride; <code>master</code> ise 4 commit ilerlemiş (seviye sistemi, oyun modları, yapılacaklar tahtası). Uzakta ayrıca <code>surum/1.5.1</code> ve <code>ozellik/mor-tema</code> dalları var.</li>
+      </ul>
+    </section>
+  </aside>
+</div>

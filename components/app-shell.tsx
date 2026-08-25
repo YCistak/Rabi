@@ -60,13 +60,7 @@ import { SiralamaEkrani } from '@/components/ekranlar/siralama'
 import { HedefEkrani } from '@/components/ekranlar/hedef'
 import { YanlisBankaEkrani } from '@/components/ekranlar/yanlis-banka'
 import { RozetlerEkrani } from '@/components/ekranlar/rozetler'
-import { MagazaEkrani } from '@/components/ekranlar/magaza'
-import {
-  BASLANGIC_HAVUCU,
-  BOS_MAGAZA,
-  magazayiNormalize,
-  type MagazaDurumu,
-} from '@/lib/magaza/magaza'
+import { BASLANGIC_HAVUCU } from '@/lib/havuc'
 import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
 import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
 import { RozetKutlama } from '@/components/rozet-kutlama'
@@ -143,15 +137,8 @@ export function AppShell() {
    * sayılamıyor; rozet buna baktığından ayrı bir sayaç olarak birikiyor.
    */
   const [bankaDusen, setBankaDusen] = useYerelDepo<number>(ANAHTARLAR.bankaDusen, 0)
-  /**
-   * Havuç bakiyesi ve mağaza koleksiyonu.
-   *
-   * Kayıt güncel katalogla uyumlanıyor (`magazayiNormalize`): katalogdan
-   * kalkmış bir eşya kayıtta kalırsa avatar çizilirken patlar.
-   */
-  const [havuc, setHavuc] = useYerelDepo<number>(ANAHTARLAR.havuc, BASLANGIC_HAVUCU)
-  const [magazaHam, setMagaza] = useYerelDepo<MagazaDurumu>(ANAHTARLAR.magaza, BOS_MAGAZA)
-  const magaza = magazayiNormalize(magazaHam)
+  /** Havuç bakiyesi. Harcayan ya da kazandıran bir özellik henüz yok. */
+  const [havuc] = useYerelDepo<number>(ANAHTARLAR.havuc, BASLANGIC_HAVUCU)
   /**
    * Bankadan açılan tur. Oyun kimliği burada duruyor çünkü turu Oyunlar sekmesi
    * çiziyor ama başlatan Oyun Bankası ekranı — ikisi kardeş, ortak sahibi bu.
@@ -242,6 +229,20 @@ export function AppShell() {
       clearTimeout(kaldirma)
     }
   }, [])
+
+  // Açılış ekranı `fixed`: kendisi kaydırılmıyor ama parmak hareketi altındaki
+  // sayfaya geçiyordu ve ekran kalkınca ana sayfa ortasından başlıyordu.
+  // Ekran görünürken gövde kilitleniyor, kalkarken sayfa başa alınıyor.
+  const acilisGorunur = acilis !== 'bitti'
+  useEffect(() => {
+    if (!acilisGorunur) return
+    const oncekiTasma = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = oncekiTasma
+      window.scrollTo(0, 0)
+    }
+  }, [acilisGorunur])
 
   // Eylülde yeni ders yılı başlayınca kullanıcı bir üst sınıfa kendiliğinden geçer.
   useEffect(() => {
@@ -398,8 +399,7 @@ export function AppShell() {
 
   // Açılış ekranı bütün dönüşlerin üstünde duruyor: kurulum sihirbazı ve veri
   // beklenirken gösterilen boş ekran da onun altında kalmalı.
-  const acilisKatmani =
-    acilis === 'bitti' ? null : <Acilis kapaniyor={acilis === 'kapaniyor'} />
+  const acilisKatmani = acilisGorunur ? <Acilis kapaniyor={acilis === 'kapaniyor'} /> : null
 
   // Veri okunmadan ekran çizilirse "kayıt yok" bir an yanıp söner.
   if (!ayarlarHazir) {
@@ -501,9 +501,6 @@ export function AppShell() {
           )}
           {ekran === 'yanlis-banka' && (
             <YanlisBankaEkrani sorular={yanlisSorular} setSorular={setYanlisSorular} />
-          )}
-          {ekran === 'magaza' && (
-            <MagazaEkrani havuc={havuc} setHavuc={setHavuc} durum={magaza} setDurum={setMagaza} />
           )}
           {ekran === 'oyun-bankasi' && (
             <OyunBankasiEkrani
@@ -628,7 +625,6 @@ export function AppShell() {
                 oyunBankasi,
                 bankaDusen,
                 havuc,
-                magaza,
                 pomodoroGecmis,
                 pomodoroAyar,
                 hedef,

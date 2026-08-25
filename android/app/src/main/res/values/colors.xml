@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Rabi mavisi — açılış ekranının zemini, uygulama vurgu rengiyle aynı. -->
-    <color name="acilis_zemin">#4A8FE7</color>
+    <!--
+      Açılış ekranının zemini. Uygulamanın kendi açılış ekranıyla
+      (components/acilis.tsx) **birebir aynı** olmak zorunda: farklı olsaydı
+      sistem açılışından uygulama açılışına geçerken bir renk sıçraması olurdu.
+    -->
+    <color name="acilis_zemin">#F8F8F7</color>
 
     <!--
-      WebView boyanana kadar görünen zemin. Uygulamanın açık tema arka planıyla
-      aynı; koyu tema karşılığı values-night altında.
+      WebView boyanana kadar görünen zemin. Uygulamanın arka planıyla aynı.
       Boş bırakılırsa (Capacitor şablonunda @null'du) açılışta siyah bir kare
       yanıp sönüyor.
     -->
-    <color name="uygulama_zemin">#EDF1FD</color>
+    <color name="uygulama_zemin">#F8F8F7</color>
 
-    <!-- Engel katmanının yazı renkleri; koyu karşılıkları values-night altında. -->
-    <color name="odak_metin">#12141C</color>
-    <color name="odak_soluk">#5B6478</color>
+    <!-- Engel katmanının yazı renkleri. -->
+    <color name="odak_metin">#1B1A19</color>
+    <color name="odak_soluk">#6B6764</color>
 </resources>

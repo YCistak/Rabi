@@ -40,8 +40,6 @@ export type Ekran =
   | 'rozetler'
   | 'istatistik'
   | 'oyun-bankasi'
-  /** Havuç Mağazası — ana sayfanın sağ üstünden açılıyor, kart menüsünde yok. */
-  | 'magaza'
 
 /** Kutucuk zeminleri — tasarımdaki pastel aileler. */
 export type KartRengi = 'mavi' | 'pembe' | 'krem' | 'nane' | 'lavanta'
@@ -55,7 +53,7 @@ export type KartTanimi = {
 }
 
 /**
- * "Daha" sekmesindeki kart menüsü. Sıra önem taşıyor: ana sayfadaki "Araçlar"
+ * "Araçlar" sekmesindeki kart menüsü. Sıra önem taşıyor: ana sayfadaki "Araçlar"
  * bölümü bu listenin ilk dördünü gösteriyor, o yüzden en sık açılanlar başta.
  */
 export const KARTLAR: KartTanimi[] = [
