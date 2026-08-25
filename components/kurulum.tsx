@@ -57,7 +57,7 @@ const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
     aciklama: 'Sıralama tahmini ve deneme şablonları buna göre ayarlanır.',
   },
   hedef: {
-    baslik: 'Günlük hedefin',
+    baslik: 'Günlük soru hedefin',
     aciklama: 'Her günü buna göre takip edeceğim.',
   },
   hatirlatma: {
@@ -228,25 +228,23 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
         )}
 
         {suanki === 'hedef' && (
-          <div>
-            <Etiket>Günde kaç soru çözmeyi hedefliyorsun?</Etiket>
-            {/* Çubuk parmakla yukarı aşağı: beş sabit çip yerine 50–500 arası
-                her elli. Sayıyı klavye açmadan seçtirmek asıl mesele. */}
-            <DikCubuk
-              deger={hedef}
-              onDegis={setHedef}
-              enAz={HEDEF_EN_AZ}
-              enCok={HEDEF_EN_COK}
-              adim={HEDEF_ADIMI}
-              birim="soru"
-              etiket="Günlük soru hedefi"
-              className="mt-1"
-            />
-            <p className="mt-4 text-xs text-muted-foreground">
-              Tutturamayacağın bir sayı seçme — küçük başlayıp yükseltmek, büyük başlayıp
-              her gün başarısız olmaktan iyi. Sonradan Ayarlar'dan değiştirebilirsin.
-            </p>
-          </div>
+          /*
+            Kartta çubuktan başka hiçbir şey yok: adımın başlığı zaten "Günlük
+            soru hedefin", altında da ne işe yaradığı yazıyor. Kartın içinde
+            ayrıca bir soru cümlesi, basamak cetveli ve üç satırlık öğüt
+            varken asıl iş — sürüklenecek çubuk — sayfanın gürültüsü içinde
+            kayboluyordu.
+          */
+          <DikCubuk
+            deger={hedef}
+            onDegis={setHedef}
+            enAz={HEDEF_EN_AZ}
+            enCok={HEDEF_EN_COK}
+            adim={HEDEF_ADIMI}
+            birim="soru"
+            etiket="Günlük soru hedefi"
+            className="py-2"
+          />
         )}
 
         {suanki === 'hatirlatma' && (

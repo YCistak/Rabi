@@ -88,104 +88,70 @@ export function DikCubuk({
     }
   }
 
-  /*
-    Yanda yazan basamaklar. Hepsi yazılsaydı (elli'şer on satır) rakamlar üst
-    üste binerdi; ikide bir atlanıyor. Sayma **tepeden** başlıyor: aşağıdan
-    başlayınca en üstteki iki etiket (450 ve 500) tek basamak arayla yan yana
-    düşüp çakışıyordu. En alttaki değer ayrıca ekleniyor — çubuğun nerede
-    başladığı okunabilmeli.
-  */
-  const basamaklar: number[] = []
-  for (let d = enAz; d <= enCok; d += adim) basamaklar.push(d)
-  const sonSira = basamaklar.length - 1
-  const yazilanlar = basamaklar.filter(
-    (d, sira) => (sonSira - sira) % 2 === 0 || d === enAz,
-  )
-
   return (
-    <div className={className}>
-      {/* Alt boşluk 16px: etiket sütununun en üstteki yazısı kendi yarısı
-          kadar yukarı taşıyor, daha dar bir boşlukta sayının üstüne biniyordu. */}
-      <p className="mb-4">
-        <span className="rakam font-display text-[44px] leading-none font-extrabold text-primary">
+    <div className={cn('flex flex-col items-center', className)}>
+      {/*
+        Sayı çubuğun üstünde ve ortada. Yanda basamak etiketleri (50 · 100 ·
+        … · 500) de vardı; kaldırıldı — seçilen sayı zaten burada yazıyor,
+        çubuğun ne kadar dolduğu da bakışta görünüyor. İkisi yan yana durunca
+        adım adım bir cetvel gibi okunuyor ve asıl sayı kayboluyordu.
+      */}
+      <p className="mb-4 text-center">
+        <span className="rakam font-display text-[52px] leading-none font-extrabold text-primary">
           {deger}
         </span>
-        <span className="ml-1.5 text-sm font-extrabold text-muted-foreground">{birim}</span>
+        <span className="ml-2 text-sm font-extrabold text-muted-foreground">{birim}</span>
       </p>
 
-      <div className="flex items-stretch gap-3">
+      <div
+        ref={rayRef}
+        role="slider"
+        tabIndex={0}
+        aria-label={etiket}
+        aria-valuemin={enAz}
+        aria-valuemax={enCok}
+        aria-valuenow={deger}
+        aria-valuetext={`${deger} ${birim}`}
+        onKeyDown={tusla}
+        onPointerDown={(e) => {
+          // Yakalama şart: parmak çubuğun dışına taşsa bile olaylar buraya
+          // gelmeye devam etsin, sürükleme yarıda kesilmesin.
+          e.currentTarget.setPointerCapture(e.pointerId)
+          setSuruklenen(true)
+          surukle(e)
+        }}
+        onPointerMove={(e) => {
+          if (suruklenen) surukle(e)
+        }}
+        onPointerUp={() => setSuruklenen(false)}
+        onPointerCancel={() => setSuruklenen(false)}
+        className={cn(
+          'relative h-[260px] w-[84px] shrink-0 touch-none overflow-hidden rounded-[28px] bg-muted',
+          'transition-shadow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+          suruklenen && 'ring-2 ring-primary ring-offset-2 ring-offset-card',
+        )}
+      >
+        {/* Dolu kısım aşağıdan yukarı. Sürüklenirken geçiş kapalı: animasyon
+            parmağın arkasında kalıp çubuk takılıyormuş gibi duruyordu. */}
         <div
-          ref={rayRef}
-          role="slider"
-          tabIndex={0}
-          aria-label={etiket}
-          aria-valuemin={enAz}
-          aria-valuemax={enCok}
-          aria-valuenow={deger}
-          aria-valuetext={`${deger} ${birim}`}
-          onKeyDown={tusla}
-          onPointerDown={(e) => {
-            // Yakalama şart: parmak çubuğun dışına taşsa bile olaylar buraya
-            // gelmeye devam etsin, sürükleme yarıda kesilmesin.
-            e.currentTarget.setPointerCapture(e.pointerId)
-            setSuruklenen(true)
-            surukle(e)
-          }}
-          onPointerMove={(e) => {
-            if (suruklenen) surukle(e)
-          }}
-          onPointerUp={() => setSuruklenen(false)}
-          onPointerCancel={() => setSuruklenen(false)}
           className={cn(
-            'relative h-[240px] w-[76px] shrink-0 touch-none overflow-hidden rounded-[26px] bg-muted',
-            'transition-shadow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-            suruklenen && 'ring-2 ring-primary ring-offset-2 ring-offset-card',
+            'absolute inset-x-0 bottom-0 rounded-[28px] bg-primary-parlak',
+            !suruklenen && 'transition-[height] duration-150',
           )}
-        >
-          {/* Dolu kısım aşağıdan yukarı. Sürüklenirken geçiş kapalı: animasyon
-              parmağın arkasında kalıp çubuk takılıyormuş gibi duruyordu. */}
-          <div
-            className={cn(
-              'absolute inset-x-0 bottom-0 rounded-[26px] bg-primary-parlak',
-              !suruklenen && 'transition-[height] duration-150',
-            )}
-            style={{ height: `${Math.max(7, oran * 100)}%` }}
-            aria-hidden
-          />
+          style={{ height: `${Math.max(7, oran * 100)}%` }}
+          aria-hidden
+        />
 
-          {/* Tutamak: dolu kısmın tepesinde duran beyaz çizgi. Çubuğun nereden
-              tutulacağı yazıyla değil biçimle söyleniyor. */}
-          <div
-            className={cn(
-              'absolute inset-x-3 h-1.5 -translate-y-1/2 rounded-full bg-white/85',
-              !suruklenen && 'transition-[bottom] duration-150',
-            )}
-            style={{ bottom: `calc(${Math.max(7, oran * 100)}% - 3px)` }}
-            aria-hidden
-          />
-        </div>
-
-        {/*
-          Basamak etiketleri çubukla **aynı boyda** bir sütunda ve her biri
-          kendi değerinin hizasına konuyor. Eşit aralıklı bir liste olarak
-          dizildiklerinde tutamağın hizasını tutmuyor, çubuk yanlış değeri
-          gösteriyormuş gibi duruyordu.
-        */}
-        <ul className="relative h-[240px] flex-1" aria-hidden>
-          {yazilanlar.map((d) => (
-            <li
-              key={d}
-              className="rakam absolute inset-x-0 flex -translate-y-1/2 items-center gap-2 text-[11px] font-bold"
-              style={{ bottom: `${((d - enAz) / (enCok - enAz)) * 100}%` }}
-            >
-              <span
-                className={cn('h-px w-3', d === deger ? 'bg-primary' : 'bg-border')}
-                aria-hidden
-              />
-              <span className={d === deger ? 'text-primary' : 'text-muted-foreground/70'}>{d}</span>
-            </li>
-          ))}
-        </ul>
+        {/* Tutamak: dolu kısmın tepesinde duran beyaz çizgi. Çubuğun nereden
+            tutulacağı yazıyla değil biçimle söyleniyor. */}
+        <div
+          className={cn(
+            'absolute inset-x-3.5 h-1.5 -translate-y-1/2 rounded-full bg-white/85',
+            !suruklenen && 'transition-[bottom] duration-150',
+          )}
+          style={{ bottom: `calc(${Math.max(7, oran * 100)}% - 3px)` }}
+          aria-hidden
+        />
       </div>
     </div>
   )
