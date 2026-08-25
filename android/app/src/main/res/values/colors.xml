@@ -1,15 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Rabi moru — açılış ekranının zemini, uygulama vurgu rengiyle aynı. -->
-    <color name="acilis_zemin">#6D3FE0</color>
+    <!--
+      Açılış ekranının zemini.
+
+      Uygulamaya girerken **tek** bir ekran görünmesi için üç yüzeyin zemini
+      aynı olmak zorunda: sistemin açılış ekranı (styles.xml →
+      windowSplashScreenBackground), WebView ilk kareyi boyayana kadar görünen
+      pencere zemini (styles.xml → AppTheme.NoActionBar) ve uygulamanın kendi
+      açılış ekranı (components/acilis.tsx → ACILIS_ZEMINI). Üçü farklıyken
+      uygulama açılışta mor → siyah → mor diye üç kez renk değiştiriyordu.
+
+      Renk, açılış ekranındaki gradyanın **dış** durağı: gradyanın ışığı sol
+      üst köşenin dışında, ekranın geri kalanı tam bu renk. Sistem açılış
+      ekranı gradyan gösteremiyor (yalnızca renk kabul ediyor), o yüzden
+      eşitlenecek tek sayı bu. Aradaki pencere zemini ise gradyanı taklit
+      edebiliyor: drawable/acilis_zemini.xml.
+
+      Değiştirirsen acilis.tsx içindeki ACILIS_ZEMINI ile birlikte değiştir.
+    -->
+    <color name="acilis_zemin">#0E0D16</color>
 
     <!--
-      WebView boyanana kadar görünen zemin. Uygulamanın açık tema arka planıyla
-      aynı; koyu tema karşılığı values-night altında.
-      Boş bırakılırsa (Capacitor şablonunda @null'du) açılışta siyah bir kare
-      yanıp sönüyor.
+      Rabi moru — uygulamanın vurgu rengi ve simgesinin zemini. Açılış ekranının
+      zemini artık koyu olduğu için ondan ayrıldı: burası markanın rengi, orası
+      bir ekranın zemini; ikisi aynı değişkende dururken birini değiştirmek
+      ötekini de bozuyordu.
     -->
-    <color name="uygulama_zemin">#F5F3FF</color>
+    <color name="marka_mor">#6D3FE0</color>
+
+    <!--
+      Odak kilidi katmanının zemini — uygulamanın açık tema arka planıyla aynı,
+      koyu karşılığı values-night altında. Katman uygulamanın üstünde açıldığı
+      için sistemin değil uygulamanın rengini izliyor.
+    -->
+    <color name="odak_zemin">#F5F3FF</color>
 
     <!-- Engel katmanının yazı renkleri; koyu karşılıkları values-night altında. -->
     <color name="odak_metin">#1F1937</color>

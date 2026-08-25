@@ -58,6 +58,12 @@
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 
+  /* Açılış ekranının yazı tipi ayrı: tasarım Manrope ile çizildi ve "RABİ"
+     46 pikselde iki ailede belirgin biçimde farklı duruyor. Uygulamanın geri
+     kalanı Plus Jakarta Sans'ta kalıyor — bu istisna yalnızca marka anına
+     ait, `font-marka` başka hiçbir yerde kullanılmıyor. */
+  --font-marka: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+
   /* Kartlar tasarımda çerçeveyle değil gölgeyle ayrılıyor: morumsu zeminin
      üstünde yüzen beyaz yüzeyler. Koyu temada gölge de çerçeve de yok; orada
      kart zaten zeminden açık bir mor (bkz. `.dark .golge-kart`). */
@@ -364,17 +370,59 @@
   /* --- Açılış ekranı (components/acilis.tsx) --- */
 
   /*
-    Zıplama. Yukarı çıkışta yavaşlayan, inişte hızlanan bir eğri kullanılıyor —
-    tek bir `ease-in-out` ile tavşan havada asılı kalmış gibi duruyordu.
+    Ekranın bütün parçaları tek bir 4,2 saniyelik zaman çizgisini paylaşıyor:
+    %0–34 iniş, %34–68 duruş, %68–100 çıkış. Süreler bu yüzden hepsinde aynı
+    ve ayrı ayrı değiştirilemez — biri kayarsa yazılar maskottan önce ya da
+    sonra gider, ekran dağılır. Süreyi `ACILIS_SURESI` ile birlikte değiştir.
   */
-  .acilis-ziplama {
-    animation: acilis-ziplama 760ms cubic-bezier(0.3, 0, 0.4, 1) infinite;
+  .rb3-inis {
+    opacity: 0;
+    animation: rb3-inis 4.2s cubic-bezier(0.3, 0.8, 0.25, 1) forwards;
   }
-  .acilis-yazi {
-    animation: acilis-yazi 700ms 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  .rb3-yazi {
+    opacity: 0;
+    animation: rb3-yazi 4.2s cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
   }
-  .acilis-cark {
-    animation: acilis-cark 1700ms linear infinite;
+  .rb3-slogan {
+    opacity: 0;
+    animation: rb3-slogan 4.2s ease-out forwards;
+  }
+  .rb3-son {
+    animation: rb3-son 4.2s ease-out forwards;
+  }
+  /*
+    Hâlelerin iki animasyonu var: sürekli nefes alma (`rb-hale`) ve çıkışta
+    sönme (`rb3-son`). İkisi ayrı sınıfa yazılamıyor — aynı öğede iki
+    `animation` bildirimi birleşmez, sonraki öncekini siler. Süreler ve
+    gecikmeler öğe üzerinden veriliyor çünkü iki hâle farklı hızda nefes
+    alıyor (8s ve 5,4s).
+  */
+  .rb3-hale {
+    animation-name: rb-hale, rb3-son;
+    animation-timing-function: ease-in-out, ease-out;
+    animation-iteration-count: infinite, 1;
+    animation-fill-mode: none, forwards;
+  }
+  .rb-aurora {
+    animation: rb-aurora 23s ease-in-out infinite;
+  }
+
+  /*
+    Ekran, uygulama penceresi gerçekten görünene kadar ilk karesinde duruyor.
+
+    CSS animasyonları sayfa çizilir çizilmez başlıyor; Android'in kendi açılış
+    ekranı ise o sırada hâlâ ekranı kaplıyor olabiliyor. Animasyon arkada akıp
+    bitiyor ve pencere açıldığında kullanıcı yalnızca son karesini görüyor —
+    "animasyon yok" diye okunan şey tam olarak bu. Sınıf, ilk kare üretildiği
+    an kalkıyor (bkz. acilis.tsx → `useBaslangic`).
+
+    Duraklatma `display: none` ya da gecikmeyle değil `animation-play-state`
+    ile: ekran o sırada görünmek zorunda (zemini sistem açılış ekranıyla aynı,
+    yani arada bir boşluk oluşmuyor), yalnızca zaman çizgisi beklemeli.
+  */
+  .rb3-bekliyor,
+  .rb3-bekliyor * {
+    animation-play-state: paused !important;
   }
 
   /* --- Haftalık özet (components/ekranlar/haftalik-ozet.tsx) --- */
@@ -419,39 +467,63 @@
   }
 }
 
-@keyframes acilis-ziplama {
-  0%,
+/* --- Açılış ekranının kareleri --- */
+
+/*
+  Maskotun varış noktası koda sabit yazılamıyor: tasarım 360×720'lik çerçeve
+  için translate(-138px, -316px) scale(0.6) diyor, gerçek telefonlarda hem
+  ekranın ortası hem başlığın yeri başka. Açılış ekranı yuvayı ölçüp bu üç
+  değişkeni dolduruyor; ölçüm tutmazsa yedek değerler tasarımın kendi sayıları.
+*/
+@keyframes rb3-inis {
+  0% { opacity: 0; transform: translateY(-300px) scale(1.04); }
+  12% { opacity: 1; }
+  26% { transform: translateY(14px) scale(0.99); }
+  34% { opacity: 1; transform: translateY(0) scale(1); }
+  68% { opacity: 1; transform: translateY(0) scale(1); }
   100% {
-    transform: translateY(0) scaleY(1);
-  }
-  18% {
-    transform: translateY(0) scaleY(0.9);
-  }
-  50% {
-    transform: translateY(-26px) scaleY(1.04);
-  }
-  82% {
-    transform: translateY(0) scaleY(0.94);
-  }
-}
-
-@keyframes acilis-yazi {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-    letter-spacing: 0.42em;
-  }
-  to {
     opacity: 1;
-    transform: none;
-    letter-spacing: 0.18em;
+    transform: translate(var(--rb3-dx, -138px), var(--rb3-dy, -316px))
+      scale(var(--rb3-olcek, 0.6));
   }
 }
 
-@keyframes acilis-cark {
-  to {
-    transform: rotate(360deg);
-  }
+@keyframes rb3-yazi {
+  0%,
+  18% { opacity: 0; transform: translateY(18px); }
+  36% { opacity: 1; transform: translateY(0); }
+  68% { opacity: 1; transform: translateY(0); }
+  86%,
+  100% { opacity: 0; transform: translateY(-26px); }
+}
+
+@keyframes rb3-slogan {
+  0%,
+  30% { opacity: 0; transform: translateY(10px); }
+  46% { opacity: 1; transform: translateY(0); }
+  66% { opacity: 1; transform: translateY(0); }
+  82%,
+  100% { opacity: 0; transform: translateY(-16px); }
+}
+
+@keyframes rb3-son {
+  0%,
+  68% { opacity: 1; }
+  86%,
+  100% { opacity: 0; }
+}
+
+@keyframes rb-hale {
+  0%,
+  100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.08); }
+}
+
+@keyframes rb-aurora {
+  0%,
+  100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.55; }
+  33% { transform: translate3d(26px, -22px, 0) scale(1.12); opacity: 0.85; }
+  66% { transform: translate3d(-18px, 16px, 0) scale(0.95); opacity: 0.65; }
 }
 
 @keyframes ozet-girisi {
@@ -497,8 +569,8 @@
 }
 
 /*
-  Hareket azaltma tercihi açıksa süslemeler durur. Açılış çarkı istisna: dönmeyen
-  bir bekleme göstergesi "donmuş" izlenimi veriyor, o yüzden yavaşlatılıyor.
+  Hareket azaltma tercihi açıksa süslemeler durur — açılış ekranı hariç, sebebi
+  aşağıdaki blokta yazılı.
 */
 @keyframes ozet-cubuk {
   from {
@@ -511,8 +583,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .acilis-girisi,
-  .acilis-ziplama,
-  .acilis-yazi,
   .ozet-girisi,
   .ozet-vurgu,
   .ozet-nabiz {
@@ -520,9 +590,22 @@
   }
   /* `ozet-cubuk` bilerek listede yok: süsleme değil, kartın ne zaman
      geçeceğini gösteren tek işaret. */
-  .acilis-cark {
-    animation-duration: 3.4s;
-  }
+
+  /*
+    Açılış ekranı bu listede bilerek **yok**.
+
+    Tasarımın kendi kuralı ekranı burada tümüyle susturuyordu ve uygulama bir
+    süre öyle çıktı; sonuç, animasyonu hiç görmeyen bir kullanıcı oldu.
+    Android'de bu tercih çoğu zaman erişilebilirlik ayarından değil geliştirici
+    seçeneklerindeki "animasyon ölçeği" ya da pil tasarrufundan geliyor — yani
+    hareketten rahatsız olduğu için değil telefonu hızlansın diye kapatan
+    kullanıcıda da açılış ekranı boş bir kareye dönüyordu.
+
+    Karar kullanıcının: açılış animasyonu her koşulda oynasın istedi. Hareket
+    dört saniyede bir kez, uygulama açılışında ve tek yönde — uygulamanın geri
+    kalanı (haftalık özet, harita, tur içi efektler) bu tercihi izlemeye devam
+    ediyor.
+  */
 }
 
 /*

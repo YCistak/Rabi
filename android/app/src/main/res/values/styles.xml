@@ -13,11 +13,24 @@
         <!--
           Capacitor şablonunda burası @null'dı. Açılış ekranı kapandıktan sonra
           WebView ilk kareyi boyayana kadar arkada hiçbir şey olmadığı için
-          siyah bir kare yanıp sönüyordu. Uygulamanın kendi zemin rengi konuldu
-          (values-night altında koyu karşılığı var).
+          siyah bir kare yanıp sönüyordu.
+
+          Zemin uygulamanın temasını değil **açılış ekranının** zeminini izliyor:
+          bu boşlukta ekranda hâlâ açılış görünüyor olmalı. Temaya bağlıyken
+          koyu modda o kare neredeyse siyahtı ve mor sistem ekranıyla mor açılış
+          ekranının arasına siyah bir kare giriyordu — kullanıcının gördüğü üç
+          ekranın ortadakiydi.
+
+          Pencere zemini düz renk değil gradyan (drawable/acilis_zemini.xml):
+          bu kare bazen birkaç yüz milisaniye duruyor ve düz renkten gradyana
+          geçiş, kısa da olsa "başka bir ekran geldi" diye okunuyordu.
+
+          `android:background` yine düz renk. O öznitelik pencerenin değil
+          görünümlerin zemini; büyük bir gradyanı her görünüme dağıtmanın
+          görünür bir karşılığı yok, riski ise var.
         -->
-        <item name="android:background">@color/uygulama_zemin</item>
-        <item name="android:windowBackground">@color/uygulama_zemin</item>
+        <item name="android:background">@color/acilis_zemin</item>
+        <item name="android:windowBackground">@drawable/acilis_zemini</item>
     </style>
 
     <!--
@@ -26,7 +39,7 @@
       Android 12+ sistemin kendi açılış ekranını çizmek zorunda; kapatılamıyor.
       Burada yalnızca **zemin rengi** bırakıldı: ikon saydam (`acilis_bos`),
       animasyon yok. Uygulamanın kendi açılış ekranı (components/acilis.tsx)
-      aynı zeminde tavşanı, "Rabi" yazısını ve çarkı gösteriyor — ikisi de ikon
+      aynı zeminde inen tavşanı ve "RABİ" yazısını gösteriyor — ikisi de ikon
       gösterseydi arka arkaya iki açılış ekranı izleniyordu.
 
       `postSplashScreenTheme` şart: açılış bitince etkinlik bu temada kalıyor,

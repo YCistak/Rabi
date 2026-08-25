@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Plus_Jakarta_Sans } from 'next/font/google'
+import { Manrope, Plus_Jakarta_Sans } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
@@ -11,6 +11,23 @@ const jakarta = Plus_Jakarta_Sans({
   weight: ['400', '500', '600', '700', '800'],
   variable: '--font-jakarta',
   display: 'swap',
+})
+
+// Yalnızca açılış ekranının yazı tipi (`font-marka`). Tasarım Manrope ile
+// çizildi ve "RABİ" 46 pikselde iki ailede belirgin biçimde farklı duruyor;
+// uygulamanın geri kalanı Plus Jakarta Sans'ta kalıyor.
+//
+// `display: 'block'` bilerek: açılış ekranı 4,2 saniye sürüyor ve wordmark o
+// ekranın tamamı. `swap` ile yazı önce yedek aileyle çizilip sonra yerine
+// oturuyordu — marka adının ilk yarım saniyede başka bir yazı tipinde
+// görünmesi, en çok bakılan anda gözden kaçmıyor. Yazı tipi zaten uygulamayla
+// birlikte geliyor (next/font derleme anında indirip gömüyor), yani beklenen
+// süre ağ değil yalnızca çözümleme.
+const manrope = Manrope({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['600', '800'],
+  variable: '--font-manrope',
+  display: 'block',
 })
 
 export const metadata: Metadata = {
@@ -63,7 +80,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html
       lang="tr"
       suppressHydrationWarning
-      className={jakarta.variable}
+      className={`${jakarta.variable} ${manrope.variable}`}
     >
       <head>
         {/* Tema sınıfı ilk boyamadan önce uygulanmazsa uygulama açılırken
