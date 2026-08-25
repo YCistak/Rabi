@@ -25,6 +25,7 @@ import {
   odakKilidiniBitir,
 } from '@/lib/odak-kilidi'
 import { OdakKurulum } from '@/components/ekranlar/odak-kurulum'
+import { ODAK_CEZASI } from '@/lib/havuc'
 import { cn, yeniId } from '@/lib/utils'
 import { BaslikSatiri, Buton, Cip, Kart, Not } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
@@ -36,10 +37,16 @@ export function PomodoroEkrani({
   ayar,
   setAyar,
   onSeansBitti,
+  onKilitKirildi,
 }: {
   ayar: PomodoroAyar
   setAyar: (guncelleyici: PomodoroAyar | ((onceki: PomodoroAyar) => PomodoroAyar)) => void
   onSeansBitti: (seans: PomodoroSeans) => void
+  /**
+   * Odak kilidi çalışma turu sürerken kırıldı. Havuç cezasını üst katman
+   * kesiyor; gerçekten düşen miktarı döndürüyor, bakiye yetmemiş olabilir.
+   */
+  onKilitKirildi: () => number
 }) {
   const [asama, setAsama] = useState<Asama>('calisma')
   const [tur, setTur] = useState(1)
@@ -67,6 +74,14 @@ export function PomodoroEkrani({
   useEffect(() => {
     if (odakKilidiDesteklenir() && !ayar.kilitTanitimiGoruldu) setKurulumAcik(true)
   }, [ayar.kilitTanitimiGoruldu])
+
+  /**
+   * Kırılan kilidin bedeli — bir sonraki başlatmaya kadar ekranda duruyor.
+   *
+   * Ceza sessizce kesilseydi kullanıcı havucunun neden azaldığını hiç
+   * öğrenemezdi; caydırıcılığın tamamı bunun görülmesinden geliyor.
+   */
+  const [kirilanKilit, setKirilanKilit] = useState<number | null>(null)
 
   const calarRef = useRef<SesCalar | null>(null)
   const baslangicRef = useRef<string | null>(null)
@@ -149,6 +164,7 @@ export function PomodoroEkrani({
   }, [bitisZamani, asamayiBitir])
 
   const baslat = () => {
+    setKirilanKilit(null)
     const bitis = Date.now() + kalan * 1000
     setBitisZamani(bitis)
     setDokunulmadi(false)
@@ -196,13 +212,21 @@ export function PomodoroEkrani({
   }
 
   /**
-   * Engel katmanındaki "kilidi kapat" turu iptal ediyor — bedeli olmayan engel,
-   * engel değil. Geri çağrı ref üzerinden okunuyor: dinleyici bir kez kuruluyor
-   * ama iptalin güncel aşamayı görmesi gerekiyor.
+   * Engel katmanındaki "kilidi kapat" hem turu iptal ediyor hem havuç
+   * götürüyor — bedeli olmayan engel, engel değil. Kilit kırılabilir olmak
+   * zorunda (kırılamasaydı telefonun sahibi kendi telefonunda mahsur kalırdı),
+   * o yüzden caydırıcılığı bedelin taşıması gerekiyor.
+   *
+   * Geri çağrı ref üzerinden okunuyor: dinleyici bir kez kuruluyor ama iptalin
+   * güncel aşamayı ve güncel bakiyeyi görmesi gerekiyor.
    */
+  const kilidiKir = () => {
+    setKirilanKilit(onKilitKirildi())
+    sifirla()
+  }
   const iptalRef = useRef<() => void>(() => {})
   useEffect(() => {
-    iptalRef.current = sifirla
+    iptalRef.current = kilidiKir
   })
   useEffect(() => {
     let birak: () => void = () => {}
@@ -235,6 +259,14 @@ export function PomodoroEkrani({
   return (
     <div>
       <BaslikSatiri baslik="Pomodoro" aciklama={`${tur}. tur · ${ASAMA_ADI[asama]}`} />
+
+      {kirilanKilit !== null && (
+        <Not tur="uyari" className="mb-4">
+          {kirilanKilit > 0
+            ? `Odak kilidini kırdın: ${kirilanKilit} havuç gitti ve tur baştan başlıyor.`
+            : 'Odak kilidini kırdın, tur baştan başlıyor. Havucun zaten boştu.'}
+        </Not>
+      )}
 
       <Kart className="mb-4 flex flex-col items-center py-6">
         <Sayac kalan={kalan} oran={oran} mola={molaMi} />

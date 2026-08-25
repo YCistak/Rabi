@@ -8,6 +8,7 @@ import {
   Images,
   PencilLine,
   Sparkles,
+  StickyNote,
   Target,
   Timer,
   TrendingUp,
@@ -29,6 +30,7 @@ export type Sekme = 'ana' | 'oyunlar' | 'daha' | 'ayarlar'
  */
 export type Ekran =
   | 'pomodoro'
+  | 'notlar'
   | 'soru'
   | 'deneme'
   | 'siralama'
@@ -65,6 +67,13 @@ export const KARTLAR: KartTanimi[] = [
     aciklama: 'Sayaçlı çalışma seansı',
     Simge: Timer,
     renk: 'krem',
+  },
+  {
+    id: 'notlar',
+    ad: 'Yapılacaklar',
+    aciklama: 'Bugününü kâğıtlara yaz',
+    Simge: StickyNote,
+    renk: 'lavanta',
   },
   {
     id: 'yanlis-banka',

@@ -1,4 +1,4 @@
-import { TOPLAM_HAVUC } from '../seviye'
+import { TOPLAM_KAZANC } from '../havuc'
 
 /**
  * Jokerler — tur sırasında harcanan tek kullanımlık yardımlar. Havuç
@@ -11,11 +11,12 @@ import { TOPLAM_HAVUC } from '../seviye'
  *
  * ## Fiyatlar ve seviye
  *
- * Havuç yalnızca seviye atlayarak kazanılıyor (`lib/seviye.ts`) ve ömür boyu
- * kazanılabilecek toplam belli. Fiyatlar o toplama göre konuldu: bütün havucunu
- * jokere yatıran biri kırk kadar joker alabiliyor — yani joker bir yılda birkaç
- * düzine kez kullanılan bir şey, her turda açılan bir menü değil. `denge.test`
- * bu oranı sabitliyor.
+ * Havuç seviye atlayarak (`lib/seviye.ts`) ve Oyun Bankası'ndan soru düşürerek
+ * (`lib/havuc.ts`) kazanılıyor; ömür boyu kazanılabilecek toplam ikisinden de
+ * belli. Fiyatlar o toplama göre konuldu: bütün havucunu jokere yatıran biri
+ * kırk kadar joker alabiliyor — yani joker bir yılda birkaç düzine kez
+ * kullanılan bir şey, her turda açılan bir menü değil. `denge` testleri bu
+ * oranı sabitliyor.
  *
  * Güçlü jokerlerin ayrıca **seviye şartı** var. Havuç tek başına kapı olsaydı
  * ilk haftasında bir tur maratonu yapan biri en güçlü jokeri açardı; seviye
@@ -182,13 +183,13 @@ export function jokerAl(
 /**
  * Bütün jokerlerin fiyat toplamı — denge testinin ölçüsü.
  *
- * Ekonominin tavanına (`TOPLAM_HAVUC`) göre okunuyor: kaç joker alınabildiği
+ * Ekonominin tavanına (`TOPLAM_KAZANC`) göre okunuyor: kaç joker alınabildiği
  * bu ikisinin oranı.
  */
 export const KATALOG_TUTARI = JOKERLER.reduce((t, j) => t + j.fiyat, 0)
 
 /** Ömür boyu kazanılan havuçla alınabilecek yaklaşık joker sayısı. */
-export const OMURLUK_JOKER = Math.floor(TOPLAM_HAVUC / (KATALOG_TUTARI / JOKERLER.length))
+export const OMURLUK_JOKER = Math.floor(TOPLAM_KAZANC / (KATALOG_TUTARI / JOKERLER.length))
 
 /** En geç açılan jokerin seviyesi. Testte seviye tavanının altında tutuluyor. */
 export const EN_GEC_SEVIYE = Math.max(...JOKERLER.map((j) => j.enAzSeviye))

@@ -1,9 +1,13 @@
 'use client'
 
+import { useEffect, useRef, useState } from 'react'
 import { Check, HelpCircle, Trophy, X } from 'lucide-react'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { bossSesi, seriyiSifirla, sureUyarisi } from '@/lib/oyunlar/oyun-sesi'
 import type { OyunId } from '@/lib/types'
 import { sureOrani } from '@/lib/oyunlar/tur'
 import { BOSS_ARALIGI, bossluMu } from '@/lib/oyunlar/ritim'
+import { MODLAR, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { cn } from '@/lib/utils'
 import { Halka } from '@/components/ui'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
@@ -180,27 +184,34 @@ export const EN_COK_YANLIS = 5
 /**
  * Turu ne bitirdi.
  *
- * `false`: eleme yok — soru sınırına gelindi ya da banka turu tükendi.
+ * `false`: eleme yok — soru sınırına gelindi, banka turu tükendi ya da Rahat
+ * turda oyuncu kendisi bitirdi.
  * `'boss'` ve `'yanlis'` ikisi de yanlış cevap, ama tur sonu ekranı ikisini
  * ayrı söylüyor: boss'a takılmak ile sıradan bir soruda takılmak oyuncu için
  * aynı his değil.
+ * `'sure'` tur saatinin bitmesi (Sıradan, Turbo) — orada yanlış turu
+ * bitirmiyor, süreyi bitiriyor.
  */
-export type Eleme = false | 'boss' | 'yanlis'
+export type Eleme = false | 'boss' | 'yanlis' | 'sure'
 
 export type SayacBilgisi = {
   /** Kalan saniye. */
   kalan: number
   /**
-   * Bu sorunun toplam süresi.
+   * Sayacın toplamı — halkanın ve çubuğun doluluğu buna göre.
    *
-   * Halkanın ve çubuğun doluluğu buna göre. Sabit tur süresi yerine soru
-   * süresi kullanılıyor: boss'un süresi uzun, halka yine dolu başlamalı.
+   * Neyin toplamı olduğunu mod belirliyor: tur saatli modlarda turun süresi,
+   * soru saatli modda o sorunun süresi (boss'unki uzun, halka yine dolu
+   * başlamalı). **Sıfır ise sayaç yok** — Rahat turda gösterilecek bir süre
+   * olmadığı için halka hiç çizilmiyor.
    */
   toplam: number
   /** Kaçıncı soru — boss uyarısında görünüyor. */
   sira: number
   /** Bu soru boss mu: eleyici olan, ekranın rengini değiştiren. */
   boss: boolean
+  /** Turun modu — şeridin ne gösterdiğini o belirliyor. */
+  mod: OyunModu
   /** Şu anki ardışık doğru sayısı. */
   seri: number
   dogru: number
@@ -216,6 +227,103 @@ export type SayacBilgisi = {
    * sütun ise yanlış bilgi olurdu.
    */
   puan?: number
+}
+
+/** Süre uyarısının ve nabzın başladığı oran — halkanın kırmızıya döndüğü yer. */
+const BASKI_ORANI = 0.25
+
+/**
+ * Turun olaylarını efektlere çeviren kanca.
+ *
+ * Olayları **sayaçtan türetiyor**, oyunlardan haber almıyor: kabuk zaten
+ * `dogru`, `yanlis`, `boss` ve `kalan` değerlerini alıyor ve bir sayının
+ * artması "bir şey oldu" demek. 18 oyuna geri çağrı eklemek aynı şeyi 18 kez
+ * yazmak olurdu; burada tek bir yerde duruyor ve yeni bir oyun hiçbir şey
+ * yapmadan efektlere kavuşuyor.
+ */
+function useTurEfektleri(sayac: SayacBilgisi | null) {
+  const [sarsiliyor, setSarsiliyor] = useState(false)
+  /** Parlamanın kaçıncı kez tetiklendiği — animasyonu yeniden başlatan anahtar. */
+  const [bossParlamasi, setBossParlamasi] = useState(0)
+  const oncekiRef = useRef({ dogru: 0, yanlis: 0, boss: false })
+  /**
+   * Boss sürerken doğru cevap geldi mi.
+   *
+   * Parlama boss **kapanınca** çalıyor ama "kapanırken doğru sayısı arttı mı"
+   * diye bakmak işe yaramıyor: oyunlar cevabı hemen sayıyor, soruyu ise geri
+   * bildirim gösterdikten sonra değiştiriyor. Yani sayı boss hâlâ ekrandayken
+   * artıyor, boss kapandığı çizimde artık artmış olmuyor. Bayrak o iki anı
+   * birbirine bağlıyor.
+   */
+  const bossVuruldu = useRef(false)
+  /** Süre uyarısı bu sayaç için çaldı mı — her turda/soruda bir kez. */
+  const uyarildiRef = useRef(false)
+
+  /*
+    Ses kapalıyken `oyunSesiCal` hiç çalışmıyor, yani perde sayacı da
+    ilerlemiyor. Ayarı tur arasında açan kullanıcıda eski turdan kalan bir seri
+    duruyor olabilirdi.
+  */
+  useEffect(() => {
+    seriyiSifirla()
+  }, [])
+
+  const dogru = sayac?.dogru ?? 0
+  const yanlis = sayac?.yanlis ?? 0
+  const boss = sayac?.boss ?? false
+
+  useEffect(() => {
+    if (!sayac) {
+      oncekiRef.current = { dogru: 0, yanlis: 0, boss: false }
+      bossVuruldu.current = false
+      return
+    }
+    const onceki = oncekiRef.current
+    oncekiRef.current = { dogru, yanlis, boss }
+
+    if (yanlis > onceki.yanlis) setSarsiliyor(true)
+
+    // Boss sürerken gelen doğru işaretleniyor; Edebiyat'ta boss bir el olduğu
+    // ve el sürerken birden çok doğru geldiği için bayrak, sayaç değil.
+    if (boss && dogru > onceki.dogru) bossVuruldu.current = true
+
+    /*
+      Parlama boss kapanınca: soru hâlâ ekrandayken kutlamak, oyuncunun daha
+      okumadığı geri bildirimin üstüne binerdi.
+    */
+    if (onceki.boss && !boss) {
+      if (bossVuruldu.current) {
+        setBossParlamasi((n) => n + 1)
+        bossSesi()
+        void Haptics.impact({ style: ImpactStyle.Heavy }).catch(() => {})
+      }
+      bossVuruldu.current = false
+    }
+  }, [sayac, dogru, yanlis, boss])
+
+  // Sarsıntı kendi kendine sönüyor; süresi CSS'teki animasyonla eşleşiyor.
+  useEffect(() => {
+    if (!sarsiliyor) return
+    const zaman = setTimeout(() => setSarsiliyor(false), 400)
+    return () => clearTimeout(zaman)
+  }, [sarsiliyor])
+
+  const oran = sayac && sayac.toplam > 0 ? sayac.kalan / sayac.toplam : 1
+  const baski = sayac !== null && sayac.toplam > 0 && sayac.kalan > 0 && oran <= BASKI_ORANI
+
+  useEffect(() => {
+    // Eşiğin üstüne çıkmak uyarıyı yeniden kuruyor: soru saatli modda her
+    // sorunun kendi son saniyeleri var.
+    if (!baski) {
+      uyarildiRef.current = false
+      return
+    }
+    if (uyarildiRef.current) return
+    uyarildiRef.current = true
+    sureUyarisi()
+  }, [baski])
+
+  return { sarsiliyor, bossParlamasi, baski: baski && !(sayac?.boss ?? false) }
 }
 
 export function OyunKabugu({
@@ -235,6 +343,7 @@ export function OyunKabugu({
   children: React.ReactNode
 }) {
   const aile = AILE[oyunId]
+  const { sarsiliyor, bossParlamasi, baski } = useTurEfektleri(sayac)
 
   return (
     <div
@@ -247,7 +356,18 @@ export function OyunKabugu({
         sayac?.boss ? 'boss-alan bg-boss-zemin' : aile.zemin,
       )}
     >
-      <div className="guvenli-alt mx-auto flex w-full max-w-md flex-1 flex-col overflow-y-auto px-4 pb-3 pt-[calc(0.9rem+var(--guvenli-ust))]">
+      {/* Boss parlaması en üstte ve tıklamayı geçirmiyor: sonraki soru şıklarına
+          basmayı 600 ms geciktiren bir kutlama, kutlama olmaktan çıkardı. */}
+      {bossParlamasi > 0 && <span key={bossParlamasi} className="boss-parlama" aria-hidden />}
+
+      {/* Sarsıntı bütün oyun alanına: soru kartını ayrıca sarmak 18 oyunun
+          yerleşimine dokunmak demekti, oysa yanlış olan cevap değil o an. */}
+      <div
+        className={cn(
+          'guvenli-alt mx-auto flex w-full max-w-md flex-1 flex-col overflow-y-auto px-4 pb-3 pt-[calc(0.9rem+var(--guvenli-ust))]',
+          sarsiliyor && 'oyun-sarsinti',
+        )}
+      >
         <div className="flex flex-none items-center gap-2">
           <YuvarlakDugme etiket="Oyundan çık" onClick={onCik}>
             <X size={17} aria-hidden />
@@ -280,23 +400,29 @@ export function OyunKabugu({
           )}
         </div>
 
-        {sayac && (
+        {sayac && sayac.toplam <= 0 && <ModSeridi mod={sayac.mod} />}
+
+        {sayac && sayac.toplam > 0 && (
           <>
             <div className="relative mt-4 flex flex-none items-center gap-3">
-              <Halka
-                deger={sayac.kalan}
-                hedef={sayac.toplam}
-                boyut={54}
-                kalinlik={5}
-                renk={sureRengi(sayac.kalan, sayac.toplam, sayac.boss)}
-              >
-                <span
-                  className="rakam font-display text-[17px] font-extrabold"
-                  style={{ color: sureRengi(sayac.kalan, sayac.toplam, sayac.boss) }}
+              {/* Nabız halkayı saran kapta: `Halka` bir SVG çiziyor ve onu
+                  döndürmek yerine kabını ölçeklemek çizimi bozmuyor. */}
+              <span className={cn('flex-none', baski && 'sure-nabzi')}>
+                <Halka
+                  deger={sayac.kalan}
+                  hedef={sayac.toplam}
+                  boyut={54}
+                  kalinlik={5}
+                  renk={sureRengi(sayac.kalan, sayac.toplam, sayac.boss)}
                 >
-                  {sayac.kalan}
-                </span>
-              </Halka>
+                  <span
+                    className="rakam font-display text-[17px] font-extrabold"
+                    style={{ color: sureRengi(sayac.kalan, sayac.toplam, sayac.boss) }}
+                  >
+                    {sayac.kalan}
+                  </span>
+                </Halka>
+              </span>
 
               <div className="h-[9px] flex-1 overflow-hidden rounded-full bg-foreground/10">
                 <div
@@ -309,8 +435,9 @@ export function OyunKabugu({
               </div>
 
               {/* Boss uyarısı süre çubuğunun üstünde: gözün zaten baktığı yer
-                  burası. Metin artık "elenirsin" demiyor — her yanlış eliyor,
-                  boss'u ayıran şey sorunun bir üst zorluktan gelmesi. */}
+                  burası. Metin "elenirsin" demiyor: eleme yalnızca Ani
+                  Ölüm'de var, boss'u her modda ayıran şey sorunun bir üst
+                  zorluktan gelmesi. */}
               {sayac.boss && (
                 <span
                   key={sayac.sira}
@@ -319,11 +446,18 @@ export function OyunKabugu({
                   Boss · bir üst seviye
                 </span>
               )}
+
+              {/* Mod rozeti sayacın yanında: halkanın 30'dan mı 60'tan mı
+                  saydığı ancak modu bilerek okunuyor. Sıradan turda yok —
+                  varsayılanı ilan etmek gürültü. */}
+              {sayac.mod !== 'siradan' && <ModRozeti mod={sayac.mod} />}
             </div>
 
             <SayacSeridi oyunId={oyunId} sayac={sayac} />
           </>
         )}
+
+        {sayac && sayac.toplam <= 0 && <SayacSeridi oyunId={oyunId} sayac={sayac} />}
 
         {children}
       </div>
@@ -332,13 +466,47 @@ export function OyunKabugu({
 }
 
 /**
+ * Süresiz turun sayaç yerine geçen şeridi.
+ *
+ * Halkanın olmadığı yerde boşluk bırakmak, ekranın bir parçasının kırıldığı
+ * hissini veriyordu. Yerine turun kuralı yazıyor: süre yok, yanlış turu
+ * bitirmiyor, karşılığında rekor da tutulmuyor.
+ */
+function ModSeridi({ mod }: { mod: OyunModu }) {
+  const tanim = MODLAR[mod]
+  return (
+    <div className="mt-4 flex flex-none items-center gap-2 rounded-2xl bg-foreground/[0.06] px-3 py-2">
+      <span aria-hidden className="text-base">
+        {tanim.simge}
+      </span>
+      <span className="min-w-0 text-[11.5px] font-bold leading-snug text-foreground/70">
+        <b className="font-extrabold">{tanim.ad} tur</b> · {tanim.ozet.toLocaleLowerCase('tr')},
+        yanlış turu bitirmez
+        {!modKayitliMi(mod) && ', rekora sayılmaz'}
+      </span>
+    </div>
+  )
+}
+
+/** Sayacın yanındaki mod rozeti — halkanın neyi saydığını söylüyor. */
+function ModRozeti({ mod }: { mod: OyunModu }) {
+  return (
+    <span className="flex h-[26px] shrink-0 items-center gap-1 rounded-full bg-foreground/[0.07] px-2 text-[11px] font-extrabold text-foreground/70">
+      <span aria-hidden>{MODLAR[mod].simge}</span>
+      {MODLAR[mod].ad}
+    </span>
+  )
+}
+
+/**
  * Tur sayaçları.
  *
- * "Yanlış" ve "Seri" hiçbir oyunda gösterilmiyor: artık her yanlış turu
- * bitirdiği için yanlış sayısı tur boyunca hep 0, seri de doğru sayısının
- * aynısı — üç hücrenin ikisi aynı sayıyı gösteriyordu.
+ * "Yanlış" ve "Seri" şeritte yok. Seri zaten başlıktaki rozette duruyor;
+ * yanlış sayısı ise şeritte yer alacak kadar merak edilmiyor — süreli modda
+ * yanlışın bedeli sayacın geri gitmesiyle zaten görülüyor, Ani Ölüm'de de tur
+ * bitiyor. İkisi de tur sonu ekranında kutu kutu duruyor.
  *
- * Boss'lu oyunlarda yerlerine boss'a kaç soru kaldığı geldi; oyuncunun turda
+ * Boss'lu oyunlarda araya boss'a kaç soru kaldığı giriyor; oyuncunun turda
  * gerçekten merak ettiği şey bu. Matematik oyunlarında boss yok, orada şerit
  * yalnızca doğru sayısı ve rekordan ibaret — gösterilecek üçüncü bir sayı
  * uydurmak, boş bir sütuna sayı koymak olurdu.
@@ -396,12 +564,55 @@ function SayacSeridi({ oyunId, sayac }: { oyunId: OyunId; sayac: SayacBilgisi })
  * burada durum bildiriyor — oyunun ailesi zaten ekranın zemininde duruyor,
  * halkayı da aileye boyamak "az kaldı" uyarısını yutardı.
  */
+/**
+ * Yeni rekorda düşen konfeti.
+ *
+ * Yalnızca rekorda çiziliyor: her tur sonunda patlayan bir kutlama üç turda
+ * anlamını yitirir ve "iyi bir tur" ile "hayatının turu" aynı görünür.
+ *
+ * Parçacıkların yeri sabit bir tablodan geliyor, `Math.random` ile değil.
+ * Rastgelelik çizim sırasında üretilseydi statik dışa aktarımda sunucu ve
+ * istemci çıktısı ayrışır, her yeniden çizimde de parçacıklar yerinden
+ * oynardı — göze rastgele görünmesi için gerçekten rastgele olması gerekmiyor.
+ */
+const KONFETI: readonly { sol: number; gecikme: number; renk: string }[] = [
+  { sol: 6, gecikme: 0, renk: 'var(--primary)' },
+  { sol: 14, gecikme: 260, renk: 'var(--warning)' },
+  { sol: 23, gecikme: 90, renk: 'var(--ikincil)' },
+  { sol: 31, gecikme: 420, renk: 'var(--success)' },
+  { sol: 39, gecikme: 170, renk: 'var(--primary)' },
+  { sol: 47, gecikme: 540, renk: 'var(--warning)' },
+  { sol: 55, gecikme: 40, renk: 'var(--ikincil)' },
+  { sol: 62, gecikme: 330, renk: 'var(--success)' },
+  { sol: 70, gecikme: 200, renk: 'var(--primary)' },
+  { sol: 78, gecikme: 610, renk: 'var(--warning)' },
+  { sol: 86, gecikme: 120, renk: 'var(--ikincil)' },
+  { sol: 93, gecikme: 470, renk: 'var(--success)' },
+]
+
+function Konfeti() {
+  return (
+    <span
+      aria-hidden
+      className="pointer-events-none absolute inset-x-0 top-0 h-48 overflow-hidden"
+    >
+      {KONFETI.map((p) => (
+        <span
+          key={p.sol}
+          className="konfeti"
+          style={{ left: `${p.sol}%`, background: p.renk, animationDelay: `${p.gecikme}ms` }}
+        />
+      ))}
+    </span>
+  )
+}
+
 function sureRengi(kalan: number, toplam: number, boss = false): string {
   // Boss'ta renk bilgi taşımıyor, gerginlik taşıyor: baştan sona kırmızı.
   if (boss) return 'var(--danger)'
-  // Eşikler orana bağlı, saniyeye değil: soru süreleri oyundan oyuna değişiyor
-  // (sözelde 12, üçgende 22) ve sabit "10 saniye kaldı" eşiği birinde turun
-  // yarısı, ötekinde sonu demek olurdu.
+  // Eşikler orana bağlı, saniyeye değil: sayacın toplamı moddan moda ve
+  // oyundan oyuna değişiyor (turbo turda 30, üçgen sorusunda 22) ve sabit
+  // "10 saniye kaldı" eşiği birinde turun yarısı, ötekinde sonu demek olurdu.
   const oran = toplam > 0 ? kalan / toplam : 0
   if (oran <= 0.25) return 'var(--danger)'
   if (oran <= 0.5) return 'var(--ikincil)'
@@ -554,6 +765,7 @@ export function TurSonu({
   rekor,
   yeniRekor,
   bankaTuru,
+  mod,
   elendi,
   puan,
   altBaslik,
@@ -572,11 +784,13 @@ export function TurSonu({
   yeniRekor: boolean
   /** Banka turunda rekor ve istatistik yazılmıyor; ekran bunu söylüyor. */
   bankaTuru: boolean
+  /** Turun modu — Rahat turda da rekor yazılmıyor ve ekran bunu söylüyor. */
+  mod: OyunModu
   /**
    * Turu ne bitirdi.
    *
-   * Başlığı değiştiriyor: "Süre bitti" artık doğru değil — tur sonsuzdu, onu
-   * bitiren şey yanlış cevaptı ve oyuncunun bunu net görmesi gerekiyor.
+   * Başlığı değiştiriyor: turu bitiren şeyin süre mi yanlış mı olduğu oyuncu
+   * için aynı his değil ve moda göre ikisi de mümkün.
    */
   elendi?: Eleme
   /**
@@ -606,7 +820,9 @@ export function TurSonu({
         : 'normal'
 
   return (
-    <div className="flex flex-1 flex-col gap-3 py-3">
+    <div className="relative flex flex-1 flex-col gap-3 py-3">
+      {yeniRekor && <Konfeti />}
+
       <div className="flex flex-none items-center gap-3 px-0.5">
         <Rabi durum={maskot} boyut={52} />
         <div className="min-w-0">
@@ -617,17 +833,21 @@ export function TurSonu({
               ? 'Boss’a takıldın'
               : elendi === 'yanlis'
                 ? 'Bir yanlış yetti'
-                : yeniRekor
-                  ? 'Yeni rekor!'
-                  : 'Tur bitti'}
+                : elendi === 'sure'
+                  ? 'Süre bitti'
+                  : yeniRekor
+                    ? 'Yeni rekor!'
+                    : 'Tur bitti'}
           </h2>
           <p className="mt-0.5 text-[12.5px] font-semibold text-muted-foreground">{altBaslik}</p>
         </div>
       </div>
 
-      {bankaTuru && (
+      {/* Rekorun neden kıpırdamadığı burada yazıyor. İki sebep de aynı
+          sonucu veriyor ama sebebi söylemeden sonuç şaşırtıcı olurdu. */}
+      {(bankaTuru || !modKayitliMi(mod)) && (
         <p className="flex-none self-start rounded-full bg-ikincil-soft px-3 py-1 text-[11.5px] font-extrabold text-ikincil">
-          Banka turu — rekora sayılmaz
+          {bankaTuru ? 'Banka turu' : `${MODLAR[mod].ad} tur`} — rekora sayılmaz
         </p>
       )}
 
