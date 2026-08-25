@@ -1,18 +1,3 @@
-import type { LucideIcon } from 'lucide-react'
-import {
-  Award,
-  BarChart3,
-  CalendarX2,
-  ClipboardList,
-  GraduationCap,
-  Images,
-  PencilLine,
-  Sparkles,
-  Target,
-  Timer,
-  TrendingUp,
-} from 'lucide-react'
-
 /**
  * Alt menüdeki dört sekme.
  *
@@ -48,7 +33,15 @@ export type KartTanimi = {
   id: Ekran
   ad: string
   aciklama: string
-  Simge: LucideIcon
+  /**
+   * Kartın yüzü — emoji.
+   *
+   * Önce `lucide` çizgi simgesiydi. Araçlar ve Oyunlar sekmeleri aynı kart
+   * biçimini paylaşıyor ama biri çizgi simge biri emoji gösterince yan yana
+   * iki farklı uygulamadan alınmış gibi duruyordu. Oyun tanımlarındaki
+   * `ikon` alanıyla aynı iş.
+   */
+  ikon: string
   renk: KartRengi
 }
 
@@ -61,65 +54,65 @@ export const KARTLAR: KartTanimi[] = [
     id: 'pomodoro',
     ad: 'Pomodoro',
     aciklama: 'Sayaçlı çalışma seansı',
-    Simge: Timer,
+    ikon: '⏱️',
     renk: 'krem',
   },
   {
     id: 'yanlis-banka',
     ad: 'Yanlış Soru',
     aciklama: 'Zorlandığın soruların fotoğrafı',
-    Simge: Images,
+    ikon: '📸',
     renk: 'pembe',
   },
   {
     id: 'devamsizlik',
     ad: 'Devamsızlık',
     aciklama: 'Kalan gün hakkın',
-    Simge: CalendarX2,
+    ikon: '📅',
     renk: 'nane',
   },
   {
     id: 'siralama',
     ad: 'Sıralama',
     aciklama: 'Denemeden tahmini YKS sırası',
-    Simge: TrendingUp,
+    ikon: '📈',
     renk: 'lavanta',
   },
   {
     id: 'soru',
     ad: 'Soru Takibi',
     aciklama: 'Günlük çözdüğün sorular',
-    Simge: PencilLine,
+    ikon: '✏️',
     renk: 'mavi',
   },
   {
     id: 'deneme',
     ad: 'Denemeler',
     aciklama: 'Net ve gidişat',
-    Simge: ClipboardList,
+    ikon: '📝',
     renk: 'pembe',
   },
   {
     id: 'haftalik-ozet',
     ad: 'Haftalık Özet',
     aciklama: 'Haftanı kart kart izle',
-    Simge: Sparkles,
+    ikon: '✨',
     renk: 'lavanta',
   },
   {
     id: 'okul',
     ad: 'Okul Notları',
     aciklama: 'Dönem notları ve OBP',
-    Simge: GraduationCap,
+    ikon: '🎓',
     renk: 'krem',
   },
-  { id: 'hedef', ad: 'Hedefim', aciklama: 'Üniversite ve bölüm', Simge: Target, renk: 'nane' },
-  { id: 'rozetler', ad: 'Rozetler', aciklama: 'Kazandıkların', Simge: Award, renk: 'krem' },
+  { id: 'hedef', ad: 'Hedefim', aciklama: 'Üniversite ve bölüm', ikon: '🎯', renk: 'nane' },
+  { id: 'rozetler', ad: 'Rozetler', aciklama: 'Kazandıkların', ikon: '🏅', renk: 'krem' },
   {
     id: 'istatistik',
     ad: 'İstatistik',
     aciklama: 'Ders bazlı gidişat',
-    Simge: BarChart3,
+    ikon: '📊',
     renk: 'mavi',
   },
 ]

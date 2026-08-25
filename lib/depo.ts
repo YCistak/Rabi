@@ -150,14 +150,14 @@ okulNotlariniTasi()
  * Günlük soru hedefinin sınırları — kurulumdaki ve Ayarlar'daki çubuk aynı
  * aralığı kullanıyor.
  *
- * Üst sınır 500: günde 500 sorunun üstü bir lise öğrencisi için gerçekçi değil
- * ve çubuğun tamamı o aralığa yayılınca 150 ile 200'ü ayırmak zorlaşıyordu.
- * Elli'şer artıyor; daha ince bir basamak çubuğu parmakla isabet ettirilemez
- * hâle getirir.
+ * Üst sınır 500: günde 500 sorunun üstü bir lise öğrencisi için gerçekçi değil.
+ * Yirmi beşer artıyor. Sürüklenen çubuk zamanında elli'şerdi — daha ince bir
+ * basamağa parmakla isabet ettirmek zordu; tekerlekte her basamak kendi satırı
+ * olduğu için böyle bir sınır yok ve 175 ya da 225 gibi hedefler de seçilebiliyor.
  */
 export const HEDEF_EN_AZ = 50
 export const HEDEF_EN_COK = 500
-export const HEDEF_ADIMI = 50
+export const HEDEF_ADIMI = 25
 
 export const VARSAYILAN_AYARLAR: Ayarlar = {
   varsayilanSablonId: VARSAYILAN_SABLON_ID,

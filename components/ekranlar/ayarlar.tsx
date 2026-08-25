@@ -31,7 +31,7 @@ import {
   type OdakDurumu,
 } from '@/lib/odak-kilidi'
 import { UygulamaSecici } from '@/components/odak/uygulama-secici'
-import { DikCubuk, SaatSecici } from '@/components/secici'
+import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { SINIF_SECENEKLERI, egitimYili, katsayiYaz, mezunMu, sinifAdi } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
 import {
@@ -309,10 +309,10 @@ export function AyarlarEkrani({
           />
           {acikAyar === 'hedef' && (
             <GenisAlan tam>
-              {/* Kurulumdaki çubuğun aynısı: iki yerde iki farklı seçim
+              {/* Kurulumdaki tekerleğin aynısı: iki yerde iki farklı seçim
                   biçimi olsaydı kullanıcı hedefi değiştirmeye geldiğinde
                   tanımadığı bir arayüzle karşılaşırdı. */}
-              <DikCubuk
+              <SayiTekerlegi
                 deger={ayarlar.gunlukHedef}
                 onDegis={(yeni) => setAyarlar((o) => ({ ...o, gunlukHedef: yeni }))}
                 enAz={HEDEF_EN_AZ}
@@ -321,12 +321,12 @@ export function AyarlarEkrani({
                 birim="soru"
                 etiket="Günlük soru hedefi"
               />
-              {/* Çubuk elli'şer artıyor; eski bir kurulumdan 275 gibi bir
-                  sayı kalmışsa kullanıcı onu görebilmeli. */}
+              {/* Tekerlek yirmi beşer artıyor; eski bir kurulumdan 310 gibi
+                  bir sayı kalmışsa kullanıcı onu görebilmeli. */}
               {ayarlar.gunlukHedef % HEDEF_ADIMI !== 0 && (
                 <AlanNotu>
                   Şu an <strong className="rakam text-foreground">{ayarlar.gunlukHedef}</strong>{' '}
-                  seçili. Çubuğa dokunursan en yakın elliliğe oturur.
+                  seçili. Tekerleğe dokunursan en yakın basamağa oturur.
                 </AlanNotu>
               )}
             </GenisAlan>
@@ -360,11 +360,7 @@ export function AyarlarEkrani({
             Simge={ClipboardList}
             renk="krem"
             baslik="Sınıfım"
-            aciklama={
-              mezunMu(ayarlar.buYilSinif)
-                ? 'Mezunda ilerleme durur'
-                : 'Her eylülde kendiliğinden ilerler'
-            }
+            aciklama="Bu yılki sınıfın"
             deger={sinifAdi(ayarlar.buYilSinif)}
             {...acilir('sinif')}
           />

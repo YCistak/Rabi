@@ -280,10 +280,27 @@
       %30–46  slogan belirir
       %38–52  çark, şerit ve "HAZIRLANIYOR" belirir
       %66–86  yazılar ve yükleme bloğu söner
-      %68–100 tavşan sol üste küçülerek süzülür (ana sayfa başlığına doğru)
+      %68–100 tavşan varış noktasına küçülerek süzülür
+      %78–92  zemin solar — tavşanın son yolu uygulamanın üstünde geçer
   */
   .acilis-inis {
+    /* Varış noktası `components/acilis.tsx`'ten `style` ile geliyor; burada
+       yalnızca yedek değerler duruyor (ana sayfa başlığındaki maskot). */
+    --acilis-x: -147px;
+    --acilis-y: -224px;
+    --acilis-olcek: 0.33;
     animation: acilis-inis 4200ms cubic-bezier(0.3, 0.8, 0.25, 1) forwards;
+  }
+  /*
+    Açılışın zemini. Ayrı bir katman, çünkü gösteri biterken **yalnız zemin**
+    kayboluyor: tavşan son yolunu ana sayfanın (ya da kurulumun) üstünde
+    uçarak alıyor. Zemin en dış katmanda dursaydı tavşan bomboş beyaz bir
+    ekranda süzülür, uygulama ancak o iş bittikten sonra görünürdü.
+  */
+  .acilis-zemin {
+    position: absolute;
+    inset: 0;
+    animation: acilis-zemin-son 4200ms ease-out forwards;
   }
   .acilis-yazi {
     animation: acilis-yazi 4200ms cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
@@ -417,10 +434,12 @@
 /*
   Tavşanın inişi ve çıkışı.
 
-  Bitiş değeri (-147px, -224px) scale(0.33): 390×844 ekranda maskotun ana sayfa
-  başlığındaki 38px'lik konumuna denk geliyor — açılış kalkınca tavşan yerinde
-  duruyormuş gibi görünüyor. Başlıktaki maskotun ölçüsü değişirse yalnız bu iki
-  değeri güncelle.
+  Varış noktası `--acilis-x` / `--acilis-y` / `--acilis-olcek` değişkenlerinden
+  geliyor; değerleri `components/acilis.tsx` içindeki `VARIS` tablosunda.
+  Uygulama kuruluysa ana sayfa başlığındaki maskotun üstüne, ilk açılışta
+  kurulum sihirbazının tepesindeki maskotun üstüne oturuyor — açılış kalkınca
+  tavşan yerinde duruyormuş gibi görünüyor. Başlıktaki maskotun ölçüsü ya da
+  yeri değişirse yalnız o tabloyu güncelle.
 */
 @keyframes acilis-inis {
   0% { opacity: 0; transform: translateY(-300px) scale(1.04); }
@@ -428,7 +447,10 @@
   26% { transform: translateY(14px) scale(0.99); }
   34% { opacity: 1; transform: translateY(0) scale(1); }
   68% { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 1; transform: translate(-147px, -224px) scale(0.33); }
+  100% {
+    opacity: 1;
+    transform: translate(var(--acilis-x), var(--acilis-y)) scale(var(--acilis-olcek));
+  }
 }
 
 @keyframes acilis-yazi {
@@ -456,6 +478,12 @@
 @keyframes acilis-son {
   0%, 68% { opacity: 1; }
   86%, 100% { opacity: 0; }
+}
+
+/** Zemin, yazılar tamamen söndükten sonra çekiliyor; sıra karışmasın. */
+@keyframes acilis-zemin-son {
+  0%, 78% { opacity: 1; }
+  92%, 100% { opacity: 0; }
 }
 
 @keyframes acilis-cark {
@@ -539,8 +567,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Tavşan uçmuyor ama sönüyor: zemin çekildikten sonra ekranın ortasında
+     asılı kalmasın. */
+  .acilis-inis {
+    animation: acilis-son 4200ms ease-out forwards;
+  }
   .acilis-girisi,
-  .acilis-inis,
   .acilis-yazi,
   .acilis-slogan,
   .acilis-yukleme,

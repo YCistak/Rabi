@@ -6,7 +6,7 @@ import type { Ayarlar, OkulYili, PuanTuru } from '@/lib/types'
 import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
 import { yeniId } from '@/lib/utils'
 import { Alan, Buton, Cip, Etiket, Kart } from '@/components/ui'
-import { DikCubuk, SaatSecici } from '@/components/secici'
+import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { Rabi } from '@/components/maskot/rabi'
 import { izinIste } from '@/lib/bildirim'
 import { HEDEF_ADIMI, HEDEF_EN_AZ, HEDEF_EN_COK } from '@/lib/depo'
@@ -56,8 +56,8 @@ const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
     aciklama: 'Sıralama tahmini ve deneme şablonları buna göre ayarlanır.',
   },
   hedef: {
-    baslik: 'Günlük soru hedefin',
-    aciklama: 'Her günü buna göre takip edeceğim.',
+    baslik: 'Bugün kaç soru çözmek istiyorsun?',
+    aciklama: 'Günlük hedefini belirle.',
   },
   hatirlatma: {
     baslik: 'Hatırlatma',
@@ -222,13 +222,12 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
 
         {suanki === 'hedef' && (
           /*
-            Kartta çubuktan başka hiçbir şey yok: adımın başlığı zaten "Günlük
-            soru hedefin", altında da ne işe yaradığı yazıyor. Kartın içinde
-            ayrıca bir soru cümlesi, basamak cetveli ve üç satırlık öğüt
-            varken asıl iş — sürüklenecek çubuk — sayfanın gürültüsü içinde
-            kayboluyordu.
+            Kartta tekerlekten başka hiçbir şey yok: adımın başlığı zaten soruyu
+            soruyor, altında da ne işe yaradığı yazıyor. Kartın içinde ayrıca
+            bir soru cümlesi, basamak cetveli ve üç satırlık öğüt varken asıl iş
+            sayfanın gürültüsü içinde kayboluyordu.
           */
-          <DikCubuk
+          <SayiTekerlegi
             deger={hedef}
             onDegis={setHedef}
             enAz={HEDEF_EN_AZ}
@@ -236,7 +235,6 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
             adim={HEDEF_ADIMI}
             birim="soru"
             etiket="Günlük soru hedefi"
-            className="py-2"
           />
         )}
 

@@ -6,16 +6,16 @@ import { cn } from '@/lib/utils'
 /**
  * Kart aileleri — Oyunlar sekmesindeki ders kartlarıyla aynı üçlü.
  *
- * `zemin` kartın pastel yüzeyi, `yazi` o yüzeyin üstünde okunan koyu ton,
- * `ok` ise sağ alttaki dolu dairenin rengi. İki ekran aynı kart biçimini
- * kullanıyor, dolayısıyla renk sözleşmesi de aynı olmak zorunda.
+ * `zemin` kartın pastel yüzeyi, `ok` sağ alttaki dolu dairenin rengi. İki
+ * ekran aynı kart biçimini kullanıyor, dolayısıyla renk sözleşmesi de aynı
+ * olmak zorunda.
  */
-const RENK_SINIFI: Record<KartRengi, { zemin: string; yazi: string; ok: string }> = {
-  mavi: { zemin: 'bg-primary-soft', yazi: 'text-primary', ok: 'bg-primary' },
-  pembe: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu', ok: 'bg-yzm-ok' },
-  krem: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', ok: 'bg-isl-ok' },
-  nane: { zemin: 'bg-success-soft', yazi: 'text-success', ok: 'bg-success' },
-  lavanta: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu', ok: 'bg-edb-ok' },
+const RENK_SINIFI: Record<KartRengi, { zemin: string; ok: string }> = {
+  mavi: { zemin: 'bg-primary-soft', ok: 'bg-primary' },
+  pembe: { zemin: 'bg-yzm-kart', ok: 'bg-yzm-ok' },
+  krem: { zemin: 'bg-isl-kart', ok: 'bg-isl-ok' },
+  nane: { zemin: 'bg-success-soft', ok: 'bg-success' },
+  lavanta: { zemin: 'bg-edb-kart', ok: 'bg-edb-ok' },
 }
 
 /**
@@ -101,7 +101,7 @@ function AracKarti({
   genis: boolean
   onAc: () => void
 }) {
-  const { ad, aciklama, Simge, renk } = kart
+  const { ad, aciklama, ikon, renk } = kart
   const aile = RENK_SINIFI[renk]
 
   return (
@@ -115,13 +115,13 @@ function AracKarti({
         genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[164px] flex-col',
       )}
     >
+      {/* Oyun kartındaki kutunun aynısı: aynı ölçü, aynı beyaz yüzey, aynı
+          emoji boyu. İki sekme yan yana bakıldığında tek bir dile benzesin. */}
       <span
-        className={cn(
-          'grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80',
-          aile.yazi,
-        )}
+        className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80 text-[23px] leading-none"
+        aria-hidden
       >
-        <Simge size={24} aria-hidden />
+        {ikon}
       </span>
 
       <span className={cn('min-w-0', genis ? 'flex-1' : 'mt-2.5')}>

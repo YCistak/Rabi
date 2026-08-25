@@ -29,19 +29,59 @@ const ZEMIN = '#F8F8F7'
  */
 export const ACILIS_SURESI = 4200
 
-export function Acilis({ kapaniyor }: { kapaniyor: boolean }) {
+/**
+ * Tavşanın gösteri sonunda gideceği yer.
+ *
+ * `kose`: ana sayfanın başlığındaki maskotun üstü — uygulama daha önce
+ * kurulmuşsa açılışın arkasında ana sayfa duruyor.
+ * `kurulum`: kurulum sihirbazının tepesindeki maskotun üstü. İlk açılışta sol
+ * üst köşede hiçbir şey yok; tavşan oraya gidince ekranın kimsesiz bir
+ * köşesine süzülmüş gibi oluyordu.
+ *
+ * Konum sınıf değil **değişken** olarak veriliyor: `kurulumTamamlandi`
+ * localStorage'dan bir kare sonra geliyor ve sınıf değişseydi animasyon
+ * baştan başlardı. Değişken değişince yalnız varış noktası güncelleniyor.
+ */
+export type AcilisVarisi = 'kose' | 'kurulum'
+
+const VARIS: Record<AcilisVarisi, React.CSSProperties> = {
+  // 390×844 ekranda ana sayfa başlığındaki 58px'lik maskotun yeri.
+  kose: { '--acilis-x': '-147px', '--acilis-y': '-224px', '--acilis-olcek': '0.33' },
+  // Kurulumun tepesindeki 110px'lik maskot: yatayda zaten ortada, dikeyde
+  // sayfanın üst boşluğuna (2rem + güvenli alan) çıkıyor.
+  kurulum: {
+    '--acilis-x': '0px',
+    '--acilis-y': 'calc(2rem + var(--guvenli-ust) + 160px - 50dvh)',
+    '--acilis-olcek': '0.98',
+  },
+} as Record<AcilisVarisi, React.CSSProperties>
+
+export function Acilis({
+  kapaniyor,
+  varis = 'kose',
+}: {
+  kapaniyor: boolean
+  varis?: AcilisVarisi
+}) {
   return (
     <div
-      className="fixed inset-0 z-[60] overflow-hidden transition-opacity duration-300"
-      style={{ backgroundColor: ZEMIN, opacity: kapaniyor ? 0 : 1 }}
+      // Zemin bu katmanda değil altındaki `acilis-zemin`de: gösteri biterken
+      // zemin soluyor ve tavşan **uygulamanın üstünde** uçarak yerine gidiyor.
+      // Zemin burada dursaydı tavşan yol boyunca bomboş beyaz bir ekranda
+      // süzülürdü. `pointer-events-none`, sönen katmanın son yarım saniyede
+      // dokunuşları yutmasını engelliyor.
+      className="pointer-events-none fixed inset-0 z-[60] overflow-hidden transition-opacity duration-300"
+      style={{ opacity: kapaniyor ? 0 : 1 }}
       aria-hidden={kapaniyor}
       role="status"
       aria-label="Rabi açılıyor"
     >
-      {/* Arka planda yavaşça sürüklenen iki yumuşak parıltı. Zemin düz beyaza
-          yakın; bunlar olmadan ekran boş bir kâğıt gibi duruyor. */}
-      <span className="acilis-parilti acilis-parilti-sol" />
-      <span className="acilis-parilti acilis-parilti-sag" />
+      {/* Zemin ve üstündeki iki yumuşak parıltı. Zemin düz beyaza yakın;
+          parıltılar olmadan ekran boş bir kâğıt gibi duruyor. */}
+      <div className="acilis-zemin" style={{ backgroundColor: ZEMIN }}>
+        <span className="acilis-parilti acilis-parilti-sol" />
+        <span className="acilis-parilti acilis-parilti-sag" />
+      </div>
 
       {/*
         Yerleşim `flex` ile değil, ortadan ölçülen sabit boşluklarla kuruluyor:
@@ -54,7 +94,7 @@ export function Acilis({ kapaniyor }: { kapaniyor: boolean }) {
         <span className="acilis-hale" />
         <span className="acilis-golge" />
 
-        <div className="acilis-inis -mt-[160px]">
+        <div className="acilis-inis -mt-[160px]" style={VARIS[varis]}>
           {/*
             Uygulamanın kendi maskotu kullanılıyor, ayrı bir açılış çizimi değil:
             animasyon tavşanı sol üste süzülerek bitiriyor ve orada ana sayfanın

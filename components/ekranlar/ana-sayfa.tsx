@@ -25,11 +25,11 @@ const GUN_ADLARI = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt']
 
 /** Kutucuk yüzleri — `KARTLAR`'daki pastel aile adları tema değişkenlerine bağlanıyor. */
 const KUTUCUK_RENGI: Record<KartRengi, string> = {
-  mavi: 'bg-primary-soft text-primary',
-  pembe: 'bg-yzm-kart text-yzm-koyu',
-  krem: 'bg-isl-kart text-isl-koyu',
-  nane: 'bg-success-soft text-success',
-  lavanta: 'bg-edb-kart text-edb-koyu',
+  mavi: 'bg-primary-soft',
+  pembe: 'bg-yzm-kart',
+  krem: 'bg-isl-kart',
+  nane: 'bg-success-soft',
+  lavanta: 'bg-edb-kart',
 }
 
 /** Oyunların kendi aileleri var; ana sayfadaki kutucuk da aynı rengi taşımalı. */
@@ -214,10 +214,13 @@ export function AnaSayfa({
             <h2 className="font-display text-base font-extrabold tracking-tight">
               Bugünkü soru hedefin
             </h2>
-            <p className="rakam text-[13px] leading-snug font-semibold text-muted-foreground">
-              {ayarlar.gunlukHedef} hedefin var, {kalan} soru kaldı.
+            {/* Satırın tamamı ince, yalnız "kaç soru kaldı" kalın: göz kartta
+                tek bir sayı arıyor ve o sayı bu. Hedefin kendisi bağlam. */}
+            <p className="rakam text-[13px] leading-snug font-medium text-muted-foreground">
+              {ayarlar.gunlukHedef} hedefin var,{' '}
+              <strong className="font-extrabold text-foreground">{kalan} soru kaldı.</strong>
             </p>
-            <p className="text-[13px] leading-snug font-semibold text-muted-foreground">
+            <p className="text-[13px] leading-snug font-medium text-muted-foreground">
               {hedefCumlesi(bugunku.toplam, kalan, ayarlar.gunlukHedef, hedefTuttu)}
             </p>
           </div>
@@ -268,64 +271,49 @@ export function AnaSayfa({
         </Not>
       )}
 
-      {/* Araçlar — en son açılan dördü; hiç açılmamışsa `KARTLAR`'ın başı.
-          Kart içinde değil, doğrudan zeminde duran dört kutucuk: kartın içine
-          konunca ana sayfa üst üste yığılmış kutuların listesine dönüyordu. */}
-      <Bolum onTumu={onDahaGit}>
-        {gosterilenAraclar.map(({ id, ad, Simge, renk }) => (
-          <Kutucuk key={id} ad={ad} onSec={() => onKartAc(id)}>
-            <span className={cn('grid size-11 place-items-center rounded-2xl', KUTUCUK_RENGI[renk])}>
-              <Simge size={22} aria-hidden />
-            </span>
-          </Kutucuk>
+      {/* Araçlar ve Oyunlar aynı biçimde: başlık + "Tümü", altında tek bir
+          kutunun içinde dört yüz. Araçlar bir ara başlıksız ve kutusuz
+          duruyordu; iki bölüm yan yana iki ayrı tasarım gibi okunuyordu. */}
+      <Bolum baslik="Araçlar 🧰" onTumu={onDahaGit}>
+        {gosterilenAraclar.map(({ id, ad, ikon, renk }) => (
+          <Kutucuk key={id} ad={ad} ikon={ikon} renk={KUTUCUK_RENGI[renk]} onSec={() => onKartAc(id)} />
         ))}
       </Bolum>
 
-      {/* Oyunlar — en son oynanan dördü; hiç oynanmamışsa `OYUNLAR`'ın başı.
-          Yüz daire, araç kutucuklarının yuvarlak karesi değil: oyunlar bir
-          şeyi takip etmiyor, ayrı bir tür olduğu ilk bakışta belli olsun. */}
       <Bolum baslik="Oyunlar 🎮" onTumu={onOyunlaraGit}>
         {gosterilenOyunlar.map((oyun) => (
-          <Kutucuk key={oyun.id} ad={oyun.ad} onSec={onOyunlaraGit}>
-            <span
-              className={cn('grid size-11 place-items-center rounded-full', OYUN_RENGI[oyun.id])}
-            >
-              <span className="text-[22px] leading-none" aria-hidden>
-                {oyun.ikon}
-              </span>
-            </span>
-          </Kutucuk>
+          <Kutucuk
+            key={oyun.id}
+            ad={oyun.ad}
+            ikon={oyun.ikon}
+            renk={OYUN_RENGI[oyun.id]}
+            onSec={onOyunlaraGit}
+          />
         ))}
       </Bolum>
-
     </div>
   )
 }
 
-/**
- * Kartsız kısayol bölümü: üstte başlık + "Tümü", altında dört beyaz kutucuk.
- * Kutucukların her biri kendi kartı — dördü tek bir kartın içinde dururken
- * hangisinin ayrı bir düğme olduğu belli olmuyordu.
- */
+/** Kısayol bölümü: üstte başlık + "Tümü", altında dört yüzü tutan tek kutu. */
 function Bolum({
   baslik,
   onTumu,
   children,
 }: {
-  /** Yoksa başlık satırı hiç çizilmiyor — araç kutucukları tasarımda başlıksız. */
-  baslik?: string
+  baslik: string
   onTumu: () => void
   children: React.ReactNode
 }) {
   return (
     <section>
-      {baslik && (
-        <div className="mb-2 flex items-center justify-between gap-3 px-1">
-          <h2 className="font-display text-base font-extrabold tracking-tight">{baslik}</h2>
-          <TumuBaglantisi onSec={onTumu} />
-        </div>
-      )}
-      <div className="grid grid-cols-4 gap-2.5">{children}</div>
+      <div className="mb-2 flex items-center justify-between gap-3 px-1">
+        <h2 className="font-display text-base font-extrabold tracking-tight">{baslik}</h2>
+        <TumuBaglantisi onSec={onTumu} />
+      </div>
+      <Kart className="px-2.5 py-3.5">
+        <div className="grid grid-cols-4 gap-1.5">{children}</div>
+      </Kart>
     </section>
   )
 }
@@ -342,23 +330,30 @@ function TumuBaglantisi({ onSec }: { onSec: () => void }) {
   )
 }
 
-/** Beyaz kart + ortada renkli yüz + altında ad. Araçlar ve Oyunlar aynı kutucuğu kullanır. */
+/** Pastel daire içinde emoji, altında ad. Araçlar ve Oyunlar aynı kutucuğu kullanır. */
 function Kutucuk({
   ad,
+  ikon,
+  renk,
   onSec,
-  children,
 }: {
   ad: string
+  ikon: string
+  /** Dairenin pastel zemin sınıfı. */
+  renk: string
   onSec: () => void
-  children: React.ReactNode
 }) {
   return (
     <button
       type="button"
       onClick={onSec}
-      className="golge-kart flex flex-col items-center gap-1.5 rounded-[20px] bg-card px-1 pt-3 pb-2.5 transition active:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      className="flex flex-col items-center gap-1.5 rounded-2xl px-1 py-1.5 transition active:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
-      {children}
+      <span className={cn('grid size-11 place-items-center rounded-full', renk)}>
+        <span className="text-[22px] leading-none" aria-hidden>
+          {ikon}
+        </span>
+      </span>
       <span className="text-[10.5px] leading-tight font-bold text-balance text-muted-foreground">
         {ad}
       </span>

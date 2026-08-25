@@ -1,26 +1,34 @@
 'use client'
 
-import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useMemo, useRef } from 'react'
 import { cn } from '@/lib/utils'
 import { saatiKirp } from '@/lib/hatirlatma'
 
 /* ===========================================================================
-   Dik çubuk — sayı seçici
+   Sayı tekerleği
    =========================================================================== */
 
+/** Tek satırın yüksekliği (px). */
+const SAYI_SATIRI = 56
+/** Görünen satır sayısı; ortadaki seçili olan. Tek sayı olmak zorunda. */
+const SAYI_GORUNEN = 5
+
 /**
- * Yukarı aşağı sürüklenen dik çubuk.
+ * Dikey sayı seçici — telefonun kendi saat/tarih tekerleklerindeki hareket.
  *
- * Günlük soru hedefi önce çip listesiydi (100 · 200 · 300 · 400 · 500) ve
- * yanında "kendin yaz" kutusu vardı: beş sabit sayının dışında bir hedef
- * isteyen herkes klavye açıp rakam yazmak zorundaydı. Çubuk hem aradaki
- * değerleri hem de "az mı çok mu" hissini tek harekette veriyor.
+ * Günlük soru hedefi önce çip listesiydi (100 · 200 · 300 · 400 · 500), sonra
+ * yukarı aşağı sürüklenen dolu bir çubuk oldu. Çubuk "az mı çok mu" hissini
+ * veriyordu ama hangi sayıda olduğunu ancak üstündeki rakama bakarak
+ * anlıyordun ve termometre gibi duran koca bir gövde kartın tamamını
+ * kaplıyordu. Tekerlekte seçilen sayı ortada, komşuları üstünde ve altında:
+ * hem nerede olduğun hem de nereye gidebileceğin aynı anda görünüyor.
  *
- * Sürükleme `pointer` olaylarıyla: `touch` ve `mouse` ayrı ayrı yazılsaydı iki
- * kod yolu olurdu, WebView ikisini de pointer olarak veriyor. `touch-none`
- * şart — yoksa parmak çubuğu sürüklerken sayfa da kayıyor.
+ * Sürükleme kodu yok; tarayıcının kendi kaydırması + `scroll-snap`
+ * kullanılıyor. İvme, sınırda yaylanma ve dokunma hassasiyeti elle yazılsa
+ * asla bu kadar doğal olmazdı. Aynı gerekçe `SaatSecici` için de geçerli —
+ * iki seçici bilerek aynı mekanikte.
  */
-export function DikCubuk({
+export function SayiTekerlegi({
   deger,
   onDegis,
   enAz,
@@ -34,48 +42,76 @@ export function DikCubuk({
   onDegis: (yeni: number) => void
   enAz: number
   enCok: number
-  /** Kaçar kaçar artacağı. Sürükleme bu basamağa yuvarlanır. */
+  /** Kaçar kaçar artacağı. */
   adim: number
-  /** Sayının altında yazan birim ("soru" gibi). */
+  /** Seçili sayının yanında yazan birim ("soru" gibi). */
   birim: string
   /** Ekran okuyucuya söylenen ad. */
   etiket: string
   className?: string
 }) {
-  const rayRef = useRef<HTMLDivElement>(null)
-  const [suruklenen, setSuruklenen] = useState(false)
-
-  const oran = (deger - enAz) / (enCok - enAz)
-
-  /** Parmağın dikey konumunu değere çevirir; çubuk aşağıdan yukarı dolar. */
-  const konumdanDeger = useCallback(
-    (y: number) => {
-      const ray = rayRef.current
-      if (!ray) return deger
-      const kutu = ray.getBoundingClientRect()
-      const ham = 1 - (y - kutu.top) / kutu.height
-      const sinirli = Math.min(1, Math.max(0, ham))
-      const basamak = Math.round((sinirli * (enCok - enAz)) / adim) * adim
-      return enAz + basamak
-    },
-    [adim, deger, enAz, enCok],
+  const secenekler = useMemo(
+    () => Array.from({ length: Math.floor((enCok - enAz) / adim) + 1 }, (_, i) => enAz + i * adim),
+    [enAz, enCok, adim],
   )
 
-  const surukle = (e: React.PointerEvent<HTMLDivElement>) => {
-    const yeni = konumdanDeger(e.clientY)
-    if (yeni !== deger) onDegis(yeni)
+  // Kayıtlı değer basamağa oturmuyorsa (eski kurulumdan kalan 275 gibi bir
+  // sayı) en yakın satır seçiliyor; yoksa tekerlek hiçbir satıra hizalanmaz.
+  const sira = useMemo(() => {
+    const ham = Math.round((deger - enAz) / adim)
+    return Math.min(secenekler.length - 1, Math.max(0, ham))
+  }, [deger, enAz, adim, secenekler.length])
+
+  const ref = useRef<HTMLDivElement>(null)
+  const zamanlayici = useRef<ReturnType<typeof setTimeout> | null>(null)
+  /**
+   * Parmak tekerlekteyken dışarıdan gelen hizalama çalışmamalı.
+   *
+   * Seçim kaydırma sırasında anında bildiriliyor; dışarıdaki değer değişince
+   * aşağıdaki etki tekerleği yeniden konumlandırmaya kalksaydı kaydırmayı
+   * kendi ortasına çekip parmakla kavga ederdi.
+   */
+  const kaydiriyor = useRef(false)
+
+  const bosluk = ((SAYI_GORUNEN - 1) / 2) * SAYI_SATIRI
+
+  useEffect(() => {
+    const kutu = ref.current
+    if (!kutu || kaydiriyor.current) return
+    const hedef = sira * SAYI_SATIRI
+    if (Math.abs(kutu.scrollTop - hedef) > 2) kutu.scrollTo({ top: hedef })
+  }, [sira])
+
+  useEffect(() => () => void (zamanlayici.current && clearTimeout(zamanlayici.current)), [])
+
+  /**
+   * Kaydırdıkça ortadaki satırı okur.
+   *
+   * Değer beklemeden bildiriliyor: tekerlek dönerken kartın geri kalanının
+   * (kurulumdaki "Devam", ayarlardaki satır değeri) eski sayıda kalması,
+   * seçimin işlenmediği izlenimi veriyordu. `scrollend` olayı WebView'ın her
+   * sürümünde yok; kaydırma sustuktan 140 ms sonra bayrak indiriliyor.
+   */
+  const kaydirildi = () => {
+    kaydiriyor.current = true
+    const kutu = ref.current
+    if (kutu) {
+      const yeni = secenekler[Math.round(kutu.scrollTop / SAYI_SATIRI)]
+      if (yeni !== undefined && yeni !== deger) onDegis(yeni)
+    }
+    if (zamanlayici.current) clearTimeout(zamanlayici.current)
+    zamanlayici.current = setTimeout(() => {
+      kaydiriyor.current = false
+    }, 140)
   }
 
   const tusla = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const yon =
-      e.key === 'ArrowUp' || e.key === 'ArrowRight'
-        ? 1
-        : e.key === 'ArrowDown' || e.key === 'ArrowLeft'
-          ? -1
-          : 0
+      e.key === 'ArrowUp' ? -1 : e.key === 'ArrowDown' ? 1 : 0
     if (yon !== 0) {
       e.preventDefault()
-      onDegis(Math.min(enCok, Math.max(enAz, deger + yon * adim)))
+      const hedef = secenekler[Math.min(secenekler.length - 1, Math.max(0, sira + yon))]
+      if (hedef !== undefined) onDegis(hedef)
       return
     }
     if (e.key === 'Home') {
@@ -89,69 +125,67 @@ export function DikCubuk({
   }
 
   return (
-    <div className={cn('flex flex-col items-center', className)}>
-      {/*
-        Sayı çubuğun üstünde ve ortada. Yanda basamak etiketleri (50 · 100 ·
-        … · 500) de vardı; kaldırıldı — seçilen sayı zaten burada yazıyor,
-        çubuğun ne kadar dolduğu da bakışta görünüyor. İkisi yan yana durunca
-        adım adım bir cetvel gibi okunuyor ve asıl sayı kayboluyordu.
-      */}
-      <p className="mb-4 text-center">
-        <span className="rakam font-display text-[52px] leading-none font-extrabold text-primary">
-          {deger}
-        </span>
-        <span className="ml-2 text-sm font-extrabold text-muted-foreground">{birim}</span>
-      </p>
+    <div className={cn('relative', className)}>
+      {/* Seçim alanı: kart değil, zeminden zar zor ayrılan yumuşak bir bant.
+          Kutu çizilseydi tasarımın kaldırılan termometresinin yerine bu sefer
+          bir çerçeve geçmiş olurdu. */}
+      <div
+        className="pointer-events-none absolute inset-x-6 top-1/2 h-[52px] -translate-y-1/2 rounded-2xl bg-primary-soft"
+        aria-hidden
+      />
+      {/* Birim, seçili sayının sağında sabit duruyor: sayıyla birlikte
+          kaydırılsaydı her satırda tekrar eden bir gürültü olurdu. */}
+      <span
+        className="pointer-events-none absolute right-8 top-1/2 -translate-y-1/2 text-xs font-extrabold text-primary/70"
+        aria-hidden
+      >
+        {birim}
+      </span>
 
       <div
-        ref={rayRef}
-        role="slider"
-        tabIndex={0}
-        aria-label={etiket}
-        aria-valuemin={enAz}
-        aria-valuemax={enCok}
-        aria-valuenow={deger}
-        aria-valuetext={`${deger} ${birim}`}
+        ref={ref}
+        onScroll={kaydirildi}
         onKeyDown={tusla}
-        onPointerDown={(e) => {
-          // Yakalama şart: parmak çubuğun dışına taşsa bile olaylar buraya
-          // gelmeye devam etsin, sürükleme yarıda kesilmesin.
-          e.currentTarget.setPointerCapture(e.pointerId)
-          setSuruklenen(true)
-          surukle(e)
+        tabIndex={0}
+        role="listbox"
+        aria-label={etiket}
+        aria-activedescendant={undefined}
+        className="scrollbar-gizli relative snap-y snap-mandatory overflow-y-auto overscroll-contain rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        style={{
+          height: SAYI_GORUNEN * SAYI_SATIRI,
+          paddingTop: bosluk,
+          paddingBottom: bosluk,
+          // Uçlardaki sayılar kesilmek yerine soluyor. Satır opaklıkları
+          // uzaklığa göre zaten düşüyor, maske o geçişi kenara kadar taşıyor.
+          maskImage:
+            'linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent)',
+          WebkitMaskImage:
+            'linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent)',
         }}
-        onPointerMove={(e) => {
-          if (suruklenen) surukle(e)
-        }}
-        onPointerUp={() => setSuruklenen(false)}
-        onPointerCancel={() => setSuruklenen(false)}
-        className={cn(
-          'relative h-[260px] w-[84px] shrink-0 touch-none overflow-hidden rounded-[28px] bg-muted',
-          'transition-shadow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-          suruklenen && 'ring-2 ring-primary ring-offset-2 ring-offset-card',
-        )}
       >
-        {/* Dolu kısım aşağıdan yukarı. Sürüklenirken geçiş kapalı: animasyon
-            parmağın arkasında kalıp çubuk takılıyormuş gibi duruyordu. */}
-        <div
-          className={cn(
-            'absolute inset-x-0 bottom-0 rounded-[28px] bg-primary-parlak',
-            !suruklenen && 'transition-[height] duration-150',
-          )}
-          style={{ height: `${Math.max(7, oran * 100)}%` }}
-          aria-hidden
-        />
-
-        {/* Tutamak: dolu kısmın tepesinde duran beyaz çizgi. Çubuğun nereden
-            tutulacağı yazıyla değil biçimle söyleniyor. */}
-        <div
-          className={cn(
-            'absolute inset-x-3.5 h-1.5 -translate-y-1/2 rounded-full bg-white/85',
-            !suruklenen && 'transition-[bottom] duration-150',
-          )}
-          style={{ bottom: `calc(${Math.max(7, oran * 100)}% - 3px)` }}
-          aria-hidden
-        />
+        {secenekler.map((secenek, i) => {
+          const uzaklik = Math.abs(i - sira)
+          return (
+            <button
+              key={secenek}
+              type="button"
+              role="option"
+              aria-selected={i === sira}
+              onClick={() => onDegis(secenek)}
+              className={cn(
+                'rakam flex w-full snap-center items-center justify-center font-display font-extrabold tabular-nums transition-all duration-150',
+                uzaklik === 0
+                  ? 'text-[40px] text-primary'
+                  : uzaklik === 1
+                    ? 'text-[24px] text-foreground/45'
+                    : 'text-[19px] text-foreground/20',
+              )}
+              style={{ height: SAYI_SATIRI }}
+            >
+              {secenek}
+            </button>
+          )
+        })}
       </div>
     </div>
   )

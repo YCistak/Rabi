@@ -336,6 +336,18 @@ export function AppShell() {
     gunlukKayitlar,
   ])
 
+  /*
+    Ekran değişince sayfa başa döner.
+
+    Tarayıcı kaydırma konumunu **belgede** tutuyor; sekmeler ayrı sayfalar
+    değil, aynı belgenin farklı içeriği. Uzun bir ekranın (Ayarlar, Oyunlar)
+    dibindeyken başka bir sekmeye geçince yeni ekran da dibinden açılıyordu —
+    kısa bir ekransa doğrudan boşluğa.
+  */
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [sekme, ekran, denemeFormu, bankaTuru])
+
   const geriGit = useCallback(() => {
     // En içteki katmandan dışa doğru: ekranın kendi açtığı katman (fotoğraf
     // görüntüleyici, onay kutusu) → form → alt ekran → ana sekme → çıkış.
@@ -399,7 +411,14 @@ export function AppShell() {
 
   // Açılış ekranı bütün dönüşlerin üstünde duruyor: kurulum sihirbazı ve veri
   // beklenirken gösterilen boş ekran da onun altında kalmalı.
-  const acilisKatmani = acilisGorunur ? <Acilis kapaniyor={acilis === 'kapaniyor'} /> : null
+  const acilisKatmani = acilisGorunur ? (
+    <Acilis
+      kapaniyor={acilis === 'kapaniyor'}
+      // İlk açılışta arkada kurulum sihirbazı var; tavşan sol üst köşeye
+      // değil onun tepesindeki maskotun üstüne konuyor.
+      varis={ayarlar.kurulumTamamlandi ? 'kose' : 'kurulum'}
+    />
+  ) : null
 
   // Veri okunmadan ekran çizilirse "kayıt yok" bir an yanıp söner.
   if (!ayarlarHazir) {
