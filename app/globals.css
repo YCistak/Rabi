@@ -22,7 +22,6 @@
   --color-warning: var(--warning);
   --color-warning-soft: var(--warning-soft);
   --color-grid: var(--grid);
-  --color-maskot-hat: var(--maskot-hat);
 
   /* Mini oyun aileleri */
   --color-yzm: var(--yzm);
@@ -179,20 +178,8 @@
   /* Boss sorusunda oyun ekranının zemini. */
   --boss-zemin: var(--ikincil-soft);
 
-  /* Maskot renkleri — Rabi'nin kürkü zeminden hafifçe ayrışır. Dolgular
-     amber palete uysun diye sıcaklaştırıldı; eski pembe burun ve yanak
-     burada soğuk kalıyordu. */
-  --maskot-kurk: #ffffff;
-  /* Kürk beyaz, zemin de neredeyse beyaz: mavi paletteki mavimsi kâğıt
-     gittiğinde maskotun dış hattı kayboluyordu. İnce sıcak gri bir kontur
-     hem kırık beyaz zeminde hem beyaz kartın üstünde siluetı geri veriyor. */
-  --maskot-hat: #d8d3cd;
-  --maskot-kulak-ic: #f2cfc2;
-  --maskot-yanak: #f7dace;
-  --maskot-burun: #d9784f;
-  --maskot-agiz: #a8432b;
-  --maskot-cizgi: #1b1a19;
-  --maskot-parlak: #ffffff;
+  /* Maskot artık bir görsel (`public/tavsan-yuz.png`); boyanacak bir çizim
+     kalmadığı için maskot renk değişkenleri kaldırıldı. */
 }
 
 @layer base {
@@ -283,7 +270,7 @@
   /* --- Açılış ekranı (components/acilis.tsx) --- */
 
   /*
-    Tek seferlik, `ACILIS_SURESI` (2,4s) boyunca akan bir gösteri. Bütün
+    Tek seferlik, `ACILIS_SURESI` (4,2s) boyunca akan bir gösteri. Bütün
     parçalar aynı süreyi paylaşıyor ve sıralarını yüzdelerle alıyor: süreyi
     değiştirmek istersen yalnız `animation-duration` değerlerini aynı oranda
     değiştir, yüzdeler kendiliğinden ölçeklenir.
@@ -296,19 +283,19 @@
       %68–100 tavşan sol üste küçülerek süzülür (ana sayfa başlığına doğru)
   */
   .acilis-inis {
-    animation: acilis-inis 2400ms cubic-bezier(0.3, 0.8, 0.25, 1) forwards;
+    animation: acilis-inis 4200ms cubic-bezier(0.3, 0.8, 0.25, 1) forwards;
   }
   .acilis-yazi {
-    animation: acilis-yazi 2400ms cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
+    animation: acilis-yazi 4200ms cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
   }
   .acilis-slogan {
-    animation: acilis-slogan 2400ms ease-out forwards;
+    animation: acilis-slogan 4200ms ease-out forwards;
   }
   .acilis-yukleme {
-    animation: acilis-yukleme 2400ms ease-out forwards;
+    animation: acilis-yukleme 4200ms ease-out forwards;
   }
   .acilis-alt {
-    animation: acilis-son 2400ms ease-out forwards;
+    animation: acilis-son 4200ms ease-out forwards;
   }
   .acilis-cark {
     animation: acilis-cark 3600ms linear infinite;
@@ -326,7 +313,7 @@
     border-radius: 999px;
     background: radial-gradient(circle, color-mix(in srgb, var(--primary) 8%, transparent), transparent 68%);
     filter: blur(5px);
-    animation: acilis-hale 6s ease-in-out infinite, acilis-son 2400ms ease-out forwards;
+    animation: acilis-hale 6s ease-in-out infinite, acilis-son 4200ms ease-out forwards;
   }
   .acilis-golge {
     position: absolute;
@@ -338,7 +325,7 @@
     border-radius: 999px;
     background: radial-gradient(ellipse, rgba(24, 23, 22, 0.1), transparent 72%);
     filter: blur(3px);
-    animation: acilis-havuz 6.5s ease-in-out infinite, acilis-son 2400ms ease-out forwards;
+    animation: acilis-havuz 6.5s ease-in-out infinite, acilis-son 4200ms ease-out forwards;
   }
 
   /* Arka plandaki yumuşak parıltılar. */

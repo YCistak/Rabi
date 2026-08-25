@@ -86,20 +86,12 @@ const PUAN_TURU_ADI: Record<PuanTuru, string> = {
  */
 type AyarId = 'hedef' | 'alan' | 'sinif' | 'deneme-turu' | 'hatirlatma-saati' | 'muzik-turu'
 
-/**
- * Mini oyun müziği seçenekleri. Hangisinin "iyi" olduğu tamamen zevk meselesi
- * olduğu için seçim kullanıcıda bırakıldı; tek bir parça dayatmak, beğenmeyen
- * için müziği tamamen kapatmaktan başka yol bırakmıyordu.
- */
+/** Mini oyun müziği seçenekleri; hangisinin iyi olduğu zevk meselesi. */
 const OYUN_MUZIK_ADI: Record<OyunMuzikTuru, string> = {
   arcade: 'Arcade',
   lofi: 'Lo-fi',
 }
 
-const OYUN_MUZIK_ACIKLAMA: Record<OyunMuzikTuru, string> = {
-  arcade: 'Hızlı chiptune döngüsü — turun temposuyla aynı, acele ettiriyor.',
-  lofi: 'Pomodoro’nun sakin parçaları. Yavaş; oyunun hızını taşımıyor.',
-}
 
 /** Bayt sayısını okunur hâle getirir: 5242880 → "5,0 MB". */
 function boyutYaz(bayt: number): string {
@@ -401,11 +393,8 @@ export function AyarlarEkrani({
                 </Cip>
               ))}
             </Cipler>
-            <AlanNotu>
-              {mezunMu(ayarlar.buYilSinif)
-                ? 'Mezunda ilerleme durur. OBP’ni Okul Notları ekranından doğrudan girebilirsin.'
-                : 'Her eylülde bir üst sınıfa kendiliğinden geçer, 12’de durur.'}
-            </AlanNotu>
+            {/* "Her eylülde bir üst sınıfa geçer" notu kaldırıldı: satırın
+                kendi açıklaması zaten bunu söylüyordu. */}
           </GenisAlan>
           )}
 
@@ -703,10 +692,6 @@ export function AyarlarEkrani({
                     </div>
                   )}
 
-                  <AlanNotu>
-                    Kilit bir engel, kilit değil: istediğin an kapatabilirsin. Molada
-                    kendiliğinden açılır.
-                  </AlanNotu>
                 </GenisAlan>
               )}
             </>
@@ -753,13 +738,10 @@ export function AyarlarEkrani({
                 }
               />
 
+              {/* Seçili saat satırın sağında zaten yazıyor; burada tekrar
+                  etmiyor. Kalan tek cümle bildirimin ne sıklıkta geleceği. */}
               <AlanNotu>
-                Şu an seçili:{' '}
-                <strong className="rakam text-foreground">
-                  {saatYaz(ayarlar.hatirlatmaSaati, ayarlar.hatirlatmaDakikasi)}
-                </strong>
-                . Günde en fazla bir bildirim gönderilir; o gün soru girdiysen hiç gönderilmez.
-                Bildirim gelmiyorsa telefonun pil optimizasyonu Rabi’yi kısıtlıyor olabilir.
+                Günde en fazla bir bildirim gelir; o gün soru girdiysen hiç gelmez.
               </AlanNotu>
             </GenisAlan>
           )}
@@ -821,7 +803,6 @@ export function AyarlarEkrani({
                   </Cip>
                 ))}
               </Cipler>
-              <AlanNotu>{OYUN_MUZIK_ACIKLAMA[ayarlar.oyunMuzikTuru]}</AlanNotu>
             </GenisAlan>
           )}
         </Bolum>

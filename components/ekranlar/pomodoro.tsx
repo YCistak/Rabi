@@ -27,7 +27,6 @@ import {
 import { OdakKurulum } from '@/components/ekranlar/odak-kurulum'
 import { cn, yeniId } from '@/lib/utils'
 import { BaslikSatiri, Buton, Cip, Kart, Not } from '@/components/ui'
-import { Rabi } from '@/components/maskot/rabi'
 
 /** Ders çipleri baştan bu kadar gösteriliyor; gerisi "+N ders" ile açılıyor. */
 const KISA_DERS_SAYISI = 8
@@ -239,12 +238,6 @@ export function PomodoroEkrani({
       <Kart className="mb-4 flex flex-col items-center py-6">
         <Sayac kalan={kalan} oran={oran} mola={molaMi} />
 
-        <Rabi
-          durum={calisiyor ? (molaMi ? 'mutlu' : 'calisiyor') : 'uykulu'}
-          boyut={72}
-          className="mt-4"
-        />
-
         <div className="mt-4 flex items-center gap-2">
           <Buton bicim="ikincil" boy="simge" onClick={sifirla} aria-label="Sıfırla">
             <RotateCcw size={18} aria-hidden />
@@ -362,8 +355,7 @@ export function PomodoroEkrani({
 
       <Not className="mt-4">
         Sayaç bitiş saatine göre çalışıyor — telefonu kilitlesen de doğru zamanda biter ve
-        bildirim gelir. Bildirim gelmiyorsa telefonun pil ayarlarından Rabi'yi kısıtlamadan
-        çıkarman gerekebilir.
+        bildirim gelir.
       </Not>
     </div>
   )

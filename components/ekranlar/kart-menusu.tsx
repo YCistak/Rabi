@@ -1,20 +1,21 @@
 'use client'
 
-import { ChevronRight } from 'lucide-react'
 import { KARTLAR, type Ekran, type KartRengi, type KartTanimi } from '@/lib/gezinme'
 import { cn } from '@/lib/utils'
 
 /**
- * Simge kutusunun yüzü — ders aileleriyle aynı pastel + koyu ton ikilisi.
- * Kartın tamamı artık beyaz; renk yalnızca simgede duruyor, böylece on bir
- * satır alt alta dizildiğinde sayfa renk kalabalığına dönüşmüyor.
+ * Kart aileleri — Oyunlar sekmesindeki ders kartlarıyla aynı üçlü.
+ *
+ * `zemin` kartın pastel yüzeyi, `yazi` o yüzeyin üstünde okunan koyu ton,
+ * `ok` ise sağ alttaki dolu dairenin rengi. İki ekran aynı kart biçimini
+ * kullanıyor, dolayısıyla renk sözleşmesi de aynı olmak zorunda.
  */
-const RENK_SINIFI: Record<KartRengi, string> = {
-  mavi: 'bg-primary-soft text-primary',
-  pembe: 'bg-yzm-kart text-yzm-koyu',
-  krem: 'bg-isl-kart text-isl-koyu',
-  nane: 'bg-success-soft text-success',
-  lavanta: 'bg-edb-kart text-edb-koyu',
+const RENK_SINIFI: Record<KartRengi, { zemin: string; yazi: string; ok: string }> = {
+  mavi: { zemin: 'bg-primary-soft', yazi: 'text-primary', ok: 'bg-primary' },
+  pembe: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu', ok: 'bg-yzm-ok' },
+  krem: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', ok: 'bg-isl-ok' },
+  nane: { zemin: 'bg-success-soft', yazi: 'text-success', ok: 'bg-success' },
+  lavanta: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu', ok: 'bg-edb-ok' },
 }
 
 /**
@@ -32,12 +33,11 @@ const BOLUMLER: { baslik: string; kartlar: Ekran[] }[] = [
 ]
 
 /**
- * "Araçlar" sekmesi — bölüm bölüm satır listesi.
+ * "Araçlar" sekmesi — bölüm bölüm kart ızgarası.
  *
- * Önce iki sütunlu, tamamı pastel zeminli kartlardı. On bir araç bu boyda
- * ekranı üç ekran boyu uzatıyordu ve her kart farklı renkte olduğu için göz
- * sırayı takip edemiyordu. Ayarlar ekranıyla aynı satır desenine geçildi:
- * beyaz kart, renkli simge, ad, açıklama, sağda ok.
+ * Beyaz satır listesi de denendi; Oyunlar sekmesindeki renkli kartların yanında
+ * soluk ve birbirine benzer duruyordu. İki sekme aynı kart ölçüsünü paylaşıyor:
+ * iki sütun, pastel zemin, beyaz kutuda simge ve sağ altta dolu ok.
  */
 export function KartMenusu({
   onKartAc,
@@ -64,19 +64,23 @@ export function KartMenusu({
         <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">Her şey burada.</p>
       </header>
 
-      <div className="mt-4 space-y-4">
+      <div className="mt-4 space-y-5">
         {bolumler.map(({ baslik, kartlar }) => (
           <section key={baslik}>
-            <h2 className="mb-2 ml-1 text-[11.5px] font-extrabold tracking-[0.09em] text-muted-foreground uppercase">
+            <h2 className="mb-3 ml-1 text-[11.5px] font-extrabold tracking-[0.09em] text-muted-foreground uppercase">
               {baslik}
             </h2>
 
-            {/* Ayraç satırın kendisinde (`first:border-t-0`), kabın seçicisinde
-                değil: bölümün ilk satırı koşullu çizilse bile çizgi hep iki
-                satırın arasına düşsün. */}
-            <div className="golge-kart overflow-hidden rounded-[22px] bg-card">
-              {kartlar.map((kart) => (
-                <AracSatiri key={kart.id} kart={kart} onAc={() => onKartAc(kart.id)} />
+            <div className="grid grid-cols-2 gap-3">
+              {kartlar.map((kart, sira) => (
+                <AracKarti
+                  key={kart.id}
+                  kart={kart}
+                  // Tek sayıda kart varsa sonuncusu iki sütunu kaplıyor; yoksa
+                  // ızgarada yanı boş bir kart kalıyordu.
+                  genis={kartlar.length % 2 === 1 && sira === kartlar.length - 1}
+                  onAc={() => onKartAc(kart.id)}
+                />
               ))}
             </div>
           </section>
@@ -86,34 +90,78 @@ export function KartMenusu({
   )
 }
 
-/** Ayarlar ekranındaki satırla aynı desen: simge · ad/açıklama · ok. */
-function AracSatiri({ kart, onAc }: { kart: KartTanimi; onAc: () => void }) {
+/** Oyunlardaki ders kartıyla aynı ölçüde: simge kutusu, ad, açıklama ve dolu ok. */
+function AracKarti({
+  kart,
+  genis,
+  onAc,
+}: {
+  kart: KartTanimi
+  /** İki sütunu birden kaplayan yatay hâl. */
+  genis: boolean
+  onAc: () => void
+}) {
   const { ad, aciklama, Simge, renk } = kart
+  const aile = RENK_SINIFI[renk]
 
   return (
     <button
       type="button"
       onClick={onAc}
       className={cn(
-        'flex w-full items-center gap-3 border-t border-border px-3.5 py-2.5 text-left first:border-t-0',
-        'transition active:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring',
+        'relative rounded-2xl p-4 text-left transition active:brightness-[0.97]',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+        aile.zemin,
+        genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[164px] flex-col',
       )}
     >
       <span
-        className={cn('grid size-[42px] shrink-0 place-items-center rounded-[14px]', RENK_SINIFI[renk])}
+        className={cn(
+          'grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80',
+          aile.yazi,
+        )}
       >
-        <Simge size={22} aria-hidden />
+        <Simge size={24} aria-hidden />
       </span>
 
-      <span className="min-w-0 flex-1">
-        <span className="block text-[14.5px] font-extrabold leading-tight">{ad}</span>
-        <span className="mt-0.5 block text-xs font-medium leading-snug text-muted-foreground">
+      <span className={cn('min-w-0', genis ? 'flex-1' : 'mt-2.5')}>
+        <span className="block font-display text-[16.5px] leading-[1.15] font-extrabold tracking-tight text-foreground">
+          {ad}
+        </span>
+        <span className="mt-1.5 block text-[12.5px] leading-snug font-medium text-foreground/60">
           {aciklama}
         </span>
       </span>
 
-      <ChevronRight size={18} strokeWidth={2.6} className="shrink-0 text-muted-foreground/50" aria-hidden />
+      <span
+        className={cn(
+          'grid h-8 w-8 shrink-0 place-items-center rounded-full text-white',
+          aile.ok,
+          genis ? '' : 'mt-auto self-end',
+        )}
+        aria-hidden
+      >
+        <OkSimgesi />
+      </span>
     </button>
+  )
+}
+
+function OkSimgesi() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={17}
+      height={17}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="m9 5 7 7-7 7" />
+    </svg>
   )
 }
 

@@ -82,7 +82,10 @@ export function GeriSayim({
 
       {/* Sayının kendisi. Sınav günü sayı yerine "Bugün" yazıyor: "0 gün kaldı"
           hem tuhaf okunuyor hem de o sabah söylenecek şey bu değil. */}
-      <p className="mt-2 flex items-baseline gap-2">
+      {/* Sayı, "gün kaldı" ve tarih tek satırda. Tarih ayrı satırdayken kartın
+          yarısını üç satırlık bir bilgi bloğu kaplıyordu; asıl okunacak şey
+          büyük sayı, gerisi onun eki. */}
+      <p className="mt-2 flex flex-wrap items-baseline gap-x-2">
         {sinavGunu ? (
           <span className="font-display text-[40px] leading-none font-extrabold">Bugün!</span>
         ) : (
@@ -95,24 +98,21 @@ export function GeriSayim({
             >
               {sayim.kalanGun}
             </span>
-            <span className="font-display text-base font-extrabold">gün kaldı</span>
+            {/* Nokta ayracı "gün kaldı"nın ucunda, tarihin başında değil:
+                satır sarınca baştaki nokta alt satırda tek başına kalıyordu. */}
+            <span className="font-display text-base font-extrabold">gün kaldı ·</span>
+            <span
+              className={cn(
+                'text-[13px] font-semibold',
+                doluKart ? 'text-white/85' : 'text-muted-foreground',
+              )}
+            >
+              {/* Tarih hesaptan geliyorsa "tahmini" yazmak zorunlu: tahmini bir
+                  günü kesinmiş gibi göstermiyoruz. */}
+              {sinavTarihiYaz(sayim.sinavTarihi)}
+              {sayim.tahmini && ' (tahmini)'}
+            </span>
           </>
-        )}
-      </p>
-
-      <p
-        className={cn(
-          'mt-1.5 text-[13px] leading-snug font-semibold',
-          doluKart ? 'text-white/85' : 'text-muted-foreground',
-        )}
-      >
-        {sinavTarihiYaz(sayim.sinavTarihi)}
-        {/* Tarih ÖSYM'den değil hesaptan geliyorsa bu her zaman yazılır —
-            tahmini bir sayıyı kesinmiş gibi gösterme kuralı. */}
-        {sayim.tahmini && (
-          <span className={cn('block', doluKart ? 'text-white/70' : 'text-muted-foreground/75')}>
-            Tahmini tarih — ÖSYM takvimi açıklanınca netleşir.
-          </span>
         )}
       </p>
 
@@ -136,22 +136,12 @@ export function GeriSayim({
               style={{ width: `${Math.max(2, yuzde)}%` }}
             />
           </div>
-          <p className="rakam mt-1.5 text-[11px] font-bold text-muted-foreground/80">
-            {/* "%16’sı / %20’si" ekleri sayıya göre değişiyor; "kadarı" her sayıda doğru. */}
-            Sınav yılının %{yuzde} kadarı geçti
-          </p>
         </div>
       )}
 
-      {/* Kalan güne uygun söz — havuzu `lib/sinav-sozleri.ts`'de. */}
-      <p
-        className={cn(
-          'mt-3 border-t pt-3 text-[13px] leading-relaxed font-medium',
-          doluKart ? 'border-white/25 text-white/90' : 'border-border text-foreground/80',
-        )}
-      >
-        {soz.metin}
-      </p>
+      {/* Kalan güne uygun söz kaldırıldı: kartta zaten sağ üstte aynı havuzdan
+          gelen kısa başlık ("Uzun yol") duruyor ve iki satır aynı şeyi iki kez
+          söylüyordu. Havuz `lib/sinav-sozleri.ts`'de, başlık hâlâ oradan. */}
 
       {children && (
         <div

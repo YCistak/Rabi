@@ -22,10 +22,12 @@ const ZEMIN = '#F8F8F7'
  * Ekranın en az ne kadar kalacağı (ms).
  *
  * Veri localStorage'dan neredeyse anında okunuyor; süre konulmasaydı ekran bir
- * kare görünüp kaybolur, animasyon hiç izlenmezdi. 2,4 saniye tavşanın inişini,
- * "RABİ" yazısının belirmesini ve yükleme şeridinin bir turunu tamamlıyor.
+ * kare görünüp kaybolur, animasyon hiç izlenmezdi. Tasarımın kendi süresi 4,2
+ * saniye: iniş, yazı, slogan ve yükleme bloğu sırayla belirip sönüyor, sonunda
+ * tavşan sol üste süzülüyor. `globals.css`'teki `acilis-*` animasyonlarının
+ * süresi de bu — birlikte değişmeliler.
  */
-export const ACILIS_SURESI = 2400
+export const ACILIS_SURESI = 4200
 
 export function Acilis({ kapaniyor }: { kapaniyor: boolean }) {
   return (

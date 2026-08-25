@@ -5,7 +5,6 @@ import { AlertTriangle, Carrot, ChevronRight, Sparkles, Target } from 'lucide-re
 import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef, OyunId } from '@/lib/types'
 import { devamsizlikOzeti, gunOzeti, kayitHaritasi, netYaz } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
-import { sozSec } from '@/lib/sozler'
 import { siraYaz } from '@/lib/siralama'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
 import { kisayollar } from '@/lib/son-kullanilan'
@@ -89,10 +88,6 @@ export function AnaSayfa({
 }) {
   const tarih = bugun()
 
-  // Söz gün boyunca sabit kalsın diye tohum olarak tarih verilir; her yeniden
-  // çizimde değişse okunamadan kaybolurdu.
-  const soz = useMemo(() => sozSec(tarih), [tarih])
-
   const gosterilenAraclar = useMemo(() => kisayollar(KARTLAR, sonAraclar), [sonAraclar])
   const gosterilenOyunlar = useMemo(() => kisayollar(OYUNLAR, sonOyunlar), [sonOyunlar])
 
@@ -101,14 +96,24 @@ export function AnaSayfa({
     [gunlukKayitlar, tarih],
   )
 
-  // Seri kartı bugünle biten yedi günü gösteriyor: sağa doğru ilerleyen bir
-  // takvim yerine "bugüne kadar ne yaptın" okuması isteniyor.
+  /*
+    Seri şeridi **içinde bulunulan takvim haftası**: pazartesiden pazara.
+
+    Önce "bugünle biten son yedi gün"dü ve şerit her gün başka bir güne
+    kayıyordu — çarşamba günü perşembeyle başlıyordu. Hafta hep aynı yerden
+    başlayınca kullanıcı kendi haftasını tanıyor. Türkiye'de hafta pazartesi
+    başlar; `getDay()` pazarı 0 saydığı için pazar 6'ya çekiliyor.
+  */
   const gunler = useMemo(() => {
     const harita = kayitHaritasi(gunlukKayitlar)
-    const son = tariheCevir(tarih)
+    const bugunkuTarih = tariheCevir(tarih)
+    const haftaninGunu = (bugunkuTarih.getDay() + 6) % 7
+    const pazartesi = new Date(bugunkuTarih)
+    pazartesi.setDate(pazartesi.getDate() - haftaninGunu)
+
     return Array.from({ length: SERI_GUNU }, (_, sira) => {
-      const gun = new Date(son)
-      gun.setDate(gun.getDate() - (SERI_GUNU - 1 - sira))
+      const gun = new Date(pazartesi)
+      gun.setDate(gun.getDate() + sira)
       const iso = tariheYaz(gun)
       return {
         iso,
@@ -116,6 +121,8 @@ export function AnaSayfa({
         // Hedef sıfırsa "tutturdu" demek anlamsız; kutucuklar boş kalır.
         tuttu: ayarlar.gunlukHedef > 0 && gunOzeti(harita.get(iso)).toplam >= ayarlar.gunlukHedef,
         bugunMu: iso === tarih,
+        // Gelecek günler boş kalıyor ama "tutturamadın" gibi durmamalı.
+        gelecekMi: iso > tarih,
       }
     })
   }, [gunlukKayitlar, ayarlar.gunlukHedef, tarih])
@@ -140,12 +147,9 @@ export function AnaSayfa({
         <Rabi durum={maskotDurumu} boyut={58} />
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-extrabold tracking-wide text-ikincil">Rabi</p>
-          <h1 className="mt-px font-display text-xl font-extrabold tracking-tight text-balance">
+          <h1 className="mt-px font-display text-[22px] font-extrabold tracking-tight text-balance">
             Merhaba 👋
           </h1>
-          <p className="mt-0.5 text-[13px] leading-snug font-medium text-muted-foreground">
-            {durumCumlesi(bugunku.toplam, kalan, hedefTuttu, tamamlanan)}
-          </p>
         </div>
 
         {/* Havuç bakiyesi. Düğme değil, çünkü götüreceği bir yer yok: havucu
@@ -194,12 +198,15 @@ export function AnaSayfa({
           dururken iki ayrı ölçü gibi okunuyordu. */}
       <Kart className="px-5 py-5">
         <div className="flex items-center gap-4">
+          {/* Halkanın içinde hedef ("/300") yazmıyor: hedef zaten yanda,
+              "300 hedefin var" cümlesinde geçiyordu ve iki kez yazılınca göz
+              hangisinin bugünkü sayı olduğunu ayırt edemiyordu. */}
           <Halka deger={bugunku.toplam} hedef={ayarlar.gunlukHedef} boyut={92} kalinlik={9}>
             <span className="rakam font-display text-[27px] leading-none font-extrabold">
               {bugunku.toplam}
             </span>
-            <span className="rakam mt-1 text-xs font-bold text-muted-foreground">
-              / {ayarlar.gunlukHedef}
+            <span className="mt-1 text-[9.5px] font-extrabold uppercase tracking-[0.12em] text-muted-foreground">
+              soru
             </span>
           </Halka>
 
@@ -207,35 +214,37 @@ export function AnaSayfa({
             <h2 className="font-display text-base font-extrabold tracking-tight">
               Bugünkü soru hedefin
             </h2>
-            <p className="text-[13px] leading-snug font-semibold text-muted-foreground">
-              {hedefCumlesi(bugunku.toplam, kalan, hedefTuttu)}
+            <p className="rakam text-[13px] leading-snug font-semibold text-muted-foreground">
+              {ayarlar.gunlukHedef} hedefin var, {kalan} soru kaldı.
             </p>
-            {bugunku.toplam > 0 && (
-              <p className="rakam text-xs font-medium text-muted-foreground/80">
-                {bugunku.dogru} doğru · {bugunku.yanlis} yanlış · {netYaz(bugunku.net)} net
-              </p>
-            )}
+            <p className="text-[13px] leading-snug font-semibold text-muted-foreground">
+              {hedefCumlesi(bugunku.toplam, kalan, ayarlar.gunlukHedef, hedefTuttu)}
+            </p>
           </div>
         </div>
 
-        {/* Yedi günlük seri. Kutucuk değil hap: gün adı okunabilsin diye —
+        {/* Haftanın günleri. Kutucuk değil hap: gün adı okunabilsin diye —
             daire içinde "Cmt" sığmıyordu, adı altına yazınca da satır iki kat
             yer kaplıyordu. */}
         <ul
-          aria-label={`Son ${SERI_GUNU} gün: ${tamamlanan} günde hedef tuttu`}
+          aria-label={`Bu hafta ${tamamlanan} günde hedef tuttu`}
           className="mt-4 flex gap-1.5"
         >
           {gunler.map((gun) => (
             <li key={gun.iso} className="flex-1">
               <span
-                aria-label={`${gun.ad}: ${gun.tuttu ? 'hedef tuttu' : 'hedef tutmadı'}`}
+                aria-label={`${gun.ad}: ${
+                  gun.gelecekMi ? 'henüz gelmedi' : gun.tuttu ? 'hedef tuttu' : 'hedef tutmadı'
+                }`}
                 className={cn(
                   'grid h-8 place-items-center rounded-full text-[11.5px] font-extrabold',
-                  gun.tuttu
+                  gun.bugunMu
                     ? 'bg-primary text-primary-foreground'
-                    : gun.bugunMu
+                    : gun.tuttu
                       ? 'bg-primary-soft text-primary'
-                      : 'bg-muted text-muted-foreground',
+                      : gun.gelecekMi
+                        ? 'bg-muted/60 text-muted-foreground/60'
+                        : 'bg-muted text-muted-foreground',
                 )}
               >
                 {gun.ad}
@@ -262,7 +271,7 @@ export function AnaSayfa({
       {/* Araçlar — en son açılan dördü; hiç açılmamışsa `KARTLAR`'ın başı.
           Kart içinde değil, doğrudan zeminde duran dört kutucuk: kartın içine
           konunca ana sayfa üst üste yığılmış kutuların listesine dönüyordu. */}
-      <Bolum baslik="Araçlar 🧰" onTumu={onDahaGit}>
+      <Bolum onTumu={onDahaGit}>
         {gosterilenAraclar.map(({ id, ad, Simge, renk }) => (
           <Kutucuk key={id} ad={ad} onSec={() => onKartAc(id)}>
             <span className={cn('grid size-11 place-items-center rounded-2xl', KUTUCUK_RENGI[renk])}>
@@ -289,13 +298,6 @@ export function AnaSayfa({
         ))}
       </Bolum>
 
-      {/* Günün sözü. Tasarımda yeri yok ama uygulamada vardı; selamlamadaki
-          cümle artık duruma bağlı olduğu için söz sayfanın sonuna, sessiz bir
-          satıra indi. */}
-      <p className="px-2 pt-1 text-center text-xs leading-relaxed font-medium text-muted-foreground">
-        {soz.metin}
-        {soz.kaynak && <span className="block text-muted-foreground/70">— {soz.kaynak}</span>}
-      </p>
     </div>
   )
 }
@@ -310,16 +312,19 @@ function Bolum({
   onTumu,
   children,
 }: {
-  baslik: string
+  /** Yoksa başlık satırı hiç çizilmiyor — araç kutucukları tasarımda başlıksız. */
+  baslik?: string
   onTumu: () => void
   children: React.ReactNode
 }) {
   return (
     <section>
-      <div className="mb-2 flex items-center justify-between gap-3 px-1">
-        <h2 className="font-display text-base font-extrabold tracking-tight">{baslik}</h2>
-        <TumuBaglantisi onSec={onTumu} />
-      </div>
+      {baslik && (
+        <div className="mb-2 flex items-center justify-between gap-3 px-1">
+          <h2 className="font-display text-base font-extrabold tracking-tight">{baslik}</h2>
+          <TumuBaglantisi onSec={onTumu} />
+        </div>
+      )}
       <div className="grid grid-cols-4 gap-2.5">{children}</div>
     </section>
   )
@@ -444,22 +449,16 @@ function HedefOzeti({
   )
 }
 
-/** Selamlamanın altındaki cümle — kullanıcının bugünkü durumuna göre değişir. */
-function durumCumlesi(
-  cozulen: number,
-  kalan: number,
-  hedefTuttu: boolean,
-  tamamlanan: number,
-): string {
-  if (hedefTuttu) return 'Bugünkü hedefi tutturdun, seri sende.'
-  if (cozulen > 0) return `Başladın bile — hedefe ${kalan} soru kaldı.`
-  if (tamamlanan > 0) return 'Serini bugün de sürdürelim mi?'
-  return 'Bugün çalışmadın henüz, başlayalım mı?'
-}
-
 /** Hedef halkasının yanındaki cümle. */
-function hedefCumlesi(cozulen: number, kalan: number, hedefTuttu: boolean): string {
-  if (hedefTuttu) return 'Hedefi tutturdun. Fazlası cabası.'
-  if (cozulen > 0) return `${kalan} soru kaldı, az kaldı bitirmeye.`
-  return `${kalan} soru kaldı. Bir 20'lik çözmek bile seriyi başlatır.`
+/**
+ * Halkanın yanındaki ikinci satır — teşvik cümlesi.
+ *
+ * Sayı geçmiyor: üstteki satır zaten "şu kadar hedefin var, şu kadar kaldı"
+ * diyor ve iki satır aynı rakamı iki kez yazınca ikisi de okunmuyordu.
+ */
+function hedefCumlesi(cozulen: number, kalan: number, hedef: number, hedefTuttu: boolean): string {
+  if (hedefTuttu) return 'Hedefi tutturdun, fazlası cabası 🎉'
+  if (hedef > 0 && kalan <= hedef / 4) return 'Az kaldı, bugünün kapatalım 🎉'
+  if (cozulen > 0) return 'Başladın bile, devam.'
+  return "Bir 20'lik çözmek bile seriyi başlatır."
 }

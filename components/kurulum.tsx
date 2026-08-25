@@ -5,7 +5,6 @@ import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import type { Ayarlar, OkulYili, PuanTuru } from '@/lib/types'
 import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
 import { yeniId } from '@/lib/utils'
-import { saatYaz } from '@/lib/hatirlatma'
 import { Alan, Buton, Cip, Etiket, Kart } from '@/components/ui'
 import { DikCubuk, SaatSecici } from '@/components/secici'
 import { Rabi } from '@/components/maskot/rabi'
@@ -154,11 +153,6 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
                 </Cip>
               ))}
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">
-              {mezun
-                ? 'Mezunsan sınıf ilerlemez. Sıradaki adımda yıl sonu notlarını sorayım — istersen atlarsın.'
-                : 'Her eylülde bir üst sınıfa kendiliğinden geçersin; tekrar sormam gerekmez.'}
-            </p>
           </div>
         )}
 
@@ -197,8 +191,7 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
             />
 
             <p className="mt-3 text-xs text-muted-foreground">
-              OBP yazarsan notlara hiç gerek yok — doğrudan o kullanılır. İkisini de boş
-              bırakabilirsin; sonradan Okul Notları ekranından girersin.
+              OBP yazarsan notlara gerek yok. İkisini de boş bırakabilirsin.
             </p>
           </div>
         )}
@@ -282,16 +275,11 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
                   className="mt-1"
                 />
 
-                <p className="mt-2 text-xs text-muted-foreground">
-                  Şu an seçili:{' '}
-                  <strong className="rakam text-foreground">{saatYaz(saat, dakika)}</strong>
-                </p>
+                {/* "Şu an seçili" satırı yok: seçilen saat tekerleğin
+                    ortasında, vurgulu renkte zaten duruyor. */}
               </div>
             )}
 
-            <p className="mt-4 text-xs text-muted-foreground">
-              Günde en fazla bir bildirim gönderiyorum. O gün soru girdiysen hiç göndermem.
-            </p>
           </div>
         )}
       </Kart>
