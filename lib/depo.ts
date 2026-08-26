@@ -105,6 +105,18 @@ export const ANAHTARLAR = {
   /** Bildirimleri gruplamaya yarayan anonim cihaz numarası; yedeğe girmiyor. */
   cihazKimligi: 'rabi-cihaz-kimligi',
   /**
+   * Hatalı soru bildirimlerinin gönderilmesine izin verildi mi.
+   *
+   * `'sorulmadi' | 'verildi' | 'reddedildi'`. Google Play'in kullanıcı verisi
+   * politikası, veri cihazdan çıkmadan önce **belirgin bir açıklama** ve
+   * **kullanıcının olumlu bir eylemi** istiyor; ayarlar ekranındaki bir
+   * paragraf bunun yerine geçmiyor. İzin verilene kadar bildirimler cihazda
+   * bekliyor, ağa hiçbir şey çıkmıyor.
+   *
+   * Yedeğe **girmiyor**: rıza cihaz başına verilir, başka telefona taşınmaz.
+   */
+  bildirimIzni: 'rabi-bildirim-izni',
+  /**
    * Yapılacaklar tahtasındaki not kâğıtları — metin, renk ve konum.
    *
    * Konum da veri: kullanıcının kâğıdı nereye yapıştırdığı onun verdiği bilgi.
@@ -185,6 +197,7 @@ export const HEDEF_ADIMI = 25
 
 export const VARSAYILAN_AYARLAR: Ayarlar = {
   varsayilanSablonId: VARSAYILAN_SABLON_ID,
+  ad: '',
   buYilSinif: 12,
   elleObp: null,
   sinifYili: egitimYili(),

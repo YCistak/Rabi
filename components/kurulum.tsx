@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
+import { AlertCircle, ArrowLeft, ArrowRight, Check, User } from 'lucide-react'
 import type { Ayarlar, OkulYili, PuanTuru } from '@/lib/types'
 import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
 import { yeniId } from '@/lib/utils'
@@ -14,6 +14,7 @@ import { HEDEF_ADIMI, HEDEF_EN_AZ, HEDEF_EN_COK } from '@/lib/depo'
 /** Kurulumun ürettiği ayarlar — geri kalanı varsayılanlardan gelir. */
 export type KurulumSecimleri = Pick<
   Ayarlar,
+  | 'ad'
   | 'buYilSinif'
   | 'elleObp'
   | 'puanTuru'
@@ -42,9 +43,13 @@ export type KurulumSonucu = {
  * kendinden önceki sınıfları bitmiştir, 9. sınıftakinin ise hiçbiri — ona bu
  * adımı göstermek boş bir form göstermek olurdu.
  */
-type AdimId = 'sinif' | 'notlar' | 'alan' | 'hedef' | 'hatirlatma'
+type AdimId = 'isim' | 'sinif' | 'notlar' | 'alan' | 'hedef' | 'hatirlatma'
 
 const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
+  isim: {
+    baslik: 'Sana nasıl sesleneyim?',
+    aciklama: 'Böylece seni adınla selamlayabilirim.',
+  },
   sinif: {
     baslik: 'Merhaba, ben Rabi',
     aciklama: 'Seninle YKS yolunda çalışacağım. Önce birkaç şey sorayım.',
@@ -67,11 +72,20 @@ const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
   },
 }
 
-const PUAN_TURLERI: { id: PuanTuru; ad: string; aciklama: string }[] = [
-  { id: 'say', ad: 'Sayısal', aciklama: 'Matematik · Fizik · Kimya · Biyoloji' },
-  { id: 'ea', ad: 'Eşit Ağırlık', aciklama: 'Matematik · Edebiyat · Tarih · Coğrafya' },
-  { id: 'soz', ad: 'Sözel', aciklama: 'Edebiyat · Sosyal Bilimler' },
-  { id: 'dil', ad: 'Dil', aciklama: 'Yabancı Dil Testi (YDT)' },
+/**
+ * Adın en az kaç harf olacağı.
+ *
+ * Tek harf ("a") ya da boş bırakılan ad selamlamayı anlamsızlaştırıyor;
+ * üç, gerçek adların hepsini geçirip baştan savma girişleri eleyen en küçük
+ * sınır.
+ */
+const AD_EN_AZ = 3
+
+const PUAN_TURLERI: { id: PuanTuru; ad: string }[] = [
+  { id: 'say', ad: 'Sayısal' },
+  { id: 'ea', ad: 'Eşit Ağırlık' },
+  { id: 'soz', ad: 'Sözel' },
+  { id: 'dil', ad: 'Dil' },
 ]
 
 
@@ -84,6 +98,14 @@ export function Kurulum({
   maskotGizli?: boolean
 }) {
   const [adim, setAdim] = useState(0)
+  const [ad, setAd] = useState('')
+  /**
+   * Ad uyarısı yalnızca kullanıcı Devam'a bastıktan sonra çıkıyor.
+   *
+   * Ekran açılır açılmaz boş alanın üstüne kırmızı yazı koymak, daha hiçbir
+   * şey yapmamış kullanıcıyı hatalı gibi göstermek olurdu.
+   */
+  const [adDenendi, setAdDenendi] = useState(false)
   const [sinif, setSinif] = useState(12)
   /** Mezunun yıl sonu notları: sınıf → yazılan metin. Boşlar hesaba girmiyor. */
   const [notlar, setNotlar] = useState<Record<number, string>>({})
@@ -107,6 +129,7 @@ export function Kurulum({
   // Sınıf geri dönülüp değiştirilebildiği için liste her çizimde kuruluyor;
   // sıra numarası da listenin boyuna kırpılıyor.
   const adimlar: AdimId[] = [
+    'isim',
     'sinif',
     ...(notluSiniflar.length > 0 ? (['notlar'] as AdimId[]) : []),
     'alan',
@@ -119,6 +142,26 @@ export function Kurulum({
 
   const ilerle = () => setAdim(Math.min(sonAdim, siradaki + 1))
   const geri = () => setAdim(Math.max(0, siradaki - 1))
+
+  const adGecerli = ad.trim().length >= AD_EN_AZ
+  /** Uyarı, denendikten sonra yazarken de canlı kalıyor; üç harfte kayboluyor. */
+  const adUyarisi = adDenendi && !adGecerli
+
+  /**
+   * Devam / Başlayalım düğmesi.
+   *
+   * Ad adımında geçersiz bir adla ilerlemeyi kesiyor: düğmeyi devre dışı
+   * bırakmak yerine basılabilir bırakıp uyarı göstermek, kullanıcıya neyin
+   * eksik olduğunu söylüyor — ölü bir düğme söylemezdi.
+   */
+  const devamEt = () => {
+    if (suanki === 'isim' && !adGecerli) {
+      setAdDenendi(true)
+      return
+    }
+    if (siradaki === sonAdim) void bitir()
+    else ilerle()
+  }
 
   /** Notları ve OBP'yi boşaltıp geçer — "şimdilik atla" düğmesi. */
   const notlariAtla = () => {
@@ -135,6 +178,8 @@ export function Kurulum({
     const obp = Number(obpMetni.replace(',', '.'))
     onBitir({
       ayarlar: {
+        // Baştaki/sondaki boşluk temizleniyor: "  Emre " ile "Emre" aynı ad.
+        ad: ad.trim(),
         buYilSinif: sinif,
         // Mezun değilse elle OBP hiç sorulmuyor; yazılmış bir sayı kalmışsa da
         // (sınıf sonradan değiştirildiyse) geçersiz sayılıyor.
@@ -172,6 +217,63 @@ export function Kurulum({
       </div>
 
       <Kart>
+        {suanki === 'isim' && (
+          <div>
+            {/* Uyarı etiketin sağında, alanın hemen üstünde duruyor: göz
+                alandan yukarı kaydığında ilk gördüğü yer burası. Açılır
+                pencere kullanılmadı — kullanıcıyı akıştan koparırdı. */}
+            <div className="mb-1.5 flex items-baseline justify-between gap-3">
+              <Etiket htmlFor="kurulum-ad" className="mb-0">
+                Adın
+              </Etiket>
+              {adUyarisi && (
+                <span
+                  id="kurulum-ad-uyari"
+                  role="alert"
+                  className="flex items-center gap-1 text-xs font-medium text-danger"
+                >
+                  <AlertCircle size={13} aria-hidden className="shrink-0" />
+                  En az {AD_EN_AZ} harf yaz
+                </span>
+              )}
+            </div>
+            {/* Kişi simgesi alanın içinde duruyor: alan tek başına boş bir
+                kutu, simge ne beklendiğini yazıya gerek kalmadan söylüyor.
+                Simge `pointer-events-none`, yoksa üstüne dokunmak alanı
+                odaklamaz ve klavye açılmazdı. */}
+            <div className="relative">
+              <User
+                size={18}
+                aria-hidden
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              />
+              <Alan
+                id="kurulum-ad"
+                value={ad}
+                onChange={(e) => setAd(e.target.value)}
+                placeholder="Adını yaz"
+                aria-invalid={adUyarisi}
+                aria-describedby={adUyarisi ? 'kurulum-ad-uyari' : undefined}
+                className={`pl-10 ${adUyarisi ? 'border-danger focus-visible:border-danger' : ''}`}
+                // Ad alanı: klavye baş harfi büyütsün, tarayıcı yazım
+                // denetimiyle altını kırmızı çizmesin.
+                autoCapitalize="words"
+                autoCorrect="off"
+                spellCheck={false}
+                autoComplete="given-name"
+                enterKeyHint="next"
+                maxLength={24}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    devamEt()
+                  }
+                }}
+              />
+            </div>
+          </div>
+        )}
+
         {suanki === 'sinif' && (
           <div>
             <Etiket>Bu yıl kaçıncı sınıftasın?</Etiket>
@@ -182,13 +284,6 @@ export function Kurulum({
                 </Cip>
               ))}
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">
-              {mezun
-                ? 'Mezunsan sınıf ilerlemez. Sıradaki adımda yıl sonu notlarını sorayım — istersen atlarsın.'
-                : notluSiniflar.length > 0
-                  ? `Her eylülde bir üst sınıfa kendiliğinden geçersin. Sıradaki adımda biten ${notluSiniflar.length === 1 ? 'yılının' : 'yıllarının'} notunu sorayım — istersen atlarsın.`
-                  : 'Her eylülde bir üst sınıfa kendiliğinden geçersin; tekrar sormam gerekmez.'}
-            </p>
           </div>
         )}
 
@@ -237,11 +332,6 @@ export function Kurulum({
               </>
             )}
 
-            <p className="mt-3 text-xs text-muted-foreground">
-              {mezun
-                ? 'OBP yazarsan notlara hiç gerek yok — doğrudan o kullanılır. İkisini de boş bırakabilirsin; sonradan Okul Notları ekranından girersin.'
-                : 'Boş bırakabilirsin; sonradan Okul Notları ekranından girersin. Yıllar tamamlanmadığı için buradan çıkan OBP bir tahmindir.'}
-            </p>
           </div>
         )}
 
@@ -259,10 +349,7 @@ export function Kurulum({
                     : 'border-border active:bg-muted'
                 }`}
               >
-                <span>
-                  <span className="block font-medium">{tur.ad}</span>
-                  <span className="block text-xs text-muted-foreground">{tur.aciklama}</span>
-                </span>
+                <span className="font-medium">{tur.ad}</span>
                 {puanTuru === tur.id && <Check size={18} className="shrink-0 text-primary" />}
               </button>
             ))}
@@ -297,12 +384,7 @@ export function Kurulum({
                 bildirim ? 'border-primary bg-primary-soft' : 'border-border active:bg-muted'
               }`}
             >
-              <span>
-                <span className="block font-medium">Günlük hatırlatma</span>
-                <span className="block text-xs text-muted-foreground">
-                  Soru girmediğin günlerde tek bir hatırlatma
-                </span>
-              </span>
+              <span className="font-medium">Günlük hatırlatma</span>
               {bildirim && <Check size={18} className="shrink-0 text-primary" />}
             </button>
 
@@ -322,8 +404,8 @@ export function Kurulum({
                   className="mt-1"
                 />
 
-                {/* "Şu an seçili" satırı yok: seçilen saat tekerleğin
-                    ortasında, vurgulu renkte zaten duruyor. */}
+                {/* "Şu an seçili" satırı yok: seçilen saat seçicinin
+                    tepesinde, büyük puntoyla zaten duruyor. */}
               </div>
             )}
 
@@ -347,7 +429,7 @@ export function Kurulum({
             Şimdilik atla
           </Buton>
         )}
-        <Buton className="flex-1" onClick={() => (siradaki === sonAdim ? void bitir() : ilerle())}>
+        <Buton className="flex-1" onClick={devamEt}>
           {siradaki === sonAdim ? 'Başlayalım' : 'Devam'}
           {siradaki === sonAdim ? (
             <Check size={18} aria-hidden />

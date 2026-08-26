@@ -20,6 +20,7 @@ import {
   Flag,
   Trash2,
   Upload,
+  UserRound,
   Volume2,
   X,
 } from 'lucide-react'
@@ -54,6 +55,7 @@ import {
 import type { BankaKaydi } from '@/lib/oyunlar/banka'
 import { izinIste } from '@/lib/bildirim'
 import { saatYaz } from '@/lib/hatirlatma'
+import type { BildirimIzni } from '@/lib/hata-kuyrugu'
 import { cn, yeniId } from '@/lib/utils'
 import type {
   Ayarlar,
@@ -85,7 +87,14 @@ const PUAN_TURU_ADI: Record<PuanTuru, string> = {
  * hâlinde: yeni bir açılır ayar eklerken burada da tanımlanması gerekiyor,
  * yazım hatası sessizce hiç açılmayan bir satıra dönüşmesin.
  */
-type AyarId = 'hedef' | 'alan' | 'sinif' | 'deneme-turu' | 'hatirlatma-saati' | 'muzik-turu'
+type AyarId =
+  | 'ad'
+  | 'hedef'
+  | 'alan'
+  | 'sinif'
+  | 'deneme-turu'
+  | 'hatirlatma-saati'
+  | 'muzik-turu'
 
 /** Mini oyun müziği seçenekleri; hangisinin iyi olduğu zevk meselesi. */
 const OYUN_MUZIK_ADI: Record<OyunMuzikTuru, string> = {
@@ -106,6 +115,8 @@ export function AyarlarEkrani({
   ayarlar,
   setAyarlar,
   bekleyenBildirim,
+  bildirimIzni,
+  onBildirimIzni,
   pomodoroAyar,
   setPomodoroAyar,
   yedeklenecek,
@@ -116,6 +127,9 @@ export function AyarlarEkrani({
   ayarlar: Ayarlar
   /** Gönderilmeyi bekleyen hatalı soru bildirimi sayısı. */
   bekleyenBildirim: number
+  /** Gönderim izni — `'verildi'` olmadan hiçbir bildirim ağa çıkmıyor. */
+  bildirimIzni: BildirimIzni
+  onBildirimIzni: (karar: BildirimIzni) => void
   setAyarlar: (guncelleyici: Ayarlar | ((onceki: Ayarlar) => Ayarlar)) => void
   /** Odak kilidi ayarları pomodoro ayarının içinde duruyor. */
   pomodoroAyar: PomodoroAyar
@@ -299,6 +313,32 @@ export function AyarlarEkrani({
 
         {/* ------------------------------ Çalışma ------------------------- */}
         <Bolum baslik="Çalışma">
+          <Satir
+            Simge={UserRound}
+            renk="mercan"
+            baslik="Adım"
+            aciklama="Ana sayfada seni böyle selamlıyorum"
+            deger={ayarlar.ad || 'Belirtilmedi'}
+            {...acilir('ad')}
+          />
+          {acikAyar === 'ad' && (
+            <GenisAlan tam>
+              <Etiket>Adın</Etiket>
+              <Alan
+                value={ayarlar.ad}
+                onChange={(e) => setAyarlar((o) => ({ ...o, ad: e.target.value }))}
+                // Kayda giren değer kırpılıyor ama yazarken kırpılmıyor:
+                // aradaki boşluğu silmek kullanıcının elinden alınmamalı.
+                onBlur={(e) => setAyarlar((o) => ({ ...o, ad: e.target.value.trim() }))}
+                placeholder="Adını yaz"
+                autoCapitalize="words"
+                autoCorrect="off"
+                spellCheck={false}
+                maxLength={24}
+              />
+            </GenisAlan>
+          )}
+
           <Satir
             Simge={Target}
             renk="mavi"
@@ -830,9 +870,38 @@ export function AyarlarEkrani({
               <b>gönderilmez</b>. Bildirim önce cihaza kaydedilir; internet yoksa
               bekler, bağlanınca kendiliğinden gider.
             </AlanNotu>
+            {/* İzin ayrı bir karar: ayarın açık olması tek başına yetmiyor,
+                kullanıcı ilk bildiriminde ne gönderileceğini görüp "Gönder"
+                demeden hiçbir şey ağa çıkmıyor. Kararı buradan geri alabilsin.
+                (Play'in kullanıcı verisi politikası bunu şart koşuyor.) */}
+            <AlanNotu ust>
+              {bildirimIzni === 'verildi'
+                ? 'Gönderime izin verdin.'
+                : bildirimIzni === 'reddedildi'
+                  ? 'Gönderime izin vermedin — bildirimlerin telefonunda kalıyor.'
+                  : 'Gönderim izni henüz sorulmadı; ilk bildiriminde sorulacak.'}
+            </AlanNotu>
+            {bildirimIzni !== 'sorulmadi' && (
+              <GenisAlan tam>
+                <Cipler>
+                  <Cip
+                    secili={bildirimIzni === 'verildi'}
+                    onClick={() => onBildirimIzni('verildi')}
+                  >
+                    İzin ver
+                  </Cip>
+                  <Cip
+                    secili={bildirimIzni === 'reddedildi'}
+                    onClick={() => onBildirimIzni('reddedildi')}
+                  >
+                    Gönderme
+                  </Cip>
+                </Cipler>
+              </GenisAlan>
+            )}
             {bekleyenBildirim > 0 && (
               <AlanNotu ust>
-                {bekleyenBildirim} bildirim gönderilmeyi bekliyor.
+                {bekleyenBildirim} bildirim {bildirimIzni === 'verildi' ? 'gönderilmeyi bekliyor' : 'telefonunda bekliyor'}.
               </AlanNotu>
             )}
           </GenisAlan>

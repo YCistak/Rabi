@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Kameranın geçici dosyalarını paylaşmak için. Yalnızca kamera eklentisinin
+  gerçekten yazdığı iki dizin açık:
+
+  - `cache-path`  → `context.cacheDir`, güncel kamera akışının kullandığı yer
+                    (IonCameraUtils.kt: `File(context.cacheDir, filename)`).
+  - `external-files-path path="Pictures/"`
+                  → `getExternalFilesDir(DIRECTORY_PICTURES)`, eski (legacy)
+                    kamera akışının kullandığı yer (CameraUtils.java:24).
+
+  Capacitor şablonundan gelen `<external-path path="."/>` **kaldırıldı**: o
+  girdi dış depolamanın tamamını (`Environment.getExternalStorageDirectory()`)
+  paylaşıma açıyordu ve kamera eklentisi orayı hiç kullanmıyor — yani hem
+  gereksiz hem de güvenlik incelemesinde gereğinden geniş yüzey.
+-->
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <external-path name="my_images" path="." />
-    <cache-path name="my_cache_images" path="." />
+    <cache-path name="kamera_gecici" path="." />
+    <external-files-path name="kamera_resimleri" path="Pictures/" />
 </paths>
