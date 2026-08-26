@@ -20,8 +20,12 @@ android {
         applicationId "com.rabi.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 8
-        versionName "1.4.1"
+        // İki dal birleşti: beyaz tema (20) ile oyun modları dalı (19). Android
+        // daha küçük bir versionCode ile kurulumu reddediyor ve telefonda daha
+        // büyüğü duruyorsa "uygulama yüklenemedi" diyor; numara bu yüzden
+        // ikisinin de üstünden, 21den devam etti.
+        versionCode 22
+        versionName "1.9.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

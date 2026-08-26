@@ -25,6 +25,10 @@ import { BOZUKLUK_ADI, type BozuklukTuru } from './anlatim-havuzu'
 import { altSinir, ustSinir, type KokluSorusu } from './koklu'
 import type { BiyolojiSorusu } from './biyoloji'
 import type { OrganelSorusu } from './hucre-havuzu'
+import type { SiraliOlay } from './sirala-havuzu'
+import { dogruSira, yilMetni, type SiralamaSorusu } from './sirala'
+import type { TuzakKurali } from './tuzak-havuzu'
+import type { TuzakSorusu } from './tuzak'
 
 /** Bir kaydın bankadan düşmesi için gereken üst üste doğru sayısı. */
 export const DUSME_ESIGI = 3
@@ -99,6 +103,22 @@ export type BankaSorusu =
   // İpuçları da kayıtta: banka turunda kart yeniden açılıyor ve ipuçları
   // olmadan oyun oynanamaz.
   | { oyun: 'hucre'; hucre: OrganelSorusu }
+  /**
+   * Sıralama sorusu beş (boss'ta altı) olayı birden taşıyor.
+   *
+   * Soru tek bir bilgi değil, olaylar **arasındaki** ilişki: tek olay
+   * saklansaydı bankadan yeniden kurulan soru başka bir soru olurdu. Kartların
+   * kayıttaki sırası önemsiz — banka turu onları yeniden karıştırıyor.
+   */
+  | { oyun: 'sirala'; olaylar: SiraliOlay[] }
+  /**
+   * Kural kaydında sorunun hangi yüzü sorulduğu yok, kuralın kendisi var.
+   *
+   * Aynı kuralın doğru ve yanlış hâli aynı bilgi; ayrı kayıt açsalardı öğrenci
+   * aynı kuralı iki kez düşürmek zorunda kalırdı. Banka turu yüzü yeniden
+   * atıyor.
+   */
+  | { oyun: 'tuzak'; kural: TuzakKurali }
 
 export type BankaKaydi = {
   /** Soru içeriğinden türetilen kimlik; aynı soru iki kez eklenmez. */
@@ -247,6 +267,15 @@ export function hucredenBanka(soru: OrganelSorusu): BankaSorusu {
   return { oyun: 'hucre', hucre: soru }
 }
 
+/** Kayıt doğru sırayla yazılıyor: listede okunan şey doğru cevap. */
+export function siraladanBanka(soru: SiralamaSorusu): BankaSorusu {
+  return { oyun: 'sirala', olaylar: dogruSira(soru) }
+}
+
+export function tuzaktanBanka(soru: TuzakSorusu): BankaSorusu {
+  return { oyun: 'tuzak', kural: soru.kural }
+}
+
 /**
  * Kayıt kimliği.
  *
@@ -300,6 +329,13 @@ export function bankaKimligi(soru: BankaSorusu): string {
       return `${soru.oyun}:${soru.biyoloji.soru}`
     case 'hucre':
       return `hucre:${soru.hucre.organel}`
+    // Olay adları sıralanarak birleşiyor: aynı beş olay farklı karışık düzenle
+    // gelse de aynı soru sayılmalı.
+    case 'sirala':
+      return `sirala:${[...soru.olaylar].map((o) => o.olay).sort().join('|')}`
+    // Kimlik kuralın doğru hâlinden: iki yüzü tek kayıt.
+    case 'tuzak':
+      return `tuzak:${soru.kural.dogru}`
   }
 }
 
@@ -344,6 +380,13 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
     // hiçbir şey öğretmezdi.
     case 'hucre':
       return soru.hucre.ipuclari[soru.hucre.ipuclari.length - 1]
+    // Listede olaylar yılsız duruyor: yıl cevabın kendisi.
+    case 'sirala':
+      return soru.olaylar.map((o) => o.olay).join(' · ')
+    // Kartta kuralın **yanlış** hâli yazıyor: bankada hatırlanması gereken şey
+    // tuzağın nasıl göründüğü, doğru hâli hemen altında cevap olarak duruyor.
+    case 'tuzak':
+      return soru.kural.yanlis
   }
 }
 
@@ -387,6 +430,10 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
       return soru.biyoloji.dogru
     case 'hucre':
       return soru.hucre.organel
+    case 'sirala':
+      return soru.olaylar.map((o) => yilMetni(o.yil)).join(' → ')
+    case 'tuzak':
+      return soru.kural.dogru
   }
 }
 
@@ -495,6 +542,8 @@ const BOS_DAGILIM: Record<OyunId, number> = {
   ortak: 0,
   siniflandirma: 0,
   hucre: 0,
+  sirala: 0,
+  tuzak: 0,
 }
 
 export const OYUN_KIMLIKLERI = Object.keys(BOS_DAGILIM) as OyunId[]

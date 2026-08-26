@@ -13,6 +13,7 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-soft: var(--primary-soft);
   --color-primary-parlak: var(--primary-parlak);
+  --color-primary-dolu: var(--primary-dolu);
   --color-ikincil: var(--ikincil);
   --color-ikincil-soft: var(--ikincil-soft);
   --color-ring: var(--ring);
@@ -54,6 +55,10 @@
      kalınlık: gövde 500-600, başlık 800-900. */
   --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  /* Yalnızca açılış ekranı: tasarım o ekranı Manrope ile çizdi ve "RABİ"
+     50 pikselde iki ailede belirgin biçimde farklı duruyor. Başka hiçbir
+     yerde kullanılmıyor. */
+  --font-marka: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
 
   /* Kartlar tasarımda çerçeveyle değil gölgeyle ayrılıyor: kırık beyaz
      zeminin üstünde yüzen beyaz yüzeyler. */
@@ -124,6 +129,10 @@
   --primary-parlak: #d9622f;
   --primary-soft: #fbeee7;
   --primary-foreground: #ffffff;
+  /* Dolu eylem yüzeyi: düğme, seçili çip, açık anahtar. Parlak tonun kendisi;
+     ayrı bir ad olarak duruyor çünkü ekranlar "dolgu" ile "eylem"i ayrı ayrı
+     çağırıyor ve ileride birbirinden ayrılabilirler. */
+  --primary-dolu: var(--primary-parlak);
 
   /* İkinci kimlik rengi: tuğla. Marka yazısı, yanlışlar, dikkat çeken eylem.
      Turuncudan ayrışsın diye daha koyu ve kırmızıya yakın, ama aynı sıcaklıkta. */
@@ -172,8 +181,8 @@
      ayrılsın diye. İkisi aynı listede yan yana duruyor. */
   --byl: #eef1e4;
   --byl-kart: var(--byl);
-  --byl-koyu: #5f7d28;
-  --byl-ok: #86ac3e;
+  --byl-koyu: #5c7c26;
+  --byl-ok: #83a93c;
 
   /* Boss sorusunda oyun ekranının zemini. */
   --boss-zemin: var(--ikincil-soft);
@@ -207,6 +216,9 @@
 @layer utilities {
   .font-display {
     font-family: var(--font-display);
+  }
+  .font-marka {
+    font-family: var(--font-marka);
   }
   /*
     Kart yüzeyi: çerçeve değil gölge. Kırık beyaz zeminin üstünde beyaz
@@ -275,7 +287,8 @@
     değiştirmek istersen yalnız `animation-duration` değerlerini aynı oranda
     değiştir, yüzdeler kendiliğinden ölçeklenir.
 
-      %0–34   tavşan yukarıdan düşer, hafif sekerek yerine oturur
+      %0–30   tavşan hızlanarak düşer, sonunda yumuşayarak yerine oturur
+      %17–30  gölge ve hale, tavşan yere yaklaşırken belirir
       %18–36  RABİ yazısı belirir
       %30–46  slogan belirir
       %38–52  çark, şerit ve "HAZIRLANIYOR" belirir
@@ -283,13 +296,35 @@
       %68–100 tavşan varış noktasına küçülerek süzülür
       %78–92  zemin solar — tavşanın son yolu uygulamanın üstünde geçer
   */
+  /*
+    Varış noktası (`--acilis-x/y/olcek`) `components/acilis.tsx`'ten `style` ile
+    geliyor ve orada **ölçülerek** bulunuyor. Burada yedeği yok: değer her
+    çizimde satır içinde veriliyor, buraya bir yedek yazmak iki ayrı doğru
+    kaynak yaratırdı.
+  */
+  /* Zamanlama `linear`: iniş eğrisini keyframe'lerin kendisi taşıyor
+     (`animation-timing-function`), öğeye ikinci bir eğri koymak ikisini
+     çarpar ve kesintisiz iniş yeniden titriyormuş gibi görünürdü. */
   .acilis-inis {
-    /* Varış noktası `components/acilis.tsx`'ten `style` ile geliyor; burada
-       yalnızca yedek değerler duruyor (ana sayfa başlığındaki maskot). */
-    --acilis-x: calc(max(0px, (100vw - 448px) / 2) + 47px - 50vw);
-    --acilis-y: calc(1.25rem + var(--guvenli-ust) + 138.7px - 50dvh);
-    --acilis-olcek: 0.518;
-    animation: acilis-inis 4200ms cubic-bezier(0.3, 0.8, 0.25, 1) forwards;
+    animation: acilis-inis 4200ms linear forwards;
+  }
+
+  /*
+    Ekran, uygulama penceresi gerçekten görünene kadar ilk karesinde duruyor.
+
+    CSS animasyonları sayfa çizilir çizilmez başlıyor; Android’in kendi
+    açılış ekranı ise o sırada hâlâ ekranı kaplıyor olabiliyor. Animasyon
+    arkada akıp bitiyor ve pencere açıldığında kullanıcı yalnızca son
+    karesini görüyor — "animasyon yok" diye okunan şey tam olarak bu. Sınıf,
+    ilk kare üretildiği an kalkıyor (bkz. acilis.tsx → `useBaslangic`).
+
+    Duraklatma `display: none` ya da gecikmeyle değil `animation-play-state`
+    ile: ekran o sırada görünmek zorunda (zemini sistem açılış ekranıyla aynı,
+    yani arada bir boşluk oluşmuyor), yalnızca zaman çizgisi beklemeli.
+  */
+  .acilis-bekliyor,
+  .acilis-bekliyor * {
+    animation-play-state: paused !important;
   }
   /*
     Açılışın zemini. Ayrı bir katman, çünkü gösteri biterken **yalnız zemin**
@@ -312,6 +347,10 @@
     animation: acilis-yukleme 4200ms ease-out forwards;
   }
   .acilis-alt {
+    animation: acilis-son 4200ms ease-out forwards;
+  }
+  /* Ölçüm hiç tutmadıysa uçmayan tavşan da süslemelerle birlikte sönüyor. */
+  .acilis-son {
     animation: acilis-son 4200ms ease-out forwards;
   }
   .acilis-cark {
@@ -337,29 +376,37 @@
 
   /* Maskotun arkasındaki hale ve altındaki zemin gölgesi. İkisi de ortadan
      ölçülüyor (`top: 50%` + eksi kenar boşluğu), tavşanla aynı hizada. */
+  /* İkisi de tavşandan ÖNCE görünmez (`opacity: 0`) ve tavşan yere inerken
+     doğuyor. Ayrı bir "nefes alma" döngüsü yok: ikisi de tek seferlik zaman
+     çizgisinden kendi payını oynuyor — sürekli dönen bir döngü, yere oturma
+     anındaki yayılmayı kendi ritmiyle örtüyordu. */
   .acilis-hale {
     position: absolute;
     left: 50%;
-    top: 0;
+    top: 50%;
     width: 170px;
     height: 170px;
     margin: -186px 0 0 -85px;
     border-radius: 999px;
     background: radial-gradient(circle, color-mix(in srgb, var(--primary) 8%, transparent), transparent 68%);
     filter: blur(5px);
-    animation: acilis-hale 6s ease-in-out infinite, acilis-son 4200ms ease-out forwards;
+    opacity: 0;
+    animation: acilis-hale 4200ms ease-out forwards;
   }
+  /* Gölge tavşanın alt kenarının **altına** oturuyor: daha yukarıdayken
+     gövdenin içinde kalıyor ve tavşan tarafından örtülüyordu. */
   .acilis-golge {
     position: absolute;
     left: 50%;
-    top: 0;
-    width: 130px;
-    height: 20px;
-    margin: -60px 0 0 -65px;
+    top: 50%;
+    width: 104px;
+    height: 16px;
+    margin: -45px 0 0 -52px;
     border-radius: 999px;
-    background: radial-gradient(ellipse, rgba(24, 23, 22, 0.1), transparent 72%);
+    background: radial-gradient(ellipse, rgba(24, 23, 22, 0.2), transparent 72%);
     filter: blur(3px);
-    animation: acilis-havuz 6.5s ease-in-out infinite, acilis-son 4200ms ease-out forwards;
+    opacity: 0;
+    animation: acilis-golge 4200ms ease-out forwards;
   }
 
   /* Arka plandaki yumuşak parıltılar. */
@@ -459,11 +506,24 @@
   yeri değişirse yalnız o tabloyu güncelle.
 */
 @keyframes acilis-inis {
-  0% { opacity: 0; transform: translateY(-300px) scale(1.04); }
-  12% { opacity: 1; }
-  26% { transform: translateY(14px) scale(0.99); }
-  34% { opacity: 1; transform: translateY(0) scale(1); }
-  68% { opacity: 1; transform: translateY(0) scale(1); }
+  /* Tek parça iniş: hızlanarak düşer, sonuna doğru yumuşayarak yerine oturur.
+     Sekme YOK — eğri baştan sona kesintisiz. Bir süre %26'da hafif bir sekme
+     vardı; 118 piksellik bir yüzde o sekme çarpma değil titreme gibi duruyordu. */
+  0% {
+    opacity: 0;
+    transform: translateY(-320px) scale(1);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.35, 1);
+  }
+  8% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.35, 1);
+  }
+  30% { opacity: 1; transform: translateY(0) scale(1); }
+  68% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.2, 1);
+  }
   100% {
     opacity: 1;
     transform: translate(var(--acilis-x), var(--acilis-y)) scale(var(--acilis-olcek));
@@ -521,13 +581,22 @@
 }
 
 @keyframes acilis-hale {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(1.08); }
+  0%, 17% { opacity: 0; transform: scale(0.85); }
+  30% { opacity: 0.85; transform: scale(1.06); }
+  50% { opacity: 0.55; transform: scale(1); }
+  68% { opacity: 0.8; transform: scale(1.05); }
+  86%, 100% { opacity: 0; transform: scale(0.9); }
 }
 
-@keyframes acilis-havuz {
-  0%, 100% { opacity: 0.45; transform: scaleX(1); }
-  50% { opacity: 0.75; transform: scaleX(1.08); }
+/* Tavşan inerken doğuyor, yere oturma anında (%30) yayılıp toparlanıyor,
+   sonra hafifçe nefes alıyor ve tavşanla birlikte sönüyor. */
+@keyframes acilis-golge {
+  0%, 17% { opacity: 0; transform: scale(0.5); }
+  26% { opacity: 0.72; transform: scale(0.92); }
+  30% { opacity: 0.9; transform: scale(1.06); }
+  42% { opacity: 0.62; transform: scale(1); }
+  68% { opacity: 0.72; transform: scale(1.02); }
+  82%, 100% { opacity: 0; transform: scale(0.7); }
 }
 
 @keyframes acilis-parilti {
@@ -579,8 +648,8 @@
 }
 
 /*
-  Hareket azaltma tercihi açıksa süslemeler durur. Açılış çarkı istisna: dönmeyen
-  bir bekleme göstergesi "donmuş" izlenimi veriyor, o yüzden yavaşlatılıyor.
+  Hareket azaltma tercihi açıksa süslemeler durur — açılış ekranı hariç, sebebi
+  aşağıdaki blokta yazılı.
 */
 @keyframes ozet-cubuk {
   from {
@@ -591,42 +660,34 @@
   }
 }
 
+/*
+  Açılış ekranı bu listede bilerek **yok**.
+
+  Tasarımın kendi kuralı onu da susturuyordu ve uygulama bir süre öyle çıktı.
+  Android'de bu tercih çoğu zaman erişilebilirlik ayarından değil geliştirici
+  seçeneklerindeki "animasyon ölçeği" ya da pil tasarrufundan geliyor — yani
+  hareketten rahatsız olduğu için değil telefonu hızlansın diye kapatan
+  kullanıcıda da açılış ekranı boş bir kareye dönüyordu. Karar kullanıcının:
+  açılış animasyonu her koşulda oynuyor, uygulamanın geri kalanı tercihi
+  izlemeye devam ediyor.
+*/
 @media (prefers-reduced-motion: reduce) {
-  /* Tavşan uçmuyor ama sönüyor: zemin çekildikten sonra ekranın ortasında
-     asılı kalmasın. */
-  .acilis-inis {
-    animation: acilis-son 4200ms ease-out forwards;
-  }
-  /* Geçiş katmanı uçmuyor ama doğrudan varış noktasında duruyor: yerinde
-     kalsaydı ana sayfanın üstünde bir saniye boyunca kocaman bir tavşan
-     asılı kalırdı. */
+  /* Kurulum sonrası geçiş uçmuyor ama doğrudan varış noktasında duruyor:
+     yerinde kalsaydı ana sayfanın üstünde bir saniye boyunca kocaman bir
+     tavşan asılı kalırdı. Bu bir marka anı değil, ekranlar arası bir
+     hareket. */
   .acilis-gecis {
     animation: none;
     transform: translate(var(--gecis-x), var(--gecis-y)) scale(var(--gecis-olcek));
   }
   .acilis-girisi,
-  .acilis-yazi,
-  .acilis-slogan,
-  .acilis-yukleme,
-  .acilis-alt,
-  .acilis-hale,
-  .acilis-golge,
-  .acilis-parilti,
   .ozet-girisi,
   .ozet-vurgu,
   .ozet-nabiz {
     animation: none;
   }
   /* `ozet-cubuk` bilerek listede yok: süsleme değil, kartın ne zaman
-     geçeceğini gösteren tek işaret. Açılıştaki çark ile yükleme şeridi de
-     durmuyor, yalnızca yavaşlıyor: donmuş bir bekleme göstergesi uygulamanın
-     takıldığı izlenimi veriyor. */
-  .acilis-cark {
-    animation-duration: 7s;
-  }
-  .acilis-ray::after {
-    animation-duration: 3.4s;
-  }
+     geçeceğini gösteren tek işaret. */
 }
 
 /*
@@ -697,5 +758,199 @@
 
   .boss-rozet {
     animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Tur içi efektler
+
+   Dördü de `oyun-kabuk.tsx`'te tetikleniyor, yani tek yerde yazılıp 18 oyuna
+   birden düşüyorlar. Hepsi `prefers-reduced-motion` altında susuyor: hareket
+   burada bilgi taşımıyor, bilgi zaten sayıda ve renkte duruyor.
+   --------------------------------------------------------------------------- */
+
+/*
+  Yanlış cevapta sarsıntı.
+
+  Yanlışın tek işareti ses ve titreşimdi; ekranda hiçbir şey kımıldamıyordu ve
+  sesi kapatan kullanıcı için yanlış ile doğru aynı görünüyordu. Yatay ve kısa:
+  dikey sarsıntı okuma satırını kaydırıyor, uzun olanı da bir sonraki soruya
+  geçişi geciktiriyor.
+*/
+@keyframes oyunSarsinti {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-7px); }
+  30% { transform: translateX(6px); }
+  45% { transform: translateX(-4px); }
+  60% { transform: translateX(3px); }
+  80% { transform: translateX(-1px); }
+}
+
+.oyun-sarsinti {
+  animation: oyunSarsinti 380ms ease-in-out both;
+}
+
+/*
+  Süre tükenirken halkanın nabzı.
+
+  Renk zaten kırmızıya dönüyor ama renk pasif bir işaret: ekranın başka yerine
+  bakan oyuncu onu görmüyor. Hareket görüş alanının kenarından da fark ediliyor.
+  Boss'ta çalışmıyor — orada zaten ekranın çerçevesi atıyor, iki nabız birbirini
+  bozar.
+*/
+@keyframes sureNabzi {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.sure-nabzi {
+  animation: sureNabzi 780ms ease-in-out infinite;
+}
+
+/*
+  Boss yenildiğinde patlayan ışık.
+
+  Boss'un girişi vardı, yenilişi yoktu: onuncu soruyu bilmek üçüncüyü bilmekle
+  aynı hissettiriyordu.
+
+  İlk deneme yerinde duran bir altın radyaldi ve iyi durmadı: boss zemini açık
+  bir renk (`--boss-zemin`, mercanın soluğu) ve onun üstünde sabit bir sarı
+  daire ışık gibi değil leke gibi görünüyor. Işık olarak okunması için
+  **büyümesi** gerekiyor — göz parlaklığı değil, yayılmayı ışık sanıyor.
+
+  Üç katman: dışa açılan bir halka (her zeminde okunuyor, biçimi olan tek
+  katman), onun arkasında büyüyen yumuşak bir hâle ve içeriden gelen kısa bir
+  aydınlanma. Halka ötekilerden hızlı gidiyor; hepsi aynı hızda olsaydı tek bir
+  bulanık daire olurdu.
+*/
+@keyframes bossHale {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+  18% { opacity: 0.7; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.25); }
+}
+
+@keyframes bossHalka {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.12); border-width: 10px; }
+  15% { opacity: 0.95; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); border-width: 1px; }
+}
+
+.boss-parlama {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Hâle: sınırı olmayan yumuşak ışık. Merkez soru kartının hizasında (%42),
+   ekranın tam ortası değil — oyuncunun gözü orada. */
+.boss-parlama::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 150vmax;
+  height: 150vmax;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--warning) 85%, transparent) 0%,
+    color-mix(in srgb, var(--warning) 40%, transparent) 30%,
+    transparent 58%
+  );
+  animation: bossHale 760ms cubic-bezier(0.16, 0.9, 0.3, 1) both;
+}
+
+/* Halka: patlamanın kenarı. Çizgi kalınlığı büyürken inceliyor, yani halka
+   dağılıyormuş gibi duruyor — sabit kalınlıkta bir çember çember gibi görünür,
+   patlama gibi değil. */
+.boss-parlama::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 190vmin;
+  height: 190vmin;
+  border-radius: 50%;
+  border: 10px solid var(--warning);
+  animation: bossHalka 620ms cubic-bezier(0.1, 0.8, 0.25, 1) both;
+}
+
+/*
+  Yeni rekorda konfeti.
+
+  Yalnızca rekorda: her tur sonunda patlasaydı üç turda anlamını yitirirdi.
+  Konum ve gecikme sabit bir tablodan geliyor, rastgele değil — `Math.random`
+  çizim sırasında sunucu ve istemci çıktısını ayırır, statik dışa aktarımda da
+  her yeniden çizimde parçacıklar yerinden oynardı.
+*/
+@keyframes konfetiDus {
+  0% { transform: translateY(-14px) rotate(0deg); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translateY(190px) rotate(420deg); opacity: 0; }
+}
+
+.konfeti {
+  position: absolute;
+  top: 0;
+  width: 7px;
+  height: 11px;
+  border-radius: 2px;
+  animation: konfetiDus 1500ms ease-in forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oyun-sarsinti,
+  .sure-nabzi,
+  .konfeti {
+    animation: none;
+  }
+
+  /* Parlamanın animasyonu sözde öğelerde; kabı gizlemek üçünü birden susturuyor. */
+  .boss-parlama,
+  .konfeti {
+    display: none;
+  }
+}
+
+/*
+  Oyun Bankası'nda tikle kaldırılan kart.
+
+  Kayıt eskiden anında yok oluyordu ve dokunuşun karşılığı görünmüyordu: liste
+  kısalıyor ama hangi kartın gittiği anlaşılmıyordu. Kart önce onaylanıyor
+  (yeşile dönüp hafifçe büyüyor), sonra yana süzülüyor. Süre kısa — silme
+  kararı zaten verilmiş, burada sorulan bir şey yok.
+*/
+@keyframes bankaKalk {
+  0% { transform: scale(1); opacity: 1; }
+  22% { transform: scale(1.03); opacity: 1; }
+  100% { transform: scale(0.9) translateX(28%); opacity: 0; }
+}
+
+.banka-kalkiyor {
+  animation: bankaKalk 420ms cubic-bezier(0.4, 0, 0.9, 0.4) both;
+}
+
+/* Tik basılınca doluyor: kartın gideceğini kart gitmeden söylüyor. */
+@keyframes tikDol {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.tik-dolu {
+  animation: tikDol 320ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .banka-kalkiyor,
+  .tik-dolu {
+    animation: none;
+  }
+
+  /* Hareket kapalıyken de kart gitmeden önce görünür bir onay kalmalı. */
+  .banka-kalkiyor {
+    opacity: 0.4;
   }
 }

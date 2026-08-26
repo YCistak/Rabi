@@ -1,6 +1,8 @@
 'use client'
 
-import { Rabi } from '@/components/maskot/rabi'
+import { useEffect, useRef, useState } from 'react'
+import { cn } from '@/lib/utils'
+import { MASKOT_YUVASI, Rabi } from '@/components/maskot/rabi'
 
 /**
  * Açılış ekranı.
@@ -19,78 +21,262 @@ import { Rabi } from '@/components/maskot/rabi'
 const ZEMIN = '#F8F8F7'
 
 /**
- * Ekranın en az ne kadar kalacağı (ms).
+ * Ekranın ömrü (ms) — tasarımın kendi süresi.
  *
- * Veri localStorage'dan neredeyse anında okunuyor; süre konulmasaydı ekran bir
- * kare görünüp kaybolur, animasyon hiç izlenmezdi. Tasarımın kendi süresi 4,2
- * saniye: iniş, yazı, slogan ve yükleme bloğu sırayla belirip sönüyor, sonunda
- * tavşan sol üste süzülüyor. `globals.css`'teki `acilis-*` animasyonlarının
- * süresi de bu — birlikte değişmeliler.
+ * Bütün parçalar tek bir 4,2 saniyelik zaman çizgisini paylaşıyor ve sıralarını
+ * yüzdelerle alıyor: %0–30 iniş, %30–68 duruş, %68–100 çıkış. Süreyi
+ * değiştirirsen `globals.css`'teki bütün `acilis-*` sürelerini birlikte
+ * değiştir; yüzdeler kendiliğinden ölçeklenir ama süreler birbirinden ayrılırsa
+ * parçalar dağılır.
+ *
+ * Veri okumasına bağlanmadı: localStorage neredeyse anında dönüyor,
+ * bağlansaydı ekran bir kare görünüp kaybolur ve animasyon hiç izlenmezdi.
  */
 export const ACILIS_SURESI = 4200
 
 /**
- * Tavşanın gösteri sonunda gideceği yer.
+ * Maskotun açılıştaki ölçüleri.
  *
- * `kose`: ana sayfanın başlığındaki maskotun üstü — uygulama daha önce
- * kurulmuşsa açılışın arkasında ana sayfa duruyor.
- * `kurulum`: kurulum sihirbazının tepesindeki maskotun üstü. İlk açılışta sol
- * üst köşede hiçbir şey yok; tavşan oraya gidince ekranın kimsesiz bir
- * köşesine süzülmüş gibi oluyordu.
- *
- * Konum sınıf değil **değişken** olarak veriliyor: `kurulumTamamlandi`
- * localStorage'dan bir kare sonra geliyor ve sınıf değişseydi animasyon
- * baştan başlardı. Değişken değişince yalnız varış noktası güncelleniyor.
+ * Tasarım 118 piksellik kare bir görsel çiziyor. `Rabi`nin kutusu ise 130/120
+ * oranında — eski SVG'nin kutusu bu ölçüdeydi ve on beş ekranın yerleşimi ona
+ * göre kuruldu. Kare görsel `object-contain` ile o kutunun **ortasına**
+ * oturuyor, yani kutu görselden 8 piksel uzun. Üst boşluk bu yüzden kutunun
+ * değil görselin merkezinden ölçülüyor: doğrudan tasarımın -160'ı yazılsaydı
+ * tavşan 5 piksel aşağı kayardı.
  */
-export type AcilisVarisi = 'kose' | 'kurulum'
+const MASKOT_BOYU = 118
+const MASKOT_KUTUSU = (MASKOT_BOYU * 130) / 120
+/** Görselin merkezi, ekranın ortasına göre (tasarımda kutunun üstü -160). */
+const MASKOT_MERKEZI = -160 + MASKOT_BOYU / 2
 
-/*
-  Değerler tarayıcıda ölçülerek çıkarıldı, göz kararıyla değil: varış
-  noktasındaki maskot artık uçuş boyunca gizli olduğu için 1-2 piksellik
-  kayma bile son karede zıplama olarak görünüyor.
+/**
+ * Uçuşun zaman çizgisindeki yeri.
+ *
+ * Tavşan %68'e kadar yerinde duruyor, oradan sonra varış noktasına süzülüyor
+ * (`acilis-inis`). Ölçüm bu ana kadar yenileniyor, bu andan sonra donuyor:
+ * uçuş başladıktan sonra varış noktasını değiştirmek tavşanı yolun ortasında
+ * ışınlardı.
+ */
+const UCUS_BASLANGICI = Math.round(ACILIS_SURESI * 0.68)
 
-  Uçan tavşanın durduğu yer: yatayda ekranın ortası, dikeyde `50dvh - 99.33px`
-  (kapsayıcı `top: 50%`, içerideki kutu `-160px`, kutunun yarısı 60.67px).
-  Ölçek, hedefteki maskotun genişliğinin 112'ye oranı.
+type Olcum = { dx: number; dy: number; olcek: number }
 
-  Yatay hedef her iki varışta da sayfa kabının solundan 47px içeride
-  (`mx-auto max-w-md` + `px-4` + `px-0.5` + maskotun yarısı). Dar ekranda kap
-  ekranla aynı, geniş ekranda 448px'e oturuyor — `max()` ikisini de karşılıyor.
-*/
-const VARIS: Record<AcilisVarisi, React.CSSProperties> = {
-  // Ana sayfa başlığındaki 58px'lik maskot.
-  kose: {
-    '--acilis-x': 'calc(max(0px, (100vw - 448px) / 2) + 47px - 50vw)',
-    '--acilis-y': 'calc(1.25rem + var(--guvenli-ust) + 138.7px - 50dvh)',
-    '--acilis-olcek': '0.518',
-  },
-  // Kurulumun tepesindeki 110px'lik maskot: yatayda zaten ortada.
-  kurulum: {
-    '--acilis-x': '0px',
-    '--acilis-y': 'calc(2rem + var(--guvenli-ust) + 158.9px - 50dvh)',
-    '--acilis-olcek': '0.982',
-  },
-} as Record<AcilisVarisi, React.CSSProperties>
+/** Ölçümün yinelenme aralığı (ms). */
+const OLCUM_ARALIGI = 16
 
-export function Acilis({
-  kapaniyor,
-  varis = 'kose',
-}: {
-  kapaniyor: boolean
-  varis?: AcilisVarisi
-}) {
+/** Bu kadar pikselden küçük oynamalar için yeniden çizmeye değmiyor. */
+const ONEMSIZ_OYNAMA = 0.5
+
+/**
+ * Maskotun nereye süzüleceğini varış noktasındaki maskottan ölçer.
+ *
+ * Varış noktası koda yazılabilirdi — bir süre öyleydi (`VARIS` diye bir tablo
+ * vardı) — ama o hesap başlığın kaç piksel yukarıda durduğunu, güvenli alanı ve
+ * kabın genişliğini bilmek zorunda. Tablo tam da bu yüzden bozuldu: düzen
+ * değişti, sayılar kaldı ve tavşan yuvanın **93 piksel altına** iniyordu.
+ * Üstelik yalnızca bazen — tablo sadece ölçüm yetişmediğinde devreye giriyordu,
+ * yani hata telefonun o açılışta ne kadar hızlı olduğuna bağlıydı.
+ *
+ * Bu yüzden iki kural var:
+ *
+ * 1. **Ölçüm uçuş başlayana kadar bırakılmıyor.** Eskiden 60 deneme (~1 sn)
+ *    hakkı vardı ve hakkı bitince yedeğe düşülüyordu; yavaş açılan bir
+ *    telefonda ana sayfa o saniyeye yetişmiyor. Artık tek sınır uçuşun kendisi:
+ *    yuva ne zaman doğarsa ölçüm onu yakalıyor.
+ * 2. **İlk başarılı ölçüm son söz değil.** Düzen açılıştan sonra bir kez daha
+ *    oynayabiliyor — güvenli alan (`--guvenli-ust`) yerli köprüden gecikmeli
+ *    geliyor, yazı tipi sonradan takas oluyor. Ölçüm uçuşa kadar yenilendiği
+ *    için tavşan hangi düzen son hâlse ona iniyor.
+ *
+ * Ölçü ekranın kendi kutusundan alınıyor, `window.innerHeight`ten değil:
+ * uçan tavşan `fixed inset-0` bir katmanın ortasına göre duruyor ve WebView
+ * açılırken pencere ölçüsüyle o katmanın kutusu bir süre ayrı düşebiliyor.
+ *
+ * Yineleme `requestAnimationFrame` ile değil zamanlayıcıyla: sayfa görünür
+ * değilken (uygulama arka planda açıldıysa) rAF hiç çağrılmıyor ve ölçüm
+ * sonsuza kadar beklerdi. Hesap zaten çizime değil düzene bakıyor.
+ */
+function useVaris(katmanRef: React.RefObject<HTMLDivElement | null>, basladi: boolean): Olcum | null {
+  const [olcum, setOlcum] = useState<Olcum | null>(null)
+
+  useEffect(() => {
+    let zamanlayici = 0
+    let dondu = false
+
+    const olc = () => {
+      if (dondu) return
+
+      const yuva = document.getElementById(MASKOT_YUVASI)
+      const yuvaKutusu = yuva?.getBoundingClientRect()
+      const katmanKutusu = katmanRef.current?.getBoundingClientRect()
+
+      // Yuva henüz yok (veri okunuyor) ya da ölçüsü sıfır: birazdan yeniden bak.
+      if (yuvaKutusu && katmanKutusu && yuvaKutusu.width > 0) {
+        // İki kutu da kare görseli ortalayan `object-contain` kutusu; kutunun
+        // merkezi görselin merkeziyle aynı yerde.
+        const yeni: Olcum = {
+          dx: yuvaKutusu.left + yuvaKutusu.width / 2 - (katmanKutusu.left + katmanKutusu.width / 2),
+          dy:
+            yuvaKutusu.top +
+            yuvaKutusu.height / 2 -
+            (katmanKutusu.top + katmanKutusu.height / 2 + MASKOT_MERKEZI),
+          olcek: yuvaKutusu.width / MASKOT_BOYU,
+        }
+        // Ölçüm 16 ms'de bir yineleniyor; her seferinde yeni bir nesne vermek
+        // ekranı boşuna baştan çizerdi.
+        setOlcum((onceki) =>
+          onceki &&
+          Math.abs(onceki.dx - yeni.dx) < ONEMSIZ_OYNAMA &&
+          Math.abs(onceki.dy - yeni.dy) < ONEMSIZ_OYNAMA &&
+          Math.abs(onceki.olcek - yeni.olcek) < 0.001
+            ? onceki
+            : yeni,
+        )
+      }
+
+      zamanlayici = window.setTimeout(olc, OLCUM_ARALIGI)
+    }
+
+    olc()
+
+    // Donma sayacı animasyon **başlayınca** işliyor: ekran duraklatılmış
+    // başlıyor (bkz. `useBaslangic`) ve uçuş o zaman çizgisinin %68'inde.
+    // Bağlanmadan işletilseydi yavaş açılan bir telefonda ölçüm tavşan daha
+    // yola çıkmadan donardı.
+    const donma = basladi ? window.setTimeout(() => (dondu = true), UCUS_BASLANGICI) : 0
+
+    return () => {
+      dondu = true
+      clearTimeout(zamanlayici)
+      clearTimeout(donma)
+    }
+  }, [katmanRef, basladi])
+
+  return olcum
+}
+
+/**
+ * Ekran hiç kare üretilmeden başlarsa animasyonun görüleceği bir yer kalmıyor.
+ *
+ * CSS animasyonları sayfa çizilir çizilmez başlıyor. Uygulama açılırken o an
+ * ekranı hâlâ Android'in kendi açılış ekranı kaplıyor olabiliyor: animasyon
+ * arkada akıp bitiyor ve pencere açıldığında kullanıcı yalnızca son karesini
+ * görüyor. Dışarıdan bakınca "animasyon hiç oynamadı" gibi duruyor.
+ *
+ * Bu yüzden zaman çizgisi duraklatılmış başlıyor ve **kare üretildiği** an
+ * salınıyor: arka arkaya iki `requestAnimationFrame`, tarayıcının gerçekten
+ * çizdiğinin kanıtı. rAF sayfa görünür değilken hiç çağrılmadığı için
+ * `visibilitychange` de dinleniyor.
+ *
+ * Emniyet zamanlayıcısı şart: kare hiç gelmezse ekran sonsuza kadar donuk
+ * kalır ve uygulama açılış katmanının altında kilitlenirdi.
+ */
+const EMNIYET_SURESI = 800
+
+function useBaslangic(): boolean {
+  const [basladi, setBasladi] = useState(false)
+
+  useEffect(() => {
+    let bitti = false
+    let kare1 = 0
+    let kare2 = 0
+
+    const basla = () => {
+      if (bitti) return
+      bitti = true
+      setBasladi(true)
+    }
+
+    const kareBekle = () => {
+      cancelAnimationFrame(kare1)
+      cancelAnimationFrame(kare2)
+      kare1 = requestAnimationFrame(() => {
+        kare2 = requestAnimationFrame(basla)
+      })
+    }
+
+    const gorunurlukDegisti = () => {
+      if (document.visibilityState === 'visible') kareBekle()
+    }
+
+    kareBekle()
+    document.addEventListener('visibilitychange', gorunurlukDegisti)
+    const emniyet = window.setTimeout(basla, EMNIYET_SURESI)
+
+    return () => {
+      cancelAnimationFrame(kare1)
+      cancelAnimationFrame(kare2)
+      clearTimeout(emniyet)
+      document.removeEventListener('visibilitychange', gorunurlukDegisti)
+    }
+  }, [])
+
+  return basladi
+}
+
+/**
+ * @param onBitti Ekranın ömrü dolduğunda çağrılır.
+ *
+ * Sayaç bu bileşenin içinde, çağıranda değil: ekran ancak animasyon başlayınca
+ * yaşamaya başlıyor ve o anı yalnızca burası biliyor. Dışarıda tutulsaydı sayaç
+ * animasyondan önce işlemeye başlar, yavaş açılan bir telefonda katman maskot
+ * yuvasına varmadan kaldırılırdı.
+ */
+export function Acilis({ onBitti }: { onBitti: () => void }) {
+  const katmanRef = useRef<HTMLDivElement>(null)
+  const basladi = useBaslangic()
+  const olcum = useVaris(katmanRef, basladi)
+
+  // Geri çağrı her çizimde yeniden üretilebiliyor; sayacın ona bakması
+  // zamanlayıcıyı sıfırlardı.
+  const bitisRef = useRef(onBitti)
+  bitisRef.current = onBitti
+
+  useEffect(() => {
+    if (!basladi) return
+    const zamanlayici = window.setTimeout(() => bitisRef.current(), ACILIS_SURESI)
+    return () => clearTimeout(zamanlayici)
+  }, [basladi])
+
+  /*
+    Ölçüm hiç tutmadıysa tavşan **uçmuyor**, olduğu yerde sönüyor.
+
+    Eskiden koda yazılmış bir yedek tabloya uçuyordu ve bu ekranın tek gerçek
+    hatasıydı: yuva yoksa zaten konacak bir maskot da yok, tahmin edilen bir
+    köşeye süzülmek hareketi kurtarmıyor — yanlış yere inen bir tavşan
+    gösteriyor. Kendi yerinde sönmek hiç olmazsa yanlış bir şey söylemiyor.
+  */
+  const hedef = (
+    olcum
+      ? {
+          '--acilis-x': `${olcum.dx}px`,
+          '--acilis-y': `${olcum.dy}px`,
+          '--acilis-olcek': olcum.olcek,
+        }
+      : { '--acilis-x': '0px', '--acilis-y': '0px', '--acilis-olcek': 1 }
+  ) as React.CSSProperties
+
   return (
     <div
       // Zemin bu katmanda değil altındaki `acilis-zemin`de: gösteri biterken
       // zemin soluyor ve tavşan **uygulamanın üstünde** uçarak yerine gidiyor.
       // Zemin burada dursaydı tavşan yol boyunca bomboş beyaz bir ekranda
-      // süzülürdü. `pointer-events-none`, sönen katmanın son yarım saniyede
-      // dokunuşları yutmasını engelliyor.
-      className="pointer-events-none fixed inset-0 z-[60] overflow-hidden transition-opacity duration-300"
-      style={{ opacity: kapaniyor ? 0 : 1 }}
-      aria-hidden={kapaniyor}
+      // süzülürdü.
+      //
+      // Katman dokunuşları **yutuyor** (`pointer-events-none` yok). Bir süre
+      // saydamdı: son saniyede zemin çoktan solmuş oluyor ve altındaki
+      // düğmeler görünüyordu, ama görünen her şey aynı zamanda basılabilir
+      // oluyordu — kullanıcı daha uygulamayı görmeden sekme değiştiriyor,
+      // açılış kalkınca kendini başka bir ekranda buluyordu. Görünürlük
+      // dokunulabilirlik demek değil: gösteri bitene kadar ekran kilitli.
+      // `touch-none`, aynı şeyi kaydırma/yakınlaştırma için yapıyor.
+      className={cn(
+        'font-marka fixed inset-0 z-[60] touch-none overflow-hidden select-none',
+        !basladi && 'acilis-bekliyor',
+      )}
       role="status"
       aria-label="Rabi açılıyor"
+      ref={katmanRef}
     >
       {/* Zemin ve üstündeki iki yumuşak parıltı. Zemin düz beyaza yakın;
           parıltılar olmadan ekran boş bir kâğıt gibi duruyor. */}
@@ -100,54 +286,61 @@ export function Acilis({
       </div>
 
       {/*
-        Yerleşim `flex` ile değil, ortadan ölçülen sabit boşluklarla kuruluyor:
-        parçalar farklı zamanlarda beliriyor ve akışta olsalardı biri gelirken
-        ötekiler kayıyordu. Boşluklar `mt-*` ile veriliyor, üst üste binmesin
-        diye her parçaya kendi satır yüksekliği kadar yer ayrıldı.
+        Parçalar akışta değil, ekranın ortasından ölçülen sabit boşluklarda
+        duruyor: hepsi ayrı zamanlarda belirip sönüyor ve akışta olsalardı biri
+        giderken ötekiler kayardı. Boşluklar tasarımın kendi sayıları.
       */}
-      <div className="absolute inset-x-0 top-1/2 flex flex-col items-center">
-        {/* Maskotun arkasındaki hale ve altındaki zemin gölgesi */}
-        <span className="acilis-hale" />
-        <span className="acilis-golge" />
 
-        <div className="acilis-inis -mt-[160px]" style={VARIS[varis]}>
-          {/*
-            Uygulamanın kendi maskotu kullanılıyor, ayrı bir açılış çizimi değil:
-            animasyon tavşanı sol üste süzülerek bitiriyor ve orada ana sayfanın
-            başlığındaki maskotun üstüne oturuyor. İki farklı çizim olsaydı
-            geçişte tavşan değişiyormuş gibi görünürdü.
-          */}
-          <Rabi durum="mutlu" boyut={112} />
-        </div>
+      {/* Maskotun arkasındaki hale ve altındaki zemin gölgesi. */}
+      <span className="acilis-hale" />
+      <span className="acilis-golge" />
 
+      <div
+        className="acilis-inis absolute top-1/2 left-1/2"
+        style={{
+          marginTop: MASKOT_MERKEZI - MASKOT_KUTUSU / 2,
+          marginLeft: -MASKOT_BOYU / 2,
+          ...hedef,
+        }}
+      >
         {/*
-          "RABİ" — 50px yazının satır yüksekliği 1.32 (66px): "İ" harfinin
-          noktası kırpılmasın diye.
+          Uygulamanın kendi maskotu kullanılıyor, ayrı bir açılış çizimi değil:
+          animasyon tavşanı varış noktasına süzülerek bitiriyor ve orada ana
+          sayfanın (ya da kurulumun) maskotunun üstüne oturuyor. İki farklı
+          çizim olsaydı geçişte tavşan değişiyormuş gibi görünürdü.
         */}
-        <p className="acilis-yazi font-display mt-[62px] text-[50px] font-extrabold leading-[1.32] tracking-[-0.05em] text-foreground">
-          RABİ
-        </p>
-
-        {/*
-          Slogan. Üst boşluk yazının **kutusunun altından** ölçülüyor: 62 + 66 =
-          128, üstüne 14px nefes. Tasarımın ilk hâlinde bu değer 115'ti ve
-          yazının alt kısmı sloganın üstüne biniyordu.
-        */}
-        <p className="acilis-slogan mt-[14px] text-[9.5px] font-semibold uppercase leading-none tracking-[0.3em] text-muted-foreground">
-          Sınav yolu arkadaşın
-        </p>
-
-        {/* Yükleme bloğu: çark + tarayan şerit + durum metni */}
-        <div className="acilis-yukleme mt-[34px] flex flex-col items-center gap-3">
-          <DonenCark />
-          <span className="acilis-ray" aria-hidden />
-          <span className="text-[9.5px] font-semibold uppercase leading-none tracking-[0.2em] text-muted-foreground">
-            Hazırlanıyor
-          </span>
-        </div>
+        {/* Uçuş yoksa tavşan öteki süslemelerle birlikte sönüyor. Solma
+            `acilis-inis`in üstünde değil ayrı bir kapta: ikisi de aynı öğede
+            olsaydı opaklığı sonuncusu ele geçirir ve iniş görünmez olurdu. */}
+        <span className={cn('block', !olcum && 'acilis-son')}>
+          <Rabi durum="mutlu" boyut={MASKOT_BOYU} />
+        </span>
       </div>
 
-      <p className="acilis-alt absolute inset-x-0 bottom-[22px] text-center text-[10.5px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+      {/*
+        "RABİ" — 50px yazının satır yüksekliği 1.32 (66px): "İ" harfinin
+        noktası kırpılmasın diye.
+      */}
+      <p className="acilis-yazi text-foreground absolute inset-x-0 top-1/2 mt-[48px] text-center text-[50px] leading-[1.32] font-extrabold tracking-[-0.05em]">
+        RABİ
+      </p>
+
+      <p className="acilis-slogan text-muted-foreground absolute inset-x-0 top-1/2 mt-[128px] text-center text-[9.5px] leading-none font-semibold tracking-[0.3em] uppercase">
+        Sınav yolu arkadaşın
+      </p>
+
+      {/* Yükleme bloğu: çark + tarayan şerit + durum metni. */}
+      <div className="acilis-yukleme absolute inset-x-0 top-1/2 mt-[176px] flex flex-col items-center gap-3">
+        <DonenCark />
+        <span className="acilis-ray" aria-hidden />
+        <span className="text-muted-foreground text-[9.5px] leading-none font-semibold tracking-[0.2em] uppercase">
+          Hazırlanıyor
+        </span>
+      </div>
+
+      {/* Uygulamanın tek vaadi. Açılışta söylenmesinin sebebi var: sunucusu
+          olmayan bir uygulamada bu, kullanıcının ilk merak ettiği şey. */}
+      <p className="acilis-alt text-muted-foreground absolute inset-x-0 bottom-[22px] text-center text-[10.5px] font-semibold tracking-[0.16em] uppercase">
         çevrimdışı çalışır
       </p>
     </div>

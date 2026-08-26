@@ -2,14 +2,14 @@
 <!--
   Engel katmanının düzeni.
 
-  Zemin donuk (@color/uygulama_zemin): arkadaki uygulama görünmemeli, yoksa
+  Zemin donuk (@color/odak_zemin): arkadaki uygulama görünmemeli, yoksa
   engel işe yaramaz. Renkler uygulamanınkiyle aynı değişkenlerden geliyor,
   values-night karşılıkları sayesinde koyu temada da doğru çıkıyor.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/uygulama_zemin">
+    android:background="@color/odak_zemin">
 
     <LinearLayout
         android:id="@+id/odak_ana"
@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:textColor="@color/acilis_zemin"
+            android:textColor="@color/marka_amber"
             android:textSize="20sp" />
 
         <TextView
@@ -55,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
-            android:backgroundTint="@color/acilis_zemin"
+            android:backgroundTint="@color/marka_amber"
             android:paddingHorizontal="28dp"
             android:text="Rabi'ye dön"
             android:textColor="#FFFFFF" />
@@ -95,7 +95,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:backgroundTint="@color/acilis_zemin"
+            android:backgroundTint="@color/marka_amber"
             android:paddingHorizontal="28dp"
             android:text="Çalışmaya devam"
             android:textColor="#FFFFFF" />

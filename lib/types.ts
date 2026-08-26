@@ -3,6 +3,8 @@
 // sunucu, hesap, senkronizasyon yoktur.
 
 import type { BankaKaydi } from './oyunlar/banka'
+import type { JokerStogu } from './magaza/jokerler'
+import type { NotKagidi } from './yapilacaklar'
 
 // ---------------------------------------------------------------------------
 // Deneme
@@ -222,6 +224,8 @@ export type OyunId =
   | 'ortak'
   | 'siniflandirma'
   | 'hucre'
+  | 'sirala'
+  | 'tuzak'
 
 /**
  * Bir mini oyunun kalıcı istatistiği.
@@ -288,7 +292,7 @@ export type KazanilanRozet = {
 // Ayarlar ve yedek
 // ---------------------------------------------------------------------------
 
-export type OyunMuzikTuru = 'arcade' | 'lofi'
+export type OyunMuzikTuru = 'sakin' | 'lofi'
 
 export type Ayarlar = {
   varsayilanSablonId: string
@@ -332,8 +336,8 @@ export type Ayarlar = {
   /** Mini oyunlarda arkada müzik çalsın mı. Sesten ayrı: biri kapalı, öteki açık olabilir. */
   oyunMuzigi: boolean
   /**
-   * Hangi müzik: `arcade` koddan üretilen hızlı chiptune döngüsü, `lofi`
-   * pomodoro'nun sakin parçaları. Zevk meselesi olduğu için seçim kullanıcıda.
+   * Hangi müzik: `sakin` koddan üretilen yumuşak pad, `lofi` pomodoro'nun
+   * parçaları. Zevk meselesi olduğu için seçim kullanıcıda.
    */
   oyunMuzikTuru: OyunMuzikTuru
   /** İlk açılış kurulumu tamamlandı mı; false ise kurulum ekranı gösterilir. */
@@ -375,6 +379,21 @@ export type Yedek = {
    * kullanıcının mevcut bakiyesi olduğu gibi kalıyor.
    */
   havuc?: number
+  /**
+   * Ödülü verilmiş en yüksek seviye. Bakiyeyle birlikte gitmesi şart: yalnızca
+   * havuç taşınsaydı yedeği geri yükleyen kullanıcı aynı seviyelerin ödülünü
+   * ikinci kez alırdı.
+   */
+  seviye?: number
+  /** Joker çantası — kimlik başına adet. */
+  jokerler?: JokerStogu
+  /**
+   * Yapılacaklar tahtası. Eski yedeklerde yok — geri yüklemede yazılmıyor,
+   * kullanıcının mevcut kâğıtları olduğu gibi kalıyor.
+   *
+   * Oyun modu burada **yok**: o veri değil, bu cihazdaki tercih.
+   */
+  notlar?: NotKagidi[]
   pomodoroGecmis: PomodoroSeans[]
   /**
    * Pomodoro ayarı. Eski yedeklerde yok — o zaman geri yüklemede yazılmıyor,

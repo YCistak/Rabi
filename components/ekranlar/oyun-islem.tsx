@@ -25,8 +25,9 @@ import {
   type BankaCevabi,
   type BankaKaydi,
 } from '@/lib/oyunlar/banka'
-import { MATEMATIK_TUR_SORUSU, soruSuresi } from '@/lib/oyunlar/ritim'
-import { useSoruSayaci } from '@/lib/oyunlar/soru-sayaci'
+import { TUR_SORU_SINIRI, elerMi, soruSuresi } from '@/lib/oyunlar/ritim'
+import { etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
+import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
@@ -43,6 +44,7 @@ import {
   TurSonu,
   YanlisKarti,
   rekorCumlesi,
+  type Eleme,
 } from '@/components/oyun-kabuk'
 import { CevapAlani, TusTakimi, rakamEkle } from '@/components/oyun-tus-takimi'
 import { OyunTanitim } from '@/components/oyun-tanitim'
@@ -56,13 +58,12 @@ import { OyunTanitim } from '@/components/oyun-tanitim'
  */
 const CEVAP_BEKLEMESI = 1100
 /**
- * Turdaki soru sayısı.
+ * Turda hazırlanan en fazla soru.
  *
- * Matematik oyunlarında boss yok, dolayısıyla eleme de yok — turu bitirecek
- * bir şey gerekiyor. Yirmi soru boss aralığının iki katı: sözel oyunlarla aynı
- * ritim, yalnızca sonunda kesiliyor. (`ritim.ts`)
+ * Turu bitiren şey moda göre süre ya da ilk yanlış (`mod.ts`); soru sayısı
+ * hedefi yok. Bu sabit yalnızca sonsuz bir dizi üretilemediği için var.
  */
-const TUR_SORUSU = MATEMATIK_TUR_SORUSU
+const TUR_SORUSU = TUR_SORU_SINIRI
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
@@ -137,6 +138,8 @@ export function IslemOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
+  mod,
+  setMod,
   onCik,
   bildir,
 }: {
@@ -148,9 +151,12 @@ export function IslemOyunuEkrani({
   onTurBitti: (
     ozet: TurOzeti<IslemSorusu>,
     bankaCevaplari: BankaCevabi[],
-    /** Turun gerçek uzunluğu — tur artık sabit süreli değil. */
+    /** Turun gerçek uzunluğu — modlar arasında değişiyor. */
     gecenSaniye: number,
   ) => void
+  /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
+  mod: OyunModu
+  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -173,8 +179,17 @@ export function IslemOyunuEkrani({
   const [yanlisGirdileri, setYanlisGirdileri] = useState<string[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
 
+  /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
+  const [elendi, setElendi] = useState<Eleme>(false)
   /** Yardım açıkken sayaç duruyor. */
   const [duraklatilan, setDuraklatilan] = useState(false)
+  /**
+   * Kaçıncı tur.
+   *
+   * Tur saatli modlarda sayacı sıfırlayan tek şey bu: soru sırası bir turun
+   * ortasında da sıfır olabiliyor (`tur-sayaci.ts`).
+   */
+  const [turNo, setTurNo] = useState(0)
 
   const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<IslemSorusu>; yeniRekor: boolean } | null>(
     null,
@@ -182,6 +197,8 @@ export function IslemOyunuEkrani({
 
   const bankaHavuzu = useMemo(() => bankaSorulariniCoz(bankaSorulari), [bankaSorulari])
   const bankaTuru = bankaHavuzu.length > 0
+  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
+  const gecerliMod = etkinMod(mod, bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   /**
@@ -201,6 +218,7 @@ export function IslemOyunuEkrani({
 
   const turBaslat = useCallback(() => {
     turBasiRekor.current = istatistik.enIyiDogru
+    setTurNo((n) => n + 1)
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
@@ -211,6 +229,7 @@ export function IslemOyunuEkrani({
     setYanlisGirdileri([])
     setGeriBildirim(null)
     setSonuc(null)
+    setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
   }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru, secili])
@@ -224,6 +243,7 @@ export function IslemOyunuEkrani({
         ozet,
         yeniRekor:
           !bankaTuru &&
+          modKayitliMi(gecerliMod) &&
           rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
       })
       oyunSesiCal('bitis', sesAcik)
@@ -239,7 +259,7 @@ export function IslemOyunuEkrani({
         Math.round((Date.now() - turBasladiRef.current) / 1000),
       )
     },
-    [bankaTuru, istatistik, onTurBitti, sesAcik],
+    [bankaTuru, gecerliMod, istatistik, onTurBitti, sesAcik],
   )
 
   // Seçilen tür az sayıda farklı soru üretebiliyorsa liste kısa dönebiliyor;
@@ -281,24 +301,53 @@ export function IslemOyunuEkrani({
       zamanlayiciRef.current = setTimeout(() => {
         setGeriBildirim(null)
         setGirilen('')
-        setSira((s) => s + 1)
+        if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
+          setElendi('yanlis')
+          turBitir(cevaplarRef.current)
+        } else {
+          setSira((s) => s + 1)
+        }
       }, CEVAP_BEKLEMESI)
     },
-    [asama, geriBildirim, girilen, sira, sorular],
+    [asama, bankaTuru, geriBildirim, girilen, sira, sorular, turBitir],
   )
 
 
   /**
    * Süre dolması cevap vermemekle aynı: soru pas geçilmiş sayılıyor.
    *
-   * Matematik oyunlarında boss yok, dolayısıyla eleme de yok — süre dolunca
-   * tur bitmiyor, sıradaki soruya geçiliyor.
+   * Yanlış sayıldığı için turu da bitiriyor — beklemek de bilmemek.
    */
   const sureDoldu = useCallback(() => {
     cevapla(true)
   }, [cevapla])
 
-  const { kalan, toplam } = useSoruSayaci({
+  /** Tur saati bitti: yanlış değil, tur biter. */
+  const turSuresiDoldu = () => {
+    setElendi('sure')
+    turBitir(cevaplarRef.current)
+  }
+
+  /*
+    Rahat turda çıkış turu bitiriyor.
+
+    Süre yok, yanlış elemiyor: turu bitirecek başka bir şey de yok. Doğrudan
+    çıkılsaydı o turda yanlış bilinen sorular Oyun Bankası'na hiç düşmezdi ve
+    modun tek amacı olan öğrenme kaybolurdu.
+  */
+  const turdanCik = () => {
+    if (asama === 'oynaniyor' && gecerliMod === 'rahat' && cevaplarRef.current.length > 0) {
+      turBitir(cevaplarRef.current)
+      return
+    }
+    onCik()
+  }
+
+  const { kalan, toplam } = useTurSayaci({
+    mod: gecerliMod,
+    turNo,
+    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan,
     sure: soruSuresi('islem', null),
     anahtar: sira,
@@ -363,6 +412,7 @@ export function IslemOyunuEkrani({
                 toplam,
                 sira: sira + 1,
                 boss: false,
+                mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
                 yanlis: cevaplar.length - dogruSayisi,
@@ -370,7 +420,7 @@ export function IslemOyunuEkrani({
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
-        onCik={onCik}
+        onCik={turdanCik}
         onYardim={yardimAc}
       >
         {asama === 'bitti' && sonuc ? (
@@ -380,6 +430,8 @@ export function IslemOyunuEkrani({
             turler={turdekiTurler}
             rekor={turBasiRekor.current}
             bankaTuru={bankaTuru}
+            mod={gecerliMod}
+            elendi={elendi}
             onTekrar={turBaslat}
             onCik={onCik}
             bildir={bildir}
@@ -445,6 +497,8 @@ export function IslemOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
+        mod={mod}
+        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
         // Banka turunda tür seçimi gösterilmiyor: sorular bankadan geliyor,
@@ -503,6 +557,8 @@ function SonucGorunumu({
   turler,
   rekor,
   bankaTuru,
+  mod,
+  elendi,
   onTekrar,
   onCik,
   bildir,
@@ -513,6 +569,8 @@ function SonucGorunumu({
   turler: IslemTuru[]
   rekor: number
   bankaTuru: boolean
+  mod: OyunModu
+  elendi: Eleme
   onTekrar: () => void
   onCik: () => void
   bildir: BildirimKolu
@@ -537,6 +595,8 @@ function SonucGorunumu({
       rekor={rekor}
       yeniRekor={yeniRekor}
       bankaTuru={bankaTuru}
+      mod={mod}
+      elendi={elendi}
       altBaslik={
         yigilma
           ? `${ISLEM_ADI[yigilma.tur]} seni yavaşlatıyor.`

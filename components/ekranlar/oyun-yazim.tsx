@@ -47,7 +47,8 @@ import {
   type SiradakiSoru,
   type Zorluk,
 } from '@/lib/oyunlar/ritim'
-import { useSoruSayaci } from '@/lib/oyunlar/soru-sayaci'
+import { etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
+import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
 import { ZorlukSecimi } from '@/components/zorluk-secimi'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
@@ -154,6 +155,8 @@ export function YazimOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
+  mod,
+  setMod,
   onCik,
   bildir,
 }: {
@@ -165,9 +168,12 @@ export function YazimOyunuEkrani({
   onTurBitti: (
     ozet: TurOzeti<SoruIcerigi>,
     bankaCevaplari: BankaCevabi[],
-    /** Turun gerçek uzunluğu — tur artık sabit süreli değil. */
+    /** Turun gerçek uzunluğu — modlar arasında değişiyor. */
     gecenSaniye: number,
   ) => void
+  /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
+  mod: OyunModu
+  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -193,6 +199,13 @@ export function YazimOyunuEkrani({
   const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukYazim, 'kolay')
   /** Yardım açıkken sayaç duruyor. */
   const [duraklatilan, setDuraklatilan] = useState(false)
+  /**
+   * Kaçıncı tur.
+   *
+   * Tur saatli modlarda sayacı sıfırlayan tek şey bu: soru sırası bir turun
+   * ortasında da sıfır olabiliyor (`tur-sayaci.ts`).
+   */
+  const [turNo, setTurNo] = useState(0)
 
   const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<SoruIcerigi>; yeniRekor: boolean } | null>(
     null,
@@ -201,6 +214,8 @@ export function YazimOyunuEkrani({
   /** Banka turunda havuz bankadaki kayıtlar; normal turda oyunun kendi havuzu. */
   const bankaHavuzu = useMemo(() => bankaHavuzlari(bankaSorulari), [bankaSorulari])
   const bankaTuru = bankaHavuzu.yazim.length + bankaHavuzu.noktalama.length > 0
+  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
+  const gecerliMod = etkinMod(mod, bankaTuru)
 
   // Tur başındaki rekor: sonuç ekranı "yeni rekor" derken güncellenmiş değerle
   // değil, tura girerken geçerli olan değerle karşılaştırmalı.
@@ -226,6 +241,7 @@ export function YazimOyunuEkrani({
 
   const turBaslat = useCallback(() => {
     turBasiRekor.current = istatistik.enIyiDogru
+    setTurNo((n) => n + 1)
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
@@ -259,6 +275,7 @@ export function YazimOyunuEkrani({
         ozet,
         yeniRekor:
           !bankaTuru &&
+          modKayitliMi(gecerliMod) &&
           rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
       })
       oyunSesiCal('bitis', sesAcik)
@@ -274,7 +291,7 @@ export function YazimOyunuEkrani({
         Math.round((Date.now() - turBasladiRef.current) / 1000),
       )
     },
-    [bankaTuru, istatistik, onTurBitti, sesAcik],
+    [bankaTuru, gecerliMod, istatistik, onTurBitti, sesAcik],
   )
 
   // Havuz tükenirse tur süre dolmadan biter; yoksa ekranda soru kalmaz ve sayaç
@@ -316,7 +333,7 @@ export function YazimOyunuEkrani({
   const ilerle = (dogruMu: boolean, bossMuydu: boolean) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
-      if (elerMi(dogruMu, bankaTuru)) {
+      if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
         setElendi(bossMuydu ? 'boss' : 'yanlis')
         turBitir(cevaplarRef.current)
       } else {
@@ -348,7 +365,32 @@ export function YazimOyunuEkrani({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asama, geriBildirim, soru, boss])
 
-  const { kalan, toplam } = useSoruSayaci({
+  /** Tur saati bitti: yanlış değil, tur biter. */
+  const turSuresiDoldu = () => {
+    setElendi('sure')
+    turBitir(cevaplarRef.current)
+  }
+
+  /*
+    Rahat turda çıkış turu bitiriyor.
+
+    Süre yok, yanlış elemiyor: turu bitirecek başka bir şey de yok. Doğrudan
+    çıkılsaydı o turda yanlış bilinen sorular Oyun Bankası'na hiç düşmezdi ve
+    modun tek amacı olan öğrenme kaybolurdu.
+  */
+  const turdanCik = () => {
+    if (asama === 'oynaniyor' && gecerliMod === 'rahat' && cevaplarRef.current.length > 0) {
+      turBitir(cevaplarRef.current)
+      return
+    }
+    onCik()
+  }
+
+  const { kalan, toplam } = useTurSayaci({
+    mod: gecerliMod,
+    turNo,
+    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: soruSuresi('yazim', boss ? bossZorlugu(zorluk) : null),
     anahtar: sira,
@@ -394,6 +436,7 @@ export function YazimOyunuEkrani({
                 toplam,
                 sira: sira + 1,
                 boss,
+                mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
                 yanlis: cevaplar.length - dogruSayisi,
@@ -401,7 +444,7 @@ export function YazimOyunuEkrani({
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
-        onCik={onCik}
+        onCik={turdanCik}
         onYardim={yardimAc}
       >
         {asama === 'bitti' && sonuc ? (
@@ -409,6 +452,7 @@ export function YazimOyunuEkrani({
             sonuc={sonuc}
             rekor={turBasiRekor.current}
             bankaTuru={bankaTuru}
+            mod={gecerliMod}
             elendi={elendi}
             onTekrar={turBaslat}
             onCik={onCik}
@@ -465,6 +509,8 @@ export function YazimOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
+        mod={mod}
+        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
         // Banka turunda tür seçimi gösterilmiyor: sorular bankadan geliyor,
@@ -600,6 +646,7 @@ function SonucGorunumu({
   sonuc,
   rekor,
   bankaTuru,
+  mod,
   elendi,
   onTekrar,
   onCik,
@@ -608,6 +655,7 @@ function SonucGorunumu({
   sonuc: { ozet: TurOzeti<SoruIcerigi>; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
+  mod: OyunModu
   elendi: Eleme
   onTekrar: () => void
   onCik: () => void
@@ -626,6 +674,7 @@ function SonucGorunumu({
       rekor={rekor}
       yeniRekor={yeniRekor}
       bankaTuru={bankaTuru}
+      mod={mod}
       elendi={elendi}
       altBaslik={
         bankaTuru

@@ -14,6 +14,20 @@
     -->
     <color name="uygulama_zemin">#F8F8F7</color>
 
+    <!--
+      Odak kilidi katmanının zemini. Katman uygulamanın üstünde açıldığı için
+      sistemin değil uygulamanın rengini izliyor: `uygulama_zemin` ile aynı,
+      ayrı adı olmasının sebebi ikisinin ayrı sorulara cevap vermesi.
+    -->
+    <color name="odak_zemin">#F8F8F7</color>
+
+    <!--
+      Marka rengi — engel katmanının başlığı ve düğmeleri. Web tarafındaki
+      parlak amber tonuyla (primary-parlak, #D9622F) aynı: katman uygulamanın
+      devamı gibi görünmeli. Dolgu tonu kullanılıyor çünkü burası da dolgu.
+    -->
+    <color name="marka_amber">#D9622F</color>
+
     <!-- Engel katmanının yazı renkleri. -->
     <color name="odak_metin">#1B1A19</color>
     <color name="odak_soluk">#6B6764</color>

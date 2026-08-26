@@ -29,7 +29,8 @@ import {
   zorluktaSuz,
   type Zorluk,
 } from '@/lib/oyunlar/ritim'
-import { useSoruSayaci } from '@/lib/oyunlar/soru-sayaci'
+import { etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
+import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { ZorlukSecimi } from '@/components/zorluk-secimi'
 import type { BildirimKolu } from '@/components/hata-bildir'
@@ -154,6 +155,8 @@ export function AntlasmaOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
+  mod,
+  setMod,
   onCik,
   bildir,
 }: {
@@ -164,9 +167,12 @@ export function AntlasmaOyunuEkrani({
   onTurBitti: (
     ozet: TurOzeti<AntlasmaMaddesi>,
     bankaCevaplari: BankaCevabi[],
-    /** Turun gerçek uzunluğu — tur artık sabit süreli değil. */
+    /** Turun gerçek uzunluğu — modlar arasında değişiyor. */
     gecenSaniye: number,
   ) => void
+  /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
+  mod: OyunModu
+  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -197,6 +203,13 @@ export function AntlasmaOyunuEkrani({
   const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukAntlasma, 'kolay')
   /** Yardım açıkken sayaç duruyor. */
   const [duraklatilan, setDuraklatilan] = useState(false)
+  /**
+   * Kaçıncı tur.
+   *
+   * Tur saatli modlarda sayacı sıfırlayan tek şey bu: soru sırası bir turun
+   * ortasında da sıfır olabiliyor (`tur-sayaci.ts`).
+   */
+  const [turNo, setTurNo] = useState(0)
 
   const [sonuc, setSonuc] = useState<{
     ozet: TurOzeti<AntlasmaMaddesi>
@@ -205,6 +218,8 @@ export function AntlasmaOyunuEkrani({
 
   const bankaHavuzu = useMemo(() => bankaEsleri(bankaSorulari), [bankaSorulari])
   const bankaTuru = bankaHavuzu.length > 0
+  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
+  const gecerliMod = etkinMod(mod, bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   /** Turun başladığı an — tur sınırsız olduğu için süre gerçekten ölçülüyor. */
@@ -233,6 +248,7 @@ export function AntlasmaOyunuEkrani({
 
   const turBaslat = useCallback(() => {
     turBasiRekor.current = istatistik.enIyiDogru
+    setTurNo((n) => n + 1)
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
@@ -262,6 +278,7 @@ export function AntlasmaOyunuEkrani({
         ozet,
         yeniRekor:
           !bankaTuru &&
+          modKayitliMi(gecerliMod) &&
           rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
       })
       oyunSesiCal('bitis', sesAcik)
@@ -277,7 +294,7 @@ export function AntlasmaOyunuEkrani({
         Math.round((Date.now() - turBasladiRef.current) / 1000),
       )
     },
-    [bankaTuru, istatistik, onTurBitti, sesAcik],
+    [bankaTuru, gecerliMod, istatistik, onTurBitti, sesAcik],
   )
 
   // Havuz (banka turunda banka) tükenip yeni el kurulamazsa tur süre dolmadan
@@ -329,7 +346,7 @@ export function AntlasmaOyunuEkrani({
     setCevaplar((onceki) => [...onceki, ...kalanEsler.map((soru) => ({ soru, dogruMu: false }))])
     setYanlisGirdileri((onceki) => [...onceki, ...kalanEsler.map(() => 'süre doldu')])
     geriBildir(false)
-    if (elerMi(false, bankaTuru)) {
+    if (elerMi(false, bankaTuru, gecerliMod)) {
       setElendi(bossEl ? 'boss' : 'yanlis')
       zamanlayiciRef.current = setTimeout(() => turBitir(cevaplarRef.current), CEVAP_BEKLEMESI)
       return
@@ -338,7 +355,32 @@ export function AntlasmaOyunuEkrani({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asama, bankaTuru, bossEl, el, eslesenler])
 
-  const { kalan, toplam } = useSoruSayaci({
+  /** Tur saati bitti: yanlış değil, tur biter. */
+  const turSuresiDoldu = () => {
+    setElendi('sure')
+    turBitir(cevaplarRef.current)
+  }
+
+  /*
+    Rahat turda çıkış turu bitiriyor.
+
+    Süre yok, yanlış elemiyor: turu bitirecek başka bir şey de yok. Doğrudan
+    çıkılsaydı o turda yanlış bilinen sorular Oyun Bankası'na hiç düşmezdi ve
+    modun tek amacı olan öğrenme kaybolurdu.
+  */
+  const turdanCik = () => {
+    if (asama === 'oynaniyor' && gecerliMod === 'rahat' && cevaplarRef.current.length > 0) {
+      turBitir(cevaplarRef.current)
+      return
+    }
+    onCik()
+  }
+
+  const { kalan, toplam } = useTurSayaci({
+    mod: gecerliMod,
+    turNo,
+    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && !duraklatilan && !elBekliyor && el !== null,
     sure: soruSuresi('antlasma', bossEl ? bossZorlugu(zorluk) : null),
     anahtar: elSayisi,
@@ -365,7 +407,7 @@ export function AntlasmaOyunuEkrani({
         setYanlisCift(null)
         setSecim(BOS_SECIM)
         // Tek yanlış eşleştirme turu bitiriyor; banka turu bunun dışında.
-        if (elerMi(false, bankaTuru)) {
+        if (elerMi(false, bankaTuru, gecerliMod)) {
           setElendi(bossEl ? 'boss' : 'yanlis')
           turBitir(cevaplarRef.current)
         }
@@ -435,6 +477,7 @@ export function AntlasmaOyunuEkrani({
                 toplam,
                 sira: elSayisi + 1,
                 boss: bossEl,
+                mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
                 yanlis: cevaplar.length - dogruSayisi,
@@ -442,7 +485,7 @@ export function AntlasmaOyunuEkrani({
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
-        onCik={onCik}
+        onCik={turdanCik}
         onYardim={yardimAc}
       >
         {asama === 'bitti' && sonuc ? (
@@ -451,6 +494,7 @@ export function AntlasmaOyunuEkrani({
             girdiler={yanlisGirdileri}
             rekor={turBasiRekor.current}
             bankaTuru={bankaTuru}
+            mod={gecerliMod}
             elendi={elendi}
             onTekrar={turBaslat}
             onCik={onCik}
@@ -535,6 +579,8 @@ export function AntlasmaOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
+        mod={mod}
+        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
         ekstra={
@@ -552,6 +598,7 @@ function SonucGorunumu({
   girdiler,
   rekor,
   bankaTuru,
+  mod,
   elendi,
   onTekrar,
   onCik,
@@ -562,6 +609,7 @@ function SonucGorunumu({
   girdiler: string[]
   rekor: number
   bankaTuru: boolean
+  mod: OyunModu
   elendi: Eleme
   onTekrar: () => void
   onCik: () => void
@@ -580,6 +628,7 @@ function SonucGorunumu({
       rekor={rekor}
       yeniRekor={yeniRekor}
       bankaTuru={bankaTuru}
+      mod={mod}
       elendi={elendi}
       altBaslik={
         bankaTuru
