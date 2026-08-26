@@ -297,6 +297,14 @@ export type OyunMuzikTuru = 'sakin' | 'lofi'
 export type Ayarlar = {
   varsayilanSablonId: string
   /**
+   * Kullanıcının adı — kurulumun ilk adımında sorulur, boş bırakılabilir.
+   *
+   * Yalnızca selamlamada kullanılıyor; boşken selamlama adsız hâline düşüyor
+   * ("Merhaba 👋"). Hesaba, sıralamaya, hiçbir yere girmiyor ve cihazdan
+   * çıkmıyor. Ayarlar'dan değiştirilebilir.
+   */
+  ad: string
+  /**
    * Bu yılın hangi sınıf olduğu — ilk açılışta sorulur, OBP hesabında kullanılır.
    * Mezun için `MEZUN` (13); ayrı bir bayrak yok (bkz. `lib/hesap.ts`).
    */

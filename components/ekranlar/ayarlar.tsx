@@ -20,6 +20,7 @@ import {
   Flag,
   Trash2,
   Upload,
+  UserRound,
   Volume2,
   X,
 } from 'lucide-react'
@@ -87,7 +88,14 @@ const PUAN_TURU_ADI: Record<PuanTuru, string> = {
  * hâlinde: yeni bir açılır ayar eklerken burada da tanımlanması gerekiyor,
  * yazım hatası sessizce hiç açılmayan bir satıra dönüşmesin.
  */
-type AyarId = 'hedef' | 'alan' | 'sinif' | 'deneme-turu' | 'hatirlatma-saati' | 'muzik-turu'
+type AyarId =
+  | 'ad'
+  | 'hedef'
+  | 'alan'
+  | 'sinif'
+  | 'deneme-turu'
+  | 'hatirlatma-saati'
+  | 'muzik-turu'
 
 /** Mini oyun müziği seçenekleri; hangisinin iyi olduğu zevk meselesi. */
 const OYUN_MUZIK_ADI: Record<OyunMuzikTuru, string> = {
@@ -310,6 +318,35 @@ export function AyarlarEkrani({
 
         {/* ------------------------------ Çalışma ------------------------- */}
         <Bolum baslik="Çalışma">
+          <Satir
+            Simge={UserRound}
+            renk="mercan"
+            baslik="Adım"
+            aciklama="Ana sayfada seni böyle selamlıyorum"
+            deger={ayarlar.ad || 'Belirtilmedi'}
+            {...acilir('ad')}
+          />
+          {acikAyar === 'ad' && (
+            <GenisAlan tam>
+              <Etiket>Adın</Etiket>
+              <Alan
+                value={ayarlar.ad}
+                onChange={(e) => setAyarlar((o) => ({ ...o, ad: e.target.value }))}
+                // Kayda giren değer kırpılıyor ama yazarken kırpılmıyor:
+                // aradaki boşluğu silmek kullanıcının elinden alınmamalı.
+                onBlur={(e) => setAyarlar((o) => ({ ...o, ad: e.target.value.trim() }))}
+                placeholder="Adını yaz"
+                autoCapitalize="words"
+                autoCorrect="off"
+                spellCheck={false}
+                maxLength={24}
+              />
+              <AlanNotu>
+                Boş bırakırsan yalnızca &ldquo;Merhaba&rdquo; derim. Bu ad cihazdan çıkmıyor.
+              </AlanNotu>
+            </GenisAlan>
+          )}
+
           <Satir
             Simge={Target}
             renk="mavi"

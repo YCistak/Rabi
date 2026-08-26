@@ -166,7 +166,9 @@ export function AnaSayfa({
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-extrabold tracking-wide text-ikincil">Rabi</p>
           <h1 className="mt-px font-display text-[22px] font-extrabold tracking-tight text-balance">
-            Merhaba 👋
+            {/* Ad kurulumda boş bırakılmış olabilir; o zaman selamlama adsız
+                kalıyor, "Merhaba  👋" gibi çift boşluk oluşmuyor. */}
+            {ayarlar.ad ? `Merhaba ${ayarlar.ad} 👋` : 'Merhaba 👋'}
           </h1>
           {/* Seviye ve unvan selamlamanın alt satırında: eskiden ayrı bir
               karttı ve sayfanın en değerli yerini üç sayı için harcıyordu. */}

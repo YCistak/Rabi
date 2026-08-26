@@ -16,6 +16,7 @@ const bos: Omit<Yedek, 'uygulama' | 'surum' | 'tarih'> = {
   hedef: null,
   ayarlar: {
     varsayilanSablonId: 'okul',
+    ad: 'Emre',
     buYilSinif: 12,
     elleObp: null,
     sinifYili: 2026,

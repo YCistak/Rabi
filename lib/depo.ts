@@ -206,6 +206,7 @@ export const HEDEF_ADIMI = 25
 
 export const VARSAYILAN_AYARLAR: Ayarlar = {
   varsayilanSablonId: VARSAYILAN_SABLON_ID,
+  ad: '',
   buYilSinif: 12,
   elleObp: null,
   sinifYili: egitimYili(),

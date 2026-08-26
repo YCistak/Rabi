@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, User } from 'lucide-react'
 import type { Ayarlar, OkulYili, PuanTuru } from '@/lib/types'
 import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
 import { yeniId } from '@/lib/utils'
@@ -14,6 +14,7 @@ import { HEDEF_ADIMI, HEDEF_EN_AZ, HEDEF_EN_COK } from '@/lib/depo'
 /** Kurulumun ürettiği ayarlar — geri kalanı varsayılanlardan gelir. */
 export type KurulumSecimleri = Pick<
   Ayarlar,
+  | 'ad'
   | 'buYilSinif'
   | 'elleObp'
   | 'puanTuru'
@@ -42,9 +43,13 @@ export type KurulumSonucu = {
  * kendinden önceki sınıfları bitmiştir, 9. sınıftakinin ise hiçbiri — ona bu
  * adımı göstermek boş bir form göstermek olurdu.
  */
-type AdimId = 'sinif' | 'notlar' | 'alan' | 'hedef' | 'hatirlatma'
+type AdimId = 'isim' | 'sinif' | 'notlar' | 'alan' | 'hedef' | 'hatirlatma'
 
 const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
+  isim: {
+    baslik: 'Sana nasıl sesleneyim?',
+    aciklama: 'Böylece seni adınla selamlayabilirim.',
+  },
   sinif: {
     baslik: 'Merhaba, ben Rabi',
     aciklama: 'Seninle YKS yolunda çalışacağım. Önce birkaç şey sorayım.',
@@ -84,6 +89,7 @@ export function Kurulum({
   maskotGizli?: boolean
 }) {
   const [adim, setAdim] = useState(0)
+  const [ad, setAd] = useState('')
   const [sinif, setSinif] = useState(12)
   /** Mezunun yıl sonu notları: sınıf → yazılan metin. Boşlar hesaba girmiyor. */
   const [notlar, setNotlar] = useState<Record<number, string>>({})
@@ -107,6 +113,7 @@ export function Kurulum({
   // Sınıf geri dönülüp değiştirilebildiği için liste her çizimde kuruluyor;
   // sıra numarası da listenin boyuna kırpılıyor.
   const adimlar: AdimId[] = [
+    'isim',
     'sinif',
     ...(notluSiniflar.length > 0 ? (['notlar'] as AdimId[]) : []),
     'alan',
@@ -135,6 +142,8 @@ export function Kurulum({
     const obp = Number(obpMetni.replace(',', '.'))
     onBitir({
       ayarlar: {
+        // Baştaki/sondaki boşluk temizleniyor: "  Emre " ile "Emre" aynı ad.
+        ad: ad.trim(),
         buYilSinif: sinif,
         // Mezun değilse elle OBP hiç sorulmuyor; yazılmış bir sayı kalmışsa da
         // (sınıf sonradan değiştirildiyse) geçersiz sayılıyor.
@@ -172,6 +181,47 @@ export function Kurulum({
       </div>
 
       <Kart>
+        {suanki === 'isim' && (
+          <div>
+            <Etiket>Adın</Etiket>
+            {/* Kişi simgesi alanın içinde duruyor: alan tek başına boş bir
+                kutu, simge ne beklendiğini yazıya gerek kalmadan söylüyor.
+                Simge `pointer-events-none`, yoksa üstüne dokunmak alanı
+                odaklamaz ve klavye açılmazdı. */}
+            <div className="relative">
+              <User
+                size={18}
+                aria-hidden
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              />
+              <Alan
+                value={ad}
+                onChange={(e) => setAd(e.target.value)}
+                placeholder="Adını yaz"
+                className="pl-10"
+                // Ad alanı: klavye baş harfi büyütsün, tarayıcı yazım
+                // denetimiyle altını kırmızı çizmesin.
+                autoCapitalize="words"
+                autoCorrect="off"
+                spellCheck={false}
+                autoComplete="given-name"
+                enterKeyHint="next"
+                maxLength={24}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    ilerle()
+                  }
+                }}
+              />
+            </div>
+            <p className="mt-3 text-xs text-muted-foreground">
+              İstersen boş bırak — o zaman sana yalnızca &ldquo;Merhaba&rdquo; derim.
+              Sonradan Ayarlar&rsquo;dan değiştirebilirsin.
+            </p>
+          </div>
+        )}
+
         {suanki === 'sinif' && (
           <div>
             <Etiket>Bu yıl kaçıncı sınıftasın?</Etiket>
