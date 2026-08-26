@@ -62,21 +62,13 @@ export function OyunTanitim({
           </div>
         </div>
 
-        <ol className="mt-4 space-y-2.5">
-          {oyun.nasilOynanir.map((madde, sira) => (
-            <li key={madde} className="flex gap-2.5">
-              <span
-                aria-hidden
-                className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-soft text-xs font-semibold text-primary"
-              >
-                {sira + 1}
-              </span>
-              <span className="text-sm leading-snug text-muted-foreground">
-                <Vurgulu metin={madde} />
-              </span>
-            </li>
-          ))}
-        </ol>
+        {/* Numaralı maddeler yerine tek paragraf. Sekiz maddelik liste
+            pencereyi ekran boyuna çıkarıyor, "Başla" düğmesi kaydırmanın
+            altında kalıyordu; okunmayan bir kural listesi, okunan bir
+            düğmeyi böyle aşağı itmemeli. */}
+        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+          <Vurgulu metin={oyun.ozet} />
+        </p>
 
         {/* Mod seçimi yalnızca turu başlatan pencerede: "?" ile açılan
             pencerede tur zaten sürüyor ve kural tur ortasında değişmemeli. */}

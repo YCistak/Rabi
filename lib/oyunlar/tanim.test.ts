@@ -51,7 +51,9 @@ describe('oyun listesi', () => {
     for (const oyun of OYUNLAR) {
       expect(oyun.ad, oyun.id).toBeTruthy()
       expect(oyun.ikon, oyun.id).toBeTruthy()
-      expect(oyun.nasilOynanir.length, oyun.id).toBeGreaterThan(2)
+      // Özet kısa olmalı ama boş da olmamalı: tanıtımın tek cümlesi bu.
+      expect(oyun.ozet.length, oyun.id).toBeGreaterThan(30)
+      expect(oyun.ozet.length, oyun.id).toBeLessThanOrEqual(220)
     }
   })
 
