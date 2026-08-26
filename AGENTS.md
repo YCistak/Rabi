@@ -95,6 +95,11 @@ durumda, yani geçiş tek bir hareket gibi okunuyor. Dört şey buna bağlı:
   kendi kutusundan alınıyor; WebView açılırken ikisi bir süre ayrı düşüyor.
 - **Yuva tek.** Ekranda ya ana sayfanın başlığı vardır ya kurulum sihirbazı,
   o yüzden ikisinde de aynı kimlik duruyor ve ölçüm hangisi varsa onu buluyor.
+  Kurulumun ilk ekranı (karşılama) kendi düzenini çizdiği için yuva orada
+  ekranın **ortasında** duruyor; varış noktası yazılmayıp ölçüldüğü için uçuş
+  kendiliğinden oraya iniyor. Karşılama ekranına ikinci bir maskot eklersen
+  aynı kimlikten iki tane olur ve `getElementById` hangisini önce bulursa
+  tavşan oraya iner.
 - **Ölçüm zamanlayıcıyla yineleniyor, `requestAnimationFrame` ile değil.**
   Sayfa görünür değilken rAF hiç çağrılmıyor ve ölçüm sonsuza kadar bekliyor.
 
@@ -135,6 +140,42 @@ Karar kullanıcının: açılış animasyonu her koşulda oynuyor. Açılış ek
 yüzden `@media (prefers-reduced-motion: reduce)` bloğunda **yok**; uygulamanın
 geri kalanı (haftalık özet, harita, kurulum sonrası geçiş) tercihi izlemeye
 devam ediyor. Bu istisnayı geri almadan önce yukarıdaki sebebe bak.
+
+### Kurulum soru sormayan iki ekranla açılıyor
+
+Kurulum üç ekranla başlıyor: **karşılama** ("Rabi seni tanısın"), **isim**
+("Sana nasıl sesleneyim?") ve **tanışma** ("Seni tanıdığıma memnun oldum,
+Emre"). Sebep, ilk ekranın eskiden doğrudan "Bu yıl kaçıncı sınıftasın?" diye
+sorması: uygulamayı ilk açan kişi kendini tanıtan bir şey görmeden forma
+düşüyordu. Tanışma ekranı da yazılan adın gerçekten alındığını gösteren tek
+yer — kurulumun geri kalanı sınıf, alan ve hedef soruyor ve ad bir daha
+görünmüyordu.
+
+Karşılama ile tanışma `adimlar` dizisinde duruyor (sıra onlardan geçiyor) ama
+ötekilerin düzenini kullanmıyor: `Kurulum` ikisi için de erken dönüyor ve
+ortak `TekIsliEkran` çiziyor. Kart, geri düğmesi ve adım noktaları orada yok —
+ekranda yapılabilecek tek bir şey varken üçü de gürültü.
+
+Adım noktaları bu ikisini **saymıyor** (`noktaAdimlari`); nokta "kaç soru
+kaldı"yı anlatıyor ve ikisi de soru sormuyor. Sayının ayrı bir listeden çıkması
+şart: dizinin kendisinden çıkarılsalardı `ilerle` onları atlardı.
+
+Tanışma ekranının başlığı `ADIM_BILGISI` tablosunda **yok**, `tanismaBasligi`
+kuruyor: içinde kullanıcının adı geçiyor ve ad boş bırakılabiliyor. Adsızken
+virgül de düşüyor — "Seni tanıdığıma memnun oldum," diye biten bir cümle, adı
+yazmayı unutmuş gibi duruyordu.
+
+Son adımın düğmesi bu yüzden "Başlayalım" değil **"Hazırım"**: aynı akışta iki
+kez "Başlayalım" yazan düğme, kullanıcıya başa döndüğünü düşündürüyordu.
+
+**Maskotun pozu.** Tanışma ekranında tavşan el sallıyor
+(`poz="el-sallayan"` → `public/tavsan-el-sallayan.png`); karşılamadaki duran
+yüzle aynı görsel olsaydı ekran ileri gitmiş gibi durmazdı. Poz `durum`dan
+ayrı bir prop: `durum` yalnızca ekran okuyucu etiketini belirliyor, poz
+gerçekten başka bir dosya gösteriyor. Görsel eksikse `Rabi` yüze düşüyor —
+kırık görsel simgesi, ekranın ortasında dururken eksik bir dosyadan çok bozuk
+bir uygulama gibi görünüyor. Yeni bir poz eklerken dosyayı `public/` altına
+koy ve kare oranı koru; ölçü `Rabi` içinde 130/120 kutusuna oturuyor.
 
 ### Ayarlar satırları kapalı açılıyor
 
