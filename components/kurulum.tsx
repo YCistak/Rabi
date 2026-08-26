@@ -72,11 +72,11 @@ const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
   },
 }
 
-const PUAN_TURLERI: { id: PuanTuru; ad: string; aciklama: string }[] = [
-  { id: 'say', ad: 'Sayısal', aciklama: 'Matematik · Fizik · Kimya · Biyoloji' },
-  { id: 'ea', ad: 'Eşit Ağırlık', aciklama: 'Matematik · Edebiyat · Tarih · Coğrafya' },
-  { id: 'soz', ad: 'Sözel', aciklama: 'Edebiyat · Sosyal Bilimler' },
-  { id: 'dil', ad: 'Dil', aciklama: 'Yabancı Dil Testi (YDT)' },
+const PUAN_TURLERI: { id: PuanTuru; ad: string }[] = [
+  { id: 'say', ad: 'Sayısal' },
+  { id: 'ea', ad: 'Eşit Ağırlık' },
+  { id: 'soz', ad: 'Sözel' },
+  { id: 'dil', ad: 'Dil' },
 ]
 
 
@@ -215,10 +215,6 @@ export function Kurulum({
                 }}
               />
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">
-              İstersen boş bırak — o zaman sana yalnızca &ldquo;Merhaba&rdquo; derim.
-              Sonradan Ayarlar&rsquo;dan değiştirebilirsin.
-            </p>
           </div>
         )}
 
@@ -232,13 +228,6 @@ export function Kurulum({
                 </Cip>
               ))}
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">
-              {mezun
-                ? 'Mezunsan sınıf ilerlemez. Sıradaki adımda yıl sonu notlarını sorayım — istersen atlarsın.'
-                : notluSiniflar.length > 0
-                  ? `Her eylülde bir üst sınıfa kendiliğinden geçersin. Sıradaki adımda biten ${notluSiniflar.length === 1 ? 'yılının' : 'yıllarının'} notunu sorayım — istersen atlarsın.`
-                  : 'Her eylülde bir üst sınıfa kendiliğinden geçersin; tekrar sormam gerekmez.'}
-            </p>
           </div>
         )}
 
@@ -309,10 +298,7 @@ export function Kurulum({
                     : 'border-border active:bg-muted'
                 }`}
               >
-                <span>
-                  <span className="block font-medium">{tur.ad}</span>
-                  <span className="block text-xs text-muted-foreground">{tur.aciklama}</span>
-                </span>
+                <span className="font-medium">{tur.ad}</span>
                 {puanTuru === tur.id && <Check size={18} className="shrink-0 text-primary" />}
               </button>
             ))}
