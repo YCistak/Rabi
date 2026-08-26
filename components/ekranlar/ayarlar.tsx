@@ -34,7 +34,6 @@ import { UygulamaSecici } from '@/components/odak/uygulama-secici'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { SINIF_SECENEKLERI, egitimYili, katsayiYaz, mezunMu, sinifAdi } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
-import type { JokerStogu } from '@/lib/magaza/jokerler'
 import type { NotKagidi } from '@/lib/yapilacaklar'
 import {
   HEDEF_ADIMI,
@@ -136,10 +135,6 @@ export function AyarlarEkrani({
     /** Eski yedeklerde yok; `Yedek` tipinde de isteğe bağlı. */
     oyunBankasi?: BankaKaydi[]
     bankaDusen?: number
-    /** Havuç bakiyesi ve ödülü verilmiş seviye — ikisi birlikte yedeğe giriyor. */
-    havuc?: number
-    seviye?: number
-    jokerler?: JokerStogu
     /** Yapılacaklar tahtası — kâğıdın konumu da veri. */
     notlar?: NotKagidi[]
     pomodoroGecmis: PomodoroSeans[]
