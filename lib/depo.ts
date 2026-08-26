@@ -106,6 +106,18 @@ export const ANAHTARLAR = {
   /** Bildirimleri gruplamaya yarayan anonim cihaz numarası; yedeğe girmiyor. */
   cihazKimligi: 'rabi-cihaz-kimligi',
   /**
+   * Hatalı soru bildirimlerinin gönderilmesine izin verildi mi.
+   *
+   * `'sorulmadi' | 'verildi' | 'reddedildi'`. Google Play'in kullanıcı verisi
+   * politikası, veri cihazdan çıkmadan önce **belirgin bir açıklama** ve
+   * **kullanıcının olumlu bir eylemi** istiyor; ayarlar ekranındaki bir
+   * paragraf bunun yerine geçmiyor. İzin verilene kadar bildirimler cihazda
+   * bekliyor, ağa hiçbir şey çıkmıyor.
+   *
+   * Yedeğe **girmiyor**: rıza cihaz başına verilir, başka telefona taşınmaz.
+   */
+  bildirimIzni: 'rabi-bildirim-izni',
+  /**
    * Havuç bakiyesi. Yalnızca seviye atlayarak artıyor, yalnızca mağazada
    * eksiliyor.
    */

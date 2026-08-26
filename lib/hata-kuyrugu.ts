@@ -9,6 +9,13 @@
  * Gönderim uygulama **öne geldiğinde** deneniyor. Ayrı bir zamanlayıcı yok:
  * bildirimin birkaç dakika gecikmesinin kimseye zararı yok, arka planda dönen
  * bir sayaç ise pil yerdi.
+ *
+ * Gönderim **izne bağlı**: `bildirimIzni` `'verildi'` olana kadar hiçbir şey
+ * ağa çıkmıyor, bildirimler cihazda birikiyor. Play'in kullanıcı verisi
+ * politikası veri cihazdan çıkmadan önce belirgin açıklama ve kullanıcının
+ * olumlu bir eylemini şart koşuyor; ayarlardaki açıklama tek başına yetmiyor.
+ * İzin reddedilirse kayıtlar silinmiyor — kullanıcı fikrini değiştirirse
+ * bekleyenler o zaman gidiyor.
  */
 
 import { useCallback, useEffect, useMemo, useRef } from 'react'
@@ -37,11 +44,15 @@ import type { BildirimKolu } from '@/components/hata-bildir'
  */
 const YENIDEN_DENEME = 60_000
 
+/** Gönderim izninin üç hâli. */
+export type BildirimIzni = 'sorulmadi' | 'verildi' | 'reddedildi'
+
 export function useHataBildirimi(acik: boolean): BildirimKolu {
   const [bildirimler, setBildirimler] = useYerelDepo<HataBildirimi[]>(
     ANAHTARLAR.hataBildirimleri,
     [],
   )
+  const [izin, setIzin] = useYerelDepo<BildirimIzni>(ANAHTARLAR.bildirimIzni, 'sorulmadi')
   const gorunur = useUygulamaGorunur()
   const calisiyor = useRef(false)
   const sonDeneme = useRef(0)
@@ -49,6 +60,7 @@ export function useHataBildirimi(acik: boolean): BildirimKolu {
   const bekleyen = useMemo(() => gonderilecekler(bildirimler), [bildirimler])
 
   useEffect(() => {
+    if (izin !== 'verildi') return
     if (!acik || !gorunur || bekleyen.length === 0 || calisiyor.current) return
     if (Date.now() - sonDeneme.current < YENIDEN_DENEME) return
 
@@ -62,7 +74,7 @@ export function useHataBildirimi(acik: boolean): BildirimKolu {
       .finally(() => {
         calisiyor.current = false
       })
-  }, [acik, gorunur, bekleyen, setBildirimler])
+  }, [acik, gorunur, izin, bekleyen, setBildirimler])
 
   const onBildir = useCallback(
     (soru: BankaSorusu) => {
@@ -78,13 +90,22 @@ export function useHataBildirimi(acik: boolean): BildirimKolu {
     [setBildirimler],
   )
 
+  const onIzin = useCallback(
+    (karar: BildirimIzni) => {
+      setIzin(karar)
+    },
+    [setIzin],
+  )
+
   return useMemo(
     () => ({
       bildirimler,
       sinirda: sinirdaMi(bildirimler, new Date()),
+      izin,
       onBildir,
       onSebep,
+      onIzin,
     }),
-    [bildirimler, onBildir, onSebep],
+    [bildirimler, izin, onBildir, onSebep, onIzin],
   )
 }

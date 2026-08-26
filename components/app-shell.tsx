@@ -815,6 +815,8 @@ export function AppShell() {
               ayarlar={ayarlar}
               setAyarlar={setAyarlar}
               bekleyenBildirim={bekleyenSayisi(hataBildirimi.bildirimler)}
+              bildirimIzni={hataBildirimi.izin}
+              onBildirimIzni={hataBildirimi.onIzin}
               pomodoroAyar={pomodoroAyar}
               setPomodoroAyar={setPomodoroAyar}
               yedeklenecek={{

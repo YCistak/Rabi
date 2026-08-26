@@ -9,7 +9,8 @@
     "test": "vitest run",
     "test:izle": "vitest",
     "sync": "next build && cap sync android",
-    "apk": "npm run sync && cd android && ./gradlew assembleDebug"
+    "apk": "npm run sync && cd android && ./gradlew assembleDebug",
+    "aab": "npm run sync && cd android && ./gradlew bundleRelease"
   },
   "dependencies": {
     "@capacitor-community/keep-awake": "^8.0.1",

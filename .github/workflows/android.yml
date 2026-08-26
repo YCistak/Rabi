@@ -55,35 +55,49 @@ jobs:
           if [ -n "$KEYSTORE_BASE64" ]; then
             echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
             echo "path=$RUNNER_TEMP/release.jks" >> "$GITHUB_OUTPUT"
+          elif [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            # Etiketli sürüm Play'e gidiyor; imzasız AAB'yi Play reddediyor ve
+            # bu ancak Console'a yükleme denendiğinde fark ediliyor. Burada dur.
+            echo "::error::KEYSTORE_BASE64 tanımlı değil — imzasız AAB Play'e yüklenemez."
+            exit 1
           else
-            echo "::warning::KEYSTORE_BASE64 yok; APK imzasız üretilecek."
+            echo "::warning::KEYSTORE_BASE64 yok; paketler imzasız üretilecek (yalnızca deneme)."
           fi
 
-      - name: APK derle
+      # AAB Play'e yüklenen biçim, APK doğrudan kurulum (arkadaşlara dağıtım)
+      # için. Play 2021'den beri yeni uygulamalarda APK kabul etmiyor, o yüzden
+      # `bundleRelease` olmadan yayına çıkılamıyor.
+      - name: AAB ve APK derle
         working-directory: android
         env:
           KEYSTORE_FILE: ${{ steps.keystore.outputs.path }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew assembleRelease --no-daemon
+        run: ./gradlew bundleRelease assembleRelease --no-daemon
 
-      - name: APK'yı topla
+      - name: Çıktıları topla
         run: |
           mkdir -p dist
           APK=$(find android/app/build/outputs/apk/release -name '*.apk' | head -1)
           cp "$APK" "dist/rabi-${GITHUB_REF_NAME}.apk"
+          AAB=$(find android/app/build/outputs/bundle/release -name '*.aab' | head -1)
+          cp "$AAB" "dist/rabi-${GITHUB_REF_NAME}.aab"
 
       - name: Sürüm oluştur
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/*.apk
+          files: |
+            dist/*.apk
+            dist/*.aab
           generate_release_notes: true
 
       - name: Artefakt olarak yükle
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         uses: actions/upload-artifact@v4
         with:
-          name: rabi-apk
-          path: dist/*.apk
+          name: rabi-paketler
+          path: |
+            dist/*.apk
+            dist/*.aab
