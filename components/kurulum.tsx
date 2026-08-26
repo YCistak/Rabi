@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, ArrowRight, Check, User } from 'lucide-react'
+import { AlertCircle, ArrowLeft, ArrowRight, Check, User } from 'lucide-react'
 import type { Ayarlar, OkulYili, PuanTuru } from '@/lib/types'
 import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
 import { yeniId } from '@/lib/utils'
@@ -95,6 +95,15 @@ const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
   },
 }
 
+/**
+ * Adın en az kaç harf olacağı.
+ *
+ * Tek harf ("a") ya da boş bırakılan ad selamlamayı anlamsızlaştırıyor;
+ * üç, gerçek adların hepsini geçirip baştan savma girişleri eleyen en küçük
+ * sınır.
+ */
+const AD_EN_AZ = 3
+
 const PUAN_TURLERI: { id: PuanTuru; ad: string }[] = [
   { id: 'say', ad: 'Sayısal' },
   { id: 'ea', ad: 'Eşit Ağırlık' },
@@ -113,6 +122,13 @@ export function Kurulum({
 }) {
   const [adim, setAdim] = useState(0)
   const [ad, setAd] = useState('')
+  /**
+   * Ad uyarısı yalnızca kullanıcı Devam'a bastıktan sonra çıkıyor.
+   *
+   * Ekran açılır açılmaz boş alanın üstüne kırmızı yazı koymak, daha hiçbir
+   * şey yapmamış kullanıcıyı hatalı gibi göstermek olurdu.
+   */
+  const [adDenendi, setAdDenendi] = useState(false)
   const [sinif, setSinif] = useState(12)
   /** Mezunun yıl sonu notları: sınıf → yazılan metin. Boşlar hesaba girmiyor. */
   const [notlar, setNotlar] = useState<Record<number, string>>({})
@@ -160,6 +176,26 @@ export function Kurulum({
 
   const ilerle = () => setAdim(Math.min(sonAdim, siradaki + 1))
   const geri = () => setAdim(Math.max(0, siradaki - 1))
+
+  const adGecerli = ad.trim().length >= AD_EN_AZ
+  /** Uyarı, denendikten sonra yazarken de canlı kalıyor; üç harfte kayboluyor. */
+  const adUyarisi = adDenendi && !adGecerli
+
+  /**
+   * Devam / Başlayalım düğmesi.
+   *
+   * Ad adımında geçersiz bir adla ilerlemeyi kesiyor: düğmeyi devre dışı
+   * bırakmak yerine basılabilir bırakıp uyarı göstermek, kullanıcıya neyin
+   * eksik olduğunu söylüyor — ölü bir düğme söylemezdi.
+   */
+  const devamEt = () => {
+    if (suanki === 'isim' && !adGecerli) {
+      setAdDenendi(true)
+      return
+    }
+    if (siradaki === sonAdim) void bitir()
+    else ilerle()
+  }
 
   /** Notları ve OBP'yi boşaltıp geçer — "şimdilik atla" düğmesi. */
   const notlariAtla = () => {
@@ -221,7 +257,7 @@ export function Kurulum({
         // Açılıştaki tavşan buranın üstüne konuyor: kurulumun ilk ekranı bu.
         yuvaMi
         dugme="Başlayalım"
-        onDevam={ilerle}
+        onDevam={devamEt}
       />
     )
   }
@@ -244,7 +280,7 @@ export function Kurulum({
         maskotGizli={maskotGizli}
         poz="el-sallayan"
         dugme="Devam"
-        onDevam={ilerle}
+        onDevam={devamEt}
       />
     )
   }
@@ -271,7 +307,24 @@ export function Kurulum({
       <Kart>
         {suanki === 'isim' && (
           <div>
-            <Etiket>Adın</Etiket>
+            {/* Uyarı etiketin sağında, alanın hemen üstünde duruyor: göz
+                alandan yukarı kaydığında ilk gördüğü yer burası. Açılır
+                pencere kullanılmadı — kullanıcıyı akıştan koparırdı. */}
+            <div className="mb-1.5 flex items-baseline justify-between gap-3">
+              <Etiket htmlFor="kurulum-ad" className="mb-0">
+                Adın
+              </Etiket>
+              {adUyarisi && (
+                <span
+                  id="kurulum-ad-uyari"
+                  role="alert"
+                  className="flex items-center gap-1 text-xs font-medium text-danger"
+                >
+                  <AlertCircle size={13} aria-hidden className="shrink-0" />
+                  En az {AD_EN_AZ} harf yaz
+                </span>
+              )}
+            </div>
             {/* Kişi simgesi alanın içinde duruyor: alan tek başına boş bir
                 kutu, simge ne beklendiğini yazıya gerek kalmadan söylüyor.
                 Simge `pointer-events-none`, yoksa üstüne dokunmak alanı
@@ -283,10 +336,13 @@ export function Kurulum({
                 className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
               />
               <Alan
+                id="kurulum-ad"
                 value={ad}
                 onChange={(e) => setAd(e.target.value)}
                 placeholder="Adını yaz"
-                className="pl-10"
+                aria-invalid={adUyarisi}
+                aria-describedby={adUyarisi ? 'kurulum-ad-uyari' : undefined}
+                className={`pl-10 ${adUyarisi ? 'border-danger focus-visible:border-danger' : ''}`}
                 // Ad alanı: klavye baş harfi büyütsün, tarayıcı yazım
                 // denetimiyle altını kırmızı çizmesin.
                 autoCapitalize="words"
@@ -298,7 +354,7 @@ export function Kurulum({
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault()
-                    ilerle()
+                    devamEt()
                   }
                 }}
               />
@@ -364,11 +420,6 @@ export function Kurulum({
               </>
             )}
 
-            <p className="mt-3 text-xs text-muted-foreground">
-              {mezun
-                ? 'OBP yazarsan notlara hiç gerek yok — doğrudan o kullanılır. İkisini de boş bırakabilirsin; sonradan Okul Notları ekranından girersin.'
-                : 'Boş bırakabilirsin; sonradan Okul Notları ekranından girersin. Yıllar tamamlanmadığı için buradan çıkan OBP bir tahmindir.'}
-            </p>
           </div>
         )}
 
@@ -421,12 +472,7 @@ export function Kurulum({
                 bildirim ? 'border-primary bg-primary-soft' : 'border-border active:bg-muted'
               }`}
             >
-              <span>
-                <span className="block font-medium">Günlük hatırlatma</span>
-                <span className="block text-xs text-muted-foreground">
-                  Soru girmediğin günlerde tek bir hatırlatma
-                </span>
-              </span>
+              <span className="font-medium">Günlük hatırlatma</span>
               {bildirim && <Check size={18} className="shrink-0 text-primary" />}
             </button>
 
@@ -471,7 +517,7 @@ export function Kurulum({
             Şimdilik atla
           </Buton>
         )}
-        <Buton className="flex-1" onClick={() => (siradaki === sonAdim ? void bitir() : ilerle())}>
+        <Buton className="flex-1" onClick={devamEt}>
           {/* Karşılama ekranı "Başlayalım" diyor; aynı akışta ikinci kez aynı
               söz, kullanıcıya başa döndüğünü düşündürüyordu. */}
           {siradaki === sonAdim ? 'Hazırım' : 'Devam'}
@@ -557,9 +603,10 @@ function TekIsliEkran({
 /**
  * Tanışma ekranının başlığı.
  *
- * Ad **boş bırakılabiliyor** (isim adımı öyle kurulmuş), o yüzden iki hâli
- * var: adsızken virgül de düşüyor — "Seni tanıdığıma memnun oldum," diye biten
- * bir cümle, adı yazmayı unutmuş gibi duruyordu.
+ * İsim adımı adı zorunlu tutuyor (`AD_EN_AZ`), yani buraya normalde boş ad
+ * gelmiyor. Yine de adsız hâli duruyor: kural gevşetilirse cümle "Seni
+ * tanıdığıma memnun oldum," diye biter ve adı yazmayı unutmuş gibi görünürdü.
+ * Sınır tek yerde (isim adımı) kalsın diye bu ekran ona bağımlı değil.
  */
 function tanismaBasligi(ad: string): string {
   const temiz = ad.trim()

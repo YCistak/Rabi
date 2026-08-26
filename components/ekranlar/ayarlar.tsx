@@ -336,9 +336,6 @@ export function AyarlarEkrani({
                 spellCheck={false}
                 maxLength={24}
               />
-              <AlanNotu>
-                Boş bırakırsan yalnızca &ldquo;Merhaba&rdquo; derim. Bu ad cihazdan çıkmıyor.
-              </AlanNotu>
             </GenisAlan>
           )}
 
