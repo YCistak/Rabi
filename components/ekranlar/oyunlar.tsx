@@ -750,23 +750,8 @@ function BankaSatiri({
           <span className="rakam block font-display text-[22px] leading-none font-extrabold text-primary">
             {toplam}
           </span>
-
-          <span className="min-w-0 flex-1">
-            <span className="block font-display text-base font-extrabold tracking-tight">
-              Oyun Bankası
-            </span>
-            <span className="mt-0.5 block text-[12.5px] font-medium leading-snug text-muted-foreground">
-              {toplam > 0 ? 'Karıştırdıklarını tekrar oyna' : 'Karıştırdığın sorular burada birikir'}
-            </span>
-          </span>
-
-          {/* Ok daire yerine yazılı düğme: bankaya girmek "ileri gitmek" değil,
-              biriken soruları **oynamak** — dokunulduğunda ne olacağı okunsun. */}
-          <span
-            className="shrink-0 rounded-full bg-ikincil px-4 py-2 text-[13px] font-extrabold text-white"
-            aria-hidden
-          >
-            Oyna
+          <span className="mt-1 block text-[9.5px] font-extrabold uppercase tracking-[0.12em] text-primary">
+            soru
           </span>
         </span>
 
@@ -779,7 +764,12 @@ function BankaSatiri({
           </span>
         </span>
 
-        <span className="shrink-0 rounded-full bg-primary-dolu px-4 py-2 text-[13px] font-extrabold text-white">
+        {/* Ok daire yerine yazılı düğme: bankaya girmek "ileri gitmek" değil,
+            biriken soruları **oynamak** — dokunulduğunda ne olacağı okunsun. */}
+        <span
+          className="shrink-0 rounded-full bg-ikincil px-4 py-2 text-[13px] font-extrabold text-white"
+          aria-hidden
+        >
           Oyna
         </span>
       </span>

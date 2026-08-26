@@ -1,22 +1,23 @@
 'use client'
 
+import { useState } from 'react'
 import { KARTLAR, type Ekran, type KartRengi, type KartTanimi } from '@/lib/gezinme'
 import { cn } from '@/lib/utils'
 
 /**
- * Kart aileleri — Oyunlar sekmesindeki ders kartlarıyla aynı üçlü.
+ * Simge yüzleri — her aile bir pastel zemin.
  *
- * `zemin` kartın pastel yüzeyi, `ok` sağ alttaki dolu dairenin rengi. İki
- * ekran aynı kart biçimini kullanıyor, dolayısıyla renk sözleşmesi de aynı
- * olmak zorunda.
+ * Kart artık pastel değil beyaz; renk yalnızca simgenin arkasında duruyor.
+ * Satırın tamamı renkliyken bir düzine giriş alt alta bir boya kutusu gibi
+ * okunuyordu ve renk "hangi araç" bilgisini taşımayı bırakmıştı.
  */
-const RENK_SINIFI: Record<KartRengi, { zemin: string; ok: string }> = {
-  mavi: { zemin: 'bg-primary-soft', ok: 'bg-primary' },
-  pembe: { zemin: 'bg-yzm-kart', ok: 'bg-yzm-ok' },
-  krem: { zemin: 'bg-isl-kart', ok: 'bg-isl-ok' },
-  nane: { zemin: 'bg-success-soft', ok: 'bg-success' },
-  lavanta: { zemin: 'bg-edb-kart', ok: 'bg-edb-ok' },
-  deniz: { zemin: 'bg-trh-kart', ok: 'bg-trh-ok' },
+const RENK_SINIFI: Record<KartRengi, string> = {
+  mavi: 'bg-primary-soft',
+  pembe: 'bg-yzm-kart',
+  krem: 'bg-isl-kart',
+  nane: 'bg-success-soft',
+  lavanta: 'bg-edb-kart',
+  deniz: 'bg-trh-kart',
 }
 
 /**
@@ -25,20 +26,47 @@ const RENK_SINIFI: Record<KartRengi, { zemin: string; ok: string }> = {
  * Gruplama `lib/gezinme.ts` yerine burada, çünkü yalnızca bu ekrana ait: aynı
  * kart listesi ana sayfada başlıksız bir ızgara olarak çiziliyor. Bir düzine
  * giriş düz bir liste hâlinde kaybolduğu için dört başlığa bölündü.
+ *
+ * `ipucu` başlığın sağında duran soluk yazı: başlık ne olduğunu, ipucu ne işe
+ * yaradığını söylüyor. "Okul" tek başına takvim mi not mu belli etmiyordu.
  */
-const BOLUMLER: { baslik: string; kartlar: Ekran[] }[] = [
-  { baslik: 'Çalışma', kartlar: ['pomodoro', 'soru', 'yanlis-banka', 'notlar'] },
-  { baslik: 'Denemeler', kartlar: ['deneme', 'siralama', 'istatistik'] },
-  { baslik: 'Okul', kartlar: ['okul', 'devamsizlik'] },
-  { baslik: 'Motivasyon', kartlar: ['haftalik-ozet', 'hedef', 'rozetler'] },
+const BOLUMLER: { baslik: string; ipucu: string; kartlar: Ekran[] }[] = [
+  {
+    baslik: 'Çalışma',
+    ipucu: 'Günlük rutin',
+    kartlar: ['pomodoro', 'soru', 'yanlis-banka', 'notlar'],
+  },
+  {
+    baslik: 'Denemeler',
+    ipucu: 'Sınav performansın',
+    kartlar: ['deneme', 'siralama', 'istatistik'],
+  },
+  { baslik: 'Okul', ipucu: 'Dönem takibi', kartlar: ['okul', 'devamsizlik'] },
+  {
+    baslik: 'Motivasyon',
+    ipucu: 'Devam etme sebebin',
+    kartlar: ['haftalik-ozet', 'hedef', 'rozetler'],
+  },
 ]
 
 /**
- * "Araçlar" sekmesi — bölüm bölüm kart ızgarası.
+ * Satırın sağında ok yerine yazılı düğme duran araçlar.
  *
- * Beyaz satır listesi de denendi; Oyunlar sekmesindeki renkli kartların yanında
- * soluk ve birbirine benzer duruyordu. İki sekme aynı kart ölçüsünü paylaşıyor:
- * iki sütun, pastel zemin, beyaz kutuda simge ve sağ altta dolu ok.
+ * Pomodoro'ya girmenin tek sebebi sayacı başlatmak; ok "bir yere gidiyorsun"
+ * derken düğme ne olacağını söylüyor. Listeye yeni giriş eklemeden önce
+ * düşün: her satırda düğme varsa hiçbiri öne çıkmaz.
+ */
+const EYLEM: Partial<Record<Ekran, string>> = { pomodoro: 'Başlat' }
+
+/** Alt başlıktaki bölüm sayısı — bir elin parmağını geçmiyor, yazıyla yazılıyor. */
+const SAYI_ADI = ['sıfır', 'tek', 'iki', 'üç', 'dört', 'beş', 'altı']
+
+/**
+ * "Araçlar" sekmesi — bölüm bölüm satır listesi.
+ *
+ * Renkli kart ızgarası da denendi; iki sütunda on iki kart ekranı üç ekran
+ * boyuna çıkarıyor ve hepsi aynı ağırlıkta durduğu için aranan araç ancak
+ * kaydırarak bulunuyordu. Satır dar: bir bakışta bütün bir bölüm görünüyor.
  */
 export function KartMenusu({
   onKartAc,
@@ -47,43 +75,95 @@ export function KartMenusu({
   onKartAc: (ekran: Ekran) => void
   className?: string
 }) {
+  /** Seçili süzgeç; null ise bütün bölümler görünüyor. */
+  const [suzgec, setSuzgec] = useState<string | null>(null)
+
   // Bir bölüme yazılmamış kart sessizce kaybolmasın diye: `gezinme.ts`'e yeni
   // kart eklenip `BOLUMLER`'e işlenmezse hiç çizilmezdi.
   const yerlesenler = new Set(BOLUMLER.flatMap((b) => b.kartlar))
   const yersizler = KARTLAR.filter((k) => !yerlesenler.has(k.id))
 
   const bolumler = [
-    ...BOLUMLER.map(({ baslik, kartlar }) => ({ baslik, kartlar: kartlariBul(kartlar) })),
-    ...(yersizler.length > 0 ? [{ baslik: 'Diğer', kartlar: yersizler }] : []),
+    ...BOLUMLER.map(({ baslik, ipucu, kartlar }) => ({
+      baslik,
+      ipucu,
+      kartlar: kartlariBul(kartlar),
+    })),
+    ...(yersizler.length > 0 ? [{ baslik: 'Diğer', ipucu: '', kartlar: yersizler }] : []),
   ]
+
+  const gorunen = suzgec ? bolumler.filter((b) => b.baslik === suzgec) : bolumler
 
   return (
     <div className={className}>
-      <header className="px-0.5 pt-1">
-        <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
-        <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Araçlar 🧰</h1>
-        <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">Her şey burada.</p>
+      <header className="flex items-start gap-3 px-0.5 pt-1">
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
+          <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Araçlar</h1>
+          <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
+            {KARTLAR.length} araç, {SAYI_ADI[bolumler.length] ?? bolumler.length} başlık altında.
+          </p>
+        </div>
+
+        {/* Başlığın simgesi sağ üstte, ana sayfada maskotun durduğu hizada:
+            iki sekme aynı yerden başlasın diye. */}
+        <span
+          className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart text-[21px] leading-none"
+          aria-hidden
+        >
+          🧰
+        </span>
       </header>
 
-      <div className="mt-4 space-y-5">
-        {bolumler.map(({ baslik, kartlar }) => (
-          <section key={baslik}>
-            <h2 className="mb-3 ml-1 text-[11.5px] font-extrabold tracking-[0.09em] text-muted-foreground uppercase">
+      {/* Süzgeç çipleri. Bölüme atlamak yerine süzüyor: dört başlık zaten tek
+          ekrana sığmıyor ve "atla" dokunuşu kullanıcıyı kaydırmaktan
+          kurtarmıyordu. Seçiliye tekrar dokunmak süzgeci kaldırıyor. */}
+      <div className="mt-3.5 flex flex-wrap gap-2">
+        {BOLUMLER.map(({ baslik }) => {
+          const secili = suzgec === baslik
+          return (
+            <button
+              key={baslik}
+              type="button"
+              onClick={() => setSuzgec((o) => (o === baslik ? null : baslik))}
+              aria-pressed={secili}
+              className={cn(
+                'rounded-full border px-3.5 py-2 text-[13px] font-bold transition',
+                'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+                secili
+                  ? 'border-primary-dolu bg-primary-dolu text-white'
+                  : 'border-border bg-card active:bg-muted',
+              )}
+            >
               {baslik}
-            </h2>
+            </button>
+          )
+        })}
+      </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              {kartlar.map((kart, sira) => (
-                <AracKarti
-                  key={kart.id}
-                  kart={kart}
-                  // Tek sayıda kart varsa sonuncusu iki sütunu kaplıyor; yoksa
-                  // ızgarada yanı boş bir kart kalıyordu.
-                  genis={kartlar.length % 2 === 1 && sira === kartlar.length - 1}
-                  onAc={() => onKartAc(kart.id)}
-                />
-              ))}
+      <div className="mt-5 space-y-5">
+        {gorunen.map(({ baslik, ipucu, kartlar }) => (
+          <section key={baslik}>
+            <div className="mb-2 flex items-baseline justify-between gap-3 px-1.5">
+              <h2 className="text-[11.5px] font-extrabold tracking-[0.09em] text-muted-foreground uppercase">
+                {baslik}
+              </h2>
+              {ipucu && (
+                <span className="shrink-0 text-[12px] font-medium text-muted-foreground/70">
+                  {ipucu}
+                </span>
+              )}
             </div>
+
+            {/* Bölümün satırları tek kartın içinde: her satır ayrı kart olsaydı
+                bir düzine gölge alt alta dizilir, ekran huzursuz olurdu. */}
+            <ul className="golge-kart overflow-hidden rounded-[22px] bg-card">
+              {kartlar.map((kart) => (
+                <li key={kart.id} className="border-t border-border first:border-t-0">
+                  <AracSatiri kart={kart} onAc={() => onKartAc(kart.id)} />
+                </li>
+              ))}
+            </ul>
           </section>
         ))}
       </div>
@@ -91,69 +171,59 @@ export function KartMenusu({
   )
 }
 
-/** Oyunlardaki ders kartıyla aynı ölçüde: simge kutusu, ad, açıklama ve dolu ok. */
-function AracKarti({
-  kart,
-  genis,
-  onAc,
-}: {
-  kart: KartTanimi
-  /** İki sütunu birden kaplayan yatay hâl. */
-  genis: boolean
-  onAc: () => void
-}) {
-  const { ad, aciklama, ikon, renk } = kart
-  const aile = RENK_SINIFI[renk]
+/** Tek satır: pastel simge kutusu, ad, açıklama ve sağda ok ya da yazılı düğme. */
+function AracSatiri({ kart, onAc }: { kart: KartTanimi; onAc: () => void }) {
+  const { id, ad, aciklama, ikon, renk } = kart
+  const eylem = EYLEM[id]
 
   return (
     <button
       type="button"
       onClick={onAc}
-      className={cn(
-        'relative rounded-2xl p-4 text-left transition active:brightness-[0.97]',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        aile.zemin,
-        genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[164px] flex-col',
-      )}
+      className="flex w-full items-center gap-3 px-3.5 py-3 text-left transition active:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
     >
-      {/* Oyun kartındaki kutunun aynısı: aynı ölçü, aynı beyaz yüzey, aynı
-          emoji boyu. İki sekme yan yana bakıldığında tek bir dile benzesin. */}
       <span
-        className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80 text-[23px] leading-none"
+        className={cn(
+          'grid size-[42px] shrink-0 place-items-center rounded-full text-[20px] leading-none',
+          RENK_SINIFI[renk],
+        )}
         aria-hidden
       >
         {ikon}
       </span>
 
-      <span className={cn('min-w-0', genis ? 'flex-1' : 'mt-2.5')}>
-        <span className="block font-display text-[16.5px] leading-[1.15] font-extrabold tracking-tight text-foreground">
+      <span className="min-w-0 flex-1">
+        <span className="block font-display text-[16px] leading-tight font-extrabold tracking-tight">
           {ad}
         </span>
-        <span className="mt-1.5 block text-[12.5px] leading-snug font-medium text-foreground/60">
+        <span className="mt-0.5 block text-[12.5px] leading-snug font-medium text-muted-foreground">
           {aciklama}
         </span>
       </span>
 
-      <span
-        className={cn(
-          'grid h-8 w-8 shrink-0 place-items-center rounded-full text-white',
-          aile.ok,
-          genis ? '' : 'mt-auto self-end',
-        )}
-        aria-hidden
-      >
-        <OkSimgesi />
-      </span>
+      {eylem ? (
+        <span
+          className="flex shrink-0 items-center gap-1 rounded-full bg-primary-soft px-3 py-1.5 text-[13px] font-extrabold text-primary"
+          aria-hidden
+        >
+          {eylem}
+          <OkSimgesi boyut={14} />
+        </span>
+      ) : (
+        <span className="shrink-0 text-muted-foreground/50" aria-hidden>
+          <OkSimgesi boyut={18} />
+        </span>
+      )}
     </button>
   )
 }
 
-function OkSimgesi() {
+function OkSimgesi({ boyut }: { boyut: number }) {
   return (
     <svg
       viewBox="0 0 24 24"
-      width={17}
-      height={17}
+      width={boyut}
+      height={boyut}
       fill="none"
       stroke="currentColor"
       strokeWidth={2.6}
