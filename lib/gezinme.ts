@@ -26,8 +26,6 @@ export type Ekran =
   | 'rozetler'
   | 'istatistik'
   | 'oyun-bankasi'
-  /** Havuç Mağazası — ana sayfanın sağ üstündeki bakiyeden açılıyor, kart menüsünde yok. */
-  | 'magaza'
 
 /** Kutucuk zeminleri — tasarımdaki aileler. */
 export type KartRengi = 'mavi' | 'pembe' | 'krem' | 'nane' | 'lavanta' | 'deniz'

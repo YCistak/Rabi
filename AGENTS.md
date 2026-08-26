@@ -144,41 +144,21 @@ Seçenek çipleri satırın altında sürekli açık dururken ekran üç ekran b
 (hatırlatma, müzik) açılamaz: satıra dokunmak anahtarı çeviriyor, aynı satır hem
 anahtar hem liste olamaz — hatırlatma saati o yüzden **ayrı** bir satır.
 
-## Seviye ve havuç
+## Seviye, havuç ve mağaza kaldırıldı
 
-Seviye **türetilmiş**: kayıtta XP sayacı yok, her açılışta mevcut veriden yeniden
-hesaplanıyor (`lib/seviye.ts`). Böylece aylardır veri girmiş kullanıcı sistemi ilk
-gördüğünde hak ettiği seviyede başlıyor. `rabi-seviye` altında yalnızca **ulaşılan
-en yüksek seviye** duruyor; o sayı hem seviyenin geri gitmesini hem aynı ödülün
-ikinci kez dağıtılmasını engelliyor.
+Uygulamada bir XP/seviye sistemi (`lib/seviye.ts`), havuç para birimi
+(`lib/havuc.ts`) ve joker satan Havuç Mağazası (`lib/magaza/`) vardı; üçü de
+tümüyle silindi. Geriye yalnızca eski kurulumlardaki `rabi-havuc`,
+`rabi-seviye` ve `rabi-jokerler` anahtarlarının temizlenmesi kaldı
+(`ESKI_ANAHTARLAR`, `lib/depo.ts`).
 
-XP'nin kuralı rozetlerinkiyle aynı (`lib/rozetler.ts`): soru sayısı elle giriliyor,
-o yüzden soru XP'sinin hem günlük hem ömür boyu tavanı var. Zaman isteyen ölçüler
-(pomodoro dakikası, seri günü, bankadan düşen soru) tavansız ve seviyenin omurgası;
-oyun XP'sinin de ayrı bir toplam tavanı var — oyun mola aktivitesi, ana yol değil.
-Yeni bir XP kaynağı eklerken önce "bu uydurulabilir mi" diye sor; uydurulabiliyorsa
-tavanla.
-
-Havucun akışları sayılıdır ve hepsi `lib/seviye.ts` ile `lib/havuc.ts` içinde:
-
-- **Artar:** seviye atlayınca (`birikenOdul`) ve Oyun Bankası'ndan soru düşünce
-  (`bankaOdulu`). İkincisinin ömür boyu tavanı var — bankaya bilerek yanlış
-  düşürüp düzelten biri yavaş ama sınırsız havuç basabilirdi. Ödül yalnızca
-  **kazanılan** düşüşün karşılığı: bankadaki tikle elle kaldırma `bankadanDustu`
-  yoluna hiç uğramıyor, yoksa havuç bir tuşa basmanın bedeli olurdu.
-- **Azalır:** mağaza ve **odak cezası** (`cezaDus`). Pomodoro sırasında odak
-  kilidini kıran kullanıcıdan en ucuz jokerin fiyatı kadar havuç gider. Kilit
-  kırılabilir olmak zorunda; caydırıcılığı o yüzden bedelin taşıması gerekiyor.
-  Bakiye eksiye inmiyor — borç yok.
-
-Ömür boyu kazanılabilecek toplam `TOPLAM_KAZANC` ile sabit (≈10.800) ve joker
-fiyatları ona oranla konuldu. `lib/magaza/jokerler.test.ts` ile `lib/havuc.test.ts`
-içindeki `denge` testleri bu oranı koruyor: bütün havuç toplansa bile çantayı her
-jokerden dokuzar tane doldurmaya yetmiyor. Fiyatı, XP eğrisini ya da ödül tavanını
-değiştirirsen o testler kırılır; kırılmaları doğru, sayıyı güncellemeden geçme.
-
-Yeni bir havuç kaynağı eklerken tavan sorusunu sor: kaynak tavansızsa mağaza bir
-süre sonra anlamsızlaşıyor.
+**Geri getirme.** Uygulamanın ölçtüğü şeylerin çoğu elle giriliyor — soru
+sayısı, deneme neti, devamsızlık. Puanlanan ve harcanabilen bir para birimi,
+elle girilen sayıyı bir ödülün bedeli hâline getiriyor ve kullanıcının kendi
+verisini şişirmesi için sebep üretiyor. Ölçü doğruluğunu bozmayan tek ilerleme
+göstergesi rozetler (`lib/rozetler.ts`): eşik geçmenin karşılığı bir rozet,
+harcanabilir bir bakiye değil. Yeni bir ödül sistemi düşünüyorsan önce bu
+soruyu geç: kullanıcı ödülü, veriyi uydurarak alabiliyor mu?
 
 ## Tur içi efektler
 
@@ -242,14 +222,15 @@ sayıda ve renkte duruyor.
 ## Oyun Bankası
 
 Bir kayıt iki yoldan çıkıyor ve ikisi aynı şey değil. **Kazanılan çıkış**: soru
-turlarda üst üste `DUSME_ESIGI` kez doğru bilinince kendiliğinden düşüyor; havucu
-veren yol bu. **Elle kaldırma**: karttaki tik kaydı havuçsuz siliyor. İkincisi
-sonradan eklendi çünkü banka bir borç listesi — öğrendiğine kullanıcının kendisi
-karar veremiyorsa liste yalnızca büyüyor ve bir yerden sonra hiç açılmıyor.
+turlarda üst üste `DUSME_ESIGI` kez doğru bilinince kendiliğinden düşüyor;
+"bankadan düşen" sayacını ilerleten ve rozete sayılan yol bu. **Elle kaldırma**:
+karttaki tik kaydı sayaca dokunmadan siliyor. İkincisi sonradan eklendi çünkü
+banka bir borç listesi — öğrendiğine kullanıcının kendisi karar veremiyorsa liste
+yalnızca büyüyor ve bir yerden sonra hiç açılmıyor.
 
-Tik havuç vermiyor; ölçtüğü tek şey kullanıcının tuşa basması. Bankaya yeni bir
-çıkış yolu eklersen aynı soruyu sor: bu yol uydurulabiliyor mu, uydurulabiliyorsa
-ödülü olmamalı.
+Tik sayacı ilerletmiyor; ölçtüğü tek şey kullanıcının tuşa basması. Bankaya yeni
+bir çıkış yolu eklersen aynı soruyu sor: bu yol uydurulabiliyor mu,
+uydurulabiliyorsa sayaca yazılmamalı.
 
 ## Oyun modları
 
@@ -322,18 +303,6 @@ göstermiyor. Görünüşe ait bir sınıfın taramadan düşmesi eksik bir göl
 > hem depoya girmiyor hem Tailwind'in tarayıcısından düşüyor. Bir dosyayı yeniden
 > adlandırdıktan sonra `npm run build`'i **tekrar çalıştır**: Tailwind kaynak
 > listesini derleme başında kuruyor, eski çıktı hatasız ama sınıfsız kalıyor.
-
-## Havuç Mağazası
-
-Satılan tek şey joker; tavşan özelleştirmesi kaldırıldı. Katalog
-`lib/magaza/jokerler.ts`, çanta `rabi-jokerler` anahtarında kimlik başına adet
-tutuyor. Hiçbir joker doğru cevabı söylemiyor — sahayı daraltıyor, süreye ya da
-hakka dokunuyor. Cevabı veren bir joker rekoru da Oyun Bankası'nı da
-anlamsızlaştırırdı. Güçlü jokerlerin ayrıca seviye şartı var (`enAzSeviye`);
-kilitli joker gizlenmiyor, kilitli gösteriliyor.
-
-Jokerlerin tur içinde kullanılması henüz yazılmadı: stok yalnızca `jokerKullan`
-üzerinden eksilmeli, oyun tarafı geldiğinde de o tek kapı kalmalı.
 
 ## Hedef kataloğu
 

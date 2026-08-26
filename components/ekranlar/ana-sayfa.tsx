@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { AlertTriangle, Carrot, ChevronRight, Sparkles, Target } from 'lucide-react'
+import { AlertTriangle, ChevronRight, Sparkles, Target } from 'lucide-react'
 import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef, OyunId } from '@/lib/types'
 import { devamsizlikOzeti, gunOzeti, kayitHaritasi } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
@@ -9,7 +9,6 @@ import { siraYaz } from '@/lib/siralama'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
 import { kisayollar } from '@/lib/son-kullanilan'
 import { OYUNLAR } from '@/lib/oyunlar/tanim'
-import { seviyeUnvani, type SeviyeDurumu } from '@/lib/seviye'
 import { Halka, Kart, Not } from '@/components/ui'
 import { GeriSayim } from '@/components/geri-sayim'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
@@ -63,8 +62,6 @@ export function AnaSayfa({
   gunlukKayitlar,
   devamsizlik,
   hedef,
-  seviye,
-  havuc,
   guncelSiralama,
   ozetBekliyor,
   sonAraclar,
@@ -80,10 +77,6 @@ export function AnaSayfa({
   gunlukKayitlar: GunlukKayit[]
   devamsizlik: Devamsizlik[]
   hedef: Hedef | null
-  /** Türetilen seviye durumu — selamlamanın alt satırındaki sayı. */
-  seviye: SeviyeDurumu
-  /** Havuç bakiyesi; seviyeyle aynı satırda duruyor. */
-  havuc: number
   /** Son denemelerden çıkan tahmini sıralama; deneme yoksa null. */
   guncelSiralama: number | null
   /** Biten haftanın özeti henüz izlenmediyse davet kartı gösterilir. */
@@ -170,26 +163,7 @@ export function AnaSayfa({
                 kalıyor, "Merhaba  👋" gibi çift boşluk oluşmuyor. */}
             {ayarlar.ad ? `Merhaba ${ayarlar.ad} 👋` : 'Merhaba 👋'}
           </h1>
-          {/* Seviye ve unvan selamlamanın alt satırında: eskiden ayrı bir
-              karttı ve sayfanın en değerli yerini üç sayı için harcıyordu. */}
-          <p className="mt-0.5 text-[12.5px] font-bold text-muted-foreground">
-            <span className="rakam text-primary">Seviye {seviye.seviye}</span>
-            {' · '}
-            {seviyeUnvani(seviye.seviye)}
-          </p>
         </div>
-
-        {/* Havuç bakiyesi mağazanın kapısı: sayının dokunulabilir olduğu
-            zaten bekleniyordu, düğme olmadığı sürece bozuk görünüyordu. */}
-        <button
-          type="button"
-          onClick={() => onKartAc('magaza')}
-          aria-label={`${havuc} havucun var — Havuç Mağazası`}
-          className="flex shrink-0 items-center gap-1.5 self-start rounded-full bg-isl-kart px-2.5 py-1.5 text-isl-koyu transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-        >
-          <Carrot size={16} strokeWidth={2.6} aria-hidden />
-          <span className="rakam text-sm font-extrabold">{havuc}</span>
-        </button>
       </header>
 
       {/* Haftalık özet daveti — biten haftanın özeti izlenmediyse en üstte.

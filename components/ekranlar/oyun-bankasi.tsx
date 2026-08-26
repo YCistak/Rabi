@@ -32,10 +32,11 @@ import { Rabi } from '@/components/maskot/rabi'
  *
  * - **Kazanılan çıkış** — soru turlarda üst üste `DUSME_ESIGI` kez doğru
  *   bilinir ve kendiliğinden düşer. Tek doğru yetmiyor: bir kez tutturmak
- *   bilmek değil, hatırlamak olabilir. Havuç yalnızca bunun karşılığı.
+ *   bilmek değil, hatırlamak olabilir. "Bankadan düşen" sayacı — ve ona bakan
+ *   rozet — yalnızca bunun karşılığı.
  * - **Elle kaldırma** — karttaki tik. Banka bir borç listesi; öğrendiğine
  *   kullanıcının kendisi karar veremiyorsa liste büyümekten başka bir şey
- *   yapmıyor ve bir yerden sonra hiç açılmıyor. Tik havuç vermiyor, çünkü
+ *   yapmıyor ve bir yerden sonra hiç açılmıyor. Tik sayacı ilerletmiyor, çünkü
  *   ölçtüğü tek şey kullanıcının tuşa basması.
  */
 

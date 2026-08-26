@@ -10,7 +10,6 @@ import {
   type OdakIzni,
 } from '@/lib/odak-kilidi'
 import { Buton, Kart, Not } from '@/components/ui'
-import { ODAK_CEZASI } from '@/lib/havuc'
 import { Rabi } from '@/components/maskot/rabi'
 import { UygulamaSecici } from '@/components/odak/uygulama-secici'
 
@@ -92,11 +91,10 @@ export function OdakKurulum({
               Bu bir kilit değil, engel: istediğin an kapatabilirsin. Amacı refleksle
               telefona uzanmayı zorlaştırmak.
             </Not>
-            {/* Bedeli izin istenmeden önce yazıyor: sonradan öğrenilen ceza
+            {/* Bedeli izin istenmeden önce yazıyor: sonradan öğrenilen karşılık
                 caydırıcı değil, sürpriz olurdu. */}
             <Not tur="uyari">
-              Ama bedava değil: çalışma turu sürerken kilidi kaparsan tur baştan başlar
-              ve <strong className="rakam">{ODAK_CEZASI}</strong> havuç gider.
+              Ama bedava değil: çalışma turu sürerken kilidi kaparsan tur baştan başlar.
             </Not>
           </div>
         )}
