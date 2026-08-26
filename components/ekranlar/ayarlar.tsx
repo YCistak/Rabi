@@ -13,11 +13,8 @@ import {
   GraduationCap,
   Images,
   Lock,
-  Moon,
   Music,
   Plus,
-  Smartphone,
-  Sun,
   Table,
   Target,
   Flag,
@@ -27,7 +24,6 @@ import {
   X,
 } from 'lucide-react'
 import { Alan, Buton, Cip, Etiket, Not, Onay } from '@/components/ui'
-import { useTema, type TemaTercihi } from '@/components/theme-provider'
 import {
   odakDurumu,
   odakIzniIste,
@@ -35,11 +31,15 @@ import {
   type OdakDurumu,
 } from '@/lib/odak-kilidi'
 import { UygulamaSecici } from '@/components/odak/uygulama-secici'
+import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { SINIF_SECENEKLERI, egitimYili, katsayiYaz, mezunMu, sinifAdi } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
 import type { JokerStogu } from '@/lib/magaza/jokerler'
 import type { NotKagidi } from '@/lib/yapilacaklar'
 import {
+  HEDEF_ADIMI,
+  HEDEF_EN_AZ,
+  HEDEF_EN_COK,
   elenenSoruSayisi,
   tumVeriyiSil,
   yedegiDogrula,
@@ -54,7 +54,7 @@ import {
 } from '@/lib/resim-depo'
 import type { BankaKaydi } from '@/lib/oyunlar/banka'
 import { izinIste } from '@/lib/bildirim'
-import { saatDegeri, saatYaz, saatiCoz } from '@/lib/hatirlatma'
+import { saatYaz } from '@/lib/hatirlatma'
 import { cn, yeniId } from '@/lib/utils'
 import type {
   Ayarlar,
@@ -82,35 +82,16 @@ const PUAN_TURU_ADI: Record<PuanTuru, string> = {
 }
 
 /**
- * Tema seçenekleri. Varsayılan `sistem`: uygulama, telefon hangi temadaysa o
- * temada açılır ve telefon gece moduna geçtiğinde kendiliğinden onu izler.
+ * Seçenekleri açılıp kapanan ayarların kimlikleri. Serbest metin yerine birlik
+ * hâlinde: yeni bir açılır ayar eklerken burada da tanımlanması gerekiyor,
+ * yazım hatası sessizce hiç açılmayan bir satıra dönüşmesin.
  */
-const TEMA_SECENEKLERI: { id: TemaTercihi; ad: string; Simge: LucideIcon }[] = [
-  { id: 'sistem', ad: 'Cihazımla aynı', Simge: Smartphone },
-  { id: 'acik', ad: 'Açık', Simge: Sun },
-  { id: 'koyu', ad: 'Koyu', Simge: Moon },
-]
+type AyarId = 'hedef' | 'alan' | 'sinif' | 'deneme-turu' | 'hatirlatma-saati' | 'muzik-turu'
 
-const HAZIR_HEDEFLER = [100, 200, 300, 400, 500]
-/**
- * Hızlı seçim saatleri. Yanındaki saat kutusu her değeri kabul ettiği için bu
- * liste "en sık istenenler"; tam liste 24 çip olurdu ve okunmazdı.
- */
-const HATIRLATMA_SAATLERI = [8, 12, 16, 18, 19, 20, 21, 22, 23]
-
-/**
- * Mini oyun müziği seçenekleri. Hangisinin "iyi" olduğu tamamen zevk meselesi
- * olduğu için seçim kullanıcıda bırakıldı; tek bir parça dayatmak, beğenmeyen
- * için müziği tamamen kapatmaktan başka yol bırakmıyordu.
- */
+/** Mini oyun müziği seçenekleri; hangisinin iyi olduğu zevk meselesi. */
 const OYUN_MUZIK_ADI: Record<OyunMuzikTuru, string> = {
   sakin: 'Sakin',
   lofi: 'Lo-fi',
-}
-
-const OYUN_MUZIK_ACIKLAMA: Record<OyunMuzikTuru, string> = {
-  sakin: 'Koddan üretilen yumuşak pad. Davulsuz, çok kısık; arkada durur.',
-  lofi: 'Pomodoro’nun parçaları. Daha dolu; müziğin çaldığı belli olur.',
 }
 
 /** Bayt sayısını okunur hâle getirir: 5242880 → "5,0 MB". */
@@ -167,7 +148,15 @@ export function AyarlarEkrani({
     hedef: Hedef | null
   }
 }) {
-  const { tercih, tema, temaDegistir } = useTema()
+  /**
+   * Seçenekleri açık duran ayar; aynı anda yalnız biri açılabiliyor.
+   *
+   * Önce bütün çipler hep görünüyordu ve Ayarlar altı ekran boyu bir çip
+   * duvarıydı: kullanıcı aradığı ayarı bulmak için onlarca seçeneğin arasından
+   * kaydırıyordu. Artık satır ne seçili olduğunu sağında yazıyor, çipler ancak
+   * satıra dokununca açılıyor.
+   */
+  const [acikAyar, setAcikAyar] = useState<AyarId | null>(null)
   const [sablonlarAcik, setSablonlarAcik] = useState(false)
   const [acikSablonId, setAcikSablonId] = useState<string | null>(null)
   const [silinecekSablon, setSilinecekSablon] = useState<Sablon | null>(null)
@@ -190,19 +179,18 @@ export function AyarlarEkrani({
     return () => document.removeEventListener('visibilitychange', gorunurluk)
   }, [])
   const [durum, setDurum] = useState<string | null>(null)
-  const [hedefMetni, setHedefMetni] = useState(String(ayarlar.gunlukHedef))
-  // Kutu yalnızca hazır çiplerden biri seçili değilken ya da kullanıcı "Kendin
-  // yaz" dediğinde açılıyor; sürekli açık durduğunda çiplerin altında ikinci
-  // bir seçim alanı gibi görünüyordu.
-  const [ozelHedefAcik, setOzelHedefAcik] = useState(
-    !HAZIR_HEDEFLER.includes(ayarlar.gunlukHedef),
-  )
   const [izinReddedildi, setIzinReddedildi] = useState(false)
   const [fotoBoyut, setFotoBoyut] = useState(0)
   const dosyaRef = useRef<HTMLInputElement>(null)
 
-  const temaSecenegi = TEMA_SECENEKLERI.find((s) => s.id === tercih)
   const varsayilanSablon = sablonlar.find((s) => s.id === ayarlar.varsayilanSablonId)
+
+  /** Seçenekli bir satırı açıp kapatan ortak prop'lar. */
+  const acilir = (id: AyarId) => ({
+    onClick: () => setAcikAyar((a) => (a === id ? null : id)),
+    acikMi: acikAyar === id,
+    sag: <AcilirOk acik={acikAyar === id} />,
+  })
 
   /**
    * Hatırlatmayı açarken izin de istenir. Android'de izin bir kez kalıcı olarak
@@ -304,7 +292,7 @@ export function AyarlarEkrani({
     <div>
       {/* Ayarlar artık alt menüde kendi sekmesi; diğer sekmelerle aynı başlık deseni. */}
       <header className="px-0.5 pt-1">
-        <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
+        <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
         <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Ayarlar ⚙️</h1>
         <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
           Rabi’yi kendine göre kur.
@@ -312,35 +300,7 @@ export function AyarlarEkrani({
       </header>
 
       <div className="mt-4 space-y-4">
-        {/* ------------------------------ Görünüm ------------------------- */}
-        <Bolum baslik="Görünüm">
-          <Satir
-            Simge={Moon}
-            renk="lavanta"
-            baslik="Tema"
-            aciklama="Gece çalışırken gözü yormaz"
-            deger={temaSecenegi?.ad}
-          />
-          <GenisAlan>
-            <Cipler>
-              {TEMA_SECENEKLERI.map((secenek) => (
-                <Cip
-                  key={secenek.id}
-                  secili={tercih === secenek.id}
-                  onClick={() => temaDegistir(secenek.id)}
-                >
-                  <secenek.Simge size={14} className="mr-1.5 inline align-[-2px]" aria-hidden />
-                  {secenek.ad}
-                </Cip>
-              ))}
-            </Cipler>
-            <AlanNotu>
-              {tercih === 'sistem'
-                ? `Telefonunun ayarını izliyorum — şu an ${tema === 'koyu' ? 'koyu' : 'açık'}.`
-                : 'Telefonun gece moduna geçse bile bu seçim değişmez.'}
-            </AlanNotu>
-          </GenisAlan>
-        </Bolum>
+        {/* Görünüm bölümü yok: tek tema var, seçilecek bir şey kalmadı. */}
 
         {/* ------------------------------ Çalışma ------------------------- */}
         <Bolum baslik="Çalışma">
@@ -350,42 +310,32 @@ export function AyarlarEkrani({
             baslik="Günlük soru hedefim"
             aciklama="Her günü buna göre takip ediyorum"
             deger={ayarlar.gunlukHedef}
+            {...acilir('hedef')}
           />
-          <GenisAlan>
-            <Cipler>
-              {HAZIR_HEDEFLER.map((h) => (
-                <Cip
-                  key={h}
-                  secili={ayarlar.gunlukHedef === h}
-                  onClick={() => {
-                    setAyarlar((o) => ({ ...o, gunlukHedef: h }))
-                    setHedefMetni(String(h))
-                    setOzelHedefAcik(false)
-                  }}
-                >
-                  {h}
-                </Cip>
-              ))}
-              <Cip secili={ozelHedefAcik} onClick={() => setOzelHedefAcik((a) => !a)}>
-                Kendin yaz
-              </Cip>
-            </Cipler>
-
-            {ozelHedefAcik && (
-              <Alan
-                inputMode="numeric"
-                aria-label="Günlük soru hedefi"
-                value={hedefMetni}
-                onChange={(e) => {
-                  const temiz = e.target.value.replace(/[^0-9]/g, '').slice(0, 4)
-                  setHedefMetni(temiz)
-                  const sayi = Number(temiz)
-                  if (sayi > 0) setAyarlar((o) => ({ ...o, gunlukHedef: sayi }))
-                }}
-                className="rakam mt-2.5 h-10 w-28"
+          {acikAyar === 'hedef' && (
+            <GenisAlan tam>
+              {/* Kurulumdaki tekerleğin aynısı: iki yerde iki farklı seçim
+                  biçimi olsaydı kullanıcı hedefi değiştirmeye geldiğinde
+                  tanımadığı bir arayüzle karşılaşırdı. */}
+              <SayiTekerlegi
+                deger={ayarlar.gunlukHedef}
+                onDegis={(yeni) => setAyarlar((o) => ({ ...o, gunlukHedef: yeni }))}
+                enAz={HEDEF_EN_AZ}
+                enCok={HEDEF_EN_COK}
+                adim={HEDEF_ADIMI}
+                birim="soru"
+                etiket="Günlük soru hedefi"
               />
-            )}
-          </GenisAlan>
+              {/* Tekerlek yirmi beşer artıyor; eski bir kurulumdan 310 gibi
+                  bir sayı kalmışsa kullanıcı onu görebilmeli. */}
+              {ayarlar.gunlukHedef % HEDEF_ADIMI !== 0 && (
+                <AlanNotu>
+                  Şu an <strong className="rakam text-foreground">{ayarlar.gunlukHedef}</strong>{' '}
+                  seçili. Tekerleğe dokunursan en yakın basamağa oturur.
+                </AlanNotu>
+              )}
+            </GenisAlan>
+          )}
 
           <Satir
             Simge={GraduationCap}
@@ -393,7 +343,9 @@ export function AyarlarEkrani({
             baslik="Alanım"
             aciklama="Sıralama tahmini buna göre hesaplanır"
             deger={PUAN_TURU_ADI[ayarlar.puanTuru]}
+            {...acilir('alan')}
           />
+          {acikAyar === 'alan' && (
           <GenisAlan>
             <Cipler>
               {(Object.keys(PUAN_TURU_ADI) as PuanTuru[]).map((tur) => (
@@ -407,18 +359,17 @@ export function AyarlarEkrani({
               ))}
             </Cipler>
           </GenisAlan>
+          )}
 
           <Satir
             Simge={ClipboardList}
             renk="krem"
             baslik="Sınıfım"
-            aciklama={
-              mezunMu(ayarlar.buYilSinif)
-                ? 'Mezunda ilerleme durur'
-                : 'Her eylülde kendiliğinden ilerler'
-            }
+            aciklama="Bu yılki sınıfın"
             deger={sinifAdi(ayarlar.buYilSinif)}
+            {...acilir('sinif')}
           />
+          {acikAyar === 'sinif' && (
           <GenisAlan>
             <Cipler>
               {SINIF_SECENEKLERI.map((sinif) => (
@@ -443,12 +394,10 @@ export function AyarlarEkrani({
                 </Cip>
               ))}
             </Cipler>
-            <AlanNotu>
-              {mezunMu(ayarlar.buYilSinif)
-                ? 'Mezunda ilerleme durur. OBP’ni Okul Notları ekranından doğrudan girebilirsin.'
-                : 'Her eylülde bir üst sınıfa kendiliğinden geçer, 12’de durur.'}
-            </AlanNotu>
+            {/* "Her eylülde bir üst sınıfa geçer" notu kaldırıldı: satırın
+                kendi açıklaması zaten bunu söylüyordu. */}
           </GenisAlan>
+          )}
 
           <Satir
             Simge={Bookmark}
@@ -456,7 +405,9 @@ export function AyarlarEkrani({
             baslik="Varsayılan deneme türü"
             aciklama="Yeni deneme bu şablonla açılır"
             deger={varsayilanSablon?.ad}
+            {...acilir('deneme-turu')}
           />
+          {acikAyar === 'deneme-turu' && (
           <GenisAlan>
             <Cipler>
               {sablonlar.map((s) => (
@@ -470,6 +421,7 @@ export function AyarlarEkrani({
               ))}
             </Cipler>
           </GenisAlan>
+          )}
 
           <Satir
             Simge={Table}
@@ -741,10 +693,6 @@ export function AyarlarEkrani({
                     </div>
                   )}
 
-                  <AlanNotu>
-                    Kilit bir engel, kilit değil: istediğin an kapatabilirsin. Molada
-                    kendiliğinden açılır.
-                  </AlanNotu>
                 </GenisAlan>
               )}
             </>
@@ -763,51 +711,38 @@ export function AyarlarEkrani({
             sag={<Anahtar acik={ayarlar.bildirimAcik} />}
           />
 
+          {/* Saat seçimi kendi satırında: bildirim anahtarının altına doğrudan
+              dokuz çip serilince "Günlük hatırlatma" ile saat aynı ayar gibi
+              okunuyordu. Ayrı satır hem seçili saati sağında yazıyor hem de
+              çipler ancak dokununca açılıyor. */}
           {ayarlar.bildirimAcik && (
-            <GenisAlan>
-              <Cipler>
-                {HATIRLATMA_SAATLERI.map((h) => (
-                  <Cip
-                    key={h}
-                    secili={ayarlar.hatirlatmaSaati === h && ayarlar.hatirlatmaDakikasi === 0}
-                    onClick={() =>
-                      setAyarlar((o) => ({ ...o, hatirlatmaSaati: h, hatirlatmaDakikasi: 0 }))
-                    }
-                  >
-                    {saatYaz(h, 0)}
-                  </Cip>
-                ))}
-              </Cipler>
+            <Satir
+              Simge={Bell}
+              renk="mercan"
+              baslik="Hatırlatma saati"
+              aciklama="Bildirim bu saatte gelir"
+              deger={saatYaz(ayarlar.hatirlatmaSaati, ayarlar.hatirlatmaDakikasi)}
+              {...acilir('hatirlatma-saati')}
+            />
+          )}
 
-              {/* Çipler tam saatler; dakikalı bir saat ("21.30") ancak buradan
-                  girilebiliyor. Sistemin kendi saat seçicisini açtığı için
-                  telefonda elle rakam yazmak gerekmiyor. */}
-              <div className="mt-2.5 flex items-center gap-2">
-                <Etiket className="mb-0 shrink-0 text-xs">Başka saat</Etiket>
-                <Alan
-                  type="time"
-                  value={saatDegeri(ayarlar.hatirlatmaSaati, ayarlar.hatirlatmaDakikasi)}
-                  onChange={(e) => {
-                    const cozulen = saatiCoz(e.target.value)
-                    if (!cozulen) return
-                    setAyarlar((o) => ({
-                      ...o,
-                      hatirlatmaSaati: cozulen.saat,
-                      hatirlatmaDakikasi: cozulen.dakika,
-                    }))
-                  }}
-                  aria-label="Hatırlatma saati"
-                  className="rakam h-10 w-32"
-                />
-              </div>
+          {ayarlar.bildirimAcik && acikAyar === 'hatirlatma-saati' && (
+            <GenisAlan tam>
+              {/* Sistemin `<input type="time">` seçicisi kaldırıldı: telefon
+                  İngilizceyse AM/PM düzeninde açılıyor ve uygulamanın her
+                  yerindeki 24 saatlik "20.00" biçimiyle çelişiyordu. */}
+              <SaatSecici
+                saat={ayarlar.hatirlatmaSaati}
+                dakika={ayarlar.hatirlatmaDakikasi}
+                onDegis={({ saat, dakika }) =>
+                  setAyarlar((o) => ({ ...o, hatirlatmaSaati: saat, hatirlatmaDakikasi: dakika }))
+                }
+              />
 
+              {/* Seçili saat satırın sağında zaten yazıyor; burada tekrar
+                  etmiyor. Kalan tek cümle bildirimin ne sıklıkta geleceği. */}
               <AlanNotu>
-                Şu an seçili:{' '}
-                <strong className="rakam text-foreground">
-                  {saatYaz(ayarlar.hatirlatmaSaati, ayarlar.hatirlatmaDakikasi)}
-                </strong>
-                . Günde en fazla bir bildirim gönderilir; o gün soru girdiysen hiç gönderilmez.
-                Bildirim gelmiyorsa telefonun pil optimizasyonu Rabi’yi kısıtlıyor olabilir.
+                Günde en fazla bir bildirim gelir; o gün soru girdiysen hiç gelmez.
               </AlanNotu>
             </GenisAlan>
           )}
@@ -843,7 +778,20 @@ export function AyarlarEkrani({
             sag={<Anahtar acik={ayarlar.oyunMuzigi} />}
           />
 
+          {/* Parça seçimi müzik anahtarının altındaki ayrı satırda: aynı satıra
+              konunca "müzik açık mı" ile "hangi parça" tek ayar gibi okunuyordu. */}
           {ayarlar.oyunMuzigi && (
+            <Satir
+              Simge={Music}
+              renk="lavanta"
+              baslik="Müzik parçası"
+              aciklama="Turun temposunu belirler"
+              deger={OYUN_MUZIK_ADI[ayarlar.oyunMuzikTuru]}
+              {...acilir('muzik-turu')}
+            />
+          )}
+
+          {ayarlar.oyunMuzigi && acikAyar === 'muzik-turu' && (
             <GenisAlan>
               <Cipler>
                 {(Object.keys(OYUN_MUZIK_ADI) as OyunMuzikTuru[]).map((tur) => (
@@ -856,7 +804,6 @@ export function AyarlarEkrani({
                   </Cip>
                 ))}
               </Cipler>
-              <AlanNotu>{OYUN_MUZIK_ACIKLAMA[ayarlar.oyunMuzikTuru]}</AlanNotu>
             </GenisAlan>
           )}
         </Bolum>
@@ -1040,16 +987,39 @@ function Bolum({ baslik, children }: { baslik: string; children: React.ReactNode
       <h2 className="mb-2 ml-1 text-[11.5px] font-extrabold uppercase tracking-[0.09em] text-muted-foreground">
         {baslik}
       </h2>
-      {/* Ayraç ilk çocuk dışındaki her çocuğa: satırlar koşullu çizildiği için
-          (kapalı hatırlatmanın çipleri yok) sabit bir sınıf listesi tutmuyor. */}
-      <div className="golge-kart overflow-hidden rounded-[22px] bg-card [&>*+*]:border-t [&>*+*]:border-border">
-        {children}
-      </div>
+      {/* Ayracı `Satir` kendi çiziyor (bkz. `AYRAC`). Burada bir zamanlar
+          "ilk çocuk dışında her çocuğa çizgi" kuralı vardı; `GenisAlan` da bir
+          çocuk olduğu için çizgi ayarı bir sonrakinden değil **kendi
+          seçeneklerinden** ayırıyordu ve "Mini oyun müziği" anahtarı ile onun
+          Arcade/Lo-fi seçimi iki ayrı ayar gibi duruyordu. */}
+      <div className="golge-kart overflow-hidden rounded-[22px] bg-card">{children}</div>
     </section>
   )
 }
 
-/** Bir ayar satırı: ikon · başlık/açıklama · sağda değer ya da denetim. */
+/** Seçenekli satırların sağındaki, açıkken dönen ok. */
+function AcilirOk({ acik }: { acik: boolean }) {
+  return (
+    <ChevronDown
+      size={18}
+      strokeWidth={2.6}
+      aria-hidden
+      className={cn('shrink-0 text-muted-foreground/50 transition-transform', acik && 'rotate-180')}
+    />
+  )
+}
+
+/** Satırın üstündeki ayraç; bölümün ilk satırında çizilmiyor. */
+const AYRAC = 'border-t border-border first:border-t-0'
+
+/**
+ * Bir ayar satırı: ikon · başlık/açıklama · sağda değer ya da denetim.
+ *
+ * Ayraç çizgisi burada: her satır **kendi üstüne** çiziyor, bölümün ilki
+ * hariç. Böylece çizgi hep iki ayarın arasına düşüyor; bir ayarın kendi
+ * seçenekleri (`GenisAlan`) çizgisiz kalıp satıra bağlı görünüyor. Koşullu
+ * satırlarda da doğru: baştaki satır çizilmezse `:first-child` sonrakine geçer.
+ */
 function Satir({
   Simge,
   renk,
@@ -1095,7 +1065,7 @@ function Satir({
 
       {/* Sağdaki değer seçili olanı söylüyor: çiplere bakmadan okunuyor. */}
       {deger !== undefined && (
-        <span className="rakam shrink-0 text-[13px] font-extrabold text-muted-foreground">
+        <span className="rakam shrink-0 text-[13px] font-extrabold text-primary">
           {deger}
         </span>
       )}
@@ -1104,7 +1074,7 @@ function Satir({
   )
 
   if (!onClick) {
-    return <div className="flex items-center gap-3 px-3.5 py-2.5">{icerik}</div>
+    return <div className={cn(AYRAC, 'flex items-center gap-3 px-3.5 py-2.5')}>{icerik}</div>
   }
 
   return (
@@ -1113,10 +1083,32 @@ function Satir({
       onClick={onClick}
       aria-pressed={basiliMi}
       aria-expanded={acikMi}
-      className="flex w-full items-center gap-3 px-3.5 py-2.5 text-left transition active:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+      className={cn(
+        AYRAC,
+        'flex w-full items-center gap-3 px-3.5 py-2.5 text-left transition active:bg-muted',
+        'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring',
+      )}
     >
       {icerik}
     </button>
+  )
+}
+
+/**
+ * Açılır satırların sağındaki ok. Tasarımda çizilmemiş ama bir yeri olmalı:
+ * dokununca açılan bir satırın dokunulabildiği başka türlü anlaşılmıyor.
+ */
+function AcOk({ acik }: { acik: boolean }) {
+  return (
+    <ChevronDown
+      size={18}
+      strokeWidth={2.6}
+      aria-hidden
+      className={cn(
+        'shrink-0 text-muted-foreground/50 transition-transform',
+        acik && 'rotate-180',
+      )}
+    />
   )
 }
 
@@ -1127,7 +1119,10 @@ function Satir({
  */
 function GenisAlan({ tam, children }: { tam?: boolean; children: React.ReactNode }) {
   return (
-    <div className={cn('pb-3.5 pr-3.5 pt-0.5', tam ? 'pl-3.5' : 'pl-[68px]')}>{children}</div>
+    // Ayraç yok: bu alan üstündeki satırın parçası, ondan ayrılmamalı.
+    <div className={cn('pb-3.5 pr-3.5 pt-0.5', tam ? 'pl-3.5' : 'pl-[68px]')}>
+      {children}
+    </div>
   )
 }
 
@@ -1155,7 +1150,7 @@ function Anahtar({ acik }: { acik: boolean }) {
     <span
       className={cn(
         'relative h-[27px] w-[46px] shrink-0 rounded-full transition',
-        acik ? 'bg-primary' : 'bg-muted',
+        acik ? 'bg-primary-dolu' : 'bg-muted',
       )}
     >
       <span

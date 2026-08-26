@@ -520,7 +520,7 @@ function Kart({
               >
                 <span
                   aria-hidden
-                  className="rakam mt-px grid h-4 w-4 shrink-0 place-items-center rounded-full bg-byl-ok text-[9.5px] font-black text-white"
+                  className="rakam mt-px grid h-4 w-4 shrink-0 place-items-center rounded-full bg-byl-ok text-[9.5px] font-extrabold text-white"
                 >
                   {sayi + 1}
                 </span>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Açılış ekranının zemini — WebView ilk kareyi boyayana kadar görünen pencere
+  arka planı (values/styles.xml → AppTheme.NoActionBar).
+
+  Düz renk de olurdu ama o kare bazen birkaç yüz milisaniye duruyor ve düz bir
+  renkten gradyana geçiş "başka bir ekran açıldı" gibi okunuyordu. Burası
+  uygulamanın kendi açılış ekranındaki gradyanın (components/acilis.tsx →
+  ZEMIN_GRADYANI) yaklaşık karşılığı: ışık sol üst köşenin dışında, kenarlar
+  acilis_zemin rengine iniyor.
+
+  Yaklaşık, çünkü Android radyal gradyanı yalnızca **daire** çizebiliyor;
+  CSS'teki elips (130% 65%) burada 500dp yarıçaplı bir daireye indi. Kenar
+  rengi birebir aynı olduğu için fark yalnızca köşedeki ışığın biçiminde ve o
+  da bir iki kare görünüyor.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+  <gradient
+      android:type="radial"
+      android:centerX="0.15"
+      android:centerY="-0.10"
+      android:gradientRadius="500dp"
+      android:startColor="#221F3D"
+      android:endColor="@color/acilis_zemin" />
+</shape>

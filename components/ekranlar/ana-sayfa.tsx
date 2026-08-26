@@ -1,11 +1,10 @@
 'use client'
 
 import { useMemo } from 'react'
-import { AlertTriangle, Carrot, Check, ChevronRight, Sparkles, Store, Target } from 'lucide-react'
+import { AlertTriangle, Carrot, ChevronRight, Sparkles, Target } from 'lucide-react'
 import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef, OyunId } from '@/lib/types'
-import { devamsizlikOzeti, gunOzeti, kayitHaritasi, netYaz } from '@/lib/hesap'
+import { devamsizlikOzeti, gunOzeti, kayitHaritasi } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
-import { sozSec } from '@/lib/sozler'
 import { siraYaz } from '@/lib/siralama'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
 import { kisayollar } from '@/lib/son-kullanilan'
@@ -15,7 +14,7 @@ import { Halka, Kart, Not } from '@/components/ui'
 import { GeriSayim } from '@/components/geri-sayim'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
 
-/** Seride gösterilen gün sayısı. Tasarımda kart "7 günlük seri" diye adlandırılıyor. */
+/** Seride gösterilen gün sayısı. Tasarımda hedef kartının altındaki yedi kutucuk. */
 const SERI_GUNU = 7
 
 /**
@@ -25,13 +24,14 @@ const SERI_GUNU = 7
  */
 const GUN_ADLARI = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt']
 
-/** Kutucuk yüzleri — `KARTLAR`'daki pastel aile adları tema değişkenlerine bağlanıyor. */
+/** Kutucuk yüzleri — `KARTLAR`'daki aile adları tema değişkenlerine bağlanıyor. */
 const KUTUCUK_RENGI: Record<KartRengi, string> = {
   mavi: 'bg-primary-soft text-primary',
   pembe: 'bg-yzm-kart text-yzm-koyu',
   krem: 'bg-isl-kart text-isl-koyu',
   nane: 'bg-success-soft text-success',
   lavanta: 'bg-edb-kart text-edb-koyu',
+  deniz: 'bg-trh-kart text-trh-koyu',
 }
 
 /** Oyunların kendi aileleri var; ana sayfadaki kutucuk da aynı rengi taşımalı. */
@@ -58,6 +58,7 @@ const OYUN_RENGI: Record<OyunId, string> = {
 }
 
 export function AnaSayfa({
+  maskotGizli,
   ayarlar,
   gunlukKayitlar,
   devamsizlik,
@@ -71,14 +72,17 @@ export function AnaSayfa({
   onKartAc,
   onDahaGit,
   onOyunlaraGit,
+  acilisSuruyor = false,
 }: {
+  /** Açılış ya da kurulum geçişindeki tavşan buranın üstüne konarken gizlenir. */
+  maskotGizli: boolean
   ayarlar: Ayarlar
   gunlukKayitlar: GunlukKayit[]
   devamsizlik: Devamsizlik[]
   hedef: Hedef | null
-  /** Türetilen seviye durumu — şeritteki sayı ve ilerleme çubuğu. */
+  /** Türetilen seviye durumu — selamlamanın alt satırındaki sayı. */
   seviye: SeviyeDurumu
-  /** Havuç bakiyesi; seviyeyle aynı şeritte duruyor. */
+  /** Havuç bakiyesi; seviyeyle aynı satırda duruyor. */
   havuc: number
   /** Son denemelerden çıkan tahmini sıralama; deneme yoksa null. */
   guncelSiralama: number | null
@@ -88,16 +92,19 @@ export function AnaSayfa({
   sonAraclar: string[]
   sonOyunlar: string[]
   onKartAc: (ekran: Ekran) => void
-  /** "Araçlar" başlığındaki "Tümü" — kart menüsünün tamamına götürür. */
+  /** "Araçlar" bölümünün "Tümü" bağlantısı — kart menüsü sekmesini açar. */
   onDahaGit: () => void
   /** "Oyunlar" kartındaki her kutucuk oyun sekmesini açar. */
   onOyunlaraGit: () => void
+  /**
+   * Açılış ekranı hâlâ duruyor mu.
+   *
+   * Yalnızca başlıktaki maskotu ilgilendiriyor: açılış sürerken gizli
+   * kalıyor, yoksa ekranda iki tavşan birden görünüyor.
+   */
+  acilisSuruyor?: boolean
 }) {
   const tarih = bugun()
-
-  // Söz gün boyunca sabit kalsın diye tohum olarak tarih verilir; her yeniden
-  // çizimde değişse okunamadan kaybolurdu.
-  const soz = useMemo(() => sozSec(tarih), [tarih])
 
   const gosterilenAraclar = useMemo(() => kisayollar(KARTLAR, sonAraclar), [sonAraclar])
   const gosterilenOyunlar = useMemo(() => kisayollar(OYUNLAR, sonOyunlar), [sonOyunlar])
@@ -107,14 +114,24 @@ export function AnaSayfa({
     [gunlukKayitlar, tarih],
   )
 
-  // Seri kartı bugünle biten yedi günü gösteriyor: sağa doğru ilerleyen bir
-  // takvim yerine "bugüne kadar ne yaptın" okuması isteniyor.
+  /*
+    Seri şeridi **içinde bulunulan takvim haftası**: pazartesiden pazara.
+
+    Önce "bugünle biten son yedi gün"dü ve şerit her gün başka bir güne
+    kayıyordu — çarşamba günü perşembeyle başlıyordu. Hafta hep aynı yerden
+    başlayınca kullanıcı kendi haftasını tanıyor. Türkiye'de hafta pazartesi
+    başlar; `getDay()` pazarı 0 saydığı için pazar 6'ya çekiliyor.
+  */
   const gunler = useMemo(() => {
     const harita = kayitHaritasi(gunlukKayitlar)
-    const son = tariheCevir(tarih)
+    const bugunkuTarih = tariheCevir(tarih)
+    const haftaninGunu = (bugunkuTarih.getDay() + 6) % 7
+    const pazartesi = new Date(bugunkuTarih)
+    pazartesi.setDate(pazartesi.getDate() - haftaninGunu)
+
     return Array.from({ length: SERI_GUNU }, (_, sira) => {
-      const gun = new Date(son)
-      gun.setDate(gun.getDate() - (SERI_GUNU - 1 - sira))
+      const gun = new Date(pazartesi)
+      gun.setDate(gun.getDate() + sira)
       const iso = tariheYaz(gun)
       return {
         iso,
@@ -122,6 +139,8 @@ export function AnaSayfa({
         // Hedef sıfırsa "tutturdu" demek anlamsız; kutucuklar boş kalır.
         tuttu: ayarlar.gunlukHedef > 0 && gunOzeti(harita.get(iso)).toplam >= ayarlar.gunlukHedef,
         bugunMu: iso === tarih,
+        // Gelecek günler boş kalıyor ama "tutturamadın" gibi durmamalı.
+        gelecekMi: iso > tarih,
       }
     })
   }, [gunlukKayitlar, ayarlar.gunlukHedef, tarih])
@@ -143,71 +162,43 @@ export function AnaSayfa({
     <div className="space-y-3.5">
       {/* Selamlama — tasarımda ad sorulmuyor, kurulumda ad adımı yok. */}
       <header className="flex items-center gap-3 px-0.5 pt-2 pb-1">
-        <Rabi durum={maskotDurumu} boyut={58} />
+        <Rabi durum={maskotDurumu} boyut={58} gizli={maskotGizli} yuvaMi />
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-extrabold tracking-wide text-ikincil">Rabi</p>
-          <h1 className="mt-px font-display text-xl font-extrabold tracking-tight text-balance">
+          <h1 className="mt-px font-display text-[22px] font-extrabold tracking-tight text-balance">
             Merhaba 👋
           </h1>
-          <p className="mt-0.5 text-[13px] leading-snug font-medium text-muted-foreground">
-            {durumCumlesi(bugunku.toplam, kalan, hedefTuttu, tamamlanan)}
+          {/* Seviye ve unvan selamlamanın alt satırında: eskiden ayrı bir
+              karttı ve sayfanın en değerli yerini üç sayı için harcıyordu. */}
+          <p className="mt-0.5 text-[12.5px] font-bold text-muted-foreground">
+            <span className="rakam text-primary">Seviye {seviye.seviye}</span>
+            {' · '}
+            {seviyeUnvani(seviye.seviye)}
           </p>
         </div>
 
-        {/* Yalnızca mağaza düğmesi. Sayılar selamlamanın değil, hemen altındaki
-            seviye şeridinin işi: burada da yazsalardı üç satırlık selamlama
-            iki sayıyla yarışırdı. */}
+        {/* Havuç bakiyesi mağazanın kapısı: sayının dokunulabilir olduğu
+            zaten bekleniyordu, düğme olmadığı sürece bozuk görünüyordu. */}
         <button
           type="button"
           onClick={() => onKartAc('magaza')}
-          aria-label="Havuç Mağazası"
-          className="grid size-10 shrink-0 self-start place-items-center rounded-full bg-primary text-primary-foreground transition active:brightness-95"
+          aria-label={`${havuc} havucun var — Havuç Mağazası`}
+          className="flex shrink-0 items-center gap-1.5 self-start rounded-full bg-isl-kart px-2.5 py-1.5 text-isl-koyu transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
-          <Store size={19} aria-hidden />
+          <Carrot size={16} strokeWidth={2.6} aria-hidden />
+          <span className="rakam text-sm font-extrabold">{havuc}</span>
         </button>
       </header>
 
-      {/* Seviye şeridi.
-          Selamlamanın hemen altında: kullanıcının kendi durumu, günün verisinden
-          önce gelir. Havuç bakiyesi de burada duruyor çünkü ikisi aynı şeyin iki
-          yüzü — havuç yalnızca seviye atlayınca kazanılıyor. Şeride dokunmak
-          mağazayı açıyor, kazanç ile harcama arasındaki yol tek dokunuş olsun. */}
-      <button
-        type="button"
-        onClick={() => onKartAc('magaza')}
-        className="golge-kart w-full rounded-2xl bg-card px-4 py-3 text-left transition active:brightness-95"
-        aria-label={`Seviye ${seviye.seviye}, ${havuc} havuç — Havuç Mağazası`}
-      >
-        <div className="flex items-baseline justify-between gap-2">
-          <span className="font-display font-extrabold">
-            <span className="rakam text-primary">Seviye {seviye.seviye}</span>
-            <span className="ml-1.5 text-[13px] font-bold text-muted-foreground">
-              {seviyeUnvani(seviye.seviye)}
-            </span>
-          </span>
-          <span className="inline-flex shrink-0 items-center gap-1 text-sm font-extrabold text-isl-koyu">
-            <Carrot size={15} strokeWidth={2.6} aria-hidden />
-            <span className="rakam">{havuc}</span>
-          </span>
-        </div>
-
-        <span className="mt-2 block h-1.5 overflow-hidden rounded-full bg-muted">
-          <span
-            className="block h-full rounded-full bg-primary transition-[width]"
-            style={{ width: `${Math.round(seviye.oran * 100)}%` }}
-          />
-        </span>
-      </button>
-
       {/* Haftalık özet daveti — biten haftanın özeti izlenmediyse en üstte.
           Ana sayfanın en görünür yeri burası; kart menüsüne konsaydı özet
-          çıktığından haberi olmayan kullanıcı hiç açmazdı. Mercan, tasarımın
+          çıktığından haberi olmayan kullanıcı hiç açmazdı. Fuşya, tasarımın
           dikkat rengi. */}
       {ozetBekliyor && (
         <button
           type="button"
           onClick={() => onKartAc('haftalik-ozet')}
-          className="acilis-girisi flex w-full items-center gap-3 rounded-2xl bg-ikincil px-4 py-3.5 text-left text-white transition active:brightness-95"
+          className="acilis-girisi flex w-full items-center gap-3 rounded-[22px] bg-ikincil px-4 py-3.5 text-left text-white transition active:brightness-95"
         >
           <Sparkles size={22} className="shrink-0" aria-hidden />
           <span className="min-w-0 flex-1">
@@ -221,42 +212,68 @@ export function AnaSayfa({
       )}
 
       {/* YKS geri sayımı — haftalık özet davetinin hemen altında, sayfanın en
-          görünür yerinde. Kalan gün, sayfadaki her sayının bağlamı. */}
-      <GeriSayim tarih={tarih} />
+          görünür yerinde. Kalan gün, sayfadaki her sayının bağlamı. Hedef
+          özeti kartın içine, geri sayımın altına giriyor: ikisi de aynı soruya
+          bakıyor, ayrı kartlarda dururken aralarındaki bağ kayboluyordu. */}
+      <GeriSayim tarih={tarih}>
+        <HedefOzeti hedef={hedef} guncelSiralama={guncelSiralama} onAc={() => onKartAc('hedef')} />
+      </GeriSayim>
 
-      {/* 7 günlük seri */}
-      <Kart>
-        <KartUstu baslik={`${SERI_GUNU} günlük seri`} aciklama="Bugünkü hedefi tuttur, seriyi büyüt.">
-          <span className="rakam shrink-0 rounded-full bg-primary-soft px-3 py-1.5 text-xs font-extrabold text-primary">
-            {tamamlanan}/{SERI_GUNU} tamamlandı
-          </span>
-        </KartUstu>
+      {/* Günlük hedef. Yedi günlük seri buranın altında, ayrı kart değil: seri
+          "bugünkü hedefi tutturdun mu"nun yedi günlük hâli, ayrı kartta
+          dururken iki ayrı ölçü gibi okunuyordu. */}
+      <Kart className="px-5 py-5">
+        <div className="flex items-center gap-4">
+          {/* Halkanın içinde hedef ("/300") yazmıyor: hedef zaten yanda,
+              "300 hedefin var" cümlesinde geçiyordu ve iki kez yazılınca göz
+              hangisinin bugünkü sayı olduğunu ayırt edemiyordu. */}
+          <Halka deger={bugunku.toplam} hedef={ayarlar.gunlukHedef} boyut={92} kalinlik={9}>
+            <span className="rakam font-display text-[27px] leading-none font-extrabold">
+              {bugunku.toplam}
+            </span>
+            <span className="mt-1 text-[9.5px] font-extrabold uppercase tracking-[0.12em] text-muted-foreground">
+              soru
+            </span>
+          </Halka>
 
-        <ul className="grid grid-cols-7 gap-1">
+          <div className="min-w-0 flex-1 space-y-1">
+            <h2 className="font-display text-base font-extrabold tracking-tight">
+              Bugünkü soru hedefin
+            </h2>
+            {/* Satırın tamamı ince, yalnız "kaç soru kaldı" kalın: göz kartta
+                tek bir sayı arıyor ve o sayı bu. Hedefin kendisi bağlam. */}
+            <p className="rakam text-[13px] leading-snug font-medium text-muted-foreground">
+              {ayarlar.gunlukHedef} hedefin var,{' '}
+              <strong className="font-extrabold text-foreground">{kalan} soru kaldı.</strong>
+            </p>
+            <p className="text-[13px] leading-snug font-medium text-muted-foreground">
+              {hedefCumlesi(bugunku.toplam, kalan, ayarlar.gunlukHedef, hedefTuttu)}
+            </p>
+          </div>
+        </div>
+
+        {/* Haftanın günleri. Kutucuk değil hap: gün adı okunabilsin diye —
+            daire içinde "Cmt" sığmıyordu, adı altına yazınca da satır iki kat
+            yer kaplıyordu. */}
+        <ul
+          aria-label={`Bu hafta ${tamamlanan} günde hedef tuttu`}
+          className="mt-4 flex gap-1.5"
+        >
           {gunler.map((gun) => (
-            <li
-              key={gun.iso}
-              className="flex flex-col items-center gap-1.5"
-              aria-label={`${gun.ad}: ${gun.tuttu ? 'hedef tuttu' : 'hedef tutmadı'}`}
-            >
+            <li key={gun.iso} className="flex-1">
               <span
+                aria-label={`${gun.ad}: ${
+                  gun.gelecekMi ? 'henüz gelmedi' : gun.tuttu ? 'hedef tuttu' : 'hedef tutmadı'
+                }`}
                 className={cn(
-                  'grid size-9 place-items-center rounded-full',
-                  gun.tuttu ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground/50',
-                  // Bugün, dolu olsun olmasın halkasıyla ayrışır.
-                  gun.bugunMu && 'ring-2 ring-primary ring-offset-2 ring-offset-card',
-                )}
-              >
-                {gun.tuttu ? (
-                  <Check size={18} strokeWidth={3} aria-hidden />
-                ) : (
-                  <span className="size-2 rounded-full bg-current" aria-hidden />
-                )}
-              </span>
-              <span
-                className={cn(
-                  'text-[11px] font-bold',
-                  gun.bugunMu ? 'text-primary' : 'text-muted-foreground/80',
+                  'grid h-8 place-items-center rounded-full text-[11.5px] font-extrabold',
+                  gun.bugunMu
+                    ? 'bg-primary text-primary-foreground'
+                    : gun.tuttu
+                      ? 'bg-primary-soft text-primary'
+                      : gun.gelecekMi
+                        ? 'bg-muted/60 text-muted-foreground/60'
+                        : 'bg-muted text-muted-foreground',
                 )}
               >
                 {gun.ad}
@@ -264,32 +281,6 @@ export function AnaSayfa({
             </li>
           ))}
         </ul>
-      </Kart>
-
-      {/* Günlük hedef */}
-      <Kart className="flex items-center gap-4 px-5 py-5">
-        <Halka deger={bugunku.toplam} hedef={ayarlar.gunlukHedef} boyut={92} kalinlik={9}>
-          <span className="rakam font-display text-[27px] leading-none font-extrabold">
-            {bugunku.toplam}
-          </span>
-          <span className="rakam mt-1 text-xs font-bold text-muted-foreground">
-            / {ayarlar.gunlukHedef}
-          </span>
-        </Halka>
-
-        <div className="min-w-0 flex-1 space-y-1">
-          <h2 className="font-display text-base font-extrabold tracking-tight">
-            Bugünkü soru hedefin
-          </h2>
-          <p className="text-[13px] leading-snug font-semibold text-muted-foreground">
-            {hedefCumlesi(bugunku.toplam, kalan, hedefTuttu)}
-          </p>
-          {bugunku.toplam > 0 && (
-            <p className="rakam text-xs font-medium text-muted-foreground/80">
-              {bugunku.dogru} doğru · {bugunku.yanlis} yanlış · {netYaz(bugunku.net)} net
-            </p>
-          )}
-        </div>
       </Kart>
 
       {/* Devamsızlık uyarısı — yalnızca gerektiğinde görünür */}
@@ -306,122 +297,50 @@ export function AnaSayfa({
         </Not>
       )}
 
-      {/* Araçlar — en son açılan dördü; hiç açılmamışsa `KARTLAR`'ın başı. */}
-      <Kart>
-        <KartUstu baslik="Araçlar 🧰" aciklama="Çalışmanı takip et">
-          <TumuBaglantisi onSec={onDahaGit} />
-        </KartUstu>
+      {/* Araçlar ve Oyunlar aynı biçimde: başlık + "Tümü", altında tek bir
+          kutunun içinde dört yüz. Araçlar bir ara başlıksız ve kutusuz
+          duruyordu; iki bölüm yan yana iki ayrı tasarım gibi okunuyordu. */}
+      <Bolum baslik="Araçlar 🧰" onTumu={onDahaGit}>
+        {gosterilenAraclar.map(({ id, ad, ikon, renk }) => (
+          <Kutucuk key={id} ad={ad} ikon={ikon} renk={KUTUCUK_RENGI[renk]} onSec={() => onKartAc(id)} />
+        ))}
+      </Bolum>
 
-        <div className="grid grid-cols-4 gap-2.5">
-          {gosterilenAraclar.map(({ id, ad, Simge, renk }) => (
-            <Kutucuk
-              key={id}
-              ad={ad}
-              yuz={KUTUCUK_RENGI[renk]}
-              oran="aspect-[1/0.92]"
-              onSec={() => onKartAc(id)}
-            >
-              <Simge size={26} aria-hidden />
-            </Kutucuk>
-          ))}
-        </div>
-      </Kart>
-
-      {/* Oyunlar — en son oynanan dördü; hiç oynanmamışsa `OYUNLAR`'ın başı. */}
-      <Kart>
-        <KartUstu baslik="Oyunlar 🎮" aciklama="Eğlenerek pratik yap">
-          <TumuBaglantisi onSec={onOyunlaraGit} />
-        </KartUstu>
-
-        <div className="grid grid-cols-4 gap-2.5">
-          {gosterilenOyunlar.map((oyun) => (
-            <Kutucuk
-              key={oyun.id}
-              ad={oyun.ad}
-              yuz={OYUN_RENGI[oyun.id]}
-              oran="aspect-[1/0.92]"
-              onSec={onOyunlaraGit}
-            >
-              <span className="text-2xl leading-none" aria-hidden>
-                {oyun.ikon}
-              </span>
-            </Kutucuk>
-          ))}
-        </div>
-      </Kart>
-
-      {/* Hedef bölüm — tahmini sıralamayla birlikte */}
-      <button
-        type="button"
-        onClick={() => onKartAc('hedef')}
-        className="golge-kart w-full rounded-2xl bg-card p-4 text-left transition active:brightness-[0.98]"
-      >
-        <span className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground">
-          <Target size={14} aria-hidden />
-          Hedefim
-        </span>
-        {hedef ? (
-          <>
-            <span className="mt-1.5 block font-display text-base leading-tight font-extrabold">
-              {hedef.bolum}
-            </span>
-            <span className="block text-[13px] font-semibold text-muted-foreground">
-              {hedef.universite}
-            </span>
-            {hedef.basariSirasi !== null && (
-              <span className="rakam mt-1 block text-[13px] font-semibold text-muted-foreground">
-                Gereken sıralama: {siraYaz(hedef.basariSirasi)}
-              </span>
-            )}
-            {hedef.basariSirasi !== null && guncelSiralama !== null && (
-              <span
-                className={cn(
-                  'mt-1 block text-[13px] font-bold',
-                  guncelSiralama <= hedef.basariSirasi ? 'text-success' : 'text-primary',
-                )}
-              >
-                {guncelSiralama <= hedef.basariSirasi
-                  ? 'Şu an hedefinin içindesin.'
-                  : `${siraYaz(guncelSiralama - hedef.basariSirasi)} sıra uzaktasın.`}
-              </span>
-            )}
-          </>
-        ) : (
-          <span className="mt-1.5 block text-[13px] font-semibold text-muted-foreground">
-            Hedef bölümünü yaz — Rabi sıralamana ne kadar kaldığını takip etsin.
-          </span>
-        )}
-      </button>
-
-      {/* Günün sözü. Tasarımda yeri yok ama uygulamada vardı; selamlamadaki
-          cümle artık duruma bağlı olduğu için söz sayfanın sonuna, sessiz bir
-          satıra indi. */}
-      <p className="px-2 pt-1 text-center text-xs leading-relaxed font-medium text-muted-foreground">
-        {soz.metin}
-        {soz.kaynak && <span className="block text-muted-foreground/70">— {soz.kaynak}</span>}
-      </p>
+      <Bolum baslik="Oyunlar 🎮" onTumu={onOyunlaraGit}>
+        {gosterilenOyunlar.map((oyun) => (
+          <Kutucuk
+            key={oyun.id}
+            ad={oyun.ad}
+            ikon={oyun.ikon}
+            renk={OYUN_RENGI[oyun.id]}
+            onSec={onOyunlaraGit}
+          />
+        ))}
+      </Bolum>
     </div>
   )
 }
 
-/** Kart başlığı: solda ad + açıklama, sağda rozet ya da "Tümü". */
-function KartUstu({
+/** Kısayol bölümü: üstte başlık + "Tümü", altında dört yüzü tutan tek kutu. */
+function Bolum({
   baslik,
-  aciklama,
+  onTumu,
   children,
 }: {
   baslik: string
-  aciklama: string
+  onTumu: () => void
   children: React.ReactNode
 }) {
   return (
-    <div className="mb-3.5 flex items-start justify-between gap-3">
-      <div className="min-w-0">
+    <section>
+      <div className="mb-2 flex items-center justify-between gap-3 px-1">
         <h2 className="font-display text-base font-extrabold tracking-tight">{baslik}</h2>
-        <p className="mt-0.5 text-xs leading-snug font-medium text-muted-foreground">{aciklama}</p>
+        <TumuBaglantisi onSec={onTumu} />
       </div>
-      {children}
-    </div>
+      <Kart className="px-2.5 py-3.5">
+        <div className="grid grid-cols-4 gap-1.5">{children}</div>
+      </Kart>
+    </section>
   )
 }
 
@@ -430,61 +349,137 @@ function TumuBaglantisi({ onSec }: { onSec: () => void }) {
     <button
       type="button"
       onClick={onSec}
-      className="shrink-0 rounded-lg px-1.5 py-0.5 text-[13px] font-extrabold text-ikincil transition active:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ikincil"
+      className="shrink-0 rounded-lg px-1.5 py-0.5 text-[13px] font-extrabold text-primary transition active:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       Tümü →
     </button>
   )
 }
 
-/** Renkli yuvarlak kare + altında ad. Araçlar ve Oyunlar aynı kutucuğu kullanır. */
+/** Pastel daire içinde emoji, altında ad. Araçlar ve Oyunlar aynı kutucuğu kullanır. */
 function Kutucuk({
   ad,
-  yuz,
-  oran,
+  ikon,
+  renk,
   onSec,
-  children,
 }: {
   ad: string
-  /** Zemin ve simge rengi sınıfları. */
-  yuz: string
-  /** Yüzün en-boy oranı; oyun kutucukları tasarımda daha basık. */
-  oran: string
+  ikon: string
+  /** Dairenin pastel zemin sınıfı. */
+  renk: string
   onSec: () => void
-  children: React.ReactNode
 }) {
   return (
     <button
       type="button"
       onClick={onSec}
-      className="flex flex-col items-center gap-1.5 rounded-xl transition active:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      className="flex flex-col items-center gap-1.5 rounded-2xl px-1 py-1.5 transition active:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
-      <span className={cn('grid w-full place-items-center rounded-[18px]', oran, yuz)}>
-        {children}
+      <span className={cn('grid size-11 place-items-center rounded-full', renk)}>
+        <span className="text-[22px] leading-none" aria-hidden>
+          {ikon}
+        </span>
       </span>
-      <span className="text-[11px] leading-tight font-bold text-balance text-foreground/70">
+      <span className="text-[10.5px] leading-tight font-bold text-balance text-muted-foreground">
         {ad}
       </span>
     </button>
   )
 }
 
-/** Selamlamanın altındaki cümle — kullanıcının bugünkü durumuna göre değişir. */
-function durumCumlesi(
-  cozulen: number,
-  kalan: number,
-  hedefTuttu: boolean,
-  tamamlanan: number,
-): string {
-  if (hedefTuttu) return 'Bugünkü hedefi tutturdun, seri sende.'
-  if (cozulen > 0) return `Başladın bile — hedefe ${kalan} soru kaldı.`
-  if (tamamlanan > 0) return 'Serini bugün de sürdürelim mi?'
-  return 'Bugün çalışmadın henüz, başlayalım mı?'
+/**
+ * Geri sayım kartının içindeki hedef özeti.
+ *
+ * Hedef yazılmamışsa da görünüyor: boşluğu doldurmak için değil, hedefin
+ * girilebilir bir şey olduğunu söylemek için — kart menüsünde kaybolduğunda
+ * kullanıcı hiç girmiyordu.
+ */
+function HedefOzeti({
+  hedef,
+  guncelSiralama,
+  onAc,
+}: {
+  hedef: Hedef | null
+  guncelSiralama: number | null
+  onAc: () => void
+}) {
+  const uzaklik =
+    hedef?.basariSirasi != null && guncelSiralama !== null
+      ? guncelSiralama - hedef.basariSirasi
+      : null
+
+  return (
+    <button type="button" onClick={onAc} className="flex w-full items-center gap-3 text-left">
+      <span className="grid size-9 shrink-0 place-items-center rounded-full bg-primary-soft text-primary">
+        <Target size={18} strokeWidth={2.4} aria-hidden />
+      </span>
+
+      <span className="min-w-0 flex-1">
+        <span className="block text-[10.5px] font-extrabold uppercase tracking-[0.09em] text-muted-foreground">
+          Hedefim
+        </span>
+        {hedef ? (
+          <>
+            <span className="mt-0.5 block truncate text-[13.5px] leading-tight font-extrabold">
+              {hedef.bolum}
+            </span>
+            <span className="block truncate text-xs font-semibold text-muted-foreground">
+              {hedef.universite}
+            </span>
+          </>
+        ) : (
+          <span className="mt-0.5 block text-[13px] leading-snug font-semibold text-muted-foreground">
+            Hedef bölümünü yaz, sıralamana ne kadar kaldığını takip edeyim.
+          </span>
+        )}
+      </span>
+
+      {/* Sağdaki sayı "hedefe ne kadar kaldı"nın tek satırlık hâli. Deneme
+          girilmemişse gereken sıralama yazılıyor: karşılaştıracak bir şey yok. */}
+      {hedef?.basariSirasi != null && (
+        <span className="shrink-0 text-right">
+          {uzaklik === null ? (
+            <>
+              <span className="rakam block text-[15px] font-extrabold text-primary">
+                {siraYaz(hedef.basariSirasi)}
+              </span>
+              <span className="block text-[10.5px] font-semibold text-muted-foreground">
+                gereken sıra
+              </span>
+            </>
+          ) : uzaklik <= 0 ? (
+            <>
+              <span className="block text-[13px] font-extrabold text-success">Hedefindesin</span>
+              <span className="block text-[10.5px] font-semibold text-muted-foreground">
+                tahmini sıralamana göre
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="rakam block text-[15px] font-extrabold text-primary">
+                {siraYaz(uzaklik)}
+              </span>
+              <span className="block text-[10.5px] font-semibold text-muted-foreground">
+                sıra uzakta
+              </span>
+            </>
+          )}
+        </span>
+      )}
+    </button>
+  )
 }
 
 /** Hedef halkasının yanındaki cümle. */
-function hedefCumlesi(cozulen: number, kalan: number, hedefTuttu: boolean): string {
-  if (hedefTuttu) return 'Hedefi tutturdun. Fazlası cabası.'
-  if (cozulen > 0) return `${kalan} soru kaldı, az kaldı bitirmeye.`
-  return `${kalan} soru kaldı. Bir 20'lik çözmek bile seriyi başlatır.`
+/**
+ * Halkanın yanındaki ikinci satır — teşvik cümlesi.
+ *
+ * Sayı geçmiyor: üstteki satır zaten "şu kadar hedefin var, şu kadar kaldı"
+ * diyor ve iki satır aynı rakamı iki kez yazınca ikisi de okunmuyordu.
+ */
+function hedefCumlesi(cozulen: number, kalan: number, hedef: number, hedefTuttu: boolean): string {
+  if (hedefTuttu) return 'Hedefi tutturdun, fazlası cabası 🎉'
+  if (hedef > 0 && kalan <= hedef / 4) return 'Az kaldı, bugünün kapatalım 🎉'
+  if (cozulen > 0) return 'Başladın bile, devam.'
+  return "Bir 20'lik çözmek bile seriyi başlatır."
 }

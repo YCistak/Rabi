@@ -186,6 +186,77 @@ export const YAZIM_HAVUZU: YazimSorusu[] = [
     ['mütevazı bir ev', 'mütevazi bir ev', 'zor'],
     ['ıstakoz', 'istakoz', 'zor'],
     ['aksesuar', 'aksesuvar', 'zor'],
+
+    // ---- Çift ünsüz ----
+    // Arapçadan gelen bu kelimelerde ünsüz ikizleşiyor ama söyleyişte tek ses
+    // duyuluyor; kulağına güvenen tek harfle yazıyor. Kökte iki tane var.
+    ['dikkat', 'dikat', 'kolay'],
+    ['hakkında', 'hakında', 'kolay'],
+    ['bakkal', 'bakal', 'kolay'],
+    ['cadde', 'cade', 'kolay'],
+    ['millet', 'milet', 'orta'],
+    ['cennet', 'cenet', 'orta'],
+    ['kuvvet', 'kuvet', 'orta'],
+    ['şiddet', 'şidet', 'orta'],
+    ['hassas', 'hasas', 'orta'],
+    ['evvel', 'evel', 'orta'],
+    ['teneffüs', 'tenefüs', 'orta'],
+    ['hürriyet', 'hüriyet', 'zor'],
+    ['sıhhat', 'sıhat', 'zor'],
+    ['muhakkak', 'muhakak', 'zor'],
+    ['seyyar', 'seyar', 'zor'],
+    ['ıssız', 'ısız', 'zor'],
+
+    // ---- "n" mi "m" mi ----
+    // b'den önceki n söyleyişte m'ye kayıyor (dudak benzeşmesi) ve TDK bu
+    // kelimeleri m ile yazıyor; yanlış şık kökteki n'yi olduğu gibi bırakıyor.
+    ['pembe', 'penbe', 'orta'],
+    ['çember', 'çenber', 'orta'],
+    ['tembel', 'tenbel', 'orta'],
+    ['saklambaç', 'saklanbaç', 'orta'],
+    ['cambaz', 'canbaz', 'zor'],
+    ['kambur', 'kanbur', 'zor'],
+    ['sümbül', 'sünbül', 'zor'],
+
+    // ---- Sert ünsüzle biten kökler ----
+    // Türkçe kelimenin sonunda b, c, d bulunmaz; ek gelince yumuşasa da yalın
+    // hâli sert yazılır ("ilacı" ama "ilaç"). Yanlış şıklar Osmanlıca aslından.
+    ['armut', 'armud', 'kolay'],
+    ['ilaç', 'ilac', 'kolay'],
+    ['ihtiyaç', 'ihtiyac', 'kolay'],
+    ['ümit', 'ümid', 'orta'],
+    ['bant', 'band', 'orta'],
+    ['tespit', 'tesbit', 'orta'],
+    ['ispat', 'isbat', 'orta'],
+    ['üstat', 'üstad', 'zor'],
+    ['müspet', 'müsbet', 'zor'],
+    ['nispet', 'nisbet', 'zor'],
+
+    // ---- ı / i ayrımı ----
+    // İkisi Türkçede ayrı harf; karışınca kelime tanınmaz hâle geliyor.
+    ['ısrar', 'israr', 'orta'],
+    ['ıslak', 'islak', 'orta'],
+    ['ıhlamur', 'ihlamur', 'orta'],
+    ['ıslık', 'islık', 'orta'],
+    ['ıstırap', 'ızdırap', 'zor'],
+
+    // ---- "-hane": düşen ve düşmeyen h ----
+    // hastane, pastane, postane'de h düştü; kütüphane ve dershane'de düşmedi.
+    // Kural yok, TDK hangisinde kısalmayı kabul ettiyse o yazılıyor.
+    ['kütüphane', 'kütüpane', 'orta'],
+    ['postane', 'postahane', 'orta'],
+    ['dershane', 'dersane', 'zor'],
+
+    // ---- Söyleyişten yazıya sızanlar ----
+    ['merhaba', 'meraba', 'kolay'],
+    ['aşçı', 'ahçı', 'orta'],
+    ['sohbet', 'sohpet', 'orta'],
+    ['yalnızlık', 'yanlızlık', 'orta'],
+    ['yanlışlıkla', 'yalnışlıkla', 'orta'],
+    ['karnabahar', 'karnıbahar', 'orta'],
+    // "tabi" de sözlükte var (bağlı, bağımlı); soru tek doğru cevaplı kalsın
+    // diye cümle içinde soruluyor.
+    ['Tabii ki gelirim.', 'Tabi ki gelirim.', 'zor'],
   ]),
 
   // -------------------------------------------------------------------------
@@ -544,6 +615,211 @@ export const YAZIM_HAVUZU: YazimSorusu[] = [
     // olmalarına rağmen. ÖSYM bu istisnayı sık soruyor.
     ['Türk Dil Kurumuna', 'Türk Dil Kurumu’na', 'zor'],
     ['Ziraat Bankasına', 'Ziraat Bankası’na', 'zor'],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Ses ve harf — ek grup: eklerin sesle uyumu
+  // -------------------------------------------------------------------------
+  // Buradaki hataların hepsi aynı kaynaktan çıkıyor: kelime söylenirken sesler
+  // birbirine uyuyor, yazarken ise kök olduğu gibi bırakılıyor (ya da tersi).
+  ...grup('ses', 'orta', [
+    // Sert ünsüzle biten kelimeye gelen ek de sertleşir: -cı değil -çı.
+    ['kitapçı', 'kitapcı', 'kolay'],
+    ['çiçekçi', 'çiçekci', 'kolay'],
+    ['sanatçı', 'sanatcı', 'kolay'],
+    ['balıkçı', 'balıkcı', 'kolay'],
+    ['dişçi', 'dişci'],
+    ['saatçi', 'saatci'],
+    ['simitçi', 'simitci'],
+    ['gözlükçü', 'gözlükcü'],
+    // Tersi de yanlış: yumuşak ünsüzden sonra ek sertleşmez.
+    ['yolcu', 'yolçu', 'kolay'],
+    ['tuzcu', 'tuzçu'],
+    ['arabacı', 'arabaçı', 'kolay'],
+
+    // Ünsüz yumuşaması: ünlüyle başlayan ek gelince p/ç/t/k sesi b/c/d/g olur.
+    ['kitabı', 'kitapı', 'kolay'],
+    ['ağacı', 'ağaçı', 'kolay'],
+    ['dolabı', 'dolapı', 'kolay'],
+    ['rengi', 'renki'],
+    ['kanadı', 'kanatı'],
+    ['ilacı', 'ilaçı'],
+
+    // Ünlü düşmesi: iki heceli kelimenin ikinci ünlüsü ek gelince düşer.
+    ['ağzı', 'ağızı'],
+    ['burnu', 'burunu'],
+    ['şehri', 'şehiri'],
+    ['göğsü', 'göğüsü'],
+    ['fikri', 'fikiri'],
+    ['ömrü', 'ömürü'],
+    ['aklı', 'akılı'],
+    ['sabrı', 'sabırı', 'zor'],
+
+    // Heceleri yer değiştiren ya da ses düşüren yaygın hatalar.
+    ['sarımsak', 'sarmısak'],
+    ['ağabey', 'ağbey'],
+    ['tasdik', 'tastik'],
+    ['şüphe', 'şübhe'],
+    ['müsait', 'müsayit'],
+    ['muayene', 'muyene'],
+    ['mühendis', 'mühendiz', 'kolay'],
+    ['inşaat', 'inşat', 'kolay'],
+    ['patlıcan', 'patlican', 'kolay'],
+    ['patates', 'patetes', 'kolay'],
+    ['kayısı', 'kaysı'],
+    ['pilav', 'pilaf'],
+    ['kanepe', 'kanape'],
+    ['mikrofon', 'mikrafon', 'kolay'],
+    ['kuaför', 'kuvaför', 'kolay'],
+    ['parfüm', 'perfüm', 'kolay'],
+    ['deodorant', 'deodrant'],
+    ['şampuan', 'şampuvan'],
+    ['resepsiyon', 'resepsyon'],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Yabancı kökenli kelimeler — ek grup: başta üst üste gelen iki ünsüz
+  // -------------------------------------------------------------------------
+  // Türkçe kelimeler iki ünsüzle başlamaz; bu yüzden konuşurken araya ya da
+  // başa bir ünlü sıkıştırılıyor. Yazıda bu ünlü yazılmaz.
+  ...grup('yabanci', 'orta', [
+    ['trafik', 'tırafik', 'kolay'],
+    ['tramvay', 'tıramvay'],
+    ['plan', 'pilan', 'kolay'],
+    ['plaka', 'pilaka', 'kolay'],
+    ['plastik', 'pilastik', 'kolay'],
+    ['klinik', 'kilinik'],
+    ['kredi', 'kiredi', 'kolay'],
+    ['spor', 'sipor', 'kolay'],
+    ['stres', 'sitres', 'kolay'],
+    ['klavye', 'kılavye'],
+    ['broşür', 'buroşür'],
+    // Ünlüsü ya da hecesi karıştırılan alıntılar.
+    ['profesör', 'profösör', 'kolay'],
+    ['enstitü', 'enstütü'],
+    ['debriyaj', 'debiryaj', 'zor'],
+    ['jeneratör', 'jenaratör'],
+    ['fermuar', 'fermuvar'],
+    ['tribün', 'tiribün'],
+    ['turnuva', 'turnova'],
+    ['rezervasyon', 'rezarvasyon'],
+    ['dedektif', 'detektif'],
+    ['kompozisyon', 'kompozisiyon'],
+    ['kariyer', 'karyer'],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Bitişik yazılanlar — ek grup: pekiştirmeliler ve kalıplaşmış birleşikler
+  // -------------------------------------------------------------------------
+  // Pekiştirme hecesi (bem-, sim-, sap-…) tek başına anlamsızdır; kelimeden
+  // koparılamaz, bu yüzden her zaman bitişik yazılır.
+  ...grup('bitisik', 'orta', [
+    ['bembeyaz', 'bem beyaz', 'kolay'],
+    ['simsiyah', 'sim siyah', 'kolay'],
+    ['sapsarı', 'sap sarı', 'kolay'],
+    ['masmavi', 'mas mavi', 'kolay'],
+    ['yemyeşil', 'yem yeşil', 'kolay'],
+    ['kupkuru', 'kup kuru'],
+    ['upuzun', 'up uzun'],
+    ['dosdoğru', 'dos doğru'],
+    ['tertemiz', 'ter temiz'],
+    ['büsbütün', 'büs bütün'],
+    ['paramparça', 'param parça'],
+    ['çepeçevre', 'çepe çevre', 'zor'],
+    ['darmadağın', 'darma dağın', 'zor'],
+
+    // Birleşince kelimelerden biri kendi anlamını yitiriyor: kaynanada "ana"
+    // yok, gökdelende "delmek" yok. Anlam kayması varsa bitişik yazılır.
+    ['kaynana', 'kayın ana'],
+    ['akciğer', 'ak ciğer', 'kolay'],
+    ['karaciğer', 'kara ciğer', 'kolay'],
+    ['kırkayak', 'kırk ayak'],
+    ['denizaltı', 'deniz altı'],
+    ['gökdelen', 'gök delen'],
+    ['dedikodu', 'dedi kodu', 'kolay'],
+    ['delikanlı', 'deli kanlı', 'kolay'],
+    ['sağduyu', 'sağ duyu'],
+    ['soyadı', 'soy adı'],
+    ['birdenbire', 'birden bire'],
+    ['başkent', 'baş kent', 'kolay'],
+    ['başkomutan', 'baş komutan'],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Ayrı yazılanlar — ek grup: sayılar, ikilemeler, kalıplaşmamış öbekler
+  // -------------------------------------------------------------------------
+  // Sayılar harfle yazılırken her basamak ayrı yazılır; bitişik yazım yalnızca
+  // çek, senet gibi belgelerde geçerli.
+  ...grup('ayri', 'orta', [
+    ['yirmi beş', 'yirmibeş', 'kolay'],
+    ['otuz iki', 'otuziki', 'kolay'],
+    ['kırk dört', 'kırkdört', 'kolay'],
+    ['üç yüz altmış beş', 'üçyüzaltmışbeş'],
+
+    // İkilemeler her zaman ayrı ve arada noktalama olmadan yazılır.
+    ['yavaş yavaş', 'yavaşyavaş', 'kolay'],
+    ['ağır ağır', 'ağırağır', 'kolay'],
+    ['teker teker', 'tekerteker', 'kolay'],
+    ['abur cubur', 'aburcubur', 'kolay'],
+    ['irili ufaklı', 'iriliufaklı'],
+    ['eciş bücüş', 'ecişbücüş'],
+    ['allak bullak', 'allakbullak'],
+    ['ıvır zıvır', 'ıvırzıvır'],
+    ['konu komşu', 'konukomşu'],
+
+    // Anlam kayması olmadığı için ayrı: "ön söz" hâlâ önde olan sözdür.
+    // Bunlar bitişik sanıldığı için ÖSYM'nin sevdiği tuzaklar.
+    ['ön söz', 'önsöz', 'zor'],
+    ['dil bilgisi', 'dilbilgisi', 'zor'],
+    ['ilk yardım', 'ilkyardım', 'zor'],
+    ['iş birliği', 'işbirliği', 'zor'],
+    ['hava alanı', 'havaalanı', 'zor'],
+
+    // Yardımcı fiilde ses düşmesi ya da türemesi yoksa ayrı yazılır.
+    ['dans etmek', 'dansetmek'],
+    ['ilan etmek', 'ilanetmek'],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Düzeltme işareti — ek grup
+  // -------------------------------------------------------------------------
+  // İşaret iki iş görüyor: ünlüyü uzatmak (kâinat) ve kendinden önceki g, k, l
+  // sesini inceltmek (hâkim, kâhya). İkisi de yazılmazsa kelime başka okunur.
+  ...grup('duzeltme', 'zor', [
+    ['hâkim', 'hakim', 'orta'],
+    ['dergâh', 'dergah', 'orta'],
+    ['kâhya', 'kahya'],
+    ['kâinat', 'kainat', 'orta'],
+    ['kâfi', 'kafi'],
+    ['yadigâr', 'yadigar'],
+    ['zekâ', 'zeka', 'orta'],
+    // Nispet eki "-î" uzun okunur; yazılmazsa kelime iyelik eki sanılır.
+    ['askerî okul', 'askeri okul'],
+    ['edebî eser', 'edebi eser'],
+    ['dinî bayram', 'dini bayram'],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Kesme işareti — ek grup: yer, eser, kısaltma ve saat
+  // -------------------------------------------------------------------------
+  ...grup('kesme', 'orta', [
+    ['Karadeniz’in', 'Karadenizin', 'kolay'],
+    ['Yunus Emre’yi', 'Yunus Emreyi', 'kolay'],
+    ['Van Gölü’nün', 'Van Gölünün'],
+    ['Ağrı Dağı’na', 'Ağrı Dağına'],
+    ['Çanakkale Zaferi’ni', 'Çanakkale Zaferini'],
+    ['Cumhuriyet Bayramı’nı', 'Cumhuriyet Bayramını'],
+    // Kısaltmaya gelen ek, kısaltmanın okunuşuna göre seçilir: MEB "meb"
+    // okunduğu için ek ince ünlüyle gelir.
+    ['MEB’in', 'MEB’ın'],
+    ['THY’de', 'THY de'],
+    // Saat ve dakika gösteren sayılara gelen ek de kesmeyle ayrılır.
+    ['saat 15.30’da', 'saat 15.30 da'],
+    // Yapım eki kesmeyle ayrılmaz; özel ad artık cins ada dönüşmüştür.
+    ['İstanbullu', 'İstanbul’lu', 'zor'],
+    ['Türkçeyi', 'Türkçe’yi', 'zor'],
+    ['Almancadan', 'Almanca’dan', 'zor'],
+    ['Sağlık Bakanlığına', 'Sağlık Bakanlığı’na', 'zor'],
   ]),
 ]
 

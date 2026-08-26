@@ -135,23 +135,22 @@ export const ANAHTARLAR = {
    */
   oyunModu: 'rabi-oyun-modu',
   ayarlar: 'rabi-ayarlar',
-  tema: 'rabi-tema',
   sonBildirim: 'rabi-son-bildirim',
 } as const
-
-/** Görünüm tercihleri veriye dahil değildir; sıfırlama ve yedekleme bunlara dokunmaz. */
-const GORUNUM_ANAHTARLARI: string[] = [ANAHTARLAR.tema]
 
 /**
  * Artık yazılmayan ama eski kurulumlarda kalmış olabilecek anahtarlar.
  * "Tüm veriyi sil" bunları da temizlemeli, yoksa sıfırlanmış bir uygulamada
- * eski veri artıkları kalırdı.
+ * eski veri artıkları kalırdı. `rabi-tema` de burada: koyu tema kaldırıldı,
+ * anahtar eski kurulumlarda duruyor olabilir.
  */
 const ESKI_ANAHTARLAR = [
   'rabi-gecmis-yillar',
   'rabi-okul-dersleri',
   // Tavşan özelleştirmesi kaldırıldı; kayıt artık hiçbir yerde okunmuyor.
   'rabi-magaza',
+  // Koyu tema kaldırıldı; anahtar eski kurulumlarda duruyor olabilir.
+  'rabi-tema',
 ]
 
 /**
@@ -179,6 +178,19 @@ function okulNotlariniTasi() {
 }
 
 okulNotlariniTasi()
+
+/**
+ * Günlük soru hedefinin sınırları — kurulumdaki ve Ayarlar'daki çubuk aynı
+ * aralığı kullanıyor.
+ *
+ * Üst sınır 500: günde 500 sorunun üstü bir lise öğrencisi için gerçekçi değil.
+ * Yirmi beşer artıyor. Sürüklenen çubuk zamanında elli'şerdi — daha ince bir
+ * basamağa parmakla isabet ettirmek zordu; tekerlekte her basamak kendi satırı
+ * olduğu için böyle bir sınır yok ve 175 ya da 225 gibi hedefler de seçilebiliyor.
+ */
+export const HEDEF_EN_AZ = 50
+export const HEDEF_EN_COK = 500
+export const HEDEF_ADIMI = 25
 
 export const VARSAYILAN_AYARLAR: Ayarlar = {
   varsayilanSablonId: VARSAYILAN_SABLON_ID,
@@ -642,7 +654,6 @@ export function elenenSoruSayisi(yedek: Yedek): number {
 
 export function tumVeriyiSil() {
   for (const anahtar of [...Object.values(ANAHTARLAR), ...ESKI_ANAHTARLAR]) {
-    if (GORUNUM_ANAHTARLARI.includes(anahtar)) continue
     try {
       localStorage.removeItem(anahtar)
     } catch {

@@ -41,7 +41,7 @@ import { bugun } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import { kullanildi } from '@/lib/son-kullanilan'
 import { ustKatmaniKapat } from '@/lib/geri'
-import { Acilis, ACILIS_SURESI } from '@/components/acilis'
+import { Acilis, GECIS_SURESI, MaskotGecisi } from '@/components/acilis'
 import { HaftalikOzetEkrani } from '@/components/ekranlar/haftalik-ozet'
 import { Buton } from '@/components/ui'
 import { BottomNav } from '@/components/bottom-nav'
@@ -209,11 +209,25 @@ export function AppShell() {
     null,
   )
   /**
-   * Açılış ekranının hâli. Üç adım: görünür → soluyor → kaldırıldı. Ortadaki
-   * adım olmadan ekran bir anda kayboluyor ve sistem açılış ekranından gelen
-   * yumuşak geçiş bozuluyordu.
+   * Açılış ekranı kalktı mı.
+   *
+   * Ayrı bir "soluyor" adımı yok: ekran kendi çıkışını kendi yapıyor. Son
+   * saniyesinde zemin ve yazılar sönüyor, tavşan varış noktasındaki maskotun
+   * üstüne süzülüyor; katman kalktığında ekranda zaten yalnızca o maskot
+   * duruyor ve altındaki sayfa görünür durumda. Buraya bir de solma eklemek,
+   * biten bir geçişin üstüne ikinci bir geçiş koymak olurdu.
+   *
+   * Ne zaman kalkacağını ekranın kendisi bildiriyor: sayacı animasyon
+   * gerçekten başlayınca işlemeye başlıyor ve o anı yalnızca o bileşen
+   * biliyor (bkz. acilis.tsx → `useBaslangic`).
    */
-  const [acilis, setAcilis] = useState<'acik' | 'kapaniyor' | 'bitti'>('acik')
+  const [acilisBitti, setAcilisBitti] = useState(false)
+  /**
+   * Kurulum bitince tavşanın başlığa uçuşu. Açılış ekranıyla aynı üç adım:
+   * uçuyor → soluyor → yok. Ortadaki adım olmadan katman bir anda kalkıyor ve
+   * varış noktasındaki tavşan zıplıyormuş gibi görünüyor.
+   */
+  const [gecis, setGecis] = useState<'yok' | 'ucuyor' | 'soluyor'>('yok')
   const [hedef, setHedef] = useYerelDepo<Hedef | null>(ANAHTARLAR.hedef, null)
   const [pomodoroAyarHam, setPomodoroAyar] = useYerelDepo<PomodoroAyar>(
     ANAHTARLAR.pomodoroAyar,
@@ -280,16 +294,33 @@ export function AppShell() {
   const diplomaNotu = obpHesapla(okulYillari, ayarlar.elleObp)?.diplomaNotu ?? null
 
   // ---- Açılış ekranı ----
-  // Süre veri okumasına bağlanmadı: localStorage neredeyse anında dönüyor,
-  // bağlansaydı ekran bir kare görünüp kaybolur ve animasyon hiç izlenmezdi.
+  const acilisiKapat = useCallback(() => setAcilisBitti(true), [])
+
   useEffect(() => {
-    const solma = setTimeout(() => setAcilis('kapaniyor'), ACILIS_SURESI)
-    const kaldirma = setTimeout(() => setAcilis('bitti'), ACILIS_SURESI + 320)
+    if (gecis !== 'ucuyor') return
+    const solma = setTimeout(() => setGecis('soluyor'), GECIS_SURESI)
+    return () => clearTimeout(solma)
+  }, [gecis])
+
+  useEffect(() => {
+    if (gecis !== 'soluyor') return
+    const kaldirma = setTimeout(() => setGecis('yok'), 320)
+    return () => clearTimeout(kaldirma)
+  }, [gecis])
+
+  // Açılış ekranı `fixed`: kendisi kaydırılmıyor ama parmak hareketi altındaki
+  // sayfaya geçiyordu ve ekran kalkınca ana sayfa ortasından başlıyordu.
+  // Ekran görünürken gövde kilitleniyor, kalkarken sayfa başa alınıyor.
+  const acilisGorunur = !acilisBitti
+  useEffect(() => {
+    if (!acilisGorunur) return
+    const oncekiTasma = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
     return () => {
-      clearTimeout(solma)
-      clearTimeout(kaldirma)
+      document.body.style.overflow = oncekiTasma
+      window.scrollTo(0, 0)
     }
-  }, [])
+  }, [acilisGorunur])
 
   // Eylülde yeni ders yılı başlayınca kullanıcı bir üst sınıfa kendiliğinden geçer.
   useEffect(() => {
@@ -461,6 +492,18 @@ export function AppShell() {
     gunlukKayitlar,
   ])
 
+  /*
+    Ekran değişince sayfa başa döner.
+
+    Tarayıcı kaydırma konumunu **belgede** tutuyor; sekmeler ayrı sayfalar
+    değil, aynı belgenin farklı içeriği. Uzun bir ekranın (Ayarlar, Oyunlar)
+    dibindeyken başka bir sekmeye geçince yeni ekran da dibinden açılıyordu —
+    kısa bir ekransa doğrudan boşluğa.
+  */
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [sekme, ekran, denemeFormu, bankaTuru])
+
   const geriGit = useCallback(() => {
     // En içteki katmandan dışa doğru: ekranın kendi açtığı katman (fotoğraf
     // görüntüleyici, onay kutusu) → form → alt ekran → ana sekme → çıkış.
@@ -534,57 +577,61 @@ export function AppShell() {
     [setDenemeler],
   )
 
-  // Açılış ekranı bütün dönüşlerin üstünde duruyor: kurulum sihirbazı ve veri
-  // beklenirken gösterilen boş ekran da onun altında kalmalı.
-  const acilisKatmani =
-    acilis === 'bitti' ? null : <Acilis kapaniyor={acilis === 'kapaniyor'} />
+  /**
+   * Açılış katmanı.
+   *
+   * Aşağıdaki dallar `icerik` değişkenine yazılıyor, ayrı ayrı `return`
+   * edilmiyor: açılış katmanı her dalda yeniden yazılsaydı React onu ayrı
+   * konumdaki ayrı bir öğe sayar, veri hazır olur olmaz söküp yeniden takar ve
+   * **CSS animasyonu baştan başlardı** — tavşan bir iniyor, sonra yukarı
+   * kaçıp bir daha iniyordu. Tek bir kökün altında sabit sırada durunca
+   * animasyon kesintisiz akıyor.
+   */
+  // Varış noktası burada seçilmiyor: ekranda tek bir maskot yuvası var (ilk
+  // açılışta kurulum sihirbazının tepesindeki, sonrasında ana sayfa
+  // başlığındaki) ve açılış onu bulup mesafeyi kendi ölçüyor.
+  const acilisKatmani = acilisGorunur ? <Acilis onBitti={acilisiKapat} /> : null
+
+  /**
+   * Uçan tavşanın konacağı maskot bu sırada gizli: açılışta ve kurulum
+   * geçişinde varış noktasında zaten bir tavşan duruyor ve ikisi üst üste
+   * biniyordu. Uçuş bitip katman solmaya başlayınca gizlilik kalkıyor —
+   * ikisi tam olarak aynı yerde olduğu için değişim görünmüyor.
+   */
+  const maskotGizli = acilisGorunur || gecis === 'ucuyor'
 
   // Veri okunmadan ekran çizilirse "kayıt yok" bir an yanıp söner.
-  if (!ayarlarHazir) {
-    return (
-      <>
-        <div className="min-h-dvh" aria-busy="true" />
-        {acilisKatmani}
-      </>
-    )
-  }
-
-  if (!ayarlar.kurulumTamamlandi) {
-    return (
-      <>
-        <Kurulum
-          onBitir={({ ayarlar: secimler, okulYillari: girilenler }) => {
-            setAyarlar((o) => ({
-              ...ayarlariNormalize(o),
-              ...secimler,
-              sinifYili: egitimYili(),
-              kurulumTamamlandi: true,
-            }))
-            // Mezun kurulumda yıl sonu notlarını girmiş olabilir; atladıysa
-            // liste boş geliyor ve kayıtlı veriye dokunulmuyor.
-            if (girilenler.length > 0) setOkulYillari(girilenler)
-          }}
-        />
-        {acilisKatmani}
-      </>
-    )
-  }
-
-  if (denemeFormu !== null) {
-    return (
-      <div className="mx-auto min-h-dvh max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
-        <YeniDenemeEkrani
-          sablonlar={sablonlar}
-          varsayilanSablonId={ayarlar.varsayilanSablonId}
-          duzenlenen={denemeFormu.duzenlenen}
-          denemeSayisi={denemeler.length}
-          onKaydet={denemeKaydet}
-          onVazgec={() => setDenemeFormu(null)}
-        />
-      </div>
-    )
-  }
-
+  const icerik = !ayarlarHazir ? (
+    <div className="min-h-dvh" aria-busy="true" />
+  ) : !ayarlar.kurulumTamamlandi ? (
+    <Kurulum
+      maskotGizli={maskotGizli}
+      onBitir={({ ayarlar: secimler, okulYillari: girilenler }) => {
+        setAyarlar((o) => ({
+          ...ayarlariNormalize(o),
+          ...secimler,
+          sinifYili: egitimYili(),
+          kurulumTamamlandi: true,
+        }))
+        // Mezun kurulumda yıl sonu notlarını girmiş olabilir; atladıysa
+        // liste boş geliyor ve kayıtlı veriye dokunulmuyor.
+        if (girilenler.length > 0) setOkulYillari(girilenler)
+        // Kurulum ekranı bu karede kalkıyor; tavşan yerine uçarak gidiyor.
+        setGecis('ucuyor')
+      }}
+    />
+  ) : denemeFormu !== null ? (
+    <div className="mx-auto min-h-dvh max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
+      <YeniDenemeEkrani
+        sablonlar={sablonlar}
+        varsayilanSablonId={ayarlar.varsayilanSablonId}
+        duzenlenen={denemeFormu.duzenlenen}
+        denemeSayisi={denemeler.length}
+        onKaydet={denemeKaydet}
+        onVazgec={() => setDenemeFormu(null)}
+      />
+    </div>
+  ) : (
   /*
     Kök `div`de giriş animasyonu **yok** ve olmamalı.
 
@@ -597,7 +644,6 @@ export function AppShell() {
 
     Açılıştaki yumuşak geçişi artık `components/acilis.tsx` hallediyor.
   */
-  return (
     <div className="mx-auto min-h-dvh max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(6rem+var(--guvenli-alt))]">
       {/* Haftalık özet bir ekran değil, tam ekran bir katman: kendi kapatma
           düğmesi var ve "Geri" çubuğu kartların üstünde durmamalı. */}
@@ -725,6 +771,7 @@ export function AppShell() {
         <>
           {sekme === 'ana' && (
             <AnaSayfa
+              maskotGizli={maskotGizli}
               ayarlar={ayarlar}
               gunlukKayitlar={gunlukKayitlar}
               devamsizlik={devamsizlik}
@@ -738,6 +785,7 @@ export function AppShell() {
               onKartAc={aracAc}
               onDahaGit={() => setSekme('daha')}
               onOyunlaraGit={() => setSekme('oyunlar')}
+              acilisSuruyor={!acilisBitti}
             />
           )}
           {sekme === 'oyunlar' && (
@@ -813,8 +861,14 @@ export function AppShell() {
       {kutlanan.length === 0 && (
         <SeviyeKutlama kutlama={seviyeKutlamasi} onKapat={() => setSeviyeKutlamasi(null)} />
       )}
-
-      {acilisKatmani}
     </div>
+  )
+
+  return (
+    <>
+      {icerik}
+      {acilisKatmani}
+      {gecis !== 'yok' && <MaskotGecisi soluyor={gecis === 'soluyor'} />}
+    </>
   )
 }

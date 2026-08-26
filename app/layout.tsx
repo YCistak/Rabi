@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Nunito } from 'next/font/google'
-import { ThemeProvider } from '@/components/theme-provider'
+import { Manrope, Nunito } from 'next/font/google'
 import './globals.css'
 
 // Tasarımın tek yazı tipi. 400-900 arası kalınlıkların hepsi isteniyor:
@@ -10,6 +9,23 @@ const nunito = Nunito({
   weight: ['400', '500', '600', '700', '800', '900'],
   variable: '--font-nunito',
   display: 'swap',
+})
+
+// Yalnızca açılış ekranının yazı tipi (`font-marka`). Tasarım o ekranı Manrope
+// ile çizdi ve "RABİ" 50 pikselde iki ailede belirgin biçimde farklı duruyor;
+// uygulamanın geri kalanı Nunito'da kalıyor.
+//
+// `display: 'block'` bilerek: açılış ekranı 4,2 saniye sürüyor ve wordmark o
+// ekranın tamamı. `swap` ile yazı önce yedek aileyle çizilip sonra yerine
+// oturuyordu — marka adının ilk yarım saniyede başka bir yazı tipinde
+// görünmesi, en çok bakılan anda gözden kaçmıyor. Yazı tipi zaten uygulamayla
+// birlikte geliyor (next/font derleme anında indirip gömüyor), yani beklenen
+// süre ağ değil yalnızca çözümleme.
+const manrope = Manrope({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['600', '800'],
+  variable: '--font-manrope',
+  display: 'block',
 })
 
 export const metadata: Metadata = {
@@ -42,11 +58,9 @@ export const viewport: Viewport = {
   // 0 bildiriyordu — alt menünün yazıları gezinme çubuğunun altında kalıyordu.
   // Boşluklar `--guvenli-ust` / `--guvenli-alt` ile elle veriliyor.
   viewportFit: 'cover',
-  colorScheme: 'light dark',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#edf1fd' },
-    { media: '(prefers-color-scheme: dark)', color: '#12141c' },
-  ],
+  // Tek tema var; cihaz gece modundayken bile uygulama açık kalıyor.
+  colorScheme: 'light',
+  themeColor: '#f8f8f7',
 }
 
 /*
@@ -59,26 +73,8 @@ export const viewport: Viewport = {
 */
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="tr"
-      suppressHydrationWarning
-      className={nunito.variable}
-    >
-      <head>
-        {/* Tema sınıfı ilk boyamadan önce uygulanmazsa uygulama açılırken
-            bir an yanlış renkte parlıyor (FOUC).
-
-            Kayıtlı tercih yoksa ya da `sistem` ise cihazın gece modu izlenir —
-            uygulama telefon hangi temadaysa o temada açılır. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('rabi-tema');var koyu=t==='koyu'||(t!=='acik'&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(koyu){document.documentElement.classList.add('dark')}}catch(e){}})()`,
-          }}
-        />
-      </head>
-      <body className="font-sans antialiased">
-        <ThemeProvider>{children}</ThemeProvider>
-      </body>
+    <html lang="tr" className={`${nunito.variable} ${manrope.variable}`}>
+      <body className="font-sans antialiased">{children}</body>
     </html>
   )
 }

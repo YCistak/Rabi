@@ -1,7 +1,5 @@
 @import 'tailwindcss';
 
-@custom-variant dark (&:is(.dark *));
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -14,6 +12,8 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-soft: var(--primary-soft);
+  --color-primary-parlak: var(--primary-parlak);
+  --color-primary-dolu: var(--primary-dolu);
   --color-ikincil: var(--ikincil);
   --color-ikincil-soft: var(--ikincil-soft);
   --color-ring: var(--ring);
@@ -55,11 +55,14 @@
      kalınlık: gövde 500-600, başlık 800-900. */
   --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  /* Yalnızca açılış ekranı: tasarım o ekranı Manrope ile çizdi ve "RABİ"
+     50 pikselde iki ailede belirgin biçimde farklı duruyor. Başka hiçbir
+     yerde kullanılmıyor. */
+  --font-marka: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
 
-  /* Kartlar tasarımda çerçeveyle değil gölgeyle ayrılıyor: mavimsi zeminin
-     üstünde yüzen beyaz yüzeyler. Koyu temada gölge okunmadığı için oradaki
-     ayrım ince çerçeveye düşüyor (bkz. `.dark .golge-kart`). */
-  --shadow-kart: 0 6px 20px rgba(38, 58, 110, 0.07);
+  /* Kartlar tasarımda çerçeveyle değil gölgeyle ayrılıyor: kırık beyaz
+     zeminin üstünde yüzen beyaz yüzeyler. */
+  --shadow-kart: 0 6px 20px rgba(90, 60, 35, 0.07);
 
   --radius-sm: calc(var(--radius) * 0.5);
   --radius-md: calc(var(--radius) * 0.75);
@@ -69,16 +72,26 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Rabi paleti — tasarim/ altındaki mockup'lardan geliyor.
+   Rabi paleti — kavrulmuş amber, tek tema.
 
-   Vurgu mavi (#4A8FE7), ikinci kimlik rengi mercan (#EF5A52). Zemin saf beyaz
-   değil, hafif mavimsi bir kâğıt (#EDF1FD): beyaz kartlar üstünde yüzüyor gibi
-   dursun diye. Tek palet — kullanıcıya renk seçtirilmiyor, yalnızca açık/koyu.
+   Vurgu turuncu iki tonda çalışıyor: `--primary` (#B3491F) **yazı ve ikon**
+   için, `--primary-parlak` (#D9622F) **dolgu** için (halka, ilerleme çubuğu,
+   düğme yüzeyi, büyük sayı). İkisi aynı aileden ama yazı tonu bir kademe
+   koyu: #D9622F beyaz üstünde 3,4:1 veriyor, küçük yazı için yetmiyor;
+   #B3491F 5,8:1 veriyor.
 
-   Mini oyunların kendi aileleri var (yzm/isl/edb/cog/trh/byl): her oyunun pastel zemini ve
-   o zeminin üstünde okunan koyu tonu. Oyun kartı, tur sonu ekranı ve Oyun
-   Bankası aynı üçlüyü kullanıyor — kullanıcı rengi görünce hangi oyun olduğunu
-   yazıyı okumadan biliyor.
+   Zemin krem değil, çok açık sıcak nötr (#F8F8F7): turuncuyla aynı sıcaklıkta
+   ama doygunluğu neredeyse sıfır, böylece turuncu tek başına konuşuyor. Beyaz
+   kartlar bu zeminin üstünde yüzüyor.
+
+   Koyu tema **yok** — bilerek. Tek palet, tek gölge kuralı, `dark:` sınıfı
+   hiç kullanılmıyor. Ayarlar'da tema seçeneği de bu yüzden yok.
+
+   Ders aileleri (yzm/isl/edb/cog/trh/byl): her dersin pastel zemini ve o
+   zeminin üstünde okunan koyu tonu. Oyun kartı, tur sonu ekranı ve Oyun
+   Bankası aynı üçlüyü kullanıyor — kullanıcı rengi görünce hangi ders
+   olduğunu yazıyı okumadan biliyor. Hepsi turuncuyla çakışmasın diye bir tık
+   sıcaklaştırıldı.
 --------------------------------------------------------------------------- */
 
 /*
@@ -100,159 +113,82 @@
 
 :root {
   color-scheme: light;
-  --background: #edf1fd;
-  --foreground: #1b2440;
+  --background: #f8f8f7;
+  --foreground: #1b1a19;
   --card: #ffffff;
-  --card-foreground: #1b2440;
-  --muted: #e6ebf8;
-  --muted-foreground: #7a8399;
-  --border: #e1e6f0;
-  --input: #e1e6f0;
-  --grid: #dde3f1;
+  --card-foreground: #1b1a19;
+  --muted: #efeeeb;
+  --muted-foreground: #6b6764;
+  --border: #eae9e6;
+  --input: #eae9e6;
+  --grid: #e4e2de;
   --radius: 0.8rem;
 
-  --primary: #4a8fe7;
-  --primary-soft: #e4eefc;
+  --primary: #b3491f;
+  /* Dolgular için bir tık parlak ton; yazıda kullanılmaz (kontrastı yetmez). */
+  --primary-parlak: #d9622f;
+  --primary-soft: #fbeee7;
   --primary-foreground: #ffffff;
+  /* Dolu eylem yüzeyi: düğme, seçili çip, açık anahtar. Parlak tonun kendisi;
+     ayrı bir ad olarak duruyor çünkü ekranlar "dolgu" ile "eylem"i ayrı ayrı
+     çağırıyor ve ileride birbirinden ayrılabilirler. */
+  --primary-dolu: var(--primary-parlak);
 
-  /* İkinci kimlik rengi: marka yazısı, yanlışlar, dikkat çeken eylem */
-  --ikincil: #ef5a52;
-  --ikincil-soft: #fde7e4;
+  /* İkinci kimlik rengi: tuğla. Marka yazısı, yanlışlar, dikkat çeken eylem.
+     Turuncudan ayrışsın diye daha koyu ve kırmızıya yakın, ama aynı sıcaklıkta. */
+  --ikincil: #a8432b;
+  --ikincil-soft: #f8e7e0;
 
   --ring: var(--primary);
-  --success: #3e9b63;
-  --success-soft: #e3f3e7;
-  --warning: #cf9420;
-  --warning-soft: #fbf2dc;
-  --danger: #e0413a;
+  /* Semantik renkler de sıcak tarafa çekildi: mavi bias'lı yeşil bu paletin
+     içinde yabancı duruyordu. */
+  --success: #4f7a4a;
+  --success-soft: #e9f0e4;
+  --warning: #a87c24;
+  --warning-soft: #f9f0d9;
+  --danger: #b23b2b;
 
   /*
-    Oyun aileleri — pastel zemin + üstünde okunan koyu ton.
+    Ders aileleri — pastel zemin + üstünde okunan koyu ton.
 
-    İki ayrı yüzey var: `--yzm` oyun ekranının **zemini** (tam ekran), `--yzm-kart`
-    ise listedeki **kart** yüzeyi. Açık temada ikisi aynı pastel; koyu temada
-    ayrışıyorlar, çünkü orada zemin karttan koyu olmak zorunda (bkz. `.dark`).
+    İki ayrı yüzey var: `--yzm` oyun ekranının **zemini** (tam ekran),
+    `--yzm-kart` ise listedeki **kart** yüzeyi. Tek tema kaldığı için ikisi
+    aynı pastele çözülüyor; ayrım koyu temaya aitti, o gittiğinde anlamı da
+    gitti. Değişkenler duruyor çünkü ekranlar ikisini ayrı ayrı çağırıyor.
   */
-  --yzm: #fce7ea;
+  --yzm: #f9ebee;
   --yzm-kart: var(--yzm);
-  --yzm-koyu: #c24a60;
-  --yzm-ok: #e4708a;
-  --isl: #fbf2dc;
+  --yzm-koyu: #b4523c;
+  --yzm-ok: #d4738a;
+  --isl: #f7f0e1;
   --isl-kart: var(--isl);
-  --isl-koyu: #b57d1e;
-  --isl-ok: #e0a233;
-  --edb: #ece7fb;
+  --isl-koyu: #a87c24;
+  --isl-ok: #d09b34;
+  --edb: #eceaf7;
   --edb-kart: var(--edb);
-  --edb-koyu: #6c55c4;
-  --edb-ok: #8570da;
+  --edb-koyu: #6b5ca5;
+  --edb-ok: #8a7cc4;
   /* Coğrafya yeşili: haritanın kendi rengi, öteki ailelerle karışmıyor. */
-  --cog: #e0f1e7;
+  --cog: #e9f1e9;
   --cog-kart: var(--cog);
-  --cog-koyu: #2f7a52;
-  --cog-ok: #4fa87a;
-  --trh: #dceef0;
+  --cog-koyu: #4a7a52;
+  --cog-ok: #6ba173;
+  --trh: #e7f0f1;
   --trh-kart: var(--trh);
-  --trh-koyu: #1d7a86;
-  --trh-ok: #3ba3ae;
+  --trh-koyu: #3a7480;
+  --trh-ok: #5c9ba6;
   /* Biyoloji yaprak yeşili sarıya çalıyor: Coğrafya'nın mavimsi yeşilinden
-     ayrılsın diye. İkisi aynı listede yan yana duruyor ve birleşmeden önce
-     neredeyse aynı tondaydılar. */
-  --byl: #eef4dd;
+     ayrılsın diye. İkisi aynı listede yan yana duruyor. */
+  --byl: #eef1e4;
   --byl-kart: var(--byl);
-  --byl-koyu: #5f7d28;
-  --byl-ok: #86ac3e;
+  --byl-koyu: #5c7c26;
+  --byl-ok: #83a93c;
 
   /* Boss sorusunda oyun ekranının zemini. */
   --boss-zemin: var(--ikincil-soft);
 
-  /* Maskot renkleri — Rabi'nin kürkü zeminden hafifçe ayrışır. */
-  --maskot-kurk: #ffffff;
-  --maskot-kulak-ic: #f6d2da;
-  --maskot-yanak: #f9dde3;
-  --maskot-burun: #ef8c9e;
-  --maskot-agiz: #d4586c;
-  --maskot-cizgi: #1b2440;
-  --maskot-parlak: #ffffff;
-}
-
-.dark {
-  color-scheme: dark;
-  --background: #12141c;
-  --foreground: #e6e9f2;
-  --card: #1c1f29;
-  --card-foreground: #e6e9f2;
-  --muted: #252a37;
-  --muted-foreground: #99a1b5;
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 16%);
-  --grid: oklch(1 0 0 / 10%);
-
-  --primary: #7fb2f0;
-  --primary-soft: #22304a;
-  --primary-foreground: #10131c;
-
-  --ikincil: #ff7b73;
-  --ikincil-soft: #3a2320;
-
-  --success: #63c489;
-  --success-soft: #1e3327;
-  --warning: #e5b355;
-  --warning-soft: #35301f;
-  --danger: #ff6f66;
-
-  /*
-    Koyu temada aile renkleri.
-
-    Önceki sürüm pastelleri koyulaştırılmış sabit tonlarla değiştiriyordu
-    (#3a2028 gibi) ve iki sorun çıkıyordu: (1) o tonlar zemin renginden **daha
-    açıktı**, yani oyun ekranında zemin kartlardan parlak kalıyor, kartlar
-    çukur gibi görünüyordu — açık temadaki hiyerarşinin tam tersi; (2) sıcak
-    kahve-bordo tonlar soğuk lacivert zeminle çakışıp çamurlaşıyordu.
-
-    Şimdi ikisi de aynı yerden türüyor: zemin, sayfa zemininin üstüne ailenin
-    ara tonundan bir tutam; kart ise kart yüzeyinin üstüne ailenin açık tonundan
-    daha fazlası. Böylece zemin zeminden koyu, kart karttan açık kalıyor ve renk
-    kimliği duruyor.
-
-    Kartta ara ton değil açık ton (`-koyu`) kullanılıyor: matematiğin ara tonu
-    amber ve lacivert kart yüzeyiyle karışınca zeytin yeşiline kaçıyordu.
-  */
-  --yzm: color-mix(in srgb, var(--yzm-ok) 9%, var(--background));
-  --yzm-kart: color-mix(in srgb, var(--yzm-koyu) 26%, var(--card));
-  --yzm-koyu: #f2a2b3;
-  --yzm-ok: #e4708a;
-  --isl: color-mix(in srgb, var(--isl-ok) 9%, var(--background));
-  --isl-kart: color-mix(in srgb, var(--isl-koyu) 26%, var(--card));
-  --isl-koyu: #e8bf74;
-  --isl-ok: #e0a233;
-  --edb: color-mix(in srgb, var(--edb-ok) 9%, var(--background));
-  --edb-kart: color-mix(in srgb, var(--edb-koyu) 26%, var(--card));
-  --edb-koyu: #b9a9f2;
-  --edb-ok: #8570da;
-  --cog: color-mix(in srgb, var(--cog-ok) 9%, var(--background));
-  --cog-kart: color-mix(in srgb, var(--cog-koyu) 26%, var(--card));
-  --cog-koyu: #8ad3a8;
-  --cog-ok: #4fa87a;
-  --trh: color-mix(in srgb, var(--trh-ok) 9%, var(--background));
-  --trh-kart: color-mix(in srgb, var(--trh-koyu) 26%, var(--card));
-  --trh-koyu: #86cfda;
-  --trh-ok: #3ba3ae;
-  --byl: color-mix(in srgb, var(--byl-ok) 9%, var(--background));
-  --byl-kart: color-mix(in srgb, var(--byl-koyu) 26%, var(--card));
-  --byl-koyu: #bcd98a;
-  --byl-ok: #86ac3e;
-
-  /* Boss zemini de aynı kuralla: sayfa zemininin kırmızıya çalan hâli. Eski
-     sabit ton (#3a2320) kartlardan açıktı ve kahverengiye kaçıyordu. */
-  --boss-zemin: color-mix(in srgb, var(--ikincil) 13%, var(--background));
-
-  --maskot-kurk: #e9ecf5;
-  --maskot-kulak-ic: #c99aa6;
-  --maskot-yanak: #d3a8b2;
-  --maskot-burun: #e07f92;
-  --maskot-agiz: #b8465c;
-  --maskot-cizgi: #1b2440;
-  --maskot-parlak: #ffffff;
+  /* Maskot artık bir görsel (`public/tavsan-yuz.png`); boyanacak bir çizim
+     kalmadığı için maskot renk değişkenleri kaldırıldı. */
 }
 
 @layer base {
@@ -281,17 +217,29 @@
   .font-display {
     font-family: var(--font-display);
   }
+  .font-marka {
+    font-family: var(--font-marka);
+  }
   /*
-    Kart yüzeyi. Açık temada gölge, koyu temada ince çerçeve — koyu zeminde
-    gölge görünmüyor, kart zeminden hiç ayrılmıyordu.
+    Kart yüzeyi: çerçeve değil gölge. Kırık beyaz zeminin üstünde beyaz
+    kartlar ancak gölgeyle ayrışıyor.
   */
   .golge-kart {
     box-shadow: var(--shadow-kart);
   }
-  .dark .golge-kart {
-    box-shadow: none;
-    border: 1px solid var(--border);
+  /*
+    Kaydırma çubuğunu gizler. Saat tekerleğinde (components/secici.tsx) çubuk
+    hem dar sütunun yarısını kaplıyor hem de "burada bir liste var" demek
+    yerine "bir şey taştı" izlenimi veriyordu; kaydırmanın kendisi zaten
+    ortadaki seçim bandıyla anlatılıyor.
+  */
+  .scrollbar-gizli {
+    scrollbar-width: none;
   }
+  .scrollbar-gizli::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Sütun halindeki sayılar hizalansın diye; büyük tek sayılarda kullanılmaz */
   .rakam {
     font-variant-numeric: tabular-nums;
@@ -334,17 +282,175 @@
   /* --- Açılış ekranı (components/acilis.tsx) --- */
 
   /*
-    Zıplama. Yukarı çıkışta yavaşlayan, inişte hızlanan bir eğri kullanılıyor —
-    tek bir `ease-in-out` ile tavşan havada asılı kalmış gibi duruyordu.
+    Tek seferlik, `ACILIS_SURESI` (4,2s) boyunca akan bir gösteri. Bütün
+    parçalar aynı süreyi paylaşıyor ve sıralarını yüzdelerle alıyor: süreyi
+    değiştirmek istersen yalnız `animation-duration` değerlerini aynı oranda
+    değiştir, yüzdeler kendiliğinden ölçeklenir.
+
+      %0–30   tavşan hızlanarak düşer, sonunda yumuşayarak yerine oturur
+      %17–30  gölge ve hale, tavşan yere yaklaşırken belirir
+      %18–36  RABİ yazısı belirir
+      %30–46  slogan belirir
+      %38–52  çark, şerit ve "HAZIRLANIYOR" belirir
+      %66–86  yazılar ve yükleme bloğu söner
+      %68–100 tavşan varış noktasına küçülerek süzülür
+      %78–92  zemin solar — tavşanın son yolu uygulamanın üstünde geçer
   */
-  .acilis-ziplama {
-    animation: acilis-ziplama 760ms cubic-bezier(0.3, 0, 0.4, 1) infinite;
+  /*
+    Varış noktası (`--acilis-x/y/olcek`) `components/acilis.tsx`'ten `style` ile
+    geliyor ve orada **ölçülerek** bulunuyor. Burada yedeği yok: değer her
+    çizimde satır içinde veriliyor, buraya bir yedek yazmak iki ayrı doğru
+    kaynak yaratırdı.
+  */
+  /* Zamanlama `linear`: iniş eğrisini keyframe'lerin kendisi taşıyor
+     (`animation-timing-function`), öğeye ikinci bir eğri koymak ikisini
+     çarpar ve kesintisiz iniş yeniden titriyormuş gibi görünürdü. */
+  .acilis-inis {
+    animation: acilis-inis 4200ms linear forwards;
+  }
+
+  /*
+    Ekran, uygulama penceresi gerçekten görünene kadar ilk karesinde duruyor.
+
+    CSS animasyonları sayfa çizilir çizilmez başlıyor; Android’in kendi
+    açılış ekranı ise o sırada hâlâ ekranı kaplıyor olabiliyor. Animasyon
+    arkada akıp bitiyor ve pencere açıldığında kullanıcı yalnızca son
+    karesini görüyor — "animasyon yok" diye okunan şey tam olarak bu. Sınıf,
+    ilk kare üretildiği an kalkıyor (bkz. acilis.tsx → `useBaslangic`).
+
+    Duraklatma `display: none` ya da gecikmeyle değil `animation-play-state`
+    ile: ekran o sırada görünmek zorunda (zemini sistem açılış ekranıyla aynı,
+    yani arada bir boşluk oluşmuyor), yalnızca zaman çizgisi beklemeli.
+  */
+  .acilis-bekliyor,
+  .acilis-bekliyor * {
+    animation-play-state: paused !important;
+  }
+  /*
+    Açılışın zemini. Ayrı bir katman, çünkü gösteri biterken **yalnız zemin**
+    kayboluyor: tavşan son yolunu ana sayfanın (ya da kurulumun) üstünde
+    uçarak alıyor. Zemin en dış katmanda dursaydı tavşan bomboş beyaz bir
+    ekranda süzülür, uygulama ancak o iş bittikten sonra görünürdü.
+  */
+  .acilis-zemin {
+    position: absolute;
+    inset: 0;
+    animation: acilis-zemin-son 4200ms ease-out forwards;
   }
   .acilis-yazi {
-    animation: acilis-yazi 700ms 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: acilis-yazi 4200ms cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
+  }
+  .acilis-slogan {
+    animation: acilis-slogan 4200ms ease-out forwards;
+  }
+  .acilis-yukleme {
+    animation: acilis-yukleme 4200ms ease-out forwards;
+  }
+  .acilis-alt {
+    animation: acilis-son 4200ms ease-out forwards;
+  }
+  /* Ölçüm hiç tutmadıysa uçmayan tavşan da süslemelerle birlikte sönüyor. */
+  .acilis-son {
+    animation: acilis-son 4200ms ease-out forwards;
   }
   .acilis-cark {
-    animation: acilis-cark 1700ms linear infinite;
+    animation: acilis-cark 3600ms linear infinite;
+  }
+
+  /*
+    Kurulum bitince tavşanın başlığa uçuşu (components/acilis.tsx).
+    Varış değerleri açılıştakiyle aynı hesaptan çıkıyor; ikisi de ana sayfa
+    başlığındaki 58px'lik maskotun üstüne oturuyor.
+  */
+  .acilis-gecis {
+    display: block;
+    /* Kurulumun 110px'lik maskotundan ana sayfanın 58px'lik maskotuna.
+       Yatayda `acilis-inis` ile aynı hedef; dikeyde iki maskotun merkez farkı
+       sabit (20+8+31.4) − (32+59.58) = −32.2px, güvenli alan ikisinde de var
+       ve sadeleşiyor. */
+    --gecis-x: calc(max(0px, (100vw - 448px) / 2) + 47px - 50vw);
+    --gecis-y: -32.2px;
+    --gecis-olcek: 0.527;
+    animation: acilis-gecis 900ms cubic-bezier(0.45, 0, 0.2, 1) forwards;
+  }
+
+  /* Maskotun arkasındaki hale ve altındaki zemin gölgesi. İkisi de ortadan
+     ölçülüyor (`top: 50%` + eksi kenar boşluğu), tavşanla aynı hizada. */
+  /* İkisi de tavşandan ÖNCE görünmez (`opacity: 0`) ve tavşan yere inerken
+     doğuyor. Ayrı bir "nefes alma" döngüsü yok: ikisi de tek seferlik zaman
+     çizgisinden kendi payını oynuyor — sürekli dönen bir döngü, yere oturma
+     anındaki yayılmayı kendi ritmiyle örtüyordu. */
+  .acilis-hale {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 170px;
+    height: 170px;
+    margin: -186px 0 0 -85px;
+    border-radius: 999px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--primary) 8%, transparent), transparent 68%);
+    filter: blur(5px);
+    opacity: 0;
+    animation: acilis-hale 4200ms ease-out forwards;
+  }
+  /* Gölge tavşanın alt kenarının **altına** oturuyor: daha yukarıdayken
+     gövdenin içinde kalıyor ve tavşan tarafından örtülüyordu. */
+  .acilis-golge {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 104px;
+    height: 16px;
+    margin: -45px 0 0 -52px;
+    border-radius: 999px;
+    background: radial-gradient(ellipse, rgba(24, 23, 22, 0.2), transparent 72%);
+    filter: blur(3px);
+    opacity: 0;
+    animation: acilis-golge 4200ms ease-out forwards;
+  }
+
+  /* Arka plandaki yumuşak parıltılar. */
+  .acilis-parilti {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(10px);
+    animation: acilis-parilti 21s ease-in-out infinite;
+  }
+  .acilis-parilti-sol {
+    left: -50px;
+    top: 170px;
+    width: 230px;
+    height: 230px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--primary) 7%, transparent), transparent 70%);
+  }
+  .acilis-parilti-sag {
+    right: -60px;
+    bottom: 150px;
+    width: 240px;
+    height: 240px;
+    background: radial-gradient(circle, rgba(120, 110, 100, 0.07), transparent 70%);
+    animation-duration: 26s;
+    animation-delay: 4s;
+  }
+
+  /* Yükleme şeridi: sabit ray, üstünde gidip gelen bir ışık. */
+  .acilis-ray {
+    position: relative;
+    display: block;
+    width: 132px;
+    height: 3px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--border);
+  }
+  .acilis-ray::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 38px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    animation: acilis-yol 1700ms ease-in-out infinite;
   }
 
   /* --- Haftalık özet (components/ekranlar/haftalik-ozet.tsx) --- */
@@ -389,39 +495,114 @@
   }
 }
 
-@keyframes acilis-ziplama {
-  0%,
+/*
+  Tavşanın inişi ve çıkışı.
+
+  Varış noktası `--acilis-x` / `--acilis-y` / `--acilis-olcek` değişkenlerinden
+  geliyor; değerleri `components/acilis.tsx` içindeki `VARIS` tablosunda.
+  Uygulama kuruluysa ana sayfa başlığındaki maskotun üstüne, ilk açılışta
+  kurulum sihirbazının tepesindeki maskotun üstüne oturuyor — açılış kalkınca
+  tavşan yerinde duruyormuş gibi görünüyor. Başlıktaki maskotun ölçüsü ya da
+  yeri değişirse yalnız o tabloyu güncelle.
+*/
+@keyframes acilis-inis {
+  /* Tek parça iniş: hızlanarak düşer, sonuna doğru yumuşayarak yerine oturur.
+     Sekme YOK — eğri baştan sona kesintisiz. Bir süre %26'da hafif bir sekme
+     vardı; 118 piksellik bir yüzde o sekme çarpma değil titreme gibi duruyordu. */
+  0% {
+    opacity: 0;
+    transform: translateY(-320px) scale(1);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.35, 1);
+  }
+  8% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.35, 1);
+  }
+  30% { opacity: 1; transform: translateY(0) scale(1); }
+  68% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.2, 1);
+  }
   100% {
-    transform: translateY(0) scaleY(1);
-  }
-  18% {
-    transform: translateY(0) scaleY(0.9);
-  }
-  50% {
-    transform: translateY(-26px) scaleY(1.04);
-  }
-  82% {
-    transform: translateY(0) scaleY(0.94);
+    opacity: 1;
+    transform: translate(var(--acilis-x), var(--acilis-y)) scale(var(--acilis-olcek));
   }
 }
 
 @keyframes acilis-yazi {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-    letter-spacing: 0.42em;
-  }
-  to {
-    opacity: 1;
-    transform: none;
-    letter-spacing: 0.18em;
+  0%, 18% { opacity: 0; transform: translateY(18px); }
+  36% { opacity: 1; transform: translateY(0); }
+  68% { opacity: 1; transform: translateY(0); }
+  86%, 100% { opacity: 0; transform: translateY(-26px); }
+}
+
+@keyframes acilis-slogan {
+  0%, 30% { opacity: 0; transform: translateY(10px); }
+  46% { opacity: 1; transform: translateY(0); }
+  66% { opacity: 1; transform: translateY(0); }
+  82%, 100% { opacity: 0; transform: translateY(-16px); }
+}
+
+@keyframes acilis-yukleme {
+  0%, 38% { opacity: 0; transform: translateY(8px); }
+  52% { opacity: 1; transform: translateY(0); }
+  66% { opacity: 1; transform: translateY(0); }
+  80%, 100% { opacity: 0; transform: translateY(-12px); }
+}
+
+/** Süslemelerin ortak sönüşü: gösteri biterken hepsi birlikte kayboluyor. */
+@keyframes acilis-son {
+  0%, 68% { opacity: 1; }
+  86%, 100% { opacity: 0; }
+}
+
+/** Zemin, yazılar tamamen söndükten sonra çekiliyor; sıra karışmasın. */
+@keyframes acilis-zemin-son {
+  0%, 78% { opacity: 1; }
+  92%, 100% { opacity: 0; }
+}
+
+@keyframes acilis-gecis {
+  0% { transform: translate(0, 0) scale(1); }
+  100% {
+    transform: translate(var(--gecis-x, -147px), var(--gecis-y, 0px))
+      scale(var(--gecis-olcek, 0.527));
   }
 }
 
 @keyframes acilis-cark {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes acilis-yol {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(340%); }
+}
+
+@keyframes acilis-hale {
+  0%, 17% { opacity: 0; transform: scale(0.85); }
+  30% { opacity: 0.85; transform: scale(1.06); }
+  50% { opacity: 0.55; transform: scale(1); }
+  68% { opacity: 0.8; transform: scale(1.05); }
+  86%, 100% { opacity: 0; transform: scale(0.9); }
+}
+
+/* Tavşan inerken doğuyor, yere oturma anında (%30) yayılıp toparlanıyor,
+   sonra hafifçe nefes alıyor ve tavşanla birlikte sönüyor. */
+@keyframes acilis-golge {
+  0%, 17% { opacity: 0; transform: scale(0.5); }
+  26% { opacity: 0.72; transform: scale(0.92); }
+  30% { opacity: 0.9; transform: scale(1.06); }
+  42% { opacity: 0.62; transform: scale(1); }
+  68% { opacity: 0.72; transform: scale(1.02); }
+  82%, 100% { opacity: 0; transform: scale(0.7); }
+}
+
+@keyframes acilis-parilti {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.55; }
+  33% { transform: translate3d(26px, -22px, 0) scale(1.12); opacity: 0.85; }
+  66% { transform: translate3d(-18px, 16px, 0) scale(0.95); opacity: 0.65; }
 }
 
 @keyframes ozet-girisi {
@@ -467,8 +648,8 @@
 }
 
 /*
-  Hareket azaltma tercihi açıksa süslemeler durur. Açılış çarkı istisna: dönmeyen
-  bir bekleme göstergesi "donmuş" izlenimi veriyor, o yüzden yavaşlatılıyor.
+  Hareket azaltma tercihi açıksa süslemeler durur — açılış ekranı hariç, sebebi
+  aşağıdaki blokta yazılı.
 */
 @keyframes ozet-cubuk {
   from {
@@ -479,10 +660,27 @@
   }
 }
 
+/*
+  Açılış ekranı bu listede bilerek **yok**.
+
+  Tasarımın kendi kuralı onu da susturuyordu ve uygulama bir süre öyle çıktı.
+  Android'de bu tercih çoğu zaman erişilebilirlik ayarından değil geliştirici
+  seçeneklerindeki "animasyon ölçeği" ya da pil tasarrufundan geliyor — yani
+  hareketten rahatsız olduğu için değil telefonu hızlansın diye kapatan
+  kullanıcıda da açılış ekranı boş bir kareye dönüyordu. Karar kullanıcının:
+  açılış animasyonu her koşulda oynuyor, uygulamanın geri kalanı tercihi
+  izlemeye devam ediyor.
+*/
 @media (prefers-reduced-motion: reduce) {
+  /* Kurulum sonrası geçiş uçmuyor ama doğrudan varış noktasında duruyor:
+     yerinde kalsaydı ana sayfanın üstünde bir saniye boyunca kocaman bir
+     tavşan asılı kalırdı. Bu bir marka anı değil, ekranlar arası bir
+     hareket. */
+  .acilis-gecis {
+    animation: none;
+    transform: translate(var(--gecis-x), var(--gecis-y)) scale(var(--gecis-olcek));
+  }
   .acilis-girisi,
-  .acilis-ziplama,
-  .acilis-yazi,
   .ozet-girisi,
   .ozet-vurgu,
   .ozet-nabiz {
@@ -490,9 +688,6 @@
   }
   /* `ozet-cubuk` bilerek listede yok: süsleme değil, kartın ne zaman
      geçeceğini gösteren tek işaret. */
-  .acilis-cark {
-    animation-duration: 3.4s;
-  }
 }
 
 /*

@@ -31,19 +31,118 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
 
 - Mobil öncelikli, `max-w-md` tek sütun. Hover yerine `active:` — dokunmatik cihaz.
 - Renkler doğrudan yazılmaz, tema değişkenlerinden gelir (`var(--primary)` /
-  Tailwind `text-primary`). Tek palet var, kullanıcıya renk seçtirilmiyor.
-  Vurgu mavi (`--primary` #4A8FE7), ikinci kimlik rengi mercan (`--ikincil` #EF5A52),
-  zemin mavimsi kâğıt (`--background` #EDF1FD). Renk **derse** ait, oyuna değil:
+  Tailwind `text-primary`). **Tek tema var** — koyu tema kaldırıldı, `dark:`
+  sınıfı kullanma, Ayarlar'da tema seçeneği yok.
+  Vurgu kavrulmuş amber: `--primary` #B3491F **yazı ve ikon** için,
+  `--primary-parlak` #D9622F **dolgu** için (halka, çubuk, düğme, büyük sayı).
+  İkinci kimlik rengi tuğla (`--ikincil` #A8432B), zemin kırık beyaz
+  (`--background` #F8F8F7). Renk **derse** ait, oyuna değil:
   `yzm` (Türkçe, pembe) · `isl` (Matematik, krem) · `edb` (Edebiyat, lavanta) ·
   `trh` (Tarih, deniz mavisi) · `byl` (Biyoloji, yeşil), her biri `-koyu` ve
   `-ok` tonuyla.
-  Kart yüzeyi `golge-kart` sınıfıyla: açık temada gölge, koyu temada ince çerçeve.
-- Yazı tipi tek: **Nunito**. Başlık ayrı aile değil ayrı kalınlık — `font-display`
-  hâlâ var ama Nunito'ya çözülüyor; başlıklar `font-extrabold`, gövde `font-medium`.
+  Kart yüzeyi `golge-kart` sınıfıyla: beyaz kart, sıcak gölge.
+  Maskotun kürkü beyaz olduğu için `--maskot-hat` konturu şart; zemin de
+  neredeyse beyaz, kontursuz siluet kayboluyor.
+- Zemin rengi üç yerde birden yazılı ve **birlikte** değişmeli:
+  `--background` (globals.css), `acilis.tsx`'teki `ZEMIN` ve Android'in
+  `acilis_zemin` / `uygulama_zemin` renkleri. Ayrılırlarsa açılışta renk
+  sıçraması olur.
+- Yazı tipi tek: **Nunito**. Tek istisna açılış ekranı: orası Manrope
+  (`font-marka`), çünkü tasarım o ekranı Manrope ile çizdi ve "RABİ" 50
+  pikselde iki ailede belirgin biçimde farklı duruyor. `font-marka` başka
+  hiçbir yerde kullanılmıyor; yeni bir yerde kullanmadan önce bu istisnanın
+  neden açıldığına bak. Başlık ayrı aile değil ayrı kalınlık — `font-display`
 - Tasarım kaynağı `tasarim/` altındaki HTML mockup'lar. Derlemeye girmiyorlar,
   uygulama onlardan hiçbir şey import etmiyor — ekran değiştirirken oraya bak.
 - Sütun hâlindeki sayılara `rakam` sınıfı (tabular-nums), başlıklara `font-display`.
 - Alt menünün altında kalan içerik için `guvenli-alt`.
+
+### Açılışın son hareketi ana sayfaya bağlanıyor
+
+Ekran 4,2 saniye sürüyor (`ACILIS_SURESI`) ve bütün parçalar **tek** bir zaman
+çizgisini paylaşıyor: %0–30 iniş, %30–68 duruş, %68–100 çıkış. Süreler bu
+yüzden hepsinde aynı ve ayrı ayrı değiştirilemez — biri kayarsa yazılar
+tavşandan önce ya da sonra gider.
+
+Çıkışta tavşan varış noktasındaki maskotun **tam üstüne** süzülüyor; katman
+kalktığında ekranda zaten yalnızca o maskot duruyor ve altındaki sayfa görünür
+durumda, yani geçiş tek bir hareket gibi okunuyor. Dört şey buna bağlı:
+
+- **Ekranda hep tek tavşan var.** Açılış sürerken varış noktasındaki maskot
+  `visibility: hidden` (`Rabi` → `gizli`). Zemin son saniyede saydamlaşıyor ve
+  altındaki sayfa görünür oluyor; gizlenmeseydi biri uçarken öteki yerinde
+  dururken **iki** tavşan görünürdü. Katman kalkarken gizlilik de kalkıyor,
+  ikisi aynı görsel olduğu için takas görünmüyor. `display: none` olamaz:
+  varış noktası bu öğe ölçülerek bulunuyor ve düzenden çıkmış bir öğenin
+  ölçüsü sıfırdır.
+- **Varış noktası ölçülüyor, yazılmıyor — yedeği de yok.** Tasarım
+  `translate(-147px, -224px) scale(0.33)` diyor ama o sayılar 360×720lik
+  prototip çerçevesine ait. Bir süre uygulamada da yazılıydı (`VARIS` tablosu,
+  `calc()` ile) ve tam da beklendiği gibi bozuldu: düzen değişti, sayılar
+  kaldı, tavşan yuvanın 93 piksel altına indi. Tablo yalnızca ölçüm
+  yetişmediğinde devreye girdiği için hata da **arada bir** görünüyordu —
+  telefonun o açılışta ne kadar hızlı olduğuna bağlıydı. Tablo silindi: ölçüm
+  tutmazsa tavşan hiç uçmuyor, olduğu yerde sönüyor. Yuva yoksa konacak maskot
+  da yok; tahmin edilen bir köşeye inmek hareketi kurtarmıyor, yanlış yere
+  inen bir tavşan gösteriyor.
+- **Ölçüm tek seferlik değil.** Uçuş %68'de başlıyor ve ölçüm o ana kadar
+  yenilenip orada donuyor. İki sebebi var: yuva geç doğabiliyor (eskiden 60
+  deneme ≈ 1 saniyelik bir hak vardı ve yavaş telefonda ana sayfa ona
+  yetişmiyordu) ve düzen bir kez daha oynayabiliyor — güvenli alan
+  (`--guvenli-ust`) yerli köprüden gecikmeli geliyor, yazı tipi sonradan takas
+  oluyor. Donma şart: uçuş başladıktan sonra varış noktasını değiştirmek
+  tavşanı yolun ortasında ışınlar. Ölçü `window.innerHeight`ten değil ekranın
+  kendi kutusundan alınıyor; WebView açılırken ikisi bir süre ayrı düşüyor.
+- **Yuva tek.** Ekranda ya ana sayfanın başlığı vardır ya kurulum sihirbazı,
+  o yüzden ikisinde de aynı kimlik duruyor ve ölçüm hangisi varsa onu buluyor.
+- **Ölçüm zamanlayıcıyla yineleniyor, `requestAnimationFrame` ile değil.**
+  Sayfa görünür değilken rAF hiç çağrılmıyor ve ölçüm sonsuza kadar bekliyor.
+
+Ayrı bir solma adımı yok: ekran kendi çıkışını kendi yapıyor (`acilis-son`,
+`acilis-zemin-son`), üstüne bir de opaklık geçişi koymak biten bir geçişin
+üstüne ikincisini koymak olurdu.
+
+### Açılış animasyonunu susturan iki tuzak
+
+İkisi de bir kez uygulamaya girdi ve ekranı "animasyonsuz" gösterdi. Yeni bir
+hareket eklerken ikisini de kontrol et.
+
+**1. Zaman çizgisi pencere görünmeden başlıyordu.** CSS animasyonları sayfa
+çizilir çizilmez başlıyor; uygulama açılırken ekranı o sırada hâlâ Android'in
+kendi açılış ekranı kaplıyor olabiliyor. Animasyon arkada akıp bitiyor ve
+pencere açıldığında kullanıcı yalnızca son karesini görüyor.
+
+Ekran bu yüzden `acilis-bekliyor` ile **duraklatılmış** başlıyor (sınıf
+sunucuda üretilen HTML'de de var, yani ilk boyanan karede zaten duruyor) ve
+arka arkaya iki `requestAnimationFrame` geldiğinde salınıyor — bu, tarayıcının
+gerçekten kare ürettiğinin kanıtı. rAF sayfa görünür değilken hiç çağrılmadığı
+için `visibilitychange` de dinleniyor, üstüne bir emniyet zamanlayıcısı var:
+kare hiç gelmezse ekran donuk kalır ve uygulama katmanın altında kilitlenirdi.
+
+Ekranın sayacı da bu yüzden `acilis.tsx` içinde, `AppShell` içinde değil:
+katman ancak animasyon başladıktan `ACILIS_SURESI` sonra kalkmalı. Dışarıda
+tutulsaydı sayaç animasyondan önce işlemeye başlar, yavaş açılan bir telefonda
+tavşan yuvasına varmadan katman silinirdi.
+
+**2. `prefers-reduced-motion` ekranı tümüyle susturuyordu.** Tasarımın kendi
+kuralı buydu ve uygulama bir süre öyle çıktı. Android'de bu tercih çoğu zaman
+erişilebilirlik ayarından değil geliştirici seçeneklerindeki "animasyon
+ölçeği" ya da pil tasarrufundan geliyor — yani hareketten rahatsız olduğu için
+değil telefonu hızlansın diye kapatan kullanıcıda da açılış ekranı boş bir
+kareye dönüyordu.
+
+Karar kullanıcının: açılış animasyonu her koşulda oynuyor. Açılış ekranı o
+yüzden `@media (prefers-reduced-motion: reduce)` bloğunda **yok**; uygulamanın
+geri kalanı (haftalık özet, harita, kurulum sonrası geçiş) tercihi izlemeye
+devam ediyor. Bu istisnayı geri almadan önce yukarıdaki sebebe bak.
+
+### Ayarlar satırları kapalı açılıyor
+
+Seçenek çipleri satırın altında sürekli açık dururken ekran üç ekran boyundaydı.
+Şimdi satır kapalı: solda ad, sağda seçili değer, uçta ok. Tek satır açık kalıyor
+(`acikAyar`), ikincisini açmak birincisini kapatıyor. Anahtarlı satırlar
+(hatırlatma, müzik) açılamaz: satıra dokunmak anahtarı çeviriyor, aynı satır hem
+anahtar hem liste olamaz — hatırlatma saati o yüzden **ayrı** bir satır.
 
 ## Seviye ve havuç
 
@@ -218,17 +317,9 @@ genişlikte kalıyor ve "yeni kâğıt" tuşu çalışıyormuş gibi görünüp 
 göstermiyor. Görünüşe ait bir sınıfın taramadan düşmesi eksik bir gölge demek;
 ölçüye ait olanınki boş bir ekran.
 
-Tahtanın yüksekliği ve kâğıdın genişliği Tailwind sınıfı değil, satır içi ölçü.
-Bu ikisi olmadan özellik ekranda **yok**: tahta sıfır yükseklikte, kâğıt sıfır
-genişlikte kalıyor ve "yeni kâğıt" tuşu çalışıyormuş gibi görünüp hiçbir şey
-göstermiyor. Görünüşe ait bir sınıfın taramadan düşmesi eksik bir gölge demek;
-ölçüye ait olanınki boş bir ekran.
-
 > Dosya adı `notlar.ts` **olamaz**: `.gitignore` kişisel notlar için `notlar.*`
 > deseni taşıyor ve desen tüm ağaçta geçerli. Öyle adlandırılan bir kaynak dosya
 > hem depoya girmiyor hem Tailwind'in tarayıcısından düşüyor. Bir dosyayı yeniden
-> adlandırdıktan sonra `npm run build`'i **tekrar çalıştır**: Tailwind kaynak
-> listesini derleme başında kuruyor, eski çıktı hatasız ama sınıfsız kalıyor. Bir dosyayı yeniden
 > adlandırdıktan sonra `npm run build`'i **tekrar çalıştır**: Tailwind kaynak
 > listesini derleme başında kuruyor, eski çıktı hatasız ama sınıfsız kalıyor.
 
@@ -243,6 +334,68 @@ kilitli joker gizlenmiyor, kilitli gösteriliyor.
 
 Jokerlerin tur içinde kullanılması henüz yazılmadı: stok yalnızca `jokerKullan`
 üzerinden eksilmeli, oyun tarafı geldiğinde de o tek kapı kalmalı.
+
+## Hedef kataloğu
+
+Kullanıcı eskiden hedef ekranında dört kutuyu da elle dolduruyordu: bölüm,
+üniversite, taban puan, başarı sırası. Son iki sayıyı bilen kimse yoktu — hedef
+ya boş kalıyordu ya rastgele bir sayıyla kaydediliyordu ve "hedefine ne kadar
+kaldı" cümlesi ölçtüğü şeyi kaybediyordu. Artık **arayıp seçiliyor**, sayıları
+katalog dolduruyor.
+
+Veri iki dosyada, mantık üçüncüde: `lib/veri/universiteler.ts` (205 üniversite),
+`lib/veri/bolumler.ts` (77 bölüm), `lib/hedef-katalog.ts` (saf, test edilebilir).
+
+### Katalogda sıra yazıyor, puan yazmıyor
+
+Her bölüm satırında **başarı sırası** var, taban puan yok. Puan `siralama.ts`
+içindeki `siralamadanPuan` ile o yılın gerçek ÖSYM yerleştirme dağılımından geri
+hesaplanıyor. Sebep: sıralama yıldan yıla neredeyse yerinde duruyor, puan
+sınavın zorluğuyla oynuyor. Böylece tahminin elle tutulan kısmı en yavaş
+bayatlayan sayıya iniyor ve puan yeni yıl verisi gelince kendiliğinden
+güncelleniyor.
+
+`siralamadanPuan` ile `yilSiralamasi` birbirinin **tersi** olmak zorunda; ikisi
+de logaritmik iç değer kullanıyor ve `hedef-katalog.test.ts` gidip gelen
+çevrimin başladığı puana döndüğünü denetliyor. Birine dokunursan ötekine de bak.
+
+### Kademe
+
+Her üniversitenin 1–5 arası bir kademesi var; bölümün iki ucu (`ustSira`,
+`altSira`) arasında **geometrik** iç değerle o kademenin sırası bulunuyor.
+Sıralamalar kademe kademe doğrusal değil katlanarak büyüyor (Tıp: 400 → 60.000)
+— doğrusal iç değer ortadaki kademeleri tek bir yere yığardı.
+
+200 × 77 satırlık gerçek YÖK Atlas tablosu bilerek taşınmıyor: hem uygulamayı
+şişirirdi hem her ağustos elde güncellenirdi. Model tek boyutlu olduğunu kabul
+ediyor — Tıp'ta önde olan üniversite Hukuk'ta da genelde önde.
+
+Vakıf üniversitelerinde kademe **tam burslu** kontenjanı anlatıyor; ücretliyle
+burslunun arası uçurum ve hedef koyan öğrencinin kovaladığı sayı burslununki.
+
+### İki ayrı süzgeç
+
+Bölüm listesi iki şeye birden bakıyor ve ikisi farklı soru: `alanlar`
+üniversitede o fakülte var mı, `sonKademe` o bölüm bu kademede açılıyor mu. Tıp
+fakültesi olmayan bir üniversitede Tıp seçtirmek tahminden çok daha kaba bir
+yanlış olurdu; Havacılık ve Uzay Mühendisliği'ni mühendislik fakültesi olan her
+üniversitede listelemek de ikinci soruyu atlamak olur.
+
+`hedef-katalog.test.ts` her üniversitenin **en az bir** bölüm açtığını
+denetliyor: boş liste, kullanıcıyı seçtiği üniversitede çıkmaz sokağa sokar.
+
+### Elle giriş kipi kalıyor
+
+Ekranın serbest metin kipi silinmedi. Katalog dışı bir hedef kayıtlıysa ekran o
+kiple açılıyor (`universiteBul` null dönüyor), çünkü eski sürümde herkes iki adı
+elle yazıyordu ve o kayıtlar duruyor. `Hedef` tipi de kimlik değil **ad**
+tutmaya devam ediyor — kimliğe geçmek o kayıtları geçersiz kılardı.
+
+Seçim ekranda ayrı bir state'te durmuyor, iki addan türetiliyor: iki kaynak
+olsaydı elle yazılan ad ile seçili kayıt birbiriyle çelişebilirdi.
+
+Çıkan sayılar tahmin ve aşağıdaki **Doğruluk** kuralına tabi: kutular
+düzenlenebilir, uyarı kaldırılamaz.
 
 ## Doğruluk
 

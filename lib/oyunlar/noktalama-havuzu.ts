@@ -84,7 +84,11 @@ export type NoktalamaKurali =
   | 'parantez-ek-bilgi'
   | 'kesme-kurum'
   | 'noktali-virgul-tur'
+  | 'noktali-virgul-cumle'
   | 'uc-nokta-eksiltme'
+  | 'zarf-fiil-virgul'
+  | 'sart-eki-virgul'
+  | 'kesme-cins-isim'
 
 /** Sonuç ekranında, yanlış bilinen cümlenin altında görünen kural. */
 export const NOKTALAMA_ACIKLAMASI: Record<NoktalamaKurali, string> = {
@@ -114,6 +118,12 @@ export const NOKTALAMA_ACIKLAMASI: Record<NoktalamaKurali, string> = {
   'noktali-virgul-tur':
     'Cümle içinde virgüllerle ayrılmış tür veya takımları birbirinden ayırmak için noktalı virgül konur.',
   'uc-nokta-eksiltme': 'Anlam bakımından tamamlanmamış cümlelerin sonuna üç nokta konur.',
+  'noktali-virgul-cumle':
+    'Bağımsız cümleler virgülle değil noktalı virgülle ayrılır; özellikle ikinci cümle “ancak, fakat, ama, oysa” gibi bir bağlaçla başlıyorsa.',
+  'zarf-fiil-virgul': 'Zarf-fiil ekleriyle kurulmuş sözlerden sonra virgül konmaz.',
+  'sart-eki-virgul': 'Şart ekinden (-se, -sa) sonra virgül konmaz.',
+  'kesme-cins-isim':
+    'Cins isimlere getirilen çekim ekleri kesme işaretiyle ayrılmaz; kesme yalnızca özel adlarda kullanılır.',
 }
 
 export type NoktalamaSorusu = {
@@ -1018,6 +1028,873 @@ export const NOKTALAMA_HAVUZU: NoktalamaSorusu[] = [
       'Sait Faik’in anlattığı o eski İstanbul.',
       'Sait Faik’in anlattığı o eski İstanbul…',
       'nokta',
+      'kesme',
+    ],
+  ]),
+  // -------------------------------------------------------------------------
+  // “ve, veya, yahut, ile” bağlacının iki yanına virgül konmaz
+  // Kural tek satır ama hata çok yaygın: konuşurken bağlaçtan önce duraklıyoruz,
+  // o duraklamayı yazıya virgül olarak geçiriyoruz. Bu yüzden havuzun en kalabalık
+  // grubu burası.
+  // -------------------------------------------------------------------------
+  ...grup('ve-virgul', 'kolay', [
+    [
+      'Kapıyı kilitledi, ve merdivenlerden hızla indi.',
+      'Kapıyı kilitledi ve merdivenlerden hızla indi.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Rüzgâr dindi, ve deniz yeniden sakinleşti.',
+      'Rüzgâr dindi ve deniz yeniden sakinleşti.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Kalem, ve defter almak için kırtasiyeye uğradım.',
+      'Kalem ve defter almak için kırtasiyeye uğradım.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Bu konuyu bugün, veya yarın tekrar edeceğim.',
+      'Bu konuyu bugün veya yarın tekrar edeceğim.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Ağabeyim ile, ablam aynı üniversiteye gitti.',
+      'Ağabeyim ile ablam aynı üniversiteye gitti.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Tahtayı sildi, ve yeni konuya geçti.',
+      'Tahtayı sildi ve yeni konuya geçti.',
+      'virgul',
+      'nokta',
+    ],
+    // Çeldirici kesme: “Zeynep’in” özel ada gelen çekim eki, doğru kullanım.
+    [
+      'Zeynep’in çantası, ve montu koridorda kalmış.',
+      'Zeynep’in çantası ve montu koridorda kalmış.',
+      'virgul',
+      'kesme',
+    ],
+    [
+      'Sınava iki gün kaldı, ve hâlâ tekrar bitmedi!',
+      'Sınava iki gün kaldı ve hâlâ tekrar bitmedi!',
+      'virgul',
+      'unlem',
+    ],
+    // Çeldirici noktalı virgül: bağımsız iki cümleyi ayırıyor, yeri doğru.
+    [
+      'Notlarını topladı, ve kütüphaneden çıktı; kimseye görünmedi.',
+      'Notlarını topladı ve kütüphaneden çıktı; kimseye görünmedi.',
+      'virgul',
+      'noktali-virgul',
+    ],
+    [
+      'Yarın sabah erken kalkacağım, ve ilk otobüse bineceğim.',
+      'Yarın sabah erken kalkacağım ve ilk otobüse bineceğim.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Ödevini bitirdi, ve televizyonun karşısına geçti.',
+      'Ödevini bitirdi ve televizyonun karşısına geçti.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Matematikte pratik, ve düzenli tekrar şart!',
+      'Matematikte pratik ve düzenli tekrar şart!',
+      'virgul',
+      'unlem',
+    ],
+    // Çeldirici tırnak: aktarılan söz tırnak içinde, noktası da tırnağın içinde.
+    [
+      'Kapıyı çaldı, ve içeriden “Buyurun.” sesi geldi.',
+      'Kapıyı çaldı ve içeriden “Buyurun.” sesi geldi.',
+      'virgul',
+      'tirnak',
+    ],
+    // Çeldirici parantez: cümlenin dışında kalan ek bilgi, doğru kullanım.
+    [
+      'Sonuçlar bugün açıklandı, ve tercih dönemi (10-20 Ağustos) başladı.',
+      'Sonuçlar bugün açıklandı ve tercih dönemi (10-20 Ağustos) başladı.',
+      'virgul',
+      'parantez',
+    ],
+    [
+      'Işıkları söndürdü, ve odadan sessizce çıktı.',
+      'Işıkları söndürdü ve odadan sessizce çıktı.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Ders bitti, ve herkes koridora doğru yürüdü.',
+      'Ders bitti ve herkes koridora doğru yürüdü.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Tuz, veya karabiber isteyen var mı?',
+      'Tuz veya karabiber isteyen var mı?',
+      'virgul',
+      'soru',
+    ],
+    [
+      'Dedem ile, ninem hâlâ köyde yaşıyor.',
+      'Dedem ile ninem hâlâ köyde yaşıyor.',
+      'virgul',
+      'nokta',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Soru cümlesinin sonuna nokta değil soru işareti
+  // Bu grupta yanlış işaret hep nokta olduğu için cümlede başka nokta bulunamaz;
+  // çeldirici de bu yüzden virgül, kesme, tırnak gibi ikinci bir işaretten seçildi.
+  // -------------------------------------------------------------------------
+  ...grup('soru-cumlesi', 'kolay', [
+    [
+      'Zeynep’in telefon numarasını biliyor musun.',
+      'Zeynep’in telefon numarasını biliyor musun?',
+      'nokta',
+      'kesme',
+    ],
+    [
+      'Bu akşam sinemaya mı, tiyatroya mı gideceğiz.',
+      'Bu akşam sinemaya mı, tiyatroya mı gideceğiz?',
+      'nokta',
+      'virgul',
+    ],
+    ['Sabah kaçta kalktın, Zeynep.', 'Sabah kaçta kalktın, Zeynep?', 'nokta', 'virgul'],
+    [
+      'Deneme kitabını nereye koydun, hatırlıyor musun.',
+      'Deneme kitabını nereye koydun, hatırlıyor musun?',
+      'nokta',
+      'virgul',
+    ],
+    ['Mehmet’in adresini kim biliyor.', 'Mehmet’in adresini kim biliyor?', 'nokta', 'kesme'],
+    [
+      'Sınav salonuna kaçta girmemiz gerekiyor, öğretmenim.',
+      'Sınav salonuna kaçta girmemiz gerekiyor, öğretmenim?',
+      'nokta',
+      'virgul',
+    ],
+    [
+      'Bu şiiri kim yazmış, biliyor musunuz.',
+      'Bu şiiri kim yazmış, biliyor musunuz?',
+      'nokta',
+      'virgul',
+    ],
+    ['Bu kalem Elif’in mi.', 'Bu kalem Elif’in mi?', 'nokta', 'kesme'],
+    [
+      'Kitabı bitirdin mi, yoksa yarıda mı bıraktın.',
+      'Kitabı bitirdin mi, yoksa yarıda mı bıraktın?',
+      'nokta',
+      'virgul',
+    ],
+    [
+      'Yağmur yağarsa maça gidecek miyiz, baba.',
+      'Yağmur yağarsa maça gidecek miyiz, baba?',
+      'nokta',
+      'virgul',
+    ],
+    [
+      'Ben yapamadım; sen bu soruyu çözebildin mi.',
+      'Ben yapamadım; sen bu soruyu çözebildin mi?',
+      'nokta',
+      'noktali-virgul',
+    ],
+    [
+      'Peki, bu konuyu ne zaman tekrar edeceğiz.',
+      'Peki, bu konuyu ne zaman tekrar edeceğiz?',
+      'nokta',
+      'virgul',
+    ],
+    ['İzmir-Manisa yolu hâlâ kapalı mı.', 'İzmir-Manisa yolu hâlâ kapalı mı?', 'nokta', 'kisa-cizgi'],
+    [
+      'Temel Yeterlilik Testi (TYT) kaç soruluk.',
+      'Temel Yeterlilik Testi (TYT) kaç soruluk?',
+      'nokta',
+      'parantez',
+    ],
+    [
+      'O eski günler, o sokaklar… hatırlıyor musun.',
+      'O eski günler, o sokaklar… hatırlıyor musun?',
+      'nokta',
+      'uc-nokta',
+    ],
+    [
+      'Bu şarkının adı “Bir Başkadır Benim Memleketim” mi.',
+      'Bu şarkının adı “Bir Başkadır Benim Memleketim” mi?',
+      'nokta',
+      'tirnak',
+    ],
+    [
+      'Bugün kütüphaneye uğrayacak mısın, Elif.',
+      'Bugün kütüphaneye uğrayacak mısın, Elif?',
+      'nokta',
+      'virgul',
+    ],
+    [
+      'Neden bu kadar geç kaldın, açıklayabilir misin.',
+      'Neden bu kadar geç kaldın, açıklayabilir misin?',
+      'nokta',
+      'virgul',
+    ],
+  ]),
+  // -------------------------------------------------------------------------
+  // Hitap ve seslenme sözünden sonra virgül
+  // Buradaki yanlış hep noktalı virgül ya da iki nokta: ikisi de “duraklama”
+  // hissi verdiği için hitaptan sonra sık sık virgülün yerine geçiriliyor.
+  // Düzeltme cümleye bir virgül eklediği için çeldirici asla virgül seçilmedi.
+  // -------------------------------------------------------------------------
+  ...grup('hitap-virgul', 'kolay', [
+    ['Anneciğim; çantamı bulamıyorum.', 'Anneciğim, çantamı bulamıyorum.', 'noktali-virgul', 'nokta'],
+    [
+      'Değerli konuklar: programımıza hoş geldiniz.',
+      'Değerli konuklar, programımıza hoş geldiniz.',
+      'iki-nokta',
+      'nokta',
+    ],
+    ['Beyler; sıraya geçin lütfen!', 'Beyler, sıraya geçin lütfen!', 'noktali-virgul', 'unlem'],
+    [
+      'Kardeşim: bu soruyu bana açıklar mısın?',
+      'Kardeşim, bu soruyu bana açıklar mısın?',
+      'iki-nokta',
+      'soru',
+    ],
+    [
+      'Zeynep; Ahmet’in defterini geri ver.',
+      'Zeynep, Ahmet’in defterini geri ver.',
+      'noktali-virgul',
+      'kesme',
+    ],
+    // Çeldirici kesme: “15.40’ta” — saatten sonraki ek kesmeyle ayrılır.
+    [
+      'Sayın yolcular: trenimiz 15.40’ta kalkacaktır.',
+      'Sayın yolcular, trenimiz 15.40’ta kalkacaktır.',
+      'iki-nokta',
+      'kesme',
+    ],
+    [
+      'Ey yolcu; bu yollar seni nereye götürür?',
+      'Ey yolcu, bu yollar seni nereye götürür?',
+      'noktali-virgul',
+      'soru',
+    ],
+    [
+      'Çocuklar; bugün “Kırmızı Başlıklı Kız” masalını okuyacağız.',
+      'Çocuklar, bugün “Kırmızı Başlıklı Kız” masalını okuyacağız.',
+      'noktali-virgul',
+      'tirnak',
+    ],
+    [
+      'Sevgili günlük: bugün çok yorucu bir gün geçirdim.',
+      'Sevgili günlük, bugün çok yorucu bir gün geçirdim.',
+      'iki-nokta',
+      'nokta',
+    ],
+    [
+      'Arkadaşlar: sınav yerlerimiz (salon numaraları) belli oldu.',
+      'Arkadaşlar, sınav yerlerimiz (salon numaraları) belli oldu.',
+      'iki-nokta',
+      'parantez',
+    ],
+    [
+      'Sevgili öğrenciler; hepinize başarılar dilerim!',
+      'Sevgili öğrenciler, hepinize başarılar dilerim!',
+      'noktali-virgul',
+      'unlem',
+    ],
+    [
+      'Efendim: sizi rahatsız ettiysem özür dilerim.',
+      'Efendim, sizi rahatsız ettiysem özür dilerim.',
+      'iki-nokta',
+      'nokta',
+    ],
+    [
+      'Dostum; İstanbul-Ankara yolu bu saatte çok kalabalık.',
+      'Dostum, İstanbul-Ankara yolu bu saatte çok kalabalık.',
+      'noktali-virgul',
+      'kisa-cizgi',
+    ],
+    ['Ahmet: ne yaptığını bir düşün…', 'Ahmet, ne yaptığını bir düşün…', 'iki-nokta', 'uc-nokta'],
+    [
+      'Aziz milletim: bu topraklar hepimize emanet.',
+      'Aziz milletim, bu topraklar hepimize emanet.',
+      'iki-nokta',
+      'nokta',
+    ],
+    [
+      'Öğretmenim; Elif’in raporunu masanıza bıraktım.',
+      'Öğretmenim, Elif’in raporunu masanıza bıraktım.',
+      'noktali-virgul',
+      'kesme',
+    ],
+    [
+      'Komşum; kapının önündeki kutu senin mi?',
+      'Komşum, kapının önündeki kutu senin mi?',
+      'noktali-virgul',
+      'soru',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Duygu bildiren cümlenin sonuna ünlem
+  // Yanlış işaret hep nokta olduğundan cümlede tek bir nokta bulunabiliyor;
+  // ikinci işaret (virgül, kesme, tırnak…) hem çeldirici hem de cümleyi
+  // “tek işaretli” olmaktan kurtaran unsur.
+  // -------------------------------------------------------------------------
+  ...grup('unlem-duygu', 'kolay', [
+    ['Yaşasın, sınavı kazandım.', 'Yaşasın, sınavı kazandım!', 'nokta', 'virgul'],
+    ['Hey, oradaki çantaya dikkat et.', 'Hey, oradaki çantaya dikkat et!', 'nokta', 'virgul'],
+    ['Vah vah, ne kadar üzücü bir haber.', 'Vah vah, ne kadar üzücü bir haber!', 'nokta', 'virgul'],
+    [
+      'Ne güzel bir manzara, insanın içi açılıyor.',
+      'Ne güzel bir manzara, insanın içi açılıyor!',
+      'nokta',
+      'virgul',
+    ],
+    ['Hey gidi günler, ne çabuk geçtiniz.', 'Hey gidi günler, ne çabuk geçtiniz!', 'nokta', 'virgul'],
+    [
+      'Ne yazık, tren tam gözümüzün önünde kalktı.',
+      'Ne yazık, tren tam gözümüzün önünde kalktı!',
+      'nokta',
+      'virgul',
+    ],
+    ['Oh be, sonunda bu konuyu bitirdim.', 'Oh be, sonunda bu konuyu bitirdim!', 'nokta', 'virgul'],
+    ['Hoş geldiniz, sizi görmek ne güzel.', 'Hoş geldiniz, sizi görmek ne güzel!', 'nokta', 'virgul'],
+    ['Yandım, çay çok sıcakmış.', 'Yandım, çay çok sıcakmış!', 'nokta', 'virgul'],
+    [
+      'Ne kadar sevindim; sonunda başardın.',
+      'Ne kadar sevindim; sonunda başardın!',
+      'nokta',
+      'noktali-virgul',
+    ],
+    ['Şuraya bak, kar yağıyor.', 'Şuraya bak, kar yağıyor!', 'nokta', 'virgul'],
+    [
+      'Of, bu gürültü… artık dayanamıyorum.',
+      'Of, bu gürültü… artık dayanamıyorum!',
+      'nokta',
+      'uc-nokta',
+    ],
+    [
+      'Bravo Zeynep, bütün soruları çözmüşsün.',
+      'Bravo Zeynep, bütün soruları çözmüşsün!',
+      'nokta',
+      'virgul',
+    ],
+    [
+      'Eyvahlar olsun; kitabı serviste unutmuşum.',
+      'Eyvahlar olsun; kitabı serviste unutmuşum!',
+      'nokta',
+      'noktali-virgul',
+    ],
+    [
+      'Ne yaptın sen, Mehmet’in bütün emeği boşa gitti.',
+      'Ne yaptın sen, Mehmet’in bütün emeği boşa gitti!',
+      'nokta',
+      'kesme',
+    ],
+    [
+      'Nihayet “Suç ve Ceza” romanını bitirdim.',
+      'Nihayet “Suç ve Ceza” romanını bitirdim!',
+      'nokta',
+      'tirnak',
+    ],
+    [
+      'Müjde, tatil (tam üç hafta) başlıyor.',
+      'Müjde, tatil (tam üç hafta) başlıyor!',
+      'nokta',
+      'parantez',
+    ],
+  ]),
+  // -------------------------------------------------------------------------
+  // Eş görevli kelimeler arasında virgül
+  // Düzeltme cümleye virgül eklediği için çeldirici hiçbir zaman virgül olamaz;
+  // ikinci işaret hep nokta, ünlem, tırnak gibi cümleye dokunulmayan bir işaret.
+  // -------------------------------------------------------------------------
+  ...grup('sirali-virgul', 'orta', [
+    [
+      'Dolapta gömlek; pantolon ve kazak asılıydı.',
+      'Dolapta gömlek, pantolon ve kazak asılıydı.',
+      'noktali-virgul',
+      'nokta',
+    ],
+    [
+      'Sınıfta tahta: sıra ve dolap yenilendi.',
+      'Sınıfta tahta, sıra ve dolap yenilendi.',
+      'iki-nokta',
+      'nokta',
+    ],
+    [
+      'Çocuk uzun; sarışın ve çok neşeliydi.',
+      'Çocuk uzun, sarışın ve çok neşeliydi.',
+      'noktali-virgul',
+      'nokta',
+    ],
+    // Çeldirici noktalı virgül: bağımsız iki cümleyi ayırıyor, yeri doğru.
+    [
+      'Kahvaltıda zeytin: peynir ve reçel vardı; çay demlenmemişti.',
+      'Kahvaltıda zeytin, peynir ve reçel vardı; çay demlenmemişti.',
+      'iki-nokta',
+      'noktali-virgul',
+    ],
+    [
+      'Bu kitap sade; akıcı ve öğretici bir dille yazılmış.',
+      'Bu kitap sade, akıcı ve öğretici bir dille yazılmış.',
+      'noktali-virgul',
+      'nokta',
+    ],
+    [
+      'Ahmet’in listesinde kalem: silgi ve cetvel yazıyordu.',
+      'Ahmet’in listesinde kalem, silgi ve cetvel yazıyordu.',
+      'iki-nokta',
+      'kesme',
+    ],
+    [
+      'Ne kadar sabırlı; ne kadar çalışkan bir öğrenci!',
+      'Ne kadar sabırlı, ne kadar çalışkan bir öğrenci!',
+      'noktali-virgul',
+      'unlem',
+    ],
+    [
+      'Ankara-Konya yolunda kar; buz ve sis vardı.',
+      'Ankara-Konya yolunda kar, buz ve sis vardı.',
+      'noktali-virgul',
+      'kisa-cizgi',
+    ],
+    [
+      'Bavuluna tişört: şort ve mayo koydu mu?',
+      'Bavuluna tişört, şort ve mayo koydu mu?',
+      'iki-nokta',
+      'soru',
+    ],
+    // Eser adları zaten tırnak içinde; sıralamayı ayıran işaret yine virgül olmalı.
+    [
+      'Rafta “Sefiller”; “Anna Karenina” ve “Beyaz Gemi” yan yanaydı.',
+      'Rafta “Sefiller”, “Anna Karenina” ve “Beyaz Gemi” yan yanaydı.',
+      'noktali-virgul',
+      'tirnak',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Saat ile dakikayı nokta ayırır
+  // Dijital saatlerin “:” alışkanlığı yazıya taşınıyor. Düzeltme cümleye bir
+  // nokta eklediği için bu grupta çeldirici asla nokta olamaz.
+  // -------------------------------------------------------------------------
+  ...grup('saat-nokta', 'orta', [
+    ['Uçağımız 07:10’da havalanacak.', 'Uçağımız 07.10’da havalanacak.', 'iki-nokta', 'kesme'],
+    [
+      'Dersler 13:25’te başlıyor, sakın geç kalma.',
+      'Dersler 13.25’te başlıyor, sakın geç kalma.',
+      'iki-nokta',
+      'virgul',
+    ],
+    ['Kütüphane 18:40’ta kapanıyor mu?', 'Kütüphane 18.40’ta kapanıyor mu?', 'iki-nokta', 'soru'],
+    [
+      'Son otobüs 22:05’te kalkıyor; kaçırırsak yürürüz.',
+      'Son otobüs 22.05’te kalkıyor; kaçırırsak yürürüz.',
+      'iki-nokta',
+      'noktali-virgul',
+    ],
+    [
+      'İzmir-Denizli treni 11:35’te hareket edecek.',
+      'İzmir-Denizli treni 11.35’te hareket edecek.',
+      'iki-nokta',
+      'kisa-cizgi',
+    ],
+    [
+      'Sunum 14:50’de başlıyor (salon B).',
+      'Sunum 14.50’de başlıyor (salon B).',
+      'iki-nokta',
+      'parantez',
+    ],
+    [
+      'Görevli “Kapılar 16:20’de açılacak.” diye duyurdu.',
+      'Görevli “Kapılar 16.20’de açılacak.” diye duyurdu.',
+      'iki-nokta',
+      'tirnak',
+    ],
+    ['Nihayet 23:15’te eve vardık!', 'Nihayet 23.15’te eve vardık!', 'iki-nokta', 'unlem'],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Açıklama ve örnek öncesinde iki nokta
+  // Yanlış işaret ya noktalı virgül ya virgül; ikisi de “burada duraklıyorum”
+  // sezgisiyle konuyor, oysa arkadan gelen kısım açıklama olduğu için iki nokta
+  // gerekiyor. Düzeltme iki nokta eklediğinden çeldirici asla iki nokta değil.
+  // -------------------------------------------------------------------------
+  ...grup('iki-nokta-aciklama', 'orta', [
+    [
+      'Dolapta iki renk vardı; mavi ve yeşil.',
+      'Dolapta iki renk vardı: mavi ve yeşil.',
+      'noktali-virgul',
+      'nokta',
+    ],
+    [
+      'Sana bir şey söyleyeceğim, bu iş sandığın kadar kolay değil.',
+      'Sana bir şey söyleyeceğim: bu iş sandığın kadar kolay değil.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Yapman gerekenler şunlar; erken kalk, plan yap, ara ver.',
+      'Yapman gerekenler şunlar: erken kalk, plan yap, ara ver.',
+      'noktali-virgul',
+      'virgul',
+    ],
+    [
+      'Sonuç ortada; emek veren kazanıyor.',
+      'Sonuç ortada: emek veren kazanıyor.',
+      'noktali-virgul',
+      'nokta',
+    ],
+    // Aktarılan söz tırnak içinde; öncesindeki işaret iki nokta olmalı.
+    ['Annem seslendi, “Sofraya gel!”', 'Annem seslendi: “Sofraya gel!”', 'virgul', 'tirnak'],
+    [
+      'Öğretmenin tek şartı vardı; defterler eksiksiz olacak.',
+      'Öğretmenin tek şartı vardı: defterler eksiksiz olacak.',
+      'noktali-virgul',
+      'nokta',
+    ],
+    [
+      'Elif’in aklında tek bir düşünce vardı; bir an önce eve dönmek.',
+      'Elif’in aklında tek bir düşünce vardı: bir an önce eve dönmek.',
+      'noktali-virgul',
+      'kesme',
+    ],
+    [
+      'Şunu hiç unutma, sabır her kapıyı açar!',
+      'Şunu hiç unutma: sabır her kapıyı açar!',
+      'virgul',
+      'unlem',
+    ],
+    [
+      'Herkesin merak ettiği soru şuydu; tercihler ne zaman başlayacak?',
+      'Herkesin merak ettiği soru şuydu: tercihler ne zaman başlayacak?',
+      'noktali-virgul',
+      'soru',
+    ],
+    [
+      'Sınavda iki oturum var; sabah (TYT) ve öğleden sonra (AYT).',
+      'Sınavda iki oturum var: sabah (TYT) ve öğleden sonra (AYT).',
+      'noktali-virgul',
+      'parantez',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Eser, yazı ve bölüm adları tırnak içinde
+  // Yanlış kullanım yay ayraç: ek bilgi ile eser adı karıştırılıyor. Düzeltme
+  // tırnak eklediği için çeldirici tırnak olamaz.
+  // -------------------------------------------------------------------------
+  ...grup('tirnak-eser-adi', 'orta', [
+    [
+      'Bu yaz (Tutunamayanlar) romanını okumayı planlıyorum.',
+      'Bu yaz “Tutunamayanlar” romanını okumayı planlıyorum.',
+      'parantez',
+      'nokta',
+    ],
+    [
+      'Nâzım Hikmet’in (Memleketimden İnsan Manzaraları) adlı eserini duydun mu?',
+      'Nâzım Hikmet’in “Memleketimden İnsan Manzaraları” adlı eserini duydun mu?',
+      'parantez',
+      'kesme',
+    ],
+    [
+      'Derste (Sinekli Bakkal) romanını inceledik, hepimiz çok beğendik.',
+      'Derste “Sinekli Bakkal” romanını inceledik, hepimiz çok beğendik.',
+      'parantez',
+      'virgul',
+    ],
+    [
+      'Ders kitabının (Ses Bilgisi) ünitesini bitirdik; sıra biçim bilgisinde.',
+      'Ders kitabının “Ses Bilgisi” ünitesini bitirdik; sıra biçim bilgisinde.',
+      'parantez',
+      'noktali-virgul',
+    ],
+    [
+      'Ödevimde (Kaldırımlar) şiirini incelemişim!',
+      'Ödevimde “Kaldırımlar” şiirini incelemişim!',
+      'parantez',
+      'unlem',
+    ],
+    [
+      'Ansiklopedinin (Kaynakça) bölümüne baktın mı?',
+      'Ansiklopedinin “Kaynakça” bölümüne baktın mı?',
+      'parantez',
+      'soru',
+    ],
+    [
+      'Sait Faik’in (Semaver) öyküsünü sınıfta hep birlikte okuduk.',
+      'Sait Faik’in “Semaver” öyküsünü sınıfta hep birlikte okuduk.',
+      'parantez',
+      'kesme',
+    ],
+    [
+      'Gazetenin (Kültür-Sanat) sayfasında bu yazı çıkmış.',
+      'Gazetenin “Kültür-Sanat” sayfasında bu yazı çıkmış.',
+      'parantez',
+      'kisa-cizgi',
+    ],
+  ]),
+  // -------------------------------------------------------------------------
+  // Cümlenin dışında kalan ek bilgi yay ayraç içinde
+  // Yanlış kullanım tırnak: tırnak “aktarılan söz / eser adı” demek, ek bilgi
+  // demek değil. Düzeltme parantez eklediği için çeldirici parantez olamaz.
+  // -------------------------------------------------------------------------
+  ...grup('parantez-ek-bilgi', 'orta', [
+    [
+      'Dün akşam Zeynep “sınıf birincisi” bize uğradı.',
+      'Dün akşam Zeynep (sınıf birincisi) bize uğradı.',
+      'tirnak',
+      'nokta',
+    ],
+    [
+      'Türkiye Radyo ve Televizyon Kurumu “TRT”, yeni diziyi akşam duyurdu.',
+      'Türkiye Radyo ve Televizyon Kurumu (TRT), yeni diziyi akşam duyurdu.',
+      'tirnak',
+      'virgul',
+    ],
+    [
+      'Bu yol “İzmir-Aydın hattı” geçen yıl baştan sona yenilenmiş.',
+      'Bu yol (İzmir-Aydın hattı) geçen yıl baştan sona yenilenmiş.',
+      'tirnak',
+      'kisa-cizgi',
+    ],
+    [
+      'Bu ilacı günde iki kez “sabah ve akşam” içmelisin!',
+      'Bu ilacı günde iki kez (sabah ve akşam) içmelisin!',
+      'tirnak',
+      'unlem',
+    ],
+    [
+      'Sınav ücretini “yüz elli lira” yatırdın mı?',
+      'Sınav ücretini (yüz elli lira) yatırdın mı?',
+      'tirnak',
+      'soru',
+    ],
+    [
+      'Ödevi Ahmet’in ablası “üniversite öğrencisi” yapmış.',
+      'Ödevi Ahmet’in ablası (üniversite öğrencisi) yapmış.',
+      'tirnak',
+      'kesme',
+    ],
+    [
+      'Ödevi iki günde “tam on iki saatte” bitirdim; kendime şaşırdım.',
+      'Ödevi iki günde (tam on iki saatte) bitirdim; kendime şaşırdım.',
+      'tirnak',
+      'noktali-virgul',
+    ],
+    [
+      'Bu sözcük “Arapça kökenli” dilimize çok eskiden girmiş.',
+      'Bu sözcük (Arapça kökenli) dilimize çok eskiden girmiş.',
+      'tirnak',
+      'nokta',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // “ama, fakat, ancak, çünkü, yoksa…” bağlaçlarından önce noktalı virgül
+  // Bu bağlaçlar iki bağımsız cümleyi birbirine bağlar; aralarındaki duraklama
+  // virgülün taşıyabileceğinden büyük. Düzeltme noktalı virgül eklediği için
+  // çeldirici asla noktalı virgül seçilmedi.
+  // -------------------------------------------------------------------------
+  ...grup('noktali-virgul-cumle', 'orta', [
+    [
+      'Çok çalıştı, ancak istediği sonucu alamadı.',
+      'Çok çalıştı; ancak istediği sonucu alamadı.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Kar yağıyordu, fakat kimse üşümüyordu.',
+      'Kar yağıyordu; fakat kimse üşümüyordu.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Bugün dışarı çıkmadım, çünkü hava çok soğuktu.',
+      'Bugün dışarı çıkmadım; çünkü hava çok soğuktu.',
+      'virgul',
+      'nokta',
+    ],
+    ['Elif’i aradım, ama telefonunu açmadı.', 'Elif’i aradım; ama telefonunu açmadı.', 'virgul', 'kesme'],
+    [
+      'Acele etmelisin, yoksa ilk otobüsü kaçıracaksın.',
+      'Acele etmelisin; yoksa ilk otobüsü kaçıracaksın.',
+      'virgul',
+      'nokta',
+    ],
+    ['Sen de haklısın, ama bu işi böyle bitiremeyiz!', 'Sen de haklısın; ama bu işi böyle bitiremeyiz!', 'virgul', 'unlem'],
+    [
+      'Konular bitti, öyleyse deneme çözmeye başlayalım mı?',
+      'Konular bitti; öyleyse deneme çözmeye başlayalım mı?',
+      'virgul',
+      'soru',
+    ],
+    [
+      'Yağmur bardaktan boşanıyordu, lakin maç yine de oynandı.',
+      'Yağmur bardaktan boşanıyordu; lakin maç yine de oynandı.',
+      'virgul',
+      'nokta',
+    ],
+    [
+      'Ali “Ben gelmiyorum.” dedi, bundan dolayı planı değiştirdik.',
+      'Ali “Ben gelmiyorum.” dedi; bundan dolayı planı değiştirdik.',
+      'virgul',
+      'tirnak',
+    ],
+    [
+      'Tercih listesini hazırladık, ancak son karar (aile toplantısında) verilecek.',
+      'Tercih listesini hazırladık; ancak son karar (aile toplantısında) verilecek.',
+      'virgul',
+      'parantez',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Cins isme gelen çekim eki kesmeyle ayrılmaz
+  // Kesme özel ada mahsus; “müdür, kitap, okul” cins isim olduğu için ek doğrudan
+  // yazılır. Tabela ve duyurularda çok görülen hata olduğundan ayrı grup edildi.
+  // -------------------------------------------------------------------------
+  ...grup('kesme-cins-isim', 'orta', [
+    [
+      'Müdür’e durumu anlattım, o da hemen yardımcı oldu.',
+      'Müdüre durumu anlattım, o da hemen yardımcı oldu.',
+      'kesme',
+      'virgul',
+    ],
+    [
+      'Öğretmen’in masasında bir yığın kâğıt duruyordu.',
+      'Öğretmenin masasında bir yığın kâğıt duruyordu.',
+      'kesme',
+      'nokta',
+    ],
+    [
+      'Kitap’ın son sayfasını okuyunca çok şaşırdım!',
+      'Kitabın son sayfasını okuyunca çok şaşırdım!',
+      'kesme',
+      'unlem',
+    ],
+    [
+      'Bu okul’da tam üç yıl okudum; hiç unutmam.',
+      'Bu okulda tam üç yıl okudum; hiç unutmam.',
+      'kesme',
+      'noktali-virgul',
+    ],
+    [
+      'Doktor’a gitmeden önce randevu aldın mı?',
+      'Doktora gitmeden önce randevu aldın mı?',
+      'kesme',
+      'soru',
+    ],
+    [
+      'Bilgisayar’ı tamire götürdüm (garantisi çoktan bitmiş).',
+      'Bilgisayarı tamire götürdüm (garantisi çoktan bitmiş).',
+      'kesme',
+      'parantez',
+    ],
+    ['Ev’in kapısı sabaha kadar aralık kaldı…', 'Evin kapısı sabaha kadar aralık kaldı…', 'kesme', 'uc-nokta'],
+    ['Öğretmen “Defter’i çıkarın.” dedi.', 'Öğretmen “Defteri çıkarın.” dedi.', 'kesme', 'tirnak'],
+    [
+      'Otobüs’ün İzmir-Aydın seferi iptal edilmiş.',
+      'Otobüsün İzmir-Aydın seferi iptal edilmiş.',
+      'kesme',
+      'kisa-cizgi',
+    ],
+    [
+      'Rapor’un sonuç bölümünü henüz yazmadım.',
+      'Raporun sonuç bölümünü henüz yazmadım.',
+      'kesme',
+      'nokta',
+    ],
+  ]),
+
+  // -------------------------------------------------------------------------
+  // Soru anlamı taşımayan cümlede soru işareti
+  // “ne, nasıl, kim, kaç” sözleri cümlede geçtiği hâlde cümle bir şey sormuyor,
+  // bildiriyor. Düzeltme sona nokta koyduğu için çeldirici asla nokta olamaz.
+  // -------------------------------------------------------------------------
+  ...grup('soru-anlami', 'zor', [
+    [
+      'Bu soruyu kimin çözdüğünü Zeynep’e söylemedim?',
+      'Bu soruyu kimin çözdüğünü Zeynep’e söylemedim.',
+      'soru',
+      'kesme',
+    ],
+    [
+      'Nereden geldiğini, nereye gittiğini kimse sormadı?',
+      'Nereden geldiğini, nereye gittiğini kimse sormadı.',
+      'soru',
+      'virgul',
+    ],
+    [
+      'Hangi üniversiteyi kazandığını bize hiç söylemedi; biz de sormadık?',
+      'Hangi üniversiteyi kazandığını bize hiç söylemedi; biz de sormadık.',
+      'soru',
+      'noktali-virgul',
+    ],
+    [
+      'Öğretmen bu konunun kaç saat süreceğini “Bilmiyorum.” diye geçiştirdi?',
+      'Öğretmen bu konunun kaç saat süreceğini “Bilmiyorum.” diye geçiştirdi.',
+      'soru',
+      'tirnak',
+    ],
+    [
+      'Kütüphanenin (yeni binanın arkasında) kaçta açıldığını bilmiyorum?',
+      'Kütüphanenin (yeni binanın arkasında) kaçta açıldığını bilmiyorum.',
+      'soru',
+      'parantez',
+    ],
+    [
+      'Kim gelecek, kim gelmeyecek… listeyi hâlâ göremedim?',
+      'Kim gelecek, kim gelmeyecek… listeyi hâlâ göremedim.',
+      'soru',
+      'uc-nokta',
+    ],
+    [
+      'Trabzon-Rize yolunun ne zaman biteceğini duymadım?',
+      'Trabzon-Rize yolunun ne zaman biteceğini duymadım.',
+      'soru',
+      'kisa-cizgi',
+    ],
+    [
+      'Ahmet’in hangi bölümü tercih ettiğini çok merak ediyorum?',
+      'Ahmet’in hangi bölümü tercih ettiğini çok merak ediyorum.',
+      'soru',
+      'kesme',
+    ],
+    // Çeldirici iki nokta: arkadan açıklama geliyor, yeri doğru.
+    [
+      'Şunu iyi bilirim: çalışan insan bir gün mutlaka kazanır?',
+      'Şunu iyi bilirim: çalışan insan bir gün mutlaka kazanır.',
+      'soru',
+      'iki-nokta',
+    ],
+    [
+      'Neyi yanlış yaptığımı, nerede hata ettiğimi uzun uzun düşündüm?',
+      'Neyi yanlış yaptığımı, nerede hata ettiğimi uzun uzun düşündüm.',
+      'soru',
+      'virgul',
+    ],
+    [
+      'Bu kitabı kimin unuttuğunu bulamadık; sahibi de hiç aramadı?',
+      'Bu kitabı kimin unuttuğunu bulamadık; sahibi de hiç aramadı.',
+      'soru',
+      'noktali-virgul',
+    ],
+    [
+      'Elif’in neden erken çıktığını sonradan öğrendim?',
+      'Elif’in neden erken çıktığını sonradan öğrendim.',
+      'soru',
       'kesme',
     ],
   ]),

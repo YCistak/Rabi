@@ -1,15 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, ArrowRight, Check, Moon, Smartphone, Sun } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import type { Ayarlar, OkulYili, PuanTuru } from '@/lib/types'
 import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
 import { yeniId } from '@/lib/utils'
-import { saatDegeri, saatYaz, saatiCoz } from '@/lib/hatirlatma'
-import { useTema, type TemaTercihi } from '@/components/theme-provider'
 import { Alan, Buton, Cip, Etiket, Kart } from '@/components/ui'
+import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { Rabi } from '@/components/maskot/rabi'
 import { izinIste } from '@/lib/bildirim'
+import { HEDEF_ADIMI, HEDEF_EN_AZ, HEDEF_EN_COK } from '@/lib/depo'
 
 /** Kurulumun ürettiği ayarlar — geri kalanı varsayılanlardan gelir. */
 export type KurulumSecimleri = Pick<
@@ -42,7 +42,7 @@ export type KurulumSonucu = {
  * kendinden önceki sınıfları bitmiştir, 9. sınıftakinin ise hiçbiri — ona bu
  * adımı göstermek boş bir form göstermek olurdu.
  */
-type AdimId = 'sinif' | 'notlar' | 'tema' | 'alan' | 'hedef' | 'hatirlatma'
+type AdimId = 'sinif' | 'notlar' | 'alan' | 'hedef' | 'hatirlatma'
 
 const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
   sinif: {
@@ -53,17 +53,13 @@ const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
     baslik: 'Okul notların',
     aciklama: 'OBP’n sıralama tahminine giriyor. İstersen bu adımı atla.',
   },
-  tema: {
-    baslik: 'Nasıl görünelim?',
-    aciklama: 'Telefonunla aynı mı, hep açık mı, hep koyu mu? İstediğin an değiştirebilirsin.',
-  },
   alan: {
     baslik: 'Hangi alandasın?',
     aciklama: 'Sıralama tahmini ve deneme şablonları buna göre ayarlanır.',
   },
   hedef: {
-    baslik: 'Günlük hedefin',
-    aciklama: 'Her günü buna göre takip edeceğim.',
+    baslik: 'Bugün kaç soru çözmek istiyorsun?',
+    aciklama: 'Günlük hedefini belirle.',
   },
   hatirlatma: {
     baslik: 'Hatırlatma',
@@ -78,32 +74,26 @@ const PUAN_TURLERI: { id: PuanTuru; ad: string; aciklama: string }[] = [
   { id: 'dil', ad: 'Dil', aciklama: 'Yabancı Dil Testi (YDT)' },
 ]
 
-const HAZIR_HEDEFLER = [100, 200, 300, 400, 500]
 
-/**
- * Hatırlatma için hızlı seçim saatleri — Ayarlar ekranındakilerle **aynı**.
- * Burada beş saatlik kısa bir liste vardı; kurulumda 08.00'i seçmek isteyen
- * kullanıcı önce kurulumu bitirip sonra Ayarlar'a girmek zorunda kalıyordu.
- * Yanındaki saat kutusu, listede olmayan her saati ve dakikayı kabul ediyor.
- */
-const HATIRLATMA_SAATLERI = [8, 12, 16, 18, 19, 20, 21, 22, 23]
-
-export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }) {
+export function Kurulum({
+  onBitir,
+  maskotGizli = false,
+}: {
+  onBitir: (sonuc: KurulumSonucu) => void
+  /** Açılış ekranındaki tavşan buranın üstüne konarken maskot gizleniyor. */
+  maskotGizli?: boolean
+}) {
   const [adim, setAdim] = useState(0)
   const [sinif, setSinif] = useState(12)
   /** Mezunun yıl sonu notları: sınıf → yazılan metin. Boşlar hesaba girmiyor. */
   const [notlar, setNotlar] = useState<Record<number, string>>({})
   const [obpMetni, setObpMetni] = useState('')
   const [puanTuru, setPuanTuru] = useState<PuanTuru>('ea')
+  // Varsayılan 200: çubuğun ortasına yakın, kurulumu hiç ellemeyen için makul.
   const [hedef, setHedef] = useState(200)
-  const [hedefMetni, setHedefMetni] = useState('200')
   const [saat, setSaat] = useState(20)
   const [dakika, setDakika] = useState(0)
   const [bildirim, setBildirim] = useState(true)
-
-  // Tema seçimi anında uygulanıyor (kaydetmeye gerek yok): kullanıcı iki
-  // seçeneği de dokunarak görebilsin, sonra devam etsin.
-  const { tercih, temaDegistir } = useTema()
 
   const mezun = mezunMu(sinif)
   /**
@@ -119,7 +109,6 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
   const adimlar: AdimId[] = [
     'sinif',
     ...(notluSiniflar.length > 0 ? (['notlar'] as AdimId[]) : []),
-    'tema',
     'alan',
     'hedef',
     'hatirlatma',
@@ -166,7 +155,12 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
       <div className="mb-6 flex flex-col items-center text-center">
-        <Rabi durum={siradaki === sonAdim ? 'mutlu' : 'normal'} boyut={110} />
+        <Rabi
+          durum={siradaki === sonAdim ? 'mutlu' : 'normal'}
+          boyut={110}
+          gizli={maskotGizli}
+          yuvaMi
+        />
         <h1 className="mt-3 font-display text-2xl font-semibold tracking-tight">
           {ADIM_BILGISI[suanki].baslik}
         </h1>
@@ -251,35 +245,6 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
           </div>
         )}
 
-        {suanki === 'tema' && (
-          <div className="space-y-2">
-            {TEMALAR.map((secenek) => (
-              <button
-                key={secenek.id}
-                type="button"
-                onClick={() => temaDegistir(secenek.id)}
-                aria-pressed={tercih === secenek.id}
-                className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left transition ${
-                  tercih === secenek.id
-                    ? 'border-primary bg-primary-soft'
-                    : 'border-border active:bg-muted'
-                }`}
-              >
-                <secenek.Simge size={20} className="shrink-0 text-primary" aria-hidden />
-                <span className="flex-1">
-                  <span className="block font-medium">{secenek.ad}</span>
-                  <span className="block text-xs text-muted-foreground">{secenek.aciklama}</span>
-                </span>
-                {tercih === secenek.id && <Check size={18} className="shrink-0 text-primary" />}
-              </button>
-            ))}
-            <p className="pt-1 text-xs text-muted-foreground">
-              Dokunmazsan telefonunun temasını izlemeye devam ederim: gece moduna geçince Rabi
-              de kararır. Dokunduğun anda değişiyor; sonradan Ayarlar'dan da değiştirebilirsin.
-            </p>
-          </div>
-        )}
-
         {suanki === 'alan' && (
           <div className="space-y-2">
             {PUAN_TURLERI.map((tur) => (
@@ -305,41 +270,21 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
         )}
 
         {suanki === 'hedef' && (
-          <div>
-            <Etiket>Günde kaç soru çözmeyi hedefliyorsun?</Etiket>
-            <div className="flex flex-wrap gap-2">
-              {HAZIR_HEDEFLER.map((h) => (
-                <Cip
-                  key={h}
-                  secili={hedef === h}
-                  onClick={() => {
-                    setHedef(h)
-                    setHedefMetni(String(h))
-                  }}
-                >
-                  {h}
-                </Cip>
-              ))}
-            </div>
-
-            <Etiket className="mt-4">Ya da kendin yaz</Etiket>
-            <Alan
-              type="number"
-              inputMode="numeric"
-              value={hedefMetni}
-              onChange={(e) => {
-                const temiz = e.target.value.replace(/[^0-9]/g, '').slice(0, 4)
-                setHedefMetni(temiz)
-                const sayi = Number(temiz)
-                if (sayi > 0) setHedef(sayi)
-              }}
-              placeholder="örn. 250"
-            />
-            <p className="mt-3 text-xs text-muted-foreground">
-              Tutturamayacağın bir sayı seçme — küçük başlayıp yükseltmek, büyük başlayıp
-              her gün başarısız olmaktan iyi. Sonradan Ayarlar'dan değiştirebilirsin.
-            </p>
-          </div>
+          /*
+            Kartta tekerlekten başka hiçbir şey yok: adımın başlığı zaten soruyu
+            soruyor, altında da ne işe yaradığı yazıyor. Kartın içinde ayrıca
+            bir soru cümlesi, basamak cetveli ve üç satırlık öğüt varken asıl iş
+            sayfanın gürültüsü içinde kayboluyordu.
+          */
+          <SayiTekerlegi
+            deger={hedef}
+            onDegis={setHedef}
+            enAz={HEDEF_EN_AZ}
+            enCok={HEDEF_EN_COK}
+            adim={HEDEF_ADIMI}
+            birim="soru"
+            etiket="Günlük soru hedefi"
+          />
         )}
 
         {suanki === 'hatirlatma' && (
@@ -364,50 +309,24 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
             {bildirim && (
               <div className="mt-4">
                 <Etiket>Saat kaçta hatırlatayım?</Etiket>
-                <div className="flex flex-wrap gap-2">
-                  {HATIRLATMA_SAATLERI.map((h) => (
-                    <Cip
-                      key={h}
-                      secili={saat === h && dakika === 0}
-                      onClick={() => {
-                        setSaat(h)
-                        setDakika(0)
-                      }}
-                    >
-                      {saatYaz(h, 0)}
-                    </Cip>
-                  ))}
-                </div>
+                {/* Sistemin `<input type="time">` seçicisi yerine kendi
+                    tekerleğimiz: telefon İngilizceyse orası AM/PM gösteriyor,
+                    uygulamanın geri kalanı 24 saatlik "20.00" biçiminde. */}
+                <SaatSecici
+                  saat={saat}
+                  dakika={dakika}
+                  onDegis={({ saat: s, dakika: d }) => {
+                    setSaat(s)
+                    setDakika(d)
+                  }}
+                  className="mt-1"
+                />
 
-                {/* Çipler tam saatler; "21.30" gibi bir saat ancak buradan
-                    girilebiliyor. Telefonun kendi saat seçicisi açıldığı için
-                    elle rakam yazmak gerekmiyor. */}
-                <div className="mt-3 flex items-center gap-2">
-                  <Etiket className="mb-0 shrink-0">Başka saat</Etiket>
-                  <Alan
-                    type="time"
-                    value={saatDegeri(saat, dakika)}
-                    onChange={(e) => {
-                      const cozulen = saatiCoz(e.target.value)
-                      if (!cozulen) return
-                      setSaat(cozulen.saat)
-                      setDakika(cozulen.dakika)
-                    }}
-                    aria-label="Hatırlatma saati"
-                    className="rakam h-10 w-32"
-                  />
-                </div>
-
-                <p className="mt-2 text-xs text-muted-foreground">
-                  Şu an seçili:{' '}
-                  <strong className="rakam text-foreground">{saatYaz(saat, dakika)}</strong>
-                </p>
+                {/* "Şu an seçili" satırı yok: seçilen saat tekerleğin
+                    ortasında, vurgulu renkte zaten duruyor. */}
               </div>
             )}
 
-            <p className="mt-4 text-xs text-muted-foreground">
-              Günde en fazla bir bildirim gönderiyorum. O gün soru girdiysen hiç göndermem.
-            </p>
           </div>
         )}
       </Kart>
@@ -453,16 +372,6 @@ export function Kurulum({ onBitir }: { onBitir: (sonuc: KurulumSonucu) => void }
   )
 }
 
-const TEMALAR: { id: TemaTercihi; ad: string; aciklama: string; Simge: typeof Sun }[] = [
-  {
-    id: 'sistem',
-    ad: 'Cihazımla aynı',
-    aciklama: 'Telefonun gece moduna göre kendiliğinden değişir',
-    Simge: Smartphone,
-  },
-  { id: 'acik', ad: 'Açık tema', aciklama: 'Gündüz ve aydınlık odalarda okunaklı', Simge: Sun },
-  { id: 'koyu', ad: 'Koyu tema', aciklama: 'Gece çalışırken gözü yormaz', Simge: Moon },
-]
 
 /**
  * Girilen yıl notlarını kayda çevirir; boş ve geçersiz olanlar atlanır.

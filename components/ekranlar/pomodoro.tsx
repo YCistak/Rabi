@@ -28,7 +28,6 @@ import { OdakKurulum } from '@/components/ekranlar/odak-kurulum'
 import { ODAK_CEZASI } from '@/lib/havuc'
 import { cn, yeniId } from '@/lib/utils'
 import { BaslikSatiri, Buton, Cip, Kart, Not } from '@/components/ui'
-import { Rabi } from '@/components/maskot/rabi'
 
 /** Ders çipleri baştan bu kadar gösteriliyor; gerisi "+N ders" ile açılıyor. */
 const KISA_DERS_SAYISI = 8
@@ -271,12 +270,6 @@ export function PomodoroEkrani({
       <Kart className="mb-4 flex flex-col items-center py-6">
         <Sayac kalan={kalan} oran={oran} mola={molaMi} />
 
-        <Rabi
-          durum={calisiyor ? (molaMi ? 'mutlu' : 'calisiyor') : 'uykulu'}
-          boyut={72}
-          className="mt-4"
-        />
-
         <div className="mt-4 flex items-center gap-2">
           <Buton bicim="ikincil" boy="simge" onClick={sifirla} aria-label="Sıfırla">
             <RotateCcw size={18} aria-hidden />
@@ -394,8 +387,7 @@ export function PomodoroEkrani({
 
       <Not className="mt-4">
         Sayaç bitiş saatine göre çalışıyor — telefonu kilitlesen de doğru zamanda biter ve
-        bildirim gelir. Bildirim gelmiyorsa telefonun pil ayarlarından Rabi'yi kısıtlamadan
-        çıkarman gerekebilir.
+        bildirim gelir.
       </Not>
     </div>
   )
@@ -469,13 +461,15 @@ function SureAyarlari({
 
   return (
     <Kart>
-      <p className="mb-3 font-medium">Süreler</p>
+      <p className="mb-3 font-display text-base font-extrabold tracking-tight">Süreler</p>
       <div className={cn('space-y-3', kilitli && 'pointer-events-none opacity-50')}>
         {alanlar.map(({ anahtar, etiket, secenekler, sinir }) => (
           <div key={anahtar}>
-            <p className="mb-1.5 text-xs text-muted-foreground">
+            {/* Etiket küçük ve büyük harf: dört grup alt alta dizildiğinde
+                normal yazıyla çipler ile etiketler aynı ağırlıkta okunuyordu. */}
+            <p className="mb-1.5 text-[11px] font-extrabold uppercase tracking-[0.08em] text-muted-foreground">
               {etiket}
-              {anahtar === 'turSayisi' ? ' (tur)' : ' (dakika)'}
+              {anahtar === 'turSayisi' ? ' (tur)' : ' (dk)'}
             </p>
             <div className="flex flex-wrap items-center gap-2">
               {secenekler.map((deger) => (

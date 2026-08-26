@@ -441,7 +441,7 @@ export function OyunKabugu({
               {sayac.boss && (
                 <span
                   key={sayac.sira}
-                  className="boss-rozet absolute -top-3 left-[66px] rounded-full bg-danger px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wide text-white"
+                  className="boss-rozet absolute -top-3 left-[66px] rounded-full bg-danger px-2.5 py-0.5 text-[11px] font-extrabold uppercase tracking-wide text-white"
                 >
                   Boss · bir üst seviye
                 </span>

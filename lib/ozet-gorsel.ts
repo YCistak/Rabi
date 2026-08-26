@@ -20,8 +20,8 @@ import { netYaz } from './hesap'
 const GENISLIK = 1080
 const YUKSEKLIK = 1920
 
-const ZEMIN_UST = '#4A8FE7'
-const ZEMIN_ALT = '#1F4F92'
+const ZEMIN_UST = '#C05B2B'
+const ZEMIN_ALT = '#7A3316'
 const BEYAZ = '#FFFFFF'
 const SOLUK = 'rgba(255,255,255,0.72)'
 const COK_SOLUK = 'rgba(255,255,255,0.16)'

@@ -129,6 +129,102 @@ export const ANTLASMA_HAVUZU: AntlasmaMaddesi[] = [
     ],
   ]),
 
+  // Klasik dönemin ikinci bölümü: Fatih ve Kanuni'nin Batı antlaşmaları ile
+  // duraklamanın Doğu barışları. Aynı zorlukta çünkü öğrenci bunları
+  // birbirinden ancak maddeye bakarak ayırabiliyor — tarih ipucu vermiyor.
+  ...donem('klasik', 'zor', [
+    [
+      'Venedik’e Osmanlı sularında serbest ticaret ve İstanbul’da balyoz adıyla elçi bulundurma hakkı verildi.',
+      'İstanbul Antlaşması (1479)',
+    ],
+    [
+      'Venedik, aldığı ticaret ayrıcalıklarına karşılık her yıl 10.000 duka altın ödemeyi kabul etti.',
+      'İstanbul Antlaşması (1479)',
+    ],
+    [
+      'Kroya ve İşkodra Osmanlı’da kaldı; on altı yıl süren Osmanlı–Venedik savaşı sona erdi.',
+      'İstanbul Antlaşması (1479)',
+    ],
+    // Zitvatorok'ta arşidük **padişaha**, burada **sadrazama** denk sayılıyor;
+    // ÖSYM'nin en sevdiği ayrımlardan biri, ikisi de havuzda dursun.
+    [
+      'Avusturya arşidükü protokol bakımından Osmanlı sadrazamına denk sayıldı.',
+      'İstanbul Antlaşması (1533)',
+    ],
+    [
+      'Macaristan’ın kralı olarak Osmanlı’nın desteklediği Zapolya tanındı.',
+      'İstanbul Antlaşması (1533)',
+    ],
+    [
+      'Osmanlı Devleti ile İran arasında imzalanan ilk resmî antlaşmadır.',
+      'Amasya Antlaşması (1555)',
+    ],
+    [
+      'Kanuni’nin İran’a düzenlediği üç seferin ardından imzalandı.',
+      'Amasya Antlaşması (1555)',
+    ],
+    [
+      'Tebriz Osmanlı’ya bırakıldı; on iki yıl süren Osmanlı–İran savaşları sona erdi.',
+      'Ferhat Paşa Antlaşması (1590)',
+    ],
+    [
+      'Eğri, Estergon ve Kanije kaleleri Osmanlı’da kaldı; antlaşma yirmi yıl geçerli olacaktı.',
+      'Zitvatorok Antlaşması (1606)',
+    ],
+    [
+      'On üç yıl süren Osmanlı–Avusturya savaşları sona erdi.',
+      'Zitvatorok Antlaşması (1606)',
+    ],
+    [
+      'Osmanlı’nın Orta Avrupa’daki ilerleyişinin durduğunun ilk işareti sayıldı.',
+      'Zitvatorok Antlaşması (1606)',
+    ],
+    [
+      'Osmanlı, 1590’da İran’dan aldığı toprakların tamamını geri verdi.',
+      'Nasuh Paşa Antlaşması (1612)',
+    ],
+    [
+      'Nasuh Paşa Antlaşması’yla çizilen sınır aynen korundu.',
+      'Serav Antlaşması (1618)',
+    ],
+    [
+      'II. Osman’ın Lehistan seferi sonunda imzalandı; Lehistan yıllık vergi ödemeyi sürdürecekti.',
+      'Hotin Antlaşması (1621)',
+    ],
+    [
+      'Osmanlı ile Lehistan arasındaki savaş, sınırlarda değişiklik olmadan sona erdi.',
+      'Hotin Antlaşması (1621)',
+    ],
+    [
+      'IV. Murat’ın Bağdat Seferi’nin ardından imzalandı.',
+      'Kasr-ı Şirin Antlaşması (1639)',
+    ],
+    [
+      'İki taraf da sınır boylarındaki aşiretleri kışkırtmayacak, birbirinin toprağına saldırmayacaktı.',
+      'Kasr-ı Şirin Antlaşması (1639)',
+    ],
+    [
+      'Osmanlı ordusu Saint Gotthard’da yenilmesine rağmen antlaşma Osmanlı lehine imzalandı.',
+      'Vasvar Antlaşması (1664)',
+    ],
+    [
+      'Lehistan, Ukrayna’yı Osmanlı’nın koruyuculuğundaki Kazaklara bırakmayı kabul etti.',
+      'Bucaş Antlaşması (1672)',
+    ],
+    [
+      'Lehistan’ın ödeyeceği yıllık 22.000 altın vergi, Lehistan meclisinin tepkisiyle uygulanamadı.',
+      'Bucaş Antlaşması (1672)',
+    ],
+    [
+      'Kamaniçe Kalesi’nin alınması Lehistan’ı barışa zorladı.',
+      'Bucaş Antlaşması (1672)',
+    ],
+    [
+      'Bucaş’ta konulan yıllık vergi maddesi kaldırıldı; Podolya Osmanlı’da kalmayı sürdürdü.',
+      'Zoravno Antlaşması (1676)',
+    ],
+  ]),
+
   ...donem('gerileme', 'zor', [
     [
       'Mora ve Dalmaçya Venedik’e, Podolya Lehistan’a, Macaristan ve Erdel Avusturya’ya bırakıldı.',
@@ -174,6 +270,77 @@ export const ANTLASMA_HAVUZU: AntlasmaMaddesi[] = [
       'Kırım’ın Rusya’ya ait olduğu kesin olarak kabul edildi; Dinyester Nehri sınır oldu.',
       'Yaş Antlaşması (1792)',
     ],
+  ]),
+
+  // Gerileme dönemi ikinci bölüm. Bu dönemin antlaşmaları çift çift öğreniliyor
+  // (kaybedilen yer / geri alınan yer), bu yüzden maddeler hangi tarafın
+  // kazandığını da söylüyor.
+  ...donem('gerileme', 'zor', [
+    [
+      'İngiltere ve Hollanda’nın arabuluculuğuyla, yirmi beş yıl süreli olarak imzalandı.',
+      'Karlofça Antlaşması (1699)',
+    ],
+    [
+      'Temeşvar ve Banat yöresi Osmanlı’da kaldı.',
+      'Karlofça Antlaşması (1699)',
+    ],
+    [
+      'Rus hacıların Kudüs’ü serbestçe ziyaret etmesine izin verildi.',
+      'İstanbul Antlaşması (1700)',
+    ],
+    [
+      'Rusya’nın Kırım Hanlığı’na ödediği yıllık vergi kaldırıldı.',
+      'İstanbul Antlaşması (1700)',
+    ],
+    ['Rusya, Lehistan’ın iç işlerine karışmayacaktı.', 'Prut Antlaşması (1711)'],
+    [
+      'İsveç kralı XII. Şarl’ın ülkesine dönmesine engel olunmayacaktı.',
+      'Prut Antlaşması (1711)',
+    ],
+    [
+      'Dalmaçya kıyıları Venedik’e bırakıldı; antlaşmayı izleyen yıllara Lale Devri adı verildi.',
+      'Pasarofça Antlaşması (1718)',
+    ],
+    [
+      'Osmanlı Devleti Batı’da toprak kazanma siyasetinden vazgeçti, savunmaya çekildi.',
+      'Pasarofça Antlaşması (1718)',
+    ],
+    [
+      'Osmanlı Devleti’nin XVIII. yüzyılda kazanç sağladığı son antlaşmadır.',
+      'Belgrad Antlaşması (1739)',
+    ],
+    ['Fransa’nın arabuluculuğuyla imzalandı.', 'Belgrad Antlaşması (1739)'],
+    // Kapitülasyon maddesi Belgrad'ın kendisinde değil, arabuluculuğun ödülü
+    // olarak bir yıl sonra verildi; ayrı kayıt olmasının sebebi bu.
+    [
+      'Her padişah değişiminde yenilenen ticari ayrıcalıklar sürekli hâle getirildi.',
+      'Fransa Kapitülasyonları (1740)',
+    ],
+    [
+      'Kasr-ı Şirin sınırı esas alındı; Osmanlı–İran savaşları kesin olarak sona erdi.',
+      'Kerden Antlaşması (1746)',
+    ],
+    [
+      'Rusya, diğer devletlere tanınan kapitülasyonlardan aynen yararlanacaktı.',
+      'Küçük Kaynarca Antlaşması (1774)',
+    ],
+    [
+      'Rus ticaret gemileri Karadeniz ve Boğazlardan serbestçe geçebilecekti.',
+      'Küçük Kaynarca Antlaşması (1774)',
+    ],
+    [
+      'Osmanlı Devleti savaş tazminatı ödeyecekti; Kırım’ın elden çıkışının ilk adımı atıldı.',
+      'Küçük Kaynarca Antlaşması (1774)',
+    ],
+    [
+      'Kırım hanlarının halife sıfatıyla padişah tarafından onaylanması Rusya’ca kabul edildi.',
+      'Aynalıkavak Tenkihnamesi (1779)',
+    ],
+    [
+      'Avusturya, Rusya’nın yanında girdiği savaştan tek başına çekilerek barış imzaladı.',
+      'Ziştovi Antlaşması (1791)',
+    ],
+    ['Özi Kalesi ve çevresi Rusya’ya bırakıldı.', 'Yaş Antlaşması (1792)'],
   ]),
 
   // Orta: Dağılma dönemi ve Cumhuriyet dış politikası.
