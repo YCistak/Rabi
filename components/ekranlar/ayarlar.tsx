@@ -34,6 +34,8 @@ import { UygulamaSecici } from '@/components/odak/uygulama-secici'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { SINIF_SECENEKLERI, egitimYili, katsayiYaz, mezunMu, sinifAdi } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
+import type { JokerStogu } from '@/lib/magaza/jokerler'
+import type { NotKagidi } from '@/lib/yapilacaklar'
 import {
   HEDEF_ADIMI,
   HEDEF_EN_AZ,
@@ -88,10 +90,9 @@ type AyarId = 'hedef' | 'alan' | 'sinif' | 'deneme-turu' | 'hatirlatma-saati' | 
 
 /** Mini oyun müziği seçenekleri; hangisinin iyi olduğu zevk meselesi. */
 const OYUN_MUZIK_ADI: Record<OyunMuzikTuru, string> = {
-  arcade: 'Arcade',
+  sakin: 'Sakin',
   lofi: 'Lo-fi',
 }
-
 
 /** Bayt sayısını okunur hâle getirir: 5242880 → "5,0 MB". */
 function boyutYaz(bayt: number): string {
@@ -135,8 +136,12 @@ export function AyarlarEkrani({
     /** Eski yedeklerde yok; `Yedek` tipinde de isteğe bağlı. */
     oyunBankasi?: BankaKaydi[]
     bankaDusen?: number
-    /** Havuç bakiyesi — yedeğe giriyor. */
+    /** Havuç bakiyesi ve ödülü verilmiş seviye — ikisi birlikte yedeğe giriyor. */
     havuc?: number
+    seviye?: number
+    jokerler?: JokerStogu
+    /** Yapılacaklar tahtası — kâğıdın konumu da veri. */
+    notlar?: NotKagidi[]
     pomodoroGecmis: PomodoroSeans[]
     /** Kilitli uygulama listesi burada; yedekten dönen kullanıcı yeniden seçmesin. */
     pomodoroAyar: PomodoroAyar
@@ -287,7 +292,7 @@ export function AyarlarEkrani({
     <div>
       {/* Ayarlar artık alt menüde kendi sekmesi; diğer sekmelerle aynı başlık deseni. */}
       <header className="px-0.5 pt-1">
-        <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
+        <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
         <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Ayarlar ⚙️</h1>
         <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
           Rabi’yi kendine göre kur.
@@ -1060,7 +1065,7 @@ function Satir({
 
       {/* Sağdaki değer seçili olanı söylüyor: çiplere bakmadan okunuyor. */}
       {deger !== undefined && (
-        <span className="rakam shrink-0 text-[13px] font-extrabold text-muted-foreground">
+        <span className="rakam shrink-0 text-[13px] font-extrabold text-primary">
           {deger}
         </span>
       )}
@@ -1086,6 +1091,24 @@ function Satir({
     >
       {icerik}
     </button>
+  )
+}
+
+/**
+ * Açılır satırların sağındaki ok. Tasarımda çizilmemiş ama bir yeri olmalı:
+ * dokununca açılan bir satırın dokunulabildiği başka türlü anlaşılmıyor.
+ */
+function AcOk({ acik }: { acik: boolean }) {
+  return (
+    <ChevronDown
+      size={18}
+      strokeWidth={2.6}
+      aria-hidden
+      className={cn(
+        'shrink-0 text-muted-foreground/50 transition-transform',
+        acik && 'rotate-180',
+      )}
+    />
   )
 }
 
@@ -1127,7 +1150,7 @@ function Anahtar({ acik }: { acik: boolean }) {
     <span
       className={cn(
         'relative h-[27px] w-[46px] shrink-0 rounded-full transition',
-        acik ? 'bg-primary' : 'bg-muted',
+        acik ? 'bg-primary-dolu' : 'bg-muted',
       )}
     >
       <span

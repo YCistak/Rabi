@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { OyunId } from '@/lib/types'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import {
@@ -16,6 +16,7 @@ import {
 import { KURAL_ACIKLAMASI, type YazimKurali } from '@/lib/oyunlar/yazim-havuzu'
 import { NOKTALAMA_ACIKLAMASI, type NoktalamaKurali } from '@/lib/oyunlar/noktalama-havuzu'
 import { BildirimDugmesi, type BildirimKolu } from '@/components/hata-bildir'
+import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { BosDurum, Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
@@ -27,8 +28,15 @@ import { Rabi } from '@/components/maskot/rabi'
  * oynanıyor** — fotoğraflı Yanlış Soru Bankası'ndan farkı bu: oradaki kayıt
  * bakılacak bir görüntü, buradaki çözülecek bir soru.
  *
- * Bir kayıt bankadan ancak üst üste `DUSME_ESIGI` kez doğru bilinince düşüyor.
- * Tek doğru yetmiyor: bir kez tutturmak bilmek değil, hatırlamak olabilir.
+ * Bir kaydın çıkmasının iki yolu var ve ikisi aynı şey değil:
+ *
+ * - **Kazanılan çıkış** — soru turlarda üst üste `DUSME_ESIGI` kez doğru
+ *   bilinir ve kendiliğinden düşer. Tek doğru yetmiyor: bir kez tutturmak
+ *   bilmek değil, hatırlamak olabilir. Havuç yalnızca bunun karşılığı.
+ * - **Elle kaldırma** — karttaki tik. Banka bir borç listesi; öğrendiğine
+ *   kullanıcının kendisi karar veremiyorsa liste büyümekten başka bir şey
+ *   yapmıyor ve bir yerden sonra hiç açılmıyor. Tik havuç vermiyor, çünkü
+ *   ölçtüğü tek şey kullanıcının tuşa basması.
  */
 
 const AILE: Record<OyunId, { zemin: string; yazi: string; dolgu: string }> = {
@@ -49,6 +57,8 @@ const AILE: Record<OyunId, { zemin: string; yazi: string; dolgu: string }> = {
   ortak: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu', dolgu: 'bg-byl-ok' },
   siniflandirma: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu', dolgu: 'bg-byl-ok' },
   hucre: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu', dolgu: 'bg-byl-ok' },
+  sirala: { zemin: 'bg-trh-kart', yazi: 'text-trh-koyu', dolgu: 'bg-trh-ok' },
+  tuzak: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
 }
 
 const KISA_AD: Record<OyunId, string> = {
@@ -69,6 +79,8 @@ const KISA_AD: Record<OyunId, string> = {
   ortak: 'Ortak Özellik',
   siniflandirma: 'Sınıflandırma',
   hucre: 'Organel',
+  sirala: 'Zaman Şeridi',
+  tuzak: 'Kural Tuzağı',
 }
 
 type Suzgec = OyunId | 'tumu'
@@ -76,11 +88,14 @@ type Suzgec = OyunId | 'tumu'
 export function OyunBankasiEkrani({
   banka,
   onTurBaslat,
+  onKaldir,
   bildir,
 }: {
   banka: BankaKaydi[]
   /** Seçilen oyunun bankadaki sorularıyla bir tur açar. */
   onTurBaslat: (oyun: OyunId) => void
+  /** Kaydı elle bankadan çıkarır — "bunu öğrendim". */
+  onKaldir: (id: string) => void
   bildir: BildirimKolu
 }) {
   const [suzgec, setSuzgec] = useState<Suzgec>('tumu')
@@ -105,7 +120,7 @@ export function OyunBankasiEkrani({
         <BosDurum
           simge={<Rabi durum="mutlu" boyut={72} />}
           baslik="Banka boş — iyi haber"
-          aciklama="Mini oyunlarda yanlış bildiğin sorular buraya düşer. Üst üste üç kez doğru bilince kendiliğinden çıkarlar."
+          aciklama="Mini oyunlarda yanlış bildiğin sorular buraya düşer. Üst üste üç kez doğru bilince kendiliğinden çıkar, öğrendiğine karar verdiklerini de tikle kaldırırsın."
         />
       </div>
     )
@@ -170,7 +185,7 @@ export function OyunBankasiEkrani({
       <ul className="space-y-2.5">
         {gorunen.map((kayit) => (
           <li key={kayit.id}>
-            <KayitKarti kayit={kayit} bildir={bildir} />
+            <KayitKarti kayit={kayit} onKaldir={() => onKaldir(kayit.id)} bildir={bildir} />
           </li>
         ))}
       </ul>
@@ -181,13 +196,13 @@ export function OyunBankasiEkrani({
 function Baslik({ toplam }: { toplam: number }) {
   return (
     <header className="mb-4 px-0.5">
-      <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
+      <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
       <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">
         Oyun Bankası 🗂️
       </h1>
       <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
         {toplam > 0
-          ? 'Oyunlarda karıştırdıkların. Üst üste üç doğruda düşer.'
+          ? 'Oyunlarda karıştırdıkların. Üst üste üç doğruda düşer, tikle sen de kaldırabilirsin.'
           : 'Oyunlarda karıştırdığın sorular burada birikir.'}
       </p>
     </header>
@@ -224,11 +239,48 @@ function SuzgecCipi({
   )
 }
 
-function KayitKarti({ kayit, bildir }: { kayit: BankaKaydi; bildir: BildirimKolu }) {
+/** Kartın çıkış animasyonunun süresi (ms) — CSS'teki `bankaKalk` ile eşleşiyor. */
+const KALKMA_SURESI = 420
+
+function KayitKarti({
+  kayit,
+  onKaldir,
+  bildir,
+}: {
+  kayit: BankaKaydi
+  onKaldir: () => void
+  bildir: BildirimKolu
+}) {
   const aile = AILE[kayit.soru.oyun]
+  /**
+   * Kaldırma iki adımda.
+   *
+   * Kayıt anında yok olunca dokunuşun karşılığı görünmüyordu: liste kısalıyor
+   * ama hangi kartın gittiği anlaşılmıyor, yanlış karta bastığını fark eden
+   * kullanıcı da neyi kaybettiğini göremiyordu. Kart önce onaylanıp süzülüyor,
+   * silme ondan sonra.
+   */
+  const [kalkiyor, setKalkiyor] = useState(false)
+  const kaldirRef = useRef(onKaldir)
+  kaldirRef.current = onKaldir
+
+  useEffect(() => {
+    if (!kalkiyor) return
+    const zaman = setTimeout(() => kaldirRef.current(), KALKMA_SURESI)
+    return () => clearTimeout(zaman)
+  }, [kalkiyor])
 
   return (
-    <div className="golge-kart rounded-2xl bg-card p-3.5">
+    <div
+      className={cn(
+        'golge-kart relative rounded-2xl bg-card p-3.5',
+        kalkiyor && 'banka-kalkiyor',
+      )}
+      // Animasyon sürerken karta ikinci kez basılabilseydi `onKaldir` iki kez
+      // çağrılırdı; kimliğe göre süzüldüğü için zararsız ama tuş da yanıt
+      // vermiş gibi görünürdü.
+      aria-hidden={kalkiyor || undefined}
+    >
       <div className="flex items-start gap-2.5">
         <span
           className={cn(
@@ -284,7 +336,33 @@ function KayitKarti({ kayit, bildir }: { kayit: BankaKaydi; bildir: BildirimKolu
         </span>
       </div>
 
-      <BildirimDugmesi soru={kayit.soru} kol={bildir} />
+      {/* Sağ pay tikin yeri: bildirim satırının yazısı tuşun altına girmesin. */}
+      <div className="pr-11">
+        <BildirimDugmesi soru={kayit.soru} kol={bildir} />
+      </div>
+
+      {/*
+        Kaldırma tuşu kartın sağ alt köşesinde, akışın içinde değil.
+
+        Yeri kasıtlı olarak sıradan: kartın asıl işi soruyu göstermek, bu tuş
+        "bununla işim bitti" demenin yolu. Akışa konsaydı bildirim satırıyla
+        aynı ağırlıkta görünür, kart da iki eylemli bir forma dönerdi.
+      */}
+      <button
+        type="button"
+        onClick={() => setKalkiyor(true)}
+        disabled={kalkiyor}
+        aria-label="Bu soruyu bankadan kaldır"
+        title="Öğrendim, bankadan kaldır"
+        className={cn(
+          'absolute bottom-2.5 right-2.5 grid size-9 place-items-center rounded-full transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+          // Basılınca dolu yeşile dönüyor: kart gitmeden önce kararın alındığı
+          // görünüyor ve gidişin sebebi tikte kalıyor.
+          kalkiyor ? 'tik-dolu bg-success text-white' : 'bg-success-soft text-success',
+        )}
+      >
+        <Check size={18} strokeWidth={3} aria-hidden />
+      </button>
     </div>
   )
 }

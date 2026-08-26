@@ -34,7 +34,12 @@ android/keystore.properties
 .DS_Store
 .vscode/
 
-# kişisel notlar — uzantılı/uzantısız her hâli
+# Kişisel notlar — uzantılı/uzantısız her hâli.
+#
+# Dikkat: desen tüm ağaçta geçerli, yalnızca kökte değil. Kaynak dosyaya
+# "notlar" adını vermek onu sessizce depodan da Tailwind'in tarayıcısından da
+# düşürüyor (yaşandı: Yapılacaklar tahtası `lib/yapilacaklar.ts` adını bu
+# yüzden taşıyor).
 eklenecekler
 eklenecekler.*
 notlar

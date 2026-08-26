@@ -20,12 +20,12 @@ android {
         applicationId "com.rabi.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // Sayı mor tema dalının 19una kadar çıkmıştı; Android daha küçük bir
-        // versionCode ile kurulumu reddediyor ve telefonda o sürüm duruyorsa
-        // bu yapı "uygulama yüklenemedi" diyordu. Numara bu yüzden 20den
-        // devam ediyor, sürüm adı beyaz tema dalının kendi çizgisinde.
-        versionCode 20
-        versionName "1.5.0"
+        // İki dal birleşti: beyaz tema (20) ile oyun modları dalı (19). Android
+        // daha küçük bir versionCode ile kurulumu reddediyor ve telefonda daha
+        // büyüğü duruyorsa "uygulama yüklenemedi" diyor; numara bu yüzden
+        // ikisinin de üstünden, 21den devam ediyor.
+        versionCode 21
+        versionName "1.9.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

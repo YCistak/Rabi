@@ -16,17 +16,18 @@ const RENK_SINIFI: Record<KartRengi, { zemin: string; ok: string }> = {
   krem: { zemin: 'bg-isl-kart', ok: 'bg-isl-ok' },
   nane: { zemin: 'bg-success-soft', ok: 'bg-success' },
   lavanta: { zemin: 'bg-edb-kart', ok: 'bg-edb-ok' },
+  deniz: { zemin: 'bg-trh-kart', ok: 'bg-trh-ok' },
 }
 
 /**
  * "Araçlar" sekmesinin bölümleri.
  *
  * Gruplama `lib/gezinme.ts` yerine burada, çünkü yalnızca bu ekrana ait: aynı
- * kart listesi ana sayfada başlıksız bir ızgara olarak çiziliyor. On bir giriş
- * düz bir liste hâlinde kaybolduğu için dört başlığa bölündü.
+ * kart listesi ana sayfada başlıksız bir ızgara olarak çiziliyor. Bir düzine
+ * giriş düz bir liste hâlinde kaybolduğu için dört başlığa bölündü.
  */
 const BOLUMLER: { baslik: string; kartlar: Ekran[] }[] = [
-  { baslik: 'Çalışma', kartlar: ['pomodoro', 'soru', 'yanlis-banka'] },
+  { baslik: 'Çalışma', kartlar: ['pomodoro', 'soru', 'yanlis-banka', 'notlar'] },
   { baslik: 'Denemeler', kartlar: ['deneme', 'siralama', 'istatistik'] },
   { baslik: 'Okul', kartlar: ['okul', 'devamsizlik'] },
   { baslik: 'Motivasyon', kartlar: ['haftalik-ozet', 'hedef', 'rozetler'] },

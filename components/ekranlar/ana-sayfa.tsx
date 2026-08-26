@@ -3,17 +3,18 @@
 import { useMemo } from 'react'
 import { AlertTriangle, Carrot, ChevronRight, Sparkles, Target } from 'lucide-react'
 import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef, OyunId } from '@/lib/types'
-import { devamsizlikOzeti, gunOzeti, kayitHaritasi, netYaz } from '@/lib/hesap'
+import { devamsizlikOzeti, gunOzeti, kayitHaritasi } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
 import { siraYaz } from '@/lib/siralama'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
 import { kisayollar } from '@/lib/son-kullanilan'
 import { OYUNLAR } from '@/lib/oyunlar/tanim'
+import { seviyeUnvani, type SeviyeDurumu } from '@/lib/seviye'
 import { Halka, Kart, Not } from '@/components/ui'
 import { GeriSayim } from '@/components/geri-sayim'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
 
-/** Seride gösterilen gün sayısı. Tasarımda kart "7 günlük seri" diye adlandırılıyor. */
+/** Seride gösterilen gün sayısı. Tasarımda hedef kartının altındaki yedi kutucuk. */
 const SERI_GUNU = 7
 
 /**
@@ -23,13 +24,14 @@ const SERI_GUNU = 7
  */
 const GUN_ADLARI = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt']
 
-/** Kutucuk yüzleri — `KARTLAR`'daki pastel aile adları tema değişkenlerine bağlanıyor. */
+/** Kutucuk yüzleri — `KARTLAR`'daki aile adları tema değişkenlerine bağlanıyor. */
 const KUTUCUK_RENGI: Record<KartRengi, string> = {
-  mavi: 'bg-primary-soft',
-  pembe: 'bg-yzm-kart',
-  krem: 'bg-isl-kart',
-  nane: 'bg-success-soft',
-  lavanta: 'bg-edb-kart',
+  mavi: 'bg-primary-soft text-primary',
+  pembe: 'bg-yzm-kart text-yzm-koyu',
+  krem: 'bg-isl-kart text-isl-koyu',
+  nane: 'bg-success-soft text-success',
+  lavanta: 'bg-edb-kart text-edb-koyu',
+  deniz: 'bg-trh-kart text-trh-koyu',
 }
 
 /** Oyunların kendi aileleri var; ana sayfadaki kutucuk da aynı rengi taşımalı. */
@@ -51,6 +53,8 @@ const OYUN_RENGI: Record<OyunId, string> = {
   ortak: 'bg-byl-kart',
   siniflandirma: 'bg-byl-kart',
   hucre: 'bg-byl-kart',
+  sirala: 'bg-trh-kart',
+  tuzak: 'bg-isl-kart',
 }
 
 export function AnaSayfa({
@@ -59,14 +63,16 @@ export function AnaSayfa({
   gunlukKayitlar,
   devamsizlik,
   hedef,
+  seviye,
+  havuc,
   guncelSiralama,
   ozetBekliyor,
   sonAraclar,
   sonOyunlar,
-  havuc,
   onKartAc,
   onDahaGit,
   onOyunlaraGit,
+  acilisSuruyor = false,
 }: {
   /** Açılış ya da kurulum geçişindeki tavşan buranın üstüne konarken gizlenir. */
   maskotGizli: boolean
@@ -74,6 +80,10 @@ export function AnaSayfa({
   gunlukKayitlar: GunlukKayit[]
   devamsizlik: Devamsizlik[]
   hedef: Hedef | null
+  /** Türetilen seviye durumu — selamlamanın alt satırındaki sayı. */
+  seviye: SeviyeDurumu
+  /** Havuç bakiyesi; seviyeyle aynı satırda duruyor. */
+  havuc: number
   /** Son denemelerden çıkan tahmini sıralama; deneme yoksa null. */
   guncelSiralama: number | null
   /** Biten haftanın özeti henüz izlenmediyse davet kartı gösterilir. */
@@ -81,13 +91,18 @@ export function AnaSayfa({
   /** En son açılan araçlar ve oynanan oyunlar — kısayol kutucuklarının sırası. */
   sonAraclar: string[]
   sonOyunlar: string[]
-  /** Havuç bakiyesi — sağ üstteki rozette yazıyor. */
-  havuc: number
   onKartAc: (ekran: Ekran) => void
-  /** "Araçlar" başlığındaki "Tümü" — kart menüsünün tamamına götürür. */
+  /** "Araçlar" bölümünün "Tümü" bağlantısı — kart menüsü sekmesini açar. */
   onDahaGit: () => void
   /** "Oyunlar" kartındaki her kutucuk oyun sekmesini açar. */
   onOyunlaraGit: () => void
+  /**
+   * Açılış ekranı hâlâ duruyor mu.
+   *
+   * Yalnızca başlıktaki maskotu ilgilendiriyor: açılış sürerken gizli
+   * kalıyor, yoksa ekranda iki tavşan birden görünüyor.
+   */
+  acilisSuruyor?: boolean
 }) {
   const tarih = bugun()
 
@@ -153,29 +168,37 @@ export function AnaSayfa({
           <h1 className="mt-px font-display text-[22px] font-extrabold tracking-tight text-balance">
             Merhaba 👋
           </h1>
+          {/* Seviye ve unvan selamlamanın alt satırında: eskiden ayrı bir
+              karttı ve sayfanın en değerli yerini üç sayı için harcıyordu. */}
+          <p className="mt-0.5 text-[12.5px] font-bold text-muted-foreground">
+            <span className="rakam text-primary">Seviye {seviye.seviye}</span>
+            {' · '}
+            {seviyeUnvani(seviye.seviye)}
+          </p>
         </div>
 
-        {/* Havuç bakiyesi. Düğme değil, çünkü götüreceği bir yer yok: havucu
-            harcayan ya da kazandıran bir özellik henüz yazılmadı. Dokunulunca
-            hiçbir şey yapmayan bir düğme, bozuk bir düğmeden farksız olurdu. */}
-        <p
-          aria-label={`${havuc} havucun var`}
-          className="flex shrink-0 items-center gap-1.5 self-start rounded-full bg-isl-kart px-2.5 py-1.5 text-isl-koyu"
+        {/* Havuç bakiyesi mağazanın kapısı: sayının dokunulabilir olduğu
+            zaten bekleniyordu, düğme olmadığı sürece bozuk görünüyordu. */}
+        <button
+          type="button"
+          onClick={() => onKartAc('magaza')}
+          aria-label={`${havuc} havucun var — Havuç Mağazası`}
+          className="flex shrink-0 items-center gap-1.5 self-start rounded-full bg-isl-kart px-2.5 py-1.5 text-isl-koyu transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           <Carrot size={16} strokeWidth={2.6} aria-hidden />
           <span className="rakam text-sm font-extrabold">{havuc}</span>
-        </p>
+        </button>
       </header>
 
       {/* Haftalık özet daveti — biten haftanın özeti izlenmediyse en üstte.
           Ana sayfanın en görünür yeri burası; kart menüsüne konsaydı özet
-          çıktığından haberi olmayan kullanıcı hiç açmazdı. Mercan, tasarımın
+          çıktığından haberi olmayan kullanıcı hiç açmazdı. Fuşya, tasarımın
           dikkat rengi. */}
       {ozetBekliyor && (
         <button
           type="button"
           onClick={() => onKartAc('haftalik-ozet')}
-          className="acilis-girisi flex w-full items-center gap-3 rounded-2xl bg-ikincil px-4 py-3.5 text-left text-white transition active:brightness-95"
+          className="acilis-girisi flex w-full items-center gap-3 rounded-[22px] bg-ikincil px-4 py-3.5 text-left text-white transition active:brightness-95"
         >
           <Sparkles size={22} className="shrink-0" aria-hidden />
           <span className="min-w-0 flex-1">

@@ -28,8 +28,9 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { kokludenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
-import { MATEMATIK_TUR_SORUSU, soruSuresi } from '@/lib/oyunlar/ritim'
-import { useSoruSayaci } from '@/lib/oyunlar/soru-sayaci'
+import { TUR_SORU_SINIRI, elerMi, soruSuresi } from '@/lib/oyunlar/ritim'
+import { etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
+import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
@@ -44,6 +45,7 @@ import {
   TurSonu,
   YanlisKarti,
   rekorCumlesi,
+  type Eleme,
 } from '@/components/oyun-kabuk'
 import { SayiCubugu, type Aralik } from '@/components/oyun-sayi-cubugu'
 import { OyunTanitim } from '@/components/oyun-tanitim'
@@ -63,12 +65,12 @@ const CEVAP_BEKLEMESI = 1400
 const BONUS_BEKLEMESI = 850
 
 /**
- * Turdaki soru sayısı.
+ * Turda hazırlanan en fazla soru.
  *
- * Matematik oyunlarında boss yok, dolayısıyla eleme de yok — turu bitirecek
- * bir şey gerekiyor. (`ritim.ts`)
+ * Turu bitiren şey moda göre süre ya da ilk yanlış (`mod.ts`); soru sayısı
+ * hedefi yok. Bu sabit yalnızca sonsuz bir dizi üretilemediği için var.
  */
-const TUR_SORUSU = MATEMATIK_TUR_SORUSU
+const TUR_SORUSU = TUR_SORU_SINIRI
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 /** Sorunun hangi evresi ekranda. */
@@ -100,6 +102,8 @@ export function KokluOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
+  mod,
+  setMod,
   onCik,
   bildir,
 }: {
@@ -110,9 +114,12 @@ export function KokluOyunuEkrani({
   onTurBitti: (
     ozet: TurOzeti<KokluSorusu>,
     bankaCevaplari: BankaCevabi[],
-    /** Turun gerçek uzunluğu — tur artık sabit süreli değil. */
+    /** Turun gerçek uzunluğu — modlar arasında değişiyor. */
     gecenSaniye: number,
   ) => void
+  /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
+  mod: OyunModu
+  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -137,8 +144,17 @@ export function KokluOyunuEkrani({
    */
   const [aralik, setAralik] = useState<Aralik>({ alt: CUBUK_EN_AZ, ust: CUBUK_EN_COK })
 
+  /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
+  const [elendi, setElendi] = useState<Eleme>(false)
   /** Yardım açıkken sayaç duruyor. */
   const [duraklatilan, setDuraklatilan] = useState(false)
+  /**
+   * Kaçıncı tur.
+   *
+   * Tur saatli modlarda sayacı sıfırlayan tek şey bu: soru sırası bir turun
+   * ortasında da sıfır olabiliyor (`tur-sayaci.ts`).
+   */
+  const [turNo, setTurNo] = useState(0)
 
   const [sonuc, setSonuc] = useState<{
     ozet: TurOzeti<KokluSorusu>
@@ -148,6 +164,8 @@ export function KokluOyunuEkrani({
 
   const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
+  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
+  const gecerliMod = etkinMod(mod, bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   const turBasladiRef = useRef(0)
@@ -162,6 +180,7 @@ export function KokluOyunuEkrani({
 
   const turBaslat = useCallback(() => {
     turBasiRekor.current = istatistik.enIyiDogru
+    setTurNo((n) => n + 1)
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
@@ -173,6 +192,7 @@ export function KokluOyunuEkrani({
     setGeriBildirim(null)
     setSonuc(null)
     setAralik({ alt: CUBUK_EN_AZ, ust: CUBUK_EN_COK })
+    setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
   }, [bankaTuru, havuz, istatistik.enIyiDogru])
@@ -187,6 +207,7 @@ export function KokluOyunuEkrani({
         puan: puanRef.current,
         yeniRekor:
           !bankaTuru &&
+          modKayitliMi(gecerliMod) &&
           rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
       })
       oyunSesiCal('bitis', sesAcik)
@@ -201,7 +222,7 @@ export function KokluOyunuEkrani({
         Math.round((Date.now() - turBasladiRef.current) / 1000),
       )
     },
-    [bankaTuru, istatistik, onTurBitti, sesAcik],
+    [bankaTuru, gecerliMod, istatistik, onTurBitti, sesAcik],
   )
 
   // Banka turunda liste bankadaki kayıt kadar; tükenirse tur erken biter.
@@ -257,6 +278,12 @@ export function KokluOyunuEkrani({
         if (dogruMu) {
           setGeriBildirim(null)
           setEvre('bonus')
+        } else if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
+          // Eleme yalnızca aralık evresinde: bonusu kaçırmak turu bitirmiyor,
+          // çünkü bonus ayrı bir soru değil, zaten bilinmiş sorunun devamı.
+          setGeriBildirim(null)
+          setElendi('yanlis')
+          turBitir(cevaplarRef.current)
         } else {
           sonrakiSoru()
         }
@@ -297,7 +324,32 @@ export function KokluOyunuEkrani({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asama, geriBildirim, soru, evre, aralik])
 
-  const { kalan, toplam } = useSoruSayaci({
+  /** Tur saati bitti: yanlış değil, tur biter. */
+  const turSuresiDoldu = () => {
+    setElendi('sure')
+    turBitir(cevaplarRef.current)
+  }
+
+  /*
+    Rahat turda çıkış turu bitiriyor.
+
+    Süre yok, yanlış elemiyor: turu bitirecek başka bir şey de yok. Doğrudan
+    çıkılsaydı o turda yanlış bilinen sorular Oyun Bankası'na hiç düşmezdi ve
+    modun tek amacı olan öğrenme kaybolurdu.
+  */
+  const turdanCik = () => {
+    if (asama === 'oynaniyor' && gecerliMod === 'rahat' && cevaplarRef.current.length > 0) {
+      turBitir(cevaplarRef.current)
+      return
+    }
+    onCik()
+  }
+
+  const { kalan, toplam } = useTurSayaci({
+    mod: gecerliMod,
+    turNo,
+    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: evre === 'bonus' ? BONUS_SURESI : soruSuresi('koklu', null),
     // İki evre ayrı sayaç: aynı anahtar kalsaydı bonusa geçerken sayaç
@@ -338,6 +390,7 @@ export function KokluOyunuEkrani({
                 toplam,
                 sira: sira + 1,
                 boss: false,
+                mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
                 yanlis: cevaplar.length - dogruSayisi,
@@ -346,7 +399,7 @@ export function KokluOyunuEkrani({
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
-        onCik={onCik}
+        onCik={turdanCik}
         onYardim={yardimAc}
       >
         {asama === 'bitti' && sonuc ? (
@@ -354,6 +407,8 @@ export function KokluOyunuEkrani({
             sonuc={sonuc}
             rekor={turBasiRekor.current}
             bankaTuru={bankaTuru}
+            mod={gecerliMod}
+            elendi={elendi}
             onTekrar={turBaslat}
             onCik={onCik}
             bildir={bildir}
@@ -431,6 +486,8 @@ export function KokluOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
+        mod={mod}
+        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
       />
@@ -510,6 +567,8 @@ function SonucGorunumu({
   sonuc,
   rekor,
   bankaTuru,
+  mod,
+  elendi,
   onTekrar,
   onCik,
   bildir,
@@ -517,6 +576,8 @@ function SonucGorunumu({
   sonuc: { ozet: TurOzeti<KokluSorusu>; yeniRekor: boolean; puan: number }
   rekor: number
   bankaTuru: boolean
+  mod: OyunModu
+  elendi: Eleme
   onTekrar: () => void
   onCik: () => void
   bildir: BildirimKolu
@@ -534,6 +595,8 @@ function SonucGorunumu({
       rekor={rekor}
       yeniRekor={yeniRekor}
       bankaTuru={bankaTuru}
+      mod={mod}
+      elendi={elendi}
       puan={{ deger: sonuc.puan, etiket: 'Puan' }}
       altBaslik={
         bankaTuru

@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { App as CapacitorApp } from '@capacitor/app'
 import { ArrowLeft } from 'lucide-react'
 import type {
@@ -60,13 +60,31 @@ import { SiralamaEkrani } from '@/components/ekranlar/siralama'
 import { HedefEkrani } from '@/components/ekranlar/hedef'
 import { YanlisBankaEkrani } from '@/components/ekranlar/yanlis-banka'
 import { RozetlerEkrani } from '@/components/ekranlar/rozetler'
-import { BASLANGIC_HAVUCU } from '@/lib/havuc'
+import { MagazaEkrani } from '@/components/ekranlar/magaza'
+import { BASLANGIC_HAVUCU, birikenOdul, seviyeDurumu, tabanla } from '@/lib/seviye'
+import { ODAK_CEZASI, bankaOdulu, cezaDus } from '@/lib/havuc'
+import { gununNotlari, notlariNormalize, type NotKagidi } from '@/lib/yapilacaklar'
+import { BOS_STOK, stoguNormalize, type JokerStogu } from '@/lib/magaza/jokerler'
 import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
 import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
+import { YapilacaklarEkrani } from '@/components/ekranlar/yapilacaklar'
+import { HavucKazanci, type HavucKazanciVerisi } from '@/components/havuc-kazanci'
 import { RozetKutlama } from '@/components/rozet-kutlama'
+import { SeviyeKutlama } from '@/components/seviye-kutlama'
 
-/** Rozet kontrolünün, veri durulana kadar beklediği süre (ms). */
+/** Rozet ve seviye kontrolünün, veri durulana kadar beklediği süre (ms). */
 const ROZET_BEKLEME = 1200
+
+/*
+  Boyamadan **önce** çalışması gereken etki.
+
+  `useEffect` boyamadan sonra çalışıyor; sayfayı başa almak için kullanılırsa
+  yeni ekran bir kare boyunca eski kaydırma konumunda görünüyor, sonra
+  zıplıyor. `useLayoutEffect` bunu boyamadan halleder ama sunucuda çalışmıyor
+  ve statik dışa aktarım sayfayı sunucuda da bir kez çiziyor — orada uyarı
+  çıkmasın diye `useEffect`e düşülüyor. Sunucuda kaydırılacak pencere de yok.
+*/
+const useYerlesimEtkisi = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
 export function AppShell() {
   const [sekme, setSekme] = useState<Sekme>('ana')
@@ -137,8 +155,42 @@ export function AppShell() {
    * sayılamıyor; rozet buna baktığından ayrı bir sayaç olarak birikiyor.
    */
   const [bankaDusen, setBankaDusen] = useYerelDepo<number>(ANAHTARLAR.bankaDusen, 0)
-  /** Havuç bakiyesi. Harcayan ya da kazandıran bir özellik henüz yok. */
-  const [havuc] = useYerelDepo<number>(ANAHTARLAR.havuc, BASLANGIC_HAVUCU)
+  /**
+   * Havuç bakiyesi ve ödülü verilmiş en yüksek seviye.
+   *
+   * İkisi birlikte gidiyor: bakiye yalnızca seviye atlayınca artıyor, `odullenen`
+   * de aynı seviyenin ikinci kez ödenmesini engelliyor.
+   */
+  const [havuc, setHavuc, havucHazir] = useYerelDepo<number>(ANAHTARLAR.havuc, BASLANGIC_HAVUCU)
+  const [odullenen, setOdullenen, seviyeHazir] = useYerelDepo<number>(ANAHTARLAR.seviye, 1)
+  const [stokHam, setStok] = useYerelDepo<JokerStogu>(ANAHTARLAR.jokerler, BOS_STOK)
+  const jokerler = stoguNormalize(stokHam)
+  const [notlarHam, setNotlar, notlarHazir] = useYerelDepo<NotKagidi[]>(ANAHTARLAR.notlar, [])
+  /*
+    Tahta günlük ve gün her çizimde yeniden okunuyor.
+
+    Zamanlayıcı kurmak yerine türetmek: gece yarısını bekleyen bir `setTimeout`
+    uygulama kapalıyken çalışmaz, uyanan telefonda da geç çalışır. Gün dönmüşse
+    kâğıtlar zaten ilk çizimde eleniyor; aşağıdaki etki de kaydı buna eşitliyor.
+  */
+  const notlar = gununNotlari(notlariNormalize(notlarHam), bugun())
+  /*
+    Elenen kâğıtlar kayıttan da siliniyor.
+
+    Yalnızca çizimden düşselerdi dünün kâğıtları `localStorage`'da birikir,
+    yedeğe girer ve saati geri alan bir cihazda geri gelirdi. `notlarHazir`
+    şart: ilk okuma bitmeden yazmak, kayıtta duran kâğıtları boş varsayılanla
+    ezerdi.
+  */
+  useEffect(() => {
+    if (!notlarHazir || notlar.length === notlarHam.length) return
+    setNotlar(notlar)
+  })
+  /**
+   * Havuç kazancının kısa şeridi. Seviye kutlamasından ayrı: bu, turun
+   * ortasında kazanılan küçük ödül ve tam ekran bir kutlamayı hak etmiyor.
+   */
+  const [havucKazanci, setHavucKazanci] = useState<HavucKazanciVerisi | null>(null)
   /**
    * Bankadan açılan tur. Oyun kimliği burada duruyor çünkü turu Oyunlar sekmesi
    * çiziyor ama başlatan Oyun Bankası ekranı — ikisi kardeş, ortak sahibi bu.
@@ -152,6 +204,10 @@ export function AppShell() {
   /** İzlenmiş haftalık özetlerin hafta başı tarihleri. */
   const [ozetGorulen, setOzetGorulen] = useYerelDepo<string[]>(ANAHTARLAR.ozetGorulen, [])
   const [kutlanan, setKutlanan] = useState<Rozet[]>([])
+  /** Yeni atlanan seviye ve ödülü; kutlama kapanınca temizleniyor. */
+  const [seviyeKutlamasi, setSeviyeKutlamasi] = useState<{ seviye: number; odul: number } | null>(
+    null,
+  )
   /**
    * Açılış ekranı kalktı mı.
    *
@@ -184,7 +240,12 @@ export function AppShell() {
     [],
   )
 
-  const sablonlar = sablonlariBirlestir(kayitliSablonlar)
+  /*
+    Memoize edilmesi şart: her çizimde yeni bir dizi dönseydi bu diziye bağlı
+    `useMemo`'ların hiçbiri tutmaz, altındaki ağır hesaplar (haftalık özet,
+    rozet/seviye ölçüleri) her çizimde yeniden çalışırdı.
+  */
+  const sablonlar = useMemo(() => sablonlariBirlestir(kayitliSablonlar), [kayitliSablonlar])
 
   // ---- Haftalık özet ----
   // Biten haftanın özeti. Pazar günü doğuyor ve sonraki pazara kadar duruyor:
@@ -277,21 +338,16 @@ export function AppShell() {
     setAyarlar,
   ])
 
-  // ---- Rozetler ----
-  // Kazanılanlar yazılmadan önce hepsinin okunmuş olması şart. `useYerelDepo`
-  // bir kez yazıldıktan sonra ilk okumayı atlıyor; hazır olmadan rozet
-  // eklenseydi kayıtlı rozetler silinir, kutlama her açılışta tekrarlanırdı.
-  const rozetVerisiHazir =
-    rozetlerHazir && denemelerHazir && gunlukHazir && okulHazir && ayarlarHazir && oyunlarHazir
-
-  useEffect(() => {
-    if (!rozetVerisiHazir) return
-
-    // Kontrol bilerek geciktiriliyor. Soru sayısı yazılırken her tuş bir
-    // değişiklik: "420" yazarken 4 → 42 → 420 geçilir ve kutlama daha alan
-    // doldurulmadan ekranı kapatırdı. Yazma durunca bir kez çalışıyor.
-    const zamanlayici = setTimeout(() => {
-      const durum = rozetDurumu({
+  // ---- Rozetler ve seviye ----
+  /*
+    İkisi aynı ölçü nesnesinden çıkıyor: rozet "eşiği geçtin mi", seviye
+    "toplamda ne kadar ilerledin" diye soruyor ama baktıkları veri aynı.
+    `RozetDurumu` alanları `XpGirdisi`'ni zaten karşıladığı için nesne olduğu
+    gibi seviyeye de veriliyor.
+  */
+  const ilerleme = useMemo(
+    () =>
+      rozetDurumu({
         denemeler,
         sablonlar,
         gunlukKayitlar,
@@ -302,30 +358,113 @@ export function AppShell() {
         oyunlar,
         bankaDusen,
         bankaBoyutu: oyunBankasi.length,
-      })
-      const yeniler = yeniRozetler(durum, rozetler)
-      if (yeniler.length === 0) return
+      }),
+    [
+      denemeler,
+      sablonlar,
+      gunlukKayitlar,
+      ayarlar.gunlukHedef,
+      diplomaNotu,
+      pomodoroGecmis,
+      yanlisSorular,
+      oyunlar,
+      bankaDusen,
+      oyunBankasi.length,
+    ],
+  )
 
-      const tarih = bugun()
-      setRozetler((onceki) => [...onceki, ...yeniler.map((r) => ({ rozetId: r.id, tarih }))])
-      setKutlanan(yeniler)
+  /**
+   * Bankadan soru düştü: sayaç ilerliyor, karşılığında havuç veriliyor.
+   *
+   * Ödül aralıktan hesaplanıyor (`lib/havuc.ts`): ayrı bir "ödenmiş" sayacı
+   * tutmak yerine zaten var olan toplam sayacın iki hâli karşılaştırılıyor, tavan
+   * da orada uygulanıyor. Bankadan soru düşürmek uygulamadaki en zor uydurulan
+   * ölçü — bir soruyu üst üste üç kez doğru bilmek demek.
+   */
+  const bankadanDustu = useCallback(
+    (adet: number) => {
+      const yeniToplam = bankaDusen + adet
+      const odul = bankaOdulu(bankaDusen, yeniToplam)
+      setBankaDusen(yeniToplam)
+      if (odul > 0) {
+        setHavuc((onceki) => onceki + odul)
+        setHavucKazanci({
+          miktar: odul,
+          sebep: adet === 1 ? 'Bankadan bir soru düştü' : `Bankadan ${adet} soru düştü`,
+        })
+      }
+    },
+    [bankaDusen, setBankaDusen, setHavuc],
+  )
+
+  /**
+   * Odak kilidi çalışma turu sürerken kırıldı.
+   *
+   * Bakiyeden düşen miktar dönüyor: yetmiyorsa yetmediği kadarı gidiyor ve
+   * ekran "40 havuç gitti" diye yalan söylemiyor. Havucun mağaza dışındaki tek
+   * eksilme yolu burası.
+   */
+  const odakKilidiKirildi = useCallback(() => {
+    const sonuc = cezaDus(havuc, ODAK_CEZASI)
+    setHavuc(sonuc.havuc)
+    return sonuc.dusen
+  }, [havuc, setHavuc])
+
+  /** Veriden türeyen seviye; gösterilen seviye daha önce ulaşılanın altına inmiyor. */
+  const seviye = tabanla(seviyeDurumu(ilerleme), odullenen)
+
+  // Kayıt yazılmadan önce hepsinin okunmuş olması şart. `useYerelDepo` bir kez
+  // yazıldıktan sonra ilk okumayı atlıyor; hazır olmadan yazılsaydı kayıtlı
+  // rozetler silinir, havuç bakiyesi sıfırlanır ve ödül her açılışta yeniden
+  // dağıtılırdı.
+  const ilerlemeHazir =
+    rozetlerHazir &&
+    denemelerHazir &&
+    gunlukHazir &&
+    okulHazir &&
+    ayarlarHazir &&
+    oyunlarHazir &&
+    seviyeHazir &&
+    havucHazir
+
+  useEffect(() => {
+    if (!ilerlemeHazir) return
+
+    // Kontrol bilerek geciktiriliyor. Soru sayısı yazılırken her tuş bir
+    // değişiklik: "420" yazarken 4 → 42 → 420 geçilir ve kutlama daha alan
+    // doldurulmadan ekranı kapatırdı. Yazma durunca bir kez çalışıyor.
+    const zamanlayici = setTimeout(() => {
+      const yeniler = yeniRozetler(ilerleme, rozetler)
+      if (yeniler.length > 0) {
+        const tarih = bugun()
+        setRozetler((onceki) => [...onceki, ...yeniler.map((r) => ({ rozetId: r.id, tarih }))])
+        setKutlanan(yeniler)
+      }
+
+      /*
+        Havucun **tek** artma yolu burası. `odullenen` hem tavan hem makbuz:
+        aynı seviyenin ödülü ikinci kez dağıtılmıyor, veri sonradan düşse bile
+        geri alınmıyor. Sistemi ilk gören eski kullanıcı aradaki bütün
+        seviyeleri bir kerede atlıyor ve hepsinin ödülünü alıyor.
+      */
+      if (seviye.seviye > odullenen) {
+        const odul = birikenOdul(odullenen, seviye.seviye)
+        setOdullenen(seviye.seviye)
+        setHavuc((onceki) => onceki + odul)
+        setSeviyeKutlamasi({ seviye: seviye.seviye, odul })
+      }
     }, ROZET_BEKLEME)
 
     return () => clearTimeout(zamanlayici)
   }, [
-    rozetVerisiHazir,
-    denemeler,
-    sablonlar,
-    gunlukKayitlar,
-    ayarlar.gunlukHedef,
-    diplomaNotu,
-    pomodoroGecmis,
-    yanlisSorular,
-    oyunlar,
-    bankaDusen,
-    oyunBankasi.length,
+    ilerlemeHazir,
+    ilerleme,
+    seviye.seviye,
+    odullenen,
     rozetler,
     setRozetler,
+    setOdullenen,
+    setHavuc,
   ])
 
   // ---- Günlük hatırlatma ----
@@ -404,6 +543,18 @@ export function AppShell() {
     void pomodoroIptal()
     void odakKilidiniBitir()
   }, [])
+
+  /*
+    Ekran değişince sayfa başa dönüyor.
+
+    Kaydırılan şey pencerenin kendisi ve ekranlar aynı kökün içinde yer
+    değiştiriyor: tarayıcı kaydırma konumunu koruduğu için ana sayfanın
+    dibindeyken açılan sekme de dibinden açılıyordu.
+  */
+  const formAcik = denemeFormu !== null
+  useYerlesimEtkisi(() => {
+    window.scrollTo(0, 0)
+  }, [sekme, ekran, formAcik])
 
   // Android donanım geri tuşu
   useEffect(() => {
@@ -539,10 +690,25 @@ export function AppShell() {
           {ekran === 'yanlis-banka' && (
             <YanlisBankaEkrani sorular={yanlisSorular} setSorular={setYanlisSorular} />
           )}
+          {ekran === 'magaza' && (
+            <MagazaEkrani
+              havuc={havuc}
+              setHavuc={setHavuc}
+              seviye={seviye}
+              stok={jokerler}
+              setStok={setStok}
+            />
+          )}
           {ekran === 'oyun-bankasi' && (
             <OyunBankasiEkrani
               banka={oyunBankasi}
               bildir={hataBildirimi}
+              /*
+                Elle kaldırma `bankadanDustu`'ya uğramıyor: havuç, soruyu üst
+                üste üç kez doğru bilmenin karşılığı. Tuşa basmakla kazanılan
+                bir ödül, ödül olmaktan çıkıp mağazayı anlamsızlaştırırdı.
+              */
+              onKaldir={(id) => setOyunBankasi((o) => o.filter((k) => k.id !== id))}
               onTurBaslat={(oyun) => {
                 // Turu Oyunlar sekmesi çiziyor; oyun katmanı tam ekran açıldığı
                 // için arkada hangi sekmenin durduğu görünmüyor, ama turdan
@@ -558,8 +724,10 @@ export function AppShell() {
               ayar={pomodoroAyar}
               setAyar={setPomodoroAyar}
               onSeansBitti={(seans) => setPomodoroGecmis((o) => [...o, seans])}
+              onKilitKirildi={odakKilidiKirildi}
             />
           )}
+          {ekran === 'notlar' && <YapilacaklarEkrani notlar={notlar} setNotlar={setNotlar} />}
           {ekran === 'soru' && (
             <SoruTakibiEkrani
               kayitlar={gunlukKayitlar}
@@ -612,14 +780,16 @@ export function AppShell() {
               gunlukKayitlar={gunlukKayitlar}
               devamsizlik={devamsizlik}
               hedef={hedef}
+              seviye={seviye}
+              havuc={havuc}
               guncelSiralama={guncelSiralama}
               ozetBekliyor={ozetBekliyor}
               sonAraclar={sonAraclar}
               sonOyunlar={sonOyunlar}
-              havuc={havuc}
               onKartAc={aracAc}
               onDahaGit={() => setSekme('daha')}
               onOyunlaraGit={() => setSekme('oyunlar')}
+              acilisSuruyor={!acilisBitti}
             />
           )}
           {sekme === 'oyunlar' && (
@@ -628,7 +798,7 @@ export function AppShell() {
               setKayitlar={setOyunlar}
               setGecmis={setOyunGecmisi}
               banka={oyunBankasi}
-              onBankadanDustu={(adet) => setBankaDusen((onceki) => onceki + adet)}
+              onBankadanDustu={bankadanDustu}
               setBanka={setOyunBankasi}
               sesAcik={ayarlar.oyunSesi}
               muzikAcik={ayarlar.oyunMuzigi}
@@ -663,6 +833,9 @@ export function AppShell() {
                 oyunBankasi,
                 bankaDusen,
                 havuc,
+                seviye: odullenen,
+                jokerler,
+                notlar,
                 pomodoroGecmis,
                 pomodoroAyar,
                 hedef,
@@ -684,7 +857,14 @@ export function AppShell() {
         <HaftalikOzetEkrani ozet={ozet} sesAcik={ayarlar.oyunSesi} onKapat={ozetiKapat} />
       )}
 
+      <HavucKazanci kazanc={havucKazanci} onKapat={() => setHavucKazanci(null)} />
+
       <RozetKutlama rozetler={kutlanan} onKapat={() => setKutlanan([])} />
+
+      {/* Rozet kutlaması varken bekliyor: iki tam ekran katman üst üste binerdi. */}
+      {kutlanan.length === 0 && (
+        <SeviyeKutlama kutlama={seviyeKutlamasi} onKapat={() => setSeviyeKutlamasi(null)} />
+      )}
     </div>
   )
 

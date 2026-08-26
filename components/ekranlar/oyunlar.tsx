@@ -34,7 +34,13 @@ import {
   type BankaKaydi,
 } from '@/lib/oyunlar/banka'
 import { sesleriHazirla } from '@/lib/oyunlar/oyun-sesi'
-import { OYUN_GECMIS_SINIRI, TUR_EN_UZUN } from '@/lib/depo'
+import { ANAHTARLAR, OYUN_GECMIS_SINIRI, TUR_EN_UZUN, useYerelDepo } from '@/lib/depo'
+import {
+  VARSAYILAN_MOD,
+  modKayitliMi,
+  moduNormalize,
+  type OyunModu,
+} from '@/lib/oyunlar/mod'
 import { OyunMuzigi } from '@/lib/oyunlar/oyun-muzigi'
 import { LOFI_PARCALAR } from '@/lib/lofi'
 import { SesCalar } from '@/lib/ses'
@@ -59,6 +65,8 @@ import { AnlatimOyunuEkrani } from '@/components/ekranlar/oyun-anlatim'
 import { KokluOyunuEkrani } from '@/components/ekranlar/oyun-koklu'
 import { BiyolojiOyunuEkrani } from '@/components/ekranlar/oyun-biyoloji'
 import { HucreOyunuEkrani } from '@/components/ekranlar/oyun-hucre'
+import { SiralaOyunuEkrani } from '@/components/ekranlar/oyun-sirala'
+import { TuzakOyunuEkrani } from '@/components/ekranlar/oyun-tuzak'
 
 /**
  * Oyunlar sekmesi.
@@ -115,6 +123,8 @@ const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   ortak: ['Ortak', 'Özellikler'],
   siniflandirma: ['Canlıları', 'Sınıflandır'],
   hucre: ['Organel', 'Kartı'],
+  sirala: ['Zaman', 'Şeridi'],
+  tuzak: ['Kural', 'Tuzağı'],
 }
 
 export function OyunlarEkrani({
@@ -151,6 +161,15 @@ export function OyunlarEkrani({
   onOyunAcildi: (oyun: OyunId) => void
   bildir: BildirimKolu
 }) {
+  /**
+   * Tur modu — bütün oyunlarda ortak, kayıtta saklanıyor.
+   *
+   * Sahibi burası çünkü hem oyun ekranlarına geçiyor hem de biten turun
+   * kaydedilip kaydedilmeyeceğini belirliyor; iki yerde ayrı okunsaydı bir
+   * ekranın gördüğü mod ötekinin gördüğünden farklı olabilirdi.
+   */
+  const [modHam, setMod] = useYerelDepo<OyunModu>(ANAHTARLAR.oyunModu, VARSAYILAN_MOD)
+  const mod = moduNormalize(modHam)
   const [secilenOyun, setSecilenOyun] = useState<OyunId | null>(null)
   /** Açık kategori; null ise ders ızgarası görünüyor. */
   const [secilenDers, setSecilenDers] = useState<DersId | null>(null)
@@ -172,22 +191,29 @@ export function OyunlarEkrani({
   // sonra çalmaya devam etmesi ise uygulama görev listesinden silinene kadar
   // sürüyordu.
   const gorunur = useUygulamaGorunur()
-  const arcadeRef = useRef<OyunMuzigi | null>(null)
+  const sakinRef = useRef<OyunMuzigi | null>(null)
   const lofiRef = useRef<SesCalar | null>(null)
 
   const muzikCalsin = acikOyun !== null && muzikAcik
 
   useEffect(() => {
-    if (!muzikCalsin || muzikTuru !== 'arcade') {
-      arcadeRef.current?.kapat()
-      arcadeRef.current = null
+    if (!muzikCalsin || muzikTuru !== 'sakin') {
+      sakinRef.current?.kapat()
+      sakinRef.current = null
       return
     }
-    const muzik = arcadeRef.current ?? new OyunMuzigi()
-    arcadeRef.current = muzik
-    // Ses efektlerinin altında kalmalı: müzik yüksek olursa doğru/yanlış
-    // geri bildirimi duyulmuyor ve oyunun tek geri bildirimi kayboluyor.
-    muzik.sesSeviyesi(0.42)
+    const muzik = sakinRef.current ?? new OyunMuzigi()
+    sakinRef.current = muzik
+    /*
+      Ses efektlerinin altında kalmalı: müzik yüksek olursa doğru/yanlış geri
+      bildirimi duyulmuyor ve oyunun tek geri bildirimi kayboluyor.
+
+      Değer 0.06'ydı ve o denge efektler tam seviyedeyken kurulmuştu. Efekt
+      dosyaları 1'den 0.42'ye indirilince (`oyun-sesi.ts`) müzik altta kaldı;
+      aradaki farkı korumak için o kadar geri veriliyor. Efekt seviyesine
+      dokunursan buraya da bak — ikisi tek bir dengenin iki ucu.
+    */
+    muzik.sesSeviyesi(0.1)
     if (gorunur) muzik.basla()
     else muzik.duraklat()
   }, [muzikCalsin, muzikTuru, gorunur])
@@ -200,7 +226,7 @@ export function OyunlarEkrani({
     }
     if (!lofiRef.current) {
       const calar = new SesCalar()
-      calar.sesSeviyesi(0.22)
+      calar.sesSeviyesi(0.28)
       calar.cal(`lofi:${LOFI_PARCALAR[5].dosya}`)
       lofiRef.current = calar
     }
@@ -211,8 +237,8 @@ export function OyunlarEkrani({
   // Ekrandan çıkarken bağlamlar da kapanmalı; yukarıdaki efektler duraklatmakla yetiniyor.
   useEffect(
     () => () => {
-      arcadeRef.current?.kapat()
-      arcadeRef.current = null
+      sakinRef.current?.kapat()
+      sakinRef.current = null
       lofiRef.current?.kapat()
       lofiRef.current = null
     },
@@ -239,7 +265,12 @@ export function OyunlarEkrani({
     setBanka(() => yeniBanka)
     if (dusen > 0) onBankadanDustu(dusen)
 
-    if (bankaTuru !== null) return
+    /*
+      Rahat tur da banka turu gibi: yanlışlar bankaya düşüyor ama rekora,
+      istatistiğe ve oyun geçmişine yazılmıyor. Süresiz bir turda "kaç doğru
+      yaptın" sorusunun cevabı sabrı ölçer, bilgiyi değil (`lib/oyunlar/mod.ts`).
+    */
+    if (bankaTuru !== null || !modKayitliMi(mod)) return
 
     setKayitlar((onceki) => ({
       ...onceki,
@@ -309,7 +340,7 @@ export function OyunlarEkrani({
   return (
     <div>
       <header className="px-0.5 pt-1">
-        <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
+        <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
         <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">
           Oyunlar 🎮
         </h1>
@@ -318,7 +349,7 @@ export function OyunlarEkrani({
         </p>
       </header>
 
-      <BankaDestesi
+      <BankaSatiri
         toplam={banka.length}
         dagilim={dagilim}
         onAc={onBankayaGit}
@@ -327,7 +358,7 @@ export function OyunlarEkrani({
 
       {secilenDers === null ? (
         <>
-          <h2 className="mt-5 mb-3 px-0.5 font-display text-lg font-extrabold tracking-tight">
+          <h2 className="mt-5 mb-3 px-0.5 font-display text-lg font-extrabold tracking-tight text-primary">
             Dersler
           </h2>
 
@@ -459,6 +490,8 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('yazim', ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -469,6 +502,8 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('ses', ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -479,6 +514,8 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('oge', ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -489,6 +526,8 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('soz', ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -499,6 +538,8 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('islem', ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -509,6 +550,8 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('bolunme', ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -519,6 +562,8 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('aci', ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -529,6 +574,8 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('ucgen', ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -540,6 +587,8 @@ export function OyunlarEkrani({
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('harita', ozet, cevaplar, saniye)}
           onCik={oyunuKapat}
+          mod={mod}
+          setMod={setMod}
           bildir={bildir}
         />
       )}
@@ -549,6 +598,8 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('antlasma', ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -559,6 +610,8 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('kavram', ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -569,6 +622,8 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('anlatim', ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -579,6 +634,8 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('koklu', ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -591,6 +648,8 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti(acikOyun, ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -601,6 +660,32 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('hucre', ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
+          bildir={bildir}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'sirala' && (
+        <SiralaOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'sirala')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('sirala', ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
+          bildir={bildir}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'tuzak' && (
+        <TuzakOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'tuzak')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye) => turBitti('tuzak', ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -611,6 +696,8 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye) => turBitti('edebiyat', ozet, cevaplar, saniye)}
+          mod={mod}
+          setMod={setMod}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -620,13 +707,18 @@ export function OyunlarEkrani({
 }
 
 /**
- * Oyun Bankası girişi — bir kart destesi.
+ * Oyun Bankası girişi — tek satır.
  *
- * Liste satırı değil: arkadan sırıtan iki katman üç oyunun kendi renkleri,
- * yani deste onların sorularından oluşuyor. Sayı kırmızı bir rozet değil,
- * kartın en büyük yazısı — rozet uyarı gibi duruyordu, buradaki bilgi.
+ * Önce arkadan sırıtan iki katmanla bir kart destesiydi; tasarım düz yüzeylere
+ * geçince eğik katmanlar sayfadaki tek eğri parça olarak kaldı ve süs gibi
+ * durdu. Şimdi tasarımın kendi deseni: solda sayının rozeti, ortada ad, sağda
+ * eylem. Sayı kırmızı bir rozet değil, kartın en büyük yazısı — rozet uyarı
+ * gibi duruyordu, buradaki bilgi.
+ *
+ * Dokunma hedefi "Oyna" düğmesi değil kartın tamamı; düğme onun içinde bir
+ * yüzey, çünkü iç içe iki düğme olmaz.
  */
-function BankaDestesi({
+function BankaSatiri({
   toplam,
   dagilim,
   onAc,
@@ -644,38 +736,19 @@ function BankaDestesi({
   ].filter((c) => dagilim[c.id] > 0)
 
   return (
-    <div className={cn('relative pb-4', className)}>
-      {/* Destenin altındaki iki kart. Yalnızca dolu bankada çiziliyor: boş
-          bankada arkadan sırıtan katmanlar "içinde bir şey var" der, yalan olur. */}
-      {toplam > 0 && (
-        <>
-          <span
-            aria-hidden
-            className="absolute inset-x-2.5 bottom-0 top-4 -rotate-[1.4deg] rounded-2xl bg-edb-kart"
-          />
-          <span
-            aria-hidden
-            className="absolute inset-x-1.5 bottom-2 top-2 rounded-2xl bg-isl-kart"
-          />
-        </>
+    <button
+      type="button"
+      onClick={onAc}
+      className={cn(
+        'golge-kart w-full rounded-[22px] bg-card p-3.5 text-left transition',
+        'active:brightness-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+        className,
       )}
-
-      <button
-        type="button"
-        onClick={onAc}
-        className={cn(
-          'golge-kart relative flex w-full flex-col gap-2.5 rounded-2xl bg-card p-3.5 text-left transition',
-          'active:brightness-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        )}
-      >
-        <span className="flex items-center gap-3">
-          <span className="min-w-[56px] rounded-2xl bg-ikincil-soft px-2.5 py-2 text-center">
-            <span className="rakam block font-display text-2xl font-black leading-none tracking-tight text-ikincil">
-              {toplam}
-            </span>
-            <span className="mt-1 block text-[9.5px] font-extrabold uppercase tracking-wider text-ikincil">
-              soru
-            </span>
+    >
+      <span className="flex items-center gap-3">
+        <span className="min-w-[58px] shrink-0 rounded-[16px] bg-primary-soft px-2.5 py-2 text-center">
+          <span className="rakam block font-display text-[22px] leading-none font-extrabold text-primary">
+            {toplam}
           </span>
 
           <span className="min-w-0 flex-1">
@@ -697,25 +770,38 @@ function BankaDestesi({
           </span>
         </span>
 
-        {cipler.length > 0 && (
-          <span className="flex gap-1.5">
-            {cipler.map((cip) => (
-              <span
-                key={cip.id}
-                className={cn(
-                  'rakam flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-extrabold',
-                  cip.zemin,
-                  cip.yazi,
-                )}
-              >
-                <span aria-hidden>{cip.ikon}</span>
-                {dagilim[cip.id]} <em className="not-italic font-semibold">{cip.ad}</em>
-              </span>
-            ))}
+        <span className="min-w-0 flex-1">
+          <span className="block font-display text-base font-extrabold tracking-tight">
+            Oyun Bankası
           </span>
-        )}
-      </button>
-    </div>
+          <span className="mt-0.5 block text-[12.5px] font-medium leading-snug text-muted-foreground">
+            {toplam > 0 ? 'Karıştırdıklarını tekrar oyna' : 'Karıştırdığın sorular burada birikir'}
+          </span>
+        </span>
+
+        <span className="shrink-0 rounded-full bg-primary-dolu px-4 py-2 text-[13px] font-extrabold text-white">
+          Oyna
+        </span>
+      </span>
+
+      {cipler.length > 0 && (
+        <span className="mt-3 flex gap-1.5">
+          {cipler.map((cip) => (
+            <span
+              key={cip.id}
+              className={cn(
+                'rakam flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-extrabold',
+                cip.zemin,
+                cip.yazi,
+              )}
+            >
+              <span aria-hidden>{cip.ikon}</span>
+              {dagilim[cip.id]} <em className="not-italic font-semibold">{cip.ad}</em>
+            </span>
+          ))}
+        </span>
+      )}
+    </button>
   )
 }
 
@@ -746,7 +832,7 @@ function OyunKarti({
       type="button"
       onClick={onAc}
       className={cn(
-        'relative rounded-2xl p-4 text-left transition active:brightness-[0.97]',
+        'relative rounded-[22px] p-4 text-left transition active:brightness-[0.97]',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         aile.zemin,
         genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[186px] flex-col',
@@ -825,7 +911,7 @@ function BolumKarti({
       type="button"
       onClick={onAc}
       className={cn(
-        'relative rounded-2xl p-4 text-left transition active:brightness-[0.97]',
+        'relative rounded-[22px] p-4 text-left transition active:brightness-[0.97]',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         aile.zemin,
         genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[186px] flex-col',

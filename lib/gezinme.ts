@@ -14,6 +14,7 @@ export type Sekme = 'ana' | 'oyunlar' | 'daha' | 'ayarlar'
  */
 export type Ekran =
   | 'pomodoro'
+  | 'notlar'
   | 'soru'
   | 'deneme'
   | 'siralama'
@@ -25,9 +26,11 @@ export type Ekran =
   | 'rozetler'
   | 'istatistik'
   | 'oyun-bankasi'
+  /** Havuç Mağazası — ana sayfanın sağ üstündeki bakiyeden açılıyor, kart menüsünde yok. */
+  | 'magaza'
 
-/** Kutucuk zeminleri — tasarımdaki pastel aileler. */
-export type KartRengi = 'mavi' | 'pembe' | 'krem' | 'nane' | 'lavanta'
+/** Kutucuk zeminleri — tasarımdaki aileler. */
+export type KartRengi = 'mavi' | 'pembe' | 'krem' | 'nane' | 'lavanta' | 'deniz'
 
 export type KartTanimi = {
   id: Ekran
@@ -84,6 +87,13 @@ export const KARTLAR: KartTanimi[] = [
     aciklama: 'Günlük çözdüğün sorular',
     ikon: '✏️',
     renk: 'mavi',
+  },
+  {
+    id: 'notlar',
+    ad: 'Yapılacaklar',
+    aciklama: 'Bugününü kâğıtlara yaz',
+    ikon: '🗒️',
+    renk: 'deniz',
   },
   {
     id: 'deneme',
