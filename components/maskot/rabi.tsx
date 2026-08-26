@@ -11,8 +11,24 @@ import { cn } from '@/lib/utils'
  */
 export type MaskotDurumu = 'normal' | 'mutlu' | 'uykulu' | 'calisiyor' | 'uzgun' | 'kutlama'
 
+/**
+ * Maskotun pozu — hangi görselin çizileceği.
+ *
+ * Durumdan ayrı bir prop: `durum` yalnızca ekran okuyucuya söylenen etiketi
+ * belirliyor ve on beş ekran onu zaten hesaplıyor. Poz ise gerçekten başka bir
+ * dosya gösteriyor, o yüzden yalnızca isteyen ekran veriyor.
+ */
+export type MaskotPozu = 'yuz' | 'el-sallayan'
+
+/** Poz → dosya. Hepsi `public/` altında ve aynı kare oranda. */
+const POZ_GORSELI: Record<MaskotPozu, string> = {
+  yuz: '/tavsan-yuz.png',
+  'el-sallayan': '/tavsan-el-sallayan.png',
+}
+
 type Props = {
   durum?: MaskotDurumu
+  poz?: MaskotPozu
   /** Piksel cinsinden genişlik; yükseklik oranla belirlenir. */
   boyut?: number
   /**
@@ -54,6 +70,7 @@ export const MASKOT_YUVASI = 'rabi-maskot-yuvasi'
  */
 export function Rabi({
   durum = 'normal',
+  poz = 'yuz',
   boyut = 96,
   gizli = false,
   yuvaMi = false,
@@ -63,7 +80,7 @@ export function Rabi({
     // eslint-disable-next-line @next/next/no-img-element
     <img
       id={yuvaMi ? MASKOT_YUVASI : undefined}
-      src="/tavsan-yuz.png"
+      src={POZ_GORSELI[poz]}
       width={boyut}
       height={(boyut * 130) / 120}
       style={{
@@ -79,6 +96,18 @@ export function Rabi({
       loading="eager"
       decoding="async"
       draggable={false}
+      /*
+        Poz görseli yoksa yüze düşülüyor.
+
+        Maskot birden çok dosyaya bölündü ve biri eksik kalırsa tarayıcı kırık
+        görsel simgesi çiziyor: ekranın ortasında duran bir maskot için bu,
+        eksik bir dosyadan çok bozuk bir uygulama gibi görünüyor.
+      */
+      onError={(olay) => {
+        const img = olay.currentTarget
+        if (img.src.endsWith(POZ_GORSELI.yuz)) return
+        img.src = POZ_GORSELI.yuz
+      }}
     />
   )
 }

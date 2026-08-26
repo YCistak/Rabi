@@ -7,7 +7,7 @@ import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
 import { yeniId } from '@/lib/utils'
 import { Alan, Buton, Cip, Etiket, Kart } from '@/components/ui'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
-import { Rabi } from '@/components/maskot/rabi'
+import { Rabi, type MaskotPozu } from '@/components/maskot/rabi'
 import { izinIste } from '@/lib/bildirim'
 import { HEDEF_ADIMI, HEDEF_EN_AZ, HEDEF_EN_COK } from '@/lib/depo'
 
@@ -43,16 +43,39 @@ export type KurulumSonucu = {
  * kendinden önceki sınıfları bitmiştir, 9. sınıftakinin ise hiçbiri — ona bu
  * adımı göstermek boş bir form göstermek olurdu.
  */
-type AdimId = 'isim' | 'sinif' | 'notlar' | 'alan' | 'hedef' | 'hatirlatma'
+type AdimId =
+  | 'karsilama'
+  | 'isim'
+  | 'tanisma'
+  | 'sinif'
+  | 'notlar'
+  | 'alan'
+  | 'hedef'
+  | 'hatirlatma'
 
 const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
+  karsilama: {
+    baslik: 'Rabi seni tanısın',
+    aciklama: 'Ne kadar doğru cevap verirsen seni o kadar iyi yönlendiririm.',
+  },
   isim: {
     baslik: 'Sana nasıl sesleneyim?',
     aciklama: 'Böylece seni adınla selamlayabilirim.',
   },
+  /*
+    Tanışma ekranının başlığı burada **yok**: içinde kullanıcının adı geçiyor
+    ve ad her çizimde değişebiliyor. Sabit bir tabloya yazılamayacak tek metin
+    bu, o yüzden ekranın kendi içinde kuruluyor (`tanismaBasligi`).
+  */
+  tanisma: {
+    baslik: '',
+    aciklama: '',
+  },
   sinif: {
-    baslik: 'Merhaba, ben Rabi',
-    aciklama: 'Seninle YKS yolunda çalışacağım. Önce birkaç şey sorayım.',
+    // Karşılama ekranı zaten selam verdi; burada ikinci kez "merhaba" demek
+    // kullanıcıyı aynı yerde saydırıyordu.
+    baslik: 'Seni tanıyayım',
+    aciklama: 'Önce birkaç şey sorayım.',
   },
   notlar: {
     baslik: 'Okul notların',
@@ -129,7 +152,9 @@ export function Kurulum({
   // Sınıf geri dönülüp değiştirilebildiği için liste her çizimde kuruluyor;
   // sıra numarası da listenin boyuna kırpılıyor.
   const adimlar: AdimId[] = [
+    'karsilama',
     'isim',
+    'tanisma',
     'sinif',
     ...(notluSiniflar.length > 0 ? (['notlar'] as AdimId[]) : []),
     'alan',
@@ -139,6 +164,15 @@ export function Kurulum({
   const sonAdim = adimlar.length - 1
   const siradaki = Math.min(adim, sonAdim)
   const suanki = adimlar[siradaki]
+  /*
+    Nokta göstergesinin saydığı adımlar: soru soranlar.
+
+    Sayının `adimlar` üzerinden değil ayrı bir listeden çıkması şart — karşılama
+    ile tanışma dizinin içinde duruyor (sıra onlardan geçiyor) ama noktası yok.
+    Dizinin kendisinden çıkarılsalardı `ilerle` onları atlardı.
+  */
+  const noktaAdimlari: AdimId[] = adimlar.filter((id) => id !== 'karsilama' && id !== 'tanisma')
+  const noktaSirasi = noktaAdimlari.indexOf(suanki)
 
   const ilerle = () => setAdim(Math.min(sonAdim, siradaki + 1))
   const geri = () => setAdim(Math.max(0, siradaki - 1))
@@ -195,6 +229,60 @@ export function Kurulum({
       // O yüzden kayda yalnızca güncel sınıfa göre bitmiş yıllar giriyor.
       okulYillari: okulYillariKur(notlar, notluSiniflar),
     })
+  }
+
+  /*
+    Karşılama ekranının düzeni ötekilere benzemiyor, o yüzden erken dönüyor.
+
+    Soru sormuyor: kart, adım noktaları ve geri düğmesi burada gürültü olurdu —
+    ekranda yapılacak tek bir şey var. Maskot da ekranın **ortasında** duruyor,
+    başlığın yanında değil; açılıştaki tavşan buranın üstüne konduğu için
+    (`yuvaMi`) ilk açılışta uçuş doğrudan bu tavşanın üstünde bitiyor.
+  */
+  /*
+    Soru sormayan iki ekran (karşılama ve tanışma) ötekilerin düzenini
+    kullanmıyor, o yüzden `Kurulum` onlar için erken dönüyor.
+
+    Kart, geri düğmesi ve adım noktaları orada yok: ekranda yapılabilecek tek
+    bir şey varken üçü de gürültü. Düzen `SoysuzEkran` yerine tek bir
+    `TekIsliEkran` içinde duruyor — ikisi aynı ekranın iki hâli, ayrı ayrı
+    yazılsaydı biri değişince öteki geride kalırdı.
+  */
+  if (suanki === 'karsilama') {
+    return (
+      <TekIsliEkran
+        baslik={ADIM_BILGISI.karsilama.baslik}
+        altYazi={ADIM_BILGISI.karsilama.aciklama}
+        maskotGizli={maskotGizli}
+        // Açılıştaki tavşan buranın üstüne konuyor: kurulumun ilk ekranı bu.
+        yuvaMi
+        dugme="Başlayalım"
+        onDevam={devamEt}
+      />
+    )
+  }
+
+  /*
+    Tanışma: adı aldıktan hemen sonra onu geri söyleyen ekran.
+
+    Yazılan adın gerçekten kaydedildiğini gösteren tek yer burası — kurulumun
+    geri kalanı sınıf, alan ve hedef soruyor ve ad bir daha görünmüyordu.
+    Maskot burada el sallıyor; selam veren bir yüz, karşılamadaki duran yüzle
+    aynı görsel olsaydı ekran ileri gitmiş gibi durmazdı.
+
+    Yuva değil: açılış çoktan bitti ve kullanıcı buraya ancak iki dokunuşla
+    gelebiliyor.
+  */
+  if (suanki === 'tanisma') {
+    return (
+      <TekIsliEkran
+        baslik={tanismaBasligi(ad)}
+        maskotGizli={maskotGizli}
+        poz="el-sallayan"
+        dugme="Devam"
+        onDevam={devamEt}
+      />
+    )
   }
 
   return (
@@ -430,7 +518,9 @@ export function Kurulum({
           </Buton>
         )}
         <Buton className="flex-1" onClick={devamEt}>
-          {siradaki === sonAdim ? 'Başlayalım' : 'Devam'}
+          {/* Karşılama ekranı "Başlayalım" diyor; aynı akışta ikinci kez aynı
+              söz, kullanıcıya başa döndüğünü düşündürüyordu. */}
+          {siradaki === sonAdim ? 'Hazırım' : 'Devam'}
           {siradaki === sonAdim ? (
             <Check size={18} aria-hidden />
           ) : (
@@ -439,13 +529,15 @@ export function Kurulum({
         </Buton>
       </div>
 
-      {/* Adım göstergesi */}
+      {/* Adım göstergesi — karşılama ve tanışma sayılmıyor: nokta "kaç soru
+          kaldı"yı anlatıyor, ikisi de soru sormuyor. Zaten kendi düzenlerini
+          çizdikleri için şerit orada hiç görünmüyor. */}
       <div className="mt-4 flex justify-center gap-1.5" aria-hidden>
-        {adimlar.map((id, i) => (
+        {noktaAdimlari.map((id, i) => (
           <span
             key={id}
             className={`h-1.5 rounded-full transition-all ${
-              i === siradaki ? 'w-5 bg-primary' : 'w-1.5 bg-border'
+              i === noktaSirasi ? 'w-5 bg-primary' : 'w-1.5 bg-border'
             }`}
           />
         ))}
@@ -454,6 +546,74 @@ export function Kurulum({
   )
 }
 
+
+/**
+ * Soru sormayan kurulum ekranı: ortada maskot, altında başlık, en altta tek
+ * düğme.
+ *
+ * Karşılama ve tanışma bunu paylaşıyor. İkisinin farkı üç prop: hangi görsel,
+ * hangi başlık, düğmede ne yazdığı.
+ */
+function TekIsliEkran({
+  baslik,
+  altYazi,
+  poz,
+  yuvaMi = false,
+  maskotGizli,
+  dugme,
+  onDevam,
+}: {
+  baslik: string
+  /** İkinci satır — tanışma ekranında yok, başlık zaten tek cümle. */
+  altYazi?: string
+  poz?: MaskotPozu
+  yuvaMi?: boolean
+  maskotGizli: boolean
+  dugme: string
+  onDevam: () => void
+}) {
+  return (
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
+      {/* Üstteki boşluk alttakinden küçük: maskot tam ortada dururken ekran
+          aşağı sarkmış gibi görünüyor, göz ağırlık merkezini ortanın biraz
+          üstünde arıyor. */}
+      <div className="flex-[0.85]" aria-hidden />
+
+      <div className="flex flex-col items-center text-center">
+        <Rabi durum="mutlu" poz={poz} boyut={150} gizli={maskotGizli} yuvaMi={yuvaMi} />
+        <h1 className="mt-6 font-display text-[27px] leading-tight font-extrabold tracking-tight text-balance">
+          {baslik}
+        </h1>
+        {altYazi && (
+          <p className="mt-2.5 text-[15px] leading-snug font-medium text-balance text-muted-foreground">
+            {altYazi}
+          </p>
+        )}
+      </div>
+
+      <div className="flex-1" aria-hidden />
+
+      <Buton className="w-full" onClick={onDevam}>
+        {dugme}
+      </Buton>
+    </div>
+  )
+}
+
+/**
+ * Tanışma ekranının başlığı.
+ *
+ * İsim adımı adı zorunlu tutuyor (`AD_EN_AZ`), yani buraya normalde boş ad
+ * gelmiyor. Yine de adsız hâli duruyor: kural gevşetilirse cümle "Seni
+ * tanıdığıma memnun oldum," diye biter ve adı yazmayı unutmuş gibi görünürdü.
+ * Sınır tek yerde (isim adımı) kalsın diye bu ekran ona bağımlı değil.
+ */
+function tanismaBasligi(ad: string): string {
+  const temiz = ad.trim()
+  return temiz === ''
+    ? 'Seni tanıdığıma memnun oldum'
+    : `Seni tanıdığıma memnun oldum, ${temiz}`
+}
 
 /**
  * Girilen yıl notlarını kayda çevirir; boş ve geçersiz olanlar atlanır.
