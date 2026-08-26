@@ -280,8 +280,8 @@ export function Kurulum({
                   className="mt-1"
                 />
 
-                {/* "Şu an seçili" satırı yok: seçilen saat tekerleğin
-                    ortasında, vurgulu renkte zaten duruyor. */}
+                {/* "Şu an seçili" satırı yok: seçilen saat seçicinin
+                    tepesinde, büyük puntoyla zaten duruyor. */}
               </div>
             )}
 

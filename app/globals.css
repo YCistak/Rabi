@@ -216,10 +216,10 @@
     box-shadow: var(--shadow-kart);
   }
   /*
-    Kaydırma çubuğunu gizler. Saat tekerleğinde (components/secici.tsx) çubuk
-    hem dar sütunun yarısını kaplıyor hem de "burada bir liste var" demek
-    yerine "bir şey taştı" izlenimi veriyordu; kaydırmanın kendisi zaten
-    ortadaki seçim bandıyla anlatılıyor.
+    Kaydırma çubuğunu gizler. Tekerleklerde (components/secici.tsx) çubuk hem
+    dar sütunun yarısını kaplıyor hem de "burada bir liste var" demek yerine
+    "bir şey taştı" izlenimi veriyordu; kaydırmanın kendisi zaten ortadaki
+    satırın büyüyüp renklenmesiyle anlatılıyor.
   */
   .scrollbar-gizli {
     scrollbar-width: none;
