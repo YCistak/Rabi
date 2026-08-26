@@ -3,7 +3,6 @@
 // sunucu, hesap, senkronizasyon yoktur.
 
 import type { BankaKaydi } from './oyunlar/banka'
-import type { JokerStogu } from './magaza/jokerler'
 import type { NotKagidi } from './yapilacaklar'
 
 // ---------------------------------------------------------------------------
@@ -374,19 +373,6 @@ export type Yedek = {
   oyunBankasi?: BankaKaydi[]
   /** Oyun Bankası'ndan düşen toplam soru sayısı. */
   bankaDusen?: number
-  /**
-   * Havuç bakiyesi. Eski yedeklerde yok — geri yüklemede yazılmıyor,
-   * kullanıcının mevcut bakiyesi olduğu gibi kalıyor.
-   */
-  havuc?: number
-  /**
-   * Ödülü verilmiş en yüksek seviye. Bakiyeyle birlikte gitmesi şart: yalnızca
-   * havuç taşınsaydı yedeği geri yükleyen kullanıcı aynı seviyelerin ödülünü
-   * ikinci kez alırdı.
-   */
-  seviye?: number
-  /** Joker çantası — kimlik başına adet. */
-  jokerler?: JokerStogu
   /**
    * Yapılacaklar tahtası. Eski yedeklerde yok — geri yüklemede yazılmıyor,
    * kullanıcının mevcut kâğıtları olduğu gibi kalıyor.
