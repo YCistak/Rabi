@@ -95,6 +95,11 @@ durumda, yani geçiş tek bir hareket gibi okunuyor. Dört şey buna bağlı:
   kendi kutusundan alınıyor; WebView açılırken ikisi bir süre ayrı düşüyor.
 - **Yuva tek.** Ekranda ya ana sayfanın başlığı vardır ya kurulum sihirbazı,
   o yüzden ikisinde de aynı kimlik duruyor ve ölçüm hangisi varsa onu buluyor.
+  Kurulumun ilk ekranı (karşılama) kendi düzenini çizdiği için yuva orada
+  ekranın **ortasında** duruyor; varış noktası yazılmayıp ölçüldüğü için uçuş
+  kendiliğinden oraya iniyor. Karşılama ekranına ikinci bir maskot eklersen
+  aynı kimlikten iki tane olur ve `getElementById` hangisini önce bulursa
+  tavşan oraya iner.
 - **Ölçüm zamanlayıcıyla yineleniyor, `requestAnimationFrame` ile değil.**
   Sayfa görünür değilken rAF hiç çağrılmıyor ve ölçüm sonsuza kadar bekliyor.
 
@@ -135,6 +140,23 @@ Karar kullanıcının: açılış animasyonu her koşulda oynuyor. Açılış ek
 yüzden `@media (prefers-reduced-motion: reduce)` bloğunda **yok**; uygulamanın
 geri kalanı (haftalık özet, harita, kurulum sonrası geçiş) tercihi izlemeye
 devam ediyor. Bu istisnayı geri almadan önce yukarıdaki sebebe bak.
+
+### Kurulum bir karşılama ekranıyla açılıyor
+
+İlk kurulumda soru sorulmadan önce tek bir ekran duruyor: ortada maskot,
+altında "Rabi seni tanısın" ve tek satırlık bir söz, en altta yalnızca
+**Başlayalım**. Sebep, ilk ekranın eskiden doğrudan "Bu yıl kaçıncı
+sınıftasın?" diye sorması: uygulamayı ilk açan kişi kendini tanıtan bir şey
+görmeden forma düşüyordu.
+
+Karşılama `adimlar` dizisinin ilk elemanı ama ötekilerle aynı düzeni
+kullanmıyor — `Kurulum` onun için erken dönüyor. Kart, geri düğmesi ve adım
+noktaları orada yok: ekranda yapılabilecek tek bir şey varken üçü de gürültü.
+Adım noktaları zaten karşılamayı **saymıyor** (`adimlar.slice(1)`); nokta
+"kaç soru kaldı"yı anlatıyor ve karşılama soru sormuyor.
+
+Son adımın düğmesi bu yüzden "Başlayalım" değil **"Hazırım"**: aynı akışta iki
+kez "Başlayalım" yazan düğme, kullanıcıya başa döndüğünü düşündürüyordu.
 
 ### Ayarlar satırları kapalı açılıyor
 

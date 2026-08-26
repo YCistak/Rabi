@@ -42,12 +42,18 @@ export type KurulumSonucu = {
  * kendinden önceki sınıfları bitmiştir, 9. sınıftakinin ise hiçbiri — ona bu
  * adımı göstermek boş bir form göstermek olurdu.
  */
-type AdimId = 'sinif' | 'notlar' | 'alan' | 'hedef' | 'hatirlatma'
+type AdimId = 'karsilama' | 'sinif' | 'notlar' | 'alan' | 'hedef' | 'hatirlatma'
 
 const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
+  karsilama: {
+    baslik: 'Rabi seni tanısın',
+    aciklama: 'Ne kadar doğru cevap verirsen seni o kadar iyi yönlendiririm.',
+  },
   sinif: {
-    baslik: 'Merhaba, ben Rabi',
-    aciklama: 'Seninle YKS yolunda çalışacağım. Önce birkaç şey sorayım.',
+    // Karşılama ekranı zaten selam verdi; burada ikinci kez "merhaba" demek
+    // kullanıcıyı aynı yerde saydırıyordu.
+    baslik: 'Seni tanıyayım',
+    aciklama: 'Önce birkaç şey sorayım.',
   },
   notlar: {
     baslik: 'Okul notların',
@@ -107,6 +113,7 @@ export function Kurulum({
   // Sınıf geri dönülüp değiştirilebildiği için liste her çizimde kuruluyor;
   // sıra numarası da listenin boyuna kırpılıyor.
   const adimlar: AdimId[] = [
+    'karsilama',
     'sinif',
     ...(notluSiniflar.length > 0 ? (['notlar'] as AdimId[]) : []),
     'alan',
@@ -150,6 +157,41 @@ export function Kurulum({
       // O yüzden kayda yalnızca güncel sınıfa göre bitmiş yıllar giriyor.
       okulYillari: okulYillariKur(notlar, notluSiniflar),
     })
+  }
+
+  /*
+    Karşılama ekranının düzeni ötekilere benzemiyor, o yüzden erken dönüyor.
+
+    Soru sormuyor: kart, adım noktaları ve geri düğmesi burada gürültü olurdu —
+    ekranda yapılacak tek bir şey var. Maskot da ekranın **ortasında** duruyor,
+    başlığın yanında değil; açılıştaki tavşan buranın üstüne konduğu için
+    (`yuvaMi`) ilk açılışta uçuş doğrudan bu tavşanın üstünde bitiyor.
+  */
+  if (suanki === 'karsilama') {
+    return (
+      <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
+        {/* Üstteki boşluk alttakinden büyük: maskot tam ortada dururken ekran
+            aşağı sarkmış gibi görünüyor, göz ağırlık merkezini ortanın biraz
+            üstünde arıyor. */}
+        <div className="flex-[0.85]" aria-hidden />
+
+        <div className="flex flex-col items-center text-center">
+          <Rabi durum="mutlu" boyut={150} gizli={maskotGizli} yuvaMi />
+          <h1 className="mt-6 font-display text-[27px] leading-tight font-extrabold tracking-tight text-balance">
+            {ADIM_BILGISI.karsilama.baslik}
+          </h1>
+          <p className="mt-2.5 text-[15px] leading-snug font-medium text-balance text-muted-foreground">
+            {ADIM_BILGISI.karsilama.aciklama}
+          </p>
+        </div>
+
+        <div className="flex-1" aria-hidden />
+
+        <Buton className="w-full" onClick={ilerle}>
+          Başlayalım
+        </Buton>
+      </div>
+    )
   }
 
   return (
@@ -348,7 +390,9 @@ export function Kurulum({
           </Buton>
         )}
         <Buton className="flex-1" onClick={() => (siradaki === sonAdim ? void bitir() : ilerle())}>
-          {siradaki === sonAdim ? 'Başlayalım' : 'Devam'}
+          {/* Karşılama ekranı "Başlayalım" diyor; aynı akışta ikinci kez aynı
+              söz, kullanıcıya başa döndüğünü düşündürüyordu. */}
+          {siradaki === sonAdim ? 'Hazırım' : 'Devam'}
           {siradaki === sonAdim ? (
             <Check size={18} aria-hidden />
           ) : (
@@ -357,13 +401,14 @@ export function Kurulum({
         </Buton>
       </div>
 
-      {/* Adım göstergesi */}
+      {/* Adım göstergesi — karşılama sayılmıyor: nokta "kaç soru kaldı"yı
+          anlatıyor ve karşılama ekranı soru sormuyor. */}
       <div className="mt-4 flex justify-center gap-1.5" aria-hidden>
-        {adimlar.map((id, i) => (
+        {adimlar.slice(1).map((id, i) => (
           <span
             key={id}
             className={`h-1.5 rounded-full transition-all ${
-              i === siradaki ? 'w-5 bg-primary' : 'w-1.5 bg-border'
+              i === siradaki - 1 ? 'w-5 bg-primary' : 'w-1.5 bg-border'
             }`}
           />
         ))}
