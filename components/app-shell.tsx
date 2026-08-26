@@ -587,14 +587,10 @@ export function AppShell() {
    * kaçıp bir daha iniyordu. Tek bir kökün altında sabit sırada durunca
    * animasyon kesintisiz akıyor.
    */
-  const acilisKatmani = acilisGorunur ? (
-    <Acilis
-      onBitti={acilisiKapat}
-      // İlk açılışta arkada kurulum sihirbazı var; tavşan sol üst köşeye
-      // değil onun tepesindeki maskotun üstüne konuyor.
-      varis={ayarlar.kurulumTamamlandi ? 'kose' : 'kurulum'}
-    />
-  ) : null
+  // Varış noktası burada seçilmiyor: ekranda tek bir maskot yuvası var (ilk
+  // açılışta kurulum sihirbazının tepesindeki, sonrasında ana sayfa
+  // başlığındaki) ve açılış onu bulup mesafeyi kendi ölçüyor.
+  const acilisKatmani = acilisGorunur ? <Acilis onBitti={acilisiKapat} /> : null
 
   /**
    * Uçan tavşanın konacağı maskot bu sırada gizli: açılışta ve kurulum

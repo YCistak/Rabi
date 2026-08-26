@@ -24,7 +24,7 @@ const ZEMIN = '#F8F8F7'
  * Ekranın ömrü (ms) — tasarımın kendi süresi.
  *
  * Bütün parçalar tek bir 4,2 saniyelik zaman çizgisini paylaşıyor ve sıralarını
- * yüzdelerle alıyor: %0–34 iniş, %34–68 duruş, %68–100 çıkış. Süreyi
+ * yüzdelerle alıyor: %0–30 iniş, %30–68 duruş, %68–100 çıkış. Süreyi
  * değiştirirsen `globals.css`'teki bütün `acilis-*` sürelerini birlikte
  * değiştir; yüzdeler kendiliğinden ölçeklenir ama süreler birbirinden ayrılırsa
  * parçalar dağılır.
@@ -50,98 +50,107 @@ const MASKOT_KUTUSU = (MASKOT_BOYU * 130) / 120
 const MASKOT_MERKEZI = -160 + MASKOT_BOYU / 2
 
 /**
- * Tavşanın gösteri sonunda gideceği yer.
+ * Uçuşun zaman çizgisindeki yeri.
  *
- * `kose`: ana sayfanın başlığındaki maskotun üstü — uygulama daha önce
- * kurulmuşsa açılışın arkasında ana sayfa duruyor.
- * `kurulum`: kurulum sihirbazının tepesindeki maskotun üstü. İlk açılışta sol
- * üst köşede hiçbir şey yok; tavşan oraya gidince ekranın kimsesiz bir
- * köşesine süzülmüş gibi oluyordu.
- *
- * Konum sınıf değil **değişken** olarak veriliyor: `kurulumTamamlandi`
- * localStorage'dan bir kare sonra geliyor ve sınıf değişseydi animasyon
- * baştan başlardı. Değişken değişince yalnız varış noktası güncelleniyor.
+ * Tavşan %68'e kadar yerinde duruyor, oradan sonra varış noktasına süzülüyor
+ * (`acilis-inis`). Ölçüm bu ana kadar yenileniyor, bu andan sonra donuyor:
+ * uçuş başladıktan sonra varış noktasını değiştirmek tavşanı yolun ortasında
+ * ışınlardı.
  */
-export type AcilisVarisi = 'kose' | 'kurulum'
-
-/*
-  Yedek varış değerleri.
-
-  Asıl değerler ölçülerek bulunuyor (bkz. `useVaris`); buradakiler ölçüm hiç
-  tutmazsa kullanılıyor. Uçan tavşanın durduğu yer yatayda ekranın ortası,
-  dikeyde `50dvh + MASKOT_MERKEZI` — yani ortanın 101 piksel yukarısı. Yatay
-  hedef her iki varışta da sayfa kabının solundan 47px içeride (`mx-auto
-  max-w-md` + `px-4` + `px-0.5` + maskotun yarısı): dar ekranda kap ekranla
-  aynı, geniş ekranda 448px'e oturuyor — `max()` ikisini de karşılıyor.
-*/
-const VARIS: Record<AcilisVarisi, React.CSSProperties> = {
-  // Ana sayfa başlığındaki 58px'lik maskot.
-  kose: {
-    '--acilis-x': 'calc(max(0px, (100vw - 448px) / 2) + 47px - 50vw)',
-    '--acilis-y': 'calc(1.25rem + var(--guvenli-ust) + 138.7px + 101px - 50dvh)',
-    '--acilis-olcek': '0.492',
-  },
-  // Kurulumun tepesindeki 110px'lik maskot: yatayda zaten ortada.
-  kurulum: {
-    '--acilis-x': '0px',
-    '--acilis-y': 'calc(2rem + var(--guvenli-ust) + 158.9px + 101px - 50dvh)',
-    '--acilis-olcek': '0.932',
-  },
-} as Record<AcilisVarisi, React.CSSProperties>
+const UCUS_BASLANGICI = Math.round(ACILIS_SURESI * 0.68)
 
 type Olcum = { dx: number; dy: number; olcek: number }
 
-/** Yuva geç doğabiliyor: ölçüm tutmazsa bu aralıkla bu kadar kez yineleniyor. */
+/** Ölçümün yinelenme aralığı (ms). */
 const OLCUM_ARALIGI = 16
-const OLCUM_DENEMESI = 60
+
+/** Bu kadar pikselden küçük oynamalar için yeniden çizmeye değmiyor. */
+const ONEMSIZ_OYNAMA = 0.5
 
 /**
  * Maskotun nereye süzüleceğini varış noktasındaki maskottan ölçer.
  *
- * Varış noktası koda yazılabilirdi — bir süre öyleydi (yukarıdaki `VARIS`
- * tablosu) — ama o hesap başlığın kaç piksel yukarıda durduğunu, güvenli alanı
- * ve kabın genişliğini bilmek zorunda: biri değişince tavşan yuvanın yanına
- * düşüyor ve katman kalkınca zıplıyor. Geçişin tamamı o zıplamada kayboluyor.
+ * Varış noktası koda yazılabilirdi — bir süre öyleydi (`VARIS` diye bir tablo
+ * vardı) — ama o hesap başlığın kaç piksel yukarıda durduğunu, güvenli alanı ve
+ * kabın genişliğini bilmek zorunda. Tablo tam da bu yüzden bozuldu: düzen
+ * değişti, sayılar kaldı ve tavşan yuvanın **93 piksel altına** iniyordu.
+ * Üstelik yalnızca bazen — tablo sadece ölçüm yetişmediğinde devreye giriyordu,
+ * yani hata telefonun o açılışta ne kadar hızlı olduğuna bağlıydı.
  *
- * Ölçüm ilk boyamadan sonraya bırakılıyor ve tutmazsa yineleniyor: açılış
- * katmanı ana sayfayla aynı anda çiziliyor, ilk karede yuva henüz yok olabilir
- * (veri okunuyor) ya da ölçüsü sıfır dönebilir.
+ * Bu yüzden iki kural var:
+ *
+ * 1. **Ölçüm uçuş başlayana kadar bırakılmıyor.** Eskiden 60 deneme (~1 sn)
+ *    hakkı vardı ve hakkı bitince yedeğe düşülüyordu; yavaş açılan bir
+ *    telefonda ana sayfa o saniyeye yetişmiyor. Artık tek sınır uçuşun kendisi:
+ *    yuva ne zaman doğarsa ölçüm onu yakalıyor.
+ * 2. **İlk başarılı ölçüm son söz değil.** Düzen açılıştan sonra bir kez daha
+ *    oynayabiliyor — güvenli alan (`--guvenli-ust`) yerli köprüden gecikmeli
+ *    geliyor, yazı tipi sonradan takas oluyor. Ölçüm uçuşa kadar yenilendiği
+ *    için tavşan hangi düzen son hâlse ona iniyor.
+ *
+ * Ölçü ekranın kendi kutusundan alınıyor, `window.innerHeight`ten değil:
+ * uçan tavşan `fixed inset-0` bir katmanın ortasına göre duruyor ve WebView
+ * açılırken pencere ölçüsüyle o katmanın kutusu bir süre ayrı düşebiliyor.
  *
  * Yineleme `requestAnimationFrame` ile değil zamanlayıcıyla: sayfa görünür
- * değilken (uygulama arka planda açıldıysa, cihaz kareyi hiç çizmiyorsa) rAF
- * hiç çağrılmıyor ve ölçüm sonsuza kadar bekliyor. Zamanlayıcı o durumda da
- * işliyor; hesap zaten çizime değil düzene bakıyor.
+ * değilken (uygulama arka planda açıldıysa) rAF hiç çağrılmıyor ve ölçüm
+ * sonsuza kadar beklerdi. Hesap zaten çizime değil düzene bakıyor.
  */
-function useVaris(): Olcum | null {
+function useVaris(katmanRef: React.RefObject<HTMLDivElement | null>, basladi: boolean): Olcum | null {
   const [olcum, setOlcum] = useState<Olcum | null>(null)
 
   useEffect(() => {
     let zamanlayici = 0
-    let kalanDeneme = OLCUM_DENEMESI
+    let dondu = false
 
     const olc = () => {
-      const yuva = document.getElementById(MASKOT_YUVASI)
-      const kutu = yuva?.getBoundingClientRect()
+      if (dondu) return
 
-      // Yuva henüz yok (veri okunuyor) ya da ölçüsü sıfır: birazdan yeniden
-      // bak, deneme hakkı biterse yedek değerlerle devam et.
-      if (!kutu || kutu.width === 0) {
-        if (kalanDeneme-- > 0) zamanlayici = window.setTimeout(olc, OLCUM_ARALIGI)
-        return
+      const yuva = document.getElementById(MASKOT_YUVASI)
+      const yuvaKutusu = yuva?.getBoundingClientRect()
+      const katmanKutusu = katmanRef.current?.getBoundingClientRect()
+
+      // Yuva henüz yok (veri okunuyor) ya da ölçüsü sıfır: birazdan yeniden bak.
+      if (yuvaKutusu && katmanKutusu && yuvaKutusu.width > 0) {
+        // İki kutu da kare görseli ortalayan `object-contain` kutusu; kutunun
+        // merkezi görselin merkeziyle aynı yerde.
+        const yeni: Olcum = {
+          dx: yuvaKutusu.left + yuvaKutusu.width / 2 - (katmanKutusu.left + katmanKutusu.width / 2),
+          dy:
+            yuvaKutusu.top +
+            yuvaKutusu.height / 2 -
+            (katmanKutusu.top + katmanKutusu.height / 2 + MASKOT_MERKEZI),
+          olcek: yuvaKutusu.width / MASKOT_BOYU,
+        }
+        // Ölçüm 16 ms'de bir yineleniyor; her seferinde yeni bir nesne vermek
+        // ekranı boşuna baştan çizerdi.
+        setOlcum((onceki) =>
+          onceki &&
+          Math.abs(onceki.dx - yeni.dx) < ONEMSIZ_OYNAMA &&
+          Math.abs(onceki.dy - yeni.dy) < ONEMSIZ_OYNAMA &&
+          Math.abs(onceki.olcek - yeni.olcek) < 0.001
+            ? onceki
+            : yeni,
+        )
       }
 
-      // İki kutu da kare görseli ortalayan `object-contain` kutusu; kutunun
-      // merkezi görselin merkeziyle aynı yerde.
-      setOlcum({
-        dx: kutu.left + kutu.width / 2 - window.innerWidth / 2,
-        dy: kutu.top + kutu.height / 2 - (window.innerHeight / 2 + MASKOT_MERKEZI),
-        olcek: kutu.width / MASKOT_BOYU,
-      })
+      zamanlayici = window.setTimeout(olc, OLCUM_ARALIGI)
     }
 
     olc()
-    return () => clearTimeout(zamanlayici)
-  }, [])
+
+    // Donma sayacı animasyon **başlayınca** işliyor: ekran duraklatılmış
+    // başlıyor (bkz. `useBaslangic`) ve uçuş o zaman çizgisinin %68'inde.
+    // Bağlanmadan işletilseydi yavaş açılan bir telefonda ölçüm tavşan daha
+    // yola çıkmadan donardı.
+    const donma = basladi ? window.setTimeout(() => (dondu = true), UCUS_BASLANGICI) : 0
+
+    return () => {
+      dondu = true
+      clearTimeout(zamanlayici)
+      clearTimeout(donma)
+    }
+  }, [katmanRef, basladi])
 
   return olcum
 }
@@ -213,9 +222,10 @@ function useBaslangic(): boolean {
  * animasyondan önce işlemeye başlar, yavaş açılan bir telefonda katman maskot
  * yuvasına varmadan kaldırılırdı.
  */
-export function Acilis({ onBitti, varis = 'kose' }: { onBitti: () => void; varis?: AcilisVarisi }) {
-  const olcum = useVaris()
+export function Acilis({ onBitti }: { onBitti: () => void }) {
+  const katmanRef = useRef<HTMLDivElement>(null)
   const basladi = useBaslangic()
+  const olcum = useVaris(katmanRef, basladi)
 
   // Geri çağrı her çizimde yeniden üretilebiliyor; sayacın ona bakması
   // zamanlayıcıyı sıfırlardı.
@@ -228,28 +238,45 @@ export function Acilis({ onBitti, varis = 'kose' }: { onBitti: () => void; varis
     return () => clearTimeout(zamanlayici)
   }, [basladi])
 
-  const hedef = olcum
-    ? ({
-        '--acilis-x': `${olcum.dx}px`,
-        '--acilis-y': `${olcum.dy}px`,
-        '--acilis-olcek': olcum.olcek,
-      } as React.CSSProperties)
-    : VARIS[varis]
+  /*
+    Ölçüm hiç tutmadıysa tavşan **uçmuyor**, olduğu yerde sönüyor.
+
+    Eskiden koda yazılmış bir yedek tabloya uçuyordu ve bu ekranın tek gerçek
+    hatasıydı: yuva yoksa zaten konacak bir maskot da yok, tahmin edilen bir
+    köşeye süzülmek hareketi kurtarmıyor — yanlış yere inen bir tavşan
+    gösteriyor. Kendi yerinde sönmek hiç olmazsa yanlış bir şey söylemiyor.
+  */
+  const hedef = (
+    olcum
+      ? {
+          '--acilis-x': `${olcum.dx}px`,
+          '--acilis-y': `${olcum.dy}px`,
+          '--acilis-olcek': olcum.olcek,
+        }
+      : { '--acilis-x': '0px', '--acilis-y': '0px', '--acilis-olcek': 1 }
+  ) as React.CSSProperties
 
   return (
     <div
       // Zemin bu katmanda değil altındaki `acilis-zemin`de: gösteri biterken
       // zemin soluyor ve tavşan **uygulamanın üstünde** uçarak yerine gidiyor.
       // Zemin burada dursaydı tavşan yol boyunca bomboş beyaz bir ekranda
-      // süzülürdü. `pointer-events-none`, son yarım saniyede zemin çoktan
-      // saydamken katmanın dokunuşları yutmasını engelliyor: altta uygulama
-      // görünüyor ve basan kullanıcı "bastım, olmadı" diyordu.
+      // süzülürdü.
+      //
+      // Katman dokunuşları **yutuyor** (`pointer-events-none` yok). Bir süre
+      // saydamdı: son saniyede zemin çoktan solmuş oluyor ve altındaki
+      // düğmeler görünüyordu, ama görünen her şey aynı zamanda basılabilir
+      // oluyordu — kullanıcı daha uygulamayı görmeden sekme değiştiriyor,
+      // açılış kalkınca kendini başka bir ekranda buluyordu. Görünürlük
+      // dokunulabilirlik demek değil: gösteri bitene kadar ekran kilitli.
+      // `touch-none`, aynı şeyi kaydırma/yakınlaştırma için yapıyor.
       className={cn(
-        'font-marka pointer-events-none fixed inset-0 z-[60] overflow-hidden',
+        'font-marka fixed inset-0 z-[60] touch-none overflow-hidden select-none',
         !basladi && 'acilis-bekliyor',
       )}
       role="status"
       aria-label="Rabi açılıyor"
+      ref={katmanRef}
     >
       {/* Zemin ve üstündeki iki yumuşak parıltı. Zemin düz beyaza yakın;
           parıltılar olmadan ekran boş bir kâğıt gibi duruyor. */}
@@ -282,23 +309,28 @@ export function Acilis({ onBitti, varis = 'kose' }: { onBitti: () => void; varis
           sayfanın (ya da kurulumun) maskotunun üstüne oturuyor. İki farklı
           çizim olsaydı geçişte tavşan değişiyormuş gibi görünürdü.
         */}
-        <Rabi durum="mutlu" boyut={MASKOT_BOYU} />
+        {/* Uçuş yoksa tavşan öteki süslemelerle birlikte sönüyor. Solma
+            `acilis-inis`in üstünde değil ayrı bir kapta: ikisi de aynı öğede
+            olsaydı opaklığı sonuncusu ele geçirir ve iniş görünmez olurdu. */}
+        <span className={cn('block', !olcum && 'acilis-son')}>
+          <Rabi durum="mutlu" boyut={MASKOT_BOYU} />
+        </span>
       </div>
 
       {/*
         "RABİ" — 50px yazının satır yüksekliği 1.32 (66px): "İ" harfinin
         noktası kırpılmasın diye.
       */}
-      <p className="acilis-yazi text-foreground absolute inset-x-0 top-1/2 mt-[64px] text-center text-[50px] leading-[1.32] font-extrabold tracking-[-0.05em]">
+      <p className="acilis-yazi text-foreground absolute inset-x-0 top-1/2 mt-[48px] text-center text-[50px] leading-[1.32] font-extrabold tracking-[-0.05em]">
         RABİ
       </p>
 
-      <p className="acilis-slogan text-muted-foreground absolute inset-x-0 top-1/2 mt-[115px] text-center text-[9.5px] leading-none font-semibold tracking-[0.3em] uppercase">
+      <p className="acilis-slogan text-muted-foreground absolute inset-x-0 top-1/2 mt-[128px] text-center text-[9.5px] leading-none font-semibold tracking-[0.3em] uppercase">
         Sınav yolu arkadaşın
       </p>
 
       {/* Yükleme bloğu: çark + tarayan şerit + durum metni. */}
-      <div className="acilis-yukleme absolute inset-x-0 top-1/2 mt-[165px] flex flex-col items-center gap-3">
+      <div className="acilis-yukleme absolute inset-x-0 top-1/2 mt-[176px] flex flex-col items-center gap-3">
         <DonenCark />
         <span className="acilis-ray" aria-hidden />
         <span className="text-muted-foreground text-[9.5px] leading-none font-semibold tracking-[0.2em] uppercase">

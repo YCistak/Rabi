@@ -60,7 +60,7 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
 ### Açılışın son hareketi ana sayfaya bağlanıyor
 
 Ekran 4,2 saniye sürüyor (`ACILIS_SURESI`) ve bütün parçalar **tek** bir zaman
-çizgisini paylaşıyor: %0–34 iniş, %34–68 duruş, %68–100 çıkış. Süreler bu
+çizgisini paylaşıyor: %0–30 iniş, %30–68 duruş, %68–100 çıkış. Süreler bu
 yüzden hepsinde aynı ve ayrı ayrı değiştirilemez — biri kayarsa yazılar
 tavşandan önce ya da sonra gider.
 
@@ -75,13 +75,24 @@ durumda, yani geçiş tek bir hareket gibi okunuyor. Dört şey buna bağlı:
   ikisi aynı görsel olduğu için takas görünmüyor. `display: none` olamaz:
   varış noktası bu öğe ölçülerek bulunuyor ve düzenden çıkmış bir öğenin
   ölçüsü sıfırdır.
-- **Varış noktası ölçülüyor, yazılmıyor.** Tasarım `translate(-147px, -224px)
-  scale(0.33)` diyor ama o sayılar 360×720lik prototip çerçevesine ait. Bir
-  süre uygulamada da yazılıydı (`VARIS` tablosu, `calc()` ile): o hesap
-  başlığın yerini, güvenli alanı ve kabın genişliğini bilmek zorunda ve biri
-  değişince tavşan yuvanın yanına düşüp katman kalkınca zıplıyor. Şimdi açılış
-  ekranı `MASKOT_YUVASI` kimlikli öğeyi bulup mesafeyi kendi hesaplıyor;
-  tablo yalnızca ölçüm hiç tutmazsa devreye giriyor.
+- **Varış noktası ölçülüyor, yazılmıyor — yedeği de yok.** Tasarım
+  `translate(-147px, -224px) scale(0.33)` diyor ama o sayılar 360×720lik
+  prototip çerçevesine ait. Bir süre uygulamada da yazılıydı (`VARIS` tablosu,
+  `calc()` ile) ve tam da beklendiği gibi bozuldu: düzen değişti, sayılar
+  kaldı, tavşan yuvanın 93 piksel altına indi. Tablo yalnızca ölçüm
+  yetişmediğinde devreye girdiği için hata da **arada bir** görünüyordu —
+  telefonun o açılışta ne kadar hızlı olduğuna bağlıydı. Tablo silindi: ölçüm
+  tutmazsa tavşan hiç uçmuyor, olduğu yerde sönüyor. Yuva yoksa konacak maskot
+  da yok; tahmin edilen bir köşeye inmek hareketi kurtarmıyor, yanlış yere
+  inen bir tavşan gösteriyor.
+- **Ölçüm tek seferlik değil.** Uçuş %68'de başlıyor ve ölçüm o ana kadar
+  yenilenip orada donuyor. İki sebebi var: yuva geç doğabiliyor (eskiden 60
+  deneme ≈ 1 saniyelik bir hak vardı ve yavaş telefonda ana sayfa ona
+  yetişmiyordu) ve düzen bir kez daha oynayabiliyor — güvenli alan
+  (`--guvenli-ust`) yerli köprüden gecikmeli geliyor, yazı tipi sonradan takas
+  oluyor. Donma şart: uçuş başladıktan sonra varış noktasını değiştirmek
+  tavşanı yolun ortasında ışınlar. Ölçü `window.innerHeight`ten değil ekranın
+  kendi kutusundan alınıyor; WebView açılırken ikisi bir süre ayrı düşüyor.
 - **Yuva tek.** Ekranda ya ana sayfanın başlığı vardır ya kurulum sihirbazı,
   o yüzden ikisinde de aynı kimlik duruyor ve ölçüm hangisi varsa onu buluyor.
 - **Ölçüm zamanlayıcıyla yineleniyor, `requestAnimationFrame` ile değil.**
