@@ -7,7 +7,7 @@ import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
 import { yeniId } from '@/lib/utils'
 import { Alan, Buton, Cip, Etiket, Kart } from '@/components/ui'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
-import { Rabi, type MaskotPozu } from '@/components/maskot/rabi'
+import { Rabi } from '@/components/maskot/rabi'
 import { izinIste } from '@/lib/bildirim'
 import { HEDEF_ADIMI, HEDEF_EN_AZ, HEDEF_EN_COK } from '@/lib/depo'
 
@@ -63,9 +63,9 @@ const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
     aciklama: 'Böylece seni adınla selamlayabilirim.',
   },
   /*
-    Tanışma ekranının başlığı burada **yok**: içinde kullanıcının adı geçiyor
-    ve ad her çizimde değişebiliyor. Sabit bir tabloya yazılamayacak tek metin
-    bu, o yüzden ekranın kendi içinde kuruluyor (`tanismaBasligi`).
+    Tanışma ekranının yazıları burada **yok**: başlıkta kullanıcının adı
+    geçiyor ve ad ayrı renkte çiziliyor, yani metin değil JSX. Sabit bir
+    tabloya sığmayan tek ekran bu; yazıları `TanismaEkrani` içinde duruyor.
   */
   tanisma: {
     baslik: '',
@@ -239,26 +239,31 @@ export function Kurulum({
     başlığın yanında değil; açılıştaki tavşan buranın üstüne konduğu için
     (`yuvaMi`) ilk açılışta uçuş doğrudan bu tavşanın üstünde bitiyor.
   */
-  /*
-    Soru sormayan iki ekran (karşılama ve tanışma) ötekilerin düzenini
-    kullanmıyor, o yüzden `Kurulum` onlar için erken dönüyor.
-
-    Kart, geri düğmesi ve adım noktaları orada yok: ekranda yapılabilecek tek
-    bir şey varken üçü de gürültü. Düzen `SoysuzEkran` yerine tek bir
-    `TekIsliEkran` içinde duruyor — ikisi aynı ekranın iki hâli, ayrı ayrı
-    yazılsaydı biri değişince öteki geride kalırdı.
-  */
   if (suanki === 'karsilama') {
     return (
-      <TekIsliEkran
-        baslik={ADIM_BILGISI.karsilama.baslik}
-        altYazi={ADIM_BILGISI.karsilama.aciklama}
-        maskotGizli={maskotGizli}
-        // Açılıştaki tavşan buranın üstüne konuyor: kurulumun ilk ekranı bu.
-        yuvaMi
-        dugme="Başlayalım"
-        onDevam={devamEt}
-      />
+      <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
+        {/* Üstteki boşluk alttakinden küçük: maskot tam ortada dururken ekran
+            aşağı sarkmış gibi görünüyor, göz ağırlık merkezini ortanın biraz
+            üstünde arıyor. */}
+        <div className="flex-[0.85]" aria-hidden />
+
+        <div className="flex flex-col items-center text-center">
+          {/* Açılıştaki tavşan buranın üstüne konuyor: kurulumun ilk ekranı bu. */}
+          <Rabi durum="mutlu" boyut={150} gizli={maskotGizli} yuvaMi />
+          <h1 className="mt-6 font-display text-[27px] leading-tight font-extrabold tracking-tight text-balance">
+            {ADIM_BILGISI.karsilama.baslik}
+          </h1>
+          <p className="mt-2.5 text-[15px] leading-snug font-medium text-balance text-muted-foreground">
+            {ADIM_BILGISI.karsilama.aciklama}
+          </p>
+        </div>
+
+        <div className="flex-1" aria-hidden />
+
+        <Buton className="w-full" onClick={devamEt}>
+          Başlayalım
+        </Buton>
+      </div>
     )
   }
 
@@ -274,15 +279,7 @@ export function Kurulum({
     gelebiliyor.
   */
   if (suanki === 'tanisma') {
-    return (
-      <TekIsliEkran
-        baslik={tanismaBasligi(ad)}
-        maskotGizli={maskotGizli}
-        poz="el-sallayan"
-        dugme="Devam"
-        onDevam={devamEt}
-      />
-    )
+    return <TanismaEkrani ad={ad} maskotGizli={maskotGizli} onDevam={devamEt} />
   }
 
   return (
@@ -548,71 +545,131 @@ export function Kurulum({
 
 
 /**
- * Soru sormayan kurulum ekranı: ortada maskot, altında başlık, en altta tek
- * düğme.
+ * Tanışma ekranındaki süsler.
  *
- * Karşılama ve tanışma bunu paylaşıyor. İkisinin farkı üç prop: hangi görsel,
- * hangi başlık, düğmede ne yazdığı.
+ * Konumlar oran (yüzde), piksel değil: ekran boyu telefondan telefona
+ * değişiyor ve sabit piksellerde süsler küçük ekranda daireye biniyor,
+ * büyükte kenara yapışıyordu. Hepsi `aria-hidden` — taşıdıkları bilgi yok,
+ * ekran okuyucuya sekiz emoji okutmak gürültü olurdu.
  */
-function TekIsliEkran({
-  baslik,
-  altYazi,
-  poz,
-  yuvaMi = false,
+const SUSLER = [
+  { simge: '🐾', sol: '27%', ust: '9%', boy: 'text-[19px]' },
+  { simge: '✨', sol: '13%', ust: '19%', boy: 'text-[17px]' },
+  { simge: '🩷', sol: '68%', ust: '12%', boy: 'text-[19px]' },
+  { simge: '🥕', sol: '83%', ust: '25%', boy: 'text-[21px]' },
+  { simge: '💛', sol: '19%', ust: '47%', boy: 'text-[19px]' },
+  { simge: '🌸', sol: '88%', ust: '53%', boy: 'text-[19px]' },
+  { simge: '⭐', sol: '9%', ust: '70%', boy: 'text-[17px]' },
+  { simge: '✨', sol: '78%', ust: '75%', boy: 'text-[19px]' },
+]
+
+/**
+ * Tanışma — kurulumun kutlama ekranı.
+ *
+ * Karşılamayla aynı düzeni **paylaşmıyor** (`TekIsliEkran`): orası sakin bir
+ * giriş, burası adı öğrendikten sonraki karşılama anı. Degrade zemin,
+ * süsler, halkalı madalyon ve rozet yalnızca burada; ikisini tek bileşende
+ * toplamak, yarısı kullanılmayan bir sürü propla biten bir bileşen olurdu.
+ *
+ * Maskot el sallıyor. Tasarımda dairenin sağ üstünde ayrıca bir 👋 duruyordu;
+ * alındı — maskot zaten el sallıyor ve iki el aynı anda iki selam gibi
+ * okunuyordu.
+ *
+ * Yuva değil: açılış çoktan bitti, kullanıcı buraya ancak iki dokunuşla
+ * geliyor.
+ */
+function TanismaEkrani({
+  ad,
   maskotGizli,
-  dugme,
   onDevam,
 }: {
-  baslik: string
-  /** İkinci satır — tanışma ekranında yok, başlık zaten tek cümle. */
-  altYazi?: string
-  poz?: MaskotPozu
-  yuvaMi?: boolean
+  ad: string
   maskotGizli: boolean
-  dugme: string
   onDevam: () => void
 }) {
+  const temizAd = ad.trim()
+
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
-      {/* Üstteki boşluk alttakinden küçük: maskot tam ortada dururken ekran
-          aşağı sarkmış gibi görünüyor, göz ağırlık merkezini ortanın biraz
-          üstünde arıyor. */}
-      <div className="flex-[0.85]" aria-hidden />
+    <div className="relative mx-auto flex min-h-dvh max-w-md flex-col overflow-hidden px-5 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(1.5rem+var(--guvenli-alt))]">
+      {/* Sıcak degrade: krem sol üstte, şeftali sağda, altta zemine çözülüyor.
+          Üç ayrı radyal, tek bir doğrusal degradeyle aynı şey değil — köşeden
+          köşeye giden bir geçiş bant gibi görünüyordu. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          backgroundImage:
+            'radial-gradient(60% 45% at 12% 4%, var(--kutlama-krem) 0%, transparent 70%), ' +
+            'radial-gradient(65% 50% at 96% 30%, var(--kutlama-seftali) 0%, transparent 72%), ' +
+            'linear-gradient(180deg, var(--kutlama-krem) 0%, var(--background) 62%)',
+        }}
+      />
+
+      {SUSLER.map((sus, sira) => (
+        <span
+          key={`${sus.simge}-${sira}`}
+          aria-hidden
+          className={`pointer-events-none absolute -z-10 -translate-x-1/2 -translate-y-1/2 opacity-80 ${sus.boy}`}
+          style={{ left: sus.sol, top: sus.ust }}
+        >
+          {sus.simge}
+        </span>
+      ))}
+
+      <div className="flex-[0.9]" aria-hidden />
 
       <div className="flex flex-col items-center text-center">
-        <Rabi durum="mutlu" poz={poz} boyut={150} gizli={maskotGizli} yuvaMi={yuvaMi} />
-        <h1 className="mt-6 font-display text-[27px] leading-tight font-extrabold tracking-tight text-balance">
-          {baslik}
+        {/* Madalyon: beyaz daire + altın halka. Maskot beyaz zeminin üstünde
+            duruyor; degradenin üstüne konsaydı kürkü zeminle karışırdı —
+            `--maskot-hat` kuralının aynı sebebi. */}
+        <div className="grid size-[168px] place-items-center rounded-full bg-card shadow-[0_10px_30px_rgba(90,60,35,0.12)] ring-4 ring-kutlama-halka">
+          <Rabi durum="mutlu" poz="el-sallayan" boyut={116} gizli={maskotGizli} />
+        </div>
+
+        <p className="mt-7 rounded-full bg-kutlama-krem px-4 py-2 text-[13.5px] font-extrabold text-primary">
+          ✨ Aramıza hoş geldin ✨
+        </p>
+
+        {/* Ad vurgulu: ekranın tek işi adı geri söylemek, o yüzden cümlenin
+            içinde aranmadan bulunuyor. Yazıda `--primary` kullanılıyor,
+            dolgunun parlak tonu değil — parlak ton yazıda kontrastı tutmuyor. */}
+        <h1 className="mt-4 font-display text-[29px] leading-[1.2] font-extrabold tracking-tight text-balance">
+          {temizAd === '' ? (
+            'Seni tanıdığıma memnun oldum'
+          ) : (
+            <>
+              Seni tanıdığıma memnun oldum, <span className="text-primary">{temizAd}</span>
+            </>
+          )}
         </h1>
-        {altYazi && (
-          <p className="mt-2.5 text-[15px] leading-snug font-medium text-balance text-muted-foreground">
-            {altYazi}
-          </p>
-        )}
+
+        <p className="mt-3 max-w-[19rem] text-[14.5px] leading-snug font-medium text-balance text-muted-foreground">
+          Bundan sonra birlikteyiz — küçük adımlarla güzel şeyler yapacağız. 🌱
+        </p>
       </div>
 
       <div className="flex-1" aria-hidden />
 
-      <Buton className="w-full" onClick={onDevam}>
-        {dugme}
+      {/*
+        Üç nokta = kurulumun soru sormayan üç ekranı, sonuncusu bu.
+
+        Tasarımda ilk nokta doluydu; sonuncusu dolduruldu çünkü bu ekran
+        üçüncü sırada ve "1/3" diyen bir gösterge kullanıcıya yolun daha yeni
+        başladığını söylerdi.
+      */}
+      <div className="mb-5 flex justify-center gap-1.5" aria-hidden>
+        <span className="h-1.5 w-1.5 rounded-full bg-border" />
+        <span className="h-1.5 w-1.5 rounded-full bg-border" />
+        <span className="h-1.5 w-5 rounded-full bg-primary-dolu" />
+      </div>
+
+      {/* Düğme kurulumun geri kalanından daha yuvarlak ve daha uzun: bu ekranda
+          tek eylem var ve tasarım onu bir tuş değil bir davet gibi çiziyor. */}
+      <Buton className="h-14 w-full rounded-full text-[17px]" onClick={onDevam}>
+        Devam
       </Buton>
     </div>
   )
-}
-
-/**
- * Tanışma ekranının başlığı.
- *
- * İsim adımı adı zorunlu tutuyor (`AD_EN_AZ`), yani buraya normalde boş ad
- * gelmiyor. Yine de adsız hâli duruyor: kural gevşetilirse cümle "Seni
- * tanıdığıma memnun oldum," diye biter ve adı yazmayı unutmuş gibi görünürdü.
- * Sınır tek yerde (isim adımı) kalsın diye bu ekran ona bağımlı değil.
- */
-function tanismaBasligi(ad: string): string {
-  const temiz = ad.trim()
-  return temiz === ''
-    ? 'Seni tanıdığıma memnun oldum'
-    : `Seni tanıdığıma memnun oldum, ${temiz}`
 }
 
 /**

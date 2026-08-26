@@ -152,9 +152,16 @@ yer — kurulumun geri kalanı sınıf, alan ve hedef soruyor ve ad bir daha
 görünmüyordu.
 
 Karşılama ile tanışma `adimlar` dizisinde duruyor (sıra onlardan geçiyor) ama
-ötekilerin düzenini kullanmıyor: `Kurulum` ikisi için de erken dönüyor ve
-ortak `TekIsliEkran` çiziyor. Kart, geri düğmesi ve adım noktaları orada yok —
-ekranda yapılabilecek tek bir şey varken üçü de gürültü.
+ötekilerin düzenini kullanmıyor: `Kurulum` ikisi için de erken dönüyor. Kart,
+geri düğmesi ve soru noktaları orada yok — ekranda yapılabilecek tek bir şey
+varken üçü de gürültü.
+
+İkisi bir süre tek bir `TekIsliEkran` bileşenini paylaştı; tanışma tasarıma
+göre yeniden çizilince paylaşım bitti ve bileşen kaldırıldı. Karşılama sakin
+bir giriş, tanışma ise adı öğrendikten sonraki kutlama: degrade zemin,
+serpiştirilmiş süsler, halkalı madalyon ve rozet yalnızca tanışmada. İkisini
+tek bileşende tutmak, yarısı kullanılmayan bir sürü propla biten bir bileşen
+olurdu.
 
 Adım noktaları bu ikisini **saymıyor** (`noktaAdimlari`); nokta "kaç soru
 kaldı"yı anlatıyor ve ikisi de soru sormuyor. Sayının ayrı bir listeden çıkması
@@ -168,6 +175,24 @@ yazmayı unutmuş gibi duruyordu.
 Son adımın düğmesi bu yüzden "Başlayalım" değil **"Hazırım"**: aynı akışta iki
 kez "Başlayalım" yazan düğme, kullanıcıya başa döndüğünü düşündürüyordu.
 
+**Tanışma ekranının süsleri.** Sekiz emoji (`SUSLER`) degradenin üstüne
+serpiliyor ve konumları **oran**, piksel değil: sabit piksellerde küçük
+ekranda madalyona biniyor, büyükte kenara yapışıyorlardı. Hepsi
+`aria-hidden` — taşıdıkları bilgi yok, ekran okuyucuya sekiz emoji okutmak
+gürültü olurdu.
+
+Degrade uygulamanın **tek** degrade zemini (`--kutlama-krem`,
+`--kutlama-seftali`): ekran bir şey sormuyor, karşılıyor. Üç durak da mevcut
+paletin içinden seçildi, yoksa ekran başka bir uygulamadan gelmiş gibi
+duruyordu. Üç ayrı radyal kullanılıyor — köşeden köşeye giden tek bir doğrusal
+degrade bant gibi görünüyordu.
+
+Alttaki üç nokta kurulumun soru sormayan üç ekranını sayıyor ve **sonuncusu**
+dolu. Tasarımda ilk nokta doluydu; bu ekran üçüncü sırada olduğu için "1/3"
+diyen bir gösterge kullanıcıya yolun daha yeni başladığını söylerdi. Bu üç
+nokta, soru adımlarının `noktaAdimlari` şeridiyle karışmasın: ikisi ayrı
+şeyler sayıyor ve aynı anda hiç görünmüyorlar.
+
 **Maskotun pozu.** Tanışma ekranında tavşan el sallıyor
 (`poz="el-sallayan"` → `public/tavsan-el-sallayan.png`); karşılamadaki duran
 yüzle aynı görsel olsaydı ekran ileri gitmiş gibi durmazdı. Poz `durum`dan
@@ -175,7 +200,12 @@ ayrı bir prop: `durum` yalnızca ekran okuyucu etiketini belirliyor, poz
 gerçekten başka bir dosya gösteriyor. Görsel eksikse `Rabi` yüze düşüyor —
 kırık görsel simgesi, ekranın ortasında dururken eksik bir dosyadan çok bozuk
 bir uygulama gibi görünüyor. Yeni bir poz eklerken dosyayı `public/` altına
-koy ve kare oranı koru; ölçü `Rabi` içinde 130/120 kutusuna oturuyor.
+koy ve kare oranı koru; ölçü `Rabi` içinde 130/120 kutusuna oturuyor —
+`tavsan-el-sallayan.png` de bu yüzden kaynağındaki 247×236'dan 256×256 kare
+tuvale taşındı, yoksa `object-contain` onu yüzden farklı ölçeklerdi.
+
+Tasarımda madalyonun sağ üstünde ayrıca bir 👋 duruyordu; alınmadı — maskot
+zaten el sallıyor ve iki el aynı anda iki selam gibi okunuyordu.
 
 ### Ayarlar satırları kapalı açılıyor
 

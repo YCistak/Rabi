@@ -16,6 +16,9 @@
   --color-primary-dolu: var(--primary-dolu);
   --color-ikincil: var(--ikincil);
   --color-ikincil-soft: var(--ikincil-soft);
+  --color-kutlama-krem: var(--kutlama-krem);
+  --color-kutlama-seftali: var(--kutlama-seftali);
+  --color-kutlama-halka: var(--kutlama-halka);
   --color-ring: var(--ring);
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
@@ -138,6 +141,17 @@
      Turuncudan ayrışsın diye daha koyu ve kırmızıya yakın, ama aynı sıcaklıkta. */
   --ikincil: #a8432b;
   --ikincil-soft: #f8e7e0;
+
+  /*
+    Tanışma ekranının sıcak degradesi — kurulumun kutlama anı.
+
+    Uygulamanın tek degrade zemini burası: ekran bir şey sormuyor, karşılıyor.
+    Üç durak da mevcut paletin içinden — krem `--isl`in, şeftali `--yzm`in
+    komşusu — yoksa ekran başka bir uygulamadan gelmiş gibi duruyordu.
+  */
+  --kutlama-krem: #f8edd7;
+  --kutlama-seftali: #fadfd4;
+  --kutlama-halka: #eacb92;
 
   --ring: var(--primary);
   /* Semantik renkler de sıcak tarafa çekildi: mavi bias'lı yeşil bu paletin
