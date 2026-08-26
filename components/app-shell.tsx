@@ -41,7 +41,7 @@ import { bugun } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import { kullanildi } from '@/lib/son-kullanilan'
 import { ustKatmaniKapat } from '@/lib/geri'
-import { Acilis, ACILIS_SURESI, GECIS_SURESI, MaskotGecisi } from '@/components/acilis'
+import { Acilis, GECIS_SURESI, MaskotGecisi } from '@/components/acilis'
 import { HaftalikOzetEkrani } from '@/components/ekranlar/haftalik-ozet'
 import { Buton } from '@/components/ui'
 import { BottomNav } from '@/components/bottom-nav'
@@ -153,11 +153,19 @@ export function AppShell() {
   const [ozetGorulen, setOzetGorulen] = useYerelDepo<string[]>(ANAHTARLAR.ozetGorulen, [])
   const [kutlanan, setKutlanan] = useState<Rozet[]>([])
   /**
-   * Açılış ekranının hâli. Üç adım: görünür → soluyor → kaldırıldı. Ortadaki
-   * adım olmadan ekran bir anda kayboluyor ve sistem açılış ekranından gelen
-   * yumuşak geçiş bozuluyordu.
+   * Açılış ekranı kalktı mı.
+   *
+   * Ayrı bir "soluyor" adımı yok: ekran kendi çıkışını kendi yapıyor. Son
+   * saniyesinde zemin ve yazılar sönüyor, tavşan varış noktasındaki maskotun
+   * üstüne süzülüyor; katman kalktığında ekranda zaten yalnızca o maskot
+   * duruyor ve altındaki sayfa görünür durumda. Buraya bir de solma eklemek,
+   * biten bir geçişin üstüne ikinci bir geçiş koymak olurdu.
+   *
+   * Ne zaman kalkacağını ekranın kendisi bildiriyor: sayacı animasyon
+   * gerçekten başlayınca işlemeye başlıyor ve o anı yalnızca o bileşen
+   * biliyor (bkz. acilis.tsx → `useBaslangic`).
    */
-  const [acilis, setAcilis] = useState<'acik' | 'kapaniyor' | 'bitti'>('acik')
+  const [acilisBitti, setAcilisBitti] = useState(false)
   /**
    * Kurulum bitince tavşanın başlığa uçuşu. Açılış ekranıyla aynı üç adım:
    * uçuyor → soluyor → yok. Ortadaki adım olmadan katman bir anda kalkıyor ve
@@ -225,16 +233,7 @@ export function AppShell() {
   const diplomaNotu = obpHesapla(okulYillari, ayarlar.elleObp)?.diplomaNotu ?? null
 
   // ---- Açılış ekranı ----
-  // Süre veri okumasına bağlanmadı: localStorage neredeyse anında dönüyor,
-  // bağlansaydı ekran bir kare görünüp kaybolur ve animasyon hiç izlenmezdi.
-  useEffect(() => {
-    const solma = setTimeout(() => setAcilis('kapaniyor'), ACILIS_SURESI)
-    const kaldirma = setTimeout(() => setAcilis('bitti'), ACILIS_SURESI + 320)
-    return () => {
-      clearTimeout(solma)
-      clearTimeout(kaldirma)
-    }
-  }, [])
+  const acilisiKapat = useCallback(() => setAcilisBitti(true), [])
 
   useEffect(() => {
     if (gecis !== 'ucuyor') return
@@ -251,7 +250,7 @@ export function AppShell() {
   // Açılış ekranı `fixed`: kendisi kaydırılmıyor ama parmak hareketi altındaki
   // sayfaya geçiyordu ve ekran kalkınca ana sayfa ortasından başlıyordu.
   // Ekran görünürken gövde kilitleniyor, kalkarken sayfa başa alınıyor.
-  const acilisGorunur = acilis !== 'bitti'
+  const acilisGorunur = !acilisBitti
   useEffect(() => {
     if (!acilisGorunur) return
     const oncekiTasma = document.body.style.overflow
@@ -439,7 +438,7 @@ export function AppShell() {
    */
   const acilisKatmani = acilisGorunur ? (
     <Acilis
-      kapaniyor={acilis === 'kapaniyor'}
+      onBitti={acilisiKapat}
       // İlk açılışta arkada kurulum sihirbazı var; tavşan sol üst köşeye
       // değil onun tepesindeki maskotun üstüne konuyor.
       varis={ayarlar.kurulumTamamlandi ? 'kose' : 'kurulum'}
@@ -452,7 +451,7 @@ export function AppShell() {
    * biniyordu. Uçuş bitip katman solmaya başlayınca gizlilik kalkıyor —
    * ikisi tam olarak aynı yerde olduğu için değişim görünmüyor.
    */
-  const maskotGizli = acilis === 'acik' || gecis === 'ucuyor'
+  const maskotGizli = acilisGorunur || gecis === 'ucuyor'
 
   // Veri okunmadan ekran çizilirse "kayıt yok" bir an yanıp söner.
   const icerik = !ayarlarHazir ? (

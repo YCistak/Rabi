@@ -142,7 +142,12 @@ export function Kurulum({
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
       <div className="mb-6 flex flex-col items-center text-center">
-        <Rabi durum={siradaki === sonAdim ? 'mutlu' : 'normal'} boyut={110} gizli={maskotGizli} />
+        <Rabi
+          durum={siradaki === sonAdim ? 'mutlu' : 'normal'}
+          boyut={110}
+          gizli={maskotGizli}
+          yuvaMi
+        />
         <h1 className="mt-3 font-display text-2xl font-semibold tracking-tight">
           {ADIM_BILGISI[suanki].baslik}
         </h1>

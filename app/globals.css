@@ -54,6 +54,10 @@
      kalınlık: gövde 500-600, başlık 800-900. */
   --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  /* Yalnızca açılış ekranı: tasarım o ekranı Manrope ile çizdi ve "RABİ"
+     50 pikselde iki ailede belirgin biçimde farklı duruyor. Başka hiçbir
+     yerde kullanılmıyor. */
+  --font-marka: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
 
   /* Kartlar tasarımda çerçeveyle değil gölgeyle ayrılıyor: kırık beyaz
      zeminin üstünde yüzen beyaz yüzeyler. */
@@ -208,6 +212,9 @@
   .font-display {
     font-family: var(--font-display);
   }
+  .font-marka {
+    font-family: var(--font-marka);
+  }
   /*
     Kart yüzeyi: çerçeve değil gölge. Kırık beyaz zeminin üstünde beyaz
     kartlar ancak gölgeyle ayrışıyor.
@@ -283,13 +290,32 @@
       %68–100 tavşan varış noktasına küçülerek süzülür
       %78–92  zemin solar — tavşanın son yolu uygulamanın üstünde geçer
   */
+  /*
+    Varış noktası (`--acilis-x/y/olcek`) `components/acilis.tsx`'ten `style` ile
+    geliyor ve orada **ölçülerek** bulunuyor. Burada yedeği yok: değer her
+    çizimde satır içinde veriliyor, buraya bir yedek yazmak iki ayrı doğru
+    kaynak yaratırdı.
+  */
   .acilis-inis {
-    /* Varış noktası `components/acilis.tsx`'ten `style` ile geliyor; burada
-       yalnızca yedek değerler duruyor (ana sayfa başlığındaki maskot). */
-    --acilis-x: calc(max(0px, (100vw - 448px) / 2) + 47px - 50vw);
-    --acilis-y: calc(1.25rem + var(--guvenli-ust) + 138.7px - 50dvh);
-    --acilis-olcek: 0.518;
     animation: acilis-inis 4200ms cubic-bezier(0.3, 0.8, 0.25, 1) forwards;
+  }
+
+  /*
+    Ekran, uygulama penceresi gerçekten görünene kadar ilk karesinde duruyor.
+
+    CSS animasyonları sayfa çizilir çizilmez başlıyor; Android’in kendi
+    açılış ekranı ise o sırada hâlâ ekranı kaplıyor olabiliyor. Animasyon
+    arkada akıp bitiyor ve pencere açıldığında kullanıcı yalnızca son
+    karesini görüyor — "animasyon yok" diye okunan şey tam olarak bu. Sınıf,
+    ilk kare üretildiği an kalkıyor (bkz. acilis.tsx → `useBaslangic`).
+
+    Duraklatma `display: none` ya da gecikmeyle değil `animation-play-state`
+    ile: ekran o sırada görünmek zorunda (zemini sistem açılış ekranıyla aynı,
+    yani arada bir boşluk oluşmuyor), yalnızca zaman çizgisi beklemeli.
+  */
+  .acilis-bekliyor,
+  .acilis-bekliyor * {
+    animation-play-state: paused !important;
   }
   /*
     Açılışın zemini. Ayrı bir katman, çünkü gösteri biterken **yalnız zemin**
@@ -340,7 +366,7 @@
   .acilis-hale {
     position: absolute;
     left: 50%;
-    top: 0;
+    top: 50%;
     width: 170px;
     height: 170px;
     margin: -186px 0 0 -85px;
@@ -352,10 +378,10 @@
   .acilis-golge {
     position: absolute;
     left: 50%;
-    top: 0;
+    top: 50%;
     width: 130px;
     height: 20px;
-    margin: -60px 0 0 -65px;
+    margin: -72px 0 0 -65px;
     border-radius: 999px;
     background: radial-gradient(ellipse, rgba(24, 23, 22, 0.1), transparent 72%);
     filter: blur(3px);
@@ -591,42 +617,34 @@
   }
 }
 
+/*
+  Açılış ekranı bu listede bilerek **yok**.
+
+  Tasarımın kendi kuralı onu da susturuyordu ve uygulama bir süre öyle çıktı.
+  Android'de bu tercih çoğu zaman erişilebilirlik ayarından değil geliştirici
+  seçeneklerindeki "animasyon ölçeği" ya da pil tasarrufundan geliyor — yani
+  hareketten rahatsız olduğu için değil telefonu hızlansın diye kapatan
+  kullanıcıda da açılış ekranı boş bir kareye dönüyordu. Karar kullanıcının:
+  açılış animasyonu her koşulda oynuyor, uygulamanın geri kalanı tercihi
+  izlemeye devam ediyor.
+*/
 @media (prefers-reduced-motion: reduce) {
-  /* Tavşan uçmuyor ama sönüyor: zemin çekildikten sonra ekranın ortasında
-     asılı kalmasın. */
-  .acilis-inis {
-    animation: acilis-son 4200ms ease-out forwards;
-  }
-  /* Geçiş katmanı uçmuyor ama doğrudan varış noktasında duruyor: yerinde
-     kalsaydı ana sayfanın üstünde bir saniye boyunca kocaman bir tavşan
-     asılı kalırdı. */
+  /* Kurulum sonrası geçiş uçmuyor ama doğrudan varış noktasında duruyor:
+     yerinde kalsaydı ana sayfanın üstünde bir saniye boyunca kocaman bir
+     tavşan asılı kalırdı. Bu bir marka anı değil, ekranlar arası bir
+     hareket. */
   .acilis-gecis {
     animation: none;
     transform: translate(var(--gecis-x), var(--gecis-y)) scale(var(--gecis-olcek));
   }
   .acilis-girisi,
-  .acilis-yazi,
-  .acilis-slogan,
-  .acilis-yukleme,
-  .acilis-alt,
-  .acilis-hale,
-  .acilis-golge,
-  .acilis-parilti,
   .ozet-girisi,
   .ozet-vurgu,
   .ozet-nabiz {
     animation: none;
   }
   /* `ozet-cubuk` bilerek listede yok: süsleme değil, kartın ne zaman
-     geçeceğini gösteren tek işaret. Açılıştaki çark ile yükleme şeridi de
-     durmuyor, yalnızca yavaşlıyor: donmuş bir bekleme göstergesi uygulamanın
-     takıldığı izlenimi veriyor. */
-  .acilis-cark {
-    animation-duration: 7s;
-  }
-  .acilis-ray::after {
-    animation-duration: 3.4s;
-  }
+     geçeceğini gösteren tek işaret. */
 }
 
 /*

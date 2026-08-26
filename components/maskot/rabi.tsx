@@ -23,8 +23,21 @@ type Props = {
    * tavşan olurdu; `display: none` ise satırın hizasını bozardı.
    */
   gizli?: boolean
+  /**
+   * Uçan tavşanın **varış noktası** burası.
+   *
+   * Açılış ekranı bu öğeyi kimliğinden bulup mesafeyi kendisi ölçüyor; varış
+   * koda yazılıydı ve o hesap başlığın yerini, güvenli alanı ve kabın
+   * genişliğini bilmek zorundaydı — biri değişince tavşan yuvanın yanına
+   * düşüyor, katman kalkınca zıplıyordu. Aynı anda **tek** bir yuva olabilir:
+   * ekranda ya ana sayfanın başlığı vardır ya kurulum sihirbazı.
+   */
+  yuvaMi?: boolean
   className?: string
 }
+
+/** Açılış ekranının aradığı yuvanın kimliği. */
+export const MASKOT_YUVASI = 'rabi-maskot-yuvasi'
 
 /**
  * Rabi — uygulamanın tavşan maskotu.
@@ -39,10 +52,17 @@ type Props = {
  * ekranın yerleşimi ona göre kurulmuştu. Kare görsel `object-contain` ile bu
  * kutunun içine oturuyor, hiçbir ekranda boşluk kaymıyor.
  */
-export function Rabi({ durum = 'normal', boyut = 96, gizli = false, className }: Props) {
+export function Rabi({
+  durum = 'normal',
+  boyut = 96,
+  gizli = false,
+  yuvaMi = false,
+  className,
+}: Props) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
+      id={yuvaMi ? MASKOT_YUVASI : undefined}
       src="/tavsan-yuz.png"
       width={boyut}
       height={(boyut * 130) / 120}

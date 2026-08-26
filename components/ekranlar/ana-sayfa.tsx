@@ -147,7 +147,7 @@ export function AnaSayfa({
     <div className="space-y-3.5">
       {/* Selamlama — tasarımda ad sorulmuyor, kurulumda ad adımı yok. */}
       <header className="flex items-center gap-3 px-0.5 pt-2 pb-1">
-        <Rabi durum={maskotDurumu} boyut={58} gizli={maskotGizli} />
+        <Rabi durum={maskotDurumu} boyut={58} gizli={maskotGizli} yuvaMi />
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-extrabold tracking-wide text-ikincil">Rabi</p>
           <h1 className="mt-px font-display text-[22px] font-extrabold tracking-tight text-balance">
