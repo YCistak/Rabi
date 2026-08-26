@@ -1,9 +1,5 @@
 import type { OyunId, OyunIstatistigi, OyunKayitlari } from '../types'
-import { BOSS_ARALIGI, MATEMATIK_TUR_SORUSU, SORU_SURESI } from './ritim'
 import { istatistigiTamamla } from './tur'
-import { CELDIRICI_SAYISI } from './kavram'
-import { IPUCU_SAYISI } from './hucre'
-import { BONUS_SURESI as KOKLU_BONUS_SURESI } from './koklu'
 
 /**
  * Mini oyun listesi.
@@ -125,8 +121,21 @@ export type OyunTanimi = {
   ad: string
   kisaAciklama: string
   ikon: string
-  /** Tanıtım penceresindeki "nasıl oynanır" maddeleri. */
-  nasilOynanir: string[]
+  /**
+   * Tanıtım penceresindeki özet — bir ya da iki cümle.
+   *
+   * Önce sekiz maddelik bir "nasıl oynanır" listesiydi ve kimse okumuyordu:
+   * pencere turu başlatan yer, ders kitabı değil. Maddelerin çoğu zaten
+   * pencerenin kendisinde yazıyor — turun kuralı mod seçiminde
+   * (`components/mod-secimi.tsx`), boss'un nereden geldiği zorluk seçiminde
+   * (`components/zorluk-secimi.tsx`), oyuna özgü seçimler de tanıtımın
+   * `ekstra` bölümünde. Geriye kalan tek soru "ben ne yapacağım"; cevabı
+   * burada duruyor.
+   *
+   * Havuz boyu, çeldirici mantığı, kural listesi gibi ayrıntılar bilerek
+   * yok: hiçbiri ilk turu oynamak için gerekmiyor.
+   */
+  ozet: string
 }
 
 export const OYUNLAR: OyunTanimi[] = [
@@ -136,11 +145,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Yazım Ustası',
     kisaAciklama: 'Yazım ve noktalama hatalarını yakala',
     ikon: '✍️',
-    nasilOynanir: [
-      `Önce hangi hatalarla çalışacağını seç: yazım, noktalama ya da ikisi.`,
-      `Yazımda **doğru** yazılışa, noktalamada **yanlış** işarete dokun.`,
-      `Soru başına ${SORU_SURESI.yazim} saniye. **Tek yanlış turu bitirir.** ${BOSS_ARALIGI} soruda bir **boss** gelir.`,
-    ],
+    ozet: `Yazımda **doğru** yazılışa dokunursun, noktalamada cümledeki **yanlış** işarete. Hangi hatalarla çalışacağını aşağıdan seçebilirsin.`,
   },
   {
     id: 'ses',
@@ -148,11 +153,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Ses Olayları',
     kisaAciklama: 'Sözcükteki ses olayını bul',
     ikon: '🔤',
-    nasilOynanir: [
-      `Gelen sözcükte hangi ses olayı var? Dört şıktan seç.`,
-      `Şaşırınca kökü bul: *kitabı* → **kitap + ı**.`,
-      `Soru başına ${SORU_SURESI.ses} saniye. **Tek yanlış turu bitirir.** ${BOSS_ARALIGI} soruda bir **boss** gelir.`,
-    ],
+    ozet: `Gelen sözcükte hangi ses olayının yaşandığını dört şıktan seçersin. Şaşırınca kökü bul: *kitabı* → **kitap + ı**.`,
   },
   {
     id: 'oge',
@@ -160,11 +161,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Cümlenin Ögeleri',
     kisaAciklama: 'Vurgulu bölüm hangi öge?',
     ikon: '🧩',
-    nasilOynanir: [
-      `Cümlede vurgulanan bölüm hangi öge? Dört şıktan seç.`,
-      `Şaşırınca yükleme sor: “kim” özneyi, “neyi” belirtili nesneyi, “nereye” dolaylı tümleci verir.`,
-      `Soru başına ${SORU_SURESI.oge} saniye. **Tek yanlış turu bitirir.** ${BOSS_ARALIGI} soruda bir **boss** gelir.`,
-    ],
+    ozet: `Cümlede vurgulanan bölümün hangi öge olduğunu dört şıktan seçersin. Şaşırınca yükleme sor: “kim” özneyi, “neyi” nesneyi verir.`,
   },
   {
     id: 'soz',
@@ -172,11 +169,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Deyim ve Atasözü',
     kisaAciklama: 'Anlamını doğru şıkta bul',
     ikon: '💬',
-    nasilOynanir: [
-      `Gelen deyim ya da atasözünün anlamını dört şıktan seç.`,
-      `Soru başına ${SORU_SURESI.soz} saniye. **Tek yanlış turu bitirir.** ${BOSS_ARALIGI} soruda bir **boss** gelir.`,
-      `Tur bitince yanlış bildiklerin anlamlarıyla listelenir.`,
-    ],
+    ozet: `Gelen deyim ya da atasözünün anlamını dört şıktan seçersin. Tur bitince yanlış bildiklerin anlamlarıyla listelenir.`,
   },
   {
     id: 'bolunme',
@@ -184,11 +177,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Bölünebilme',
     kisaAciklama: 'Bölünür mü, kalan kaç?',
     ikon: '➗',
-    nasilOynanir: [
-      `Gelen sayı için ya **kalanı** yaz ya da **bölünür mü** diye cevapla.`,
-      `Hangi bölenlerle (2–10) çalışacağını aşağıdan seçebilirsin.`,
-      `Soru başına ${SORU_SURESI.bolunme} saniye. Yanlış turu bitirmez; tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
-    ],
+    ozet: `Gelen sayı için ya **kalanı** tuş takımıyla yazarsın ya da **bölünür mü** diye cevaplarsın. Hangi bölenlerin (2–10) geleceğini aşağıdan seçebilirsin.`,
   },
   {
     id: 'islem',
@@ -196,11 +185,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Zihinden İşlem',
     kisaAciklama: 'İşlem hızını aç, sonucu tuşla yaz',
     ikon: '🧮',
-    nasilOynanir: [
-      `Önce hangi işlemlerle çalışacağını seç.`,
-      `Çıkan işlemin sonucunu tuş takımıyla yazıp onayla. Sonuçlar hep tam sayı.`,
-      `Soru başına ${SORU_SURESI.islem} saniye. Yanlış turu bitirmez; tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
-    ],
+    ozet: `Ekrana gelen işlemin sonucunu tuş takımıyla yazıp onaylarsın; sonuçlar hep tam sayı. Hangi işlemlerle çalışacağını aşağıdan seçersin.`,
   },
   {
     id: 'aci',
@@ -209,11 +194,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Açı Tamamlama',
     kisaAciklama: 'Şekildeki x kaç derece?',
     ikon: '📐',
-    nasilOynanir: [
-      `Şekilde **x** ile gösterilen açının kaç derece olduğunu yaz.`,
-      `Şekiller ölçekli — takıldığında bakmak işe yarar.`,
-      `Soru başına ${SORU_SURESI.aci} saniye. Yanlış turu bitirmez; tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
-    ],
+    ozet: `Şekilde **x** ile gösterilen açının kaç derece olduğunu tuş takımıyla yazarsın. Şekiller ölçekli — takıldığında bakmak işe yarar.`,
   },
   {
     id: 'ucgen',
@@ -222,11 +203,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Özel Üçgenler',
     kisaAciklama: 'İki kenar verili, üçüncüsü kaç?',
     ikon: '📏',
-    nasilOynanir: [
-      `Dik üçgende **x** ile gösterilen kenarı iki şıktan seç.`,
-      `Pisagor üçlüleri, 30-60-90 ve 45-45-90 dönüşümlü gelir; kenarlar ölçekli çizilir.`,
-      `Soru başına ${SORU_SURESI.ucgen} saniye. Yanlış turu bitirmez; tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
-    ],
+    ozet: `Dik üçgende **x** ile gösterilen kenarı iki şıktan seçersin. Pisagor üçlüleri, 30-60-90 ve 45-45-90 dönüşümlü gelir; kenarlar ölçekli çizilir.`,
   },
   {
     id: 'edebiyat',
@@ -234,11 +211,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Edebiyat Eşleştirme',
     kisaAciklama: 'Eseri yazarıyla eşleştir',
     ikon: '📚',
-    nasilOynanir: [
-      `Üstte altı eser, altta altı yazar. Esere, sonra yazarına dokun — sıra fark etmez.`,
-      `Her el ${SORU_SURESI.edebiyat} saniye. **Tek yanlış eşleştirme turu bitirir.**`,
-      `Her ${BOSS_ARALIGI} eşleştirmede bir **boss eli** gelir: bir üst seviyeden.`,
-    ],
+    ozet: `Üstteki esere, sonra alttaki yazarına dokunursun — sıra fark etmez. Altı çift bitince yeni altılı gelir.`,
   },
   {
     id: 'harita',
@@ -246,11 +219,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Harita Avı',
     kisaAciklama: 'İli haritada bul',
     ikon: '🗺️',
-    nasilOynanir: [
-      `İki tür soru var: **“Ankara’yı bul”**da haritada ile dokunursun, il yanıp sönünce adını seçersin.`,
-      `Harita yakınlaştırılabilir: iki parmakla aç, tek parmakla kaydır.`,
-      `Soru başına ${SORU_SURESI.harita} saniye. **Tek yanlış turu bitirir.** ${BOSS_ARALIGI} soruda bir **boss** gelir.`,
-    ],
+    ozet: `**“Ankara’yı bul”** dendiğinde ili haritada gösterirsin; il yanıp söndüğünde adını dört şıktan seçersin. Harita iki parmakla yakınlaştırılabilir.`,
   },
   {
     id: 'antlasma',
@@ -258,11 +227,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Antlaşma Eşleştirme',
     kisaAciklama: 'Bu madde hangi antlaşmadan?',
     ikon: '📜',
-    nasilOynanir: [
-      `Üstteki maddeyi alttaki antlaşmayla eşleştir — sıra fark etmez.`,
-      `Her el ${SORU_SURESI.antlasma} saniye; süre dolarsa eşleşmeyenler yanlış sayılır.`,
-      `Her ${BOSS_ARALIGI} eşleştirmede bir **boss eli** gelir: orada tek yanlış turu bitirir.`,
-    ],
+    ozet: `Üstteki maddeyi ait olduğu antlaşmayla eşleştirirsin — sıra fark etmez. El bitince yenisi gelir.`,
   },
   {
     id: 'kavram',
@@ -270,11 +235,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Kavram Eşleştirme',
     kisaAciklama: 'Kavramı tanımıyla eşleştir',
     ikon: '🧭',
-    nasilOynanir: [
-      `Soldaki kavrama, sağdaki tanımına dokun. ${CELDIRICI_SAYISI} tanımın karşılığı yok.`,
-      `Her tahta ${SORU_SURESI.kavram} saniye; süre dolarsa eşleşmeyenler yanlış sayılır.`,
-      `Her ${BOSS_ARALIGI} eşleştirmede bir **boss tahtası** gelir: orada tek yanlış turu bitirir.`,
-    ],
+    ozet: `Soldaki kavrama, sonra sağdaki tanımına dokunursun. Tanımların birkaçının karşılığı yok; tahta bitince açıkta kalırlar.`,
   },
   {
     id: 'anlatim',
@@ -282,11 +243,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Anlatım Bozukluğu',
     kisaAciklama: 'Cümle bozuk — sebebi hangisi?',
     ikon: '🚧',
-    nasilOynanir: [
-      `Gelen **bozuk** cümlede bozukluğun sebebini dört şıktan seç — düzeltmen istenmiyor.`,
-      `Şaşırınca yükleme sor: cevabı olmayan soru (“kimi?”, “neye?”) eksik ögeyi verir.`,
-      `Soru başına ${SORU_SURESI.anlatim} saniye. ${BOSS_ARALIGI} soruda bir **boss** gelir; orada hakkın tek.`,
-    ],
+    ozet: `Gelen **bozuk** cümlede bozukluğun sebebini dört şıktan seçersin — cümleyi düzeltmen değil, hatayı adlandırman isteniyor.`,
   },
   {
     id: 'koklu',
@@ -294,11 +251,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Köklü Sayı Aralığı',
     kisaAciklama: 'Köklü sayı hangi iki sayı arasında?',
     ikon: '🔢',
-    nasilOynanir: [
-      `Çubuğun iki ucunu sürükleyip köklü sayının aralığını göster; yalnızca **en dar** aralık doğru (√50 → 7 – 8).`,
-      `Doğru bilirsen ${KOKLU_BONUS_SURESI} saniyelik **bonus** gelir: sayı hangi uca daha yakın?`,
-      `Soru başına ${SORU_SURESI.koklu} saniye. Yanlış turu bitirmez; tur ${MATEMATIK_TUR_SORUSU} soru sürer.`,
-    ],
+    ozet: `Çubuğun iki ucunu sürükleyip köklü sayının hangi iki sayı arasında olduğunu gösterirsin; yalnızca **en dar** aralık doğru (√50 → 7 – 8). Doğru bilirsen kısa bir bonus soru gelir.`,
   },
   {
     id: 'ortak',
@@ -306,11 +259,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Ortak Özellikler',
     kisaAciklama: 'Canlıları canlı yapan nedir?',
     ikon: '🌱',
-    nasilOynanir: [
-      `Gelen soruyu dört şıktan cevapla. Konu 9. sınıfın ilk ünitesi: canlıların ortak özellikleri.`,
-      `Soru başına ${SORU_SURESI.ortak} saniye; süre dolarsa yanlış sayılır.`,
-      `${BOSS_ARALIGI} soruda bir **boss** gelir; orada hakkın tek — yanılırsan tur biter.`,
-    ],
+    ozet: `Canlıların ortak özellikleri üzerine gelen soruyu dört şıktan cevaplarsın. Konu 9. sınıfın ilk ünitesi.`,
   },
   {
     id: 'siniflandirma',
@@ -318,11 +267,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Canlıları Sınıflandır',
     kisaAciklama: 'Âlemler, birimler, ikili adlandırma',
     ikon: '🔬',
-    nasilOynanir: [
-      `Gelen soruyu dört şıktan cevapla. Konu 9. sınıf “Canlılar Dünyası”: taksonomi ve altı âlem.`,
-      `Soru başına ${SORU_SURESI.siniflandirma} saniye; süre dolarsa yanlış sayılır.`,
-      `${BOSS_ARALIGI} soruda bir **boss** gelir; orada hakkın tek — yanılırsan tur biter.`,
-    ],
+    ozet: `Gelen soruyu dört şıktan cevaplarsın. Konu 9. sınıf “Canlılar Dünyası”: taksonomi, ikili adlandırma ve altı âlem.`,
   },
   {
     id: 'hucre',
@@ -330,11 +275,23 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Organel Kartı',
     kisaAciklama: 'İpuçlarından organeli bul',
     ikon: '🧫',
-    nasilOynanir: [
-      `Kart sana ipucu verir, sen organeli dört şıktan bulursun.`,
-      `İpuçları üç saniyede bir açılır, en fazla ${IPUCU_SAYISI} tane. Erken bilmek çok puan: **1. ipucuyla 3**, 2. ile 2, 3. ile 1.`,
-      `Şıkka dokununca kart çevrilir ve cevabı görürsün.`,
-    ],
+    ozet: `Kart üç saniyede bir yeni ipucu açar, sen organeli dört şıktan bulursun. Erken bilmek çok puan: **1. ipucuyla 3**, 2. ile 2, 3. ile 1.`,
+  },
+  {
+    id: 'sirala',
+    ders: 'tarih',
+    ad: 'Zaman Şeridi',
+    kisaAciklama: 'Olayları eskiden yeniye diz',
+    ikon: '⏳',
+    ozet: `Karışık gelen olay kartlarını sürükleyerek **eskiden yeniye** dizip onaylarsın. Puan kısmi: doğru sıralanan her komşu çift bir puan.`,
+  },
+  {
+    id: 'tuzak',
+    ders: 'matematik',
+    ad: 'Kural Tuzağı',
+    kisaAciklama: 'Eşitlik doğru mu, yanlış mı?',
+    ikon: '🪤',
+    ozet: `Gelen eşitlik doğruysa kartı **sağa**, yanlışsa **sola** atarsın; alttaki iki düğme de aynı işi görür.`,
   },
 ]
 

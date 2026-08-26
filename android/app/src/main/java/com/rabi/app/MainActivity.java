@@ -42,9 +42,11 @@ public class MainActivity extends BridgeActivity {
      * Burada açıkça veriliyor.
      */
     private void gorevTaniminiAyarla() {
-        // Kart başlığının rengi marka mavisi: ikonun zeminiyle aynı ve açık/koyu
-        // temada değişmiyor, yani kart her koşulda aynı görünüyor.
-        int renk = ContextCompat.getColor(this, R.color.acilis_zemin);
+        // Kart başlığının rengi markanın amberi: ikonun zeminiyle aynı ve
+        // tema değişse de aynı, yani kart her koşulda aynı görünüyor. Açılış
+        // ekranının zemini (acilis_zemin) bilerek kullanılmıyor — o bir
+        // ekran rengi, bu ise markanın rengi.
+        int renk = ContextCompat.getColor(this, R.color.marka_amber);
         String ad = getString(R.string.app_name);
 
         ActivityManager.TaskDescription tanim;

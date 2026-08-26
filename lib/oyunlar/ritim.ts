@@ -1,17 +1,16 @@
 /**
  * Turun ritmi — soru başına süre, boss soruları ve eleme kuralları.
  *
- * Eski tasarım: tur sabit süreliydi (60 sn), "bu sürede kaç soru çözersin"
- * diye sorardı. Yeni tasarım tersi: **her sorunun kendi süresi var**, tur ise
- * elenene kadar sürüyor. Fark yalnızca ölçüm değil, oyunun karakteri:
- * eskisinde acele etmek her zaman kârlıydı, yenisinde tek tek her soru
- * kazanılıyor ve on soruda bir gerçekten kaybedebiliyorsun.
+ * Buradaki süreler **soru** başına ve yalnızca Ani Ölüm modunda işliyor; öteki
+ * modlarda saat tura ait ya da hiç yok (`mod.ts`). İkisi ayrı dosyada çünkü
+ * ayrı sorular: burası "bu soru ne kadar sürer", orası "tur ne zaman biter".
  *
  * `tur.ts` puanlama ve rekor mantığını tutuyor, burası zamanlama ve eleme;
  * ikisi ayrı çünkü ritim oyundan oyuna değişiyor, puanlama değişmiyor.
  */
 
 import type { OyunId } from '../types'
+import { MODLAR, type OyunModu } from './mod'
 import { karistir } from './tur'
 
 export type Zorluk = 'kolay' | 'orta' | 'zor'
@@ -79,7 +78,14 @@ export function bossMu(oyun: OyunId, sira: number): boolean {
  * derse uygun kaldığını `ritim.test.ts` denetliyor — matematiğe yeni bir oyun
  * eklenip buraya yazılmazsa test kırılıyor.
  */
-export const BOSSSUZ_OYUNLAR: readonly OyunId[] = ['islem', 'bolunme', 'aci', 'ucgen', 'koklu']
+export const BOSSSUZ_OYUNLAR: readonly OyunId[] = [
+  'islem',
+  'bolunme',
+  'aci',
+  'ucgen',
+  'koklu',
+  'tuzak',
+]
 
 /** Bu oyunda boss var mı. */
 export function bossluMu(oyun: OyunId): boolean {
@@ -139,6 +145,23 @@ export const SORU_SURESI: Record<OyunId, number> = {
    * üç saniye demek. Süre değişirse ipucu ritmi de değişir.
    */
   hucre: 9,
+  /**
+   * Zaman Şeridi'nde süre **soru** başına ama soru beş kart.
+   *
+   * Okumak, karar vermek ve sürüklemek üst üste biniyor: beş olayı okumak
+   * tek başına on saniye, dizmek bir o kadar. Eşleştirme oyunlarının el
+   * süresine (35–45 sn) yakın durması tesadüf değil — orada da tek "soru"
+   * birden çok karar demek.
+   */
+  sirala: 40,
+  /**
+   * Kural Tuzağı'nın süresi kısa, çünkü oyunun ölçtüğü şey **hız**.
+   *
+   * Kuralı bilen öğrenci bir saniyede karar veriyor; sekiz saniye sağlama
+   * yapmaya yetmiyor ama okumaya rahat rahat yetiyor. Uzun olsaydı oyun kural
+   * bilgisini değil, sayı tutup deneme becerisini ölçerdi.
+   */
+  tuzak: 8,
 }
 
 /** Boss sorusuna verilen ek süre çarpanı. */
@@ -158,38 +181,39 @@ export function soruSuresi(oyun: OyunId, boss: BossZorlugu | null): number {
   return Math.round(taban * (boss.cetin ? CETIN_SURE_CARPANI : BOSS_SURE_CARPANI))
 }
 
-/**
- * Bosssuz oyunlarda turun soru sayısı.
- *
- * Boss yoksa eleme de yok, eleme yoksa sınırsız tur hiç bitmezdi. Yirmi soru
- * boss aralığının iki katı: matematik turu da sözel turla aynı ritimde
- * ilerliyor, yalnızca sonunda kesiliyor.
- */
-export const MATEMATIK_TUR_SORUSU = 20
+/*
+  Tur uzunluğu hiçbir oyunda sabit soru sayısıyla ölçülmüyor.
 
-/** Tur bu soruyla biter mi — bosssuz oyunlarda soru sayısı dolduğunda. */
-export function sonSoruMu(oyun: OyunId, sira: number): boolean {
-  return !bossluMu(oyun) && sira >= MATEMATIK_TUR_SORUSU
-}
+  Eskiden bosssuz oyunlar yirmi soru sürerdi ve rekor yirmide tavan yapıyordu:
+  yirmi doğruyu bir kez çıkaran oyuncunun kıracak rekoru kalmıyor, ilerlemeyi
+  ölçen sayı ölü bir sayıya dönüyordu. Artık turu bitiren şey moda göre süre ya
+  da eleme; soru listesi yalnızca sonsuz dizi üretilemediği için sınırlı
+  (`TUR_SORU_SINIRI`). Matematiği ötekilerden ayıran tek şey boss'un olmaması —
+  sorular üretiliyor, "bir üst zorluk havuzu" diye bir karşılığı yok.
+  (`bossluMu`)
+*/
 
 /**
  * Bu cevap turu bitirir mi.
  *
- * **Her yanlış eliyor**, yalnızca boss değil. Eskiden normal soruda yanılmak
- * serbestti; tur ancak boss'ta kaybediliyordu. Sonuç, sorunun ağırlığının
- * kaybolmasıydı: bilmediğin soruyu rastgele işaretleyip geçmek bedava oluyor,
- * on soruda bir gelen boss dışında hiçbir cevap gerçekten önemli olmuyordu.
- * Artık her soru turun devamını belirliyor — bilmediğinde tur biter ve sonuç
- * (rekor, istatistik, yanlışların bankaya düşmesi) olduğu gibi kaydedilir.
+ * Kural artık moda ait (`mod.ts`): eleme yalnızca **Ani Ölüm**'de var. Bir
+ * süre bütün turlar öyle işledi ve tasarımın gerekçesi hâlâ geçerli —
+ * bilmediğin soruyu rastgele işaretleyip geçmek bedava olmamalı. Ama tek kural
+ * olarak kaldığında oyun yeni öğrenene öğretmeyi bırakıp onu eliyordu; süreli
+ * modlarda yanlışın bedeli süreden ödeniyor, elemeden.
  *
  * Süre dolması da yanlış sayılıyor: beklemek de bilmemek.
  *
- * Tek istisna **Oyun Bankası turu**. Orada sorular zaten bir kez yanlış
+ * **Oyun Bankası turu** modun üstünde: orada sorular zaten bir kez yanlış
  * bilinmiş olanlar ve turun amacı onları üç kez doğru bilip düşürmek; ilk
  * yanlışta kapanan bir tur o işi imkânsız kılardı.
  */
-export function elerMi(dogruMu: boolean, bankaTuru = false): boolean {
-  return !dogruMu && !bankaTuru
+export function elerMi(
+  dogruMu: boolean,
+  bankaTuru = false,
+  mod: OyunModu = 'ani-olum',
+): boolean {
+  return !dogruMu && !bankaTuru && MODLAR[mod].elerMi
 }
 
 // ---------------------------------------------------------------------------

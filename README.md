@@ -140,20 +140,20 @@ istatistiği bulursa hata verip durur — sessizce yarım veri üretmez.
 
 Android 12+ sistemin kendi açılış ekranını çizmek zorunda; kapatılamıyor. Uygulama artık
 oradan **hiçbir şey** göstermiyor: `windowSplashScreenAnimatedIcon` saydam bir şekle
-(`acilis_bos.xml`) bağlı, animasyon yok. Geriye yalnızca `acilis_zemin` (`#4A8FE7`) kalıyor.
+(`acilis_bos.xml`) bağlı, animasyon yok. Geriye yalnızca `acilis_zemin` (`#6D3FE0`) kalıyor.
 
 Sebep: sistem ekranında maskot, hemen arkasından uygulamanın kendi açılış ekranında yine
 maskot çıkınca arka arkaya iki açılış ekranı izleniyordu. Önceki maskot animasyonu
 (`acilis_maskot_animasyon.xml` ve `animator/` altındaki iki animatör) bu yüzden silindi.
 
-Görünen açılış **uygulamanın kendi ekranı** (`components/acilis.tsx`): aynı mavi
+Görünen açılış **uygulamanın kendi ekranı** (`components/acilis.tsx`): aynı mor
 zeminde zıplayan beyaz çizgi tavşan, altında "Rabi" yazısı, altında dönen çark. Sistem
 ekranıyla aynı zemin rengi kullanıldığı için ikisi arasındaki geçiş görünmüyor.
 
 Süre veri okumasına bağlanmadı (`ACILIS_SURESI`, 1,6 sn): localStorage neredeyse anında
 dönüyor, bağlansaydı ekran bir kare görünüp kaybolurdu.
 
-Tavşan burada uygulamanın dolu maskotu değil, ayrı bir **çizgi** çizim: mavi zeminde
+Tavşan burada uygulamanın dolu maskotu değil, ayrı bir **çizgi** çizim: mor zeminde
 açık renkli dolgular birbirine karışıp bulanık bir leke gibi duruyordu. Aynı yollar
 paylaşılan özet görselinin alt imzasında da kullanılıyor (`tavsanCiz`).
 
@@ -328,7 +328,7 @@ Görsel **ekran görüntüsü değil, yeniden çizim** (1080×1920). Ekran gör�
 kütüphaneler birkaç yüz KB geliyor ve CSS'in yarısını yanlış yorumluyor; ayrıca paylaşılan
 görselin telefonun ekran oranından bağımsız olması gerekiyor. Yazı tipi adları sayfadan
 okunuyor — `next/font` üretilen aile adını rastgele bir sınıfın arkasına sakladığı için
-elle "Nunito" yazmak tutmuyordu.
+elle "Plus Jakarta Sans" yazmak tutmuyordu.
 
 `gorseliPaylas` görselin yanına ayrı bir **metin** de veriyor: paylaşım penceresinde bazı
 uygulamalar görseli değil yalnızca yazıyı alıyor, o durumda dosya adı yerine haftanın
@@ -526,7 +526,7 @@ ikon değişecekse `assets/` içindeki SVG düzenlenip betik yeniden çalıştı
 
 Uyarlanabilir (adaptive) ikonun ön planında tavşan, 108 birimlik tuvalin ortadaki **72
 birimlik** güvenli alanına sığdırıldı; dışarısını cihaz üreticisinin maskesi (daire, kare,
-damla) kırpabiliyor. Arka plan `@color/ic_launcher_background` = `#4A8FE7`, uygulamanın vurgu
+damla) kırpabiliyor. Arka plan `@color/ic_launcher_background` = `#6D3FE0`, uygulamanın vurgu
 rengiyle aynı. Android 8 öncesi uyarlanabilir ikonu tanımadığı için `ic_launcher.png` ve
 `ic_launcher_round.png` ayrıca üretiliyor — yuvarlak olana maskeyi sistem uygulamıyor, daire
 görselin içinde.

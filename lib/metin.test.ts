@@ -28,21 +28,17 @@ describe('vurgulariAyir', () => {
   /** Parçalar birleşince metin yıldızsız hâline dönmeli — hiçbir şey kaybolmuyor. */
   it('oyun tanıtımlarının tamamında metin korunuyor', () => {
     for (const oyun of OYUNLAR) {
-      for (const madde of oyun.nasilOynanir) {
-        const birlesik = vurgulariAyir(madde)
-          .map((p) => p.metin)
-          .join('')
-        expect(birlesik, madde).toBe(madde.replaceAll('*', ''))
-      }
+      const birlesik = vurgulariAyir(oyun.ozet)
+        .map((p) => p.metin)
+        .join('')
+      expect(birlesik, oyun.ozet).toBe(oyun.ozet.replaceAll('*', ''))
     }
   })
 
   /** Ekranda yıldız kalmamalı: asıl düzeltilen hata buydu. */
   it('hiçbir parçada yıldız kalmıyor', () => {
     for (const oyun of OYUNLAR) {
-      for (const madde of oyun.nasilOynanir) {
-        for (const parca of vurgulariAyir(madde)) expect(parca.metin).not.toContain('*')
-      }
+      for (const parca of vurgulariAyir(oyun.ozet)) expect(parca.metin).not.toContain('*')
     }
   })
 })

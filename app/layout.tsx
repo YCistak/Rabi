@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Nunito } from 'next/font/google'
+import { Manrope, Nunito } from 'next/font/google'
 import './globals.css'
 
 // Tasarımın tek yazı tipi. 400-900 arası kalınlıkların hepsi isteniyor:
@@ -9,6 +9,23 @@ const nunito = Nunito({
   weight: ['400', '500', '600', '700', '800', '900'],
   variable: '--font-nunito',
   display: 'swap',
+})
+
+// Yalnızca açılış ekranının yazı tipi (`font-marka`). Tasarım o ekranı Manrope
+// ile çizdi ve "RABİ" 50 pikselde iki ailede belirgin biçimde farklı duruyor;
+// uygulamanın geri kalanı Nunito'da kalıyor.
+//
+// `display: 'block'` bilerek: açılış ekranı 4,2 saniye sürüyor ve wordmark o
+// ekranın tamamı. `swap` ile yazı önce yedek aileyle çizilip sonra yerine
+// oturuyordu — marka adının ilk yarım saniyede başka bir yazı tipinde
+// görünmesi, en çok bakılan anda gözden kaçmıyor. Yazı tipi zaten uygulamayla
+// birlikte geliyor (next/font derleme anında indirip gömüyor), yani beklenen
+// süre ağ değil yalnızca çözümleme.
+const manrope = Manrope({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['600', '800'],
+  variable: '--font-manrope',
+  display: 'block',
 })
 
 export const metadata: Metadata = {
@@ -56,7 +73,7 @@ export const viewport: Viewport = {
 */
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="tr" className={nunito.variable}>
+    <html lang="tr" className={`${nunito.variable} ${manrope.variable}`}>
       <body className="font-sans antialiased">{children}</body>
     </html>
   )

@@ -1,0 +1,210 @@
+import { TOPLAM_KAZANC } from '../havuc'
+
+/**
+ * Jokerler — tur sırasında harcanan tek kullanımlık yardımlar. Havuç
+ * Mağazası'nda satılan tek şey.
+ *
+ * Hiçbir joker doğru cevabı **söylemiyor**. 50/50 iki yanlış şıkkı eliyor,
+ * kalanı süreye ve hakka dokunuyor. Cevabı veren bir joker oyunların ölçtüğü
+ * şeyi bozardı: rekor da banka da "biliyor muydun" sorusunun cevabı olmaktan
+ * çıkardı.
+ *
+ * ## Fiyatlar ve seviye
+ *
+ * Havuç seviye atlayarak (`lib/seviye.ts`) ve Oyun Bankası'ndan soru düşürerek
+ * (`lib/havuc.ts`) kazanılıyor; ömür boyu kazanılabilecek toplam ikisinden de
+ * belli. Fiyatlar o toplama göre konuldu: bütün havucunu jokere yatıran biri
+ * kırk kadar joker alabiliyor — yani joker bir yılda birkaç düzine kez
+ * kullanılan bir şey, her turda açılan bir menü değil. `denge` testleri bu
+ * oranı sabitliyor.
+ *
+ * Güçlü jokerlerin ayrıca **seviye şartı** var. Havuç tek başına kapı olsaydı
+ * ilk haftasında bir tur maratonu yapan biri en güçlü jokeri açardı; seviye
+ * şartı gücü zamana yayıyor.
+ *
+ * Jokerin tur içinde **kullanılması henüz yazılmadı**; burada yalnızca katalog
+ * ve stok var. Oyun tarafı geldiğinde `jokerKullan` tek giriş noktası olmalı,
+ * yoksa stok birkaç yerden birden eksilir.
+ */
+
+export type JokerId = 'elli-elli' | 'sure-dondur' | 'ek-sure' | 'cift-cevap' | 'puan-3x'
+
+/** "+15 sn" jokerinin eklediği süre. Metinlerde de bu sabit yazıyor. */
+export const EK_SURE_SANIYE = 15
+
+/** Puan katlayıcının çarpanı. */
+export const PUAN_KATSAYISI = 3
+
+export type Joker = {
+  id: JokerId
+  ad: string
+  /** Kutucuktaki emoji — ikon seti yerine, tek bakışta ayrılsınlar diye. */
+  simge: string
+  /** Tek cümlede ne yaptığı; mağazada adın altında yazıyor. */
+  aciklama: string
+  /** Havuç cinsinden fiyat. */
+  fiyat: number
+  /** Satılmaya başladığı seviye. 1 ise ilk günden açık. */
+  enAzSeviye: number
+}
+
+/**
+ * Katalog.
+ *
+ * Fiyat ve seviye sırası gücü izliyor: turu **kurtaran** joker en pahalı ve en
+ * geç açılan. Bu oyunlarda tek yanlış turu bitirdiği için "çift cevap" tek
+ * başına bir tur daha demek; süreye dokunanlar ise yalnızca rahatlatıyor.
+ */
+export const JOKERLER = [
+  {
+    id: 'ek-sure',
+    ad: 'Ek Süre',
+    simge: '⏱️',
+    aciklama: `Sayaca ${EK_SURE_SANIYE} saniye ekler.`,
+    fiyat: 120,
+    enAzSeviye: 1,
+  },
+  {
+    id: 'sure-dondur',
+    ad: 'Süre Dondurma',
+    simge: '❄️',
+    aciklama: 'Sayacı o soru boyunca durdurur; acele etmeden düşünürsün.',
+    fiyat: 180,
+    enAzSeviye: 4,
+  },
+  {
+    id: 'elli-elli',
+    ad: '50/50',
+    simge: '✂️',
+    aciklama: 'İki yanlış şıkkı eler. Doğruyu söylemez, sahayı daraltır.',
+    fiyat: 240,
+    enAzSeviye: 8,
+  },
+  {
+    id: 'puan-3x',
+    ad: `${PUAN_KATSAYISI}x Puan`,
+    simge: '✨',
+    aciklama: `Yalnızca o sorunun puanını ${PUAN_KATSAYISI}'e katlar. Bildiğin soruda kullan.`,
+    fiyat: 300,
+    enAzSeviye: 13,
+  },
+  {
+    id: 'cift-cevap',
+    ad: 'Çift Cevap',
+    simge: '🎯',
+    aciklama: 'O soruda ilk yanlışın turu bitirmez; ikinci bir hakkın olur.',
+    fiyat: 400,
+    enAzSeviye: 20,
+  },
+] as const satisfies readonly Joker[]
+
+/**
+ * Bir jokerden çantada tutulabilecek en fazla adet.
+ *
+ * Sınır olmasaydı havuç biriktiren kullanıcı tek jokerle bütün oyunları
+ * baştan sona taşıyabilirdi; ayrıca rozetteki sayı iki basamağı geçince
+ * kutucuk dağılıyor.
+ */
+export const STOK_SINIRI = 9
+
+/** Joker kimliği → çantadaki adet. Hiç yoksa anahtar yok. */
+export type JokerStogu = Partial<Record<JokerId, number>>
+
+export const BOS_STOK: JokerStogu = {}
+
+export function jokerBul(id: string): Joker | undefined {
+  return JOKERLER.find((j) => j.id === id)
+}
+
+/**
+ * Kayıttan okunan stoğu kataloga ve sınırlara uydurur.
+ *
+ * Katalogdan kalkan jokerin kimliği kayıtta kalırsa çizim tarafı boş kutucuk
+ * gösterirdi; elle kurcalanmış `localStorage` ise sınırsız stok yazabilirdi.
+ * İkisi de burada eleniyor — negatif ve kesirli adetler dahil.
+ */
+export function stoguNormalize(ham: JokerStogu | undefined): JokerStogu {
+  const stok: JokerStogu = {}
+  if (!ham || typeof ham !== 'object') return stok
+  for (const joker of JOKERLER) {
+    const adet = ham[joker.id]
+    if (typeof adet !== 'number' || !Number.isFinite(adet)) continue
+    const kirpilmis = Math.min(STOK_SINIRI, Math.floor(adet))
+    if (kirpilmis > 0) stok[joker.id] = kirpilmis
+  }
+  return stok
+}
+
+export function jokerSayisi(stok: JokerStogu, id: JokerId): number {
+  return stok[id] ?? 0
+}
+
+/** Çantadaki bütün jokerlerin toplamı — mağaza başlığındaki sayı. */
+export function jokerToplami(stok: JokerStogu): number {
+  return JOKERLER.reduce((toplam, j) => toplam + jokerSayisi(stok, j.id), 0)
+}
+
+export function jokerDoluMu(stok: JokerStogu, joker: Joker): boolean {
+  return jokerSayisi(stok, joker.id) >= STOK_SINIRI
+}
+
+/** Seviye şartı sağlandı mı — kilitli joker vitrinde görünüyor ama satılmıyor. */
+export function jokerAcikMi(joker: Joker, seviye: number): boolean {
+  return seviye >= joker.enAzSeviye
+}
+
+export function jokerAlinabilirMi(
+  stok: JokerStogu,
+  havuc: number,
+  joker: Joker,
+  seviye: number,
+): boolean {
+  return jokerAcikMi(joker, seviye) && !jokerDoluMu(stok, joker) && havuc >= joker.fiyat
+}
+
+/**
+ * Satın alma. Havuç yetmiyorsa, stok doluysa ya da seviye tutmuyorsa `null` —
+ * çağıran taraf "olmadı" durumunu tek yerden okusun, sessizce hiçbir şey
+ * yapılmasın.
+ */
+export function jokerAl(
+  stok: JokerStogu,
+  havuc: number,
+  joker: Joker,
+  seviye: number,
+): { stok: JokerStogu; havuc: number } | null {
+  if (!jokerAlinabilirMi(stok, havuc, joker, seviye)) return null
+  return {
+    stok: { ...stok, [joker.id]: jokerSayisi(stok, joker.id) + 1 },
+    havuc: havuc - joker.fiyat,
+  }
+}
+
+/**
+ * Bütün jokerlerin fiyat toplamı — denge testinin ölçüsü.
+ *
+ * Ekonominin tavanına (`TOPLAM_KAZANC`) göre okunuyor: kaç joker alınabildiği
+ * bu ikisinin oranı.
+ */
+export const KATALOG_TUTARI = JOKERLER.reduce((t, j) => t + j.fiyat, 0)
+
+/** Ömür boyu kazanılan havuçla alınabilecek yaklaşık joker sayısı. */
+export const OMURLUK_JOKER = Math.floor(TOPLAM_KAZANC / (KATALOG_TUTARI / JOKERLER.length))
+
+/** En geç açılan jokerin seviyesi. Testte seviye tavanının altında tutuluyor. */
+export const EN_GEC_SEVIYE = Math.max(...JOKERLER.map((j) => j.enAzSeviye))
+
+/**
+ * Bir joker harcar. Stokta yoksa durum değişmiyor.
+ *
+ * Oyun tarafı henüz bunu çağırmıyor; jokerin **tek** eksilme yolu burası
+ * olsun diye şimdiden yazıldı ve test edildi.
+ */
+export function jokerKullan(stok: JokerStogu, id: JokerId): JokerStogu {
+  const kalan = jokerSayisi(stok, id) - 1
+  if (kalan < 0) return stok
+  const yeni = { ...stok }
+  if (kalan === 0) delete yeni[id]
+  else yeni[id] = kalan
+  return yeni
+}
