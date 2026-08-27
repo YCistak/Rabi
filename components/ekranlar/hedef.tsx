@@ -57,7 +57,7 @@ export function HedefEkrani({
   // Seçim ayrı bir state'te değil, adlardan **türetiliyor**: iki kaynak olsaydı
   // elle yazılan ad ile seçili kayıt birbiriyle çelişebilirdi.
   const secilenUni = useMemo(() => universiteBul(universite), [universite])
-  const secilenBolum = useMemo(() => bolumBul(bolum), [bolum])
+  const secilenBolum = useMemo(() => bolumBul(secilenUni, bolum), [secilenUni, bolum])
   const tahmin = useMemo(
     () => (secilenUni && secilenBolum ? tahminEt(secilenUni, secilenBolum) : null),
     [secilenUni, secilenBolum],
