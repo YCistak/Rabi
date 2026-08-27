@@ -4,18 +4,14 @@ import { useEffect, useRef, useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import {
   Bell,
-  Bookmark,
   ChevronDown,
   ChevronRight,
   ClipboardList,
-  Copy,
   Download,
   GraduationCap,
   Images,
   Lock,
   Music,
-  Plus,
-  Table,
   Target,
   Flag,
   Trash2,
@@ -33,8 +29,7 @@ import {
 } from '@/lib/odak-kilidi'
 import { UygulamaSecici } from '@/components/odak/uygulama-secici'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
-import { SINIF_SECENEKLERI, egitimYili, katsayiYaz, mezunMu, sinifAdi } from '@/lib/hesap'
-import { toplamSoru } from '@/lib/sablonlar'
+import { SINIF_SECENEKLERI, egitimYili, mezunMu, sinifAdi } from '@/lib/hesap'
 import type { NotKagidi } from '@/lib/yapilacaklar'
 import {
   HEDEF_ADIMI,
@@ -93,7 +88,6 @@ type AyarId =
   | 'hedef'
   | 'alan'
   | 'sinif'
-  | 'deneme-turu'
   | 'hatirlatma-saati'
   | 'muzik-turu'
 
@@ -110,9 +104,7 @@ function boyutYaz(bayt: number): string {
 }
 
 export function AyarlarEkrani({
-  sablonlar,
   kayitliSablonlar,
-  setKayitliSablonlar,
   ayarlar,
   setAyarlar,
   bekleyenBildirim,
@@ -122,9 +114,8 @@ export function AyarlarEkrani({
   setPomodoroAyar,
   yedeklenecek,
 }: {
-  sablonlar: Sablon[]
+  /** Yedeğe giren kullanıcı şablonları — ekranda düzenlenmiyor. */
   kayitliSablonlar: Sablon[]
-  setKayitliSablonlar: (guncelleyici: Sablon[] | ((onceki: Sablon[]) => Sablon[])) => void
   ayarlar: Ayarlar
   /** Gönderilmeyi bekleyen hatalı soru bildirimi sayısı. */
   bekleyenBildirim: number
@@ -177,9 +168,6 @@ export function AyarlarEkrani({
   const [adTaslagi, setAdTaslagi] = useState<string | null>(null)
   const adMetni = adTaslagi ?? ayarlar.ad
   const adUyarisi = adTaslagi !== null && !adGecerliMi(adTaslagi)
-  const [sablonlarAcik, setSablonlarAcik] = useState(false)
-  const [acikSablonId, setAcikSablonId] = useState<string | null>(null)
-  const [silinecekSablon, setSilinecekSablon] = useState<Sablon | null>(null)
   const [sifirlamaAcik, setSifirlamaAcik] = useState(false)
   const [odakIzinleri, setOdakIzinleri] = useState<OdakDurumu>({
     kullanimVerisi: false,
@@ -202,8 +190,6 @@ export function AyarlarEkrani({
   const [izinReddedildi, setIzinReddedildi] = useState(false)
   const [fotoBoyut, setFotoBoyut] = useState(0)
   const dosyaRef = useRef<HTMLInputElement>(null)
-
-  const varsayilanSablon = sablonlar.find((s) => s.id === ayarlar.varsayilanSablonId)
 
   /** Seçenekli bir satırı açıp kapatan ortak prop'lar. */
   const acilir = (id: AyarId) => ({
@@ -295,22 +281,6 @@ export function AyarlarEkrani({
         : 'Yedek yüklendi, uygulama yenileniyor…',
     )
     setTimeout(() => window.location.reload(), elenen > 0 ? 2500 : 600)
-  }
-
-  const sablonGuncelle = (id: string, degistir: (sablon: Sablon) => Sablon) => {
-    setKayitliSablonlar((onceki) => onceki.map((s) => (s.id === id ? degistir(s) : s)))
-  }
-
-  const sablonKopyala = (kaynak: Sablon) => {
-    const kopya: Sablon = {
-      ...kaynak,
-      id: yeniId(),
-      ad: `${kaynak.ad} (kopya)`,
-      hazir: false,
-      dersler: kaynak.dersler.map((d) => ({ ...d })),
-    }
-    setKayitliSablonlar((onceki) => [...onceki, kopya])
-    setAcikSablonId(kopya.id)
   }
 
   return (
@@ -470,242 +440,6 @@ export function AyarlarEkrani({
           </GenisAlan>
           )}
 
-          <Satir
-            Simge={Bookmark}
-            renk="mavi"
-            baslik="Varsayılan deneme türü"
-            aciklama="Yeni deneme bu şablonla açılır"
-            deger={varsayilanSablon?.ad}
-            {...acilir('deneme-turu')}
-          />
-          {acikAyar === 'deneme-turu' && (
-          <GenisAlan>
-            <Cipler>
-              {sablonlar.map((s) => (
-                <Cip
-                  key={s.id}
-                  secili={s.id === ayarlar.varsayilanSablonId}
-                  onClick={() => setAyarlar((onceki) => ({ ...onceki, varsayilanSablonId: s.id }))}
-                >
-                  {s.ad}
-                </Cip>
-              ))}
-            </Cipler>
-          </GenisAlan>
-          )}
-
-          <Satir
-            Simge={Table}
-            renk="pembe"
-            baslik="Deneme şablonları"
-            aciklama="TYT, AYT, YDT ve kendi şablonların"
-            deger={sablonlar.length}
-            onClick={() => setSablonlarAcik((a) => !a)}
-            acikMi={sablonlarAcik}
-            sag={
-              <ChevronDown
-                size={18}
-                strokeWidth={2.6}
-                aria-hidden
-                className={cn(
-                  'shrink-0 text-muted-foreground/50 transition-transform',
-                  sablonlarAcik && 'rotate-180',
-                )}
-              />
-            }
-          />
-
-          {sablonlarAcik && (
-            <GenisAlan tam>
-              <AlanNotu ust={false}>
-                Hazır şablonlar değiştirilemez; kopyalayıp kendi ders dağılımını kurabilirsin.
-              </AlanNotu>
-
-              <ul className="mt-2 overflow-hidden rounded-xl border border-border">
-                {sablonlar.map((sablon) => {
-                  const acik = acikSablonId === sablon.id
-
-                  return (
-                    <li key={sablon.id} className="border-t border-border first:border-t-0">
-                      <button
-                        type="button"
-                        onClick={() => setAcikSablonId(acik ? null : sablon.id)}
-                        aria-expanded={acik}
-                        className="flex w-full items-center gap-2 px-3 py-2.5 text-left"
-                      >
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-bold">{sablon.ad}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {sablon.dersler.length} ders · {toplamSoru(sablon)} soru ·{' '}
-                            {katsayiYaz(sablon.yanlisKatsayi)}
-                            {sablon.hazir ? ' · hazır' : ''}
-                          </p>
-                        </div>
-                        <ChevronDown
-                          size={16}
-                          className={cn(
-                            'shrink-0 text-muted-foreground transition-transform',
-                            acik && 'rotate-180',
-                          )}
-                        />
-                      </button>
-
-                      {acik && (
-                        <div className="px-3 pb-3">
-                          {sablon.hazir ? (
-                            <>
-                              <ul className="mb-3 space-y-1 text-sm text-muted-foreground">
-                                {sablon.dersler.map((d) => (
-                                  <li key={d.id} className="flex justify-between">
-                                    <span>{d.ad}</span>
-                                    <span className="rakam">{d.soruSayisi} soru</span>
-                                  </li>
-                                ))}
-                              </ul>
-                              <p className="mb-3 rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
-                                Net hesabı: {katsayiYaz(sablon.yanlisKatsayi)}.
-                              </p>
-                              <Buton
-                                bicim="ikincil"
-                                boy="kucuk"
-                                className="w-full"
-                                onClick={() => sablonKopyala(sablon)}
-                              >
-                                <Copy size={15} />
-                                Kopyala ve düzenle
-                              </Buton>
-                            </>
-                          ) : (
-                            <>
-                              <div className="mb-3 flex gap-2">
-                                <div className="flex-1">
-                                  <Etiket>Şablon adı</Etiket>
-                                  <Alan
-                                    value={sablon.ad}
-                                    onChange={(e) =>
-                                      sablonGuncelle(sablon.id, (s) => ({
-                                        ...s,
-                                        ad: e.target.value,
-                                      }))
-                                    }
-                                    className="h-9 text-sm"
-                                  />
-                                </div>
-                                <div className="w-20">
-                                  <Etiket>Yanlış</Etiket>
-                                  <Alan
-                                    inputMode="numeric"
-                                    value={String(sablon.yanlisKatsayi)}
-                                    onChange={(e) => {
-                                      const katsayi = Number.parseInt(
-                                        e.target.value.replace(/[^0-9]/g, ''),
-                                        10,
-                                      )
-                                      sablonGuncelle(sablon.id, (s) => ({
-                                        ...s,
-                                        yanlisKatsayi: Number.isFinite(katsayi) ? katsayi : 4,
-                                      }))
-                                    }}
-                                    className="rakam h-9 text-center text-sm"
-                                  />
-                                </div>
-                              </div>
-
-                              <p className="mb-3 text-xs text-muted-foreground">
-                                {katsayiYaz(sablon.yanlisKatsayi)}.
-                              </p>
-
-                              <ul className="mb-2 space-y-1.5">
-                                {sablon.dersler.map((ders, indeks) => (
-                                  <li key={ders.id} className="flex items-center gap-2">
-                                    <Alan
-                                      value={ders.ad}
-                                      onChange={(e) =>
-                                        sablonGuncelle(sablon.id, (s) => ({
-                                          ...s,
-                                          dersler: s.dersler.map((d, i) =>
-                                            i === indeks ? { ...d, ad: e.target.value } : d,
-                                          ),
-                                        }))
-                                      }
-                                      className="h-9 flex-1 text-sm"
-                                    />
-                                    <Alan
-                                      inputMode="numeric"
-                                      value={String(ders.soruSayisi)}
-                                      onChange={(e) => {
-                                        const adet = Number.parseInt(
-                                          e.target.value.replace(/[^0-9]/g, ''),
-                                          10,
-                                        )
-                                        sablonGuncelle(sablon.id, (s) => ({
-                                          ...s,
-                                          dersler: s.dersler.map((d, i) =>
-                                            i === indeks
-                                              ? {
-                                                  ...d,
-                                                  soruSayisi: Number.isFinite(adet) ? adet : 0,
-                                                }
-                                              : d,
-                                          ),
-                                        }))
-                                      }}
-                                      className="rakam h-9 w-14 px-1 text-center text-sm"
-                                    />
-                                    <button
-                                      type="button"
-                                      aria-label={`${ders.ad} dersini çıkar`}
-                                      onClick={() =>
-                                        sablonGuncelle(sablon.id, (s) => ({
-                                          ...s,
-                                          dersler: s.dersler.filter((_, i) => i !== indeks),
-                                        }))
-                                      }
-                                      className="text-muted-foreground active:text-danger"
-                                    >
-                                      <X size={16} />
-                                    </button>
-                                  </li>
-                                ))}
-                              </ul>
-
-                              <div className="flex gap-2">
-                                <Buton
-                                  bicim="ikincil"
-                                  boy="kucuk"
-                                  className="flex-1"
-                                  onClick={() =>
-                                    sablonGuncelle(sablon.id, (s) => ({
-                                      ...s,
-                                      dersler: [
-                                        ...s.dersler,
-                                        { id: yeniId(), ad: 'Yeni ders', soruSayisi: 10 },
-                                      ],
-                                    }))
-                                  }
-                                >
-                                  <Plus size={15} />
-                                  Ders ekle
-                                </Buton>
-                                <Buton
-                                  bicim="tehlike"
-                                  boy="kucuk"
-                                  onClick={() => setSilinecekSablon(sablon)}
-                                >
-                                  <Trash2 size={15} />
-                                  Şablonu sil
-                                </Buton>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      )}
-                    </li>
-                  )
-                })}
-              </ul>
-            </GenisAlan>
-          )}
           {/* ---- Odak kilidi. Tarayıcıda özellik yok, kart da görünmüyor. ---- */}
           {odakKilidiDesteklenir() && (
             <>
@@ -1034,17 +768,6 @@ export function AyarlarEkrani({
         Rabi · çevrimdışı çalışır · bildirdiğin hatalı sorular dışında veri cihazdan
         çıkmaz
       </p>
-
-      <Onay
-        acik={silinecekSablon !== null}
-        baslik="Şablon silinsin mi?"
-        aciklama={`"${silinecekSablon?.ad}" şablonu silinecek. Bu şablonla kaydedilmiş denemeler listede kalır ama net dökümleri görünmez.`}
-        onOnayla={() =>
-          silinecekSablon &&
-          setKayitliSablonlar((onceki) => onceki.filter((s) => s.id !== silinecekSablon.id))
-        }
-        onIptal={() => setSilinecekSablon(null)}
-      />
 
       <Onay
         acik={sifirlamaAcik}

@@ -224,6 +224,40 @@ Seçenek çipleri satırın altında sürekli açık dururken ekran üç ekran b
 (hatırlatma, müzik) açılamaz: satıra dokunmak anahtarı çeviriyor, aynı satır hem
 anahtar hem liste olamaz — hatırlatma saati o yüzden **ayrı** bir satır.
 
+### Ayarlarda şablon yok
+
+"Varsayılan deneme türü" ve "Deneme şablonları" satırları kaldırıldı: ayarlar
+ekranının yarısı bir şablon düzenleyicisiydi (ders ekle/çıkar, soru sayısı,
+yanlış katsayısı, kopyala, sil) ve o düzenleyici bir ayardan çok kendi başına
+bir ekrandı.
+
+Şablonların kendisi duruyor (`lib/sablonlar.ts`): hazır TYT/AYT/YDT şablonları
+yeni deneme ekranında hâlâ seçiliyor ve kullanıcının kayıtlı şablonları
+yedeğe girmeye devam ediyor — kayıt silinmedi, yalnızca düzenleme kapısı kapandı.
+`ayarlar.varsayilanSablonId` de kayıtta duruyor; yeni deneme onu okumaya devam
+ediyor, artık ayarlardan değiştirilmiyor.
+
+## Haftalık özet kapalı
+
+Ekran (`components/ekranlar/haftalik-ozet.tsx`), hesabı (`lib/ozet.ts`) ve
+paylaşılan görseli üreten `lib/ozet-gorsel.ts` **dosya olarak duruyor** ama
+uygulamadan açılamıyor: Araçlar listesinde kartı yok (`gezinme.ts`), ana
+sayfadaki "Haftalık özetin hazır" daveti kalktı ve `AppShell` katmanı hiç
+kurmuyor.
+
+Geri açmak istenirse üçü birden gerekiyor: `Ekran` tipine ve `KARTLAR`'a
+`haftalik-ozet`, kart menüsündeki "Motivasyon" bölümüne giriş, `AppShell`'e
+özet hesabı + katman + `ozetGorulen` işaretlemesi. Depodaki `ozetGorulen`
+anahtarı silinmedi; okunmuyor ama duruyor.
+
+## Rozet değil başarım
+
+Arayüzde bölümün adı **Başarımlar**: Araçlar satırı, ekran başlığı ve kutlama
+penceresi böyle diyor. Kod tarafı `rozet` kalıyor — `lib/rozetler.ts`, `Ekran`
+kimliği `rozetler`, depo anahtarı `rabi-rozetler` ve yedekteki `rozetler`
+alanı. Kimliği değiştirmek kazanılmış rozetleri kayıtta öksüz bırakırdı; ad
+yalnızca görünen yüzde değişti.
+
 ## Seviye, havuç ve mağaza kaldırıldı
 
 Uygulamada bir XP/seviye sistemi (`lib/seviye.ts`), havuç para birimi

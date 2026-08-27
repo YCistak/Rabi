@@ -34,7 +34,6 @@ import { egitimYili, gunlukToplam, ilerlemisSinif } from '@/lib/hesap'
 import { rozetDurumu, yeniRozetler, type Rozet } from '@/lib/rozetler'
 import { hatirlatmaIptal, hatirlatmaPlanla, pomodoroIptal } from '@/lib/bildirim'
 import { odakKilidiniBitir } from '@/lib/odak-kilidi'
-import { bekleyenOzetHaftasi, haftalikOzet } from '@/lib/ozet'
 import { bekleyenSayisi } from '@/lib/hata-bildirimi'
 import { useHataBildirimi } from '@/lib/hata-kuyrugu'
 import { bugun } from '@/lib/utils'
@@ -42,7 +41,6 @@ import type { Ekran, Sekme } from '@/lib/gezinme'
 import { kullanildi } from '@/lib/son-kullanilan'
 import { ustKatmaniKapat } from '@/lib/geri'
 import { Acilis, GECIS_SURESI, MaskotGecisi } from '@/components/acilis'
-import { HaftalikOzetEkrani } from '@/components/ekranlar/haftalik-ozet'
 import { Buton } from '@/components/ui'
 import { BottomNav } from '@/components/bottom-nav'
 import { Kurulum } from '@/components/kurulum'
@@ -181,7 +179,6 @@ export function AppShell() {
    */
   const hataBildirimi = useHataBildirimi(ayarlar.hataBildirimiAcik)
   /** İzlenmiş haftalık özetlerin hafta başı tarihleri. */
-  const [ozetGorulen, setOzetGorulen] = useYerelDepo<string[]>(ANAHTARLAR.ozetGorulen, [])
   const [kutlanan, setKutlanan] = useState<Rozet[]>([])
   /**
    * Açılış ekranı kalktı mı.
@@ -222,46 +219,14 @@ export function AppShell() {
   */
   const sablonlar = useMemo(() => sablonlariBirlestir(kayitliSablonlar), [kayitliSablonlar])
 
-  // ---- Haftalık özet ----
-  // Biten haftanın özeti. Pazar günü doğuyor ve sonraki pazara kadar duruyor:
-  // yalnızca pazar gösterilseydi o gün uygulamayı açmayan kullanıcı kaçırırdı.
-  const ozetHaftasi = bekleyenOzetHaftasi(bugun())
-  const ozet = useMemo(
-    () =>
-      haftalikOzet({
-        haftaBasiIso: ozetHaftasi,
-        gunlukKayitlar,
-        gunlukHedef: ayarlar.gunlukHedef,
-        devamsizlik,
-        pomodoroGecmis,
-        oyunGecmisi,
-        yanlisSorular,
-        denemeler,
-        sablonlar,
-      }),
-    [
-      ozetHaftasi,
-      gunlukKayitlar,
-      ayarlar.gunlukHedef,
-      devamsizlik,
-      pomodoroGecmis,
-      oyunGecmisi,
-      yanlisSorular,
-      denemeler,
-      sablonlar,
-    ],
-  )
-  /** Özet henüz izlenmediyse ana sayfada davet kartı çıkar. */
-  const ozetBekliyor = !ozet.bosMu && !ozetGorulen.includes(ozetHaftasi)
+  /*
+    Haftalık özet uygulamada **kapalı**.
 
-  const ozetiKapat = useCallback(() => {
-    setEkran(null)
-    // İzlenen hafta işaretleniyor; liste son sekiz haftayla sınırlı — daha
-    // eskisini bilmenin bir faydası yok, davet kartı zaten yalnızca sona bakıyor.
-    setOzetGorulen((onceki) =>
-      onceki.includes(ozetHaftasi) ? onceki : [...onceki, ozetHaftasi].slice(-8),
-    )
-  }, [ozetHaftasi, setOzetGorulen])
+    Ekran, hesabı (`lib/ozet.ts`) ve görsel üreteci dosya olarak duruyor ama
+    hiçbir yerden açılmıyor: Araçlar listesinde kartı yok, ana sayfadaki davet
+    kartı da kalktı. Geri açmak istenirse `gezinme.ts`'e kart, buraya da
+    katman ve `ozetGorulen` işaretlemesi geri gelmeli.
+  */
 
   // Hedef kartı ve ana sayfa, en yeni denemelerden çıkan tahmini gösteriyor.
   const tahmin = guncelTahmin(denemeler, sablonlar, okulYillari, ayarlar.puanTuru, ayarlar.elleObp)
@@ -560,9 +525,7 @@ export function AppShell() {
     Açılıştaki yumuşak geçişi artık `components/acilis.tsx` hallediyor.
   */
     <div className="mx-auto min-h-dvh max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(6rem+var(--guvenli-alt))]">
-      {/* Haftalık özet bir ekran değil, tam ekran bir katman: kendi kapatma
-          düğmesi var ve "Geri" çubuğu kartların üstünde durmamalı. */}
-      {ekran !== null && ekran !== 'haftalik-ozet' ? (
+      {ekran !== null ? (
         <>
           <Buton
             bicim="hayalet"
@@ -682,7 +645,6 @@ export function AppShell() {
               devamsizlik={devamsizlik}
               hedef={hedef}
               guncelSiralama={guncelSiralama}
-              ozetBekliyor={ozetBekliyor}
               sonAraclar={sonAraclar}
               sonOyunlar={sonOyunlar}
               onKartAc={aracAc}
@@ -712,9 +674,7 @@ export function AppShell() {
           {sekme === 'daha' && <KartMenusu onKartAc={aracAc} />}
           {sekme === 'ayarlar' && (
             <AyarlarEkrani
-              sablonlar={sablonlar}
               kayitliSablonlar={kayitliSablonlar}
-              setKayitliSablonlar={setSablonlar}
               ayarlar={ayarlar}
               setAyarlar={setAyarlar}
               bekleyenBildirim={bekleyenSayisi(hataBildirimi.bildirimler)}
@@ -750,10 +710,6 @@ export function AppShell() {
           setSekme(yeni)
         }}
       />
-
-      {ekran === 'haftalik-ozet' && (
-        <HaftalikOzetEkrani ozet={ozet} sesAcik={ayarlar.oyunSesi} onKapat={ozetiKapat} />
-      )}
 
       <RozetKutlama rozetler={kutlanan} onKapat={() => setKutlanan([])} />
     </div>

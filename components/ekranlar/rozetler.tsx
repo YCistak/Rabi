@@ -153,7 +153,7 @@ export function RozetlerEkrani({
   return (
     <div>
       <BaslikSatiri
-        baslik="Rozetler"
+        baslik="Başarımlar"
         aciklama={`${kazanilanSayi} / ${ROZETLER.length} kazanıldı`}
       />
 
@@ -173,7 +173,7 @@ export function RozetlerEkrani({
               <Ilerleme satir={sonraki} />
             </>
           ) : (
-            <p className="text-sm font-medium">Bütün rozetleri topladın. 🐰</p>
+            <p className="text-sm font-medium">Bütün başarımları topladın. 🐰</p>
           )}
         </div>
       </Kart>
