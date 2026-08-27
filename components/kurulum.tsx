@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import type { CSSProperties } from 'react'
 import { AlertCircle, ArrowLeft, ArrowRight, Check, User } from 'lucide-react'
 import type { Ayarlar, OkulYili, PuanTuru } from '@/lib/types'
 import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
@@ -551,25 +552,33 @@ export function Kurulum({
  * değişiyor ve sabit piksellerde süsler küçük ekranda daireye biniyor,
  * büyükte kenara yapışıyordu. Hepsi `aria-hidden` — taşıdıkları bilgi yok,
  * ekran okuyucuya sekiz emoji okutmak gürültü olurdu.
+ *
+ * Her süs kendi süresi ve gecikmesiyle süzülüyor (`sus-suzuluyor`): ortak bir
+ * ritim sekizini tek ağızdan soluk alıp veren bir topluluğa çeviriyordu.
  */
 const SUSLER = [
-  { simge: '🐾', sol: '27%', ust: '9%', boy: 'text-[19px]' },
-  { simge: '✨', sol: '13%', ust: '19%', boy: 'text-[17px]' },
-  { simge: '🩷', sol: '68%', ust: '12%', boy: 'text-[19px]' },
-  { simge: '🥕', sol: '83%', ust: '25%', boy: 'text-[21px]' },
-  { simge: '💛', sol: '19%', ust: '47%', boy: 'text-[19px]' },
-  { simge: '🌸', sol: '88%', ust: '53%', boy: 'text-[19px]' },
-  { simge: '⭐', sol: '9%', ust: '70%', boy: 'text-[17px]' },
-  { simge: '✨', sol: '78%', ust: '75%', boy: 'text-[19px]' },
+  { simge: '🐾', sol: '27%', ust: '9%', boy: 'text-[19px]', sure: 4200, gecikme: 0 },
+  { simge: '✨', sol: '13%', ust: '19%', boy: 'text-[17px]', sure: 5200, gecikme: 700 },
+  { simge: '🩷', sol: '68%', ust: '12%', boy: 'text-[19px]', sure: 4600, gecikme: 1300 },
+  { simge: '🥕', sol: '83%', ust: '25%', boy: 'text-[21px]', sure: 5600, gecikme: 400 },
+  { simge: '💛', sol: '19%', ust: '47%', boy: 'text-[19px]', sure: 4800, gecikme: 1800 },
+  { simge: '🌸', sol: '88%', ust: '53%', boy: 'text-[19px]', sure: 5000, gecikme: 900 },
+  { simge: '⭐', sol: '9%', ust: '70%', boy: 'text-[17px]', sure: 4400, gecikme: 2100 },
+  { simge: '✨', sol: '78%', ust: '75%', boy: 'text-[19px]', sure: 5400, gecikme: 1500 },
 ]
 
 /**
  * Tanışma — kurulumun kutlama ekranı.
  *
  * Karşılamayla aynı düzeni **paylaşmıyor** (`TekIsliEkran`): orası sakin bir
- * giriş, burası adı öğrendikten sonraki karşılama anı. Degrade zemin,
- * süsler, halkalı madalyon ve rozet yalnızca burada; ikisini tek bileşende
- * toplamak, yarısı kullanılmayan bir sürü propla biten bir bileşen olurdu.
+ * giriş, burası adı öğrendikten sonraki karşılama anı. Süzülen süsler ve üç
+ * noktalı gösterge yalnızca burada; ikisini tek bileşende toplamak, yarısı
+ * kullanılmayan bir sürü propla biten bir bileşen olurdu.
+ *
+ * Zemin uygulamanın geri kalanıyla aynı. Bir süre degrade bir zemin, altın
+ * halkalı bir madalyon ve "Aramıza hoş geldin" rozeti vardı; üçü de kalktı.
+ * Ekranın tek işi adı geri söylemek ve onun etrafındaki her katman o cümleyi
+ * bastırıyordu.
  *
  * Maskot el sallıyor. Tasarımda dairenin sağ üstünde ayrıca bir 👋 duruyordu;
  * alındı — maskot zaten el sallıyor ve iki el aynı anda iki selam gibi
@@ -591,26 +600,19 @@ function TanismaEkrani({
 
   return (
     <div className="relative mx-auto flex min-h-dvh max-w-md flex-col overflow-hidden px-5 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(1.5rem+var(--guvenli-alt))]">
-      {/* Sıcak degrade: krem sol üstte, şeftali sağda, altta zemine çözülüyor.
-          Üç ayrı radyal, tek bir doğrusal degradeyle aynı şey değil — köşeden
-          köşeye giden bir geçiş bant gibi görünüyordu. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          backgroundImage:
-            'radial-gradient(60% 45% at 12% 4%, var(--kutlama-krem) 0%, transparent 70%), ' +
-            'radial-gradient(65% 50% at 96% 30%, var(--kutlama-seftali) 0%, transparent 72%), ' +
-            'linear-gradient(180deg, var(--kutlama-krem) 0%, var(--background) 62%)',
-        }}
-      />
-
       {SUSLER.map((sus, sira) => (
         <span
           key={`${sus.simge}-${sira}`}
           aria-hidden
-          className={`pointer-events-none absolute -z-10 -translate-x-1/2 -translate-y-1/2 opacity-80 ${sus.boy}`}
-          style={{ left: sus.sol, top: sus.ust }}
+          className={`sus-suzuluyor pointer-events-none absolute -z-10 -translate-x-1/2 -translate-y-1/2 opacity-80 ${sus.boy}`}
+          style={
+            {
+              left: sus.sol,
+              top: sus.ust,
+              '--sus-sure': `${sus.sure}ms`,
+              '--sus-gecikme': `${sus.gecikme}ms`,
+            } as CSSProperties
+          }
         >
           {sus.simge}
         </span>
@@ -619,21 +621,17 @@ function TanismaEkrani({
       <div className="flex-[0.9]" aria-hidden />
 
       <div className="flex flex-col items-center text-center">
-        {/* Madalyon: beyaz daire + altın halka. Maskot beyaz zeminin üstünde
-            duruyor; degradenin üstüne konsaydı kürkü zeminle karışırdı —
-            `--maskot-hat` kuralının aynı sebebi. */}
-        <div className="grid size-[168px] place-items-center rounded-full bg-card shadow-[0_10px_30px_rgba(90,60,35,0.12)] ring-4 ring-kutlama-halka">
-          <Rabi durum="mutlu" poz="el-sallayan" boyut={116} gizli={maskotGizli} />
-        </div>
-
-        <p className="mt-7 rounded-full bg-kutlama-krem px-4 py-2 text-[13.5px] font-extrabold text-primary">
-          ✨ Aramıza hoş geldin ✨
-        </p>
+        {/* Maskot karşılama ekranıyla aynı ölçüde (150): iki ekran arka arkaya
+            geliyor ve tavşanın ekrandan ekrana büyüyüp küçülmesi geçişi
+            kesiyordu. Halkalı madalyon da kalktı — çember degradenin üstünde
+            maskotu zeminden ayırmak için vardı, düz zeminde tavşanın etrafına
+            çizilmiş bir çerçeveye dönüşüyor. */}
+        <Rabi durum="mutlu" poz="el-sallayan" boyut={150} gizli={maskotGizli} />
 
         {/* Ad vurgulu: ekranın tek işi adı geri söylemek, o yüzden cümlenin
             içinde aranmadan bulunuyor. Yazıda `--primary` kullanılıyor,
             dolgunun parlak tonu değil — parlak ton yazıda kontrastı tutmuyor. */}
-        <h1 className="mt-4 font-display text-[29px] leading-[1.2] font-extrabold tracking-tight text-balance">
+        <h1 className="mt-6 font-display text-[29px] leading-[1.2] font-extrabold tracking-tight text-balance">
           {temizAd === '' ? (
             'Seni tanıdığıma memnun oldum'
           ) : (

@@ -158,9 +158,9 @@ varken üçü de gürültü.
 
 İkisi bir süre tek bir `TekIsliEkran` bileşenini paylaştı; tanışma tasarıma
 göre yeniden çizilince paylaşım bitti ve bileşen kaldırıldı. Karşılama sakin
-bir giriş, tanışma ise adı öğrendikten sonraki kutlama: degrade zemin,
-serpiştirilmiş süsler, halkalı madalyon ve rozet yalnızca tanışmada. İkisini
-tek bileşende tutmak, yarısı kullanılmayan bir sürü propla biten bir bileşen
+bir giriş, tanışma ise adı öğrendikten sonraki karşılama anı: süzülen süsler,
+el sallayan poz ve üç noktalı gösterge yalnızca tanışmada. İkisini tek
+bileşende tutmak, yarısı kullanılmayan bir sürü propla biten bir bileşen
 olurdu.
 
 Adım noktaları bu ikisini **saymıyor** (`noktaAdimlari`); nokta "kaç soru
@@ -175,17 +175,26 @@ yazmayı unutmuş gibi duruyordu.
 Son adımın düğmesi bu yüzden "Başlayalım" değil **"Hazırım"**: aynı akışta iki
 kez "Başlayalım" yazan düğme, kullanıcıya başa döndüğünü düşündürüyordu.
 
-**Tanışma ekranının süsleri.** Sekiz emoji (`SUSLER`) degradenin üstüne
-serpiliyor ve konumları **oran**, piksel değil: sabit piksellerde küçük
-ekranda madalyona biniyor, büyükte kenara yapışıyorlardı. Hepsi
-`aria-hidden` — taşıdıkları bilgi yok, ekran okuyucuya sekiz emoji okutmak
-gürültü olurdu.
+**Tanışma ekranının süsleri.** Sekiz emoji (`SUSLER`) zemine serpiliyor ve
+konumları **oran**, piksel değil: sabit piksellerde küçük ekranda maskota
+biniyor, büyükte kenara yapışıyorlardı. Hepsi `aria-hidden` — taşıdıkları bilgi
+yok, ekran okuyucuya sekiz emoji okutmak gürültü olurdu.
 
-Degrade uygulamanın **tek** degrade zemini (`--kutlama-krem`,
-`--kutlama-seftali`): ekran bir şey sormuyor, karşılıyor. Üç durak da mevcut
-paletin içinden seçildi, yoksa ekran başka bir uygulamadan gelmiş gibi
-duruyordu. Üç ayrı radyal kullanılıyor — köşeden köşeye giden tek bir doğrusal
-degrade bant gibi görünüyordu.
+Süsler hafifçe süzülüyor (`sus-suzuluyor`, `globals.css`): birkaç piksel yukarı
+aşağı, hafif bir dönüşle. Hareket bilerek küçük — süsler bilgi taşımıyor,
+dikkati ortadaki addan çalmamalılar. Süre ve gecikme her süse **ayrı** veriliyor
+(`--sus-sure`, `--sus-gecikme`); ortak bir ritimde sekizi tek ağızdan soluk alıp
+veren bir topluluk gibi duruyordu. Animasyon dönüşümün içinde ortalamayı
+(`translate(-50%, -50%)`) tekrarlamak zorunda: konum `left`/`top` ile verildiği
+için ayrı bir `transform` ortalamayı silerdi. `prefers-reduced-motion` altında
+susuyor.
+
+**Zemin ayrı değil.** Ekran bir süre degrade bir zemin, altın halkalı bir
+madalyon ve "Aramıza hoş geldin" rozeti taşıyordu; üçü de kaldırıldı ve
+`--kutlama-*` renkleri silindi. Ekranın tek işi adı geri söylemek ve o
+katmanların her biri o cümleyi bastırıyordu. Maskot da karşılamadakiyle **aynı
+ölçüde** (150): iki ekran arka arkaya geliyor, tavşanın ekrandan ekrana büyüyüp
+küçülmesi geçişi kesiyordu.
 
 Alttaki üç nokta kurulumun soru sormayan üç ekranını sayıyor ve **sonuncusu**
 dolu. Tasarımda ilk nokta doluydu; bu ekran üçüncü sırada olduğu için "1/3"
@@ -204,7 +213,7 @@ koy ve kare oranı koru; ölçü `Rabi` içinde 130/120 kutusuna oturuyor —
 `tavsan-el-sallayan.png` de bu yüzden kaynağındaki 247×236'dan 256×256 kare
 tuvale taşındı, yoksa `object-contain` onu yüzden farklı ölçeklerdi.
 
-Tasarımda madalyonun sağ üstünde ayrıca bir 👋 duruyordu; alınmadı — maskot
+Tasarımda maskotun sağ üstünde ayrıca bir 👋 duruyordu; alınmadı — maskot
 zaten el sallıyor ve iki el aynı anda iki selam gibi okunuyordu.
 
 ### Ayarlar satırları kapalı açılıyor
