@@ -5,6 +5,7 @@ import { Check, Pencil, Trash2 } from 'lucide-react'
 import type { Hedef, PuanTuru } from '@/lib/types'
 import { siraYaz } from '@/lib/siralama'
 import {
+  KATALOG_VERI_YILI,
   bolumAra,
   bolumBul,
   tahminEt,
@@ -326,12 +327,23 @@ export function HedefEkrani({
         </button>
       </Kart>
 
+      {/* Sıra artık kestirilmiyor: kılavuzdaki gerçek değer. Metin bunu
+          söylemek zorunda -- "tahmin" demek sayıyı olduğundan güvensiz
+          gösterirdi, taban puan içinse tahmin demek şart. Kaynağın ÖSYM
+          olduğu da yazıyor: veriyi nereden aldığını söylememek onu Rabi
+          üretmiş gibi gösterirdi. Bağlantısızlık cümlesi bunun karşılığı --
+          ÖSYM adı burada kaynak olarak geçiyor, marka olarak değil. */}
       <Not className="mt-4">
-        Taban puan ve sıralama <strong>tahmindir</strong>: bölümün sırası
-        üniversitenin genel düzeyine göre kestiriliyor, puan da ÖSYM'nin{' '}
-        {SON_VERI_YILI} yerleştirme dağılımından çevriliyor. Sıralamalar her yıl
-        oynuyor — hedefinin biraz üstünü tutturmak daha güvenli. Yanlış geldiyse
-        sayıları elle düzeltebilirsin.
+        Bölümün sırası, ÖSYM'nin yayımladığı {KATALOG_VERI_YILI} yerleştirme
+        sonuçlarındaki gerçek değer. Taban puan <strong>tahmindir</strong>: o
+        sıranın {SON_VERI_YILI} puan dağılımındaki karşılığı hesaplanıyor.
+        Sıralamalar her yıl oynuyor — hedefinin biraz üstünü tutturmak daha
+        güvenli. Yanlış geldiyse sayıları elle düzeltebilirsin.
+      </Not>
+
+      <Not className="mt-2">
+        Rabi ÖSYM ile bağlantılı değildir; sayılar ÖSYM'nin herkese açık
+        yayınlarından derlenmiştir.
       </Not>
 
       <Onay
