@@ -91,9 +91,16 @@ type AyarId =
   | 'hatirlatma-saati'
   | 'muzik-turu'
 
-/** Mini oyun müziği seçenekleri; hangisinin iyi olduğu zevk meselesi. */
+/**
+ * Mini oyun müziği seçenekleri.
+ *
+ * "Mod müziği" her tur moduna ayrı bir parça çalıyor: Sıradan'da süre azaldıkça
+ * hızlanan, Turbo'da sonda vites atan, Ani Ölüm'de hiç yavaşlamayan, Rahat'ta
+ * vuruşsuz pad. Lo-fi ise moddan bağımsız, sabit tempolu bir kayıt — turun
+ * temposunu duymak istemeyen için duruyor.
+ */
 const OYUN_MUZIK_ADI: Record<OyunMuzikTuru, string> = {
-  sakin: 'Sakin',
+  mod: 'Mod müziği',
   lofi: 'Lo-fi',
 }
 
@@ -590,7 +597,7 @@ export function AyarlarEkrani({
               Simge={Music}
               renk="lavanta"
               baslik="Müzik parçası"
-              aciklama="Turun temposunu belirler"
+              aciklama="Mod müziği turun temposuyla değişir, Lo-fi sabit kalır"
               deger={OYUN_MUZIK_ADI[ayarlar.oyunMuzikTuru]}
               {...acilir('muzik-turu')}
             />

@@ -28,7 +28,7 @@ const bos: Omit<Yedek, 'uygulama' | 'surum' | 'tarih'> = {
     hataBildirimiAcik: true,
     oyunSesi: true,
     oyunMuzigi: true,
-  oyunMuzikTuru: 'sakin' as const,
+  oyunMuzikTuru: 'mod' as const,
     kurulumTamamlandi: true,
   },
 }

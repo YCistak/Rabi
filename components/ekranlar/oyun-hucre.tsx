@@ -133,6 +133,8 @@ export function HucreOyunuEkrani({
     bankaCevaplari: BankaCevabi[],
     /** Turun gerçek uzunluğu — modlar arasında değişiyor. */
     gecenSaniye: number,
+    /** Tur bitmeden çıkıldı mı — yarım tur rekora ve istatistiğe yazılmıyor. */
+    yarim: boolean,
   ) => void
   /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
   mod: OyunModu
@@ -209,7 +211,7 @@ export function HucreOyunuEkrani({
   }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluk])
 
   const turBitir = useCallback(
-    (verilenler: Cevap<OrganelSorusu>[]) => {
+    (verilenler: Cevap<OrganelSorusu>[], yarim = false) => {
       if (bittiRef.current) return
       bittiRef.current = true
       const ozet = turOzeti(verilenler)
@@ -217,6 +219,7 @@ export function HucreOyunuEkrani({
         ozet,
         puan: puanRef.current,
         yeniRekor:
+          !yarim &&
           !bankaTuru &&
           modKayitliMi(gecerliMod) &&
           rekorKirildiMi({ ...istatistik, enIyiDogru: turBasiRekor.current }, ozet),
@@ -230,6 +233,7 @@ export function HucreOyunuEkrani({
           dogruMu: cevap.dogruMu,
         })),
         Math.round((Date.now() - turBasladiRef.current) / 1000),
+        yarim,
       )
     },
     [bankaTuru, gecerliMod, istatistik, onTurBitti, sesAcik],
@@ -281,15 +285,19 @@ export function HucreOyunuEkrani({
   }
 
   /*
-    Rahat turda çıkış turu bitiriyor.
+    Çıkış turu bitiriyor — her modda.
 
-    Süre yok, yanlış elemiyor: turu bitirecek başka bir şey de yok. Doğrudan
-    çıkılsaydı o turda yanlış bilinen sorular Oyun Bankası'na hiç düşmezdi ve
-    modun tek amacı olan öğrenme kaybolurdu.
+    Doğrudan çıkılsaydı o turda yanlış bilinen sorular Oyun Bankası'na hiç
+    düşmezdi: yarıda bırakılan tur da öğrenilen bir turdur. Tur sonu ekranı da
+    çıkışta görünüyor, oyuncu ne yaptığını görmeden ekrandan atılmıyor.
+
+    Yarım tur `yarim` bayrağıyla bildiriliyor ve rekora, istatistiğe, oyun
+    geçmişine **yazılmıyor** (`oyunlar.tsx`). Bankaya yazılıyor: soruyu nerede
+    yanlış bilirsen bil, öğrenmen gereken soru odur.
   */
   const turdanCik = () => {
-    if (asama === 'oynaniyor' && gecerliMod === 'rahat' && cevaplarRef.current.length > 0) {
-      turBitir(cevaplarRef.current)
+    if (asama === 'oynaniyor' && cevaplarRef.current.length > 0) {
+      turBitir(cevaplarRef.current, true)
       return
     }
     onCik()

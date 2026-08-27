@@ -216,6 +216,32 @@ function yanlisTonu() {
 }
 
 /**
+ * Geri sayım sesi — 3, 2, 1 ve `0` ile "Başla!".
+ *
+ * Rakamlar tek ve alçak bir tik; sonuncusu yukarı açılan üç nota. Tırmanış
+ * kasıtlı: sayım aşağı iner, ses yukarı çıkar, o yüzden "bitti" değil
+ * "başlıyor" gibi duyuluyor.
+ *
+ * Perde her rakamda biraz yükseliyor (`RAKAM_PERDESI`); aynı tik üç kez
+ * çalınca sayım duraklamış gibi geliyordu.
+ */
+const RAKAM_PERDESI = [523.25, 587.33, 659.25]
+
+export function geriSayimSesi(kalan: number) {
+  if (!sesAcik) return
+  if (kalan > 0) {
+    const hz = RAKAM_PERDESI[Math.min(kalan, RAKAM_PERDESI.length) - 1]
+    cal([{ frekans: hz, gecikme: 0, sure: 0.13, bicim: 'triangle', seviye: 0.24 }])
+    return
+  }
+  cal([
+    { frekans: 659.25, gecikme: 0, sure: 0.12, bicim: 'triangle', seviye: 0.26 },
+    { frekans: 880, gecikme: 0.08, sure: 0.12, bicim: 'triangle', seviye: 0.28 },
+    { frekans: 1174.66, gecikme: 0.16, sure: 0.34, bicim: 'triangle', seviye: 0.3 },
+  ])
+}
+
+/**
  * Boss sorusunun yenilmesi.
  *
  * Doğru sesinin **üstüne** biniyor, onun yerine geçmiyor: boss da bir doğru

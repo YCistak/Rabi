@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Check, HelpCircle, Trophy, X } from 'lucide-react'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
 import { bossSesi, seriyiSifirla, sureUyarisi } from '@/lib/oyunlar/oyun-sesi'
+import { muzikGerginligi } from '@/lib/oyunlar/mod-muzigi'
+import { GeriSayim } from '@/components/oyun-geri-sayim'
 import type { OyunId } from '@/lib/types'
 import { sureOrani } from '@/lib/oyunlar/tur'
 import { BOSS_ARALIGI, bossluMu } from '@/lib/oyunlar/ritim'
@@ -309,6 +311,20 @@ function useTurEfektleri(sayac: SayacBilgisi | null) {
   }, [sarsiliyor])
 
   const oran = sayac && sayac.toplam > 0 ? sayac.kalan / sayac.toplam : 1
+
+  /*
+    Müziğin gerginliği de aynı orandan besleniyor.
+
+    Mod müziği tempoyu buna göre kuruyor (`lib/oyunlar/mod-muzigi.ts`): Sıradan
+    turda süre azaldıkça hızlanıyor, Turbo son çeyrekte vites atıyor. Sayacı
+    olmayan modlarda oran 1 kalıyor ve o parçalar zaten gerginliğe bakmıyor.
+
+    Beslemenin burada olması efektlerdeki kuralın aynısı: kabuk sayacı zaten
+    biliyor, 18 oyun dosyasına müziği anlatmak gerekmiyor.
+  */
+  useEffect(() => {
+    muzikGerginligi(1 - oran)
+  }, [oran])
   const baski = sayac !== null && sayac.toplam > 0 && sayac.kalan > 0 && oran <= BASKI_ORANI
 
   useEffect(() => {
@@ -810,6 +826,12 @@ export function TurSonu({
 }) {
   const aile = AILE[oyunId]
   const { dolu, cizgi } = olcekOranlari(dogru, rekor)
+  /*
+    "Tekrar" turu hemen açmıyor: tanıtımdaki "Başla" gibi önce 3 · 2 · 1
+    sayıyor. İki giriş de aynı katmanı kullanıyor (`oyun-geri-sayim.tsx`);
+    ikinci turda sayımın atlanması, aynı oyunun iki farklı başlangıcı olurdu.
+  */
+  const [sayiliyor, setSayiliyor] = useState(false)
 
   const maskot: MaskotDurumu = yeniRekor
     ? 'kutlama'
@@ -818,6 +840,8 @@ export function TurSonu({
       : yanlis === 0
         ? 'mutlu'
         : 'normal'
+
+  if (sayiliyor) return <GeriSayim onBitti={onTekrar} />
 
   return (
     <div className="relative flex flex-1 flex-col gap-3 py-3">
@@ -932,7 +956,7 @@ export function TurSonu({
         </button>
         <button
           type="button"
-          onClick={onTekrar}
+          onClick={() => setSayiliyor(true)}
           className={cn(
             'grid h-12 place-items-center rounded-[17px] font-display text-[14.5px] font-extrabold text-white transition active:brightness-95',
             aile.dolgu,

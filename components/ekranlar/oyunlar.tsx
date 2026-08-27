@@ -37,11 +37,12 @@ import { sesleriHazirla } from '@/lib/oyunlar/oyun-sesi'
 import { ANAHTARLAR, OYUN_GECMIS_SINIRI, TUR_EN_UZUN, useYerelDepo } from '@/lib/depo'
 import {
   VARSAYILAN_MOD,
+  etkinMod,
   modKayitliMi,
   moduNormalize,
   type OyunModu,
 } from '@/lib/oyunlar/mod'
-import { OyunMuzigi } from '@/lib/oyunlar/oyun-muzigi'
+import { muzikBaslat, muzikDuraklat, muzikDurdur } from '@/lib/oyunlar/mod-muzigi'
 import { LOFI_PARCALAR } from '@/lib/lofi'
 import { SesCalar } from '@/lib/ses'
 import { useGeriKatmani } from '@/lib/geri'
@@ -191,32 +192,29 @@ export function OyunlarEkrani({
   // sonra çalmaya devam etmesi ise uygulama görev listesinden silinene kadar
   // sürüyordu.
   const gorunur = useUygulamaGorunur()
-  const sakinRef = useRef<OyunMuzigi | null>(null)
   const lofiRef = useRef<SesCalar | null>(null)
 
   const muzikCalsin = acikOyun !== null && muzikAcik
 
+  /*
+    Mod müziği: parçayı tur modu seçiyor (`lib/oyunlar/mod-muzigi.ts`).
+
+    Seviye dengesi orada tek yerde duruyor (`MUZIK_SEVIYESI`): müzik, efektlerin
+    (`oyun-sesi.ts`) altında kalmalı, yoksa oyunun tek sesli geri bildirimi olan
+    doğru/yanlış duyulmaz. Efekt seviyesine dokunursan oraya da bak — ikisi tek
+    bir dengenin iki ucu.
+
+    Banka turu modu dinlemiyor (`etkinMod`); müzik de onu izliyor, yoksa
+    süresiz bir turda süre daraltan bir parça çalardı.
+  */
   useEffect(() => {
-    if (!muzikCalsin || muzikTuru !== 'sakin') {
-      sakinRef.current?.kapat()
-      sakinRef.current = null
+    if (!muzikCalsin || muzikTuru !== 'mod') {
+      muzikDurdur()
       return
     }
-    const muzik = sakinRef.current ?? new OyunMuzigi()
-    sakinRef.current = muzik
-    /*
-      Ses efektlerinin altında kalmalı: müzik yüksek olursa doğru/yanlış geri
-      bildirimi duyulmuyor ve oyunun tek geri bildirimi kayboluyor.
-
-      Değer 0.06'ydı ve o denge efektler tam seviyedeyken kurulmuştu. Efekt
-      dosyaları 1'den 0.42'ye indirilince (`oyun-sesi.ts`) müzik altta kaldı;
-      aradaki farkı korumak için o kadar geri veriliyor. Efekt seviyesine
-      dokunursan buraya da bak — ikisi tek bir dengenin iki ucu.
-    */
-    muzik.sesSeviyesi(0.1)
-    if (gorunur) muzik.basla()
-    else muzik.duraklat()
-  }, [muzikCalsin, muzikTuru, gorunur])
+    if (gorunur) muzikBaslat(etkinMod(mod, bankaTuru !== null))
+    else muzikDuraklat()
+  }, [muzikCalsin, muzikTuru, gorunur, mod, bankaTuru])
 
   useEffect(() => {
     if (!muzikCalsin || muzikTuru !== 'lofi') {
@@ -237,8 +235,7 @@ export function OyunlarEkrani({
   // Ekrandan çıkarken bağlamlar da kapanmalı; yukarıdaki efektler duraklatmakla yetiniyor.
   useEffect(
     () => () => {
-      sakinRef.current?.kapat()
-      sakinRef.current = null
+      muzikDurdur()
       lofiRef.current?.kapat()
       lofiRef.current = null
     },
@@ -259,6 +256,8 @@ export function OyunlarEkrani({
     ozet: TurSayilari,
     cevaplar: BankaCevabi[],
     gecenSaniye: number,
+    /** Tur bitmeden çıkıldı mı. */
+    yarim: boolean,
   ) => {
     const yeniBanka = bankayiGuncelle(banka, cevaplar, bugun())
     const dusen = dusenSayisi(banka, yeniBanka)
@@ -266,11 +265,17 @@ export function OyunlarEkrani({
     if (dusen > 0) onBankadanDustu(dusen)
 
     /*
-      Rahat tur da banka turu gibi: yanlışlar bankaya düşüyor ama rekora,
-      istatistiğe ve oyun geçmişine yazılmıyor. Süresiz bir turda "kaç doğru
-      yaptın" sorusunun cevabı sabrı ölçer, bilgiyi değil (`lib/oyunlar/mod.ts`).
+      Rahat tur, banka turu ve **yarıda bırakılan** tur aynı yerde eleniyor:
+      yanlışlar bankaya düşüyor ama rekora, istatistiğe ve oyun geçmişine
+      yazılmıyor.
+
+      Rahat turda sebep süre: süresiz bir turda "kaç doğru yaptın" sorusunun
+      cevabı sabrı ölçer, bilgiyi değil (`lib/oyunlar/mod.ts`). Yarım turda
+      sebep başka: tur kendi kuralıyla bitmedi, oyuncu kapattı. Yarısında
+      çıkılan turları saymak "oynanan tur" sayısını da ortalama süreyi de
+      bozardı.
     */
-    if (bankaTuru !== null || !modKayitliMi(mod)) return
+    if (bankaTuru !== null || !modKayitliMi(mod) || yarim) return
 
     setKayitlar((onceki) => ({
       ...onceki,
@@ -489,7 +494,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'yazim')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('yazim', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('yazim', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}
@@ -501,7 +506,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'ses')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('ses', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('ses', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}
@@ -513,7 +518,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'oge')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('oge', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('oge', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}
@@ -525,7 +530,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'soz')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('soz', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('soz', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}
@@ -537,7 +542,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'islem')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('islem', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('islem', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}
@@ -549,7 +554,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'bolunme')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('bolunme', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('bolunme', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}
@@ -561,7 +566,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'aci')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('aci', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('aci', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}
@@ -573,7 +578,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'ucgen')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('ucgen', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('ucgen', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}
@@ -585,7 +590,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'harita')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('harita', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('harita', ozet, cevaplar, saniye, yarim)}
           onCik={oyunuKapat}
           mod={mod}
           setMod={setMod}
@@ -597,7 +602,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'antlasma')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('antlasma', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('antlasma', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}
@@ -609,7 +614,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'kavram')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('kavram', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('kavram', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}
@@ -621,7 +626,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'anlatim')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('anlatim', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('anlatim', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}
@@ -633,7 +638,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'koklu')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('koklu', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('koklu', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}
@@ -647,7 +652,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, acikOyun)}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti(acikOyun, ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti(acikOyun, ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}
@@ -659,7 +664,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'hucre')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('hucre', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('hucre', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}
@@ -671,7 +676,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'sirala')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('sirala', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('sirala', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}
@@ -683,7 +688,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'tuzak')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('tuzak', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('tuzak', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}
@@ -695,7 +700,7 @@ export function OyunlarEkrani({
           istatistik={istatistikAl(kayitlar, 'edebiyat')}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye) => turBitti('edebiyat', ozet, cevaplar, saniye)}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('edebiyat', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}

@@ -291,7 +291,15 @@ export type KazanilanRozet = {
 // Ayarlar ve yedek
 // ---------------------------------------------------------------------------
 
-export type OyunMuzikTuru = 'sakin' | 'lofi'
+/**
+ * Oyun müziği seçimi.
+ *
+ * `'mod'` eskiden `'sakin'`di ve tek bir pad'i anlatıyordu; artık her tur modu
+ * kendi parçasını çalıyor (`lib/oyunlar/mod-muzigi.ts`) ve Rahat modun parçası
+ * o eski pad. Kayıttaki `'sakin'` değeri `ayarlariNormalize` içinde `'mod'`a
+ * çevriliyor — eski kurulumlar ayarlarını kaybetmesin.
+ */
+export type OyunMuzikTuru = 'mod' | 'lofi'
 
 export type Ayarlar = {
   varsayilanSablonId: string
