@@ -1,5 +1,5 @@
 /**
- * Hedef kataloğu — üniversite + bölüm seçiminden tahmini taban puan ve sıra.
+ * Hedef kataloğu — üniversite + bölüm seçiminden başarı sırası ve taban puan.
  *
  * Kullanıcı eskiden hedef ekranında dört kutuyu da elle dolduruyordu: bölüm
  * adı, üniversite adı, taban puan, başarı sırası. Son iki sayıyı bilen kimse
@@ -7,43 +7,40 @@
  * "hedefine ne kadar kaldı" cümlesi ölçtüğü şeyi kaybediyordu. Artık kullanıcı
  * yalnızca **arayıp seçiyor**, sayıları katalog dolduruyor.
  *
- * ## Tahmin zinciri
+ * ## Sıra artık tahmin değil
  *
- * 1. Üniversitenin **kademesi** (`universiteler.ts`) ile bölümün iki ucu
- *    (`bolumler.ts`) arasında geometrik iç değer → tahmini **başarı sırası**.
- * 2. O sıra, `puan.ts`'teki gerçek ÖSYM yerleştirme dağılımından geri çevrilir
- *    (`siralamadanPuan`) → tahmini **taban puan**.
+ * Eskiden sıra, üniversitenin 1–5 arası "kademesi" ile bölümün iki ucu
+ * arasında geometrik iç değerle **tahmin ediliyordu**; model tek boyutluydu ve
+ * bir üniversitenin her bölümde aynı yerde olduğunu varsayıyordu. Artık
+ * `veri/katalog.ts` her programın kılavuzdaki **gerçek** başarı sırasını
+ * taşıyor.
  *
- * İkinci adım gerçek veri, birinci adım tahmin. Bölünme kasıtlı: en yavaş
- * bayatlayan sayıyı (sırayı) elle tutuyoruz, hızlı bayatlayanı (puanı) her yıl
- * gelen veriden hesaplatıyoruz.
+ * ## Puan hâlâ hesaplanıyor
  *
- * ## Neden geometrik iç değer
- *
- * Sıralamalar kademe kademe doğrusal değil **katlanarak** büyüyor: Tıp'ta
- * 1. kademe 400. sıra, 5. kademe 60.000. sıra — aradaki her basamak bir
- * öncekinin yaklaşık üç katı. Doğrusal iç değer ortadaki kademeleri 15.000
- * civarına yığar ve gerçekte 4.000'lik olan bir bölümü ulaşılmaz gösterirdi.
- *
- * ## Yuvarlama
- *
- * Çıkan sıra kabalaştırılıyor. Kesin görünen bir sayı ("47.213") tahmini
- * olduğundan daha güvenilir gösteriyor; `siralama.ts`'teki `bantYaz` da aynı
- * gerekçeyle yuvarlıyor.
+ * Kılavuzda taban puan da yazıyor ama kataloğa girmiyor; puan `siralamadanPuan`
+ * ile o yılın yerleştirme dağılımından geri hesaplanıyor. Sebep değişmedi:
+ * sıra yıldan yıla neredeyse yerinde duruyor, puan sınavın zorluğuyla oynuyor.
+ * Yeni yılın dağılımı geldiğinde puan kendiliğinden güncelleniyor; kataloğa
+ * yazılmış olsaydı bir yıl eskimiş sayıyı göstermeye devam ederdi.
  *
  * Saf ve React'ten bağımsız.
  */
 
 import { SON_VERI_YILI } from './puan'
 import { siralamadanPuan } from './siralama'
-import { BOLUMLER, type Bolum } from './veri/bolumler'
-import { UNIVERSITELER, sadelestir, type Universite } from './veri/universiteler'
+import {
+  UNIVERSITELER,
+  sadelestir,
+  universiteninBolumleri,
+  type Bolum,
+  type Universite,
+} from './veri/katalog'
 
-export { sadelestir }
+export { sadelestir, VERI_YILI as KATALOG_VERI_YILI } from './veri/katalog'
 export type { Bolum, Universite }
 
 export type Tahmin = {
-  /** Tahmini başarı sırası. */
+  /** Programın kılavuzdaki başarı sırası. */
   siralama: number
   /** O sıranın son veri yılındaki yerleştirme puanı karşılığı. */
   tabanPuan: number
@@ -53,43 +50,29 @@ export type Tahmin = {
 export const EN_COK_SONUC = 40
 
 /**
- * Bölümün o kademedeki tahmini başarı sırası.
+ * Üniversite + bölüm → başarı sırası ve taban puan.
  *
- * Kademe bölümün açıldığı en düşük kademeden aşağıdaysa alt uca sabitleniyor;
- * çağıran taraf zaten `bolumleriGetir` ile süzüyor, burası yalnızca güvenlik.
+ * Sıra katalogdan olduğu gibi geliyor; yuvarlanmıyor. Eskiden sıra bir
+ * tahmindi ve "47.213" gibi kesin görünen bir sayı hak etmediği güveni
+ * veriyordu, o yüzden kabalaştırılıyordu. Artık sayı ÖSYM'nin kendi yayımladığı
+ * değer — yuvarlamak onu daha dürüst değil, yalnızca daha yanlış yapardı.
+ * Arayüzdeki belirsizlik bandı `siralama.ts`'teki `bantYaz`ın işi.
  */
-export function tahminiSira(bolum: Bolum, kademe: number): number {
-  const sinirli = Math.min(Math.max(kademe, 1), bolum.sonKademe)
-  const oran = bolum.sonKademe <= 1 ? 0 : (sinirli - 1) / (bolum.sonKademe - 1)
-  const ham = bolum.ustSira * Math.pow(bolum.altSira / bolum.ustSira, oran)
-  return kabalastir(ham)
-}
-
-/** Tahmini sayıyı okunur bir adıma indirir — kesinlik iddiası taşımasın diye. */
-function kabalastir(sayi: number): number {
-  const basamak = sayi >= 100_000 ? 1000 : sayi >= 10_000 ? 500 : sayi >= 1_000 ? 100 : 10
-  return Math.max(basamak, Math.round(sayi / basamak) * basamak)
-}
-
-/** Üniversite + bölüm → tahmini sıra ve taban puan. */
-export function tahminEt(universite: Universite, bolum: Bolum): Tahmin {
-  const siralama = tahminiSira(bolum, universite.kademe)
-  const { puan } = siralamadanPuan(siralama, bolum.puanTuru, SON_VERI_YILI)
-  return { siralama, tabanPuan: Math.round(puan * 10) / 10 }
+export function tahminEt(_universite: Universite, bolum: Bolum): Tahmin {
+  const { puan } = siralamadanPuan(bolum.basariSirasi, bolum.puanTuru, SON_VERI_YILI)
+  return { siralama: bolum.basariSirasi, tabanPuan: Math.round(puan * 10) / 10 }
 }
 
 /**
  * Üniversitenin açtığı bölümler.
  *
- * İki ayrı süzgeç var ve ikisi farklı soruyu soruyor: fakülte grubu "bu
- * üniversitede böyle bir fakülte var mı", `sonKademe` ise "bu bölüm bu
- * kademede açılıyor mu". Havacılık ve Uzay Mühendisliği'ni mühendislik
- * fakültesi olan her üniversitede listelemek ikincisini atlamak olurdu.
+ * Eskiden burada iki süzgeç vardı (fakülte grubu var mı, bölüm bu kademede
+ * açılıyor mu) çünkü liste bütün bölümlerin çarpımından türetiliyordu. Katalog
+ * artık gerçek programları taşıyor: bir üniversitede listelenen her bölüm o
+ * üniversitede gerçekten açık.
  */
 export function bolumleriGetir(universite: Universite): Bolum[] {
-  return BOLUMLER.filter(
-    (b) => universite.alanlar.includes(b.alan) && universite.kademe <= b.sonKademe,
-  )
+  return universiteninBolumleri(universite)
 }
 
 /**
@@ -148,11 +131,19 @@ export function universiteBul(ad: string): Universite | null {
   return UNIVERSITELER.find((u) => sadelestir(u.ad) === aranan) ?? null
 }
 
-/** Kayıtlı hedefin bölümünü katalogda bulur; bulamazsa `null`. */
-export function bolumBul(ad: string): Bolum | null {
+/**
+ * Kayıtlı hedefin bölümünü katalogda bulur; bulamazsa `null`.
+ *
+ * Üniversite parametresi şart: bölüm artık evrensel bir kayıt değil, o
+ * üniversitedeki bir program ve başarı sırası üniversiteden üniversiteye
+ * değişiyor. Üniversitesiz bir arama, "Tıp"ın sırasını rastgele bir
+ * üniversiteden okurdu.
+ */
+export function bolumBul(universite: Universite | null, ad: string): Bolum | null {
+  if (universite === null) return null
   const aranan = sadelestir(ad.trim())
   if (aranan === '') return null
-  return BOLUMLER.find((b) => sadelestir(b.ad) === aranan) ?? null
+  return bolumleriGetir(universite).find((b) => sadelestir(b.ad) === aranan) ?? null
 }
 
 /** Üniversite türünün ekranda görünen adı. */
