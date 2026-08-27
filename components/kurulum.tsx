@@ -91,7 +91,7 @@ const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
   },
   hatirlatma: {
     baslik: 'Hatırlatma',
-    aciklama: 'Son adım — istersen atlayabilirsin.',
+    aciklama: 'Her gün bu saatte seni çalışmaya çağıracağım.',
   },
 }
 
@@ -138,7 +138,6 @@ export function Kurulum({
   const [hedef, setHedef] = useState(200)
   const [saat, setSaat] = useState(20)
   const [dakika, setDakika] = useState(0)
-  const [bildirim, setBildirim] = useState(true)
 
   const mezun = mezunMu(sinif)
   /**
@@ -205,10 +204,15 @@ export function Kurulum({
   }
 
   const bitir = async () => {
-    // Android 13+ izni burada isteniyor: kullanıcı hatırlatmayı açtıktan hemen
-    // sonra, ne için sorulduğu belliyken. Reddederse kurulum yine tamamlanır,
-    // yalnızca hatırlatma kapalı kaydedilir — Ayarlar'dan tekrar denenebilir.
-    const izinli = bildirim ? await izinIste() : false
+    // Hatırlatma açık kuruluyor; kurulumda kapatma anahtarı yok. Uygulamayı
+    // yeni kuran kişi hatırlatmanın ne olduğunu daha görmedi ve kapalıya basıp
+    // bir daha hiç açmıyordu. Kapatma yeri Ayarlar — orada hatırlatmanın ne
+    // yaptığı yaşanmış oluyor.
+    //
+    // Android 13+ izni de burada isteniyor: saat kurulduktan hemen sonra, ne
+    // için sorulduğu belliyken. Reddedilirse kurulum yine tamamlanıyor,
+    // yalnızca hatırlatma kapalı kaydediliyor — Ayarlar'dan tekrar denenebilir.
+    const izinli = await izinIste()
     const obp = Number(obpMetni.replace(',', '.'))
     onBitir({
       ayarlar: {
@@ -304,11 +308,23 @@ export function Kurulum({
         </p>
       </div>
 
-      {/* Sınıf ve notlar adımları kartın dışında duruyor: ikisinde de
+      {/* Sınıf, alan ve notlar adımları kartın dışında duruyor: üçünde de
           seçenekler/satırlar zaten birer kart, onları bir kartın içine koymak
           iç içe iki çerçeve demek olurdu. */}
       {suanki === 'sinif' ? (
-        <SinifSecimi secili={sinif} onSec={setSinif} />
+        <SecimKartlari
+          etiket="Bu yıl kaçıncı sınıftasın?"
+          secenekler={SINIF_SECENEKLERI.map((s) => ({ deger: s, ad: sinifAdi(s) }))}
+          secili={sinif}
+          onSec={setSinif}
+        />
+      ) : suanki === 'alan' ? (
+        <SecimKartlari
+          etiket="Hangi alandasın?"
+          secenekler={PUAN_TURLERI.map((tur) => ({ deger: tur.id, ad: tur.ad }))}
+          secili={puanTuru}
+          onSec={setPuanTuru}
+        />
       ) : suanki === 'notlar' ? (
         <OkulNotlari
           siniflar={notluSiniflar}
@@ -377,27 +393,6 @@ export function Kurulum({
             </div>
           )}
 
-          {suanki === 'alan' && (
-            <div className="space-y-2">
-              {PUAN_TURLERI.map((tur) => (
-                <button
-                  key={tur.id}
-                  type="button"
-                  onClick={() => setPuanTuru(tur.id)}
-                  aria-pressed={puanTuru === tur.id}
-                  className={`flex w-full items-center justify-between gap-3 rounded-xl border p-3 text-left transition ${
-                    puanTuru === tur.id
-                      ? 'border-primary bg-primary-soft'
-                      : 'border-border active:bg-muted'
-                  }`}
-                >
-                  <span className="font-medium">{tur.ad}</span>
-                  {puanTuru === tur.id && <Check size={18} className="shrink-0 text-primary" />}
-                </button>
-              ))}
-            </div>
-          )}
-
           {suanki === 'hedef' && (
             /*
               Kartta tekerlekten başka hiçbir şey yok: adımın başlığı zaten soruyu
@@ -418,41 +413,25 @@ export function Kurulum({
 
           {suanki === 'hatirlatma' && (
             <div>
-              <button
-                type="button"
-                onClick={() => setBildirim((b) => !b)}
-                aria-pressed={bildirim}
-                className={`flex w-full items-center justify-between gap-3 rounded-xl border p-3 text-left transition ${
-                  bildirim ? 'border-primary bg-primary-soft' : 'border-border active:bg-muted'
-                }`}
-              >
-                <span className="font-medium">Günlük hatırlatma</span>
-                {bildirim && <Check size={18} className="shrink-0 text-primary" />}
-              </button>
+              <Etiket>Saat kaçta hatırlatayım?</Etiket>
+              {/* Sistemin `<input type="time">` seçicisi yerine kendi
+                  tekerleğimiz: telefon İngilizceyse orası AM/PM gösteriyor,
+                  uygulamanın geri kalanı 24 saatlik "20.00" biçiminde. */}
+              <SaatSecici
+                saat={saat}
+                dakika={dakika}
+                onDegis={({ saat: s, dakika: d }) => {
+                  setSaat(s)
+                  setDakika(d)
+                }}
+                className="mt-1"
+              />
 
-              {bildirim && (
-                <div className="mt-4">
-                  <Etiket>Saat kaçta hatırlatayım?</Etiket>
-                  {/* Sistemin `<input type="time">` seçicisi yerine kendi
-                      tekerleğimiz: telefon İngilizceyse orası AM/PM gösteriyor,
-                      uygulamanın geri kalanı 24 saatlik "20.00" biçiminde. */}
-                  <SaatSecici
-                    saat={saat}
-                    dakika={dakika}
-                    onDegis={({ saat: s, dakika: d }) => {
-                      setSaat(s)
-                      setDakika(d)
-                    }}
-                    className="mt-1"
-                  />
-
-                  {/* "Şu an seçili" satırı yok: seçilen saat seçicinin
-                      tepesinde, büyük puntoyla zaten duruyor. */}
-                </div>
-              )}
-
+              {/* "Şu an seçili" satırı yok: seçilen saat tekerleğin ortasında
+                  zaten duruyor. */}
             </div>
           )}
+
         </Kart>
       )}
 
@@ -597,7 +576,10 @@ function okulYillariKur(notlar: Record<number, string>, siniflar: number[]): Oku
 
 
 /**
- * Sınıf seçimi — büyük, dikey kartlar.
+ * Tek seçimlik büyük kart listesi — sınıf ve alan adımları bunu kullanıyor.
+ *
+ * İkisi de "bir tane seç" sorusu ve arka arkaya geliyor; ayrı ayrı çizilseler
+ * kullanıcı iki adımda iki farklı form diliyle karşılaşırdı.
  *
  * Seçim tek göstergeyle anlatılıyor: turuncu dolgu. Tik ya da kutucuk yok,
  * çünkü dolu turuncu kartın seçili olduğu bir bakışta belli; ikon aynı bilgiyi
@@ -607,31 +589,32 @@ function okulYillariKur(notlar: Record<number, string>, siniflar: number[]): Oku
  * "burası" diyen kadarı. Yükseklikler `min-h` ile veriliyor ki yazı tipi
  * büyütülmüş telefonlarda kart taşmak yerine uzasın.
  */
-function SinifSecimi({
+function SecimKartlari<T extends string | number>({
+  etiket,
+  secenekler,
   secili,
   onSec,
 }: {
-  secili: number
-  onSec: (sinif: number) => void
+  /** Ekran okuyucuya sorulan soru; başlıkla aynı cümle. */
+  etiket: string
+  secenekler: { deger: T; ad: string }[]
+  secili: T
+  onSec: (deger: T) => void
 }) {
   return (
     /* `my-auto`: kartlar kalan boşlukta dikey ortalanıyor. Üstte maskot,
        altta Devam dururken listenin tepeye yapışması sayfayı dengesiz
        gösteriyordu. */
-    <div
-      className="my-auto space-y-2.5"
-      role="radiogroup"
-      aria-label="Bu yıl kaçıncı sınıftasın?"
-    >
-      {SINIF_SECENEKLERI.map((s) => {
-        const bu = secili === s
+    <div className="my-auto space-y-2.5" role="radiogroup" aria-label={etiket}>
+      {secenekler.map((secenek) => {
+        const bu = secili === secenek.deger
         return (
           <button
-            key={s}
+            key={String(secenek.deger)}
             type="button"
             role="radio"
             aria-checked={bu}
-            onClick={() => onSec(s)}
+            onClick={() => onSec(secenek.deger)}
             className={cn(
               'flex w-full items-center justify-center rounded-3xl border px-5 py-4 text-center',
               'transition-all duration-200 ease-out',
@@ -647,7 +630,7 @@ function SinifSecimi({
                 bu ? 'text-lg font-bold' : 'text-base font-semibold',
               )}
             >
-              {sinifAdi(s).toLocaleUpperCase('tr-TR')}
+              {secenek.ad.toLocaleUpperCase('tr-TR')}
             </span>
           </button>
         )
@@ -655,7 +638,6 @@ function SinifSecimi({
     </div>
   )
 }
-
 
 /** Yıl sonu notunun tavanı: notlar yüz üzerinden. */
 const NOT_EN_COK = 100
