@@ -5,8 +5,8 @@ import type { CSSProperties } from 'react'
 import { AlertCircle, ArrowLeft, ArrowRight, Check, User } from 'lucide-react'
 import type { Ayarlar, OkulYili, PuanTuru } from '@/lib/types'
 import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
-import { yeniId } from '@/lib/utils'
-import { Alan, Buton, Cip, Etiket, Kart } from '@/components/ui'
+import { cn, yeniId } from '@/lib/utils'
+import { Alan, Buton, Etiket, Kart } from '@/components/ui'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { Rabi } from '@/components/maskot/rabi'
 import { izinIste } from '@/lib/bildirim'
@@ -75,8 +75,8 @@ const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
   sinif: {
     // Karşılama ekranı zaten selam verdi; burada ikinci kez "merhaba" demek
     // kullanıcıyı aynı yerde saydırıyordu.
-    baslik: 'Seni tanıyayım',
-    aciklama: 'Önce birkaç şey sorayım.',
+    baslik: 'Hangi sınıftasın?',
+    aciklama: 'Sıralama tahmini ve deneme takvimi buna göre kurulur.',
   },
   notlar: {
     baslik: 'Okul notların',
@@ -302,202 +302,195 @@ export function Kurulum({
         </p>
       </div>
 
-      <Kart>
-        {suanki === 'isim' && (
-          <div>
-            {/* Uyarı etiketin sağında, alanın hemen üstünde duruyor: göz
-                alandan yukarı kaydığında ilk gördüğü yer burası. Açılır
-                pencere kullanılmadı — kullanıcıyı akıştan koparırdı. */}
-            <div className="mb-1.5 flex items-baseline justify-between gap-3">
-              <Etiket htmlFor="kurulum-ad" className="mb-0">
-                Adın
-              </Etiket>
-              {adUyarisi && (
-                <span
-                  id="kurulum-ad-uyari"
-                  role="alert"
-                  className="flex items-center gap-1 text-xs font-medium text-danger"
-                >
-                  <AlertCircle size={13} aria-hidden className="shrink-0" />
-                  En az {AD_EN_AZ} harf yaz
-                </span>
-              )}
+      {/* Sınıf adımı kartın dışında duruyor: seçenekler zaten birer kart,
+          onları bir kartın içine koymak iç içe iki çerçeve demek olurdu. */}
+      {suanki === 'sinif' ? (
+        <SinifSecimi secili={sinif} onSec={setSinif} />
+      ) : (
+        <Kart>
+          {suanki === 'isim' && (
+            <div>
+              {/* Uyarı etiketin sağında, alanın hemen üstünde duruyor: göz
+                  alandan yukarı kaydığında ilk gördüğü yer burası. Açılır
+                  pencere kullanılmadı — kullanıcıyı akıştan koparırdı. */}
+              <div className="mb-1.5 flex items-baseline justify-between gap-3">
+                <Etiket htmlFor="kurulum-ad" className="mb-0">
+                  Adın
+                </Etiket>
+                {adUyarisi && (
+                  <span
+                    id="kurulum-ad-uyari"
+                    role="alert"
+                    className="flex items-center gap-1 text-xs font-medium text-danger"
+                  >
+                    <AlertCircle size={13} aria-hidden className="shrink-0" />
+                    En az {AD_EN_AZ} harf yaz
+                  </span>
+                )}
+              </div>
+              {/* Kişi simgesi alanın içinde duruyor: alan tek başına boş bir
+                  kutu, simge ne beklendiğini yazıya gerek kalmadan söylüyor.
+                  Simge `pointer-events-none`, yoksa üstüne dokunmak alanı
+                  odaklamaz ve klavye açılmazdı. */}
+              <div className="relative">
+                <User
+                  size={18}
+                  aria-hidden
+                  className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                />
+                <Alan
+                  id="kurulum-ad"
+                  value={ad}
+                  onChange={(e) => setAd(e.target.value)}
+                  placeholder="Adını yaz"
+                  aria-invalid={adUyarisi}
+                  aria-describedby={adUyarisi ? 'kurulum-ad-uyari' : undefined}
+                  className={`pl-10 ${adUyarisi ? 'border-danger focus-visible:border-danger' : ''}`}
+                  // Ad alanı: klavye baş harfi büyütsün, tarayıcı yazım
+                  // denetimiyle altını kırmızı çizmesin.
+                  autoCapitalize="words"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  autoComplete="given-name"
+                  enterKeyHint="next"
+                  maxLength={24}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      devamEt()
+                    }
+                  }}
+                />
+              </div>
             </div>
-            {/* Kişi simgesi alanın içinde duruyor: alan tek başına boş bir
-                kutu, simge ne beklendiğini yazıya gerek kalmadan söylüyor.
-                Simge `pointer-events-none`, yoksa üstüne dokunmak alanı
-                odaklamaz ve klavye açılmazdı. */}
-            <div className="relative">
-              <User
-                size={18}
-                aria-hidden
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-              />
-              <Alan
-                id="kurulum-ad"
-                value={ad}
-                onChange={(e) => setAd(e.target.value)}
-                placeholder="Adını yaz"
-                aria-invalid={adUyarisi}
-                aria-describedby={adUyarisi ? 'kurulum-ad-uyari' : undefined}
-                className={`pl-10 ${adUyarisi ? 'border-danger focus-visible:border-danger' : ''}`}
-                // Ad alanı: klavye baş harfi büyütsün, tarayıcı yazım
-                // denetimiyle altını kırmızı çizmesin.
-                autoCapitalize="words"
-                autoCorrect="off"
-                spellCheck={false}
-                autoComplete="given-name"
-                enterKeyHint="next"
-                maxLength={24}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault()
-                    devamEt()
-                  }
-                }}
-              />
-            </div>
-          </div>
-        )}
+          )}
 
-        {suanki === 'sinif' && (
-          <div>
-            <Etiket>Bu yıl kaçıncı sınıftasın?</Etiket>
-            <div className="flex flex-wrap gap-2">
-              {SINIF_SECENEKLERI.map((s) => (
-                <Cip key={s} secili={sinif === s} onClick={() => setSinif(s)}>
-                  {sinifAdi(s)}
-                </Cip>
-              ))}
-            </div>
-          </div>
-        )}
+          {suanki === 'notlar' && (
+            <div>
+              <Etiket>Yıl sonu notların</Etiket>
+              <div className="grid grid-cols-2 gap-2">
+                {notluSiniflar.map((s) => (
+                  <label key={s} className="flex items-center gap-2 rounded-xl border border-border p-2.5">
+                    <span className="flex-1 text-sm font-medium">{s}. sınıf</span>
+                    <Alan
+                      inputMode="decimal"
+                      value={notlar[s] ?? ''}
+                      onChange={(e) =>
+                        setNotlar((onceki) => ({
+                          ...onceki,
+                          [s]: e.target.value.replace(/[^0-9,.]/g, '').slice(0, 6),
+                        }))
+                      }
+                      placeholder="—"
+                      aria-label={`${s}. sınıf yıl sonu notu`}
+                      className="rakam h-9 w-16 text-center font-semibold"
+                    />
+                  </label>
+                ))}
+              </div>
 
-        {suanki === 'notlar' && (
-          <div>
-            <Etiket>Yıl sonu notların</Etiket>
-            <div className="grid grid-cols-2 gap-2">
-              {notluSiniflar.map((s) => (
-                <label key={s} className="flex items-center gap-2 rounded-xl border border-border p-2.5">
-                  <span className="flex-1 text-sm font-medium">{s}. sınıf</span>
+              {/* OBP kutusu yalnızca mezunda.
+
+                  OBP diploma notunun beş katı ve ancak **bütün** yıllar bitince
+                  oluşuyor; okuyan öğrencinin bilebileceği bir sayı değil. Kutuyu
+                  herkese göstermek, henüz var olmayan bir sayıyı soruyor olurdu. */}
+              {mezun && (
+                <>
+                  <Etiket className="mt-4">Ya da OBP’ni biliyorsan</Etiket>
                   <Alan
                     inputMode="decimal"
-                    value={notlar[s] ?? ''}
+                    value={obpMetni}
                     onChange={(e) =>
-                      setNotlar((onceki) => ({
-                        ...onceki,
-                        [s]: e.target.value.replace(/[^0-9,.]/g, '').slice(0, 6),
-                      }))
+                      setObpMetni(e.target.value.replace(/[^0-9,.]/g, '').slice(0, 6))
                     }
-                    placeholder="—"
-                    aria-label={`${s}. sınıf yıl sonu notu`}
-                    className="rakam h-9 w-16 text-center font-semibold"
+                    placeholder="örn. 412,5"
+                    aria-label="Elle girilen OBP"
+                    className="rakam"
                   />
-                </label>
+                </>
+              )}
+
+            </div>
+          )}
+
+          {suanki === 'alan' && (
+            <div className="space-y-2">
+              {PUAN_TURLERI.map((tur) => (
+                <button
+                  key={tur.id}
+                  type="button"
+                  onClick={() => setPuanTuru(tur.id)}
+                  aria-pressed={puanTuru === tur.id}
+                  className={`flex w-full items-center justify-between gap-3 rounded-xl border p-3 text-left transition ${
+                    puanTuru === tur.id
+                      ? 'border-primary bg-primary-soft'
+                      : 'border-border active:bg-muted'
+                  }`}
+                >
+                  <span className="font-medium">{tur.ad}</span>
+                  {puanTuru === tur.id && <Check size={18} className="shrink-0 text-primary" />}
+                </button>
               ))}
             </div>
+          )}
 
-            {/* OBP kutusu yalnızca mezunda.
+          {suanki === 'hedef' && (
+            /*
+              Kartta tekerlekten başka hiçbir şey yok: adımın başlığı zaten soruyu
+              soruyor, altında da ne işe yaradığı yazıyor. Kartın içinde ayrıca
+              bir soru cümlesi, basamak cetveli ve üç satırlık öğüt varken asıl iş
+              sayfanın gürültüsü içinde kayboluyordu.
+            */
+            <SayiTekerlegi
+              deger={hedef}
+              onDegis={setHedef}
+              enAz={HEDEF_EN_AZ}
+              enCok={HEDEF_EN_COK}
+              adim={HEDEF_ADIMI}
+              birim="soru"
+              etiket="Günlük soru hedefi"
+            />
+          )}
 
-                OBP diploma notunun beş katı ve ancak **bütün** yıllar bitince
-                oluşuyor; okuyan öğrencinin bilebileceği bir sayı değil. Kutuyu
-                herkese göstermek, henüz var olmayan bir sayıyı soruyor olurdu. */}
-            {mezun && (
-              <>
-                <Etiket className="mt-4">Ya da OBP’ni biliyorsan</Etiket>
-                <Alan
-                  inputMode="decimal"
-                  value={obpMetni}
-                  onChange={(e) =>
-                    setObpMetni(e.target.value.replace(/[^0-9,.]/g, '').slice(0, 6))
-                  }
-                  placeholder="örn. 412,5"
-                  aria-label="Elle girilen OBP"
-                  className="rakam"
-                />
-              </>
-            )}
-
-          </div>
-        )}
-
-        {suanki === 'alan' && (
-          <div className="space-y-2">
-            {PUAN_TURLERI.map((tur) => (
+          {suanki === 'hatirlatma' && (
+            <div>
               <button
-                key={tur.id}
                 type="button"
-                onClick={() => setPuanTuru(tur.id)}
-                aria-pressed={puanTuru === tur.id}
+                onClick={() => setBildirim((b) => !b)}
+                aria-pressed={bildirim}
                 className={`flex w-full items-center justify-between gap-3 rounded-xl border p-3 text-left transition ${
-                  puanTuru === tur.id
-                    ? 'border-primary bg-primary-soft'
-                    : 'border-border active:bg-muted'
+                  bildirim ? 'border-primary bg-primary-soft' : 'border-border active:bg-muted'
                 }`}
               >
-                <span className="font-medium">{tur.ad}</span>
-                {puanTuru === tur.id && <Check size={18} className="shrink-0 text-primary" />}
+                <span className="font-medium">Günlük hatırlatma</span>
+                {bildirim && <Check size={18} className="shrink-0 text-primary" />}
               </button>
-            ))}
-          </div>
-        )}
 
-        {suanki === 'hedef' && (
-          /*
-            Kartta tekerlekten başka hiçbir şey yok: adımın başlığı zaten soruyu
-            soruyor, altında da ne işe yaradığı yazıyor. Kartın içinde ayrıca
-            bir soru cümlesi, basamak cetveli ve üç satırlık öğüt varken asıl iş
-            sayfanın gürültüsü içinde kayboluyordu.
-          */
-          <SayiTekerlegi
-            deger={hedef}
-            onDegis={setHedef}
-            enAz={HEDEF_EN_AZ}
-            enCok={HEDEF_EN_COK}
-            adim={HEDEF_ADIMI}
-            birim="soru"
-            etiket="Günlük soru hedefi"
-          />
-        )}
+              {bildirim && (
+                <div className="mt-4">
+                  <Etiket>Saat kaçta hatırlatayım?</Etiket>
+                  {/* Sistemin `<input type="time">` seçicisi yerine kendi
+                      tekerleğimiz: telefon İngilizceyse orası AM/PM gösteriyor,
+                      uygulamanın geri kalanı 24 saatlik "20.00" biçiminde. */}
+                  <SaatSecici
+                    saat={saat}
+                    dakika={dakika}
+                    onDegis={({ saat: s, dakika: d }) => {
+                      setSaat(s)
+                      setDakika(d)
+                    }}
+                    className="mt-1"
+                  />
 
-        {suanki === 'hatirlatma' && (
-          <div>
-            <button
-              type="button"
-              onClick={() => setBildirim((b) => !b)}
-              aria-pressed={bildirim}
-              className={`flex w-full items-center justify-between gap-3 rounded-xl border p-3 text-left transition ${
-                bildirim ? 'border-primary bg-primary-soft' : 'border-border active:bg-muted'
-              }`}
-            >
-              <span className="font-medium">Günlük hatırlatma</span>
-              {bildirim && <Check size={18} className="shrink-0 text-primary" />}
-            </button>
+                  {/* "Şu an seçili" satırı yok: seçilen saat seçicinin
+                      tepesinde, büyük puntoyla zaten duruyor. */}
+                </div>
+              )}
 
-            {bildirim && (
-              <div className="mt-4">
-                <Etiket>Saat kaçta hatırlatayım?</Etiket>
-                {/* Sistemin `<input type="time">` seçicisi yerine kendi
-                    tekerleğimiz: telefon İngilizceyse orası AM/PM gösteriyor,
-                    uygulamanın geri kalanı 24 saatlik "20.00" biçiminde. */}
-                <SaatSecici
-                  saat={saat}
-                  dakika={dakika}
-                  onDegis={({ saat: s, dakika: d }) => {
-                    setSaat(s)
-                    setDakika(d)
-                  }}
-                  className="mt-1"
-                />
-
-                {/* "Şu an seçili" satırı yok: seçilen saat seçicinin
-                    tepesinde, büyük puntoyla zaten duruyor. */}
-              </div>
-            )}
-
-          </div>
-        )}
-      </Kart>
+            </div>
+          )}
+        </Kart>
+      )}
 
       {/* Düğmeler adımdan adıma zıplamasın diye alta itilir */}
       <div className="flex-1" aria-hidden />
@@ -693,4 +686,65 @@ function okulYillariKur(notlar: Record<number, string>, siniflar: number[]): Oku
       },
     ]
   })
+}
+
+
+/**
+ * Sınıf seçimi — büyük, dikey kartlar.
+ *
+ * Seçim tek göstergeyle anlatılıyor: turuncu dolgu. Tik ya da kutucuk yok,
+ * çünkü dolu turuncu kartın seçili olduğu bir bakışta belli; ikon aynı bilgiyi
+ * ikinci kez söyleyip listeyi kalabalıklaştırırdı.
+ *
+ * Seçili kart bir tık büyüyor (`scale`) — düzeni kaydırmayan, yalnızca göze
+ * "burası" diyen kadarı. Yükseklikler `min-h` ile veriliyor ki yazı tipi
+ * büyütülmüş telefonlarda kart taşmak yerine uzasın.
+ */
+function SinifSecimi({
+  secili,
+  onSec,
+}: {
+  secili: number
+  onSec: (sinif: number) => void
+}) {
+  return (
+    /* `my-auto`: kartlar kalan boşlukta dikey ortalanıyor. Üstte maskot,
+       altta Devam dururken listenin tepeye yapışması sayfayı dengesiz
+       gösteriyordu. */
+    <div
+      className="my-auto space-y-2.5"
+      role="radiogroup"
+      aria-label="Bu yıl kaçıncı sınıftasın?"
+    >
+      {SINIF_SECENEKLERI.map((s) => {
+        const bu = secili === s
+        return (
+          <button
+            key={s}
+            type="button"
+            role="radio"
+            aria-checked={bu}
+            onClick={() => onSec(s)}
+            className={cn(
+              'flex w-full items-center justify-center rounded-3xl border px-5 py-4 text-center',
+              'transition-all duration-200 ease-out',
+              'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+              bu
+                ? 'golge-kart min-h-[64px] scale-[1.015] border-primary-dolu bg-primary-dolu text-white'
+                : 'min-h-[56px] border-border bg-card text-muted-foreground active:bg-muted',
+            )}
+          >
+            <span
+              className={cn(
+                'font-display tracking-wide transition-all duration-200 ease-out',
+                bu ? 'text-lg font-bold' : 'text-base font-semibold',
+              )}
+            >
+              {sinifAdi(s).toLocaleUpperCase('tr-TR')}
+            </span>
+          </button>
+        )
+      })}
+    </div>
+  )
 }
