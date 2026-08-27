@@ -56,12 +56,17 @@ const UYANMA = 90
  *
  * Efekt dosyaları 0.42'de çalıyor (`oyun-sesi.ts`) ve müzik onların altında
  * kalmalı: doğru/yanlış geri bildirimi oyunun tek sesli işareti, müzik
- * bastırırsa oyun sessizleşmiş sayılır. Ritmik parçalar sakin pad'den (0.1)
- * daha çok fark ediliyor — vuruş dikkat çekiyor — o yüzden biraz daha alçak
- * tutuluyor. Hedef, telefonun ses düzeyi ortadayken ikisinin de duyulması:
- * müzik odanın sesini bastırmıyor, efekt müziğin içinde kaybolmuyor.
+ * bastırırsa oyun sessizleşmiş sayılır. Hedef, telefonun ses düzeyi ortadayken
+ * ikisinin de duyulması: müzik odanın sesini bastırmıyor, efekt müziğin içinde
+ * kaybolmuyor.
+ *
+ * Değer 0.09'du ve kullanıcı telefonda "duyulmuyor" dedi. Hesap kâğıt üstünde
+ * doğruydu ama tek şeyi atlıyordu: efektler kaydedilmiş, ustalanmış dosyalar,
+ * bu parçalar ise sıfırdan sentezlenen ince dalgalar — aynı sayı ikisinde aynı
+ * gürlük demek değil. Sentezlenmiş bir parça, efektle eşit duyulmak için
+ * sayıca ondan yüksek durmak zorunda değil ama bu kadar altında da kalamıyor.
  */
-export const MUZIK_SEVIYESI = 0.09
+export const MUZIK_SEVIYESI = 0.26
 
 /**
  * Modun temposu (BPM) — gerginliğe göre.
@@ -427,9 +432,9 @@ export function muzikBaslat(mod: OyunModu) {
   if (calan && calan.mod !== mod) muzikDurdur()
   if (!calan) {
     const parca = parcaKur(mod)
-    // Sakin pad kendi dengesini koruyor: vuruşsuz olduğu için biraz daha
-    // yüksek duyulabiliyor, ritmik parçalar aynı seviyede öne çıkardı.
-    parca.sesSeviyesi(mod === 'rahat' ? 0.1 : MUZIK_SEVIYESI)
+    // Sakin pad kendi dengesini koruyor: sürekli ve vuruşsuz olduğu için aynı
+    // seviyede ritmik parçalardan daha çok fark ediliyor, o yüzden altında.
+    parca.sesSeviyesi(mod === 'rahat' ? 0.18 : MUZIK_SEVIYESI)
     calan = { mod, parca }
   }
   calan.parca.basla()

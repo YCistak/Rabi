@@ -276,13 +276,12 @@ soruyu geç: kullanıcı ödülü, veriyi uydurarak alabiliyor mu?
 
 ## Tur içi efektler
 
-Beş efekt var ve hepsi **ortak koddan** çıkıyor: ses `lib/oyunlar/oyun-sesi.ts`,
+Dört efekt var ve hepsi **ortak koddan** çıkıyor: ses `lib/oyunlar/oyun-sesi.ts`,
 görsel olanlar `components/oyun-kabuk.tsx` ile `app/globals.css`. Oyun
 dosyalarına hiç dokunmuyorlar.
 
 | Efekt | Ne zaman | Nerede |
 | --- | --- | --- |
-| Perde yükselmesi | her ardışık doğru, sekiz çeyrek tona kadar | `oyun-sesi.ts` |
 | Sarsıntı | yanlış cevap | kabuk + `oyun-sarsinti` |
 | Süre nabzı + tek uyarı | kalan süre toplamın ¼'ünün altına inince | kabuk + `sure-nabzi` |
 | Boss parlaması | boss sorusu bilinerek kapanınca | kabuk + `boss-parlama` |
@@ -300,19 +299,21 @@ ekrandayken artıyor, boss kapandığı çizimde artmış olmuyor. O yüzden bir
 (`bossVuruldu`) iki anı birbirine bağlıyor; "kapanırken sayı arttı mı" diye
 bakan bir kural hiç çalışmaz.
 
-Perde sayacı da oyunlarda değil modülün içinde: seriyi 18 dosyadan parametre
-olarak geçirmek yerine `oyun-sesi.ts` ardışık `dogru` çağrılarını kendi sayıyor,
-yanlış ve tur bitişi sıfırlıyor. Tavan (`EN_COK_KADEME`) şart — sınırsız yükselen
-bir ses ödül olmaktan çıkıp rahatsız ediyor.
-
-Kademe **çeyrek ton** (`KADEME`), yarım ton değil. Yarım tonken kulakta bir tam
-ton gibi duyuluyordu: art arda gelen doğrularda basamaklar tek tek değil topluca
-işitiliyor ve üçüncü doğruda ses başkalaşıyordu.
+**Doğru sesinin perdesi sabit.** Bir süre ardışık doğrularda kademe kademe
+yükseliyordu: önce yarım ton, sonra "çok belirgin" diye çeyrek tona indirildi,
+sonunda tümüyle kaldırıldı. İkisi de kulakta iyi durmadı ve sebebi kademenin
+büyüklüğü değil yöntemin kendisi: perde `playbackRate` ile değişiyor, yani ses
+hem tizleşiyor hem kısalıyor ve kaydedilmiş efekt kendi kimliğinden uzaklaşıyor
+— kullanıcı bunu "ses bozuluyor" diye duyuyor. Seriyi ödüllendiren şey zaten
+ekranda duruyor; efektin işi yalnızca "doğru" demek. Geri getirmek istersen
+perdeyi oynatma, ayrı bir ses ekle.
 
 Efekt seviyesiyle oyun müziğinin seviyesi (`mod-muzigi.ts`, `MUZIK_SEVIYESI`)
-tek bir dengenin iki ucu: efekt 1'den 0.42'ye inince müzik altta kaldı ve o kadar
-geri verildi. Birine dokunursan ötekine de bak; sıralamayı
-`mod-muzigi.test.ts` denetliyor.
+tek bir dengenin iki ucu ve ikisi de telefonda dinlenerek ayarlandı: efekt
+1'den 0.42'ye indi (çok gürdü), müzik 0.09'dan 0.26'ya çıktı (hiç
+duyulmuyordu). Sayıların eşit olması gürlüğün eşit olması demek değil —
+efektler ustalanmış mp3, parçalar sıfırdan sentezlenmiş ince dalgalar. Birine
+dokunursan ötekine de bak; sıralamayı `mod-muzigi.test.ts` denetliyor.
 
 Boss parlaması ilk denemede yerinde duran bir altın radyaldi ve iyi durmadı:
 boss zemini açık bir renk ve onun üstünde sabit bir sarı daire ışık gibi değil
@@ -349,6 +350,18 @@ her oyuna ayrı ayrı eklemek demekti.
 
 CSS süreleri (`geri-sayim-rakam`, `geri-sayim-basla`) bileşendeki `ADIM` ve
 `BASLANGIC` ile eşleşmeli; animasyon adımdan uzun olursa rakamlar üst üste biner.
+
+Katman **donuk beyaz**, rakamlar markanın dolgu tonunda
+(`--primary-parlak`). Önce yarı saydam bir karartmaydı ve altındaki soru okunur
+kalıyordu: göz sayımdan çok ona kaçıyordu. Sayım turun başladığı an, oyunun
+üstüne düşen bir uyarı değil.
+
+Üç rakamın tonu **aynı** (`RAKAM_TONU`); perde yalnızca sonda, "Başla!"
+akorunda tırmanıyor. Rakamlarda da yükseliyordu ve kullanıcı "kötü duyuluyor"
+dedi — sayımın işi metronom gibi, aynı tonun eşit aralıkla vurması sayının
+indiğini zaten anlatıyor. Sayım sesi efekt dosyalarından da yüksek
+(`SAYIM_SEVIYESI`): oyunun ilk sesi, öncesinde duyulmuş bir şey yok ve alçak
+tutulunca hiç fark edilmedi.
 
 ## Yarıda bırakılan tur da bir tur
 
