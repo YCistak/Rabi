@@ -304,10 +304,20 @@ export function Kurulum({
         </p>
       </div>
 
-      {/* Sınıf adımı kartın dışında duruyor: seçenekler zaten birer kart,
-          onları bir kartın içine koymak iç içe iki çerçeve demek olurdu. */}
+      {/* Sınıf ve notlar adımları kartın dışında duruyor: ikisinde de
+          seçenekler/satırlar zaten birer kart, onları bir kartın içine koymak
+          iç içe iki çerçeve demek olurdu. */}
       {suanki === 'sinif' ? (
         <SinifSecimi secili={sinif} onSec={setSinif} />
+      ) : suanki === 'notlar' ? (
+        <OkulNotlari
+          siniflar={notluSiniflar}
+          notlar={notlar}
+          onNot={(sinif, deger) => setNotlar((onceki) => ({ ...onceki, [sinif]: deger }))}
+          mezun={mezun}
+          obpMetni={obpMetni}
+          onObp={setObpMetni}
+        />
       ) : (
         <Kart>
           {suanki === 'isim' && (
@@ -364,54 +374,6 @@ export function Kurulum({
                   }}
                 />
               </div>
-            </div>
-          )}
-
-          {suanki === 'notlar' && (
-            <div>
-              <Etiket>Yıl sonu notların</Etiket>
-              <div className="grid grid-cols-2 gap-2">
-                {notluSiniflar.map((s) => (
-                  <label key={s} className="flex items-center gap-2 rounded-xl border border-border p-2.5">
-                    <span className="flex-1 text-sm font-medium">{s}. sınıf</span>
-                    <Alan
-                      inputMode="decimal"
-                      value={notlar[s] ?? ''}
-                      onChange={(e) =>
-                        setNotlar((onceki) => ({
-                          ...onceki,
-                          [s]: e.target.value.replace(/[^0-9,.]/g, '').slice(0, 6),
-                        }))
-                      }
-                      placeholder="—"
-                      aria-label={`${s}. sınıf yıl sonu notu`}
-                      className="rakam h-9 w-16 text-center font-semibold"
-                    />
-                  </label>
-                ))}
-              </div>
-
-              {/* OBP kutusu yalnızca mezunda.
-
-                  OBP diploma notunun beş katı ve ancak **bütün** yıllar bitince
-                  oluşuyor; okuyan öğrencinin bilebileceği bir sayı değil. Kutuyu
-                  herkese göstermek, henüz var olmayan bir sayıyı soruyor olurdu. */}
-              {mezun && (
-                <>
-                  <Etiket className="mt-4">Ya da OBP’ni biliyorsan</Etiket>
-                  <Alan
-                    inputMode="decimal"
-                    value={obpMetni}
-                    onChange={(e) =>
-                      setObpMetni(e.target.value.replace(/[^0-9,.]/g, '').slice(0, 6))
-                    }
-                    placeholder="örn. 412,5"
-                    aria-label="Elle girilen OBP"
-                    className="rakam"
-                  />
-                </>
-              )}
-
             </div>
           )}
 
@@ -690,6 +652,150 @@ function SinifSecimi({
           </button>
         )
       })}
+    </div>
+  )
+}
+
+
+/** Yıl sonu notunun tavanı: notlar yüz üzerinden. */
+const NOT_EN_COK = 100
+/** OBP'nin tavanı: diploma notunun beş katı, yani 500 üzerinden. */
+const OBP_EN_COK = 500
+
+/**
+ * Sayı alanına yazılanı süzer; sınırı aşan giriş **kabul edilmiyor**.
+ *
+ * `null` dönmesi "bu tuşu yok say" demek: 100'lük bir alana 105 yazılınca
+ * sayıyı sessizce 100'e çevirmek, kullanıcının yazdığından başka bir şey
+ * kaydetmek olurdu — tuş hiç işlenmiyor ve alanda 10 kalıyor.
+ *
+ * Yarım yazımlar (`82,`) geçiyor: onlar geçersiz değil, henüz bitmemiş.
+ */
+function sayiSuz(ham: string, enCok: number): string | null {
+  const temiz = ham.replace(/[^0-9,.]/g, '').slice(0, 6)
+  if (temiz === '') return ''
+  const sayi = Number(temiz.replace(',', '.'))
+  if (!Number.isFinite(sayi)) return temiz
+  return sayi > enCok ? null : temiz
+}
+
+/**
+ * Okul notları — yıl başına bir satır kartı.
+ *
+ * Kartlar sınıf seçimiyle aynı dili konuşuyor: adım adım ilerleyen kurulumda
+ * her ekranın kendi görsel diline geçmesi akışı parçalıyordu. Eski hâli iki
+ * sütunlu bir ızgaraydı ve tek sayıda yıl olduğunda (9-10-11) sağ alt köşe boş
+ * kalıp liste yarım görünüyordu.
+ *
+ * Not girilen kart turuncuya dönüyor: "hangi yılı doldurdum" sorusunu kutuların
+ * içine tek tek bakmadan cevaplıyor.
+ *
+ * `/100` ölçek yazıyor çünkü not beşlik mi yüzlük mü sorusu gerçekten soruluyor;
+ * hesap (`okulYillariKur`) 0–100 aralığına kırpıyor.
+ */
+function OkulNotlari({
+  siniflar,
+  notlar,
+  onNot,
+  mezun,
+  obpMetni,
+  onObp,
+}: {
+  siniflar: number[]
+  notlar: Record<number, string>
+  onNot: (sinif: number, deger: string) => void
+  /** OBP yalnızca mezunda soruluyor — aşağıdaki açıklamaya bak. */
+  mezun: boolean
+  obpMetni: string
+  onObp: (deger: string) => void
+}) {
+  const obpDolu = obpMetni.trim() !== ''
+
+  return (
+    <div className="my-auto">
+      <div className="space-y-2.5">
+        {siniflar.map((s) => {
+          const dolu = (notlar[s] ?? '').trim() !== ''
+          return (
+            <label
+              key={s}
+              className={cn(
+                'golge-kart flex items-center justify-between gap-3 rounded-2xl border py-2.5 pl-4 pr-2.5',
+                'transition-colors duration-200',
+                dolu ? 'border-primary/35 bg-primary-soft' : 'border-border bg-card',
+              )}
+            >
+              <span className="font-display text-base font-bold tracking-wide">
+                {s}. SINIF
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Alan
+                  inputMode="decimal"
+                  value={notlar[s] ?? ''}
+                  onChange={(e) => {
+                    const deger = sayiSuz(e.target.value, NOT_EN_COK)
+                    if (deger !== null) onNot(s, deger)
+                  }}
+                  placeholder="—"
+                  aria-label={`${s}. sınıf yıl sonu notu`}
+                  className={cn(
+                    'rakam w-20 text-center text-lg font-bold',
+                    dolu && 'border-primary/45 text-primary',
+                  )}
+                />
+                <span className="text-sm text-muted-foreground" aria-hidden>
+                  /100
+                </span>
+              </span>
+            </label>
+          )
+        })}
+      </div>
+
+      {/* OBP kutusu **yalnızca mezunda**.
+
+          OBP diploma notunun beş katı ve ancak bütün yıllar bitince oluşuyor;
+          okuyan öğrencinin bilebileceği bir sayı değil. Kutuyu herkese
+          göstermek, henüz var olmayan bir sayıyı soruyor olurdu.
+
+          Görünüşü yıl satırlarıyla aynı: aynı ekranda iki ayrı form dili
+          konuşmak, OBP'yi başka bir yerden gelmiş gibi gösteriyordu. Ölçek
+          farkını `/500` söylüyor. */}
+      {mezun && (
+        <div className="mt-4 border-t border-border pt-4">
+          <Etiket htmlFor="kurulum-obp">Ya da OBP’ni biliyorsan</Etiket>
+          <label
+            htmlFor="kurulum-obp"
+            className={cn(
+              'golge-kart flex items-center justify-between gap-3 rounded-2xl border py-2.5 pl-4 pr-2.5',
+              'transition-colors duration-200',
+              obpDolu ? 'border-primary/35 bg-primary-soft' : 'border-border bg-card',
+            )}
+          >
+            <span className="font-display text-base font-bold tracking-wide">OBP</span>
+            <span className="flex items-center gap-1.5">
+              <Alan
+                id="kurulum-obp"
+                inputMode="decimal"
+                value={obpMetni}
+                onChange={(e) => {
+                  const deger = sayiSuz(e.target.value, OBP_EN_COK)
+                  if (deger !== null) onObp(deger)
+                }}
+                placeholder="—"
+                aria-label="Elle girilen OBP"
+                className={cn(
+                  'rakam w-20 text-center text-lg font-bold',
+                  obpDolu && 'border-primary/45 text-primary',
+                )}
+              />
+              <span className="text-sm text-muted-foreground" aria-hidden>
+                /500
+              </span>
+            </span>
+          </label>
+        </div>
+      )}
     </div>
   )
 }
