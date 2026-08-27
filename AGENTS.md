@@ -446,6 +446,26 @@ olsaydı elle yazılan ad ile seçili kayıt birbiriyle çelişebilirdi.
 Çıkan sayılar tahmin ve aşağıdaki **Doğruluk** kuralına tabi: kutular
 düzenlenebilir, uyarı kaldırılamaz.
 
+### Kurulumda da bir bölüm adımı var
+
+Aynı seçim kurulumda, alan adımından hemen sonra bir kez soruluyor: uygulamayı
+ilk açan öğrenci hedefini Araçlar'a girmeyi akıl etmeden ana sayfada boş bir
+"HEDEFİM" paneli görüyordu.
+
+Adım **atlanabilir** — hedefini henüz bilmeyeni kurulumda tutmak, uygulamayı hiç
+açamamak demek. Seçim yapılmazsa `KurulumSonucu.hedef` `null` geliyor ve kayda
+dokunulmuyor.
+
+Kurulum kendi listesini çizmiyor: arama alanı, liste ve seçilen satır
+`components/hedef-secici.tsx`ten geliyor ve Hedefim ekranı da aynı parçaları
+kullanıyor. İkinci bir kopya, iki listenin zamanla birbirinden ayrılması demekti.
+
+Taban puan ve sıra kurulumda **sorulmuyor**, katalogdan hesaplanıyor
+(`tahminEt`); kullanıcı sonradan Hedefim ekranından düzeltebiliyor. Kaydedilen
+puan türü de seçilen bölümün türü, kurulumdaki "Hangi alandasın?" cevabı değil:
+o soru öğrencinin kendi alanını soruyor ve hedef bölümünkiyle aynı olmak zorunda
+değil.
+
 ## Doğruluk
 
 Puan ve sıralama hesabı **tahmindir** ve arayüzde her zaman böyle sunulur. Tahmini

@@ -1,12 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { AlertCircle, ArrowLeft, ArrowRight, Check, User } from 'lucide-react'
-import type { Ayarlar, OkulYili, PuanTuru } from '@/lib/types'
+import type { Ayarlar, Hedef, OkulYili, PuanTuru } from '@/lib/types'
 import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
 import { cn, yeniId } from '@/lib/utils'
 import { Alan, Buton, Etiket, Kart } from '@/components/ui'
+import { AramaAlani, Liste, SecilenSatir, SecimSatiri } from '@/components/hedef-secici'
+import {
+  bolumAra,
+  bolumBul,
+  tahminEt,
+  turAdi,
+  universiteAra,
+  universiteBul,
+  type Bolum,
+  type Universite,
+} from '@/lib/hedef-katalog'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { Rabi } from '@/components/maskot/rabi'
 import { izinIste } from '@/lib/bildirim'
@@ -34,6 +45,14 @@ export type KurulumSecimleri = Pick<
 export type KurulumSonucu = {
   ayarlar: KurulumSecimleri
   okulYillari: OkulYili[]
+  /**
+   * Kurulumda seçilen hedef bölüm; seçilmediyse `null` ve kayda dokunulmuyor.
+   *
+   * Adım atlanabilir: hedefini henüz bilmeyen öğrenciyi kurulumda tutmak,
+   * uygulamayı hiç açamamak demek olurdu. Hedef sonradan Araçlar'daki Hedefim
+   * ekranından da konabiliyor.
+   */
+  hedef: Hedef | null
 }
 
 /**
@@ -51,6 +70,7 @@ type AdimId =
   | 'sinif'
   | 'notlar'
   | 'alan'
+  | 'bolum'
   | 'hedef'
   | 'hatirlatma'
 
@@ -86,6 +106,10 @@ const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
     baslik: 'Hangi alandasın?',
     aciklama: 'Sıralama tahmini ve deneme şablonları buna göre ayarlanır.',
   },
+  bolum: {
+    baslik: 'Hedefin hangi bölüm?',
+    aciklama: 'Günde 200 soru dedin. Peki bu sorular hangi bölüm için?',
+  },
   hedef: {
     baslik: 'Bugün kaç soru çözmek istiyorsun?',
     aciklama: 'Günlük hedefini belirle.',
@@ -104,6 +128,13 @@ const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
  * sınır.
  */
 const AD_EN_AZ = 3
+
+const PUAN_TURU_ADI: Record<PuanTuru, string> = {
+  say: 'Sayısal',
+  ea: 'Eşit Ağırlık',
+  soz: 'Sözel',
+  dil: 'Dil',
+}
 
 const PUAN_TURLERI: { id: PuanTuru; ad: string }[] = [
   { id: 'say', ad: 'Sayısal' },
@@ -137,9 +168,43 @@ export function Kurulum({
   const [puanTuru, setPuanTuru] = useState<PuanTuru>('ea')
   // Varsayılan 200: çubuğun ortasına yakın, kurulumu hiç ellemeyen için makul.
   const [hedef, setHedef] = useState(200)
+  /*
+    Hedef bölüm: iki **ad** tutuluyor, kimlik değil — `Hedef` tipi de adla
+    çalışıyor ve elle yazılmış eski kayıtlar öyle duruyor.
+
+    Seçimin kendisi ayrı bir state'te durmuyor, adlardan türetiliyor: iki
+    kaynak olsaydı biri ötekiyle çelişebilirdi (Hedefim ekranındaki kural).
+  */
+  const [hedefUniversite, setHedefUniversite] = useState('')
+  const [hedefBolum, setHedefBolum] = useState('')
+  const [uniArama, setUniArama] = useState('')
+  const [bolumArama, setBolumArama] = useState('')
   const [saat, setSaat] = useState(20)
   const [dakika, setDakika] = useState(0)
   const [bildirim, setBildirim] = useState(true)
+
+  const secilenUni = useMemo(() => universiteBul(hedefUniversite), [hedefUniversite])
+  const secilenBolum = useMemo(() => bolumBul(hedefBolum), [hedefBolum])
+  const uniSonuclari = useMemo(() => universiteAra(uniArama), [uniArama])
+  const bolumSonuclari = useMemo(
+    () => (secilenUni ? bolumAra(secilenUni, bolumArama) : []),
+    [secilenUni, bolumArama],
+  )
+
+  const universiteSec = (secilen: Universite) => {
+    setHedefUniversite(secilen.ad)
+    setUniArama('')
+    // Yeni üniversitenin açmadığı bir bölüm seçili kalırsa ekran, o
+    // üniversitede olmayan bir hedefi kaydedilebilir gösterirdi.
+    if (secilenBolum && !bolumAra(secilen, '').some((b) => b.id === secilenBolum.id)) {
+      setHedefBolum('')
+    }
+  }
+
+  const bolumSec = (secilen: Bolum) => {
+    setHedefBolum(secilen.ad)
+    setBolumArama('')
+  }
 
   const mezun = mezunMu(sinif)
   /**
@@ -159,6 +224,7 @@ export function Kurulum({
     'sinif',
     ...(notluSiniflar.length > 0 ? (['notlar'] as AdimId[]) : []),
     'alan',
+    'bolum',
     'hedef',
     'hatirlatma',
   ]
@@ -229,6 +295,22 @@ export function Kurulum({
       // notu, sonradan 10 seçildiğinde artık bitmemiş bir yılın notu olur.
       // O yüzden kayda yalnızca güncel sınıfa göre bitmiş yıllar giriyor.
       okulYillari: okulYillariKur(notlar, notluSiniflar),
+      /*
+        Taban puan ve sıra katalogdan hesaplanıyor, kullanıcıya sorulmuyor:
+        ikisini de bilen kimse yok ve `hedef-katalog.ts` sırayı üniversitenin
+        kademesinden, puanı da o sıradan çıkarıyor. Puan türü seçilen bölümün
+        türü — kurulumdaki "Hangi alandasın?" öğrencinin kendi alanını soruyor
+        ve hedef bölümünkiyle aynı olmak zorunda değil.
+      */
+      hedef:
+        secilenUni && secilenBolum
+          ? {
+              universite: secilenUni.ad,
+              bolum: secilenBolum.ad,
+              puanTuru: secilenBolum.puanTuru,
+              ...tahminHedefi(secilenUni, secilenBolum),
+            }
+          : null,
     })
   }
 
@@ -434,6 +516,78 @@ export function Kurulum({
             </div>
           )}
 
+          {suanki === 'bolum' && (
+            <div className="space-y-4">
+              <div>
+                <Etiket htmlFor="kurulum-universite-ara">Üniversite</Etiket>
+                {secilenUni ? (
+                  <SecilenSatir
+                    baslik={secilenUni.ad}
+                    alt={`${secilenUni.sehir} · ${turAdi(secilenUni)}`}
+                    onDegistir={() => {
+                      setHedefUniversite('')
+                      setUniArama('')
+                    }}
+                  />
+                ) : (
+                  <>
+                    <AramaAlani
+                      id="kurulum-universite-ara"
+                      deger={uniArama}
+                      onDegis={setUniArama}
+                      ipucu="Üniversite ya da şehir ara"
+                    />
+                    <Liste bos="Bu adla üniversite bulamadım.">
+                      {uniSonuclari.map((u) => (
+                        <SecimSatiri
+                          key={u.id}
+                          baslik={u.ad}
+                          alt={`${u.sehir} · ${turAdi(u)}`}
+                          onSec={() => universiteSec(u)}
+                        />
+                      ))}
+                    </Liste>
+                  </>
+                )}
+              </div>
+
+              {/* Bölüm listesi ancak üniversite seçilince çıkıyor: hangi
+                  bölümlerin açıldığı üniversiteye bağlı ve boş bir liste,
+                  seçilecek bir şey yokmuş gibi durur. */}
+              {secilenUni && (
+                <div>
+                  <Etiket htmlFor="kurulum-bolum-ara">Bölüm</Etiket>
+                  {secilenBolum ? (
+                    <SecilenSatir
+                      baslik={secilenBolum.ad}
+                      alt={`${PUAN_TURU_ADI[secilenBolum.puanTuru]} · ${secilenBolum.sure} yıl`}
+                      onDegistir={() => setHedefBolum('')}
+                    />
+                  ) : (
+                    <>
+                      <AramaAlani
+                        id="kurulum-bolum-ara"
+                        deger={bolumArama}
+                        onDegis={setBolumArama}
+                        ipucu="Bölüm ara"
+                      />
+                      <Liste bos="Bu üniversitede böyle bir bölüm bulamadım.">
+                        {bolumSonuclari.map((b) => (
+                          <SecimSatiri
+                            key={b.id}
+                            baslik={b.ad}
+                            alt={`${PUAN_TURU_ADI[b.puanTuru]} · ${b.sure} yıl`}
+                            onSec={() => bolumSec(b)}
+                          />
+                        ))}
+                      </Liste>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           {suanki === 'hedef' && (
             /*
               Kartta tekerlekten başka hiçbir şey yok: adımın başlığı zaten soruyu
@@ -537,6 +691,20 @@ export function Kurulum({
   )
 }
 
+
+/**
+ * Seçilen bölümün tahmini taban puanı ve başarı sırası.
+ *
+ * Sayılar `hedef-katalog.ts`ten geliyor ve **tahmin**: kurulum onları
+ * sormuyor, kullanıcı sonradan Hedefim ekranından düzeltebiliyor.
+ */
+function tahminHedefi(
+  universite: Universite,
+  bolum: Bolum,
+): { tabanPuan: number; basariSirasi: number } {
+  const tahmin = tahminEt(universite, bolum)
+  return { tabanPuan: tahmin.tabanPuan, basariSirasi: tahmin.siralama }
+}
 
 /**
  * Tanışma ekranındaki süsler.
