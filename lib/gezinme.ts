@@ -19,7 +19,6 @@ export type Ekran =
   | 'deneme'
   | 'siralama'
   | 'yanlis-banka'
-  | 'haftalik-ozet'
   | 'devamsizlik'
   | 'okul'
   | 'hedef'
@@ -101,13 +100,6 @@ export const KARTLAR: KartTanimi[] = [
     renk: 'pembe',
   },
   {
-    id: 'haftalik-ozet',
-    ad: 'Haftalık Özet',
-    aciklama: 'Haftanı kart kart izle',
-    ikon: '✨',
-    renk: 'lavanta',
-  },
-  {
     id: 'okul',
     ad: 'Okul Notları',
     aciklama: 'Dönem notları ve OBP',
@@ -115,7 +107,7 @@ export const KARTLAR: KartTanimi[] = [
     renk: 'krem',
   },
   { id: 'hedef', ad: 'Hedefim', aciklama: 'Üniversite ve bölüm', ikon: '🎯', renk: 'nane' },
-  { id: 'rozetler', ad: 'Rozetler', aciklama: 'Kazandıkların', ikon: '🏅', renk: 'krem' },
+  { id: 'rozetler', ad: 'Başarımlar', aciklama: 'Kazandıkların', ikon: '🏅', renk: 'krem' },
   {
     id: 'istatistik',
     ad: 'İstatistik',

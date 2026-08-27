@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { AlertTriangle, ChevronRight, Sparkles, Target } from 'lucide-react'
+import { AlertTriangle, Target } from 'lucide-react'
 import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef, OyunId } from '@/lib/types'
 import { devamsizlikOzeti, gunOzeti, kayitHaritasi } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
@@ -63,7 +63,6 @@ export function AnaSayfa({
   devamsizlik,
   hedef,
   guncelSiralama,
-  ozetBekliyor,
   sonAraclar,
   sonOyunlar,
   onKartAc,
@@ -80,7 +79,6 @@ export function AnaSayfa({
   /** Son denemelerden çıkan tahmini sıralama; deneme yoksa null. */
   guncelSiralama: number | null
   /** Biten haftanın özeti henüz izlenmediyse davet kartı gösterilir. */
-  ozetBekliyor: boolean
   /** En son açılan araçlar ve oynanan oyunlar — kısayol kutucuklarının sırası. */
   sonAraclar: string[]
   sonOyunlar: string[]
@@ -165,27 +163,6 @@ export function AnaSayfa({
           </h1>
         </div>
       </header>
-
-      {/* Haftalık özet daveti — biten haftanın özeti izlenmediyse en üstte.
-          Ana sayfanın en görünür yeri burası; kart menüsüne konsaydı özet
-          çıktığından haberi olmayan kullanıcı hiç açmazdı. Fuşya, tasarımın
-          dikkat rengi. */}
-      {ozetBekliyor && (
-        <button
-          type="button"
-          onClick={() => onKartAc('haftalik-ozet')}
-          className="acilis-girisi flex w-full items-center gap-3 rounded-[22px] bg-ikincil px-4 py-3.5 text-left text-white transition active:brightness-95"
-        >
-          <Sparkles size={22} className="shrink-0" aria-hidden />
-          <span className="min-w-0 flex-1">
-            <span className="block font-display font-extrabold">Haftalık özetin hazır</span>
-            <span className="block text-xs font-medium text-white/85">
-              Geçen haftanı kart kart izle, paylaş
-            </span>
-          </span>
-          <ChevronRight size={18} className="shrink-0 text-white/85" aria-hidden />
-        </button>
-      )}
 
       {/* YKS geri sayımı — haftalık özet davetinin hemen altında, sayfanın en
           görünür yerinde. Kalan gün, sayfadaki her sayının bağlamı. Hedef

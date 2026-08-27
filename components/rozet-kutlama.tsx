@@ -47,10 +47,10 @@ export function RozetKutlama({ rozetler, onKapat }: { rozetler: Rozet[]; onKapat
 
         <p className="mt-3 font-display text-xl font-semibold tracking-tight">
           {enYuksek === 'efsane'
-            ? 'Efsane rozet!'
+            ? 'Efsane başarım!'
             : tekli
-              ? 'Yeni rozet!'
-              : `${rozetler.length} yeni rozet!`}
+              ? 'Yeni başarım!'
+              : `${rozetler.length} yeni başarım!`}
         </p>
 
         <ul className="mt-4 space-y-2 text-left">

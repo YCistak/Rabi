@@ -45,18 +45,9 @@ const BOLUMLER: { baslik: string; ipucu: string; kartlar: Ekran[] }[] = [
   {
     baslik: 'Motivasyon',
     ipucu: 'Devam etme sebebin',
-    kartlar: ['haftalik-ozet', 'hedef', 'rozetler'],
+    kartlar: ['hedef', 'rozetler'],
   },
 ]
-
-/**
- * Satırın sağında ok yerine yazılı düğme duran araçlar.
- *
- * Pomodoro'ya girmenin tek sebebi sayacı başlatmak; ok "bir yere gidiyorsun"
- * derken düğme ne olacağını söylüyor. Listeye yeni giriş eklemeden önce
- * düşün: her satırda düğme varsa hiçbiri öne çıkmaz.
- */
-const EYLEM: Partial<Record<Ekran, string>> = { pomodoro: 'Başlat' }
 
 /** Alt başlıktaki bölüm sayısı — bir elin parmağını geçmiyor, yazıyla yazılıyor. */
 const SAYI_ADI = ['sıfır', 'tek', 'iki', 'üç', 'dört', 'beş', 'altı']
@@ -171,10 +162,9 @@ export function KartMenusu({
   )
 }
 
-/** Tek satır: pastel simge kutusu, ad, açıklama ve sağda ok ya da yazılı düğme. */
+/** Tek satır: pastel simge kutusu, ad, açıklama ve sağda ok. */
 function AracSatiri({ kart, onAc }: { kart: KartTanimi; onAc: () => void }) {
-  const { id, ad, aciklama, ikon, renk } = kart
-  const eylem = EYLEM[id]
+  const { ad, aciklama, ikon, renk } = kart
 
   return (
     <button
@@ -201,19 +191,9 @@ function AracSatiri({ kart, onAc }: { kart: KartTanimi; onAc: () => void }) {
         </span>
       </span>
 
-      {eylem ? (
-        <span
-          className="flex shrink-0 items-center gap-1 rounded-full bg-primary-soft px-3 py-1.5 text-[13px] font-extrabold text-primary"
-          aria-hidden
-        >
-          {eylem}
-          <OkSimgesi boyut={14} />
-        </span>
-      ) : (
-        <span className="shrink-0 text-muted-foreground/50" aria-hidden>
-          <OkSimgesi boyut={18} />
-        </span>
-      )}
+      <span className="shrink-0 text-muted-foreground/50" aria-hidden>
+        <OkSimgesi boyut={18} />
+      </span>
     </button>
   )
 }
