@@ -518,7 +518,7 @@ export function AppShell() {
   ) : !ayarlar.kurulumTamamlandi ? (
     <Kurulum
       maskotGizli={maskotGizli}
-      onBitir={({ ayarlar: secimler, okulYillari: girilenler }) => {
+      onBitir={({ ayarlar: secimler, okulYillari: girilenler, hedef: secilenHedef }) => {
         setAyarlar((o) => ({
           ...ayarlariNormalize(o),
           ...secimler,
@@ -528,6 +528,9 @@ export function AppShell() {
         // Mezun kurulumda yıl sonu notlarını girmiş olabilir; atladıysa
         // liste boş geliyor ve kayıtlı veriye dokunulmuyor.
         if (girilenler.length > 0) setOkulYillari(girilenler)
+        // Bölüm adımı atlanabiliyor; atlandıysa hedef `null` geliyor ve
+        // kayıtlı hedefe (varsa) dokunulmuyor.
+        if (secilenHedef) setHedef(secilenHedef)
         // Kurulum ekranı bu karede kalkıyor; tavşan yerine uçarak gidiyor.
         setGecis('ucuyor')
       }}

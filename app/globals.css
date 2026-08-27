@@ -954,3 +954,32 @@
     opacity: 0.4;
   }
 }
+
+/*
+  Tanışma ekranındaki süsler hafifçe süzülüyor.
+
+  Ekran bir şey sormuyor, karşılıyor; duran sekiz emoji ekranı yapıştırılmış
+  gibi gösteriyordu. Hareket küçük tutuldu (birkaç piksel, yavaş): süsler bilgi
+  taşımıyor, dikkati ortadaki addan çalmamalılar. Süre ve gecikme her süse ayrı
+  veriliyor (`--sus-sure`, `--sus-gecikme`), yoksa sekizi tek ağızdan
+  soluk alıp veren bir topluluk gibi duruyordu.
+
+  Konum `left`/`top` ile veriliyor ve ortalama `translate(-50%, -50%)` de
+  dönüşümde duruyor; animasyon o yüzden ortalamayı kendi içinde tekrarlıyor —
+  ayrı bir `transform` yazmak ortalamayı silerdi.
+*/
+@keyframes susSuzul {
+  0% { transform: translate(-50%, -50%) rotate(-4deg); }
+  50% { transform: translate(-50%, calc(-50% - 7px)) rotate(4deg); }
+  100% { transform: translate(-50%, -50%) rotate(-4deg); }
+}
+
+.sus-suzuluyor {
+  animation: susSuzul var(--sus-sure, 4200ms) ease-in-out var(--sus-gecikme, 0ms) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sus-suzuluyor {
+    animation: none;
+  }
+}
