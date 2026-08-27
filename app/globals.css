@@ -983,3 +983,24 @@
     animation: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Kurulum sonrası hazırlık ekranı
+
+   Çubuk beklemenin ne kadar süreceğini söyleyen tek işaret; süresi bileşenden
+   `--hazirlik-sure` ile geliyor ki iki yerde iki ayrı sayı tutulmasın —
+   ayrılırlarsa çubuk ya erken dolup boş boş bekler ya ekran çubuk dolmadan
+   kalkar.
+
+   `prefers-reduced-motion` altında **susmuyor**: buradaki hareket süsleme
+   değil, ilerlemenin kendisi. Susturulsaydı kullanıcı dokuz saniye boyunca boş
+   bir çubuğa bakardı.
+   --------------------------------------------------------------------------- */
+@keyframes hazirlikDolusu {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+.hazirlik-cubugu {
+  animation: hazirlikDolusu var(--hazirlik-sure, 9110ms) cubic-bezier(0.35, 0, 0.25, 1) forwards;
+}

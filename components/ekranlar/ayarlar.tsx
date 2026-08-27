@@ -56,6 +56,7 @@ import type { BankaKaydi } from '@/lib/oyunlar/banka'
 import { izinIste } from '@/lib/bildirim'
 import { saatYaz } from '@/lib/hatirlatma'
 import type { BildirimIzni } from '@/lib/hata-kuyrugu'
+import { AD_EN_AZ, adBiciminde, adGecerliMi } from '@/lib/ad'
 import { cn, yeniId } from '@/lib/utils'
 import type {
   Ayarlar,
@@ -166,6 +167,16 @@ export function AyarlarEkrani({
    * satıra dokununca açılıyor.
    */
   const [acikAyar, setAcikAyar] = useState<AyarId | null>(null)
+  /**
+   * Ad alanının taslağı: kayda geçmemiş yazım.
+   *
+   * `null` "taslak yok, kayıtlı ad görünüyor" demek. Geçersiz bir ad (üç
+   * harften kısa) doğrudan ayarlara yazılsaydı kullanıcı adını silerken
+   * uygulama bir anlığına adsız kalır, satır kapanınca da o hâlde kaydolurdu.
+   */
+  const [adTaslagi, setAdTaslagi] = useState<string | null>(null)
+  const adMetni = adTaslagi ?? ayarlar.ad
+  const adUyarisi = adTaslagi !== null && !adGecerliMi(adTaslagi)
   const [sablonlarAcik, setSablonlarAcik] = useState(false)
   const [acikSablonId, setAcikSablonId] = useState<string | null>(null)
   const [silinecekSablon, setSilinecekSablon] = useState<Sablon | null>(null)
@@ -196,7 +207,12 @@ export function AyarlarEkrani({
 
   /** Seçenekli bir satırı açıp kapatan ortak prop'lar. */
   const acilir = (id: AyarId) => ({
-    onClick: () => setAcikAyar((a) => (a === id ? null : id)),
+    onClick: () => {
+      // Ad satırı kapanırken kaydedilmemiş taslak da düşüyor: geri açıldığında
+      // kayıtlı olmayan bir adı görmek, kaydedilmiş sanmaya yol açardı.
+      setAdTaslagi(null)
+      setAcikAyar((a) => (a === id ? null : id))
+    },
     acikMi: acikAyar === id,
     sag: <AcilirOk acik={acikAyar === id} />,
   })
@@ -323,18 +339,38 @@ export function AyarlarEkrani({
           />
           {acikAyar === 'ad' && (
             <GenisAlan tam>
-              <Etiket>Adın</Etiket>
+              <div className="mb-1.5 flex items-baseline justify-between gap-3">
+                <Etiket className="mb-0">Adın</Etiket>
+                {/* Uzunluk kuralı kurulumdakiyle aynı: orada üç harf isteyip
+                    burada tek harfe izin vermek, aynı alanın iki ekranda iki
+                    ayrı kural tanıması olurdu. */}
+                {adUyarisi && (
+                  <span role="alert" className="text-xs font-medium text-danger">
+                    En az {AD_EN_AZ} harf yaz
+                  </span>
+                )}
+              </div>
               <Alan
-                value={ayarlar.ad}
-                onChange={(e) => setAyarlar((o) => ({ ...o, ad: e.target.value }))}
+                value={adMetni}
+                // İlk harf büyütülüyor: `autoCapitalize` yalnızca klavyeye
+                // verilen bir ipucu ve her klavye onu dinlemiyor.
+                onChange={(e) => setAdTaslagi(adBiciminde(e.target.value))}
                 // Kayda giren değer kırpılıyor ama yazarken kırpılmıyor:
                 // aradaki boşluğu silmek kullanıcının elinden alınmamalı.
-                onBlur={(e) => setAyarlar((o) => ({ ...o, ad: e.target.value.trim() }))}
+                // Geçersiz ad kaydedilmiyor; taslak alanda kalıyor ki kullanıcı
+                // yazdığını kaybetmesin ve uyarıyı görsün.
+                onBlur={(e) => {
+                  if (!adGecerliMi(e.target.value)) return
+                  setAyarlar((o) => ({ ...o, ad: e.target.value.trim() }))
+                  setAdTaslagi(null)
+                }}
+                aria-invalid={adUyarisi}
                 placeholder="Adını yaz"
                 autoCapitalize="words"
                 autoCorrect="off"
                 spellCheck={false}
                 maxLength={24}
+                className={adUyarisi ? 'border-danger focus-visible:border-danger' : undefined}
               />
             </GenisAlan>
           )}

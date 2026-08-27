@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { AlertCircle, ArrowLeft, ArrowRight, Check, User } from 'lucide-react'
 import type { Ayarlar, Hedef, OkulYili, PuanTuru } from '@/lib/types'
@@ -20,6 +20,8 @@ import {
 } from '@/lib/hedef-katalog'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { Rabi } from '@/components/maskot/rabi'
+import { HAZIRLIK_SURESI, Hazirlaniyor } from '@/components/hazirlaniyor'
+import { AD_EN_AZ, adBiciminde, adGecerliMi } from '@/lib/ad'
 import { izinIste } from '@/lib/bildirim'
 import { HEDEF_ADIMI, HEDEF_EN_AZ, HEDEF_EN_COK } from '@/lib/depo'
 
@@ -120,14 +122,6 @@ const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
   },
 }
 
-/**
- * Adın en az kaç harf olacağı.
- *
- * Tek harf ("a") ya da boş bırakılan ad selamlamayı anlamsızlaştırıyor;
- * üç, gerçek adların hepsini geçirip baştan savma girişleri eleyen en küçük
- * sınır.
- */
-const AD_EN_AZ = 3
 
 const PUAN_TURU_ADI: Record<PuanTuru, string> = {
   say: 'Sayısal',
@@ -181,6 +175,13 @@ export function Kurulum({
   const [bolumArama, setBolumArama] = useState('')
   const [saat, setSaat] = useState(20)
   const [dakika, setDakika] = useState(0)
+  /**
+   * Kurulum bitti, hazırlık ekranı akıyor.
+   *
+   * Sonuç burada bekliyor çünkü `onBitir` çağrıldığı anda ekran ana sayfaya
+   * dönüyor; hazırlık ekranı da tam olarak o anı geciktirmek için var.
+   */
+  const [hazirlanan, setHazirlanan] = useState<KurulumSonucu | null>(null)
 
   const secilenUni = useMemo(() => universiteBul(hedefUniversite), [hedefUniversite])
   const secilenBolum = useMemo(() => bolumBul(hedefBolum), [hedefBolum])
@@ -243,7 +244,7 @@ export function Kurulum({
   const ilerle = () => setAdim(Math.min(sonAdim, siradaki + 1))
   const geri = () => setAdim(Math.max(0, siradaki - 1))
 
-  const adGecerli = ad.trim().length >= AD_EN_AZ
+  const adGecerli = adGecerliMi(ad)
   /** Uyarı, denendikten sonra yazarken de canlı kalıyor; üç harfte kayboluyor. */
   const adUyarisi = adDenendi && !adGecerli
 
@@ -281,7 +282,7 @@ export function Kurulum({
     // yalnızca hatırlatma kapalı kaydediliyor — Ayarlar'dan tekrar denenebilir.
     const izinli = await izinIste()
     const obp = Number(obpMetni.replace(',', '.'))
-    onBitir({
+    setHazirlanan({
       ayarlar: {
         // Baştaki/sondaki boşluk temizleniyor: "  Emre " ile "Emre" aynı ad.
         ad: ad.trim(),
@@ -317,6 +318,28 @@ export function Kurulum({
           : null,
     })
   }
+
+  /*
+    Hazırlık ekranı dolunca sonuç yukarı veriliyor.
+
+    Sayaç burada, `Hazirlaniyor` içinde değil: bileşen yalnızca çiziyor, akışı
+    kesen karar kurulumun kendisine ait. Ekran arada kapanırsa (uygulama
+    kapatılırsa) sayaç da temizleniyor — kurulum kaydedilmemiş sayılıyor ve
+    açılışta baştan başlıyor.
+  */
+  const bitirRef = useRef(onBitir)
+  bitirRef.current = onBitir
+
+  useEffect(() => {
+    if (!hazirlanan) return
+    // `onBitir` bağımlılığa konamaz: `AppShell` onu satır içi bir fonksiyon
+    // olarak veriyor, yani her çizimde yeni bir referans. Bağımlılık olsaydı
+    // üstteki her çizim sayacı baştan kurar ve ekran hiç kapanmazdı.
+    const sayac = setTimeout(() => bitirRef.current(hazirlanan), HAZIRLIK_SURESI)
+    return () => clearTimeout(sayac)
+  }, [hazirlanan])
+
+  if (hazirlanan) return <Hazirlaniyor ad={ad.trim()} />
 
   /*
     Karşılama ekranının düzeni ötekilere benzemiyor, o yüzden erken dönüyor.
@@ -449,7 +472,9 @@ export function Kurulum({
                 <Alan
                   id="kurulum-ad"
                   value={ad}
-                  onChange={(e) => setAd(e.target.value)}
+                  // İlk harf büyütülüyor: `autoCapitalize` yalnızca klavyeye
+                  // verilen bir ipucu ve her klavye onu dinlemiyor.
+                  onChange={(e) => setAd(adBiciminde(e.target.value))}
                   placeholder="Adını yaz"
                   aria-invalid={adUyarisi}
                   aria-describedby={adUyarisi ? 'kurulum-ad-uyari' : undefined}
