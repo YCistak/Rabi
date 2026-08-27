@@ -152,9 +152,16 @@ yer — kurulumun geri kalanı sınıf, alan ve hedef soruyor ve ad bir daha
 görünmüyordu.
 
 Karşılama ile tanışma `adimlar` dizisinde duruyor (sıra onlardan geçiyor) ama
-ötekilerin düzenini kullanmıyor: `Kurulum` ikisi için de erken dönüyor ve
-ortak `TekIsliEkran` çiziyor. Kart, geri düğmesi ve adım noktaları orada yok —
-ekranda yapılabilecek tek bir şey varken üçü de gürültü.
+ötekilerin düzenini kullanmıyor: `Kurulum` ikisi için de erken dönüyor. Kart,
+geri düğmesi ve soru noktaları orada yok — ekranda yapılabilecek tek bir şey
+varken üçü de gürültü.
+
+İkisi bir süre tek bir `TekIsliEkran` bileşenini paylaştı; tanışma tasarıma
+göre yeniden çizilince paylaşım bitti ve bileşen kaldırıldı. Karşılama sakin
+bir giriş, tanışma ise adı öğrendikten sonraki karşılama anı: süzülen süsler,
+el sallayan poz ve üç noktalı gösterge yalnızca tanışmada. İkisini tek
+bileşende tutmak, yarısı kullanılmayan bir sürü propla biten bir bileşen
+olurdu.
 
 Adım noktaları bu ikisini **saymıyor** (`noktaAdimlari`); nokta "kaç soru
 kaldı"yı anlatıyor ve ikisi de soru sormuyor. Sayının ayrı bir listeden çıkması
@@ -168,6 +175,33 @@ yazmayı unutmuş gibi duruyordu.
 Son adımın düğmesi bu yüzden "Başlayalım" değil **"Hazırım"**: aynı akışta iki
 kez "Başlayalım" yazan düğme, kullanıcıya başa döndüğünü düşündürüyordu.
 
+**Tanışma ekranının süsleri.** Sekiz emoji (`SUSLER`) zemine serpiliyor ve
+konumları **oran**, piksel değil: sabit piksellerde küçük ekranda maskota
+biniyor, büyükte kenara yapışıyorlardı. Hepsi `aria-hidden` — taşıdıkları bilgi
+yok, ekran okuyucuya sekiz emoji okutmak gürültü olurdu.
+
+Süsler hafifçe süzülüyor (`sus-suzuluyor`, `globals.css`): birkaç piksel yukarı
+aşağı, hafif bir dönüşle. Hareket bilerek küçük — süsler bilgi taşımıyor,
+dikkati ortadaki addan çalmamalılar. Süre ve gecikme her süse **ayrı** veriliyor
+(`--sus-sure`, `--sus-gecikme`); ortak bir ritimde sekizi tek ağızdan soluk alıp
+veren bir topluluk gibi duruyordu. Animasyon dönüşümün içinde ortalamayı
+(`translate(-50%, -50%)`) tekrarlamak zorunda: konum `left`/`top` ile verildiği
+için ayrı bir `transform` ortalamayı silerdi. `prefers-reduced-motion` altında
+susuyor.
+
+**Zemin ayrı değil.** Ekran bir süre degrade bir zemin, altın halkalı bir
+madalyon ve "Aramıza hoş geldin" rozeti taşıyordu; üçü de kaldırıldı ve
+`--kutlama-*` renkleri silindi. Ekranın tek işi adı geri söylemek ve o
+katmanların her biri o cümleyi bastırıyordu. Maskot da karşılamadakiyle **aynı
+ölçüde** (150): iki ekran arka arkaya geliyor, tavşanın ekrandan ekrana büyüyüp
+küçülmesi geçişi kesiyordu.
+
+Alttaki üç nokta kurulumun soru sormayan üç ekranını sayıyor ve **sonuncusu**
+dolu. Tasarımda ilk nokta doluydu; bu ekran üçüncü sırada olduğu için "1/3"
+diyen bir gösterge kullanıcıya yolun daha yeni başladığını söylerdi. Bu üç
+nokta, soru adımlarının `noktaAdimlari` şeridiyle karışmasın: ikisi ayrı
+şeyler sayıyor ve aynı anda hiç görünmüyorlar.
+
 **Maskotun pozu.** Tanışma ekranında tavşan el sallıyor
 (`poz="el-sallayan"` → `public/tavsan-el-sallayan.png`); karşılamadaki duran
 yüzle aynı görsel olsaydı ekran ileri gitmiş gibi durmazdı. Poz `durum`dan
@@ -175,7 +209,12 @@ ayrı bir prop: `durum` yalnızca ekran okuyucu etiketini belirliyor, poz
 gerçekten başka bir dosya gösteriyor. Görsel eksikse `Rabi` yüze düşüyor —
 kırık görsel simgesi, ekranın ortasında dururken eksik bir dosyadan çok bozuk
 bir uygulama gibi görünüyor. Yeni bir poz eklerken dosyayı `public/` altına
-koy ve kare oranı koru; ölçü `Rabi` içinde 130/120 kutusuna oturuyor.
+koy ve kare oranı koru; ölçü `Rabi` içinde 130/120 kutusuna oturuyor —
+`tavsan-el-sallayan.png` de bu yüzden kaynağındaki 247×236'dan 256×256 kare
+tuvale taşındı, yoksa `object-contain` onu yüzden farklı ölçeklerdi.
+
+Tasarımda maskotun sağ üstünde ayrıca bir 👋 duruyordu; alınmadı — maskot
+zaten el sallıyor ve iki el aynı anda iki selam gibi okunuyordu.
 
 ### Ayarlar satırları kapalı açılıyor
 
@@ -406,6 +445,26 @@ olsaydı elle yazılan ad ile seçili kayıt birbiriyle çelişebilirdi.
 
 Çıkan sayılar tahmin ve aşağıdaki **Doğruluk** kuralına tabi: kutular
 düzenlenebilir, uyarı kaldırılamaz.
+
+### Kurulumda da bir bölüm adımı var
+
+Aynı seçim kurulumda, alan adımından hemen sonra bir kez soruluyor: uygulamayı
+ilk açan öğrenci hedefini Araçlar'a girmeyi akıl etmeden ana sayfada boş bir
+"HEDEFİM" paneli görüyordu.
+
+Adım **atlanabilir** — hedefini henüz bilmeyeni kurulumda tutmak, uygulamayı hiç
+açamamak demek. Seçim yapılmazsa `KurulumSonucu.hedef` `null` geliyor ve kayda
+dokunulmuyor.
+
+Kurulum kendi listesini çizmiyor: arama alanı, liste ve seçilen satır
+`components/hedef-secici.tsx`ten geliyor ve Hedefim ekranı da aynı parçaları
+kullanıyor. İkinci bir kopya, iki listenin zamanla birbirinden ayrılması demekti.
+
+Taban puan ve sıra kurulumda **sorulmuyor**, katalogdan hesaplanıyor
+(`tahminEt`); kullanıcı sonradan Hedefim ekranından düzeltebiliyor. Kaydedilen
+puan türü de seçilen bölümün türü, kurulumdaki "Hangi alandasın?" cevabı değil:
+o soru öğrencinin kendi alanını soruyor ve hedef bölümünkiyle aynı olmak zorunda
+değil.
 
 ## Doğruluk
 
