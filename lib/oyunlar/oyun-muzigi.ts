@@ -1,7 +1,12 @@
 'use client'
 
 /**
- * Mini oyunların arka plan müziği.
+ * Rahat modun arka plan müziği — vuruşsuz pad.
+ *
+ * Bir süre **bütün** oyunların tek müziğiydi; artık her tur modunun kendi
+ * parçası var (`mod-muzigi.ts`) ve bu pad Rahat modda çalıyor. Yeri orası
+ * çünkü Rahat turda süre yok: taşıyacak bir tempo olmayınca geriye yalnızca
+ * ortam kalıyor.
  *
  * Önce 126 BPM'lik bir chiptune döngüsü çalıyordu: arpejli, davullu, turun
  * temposunu taşısın diye yazılmış bir parça. Temposu tutuyordu ama dikkati de

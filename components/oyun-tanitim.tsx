@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import type { OyunTanimi } from '@/lib/oyunlar/tanim'
 import type { OyunModu } from '@/lib/oyunlar/mod'
 import { vurgulariAyir } from '@/lib/metin'
@@ -7,6 +8,7 @@ import { useGeriKatmani } from '@/lib/geri'
 import { Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { ModSecimi } from '@/components/mod-secimi'
+import { GeriSayim } from '@/components/oyun-geri-sayim'
 
 /**
  * Oyun tanıtım penceresi.
@@ -14,6 +16,11 @@ import { ModSecimi } from '@/components/mod-secimi'
  * Oyun her açıldığında çıkar ve turu **o başlatır**: kurallar okunmadan sayaç
  * işlemeye başlasaydı ilk beş saniye boşa giderdi. Oynarken üstteki "?" ile
  * yeniden açılabiliyor; o durumda tur zaten duruyor, düğme "Kapat" olur.
+ *
+ * "Başla" turu **hemen** başlatmıyor: pencerenin yerini 3 · 2 · 1 geri sayımı
+ * alıyor ve tur sayım bitince açılıyor (`onBasla`). Pencere o sırada
+ * gizleniyor ama bileşen ayakta kalıyor — sayımı ayrı bir katmana taşımak,
+ * onu 18 oyun dosyasına da eklemek demekti.
  */
 export function OyunTanitim({
   oyun,
@@ -47,9 +54,14 @@ export function OyunTanitim({
   onBasla: () => void
   onKapat: () => void
 }) {
+  const [sayiliyor, setSayiliyor] = useState(false)
+
   useGeriKatmani(acik, onKapat)
 
   if (!acik) return null
+
+  // Sayım sürerken pencere yok: kurallar okundu, sıra hazırlanmada.
+  if (sayiliyor) return <GeriSayim onBitti={onBasla} />
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/55 px-4 pt-[calc(1rem+var(--guvenli-ust))] pb-[calc(1rem+var(--guvenli-alt))]">
@@ -92,7 +104,7 @@ export function OyunTanitim({
             {baslatir ? 'Vazgeç' : 'Kapat'}
           </Buton>
           {baslatir && (
-            <Buton className="flex-1" onClick={onBasla}>
+            <Buton className="flex-1" onClick={() => setSayiliyor(true)}>
               Başla
             </Buton>
           )}

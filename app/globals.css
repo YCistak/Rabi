@@ -1004,3 +1004,41 @@
 .hazirlik-cubugu {
   animation: hazirlikDolusu var(--hazirlik-sure, 9110ms) cubic-bezier(0.35, 0, 0.25, 1) forwards;
 }
+
+/*
+  Tur öncesi geri sayım (3 · 2 · 1 · Başla).
+
+  Rakam büyükten gelip yerine oturuyor ve solarak çıkıyor: yerinde beliren bir
+  rakam sayım değil, tek kare gibi duruyordu. Süreler `oyun-geri-sayim.tsx`
+  içindeki `ADIM` ve `BASLANGIC` ile eşleşmeli — animasyon adımdan uzun olursa
+  bir sonraki rakam öncekinin üstüne biner.
+*/
+@keyframes geriSayimRakam {
+  0% { transform: scale(1.55); opacity: 0; }
+  22% { transform: scale(1); opacity: 1; }
+  72% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.86); opacity: 0; }
+}
+
+.geri-sayim-rakam {
+  animation: geriSayimRakam 620ms ease-out both;
+}
+
+/* "Başla!" ters yönde: küçükten gelip büyüyor — sayım biter, tur açılır. */
+@keyframes geriSayimBasla {
+  0% { transform: scale(0.7); opacity: 0; }
+  30% { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1.14); opacity: 0; }
+}
+
+.geri-sayim-basla {
+  animation: geriSayimBasla 480ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Sayım yine akıyor, yalnızca hareketi kalkıyor: rakamlar bilgi taşıyor. */
+  .geri-sayim-rakam,
+  .geri-sayim-basla {
+    animation: none;
+  }
+}

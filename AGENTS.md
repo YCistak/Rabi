@@ -309,9 +309,10 @@ Kademe **çeyrek ton** (`KADEME`), yarım ton değil. Yarım tonken kulakta bir 
 ton gibi duyuluyordu: art arda gelen doğrularda basamaklar tek tek değil topluca
 işitiliyor ve üçüncü doğruda ses başkalaşıyordu.
 
-Efekt seviyesiyle oyun müziğinin seviyesi (`oyunlar.tsx`, `sesSeviyesi`) tek bir
-dengenin iki ucu: efekt 1'den 0.42'ye inince müzik altta kaldı ve o kadar geri
-verildi. Birine dokunursan ötekine de bak.
+Efekt seviyesiyle oyun müziğinin seviyesi (`mod-muzigi.ts`, `MUZIK_SEVIYESI`)
+tek bir dengenin iki ucu: efekt 1'den 0.42'ye inince müzik altta kaldı ve o kadar
+geri verildi. Birine dokunursan ötekine de bak; sıralamayı
+`mod-muzigi.test.ts` denetliyor.
 
 Boss parlaması ilk denemede yerinde duran bir altın radyaldi ve iyi durmadı:
 boss zemini açık bir renk ve onun üstünde sabit bir sarı daire ışık gibi değil
@@ -332,6 +333,69 @@ sessize yaklaşmıyor — kapatmak isteyene ayarda anahtar zaten var.
 Hepsi `prefers-reduced-motion` altında susuyor. Yeni bir efekt eklersen o
 medya sorgusuna da ekle: buradaki hareketlerin hiçbiri bilgi taşımıyor, bilgi
 sayıda ve renkte duruyor.
+
+## Tur öncesi geri sayım
+
+"Başla" ve tur sonundaki "Tekrar" turu hemen açmıyor: araya 3 · 2 · 1 · Başla
+giriyor (`components/oyun-geri-sayim.tsx`, sesi `geriSayimSesi`). Düğmeye basar
+basmaz ilk soru geliyordu ve süreli modlarda ilk saniye parmağı ekrana
+götürmekle geçiyordu.
+
+Katman **iki ortak bileşenin içinde** duruyor (`oyun-tanitim.tsx` ve
+`TurSonu`); 18 oyun dosyasının hiçbiri geri sayımdan haberdar değil. Tur, sayım
+bitince başlıyor — yani `onBasla`/`onTekrar` çağrıldığı an. Tanıtım penceresi
+sayım sürerken gizleniyor ama sökülmüyor: sayımı ayrı bir katmana taşımak, onu
+her oyuna ayrı ayrı eklemek demekti.
+
+CSS süreleri (`geri-sayim-rakam`, `geri-sayim-basla`) bileşendeki `ADIM` ve
+`BASLANGIC` ile eşleşmeli; animasyon adımdan uzun olursa rakamlar üst üste biner.
+
+## Yarıda bırakılan tur da bir tur
+
+Oyundan çıkmak her modda turu **bitiriyor**: tur sonu ekranı çıkıyor ve o turun
+yanlışları Oyun Bankası'na düşüyor. Eskiden bu yalnızca Rahat modda böyleydi,
+ötekilerde çıkış turu sessizce siliyordu — oyuncu ne yaptığını görmeden ekrandan
+atılıyor ve öğrenmesi gereken sorular kaydedilmiyordu.
+
+Yarım tur `yarim` bayrağıyla bildiriliyor (`onTurBitti`'nin dördüncü
+parametresi) ve rekora, istatistiğe, oyun geçmişine **yazılmıyor**: eleme
+`oyunlar.tsx` içindeki `turBitti`'de, Rahat ve banka turlarıyla aynı satırda.
+Sayılsaydı yarısında çıkılan turlar hem "oynanan tur" sayısını hem ortalama
+süreyi bozardı. Tur sonu ekranındaki rekor rozeti de bu yüzden yarım turda
+kutlamıyor.
+
+## Mod müzikleri
+
+Dört modun dört ayrı parçası var (`lib/oyunlar/mod-muzigi.ts`); üçü orada
+sentezleniyor, Rahat'ınki eski pad (`oyun-muzigi.ts`).
+
+| Mod | Parça | Tempo |
+| --- | --- | --- |
+| Rahat | vuruşsuz pad | yok |
+| Sıradan | "Yürüyüş" (Am/F/C/G, marimba arpej) | 88 → 134, sürekli hızlanır |
+| Turbo | "Koşu" (Dm/B♭/F/C, senkoplu kare bas) | 138, son çeyrekte 168 |
+| Ani Ölüm | "Nefes yok" (Em pedal, inen kromatik) | 152 sabit |
+
+Üçü **ayrı beste**, aynı ezginin hızlandırılmışı değil: farklı tonalite, farklı
+enstrüman, farklı vuruş deseni. Aynı melodiyi hızlandırmak dört modu tek bir
+modun dört ayarı gibi gösterirdi; aralarındaki fark tempo değil kural.
+
+Tempo kuralı saf ve dışa açık (`tempo(mod, gerginlik)`, `mod-muzigi.test.ts`).
+Gerginliği besleyen yer oyun kabuğu: `kalan / toplam` zaten orada ve
+`muzikGerginligi` ile geçiyor — efektlerdeki kuralın aynısı, oyun dosyaları
+müzikten habersiz. Sayacı olmayan modlarda oran sabit kalıyor, o parçalar zaten
+gerginliğe bakmıyor.
+
+Müzik modül düzeyinde **tekil**: parçayı kuran yer oyunlar ekranı, gerginliği
+besleyen yer kabuk; ikisinin aynı nesneye ulaşması gerekiyordu.
+
+Ayarlardaki seçim "Mod müziği" ya da "Lo-fi" (`OyunMuzikTuru`). Eski kurulumlarda
+kayıtlı `'sakin'` değeri `ayarlariNormalize` içinde `'mod'`a çevriliyor.
+
+Ses dengesi tek bir yerde: `MUZIK_SEVIYESI` (0.09) efekt dosyalarının seviyesinin
+(`DOSYA_SEVIYESI`, 0.42) belirgin biçimde altında. Müzik efekti bastırırsa oyunun
+tek sesli geri bildirimi kaybolur; duyulmayan müzik de hiç yok demektir. Birine
+dokunursan ötekine de bak — `mod-muzigi.test.ts` sıralamayı denetliyor.
 
 ## Oyun Bankası
 
