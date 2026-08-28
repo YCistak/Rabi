@@ -503,46 +503,75 @@ ya boş kalıyordu ya rastgele bir sayıyla kaydediliyordu ve "hedefine ne kadar
 kaldı" cümlesi ölçtüğü şeyi kaybediyordu. Artık **arayıp seçiliyor**, sayıları
 katalog dolduruyor.
 
-Veri iki dosyada, mantık üçüncüde: `lib/veri/universiteler.ts` (205 üniversite),
-`lib/veri/bolumler.ts` (77 bölüm), `lib/hedef-katalog.ts` (saf, test edilebilir).
+Veri `lib/veri/hedef-katalog-2025.json`, tipler ve erişim `lib/veri/katalog.ts`,
+mantık `lib/hedef-katalog.ts` (saf, test edilebilir).
 
-### Katalogda sıra yazıyor, puan yazmıyor
+### Sıra artık tahmin değil, ÖSYM'nin kendi sayısı
 
-Her bölüm satırında **başarı sırası** var, taban puan yok. Puan `siralama.ts`
-içindeki `siralamadanPuan` ile o yılın gerçek ÖSYM yerleştirme dağılımından geri
-hesaplanıyor. Sebep: sıralama yıldan yıla neredeyse yerinde duruyor, puan
-sınavın zorluğuyla oynuyor. Böylece tahminin elle tutulan kısmı en yavaş
-bayatlayan sayıya iniyor ve puan yeni yıl verisi gelince kendiliğinden
-güncelleniyor.
+Eskiden burada elle yazılmış 205 üniversite ve 77 bölüm vardı. Her
+üniversitenin 1–5 arası bir **kademesi**, her bölümün iki sıra ucu tutuluyor ve
+hedefin sırası ikisi arasında geometrik iç değerle tahmin ediliyordu. Model tek
+boyutluydu: Tıp'ta önde olan üniversite Hukuk'ta da önde sayılıyordu. Gerçek
+tablo o zaman bilerek taşınmamıştı — "hem uygulamayı şişirir hem her ağustos
+elle güncellenir" diye.
+
+İki gerekçe de artık geçerli değil:
+
+- **Elle güncelleme yok.** Veri, ÖSYM'nin *Yükseköğretim Programları ve
+  Kontenjanları Kılavuzu* PDF'inden bir ETL ile çıkıyor (ayrı depo:
+  `Asaf Belge/files`, `src/etl_kilavuz.py` → `src/uygulama_profili.py`). Yeni
+  kılavuz çıktığında ETL yeniden çalışıyor, JSON değişiyor.
+- **Şişirmiyor.** Profil yalnızca uygulamanın kullandığı alanlara indirilmiş:
+  225 üniversite, 9.304 lisans programı, 250 KB. Adlar bir sözlükte bir kez
+  yazılıp programlar indekse döndüğü için düz nesne dizisinin dörtte biri
+  kadar yer tutuyor.
+
+`kademe`, `alanlar`, `ustSira`, `altSira`, `sonKademe` alanlarının hepsi
+kalktı; onlarla birlikte `tahminiSira` ve iki süzgeç de gitti. Bir üniversitede
+listelenen her bölüm artık o üniversitede **gerçekten açık**.
+
+### Puan hâlâ sıradan hesaplanıyor
+
+Kılavuzda taban puan da yazıyor ama kataloğa **girmiyor**. Puan
+`siralama.ts`'teki `siralamadanPuan` ile o yılın yerleştirme dağılımından geri
+hesaplanıyor. Gerekçe kademe döneminden beri aynı: sıra yıldan yıla neredeyse
+yerinde duruyor, puan sınavın zorluğuyla oynuyor. Yeni yılın dağılımı gelince
+puan kendiliğinden güncelleniyor — kataloğa yazılmış olsaydı bir yıl eskimiş
+sayıyı göstermeye devam ederdi.
 
 `siralamadanPuan` ile `yilSiralamasi` birbirinin **tersi** olmak zorunda; ikisi
 de logaritmik iç değer kullanıyor ve `hedef-katalog.test.ts` gidip gelen
 çevrimin başladığı puana döndüğünü denetliyor. Birine dokunursan ötekine de bak.
 
-### Kademe
+### Sıra artık yuvarlanmıyor
 
-Her üniversitenin 1–5 arası bir kademesi var; bölümün iki ucu (`ustSira`,
-`altSira`) arasında **geometrik** iç değerle o kademenin sırası bulunuyor.
-Sıralamalar kademe kademe doğrusal değil katlanarak büyüyor (Tıp: 400 → 60.000)
-— doğrusal iç değer ortadaki kademeleri tek bir yere yığardı.
+Kademe döneminde çıkan sayı kabalaştırılıyordu: "47.213" gibi kesin görünen bir
+sayı, tahmini olduğundan daha güvenilir gösteriyordu. Artık sayı ÖSYM'nin
+yayımladığı değer; yuvarlamak onu dürüst değil yalnızca yanlış yapardı.
+Arayüzdeki belirsizlik bandı `bantYaz`ın işi ve orada duruyor.
 
-200 × 77 satırlık gerçek YÖK Atlas tablosu bilerek taşınmıyor: hem uygulamayı
-şişirirdi hem her ağustos elde güncellenirdi. Model tek boyutlu olduğunu kabul
-ediyor — Tıp'ta önde olan üniversite Hukuk'ta da genelde önde.
+### Bölüm artık üniversiteye ait
 
-Vakıf üniversitelerinde kademe **tam burslu** kontenjanı anlatıyor; ücretliyle
-burslunun arası uçurum ve hedef koyan öğrencinin kovaladığı sayı burslununki.
+`bolumBul` üniversite parametresi alıyor. Aynı bölümün sırası üniversiteden
+üniversiteye değişiyor (Tıp: Hacettepe 1.836, Van 20.882); üniversitesiz bir
+arama "Tıp"ın sırasını rastgele bir kayıttan okurdu.
 
-### İki ayrı süzgeç
+### Profilin dışarıda bıraktıkları
 
-Bölüm listesi iki şeye birden bakıyor ve ikisi farklı soru: `alanlar`
-üniversitede o fakülte var mı, `sonKademe` o bölüm bu kademede açılıyor mu. Tıp
-fakültesi olmayan bir üniversitede Tıp seçtirmek tahminden çok daha kaba bir
-yanlış olurdu; Havacılık ve Uzay Mühendisliği'ni mühendislik fakültesi olan her
-üniversitede listelemek de ikinci soruyu atlamak olur.
+- **Önlisans (TYT).** `PuanTuru` say/ea/soz/dil; önlisans hedefi uygulamada hiç
+  olmadı. Eklemek tip değişikliğinden deneme şablonlarına kadar giden ayrı bir
+  iş.
+- **"KKTC Uyruklu" kontenjanları.** Türkiye'deki öğrenci başvuramıyor;
+  listelemek seçilemeyecek bir hedef göstermek olurdu.
+- **Puanı olmayan programlar.** Kontenjanı dolmamış ya da yeni açılmış
+  programlarda taban puan/sıra yok, dolayısıyla hedef sayısı da yok.
 
-`hedef-katalog.test.ts` her üniversitenin **en az bir** bölüm açtığını
-denetliyor: boş liste, kullanıcıyı seçtiği üniversitede çıkmaz sokağa sokar.
+Aynı üniversitede aynı adla birden çok program varsa (bölüm ayrı fakültelerde
+açılıyorsa) ada fakülte ekleniyor: "Turizm İşletmeciliği (Manavgat Turizm
+Fakültesi)". Kılavuzun kendisi aynı adı iki kez listeliyorsa (Türk-Alman
+Üniversitesi'nde Hukuk'un 80 ve 16 kontenjanlı iki satırı) ana kontenjan olan,
+sırası daha iyi kayıt tutuluyor — ikisini de göstermek seçim ekranında aynı
+satırı iki kez çıkarırdı.
 
 ### Elle giriş kipi kalıyor
 

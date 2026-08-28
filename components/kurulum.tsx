@@ -184,7 +184,10 @@ export function Kurulum({
   const [hazirlanan, setHazirlanan] = useState<KurulumSonucu | null>(null)
 
   const secilenUni = useMemo(() => universiteBul(hedefUniversite), [hedefUniversite])
-  const secilenBolum = useMemo(() => bolumBul(hedefBolum), [hedefBolum])
+  const secilenBolum = useMemo(
+    () => bolumBul(secilenUni, hedefBolum),
+    [secilenUni, hedefBolum],
+  )
   const uniSonuclari = useMemo(() => universiteAra(uniArama), [uniArama])
   const bolumSonuclari = useMemo(
     () => (secilenUni ? bolumAra(secilenUni, bolumArama) : []),
