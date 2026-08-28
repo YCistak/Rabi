@@ -202,12 +202,22 @@ const RAKAM_TONU = 880
 /**
  * Sayım sesinin seviyesi.
  *
- * Efekt dosyalarının (`DOSYA_SEVIYESI`) hizasında duruyor: sayım oyunun ilk
- * sesi, ondan önce duyulmuş bir şey yok ve alçak tutulunca kullanıcı hiç
- * duymadı. Üretilen ton, kaydedilmiş bir dosyanın gövdesini taşımadığı için
- * aynı sayıda daha kısık duyulur — bu yüzden ondan da yukarıda.
+ * Efekt dosyalarının (`DOSYA_SEVIYESI`) belirgin biçimde **üstünde**: sayım
+ * oyunun ilk sesi, ondan önce duyulmuş bir şey yok ve tek bir triangle tonu,
+ * kaydedilmiş bir efektin gövdesini taşımıyor. 0.5'te kullanıcı telefonda hâlâ
+ * duymadı; buradaki sayı gürlüğü değil dalganın inceliğini karşılıyor.
  */
-const SAYIM_SEVIYESI = 0.5
+const SAYIM_SEVIYESI = 0.8
+
+/**
+ * "Başla!" akorunun tek nota seviyesi — sayım tonunun altında.
+ *
+ * Üç nota 0.08 saniye arayla giriyor ve kuyrukları üst üste biniyor: üçü de
+ * `SAYIM_SEVIYESI` ile çalsaydı toplam çıkış 1'i aşar, akor yüksek değil
+ * **kırpılmış** duyulurdu. Bölünen tepe sayesinde akor tikler kadar gür ama
+ * bozulmuyor.
+ */
+const AKOR_SEVIYESI = SAYIM_SEVIYESI * 0.6
 
 /**
  * Geri sayım sesi — 3, 2, 1 ve `0` ile "Başla!".
@@ -223,9 +233,9 @@ export function geriSayimSesi(kalan: number) {
     return
   }
   cal([
-    { frekans: 880, gecikme: 0, sure: 0.12, bicim: 'triangle', seviye: SAYIM_SEVIYESI },
-    { frekans: 1174.66, gecikme: 0.08, sure: 0.12, bicim: 'triangle', seviye: SAYIM_SEVIYESI },
-    { frekans: 1760, gecikme: 0.16, sure: 0.34, bicim: 'triangle', seviye: SAYIM_SEVIYESI },
+    { frekans: 880, gecikme: 0, sure: 0.12, bicim: 'triangle', seviye: AKOR_SEVIYESI },
+    { frekans: 1174.66, gecikme: 0.08, sure: 0.12, bicim: 'triangle', seviye: AKOR_SEVIYESI },
+    { frekans: 1760, gecikme: 0.16, sure: 0.34, bicim: 'triangle', seviye: AKOR_SEVIYESI },
   ])
 }
 

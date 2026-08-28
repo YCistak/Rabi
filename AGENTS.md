@@ -175,19 +175,21 @@ yazmayı unutmuş gibi duruyordu.
 Son adımın düğmesi bu yüzden "Başlayalım" değil **"Hazırım"**: aynı akışta iki
 kez "Başlayalım" yazan düğme, kullanıcıya başa döndüğünü düşündürüyordu.
 
-**Tanışma ekranının süsleri.** Sekiz emoji (`SUSLER`) zemine serpiliyor ve
-konumları **oran**, piksel değil: sabit piksellerde küçük ekranda maskota
-biniyor, büyükte kenara yapışıyorlardı. Hepsi `aria-hidden` — taşıdıkları bilgi
-yok, ekran okuyucuya sekiz emoji okutmak gürültü olurdu.
+**Tanışma ekranının tek süsü bir hat.** Ekran bir süre sekiz emojiyi (🐾 ✨ 🥕
+…) zemine serpiyordu; hepsi kaldırıldı. Sebep hareket değil kalabalık: ekranda
+tek bir cümle var — adın geri söylendiği cümle — ve etrafına serpilen simgeler
+o cümleyi taşımıyor, ondan dikkat çalıyordu.
 
-Süsler hafifçe süzülüyor (`sus-suzuluyor`, `globals.css`): birkaç piksel yukarı
-aşağı, hafif bir dönüşle. Hareket bilerek küçük — süsler bilgi taşımıyor,
-dikkati ortadaki addan çalmamalılar. Süre ve gecikme her süse **ayrı** veriliyor
-(`--sus-sure`, `--sus-gecikme`); ortak bir ritimde sekizi tek ağızdan soluk alıp
-veren bir topluluk gibi duruyordu. Animasyon dönüşümün içinde ortalamayı
-(`translate(-50%, -50%)`) tekrarlamak zorunda: konum `left`/`top` ile verildiği
-için ayrı bir `transform` ortalamayı silerdi. `prefers-reduced-motion` altında
-susuyor.
+Yerine adın altına çekilen tek bir kalem hattı kondu (`tanisma-hat`,
+`globals.css`). Çizilerek beliriyor ve **bitiyor**: sürekli oynayan bir süs göz
+ucunda kalıcı bir kıpırtı bırakır, bir kez çizilen hat cümleyi gösterip susar.
+Çizim `stroke-dasharray` ile — kesik deseni yolun gerçek uzunluğundan uzun
+tutuldu, kısa kalsaydı hat tek parça yerine tekrarlayan kesikler olurdu.
+Gecikmesi de kasıtlı: altını çizdiği yazıdan önce belirirse neyi işaret ettiği
+anlaşılmıyor. `prefers-reduced-motion` altında hat duruyor, çizilmesi susuyor.
+
+Yeni bir süs eklemeden önce soru şu: eklenen şey adı öne mi çıkarıyor, yoksa
+onunla mı yarışıyor?
 
 **Zemin ayrı değil.** Ekran bir süre degrade bir zemin, altın halkalı bir
 madalyon ve "Aramıza hoş geldin" rozeti taşıyordu; üçü de kaldırıldı ve
@@ -310,10 +312,13 @@ perdeyi oynatma, ayrı bir ses ekle.
 
 Efekt seviyesiyle oyun müziğinin seviyesi (`mod-muzigi.ts`, `MUZIK_SEVIYESI`)
 tek bir dengenin iki ucu ve ikisi de telefonda dinlenerek ayarlandı: efekt
-1'den 0.42'ye indi (çok gürdü), müzik 0.09'dan 0.26'ya çıktı (hiç
-duyulmuyordu). Sayıların eşit olması gürlüğün eşit olması demek değil —
-efektler ustalanmış mp3, parçalar sıfırdan sentezlenmiş ince dalgalar. Birine
-dokunursan ötekine de bak; sıralamayı `mod-muzigi.test.ts` denetliyor.
+1'den 0.42'ye indi (çok gürdü), müzik iki kez yükseldi — 0.09, sonra 0.26,
+şimdi 0.5. **Sayıların eşit olması gürlüğün eşit olması demek değil**: efektler
+ustalanmış mp3, dalgaları baştan sona tepeye yakın; parçalar sıfırdan
+sentezlenmiş ince dalgalar ve aralarında sessizlik var. Bu yüzden müzik sayıca
+efektin üstünde durup kulakta onun hizasına geliyor — 0.26'da kullanıcı
+"telefonun sesini sonuna kadar açmadıkça duyulmuyor" dedi. Birine dokunursan
+ötekine de bak; sıralamayı `mod-muzigi.test.ts` denetliyor.
 
 Boss parlaması ilk denemede yerinde duran bir altın radyaldi ve iyi durmadı:
 boss zemini açık bir renk ve onun üstünde sabit bir sarı daire ışık gibi değil
@@ -359,9 +364,12 @@ kalıyordu: göz sayımdan çok ona kaçıyordu. Sayım turun başladığı an, 
 Üç rakamın tonu **aynı** (`RAKAM_TONU`); perde yalnızca sonda, "Başla!"
 akorunda tırmanıyor. Rakamlarda da yükseliyordu ve kullanıcı "kötü duyuluyor"
 dedi — sayımın işi metronom gibi, aynı tonun eşit aralıkla vurması sayının
-indiğini zaten anlatıyor. Sayım sesi efekt dosyalarından da yüksek
-(`SAYIM_SEVIYESI`): oyunun ilk sesi, öncesinde duyulmuş bir şey yok ve alçak
-tutulunca hiç fark edilmedi.
+indiğini zaten anlatıyor. Sayım sesi efekt dosyalarından belirgin biçimde
+yüksek (`SAYIM_SEVIYESI` 0.8): oyunun ilk sesi, öncesinde duyulmuş bir şey yok
+ve tek bir triangle tonu kaydedilmiş efektin gövdesini taşımıyor; 0.5'te
+kullanıcı telefonda hâlâ duymadı. "Başla!" akorunun üç notası ise bunun altında
+(`AKOR_SEVIYESI`) çünkü kuyrukları üst üste biniyor — üçü de sayım seviyesinde
+çalsaydı çıkış 1'i aşar, akor yüksek değil **kırpılmış** duyulurdu.
 
 ## Yarıda bırakılan tur da bir tur
 
@@ -405,10 +413,13 @@ besleyen yer kabuk; ikisinin aynı nesneye ulaşması gerekiyordu.
 Ayarlardaki seçim "Mod müziği" ya da "Lo-fi" (`OyunMuzikTuru`). Eski kurulumlarda
 kayıtlı `'sakin'` değeri `ayarlariNormalize` içinde `'mod'`a çevriliyor.
 
-Ses dengesi tek bir yerde: `MUZIK_SEVIYESI` (0.09) efekt dosyalarının seviyesinin
-(`DOSYA_SEVIYESI`, 0.42) belirgin biçimde altında. Müzik efekti bastırırsa oyunun
-tek sesli geri bildirimi kaybolur; duyulmayan müzik de hiç yok demektir. Birine
-dokunursan ötekine de bak — `mod-muzigi.test.ts` sıralamayı denetliyor.
+Ses dengesi tek bir yerde: `MUZIK_SEVIYESI` (0.5) efekt dosyalarının
+seviyesinin (`DOSYA_SEVIYESI`, 0.42) sayıca üstünde ama kulakta hizasında —
+sentezlenmiş dalga, ustalanmış mp3'le aynı sayıda daha kısık duyuluyor. Üst
+sınırı kırpılma koyuyor: nota tepeleri bu ana seviyede toplanıyor, 1'e yaklaşan
+bir değer parçayı yüksek değil bozuk çalar. Rahat modun pad'i ondan türeyen
+`RAHAT_SEVIYESI` ile altta kalıyor: vuruşsuz ve sürekli olduğu için aynı
+sayıda daha çok fark ediliyor. `mod-muzigi.test.ts` iki sınırı da denetliyor.
 
 ## Oyun Bankası
 

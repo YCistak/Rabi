@@ -54,19 +54,33 @@ const UYANMA = 90
 /**
  * Müziğin ana ses seviyesi.
  *
- * Efekt dosyaları 0.42'de çalıyor (`oyun-sesi.ts`) ve müzik onların altında
- * kalmalı: doğru/yanlış geri bildirimi oyunun tek sesli işareti, müzik
- * bastırırsa oyun sessizleşmiş sayılır. Hedef, telefonun ses düzeyi ortadayken
- * ikisinin de duyulması: müzik odanın sesini bastırmıyor, efekt müziğin içinde
- * kaybolmuyor.
+ * Hedef, doğru/yanlış efektlerinin (`DOSYA_SEVIYESI`, 0.42) **hizası**: müzik
+ * onların yanında duyulacak kadar var olmalı ama gürültüye dönüşmemeli, çünkü
+ * oyunun tek sesli geri bildirimi o iki efekt.
  *
- * Değer 0.09'du ve kullanıcı telefonda "duyulmuyor" dedi. Hesap kâğıt üstünde
- * doğruydu ama tek şeyi atlıyordu: efektler kaydedilmiş, ustalanmış dosyalar,
- * bu parçalar ise sıfırdan sentezlenen ince dalgalar — aynı sayı ikisinde aynı
- * gürlük demek değil. Sentezlenmiş bir parça, efektle eşit duyulmak için
- * sayıca ondan yüksek durmak zorunda değil ama bu kadar altında da kalamıyor.
+ * Sayı iki kez yükseldi ve ikisinde de sebep aynı: kâğıt üstünde doğru duran
+ * oran telefonda duyulmuyordu. Önce 0.09'du ("hiç duyulmuyor"), sonra 0.26
+ * ("telefonun sesini sonuna kadar açmadıkça duyulmuyor"). Atlanan şey şu:
+ * efektler kaydedilmiş, ustalanmış mp3'ler, dalgaları baştan sona tepeye
+ * yakın; bu parçalar ise sıfırdan sentezlenen ince dalgalar ve aralarında
+ * sessizlik var. Aynı sayı ikisinde aynı gürlük demek değil — müzik sayıca
+ * efektin **üstünde** durup kulakta onun hizasına geliyor.
+ *
+ * Kırpılma sınırı buna izin veriyor: notaların tepeleri (`tepe`) ana seviyenin
+ * altında toplandığı için çıkış 1'e varmıyor. Daha yukarı çıkarmadan önce
+ * parçaları hoparlörde dinle; kırpılan bir parça yüksek değil bozuk duyuluyor.
  */
-export const MUZIK_SEVIYESI = 0.26
+export const MUZIK_SEVIYESI = 0.5
+
+/**
+ * Rahat modun pad'i, ritmik parçaların altında.
+ *
+ * Vuruşsuz ve **sürekli** çaldığı için aynı seviyede ötekilerden daha çok fark
+ * ediliyor: arada sessizlik yok, kulak sesi hiç bırakmıyor. Oran ritmik
+ * seviyeden türetiliyor — birini elle değiştirip ötekini unutmak iki modun
+ * dengesini ayırıyordu.
+ */
+export const RAHAT_SEVIYESI = MUZIK_SEVIYESI * 0.7
 
 /**
  * Modun temposu (BPM) — gerginliğe göre.
@@ -432,9 +446,7 @@ export function muzikBaslat(mod: OyunModu) {
   if (calan && calan.mod !== mod) muzikDurdur()
   if (!calan) {
     const parca = parcaKur(mod)
-    // Sakin pad kendi dengesini koruyor: sürekli ve vuruşsuz olduğu için aynı
-    // seviyede ritmik parçalardan daha çok fark ediliyor, o yüzden altında.
-    parca.sesSeviyesi(mod === 'rahat' ? 0.18 : MUZIK_SEVIYESI)
+    parca.sesSeviyesi(mod === 'rahat' ? RAHAT_SEVIYESI : MUZIK_SEVIYESI)
     calan = { mod, parca }
   }
   calan.parca.basla()
