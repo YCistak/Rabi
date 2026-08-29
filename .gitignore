@@ -50,3 +50,7 @@ notlar.*
 # yeniden yazılıyor.
 reports/
 .istatistik.mts
+
+# Sürüm alma kılavuzu — makinedeki kuruluma özgü yollar ve JDK sürümleri
+# içeriyor, kişisel bir not defteri gibi tutuluyor.
+RELEASE.md
