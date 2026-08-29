@@ -176,7 +176,15 @@ export function AnaSayfa({
           "bugünkü hedefi tutturdun mu"nun yedi günlük hâli, ayrı kartta
           dururken iki ayrı ölçü gibi okunuyordu. */}
       <Kart className="px-5 py-5">
-        <div className="flex items-center gap-4">
+        {/* Halka ve yanındaki satır tıklanabilir: karttaki sayı "bugün kaç soru
+            çözdün" ve o sayıyı büyütmenin tek yolu soru takibi ekranı. Kartın
+            tamamı değil yalnızca bu satır — altındaki hafta şeridi yedi günü
+            anlatıyor, ona basan kullanıcı bugünkü ekrana gitmeyi beklemiyor. */}
+        <button
+          type="button"
+          onClick={() => onKartAc('soru')}
+          className="flex w-full items-center gap-4 text-left"
+        >
           {/* Halkanın içinde hedef ("/300") yazmıyor: hedef zaten yanda,
               "300 hedefin var" cümlesinde geçiyordu ve iki kez yazılınca göz
               hangisinin bugünkü sayı olduğunu ayırt edemiyordu. */}
@@ -189,21 +197,24 @@ export function AnaSayfa({
             </span>
           </Halka>
 
-          <div className="min-w-0 flex-1 space-y-1">
-            <h2 className="font-display text-base font-extrabold tracking-tight">
+          {/* Başlık ve satırlar `span`: düğmenin içi yalnızca metin öğesi
+              alıyor, `h2`/`p` orada geçersiz iç içe geçme oluyor. Görünüş
+              `block` ile aynı kalıyor. */}
+          <span className="min-w-0 flex-1 space-y-1">
+            <span className="block font-display text-base font-extrabold tracking-tight">
               Bugünkü soru hedefin
-            </h2>
+            </span>
             {/* Satırın tamamı ince, yalnız "kaç soru kaldı" kalın: göz kartta
                 tek bir sayı arıyor ve o sayı bu. Hedefin kendisi bağlam. */}
-            <p className="rakam text-[13px] leading-snug font-medium text-muted-foreground">
+            <span className="rakam block text-[13px] leading-snug font-medium text-muted-foreground">
               {ayarlar.gunlukHedef} hedefin var,{' '}
               <strong className="font-extrabold text-foreground">{kalan} soru kaldı.</strong>
-            </p>
-            <p className="text-[13px] leading-snug font-medium text-muted-foreground">
+            </span>
+            <span className="block text-[13px] leading-snug font-medium text-muted-foreground">
               {hedefCumlesi(bugunku.toplam, kalan, ayarlar.gunlukHedef, hedefTuttu)}
-            </p>
-          </div>
-        </div>
+            </span>
+          </span>
+        </button>
 
         {/* Haftanın günleri. Kutucuk değil hap: gün adı okunabilsin diye —
             daire içinde "Cmt" sığmıyordu, adı altına yazınca da satır iki kat
