@@ -94,6 +94,8 @@ import { TuzakOyunuEkrani } from '@/components/ekranlar/oyun-tuzak'
 const AILE: Record<DersTanimi['aile'], { zemin: string; yazi: string; ok: string }> = {
   yzm: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu', ok: 'bg-yzm-ok' },
   isl: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', ok: 'bg-isl-ok' },
+  // `edb` artık hiçbir derste yok (Türkçe ile Edebiyat birleşti); tablo tam
+  // kalıyor çünkü anahtarları renk ailesi listesinden geliyor.
   edb: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu', ok: 'bg-edb-ok' },
   cog: { zemin: 'bg-cog-kart', yazi: 'text-cog-koyu', ok: 'bg-cog-ok' },
   trh: { zemin: 'bg-trh-kart', yazi: 'text-trh-koyu', ok: 'bg-trh-ok' },
@@ -737,7 +739,7 @@ function BankaSatiri({
   const cipler = [
     { id: 'yazim' as const, ikon: '✍️', ad: 'yazım', zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu' },
     { id: 'islem' as const, ikon: '🧮', ad: 'işlem', zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
-    { id: 'edebiyat' as const, ikon: '📚', ad: 'edebiyat', zemin: 'bg-edb-kart', yazi: 'text-edb-koyu' },
+    { id: 'edebiyat' as const, ikon: '📚', ad: 'edebiyat', zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu' },
   ].filter((c) => dagilim[c.id] > 0)
 
   return (

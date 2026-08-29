@@ -45,7 +45,9 @@ const OYUN_RENGI: Record<OyunId, string> = {
   aci: 'bg-isl-kart',
   ucgen: 'bg-isl-kart',
   koklu: 'bg-isl-kart',
-  edebiyat: 'bg-edb-kart',
+  // Edebiyat Eşleştirme artık Türk Dili ve Edebiyatı dersinde; rengi de o
+  // dersin ailesinden geliyor.
+  edebiyat: 'bg-yzm-kart',
   harita: 'bg-cog-kart',
   antlasma: 'bg-trh-kart',
   kavram: 'bg-trh-kart',
@@ -264,13 +266,13 @@ export function AnaSayfa({
       {/* Araçlar ve Oyunlar aynı biçimde: başlık + "Tümü", altında tek bir
           kutunun içinde dört yüz. Araçlar bir ara başlıksız ve kutusuz
           duruyordu; iki bölüm yan yana iki ayrı tasarım gibi okunuyordu. */}
-      <Bolum baslik="Araçlar 🧰" onTumu={onDahaGit}>
+      <Bolum baslik="Araçlar 🧰" aciklama="Çalışmanı takip et" onTumu={onDahaGit}>
         {gosterilenAraclar.map(({ id, ad, ikon, renk }) => (
           <Kutucuk key={id} ad={ad} ikon={ikon} renk={KUTUCUK_RENGI[renk]} onSec={() => onKartAc(id)} />
         ))}
       </Bolum>
 
-      <Bolum baslik="Oyunlar 🎮" onTumu={onOyunlaraGit}>
+      <Bolum baslik="Oyunlar 🎮" aciklama="Eğlenerek pratik yap" onTumu={onOyunlaraGit}>
         {gosterilenOyunlar.map((oyun) => (
           <Kutucuk
             key={oyun.id}
@@ -288,21 +290,30 @@ export function AnaSayfa({
 /** Kısayol bölümü: üstte başlık + "Tümü", altında dört yüzü tutan tek kutu. */
 function Bolum({
   baslik,
+  aciklama,
   onTumu,
   children,
 }: {
   baslik: string
+  /** Başlığın altındaki tek satır: bölümün ne işe yaradığı. */
+  aciklama: string
   onTumu: () => void
   children: React.ReactNode
 }) {
   return (
     <section>
-      <div className="mb-2 flex items-center justify-between gap-3 px-1">
-        <h2 className="font-display text-base font-extrabold tracking-tight">{baslik}</h2>
+      <div className="mb-2 flex items-start justify-between gap-3 px-1">
+        <div>
+          <h2 className="font-display text-base font-extrabold tracking-tight">{baslik}</h2>
+          {/* Dört kısayol iki bölümde de emoji ve addan ibaret; "Araçlar" ile
+              "Oyunlar" arasındaki farkı ilk kez açan kullanıcıya söyleyen tek
+              satır bu. */}
+          <p className="text-xs text-muted-foreground">{aciklama}</p>
+        </div>
         <TumuBaglantisi onSec={onTumu} />
       </div>
       <Kart className="px-2.5 py-3.5">
-        <div className="grid grid-cols-4 gap-1.5">{children}</div>
+        <div className="grid grid-cols-4 gap-2">{children}</div>
       </Kart>
     </section>
   )
@@ -320,7 +331,15 @@ function TumuBaglantisi({ onSec }: { onSec: () => void }) {
   )
 }
 
-/** Pastel daire içinde emoji, altında ad. Araçlar ve Oyunlar aynı kutucuğu kullanır. */
+/**
+ * Pastel yuvarlak kare içinde emoji, altında ad. Araçlar ve Oyunlar aynı
+ * kutucuğu kullanır.
+ *
+ * Daireydi ve dört daire yan yana dizildiğinde satır bir simge şeridi gibi
+ * duruyordu; köşeleri yumuşatılmış kare, kartın ve seçim kartlarının diliyle
+ * aynı ve aynı yerde daha çok renk taşıyor — dokunulacak bir yüzey olduğu
+ * daha çabuk okunuyor.
+ */
 function Kutucuk({
   ad,
   ikon,
@@ -339,12 +358,17 @@ function Kutucuk({
       onClick={onSec}
       className="flex flex-col items-center gap-1.5 rounded-2xl px-1 py-1.5 transition active:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
-      <span className={cn('grid size-11 place-items-center rounded-full', renk)}>
-        <span className="text-[22px] leading-none" aria-hidden>
+      {/* `aspect-square` + `w-full`: kutu sütunun genişliğini alıyor, dar
+          telefonda küçülüyor. Üst sınır olmasaydı geniş ekranda dört kocaman
+          kare olurdu. */}
+      <span
+        className={cn('grid aspect-square w-full max-w-[64px] place-items-center rounded-[18px]', renk)}
+      >
+        <span className="text-[26px] leading-none" aria-hidden>
           {ikon}
         </span>
       </span>
-      <span className="text-[10.5px] leading-tight font-bold text-balance text-muted-foreground">
+      <span className="text-[11px] leading-tight font-bold text-balance text-muted-foreground">
         {ad}
       </span>
     </button>

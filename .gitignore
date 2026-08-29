@@ -44,3 +44,13 @@ eklenecekler
 eklenecekler.*
 notlar
 notlar.*
+
+# Denetim raporları ve istatistik betiği — makinede üretilip okunuyor, depoya
+# girmesi gerekmiyor. reports/ altındaki Play denetim çıktıları her koşuda
+# yeniden yazılıyor.
+reports/
+.istatistik.mts
+
+# Sürüm alma kılavuzu — makinedeki kuruluma özgü yollar ve JDK sürümleri
+# içeriyor, kişisel bir not defteri gibi tutuluyor.
+RELEASE.md
