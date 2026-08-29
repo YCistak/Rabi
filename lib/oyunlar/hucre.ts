@@ -34,6 +34,10 @@ export const ORGANELLER = HUCRE_HAVUZU.map((s) => s.organel)
  * sorusunda süre uzuyor ve sabit aralık kalsaydı üç ipucu da ilk yarıda
  * açılır, kalan yarı boş geçerdi. Normal soruda süre 9 saniye olduğu için
  * aralık yine üç saniye.
+ *
+ * Geçen süreyi besleyen saat **turun sayacı değil** (`oyun-hucre.tsx`,
+ * `useAcikIpucu`): Sıradan ve Turbo'da saat tura ait, Rahat'ta hiç yok. İkisi
+ * karıştırıldığında kart tur boyunca tek ipucunda donuyordu.
  */
 export function gorunenIpucu(gecenSaniye: number, toplamSure: number): number {
   if (toplamSure <= 0) return IPUCU_SAYISI
