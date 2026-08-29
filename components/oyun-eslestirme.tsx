@@ -18,7 +18,7 @@ import { cn } from '@/lib/utils'
 
 export type EslestirmeDurumu = 'bos' | 'secili' | 'eslesti' | 'yanlis'
 
-/** Seçili hâlin renkleri — oyunun dersinden geliyor (yzm/isl/edb/trh). */
+/** Seçili hâlin renkleri — oyunun dersinden geliyor (yzm/isl/cog/trh/byl). */
 export type EslestirmeRengi = {
   kenar: string
   zemin: string
