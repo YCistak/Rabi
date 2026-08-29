@@ -34,6 +34,16 @@
  */
 const DOSYA_SEVIYESI = 0.42
 
+/**
+ * Doğru sesi, yanlışın bir tık altında.
+ *
+ * İkisi bir süre aynı seviyedeydi ve kullanıcı doğru sesini "biraz yüksek"
+ * buldu. Sebep sayı değil sıklık: doğru sesi bir turda onlarca kez çalıyor,
+ * yanlış birkaç kez. Aynı seviyede çalan bir ses, çok tekrarlandığında daha
+ * gür duyuluyor. Yanlış aşağı çekilmedi: turu kesen, dikkat isteyen olay o.
+ */
+const DOGRU_SEVIYESI = DOSYA_SEVIYESI * 0.72
+
 /*
   Doğru sesinin perdesi **hiç değişmiyor**.
 
@@ -122,7 +132,7 @@ function tamponCal(tur: DosyaliSes): boolean {
   const kaynak = ctx.createBufferSource()
   const kazanc = ctx.createGain()
   kaynak.buffer = tampon
-  kazanc.gain.value = DOSYA_SEVIYESI
+  kazanc.gain.value = tur === 'dogru' ? DOGRU_SEVIYESI : DOSYA_SEVIYESI
   kaynak.connect(kazanc)
   kazanc.connect(ctx.destination)
   kaynak.start()
@@ -174,8 +184,8 @@ function cal(notalar: Nota[]) {
 /** Doğru cevap dosyası okunamazsa çalan yedek ton. */
 function dogruTonu() {
   cal([
-    { frekans: 880, gecikme: 0, sure: 0.09, seviye: 0.3 },
-    { frekans: 1318, gecikme: 0.075, sure: 0.13, seviye: 0.3 },
+    { frekans: 880, gecikme: 0, sure: 0.09, seviye: 0.22 },
+    { frekans: 1318, gecikme: 0.075, sure: 0.13, seviye: 0.22 },
   ])
 }
 

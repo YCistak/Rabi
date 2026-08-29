@@ -79,8 +79,14 @@ export const MUZIK_SEVIYESI = 0.5
  * ediliyor: arada sessizlik yok, kulak sesi hiç bırakmıyor. Oran ritmik
  * seviyeden türetiliyor — birini elle değiştirip ötekini unutmak iki modun
  * dengesini ayırıyordu.
+ *
+ * Oran 0.7'den 0.35'e indi: kullanıcı Rahat turda pad'i "rahatsız edici"
+ * buldu. Ritmik parçalarda ölçü "duyuluyor mu", pad'de "farkında olmadan
+ * dinlenebiliyor mu" — sürekli çalan bir ses, fark edilir olduğu anda zaten
+ * yüksek demek. Sessize inmiyor: mod müziği açıkken hiç duyulmayan bir parça,
+ * ayarın kapalı olduğunu düşündürür.
  */
-export const RAHAT_SEVIYESI = MUZIK_SEVIYESI * 0.7
+export const RAHAT_SEVIYESI = MUZIK_SEVIYESI * 0.35
 
 /**
  * Modun temposu (BPM) — gerginliğe göre.

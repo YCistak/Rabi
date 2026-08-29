@@ -336,6 +336,11 @@ ve kullanıcı "çok fazla geliyor" dedi. Efekt oyunun içinden gelen bir işare
 ortamı bastırması gerekmiyor; ama duyulmayan efekt de hiç olmamış demek, o yüzden
 sessize yaklaşmıyor — kapatmak isteyene ayarda anahtar zaten var.
 
+Doğru sesi bunun da altında (`DOGRU_SEVIYESI`, `DOSYA_SEVIYESI` × 0.72). Fark
+sayıdan değil **sıklıktan**: doğru sesi bir turda onlarca kez çalıyor, yanlış
+birkaç kez, ve çok tekrarlanan bir ses aynı seviyede daha gür duyuluyor. Yanlış
+aşağı çekilmedi — turu kesen, dikkat isteyen olay o.
+
 Hepsi `prefers-reduced-motion` altında susuyor. Yeni bir efekt eklersen o
 medya sorgusuna da ekle: buradaki hareketlerin hiçbiri bilgi taşımıyor, bilgi
 sayıda ve renkte duruyor.
@@ -419,7 +424,10 @@ sentezlenmiş dalga, ustalanmış mp3'le aynı sayıda daha kısık duyuluyor. �
 sınırı kırpılma koyuyor: nota tepeleri bu ana seviyede toplanıyor, 1'e yaklaşan
 bir değer parçayı yüksek değil bozuk çalar. Rahat modun pad'i ondan türeyen
 `RAHAT_SEVIYESI` ile altta kalıyor: vuruşsuz ve sürekli olduğu için aynı
-sayıda daha çok fark ediliyor. `mod-muzigi.test.ts` iki sınırı da denetliyor.
+sayıda daha çok fark ediliyor — oran 0.7'den 0.35'e indi, kullanıcı Rahat
+turda pad'i "rahatsız edici" buldu. Sürekli çalan bir seste ölçü "duyuluyor
+mu" değil "farkında olmadan dinlenebiliyor mu". `mod-muzigi.test.ts` iki
+sınırı da denetliyor.
 
 ## Oyun Bankası
 
