@@ -16,6 +16,18 @@ export const HATIRLATMA_MESAJLARI: { baslik: string; metin: string }[] = [
   { baslik: 'Defteri açalım mı?', metin: 'Bugün hiç soru işaretlemedin. On dakika yeter. 🐰' },
   { baslik: 'Günü boş geçirme', metin: 'Küçük bir tur at, seriyi bozma. 🌿' },
   { baslik: 'Bir soru bile sayılır', metin: 'Bugün hiç giriş yok. Başlamak en zor kısmı. 🐰' },
+  { baslik: 'Rabi kulaklarını dikti', metin: 'Bugün defterden hiç ses gelmedi. Bir soru at da duyayım. 🐰' },
+  { baslik: 'Yarınki sen izliyor', metin: 'Bugün çözdüğün soru, sınavda tanıdık gelen soru. 🌱' },
+  { baslik: 'Havuç kaçıyor!', metin: 'Peşinden koşacak bir tavşan lazım. Yirmi soru yeter. 🥕' },
+  { baslik: 'Sıralaman seni bekliyor', metin: 'Bugün girilmeyen her soru, listede geri kalan bir basamak. 📈' },
+  { baslik: 'Zor olan başlamak', metin: 'İlk soruyu çöz; gerisi kendiliğinden geliyor. 🐰' },
+  { baslik: 'On dakikan var mı?', metin: 'Rabi kronometreyi kurdu bile. Tek soruyla da olur. ⏱️' },
+  { baslik: 'Bugünü boş bırakma', metin: 'Bir günlük boşluk, bir haftalık alışkanlığı bozuyor. 🌿' },
+  { baslik: 'Rabi bir tur teklif ediyor', metin: 'Oyunlardan kısa bir tur? Hem eğlence hem tekrar. 🎮' },
+  { baslik: 'Dünkü sen bugünküne güveniyordu', metin: 'Onu haklı çıkaralım mı? 🐰' },
+  { baslik: 'Yanlışların seni bekliyor', metin: 'Bankadaki sorular kendi kendine öğrenilmiyor. 📒' },
+  { baslik: 'Küçük ama her gün', metin: 'Yirmi soru bugün az görünür; bir ayda 600 eder. 🥕' },
+  { baslik: 'Rabi patisini uzattı', metin: 'Bugünlük bir tur, sonrası rahat rahat dinlenmek. 🐾' },
 ]
 
 /**
