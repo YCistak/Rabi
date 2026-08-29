@@ -18,7 +18,7 @@ import { istatistigiTamamla } from './tur'
  * tek bir ızgaraya sığmayacak ve hangi oyunun hangi derse çalıştığı
  * kaybolacaktı. Sınıflandırma sonradan değil, şimdi kuruluyor.
  */
-export type DersId = 'turkce' | 'matematik' | 'edebiyat' | 'cografya' | 'tarih' | 'biyoloji'
+export type DersId = 'turkce' | 'matematik' | 'cografya' | 'tarih' | 'biyoloji'
 
 export type DersTanimi = {
   id: DersId
@@ -31,16 +31,24 @@ export type DersTanimi = {
    * Renk artık oyuna değil **derse** bağlı: aynı derse çalışan bütün oyunlar
    * aynı rengi paylaşıyor, böylece renk bir kimlik taşıyor. (Ailelerin adları
    * ilk oyunlardan geliyor: yzm=yazım, isl=işlem, edb=edebiyat, trh=tarih,
-   * byl=biyoloji.)
+   * byl=biyoloji.) `edb` artık hiçbir derste yok — Türkçe ile Edebiyat tek
+   * derse indi ve birleşik ders `yzm`yi taşıyor; renk ailesi listede duruyor
+   * çünkü rozetler onu kullanmaya devam ediyor.
    */
   aile: 'yzm' | 'isl' | 'edb' | 'cog' | 'trh' | 'byl'
 }
 
 export const DERSLER: DersTanimi[] = [
+  /*
+    Türkçe ile Edebiyat tek ders: ÖSYM'de de tek test var (AYT Türk Dili ve
+    Edebiyatı) ve ayrıyken kullanıcı "Edebiyat Eşleştirme"yi ararken iki
+    kategoriyi birden açıyordu. Birinde beş, ötekinde tek oyun duran iki
+    kategori, ayrı durmayı hak edecek kadar da dolu değildi.
+  */
   {
     id: 'turkce',
-    ad: 'Türkçe',
-    aciklama: 'Yazım, dil bilgisi, anlam',
+    ad: 'Türk Dili ve Edebiyatı',
+    aciklama: 'Yazım, dil bilgisi, edebiyat',
     ikon: '✍️',
     aile: 'yzm',
   },
@@ -50,13 +58,6 @@ export const DERSLER: DersTanimi[] = [
     aciklama: 'İşlem hızı, denklem',
     ikon: '🧮',
     aile: 'isl',
-  },
-  {
-    id: 'edebiyat',
-    ad: 'Edebiyat',
-    aciklama: 'Eser, yazar, dönem',
-    ikon: '📚',
-    aile: 'edb',
   },
   {
     id: 'cografya',
@@ -207,7 +208,7 @@ export const OYUNLAR: OyunTanimi[] = [
   },
   {
     id: 'edebiyat',
-    ders: 'edebiyat',
+    ders: 'turkce',
     ad: 'Edebiyat Eşleştirme',
     kisaAciklama: 'Eseri yazarıyla eşleştir',
     ikon: '📚',

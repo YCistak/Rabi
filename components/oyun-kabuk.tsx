@@ -98,12 +98,14 @@ const AILE: Record<
     kenar: 'border-l-isl-koyu',
     degisken: 'var(--isl-koyu)',
   },
+  // Edebiyat Eşleştirme, Türkçe ile birleşen dersin içinde: rengi de artık
+  // lavanta değil o dersin pembesi. Renk **derse** ait, oyuna değil.
   edebiyat: {
-    zemin: 'bg-edb',
-    yazi: 'text-edb-koyu',
-    dolgu: 'bg-edb-koyu',
-    kenar: 'border-l-edb-koyu',
-    degisken: 'var(--edb-koyu)',
+    zemin: 'bg-yzm',
+    yazi: 'text-yzm-koyu',
+    dolgu: 'bg-yzm-koyu',
+    kenar: 'border-l-yzm-koyu',
+    degisken: 'var(--yzm-koyu)',
   },
   harita: {
     zemin: 'bg-cog',

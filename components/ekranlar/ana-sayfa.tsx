@@ -45,7 +45,9 @@ const OYUN_RENGI: Record<OyunId, string> = {
   aci: 'bg-isl-kart',
   ucgen: 'bg-isl-kart',
   koklu: 'bg-isl-kart',
-  edebiyat: 'bg-edb-kart',
+  // Edebiyat Eşleştirme artık Türk Dili ve Edebiyatı dersinde; rengi de o
+  // dersin ailesinden geliyor.
+  edebiyat: 'bg-yzm-kart',
   harita: 'bg-cog-kart',
   antlasma: 'bg-trh-kart',
   kavram: 'bg-trh-kart',
