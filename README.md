@@ -1,7 +1,48 @@
-# Rabi
+<div align="center">
 
-Lise öğrencileri için YKS çalışma asistanı. Tamamen çevrimdışı çalışır; veri
-telefondan çıkmaz (localStorage + fotoğraflar için IndexedDB), sunucu ve hesap yoktur.
+# 🐰 Rabi
+
+**Lise öğrencileri için YKS çalışma asistanı.**
+Tamamen çevrimdışı — veri telefondan çıkmaz, sunucu yok, hesap yok.
+
+<sub><i>An offline-first study assistant for Turkish university-entrance exam (YKS)
+candidates. No account, no server — your data never leaves the phone.</i></sub>
+
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)
+![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)
+![Capacitor](https://img.shields.io/badge/Capacitor-8-119eff?logo=capacitor&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+</div>
+
+---
+
+<div align="center">
+
+| Ana sayfa | Sıralama tahmini | İstatistik | Pomodoro | Oyunlar |
+|:---:|:---:|:---:|:---:|:---:|
+| <img src="docs/ekran/ana.png" width="170"> | <img src="docs/ekran/siralama.png" width="170"> | <img src="docs/ekran/istatistik.png" width="170"> | <img src="docs/ekran/pomodoro.png" width="170"> | <img src="docs/ekran/oyunlar.png" width="170"> |
+
+<sub>Ekran görüntülerindeki veriler örnektir.</sub>
+
+</div>
+
+---
+
+## Ne yapıyor
+
+- **Deneme takibi** — TYT / AYT / YDT ve okul denemeleri, ders bazlı net dökümü, gidişat grafiği.
+- **Sıralama tahmini** — netlerden yaklaşık YKS puanı ve sıralama; uydurma katsayılarla değil,
+  ÖSYM'nin kendi yöntemi ve kendi yayınladığı istatistiklerle ([nasıl](#sıralama-tahmini-nasıl-çalışıyor)).
+- **OBP** — dört yılın diploma notundan okul başarı puanı, yerleştirme puanına dahil.
+- **Pomodoro** — sayaç, ders seçimi, lo-fi müzik, odak kilidi.
+- **Soru takibi ve yanlış bankası** — günlük çözülen soru, zorlanılan soruların fotoğrafı.
+- **Mini oyunlar** — bir dakikalık turlarla bilgi tazeleme; karıştırılan sorular Oyun Bankası'na düşer.
+- **Haftalık özet** — kart kart izlenen, paylaşılabilir görsel.
+
+Veri `localStorage`'da, fotoğraflar `IndexedDB`'de tutulur. Ağ isteği yalnızca isteğe bağlı
+hata bildirimi ve sözlük doğrulama betiği için yapılır.
 
 **Yığın:** Next.js 16 (statik export) · React 19 · TypeScript · Tailwind v4 · Capacitor 8
 
@@ -567,3 +608,7 @@ sonra sayfa yenilendiği için, sonraya bırakılsaydı yarısı yazılmadan yen
 Bilinen sınır: Android, kamera ekranı açıkken belleği daraltıp uygulamayı öldürürse çekilen
 fotoğraf kaybolur (Capacitor'ın `appRestoredResult` akışı kurulmadı). Kullanıcı açısından
 sonucu, fotoğrafın tekrar çekilmesi.
+
+## Lisans
+
+[MIT](LICENSE). `public/ses/` altındaki lo-fi parçalar CC0 — ayrıntı `public/ses/LISANS.md`.
