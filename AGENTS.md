@@ -237,6 +237,47 @@ yedeğe girmeye devam ediyor — kayıt silinmedi, yalnızca düzenleme kapısı
 `ayarlar.varsayilanSablonId` de kayıtta duruyor; yeni deneme onu okumaya devam
 ediyor, artık ayarlardan değiştirilmiyor.
 
+### Uygulama ikonu üretiliyor, elle çizilmiyor
+
+İkonun tek kaynağı `scripts/ikon-uret.mjs`; `public/icon-*.png` ile
+`android/.../mipmap-*` altındaki bütün PNG'ler oradan çıkıyor. Üretilen dosyalar
+depoya giriyor (Capacitor `cap sync` sırasında silmiyor) ama **elle
+düzenlenmemeli** — ikon değişecekse betikteki sayılar düzeltilip betik yeniden
+çalıştırılmalı.
+
+**Maskot artık çizilmiyor, uygulamanınki kullanılıyor.** Eski betik
+(`ikon-uret.sh` + `assets/icon-*.svg`) tavşanı elle yazılmış elipslerden
+kuruyordu ve uygulamanın kendi tavşanına benzemiyordu: ikondaki yüz ile açılış
+ekranındaki yüz iki ayrı tavşandı. Üstelik ikisi ayrı ayrı güncelleniyordu —
+uygulama amber temaya geçtiğinde `public/icon.svg` düzeltildi, Android ikonları
+mor (#6D3FE0) kaldı ve kimse fark etmedi. Artık hepsi `public/tavsan-yuz.png`
+kullanıyor.
+
+Bedeli: kaynak saf vektör değil, o yüzden `rsvg-convert` + ImageMagick yerine
+`sharp` ile üretiliyor. `sharp` bu yüzden `devDependencies`e yazıldı; Next'in
+bağımlılığı olarak zaten kuruluydu ama betiğin ona dolaylı yoldan güvenmesi,
+Next bir gün bırakınca sessizce bozulmak demekti.
+
+Ölçüler (degrade, üst soldaki açık daire, köşe eğrisi, maskotun yeri) tasarımın
+verdiği 179 piksellik ikondan ölçüldü ve hepsi kenar uzunluğuna **oran** olarak
+yazılı: aynı geometri 48 pikselden 512 piksele kadar her yoğunlukta ve ayrıca
+Android'in 108 birimlik uyarlanabilir tuvalinde yeniden kuruluyor. Köşe daire
+değil "squircle"; eğri ölçülen ikona oturtuldu.
+
+**`public/icon.svg` silindi.** Maskot bir PNG olduğu için SVG sürümü de onu
+base64 gömmek zorundaydı: 107 KB'lık, içi tek bir rasterden ibaret bir "vektör".
+PNG'lerin üstüne hiçbir şey katmıyordu.
+
+**Maskelenebilir ikon ayrı dosya** (`icon-maskelenebilir-512.png`): köşeleri
+yuvarlatılmamış, zemin kenara kadar sürüyor ve ikon karesi ortadaki %80'e
+oturuyor. Yuvarlatılmış olan verilseydi işletim sistemi kendi maskesini
+uygularken köşelerde saydam boşluk kalırdı.
+
+**Uyarlanabilir ikonun zemini artık düz renk değil** bir PNG
+(`mipmap-*/ic_launcher_background.png`), çünkü yeni ikonun zemini degrade.
+`values/ic_launcher_background.xml` bu yüzden silindi.
+
+
 ## Haftalık özet kapalı
 
 Ekran (`components/ekranlar/haftalik-ozet.tsx`), hesabı (`lib/ozet.ts`) ve
