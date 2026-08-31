@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { ArrowRight, Check, Eye, Layers, ShieldCheck } from 'lucide-react'
+import { ArrowRight, BellOff, Check, Eye, Layers, ShieldCheck } from 'lucide-react'
 import type { PomodoroAyar } from '@/lib/types'
 import {
   odakDurumu,
@@ -33,6 +33,7 @@ export function OdakKurulum({
   const [durum, setDurum] = useState<OdakDurumu>({
     kullanimVerisi: false,
     katman: false,
+    bildirim: false,
     calisiyor: false,
   })
   const [secili, setSecili] = useState<string[]>(ayar.kilitliUygulamalar)
@@ -106,8 +107,9 @@ export function OdakKurulum({
             <div className="space-y-2 text-[15px]">
               <p className="font-medium">Ne yapıyorum</p>
               <p className="text-sm text-muted-foreground">
-                Yalnızca hangi uygulamanın ekranda olduğuna bakıyorum ve seçtiklerinin
-                üstüne kendi ekranımı koyuyorum.
+                Yalnızca hangi uygulamanın ekranda olduğuna bakıyorum, seçtiklerinin
+                üstüne kendi ekranımı koyuyorum ve tur boyunca onların bildirimlerini
+                siliyorum.
               </p>
               <p className="font-medium">Ne yapmıyorum</p>
               <p className="text-sm text-muted-foreground">
@@ -130,6 +132,24 @@ export function OdakKurulum({
               verildi={durum.katman}
               onAc={() => izinAc('katman')}
             />
+            {/* Üçüncüsü isteğe bağlı ve öyle de yazıyor: verilmezse kilit
+                çalışmaya devam ediyor, yalnızca bildirimler susmuyor. */}
+            <IzinSatiri
+              Simge={BellOff}
+              ad="Bildirim erişimi (isteğe bağlı)"
+              aciklama="Seçtiklerinin bildirimlerini tur boyunca silmek için"
+              verildi={durum.bildirim}
+              onAc={() => izinAc('bildirim')}
+            />
+
+            {/* Sistemin uyarısı burada, izin ekranına düşmeden önce
+                açıklanıyor: hazırlıksız yakalanan kullanıcı onu virüs uyarısı
+                sanıp geri dönüyor ve özellik orada bitiyordu. */}
+            <Not>
+              Android bu izinler için &ldquo;bu uygulama ekrandaki her şeyi
+              görebilir&rdquo; gibi sert bir uyarı gösteriyor; bu uyarı izni isteyen
+              her uygulamaya çıkıyor. Rabi virüs değil, reklam da göstermiyor.
+            </Not>
 
             {!durum.kullanimVerisi || !durum.katman ? (
               <Not tur="uyari">
@@ -139,7 +159,8 @@ export function OdakKurulum({
             ) : (
               <Not>
                 <span className="inline-flex items-center gap-1.5">
-                  <ShieldCheck size={14} aria-hidden /> İki izin de hazır.
+                  <ShieldCheck size={14} aria-hidden />{' '}
+                  {durum.bildirim ? 'Üç izin de hazır.' : 'Kilit için gereken iki izin hazır.'}
                 </span>
               </Not>
             )}
@@ -214,10 +235,12 @@ function IzinSatiri({
   )
 }
 
+// İkinci başlık "üç izin" demiyor: üçüncüsü isteğe bağlı ve zorunlu sayısını
+// büyütmek, hazır vazgeçmeye meyilli kullanıcıyı orada kaybettirirdi.
 const BASLIKLAR = ['Odak kilidi', 'İki izin gerekiyor', 'Hangi uygulamalar?']
 
 const ACIKLAMALAR = [
   'Pomodoro çalışırken telefon seni bölmesin.',
-  'İkisi de telefonunda kalır, hiçbir veri dışarı çıkmaz.',
+  'Hepsi telefonunda kalır, hiçbir veri dışarı çıkmaz.',
   'Sayaç çalışırken bunları açmaya kalkarsan karşına çıkarım.',
 ]

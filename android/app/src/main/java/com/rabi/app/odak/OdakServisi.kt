@@ -88,6 +88,9 @@ class OdakServisi : Service() {
 
         onPlanaGec()
         calisiyor = true
+        // Bildirim susturma isteğe bağlı: izin yoksa dinleyici hiç bağlanmıyor
+        // ve buradaki çağrı sessizce boşa düşüyor, kilit çalışmaya devam ediyor.
+        BildirimSusturucu.baslat(yasakli)
 
         elciler.removeCallbacks(dongu)
         elciler.post(dongu)
@@ -116,6 +119,9 @@ class OdakServisi : Service() {
 
     override fun onDestroy() {
         calisiyor = false
+        // Tur bitti: bildirimler yeniden normal düşsün. Molada susmaya devam
+        // eden bir telefon, molayı mola olmaktan çıkarırdı.
+        BildirimSusturucu.durdur()
         elciler.removeCallbacks(dongu)
         katman?.gizle()
         katman = null

@@ -202,9 +202,9 @@ export function OyunlarEkrani({
     Mod müziği: parçayı tur modu seçiyor (`lib/oyunlar/mod-muzigi.ts`).
 
     Seviye dengesi orada tek yerde duruyor (`MUZIK_SEVIYESI`): müzik, efektlerin
-    (`oyun-sesi.ts`) altında kalmalı, yoksa oyunun tek sesli geri bildirimi olan
-    doğru/yanlış duyulmaz. Efekt seviyesine dokunursan oraya da bak — ikisi tek
-    bir dengenin iki ucu.
+    (`oyun-sesi.ts`) hizasında duyulmalı ama onları bastırmamalı — oyunun tek
+    sesli geri bildirimi doğru/yanlış efektleri. Efekt seviyesine dokunursan
+    oraya da bak; ikisi tek bir dengenin iki ucu.
 
     Banka turu modu dinlemiyor (`etkinMod`); müzik de onu izliyor, yoksa
     süresiz bir turda süre daraltan bir parça çalardı.

@@ -956,31 +956,36 @@
 }
 
 /*
-  Tanışma ekranındaki süsler hafifçe süzülüyor.
+  Tanışma ekranındaki hat, adın altına çizilerek beliriyor.
 
-  Ekran bir şey sormuyor, karşılıyor; duran sekiz emoji ekranı yapıştırılmış
-  gibi gösteriyordu. Hareket küçük tutuldu (birkaç piksel, yavaş): süsler bilgi
-  taşımıyor, dikkati ortadaki addan çalmamalılar. Süre ve gecikme her süse ayrı
-  veriliyor (`--sus-sure`, `--sus-gecikme`), yoksa sekizi tek ağızdan
-  soluk alıp veren bir topluluk gibi duruyordu.
+  Ekranda bir süre sekiz emoji süzülüyordu (`sus-suzuluyor`); kullanıcı hepsini
+  kaldırttı ve yerine tek bir süs kondu. Hareket de bu yüzden **bitiyor**:
+  sürekli oynayan bir süs göz ucunda kalıcı bir kıpırtı bırakıyor, bir kez
+  çizilen hat ise cümleyi gösterip susuyor.
 
-  Konum `left`/`top` ile veriliyor ve ortalama `translate(-50%, -50%)` de
-  dönüşümde duruyor; animasyon o yüzden ortalamayı kendi içinde tekrarlıyor —
-  ayrı bir `transform` yazmak ortalamayı silerdi.
+  Çizim `stroke-dasharray` ile yapılıyor: hattın uzunluğu kadar bir kesik
+  desen verilip kaydırma sıfıra çekiliyor, yani hat baştan sona **çiziliyor**.
+  Desen yolun gerçek uzunluğundan (`~128px`) uzun tutuldu; kısa kalsaydı hat
+  tek parça yerine tekrar eden kesikler hâlinde görünürdü.
+
+  Gecikme kasıtlı: ad ekrana geldikten sonra çizilmeye başlıyor, altını çizdiği
+  şeyden önce belirirse neyi işaret ettiği anlaşılmıyor.
 */
-@keyframes susSuzul {
-  0% { transform: translate(-50%, -50%) rotate(-4deg); }
-  50% { transform: translate(-50%, calc(-50% - 7px)) rotate(4deg); }
-  100% { transform: translate(-50%, -50%) rotate(-4deg); }
+@keyframes tanismaHat {
+  from { stroke-dashoffset: 150; }
+  to { stroke-dashoffset: 0; }
 }
 
-.sus-suzuluyor {
-  animation: susSuzul var(--sus-sure, 4200ms) ease-in-out var(--sus-gecikme, 0ms) infinite;
+.tanisma-hat path {
+  stroke-dasharray: 150;
+  animation: tanismaHat 900ms cubic-bezier(0.35, 0, 0.2, 1) 260ms both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sus-suzuluyor {
+  /* Hat kalıyor, çizilmesi kalkıyor: süs görünsün ama hareket etmesin. */
+  .tanisma-hat path {
     animation: none;
+    stroke-dashoffset: 0;
   }
 }
 

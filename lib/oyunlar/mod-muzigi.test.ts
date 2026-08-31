@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { MUZIK_SEVIYESI, tempo } from './mod-muzigi'
+import { MUZIK_SEVIYESI, RAHAT_SEVIYESI, tempo } from './mod-muzigi'
 import { MOD_SIRASI } from './mod'
 
 describe('tempo', () => {
@@ -46,11 +46,18 @@ describe('tempo', () => {
 })
 
 describe('ses dengesi', () => {
-  it('müzik efektlerin altında kalıyor', () => {
-    // Efekt dosyaları 0.42'de çalıyor (`oyun-sesi.ts`). Müzik onun üstüne
-    // çıkarsa oyunun tek sesli geri bildirimi olan doğru/yanlış duyulmaz.
-    expect(MUZIK_SEVIYESI).toBeLessThan(0.42)
-    // Duyulmayan müzik de hiç olmamış demek.
-    expect(MUZIK_SEVIYESI).toBeGreaterThan(0.03)
+  it('müzik efektlerin hizasında ama kırpılmıyor', () => {
+    // Sentezlenmiş parça, kaydedilmiş efektle (0.42, `oyun-sesi.ts`) aynı
+    // sayıda daha kısık duyuluyor; hizaya gelmek için sayıca üstünde duruyor.
+    expect(MUZIK_SEVIYESI).toBeGreaterThan(0.42)
+    // Nota tepeleri bu seviyede toplanıyor: 1'e yaklaşan bir ana seviye
+    // parçayı yüksek değil kırpılmış çalar.
+    expect(MUZIK_SEVIYESI).toBeLessThan(0.7)
+  })
+
+  it('Rahat modun padi ritmik parçaların altında', () => {
+    // Vuruşsuz ve sürekli: aynı seviyede ötekilerden daha çok fark ediliyor.
+    expect(RAHAT_SEVIYESI).toBeLessThan(MUZIK_SEVIYESI)
+    expect(RAHAT_SEVIYESI).toBeGreaterThan(0.03)
   })
 })

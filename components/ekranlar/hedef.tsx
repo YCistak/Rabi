@@ -33,11 +33,22 @@ export function HedefEkrani({
   varsayilanTur,
   /** Sıralama ekranından gelen güncel tahmin; yoksa karşılaştırma gösterilmez. */
   guncelSiralama,
+  /**
+   * Kaydettikten sonra ekranı kapatır.
+   *
+   * Kaydedince ekranda kalmak, kaydın işlenip işlenmediğini belirsiz
+   * bırakıyordu: aynı form aynı değerlerle duruyor ve tek fark bir yerdeki
+   * özet. Hedef ana sayfada zaten görünüyor — kullanıcıyı oraya bırakmak
+   * kaydın karşılığını gösteriyor. Silme burada değil: silen kullanıcı yeni
+   * bir hedef girmek için ekranda kalıyor.
+   */
+  onKaydedildi,
 }: {
   hedef: Hedef | null
   setHedef: (hedef: Hedef | null) => void
   varsayilanTur: PuanTuru
   guncelSiralama: number | null
+  onKaydedildi: () => void
 }) {
   const [universite, setUniversite] = useState(hedef?.universite ?? '')
   const [bolum, setBolum] = useState(hedef?.bolum ?? '')
@@ -110,6 +121,7 @@ export function HedefEkrani({
       tabanPuan: sayiVeyaNull(tabanPuan),
       basariSirasi: sayiVeyaNull(basariSirasi),
     })
+    onKaydedildi()
   }
 
   const fark =

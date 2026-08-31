@@ -175,19 +175,21 @@ yazmayı unutmuş gibi duruyordu.
 Son adımın düğmesi bu yüzden "Başlayalım" değil **"Hazırım"**: aynı akışta iki
 kez "Başlayalım" yazan düğme, kullanıcıya başa döndüğünü düşündürüyordu.
 
-**Tanışma ekranının süsleri.** Sekiz emoji (`SUSLER`) zemine serpiliyor ve
-konumları **oran**, piksel değil: sabit piksellerde küçük ekranda maskota
-biniyor, büyükte kenara yapışıyorlardı. Hepsi `aria-hidden` — taşıdıkları bilgi
-yok, ekran okuyucuya sekiz emoji okutmak gürültü olurdu.
+**Tanışma ekranının tek süsü bir hat.** Ekran bir süre sekiz emojiyi (🐾 ✨ 🥕
+…) zemine serpiyordu; hepsi kaldırıldı. Sebep hareket değil kalabalık: ekranda
+tek bir cümle var — adın geri söylendiği cümle — ve etrafına serpilen simgeler
+o cümleyi taşımıyor, ondan dikkat çalıyordu.
 
-Süsler hafifçe süzülüyor (`sus-suzuluyor`, `globals.css`): birkaç piksel yukarı
-aşağı, hafif bir dönüşle. Hareket bilerek küçük — süsler bilgi taşımıyor,
-dikkati ortadaki addan çalmamalılar. Süre ve gecikme her süse **ayrı** veriliyor
-(`--sus-sure`, `--sus-gecikme`); ortak bir ritimde sekizi tek ağızdan soluk alıp
-veren bir topluluk gibi duruyordu. Animasyon dönüşümün içinde ortalamayı
-(`translate(-50%, -50%)`) tekrarlamak zorunda: konum `left`/`top` ile verildiği
-için ayrı bir `transform` ortalamayı silerdi. `prefers-reduced-motion` altında
-susuyor.
+Yerine adın altına çekilen tek bir kalem hattı kondu (`tanisma-hat`,
+`globals.css`). Çizilerek beliriyor ve **bitiyor**: sürekli oynayan bir süs göz
+ucunda kalıcı bir kıpırtı bırakır, bir kez çizilen hat cümleyi gösterip susar.
+Çizim `stroke-dasharray` ile — kesik deseni yolun gerçek uzunluğundan uzun
+tutuldu, kısa kalsaydı hat tek parça yerine tekrarlayan kesikler olurdu.
+Gecikmesi de kasıtlı: altını çizdiği yazıdan önce belirirse neyi işaret ettiği
+anlaşılmıyor. `prefers-reduced-motion` altında hat duruyor, çizilmesi susuyor.
+
+Yeni bir süs eklemeden önce soru şu: eklenen şey adı öne mi çıkarıyor, yoksa
+onunla mı yarışıyor?
 
 **Zemin ayrı değil.** Ekran bir süre degrade bir zemin, altın halkalı bir
 madalyon ve "Aramıza hoş geldin" rozeti taşıyordu; üçü de kaldırıldı ve
@@ -276,13 +278,12 @@ soruyu geç: kullanıcı ödülü, veriyi uydurarak alabiliyor mu?
 
 ## Tur içi efektler
 
-Beş efekt var ve hepsi **ortak koddan** çıkıyor: ses `lib/oyunlar/oyun-sesi.ts`,
+Dört efekt var ve hepsi **ortak koddan** çıkıyor: ses `lib/oyunlar/oyun-sesi.ts`,
 görsel olanlar `components/oyun-kabuk.tsx` ile `app/globals.css`. Oyun
 dosyalarına hiç dokunmuyorlar.
 
 | Efekt | Ne zaman | Nerede |
 | --- | --- | --- |
-| Perde yükselmesi | her ardışık doğru, sekiz çeyrek tona kadar | `oyun-sesi.ts` |
 | Sarsıntı | yanlış cevap | kabuk + `oyun-sarsinti` |
 | Süre nabzı + tek uyarı | kalan süre toplamın ¼'ünün altına inince | kabuk + `sure-nabzi` |
 | Boss parlaması | boss sorusu bilinerek kapanınca | kabuk + `boss-parlama` |
@@ -300,19 +301,24 @@ ekrandayken artıyor, boss kapandığı çizimde artmış olmuyor. O yüzden bir
 (`bossVuruldu`) iki anı birbirine bağlıyor; "kapanırken sayı arttı mı" diye
 bakan bir kural hiç çalışmaz.
 
-Perde sayacı da oyunlarda değil modülün içinde: seriyi 18 dosyadan parametre
-olarak geçirmek yerine `oyun-sesi.ts` ardışık `dogru` çağrılarını kendi sayıyor,
-yanlış ve tur bitişi sıfırlıyor. Tavan (`EN_COK_KADEME`) şart — sınırsız yükselen
-bir ses ödül olmaktan çıkıp rahatsız ediyor.
-
-Kademe **çeyrek ton** (`KADEME`), yarım ton değil. Yarım tonken kulakta bir tam
-ton gibi duyuluyordu: art arda gelen doğrularda basamaklar tek tek değil topluca
-işitiliyor ve üçüncü doğruda ses başkalaşıyordu.
+**Doğru sesinin perdesi sabit.** Bir süre ardışık doğrularda kademe kademe
+yükseliyordu: önce yarım ton, sonra "çok belirgin" diye çeyrek tona indirildi,
+sonunda tümüyle kaldırıldı. İkisi de kulakta iyi durmadı ve sebebi kademenin
+büyüklüğü değil yöntemin kendisi: perde `playbackRate` ile değişiyor, yani ses
+hem tizleşiyor hem kısalıyor ve kaydedilmiş efekt kendi kimliğinden uzaklaşıyor
+— kullanıcı bunu "ses bozuluyor" diye duyuyor. Seriyi ödüllendiren şey zaten
+ekranda duruyor; efektin işi yalnızca "doğru" demek. Geri getirmek istersen
+perdeyi oynatma, ayrı bir ses ekle.
 
 Efekt seviyesiyle oyun müziğinin seviyesi (`mod-muzigi.ts`, `MUZIK_SEVIYESI`)
-tek bir dengenin iki ucu: efekt 1'den 0.42'ye inince müzik altta kaldı ve o kadar
-geri verildi. Birine dokunursan ötekine de bak; sıralamayı
-`mod-muzigi.test.ts` denetliyor.
+tek bir dengenin iki ucu ve ikisi de telefonda dinlenerek ayarlandı: efekt
+1'den 0.42'ye indi (çok gürdü), müzik iki kez yükseldi — 0.09, sonra 0.26,
+şimdi 0.5. **Sayıların eşit olması gürlüğün eşit olması demek değil**: efektler
+ustalanmış mp3, dalgaları baştan sona tepeye yakın; parçalar sıfırdan
+sentezlenmiş ince dalgalar ve aralarında sessizlik var. Bu yüzden müzik sayıca
+efektin üstünde durup kulakta onun hizasına geliyor — 0.26'da kullanıcı
+"telefonun sesini sonuna kadar açmadıkça duyulmuyor" dedi. Birine dokunursan
+ötekine de bak; sıralamayı `mod-muzigi.test.ts` denetliyor.
 
 Boss parlaması ilk denemede yerinde duran bir altın radyaldi ve iyi durmadı:
 boss zemini açık bir renk ve onun üstünde sabit bir sarı daire ışık gibi değil
@@ -329,6 +335,11 @@ Efekt dosyalarının seviyesi 1 değil (`DOSYA_SEVIYESI`): tam seviyede çalıyo
 ve kullanıcı "çok fazla geliyor" dedi. Efekt oyunun içinden gelen bir işaret,
 ortamı bastırması gerekmiyor; ama duyulmayan efekt de hiç olmamış demek, o yüzden
 sessize yaklaşmıyor — kapatmak isteyene ayarda anahtar zaten var.
+
+Doğru sesi bunun da altında (`DOGRU_SEVIYESI`, `DOSYA_SEVIYESI` × 0.72). Fark
+sayıdan değil **sıklıktan**: doğru sesi bir turda onlarca kez çalıyor, yanlış
+birkaç kez, ve çok tekrarlanan bir ses aynı seviyede daha gür duyuluyor. Yanlış
+aşağı çekilmedi — turu kesen, dikkat isteyen olay o.
 
 Hepsi `prefers-reduced-motion` altında susuyor. Yeni bir efekt eklersen o
 medya sorgusuna da ekle: buradaki hareketlerin hiçbiri bilgi taşımıyor, bilgi
@@ -349,6 +360,21 @@ her oyuna ayrı ayrı eklemek demekti.
 
 CSS süreleri (`geri-sayim-rakam`, `geri-sayim-basla`) bileşendeki `ADIM` ve
 `BASLANGIC` ile eşleşmeli; animasyon adımdan uzun olursa rakamlar üst üste biner.
+
+Katman **donuk beyaz**, rakamlar markanın dolgu tonunda
+(`--primary-parlak`). Önce yarı saydam bir karartmaydı ve altındaki soru okunur
+kalıyordu: göz sayımdan çok ona kaçıyordu. Sayım turun başladığı an, oyunun
+üstüne düşen bir uyarı değil.
+
+Üç rakamın tonu **aynı** (`RAKAM_TONU`); perde yalnızca sonda, "Başla!"
+akorunda tırmanıyor. Rakamlarda da yükseliyordu ve kullanıcı "kötü duyuluyor"
+dedi — sayımın işi metronom gibi, aynı tonun eşit aralıkla vurması sayının
+indiğini zaten anlatıyor. Sayım sesi efekt dosyalarından belirgin biçimde
+yüksek (`SAYIM_SEVIYESI` 0.8): oyunun ilk sesi, öncesinde duyulmuş bir şey yok
+ve tek bir triangle tonu kaydedilmiş efektin gövdesini taşımıyor; 0.5'te
+kullanıcı telefonda hâlâ duymadı. "Başla!" akorunun üç notası ise bunun altında
+(`AKOR_SEVIYESI`) çünkü kuyrukları üst üste biniyor — üçü de sayım seviyesinde
+çalsaydı çıkış 1'i aşar, akor yüksek değil **kırpılmış** duyulurdu.
 
 ## Yarıda bırakılan tur da bir tur
 
@@ -392,10 +418,16 @@ besleyen yer kabuk; ikisinin aynı nesneye ulaşması gerekiyordu.
 Ayarlardaki seçim "Mod müziği" ya da "Lo-fi" (`OyunMuzikTuru`). Eski kurulumlarda
 kayıtlı `'sakin'` değeri `ayarlariNormalize` içinde `'mod'`a çevriliyor.
 
-Ses dengesi tek bir yerde: `MUZIK_SEVIYESI` (0.09) efekt dosyalarının seviyesinin
-(`DOSYA_SEVIYESI`, 0.42) belirgin biçimde altında. Müzik efekti bastırırsa oyunun
-tek sesli geri bildirimi kaybolur; duyulmayan müzik de hiç yok demektir. Birine
-dokunursan ötekine de bak — `mod-muzigi.test.ts` sıralamayı denetliyor.
+Ses dengesi tek bir yerde: `MUZIK_SEVIYESI` (0.5) efekt dosyalarının
+seviyesinin (`DOSYA_SEVIYESI`, 0.42) sayıca üstünde ama kulakta hizasında —
+sentezlenmiş dalga, ustalanmış mp3'le aynı sayıda daha kısık duyuluyor. Üst
+sınırı kırpılma koyuyor: nota tepeleri bu ana seviyede toplanıyor, 1'e yaklaşan
+bir değer parçayı yüksek değil bozuk çalar. Rahat modun pad'i ondan türeyen
+`RAHAT_SEVIYESI` ile altta kalıyor: vuruşsuz ve sürekli olduğu için aynı
+sayıda daha çok fark ediliyor — oran 0.7'den 0.35'e indi, kullanıcı Rahat
+turda pad'i "rahatsız edici" buldu. Sürekli çalan bir seste ölçü "duyuluyor
+mu" değil "farkında olmadan dinlenebiliyor mu". `mod-muzigi.test.ts` iki
+sınırı da denetliyor.
 
 ## Oyun Bankası
 

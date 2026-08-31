@@ -303,19 +303,23 @@ export function HucreOyunuEkrani({
     onCik()
   }
 
+  /** Soru gerçekten oynanıyor mu — tur sayacı da ipucu saati de buna bakıyor. */
+  const soruAktif =
+    asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined
+
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
     yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
     onTurBitti: turSuresiDoldu,
-    aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
+    aktif: soruAktif,
     sure,
     anahtar: sira,
     onBitti: () => sureDoldu(),
   })
 
-  /** Şu an açık olan ipucu sayısı — cevap verilince donuyor (sayaç duruyor). */
-  const acikIpucu = gorunenIpucu(toplam - kalan, toplam)
+  /** Şu an açık olan ipucu sayısı — cevap verilince donuyor (saat duruyor). */
+  const acikIpucu = useAcikIpucu(sure, soruAktif, `${turNo}-${sira}`)
 
   const cevapla = (sik: HucreSikki) => {
     // Geri bildirim gösterilirken ikinci dokunuş yok sayılıyor; yoksa aynı
@@ -477,6 +481,61 @@ export function HucreOyunuEkrani({
       />
     </>
   )
+}
+
+/**
+ * Kartın **kendi** saati: açık ipucu sayısı.
+ *
+ * İpucu sırası bir süre tur sayacından okunuyordu (`toplam - kalan`) ve oyun
+ * varsayılan modda bozuktu. Sebep: o saat çoğu modda soruya ait değil.
+ *
+ * - Sıradan/Turbo'da saat **tura** ait (60/30 sn) ve sorudan soruya
+ *   sıfırlanmıyor. `toplam - kalan` turun başından beri geçen süre olduğu için
+ *   ilk sorular baştan sona tek ipucuyla kalıyor, turun sonundakiler üç ipucu
+ *   birden açık başlıyordu.
+ * - Rahat'ta sayaç hiç yok (`toplam` 0) ve `gorunenIpucu` bu durumda üç
+ *   ipucunu birden veriyordu.
+ * - Yalnızca Ani Ölüm'de saat soruya aitti; oyun yalnızca orada doğru
+ *   çalışıyordu.
+ *
+ * Bu saat sorunun kendi süresini (`soruSuresi`) ölçüyor ve her soruda
+ * sıfırlanıyor; turu bitiren saat hâlâ modun sayacı. İkisi ayrı çünkü ipucu
+ * ritmi oyunun kuralı, tur süresi ise modun tercihi — Rahat modda tur saati
+ * hiç yokken de kart ipuçlarını açmaya devam etmeli.
+ *
+ * `aktif` false iken duruyor ve biriken süre korunuyor: cevap geri bildirimi
+ * ya da yardım penceresi açıkken geçen saniyeler oyuncudan götürülmemeli.
+ * Zaman damgasıyla çalışıyor, saniye saymıyor — WebView arka planda
+ * `setInterval`'ı kısıyor ve sayarak ilerleyen bir saat orada donardı.
+ */
+function useAcikIpucu(sure: number, aktif: boolean, anahtar: string): number {
+  const [acik, setAcik] = useState(1)
+  const gecenRef = useRef(0)
+  const baslangicRef = useRef(0)
+
+  // Yeni soru: kart baştan, tek ipucuyla açılıyor.
+  useEffect(() => {
+    gecenRef.current = 0
+    setAcik(1)
+  }, [anahtar, sure])
+
+  useEffect(() => {
+    if (!aktif || sure <= 0) return
+
+    baslangicRef.current = Date.now() - gecenRef.current * 1000
+    const oku = () => {
+      gecenRef.current = (Date.now() - baslangicRef.current) / 1000
+      const yeni = gorunenIpucu(gecenRef.current, sure)
+      // Yalnızca değişince yazılıyor: saat saniyede dört kez okunuyor, her
+      // okumada state'e yazmak kartı boşuna yeniden çizerdi.
+      setAcik((onceki) => (onceki === yeni ? onceki : yeni))
+    }
+    oku()
+    const isaret = setInterval(oku, 250)
+    return () => clearInterval(isaret)
+  }, [aktif, anahtar, sure])
+
+  return acik
 }
 
 /**

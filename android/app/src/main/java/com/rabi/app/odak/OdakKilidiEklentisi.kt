@@ -23,6 +23,7 @@ class OdakKilidiEklentisi : Plugin() {
         val sonuc = JSObject()
         sonuc.put("kullanimVerisi", Izinler.kullanimVerisiVar(context))
         sonuc.put("katman", Izinler.katmanVar(context))
+        sonuc.put("bildirim", Izinler.bildirimErisimiVar(context))
         sonuc.put("calisiyor", OdakServisi.calisiyor)
         cagri.resolve(sonuc)
     }
@@ -37,6 +38,7 @@ class OdakKilidiEklentisi : Plugin() {
         val acildi = when (hangi) {
             "kullanimVerisi" -> Izinler.kullanimVerisiEkraniniAc(context)
             "katman" -> Izinler.katmanEkraniniAc(context)
+            "bildirim" -> Izinler.bildirimErisimiEkraniniAc(context)
             else -> false
         }
         cagri.resolve(JSObject().put("acildi", acildi))

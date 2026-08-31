@@ -35,35 +35,25 @@
 const DOSYA_SEVIYESI = 0.42
 
 /**
- * Ardışık doğru sayısı — sesin perdesi buna göre yükseliyor.
+ * Doğru sesi, yanlışın bir tık altında.
  *
- * Sayaç burada, çağıran tarafta değil: 18 oyunun her biri seriyi zaten
- * biliyor ama hepsine parametre geçirmek 18 dosyaya dokunmak demekti. Modül
- * kendi saydığında kural tek yerde duruyor ve oyunların haberi bile olmuyor.
- *
- * Yanlış cevap ve tur bitişi sıfırlıyor; ikisi de zaten buradan geçiyor.
+ * İkisi bir süre aynı seviyedeydi ve kullanıcı doğru sesini "biraz yüksek"
+ * buldu. Sebep sayı değil sıklık: doğru sesi bir turda onlarca kez çalıyor,
+ * yanlış birkaç kez. Aynı seviyede çalan bir ses, çok tekrarlandığında daha
+ * gür duyuluyor. Yanlış aşağı çekilmedi: turu kesen, dikkat isteyen olay o.
  */
-let seri = 0
+const DOGRU_SEVIYESI = DOSYA_SEVIYESI * 0.72
 
-/**
- * Perdenin kaç kademe yükselebileceği.
- *
- * Tavan şart: sınırsız yükselen bir ses on beşinci doğruda cıva gibi çıkıyor
- * ve ödül olmaktan çıkıp rahatsız ediyor. Sekiz kademe, aynı sesin hâlâ aynı
- * ses olarak tanındığı en üst nokta.
- */
-const EN_COK_KADEME = 8
+/*
+  Doğru sesinin perdesi **hiç değişmiyor**.
 
-/**
- * Bir kademenin oranı — `playbackRate` çarpanı olarak.
- *
- * Çeyrek ton (yarım tonun yarısı). Önce yarım tondu ve kulakta bir tam ton
- * gibi duyuluyordu: art arda gelen doğrularda basamaklar tek tek değil topluca
- * işitiliyor, üçüncü doğruda ses gözle görülür biçimde başkalaşıyordu. Yarıya
- * inince tırmanış duyuluyor ama sesin kimliği bozulmuyor — sekiz kademenin
- * toplamı da bir tam sekizli değil, dört yarım ton.
- */
-const KADEME = Math.pow(2, 1 / 24)
+  Bir süre ardışık doğrularda çeyrek ton çeyrek ton yükseliyordu (önce yarım
+  tondu, sonra yarıya indirildi). İkisi de kulakta iyi durmadı: dosya kendi
+  perdesinde tasarlanmış bir efekt ve `playbackRate` onu hem tizleştirip hem
+  kısaltıyor — seri ilerledikçe ses kendi kimliğinden uzaklaşıyor, kullanıcı
+  bunu "ses bozuluyor" diye duyuyor. Seriyi ödüllendiren şey zaten ekranda:
+  sayaç, çarpan ve tur sonu. Efektin işi yalnızca "doğru" demek.
+*/
 
 /**
  * Ses ayarının son bilinen hâli.
@@ -133,7 +123,7 @@ export function sesleriHazirla(acik: boolean) {
   void yukle('yanlis')
 }
 
-function tamponCal(tur: DosyaliSes, hiz = 1): boolean {
+function tamponCal(tur: DosyaliSes): boolean {
   const ctx = baglamAl()
   const tampon = tamponlar.get(tur)
   if (!ctx || !tampon) return false
@@ -142,19 +132,11 @@ function tamponCal(tur: DosyaliSes, hiz = 1): boolean {
   const kaynak = ctx.createBufferSource()
   const kazanc = ctx.createGain()
   kaynak.buffer = tampon
-  // Perde ve süre birlikte değişiyor: seri yükseldikçe ses hem tizleşiyor hem
-  // kısalıyor, yani art arda gelen doğrular birbirine binmiyor.
-  kaynak.playbackRate.value = hiz
-  kazanc.gain.value = DOSYA_SEVIYESI
+  kazanc.gain.value = tur === 'dogru' ? DOGRU_SEVIYESI : DOSYA_SEVIYESI
   kaynak.connect(kazanc)
   kazanc.connect(ctx.destination)
   kaynak.start()
   return true
-}
-
-/** Şu anki serinin perde çarpanı. İlk doğru 1, sonrakiler birer yarım ton. */
-function seriPerdesi(): number {
-  return Math.pow(KADEME, Math.min(Math.max(seri - 1, 0), EN_COK_KADEME))
 }
 
 type Nota = {
@@ -199,12 +181,11 @@ function cal(notalar: Nota[]) {
   }
 }
 
-/** Doğru cevap dosyası okunamazsa çalan yedek ton. Perde yine seriyle yükseliyor. */
+/** Doğru cevap dosyası okunamazsa çalan yedek ton. */
 function dogruTonu() {
-  const perde = seriPerdesi()
   cal([
-    { frekans: 880 * perde, gecikme: 0, sure: 0.09, seviye: 0.3 },
-    { frekans: 1318 * perde, gecikme: 0.075, sure: 0.13, seviye: 0.3 },
+    { frekans: 880, gecikme: 0, sure: 0.09, seviye: 0.22 },
+    { frekans: 1318, gecikme: 0.075, sure: 0.13, seviye: 0.22 },
   ])
 }
 
@@ -216,28 +197,55 @@ function yanlisTonu() {
 }
 
 /**
+ * Geri sayımın rakam tonu — üç rakamda da **aynı**.
+ *
+ * Perde bir süre her rakamda değişiyordu; kullanıcı bunu "kötü duyuluyor" diye
+ * bildirdi. Sayımın işi metronom gibi: aynı tonun üç kez, aynı aralıkla
+ * vurması sayının indiğini zaten anlatıyor, perde oynatmak onu bir ezgiye
+ * çevirip ritmi bulanıklaştırıyor. Tırmanış yalnızca sonda, "Başla!" akorunda.
+ *
+ * A5 seçildi: telefon hoparlörünün rahat taşıdığı bir bölge — daha alçak tonlar
+ * küçük hoparlörde gövdesini kaybediyor.
+ */
+const RAKAM_TONU = 880
+
+/**
+ * Sayım sesinin seviyesi.
+ *
+ * Efekt dosyalarının (`DOSYA_SEVIYESI`) belirgin biçimde **üstünde**: sayım
+ * oyunun ilk sesi, ondan önce duyulmuş bir şey yok ve tek bir triangle tonu,
+ * kaydedilmiş bir efektin gövdesini taşımıyor. 0.5'te kullanıcı telefonda hâlâ
+ * duymadı; buradaki sayı gürlüğü değil dalganın inceliğini karşılıyor.
+ */
+const SAYIM_SEVIYESI = 0.8
+
+/**
+ * "Başla!" akorunun tek nota seviyesi — sayım tonunun altında.
+ *
+ * Üç nota 0.08 saniye arayla giriyor ve kuyrukları üst üste biniyor: üçü de
+ * `SAYIM_SEVIYESI` ile çalsaydı toplam çıkış 1'i aşar, akor yüksek değil
+ * **kırpılmış** duyulurdu. Bölünen tepe sayesinde akor tikler kadar gür ama
+ * bozulmuyor.
+ */
+const AKOR_SEVIYESI = SAYIM_SEVIYESI * 0.6
+
+/**
  * Geri sayım sesi — 3, 2, 1 ve `0` ile "Başla!".
  *
- * Rakamlar tek ve alçak bir tik; sonuncusu yukarı açılan üç nota. Tırmanış
+ * Rakamlar tek ve sabit bir tik; sonuncusu yukarı açılan üç nota. Tırmanış
  * kasıtlı: sayım aşağı iner, ses yukarı çıkar, o yüzden "bitti" değil
  * "başlıyor" gibi duyuluyor.
- *
- * Perde her rakamda biraz yükseliyor (`RAKAM_PERDESI`); aynı tik üç kez
- * çalınca sayım duraklamış gibi geliyordu.
  */
-const RAKAM_PERDESI = [523.25, 587.33, 659.25]
-
 export function geriSayimSesi(kalan: number) {
   if (!sesAcik) return
   if (kalan > 0) {
-    const hz = RAKAM_PERDESI[Math.min(kalan, RAKAM_PERDESI.length) - 1]
-    cal([{ frekans: hz, gecikme: 0, sure: 0.13, bicim: 'triangle', seviye: 0.24 }])
+    cal([{ frekans: RAKAM_TONU, gecikme: 0, sure: 0.14, bicim: 'triangle', seviye: SAYIM_SEVIYESI }])
     return
   }
   cal([
-    { frekans: 659.25, gecikme: 0, sure: 0.12, bicim: 'triangle', seviye: 0.26 },
-    { frekans: 880, gecikme: 0.08, sure: 0.12, bicim: 'triangle', seviye: 0.28 },
-    { frekans: 1174.66, gecikme: 0.16, sure: 0.34, bicim: 'triangle', seviye: 0.3 },
+    { frekans: 880, gecikme: 0, sure: 0.12, bicim: 'triangle', seviye: AKOR_SEVIYESI },
+    { frekans: 1174.66, gecikme: 0.08, sure: 0.12, bicim: 'triangle', seviye: AKOR_SEVIYESI },
+    { frekans: 1760, gecikme: 0.16, sure: 0.34, bicim: 'triangle', seviye: AKOR_SEVIYESI },
   ])
 }
 
@@ -270,7 +278,6 @@ export function sureUyarisi() {
 
 /** Tur bitişi: üç notalık küçük bir kapanış. */
 export function bitisSesi() {
-  seri = 0
   cal([
     { frekans: 784, gecikme: 0, sure: 0.14 },
     { frekans: 988, gecikme: 0.12, sure: 0.14 },
@@ -278,30 +285,18 @@ export function bitisSesi() {
   ])
 }
 
-/** Doğru cevap: mp3 hazırsa o, değilse yedek ton. Perde seriyle yükseliyor. */
+/** Doğru cevap: mp3 hazırsa o, değilse yedek ton. */
 export function dogruSesi() {
-  seri += 1
-  if (tamponCal('dogru', seriPerdesi())) return
+  if (tamponCal('dogru')) return
   void yukle('dogru')
   dogruTonu()
 }
 
-/** Yanlış cevap: mp3 hazırsa o, değilse yedek ton. Seriyi de sıfırlıyor. */
+/** Yanlış cevap: mp3 hazırsa o, değilse yedek ton. */
 export function yanlisSesi() {
-  seri = 0
   if (tamponCal('yanlis')) return
   void yukle('yanlis')
   yanlisTonu()
-}
-
-/**
- * Seriyi elle sıfırlar — oyun kabuğu açılırken çağrılıyor.
- *
- * Ses kapalıyken `oyunSesiCal` hiç çalışmadığı için sayaç da ilerlemiyor;
- * kullanıcı ayarı tur ortasında açarsa sayaç eski turdan kalmış olabilirdi.
- */
-export function seriyiSifirla() {
-  seri = 0
 }
 
 /**

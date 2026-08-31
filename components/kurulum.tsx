@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { CSSProperties } from 'react'
 import { AlertCircle, ArrowLeft, ArrowRight, Check, User } from 'lucide-react'
 import type { Ayarlar, Hedef, OkulYili, PuanTuru } from '@/lib/types'
 import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
@@ -109,8 +108,13 @@ const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
     aciklama: 'Sıralama tahmini ve deneme şablonları buna göre ayarlanır.',
   },
   bolum: {
-    baslik: 'Hedefin hangi bölüm?',
-    aciklama: 'Günde 200 soru dedin. Peki bu sorular hangi bölüm için?',
+    /*
+      Soru hedefi hayalden **sonra** soruluyor (`hedef` adımı bu adımın
+      ardında): açıklama bir süre "Günde 200 soru dedin" diye başlıyordu ve
+      kullanıcı o sayıyı henüz söylememişti.
+    */
+    baslik: 'Hayalindeki üniversite ve bölüm neresi?',
+    aciklama: 'Seçmezsen de olur; sonradan Hedefim ekranından ekleyebilirsin.',
   },
   hedef: {
     baslik: 'Bugün kaç soru çözmek istiyorsun?',
@@ -676,39 +680,26 @@ function tahminHedefi(
 }
 
 /**
- * Tanışma ekranındaki süsler.
- *
- * Konumlar oran (yüzde), piksel değil: ekran boyu telefondan telefona
- * değişiyor ve sabit piksellerde süsler küçük ekranda daireye biniyor,
- * büyükte kenara yapışıyordu. Hepsi `aria-hidden` — taşıdıkları bilgi yok,
- * ekran okuyucuya sekiz emoji okutmak gürültü olurdu.
- *
- * Her süs kendi süresi ve gecikmesiyle süzülüyor (`sus-suzuluyor`): ortak bir
- * ritim sekizini tek ağızdan soluk alıp veren bir topluluğa çeviriyordu.
- */
-const SUSLER = [
-  { simge: '🐾', sol: '27%', ust: '9%', boy: 'text-[19px]', sure: 4200, gecikme: 0 },
-  { simge: '✨', sol: '13%', ust: '19%', boy: 'text-[17px]', sure: 5200, gecikme: 700 },
-  { simge: '🩷', sol: '68%', ust: '12%', boy: 'text-[19px]', sure: 4600, gecikme: 1300 },
-  { simge: '🥕', sol: '83%', ust: '25%', boy: 'text-[21px]', sure: 5600, gecikme: 400 },
-  { simge: '💛', sol: '19%', ust: '47%', boy: 'text-[19px]', sure: 4800, gecikme: 1800 },
-  { simge: '🌸', sol: '88%', ust: '53%', boy: 'text-[19px]', sure: 5000, gecikme: 900 },
-  { simge: '⭐', sol: '9%', ust: '70%', boy: 'text-[17px]', sure: 4400, gecikme: 2100 },
-  { simge: '✨', sol: '78%', ust: '75%', boy: 'text-[19px]', sure: 5400, gecikme: 1500 },
-]
-
-/**
  * Tanışma — kurulumun kutlama ekranı.
  *
  * Karşılamayla aynı düzeni **paylaşmıyor** (`TekIsliEkran`): orası sakin bir
- * giriş, burası adı öğrendikten sonraki karşılama anı. Süzülen süsler ve üç
- * noktalı gösterge yalnızca burada; ikisini tek bileşende toplamak, yarısı
- * kullanılmayan bir sürü propla biten bir bileşen olurdu.
+ * giriş, burası adı öğrendikten sonraki karşılama anı. Üç noktalı gösterge
+ * yalnızca burada; ikisini tek bileşende toplamak, yarısı kullanılmayan bir
+ * sürü propla biten bir bileşen olurdu.
  *
  * Zemin uygulamanın geri kalanıyla aynı. Bir süre degrade bir zemin, altın
  * halkalı bir madalyon ve "Aramıza hoş geldin" rozeti vardı; üçü de kalktı.
  * Ekranın tek işi adı geri söylemek ve onun etrafındaki her katman o cümleyi
  * bastırıyordu.
+ *
+ * Süs olarak bir süre sekiz emoji (🐾 ✨ 🥕 …) zemine serpiliyordu; kullanıcı
+ * hepsini kaldırttı. Sebebi hareket değil kalabalık: ekranda tek bir cümle var
+ * ve etrafına serpilen simgeler cümleyi taşımıyor, ondan dikkat çalıyordu.
+ * Yerine **tek** bir süs kondu — adın altına çekilen, çizilerek beliren bir
+ * kalem hattı (`tanisma-hat`). Cümleyi çevrelemiyor, altını çiziyor: süs
+ * dikkati dağıtmak yerine bakılacak yeri gösteriyor. Yeni bir süs eklemeden
+ * önce şunu sor — eklenen şey adı mı öne çıkarıyor, yoksa onunla mı
+ * yarışıyor?
  *
  * Maskot el sallıyor. Tasarımda dairenin sağ üstünde ayrıca bir 👋 duruyordu;
  * alındı — maskot zaten el sallıyor ve iki el aynı anda iki selam gibi
@@ -730,24 +721,6 @@ function TanismaEkrani({
 
   return (
     <div className="relative mx-auto flex min-h-dvh max-w-md flex-col overflow-hidden px-5 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(1.5rem+var(--guvenli-alt))]">
-      {SUSLER.map((sus, sira) => (
-        <span
-          key={`${sus.simge}-${sira}`}
-          aria-hidden
-          className={`sus-suzuluyor pointer-events-none absolute -z-10 -translate-x-1/2 -translate-y-1/2 opacity-80 ${sus.boy}`}
-          style={
-            {
-              left: sus.sol,
-              top: sus.ust,
-              '--sus-sure': `${sus.sure}ms`,
-              '--sus-gecikme': `${sus.gecikme}ms`,
-            } as CSSProperties
-          }
-        >
-          {sus.simge}
-        </span>
-      ))}
-
       <div className="flex-[0.9]" aria-hidden />
 
       <div className="flex flex-col items-center text-center">
@@ -771,8 +744,32 @@ function TanismaEkrani({
           )}
         </h1>
 
-        <p className="mt-3 max-w-[19rem] text-[14.5px] leading-snug font-medium text-balance text-muted-foreground">
-          Bundan sonra birlikteyiz — küçük adımlarla güzel şeyler yapacağız. 🌱
+        {/*
+          Ekranın tek süsü: adın altına elle çekilmiş gibi duran bir hat.
+
+          Çizilerek beliriyor (`tanisma-hat`), yani hareket cümleyi işaret
+          ediyor — ekrana serpilen ve kendi başına oynayan süslerin tersine.
+          Genişliği sabit ve ortalı: başlık iki satıra düşse de hat cümlenin
+          altında kalıyor, bir kelimenin altını çizmeye çalışmıyor.
+        */}
+        <svg
+          aria-hidden
+          className="tanisma-hat mt-4 text-primary-parlak"
+          width="132"
+          height="12"
+          viewBox="0 0 132 12"
+          fill="none"
+        >
+          <path
+            d="M3 8.4C25 4 47 2.6 68 4.2C89 5.8 110 7.6 129 4.6"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+        </svg>
+
+        <p className="mt-4 max-w-[19rem] text-[14.5px] leading-snug font-medium text-balance text-muted-foreground">
+          Bundan sonra birlikteyiz — küçük adımlarla güzel şeyler yapacağız.
         </p>
       </div>
 

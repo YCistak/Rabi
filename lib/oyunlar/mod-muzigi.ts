@@ -54,14 +54,39 @@ const UYANMA = 90
 /**
  * Müziğin ana ses seviyesi.
  *
- * Efekt dosyaları 0.42'de çalıyor (`oyun-sesi.ts`) ve müzik onların altında
- * kalmalı: doğru/yanlış geri bildirimi oyunun tek sesli işareti, müzik
- * bastırırsa oyun sessizleşmiş sayılır. Ritmik parçalar sakin pad'den (0.1)
- * daha çok fark ediliyor — vuruş dikkat çekiyor — o yüzden biraz daha alçak
- * tutuluyor. Hedef, telefonun ses düzeyi ortadayken ikisinin de duyulması:
- * müzik odanın sesini bastırmıyor, efekt müziğin içinde kaybolmuyor.
+ * Hedef, doğru/yanlış efektlerinin (`DOSYA_SEVIYESI`, 0.42) **hizası**: müzik
+ * onların yanında duyulacak kadar var olmalı ama gürültüye dönüşmemeli, çünkü
+ * oyunun tek sesli geri bildirimi o iki efekt.
+ *
+ * Sayı iki kez yükseldi ve ikisinde de sebep aynı: kâğıt üstünde doğru duran
+ * oran telefonda duyulmuyordu. Önce 0.09'du ("hiç duyulmuyor"), sonra 0.26
+ * ("telefonun sesini sonuna kadar açmadıkça duyulmuyor"). Atlanan şey şu:
+ * efektler kaydedilmiş, ustalanmış mp3'ler, dalgaları baştan sona tepeye
+ * yakın; bu parçalar ise sıfırdan sentezlenen ince dalgalar ve aralarında
+ * sessizlik var. Aynı sayı ikisinde aynı gürlük demek değil — müzik sayıca
+ * efektin **üstünde** durup kulakta onun hizasına geliyor.
+ *
+ * Kırpılma sınırı buna izin veriyor: notaların tepeleri (`tepe`) ana seviyenin
+ * altında toplandığı için çıkış 1'e varmıyor. Daha yukarı çıkarmadan önce
+ * parçaları hoparlörde dinle; kırpılan bir parça yüksek değil bozuk duyuluyor.
  */
-export const MUZIK_SEVIYESI = 0.09
+export const MUZIK_SEVIYESI = 0.5
+
+/**
+ * Rahat modun pad'i, ritmik parçaların altında.
+ *
+ * Vuruşsuz ve **sürekli** çaldığı için aynı seviyede ötekilerden daha çok fark
+ * ediliyor: arada sessizlik yok, kulak sesi hiç bırakmıyor. Oran ritmik
+ * seviyeden türetiliyor — birini elle değiştirip ötekini unutmak iki modun
+ * dengesini ayırıyordu.
+ *
+ * Oran 0.7'den 0.35'e indi: kullanıcı Rahat turda pad'i "rahatsız edici"
+ * buldu. Ritmik parçalarda ölçü "duyuluyor mu", pad'de "farkında olmadan
+ * dinlenebiliyor mu" — sürekli çalan bir ses, fark edilir olduğu anda zaten
+ * yüksek demek. Sessize inmiyor: mod müziği açıkken hiç duyulmayan bir parça,
+ * ayarın kapalı olduğunu düşündürür.
+ */
+export const RAHAT_SEVIYESI = MUZIK_SEVIYESI * 0.35
 
 /**
  * Modun temposu (BPM) — gerginliğe göre.
@@ -427,9 +452,7 @@ export function muzikBaslat(mod: OyunModu) {
   if (calan && calan.mod !== mod) muzikDurdur()
   if (!calan) {
     const parca = parcaKur(mod)
-    // Sakin pad kendi dengesini koruyor: vuruşsuz olduğu için biraz daha
-    // yüksek duyulabiliyor, ritmik parçalar aynı seviyede öne çıkardı.
-    parca.sesSeviyesi(mod === 'rahat' ? 0.1 : MUZIK_SEVIYESI)
+    parca.sesSeviyesi(mod === 'rahat' ? RAHAT_SEVIYESI : MUZIK_SEVIYESI)
     calan = { mod, parca }
   }
   calan.parca.basla()

@@ -15,8 +15,14 @@ import { geriSayimSesi } from '@/lib/oyunlar/oyun-sesi'
  * dosyasının hiçbiri geri sayımdan haberdar değil — tur, sayım bitince
  * başlıyor, yani `onBitti` çağrıldığı an.
  *
- * Sesler `oyun-sesi.ts`'te: üç alçak tik ve sonda açılan bir akor. Ses
+ * Sesler `oyun-sesi.ts`'te: üç sabit tik ve sonda açılan bir akor. Ses
  * kapalıysa sayım sessiz akıyor, görüntü değişmiyor.
+ *
+ * Katman **donuk beyaz**, altındaki oyun kararmıyor: sayım oyunun üstüne
+ * düşen bir uyarı değil, turun başladığı an. Yarı saydam karartma arkada
+ * duran soruyu okunur bırakıyor ve göz sayımdan çok ona kaçıyordu. Rakamlar
+ * markanın dolgu tonunda (`--primary-parlak`) — beyaz zeminde tek renk var,
+ * o da uygulamanın kendi rengi.
  */
 
 /** Bir rakamın ekranda kalma süresi (ms). CSS'teki `geri-sayim-rakam` ile eşleşmeli. */
@@ -52,7 +58,7 @@ export function GeriSayim({ onBitti }: { onBitti: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 grid place-items-center bg-black/60 px-6"
+      className="fixed inset-0 z-50 grid place-items-center bg-white px-6"
       // Ekran okuyucuya tek tek rakam okutmak yerine ne olduğunu bir kez
       // söylüyor: sayım görsel bir hazırlık, taşıdığı bilgi "tur başlıyor".
       role="status"
@@ -65,8 +71,8 @@ export function GeriSayim({ onBitti }: { onBitti: () => void }) {
         aria-hidden
         className={
           sonMu
-            ? 'geri-sayim-basla font-display text-[54px] leading-none font-extrabold text-white'
-            : 'geri-sayim-rakam rakam font-display text-[92px] leading-none font-extrabold text-white'
+            ? 'geri-sayim-basla font-display text-primary-parlak text-[54px] leading-none font-extrabold'
+            : 'geri-sayim-rakam rakam font-display text-primary-parlak text-[92px] leading-none font-extrabold'
         }
       >
         {yazi}

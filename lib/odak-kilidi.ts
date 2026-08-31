@@ -16,11 +16,17 @@ export type OdakDurumu = {
   kullanimVerisi: boolean
   /** Diğer uygulamaların üzerine çizme izni verildi mi. */
   katman: boolean
+  /**
+   * Bildirim erişimi verildi mi — kilitli uygulamaların bildirimleri silinsin
+   * diye. **İsteğe bağlı**: verilmezse kilit çalışır, yalnızca bildirimler
+   * susmaz. Bu yüzden `baslat` bunu şart koşmuyor.
+   */
+  bildirim: boolean
   /** Ön plan servisi şu an ayakta mı. */
   calisiyor: boolean
 }
 
-export type OdakIzni = 'kullanimVerisi' | 'katman'
+export type OdakIzni = 'kullanimVerisi' | 'katman' | 'bildirim'
 
 type OdakKilidiEklentisi = {
   durum(): Promise<OdakDurumu>
@@ -38,7 +44,12 @@ type OdakKilidiEklentisi = {
   ): Promise<{ remove: () => Promise<void> }>
 }
 
-const KAPALI_DURUM: OdakDurumu = { kullanimVerisi: false, katman: false, calisiyor: false }
+const KAPALI_DURUM: OdakDurumu = {
+  kullanimVerisi: false,
+  katman: false,
+  bildirim: false,
+  calisiyor: false,
+}
 
 /**
  * Tarayıcı sahtesi.

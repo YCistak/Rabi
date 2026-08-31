@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Check, HelpCircle, Trophy, X } from 'lucide-react'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
-import { bossSesi, seriyiSifirla, sureUyarisi } from '@/lib/oyunlar/oyun-sesi'
+import { bossSesi, sureUyarisi } from '@/lib/oyunlar/oyun-sesi'
 import { muzikGerginligi } from '@/lib/oyunlar/mod-muzigi'
 import { GeriSayim } from '@/components/oyun-geri-sayim'
 import type { OyunId } from '@/lib/types'
@@ -262,15 +262,6 @@ function useTurEfektleri(sayac: SayacBilgisi | null) {
   const bossVuruldu = useRef(false)
   /** Süre uyarısı bu sayaç için çaldı mı — her turda/soruda bir kez. */
   const uyarildiRef = useRef(false)
-
-  /*
-    Ses kapalıyken `oyunSesiCal` hiç çalışmıyor, yani perde sayacı da
-    ilerlemiyor. Ayarı tur arasında açan kullanıcıda eski turdan kalan bir seri
-    duruyor olabilirdi.
-  */
-  useEffect(() => {
-    seriyiSifirla()
-  }, [])
 
   const dogru = sayac?.dogru ?? 0
   const yanlis = sayac?.yanlis ?? 0

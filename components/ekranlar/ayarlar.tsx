@@ -26,8 +26,10 @@ import {
   odakIzniIste,
   odakKilidiDesteklenir,
   type OdakDurumu,
+  type OdakIzni,
 } from '@/lib/odak-kilidi'
 import { UygulamaSecici } from '@/components/odak/uygulama-secici'
+import { OdakDaveti } from '@/components/odak/odak-daveti'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { SINIF_SECENEKLERI, egitimYili, mezunMu, sinifAdi } from '@/lib/hesap'
 import type { NotKagidi } from '@/lib/yapilacaklar'
@@ -179,9 +181,19 @@ export function AyarlarEkrani({
   const [odakIzinleri, setOdakIzinleri] = useState<OdakDurumu>({
     kullanimVerisi: false,
     katman: false,
+    bildirim: false,
     calisiyor: false,
   })
   const [seciciAcik, setSeciciAcik] = useState(false)
+  /**
+   * Odak kilidi daveti açık mı.
+   *
+   * Anahtar artık kilidi doğrudan açmıyor: önce pencere çıkıyor, kilit ancak
+   * "İstiyorum" denince açılıyor. Sebep izin ekranlarının kendisi — ne işe
+   * yaradığını bilmeden oraya düşen kullanıcı geri dönüyor ve anahtar açık ama
+   * kilit çalışmıyor kalıyordu (`components/odak/odak-daveti.tsx`).
+   */
+  const [davetAcik, setDavetAcik] = useState(false)
 
   // Odak izinleri sistem ayarlarından veriliyor; kullanıcı Rabi'ye döndüğünde
   // durum yeniden sorulmalı, yoksa kart hâlâ "izin eksik" derdi.
@@ -455,7 +467,17 @@ export function AyarlarEkrani({
                 renk="lavanta"
                 baslik="Odak kilidi"
                 aciklama="Çalışma turunda seçtiğin uygulamaların üstüne çıkarım"
-                onClick={() => setPomodoroAyar((o) => ({ ...o, odakKilidi: !o.odakKilidi }))}
+                /*
+                  Açarken davet penceresi, kapatırken doğrudan: vazgeçmek için
+                  ikna edilmesi gereken bir anahtar, anahtar değil tuzaktır.
+                */
+                onClick={() => {
+                  if (pomodoroAyar.odakKilidi) {
+                    setPomodoroAyar((o) => ({ ...o, odakKilidi: false }))
+                    return
+                  }
+                  setDavetAcik(true)
+                }}
                 basiliMi={pomodoroAyar.odakKilidi}
                 sag={<Anahtar acik={pomodoroAyar.odakKilidi} />}
               />
@@ -485,6 +507,34 @@ export function AyarlarEkrani({
                           </Buton>
                         )}
                       </span>
+                    </Not>
+                  )}
+
+                  {/*
+                    Bildirim erişimi ayrı bir satır, çünkü ötekilerle aynı
+                    sınıfta değil: yokken kilit çalışmaya devam ediyor, yalnızca
+                    bildirimler susmuyor. "Eksik izin" uyarısının içine
+                    konsaydı, isteğe bağlı bir izin zorunlu görünürdü.
+                  */}
+                  {!odakIzinleri.bildirim ? (
+                    <Not className="mb-2.5">
+                      Bildirimler de sussun ister misin? Seçtiğin uygulamaların
+                      bildirimleri tur boyunca silinir. Açılan listede{' '}
+                      <b className="font-extrabold">Rabi</b>'yi bul ve aç.
+                      <span className="mt-2 block">
+                        <Buton
+                          bicim="ikincil"
+                          boy="kucuk"
+                          onClick={() => void odakIzniIste('bildirim')}
+                        >
+                          Bildirim erişimi izni
+                        </Buton>
+                      </span>
+                    </Not>
+                  ) : (
+                    <Not className="mb-2.5">
+                      Bildirim susturma açık: tur boyunca seçtiğin uygulamaların
+                      bildirimleri silinir.
                     </Not>
                   )}
 
@@ -789,6 +839,33 @@ export function AyarlarEkrani({
           window.location.reload()
         }}
         onIptal={() => setSifirlamaAcik(false)}
+      />
+
+      <OdakDaveti
+        acik={davetAcik}
+        onIstemiyorum={() => setDavetAcik(false)}
+        /*
+          Kilit burada açılıyor ama henüz çalışmıyor: izinler eksikken anahtar
+          açık durur ve satırın altındaki uyarı ne eksik olduğunu söyler.
+          Anahtarı izinler gelene kadar kapalı tutmak, kullanıcının "istiyorum"
+          dediği anı kaybetmek olurdu.
+
+          Eksik izinlerden **yalnızca ilki** açılıyor: sistem ekranları üst üste
+          açılamıyor, ikincisi birinciyi ezerdi. Kullanıcı geri döndüğünde durum
+          tazeleniyor ve kalan izin için düğme satırın altında duruyor.
+        */
+        onIstiyorum={() => {
+          setDavetAcik(false)
+          setPomodoroAyar((o) => ({ ...o, odakKilidi: true }))
+          const eksik: OdakIzni | null = !odakIzinleri.kullanimVerisi
+            ? 'kullanimVerisi'
+            : !odakIzinleri.katman
+              ? 'katman'
+              : !odakIzinleri.bildirim
+                ? 'bildirim'
+                : null
+          if (eksik) void odakIzniIste(eksik)
+        }}
       />
     </div>
   )
