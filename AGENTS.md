@@ -190,6 +190,35 @@ ancak **artan** yeri paylaşıyor: orada duran bir `flex-1` artanı önce kendi
 alıyor, liste de ekranın tepesine yapışıp altında kocaman bir boşluk
 bırakıyordu.
 
+### Boş kutuyla ilerlenmiyor
+
+Devam düğmesi eksik cevapta **pasif**. Dört adımın kuralı var: ad geçerli
+olacak, alan kartlarından birine dokunulacak, bölüm adımında üniversite+bölüm
+seçili olacak, notlar adımında en az bir sayı yazılacak. Ötekiler
+(sınıf, hedef, hatırlatma) varsayılanla geliyor — varsayılan da bir cevap.
+
+Boş bırakılabilen iki adımın (bölüm, notlar) atlama yolu düğmenin hemen
+üstündeki **"daha sonra seçeceğim"** onay kutusu (`SonraSec`). Onay kutusu,
+düğme değil: düğme ekranı ileri götürür, bu ise adımın cevabını "şimdilik yok"
+yapıyor — ileri götüren şey yine Devam. İşaret konduğunda o adımda yazılmış
+olanlar da temizleniyor; üç yılı girip sonra işareti koyan kullanıcının kararı
+sonuncusudur ve yarım bir OBP tahmini sessizce bozardı.
+
+Eskiden ikisi de sessizce boş geçilebiliyordu ve sonucu ana sayfada
+görünüyordu: hedef paneli boş açılıyor, oraya kimse geri dönmüyordu. Notlar
+adımındaki eski "Şimdilik atla" düğmesi de kalktı — Devam'ın yanında ikinci bir
+düğme, hangisinin ileri götürdüğünü belirsiz bırakıyordu.
+
+Alan adımı bir süre "Karar vermedim"i **seçili** gösteriyordu (`puanTuru ?? ALANSIZ`):
+hiçbir şeye dokunmamış kullanıcı, kendi adına verilmiş bir cevap görüyordu.
+Artık hiçbiri seçili gelmiyor; "Karar vermedim" o adımın açık atlama yolu ve
+seçilmesi de bir dokunuş istiyor.
+
+Ad adımında uyarı eskiden yalnızca Devam'a basılınca çıkıyordu; düğme pasif
+olduğu için o an hiç gelmiyor. İpucu bu yüzden iki yüzlü: boş alanda soluk bir
+yönerge, kısa yazılmış adda kırmızı bir uyarı. Pasif bir düğmenin yanında
+sebebi yazmayan ekran, kullanıcıyı kurulumda kilitler.
+
 ### Maskot adımdan adıma uçuyor
 
 Tavşan üç düzende üç ayrı yerde duruyor: karşılamada ortada 150 pikselde, soru
@@ -290,6 +319,37 @@ yedeğe girmeye devam ediyor — kayıt silinmedi, yalnızca düzenleme kapısı
 `ayarlar.varsayilanSablonId` de kayıtta duruyor; yeni deneme onu okumaya devam
 ediyor, artık ayarlardan değiştirilmiyor.
 
+### Pomodoro'da sınav provası
+
+Pomodoro'nun tepesindeki **Deneme provası** çipleri turu ÖSYM'nin süresine
+çeviriyor: TYT 165, AYT 180, YDT 120 dakika (`lib/sinav-provasi.ts`). Amaç
+denemeyi uygulamanın içinde çözdürmek değil, kâğıdı çözerken süreyi buradan
+tutturmak — öğrenci zaten telefonun kronometresini açıyordu ve o süre hiçbir
+yere yazılmıyordu.
+
+Prova **aşama değil ayrı bir kip**. `Asama`ya dördüncü bir değer olarak
+eklenseydi `sonrakiAsama` her provanın arkasına mola koyardı; 165 dakikanın
+sonunda beş dakikalık kısa mola vermek provayı prova olmaktan çıkarır. Seçili
+provada:
+
+- Süre `ayar.calisma` değil provanın süresi, o yüzden **Süreler kartı hiç
+  çizilmiyor** — kilitli bir kutu, kullanılıyormuş izlenimi verir. Ayarlar
+  kaybolmuyor, prova kapatılınca aynı değerlerle geri geliyor.
+- Ders çipleri yok: seans `PROVA_DERSI` ("Deneme Çözümü") ile kaydediliyor.
+  Ad uydurulmadı — istatistik seansları ders adına göre topluyor ve listede
+  (`CALISMA_DERSLERI`) olmayan bir ad orada tek başına bir dilim olurdu.
+- Tur sayacı ilerlemiyor, arkasından mola gelmiyor; sayaç dolunca sıradan
+  çalışma turuna dönüyor. Dönmeseydi bir sonraki "Başlat" yeniden 165 dakika
+  verirdi.
+- Yarıda "atla"mak provadan çıkmak demek ve seans **yazılmıyor** — sayaç
+  dolmadı. Oyunlardaki "yarım tur da bir tur" kuralının tersi: orada kayıt
+  bankaya düşüyor, burada ölçülen şey sürenin kendisi.
+
+Soru sayıları elle yazılmıyor, `OSYM_TEST_SORU`dan toplanıyor: aynı sayı
+`sablonlar.ts`te zaten duruyor ve iki yere yazılan bir sayı dağılım
+değiştiğinde birinde eski kalırdı. Süreler ise elle yazılı — ÖSYM'nin kararı,
+soru sayısından türetilemez.
+
 ### Odak kilidi yalnızca Pomodoro'da
 
 Odak kilidi ve Rahatsız Etme anahtarları bir süre **iki yerde** duruyordu: hem
@@ -383,6 +443,30 @@ uygularken köşelerde saydam boşluk kalırdı.
 (`mipmap-*/ic_launcher_background.png`), çünkü yeni ikonun zemini degrade.
 `values/ic_launcher_background.xml` bu yüzden silindi.
 
+
+## Yanlış soru, deneme formunun içinden ekleniyor
+
+Yeni deneme ekranında Kaydet'in hemen üstünde **"Yanlış soru ekle"** düğmesi
+var ve açtığı şey tam ekran bir **katman**, ayrı bir ekran değil.
+
+Sebep girilen netler: ekran `AppShell` içindeki `denemeFormu` state'ine bağlı
+ve başka bir ekrana geçmek onu söküyor. Yanlış Soru Bankası'na gidip dönen
+kullanıcı, sekiz dersin doğru/yanlışını yazdıktan sonra boş bir form buluyordu.
+Katman üstte açılıyor, form altında olduğu gibi duruyor.
+
+Düğmenin yeri de bundan: yanlışlar kâğıttan tam da sayılar yazılırken
+çekiliyor ve kaydettikten sonra ekran kapandığı için "sonra eklerim" pratikte
+"hiç eklemem" oluyordu.
+
+Fotoğraf alma ve kaydetme mantığı iki ekranda **paylaşılıyor**
+(`components/yanlis-soru-ekle.tsx`: `useYanlisSoruEkleme`, `EklemeFormu`,
+`FotografDugmeleri`). Kopyalansaydı iki ekran zamanla ayrışırdı — biri
+fotoğrafı küçültürken ötekinin küçültmemesi gibi. Kayıt tek yoldan gidiyor:
+önce blob IndexedDB'ye, sonra liste kaydı; ters sırada yazma başarısız olsa
+galeride görüntüsü olmayan bir kart kalırdı.
+
+Katman kayıttan sonra kapanıyor: asıl iş deneme formuna dönmek, art arda çekim
+isteyen kullanıcı düğmeye yeniden basıyor.
 
 ## Haftalık özet kapalı
 
@@ -1025,8 +1109,13 @@ kayda koy, kimliğe güvenme.
 
 Konular sırayla açılmıyor. Sınav hazırlığındaki öğrenci yarın işlenecek
 konuya bugün bakmak ister ve kilitli bir harita onu kendi müfredatından uzak
-tutar. Patika sırayı **gösteriyor**, dayatmıyor; "kaldığın yer" kartı ve
-düğümdeki halka aynı işi zorlamadan yapıyor.
+tutar. Patika sırayı **gösteriyor**, dayatmıyor; sıradaki konunun düğümündeki
+halka aynı işi zorlamadan yapıyor.
+
+Haritanın tepesinde bir süre "Kaldığın yer" kısayolu duruyordu; kaldırıldı.
+Ekranın işi seçtirmek ve seçilecek yer zaten patikanın kendisi — kısayol,
+haritanın gösterdiği sırayı ikinci kez ve tek bir konuya indirgeyerek
+anlatıyordu.
 
 Tamamlanma destenin sonuna gelmekle kazanılıyor. Yarıda çıkılan destede
 işaretlenen kartlar bankaya düşüyor ama konu bitmiş sayılmıyor — yoksa ilk
@@ -1034,7 +1123,9 @@ kartı işaretleyip çıkmak konuyu tamamlamanın yolu olurdu.
 
 ### Ana sayfada kısayol değil kendi bölümü
 
-Konu Anlatımı `KARTLAR` listesinde **yok**: Araçlar şeridine bir kutucuk
+Ana sayfada bölümün adı **Bilgi Kartları** (kod tarafı `konu` kalıyor):
+ekranın kendisi kart gösteriyor, ders anlatmıyor. Bölüm `KARTLAR` listesinde
+**yok** — Araçlar şeridine bir kutucuk
 olarak konsaydı son kullanılanlarla birlikte sıraya girip kayardı ve hemen
 altındaki kutuda ikinci bir kopyası dururdu. Buradaki iş "aç ve oku", her gün
 aynı yerde durması gerekiyor. Bilmediklerim de ayrı bir araç değil, haritanın

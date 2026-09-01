@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { KeepAwake } from '@capacitor-community/keep-awake'
 import { Capacitor } from '@capacitor/core'
 import {
+  FileText,
   Music,
   Pause,
   Play,
@@ -26,6 +27,7 @@ import {
 import { SesCalar } from '@/lib/ses'
 import { LOFI_PARCALAR } from '@/lib/lofi'
 import { CALISMA_DERSLERI } from '@/lib/dersler'
+import { PROVALAR, PROVA_DERSI, type Prova } from '@/lib/sinav-provasi'
 import { pomodoroIptal, pomodoroPlanla } from '@/lib/bildirim'
 import {
   odakKilidiDesteklenir,
@@ -52,6 +54,16 @@ export function PomodoroEkrani({
 }) {
   const [asama, setAsama] = useState<Asama>('calisma')
   const [tur, setTur] = useState(1)
+  /**
+   * Seçili sınav provası — seçiliyken sayaç pomodoro değil kitapçık sayıyor.
+   *
+   * Aşamadan ayrı bir state: prova bir "uzun çalışma turu" değil, mola
+   * döngüsünün tümüyle dışında bir kip. `Asama`ya dördüncü bir değer olarak
+   * eklenseydi `sonrakiAsama` her prova sonunda mola vermek zorunda kalırdı.
+   */
+  const [prova, setProva] = useState<Prova | null>(null)
+  /** Biten prova — bir sonraki başlatmaya kadar ekranda duruyor. */
+  const [bitenProva, setBitenProva] = useState<Prova | null>(null)
   const [ders, setDers] = useState<string | null>(null)
   const [hepsiAcik, setHepsiAcik] = useState(false)
   const kisaListe = CALISMA_DERSLERI.slice(0, KISA_DERS_SAYISI)
@@ -90,7 +102,8 @@ export function PomodoroEkrani({
   const calarRef = useRef<SesCalar | null>(null)
   const baslangicRef = useRef<string | null>(null)
 
-  const toplamDakika = asamaSuresi(asama, ayar)
+  // Provada süre ÖSYM'nin, ayarların değil.
+  const toplamDakika = prova ? prova.dakika : asamaSuresi(asama, ayar)
   const calisiyor = bitisZamani !== null
 
   const calarAl = useCallback(() => {
@@ -116,7 +129,23 @@ export function PomodoroEkrani({
     void pomodoroIptal()
     void odakKilidiniBitir()
 
-    if (asama === 'calisma') {
+    if (prova) {
+      /*
+        Prova biten tek parça bir sınav: arkasından mola gelmiyor ve tur
+        sayacı ilerlemiyor. Sayaç doğrudan sıradan çalışma turuna dönüyor,
+        yoksa kullanıcı bir sonraki "Başlat"ta yeniden 165 dakika alırdı.
+      */
+      onSeansBitti({
+        id: yeniId(),
+        baslangic: baslangicRef.current ?? new Date().toISOString(),
+        dakika: prova.dakika,
+        ders: PROVA_DERSI,
+      })
+      setBitenProva(prova)
+      setProva(null)
+      setAsama('calisma')
+      setKalan(ayar.calisma * 60)
+    } else if (asama === 'calisma') {
       onSeansBitti({
         id: yeniId(),
         baslangic: baslangicRef.current ?? new Date().toISOString(),
@@ -135,7 +164,7 @@ export function PomodoroEkrani({
     setBitisZamani(null)
     setDokunulmadi(true)
     baslangicRef.current = null
-  }, [asama, ayar, calarAl, ders, onSeansBitti, tur])
+  }, [asama, ayar, calarAl, ders, onSeansBitti, prova, tur])
 
   // Ayarlardan süre değiştirildiğinde ekrandaki sayaç da değişmeli. Bu olmadan
   // "60 dakika" seçilip Başlat'a basılınca sayaç eski süreyle çalışıyordu.
@@ -169,6 +198,7 @@ export function PomodoroEkrani({
 
   const baslat = () => {
     setKirilanKilit(false)
+    setBitenProva(null)
     const bitis = Date.now() + kalan * 1000
     setBitisZamani(bitis)
     setDokunulmadi(false)
@@ -192,7 +222,9 @@ export function PomodoroEkrani({
       void odakKilidiniBaslat(
         ayar.odakKilidi ? ayar.kilitliUygulamalar : [],
         bitis,
-        ders ?? undefined,
+        // Engel katmanındaki çip provada dersin değil sınavın adını yazıyor:
+        // ekranda "MATEMATİK" görünürken çözülen şey TYT kitapçığı oluyordu.
+        prova ? `${prova.ad} PROVASI` : (ders ?? undefined),
         ayar.rahatsizEtme,
       )
     }
@@ -218,6 +250,17 @@ export function PomodoroEkrani({
 
   const atla = () => {
     duraklat()
+    /*
+      Provada atlamak provadan çıkmak demek: yarıda bırakılan kitapçık seans
+      olarak sayılmıyor (sayaç dolmadı) ve sayaç sıradan çalışma turuna döner.
+    */
+    if (prova) {
+      setProva(null)
+      setAsama('calisma')
+      setKalan(ayar.calisma * 60)
+      setDokunulmadi(true)
+      return
+    }
     // Atlanan çalışma turu seans olarak sayılmaz — sayacı doldurmadan geçildi.
     const yeniAsama =
       asama === 'calisma' ? sonrakiAsama('calisma', tur, ayar) : ('calisma' as Asama)
@@ -250,6 +293,23 @@ export function PomodoroEkrani({
     })
     return () => birak()
   }, [])
+
+  /**
+   * Prova seçimi. Aynı çipe ikinci kez dokunmak provayı kapatıyor.
+   *
+   * Sayaç çalışırken seçim yok: süresi değişen bir sayaç, başladığı sınavdan
+   * başka bir sınavı ölçer.
+   */
+  const provaSec = (secilen: Prova) => {
+    if (calisiyor) return
+    const yeni = prova?.id === secilen.id ? null : secilen
+    setProva(yeni)
+    setBitenProva(null)
+    setAsama('calisma')
+    setKalan((yeni ? yeni.dakika : ayar.calisma) * 60)
+    setDokunulmadi(true)
+    baslangicRef.current = null
+  }
 
   const sesSec = (secim: SesSecimi) => {
     setAyar((o) => ({ ...o, ses: secim }))
@@ -284,7 +344,17 @@ export function PomodoroEkrani({
 
   return (
     <div>
-      <BaslikSatiri baslik="Pomodoro" aciklama={`${tur}. tur · ${ASAMA_ADI[asama]}`} />
+      <BaslikSatiri
+        baslik="Pomodoro"
+        aciklama={prova ? `${prova.ad} provası · ${prova.dakika} dk` : `${tur}. tur · ${ASAMA_ADI[asama]}`}
+      />
+
+      {bitenProva && (
+        <Not className="mb-4">
+          {bitenProva.ad} provası bitti — süre {bitenProva.dakika} dakikaydı, çalışma
+          geçmişine yazıldı.
+        </Not>
+      )}
 
       {kirilanKilit && (
         <Not tur="uyari" className="mb-4">
@@ -338,6 +408,45 @@ export function PomodoroEkrani({
         </Kart>
       )}
 
+      {/*
+        Deneme provası: sayacın **üstünde**, koruma satırıyla aynı yerde.
+
+        Seçim turun kuralını değiştiriyor (süre ÖSYM'nin, mola yok, ders sabit)
+        ve turu başlatmadan önce görülmesi gerekiyor — odak korumasındaki
+        gerekçenin aynısı. Sayaç çalışırken çipler kilitli: süresi değişen bir
+        sayaç, başladığı sınavdan başkasını ölçer.
+      */}
+      <Kart className="mb-4">
+        <div className="mb-2 flex items-center gap-2">
+          <FileText
+            size={16}
+            className={cn('shrink-0', prova ? 'text-primary' : 'text-muted-foreground')}
+            aria-hidden
+          />
+          <p className="font-display text-base font-extrabold tracking-tight">Deneme provası</p>
+        </div>
+        <p className="mb-3 text-xs text-muted-foreground">
+          {prova
+            ? `${prova.soru} soru · ${prova.dakika} dakika · mola yok`
+            : 'Gerçek sınav süresiyle tek parça sayaç. Seçmezsen normal pomodoro turu.'}
+        </p>
+        <div className={cn('flex flex-wrap gap-2', calisiyor && 'pointer-events-none opacity-50')}>
+          {PROVALAR.map((p) => (
+            <Cip key={p.id} secili={prova?.id === p.id} onClick={() => provaSec(p)}>
+              {p.ad} · {p.dakika} dk
+            </Cip>
+          ))}
+        </div>
+        {prova && (
+          <p className="mt-2 text-xs text-muted-foreground">{prova.aciklama}</p>
+        )}
+        {calisiyor && (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Provayı değiştirmek için sayacı duraklat.
+          </p>
+        )}
+      </Kart>
+
       <Kart className="mb-4 flex flex-col items-center py-6">
         <Sayac kalan={kalan} oran={oran} mola={molaMi} />
 
@@ -362,7 +471,9 @@ export function PomodoroEkrani({
         </div>
       </Kart>
 
-      {!calisiyor && asama === 'calisma' && (
+      {/* Provada ders sorulmuyor: seans `PROVA_DERSI` ile kaydediliyor ve
+          ekranda iki ayrı "ne çalışıyorsun" cevabı olamaz. */}
+      {!calisiyor && asama === 'calisma' && prova === null && (
         <div className="mb-4">
           <p className="mb-2 text-sm font-medium">Hangi derse çalışıyorsun?</p>
           <div className="flex flex-wrap gap-2">
@@ -454,11 +565,15 @@ export function PomodoroEkrani({
         )}
       </Kart>
 
-      <SureAyarlari ayar={ayar} setAyar={setAyar} kilitli={calisiyor} />
+      {/* Provada süre kutusu hiç çizilmiyor: o turda çalışma/mola süreleri
+          kullanılmıyor ve kilitli bir kutu, kullanılıyormuş izlenimi verirdi.
+          Ayarlar kaybolmuyor — prova kapatılınca aynı değerlerle geri geliyor. */}
+      {prova === null && <SureAyarlari ayar={ayar} setAyar={setAyar} kilitli={calisiyor} />}
 
       <Not className="mt-4">
-        Sayaç bitiş saatine göre çalışıyor — telefonu kilitlesen de doğru zamanda biter ve
-        bildirim gelir.
+        {prova
+          ? `Sayaç bitiş saatine göre çalışıyor — ${prova.dakika} dakika sonra, telefon kilitli olsa da bildirim gelir.`
+          : 'Sayaç bitiş saatine göre çalışıyor — telefonu kilitlesen de doğru zamanda biter ve bildirim gelir.'}
       </Not>
     </div>
   )

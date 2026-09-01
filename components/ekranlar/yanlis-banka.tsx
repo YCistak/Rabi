@@ -1,15 +1,7 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
-import {
-  Camera,
-  Check,
-  ImagePlus,
-  Images,
-  RotateCcw,
-  Trash2,
-  X,
-} from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { Check, Images, RotateCcw, Trash2, X } from 'lucide-react'
 import type { YanlisSoru } from '@/lib/types'
 import {
   bankaOzeti,
@@ -18,28 +10,17 @@ import {
   gecerliDers,
   type BankaSekmesi,
 } from '@/lib/banka'
-import { CALISMA_DERSLERI, dersOnerileriniSuz } from '@/lib/dersler'
-import { cihazdaMi, cihazdanFotograf, dosyadanFotograf, type Kaynak } from '@/lib/kamera'
-import { oksuzResimleriSil, resimSil, resimYaz, useResimUrl } from '@/lib/resim-depo'
+import { oksuzResimleriSil, resimSil, useResimUrl } from '@/lib/resim-depo'
+import {
+  EklemeFormu,
+  FotografDugmeleri,
+  useYanlisSoruEkleme,
+} from '@/components/yanlis-soru-ekle'
 import { useGeriKatmani } from '@/lib/geri'
 import { tarihYaz } from '@/lib/hesap'
-import { bugun, yeniId } from '@/lib/utils'
-import {
-  Alan,
-  BaslikSatiri,
-  BosDurum,
-  Buton,
-  Cip,
-  Etiket,
-  Kart,
-  Not,
-  Onay,
-  SecmeliAlan,
-} from '@/components/ui'
+import { bugun } from '@/lib/utils'
+import { BaslikSatiri, BosDurum, Buton, Cip, Kart, Not, Onay } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
-
-/** Kaydedilmeyi bekleyen fotoğraf: blob ile önizleme adresi birlikte taşınır. */
-type Bekleyen = { blob: Blob; url: string }
 
 export function YanlisBankaEkrani({
   sorular,
@@ -50,10 +31,9 @@ export function YanlisBankaEkrani({
 }) {
   const [sekme, setSekme] = useState<BankaSekmesi>('bekleyen')
   const [dersSuzgec, setDersSuzgec] = useState('')
-  const [bekleyen, setBekleyen] = useState<Bekleyen | null>(null)
   const [acikId, setAcikId] = useState<string | null>(null)
-  const [hata, setHata] = useState<string | null>(null)
-  const dosyaGirdisi = useRef<HTMLInputElement>(null)
+  const { bekleyen, hata, fotografAl, kaydet, vazgec, gizliGirdi } =
+    useYanlisSoruEkleme(setSorular)
 
   const ozet = useMemo(() => bankaOzeti(sorular), [sorular])
   const sekmedekiler = useMemo(
@@ -71,7 +51,7 @@ export function YanlisBankaEkrani({
   // Geri tuşu önce görüntüleyiciyi, sonra kaydedilmeyi bekleyen fotoğrafı
   // kapatmalı; ikisi de bu ekranın içinde açılan katmanlar.
   useGeriKatmani(acik !== null, () => setAcikId(null))
-  useGeriKatmani(bekleyen !== null, () => setBekleyen(null))
+  useGeriKatmani(bekleyen !== null, vazgec)
 
   // Kayıt silinip blob'u kalmış fotoğrafları bir kez temizle. Silme işleminin
   // ortasında uygulama kapanırsa öksüz blob kalabiliyor.
@@ -81,52 +61,6 @@ export function YanlisBankaEkrani({
     // bekleyen fotoğrafı da öksüz sayıp silerdi.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  // Önizleme adresi bileşen kalkarken serbest bırakılmalı, yoksa bellekte kalır.
-  useEffect(() => {
-    return () => {
-      if (bekleyen) URL.revokeObjectURL(bekleyen.url)
-    }
-  }, [bekleyen])
-
-  const fotografAl = async (kaynak: Kaynak) => {
-    setHata(null)
-    if (!cihazdaMi()) {
-      dosyaGirdisi.current?.click()
-      return
-    }
-    const blob = await cihazdanFotograf(kaynak)
-    if (!blob) return
-    setBekleyen({ blob, url: URL.createObjectURL(blob) })
-  }
-
-  const kaydet = async (bilgi: { ders: string; konu: string; not: string }) => {
-    if (!bekleyen) return
-    const resimId = yeniId()
-    try {
-      // Önce blob, sonra kayıt: ters sırada olsa ve yazma başarısız olsa,
-      // galeride görüntüsü olmayan bir kart kalırdı.
-      await resimYaz(resimId, bekleyen.blob)
-    } catch {
-      setHata('Fotoğraf kaydedilemedi — cihazda yer kalmamış olabilir.')
-      return
-    }
-
-    setSorular((onceki) => [
-      ...onceki,
-      {
-        id: yeniId(),
-        ders: bilgi.ders.trim(),
-        tarih: bugun(),
-        resimId,
-        konu: bilgi.konu.trim() || undefined,
-        not: bilgi.not.trim() || undefined,
-        cozuldu: false,
-      },
-    ])
-    setBekleyen(null)
-    setSekme('bekleyen')
-  }
 
   const sil = (soru: YanlisSoru) => {
     setSorular((onceki) => onceki.filter((s) => s.id !== soru.id))
@@ -150,8 +84,12 @@ export function YanlisBankaEkrani({
     return (
       <EklemeFormu
         onizleme={bekleyen.url}
-        onKaydet={kaydet}
-        onVazgec={() => setBekleyen(null)}
+        onKaydet={async (bilgi) => {
+          // Kaydedilen soru "bekleyen" sekmesine düşüyor; kullanıcı çözdükleri
+          // sekmesindeyken eklerse yeni kartı hiç göremezdi.
+          if (await kaydet(bilgi)) setSekme('bekleyen')
+        }}
+        onVazgec={vazgec}
         hata={hata}
       />
     )
@@ -168,36 +106,9 @@ export function YanlisBankaEkrani({
         }
       />
 
-      {/* Tarayıcıda kamera eklentisi çalışmaz; dosya seçici onun yerine geçer. */}
-      <input
-        ref={dosyaGirdisi}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        className="hidden"
-        onChange={async (e) => {
-          const dosya = e.target.files?.[0]
-          e.target.value = ''
-          if (!dosya) return
-          const blob = await dosyadanFotograf(dosya)
-          if (!blob) {
-            setHata('Seçilen dosya bir görsel değil.')
-            return
-          }
-          setBekleyen({ blob, url: URL.createObjectURL(blob) })
-        }}
-      />
+      {gizliGirdi}
 
-      <div className="mb-4 flex gap-2">
-        <Buton className="flex-1" onClick={() => void fotografAl('kamera')}>
-          <Camera size={18} aria-hidden />
-          Fotoğraf çek
-        </Buton>
-        <Buton bicim="ikincil" className="flex-1" onClick={() => void fotografAl('galeri')}>
-          <ImagePlus size={18} aria-hidden />
-          Galeriden
-        </Buton>
-      </div>
+      <FotografDugmeleri onSec={(kaynak) => void fotografAl(kaynak)} className="mb-4 flex gap-2" />
 
       {hata && (
         <Not tur="tehlike" className="mb-3">
@@ -400,89 +311,3 @@ function Goruntuleyici({
 }
 
 /** Fotoğraf çekildikten sonra ders/konu/not sorulan adım. */
-function EklemeFormu({
-  onizleme,
-  onKaydet,
-  onVazgec,
-  hata,
-}: {
-  onizleme: string
-  onKaydet: (bilgi: { ders: string; konu: string; not: string }) => Promise<void>
-  onVazgec: () => void
-  hata: string | null
-}) {
-  const [ders, setDers] = useState('')
-  const [konu, setKonu] = useState('')
-  const [not, setNot] = useState('')
-  const [kaydediliyor, setKaydediliyor] = useState(false)
-
-  const kaydedilebilir = ders.trim() !== '' && !kaydediliyor
-
-  return (
-    <div>
-      <BaslikSatiri baslik="Soruyu ekle" aciklama="Hangi dersten olduğunu yaz, sonra kaydet" />
-
-      <div className="mb-4 overflow-hidden rounded-2xl border border-border bg-muted">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={onizleme} alt="Çekilen soru" className="max-h-72 w-full object-contain" />
-      </div>
-
-      {hata && (
-        <Not tur="tehlike" className="mb-3">
-          {hata}
-        </Not>
-      )}
-
-      <Kart className="space-y-3">
-        <div>
-          <Etiket htmlFor="banka-ders">Ders</Etiket>
-          <SecmeliAlan
-            id="banka-ders"
-            deger={ders}
-            onDegis={setDers}
-            oneriler={dersOnerileriniSuz(ders, [], CALISMA_DERSLERI)}
-            placeholder="örn. Matematik"
-          />
-        </div>
-
-        <div>
-          <Etiket htmlFor="banka-konu">Konu (isteğe bağlı)</Etiket>
-          <Alan
-            id="banka-konu"
-            value={konu}
-            onChange={(e) => setKonu(e.target.value)}
-            placeholder="örn. Türev"
-          />
-        </div>
-
-        <div>
-          <Etiket htmlFor="banka-not">Not (isteğe bağlı)</Etiket>
-          <Alan
-            id="banka-not"
-            value={not}
-            onChange={(e) => setNot(e.target.value)}
-            placeholder="örn. İkinci adımda takıldım"
-          />
-        </div>
-
-        <div className="flex gap-2 pt-1">
-          <Buton bicim="ikincil" className="flex-1" onClick={onVazgec}>
-            Vazgeç
-          </Buton>
-          <Buton
-            className="flex-1"
-            disabled={!kaydedilebilir}
-            onClick={async () => {
-              setKaydediliyor(true)
-              await onKaydet({ ders, konu, not })
-              setKaydediliyor(false)
-            }}
-          >
-            <Check size={18} aria-hidden />
-            Kaydet
-          </Buton>
-        </div>
-      </Kart>
-    </div>
-  )
-}

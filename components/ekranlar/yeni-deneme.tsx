@@ -1,12 +1,18 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { AlertCircle, Check, X } from 'lucide-react'
-import { Alan, Buton, Cip, Etiket, Kart } from '@/components/ui'
+import { AlertCircle, Camera, Check, X } from 'lucide-react'
+import { Alan, Buton, Cip, Etiket, Kart, Not } from '@/components/ui'
+import {
+  EklemeFormu,
+  FotografDugmeleri,
+  useYanlisSoruEkleme,
+} from '@/components/yanlis-soru-ekle'
+import { useGeriKatmani } from '@/lib/geri'
 import { katsayiYaz, net, netYaz, sonucGecerliMi, yuvarla } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
 import { bugun, cn, yeniId } from '@/lib/utils'
-import type { Deneme, Sablon } from '@/lib/types'
+import type { Deneme, Sablon, YanlisSoru } from '@/lib/types'
 
 type Giris = { dogru: string; yanlis: string }
 
@@ -24,6 +30,7 @@ export function YeniDenemeEkrani({
   varsayilanSablonId,
   duzenlenen,
   denemeSayisi,
+  setYanlisSorular,
   onKaydet,
   onVazgec,
 }: {
@@ -31,6 +38,7 @@ export function YeniDenemeEkrani({
   varsayilanSablonId: string
   duzenlenen: Deneme | null
   denemeSayisi: number
+  setYanlisSorular: (guncelleyici: (onceki: YanlisSoru[]) => YanlisSoru[]) => void
   onKaydet: (deneme: Deneme) => void
   onVazgec: () => void
 }) {
@@ -58,6 +66,22 @@ export function YeniDenemeEkrani({
   })
 
   const sablon = sablonlar.find((s) => s.id === sablonId) ?? sablonlar[0]
+
+  /*
+    Yanlış soru ekleme bu ekranın **içinde** bir katman olarak açılıyor,
+    Yanlış Soru Bankası ekranına gidilmiyor.
+
+    Sebep tek: girilen netler. Bu ekran ana kabuktaki `denemeFormu` state'ine
+    bağlı ve başka bir ekrana geçmek onu söküyor — kullanıcı sekiz dersin
+    doğru/yanlışını yazdıktan sonra bir soru fotoğraflayıp döndüğünde boş bir
+    form buluyordu. Katman üstte açılıyor, form altında olduğu gibi duruyor.
+  */
+  const [yanlisAcik, setYanlisAcik] = useState(false)
+  const [eklenenYanlis, setEklenenYanlis] = useState(0)
+  const yanlisEkleme = useYanlisSoruEkleme(setYanlisSorular)
+  // Geri tuşu önce ekleme formunu, sonra katmanı kapatmalı.
+  useGeriKatmani(yanlisAcik && yanlisEkleme.bekleyen === null, () => setYanlisAcik(false))
+  useGeriKatmani(yanlisEkleme.bekleyen !== null, yanlisEkleme.vazgec)
 
   // Şablon değişince ders listesi değişir, girişler sıfırlanır
   useEffect(() => {
@@ -236,7 +260,28 @@ export function YeniDenemeEkrani({
         </p>
       )}
 
-      <div className="mt-4 flex gap-2">
+      {/*
+        Yanlış soru düğmesi Kaydet'in hemen üstünde: yanlışlar kâğıttan tam da
+        sayılar yazılırken çekiliyor ve kaydettikten sonra ekran kapandığı için
+        "sonra eklerim" pratikte "hiç eklemem" oluyordu.
+      */}
+      <Buton
+        bicim="ikincil"
+        className="mt-4 w-full"
+        onClick={() => setYanlisAcik(true)}
+      >
+        <Camera size={18} aria-hidden />
+        Yanlış soru ekle
+        {eklenenYanlis > 0 && ` (${eklenenYanlis})`}
+      </Buton>
+
+      {eklenenYanlis > 0 && (
+        <p className="mt-2 text-center text-xs text-muted-foreground">
+          {eklenenYanlis} soru bankaya eklendi. Girdiğin netler yerinde duruyor.
+        </p>
+      )}
+
+      <div className="mt-3 flex gap-2">
         <Buton bicim="ikincil" className="flex-1" onClick={onVazgec}>
           Vazgeç
         </Buton>
@@ -249,6 +294,64 @@ export function YeniDenemeEkrani({
         <p className="mt-2 text-center text-xs text-muted-foreground">
           Kaydetmek için en az bir derse sonuç gir.
         </p>
+      )}
+
+      {yanlisAcik && (
+        /* Katman tam ekran ve donuk: altındaki form görünür kalsaydı iki ayrı
+           "kaydet" düğmesi aynı anda ekranda olurdu. */
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-background">
+          <div className="mx-auto max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
+            {yanlisEkleme.gizliGirdi}
+
+            {yanlisEkleme.bekleyen ? (
+              <EklemeFormu
+                onizleme={yanlisEkleme.bekleyen.url}
+                onKaydet={async (bilgi) => {
+                  if (await yanlisEkleme.kaydet(bilgi)) {
+                    setEklenenYanlis((n) => n + 1)
+                    // Katman kapanıyor: deneme formuna dönmek asıl iş, art
+                    // arda çekim isteyen kullanıcı düğmeye yeniden basıyor.
+                    setYanlisAcik(false)
+                  }
+                }}
+                onVazgec={yanlisEkleme.vazgec}
+                hata={yanlisEkleme.hata}
+              />
+            ) : (
+              <>
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="font-display text-xl font-semibold tracking-tight">
+                    Yanlış soru ekle
+                  </h2>
+                  <Buton
+                    bicim="hayalet"
+                    boy="simge"
+                    onClick={() => setYanlisAcik(false)}
+                    aria-label="Kapat"
+                  >
+                    <X size={20} />
+                  </Buton>
+                </div>
+
+                <FotografDugmeleri
+                  onSec={(kaynak) => void yanlisEkleme.fotografAl(kaynak)}
+                  className="mb-3 flex gap-2"
+                />
+
+                {yanlisEkleme.hata && (
+                  <Not tur="tehlike" className="mb-3">
+                    {yanlisEkleme.hata}
+                  </Not>
+                )}
+
+                <Not>
+                  Fotoğraf Yanlış Soru Bankası'na gidiyor. Bu ekranda girdiğin doğru ve
+                  yanlış sayıları silinmiyor.
+                </Not>
+              </>
+            )}
+          </div>
+        </div>
       )}
     </div>
   )
