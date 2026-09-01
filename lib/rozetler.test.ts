@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   KADEME_SIRASI,
   ROZETLER,
+  bildirilecekler,
   hakEdilenler,
   kademeSayimi,
   rozetDurumu,
@@ -363,5 +364,40 @@ describe('kademeler', () => {
     const sayim = kademeSayimi(rozetListesi(durum, []))
     expect(sayim.bronz).toBe(1)
     expect(sayim.efsane).toBe(0)
+  })
+})
+
+describe('bildirilecekler', () => {
+  const rozet = (id: string) => {
+    const bulunan = ROZETLER.find((r) => r.id === id)
+    if (!bulunan) throw new Error(`rozet yok: ${id}`)
+    return bulunan
+  }
+
+  it('aynı türün alt basamakları bildirilmiyor, yalnızca en değerlisi', () => {
+    // Kurulumda 97 diploma notu yazan öğrenci üç rozeti birden kazanıyor.
+    const yeniler = [rozet('diploma-85'), rozet('diploma-90'), rozet('diploma-95')]
+    expect(bildirilecekler(yeniler).map((r) => r.id)).toEqual(['diploma-95'])
+  })
+
+  it('ayrı türler ayrı ayrı bildiriliyor', () => {
+    // Seri ile diploma iki ayrı başarı; biri ötekinin alt basamağı değil.
+    const yeniler = [rozet('diploma-85'), rozet('seri-3')]
+    expect(bildirilecekler(yeniler)).toHaveLength(2)
+  })
+
+  it('en değerli olan kuyruğun başında', () => {
+    const yeniler = [rozet('seri-3'), rozet('diploma-95')]
+    expect(bildirilecekler(yeniler)[0].id).toBe('diploma-95')
+  })
+
+  it('kademe eşitse yüksek eşik kazanıyor', () => {
+    // seri-7 ve seri-14 ikisi de gümüş; bildirilecek olan on dört günlük olan.
+    const yeniler = [rozet('seri-7'), rozet('seri-14')]
+    expect(bildirilecekler(yeniler).map((r) => r.id)).toEqual(['seri-14'])
+  })
+
+  it('yeni rozet yoksa kuyruk boş', () => {
+    expect(bildirilecekler([])).toEqual([])
   })
 })

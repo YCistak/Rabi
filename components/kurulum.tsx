@@ -10,6 +10,7 @@ import { AramaAlani, Liste, SecilenSatir, SecimSatiri } from '@/components/hedef
 import {
   bolumAra,
   bolumBul,
+  bolumleriGetir,
   tahminEt,
   turAdi,
   universiteAra,
@@ -105,7 +106,7 @@ const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
   },
   alan: {
     baslik: 'Hangi alandasın?',
-    aciklama: 'Sıralama tahmini ve deneme şablonları buna göre ayarlanır.',
+    aciklama: 'Sıralama tahmini, deneme şablonları ve bölüm listesi buna göre ayarlanır.',
   },
   bolum: {
     /*
@@ -134,11 +135,27 @@ const PUAN_TURU_ADI: Record<PuanTuru, string> = {
   dil: 'Dil',
 }
 
-const PUAN_TURLERI: { id: PuanTuru; ad: string }[] = [
+/**
+ * Kurulumda sorulan alanlar.
+ *
+ * **Dil burada yok**, `PuanTuru` içinde duruyor: Dil öğrencisi azınlıkta ve
+ * kurulumdaki dördüncü kart listeyi kararsızlara kapatıyordu. Dil'i seçmek
+ * gerekirse yolu Ayarlar &rsaquo; Alanım -- oradaki çip listesi dört türü de
+ * gösteriyor. Katalogdaki DİL programları da yerinde; yalnızca kurulumdaki
+ * soru sadeleşti.
+ *
+ * `'yok'` gerçek bir puan türü değil, "karar vermedim"in kart listesindeki
+ * karşılığı; kayda `null` olarak geçiyor. Kararsız öğrenciye bir alan
+ * seçtirmek, sıralama ekranında onun hiç söylemediği bir türe göre hesaplanmış
+ * bir sayı göstermek olurdu.
+ */
+const ALANSIZ = 'yok'
+
+const PUAN_TURLERI: { id: PuanTuru | typeof ALANSIZ; ad: string }[] = [
   { id: 'say', ad: 'Sayısal' },
   { id: 'ea', ad: 'Eşit Ağırlık' },
   { id: 'soz', ad: 'Sözel' },
-  { id: 'dil', ad: 'Dil' },
+  { id: ALANSIZ, ad: 'Karar vermedim' },
 ]
 
 
@@ -163,7 +180,16 @@ export function Kurulum({
   /** Mezunun yıl sonu notları: sınıf → yazılan metin. Boşlar hesaba girmiyor. */
   const [notlar, setNotlar] = useState<Record<number, string>>({})
   const [obpMetni, setObpMetni] = useState('')
-  const [puanTuru, setPuanTuru] = useState<PuanTuru>('ea')
+  const [puanTuru, setPuanTuru] = useState<PuanTuru | null>(null)
+  /*
+    Bölüm listesi alana göre süzülüyor; bu anahtar süzgeci kaldırıyor.
+
+    Süzgeç şart: sözel öğrenciye Bilgisayar Mühendisliği göstermek,
+    giremeyeceği bir bölümü hedef olarak kaydettirmek demek. Ama kapısı da
+    şart -- alan değiştirmeyi düşünen ya da alanını yanlış işaretlemiş öğrenci
+    aradığı bölümü hiç bulamaz ve listeyi bozuk sanardı.
+  */
+  const [alanDisiniGoster, setAlanDisiniGoster] = useState(false)
   // Varsayılan 200: çubuğun ortasına yakın, kurulumu hiç ellemeyen için makul.
   const [hedef, setHedef] = useState(200)
   /*
@@ -193,17 +219,21 @@ export function Kurulum({
     [secilenUni, hedefBolum],
   )
   const uniSonuclari = useMemo(() => universiteAra(uniArama), [uniArama])
+  /** Kararsızken ve anahtar açıkken süzgeç yok; kalan durumda alan süzüyor. */
+  const alanSuzgeci = alanDisiniGoster ? null : puanTuru
   const bolumSonuclari = useMemo(
-    () => (secilenUni ? bolumAra(secilenUni, bolumArama) : []),
-    [secilenUni, bolumArama],
+    () => (secilenUni ? bolumAra(secilenUni, bolumArama, alanSuzgeci) : []),
+    [secilenUni, bolumArama, alanSuzgeci],
   )
 
   const universiteSec = (secilen: Universite) => {
     setHedefUniversite(secilen.ad)
     setUniArama('')
     // Yeni üniversitenin açmadığı bir bölüm seçili kalırsa ekran, o
-    // üniversitede olmayan bir hedefi kaydedilebilir gösterirdi.
-    if (secilenBolum && !bolumAra(secilen, '').some((b) => b.id === secilenBolum.id)) {
+    // üniversitede olmayan bir hedefi kaydedilebilir gösterirdi. Denetim
+    // süzgeçsiz listeye bakıyor: alan dışındaki bir seçim geçerli, yalnızca
+    // listede gizli.
+    if (secilenBolum && !bolumleriGetir(secilen).some((b) => b.id === secilenBolum.id)) {
       setHedefBolum('')
     }
   }
@@ -432,8 +462,8 @@ export function Kurulum({
         <SecimKartlari
           etiket="Hangi alandasın?"
           secenekler={PUAN_TURLERI.map((tur) => ({ deger: tur.id, ad: tur.ad }))}
-          secili={puanTuru}
-          onSec={setPuanTuru}
+          secili={puanTuru ?? ALANSIZ}
+          onSec={(deger) => setPuanTuru(deger === ALANSIZ ? null : deger)}
         />
       ) : suanki === 'notlar' ? (
         <OkulNotlari
@@ -560,7 +590,13 @@ export function Kurulum({
                         onDegis={setBolumArama}
                         ipucu="Bölüm ara"
                       />
-                      <Liste bos="Bu üniversitede böyle bir bölüm bulamadım.">
+                      <Liste
+                        bos={
+                          alanSuzgeci
+                            ? 'Alanına uyan böyle bir bölüm bulamadım.'
+                            : 'Bu üniversitede böyle bir bölüm bulamadım.'
+                        }
+                      >
                         {bolumSonuclari.map((b) => (
                           <SecimSatiri
                             key={b.id}
@@ -570,6 +606,20 @@ export function Kurulum({
                           />
                         ))}
                       </Liste>
+                      {/* Anahtar yalnızca süzgeç varken görünüyor: kararsız
+                          öğrenciye zaten bütün liste açık ve "alan dışı"nın
+                          karşılığı yok. */}
+                      {puanTuru !== null && (
+                        <button
+                          type="button"
+                          onClick={() => setAlanDisiniGoster((a) => !a)}
+                          className="mt-2 w-full rounded-lg py-1 text-center text-[13px] font-bold text-ikincil transition active:opacity-70"
+                        >
+                          {alanDisiniGoster
+                            ? 'Yalnızca alanımdaki bölümler'
+                            : 'Alanım dışındaki bölümleri de göster'}
+                        </button>
+                      )}
                     </>
                   )}
                 </div>

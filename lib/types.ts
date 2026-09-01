@@ -329,8 +329,17 @@ export type Ayarlar = {
    * başladığında sınıf bunun üzerinden kendiliğinden ilerler.
    */
   sinifYili: number
-  /** Hedeflenen puan türü — sıralama ekranı ve şablon önerileri buna bakar. */
-  puanTuru: PuanTuru
+  /**
+   * Öğrencinin kendi alanı — sıralama ekranı, şablon önerileri ve hedef
+   * listesinin süzgeci buna bakar.
+   *
+   * `null` "karar vermedim" demek ve bir varsayılanla doldurulmuyor. Kurulumda
+   * bir alan **seçilmiş gibi** kaydetmek, sıralama ekranında hiç seçilmemiş bir
+   * türe göre hesaplanmış bir sayı göstermek olurdu; o sayı da tahmin değil
+   * uydurma olurdu. Kararsızken sıralama hesaplanmıyor, hedef listesi de
+   * süzülmüyor.
+   */
+  puanTuru: PuanTuru | null
   /** Günlük soru hedefi, ilk açılışta seçilir. */
   gunlukHedef: number
   /** Günlük hatırlatma saati, 0–23. */

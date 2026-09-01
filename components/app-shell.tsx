@@ -31,7 +31,7 @@ import type { BankaKaydi } from '@/lib/oyunlar/banka'
 import { sablonlariBirlestir } from '@/lib/sablonlar'
 import { guncelTahmin, obpHesapla } from '@/lib/tahmin'
 import { egitimYili, gunlukToplam, ilerlemisSinif } from '@/lib/hesap'
-import { rozetDurumu, yeniRozetler, type Rozet } from '@/lib/rozetler'
+import { bildirilecekler, rozetDurumu, yeniRozetler, type Rozet } from '@/lib/rozetler'
 import { hatirlatmaIptal, hatirlatmaPlanla, pomodoroIptal } from '@/lib/bildirim'
 import { odakKilidiniBitir } from '@/lib/odak-kilidi'
 import { bekleyenSayisi } from '@/lib/hata-bildirimi'
@@ -62,7 +62,7 @@ import { gununNotlari, notlariNormalize, type NotKagidi } from '@/lib/yapilacakl
 import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
 import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
 import { YapilacaklarEkrani } from '@/components/ekranlar/yapilacaklar'
-import { RozetKutlama } from '@/components/rozet-kutlama'
+import { RozetBildirimi } from '@/components/rozet-bildirimi'
 
 /** Rozet kontrolünün, veri durulana kadar beklediği süre (ms). */
 const ROZET_BEKLEME = 1200
@@ -179,7 +179,12 @@ export function AppShell() {
    */
   const hataBildirimi = useHataBildirimi(ayarlar.hataBildirimiAcik)
   /** İzlenmiş haftalık özetlerin hafta başı tarihleri. */
-  const [kutlanan, setKutlanan] = useState<Rozet[]>([])
+  /*
+    Bildirim kuyruğu. Aynı anda birden fazla rozet gelebiliyor ve ekranda hep
+    tek bildirim var: üst üste inen iki şerit ikisini de okunmaz yapardı.
+    Kuyruğun sahibi burası, `RozetBildirimi` tek bir rozet çiziyor.
+  */
+  const [bildirimKuyrugu, setBildirimKuyrugu] = useState<Rozet[]>([])
   /**
    * Açılış ekranı kalktı mı.
    *
@@ -336,8 +341,11 @@ export function AppShell() {
       const yeniler = yeniRozetler(ilerleme, rozetler)
       if (yeniler.length > 0) {
         const tarih = bugun()
+        // Kazanılan **hepsi** kayda giriyor; kuyruğa yalnızca her türün en
+        // değerlisi düşüyor (`bildirilecekler`). 97 diploma notu yazan öğrenci
+        // üç diploma rozetini birden kazanıyor ama tek bildirim görüyor.
         setRozetler((onceki) => [...onceki, ...yeniler.map((r) => ({ rozetId: r.id, tarih }))])
-        setKutlanan(yeniler)
+        setBildirimKuyrugu((onceki) => [...onceki, ...bildirilecekler(yeniler)])
       }
     }, ROZET_BEKLEME)
 
@@ -712,7 +720,10 @@ export function AppShell() {
         }}
       />
 
-      <RozetKutlama rozetler={kutlanan} onKapat={() => setKutlanan([])} />
+      <RozetBildirimi
+        rozet={bildirimKuyrugu[0] ?? null}
+        onBitti={() => setBildirimKuyrugu((onceki) => onceki.slice(1))}
+      />
     </div>
   )
 

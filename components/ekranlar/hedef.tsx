@@ -8,6 +8,7 @@ import {
   KATALOG_VERI_YILI,
   bolumAra,
   bolumBul,
+  bolumleriGetir,
   tahminEt,
   turAdi,
   universiteAra,
@@ -46,13 +47,28 @@ export function HedefEkrani({
 }: {
   hedef: Hedef | null
   setHedef: (hedef: Hedef | null) => void
-  varsayilanTur: PuanTuru
+  /** Öğrencinin kendi alanı; bölüm listesini süzüyor. `null` = karar vermedi. */
+  varsayilanTur: PuanTuru | null
   guncelSiralama: number | null
   onKaydedildi: () => void
 }) {
   const [universite, setUniversite] = useState(hedef?.universite ?? '')
   const [bolum, setBolum] = useState(hedef?.bolum ?? '')
-  const [puanTuru, setPuanTuru] = useState<PuanTuru>(hedef?.puanTuru ?? varsayilanTur)
+  /*
+    Hedefin puan türü. Kayıtlı hedef varsa onunki, yoksa öğrencinin kendi alanı;
+    ikisi de yoksa 'ea' -- yalnızca elle giriş kipindeki çiplerin bir başlangıcı
+    olsun diye. Katalogdan bölüm seçilir seçilmez `yaz` bunu bölümün gerçek
+    türüyle değiştiriyor.
+  */
+  const [puanTuru, setPuanTuru] = useState<PuanTuru>(hedef?.puanTuru ?? varsayilanTur ?? 'ea')
+  /*
+    Bölüm listesi öğrencinin alanına göre süzülüyor; bu anahtar süzgeci
+    kaldırıyor. Süzgeç olmadan sözel öğrenciye Bilgisayar Mühendisliği
+    çıkıyordu -- giremeyeceği bir bölüm hedef olarak kaydedilince "hedefine ne
+    kadar kaldı" cümlesi ölçtüğü şeyi kaybediyor. Anahtar da şart: alan
+    değiştirmeyi düşünen öğrenci aradığını hiç bulamazdı.
+  */
+  const [alanDisiniGoster, setAlanDisiniGoster] = useState(false)
   const [tabanPuan, setTabanPuan] = useState(hedef?.tabanPuan?.toString() ?? '')
   const [basariSirasi, setBasariSirasi] = useState(hedef?.basariSirasi?.toString() ?? '')
   const [silmeAcik, setSilmeAcik] = useState(false)
@@ -76,9 +92,16 @@ export function HedefEkrani({
   )
 
   const uniSonuclari = useMemo(() => universiteAra(uniArama), [uniArama])
+  /*
+    Süzgeç `varsayilanTur`dan geliyor, `puanTuru` state'inden değil: biri
+    öğrencinin **kendi** alanı, öteki seçilen **bölümün** türü. İkincisine
+    bakan bir süzgeç kendi kuyruğunu kovalardı -- seçilen bölüm süzgeci
+    değiştirir, süzgeç de listeyi.
+  */
+  const alanSuzgeci = alanDisiniGoster ? null : varsayilanTur
   const bolumSonuclari = useMemo(
-    () => (secilenUni ? bolumAra(secilenUni, bolumArama) : []),
-    [secilenUni, bolumArama],
+    () => (secilenUni ? bolumAra(secilenUni, bolumArama, alanSuzgeci) : []),
+    [secilenUni, bolumArama, alanSuzgeci],
   )
 
   const universiteSec = (secilen: Universite) => {
@@ -86,7 +109,9 @@ export function HedefEkrani({
     setUniArama('')
     // Yeni üniversitenin açmadığı bir bölüm seçili kalırsa ekran, o
     // üniversitede olmayan bir hedefi kaydedilebilir gösterirdi.
-    if (secilenBolum && !bolumAra(secilen, '').some((b) => b.id === secilenBolum.id)) {
+    // Denetim süzgeçsiz listeye bakıyor: alan dışındaki bir seçim geçerli,
+    // yalnızca listede gizli.
+    if (secilenBolum && !bolumleriGetir(secilen).some((b) => b.id === secilenBolum.id)) {
       setBolum('')
       setTabanPuan('')
       setBasariSirasi('')
@@ -227,7 +252,13 @@ export function HedefEkrani({
                       onDegis={setBolumArama}
                       ipucu="Bölüm ara"
                     />
-                    <Liste bos="Bu üniversitede böyle bir bölüm bulamadım.">
+                    <Liste
+                      bos={
+                        alanSuzgeci
+                          ? 'Alanına uyan böyle bir bölüm bulamadım.'
+                          : 'Bu üniversitede böyle bir bölüm bulamadım.'
+                      }
+                    >
                       {bolumSonuclari.map((b) => {
                         const t = tahminEt(secilenUni, b)
                         return (
@@ -248,6 +279,19 @@ export function HedefEkrani({
                         )
                       })}
                     </Liste>
+                    {/* Anahtar yalnızca süzgeç varken görünüyor: alanını
+                        seçmemiş öğrenciye zaten bütün liste açık. */}
+                    {varsayilanTur !== null && (
+                      <button
+                        type="button"
+                        onClick={() => setAlanDisiniGoster((a) => !a)}
+                        className="mt-2 w-full rounded-lg py-1 text-center text-[13px] font-bold text-ikincil transition active:opacity-70"
+                      >
+                        {alanDisiniGoster
+                          ? 'Yalnızca alanımdaki bölümler'
+                          : 'Alanım dışındaki bölümleri de göster'}
+                      </button>
+                    )}
                   </>
                 )}
               </div>

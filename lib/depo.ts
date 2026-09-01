@@ -201,7 +201,9 @@ export const VARSAYILAN_AYARLAR: Ayarlar = {
   buYilSinif: 12,
   elleObp: null,
   sinifYili: egitimYili(),
-  puanTuru: 'ea',
+  // Alan sorulmadan seçilmiş sayılmıyor; kurulumda "Karar vermedim" de bir
+  // cevap ve karşılığı bu.
+  puanTuru: null,
   gunlukHedef: 200,
   hatirlatmaSaati: 20,
   hatirlatmaDakikasi: 0,

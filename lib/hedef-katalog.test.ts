@@ -133,6 +133,23 @@ describe('bolumleriGetir', () => {
       true,
     )
   })
+
+  it('alan verilince öğrencinin giremeyeceği bölüm listeye girmiyor', () => {
+    const itu = uni('İstanbul Teknik Üniversitesi')
+    const sozel = bolumleriGetir(itu, 'soz')
+    expect(sozel.some((b) => b.ad.startsWith('Bilgisayar Mühendisliği'))).toBe(false)
+    expect(sozel.every((b) => b.puanTuru === 'soz')).toBe(true)
+    // Süzgeçsiz çağrı eskisi gibi: alanını seçmemiş kullanıcıya bütün liste açık.
+    expect(bolumleriGetir(itu).length).toBeGreaterThan(sozel.length)
+  })
+
+  it('bolumBul süzgece takılmıyor — alan dışı kayıtlı hedef bulunmaya devam ediyor', () => {
+    // Alanını sözel işaretleyen ama hedefi sayısal kalmış kullanıcının kaydı
+    // ekranda silinmiş gibi görünmemeli.
+    const itu = uni('İstanbul Teknik Üniversitesi')
+    const sayisal = bolumleriGetir(itu, 'say')[0]
+    expect(bolumBul(itu, sayisal.ad)?.id).toBe(sayisal.id)
+  })
 })
 
 describe('arama', () => {
@@ -158,6 +175,12 @@ describe('arama', () => {
     const itu = uni('İstanbul Teknik Üniversitesi')
     expect(bolumAra(itu, 'tıp')).toEqual([])
     expect(bolumAra(itu, 'bilgisayar')[0].ad).toContain('Bilgisayar Mühendisliği')
+  })
+
+  it('arama da alana göre süzülüyor', () => {
+    const itu = uni('İstanbul Teknik Üniversitesi')
+    expect(bolumAra(itu, 'bilgisayar', 'soz')).toEqual([])
+    expect(bolumAra(itu, 'bilgisayar', 'say')[0].ad).toContain('Bilgisayar Mühendisliği')
   })
 })
 

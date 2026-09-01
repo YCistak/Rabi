@@ -332,6 +332,41 @@ export function yeniRozetler(durum: RozetDurumu, kazanilmis: KazanilanRozet[]): 
   return hakEdilenler(durum).filter((r) => !varOlan.has(r.id))
 }
 
+/** İki rozetten hangisi daha değerli: önce kademe, eşitse yüksek eşik. */
+function ustunMu(aday: Rozet, mevcut: Rozet): boolean {
+  const fark = KADEME_SIRASI[aday.kademe] - KADEME_SIRASI[mevcut.kademe]
+  return fark !== 0 ? fark > 0 : aday.esik > mevcut.esik
+}
+
+/**
+ * Aynı anda kazanılan rozetlerden **bildirilecek** olanlar.
+ *
+ * Bir eşik geçildiğinde altındakiler de birlikte geliyor: kurulumda 97 diploma
+ * notu yazan öğrenci diploma-85 (bronz), diploma-90 (altın) ve diploma-95
+ * (efsane) rozetlerinin üçünü birden kazanıyor. Üçünü de duyurmak aynı haberi
+ * üç kez vermek ve en değerlisini ötekilerin arasında kaybetmek: kullanıcı
+ * "Diploma 95+" aldığını biliyorsa "Diploma 85+" bir haber değil.
+ *
+ * O yüzden her **tür**den yalnızca en değerlisi bildiriliyor. Türler
+ * birleştirilmiyor: aynı anda gelen bir seri rozeti ile bir diploma rozeti
+ * ayrı iki başarı ve biri ötekinin alt basamağı değil — ikisi de sırayla
+ * duyuruluyor.
+ *
+ * Eleme yalnızca **bildirimde**: `yeniRozetler` hepsini döndürmeye devam
+ * ediyor ve hepsi kayda giriyor. Kazanılmış bir rozeti duyurmamak başka,
+ * vermemek başka; Başarımlar ekranında üçü de duruyor.
+ *
+ * Sıra değerliden değersize: kuyruğun ilk bildirimi en değerli olanı olsun.
+ */
+export function bildirilecekler(yeniler: Rozet[]): Rozet[] {
+  const enIyi = new Map<RozetTuru, Rozet>()
+  for (const rozet of yeniler) {
+    const mevcut = enIyi.get(rozet.tur)
+    if (mevcut === undefined || ustunMu(rozet, mevcut)) enIyi.set(rozet.tur, rozet)
+  }
+  return [...enIyi.values()].sort((a, b) => KADEME_SIRASI[b.kademe] - KADEME_SIRASI[a.kademe])
+}
+
 export type RozetIlerlemesi = {
   rozet: Rozet
   kazanildi: boolean
