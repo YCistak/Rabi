@@ -20,12 +20,18 @@ android {
         applicationId "com.rabi.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // İki dal birleşti: beyaz tema (20) ile oyun modları dalı (19). Android
-        // daha küçük bir versionCode ile kurulumu reddediyor ve telefonda daha
-        // büyüğü duruyorsa "uygulama yüklenemedi" diyor; numara bu yüzden
-        // ikisinin de üstünden, 21den devam etti.
-        versionCode 33
-        versionName "1.14.0"
+        // Numara **bütün dalların** üstünden gidiyor, yalnız master'ın değil.
+        // İki kez aynı yere düşüldü: önce beyaz tema (20) ile oyun modları (19)
+        // birleşince, sonra `ozellik/konu-anlatimi` master'a girmeden 40'a
+        // çıkıp o APK telefona kurulunca. Android daha küçük numaralı sürümü
+        // üstüne kurmayı reddediyor ve telefonda daha büyüğü duruyorsa
+        // "uygulama yüklenemedi" diyor — dalda derlenmiş bir APK'yı denemek
+        // master'ı kurulamaz hâle getiriyor.
+        //
+        // Yeni bir dalda numara verirken `git branch -r` üzerinden en yüksek
+        // versionCode'a bak, master'ınkine değil.
+        versionCode 44
+        versionName "1.18.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // CameraX dört ABI'de native kütüphane getiriyor. Sembol tablosu
         // yüklenmezse Play Console'daki native çökme raporları okunamıyor ve
@@ -51,7 +57,26 @@ android {
     }
 
     buildTypes {
+        /*
+          ML Kit'in OCR kütüphanesi ABI başına ~10 MB ve APK içinde
+          sıkıştırılmadan duruyor; dört ABI'yi birden taşıyan APK 64 MB'a
+          çıkıyor. Elde denemek için `-PtekAbi` bayrağı yalnız arm64 bırakıyor
+          (denenen telefonların hepsi arm64) ve APK'yı ~25 MB'a indiriyor.
+
+          **AAB'ye dokunulmuyor**: Play'e giden paket dört ABI'yi de taşımak
+          zorunda, yoksa bir kısım cihaz uygulamayı hiç indiremez. Bayrak
+          yalnızca `npm run apk:imzali` içinde veriliyor; bayraksız derlenen
+          debug ve release APK'ları dört ABI'li kalıyor.
+        */
         release {
+            // Elde denemek için imzalı ama tek ABI'lik APK: `-PtekAbi`.
+            // Play'e giden `bundleRelease` bu bayrağı almıyor, dört ABI'yi de
+            // taşımaya devam ediyor.
+            if (project.hasProperty('tekAbi')) {
+                ndk {
+                    abiFilters 'arm64-v8a'
+                }
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             if (storeFilePath) {
