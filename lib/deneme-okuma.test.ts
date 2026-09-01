@@ -162,3 +162,73 @@ describe('şablon önerisi', () => {
     expect(sablonOnerisi(metin, TYT, HAZIR_SABLONLAR)).toBeNull()
   })
 })
+
+describe('gerçek kâğıtlar', () => {
+  // Aşağıdaki satırlar kullanıcının çektiği dokuz fotoğraftan alındı.
+  // Hiçbiri önerilen yazımda değil; okuma gerçekte yazılana uymak zorunda.
+
+  it('boş işareti yanlış sanılmıyor', () => {
+    // Eski davranış: "2D 1B" -> 2 doğru 1 yanlış. TYT Coğrafya 5 soru,
+    // 2 doğru 1 boş demek 2 yanlış demek.
+    expect(tablo('Coğrafya: 2D 1B')).toEqual({ cografya: '2/2' })
+  })
+
+  it('doğru yazılmamışsa boştan çıkarılıyor', () => {
+    // TYT Temel Matematik 40 soru: 40 - 15 - 20 = 5 yanlış.
+    expect(tablo('Temel Matematik: 15D 20B')).toEqual({ matematik: '15/5' })
+  })
+
+  it('yanlış ile boş yazılmışsa doğru çıkarılıyor', () => {
+    // TYT Türkçe 40 soru: 40 - 10 - 5 = 25 doğru.
+    expect(tablo('Türkçe: 5B 10Y')).toEqual({ turkce: '25/10' })
+  })
+
+  it('sıra ters olsa da okunuyor', () => {
+    expect(tablo('Coğrafya: 3Y 2D')).toEqual({ cografya: '2/3' })
+  })
+
+  it('yalnızca boş yazılmışsa satır atlanıyor', () => {
+    // "Coğ: 1B" doğrunun kaç olduğunu söylemiyor.
+    const sonuc = denemeyiCoz('Coğ: 1B', TYT)
+    expect(sonuc.okunanlar).toEqual([])
+    expect(sonuc.atlananlar).toContain('Coğrafya')
+  })
+
+  it('alt satıra taşan sayı yukarıdaki derse bağlanıyor', () => {
+    expect(tablo('Türkçe: 36D\n1B')).toEqual({ turkce: '36/3' })
+  })
+
+  it('taşan satır yalnızca sayıysa birleşiyor, ders adı varsa birleşmiyor', () => {
+    expect(tablo('Türkçe: 32D 5Y\nMatematik: 38D 2Y')).toEqual({
+      turkce: '32/5',
+      matematik: '38/2',
+    })
+  })
+
+  it('kısaltmalar tanınıyor', () => {
+    const metin = 'Fels: 3D 1Y\nFiz: 2D 3Y\nKim: 4D 1Y\nBiy: 5D 1Y\nTar: 4D 1Y'
+    expect(tablo(metin)).toEqual({
+      felsefe: '3/1',
+      fizik: '2/3',
+      kimya: '4/1',
+      biyoloji: '5/1',
+      tarih: '4/1',
+    })
+  })
+
+  it('numaralı kısaltma ayırt ediliyor', () => {
+    expect(tablo('Tar1: 6D 4Y\nTar2: 5D 5Y\nCoğ1: 2D 1Y\nCoğ2: 6D 1Y', AYT_SOZEL)).toEqual({
+      tarih1: '6/4',
+      tarih2: '5/5',
+      cografya1: '2/1',
+      cografya2: '6/1',
+    })
+  })
+
+  it('çıkarım eksiye düşerse atlanıyor', () => {
+    // TYT Fizik 7 soru; 5 doğru + 9 boş olamaz.
+    const sonuc = denemeyiCoz('Fizik: 5D 9B', TYT)
+    expect(sonuc.okunanlar).toEqual([])
+    expect(sonuc.atlananlar).toContain('Fizik')
+  })
+})

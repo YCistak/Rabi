@@ -29,6 +29,16 @@ import type { Sablon, SablonDers } from './types'
 /** Kullanıcıya gösterilen yazım örneği; okuma bu düzene göre ayarlandı. */
 export const ORNEK_YAZIM = 'Matematik 38D 2Y'
 
+/**
+ * İkinci örnek: boşla yazım.
+ *
+ * Öğrencilerin çoğu sonucu doğru/yanlış diye değil doğru/boş diye tutuyor ve
+ * kâğıda öyle yazıyor. Yalnızca ilk örneği göstermek, okumanın desteklemediği
+ * bir düzen varmış gibi durmasına yol açıyordu — oysa üçüncü sayı zaten
+ * çıkarımla buluyor.
+ */
+export const ORNEK_YAZIM_BOS = 'Türkçe 15D 20B'
+
 export type OkunanDers = {
   dersId: string
   dogru: number
@@ -59,17 +69,17 @@ const ESANLAMLI: Record<string, readonly string[]> = {
   turkce: ['turkce', 'turk'],
   matematik: ['matematik', 'temel matematik', 'mat'],
   edebiyat: ['edebiyat', 'turk dili', 'edb', 'tdb', 'tde'],
-  tarih: ['tarih', 'trh'],
-  tarih1: ['tarih-1', 'tarih 1', 'tarih1'],
-  tarih2: ['tarih-2', 'tarih 2', 'tarih2'],
+  tarih: ['tarih', 'trh', 'tar'],
+  tarih1: ['tarih-1', 'tarih 1', 'tarih1', 'tar-1', 'tar 1', 'tar1'],
+  tarih2: ['tarih-2', 'tarih 2', 'tarih2', 'tar-2', 'tar 2', 'tar2'],
   cografya: ['cografya', 'cog'],
-  cografya1: ['cografya-1', 'cografya 1', 'cografya1'],
-  cografya2: ['cografya-2', 'cografya 2', 'cografya2'],
-  felsefe: ['felsefe', 'fel'],
+  cografya1: ['cografya-1', 'cografya 1', 'cografya1', 'cog-1', 'cog 1', 'cog1'],
+  cografya2: ['cografya-2', 'cografya 2', 'cografya2', 'cog-2', 'cog 2', 'cog2'],
+  felsefe: ['felsefe', 'fel', 'fels'],
   din: ['din', 'din kulturu', 'dkab'],
-  fizik: ['fizik', 'fzk'],
-  kimya: ['kimya', 'kmy'],
-  biyoloji: ['biyoloji', 'biyo', 'byl'],
+  fizik: ['fizik', 'fzk', 'fiz'],
+  kimya: ['kimya', 'kmy', 'kim'],
+  biyoloji: ['biyoloji', 'biyo', 'byl', 'biy'],
   ingilizce: ['ingilizce', 'ing', 'yds', 'ydt'],
 }
 
@@ -171,29 +181,57 @@ function dersleriBul(satir: string, dersler: SablonDers[]): { bulgular: Bulgu[];
 /** `38d` / `38 dogru` gibi işaretli sayılar. */
 const DOGRU_DESENI = /(\d{1,3})\s*d(?:ogru)?(?![a-z0-9])/
 const YANLIS_DESENI = /(\d{1,3})\s*y(?:anlis)?(?![a-z0-9])/
+const BOS_DESENI = /(\d{1,3})\s*b(?:os)?(?![a-z0-9])/
 
 /**
  * Ders adından sonra gelen parçadan doğru/yanlış çıkarır.
  *
- * Önce `D`/`Y` işaretleri aranıyor — öğrenciye önerilen yazım bu ve işaret
- * varken sıraya güvenmeye gerek yok. İşaret yoksa ilk iki sayı sırayla doğru
- * ve yanlış sayılıyor; kâğıda "Matematik 38 2" yazan da var.
+ * Üç işaret de aranıyor: `D`, `Y` ve `B`. İşaretler aranırken sıraya
+ * bakılmıyor — kâğıtta "3Y 2D" diye ters yazan da var.
+ *
+ * ## Boş neden gerekiyor
+ *
+ * Öğrenciler sonucu doğru/yanlış diye değil **doğru/boş** diye yazıyor:
+ * "Coğ1: 2D 1B", "Temel Matematik: 15D 20B", "TDE: 5B 10Y". `B` bilinmezken
+ * bu satırlar işaretsiz sanılıp ilk iki sayı doğru ve yanlış diye okunuyordu —
+ * "2D 1B" **2 doğru 1 yanlış** oluyordu. Yanlış dolmuş kutu, hiç dolmamış
+ * kutudan kötü: kullanıcı onu fark etmeden kaydediyor.
+ *
+ * ## Üçüncü sayı çıkarımla bulunuyor
+ *
+ * Doğru + yanlış + boş, dersin soru sayısına eşit. İkisi yazılmışsa üçüncüsü
+ * tahmin değil **aritmetik**: "15D 20B" yazan 40 soruluk Temel Matematik'te
+ * yanlış 5'tir. Çıkarım yalnızca şablondaki soru sayısı doğruysa geçerli;
+ * öğrencinin kâğıdı başka bir sınava aitse sayı kayar. Bu yüzden sonuç
+ * negatif çıkarsa satır atlanıyor ve okunanlar kutulara yazılıp kullanıcıya
+ * gösteriliyor, doğrudan kaydedilmiyor.
  *
  * **Tek işaret yetmiyor.** Yalnızca "38D" yazılmışsa yanlışın sıfır olduğu
  * bilinmiyor — yazılmamış olabilir. Sıfır yazmak veriyi uydurmak olurdu.
+ * "Coğ: 1B" ve "Kim: 5Y" de aynı sebeple atlanıyor.
  */
-function sayilariCoz(parca: string): { dogru: number; yanlis: number } | null {
-  const dogruEs = DOGRU_DESENI.exec(parca)
-  const yanlisEs = YANLIS_DESENI.exec(parca)
-
-  if (dogruEs && yanlisEs) {
-    return { dogru: Number(dogruEs[1]), yanlis: Number(yanlisEs[1]) }
+function sayilariCoz(parca: string, soruSayisi: number): { dogru: number; yanlis: number } | null {
+  const sayi = (desen: RegExp): number | null => {
+    const es = desen.exec(parca)
+    return es === null ? null : Number(es[1])
   }
-  if (dogruEs || yanlisEs) return null
+  const dogru = sayi(DOGRU_DESENI)
+  const yanlis = sayi(YANLIS_DESENI)
+  const bos = sayi(BOS_DESENI)
+
+  if (dogru !== null && yanlis !== null) return { dogru, yanlis }
+  if (dogru !== null && bos !== null) return tamamla(dogru, soruSayisi - dogru - bos)
+  if (yanlis !== null && bos !== null) return tamamla(soruSayisi - yanlis - bos, yanlis)
+  if (dogru !== null || yanlis !== null || bos !== null) return null
 
   const sayilar = [...parca.matchAll(/\d{1,3}/g)].map((e) => Number(e[0]))
   if (sayilar.length < 2) return null
   return { dogru: sayilar[0], yanlis: sayilar[1] }
+}
+
+/** Çıkarımla bulunan sayı eksiye düşerse okuma yanlış demektir. */
+function tamamla(dogru: number, yanlis: number): { dogru: number; yanlis: number } | null {
+  return dogru < 0 || yanlis < 0 ? null : { dogru, yanlis }
 }
 
 /**
@@ -204,22 +242,55 @@ function sayilariCoz(parca: string): { dogru: number; yanlis: number } | null {
  * Bu yüzden ders adları satır içinde **yer**leriyle bulunuyor ve her dersin
  * sayıları kendi adıyla bir sonraki ders adı arasından okunuyor.
  */
+/**
+ * Bir ders adı, sayıları uzun bir addan sonra alt satıra taşabiliyor.
+ *
+ * Kâğıtta "Türk Dili ve Edebiyat.: 36D" yazıp satır bitince "1B"yi altına
+ * yazan öğrenci var; OCR de bunu iki ayrı satır olarak veriyor. Alt satırda
+ * ders adı yok, o yüzden tek başına hiçbir şeye bağlanamıyor ve sayılar
+ * kayboluyordu.
+ *
+ * Yalnızca **işaretli sayılardan ibaret** satırlar bir öncekine ekleniyor.
+ * Ölçü dar tutuldu: harf taşıyan bir satır kendi başına bir kayıt olabilir ve
+ * onu yukarıdakine yapıştırmak iki dersin sayılarını karıştırırdı.
+ */
+function satirlar(metin: string): string[] {
+  const cikti: string[] = []
+
+  for (const ham of metin.split(/\r?\n/)) {
+    const satir = sadelestir(ham)
+    if (satir === '') continue
+
+    if (cikti.length > 0 && yalnizcaSayiSatiri(satir)) {
+      cikti[cikti.length - 1] += ' ' + satir
+      continue
+    }
+    cikti.push(satir)
+  }
+
+  return cikti
+}
+
+/** Satırda işaretli sayılardan başka bir şey var mı? */
+function yalnizcaSayiSatiri(satir: string): boolean {
+  if (!/\d/.test(satir)) return false
+  return satir.replace(/\d{1,3}\s*[dyb](?![a-z0-9])/g, ' ').replace(/[^a-z]/g, '') === ''
+}
+
 export function denemeyiCoz(metin: string, sablon: Sablon): OkumaSonucu {
   const bulunanlar = new Map<string, OkunanDers>()
   const atlanan = new Set<string>()
   // Aynı ders iki kez ve **farklı** sayılarla okunursa ikisi de güvenilmez.
   const cakisan = new Set<string>()
 
-  for (const hamSatir of metin.split(/\r?\n/)) {
-    const satir = sadelestir(hamSatir)
-    if (satir === '') continue
+  for (const satir of satirlar(metin)) {
 
     const { bulgular, belirsiz } = dersleriBul(satir, sablon.dersler)
     for (const ad of belirsiz) atlanan.add(ad)
 
     for (const [sira, bulgu] of bulgular.entries()) {
       const sonrakiBas = bulgular[sira + 1]?.bas ?? satir.length
-      const sayilar = sayilariCoz(satir.slice(bulgu.son, sonrakiBas))
+      const sayilar = sayilariCoz(satir.slice(bulgu.son, sonrakiBas), bulgu.ders.soruSayisi)
 
       if (sayilar === null) {
         atlanan.add(bulgu.ders.ad)

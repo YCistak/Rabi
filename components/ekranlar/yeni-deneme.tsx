@@ -5,7 +5,7 @@ import { AlertCircle, Check, ScanLine, X } from 'lucide-react'
 import { Alan, Buton, Cip, Etiket, Kart } from '@/components/ui'
 import { katsayiYaz, net, netYaz, sonucGecerliMi, yuvarla } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
-import { ORNEK_YAZIM, denemeyiCoz, sablonOnerisi } from '@/lib/deneme-okuma'
+import { ORNEK_YAZIM, ORNEK_YAZIM_BOS, denemeyiCoz, sablonOnerisi } from '@/lib/deneme-okuma'
 import { kagidiOku, okumaVarMi } from '@/lib/deneme-ocr'
 import { bugun, cn, yeniId } from '@/lib/utils'
 import type { Deneme, Sablon } from '@/lib/types'
@@ -258,9 +258,16 @@ export function YeniDenemeEkrani({
               <p className="mt-1.5 rounded-lg bg-muted px-3 py-2 text-center text-[15px] font-extrabold rakam">
                 {ORNEK_YAZIM}
               </p>
+              <p className="mt-1.5 rounded-lg bg-muted px-3 py-2 text-center text-[15px] font-extrabold rakam">
+                {ORNEK_YAZIM_BOS}
+              </p>
               <p className="mt-2 text-[12px] leading-snug font-medium text-muted-foreground">
-                Her ders ayrı satırda; önce doğru, sonra yanlış. Okunan sayılar
-                kutulara yazılır, <strong>kaydetmeden önce sen kontrol edersin</strong>.
+                Her ders ayrı satırda. <strong>D</strong> doğru, <strong>Y</strong> yanlış,
+                <strong> B</strong> boş; üçünden ikisini yazman yeter. Ders adını
+                kısaltabilirsin (&ldquo;Mat&rdquo;, &ldquo;Fiz&rdquo;) ama tek harf
+                yazma &mdash; &ldquo;F&rdquo; hem Fizik hem Felsefe olabiliyor.
+                Okunan sayılar kutulara yazılır,{' '}
+                <strong>kaydetmeden önce sen kontrol edersin</strong>.
               </p>
               <div className="mt-2.5 flex gap-2">
                 <Buton className="flex-1" onClick={okut}>

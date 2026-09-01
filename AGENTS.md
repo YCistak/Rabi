@@ -798,6 +798,37 @@ Anahtar eşleşmesi **söz sınırına** bakıyor. İki hata bundan çıkmışt�
 kısaltması "otomat"ın içinde yakalanıyordu, ve "tarih 1" eşanlamlısı
 "tarih 10d 2y" satırında "tarih 1" olarak eşleşip geriye "0d 2y" bırakıyordu.
 
+### Boş da bir sayı (`B`)
+
+Öğrenciler sonucu doğru/yanlış diye değil **doğru/boş** diye tutuyor: gerçek
+kâğıtlarda "Coğ1: 2D 1B", "Temel Matematik: 15D 20B", "TDE: 5B 10Y" yazıyor.
+`B` bilinmezken bu satırlar işaretsiz sanılıp ilk iki sayı doğru ve yanlış diye
+okunuyordu — "2D 1B" **2 doğru 1 yanlış** oluyordu.
+
+Üçü de aranıyor ve **sıraya bakılmıyor** ("3Y 2D" diye yazan var). İkisi
+yazılmışsa üçüncüsü çıkarımla buluyor: doğru + yanlış + boş = soru sayısı. Bu
+tahmin değil aritmetik, ama şablondaki soru sayısının doğru olmasına bağlı;
+sonuç eksiye düşerse satır atlanıyor.
+
+Tek işaret yine yetmiyor: "Coğ: 1B" doğrunun kaç olduğunu söylemiyor.
+
+### Tek harflik kısaltma çözülmüyor
+
+Kâğıtlarda "T.E", "T.M", "Fi", "F", "K", "B" gibi kısaltmalar var ve bunlar
+insan için de belirsiz: aynı fotoğrafta "F" Fizik'ken başka birinde Felsefe,
+"B" hem Biyoloji hem boş işareti. En az üç harf kuralı bu yüzden duruyor
+(`anahtarlar`) — bir harfi derse bağlamak yazı tura atmak olurdu. Örnek kartı
+kullanıcıya bunu **söylüyor**; sessizce atlamak, okumanın bozuk olduğunu
+düşündürüyordu.
+
+### Sayı alt satıra taşabiliyor
+
+Uzun ders adından sonra satır bitiyor ve sayı altına düşüyor ("Türk Dili ve
+Edebiyat.: 36D" ⏎ "1B"). Yalnızca işaretli sayılardan ibaret satırlar bir
+öncekine ekleniyor (`satirlar`). Ölçü dar: harf taşıyan satır kendi başına bir
+kayıt olabilir ve onu yukarıdakine yapıştırmak iki dersin sayılarını
+karıştırırdı.
+
 ### Örnek kamera açılmadan gösteriliyor
 
 "Kâğıdı okut"a basınca kamera değil önce **örnek yazım** çıkıyor
@@ -860,6 +891,23 @@ Puan ve sıralama hesabı **tahmindir** ve arayüzde her zaman böyle sunulur. T
 kesin sayı gibi gösteren bir arayüz yazma; uyarıyı kapatılabilir yapma.
 
 ## Derleme
+
+### Elden kurulan APK'yı Play Protect engelliyor
+
+"Uygulama, cihazınızı korumak için engellendi" — telefona kurulum hiç
+başlamıyor. Sebep pakette **değil**: ML Kit, imza (debug ve release),
+versionCode, ABI sayısı, izinler ve derleme tipi tek tek elendi; başka bir
+cihazda kurulmuş eski bir APK'yla aynı sertifikayı, aynı dört ABI'yi ve daha
+az izni taşıyan paket de engellendi. Play Protect kararı dosyanın içeriğine
+değil, Google'ın o dosya özetini daha önce görüp görmediğine veriyor — yeni
+derlenen her APK dünyada tek kopya.
+
+Elde denemek için Play Store › profil › Play Protect › taramayı kurulum
+süresince kapatmak gerekiyor. Kalıcı çözüm Play iç test kanalı: Play'in
+imzalayıp dağıttığı paketi Protect sorgulamıyor.
+
+**Bu teşhisi tekrar etme.** Yeni bir APK kurulmuyorsa önce Play Protect'i ele;
+paket farklarını aramak saatler alıyor ve hiçbiri sebep değil.
 
 APK için **JDK 21 şart** — sistem varsayılanı JDK 25, Gradle 8.14.3 desteklemiyor.
 `JAVA_HOME=/usr/lib/jvm/java-21-openjdk npm run apk`.
