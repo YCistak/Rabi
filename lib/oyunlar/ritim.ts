@@ -128,6 +128,19 @@ export const SORU_SURESI: Record<OyunId, number> = {
    * adından uzun sürüyor, o yüzden edebiyattan fazla. Kavram'da üç eşleştirme
    * var ama beş tanım okunuyor — iki tanesi boşuna.
    */
+  /**
+   * İklimde süre haritayı okumaya gidiyor.
+   *
+   * Şık okumak beş saniye sürüyor; işaretli bölgeyi dünya haritasında bulmak
+   * ve enlemini görmek daha uzun — sorunun asıl işi o.
+   */
+  iklim: 18,
+  /**
+   * İzohipste süre en uzunu: eğrilerin biçimine bakmak yetmiyor, yükselti
+   * sayılarını da okumak gerekiyor. Tepe ile kapalı çukuru ayıran tek şey o
+   * sayılar; okumadan verilen cevap yazı turadan farksız.
+   */
+  izohips: 22,
   antlasma: 45,
   kavram: 35,
   // Anlatım bozukluğunda önce cümleyi okumak, sonra sebebi seçmek gerekiyor;
@@ -162,6 +175,15 @@ export const SORU_SURESI: Record<OyunId, number> = {
    * bilgisini değil, sayı tutup deneme becerisini ölçerdi.
    */
   tuzak: 8,
+  /**
+   * Periyodik tabloda süre göz taramasına gidiyor.
+   *
+   * Soruyu okumak bir saniye, 18 sütunluk tabloda hücreyi bulmak on saniye —
+   * Harita Avı'ndaki hesabın aynısı.
+   */
+  periyodik: 16,
+  /** Formül'de süre **el** başına: oyun altılı eşleştirme dağıtıyor. */
+  formul: 40,
 }
 
 /** Boss sorusuna verilen ek süre çarpanı. */
@@ -205,7 +227,7 @@ export function soruSuresi(oyun: OyunId, boss: BossZorlugu | null): number {
  * Süre dolması da yanlış sayılıyor: beklemek de bilmemek.
  *
  * **Oyun Bankası turu** modun üstünde: orada sorular zaten bir kez yanlış
- * bilinmiş olanlar ve turun amacı onları üç kez doğru bilip düşürmek; ilk
+ * bilinmiş olanlar ve turun amacı hepsini bir kez daha görmek; ilk
  * yanlışta kapanan bir tur o işi imkânsız kılardı.
  */
 export function elerMi(

@@ -4,6 +4,7 @@ import {
   SON_KULLANILAN_SINIRI,
   kisayollar,
   kullanildi,
+  sabitliKisayollar,
 } from './son-kullanilan'
 
 const TUMU = [
@@ -90,5 +91,54 @@ describe('kisayollar', () => {
 
   it('seçenek dörtten azsa var olan kadarını döner', () => {
     expect(kisayollar([{ id: 'a' }, { id: 'b' }], ['b']).map((o) => o.id)).toEqual(['b', 'a'])
+  })
+})
+
+describe('sabitliKisayollar', () => {
+  it('sabitlenenler kendi sırasıyla başta durur', () => {
+    expect(sabitliKisayollar(TUMU, ['e', 'c'], ['f']).map((o) => o.id)).toEqual([
+      'e',
+      'c',
+      'f',
+      'a',
+    ])
+  })
+
+  // Sabitlemek listeyi kapatmıyor: kalan yerler son kullanılanlarla doluyor.
+  it('dördü doldurmayan sabit, geri kalanı geçmişe bırakır', () => {
+    expect(sabitliKisayollar(TUMU, ['d'], ['f', 'e']).map((o) => o.id)).toEqual([
+      'd',
+      'f',
+      'e',
+      'a',
+    ])
+  })
+
+  it('hiç sabit yoksa eski davranışın aynısı', () => {
+    expect(sabitliKisayollar(TUMU, [], ['f', 'e'])).toEqual(kisayollar(TUMU, ['f', 'e']))
+  })
+
+  it('geçmişte de duran sabit iki yer işgal etmez', () => {
+    const secilen = sabitliKisayollar(TUMU, ['f'], ['f', 'e']).map((o) => o.id)
+    expect(secilen).toEqual(['f', 'e', 'a', 'b'])
+    expect(new Set(secilen).size).toBe(secilen.length)
+  })
+
+  it('kaldırılmış bir kimlik sabitlenmiş olsa da elenir', () => {
+    expect(sabitliKisayollar(TUMU, ['yok-artik', 'b'], []).map((o) => o.id)).toEqual([
+      'b',
+      'a',
+      'c',
+      'd',
+    ])
+  })
+
+  it('dört sabit varken geçmişe hiç bakmaz', () => {
+    expect(sabitliKisayollar(TUMU, ['a', 'b', 'c', 'd'], ['f']).map((o) => o.id)).toEqual([
+      'a',
+      'b',
+      'c',
+      'd',
+    ])
   })
 })

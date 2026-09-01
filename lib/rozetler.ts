@@ -150,7 +150,7 @@ export const ROZETLER: Rozet[] = [
   { id: 'yanlis-coz-100', tur: 'yanlis-cozme', esik: 100, kademe: 'efsane', ikon: '🧹', ad: 'Yüz çözüm', aciklama: 'Bankadaki 100 soruyu çözdüm diye işaretledin' },
 
   // --- Oyun Bankası: karıştırılan sorunun öğrenilmesi ---
-  { id: 'banka-1', tur: 'banka-dusen', esik: 1, kademe: 'bronz', ikon: '🎈', ad: 'İlk düşen', aciklama: 'Bir soruyu bankadan düşürdün — üç kez üst üste doğru bildin' },
+  { id: 'banka-1', tur: 'banka-dusen', esik: 1, kademe: 'bronz', ikon: '🎈', ad: 'İlk düşen', aciklama: 'Bir soruyu bankadan düşürdün — genel testte doğru bildin' },
   { id: 'banka-25', tur: 'banka-dusen', esik: 25, kademe: 'altin', ikon: '🧺', ad: 'Yirmi beş düşen', aciklama: 'Oyun Bankası’ndan 25 soru düşürdün' },
   { id: 'banka-temiz', tur: 'banka-temiz', esik: 1, kademe: 'efsane', ikon: '✨', ad: 'Banka tertemiz', aciklama: 'En az 20 soru düşürdükten sonra bankayı tamamen boşalttın' },
 

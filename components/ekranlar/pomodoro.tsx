@@ -3,7 +3,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { KeepAwake } from '@capacitor-community/keep-awake'
 import { Capacitor } from '@capacitor/core'
-import { Music, Pause, Play, RotateCcw, SkipForward, Volume2, VolumeX } from 'lucide-react'
+import {
+  Music,
+  Pause,
+  Play,
+  RotateCcw,
+  ShieldCheck,
+  SkipForward,
+  Volume2,
+  VolumeX,
+} from 'lucide-react'
 import type { PomodoroAyar, PomodoroSeans, SesSecimi } from '@/lib/types'
 import {
   ASAMA_ADI,
@@ -25,6 +34,7 @@ import {
   odakKilidiniBitir,
 } from '@/lib/odak-kilidi'
 import { OdakKurulum } from '@/components/ekranlar/odak-kurulum'
+import { OdakAyarlari } from '@/components/odak/odak-ayarlari'
 import { cn, yeniId } from '@/lib/utils'
 import { BaslikSatiri, Buton, Cip, Kart, Not } from '@/components/ui'
 
@@ -63,6 +73,8 @@ export function PomodoroEkrani({
    * özellik hiç yok; orada tanıtım da gösterilmiyor.
    */
   const [kurulumAcik, setKurulumAcik] = useState(false)
+  /** Koruma paneli açık mı — kapalı başlıyor, sayaç ekranın asıl işi. */
+  const [korumaPaneli, setKorumaPaneli] = useState(false)
   useEffect(() => {
     if (odakKilidiDesteklenir() && !ayar.kilitTanitimiGoruldu) setKurulumAcik(true)
   }, [ayar.kilitTanitimiGoruldu])
@@ -167,10 +179,22 @@ export function PomodoroEkrani({
     calar.cal(ayar.ses)
 
     void pomodoroPlanla(bitis, asama !== 'calisma')
-    // Kilit yalnızca çalışma turunda; molada kendiliğinden açılıyor. İzin yoksa
-    // yerli taraf sessizce "başlamadı" diyor, sayaç normal çalışmaya devam ediyor.
-    if (asama === 'calisma' && ayar.odakKilidi) {
-      void odakKilidiniBaslat(ayar.kilitliUygulamalar, bitis, ders ?? undefined)
+    /*
+      Koruma yalnızca çalışma turunda; molada kendiliğinden kalkıyor. İzin
+      yoksa yerli taraf sessizce "başlamadı" diyor, sayaç normal çalışmaya
+      devam ediyor.
+
+      İki anahtar ayrı ayrı geçiyor: kilit kapalıyken de tur başlatılabiliyor,
+      o zaman engellenecek uygulama listesi boş gidiyor ve yerli taraf yalnızca
+      susturmayı yönetiyor. İkisi de kapalıysa servis hiç kurulmuyor.
+    */
+    if (asama === 'calisma' && (ayar.odakKilidi || ayar.rahatsizEtme)) {
+      void odakKilidiniBaslat(
+        ayar.odakKilidi ? ayar.kilitliUygulamalar : [],
+        bitis,
+        ders ?? undefined,
+        ayar.rahatsizEtme,
+      )
     }
     if (ayar.ekraniAcikTut && Capacitor.isNativePlatform()) {
       void KeepAwake.keepAwake().catch(() => {})
@@ -235,6 +259,17 @@ export function PomodoroEkrani({
     if (calisiyor) calar.cal(secim)
   }
 
+  /*
+    Satırın altındaki özet: paneli açmadan hangi korumanın açık olduğu
+    okunabilmeli, yoksa kapalı bir satır ayarı görünmez kılardı.
+  */
+  const korumaVar = ayar.odakKilidi || ayar.rahatsizEtme
+  const korumaOzeti = !korumaVar
+    ? 'Kilit ve rahatsız etme kapalı'
+    : [ayar.odakKilidi && 'Kilit açık', ayar.rahatsizEtme && 'Rahatsız etme açık']
+        .filter(Boolean)
+        .join(' · ')
+
   const oran = bitisZamani !== null ? ilerlemeOrani(bitisZamani, toplamDakika) : 0
   const molaMi = asama !== 'calisma'
 
@@ -255,6 +290,52 @@ export function PomodoroEkrani({
         <Not tur="uyari" className="mb-4">
           Odak kilidini kırdın, tur baştan başlıyor.
         </Not>
+      )}
+
+      {/*
+        Korumaların kapısı sayacın **üstünde** ve kapalı.
+
+        İki anahtar (odak kilidi, rahatsız etme) bir süre burada açık duruyordu
+        ve ikisi de ayrıca Ayarlar'da vardı; iki kopya zamanla birbirinden
+        ayrıldı. Ayarlar'daki kaldırıldı, buradaki tek satıra indi: paneli
+        açmadan da hangi korumanın açık olduğu satırın altında yazıyor.
+
+        Yeri değişmedi çünkü gerekçe değişmedi: karar her turda değişiyor
+        (kütüphanede telefon sussun, evde uygulamalar engelli olsun yeter) ve
+        turu başlatmadan önce görülmeyen bir ayar, o turda yanlış kurulmuş bir
+        ayardır.
+
+        Tarayıcıda görünmüyor: odak kilidi cihaza bağlı tek özellik.
+      */}
+      {odakKilidiDesteklenir() && (
+        <Kart className="mb-4 p-0">
+          <button
+            type="button"
+            onClick={() => setKorumaPaneli((a) => !a)}
+            className="flex w-full items-center gap-3 p-4 text-left"
+          >
+            <ShieldCheck
+              size={18}
+              className={cn('shrink-0', korumaVar ? 'text-primary' : 'text-muted-foreground')}
+              aria-hidden
+            />
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-medium">Odak koruması</span>
+              <span className="block truncate text-xs text-muted-foreground">
+                {korumaOzeti}
+              </span>
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {korumaPaneli ? 'Kapat' : 'Ayarla'}
+            </span>
+          </button>
+
+          {korumaPaneli && (
+            <div className="border-t border-border">
+              <OdakAyarlari ayar={ayar} setAyar={setAyar} />
+            </div>
+          )}
+        </Kart>
       )}
 
       <Kart className="mb-4 flex flex-col items-center py-6">

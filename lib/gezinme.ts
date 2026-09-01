@@ -25,6 +25,8 @@ export type Ekran =
   | 'rozetler'
   | 'istatistik'
   | 'oyun-bankasi'
+  /** Konu Anlatımı haritası — ana sayfada kendi bölümü var, kart menüsünde yok. */
+  | 'konu'
 
 /** Kutucuk zeminleri — tasarımdaki aileler. */
 export type KartRengi = 'mavi' | 'pembe' | 'krem' | 'nane' | 'lavanta' | 'deniz'

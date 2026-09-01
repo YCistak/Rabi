@@ -163,9 +163,60 @@ el sallayan poz ve üç noktalı gösterge yalnızca tanışmada. İkisini tek
 bileşende tutmak, yarısı kullanılmayan bir sürü propla biten bir bileşen
 olurdu.
 
-Adım noktaları bu ikisini **saymıyor** (`noktaAdimlari`); nokta "kaç soru
-kaldı"yı anlatıyor ve ikisi de soru sormuyor. Sayının ayrı bir listeden çıkması
-şart: dizinin kendisinden çıkarılsalardı `ilerle` onları atlardı.
+İlerleme göstergesi bu ikisini **saymıyor** (`noktaAdimlari`); gösterge "kaç
+soru kaldı"yı anlatıyor ve ikisi de soru sormuyor. Sayının ayrı bir listeden
+çıkması şart: dizinin kendisinden çıkarılsalardı `ilerle` onları atlardı.
+Payda da bu listenin **boyu**: notlar adımı herkeste yok ve sabit bir yediliğe
+göre dolan bir çubuk, o adımı görmeyen kullanıcıda hiç dolmadan biterdi.
+
+### Soruyu Rabi soruyor
+
+Soru soran ekranların düzeni üç şeyde tasarımın son hâline döndü:
+
+- **İlerleme üstte, ince bir çubuk.** Alttaki nokta şeridi kalktı. Nokta sayısı
+  arttıkça "ne kadar kaldı" sayılmadan okunmuyordu ve şerit Devam düğmesinin de
+  altında, gözün en son gittiği yerde duruyordu.
+- **Maskot 110'dan 76'ya inip sola geçti**, soru da onun **konuşma balonunda**
+  ve sola hizalı. Ortalanmış başlık ekranın başlığı gibi duruyordu; balondaki
+  soru Rabi'nin sorusu gibi duruyor ve satır okunduğu yerde başlıyor.
+  Hatırlatma adımının başlığı bu yüzden "Hatırlatma" değil **"Saat kaçta
+  hatırlatayım?"**: soru balona çıkınca kartın içindeki aynı cümleli etiket
+  ikinci bir başlık oluyordu, o etiket kaldırıldı.
+- **Kazanılan yükseklik içeriğe gidiyor.**
+
+Alttaki esneyen boşluk (`flex-1`) yalnızca isim ve bölüm adımlarında var.
+Ötekilerde içerik kendi `my-auto`suyla ortalanıyor ve otomatik kenar boşluğu
+ancak **artan** yeri paylaşıyor: orada duran bir `flex-1` artanı önce kendi
+alıyor, liste de ekranın tepesine yapışıp altında kocaman bir boşluk
+bırakıyordu.
+
+### Maskot adımdan adıma uçuyor
+
+Tavşan üç düzende üç ayrı yerde duruyor: karşılamada ortada 150 pikselde, soru
+ekranlarında sol üstte 76'da, tanışmada yine ortada. Ekranlar ayrı ağaçlar
+olduğu için maskot her adımda sökülüp yeniden kuruluyor ve kullanıcı onu bir
+karede oradan oraya **ışınlanırken** görüyordu.
+
+`KurulumMaskotu` aradaki farkı ölçüp uçarak kapatıyor: her yerleştiğinde kendi
+kutusunu `Kurulum`daki ref'e yazıyor, bir sonraki adımda yeni kutusunu ölçüp
+farkı bir kare boyunca **ters** dönüşüm olarak uyguluyor, sonra dönüşümü
+kaldırıyor. Varış noktası açılış ekranındaki kuralın aynısıyla ölçülüyor,
+yazılmıyor. Dört incelik:
+
+- Ref `Kurulum`da duruyor, bileşenin içinde değil — bileşen adım değişince
+  sökülüyor ve kendi içinde tuttuğu değer o sırada kayboluyor.
+- Ters dönüşüm `useLayoutEffect` içinde konuyor; boyamadan sonra konsaydı
+  tavşan bir kare varış noktasında görünür, uçuş oradan başlardı.
+- İki `requestAnimationFrame` şart (tarayıcı ters dönüşümlü hâli bir kez
+  boyamalı) ama tek başına yetmiyor: rAF sayfa görünür değilken hiç
+  çağrılmıyor ve tavşan eski yerinde asılı kalırdı. Arkasında bir emniyet
+  zamanlayıcısı var — açılış ekranındaki kuralın aynısı.
+- Ölçmeden **önce** eski dönüşüm siliniyor: Devam'a arka arkaya basılırsa bir
+  önceki uçuş sürüyor olabiliyor ve `getBoundingClientRect` o sırada tavşanın
+  durduğu yeri değil yolun ortasını döndürür.
+
+Hareket bilgi taşımıyor — nerede olduğunu düzen zaten söylüyor — o yüzden
+`prefers-reduced-motion` altında uçuş yok, maskot doğrudan yerine geçiyor.
 
 Tanışma ekranının başlığı `ADIM_BILGISI` tablosunda **yok**, `tanismaBasligi`
 kuruyor: içinde kullanıcının adı geçiyor ve ad boş bırakılabiliyor. Adsızken
@@ -238,6 +289,60 @@ yeni deneme ekranında hâlâ seçiliyor ve kullanıcının kayıtlı şablonlar
 yedeğe girmeye devam ediyor — kayıt silinmedi, yalnızca düzenleme kapısı kapandı.
 `ayarlar.varsayilanSablonId` de kayıtta duruyor; yeni deneme onu okumaya devam
 ediyor, artık ayarlardan değiştirilmiyor.
+
+### Odak kilidi yalnızca Pomodoro'da
+
+Odak kilidi ve Rahatsız Etme anahtarları bir süre **iki yerde** duruyordu: hem
+Ayarlar'da hem Pomodoro'nun tepesinde. İki kopya zamanla birbirinden ayrıldı
+(biri uygulama listesini açıyordu, öteki açmıyordu). Ayarlar'daki kaldırıldı;
+ikisi de yalnızca çalışma turu boyunca yaşıyor ve turdan bağımsız bir anlamları
+yok — Ayarlar'dan açılan bir koruma, turu başlatan ekranda hiç görünmüyordu.
+
+Tek yerleri artık Pomodoro'daki **"Odak koruması"** satırı; içeriği
+`components/odak/odak-ayarlari.tsx`, iki ekran arasında paylaşılmıyor çünkü
+ikinci ekran kalmadı. Satır **kapalı** başlıyor ve açık korumaları altında
+yazıyor: sayaç ekranın asıl işi, iki anahtar sürekli açık dururken sayacı aşağı
+itiyorlardı. Yeri değişmedi (sayacın üstünde) çünkü gerekçe değişmedi — karar
+her turda değişiyor ve turu başlatmadan önce görülmeyen bir ayar, o turda
+yanlış kurulmuş bir ayardır.
+
+Anahtarın kilidi doğrudan açmadığı kural duruyor: önce davet penceresi
+(`odak-daveti.tsx`), kilit ancak "İstiyorum" denince açılıyor ve izin ekranı
+yalnızca adı yazılı düğmeye basılınca gidiyor.
+
+### Engel katmanı uygulamanın devamı gibi görünüyor
+
+Odak kilidi sırasında yasaklı bir uygulama öne gelince üstüne konan tam ekran
+katman (`android/.../EngelKatmani.kt`, `res/layout/engel_katmani.xml`) yerli
+Android düzeni — WebView değil, çünkü uygulamanın kendisi o an ekranda yok.
+Buna rağmen uygulamanın diliyle konuşuyor:
+
+- **Maskot emoji değil, uygulamanın kendi görseli.** Katman bir süre 🐰
+  yazıyordu; sistem yazı tipinden gelen emoji telefondan telefona başka
+  çiziliyor ve kullanıcının tanıdığı tavşandan başka bir tavşan çıkıyordu.
+  Artık `res/drawable-nodpi/tavsan_yuz.png` — `public/tavsan-yuz.png`in
+  kopyası. Görseli değiştirirsen **ikisini birden** değiştir; yerli taraf
+  `public/` altını okuyamıyor.
+- **Renkler `values/colors.xml`den**, doğrudan yazılmıyor, ve
+  `values-night/` karşılıkları birebir aynı — Rabi'nin koyu teması yok,
+  o dosya sistemin gece modunda kaynakları kendi varsayılanlarına
+  düşürmesini engelliyor.
+- **Kalan süre ekranın en büyük ögesi** ve altında bir çubuk var. Sayı "ne
+  kadar kaldı", çubuk "ne kadarı geçti" diyor; ikisi ayrı sorular ve turun
+  ortasında mı sonunda mı olunduğunu sayıya bakıp hesaplamak gerekiyordu.
+  Çubuğun toplamı web tarafından geçmiyor, servis kurulurken damgalanıyor
+  (`OdakServisi.baslangicZamani`): kilit turla birlikte başlıyor ve
+  duraklat/devam et her seferinde yeni bir bitişle servisi yeniden kuruyor,
+  yani çubuk her zaman içinde bulunulan kesintisiz parçayı ölçüyor. Toplam
+  bilinmiyorsa çubuk **boş** kalıyor — uydurma bir doluluk, sayı doğruyu
+  söylerken yanlış bir yer gösterirdi.
+- **Çip hep duruyor.** Ders biliniyorsa adını yazıyor ("MATEMATİK", Türkçe
+  yerelle büyütülüyor — varsayılan yerelde i noktasız İ oluyor), bilinmiyorsa
+  "DERS MODU AÇIK". Gizlenseydi ekranın tepesi bir satır boşalır, maskot
+  yukarı kayardı.
+
+Onay ekranı (`odak_onay`) ayrı duruyor: kilidi kapatmanın bedeli var — tur
+iptal olur, seri kırılır. Bedeli olmayan engel engel değildir.
 
 ## Haftalık özet kapalı
 
@@ -312,13 +417,20 @@ perdeyi oynatma, ayrı bir ses ekle.
 
 Efekt seviyesiyle oyun müziğinin seviyesi (`mod-muzigi.ts`, `MUZIK_SEVIYESI`)
 tek bir dengenin iki ucu ve ikisi de telefonda dinlenerek ayarlandı: efekt
-1'den 0.42'ye indi (çok gürdü), müzik iki kez yükseldi — 0.09, sonra 0.26,
-şimdi 0.5. **Sayıların eşit olması gürlüğün eşit olması demek değil**: efektler
-ustalanmış mp3, dalgaları baştan sona tepeye yakın; parçalar sıfırdan
-sentezlenmiş ince dalgalar ve aralarında sessizlik var. Bu yüzden müzik sayıca
-efektin üstünde durup kulakta onun hizasına geliyor — 0.26'da kullanıcı
-"telefonun sesini sonuna kadar açmadıkça duyulmuyor" dedi. Birine dokunursan
-ötekine de bak; sıralamayı `mod-muzigi.test.ts` denetliyor.
+1'den 0.42'ye indi (çok gürdü). **Sayıların eşit olması gürlüğün eşit olması
+demek değil**: efektler ustalanmış mp3, dalgaları baştan sona tepeye yakın;
+parçalar sıfırdan sentezlenmiş ince dalgalar ve aralarında sessizlik var. Bu
+yüzden müzik sayıca efektin üstünde duruyor. Birine dokunursan ötekine de bak;
+sıralamayı `mod-muzigi.test.ts` denetliyor.
+
+**Ana seviye yanlış koldu.** Müzik üç kez yükseltildi (0.09 → 0.26 → 0.5) ve
+kullanıcı üçünde de "duyulmuyor" dedi. Sebep şu: ana seviye karışımdaki her
+şeyi birlikte kaldırıyor ve karışımın en yükseği vuruştu (`tepe` 0.9) — ezgi
+notaları onun altıda biri kadardı (0.07–0.11), yani seviye arttıkça duyulan
+şey davul oluyordu. "Müzik" diye duyulan şey ezgi. Düzeltme parçaların **kendi
+dengesinde**: vuruş indi, ezgi ve bas çıktı, çıkışa bir sınırlayıcı kondu
+(`RitimMotoru.kur`) ve ana seviye onun arkasında 0.85'e çıkabildi. Bir daha
+"duyulmuyor" gelirse önce tepelere bak, ana seviyeye değil.
 
 Boss parlaması ilk denemede yerinde duran bir altın radyaldi ve iyi durmadı:
 boss zemini açık bir renk ve onun üstünde sabit bir sarı daire ışık gibi değil
@@ -418,29 +530,77 @@ besleyen yer kabuk; ikisinin aynı nesneye ulaşması gerekiyordu.
 Ayarlardaki seçim "Mod müziği" ya da "Lo-fi" (`OyunMuzikTuru`). Eski kurulumlarda
 kayıtlı `'sakin'` değeri `ayarlariNormalize` içinde `'mod'`a çevriliyor.
 
-Ses dengesi tek bir yerde: `MUZIK_SEVIYESI` (0.5) efekt dosyalarının
-seviyesinin (`DOSYA_SEVIYESI`, 0.42) sayıca üstünde ama kulakta hizasında —
-sentezlenmiş dalga, ustalanmış mp3'le aynı sayıda daha kısık duyuluyor. Üst
-sınırı kırpılma koyuyor: nota tepeleri bu ana seviyede toplanıyor, 1'e yaklaşan
-bir değer parçayı yüksek değil bozuk çalar. Rahat modun pad'i ondan türeyen
-`RAHAT_SEVIYESI` ile altta kalıyor: vuruşsuz ve sürekli olduğu için aynı
-sayıda daha çok fark ediliyor — oran 0.7'den 0.35'e indi, kullanıcı Rahat
-turda pad'i "rahatsız edici" buldu. Sürekli çalan bir seste ölçü "duyuluyor
+Ses dengesi iki katmanlı ve **ikisi birlikte** okunmalı:
+
+- **Parçanın içi.** Duyulan şeyi ezgi belirliyor, ana seviye değil: nota
+  tepeleri (`nota`'nın `tepe`'si) vuruşun (`vurus`) altında ama ondan kopuk
+  değil. Vuruş 0.9'dan ~0.5'e indi, ezgi ve bas iki katına çıktı; ters oran
+  parçayı davul soloya çeviriyordu.
+- **Ana seviye.** `MUZIK_SEVIYESI` (0.85) efekt dosyalarının seviyesinin
+  (`DOSYA_SEVIYESI`, 0.42) sayıca üstünde ama kulakta hizasında — sentezlenmiş
+  dalga, ustalanmış mp3'le aynı sayıda daha kısık duyuluyor. Bu kadar
+  yükselebilmesi çıkıştaki sınırlayıcıya bağlı (`RitimMotoru.kur`);
+  sınırlayıcı olmadan üst sınırı kırpılma koyuyordu ve kırpılan parça yüksek
+  değil bozuk duyuluyor.
+
+Rahat modun pad'i ana seviyeden türeyen `RAHAT_SEVIYESI` ile altta kalıyor:
+vuruşsuz ve sürekli olduğu için aynı sayıda daha çok fark ediliyor — kullanıcı
+Rahat turda pad'i "rahatsız edici" buldu. Ana seviye yükselince oran 0.35'ten
+0.22'ye indi ki **çarpım yerinde kalsın**; yükseltilen şey ritmik parçaların
+ezgisiydi, pad'in öyle bir sorunu yok. Sürekli çalan bir seste ölçü "duyuluyor
 mu" değil "farkında olmadan dinlenebiliyor mu". `mod-muzigi.test.ts` iki
 sınırı da denetliyor.
 
 ## Oyun Bankası
 
 Bir kayıt iki yoldan çıkıyor ve ikisi aynı şey değil. **Kazanılan çıkış**: soru
-turlarda üst üste `DUSME_ESIGI` kez doğru bilinince kendiliğinden düşüyor;
-"bankadan düşen" sayacını ilerleten ve rozete sayılan yol bu. **Elle kaldırma**:
-karttaki tik kaydı sayaca dokunmadan siliyor. İkincisi sonradan eklendi çünkü
-banka bir borç listesi — öğrendiğine kullanıcının kendisi karar veremiyorsa liste
-yalnızca büyüyor ve bir yerden sonra hiç açılmıyor.
+genel testte doğru bilinince düşüyor; "bankadan düşen" sayacını ilerleten ve
+rozete sayılan yol bu. **Elle kaldırma**: karttaki tik kaydı sayaca dokunmadan
+siliyor. İkincisi sonradan eklendi çünkü banka bir borç listesi — öğrendiğine
+kullanıcının kendisi karar veremiyorsa liste yalnızca büyüyor ve bir yerden
+sonra hiç açılmıyor.
 
 Tik sayacı ilerletmiyor; ölçtüğü tek şey kullanıcının tuşa basması. Bankaya yeni
 bir çıkış yolu eklersen aynı soruyu sor: bu yol uydurulabiliyor mu,
 uydurulabiliyorsa sayaca yazılmamalı.
+
+### Çıkışın tek kazanılan yolu genel test
+
+Bir kayıt eskiden turlarda **üst üste üç kez** doğru bilinince kendiliğinden
+düşüyordu (`DUSME_ESIGI`, `ardisikDogru`); ikisi de kaldırıldı ve turdaki doğru
+cevap artık bankaya hiç dokunmuyor. Sayaç ölçtüğü şeyi ölçmüyordu: soru turun
+kendi havuzunda kayboluyor, üç doğru haftalara yayılıyor ve aynı oyunun
+turunda gelen soru şıklarından tanınabiliyordu.
+
+Yerine **genel test** var (`lib/oyunlar/banka-testi.ts`,
+`components/ekranlar/banka-testi.tsx`): bankadaki bütün yanlışlar oyun ayrımı
+olmadan, karışık sırayla ve tek bir ortak biçimde soruluyor. Ortak biçim şıklı
+soru olmak zorunda — on sekiz oyunun kendi ekranını tek turda toplamak mümkün
+değil, ama her kaydın zaten bir soru metni ile bir cevap metni var
+(`bankaSorusuMetni`, `bankaCevabiMetni`).
+
+Testin iki ucu **eşit değil**: doğru bilinen kayıt düşüyor (`testiIsle`), yanlış
+bilinen olduğu gibi kalıyor — sayacı artmıyor, ikinci kez eklenmiyor. Test yeni
+bir hata üretmiyor, hâlâ öğrenilmemiş olanı gösteriyor; `bankayiGuncelle` bu
+yüzden kullanılmıyor, o oyun turundan gelen yeni hatayı sayıyor.
+
+Çeldiriciler bankanın kendisinden geliyor ve **aynı oyun** öncelikli: bir eser
+sorusunun şıklarına element adı karışsaydı soru, cevabı bilmeden elenirdi.
+Çeldirici bulunamayan kayıt teste hiç girmiyor — tek şıklı bir soru
+cevaplanmadan doğru sayılır ve o kayıt hak etmeden düşerdi.
+
+### Karta dokunmak soruyu açmıyor
+
+Kartın gövdesi bir süre tıklanabilirdi ve dokunuş o soruyla tek soruluk bir tur
+açıyordu; kaldırıldı. Sebep kartın kendisi: doğru cevap sorunun hemen altında
+yazıyor ve okuduktan saniyeler sonra çözülen soru bilmeyi değil hatırlamayı bile
+ölçmüyor. Aynı soru genel testte cevabı görünmeden ve karışık sırada soruluyor.
+
+`BankaTuru` bu yüzden yalnızca oyun kimliği taşıyor (`kayit` alanı silindi) ve
+"sadece bunlardan bir tur" düğmesi duruyor: soruları kendi oyununun ekranında
+tekrar çözmek hâlâ mümkün, ama o tur kaydı düşürmüyor. Havuzu süzen yer
+`oyunlar.tsx` içindeki `bankaSorulari`; oyun dosyalarının hiçbiri değişmedi,
+çünkü hepsi zaten "havuz boş değilse banka turu" kuralıyla çalışıyor.
 
 ## Oyun modları
 
@@ -474,6 +634,236 @@ Sayaç tek yerde: `lib/oyunlar/tur-sayaci.ts`. Toplamı sıfır dönmesi "sayaç
 demek ve arayüz halkayı ona bakarak gizliyor. Yeni bir mod eklersen saatin tura
 mı soruya mı ait olduğuna karar ver — ikisi birden olmaz, `mod.test.ts` bunu
 denetliyor.
+
+## Coğrafyanın iki harita oyunu
+
+Harita Avı'nın yanına iki oyun daha geldi ve ikisi de 9. sınıf konularına
+çalışıyor: **İklim Kuşakları** (yeryüzünde iklim tipleri) ve **İzohips Okuma**
+(eş yükselti eğrilerinden yer şekli). Üçünün de haritası ayrı: Türkiye illeri,
+dünya ülkeleri, üretilen izohips haritası.
+
+### Dünya haritası da Natural Earth'ten üretiliyor
+
+`lib/oyunlar/dunya-havuzu.ts` elle yazılmadı: `scripts/dunya-uret.mjs` Natural
+Earth 1:110m admin-0 verisini indirip izdüşüme sokuyor, sadeleştiriyor ve
+1000×389'luk bir kutuya oturtuyor (176 ülke, 62 KB). Türkiye haritasındaki
+(`harita-havuzu.ts`) boru hattının aynısı; dosyayı elle düzenleme, betiği
+yeniden çalıştır.
+
+İzdüşüm **eşdikdörtgen** ve bu bir tercih: oyunun sorduğu şeyin çoğu enleme
+bağlı ve eşdikdörtgende enlem düşey eksende doğrusal, yani ekvatorun iki
+yanındaki kuşaklar haritada da simetrik duruyor. Robinson gibi bir izdüşümde
+kuşaklar eğrilir ve "aynı enlemde aynı kuşak" sezgisi bozulurdu. Antarktika ile
+84° kuzeyin üstü kesildi: eşdikdörtgende kutuplar yatay olarak uzuyor ve
+haritanın üçte birini yiyorlar.
+
+Harita **yakınlaştırılmıyor** (Harita Avı'ndan ayrıldığı yer burası): orada
+oyuncu haritaya dokunup il seçiyor ve küçük illere sokulabilmesi gerekiyor,
+burada haritaya yalnızca bakılıyor. İşaretli yer hem halka hem boyalı sınırla
+gösteriliyor; ikisi birden olduğu için Hollanda kadar küçük bir ülke de
+kaybolmuyor.
+
+Ekvator, dönenceler ve Kuzey Kutup Dairesi haritanın üstünde çizili. Süs
+değiller, sorunun yarısı: "bu bölge hangi kuşakta" bağını kuran şey onlar.
+Adları haritanın **altında** yazıyor — 1000 birimlik kutuda okunabilir bir yazı
+ülkelerin yarısını kapatıyor.
+
+### İklim soruları ülkeye değil bölgeye ait
+
+Havuzun ölçütü tek: bir yer ancak **tek bir iklim tipiyle** anılabiliyorsa soru
+oluyor. Brezilya bu yüzden ülke olarak yok — kuzeyi ekvatoral, ortası savan,
+güneyi ılıman; "Brezilya'da hangi iklim görülür" sorusunun tek doğru cevabı
+olmazdı. Yerine Amazon Havzası ve Brezilya'nın orta kesimi ayrı ayrı, birer
+nokta olarak duruyor. Havuzun iki tür kaydı olmasının sebebi bu: bazı sorular
+bir ülkeyi işaretliyor (sınırı boyanıyor), bazıları bir bölgeyi (yalnızca halka
+konuyor). Çölün, havzanın, kuşağın sınırı yok — ortası var.
+
+Çeldiriciler de rastgele değil, `KARISTIRILAN` tablosundan: gerçekten
+karıştırılan iklimler. Grönland sorulup şıklara Ekvatoral, Muson ve Savan
+konsaydı haritaya bakan herkes kutbu seçerdi; iş sorunun cevabını bilmeye değil
+şıkları elemeye dönerdi.
+
+Ülke kodu ile koordinat ayrı ayrı elle yazılıyor ve ikisinin birbirini tutması
+şart — `iklim.test.ts` her kodun haritada karşılığı olduğunu ve halkanın o
+ülkenin üstüne düştüğünü denetliyor. Tutmazsa soru "Kenya" yazıp Peru'yu
+işaretler ve bunu kimse fark etmez.
+
+### İzohips haritaları çiziliyor değil, üretiliyor
+
+Haritalar bir görsel havuzundan gelmiyor: tohumdan bir yükselti alanı
+kuruluyor, marching squares ile eğrilere çevriliyor
+(`lib/oyunlar/izohips.ts`). İki gerekçe var ve ikincisi asıl olan:
+
+1. **Telif.** Deneme ve sınav kitaplarındaki izohips haritaları o yayınların;
+   kopyalanamaz. Üretilen harita özgün.
+2. **Cevabın doğruluğu.** Hazır bir görselde "daire içindeki şekil nedir"
+   sorusunun cevabı elle yazılır ve yanlış yazılabilir. Burada daire, tepeyi
+   oraya koyan kodun bildiği yere konuyor.
+
+Kayıtta harita değil **tohum** duruyor (`banka.ts`): Oyun Bankası turunda aynı
+harita birebir yeniden çiziliyor. Bu yüzden üreteç `Math.random` değil,
+tohumdan türeyen bir mulberry32 — öğrencinin bir kez yanlış bildiği harita
+tekrar karşısına çıktığında başka bir harita olsaydı banka öğretmezdi.
+
+**Doğruluk testle tutuluyor.** `izohips.test.ts` çizime değil, çizimin çıktığı
+yükselti alanına bakıyor (`yukseltiAlani`): tepede halkanın merkezi her yönden
+yüksek mi, kapalı çukurda alçak mı, boyunda iki yön yukarı iki yön aşağı mı,
+adanın çevresi deniz mi, platonun halkası içinde tek bir izohips bile geçmiyor
+mu, dik yamaç haritanın en dik yeri mi. Testler altmış tohumla dönüyor ve
+üretimdeki her ayar (dekorların uzaklığı, çan eğrilerinin genişliği, bölgesel
+eğimin şiddeti) bu testler kırıldığı için bugünkü değerinde: sayıları
+oynatırsan testler hangi soruyu bozduğunu söyler.
+
+Üretimde bir kez düşülüp testle yakalanan tuzaklar:
+
+- **Serit katmanlar uzağa taşıyor.** Vadi ve sırt bir doğru parçası boyunca
+  uzanıyor; merkezleri uzak olsa bile uçları başka bir şeklin halkasına
+  giriyordu. Uzunluk kısaldı, dekorların en az uzaklığı büyüdü.
+- **Basamak katmanı yerel değil.** Dik/yatık yamacın geçiş kuşağı bir çizgi ve
+  haritayı baştan başa geçiyor. İki yamacın merkezi arasındaki uzaklık eğime
+  **dik** yöndeyse kuşaklar üst üste biniyor ve dik kuşak yatık yamacın
+  halkasından geçiyordu; karşıt yamaç bu yüzden eğim ekseni boyunca kaydırılıyor.
+  Yamaç sorularında haritada dekor da yok — tepelerin yamacı ikisinden de dik
+  oluyor ve "en sık izohipsler" oraya kaçıyordu.
+- **Bölgesel eğim her soruda iyi değil.** Vadi ile sırt ancak bir yamaç
+  üzerinde ayrışıyor (düz zeminde ikisi de kapalı halkaya döner), ama aynı eğim
+  platonun düz tepesini izohipsle kesiyor ve boynun eyerini yana yatırıyordu.
+  Şiddet bu yüzden şekle göre değişiyor.
+- **Deniz sütun sütun taranıyor.** Kıyı çizgisi her sütunda yukarıdan aşağı
+  inip suya ilk girilen yerden bulunuyor; genel bir çokgen kesme algoritması
+  yok çünkü zemin kıyıdan aşağı tek yönde iniyor. Bunun bedeli: denizli
+  haritada karada deniz seviyesinin altına inen bir çukur (göl) olamaz, yoksa
+  tarama gölü denizin devamı sanıp aradaki karayı suya boğar. Denizli
+  haritaların dekorları bu yüzden yalnızca tepe ve boyun.
+
+**Sayılar şeklin yanında duruyor.** Yükselti yazıları önce halkadan
+olabildiğince uzağa konuyordu ve soru cevaplanamaz hâle geliyordu: tepe ile
+kapalı çukurun çizimi birebir aynı, ayıran tek şey yükseltinin içe doğru artıp
+azalması. Halkanın çevresindeki eğrilerde sayı yoksa öğrenci ekranın öbür
+ucundan başlayıp halkaları saymak zorunda kalıyor. Artık her seviyenin sayısı
+işarete **en yakın** eğrisine konuyor; yazılar yalnızca birbirinden uzak
+duruyor.
+
+Denizin mavisi tarih dersinin renk ailesinden (`trh`) geliyor ve bu, "renk
+derse aittir" kuralının bilinçli istisnası: buradaki renk bir ders kimliği
+değil harita göstergesi, coğrafyanın yeşiline boyanmış bir deniz karadan ayırt
+edilemiyordu. Aynı sebeple dünya haritasının okyanusu da o aileden.
+
+## Kimyanın iki oyunu
+
+Kimya dersi iki oyunla açıldı: **Periyodik Tablo Avı** (element, yer, aile) ve
+**Formül Eşleştirme** (formül–ad). Ders renk ailesi olarak lavantayı (`edb`)
+alıyor; o aile Türkçe ile Edebiyat birleştiğinde boşta kalmıştı ve renk
+değişkenleri (`--edb-*`) rozetlerde kullanıldığı için adı değişmedi. Yani
+`edb` artık "edebiyat" değil "Kimya'nın rengi" demek.
+
+### Tablo eksik yazılı, iskeleti tam
+
+Havuzda 118 element değil 38 element var (`periyodik-havuzu.ts`) ve ölçüt tek:
+TYT'de karşılığı olan element. Havuz bir kez bütün tabloyu taşıdı ve oyun
+oynanmaz hâle geldi — "Praseodim'i bul" sorusu bilgiyi değil sabrı ölçüyor,
+öğrenci turu kapatıyordu. Eksik bir havuz, cevaplanan bir soru demek. Test
+(`periyodik.test.ts`) iki ucu birden tutuyor: ilk yirmi element **şart**
+(müfredatın çekirdeği), toplam sayı da bir üst sınırın altında kalıyor.
+
+Buna karşılık tablonun **çizimi** kırpılmadı: 18 grup çiziliyor ve havuzda
+karşılığı olmayan hücreler boş kutu olarak duruyor. Boş kutular süs değil,
+sorunun yarısı: grupların nerede başlayıp bittiğini — bor grubunun 2. periyotta
+açılmasını, geçiş metallerinin 4. periyotta gelmesini — onlar anlatıyor.
+Kırpılmış bir tabloda "Ca, K'nin sağında" demek başka bir tablodan bahsetmek
+olurdu. Kural `hucreVarMi` içinde ve elementlerden **bağımsız**; havuz
+değişince tablonun şekli değişmiyor.
+
+**7. periyot çizilmiyor** (`PERIYOT_SAYISI` 6). Oradan havuza tek element
+girmiyor ve tümüyle boş bir satır tablonun şeklini değil boşluğunu gösteriyor:
+kullanıcı orada okunacak bir şey arıyor, bulamıyor. Lantanit/aktinit blokları
+da yok, aynı sebeple.
+
+Yakınlaştırma **yok** — Harita Avı'ndan ayrıldığı yer burası. Orada Yalova 390
+piksellik ekranda altı piksel kalıyor ve haritaya sokulabilmek gerekiyor;
+burada her hücre aynı boyda ve on sekiz sütun sığıyor. Izgara Tailwind sınıfı
+değil satır içi ölçü: on sekiz sütunluk bir `grid-cols-*` sınıfı taramadan
+düşerse tablo tek sütuna iner ve oyun ekranda hiç olmaz.
+
+### Üç soru tipi, üç ayrı beceri
+
+`bul` yeri (tabloda dokun), `sec` sembolü (yanıp sönen hücrenin adı),
+`sinif` tablonun anlamını (hangi aile) soruyor. TYT'de sorulan çoğunlukla
+üçüncüsü, ama ilk ikisi olmadan üçüncüsü ezberden ibaret kalıyor.
+
+Çeldiriciler tabloda **komşu** hücrelerden (`enYakinlar`) — Harita Avı'nın
+kuralının aynısı: işaretli hücre 2. periyotta dururken şıklara Altın konsaydı
+tabloya bakmadan elenirdi.
+
+Sınıf sorusunun şıklarına **"Metal" hiç girmiyor** ve Al, Sn, Pb'ye sınıf
+sorusu hiç sorulmuyor (`sinifSorulurMu`). Sebep cevabın tekliği: kalsiyum hem
+toprak alkali hem metaldir, ikisi birden şıkta dururken doğru cevap iki tane
+olurdu.
+
+Banka kaydında sembol ile **tip** birlikte duruyor: aynı elementin yerini
+bilmekle ailesini bilmek ayrı şeyler, tek kayıt olsalardı biri ötekini
+düşürürdü. Şıklar kayda **girmiyor**, her açılışta yeniden kuruluyor —
+ezberlenmiş bir şık dizilimi soruyu cevaplamadan geçirtirdi.
+
+### Formülün alt indisi çizim tarafında
+
+Havuzda `H2SO4` yazıyor, ekranda H₂SO₄ duruyor (`formulParcalari`).
+Unicode'un alt indis rakamları kullanılmadı: Nunito'da yoklar ve tarayıcı eksik
+karakteri başka bir aileden çiziyor, formülün yarısı başka yazı tipinde
+kalıyordu. Kural basit tutulabiliyor çünkü havuzdaki formüllerde **her** rakam
+bir alt indis; değerlik gösteren Roma rakamları formülde değil adda duruyor
+("Bakır(II) sülfat") ve testi bunu denetliyor.
+
+### Zorluk elin türünü değil içindekileri seçiyor
+
+Eller Edebiyat Eşleştirme'deki gibi mümkün oldukça **tek türden** kuruluyor
+(altı asit, altı tuz): karışık elde öğrenci formüle değil biçime bakıp eliyor
+— "OH ile bitiyorsa bazdır" altı çiftin altısını da bulduruyor.
+
+Öteki oyunlarda havuz önce zorluğa göre süzülüyor (`zorluktaSuz`); burada
+süzülemiyor. Kolay bileşiklerin sayısı tür başına altıya ulaşmıyor ve süzülmüş
+havuzda hiçbir tür el kuramıyordu — yani Kolay seviyede **her el karışık**
+kuruluyor, oyunun asıl zorluğu kolay seviyede hiç yaşanmıyordu. Tür bu yüzden
+bütün havuzdan seçiliyor, seçilen zorluk o türün içinde öne alınıyor: istenen
+seviyeden yeterince bileşik varsa el tümüyle oradan çıkıyor, yoksa aynı türün
+öteki seviyeleri tamamlıyor. `formul.test.ts` üç zorlukta da elin tek türden
+kurulduğunu denetliyor.
+
+## Ana sayfadaki dört kutucuk
+
+İki bölüm de (Araçlar, Oyunlar) dört kutucuk gösteriyor ve ikisi aynı koddan
+besleniyor (`lib/son-kullanilan.ts`). İki kural üst üste duruyor:
+
+- **Sabitlenenler önde.** Kullanıcı kalem tuşundan en fazla dört tane seçiyor
+  (`components/kisayol-duzenle.tsx`, kayıt `rabi-sabit-araclar` /
+  `rabi-sabit-dersler`). "En son kullanılan" iyi bir varsayılan ama bir tercih
+  değil: sıra her turda değişiyor ve kullanıcı aradığı kutucuğu her seferinde
+  okumak zorunda kalıyordu.
+- **Kalan yerler son kullanılanlarla doluyor.** Sabitleme listeyi kapatmıyor;
+  tek bir aracı sabitlemek ötekilerin üçünü birden gizleseydi kalem tuşu
+  kutucukları eksiltmenin yolu olurdu. Hiç sabit yoksa davranış eskisinin
+  birebir aynısı.
+
+Sabitler son kullanılanlardan **ayrı** anahtarda: biri tercih, öteki her turda
+değişen bir sıra. Tek listede tutulsalardı bir oyunu açmak kullanıcının kurduğu
+düzeni bozardı. İkisi de yedeğe girmiyor — bu cihazdaki yerleşim.
+
+### Oyun kutucukları oyunu değil dersi gösteriyor
+
+Kutucuklar bir süre oyunların adını yazıyordu ve iki sorun birden vardı:
+"Anlatım Bozukluğu" 64 piksellik bir kutunun altında üç satıra iniyordu, ve
+dokunuş zaten oyunu açmıyor Oyunlar sekmesini açıyordu — yani kutucuk gidilecek
+yerin değil, orada bulunabilecek bir şeyin adını taşıyordu.
+
+Artık kutucuk dersin kendisi: adı kısa, rengi `DersTanimi.aile`den ("renk derse
+aittir" kuralının doğrudan karşılığı) ve dokunuşun karşılığı tam olarak o
+dersin ızgarası — `onOyunlaraGit(ders)` sekmeyi açarken `acilacakDers`i de
+geçiyor. İstek `oyunlar.tsx` içinde bir kez tüketiliyor; prop doğrudan
+okunsaydı geri tuşu dersi kapatır, bir sonraki çizim aynı dersi yeniden açardı.
+
+Ders kutucuklarının geçmişi ayrı tutulmuyor, oynanan oyunlardan türetiliyor
+(`oyunlarinDersleri`): ikinci bir "son açılan ders" listesi aynı bilgiyi ikinci
+kez saklamak olurdu ve iki liste zamanla birbirinden ayrılırdı.
 
 ## Yapılacaklar tahtası
 
@@ -513,6 +903,67 @@ göstermiyor. Görünüşe ait bir sınıfın taramadan düşmesi eksik bir göl
 > hem depoya girmiyor hem Tailwind'in tarayıcısından düşüyor. Bir dosyayı yeniden
 > adlandırdıktan sonra `npm run build`'i **tekrar çalıştır**: Tailwind kaynak
 > listesini derleme başında kuruyor, eski çıktı hatasız ama sınıfsız kalıyor.
+
+## Konu Anlatımı Maarif müfredatına bağlı
+
+Müfredat **Türkiye Yüzyılı Maarif Modeli** — eski (2018) programın ünite
+adları hiçbir yerde geçmiyor. Tema adları programın kendi adları; içerik
+dosyalarının başındaki yorumlar, eski programdan **neyin taşınmadığını** da
+yazıyor (Kimya 9'da mol yok, Biyoloji 10'da kalıtım yok, Matematik 10'da
+polinom yok). Yeni bir konu eklemeden önce o yorumu oku: eski müfredattan
+hatırladığın bir başlık, bu programda başka sınıfta olabilir.
+
+İçerik `lib/konu/icerik/<sınıf>-<ders>.ts`. Yedi ders × iki sınıf; sekizinci
+bir ders eklemek `KonuDersId` ile birlikte yeni bir renk ailesi de gerektirir
+(Fizik'in `fzk` ailesi bu yüzden açıldı — oyunlarda Fizik yok).
+
+### Kart uzunluğu kuralın kendisi
+
+Kartlar ders notu değil, bir konuda akılda kalması gereken birkaç şey.
+Uzunluk `icerik.test.ts` ile denetleniyor (başlık 44, metin 240 karakter;
+konu başına en fazla 8 kart) ve bu sayılar keyfî değil: kart telefonda
+kaydırmadan okunacak kadar olmalı. Sınırı aşan kart, ikiye bölünmesi gereken
+karttır — sınırı büyütmeden önce kartı böl.
+
+### Kayıt kartın metnini de saklıyor
+
+Kart kimliği `${konuId}-${sıra}`; ortaya kart eklemek sonraki kartların
+kimliğini kaydırır. Bu yüzden bilinmeyenler bankasındaki kayıt kartın
+**başlığını ve metnini kendi içinde** taşıyor. Kimlik yalnızca aynı kartın
+iki kez eklenmesini önlüyor; içerik güncellendiğinde kullanıcının kaydettiği
+bilgi yerinde kalıyor. Yeni bir kart alanı eklersen (görsel, formül) onu da
+kayda koy, kimliğe güvenme.
+
+### Kilit yok, sıra var
+
+Konular sırayla açılmıyor. Sınav hazırlığındaki öğrenci yarın işlenecek
+konuya bugün bakmak ister ve kilitli bir harita onu kendi müfredatından uzak
+tutar. Patika sırayı **gösteriyor**, dayatmıyor; "kaldığın yer" kartı ve
+düğümdeki halka aynı işi zorlamadan yapıyor.
+
+Tamamlanma destenin sonuna gelmekle kazanılıyor. Yarıda çıkılan destede
+işaretlenen kartlar bankaya düşüyor ama konu bitmiş sayılmıyor — yoksa ilk
+kartı işaretleyip çıkmak konuyu tamamlamanın yolu olurdu.
+
+### Ana sayfada kısayol değil kendi bölümü
+
+Konu Anlatımı `KARTLAR` listesinde **yok**: Araçlar şeridine bir kutucuk
+olarak konsaydı son kullanılanlarla birlikte sıraya girip kayardı ve hemen
+altındaki kutuda ikinci bir kopyası dururdu. Buradaki iş "aç ve oku", her gün
+aynı yerde durması gerekiyor. Bilmediklerim de ayrı bir araç değil, haritanın
+içinde: kartlar oraya buradan düşüyor.
+
+### Patikanın şeritleri
+
+Düğümler üç şeride yayılıyor (`SERITLER = [1, 2, 1, 0]`) ve aralarındaki eğri
+`preserveAspectRatio="none"` bir SVG. Şerit konumları yüzde olarak biliniyor
+ama piksel karşılığı ekran genişliğine bağlı; yatayda esneyen bir kutu bunu
+**ölçüm yapmadan** çözüyor. Düğüm daire değil yuvarlatılmış kare — uygulamanın
+geri kalanı (ana sayfa kutucukları, kartlar) bu dili konuşuyor.
+
+Ders zeminleri `AILE_ZEMIN` / `AILE_YAZI` tablolarında **tam yazılı**;
+`bg-${aile}-kart` gibi birleştirilen bir ad Tailwind'in taramasından düşer ve
+şerit renksiz kalır.
 
 ## Hedef kataloğu
 

@@ -18,7 +18,7 @@ import { istatistigiTamamla } from './tur'
  * tek bir ızgaraya sığmayacak ve hangi oyunun hangi derse çalıştığı
  * kaybolacaktı. Sınıflandırma sonradan değil, şimdi kuruluyor.
  */
-export type DersId = 'turkce' | 'matematik' | 'cografya' | 'tarih' | 'biyoloji'
+export type DersId = 'turkce' | 'matematik' | 'cografya' | 'tarih' | 'biyoloji' | 'kimya'
 
 export type DersTanimi = {
   id: DersId
@@ -31,9 +31,10 @@ export type DersTanimi = {
    * Renk artık oyuna değil **derse** bağlı: aynı derse çalışan bütün oyunlar
    * aynı rengi paylaşıyor, böylece renk bir kimlik taşıyor. (Ailelerin adları
    * ilk oyunlardan geliyor: yzm=yazım, isl=işlem, edb=edebiyat, trh=tarih,
-   * byl=biyoloji.) `edb` artık hiçbir derste yok — Türkçe ile Edebiyat tek
-   * derse indi ve birleşik ders `yzm`yi taşıyor; renk ailesi listede duruyor
-   * çünkü rozetler onu kullanmaya devam ediyor.
+   * byl=biyoloji.) `edb` adını ilk sahibinden alıyor ama artık **Kimya'nın**:
+   * Türkçe ile Edebiyat tek derse inince lavanta boşta kaldı ve yeni bir aile
+   * uydurmak yerine o kullanıldı. Kimlik değişmedi çünkü renk değişkenleri
+   * (`--edb-*`) ve rozet renkleri aynı ada bağlı.
    */
   aile: 'yzm' | 'isl' | 'edb' | 'cog' | 'trh' | 'byl'
 }
@@ -79,6 +80,13 @@ export const DERSLER: DersTanimi[] = [
     aciklama: 'Canlılar, sınıflandırma, hücre',
     ikon: '🧬',
     aile: 'byl',
+  },
+  {
+    id: 'kimya',
+    ad: 'Kimya',
+    aciklama: 'Periyodik tablo, formüller',
+    ikon: '🧪',
+    aile: 'edb',
   },
 ]
 
@@ -223,6 +231,22 @@ export const OYUNLAR: OyunTanimi[] = [
     ozet: `**“Ankara’yı bul”** dendiğinde ili haritada gösterirsin; il yanıp söndüğünde adını dört şıktan seçersin. Harita iki parmakla yakınlaştırılabilir.`,
   },
   {
+    id: 'iklim',
+    ders: 'cografya',
+    ad: 'İklim Kuşakları',
+    kisaAciklama: 'Bu bölgede hangi iklim görülür?',
+    ikon: '🌍',
+    ozet: `Dünya haritasında bir bölge işaretlenir, sen orada görülen iklim tipini dört şıktan seçersin. Haritadaki kesikli çizgiler dönenceler ve kutup dairesi — iklimin çoğu **enlemden** okunur.`,
+  },
+  {
+    id: 'izohips',
+    ders: 'cografya',
+    ad: 'İzohips Okuma',
+    kisaAciklama: 'Daire içindeki yer şekli hangisi?',
+    ikon: '⛰️',
+    ozet: `Eş yükselti eğrileriyle çizilmiş haritada daire içine alınan yerdeki şekli dört şıktan seçersin. Eğrilerin üstündeki **sayılara** bak: tepe ile kapalı çukurun çizimi aynı, sayıları ters.`,
+  },
+  {
     id: 'antlasma',
     ders: 'tarih',
     ad: 'Antlaşma Eşleştirme',
@@ -294,6 +318,22 @@ export const OYUNLAR: OyunTanimi[] = [
     ikon: '🪤',
     ozet: `Gelen eşitlik doğruysa kartı **sağa**, yanlışsa **sola** atarsın; alttaki iki düğme de aynı işi görür.`,
   },
+  {
+    id: 'periyodik',
+    ders: 'kimya',
+    ad: 'Periyodik Tablo Avı',
+    kisaAciklama: 'Elementi tabloda bul',
+    ikon: '⚛️',
+    ozet: `**“Kalsiyum’u bul”** dendiğinde elementi tabloda gösterirsin; hücre yanıp söndüğünde adını ya da ailesini dört şıktan seçersin. Tabloda yalnızca sınavda karşılığı olan elementler yazılı.`,
+  },
+  {
+    id: 'formul',
+    ders: 'kimya',
+    ad: 'Formül Eşleştirme',
+    kisaAciklama: 'Formülü adıyla eşleştir',
+    ikon: '⚗️',
+    ozet: `Üstteki formüle, sonra alttaki adına dokunursun — sıra fark etmez. El mümkün oldukça tek türden kuruluyor: altı asit, altı tuz.`,
+  },
 ]
 
 export function dersBul(id: DersId): DersTanimi {
@@ -335,6 +375,24 @@ export function bolumsuzOyunlar(id: DersId): OyunTanimi[] {
  */
 export function doluDersler(): DersTanimi[] {
   return DERSLER.filter((d) => dersinOyunlari(d.id).length > 0)
+}
+
+/**
+ * Oyun kimliklerinden ders kimlikleri — sıra korunuyor, tekrar eleniyor.
+ *
+ * Ana sayfadaki oyun kutucukları ders gösteriyor ve sıraları "en son
+ * oynanan"dan geliyor. Ayrı bir "son açılan ders" listesi tutulmadı: aynı
+ * bilgiyi ikinci kez saklamak olurdu ve iki liste zamanla birbirinden
+ * ayrılırdı — oyunu açmakla dersi açmak zaten aynı hareket.
+ */
+export function oyunlarinDersleri(oyunlar: readonly string[]): DersId[] {
+  const dersler: DersId[] = []
+  for (const id of oyunlar) {
+    const oyun = OYUNLAR.find((o) => o.id === id)
+    // Kaldırılmış oyunun kaydı sessizce eleniyor.
+    if (oyun && !dersler.includes(oyun.ders)) dersler.push(oyun.ders)
+  }
+  return dersler
 }
 
 export function oyunBul(id: OyunId): OyunTanimi {

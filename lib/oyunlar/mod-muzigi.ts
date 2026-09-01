@@ -58,19 +58,22 @@ const UYANMA = 90
  * onların yanında duyulacak kadar var olmalı ama gürültüye dönüşmemeli, çünkü
  * oyunun tek sesli geri bildirimi o iki efekt.
  *
- * Sayı iki kez yükseldi ve ikisinde de sebep aynı: kâğıt üstünde doğru duran
- * oran telefonda duyulmuyordu. Önce 0.09'du ("hiç duyulmuyor"), sonra 0.26
- * ("telefonun sesini sonuna kadar açmadıkça duyulmuyor"). Atlanan şey şu:
- * efektler kaydedilmiş, ustalanmış mp3'ler, dalgaları baştan sona tepeye
- * yakın; bu parçalar ise sıfırdan sentezlenen ince dalgalar ve aralarında
- * sessizlik var. Aynı sayı ikisinde aynı gürlük demek değil — müzik sayıca
- * efektin **üstünde** durup kulakta onun hizasına geliyor.
+ * Sayı üç kez yükseldi (0.09 → 0.26 → 0.5) ve üçünde de kullanıcı "hâlâ
+ * duyulmuyor" dedi. Ana seviyeyi yükseltmek **yanlış koldu**: karışımdaki her
+ * şeyi birlikte kaldırıyor ve karışımda en yüksek duran şey vuruş (`tepe` 0.9)
+ * — ezgi notaları onun altıda biri kadardı (0.07–0.11). Yani seviye artınca
+ * duyulan da davul oluyordu; "müzik" diye duyulan şey ezgi.
  *
- * Kırpılma sınırı buna izin veriyor: notaların tepeleri (`tepe`) ana seviyenin
- * altında toplandığı için çıkış 1'e varmıyor. Daha yukarı çıkarmadan önce
- * parçaları hoparlörde dinle; kırpılan bir parça yüksek değil bozuk duyuluyor.
+ * Düzeltme iki kollu: parçaların **kendi dengesi** değişti (vuruş indi, ezgi ve
+ * bas çıktı) ve çıkışa bir sınırlayıcı kondu (`kur`). Sınırlayıcı olmadan bu
+ * seviye kırpardı — kırpılan parça yüksek değil bozuk duyuluyor; onunla
+ * birlikte tepeler güvenle 1'e yaklaşabiliyor.
+ *
+ * Buradan yukarı çıkmadan önce dengeye bak: sayı zaten sınırlayıcının
+ * çalıştığı bölgede ve daha da yükseltmek parçayı gürleştirmek yerine
+ * ezgiyi vuruşun nabzında ezdirmeye başlar.
  */
-export const MUZIK_SEVIYESI = 0.5
+export const MUZIK_SEVIYESI = 0.85
 
 /**
  * Rahat modun pad'i, ritmik parçaların altında.
@@ -85,8 +88,13 @@ export const MUZIK_SEVIYESI = 0.5
  * dinlenebiliyor mu" — sürekli çalan bir ses, fark edilir olduğu anda zaten
  * yüksek demek. Sessize inmiyor: mod müziği açıkken hiç duyulmayan bir parça,
  * ayarın kapalı olduğunu düşündürür.
+ *
+ * Ritmik seviye 0.5'ten 0.85'e çıkınca oran 0.35'ten 0.22'ye indi: **çarpım
+ * yerinde kaldı**. Yükseltilen şey ritmik parçaların ezgisiydi ve pad'in öyle
+ * bir sorunu yok — oran sabit bırakılsaydı, az önce "rahatsız edici" denen
+ * pad kendiliğinden 1,7 katına çıkardı.
  */
-export const RAHAT_SEVIYESI = MUZIK_SEVIYESI * 0.35
+export const RAHAT_SEVIYESI = MUZIK_SEVIYESI * 0.22
 
 /**
  * Modun temposu (BPM) — gerginliğe göre.
@@ -186,7 +194,29 @@ abstract class RitimMotoru {
     this.ctx = ctx
     this.ana = ctx.createGain()
     this.ana.gain.value = this.seviye
-    this.ana.connect(ctx.destination)
+
+    /*
+      Çıkıştaki sınırlayıcı.
+
+      Ana seviyenin yükselebilmesi buna bağlı: aynı anda çalan vuruş, bas ve
+      üç arpej notası toplandığında tepe 1'i aşıyor ve kırpılan bir parça
+      yüksek değil **bozuk** duyuluyor — seviyeyi yıllarca aşağıda tutan da
+      buydu. Sınırlayıcı yalnızca o tepeleri kesiyor, aradaki ezgiye
+      dokunmuyor.
+
+      Eşik yüksek ve oran sert (bir limiter, kompresör değil): amaç parçayı
+      "ezmek" değil, taşan tek tük anı yakalamak. Diz sıfır, yani devreye
+      yumuşayarak değil tam eşikte giriyor; bırakma süresi bir vuruştan kısa,
+      yoksa her vuruş ezginin üstünü emiyor.
+    */
+    const sinirlayici = ctx.createDynamicsCompressor()
+    sinirlayici.threshold.value = -3
+    sinirlayici.knee.value = 0
+    sinirlayici.ratio.value = 20
+    sinirlayici.attack.value = 0.003
+    sinirlayici.release.value = 0.12
+    this.ana.connect(sinirlayici)
+    sinirlayici.connect(ctx.destination)
 
     // Beyaz gürültü bir kez üretilip saklanıyor: hi-hat her 16'lıkta çalıyor ve
     // her seferinde tampon doldurmak boşuna iş.
@@ -210,8 +240,14 @@ abstract class RitimMotoru {
     }
   }
 
-  /** Alçak, kısa vuruş — perdesi hızla düşen sinüs. */
-  protected vurus(an: number, tepe = 0.9, baslangicHz = 130) {
+  /**
+   * Alçak, kısa vuruş — perdesi hızla düşen sinüs.
+   *
+   * Varsayılan tepe 0.9'dan indi: karışımın en yüksek sesi vuruştu ve ezgiyi
+   * örtüyordu. Vuruş turun nabzı, parçanın kendisi değil — ölçüsü "duyuluyor
+   * mu" değil, "ezginin önüne geçiyor mu".
+   */
+  protected vurus(an: number, tepe = 0.55, baslangicHz = 130) {
     const ctx = this.ctx
     if (!ctx || !this.ana) return
     const osilator = ctx.createOscillator()
@@ -253,7 +289,10 @@ abstract class RitimMotoru {
     an: number,
     sure: number,
     {
-      tepe = 0.2,
+      // Ezgiyi taşıyan şey bu: varsayılan 0.2'den çıktı ve çağrı yerlerindeki
+      // tepeler de birlikte yükseldi. Parçanın duyulur olması buradan geliyor,
+      // ana seviyeden değil.
+      tepe = 0.32,
       bicim = 'triangle',
       kesim = 2400,
       sapma = 0,
@@ -314,7 +353,7 @@ class SiradanMuzik extends RitimMotoru {
     const akor = SiradanMuzik.AKORLAR[Math.floor(sira / ADIM_SAYISI)]
     const yerel = sira % ADIM_SAYISI
 
-    if (yerel === 0 || yerel === 8) this.vurus(an, 0.75)
+    if (yerel === 0 || yerel === 8) this.vurus(an, 0.5)
     // Sıkışan yarıda ikinci bir vuruş ve hi-hat: aynı ezgi daha yoğun duyuluyor.
     if (this.gerginlik > 0.4 && (yerel === 4 || yerel === 12)) this.tik(an, 0.13, 0.07, 4200)
     if (this.gerginlik > 0.55 && yerel % 4 === 2) this.tik(an, 0.07)
@@ -323,13 +362,15 @@ class SiradanMuzik extends RitimMotoru {
     // Bas 8'liklerde: kök – beşli – kök – beşli.
     if (yerel % 4 === 0) {
       const bes = yerel % 8 === 0 ? akor.kok - 12 : akor.kok - 5
-      this.nota(bes, an, 0.34, { tepe: 0.28, bicim: 'triangle', kesim: 700 })
+      this.nota(bes, an, 0.34, { tepe: 0.42, bicim: 'triangle', kesim: 700 })
     }
 
     // Arpej 8'liklerin arasında; yükselip inen üç nota.
     if (yerel % 2 === 0) {
       const sirali = [0, 1, 2, 1, 0, 1, 2, 1][yerel / 2]
-      this.nota(akor.notalar[sirali], an, 0.42, { tepe: 0.11, kesim: 2600, sapma: 4 })
+      // Parçanın ezgisi bu satır: eskiden 0.11'di, yani vuruşun yedide biri —
+      // "müzik duyulmuyor" şikâyetinin karşılığı tam olarak burasıydı.
+      this.nota(akor.notalar[sirali], an, 0.42, { tepe: 0.3, kesim: 2600, sapma: 4 })
     }
   }
 }
@@ -365,19 +406,21 @@ class TurboMuzik extends RitimMotoru {
     const yerel = sira % ADIM_SAYISI
 
     // Dört vuruş yerde: koşu temposunun omurgası.
-    if (yerel % 4 === 0) this.vurus(an, 0.8, 150)
+    if (yerel % 4 === 0) this.vurus(an, 0.52, 150)
     if (yerel % 8 === 4) this.tik(an, 0.16, 0.08, 3600)
     if (yerel % 2 === 0) this.tik(an, 0.06)
     if (this.gerginlik > 0.72 && yerel % 2 === 1) this.tik(an, 0.05, 0.022)
 
     if (TurboMuzik.BAS.includes(yerel)) {
-      this.nota(akor.kok - 12, an, 0.13, { tepe: 0.3, bicim: 'square', kesim: 900 })
+      this.nota(akor.kok - 12, an, 0.13, { tepe: 0.44, bicim: 'square', kesim: 900 })
     }
 
     // Akor vuruşları ters vuruşta: senkopu duyuran şey bu iki nokta.
     if (yerel === 2 || yerel === 10) {
       for (const nota of akor.notalar) {
-        this.nota(nota, an, 0.16, { tepe: 0.07, bicim: 'sawtooth', kesim: 1800 })
+        // Üç nota aynı anda: tek tek tepesi düşük kalıyor, toplamı senkopu
+        // duyuruyor. Sınırlayıcı taşarsa ilk kırpılacak yer de burası.
+        this.nota(nota, an, 0.16, { tepe: 0.19, bicim: 'sawtooth', kesim: 1800 })
       }
     }
   }
@@ -411,18 +454,18 @@ class AniOlumMuzik extends RitimMotoru {
 
     // Düzensiz aksan: 0 – 6 – 10. Dört vuruş yerde olsaydı koşu gibi olurdu,
     // burada istenen tedirginlik.
-    if (yerel === 0 || yerel === 6 || yerel === 10) this.vurus(an, 0.7, 110)
+    if (yerel === 0 || yerel === 6 || yerel === 10) this.vurus(an, 0.48, 110)
     this.tik(an, yerel % 4 === 0 ? 0.075 : 0.04, 0.022, 8000)
 
     // Pedal bas: her 8'likte aynı nota, kısa ve kuru.
-    if (yerel % 4 === 0) this.nota(28, an, 0.16, { tepe: 0.32, bicim: 'square', kesim: 600 })
+    if (yerel % 4 === 0) this.nota(28, an, 0.16, { tepe: 0.44, bicim: 'square', kesim: 600 })
 
     // Tremolo: 16'lıkta tekrarlayan iki nota, nefes bırakmıyor.
     if (yerel % 2 === 0) {
-      this.nota(ust, an, 0.1, { tepe: 0.085, bicim: 'sawtooth', kesim: 1500, sapma: -6 })
+      this.nota(ust, an, 0.1, { tepe: 0.24, bicim: 'sawtooth', kesim: 1500, sapma: -6 })
     }
     if (yerel % 4 === 3) {
-      this.nota(ust - 12, an, 0.12, { tepe: 0.07, bicim: 'triangle', kesim: 1200 })
+      this.nota(ust - 12, an, 0.12, { tepe: 0.2, bicim: 'triangle', kesim: 1200 })
     }
   }
 }

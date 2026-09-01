@@ -19,6 +19,9 @@ import { OLAY_ADI, type SesOlayi } from './ses-havuzu'
 import { OGE_ADI, type OgeTuru } from './oge-havuzu'
 import type { BolunmeTipi } from './bolunme'
 import type { HaritaTipi } from './harita'
+import { iklimBul } from './iklim'
+import { IKLIM_ADI } from './iklim-havuzu'
+import { SEKIL_ADI, type IzohipsSorusu } from './izohips'
 import type { SozKonusu, SozTuru } from './soz-havuzu'
 import { ucgenCevabi, ucgenKimligi, ucgenOzeti, kenarMetni, type UcgenSorusu } from './ucgen'
 import { BOZUKLUK_ADI, type BozuklukTuru } from './anlatim-havuzu'
@@ -29,9 +32,8 @@ import type { SiraliOlay } from './sirala-havuzu'
 import { dogruSira, yilMetni, type SiralamaSorusu } from './sirala'
 import type { TuzakKurali } from './tuzak-havuzu'
 import type { TuzakSorusu } from './tuzak'
-
-/** Bir kaydın bankadan düşmesi için gereken üst üste doğru sayısı. */
-export const DUSME_ESIGI = 3
+import { elementBul, type PeriyodikTipi } from './periyodik'
+import { SINIF_ADI } from './periyodik-havuzu'
 
 /**
  * Bankanın en fazla tutacağı kayıt.
@@ -75,6 +77,21 @@ export type BankaSorusu =
    * şekillerini üretebilen** veri: `aciSekli`/`ucgenSekli` bu nesneden çizimi
    * yeniden kuruyor, bankaya koordinat yazmak gerekmiyor.
    */
+  /*
+    İklimde yalnızca bölgenin adı saklanıyor.
+
+    İklimin kendisi, haritadaki yeri ve açıklaması havuzda duruyor
+    (`iklim-havuzu.ts`) ve havuz düzeltildiğinde kayıtla çelişmemeleri
+    gerekiyor: kayda yazılmış bir iklim tipi, havuz düzeltildikten sonra da
+    yanlış cevabı doğru diye öğretmeye devam ederdi.
+  */
+  | { oyun: 'iklim'; bolge: string }
+  /*
+    İzohips haritası bir görsel değil, tohumdan yeniden çizilen bir hesap
+    (`izohips.ts`): kayıtta tohum, zorluk ve cevap duruyor, harita bankada
+    açılırken birebir aynı çiziliyor.
+  */
+  | { oyun: 'izohips'; izohips: IzohipsSorusu }
   | { oyun: 'aci'; aci: AciSorusu }
   | { oyun: 'ucgen'; ucgen: UcgenSorusu }
   | { oyun: 'antlasma'; madde: string; antlasma: string }
@@ -119,6 +136,27 @@ export type BankaSorusu =
    * atıyor.
    */
   | { oyun: 'tuzak'; kural: TuzakKurali }
+  /*
+    Elementin yalnızca sembolü saklanıyor.
+
+    Adı, tablodaki yeri, ailesi ve zorluğu havuzda duruyor
+    (`periyodik-havuzu.ts`); kayda yazılmış bir aile, havuz düzeltildikten
+    sonra da yanlış cevabı doğru diye öğretmeye devam ederdi. Tip de kayıtta:
+    aynı element hem "tabloda bul" hem "ailesi hangisi" olarak geçebiliyor ve
+    ikisi ayrı beceri.
+  */
+  | { oyun: 'periyodik'; sembol: string; periyodikTipi: PeriyodikTipi }
+  | { oyun: 'formul'; formul: string; ad: string }
+
+/**
+ * Bankadan açılan tur: o oyunun bankadaki bütün sorularıyla.
+ *
+ * Bir süre tek kaydı da açabiliyordu (`kayit` alanı, karta dokunmanın
+ * karşılığı) ve o yol kaldırıldı: bankadan çıkışın tek kazanılan yolu artık
+ * genel test (`banka-testi.ts`) ve tek soruyu hemen yeniden çözmek, o testin
+ * ölçtüğü şeyi — soruyu karışık bir sırada tanıyabilmeyi — atlatmanın yoluydu.
+ */
+export type BankaTuru = { oyun: OyunId }
 
 export type BankaKaydi = {
   /** Soru içeriğinden türetilen kimlik; aynı soru iki kez eklenmez. */
@@ -126,8 +164,6 @@ export type BankaKaydi = {
   soru: BankaSorusu
   /** Kaç kez yanlış bilindi. "3 kez" rozeti bunu gösteriyor. */
   kacKez: number
-  /** Üst üste kaç doğru. `DUSME_ESIGI`'ne ulaşınca kayıt bankadan çıkar. */
-  ardisikDogru: number
   /** İlk eklenme (ISO tarih) — sınır aşılınca en eskisi düşsün diye. */
   eklenme: string
   /** Son yanlış bilinme tarihi (ISO). */
@@ -218,6 +254,15 @@ export function bolunmedenBanka(soru: {
   return { oyun: 'bolunme', sayi: soru.sayi, bolen: soru.bolen, bolunmeTipi: soru.tip }
 }
 
+/** Kayıt yalnızca adı taşıyor; iklimi ve haritadaki yeri havuz veriyor. */
+export function iklimdenBanka(soru: { ad: string }): BankaSorusu {
+  return { oyun: 'iklim', bolge: soru.ad }
+}
+
+export function izohipstenBanka(soru: IzohipsSorusu): BankaSorusu {
+  return { oyun: 'izohips', izohips: soru }
+}
+
 export function acidanBanka(soru: AciSorusu): BankaSorusu {
   return { oyun: 'aci', aci: soru }
 }
@@ -276,6 +321,17 @@ export function tuzaktanBanka(soru: TuzakSorusu): BankaSorusu {
   return { oyun: 'tuzak', kural: soru.kural }
 }
 
+export function periyodiktenBanka(soru: {
+  tip: PeriyodikTipi
+  element: { sembol: string }
+}): BankaSorusu {
+  return { oyun: 'periyodik', sembol: soru.element.sembol, periyodikTipi: soru.tip }
+}
+
+export function formuldenBanka(es: { formul: string; ad: string }): BankaSorusu {
+  return { oyun: 'formul', formul: es.formul, ad: es.ad }
+}
+
 /**
  * Kayıt kimliği.
  *
@@ -312,6 +368,11 @@ export function bankaKimligi(soru: BankaSorusu): string {
     // ayrı beceri, ayrı kayıt.
     case 'harita':
       return `harita:${soru.haritaTipi}:${soru.il}`
+    case 'iklim':
+      return `iklim:${soru.bolge}`
+    // Kimlik tohumdan: aynı tohum aynı harita demek, aynı harita da aynı soru.
+    case 'izohips':
+      return `izohips:${soru.izohips.tohum}`
     // Eşleştirme oyunlarında kimlik sorulan taraftan geliyor: aynı antlaşmanın
     // iki farklı maddesi iki ayrı soru.
     case 'antlasma':
@@ -336,6 +397,12 @@ export function bankaKimligi(soru: BankaSorusu): string {
     // Kimlik kuralın doğru hâlinden: iki yüzü tek kayıt.
     case 'tuzak':
       return `tuzak:${soru.kural.dogru}`
+    // Aynı element üç ayrı tiple sorulabiliyor; tip kimliğe girmeseydi
+    // "tabloda bul"u öğrenen öğrenci ailesini de öğrenmiş sayılırdı.
+    case 'periyodik':
+      return `periyodik:${soru.periyodikTipi}:${soru.sembol}`
+    case 'formul':
+      return `formul:${soru.formul}`
   }
 }
 
@@ -364,6 +431,12 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
       return ucgenOzeti(soru.ucgen)
     case 'harita':
       return soru.haritaTipi === 'bul' ? `${soru.il} nerede?` : 'Haritada işaretlenen il'
+    case 'iklim':
+      return `${soru.bolge} · hangi iklim?`
+    // Listede haritanın kendisi yok, ne sorulduğu var: küçültülmüş bir izohips
+    // haritası satır içinde okunmuyor.
+    case 'izohips':
+      return 'Daire içindeki yer şekli'
     case 'antlasma':
       return soru.madde
     case 'kavram':
@@ -387,6 +460,22 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
     // tuzağın nasıl göründüğü, doğru hâli hemen altında cevap olarak duruyor.
     case 'tuzak':
       return soru.kural.yanlis
+    /*
+      Havuzdan düşmüş bir sembolün kaydı cevapsız kalıyor; o kayıt zaten
+      sorulamıyor (banka turu havuzdan kuruluyor) ve listede sembolün kendisi,
+      uydurulmuş bir addan iyidir.
+    */
+    case 'periyodik': {
+      const element = elementBul(soru.sembol)
+      const ad = element?.ad ?? soru.sembol
+      if (soru.periyodikTipi === 'bul') return `${ad} tabloda nerede?`
+      if (soru.periyodikTipi === 'sinif') return `${ad} hangi ailede?`
+      return 'Tabloda işaretlenen element'
+    }
+    // Formül düz yazı duruyor: alt indis bir çizim ayrıntısı ve listede tek
+    // satırlık metin isteniyor (`formul.ts`).
+    case 'formul':
+      return soru.formul
   }
 }
 
@@ -417,6 +506,19 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
       return kenarMetni(ucgenCevabi(soru.ucgen))
     case 'harita':
       return soru.il
+    /*
+      İklimin adı havuzdan okunuyor.
+
+      Havuzdan düşmüş bir bölgenin kaydı cevapsız kalıyor; o kayıt zaten
+      sorulamıyor (banka turu havuzdan kuruluyor) ve listede boş bir satır,
+      yanlış bir cevaptan iyidir.
+    */
+    case 'iklim': {
+      const bolge = iklimBul(soru.bolge)
+      return bolge ? IKLIM_ADI[bolge.iklim] : '—'
+    }
+    case 'izohips':
+      return SEKIL_ADI[soru.izohips.sekil]
     case 'antlasma':
       return soru.antlasma
     case 'kavram':
@@ -434,16 +536,25 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
       return soru.olaylar.map((o) => yilMetni(o.yil)).join(' → ')
     case 'tuzak':
       return soru.kural.dogru
+    case 'periyodik': {
+      const element = elementBul(soru.sembol)
+      if (!element) return '—'
+      return soru.periyodikTipi === 'sinif' ? SINIF_ADI[element.sinif] : element.ad
+    }
+    case 'formul':
+      return soru.ad
   }
 }
 
 /**
- * Biten turun cevaplarını bankaya işler.
+ * Biten turun cevaplarını bankaya işler: **yalnızca yanlışları**.
  *
- * Tek fonksiyon hem ekliyor hem düşürüyor, çünkü ikisi aynı kuralın iki yüzü:
- * yanlış bilinen girer, üst üste `DUSME_ESIGI` kez doğru bilinen çıkar. Ayrı
- * yazılsaydı normal turda verilen doğru cevabın bankayı ilerletmesi unutulurdu —
- * oysa asıl istenen bu: soruyu nerede bilirsen bil, öğrenmiş sayılırsın.
+ * Doğru cevap bankaya hiç dokunmuyor. Eskiden bir kayıt turlarda üst üste üç
+ * kez doğru bilinince kendiliğinden düşüyordu; o sayaç kaldırıldı. Sebep
+ * ölçtüğü şey: sayaç turun kendi havuzunda dağılıyordu — soru turda bir daha
+ * hiç gelmeyebiliyor, geldiğinde de şıkları ezberden tanınabiliyordu. Bankadan
+ * kazanılan çıkışın tek yolu artık genel test (`banka-testi.ts`): bütün
+ * yanlışlar karışık sorulur, doğru bilinen düşer.
  *
  * Saf: girdiyi değiştirmiyor, yeni dizi döndürüyor.
  */
@@ -455,38 +566,28 @@ export function bankayiGuncelle(
   const harita = new Map(banka.map((k) => [k.id, { ...k }]))
 
   for (const cevap of cevaplar) {
+    if (cevap.dogruMu) continue
+
     const id = bankaKimligi(cevap.soru)
     const mevcut = harita.get(id)
 
-    if (!cevap.dogruMu) {
-      if (mevcut) {
-        harita.set(id, {
-          ...mevcut,
-          // Soru güncelleniyor: havuzdaki kural metni sonradan düzeltilmiş olabilir.
-          soru: cevap.soru,
-          kacKez: mevcut.kacKez + 1,
-          ardisikDogru: 0,
-          sonYanlis: bugunIso,
-        })
-      } else {
-        harita.set(id, {
-          id,
-          soru: cevap.soru,
-          kacKez: 1,
-          ardisikDogru: 0,
-          eklenme: bugunIso,
-          sonYanlis: bugunIso,
-        })
-      }
-      continue
+    if (mevcut) {
+      harita.set(id, {
+        ...mevcut,
+        // Soru güncelleniyor: havuzdaki kural metni sonradan düzeltilmiş olabilir.
+        soru: cevap.soru,
+        kacKez: mevcut.kacKez + 1,
+        sonYanlis: bugunIso,
+      })
+    } else {
+      harita.set(id, {
+        id,
+        soru: cevap.soru,
+        kacKez: 1,
+        eklenme: bugunIso,
+        sonYanlis: bugunIso,
+      })
     }
-
-    // Doğru cevap yalnızca bankada duran bir soruyu ilerletir; bilinen soru
-    // bankaya girmez.
-    if (!mevcut) continue
-    const ilerleme = mevcut.ardisikDogru + 1
-    if (ilerleme >= DUSME_ESIGI) harita.delete(id)
-    else harita.set(id, { ...mevcut, ardisikDogru: ilerleme })
   }
 
   const hepsi = [...harita.values()]
@@ -494,6 +595,23 @@ export function bankayiGuncelle(
 
   // Sınır aşıldı: en eski eklenenler düşer.
   return [...hepsi].sort((a, b) => a.eklenme.localeCompare(b.eklenme)).slice(-BANKA_SINIRI)
+}
+
+/**
+ * Genel testin sonucunu işler: doğru bilinenler düşer.
+ *
+ * Yanlış bilinenlere **hiç dokunulmuyor** — ne sayaçları artıyor ne tarihleri
+ * yenileniyor. Soru zaten bankada duruyor; testte bir kez daha karıştırmak onu
+ * ikinci bir hata yapmıyor, yalnızca hâlâ öğrenilmediğini gösteriyor.
+ * `bankayiGuncelle` bu yüzden kullanılmıyor: o, oyun turundan gelen **yeni**
+ * hatayı sayıyor.
+ */
+export function testiIsle(
+  banka: readonly BankaKaydi[],
+  dogruIdler: readonly string[],
+): BankaKaydi[] {
+  const dusenler = new Set(dogruIdler)
+  return banka.filter((k) => !dusenler.has(k.id))
 }
 
 /** Bankadaki kayıtları oyun kimliğine göre sayar. */
@@ -533,6 +651,8 @@ const BOS_DAGILIM: Record<OyunId, number> = {
   bolunme: 0,
   edebiyat: 0,
   harita: 0,
+  iklim: 0,
+  izohips: 0,
   aci: 0,
   ucgen: 0,
   antlasma: 0,
@@ -544,6 +664,8 @@ const BOS_DAGILIM: Record<OyunId, number> = {
   hucre: 0,
   sirala: 0,
   tuzak: 0,
+  periyodik: 0,
+  formul: 0,
 }
 
 export const OYUN_KIMLIKLERI = Object.keys(BOS_DAGILIM) as OyunId[]

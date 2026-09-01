@@ -80,6 +80,7 @@ keyPassword=...
 | `lib/depo.ts` | localStorage hook'u, yedekleme |
 | `lib/oyunlar/` | Mini oyunlar — ortak tur mantığı (`tur.ts`), tanım listesi, oyun havuzları |
 | `lib/oyunlar/banka.ts` | Oyun Bankası — karıştırılan soruların biriktiği havuz, **saf** |
+| `lib/konu/` | Konu Anlatımı — Maarif müfredatı içeriği (`icerik/`), ilerleme ve bilinmeyenler bankası (`ilerleme.ts`, **saf**) |
 | `lib/ozet.ts` | Haftalık özet hesabı — **saf fonksiyonlar** |
 | `lib/ozet-gorsel.ts` | Özetin paylaşılabilir PNG'si (tuvale çizim) |
 | `lib/paylas.ts` | Capacitor Share / `navigator.share` sarmalayıcısı |
@@ -361,6 +362,42 @@ tek tur rekoru, hatasız tur, toplam doğru, tur bitirilen farklı oyun sayısı
 `lib/oyunlar/tanim.ts` içindeki listeye eklenip bir ekran yazıldığında rozetler onu
 kendiliğinden sayar; rozet mantığına dokunmak gerekmez.
 
+## Konu Anlatımı
+
+Ana sayfadaki **Konu Anlatımı** bölümü ders haritasını açıyor: üstte sınıf
+(9/10) ve ders seçiliyor, altında o programın temaları **patika** hâlinde
+diziliyor. Konular üç şeride yayılıp eğri çizgilerle bağlanıyor; düz bir liste
+tema içindeki sırayı ve "nerede kaldım"ı göstermiyordu.
+
+Müfredat **Türkiye Yüzyılı Maarif Modeli**ne göre — eski (2018) programın ünite
+adları kullanılmıyor. Yedi ders (Matematik, Türkçe, Fizik, Kimya, Biyoloji,
+Tarih, Coğrafya) × iki sınıf = 14 program, 60 tema, 177 konu, 759 bilgi kartı.
+İçerik `lib/konu/icerik/` altında `<sınıf>-<ders>.ts` dosyalarında; kimlik
+çakışması ve kart uzunluğu `lib/konu/icerik.test.ts` ile denetleniyor.
+
+### Kart yukarı mı aşağı mı
+
+Konuya dokununca bilgi kartları tek tek geliyor. Kart **aşağı** kaydırılırsa
+"biliyorum", **yukarı** kaydırılırsa "bilmiyorum". Yukarısı kırmızı, aşağısı
+yeşil; iki bölge kart sürüklenmeden de görünüyor ki hareket keşfedilebilsin.
+Aynı iki karar için altta düğme de var — kaydırma keşfedilmesi gereken bir
+hareket ve düğmeler ekran okuyucunun tek tutamağı.
+
+"Bilmiyorum" denen kart **Bilmediklerim** bankasına düşüyor
+(`components/konu/bilinmeyenler.tsx`). Kayıt kartın **metnini kendi içinde**
+taşıyor, yalnızca kimliğini değil: içerik güncellenip kart kimlikleri kaysa
+bile kullanıcının kaydettiği bilgi yerinde kalıyor.
+
+### Kilit yok
+
+Konular sırayla açılmıyor, hepsi her zaman açık. Sınav hazırlığındaki öğrenci
+yarın işlenecek konuya bugün bakmak ister; kilitli bir harita onu kendi
+müfredatından uzak tutardı. Sıra bilgisi yine duruyor — patikanın kendisi
+sırayı gösteriyor, dayatmıyor.
+
+Tamamlanma destenin **sonuna gelmekle** kazanılıyor. Yarıda çıkılan destede
+işaretlenen kartlar yine bankaya düşüyor ama konu haritada bitmiş görünmüyor.
+
 ## Mini oyunlar
 
 Her oyunun istatistiği `rabi-oyunlar` altında oyun kimliğine göre tutuluyor; tek tek turlar
@@ -376,13 +413,15 @@ ve Oyunlar sekmesinden yeniden oynanabiliyor. Fotoğraflı Yanlış Soru Bankas�
 Kayıt, soruyu yeniden kurmak için gereken her şeyi kendi içinde taşıyor — havuzdaki
 sıraya bağlanmadı, çünkü havuza yeni soru eklenince bütün banka kayardı.
 
-Bir kayıt ancak **üst üste üç kez** doğru bilinince düşüyor (`DUSME_ESIGI`): tek doğru
-bilmek değil hatırlamak olabilir. Araya bir yanlış girerse sayaç sıfırlanıyor. Banka
-en fazla `BANKA_SINIRI` (100) kayıt tutuyor; sınır aşılınca en eskisi düşüyor.
+Bir kayıt ancak **genel testte** doğru bilinince düşüyor: banka ekranındaki bu test
+bütün yanlışları oyun ayrımı olmadan, karışık sırayla ve ortak bir şıklı biçimde
+soruyor (`lib/oyunlar/banka-testi.ts`). Doğru bilinen düşüyor, yanlış bilinen olduğu
+gibi kalıyor — sayacı artmıyor, ikinci kez eklenmiyor. Banka en fazla
+`BANKA_SINIRI` (100) kayıt tutuyor; sınır aşılınca en eskisi düşüyor.
 
-`bankayiGuncelle` hem ekliyor hem düşürüyor, çünkü ikisi aynı kuralın iki yüzü. Normal
-turda verilen doğru cevap da bankayı ilerletiyor — soruyu nerede bilirsen bil, öğrenmiş
-sayılıyorsun.
+`bankayiGuncelle` yalnızca **yanlışları** işliyor: turda verilen doğru cevap bankaya
+dokunmuyor. Eskiden üst üste üç doğru kaydı düşürüyordu; o sayaç soruyu turun kendi
+havuzunda kaybettiği için kaldırıldı.
 
 Banka turları **rekora ve istatistiğe sayılmıyor** (`components/ekranlar/oyunlar.tsx`):
 sorular zaten bir kez yanlış bilinip kenara ayrılmış sorular, sayılsaydı bankayı birkaç
@@ -515,21 +554,43 @@ tekrar dener ve kalıcı ret durumunda ne yapılacağını yazar.
 
 ## İkonlar ve açılış ekranı
 
-Kaynak SVG'ler `assets/` altında, üretilen PNG'ler `android/app/src/main/res/` altında:
+İkonun kaynağı **maskotun kendisi** — `public/tavsan-yuz.png`, uygulamanın içinde görünen
+tavşanla aynı dosya. Bir süre kaynak elle çizilmiş bir SVG tavşandı ve telefonun ana
+ekranındaki tavşan uygulamanın içindekine benzemiyordu; iki ayrı kaynak bunu kalıcı hâle
+getiriyordu.
 
 ```
-./scripts/ikon-uret.sh      # rsvg-convert + ImageMagick gerekir
+node scripts/ikon-uret.mjs   # tek bağımlılık: sharp (Next ile zaten kurulu)
 ```
 
 Üretilen dosyalar depoya giriyor (`cap sync` onları silmiyor) ama **elle düzenlenmemeli** —
-ikon değişecekse `assets/` içindeki SVG düzenlenip betik yeniden çalıştırılmalı.
+ikon değişecekse maskot değiştirilip betik yeniden çalıştırılmalı.
 
-Uyarlanabilir (adaptive) ikonun ön planında tavşan, 108 birimlik tuvalin ortadaki **72
-birimlik** güvenli alanına sığdırıldı; dışarısını cihaz üreticisinin maskesi (daire, kare,
-damla) kırpabiliyor. Arka plan `@color/ic_launcher_background` = `#6D3FE0`, uygulamanın vurgu
-rengiyle aynı. Android 8 öncesi uyarlanabilir ikonu tanımadığı için `ic_launcher.png` ve
-`ic_launcher_round.png` ayrıca üretiliyor — yuvarlak olana maskeyi sistem uygulamıyor, daire
-görselin içinde.
+Betik dört şey üretiyor:
+
+| Çıktı | Nerede | Ne |
+|---|---|---|
+| `ic_launcher_foreground.png` | `mipmap-*` | uyarlanabilir ikonun ön planı |
+| `ic_launcher.png` / `_round.png` | `mipmap-*` | Android 8 öncesi için zemini basılmış ikon |
+| `ic_bildirim.png` | `drawable-*` | bildirim çubuğunun beyaz silueti |
+| `icon-512.png` / `icon-192.png` | `public/` | web (PWA) ikonu |
+
+Kaynak görselin kenarında beyaz zeminden kalmış soluk pikseller var; uygulamanın kırık beyaz
+zemininde görünmüyorlar ama turuncu ikonun üstünde hâle ve benek olarak çıkıyorlardı. Betik
+alfası eşiğin altındaki pikselleri siliyor (`TOZ_ESIGI`).
+
+Uyarlanabilir ikonun ön planında tavşan, 108 birimlik tuvalin ortadaki **72 birimlik** güvenli
+alanına sığdırıldı; dışarısını cihaz üreticisinin maskesi (daire, kare, damla) kırpabiliyor.
+Zemin `@drawable/ic_launcher_arka`: markanın iki tonu arasında köşegen bir geçiş. Bir süre
+burada tek bir mor (`#6D3FE0`) duruyordu — mor tema kaldırıldığında uygulamanın her yeri
+amber oldu ama ana ekrandaki ikon mor kaldı, çünkü zemin rengi ikonun kendi dosyasında ayrı
+yazılı.
+
+**Bildirim simgesi ayrı olmak zorunda.** Android durum çubuğunda yalnızca **alfa kanalını**
+okuyor: renkli bir ikon orada beyaz bir lekeye dönüşüyor ve bildirimin hangi uygulamadan
+geldiği anlaşılmıyor. `ic_bildirim` maskotun saydamlığından çıkarılmış beyaz siluet; rengini
+`iconColor` (web tarafı) ve `setColor` (odak servisi) veriyor. Bildirim panelindeki renkli
+logo ise `largeIcon` ile geliyor — siluet uygulamayı tanıtmaya yetmiyor.
 
 ## Fotoğraf deposu
 

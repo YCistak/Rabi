@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  "DERS MODU AÇIK" çipinin zemini — hap biçiminde, sönük.
+
+  Çip ekranın ilk satırı ve tek işi nerede olduğunu söylemek; markanın
+  turuncusu burada kullanılsaydı gözü asıl sayıdan (kalan süre) çalardı.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+  <solid android:color="@color/odak_cip" />
+  <corners android:radius="999dp" />
+</shape>

@@ -13,4 +13,15 @@
     <color name="marka_amber">#D9622F</color>
     <color name="odak_metin">#1B1A19</color>
     <color name="odak_soluk">#6B6764</color>
+    <!--
+      Engel katmanının yüzey renkleri.
+
+      İkisi de web tarafındaki karşılıklarıyla aynı: çip zemini muted
+      tonu, çizgi de border tonu. (XML yorumunda iki tire yan yana
+      yazılamıyor, o yüzden değişken adları tema öneki olmadan.) Katman
+      uygulamanın devamı gibi görünmeli — kendi paletini kuran bir engel
+      ekranı, başka bir uygulamadan gelmiş gibi duruyordu.
+    -->
+    <color name="odak_cip">#EFEEEB</color>
+    <color name="odak_cizgi">#EAE9E6</color>
 </resources>

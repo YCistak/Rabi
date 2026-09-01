@@ -27,7 +27,8 @@ import {
   pomodoroAyariniNormalize,
   useYerelDepo,
 } from '@/lib/depo'
-import type { BankaKaydi } from '@/lib/oyunlar/banka'
+import { testiIsle, type BankaKaydi, type BankaTuru } from '@/lib/oyunlar/banka'
+import type { DersId } from '@/lib/oyunlar/tanim'
 import { sablonlariBirlestir } from '@/lib/sablonlar'
 import { guncelTahmin, obpHesapla } from '@/lib/tahmin'
 import { egitimYili, gunlukToplam, ilerlemisSinif } from '@/lib/hesap'
@@ -38,6 +39,8 @@ import { bekleyenSayisi } from '@/lib/hata-bildirimi'
 import { useHataBildirimi } from '@/lib/hata-kuyrugu'
 import { bugun } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
+import type { KonuDersId, KonuSinifi } from '@/lib/konu'
+import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { kullanildi } from '@/lib/son-kullanilan'
 import { ustKatmaniKapat } from '@/lib/geri'
 import { Acilis, GECIS_SURESI, MaskotGecisi } from '@/components/acilis'
@@ -61,6 +64,7 @@ import { RozetlerEkrani } from '@/components/ekranlar/rozetler'
 import { gununNotlari, notlariNormalize, type NotKagidi } from '@/lib/yapilacaklar'
 import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
 import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
+import { KonuHaritasiEkrani } from '@/components/ekranlar/konu-haritasi'
 import { YapilacaklarEkrani } from '@/components/ekranlar/yapilacaklar'
 import { RozetKutlama } from '@/components/rozet-kutlama'
 
@@ -89,6 +93,15 @@ export function AppShell() {
   // da ekrandan ekrana değişirdi.
   const [sonAraclar, setSonAraclar] = useYerelDepo<string[]>(ANAHTARLAR.sonAraclar, [])
   const [sonOyunlar, setSonOyunlar] = useYerelDepo<string[]>(ANAHTARLAR.sonOyunlar, [])
+  /*
+    Kullanıcının kendi sabitlediği kutucuklar — son kullanılanlardan ayrı
+    kayıtta. Sabit bir tercih, öteki her turda değişen bir sıra; tek listede
+    tutulsalardı bir oyunu açmak kurulan düzeni bozardı.
+  */
+  const [sabitAraclar, setSabitAraclar] = useYerelDepo<string[]>(ANAHTARLAR.sabitAraclar, [])
+  const [sabitDersler, setSabitDersler] = useYerelDepo<string[]>(ANAHTARLAR.sabitDersler, [])
+  /** Ana sayfadan seçilen ders — Oyunlar sekmesi açılırken onun ızgarasına giriyor. */
+  const [acilacakDers, setAcilacakDers] = useState<DersId | null>(null)
 
   /** Bir aracı açar ve kısayol sırasında öne alır. */
   const aracAc = useCallback(
@@ -147,6 +160,22 @@ export function AppShell() {
    * sayılamıyor; rozet buna baktığından ayrı bir sayaç olarak birikiyor.
    */
   const [bankaDusen, setBankaDusen] = useYerelDepo<number>(ANAHTARLAR.bankaDusen, 0)
+  const [konuIlerleme, setKonuIlerleme] = useYerelDepo<KonuIlerlemeleri>(
+    ANAHTARLAR.konuIlerleme,
+    {},
+  )
+  const [bilinmeyenKartlar, setBilinmeyenKartlar] = useYerelDepo<BilinmeyenKart[]>(
+    ANAHTARLAR.bilinmeyenKartlar,
+    [],
+  )
+  /*
+    Konu haritasında kalınan yer. Yedeğe girmeyen bir tercih olduğu için
+    ilerlemeden ayrı anahtarda duruyor.
+  */
+  const [konuSecimi, setKonuSecimi] = useYerelDepo<{ ders: KonuDersId; sinif: KonuSinifi }>(
+    ANAHTARLAR.konuSecimi,
+    { ders: 'matematik', sinif: 9 },
+  )
   const [notlarHam, setNotlar, notlarHazir] = useYerelDepo<NotKagidi[]>(ANAHTARLAR.notlar, [])
   /*
     Tahta günlük ve gün her çizimde yeniden okunuyor.
@@ -172,7 +201,7 @@ export function AppShell() {
    * Bankadan açılan tur. Oyun kimliği burada duruyor çünkü turu Oyunlar sekmesi
    * çiziyor ama başlatan Oyun Bankası ekranı — ikisi kardeş, ortak sahibi bu.
    */
-  const [bankaTuru, setBankaTuru] = useState<OyunId | null>(null)
+  const [bankaTuru, setBankaTuru] = useState<BankaTuru | null>(null)
   /**
    * Bildirilen hatalı sorular. Kuyruk, gönderim ve arayüzün kolu hook'un
    * içinde; buradan yalnızca ayarın açık olup olmadığı geçiyor.
@@ -569,20 +598,41 @@ export function AppShell() {
             <OyunBankasiEkrani
               banka={oyunBankasi}
               bildir={hataBildirimi}
+              sesAcik={ayarlar.oyunSesi}
               /*
-                Elle kaldırma `bankadanDustu`'ya uğramıyor: sayaç, soruyu üst
-                üste üç kez doğru bilmenin karşılığı ve rozet ona bakıyor. Tuşa
+                Elle kaldırma `bankadanDustu`'ya uğramıyor: sayaç, soruyu genel
+                testte doğru bilmenin karşılığı ve rozet ona bakıyor. Tuşa
                 basmakla artan bir sayaç ölçtüğü şeyi ölçmez olurdu.
               */
               onKaldir={(id) => setOyunBankasi((o) => o.filter((k) => k.id !== id))}
-              onTurBaslat={(oyun) => {
+              /*
+                Genel testin kazandırdığı çıkış: doğru bilinenler düşüyor ve
+                rozetin baktığı sayaç ilerliyor. Yanlış bilinenlere hiç
+                dokunulmuyor — testin kendisi yeni bir hata değil.
+              */
+              onTestBitti={(dogruIdler) => {
+                if (dogruIdler.length === 0) return
+                setOyunBankasi((o) => testiIsle(o, dogruIdler))
+                bankadanDustu(dogruIdler.length)
+              }}
+              onTurBaslat={(tur) => {
                 // Turu Oyunlar sekmesi çiziyor; oyun katmanı tam ekran açıldığı
                 // için arkada hangi sekmenin durduğu görünmüyor, ama turdan
                 // çıkınca kullanıcı oyunların yanında kalmalı.
-                setBankaTuru(oyun)
+                setBankaTuru(tur)
                 setEkran(null)
                 setSekme('oyunlar')
               }}
+            />
+          )}
+          {ekran === 'konu' && (
+            <KonuHaritasiEkrani
+              secim={konuSecimi}
+              setSecim={(secim) => setKonuSecimi(secim)}
+              ilerlemeler={konuIlerleme}
+              setIlerlemeler={setKonuIlerleme}
+              bilinmeyenler={bilinmeyenKartlar}
+              setBilinmeyenler={setBilinmeyenKartlar}
             />
           )}
           {ekran === 'pomodoro' && (
@@ -646,11 +696,21 @@ export function AppShell() {
               devamsizlik={devamsizlik}
               hedef={hedef}
               guncelSiralama={guncelSiralama}
+              bilinmeyenSayisi={bilinmeyenKartlar.length}
               sonAraclar={sonAraclar}
               sonOyunlar={sonOyunlar}
+              sabitAraclar={sabitAraclar}
+              setSabitAraclar={(secim) => setSabitAraclar(() => secim)}
+              sabitDersler={sabitDersler}
+              setSabitDersler={(secim) => setSabitDersler(() => secim)}
               onKartAc={aracAc}
               onDahaGit={() => setSekme('daha')}
-              onOyunlaraGit={() => setSekme('oyunlar')}
+              onOyunlaraGit={(ders) => {
+                // Ders kutucuğu doğrudan o dersin ızgarasını açıyor; sekmenin
+                // başına düşen kullanıcı aynı seçimi bir kez daha yapıyordu.
+                setAcilacakDers(ders ?? null)
+                setSekme('oyunlar')
+              }}
               acilisSuruyor={!acilisBitti}
             />
           )}
@@ -668,6 +728,8 @@ export function AppShell() {
               onBankayaGit={() => setEkran('oyun-bankasi')}
               bankaTuru={bankaTuru}
               onBankaTuruBitti={() => setBankaTuru(null)}
+              acilacakDers={acilacakDers}
+              onDersAcildi={() => setAcilacakDers(null)}
               onOyunAcildi={oyunAcildi}
               bildir={hataBildirimi}
             />
@@ -681,8 +743,6 @@ export function AppShell() {
               bekleyenBildirim={bekleyenSayisi(hataBildirimi.bildirimler)}
               bildirimIzni={hataBildirimi.izin}
               onBildirimIzni={hataBildirimi.onIzin}
-              pomodoroAyar={pomodoroAyar}
-              setPomodoroAyar={setPomodoroAyar}
               yedeklenecek={{
                 denemeler,
                 okulYillari,
@@ -695,6 +755,8 @@ export function AppShell() {
                 oyunBankasi,
                 bankaDusen,
                 notlar,
+                konuIlerleme,
+                bilinmeyenKartlar,
                 pomodoroGecmis,
                 pomodoroAyar,
                 hedef,

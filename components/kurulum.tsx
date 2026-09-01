@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import type { RefObject } from 'react'
 import { AlertCircle, ArrowLeft, ArrowRight, Check, User } from 'lucide-react'
 import type { Ayarlar, Hedef, OkulYili, PuanTuru } from '@/lib/types'
 import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
@@ -121,7 +122,14 @@ const ADIM_BILGISI: Record<AdimId, { baslik: string; aciklama: string }> = {
     aciklama: 'Günlük hedefini belirle.',
   },
   hatirlatma: {
-    baslik: 'Hatırlatma',
+    /*
+      Soruyu balon soruyor, kart değil.
+
+      Başlık bir süre yalnızca "Hatırlatma" diyordu ve asıl soru kartın
+      içindeki etikette duruyordu; balonlu düzende ikisi arka arkaya görününce
+      ekranda iki başlık oluyordu. Soru yukarı alındı, etiket kaldırıldı.
+    */
+    baslik: 'Saat kaçta hatırlatayım?',
     aciklama: 'Her gün bu saatte seni çalışmaya çağıracağım.',
   },
 }
@@ -186,6 +194,18 @@ export function Kurulum({
    * dönüyor; hazırlık ekranı da tam olarak o anı geciktirmek için var.
    */
   const [hazirlanan, setHazirlanan] = useState<KurulumSonucu | null>(null)
+  /*
+    Maskotun bir önceki adımdaki yeri.
+
+    Kurulumun üç düzeni var (karşılama, tanışma, soru ekranları) ve maskot
+    ekrandan ekrana hem yer hem boy değiştiriyor: ortada 150 pikselken sol
+    üstte 76'ya iniyor. Adım değişince tavşan bir karede oradan oraya
+    ışınlanıyordu; `KurulumMaskotu` eski kutuyu buradan okuyup aradaki farkı
+    uçarak kapatıyor. Ref `Kurulum`da duruyor çünkü ekranlar ayrı ağaçlar —
+    maskot her adımda sökülüp yeniden kuruluyor ve bileşenin kendi içinde
+    tutulan bir değer o sırada kayboluyor.
+  */
+  const maskotKutusu = useRef<DOMRect | null>(null)
 
   const secilenUni = useMemo(() => universiteBul(hedefUniversite), [hedefUniversite])
   const secilenBolum = useMemo(
@@ -247,6 +267,14 @@ export function Kurulum({
   */
   const noktaAdimlari: AdimId[] = adimlar.filter((id) => id !== 'karsilama' && id !== 'tanisma')
   const noktaSirasi = noktaAdimlari.indexOf(suanki)
+  /*
+    Üstteki çubuğun doluluğu — nokta şeridiyle aynı sayıyı gösteriyor.
+
+    Payda `noktaAdimlari`nin boyu: notlar adımı herkeste yok ve çubuk sabit
+    bir yediliğe göre dolsaydı o adımı görmeyen kullanıcıda hiç dolmadan
+    biterdi. Son adımda tam dolu.
+  */
+  const ilerlemeYuzdesi = ((noktaSirasi + 1) / noktaAdimlari.length) * 100
 
   const ilerle = () => setAdim(Math.min(sonAdim, siradaki + 1))
   const geri = () => setAdim(Math.max(0, siradaki - 1))
@@ -366,7 +394,14 @@ export function Kurulum({
 
         <div className="flex flex-col items-center text-center">
           {/* Açılıştaki tavşan buranın üstüne konuyor: kurulumun ilk ekranı bu. */}
-          <Rabi durum="mutlu" boyut={150} gizli={maskotGizli} yuvaMi />
+          <KurulumMaskotu
+            oncekiKutu={maskotKutusu}
+            adimAnahtari={suanki}
+            durum="mutlu"
+            boyut={BUYUK_MASKOT}
+            gizli={maskotGizli}
+            yuvaMi
+          />
           <h1 className="mt-6 font-display text-[27px] leading-tight font-extrabold tracking-tight text-balance">
             {ADIM_BILGISI.karsilama.baslik}
           </h1>
@@ -396,26 +431,68 @@ export function Kurulum({
     gelebiliyor.
   */
   if (suanki === 'tanisma') {
-    return <TanismaEkrani ad={ad} maskotGizli={maskotGizli} onDevam={devamEt} />
+    return (
+      <TanismaEkrani
+        ad={ad}
+        maskotGizli={maskotGizli}
+        oncekiKutu={maskotKutusu}
+        adimAnahtari={suanki}
+        onDevam={devamEt}
+      />
+    )
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
-      <div className="mb-6 flex flex-col items-center text-center">
-        <Rabi
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[calc(1.5rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
+      {/*
+        İlerleme çubuğu — eskiden alttaki nokta şeridiydi.
+
+        İki sebep: nokta sayısı arttıkça "ne kadar kaldı" sayılmadan
+        okunmuyordu, ve şerit ekranın altında Devam düğmesinin de altında
+        kalıyordu — göz oraya en son gidiyor. Çubuk üstte, ilk bakılan yerde;
+        kazanılan yükseklik de içeriğe gidiyor.
+      */}
+      <div className="h-1 overflow-hidden rounded-full bg-border" aria-hidden>
+        <div
+          className="h-full rounded-full bg-primary-dolu transition-[width] duration-300 ease-out"
+          style={{ width: `${ilerlemeYuzdesi}%` }}
+        />
+      </div>
+
+      {/*
+        Soruyu Rabi soruyor.
+
+        Başlık ortalanmış bir sayfa başlığıydı ve maskot onun üstünde 110
+        pikselde duruyordu. Şimdi maskot 76'ya inip sola geçiyor, soru da onun
+        konuşma balonunda ve sola hizalı: satır okunduğu yerde başlıyor ve
+        soru "ekranın başlığı" değil "Rabi'nin sorusu" gibi duruyor.
+      */}
+      <div className="mb-5 mt-5 flex items-start gap-2.5">
+        <KurulumMaskotu
+          oncekiKutu={maskotKutusu}
+          adimAnahtari={suanki}
           durum={siradaki === sonAdim ? 'mutlu' : 'normal'}
-          boyut={110}
+          boyut={KUCUK_MASKOT}
           gizli={maskotGizli}
           yuvaMi
         />
-        <h1 className="mt-3 font-display text-2xl font-semibold tracking-tight">
-          {ADIM_BILGISI[suanki].baslik}
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {suanki === 'notlar' && !mezun
-            ? 'Biten yılların notu OBP tahminine giriyor. İstersen bu adımı atla.'
-            : ADIM_BILGISI[suanki].aciklama}
-        </p>
+        <div className="golge-kart relative min-w-0 flex-1 rounded-[22px] bg-card p-4 text-card-foreground">
+          {/* Balonun kuyruğu: kartla aynı renkte, 45° çevrilmiş bir kare.
+              Yazıların `relative` olması şart — kuyruk konumlanmış bir öğe ve
+              onların üstüne binerdi. */}
+          <span
+            aria-hidden
+            className="absolute -left-[5px] top-6 h-3 w-3 rotate-45 bg-card"
+          />
+          <h1 className="relative font-display text-[19px] leading-tight font-extrabold tracking-tight text-pretty">
+            {ADIM_BILGISI[suanki].baslik}
+          </h1>
+          <p className="relative mt-1 text-[13px] leading-normal font-medium text-muted-foreground">
+            {suanki === 'notlar' && !mezun
+              ? 'Biten yılların notu OBP tahminine giriyor. İstersen bu adımı atla.'
+              : ADIM_BILGISI[suanki].aciklama}
+          </p>
+        </div>
       </div>
 
       {/* Sınıf, alan ve notlar adımları kartın dışında duruyor: üçünde de
@@ -445,7 +522,11 @@ export function Kurulum({
           onObp={setObpMetni}
         />
       ) : (
-        <Kart>
+        /* Tekerlekli iki adımda kart kalan boşlukta ortalanıyor (`my-auto`):
+           tek bir tekerlek balonun hemen altına yapıştığında ekranın altı
+           kocaman boş kalıyordu. İsim ve bölüm adımlarında kart yukarıda
+           kalıyor — orada içerik yazıldıkça uzuyor. */
+        <Kart className={cn((suanki === 'hedef' || suanki === 'hatirlatma') && 'my-auto')}>
           {suanki === 'isim' && (
             <div>
               {/* Uyarı etiketin sağında, alanın hemen üstünde duruyor: göz
@@ -596,31 +677,34 @@ export function Kurulum({
           )}
 
           {suanki === 'hatirlatma' && (
-            <div>
-              <Etiket>Saat kaçta hatırlatayım?</Etiket>
-              {/* Sistemin `<input type="time">` seçicisi yerine kendi
-                  tekerleğimiz: telefon İngilizceyse orası AM/PM gösteriyor,
-                  uygulamanın geri kalanı 24 saatlik "20.00" biçiminde. */}
-              <SaatSecici
-                saat={saat}
-                dakika={dakika}
-                onDegis={({ saat: s, dakika: d }) => {
-                  setSaat(s)
-                  setDakika(d)
-                }}
-                className="mt-1"
-              />
+            /* Sistemin `<input type="time">` seçicisi yerine kendi
+               tekerleğimiz: telefon İngilizceyse orası AM/PM gösteriyor,
+               uygulamanın geri kalanı 24 saatlik "20.00" biçiminde.
 
-              {/* "Şu an seçili" satırı yok: seçilen saat tekerleğin ortasında
-                  zaten duruyor. */}
-            </div>
+               "Şu an seçili" satırı yok: seçilen saat tekerleğin ortasında
+               zaten duruyor. */
+            <SaatSecici
+              saat={saat}
+              dakika={dakika}
+              onDegis={({ saat: s, dakika: d }) => {
+                setSaat(s)
+                setDakika(d)
+              }}
+            />
           )}
 
         </Kart>
       )}
 
-      {/* Düğmeler adımdan adıma zıplamasın diye alta itilir */}
-      <div className="flex-1" aria-hidden />
+      {/*
+        Boşluk yalnızca içeriği yukarıda duran adımlarda.
+
+        Ötekilerde içerik kendi `my-auto`suyla ortalanıyor ve otomatik kenar
+        boşluğu ancak **artan** yeri paylaşıyor: burada duran bir `flex-1`
+        artanı önce kendi alıyor, liste de ekranın tepesine yapışıp altında
+        kocaman bir boşluk bırakıyordu.
+      */}
+      {(suanki === 'isim' || suanki === 'bolum') && <div className="flex-1" aria-hidden />}
 
       <div className="mt-5 flex items-center gap-2">
         {siradaki > 0 && (
@@ -646,24 +730,145 @@ export function Kurulum({
           )}
         </Buton>
       </div>
-
-      {/* Adım göstergesi — karşılama ve tanışma sayılmıyor: nokta "kaç soru
-          kaldı"yı anlatıyor, ikisi de soru sormuyor. Zaten kendi düzenlerini
-          çizdikleri için şerit orada hiç görünmüyor. */}
-      <div className="mt-4 flex justify-center gap-1.5" aria-hidden>
-        {noktaAdimlari.map((id, i) => (
-          <span
-            key={id}
-            className={`h-1.5 rounded-full transition-all ${
-              i === noktaSirasi ? 'w-5 bg-primary' : 'w-1.5 bg-border'
-            }`}
-          />
-        ))}
-      </div>
     </div>
   )
 }
 
+
+/** Ortada duran maskotun boyu — karşılama ve tanışma ekranları. */
+const BUYUK_MASKOT = 150
+/** Balonun yanındaki maskotun boyu — soru soran ekranlar. */
+const KUCUK_MASKOT = 76
+/**
+ * Maskotun bir adımdan ötekine uçma süresi.
+ *
+ * CSS'te değil burada: geçiş JS'ten kuruluyor (uçuşun mesafesi ölçülerek
+ * bulunuyor), iki yerde iki ayrı sayı tutmak ikisinin ayrı düşmesi demekti.
+ */
+const MASKOT_UCUS_SURESI = 460
+
+/**
+ * Adımdan adıma uçan maskot.
+ *
+ * Kurulumda tavşan üç ayrı düzende görünüyor: karşılamada ekranın ortasında
+ * 150 pikselde, soru ekranlarında sol üstte 76'da, tanışmada yine ortada.
+ * Ekranlar ayrı ağaçlar olduğu için tavşan her adımda sökülüp yeniden
+ * kuruluyordu ve kullanıcı iki ekran arasında onu **ışınlanırken** görüyordu:
+ * ortadaki büyük tavşan bir karede sol üstteki küçük tavşana dönüşüyordu.
+ *
+ * Çözüm ölçmek. Maskot her yerleştiğinde kendi kutusunu `oncekiKutu`ya
+ * yazıyor; bir sonraki adımda yeni kutusunu ölçüp aradaki farkı **ters**
+ * dönüşüm olarak uyguluyor (yani bir kare boyunca eski yerinde ve eski boyunda
+ * duruyor), sonra dönüşümü kaldırıyor ve tarayıcı aradaki yolu kendi kat
+ * ediyor. Varış noktası yazılmıyor, ölçülüyor — açılış ekranındaki kuralın
+ * aynısı: yazılmış bir koordinat düzen değişince bayatlıyor.
+ *
+ * Ters dönüşüm `useLayoutEffect` içinde konuyor: boyamadan önce çalışmazsa
+ * kullanıcı tavşanı bir kare varış noktasında görür, uçuş oradan başlar.
+ *
+ * İki `requestAnimationFrame` şart: geçişin çalışması için tarayıcının ters
+ * dönüşümlü hâli gerçekten bir kez boyamış olması gerekiyor. Tek karede
+ * hem başlangıç hem bitiş yazılırsa tarayıcı yalnızca sonuncusunu görür ve
+ * hareket hiç olmaz.
+ */
+function KurulumMaskotu({
+  oncekiKutu,
+  adimAnahtari,
+  durum,
+  poz,
+  boyut,
+  gizli,
+  yuvaMi,
+}: {
+  oncekiKutu: RefObject<DOMRect | null>
+  /** Değiştiğinde uçuş kuruluyor; aynı adımdaki çizimler tavşana dokunmuyor. */
+  adimAnahtari: string
+  durum: 'normal' | 'mutlu'
+  poz?: 'yuz' | 'el-sallayan'
+  boyut: number
+  gizli: boolean
+  yuvaMi?: boolean
+}) {
+  const sarmalRef = useRef<HTMLSpanElement>(null)
+
+  useLayoutEffect(() => {
+    const oge = sarmalRef.current
+    if (!oge) return
+
+    /*
+      Ölçmeden önce eski dönüşüm siliniyor.
+
+      Kullanıcı Devam'a arka arkaya basarsa bir önceki uçuş hâlâ sürüyor
+      olabiliyor ve `getBoundingClientRect` dönüşümlü kutuyu döndürüyor —
+      ölçüm o zaman tavşanın durduğu yeri değil yolun ortasını yazardı.
+    */
+    oge.style.transition = 'none'
+    oge.style.transform = ''
+
+    const yeni = oge.getBoundingClientRect()
+    const onceki = oncekiKutu.current
+    // Kutu her adımda yenileniyor: uçuş bitmese de kayıtta duran şey tavşanın
+    // **durduğu** yer olmalı, uçuşun ortasındaki bir ara kare değil.
+    oncekiKutu.current = yeni
+    if (!onceki || yeni.width === 0) return
+
+    const dx = onceki.left - yeni.left
+    const dy = onceki.top - yeni.top
+    const olcek = onceki.width / yeni.width
+    // Yerinde duran maskot için geçiş kurmak, hiç oynamayan bir animasyon
+    // demek; ekran de öyle kalıyor.
+    if (Math.abs(dx) < 1 && Math.abs(dy) < 1 && Math.abs(olcek - 1) < 0.01) return
+    // Bu hareket bilgi taşımıyor — nerede olduğunu zaten düzen söylüyor.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    oge.style.transform = `translate(${dx}px, ${dy}px) scale(${olcek})`
+
+    let salindi = false
+    const sal = () => {
+      if (salindi) return
+      salindi = true
+      oge.style.transition = `transform ${MASKOT_UCUS_SURESI}ms cubic-bezier(0.22, 1, 0.36, 1)`
+      oge.style.transform = ''
+    }
+
+    let ikinciKare = 0
+    const ilkKare = requestAnimationFrame(() => {
+      ikinciKare = requestAnimationFrame(sal)
+    })
+    /*
+      Emniyet zamanlayıcısı: `requestAnimationFrame` sayfa görünür değilken hiç
+      çağrılmıyor. Uygulama arka plandayken adım değişirse (bildirimden dönmek
+      gibi) tavşan ters dönüşümle, yani eski yerinde asılı kalırdı. Zamanlayıcı
+      arka planda yavaşlıyor ama **çalışıyor**; kare gelmezse uçuşu o salıyor.
+    */
+    const emniyet = setTimeout(sal, 200)
+
+    return () => {
+      cancelAnimationFrame(ilkKare)
+      cancelAnimationFrame(ikinciKare)
+      clearTimeout(emniyet)
+    }
+  }, [adimAnahtari, oncekiKutu])
+
+  return (
+    /*
+      Sarmalayıcı şart: uçan şey `transform` alan bir kutu ve maskotun kendisi
+      ölçüsünü `width`/`height` ile veriyor — dönüşümü doğrudan ona koymak,
+      açılış ekranının ölçtüğü öğeyi de oynatırdı.
+
+      `z-10`: uçuşun ortasında büyümüş tavşan konuşma balonunun üstünden
+      geçiyor; balon DOM'da sonra geldiği için katman verilmezse onun altında
+      kalırdı.
+    */
+    <span
+      ref={sarmalRef}
+      className="relative z-10 inline-flex shrink-0"
+      style={{ transformOrigin: 'top left' }}
+    >
+      <Rabi durum={durum} poz={poz} boyut={boyut} gizli={gizli} yuvaMi={yuvaMi} />
+    </span>
+  )
+}
 
 /**
  * Seçilen bölümün tahmini taban puanı ve başarı sırası.
@@ -711,10 +916,14 @@ function tahminHedefi(
 function TanismaEkrani({
   ad,
   maskotGizli,
+  oncekiKutu,
+  adimAnahtari,
   onDevam,
 }: {
   ad: string
   maskotGizli: boolean
+  oncekiKutu: RefObject<DOMRect | null>
+  adimAnahtari: string
   onDevam: () => void
 }) {
   const temizAd = ad.trim()
@@ -729,7 +938,14 @@ function TanismaEkrani({
             kesiyordu. Halkalı madalyon da kalktı — çember degradenin üstünde
             maskotu zeminden ayırmak için vardı, düz zeminde tavşanın etrafına
             çizilmiş bir çerçeveye dönüşüyor. */}
-        <Rabi durum="mutlu" poz="el-sallayan" boyut={150} gizli={maskotGizli} />
+        <KurulumMaskotu
+          oncekiKutu={oncekiKutu}
+          adimAnahtari={adimAnahtari}
+          durum="mutlu"
+          poz="el-sallayan"
+          boyut={BUYUK_MASKOT}
+          gizli={maskotGizli}
+        />
 
         {/* Ad vurgulu: ekranın tek işi adı geri söylemek, o yüzden cümlenin
             içinde aranmadan bulunuyor. Yazıda `--primary` kullanılıyor,

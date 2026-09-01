@@ -10,7 +10,6 @@ import {
   Download,
   GraduationCap,
   Images,
-  Lock,
   Music,
   Target,
   Flag,
@@ -20,16 +19,7 @@ import {
   Volume2,
   X,
 } from 'lucide-react'
-import { Alan, Buton, Cip, Etiket, Not, Onay } from '@/components/ui'
-import {
-  odakDurumu,
-  odakIzniIste,
-  odakKilidiDesteklenir,
-  type OdakDurumu,
-  type OdakIzni,
-} from '@/lib/odak-kilidi'
-import { UygulamaSecici } from '@/components/odak/uygulama-secici'
-import { OdakDaveti } from '@/components/odak/odak-daveti'
+import { Alan, Anahtar, Buton, Cip, Etiket, Not, Onay } from '@/components/ui'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { SINIF_SECENEKLERI, egitimYili, mezunMu, sinifAdi } from '@/lib/hesap'
 import type { NotKagidi } from '@/lib/yapilacaklar'
@@ -50,6 +40,7 @@ import {
   tumResimleriSil,
 } from '@/lib/resim-depo'
 import type { BankaKaydi } from '@/lib/oyunlar/banka'
+import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { izinIste } from '@/lib/bildirim'
 import { saatYaz } from '@/lib/hatirlatma'
 import type { BildirimIzni } from '@/lib/hata-kuyrugu'
@@ -119,8 +110,6 @@ export function AyarlarEkrani({
   bekleyenBildirim,
   bildirimIzni,
   onBildirimIzni,
-  pomodoroAyar,
-  setPomodoroAyar,
   yedeklenecek,
 }: {
   /** Yedeğe giren kullanıcı şablonları — ekranda düzenlenmiyor. */
@@ -132,11 +121,6 @@ export function AyarlarEkrani({
   bildirimIzni: BildirimIzni
   onBildirimIzni: (karar: BildirimIzni) => void
   setAyarlar: (guncelleyici: Ayarlar | ((onceki: Ayarlar) => Ayarlar)) => void
-  /** Odak kilidi ayarları pomodoro ayarının içinde duruyor. */
-  pomodoroAyar: PomodoroAyar
-  setPomodoroAyar: (
-    guncelleyici: PomodoroAyar | ((onceki: PomodoroAyar) => PomodoroAyar),
-  ) => void
   /** Yedeğe girecek bütün veri — fotoğraflar hariç. */
   yedeklenecek: {
     denemeler: Deneme[]
@@ -150,6 +134,9 @@ export function AyarlarEkrani({
     /** Eski yedeklerde yok; `Yedek` tipinde de isteğe bağlı. */
     oyunBankasi?: BankaKaydi[]
     bankaDusen?: number
+    /** Konu Anlatımı kayıtları — okunan konular ve bilinmeyen kartlar. */
+    konuIlerleme?: KonuIlerlemeleri
+    bilinmeyenKartlar?: BilinmeyenKart[]
     /** Yapılacaklar tahtası — kâğıdın konumu da veri. */
     notlar?: NotKagidi[]
     pomodoroGecmis: PomodoroSeans[]
@@ -178,33 +165,6 @@ export function AyarlarEkrani({
   const adMetni = adTaslagi ?? ayarlar.ad
   const adUyarisi = adTaslagi !== null && !adGecerliMi(adTaslagi)
   const [sifirlamaAcik, setSifirlamaAcik] = useState(false)
-  const [odakIzinleri, setOdakIzinleri] = useState<OdakDurumu>({
-    kullanimVerisi: false,
-    katman: false,
-    bildirim: false,
-    calisiyor: false,
-  })
-  const [seciciAcik, setSeciciAcik] = useState(false)
-  /**
-   * Odak kilidi daveti açık mı.
-   *
-   * Anahtar artık kilidi doğrudan açmıyor: önce pencere çıkıyor, kilit ancak
-   * "İstiyorum" denince açılıyor. Sebep izin ekranlarının kendisi — ne işe
-   * yaradığını bilmeden oraya düşen kullanıcı geri dönüyor ve anahtar açık ama
-   * kilit çalışmıyor kalıyordu (`components/odak/odak-daveti.tsx`).
-   */
-  const [davetAcik, setDavetAcik] = useState(false)
-
-  // Odak izinleri sistem ayarlarından veriliyor; kullanıcı Rabi'ye döndüğünde
-  // durum yeniden sorulmalı, yoksa kart hâlâ "izin eksik" derdi.
-  useEffect(() => {
-    if (!odakKilidiDesteklenir()) return
-    const tazele = () => void odakDurumu().then(setOdakIzinleri)
-    tazele()
-    const gorunurluk = () => document.visibilityState === 'visible' && tazele()
-    document.addEventListener('visibilitychange', gorunurluk)
-    return () => document.removeEventListener('visibilitychange', gorunurluk)
-  }, [])
   const [durum, setDurum] = useState<string | null>(null)
   const [izinReddedildi, setIzinReddedildi] = useState(false)
   const [fotoBoyut, setFotoBoyut] = useState(0)
@@ -305,12 +265,25 @@ export function AyarlarEkrani({
   return (
     <div>
       {/* Ayarlar artık alt menüde kendi sekmesi; diğer sekmelerle aynı başlık deseni. */}
-      <header className="px-0.5 pt-1">
-        <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
-        <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Ayarlar ⚙️</h1>
-        <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
-          Rabi’yi kendine göre kur.
-        </p>
+      <header className="flex items-start gap-3 px-0.5 pt-1">
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
+          <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Ayarlar</h1>
+          <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
+            Rabi’yi kendine göre kur.
+          </p>
+        </div>
+
+        {/* Simge başlığın içinden çıkıp sağ üste taşındı (Araçlar'daki 🧰 ile
+            aynı kutu, aynı hiza): başlığın sonuna yapışan emoji sekmeden
+            sekmeye başlığın bittiği yeri kaydırıyor, sağ üstteki kutu ise üç
+            sekmede de aynı noktada duruyor. */}
+        <span
+          className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart text-[21px] leading-none"
+          aria-hidden
+        >
+          ⚙️
+        </span>
       </header>
 
       <div className="mt-4 space-y-4">
@@ -459,106 +432,16 @@ export function AyarlarEkrani({
           </GenisAlan>
           )}
 
-          {/* ---- Odak kilidi. Tarayıcıda özellik yok, kart da görünmüyor. ---- */}
-          {odakKilidiDesteklenir() && (
-            <>
-              <Satir
-                Simge={Lock}
-                renk="lavanta"
-                baslik="Odak kilidi"
-                aciklama="Çalışma turunda seçtiğin uygulamaların üstüne çıkarım"
-                /*
-                  Açarken davet penceresi, kapatırken doğrudan: vazgeçmek için
-                  ikna edilmesi gereken bir anahtar, anahtar değil tuzaktır.
-                */
-                onClick={() => {
-                  if (pomodoroAyar.odakKilidi) {
-                    setPomodoroAyar((o) => ({ ...o, odakKilidi: false }))
-                    return
-                  }
-                  setDavetAcik(true)
-                }}
-                basiliMi={pomodoroAyar.odakKilidi}
-                sag={<Anahtar acik={pomodoroAyar.odakKilidi} />}
-              />
+          {/*
+            Odak kilidi ve Rahatsız Etme burada **yok**.
 
-              {pomodoroAyar.odakKilidi && (
-                <GenisAlan>
-                  {(!odakIzinleri.kullanimVerisi || !odakIzinleri.katman) && (
-                    <Not tur="uyari" className="mb-2.5">
-                      İzin eksik olduğu sürece kilit çalışmaz.
-                      <span className="mt-2 flex flex-wrap gap-1.5">
-                        {!odakIzinleri.kullanimVerisi && (
-                          <Buton
-                            bicim="ikincil"
-                            boy="kucuk"
-                            onClick={() => void odakIzniIste('kullanimVerisi')}
-                          >
-                            Kullanım verisi izni
-                          </Buton>
-                        )}
-                        {!odakIzinleri.katman && (
-                          <Buton
-                            bicim="ikincil"
-                            boy="kucuk"
-                            onClick={() => void odakIzniIste('katman')}
-                          >
-                            Üste çizme izni
-                          </Buton>
-                        )}
-                      </span>
-                    </Not>
-                  )}
-
-                  {/*
-                    Bildirim erişimi ayrı bir satır, çünkü ötekilerle aynı
-                    sınıfta değil: yokken kilit çalışmaya devam ediyor, yalnızca
-                    bildirimler susmuyor. "Eksik izin" uyarısının içine
-                    konsaydı, isteğe bağlı bir izin zorunlu görünürdü.
-                  */}
-                  {!odakIzinleri.bildirim ? (
-                    <Not className="mb-2.5">
-                      Bildirimler de sussun ister misin? Seçtiğin uygulamaların
-                      bildirimleri tur boyunca silinir. Açılan listede{' '}
-                      <b className="font-extrabold">Rabi</b>'yi bul ve aç.
-                      <span className="mt-2 block">
-                        <Buton
-                          bicim="ikincil"
-                          boy="kucuk"
-                          onClick={() => void odakIzniIste('bildirim')}
-                        >
-                          Bildirim erişimi izni
-                        </Buton>
-                      </span>
-                    </Not>
-                  ) : (
-                    <Not className="mb-2.5">
-                      Bildirim susturma açık: tur boyunca seçtiğin uygulamaların
-                      bildirimleri silinir.
-                    </Not>
-                  )}
-
-                  <Buton bicim="ikincil" boy="kucuk" onClick={() => setSeciciAcik((a) => !a)}>
-                    {seciciAcik
-                      ? 'Listeyi kapat'
-                      : `Uygulamaları seç (${pomodoroAyar.kilitliUygulamalar.length})`}
-                  </Buton>
-
-                  {seciciAcik && (
-                    <div className="mt-3">
-                      <UygulamaSecici
-                        secili={pomodoroAyar.kilitliUygulamalar}
-                        onDegis={(paketler) =>
-                          setPomodoroAyar((o) => ({ ...o, kilitliUygulamalar: paketler }))
-                        }
-                      />
-                    </div>
-                  )}
-
-                </GenisAlan>
-              )}
-            </>
-          )}
+            İkisi bir süre hem burada hem Pomodoro'nun tepesinde duruyordu ve
+            iki kopya zamanla birbirinden ayrıldı. İkisi de yalnızca çalışma
+            turu boyunca yaşıyor; turdan bağımsız bir anlamları yok ve buradan
+            açılan bir koruma, turu başlatan ekranda görünmüyordu. Tek yerleri
+            artık Pomodoro sekmesindeki "Odak koruması" satırı
+            (`components/odak/odak-ayarlari.tsx`).
+          */}
         </Bolum>
 
         {/* ------------------------------ Hatırlatma ---------------------- */}
@@ -841,32 +724,6 @@ export function AyarlarEkrani({
         onIptal={() => setSifirlamaAcik(false)}
       />
 
-      <OdakDaveti
-        acik={davetAcik}
-        onIstemiyorum={() => setDavetAcik(false)}
-        /*
-          Kilit burada açılıyor ama henüz çalışmıyor: izinler eksikken anahtar
-          açık durur ve satırın altındaki uyarı ne eksik olduğunu söyler.
-          Anahtarı izinler gelene kadar kapalı tutmak, kullanıcının "istiyorum"
-          dediği anı kaybetmek olurdu.
-
-          Eksik izinlerden **yalnızca ilki** açılıyor: sistem ekranları üst üste
-          açılamıyor, ikincisi birinciyi ezerdi. Kullanıcı geri döndüğünde durum
-          tazeleniyor ve kalan izin için düğme satırın altında duruyor.
-        */
-        onIstiyorum={() => {
-          setDavetAcik(false)
-          setPomodoroAyar((o) => ({ ...o, odakKilidi: true }))
-          const eksik: OdakIzni | null = !odakIzinleri.kullanimVerisi
-            ? 'kullanimVerisi'
-            : !odakIzinleri.katman
-              ? 'katman'
-              : !odakIzinleri.bildirim
-                ? 'bildirim'
-                : null
-          if (eksik) void odakIzniIste(eksik)
-        }}
-      />
     </div>
   )
 }
@@ -1052,20 +909,3 @@ function AlanNotu({ ust = true, children }: { ust?: boolean; children: React.Rea
 }
 
 /** Aç/kapa anahtarının görüntüsü; tıklama satırın kendisinde. */
-function Anahtar({ acik }: { acik: boolean }) {
-  return (
-    <span
-      className={cn(
-        'relative h-[27px] w-[46px] shrink-0 rounded-full transition',
-        acik ? 'bg-primary-dolu' : 'bg-muted',
-      )}
-    >
-      <span
-        className={cn(
-          'absolute top-[3px] size-[21px] rounded-full bg-white shadow transition-all',
-          acik ? 'left-[22px]' : 'left-[3px]',
-        )}
-      />
-    </span>
-  )
-}

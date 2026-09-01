@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { OyunId } from '@/lib/types'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import {
-  DUSME_ESIGI,
   bankaCevabiMetni,
   bankaDagilimi,
   bankaSorusuMetni,
@@ -12,14 +11,16 @@ import {
   OYUN_KIMLIKLERI,
   enKalabalikOyun,
   type BankaKaydi,
+  type BankaTuru,
 } from '@/lib/oyunlar/banka'
 import { KURAL_ACIKLAMASI, type YazimKurali } from '@/lib/oyunlar/yazim-havuzu'
 import { NOKTALAMA_ACIKLAMASI, type NoktalamaKurali } from '@/lib/oyunlar/noktalama-havuzu'
 import { BildirimDugmesi, type BildirimKolu } from '@/components/hata-bildir'
-import { Check } from 'lucide-react'
+import { Check, ListChecks } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { BosDurum, Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
+import { BankaTestiEkrani } from '@/components/ekranlar/banka-testi'
 
 /**
  * Oyun Bankası.
@@ -30,36 +31,45 @@ import { Rabi } from '@/components/maskot/rabi'
  *
  * Bir kaydın çıkmasının iki yolu var ve ikisi aynı şey değil:
  *
- * - **Kazanılan çıkış** — soru turlarda üst üste `DUSME_ESIGI` kez doğru
- *   bilinir ve kendiliğinden düşer. Tek doğru yetmiyor: bir kez tutturmak
- *   bilmek değil, hatırlamak olabilir. "Bankadan düşen" sayacı — ve ona bakan
+ * - **Kazanılan çıkış** — genel testte doğru bilinmek (`banka-testi.tsx`).
+ *   Bütün yanlışlar tek testte, karışık soruluyor; doğru bilinen düşüyor,
+ *   yanlış bilinen olduğu gibi kalıyor. "Bankadan düşen" sayacı — ve ona bakan
  *   rozet — yalnızca bunun karşılığı.
  * - **Elle kaldırma** — karttaki tik. Banka bir borç listesi; öğrendiğine
  *   kullanıcının kendisi karar veremiyorsa liste büyümekten başka bir şey
  *   yapmıyor ve bir yerden sonra hiç açılmıyor. Tik sayacı ilerletmiyor, çünkü
  *   ölçtüğü tek şey kullanıcının tuşa basması.
+ *
+ * Kartın kendisi **tıklanabilir değil**. Bir süre dokunuş o soruyla tek
+ * soruluk bir tur açıyordu; kaldırıldı, çünkü sorunun cevabı kartın üstünde
+ * yazıyor ve hemen altında aynı soruyu çözmek bilmeyi değil okumayı ölçüyordu.
+ * Aynı soru genel testte, cevabı görünmeden ve karışık sırada soruluyor.
  */
 
-const AILE: Record<OyunId, { zemin: string; yazi: string; dolgu: string }> = {
-  yazim: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
-  ses: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
-  oge: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
-  soz: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
-  islem: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
-  bolunme: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
-  aci: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
-  ucgen: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
-  edebiyat: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu', dolgu: 'bg-edb-ok' },
-  harita: { zemin: 'bg-cog-kart', yazi: 'text-cog-koyu', dolgu: 'bg-cog-ok' },
-  antlasma: { zemin: 'bg-trh-kart', yazi: 'text-trh-koyu', dolgu: 'bg-trh-ok' },
-  kavram: { zemin: 'bg-trh-kart', yazi: 'text-trh-koyu', dolgu: 'bg-trh-ok' },
-  anlatim: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu', dolgu: 'bg-yzm-ok' },
-  koklu: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
-  ortak: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu', dolgu: 'bg-byl-ok' },
-  siniflandirma: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu', dolgu: 'bg-byl-ok' },
-  hucre: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu', dolgu: 'bg-byl-ok' },
-  sirala: { zemin: 'bg-trh-kart', yazi: 'text-trh-koyu', dolgu: 'bg-trh-ok' },
-  tuzak: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', dolgu: 'bg-isl-ok' },
+const AILE: Record<OyunId, { zemin: string; yazi: string }> = {
+  yazim: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu' },
+  ses: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu' },
+  oge: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu' },
+  soz: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu' },
+  islem: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
+  bolunme: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
+  aci: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
+  ucgen: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
+  edebiyat: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu' },
+  harita: { zemin: 'bg-cog-kart', yazi: 'text-cog-koyu' },
+  iklim: { zemin: 'bg-cog-kart', yazi: 'text-cog-koyu' },
+  izohips: { zemin: 'bg-cog-kart', yazi: 'text-cog-koyu' },
+  antlasma: { zemin: 'bg-trh-kart', yazi: 'text-trh-koyu' },
+  kavram: { zemin: 'bg-trh-kart', yazi: 'text-trh-koyu' },
+  anlatim: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu' },
+  koklu: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
+  ortak: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu' },
+  siniflandirma: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu' },
+  hucre: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu' },
+  sirala: { zemin: 'bg-trh-kart', yazi: 'text-trh-koyu' },
+  tuzak: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
+  periyodik: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu' },
+  formul: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu' },
 }
 
 const KISA_AD: Record<OyunId, string> = {
@@ -73,6 +83,8 @@ const KISA_AD: Record<OyunId, string> = {
   ucgen: 'Üçgen',
   edebiyat: 'Edebiyat',
   harita: 'Harita',
+  iklim: 'İklim',
+  izohips: 'İzohips',
   antlasma: 'Antlaşma',
   kavram: 'Kavram',
   anlatim: 'Anlatım',
@@ -82,6 +94,8 @@ const KISA_AD: Record<OyunId, string> = {
   hucre: 'Organel',
   sirala: 'Zaman Şeridi',
   tuzak: 'Kural Tuzağı',
+  periyodik: 'Element',
+  formul: 'Formül',
 }
 
 type Suzgec = OyunId | 'tumu'
@@ -90,29 +104,55 @@ export function OyunBankasiEkrani({
   banka,
   onTurBaslat,
   onKaldir,
+  onTestBitti,
+  sesAcik,
   bildir,
 }: {
   banka: BankaKaydi[]
-  /** Seçilen oyunun bankadaki sorularıyla bir tur açar. */
-  onTurBaslat: (oyun: OyunId) => void
+  /** Bankadan tur açar: o oyunun bütün kayıtlarıyla. */
+  onTurBaslat: (tur: BankaTuru) => void
   /** Kaydı elle bankadan çıkarır — "bunu öğrendim". */
   onKaldir: (id: string) => void
+  /** Genel test bitti: doğru bilinen kayıtlar bankadan düşüyor. */
+  onTestBitti: (dogruIdler: string[]) => void
+  sesAcik: boolean
   bildir: BildirimKolu
 }) {
   const [suzgec, setSuzgec] = useState<Suzgec>('tumu')
+  const [testAcik, setTestAcik] = useState(false)
   const dagilim = useMemo(() => bankaDagilimi(banka), [banka])
   const gorunen = useMemo(() => bankaSuz(banka, suzgec), [banka, suzgec])
 
   /*
-    Turun hangi oyundan açılacağı.
+    Oyun turunun hangi oyundan açılacağı.
 
     Tur mantığı oyuna özgü — yazımda iki şık, işlemde tuş takımı, edebiyatta
-    eşleştirme. Üçünü tek turda karıştırmak her birinin kendi ekranını bozardı,
-    o yüzden "Tümü" seçiliyken en çok kaydı olan oyun açılıyor: en çok tekrar
-    gereken yer orası.
+    eşleştirme. Hepsini tek turda karıştırmak her birinin kendi ekranını
+    bozardı, o yüzden "Tümü" seçiliyken en çok kaydı olan oyun açılıyor: en çok
+    tekrar gereken yer orası. Bütün oyunları karıştıran tek şey genel test ve
+    o, soruları oyunun ekranında değil ortak bir şıklı biçimde soruyor.
   */
   const turOyunu: OyunId | null = suzgec === 'tumu' ? enKalabalikOyun(banka) : suzgec
   const turSayisi = turOyunu === null ? 0 : dagilim[turOyunu]
+
+  /*
+    Test açıkken liste hiç çizilmiyor.
+
+    Listede her sorunun cevabı yazıyor; testin altında ya da arkasında duran
+    bir kopyası, testin ölçtüğü şeyi ortadan kaldırırdı.
+  */
+  if (testAcik) {
+    return (
+      <BankaTestiEkrani
+        banka={banka}
+        sesAcik={sesAcik}
+        onBitti={(dogruIdler) => {
+          setTestAcik(false)
+          onTestBitti(dogruIdler)
+        }}
+      />
+    )
+  }
 
   if (banka.length === 0) {
     return (
@@ -121,7 +161,7 @@ export function OyunBankasiEkrani({
         <BosDurum
           simge={<Rabi durum="mutlu" boyut={72} />}
           baslik="Banka boş — iyi haber"
-          aciklama="Mini oyunlarda yanlış bildiğin sorular buraya düşer. Üst üste üç kez doğru bilince kendiliğinden çıkar, öğrendiğine karar verdiklerini de tikle kaldırırsın."
+          aciklama="Mini oyunlarda yanlış bildiğin sorular buraya düşer. Genel testte doğru bilince çıkar, öğrendiğine karar verdiklerini de tikle kaldırırsın."
         />
       </div>
     )
@@ -144,10 +184,26 @@ export function OyunBankasiEkrani({
           .
         </p>
 
+        {/*
+          Genel test önde ve dolu renkte: bankadan çıkışın kazanılan tek yolu o.
+          Oyun turu altında ve çerçeveli — soruları kendi oyununun ekranında
+          tekrar çözmek hâlâ mümkün, ama kaydı düşürmüyor.
+        */}
         <Buton
           className="mt-3 w-full bg-ikincil text-white"
+          disabled={banka.length < 2}
+          onClick={() => setTestAcik(true)}
+        >
+          <ListChecks size={17} strokeWidth={2.8} aria-hidden />
+          {banka.length < 2
+            ? 'Genel test için en az iki soru gerekiyor'
+            : `Genel test — ${banka.length} soru karışık`}
+        </Buton>
+
+        <Buton
+          className="mt-2 w-full border border-border bg-card text-foreground"
           disabled={turOyunu === null}
-          onClick={() => turOyunu && onTurBaslat(turOyunu)}
+          onClick={() => turOyunu && onTurBaslat({ oyun: turOyunu })}
         >
           {turOyunu === null
             ? 'Tur açılacak soru yok'
@@ -157,7 +213,9 @@ export function OyunBankasiEkrani({
         </Buton>
 
         <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-          Banka turları rekora sayılmaz — sorular zaten gördüğün sorular.
+          Genel testte doğru bildiğin soru bankadan düşer, yanlış bildiğin
+          olduğu gibi kalır. Oyun turları rekora sayılmaz — sorular zaten
+          gördüğün sorular.
         </p>
       </div>
 
@@ -203,7 +261,7 @@ function Baslik({ toplam }: { toplam: number }) {
       </h1>
       <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
         {toplam > 0
-          ? 'Oyunlarda karıştırdıkların. Üst üste üç doğruda düşer, tikle sen de kaldırabilirsin.'
+          ? 'Oyunlarda karıştırdıkların. Genel testte doğru bilince düşer, tikle sen de kaldırabilirsin.'
           : 'Oyunlarda karıştırdığın sorular burada birikir.'}
       </p>
     </header>
@@ -282,7 +340,15 @@ function KayitKarti({
       // vermiş gibi görünürdü.
       aria-hidden={kalkiyor || undefined}
     >
-      <div className="flex items-start gap-2.5">
+      {/*
+        Kartın gövdesi okunacak bir şey, dokunulacak bir şey değil.
+
+        Bir süre tıklanabilirdi ve dokunuş o soruyla tek soruluk bir tur
+        açıyordu; kaldırıldı, çünkü doğru cevap kartın üstünde yazıyor ve
+        cevabı okuduktan hemen sonra çözülen soru bilmeyi ölçmüyor. Aynı soru
+        genel testte cevabı görünmeden soruluyor.
+      */}
+      <div className="flex w-full items-start gap-2.5 text-left">
         <span
           className={cn(
             'shrink-0 rounded-lg px-2 py-1 text-[10.5px] font-extrabold',
@@ -293,47 +359,26 @@ function KayitKarti({
           {KISA_AD[kayit.soru.oyun]}
         </span>
 
-        <div className="min-w-0 flex-1">
-          <p className="font-display text-[15px] font-extrabold leading-tight">
+        <span className="min-w-0 flex-1">
+          <span className="block font-display text-[15px] font-extrabold leading-tight">
             {bankaSorusuMetni(kayit.soru)}
-          </p>
-          <p className="mt-1 text-[13px] font-semibold text-success">
+          </span>
+          <span className="mt-1 block text-[13px] font-semibold text-success">
             {bankaCevabiMetni(kayit.soru)}
-          </p>
+          </span>
           {/* Kural metni iki havuzdan gelebiliyor: noktalama kayıtları da
               bankada 'yazim' kimliğiyle duruyor, ayıran alan `isaretler`. */}
           {kayit.soru.oyun === 'yazim' && (
-            <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+            <span className="mt-1.5 block text-xs leading-relaxed text-muted-foreground">
               {(kayit.soru.isaretler
                 ? NOKTALAMA_ACIKLAMASI[kayit.soru.kural as NoktalamaKurali]
                 : KURAL_ACIKLAMASI[kayit.soru.kural as YazimKurali]) ?? ''}
-            </p>
+            </span>
           )}
-        </div>
+        </span>
 
         <span className="rakam shrink-0 rounded-full bg-muted px-2 py-1 text-[10.5px] font-extrabold text-muted-foreground">
           {kayit.kacKez} kez
-        </span>
-      </div>
-
-      {/* Düşme çubuğu: üst üste kaç doğru verildiği. Yanlışta sıfırlanıyor,
-          o yüzden "ilerleme" değil "üst üste" diyor. */}
-      <div className="mt-2.5 flex items-center gap-2">
-        <div className="flex flex-1 gap-1">
-          {Array.from({ length: DUSME_ESIGI }, (_, i) => (
-            <span
-              key={i}
-              className={cn(
-                'h-1.5 flex-1 rounded-full',
-                i < kayit.ardisikDogru ? aile.dolgu : 'bg-muted',
-              )}
-            />
-          ))}
-        </div>
-        <span className="text-[11px] font-semibold text-muted-foreground">
-          {kayit.ardisikDogru === 0
-            ? `Üst üste ${DUSME_ESIGI} doğruda düşer`
-            : `${kayit.ardisikDogru}/${DUSME_ESIGI} üst üste doğru`}
         </span>
       </div>
 

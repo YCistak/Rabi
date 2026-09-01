@@ -14,11 +14,15 @@ import { SORU_SURESI, ZORLUKLAR, soruSuresi } from './ritim'
 describe('gorunenIpucu', () => {
   const sure = SORU_SURESI.hucre
 
-  it('normal soruda üç saniyede bir açılıyor', () => {
+  it('üç ipucu da sürenin ilk yarısında açılıyor', () => {
+    // 9 saniyelik soruda aralık 1,5 saniye: son ipucu 3. saniyede, yani
+    // sürenin yarısında tamamlanıyor ve kalan yarı karar vermeye kalıyor.
     expect(gorunenIpucu(0, sure)).toBe(1)
-    expect(gorunenIpucu(2.9, sure)).toBe(1)
-    expect(gorunenIpucu(3, sure)).toBe(2)
-    expect(gorunenIpucu(6, sure)).toBe(3)
+    expect(gorunenIpucu(1.4, sure)).toBe(1)
+    expect(gorunenIpucu(1.5, sure)).toBe(2)
+    expect(gorunenIpucu(3, sure)).toBe(3)
+    // Yarıyı geçtikten sonra açılacak yeni bir ipucu yok.
+    expect(gorunenIpucu(sure / 2, sure)).toBe(IPUCU_SAYISI)
   })
 
   it('süre bitse de son ipucunda kalıyor', () => {
@@ -27,14 +31,18 @@ describe('gorunenIpucu', () => {
   })
 
   /**
-   * Boss'ta süre uzuyor; aralık da uzamazsa üç ipucu ilk yarıda biter ve
-   * kalan yarı boş geçerdi.
+   * Boss'ta süre uzuyor; aralık oranla hesaplandığı için ipuçları orada da
+   * sürenin ilk yarısında bitiyor — sabit saniye olsaydı ipucu ritmi soru
+   * uzunluğuna göre değişirdi.
    */
   it('boss süresinde aralık da uzuyor', () => {
     const bossSuresi = soruSuresi('hucre', { zorluk: 'zor', cetin: false })
     expect(bossSuresi).toBeGreaterThan(sure)
-    expect(gorunenIpucu(sure - 1, bossSuresi)).toBe(2)
-    expect(gorunenIpucu(bossSuresi - 1, bossSuresi)).toBe(IPUCU_SAYISI)
+    expect(gorunenIpucu(0, bossSuresi)).toBe(1)
+    expect(gorunenIpucu(bossSuresi / 2, bossSuresi)).toBe(IPUCU_SAYISI)
+    // Aralık gerçekten uzuyor: normal sorunun son ipucu anında boss hâlâ
+    // erken bir ipucunda.
+    expect(gorunenIpucu(sure / 2, bossSuresi)).toBeLessThan(IPUCU_SAYISI)
   })
 })
 

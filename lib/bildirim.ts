@@ -48,6 +48,27 @@ export async function izinVarMi(): Promise<boolean> {
 }
 
 /**
+ * Bildirimin görünüşü — iki planlayıcı da bunu yayıyor.
+ *
+ * `smallIcon` şart: verilmezse eklenti uygulama ikonunu kullanıyor ve Android
+ * durum çubuğunda **yalnızca alfa kanalını** okuduğu için renkli ikon orada
+ * beyaz bir lekeye dönüşüyor — bildirimin hangi uygulamadan geldiği
+ * anlaşılmıyordu. `ic_bildirim` bunun için üretilmiş beyaz siluet
+ * (`scripts/ikon-uret.mjs`).
+ *
+ * `largeIcon` ise bildirim panelinde sağda duran **renkli** ikon: siluet
+ * uygulamayı tanıtmaya yetmiyor, asıl logo orada görünüyor.
+ *
+ * `iconColor` siluetin arkasındaki noktayı markanın tonuna boyuyor; Android
+ * onu varsayılan olarak sistemin vurgu rengiyle çiziyor.
+ */
+const GORUNUS = {
+  smallIcon: 'ic_bildirim',
+  largeIcon: 'ic_launcher',
+  iconColor: '#D9622F',
+} as const
+
+/**
  * Seans bitiminde çalacak bildirimi kurar. Uygulama arka plandayken de zil
  * çalsın diye; uygulama önde bitirirse `pomodoroIptal` ile geri alınır.
  */
@@ -66,6 +87,7 @@ export async function pomodoroPlanla(bitisZamani: number, mola: boolean) {
           body: mola
             ? 'Molan doldu. Hazırsan bir tur daha? 🐰'
             : 'Bir pomodoro tamamlandı. Biraz ara ver. 🐰',
+          ...GORUNUS,
           schedule: { at: new Date(bitisZamani) },
         },
       ],
@@ -119,6 +141,7 @@ export async function hatirlatmaPlanla({
           id: HATIRLATMA_ID,
           title: baslik,
           body: metin,
+          ...GORUNUS,
           schedule: {
             at: zaman,
             // Tam saatli alarm istenmiyor: günlük hatırlatmada dakika hassasiyeti

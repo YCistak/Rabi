@@ -17,16 +17,24 @@ export type OdakDurumu = {
   /** Diğer uygulamaların üzerine çizme izni verildi mi. */
   katman: boolean
   /**
-   * Bildirim erişimi verildi mi — kilitli uygulamaların bildirimleri silinsin
-   * diye. **İsteğe bağlı**: verilmezse kilit çalışır, yalnızca bildirimler
-   * susmaz. Bu yüzden `baslat` bunu şart koşmuyor.
+   * Rahatsız Etme erişimi verildi mi — tur boyunca telefon sussun diye.
+   *
+   * **İsteğe bağlı**: verilmezse kilit çalışır, yalnızca telefon susmaz. Bu
+   * yüzden `baslat` bunu şart koşmuyor.
+   *
+   * Bir süre bunun yerine bildirim dinleyicisi vardı ve paket başına
+   * susturabiliyordu. Xiaomi/HyperOS iki yerde birden kapattı: dinleyici
+   * tanımlayan APK Play dışından kurulamıyor ("hassas verilere erişebilir",
+   * "yine de yükle" düğmesi de yok) ve kurulsa bile bildirim erişimi izni o
+   * cihazlarda verilemiyor. Rahatsız Etme telefonun tamamını susturuyor ama
+   * her cihazda gerçekten çalışıyor.
    */
-  bildirim: boolean
+  rahatsizEtme: boolean
   /** Ön plan servisi şu an ayakta mı. */
   calisiyor: boolean
 }
 
-export type OdakIzni = 'kullanimVerisi' | 'katman' | 'bildirim'
+export type OdakIzni = 'kullanimVerisi' | 'katman' | 'rahatsizEtme'
 
 type OdakKilidiEklentisi = {
   durum(): Promise<OdakDurumu>
@@ -36,6 +44,7 @@ type OdakKilidiEklentisi = {
     paketler: string[]
     bitisZamani: number
     ders?: string
+    rahatsizEtme: boolean
   }): Promise<{ basladi: boolean }>
   bitir(): Promise<void>
   addListener(
@@ -47,7 +56,7 @@ type OdakKilidiEklentisi = {
 const KAPALI_DURUM: OdakDurumu = {
   kullanimVerisi: false,
   katman: false,
-  bildirim: false,
+  rahatsizEtme: false,
   calisiyor: false,
 }
 
@@ -115,10 +124,18 @@ export async function odakKilidiniBaslat(
   paketler: string[],
   bitisZamani: number,
   ders?: string,
+  rahatsizEtme = false,
 ): Promise<boolean> {
-  if (!odakKilidiDesteklenir() || paketler.length === 0) return false
+  /*
+    Boş liste artık tek başına "başlatma" demek değil: kullanıcı uygulama
+    engellemeyi kapatıp yalnızca Rahatsız Etme'yi açmış olabilir. İkisi de
+    kapalıysa servisi kurmak, hiçbir şey yapmayan bir ön plan bildirimi
+    göstermek olurdu.
+  */
+  if (!odakKilidiDesteklenir()) return false
+  if (paketler.length === 0 && !rahatsizEtme) return false
   try {
-    const sonuc = await eklenti.baslat({ paketler, bitisZamani, ders })
+    const sonuc = await eklenti.baslat({ paketler, bitisZamani, ders, rahatsizEtme })
     return sonuc.basladi
   } catch {
     return false

@@ -28,12 +28,24 @@ export type HucreOyunSorusu = { soru: OrganelSorusu; siklar: HucreSikki[] }
 export const ORGANELLER = HUCRE_HAVUZU.map((s) => s.organel)
 
 /**
+ * İpuçları sorunun **ilk yarısında** tükeniyor.
+ *
+ * Bir süre soru süresinin tamamına yayılıyorlardı: üçüncü ipucu tam süre
+ * dolarken geliyordu, yani gördüğü an oyuncunun cevaplayacak vakti kalmıyordu
+ * ve bekleme "oyun donmuş" gibi duruyordu. Şimdi son ipucu sürenin yarısında
+ * açılıyor; kalan yarı kararı vermeye ayrılıyor.
+ *
+ * Oran olarak duruyor, sabit saniye olarak değil: boss sorusunda süre uzuyor
+ * ve sabit aralık orada da aynı sorunu geri getirirdi.
+ */
+const IPUCU_PAYI = 0.5
+
+/**
  * Şu an kaçıncı ipucu görünüyor: 1, 2 ya da `IPUCU_SAYISI`.
  *
- * İpuçları soru süresini eşit üçe bölüyor, sabit üç saniyeye değil: boss
- * sorusunda süre uzuyor ve sabit aralık kalsaydı üç ipucu da ilk yarıda
- * açılır, kalan yarı boş geçerdi. Normal soruda süre 9 saniye olduğu için
- * aralık yine üç saniye.
+ * İpuçları soru süresinin `IPUCU_PAYI` kadarını eşit üçe bölüyor, sabit
+ * saniyeye değil: boss sorusunda süre uzuyor ve sabit aralık kalsaydı ipuçları
+ * turdan tura farklı hızda gelirdi.
  *
  * Geçen süreyi besleyen saat **turun sayacı değil** (`oyun-hucre.tsx`,
  * `useAcikIpucu`): Sıradan ve Turbo'da saat tura ait, Rahat'ta hiç yok. İkisi
@@ -41,7 +53,7 @@ export const ORGANELLER = HUCRE_HAVUZU.map((s) => s.organel)
  */
 export function gorunenIpucu(gecenSaniye: number, toplamSure: number): number {
   if (toplamSure <= 0) return IPUCU_SAYISI
-  const aralik = toplamSure / IPUCU_SAYISI
+  const aralik = (toplamSure * IPUCU_PAYI) / IPUCU_SAYISI
   const sira = Math.floor(gecenSaniye / aralik) + 1
   return Math.min(IPUCU_SAYISI, Math.max(1, sira))
 }

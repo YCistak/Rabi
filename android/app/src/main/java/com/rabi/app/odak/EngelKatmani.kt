@@ -8,7 +8,9 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.widget.ProgressBar
 import android.widget.TextView
+import java.util.Locale
 import com.rabi.app.R
 
 /**
@@ -26,6 +28,8 @@ class EngelKatmani(private val baglam: Context) {
 
     private var gorunum: View? = null
     private var bitisZamani = 0L
+    /** Turun başladığı an — çubuk "ne kadarı geçti"yi bununla çiziyor. */
+    private var baslangicZamani = 0L
 
     private val geriSayim = object : Runnable {
         override fun run() {
@@ -34,7 +38,8 @@ class EngelKatmani(private val baglam: Context) {
         }
     }
 
-    fun goster(bitis: Long, ders: String?) {
+    fun goster(baslangic: Long, bitis: Long, ders: String?) {
+        baslangicZamani = baslangic
         bitisZamani = bitis
         // Katman zaten duruyorsa yeniden eklenmemeli: her döngü adımında
         // eklenirse ekran görünür biçimde titriyor.
@@ -46,10 +51,19 @@ class EngelKatmani(private val baglam: Context) {
         // "kilidi kapat" olmalı. Ana ekran tuşu zaten engellenemiyor, gerek de yok.
         yeni.setOnKeyListener { _, kod, _ -> kod == KeyEvent.KEYCODE_BACK }
 
-        yeni.findViewById<TextView>(R.id.odak_ders).apply {
-            text = if (ders.isNullOrBlank()) "" else ders + " çalışıyorsun"
-            visibility = if (ders.isNullOrBlank()) View.GONE else View.VISIBLE
-        }
+        /*
+          Çip ekranın ilk satırı ve tek işi nerede olunduğunu söylemek. Ders
+          biliniyorsa onun adını yazıyor — "MATEMATİK", ekranın geri kalanı
+          zaten kilidin ne olduğunu anlatıyor. Ders yoksa çip **kalıyor**:
+          gizlendiğinde ekranın tepesi bir satır boşalıyor ve maskot yukarı
+          kayıyordu.
+
+          Büyütme Türkçe yerelle: varsayılan yerelde "İstanbul"un i'si
+          noktasız İ oluyor ve ders adı yanlış yazılmış gibi duruyor.
+        */
+        yeni.findViewById<TextView>(R.id.odak_ders).text =
+            if (ders.isNullOrBlank()) "DERS MODU AÇIK"
+            else ders.uppercase(Locale("tr", "TR"))
 
         yeni.findViewById<View>(R.id.odak_don).setOnClickListener {
             baglam.packageManager.getLaunchIntentForPackage(baglam.packageName)?.let {
@@ -97,12 +111,35 @@ class EngelKatmani(private val baglam: Context) {
         }
     }
 
+    /**
+     * Kalan süreyi ve çubuğu tazeler.
+     *
+     * Sayı ile çubuk ayrı sorulara cevap veriyor: sayı "ne kadar kaldı",
+     * çubuk "ne kadarı geçti" diyor ve turun ortasında mı sonunda mı
+     * olunduğunu sayıya bakıp hesaplamak gerekiyordu.
+     *
+     * Dakika da iki basamağa dolduruluyor (`%02d`): sayı 44sp ve tek
+     * basamaktan iki basamağa geçerken bütün satır yana kayıyordu.
+     */
     private fun sureyiYaz() {
-        val alan = gorunum?.findViewById<TextView>(R.id.odak_sure) ?: return
-        val kalanSaniye = ((bitisZamani - System.currentTimeMillis()) / 1000L).coerceAtLeast(0L)
-        val dakika = kalanSaniye / 60
-        val saniye = kalanSaniye % 60
-        alan.text = String.format("%d:%02d kaldı", dakika, saniye)
+        val acik = gorunum ?: return
+        val simdi = System.currentTimeMillis()
+        val kalanSaniye = ((bitisZamani - simdi) / 1000L).coerceAtLeast(0L)
+        acik.findViewById<TextView>(R.id.odak_sure).text =
+            String.format(Locale.US, "%02d:%02d", kalanSaniye / 60, kalanSaniye % 60)
+
+        /*
+          Toplam süre bilinmiyorsa çubuk boş kalıyor.
+
+          Yanlış bir dolulukla çizmek, kullanıcıya turun nerede olduğu
+          konusunda uydurma bir bilgi vermek olurdu — sayı zaten doğruyu
+          söylüyor.
+        */
+        val toplam = bitisZamani - baslangicZamani
+        val cubuk = acik.findViewById<ProgressBar>(R.id.odak_cubuk)
+        cubuk.progress =
+            if (toplam <= 0L) 0
+            else (((simdi - baslangicZamani) * 1000L) / toplam).coerceIn(0L, 1000L).toInt()
     }
 
     private fun parametreler(): WindowManager.LayoutParams = WindowManager.LayoutParams(

@@ -140,7 +140,7 @@ describe('bossluMu', () => {
  * veriliyor. Zaman Şeridi'nde de bir soru beş kartın yerleştirilmesi demek.
  * Üst sınırları doğal olarak yüksek.
  */
-const EL_SURELI: OyunId[] = ['edebiyat', 'antlasma', 'kavram', 'sirala']
+const EL_SURELI: OyunId[] = ['edebiyat', 'antlasma', 'kavram', 'sirala', 'formul']
 
 describe('soruSuresi', () => {
   it('her oyun için süre tanımlı ve makul', () => {
