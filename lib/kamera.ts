@@ -57,6 +57,35 @@ export async function cihazdanFotograf(kaynak: Kaynak): Promise<Blob | null> {
 }
 
 /**
+ * Cihazdaki fotoğrafın **yerel dosya yolu**.
+ *
+ * `cihazdanFotograf` blob döndürüyor çünkü onu çağıran taraf fotoğrafı
+ * saklıyor. Metin tanıma ise yol istiyor: model native tarafta çalışıyor ve
+ * dosyayı kendisi açıyor, blob'u WebView'den native'e geçirmek fotoğrafı
+ * base64'e çevirip iki kez kopyalamak olurdu.
+ *
+ * Fotoğraf **saklanmıyor**: yol yalnızca okuma sırasında kullanılıyor. Yanlış
+ * soru fotoğrafları depoya giriyor çünkü orada fotoğraf verinin kendisi;
+ * burada araç.
+ */
+export async function cihazdanFotografYolu(kaynak: Kaynak): Promise<string | null> {
+  try {
+    const foto = await Camera.getPhoto({
+      quality: Math.round(KALITE * 100),
+      // Küçültme yok: metin tanıma için çözünürlük iyi olmalı ve fotoğraf
+      // zaten kaydedilmiyor. `EN_BUYUK_KENAR`da el yazısı rakamlar bulanıyor.
+      allowEditing: false,
+      correctOrientation: true,
+      resultType: CameraResultType.Uri,
+      source: kaynak === 'kamera' ? CameraSource.Camera : CameraSource.Photos,
+    })
+    return foto.path ?? null
+  } catch {
+    return null
+  }
+}
+
+/**
  * Tarayıcıda seçilen dosyayı küçültür. Cihaz tarafında küçültmeyi eklenti
  * yaptığı için bu yalnızca web yolunda çağrılır.
  */

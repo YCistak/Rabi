@@ -9,6 +9,32 @@
  * Saf ve React'ten bağımsız: bileşen yalnızca çıkan parçaları çiziyor.
  */
 
+/**
+ * Arama ve eşleştirme için metni sadeleştirir.
+ *
+ * `toLowerCase` tek başına yetmiyor: "İ" küçültüldüğünde birleşik işaretli bir
+ * karakter çıkıyor ve "İstanbul" araması kendi kaydını bulamıyor.
+ *
+ * Rakamlar ve noktalama **korunuyor**: hedef kataloğu bunları zaten
+ * kullanmıyor ama deneme fotoğrafını çözen taraf "38d 2y" gibi bir satırdan
+ * sayıları okuyor.
+ */
+export function sadelestir(metin: string): string {
+  return metin
+    .replace(/İ/g, 'i')
+    .replace(/I/g, 'i')
+    .replace(/ı/g, 'i')
+    .toLowerCase()
+    .replace(/ş/g, 's')
+    .replace(/ğ/g, 'g')
+    .replace(/ü/g, 'u')
+    .replace(/ö/g, 'o')
+    .replace(/ç/g, 'c')
+    .replace(/â/g, 'a')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 export type MetinParcasi = { tur: 'duz' | 'kalin' | 'egik'; metin: string }
 
 /** Yıldızlı bölümleri ayırır; yıldız yoksa tek parça döner. */

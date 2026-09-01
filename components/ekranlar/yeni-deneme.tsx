@@ -1,10 +1,12 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { AlertCircle, Check, X } from 'lucide-react'
+import { AlertCircle, Check, ScanLine, X } from 'lucide-react'
 import { Alan, Buton, Cip, Etiket, Kart } from '@/components/ui'
 import { katsayiYaz, net, netYaz, sonucGecerliMi, yuvarla } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
+import { ORNEK_YAZIM, denemeyiCoz, sablonOnerisi } from '@/lib/deneme-okuma'
+import { kagidiOku, okumaVarMi } from '@/lib/deneme-ocr'
 import { bugun, cn, yeniId } from '@/lib/utils'
 import type { Deneme, Sablon } from '@/lib/types'
 
@@ -12,6 +14,25 @@ type Giris = { dogru: string; yanlis: string }
 
 function bosGirisler(sablon: Sablon): Record<string, Giris> {
   return Object.fromEntries(sablon.dersler.map((d) => [d.id, { dogru: '', yanlis: '' }]))
+}
+
+/**
+ * Fotoğraftan okunan tek bir metin.
+ *
+ * `sayac` metnin yanında duruyor çünkü aynı kâğıt iki kez okutulabiliyor:
+ * metin aynı kalır, kutuların yeniden dolması gerekir. Yalnızca metne bakan
+ * bir bağımlılık listesi ikinci okumada hiçbir şey yapmazdı.
+ */
+type Okuma = { metin: string; sayac: number }
+
+/** Okunan metni şablonun kutularına yazar; okunamayan kutular boş kalıyor. */
+function okumadanGirisler(sablon: Sablon, okuma: Okuma | null): Record<string, Giris> {
+  const girisler = bosGirisler(sablon)
+  if (okuma === null) return girisler
+  for (const okunan of denemeyiCoz(okuma.metin, sablon).okunanlar) {
+    girisler[okunan.dersId] = { dogru: String(okunan.dogru), yanlis: String(okunan.yanlis) }
+  }
+  return girisler
 }
 
 function sayi(metin: string): number {
@@ -57,13 +78,25 @@ export function YeniDenemeEkrani({
     )
   })
 
+  /*
+    Fotoğraftan okunan metin. Kutuların **kaynağı** bu: şablon değişince metin
+    yeni şablona göre yeniden çözülüyor. İki ayrı yerde doldurma olsaydı
+    (bir okurken, bir şablon değişince) ikisi zamanla ayrışırdı.
+  */
+  const [okuma, setOkuma] = useState<Okuma | null>(null)
+  /** Örnek yazım kartı — "Okut"a basınca çıkıyor, kamera ondan sonra açılıyor. */
+  const [ornekAcik, setOrnekAcik] = useState(false)
+  const [okunuyor, setOkunuyor] = useState(false)
+  const [okumaHatasi, setOkumaHatasi] = useState(false)
+
   const sablon = sablonlar.find((s) => s.id === sablonId) ?? sablonlar[0]
 
-  // Şablon değişince ders listesi değişir, girişler sıfırlanır
+  // Şablon değişince ders listesi değişir, girişler sıfırlanır — fotoğraf
+  // okunmuşsa yeni şablona göre yeniden dolar.
   useEffect(() => {
     if (duzenlenen) return
-    setGirisler(bosGirisler(sablon))
-  }, [sablon, duzenlenen])
+    setGirisler(okumadanGirisler(sablon, okuma))
+  }, [sablon, duzenlenen, okuma])
 
   const satirlar = useMemo(
     () =>
@@ -85,6 +118,33 @@ export function YeniDenemeEkrani({
       }),
     [sablon, girisler],
   )
+
+  /** Fotoğraf özeti: kaç ders okundu, hangileri okunamadı, başka şablon uyar mı. */
+  const ozet = useMemo(() => {
+    if (okuma === null) return null
+    const sonuc = denemeyiCoz(okuma.metin, sablon)
+    return {
+      okunanSayisi: sonuc.okunanlar.length,
+      atlananlar: sonuc.atlananlar,
+      oneri: sablonOnerisi(okuma.metin, sablon, sablonlar),
+    }
+  }, [okuma, sablon, sablonlar])
+
+  const okut = async () => {
+    setOrnekAcik(false)
+    setOkumaHatasi(false)
+    setOkunuyor(true)
+    const ciktisi = await kagidiOku()
+    setOkunuyor(false)
+    // Vazgeçene hiçbir şey söylenmiyor: kullanıcı zaten bilerek kapattı.
+    if (ciktisi.durum === 'metin') setOkuma((onceki) => ({
+      metin: ciktisi.metin,
+      sayac: (onceki?.sayac ?? 0) + 1,
+    }))
+    else if (ciktisi.durum !== 'vazgecildi') setOkumaHatasi(true)
+  }
+
+  const oneri = ozet?.oneri ?? null
 
   const toplamNet = yuvarla(satirlar.reduce((acc, s) => acc + (s.asim ? 0 : s.net), 0))
   const hataliDers = satirlar.find((s) => s.asim)
@@ -170,6 +230,84 @@ export function YeniDenemeEkrani({
           />
         </div>
       </div>
+
+      {/*
+        Kâğıdı okutma. Düğme yalnızca cihazda görünüyor -- eklentinin web
+        karşılığı yok ve çalışmayan bir düğme bozuk bir uygulama demek.
+
+        Basınca kamera **açılmıyor**, önce örnek çıkıyor: okuma "Matematik 38D
+        2Y" düzenine göre ayarlandı ve o düzeni bilmeden çekilen fotoğraf
+        okunmuyor. Örneği kameradan sonra göstermek, kullanıcıya kâğıdı
+        yeniden yazdırmak olurdu.
+      */}
+      {okumaVarMi() && !duzenlenen && (
+        <div className="mb-4">
+          <Buton
+            bicim="ikincil"
+            className="w-full"
+            onClick={() => setOrnekAcik((a) => !a)}
+            disabled={okunuyor}
+          >
+            <ScanLine size={18} />
+            {okunuyor ? 'Okunuyor…' : 'Kâğıdı okut'}
+          </Buton>
+
+          {ornekAcik && (
+            <div className="mt-2 rounded-xl border border-border bg-card px-3 py-3">
+              <p className="text-[13px] font-bold">Kâğıda şöyle yaz:</p>
+              <p className="mt-1.5 rounded-lg bg-muted px-3 py-2 text-center text-[15px] font-extrabold rakam">
+                {ORNEK_YAZIM}
+              </p>
+              <p className="mt-2 text-[12px] leading-snug font-medium text-muted-foreground">
+                Her ders ayrı satırda; önce doğru, sonra yanlış. Okunan sayılar
+                kutulara yazılır, <strong>kaydetmeden önce sen kontrol edersin</strong>.
+              </p>
+              <div className="mt-2.5 flex gap-2">
+                <Buton className="flex-1" onClick={okut}>
+                  Kamerayı aç
+                </Buton>
+                <Buton bicim="hayalet" className="flex-1" onClick={() => setOrnekAcik(false)}>
+                  Vazgeç
+                </Buton>
+              </div>
+            </div>
+          )}
+
+          {okumaHatasi && (
+            <p className="mt-2 text-[12px] font-semibold text-danger">
+              Fotoğrafı okuyamadım. Işık iyi olsun, kâğıt düz dursun ve bir daha dene.
+            </p>
+          )}
+
+          {ozet && (
+            <div className="mt-2 rounded-xl bg-primary-soft px-3 py-2.5">
+              <p className="text-[12.5px] font-bold text-primary">
+                {ozet.okunanSayisi === 0
+                  ? 'Fotoğraftan hiçbir ders okunamadı.'
+                  : `Fotoğraftan ${ozet.okunanSayisi} ders okundu.`}
+              </p>
+              {ozet.atlananlar.length > 0 && (
+                <p className="mt-0.5 text-[12px] leading-snug font-medium text-muted-foreground">
+                  {ozet.atlananlar.join(', ')} okunamadı — onları sen yaz.
+                </p>
+              )}
+              <p className="mt-0.5 text-[12px] leading-snug font-medium text-muted-foreground">
+                Sayıları kontrol et; fotoğraftan okunanlar yanlış olabilir.
+              </p>
+              {/* Şablon önerisi: seçim kullanıcının, sessizce değiştirilmiyor. */}
+              {oneri !== null && (
+                <button
+                  type="button"
+                  onClick={() => setSablonId(oneri.id)}
+                  className="mt-1.5 text-[12.5px] font-extrabold text-ikincil underline underline-offset-2"
+                >
+                  Bu kâğıt {oneri.ad} gibi duruyor — ona geç
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       <Kart className="p-0">
         <div className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 border-b border-border px-3 py-2 text-xs font-medium text-muted-foreground">

@@ -760,6 +760,100 @@ puan türü de seçilen bölümün türü, kurulumdaki "Hangi alandasın?" cevab
 o soru öğrencinin kendi alanını soruyor ve hedef bölümünkiyle aynı olmak zorunda
 değil.
 
+## Deneme kâğıdını okutma (OCR)
+
+Öğrenci deneme kitapçığının üstüne "Matematik 38D 2Y" diye yazıyor; kamera
+okuyor, kutular doluyor. İş üç dosyaya bölünmüş ve bölünme kasıtlı:
+
+| Dosya | İşi | Telefon gerekir mi |
+| --- | --- | --- |
+| `lib/deneme-okuma.ts` | metin → ders sonuçları, **saf** | hayır |
+| `lib/deneme-ocr.ts` | kamera + ML Kit sarmalayıcısı | evet |
+| `components/ekranlar/yeni-deneme.tsx` | düğme, örnek kartı, özet | hayır |
+
+Asıl hata ayrıştırmadan çıkıyor ve o telefonsuz test edilebilmeli: eşleştirme
+mantığı `deneme-okuma.test.ts` içinde fixture metinlerle denetleniyor.
+
+**Ağa çıkmıyor.** ML Kit'in Latin metin modeli (`@capacitor-mlkit/text-recognition`)
+APK'ya gömülü; tanıma tümüyle cihazda oluyor, uçak modunda da çalışıyor. Bulut
+OCR baştan elendi — "sunucu yok, dış servise çıkma" kuralı ve Data Safety
+beyanı ikisi birden buna bağlı.
+
+**Okunan hiçbir şey kaydedilmiyor.** Sayılar kutulara **yazılıyor**, kullanıcı
+görüp onaylıyor. Doğruluk kuralının aynısı; üstelik burada tahminin kaynağı el
+yazısı ve model basılı metin için eğitildi.
+
+### Şüphedeyken doldurmuyor
+
+Yanlış dolmuş bir kutu boş kutudan kötü: boşu kullanıcı görüp yazar, yanlışı
+fark etmeden kaydeder. Üç yerde satır atlanıp `atlananlar`a düşüyor:
+
+- **Ders adı iki derse birden uyuyorsa.** AYT Sözel'de yalnızca "Tarih" yazan
+  bir satır Tarih-1'e de Tarih-2'ye de uyuyor; birini seçmek yazı tura atmak.
+- **Sayılardan yalnızca biri okunduysa.** "38D" tek başına yanlışın sıfır
+  olduğunu söylemiyor — yazılmamış olabilir ve sıfır yazmak veriyi uydurmak.
+- **Doğru + yanlış ders soru sayısını aşıyorsa.** Sayı yanlış tanınmış demektir.
+
+Anahtar eşleşmesi **söz sınırına** bakıyor. İki hata bundan çıkmıştı: "mat"
+kısaltması "otomat"ın içinde yakalanıyordu, ve "tarih 1" eşanlamlısı
+"tarih 10d 2y" satırında "tarih 1" olarak eşleşip geriye "0d 2y" bırakıyordu.
+
+### Örnek kamera açılmadan gösteriliyor
+
+"Kâğıdı okut"a basınca kamera değil önce **örnek yazım** çıkıyor
+(`ORNEK_YAZIM`). Okuma o düzene göre ayarlandı ve düzeni bilmeden çekilen
+fotoğraf okunmuyor; örneği kameradan sonra göstermek kullanıcıya kâğıdı
+yeniden yazdırmak olurdu.
+
+Düğme yalnızca cihazda görünüyor (`okumaVarMi`): eklentinin web karşılığı yok
+ve çalışmayan bir düğme bozuk bir uygulama demek.
+
+### Kutuların kaynağı okunan metin
+
+Ekranda okunan **metin** duruyor (`okuma`), okunan sayılar değil: şablon
+değişince metin yeni şablona göre yeniden çözülüyor. İki ayrı doldurma yolu
+(biri okurken, biri şablon değişince) zamanla birbirinden ayrışırdı. Metnin
+yanındaki `sayac` aynı kâğıdın iki kez okutulabilmesi için — metin aynı kalır,
+kutuların yeniden dolması gerekir.
+
+**Şablon önerisi sessizce uygulanmıyor.** Okunan metin başka bir şablona daha
+çok uyuyorsa (`sablonOnerisi`) bir bağlantı çıkıyor; seçim kullanıcının kendi
+kararı ve elinden alınmıyor. Eşitlikte öneri yok.
+
+### Eklenti yamalı: yalnızca Latin
+
+`@capacitor-mlkit/text-recognition` beş betik modelini birden paketliyor
+(Latin, Çince, Devanagari, Japonca, Korece) ve README'si bunu kabul edip
+dışlama yolu sunmuyor. Ölçtük: dört fazla model AAB'de kullanıcıya **8,5 MB**a
+mal oluyor (arm64 telefonda 16,2 MB yerine 7,7 MB) ve hiçbiri bu uygulamada
+kullanılmıyor — Türkçe Latin alfabesiyle yazılıyor.
+
+Çözüm `patches/@capacitor-mlkit+text-recognition+8.2.0.patch`: `patch-package`
+her `npm install`da uyguluyor (`postinstall` betiği). Yama iki şey yapıyor:
+
+- `android/build.gradle`'dan dört bağımlılık satırı siliniyor.
+- `TextRecognition.java`'daki `createRecognizerOptionsForScript` sabitleniyor.
+  **İkincisi olmadan birincisi tehlikeli**: o yöntemin `switch`'i dört sınıfa
+  referans veriyor ve sınıflar paketten çıkınca çalışma anında
+  `NoClassDefFoundError` riski doğuyor.
+
+Bedeli: eklenti sürümü yükselince yama tutmayabilir. `npm install` o zaman
+**sesli** hata veriyor, sessizce geçmiyor. Yamayı kaldırmak için dosyayı silip
+`npm install` yeter.
+
+Fork edilmedi çünkü gereği yoktu: ayrı bir depo, sürüm ve yayınlama yükü
+getirir, kazandırdığı şey iki dosyalık bir diff.
+
+`Script` tipinde öteki betikler hâlâ görünüyor ama yamalı eklenti hangisi
+istenirse istensin Latin döndürüyor. `lib/deneme-ocr.ts` zaten Latin geçiyor.
+
+### Fotoğraf saklanmıyor
+
+Yol yalnızca okuma sırasında kullanılıyor (`cihazdanFotografYolu`), depoya
+girmiyor. Yanlış soru fotoğrafları `resim-depo.ts`'e giriyor çünkü orada
+fotoğraf verinin kendisi; burada araç. Küçültme de yok: `EN_BUYUK_KENAR`da el
+yazısı rakamlar bulanıyor ve dosya zaten atılıyor.
+
 ## Doğruluk
 
 Puan ve sıralama hesabı **tahmindir** ve arayüzde her zaman böyle sunulur. Tahmini

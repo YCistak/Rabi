@@ -26,6 +26,7 @@
  * modelinde hiç olmadı. Kılavuzun TYT tarafı bu yüzden profile girmiyor.
  */
 
+import { sadelestir } from '../metin'
 import ham from './hedef-katalog-2025.json'
 import type { PuanTuru } from '../types'
 
@@ -61,27 +62,14 @@ export type Bolum = {
 /** Verinin ait olduğu YKS yılı — kılavuz yılı değil, bir öncesi. */
 export const VERI_YILI: number = ham.veriYili
 
-/**
- * Arama ve eşleştirme için metni sadeleştirir.
- *
- * `toLowerCase` tek başına yetmiyor: "İ" küçültüldüğünde birleşik işaretli
- * bir karakter çıkıyor ve "İstanbul" araması kendi kaydını bulamıyor.
- */
-export function sadelestir(metin: string): string {
-  return metin
-    .replace(/İ/g, 'i')
-    .replace(/I/g, 'i')
-    .replace(/ı/g, 'i')
-    .toLowerCase()
-    .replace(/ş/g, 's')
-    .replace(/ğ/g, 'g')
-    .replace(/ü/g, 'u')
-    .replace(/ö/g, 'o')
-    .replace(/ç/g, 'c')
-    .replace(/â/g, 'a')
-    .replace(/\s+/g, ' ')
-    .trim()
-}
+/*
+  `sadelestir` bir süre burada duruyordu; deneme fotoğrafını çözen
+  `lib/deneme-okuma.ts` de aynı sadeleştirmeye ihtiyaç duyunca `lib/metin.ts`'e
+  taşındı. Buradan import edilseydi 250 KB'lık katalog JSON'u deneme ekranının
+  paketine de girerdi -- oysa o ekran katalogla hiç ilgilenmiyor.
+  Dışa açılışı korunuyor: `hedef-katalog.ts` buradan re-export ediyor.
+*/
+export { sadelestir } from '../metin'
 
 function kimlige(ad: string): string {
   return sadelestir(ad).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
