@@ -249,6 +249,10 @@ export function AnaSayfa({
 
               Hedef sıfırsa payda yazılmıyor — "12/0" bölme değil bozukluk gibi
               duruyor.
+
+              Sayının ardındaki "soru" da kalktı: hemen üstünde "Bugünkü soru
+              hedefin" yazıyor ve birimi ikinci kez söylemek kesiri okumayı
+              yavaşlatıyordu.
             */}
             <span className="rakam block text-[19px] leading-tight font-extrabold">
               {bugunku.toplam}
@@ -257,7 +261,6 @@ export function AnaSayfa({
                   /{ayarlar.gunlukHedef}
                 </span>
               )}
-              <span className="ml-1 text-[13px] font-bold text-muted-foreground">soru</span>
             </span>
           </span>
         </button>
@@ -318,9 +321,8 @@ export function AnaSayfa({
       <section>
         <div className="mb-2 px-1">
           <h2 className="font-display text-base font-extrabold tracking-tight">
-            Konu Anlatımı 📚
+            Bilgi Kartları 📚
           </h2>
-          <p className="text-xs text-muted-foreground">Maarif müfredatı, bilgi kartlarıyla</p>
         </div>
         <button
           type="button"
@@ -337,13 +339,14 @@ export function AnaSayfa({
             <span className="block font-display text-[15.5px] font-extrabold tracking-tight">
               Ders haritasını aç
             </span>
-            {/* Alt satır ya bankadaki kartları ya da neyi kapsadığını söylüyor:
-                banka boşken sayı yazmak "0 kart" gibi ölü bir satır olurdu. */}
-            <span className="mt-0.5 block text-[13px] leading-snug font-semibold text-muted-foreground">
-              {bilinmeyenSayisi > 0
-                ? `Bilmediklerinde ${bilinmeyenSayisi} kart bekliyor`
-                : '9 ve 10. sınıf · yedi ders'}
-            </span>
+            {/* Alt satır yalnızca bekleyen kart varken çıkıyor: neyi kapsadığını
+                anlatan sabit bir satır ("9 ve 10. sınıf · yedi ders") düğmeye
+                dokunulunca zaten görülen şeyi önceden yazıyordu. */}
+            {bilinmeyenSayisi > 0 && (
+              <span className="mt-0.5 block text-[13px] leading-snug font-semibold text-muted-foreground">
+                Bilmediklerinde {bilinmeyenSayisi} kart bekliyor
+              </span>
+            )}
           </span>
           <ChevronRight size={19} className="shrink-0 text-muted-foreground" aria-hidden />
         </button>
@@ -354,7 +357,6 @@ export function AnaSayfa({
           duruyordu; iki bölüm yan yana iki ayrı tasarım gibi okunuyordu. */}
       <Bolum
         baslik="Araçlar 🧰"
-        aciklama="Çalışmanı takip et"
         onTumu={onDahaGit}
         onDuzenle={() => setDuzenlenen('arac')}
       >
@@ -367,7 +369,6 @@ export function AnaSayfa({
           karşılığı da tam olarak o dersin ızgarası (bkz. `DERS_RENGI`). */}
       <Bolum
         baslik="Oyunlar 🎮"
-        aciklama="Eğlenerek pratik yap"
         onTumu={() => onOyunlaraGit()}
         onDuzenle={() => setDuzenlenen('ders')}
       >
@@ -418,14 +419,11 @@ export function AnaSayfa({
 /** Kısayol bölümü: üstte başlık + "Tümü", altında dört yüzü tutan tek kutu. */
 function Bolum({
   baslik,
-  aciklama,
   onTumu,
   onDuzenle,
   children,
 }: {
   baslik: string
-  /** Başlığın altındaki tek satır: bölümün ne işe yaradığı. */
-  aciklama: string
   onTumu: () => void
   /** Dört kutucuğu seçme penceresini açar. */
   onDuzenle: () => void
@@ -434,12 +432,12 @@ function Bolum({
   return (
     <section>
       <div className="mb-2 flex items-start justify-between gap-3 px-1">
+        {/* Başlığın altında bir ara açıklama satırı vardı ("Çalışmanı takip
+            et"); kaldırıldı. Ana sayfada üst üste üç bölüm var ve her birinin
+            altındaki ikinci satır, kutucukların kendisini aşağı itiyordu —
+            asıl okunacak şey kutucuklar. */}
         <div>
           <h2 className="font-display text-base font-extrabold tracking-tight">{baslik}</h2>
-          {/* Dört kısayol iki bölümde de emoji ve addan ibaret; "Araçlar" ile
-              "Oyunlar" arasındaki farkı ilk kez açan kullanıcıya söyleyen tek
-              satır bu. */}
-          <p className="text-xs text-muted-foreground">{aciklama}</p>
         </div>
         <div className="flex shrink-0 items-center gap-0.5">
           {/*

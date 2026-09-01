@@ -405,7 +405,7 @@ kendiliğinden sayar; rozet mantığına dokunmak gerekmez.
 
 ## Konu Anlatımı
 
-Ana sayfadaki **Konu Anlatımı** bölümü ders haritasını açıyor: üstte sınıf
+Ana sayfadaki **Bilgi Kartları** bölümü ders haritasını açıyor: üstte sınıf
 (9/10) ve ders seçiliyor, altında o programın temaları **patika** hâlinde
 diziliyor. Konular üç şeride yayılıp eğri çizgilerle bağlanıyor; düz bir liste
 tema içindeki sırayı ve "nerede kaldım"ı göstermiyordu.

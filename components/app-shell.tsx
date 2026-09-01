@@ -544,6 +544,7 @@ export function AppShell() {
         varsayilanSablonId={ayarlar.varsayilanSablonId}
         duzenlenen={denemeFormu.duzenlenen}
         denemeSayisi={denemeler.length}
+        setYanlisSorular={setYanlisSorular}
         onKaydet={denemeKaydet}
         onVazgec={() => setDenemeFormu(null)}
       />
