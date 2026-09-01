@@ -1,0 +1,718 @@
+<title>Başarım Bildirimi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap">
+
+<style>
+  /* ======================================================================
+     Başarım bildirimi — pencere değil, yukarıdan inen bildirim.
+
+     Kutlama şu an ekranın ortasına bir pencere açıyor ve turu kesiyor.
+     Buradaki öneri onun yerine geçiyor: bildirim yukarıdan iniyor, birkaç
+     saniye durup kendiliğinden çekiliyor; kullanıcı hiçbir şeyi kapatmıyor.
+
+     Kilit **açılışın kendisi**: madalyon gri ve kilitli iniyor, kilit
+     sarsılıp açılıyor, kademe rengi altından çıkıyor. Ödülü bir yazıyla
+     duyurmak yerine olurken göstermek, bildirimin durduğu üç saniyeyi
+     dolduran tek şey.
+
+     Uygulamaya bağlı değil (`AGENTS.md`: tasarım kaynağı `tasarim/` altındaki
+     HTML'ler, derlemeye girmiyorlar).
+     ====================================================================== */
+
+  /* ---- Sayfanın *etrafı* — okuyanın temasına uyuyor ---- */
+  :root {
+    --sayfa: #E9E7E3;
+    --sayfa-kart: #FFFFFF;
+    --sayfa-metin: #23211E;
+    --sayfa-soluk: #6B6764;
+    --sayfa-cizgi: #D8D5D0;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --sayfa: #161513;
+      --sayfa-kart: #201E1C;
+      --sayfa-metin: #EBE8E4;
+      --sayfa-soluk: #9C9691;
+      --sayfa-cizgi: #322F2C;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --sayfa: #161513;
+    --sayfa-kart: #201E1C;
+    --sayfa-metin: #EBE8E4;
+    --sayfa-soluk: #9C9691;
+    --sayfa-cizgi: #322F2C;
+  }
+
+  /* ---- Uygulamanın paleti (app/globals.css) — telefonun içi sabit ---- */
+  :root {
+    --background: #F8F8F7;
+    --foreground: #1B1A19;
+    --card: #FFFFFF;
+    --muted: #EFEEEB;
+    --muted-foreground: #6B6764;
+    --border: #EAE9E6;
+    --primary: #B3491F;
+    --primary-parlak: #D9622F;
+    --primary-soft: #FBEEE7;
+    --ikincil: #A8432B;
+    --ikincil-soft: #F8E7E0;
+    --warning: #A87C24;
+    --warning-soft: #F9F0D9;
+    --edb: #EBE5FA;
+    --edb-koyu: #6C55C4;
+    --edb-ok: #9C86E8;
+
+    /* Kilitli hâl: kademe rengi yok, gri var. */
+    --kilit-zemin: #E7E5E1;
+    --kilit-kenar: #D5D2CD;
+    --kilit-yazi: #8B8681;
+
+    --golge-kart: 0 6px 20px rgba(90, 58, 38, 0.09);
+    --golge-bildirim: 0 10px 30px rgba(90, 58, 38, 0.16);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--sayfa);
+    color: var(--sayfa-metin);
+    font-family: Nunito, "Segoe UI", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sayfa {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 40px 24px 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+
+  .ust h1 {
+    margin: 0 0 8px;
+    font-size: 27px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .ust p {
+    margin: 0;
+    max-width: 62ch;
+    font-size: 14.5px;
+    line-height: 1.55;
+    font-weight: 500;
+    color: var(--sayfa-soluk);
+  }
+
+  .bolum-basligi {
+    margin: 0 0 14px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--sayfa-soluk);
+  }
+
+  .aciklama-notu {
+    margin: 10px 0 0;
+    max-width: 60ch;
+    font-size: 13px;
+    line-height: 1.6;
+    font-weight: 500;
+    color: var(--sayfa-soluk);
+  }
+
+  /* ====================== Telefon çerçevesi ====================== */
+
+  .duzen {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    align-items: flex-start;
+  }
+
+  .telefon {
+    position: relative;
+    width: 360px;
+    height: 720px;
+    flex: none;
+    border-radius: 38px;
+    background: var(--background);
+    border: 9px solid #2A2724;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(40, 25, 15, 0.28);
+  }
+
+  /* Arkadaki ekran bilerek soluk: bakılan şey bildirim, altındaki sayfa değil. */
+  .arka-plan {
+    position: absolute;
+    inset: 0;
+    padding: 58px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    opacity: 0.55;
+  }
+
+  .durum-cubugu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 22px;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--foreground);
+    opacity: 0.5;
+  }
+
+  .sahte-kart {
+    background: var(--card);
+    border-radius: 18px;
+    box-shadow: var(--golge-kart);
+    padding: 14px 16px;
+  }
+
+  .sahte-kart .baslik {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .sahte-kart .buyuk {
+    margin-top: 6px;
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--primary-parlak);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sahte-cubuk {
+    height: 9px;
+    border-radius: 99px;
+    background: var(--muted);
+    overflow: hidden;
+    margin-top: 12px;
+  }
+
+  .sahte-cubuk i {
+    display: block;
+    height: 100%;
+    width: 62%;
+    border-radius: 99px;
+    background: var(--primary-parlak);
+  }
+
+  .sahte-satir {
+    height: 11px;
+    border-radius: 99px;
+    background: var(--muted);
+  }
+  .sahte-satir.kisa { width: 55%; }
+  .sahte-satir.orta { width: 78%; }
+
+  /* ====================== Bildirimin kendisi ====================== */
+
+  .bildirim-yuvasi {
+    position: absolute;
+    top: 44px;
+    left: 0;
+    right: 0;
+    padding: 8px 12px 0;
+    pointer-events: none;
+  }
+
+  /*
+    Kenarlar oval: yarıçap kutunun kendi yüksekliğinin yarısına yakın ama tam
+    hap değil -- üç satır yazı taşıyan bir hap, yazıyı kenarlardan kırpar.
+    26 piksel, madalyonun yuvarlağıyla aynı dili konuşacak kadar yuvarlak.
+  */
+  .bildirim {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 12px 18px 12px 12px;
+    border-radius: 26px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: var(--golge-bildirim);
+    transform: translateY(-190%);
+  }
+
+  /* ---- Soldaki madalyon ---- */
+
+  .madalyon {
+    position: relative;
+    flex: none;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--kilit-zemin);
+    border: 2px solid var(--kilit-kenar);
+  }
+
+  /* Rozetin kendi simgesi — kilit açılana kadar yok. */
+  .madalyon .ikon {
+    font-size: 25px;
+    line-height: 1;
+    opacity: 0;
+    transform: scale(0.4);
+  }
+
+  /*
+    Kilit madalyonun *üstünde* duruyor, içinde değil: simgenin yerini alan bir
+    kilit, açıldığında simgenin oradan çıktığını göstermez.
+  */
+  .kilit {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    color: var(--kilit-yazi);
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* Halka gövdeden ayrı: açılırken yalnızca o kalkıyor. */
+  .kilit .halka { transform-origin: 16px 10px; }
+
+  /*
+    Hâle: dışa açılan bir halka. Yerinde duran bir parlaklık ışık değil leke
+    gibi görünüyor -- göz parlaklığı değil yayılmayı ışık sanıyor.
+  */
+  .hale {
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    border: 2px solid var(--kademe-kenar);
+    opacity: 0;
+  }
+
+  /* ---- Sağdaki yazı ---- */
+
+  .yazi { min-width: 0; }
+
+  .yazi .etiket {
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .yazi .ad {
+    margin-top: 1px;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+    color: var(--foreground);
+  }
+
+  .yazi .aciklama {
+    margin-top: 2px;
+    font-size: 12px;
+    line-height: 1.35;
+    font-weight: 600;
+    color: var(--muted-foreground);
+  }
+
+  /* ====================== Kademe renkleri ======================
+     `components/rozet-renk.ts` ile aynı dört aile. Renkler madenin gerçek
+     rengini değil birbirinden ayrılmayı kovalıyor.
+     ============================================================ */
+
+  .k-bronz  { --kademe-zemin: var(--ikincil-soft); --kademe-kenar: var(--ikincil); }
+  .k-gumus  { --kademe-zemin: var(--primary-soft); --kademe-kenar: var(--primary); }
+  .k-altin  { --kademe-zemin: var(--warning-soft); --kademe-kenar: var(--warning); }
+  .k-efsane { --kademe-zemin: var(--edb);          --kademe-kenar: var(--edb-ok); }
+
+  /* ====================== Zaman çizgisi ======================
+     Tek bir akış: iniş → kilit sarsıntısı → açılış → renk + simge → bekleme →
+     çekilme. Süreler birbirine bağlı; birini kaydırmak kilidi rengin önüne ya
+     da arkasına atar.
+     ========================================================== */
+
+  .oynuyor .bildirim {
+    animation:
+      bildirim-in 520ms cubic-bezier(0.18, 0.92, 0.3, 1.02) both,
+      bildirim-cik 420ms cubic-bezier(0.5, 0, 0.75, 0) 4400ms both;
+  }
+
+  .oynuyor .kilit {
+    animation:
+      kilit-sarsinti 460ms ease-in-out 760ms both,
+      kilit-sonu 420ms cubic-bezier(0.3, 0, 0.2, 1) 1240ms both;
+  }
+
+  .oynuyor .kilit .halka {
+    animation: halka-kalk 420ms cubic-bezier(0.3, 0, 0.2, 1) 1240ms both;
+  }
+
+  .oynuyor .madalyon {
+    animation: madalyon-renk 460ms ease-out 1320ms both;
+  }
+
+  .oynuyor .madalyon .ikon {
+    animation: ikon-gel 520ms cubic-bezier(0.2, 1.5, 0.4, 1) 1420ms both;
+  }
+
+  .oynuyor .hale {
+    animation: hale-yayil 900ms cubic-bezier(0.1, 0.8, 0.3, 1) 1420ms both;
+  }
+
+  @keyframes bildirim-in {
+    from { transform: translateY(-190%); opacity: 0; }
+    to   { transform: translateY(0);     opacity: 1; }
+  }
+
+  @keyframes bildirim-cik {
+    from { transform: translateY(0);     opacity: 1; }
+    to   { transform: translateY(-190%); opacity: 0; }
+  }
+
+  /* Sarsıntı kilidin "denendi ama açılmadı" ânı; açılış ondan sonra geliyor. */
+  @keyframes kilit-sarsinti {
+    0%, 100% { transform: rotate(0deg); }
+    20%      { transform: rotate(-9deg); }
+    45%      { transform: rotate(8deg); }
+    70%      { transform: rotate(-5deg); }
+    88%      { transform: rotate(3deg); }
+  }
+
+  @keyframes halka-kalk {
+    from { transform: translateY(0)     rotate(0deg); }
+    to   { transform: translateY(-4px)  rotate(34deg); }
+  }
+
+  @keyframes kilit-sonu {
+    from { opacity: 1; transform: scale(1)    translateY(0); }
+    to   { opacity: 0; transform: scale(1.35) translateY(-3px); }
+  }
+
+  @keyframes madalyon-renk {
+    from {
+      background: var(--kilit-zemin);
+      border-color: var(--kilit-kenar);
+    }
+    to {
+      background: var(--kademe-zemin);
+      border-color: var(--kademe-kenar);
+    }
+  }
+
+  @keyframes ikon-gel {
+    from { opacity: 0; transform: scale(0.4); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes hale-yayil {
+    0%   { opacity: 0.85; transform: scale(1); }
+    100% { opacity: 0;    transform: scale(1.75); }
+  }
+
+  /* ====================== Durum örnekleri (durağan) ====================== */
+
+  .ornekler {
+    flex: 1 1 380px;
+    min-width: 320px;
+  }
+
+  .ornek-kutu {
+    background: var(--background);
+    border-radius: 22px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border: 1px solid var(--sayfa-cizgi);
+  }
+
+  /* Durağan örneklerde bildirim yerinde duruyor: burada anlatılan hareket
+     değil, bittiğinde ne göründüğü. */
+  .ornek-kutu .bildirim { transform: none; }
+
+  .ornek-kutu .durum-adi {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--sayfa-soluk);
+    margin-bottom: -4px;
+  }
+
+  /* Kilitli örnek: renk yok, simge yok, kilit duruyor. */
+  .kilitli .ikon { opacity: 0; }
+  .kilitli .kilit { opacity: 1; }
+
+  /* Açılmış örnek: kilit gitti, kademe rengi ve simge yerinde. */
+  .acik .madalyon {
+    background: var(--kademe-zemin);
+    border-color: var(--kademe-kenar);
+  }
+  .acik .ikon { opacity: 1; transform: scale(1); }
+  .acik .kilit { display: none; }
+
+  /* ====================== Denetimler ====================== */
+
+  .denetim {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-top: 18px;
+  }
+
+  .dugme {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 9px 16px;
+    border-radius: 99px;
+    border: 1px solid var(--sayfa-cizgi);
+    background: var(--sayfa-kart);
+    color: var(--sayfa-metin);
+    cursor: pointer;
+    transition: transform 120ms ease, border-color 120ms ease;
+  }
+
+  .dugme:hover { border-color: var(--primary-parlak); }
+  .dugme:active { transform: scale(0.97); }
+  .dugme[aria-pressed="true"] {
+    background: var(--primary-parlak);
+    border-color: var(--primary-parlak);
+    color: #fff;
+  }
+
+  /*
+    Hareket bilgi taşımıyor -- hangi rozetin açıldığı yazıda ve renkte duruyor.
+    Tercih açıkken bildirim son hâliyle beliriyor.
+  */
+  @media (prefers-reduced-motion: reduce) {
+    .oynuyor .bildirim,
+    .oynuyor .kilit,
+    .oynuyor .kilit .halka,
+    .oynuyor .madalyon,
+    .oynuyor .madalyon .ikon,
+    .oynuyor .hale {
+      animation: none;
+    }
+    .oynuyor .bildirim { transform: none; }
+    .oynuyor .kilit { display: none; }
+    .oynuyor .madalyon {
+      background: var(--kademe-zemin);
+      border-color: var(--kademe-kenar);
+    }
+    .oynuyor .madalyon .ikon { opacity: 1; transform: scale(1); }
+  }
+</style>
+
+<div class="sayfa">
+  <header class="ust">
+    <h1>Başarım bildirimi</h1>
+    <p>
+      Kutlama penceresinin yerine geçen öneri: ekranın ortasını kapatan bir pencere yerine
+      yukarıdan inen, kenarları oval bir bildirim. Madalyon <strong>kilitli</strong> iniyor —
+      gri zemin, üstünde kilit. Kilit sarsılıp açılıyor, altından kademe rengi ve rozetin
+      simgesi çıkıyor. Bildirim üç saniye durup kendiliğinden çekiliyor; kullanıcı hiçbir şey
+      kapatmıyor.
+    </p>
+  </header>
+
+  <section>
+    <p class="bolum-basligi">Hareket</p>
+    <div class="duzen">
+
+      <div class="telefon" id="telefon">
+        <div class="durum-cubugu"><span>20.14</span><span>▮▮▮</span></div>
+
+        <div class="arka-plan">
+          <div class="sahte-kart">
+            <div class="baslik">Bugün</div>
+            <div class="buyuk">218</div>
+            <div class="sahte-cubuk"><i></i></div>
+          </div>
+          <div class="sahte-kart">
+            <div class="sahte-satir orta"></div>
+            <div style="height:10px"></div>
+            <div class="sahte-satir kisa"></div>
+          </div>
+          <div class="sahte-kart">
+            <div class="sahte-satir kisa"></div>
+            <div style="height:10px"></div>
+            <div class="sahte-satir orta"></div>
+          </div>
+        </div>
+
+        <div class="bildirim-yuvasi">
+          <div class="bildirim k-altin" id="bildirim">
+            <div class="madalyon">
+              <span class="hale"></span>
+              <span class="ikon" id="ikon">🔥</span>
+              <svg class="kilit" viewBox="0 0 24 24" aria-hidden="true">
+                <path class="halka" d="M8.5 10.5V7.2a3.5 3.5 0 0 1 7 0v3.3" />
+                <rect class="govde" x="5" y="10.5" width="14" height="9.5" rx="3" />
+              </svg>
+            </div>
+            <div class="yazi">
+              <div class="etiket">Yeni başarım</div>
+              <div class="ad" id="ad">Bir ay kesintisiz</div>
+              <div class="aciklama" id="aciklama">Otuz gün boyunca hedefini hiç kaçırmadın</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ornekler">
+        <p class="bolum-basligi">Kademeler</p>
+        <div class="ornek-kutu">
+          <div class="durum-adi">Kilitli — iniş ânı</div>
+          <div class="bildirim kilitli k-gumus">
+            <div class="madalyon">
+              <span class="ikon">🌱</span>
+              <svg class="kilit" viewBox="0 0 24 24" aria-hidden="true">
+                <path class="halka" d="M8.5 10.5V7.2a3.5 3.5 0 0 1 7 0v3.3" />
+                <rect x="5" y="10.5" width="14" height="9.5" rx="3" />
+              </svg>
+            </div>
+            <div class="yazi">
+              <div class="etiket">Yeni başarım</div>
+              <div class="ad">Üç gün üst üste</div>
+              <div class="aciklama">Günlük hedefini üç gün arka arkaya tutturdun</div>
+            </div>
+          </div>
+
+          <div class="durum-adi">Açıldı — bronz</div>
+          <div class="bildirim acik k-bronz">
+            <div class="madalyon"><span class="ikon">🌱</span></div>
+            <div class="yazi">
+              <div class="etiket">Yeni başarım</div>
+              <div class="ad">Üç gün üst üste</div>
+              <div class="aciklama">Günlük hedefini üç gün arka arkaya tutturdun</div>
+            </div>
+          </div>
+
+          <div class="durum-adi">Açıldı — gümüş</div>
+          <div class="bildirim acik k-gumus">
+            <div class="madalyon"><span class="ikon">📅</span></div>
+            <div class="yazi">
+              <div class="etiket">Yeni başarım</div>
+              <div class="ad">Tam bir hafta</div>
+              <div class="aciklama">Yedi gün boyunca hedefini hiç kaçırmadın</div>
+            </div>
+          </div>
+
+          <div class="durum-adi">Açıldı — altın</div>
+          <div class="bildirim acik k-altin">
+            <div class="madalyon"><span class="ikon">🔥</span></div>
+            <div class="yazi">
+              <div class="etiket">Yeni başarım</div>
+              <div class="ad">Bir ay kesintisiz</div>
+              <div class="aciklama">Otuz gün boyunca hedefini hiç kaçırmadın</div>
+            </div>
+          </div>
+
+          <div class="durum-adi">Açıldı — efsane</div>
+          <div class="bildirim acik k-efsane">
+            <div class="madalyon"><span class="ikon">👑</span></div>
+            <div class="yazi">
+              <div class="etiket">Yeni başarım</div>
+              <div class="ad">Deneme ustası</div>
+              <div class="aciklama">200 deneme çözdün</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="aciklama-notu">
+          Dört kademe <code>components/rozet-renk.ts</code> ile aynı aileleri kullanıyor —
+          mercan, kavrulmuş amber, altın, mor. Kilitli hâlde hiçbiri görünmüyor: renk ödülün
+          kendisi, açılmadan önce verilmiyor.
+        </p>
+
+        <div class="denetim">
+          <button class="dugme" id="oynat" type="button">Yeniden oynat</button>
+          <button class="dugme" type="button" data-kademe="k-bronz"  data-ikon="🌱" data-ad="Üç gün üst üste"    data-aciklama="Günlük hedefini üç gün arka arkaya tutturdun">Bronz</button>
+          <button class="dugme" type="button" data-kademe="k-gumus"  data-ikon="📅" data-ad="Tam bir hafta"      data-aciklama="Yedi gün boyunca hedefini hiç kaçırmadın">Gümüş</button>
+          <button class="dugme" type="button" data-kademe="k-altin"  data-ikon="🔥" data-ad="Bir ay kesintisiz"  data-aciklama="Otuz gün boyunca hedefini hiç kaçırmadın" aria-pressed="true">Altın</button>
+          <button class="dugme" type="button" data-kademe="k-efsane" data-ikon="👑" data-ad="Deneme ustası"      data-aciklama="200 deneme çözdün">Efsane</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <p class="bolum-basligi">Kararlar</p>
+    <p class="aciklama-notu">
+      <strong>Neden bildirim, neden pencere değil.</strong> Kutlama penceresi ekranı kapatıyor
+      ve kapatılmayı bekliyor; başarım çoğu zaman bir turun ya da bir günün ortasında geliyor
+      ve orada durmak istemeyen kullanıcıyı durduruyor. Bildirim aynı haberi veriyor ama akışı
+      kesmiyor.
+    </p>
+    <p class="aciklama-notu">
+      <strong>Neden kilit.</strong> Bildirim üç saniye duruyor ve o üç saniyeyi dolduracak bir
+      şey gerekiyor. Kilidin açılması ödülü <em>anlatmak</em> yerine <em>gösteriyor</em>:
+      madalyon kilitli iniyor, kilit sarsılıp kalkıyor, renk ve simge altından çıkıyor.
+    </p>
+    <p class="aciklama-notu">
+      <strong>Neden hâle büyüyor.</strong> Yerinde duran bir parlaklık ışık gibi değil leke
+      gibi görünüyor; göz parlaklığı değil yayılmayı ışık sanıyor. Halka dışa açılıp sönüyor.
+    </p>
+    <p class="aciklama-notu">
+      <strong>Aynı anda iki başarım gelirse</strong> ikisi alt alta değil sırayla gösterilmeli —
+      üst üste inen iki bildirim ikisini de okunmaz yapar. Uygulamaya taşınırken kuyruk gerekiyor.
+    </p>
+  </section>
+</div>
+
+<script>
+  const telefon = document.getElementById('telefon')
+  const bildirim = document.getElementById('bildirim')
+  const oynat = document.getElementById('oynat')
+
+  const KADEMELER = ['k-bronz', 'k-gumus', 'k-altin', 'k-efsane']
+
+  /*
+    Animasyonu baştan başlatmanın tek güvenilir yolu sınıfı söküp tarayıcıya
+    bir kare çizdirmek; `offsetWidth` okumadan yeniden eklemek hiçbir şey
+    yapmıyor, tarayıcı iki değişikliği tek karede birleştiriyor.
+  */
+  function calistir() {
+    telefon.classList.remove('oynuyor')
+    void telefon.offsetWidth
+    telefon.classList.add('oynuyor')
+  }
+
+  oynat.addEventListener('click', calistir)
+
+  for (const dugme of document.querySelectorAll('[data-kademe]')) {
+    dugme.addEventListener('click', () => {
+      for (const b of document.querySelectorAll('[data-kademe]')) {
+        b.setAttribute('aria-pressed', String(b === dugme))
+      }
+      bildirim.classList.remove(...KADEMELER)
+      bildirim.classList.add(dugme.dataset.kademe)
+      document.getElementById('ikon').textContent = dugme.dataset.ikon
+      document.getElementById('ad').textContent = dugme.dataset.ad
+      document.getElementById('aciklama').textContent = dugme.dataset.aciklama
+      calistir()
+    })
+  }
+
+  calistir()
+</script>

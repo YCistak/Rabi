@@ -73,12 +73,30 @@ import type {
   YanlisSoru,
 } from '@/lib/types'
 
+/** Alan seçilmemişken satırda ve çipte görünen ad. */
+const ALANSIZ_ADI = 'Karar vermedim'
+
 const PUAN_TURU_ADI: Record<PuanTuru, string> = {
   say: 'Sayısal',
   ea: 'Eşit Ağırlık',
   soz: 'Sözel',
   dil: 'Dil',
 }
+
+/**
+ * Çip olarak sunulan alanlar — **Dil yok**.
+ *
+ * Dil kurulumdan da buradan da çıktı: Dil öğrencisi azınlıkta ve dördüncü kart
+ * her iki listeyi de uzatıyordu. Ad tablosunda duruyor çünkü `PuanTuru` hâlâ
+ * dört değer taşıyor: katalogdaki DİL programları yerinde ve biri hedef olarak
+ * seçilirse `Hedef.puanTuru` 'dil' oluyor.
+ *
+ * Kayıtlı ayarı 'dil' olan eski kullanıcıya çip **gösteriliyor** (`turler`):
+ * gösterilmeseydi satırda "Dil" yazarken altındaki çiplerin hiçbiri seçili
+ * görünmez, kullanıcı ayarını bozuk sanırdı. Başka bir türe geçtiği anda çip
+ * listeden düşüyor ve geri dönüşü olmuyor — istenen de bu.
+ */
+const SECILEBILIR_TURLER: PuanTuru[] = ['say', 'ea', 'soz']
 
 /**
  * Seçenekleri açılıp kapanan ayarların kimlikleri. Serbest metin yerine birlik
@@ -402,13 +420,16 @@ export function AyarlarEkrani({
             renk="nane"
             baslik="Alanım"
             aciklama="Sıralama tahmini buna göre hesaplanır"
-            deger={PUAN_TURU_ADI[ayarlar.puanTuru]}
+            deger={ayarlar.puanTuru ? PUAN_TURU_ADI[ayarlar.puanTuru] : ALANSIZ_ADI}
             {...acilir('alan')}
           />
           {acikAyar === 'alan' && (
           <GenisAlan>
             <Cipler>
-              {(Object.keys(PUAN_TURU_ADI) as PuanTuru[]).map((tur) => (
+              {(ayarlar.puanTuru === 'dil'
+                ? [...SECILEBILIR_TURLER, 'dil' as PuanTuru]
+                : SECILEBILIR_TURLER
+              ).map((tur) => (
                 <Cip
                   key={tur}
                   secili={ayarlar.puanTuru === tur}
@@ -417,6 +438,16 @@ export function AyarlarEkrani({
                   {PUAN_TURU_ADI[tur]}
                 </Cip>
               ))}
+              {/* Kararsızlık da bir cevap ve geri dönülebilir olmalı: kurulumda
+                  "Karar vermedim" diyen öğrenci burada alanını seçiyor, alanını
+                  değiştiren de buraya dönebiliyor. Çip olmasaydı bir kez alan
+                  seçen bir daha kararsıza dönemezdi. */}
+              <Cip
+                secili={ayarlar.puanTuru === null}
+                onClick={() => setAyarlar((o) => ({ ...o, puanTuru: null }))}
+              >
+                {ALANSIZ_ADI}
+              </Cip>
             </Cipler>
           </GenisAlan>
           )}

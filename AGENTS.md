@@ -301,6 +301,53 @@ kimliği `rozetler`, depo anahtarı `rabi-rozetler` ve yedekteki `rozetler`
 alanı. Kimliği değiştirmek kazanılmış rozetleri kayıtta öksüz bırakırdı; ad
 yalnızca görünen yüzde değişti.
 
+## Başarım kutlaması pencere değil, bildirim
+
+Kutlama ekranın ortasına bir pencere açıyordu (`RozetKutlama`) ve kapatılmayı
+bekliyordu. Başarım çoğu zaman bir turun ya da bir günün ortasında geliyor;
+orada durmak istemeyen kullanıcıyı durduruyordu. Şimdi yukarıdan bir şerit
+iniyor (`components/rozet-bildirimi.tsx`), birkaç saniye durup kendiliğinden
+çekiliyor. Katman dokunuşu geçiriyor — altındaki sayfa kullanılabilir kalıyor;
+kesmeyen bir bildirimin tek şartı bu. Pencere bileşeni silindi.
+
+**Kilit açılışın kendisi.** Madalyon gri ve kilitli iniyor; kilit sarsılıp
+kalkıyor, altından kademe rengi ve rozetin simgesi çıkıyor. Bildirim üç saniye
+duruyor ve o üç saniyeyi dolduracak bir şey gerekiyordu — ödülü bir yazıyla
+duyurmak yerine olurken göstermek. Sarsıntı açılıştan **önce** geliyor:
+"denendi, açılmadı" ânı olmadan kalkan bir halka açılma gibi değil kaybolma
+gibi okunuyor. Tasarım kaynağı `tasarim/basarim-bildirim.html`.
+
+Süreler iki yerde birden yazılı ve **eşleşmeli**: `BILDIRIM_SURESI` (4820 ms)
+ile `globals.css`'teki gecikmeler. Küçültülürse şerit çıkış animasyonu bitmeden
+sökülür ve yerinde silinmiş gibi görünür; büyütülürse çekildikten sonra boş bir
+katman ekranda kalır.
+
+Kademe rengi **ayrı bir katman** (`rozet-yuz`) olarak açılıyor. Gri zeminden
+renkli zemine geçiş bir keyframe içine yazılsaydı renkler tema
+değişkenlerinden değil CSS'ten gelirdi ve `rozet-renk.ts` ile ikiye ayrılırdı.
+
+### Aynı anda gelen rozetlerin yalnızca en değerlisi bildiriliyor
+
+Bir eşik geçildiğinde altındakiler de birlikte geliyor: kurulumda 97 diploma
+notu yazan öğrenci `diploma-85` (bronz), `diploma-90` (altın) ve `diploma-95`
+(efsane) rozetlerinin üçünü birden kazanıyor. Üçünü de duyurmak aynı haberi üç
+kez vermek ve en değerlisini ötekilerin arasında kaybetmek — "Diploma 95+"
+aldığını bilen kullanıcıya "Diploma 85+" bir haber değil.
+
+`bildirilecekler` (`lib/rozetler.ts`) her **türden** yalnızca en değerlisini
+geçiriyor; kademe eşitse yüksek eşikli olan kazanıyor. Türler
+birleştirilmiyor: aynı anda gelen bir seri rozeti ile bir diploma rozeti ayrı
+iki başarı ve biri ötekinin alt basamağı değil.
+
+Eleme yalnızca **bildirimde**. `yeniRozetler` hepsini döndürmeye devam ediyor
+ve hepsi kayda giriyor — kazanılmış bir rozeti duyurmamak başka, vermemek
+başka; Başarımlar ekranında üçü de duruyor.
+
+Ekranda hep tek bildirim var. Kuyruğun sahibi `AppShell`, bileşen tek rozet
+çiziyor: üst üste inen iki şerit ikisini de okunmaz yapardı. Bileşene `key`
+olarak rozet kimliği veriliyor, yoksa React aynı düğümü yeniden kullanır ve
+ikinci bildirim animasyonsuz, yerinde beliriyormuş gibi görünür.
+
 ## Seviye, havuç ve mağaza kaldırıldı
 
 Uygulamada bir XP/seviye sistemi (`lib/seviye.ts`), havuç para birimi
@@ -632,6 +679,53 @@ Fakültesi)". Kılavuzun kendisi aynı adı iki kez listeliyorsa (Türk-Alman
 Üniversitesi'nde Hukuk'un 80 ve 16 kontenjanlı iki satırı) ana kontenjan olan,
 sırası daha iyi kayıt tutuluyor — ikisini de göstermek seçim ekranında aynı
 satırı iki kez çıkarırdı.
+
+### Liste öğrencinin alanına göre süzülüyor
+
+Sözel bir öğrenciye Bilgisayar Mühendisliği çıkıyordu. Giremeyeceği bir bölümü
+hedef olarak kaydeden öğrencide "hedefine ne kadar kaldı" cümlesi ölçtüğü şeyi
+kaybediyor. Artık liste `Ayarlar.puanTuru`ya göre süzülüyor
+(`bolumleriGetir(universite, alan)` ve `bolumAra(..., alan)`).
+
+Üç kural bu süzgecin etrafında duruyor:
+
+- **`bolumBul` süzgece takılmıyor.** Kayıtlı hedef alan dışındaysa — alan
+  sonradan değiştiyse ya da eski sürümde seçildiyse — bulunamaz olur ve ekran
+  onu silinmiş gibi gösterirdi. Üniversite değiştirilirken yapılan "bu bölüm
+  burada var mı" denetimi de süzgeçsiz listeye bakıyor.
+- **Süzgecin bir kapısı var.** Her iki ekranda da "Alanım dışındaki bölümleri
+  de göster" anahtarı duruyor: alan değiştirmeyi düşünen ya da alanını yanlış
+  işaretlemiş öğrenci aradığını hiç bulamaz ve listeyi bozuk sanardı. Anahtar
+  yalnızca alan seçiliyken görünüyor.
+- **Süzgeç öğrencinin alanından geliyor, seçilen bölümün türünden değil.**
+  Hedefim ekranında ikisi ayrı: `varsayilanTur` öğrencinin kendi alanı,
+  `puanTuru` state'i seçilen bölümün türü. İkincisine bakan bir süzgeç kendi
+  kuyruğunu kovalardı — seçilen bölüm süzgeci değiştirir, süzgeç de listeyi.
+
+### Alan seçilmemiş olabilir
+
+`Ayarlar.puanTuru` artık `PuanTuru | null`. `null` "karar vermedim" demek ve bir
+varsayılanla doldurulmuyor: kurulumda bir alan **seçilmiş gibi** kaydetmek,
+sıralama ekranında kullanıcının hiç söylemediği bir türe göre hesaplanmış bir
+sayı göstermek olurdu — o sayı tahmin değil uydurma olurdu. Kararsızken
+`guncelTahmin` `null` dönüyor, sıralama ekranı boş durum çiziyor ve hedef
+listesi süzülmüyor.
+
+**Dil hiçbir yerde sorulmuyor.** Ne kurulumdaki kart listesinde ne Ayarlar ›
+Alanım'daki çiplerde var (`SECILEBILIR_TURLER`): Dil öğrencisi azınlıkta ve
+dördüncü seçenek iki listeyi de uzatıyordu.
+
+`PuanTuru` yine de dört değer taşımaya devam ediyor ve `PUAN_TURU_ADI`
+tablosunda 'dil' duruyor. İki sebebi var:
+
+- **Katalogdaki DİL programları yerinde.** Biri hedef olarak seçilirse
+  `Hedef.puanTuru` 'dil' oluyor ve satırda adı yazılıyor. Alanı Dil olmayan
+  kullanıcıya bu programlar listede süzülü görünmüyor; ulaşma yolu "Alanım
+  dışındaki bölümleri de göster" anahtarı.
+- **Ayarı 'dil' kalmış eski kullanıcı var.** Ona çip gösteriliyor, yoksa satırda
+  "Dil" yazarken altındaki çiplerin hiçbiri seçili görünmez ve kullanıcı ayarını
+  bozuk sanardı. Başka bir türe geçtiği anda çip listeden düşüyor; geri dönüşü
+  yok, istenen de bu.
 
 ### Elle giriş kipi kalıyor
 

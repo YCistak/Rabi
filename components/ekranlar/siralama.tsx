@@ -46,15 +46,37 @@ export function SiralamaEkrani({
 
   const tahmin = useMemo(
     () =>
-      tahminUret({
-        tytDenemesi: denemeler.find((d) => d.id === tytId),
-        aytDenemesi: denemeler.find((d) => d.id === aytId),
-        sablonlar,
-        tur,
-        obp: obpSonucu?.obp ?? null,
-      }),
+      tur === null
+        ? null
+        : tahminUret({
+            tytDenemesi: denemeler.find((d) => d.id === tytId),
+            aytDenemesi: denemeler.find((d) => d.id === aytId),
+            sablonlar,
+            tur,
+            obp: obpSonucu?.obp ?? null,
+          }),
     [denemeler, tytId, aytId, sablonlar, tur, obpSonucu],
   )
+
+  /*
+    Alan seçilmemişse hesap yapılmıyor. Puan katsayıları da yerleştirme
+    dağılımı da türe bağlı; bir tür varsayıp sayı göstermek, kullanıcının hiç
+    söylemediği bir alana göre hesaplanmış bir sıralama göstermek olurdu.
+    Boş durum kullanıcıyı ayarlara yollamakla yetiniyor: buradan seçtirmek,
+    aynı ayarın iki ayrı yerde durması demekti.
+  */
+  if (tur === null) {
+    return (
+      <div>
+        <BaslikSatiri baslik="Sıralama Hesapla" />
+        <BosDurum
+          simge={<Rabi durum="uykulu" boyut={96} />}
+          baslik="Önce alanını seç"
+          aciklama="Sıralama tahmini alanına göre hesaplanıyor. Ayarlar › Alanım'dan seçtiğinde burası dolacak."
+        />
+      </div>
+    )
+  }
 
   if (denemeler.length === 0) {
     return (
@@ -173,6 +195,15 @@ export function SiralamaEkrani({
                 değil, banda bak.
               </span>
             </span>
+          </Not>
+
+          {/* ÖSYM adı burada kaynak olarak geçiyor, marka olarak değil; kaynağı
+              yazmamak sayıları Rabi üretmiş gibi gösterirdi. Bağlantısızlık
+              cümlesi bunun karşılığı ve adın geçtiği her ekranda duruyor --
+              Hedefim ekranında da aynısı var. */}
+          <Not className="mt-2">
+            Rabi ÖSYM ile bağlantılı değildir; sayılar ÖSYM'nin herkese açık
+            yayınlarından derlenmiştir.
           </Not>
         </>
       )}

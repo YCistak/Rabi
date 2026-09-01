@@ -137,9 +137,13 @@ export function guncelTahmin(
   denemeler: Deneme[],
   sablonlar: Sablon[],
   okulYillari: OkulYili[],
-  tur: PuanTuru,
+  tur: PuanTuru | null,
   elleObp: number | null = null,
 ): Tahmin | null {
+  // Alan seçilmemişse sıralama hesaplanamaz: puan türü katsayıları da,
+  // yerleştirme dağılımı da türe bağlı. Bir tür varsayıp hesaplamak ana
+  // sayfada kullanıcının hiç söylemediği bir sıralama gösterirdi.
+  if (tur === null) return null
   return tahminUret({
     tytDenemesi: enYeni(tytAdaylari(denemeler, sablonlar)),
     aytDenemesi: enYeni(aytAdaylari(denemeler, sablonlar)),

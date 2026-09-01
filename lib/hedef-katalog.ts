@@ -27,6 +27,7 @@
  */
 
 import { SON_VERI_YILI } from './puan'
+import type { PuanTuru } from './types'
 import { siralamadanPuan } from './siralama'
 import {
   UNIVERSITELER,
@@ -70,9 +71,21 @@ export function tahminEt(_universite: Universite, bolum: Bolum): Tahmin {
  * açılıyor mu) çünkü liste bütün bölümlerin çarpımından türetiliyordu. Katalog
  * artık gerçek programları taşıyor: bir üniversitede listelenen her bölüm o
  * üniversitede gerçekten açık.
+ *
+ * `alan` verilirse liste öğrencinin **girebileceği** programlara iniyor: sözel
+ * öğrenciye Bilgisayar Mühendisliği göstermek, giremeyeceği bir bölümü hedef
+ * olarak kaydettirmek demek ve "hedefine ne kadar kaldı" cümlesi orada ölçtüğü
+ * şeyi kaybediyor. Süzgeç isteğe bağlı çünkü alan seçmemiş kullanıcı da var
+ * (`Ayarlar.puanTuru` `null` olabiliyor) ve alan dışını görmek isteyen de --
+ * ekranlar süzgeci kapatan bir anahtar sunuyor.
+ *
+ * `bolumBul` bu süzgeci **kullanmıyor**: kayıtlı bir hedef alan dışındaysa
+ * (alan sonradan değiştiyse ya da eski sürümde seçildiyse) bulunamaz olur ve
+ * ekran onu silinmiş gibi gösterirdi.
  */
-export function bolumleriGetir(universite: Universite): Bolum[] {
-  return universiteninBolumleri(universite)
+export function bolumleriGetir(universite: Universite, alan: PuanTuru | null = null): Bolum[] {
+  const hepsi = universiteninBolumleri(universite)
+  return alan === null ? hepsi : hepsi.filter((b) => b.puanTuru === alan)
 }
 
 /**
@@ -113,9 +126,13 @@ export function universiteAra(sorgu: string): Universite[] {
   ).slice(0, EN_COK_SONUC)
 }
 
-/** Bölüm araması — yalnızca o üniversitenin açtıkları arasında. */
-export function bolumAra(universite: Universite, sorgu: string): Bolum[] {
-  return sirala(bolumleriGetir(universite), sorgu, (b) => b.ad)
+/** Bölüm araması — yalnızca o üniversitenin açtıkları, istenirse alana göre süzülü. */
+export function bolumAra(
+  universite: Universite,
+  sorgu: string,
+  alan: PuanTuru | null = null,
+): Bolum[] {
+  return sirala(bolumleriGetir(universite, alan), sorgu, (b) => b.ad)
 }
 
 /**
