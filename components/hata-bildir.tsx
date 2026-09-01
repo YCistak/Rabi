@@ -55,7 +55,14 @@ const GONDERILENLER = [
   'ada bağlı olmayan bir cihaz numarası',
 ]
 
-/** İlk bildirimde bir kez çıkan izin kartı. */
+/**
+ * İlk bildirimde bir kez çıkan izin kartı.
+ *
+ * Kartta onayın **kapsamı** da yazılı: düğme yalnızca o bildirimi değil
+ * sonrakileri de gönderiyor. Play'in kullanıcı verisi politikası onayın "açık
+ * ve tereddütsüz" olmasını istiyor ve üstünde "Gönder" yazan bir düğme tek
+ * seferlik sanılabilirdi.
+ */
 function IzinKarti({ kol }: { kol: BildirimKolu }) {
   return (
     <div className="mt-2 rounded-xl bg-foreground/[0.05] p-3">
@@ -70,7 +77,8 @@ function IzinKarti({ kol }: { kol: BildirimKolu }) {
       </ul>
       <p className="mt-1.5 text-[11.5px] font-medium leading-snug text-muted-foreground">
         Adın, netlerin, notların ve fotoğrafların <b>gönderilmez</b>; onlar telefonunda kalır.
-        Kararını Ayarlar&nbsp;&rsaquo;&nbsp;Veri'den değiştirebilirsin.
+        &ldquo;Gönder&rdquo; dersen <b>bundan sonraki bildirimlerin de</b> aynı şekilde
+        gönderilir. Kararını Ayarlar&nbsp;&rsaquo;&nbsp;Veri'den değiştirebilirsin.
       </p>
       <div className="mt-2.5 flex gap-2">
         <button

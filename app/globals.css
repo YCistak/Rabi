@@ -1062,3 +1062,114 @@
     animation: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Başarım bildirimi
+
+   Kutlama penceresinin yerine geçti: şerit yukarıdan iniyor, kilidi açılıyor,
+   birkaç saniye durup kendiliğinden çekiliyor (`components/rozet-bildirimi.tsx`).
+
+   Bütün parçalar **tek** bir zaman çizgisini paylaşıyor ve süreleri bileşendeki
+   `BILDIRIM_SURESI` ile eşleşmek zorunda: iniş 0–520 ms, kilit 760 ms'de
+   sarsılıp 1240'ta açılıyor, renk 1320'de geliyor, simge 1420'de çıkıyor,
+   çıkış 4400'de başlıyor ve 420 ms sürüyor — toplam 4820. Biri kayarsa ya
+   kilit renkten sonra açılır ya şerit çıkışını bitirmeden sökülür.
+
+   Kilidin **sarsılması** açılıştan önce geliyor ve kasıtlı: "denendi, açılmadı"
+   ânı olmadan kalkan bir halka açılma gibi değil, kaybolma gibi okunuyordu.
+
+   Hâle dışa **açılıyor**. Yerinde duran bir parlaklık ışık gibi değil leke gibi
+   görünüyor; göz parlaklığı değil yayılmayı ışık sanıyor (boss parlamasındaki
+   kuralın aynısı).
+   --------------------------------------------------------------------------- */
+@keyframes rozetBildirimIn {
+  from { transform: translateY(-190%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes rozetBildirimCik {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-190%); opacity: 0; }
+}
+
+@keyframes rozetKilitSarsinti {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-9deg); }
+  45% { transform: rotate(8deg); }
+  70% { transform: rotate(-5deg); }
+  88% { transform: rotate(3deg); }
+}
+
+@keyframes rozetHalkaKalk {
+  from { transform: translateY(0) rotate(0deg); }
+  to { transform: translateY(-4px) rotate(34deg); }
+}
+
+@keyframes rozetKilitSonu {
+  from { opacity: 1; transform: scale(1) translateY(0); }
+  to { opacity: 0; transform: scale(1.35) translateY(-3px); }
+}
+
+@keyframes rozetYuzGel {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes rozetIkonGel {
+  from { opacity: 0; transform: scale(0.4); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes rozetHale {
+  0% { opacity: 0.85; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.75); }
+}
+
+.rozet-bildirimi {
+  animation:
+    rozetBildirimIn 520ms cubic-bezier(0.18, 0.92, 0.3, 1.02) both,
+    rozetBildirimCik 420ms cubic-bezier(0.5, 0, 0.75, 0) 4400ms both;
+}
+
+/* Halkanın dönme merkezi sağ bacağı: soldaki uç kalkıp açılıyormuş gibi dursun. */
+.rozet-halka {
+  transform-origin: 16px 10px;
+  animation: rozetHalkaKalk 420ms cubic-bezier(0.3, 0, 0.2, 1) 1240ms both;
+}
+
+.rozet-kilit {
+  animation:
+    rozetKilitSarsinti 460ms ease-in-out 760ms both,
+    rozetKilitSonu 420ms cubic-bezier(0.3, 0, 0.2, 1) 1240ms both;
+}
+
+.rozet-yuz {
+  animation: rozetYuzGel 460ms ease-out 1320ms both;
+}
+
+.rozet-ikon {
+  animation: rozetIkonGel 520ms cubic-bezier(0.2, 1.5, 0.4, 1) 1420ms both;
+}
+
+.rozet-hale {
+  animation: rozetHale 900ms cubic-bezier(0.1, 0.8, 0.3, 1) 1420ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /*
+    Bildirim yine geliyor ama son hâliyle: hangi başarımın açıldığı yazıda ve
+    renkte duruyor, hareket bilgi taşımıyor. Kilit hiç çizilmiyor — açılışı
+    susturulmuş bir kilit, kilitli kalmış gibi görünürdü.
+  */
+  .rozet-bildirimi,
+  .rozet-halka,
+  .rozet-yuz,
+  .rozet-ikon {
+    animation: none;
+  }
+
+  .rozet-kilit,
+  .rozet-hale {
+    display: none;
+  }
+}
