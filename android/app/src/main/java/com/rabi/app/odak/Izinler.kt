@@ -1,7 +1,7 @@
 package com.rabi.app.odak
 
 import android.app.AppOpsManager
-import android.content.ComponentName
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -41,24 +41,16 @@ object Izinler {
     fun katmanVar(baglam: Context): Boolean = Settings.canDrawOverlays(baglam)
 
     /**
-     * Bildirim erişimi — kilitli uygulamaların bildirimlerini silmek için.
+     * Rahatsız Etme erişimi — tur boyunca telefonu susturmak için.
      *
      * Ötekilerden farkı **isteğe bağlı** olması: verilmezse kilit çalışmaya
-     * devam ediyor, yalnızca bildirimler susmuyor. `hepsiVar` bu yüzden bunu
+     * devam ediyor, yalnızca telefon susmuyor. `hepsiVar` bu yüzden bunu
      * saymıyor.
-     *
-     * Verilen izinler `Settings.Secure`'da tek bir metinde iki nokta üst üste
-     * ile ayrılmış duruyor; bileşen adı `paket/sınıf` biçiminde. Paket adını
-     * aramak yetiyor: aynı pakette ikinci bir dinleyici yok.
      */
-    fun bildirimErisimiVar(baglam: Context): Boolean = try {
-        val izinli = Settings.Secure.getString(
-            baglam.contentResolver,
-            "enabled_notification_listeners",
-        )
-        izinli != null && izinli.split(':').any {
-            ComponentName.unflattenFromString(it)?.packageName == baglam.packageName
-        }
+    fun rahatsizEtmeVar(baglam: Context): Boolean = try {
+        val yonetici =
+            baglam.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+        yonetici?.isNotificationPolicyAccessGranted == true
     } catch (hata: Exception) {
         false
     }
@@ -69,14 +61,14 @@ object Izinler {
         ekraniAc(baglam, Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
 
     /**
-     * Bildirim erişimi ekranı.
+     * Rahatsız Etme erişimi ekranı.
      *
      * Doğrudan Rabi'nin satırına götüren bir niyet yok; liste ekranı açılıyor
      * ve kullanıcı uygulamayı kendisi buluyor. Arayüz bu yüzden ne arayacağını
      * yazıyor.
      */
-    fun bildirimErisimiEkraniniAc(baglam: Context): Boolean =
-        ekraniAc(baglam, Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+    fun rahatsizEtmeEkraniniAc(baglam: Context): Boolean =
+        ekraniAc(baglam, Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
 
     fun katmanEkraniniAc(baglam: Context): Boolean =
         ekraniAc(

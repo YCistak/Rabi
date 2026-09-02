@@ -4,6 +4,7 @@
 
 import type { BankaKaydi } from './oyunlar/banka'
 import type { NotKagidi } from './yapilacaklar'
+import type { BilinmeyenKart, KonuIlerlemeleri } from './konu/ilerleme'
 
 // ---------------------------------------------------------------------------
 // Deneme
@@ -185,6 +186,16 @@ export type PomodoroAyar = {
   ekraniAcikTut: boolean
   /** Çalışma turunda seçili uygulamalar engellensin mi. */
   odakKilidi: boolean
+  /**
+   * Çalışma turunda telefon Rahatsız Etme'ye alınsın mı.
+   *
+   * Kilitten **ayrı** bir anahtar: ikisi farklı şeyler engelliyor ve aynı anda
+   * istenmiyorlar. "Uygulamalar engellensin ama telefon çalabilsin" (nöbetteki
+   * öğrenci) ile "telefon sussun ama uygulamalara karışma" (kilit izinlerini
+   * vermeyen kullanıcı) ayrı ayrı geçerli tercihler; tek anahtara bağlanınca
+   * ikisi de kurulamıyordu.
+   */
+  rahatsizEtme: boolean
   /** Engellenecek uygulamaların paket adları. */
   kilitliUygulamalar: string[]
   /** Odak kilidi tanıtımı bir kez gösterilir; kullanıcı geçtiyse bir daha sorulmaz. */
@@ -216,6 +227,8 @@ export type OyunId =
   | 'aci'
   | 'ucgen'
   | 'harita'
+  | 'iklim'
+  | 'izohips'
   | 'antlasma'
   | 'kavram'
   | 'anlatim'
@@ -225,6 +238,8 @@ export type OyunId =
   | 'hucre'
   | 'sirala'
   | 'tuzak'
+  | 'periyodik'
+  | 'formul'
 
 /**
  * Bir mini oyunun kalıcı istatistiği.
@@ -405,6 +420,15 @@ export type Yedek = {
    * Oyun modu burada **yok**: o veri değil, bu cihazdaki tercih.
    */
   notlar?: NotKagidi[]
+  /**
+   * Konu Anlatımı: hangi konuların destesi bitirildi ve "bilmiyorum" denen
+   * kartlar. Eski yedeklerde yok — geri yüklemede yazılmıyor, kullanıcının
+   * mevcut kaydına dokunulmuyor.
+   *
+   * Seçili ders/sınıf burada **yok**: o veri değil, bu cihazdaki tercih.
+   */
+  konuIlerleme?: KonuIlerlemeleri
+  bilinmeyenKartlar?: BilinmeyenKart[]
   pomodoroGecmis: PomodoroSeans[]
   /**
    * Pomodoro ayarı. Eski yedeklerde yok — o zaman geri yüklemede yazılmıyor,

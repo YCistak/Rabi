@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  "Rabi'ye dön" düğmesi — dolgu tonunda hap.
+
+  Basılınca koyulaşıyor: katmanın üstünde dokunmanın karşılık verdiğini
+  gösteren tek işaret bu, ekranda başka hiçbir şey oynamıyor.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:state_pressed="true">
+    <shape android:shape="rectangle">
+      <solid android:color="#C4552A" />
+      <corners android:radius="999dp" />
+    </shape>
+  </item>
+  <item>
+    <shape android:shape="rectangle">
+      <solid android:color="@color/marka_amber" />
+      <corners android:radius="999dp" />
+    </shape>
+  </item>
+</selector>

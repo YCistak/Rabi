@@ -3,8 +3,13 @@
   Engel katmanının düzeni.
 
   Zemin donuk (@color/odak_zemin): arkadaki uygulama görünmemeli, yoksa
-  engel işe yaramaz. Renkler uygulamanınkiyle aynı değişkenlerden geliyor,
-  values-night karşılıkları sayesinde koyu temada da doğru çıkıyor.
+  engel işe yaramaz. Renkler uygulamanınkiyle aynı değişkenlerden geliyor;
+  katman uygulamanın devamı gibi görünmeli.
+
+  Sıralama kasıtlı: önce nerede olunduğu (çip), sonra kim söylüyor (maskot),
+  sonra ne olduğu (başlık + açıklama), sonra ne kadar kaldığı (sayı + çubuk),
+  en sonda çıkış yolları. Kalan süre ekranın ortasında ve en büyük öge —
+  kullanıcının buraya bakma sebebi o.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -17,54 +22,108 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="32dp">
+        android:paddingHorizontal="28dp"
+        android:paddingVertical="32dp">
+
+        <!-- Çipin yazısı çalışılan derse göre değişiyor; ders bilinmiyorsa
+             "DERS MODU AÇIK" kalıyor (EngelKatmani.kt). -->
+        <TextView
+            android:id="@+id/odak_ders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/odak_cip"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="6dp"
+            android:text="DERS MODU AÇIK"
+            android:textColor="@color/odak_soluk"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08" />
+
+        <!-- Maskot ışığın **içinde**: ikisi ayrı satır olsaydı ışık maskotun
+             altında bir leke gibi dururdu. -->
+        <FrameLayout
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="18dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/odak_hale" />
+
+            <ImageView
+                android:layout_width="112dp"
+                android:layout_height="112dp"
+                android:layout_gravity="center"
+                android:contentDescription="Rabi"
+                android:src="@drawable/tavsan_yuz" />
+        </FrameLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🐰"
-            android:textSize="64sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="14dp"
             android:text="Odaktasın."
             android:textColor="@color/odak_metin"
             android:textSize="26sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/odak_sure"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:textColor="@color/marka_amber"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/odak_ders"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="Bu uygulama ders bitene kadar kilitli."
             android:textColor="@color/odak_soluk"
             android:textSize="15sp" />
 
-        <Button
-            android:id="@+id/odak_don"
+        <TextView
+            android:id="@+id/odak_sure"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            android:backgroundTint="@color/marka_amber"
-            android:paddingHorizontal="28dp"
+            android:layout_marginTop="22dp"
+            android:textColor="@color/marka_amber"
+            android:textSize="44sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.04" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="kaldı"
+            android:textColor="@color/odak_soluk"
+            android:textSize="13sp" />
+
+        <ProgressBar
+            android:id="@+id/odak_cubuk"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:layout_marginTop="18dp"
+            android:max="1000"
+            android:progressDrawable="@drawable/odak_cubuk" />
+
+        <!-- Düğme tam genişlikte ve hap biçiminde: ekrandaki asıl eylem bu,
+             ötekiler (kilidi kapat) bilerek yazı olarak duruyor. -->
+        <Button
+            android:id="@+id/odak_don"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/odak_dugme"
+            android:stateListAnimator="@null"
             android:text="Rabi'ye dön"
-            android:textColor="#FFFFFF" />
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/odak_kapat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="6dp"
             android:padding="12dp"
             android:text="kilidi kapat"
             android:textColor="@color/odak_soluk"
@@ -79,7 +138,8 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="32dp"
+        android:paddingHorizontal="28dp"
+        android:paddingVertical="32dp"
         android:visibility="gone">
 
         <TextView
@@ -92,19 +152,22 @@
 
         <Button
             android:id="@+id/odak_vazgec"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
             android:layout_marginTop="24dp"
-            android:backgroundTint="@color/marka_amber"
-            android:paddingHorizontal="28dp"
+            android:background="@drawable/odak_dugme"
+            android:stateListAnimator="@null"
             android:text="Çalışmaya devam"
-            android:textColor="#FFFFFF" />
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/odak_kapat_onay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="6dp"
             android:padding="12dp"
             android:text="kilidi yine de kapat"
             android:textColor="@color/odak_soluk"

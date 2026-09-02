@@ -23,7 +23,7 @@ class OdakKilidiEklentisi : Plugin() {
         val sonuc = JSObject()
         sonuc.put("kullanimVerisi", Izinler.kullanimVerisiVar(context))
         sonuc.put("katman", Izinler.katmanVar(context))
-        sonuc.put("bildirim", Izinler.bildirimErisimiVar(context))
+        sonuc.put("rahatsizEtme", Izinler.rahatsizEtmeVar(context))
         sonuc.put("calisiyor", OdakServisi.calisiyor)
         cagri.resolve(sonuc)
     }
@@ -38,7 +38,7 @@ class OdakKilidiEklentisi : Plugin() {
         val acildi = when (hangi) {
             "kullanimVerisi" -> Izinler.kullanimVerisiEkraniniAc(context)
             "katman" -> Izinler.katmanEkraniniAc(context)
-            "bildirim" -> Izinler.bildirimErisimiEkraniniAc(context)
+            "rahatsizEtme" -> Izinler.rahatsizEtmeEkraniniAc(context)
             else -> false
         }
         cagri.resolve(JSObject().put("acildi", acildi))
@@ -60,12 +60,31 @@ class OdakKilidiEklentisi : Plugin() {
         val paketler = cagri.getArray("paketler")?.toList<String>() ?: emptyList()
         val bitisZamani = cagri.getLong("bitisZamani") ?: 0L
         val ders = cagri.getString("ders")
+        val rahatsizEtmeIstendi = cagri.getBoolean("rahatsizEtme", false) == true
 
-        if (paketler.isEmpty() || !Izinler.hepsiVar(context)) {
+        /*
+          İki iş birbirinden ayrı: uygulamaları engellemek ve telefonu
+          susturmak. Kullanıcı ikisini pomodoro ekranından tek tek açıp
+          kapatabiliyor ve her birinin kendi izni var — biri eksikken öteki
+          çalışmaya devam etmeli. Eskiden tek koşul vardı (paket listesi + iki
+          izin) ve yalnızca susturma isteyen kullanıcı hiçbir şey alamıyordu.
+        */
+        val kilitVar = paketler.isNotEmpty() && Izinler.hepsiVar(context)
+        val susturmaVar = rahatsizEtmeIstendi && Izinler.rahatsizEtmeVar(context)
+
+        if (!kilitVar && !susturmaVar) {
             cagri.resolve(JSObject().put("basladi", false))
             return
         }
-        OdakServisi.baslat(context, ArrayList(paketler), bitisZamani, ders)
+        OdakServisi.baslat(
+            context,
+            // Kilit kurulamıyorsa liste boş gidiyor: servis o zaman öne gelen
+            // uygulamayı hiç sorgulamıyor, yalnızca susturmayı yönetiyor.
+            if (kilitVar) ArrayList(paketler) else ArrayList(),
+            bitisZamani,
+            ders,
+            susturmaVar,
+        )
         cagri.resolve(JSObject().put("basladi", true))
     }
 

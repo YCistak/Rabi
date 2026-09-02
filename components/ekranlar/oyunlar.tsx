@@ -32,6 +32,7 @@ import {
   dusenSayisi,
   type BankaCevabi,
   type BankaKaydi,
+  type BankaTuru,
 } from '@/lib/oyunlar/banka'
 import { sesleriHazirla } from '@/lib/oyunlar/oyun-sesi'
 import { ANAHTARLAR, OYUN_GECMIS_SINIRI, TUR_EN_UZUN, useYerelDepo } from '@/lib/depo'
@@ -57,7 +58,11 @@ import { SozOyunuEkrani } from '@/components/ekranlar/oyun-soz'
 import { IslemOyunuEkrani } from '@/components/ekranlar/oyun-islem'
 import { BolunmeOyunuEkrani } from '@/components/ekranlar/oyun-bolunme'
 import { EdebiyatOyunuEkrani } from '@/components/ekranlar/oyun-edebiyat'
+import { PeriyodikOyunuEkrani } from '@/components/ekranlar/oyun-periyodik'
+import { FormulOyunuEkrani } from '@/components/ekranlar/oyun-formul'
 import { HaritaOyunuEkrani } from '@/components/ekranlar/oyun-harita'
+import { IklimOyunuEkrani } from '@/components/ekranlar/oyun-iklim'
+import { IzohipsOyunuEkrani } from '@/components/ekranlar/oyun-izohips'
 import { AciOyunuEkrani } from '@/components/ekranlar/oyun-aci'
 import { UcgenOyunuEkrani } from '@/components/ekranlar/oyun-ucgen'
 import { AntlasmaOyunuEkrani } from '@/components/ekranlar/oyun-antlasma'
@@ -119,6 +124,8 @@ const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   ucgen: ['Özel', 'Üçgenler'],
   edebiyat: ['Edebiyat', 'Eşleştirme'],
   harita: ['Harita', 'Avı'],
+  iklim: ['İklim', 'Kuşakları'],
+  izohips: ['İzohips', 'Okuma'],
   antlasma: ['Antlaşma', 'Eşleştirme'],
   kavram: ['Kavram', 'Eşleştirme'],
   anlatim: ['Anlatım', 'Bozukluğu'],
@@ -128,6 +135,8 @@ const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   hucre: ['Organel', 'Kartı'],
   sirala: ['Zaman', 'Şeridi'],
   tuzak: ['Kural', 'Tuzağı'],
+  periyodik: ['Periyodik', 'Tablo Avı'],
+  formul: ['Formül', 'Eşleştirme'],
 }
 
 export function OyunlarEkrani({
@@ -144,6 +153,8 @@ export function OyunlarEkrani({
   /** Bankadan "sadece bunlardan bir tur" ile açılan oyun; yoksa null. */
   bankaTuru,
   onBankaTuruBitti,
+  acilacakDers,
+  onDersAcildi,
   onOyunAcildi,
   bildir,
 }: {
@@ -158,8 +169,12 @@ export function OyunlarEkrani({
   onBankayaGit: () => void
   /** Turda bankadan düşen soru sayısı — rozet sayacını besliyor. */
   onBankadanDustu: (adet: number) => void
-  bankaTuru: OyunId | null
+  bankaTuru: BankaTuru | null
   onBankaTuruBitti: () => void
+  /** Ana sayfadaki ders kutucuğundan gelen ders; sekme onunla açılıyor. */
+  acilacakDers: DersId | null
+  /** Ders açıldı — istek tüketildi, ikinci çizimde yeniden açılmasın. */
+  onDersAcildi: () => void
   /** Bir oyun açıldı — ana sayfadaki kısayol sırası bunu izliyor. */
   onOyunAcildi: (oyun: OyunId) => void
   bildir: BildirimKolu
@@ -178,7 +193,20 @@ export function OyunlarEkrani({
   const [secilenDers, setSecilenDers] = useState<DersId | null>(null)
   /** Açık bölüm; null ise dersin kendi ızgarası görünüyor. */
   const [secilenBolum, setSecilenBolum] = useState<BolumId | null>(null)
-  const acikOyun = bankaTuru ?? secilenOyun
+  const acikOyun = bankaTuru?.oyun ?? secilenOyun
+
+  /*
+    Ana sayfadan gelen ders isteği bir kez tüketiliyor.
+
+    Prop doğrudan okunsaydı kullanıcı dersten çıkamazdı: geri tuşu `secilenDers`i
+    boşaltır, bir sonraki çizim aynı dersi yeniden açardı.
+  */
+  useEffect(() => {
+    if (acilacakDers === null) return
+    setSecilenDers(acilacakDers)
+    setSecilenBolum(null)
+    onDersAcildi()
+  }, [acilacakDers, onDersAcildi])
 
   // Kısayol sırası açılışta işaretleniyor, tur bitince değil: yarıda bırakılan
   // oyun da "en son oynadığın" oluyor ve kullanıcı ona dönmek isteyecek.
@@ -339,21 +367,38 @@ export function OyunlarEkrani({
             ...dersinBolumleri(secilenDers).map((bolum) => ({ tip: 'bolum' as const, bolum })),
           ]
 
-  const bankaSorulari = bankaTuru === null ? [] : banka.filter((k) => k.soru.oyun === bankaTuru)
+  /*
+    Banka turunun havuzu: o oyunun bankadaki bütün soruları.
+
+    Tur tek bir kayda inebiliyordu (bankadaki karta dokunmanın karşılığı); o
+    yol kaldırıldı, çünkü kartın üstünde doğru cevap yazıyor ve hemen ardından
+    çözülen soru bilmeyi ölçmüyordu.
+  */
+  const bankaSorulari =
+    bankaTuru === null ? [] : banka.filter((k) => k.soru.oyun === bankaTuru.oyun)
 
   /** Açık dersin ailesi — başlıktaki geri tuşu bu renkte duruyor. */
   const acikAile = secilenDers === null ? AILE.yzm : AILE[dersBul(secilenDers).aile]
 
   return (
     <div>
-      <header className="px-0.5 pt-1">
-        <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
-        <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">
-          Oyunlar 🎮
-        </h1>
-        <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
-          Bir dakikalık turlarla bilgi tazele.
-        </p>
+      <header className="flex items-start gap-3 px-0.5 pt-1">
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
+          <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Oyunlar</h1>
+          <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
+            Bir dakikalık turlarla bilgi tazele.
+          </p>
+        </div>
+
+        {/* Araçlar'daki 🧰 ile aynı kutu ve aynı hiza; başlığın sonuna yapışan
+            emoji sekme değiştikçe kayıyordu, sağ üstteki kutu sabit duruyor. */}
+        <span
+          className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart text-[21px] leading-none"
+          aria-hidden
+        >
+          🎮
+        </span>
       </header>
 
       <BankaSatiri
@@ -599,6 +644,30 @@ export function OyunlarEkrani({
           bildir={bildir}
         />
       )}
+      {acikOyun === 'iklim' && (
+        <IklimOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'iklim')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('iklim', ozet, cevaplar, saniye, yarim)}
+          onCik={oyunuKapat}
+          mod={mod}
+          setMod={setMod}
+          bildir={bildir}
+        />
+      )}
+      {acikOyun === 'izohips' && (
+        <IzohipsOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'izohips')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('izohips', ozet, cevaplar, saniye, yarim)}
+          onCik={oyunuKapat}
+          mod={mod}
+          setMod={setMod}
+          bildir={bildir}
+        />
+      )}
       {acikOyun === 'antlasma' && (
         <AntlasmaOyunuEkrani
           istatistik={istatistikAl(kayitlar, 'antlasma')}
@@ -703,6 +772,30 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('edebiyat', ozet, cevaplar, saniye, yarim)}
+          mod={mod}
+          setMod={setMod}
+          bildir={bildir}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'periyodik' && (
+        <PeriyodikOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'periyodik')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('periyodik', ozet, cevaplar, saniye, yarim)}
+          mod={mod}
+          setMod={setMod}
+          bildir={bildir}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'formul' && (
+        <FormulOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'formul')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('formul', ozet, cevaplar, saniye, yarim)}
           mod={mod}
           setMod={setMod}
           bildir={bildir}

@@ -136,7 +136,7 @@ export function modKayitliMi(mod: OyunModu): boolean {
  * Turun gerçekte hangi modla işlediği.
  *
  * Oyun Bankası turu modu dinlemiyor: oradaki sorular zaten bir kez yanlış
- * bilinmiş olanlar ve turun amacı onları üç kez doğru bilip düşürmek. Süreli
+ * bilinmiş olanlar ve turun amacı hepsini bir kez daha görmek. Süreli
  * bir tur o işi yarıda keser, eleyen bir tur imkânsız kılardı. Banka turu bu
  * yüzden her zaman soru başına süreyle işliyor ve eleme `elerMi` içinde ayrıca
  * kapatılıyor (`ritim.ts`).

@@ -532,7 +532,7 @@ function SonucGorunumu({
       elendi={elendi}
       altBaslik={
         bankaTuru
-          ? 'Banka soruları — üst üste üç doğruda düşerler.'
+          ? 'Banka soruları — genel testte doğru bilince düşerler.'
           : rekorCumlesi(ozet.dogru, rekor, yeniRekor, 'doğru')
       }
       bolumBasligi="Karıştırdıkların"

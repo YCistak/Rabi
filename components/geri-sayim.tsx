@@ -4,7 +4,6 @@ import { useMemo } from 'react'
 import { ChevronRight, Target } from 'lucide-react'
 import type { Hedef } from '@/lib/types'
 import { geriSayim, sinavTarihiYaz } from '@/lib/sinav-tarihi'
-import { sinavSozu } from '@/lib/sinav-sozleri'
 import { siraYaz } from '@/lib/siralama'
 import { universiteKisaAdi } from '@/lib/hedef-katalog'
 import { cn } from '@/lib/utils'
@@ -12,12 +11,12 @@ import { cn } from '@/lib/utils'
 /**
  * Ana sayfanın üstündeki YKS geri sayımı.
  *
- * Kart dört parçadan ibaret ve sırası tasarımdan geliyor: yıl/oturum satırı ve
- * yanında kalan süreyi tek kelimeyle adlandıran rozet, dev sayı ve devamındaki
- * tarih, hazırlık yılının çubuğu, en altta hedef paneli. Kalan güne uygun uzun
- * söz bilerek **yok**: rozetteki kelime ("Uzun yol") aynı havuzdan geliyor ve
- * sayfanın altında zaten günün sözü duruyor — iki motivasyon cümlesi tek
- * ekranda birbirini eziyordu.
+ * Kart dört parçadan ibaret ve sırası tasarımdan geliyor: yıl/oturum satırı,
+ * dev sayı ve devamındaki tarih, hazırlık yılının çubuğu, en altta hedef
+ * paneli. Motivasyon cümlesi de sağ üstteki tek kelimelik rozet ("Uzun yol")
+ * de kaldırıldı: ikisi de `lib/sinav-sozleri.ts` havuzundan geliyordu ve
+ * altındaki dev sayının söylediği şeyi bir kez daha söylüyorlardı. Havuz
+ * dosyası duruyor, arayüzde hiçbir yerde kullanılmıyor.
  *
  * Renk kalan güne göre koyulaşıyor: uzaktayken sakin mor, son ayda fuşya,
  * son haftada kartın tamamı fuşya. Sayının yanında yazan "42 gün" ile "son
@@ -47,10 +46,6 @@ export function GeriSayim({
   children?: React.ReactNode
 }) {
   const sayim = useMemo(() => geriSayim(tarih), [tarih])
-  const soz = useMemo(
-    () => sinavSozu(sayim.kalanGun, sayim.oturum, tarih),
-    [sayim.kalanGun, sayim.oturum, tarih],
-  )
 
   const oturumAdi = sayim.oturum === 'tyt' ? 'TYT' : 'AYT'
   const sinavGunu = sayim.kalanGun === 0
@@ -70,29 +65,18 @@ export function GeriSayim({
         className,
       )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <span
-          className={cn(
-            'text-[12.5px] font-bold',
-            doluKart ? 'text-white/85' : 'text-muted-foreground',
-          )}
-        >
-          {sayim.takvim.yil} YKS · {oturumAdi}
-        </span>
-
-        <span
-          className={cn(
-            'shrink-0 rounded-full px-3 py-1 text-[11px] font-extrabold',
-            doluKart
-              ? 'bg-white/20 text-white'
-              : acil
-                ? 'bg-ikincil-soft text-ikincil'
-                : 'bg-primary-soft text-primary',
-          )}
-        >
-          {soz.baslik}
-        </span>
-      </div>
+      {/* Sağ üstteki "Uzun yol" rozeti kaldırıldı: kalan günü zaten altındaki
+          dev sayı söylüyor ve rozet aynı bilgiyi bir de kelimeyle tekrar
+          ediyordu. Söz havuzu (`lib/sinav-sozleri.ts`) duruyor ama artık
+          arayüzde hiçbir yerde kullanılmıyor. */}
+      <span
+        className={cn(
+          'block text-[12.5px] font-bold',
+          doluKart ? 'text-white/85' : 'text-muted-foreground',
+        )}
+      >
+        {sayim.takvim.yil} YKS · {oturumAdi}
+      </span>
 
       {/* Sayının kendisi. Sınav günü sayı yerine "Bugün" yazıyor: "0 gün kaldı"
           hem tuhaf okunuyor hem de o sabah söylenecek şey bu değil. */}
@@ -116,10 +100,12 @@ export function GeriSayim({
                 doluKart ? 'text-white/85' : 'text-muted-foreground',
               )}
             >
-              {/* Tarih hesaptan geliyorsa "tahmini" yazmak zorunlu: tahmini bir
-                  günü kesinmiş gibi göstermiyoruz. */}
+              {/* ÖSYM tarihi açıklamadan önce buradaki gün hesapla bulunuyor
+                  (`sayim.tahmini`) ve bir süre yanında "(tahmini)" yazıyordu.
+                  Parantez kaldırıldı: satır "19 Haziran 2027 (tahmini)" diye
+                  okununca kartın asıl işi olan sayı ikinci plana düşüyordu.
+                  Bayrak duruyor — geri yazmak isteyen buradan bakar. */}
               {sinavTarihiYaz(sayim.sinavTarihi)}
-              {sayim.tahmini && ' (tahmini)'}
             </span>
           </>
         )}
@@ -154,10 +140,6 @@ export function GeriSayim({
           </div>
         </div>
       )}
-
-      {/* Kalan güne uygun söz kaldırıldı: kartta zaten sağ üstte aynı havuzdan
-          gelen kısa başlık ("Uzun yol") duruyor ve iki satır aynı şeyi iki kez
-          söylüyordu. Havuz `lib/sinav-sozleri.ts`'de, başlık hâlâ oradan. */}
 
       {children && (
         <div

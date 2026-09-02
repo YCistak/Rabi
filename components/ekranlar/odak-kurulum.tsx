@@ -33,7 +33,7 @@ export function OdakKurulum({
   const [durum, setDurum] = useState<OdakDurumu>({
     kullanimVerisi: false,
     katman: false,
-    bildirim: false,
+    rahatsizEtme: false,
     calisiyor: false,
   })
   const [secili, setSecili] = useState<string[]>(ayar.kilitliUygulamalar)
@@ -108,8 +108,8 @@ export function OdakKurulum({
               <p className="font-medium">Ne yapıyorum</p>
               <p className="text-sm text-muted-foreground">
                 Yalnızca hangi uygulamanın ekranda olduğuna bakıyorum, seçtiklerinin
-                üstüne kendi ekranımı koyuyorum ve tur boyunca onların bildirimlerini
-                siliyorum.
+                üstüne kendi ekranımı koyuyorum ve tur boyunca telefonu Rahatsız
+                Etme'ye alıyorum.
               </p>
               <p className="font-medium">Ne yapmıyorum</p>
               <p className="text-sm text-muted-foreground">
@@ -133,14 +133,24 @@ export function OdakKurulum({
               onAc={() => izinAc('katman')}
             />
             {/* Üçüncüsü isteğe bağlı ve öyle de yazıyor: verilmezse kilit
-                çalışmaya devam ediyor, yalnızca bildirimler susmuyor. */}
+                çalışmaya devam ediyor, yalnızca telefon susmuyor. */}
             <IzinSatiri
               Simge={BellOff}
-              ad="Bildirim erişimi (isteğe bağlı)"
-              aciklama="Seçtiklerinin bildirimlerini tur boyunca silmek için"
-              verildi={durum.bildirim}
-              onAc={() => izinAc('bildirim')}
+              ad="Rahatsız Etme erişimi (isteğe bağlı)"
+              aciklama="Tur boyunca telefonu sessize almak için"
+              verildi={durum.rahatsizEtme}
+              onAc={() => izinAc('rahatsizEtme')}
             />
+
+            {/* Susturmanın seçili uygulamalara değil telefonun tamamına ait
+                olması, izin istenmeden **önce** yazılıyor: sonradan fark edilen
+                bir yan etki, kullanıcının özelliğe güvenini bitirir. */}
+            <Not>
+              Rahatsız Etme telefonun tamamını susturuyor, yalnızca seçtiğin
+              uygulamaları değil. Alarmların ve kendi Rahatsız Etme istisnaların
+              (kişilerden gelen aramalar gibi) geçmeye devam eder; tur bitince
+              telefon eski hâline döner.
+            </Not>
 
             {/* Sistemin uyarısı burada, izin ekranına düşmeden önce
                 açıklanıyor: hazırlıksız yakalanan kullanıcı onu virüs uyarısı
@@ -160,7 +170,7 @@ export function OdakKurulum({
               <Not>
                 <span className="inline-flex items-center gap-1.5">
                   <ShieldCheck size={14} aria-hidden />{' '}
-                  {durum.bildirim ? 'Üç izin de hazır.' : 'Kilit için gereken iki izin hazır.'}
+                  {durum.rahatsizEtme ? 'Üç izin de hazır.' : 'Kilit için gereken iki izin hazır.'}
                 </span>
               </Not>
             )}

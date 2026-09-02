@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import {
   BANKA_SINIRI,
-  DUSME_ESIGI,
   bankaDagilimi,
+  testiIsle,
   OYUN_KIMLIKLERI,
   bankaKimligi,
   bankaSuz,
@@ -42,7 +42,6 @@ describe('bankayiGuncelle', () => {
     const banka = bankayiGuncelle([], [{ soru: yazim('yanlış'), dogruMu: false }], '2026-08-18')
     expect(banka).toHaveLength(1)
     expect(banka[0].kacKez).toBe(1)
-    expect(banka[0].ardisikDogru).toBe(0)
   })
 
   it('doğru bilinen soru bankaya girmez', () => {
@@ -56,22 +55,18 @@ describe('bankayiGuncelle', () => {
     expect(banka[0].kacKez).toBe(2)
   })
 
-  it(`üst üste ${DUSME_ESIGI} doğrudan sonra kayıt düşer`, () => {
+  /*
+    Turdaki doğru cevap bankaya dokunmuyor: kayıt düşmüyor, sayacı da
+    değişmiyor. Bankadan çıkışın kazanılan tek yolu genel test.
+  */
+  it('turda doğru bilinen kayıt düşmez', () => {
     let banka = bankayiGuncelle([], [{ soru: edebiyat, dogruMu: false }], '2026-08-18')
-    for (let i = 0; i < DUSME_ESIGI - 1; i++) {
+    for (let i = 0; i < 5; i++) {
       banka = bankayiGuncelle(banka, [{ soru: edebiyat, dogruMu: true }], '2026-08-19')
-      expect(banka).toHaveLength(1)
     }
-    banka = bankayiGuncelle(banka, [{ soru: edebiyat, dogruMu: true }], '2026-08-20')
-    expect(banka).toHaveLength(0)
-  })
-
-  it('araya giren yanlış ilerlemeyi sıfırlar', () => {
-    let banka = bankayiGuncelle([], [{ soru: edebiyat, dogruMu: false }], '2026-08-18')
-    banka = bankayiGuncelle(banka, [{ soru: edebiyat, dogruMu: true }], '2026-08-19')
-    banka = bankayiGuncelle(banka, [{ soru: edebiyat, dogruMu: false }], '2026-08-20')
-    expect(banka[0].ardisikDogru).toBe(0)
-    expect(banka[0].kacKez).toBe(2)
+    expect(banka).toHaveLength(1)
+    expect(banka[0].kacKez).toBe(1)
+    expect(banka[0].sonYanlis).toBe('2026-08-18')
   })
 
   it('girdiyi değiştirmez', () => {
@@ -136,12 +131,35 @@ describe('dağılım ve süzme', () => {
   })
 })
 
+describe('testiIsle', () => {
+  const banka = bankayiGuncelle(
+    [],
+    [
+      { soru: yazim('a'), dogruMu: false },
+      { soru: islem, dogruMu: false },
+      { soru: edebiyat, dogruMu: false },
+    ],
+    '2026-08-18',
+  )
+
+  it('doğru bilinenleri düşürür', () => {
+    const sonra = testiIsle(banka, [bankaKimligi(islem), bankaKimligi(edebiyat)])
+    expect(sonra).toHaveLength(1)
+    expect(sonra[0].id).toBe(bankaKimligi(yazim('a')))
+  })
+
+  /** Testte yanlış bilmek yeni bir hata değil: kayıt olduğu gibi kalıyor. */
+  it('yanlış bilinen kaydı değiştirmez', () => {
+    const sonra = testiIsle(banka, [])
+    expect(sonra).toEqual(banka)
+  })
+})
+
 describe('dusenSayisi', () => {
   const kayit = (id: string): BankaKaydi => ({
     id,
     soru: { oyun: 'yazim', dogru: 'herkes', yanlis: 'herkez', kural: 'k' },
     kacKez: 1,
-    ardisikDogru: 0,
     eklenme: '2026-08-10',
     sonYanlis: '2026-08-10',
   })

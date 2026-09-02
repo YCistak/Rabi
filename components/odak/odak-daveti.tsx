@@ -66,9 +66,13 @@ export function OdakDaveti({
               kalkarsan karşına ben çıkarım. Bir saniyelik duraklama çoğu zaman
               yeter.
             </Madde>
-            <Madde Simge={BellOff} baslik="Bildirimler susuyor">
-              Seçtiğin uygulamaların bildirimleri tur boyunca silinir. Dikkatini
-              dağıtan şey çoğu zaman uygulama değil, tepeden düşen o yazı.
+            {/* Bu madde ayrı bir anahtarı anlatıyor ve öyle de yazıyor: kilidi
+                açan kullanıcı telefonunun da susacağını sanıp beklemediği bir
+                sessizlikle karşılaşmamalı. */}
+            <Madde Simge={BellOff} baslik="İstersen telefon da susar">
+              Pomodoro ekranındaki ikinci anahtar tur boyunca Rahatsız Etme'yi
+              açıyor; bitince kendiliğinden kapanıyor. Alarmların ve kendi
+              istisnaların geçmeye devam eder.
             </Madde>
             <Madde Simge={Sparkles} baslik="Turların gerçekten dolar">
               Yarıda bırakılan 25 dakika 25 dakika sayılmaz. Kilitli turlar
@@ -95,9 +99,9 @@ export function OdakDaveti({
             </p>
             <p className="mt-1.5 text-[12px] leading-snug font-medium text-muted-foreground">
               Yaptığım tek şey: <b className="font-extrabold">hangi uygulamanın açık
-              olduğuna</b> bakmak ve seçtiklerinin bildirimini silmek. İçeriğini
-              okumuyorum, kaydetmiyorum. Rabi'nin sunucusu yok; hiçbir veri
-              telefonundan çıkmıyor.
+              olduğuna</b> bakmak ve seçtiklerinin üstüne kendi ekranımı koymak.
+              İçeriğini okumuyorum, kaydetmiyorum. Rabi'nin sunucusu yok; hiçbir
+              veri telefonundan çıkmıyor.
             </p>
           </div>
         </div>

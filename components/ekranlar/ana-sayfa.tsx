@@ -1,14 +1,15 @@
 'use client'
 
-import { useMemo } from 'react'
-import { AlertTriangle, Target } from 'lucide-react'
-import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef, OyunId } from '@/lib/types'
+import { useMemo, useState } from 'react'
+import { AlertTriangle, ChevronRight, Pencil, Target } from 'lucide-react'
+import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef } from '@/lib/types'
 import { devamsizlikOzeti, gunOzeti, kayitHaritasi } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
 import { siraYaz } from '@/lib/siralama'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
-import { kisayollar } from '@/lib/son-kullanilan'
-import { OYUNLAR } from '@/lib/oyunlar/tanim'
+import { sabitliKisayollar } from '@/lib/son-kullanilan'
+import { doluDersler, oyunlarinDersleri, type DersId, type DersTanimi } from '@/lib/oyunlar/tanim'
+import { KisayolDuzenleme } from '@/components/kisayol-duzenle'
 import { Halka, Kart, Not } from '@/components/ui'
 import { GeriSayim } from '@/components/geri-sayim'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
@@ -33,29 +34,27 @@ const KUTUCUK_RENGI: Record<KartRengi, string> = {
   deniz: 'bg-trh-kart text-trh-koyu',
 }
 
-/** Oyunların kendi aileleri var; ana sayfadaki kutucuk da aynı rengi taşımalı. */
-const OYUN_RENGI: Record<OyunId, string> = {
-  yazim: 'bg-yzm-kart',
-  ses: 'bg-yzm-kart',
-  oge: 'bg-yzm-kart',
-  soz: 'bg-yzm-kart',
-  anlatim: 'bg-yzm-kart',
-  islem: 'bg-isl-kart',
-  bolunme: 'bg-isl-kart',
-  aci: 'bg-isl-kart',
-  ucgen: 'bg-isl-kart',
-  koklu: 'bg-isl-kart',
-  // Edebiyat Eşleştirme artık Türk Dili ve Edebiyatı dersinde; rengi de o
-  // dersin ailesinden geliyor.
-  edebiyat: 'bg-yzm-kart',
-  harita: 'bg-cog-kart',
-  antlasma: 'bg-trh-kart',
-  kavram: 'bg-trh-kart',
-  ortak: 'bg-byl-kart',
-  siniflandirma: 'bg-byl-kart',
-  hucre: 'bg-byl-kart',
-  sirala: 'bg-trh-kart',
-  tuzak: 'bg-isl-kart',
+/**
+ * Ders kutucuklarının zemini.
+ *
+ * Kutucuklar bir süre **oyunları** gösteriyordu ve adları ekranın en dar
+ * yerinde okunmuyordu: "Anlatım Bozukluğu" ile "Canlıları Sınıflandır" 64
+ * piksellik bir kutunun altında üç satıra iniyordu. Dahası dokunuş zaten
+ * oyunu açmıyor, Oyunlar sekmesini açıyordu — yani kutucuk gidilecek yerin
+ * adını değil, orada bulunabilecek bir şeyin adını yazıyordu. Artık kutucuk
+ * dersin kendisi: adı kısa, dokunuşun karşılığı da tam olarak o dersin
+ * ızgarası.
+ *
+ * Renk `DersTanimi.aile`den geliyor — "renk derse aittir" kuralının doğrudan
+ * karşılığı. Sınıflar Tailwind'in taramasına takılsın diye tam yazılı.
+ */
+const DERS_RENGI: Record<DersTanimi['aile'], string> = {
+  yzm: 'bg-yzm-kart',
+  isl: 'bg-isl-kart',
+  edb: 'bg-edb-kart',
+  cog: 'bg-cog-kart',
+  trh: 'bg-trh-kart',
+  byl: 'bg-byl-kart',
 }
 
 export function AnaSayfa({
@@ -65,8 +64,13 @@ export function AnaSayfa({
   devamsizlik,
   hedef,
   guncelSiralama,
+  bilinmeyenSayisi,
   sonAraclar,
   sonOyunlar,
+  sabitAraclar,
+  setSabitAraclar,
+  sabitDersler,
+  setSabitDersler,
   onKartAc,
   onDahaGit,
   onOyunlaraGit,
@@ -80,15 +84,28 @@ export function AnaSayfa({
   hedef: Hedef | null
   /** Son denemelerden çıkan tahmini sıralama; deneme yoksa null. */
   guncelSiralama: number | null
+  /** Konu Anlatımı'nda "bilmiyorum" denen kart sayısı — bölümün alt satırı. */
+  bilinmeyenSayisi: number
   /** Biten haftanın özeti henüz izlenmediyse davet kartı gösterilir. */
   /** En son açılan araçlar ve oynanan oyunlar — kısayol kutucuklarının sırası. */
   sonAraclar: string[]
   sonOyunlar: string[]
+  /** Kullanıcının sabitlediği araçlar; boşsa kutucukları son kullanılanlar doldurur. */
+  sabitAraclar: string[]
+  setSabitAraclar: (secim: string[]) => void
+  /** Sabitlenen dersler — oyun kutucukları ders gösteriyor. */
+  sabitDersler: string[]
+  setSabitDersler: (secim: string[]) => void
   onKartAc: (ekran: Ekran) => void
   /** "Araçlar" bölümünün "Tümü" bağlantısı — kart menüsü sekmesini açar. */
   onDahaGit: () => void
-  /** "Oyunlar" kartındaki her kutucuk oyun sekmesini açar. */
-  onOyunlaraGit: () => void
+  /**
+   * Oyunlar sekmesini açar; ders verilirse doğrudan o dersin ızgarasıyla.
+   *
+   * Kutucuk dersin adını yazıyor ve dokunuşun karşılığı da o ders olmalı —
+   * sekmenin başına düşen kullanıcı aynı seçimi bir kez daha yapıyordu.
+   */
+  onOyunlaraGit: (ders?: DersId) => void
   /**
    * Açılış ekranı hâlâ duruyor mu.
    *
@@ -99,8 +116,24 @@ export function AnaSayfa({
 }) {
   const tarih = bugun()
 
-  const gosterilenAraclar = useMemo(() => kisayollar(KARTLAR, sonAraclar), [sonAraclar])
-  const gosterilenOyunlar = useMemo(() => kisayollar(OYUNLAR, sonOyunlar), [sonOyunlar])
+  /** Açık düzenleme penceresi; null ise kapalı. */
+  const [duzenlenen, setDuzenlenen] = useState<'arac' | 'ders' | null>(null)
+
+  const gosterilenAraclar = useMemo(
+    () => sabitliKisayollar(KARTLAR, sabitAraclar, sonAraclar),
+    [sabitAraclar, sonAraclar],
+  )
+
+  const dersler = useMemo(() => doluDersler(), [])
+  /*
+    Ders kutucuklarının geçmişi ayrı tutulmuyor, oynanan oyunlardan türetiliyor:
+    ikinci bir "son açılan ders" listesi aynı bilgiyi ikinci kez saklamak olurdu
+    ve oyunu açmakla dersi açmak aynı hareket.
+  */
+  const gosterilenDersler = useMemo(
+    () => sabitliKisayollar(dersler, sabitDersler, oyunlarinDersleri(sonOyunlar)),
+    [dersler, sabitDersler, sonOyunlar],
+  )
 
   const bugunku = useMemo(
     () => gunOzeti(gunlukKayitlar.find((k) => k.tarih === tarih)),
@@ -142,7 +175,6 @@ export function AnaSayfa({
   const devamsizlikDurumu = useMemo(() => devamsizlikOzeti(devamsizlik), [devamsizlik])
 
   const hedefTuttu = bugunku.toplam >= ayarlar.gunlukHedef && ayarlar.gunlukHedef > 0
-  const kalan = Math.max(0, ayarlar.gunlukHedef - bugunku.toplam)
   const maskotDurumu: MaskotDurumu = devamsizlikDurumu.asildi
     ? 'uzgun'
     : hedefTuttu
@@ -206,14 +238,26 @@ export function AnaSayfa({
             <span className="block font-display text-base font-extrabold tracking-tight">
               Bugünkü soru hedefin
             </span>
-            {/* Satırın tamamı ince, yalnız "kaç soru kaldı" kalın: göz kartta
-                tek bir sayı arıyor ve o sayı bu. Hedefin kendisi bağlam. */}
-            <span className="rakam block text-[13px] leading-snug font-medium text-muted-foreground">
-              {ayarlar.gunlukHedef} hedefin var,{' '}
-              <strong className="font-extrabold text-foreground">{kalan} soru kaldı.</strong>
-            </span>
-            <span className="block text-[13px] leading-snug font-medium text-muted-foreground">
-              {hedefCumlesi(bugunku.toplam, kalan, ayarlar.gunlukHedef, hedefTuttu)}
+            {/*
+              Başlığın altındaki tek satır: ilerlemenin kendisi, "190/200".
+
+              Yerinde iki cümle vardı ("200 hedefin var, 200 soru kaldı." ve bir
+              teşvik satırı) ve ikisi de aynı sayıyı çevresinde dolaşarak
+              anlatıyordu; halkanın içinde zaten duran sayıyı üçüncü kez yazan
+              bir kart, okunmadan geçiliyordu. Kesirin okunacak yarısı payda
+              değil pay: hedef bağlam, çözülen sayı haber.
+
+              Hedef sıfırsa payda yazılmıyor — "12/0" bölme değil bozukluk gibi
+              duruyor.
+            */}
+            <span className="rakam block text-[19px] leading-tight font-extrabold">
+              {bugunku.toplam}
+              {ayarlar.gunlukHedef > 0 && (
+                <span className="text-[15px] font-bold text-muted-foreground">
+                  /{ayarlar.gunlukHedef}
+                </span>
+              )}
+              <span className="ml-1 text-[13px] font-bold text-muted-foreground">soru</span>
             </span>
           </span>
         </button>
@@ -263,26 +307,110 @@ export function AnaSayfa({
         </Not>
       )}
 
+      {/*
+        Konu Anlatımı kendi bölümü, kısayol kutucuğu değil.
+
+        Araçlar şeridine bir kutucuk olarak konsaydı sıraya girip son
+        kullanılanlarla birlikte kayardı; buradaki iş "aç ve oku" ve her gün
+        aynı yerde durması gerekiyor. Kart menüsünde de yok — aynı şeyin iki
+        girişi, hemen altındaki Araçlar kutusunda ikinci bir kopya demekti.
+      */}
+      <section>
+        <div className="mb-2 px-1">
+          <h2 className="font-display text-base font-extrabold tracking-tight">
+            Konu Anlatımı 📚
+          </h2>
+          <p className="text-xs text-muted-foreground">Maarif müfredatı, bilgi kartlarıyla</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => onKartAc('konu')}
+          className="golge-kart flex w-full items-center gap-3.5 rounded-2xl bg-card px-4 py-4 text-left transition active:brightness-[0.98]"
+        >
+          <span
+            className="grid size-12 shrink-0 place-items-center rounded-[18px] bg-primary-soft text-[24px]"
+            aria-hidden
+          >
+            🗺️
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-display text-[15.5px] font-extrabold tracking-tight">
+              Ders haritasını aç
+            </span>
+            {/* Alt satır ya bankadaki kartları ya da neyi kapsadığını söylüyor:
+                banka boşken sayı yazmak "0 kart" gibi ölü bir satır olurdu. */}
+            <span className="mt-0.5 block text-[13px] leading-snug font-semibold text-muted-foreground">
+              {bilinmeyenSayisi > 0
+                ? `Bilmediklerinde ${bilinmeyenSayisi} kart bekliyor`
+                : '9 ve 10. sınıf · yedi ders'}
+            </span>
+          </span>
+          <ChevronRight size={19} className="shrink-0 text-muted-foreground" aria-hidden />
+        </button>
+      </section>
+
       {/* Araçlar ve Oyunlar aynı biçimde: başlık + "Tümü", altında tek bir
           kutunun içinde dört yüz. Araçlar bir ara başlıksız ve kutusuz
           duruyordu; iki bölüm yan yana iki ayrı tasarım gibi okunuyordu. */}
-      <Bolum baslik="Araçlar 🧰" aciklama="Çalışmanı takip et" onTumu={onDahaGit}>
+      <Bolum
+        baslik="Araçlar 🧰"
+        aciklama="Çalışmanı takip et"
+        onTumu={onDahaGit}
+        onDuzenle={() => setDuzenlenen('arac')}
+      >
         {gosterilenAraclar.map(({ id, ad, ikon, renk }) => (
           <Kutucuk key={id} ad={ad} ikon={ikon} renk={KUTUCUK_RENGI[renk]} onSec={() => onKartAc(id)} />
         ))}
       </Bolum>
 
-      <Bolum baslik="Oyunlar 🎮" aciklama="Eğlenerek pratik yap" onTumu={onOyunlaraGit}>
-        {gosterilenOyunlar.map((oyun) => (
+      {/* Kutucuklar oyunları değil dersleri gösteriyor: adları kısa, dokunuşun
+          karşılığı da tam olarak o dersin ızgarası (bkz. `DERS_RENGI`). */}
+      <Bolum
+        baslik="Oyunlar 🎮"
+        aciklama="Eğlenerek pratik yap"
+        onTumu={() => onOyunlaraGit()}
+        onDuzenle={() => setDuzenlenen('ders')}
+      >
+        {gosterilenDersler.map((ders) => (
           <Kutucuk
-            key={oyun.id}
-            ad={oyun.ad}
-            ikon={oyun.ikon}
-            renk={OYUN_RENGI[oyun.id]}
-            onSec={onOyunlaraGit}
+            key={ders.id}
+            ad={ders.ad}
+            ikon={ders.ikon}
+            renk={DERS_RENGI[ders.aile]}
+            onSec={() => onOyunlaraGit(ders.id)}
           />
         ))}
       </Bolum>
+
+      <KisayolDuzenleme
+        acik={duzenlenen === 'arac'}
+        baslik="Araç kısayolların"
+        secenekler={KARTLAR.map((kart) => ({
+          id: kart.id,
+          ad: kart.ad,
+          ikon: kart.ikon,
+          renk: KUTUCUK_RENGI[kart.renk],
+          aciklama: kart.aciklama,
+        }))}
+        secili={sabitAraclar}
+        onKaydet={setSabitAraclar}
+        onKapat={() => setDuzenlenen(null)}
+      />
+
+      <KisayolDuzenleme
+        acik={duzenlenen === 'ders'}
+        baslik="Oyun kısayolların"
+        secenekler={dersler.map((ders) => ({
+          id: ders.id,
+          ad: ders.ad,
+          ikon: ders.ikon,
+          renk: DERS_RENGI[ders.aile],
+          aciklama: ders.aciklama,
+        }))}
+        secili={sabitDersler}
+        onKaydet={setSabitDersler}
+        onKapat={() => setDuzenlenen(null)}
+      />
     </div>
   )
 }
@@ -292,12 +420,15 @@ function Bolum({
   baslik,
   aciklama,
   onTumu,
+  onDuzenle,
   children,
 }: {
   baslik: string
   /** Başlığın altındaki tek satır: bölümün ne işe yaradığı. */
   aciklama: string
   onTumu: () => void
+  /** Dört kutucuğu seçme penceresini açar. */
+  onDuzenle: () => void
   children: React.ReactNode
 }) {
   return (
@@ -310,7 +441,22 @@ function Bolum({
               satır bu. */}
           <p className="text-xs text-muted-foreground">{aciklama}</p>
         </div>
-        <TumuBaglantisi onSec={onTumu} />
+        <div className="flex shrink-0 items-center gap-0.5">
+          {/*
+            Kalem yazısız duruyor: "Düzenle" ile "Tümü" yan yana iki bağlantı
+            olsaydı ikisi de aynı ağırlıkta okunur, asıl yol olan "Tümü"
+            kaybolurdu. Erişilebilir adı `aria-label`da.
+          */}
+          <button
+            type="button"
+            onClick={onDuzenle}
+            aria-label={`${baslik} kısayollarını düzenle`}
+            className="grid size-8 place-items-center rounded-lg text-muted-foreground transition active:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            <Pencil size={15} strokeWidth={2.6} aria-hidden />
+          </button>
+          <TumuBaglantisi onSec={onTumu} />
+        </div>
       </div>
       <Kart className="px-2.5 py-3.5">
         <div className="grid grid-cols-4 gap-2">{children}</div>
@@ -456,18 +602,4 @@ function HedefOzeti({
       )}
     </button>
   )
-}
-
-/** Hedef halkasının yanındaki cümle. */
-/**
- * Halkanın yanındaki ikinci satır — teşvik cümlesi.
- *
- * Sayı geçmiyor: üstteki satır zaten "şu kadar hedefin var, şu kadar kaldı"
- * diyor ve iki satır aynı rakamı iki kez yazınca ikisi de okunmuyordu.
- */
-function hedefCumlesi(cozulen: number, kalan: number, hedef: number, hedefTuttu: boolean): string {
-  if (hedefTuttu) return 'Hedefi tutturdun, fazlası cabası 🎉'
-  if (hedef > 0 && kalan <= hedef / 4) return 'Az kaldı, bugünün kapatalım 🎉'
-  if (cozulen > 0) return 'Başladın bile, devam.'
-  return "Bir 20'lik çözmek bile seriyi başlatır."
 }

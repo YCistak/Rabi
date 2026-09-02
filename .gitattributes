@@ -1,0 +1,3 @@
+# Android kaynak XML dosyaları LF kalmalı: CRLF satır sonlu adaptive-icon
+# dosyalarını AAPT2 ayrıştıramıyor ve derleme "ParseError" ile düşüyor.
+android/app/src/main/res/**/*.xml text eol=lf

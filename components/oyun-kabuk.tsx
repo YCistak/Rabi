@@ -107,7 +107,22 @@ const AILE: Record<
     kenar: 'border-l-yzm-koyu',
     degisken: 'var(--yzm-koyu)',
   },
+  // Coğrafyanın üç oyunu aynı aileyi paylaşıyor.
   harita: {
+    zemin: 'bg-cog',
+    yazi: 'text-cog-koyu',
+    dolgu: 'bg-cog-koyu',
+    kenar: 'border-l-cog-koyu',
+    degisken: 'var(--cog-koyu)',
+  },
+  iklim: {
+    zemin: 'bg-cog',
+    yazi: 'text-cog-koyu',
+    dolgu: 'bg-cog-koyu',
+    kenar: 'border-l-cog-koyu',
+    degisken: 'var(--cog-koyu)',
+  },
+  izohips: {
     zemin: 'bg-cog',
     yazi: 'text-cog-koyu',
     dolgu: 'bg-cog-koyu',
@@ -179,6 +194,21 @@ const AILE: Record<
     dolgu: 'bg-isl-koyu',
     kenar: 'border-l-isl-koyu',
     degisken: 'var(--isl-koyu)',
+  },
+  // Kimyanın iki oyunu lavanta aileyi paylaşıyor.
+  periyodik: {
+    zemin: 'bg-edb',
+    yazi: 'text-edb-koyu',
+    dolgu: 'bg-edb-koyu',
+    kenar: 'border-l-edb-koyu',
+    degisken: 'var(--edb-koyu)',
+  },
+  formul: {
+    zemin: 'bg-edb',
+    yazi: 'text-edb-koyu',
+    dolgu: 'bg-edb-koyu',
+    kenar: 'border-l-edb-koyu',
+    degisken: 'var(--edb-koyu)',
   },
 }
 

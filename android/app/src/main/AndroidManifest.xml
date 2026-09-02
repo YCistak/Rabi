@@ -42,27 +42,6 @@
                 android:value="pomodoro_odak_kilidi" />
         </service>
 
-        <!--
-          Kilitli uygulamaların bildirimlerini silen dinleyici.
-
-          İzni kullanıcı Ayarlar > Bildirim erişimi'nden elle veriyor ve
-          **isteğe bağlı**: verilmezse sistem bu servisi hiç bağlamıyor, odak
-          kilidinin geri kalanı çalışmaya devam ediyor.
-
-          `exported` true olmak zorunda: servisi bağlayan sistemin kendisi.
-          `BIND_NOTIFICATION_LISTENER_SERVICE` izni de bu yüzden burada —
-          yalnızca sistemin bağlayabilmesini sağlıyor.
-        -->
-        <service
-            android:name=".odak.BildirimSusturucu"
-            android:label="@string/app_name"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
-            </intent-filter>
-        </service>
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -93,6 +72,25 @@
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!--
+      Tur boyunca telefonu Rahatsız Etme'ye almak için.
+
+      Bir süre `NotificationListenerService` kullanıldı: o, bildirimi **paket
+      başına** silebiliyordu ve istenen tam olarak buydu. İki yerde birden
+      duvara toslandı: Xiaomi/HyperOS'un yükleyicisi, dinleyici tanımlayan bir
+      APK'nın Play dışından kurulmasını "hassas verilere erişebilir" diyerek
+      reddediyor ("yine de yükle" düğmesi de yok) ve kurulsa bile bildirim
+      erişimi izni o cihazlarda verilemiyor. Yani özellik hedef kullanıcının
+      telefonunda hiç çalışmıyordu.
+
+      Rahatsız Etme erişimi sıradan bir izin: kurulumu engelletmiyor, her
+      cihazda verilebiliyor. Bedeli, susturmanın seçili uygulamalara değil
+      **telefonun tamamına** ait olması. Karşılığında kullanıcının kendi
+      istisnaları (alarm, kişilerden gelen arama, üst üste arayan) yürürlükte
+      kalıyor — bu yüzden `INTERRUPTION_FILTER_PRIORITY` seçildi, `NONE` değil.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 

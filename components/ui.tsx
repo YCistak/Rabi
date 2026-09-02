@@ -234,6 +234,30 @@ export function Deger({
 }
 
 /** Onay isteyen yıkıcı işlemler için basit alt sayfa. */
+/**
+ * Aç/kapa anahtarı — yalnızca çizim, durumu çağıran tutuyor.
+ *
+ * `button` değil `span`: her kullanıldığı yerde satırın tamamı zaten
+ * tıklanabilir ve anahtarı ayrıca düğme yapmak, düğme içinde düğme demekti.
+ */
+export function Anahtar({ acik }: { acik: boolean }) {
+  return (
+    <span
+      className={cn(
+        'relative h-[27px] w-[46px] shrink-0 rounded-full transition',
+        acik ? 'bg-primary-dolu' : 'bg-muted',
+      )}
+    >
+      <span
+        className={cn(
+          'absolute top-[3px] size-[21px] rounded-full bg-white shadow transition-all',
+          acik ? 'left-[22px]' : 'left-[3px]',
+        )}
+      />
+    </span>
+  )
+}
+
 export function Onay({
   acik,
   baslik,

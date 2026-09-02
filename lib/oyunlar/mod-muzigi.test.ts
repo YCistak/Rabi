@@ -50,9 +50,10 @@ describe('ses dengesi', () => {
     // Sentezlenmiş parça, kaydedilmiş efektle (0.42, `oyun-sesi.ts`) aynı
     // sayıda daha kısık duyuluyor; hizaya gelmek için sayıca üstünde duruyor.
     expect(MUZIK_SEVIYESI).toBeGreaterThan(0.42)
-    // Nota tepeleri bu seviyede toplanıyor: 1'e yaklaşan bir ana seviye
-    // parçayı yüksek değil kırpılmış çalar.
-    expect(MUZIK_SEVIYESI).toBeLessThan(0.7)
+    // Üst sınırı artık kırpılma değil sınırlayıcı koyuyor (`kur`), ama 1 yine
+    // de tavan: seviyenin kendisi taşarsa sınırlayıcının kesecek payı kalmaz
+    // ve parça sürekli bastırılmış duyulur.
+    expect(MUZIK_SEVIYESI).toBeLessThanOrEqual(0.9)
   })
 
   it('Rahat modun padi ritmik parçaların altında', () => {

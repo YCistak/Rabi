@@ -17,6 +17,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import com.rabi.app.PomodoroKapanis
+import com.rabi.app.R
 import kotlin.math.max
 
 /**
@@ -36,10 +37,25 @@ class OdakServisi : Service() {
     private var katman: EngelKatmani? = null
     private var yasakli: Set<String> = emptySet()
     private var bitisZamani = 0L
+    /**
+     * Turun başladığı an — engel katmanındaki çubuk bununla doluyor.
+     *
+     * Web tarafından geçmiyor, servis kurulurken damgalanıyor: kilit turla
+     * birlikte başlıyor ve duraklat/devam et her seferinde yeni bir bitişle
+     * servisi yeniden kuruyor. Yani çubuk her zaman **içinde bulunulan**
+     * kesintisiz çalışma parçasını ölçüyor.
+     */
+    private var baslangicZamani = 0L
     private var ders: String? = null
     private var ekranAcik = true
     private var sonYazilanDakika = -1
     private var sonSorgu = 0L
+
+    /**
+     * Tur başlamadan önceki Rahatsız Etme süzgeci — bitince buraya dönülüyor.
+     * `0` "susturma yapılmadı" demek (`INTERRUPTION_FILTER_UNKNOWN`).
+     */
+    private var oncekiSuzgec = 0
 
     /** Ekran kapalıyken hiçbir uygulama öne gelemez; sorgu boşuna pil yakmasın. */
     private val ekranAlicisi = object : BroadcastReceiver() {
@@ -83,14 +99,13 @@ class OdakServisi : Service() {
     override fun onStartCommand(niyet: Intent?, bayraklar: Int, baslatmaId: Int): Int {
         yasakli = niyet?.getStringArrayListExtra(EK_PAKETLER)?.toSet() ?: emptySet()
         bitisZamani = niyet?.getLongExtra(EK_BITIS, 0L) ?: 0L
+        baslangicZamani = System.currentTimeMillis()
         ders = niyet?.getStringExtra(EK_DERS)
         sonSorgu = System.currentTimeMillis()
 
         onPlanaGec()
         calisiyor = true
-        // Bildirim susturma isteğe bağlı: izin yoksa dinleyici hiç bağlanmıyor
-        // ve buradaki çağrı sessizce boşa düşüyor, kilit çalışmaya devam ediyor.
-        BildirimSusturucu.baslat(yasakli)
+        if (niyet?.getBooleanExtra(EK_RAHATSIZ_ETME, false) == true) sustur()
 
         elciler.removeCallbacks(dongu)
         elciler.post(dongu)
@@ -119,9 +134,9 @@ class OdakServisi : Service() {
 
     override fun onDestroy() {
         calisiyor = false
-        // Tur bitti: bildirimler yeniden normal düşsün. Molada susmaya devam
-        // eden bir telefon, molayı mola olmaktan çıkarırdı.
-        BildirimSusturucu.durdur()
+        // Tur bitti: telefon eski hâline dönsün. Molada susmaya devam eden bir
+        // telefon, molayı mola olmaktan çıkarırdı.
+        sesiGeriVer()
         elciler.removeCallbacks(dongu)
         katman?.gizle()
         katman = null
@@ -136,9 +151,17 @@ class OdakServisi : Service() {
     private fun adim() {
         val simdi = System.currentTimeMillis()
 
-        // Güvenlik ağı: web tarafı `bitir` diyemeden öldürülürse (uygulama zorla
-        // durdurulmuş olabilir) kilit sonsuza kadar takılı kalmasın.
-        if (bitisZamani in 1..simdi) {
+        /*
+          Güvenlik ağı: web tarafı `bitir` diyemeden öldürülürse (uygulama zorla
+          durdurulmuş olabilir) kilit sonsuza kadar takılı kalmasın.
+
+          Bitişten `GERI_ALMA_PAYI` kadar **önce** kapanıyor: seans bitimi
+          bildirimi tam bitiş anında düşüyor ve Rahatsız Etme o an hâlâ açıksa
+          zil duyulmuyordu — uygulama arka plandayken kullanıcının turun
+          bittiğini öğrenmesinin tek yolu o bildirim. Birkaç saniye erken
+          kalkan bir engelin bedeli yok; duyulmayan bir zilin var.
+        */
+        if (bitisZamani in 1..(simdi + GERI_ALMA_PAYI)) {
             durdurKendini()
             return
         }
@@ -150,10 +173,13 @@ class OdakServisi : Service() {
         }
 
         if (!ekranAcik) return
+        // Yalnızca Rahatsız Etme istenmişse engellenecek uygulama yok; öne gelen
+        // uygulamayı 1,5 saniyede bir sorgulamak boşuna pil yakardı.
+        if (yasakli.isEmpty()) return
 
         val ondeki = ondekiPaket(simdi) ?: return
         if (yasakli.contains(ondeki)) {
-            katman?.goster(bitisZamani, ders)
+            katman?.goster(baslangicZamani, bitisZamani, ders)
         } else {
             katman?.gizle()
         }
@@ -188,6 +214,43 @@ class OdakServisi : Service() {
         } catch (hata: Exception) {
             // İzin geri alınmış olabilir; kilit sessizce işlevsizleşir, çökmez.
             null
+        }
+    }
+
+    /**
+     * Telefonu Rahatsız Etme'ye alır.
+     *
+     * `PRIORITY` seçildi, `NONE` değil: kullanıcının kendi istisnaları (alarm,
+     * kişilerden gelen arama, üst üste arayan) yürürlükte kalıyor. Her şeyi
+     * susturan bir odak modu, iki saat çalışan öğrencinin telefonunu ulaşılmaz
+     * yapardı — kimse böyle bir özelliği ikinci kez açmaz.
+     *
+     * Önceki süzgeç saklanıyor: kullanıcı tur başlamadan önce zaten Rahatsız
+     * Etme'deyse tur bitince "kapalı"ya çekmek, onun kendi ayarını bozmak
+     * olurdu.
+     */
+    private fun sustur() {
+        if (!Izinler.rahatsizEtmeVar(this)) return
+        try {
+            val yonetici = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            oncekiSuzgec = yonetici.currentInterruptionFilter
+            yonetici.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY)
+        } catch (hata: Exception) {
+            // İzin tur ortasında geri alınmış olabilir; kilit bundan etkilenmiyor.
+            oncekiSuzgec = 0
+        }
+    }
+
+    private fun sesiGeriVer() {
+        val onceki = oncekiSuzgec
+        oncekiSuzgec = 0
+        if (onceki == 0 || !Izinler.rahatsizEtmeVar(this)) return
+        try {
+            val yonetici = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            yonetici.setInterruptionFilter(onceki)
+        } catch (hata: Exception) {
+            // Geri alınamazsa kullanıcı Rahatsız Etme'yi kendisi kapatabiliyor;
+            // çökmek sessiz kalmış bir telefondan daha kötü.
         }
     }
 
@@ -233,7 +296,16 @@ class OdakServisi : Service() {
         return Notification.Builder(this, KANAL_ID)
             .setContentTitle("Rabi — odak modu")
             .setContentText(kalan.toString() + " dk kaldı")
-            .setSmallIcon(android.R.drawable.ic_lock_idle_lock)
+            /*
+              Simge sistemin asma kilidi değil Rabi'nin kendi silueti
+              (`scripts/ikon-uret.mjs`): durum çubuğunda asma kilit gören
+              kullanıcı bildirimin telefonun kendi güvenlik uyarısı olduğunu
+              sanıyordu. Durum çubuğu yalnızca alfa kanalını okuyor, o yüzden
+              renkli ikon değil beyaz siluet; rengi `setColor` veriyor.
+            */
+            .setSmallIcon(R.drawable.ic_bildirim)
+            .setColor(getColor(R.color.marka_amber))
+            .setColorized(false)
             .setContentIntent(dokunma)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
@@ -254,16 +326,27 @@ class OdakServisi : Service() {
         private const val EK_PAKETLER = "paketler"
         private const val EK_BITIS = "bitisZamani"
         private const val EK_DERS = "ders"
+        private const val EK_RAHATSIZ_ETME = "rahatsizEtme"
         private const val BILDIRIM_ID = 4211
         private const val KANAL_ID = "odak-kilidi"
         private const val ARALIK_MS = 1500L
         private const val PENCERE_MS = 5000L
 
-        fun baslat(baglam: Context, paketler: ArrayList<String>, bitisZamani: Long, ders: String?) {
+        /** Kilit bitişten bu kadar önce kalkıyor — seans zili duyulabilsin diye. */
+        private const val GERI_ALMA_PAYI = 4000L
+
+        fun baslat(
+            baglam: Context,
+            paketler: ArrayList<String>,
+            bitisZamani: Long,
+            ders: String?,
+            rahatsizEtme: Boolean,
+        ) {
             val niyet = Intent(baglam, OdakServisi::class.java)
                 .putStringArrayListExtra(EK_PAKETLER, paketler)
                 .putExtra(EK_BITIS, bitisZamani)
                 .putExtra(EK_DERS, ders)
+                .putExtra(EK_RAHATSIZ_ETME, rahatsizEtme)
             baglam.startForegroundService(niyet)
         }
 

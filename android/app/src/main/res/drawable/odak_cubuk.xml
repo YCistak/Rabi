@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Kalan sürenin çubuğu.
+
+  Sayı zaten kaç dakika kaldığını söylüyor; çubuk "ne kadarı geçti"yi
+  söylüyor ve ikisi ayrı sorular — turun ortasında mı sonunda mı olduğunu
+  sayıya bakıp hesaplamak gerekiyordu.
+
+  Ölçek 0–1000: yüzde tam sayıya yuvarlanınca kısa turlarda çubuk saniyede
+  bir sıçrayarak ilerliyordu.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:id="@android:id/background">
+    <shape android:shape="rectangle">
+      <solid android:color="@color/odak_cizgi" />
+      <corners android:radius="999dp" />
+    </shape>
+  </item>
+  <item android:id="@android:id/progress">
+    <clip>
+      <shape android:shape="rectangle">
+        <solid android:color="@color/marka_amber" />
+        <corners android:radius="999dp" />
+      </shape>
+    </clip>
+  </item>
+</layer-list>

@@ -20,6 +20,7 @@
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
   --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
   --color-warning: var(--warning);
   --color-warning-soft: var(--warning-soft);
   --color-grid: var(--grid);
@@ -49,6 +50,10 @@
   --color-byl-kart: var(--byl-kart);
   --color-byl-koyu: var(--byl-koyu);
   --color-byl-ok: var(--byl-ok);
+  --color-fzk: var(--fzk);
+  --color-fzk-kart: var(--fzk-kart);
+  --color-fzk-koyu: var(--fzk-koyu);
+  --color-fzk-ok: var(--fzk-ok);
   --color-boss-zemin: var(--boss-zemin);
 
   /* Tasarımın tek yazı tipi Nunito. Başlık ve gövde ayrı aile değil, ayrı
@@ -87,7 +92,7 @@
    Koyu tema **yok** — bilerek. Tek palet, tek gölge kuralı, `dark:` sınıfı
    hiç kullanılmıyor. Ayarlar'da tema seçeneği de bu yüzden yok.
 
-   Ders aileleri (yzm/isl/edb/cog/trh/byl): her dersin pastel zemini ve o
+   Ders aileleri (yzm/isl/edb/cog/trh/byl/fzk): her dersin pastel zemini ve o
    zeminin üstünde okunan koyu tonu. Oyun kartı, tur sonu ekranı ve Oyun
    Bankası aynı üçlüyü kullanıyor — kullanıcı rengi görünce hangi ders
    olduğunu yazıyı okumadan biliyor. Hepsi turuncuyla çakışmasın diye bir tık
@@ -147,6 +152,8 @@
   --warning: #a87c24;
   --warning-soft: #f9f0d9;
   --danger: #b23b2b;
+  /* Yanlış cevabın açık zemini — doğrununki (`--success-soft`) gibi. */
+  --danger-soft: #f7e5e2;
 
   /*
     Ders aileleri — pastel zemin + üstünde okunan koyu ton.
@@ -183,6 +190,14 @@
   --byl-kart: var(--byl);
   --byl-koyu: #5c7c26;
   --byl-ok: #83a93c;
+
+  /* Fizik ailesi Konu Anlatımı ile açıldı: oyunlarda Fizik yok, yedinci
+     dersin rengi de yoktu. Gece mavisi, Tarih'in deniz mavisinden daha
+     koyu ve daha az yeşil — ikisi ders şeridinde yan yana duruyor. */
+  --fzk: #e8eaf3;
+  --fzk-kart: var(--fzk);
+  --fzk-koyu: #4a5789;
+  --fzk-ok: #6c7cb0;
 
   /* Boss sorusunda oyun ekranının zemini. */
   --boss-zemin: var(--ikincil-soft);

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Maskotun arkasındaki ışık.
+
+  Maskotun kürkü ve zemin neredeyse aynı beyazlıkta; kontursuz siluet
+  zeminde kayboluyor. Web tarafındaki karşılığı da bu (karşılama ekranındaki
+  radyal ışık) ve aynı ton kullanılıyor: markanın yazı tonu %9 opaklıkta.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+  <gradient
+      android:type="radial"
+      android:centerX="0.5"
+      android:centerY="0.5"
+      android:gradientRadius="75dp"
+      android:startColor="#17B3491F"
+      android:endColor="#00B3491F" />
+</shape>

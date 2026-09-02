@@ -220,7 +220,8 @@ export function SiralaOyunuEkrani({
       })
       oyunSesiCal('bitis', sesAcik)
       setAsama('bitti')
-      // Doğrular da bildiriliyor: banka, üst üste üç kez doğru bilinen kaydı düşürüyor.
+      // Doğrular da bildiriliyor ama bankayı ilerletmiyor: kayıt yalnızca
+      // Oyun Bankası’ndaki genel testte doğru bilinince düşüyor (`banka.ts`).
       onTurBitti(
         ozet,
         verilenler.map((cevap) => ({
@@ -523,7 +524,7 @@ function SonucGorunumu({
       puan={{ deger: sonuc.puan, etiket: 'Puan' }}
       altBaslik={
         bankaTuru
-          ? 'Banka soruları — üst üste üç doğruda düşerler.'
+          ? 'Banka soruları — genel testte doğru bilince düşerler.'
           : rekorCumlesi(ozet.dogru, rekor, yeniRekor, 'doğru')
       }
       bolumBasligi="Karıştırdığın sıralar"

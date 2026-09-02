@@ -21,7 +21,6 @@ import type {
 } from './types'
 import {
   BANKA_SINIRI,
-  DUSME_ESIGI,
   OYUN_KIMLIKLERI,
   type BankaKaydi,
   type BankaSorusu,
@@ -31,6 +30,7 @@ import { egitimYili } from './hesap'
 import { dakikayiKirp, saatiKirp } from './hatirlatma'
 import { yeniId } from './utils'
 import { notlariNormalize, type NotKagidi } from './yapilacaklar'
+import type { BilinmeyenKart, KonuIlerlemeleri } from './konu/ilerleme'
 
 export const ANAHTARLAR = {
   denemeler: 'rabi-denemeler',
@@ -54,6 +54,18 @@ export const ANAHTARLAR = {
    * sayıya baktığı için ayrı bir sayaç olarak birikiyor.
    */
   bankaDusen: 'rabi-banka-dusen',
+  /** Konu Anlatımı: konu kimliği → deste sonucu. */
+  konuIlerleme: 'rabi-konu-ilerleme',
+  /** Konu Anlatımı'nda "bilmiyorum" denen kartlar. */
+  bilinmeyenKartlar: 'rabi-bilinmeyen-kartlar',
+  /**
+   * Konu haritasında en son seçili ders ve sınıf.
+   *
+   * Yedeğe girmiyor: kısayollarla aynı sebep — bu veri değil, bu cihazda
+   * kalınan yer. Yedeği başka telefona yükleyen biri kendi seçimini
+   * kaybetmemeli.
+   */
+  konuSecimi: 'rabi-konu-secimi',
   /** Haftalık özetin hangi haftalarının izlendiği — hafta başı tarihlerinin listesi. */
   ozetGorulen: 'rabi-ozet-gorulen',
   /**
@@ -64,6 +76,18 @@ export const ANAHTARLAR = {
    */
   sonAraclar: 'rabi-son-araclar',
   sonOyunlar: 'rabi-son-oyunlar',
+  /**
+   * Ana sayfada kullanıcının **kendi sabitlediği** kısayollar.
+   *
+   * Son kullanılanlardan ayrı anahtarda: sabitlenen kutucuk yerinde kalmalı,
+   * son kullanılan listesi ise her turda değişiyor. Tek anahtarda
+   * tutulsalardı bir oyunu açmak kullanıcının kurduğu sırayı bozardı.
+   *
+   * Yedeğe girmiyor — son kullanılanlarla aynı sebep: bu cihazdaki yerleşim.
+   */
+  sabitAraclar: 'rabi-sabit-araclar',
+  /** Ana sayfadaki oyun kutucukları ders gösteriyor; kayıt ders kimliği tutuyor. */
+  sabitDersler: 'rabi-sabit-dersler',
   /** Zihinden İşlem'de seçili işlem türleri — yedeğe girmeyen küçük bir tercih. */
   islemSecimi: 'rabi-islem-secimi',
   /** Yazım Ustası'nda seçili soru türleri (yazım / noktalama). */
@@ -86,6 +110,8 @@ export const ANAHTARLAR = {
   zorlukAci: 'rabi-zorluk-aci',
   zorlukUcgen: 'rabi-zorluk-ucgen',
   zorlukHarita: 'rabi-zorluk-harita',
+  zorlukIklim: 'rabi-zorluk-iklim',
+  zorlukIzohips: 'rabi-zorluk-izohips',
   zorlukAntlasma: 'rabi-zorluk-antlasma',
   zorlukKavram: 'rabi-zorluk-kavram',
   zorlukAnlatim: 'rabi-zorluk-anlatim',
@@ -94,6 +120,8 @@ export const ANAHTARLAR = {
   zorlukHucre: 'rabi-zorluk-hucre',
   zorlukSirala: 'rabi-zorluk-sirala',
   zorlukTuzak: 'rabi-zorluk-tuzak',
+  zorlukPeriyodik: 'rabi-zorluk-periyodik',
+  zorlukFormul: 'rabi-zorluk-formul',
   /**
    * Bildirilen hatalı sorular — gönderim kuyruğu.
    *
@@ -242,6 +270,7 @@ export const VARSAYILAN_POMODORO: PomodoroAyar = {
   sesSeviyesi: 0.5,
   ekraniAcikTut: false,
   odakKilidi: false,
+  rahatsizEtme: false,
   kilitliUygulamalar: [],
   kilitTanitimiGoruldu: false,
 }
@@ -259,6 +288,9 @@ export function pomodoroAyariniNormalize(
   return {
     ...birlesik,
     odakKilidi: birlesik.odakKilidi === true,
+    // Eski kurulumlarda alan yok; kilit varken sessizce Rahatsız Etme'ye
+    // geçen bir güncelleme, kullanıcının haberi olmadan telefonunu susturur.
+    rahatsizEtme: birlesik.rahatsizEtme === true,
     kilitliUygulamalar: Array.isArray(birlesik.kilitliUygulamalar)
       ? birlesik.kilitliUygulamalar.filter((paket) => typeof paket === 'string')
       : [],
@@ -427,6 +459,12 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       oyunBankasi: bankayiCoz(nesne.oyunBankasi),
       bankaDusen: sayi(nesne.bankaDusen),
       notlar: notlariNormalize(nesne.notlar),
+      // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
+      // kullanıcının mevcut konu kaydına dokunulmuyor.
+      konuIlerleme: nesne.konuIlerleme as KonuIlerlemeleri | undefined,
+      bilinmeyenKartlar: Array.isArray(nesne.bilinmeyenKartlar)
+        ? (nesne.bilinmeyenKartlar as BilinmeyenKart[])
+        : undefined,
       pomodoroGecmis: dizi<PomodoroSeans>(nesne.pomodoroGecmis),
       // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
       // kullanıcının mevcut pomodoro ayarına dokunulmuyor.
@@ -587,7 +625,6 @@ function bankayiCoz(ham: unknown): BankaKaydi[] {
     .map((k) => ({
       ...k,
       kacKez: Math.max(1, sayi(k.kacKez)),
-      ardisikDogru: Math.min(DUSME_ESIGI - 1, sayi(k.ardisikDogru)),
       eklenme: typeof k.eklenme === 'string' ? k.eklenme : '',
       sonYanlis: typeof k.sonYanlis === 'string' ? k.sonYanlis : '',
     }))
@@ -632,6 +669,9 @@ export function yedegiUygula(yedek: Yedek) {
   yaz(ANAHTARLAR.oyunGecmisi, yedek.oyunGecmisi)
   yaz(ANAHTARLAR.oyunBankasi, yedek.oyunBankasi ?? [])
   yaz(ANAHTARLAR.bankaDusen, yedek.bankaDusen ?? 0)
+  // Eski yedeklerde konu kaydı yok; boş yazmak okunan konuları silerdi.
+  if (yedek.konuIlerleme) yaz(ANAHTARLAR.konuIlerleme, yedek.konuIlerleme)
+  if (yedek.bilinmeyenKartlar) yaz(ANAHTARLAR.bilinmeyenKartlar, yedek.bilinmeyenKartlar)
   // Eski yedeklerde tahta yok; boş dizi yazmak kullanıcının kâğıtlarını silerdi.
   if (yedek.notlar) yaz(ANAHTARLAR.notlar, yedek.notlar)
   yaz(ANAHTARLAR.pomodoroGecmis, yedek.pomodoroGecmis)
