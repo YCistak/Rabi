@@ -215,6 +215,35 @@
     background-color: var(--background);
     color: var(--foreground);
     -webkit-tap-highlight-color: transparent;
+    /*
+      Yazı seçimi kapalı.
+
+      Uygulama bir belge değil: hiçbir ekranda kopyalanacak metin yok, ama
+      dokunmatikte basılı tutmak seçim tutamaklarını ve "Kopyala / Web'de ara"
+      çubuğunu çıkarıyordu. Oyunlarda şıkka biraz uzun basmak, kaydırırken
+      parmağın bir başlıkta takılması bunun için yetiyor ve ekranın yarısı
+      maviye boyanmış hâlde kalıyordu — üstelik seçim çubuğu turu keserek
+      açılıyor.
+
+      `touch-callout` da kapalı: seçim olmadan da uzun basışta görsellerin
+      üstünde sistemin kendi menüsü açılıyor.
+    */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  /*
+    Tek istisna giriş alanları. Seçim kapalıyken imleci kelimenin ortasına
+    koymak, yazılanı düzeltmek için gereken tek şey olan çift dokunuşla
+    seçmek de gitmiş oluyor: ad, hedef ya da deneme neti girerken kullanıcı
+    yazdığını silip baştan yazmak zorunda kalırdı.
+  */
+  input,
+  textarea,
+  [contenteditable='true'] {
+    -webkit-user-select: text;
+    user-select: text;
   }
 
   /* Sayı girişlerindeki artır/azalt okları mobilde yer kaplıyor, kapatıldı */

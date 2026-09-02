@@ -24,4 +24,13 @@
     -->
     <color name="odak_cip">#EFEEEB</color>
     <color name="odak_cizgi">#EAE9E6</color>
+
+    <!--
+      Bildirim renkleri burada da aynı — zaten iki zemin için birden
+      seçildiler, gece modunda değişmeleri gerekmiyor. Dosyanın varlık
+      sebebi yukarıdaki: eksik bırakılan bir ad Android'i varsayılana
+      düşürüyor.
+    -->
+    <color name="bildirim_amber">#E8783F</color>
+    <color name="bildirim_cizgi">#33888888</color>
 </resources>

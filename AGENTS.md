@@ -56,6 +56,14 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   uygulama onlardan hiçbir şey import etmiyor — ekran değiştirirken oraya bak.
 - Sütun hâlindeki sayılara `rakam` sınıfı (tabular-nums), başlıklara `font-display`.
 - Alt menünün altında kalan içerik için `guvenli-alt`.
+- **Yazı seçimi kapalı** (`user-select: none`, `globals.css`). Uygulama bir
+  belge değil: kopyalanacak metin yok, ama dokunmatikte basılı tutmak seçim
+  tutamaklarını ve "Kopyala / Web'de ara" çubuğunu çıkarıyordu — oyunda şıkka
+  biraz uzun basmak ya da kaydırırken parmağın bir başlıkta takılması buna
+  yetiyor ve çubuk turu keserek açılıyor. `touch-callout` da kapalı: seçim
+  olmadan da uzun basışta görsellerin üstünde sistemin kendi menüsü açılıyor.
+  Tek istisna giriş alanları (`input`, `textarea`, `contenteditable`) — orada
+  seçim, yazılanı düzeltmenin tek yolu.
 
 ### Açılışın son hareketi ana sayfaya bağlanıyor
 
@@ -350,6 +358,80 @@ Soru sayıları elle yazılmıyor, `OSYM_TEST_SORU`dan toplanıyor: aynı sayı
 değiştiğinde birinde eski kalırdı. Süreler ise elle yazılı — ÖSYM'nin kararı,
 soru sayısından türetilemez.
 
+### Müzik seçilmeden önce dinleniyor
+
+Ses panelindeki on iki lo-fi parçanın arasından "Glow on the Overpass"i **ada
+bakarak** seçmek seçim değil kura. Dinlemenin tek yolu parçayı seçip turu
+başlatmaktı ve beğenilmeyen parça, başlamış bir turun ortasında değiştiriliyordu.
+
+Her satırın kendi önizleme düğmesi var: üçgene dokunmak dinletiyor, ada dokunmak
+seçiyor. İki ayrı iş, iki ayrı dokunuş hedefi — çip bulutu bu yüzden satır
+listesine döndü, iç içe düğme yazılamıyor.
+
+Dinlemek seçmek değil: `onizlenen` seçimden ayrı bir state ve panel üç parçayı
+dinleyip hiçbirini seçmeden kapatılabiliyor. Dinlenen parçayı seçili saymak,
+kararı kullanıcının yerine vermek olurdu.
+
+Çalar tek (`SesCalar`) ve önizleme onu **ödünç alıyor**: iki ses kaynağı üst üste
+binseydi önizlenen parça çalmakta olanın üstüne karışırdı. Tur sürerken bir
+başka parçayı dinlemek çalanı susturuyor, önizleme bitince seçili parça geri
+geliyor — bunu `onizle`nin `onBitti` geri çağrısı yapıyor.
+
+Önizleme yirmi saniye sonra kendiliğinden bitiyor: sonu gelmeyen bir önizleme,
+önizleme değil çalan müzik. Sonunda kesilmiyor **kısılıyor** (`kis`) — mp3'ün
+ortasında aniden kesilen ses, parçanın değil uygulamanın bozuk olduğunu
+düşündürüyor.
+
+### Sayaç kilit ekranında da duruyor
+
+Turun büyük kısmı telefona bakılmadan geçiyor ve "kaç dakika kaldı"yı öğrenmenin
+tek yolu uygulamayı açmaktı — tam da açılmaması gereken şey. Sayaç artık bir
+bildirim olarak kilit ekranında duruyor: maskot, aşama + ders, büyük geri sayım,
+ilerleme çubuğu ve iki düğme (**Duraklat/Devam et**, **Turu bitir**).
+
+Bildirimi çizen yer ön plan servisi (`OdakServisi`). Sınıfın adı odak
+kilidinden kalma ve öyle kalıyor — kimliği değiştirmek manifest'i, eklentiyi ve
+`PomodoroKapanis`i birden dokundururdu — ama işi tersine döndü: bildirim eskiden
+servisin **bedeliydi** (sistem ön plan servisinden kalıcı bildirim istiyor),
+şimdi varlık sebebi. Servis bu yüzden **her turda** kuruluyor; kilit ve Rahatsız
+Etme üstüne binen iki seçenek. Eskiden ikisi de kapalıyken servis hiç kurulmuyordu
+ve odak kilidini açmamış kullanıcı — yani çoğunluk — sayacı hiç görmüyordu.
+
+Molada da yaşıyor: molanın da bir sayacı var. Engelleme molada devreye girmiyor,
+o karar web tarafında — servise boş liste ve kapalı susturma geçiliyor.
+
+Dört incelik:
+
+- **Düzen özel, çerçeve sistemin** (`DecoratedCustomViewStyle`). Uygulama adı,
+  saat ve düğmeler sistemin çizimi; ortadaki içerik bizim. Tümüyle özel bir
+  bildirim her üreticinin gölgesinde başka türlü duruyor ve düğmeleri de elle
+  çizmek gerekiyordu.
+- **Renkler tema değişkenlerinden gelmiyor, gelemiyor.** Bildirim uygulamanın
+  içinde değil sistemin gölgesinde çiziliyor ve o zemin telefonun gece moduna
+  göre açık ya da koyu. Yazılar bu yüzden `?android:attr/textColorPrimary`,
+  vurgu da iki zeminde birden okunan ayrı bir ton (`bildirim_amber`,
+  `marka_amber`den bir tık açık). Katmanın renkleri burada kullanılamaz.
+- **Sayacın iki kopyası var** — biri serviste, biri web'de — ve bildirimin
+  düğmesi yalnızca ilkine dokunuyor. Komut `pomodoroKomutu` olayıyla web'e
+  geçiyor; geçmeseydi uygulamaya dönen kullanıcı, bildirimden duraklattığı turu
+  hâlâ işlerken bulurdu. `devam` komutu yeni **bitiş zamanını** da taşıyor:
+  web'deki sayaç mutlak zaman damgasından okunuyor (`lib/pomodoro.ts`), "devam
+  ettim" demek yetmiyor.
+- **Duraklatmak servisi durdurmuyor**, donduruyor (`odakKilidiniDuraklat`).
+  Durdurulsaydı bildirim ekrandan kalkar ve duraklatılmış tur kilit ekranında
+  hiç var olmamış gibi görünürdü. Turdan gerçekten çıkan yollar (sıfırla, atla,
+  aşama sonu) `odakKilidiniBitir` çağırıyor.
+
+Uygulamanın kendi Devam düğmesinin ayrı bir yerli karşılığı **yok**: Başlat
+servisi `baslat` ile baştan kuruyor ve o zaten duraklamayı sıfırlıyor. Devam
+yalnızca bildirimin kendi düğmesinden geliyor.
+
+İzin turu başlatırken isteniyor (`izinIste`), Ayarlar'daki bildirim anahtarına
+bağlanmadan: Android 13'ten beri POST_NOTIFICATIONS olmadan ön plan servisinin
+bildirimi de gösterilmiyor, yani izinsiz kullanıcıda özellik sessizce yok. O
+anahtar "seans bitince haber ver" demek; buradaki bildirim sayacın kendisi ve
+anahtar kapalıyken de gerekiyor.
+
 ### Odak kilidi yalnızca Pomodoro'da
 
 Odak kilidi ve Rahatsız Etme anahtarları bir süre **iki yerde** duruyordu: hem
@@ -403,6 +485,70 @@ Buna rağmen uygulamanın diliyle konuşuyor:
 
 Onay ekranı (`odak_onay`) ayrı duruyor: kilidi kapatmanın bedeli var — tur
 iptal olur, seri kırılır. Bedeli olmayan engel engel değildir.
+
+### Katman iki üç saniye geç geliyordu
+
+Yasaklı uygulama açılıyor, kullanıcı ekranı görüyor, engel ondan sonra
+düşüyordu. Gecikme iki parçadan oluşuyor ve yalnızca biri elimizde:
+
+- **Döngünün beklediği süre.** Öne gelen uygulama bir buçuk saniyede bir
+  sorulanıyordu; `ARALIK_MS` üçte birine indi (350 ms). Sorgunun kendisi ucuz
+  (son birkaç saniyenin olay listesi) ama bedava değil, o yüzden bu sıklıkta
+  yalnızca engellenecek uygulama varken dönülüyor — sayaç bildirimi için
+  saniyede bir yetiyor (`BILDIRIM_ARALIGI_MS`).
+- **Katmanın kurulma süresi.** Düzen her gösterimde baştan şişiriliyordu.
+  Artık servis ayağa kalkarken bir kez şişiriliyor (`EngelKatmani.hazirla`) ve
+  gösterim anında geriye yalnızca `addView` kalıyor. Bunun bedeli görünümün
+  gösterimler arasında yaşaması: düğmelerin dinleyicileri bu yüzden `duzenKur`
+  içinde bağlanıyor, `goster` içinde değil — her gösterimde yeniden bağlanan
+  bir dinleyici aynı düğmeye üst üste binerdi. `goster` yalnızca ders çipini ve
+  ana/onay görünürlüğünü tazeliyor, çünkü ikisi de tur içinde değişebiliyor.
+
+Üçüncü parça kullanım olayının sisteme düşme gecikmesi ve o elimizde değil.
+
+### Arkadan gelen ses ve mini oynatıcı
+
+Kullanıcı bir video açıp Rabi'ye dönüyor ve turu başlatıyordu: yasaklı uygulama
+artık **önde değil** — ana ekranda ya da mini oynatıcıda — yani öne gelen
+uygulamayı izleyen döngü onu hiç görmüyor, ses tur boyunca arkadan gelmeye devam
+ediyordu.
+
+Çözüm ses odağı: servis `AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE` alıyor ve **tur
+bitene kadar bırakmıyor**. Odağı kaybeden oynatıcı duraklıyor ve odak geri
+verilene kadar kendiliğinden devam edemiyor; bırakılsaydı video kaldığı yerden
+sürerdi. Rabi'nin kendi lo-fi'ı bundan etkilenmiyor — odak uygulama başına
+veriliyor ve WebView onu kendi adına yeniden isteyince yasaklı uygulama değil
+biz alıyoruz.
+
+Odak iki yerde alınıyor ve ikisi de **koşullu**:
+
+- Tur başlarken, yalnızca son bir dakika içinde yasaklı bir uygulama önde
+  olduysa **ve** o an bir şey çalıyorsa (`baslarkenCalaniSustur`). İki koşul
+  birden şart: `isMusicActive` hangi uygulamanın çaldığını söylemiyor ve tek
+  başına bakılsaydı engellenmemiş bir çalar — öğrencinin kendi çalışma müziği —
+  boş yere susturulurdu.
+- Tur içinde, yasaklı uygulama bir kez öne geldiğinde. Katman ekrandan
+  çekildikten sonra da uygulama arka planda çalmaya devam edebiliyor.
+
+**Mini oynatıcının penceresi kapatılamıyor.** Sesi kesiliyor ama küçük pencere
+ekranda kalabiliyor: pencere sistemin elinde ve sıradan bir uygulamanın onu
+kaldırmasının yolu yok (erişilebilirlik API'si Play politikası yüzünden zaten
+kullanılmıyor, bkz. manifest). Şikâyet edilen şey sesti ve o çözüldü; pencerenin
+kendisi için yeni bir fikir gerekiyor.
+
+### Play Store engelin yan kapısıydı
+
+Oyunları engelleyen öğrenci aynı oyunu mağazanın "Aç" düğmesinden
+başlatabiliyordu; üstelik mağaza kendi başına bir keşif akışı — engellenenin
+yerine yenisi bir dokunuş uzakta. `com.android.vending` ve Play Games artık
+manifest'teki `<queries>` listesinde adıyla yazılı: MAIN/LAUNCHER sorgusu bu
+paketleri görüyor olmalı ama bazı cihazlarda mağazanın başlatıcı etkinliği o
+sorgudan dönmüyor ve uygulama listede hiç çıkmıyordu.
+
+Öneri listesinde de duruyorlar (`ONERILENLER`) ama **zorunlu değiller**: kutu
+işaretli geliyor, kullanıcı kaldırabiliyor. Mağaza sosyal medya değil ve tur
+sırasında ders uygulaması kuran öğrenci var.
+
 ### Uygulama ikonu üretiliyor, elle çizilmiyor
 
 İkonun tek kaynağı `scripts/ikon-uret.mjs`; `public/icon-*.png` ile

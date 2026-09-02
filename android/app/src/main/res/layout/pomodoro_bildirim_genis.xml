@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Pomodoro bildiriminin açık hâli — kullanıcı gölgede bildirimi aşağı
+  çektiğinde ya da kilit ekranında yer olduğunda görünen düzen.
+
+  Kapalı hâlden farkı ölçek değil **sıra**: orada satır tek ve sayı sağda
+  duruyor, burada sayı ortada ve ekrandaki en büyük öge. Bildirime bakma sebebi
+  o sayı; açık hâlde yer varken onu bir satırın ucuna sıkıştırmak, kazanılan
+  yeri boşa harcamak olurdu.
+
+  Düğmeler bu düzende yok: onları sistem çiziyor (`Notification.Builder.addAction`
+  + `DecoratedCustomViewStyle`). Elle çizilen düğmeler her Android sürümünde ve
+  her üreticinin gölgesinde başka türlü duruyor; sistemin kendi düğmesi her
+  yerde tıklanabilir ve doğru boyda.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingTop="4dp"
+    android:paddingBottom="8dp">
+
+    <FrameLayout
+        android:layout_width="64dp"
+        android:layout_height="64dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:src="@drawable/odak_hale" />
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            android:src="@drawable/tavsan_yuz" />
+    </FrameLayout>
+
+    <!-- Aşama ve ders tek satırda: "Çalışma · Matematik". İkiye bölünseydi
+         bildirim iki satır uzar, kazanılan bilgi aynı kalırdı. -->
+    <TextView
+        android:id="@+id/bildirim_genis_asama"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/bildirim_genis_sure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:letterSpacing="0.02"
+        android:textColor="@color/bildirim_amber"
+        android:textSize="42sp"
+        android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/bildirim_genis_cubuk"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_marginTop="10dp"
+        android:max="1000"
+        android:progressDrawable="@drawable/bildirim_cubuk" />
+</LinearLayout>
