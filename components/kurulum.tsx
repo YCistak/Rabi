@@ -177,18 +177,23 @@ export function Kurulum({
 }) {
   const [adim, setAdim] = useState(0)
   const [ad, setAd] = useState('')
-  /**
-   * Ad uyarısı yalnızca kullanıcı Devam'a bastıktan sonra çıkıyor.
-   *
-   * Ekran açılır açılmaz boş alanın üstüne kırmızı yazı koymak, daha hiçbir
-   * şey yapmamış kullanıcıyı hatalı gibi göstermek olurdu.
-   */
-  const [adDenendi, setAdDenendi] = useState(false)
   const [sinif, setSinif] = useState(12)
   /** Mezunun yıl sonu notları: sınıf → yazılan metin. Boşlar hesaba girmiyor. */
   const [notlar, setNotlar] = useState<Record<number, string>>({})
   const [obpMetni, setObpMetni] = useState('')
   const [puanTuru, setPuanTuru] = useState<PuanTuru | null>(null)
+  /**
+   * Alan kartlarından birine dokunuldu mu.
+   *
+   * `puanTuru` tek başına yetmiyor: "Karar vermedim" de `null` kaydediliyor ve
+   * kart listesi bir süre o seçeneği **seçili** gösteriyordu — hiçbir şeye
+   * dokunmamış kullanıcı, kendi adına verilmiş bir cevap görüyordu. Şimdi
+   * hiçbiri seçili gelmiyor ve Devam, cevap verilene kadar pasif.
+   */
+  const [alanSecildi, setAlanSecildi] = useState(false)
+  /** "Daha sonra seçerim" işaretli mi — bölüm ve notlar adımlarının atlama yolu. */
+  const [bolumSonra, setBolumSonra] = useState(false)
+  const [notlarSonra, setNotlarSonra] = useState(false)
   /*
     Bölüm listesi alana göre süzülüyor; bu anahtar süzgeci kaldırıyor.
 
@@ -247,6 +252,9 @@ export function Kurulum({
   )
 
   const universiteSec = (secilen: Universite) => {
+    // Seçim yapan kullanıcıda "daha sonra" işareti kalırsa iki cevap birden
+    // verilmiş olurdu; dokunuş işareti kaldırıyor.
+    setBolumSonra(false)
     setHedefUniversite(secilen.ad)
     setUniArama('')
     // Yeni üniversitenin açmadığı bir bölüm seçili kalırsa ekran, o
@@ -310,30 +318,66 @@ export function Kurulum({
   const geri = () => setAdim(Math.max(0, siradaki - 1))
 
   const adGecerli = adGecerliMi(ad)
-  /** Uyarı, denendikten sonra yazarken de canlı kalıyor; üç harfte kayboluyor. */
-  const adUyarisi = adDenendi && !adGecerli
+  /** Notlar adımında girilmiş tek bir sayı var mı. */
+  const notVar = Object.values(notlar).some((n) => n.trim() !== '') || obpMetni.trim() !== ''
+  /**
+   * Devam düğmesi basılabilir mi.
+   *
+   * Kural: **boş kutuyla ilerlenmiyor.** Boş bırakılabilen adımlarda (bölüm,
+   * notlar) atlamanın kendi işareti var — "daha sonra seçeceğim". Sessizce
+   * geçilen bir adım, kullanıcının cevaplamayı unuttuğu adımdır: bölüm adımı
+   * boş geçildiğinde ana sayfadaki hedef paneli boş açılıyor ve oraya kimse
+   * geri dönmüyordu.
+   */
+  const devamEdilebilir =
+    suanki === 'isim'
+      ? adGecerli
+      : suanki === 'alan'
+        ? alanSecildi
+        : suanki === 'bolum'
+          ? bolumSonra || (secilenUni !== null && secilenBolum !== null)
+          : suanki === 'notlar'
+            ? notlarSonra || notVar
+            : true
+  /**
+   * Ad ipucu iki yüzlü: boş alanda **soluk** bir yönerge, kısa yazılmış adda
+   * **kırmızı** bir uyarı.
+   *
+   * Eskiden uyarı yalnızca Devam'a basıldıktan sonra çıkıyordu; düğme artık
+   * geçersiz adla pasif olduğu için o an hiç gelmiyor. Pasif bir düğmenin
+   * yanında sebebi yazmayan bir ekran, kullanıcıyı kurulumda kilitler.
+   */
+  const adUyarisi = !adGecerli && ad.trim() !== ''
 
   /**
    * Devam / Başlayalım düğmesi.
    *
-   * Ad adımında geçersiz bir adla ilerlemeyi kesiyor: düğmeyi devre dışı
-   * bırakmak yerine basılabilir bırakıp uyarı göstermek, kullanıcıya neyin
-   * eksik olduğunu söylüyor — ölü bir düğme söylemezdi.
+   * Eksik cevapla ilerlemiyor. Düğme bu durumda **pasif** çiziliyor ve neyin
+   * eksik olduğu ekranda yazıyor: ad alanının üstündeki ipucu, bölüm ve notlar
+   * adımlarında da düğmenin hemen üstündeki "daha sonra" satırı. Bir süre tersi
+   * denendi — düğme basılabilir kalıyor, basılınca uyarı çıkıyordu — ama o
+   * düzende hiç uyarı çıkmayan adımlar (bölüm, notlar) sessizce boş
+   * geçilebiliyordu.
+   *
+   * Klavyedeki Enter da buraya düşüyor, o yüzden denetim düğmede değil burada.
    */
   const devamEt = () => {
-    if (suanki === 'isim' && !adGecerli) {
-      setAdDenendi(true)
-      return
+    if (!devamEdilebilir) return
+    /*
+      "Daha sonra" işaretliyken yazılmış olanlar temizleniyor: kullanıcı üç yılı
+      girip sonra işareti koyduysa kararı sonuncusudur ve yarım bir OBP,
+      tahmini sessizce bozardı.
+    */
+    if (suanki === 'notlar' && notlarSonra) {
+      setNotlar({})
+      setObpMetni('')
+    }
+    if (suanki === 'bolum' && bolumSonra) {
+      setHedefUniversite('')
+      setHedefBolum('')
     }
     if (siradaki === sonAdim) void bitir()
     else ilerle()
-  }
-
-  /** Notları ve OBP'yi boşaltıp geçer — "şimdilik atla" düğmesi. */
-  const notlariAtla = () => {
-    setNotlar({})
-    setObpMetni('')
-    ilerle()
   }
 
   const bitir = async () => {
@@ -539,8 +583,11 @@ export function Kurulum({
         <SecimKartlari
           etiket="Hangi alandasın?"
           secenekler={PUAN_TURLERI.map((tur) => ({ deger: tur.id, ad: tur.ad }))}
-          secili={puanTuru ?? ALANSIZ}
-          onSec={(deger) => setPuanTuru(deger === ALANSIZ ? null : deger)}
+          secili={alanSecildi ? (puanTuru ?? ALANSIZ) : null}
+          onSec={(deger) => {
+            setAlanSecildi(true)
+            setPuanTuru(deger === ALANSIZ ? null : deger)
+          }}
         />
       ) : suanki === 'notlar' ? (
         <OkulNotlari
@@ -566,13 +613,16 @@ export function Kurulum({
                 <Etiket htmlFor="kurulum-ad" className="mb-0">
                   Adın
                 </Etiket>
-                {adUyarisi && (
+                {!adGecerli && (
                   <span
                     id="kurulum-ad-uyari"
-                    role="alert"
-                    className="flex items-center gap-1 text-xs font-medium text-danger"
+                    role={adUyarisi ? 'alert' : undefined}
+                    className={cn(
+                      'flex items-center gap-1 text-xs font-medium',
+                      adUyarisi ? 'text-danger' : 'text-muted-foreground',
+                    )}
                   >
-                    <AlertCircle size={13} aria-hidden className="shrink-0" />
+                    {adUyarisi && <AlertCircle size={13} aria-hidden className="shrink-0" />}
                     En az {AD_EN_AZ} harf yaz
                   </span>
                 )}
@@ -595,7 +645,7 @@ export function Kurulum({
                   onChange={(e) => setAd(adBiciminde(e.target.value))}
                   placeholder="Adını yaz"
                   aria-invalid={adUyarisi}
-                  aria-describedby={adUyarisi ? 'kurulum-ad-uyari' : undefined}
+                  aria-describedby={!adGecerli ? 'kurulum-ad-uyari' : undefined}
                   className={`pl-10 ${adUyarisi ? 'border-danger focus-visible:border-danger' : ''}`}
                   // Ad alanı: klavye baş harfi büyütsün, tarayıcı yazım
                   // denetimiyle altını kırmızı çizmesin.
@@ -756,20 +806,37 @@ export function Kurulum({
       */}
       {(suanki === 'isim' || suanki === 'bolum') && <div className="flex-1" aria-hidden />}
 
+      {/*
+        Atlama işareti düğmelerin **hemen üstünde**: kullanıcının gözü önce
+        pasif Devam düğmesine gidiyor, oradan yukarı kayıyor. Eskiden notlar
+        adımında Devam'ın yanında "Şimdilik atla" diye ikinci bir düğme vardı;
+        iki düğmeli bir satır hangisinin ileri götürdüğünü belirsiz bırakıyordu
+        ve bölüm adımında karşılığı hiç yoktu — orası sessizce boş geçiliyordu.
+      */}
+      {suanki === 'bolum' && (
+        <SonraSec
+          isaretli={bolumSonra}
+          onDegis={setBolumSonra}
+          etiket="Hedefimi daha sonra seçeceğim"
+          alt="Hedefim ekranından istediğin zaman ekleyebilirsin."
+        />
+      )}
+      {suanki === 'notlar' && (
+        <SonraSec
+          isaretli={notlarSonra}
+          onDegis={setNotlarSonra}
+          etiket="Notlarımı daha sonra gireceğim"
+          alt="Okulum ekranından sonradan girebilirsin; OBP tahmini o zaman açılır."
+        />
+      )}
+
       <div className="mt-5 flex items-center gap-2">
         {siradaki > 0 && (
           <Buton bicim="ikincil" boy="simge" onClick={geri} aria-label="Geri">
             <ArrowLeft size={18} aria-hidden />
           </Buton>
         )}
-        {/* Notlar adımı atlanabilir olmalı: dört yılın notunu hatırlamayan
-            kullanıcı kurulumda takılıp kalmasın. */}
-        {suanki === 'notlar' && (
-          <Buton bicim="ikincil" onClick={notlariAtla}>
-            Şimdilik atla
-          </Buton>
-        )}
-        <Buton className="flex-1" onClick={devamEt}>
+        <Buton className="flex-1" onClick={devamEt} disabled={!devamEdilebilir}>
           {/* Karşılama ekranı "Başlayalım" diyor; aynı akışta ikinci kez aynı
               söz, kullanıcıya başa döndüğünü düşündürüyordu. */}
           {siradaki === sonAdim ? 'Hazırım' : 'Devam'}
@@ -784,6 +851,45 @@ export function Kurulum({
   )
 }
 
+
+/**
+ * "Daha sonra seçerim" satırı.
+ *
+ * Düğme değil onay kutusu: düğme ekranı ileri götürür, bu ise adımın cevabını
+ * "şimdilik yok" yapıyor — ileri götüren şey yine Devam. İşaret konduğunda
+ * adımın kutuları boş kalabiliyor ve Devam açılıyor.
+ */
+function SonraSec({
+  isaretli,
+  onDegis,
+  etiket,
+  alt,
+}: {
+  isaretli: boolean
+  onDegis: (deger: boolean) => void
+  etiket: string
+  alt: string
+}) {
+  return (
+    <label
+      className={cn(
+        'mt-4 flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 transition',
+        isaretli ? 'border-primary bg-primary-soft' : 'border-border bg-card',
+      )}
+    >
+      <input
+        type="checkbox"
+        checked={isaretli}
+        onChange={(e) => onDegis(e.target.checked)}
+        className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--primary)]"
+      />
+      <span className="min-w-0">
+        <span className="block text-sm font-semibold">{etiket}</span>
+        <span className="block text-xs text-muted-foreground">{alt}</span>
+      </span>
+    </label>
+  )
+}
 
 /** Ortada duran maskotun boyu — karşılama ve tanışma ekranları. */
 const BUYUK_MASKOT = 150
@@ -1112,7 +1218,8 @@ function SecimKartlari<T extends string | number>({
   /** Ekran okuyucuya sorulan soru; başlıkla aynı cümle. */
   etiket: string
   secenekler: { deger: T; ad: string }[]
-  secili: T
+  /** Hiçbiri seçilmediyse `null`: kullanıcının vermediği cevap seçili görünmez. */
+  secili: T | null
   onSec: (deger: T) => void
 }) {
   return (

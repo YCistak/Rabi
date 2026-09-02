@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Check, Play } from 'lucide-react'
+import { Check } from 'lucide-react'
 import {
   KONU_DERSLERI,
   KONU_SINIFLARI,
@@ -18,7 +18,6 @@ import {
   bilinmeyenKur,
   bilinmeyenSil,
   bilinmeyenleriEkle,
-  dersOrani,
   ilerlemeyiYaz,
   konuBitti,
   temadaBiten,
@@ -90,12 +89,7 @@ export function KonuHaritasiEkrani({
 
   const ders = dersBul(secim.ders)
   const program = useMemo(() => programBul(secim.ders, secim.sinif), [secim])
-  const oran = useMemo(
-    () => (program ? dersOrani(program, ilerlemeler) : { biten: 0, toplam: 0 }),
-    [program, ilerlemeler],
-  )
-
-  /** İlk bitmemiş konu — "kaldığın yer" kartı ve patikadaki vurgu buna bakıyor. */
+  /** İlk bitmemiş konu — patikadaki vurgu halkası buna bakıyor. */
   const siradaki = useMemo(() => {
     if (!program) return null
     for (const tema of program.temalar) {
@@ -239,41 +233,11 @@ export function KonuHaritasiEkrani({
         </Kart>
       ) : (
         <>
-          {/* Kaldığın yer: haritada aşağı inip aramanın kısa yolu. Her konu
-              bitmişse yerini kutlama satırı alıyor. */}
-          {siradaki ? (
-            <button
-              type="button"
-              onClick={() => setAcikKonu(siradaki)}
-              className="golge-kart flex w-full items-center gap-3 rounded-2xl bg-card px-4 py-3.5 text-left transition active:brightness-[0.98]"
-            >
-              <span className="grid size-11 shrink-0 place-items-center rounded-full bg-primary-dolu text-white">
-                <Play size={18} strokeWidth={2.6} fill="currentColor" aria-hidden />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-[10.5px] font-extrabold uppercase tracking-[0.09em] text-muted-foreground">
-                  {oran.biten === 0 ? 'Buradan başla' : 'Kaldığın yer'}
-                </span>
-                <span className="mt-0.5 block truncate font-display text-[15.5px] font-extrabold tracking-tight">
-                  {siradaki.konu.ad}
-                </span>
-                <span className="block truncate text-xs font-semibold text-muted-foreground">
-                  {siradaki.temaAdi} · {siradaki.konu.kartlar.length} kart
-                </span>
-              </span>
-              <span className="rakam shrink-0 text-[13px] font-extrabold text-muted-foreground">
-                {oran.biten}/{oran.toplam}
-              </span>
-            </button>
-          ) : (
-            <Kart className="flex items-center gap-3 px-4 py-3.5">
-              <Rabi durum="kutlama" boyut={44} />
-              <p className="text-[14px] font-bold text-pretty">
-                {secim.sinif}. sınıf {ders.ad} konularının hepsini bitirdin.
-              </p>
-            </Kart>
-          )}
-
+          {/* Haritanın üstünde "kaldığın yer" kısayolu yoktu, sonra kondu,
+              sonra kaldırıldı: ekranın işi seçtirmek ve seçilecek yer zaten
+              patikanın kendisi. Kısayol, haritanın gösterdiği sırayı ikinci
+              kez — ve tek bir konuya indirgeyerek — anlatıyordu. Sıradaki konu
+              hâlâ görünüyor, patikadaki halkayla (`vurgulanan`). */}
           <div className="space-y-6">
             {program.temalar.map((tema, sira) => (
               <TemaBolumu
