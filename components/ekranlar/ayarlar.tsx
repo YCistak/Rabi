@@ -62,7 +62,6 @@ import type {
   KazanilanRozet,
   OkulYili,
   OyunKayitlari,
-  OyunMuzikTuru,
   OyunTurKaydi,
   PomodoroAyar,
   PomodoroSeans,
@@ -89,13 +88,6 @@ type AyarId =
   | 'alan'
   | 'sinif'
   | 'hatirlatma-saati'
-  | 'muzik-turu'
-
-/** Mini oyun müziği seçenekleri; hangisinin iyi olduğu zevk meselesi. */
-const OYUN_MUZIK_ADI: Record<OyunMuzikTuru, string> = {
-  sakin: 'Sakin',
-  lofi: 'Lo-fi',
-}
 
 /** Bayt sayısını okunur hâle getirir: 5242880 → "5,0 MB". */
 function boyutYaz(bayt: number): string {
@@ -289,9 +281,6 @@ export function AyarlarEkrani({
       <header className="px-0.5 pt-1">
         <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
         <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Ayarlar ⚙️</h1>
-        <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
-          Rabi’yi kendine göre kur.
-        </p>
       </header>
 
       <div className="mt-4 space-y-4">
@@ -303,7 +292,6 @@ export function AyarlarEkrani({
             Simge={UserRound}
             renk="mercan"
             baslik="Adım"
-            aciklama="Ana sayfada seni böyle selamlıyorum"
             deger={ayarlar.ad || 'Belirtilmedi'}
             {...acilir('ad')}
           />
@@ -349,7 +337,6 @@ export function AyarlarEkrani({
             Simge={Target}
             renk="mavi"
             baslik="Günlük soru hedefim"
-            aciklama="Her günü buna göre takip ediyorum"
             deger={ayarlar.gunlukHedef}
             {...acilir('hedef')}
           />
@@ -382,7 +369,6 @@ export function AyarlarEkrani({
             Simge={GraduationCap}
             renk="nane"
             baslik="Alanım"
-            aciklama="Sıralama tahmini buna göre hesaplanır"
             deger={PUAN_TURU_ADI[ayarlar.puanTuru]}
             {...acilir('alan')}
           />
@@ -406,7 +392,6 @@ export function AyarlarEkrani({
             Simge={ClipboardList}
             renk="krem"
             baslik="Sınıfım"
-            aciklama="Bu yılki sınıfın"
             deger={sinifAdi(ayarlar.buYilSinif)}
             {...acilir('sinif')}
           />
@@ -447,7 +432,6 @@ export function AyarlarEkrani({
                 Simge={Lock}
                 renk="lavanta"
                 baslik="Odak kilidi"
-                aciklama="Çalışma turunda seçtiğin uygulamaların üstüne çıkarım"
                 onClick={() => setPomodoroAyar((o) => ({ ...o, odakKilidi: !o.odakKilidi }))}
                 basiliMi={pomodoroAyar.odakKilidi}
                 sag={<Anahtar acik={pomodoroAyar.odakKilidi} />}
@@ -510,7 +494,6 @@ export function AyarlarEkrani({
             Simge={Bell}
             renk="mercan"
             baslik="Günlük hatırlatma"
-            aciklama="Soru girmediğin günlerde tek bildirim"
             onClick={() => void hatirlatmaDegistir()}
             basiliMi={ayarlar.bildirimAcik}
             sag={<Anahtar acik={ayarlar.bildirimAcik} />}
@@ -525,7 +508,6 @@ export function AyarlarEkrani({
               Simge={Bell}
               renk="mercan"
               baslik="Hatırlatma saati"
-              aciklama="Bildirim bu saatte gelir"
               deger={saatYaz(ayarlar.hatirlatmaSaati, ayarlar.hatirlatmaDakikasi)}
               {...acilir('hatirlatma-saati')}
             />
@@ -568,7 +550,6 @@ export function AyarlarEkrani({
             Simge={Volume2}
             renk="krem"
             baslik="Mini oyun sesleri"
-            aciklama="Doğru, yanlış ve tur bitişi efektleri"
             onClick={() => setAyarlar((o) => ({ ...o, oyunSesi: !o.oyunSesi }))}
             basiliMi={ayarlar.oyunSesi}
             sag={<Anahtar acik={ayarlar.oyunSesi} />}
@@ -577,40 +558,15 @@ export function AyarlarEkrani({
             Simge={Music}
             renk="lavanta"
             baslik="Mini oyun müziği"
-            aciklama="Ses efektlerinden ayrı kapatılabilir"
             onClick={() => setAyarlar((o) => ({ ...o, oyunMuzigi: !o.oyunMuzigi }))}
             basiliMi={ayarlar.oyunMuzigi}
             sag={<Anahtar acik={ayarlar.oyunMuzigi} />}
           />
 
-          {/* Parça seçimi müzik anahtarının altındaki ayrı satırda: aynı satıra
-              konunca "müzik açık mı" ile "hangi parça" tek ayar gibi okunuyordu. */}
-          {ayarlar.oyunMuzigi && (
-            <Satir
-              Simge={Music}
-              renk="lavanta"
-              baslik="Müzik parçası"
-              aciklama="Turun temposunu belirler"
-              deger={OYUN_MUZIK_ADI[ayarlar.oyunMuzikTuru]}
-              {...acilir('muzik-turu')}
-            />
-          )}
-
-          {ayarlar.oyunMuzigi && acikAyar === 'muzik-turu' && (
-            <GenisAlan>
-              <Cipler>
-                {(Object.keys(OYUN_MUZIK_ADI) as OyunMuzikTuru[]).map((tur) => (
-                  <Cip
-                    key={tur}
-                    secili={ayarlar.oyunMuzikTuru === tur}
-                    onClick={() => setAyarlar((o) => ({ ...o, oyunMuzikTuru: tur }))}
-                  >
-                    {OYUN_MUZIK_ADI[tur]}
-                  </Cip>
-                ))}
-              </Cipler>
-            </GenisAlan>
-          )}
+          {/* "Müzik parçası" satırı kaldırıldı: oyunda tek bir müzik çalıyor,
+              lo-fi listesi turun içine girmiyor. Anahtar duruyor — müziği
+              kapatmak hâlâ kullanıcının kararı. `ayarlar.oyunMuzikTuru` kayıtta
+              duruyor ama okunmuyor; alanı silmek eski yedekleri bozardı. */}
         </Bolum>
 
         {/* --------------------- Hatalı soru bildirimi -------------------- */}
@@ -621,7 +577,6 @@ export function AyarlarEkrani({
             Simge={Flag}
             renk="mercan"
             baslik="Bildirdiğim soruları gönder"
-            aciklama="Mini oyunlarda hatalı bulduğun soruları geliştiriciye ulaştırır"
             onClick={() =>
               setAyarlar((o) => ({ ...o, hataBildirimiAcik: !o.hataBildirimiAcik }))
             }
@@ -629,17 +584,9 @@ export function AyarlarEkrani({
             sag={<Anahtar acik={ayarlar.hataBildirimiAcik} />}
           />
           <GenisAlan tam>
-            <AlanNotu>
-              Uygulamanın internete çıktığı tek yer burası. Bir soruyu
-              bildirdiğinde şunlar gönderilir: sorunun kendisi, hangi oyundan
-              geldiği, uygulamanın doğru saydığı cevap, seçtiğin sebep, uygulama
-              sürümü ve cihazına verilen rastgele bir numara.
-            </AlanNotu>
-            <AlanNotu ust>
-              Adın, e-postan, denemelerin, notların, fotoğrafların ve puanların{' '}
-              <b>gönderilmez</b>. Bildirim önce cihaza kaydedilir; internet yoksa
-              bekler, bağlanınca kendiliğinden gider.
-            </AlanNotu>
+            {/* Ne gönderildiğini tek tek sayan iki paragraf şimdilik kaldırıldı;
+                yerine daha kısa bir anlatım gelecek. İzin satırları duruyor —
+                gönderim kararı hâlâ kullanıcının ve geri alınabiliyor. */}
             {/* İzin ayrı bir karar: ayarın açık olması tek başına yetmiyor,
                 kullanıcı ilk bildiriminde ne gönderileceğini görüp "Gönder"
                 demeden hiçbir şey ağa çıkmıyor. Kararı buradan geri alabilsin.
@@ -687,7 +634,6 @@ export function AyarlarEkrani({
             Simge={Download}
             renk="mavi"
             baslik="Yedeği indir"
-            aciklama="Küçük dosya — yanlış soru fotoğrafları hariç"
             onClick={() => void dosyayaIndir(false)}
           />
 
@@ -696,7 +642,6 @@ export function AyarlarEkrani({
               Simge={Images}
               renk="pembe"
               baslik="Fotoğraflarla yedekle"
-              aciklama="Her şeyi taşır, dosya büyür"
               // Base64'e çevrilince veri yaklaşık 4/3 büyüyor.
               deger={`~${boyutYaz((fotoBoyut * 4) / 3)}`}
               onClick={() => void dosyayaIndir(true)}
@@ -707,7 +652,6 @@ export function AyarlarEkrani({
             Simge={Upload}
             renk="nane"
             baslik="Yedeği yükle"
-            aciklama="Kaydettiğin dosyadan geri getir"
             onClick={() => dosyaRef.current?.click()}
             sag={
               <ChevronRight
@@ -719,15 +663,14 @@ export function AyarlarEkrani({
             }
           />
 
-          <GenisAlan tam>
-            <AlanNotu ust={false}>
-              Denemelerin, notların ve fotoğrafların yalnızca bu cihazda duruyor — yedek
-              dosyası da buradan çıkmıyor. Telefon değiştirmeden veya uygulamayı silmeden
-              önce yedek al. Fotoğrafsız bir yedeği geri yüklersen yanlış soru bankası
-              boş gelir.
-            </AlanNotu>
-            {durum && <Not className="mt-2">{durum}</Not>}
-          </GenisAlan>
+          {/* Yedeğin ne taşıdığını anlatan paragraf şimdilik kaldırıldı.
+              İşlem sonucu (`durum`) duruyor: yedek alındı mı, yüklendi mi —
+              onu söylemeyen bir düğme çalışmamış gibi görünür. */}
+          {durum && (
+            <GenisAlan tam>
+              <Not>{durum}</Not>
+            </GenisAlan>
+          )}
 
           {/* Sıfırla düğmesi satırın kendi içinde: altında ayrı bir alan
               olduğunda araya ayırıcı çizgi giriyor ve düğme başka bir ayara
@@ -736,7 +679,6 @@ export function AyarlarEkrani({
             Simge={Trash2}
             renk="mercan"
             baslik="Tüm veriyi sil"
-            aciklama="Geri alınamaz"
             sag={
               <button
                 type="button"
@@ -836,7 +778,7 @@ function AcilirOk({ acik }: { acik: boolean }) {
 const AYRAC = 'border-t border-border first:border-t-0'
 
 /**
- * Bir ayar satırı: ikon · başlık/açıklama · sağda değer ya da denetim.
+ * Bir ayar satırı: ikon · başlık · sağda değer ya da denetim.
  *
  * Ayraç çizgisi burada: her satır **kendi üstüne** çiziyor, bölümün ilki
  * hariç. Böylece çizgi hep iki ayarın arasına düşüyor; bir ayarın kendi
@@ -847,7 +789,6 @@ function Satir({
   Simge,
   renk,
   baslik,
-  aciklama,
   deger,
   sag,
   onClick,
@@ -857,7 +798,6 @@ function Satir({
   Simge: LucideIcon
   renk: SatirRengi
   baslik: string
-  aciklama?: string
   deger?: React.ReactNode
   sag?: React.ReactNode
   onClick?: () => void
@@ -877,13 +817,11 @@ function Satir({
         <Simge size={22} aria-hidden />
       </span>
 
+      {/* Satırın altındaki açıklama yazıları kaldırıldı: ayarın adı zaten ne
+          olduğunu söylüyordu ve her satırın ikinci bir cümlesi listeyi iki
+          katına çıkarıyordu. */}
       <span className="min-w-0 flex-1">
         <span className="block text-[14.5px] font-extrabold leading-tight">{baslik}</span>
-        {aciklama && (
-          <span className="mt-0.5 block text-xs font-medium leading-snug text-muted-foreground">
-            {aciklama}
-          </span>
-        )}
       </span>
 
       {/* Sağdaki değer seçili olanı söylüyor: çiplere bakmadan okunuyor. */}

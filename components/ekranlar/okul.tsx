@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Info, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import type { Ayarlar, OkulYili } from '@/lib/types'
 import {
   ILK_SINIF,
@@ -81,14 +81,7 @@ export function OkulEkrani({
 
   return (
     <div>
-      <BaslikSatiri
-        baslik="Okul Notları"
-        aciklama={
-          mezun
-            ? 'Dört yılın yıl sonu ortalaması — ya da doğrudan OBP’n'
-            : 'Her yıl için tek bir ortalama — karnendeki sayı'
-        }
-      />
+      <BaslikSatiri baslik="Okul Notları" />
 
       <Kart className="mb-3 border-primary/30 bg-primary-soft/50">
         {/* Elle girilen puan tahmin değil; başlık da öyle demiyor. */}
@@ -158,33 +151,6 @@ export function OkulEkrani({
         ))}
       </ul>
 
-      <Not className="mt-4">
-        <span className="flex items-start gap-2">
-          <Info size={15} className="mt-0.5 shrink-0" aria-hidden />
-          <span>
-            {mezun ? (
-              <>
-                Dört yılın da <strong>yıl sonu</strong> notunu yaz; hepsi bittiği için
-                hiçbiri tahmin değil. Karnende yoksa e-Okul’dan görebilirsin.
-              </>
-            ) : (
-              <>
-                Bitmiş yıllar için <strong>yıl sonu</strong> notunu yaz. İçinde bulunduğun
-                yıl henüz bitmediği için oraya <strong>1. dönem sonu</strong> notun
-                giriliyor ve o yılın tamamı için tahmin sayılıyor — karne gelince yıl sonu
-                notunla değiştir.
-              </>
-            )}
-          </span>
-        </span>
-      </Not>
-
-      {obp && !obp.tamMi && !elleGirildi && (
-        <Not className="mt-2">
-          Girilmeyen yıllar için, girdiklerinin ortalamasını tutturacağın varsayılıyor.
-          Dört yıl da girilince OBP kesinleşir.
-        </Not>
-      )}
     </div>
   )
 }

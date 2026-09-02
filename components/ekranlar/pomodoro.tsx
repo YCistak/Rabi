@@ -374,11 +374,6 @@ export function PomodoroEkrani({
       </Kart>
 
       <SureAyarlari ayar={ayar} setAyar={setAyar} kilitli={calisiyor} />
-
-      <Not className="mt-4">
-        Sayaç bitiş saatine göre çalışıyor — telefonu kilitlesen de doğru zamanda biter ve
-        bildirim gelir.
-      </Not>
     </div>
   )
 }

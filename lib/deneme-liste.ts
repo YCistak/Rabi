@@ -29,10 +29,10 @@ export type DenemeSiralamasi = 'yeni' | 'eski' | 'yuksek' | 'dusuk'
 export const SIRALAMA_SIRASI: DenemeSiralamasi[] = ['yeni', 'eski', 'yuksek', 'dusuk']
 
 export const SIRALAMA_ADLARI: Record<DenemeSiralamasi, string> = {
-  yeni: 'En yeniden en eskiye',
-  eski: 'En eskiden en yeniye',
-  yuksek: 'En yüksek netten en düşüğe',
-  dusuk: 'En düşük netten en yükseğe',
+  yeni: 'En yeni',
+  eski: 'En eski',
+  yuksek: 'En yüksek net',
+  dusuk: 'En düşük net',
 }
 
 /** Süzgeç çipleri için tür adları. `okul` kullanıcının gördüğü adla yazılır. */

@@ -14,7 +14,6 @@ import {
   type Bolum,
   type Universite,
 } from '@/lib/hedef-katalog'
-import { SON_VERI_YILI } from '@/lib/puan'
 import { Alan, BaslikSatiri, Buton, Cip, Etiket, Kart, Not, Onay } from '@/components/ui'
 import { AramaAlani, Liste, SecilenSatir, SecimSatiri } from '@/components/hedef-secici'
 import { Rabi } from '@/components/maskot/rabi'
@@ -118,14 +117,7 @@ export function HedefEkrani({
 
   return (
     <div>
-      <BaslikSatiri
-        baslik="Hedefim"
-        aciklama={
-          elleMod
-            ? 'Bölümünü ve gereken sıralamayı kendin yazıyorsun'
-            : 'Üniversiteni ara, bölümünü seç — taban puanı ve sıralamayı Rabi dolduruyor'
-        }
-      />
+      <BaslikSatiri baslik="Hedefim" />
 
       {hedef && (
         <Kart className="mb-4 flex items-center gap-3">
@@ -326,12 +318,10 @@ export function HedefEkrani({
         </button>
       </Kart>
 
+      {/* Uzun açıklama kaldırıldı; cümlenin kendisi kalıyor — puan ve sıralama
+          hesabı bir tahmin ve ekran onu kesin gibi göstermemeli. */}
       <Not className="mt-4">
-        Taban puan ve sıralama <strong>tahmindir</strong>: bölümün sırası
-        üniversitenin genel düzeyine göre kestiriliyor, puan da ÖSYM'nin{' '}
-        {SON_VERI_YILI} yerleştirme dağılımından çevriliyor. Sıralamalar her yıl
-        oynuyor — hedefinin biraz üstünü tutturmak daha güvenli. Yanlış geldiyse
-        sayıları elle düzeltebilirsin.
+        Taban puan ve sıralama <strong>tahmindir</strong>.
       </Not>
 
       <Onay

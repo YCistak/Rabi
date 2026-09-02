@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { KARTLAR, type Ekran, type KartRengi, type KartTanimi } from '@/lib/gezinme'
 import { cn } from '@/lib/utils'
 
@@ -49,9 +48,6 @@ const BOLUMLER: { baslik: string; ipucu: string; kartlar: Ekran[] }[] = [
   },
 ]
 
-/** Alt başlıktaki bölüm sayısı — bir elin parmağını geçmiyor, yazıyla yazılıyor. */
-const SAYI_ADI = ['sıfır', 'tek', 'iki', 'üç', 'dört', 'beş', 'altı']
-
 /**
  * "Araçlar" sekmesi — bölüm bölüm satır listesi.
  *
@@ -66,9 +62,6 @@ export function KartMenusu({
   onKartAc: (ekran: Ekran) => void
   className?: string
 }) {
-  /** Seçili süzgeç; null ise bütün bölümler görünüyor. */
-  const [suzgec, setSuzgec] = useState<string | null>(null)
-
   // Bir bölüme yazılmamış kart sessizce kaybolmasın diye: `gezinme.ts`'e yeni
   // kart eklenip `BOLUMLER`'e işlenmezse hiç çizilmezdi.
   const yerlesenler = new Set(BOLUMLER.flatMap((b) => b.kartlar))
@@ -83,17 +76,12 @@ export function KartMenusu({
     ...(yersizler.length > 0 ? [{ baslik: 'Diğer', ipucu: '', kartlar: yersizler }] : []),
   ]
 
-  const gorunen = suzgec ? bolumler.filter((b) => b.baslik === suzgec) : bolumler
-
   return (
     <div className={className}>
       <header className="flex items-start gap-3 px-0.5 pt-1">
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
           <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Araçlar</h1>
-          <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
-            {KARTLAR.length} araç, {SAYI_ADI[bolumler.length] ?? bolumler.length} başlık altında.
-          </p>
         </div>
 
         {/* Başlığın simgesi sağ üstte, ana sayfada maskotun durduğu hizada:
@@ -106,34 +94,10 @@ export function KartMenusu({
         </span>
       </header>
 
-      {/* Süzgeç çipleri. Bölüme atlamak yerine süzüyor: dört başlık zaten tek
-          ekrana sığmıyor ve "atla" dokunuşu kullanıcıyı kaydırmaktan
-          kurtarmıyordu. Seçiliye tekrar dokunmak süzgeci kaldırıyor. */}
-      <div className="mt-3.5 flex flex-wrap gap-2">
-        {BOLUMLER.map(({ baslik }) => {
-          const secili = suzgec === baslik
-          return (
-            <button
-              key={baslik}
-              type="button"
-              onClick={() => setSuzgec((o) => (o === baslik ? null : baslik))}
-              aria-pressed={secili}
-              className={cn(
-                'rounded-full border px-3.5 py-2 text-[13px] font-bold transition',
-                'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-                secili
-                  ? 'border-primary-dolu bg-primary-dolu text-white'
-                  : 'border-border bg-card active:bg-muted',
-              )}
-            >
-              {baslik}
-            </button>
-          )
-        })}
-      </div>
-
+      {/* Süzgeç çipleri kaldırıldı: dört başlık zaten ekranda görünüyor ve
+          süzmek listeyi kısaltmaktan çok kaydırmayı yerinden ediyordu. */}
       <div className="mt-5 space-y-5">
-        {gorunen.map(({ baslik, ipucu, kartlar }) => (
+        {bolumler.map(({ baslik, ipucu, kartlar }) => (
           <section key={baslik}>
             <div className="mb-2 flex items-baseline justify-between gap-3 px-1.5">
               <h2 className="text-[11.5px] font-extrabold tracking-[0.09em] text-muted-foreground uppercase">

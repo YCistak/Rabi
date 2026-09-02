@@ -39,7 +39,8 @@ import { BaslikSatiri, Buton, Not } from '@/components/ui'
  * içeriğe göre büyüyen bir tahtada kâğıt eklemek eskilerinin yerini kaydırırdı.
  * Yükseklik on kâğıdın **sığmasına** göre seçildi: `yeniKonum` beş satır
  * açıyor ve satır aralığı kâğıdın boyundan kısa kalırsa kâğıtlar daha ilk
- * eklendikleri anda üst üste biner.
+ * eklendikleri anda üst üste biner. Elle taşınan kâğıtlar binebiliyor ama
+ * birbirini tümüyle kapatamıyor — kural `ayrikKonum` içinde.
  *
  * Sınıf değil satır içi ölçü: bu iki sayı olmadan özellik ekranda **yok** —
  * tahta sıfır yükseklikte, kâğıt sıfır genişlikte kalıyor. Tailwind sınıfları
@@ -108,8 +109,7 @@ export function YapilacaklarEkrani({
 
       {doluMu && (
         <Not tur="uyari" className="mb-3">
-          Tahta dolu ({EN_COK_NOT} kâğıt). Yeni kâğıt için bitenlerden birini sil — sınır
-          tahtanın kendisi, üst üste binen kâğıtlar okunmuyor.
+          Tahta dolu ({EN_COK_NOT} kâğıt). Yeni kâğıt için bitenlerden birini sil.
         </Not>
       )}
 
@@ -150,11 +150,6 @@ export function YapilacaklarEkrani({
           />
         ))}
       </div>
-
-      <p className="mt-3 px-1 text-xs leading-snug text-muted-foreground">
-        Tahta günlük: kâğıtlar gün dönünce temizlenir, o yüzden buraya yarına
-        kalacak bir şey yazma. Bitirdiğin kâğıdı silmeden de işaretleyebilirsin.
-      </p>
     </div>
   )
 }

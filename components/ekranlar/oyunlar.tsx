@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type {
   OyunId,
   OyunKayitlari,
-  OyunMuzikTuru,
   OyunTurKaydi,
 } from '@/lib/types'
 import {
@@ -42,8 +41,6 @@ import {
   type OyunModu,
 } from '@/lib/oyunlar/mod'
 import { OyunMuzigi } from '@/lib/oyunlar/oyun-muzigi'
-import { LOFI_PARCALAR } from '@/lib/lofi'
-import { SesCalar } from '@/lib/ses'
 import { useGeriKatmani } from '@/lib/geri'
 import { useUygulamaGorunur } from '@/lib/gorunurluk'
 import { bugun } from '@/lib/utils'
@@ -135,7 +132,6 @@ export function OyunlarEkrani({
   setBanka,
   sesAcik,
   muzikAcik,
-  muzikTuru,
   onBankayaGit,
   onBankadanDustu,
   /** Bankadan "sadece bunlardan bir tur" ile açılan oyun; yoksa null. */
@@ -151,7 +147,6 @@ export function OyunlarEkrani({
   setBanka: (guncelleyici: (onceki: BankaKaydi[]) => BankaKaydi[]) => void
   sesAcik: boolean
   muzikAcik: boolean
-  muzikTuru: OyunMuzikTuru
   onBankayaGit: () => void
   /** Turda bankadan düşen soru sayısı — rozet sayacını besliyor. */
   onBankadanDustu: (adet: number) => void
@@ -190,14 +185,17 @@ export function OyunlarEkrani({
   // müzik başlaması menüde gezinen kullanıcıyı şaşırtırdı; ana tuşa basıldıktan
   // sonra çalmaya devam etmesi ise uygulama görev listesinden silinene kadar
   // sürüyordu.
+  // Oyunda çalan parça artık seçilmiyor: lo-fi kaydı ayarlardan kaldırıldı ve
+  // tur boyunca oyunun kendi müziği çalıyor. Seçim sunulduğu sürece turun
+  // temposunu taşıyan parça bir zevk meselesi gibi duruyordu; oysa müzik
+  // oyunun parçası, arkasında çalan bir liste değil.
   const gorunur = useUygulamaGorunur()
   const sakinRef = useRef<OyunMuzigi | null>(null)
-  const lofiRef = useRef<SesCalar | null>(null)
 
   const muzikCalsin = acikOyun !== null && muzikAcik
 
   useEffect(() => {
-    if (!muzikCalsin || muzikTuru !== 'sakin') {
+    if (!muzikCalsin) {
       sakinRef.current?.kapat()
       sakinRef.current = null
       return
@@ -216,31 +214,13 @@ export function OyunlarEkrani({
     muzik.sesSeviyesi(0.1)
     if (gorunur) muzik.basla()
     else muzik.duraklat()
-  }, [muzikCalsin, muzikTuru, gorunur])
+  }, [muzikCalsin, gorunur])
 
-  useEffect(() => {
-    if (!muzikCalsin || muzikTuru !== 'lofi') {
-      lofiRef.current?.kapat()
-      lofiRef.current = null
-      return
-    }
-    if (!lofiRef.current) {
-      const calar = new SesCalar()
-      calar.sesSeviyesi(0.28)
-      calar.cal(`lofi:${LOFI_PARCALAR[5].dosya}`)
-      lofiRef.current = calar
-    }
-    if (gorunur) lofiRef.current.devam()
-    else lofiRef.current.duraklat()
-  }, [muzikCalsin, muzikTuru, gorunur])
-
-  // Ekrandan çıkarken bağlamlar da kapanmalı; yukarıdaki efektler duraklatmakla yetiniyor.
+  // Ekrandan çıkarken bağlam da kapanmalı; yukarıdaki efekt duraklatmakla yetiniyor.
   useEffect(
     () => () => {
       sakinRef.current?.kapat()
       sakinRef.current = null
-      lofiRef.current?.kapat()
-      lofiRef.current = null
     },
     [],
   )
@@ -344,9 +324,6 @@ export function OyunlarEkrani({
         <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">
           Oyunlar 🎮
         </h1>
-        <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
-          Bir dakikalık turlarla bilgi tazele.
-        </p>
       </header>
 
       <BankaSatiri

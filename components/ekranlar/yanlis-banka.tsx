@@ -162,9 +162,7 @@ export function YanlisBankaEkrani({
       <BaslikSatiri
         baslik="Yanlış Soru Bankası"
         aciklama={
-          ozet.toplam > 0
-            ? `${ozet.bekleyen} bekleyen · ${ozet.cozulen} çözüldü`
-            : 'Zorlandığın soruların fotoğrafı'
+          ozet.toplam > 0 ? `${ozet.bekleyen} bekleyen · ${ozet.cozulen} çözüldü` : undefined
         }
       />
 
