@@ -44,6 +44,16 @@ object UygulamaListesi {
         "com.spotify.music",
         "tv.twitch.android.app",
         "com.discord",
+        /*
+          Play Store engelin yan kapısıydı: oyunu engelleyen öğrenci aynı oyunu
+          mağazanın "Aç" düğmesinden başlatabiliyor, üstelik engellenenin yerine
+          yenisini de oradan buluyordu. Öneri listesinde olması engellemiyor,
+          yalnızca kutuyu işaretli getiriyor — kullanıcı kaldırabiliyor, çünkü
+          mağaza sosyal medya değil ve bazı öğrenciler tur sırasında ders
+          uygulaması kuruyor olabilir.
+        */
+        "com.android.vending",
+        "com.google.android.play.games",
     )
 
     fun listele(baglam: Context): JSArray {

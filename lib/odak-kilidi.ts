@@ -44,13 +44,31 @@ type OdakKilidiEklentisi = {
     paketler: string[]
     bitisZamani: number
     ders?: string
+    asama?: string
     rahatsizEtme: boolean
   }): Promise<{ basladi: boolean }>
+  duraklat(): Promise<void>
   bitir(): Promise<void>
   addListener(
     olay: 'kilitKapatildi',
     dinleyici: () => void,
   ): Promise<{ remove: () => Promise<void> }>
+  addListener(
+    olay: 'pomodoroKomutu',
+    dinleyici: (veri: PomodoroKomutu) => void,
+  ): Promise<{ remove: () => Promise<void> }>
+}
+
+/**
+ * Kilit ekranındaki bildirimin düğmelerinden gelen komut.
+ *
+ * `bitisZamani` yalnızca `devam`da anlamlı: buradaki sayaç mutlak zaman
+ * damgasından okunuyor (`lib/pomodoro.ts`), yani "devam et" demek yetmiyor,
+ * hangi ana kadar olduğu da gelmeli.
+ */
+export type PomodoroKomutu = {
+  komut: 'duraklat' | 'devam' | 'bitir'
+  bitisZamani: number
 }
 
 const KAPALI_DURUM: OdakDurumu = {
@@ -73,6 +91,7 @@ const sahte: OdakKilidiEklentisi = {
   izinEkraniniAc: async () => ({ acildi: false }),
   uygulamalar: async () => ({ uygulamalar: [] }),
   baslat: async () => ({ basladi: false }),
+  duraklat: async () => {},
   bitir: async () => {},
   addListener: async () => ({ remove: async () => {} }),
 }
@@ -114,33 +133,56 @@ export async function kilitlenebilirUygulamalar(): Promise<KilitlenebilirUygulam
 }
 
 /**
- * Çalışma turu başladı.
+ * Tur başladı — yerli servis kuruluyor.
  *
  * `bitisZamani` mutlak zaman (epoch ms) olarak geçiyor: uygulama arka plana
  * düşünce JS zamanlayıcıları duraklıyor, kalan süreyi yerli taraf kendisi
  * hesaplamalı.
+ *
+ * Boş paket listesi ve kapalı Rahatsız Etme artık "başlatma" demek değil:
+ * servisin asıl işi kilit ekranındaki sayaç ve o sayaç hiçbir izin
+ * istemiyor. Eskiden burada bir "ikisi de kapalıysa vazgeç" dalı vardı ve
+ * odak kilidini hiç açmamış kullanıcı — yani çoğunluk — sayacı kilit
+ * ekranında hiç görmüyordu.
  */
 export async function odakKilidiniBaslat(
   paketler: string[],
   bitisZamani: number,
   ders?: string,
   rahatsizEtme = false,
+  asama?: string,
 ): Promise<boolean> {
-  /*
-    Boş liste artık tek başına "başlatma" demek değil: kullanıcı uygulama
-    engellemeyi kapatıp yalnızca Rahatsız Etme'yi açmış olabilir. İkisi de
-    kapalıysa servisi kurmak, hiçbir şey yapmayan bir ön plan bildirimi
-    göstermek olurdu.
-  */
   if (!odakKilidiDesteklenir()) return false
-  if (paketler.length === 0 && !rahatsizEtme) return false
   try {
-    const sonuc = await eklenti.baslat({ paketler, bitisZamani, ders, rahatsizEtme })
+    const sonuc = await eklenti.baslat({ paketler, bitisZamani, ders, asama, rahatsizEtme })
     return sonuc.basladi
   } catch {
     return false
   }
 }
+
+/**
+ * Sayaç duraklatıldı.
+ *
+ * `odakKilidiniBitir` değil: duraklatmak turdan çıkmak değil ve servis
+ * durdurulsaydı bildirim ekrandan kalkar, duraklatılmış tur kilit ekranında
+ * hiç var olmamış gibi görünürdü.
+ */
+export async function odakKilidiniDuraklat(): Promise<void> {
+  if (!odakKilidiDesteklenir()) return
+  try {
+    await eklenti.duraklat()
+  } catch {
+    // servis zaten durmuş olabilir
+  }
+}
+
+/*
+  "Devam ettir" diye bir eş yok: uygulamanın Başlat düğmesi servisi
+  `odakKilidiniBaslat` ile baştan kuruyor ve o zaten duraklamayı sıfırlıyor.
+  Devam yalnızca bildirimin kendi düğmesinden geliyor ve oradan buraya
+  `pomodoroKomutu` olayıyla dönüyor.
+*/
 
 export async function odakKilidiniBitir(): Promise<void> {
   if (!odakKilidiDesteklenir()) return
@@ -155,6 +197,27 @@ export async function odakKilidiniBitir(): Promise<void> {
  * Kullanıcı katmandan "kilidi kapat" dedi. Tur iptal edilmeli — bedeli olmayan
  * bir engel engel değil.
  */
+/**
+ * Kilit ekranındaki bildirimin düğmesine basıldı.
+ *
+ * Sayacın iki kopyası var — biri yerli serviste, biri burada — ve bildirim
+ * düğmesi yalnızca ilkine dokunuyor. Bu dinleyici olmadan uygulamaya dönen
+ * kullanıcı, bildirimden duraklattığı turu hâlâ işlerken bulurdu.
+ */
+export async function pomodoroKomutuGelince(
+  dinleyici: (veri: PomodoroKomutu) => void,
+): Promise<() => void> {
+  if (!odakKilidiDesteklenir()) return () => {}
+  try {
+    const kayit = await eklenti.addListener('pomodoroKomutu', dinleyici)
+    return () => {
+      void kayit.remove()
+    }
+  } catch {
+    return () => {}
+  }
+}
+
 export async function odakKilidiKapatilinca(
   dinleyici: () => void,
 ): Promise<() => void> {

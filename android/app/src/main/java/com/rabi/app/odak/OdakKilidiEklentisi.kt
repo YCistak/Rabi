@@ -60,33 +60,54 @@ class OdakKilidiEklentisi : Plugin() {
         val paketler = cagri.getArray("paketler")?.toList<String>() ?: emptyList()
         val bitisZamani = cagri.getLong("bitisZamani") ?: 0L
         val ders = cagri.getString("ders")
+        val asama = cagri.getString("asama")
         val rahatsizEtmeIstendi = cagri.getBoolean("rahatsizEtme", false) == true
 
         /*
           İki iş birbirinden ayrı: uygulamaları engellemek ve telefonu
           susturmak. Kullanıcı ikisini pomodoro ekranından tek tek açıp
           kapatabiliyor ve her birinin kendi izni var — biri eksikken öteki
-          çalışmaya devam etmeli. Eskiden tek koşul vardı (paket listesi + iki
-          izin) ve yalnızca susturma isteyen kullanıcı hiçbir şey alamıyordu.
+          çalışmaya devam etmeli.
+
+          Servis artık ikisi de kapalıyken de kuruluyor: asıl işi kilit değil
+          kilit ekranındaki sayaç ve o sayaç hiçbir izin istemiyor. Eskiden
+          burada bir "hiçbiri yoksa başlatma" dalı vardı ve odak kilidini hiç
+          açmamış kullanıcı — yani çoğunluk — bildirimi hiç görmezdi.
         */
         val kilitVar = paketler.isNotEmpty() && Izinler.hepsiVar(context)
         val susturmaVar = rahatsizEtmeIstendi && Izinler.rahatsizEtmeVar(context)
 
-        if (!kilitVar && !susturmaVar) {
-            cagri.resolve(JSObject().put("basladi", false))
-            return
-        }
         OdakServisi.baslat(
             context,
             // Kilit kurulamıyorsa liste boş gidiyor: servis o zaman öne gelen
-            // uygulamayı hiç sorgulamıyor, yalnızca susturmayı yönetiyor.
+            // uygulamayı hiç sorgulamıyor, yalnızca sayacı ve susturmayı yönetiyor.
             if (kilitVar) ArrayList(paketler) else ArrayList(),
             bitisZamani,
             ders,
+            asama,
             susturmaVar,
         )
         cagri.resolve(JSObject().put("basladi", true))
     }
+
+    /**
+     * Sayaç duraklatıldı — uygulamanın kendi düğmesinden.
+     *
+     * Servis durdurulmuyor: duraklatmak turdan çıkmak değil ve bildirim
+     * ekrandan kalksaydı duraklatılmış tur kilit ekranında yok olurdu.
+     */
+    @PluginMethod
+    fun duraklat(cagri: PluginCall) {
+        OdakServisi.duraklat(context)
+        cagri.resolve()
+    }
+
+    /*
+      "Devam" için eş bir yöntem yok: uygulamanın kendi Başlat düğmesi servisi
+      `baslat` ile baştan kuruyor ve o zaten duraklamayı sıfırlıyor. Devam
+      yalnızca bildirimin kendi düğmesinden geliyor, yani servisin içinde
+      kalıyor.
+    */
 
     /** Tur bitti, mola başladı ya da kullanıcı kilidi kapattı. */
     @PluginMethod
@@ -115,6 +136,26 @@ class OdakKilidiEklentisi : Plugin() {
 
         fun kilitKapatildiBildir() {
             ornek?.notifyListeners("kilitKapatildi", JSObject())
+        }
+
+        /**
+         * Bildirimdeki düğmeye basıldı.
+         *
+         * Sayacın iki kopyası var — biri serviste, biri web'de — ve düğme
+         * yalnızca birine dokunuyor. Haber gitmezse uygulamaya dönen kullanıcı,
+         * bildirimden duraklattığı turu hâlâ işlerken buluyor.
+         *
+         * `bitisZamani` yalnızca "devam" komutunda dolu: web'deki sayaç mutlak
+         * bir zaman damgasından okunuyor, "devam ettim" demek yetmiyor, hangi
+         * ana kadar olduğu söylenmeli.
+         *
+         * Uygulama süreci ölmüşse dinleyici yok ve komut yalnızca serviste
+         * kalıyor; bu bir kayıp değil, web'deki sayaç zaten süreçle birlikte
+         * ölmüştü.
+         */
+        fun pomodoroKomutuBildir(komut: String, bitisZamani: Long) {
+            val veri = JSObject().put("komut", komut).put("bitisZamani", bitisZamani)
+            ornek?.notifyListeners("pomodoroKomutu", veri)
         }
     }
 }

@@ -42,4 +42,17 @@
     -->
     <color name="odak_cip">#EFEEEB</color>
     <color name="odak_cizgi">#EAE9E6</color>
+
+    <!--
+      Pomodoro bildiriminin iki rengi.
+
+      Bildirim uygulamanın içinde değil sistemin gölgesinde çiziliyor ve o
+      zemin telefonun gece moduna göre açık ya da koyu oluyor — yani katmanın
+      renkleri burada kullanılamıyor. İkisi de iki zeminde birden okunacak
+      biçimde seçildi: amber `marka_amber`den bir tık açık (koyu gölgede
+      #D9622F sönük kalıyordu, beyazda ise bu ton hâlâ yeterince koyu), çizgi
+      de yarı saydam gri, yani zemin ne olursa olsun onun bir ton üstü.
+    -->
+    <color name="bildirim_amber">#E8783F</color>
+    <color name="bildirim_cizgi">#33888888</color>
 </resources>

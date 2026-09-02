@@ -28,12 +28,15 @@ import { SesCalar } from '@/lib/ses'
 import { LOFI_PARCALAR } from '@/lib/lofi'
 import { CALISMA_DERSLERI } from '@/lib/dersler'
 import { PROVALAR, PROVA_DERSI, type Prova } from '@/lib/sinav-provasi'
-import { pomodoroIptal, pomodoroPlanla } from '@/lib/bildirim'
+import { izinIste, pomodoroIptal, pomodoroPlanla } from '@/lib/bildirim'
 import {
   odakKilidiDesteklenir,
   odakKilidiKapatilinca,
   odakKilidiniBaslat,
   odakKilidiniBitir,
+  odakKilidiniDuraklat,
+  pomodoroKomutuGelince,
+  type PomodoroKomutu,
 } from '@/lib/odak-kilidi'
 import { OdakKurulum } from '@/components/ekranlar/odak-kurulum'
 import { OdakAyarlari } from '@/components/odak/odak-ayarlari'
@@ -80,6 +83,14 @@ export function PomodoroEkrani({
    */
   const [dokunulmadi, setDokunulmadi] = useState(true)
   const [sesPaneli, setSesPaneli] = useState(false)
+  /**
+   * Önizlemesi çalan parçanın dosya adı.
+   *
+   * Seçimden ayrı bir state: dinlemek seçmek değil. Kullanıcı üç parçayı
+   * dinleyip hiçbirini seçmeden paneli kapatabilmeli — dinlenen parçayı seçili
+   * saymak, kararı onun yerine vermek olurdu.
+   */
+  const [onizlenen, setOnizlenen] = useState<string | null>(null)
   /**
    * Odak kilidi tanıtımı pomodoroya ilk girişte bir kez çıkıyor. Tarayıcıda
    * özellik hiç yok; orada tanıtım da gösterilmiyor.
@@ -208,48 +219,79 @@ export function PomodoroEkrani({
     calar.sesSeviyesi(ayar.sesSeviyesi)
     calar.cal(ayar.ses)
 
+    /*
+      İzin turu başlatırken isteniyor, ayarlarda değil.
+
+      Android 13'ten beri POST_NOTIFICATIONS olmadan ön plan servisinin
+      bildirimi de gösterilmiyor — yani izin verilmemişse kilit ekranındaki
+      sayaç sessizce hiç görünmüyor ve kullanıcı özelliğin bozuk olduğunu
+      sanıyor. Ayarlardaki bildirim anahtarına bağlanamazdı: o anahtar "seans
+      bitince haber ver" demek, buradaki bildirim ise sayacın kendisi ve
+      anahtar kapalıyken de gerekiyor.
+
+      Daha önce kalıcı olarak reddedilmişse sistem penceresi hiç açılmıyor,
+      `izinIste` sessizce false dönüyor ve tur normal başlıyor.
+    */
+    void izinIste()
     void pomodoroPlanla(bitis, asama !== 'calisma')
     /*
-      Koruma yalnızca çalışma turunda; molada kendiliğinden kalkıyor. İzin
-      yoksa yerli taraf sessizce "başlamadı" diyor, sayaç normal çalışmaya
-      devam ediyor.
+      Yerli servis her turda kuruluyor — molada da. Asıl işi kilit ekranındaki
+      sayaç ve mola da bir sayaç: "kaç dakika sonra masaya dönüyorum" sorusunun
+      cevabı orada. Eskiden servis yalnızca kilit ya da Rahatsız Etme açıkken
+      kurulurdu ve ikisini de açmamış kullanıcı — yani çoğunluk — sayacı
+      telefonu kilitlediği anda kaybediyordu.
 
-      İki anahtar ayrı ayrı geçiyor: kilit kapalıyken de tur başlatılabiliyor,
-      o zaman engellenecek uygulama listesi boş gidiyor ve yerli taraf yalnızca
-      susturmayı yönetiyor. İkisi de kapalıysa servis hiç kurulmuyor.
+      Koruma yine yalnızca çalışma turunda: molada engellenecek uygulama
+      listesi boş gidiyor ve susturma istenmiyor, servis yalnızca sayacı
+      çiziyor. İzin yoksa yerli taraf sessizce geçiyor, sayaç çalışmaya devam
+      ediyor.
     */
-    if (asama === 'calisma' && (ayar.odakKilidi || ayar.rahatsizEtme)) {
-      void odakKilidiniBaslat(
-        ayar.odakKilidi ? ayar.kilitliUygulamalar : [],
-        bitis,
-        // Engel katmanındaki çip provada dersin değil sınavın adını yazıyor:
-        // ekranda "MATEMATİK" görünürken çözülen şey TYT kitapçığı oluyordu.
-        prova ? `${prova.ad} PROVASI` : (ders ?? undefined),
-        ayar.rahatsizEtme,
-      )
-    }
+    const korumaliTur = asama === 'calisma'
+    void odakKilidiniBaslat(
+      korumaliTur && ayar.odakKilidi ? ayar.kilitliUygulamalar : [],
+      bitis,
+      // Engel katmanındaki çip provada dersin değil sınavın adını yazıyor:
+      // ekranda "MATEMATİK" görünürken çözülen şey TYT kitapçığı oluyordu.
+      prova ? `${prova.ad} PROVASI` : (ders ?? undefined),
+      korumaliTur && ayar.rahatsizEtme,
+      prova ? 'Deneme provası' : ASAMA_ADI[asama],
+    )
     if (ayar.ekraniAcikTut && Capacitor.isNativePlatform()) {
       void KeepAwake.keepAwake().catch(() => {})
     }
   }
 
+  /**
+   * Sayacı durdurur ama turu bitirmez.
+   *
+   * Yerli servis ayakta bırakılıyor, yalnızca donduruluyor: bildirim ekrandan
+   * kalksaydı duraklatılmış tur kilit ekranında hiç var olmamış gibi
+   * görünürdü ve kullanıcı devam etmek için uygulamayı açmak zorunda kalırdı —
+   * tam da açılmaması gereken şey.
+   */
   const duraklat = () => {
     setBitisZamani(null)
     calarRef.current?.durdur()
     void pomodoroIptal()
-    void odakKilidiniBitir()
+    void odakKilidiniDuraklat()
     if (Capacitor.isNativePlatform()) void KeepAwake.allowSleep().catch(() => {})
   }
 
-  const sifirla = () => {
+  /** Turdan çıkılıyor: duraklamanın aksine bildirim de kalkıyor. */
+  const turuBirak = () => {
     duraklat()
+    void odakKilidiniBitir()
+  }
+
+  const sifirla = () => {
+    turuBirak()
     setKalan(toplamDakika * 60)
     setDokunulmadi(true)
     baslangicRef.current = null
   }
 
   const atla = () => {
-    duraklat()
+    turuBirak()
     /*
       Provada atlamak provadan çıkmak demek: yarıda bırakılan kitapçık seans
       olarak sayılmıyor (sayaç dolmadı) ve sayaç sıradan çalışma turuna döner.
@@ -295,6 +337,54 @@ export function PomodoroEkrani({
   }, [])
 
   /**
+   * Kilit ekranındaki bildirimin düğmeleri.
+   *
+   * Sayacın iki kopyası var — biri yerli serviste, biri burada — ve düğme
+   * yalnızca ilkine dokunuyor. Bu ekran haber almazsa uygulamaya dönen
+   * kullanıcı, bildirimden duraklattığı turu hâlâ işlerken buluyor.
+   *
+   * Yerli tarafta olan bitiş yeniden yapılmıyor: "duraklat" orada zaten
+   * dondu, burada yalnızca sayaç ve ses susuyor. `devam`da bitiş zamanı
+   * karşıdan geliyor, burada yeniden hesaplanmıyor — iki taraf ayrı ayrı
+   * hesaplasaydı köprünün gecikmesi kadar ayrı düşerlerdi.
+   */
+  const bildirimKomutu = (veri: PomodoroKomutu) => {
+    if (veri.komut === 'duraklat') {
+      setBitisZamani(null)
+      calarRef.current?.durdur()
+      void pomodoroIptal()
+      if (Capacitor.isNativePlatform()) void KeepAwake.allowSleep().catch(() => {})
+      return
+    }
+    if (veri.komut === 'devam') {
+      setBitisZamani(veri.bitisZamani)
+      setDokunulmadi(false)
+      const calar = calarAl()
+      calar.sesSeviyesi(ayar.sesSeviyesi)
+      calar.cal(ayar.ses)
+      void pomodoroPlanla(veri.bitisZamani, asama !== 'calisma')
+      if (ayar.ekraniAcikTut && Capacitor.isNativePlatform()) {
+        void KeepAwake.keepAwake().catch(() => {})
+      }
+      return
+    }
+    // "Turu bitir": servis kendini çoktan durdurdu, burada sayaç başa dönüyor.
+    // Atlanan turda olduğu gibi seans yazılmıyor — sayaç dolmadı.
+    sifirla()
+  }
+  const komutRef = useRef<(veri: PomodoroKomutu) => void>(() => {})
+  useEffect(() => {
+    komutRef.current = bildirimKomutu
+  })
+  useEffect(() => {
+    let birak: () => void = () => {}
+    void pomodoroKomutuGelince((veri) => komutRef.current(veri)).then((kaldir) => {
+      birak = kaldir
+    })
+    return () => birak()
+  }, [])
+
+  /**
    * Prova seçimi. Aynı çipe ikinci kez dokunmak provayı kapatıyor.
    *
    * Sayaç çalışırken seçim yok: süresi değişen bir sayaç, başladığı sınavdan
@@ -315,8 +405,55 @@ export function PomodoroEkrani({
     setAyar((o) => ({ ...o, ses: secim }))
     const calar = calarAl()
     calar.sesSeviyesi(ayar.sesSeviyesi)
+    // Seçim önizlemeyi bitiriyor: seçtikten sonra hâlâ başka bir parçayı
+    // dinliyor olmak, hangisinin seçildiğini duyulamaz yapardı.
+    setOnizlenen(null)
     // Ses seçimi çalışırken değişirse anında geçilir; duraklatılmışsa sessiz kalır.
     if (calisiyor) calar.cal(secim)
+    else calar.onizlemeyiDurdur()
+  }
+
+  /**
+   * Önizleme düğmesi: aynı parçaya ikinci kez basmak durduruyor.
+   *
+   * Kullanıcı bir parçayı **seçmeden önce** dinleyebilmeli; on iki adın
+   * arasından "Glow on the Overpass"i ada bakarak seçmek seçim değil kura.
+   * Eskiden dinlemenin tek yolu parçayı seçip turu başlatmaktı ve beğenilmeyen
+   * parça, başlamış bir turun ortasında değiştiriliyordu.
+   *
+   * Çalar tek olduğu için önizleme onu ödünç alıyor: tur sürerken bir başka
+   * parçayı dinlemek çalanı susturuyor, önizleme bitince seçili parça geri
+   * geliyor.
+   */
+  const onizlemeyiDegistir = (dosya: string) => {
+    const calar = calarAl()
+    if (onizlenen === dosya) {
+      setOnizlenen(null)
+      if (calisiyor) calar.cal(ayar.ses)
+      else calar.onizlemeyiDurdur()
+      return
+    }
+    calar.sesSeviyesi(ayar.sesSeviyesi)
+    setOnizlenen(dosya)
+    calar.onizle(dosya, () => {
+      setOnizlenen(null)
+      // Süresi dolduğunda çalar geri veriliyor. `onBitti` yalnızca önizleme
+      // hâlâ etkin kaynakken çağrılıyor, yani buradaki `calisiyor` bayat olamaz:
+      // turu başlatmak da duraklatmak da çaları önizlemeden almış olurdu.
+      if (calisiyor) calarRef.current?.cal(ayar.ses)
+    })
+  }
+
+  /** Panel kapanırken önizleme de susuyor; kapalı bir panelden ses gelmemeli. */
+  const sesPaneliniDegistir = () => {
+    setSesPaneli((acik) => {
+      if (acik && onizlenen !== null) {
+        setOnizlenen(null)
+        if (calisiyor) calarRef.current?.cal(ayar.ses)
+        else calarRef.current?.onizlemeyiDurdur()
+      }
+      return !acik
+    })
   }
 
   /*
@@ -501,7 +638,7 @@ export function PomodoroEkrani({
       <Kart className="mb-4 p-0">
         <button
           type="button"
-          onClick={() => setSesPaneli((a) => !a)}
+          onClick={sesPaneliniDegistir}
           className="flex w-full items-center gap-3 p-4 text-left"
         >
           {ayar.ses === 'yok' ? (
@@ -524,19 +661,57 @@ export function PomodoroEkrani({
               <Music size={13} aria-hidden />
               Lo-fi
             </p>
-            <div className="mb-4 flex flex-wrap gap-2">
-              <Cip secili={ayar.ses === 'yok'} onClick={() => sesSec('yok')}>
+            {/*
+              Çip bulutu yerine satır listesi: her parçanın kendi önizleme
+              düğmesi var ve iç içe düğme yazılamıyor — dinlemek ile seçmek iki
+              ayrı dokunuş, o yüzden iki ayrı hedef. Ada dokunmak seçiyor,
+              üçgene dokunmak dinletiyor.
+            */}
+            <div className="mb-4 space-y-1.5">
+              <Cip
+                secili={ayar.ses === 'yok'}
+                onClick={() => sesSec('yok')}
+                className="w-full !rounded-2xl text-left"
+              >
                 Sessiz
               </Cip>
-              {LOFI_PARCALAR.map((p) => (
-                <Cip
-                  key={p.dosya}
-                  secili={ayar.ses === `lofi:${p.dosya}`}
-                  onClick={() => sesSec(`lofi:${p.dosya}`)}
-                >
-                  {p.ad}
-                </Cip>
-              ))}
+              {LOFI_PARCALAR.map((p) => {
+                const secim: SesSecimi = `lofi:${p.dosya}`
+                const calanOnizleme = onizlenen === p.dosya
+                return (
+                  <div key={p.dosya} className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => onizlemeyiDegistir(p.dosya)}
+                      aria-label={
+                        calanOnizleme
+                          ? `${p.ad} önizlemesini durdur`
+                          : `${p.ad} parçasını dinle`
+                      }
+                      className={cn(
+                        'flex size-10 shrink-0 items-center justify-center rounded-full border transition',
+                        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+                        calanOnizleme
+                          ? 'border-primary-parlak bg-primary-parlak text-white'
+                          : 'border-border bg-card text-primary active:bg-muted',
+                      )}
+                    >
+                      {calanOnizleme ? (
+                        <Pause size={15} aria-hidden />
+                      ) : (
+                        <Play size={15} aria-hidden />
+                      )}
+                    </button>
+                    <Cip
+                      secili={ayar.ses === secim}
+                      onClick={() => sesSec(secim)}
+                      className="min-w-0 flex-1 truncate !rounded-2xl text-left"
+                    >
+                      {p.ad}
+                    </Cip>
+                  </div>
+                )
+              })}
             </div>
 
             <label className="block">
@@ -558,8 +733,8 @@ export function PomodoroEkrani({
             </label>
 
             <p className="mt-3 text-xs text-muted-foreground">
-              Parçalar kamu malı (CC0), uygulamanın içinde — internet gerekmiyor. Biri
-              bitince sıradaki başlar.
+              Dinlemek için soldaki üçgene, seçmek için adına dokun. Parçalar kamu malı
+              (CC0), uygulamanın içinde — internet gerekmiyor. Biri bitince sıradaki başlar.
             </p>
           </div>
         )}

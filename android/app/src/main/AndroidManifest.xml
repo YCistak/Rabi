@@ -26,7 +26,12 @@
         </activity>
 
         <!--
-          Odak kilidinin ön plan servisi.
+          Pomodoro turunun ön plan servisi.
+
+          Adı hâlâ `OdakServisi`: sınıf odak kilidi için yazıldı ve kimliğini
+          değiştirmek manifest, eklenti ve kapanış toplayıcısını birden
+          dokundururdu. İşi genişledi — artık her turda kuruluyor ve kilit
+          ekranındaki sayacı da o çiziyor, engelleme üstüne binen bir seçenek.
 
           `specialUse` seçildi: Android 14'ten beri tip bildirimi zorunlu ve
           listedeki tiplerin hiçbiri (konum, medya, senkronizasyon…) pomodoro
@@ -158,6 +163,22 @@
         <package android:name="com.ea.gp.fifamobile" />
         <package android:name="com.playrix.homescapes" />
         <package android:name="com.playrix.gardenscapes" />
+
+        <!--
+          Mağazalar.
+
+          Oyunları engelleyen öğrenci, engellenen oyuna Play'in "Aç" düğmesinden
+          ulaşabiliyordu: mağaza engelin yan kapısı. Üstelik mağazanın kendisi
+          de bir keşif akışı — engellenen oyunun yerine yenisi bir dokunuş
+          uzakta. MAIN/LAUNCHER sorgusu bu paketleri zaten görüyor olmalı ama
+          bazı cihazlarda mağazanın başlatıcı etkinliği o sorgudan dönmüyor ve
+          uygulama listede hiç çıkmıyordu; adı yazılı paket her cihazda görünür.
+        -->
+        <package android:name="com.android.vending" />
+        <package android:name="com.google.android.play.games" />
+        <package android:name="com.huawei.appmarket" />
+        <package android:name="com.sec.android.app.samsungapps" />
+        <package android:name="com.xiaomi.mipicks" />
 
         <!-- Tarayıcı ve alışveriş -->
         <package android:name="com.android.chrome" />

@@ -27,6 +27,16 @@ class EngelKatmani(private val baglam: Context) {
     private val elciler = Handler(Looper.getMainLooper())
 
     private var gorunum: View? = null
+    /**
+     * Önceden şişirilmiş düzen.
+     *
+     * Katman eskiden her gösterimde baştan şişiriliyordu ve yasaklı uygulama
+     * ile engelin arasındaki gecikmenin bir kısmı buradan geliyordu: düzen
+     * ağacı kurulup ölçülüyor, sonra pencereye ekleniyordu. Servis kurulurken
+     * bir kez şişirilip saklanıyor; gösterim anında geriye yalnızca `addView`
+     * kalıyor.
+     */
+    private var hazirGorunum: View? = null
     private var bitisZamani = 0L
     /** Turun başladığı an — çubuk "ne kadarı geçti"yi bununla çiziyor. */
     private var baslangicZamani = 0L
@@ -38,6 +48,15 @@ class EngelKatmani(private val baglam: Context) {
         }
     }
 
+    /**
+     * Düzeni önceden kurar. Servis ayağa kalkarken bir kez çağrılıyor; ikinci
+     * çağrı hiçbir şey yapmıyor.
+     */
+    fun hazirla() {
+        if (hazirGorunum != null) return
+        hazirGorunum = duzenKur()
+    }
+
     fun goster(baslangic: Long, bitis: Long, ders: String?) {
         baslangicZamani = baslangic
         bitisZamani = bitis
@@ -45,11 +64,13 @@ class EngelKatmani(private val baglam: Context) {
         // eklenirse ekran görünür biçimde titriyor.
         if (gorunum != null) return
 
-        val yeni = LayoutInflater.from(baglam).inflate(R.layout.engel_katmani, null)
-        yeni.isFocusableInTouchMode = true
-        // Geri tuşu katmanı kapatmasın; çıkış yolu "Rabi'ye dön" ya da
-        // "kilidi kapat" olmalı. Ana ekran tuşu zaten engellenemiyor, gerek de yok.
-        yeni.setOnKeyListener { _, kod, _ -> kod == KeyEvent.KEYCODE_BACK }
+        val yeni = hazirGorunum ?: duzenKur()
+        hazirGorunum = yeni
+
+        // Katman bir önceki gösterimde onay adımında bırakılmış olabilir; her
+        // açılış ana ekrandan başlamalı.
+        yeni.findViewById<View>(R.id.odak_onay).visibility = View.GONE
+        yeni.findViewById<View>(R.id.odak_ana).visibility = View.VISIBLE
 
         /*
           Çip ekranın ilk satırı ve tek işi nerede olunduğunu söylemek. Ders
@@ -60,10 +81,38 @@ class EngelKatmani(private val baglam: Context) {
 
           Büyütme Türkçe yerelle: varsayılan yerelde "İstanbul"un i'si
           noktasız İ oluyor ve ders adı yanlış yazılmış gibi duruyor.
+
+          Ders her gösterimde yeniden yazılıyor (düzenin geri kalanının aksine):
+          tek bir turda sabit ama servis ayakta kalırken tur değişebiliyor.
         */
         yeni.findViewById<TextView>(R.id.odak_ders).text =
             if (ders.isNullOrBlank()) "DERS MODU AÇIK"
             else ders.uppercase(Locale("tr", "TR"))
+
+        try {
+            pencereYonetici.addView(yeni, parametreler())
+        } catch (hata: Exception) {
+            // Katman izni kullanıcı tarafından geri alınmış olabilir.
+            return
+        }
+        gorunum = yeni
+        sureyiYaz()
+        elciler.postDelayed(geriSayim, 1000L)
+    }
+
+    /**
+     * Düzeni şişirir ve düğmelerini bağlar.
+     *
+     * Dinleyiciler burada, `goster`de değil: görünüm artık gösterimler arasında
+     * yaşıyor ve her gösterimde yeniden bağlanan bir dinleyici, aynı düğmeye
+     * üst üste binen tıklama işleyicileri demek olurdu.
+     */
+    private fun duzenKur(): View {
+        val yeni = LayoutInflater.from(baglam).inflate(R.layout.engel_katmani, null)
+        yeni.isFocusableInTouchMode = true
+        // Geri tuşu katmanı kapatmasın; çıkış yolu "Rabi'ye dön" ya da
+        // "kilidi kapat" olmalı. Ana ekran tuşu zaten engellenemiyor, gerek de yok.
+        yeni.setOnKeyListener { _, kod, _ -> kod == KeyEvent.KEYCODE_BACK }
 
         yeni.findViewById<View>(R.id.odak_don).setOnClickListener {
             baglam.packageManager.getLaunchIntentForPackage(baglam.packageName)?.let {
@@ -88,16 +137,7 @@ class EngelKatmani(private val baglam: Context) {
             OdakKilidiEklentisi.kilitKapatildiBildir()
             OdakServisi.durdur(baglam)
         }
-
-        try {
-            pencereYonetici.addView(yeni, parametreler())
-        } catch (hata: Exception) {
-            // Katman izni kullanıcı tarafından geri alınmış olabilir.
-            return
-        }
-        gorunum = yeni
-        sureyiYaz()
-        elciler.postDelayed(geriSayim, 1000L)
+        return yeni
     }
 
     fun gizle() {

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bildirimdeki ilerleme çubuğu.
+
+  Engel katmanınınkinden (odak_cubuk) ayrı bir dosya olmasının sebebi zemin
+  rengi: katman uygulamanın kendi zeminine çiziliyor ve orada açık gri bir
+  çizgi görünüyor, bildirim ise sistemin gölgesinde duruyor ve telefon gece
+  modundaysa o zemin koyu. Sabit açık gri, koyu bildirimde beyaz bir şerit
+  gibi parlıyordu. Yarı saydam gri ikisinde de zeminin bir ton üstünde kalıyor.
+
+  Ölçek 0-1000: yüzde tam sayıya yuvarlanınca kısa turlarda çubuk saniyede bir
+  sıçrayarak ilerliyordu.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:id="@android:id/background">
+    <shape android:shape="rectangle">
+      <solid android:color="@color/bildirim_cizgi" />
+      <corners android:radius="999dp" />
+    </shape>
+  </item>
+  <item android:id="@android:id/progress">
+    <clip>
+      <shape android:shape="rectangle">
+        <solid android:color="@color/bildirim_amber" />
+        <corners android:radius="999dp" />
+      </shape>
+    </clip>
+  </item>
+</layer-list>

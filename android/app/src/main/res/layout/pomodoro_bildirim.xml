@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Pomodoro bildiriminin kapalı hâli — gölgede ve kilit ekranında görünen satır.
+
+  Renkler burada tema değişkenlerinden gelmiyor, gelemiyor da: bu düzen
+  sistemin bildirim gölgesinde çiziliyor ve o zemin telefonun gece moduna göre
+  açık ya da koyu oluyor. Yazılar bu yüzden `?android:attr/textColorPrimary`
+  ile, yani zeminin kendi tonuyla; yalnızca kalan süre markanın turuncusunda,
+  çünkü tek renkli vurgu odur ve o ton iki zeminde de okunuyor.
+
+  Sıralama kapalı hâlde tek satır: kim (maskot), ne (aşama + ders), ne kadar
+  kaldı (sayı). Çubuk aşamanın altında ince bir şerit — kapalı bildirimde
+  yükseklik sınırlı ve sayı ile çubuk yan yana sığmıyor.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingVertical="2dp">
+
+    <!-- Maskot ışığın içinde: tavşanın kürkü beyaz ve açık zeminde kontursuz
+         siluet kayboluyor. Katmandaki kuralın aynısı. -->
+    <FrameLayout
+        android:layout_width="40dp"
+        android:layout_height="40dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:src="@drawable/odak_hale" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            android:src="@drawable/tavsan_yuz" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/bildirim_asama"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <ProgressBar
+            android:id="@+id/bildirim_cubuk"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="6dp"
+            android:max="1000"
+            android:progressDrawable="@drawable/bildirim_cubuk" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/bildirim_sure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:letterSpacing="0.02"
+        android:textColor="@color/bildirim_amber"
+        android:textSize="26sp"
+        android:textStyle="bold" />
+</LinearLayout>
