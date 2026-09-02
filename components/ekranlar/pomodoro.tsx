@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { KeepAwake } from '@capacitor-community/keep-awake'
 import { Capacitor } from '@capacitor/core'
 import {
-  FileText,
   Music,
   Pause,
   Play,
@@ -545,45 +544,6 @@ export function PomodoroEkrani({
         </Kart>
       )}
 
-      {/*
-        Deneme provası: sayacın **üstünde**, koruma satırıyla aynı yerde.
-
-        Seçim turun kuralını değiştiriyor (süre ÖSYM'nin, mola yok, ders sabit)
-        ve turu başlatmadan önce görülmesi gerekiyor — odak korumasındaki
-        gerekçenin aynısı. Sayaç çalışırken çipler kilitli: süresi değişen bir
-        sayaç, başladığı sınavdan başkasını ölçer.
-      */}
-      <Kart className="mb-4">
-        <div className="mb-2 flex items-center gap-2">
-          <FileText
-            size={16}
-            className={cn('shrink-0', prova ? 'text-primary' : 'text-muted-foreground')}
-            aria-hidden
-          />
-          <p className="font-display text-base font-extrabold tracking-tight">Deneme provası</p>
-        </div>
-        <p className="mb-3 text-xs text-muted-foreground">
-          {prova
-            ? `${prova.soru} soru · ${prova.dakika} dakika · mola yok`
-            : 'Gerçek sınav süresiyle tek parça sayaç. Seçmezsen normal pomodoro turu.'}
-        </p>
-        <div className={cn('flex flex-wrap gap-2', calisiyor && 'pointer-events-none opacity-50')}>
-          {PROVALAR.map((p) => (
-            <Cip key={p.id} secili={prova?.id === p.id} onClick={() => provaSec(p)}>
-              {p.ad} · {p.dakika} dk
-            </Cip>
-          ))}
-        </div>
-        {prova && (
-          <p className="mt-2 text-xs text-muted-foreground">{prova.aciklama}</p>
-        )}
-        {calisiyor && (
-          <p className="mt-2 text-xs text-muted-foreground">
-            Provayı değiştirmek için sayacı duraklat.
-          </p>
-        )}
-      </Kart>
-
       <Kart className="mb-4 flex flex-col items-center py-6">
         <Sayac kalan={kalan} oran={oran} mola={molaMi} />
 
@@ -740,10 +700,13 @@ export function PomodoroEkrani({
         )}
       </Kart>
 
-      {/* Provada süre kutusu hiç çizilmiyor: o turda çalışma/mola süreleri
-          kullanılmıyor ve kilitli bir kutu, kullanılıyormuş izlenimi verirdi.
-          Ayarlar kaybolmuyor — prova kapatılınca aynı değerlerle geri geliyor. */}
-      {prova === null && <SureAyarlari ayar={ayar} setAyar={setAyar} kilitli={calisiyor} />}
+      <SureAyarlari
+        ayar={ayar}
+        setAyar={setAyar}
+        kilitli={calisiyor}
+        prova={prova}
+        onProvaSec={provaSec}
+      />
 
       <Not className="mt-4">
         {prova
@@ -793,14 +756,32 @@ function Sayac({ kalan, oran, mola }: { kalan: number; oran: number; mola: boole
   )
 }
 
+/**
+ * Süreler kartı — deneme provası dahil.
+ *
+ * Prova bir süre bu kartın **üstünde kendi kartındaydı** ve iki kart aynı
+ * soruya cevap veriyordu: "bu tur kaç dakika sürecek". İkisi ayrı dururken
+ * seçim de ayrı iki karar gibi görünüyordu; oysa prova seçmek, çalışma/mola
+ * sürelerinin yerine ÖSYM'nin süresini koymak demek.
+ *
+ * Prova seçiliyken çalışma ve mola satırları çizilmiyor: o turda
+ * kullanılmıyorlar ve kilitli bir kutu, kullanılıyormuş izlenimi verirdi.
+ * Ayarlar kaybolmuyor, prova kapatılınca aynı değerlerle geri geliyor. Kart
+ * artık her hâlde duruyor — eskiden tümüyle gizleniyordu ve provayı kapatmanın
+ * yolu da onunla birlikte kayboluyordu.
+ */
 function SureAyarlari({
   ayar,
   setAyar,
   kilitli,
+  prova,
+  onProvaSec,
 }: {
   ayar: PomodoroAyar
   setAyar: (guncelleyici: PomodoroAyar | ((onceki: PomodoroAyar) => PomodoroAyar)) => void
   kilitli: boolean
+  prova: Prova | null
+  onProvaSec: (secilen: Prova) => void
 }) {
   const alanlar: {
     anahtar: keyof PomodoroAyar
@@ -823,7 +804,40 @@ function SureAyarlari({
   return (
     <Kart>
       <p className="mb-3 font-display text-base font-extrabold tracking-tight">Süreler</p>
-      <div className={cn('space-y-3', kilitli && 'pointer-events-none opacity-50')}>
+
+      {/* Prova, ötekilerle aynı biçimde etiketlenmiş bir satır: kendi başlığı
+          ve simgesi olsaydı kartın içinde ikinci bir kart gibi dururdu. */}
+      <div className={cn('mb-3', kilitli && 'pointer-events-none opacity-50')}>
+        <p className="mb-1.5 text-[11px] font-extrabold uppercase tracking-[0.08em] text-muted-foreground">
+          Deneme provası
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {PROVALAR.map((p) => (
+            <Cip key={p.id} secili={prova?.id === p.id} onClick={() => onProvaSec(p)}>
+              {p.ad} · {p.dakika} dk
+            </Cip>
+          ))}
+        </div>
+      </div>
+
+      {/* Seçili provanın kuralı yazılıyor — mola yok, ders sabit, süre ÖSYM'nin.
+          Seçili değilken açıklama yok: çiplerin üstündeki etiket zaten ne
+          olduğunu söylüyor ve boş durumda duran bir cümle, kartın en çok
+          kullanılan hâlini uzatıyordu. */}
+      {prova && (
+        <p className="mb-3 text-xs text-muted-foreground">
+          {prova.soru} soru · {prova.dakika} dakika · mola yok. {prova.aciklama}
+        </p>
+      )}
+
+      <div
+        className={cn(
+          'space-y-3',
+          kilitli && 'pointer-events-none opacity-50',
+          // Provada çalışma ve mola süreleri kullanılmıyor.
+          prova && 'hidden',
+        )}
+      >
         {alanlar.map(({ anahtar, etiket, secenekler, sinir }) => (
           <div key={anahtar}>
             {/* Etiket küçük ve büyük harf: dört grup alt alta dizildiğinde
@@ -853,26 +867,31 @@ function SureAyarlari({
             </div>
           </div>
         ))}
-
-        <label className="flex items-center justify-between gap-3 pt-1">
-          <span className="text-sm">
-            Çalışırken ekran açık kalsın
-            <span className="block text-xs text-muted-foreground">
-              Pili daha hızlı tüketir
-            </span>
-          </span>
-          <input
-            type="checkbox"
-            checked={ayar.ekraniAcikTut}
-            onChange={(e) => setAyar((o) => ({ ...o, ekraniAcikTut: e.target.checked }))}
-            className="h-5 w-5 shrink-0 accent-[var(--primary)]"
-          />
-        </label>
       </div>
+
+      {/* Ekran anahtarı süre satırlarının dışında: provada da geçerli ve
+          gizlenseydi 165 dakikalık bir turda ona hiç ulaşılamazdı. Sayaç
+          çalışırken de değiştirilebiliyor — süreler kilitli çünkü başlamış bir
+          turun uzunluğu değişmemeli, ekranın açık kalması ise turun ortasında
+          verilebilecek bir karar. */}
+      <label className="flex items-center justify-between gap-3 pt-1">
+        <span className="text-sm">
+          Çalışırken ekran açık kalsın
+          <span className="block text-xs text-muted-foreground">Pili daha hızlı tüketir</span>
+        </span>
+        <input
+          type="checkbox"
+          checked={ayar.ekraniAcikTut}
+          onChange={(e) => setAyar((o) => ({ ...o, ekraniAcikTut: e.target.checked }))}
+          className="h-5 w-5 shrink-0 accent-[var(--primary)]"
+        />
+      </label>
 
       {kilitli && (
         <p className="mt-3 text-xs text-muted-foreground">
-          Süreleri değiştirmek için sayacı duraklat.
+          {prova
+            ? 'Provayı değiştirmek için sayacı duraklat.'
+            : 'Süreleri ve provayı değiştirmek için sayacı duraklat.'}
         </p>
       )}
     </Kart>

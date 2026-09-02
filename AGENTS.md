@@ -329,7 +329,7 @@ ediyor, artık ayarlardan değiştirilmiyor.
 
 ### Pomodoro'da sınav provası
 
-Pomodoro'nun tepesindeki **Deneme provası** çipleri turu ÖSYM'nin süresine
+Süreler kartındaki **Deneme provası** çipleri turu ÖSYM'nin süresine
 çeviriyor: TYT 165, AYT 180, YDT 120 dakika (`lib/sinav-provasi.ts`). Amaç
 denemeyi uygulamanın içinde çözdürmek değil, kâğıdı çözerken süreyi buradan
 tutturmak — öğrenci zaten telefonun kronometresini açıyordu ve o süre hiçbir
@@ -340,9 +340,9 @@ eklenseydi `sonrakiAsama` her provanın arkasına mola koyardı; 165 dakikanın
 sonunda beş dakikalık kısa mola vermek provayı prova olmaktan çıkarır. Seçili
 provada:
 
-- Süre `ayar.calisma` değil provanın süresi, o yüzden **Süreler kartı hiç
-  çizilmiyor** — kilitli bir kutu, kullanılıyormuş izlenimi verir. Ayarlar
-  kaybolmuyor, prova kapatılınca aynı değerlerle geri geliyor.
+- Süre `ayar.calisma` değil provanın süresi, o yüzden **çalışma ve mola
+  satırları çizilmiyor** — kilitli bir kutu, kullanılıyormuş izlenimi verir.
+  Ayarlar kaybolmuyor, prova kapatılınca aynı değerlerle geri geliyor.
 - Ders çipleri yok: seans `PROVA_DERSI` ("Deneme Çözümü") ile kaydediliyor.
   Ad uydurulmadı — istatistik seansları ders adına göre topluyor ve listede
   (`CALISMA_DERSLERI`) olmayan bir ad orada tek başına bir dilim olurdu.
@@ -352,6 +352,26 @@ provada:
 - Yarıda "atla"mak provadan çıkmak demek ve seans **yazılmıyor** — sayaç
   dolmadı. Oyunlardaki "yarım tur da bir tur" kuralının tersi: orada kayıt
   bankaya düşüyor, burada ölçülen şey sürenin kendisi.
+
+**Prova, Süreler kartının ilk satırı.** Bir süre sayacın üstünde kendi kartında
+duruyordu ve iki kart aynı soruya cevap veriyordu: "bu tur kaç dakika sürecek".
+Ayrı dururken seçim de ayrı iki karar gibi görünüyordu; oysa prova seçmek,
+çalışma/mola sürelerinin **yerine** ÖSYM'nin süresini koymak demek. Satır
+ötekilerle aynı biçimde etiketleniyor (küçük, büyük harf) — kendi başlığı ve
+simgesi olsaydı kartın içinde ikinci bir kart gibi dururdu.
+
+Çiplerin altındaki açıklama yalnızca **prova seçiliyken** var ve o zaman turun
+kuralını yazıyor (kaç soru, kaç dakika, mola yok). Seçili değilken cümle yok:
+etiket zaten ne olduğunu söylüyor ve boş durumda duran bir açıklama, kartın en
+çok görülen hâlini uzatıyordu.
+
+Kart artık her hâlde çiziliyor. Tümüyle gizlenseydi provayı **kapatmanın yolu**
+da onunla birlikte kaybolurdu — eskiden prova kendi kartındaydı ve bu sorun
+yoktu. Aynı sebeple "çalışırken ekran açık kalsın" anahtarı süre satırlarının
+dışında duruyor: provada da geçerli ve 165 dakikalık bir turda ona ulaşılamaz
+olurdu. O anahtar sayaç çalışırken de değiştirilebiliyor, süreler ise kilitli —
+başlamış bir turun uzunluğu değişmemeli, ekranın açık kalması ise turun
+ortasında verilebilecek bir karar.
 
 Soru sayıları elle yazılmıyor, `OSYM_TEST_SORU`dan toplanıyor: aynı sayı
 `sablonlar.ts`te zaten duruyor ve iki yere yazılan bir sayı dağılım
