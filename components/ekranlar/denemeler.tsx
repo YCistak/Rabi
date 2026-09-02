@@ -62,20 +62,16 @@ export function DenemelerEkrani({
 
   return (
     <div>
-      <BaslikSatiri
-        ortala
-        baslik="Denemeler"
-        aciklama={
-          denemeler.length > 0
-            ? `${denemeler.length} deneme kayıtlı · ${SIRALAMA_ADLARI[sira].toLocaleLowerCase('tr-TR')}`
-            : 'Henüz deneme eklemedin'
-        }
-        sag={
-          <Buton boy="simge" onClick={onYeniyeGit} aria-label="Deneme ekle" className="rounded-full">
-            <Plus size={20} />
-          </Buton>
-        }
-      />
+      <BaslikSatiri ortala baslik="Denemeler" />
+
+      {/* İlk kayıtta düğme boş durumun içinde, ekranın ortasında duruyor; liste
+          doluyken oraya ulaşmak kaydırmak demek, o yüzden başlığın altına geçiyor. */}
+      {satirlar.length > 0 && (
+        <Buton onClick={onYeniyeGit} className="mb-3 w-full">
+          <Plus size={18} />
+          Deneme ekle
+        </Buton>
+      )}
 
       {satirlar.length > 0 && (
         <SuzgecCubugu
@@ -297,13 +293,16 @@ function SuzgecCubugu({
         </div>
       )}
 
-      <div className="relative">
+      <div className="relative flex items-center gap-2">
+        {/* Düğmenin üstünde yalnızca seçili sıra yazıyor; ne işe yaradığını
+            söyleyen tek yer bu etiket. */}
+        <span className="shrink-0 text-sm text-muted-foreground">Filtrele</span>
         <button
           type="button"
           onClick={() => setMenuAcik((a) => !a)}
           aria-expanded={menuAcik}
           className={cn(
-            'flex w-full items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-left text-sm font-bold transition',
+            'flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-left text-sm font-bold transition',
             'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring active:bg-muted',
           )}
         >

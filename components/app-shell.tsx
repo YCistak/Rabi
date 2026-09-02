@@ -733,7 +733,6 @@ export function AppShell() {
               setBanka={setOyunBankasi}
               sesAcik={ayarlar.oyunSesi}
               muzikAcik={ayarlar.oyunMuzigi}
-              muzikTuru={ayarlar.oyunMuzikTuru}
               onBankayaGit={() => setEkran('oyun-bankasi')}
               bankaTuru={bankaTuru}
               onBankaTuruBitti={() => setBankaTuru(null)}

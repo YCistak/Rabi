@@ -1,10 +1,9 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type {
   OyunId,
   OyunKayitlari,
-  OyunMuzikTuru,
   OyunTurKaydi,
 } from '@/lib/types'
 import {
@@ -44,8 +43,6 @@ import {
   type OyunModu,
 } from '@/lib/oyunlar/mod'
 import { muzikBaslat, muzikDuraklat, muzikDurdur } from '@/lib/oyunlar/mod-muzigi'
-import { LOFI_PARCALAR } from '@/lib/lofi'
-import { SesCalar } from '@/lib/ses'
 import { useGeriKatmani } from '@/lib/geri'
 import { useUygulamaGorunur } from '@/lib/gorunurluk'
 import { bugun } from '@/lib/utils'
@@ -147,7 +144,6 @@ export function OyunlarEkrani({
   setBanka,
   sesAcik,
   muzikAcik,
-  muzikTuru,
   onBankayaGit,
   onBankadanDustu,
   /** Bankadan "sadece bunlardan bir tur" ile açılan oyun; yoksa null. */
@@ -165,7 +161,6 @@ export function OyunlarEkrani({
   setBanka: (guncelleyici: (onceki: BankaKaydi[]) => BankaKaydi[]) => void
   sesAcik: boolean
   muzikAcik: boolean
-  muzikTuru: OyunMuzikTuru
   onBankayaGit: () => void
   /** Turda bankadan düşen soru sayısı — rozet sayacını besliyor. */
   onBankadanDustu: (adet: number) => void
@@ -221,8 +216,11 @@ export function OyunlarEkrani({
   // müzik başlaması menüde gezinen kullanıcıyı şaşırtırdı; ana tuşa basıldıktan
   // sonra çalmaya devam etmesi ise uygulama görev listesinden silinene kadar
   // sürüyordu.
+  // Turda çalan parça artık seçilmiyor: lo-fi listesi ayarlardan kaldırıldı ve
+  // her turda modun kendi müziği çalıyor. Parça bir zevk meselesi olarak
+  // sunulduğu sürece tempo da öyle okunuyordu; oysa tempo turun kuralının
+  // parçası (`mod-muzigi.ts`), arkada çalan bir liste değil.
   const gorunur = useUygulamaGorunur()
-  const lofiRef = useRef<SesCalar | null>(null)
 
   const muzikCalsin = acikOyun !== null && muzikAcik
 
@@ -238,39 +236,16 @@ export function OyunlarEkrani({
     süresiz bir turda süre daraltan bir parça çalardı.
   */
   useEffect(() => {
-    if (!muzikCalsin || muzikTuru !== 'mod') {
+    if (!muzikCalsin) {
       muzikDurdur()
       return
     }
     if (gorunur) muzikBaslat(etkinMod(mod, bankaTuru !== null))
     else muzikDuraklat()
-  }, [muzikCalsin, muzikTuru, gorunur, mod, bankaTuru])
+  }, [muzikCalsin, gorunur, mod, bankaTuru])
 
-  useEffect(() => {
-    if (!muzikCalsin || muzikTuru !== 'lofi') {
-      lofiRef.current?.kapat()
-      lofiRef.current = null
-      return
-    }
-    if (!lofiRef.current) {
-      const calar = new SesCalar()
-      calar.sesSeviyesi(0.28)
-      calar.cal(`lofi:${LOFI_PARCALAR[5].dosya}`)
-      lofiRef.current = calar
-    }
-    if (gorunur) lofiRef.current.devam()
-    else lofiRef.current.duraklat()
-  }, [muzikCalsin, muzikTuru, gorunur])
-
-  // Ekrandan çıkarken bağlamlar da kapanmalı; yukarıdaki efektler duraklatmakla yetiniyor.
-  useEffect(
-    () => () => {
-      muzikDurdur()
-      lofiRef.current?.kapat()
-      lofiRef.current = null
-    },
-    [],
-  )
+  // Ekrandan çıkarken bağlam da kapanmalı; yukarıdaki efekt duraklatmakla yetiniyor.
+  useEffect(() => () => muzikDurdur(), [])
 
   /**
    * Biten tur.
@@ -386,9 +361,6 @@ export function OyunlarEkrani({
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
           <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Oyunlar</h1>
-          <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
-            Bir dakikalık turlarla bilgi tazele.
-          </p>
         </div>
 
         {/* Araçlar'daki 🧰 ile aynı kutu ve aynı hiza; başlığın sonuna yapışan

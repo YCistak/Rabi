@@ -39,9 +39,11 @@ export function ZorlukSecimi({
           </Cip>
         ))}
       </div>
-      <p className="mt-2 text-xs text-muted-foreground">
-        {bossVar ? BOSS_ACIKLAMASI[secili] : 'Seçimin saklanır.'}
-      </p>
+      {/* Boss kuralı gizli kalmasın diye yazılıyor. Boss'u olmayan oyunda
+          söylenecek bir şey yok; oraya konan cümle satırı doldurmaktan ibaretti. */}
+      {bossVar && (
+        <p className="mt-2 text-xs text-muted-foreground">{BOSS_ACIKLAMASI[secili]}</p>
+      )}
     </div>
   )
 }

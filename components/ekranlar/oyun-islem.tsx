@@ -552,9 +552,6 @@ function IslemSecimi({
           </Cip>
         ))}
       </div>
-      <p className="mt-2 text-xs text-muted-foreground">
-        Seçimin saklanır; en az bir işlem açık kalmalı.
-      </p>
     </div>
   )
 }
