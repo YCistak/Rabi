@@ -30,8 +30,8 @@ android {
         //
         // Yeni bir dalda numara verirken `git branch -r` üzerinden en yüksek
         // versionCode'a bak, master'ınkine değil.
-        versionCode 44
-        versionName "1.18.3"
+        versionCode 51
+        versionName "1.21.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // CameraX dört ABI'de native kütüphane getiriyor. Sembol tablosu
         // yüklenmezse Play Console'daki native çökme raporları okunamıyor ve

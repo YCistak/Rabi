@@ -56,19 +56,31 @@ export async function cihazdanFotograf(kaynak: Kaynak): Promise<Blob | null> {
   }
 }
 
+/** Okumaya giden fotoğrafın iki adresi. */
+export type Kagit = {
+  /** Native tarafın açacağı yerel yol; metin tanıma bunu istiyor. */
+  yol: string
+  /** WebView'in çizebileceği adres; eşikleme tuvale bununla yükleniyor. */
+  webYol: string
+}
+
 /**
- * Cihazdaki fotoğrafın **yerel dosya yolu**.
+ * Cihazdaki fotoğrafın **iki adresi**.
  *
  * `cihazdanFotograf` blob döndürüyor çünkü onu çağıran taraf fotoğrafı
  * saklıyor. Metin tanıma ise yol istiyor: model native tarafta çalışıyor ve
- * dosyayı kendisi açıyor, blob'u WebView'den native'e geçirmek fotoğrafı
- * base64'e çevirip iki kez kopyalamak olurdu.
+ * dosyayı kendisi açıyor.
  *
- * Fotoğraf **saklanmıyor**: yol yalnızca okuma sırasında kullanılıyor. Yanlış
- * soru fotoğrafları depoya giriyor çünkü orada fotoğraf verinin kendisi;
- * burada araç.
+ * İkisi birden gerekiyor çünkü fotoğraf modele **ham** gitmiyor: önce tuvalde
+ * eşikleniyor (`lib/goruntu-esikle.ts`) ve o iş WebView'in çizebileceği bir
+ * adres istiyor. Ham yol da elde tutuluyor — eşikleme kötü sonuç verirse
+ * özgün fotoğrafa dönülüyor.
+ *
+ * Fotoğraf **saklanmıyor**: adresler yalnızca okuma sırasında kullanılıyor.
+ * Yanlış soru fotoğrafları depoya giriyor çünkü orada fotoğraf verinin
+ * kendisi; burada araç.
  */
-export async function cihazdanFotografYolu(kaynak: Kaynak): Promise<string | null> {
+export async function cihazdanKagit(kaynak: Kaynak): Promise<Kagit | null> {
   try {
     const foto = await Camera.getPhoto({
       quality: Math.round(KALITE * 100),
@@ -79,7 +91,8 @@ export async function cihazdanFotografYolu(kaynak: Kaynak): Promise<string | nul
       resultType: CameraResultType.Uri,
       source: kaynak === 'kamera' ? CameraSource.Camera : CameraSource.Photos,
     })
-    return foto.path ?? null
+    if (!foto.path || !foto.webPath) return null
+    return { yol: foto.path, webYol: foto.webPath }
   } catch {
     return null
   }

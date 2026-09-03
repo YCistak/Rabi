@@ -79,7 +79,7 @@ const ESANLAMLI: Record<string, readonly string[]> = {
   din: ['din', 'din kulturu', 'dkab'],
   fizik: ['fizik', 'fzk', 'fiz'],
   kimya: ['kimya', 'kmy', 'kim'],
-  biyoloji: ['biyoloji', 'biyo', 'byl', 'biy'],
+  biyoloji: ['biyoloji', 'byoloji', 'biyo', 'byl', 'biy'],
   ingilizce: ['ingilizce', 'ing', 'yds', 'ydt'],
 }
 
@@ -182,6 +182,8 @@ function dersleriBul(satir: string, dersler: SablonDers[]): { bulgular: Bulgu[];
 const DOGRU_DESENI = /(\d{1,3})\s*d(?:ogru)?(?![a-z0-9])/
 const YANLIS_DESENI = /(\d{1,3})\s*y(?:anlis)?(?![a-z0-9])/
 const BOS_DESENI = /(\d{1,3})\s*b(?:os)?(?![a-z0-9])/
+/** "Full" / "tamamı": sayı yerine kelimeyle yazılan tam sonuç. */
+const TAMAMI_DESENI = /(?:^|[^a-z])(?:full|tamami|tamam|hepsi)(?![a-z0-9])/
 
 /**
  * Ders adından sonra gelen parçadan doğru/yanlış çıkarır.
@@ -222,7 +224,18 @@ function sayilariCoz(parca: string, soruSayisi: number): { dogru: number; yanlis
   if (dogru !== null && yanlis !== null) return { dogru, yanlis }
   if (dogru !== null && bos !== null) return tamamla(dogru, soruSayisi - dogru - bos)
   if (yanlis !== null && bos !== null) return tamamla(soruSayisi - yanlis - bos, yanlis)
+
+  /*
+    Tek işaret genelde yetmiyor ama işaret soru sayısına eşitse geriye
+    belirsizlik kalmıyor: "Din K.: 5D" yazan öğrenci 5 soruluk dersin hepsini
+    doğru yapmış, yanlışı sıfır olmak zorunda. Bu çıkarım değil, tek olasılık.
+  */
+  if (dogru === soruSayisi) return { dogru, yanlis: 0 }
+  if (yanlis === soruSayisi) return { dogru: 0, yanlis: soruSayisi }
   if (dogru !== null || yanlis !== null || bos !== null) return null
+
+  // "Tarih: Full" -- hepsini doğru yapanın kullandığı yazım; sayı yazmıyor.
+  if (TAMAMI_DESENI.test(parca)) return { dogru: soruSayisi, yanlis: 0 }
 
   const sayilar = [...parca.matchAll(/\d{1,3}/g)].map((e) => Number(e[0]))
   if (sayilar.length < 2) return null
@@ -232,6 +245,21 @@ function sayilariCoz(parca: string, soruSayisi: number): { dogru: number; yanlis
 /** Çıkarımla bulunan sayı eksiye düşerse okuma yanlış demektir. */
 function tamamla(dogru: number, yanlis: number): { dogru: number; yanlis: number } | null {
   return dogru < 0 || yanlis < 0 ? null : { dogru, yanlis }
+}
+
+/**
+ * Bir OCR çıktısı ne kadar işe yarıyor?
+ *
+ * Aynı fotoğraf iki kez tanınıyor — ham ve eşiklenmiş — ve hangisinin
+ * kullanılacağına buradaki sayı karar veriyor (`lib/deneme-ocr.ts`). Ölçü
+ * "kaç karakter okundu" değil: eşikleme gürültüyü de harfe benzetebiliyor ve
+ * uzun ama anlamsız bir metin, kısa ama doğru olandan yüksek çıkardı.
+ *
+ * Sayılan şey **işaretli sayı**: "38d", "2 y", "1b". Kâğıttan aradığımız tek
+ * şey bu ve gürültünün rastgele üretmesi zor.
+ */
+export function okumaPuani(metin: string): number {
+  return [...sadelestir(metin).matchAll(/\d{1,3}\s*[dyb](?![a-z0-9])/g)].length
 }
 
 /**

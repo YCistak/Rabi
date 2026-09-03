@@ -5,8 +5,15 @@ import { AlertCircle, Check, ScanLine, X } from 'lucide-react'
 import { Alan, Buton, Cip, Etiket, Kart } from '@/components/ui'
 import { katsayiYaz, net, netYaz, sonucGecerliMi, yuvarla } from '@/lib/hesap'
 import { toplamSoru } from '@/lib/sablonlar'
-import { ORNEK_YAZIM, ORNEK_YAZIM_BOS, denemeyiCoz, sablonOnerisi } from '@/lib/deneme-okuma'
+import {
+  ORNEK_YAZIM,
+  ORNEK_YAZIM_BOS,
+  denemeyiCoz,
+  okumaPuani,
+  sablonOnerisi,
+} from '@/lib/deneme-okuma'
 import { kagidiOku, okumaVarMi } from '@/lib/deneme-ocr'
+import type { SatirOkuma } from '@/lib/kagit-oku'
 import { bugun, cn, yeniId } from '@/lib/utils'
 import type { Deneme, Sablon } from '@/lib/types'
 
@@ -23,15 +30,56 @@ function bosGirisler(sablon: Sablon): Record<string, Giris> {
  * metin aynı kalır, kutuların yeniden dolması gerekir. Yalnızca metne bakan
  * bir bağımlılık listesi ikinci okumada hiçbir şey yapmazdı.
  */
-type Okuma = { metin: string; sayac: number }
+type Okuma = { metin: string; satirlar: SatirOkuma[]; sayac: number }
+
+/**
+ * Kullanıcının kâğıt satırlarına verdiği dersler — satır sırası → ders kimliği.
+ *
+ * Kendi tanıyıcımız (`lib/karakter-tani.ts`) yalnızca rakamları ve D/Y/B'yi
+ * biliyor, ders adını okumuyor. O yüzden okuduğu satırlar ders adı olmadan
+ * geliyor ve dersi kullanıcı eşliyor. Tahmin edip doldurmak — sıraya bakıp
+ * "birinci satır Türkçe olsun" demek — `AGENTS.md`'deki "şüphedeyken
+ * doldurmuyor" kuralını çiğnerdi.
+ */
+type SatirDersleri = Record<number, string>
+
+/**
+ * Sayı satırlarını ders adlarıyla birleştirip okunabilir bir metne çevirir.
+ *
+ * Ayrı bir çözümleyici yazmak yerine metin kuruluyor: `denemeyiCoz`
+ * içindeki bütün kurallar (D/Y/B, çıkarım, soru sayısını aşan satırı atlama)
+ * o zaman burada da kendiliğinden geçerli oluyor.
+ */
+function eslesenMetin(sablon: Sablon, okuma: Okuma | null, dersler: SatirDersleri): string {
+  if (okuma === null) return ''
+  return okuma.satirlar
+    .map((satir, sira) => {
+      const ders = sablon.dersler.find((d) => d.id === dersler[sira])
+      return ders === undefined ? null : `${ders.ad} ${satir.metin}`
+    })
+    .filter((satir): satir is string => satir !== null)
+    .join('\n')
+}
 
 /** Okunan metni şablonun kutularına yazar; okunamayan kutular boş kalıyor. */
-function okumadanGirisler(sablon: Sablon, okuma: Okuma | null): Record<string, Giris> {
+function okumadanGirisler(
+  sablon: Sablon,
+  okuma: Okuma | null,
+  dersler: SatirDersleri,
+): Record<string, Giris> {
   const girisler = bosGirisler(sablon)
   if (okuma === null) return girisler
-  for (const okunan of denemeyiCoz(okuma.metin, sablon).okunanlar) {
-    girisler[okunan.dersId] = { dogru: String(okunan.dogru), yanlis: String(okunan.yanlis) }
+
+  const yaz = (metin: string): void => {
+    for (const okunan of denemeyiCoz(metin, sablon).okunanlar) {
+      girisler[okunan.dersId] = { dogru: String(okunan.dogru), yanlis: String(okunan.yanlis) }
+    }
   }
+
+  // Önce ML Kit'in okuduğu metin, sonra kullanıcının elle eşlediği satırlar:
+  // ikincisi bir tercih, birincisi bir tahmin — çakışırsa tercih kazanıyor.
+  yaz(okuma.metin)
+  yaz(eslesenMetin(sablon, okuma, dersler))
   return girisler
 }
 
@@ -88,6 +136,8 @@ export function YeniDenemeEkrani({
   const [ornekAcik, setOrnekAcik] = useState(false)
   const [okunuyor, setOkunuyor] = useState(false)
   const [okumaHatasi, setOkumaHatasi] = useState(false)
+  /** Kâğıt satırlarına verilen dersler; her yeni okumada sıfırlanıyor. */
+  const [satirDersleri, setSatirDersleri] = useState<SatirDersleri>({})
 
   const sablon = sablonlar.find((s) => s.id === sablonId) ?? sablonlar[0]
 
@@ -95,8 +145,8 @@ export function YeniDenemeEkrani({
   // okunmuşsa yeni şablona göre yeniden dolar.
   useEffect(() => {
     if (duzenlenen) return
-    setGirisler(okumadanGirisler(sablon, okuma))
-  }, [sablon, duzenlenen, okuma])
+    setGirisler(okumadanGirisler(sablon, okuma, satirDersleri))
+  }, [sablon, duzenlenen, okuma, satirDersleri])
 
   const satirlar = useMemo(
     () =>
@@ -122,13 +172,16 @@ export function YeniDenemeEkrani({
   /** Fotoğraf özeti: kaç ders okundu, hangileri okunamadı, başka şablon uyar mı. */
   const ozet = useMemo(() => {
     if (okuma === null) return null
-    const sonuc = denemeyiCoz(okuma.metin, sablon)
+    const sonuc = denemeyiCoz(
+      [okuma.metin, eslesenMetin(sablon, okuma, satirDersleri)].join('\n'),
+      sablon,
+    )
     return {
       okunanSayisi: sonuc.okunanlar.length,
       atlananlar: sonuc.atlananlar,
       oneri: sablonOnerisi(okuma.metin, sablon, sablonlar),
     }
-  }, [okuma, sablon, sablonlar])
+  }, [okuma, sablon, sablonlar, satirDersleri])
 
   const okut = async () => {
     setOrnekAcik(false)
@@ -137,14 +190,35 @@ export function YeniDenemeEkrani({
     const ciktisi = await kagidiOku()
     setOkunuyor(false)
     // Vazgeçene hiçbir şey söylenmiyor: kullanıcı zaten bilerek kapattı.
-    if (ciktisi.durum === 'metin') setOkuma((onceki) => ({
-      metin: ciktisi.metin,
-      sayac: (onceki?.sayac ?? 0) + 1,
-    }))
-    else if (ciktisi.durum !== 'vazgecildi') setOkumaHatasi(true)
+    if (ciktisi.durum === 'metin') {
+      // Eski eşleştirmeler yeni kâğıdın satırlarına ait değil; bırakılsaydı
+      // ikinci okumada rastgele derslere yapışırlardı.
+      setSatirDersleri({})
+      setOkuma((onceki) => ({
+        metin: ciktisi.metin,
+        satirlar: ciktisi.satirlar,
+        sayac: (onceki?.sayac ?? 0) + 1,
+      }))
+    } else if (ciktisi.durum !== 'vazgecildi') setOkumaHatasi(true)
   }
 
+  /**
+   * Kullanıcıya gösterilecek satırlar.
+   *
+   * İşaretli sayı taşımayanlar eleniyor (`okumaPuani`): ders adının harfleri de
+   * tanıyıcıdan geçiyor ve arada bir rakam gibi okunabiliyor. Sayısı olmayan
+   * bir satırı derse bağlatmak, kullanıcıdan anlamsız bir seçim istemek olurdu.
+   */
+  const okunanSatirlar = useMemo(
+    () =>
+      (okuma?.satirlar ?? [])
+        .map((satir, sira) => ({ satir, sira }))
+        .filter(({ satir }) => okumaPuani(satir.metin) > 0),
+    [okuma],
+  )
+
   const oneri = ozet?.oneri ?? null
+  const [hamAcik, setHamAcik] = useState(false)
 
   const toplamNet = yuvarla(satirlar.reduce((acc, s) => acc + (s.asim ? 0 : s.net), 0))
   const hataliDers = satirlar.find((s) => s.asim)
@@ -286,6 +360,48 @@ export function YeniDenemeEkrani({
             </p>
           )}
 
+          {/*
+            Kâğıttan okunan sayı satırları ve dersleri.
+
+            Ders adını tanıyıcı okumuyor (yalnızca 0-9 ve D/Y/B biliyor), o
+            yüzden eşlemeyi kullanıcı yapıyor. Sıraya bakıp tahmin etmek —
+            "birinci satır listenin ilk dersi" — kolay olurdu ama öğrenci
+            kâğıda istediği sırayla yazıyor ve yanlış dolmuş bir kutu boş
+            kutudan kötü.
+          */}
+          {okunanSatirlar.length > 0 && (
+            <div className="mt-2 rounded-xl border border-border bg-card px-3 py-2.5">
+              <p className="text-[12.5px] font-bold">Kâğıtta okunan satırlar</p>
+              <p className="mt-0.5 text-[12px] leading-snug font-medium text-muted-foreground">
+                Hangi satır hangi ders, sen söyle — kamera sayıları okuyor, ders
+                adını okumuyor.
+              </p>
+              <div className="mt-2 flex flex-col gap-1.5">
+                {okunanSatirlar.map(({ satir, sira }) => (
+                  <div key={sira} className="flex items-center gap-2">
+                    <span className="rakam min-w-[72px] rounded-lg bg-muted px-2 py-1.5 text-center text-[14px] font-extrabold">
+                      {satir.metin}
+                    </span>
+                    <select
+                      value={satirDersleri[sira] ?? ''}
+                      onChange={(olay) =>
+                        setSatirDersleri((onceki) => ({ ...onceki, [sira]: olay.target.value }))
+                      }
+                      className="flex-1 rounded-lg border border-border bg-background px-2 py-1.5 text-[13px] font-semibold"
+                    >
+                      <option value="">Ders seç…</option>
+                      {sablon.dersler.map((ders) => (
+                        <option key={ders.id} value={ders.id}>
+                          {ders.ad}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {ozet && (
             <div className="mt-2 rounded-xl bg-primary-soft px-3 py-2.5">
               <p className="text-[12.5px] font-bold text-primary">
@@ -306,10 +422,33 @@ export function YeniDenemeEkrani({
                 <button
                   type="button"
                   onClick={() => setSablonId(oneri.id)}
-                  className="mt-1.5 text-[12.5px] font-extrabold text-ikincil underline underline-offset-2"
+                  className="mt-1.5 block text-[12.5px] font-extrabold text-ikincil underline underline-offset-2"
                 >
                   Bu kâğıt {oneri.ad} gibi duruyor — ona geç
                 </button>
+              )}
+
+              {/*
+                Kameranın gerçekte ne okuduğu.
+
+                Kutular boş kalınca sorunun tanımada mı ayrıştırmada mı olduğu
+                anlaşılmıyordu: ikisi de dışarıdan aynı görünüyor. Ham metin
+                görünürse kullanıcı "kâğıdımı hiç görmemiş" ile "görmüş ama
+                ders adını tanımamış" arasındaki farkı kendi görüyor, ve
+                düzeltilecek yer belli oluyor. Kapalı başlıyor: normal
+                kullanımda kimsenin bakması gerekmiyor.
+              */}
+              <button
+                type="button"
+                onClick={() => setHamAcik((a) => !a)}
+                className="mt-1.5 block text-[12px] font-bold text-muted-foreground underline underline-offset-2"
+              >
+                {hamAcik ? 'Okunan metni gizle' : 'Kameranın okuduğu metni göster'}
+              </button>
+              {hamAcik && (
+                <pre className="mt-1.5 max-h-48 overflow-auto rounded-lg bg-card px-2.5 py-2 text-[11.5px] leading-snug whitespace-pre-wrap">
+                  {okuma?.metin.trim() === '' ? '(hiçbir şey okunmadı)' : okuma?.metin}
+                </pre>
               )}
             </div>
           )}

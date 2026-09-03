@@ -768,8 +768,13 @@ okuyor, kutular doluyor. İş üç dosyaya bölünmüş ve bölünme kasıtlı:
 | Dosya | İşi | Telefon gerekir mi |
 | --- | --- | --- |
 | `lib/deneme-okuma.ts` | metin → ders sonuçları, **saf** | hayır |
-| `lib/deneme-ocr.ts` | kamera + ML Kit sarmalayıcısı | evet |
-| `components/ekranlar/yeni-deneme.tsx` | düğme, örnek kartı, özet | hayır |
+| `lib/kagit-kirp.ts` | fotoğrafta kâğıdı bulup kırpar, **saf** | hayır |
+| `lib/goruntu-esikle.ts` | siyah-beyaza indirir, **saf** | hayır |
+| `lib/karakter-ayir.ts` | lekeleri bulup 28×28 kareye oturtur, **saf** | hayır |
+| `lib/karakter-tani.ts` | karenin hangi karakter olduğunu söyler, **saf** | hayır |
+| `lib/kagit-oku.ts` | satır satır sayı kümeleri üretir, **saf** | hayır |
+| `lib/deneme-ocr.ts` | kamera + tuval + ML Kit sarmalayıcısı | evet |
+| `components/ekranlar/yeni-deneme.tsx` | düğme, örnek kartı, satır eşleme, özet | hayır |
 
 Asıl hata ayrıştırmadan çıkıyor ve o telefonsuz test edilebilmeli: eşleştirme
 mantığı `deneme-okuma.test.ts` içinde fixture metinlerle denetleniyor.
@@ -812,6 +817,11 @@ sonuç eksiye düşerse satır atlanıyor.
 
 Tek işaret yine yetmiyor: "Coğ: 1B" doğrunun kaç olduğunu söylemiyor.
 
+**Tek olasılık kalırsa dolduruluyor.** "Din K.: 5D" yazan öğrenci 5 soruluk
+dersin hepsini doğru yapmış; yanlışa yer kalmıyor. "Tarih: Full" da öyle —
+sayı yerine kelime yazan var. İkisi de çıkarım değil, tek olasılık; belirsizlik
+kalan "Felsefe: 1Y" hâlâ atlanıyor.
+
 ### Tek harflik kısaltma çözülmüyor
 
 Kâğıtlarda "T.E", "T.M", "Fi", "F", "K", "B" gibi kısaltmalar var ve bunlar
@@ -828,6 +838,150 @@ Edebiyat.: 36D" ⏎ "1B"). Yalnızca işaretli sayılardan ibaret satırlar bir
 öncekine ekleniyor (`satirlar`). Ölçü dar: harf taşıyan satır kendi başına bir
 kayıt olabilir ve onu yukarıdakine yapıştırmak iki dersin sayılarını
 karıştırırdı.
+
+### Fotoğraf modele ham gitmiyor
+
+ML Kit'in Latin modeli **basılı metin** için eğitildi: koyu harf, açık zemin.
+Kurşun kalemle yazılmış kâğıtta grafit ile kâğıt arasındaki fark yer yer birkaç
+ton ve model hiçbir şey döndürmüyordu — aynı yazı tükenmezle yazılınca
+okunuyordu. Çözüm modeli değiştirmek değil **girdiyi** düzeltmek: görüntü
+tanımadan önce siyah-beyaza indiriliyor (`lib/goruntu-esikle.ts`) ve eşikten
+sonra kalem türü aradan kalkıyor.
+
+Eşik **yerel** (Bradley–Roth): her piksel kendi çevresinin ortalamasıyla
+karşılaştırılıyor. Sabit eşik işe yaramıyor — telefonla çekilen kâğıtta bir
+köşe gölgede kalıyor ve gölgedeki beyaz kâğıt, aydınlıktaki grafitten koyu
+çıkıyor. Ortalama integral görüntüyle okunuyor, piksel başına dört toplama.
+
+Eşik payı 8; belgeler için yaygın değer 15. Sebep ölçüldü: 200 tonluk kâğıda
+170 tonluk grafitle yazılmış satırda çevre ortalaması 193 ve 15 payla yazı
+kılpayı eleniyordu.
+
+**Üç tanıma yapılıyor, iyisi alınıyor.** Ham görüntü, sert eşik ve yumuşak
+yerel kontrast: eşikleme her fotoğrafta kazandırmıyor, iyi ışıkta çekilmiş
+keskin bir kâğıtta ham görüntü zaten okunuyor ve sert eşik ince kalemi yer yer
+koparabiliyor. `okumaPuani` metinleri karşılaştırıyor ve ölçüsü uzunluk
+**değil**, işaretli sayı adedi
+("38d", "2 y"): gürültü uzun ama anlamsız metin üretebiliyor ve uzunluğa
+bakan bir ölçü onu seçerdi.
+
+Piksel işi saf ve telefonsuz test ediliyor; tuval ve dosya yazma
+`lib/deneme-ocr.ts` tarafında. Hazırlanan kopya önbelleğe PNG olarak
+yazılıyor — JPEG iki renkli görüntüde harf kenarlarına halka atıp
+eşiklemeyle kazanılan keskinliği geri alıyor.
+
+### Sayıları ML Kit değil kendi ağımız okuyor
+
+ML Kit'in Latin modeli **basılı metin** için eğitildi ve el yazısı kâğıtta
+sayıları hiç döndürmüyor. Girdiyi düzeltmek (eşikleme, kontrast, üç varyant)
+denendi ve yetmedi: modelin göremediği şey parlatılarak görünür olmuyor.
+
+Ama okunması gereken alfabe çok küçük — **0-9 rakamları ile B, D, Y** — ve o
+kadar dar bir tanıyıcı genel el yazısı OCR'ının yanında küçük bir problem.
+`lib/karakter-tani.ts` içinde LeNet'in küçültülmüş hâli duruyor: iki evrişim
+katmanı, 12.917 parametre, 50 KB. Ağırlıklar `lib/karakter-agirliklari.ts`
+içinde base64 olarak gömülü ve **elle düzenlenmiyor** —
+`scripts/taniyici-egit.mjs` üretiyor.
+
+Eğitim betiği saf Node; ileri ve geri geçiş elle yazılı, makineye PyTorch
+kurmak gerekmiyor. Veri EMNIST (NIST'in el yazısı derlemi): rakamlar
+`emnist-digits`, harfler `emnist-letters`. Çalıştırmak için EMNIST'i indirip
+klasörü betiğe vermek yeterli.
+
+**Ağa çıkmıyor.** Tanıma tümüyle cihazda; "sunucu yok" kuralı ve Data Safety
+beyanı korunuyor. Bulut OCR (Vision API vb.) bu yüzden baştan elendi.
+
+ML Kit **kaldırılmadı**: ders adlarını okuma ihtimali duruyor ve iki okuma
+birbirini tamamlıyor — ML Kit adları, kendi ağımız sayıları.
+
+### On dördüncü sınıf: "bunlardan hiçbiri"
+
+Ders adının harfleri de tanıyıcıya geliyor. On üç sınıf varken ağ onlara
+zorunlu olarak bir rakam diyordu ve ortaya olmayan sayılar çıkıyordu — "Türk
+Dili" satırının başı "7661B" diye okunuyordu. `diğer` sınıfı EMNIST'in B/D/Y
+dışındaki harfleriyle eğitiliyor ve metne hiç yazılmıyor.
+
+O sınıfa **her harf alınmıyor**: O ile 0, I ile 1, S ile 5, Z ile 2, G ile 6,
+Q ile 2 elle yazıldığında ayırt edilemiyor ve onları "diğer"e atmak ağı gerçek
+rakamları da oraya itmeye alıştırırdı.
+
+### Yalnızca sayı + işaret kümeleri yazılıyor
+
+Satırdan çıkan metin ham tahmin dizisi değil: bitişik rakamların ardından
+bitişik bir B/D/Y gelen kümeler ("12D") alınıyor, gerisi atılıyor. Ölçüldü —
+"Tar2: 5D 5Y" satırı "Y21 5D 5Y" diye çıkıyordu ve bu biçimde tek başına bir
+harf ya da arkasında işaret olmayan bir sayı hiçbir şey söylemiyor.
+
+Boşluk **kabul edilen** son karaktere göre ölçülüyor, kutu sırasına göre
+değil: "12" ile "D" arasına düşüp elenen bir ders adı harfi ikisini bitişik
+gösteriyor ve "122D" çıkıyordu.
+
+### Kâğıt önce kırpılıyor
+
+Fotoğrafta masa da var ve ahşabın damarları uyarlamalı eşikten yüzlerce siyah
+leke olarak geçiyor. Ölçüldü: tek fotoğrafta 970 lekenin 700'ü masadandı ve
+**gerçek harfler onların arasında eleniyordu** — gürültü filtresi karakter
+boyunu lekelerin ortancasından çıkarıyor, ortanca da damar boyuna kayıyordu.
+`lib/kagit-kirp.ts` karedeki en büyük parlak yüzeyi (Otsu eşiğiyle) bulup
+kırpıyor; kırpmadan sonra aynı fotoğrafta 91 leke kalıyor.
+
+Gürültü filtresi ayrıca boyu **mürekkebe göre tartılmış ortancadan** alıyor:
+bir toz zerresi 5 piksel, bir harf 3000, ve sayıca baskın toz kararı böylece
+etkileyemiyor.
+
+### Bitişik yazılmış rakamlar bölünüyor
+
+Elle yazarken "20"nin sıfırı ikiye değiyor ve tek leke oluyor; bölünmezse
+tanıyıcıya iki rakam gösterip tek cevap istemiş oluyoruz. Boyunun 0,95'ini
+aşan kutu, dikey mürekkep profilinin en incelttiği yerden bölünüyor. Kesim
+eşit bölünmüş noktanın **çevresinde** aranıyor: profilin genel en düşüğü
+kutunun ucuna kaçıyor ve orada bölmek karakteri kırpıyordu.
+
+### Kâğıdın yönü okunarak bulunuyor
+
+Kâğıt her zaman düz tutulmuyor: elimizdeki dokuz gerçek fotoğrafın dördünde
+yan duruyor ve yazı dikey akıyor. Satır gruplama yatay yazı varsaydığı için o
+kâğıtlardan tek satır bile çıkmıyordu.
+
+İki ucuz yol denendi ve **ikisi de çalışmadı**:
+
+- **Lekelerin dizilişine bakmak.** Düz duran bir kâğıtta doğru eksen 45,
+  yanlış eksen 47 puan aldı; satır sayısı da satır uzunluğu da ayırt etmiyor.
+- **Birkaç karakteri örnekleyip güvene bakmak.** Ters duran bir rakam yine bir
+  rakama benziyor (6 ile 9) ve ağ ona da güveniyor.
+
+Ayırt eden tek ölçü tam okumadan çıkan **geçerli küme sayısı**: ters yönde
+sayılarla işaretler bir araya gelmiyor. Üç yön (0°, 90°, 270°) baştan sona
+okunuyor, en çok küme veren kazanıyor; eşitlikte düz duruş.
+
+180° denenmiyor — fotoğraf baş aşağı çekilmiyor ve EXIF yönü zaten uygulanmış
+oluyor. Üç okumanın tamamı masaüstünde 275 ms.
+
+### Güven eşiği düşük, çünkü ölçüldü
+
+Sezgi yüksek eşik diyor; ölçüm tersini söyledi. 0,75'te gerçek kâğıtlarda 26
+satırın 7'si tam okunuyordu, 0,40'ta 12'si. Sebebi elemenin asıl işini artık
+eşiğin yapmıyor olması — ders adının harflerini ağın "diğer" sınıfı ayıklıyor.
+Geriye kalan yüksek eşik, doğru okunmuş ama çekingen rakamları atıyordu ve bir
+satırdan tek karakterin düşmesi o satırı kullanılamaz yapıyor.
+
+**Sınav anında çoğaltma denendi ve kötüleştirdi** (aynı karakteri incelterek
+ve kalınlaştırarak sorup olasılıkları ortalamak): 13 satırdan 8-10'a düştü.
+İşi zaten eğitim yapıyor — `scripts/taniyici-egit.mjs` her örneği rastgele
+kalınlıkta gösteriyor. Tekrar deneme.
+
+### Ders adını kullanıcı eşliyor
+
+Tanıyıcı ders adını okumuyor, o yüzden okuduğu satırlar ad olmadan geliyor ve
+ekran her satırın yanında bir ders seçici gösteriyor. Sıraya bakıp tahmin
+etmek — "birinci satır listenin ilk dersi" — kolay olurdu ama öğrenci kâğıda
+istediği sırayla yazıyor ve **yanlış dolmuş bir kutu boş kutudan kötü**.
+
+Eşlenen satırlar ayrı bir çözümleyiciden geçmiyor: `<ders adı> <sayılar>`
+diye metin kurulup `denemeyiCoz`'e veriliyor, böylece D/Y/B kuralları,
+çıkarım ve "soru sayısını aşan satırı atla" denetimi orada da geçerli oluyor.
+Çakışırsa kullanıcının eşlemesi ML Kit'in okumasını eziyor: biri tercih,
+öteki tahmin.
 
 ### Örnek kamera açılmadan gösteriliyor
 
@@ -880,7 +1034,7 @@ istenirse istensin Latin döndürüyor. `lib/deneme-ocr.ts` zaten Latin geçiyor
 
 ### Fotoğraf saklanmıyor
 
-Yol yalnızca okuma sırasında kullanılıyor (`cihazdanFotografYolu`), depoya
+Yol yalnızca okuma sırasında kullanılıyor (`cihazdanKagit`), depoya
 girmiyor. Yanlış soru fotoğrafları `resim-depo.ts`'e giriyor çünkü orada
 fotoğraf verinin kendisi; burada araç. Küçültme de yok: `EN_BUYUK_KENAR`da el
 yazısı rakamlar bulanıyor ve dosya zaten atılıyor.

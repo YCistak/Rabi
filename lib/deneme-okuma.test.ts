@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { denemeyiCoz, sablonOnerisi } from './deneme-okuma'
+import { denemeyiCoz, okumaPuani, sablonOnerisi } from './deneme-okuma'
 import { HAZIR_SABLONLAR } from './sablonlar'
 import type { Sablon } from './types'
 
@@ -230,5 +230,45 @@ describe('gerçek kâğıtlar', () => {
     const sonuc = denemeyiCoz('Fizik: 5D 9B', TYT)
     expect(sonuc.okunanlar).toEqual([])
     expect(sonuc.atlananlar).toContain('Fizik')
+  })
+})
+
+describe('tek olasılık kalınca dolduruluyor', () => {
+  it('"Full" hepsi doğru demek', () => {
+    // TYT Tarih 5 soru.
+    expect(tablo('Tarih: Full')).toEqual({ tarih: '5/0' })
+  })
+
+  it('doğru soru sayısına eşitse yanlış sıfırdır', () => {
+    // "Din K.: 5D" -- 5 soruluk derste 5 doğru, yanlışa yer kalmıyor.
+    expect(tablo('Din Kültürü: 5D')).toEqual({ din: '5/0' })
+  })
+
+  it('soru sayısının altındaki tek işaret hâlâ atlanıyor', () => {
+    // "Felsefe: 1Y" -- geri kalan 4 sorunun kaçı doğru, bilinmiyor.
+    const sonuc = denemeyiCoz('Felsefe: 1Y', TYT)
+    expect(sonuc.okunanlar).toEqual([])
+    expect(sonuc.atlananlar).toContain('Felsefe')
+  })
+
+  it('eksik harfli ders adı tanınıyor', () => {
+    expect(tablo('Byoloji: 5D 1B')).toEqual({ biyoloji: '5/0' })
+  })
+})
+
+describe('okuma puanı', () => {
+  it('işaretli sayıları sayıyor', () => {
+    expect(okumaPuani('Matematik 38D 2Y\nFizik 6D 1Y')).toBe(4)
+  })
+
+  it('gürültülü uzun metin, kısa doğru metni geçemiyor', () => {
+    // Eşikleme kâğıttaki lekeleri harfe benzetebiliyor; uzunluğa bakan bir
+    // ölçü o metni seçerdi.
+    const gurultu = 'lmnop qrstuv wxyz abcdefgh ijklmno pqrstuvw xyzabcd efghijk'
+    expect(okumaPuani(gurultu)).toBeLessThan(okumaPuani('Mat 38D 2Y'))
+  })
+
+  it('boş metnin puanı sıfır', () => {
+    expect(okumaPuani('')).toBe(0)
   })
 })
