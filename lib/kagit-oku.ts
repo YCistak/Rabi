@@ -18,7 +18,7 @@
 import type { Gri } from './goruntu-esikle'
 import { ceyrekDondur } from './kagit-kirp'
 import { karakterleriCikar, kareyeOturt, type Kutu, type Satir } from './karakter-ayir'
-import { tani, YAZI_DISI, type Agirliklar } from './karakter-tani'
+import { SINIFLAR, tani, YAZI_DISI, type Agirliklar } from './karakter-tani'
 
 /** Bir yazı satırından okunanlar. */
 export type SatirOkuma = {
@@ -30,25 +30,29 @@ export type SatirOkuma = {
 /**
  * Bu güvenin altındaki karakter metne yazılmıyor.
  *
- * Yüksek tutmak akla yatkın geliyor ama ölçüldü ve **tersi** çıktı: 0,75'te
- * gerçek kâğıtlarda 26 satırın 7'si tam okunuyordu, 0,40'ta 12'si. Sebebi,
- * elemenin asıl işini artık eşiğin yapmıyor olması — ders adının harflerini
- * ağın kendi "diğer" sınıfı ayıklıyor (`lib/karakter-tani.ts`). Geriye kalan
- * yüksek eşik, doğru okunmuş ama telaffuzu çekingen rakamları atıyordu ve bir
- * satırdan tek karakterin düşmesi o satırı kullanılamaz yapıyor.
- *
- * Sıfır da değil: 0,40'ın altında sonuç değişmiyor, yani bu noktadan sonra
- * eşiğin attığı şey zaten ağın da inanmadığı bir tahmin.
+ * Yüksek tutmak akla yatkın geliyor ama ölçüldü ve **tersi** çıktı: elle
+ * etiketlenmiş 27 satırda 0,60 eşiği 20, 0,40 eşiği 21, 0,25 eşiği 22 satır
+ * veriyor. Sebebi, elemenin asıl işini artık güvenin yapmıyor olması: ders
+ * adından sızan lekeleri ağın "diğer" sınıfı ile aşağıdaki boy ve genişlik
+ * kuralları ayıklıyor. Geriye kalan yüksek eşik yalnızca doğru okunmuş ama
+ * çekingen rakamları atıyordu ve bir satırdan tek karakterin düşmesi o satırı
+ * kullanılamaz yapıyor.
  */
-const GUVEN_ESIGI = 0.4
+const GUVEN_ESIGI = 0.25
 
 /**
  * Boşluk sayılan aralık, tipik karakter genişliğinin bu katı.
  *
  * "12D 6Y" ile "12D6Y" arasındaki fark bu: rakam kümeleri arasındaki boşluk
  * harfler arasındakinden belirgin biçimde geniş.
+ *
+ * Ölçü **yalnızca gerçek karakterlerden** alınıyor (`gercekler`); ders adının
+ * ufak parçaları ile birbirine değmiş geniş lekeler ortalamayı iki yöne birden
+ * bozuyordu ve eşik onunla ölçülüyordu. Düzeltildikten sonra 27 satırın
+ * 0,55'te 20'si, 0,75'te 21'i okunuyor; 1,2'de 11'e düşüyor, çünkü o noktada
+ * gerçek kümeler arasındaki boşluk da yutuluyor.
  */
-const BOSLUK_ORANI = 0.55
+const BOSLUK_ORANI = 0.75
 
 /**
  * Bu orandan geniş kutu birden çok karakter taşıyor sayılıyor.
@@ -70,6 +74,44 @@ const BOLME_ORANI = 0.95
  * incelir; tek harfin ortasında incelmez.
  */
 const VADI_ORANI = 0.45
+
+/**
+ * Küme sonundaki kutuyu harfe çevirmek için gereken en az olasılık.
+ *
+ * Düşük tutuluyor çünkü burada ağa sorulan soru daralmış: kutunun bir harf
+ * olduğunu kâğıdın biçimi zaten söylüyor, ağdan istenen tek şey üç harften
+ * hangisi olduğu. Rakiplerini eleyen bilgi ağdan değil, sayfadan geliyor.
+ */
+const HARF_ESIGI = 0.05
+
+/** Harfe çevrilecek kutunun satır boyuna oranı; altındakiler nokta sayılıyor. */
+const TAM_BOY_ORANI = 0.6
+
+/**
+ * Bir kutunun okunması için gereken en az boy oranı.
+ *
+ * Cevap karakterleri satırın tam boyunda yazılıyor; ders adından artakalan
+ * ufak parçalar değil. 27 satırda 0,45 → 18, 0,55 → 19, 0,75 → 16: dar bir
+ * tepe, çünkü yükseldikçe gerçek rakamlar da elenmeye başlıyor.
+ */
+const EN_AZ_BOY_ORANI = 0.55
+
+/**
+ * Kutunun boyuna göre en fazla genişliği; üstü birleşmiş leke sayılıyor.
+ *
+ * En kazançlı tek kural: 1,0 → 21, 1,3 → 25, 1,8 → 24 satır. Ne rakam ne
+ * B/D/Y boyundan belirgin biçimde geniş olabiliyor.
+ */
+const EN_GENIS_ORAN = 1.3
+
+/**
+ * Bir satırın okunması için sayfanın tipik yazı boyuna oranı.
+ *
+ * Puanı değiştirmiyor ama **uydurma satırı** kaldırıyor: fotoğraflardaki ilaç
+ * kutusunun basılı logosu "7D" diye okunup olmayan bir sonuç üretiyordu. Boş
+ * kutu, yanlış dolmuş kutudan iyi.
+ */
+const SAYFA_BOY_ORANI = 0.7
 
 /**
  * Kâğıttan satır satır metin; kâğıdın yönünü kendisi buluyor.
@@ -112,7 +154,21 @@ export function satirlariOku(gri: Gri, agirliklar: Agirliklar): SatirOkuma[] {
 }
 
 function ceyrekteOku(gri: Gri, agirliklar: Agirliklar): SatirOkuma[] {
-  return karakterleriCikar(gri)
+  const satirlar = karakterleriCikar(gri)
+  if (satirlar.length === 0) return []
+
+  /*
+    Sayfanın el yazısından belirgin biçimde ufak satırlar hiç okunmuyor.
+    Kâğıtta yazıdan başka basılı şeyler de var — bu fotoğraflarda bir ilaç
+    kutusunun logosu — ve onlar da lekedir: ölçüldü, logo satırı "7D" diye
+    okunup olmayan bir sonuç uyduruyordu. Basılı yazı el yazısının yanında
+    küçük kalıyor ve bu, sınıflandırmadan bağımsız bir ayraç.
+  */
+  const boylar = satirlar.map((satir) => tipikKarakterBoyu(satir.karakterler.map((k) => k.kutu)))
+  const sayfaBoyu = [...boylar].sort((a, b) => a - b)[boylar.length >> 1]
+
+  return satirlar
+    .filter((_, sira) => boylar[sira] >= sayfaBoyu * SAYFA_BOY_ORANI)
     .map((satir) => satiriOku(gri, satir, agirliklar))
     .filter((okuma) => okuma.metin !== '')
 }
@@ -126,7 +182,12 @@ function satiriOku(gri: Gri, satir: Satir, agirliklar: Agirliklar): SatirOkuma {
   const kutular = satir.karakterler.flatMap((k) => genisleriBol(gri, k.kutu))
   if (kutular.length === 0) return { metin: '', guven: 0 }
 
-  const tipikEn = kutular.reduce((t, k) => t + k.en, 0) / kutular.length
+  const tipikBoy = tipikKarakterBoyu(kutular)
+  // Genişlik ölçüsü yalnızca gerçek karakterlerden: ders adının ufak
+  // parçaları ile "oğ" gibi birleşmiş geniş lekeler ortalamayı iki yöne birden
+  // bozuyor ve boşluk eşiği onunla ölçülüyor.
+  const gercekler = kutular.filter((k) => k.boy >= tipikBoy * EN_AZ_BOY_ORANI)
+  const tipikEn = gercekler.reduce((t, k) => t + k.en, 0) / Math.max(1, gercekler.length)
   const okunanlar: Okunan[] = []
   let guvenToplami = 0
 
@@ -140,10 +201,27 @@ function satiriOku(gri: Gri, satir: Satir, agirliklar: Agirliklar): SatirOkuma {
     const tahmin = tani(kareyeOturt(gri, kutu), agirliklar)
     guvenToplami += tahmin.guven
 
+    /*
+      Alçak kutular atılıyor. Cevap karakterleri satırın tam boyunda yazılıyor;
+      ders adından artakalan ufak parçalar ("ğ"nin şapkası, iki noktanın
+      noktası, "i"nin noktası) ise değil ve onlar da kendinden emin biçimde
+      rakam okunuyor — ölçüldü, "Din Kültürü: 2B 2D" satırı "6D 2B 2D"
+      çıkıyordu. Boy, sınıftan bağımsız ve güvenilir bir ayraç.
+    */
+    if (kutu.boy < tipikBoy * EN_AZ_BOY_ORANI) continue
+    /*
+      Yatık kutular da atılıyor. Ne rakam ne B/D/Y enine yayılıyor; boyundan
+      geniş bir leke ya birbirine değmiş iki ders adı harfi ya da altı çizili
+      bir sözcüğün çizgisi. Ölçüldü: "Bilgisi:" kelimesinden 74×48'lik bir
+      leke "4" okunup "5D" satırını "45D" yapıyordu.
+    */
+    if (kutu.en > kutu.boy * EN_GENIS_ORAN) continue
     if (tahmin.guven < GUVEN_ESIGI || tahmin.sinif === YAZI_DISI) continue
     okunanlar.push({
       karakter: tahmin.sinif,
       ayrik: oncekiSag === null || kutu.x - oncekiSag > tipikEn * BOSLUK_ORANI,
+      olasilik: tahmin.olasilik,
+      tamBoy: kutu.boy >= tipikBoy * TAM_BOY_ORANI,
     })
     oncekiSag = kutu.x + kutu.en
   }
@@ -158,6 +236,17 @@ export type Okunan = {
   karakter: string
   /** Solundaki karakterden boşlukla ayrılmış mı. */
   ayrik: boolean
+  /** Sınıf olasılıkları; kümenin sonunu harfe çevirirken gerekiyor. */
+  olasilik: Float32Array
+  /**
+   * Kutu, satırın tam boyuna yakın mı.
+   *
+   * B, D ve Y satırın tam boyunda yazılıyor; iki nokta üst üstenin noktası ya
+   * da "ğ"nin şapkası değil. Kümenin sonunu harfe çevirirken bu ayrım şart:
+   * o adım kutuya "harf olmak zorundasın" diyor ve küçük bir lekeye bunu
+   * demek olmayan bir cevap uydurmak oluyor.
+   */
+  tamBoy: boolean
 }
 
 /**
@@ -173,21 +262,87 @@ export type Okunan = {
  */
 export function kumeleriYaz(okunanlar: Okunan[]): string {
   const kumeler: string[] = []
-  let rakamlar = ''
+  let bitisik: Okunan[] = []
+
+  const bosalt = (sonMu: boolean) => {
+    kumeyeCevir(bitisik, kumeler, sonMu)
+    bitisik = []
+  }
 
   for (const okunan of okunanlar) {
-    const rakamMi = okunan.karakter >= '0' && okunan.karakter <= '9'
+    if (okunan.ayrik) bosalt(false)
+    bitisik.push(okunan)
+  }
+  bosalt(true)
 
-    if (rakamMi) {
-      rakamlar = okunan.ayrik ? okunan.karakter : rakamlar + okunan.karakter
+  return kumeler.join(' ')
+}
+
+/** Bitişik bir karakter dizisini kümelere ayırıp `kumeler`e ekler. */
+function kumeyeCevir(bitisik: Okunan[], kumeler: string[], sonMu: boolean): void {
+  const bulunan: string[] = []
+  let rakamlar = ''
+
+  for (const okunan of bitisik) {
+    if (rakamMi(okunan.karakter)) {
+      rakamlar += okunan.karakter
       continue
     }
-
-    if (rakamlar !== '' && !okunan.ayrik) kumeler.push(rakamlar + okunan.karakter)
+    if (rakamlar !== '') bulunan.push(rakamlar + okunan.karakter)
     rakamlar = ''
   }
 
-  return kumeler.join(' ')
+  /*
+    Dizi harfsiz bitiyorsa son kutu büyük olasılıkla yanlış okunmuş bir
+    harftir. Ölçüldü: kalın uçlu kalemde "1B" satırı "13", "4D" satırı "40"
+    diye çıkıyor — çünkü tanıyıcı için kalın bir B ile 3, kalın bir D ile 0
+    birbirine çok benziyor ve fark birkaç puan.
+
+    Kâğıdın biçimi bu belirsizliği çözüyor: küme **her zaman** sayıyla başlar
+    ve bir işaretle biter, "13" diye bir küme yoktur. O yüzden son kutuya en
+    büyük sınıfı değil, en olası **harfi** soruyoruz. Yine de bedava değil:
+    ders adından sızan harfler de rakam okunup küme uydurabiliyor, bu yüzden
+    harfin kendi olasılığı `HARF_ESIGI`yi geçmeli.
+  */
+  const son = bitisik[bitisik.length - 1]
+  if (rakamlar.length >= 2 && son.tamBoy) {
+    const harf = enOlasiHarf(son.olasilik)
+    if (harf !== null) bulunan.push(rakamlar.slice(0, -1) + harf)
+  }
+
+  /*
+    Bitişik bir dizi birden çok küme veriyorsa o bir cevap değil, bir
+    **kelimedir**. Ölçüldü: "Edebiyat" harfleri "6D8B" diye okunup iki küme
+    çıkarıyor, "Din Kültürü" ise "6D" — oysa gerçek cevaplar arasında her
+    zaman boşluk var, çünkü kâğıda "12D 6Y" diye yazılıyor, "12D6Y" diye
+    değil. Tek kutu dizisinden iki küme çıkması, kutuların bir sözcüğün
+    harfleri olduğunun işareti.
+
+    Satırın **son** dizisi bu kuralın dışında: ders adı solda, cevap sağda ve
+    sağda başka bir şey yoksa o dizi bir sözcük olamaz. Sıkışık yazılmış
+    "3D 2B" ancak böyle kurtuluyor.
+  */
+  if (bulunan.length === 1 || sonMu) for (const kume of bulunan) kumeler.push(kume)
+}
+
+function rakamMi(karakter: string): boolean {
+  return karakter >= '0' && karakter <= '9'
+}
+
+/** Kutunun en olası B/D/Y'si; hiçbiri eşiği geçmezse `null`. */
+function enOlasiHarf(olasilik: Float32Array): string | null {
+  let secilen: string | null = null
+  let enBuyuk = HARF_ESIGI
+
+  for (const harf of ['B', 'D', 'Y'] as const) {
+    const p = olasilik[SINIFLAR.indexOf(harf)]
+    if (p > enBuyuk) {
+      enBuyuk = p
+      secilen = harf
+    }
+  }
+
+  return secilen
 }
 
 /**
@@ -272,4 +427,23 @@ function daralt(gri: Gri, kutu: Kutu): Kutu {
     boy: altY - ustY + 1,
     piksel,
   }
+}
+
+/**
+ * Satırdaki gerçek karakterin tipik boyu.
+ *
+ * Düz ortanca işe yaramıyor: ders adı bir sürü ufak parçaya bölünüyor
+ * ("Kültürü" tek başına on leke veriyor) ve sayıca onlar baskın çıkıp ortancayı
+ * aşağı çekiyor. Mürekkeple ağırlıklandırınca ölçü, satırın yerini gerçekten
+ * kaplayan lekelerden geliyor. Aynı hile `lib/karakter-ayir.ts` içinde de var.
+ */
+function tipikKarakterBoyu(kutular: Kutu[]): number {
+  const sirali = [...kutular].sort((a, b) => a.boy - b.boy)
+  const yari = sirali.reduce((t, k) => t + k.piksel, 0) / 2
+  let birikim = 0
+  for (const kutu of sirali) {
+    birikim += kutu.piksel
+    if (birikim >= yari) return kutu.boy
+  }
+  return sirali[sirali.length - 1].boy
 }

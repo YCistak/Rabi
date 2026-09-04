@@ -957,16 +957,60 @@ okunuyor, en çok küme veren kazanıyor; eşitlikte düz duruş.
 180° denenmiyor — fotoğraf baş aşağı çekilmiyor ve EXIF yönü zaten uygulanmış
 oluyor. Üç okumanın tamamı masaüstünde 275 ms.
 
-### Güven eşiği düşük, çünkü ölçüldü
+### Eleme sınıfa değil, **biçime** bakıyor
 
-Sezgi yüksek eşik diyor; ölçüm tersini söyledi. 0,75'te gerçek kâğıtlarda 26
-satırın 7'si tam okunuyordu, 0,40'ta 12'si. Sebebi elemenin asıl işini artık
-eşiğin yapmıyor olması — ders adının harflerini ağın "diğer" sınıfı ayıklıyor.
-Geriye kalan yüksek eşik, doğru okunmuş ama çekingen rakamları atıyordu ve bir
-satırdan tek karakterin düşmesi o satırı kullanılamaz yapıyor.
+Ders adından sızan lekeleri ayıklamanın doğru yolu "ağ ne kadar emin"i
+sıkıştırmak değil; ölçüldü, o yol tıkalı. Ayıklamayı kâğıdın geometrisi
+yapıyor ve üç kural birbirinden bağımsız:
+
+| Kural | Neden | Ölçüm (27 etiketli satır) |
+|---|---|---|
+| Kutu satır boyunun 0,55'inden alçaksa atılıyor | Cevaplar tam boyda yazılıyor; "ğ"nin şapkası, iki noktanın noktası değil | 0,45 → 18 · **0,55 → 19** · 0,75 → 16 |
+| Kutu boyunun 1,3 katından genişse atılıyor | Ne rakam ne B/D/Y enine yayılıyor; yatık leke ya birleşmiş iki harf ya altı çizgisi | 1,0 → 21 · **1,3 → 25** · 1,8 → 24 |
+| Satır, sayfanın tipik yazı boyunun 0,7'sinden ufaksa hiç okunmuyor | Kâğıtta basılı şeyler de var | Puanı değiştirmiyor, **uydurma satırı kaldırıyor** |
+
+Üçüncüsü puanı yükseltmiyor ama ilaç kutusunun logosunu "7D" diye okuyup
+olmayan bir sonuç üretmeyi bitiriyor. Boş kutu, yanlış dolmuş kutudan iyi.
+
+Bunlar yerine oturunca güven eşiği **düşürülebildi**: 0,60 → 20, 0,40 → 21,
+0,25 → 22 satır. Yüksek eşik artık yalnızca doğru okunmuş ama çekingen
+rakamları atıyor ve bir satırdan tek karakterin düşmesi o satırı kullanılamaz
+yapıyor.
+
+### Küme sonu harf olmak zorunda, ağa da öyle soruluyor
+
+Kalın uçlu kalemde tanıyıcı için kalın bir "B" ile "3", kalın bir "D" ile "0"
+arasındaki fark birkaç puan — ölçüldü, "1B" satırı "13", "4D 1Y" satırı
+"40 1Y" diye çıkıyordu ve harfsiz kalan küme atılıyordu.
+
+Kâğıdın biçimi bu belirsizliği çözüyor: küme her zaman sayıyla başlar ve bir
+işaretle biter, "13" diye bir küme yoktur. O yüzden harfsiz biten bir diziye
+son kutunun **en büyük sınıfı** değil, **en olası harfi** soruluyor (`tani`
+artık bütün olasılıkları döndürüyor). Kutunun satır boyunda olması şart:
+noktaya harf demek olmayan bir cevap uydurmak olurdu.
+
+### Bir dizide iki küme varsa o bir sözcük
+
+Gerçek cevaplar arasında her zaman boşluk var — kâğıda "12D 6Y" yazılıyor,
+"12D6Y" değil. Bitişik bir kutu dizisinden iki küme çıkıyorsa o kutular bir
+sözcüğün harfleridir: ölçüldü, "Edebiyat" harfleri "6D8B" diye okunup
+"Türk Dili ve Edebiyat: 36D" satırını "6D 8B 36D" yapıyordu.
+
+Satırın **son** dizisi bu kuralın dışında: ders adı solda, cevap sağda ve
+sağında başka bir şey olmayan bir dizi sözcük olamaz. Sıkışık yazılmış
+"3D 2B" ancak bu muafiyetle kurtuluyor.
+
+### Boşluk eşiği yalnızca gerçek karakterlerden ölçülüyor
+
+Tipik genişlik bütün lekelerin ortalaması alınınca bozuluyordu: ders adının
+ufak parçaları onu aşağı, birbirine değmiş "oğ" gibi geniş lekeler yukarı
+çekiyor. Ölçü yalnızca boy filtresini geçen kutulardan alınınca eşik anlamlı
+hâle geldi — 0,55 → 20, **0,75 → 21**, 1,2 → 11 satır.
+
+### Sınav anında çoğaltma denendi ve kötüleştirdi
 
 **Sınav anında çoğaltma denendi ve kötüleştirdi** (aynı karakteri incelterek
-ve kalınlaştırarak sorup olasılıkları ortalamak): 13 satırdan 8-10'a düştü.
+ve kalınlaştırarak sorup olasılıkları ortalamak): o günün 13 satırlık taban ölçümü 8-10'a düştü.
 İşi zaten eğitim yapıyor — `scripts/taniyici-egit.mjs` her örneği rastgele
 kalınlıkta gösteriyor. Tekrar deneme.
 

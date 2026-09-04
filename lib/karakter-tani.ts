@@ -56,6 +56,14 @@ export type Tahmin = {
   sinif: Sinif
   /** 0-1 arası olasılık; şüphedeyken karakteri atmak için gerekiyor. */
   guven: number
+  /**
+   * Bütün sınıfların olasılığı, `SINIFLAR` sırasıyla.
+   *
+   * En büyüğü almak yetmiyor: bir kümenin sonunda **harf olmak zorunda** olan
+   * bir kutu için "en olası harf hangisi" sorusunun cevabı gerekiyor ve o
+   * bilgi tek bir sınıfa indirgenirse kayboluyor (`lib/kagit-oku.ts`).
+   */
+  olasilik: Float32Array
 }
 
 /** Ağın katman ölçüleri; eğitim betiği aynı sayıları kullanıyor. */
@@ -155,7 +163,7 @@ export function tani(nokta: Float32Array, a: Agirliklar): Tahmin {
   const olasilik = yumusakEnBuyuk(puan)
   let enIyi = 0
   for (let s = 1; s < olasilik.length; s++) if (olasilik[s] > olasilik[enIyi]) enIyi = s
-  return { sinif: SINIFLAR[enIyi], guven: olasilik[enIyi] }
+  return { sinif: SINIFLAR[enIyi], guven: olasilik[enIyi], olasilik }
 }
 
 /** Evrişim + ReLU. Dolgu yok, adım 1: çıkış kenarı girişten 4 eksik. */
