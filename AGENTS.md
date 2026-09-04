@@ -1014,18 +1014,27 @@ ve kalınlaştırarak sorup olasılıkları ortalamak): o günün 13 satırlık 
 İşi zaten eğitim yapıyor — `scripts/taniyici-egit.mjs` her örneği rastgele
 kalınlıkta gösteriyor. Tekrar deneme.
 
-### Ders adını kullanıcı eşliyor
+### Ders eşlemesi sıraya göre, kullanıcıya sorulmuyor
 
-Tanıyıcı ders adını okumuyor, o yüzden okuduğu satırlar ad olmadan geliyor ve
-ekran her satırın yanında bir ders seçici gösteriyor. Sıraya bakıp tahmin
-etmek — "birinci satır listenin ilk dersi" — kolay olurdu ama öğrenci kâğıda
-istediği sırayla yazıyor ve **yanlış dolmuş bir kutu boş kutudan kötü**.
+Tanıyıcı ders adını okumuyor, o yüzden okuduğu satırlar ad olmadan geliyor.
+Kâğıdın ilk sayı satırı şablonun ilk dersi sayılıyor, ikincisi ikincisi.
+
+**Bir dönem her satırın yanında ders seçici vardı ve kaldırıldı.** Gerekçesi
+"şüphedeyken doldurmuyor" kuralıydı: öğrenci kâğıda istediği sırayla
+yazabilir, eşleme yanılabilir. Ama kullanıcı denedi ve seçtirmenin kendisi
+işi elle girmekten hafiflemiyordu — sekiz satır için sekiz açılır liste.
+Kutular ekranda duruyor ve kayan birini düzeltmek tek dokunuş; boş bırakmak
+ise her satırı baştan girdiriyordu. Karar kullanıcınındır, geri alma.
+
+Kaymanın görülebilmesi için okunan satırlar ekranda **salt gösterim** olarak
+duruyor, kutuları dolduran sırayla. `okumaPuani` süzgeci ikisinde de aynı;
+ayrışırlarsa ekrandaki sıra kutuları dolduran sırayı anlatmaz olur.
 
 Eşlenen satırlar ayrı bir çözümleyiciden geçmiyor: `<ders adı> <sayılar>`
 diye metin kurulup `denemeyiCoz`'e veriliyor, böylece D/Y/B kuralları,
 çıkarım ve "soru sayısını aşan satırı atla" denetimi orada da geçerli oluyor.
-Çakışırsa kullanıcının eşlemesi ML Kit'in okumasını eziyor: biri tercih,
-öteki tahmin.
+Çakışırsa **ML Kit'in metni** sıra eşlemesini eziyor: ikisi de tahmin ama ML
+Kit ders adını gerçekten okuyor, sıra eşlemesi yalnızca varsayıyor.
 
 ### Örnek kamera açılmadan gösteriliyor
 

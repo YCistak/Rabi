@@ -33,28 +33,28 @@ function bosGirisler(sablon: Sablon): Record<string, Giris> {
 type Okuma = { metin: string; satirlar: SatirOkuma[]; sayac: number }
 
 /**
- * Kullanıcının kâğıt satırlarına verdiği dersler — satır sırası → ders kimliği.
+ * Sayı satırlarını şablonun ders sırasıyla eşleyip okunabilir bir metne çevirir.
  *
  * Kendi tanıyıcımız (`lib/karakter-tani.ts`) yalnızca rakamları ve D/Y/B'yi
- * biliyor, ders adını okumuyor. O yüzden okuduğu satırlar ders adı olmadan
- * geliyor ve dersi kullanıcı eşliyor. Tahmin edip doldurmak — sıraya bakıp
- * "birinci satır Türkçe olsun" demek — `AGENTS.md`'deki "şüphedeyken
- * doldurmuyor" kuralını çiğnerdi.
- */
-type SatirDersleri = Record<number, string>
-
-/**
- * Sayı satırlarını ders adlarıyla birleştirip okunabilir bir metne çevirir.
+ * biliyor, ders adını okumuyor. Eşleme bu yüzden **sıraya** dayanıyor: kâğıdın
+ * ilk sayı satırı şablonun ilk dersi, ikincisi ikincisi. Bu bir tahmin ve
+ * yanılabilir — öğrenci kâğıda başka sırayla yazmışsa kutular kayar. Yine de
+ * doldurmak tercih edildi: kutular ekranda duruyor ve düzeltmek tek dokunuş,
+ * oysa boş bırakmak her satırı elle girdiriyordu.
+ *
+ * Sayı taşımayan satırlar (`okumaPuani`) eşlemeye hiç girmiyor; ders adından
+ * artakalan bir leke sırayı kaydırıp bütün kutuları bozardı.
  *
  * Ayrı bir çözümleyici yazmak yerine metin kuruluyor: `denemeyiCoz`
  * içindeki bütün kurallar (D/Y/B, çıkarım, soru sayısını aşan satırı atlama)
  * o zaman burada da kendiliğinden geçerli oluyor.
  */
-function eslesenMetin(sablon: Sablon, okuma: Okuma | null, dersler: SatirDersleri): string {
+function eslesenMetin(sablon: Sablon, okuma: Okuma | null): string {
   if (okuma === null) return ''
   return okuma.satirlar
+    .filter((satir) => okumaPuani(satir.metin) > 0)
     .map((satir, sira) => {
-      const ders = sablon.dersler.find((d) => d.id === dersler[sira])
+      const ders = sablon.dersler[sira]
       return ders === undefined ? null : `${ders.ad} ${satir.metin}`
     })
     .filter((satir): satir is string => satir !== null)
@@ -62,11 +62,7 @@ function eslesenMetin(sablon: Sablon, okuma: Okuma | null, dersler: SatirDersler
 }
 
 /** Okunan metni şablonun kutularına yazar; okunamayan kutular boş kalıyor. */
-function okumadanGirisler(
-  sablon: Sablon,
-  okuma: Okuma | null,
-  dersler: SatirDersleri,
-): Record<string, Giris> {
+function okumadanGirisler(sablon: Sablon, okuma: Okuma | null): Record<string, Giris> {
   const girisler = bosGirisler(sablon)
   if (okuma === null) return girisler
 
@@ -76,10 +72,11 @@ function okumadanGirisler(
     }
   }
 
-  // Önce ML Kit'in okuduğu metin, sonra kullanıcının elle eşlediği satırlar:
-  // ikincisi bir tercih, birincisi bir tahmin — çakışırsa tercih kazanıyor.
+  // Önce sıraya dayanan eşleme, sonra ML Kit'in metni: ikisi de tahmin ama
+  // ML Kit ders **adını** okuyor, sıra eşlemesi yalnızca varsayıyor. Adı
+  // gören kazanıyor.
+  yaz(eslesenMetin(sablon, okuma))
   yaz(okuma.metin)
-  yaz(eslesenMetin(sablon, okuma, dersler))
   return girisler
 }
 
@@ -136,8 +133,6 @@ export function YeniDenemeEkrani({
   const [ornekAcik, setOrnekAcik] = useState(false)
   const [okunuyor, setOkunuyor] = useState(false)
   const [okumaHatasi, setOkumaHatasi] = useState(false)
-  /** Kâğıt satırlarına verilen dersler; her yeni okumada sıfırlanıyor. */
-  const [satirDersleri, setSatirDersleri] = useState<SatirDersleri>({})
 
   const sablon = sablonlar.find((s) => s.id === sablonId) ?? sablonlar[0]
 
@@ -145,8 +140,8 @@ export function YeniDenemeEkrani({
   // okunmuşsa yeni şablona göre yeniden dolar.
   useEffect(() => {
     if (duzenlenen) return
-    setGirisler(okumadanGirisler(sablon, okuma, satirDersleri))
-  }, [sablon, duzenlenen, okuma, satirDersleri])
+    setGirisler(okumadanGirisler(sablon, okuma))
+  }, [sablon, duzenlenen, okuma])
 
   const satirlar = useMemo(
     () =>
@@ -173,7 +168,7 @@ export function YeniDenemeEkrani({
   const ozet = useMemo(() => {
     if (okuma === null) return null
     const sonuc = denemeyiCoz(
-      [okuma.metin, eslesenMetin(sablon, okuma, satirDersleri)].join('\n'),
+      [okuma.metin, eslesenMetin(sablon, okuma)].join('\n'),
       sablon,
     )
     return {
@@ -181,7 +176,7 @@ export function YeniDenemeEkrani({
       atlananlar: sonuc.atlananlar,
       oneri: sablonOnerisi(okuma.metin, sablon, sablonlar),
     }
-  }, [okuma, sablon, sablonlar, satirDersleri])
+  }, [okuma, sablon, sablonlar])
 
   const okut = async () => {
     setOrnekAcik(false)
@@ -191,9 +186,6 @@ export function YeniDenemeEkrani({
     setOkunuyor(false)
     // Vazgeçene hiçbir şey söylenmiyor: kullanıcı zaten bilerek kapattı.
     if (ciktisi.durum === 'metin') {
-      // Eski eşleştirmeler yeni kâğıdın satırlarına ait değil; bırakılsaydı
-      // ikinci okumada rastgele derslere yapışırlardı.
-      setSatirDersleri({})
       setOkuma((onceki) => ({
         metin: ciktisi.metin,
         satirlar: ciktisi.satirlar,
@@ -203,11 +195,12 @@ export function YeniDenemeEkrani({
   }
 
   /**
-   * Kullanıcıya gösterilecek satırlar.
+   * Kullanıcıya gösterilecek satırlar — kutuları dolduran sırayla aynı.
    *
    * İşaretli sayı taşımayanlar eleniyor (`okumaPuani`): ders adının harfleri de
-   * tanıyıcıdan geçiyor ve arada bir rakam gibi okunabiliyor. Sayısı olmayan
-   * bir satırı derse bağlatmak, kullanıcıdan anlamsız bir seçim istemek olurdu.
+   * tanıyıcıdan geçiyor ve arada bir rakam gibi okunabiliyor. `eslesenMetin`
+   * de aynı süzgeci kullanıyor; ikisi ayrışırsa ekranda görünen sıra kutuları
+   * dolduran sırayı anlatmaz olurdu.
    */
   const okunanSatirlar = useMemo(
     () =>
@@ -361,42 +354,26 @@ export function YeniDenemeEkrani({
           )}
 
           {/*
-            Kâğıttan okunan sayı satırları ve dersleri.
+            Kâğıttan okunan sayı satırları — yalnızca gösterim.
 
-            Ders adını tanıyıcı okumuyor (yalnızca 0-9 ve D/Y/B biliyor), o
-            yüzden eşlemeyi kullanıcı yapıyor. Sıraya bakıp tahmin etmek —
-            "birinci satır listenin ilk dersi" — kolay olurdu ama öğrenci
-            kâğıda istediği sırayla yazıyor ve yanlış dolmuş bir kutu boş
-            kutudan kötü.
+            Kutular sıraya göre kendiliğinden doldu ve bu bir tahmin: kâğıdın
+            ilk satırı şablonun ilk dersi sayıldı. Ne okunduğunu göstermek,
+            kayma olduğunda kullanıcının bunu fark etmesinin tek yolu.
           */}
           {okunanSatirlar.length > 0 && (
             <div className="mt-2 rounded-xl border border-border bg-card px-3 py-2.5">
-              <p className="text-[12.5px] font-bold">Kâğıtta okunan satırlar</p>
+              <p className="text-[12.5px] font-bold">Kâğıttan okunanlar</p>
               <p className="mt-0.5 text-[12px] leading-snug font-medium text-muted-foreground">
-                Hangi satır hangi ders, sen söyle — kamera sayıları okuyor, ders
-                adını okumuyor.
+                Kutular bu sırayla dolduruldu. Kayan varsa aşağıdan düzelt.
               </p>
-              <div className="mt-2 flex flex-col gap-1.5">
+              <div className="mt-2 flex flex-wrap gap-1.5">
                 {okunanSatirlar.map(({ satir, sira }) => (
-                  <div key={sira} className="flex items-center gap-2">
-                    <span className="rakam min-w-[72px] rounded-lg bg-muted px-2 py-1.5 text-center text-[14px] font-extrabold">
-                      {satir.metin}
-                    </span>
-                    <select
-                      value={satirDersleri[sira] ?? ''}
-                      onChange={(olay) =>
-                        setSatirDersleri((onceki) => ({ ...onceki, [sira]: olay.target.value }))
-                      }
-                      className="flex-1 rounded-lg border border-border bg-background px-2 py-1.5 text-[13px] font-semibold"
-                    >
-                      <option value="">Ders seç…</option>
-                      {sablon.dersler.map((ders) => (
-                        <option key={ders.id} value={ders.id}>
-                          {ders.ad}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <span
+                    key={sira}
+                    className="rakam rounded-lg bg-muted px-2 py-1 text-[13px] font-extrabold"
+                  >
+                    {satir.metin}
+                  </span>
                 ))}
               </div>
             </div>
