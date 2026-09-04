@@ -298,7 +298,13 @@ export function OyunlarEkrani({
     */
     const saniye = Math.min(TUR_EN_UZUN, Math.max(0, gecenSaniye))
     setGecmis((onceki) =>
-      [...onceki, { tarih: bugun(), oyun: id, saniye, dogru: ozet.dogru }].slice(
+      [
+        ...onceki,
+        // Yanlış ve hatasız da yazılıyor: haftalık özetin oyun kartı isabet
+        // oranı ve hatasız tur sayısı gösteriyor, ikisi de doğru sayısından
+        // türetilemiyor.
+        { tarih: bugun(), oyun: id, saniye, dogru: ozet.dogru, yanlis: ozet.yanlis, hatasiz: ozet.hatasiz },
+      ].slice(
         -OYUN_GECMIS_SINIRI,
       ),
     )

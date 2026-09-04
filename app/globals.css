@@ -526,6 +526,39 @@
     animation-timing-function: linear;
     animation-fill-mode: both;
   }
+  /*
+    Kartın kendi açılışı: içerik yukarıdan aşağı sıyrılarak beliriyor.
+    `opacity` yerine `clip-path`: iki kart arasında zemin rengi de değişiyor ve
+    solarak gelen bir kart, altındaki eski kartın rengiyle bir kare karışıyordu.
+  */
+  .ozet-kart {
+    animation: ozet-kart 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  /* Çıkartma etiket ("EN İYİ GÜN · 95") — hafifçe eğik oturuyor. */
+  .ozet-pop {
+    animation: ozet-pop 560ms cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  }
+  /* Yedi günlük çubuk: tabandan yukarı büyüyor. */
+  .ozet-bar {
+    transform-origin: bottom;
+    animation: ozet-bar 560ms cubic-bezier(0.2, 1.2, 0.4, 1) both;
+  }
+  /* Yatay şerit (ders dağılımı): soldan açılıyor. */
+  .ozet-serit {
+    transform-origin: left;
+    animation: ozet-serit 720ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  /*
+    Halkanın dolması. `stroke-dashoffset` çevrenin tamamından hedefe iniyor;
+    başlangıç değeri `style` ile veriliyor çünkü her halkanın yarıçapı farklı.
+  */
+  .ozet-halka {
+    animation: ozet-halka 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  /* Kapak ve birincilik kartındaki ışıma — sürekli, çok yavaş nefes alıyor. */
+  .ozet-parla {
+    animation: ozet-parla 4s ease-in-out infinite;
+  }
 }
 
 @keyframes acilis-girisi {
@@ -704,6 +737,69 @@
   }
 }
 
+@keyframes ozet-kart {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes ozet-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-8deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08) rotate(-3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(-4deg);
+  }
+}
+
+@keyframes ozet-bar {
+  from {
+    transform: scaleY(0.03);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes ozet-serit {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes ozet-halka {
+  from {
+    stroke-dashoffset: var(--halka-cevre);
+  }
+}
+
+@keyframes ozet-parla {
+  0% {
+    opacity: 0.25;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.04);
+  }
+  100% {
+    opacity: 0.25;
+    transform: scale(0.9);
+  }
+}
+
 /*
   Açılış ekranı bu listede bilerek **yok**.
 
@@ -727,8 +823,20 @@
   .acilis-girisi,
   .ozet-girisi,
   .ozet-vurgu,
-  .ozet-nabiz {
+  .ozet-nabiz,
+  .ozet-kart,
+  .ozet-pop,
+  .ozet-bar,
+  .ozet-serit,
+  .ozet-halka,
+  .ozet-parla {
     animation: none;
+  }
+  /* Animasyon susunca çubuklar ve şeritler tam boyunda durmalı; `both`
+     olmadan başlangıç karesinde (scale 0) asılı kalırlardı. */
+  .ozet-bar,
+  .ozet-serit {
+    transform: none;
   }
   /* `ozet-cubuk` bilerek listede yok: süsleme değil, kartın ne zaman
      geçeceğini gösteren tek işaret. */

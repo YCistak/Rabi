@@ -14,17 +14,22 @@
  */
 
 import type { HaftalikOzet } from './ozet'
-import { dakikaYaz, gunYaz, haftaYaz } from './ozet'
+import { dakikaYaz, haftaYaz } from './ozet'
 import { netYaz } from './hesap'
 
 const GENISLIK = 1080
 const YUKSEKLIK = 1920
 
-const ZEMIN_UST = '#C05B2B'
-const ZEMIN_ALT = '#7A3316'
 const BEYAZ = '#FFFFFF'
 const SOLUK = 'rgba(255,255,255,0.72)'
 const COK_SOLUK = 'rgba(255,255,255,0.16)'
+
+// --- Afiş paleti (tasarım: `Ozet 1d Afis`) ---
+const AFIS_KENAR = 84
+const FIL_DISI = '#FFF4E1'
+const ACIK_VURGU = '#F6B27A'
+const CIZGI = 'rgba(255,255,255,0.12)'
+const KUTU_ZEMINI = 'rgba(255,255,255,0.07)'
 
 type Yazitipleri = { baslik: string; govde: string }
 
@@ -45,7 +50,13 @@ function yazitipleriniOku(): Yazitipleri {
   return { baslik, govde: getComputedStyle(document.body).fontFamily }
 }
 
-/** Özetin paylaşılabilir PNG'sini üretir. */
+/**
+ * Özetin paylaşılabilir PNG'si — 1080×1920 afiş.
+ *
+ * Ekrandaki hikâyenin **özeti**, kopyası değil: on kartı tek görsele sığdırmak
+ * hepsini okunmaz yapardı. Afiş haftanın taşıyıcı sayısını (soru), onun yedi
+ * günlük dağılımını ve dört kutuda geri kalanını gösteriyor.
+ */
 export async function ozetGorseliUret(ozet: HaftalikOzet): Promise<Blob | null> {
   if (typeof document === 'undefined') return null
 
@@ -64,188 +75,372 @@ export async function ozetGorseliUret(ozet: HaftalikOzet): Promise<Blob | null> 
   if (!ctx) return null
 
   const yazi = yazitipleriniOku()
-  zeminCiz(ctx)
-  icerikCiz(ctx, ozet, yazi)
+  const maskot = await maskotuYukle()
+
+  afisZeminiCiz(ctx)
+  afisIcerigiCiz(ctx, ozet, yazi, maskot)
 
   return new Promise((coz) => tuval.toBlob((blob) => coz(blob), 'image/png'))
 }
 
-function zeminCiz(ctx: CanvasRenderingContext2D) {
-  const gecis = ctx.createLinearGradient(0, 0, GENISLIK * 0.4, YUKSEKLIK)
-  gecis.addColorStop(0, ZEMIN_UST)
-  gecis.addColorStop(1, ZEMIN_ALT)
-  ctx.fillStyle = gecis
-  ctx.fillRect(0, 0, GENISLIK, YUKSEKLIK)
-
-  // Zemin düz kalmasın diye üç geniş, çok soluk daire. Doku katıyorlar ama
-  // yazının okunurluğunu bozmayacak kadar silikler.
-  ctx.fillStyle = 'rgba(255,255,255,0.05)'
-  for (const [x, y, r] of [
-    [880, 240, 380],
-    [120, 1180, 300],
-    [980, 1680, 340],
-  ]) {
-    ctx.beginPath()
-    ctx.arc(x, y, r, 0, Math.PI * 2)
-    ctx.fill()
-  }
-}
-
-function icerikCiz(ctx: CanvasRenderingContext2D, ozet: HaftalikOzet, yazi: Yazitipleri) {
-  const kenar = 88
-
-  // --- Başlık ---
-  ctx.textAlign = 'left'
-  ctx.fillStyle = SOLUK
-  ctx.font = `600 34px ${yazi.govde}`
-  ctx.fillText('RABİ · HAFTALIK ÖZET', kenar, 150)
-
-  ctx.fillStyle = BEYAZ
-  ctx.font = `700 76px ${yazi.baslik}`
-  ctx.fillText(haftaYaz(ozet.hafta), kenar, 245)
-
-  // --- Ana sayı: haftanın soru toplamı ---
-  ctx.fillStyle = SOLUK
-  ctx.font = `500 36px ${yazi.govde}`
-  ctx.fillText('Bu hafta çözdüğün soru', kenar, 400)
-
-  ctx.fillStyle = BEYAZ
-  ctx.font = `700 210px ${yazi.baslik}`
-  ctx.fillText(String(ozet.toplamSoru), kenar, 570)
-
-  ctx.fillStyle = SOLUK
-  ctx.font = `500 38px ${yazi.govde}`
-  ctx.fillText(hedefCumlesi(ozet), kenar, 635)
-
-  // --- Dört kutu ---
-  const kutular: [string, string][] = [
-    ['Pomodoro', dakikaYaz(ozet.pomodoroDakika)],
-    ['Mini oyun', dakikaYaz(ozet.oyunDakika)],
-    ['Deneme', `${ozet.denemeSayisi}`],
-    ['Seri', `${ozet.seri} gün`],
-  ]
-
-  const kutuGenislik = (GENISLIK - kenar * 2 - 32) / 2
-  const kutuYukseklik = 176
-  kutular.forEach(([etiket, deger], i) => {
-    const x = kenar + (i % 2) * (kutuGenislik + 32)
-    const y = 720 + Math.floor(i / 2) * (kutuYukseklik + 28)
-
-    yuvarlakKutu(ctx, x, y, kutuGenislik, kutuYukseklik, 34)
-    ctx.fillStyle = COK_SOLUK
-    ctx.fill()
-
-    ctx.fillStyle = SOLUK
-    ctx.font = `500 32px ${yazi.govde}`
-    ctx.fillText(etiket, x + 36, y + 66)
-
-    ctx.fillStyle = BEYAZ
-    ctx.font = `700 64px ${yazi.baslik}`
-    ctx.fillText(deger, x + 36, y + 138)
-  })
-
-  // --- En çok çalışılan üç ders ---
-  let y = 1190
-  ctx.fillStyle = SOLUK
-  ctx.font = `500 36px ${yazi.govde}`
-  ctx.fillText('En çok soru çözdüğün dersler', kenar, y)
-  y += 60
-
-  if (ozet.ilkUcDers.length === 0) {
-    ctx.fillStyle = BEYAZ
-    ctx.font = `600 46px ${yazi.baslik}`
-    ctx.fillText('Bu hafta ders girilmemiş', kenar, y + 46)
-  }
-
-  const enBuyukPay = ozet.ilkUcDers[0]?.soru ?? 1
-  ozet.ilkUcDers.forEach((ders, i) => {
-    const satirY = y + i * 132
-
-    ctx.fillStyle = BEYAZ
-    ctx.font = `700 52px ${yazi.baslik}`
-    ctx.fillText(`${i + 1}`, kenar, satirY + 56)
-
-    ctx.font = `600 46px ${yazi.baslik}`
-    ctx.fillText(kisalt(ctx, ders.ders, GENISLIK - kenar * 2 - 260), kenar + 70, satirY + 56)
-
-    ctx.textAlign = 'right'
-    ctx.fillStyle = SOLUK
-    ctx.font = `500 40px ${yazi.govde}`
-    ctx.fillText(`${ders.soru} soru`, GENISLIK - kenar, satirY + 56)
-    ctx.textAlign = 'left'
-
-    // Oran çubuğu — birinciye göre ölçekli, sıralamayı gözle okutuyor.
-    const cubukY = satirY + 84
-    yuvarlakKutu(ctx, kenar + 70, cubukY, GENISLIK - kenar * 2 - 70, 16, 8)
-    ctx.fillStyle = COK_SOLUK
-    ctx.fill()
-
-    yuvarlakKutu(
-      ctx,
-      kenar + 70,
-      cubukY,
-      Math.max(24, (GENISLIK - kenar * 2 - 70) * (ders.soru / enBuyukPay)),
-      16,
-      8,
-    )
-    ctx.fillStyle = BEYAZ
-    ctx.fill()
-  })
-
-  // --- Alt satır ---
-  // Parçalar tek satıra sığmayabiliyor (uzun deneme adı, üç madde birden);
-  // sığmayan taşıp görselin dışında kalıyordu. Genişliğe göre bölünüyor.
-  ctx.fillStyle = SOLUK
-  ctx.font = `500 34px ${yazi.govde}`
-  const satirlar = satirlaraBol(ctx, altSatir(ozet), GENISLIK - kenar * 2)
-  satirlar.forEach((satir, i) => {
-    ctx.fillText(satir, kenar, YUKSEKLIK - 110 - (satirlar.length - 1 - i) * 48)
+/**
+ * Maskotun görselini yükler; yüklenemezse `null`.
+ *
+ * Aynı kökten (`public/`) geldiği için tuval kirlenmiyor ve `toBlob` çalışmaya
+ * devam ediyor. Yüklenemezse afiş çizgi tavşana düşüyor — kırık görsel simgesi
+ * yerine uygulamanın kendi imzası.
+ */
+function maskotuYukle(): Promise<HTMLImageElement | null> {
+  return new Promise((coz) => {
+    const gorsel = new Image()
+    gorsel.onload = () => coz(gorsel)
+    gorsel.onerror = () => coz(null)
+    gorsel.src = '/tavsan-yuz.png'
   })
 }
 
 /**
- * Metni " · " sınırlarından, verilen genişliğe sığacak satırlara böler.
- * En fazla iki satır: üçüncüsü alt kenara dayanırdı.
+ * Afişin zemini — tasarımdaki `radial-gradient(120% 60% at 22% 2%, …)`.
+ *
+ * Tuvalin radyal geçişi yalnızca **daire** çizebiliyor; elips, dikey eksende
+ * ölçek verilerek kuruluyor. Düz bir daire kullanılsaydı geçiş çok erken
+ * kapanır, afişin üst yarısı olduğundan koyu çıkardı.
  */
-function satirlaraBol(
+function afisZeminiCiz(ctx: CanvasRenderingContext2D) {
+  const merkezX = GENISLIK * 0.22
+  const merkezY = YUKSEKLIK * 0.02
+  const yaricap = GENISLIK * 1.2
+  // Yatay %120, dikey %60 → dikeyde yarı ölçek.
+  const dikeyOlcek = (YUKSEKLIK * 0.6) / yaricap
+
+  ctx.save()
+  ctx.translate(0, merkezY)
+  ctx.scale(1, dikeyOlcek)
+  ctx.translate(0, -merkezY / dikeyOlcek)
+
+  const gecis = ctx.createRadialGradient(merkezX, merkezY, 0, merkezX, merkezY, yaricap)
+  gecis.addColorStop(0, '#4A2312')
+  gecis.addColorStop(0.55, '#1C0E07')
+  gecis.addColorStop(1, '#120A06')
+  ctx.fillStyle = gecis
+  ctx.fillRect(-GENISLIK, -YUKSEKLIK * 2, GENISLIK * 3, YUKSEKLIK * 5)
+  ctx.restore()
+}
+
+function afisIcerigiCiz(
+  ctx: CanvasRenderingContext2D,
+  ozet: HaftalikOzet,
+  yazi: Yazitipleri,
+  maskot: HTMLImageElement | null,
+) {
+  const kenar = AFIS_KENAR
+  const enFazla = GENISLIK - kenar * 2
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'alphabetic'
+
+  // --- Başlık satırı: maskot + "Rabi", sağda hafta hapı ---
+  if (maskot) ctx.drawImage(maskot, kenar, 96, 104, 112)
+  else tavsanCiz(ctx, kenar, 96, 1.05)
+
+  ctx.fillStyle = FIL_DISI
+  ctx.font = `900 46px ${yazi.baslik}`
+  ctx.fillText('Rabi', kenar + 128, 172)
+
+  const hafta = haftaYaz(ozet.hafta).toLocaleUpperCase('tr')
+  ctx.font = `900 30px ${yazi.baslik}`
+  const hapGenislik = harfAraliginaGore(ctx, hafta, 0.16) + 64
+  const hapX = GENISLIK - kenar - hapGenislik
+  yuvarlakKutu(ctx, hapX, 122, hapGenislik, 66, 33)
+  ctx.fillStyle = 'rgba(255,255,255,0.09)'
+  ctx.fill()
+  ctx.lineWidth = 2
+  ctx.strokeStyle = 'rgba(255,255,255,0.16)'
+  ctx.stroke()
+  ctx.fillStyle = FIL_DISI
+  aralikliYaz(ctx, hafta, hapX + 32, 166, 0.16)
+
+  // --- Taşıyıcı sayı: haftanın soru toplamı + hedef halkası ---
+  ctx.fillStyle = ACIK_VURGU
+  ctx.font = `900 34px ${yazi.baslik}`
+  aralikliYaz(ctx, 'BU HAFTA ÇÖZDÜĞÜM SORU', kenar, 316, 0.2)
+
+  const halkaVar = ozet.haftalikHedef > 0
+  const sayiAlani = enFazla - (halkaVar ? 280 : 0)
+  const sayiPunto = punto(ctx, String(ozet.toplamSoru), sayiAlani, 300, yazi.baslik)
+  ctx.fillStyle = FIL_DISI
+  ctx.font = `900 ${sayiPunto}px ${yazi.baslik}`
+  ctx.fillText(String(ozet.toplamSoru), kenar, 596)
+
+  if (halkaVar) {
+    halkaCiz(
+      ctx,
+      GENISLIK - kenar - 240,
+      356,
+      240,
+      22,
+      Math.min(1, ozet.hedefOrani),
+      `%${Math.round(ozet.hedefOrani * 100)}`,
+      'HEDEF',
+      yazi,
+    )
+  }
+
+  ctx.fillStyle = 'rgba(255,255,255,0.7)'
+  ctx.font = `700 38px ${yazi.govde}`
+  ctx.fillText(kisalt(ctx, hedefCumlesi(ozet), enFazla), kenar, 676)
+
+  // --- Yedi günlük çubuk kutusu ---
+  const kutuY = 740
+  const kutuYuksekligi = 366
+  yuvarlakKutu(ctx, kenar, kutuY, enFazla, kutuYuksekligi, 48)
+  ctx.fillStyle = 'rgba(255,255,255,0.06)'
+  ctx.fill()
+  ctx.lineWidth = 2
+  ctx.strokeStyle = CIZGI
+  ctx.stroke()
+
+  gunCubuklariCiz(ctx, ozet, kenar + 40, kutuY + 44, enFazla - 80, 250, yazi)
+
+  // --- Dört kutu ---
+  const kutuGenislik = (enFazla - 24) / 2
+  const dortluY = kutuY + kutuYuksekligi + 56
+  const dortluYukseklik = 216
+
+  dortKutu(ozet).forEach((kutu, i) => {
+    const x = kenar + (i % 2) * (kutuGenislik + 24)
+    const y = dortluY + Math.floor(i / 2) * (dortluYukseklik + 24)
+
+    yuvarlakKutu(ctx, x, y, kutuGenislik, dortluYukseklik, 40)
+    if (kutu.vurgulu) {
+      const gecis = ctx.createLinearGradient(x, y, x + kutuGenislik, y + dortluYukseklik)
+      gecis.addColorStop(0, '#E07A34')
+      gecis.addColorStop(1, '#B3491F')
+      ctx.fillStyle = gecis
+      ctx.fill()
+    } else {
+      ctx.fillStyle = KUTU_ZEMINI
+      ctx.fill()
+      ctx.lineWidth = 2
+      ctx.strokeStyle = CIZGI
+      ctx.stroke()
+    }
+
+    const degerPunto = punto(ctx, kutu.deger, kutuGenislik - 72, 68, yazi.baslik)
+    ctx.fillStyle = FIL_DISI
+    ctx.font = `900 ${degerPunto}px ${yazi.baslik}`
+    ctx.fillText(kutu.deger, x + 36, y + 96)
+
+    // Etiket önce **küçülüyor**, sonra kısalıyor: "EN YÜKSEK NET · 2 DENEME"
+    // kesildiğinde geriye kutunun ne anlattığını söylemeyen bir baş kalıyordu.
+    ctx.fillStyle = kutu.vurgulu ? 'rgba(255,244,225,0.8)' : 'rgba(255,255,255,0.55)'
+    let etiketPunto = 24
+    ctx.font = `900 ${etiketPunto}px ${yazi.baslik}`
+    while (etiketPunto > 18 && harfAraliginaGore(ctx, kutu.etiket, 0.16) > kutuGenislik - 72) {
+      etiketPunto -= 1
+      ctx.font = `900 ${etiketPunto}px ${yazi.baslik}`
+    }
+    aralikliYaz(ctx, aralikliKisalt(ctx, kutu.etiket, kutuGenislik - 72, 0.16), x + 36, y + 152, 0.16)
+  })
+
+  // --- Alt imza ---
+  const cizgiY = YUKSEKLIK - 84 - 72
+  ctx.beginPath()
+  ctx.moveTo(kenar, cizgiY)
+  ctx.lineTo(GENISLIK - kenar, cizgiY)
+  ctx.lineWidth = 2
+  ctx.strokeStyle = CIZGI
+  ctx.stroke()
+
+  ctx.fillStyle = 'rgba(255,255,255,0.5)'
+  ctx.font = `900 30px ${yazi.baslik}`
+  aralikliYaz(ctx, 'RABİ · HAFTALIK ÖZET', kenar, cizgiY + 52, 0.18)
+
+  ctx.fillStyle = ACIK_VURGU
+  ctx.font = `900 30px ${yazi.baslik}`
+  const kapanis = kapanisCumlesi(ozet)
+  aralikliYaz(ctx, kapanis, GENISLIK - kenar - harfAraliginaGore(ctx, kapanis, 0.06), cizgiY + 52, 0.06)
+}
+
+/** Afişteki dört kutu. Sonuncusu haftanın dersi ve tek vurgulu olan. */
+function dortKutu(
+  ozet: HaftalikOzet,
+): { deger: string; etiket: string; vurgulu?: boolean }[] {
+  const birinci = ozet.ilkUcDers[0]
+  return [
+    {
+      deger: ozet.pomodoroDakika > 0 ? dakikaYaz(ozet.pomodoroDakika) : '—',
+      etiket: `POMODORO · ${ozet.pomodoroSeans} OTURUM`,
+    },
+    {
+      deger: ozet.denemeEnYuksek ? netYaz(ozet.denemeEnYuksek.net) : '—',
+      etiket: `EN YÜKSEK NET · ${ozet.denemeSayisi} DENEME`,
+    },
+    {
+      deger: ozet.oyunTur > 0 ? dakikaYaz(ozet.oyunDakika) : '—',
+      etiket: `MİNİ OYUN · ${ozet.oyunTur} TUR`,
+    },
+    {
+      deger: birinci ? birinci.ders : '—',
+      etiket: birinci ? `HAFTANIN DERSİ · ${birinci.soru} SORU` : 'HAFTANIN DERSİ · YOK',
+      vurgulu: true,
+    },
+  ]
+}
+
+/** Afişteki yedi günlük çubuklar — ekrandaki hedef kartının aynısı. */
+function gunCubuklariCiz(
+  ctx: CanvasRenderingContext2D,
+  ozet: HaftalikOzet,
+  x: number,
+  y: number,
+  genislik: number,
+  yukseklik: number,
+  yazi: Yazitipleri,
+) {
+  const bosluk = 22
+  const sutun = (genislik - bosluk * 6) / 7
+  const enYuksek = Math.max(1, ...ozet.gunler.map((g) => g.soru))
+  // Etiket satırı çubuğun altında; çubuk alanı onun kadar kısalıyor.
+  const cubukAlani = yukseklik - 44
+
+  ozet.gunler.forEach((gun, i) => {
+    const sutunX = x + i * (sutun + bosluk)
+    const oran = gun.soru === 0 ? 0.04 : Math.max(0.08, gun.soru / enYuksek)
+    const boy = cubukAlani * oran
+    const enIyi = ozet.enIyiGun?.iso === gun.iso
+
+    yuvarlakKutu(ctx, sutunX, y + cubukAlani - boy, sutun, boy, 16)
+    ctx.fillStyle = enIyi
+      ? ACIK_VURGU
+      : gun.soru === 0
+        ? 'rgba(255,255,255,0.18)'
+        : 'rgba(255,255,255,0.34)'
+    ctx.fill()
+
+    ctx.fillStyle = 'rgba(255,255,255,0.55)'
+    ctx.font = `900 22px ${yazi.baslik}`
+    ctx.textAlign = 'center'
+    ctx.fillText(gun.ad, sutunX + sutun / 2, y + yukseklik)
+    ctx.textAlign = 'left'
+  })
+}
+
+/** Ortasında iki satır yazı olan ilerleme halkası. */
+function halkaCiz(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  boyut: number,
+  kalinlik: number,
+  oran: number,
+  ust: string,
+  alt: string,
+  yazi: Yazitipleri,
+) {
+  const merkezX = x + boyut / 2
+  const merkezY = y + boyut / 2
+  const yaricap = (boyut - kalinlik) / 2
+
+  ctx.lineWidth = kalinlik
+  ctx.lineCap = 'round'
+
+  ctx.beginPath()
+  ctx.arc(merkezX, merkezY, yaricap, 0, Math.PI * 2)
+  ctx.strokeStyle = 'rgba(255,255,255,0.16)'
+  ctx.stroke()
+
+  if (oran > 0) {
+    ctx.beginPath()
+    // Tepeden başlıyor (saat 12) — ekrandaki `rotate(-90deg)` ile aynı.
+    ctx.arc(merkezX, merkezY, yaricap, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * oran)
+    ctx.strokeStyle = ACIK_VURGU
+    ctx.stroke()
+  }
+  ctx.lineCap = 'butt'
+
+  ctx.textAlign = 'center'
+  ctx.fillStyle = FIL_DISI
+  ctx.font = `900 58px ${yazi.baslik}`
+  ctx.fillText(ust, merkezX, merkezY + 8)
+
+  ctx.fillStyle = 'rgba(255,255,255,0.6)'
+  ctx.font = `900 22px ${yazi.baslik}`
+  aralikliYaz(ctx, alt, merkezX - harfAraliginaGore(ctx, alt, 0.14) / 2, merkezY + 52, 0.14)
+  ctx.textAlign = 'left'
+}
+
+/**
+ * Harf aralıklı yazı.
+ *
+ * Tuvalin `letterSpacing`i her tarayıcıda yok (WebView sürümüne bağlı) ve
+ * afişteki bütün büyük harfli etiketler aralıklı yazılıyor — aralıksız
+ * yazılsalardı tasarımdaki düzenin yarısı kayardı. Harfler tek tek çiziliyor.
+ */
+function aralikliYaz(
+  ctx: CanvasRenderingContext2D,
+  metin: string,
+  x: number,
+  y: number,
+  aralik: number,
+) {
+  const puntosu = puntoOku(ctx)
+  let imlec = x
+  for (const harf of metin) {
+    ctx.fillText(harf, imlec, y)
+    imlec += ctx.measureText(harf).width + puntosu * aralik
+  }
+}
+
+/**
+ * Aralıklı yazılan metni sığdıracak kadar kısaltır.
+ *
+ * `kisalt` ile ölçülemiyor: o `measureText`e bakıyor, aralık payını saymıyor
+ * ve etiketler kutunun kenarından taşıyordu — "HAFTANIN DERSİ · 156 SORU"
+ * aralıksız sığıyor, aralıklı sığmıyor.
+ */
+function aralikliKisalt(
   ctx: CanvasRenderingContext2D,
   metin: string,
   enFazla: number,
-): string[] {
-  const parcalar = metin.split('  ·  ')
-  const satirlar: string[] = []
-  let simdiki = ''
-
-  for (const parca of parcalar) {
-    const aday = simdiki ? `${simdiki}  ·  ${parca}` : parca
-    if (ctx.measureText(aday).width <= enFazla || !simdiki) {
-      simdiki = aday
-      continue
-    }
-    satirlar.push(simdiki)
-    simdiki = parca
-    if (satirlar.length === 1) continue
+  aralik: number,
+): string {
+  if (harfAraliginaGore(ctx, metin, aralik) <= enFazla) return metin
+  let kesik = metin
+  while (kesik.length > 1 && harfAraliginaGore(ctx, `${kesik}…`, aralik) > enFazla) {
+    kesik = kesik.slice(0, -1)
   }
-  if (simdiki) satirlar.push(simdiki)
-
-  return satirlar.slice(0, 2).map((s) => kisalt(ctx, s, enFazla))
+  return `${kesik}…`
 }
 
+/** Aralıklı yazılacak metnin toplam genişliği — kutuyu ona göre ölçmek için. */
+function harfAraliginaGore(ctx: CanvasRenderingContext2D, metin: string, aralik: number): number {
+  const puntosu = puntoOku(ctx)
+  let toplam = 0
+  for (const harf of metin) toplam += ctx.measureText(harf).width + puntosu * aralik
+  return Math.max(0, toplam - puntosu * aralik)
+}
+
+/** `ctx.font` içindeki punto — aralık hesabı buna oranlı. */
+function puntoOku(ctx: CanvasRenderingContext2D): number {
+  return Number.parseFloat(/(\d+(?:\.\d+)?)px/.exec(ctx.font)?.[1] ?? '16')
+}
+
+/**
+ * Halkanın altındaki satır — hedef ve kaç günde tutturulduğu.
+ *
+ * İki bilgi birlikte: yalnızca haftalık toplam yazılsaydı hedefi bir günde
+ * kapatan da yedi güne yayan da aynı cümleyi görürdü.
+ */
 function hedefCumlesi(ozet: HaftalikOzet): string {
   if (ozet.haftalikHedef <= 0) return 'Haftalık hedef belirlenmemiş'
-  if (ozet.hedefDurumu === 'asti') return `Haftalık hedefi ${ozet.hedefFarki} soru aştın`
-  if (ozet.hedefDurumu === 'tutturdu') return `${ozet.haftalikHedef} soruluk hedefi tutturdun`
-  return `Hedefe ${Math.abs(ozet.hedefFarki)} soru kaldı`
+  return `Haftalık hedef ${ozet.haftalikHedef} soru · 7 günün ${ozet.hedefliGun}'ünde tutturdum`
 }
 
-function altSatir(ozet: HaftalikOzet): string {
-  const parcalar: string[] = []
-  if (ozet.denemeEnYuksek) parcalar.push(`En iyi deneme ${netYaz(ozet.denemeEnYuksek.net)} net`)
-  if (ozet.bankaCozulen > 0) parcalar.push(`${ozet.bankaCozulen} yanlış soru kapatıldı`)
-  if (ozet.devamsizlikToplam > 0) {
-    parcalar.push(`${gunYaz(ozet.devamsizlikToplam)} gün devamsızlık`)
-  }
-  return parcalar.length > 0 ? parcalar.join('  ·  ') : 'Rabi ile hazırlanıyorum'
+/** Afişin sağ alt köşesindeki cümle — ekrandaki kapanış kartının birinci tekili. */
+function kapanisCumlesi(ozet: HaftalikOzet): string {
+  if (ozet.hedefDurumu === 'asti') return 'Bu haftayı ben kazandım'
+  if (ozet.hedefDurumu === 'tutturdu') return 'Sözümü tuttum'
+  return 'Sıradaki hafta daha iyi'
 }
 
 /** Sığmayan ders adını üç noktayla kısaltır. */
