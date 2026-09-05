@@ -77,6 +77,7 @@ import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
 import { KonuHaritasiEkrani } from '@/components/ekranlar/konu-haritasi'
 import { YapilacaklarEkrani } from '@/components/ekranlar/yapilacaklar'
 import { HaftalikOzetEkrani } from '@/components/ekranlar/haftalik-ozet'
+import { HAFTALIK_OZET_ACIK } from '@/lib/beta'
 import { bekleyenOzetDonemi, haftalikOzet } from '@/lib/ozet'
 import { RozetBildirimi } from '@/components/rozet-bildirimi'
 
@@ -105,13 +106,6 @@ export function AppShell() {
   // da ekrandan ekrana değişirdi.
   const [sonAraclar, setSonAraclar] = useYerelDepo<string[]>(ANAHTARLAR.sonAraclar, [])
   const [sonOyunlar, setSonOyunlar] = useYerelDepo<string[]>(ANAHTARLAR.sonOyunlar, [])
-  /*
-    Kullanıcının kendi sabitlediği kutucuklar — son kullanılanlardan ayrı
-    kayıtta. Sabit bir tercih, öteki her turda değişen bir sıra; tek listede
-    tutulsalardı bir oyunu açmak kurulan düzeni bozardı.
-  */
-  const [sabitAraclar, setSabitAraclar] = useYerelDepo<string[]>(ANAHTARLAR.sabitAraclar, [])
-  const [sabitDersler, setSabitDersler] = useYerelDepo<string[]>(ANAHTARLAR.sabitDersler, [])
   /** Ana sayfadan seçilen ders — Oyunlar sekmesi açılırken onun ızgarasına giriyor. */
   const [acilacakDers, setAcilacakDers] = useState<DersId | null>(null)
 
@@ -379,7 +373,8 @@ export function AppShell() {
    * yapmadıklarını on kez tekrar ediyor. O hafta özet doğmuyor, gelecek hafta
    * yeniden bakılıyor.
    */
-  const ozetHazir = bekleyenDonem !== null && ozet !== null && !ozet.bosMu
+  const ozetHazir =
+    HAFTALIK_OZET_ACIK && bekleyenDonem !== null && ozet !== null && !ozet.bosMu
 
   const ozetiAc = useCallback(() => {
     if (!bekleyenDonem) return
@@ -846,10 +841,6 @@ export function AppShell() {
               onOzetAc={ozetiAc}
               sonAraclar={sonAraclar}
               sonOyunlar={sonOyunlar}
-              sabitAraclar={sabitAraclar}
-              setSabitAraclar={(secim) => setSabitAraclar(() => secim)}
-              sabitDersler={sabitDersler}
-              setSabitDersler={(secim) => setSabitDersler(() => secim)}
               onKartAc={aracAc}
               onDahaGit={() => setSekme('daha')}
               onOyunlaraGit={(ders) => {
