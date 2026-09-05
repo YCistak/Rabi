@@ -667,6 +667,12 @@ isteyen kullanıcı düğmeye yeniden basıyor.
 
 ## Haftalık özet kurulum gününe yaslı
 
+> **Kapalı betada gizli** (`HAFTALIK_OZET_ACIK`, `lib/beta.ts`). Bölüm çalışır
+> durumda ve kodu yerinde; davet kartı çizilmiyor, dolayısıyla hikâyeye ulaşan
+> bir yol yok. Kapalıyken dönem "izlendi" diye işaretlenmiyor — bayrak
+> açıldığında bekleyen dönem hâlâ orada duruyor. Aşağıdaki kurallar bayrak
+> açıldığında geçerli olan kurallar.
+
 Özet (`components/ekranlar/haftalik-ozet.tsx`, hesabı `lib/ozet.ts`, afişi
 `lib/ozet-gorsel.ts`) Araçlar listesinde **yok** ve olmayacak: aranıp açılan bir
 araç değil, haftada bir kendiliğinden gelen bir kapanış. Kutucuk olarak konsaydı
@@ -1307,21 +1313,22 @@ kurulduğunu denetliyor.
 ## Ana sayfadaki dört kutucuk
 
 İki bölüm de (Araçlar, Oyunlar) dört kutucuk gösteriyor ve ikisi aynı koddan
-besleniyor (`lib/son-kullanilan.ts`). İki kural üst üste duruyor:
+besleniyor (`lib/son-kullanilan.ts`): sıra **en son kullanılan** başta.
 
-- **Sabitlenenler önde.** Kullanıcı kalem tuşundan en fazla dört tane seçiyor
-  (`components/kisayol-duzenle.tsx`, kayıt `rabi-sabit-araclar` /
-  `rabi-sabit-dersler`). "En son kullanılan" iyi bir varsayılan ama bir tercih
-  değil: sıra her turda değişiyor ve kullanıcı aradığı kutucuğu her seferinde
-  okumak zorunda kalıyordu.
-- **Kalan yerler son kullanılanlarla doluyor.** Sabitleme listeyi kapatmıyor;
-  tek bir aracı sabitlemek ötekilerin üçünü birden gizleseydi kalem tuşu
-  kutucukları eksiltmenin yolu olurdu. Hiç sabit yoksa davranış eskisinin
-  birebir aynısı.
+**Sabitleme kaldırıldı, geri gelmiyor.** Bir süre kutucukların altında bir
+"Düzenle" düğmesi vardı; açtığı pencereden en fazla dört kutucuk sabitleniyordu
+(`kisayol-duzenle.tsx`, `sabitliKisayollar`, `rabi-sabit-araclar` /
+`rabi-sabit-dersler`). Hepsi silindi, iki anahtar da `ESKI_ANAHTARLAR`a taşındı.
 
-Sabitler son kullanılanlardan **ayrı** anahtarda: biri tercih, öteki her turda
-değişen bir sıra. Tek listede tutulsalardı bir oyunu açmak kullanıcının kurduğu
-düzeni bozardı. İkisi de yedeğe girmiyor — bu cihazdaki yerleşim.
+Gerekçe: kutucuk zaten bir kısayol, kısayolun kısayolu yok. Sekiz aracın
+dördünü elle seçmek, "Tümü"nün arkasındaki listeden bir tane daha kurmaktı;
+üstelik seçim yapan kullanıcının ana sayfası donuyordu — sabitlenen dört kutucuk
+hiç değişmediği için son kullanılanların girecek yeri kalmıyordu. Sıralamayı
+kullanımın kendisi belirliyor, ayrıca kurulacak bir tercih yok.
+
+Yeniden bir düzenleme kapısı eklemeden önce sorulacak soru şu: dört kutucuğu
+kullanıcıya seçtirmek, kullanmakla belirlenen sıradan daha mı iyi bir sıra
+üretiyor?
 
 ### Oyun kutucukları oyunu değil dersi gösteriyor
 
@@ -1445,6 +1452,11 @@ işaretlenen kartlar bankaya düşüyor ama konu bitmiş sayılmıyor — yoksa 
 kartı işaretleyip çıkmak konuyu tamamlamanın yolu olurdu.
 
 ### Ana sayfada kısayol değil kendi bölümü
+
+> **Kapalı betada gizli** (`KONU_ANLATIMI_ACIK`, `lib/beta.ts`). Aşağıdaki
+> kart bölümün tek girişiydi; çizilmeyince bölüme ulaşan yol kalmıyor. Ekran ve
+> `AppShell` kaydı yerinde duruyor. Sebep içeriğin yarım olması: 177 konuda
+> kart var ama soru metni hiçbirinde yazılmadı (`lib/konu/icerik/`).
 
 Ana sayfada bölümün adı **Bilgi Kartları** (kod tarafı `konu` kalıyor):
 ekranın kendisi kart gösteriyor, ders anlatmıyor. Bölüm `KARTLAR` listesinde

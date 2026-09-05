@@ -1,15 +1,15 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { AlertTriangle, ChevronRight, Pencil, Target } from 'lucide-react'
+import { useMemo } from 'react'
+import { AlertTriangle, ChevronRight, Target } from 'lucide-react'
 import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef } from '@/lib/types'
 import { devamsizlikOzeti, gunOzeti, kayitHaritasi } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
 import { siraYaz } from '@/lib/siralama'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
-import { sabitliKisayollar } from '@/lib/son-kullanilan'
+import { KONU_ANLATIMI_ACIK } from '@/lib/beta'
+import { kisayollar } from '@/lib/son-kullanilan'
 import { doluDersler, oyunlarinDersleri, type DersId, type DersTanimi } from '@/lib/oyunlar/tanim'
-import { KisayolDuzenleme } from '@/components/kisayol-duzenle'
 import { Halka, Kart, Not } from '@/components/ui'
 import { GeriSayim } from '@/components/geri-sayim'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
@@ -68,10 +68,6 @@ export function AnaSayfa({
   onOzetAc,
   sonAraclar,
   sonOyunlar,
-  sabitAraclar,
-  setSabitAraclar,
-  sabitDersler,
-  setSabitDersler,
   onKartAc,
   onDahaGit,
   onOyunlaraGit,
@@ -99,12 +95,6 @@ export function AnaSayfa({
   /** En son açılan araçlar ve oynanan oyunlar — kısayol kutucuklarının sırası. */
   sonAraclar: string[]
   sonOyunlar: string[]
-  /** Kullanıcının sabitlediği araçlar; boşsa kutucukları son kullanılanlar doldurur. */
-  sabitAraclar: string[]
-  setSabitAraclar: (secim: string[]) => void
-  /** Sabitlenen dersler — oyun kutucukları ders gösteriyor. */
-  sabitDersler: string[]
-  setSabitDersler: (secim: string[]) => void
   onKartAc: (ekran: Ekran) => void
   /** "Araçlar" bölümünün "Tümü" bağlantısı — kart menüsü sekmesini açar. */
   onDahaGit: () => void
@@ -125,13 +115,7 @@ export function AnaSayfa({
 }) {
   const tarih = bugun()
 
-  /** Açık düzenleme penceresi; null ise kapalı. */
-  const [duzenlenen, setDuzenlenen] = useState<'arac' | 'ders' | null>(null)
-
-  const gosterilenAraclar = useMemo(
-    () => sabitliKisayollar(KARTLAR, sabitAraclar, sonAraclar),
-    [sabitAraclar, sonAraclar],
-  )
+  const gosterilenAraclar = useMemo(() => kisayollar(KARTLAR, sonAraclar), [sonAraclar])
 
   const dersler = useMemo(() => doluDersler(), [])
   /*
@@ -140,8 +124,8 @@ export function AnaSayfa({
     ve oyunu açmakla dersi açmak aynı hareket.
   */
   const gosterilenDersler = useMemo(
-    () => sabitliKisayollar(dersler, sabitDersler, oyunlarinDersleri(sonOyunlar)),
-    [dersler, sabitDersler, sonOyunlar],
+    () => kisayollar(dersler, oyunlarinDersleri(sonOyunlar)),
+    [dersler, sonOyunlar],
   )
 
   const bugunku = useMemo(
@@ -322,47 +306,45 @@ export function AnaSayfa({
       )}
 
       {/*
-        Konu Anlatımı kendi bölümü, kısayol kutucuğu değil.
+        Konu Anlatımı bölümü kapalı betada gizli (`KONU_ANLATIMI_ACIK`).
 
-        Araçlar şeridine bir kutucuk olarak konsaydı sıraya girip son
-        kullanılanlarla birlikte kayardı; buradaki iş "aç ve oku" ve her gün
-        aynı yerde durması gerekiyor. Kart menüsünde de yok — aynı şeyin iki
-        girişi, hemen altındaki Araçlar kutusunda ikinci bir kopya demekti.
+        Ana sayfadaki "Ders haritasını aç" kartı bölümün **tek** girişiydi:
+        Araçlar şeridinde de kart menüsünde de yok. Kart çizilmeyince bölüme
+        ulaşan bir yol kalmıyor; ekranın kendisi (`konu-haritasi.tsx`) ve
+        `AppShell`teki kaydı yerinde duruyor, bayrak açıldığında geri geliyor.
       */}
-      <section>
-        <div className="mb-2 px-1">
-          <h2 className="font-display text-base font-extrabold tracking-tight">
-            Bilgi Kartları 📚
-          </h2>
-        </div>
-        <button
-          type="button"
-          onClick={() => onKartAc('konu')}
-          className="golge-kart flex w-full items-center gap-3.5 rounded-2xl bg-card px-4 py-4 text-left transition active:brightness-[0.98]"
-        >
-          <span
-            className="grid size-12 shrink-0 place-items-center rounded-[18px] bg-primary-soft text-[24px]"
-            aria-hidden
+      {KONU_ANLATIMI_ACIK && (
+        <section>
+          <div className="mb-2 px-1">
+            <h2 className="font-display text-base font-extrabold tracking-tight">
+              Bilgi Kartları 📚
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={() => onKartAc('konu')}
+            className="golge-kart flex w-full items-center gap-3.5 rounded-2xl bg-card px-4 py-4 text-left transition active:brightness-[0.98]"
           >
-            🗺️
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block font-display text-[15.5px] font-extrabold tracking-tight">
-              Ders haritasını aç
+            <span
+              className="grid size-12 shrink-0 place-items-center rounded-[18px] bg-primary-soft text-[24px]"
+              aria-hidden
+            >
+              🗺️
             </span>
-          </span>
-          <ChevronRight size={19} className="shrink-0 text-muted-foreground" aria-hidden />
-        </button>
-      </section>
+            <span className="min-w-0 flex-1">
+              <span className="block font-display text-[15.5px] font-extrabold tracking-tight">
+                Ders haritasını aç
+              </span>
+            </span>
+            <ChevronRight size={19} className="shrink-0 text-muted-foreground" aria-hidden />
+          </button>
+        </section>
+      )}
 
       {/* Araçlar ve Oyunlar aynı biçimde: başlık + "Tümü", altında tek bir
           kutunun içinde dört yüz. Araçlar bir ara başlıksız ve kutusuz
           duruyordu; iki bölüm yan yana iki ayrı tasarım gibi okunuyordu. */}
-      <Bolum
-        baslik="Araçlar 🧰"
-        onTumu={onDahaGit}
-        onDuzenle={() => setDuzenlenen('arac')}
-      >
+      <Bolum baslik="Araçlar 🧰" onTumu={onDahaGit}>
         {gosterilenAraclar.map(({ id, ad, ikon, renk }) => (
           <Kutucuk key={id} ad={ad} ikon={ikon} renk={KUTUCUK_RENGI[renk]} onSec={() => onKartAc(id)} />
         ))}
@@ -370,11 +352,7 @@ export function AnaSayfa({
 
       {/* Kutucuklar oyunları değil dersleri gösteriyor: adları kısa, dokunuşun
           karşılığı da tam olarak o dersin ızgarası (bkz. `DERS_RENGI`). */}
-      <Bolum
-        baslik="Oyunlar 🎮"
-        onTumu={() => onOyunlaraGit()}
-        onDuzenle={() => setDuzenlenen('ders')}
-      >
+      <Bolum baslik="Oyunlar 🎮" onTumu={() => onOyunlaraGit()}>
         {gosterilenDersler.map((ders) => (
           <Kutucuk
             key={ders.id}
@@ -385,36 +363,6 @@ export function AnaSayfa({
           />
         ))}
       </Bolum>
-
-      <KisayolDuzenleme
-        acik={duzenlenen === 'arac'}
-        baslik="Araç kısayolların"
-        secenekler={KARTLAR.map((kart) => ({
-          id: kart.id,
-          ad: kart.ad,
-          ikon: kart.ikon,
-          renk: KUTUCUK_RENGI[kart.renk],
-          aciklama: kart.aciklama,
-        }))}
-        secili={sabitAraclar}
-        onKaydet={setSabitAraclar}
-        onKapat={() => setDuzenlenen(null)}
-      />
-
-      <KisayolDuzenleme
-        acik={duzenlenen === 'ders'}
-        baslik="Oyun kısayolların"
-        secenekler={dersler.map((ders) => ({
-          id: ders.id,
-          ad: ders.ad,
-          ikon: ders.ikon,
-          renk: DERS_RENGI[ders.aile],
-          aciklama: ders.aciklama,
-        }))}
-        secili={sabitDersler}
-        onKaydet={setSabitDersler}
-        onKapat={() => setDuzenlenen(null)}
-      />
     </div>
   )
 }
@@ -423,13 +371,10 @@ export function AnaSayfa({
 function Bolum({
   baslik,
   onTumu,
-  onDuzenle,
   children,
 }: {
   baslik: string
   onTumu: () => void
-  /** Dört kutucuğu seçme penceresini açar. */
-  onDuzenle: () => void
   children: React.ReactNode
 }) {
   return (
@@ -444,23 +389,12 @@ function Bolum({
         </div>
         <TumuBaglantisi onSec={onTumu} />
       </div>
-      <Kart className="px-2.5 pt-3.5 pb-2">
+      {/* Kutucukları kullanıcının seçtiği bir "Düzenle" penceresi vardı; kalıcı
+          olarak kaldırıldı (`kisayol-duzenle.tsx` silindi). Dört yüz yalnızca
+          son kullanılanlardan geliyor: sıralamayı kullanan belirliyor, ayrıca
+          kurulacak bir tercih yok. */}
+      <Kart className="px-2.5 py-3.5">
         <div className="grid grid-cols-4 gap-2">{children}</div>
-        {/* Düzenle bir süre kalemle başlıkta, "Tümü"nün bitişiğinde duruyordu:
-            iki küçük dokunma hedefi üst üste binip ikisi de tek bir leke gibi
-            okunuyordu. Buradaki yer düzenlediği şeye (kutucuklara) bitişik ve
-            kendi satırında — yazılı olduğu için de artık aria-label'a değil
-            görünen metne dayanıyor. */}
-        <div className="mt-1.5 flex justify-end">
-          <button
-            type="button"
-            onClick={onDuzenle}
-            className="flex items-center gap-1 rounded-lg px-1.5 py-1 text-[12px] font-bold text-muted-foreground transition active:bg-muted"
-          >
-            <Pencil size={12} strokeWidth={2.6} aria-hidden />
-            Düzenle
-          </button>
-        </div>
       </Kart>
     </section>
   )

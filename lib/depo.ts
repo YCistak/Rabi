@@ -88,18 +88,6 @@ export const ANAHTARLAR = {
    */
   sonAraclar: 'rabi-son-araclar',
   sonOyunlar: 'rabi-son-oyunlar',
-  /**
-   * Ana sayfada kullanıcının **kendi sabitlediği** kısayollar.
-   *
-   * Son kullanılanlardan ayrı anahtarda: sabitlenen kutucuk yerinde kalmalı,
-   * son kullanılan listesi ise her turda değişiyor. Tek anahtarda
-   * tutulsalardı bir oyunu açmak kullanıcının kurduğu sırayı bozardı.
-   *
-   * Yedeğe girmiyor — son kullanılanlarla aynı sebep: bu cihazdaki yerleşim.
-   */
-  sabitAraclar: 'rabi-sabit-araclar',
-  /** Ana sayfadaki oyun kutucukları ders gösteriyor; kayıt ders kimliği tutuyor. */
-  sabitDersler: 'rabi-sabit-dersler',
   /** Zihinden İşlem'de seçili işlem türleri — yedeğe girmeyen küçük bir tercih. */
   islemSecimi: 'rabi-islem-secimi',
   /** Yazım Ustası'nda seçili soru türleri (yazım / noktalama). */
@@ -205,6 +193,12 @@ const ESKI_ANAHTARLAR = [
   // "Çöktüğümde sor" anahtarı kaldırıldı: rapor sorusu her çökmeden sonra
   // çıkıyor ve "Gönderme" zaten orada. Kayıt eski kurulumlarda duruyor olabilir.
   'rabi-cokme-sorusu',
+  /*
+    Ana sayfadaki kısayolları sabitleme kaldırıldı; kutucuklar yalnızca son
+    kullanılanlardan geliyor. İki anahtar da eski kurulumlarda duruyor olabilir.
+  */
+  'rabi-sabit-araclar',
+  'rabi-sabit-dersler',
 ]
 
 /**
