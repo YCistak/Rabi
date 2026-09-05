@@ -7,7 +7,7 @@ import { kart, konu, program, tema } from '../tip'
  * Hücre bölünmeleri ve kalıtım eski programda 10. sınıftaydı; Maarif'te bu
  * sınıfta **yok**, o yüzden burada da yok.
  */
-export const biyoloji10 = program('biyoloji', 10, [
+export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekolojiye', [
   tema('byl10-t1', 'Enerji', [
     konu('byl10-atp', 'Canlılarda Enerji Dönüşümü', [
       kart(

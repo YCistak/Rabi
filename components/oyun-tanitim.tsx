@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { OyunTanimi } from '@/lib/oyunlar/tanim'
 import type { OyunModu } from '@/lib/oyunlar/mod'
 import { useGeriKatmani } from '@/lib/geri'
@@ -8,6 +8,7 @@ import { Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { ModSecimi } from '@/components/mod-secimi'
 import { GeriSayim } from '@/components/oyun-geri-sayim'
+import { useGenelTest } from '@/components/genel-test-baglami'
 
 /**
  * Oyun tanıtım penceresi.
@@ -20,6 +21,12 @@ import { GeriSayim } from '@/components/oyun-geri-sayim'
  * alıyor ve tur sayım bitince açılıyor (`onBasla`). Pencere o sırada
  * gizleniyor ama bileşen ayakta kalıyor — sayımı ayrı bir katmana taşımak,
  * onu 18 oyun dosyasına da eklemek demekti.
+ *
+ * **Genel testte pencere hiç açılmıyor**, tur kendiliğinden başlıyor. Test
+ * bankadaki oyunları arka arkaya oynatıyor (`lib/oyunlar/genel-test.ts`) ve
+ * her oyunun başında bir kurallar penceresi ile bir geri sayım, tek bir testi
+ * yarım düzine ayrı ekrana bölerdi. Kurallar kaybolmuyor: turun içindeki "?"
+ * aynı pencereyi açıyor.
  */
 export function OyunTanitim({
   oyun,
@@ -54,10 +61,24 @@ export function OyunTanitim({
   onKapat: () => void
 }) {
   const [sayiliyor, setSayiliyor] = useState(false)
+  const genelTest = useGenelTest()
 
   useGeriKatmani(acik, onKapat)
 
+  /*
+    Genel testte tur kendiliğinden başlıyor.
+
+    Etki ikinci kez işlemiyor: `onBasla` turu başlatınca oyunun aşaması
+    değişiyor ve pencere `acik` olmaktan çıkıyor. Turun içinden "?" ile açılan
+    pencere `baslatir` olmadığı için buraya hiç uğramıyor.
+  */
+  useEffect(() => {
+    if (!genelTest || !acik || !baslatir) return
+    onBasla()
+  }, [genelTest, acik, baslatir, onBasla])
+
   if (!acik) return null
+  if (genelTest && baslatir) return null
 
   // Sayım sürerken pencere yok: kurallar okundu, sıra hazırlanmada.
   if (sayiliyor) return <GeriSayim onBitti={onBasla} />

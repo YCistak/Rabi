@@ -7,7 +7,7 @@ import { kart, konu, program, tema } from '../tip'
  * **Akışkanlar**, **Enerji**. Eski programdaki "Madde ve Özellikleri"
  * ünitesi 9. sınıfta yok.
  */
-export const fizik9 = program('fizik', 9, [
+export const fizik9 = program('fizik', 9, 'Fizik biliminden enerjiye', [
   tema('fzk9-t1', 'Fizik Bilimi ve Kariyer Keşfi', [
     konu('fzk9-bilim', 'Fizik Bilimi', [
       kart(

@@ -1310,3 +1310,104 @@
     display: none;
   }
 }
+
+/*
+  Bilgi kartı destesi (`components/konu/kart-destesi.tsx`).
+
+  Zemin dersin renginde ve üstünde ince bir nokta dokusu var: düz renk bir
+  zeminde kart havada duruyormuş gibi değil, zemine yapışmış gibi görünüyordu.
+  Nokta deseni gölgeye bir yüzey veriyor.
+
+  Desen `background-image` ile geliyor, zemin rengi ise sınıfla (`bg-*-kart`) —
+  ikisi tek bildirimde yazılsaydı sınıfın rengi kısayolun altında kalırdı.
+*/
+.deste-zemin {
+  background-image: radial-gradient(circle, rgba(24, 23, 22, 0.07) 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
+}
+
+/*
+  Kart giriş süzülmesi. Yön `--deste-yon` ile geliyor (ileri 1, geri −1): geri
+  dönen kart soldan girmezse deste ileri gidiyormuş gibi okunuyor ve Geri
+  düğmesinin ne yaptığı anlaşılmıyor.
+*/
+@keyframes desteKarti {
+  from { opacity: 0; transform: translateX(calc(var(--deste-yon) * 22px)); }
+  to { opacity: 1; transform: none; }
+}
+
+.deste-karti {
+  animation: desteKarti 200ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+/*
+  Soru sahnesi (`components/konu/soru-sahnesi.tsx`).
+
+  Ekran uygulamanın kırık beyaz zemininden **kopuk**, kendi koyu paletinde
+  duruyor ve renkler tema değişkenlerinden gelmiyor — haftalık özetteki
+  istisnanın aynısı, farklı gerekçeyle: burada ekranda tek bir şey var,
+  cevaplanmayı bekleyen bir kart. Aydınlık bir zeminde kart zeminle aynı renkte
+  kalıyor ve "şimdi buna bak" diyen hiçbir şey olmuyordu; koyu sahnede ışık
+  yalnızca kartın üstünde.
+
+  Renkler yine de tek yerde toplu duruyor: bileşenin içine serpiştirilmiş
+  onaltılık kodlar, ekranın tonunu değiştirmeyi altı ayrı satırı bulmaya
+  çevirirdi.
+*/
+.sahne {
+  --sahne-zemin: #211510;
+  --sahne-kart: #faf6ec;
+  --sahne-yazi: #f7f1e8;
+  --sahne-soluk: rgba(247, 241, 232, 0.55);
+  --sahne-vurgu: #d9622f;
+  --sahne-dogru: #cbe6a0;
+  --sahne-dogru-zemin: rgba(120, 160, 70, 0.3);
+  --sahne-yanlis: #f4ab99;
+  --sahne-yanlis-zemin: rgba(196, 68, 44, 0.3);
+
+  background-color: var(--sahne-zemin);
+  /* Işık üstte ve altta, ortada değil: kart ekranın ortasında duruyor ve
+     arkasındaki parlaklık kartın kenarını yutuyordu. */
+  background-image:
+    radial-gradient(120% 42% at 50% -6%, rgba(217, 98, 47, 0.4), transparent 72%),
+    radial-gradient(120% 38% at 50% 106%, rgba(217, 98, 47, 0.24), transparent 72%);
+}
+
+/*
+  Kartın çevrilmesi. İki yüz üst üste duruyor, arkadaki yarım tur çevrili
+  başlıyor; çeviren şey kapsayıcının dönmesi. Soru ile cevabı aynı yüzde
+  değiştirmek de mümkündü ama o zaman "çevirdim" değil "yazı değişti" görünüyor
+  ve kartın arkası diye bir şey olmuyordu.
+*/
+.soru-ic {
+  transform-style: preserve-3d;
+  transition: transform 460ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.soru-ic.cevrik {
+  transform: rotateY(180deg);
+}
+
+.soru-yuz {
+  backface-visibility: hidden;
+  /* WebView'ın eski sürümleri ön ekli biçimi istiyor; onsuz iki yüz birden
+     görünüyor ve arkadaki yazı aynadaki gibi okunuyor. */
+  -webkit-backface-visibility: hidden;
+}
+
+.soru-yuz-arka {
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Deste kartı yerinde beliriyor, cevap dönmeden geliyor: buradaki hareketin
+     hiçbiri bilgi taşımıyor — hangi kartta olunduğu bölmeli çubukta, hangi
+     yüzde olunduğu kartın kendi etiketinde ("SORU" / "CEVAP") yazılı. */
+  .deste-karti {
+    animation: none;
+  }
+
+  .soru-ic {
+    transition: none;
+  }
+}

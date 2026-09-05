@@ -8,7 +8,7 @@ import { kart, konu, program, tema } from '../tip'
  * geliyor. Polinomlar Maarif'te 10. sınıftan **12. sınıfa taşındı**, o
  * yüzden burada yok.
  */
-export const matematik10 = program('matematik', 10, [
+export const matematik10 = program('matematik', 10, 'Sayılardan olasılığa', [
   tema('mat10-t1', 'Sayılar', [
     konu('mat10-bolunebilme', 'Bölünebilme Kuralları', [
       kart(

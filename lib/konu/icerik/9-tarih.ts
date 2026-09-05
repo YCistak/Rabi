@@ -8,7 +8,7 @@ import { kart, konu, program, tema } from '../tip'
  * İlk Dönemleri / Orta Çağ’da Dünya / İlk ve Orta Çağlarda Türk Dünyası"
  * ünitelendirmesi değil; Türk tarihi ayrı ünite değil, temaların içinde.
  */
-export const tarih9 = program('tarih', 9, [
+export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a', [
   tema('trh9-t1', 'Geçmişin İnşa Sürecinde Tarih', [
     konu('trh9-bilim', 'Tarih Bilimi ve Yöntemi', [
       kart(

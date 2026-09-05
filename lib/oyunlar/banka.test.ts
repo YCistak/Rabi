@@ -12,7 +12,6 @@ import {
   sestenBanka,
   bolunmedenBanka,
   dusenSayisi,
-  enKalabalikOyun,
   type BankaKaydi,
   type BankaSorusu,
 } from './banka'
@@ -123,11 +122,6 @@ describe('dağılım ve süzme', () => {
   it('tek oyuna süzer', () => {
     expect(bankaSuz(banka, 'islem')).toHaveLength(1)
     expect(bankaSuz(banka, 'tumu')).toHaveLength(3)
-  })
-
-  it('en kalabalık oyunu bulur', () => {
-    expect(enKalabalikOyun(banka)).toBe('yazim')
-    expect(enKalabalikOyun([])).toBeNull()
   })
 })
 

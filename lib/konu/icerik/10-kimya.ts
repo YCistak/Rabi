@@ -7,7 +7,7 @@ import { kart, konu, program, tema } from '../tip'
  * **Sürdürülebilirlik**); değişen içerik. 9'daki atom ve bağ temeli burada
  * nicel boyuta taşınıyor: tepkime hesapları, gazlar, çözeltiler.
  */
-export const kimya10 = program('kimya', 10, [
+export const kimya10 = program('kimya', 10, 'Etkileşimden sürdürülebilirliğe', [
   tema('kim10-t1', 'Etkileşim', [
     konu('kim10-tepkime', 'Kimyasal Tepkimeler', [
       kart(

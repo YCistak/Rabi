@@ -8,7 +8,7 @@ import { kart, konu, program, tema } from '../tip'
  * ünitelendirmesi (Hikâye, Şiir, Roman, Tiyatro…) kullanılmıyor; türler
  * temaların içinde geçiyor.
  */
-export const turkce9 = program('turkce', 9, [
+export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginliğine', [
   tema('trk9-t1', 'Sözün İnceliği', [
     konu('trk9-edebiyat', 'Edebiyat ve Güzel Sanatlar', [
       kart(

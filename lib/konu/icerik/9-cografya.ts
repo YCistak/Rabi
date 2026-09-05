@@ -8,7 +8,7 @@ import { kart, konu, program, tema } from '../tip'
  * "Mekânsal Bilgi Teknolojileri" ve "Afetler ve Sürdürülebilir Çevre"
  * Maarif ile ayrı tema oldu.
  */
-export const cografya9 = program('cografya', 9, [
+export const cografya9 = program('cografya', 9, 'Coğrafyanın doğasından küresel bağlantılara', [
   tema('cog9-t1', 'Coğrafyanın Doğası', [
     konu('cog9-dogasi', 'Coğrafyanın Konusu ve Bölümleri', [
       kart(

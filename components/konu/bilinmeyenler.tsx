@@ -12,6 +12,12 @@ import { Rabi } from '@/components/maskot/rabi'
 /**
  * Bilmediklerim — kartın "bilmiyorum" denen hâlinin durduğu yer.
  *
+ * **Şu an hiçbir yerden açılmıyor.** Deste karar sormayı bıraktı
+ * (`kart-destesi.tsx`), yani listeye yeni kayıt düşmüyor ve haritanın
+ * tepesindeki giriş kaldırıldı; o köşe başka bir iş için ayrıldı. Dosya
+ * duruyor çünkü kayıtlar ve depo anahtarı da duruyor — liste yeniden
+ * açılacaksa yeniden yazılacak bir ekran değil.
+ *
  * Liste bir okuma listesi, bir borç listesi değil: kartın metni burada
  * **açık** duruyor, açılıp kapanan bir başlık değil. Kullanıcı buraya
  * öğrenmek için geliyor; bilgiyi ikinci bir dokunuşun arkasına saklamak

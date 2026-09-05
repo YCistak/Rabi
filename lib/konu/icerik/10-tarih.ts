@@ -7,7 +7,7 @@ import { kart, konu, program, tema } from '../tip'
  * Türkiye'ye (1040-1299)**, **Beylikten Devlete Osmanlı (1299-1453)**,
  * **Cihan Devleti Osmanlı (1453-1683)**.
  */
-export const tarih10 = program('tarih', 10, [
+export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', [
   tema('trh10-t1', 'Türkistan’dan Türkiye’ye (1040-1299)', [
     konu('trh10-anadolu', 'Anadolu’nun Türkleşmesi', [
       kart(

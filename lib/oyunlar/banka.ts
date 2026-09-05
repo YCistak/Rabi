@@ -149,12 +149,13 @@ export type BankaSorusu =
   | { oyun: 'formul'; formul: string; ad: string }
 
 /**
- * Bankadan açılan tur: o oyunun bankadaki bütün sorularıyla.
+ * Genel testin o anki turu: o oyunun bankadaki bütün sorularıyla.
  *
- * Bir süre tek kaydı da açabiliyordu (`kayit` alanı, karta dokunmanın
- * karşılığı) ve o yol kaldırıldı: bankadan çıkışın tek kazanılan yolu artık
- * genel test (`banka-testi.ts`) ve tek soruyu hemen yeniden çözmek, o testin
- * ölçtüğü şeyi — soruyu karışık bir sırada tanıyabilmeyi — atlatmanın yoluydu.
+ * Bir süre bankadan elle de tur açılabiliyordu ("sadece bunlardan bir tur",
+ * hatta `kayit` alanıyla tek soruluk turlar); ikisi de kaldırıldı. Genel test
+ * soruları zaten kendi oyunlarının ekranında soruyor
+ * (`lib/oyunlar/genel-test.ts`) ve yanında duran ikinci bir tur düğmesi,
+ * hangisinin kaydı düşürdüğünü belirsiz bırakıyordu.
  */
 export type BankaTuru = { oyun: OyunId }
 
@@ -553,8 +554,8 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
  * kez doğru bilinince kendiliğinden düşüyordu; o sayaç kaldırıldı. Sebep
  * ölçtüğü şey: sayaç turun kendi havuzunda dağılıyordu — soru turda bir daha
  * hiç gelmeyebiliyor, geldiğinde de şıkları ezberden tanınabiliyordu. Bankadan
- * kazanılan çıkışın tek yolu artık genel test (`banka-testi.ts`): bütün
- * yanlışlar karışık sorulur, doğru bilinen düşer.
+ * kazanılan çıkışın tek yolu artık genel test (`genel-test.ts`): bankadaki
+ * oyunlar karışık sırayla arka arkaya oynanır, doğru bilinen kayıt düşer.
  *
  * Saf: girdiyi değiştirmiyor, yeni dizi döndürüyor.
  */
@@ -682,19 +683,3 @@ export function bankaSuz(banka: readonly BankaKaydi[], oyun: OyunId | 'tumu'): B
   return secilen.sort((a, b) => b.sonYanlis.localeCompare(a.sonYanlis) || b.kacKez - a.kacKez)
 }
 
-/**
- * "Tümü" seçiliyken tur hangi oyundan açılacak: en çok kaydı olan.
- *
- * Tur mantığı oyuna özgü (yazımda iki şık, işlemde tuş takımı, edebiyatta
- * eşleştirme); üç oyunu tek turda karıştırmak her birinin kendi ekranını
- * bozardı. En kalabalık oyunu seçmek, en çok tekrar gereken yer olduğu için
- * de doğru sıralama.
- */
-export function enKalabalikOyun(banka: readonly BankaKaydi[]): OyunId | null {
-  const dagilim = bankaDagilimi(banka)
-  let enIyi: OyunId | null = null
-  for (const oyun of OYUN_KIMLIKLERI) {
-    if (dagilim[oyun] > 0 && (enIyi === null || dagilim[oyun] > dagilim[enIyi])) enIyi = oyun
-  }
-  return enIyi
-}

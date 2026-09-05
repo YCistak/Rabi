@@ -7,7 +7,7 @@ import { kart, konu, program, tema } from '../tip'
  * ünitelendirmesi değil, programın kendi tema adları kullanılıyor;
  * "Algoritma ve Bilişim" teması Maarif ile geldi.
  */
-export const matematik9 = program('matematik', 9, [
+export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
   tema('mat9-t1', 'Sayılar', [
     konu('mat9-kume', 'Kümeler ve Sayı Aralıkları', [
       kart(

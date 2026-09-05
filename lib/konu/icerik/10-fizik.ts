@@ -7,7 +7,7 @@ import { kart, konu, program, tema } from '../tip'
  * Eski programın "Basınç ve Kaldırma Kuvveti" ünitesi 9. sınıfa (Akışkanlar)
  * taşındı; Optik 10. sınıfta yok.
  */
-export const fizik10 = program('fizik', 10, [
+export const fizik10 = program('fizik', 10, 'Kuvvetten dalgalara', [
   tema('fzk10-t1', 'Kuvvet ve Hareket', [
     konu('fzk10-ivme', 'Sabit İvmeli Hareket', [
       kart(

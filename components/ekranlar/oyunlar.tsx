@@ -42,12 +42,14 @@ import {
   moduNormalize,
   type OyunModu,
 } from '@/lib/oyunlar/mod'
+import { dogruKimlikler } from '@/lib/oyunlar/genel-test'
 import { muzikBaslat, muzikDuraklat, muzikDurdur } from '@/lib/oyunlar/mod-muzigi'
 import { useGeriKatmani } from '@/lib/geri'
 import { useUygulamaGorunur } from '@/lib/gorunurluk'
 import { bugun } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 import type { BildirimKolu } from '@/components/hata-bildir'
+import { GenelTestSaglayici } from '@/components/genel-test-baglami'
 import { YazimOyunuEkrani } from '@/components/ekranlar/oyun-yazim'
 import { SesOyunuEkrani } from '@/components/ekranlar/oyun-ses'
 import { OgeOyunuEkrani } from '@/components/ekranlar/oyun-oge'
@@ -146,9 +148,10 @@ export function OyunlarEkrani({
   muzikAcik,
   onBankayaGit,
   onBankadanDustu,
-  /** Bankadan "sadece bunlardan bir tur" ile açılan oyun; yoksa null. */
+  /** Genel testin o anki oyunu; test yoksa null. */
   bankaTuru,
   onBankaTuruBitti,
+  onGenelTestTuruBitti,
   acilacakDers,
   onDersAcildi,
   onOyunAcildi,
@@ -165,7 +168,13 @@ export function OyunlarEkrani({
   /** Turda bankadan düşen soru sayısı — rozet sayacını besliyor. */
   onBankadanDustu: (adet: number) => void
   bankaTuru: BankaTuru | null
+  /** Test yarıda kapatıldı ya da hiç soru cevaplanmadan çıkıldı. */
   onBankaTuruBitti: () => void
+  /**
+   * Genel testin bir turu bitti: doğru bilinen kayıtların kimlikleri ve turun
+   * yarıda bırakılıp bırakılmadığı. Sıradaki oyuna geçiren yer `AppShell`.
+   */
+  onGenelTestTuruBitti: (dogrular: string[], yarim: boolean) => void
   /** Ana sayfadaki ders kutucuğundan gelen ders; sekme onunla açılıyor. */
   acilacakDers: DersId | null
   /** Ders açıldı — istek tüketildi, ikinci çizimde yeniden açılmasın. */
@@ -264,15 +273,26 @@ export function OyunlarEkrani({
     /** Tur bitmeden çıkıldı mı. */
     yarim: boolean,
   ) => {
+    /*
+      Genel test bankaya **yazmıyor**: doğru bilinenler testin sonunda bir
+      kerede düşüyor (`AppShell`), yanlış bilinenler olduğu gibi kalıyor —
+      sayacı artmıyor, ikinci kez eklenmiyor. Test yeni bir hata üretmiyor,
+      hâlâ öğrenilmemiş olanı gösteriyor.
+    */
+    if (bankaTuru !== null) {
+      onGenelTestTuruBitti(dogruKimlikler(cevaplar), yarim)
+      return
+    }
+
     const yeniBanka = bankayiGuncelle(banka, cevaplar, bugun())
     const dusen = dusenSayisi(banka, yeniBanka)
     setBanka(() => yeniBanka)
     if (dusen > 0) onBankadanDustu(dusen)
 
     /*
-      Rahat tur, banka turu ve **yarıda bırakılan** tur aynı yerde eleniyor:
-      yanlışlar bankaya düşüyor ama rekora, istatistiğe ve oyun geçmişine
-      yazılmıyor.
+      Rahat tur ile **yarıda bırakılan** tur aynı yerde eleniyor: yanlışlar
+      bankaya düşüyor ama rekora, istatistiğe ve oyun geçmişine yazılmıyor.
+      (Genel test yukarıda çıktı; onun turları da hiçbirine yazılmıyor.)
 
       Rahat turda sebep süre: süresiz bir turda "kaç doğru yaptın" sorusunun
       cevabı sabrı ölçer, bilgiyi değil (`lib/oyunlar/mod.ts`). Yarım turda
@@ -280,7 +300,7 @@ export function OyunlarEkrani({
       çıkılan turları saymak "oynanan tur" sayısını da ortalama süreyi de
       bozardı.
     */
-    if (bankaTuru !== null || !modKayitliMi(mod) || yarim) return
+    if (!modKayitliMi(mod) || yarim) return
 
     setKayitlar((onceki) => ({
       ...onceki,
@@ -349,11 +369,12 @@ export function OyunlarEkrani({
           ]
 
   /*
-    Banka turunun havuzu: o oyunun bankadaki bütün soruları.
+    Genel testin o anki turunun havuzu: sıradaki oyunun bankadaki bütün
+    soruları.
 
-    Tur tek bir kayda inebiliyordu (bankadaki karta dokunmanın karşılığı); o
-    yol kaldırıldı, çünkü kartın üstünde doğru cevap yazıyor ve hemen ardından
-    çözülen soru bilmeyi ölçmüyordu.
+    Banka test sürerken değişmiyor — doğru bilinenler testin sonunda bir kerede
+    düşüyor. Tur tur düşseydi sıradaki oyunun havuzu test sürerken küçülür,
+    aynı testin ortasında bir oyun sorusuz kalabilirdi.
   */
   const bankaSorulari =
     bankaTuru === null ? [] : banka.filter((k) => k.soru.oyun === bankaTuru.oyun)
@@ -362,6 +383,12 @@ export function OyunlarEkrani({
   const acikAile = secilenDers === null ? AILE.yzm : AILE[dersBul(secilenDers).aile]
 
   return (
+    /*
+      Genel testte oyunun tanıtım penceresi hiç açılmıyor, tur kendiliğinden
+      başlıyor. Bilgi bağlamla iniyor: pencereyi on sekiz oyun dosyasının her
+      biri kendi çiziyor ve prop olsaydı aynı satır on sekiz kez yazılacaktı.
+    */
+    <GenelTestSaglayici value={bankaTuru !== null}>
     <div>
       <header className="flex items-start gap-3 px-0.5 pt-1">
         <div className="min-w-0 flex-1">
@@ -781,6 +808,7 @@ export function OyunlarEkrani({
         />
       )}
     </div>
+    </GenelTestSaglayici>
   )
 }
 
