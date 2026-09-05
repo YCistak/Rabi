@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import type { OyunTanimi } from '@/lib/oyunlar/tanim'
 import type { OyunModu } from '@/lib/oyunlar/mod'
-import { vurgulariAyir } from '@/lib/metin'
 import { useGeriKatmani } from '@/lib/geri'
 import { Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
@@ -74,13 +73,9 @@ export function OyunTanitim({
           </div>
         </div>
 
-        {/* Numaralı maddeler yerine tek paragraf. Sekiz maddelik liste
-            pencereyi ekran boyuna çıkarıyor, "Başla" düğmesi kaydırmanın
-            altında kalıyordu; okunmayan bir kural listesi, okunan bir
-            düğmeyi böyle aşağı itmemeli. */}
-        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-          <Vurgulu metin={oyun.ozet} />
-        </p>
+        {/* Kural paragrafı (`oyun.ozet`) buradan kalktı: pencerenin işi tur
+            başlatmak ve mod/zorluk seçtirmek, kuralı oyunun kendisi öğretiyor.
+            Özet duruyor — tur sonu ekranı hâlâ kullanıyor. */}
 
         {/* Mod seçimi yalnızca turu başlatan pencerede: "?" ile açılan
             pencerede tur zaten sürüyor ve kural tur ortasında değişmemeli. */}
@@ -111,31 +106,5 @@ export function OyunTanitim({
         </div>
       </div>
     </div>
-  )
-}
-
-/**
- * Maddedeki `**kalın**` ve `*eğik*` bölümleri.
- *
- * Metinler elle yazılıyor, dolayısıyla kullanıcıdan gelen bir şey yok; yine de
- * biçimlendirme HTML üretmeden, parça parça çiziliyor.
- */
-function Vurgulu({ metin }: { metin: string }) {
-  return (
-    <>
-      {vurgulariAyir(metin).map((parca, sira) =>
-        parca.tur === 'kalin' ? (
-          <strong key={sira} className="font-extrabold text-foreground">
-            {parca.metin}
-          </strong>
-        ) : parca.tur === 'egik' ? (
-          <em key={sira} className="italic">
-            {parca.metin}
-          </em>
-        ) : (
-          <span key={sira}>{parca.metin}</span>
-        ),
-      )}
-    </>
   )
 }

@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import {
+  EN_AZ_PAY_X,
+  EN_AZ_PAY_Y,
   EN_COK_NOT,
   EN_UZUN_NOT,
   NOT_RENKLERI,
+  ayrikKonum,
   gununNotlari,
   kalanIs,
   konumuSinirla,
@@ -161,6 +164,56 @@ describe('düzenleme', () => {
     const notlar = tahta(3)
     expect(kalanIs(notlar)).toBe(3)
     expect(kalanIs(notuIsaretle(notlar, 'n1'))).toBe(2)
+  })
+})
+
+describe('ayrikKonum', () => {
+  /** İki kâğıt birbirini tümüyle kapatıyor mu. */
+  function kapaniyorMu(a: { x: number; y: number }, b: { x: number; y: number }): boolean {
+    return Math.abs(a.x - b.x) < EN_AZ_PAY_X && Math.abs(a.y - b.y) < EN_AZ_PAY_Y
+  }
+
+  it('tam üst üste bırakılan kâğıdı kenara çekiyor', () => {
+    const notlar = tahta(2)
+    const hedef = notlar[0]
+    const yeni = ayrikKonum(notlar, 'n1', hedef.x, hedef.y)
+    expect(kapaniyorMu(yeni, hedef)).toBe(false)
+  })
+
+  it('üst üste binmeye izin veriyor — yalnızca tam örtüşmeyi engelliyor', () => {
+    const notlar = tahta(2)
+    const hedef = notlar[0]
+    // Bir eksende payın üstünde kalan konum olduğu gibi kabul ediliyor.
+    const yakin = { x: hedef.x, y: hedef.y + EN_AZ_PAY_Y + 0.01 }
+    expect(ayrikKonum(notlar, 'n1', yakin.x, yakin.y)).toEqual(yakin)
+  })
+
+  it('kendini engel saymıyor', () => {
+    const notlar = tahta(1)
+    const n = notlar[0]
+    expect(ayrikKonum(notlar, 'n0', n.x, n.y)).toEqual({ x: n.x, y: n.y })
+  })
+
+  it('taşıma sonrası hiçbir kâğıt bir başkasını kapatmıyor', () => {
+    // On kâğıdın hepsi aynı köşeye bırakılıyor; her biri boş bir yer buluyor.
+    let notlar = tahta(EN_COK_NOT)
+    for (const not of [...notlar]) notlar = notTasi(notlar, not.id, 0.5, 0.5)
+
+    for (const a of notlar) {
+      for (const b of notlar) {
+        if (a.id === b.id) continue
+        expect(kapaniyorMu(a, b), `${a.id} ↔ ${b.id}`).toBe(false)
+      }
+    }
+  })
+
+  it('yeni kâğıt dolu bir ızgara yerine oturmuyor', () => {
+    // İlk kâğıt ikinci ızgara yerine taşınırsa, ikinci kâğıt oraya düşmemeli.
+    const ikinciYer = yeniKonum(1)
+    const notlar = notTasi(tahta(1), 'n0', ikinciYer.x, ikinciYer.y)
+    const eklenen = notEkle(notlar, 'yeni', TARIH)?.[1]
+    expect(eklenen).toBeDefined()
+    expect(kapaniyorMu(eklenen!, notlar[0])).toBe(false)
   })
 })
 

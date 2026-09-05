@@ -282,6 +282,17 @@ export type OyunTurKaydi = {
   /** Turda geçen süre, saniye. Erken çıkılırsa turun tamamı sayılmaz. */
   saniye: number
   dogru: number
+  /**
+   * Turdaki yanlış sayısı ve turun hatasız bitip bitmediği.
+   *
+   * İkisi de sonradan eklendi ve **isteğe bağlı**: haftalık özetin oyun kartı
+   * isabet oranı ("%89") ve hatasız tur sayısı istiyor, ikisi de doğru sayısı
+   * tek başınayken hesaplanamıyordu. Eski kayıtlarda yoklar — o turlar isabet
+   * hesabına hiç girmiyor; sıfır saymak, hatasız oynanmış eski turları %100
+   * isabetli gösterirdi.
+   */
+  yanlis?: number
+  hatasiz?: boolean
 }
 
 // ---------------------------------------------------------------------------

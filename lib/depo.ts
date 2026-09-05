@@ -66,8 +66,20 @@ export const ANAHTARLAR = {
    * kaybetmemeli.
    */
   konuSecimi: 'rabi-konu-secimi',
-  /** Haftalık özetin hangi haftalarının izlendiği — hafta başı tarihlerinin listesi. */
+  /** Haftalık özetin hangi dönemlerinin izlendiği — dönem başı tarihlerinin listesi. */
   ozetGorulen: 'rabi-ozet-gorulen',
+  /**
+   * Uygulamanın ilk açıldığı gün, 'YYYY-AA-GG'.
+   *
+   * Haftalık özet buna bağlı: ilk özet kurulumdan **yedi gün sonra** doğuyor ve
+   * sonra her hafta aynı gün yenileniyor. Takvim haftasına (pazartesi–pazar)
+   * bağlanmadı — çarşamba günü uygulamayı kuran kullanıcı ilk özetini dört gün
+   * sonra, üstelik yalnızca dört günlük veriyle görürdü.
+   *
+   * Yedeğe **girmiyor**: yedeği yeni telefona yükleyen kullanıcı özetini o
+   * cihazdaki kendi gününde görmeli, eski cihazın kurulum gününde değil.
+   */
+  kurulumTarihi: 'rabi-kurulum-tarihi',
   /**
    * Ana sayfadaki kısayolların sırası — en son açılan başta.
    *
@@ -526,6 +538,11 @@ function oyunGecmisiniCoz(ham: unknown): OyunTurKaydi[] {
       oyun: k.oyun as OyunId,
       saniye: Math.min(TUR_EN_UZUN, sayi(k.saniye)),
       dogru: sayi(k.dogru),
+      // Eksik olabilir; `undefined` bırakılıyor, sıfıra çevrilmiyor: sıfır
+      // yanlış "hatasız tur" demek ve eski kayıtları hak etmedikleri bir
+      // isabet oranına sokardı.
+      ...(typeof k.yanlis === 'number' ? { yanlis: sayi(k.yanlis) } : {}),
+      ...(typeof k.hatasiz === 'boolean' ? { hatasiz: k.hatasiz } : {}),
     }))
     .slice(-OYUN_GECMIS_SINIRI)
 }

@@ -66,6 +66,8 @@ import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
 import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
 import { KonuHaritasiEkrani } from '@/components/ekranlar/konu-haritasi'
 import { YapilacaklarEkrani } from '@/components/ekranlar/yapilacaklar'
+import { HaftalikOzetEkrani } from '@/components/ekranlar/haftalik-ozet'
+import { bekleyenOzetDonemi, haftalikOzet } from '@/lib/ozet'
 import { RozetBildirimi } from '@/components/rozet-bildirimi'
 
 /** Rozet kontrolünün, veri durulana kadar beklediği süre (ms). */
@@ -154,6 +156,20 @@ export function AppShell() {
     {},
   )
   const [oyunGecmisi, setOyunGecmisi] = useYerelDepo<OyunTurKaydi[]>(ANAHTARLAR.oyunGecmisi, [])
+  /*
+    Haftalık özetin takvimi.
+
+    `kurulumTarihi` uygulamanın ilk açıldığı gün, `ozetGorulen` izlenmiş
+    dönemlerin listesi. İkisi ayrı anahtarda: biri bir kez yazılıp bir daha
+    değişmiyor, öteki her özette büyüyor.
+  */
+  const [kurulumTarihi, setKurulumTarihi, kurulumTarihiHazir] = useYerelDepo<string | null>(
+    ANAHTARLAR.kurulumTarihi,
+    null,
+  )
+  const [ozetGorulen, setOzetGorulen] = useYerelDepo<string[]>(ANAHTARLAR.ozetGorulen, [])
+  /** Katmanda açık olan dönemin başlangıcı; kapalıyken null. */
+  const [ozetAcik, setOzetAcik] = useState<string | null>(null)
   const [oyunBankasi, setOyunBankasi] = useYerelDepo<BankaKaydi[]>(ANAHTARLAR.oyunBankasi, [])
   /**
    * Bankadan düşen toplam soru. Düşen kayıt silindiği için sonradan
@@ -254,13 +270,90 @@ export function AppShell() {
   const sablonlar = useMemo(() => sablonlariBirlestir(kayitliSablonlar), [kayitliSablonlar])
 
   /*
-    Haftalık özet uygulamada **kapalı**.
+    ---- Haftalık özet ----
 
-    Ekran, hesabı (`lib/ozet.ts`) ve görsel üreteci dosya olarak duruyor ama
-    hiçbir yerden açılmıyor: Araçlar listesinde kartı yok, ana sayfadaki davet
-    kartı da kalktı. Geri açmak istenirse `gezinme.ts`'e kart, buraya da
-    katman ve `ozetGorulen` işaretlemesi geri gelmeli.
+    Araçlar listesinde **yok** ve olmayacak: özet aranıp açılan bir araç değil,
+    haftada bir kendiliğinden gelen bir kapanış. Kutucuk olarak konsaydı son
+    kullanılanlarla birlikte sıraya girer, hafta ortasında açıldığında da
+    yarım bir haftanın sayılarını gösterirdi.
+
+    Tek girişi ana sayfanın **en üstündeki** davet kartı ve o kart yalnızca
+    izlenmemiş bir dönem varken duruyor.
   */
+
+  // Kurulum günü bir kez damgalanıyor: özetin takvimi buna yaslı ve sonradan
+  // değişirse kullanıcının haftası ortadan kayardı.
+  useEffect(() => {
+    if (!kurulumTarihiHazir || kurulumTarihi) return
+    setKurulumTarihi(bugun())
+  }, [kurulumTarihiHazir, kurulumTarihi, setKurulumTarihi])
+
+  /** İzlenmeyi bekleyen dönemin başlangıcı; yoksa null. */
+  const bekleyenDonem = useMemo(() => {
+    if (!kurulumTarihi) return null
+    const donemBasi = bekleyenOzetDonemi(kurulumTarihi, bugun())
+    if (!donemBasi || ozetGorulen.includes(donemBasi)) return null
+    return donemBasi
+  }, [kurulumTarihi, ozetGorulen])
+
+  /*
+    Hesabın dayandığı dönem: katman açıksa onunki, değilse bekleyen.
+
+    İkisi **tek** bir memo'da: dönem açılır açılmaz "izlendi" işaretleniyor ve
+    `bekleyenDonem` o anda `null`a düşüyor — hesap yalnızca ona bağlı olsaydı
+    katman açıldığı karede boşalırdı. Açılış anında `ozetAcik` aynı dönemi
+    tuttuğu için memo yeniden koşmuyor, yani hesap hafta başına bir kez
+    yapılıyor.
+  */
+  const ozetDonemi = ozetAcik ?? bekleyenDonem
+  const ozet = useMemo(() => {
+    if (!ozetDonemi) return null
+    return haftalikOzet({
+      haftaBasiIso: ozetDonemi,
+      gunlukKayitlar,
+      gunlukHedef: ayarlar.gunlukHedef,
+      devamsizlik,
+      pomodoroGecmis,
+      oyunGecmisi,
+      yanlisSorular,
+      denemeler,
+      sablonlar,
+    })
+  }, [
+    ozetDonemi,
+    gunlukKayitlar,
+    ayarlar.gunlukHedef,
+    devamsizlik,
+    pomodoroGecmis,
+    oyunGecmisi,
+    yanlisSorular,
+    denemeler,
+    sablonlar,
+  ])
+
+  /*
+    Dönem "izlendi" sayılıyor — kapatıldığında değil, **açıldığında**.
+
+    Kapanışta işaretlenseydi uygulamayı özet açıkken kapatan kullanıcı aynı
+    özeti bir dahaki açılışta yeniden bulurdu; hikâye bir kez izleniyor.
+  */
+  /**
+   * Davet kartı görünsün mü.
+   *
+   * Boş dönemde **görünmüyor**: hiç soru, hiç pomodoro, hiç deneme girilmemiş
+   * bir haftanın on kartı da boş çıkıyor ve o hikâye kullanıcıya kendi
+   * yapmadıklarını on kez tekrar ediyor. O hafta özet doğmuyor, gelecek hafta
+   * yeniden bakılıyor.
+   */
+  const ozetHazir = bekleyenDonem !== null && ozet !== null && !ozet.bosMu
+
+  const ozetiAc = useCallback(() => {
+    if (!bekleyenDonem) return
+    setOzetAcik(bekleyenDonem)
+    setOzetGorulen((onceki) =>
+      onceki.includes(bekleyenDonem) ? onceki : [...onceki, bekleyenDonem].slice(-52),
+    )
+  }, [bekleyenDonem, setOzetGorulen])
 
   // Hedef kartı ve ana sayfa, en yeni denemelerden çıkan tahmini gösteriyor.
   const tahmin = guncelTahmin(denemeler, sablonlar, okulYillari, ayarlar.puanTuru, ayarlar.elleObp)
@@ -706,6 +799,8 @@ export function AppShell() {
               hedef={hedef}
               guncelSiralama={guncelSiralama}
               bilinmeyenSayisi={bilinmeyenKartlar.length}
+              ozetHazir={ozetHazir}
+              onOzetAc={ozetiAc}
               sonAraclar={sonAraclar}
               sonOyunlar={sonOyunlar}
               sabitAraclar={sabitAraclar}
@@ -733,7 +828,6 @@ export function AppShell() {
               setBanka={setOyunBankasi}
               sesAcik={ayarlar.oyunSesi}
               muzikAcik={ayarlar.oyunMuzigi}
-              muzikTuru={ayarlar.oyunMuzikTuru}
               onBankayaGit={() => setEkran('oyun-bankasi')}
               bankaTuru={bankaTuru}
               onBankaTuruBitti={() => setBankaTuru(null)}
@@ -793,6 +887,15 @@ export function AppShell() {
   return (
     <>
       {icerik}
+      {/* Özet katmanı açılış ekranının **altında**: uygulama açılırken tavşan
+          yuvasına inmeli, üstüne kocaman bir hikâye katmanı düşmemeli. */}
+      {ozetAcik && ozet && (
+        <HaftalikOzetEkrani
+          ozet={ozet}
+          sesAcik={ayarlar.oyunMuzigi}
+          onKapat={() => setOzetAcik(null)}
+        />
+      )}
       {acilisKatmani}
       {gecis !== 'yok' && <MaskotGecisi soluyor={gecis === 'soluyor'} />}
     </>

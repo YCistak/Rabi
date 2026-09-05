@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Plus, X } from 'lucide-react'
 import type { Ayarlar, GunlukKayit, SoruKaydi } from '@/lib/types'
-import { bosSayisi, gunOzeti, haftalikToplamlar, netYaz } from '@/lib/hesap'
+import { bosSayisi, gunOzeti } from '@/lib/hesap'
 import { CALISMA_DERSLERI, dersOnerileriniSuz, sadelestir } from '@/lib/dersler'
-import { bugun, cn, haftaBasi, tariheCevir, tarihYaziKisa } from '@/lib/utils'
+import { bugun, cn, tariheCevir, tarihYaziKisa } from '@/lib/utils'
 import { Alan, BaslikSatiri, Buton, Cip, Deger, Kart, Not, SecmeliAlan } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { Takvim, type GunIsareti } from '@/components/takvim'
@@ -58,11 +58,6 @@ export function SoruTakibiEkrani({
     return harita
   }, [kayitlar, ayarlar.gunlukHedef])
 
-  const haftaToplami = useMemo(
-    () => haftalikToplamlar(kayitlar).get(haftaBasi(secili)) ?? 0,
-    [kayitlar, secili],
-  )
-
   /**
    * Soru yalnızca **bugüne** girilebilir.
    *
@@ -114,10 +109,7 @@ export function SoruTakibiEkrani({
 
   return (
     <div>
-      <BaslikSatiri
-        baslik="Soru Takibi"
-        aciklama="Gün seç, dersleri işaretle, doğru ve yanlışını yaz"
-      />
+      <BaslikSatiri baslik="Soru Takibi" />
 
       <Kart className="mb-4">
         <Takvim
@@ -285,16 +277,6 @@ export function SoruTakibiEkrani({
         </div>
       )}
 
-      <Not>
-        Bu hafta toplam <strong className="rakam">{haftaToplami}</strong> soru
-        {ozet.toplam > 0 && (
-          <>
-            {' · '}
-            bugünün neti <strong className="rakam">{netYaz(ozet.net)}</strong>
-          </>
-        )}
-        . Haftalık rozetler pazartesiden pazara sayılır.
-      </Not>
     </div>
   )
 }

@@ -1,22 +1,13 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Info, TriangleAlert } from 'lucide-react'
-import type { Ayarlar, Deneme, OkulYili, PuanTuru, Sablon } from '@/lib/types'
+import { TriangleAlert } from 'lucide-react'
+import type { Ayarlar, Deneme, OkulYili, Sablon } from '@/lib/types'
 import { netYaz, tarihYaz } from '@/lib/hesap'
-import { OSYM_TEST_ADI } from '@/lib/sablonlar'
-import { VERI_YILLARI } from '@/lib/puan'
 import { bantYaz, siraYaz } from '@/lib/siralama'
 import { aytAdaylari, enYeni, obpHesapla, tahminUret, tytAdaylari } from '@/lib/tahmin'
 import { BaslikSatiri, BosDurum, Deger, Kart, Not, SecmeliAlan } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
-
-const PUAN_TURU_ADI: Record<PuanTuru, string> = {
-  say: 'Sayısal',
-  ea: 'Eşit Ağırlık',
-  soz: 'Sözel',
-  dil: 'Dil',
-}
 
 export function SiralamaEkrani({
   denemeler,
@@ -93,10 +84,7 @@ export function SiralamaEkrani({
 
   return (
     <div>
-      <BaslikSatiri
-        baslik="Sıralama Hesapla"
-        aciklama={`${PUAN_TURU_ADI[tur]} · Ayarlar'dan değiştirilir`}
-      />
+      <BaslikSatiri baslik="Sıralama Hesapla" />
 
       <Kart className="mb-3 space-y-3">
         <DenemeSecici
@@ -169,30 +157,14 @@ export function SiralamaEkrani({
             </div>
           </Kart>
 
-          {tahmin.oranlanan.length > 0 && (
-            <Not className="mb-3">
-              <span className="flex items-start gap-2">
-                <Info size={15} className="mt-0.5 shrink-0" aria-hidden />
-                <span>
-                  Seçtiğin denemede{' '}
-                  {tahmin.oranlanan.map((t) => OSYM_TEST_ADI[t]).join(', ')} soru sayısı gerçek
-                  sınavdan farklı. Netler oranlanarak tahmin edildi; gerçek formatta yapılan bir
-                  deneme daha güvenilir sonuç verir.
-                </span>
-              </span>
-            </Not>
-          )}
-
-          {/* Bu uyarı bilerek kapatılamıyor. */}
+          {/* Uzun açıklamalar kaldırıldı; ekranın altı bir paragraf duvarıydı.
+              Uyarının kendisi kalıyor ve kapatılamıyor — hesap bir tahmin ve
+              ekran onu kesin bir sayı gibi göstermemeli. */}
           <Not tur="uyari">
             <span className="flex items-start gap-2">
               <TriangleAlert size={16} className="mt-0.5 shrink-0" aria-hidden />
               <span>
-                <strong>Bu bir tahmindir.</strong> Gerçek YKS puanı, o yıl sınava girenlerin
-                ortalamasına ve standart sapmasına göre hesaplanır; sınavdan önce kimse bilemez.
-                Rabi, ÖSYM'nin yayınladığı {VERI_YILLARI.join(', ')} verilerini kullanıyor —
-                sıralaman bu üç yılın koşullarında ne olurdu, onu gösteriyor. Tek bir sayıya
-                değil, banda bak.
+                <strong>Bu bir tahmindir.</strong> Tek bir sayıya değil, banda bak.
               </span>
             </span>
           </Not>

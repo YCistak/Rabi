@@ -378,6 +378,21 @@ Soru sayıları elle yazılmıyor, `OSYM_TEST_SORU`dan toplanıyor: aynı sayı
 değiştiğinde birinde eski kalırdı. Süreler ise elle yazılı — ÖSYM'nin kararı,
 soru sayısından türetilemez.
 
+### Oyunda lo-fi çalmıyor
+
+Ayarlardaki **"Müzik parçası"** satırı (Mod müziği / Lo-fi) kaldırıldı: turda
+artık her zaman modun kendi parçası çalıyor. Tempo turun kuralının parçası
+(`mod-muzigi.ts` — Sıradan hızlanır, Turbo son çeyrekte vites atar, Ani Ölüm
+hiç yavaşlamaz); onu seçilebilir kılmak, kuralı bir zevk meselesi gibi
+gösteriyordu. **"Mini oyun müziği"** anahtarı duruyor — müziği kapatmak hâlâ
+kullanıcının kararı.
+
+`Ayarlar.oyunMuzikTuru` kayıtta ve yedekte duruyor ama hiçbir yerden
+okunmuyor; alanı silmek eski yedekleri geçersiz kılardı (`varsayilanSablonId`
+ile aynı gerekçe). Lo-fi çalarının kendisi de duruyor: aşağıdaki ses paneli
+**Pomodoro'nun** paneli ve orada seçim hâlâ anlamlı — çalışma turunda çalan şey
+bir modun temposu değil, arka plan müziği.
+
 ### Müzik seçilmeden önce dinleniyor
 
 Ses panelindeki on iki lo-fi parçanın arasından "Glow on the Overpass"i **ada
@@ -634,18 +649,102 @@ galeride görüntüsü olmayan bir kart kalırdı.
 Katman kayıttan sonra kapanıyor: asıl iş deneme formuna dönmek, art arda çekim
 isteyen kullanıcı düğmeye yeniden basıyor.
 
-## Haftalık özet kapalı
+## Haftalık özet kurulum gününe yaslı
 
-Ekran (`components/ekranlar/haftalik-ozet.tsx`), hesabı (`lib/ozet.ts`) ve
-paylaşılan görseli üreten `lib/ozet-gorsel.ts` **dosya olarak duruyor** ama
-uygulamadan açılamıyor: Araçlar listesinde kartı yok (`gezinme.ts`), ana
-sayfadaki "Haftalık özetin hazır" daveti kalktı ve `AppShell` katmanı hiç
-kurmuyor.
+Özet (`components/ekranlar/haftalik-ozet.tsx`, hesabı `lib/ozet.ts`, afişi
+`lib/ozet-gorsel.ts`) Araçlar listesinde **yok** ve olmayacak: aranıp açılan bir
+araç değil, haftada bir kendiliğinden gelen bir kapanış. Kutucuk olarak konsaydı
+son kullanılanlarla birlikte sıraya girer ve hafta ortasında açıldığında yarım
+bir haftanın sayılarını gösterirdi.
 
-Geri açmak istenirse üçü birden gerekiyor: `Ekran` tipine ve `KARTLAR`'a
-`haftalik-ozet`, kart menüsündeki "Motivasyon" bölümüne giriş, `AppShell`'e
-özet hesabı + katman + `ozetGorulen` işaretlemesi. Depodaki `ozetGorulen`
-anahtarı silinmedi; okunmuyor ama duruyor.
+Tek girişi ana sayfanın **en üstündeki** davet kartı (`OzetDaveti`). Yeri
+tesadüf değil: özet haftada bir gün doğuyor ve o gün görülmezse bir hafta daha
+bekliyor; selamlamanın altına ya da Araçlar şeridinin arasına konsaydı
+kaydırılıp geçilirdi. Kapatma düğmesi de yok — kart zaten kendiliğinden
+kalkıyor, ikinci bir kapatma yolu hikâyeyi hiç görmeden özeti tüketmenin yolu
+olurdu.
+
+### Hafta pazartesiden değil, kurulumdan başlıyor
+
+Özet eskiden takvim haftasına (pazartesi–pazar) yaslıydı ve pazar günü
+doğuyordu. Çarşamba günü uygulamayı kuran öğrenci ilk özetini dört gün sonra ve
+yalnızca dört günlük veriyle görüyordu — "haftalık" demeyen bir haftalık özet.
+
+Artık dönem `rabi-kurulum-tarihi`ne yaslı: ilk özet kurulumdan **yedi gün
+sonra** doğuyor, sonra her hafta aynı gün yenileniyor (`bekleyenOzetDonemi`).
+`haftaAraligi` hâlâ duruyor ama yalnızca takvim haftası isteyen yerler için;
+özetin kendisi `donem()` kullanıyor ve pazartesiye **çekmiyor**. Çubukların gün
+adları da bu yüzden kullanıcıdan kullanıcıya farklı başlıyor (ÇAR, PER, …).
+
+Kurulum günü bir kez damgalanıyor ve yedeğe **girmiyor**: yedeği yeni telefona
+yükleyen kullanıcı özetini o cihazdaki kendi gününde görmeli, eski cihazın
+kurulum gününde değil.
+
+### Veri olmayan kart üretilmiyor
+
+Kart sayısı sabit değil. Kapak, soru hedefi ve kapanış her zaman var; pomodoro,
+mini oyun, banka, deneme ve ders kartları yalnızca o hafta veri varsa
+üretiliyor. "Bu hafta deneme yok" diyen bir kart, beş saniye boyunca hiçbir şey
+söylemeyen bir ekran. Üstteki şeridin bölme sayısı da kart sayısından geliyor,
+yani şerit gerçekten kaç kart olduğunu gösteriyor.
+
+Aynı kuralın büyüğü: hiç veri olmayan haftada (`bosMu`) davet kartı da
+görünmüyor. On kartı da boş bir hikâye, kullanıcıya kendi yapmadıklarını on kez
+tekrar ediyor.
+
+Seri ve devamsızlık kartları kaldırıldı — sıra kapak → soru hedefi → pomodoro →
+mini oyunlar → yanlış bankası → deneme netleri → 3. ders → 2. ders → haftanın
+dersi → kapanış. `HaftalikOzet` alanları duruyor (afiş ve `bosMu` kullanıyor),
+yalnızca kartları gitti.
+
+### Dönem açılınca izlendi sayılıyor
+
+`ozetGorulen` dönem başlarının listesi ve işaret katman **açılırken** konuyor,
+kapanırken değil: kapanışta işaretlenseydi uygulamayı özet açıkken kapatan
+kullanıcı aynı hikâyeyi bir dahaki açılışta yeniden bulurdu. Bu yüzden
+`AppShell` açık dönemi ayrı bir state'te (`ozetAcik`) tutuyor ve hesap
+`ozetAcik ?? bekleyenDonem` üstünden yapılıyor — yalnızca `bekleyenDonem`e
+bağlı olsaydı katman açıldığı karede boşalırdı.
+
+### Renkler tema değişkenlerinden gelmiyor
+
+Ekran uygulamanın kırık beyaz zemininden tümüyle kopuk, kendi koyu/amber
+paletinde duruyor ve renkler bileşenin içinde yazılı. Sebep paylaşılan görsel:
+afiş tuvale çiziliyor ve tuval `var(--primary)` metnini çözemiyor. Aynı renkler
+`ozet-gorsel.ts` içinde de duruyor (`GORSEL_RENKLERI`); ikisi **birlikte**
+değişmeli, yoksa ekranda gördüğü kartı paylaşan kullanıcı başka renkte bir
+görsel alıyor.
+
+Kart başına ayrı degrade de yok: üç zemin dönüşümlü kullanılıyor (koyu radial,
+amber, kızıl). On kartın onunda ayrı renk, hikâyeyi bir renk geçidine
+çeviriyordu.
+
+Punto ve kalınlıklar Tailwind sınıfı değil `yz()` yardımcısıyla satır içi. CSS'in
+`font` kısayolu kullanılamıyor: aile adı zorunlu ve oraya `inherit` yazmak
+geçersiz bir bildirim üretiyor, tarayıcı satırın tamamını atıyor. Ölçek adımları
+da yetmiyor — 132 piksellik "1" ile 88 piksellik süre aynı boya iner.
+
+### Afişte harf aralığı elle çiziliyor
+
+Paylaşım afişi 1080×1920 ve tasarımın büyük harfli etiketlerinin hepsi aralıklı.
+Tuvalin `letterSpacing`i her WebView sürümünde yok, o yüzden `aralikliYaz`
+harfleri tek tek çiziyor; kutuya sığdırma da `harfAraliginaGore` ile ölçülüyor.
+`measureText` ile ölçülseydi etiketler aralıksız sığar, aralıklı taşardı — bir
+kez öyle oldu.
+
+Etiket önce **küçülüyor**, sonra kısalıyor: "EN YÜKSEK NET · 2 DENEME"
+kesildiğinde geriye kutunun ne anlattığını söylemeyen bir baş kalıyordu.
+
+Zeminin radyal degradesi elips (`120% 60%`), tuvalin radyal geçişi ise yalnızca
+daire çizebiliyor; elips dikey ölçekle kuruluyor. Düz daire kullanılsaydı geçiş
+erken kapanır, afişin üst yarısı olduğundan koyu çıkardı.
+
+### Oyun kaydı yanlışı da tutuyor
+
+`OyunTurKaydi.yanlis` ve `hatasiz` özet için eklendi (isabet oranı ve hatasız
+tur sayısı doğru sayısından türetilemiyor) ve **isteğe bağlı**: eski kayıtlarda
+yoklar ve isabet hesabına hiç girmiyorlar. Sıfır saymak, hatasız oynanmış eski
+turları %100 isabetli gösterirdi.
 
 ## Rozet değil başarım
 
@@ -1207,7 +1306,26 @@ kez saklamak olurdu ve iki liste zamanla birbirinden ayrılırdı.
 Araçlardaki not kâğıtları (`lib/yapilacaklar.ts`). Liste değil tahta: kâğıtlar
 istenen yere sürükleniyor ve konum kullanıcının verdiği bilgi — bir listeye
 düzleştirmek onu atmak olurdu. En fazla on kâğıt; sınır tahtanın kendisinden
-geliyor, üst üste binen kâğıtlar okunmuyor.
+geliyor.
+
+### Kâğıtlar binebiliyor, birbirini kapatamıyor
+
+Üst üste binmek serbest — iki kâğıdın köşe köşe değmesi kullanıcının kurduğu
+gruplamanın parçası. Yasak olan **tam örtüşme**: altta kalan kâğıt hiç
+görünmüyorsa okunamıyor, tutulamıyor ve kullanıcı onu kaybettiğini sanıyor.
+
+Kural `ayrikKonum` içinde ve hem taşımaya hem yeni kâğıda uygulanıyor
+(`notTasi`, `notEkle`). Çakışma **iki eksende birden** payın altında kalmak
+demek; tek eksende yaklaşmak kâğıdın öbür kenarını açıkta bırakıyor.
+`EN_AZ_PAY_Y` tesadüfi değil, kâğıdın **tutma şeridi** kadar: altta kalan kâğıt
+yalnızca görünmüyor, tutulup çekilebiliyor da.
+
+Çakışan kâğıdın karşı yönüne **itmek** ilk denenen yoldu ve kalabalık tahtada
+hiç durmuyordu: itilen kâğıt ikinci bir kâğıda çarpıp geri dönüyor, döngü
+salınıyordu. Şimdi bırakılan noktanın çevresi dışa doğru taranıyor ve bulunan
+yer hep parmağın kalktığı yere **en yakın** boşluk oluyor. Bırakılan yer zaten
+boşsa hiç dokunulmuyor — kullanıcının koyduğu yeri düzeltmek, ancak
+düzeltilecek bir şey varsa yapılır.
 
 Tahta **günlük**: her kâğıt yerel günüyle (`gun`) duruyor ve gün dönünce
 `gununNotlari` onu eliyor. Dün yazdığını bugün de tahtada gören kullanıcı,

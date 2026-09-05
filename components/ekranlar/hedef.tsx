@@ -5,7 +5,6 @@ import { Check, Pencil, Trash2 } from 'lucide-react'
 import type { Hedef, PuanTuru } from '@/lib/types'
 import { siraYaz } from '@/lib/siralama'
 import {
-  KATALOG_VERI_YILI,
   bolumAra,
   bolumBul,
   bolumleriGetir,
@@ -16,7 +15,6 @@ import {
   type Bolum,
   type Universite,
 } from '@/lib/hedef-katalog'
-import { SON_VERI_YILI } from '@/lib/puan'
 import { Alan, BaslikSatiri, Buton, Cip, Etiket, Kart, Not, Onay } from '@/components/ui'
 import { AramaAlani, Liste, SecilenSatir, SecimSatiri } from '@/components/hedef-secici'
 import { Rabi } from '@/components/maskot/rabi'
@@ -156,14 +154,7 @@ export function HedefEkrani({
 
   return (
     <div>
-      <BaslikSatiri
-        baslik="Hedefim"
-        aciklama={
-          elleMod
-            ? 'Bölümünü ve gereken sıralamayı kendin yazıyorsun'
-            : 'Üniversiteni ara, bölümünü seç — taban puanı ve sıralamayı Rabi dolduruyor'
-        }
-      />
+      <BaslikSatiri baslik="Hedefim" />
 
       {hedef && (
         <Kart className="mb-4 flex items-center gap-3">
@@ -383,18 +374,12 @@ export function HedefEkrani({
         </button>
       </Kart>
 
-      {/* Sıra artık kestirilmiyor: kılavuzdaki gerçek değer. Metin bunu
-          söylemek zorunda -- "tahmin" demek sayıyı olduğundan güvensiz
-          gösterirdi, taban puan içinse tahmin demek şart. Kaynağın ÖSYM
-          olduğu da yazıyor: veriyi nereden aldığını söylememek onu Rabi
-          üretmiş gibi gösterirdi. Bağlantısızlık cümlesi bunun karşılığı --
-          ÖSYM adı burada kaynak olarak geçiyor, marka olarak değil. */}
+      {/* Uzun açıklamalar kısaltıldı; ekranın altı bir paragraf duvarıydı.
+          İki cümle kalıyor ve ikisi de süs değil: taban puan gerçekten bir
+          tahmin, ÖSYM ile bağlantısızlık da adı kaynak olarak geçtiği için
+          söylenmesi gereken bir şey. */}
       <Not className="mt-4">
-        Bölümün sırası, ÖSYM'nin yayımladığı {KATALOG_VERI_YILI} yerleştirme
-        sonuçlarındaki gerçek değer. Taban puan <strong>tahmindir</strong>: o
-        sıranın {SON_VERI_YILI} puan dağılımındaki karşılığı hesaplanıyor.
-        Sıralamalar her yıl oynuyor — hedefinin biraz üstünü tutturmak daha
-        güvenli. Yanlış geldiyse sayıları elle düzeltebilirsin.
+        Taban puan <strong>tahmindir</strong>.
       </Not>
 
       <Not className="mt-2">

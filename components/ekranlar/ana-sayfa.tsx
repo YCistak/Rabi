@@ -65,6 +65,8 @@ export function AnaSayfa({
   hedef,
   guncelSiralama,
   bilinmeyenSayisi,
+  ozetHazir,
+  onOzetAc,
   sonAraclar,
   sonOyunlar,
   sabitAraclar,
@@ -86,7 +88,16 @@ export function AnaSayfa({
   guncelSiralama: number | null
   /** Konu Anlatımı'nda "bilmiyorum" denen kart sayısı — bölümün alt satırı. */
   bilinmeyenSayisi: number
-  /** Biten haftanın özeti henüz izlenmediyse davet kartı gösterilir. */
+  /**
+   * Biten haftanın özeti izlenmeyi bekliyor mu.
+   *
+   * Bekliyorsa sayfanın **en üstünde** davet kartı duruyor. Yeri tesadüf
+   * değil: özet haftada bir gün doğuyor ve o gün açılmazsa bir hafta daha
+   * beklemesi gerekiyor — selamlamanın altına, Araçlar şeridinin arasına
+   * konsaydı görülmeden kaydırılıp geçilirdi.
+   */
+  ozetHazir: boolean
+  onOzetAc: () => void
   /** En son açılan araçlar ve oynanan oyunlar — kısayol kutucuklarının sırası. */
   sonAraclar: string[]
   sonOyunlar: string[]
@@ -185,6 +196,8 @@ export function AnaSayfa({
 
   return (
     <div className="space-y-3.5">
+      {ozetHazir && <OzetDaveti onAc={onOzetAc} />}
+
       {/* Selamlama — tasarımda ad sorulmuyor, kurulumda ad adımı yok. */}
       <header className="flex items-center gap-3 px-0.5 pt-2 pb-1">
         <Rabi durum={maskotDurumu} boyut={58} gizli={maskotGizli} yuvaMi />
@@ -515,6 +528,50 @@ function Kutucuk({
       <span className="text-[11px] leading-tight font-bold text-balance text-muted-foreground">
         {ad}
       </span>
+    </button>
+  )
+}
+
+/**
+ * Haftalık özet daveti — sayfanın en üstündeki tek kart.
+ *
+ * Uygulamanın kırık beyaz zemininden **ayrı** duruyor: koyu amber ve altında
+ * beliren bir parıltı. Öteki kartların diliyle çizilseydi araç kutucuklarının
+ * arasında sıradan bir satır olurdu; buradaki şey haftada bir kez gelen ve
+ * kaçırılmaması gereken bir davet. Aynı zemin, açtığı hikâyenin de zemini —
+ * dokunulan kart ile açılan ekran tek bir hareket gibi okunuyor.
+ *
+ * Kapatma düğmesi **yok**: kart zaten kendiliğinden kalkıyor, çünkü özet
+ * açıldığı anda "izlendi" işaretleniyor. İkinci bir kapatma yolu, hikâyeyi hiç
+ * görmeden özeti tüketmenin yolu olurdu.
+ */
+function OzetDaveti({ onAc }: { onAc: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onAc}
+      className="relative mt-2 flex w-full items-center gap-3.5 overflow-hidden rounded-2xl px-4 py-4 text-left text-white shadow-[0_10px_26px_rgba(90,32,10,.28)] transition active:brightness-95"
+      style={{ background: 'linear-gradient(150deg,#E07A34 0%,#B3491F 56%,#83300F 100%)' }}
+    >
+      {/* Işıma maskotun arkasında: kartın soluna bakması için bir sebep. */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -top-10 -left-8 h-36 w-36 rounded-full"
+        style={{ background: 'radial-gradient(circle,rgba(255,244,225,.35),transparent 68%)' }}
+      />
+      <Rabi durum="kutlama" boyut={46} className="relative shrink-0" />
+      <span className="relative min-w-0 flex-1">
+        <span className="block text-[10px] font-extrabold tracking-[0.18em] text-white/70">
+          HAFTA KAPANDI
+        </span>
+        <span className="mt-1 block font-display text-[17px] leading-tight font-extrabold">
+          Haftalık özetin hazır
+        </span>
+        <span className="mt-0.5 block text-[12.5px] font-semibold text-white/80">
+          Bu haftayı Rabi’yle kapat
+        </span>
+      </span>
+      <ChevronRight size={20} className="relative shrink-0 text-white/75" aria-hidden />
     </button>
   )
 }
