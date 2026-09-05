@@ -1,4 +1,4 @@
-package com.rabi.app.odak
+package com.fluxifyinteractive.rabi.odak
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -21,8 +21,8 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.widget.RemoteViews
-import com.rabi.app.PomodoroKapanis
-import com.rabi.app.R
+import com.fluxifyinteractive.rabi.PomodoroKapanis
+import com.fluxifyinteractive.rabi.R
 import java.util.Locale
 import kotlin.math.max
 
@@ -642,9 +642,9 @@ class OdakServisi : Service() {
         private const val KANAL_ID = "odak-kilidi"
         private const val VARSAYILAN_ASAMA = "Çalışma"
 
-        private const val EYLEM_DURAKLAT = "com.rabi.app.ODAK_DURAKLAT"
-        private const val EYLEM_DEVAM = "com.rabi.app.ODAK_DEVAM"
-        private const val EYLEM_BITIR = "com.rabi.app.ODAK_BITIR"
+        private const val EYLEM_DURAKLAT = "com.fluxifyinteractive.rabi.ODAK_DURAKLAT"
+        private const val EYLEM_DEVAM = "com.fluxifyinteractive.rabi.ODAK_DEVAM"
+        private const val EYLEM_BITIR = "com.fluxifyinteractive.rabi.ODAK_BITIR"
 
         /** Web tarafının dinlediği komut adları (`lib/odak-kilidi.ts`). */
         const val KOMUT_DURAKLAT = "duraklat"
