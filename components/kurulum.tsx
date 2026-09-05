@@ -771,7 +771,6 @@ export function Kurulum({
               enAz={HEDEF_EN_AZ}
               enCok={HEDEF_EN_COK}
               adim={HEDEF_ADIMI}
-              birim="soru"
               etiket="Günlük soru hedefi"
             />
           )}

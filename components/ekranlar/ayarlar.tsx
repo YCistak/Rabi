@@ -347,10 +347,9 @@ export function AyarlarEkrani({
                 enAz={HEDEF_EN_AZ}
                 enCok={HEDEF_EN_COK}
                 adim={HEDEF_ADIMI}
-                birim="soru"
                 etiket="Günlük soru hedefi"
               />
-              {/* Tekerlek on beşer artıyor; eski bir kurulumdan 310 gibi
+              {/* Tekerlek onar artıyor; eski bir kurulumdan 315 gibi
                   bir sayı kalmışsa kullanıcı onu görebilmeli. */}
               {ayarlar.gunlukHedef % HEDEF_ADIMI !== 0 && (
                 <AlanNotu>
