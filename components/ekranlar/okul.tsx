@@ -222,7 +222,7 @@ function YilSatiri({
         }}
         placeholder="—"
         aria-label={`${sinif}. sınıf ${buYilMi ? '1. dönem sonu' : 'yıl sonu'} notu`}
-        className="rakam h-11 w-24 shrink-0 text-center text-lg font-semibold"
+        className="rakam h-11 w-24 shrink-0 text-center text-lg font-semibold focus:placeholder:text-transparent"
       />
 
       {dolu && (
@@ -289,7 +289,7 @@ function ElleObpKarti({
           onChange={(e) => yaz(e.target.value)}
           placeholder="—"
           aria-label="Elle girilen OBP"
-          className="rakam h-11 w-24 shrink-0 text-center text-lg font-semibold"
+          className="rakam h-11 w-24 shrink-0 text-center text-lg font-semibold focus:placeholder:text-transparent"
         />
 
         {metin !== '' && (
