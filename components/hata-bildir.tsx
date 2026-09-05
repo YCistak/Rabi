@@ -58,7 +58,7 @@ export interface BildirimKolu {
  * fazlası gönderilmiş olur.
  */
 const GONDERILENLER = [
-  'sorunun kendisi',
+  'sorunun kendisi ve havuzdaki kimliği',
   'hangi oyundan geldiği',
   'uygulamanın doğru saydığı cevap',
   'senin seçtiğin sebep',

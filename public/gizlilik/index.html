@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gizlilik Politikası — Rabi</title>
+<meta name="description" content="Rabi uygulamasının gizlilik politikası: hangi veriler telefonda kalıyor, hangileri çıkıyor, nasıl silinir.">
+<style>
+  :root {
+    /*
+      Renkler uygulamanın kendi temasından (`app/globals.css`) alındı ve
+      **koyu tema bloğu bilerek yok**: AGENTS.md "tek tema var" diyor, sayfa da
+      Ayarlar'da bir iframe içinde açılıyor. Koyu tema bloğu olsaydı telefonu
+      koyu temada olan kullanıcıda açık zeminli uygulamanın ortasında koyu bir
+      pencere açılırdı.
+    */
+    color-scheme: light;
+    --zemin: #f8f8f7;
+    --metin: #1b1a19;
+    --soluk: #6b6764;
+    --cizgi: #eae9e6;
+    --kutu: #ffffff;
+    --vurgu: #b3491f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2.5rem 1.25rem 5rem;
+    background: var(--zemin);
+    color: var(--metin);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+  main { max-width: 44rem; margin: 0 auto; }
+  h1 { font-size: 1.8rem; line-height: 1.25; margin: 0 0 .35rem; letter-spacing: -.01em; }
+  h2 {
+    font-size: 1.18rem;
+    margin: 2.6rem 0 .7rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--cizgi);
+    letter-spacing: -.005em;
+  }
+  h3 { font-size: 1rem; margin: 1.6rem 0 .4rem; }
+  p, li { color: var(--metin); }
+  ul, ol { padding-left: 1.35rem; }
+  li { margin: .3rem 0; }
+  .ust { color: var(--soluk); font-size: .92rem; margin: 0 0 2rem; }
+  .kutu {
+    background: var(--kutu);
+    border: 1px solid var(--cizgi);
+    border-radius: .75rem;
+    padding: 1rem 1.15rem;
+    margin: 1.2rem 0;
+  }
+  .kutu > :first-child { margin-top: 0; }
+  .kutu > :last-child { margin-bottom: 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .94rem; }
+  th, td { text-align: left; vertical-align: top; padding: .55rem .6rem; border-bottom: 1px solid var(--cizgi); }
+  th { font-weight: 700; color: var(--soluk); font-size: .84rem; text-transform: uppercase; letter-spacing: .04em; }
+  .sar { overflow-x: auto; }
+  a { color: var(--vurgu); }
+  code {
+    background: var(--kutu);
+    border: 1px solid var(--cizgi);
+    border-radius: .3rem;
+    padding: .1rem .3rem;
+    font-size: .9em;
+  }
+  footer { margin-top: 3rem; padding-top: 1.4rem; border-top: 1px solid var(--cizgi); color: var(--soluk); font-size: .9rem; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>Rabi — Gizlilik Politikası</h1>
+<p class="ust">
+  Uygulama: <b>Rabi</b> (<code>com.fluxifyinteractive.rabi</code>) &middot;
+  Geliştirici: <b>Fluxify Interactive</b><br>
+  Yürürlük tarihi: <b>6 Eylül 2026</b> &middot; Son güncelleme: 6 Eylül 2026
+</p>
+
+<p>
+  Bu belge, Rabi'nin hangi bilgilere eriştiğini, bunları ne için kullandığını, telefonundan
+  neyin çıktığını ve nasıl sildirebileceğini anlatır. Rabi bir YKS çalışma asistanıdır:
+  deneme takibi, çalışma sayacı, mini oyunlar ve odak kilidi içerir.
+</p>
+
+<div class="kutu">
+  <p><b>Kısaca:</b> Rabi'nin sunucusu yok. Denemelerin, notların, fotoğrafların, puanların ve
+  adın <b>telefonundan hiç çıkmaz</b>. Rabi'nin ağa çıktığı yalnızca iki durum vardır ve
+  ikisi de sen izin verene kadar gerçekleşmez: <b>(1)</b> hatalı bir soruyu bildirmen,
+  <b>(2)</b> uygulama çöktükten sonra çökme kaydını göndermeyi seçmen. Reklam yok, analiz
+  (analytics) yok, hesap yok, giriş yok.</p>
+</div>
+
+<h2>1. Telefonunda kalan veriler</h2>
+
+<p>
+  Rabi'nin oluşturduğu ve kullandığı verinin neredeyse tamamı yalnızca telefonunda,
+  uygulamanın kendi özel alanında (tarayıcı deposu ve IndexedDB) durur. Bu veriler hiçbir
+  sunucuya gönderilmez; Fluxify Interactive bunları göremez.
+</p>
+
+<div class="sar">
+<table>
+  <tr><th>Veri</th><th>Ne için</th></tr>
+  <tr><td>Ayarlarda yazdığın ad, sınıfın, alanın, hedeflerin</td><td>Uygulamayı sana göre ayarlamak</td></tr>
+  <tr><td>Deneme sonuçları, netler, şablonlar, okul notları, devamsızlık</td><td>Gelişimini takip etmek</td></tr>
+  <tr><td>Yanlış soru kayıtları ve bunlara eklediğin fotoğraflar</td><td>Yanlış defteri</td></tr>
+  <tr><td>Çalışma sayacı (pomodoro) geçmişi, günlük kayıtlar, rozetler</td><td>Alışkanlık takibi</td></tr>
+  <tr><td>Mini oyun istatistikleri, Oyun Bankası, zorluk tercihleri</td><td>Oyunların ilerlemesi</td></tr>
+  <tr><td>Yapılacaklar tahtasındaki notlar</td><td>Not tutmak</td></tr>
+  <tr><td>Odak kilidinde seçtiğin uygulama listesi</td><td>Hangi uygulamaların engelleneceği</td></tr>
+  <tr><td>Cihazına verilen rastgele takma ad (örn. <code>mavi-tavsan-42</code>)</td><td>Yalnızca hatalı soru bildirimlerini gruplamak (bkz. §3)</td></tr>
+</table>
+</div>
+
+<p>
+  Uygulamayı silersen bu verilerin tamamı telefonundan silinir. Uygulama içinden de
+  <b>Ayarlar → Tüm veriyi sil</b> ile temizleyebilirsin. Yedek alırsan
+  (<b>Ayarlar → Yedeği indir</b>) dosya senin telefonuna iner; onu kiminle paylaşacağına
+  yalnızca sen karar verirsin.
+</p>
+
+<h2>2. Kamera, fotoğraflar ve metin okuma</h2>
+
+<p>
+  Yanlış soru eklerken veya deneme kâğıdını okuturken telefonunun kamerası ya da galerisi
+  açılır. İki durum birbirinden farklıdır:
+</p>
+<ul>
+  <li><b>Yanlış soru fotoğrafı</b> uygulamanın kendi deposuna kaydedilir ve orada kalır;
+      kaydı silersen fotoğraf da silinir.</li>
+  <li><b>Deneme kâğıdı fotoğrafı hiç saklanmaz.</b> Yalnızca kâğıttaki sayıları okumak için
+      kullanılır, okuma bitince atılır.</li>
+</ul>
+<ul>
+  <li>Kâğıttaki yazıyı okuyan metin tanıma modeli <b>uygulamanın içine gömülüdür</b>; okuma
+      tümüyle telefonda yapılır ve uçak modunda da çalışır.</li>
+  <li>Hiçbir fotoğraf, hiçbir zaman internete yüklenmez — ne bize, ne bir bulut servisine.</li>
+  <li>Rabi galerinin geri kalanını taramaz; yalnızca sistem seçicisinde senin seçtiğin
+      fotoğrafı alır.</li>
+</ul>
+
+<h2>3. Telefonundan çıkan ilk şey — hatalı soru bildirimi</h2>
+
+<p>
+  Sorular elle yazıldı; içlerinde yanlış cevap veya bozuk yazım olabilir. Bir sorunun
+  yanındaki bayrağa basıp sebep seçersen o bildirim bize ulaşır ve soruyu düzeltiriz.
+</p>
+
+<h3>Nasıl izin veriliyor</h3>
+<ul>
+  <li>Bildirim kendiliğinden oluşmaz: <b>bayrağa basman ve bir sebep seçmen</b> gerekir.</li>
+  <li>İlk bildirimde ekranda ne gönderileceğinin listesi çıkar. <b>&ldquo;Gönder&rdquo;</b>
+      demeden hiçbir şey telefonundan çıkmaz.</li>
+  <li>&ldquo;Gönderme&rdquo; dersen bildirim telefonunda kalır, gönderilmez. Kararını aynı
+      yerdeki &ldquo;Yine de gönder&rdquo; ile sonradan değiştirebilirsin.</li>
+  <li>İnternet yoksa bildirim telefonunda bekler, bağlanınca gider.</li>
+  <li>Günde en fazla 20 bildirim açılabilir.</li>
+</ul>
+
+<h3>Gönderilen tam liste (yedi alan)</h3>
+<ol>
+  <li>Sorunun havuzdaki kimliği</li>
+  <li>Sorunun hangi oyundan geldiği</li>
+  <li>Sorunun metni</li>
+  <li>Uygulamanın doğru saydığı cevap</li>
+  <li>Senin seçtiğin sebep (&ldquo;Cevap yanlış&rdquo;, &ldquo;Yazım hatası&rdquo; gibi)</li>
+  <li>Uygulama sürümü</li>
+  <li>Telefonunun üreticisi ve modeli, yanında cihazına verilen rastgele takma ad
+      (örn. <code>Samsung SM-A536B (mavi-tavsan-42)</code>)</li>
+</ol>
+
+<p>
+  Model bilgisi, bazı arızaların yalnızca belirli ekran ölçülerinde çıkması yüzünden var.
+  Takma ad rastgele üretilir, adınla ya da hesabınla ilgisi yoktur; tek işi aynı telefondan
+  gelen bildirimleri tabloda gruplamaktır. Bu ad kalıcı olduğu için, Google Play'in
+  sınıflandırmasında <b>&ldquo;cihaz veya diğer kimlikler&rdquo;</b> kategorisine girer ve
+  Data Safety formunda böyle beyan edilir.
+</p>
+
+<div class="kutu">
+  <p><b>Bu bildirimde gönderilmeyenler:</b> adın, e-postan, telefon numaran, konumun,
+  denemelerin ve netlerin, okul notların, yapılacaklar notların, fotoğrafların, çalışma
+  süren, oyun puanların, kilitli uygulama listen, rehberin, mesajların. Bunların hiçbiri
+  telefonundan çıkmaz.</p>
+</div>
+
+<p>
+  Bildirim, bize ait bir <b>Google Formu</b>na gönderilir ve yanıtlar Google'ın sunucularındaki
+  bir tabloda toplanır. Bağlantı HTTPS ile şifrelenir. Burada Google, bizim adımıza veri
+  işleyen taraftır (bkz. §6).
+</p>
+
+<h2>4. Telefonundan çıkan ikinci şey — çökme raporu</h2>
+
+<p>
+  Uygulama beklenmedik şekilde kapanırsa, hatanın kaydı <b>telefonunda</b> tutulur.
+  Kendiliğinden hiçbir yere gitmez: otomatik gönderim uygulamanın içinde kalıcı olarak
+  kapalıdır.
+</p>
+<ul>
+  <li>Bir sonraki açılışta sana sorulur. <b>&ldquo;Gönder&rdquo;</b> dersen kayıt gider;
+      <b>&ldquo;Gönderme&rdquo;</b> dersen telefonundan silinir.</li>
+  <li>Bu soru her çökmeden sonra tek tek sorulur; önceden verilmiş kalıcı bir izin yoktur.</li>
+</ul>
+
+<p><b>Gönderdiğinde giden kayıt şunları içerir:</b></p>
+<ul>
+  <li>Hatanın teknik dökümü (hangi kodun, hangi satırda kırıldığı)</li>
+  <li>Uygulama sürümü ve derleme türü</li>
+  <li>Android sürümü ve cihazdaki Android System WebView sürümü</li>
+  <li>Telefonun üreticisi ve modeli</li>
+  <li>Çökme aracının kendi eklediği teknik bilgiler: cihaza özel rastgele bir kurulum
+      numarası, cihaz durumu (bellek ve disk doluluğu, ekran yönü, root/jailbreak durumu,
+      işlemci mimarisi)</li>
+</ul>
+
+<p>
+  Bu kayıtta adın, denemelerin, notların, fotoğrafların ve puanların <b>yer almaz</b>.
+  Çökme raporları <b>Google Firebase Crashlytics</b> üzerinden toplanır.
+</p>
+
+<h2>5. İzinler ve neden isteniyor</h2>
+
+<div class="sar">
+<table>
+  <tr><th>İzin</th><th>Ne için</th><th>Veri dışarı çıkıyor mu</th></tr>
+  <tr><td>İnternet</td><td>Yalnızca §3 ve §4'teki iki gönderim</td><td>Yalnızca izin verirsen</td></tr>
+  <tr><td>Bildirim gönderme</td><td>Çalışma hatırlatması ve pomodoro sayacı</td><td>Hayır — bildirimler telefonunda üretilir</td></tr>
+  <tr><td>Kamera / galeri (sistem seçicisi üzerinden)</td><td>Soru fotoğrafı ve deneme kâğıdı okuma</td><td>Hayır</td></tr>
+  <tr><td>Kullanım verisi erişimi (<code>PACKAGE_USAGE_STATS</code>)</td><td>Odak kilidi sırasında hangi uygulamanın ön planda olduğunu anlamak</td><td>Hayır — okunan bilgi telefondan çıkmaz</td></tr>
+  <tr><td>Diğer uygulamaların üzerinde gösterme</td><td>Kilitli bir uygulamayı açtığında uyarı katmanını göstermek</td><td>Hayır</td></tr>
+  <tr><td>Ön plan servisi</td><td>Pomodoro turu boyunca odak kilidini ayakta tutmak</td><td>Hayır</td></tr>
+  <tr><td>Bildirim erişimi (isteğe bağlı)</td><td>Odak kilidi açıkken kilitli uygulamaların bildirimlerini susturmak</td><td>Hayır — bildirim içerikleri okunmaz, saklanmaz, gönderilmez</td></tr>
+  <tr><td>Kurulu uygulamaları görme</td><td>Odak kilidinde engellenecek uygulamaları listelemek</td><td>Hayır</td></tr>
+  <tr><td>Titreşim, uyanık tutma, açılışta başlama, tam zamanlı alarm</td><td>Sayaç ve hatırlatmaların doğru saatte çalışması</td><td>Hayır</td></tr>
+</table>
+</div>
+
+<p>
+  Bildirim erişimi izni <b>isteğe bağlıdır</b>: vermezsen odak kilidinin geri kalanı
+  çalışmaya devam eder, yalnızca bildirimler susturulmaz. Kullanım verisi ve ekran üstü
+  gösterme izinlerini telefonunun ayarlarından istediğin zaman geri alabilirsin.
+</p>
+
+<h2>6. Üçüncü taraflar</h2>
+
+<p>Rabi'nin veri gönderdiği tek şirket Google'dır ve yalnızca yukarıdaki iki durumda:</p>
+<ul>
+  <li><b>Google Forms / Google Sheets</b> — hatalı soru bildirimlerinin toplandığı yer.</li>
+  <li><b>Firebase Crashlytics</b> — gönderdiğin çökme raporlarının toplandığı yer.</li>
+</ul>
+<p>
+  Google bu verileri bizim adımıza ve talimatımızla işler. Google'ın gizlilik politikası:
+  <a href="https://policies.google.com/privacy?hl=tr" rel="noopener">policies.google.com/privacy</a>.
+</p>
+<p>
+  Rabi'de <b>reklam ağı yoktur</b>, <b>kullanım analizi (analytics) aracı yoktur</b>,
+  <b>reklam kimliği okunmaz</b> ve davranışını izleyen başka bir araç bulunmaz. Hiçbir veri satılmaz,
+  kiralanmaz veya pazarlama amacıyla paylaşılmaz. Uygulamada hesap, giriş veya üyelik yoktur.
+</p>
+
+<h2>7. Güvenlik</h2>
+<ul>
+  <li>Telefondaki veriler işletim sisteminin uygulamalara ayırdığı özel alanda tutulur;
+      başka uygulamalar buraya erişemez.</li>
+  <li>Dışarı çıkan iki gönderim de <b>HTTPS/TLS</b> ile şifrelenerek iletilir; şifresiz
+      (<code>http://</code>) bağlantı kullanılmaz.</li>
+  <li>Bize ulaşan verilere yalnızca uygulamayı geliştiren kişi erişir ve bunlar yalnızca
+      soruları düzeltmek ve hataları gidermek için kullanılır.</li>
+  <li>Bizim işlettiğimiz bir sunucu ya da veri tabanı yoktur; toplanan az sayıdaki kayıt
+      Google'ın hesap korumaları arkasında durur.</li>
+</ul>
+
+<h2>8. Saklama ve silme</h2>
+
+<h3>Telefonundaki veriler</h3>
+<p>
+  Sen silene kadar durur. <b>Ayarlar → Tüm veriyi sil</b> hepsini temizler; uygulamayı
+  kaldırmak da aynı sonucu verir.
+</p>
+
+<h3>Bize ulaşan hatalı soru bildirimleri</h3>
+<p>
+  Soru düzeltilene kadar tutulur, sonra tablodan silinir. Daha önce silinmesini istersen
+  aşağıdaki adrese yaz — hangi soruları ve yaklaşık hangi tarihlerde bildirdiğini yazman
+  yeterli; ilgili satırları sileriz ve sildiğimizi sana yazarız. Talepler en geç
+  <b>30 gün</b> içinde sonuçlandırılır.
+</p>
+
+<h3>Çökme raporları</h3>
+<p>
+  Firebase Crashlytics, çökme kayıtlarını ve bunlara bağlı kurulum numaralarını
+  <b>90 gün</b> sonra silmeye başlar. Bir raporun daha önce silinmesini istersen bize yaz.
+</p>
+
+<div class="kutu">
+  <p><b>Silme talebi için:</b> <a href="mailto:fluxifyinteractive@gmail.com">fluxifyinteractive@gmail.com</a>
+  adresine yaz, konuya &ldquo;Rabi veri silme&rdquo; yaz. Rabi'de hesap olmadığı için
+  silinecek bir hesabın yoktur; silinebilecek tek şey yukarıdaki iki kayıt türüdür.</p>
+</div>
+
+<h2>9. Çocuklar ve gençler</h2>
+<p>
+  Rabi lise öğrencileri için tasarlandı ve 13 yaşından küçüklere yönelik değildir. Rabi
+  kimseden ad, e-posta, telefon, konum veya doğum tarihi <b>istemez</b>; hesap açtırmaz,
+  reklam göstermez, kullanıcı profili çıkarmaz ve kimseyi izlemez. Ayarlardaki ad alanı
+  isteğe bağlıdır, boş bırakılabilir ve yazılsa bile telefondan çıkmaz.
+</p>
+<p>
+  Veli veya vasiysen ve çocuğuna ait bir kaydın silinmesini istiyorsan §8'deki adrese
+  yazman yeterlidir.
+</p>
+
+<h2>10. Haklarınız</h2>
+<p>
+  6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) ve ilgili mevzuat kapsamında;
+  hakkında veri işlenip işlenmediğini öğrenme, işlenmişse bilgi talep etme, düzeltilmesini
+  veya silinmesini isteme haklarına sahipsin. Bu haklarını kullanmak için
+  <a href="mailto:fluxifyinteractive@gmail.com">fluxifyinteractive@gmail.com</a> adresine
+  yazabilirsin.
+</p>
+<p>
+  Rabi ad, e-posta veya hesap bilgisi toplamadığı için, bize ulaşan kayıtların hangisinin
+  sana ait olduğunu kendiliğimizden bulamıyoruz; talebinde bildirimi yaptığın yaklaşık
+  tarihi ve soruları belirtirsen kaydı bulup silebiliriz.
+</p>
+
+<h2>11. Bu politikadaki değişiklikler</h2>
+<p>
+  Uygulamaya veri gönderen yeni bir özellik eklenirse bu sayfa güncellenir, en üstteki
+  &ldquo;son güncelleme&rdquo; tarihi değişir ve uygulamanın Google Play'deki Data Safety
+  beyanı da aynı anda güncellenir. Önemli bir değişiklik olursa uygulama içinde de duyurulur.
+</p>
+
+<h2>12. İletişim</h2>
+<p>
+  Uygulama: <b>Rabi</b> &middot; Paket adı: <code>com.fluxifyinteractive.rabi</code><br>
+  Geliştirici: <b>Fluxify Interactive</b><br>
+  E-posta: <a href="mailto:fluxifyinteractive@gmail.com">fluxifyinteractive@gmail.com</a>
+</p>
+<p>Gizlilik, veri silme veya bu politikayla ilgili her soru için bu adrese yazabilirsin.</p>
+
+<h2>13. Sorumluluk reddi</h2>
+<p>
+  Rabi bağımsız bir çalışma uygulamasıdır; ÖSYM ile ya da herhangi bir resmî kurumla
+  <b>bağlantısı yoktur</b>, hiçbiri tarafından desteklenmez veya onaylanmaz. Uygulamadaki
+  puan ve sıralama tahminleri, girdiğin verilerden yapılan <b>yaklaşık hesaplardır</b>;
+  gerçek sınav sonucunu, puanını veya sıralamanı garanti etmez ve resmî bir değer taşımaz.
+  Soru havuzundaki içerikler çalışma amaçlıdır ve hata içerebilir; fark ettiğin hataları
+  uygulama içindeki bayrak düğmesiyle bildirebilirsin.
+</p>
+
+<footer>
+  Bu belge Rabi uygulamasının gizlilik politikasıdır. Yürürlük tarihi: 6 Eylül 2026.
+</footer>
+
+</main>
+</body>
+</html>

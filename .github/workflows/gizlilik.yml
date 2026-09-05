@@ -1,0 +1,52 @@
+name: Gizlilik politikasını yayınla
+
+# Google Play, gizlilik politikasının aktif, herkese açık, coğrafi kısıtsız ve
+# düzenlenemez bir HTML adreste durmasını istiyor. Adres:
+# https://ycistak.github.io/Rabi/
+#
+# Yayınlanan site **yalnızca o tek sayfadan** ibaret: aşağıdaki iş, deponun
+# geri kalanını değil `public/gizlilik/` klasörünü yüklüyor. Pages'i "master
+# dalı + /docs klasörü" ile açmak daha kısa olurdu ama o zaman `docs/ekran`
+# altındaki ekran görüntüleri de yayına girerdi.
+#
+# Metnin kaynağı tek: `public/gizlilik/index.html`. Aynı dosya `npm run build`
+# ile APK'nın içine de giriyor; uygulamadaki düz metin karşılığı
+# `lib/veri/yasal.ts` içinde ve ikisi birlikte güncellenmeli.
+
+on:
+  push:
+    branches: [master]
+    paths: ['public/gizlilik/**', '.github/workflows/gizlilik.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  # Pages dağıtımı OIDC ile kimlik doğruluyor; bu izin olmadan `deploy-pages`
+  # yetkisiz hatası veriyor.
+  id-token: write
+
+# Aynı anda iki dağıtım olmasın; sonuncusu geçerli.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  yayinla:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.dagitim.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          # Klasörün tamamı yükleniyor ve içinde tek dosya var: index.html.
+          path: public/gizlilik
+
+      - id: dagitim
+        uses: actions/deploy-pages@v4
