@@ -109,8 +109,6 @@ export function AyarlarEkrani({
   ayarlar,
   setAyarlar,
   bekleyenBildirim,
-  pomodoroAyar,
-  setPomodoroAyar,
   yedeklenecek,
 }: {
   /** Yedeğe giren kullanıcı şablonları — ekranda düzenlenmiyor. */

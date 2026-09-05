@@ -19,8 +19,6 @@ export type Prova = {
   dakika: number
   /** Kitapçıktaki toplam soru. */
   soru: number
-  /** Çip altındaki tek satırlık açıklama. */
-  aciklama: string
 }
 
 /**
@@ -63,26 +61,22 @@ export const PROVALAR: Prova[] = [
     ad: 'TYT',
     dakika: SURE.tyt,
     soru: soruSayisi('tyt'),
-    aciklama: 'Türkçe, Sosyal, Matematik, Fen',
   },
   {
     id: 'ayt',
     ad: 'AYT',
     dakika: SURE.ayt,
-    soru: soruSayisi('ayt'),
     /*
       AYT kitapçığı 160 soruluk ama kimse hepsini çözmüyor — sayısalcı 80'ini,
-      sözelci kendi 80'ini işaretliyor. Süre yine de kitapçığın süresi, o yüzden
-      açıklama soru sayısını değil bunu söylüyor.
+      sözelci kendi 80'ini işaretliyor. Süre yine de kitapçığın tamamının süresi.
     */
-    aciklama: 'Tam kitapçık — kendi testlerini çözersin',
+    soru: soruSayisi('ayt'),
   },
   {
     id: 'ydt',
     ad: 'YDT',
     dakika: SURE.ydt,
     soru: soruSayisi('ydt'),
-    aciklama: 'Yabancı dil testi',
   },
 ]
 

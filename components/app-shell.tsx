@@ -853,8 +853,6 @@ export function AppShell() {
               ayarlar={ayarlar}
               setAyarlar={setAyarlar}
               bekleyenBildirim={bekleyenSayisi(hataBildirimi.bildirimler)}
-              pomodoroAyar={pomodoroAyar}
-              setPomodoroAyar={setPomodoroAyar}
               yedeklenecek={{
                 denemeler,
                 okulYillari,

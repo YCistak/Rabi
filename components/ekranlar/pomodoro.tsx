@@ -815,15 +815,9 @@ function SureAyarlari({
         </div>
       </div>
 
-      {/* Seçili provanın kuralı yazılıyor — mola yok, ders sabit, süre ÖSYM'nin.
-          Seçili değilken açıklama yok: çiplerin üstündeki etiket zaten ne
-          olduğunu söylüyor ve boş durumda duran bir cümle, kartın en çok
-          kullanılan hâlini uzatıyordu. */}
-      {prova && (
-        <p className="mb-3 text-xs text-muted-foreground">
-          {prova.soru} soru · {prova.dakika} dakika · mola yok. {prova.aciklama}
-        </p>
-      )}
+      {/* Seçili provanın altında bir kural cümlesi vardı, kaldırıldı: soru ve
+          dakika sayısı çipin kendisinde yazıyor, mola olmadığı da prova
+          seçilince süre satırlarının çizilmemesinden görülüyor. */}
 
       <div
         className={cn(
