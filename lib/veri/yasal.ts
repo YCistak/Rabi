@@ -173,13 +173,111 @@ const GIZLILIK: YasalBelge = {
 /**
  * Kullanıcı sözleşmesi.
  *
- * @todo Metin kullanıcıdan gelecek.
+ * Play **zorunlu tutmuyor**: sözleşme yalnızca hesap açtıran, satın alma sunan
+ * ya da kullanıcı içeriği barındıran uygulamalarda ve Child Safety Standards
+ * kapsamındakilerde şart; Rabi bunların hiçbiri değil. Yine de yazıldı, çünkü
+ * iki şeyin bir yerde durması gerekiyordu: puan ve sıralama sayılarının tahmin
+ * olduğu (Play'in Yanıltıcı İddialar politikası) ve odak kilidinin bildirim
+ * susturabildiği (kullanıcı önemli bir bildirimi kaçırabilir).
+ *
+ * Gizlilik politikasına **girmedi**: o belge veriyi anlatıyor, bu belge
+ * kullanımı. İkisini birleştirmek, veriyle ilgili bir cümle arayan kullanıcıyı
+ * sorumluluk maddelerinin arasında gezdirirdi.
  */
 const SOZLESME: YasalBelge = {
   id: 'sozlesme',
   ad: 'Kullanıcı Sözleşmesi',
   ozet: 'Uygulamayı kullanma koşulları',
-  bolumler: [],
+  yururlukTarihi: '2026-09-06',
+  bolumler: [
+    {
+      paragraflar: [
+        'Bu sözleşme, Fluxify Interactive tarafından geliştirilen Rabi uygulamasını kullanma koşullarını anlatır. Uygulamayı kurup kullanmaya devam ederek buradaki koşulları kabul etmiş olursun. Kabul etmiyorsan uygulamayı kullanma ve telefonundan kaldır.',
+        '18 yaşından küçüksen uygulamayı velinin bilgisi dahilinde kullanmalısın. Rabi lise öğrencileri için tasarlandı ve 13 yaşından küçüklere yönelik değildir.',
+      ],
+    },
+    {
+      baslik: '1. Rabi nedir, ne değildir',
+      paragraflar: [
+        'Rabi bir çalışma asistanıdır: çalışma süreni tutar, denemelerini ve okul notlarını kaydeder, mini oyunlarla tekrar yapmanı sağlar ve girdiğin verilerden hesaplar yapar.',
+        'Rabi bir eğitim kurumu, kurs, koçluk hizmeti ya da resmî bir kaynak değildir. ÖSYM ile ya da herhangi bir resmî kurumla bağlantısı yoktur, hiçbiri tarafından desteklenmez veya onaylanmaz. Uygulamadaki hiçbir bilgi resmî kılavuzun yerini tutmaz; sınav, başvuru ve tercih işlemlerinde esas alınacak tek kaynak ÖSYM’nin kendi yayımladığı belgelerdir.',
+      ],
+    },
+    {
+      baslik: '2. Puan ve sıralama sayıları tahmindir',
+      paragraflar: [
+        'Uygulamanın gösterdiği puan, net, diploma notu ve sıralama sayıları, senin girdiğin verilerden ve geçmiş yılların açıklanmış yerleştirme sonuçlarından yapılan yaklaşık hesaplardır.',
+        'Bu sayılar bir garanti değildir. Gerçek sınav sonucunu o yıl sınava girenlerin başarısı, soruların zorluğu ve ÖSYM’nin kendi hesaplama yöntemi belirler. Tercih, okul veya bölüm kararlarını yalnızca uygulamadaki sayılara bakarak verme.',
+        'Uygulamadaki bir hesabın yanlış çıkmasından doğan sonuçlardan Fluxify Interactive sorumlu tutulamaz.',
+      ],
+    },
+    {
+      baslik: '3. Soru havuzu hata içerebilir',
+      paragraflar: [
+        'Mini oyunlardaki sorular elle yazıldı ve içlerinde yanlış cevap ya da bozuk yazım bulunabilir. Bir soruyu hatalı bulursan yanındaki bayrak düğmesiyle bildir; bildirimler okunuyor ve sorular düzeltiliyor.',
+        'Bildirim sistemini gerçek bir hata olmadan doldurmak, aynı soruyu tekrar tekrar bildirmek ya da otomatik araçlarla bildirim göndermek yasaktır. Günlük bildirim sınırı bu yüzden var.',
+      ],
+    },
+    {
+      baslik: '4. Odak kilidi hakkında bilmen gerekenler',
+      paragraflar: [
+        'Odak kilidi, senin seçtiğin uygulamaları çalışma seansı boyunca engeller ve istersen o uygulamaların bildirimlerini de siler. Bu özellik yalnızca sen açtığında ve seçtiğin uygulamalar için çalışır.',
+        'Susturulan bildirimler arasında sana ulaşmaya çalışan biri olabilir. Acil durumda ulaşılman gerekiyorsa kilit listesine telefon ve mesaj uygulamalarını ekleme; seansı istediğin an bitirebilirsin. Kaçırdığın bir bildirimden doğan sonuçlardan Fluxify Interactive sorumlu değildir.',
+        'Odak kilidi bir güvenlik ya da ebeveyn denetimi aracı değildir; kendi kararınla kendine koyduğun bir engeldir ve istediğin zaman kaldırabilirsin.',
+      ],
+    },
+    {
+      baslik: '5. Verinin sorumluluğu sende',
+      paragraflar: [
+        'Rabi’nin sunucusu yok; denemelerin, notların, fotoğrafların ve çalışma geçmişin yalnızca telefonunda duruyor. Bunun anlamı şudur: uygulamayı silersen, telefonun bozulur ya da kaybolursa veriler geri getirilemez.',
+        'Ayarlar’daki “Yedeği indir” ile verinin bir dosyasını alabilirsin. Yedek almak senin sorumluluğundur; kaybolan veriden Fluxify Interactive sorumlu tutulamaz.',
+        'Verinin nasıl işlendiği ayrı bir belgede: Gizlilik Politikası.',
+      ],
+    },
+    {
+      baslik: '6. Ücret ve reklam',
+      paragraflar: [
+        'Rabi ücretsizdir. Uygulama içi satın alma, abonelik ve reklam yoktur; ücretli bir özellik eklenmesi hâlinde bu sözleşme güncellenir ve değişiklik uygulama içinde duyurulur.',
+        'Uygulamanın tek resmî dağıtım yeri Google Play’dir. Başka bir yerden indirilen dosyalar değiştirilmiş olabilir; onlardan doğacak zarardan sorumlu değiliz.',
+      ],
+    },
+    {
+      baslik: '7. Kullanım kuralları',
+      paragraflar: [
+        'Uygulamayı tersine mühendislikle çözmeye, kaynak koduna dönüştürmeye, değiştirilmiş sürümünü dağıtmaya ya da içeriğini izinsiz kopyalayıp yayımlamaya çalışma.',
+        'Uygulamanın çalışmasını bozmaya, gönderilen bildirimleri sahte veriyle doldurmaya veya başkalarının kullanımını engellemeye yönelik davranışlar bu sözleşmenin ihlalidir.',
+      ],
+    },
+    {
+      baslik: '8. Haklar',
+      paragraflar: [
+        'Uygulamanın kodu, tasarımı, maskotu, soru havuzu ve metinleri Fluxify Interactive’e aittir. Sana verilen şey uygulamayı kişisel olarak kullanma hakkıdır; mülkiyeti devredilmez.',
+        'Uygulamadaki lo-fi parçalar CC0 1.0 (kamu malı) lisanslı Open Lo-Fi derlemesinden alınmıştır. Uygulama ayrıca açık kaynaklı bileşenler kullanır ve bunların lisansları kendi sahiplerine aittir.',
+        'Telefonunda oluşturduğun veriler senindir; onlar üzerinde hiçbir hak talep etmiyoruz.',
+      ],
+    },
+    {
+      baslik: '9. Garanti ve sorumluluk',
+      paragraflar: [
+        'Rabi “olduğu gibi” sunulur. Uygulamanın hatasız çalışacağı, her cihazda aynı davranacağı, kesintisiz olacağı ya da belirli bir sonucu sağlayacağı garanti edilmez.',
+        'Yürürlükteki mevzuatın izin verdiği ölçüde Fluxify Interactive, uygulamanın kullanımından doğan dolaylı zararlardan sorumlu değildir. Bu madde, tüketici mevzuatının sana tanıdığı hakları ortadan kaldırmaz.',
+      ],
+    },
+    {
+      baslik: '10. Değişiklikler ve sona erme',
+      paragraflar: [
+        'Bu sözleşme güncellenebilir; güncel metin her zaman uygulamanın içinde durur ve yürürlük tarihi en üstte yazar. Önemli bir değişiklik olursa uygulama içinde duyurulur.',
+        'Uygulamayı istediğin zaman silerek bu sözleşmeyi sona erdirebilirsin. Sözleşmeyi ihlal eden bir kullanım hâlinde uygulamayı kullanma hakkın sona erer.',
+      ],
+    },
+    {
+      baslik: '11. Uygulanacak hukuk ve iletişim',
+      paragraflar: [
+        'Bu sözleşme Türkiye Cumhuriyeti hukukuna tabidir. Uyuşmazlıklarda tüketici mevzuatının öngördüğü merciler yetkilidir.',
+        'Soruların için: fluxifyinteractive@gmail.com',
+      ],
+    },
+  ],
 }
 
 /**
