@@ -100,6 +100,80 @@ export function konumuSinirla(deger: number): number {
 }
 
 /**
+ * İki kâğıdın arasında kalması gereken en az pay (oran).
+ *
+ * Üst üste binmek serbest: tahtadaki yerleşim kullanıcının kurduğu gruplama ve
+ * iki kâğıdın köşe köşe değmesi de o bilginin parçası. Yasak olan **tam
+ * örtüşme** — altta kalan kâğıt hiç görünmüyorsa okunamıyor, tutulamıyor ve
+ * kullanıcı onu kaybettiğini sanıyor.
+ *
+ * Ölçü tahtanın kendi oran uzayında: `EN_AZ_PAY_X` bir kâğıdın yanından,
+ * `EN_AZ_PAY_Y` üstünden görünecek şeridin genişliği. Dikey pay tesadüfi değil,
+ * kâğıdın **tutma şeridi** kadar (700 piksellik tahtada ~45 piksel): altta
+ * kalan kâğıt yalnızca görünür değil, aynı zamanda tutulup çekilebilir kalıyor.
+ * Yatay pay daha büyük, çünkü kâğıt yatayda tahtanın yarısı kadar yer kaplıyor.
+ */
+export const EN_AZ_PAY_X = 0.12
+export const EN_AZ_PAY_Y = 0.08
+
+/**
+ * Aday konumların tarandığı ızgaranın yarıçapı (adım sayısı).
+ *
+ * Adım payın kendisi kadar, yani `1 / EN_AZ_PAY_Y` ≈ 13 adım tahtanın bir
+ * ucundan ötekine yetiyor. Kâğıt sayısı ondan fazla olamadığı için tarama her
+ * zaman boş bir yer buluyor.
+ */
+const ARAMA_YARICAPI = 13
+
+/** İki konum birbirini tümüyle kapatıyor mu — çakışma **iki eksende birden**. */
+function cakisirMi(ax: number, ay: number, bx: number, by: number): boolean {
+  return Math.abs(ax - bx) < EN_AZ_PAY_X && Math.abs(ay - by) < EN_AZ_PAY_Y
+}
+
+/**
+ * Konumu, hiçbir kâğıdı tümüyle kapatmayacak **en yakın** yere çeker.
+ *
+ * Bırakılan yer boşsa hiç dokunulmuyor: kullanıcı kâğıdı nereye koyduysa oraya
+ * oturuyor ve tek eksende yaklaşmak serbest — kâğıdın öbür kenarı açıkta
+ * kalıyor. Yalnızca iki eksende birden payın altına inen konum taşınıyor.
+ *
+ * Çakışan kâğıdın karşı yönüne itmek yerine ızgara taranıyor: itme, ikinci bir
+ * kâğıda çarpıp geri dönebiliyor ve kalabalık bir tahtada hiç durulmuyordu.
+ * Tarama bırakılan noktanın çevresinden dışa doğru gidiyor, yani bulunan yer
+ * hep parmağın kalktığı yere en yakın boşluk oluyor.
+ */
+export function ayrikKonum(
+  notlar: readonly NotKagidi[],
+  id: string,
+  x: number,
+  y: number,
+): { x: number; y: number } {
+  const hedefX = konumuSinirla(x)
+  const hedefY = konumuSinirla(y)
+  const otekiler = notlar.filter((n) => n.id !== id)
+  const bosMu = (px: number, py: number) =>
+    !otekiler.some((n) => cakisirMi(px, py, n.x, n.y))
+
+  if (bosMu(hedefX, hedefY)) return { x: hedefX, y: hedefY }
+
+  const adaylar: { x: number; y: number; uzaklik: number }[] = []
+  for (let i = -ARAMA_YARICAPI; i <= ARAMA_YARICAPI; i++) {
+    for (let j = -ARAMA_YARICAPI; j <= ARAMA_YARICAPI; j++) {
+      if (i === 0 && j === 0) continue
+      const ax = konumuSinirla(hedefX + i * EN_AZ_PAY_X)
+      const ay = konumuSinirla(hedefY + j * EN_AZ_PAY_Y)
+      adaylar.push({ x: ax, y: ay, uzaklik: (ax - hedefX) ** 2 + (ay - hedefY) ** 2 })
+    }
+  }
+  adaylar.sort((a, b) => a.uzaklik - b.uzaklik)
+
+  const uygun = adaylar.find((a) => bosMu(a.x, a.y))
+  // Boş yer yoksa kâğıt bırakıldığı yerde kalıyor: dokunuşu yok saymak,
+  // kâğıdı bir başkasının altına gizlemekten daha kötü.
+  return uygun ? { x: uygun.x, y: uygun.y } : { x: hedefX, y: hedefY }
+}
+
+/**
  * Kayıttan okunan tahtayı güncel şemaya uydurur.
  *
  * `localStorage` elle kurcalanabiliyor ve eski sürümde olmayan bir alan
@@ -149,7 +223,10 @@ export function notEkle(
   gun: string,
 ): NotKagidi[] | null {
   if (!yerVarMi(notlar)) return null
-  const { x, y } = yeniKonum(notlar.length)
+  // Izgara yeri kâğıtlar taşınmışsa dolu olabiliyor; yeni kâğıt hiçbirini
+  // kapatmayacak en yakın boşluğa oturuyor.
+  const ilk = yeniKonum(notlar.length)
+  const { x, y } = ayrikKonum(notlar, id, ilk.x, ilk.y)
   return [
     ...notlar,
     { id, metin: '', renk: siradakiRenk(notlar.length), x, y, bitti: false, gun },
@@ -194,7 +271,8 @@ export function notTasi(
   x: number,
   y: number,
 ): NotKagidi[] {
-  return notuDegistir(notlar, id, (n) => ({ ...n, x: konumuSinirla(x), y: konumuSinirla(y) }))
+  const konum = ayrikKonum(notlar, id, x, y)
+  return notuDegistir(notlar, id, (n) => ({ ...n, ...konum }))
 }
 
 export function notuIsaretle(notlar: readonly NotKagidi[], id: string): NotKagidi[] {

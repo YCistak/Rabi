@@ -553,9 +553,6 @@ function BolenSecimi({
           </Cip>
         ))}
       </div>
-      <p className="mt-2 text-xs text-muted-foreground">
-        Seçimin saklanır; en az bir bölen açık kalmalı.
-      </p>
     </div>
   )
 }

@@ -744,12 +744,6 @@ export function PomodoroEkrani({
           kullanılmıyor ve kilitli bir kutu, kullanılıyormuş izlenimi verirdi.
           Ayarlar kaybolmuyor — prova kapatılınca aynı değerlerle geri geliyor. */}
       {prova === null && <SureAyarlari ayar={ayar} setAyar={setAyar} kilitli={calisiyor} />}
-
-      <Not className="mt-4">
-        {prova
-          ? `Sayaç bitiş saatine göre çalışıyor — ${prova.dakika} dakika sonra, telefon kilitli olsa da bildirim gelir.`
-          : 'Sayaç bitiş saatine göre çalışıyor — telefonu kilitlesen de doğru zamanda biter ve bildirim gelir.'}
-      </Not>
     </div>
   )
 }

@@ -358,6 +358,21 @@ Soru sayıları elle yazılmıyor, `OSYM_TEST_SORU`dan toplanıyor: aynı sayı
 değiştiğinde birinde eski kalırdı. Süreler ise elle yazılı — ÖSYM'nin kararı,
 soru sayısından türetilemez.
 
+### Oyunda lo-fi çalmıyor
+
+Ayarlardaki **"Müzik parçası"** satırı (Mod müziği / Lo-fi) kaldırıldı: turda
+artık her zaman modun kendi parçası çalıyor. Tempo turun kuralının parçası
+(`mod-muzigi.ts` — Sıradan hızlanır, Turbo son çeyrekte vites atar, Ani Ölüm
+hiç yavaşlamaz); onu seçilebilir kılmak, kuralı bir zevk meselesi gibi
+gösteriyordu. **"Mini oyun müziği"** anahtarı duruyor — müziği kapatmak hâlâ
+kullanıcının kararı.
+
+`Ayarlar.oyunMuzikTuru` kayıtta ve yedekte duruyor ama hiçbir yerden
+okunmuyor; alanı silmek eski yedekleri geçersiz kılardı (`varsayilanSablonId`
+ile aynı gerekçe). Lo-fi çalarının kendisi de duruyor: aşağıdaki ses paneli
+**Pomodoro'nun** paneli ve orada seçim hâlâ anlamlı — çalışma turunda çalan şey
+bir modun temposu değil, arka plan müziği.
+
 ### Müzik seçilmeden önce dinleniyor
 
 Ses panelindeki on iki lo-fi parçanın arasından "Glow on the Overpass"i **ada
@@ -1187,7 +1202,26 @@ kez saklamak olurdu ve iki liste zamanla birbirinden ayrılırdı.
 Araçlardaki not kâğıtları (`lib/yapilacaklar.ts`). Liste değil tahta: kâğıtlar
 istenen yere sürükleniyor ve konum kullanıcının verdiği bilgi — bir listeye
 düzleştirmek onu atmak olurdu. En fazla on kâğıt; sınır tahtanın kendisinden
-geliyor, üst üste binen kâğıtlar okunmuyor.
+geliyor.
+
+### Kâğıtlar binebiliyor, birbirini kapatamıyor
+
+Üst üste binmek serbest — iki kâğıdın köşe köşe değmesi kullanıcının kurduğu
+gruplamanın parçası. Yasak olan **tam örtüşme**: altta kalan kâğıt hiç
+görünmüyorsa okunamıyor, tutulamıyor ve kullanıcı onu kaybettiğini sanıyor.
+
+Kural `ayrikKonum` içinde ve hem taşımaya hem yeni kâğıda uygulanıyor
+(`notTasi`, `notEkle`). Çakışma **iki eksende birden** payın altında kalmak
+demek; tek eksende yaklaşmak kâğıdın öbür kenarını açıkta bırakıyor.
+`EN_AZ_PAY_Y` tesadüfi değil, kâğıdın **tutma şeridi** kadar: altta kalan kâğıt
+yalnızca görünmüyor, tutulup çekilebiliyor da.
+
+Çakışan kâğıdın karşı yönüne **itmek** ilk denenen yoldu ve kalabalık tahtada
+hiç durmuyordu: itilen kâğıt ikinci bir kâğıda çarpıp geri dönüyor, döngü
+salınıyordu. Şimdi bırakılan noktanın çevresi dışa doğru taranıyor ve bulunan
+yer hep parmağın kalktığı yere **en yakın** boşluk oluyor. Bırakılan yer zaten
+boşsa hiç dokunulmuyor — kullanıcının koyduğu yeri düzeltmek, ancak
+düzeltilecek bir şey varsa yapılır.
 
 Tahta **günlük**: her kâğıt yerel günüyle (`gun`) duruyor ve gün dönünce
 `gununNotlari` onu eliyor. Dün yazdığını bugün de tahtada gören kullanıcı,
