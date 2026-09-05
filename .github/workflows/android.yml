@@ -64,6 +64,24 @@ jobs:
             echo "::warning::KEYSTORE_BASE64 yok; paketler imzasız üretilecek (yalnızca deneme)."
           fi
 
+      # google-services.json depoda değil (herkese açık depo). Olmadan derleme
+      # çalışmaya devam eder ama **çökme raporlaması olmadan** — ve CI'nin
+      # ürettiği paketler Play'e giden paketler. Etiketli sürümde bu sessizce
+      # olursa üretimde hiç rapor gelmez, o yüzden orada hata veriliyor.
+      - name: Firebase yapılandırmasını yaz
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            printf '%s' "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
+            echo "google-services.json yazıldı."
+          elif [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            echo "::error::GOOGLE_SERVICES_JSON tanımlı değil — yayına giden pakette çökme raporlaması olmaz."
+            exit 1
+          else
+            echo "::warning::GOOGLE_SERVICES_JSON yok; paketler çökme raporlaması olmadan derlenecek."
+          fi
+
       # AAB Play'e yüklenen biçim, APK doğrudan kurulum (arkadaşlara dağıtım)
       # için. Play 2021'den beri yeni uygulamalarda APK kabul etmiyor, o yüzden
       # `bundleRelease` olmadan yayına çıkılamıyor.

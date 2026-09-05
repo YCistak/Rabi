@@ -37,6 +37,8 @@ import { hatirlatmaIptal, hatirlatmaPlanla, pomodoroIptal } from '@/lib/bildirim
 import { odakKilidiniBitir } from '@/lib/odak-kilidi'
 import { bekleyenSayisi } from '@/lib/hata-bildirimi'
 import { useHataBildirimi } from '@/lib/hata-kuyrugu'
+import { useCokmeRaporu } from '@/lib/cokme-izni'
+import { CokmeSorusu } from '@/components/cokme-sorusu'
 import { bugun } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import type { KonuDersId, KonuSinifi } from '@/lib/konu'
@@ -223,6 +225,13 @@ export function AppShell() {
    * içinde; buradan yalnızca ayarın açık olup olmadığı geçiyor.
    */
   const hataBildirimi = useHataBildirimi(ayarlar.hataBildirimiAcik)
+  /**
+   * Çökme raporlaması. Global JS hata yakalayıcısını da bu kanca kuruyor,
+   * onaydan bağımsız olarak — yakalanan hata onay yokken zaten hiçbir yere
+   * gitmiyor, ama onay verilen an öncesindeki hatalar kaybolmasın diye
+   * dinleyiciler baştan takılı duruyor.
+   */
+  const cokme = useCokmeRaporu()
   /** İzlenmiş haftalık özetlerin hafta başı tarihleri. */
   /*
     Bildirim kuyruğu. Aynı anda birden fazla rozet gelebiliyor ve ekranda hep
@@ -846,6 +855,8 @@ export function AppShell() {
               bekleyenBildirim={bekleyenSayisi(hataBildirimi.bildirimler)}
               bildirimIzni={hataBildirimi.izin}
               onBildirimIzni={hataBildirimi.onIzin}
+              cokmeSorulsun={cokme.sorulsun}
+              onCokmeSorulsun={cokme.onSorulsun}
               yedeklenecek={{
                 denemeler,
                 okulYillari,
@@ -897,6 +908,7 @@ export function AppShell() {
         />
       )}
       {acilisKatmani}
+      <CokmeSorusu kol={cokme} />
       {gecis !== 'yok' && <MaskotGecisi soluyor={gecis === 'soluyor'} />}
     </>
   )

@@ -18,7 +18,19 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
     gönderilen veri `formVerisi()` içinde tek tek sayılan yedi alandan ibaret (soru
     kimliği, oyun, soru metni, doğru sanılan cevap, sebep, sürüm, anonim cihaz
     numarası). Kullanıcı Ayarlar'dan kapatabiliyor, ne gönderildiği orada yazıyor.
-    Bu istisnayı genişletme — başka hiçbir yerden ağa çıkılmıyor.
+    Bu istisnayı genişletme.
+  - **İkinci istisna: çökme raporları.** WebView uygulamasında çökmenin sebebi
+    çoğu zaman uygulamanın kendi kodu değil, cihazdaki Android System WebView
+    sürümü oluyor; bunu kullanıcıdan öğrenmenin yolu yok. Firebase Crashlytics
+    kullanılıyor. Ağa çıkan tek yer `lib/cokme.ts` (köprü) ve yerli taraftaki
+    `CokmeRaporu.kt`; başka hiçbir dosya `FirebaseCrashlytics` import etmiyor.
+    Crashlytics'in otomatik gönderimi **hiçbir zaman açılmıyor**
+    (`AndroidManifest.xml` → `firebase_crashlytics_collection_enabled=false`
+    kalıcı): çökme cihazda saklanıyor ve uygulama yeniden açıldığında
+    gönderilsin mi diye **her seferinde soruluyor**. Ayarlardaki anahtar
+    yalnızca soruyu kapatmaya yarıyor, izin vermeye değil.
+    `firebase-analytics` bilerek eklenmedi.
+    Bu iki istisnanın dışında ağa çıkılmıyor.
 - **State kütüphanesi yok.** `AppShell` üst düzey state'in sahibi, props ile aşağı geçer.
   Yeni bir global state ihtiyacı çıkarsa önce prop ile çözmeyi dene.
 - **Saf mantık `lib/` altında.** React'e bağlı olmayan her hesap `lib/`'e; bileşenler

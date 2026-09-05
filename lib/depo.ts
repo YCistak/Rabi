@@ -142,8 +142,16 @@ export const ANAHTARLAR = {
    * açardı.
    */
   hataBildirimleri: 'rabi-hata-bildirimleri',
-  /** Bildirimleri gruplamaya yarayan anonim cihaz numarası; yedeğe girmiyor. */
-  cihazKimligi: 'rabi-cihaz-kimligi',
+  /**
+   * Bildirimleri gruplamaya yarayan okunur cihaz adı (`mavi-tavsan-42`);
+   * yedeğe girmiyor.
+   *
+   * Anahtar bilerek yeni: eski `rabi-cihaz-kimligi` altında okunamayan
+   * numaralar (`mtoptoc2-1zvbcy`) duruyordu ve hepsinin yenilenmesi istendi.
+   * Anahtarı değiştirmek taşıma kodu yazmadan bunu yapıyor — eski değer
+   * okunmuyor, ilk gerekişinde yeni ad üretiliyor.
+   */
+  cihazKimligi: 'rabi-cihaz-adi',
   /**
    * Hatalı soru bildirimlerinin gönderilmesine izin verildi mi.
    *
@@ -156,6 +164,17 @@ export const ANAHTARLAR = {
    * Yedeğe **girmiyor**: rıza cihaz başına verilir, başka telefona taşınmaz.
    */
   bildirimIzni: 'rabi-bildirim-izni',
+  /**
+   * Çökmeden sonra rapor sorusu çıksın mı (varsayılan `true`).
+   *
+   * Rıza artık önceden değil, **her çökmeden sonra tek tek** alınıyor; bu
+   * anahtar yalnızca "bana bunu hiç sorma" diyen kullanıcı için. Kapalıyken
+   * bekleyen raporlar sessizce siliniyor — cihazda süresiz bekleyen bir kuyruk
+   * tutmak, sorulmasını istememekle aynı şey değil.
+   *
+   * Yedeğe **girmiyor**: rıza cihaz başına verilir.
+   */
+  cokmeSorusu: 'rabi-cokme-sorusu',
   /**
    * Yapılacaklar tahtasındaki not kâğıtları — metin, renk ve konum.
    *

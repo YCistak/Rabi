@@ -1,4 +1,4 @@
-package com.rabi.app.odak
+package com.fluxifyinteractive.rabi.odak
 
 import android.content.Context
 import android.graphics.PixelFormat
@@ -11,7 +11,7 @@ import android.view.WindowManager
 import android.widget.ProgressBar
 import android.widget.TextView
 import java.util.Locale
-import com.rabi.app.R
+import com.fluxifyinteractive.rabi.R
 
 /**
  * Yasaklı uygulama öne geldiğinde üstüne konan tam ekran katman.

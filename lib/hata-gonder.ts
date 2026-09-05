@@ -4,8 +4,9 @@
  * `AGENTS.md` "sunucu yok, dış servise çıkma" diyor; burası o kuralın bilinçli
  * ve dar istisnası. Dışarı çıkan veri `formVerisi()` içinde tek tek sayılı
  * yedi alandan ibaret: soru kimliği, oyun, soru metni, uygulamanın doğru
- * sandığı cevap, sebep, sürüm ve anonim bir cihaz numarası. Ad, e-posta, puan,
- * deneme/okul/fotoğraf verisi buradan geçmiyor.
+ * sandığı cevap, sebep, sürüm ve cihaz alanı (telefon modeli + ada bağlı
+ * olmayan okunur bir ad). Ad, e-posta, puan, deneme/okul/fotoğraf verisi
+ * buradan geçmiyor.
  *
  * `CapacitorHttp` kullanılıyor, `fetch` değil: istek native tarafta atıldığı
  * için CORS devreye girmiyor ve **gerçek durum kodu** dönüyor. `fetch` ile
@@ -15,11 +16,12 @@
  */
 
 import { App } from '@capacitor/app'
+import { Device } from '@capacitor/device'
 import { Capacitor, CapacitorHttp } from '@capacitor/core'
 import { ANAHTARLAR, depo } from './depo'
 import { formVerisi, type HataBildirimi } from './hata-bildirimi'
 import { ALANLAR, adresHazirMi, formAdresi } from './veri/bildirim-adresi'
-import { yeniId } from './utils'
+import { yeniCihazAdi } from './cihaz-adi'
 
 export interface GonderimSonucu {
   gonderilen: string[]
@@ -29,18 +31,47 @@ export interface GonderimSonucu {
 const BOS: GonderimSonucu = { gonderilen: [], basarisiz: [] }
 
 /**
- * Cihazı temsil eden anonim numara.
+ * Cihaza verilen okunur ad — `mavi-tavsan-42`.
  *
  * Kime ait olduğu bilinemiyor; işi aynı kişiden gelen bildirimleri tabloda
  * gruplamak ve düğmeye dayanan birini ayırt edebilmek. İlk gerekişinde bir kez
  * üretiliyor, sonra saklanıyor.
+ *
+ * Önce `yeniId()` kullanılıyordu (`mtoptoc2-1zvbcy`) ve tabloda gözle ayırt
+ * edilemiyordu; oysa "bu satırlar aynı kişiden mi" sorusu gözle cevaplanıyor.
  */
 export function cihazKimligi(): string {
   const mevcut = depo.oku<string>(ANAHTARLAR.cihazKimligi, '')
   if (mevcut) return mevcut
-  const yeni = yeniId()
+  const yeni = yeniCihazAdi()
   depo.yaz(ANAHTARLAR.cihazKimligi, yeni)
   return yeni
+}
+
+/**
+ * Bildirimle giden cihaz alanı: `Samsung SM-A536B (mavi-tavsan-42)`.
+ *
+ * Model **neden gerekiyor:** bildirimlerin bir kısmı sorunun kendisiyle değil
+ * ekranla ilgili çıkıyor (metin taşıyor, seçenek görünmüyor) ve o tür bir
+ * arıza her telefonda değil belirli ekran ölçülerinde oluyor. Model olmadan
+ * "bende öyle görünmüyor" deyip kapanan bir yol.
+ *
+ * Model kişiyi tanımlamıyor — aynı modelden milyonlarca cihaz var — ama yine de
+ * **cihaz bilgisi**: Ayarlar'daki açıklama, `AGENTS.md` ve Play'in Data Safety
+ * formu bunu sayıyor. Alan eklenirse o üç yer de güncellenmeli.
+ *
+ * Tarayıcıda model yok; orada yalnızca ad dönüyor.
+ */
+export async function cihazAlani(): Promise<string> {
+  const ad = cihazKimligi()
+  if (!Capacitor.isNativePlatform()) return `web (${ad})`
+  try {
+    const bilgi = await Device.getInfo()
+    const model = [bilgi.manufacturer, bilgi.model].filter(Boolean).join(' ').trim()
+    return model ? `${model} (${ad})` : ad
+  } catch {
+    return ad
+  }
 }
 
 /** Yüklü APK'nın sürümü; tarayıcıda çalışırken `web`. */
@@ -83,7 +114,7 @@ function govde(veri: Record<string, string>): Record<string, string> {
 export async function bildirimleriGonder(bekleyen: HataBildirimi[]): Promise<GonderimSonucu> {
   if (bekleyen.length === 0 || !gonderilebilirMi()) return BOS
 
-  const cihaz = cihazKimligi()
+  const cihaz = await cihazAlani()
   const surum = await surumAl()
   const sonuc: GonderimSonucu = { gonderilen: [], basarisiz: [] }
 

@@ -1,4 +1,4 @@
-package com.rabi.app;
+package com.fluxifyinteractive.rabi;
 
 import android.app.ActivityManager;
 import android.graphics.Bitmap;
@@ -9,7 +9,10 @@ import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import androidx.core.splashscreen.SplashScreen;
 import com.getcapacitor.BridgeActivity;
-import com.rabi.app.odak.OdakKilidiEklentisi;
+import com.fluxifyinteractive.rabi.cokme.CokmeEklentisi;
+import com.fluxifyinteractive.rabi.cokme.RaporlayanWebChromeClient;
+import com.fluxifyinteractive.rabi.cokme.RaporlayanWebViewClient;
+import com.fluxifyinteractive.rabi.odak.OdakKilidiEklentisi;
 
 public class MainActivity extends BridgeActivity {
 
@@ -27,9 +30,30 @@ public class MainActivity extends BridgeActivity {
         // Uygulamanın kendi eklentisi; npm paketi olmadığı için Capacitor onu
         // kendiliğinden bulamıyor, elle kaydedilmesi gerekiyor.
         registerPlugin(OdakKilidiEklentisi.class);
+        registerPlugin(CokmeEklentisi.class);
         SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
+        webHatalariniRaporla();
         gorevTaniminiAyarla();
+    }
+
+
+    /**
+     * WebView hatalarını Crashlytics'e bağlar.
+     *
+     * `super.onCreate` sonrasında çağrılmak **zorunda**: köprü (bridge) ve
+     * WebView orada kuruluyor (`Bridge.java:280-281`), öncesinde ikisi de
+     * null olurdu.
+     *
+     * `WebViewClient` için Capacitor'ın kendi setter'ı var
+     * (`Bridge.java:1456`) ve iç alanı da güncellediği için tercih ediliyor.
+     * `WebChromeClient` için böyle bir setter yok, doğrudan WebView'e
+     * veriliyor — Capacitor o referansı kendisi saklamıyor, sorun çıkarmıyor.
+     */
+    private void webHatalariniRaporla() {
+        if (bridge == null || bridge.getWebView() == null) return;
+        bridge.setWebViewClient(new RaporlayanWebViewClient(bridge));
+        bridge.getWebView().setWebChromeClient(new RaporlayanWebChromeClient(bridge));
     }
 
     /**

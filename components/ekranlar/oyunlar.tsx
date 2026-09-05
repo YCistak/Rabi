@@ -43,6 +43,7 @@ import {
   type OyunModu,
 } from '@/lib/oyunlar/mod'
 import { muzikBaslat, muzikDuraklat, muzikDurdur } from '@/lib/oyunlar/mod-muzigi'
+import { useTurSonu } from '@/lib/oyunlar/tur-durumu'
 import { useGeriKatmani } from '@/lib/geri'
 import { useUygulamaGorunur } from '@/lib/gorunurluk'
 import { bugun } from '@/lib/utils'
@@ -222,7 +223,17 @@ export function OyunlarEkrani({
   // parçası (`mod-muzigi.ts`), arkada çalan bir liste değil.
   const gorunur = useUygulamaGorunur()
 
-  const muzikCalsin = acikOyun !== null && muzikAcik
+  /*
+    Tur sonu ekranı açıkken müzik susuyor.
+
+    Ölçü eskiden yalnızca "oyun ekranı açık mı" idi; özet ekranı da o ekranın
+    bir aşaması olduğu için parça tur bittikten sonra çalmaya devam ediyordu.
+    Bayrağı `TurSonu` kuruyor (`lib/oyunlar/tur-durumu.ts`).
+
+    Ölçü tek yerde duruyor: turun sesi tur bitince susmalı.
+  */
+  const turSonu = useTurSonu()
+  const muzikCalsin = acikOyun !== null && muzikAcik && !turSonu
 
   /*
     Mod müziği: parçayı tur modu seçiyor (`lib/oyunlar/mod-muzigi.ts`).

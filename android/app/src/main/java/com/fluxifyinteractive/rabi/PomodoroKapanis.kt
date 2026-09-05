@@ -1,4 +1,4 @@
-package com.rabi.app
+package com.fluxifyinteractive.rabi
 
 import android.app.AlarmManager
 import android.app.NotificationManager
@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.capacitorjs.plugins.localnotifications.TimedNotificationPublisher
-import com.rabi.app.odak.OdakServisi
+import com.fluxifyinteractive.rabi.odak.OdakServisi
 
 /**
  * Uygulama **kapatılınca** pomodoro turundan geriye kalanları toplar.
