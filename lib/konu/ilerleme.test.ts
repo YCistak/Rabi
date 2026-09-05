@@ -18,7 +18,7 @@ const ornekKonu = konu('k1', 'Birinci Konu', [
   kart('B', 'b metni'),
 ])
 const ikinciKonu = konu('k2', 'İkinci Konu', [kart('C', 'c metni')])
-const ornekProgram = program('biyoloji', 9, [
+const ornekProgram = program('biyoloji', 9, 'Yaşamdan organizasyona', [
   tema('t1', 'Tema Bir', [ornekKonu, ikinciKonu]),
 ])
 
@@ -37,12 +37,12 @@ function bilinmeyen(id: string, ders: BilinmeyenKart['ders'] = 'biyoloji'): Bili
 
 describe('ilerleme', () => {
   it('deste bitmeden konu tamamlanmış sayılmaz', () => {
-    const yarim = ilerlemeyiYaz({}, 'k1', { bilinen: 1, bilinmeyen: 0, bitti: false }, '2026-09-01')
+    const yarim = ilerlemeyiYaz({}, 'k1', { okunan: 1, bitti: false }, '2026-09-01')
     expect(konuBitti(yarim, 'k1')).toBe(false)
   })
 
   it('biten konu haritada tamamlanmış görünür', () => {
-    const tam = ilerlemeyiYaz({}, 'k1', { bilinen: 2, bilinmeyen: 0, bitti: true }, '2026-09-01')
+    const tam = ilerlemeyiYaz({}, 'k1', { okunan: 2, bitti: true }, '2026-09-01')
     expect(konuBitti(tam, 'k1')).toBe(true)
     expect(temadaBiten(ornekProgram.temalar[0], tam)).toBe(1)
     expect(dersOrani(ornekProgram, tam)).toEqual({ biten: 1, toplam: 2 })
@@ -50,15 +50,10 @@ describe('ilerleme', () => {
 
   /** Aynı konu yeniden okunabiliyor; kayıt birikmiyor, son okuma kazanıyor. */
   it('aynı konu ikinci kez okunursa kayıt tazelenir', () => {
-    let ilerlemeler = ilerlemeyiYaz({}, 'k1', { bilinen: 0, bilinmeyen: 2, bitti: true }, '2026-09-01')
-    ilerlemeler = ilerlemeyiYaz(
-      ilerlemeler,
-      'k1',
-      { bilinen: 2, bilinmeyen: 0, bitti: true },
-      '2026-09-05',
-    )
+    let ilerlemeler = ilerlemeyiYaz({}, 'k1', { okunan: 1, bitti: false }, '2026-09-01')
+    ilerlemeler = ilerlemeyiYaz(ilerlemeler, 'k1', { okunan: 2, bitti: true }, '2026-09-05')
     expect(Object.keys(ilerlemeler)).toHaveLength(1)
-    expect(ilerlemeler.k1).toEqual({ bilinen: 2, bilinmeyen: 0, bitti: true, tarih: '2026-09-05' })
+    expect(ilerlemeler.k1).toEqual({ okunan: 2, bitti: true, tarih: '2026-09-05' })
   })
 })
 

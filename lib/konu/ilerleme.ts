@@ -5,13 +5,31 @@ import type { BilgiKarti, DersProgrami, Konu, KonuDersId, KonuSinifi, Tema } fro
  *
  * İki ayrı şey tutuluyor: hangi konunun destesi bitirildi (`KonuIlerlemesi`)
  * ve kullanıcının "bilmiyorum" dediği kartlar (`BilinmeyenKart`).
+ *
+ * **Bilinmeyenler bankası şu an arayüze bağlı değil.** Deste karar sormayı
+ * bıraktı (bkz. `components/konu/kart-destesi.tsx`), yani bankaya yeni kayıt
+ * düşmüyor ve haritadaki girişi kaldırıldı. Kod ve depo anahtarı duruyor:
+ * kayıtlı kartları silmek, o listeyi biriktirmiş kullanıcının verisini
+ * atmak olurdu ve haritanın o köşesi başka bir iş için ayrıldı.
  */
 
 export type KonuIlerlemesi = {
-  /** Kullanıcının "biliyorum" dediği kart sayısı. */
-  bilinen: number
-  /** "Bilmiyorum" dediği kart sayısı. */
-  bilinmeyen: number
+  /**
+   * Okunan kart sayısı.
+   *
+   * Deste artık karar sormuyor, yalnızca ileri geri geziliyor; ölçülebilen
+   * tek şey kaç karta kadar gidildiği. Alan **isteğe bağlı**: eski
+   * kayıtlarda yerine `bilinen`/`bilinmeyen` vardı ve o kayıtlar duruyor —
+   * silinmeleri, bitirilmiş konuların haritada bitmemiş görünmesi demekti.
+   */
+  okunan?: number
+  /**
+   * Deste bitince sorulan sorulardan kaç tanesine "doğru" dendiği.
+   *
+   * Sorular yarıda bırakılabildiği için `okunan`dan bağımsız duruyor ve
+   * hiç soru sorulmamış eski kayıtlarda yok.
+   */
+  dogru?: number
   /** Destenin sonuna gelindi mi — haritadaki tamamlanma işareti buna bakar. */
   bitti: boolean
   /** Son okuma günü, 'YYYY-AA-GG'. */
@@ -77,7 +95,7 @@ export function dersOrani(
 export function ilerlemeyiYaz(
   ilerlemeler: KonuIlerlemeleri,
   konuId: string,
-  sonuc: { bilinen: number; bilinmeyen: number; bitti: boolean },
+  sonuc: { okunan: number; bitti: boolean; dogru?: number },
   bugun: string,
 ): KonuIlerlemeleri {
   return { ...ilerlemeler, [konuId]: { ...sonuc, tarih: bugun } }

@@ -7,7 +7,7 @@ import { kart, konu, program, tema } from '../tip'
  * **Nesillerin Mirası**. Dil bilgisi konuları "Kelimelerin Ritmi" temasının
  * altında duruyor: tema zaten kelimenin kendisine bakıyor.
  */
-export const turkce10 = program('turkce', 10, [
+export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mirasına', [
   tema('trk10-t1', 'Sözün Ezgisi', [
     konu('trk10-masal', 'Masal', [
       kart(

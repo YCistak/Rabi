@@ -7,7 +7,7 @@ import { kart, konu, program, tema } from '../tip'
  * bileşenler) ve **Organizasyon** (hücre, sınıflandırma). Eski programın
  * "Canlılar Dünyası" ünitelendirmesi kullanılmıyor.
  */
-export const biyoloji9 = program('biyoloji', 9, [
+export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan organizasyona', [
   tema('byl9-t1', 'Yaşam', [
     konu('byl9-bilim', 'Biyoloji ve Bilimin Doğası', [
       kart(

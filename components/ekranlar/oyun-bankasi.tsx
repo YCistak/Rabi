@@ -2,16 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { OyunId } from '@/lib/types'
-import { oyunBul } from '@/lib/oyunlar/tanim'
 import {
   bankaCevabiMetni,
   bankaDagilimi,
   bankaSorusuMetni,
   bankaSuz,
   OYUN_KIMLIKLERI,
-  enKalabalikOyun,
   type BankaKaydi,
-  type BankaTuru,
 } from '@/lib/oyunlar/banka'
 import { KURAL_ACIKLAMASI, type YazimKurali } from '@/lib/oyunlar/yazim-havuzu'
 import { NOKTALAMA_ACIKLAMASI, type NoktalamaKurali } from '@/lib/oyunlar/noktalama-havuzu'
@@ -20,7 +17,6 @@ import { Check, ListChecks } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { BosDurum, Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
-import { BankaTestiEkrani } from '@/components/ekranlar/banka-testi'
 
 /**
  * Oyun Bankası.
@@ -31,10 +27,11 @@ import { BankaTestiEkrani } from '@/components/ekranlar/banka-testi'
  *
  * Bir kaydın çıkmasının iki yolu var ve ikisi aynı şey değil:
  *
- * - **Kazanılan çıkış** — genel testte doğru bilinmek (`banka-testi.tsx`).
- *   Bütün yanlışlar tek testte, karışık soruluyor; doğru bilinen düşüyor,
- *   yanlış bilinen olduğu gibi kalıyor. "Bankadan düşen" sayacı — ve ona bakan
- *   rozet — yalnızca bunun karşılığı.
+ * - **Kazanılan çıkış** — genel testte doğru bilinmek
+ *   (`lib/oyunlar/genel-test.ts`). Test, bankada kaydı olan oyunları karışık
+ *   sırayla arka arkaya oynatıyor; doğru bilinen kayıt düşüyor, yanlış bilinen
+ *   olduğu gibi kalıyor. "Bankadan düşen" sayacı — ve ona bakan rozet —
+ *   yalnızca bunun karşılığı.
  * - **Elle kaldırma** — karttaki tik. Banka bir borç listesi; öğrendiğine
  *   kullanıcının kendisi karar veremiyorsa liste büyümekten başka bir şey
  *   yapmıyor ve bir yerden sonra hiç açılmıyor. Tik sayacı ilerletmiyor, çünkü
@@ -43,7 +40,11 @@ import { BankaTestiEkrani } from '@/components/ekranlar/banka-testi'
  * Kartın kendisi **tıklanabilir değil**. Bir süre dokunuş o soruyla tek
  * soruluk bir tur açıyordu; kaldırıldı, çünkü sorunun cevabı kartın üstünde
  * yazıyor ve hemen altında aynı soruyu çözmek bilmeyi değil okumayı ölçüyordu.
- * Aynı soru genel testte, cevabı görünmeden ve karışık sırada soruluyor.
+ * Aynı soru genel testte, cevabı görünmeden soruluyor.
+ *
+ * Ekranda tek bir eylem düğmesi var. Yanında bir de "sadece bunlardan bir tur"
+ * duruyordu; genel test soruları zaten kendi oyunlarının ekranında sorduğu
+ * için ikisi aynı işi yapar oldu ve hangisinin kaydı düşürdüğü belirsizleşti.
  */
 
 const AILE: Record<OyunId, { zemin: string; yazi: string }> = {
@@ -102,57 +103,20 @@ type Suzgec = OyunId | 'tumu'
 
 export function OyunBankasiEkrani({
   banka,
-  onTurBaslat,
+  onTestBaslat,
   onKaldir,
-  onTestBitti,
-  sesAcik,
   bildir,
 }: {
   banka: BankaKaydi[]
-  /** Bankadan tur açar: o oyunun bütün kayıtlarıyla. */
-  onTurBaslat: (tur: BankaTuru) => void
+  /** Genel testi açar: bankadaki oyunlar karışık sırayla oynatılıyor. */
+  onTestBaslat: () => void
   /** Kaydı elle bankadan çıkarır — "bunu öğrendim". */
   onKaldir: (id: string) => void
-  /** Genel test bitti: doğru bilinen kayıtlar bankadan düşüyor. */
-  onTestBitti: (dogruIdler: string[]) => void
-  sesAcik: boolean
   bildir: BildirimKolu
 }) {
   const [suzgec, setSuzgec] = useState<Suzgec>('tumu')
-  const [testAcik, setTestAcik] = useState(false)
   const dagilim = useMemo(() => bankaDagilimi(banka), [banka])
   const gorunen = useMemo(() => bankaSuz(banka, suzgec), [banka, suzgec])
-
-  /*
-    Oyun turunun hangi oyundan açılacağı.
-
-    Tur mantığı oyuna özgü — yazımda iki şık, işlemde tuş takımı, edebiyatta
-    eşleştirme. Hepsini tek turda karıştırmak her birinin kendi ekranını
-    bozardı, o yüzden "Tümü" seçiliyken en çok kaydı olan oyun açılıyor: en çok
-    tekrar gereken yer orası. Bütün oyunları karıştıran tek şey genel test ve
-    o, soruları oyunun ekranında değil ortak bir şıklı biçimde soruyor.
-  */
-  const turOyunu: OyunId | null = suzgec === 'tumu' ? enKalabalikOyun(banka) : suzgec
-  const turSayisi = turOyunu === null ? 0 : dagilim[turOyunu]
-
-  /*
-    Test açıkken liste hiç çizilmiyor.
-
-    Listede her sorunun cevabı yazıyor; testin altında ya da arkasında duran
-    bir kopyası, testin ölçtüğü şeyi ortadan kaldırırdı.
-  */
-  if (testAcik) {
-    return (
-      <BankaTestiEkrani
-        banka={banka}
-        sesAcik={sesAcik}
-        onBitti={(dogruIdler) => {
-          setTestAcik(false)
-          onTestBitti(dogruIdler)
-        }}
-      />
-    )
-  }
 
   if (banka.length === 0) {
     return (
@@ -171,53 +135,22 @@ export function OyunBankasiEkrani({
     <div>
       <Baslik toplam={banka.length} />
 
-      {/* Özet + tek eylem. Bankanın tamamı için değil, süzgeçte seçili oyun
-          için tur açılıyor; başlıkta hangisi olduğu yazıyor. */}
-      <div className="golge-kart mb-4 rounded-2xl bg-card p-4">
-        <p className="text-sm font-medium leading-relaxed text-muted-foreground">
-          <b className="rakam font-extrabold text-foreground">{banka.length} soru</b> tekrar
-          bekliyor
-          {OYUN_KIMLIKLERI
-            .filter((o) => dagilim[o] > 0)
-            .map((o) => ` · ${dagilim[o]} ${KISA_AD[o].toLocaleLowerCase('tr')}`)
-            .join('')}
-          .
-        </p>
-
-        {/*
-          Genel test önde ve dolu renkte: bankadan çıkışın kazanılan tek yolu o.
-          Oyun turu altında ve çerçeveli — soruları kendi oyununun ekranında
-          tekrar çözmek hâlâ mümkün, ama kaydı düşürmüyor.
-        */}
-        <Buton
-          className="mt-3 w-full bg-ikincil text-white"
-          disabled={banka.length < 2}
-          onClick={() => setTestAcik(true)}
-        >
-          <ListChecks size={17} strokeWidth={2.8} aria-hidden />
-          {banka.length < 2
-            ? 'Genel test için en az iki soru gerekiyor'
-            : `Genel test — ${banka.length} soru karışık`}
-        </Buton>
-
-        <Buton
-          className="mt-2 w-full border border-border bg-card text-foreground"
-          disabled={turOyunu === null}
-          onClick={() => turOyunu && onTurBaslat({ oyun: turOyunu })}
-        >
-          {turOyunu === null
-            ? 'Tur açılacak soru yok'
-            : suzgec === 'tumu'
-              ? `${oyunBul(turOyunu).ad} — ${turSayisi} soruyla bir tur`
-              : 'Sadece bunlardan bir tur'}
-        </Buton>
-
-        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-          Genel testte doğru bildiğin soru bankadan düşer, yanlış bildiğin
-          olduğu gibi kalır. Oyun turları rekora sayılmaz — sorular zaten
-          gördüğün sorular.
-        </p>
-      </div>
+      {/*
+        Düğme kartsız duruyor: bir zamanlar özet cümlesi, oyun turu düğmesi ve
+        bir açıklama paragrafıyla birlikte bir kutunun içindeydi. Kutunun
+        anlattığı her şey ekranın başka bir yerinde zaten yazıyor — sayı
+        başlıkta, dağılım süzgeç çiplerinde, "doğru bilince düşer" başlığın alt
+        satırında. Geriye kutunun asıl işi kaldı: bankadan çıkışın kazanılan
+        tek yolunu açmak.
+      */}
+      <Buton
+        className="mb-4 w-full bg-ikincil text-white"
+        disabled={banka.length < 2}
+        onClick={onTestBaslat}
+      >
+        <ListChecks size={17} strokeWidth={2.8} aria-hidden />
+        {banka.length < 2 ? 'Genel test için en az iki soru gerekiyor' : 'Genel test'}
+      </Buton>
 
       <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
         <SuzgecCipi

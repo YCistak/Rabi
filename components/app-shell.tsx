@@ -28,6 +28,13 @@ import {
   useYerelDepo,
 } from '@/lib/depo'
 import { testiIsle, type BankaKaydi, type BankaTuru } from '@/lib/oyunlar/banka'
+import {
+  genelTestBittiMi,
+  genelTestIlerlet,
+  genelTestKur,
+  genelTestOyunu,
+  type GenelTest,
+} from '@/lib/oyunlar/genel-test'
 import type { DersId } from '@/lib/oyunlar/tanim'
 import { sablonlariBirlestir } from '@/lib/sablonlar'
 import { guncelTahmin, obpHesapla } from '@/lib/tahmin'
@@ -182,10 +189,14 @@ export function AppShell() {
     ANAHTARLAR.konuIlerleme,
     {},
   )
-  const [bilinmeyenKartlar, setBilinmeyenKartlar] = useYerelDepo<BilinmeyenKart[]>(
-    ANAHTARLAR.bilinmeyenKartlar,
-    [],
-  )
+  /*
+    Bilinmeyenler bankası arayüze bağlı değil: deste karar sormayı bıraktı
+    (`components/konu/kart-destesi.tsx`), yani listeye yeni kayıt düşmüyor.
+    Okunuyor çünkü eski kurulumlardaki kayıtlar yedeğe girmeye devam ediyor —
+    bir özelliğin kapanması, kullanıcının o güne kadar biriktirdiği verinin
+    yedekten de düşmesi anlamına gelmemeli.
+  */
+  const [bilinmeyenKartlar] = useYerelDepo<BilinmeyenKart[]>(ANAHTARLAR.bilinmeyenKartlar, [])
   /*
     Konu haritasında kalınan yer. Yedeğe girmeyen bir tercih olduğu için
     ilerlemeden ayrı anahtarda duruyor.
@@ -219,7 +230,20 @@ export function AppShell() {
    * Bankadan açılan tur. Oyun kimliği burada duruyor çünkü turu Oyunlar sekmesi
    * çiziyor ama başlatan Oyun Bankası ekranı — ikisi kardeş, ortak sahibi bu.
    */
-  const [bankaTuru, setBankaTuru] = useState<BankaTuru | null>(null)
+  /*
+    Açık genel test: bankada kaydı olan oyunlar karışık sırayla arka arkaya
+    oynatılıyor (`lib/oyunlar/genel-test.ts`). Turun kendisini Oyunlar sekmesi
+    çiziyor, sıra burada duruyor.
+
+    `bankaTuru` ayrı bir state değil, testten **türetiliyor**: iki ayrı kayıt
+    olsaydı biri ilerlerken öteki eski oyunda kalabilirdi.
+  */
+  const [genelTest, setGenelTest] = useState<GenelTest | null>(null)
+  const bankaTuru: BankaTuru | null = (() => {
+    if (genelTest === null) return null
+    const oyun = genelTestOyunu(genelTest)
+    return oyun === null ? null : { oyun }
+  })()
   /**
    * Bildirilen hatalı sorular. Kuyruk, gönderim ve arayüzün kolu hook'un
    * içinde; buradan yalnızca ayarın açık olup olmadığı geçiyor.
@@ -451,6 +475,23 @@ export function AppShell() {
     [bankaDusen, setBankaDusen],
   )
 
+  /*
+    Genel testi kapatır: doğru bilinen kayıtlar bankadan **bir kerede** düşer.
+
+    Tur tur düşürülseydi sıradaki oyunun havuzu test sürerken küçülür, aynı
+    testin ortasında bir oyun sorusuz kalabilirdi. Yanlış bilinenlere hiç
+    dokunulmuyor — test yeni bir hata değil, hâlâ öğrenilmemiş olanı gösteriyor.
+  */
+  const genelTestiBitir = useCallback(
+    (test: GenelTest | null) => {
+      setGenelTest(null)
+      if (test === null || test.dogruIdler.length === 0) return
+      setOyunBankasi((o) => testiIsle(o, test.dogruIdler))
+      bankadanDustu(test.dogruIdler.length)
+    },
+    [bankadanDustu, setOyunBankasi],
+  )
+
   // Kayıt yazılmadan önce hepsinin okunmuş olması şart. `useYerelDepo` bir kez
   // yazıldıktan sonra ilk okumayı atlıyor; hazır olmadan yazılsaydı kayıtlı
   // rozetler silinirdi.
@@ -524,10 +565,11 @@ export function AppShell() {
     // En içteki katmandan dışa doğru: ekranın kendi açtığı katman (fotoğraf
     // görüntüleyici, onay kutusu) → form → alt ekran → ana sekme → çıkış.
     if (ustKatmaniKapat()) return true
-    // Banka turu tam ekran bir katman; geri tuşu önce onu kapatmalı, yoksa
-    // tur açıkken geri basmak arkadaki sekmeyi değiştirirdi.
-    if (bankaTuru !== null) {
-      setBankaTuru(null)
+    // Genel test tam ekran bir katman; geri tuşu önce onu kapatmalı, yoksa
+    // test açıkken geri basmak arkadaki sekmeyi değiştirirdi. O ana kadar
+    // doğru bilinenler yine de bankadan düşüyor.
+    if (genelTest !== null) {
+      genelTestiBitir(genelTest)
       return true
     }
     if (denemeFormu !== null) {
@@ -543,7 +585,7 @@ export function AppShell() {
       return true
     }
     return false
-  }, [bankaTuru, denemeFormu, ekran, sekme])
+  }, [genelTest, genelTestiBitir, denemeFormu, ekran, sekme])
 
   /**
    * Açılışta kapanmış bir turdan artakalanları temizler.
@@ -709,7 +751,6 @@ export function AppShell() {
             <OyunBankasiEkrani
               banka={oyunBankasi}
               bildir={hataBildirimi}
-              sesAcik={ayarlar.oyunSesi}
               /*
                 Elle kaldırma `bankadanDustu`'ya uğramıyor: sayaç, soruyu genel
                 testte doğru bilmenin karşılığı ve rozet ona bakıyor. Tuşa
@@ -717,20 +758,14 @@ export function AppShell() {
               */
               onKaldir={(id) => setOyunBankasi((o) => o.filter((k) => k.id !== id))}
               /*
-                Genel testin kazandırdığı çıkış: doğru bilinenler düşüyor ve
-                rozetin baktığı sayaç ilerliyor. Yanlış bilinenlere hiç
-                dokunulmuyor — testin kendisi yeni bir hata değil.
+                Genel test Oyunlar sekmesinde oynanıyor: her oyun soruları kendi
+                ekranıyla soruyor. Sekme değişiyor çünkü oyun katmanı tam ekran
+                ve testten çıkan kullanıcı oyunların yanında kalmalı.
               */
-              onTestBitti={(dogruIdler) => {
-                if (dogruIdler.length === 0) return
-                setOyunBankasi((o) => testiIsle(o, dogruIdler))
-                bankadanDustu(dogruIdler.length)
-              }}
-              onTurBaslat={(tur) => {
-                // Turu Oyunlar sekmesi çiziyor; oyun katmanı tam ekran açıldığı
-                // için arkada hangi sekmenin durduğu görünmüyor, ama turdan
-                // çıkınca kullanıcı oyunların yanında kalmalı.
-                setBankaTuru(tur)
+              onTestBaslat={() => {
+                const test = genelTestKur(oyunBankasi)
+                if (test === null) return
+                setGenelTest(test)
                 setEkran(null)
                 setSekme('oyunlar')
               }}
@@ -742,8 +777,6 @@ export function AppShell() {
               setSecim={(secim) => setKonuSecimi(secim)}
               ilerlemeler={konuIlerleme}
               setIlerlemeler={setKonuIlerleme}
-              bilinmeyenler={bilinmeyenKartlar}
-              setBilinmeyenler={setBilinmeyenKartlar}
             />
           )}
           {ekran === 'pomodoro' && (
@@ -807,7 +840,6 @@ export function AppShell() {
               devamsizlik={devamsizlik}
               hedef={hedef}
               guncelSiralama={guncelSiralama}
-              bilinmeyenSayisi={bilinmeyenKartlar.length}
               ozetHazir={ozetHazir}
               onOzetAc={ozetiAc}
               sonAraclar={sonAraclar}
@@ -839,7 +871,18 @@ export function AppShell() {
               muzikAcik={ayarlar.oyunMuzigi}
               onBankayaGit={() => setEkran('oyun-bankasi')}
               bankaTuru={bankaTuru}
-              onBankaTuruBitti={() => setBankaTuru(null)}
+              onBankaTuruBitti={() => genelTestiBitir(genelTest)}
+              /*
+                Bir tur bitti: doğrular biriktirilip sıra bir sonraki oyuna
+                geçiyor. Yarıda bırakılan tur testi de bitiriyor — kullanıcı
+                çıkmak istedi; o ana kadar bildikleri yine de sayılıyor.
+              */
+              onGenelTestTuruBitti={(dogrular, yarim) => {
+                if (genelTest === null) return
+                const sonraki = genelTestIlerlet(genelTest, dogrular)
+                if (yarim || genelTestBittiMi(sonraki)) genelTestiBitir(sonraki)
+                else setGenelTest(sonraki)
+              }}
               acilacakDers={acilacakDers}
               onDersAcildi={() => setAcilacakDers(null)}
               onOyunAcildi={oyunAcildi}

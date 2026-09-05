@@ -37,6 +37,15 @@ describe('programlar', () => {
     }
   })
 
+  /*
+    Özet, harita başlığında iki satıra sığan bir cümle. Uzunsa kart büyüyor
+    ve altındaki "sıradaki konu" satırı ekranın dışına iniyor.
+  */
+  it.each(programlar)('%s: özeti var ve kısa', (_ad, program) => {
+    expect(program!.ozet.trim().length).toBeGreaterThan(0)
+    expect(program!.ozet.length, `özet uzun: ${program!.ozet}`).toBeLessThanOrEqual(46)
+  })
+
   it.each(programlar)('%s: kartlar kısa', (_ad, program) => {
     for (const konu of tumKonular(program!)) {
       for (const kart of konu.kartlar) {
@@ -72,6 +81,21 @@ describe('kimlikler', () => {
   it('kart kimlikleri benzersiz', () => {
     const kimlikler = tumu.flatMap((p) =>
       tumKonular(p).flatMap((k) => k.kartlar.map((c) => c.id)),
+    )
+    expect(new Set(kimlikler).size).toBe(kimlikler.length)
+  })
+
+  /*
+    Soru kimlikleri kart kimlikleriyle **aynı havuzda** olmamalı: ikisi de
+    `${konuId}-${sıra}` deseninden türeseydi üçüncü kart ile üçüncü soru aynı
+    kimliği taşırdı. Ayırıcı 's' eki bu yüzden var.
+  */
+  it('soru kimlikleri kartlarla çakışmıyor', () => {
+    const kimlikler = tumu.flatMap((p) =>
+      tumKonular(p).flatMap((k) => [
+        ...k.kartlar.map((c) => c.id),
+        ...k.sorular.map((c) => c.id),
+      ]),
     )
     expect(new Set(kimlikler).size).toBe(kimlikler.length)
   })

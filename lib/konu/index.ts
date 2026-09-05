@@ -14,7 +14,7 @@ import { matematik10 } from './icerik/10-matematik'
 import { tarih10 } from './icerik/10-tarih'
 import { turkce10 } from './icerik/10-turkce'
 
-export type { BilgiKarti, DersProgrami, Konu, KonuDersId, KonuSinifi, Tema } from './tip'
+export type { BilgiKarti, DersProgrami, Konu, KonuDersId, KonuSinifi, SoruKarti, Tema } from './tip'
 
 /**
  * Ders ailesi — renk kimliği.
@@ -87,4 +87,23 @@ export function dersBul(ders: KonuDersId): KonuDersTanimi {
 /** Programdaki bütün konular, tema sırasıyla. */
 export function tumKonular(program: DersProgrami): Konu[] {
   return program.temalar.flatMap((t: Tema) => t.konular)
+}
+
+/**
+ * Bir destenin kaba okuma süresi, dakika.
+ *
+ * Harita listesinde kart sayısının yanında duruyor ("4 kart · 3 dk"):
+ * sayının tek başına söylemediği şey desteyi açmanın kaça mal olduğu ve
+ * öğrenci "şimdi mi sonra mı" kararını buna bakarak veriyor. Kart başına
+ * kırk beş saniye, kartların uzunluk sınırından (`icerik.test.ts`) çıkan
+ * kaba bir ölçü — tahmin olduğu için aşağı yuvarlanmıyor, en az bir dakika
+ * yazıyor.
+ */
+export function okumaDakikasi(kartSayisi: number): number {
+  return Math.max(1, Math.round(kartSayisi * 0.75))
+}
+
+/** Programın tema ve konu sayısı — harita başlığındaki "7 tema · 22 konu". */
+export function programSayilari(program: DersProgrami): { tema: number; konu: number } {
+  return { tema: program.temalar.length, konu: tumKonular(program).length }
 }

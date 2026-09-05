@@ -6,7 +6,7 @@ import { kart, konu, program, tema } from '../tip'
  * Tema adları 9. sınıfla aynı; içerik değişiyor. Bu sınıfın ağırlığı yerin
  * yapısında: jeolojik zamanlar, levha hareketleri, iç ve dış kuvvetler.
  */
-export const cografya10 = program('cografya', 10, [
+export const cografya10 = program('cografya', 10, 'Coğrafyanın doğasından küresel bağlantılara', [
   tema('cog10-t1', 'Coğrafyanın Doğası', [
     konu('cog10-bakis', 'Coğrafi Bakış', [
       kart(

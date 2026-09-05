@@ -7,7 +7,7 @@ import { kart, konu, program, tema } from '../tip'
  * programdaki "Kimyanın Temel Kanunları", mol kavramı, karışımlar ve
  * asit-baz hesabı 9. sınıfta **yok** — bu yüzden burada da yok.
  */
-export const kimya9 = program('kimya', 9, [
+export const kimya9 = program('kimya', 9, 'Etkileşimden sürdürülebilirliğe', [
   tema('kim9-t1', 'Etkileşim', [
     konu('kim9-hayat', 'Kimya Hayattır', [
       kart(
