@@ -64,7 +64,6 @@ export function AnaSayfa({
   devamsizlik,
   hedef,
   guncelSiralama,
-  bilinmeyenSayisi,
   ozetHazir,
   onOzetAc,
   sonAraclar,
@@ -87,7 +86,6 @@ export function AnaSayfa({
   /** Son denemelerden çıkan tahmini sıralama; deneme yoksa null. */
   guncelSiralama: number | null
   /** Konu Anlatımı'nda "bilmiyorum" denen kart sayısı — bölümün alt satırı. */
-  bilinmeyenSayisi: number
   /**
    * Biten haftanın özeti izlenmeyi bekliyor mu.
    *
@@ -352,14 +350,6 @@ export function AnaSayfa({
             <span className="block font-display text-[15.5px] font-extrabold tracking-tight">
               Ders haritasını aç
             </span>
-            {/* Alt satır yalnızca bekleyen kart varken çıkıyor: neyi kapsadığını
-                anlatan sabit bir satır ("9 ve 10. sınıf · yedi ders") düğmeye
-                dokunulunca zaten görülen şeyi önceden yazıyordu. */}
-            {bilinmeyenSayisi > 0 && (
-              <span className="mt-0.5 block text-[13px] leading-snug font-semibold text-muted-foreground">
-                Bilmediklerinde {bilinmeyenSayisi} kart bekliyor
-              </span>
-            )}
           </span>
           <ChevronRight size={19} className="shrink-0 text-muted-foreground" aria-hidden />
         </button>
@@ -444,33 +434,33 @@ function Bolum({
 }) {
   return (
     <section>
+      {/* Başlığın altında bir ara açıklama satırı vardı ("Çalışmanı takip
+          et"); kaldırıldı. Ana sayfada üst üste üç bölüm var ve her birinin
+          altındaki ikinci satır, kutucukların kendisini aşağı itiyordu —
+          asıl okunacak şey kutucuklar. */}
       <div className="mb-2 flex items-start justify-between gap-3 px-1">
-        {/* Başlığın altında bir ara açıklama satırı vardı ("Çalışmanı takip
-            et"); kaldırıldı. Ana sayfada üst üste üç bölüm var ve her birinin
-            altındaki ikinci satır, kutucukların kendisini aşağı itiyordu —
-            asıl okunacak şey kutucuklar. */}
         <div>
           <h2 className="font-display text-base font-extrabold tracking-tight">{baslik}</h2>
         </div>
-        <div className="flex shrink-0 items-center gap-0.5">
-          {/*
-            Kalem yazısız duruyor: "Düzenle" ile "Tümü" yan yana iki bağlantı
-            olsaydı ikisi de aynı ağırlıkta okunur, asıl yol olan "Tümü"
-            kaybolurdu. Erişilebilir adı `aria-label`da.
-          */}
+        <TumuBaglantisi onSec={onTumu} />
+      </div>
+      <Kart className="px-2.5 pt-3.5 pb-2">
+        <div className="grid grid-cols-4 gap-2">{children}</div>
+        {/* Düzenle bir süre kalemle başlıkta, "Tümü"nün bitişiğinde duruyordu:
+            iki küçük dokunma hedefi üst üste binip ikisi de tek bir leke gibi
+            okunuyordu. Buradaki yer düzenlediği şeye (kutucuklara) bitişik ve
+            kendi satırında — yazılı olduğu için de artık aria-label'a değil
+            görünen metne dayanıyor. */}
+        <div className="mt-1.5 flex justify-end">
           <button
             type="button"
             onClick={onDuzenle}
-            aria-label={`${baslik} kısayollarını düzenle`}
-            className="grid size-8 place-items-center rounded-lg text-muted-foreground transition active:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="flex items-center gap-1 rounded-lg px-1.5 py-1 text-[12px] font-bold text-muted-foreground transition active:bg-muted"
           >
-            <Pencil size={15} strokeWidth={2.6} aria-hidden />
+            <Pencil size={12} strokeWidth={2.6} aria-hidden />
+            Düzenle
           </button>
-          <TumuBaglantisi onSec={onTumu} />
         </div>
-      </div>
-      <Kart className="px-2.5 py-3.5">
-        <div className="grid grid-cols-4 gap-2">{children}</div>
       </Kart>
     </section>
   )
