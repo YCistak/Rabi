@@ -2,11 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  CalendarX2,
-  Download,
-  Flame,
   Gamepad2,
   Images,
+  LineChart,
   Share2,
   Target,
   Timer,
@@ -15,7 +13,7 @@ import {
   X,
 } from 'lucide-react'
 import type { HaftalikOzet } from '@/lib/ozet'
-import { dakikaYaz, gunYaz, haftaYaz, yuzdeYaz } from '@/lib/ozet'
+import { dakikaYaz, haftaYaz, yuzdeYaz } from '@/lib/ozet'
 import { netYaz } from '@/lib/hesap'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { geriSayimSesi, kapanisSesi, kartSesi, ozetSesiCal, zaferSesi } from '@/lib/ozet-sesi'
@@ -39,30 +37,110 @@ import { cn } from '@/lib/utils'
  * Kartlar kendiliğinden ilerliyor ama dokunmak beklemeden geçiriyor: elinde
  * telefonla bekleyen biri için otomatik geçiş yavaş, okumak isteyen için elle
  * geçiş yorucu — ikisi birlikte.
+ *
+ * Tasarım kaynağı `tasarim/ozet-kavrulmus.html`. Kartlar tema değişkenlerini
+ * **kullanmıyor**, renkleri burada yazılı: ekran uygulamanın kırık beyaz
+ * zemininden tümüyle kopuk, kendi koyu/amber paletinde duruyor ve aynı renkler
+ * paylaşılan görsele de gidiyor (`lib/ozet-gorsel.ts`). Tema değişkenlerinden
+ * gelselerdi tuvale çizen taraf `var(--…)` metnini çözemezdi.
  */
 
 /** Özetin arka plan müziği için sabit bir parça — her hafta aynı, "özet müziği" olsun. */
 const OZET_PARCASI = LOFI_PARCALAR[3]
 
+/**
+ * Kartın kendiliğinden geçmeden önce ekranda kalma süresi (ms).
+ *
+ * Tek bir sabit: tasarımda bütün kartlar aynı sürede geçiyor ve üstteki dolan
+ * çubuk da o süreye bağlı. Kart başına ayrı süreler verildiğinde şerit
+ * bölmeleri eşit genişlikte olmasına rağmen farklı hızda doluyor ve "ne kadar
+ * kaldı" duygusu bozuluyordu.
+ */
+const KART_SURESI = 5200
+
+/** Kartın son iki kartından biri değilse kapanışta süre dolmuyor. */
+const SONSUZ = 0
+
 type Kart = {
   id: string
-  /** Kendiliğinden geçmeden önce ekranda kalma süresi (ms). 0 = geçmez. */
-  sure: number
-  /** Zemin geçişinin iki ucu. Paylaşılan görsel de aynı renkleri kullanıyor. */
-  renkler: readonly [string, string]
+  /** Ekranın CSS zemini — kartın kendi degradesi. */
+  zemin: string
+  /** İçerik sütununun dikey boşluğu (px). Tasarımda karttan karta değişiyor. */
+  bosluk: number
   ses?: () => void
+  /** Zeminin üstündeki serbest süsler (ışıma, konfeti) — içerik sütununun altında. */
+  susler?: React.ReactNode
   icerik: React.ReactNode
   /** Kartın paylaşılabilir hâli — ekrandakiyle aynı sayı ve cümle. */
   paylasim: OzetKartVerisi
-}
-
-/** Kartın CSS zemini. Renkler tek yerde dursun diye buradan türetiliyor. */
-function zeminCss(renkler: readonly [string, string]): string {
-  return `linear-gradient(160deg, ${renkler[0]} 0%, ${renkler[1]} 100%)`
+  /** Kapanış kartı: sayaç durur, alt çubuk paylaş düğmelerine döner. */
+  sonMu?: boolean
 }
 
 /** Basılı tutma kaç ms sonra "duraklat" sayılıyor. Altındakiler dokunuş. */
 const BASILI_ESIGI = 220
+
+/**
+ * Tasarımdaki `font: 800 11px/1` kısayolunun karşılığı.
+ *
+ * CSS'in kendi `font` kısayolu **kullanılamıyor**: aile adı zorunlu ve oraya
+ * `inherit` yazmak geçersiz bir bildirim üretiyor — tarayıcı satırın tamamını
+ * atıyor ve kart varsayılan punto ile çiziliyordu. Tailwind sınıfı da değil,
+ * çünkü buradaki punto ve kalınlıklar tasarımın ölçüleri; ölçek adımlarına
+ * yuvarlanınca 132 piksellik "1" ile 88 piksellik süre aynı boya iniyor.
+ */
+function yz(kalinlik: number, punto: number, satir: number): React.CSSProperties {
+  return { fontWeight: kalinlik, fontSize: punto, lineHeight: satir }
+}
+
+// ---------------------------------------------------------------------------
+// Palet
+//
+// Kart başına ayrı bir degrade **yok**: üç zemin dönüşümlü kullanılıyor (koyu
+// radial, amber, kızıl). On kartın onunda ayrı renk, hikâyeyi bir renk
+// geçidine çeviriyordu; dönüşümlü zemin kartları gruplayıp ritim kuruyor.
+// ---------------------------------------------------------------------------
+
+const VURGU = '#D9622F'
+const ACIK_VURGU = '#F6B27A'
+const KREM = '#FFD9B0'
+const FIL_DISI = '#FFF4E1'
+const KOYU_YAZI = '#5C2410'
+const ARTIS_YESILI = '#8FC98A'
+
+const ZEMIN = {
+  kapak: 'radial-gradient(120% 75% at 22% 4%,#43200F 0%,#1C0E07 58%,#120A06 100%)',
+  amber: 'linear-gradient(158deg,#E07A34 0%,#B3491F 54%,#83300F 100%)',
+  koyuSag: 'radial-gradient(115% 70% at 78% 6%,#3E1D10 0%,#1A0D07 60%,#120A06 100%)',
+  kizil: 'linear-gradient(158deg,#8E3320 0%,#4A1810 58%,#2A0D08 100%)',
+  koyuSol: 'radial-gradient(110% 70% at 20% 8%,#3E1D10 0%,#1A0D07 62%,#120A06 100%)',
+  kizilKoyu: 'linear-gradient(158deg,#7A2C1A 0%,#3C1410 60%,#200906 100%)',
+  ucuncu: 'radial-gradient(110% 70% at 80% 10%,#33190E 0%,#180C07 62%,#120A06 100%)',
+  ikinci: 'radial-gradient(110% 70% at 20% 10%,#4A2312 0%,#1C0E07 62%,#120A06 100%)',
+  birinci: 'linear-gradient(155deg,#F0A24A 0%,#D9622F 46%,#96370F 100%)',
+  kapanis: 'linear-gradient(160deg,#C05B2B 0%,#7A3316 52%,#3A150A 100%)',
+} as const
+
+/**
+ * Paylaşılan görselin degrade uçları.
+ *
+ * CSS metni tuvale çizilemiyor (`linear-gradient(…)` ayrıştırılamaz), o yüzden
+ * her zeminin iki ucu ayrıca burada duruyor. İkisi birlikte değişmeli: ekranda
+ * gördüğü kartı paylaşan kullanıcı başka renkte bir görsel alırsa "bu o değil"
+ * diyor.
+ */
+const GORSEL_RENKLERI = {
+  kapak: ['#43200F', '#120A06'],
+  amber: ['#E07A34', '#83300F'],
+  koyuSag: ['#3E1D10', '#120A06'],
+  kizil: ['#8E3320', '#2A0D08'],
+  koyuSol: ['#3E1D10', '#120A06'],
+  kizilKoyu: ['#7A2C1A', '#200906'],
+  ucuncu: ['#33190E', '#120A06'],
+  ikinci: ['#4A2312', '#120A06'],
+  birinci: ['#F0A24A', '#96370F'],
+  kapanis: ['#C05B2B', '#3A150A'],
+} as const satisfies Record<keyof typeof ZEMIN, readonly [string, string]>
 
 export function HaftalikOzetEkrani({
   ozet,
@@ -83,6 +161,7 @@ export function HaftalikOzetEkrani({
   const kartlar = useMemo(() => kartlariKur(ozet), [ozet])
   const kart = kartlar[Math.min(sira, kartlar.length - 1)]
   const sonKart = sira >= kartlar.length - 1
+  const sure = kart.sonMu ? SONSUZ : KART_SURESI
 
   useGeriKatmani(true, onKapat)
 
@@ -136,18 +215,18 @@ export function HaftalikOzetEkrani({
   // kaldığı yerden devam ediyor — hikâye uygulamalarının davranışı bu.
   const kalanRef = useRef(0)
   useEffect(() => {
-    kalanRef.current = kart?.sure ?? 0
-  }, [kart, sira])
+    kalanRef.current = sure
+  }, [sure, sira])
 
   useEffect(() => {
-    if (!kart || kart.sure <= 0 || bekliyor) return
+    if (sure <= 0 || bekliyor) return
     const baslangic = Date.now()
     const zamanlayici = setTimeout(ilerle, kalanRef.current)
     return () => {
       clearTimeout(zamanlayici)
       kalanRef.current = Math.max(0, kalanRef.current - (Date.now() - baslangic))
     }
-  }, [kart, sira, bekliyor, ilerle])
+  }, [sure, sira, bekliyor, ilerle])
 
   // --- Basılı tutma ---
   // Dokunuş ile basılı tutmayı ayıran tek şey süre. Eşiğin altında kalan
@@ -208,93 +287,148 @@ export function HaftalikOzetEkrani({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col overflow-hidden text-white"
-      style={{ background: zeminCss(kart.renkler) }}
+      className="fixed inset-0 z-50 overflow-hidden text-white"
+      style={{ background: '#120A06' }}
       onPointerDown={basmaBasladi}
       onPointerUp={basmaBitti}
       onPointerCancel={basmaBitti}
       onPointerLeave={basmaBitti}
     >
-      {/* Zemin geçişi yumuşasın diye kartın rengi üstüne ince bir karartma */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
-
-      {/* İçerik sütunu uygulamanın geri kalanıyla aynı genişlikte tutuluyor;
-          geniş ekranda kartlar kenarlara savrulmasın. */}
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-md flex-col px-5 pt-[calc(0.75rem+var(--guvenli-ust))] pb-[calc(1rem+var(--guvenli-alt))]">
-        <IlerlemeCubuklari
-          toplam={kartlar.length}
-          sira={sira}
-          sure={kart.sure}
-          durdu={bekliyor}
-        />
-
-        <div className="mt-3 flex items-center justify-between gap-2">
-          <button
-            type="button"
-            onClick={onKapat}
-            aria-label="Özeti kapat"
-            className="rounded-full p-2 text-white/80 active:bg-white/15"
-          >
-            <X size={22} aria-hidden />
-          </button>
-
-          <p className="min-w-0 flex-1 truncate text-center text-xs font-medium uppercase tracking-[0.2em] text-white/70">
-            {haftaYaz(ozet.hafta)}
-          </p>
-
-          <div className="flex items-center">
-            {/* Hikâyede ne bakıyorsan onu paylaşırsın: bu düğme açık kartın
-                görselini üretiyor, sondaki düğme haftanın tamamını. */}
-            <button
-              type="button"
-              onClick={() => void kartiPaylas()}
-              disabled={paylasimDurumu === 'uretiliyor'}
-              aria-label="Bu kartı paylaş"
-              className="rounded-full p-2 text-white/80 active:bg-white/15 disabled:opacity-50"
-            >
-              <Share2 size={19} aria-hidden />
-            </button>
-            <button
-              type="button"
-              onClick={() => setSesli((s) => !s)}
-              aria-label={sesli ? 'Sesi kapat' : 'Sesi aç'}
-              aria-pressed={sesli}
-              className="rounded-full p-2 text-white/80 active:bg-white/15"
-            >
-              {sesli ? <Volume2 size={20} aria-hidden /> : <VolumeX size={20} aria-hidden />}
-            </button>
-          </div>
-        </div>
-
-        {/* Kartın kendisi. `key` sıra: her geçişte animasyonlar baştan oynasın. */}
-        <div key={kart.id} className="flex min-h-0 flex-1 flex-col justify-center py-6">
+      {/* Kartın kendisi. `key` sıra: her geçişte animasyonlar baştan oynasın —
+          zemin de içerikle birlikte sıyrılarak geliyor, iki kart arasında bir
+          kare boyunca eski renk görünmüyor. */}
+      <div
+        key={kart.id}
+        className="ozet-kart absolute inset-0"
+        style={{ background: kart.zemin }}
+      >
+        {kart.susler}
+        <div
+          className="absolute inset-0 mx-auto flex w-full max-w-md flex-col justify-center px-[26px]"
+          style={{
+            gap: kart.bosluk,
+            paddingTop: 'calc(104px + var(--guvenli-ust))',
+            // Kapanışta alttaki çubuk iki düğme taşıyor; ötekilerde tek bir
+            // ipucu hapı var. Tek bir boşluk verilseydi ya kapanışın kutuları
+            // düğmelerin altında kalırdı ya öteki kartlar ortadan yukarı kayardı.
+            paddingBottom: `calc(${kart.sonMu ? 180 : 110}px + var(--guvenli-alt))`,
+          }}
+        >
           {kart.icerik}
         </div>
-
-        {sonKart ? (
-          <PaylasCubugu durum={paylasimDurumu} onPaylas={() => void haftayiPaylas()} onKapat={onKapat} />
-        ) : (
-          <p className="pb-1 text-center text-xs text-white/55">
-            {basili ? 'Bıraktığında devam eder' : 'Dokun geç · basılı tut beklet'}
-          </p>
-        )}
       </div>
 
-      {/* Dokunma alanları: sol üçte bir geri, kalanı ileri. Kartın kendi
-          düğmeleri (paylaş, kapat) bunların üstünde kaldığı için engellenmiyor. */}
+      {/* Dokunma alanları: sol üçte bir geri, kalanı ileri. Üstteki şerit ve
+          alt çubuk bunların üstünde kaldığı için düğmeleri engellenmiyor. */}
       <button
         type="button"
         aria-label="Önceki kart"
         onClick={dokunus(geri)}
-        className="absolute inset-y-0 left-0 z-0 w-1/3"
+        className="absolute inset-y-0 left-0 z-[1] w-1/3"
       />
       <button
         type="button"
         aria-label="Sonraki kart"
         onClick={dokunus(ilerle)}
-        className="absolute inset-y-0 right-0 z-0 w-2/3"
+        className="absolute inset-y-0 right-0 z-[1] w-2/3"
       />
+
+      {/* Üst şerit — ilerleme çubukları ve üç yuvarlak düğme. Kabın kendisi
+          dokunuşu geçiriyor, yalnızca düğme satırı alıyor: aradaki boşluğa
+          dokunmak kartı ilerletmeli. */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-[3] mx-auto w-full max-w-md px-5 pt-[calc(16px+var(--guvenli-ust))]">
+        <IlerlemeCubuklari toplam={kartlar.length} sira={sira} sure={sure} durdu={bekliyor} />
+
+        <div className="pointer-events-auto mt-3.5 flex items-center justify-between gap-2">
+          <YuvarlakDugme etiket="Özeti kapat" onClick={onKapat}>
+            <X size={18} aria-hidden />
+          </YuvarlakDugme>
+
+          {/* Hafta adı uzayabiliyor ("26 Ağustos – 1 Eylül"): hap tek satırda
+              kalıyor ve sığmayan ad kısalıyor. Sarmasına izin verilseydi hap
+              iki satıra çıkıp yanındaki düğmelerin hizasını bozardı. */}
+          <span
+            className="flex min-w-0 items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3.5 py-2"
+            style={{ ...yz(800, 11, 1), letterSpacing: '0.14em' }}
+          >
+            <span className="truncate">{haftaYaz(ozet.hafta).toLocaleUpperCase('tr')}</span>
+            <span className="rakam shrink-0 text-white/55">
+              {sira + 1}/{kartlar.length}
+            </span>
+          </span>
+
+          <span className="flex gap-1.5">
+            {/* Hikâyede ne bakıyorsan onu paylaşırsın: bu düğme açık kartın
+                görselini üretiyor, kapanıştaki düğme haftanın tamamını. */}
+            <YuvarlakDugme
+              etiket="Bu kartı paylaş"
+              onClick={() => void kartiPaylas()}
+              pasif={paylasimDurumu === 'uretiliyor'}
+            >
+              <Share2 size={17} aria-hidden />
+            </YuvarlakDugme>
+            <YuvarlakDugme
+              etiket={sesli ? 'Sesi kapat' : 'Sesi aç'}
+              basili={sesli}
+              onClick={() => setSesli((s) => !s)}
+            >
+              {sesli ? <Volume2 size={17} aria-hidden /> : <VolumeX size={17} aria-hidden />}
+            </YuvarlakDugme>
+          </span>
+        </div>
+      </div>
+
+      {/* Alt çubuk: son karta kadar ipucu hapı, kapanışta paylaş düğmeleri. */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] mx-auto w-full max-w-md px-[26px] pb-[calc(22px+var(--guvenli-alt))]">
+        {sonKart ? (
+          <PaylasCubugu
+            durum={paylasimDurumu}
+            onPaylas={() => void haftayiPaylas()}
+            onKapat={onKapat}
+          />
+        ) : (
+          <p className="flex justify-center">
+            <span
+              className="rounded-full border border-white/15 bg-black/25 px-4 py-2.5 text-white/70"
+              style={{ ...yz(700, 11, 1) }}
+            >
+              {basili ? 'Bıraktığında devam eder' : 'Dokun geç · basılı tut beklet'}
+            </span>
+          </p>
+        )}
+      </div>
     </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Kabuk parçaları
+// ---------------------------------------------------------------------------
+
+function YuvarlakDugme({
+  etiket,
+  onClick,
+  pasif,
+  basili,
+  children,
+}: {
+  etiket: string
+  onClick: () => void
+  pasif?: boolean
+  basili?: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={etiket}
+      aria-pressed={basili}
+      disabled={pasif}
+      onClick={onClick}
+      className="grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-black/20 text-white/90 active:bg-white/20 disabled:opacity-50"
+    >
+      {children}
+    </button>
   )
 }
 
@@ -318,14 +452,18 @@ function IlerlemeCubuklari({
               Dolan çubuk hikâyenin "ne kadar kaldı" duygusunu veren asıl parça;
               dolu/boş iki durum varken kartın ne zaman geçeceği belli olmuyordu. */}
           <span
-            className={cn('block h-full rounded-full bg-white', i === sira && sure > 0 && 'ozet-cubuk')}
-            style={
-              i < sira || sure <= 0
-                ? { width: i <= sira ? '100%' : '0%' }
+            className={cn(
+              'block h-full rounded-full',
+              i === sira && sure > 0 && 'ozet-cubuk',
+            )}
+            style={{
+              background: FIL_DISI,
+              ...(i < sira || (i === sira && sure <= 0)
+                ? { width: '100%' }
                 : i === sira
                   ? { animationDuration: `${sure}ms`, animationPlayState: durdu ? 'paused' : 'running' }
-                  : { width: '0%' }
-            }
+                  : { width: '0%' }),
+            }}
           />
         </span>
       ))}
@@ -343,7 +481,7 @@ function PaylasCubugu({
   onKapat: () => void
 }) {
   return (
-    <div className="relative z-10 space-y-2">
+    <div className="pointer-events-auto space-y-2.5">
       {durum === 'hata' && (
         <p className="text-center text-xs text-white/80">
           Görsel oluşturulamadı. Ekran görüntüsü alabilirsin.
@@ -353,22 +491,17 @@ function PaylasCubugu({
         type="button"
         onClick={onPaylas}
         disabled={durum === 'uretiliyor'}
-        className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-white font-medium text-neutral-900 transition active:brightness-95 disabled:opacity-60"
+        className="flex h-[54px] w-full items-center justify-center gap-2.5 rounded-[18px] shadow-[0_10px_26px_rgba(0,0,0,.3)] active:brightness-95 disabled:opacity-60"
+        style={{ background: FIL_DISI, color: KOYU_YAZI, ...yz(900, 16, 1) }}
       >
-        {durum === 'uretiliyor' ? (
-          <>
-            <Download size={18} aria-hidden /> Görsel hazırlanıyor…
-          </>
-        ) : (
-          <>
-            <Share2 size={18} aria-hidden /> Tüm haftayı paylaş
-          </>
-        )}
+        <Share2 size={18} aria-hidden />
+        {durum === 'uretiliyor' ? 'Görsel hazırlanıyor…' : 'Haftayı afiş olarak paylaş'}
       </button>
       <button
         type="button"
         onClick={onKapat}
-        className="h-10 w-full rounded-2xl text-sm font-medium text-white/80 active:bg-white/10"
+        className="h-[46px] w-full rounded-2xl border border-white/25 bg-white/5 text-white/85 active:bg-white/15"
+        style={{ ...yz(800, 14, 1) }}
       >
         Kapat
       </button>
@@ -381,9 +514,20 @@ function PaylasCubugu({
 // ---------------------------------------------------------------------------
 
 /** Kartın küçük üst etiketi — hangi konuda olduğunu söyler. */
-function Ustluk({ simge, children }: { simge?: React.ReactNode; children: React.ReactNode }) {
+function Ustluk({
+  simge,
+  ton = 'rgba(255,255,255,.55)',
+  children,
+}: {
+  simge?: React.ReactNode
+  ton?: string
+  children: React.ReactNode
+}) {
   return (
-    <p className="ozet-girisi flex items-center gap-2 text-sm font-medium text-white/75">
+    <p
+      className="ozet-girisi m-0 flex items-center gap-2"
+      style={{ ...yz(800, 11, 1), letterSpacing: '0.2em', color: ton }}
+    >
       {simge}
       {children}
     </p>
@@ -391,461 +535,1104 @@ function Ustluk({ simge, children }: { simge?: React.ReactNode; children: React.
 }
 
 /** Kartın taşıyıcı sayısı. Gecikme, üst etiketten sonra gelmesi için. */
-function DevSayi({ children, kucuk }: { children: React.ReactNode; kucuk?: boolean }) {
+function DevSayi({
+  punto = 96,
+  renk,
+  children,
+}: {
+  punto?: number
+  renk?: string
+  children: React.ReactNode
+}) {
   return (
     <p
-      className={cn(
-        'ozet-vurgu font-display font-semibold leading-none tracking-tight',
-        kucuk ? 'text-5xl' : 'text-7xl',
-      )}
-      style={{ animationDelay: '140ms' }}
+      className="ozet-vurgu rakam m-0"
+      style={{
+        ...yz(900, punto, 0.82),
+        letterSpacing: '-0.05em',
+        color: renk,
+        animationDelay: '80ms',
+      }}
     >
       {children}
     </p>
+  )
+}
+
+/** Dev sayının yanındaki küçük birim ("sa", "dk"). */
+function Birim({ children }: { children: React.ReactNode }) {
+  return (
+    <span style={{ fontSize: '0.36em', letterSpacing: 0, color: 'rgba(255,255,255,.55)' }}>
+      {children}
+    </span>
   )
 }
 
 /** Sayının altındaki cümle — motive eden kısım burada. */
-function AltYazi({ children, gecikme = 340 }: { children: React.ReactNode; gecikme?: number }) {
+function AltYazi({
+  gecikme = 380,
+  punto = 16,
+  children,
+}: {
+  gecikme?: number
+  punto?: number
+  children: React.ReactNode
+}) {
   return (
     <p
-      className="ozet-girisi text-lg leading-relaxed text-white/90"
-      style={{ animationDelay: `${gecikme}ms` }}
+      className="ozet-girisi m-0 max-w-[300px] text-pretty"
+      style={{
+        ...yz(600, punto, 1.5),
+        color: 'rgba(255,255,255,.82)',
+        animationDelay: `${gecikme}ms`,
+      }}
     >
       {children}
     </p>
   )
 }
 
-function Sahne({ children }: { children: React.ReactNode }) {
-  return <div className="space-y-4">{children}</div>
+/** İçi doldurulabilen yuvarlak köşeli kutu — kartların ikinci katmanı. */
+function Kutu({
+  gecikme = 420,
+  className,
+  children,
+}: {
+  gecikme?: number
+  className?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div
+      className={cn(
+        'ozet-girisi relative rounded-[22px] border border-white/12 bg-white/6',
+        className,
+      )}
+      style={{ animationDelay: `${gecikme}ms` }}
+    >
+      {children}
+    </div>
+  )
+}
+
+/**
+ * Kutunun kenarına yapışan çıkartma etiket.
+ *
+ * Kutunun **dışına** taşıyor (`top:-13px`): içine konsaydı kutunun kendi
+ * başlığı gibi okunurdu; buradaki iş bir vurgu, kutuda yazan sayıya iliştirilen
+ * bir not.
+ */
+function Cikartma({
+  yon = 'sag',
+  ton = 'krem',
+  gecikme,
+  children,
+}: {
+  yon?: 'sag' | 'sol'
+  ton?: 'krem' | 'vurgu'
+  gecikme: number
+  children: React.ReactNode
+}) {
+  return (
+    <span
+      className={cn(
+        'ozet-pop absolute -top-[13px] rounded-full px-[11px] py-1.5 shadow-[0_6px_14px_rgba(0,0,0,.3)]',
+        yon === 'sag' ? 'right-4' : 'left-4',
+      )}
+      style={{
+        ...yz(800, 10, 1),
+        letterSpacing: '0.08em',
+        background: ton === 'krem' ? KREM : VURGU,
+        color: ton === 'krem' ? KOYU_YAZI : '#fff',
+        animationDelay: `${gecikme}ms`,
+      }}
+    >
+      {children}
+    </span>
+  )
+}
+
+/**
+ * Ortasında yazı olan ilerleme halkası.
+ *
+ * `stroke-dasharray` çevrenin tamamı, `stroke-dashoffset` kalan pay. Dolma
+ * animasyonu tam çevreden başlıyor ve o değer `--halka-cevre` ile CSS'e
+ * geçiyor — her halkanın yarıçapı farklı, keyframe'e sabit sayı yazılamıyor.
+ */
+function Halka({
+  oran,
+  boyut,
+  kalinlik,
+  renk,
+  ust,
+  alt,
+  gecikme = 260,
+}: {
+  /** 0–1; aşan değerler halkayı tam gösteriyor. */
+  oran: number
+  boyut: number
+  kalinlik: number
+  renk: string
+  ust: string
+  alt: string
+  gecikme?: number
+}) {
+  const yaricap = (boyut - kalinlik) / 2
+  const cevre = 2 * Math.PI * yaricap
+  const dolu = Math.max(0, Math.min(1, oran))
+
+  return (
+    <div
+      className="ozet-girisi relative flex-none"
+      style={{ width: boyut, height: boyut, animationDelay: `${gecikme}ms` }}
+    >
+      <svg width={boyut} height={boyut} viewBox={`0 0 ${boyut} ${boyut}`} style={{ transform: 'rotate(-90deg)' }} aria-hidden>
+        <circle
+          cx={boyut / 2}
+          cy={boyut / 2}
+          r={yaricap}
+          fill="none"
+          stroke="rgba(255,255,255,.22)"
+          strokeWidth={kalinlik}
+        />
+        <circle
+          className="ozet-halka"
+          cx={boyut / 2}
+          cy={boyut / 2}
+          r={yaricap}
+          fill="none"
+          stroke={renk}
+          strokeWidth={kalinlik}
+          strokeLinecap="round"
+          strokeDasharray={cevre}
+          strokeDashoffset={cevre * (1 - dolu)}
+          style={
+            {
+              '--halka-cevre': cevre,
+              animationDelay: `${gecikme + 60}ms`,
+            } as React.CSSProperties
+          }
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <p className="rakam m-0" style={{ ...yz(900, Math.round(boyut * 0.21), 1) }}>
+          {ust}
+        </p>
+        <p
+          className="m-0 mt-0.5"
+          style={{ ...yz(700, 8, 1), letterSpacing: '0.12em', color: 'rgba(255,255,255,.7)' }}
+        >
+          {alt}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+/** Yedi günlük soru çubukları. En yüksek gün vurgu renginde. */
+function GunCubuklari({ ozet }: { ozet: HaftalikOzet }) {
+  const enYuksek = Math.max(1, ...ozet.gunler.map((g) => g.soru))
+
+  return (
+    <div className="flex h-[104px] items-end gap-[9px]">
+      {ozet.gunler.map((gun, i) => {
+        // Sıfır soruda bile ince bir iz kalıyor: bomboş bir sütun "veri yok"
+        // gibi değil, çubuk hiç çizilmemiş gibi okunuyordu.
+        const yuzde = gun.soru === 0 ? 4 : Math.max(8, Math.round((gun.soru / enYuksek) * 100))
+        const enIyi = ozet.enIyiGun?.iso === gun.iso
+        return (
+          <div key={gun.iso} className="flex h-full flex-1 flex-col items-center justify-end gap-[7px]">
+            <span
+              className="ozet-bar w-full rounded-[7px]"
+              style={{
+                height: `${yuzde}%`,
+                background: enIyi ? '#FFE3C4' : gun.soru === 0 ? 'rgba(255,255,255,.22)' : 'rgba(255,255,255,.4)',
+                animationDelay: `${560 + i * 60}ms`,
+              }}
+            />
+            <span style={{ ...yz(800, 9, 1), color: 'rgba(255,255,255,.6)' }}>{gun.ad}</span>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+/** Ders adı + süre/pay satırı ve altındaki şerit. Pomodoro kartının kutusu. */
+function SeritSatiri({
+  ad,
+  deger,
+  oran,
+  oneCikan,
+  gecikme,
+}: {
+  ad: string
+  deger: string
+  /** 0–1, en büyük satıra göre. */
+  oran: number
+  oneCikan: boolean
+  gecikme: number
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div className="flex justify-between" style={{ ...yz(800, 13, 1) }}>
+        <span>{ad}</span>
+        <span className="rakam" style={{ color: oneCikan ? ACIK_VURGU : 'rgba(255,255,255,.7)' }}>
+          {deger}
+        </span>
+      </div>
+      <div className="h-[9px] overflow-hidden rounded-full bg-white/10">
+        <span
+          className="ozet-serit block h-full rounded-full"
+          style={{
+            width: `${Math.max(6, Math.round(oran * 100))}%`,
+            background: oneCikan
+              ? `linear-gradient(90deg,${VURGU},${ACIK_VURGU})`
+              : 'rgba(255,255,255,.45)',
+            animationDelay: `${gecikme}ms`,
+          }}
+        />
+      </div>
+    </div>
+  )
+}
+
+/** Kapanış ve kapak kartlarındaki küçük sayı kutusu. */
+function SayiKutusu({
+  deger,
+  etiket,
+  buyuk,
+}: {
+  deger: string
+  etiket: string
+  buyuk?: boolean
+}) {
+  return (
+    <div
+      className={cn(
+        'rounded-[20px] border border-white/15 bg-white/8',
+        buyuk ? 'px-4 py-[15px]' : 'px-3.5 py-3 text-center',
+      )}
+    >
+      {/* Değer ders adı da olabiliyor ("Matematik") ve kutuya sığmayan ad
+          kenardan taşıyordu — kutunun genişliği ızgaradan geliyor, içeriğe
+          göre büyüyemiyor. */}
+      <p className="rakam m-0 truncate" style={{ ...yz(900, buyuk ? 30 : 20, 1) }}>
+        {deger}
+      </p>
+      <p
+        className="m-0 mt-1.5"
+        style={{
+          ...yz(700, buyuk ? 10 : 9, 1),
+          letterSpacing: '0.13em',
+          color: 'rgba(255,255,255,.55)',
+        }}
+      >
+        {etiket}
+      </p>
+    </div>
+  )
+}
+
+/** Ders geri sayımının (3. → 1.) ortak gövdesi. */
+function DersKarti({
+  sira,
+  ders,
+  not,
+}: {
+  sira: 2 | 3
+  ders: HaftalikOzet['ilkUcDers'][number]
+  not: string
+}) {
+  const ucuncu = sira === 3
+  return (
+    <>
+      <Ustluk ton={ucuncu ? 'rgba(255,255,255,.45)' : 'rgba(255,255,255,.5)'}>
+        EN ÇOK SORU ÇÖZDÜĞÜN {sira}. DERS
+      </Ustluk>
+      <div className="flex items-center gap-4">
+        <p
+          className="ozet-vurgu m-0"
+          style={{
+            ...yz(900, ucuncu ? 108 : 118, 0.8),
+            letterSpacing: '-0.06em',
+            color: ucuncu ? 'rgba(255,255,255,.13)' : 'rgba(246,178,122,.22)',
+          }}
+        >
+          {sira}
+        </p>
+        <div className="min-w-0 flex-1">
+          <p
+            className="ozet-girisi m-0 truncate"
+            style={{ ...yz(900, ucuncu ? 34 : 38, 1.05), animationDelay: '240ms' }}
+          >
+            {ders.ders}
+          </p>
+          <p
+            className="ozet-girisi rakam m-0 mt-2"
+            style={{ ...yz(700, 13, 1), color: ACIK_VURGU, animationDelay: '340ms' }}
+          >
+            {ders.soru} soru · haftanın {yuzdeYaz(ders.oran)}
+          </p>
+        </div>
+      </div>
+      <div
+        className="ozet-girisi h-3 overflow-hidden rounded-full bg-white/10"
+        style={{ animationDelay: '400ms' }}
+      >
+        <span
+          className="ozet-serit block h-full rounded-full"
+          style={{
+            width: `${Math.max(6, Math.round(ders.oran * 100))}%`,
+            background: ucuncu ? 'rgba(255,255,255,.4)' : 'rgba(255,255,255,.55)',
+            animationDelay: '480ms',
+          }}
+        />
+      </div>
+      <Kutu gecikme={520} className="px-4 py-3.5">
+        <p className="m-0" style={{ ...yz(600, 14, 1.5), color: 'rgba(255,255,255,.62)' }}>
+          {not}
+        </p>
+      </Kutu>
+    </>
+  )
 }
 
 // ---------------------------------------------------------------------------
 // Kartlar
+//
+// Veri olmayan kart **üretilmiyor**: deneme girilmemiş bir haftada "Bu hafta
+// deneme yok" diyen bir kart, beş saniye boyunca hiçbir şey söylemeyen bir
+// ekran. Üstteki şeridin bölme sayısı da kart sayısından geliyor, yani şerit
+// gerçekten kaç kart olduğunu gösteriyor.
+//
+// Üçü her zaman var: kapak, soru hedefi ve kapanış. Hedef kartı boş bir
+// haftada da anlamlı — "hiç soru girilmemiş" bir haberdir; kapak ile kapanış
+// olmadan da hikâyenin başı ve sonu kalmıyor.
 // ---------------------------------------------------------------------------
 
-/**
- * Kartların zemin renkleri — geçişin iki ucu.
- *
- * CSS metni olarak değil çift olarak tutuluyor: paylaşılan görsel tuvale
- * çiziliyor ve `linear-gradient(...)` metnini ayrıştıramıyor. Renkler tek
- * yerde durunca ekrandaki kartla paylaşılan görsel birbirinden ayrılamıyor.
- */
-const ZEMINLER = {
-  giris: ['#C05B2B', '#7A3316'],
-  hedef: ['#A8432B', '#661F13'],
-  seri: ['#E4708A', '#8C2E48'],
-  devamsizlik: ['#4A5568', '#232B38'],
-  pomodoro: ['#2F6D4F', '#16382A'],
-  ders: ['#3B6E64', '#1B3831'],
-  oyun: ['#5B4A9E', '#2C2354'],
-  banka: ['#9E4A6B', '#4E2036'],
-  deneme: ['#2E5C8A', '#142B44'],
-  net: ['#1F6E7A', '#0E343A'],
-  ucuncu: ['#6B5B4A', '#33291F'],
-  ikinci: ['#8A6B33', '#46340F'],
-  birinci: ['#D08A2C', '#8A4A10'],
-  kapanis: ['#C05B2B', '#6B2C13'],
-} as const satisfies Record<string, readonly [string, string]>
-
 function kartlariKur(ozet: HaftalikOzet): Kart[] {
-  const kartlar: Kart[] = [
-    {
-      id: 'giris',
-      sure: 3400,
-      renkler: ZEMINLER.giris,
-      ses: () => kartSesi(0),
-      paylasim: {
-        ustluk: 'Haftalık özet',
-        dev: 'Haftan bitti',
-        alt: 'Bakalım ne yapmışsın.',
-        renkler: ZEMINLER.giris,
-      },
-      icerik: (
-        <Sahne>
-          <div className="ozet-vurgu flex justify-center">
-            <Rabi durum="kutlama" boyut={120} />
+  const haftaEtiketi = haftaYaz(ozet.hafta).toLocaleUpperCase('tr')
+  const kartlar: Kart[] = []
+  /** Kart sesleri diziyi yukarı tırmanıyor; kart atlanınca basamak da atlanmasın. */
+  let basamak = 0
+  const sonrakiSes = () => {
+    const su = basamak++
+    return () => kartSesi(su)
+  }
+
+  // --- Kapak ---
+  kartlar.push({
+    id: 'kapak',
+    zemin: ZEMIN.kapak,
+    bosluk: 22,
+    ses: sonrakiSes(),
+    susler: (
+      <div
+        className="ozet-parla pointer-events-none absolute left-1/2 top-[150px] h-[300px] w-[300px] -ml-[150px] rounded-full blur-[6px]"
+        style={{ background: 'radial-gradient(circle,rgba(217,98,47,.42),transparent 68%)' }}
+      />
+    ),
+    paylasim: {
+      ustluk: 'Haftalık özet',
+      dev: 'Haftan bitti',
+      alt: 'Bakalım ne yapmışsın.',
+      renkler: GORSEL_RENKLERI.kapak,
+    },
+    icerik: (
+      <div className="flex flex-col items-center gap-[22px]">
+        <div className="ozet-vurgu relative">
+          <div className="grid h-[188px] w-[188px] place-items-center rounded-full border border-white/15 bg-white/6">
+            <Rabi durum="kutlama" boyut={126} />
           </div>
-          <p className="ozet-girisi pt-2 text-center text-sm text-white/75">
-            {haftaYaz(ozet.hafta)}
-          </p>
-          <p
-            className="ozet-vurgu font-display text-center text-4xl font-semibold leading-tight"
-            style={{ animationDelay: '160ms' }}
+          <span
+            className="ozet-pop absolute -top-1.5 -right-[18px] rounded-full px-3 py-[7px] shadow-[0_8px_18px_rgba(0,0,0,.35)]"
+            style={{
+              ...yz(800, 11, 1),
+              letterSpacing: '0.06em',
+              background: KREM,
+              color: KOYU_YAZI,
+              animationDelay: '420ms',
+            }}
           >
-            Haftan bitti.
-            <br />
-            Bakalım ne yapmışsın.
-          </p>
-        </Sahne>
-      ),
-    },
+            HAFTA KAPANDI
+          </span>
+        </div>
+        <p
+          className="ozet-girisi m-0"
+          style={{
+            ...yz(800, 12, 1),
+            letterSpacing: '0.24em',
+            color: 'rgba(255,255,255,.5)',
+            animationDelay: '160ms',
+          }}
+        >
+          {haftaEtiketi}
+        </p>
+        <p
+          className="ozet-girisi m-0 text-center"
+          style={{ ...yz(900, 38, 1.1), letterSpacing: '-0.03em', animationDelay: '260ms' }}
+        >
+          Haftan bitti.
+          <br />
+          <span style={{ color: ACIK_VURGU }}>Bakalım ne yapmışsın.</span>
+        </p>
+        <div className="ozet-girisi flex gap-2" style={{ animationDelay: '420ms' }}>
+          <SayiKutusu deger={String(ozet.toplamSoru)} etiket="SORU" />
+          <SayiKutusu deger={saatKisa(ozet.pomodoroDakika)} etiket="POMODORO" />
+          <SayiKutusu deger={String(ozet.denemeSayisi)} etiket="DENEME" />
+        </div>
+      </div>
+    ),
+  })
 
-    // --- 1. Haftalık soru hedefine yakınlık ---
-    {
-      id: 'hedef',
-      sure: 4600,
-      renkler: ZEMINLER.hedef,
-      ses: () => kartSesi(1),
-      paylasim: {
-        ustluk: 'Bu hafta çözdüğüm soru',
-        dev: String(ozet.toplamSoru),
-        alt: hedefCumlesi(ozet),
-        renkler: ZEMINLER.hedef,
-      },
-      icerik: (
-        <Sahne>
-          <Ustluk simge={<Target size={16} aria-hidden />}>Bu hafta çözdüğün soru</Ustluk>
+  // --- 1. Haftalık soru hedefi ---
+  kartlar.push({
+    id: 'hedef',
+    zemin: ZEMIN.amber,
+    bosluk: 20,
+    ses: sonrakiSes(),
+    paylasim: {
+      ustluk: 'Bu hafta çözdüğüm soru',
+      dev: String(ozet.toplamSoru),
+      alt: hedefCumlesi(ozet),
+      renkler: GORSEL_RENKLERI.amber,
+    },
+    icerik: (
+      <>
+        <Ustluk simge={<Target size={15} aria-hidden />} ton="rgba(255,255,255,.72)">
+          BU HAFTA ÇÖZDÜĞÜN SORU
+        </Ustluk>
+        <div className="flex items-end justify-between gap-3">
           <DevSayi>{ozet.toplamSoru}</DevSayi>
-          <AltYazi>{hedefCumlesi(ozet)}</AltYazi>
           {ozet.haftalikHedef > 0 && (
-            <div className="ozet-girisi pt-2" style={{ animationDelay: '460ms' }}>
-              <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/20">
-                <div
-                  className="h-full rounded-full bg-white transition-[width] duration-700"
-                  style={{ width: `${Math.min(100, Math.round(ozet.hedefOrani * 100))}%` }}
-                />
-              </div>
-              <p className="mt-2 text-sm text-white/70">
-                Haftalık hedef {ozet.haftalikHedef} soru · 7 günün {ozet.hedefliGun} tanesinde
-                günlük hedefi tutturdun
-              </p>
-            </div>
+            <Halka
+              oran={ozet.hedefOrani}
+              boyut={104}
+              kalinlik={9}
+              renk="#FFE3C4"
+              ust={`%${Math.round(ozet.hedefOrani * 100)}`}
+              alt="HEDEF"
+            />
           )}
-        </Sahne>
-      ),
-    },
+        </div>
+        <AltYazi punto={17}>{hedefCumlesi(ozet)}</AltYazi>
+        <Kutu gecikme={480} className="border-white/16 bg-[rgba(48,16,6,.28)] px-4 pt-[18px] pb-3.5">
+          {ozet.enIyiGun && (
+            <Cikartma gecikme={900}>EN İYİ GÜN · {ozet.enIyiGun.soru}</Cikartma>
+          )}
+          <GunCubuklari ozet={ozet} />
+          <p
+            className="m-0 mt-3"
+            style={{
+              ...yz(700, 11, 1.4),
+              letterSpacing: '0.04em',
+              color: 'rgba(255,255,255,.72)',
+            }}
+          >
+            {ozet.haftalikHedef > 0
+              ? `HAFTALIK HEDEF ${ozet.haftalikHedef} · 7 GÜNÜN ${ozet.hedefliGun}'İNDE TUTTURDUN`
+              : 'HAFTALIK HEDEF YOK · AYARLAR’DAN GÜNLÜK HEDEF KOYABİLİRSİN'}
+          </p>
+        </Kutu>
+      </>
+    ),
+  })
 
-    // --- Seri ---
-    {
-      id: 'seri',
-      sure: 4200,
-      renkler: ZEMINLER.seri,
-      ses: () => kartSesi(2),
-      paylasim: {
-        ustluk: 'Serim',
-        dev: ozet.seri === 0 ? '—' : `${ozet.seri} gün`,
-        alt: seriCumlesi(ozet),
-        renkler: ZEMINLER.seri,
-      },
-      icerik: (
-        <Sahne>
-          <Ustluk simge={<Flame size={16} aria-hidden />}>Serin</Ustluk>
-          <DevSayi>{ozet.seri === 0 ? '—' : `${ozet.seri} gün`}</DevSayi>
-          <AltYazi>{seriCumlesi(ozet)}</AltYazi>
-        </Sahne>
-      ),
-    },
-
-    // --- 2. Devamsızlık ---
-    {
-      id: 'devamsizlik',
-      sure: 4200,
-      renkler: ZEMINLER.devamsizlik,
-      ses: () => kartSesi(3),
-      paylasim: {
-        ustluk: 'Bu haftaki devamsızlığım',
-        dev: ozet.devamsizlikToplam === 0 ? 'Tam gün' : `${gunYaz(ozet.devamsizlikToplam)} gün`,
-        alt: devamsizlikCumlesi(ozet),
-        renkler: ZEMINLER.devamsizlik,
-      },
-      icerik: (
-        <Sahne>
-          <Ustluk simge={<CalendarX2 size={16} aria-hidden />}>Bu haftaki devamsızlığın</Ustluk>
-          <DevSayi>
-            {ozet.devamsizlikToplam === 0 ? 'Tam gün' : `${gunYaz(ozet.devamsizlikToplam)} gün`}
-          </DevSayi>
-          <AltYazi>{devamsizlikCumlesi(ozet)}</AltYazi>
-        </Sahne>
-      ),
-    },
-
-    // --- 3. Pomodoro dakikası ---
-    {
-      id: 'pomodoro-dakika',
-      sure: 4200,
-      renkler: ZEMINLER.pomodoro,
-      ses: () => kartSesi(4),
+  // --- 2. Pomodoro ---
+  if (ozet.pomodoroDakika > 0) {
+    const enUzun = ozet.pomodoroDersleri[0]?.dakika ?? 1
+    kartlar.push({
+      id: 'pomodoro',
+      zemin: ZEMIN.koyuSag,
+      bosluk: 20,
+      ses: sonrakiSes(),
       paylasim: {
         ustluk: 'Pomodoro ile çalıştığım süre',
-        dev: ozet.pomodoroDakika === 0 ? '—' : dakikaYaz(ozet.pomodoroDakika),
+        dev: dakikaYaz(ozet.pomodoroDakika),
         alt: pomodoroCumlesi(ozet),
-        renkler: ZEMINLER.pomodoro,
+        renkler: GORSEL_RENKLERI.koyuSag,
       },
       icerik: (
-        <Sahne>
-          <Ustluk simge={<Timer size={16} aria-hidden />}>Pomodoro ile çalıştığın süre</Ustluk>
-          <DevSayi>{ozet.pomodoroDakika === 0 ? '—' : dakikaYaz(ozet.pomodoroDakika)}</DevSayi>
-          <AltYazi>{pomodoroCumlesi(ozet)}</AltYazi>
-        </Sahne>
+        <>
+          <Ustluk simge={<Timer size={15} aria-hidden />}>POMODORO İLE ÇALIŞTIĞIN SÜRE</Ustluk>
+          <DevSayi punto={88} renk={ACIK_VURGU}>
+            {sureParcalari(ozet.pomodoroDakika)}
+          </DevSayi>
+          <div className="ozet-girisi flex gap-2" style={{ animationDelay: '300ms' }}>
+            <Hap>{ozet.pomodoroSeans} oturum</Hap>
+            <Hap>Günde ~{Math.round(ozet.pomodoroDakika / 7)} dk</Hap>
+          </div>
+          {ozet.pomodoroDersleri.length > 0 && (
+            <Kutu gecikme={420} className="flex flex-col gap-3.5 px-4.5 py-5">
+              <Cikartma yon="sol" ton="vurgu" gecikme={760}>
+                HAFTANIN MASASI
+              </Cikartma>
+              {ozet.pomodoroDersleri.map((ders, i) => (
+                <SeritSatiri
+                  key={ders.ders}
+                  ad={ders.ders}
+                  deger={dakikaYaz(ders.dakika)}
+                  oran={ders.dakika / enUzun}
+                  oneCikan={i === 0}
+                  gecikme={520 + i * 80}
+                />
+              ))}
+            </Kutu>
+          )}
+          <AltYazi gecikme={540}>{pomodoroCumlesi(ozet)}</AltYazi>
+        </>
       ),
-    },
+    })
+  }
 
-    // --- 4. En çok çalışılan ders ---
-    {
-      id: 'pomodoro-ders',
-      sure: 4200,
-      renkler: ZEMINLER.ders,
-      ses: () => kartSesi(5),
-      paylasim: {
-        ustluk: 'En çok vakit ayırdığım ders',
-        dev: ozet.pomodoroDers?.ders ?? 'Ders seçilmemiş',
-        alt: ozet.pomodoroDers
-          ? `${dakikaYaz(ozet.pomodoroDers.dakika)} — haftanın en çok emek verdiğim dersi bu.`
-          : 'Pomodoro başlatırken ders seçilmemiş.',
-        renkler: ZEMINLER.ders,
-      },
-      icerik: (
-        <Sahne>
-          <Ustluk simge={<Timer size={16} aria-hidden />}>En çok vakit ayırdığın ders</Ustluk>
-          <DevSayi kucuk>{ozet.pomodoroDers?.ders ?? 'Ders seçilmemiş'}</DevSayi>
-          <AltYazi>
-            {ozet.pomodoroDers
-              ? `${dakikaYaz(ozet.pomodoroDers.dakika)} — haftanın en çok emek verdiğin dersi bu.`
-              : 'Pomodoro başlatırken ders seçersen, haftaya hangi derse ne kadar verdiğini burada görürsün.'}
-          </AltYazi>
-        </Sahne>
-      ),
-    },
-
-    // --- 5. Mini oyunlar ---
-    {
+  // --- 3. Mini oyunlar ---
+  if (ozet.oyunTur > 0) {
+    kartlar.push({
       id: 'oyun',
-      sure: 4200,
-      renkler: ZEMINLER.oyun,
-      ses: () => kartSesi(6),
+      zemin: ZEMIN.kizil,
+      bosluk: 22,
+      ses: sonrakiSes(),
       paylasim: {
         ustluk: 'Mini oyunlarda geçen süre',
-        dev: ozet.oyunTur === 0 ? '—' : dakikaYaz(ozet.oyunDakika),
+        dev: dakikaYaz(ozet.oyunDakika),
         alt: oyunCumlesi(ozet),
-        renkler: ZEMINLER.oyun,
+        renkler: GORSEL_RENKLERI.kizil,
       },
       icerik: (
-        <Sahne>
-          <Ustluk simge={<Gamepad2 size={16} aria-hidden />}>Mini oyunlarda geçen süre</Ustluk>
-          <DevSayi>{ozet.oyunTur === 0 ? '—' : dakikaYaz(ozet.oyunDakika)}</DevSayi>
-          <AltYazi>{oyunCumlesi(ozet)}</AltYazi>
-        </Sahne>
+        <>
+          <Ustluk simge={<Gamepad2 size={15} aria-hidden />} ton="rgba(255,255,255,.58)">
+            MİNİ OYUNLARDA GEÇEN SÜRE
+          </Ustluk>
+          <div className="flex items-center gap-[18px]">
+            <DevSayi punto={92}>
+              {ozet.oyunDakika}
+              <Birim>dk</Birim>
+            </DevSayi>
+            {ozet.oyunIsabet !== null && (
+              <Halka
+                oran={ozet.oyunIsabet}
+                boyut={96}
+                kalinlik={8}
+                renk={ACIK_VURGU}
+                ust={`%${Math.round(ozet.oyunIsabet * 100)}`}
+                alt="İSABET"
+                gecikme={280}
+              />
+            )}
+          </div>
+          <div className="ozet-girisi flex gap-2.5" style={{ animationDelay: '400ms' }}>
+            <div className="flex-1">
+              <SayiKutusu buyuk deger={String(ozet.oyunTur)} etiket="TUR" />
+            </div>
+            <div className="flex-1">
+              <SayiKutusu buyuk deger={String(ozet.oyunDogru)} etiket="DOĞRU" />
+            </div>
+            <div className="flex-1">
+              <SayiKutusu buyuk deger={String(ozet.oyunHatasiz)} etiket="HATASIZ" />
+            </div>
+          </div>
+          {ozet.enCokOynanan && (
+            <Kutu gecikme={500} className="px-4.5 py-4">
+              <Cikartma gecikme={860}>EN ÇOK OYNADIĞIN</Cikartma>
+              <p className="m-0" style={{ ...yz(900, 22, 1.1) }}>
+                {oyunBul(ozet.enCokOynanan).ad}
+              </p>
+              <p
+                className="m-0 mt-2"
+                style={{ ...yz(600, 13, 1.4), color: 'rgba(255,255,255,.65)' }}
+              >
+                {ozet.enCokOynananTur} tur · bu hafta toplam {ozet.oyunDogru} doğru
+              </p>
+            </Kutu>
+          )}
+        </>
       ),
-    },
+    })
+  }
 
-    // --- 6. Yanlış soru bankası ---
-    {
+  // --- 4. Yanlış soru bankası ---
+  if (ozet.bankaCozulen > 0 || ozet.bankaBekleyen > 0) {
+    kartlar.push({
       id: 'banka',
-      sure: 4200,
-      renkler: ZEMINLER.banka,
-      ses: () => kartSesi(7),
+      zemin: ZEMIN.koyuSol,
+      bosluk: 22,
+      ses: sonrakiSes(),
       paylasim: {
         ustluk: 'Bankadan kapattığım soru',
         dev: String(ozet.bankaCozulen),
         alt: bankaCumlesi(ozet),
-        renkler: ZEMINLER.banka,
+        renkler: GORSEL_RENKLERI.koyuSol,
       },
       icerik: (
-        <Sahne>
-          <Ustluk simge={<Images size={16} aria-hidden />}>Bankadan kapattığın soru</Ustluk>
-          <DevSayi>{ozet.bankaCozulen}</DevSayi>
-          <AltYazi>{bankaCumlesi(ozet)}</AltYazi>
-        </Sahne>
-      ),
-    },
-
-    // --- 7. Deneme sayısı ---
-    {
-      id: 'deneme-sayisi',
-      sure: 4200,
-      renkler: ZEMINLER.deneme,
-      ses: () => kartSesi(8),
-      paylasim: {
-        ustluk: 'Bu hafta girdiğim deneme',
-        dev: String(ozet.denemeSayisi),
-        alt: denemeCumlesi(ozet),
-        renkler: ZEMINLER.deneme,
-      },
-      icerik: (
-        <Sahne>
-          <Ustluk>Bu hafta girdiğin deneme</Ustluk>
-          <DevSayi>{ozet.denemeSayisi}</DevSayi>
-          <AltYazi>{denemeCumlesi(ozet)}</AltYazi>
-        </Sahne>
-      ),
-    },
-  ]
-
-  // --- 8. Deneme netleri ---
-  kartlar.push({
-    id: 'deneme-net',
-    sure: 5000,
-    renkler: ZEMINLER.net,
-    ses: () => kartSesi(9),
-    paylasim: ozet.denemeEnYuksek
-      ? {
-          ustluk: 'En yüksek deneme netim',
-          dev: netYaz(ozet.denemeEnYuksek.net),
-          alt: ozet.denemeEnYuksek.ad,
-          ekstra: [
-            `En düşük ${netYaz(ozet.denemeEnDusuk?.net ?? 0)}`,
-            `Ortalama ${netYaz(ozet.denemeOrtalama ?? 0)}`,
-          ],
-          renkler: ZEMINLER.net,
-        }
-      : {
-          ustluk: 'Deneme netlerim',
-          dev: 'Bu hafta deneme yok',
-          alt: 'Deneme, gidişatı gösteren tek ölçü.',
-          renkler: ZEMINLER.net,
-        },
-    icerik: ozet.denemeEnYuksek ? (
-      <Sahne>
-        <Ustluk>Deneme netlerin</Ustluk>
-        <DevSayi>{netYaz(ozet.denemeEnYuksek.net)}</DevSayi>
-        <AltYazi>
-          En yüksek netin — <strong className="font-semibold">{ozet.denemeEnYuksek.ad}</strong>
-        </AltYazi>
-        <div
-          className="ozet-girisi grid grid-cols-2 gap-3 pt-2"
-          style={{ animationDelay: '520ms' }}
-        >
-          <NetKutusu etiket="En düşük" deger={netYaz(ozet.denemeEnDusuk?.net ?? 0)} />
-          <NetKutusu etiket="Ortalama" deger={netYaz(ozet.denemeOrtalama ?? 0)} />
-        </div>
-      </Sahne>
-    ) : (
-      <Sahne>
-        <Ustluk>Deneme netlerin</Ustluk>
-        <DevSayi kucuk>Bu hafta deneme yok</DevSayi>
-        <AltYazi>
-          Deneme, gidişatını gösteren tek ölçü. Haftaya bir tane çözersen burada netini görürsün.
-        </AltYazi>
-      </Sahne>
-    ),
-  })
-
-  // --- 9. En çok soru çözülen üç ders, 3'ten 1'e ---
-  if (ozet.ilkUcDers.length === 0) {
-    kartlar.push({
-      id: 'ders-yok',
-      sure: 4200,
-      renkler: ZEMINLER.ucuncu,
-      ses: () => kartSesi(10),
-      paylasim: {
-        ustluk: 'En çok soru çözdüğüm dersler',
-        dev: 'Ders girilmemiş',
-        alt: 'Soru takibine ders ders girilirse haftanın zirvesi burada çıkıyor.',
-        renkler: ZEMINLER.ucuncu,
-      },
-      icerik: (
-        <Sahne>
-          <Ustluk>En çok soru çözdüğün dersler</Ustluk>
-          <DevSayi kucuk>Ders girilmemiş</DevSayi>
-          <AltYazi>
-            Soru takibine ders ders girersen, haftaya hangi dersin zirvede olduğunu burada
-            görürsün.
-          </AltYazi>
-        </Sahne>
-      ),
-    })
-  } else {
-    // Geri sayım için ters çevriliyor: 3. sıradan başlayıp 1.'ye çıkıyor.
-    const siralama = [...ozet.ilkUcDers].reverse()
-    const zeminler = [ZEMINLER.ucuncu, ZEMINLER.ikinci, ZEMINLER.birinci]
-
-    siralama.forEach((ders, i) => {
-      const sira = (siralama.length - i) as 3 | 2 | 1
-      const birinciMi = sira === 1
-
-      kartlar.push({
-        id: `ders-${sira}`,
-        sure: birinciMi ? 6000 : 4000,
-        // Birincilik altın rengi; üçüncü ve ikinci daha sönük. Renk sıcaklığının
-        // artması, geri sayımın yaklaştığını sayıyı okumadan hissettiriyor.
-        renkler: zeminler[Math.min(2, 3 - sira)],
-        paylasim: {
-          ustluk: birinciMi
-            ? 'Haftanın dersi'
-            : `En çok soru çözdüğüm ${sira}. ders`,
-          dev: `${sira}. ${ders.ders}`,
-          alt: `${ders.soru} soru · haftanın ${yuzdeYaz(ders.oran)}${
-            birinciMi ? ' — bu hafta beni en çok bu ders yordu.' : ''
-          }`,
-          renkler: zeminler[Math.min(2, 3 - sira)],
-        },
-        ses: () => (birinciMi ? zaferSesi() : geriSayimSesi(sira)),
-        icerik: (
-          <Sahne>
-            <Ustluk>
-              {birinciMi ? 'Ve haftanın dersi…' : `En çok soru çözdüğün ${sira}. ders`}
-            </Ustluk>
+        <>
+          <Ustluk simge={<Images size={15} aria-hidden />}>BANKADAN KAPATTIĞIN SORU</Ustluk>
+          <div className="flex items-end gap-3.5">
+            <DevSayi punto={104} renk={ACIK_VURGU}>
+              {ozet.bankaCozulen}
+            </DevSayi>
             <p
-              className={cn(
-                'font-display text-8xl font-bold leading-none',
-                birinciMi ? 'ozet-nabiz' : 'ozet-vurgu',
-              )}
-              style={birinciMi ? undefined : { animationDelay: '120ms' }}
+              className="m-0 mb-3"
+              style={{ ...yz(800, 14, 1.3), color: 'rgba(255,255,255,.6)' }}
             >
-              {sira}.
+              soru
+              <br />
+              kapandı
             </p>
+          </div>
+          <Kutu gecikme={320} className="p-4.5">
             <p
-              className="ozet-vurgu font-display text-4xl font-semibold leading-tight"
-              style={{ animationDelay: birinciMi ? '520ms' : '300ms' }}
+              className="m-0 mb-3"
+              style={{
+                ...yz(800, 10, 1),
+                letterSpacing: '0.14em',
+                color: 'rgba(255,255,255,.5)',
+              }}
             >
-              {ders.ders}
+              BANKANIN HÂLİ · {ozet.bankaCozulen + ozet.bankaBekleyen} KAYIT
             </p>
-            <AltYazi gecikme={birinciMi ? 760 : 520}>
-              {ders.soru} soru · haftanın {yuzdeYaz(ders.oran)}
-              {birinciMi ? ' — bu hafta seni en çok bu ders yordu.' : ''}
-            </AltYazi>
-          </Sahne>
-        ),
-      })
+            <BankaIzgarasi kapanan={ozet.bankaCozulen} bekleyen={ozet.bankaBekleyen} />
+            <div className="mt-3.5 flex gap-4">
+              <Gosterge renk={VURGU}>Kapattığın</Gosterge>
+              <Gosterge renk="rgba(255,255,255,.12)">Bekleyen {ozet.bankaBekleyen}</Gosterge>
+            </div>
+          </Kutu>
+          <AltYazi gecikme={460}>{bankaCumlesi(ozet)}</AltYazi>
+        </>
+      ),
     })
   }
+
+  // --- 5. Deneme netleri ---
+  if (ozet.denemeEnYuksek) {
+    kartlar.push({
+      id: 'deneme-net',
+      zemin: ZEMIN.kizilKoyu,
+      bosluk: 20,
+      ses: sonrakiSes(),
+      paylasim: {
+        ustluk: 'En yüksek deneme netim',
+        dev: netYaz(ozet.denemeEnYuksek.net),
+        alt: ozet.denemeEnYuksek.ad,
+        ekstra: [
+          `En düşük ${netYaz(ozet.denemeEnDusuk?.net ?? 0)}`,
+          `Ortalama ${netYaz(ozet.denemeOrtalama ?? 0)}`,
+        ],
+        renkler: GORSEL_RENKLERI.kizilKoyu,
+      },
+      icerik: (
+        <>
+          <Ustluk simge={<LineChart size={15} aria-hidden />} ton="rgba(255,255,255,.55)">
+            DENEME NETLERİN
+          </Ustluk>
+          <div className="relative">
+            <DevSayi punto={92}>{netYaz(ozet.denemeEnYuksek.net)}</DevSayi>
+            {/* Rozet yalnızca gerçekten yükselen bir haftada: her hafta çıkan
+                bir "REKOR" etiketi rekor olmaktan çıkıyor. */}
+            {ozet.denemeArtis !== null && ozet.denemeArtis > 0 && (
+              <span
+                className="ozet-pop absolute -top-1 right-0.5 rounded-full px-3 py-[7px] shadow-[0_8px_18px_rgba(0,0,0,.4)]"
+                style={{
+                  ...yz(900, 11, 1),
+                  letterSpacing: '0.06em',
+                  background: KREM,
+                  color: KOYU_YAZI,
+                  animationDelay: '700ms',
+                }}
+              >
+                YÜKSELİŞ
+              </span>
+            )}
+          </div>
+          <p
+            className="ozet-girisi m-0"
+            style={{ ...yz(600, 16, 1.5), color: 'rgba(255,255,255,.82)', animationDelay: '300ms' }}
+          >
+            En yüksek netin — <strong style={{ fontWeight: 900 }}>{ozet.denemeEnYuksek.ad}</strong>
+          </p>
+          <Kutu gecikme={400} className="px-4.5 pt-4.5 pb-3.5">
+            <NetCubuklari ozet={ozet} />
+            <div className="mt-4 flex gap-2">
+              <NetKutusu etiket="EN DÜŞÜK" deger={netYaz(ozet.denemeEnDusuk?.net ?? 0)} />
+              <NetKutusu etiket="ORTALAMA" deger={netYaz(ozet.denemeOrtalama ?? 0)} />
+              {ozet.denemeArtis !== null && (
+                <NetKutusu
+                  etiket="ARTIŞ"
+                  deger={`${ozet.denemeArtis > 0 ? '+' : ''}${netYaz(ozet.denemeArtis)}`}
+                  renk={ozet.denemeArtis >= 0 ? ARTIS_YESILI : undefined}
+                />
+              )}
+            </div>
+          </Kutu>
+        </>
+      ),
+    })
+  }
+
+  // --- 6. En çok soru çözülen üç ders, 3'ten 1'e ---
+  // Geri sayım için ters çevriliyor: 3. sıradan başlayıp 1.'ye çıkıyor.
+  const siralama = [...ozet.ilkUcDers].reverse()
+  siralama.forEach((ders, i) => {
+    const derecesi = (siralama.length - i) as 3 | 2 | 1
+
+    if (derecesi !== 1) {
+      basamak++
+      kartlar.push({
+        id: `ders-${derecesi}`,
+        zemin: derecesi === 3 ? ZEMIN.ucuncu : ZEMIN.ikinci,
+        bosluk: 18,
+        ses: () => geriSayimSesi(derecesi),
+        paylasim: {
+          ustluk: `En çok soru çözdüğüm ${derecesi}. ders`,
+          dev: `${derecesi}. ${ders.ders}`,
+          alt: `${ders.soru} soru · haftanın ${yuzdeYaz(ders.oran)}`,
+          renkler: derecesi === 3 ? GORSEL_RENKLERI.ucuncu : GORSEL_RENKLERI.ikinci,
+        },
+        icerik: <DersKarti sira={derecesi} ders={ders} not={dereceNotu(derecesi, ozet)} />,
+      })
+      return
+    }
+
+    // Birincilik: parlayan amber zemin, konfeti ve nabız atan "1".
+    basamak++
+    kartlar.push({
+      id: 'ders-1',
+      zemin: ZEMIN.birinci,
+      bosluk: 16,
+      ses: zaferSesi,
+      susler: (
+        <>
+          <div
+            className="ozet-parla pointer-events-none absolute left-1/2 top-[120px] h-[340px] w-[340px] -ml-[170px] rounded-full"
+            style={{
+              background: 'radial-gradient(circle,rgba(255,244,225,.5),transparent 66%)',
+              animationDuration: '3.6s',
+            }}
+          />
+          <span
+            className="ozet-pop pointer-events-none absolute left-[38px] top-[150px] h-3.5 w-[9px] rounded-[3px] bg-white/75"
+            style={{ animationDelay: '700ms' }}
+          />
+          <span
+            className="ozet-pop pointer-events-none absolute right-11 top-[196px] h-3.5 w-[9px] rounded-[3px]"
+            style={{ background: 'rgba(90,32,10,.35)', animationDelay: '820ms' }}
+          />
+          <span
+            className="ozet-pop pointer-events-none absolute left-16 top-[250px] h-2 w-2 rounded-full bg-white/70"
+            style={{ animationDelay: '900ms' }}
+          />
+        </>
+      ),
+      paylasim: {
+        ustluk: 'Haftanın dersi',
+        dev: ders.ders,
+        alt: `${ders.soru} soru · haftanın ${yuzdeYaz(ders.oran)} — bu hafta beni en çok bu ders yordu.`,
+        renkler: GORSEL_RENKLERI.birinci,
+      },
+      icerik: (
+        <div className="flex flex-col items-center gap-4 text-center">
+          <span
+            className="ozet-girisi rounded-full px-3.5 py-2"
+            style={{ ...yz(900, 10, 1), letterSpacing: '0.2em', background: 'rgba(48,16,6,.32)' }}
+          >
+            VE HAFTANIN DERSİ…
+          </span>
+          <p
+            className="ozet-nabiz m-0"
+            style={{
+              ...yz(900, 132, 0.78),
+              letterSpacing: '-0.07em',
+              color: FIL_DISI,
+              textShadow: '0 12px 40px rgba(90,32,10,.45)',
+            }}
+          >
+            1
+          </p>
+          <p
+            className="ozet-vurgu m-0 max-w-full truncate"
+            style={{ ...yz(900, 46, 1), letterSpacing: '-0.03em', animationDelay: '460ms' }}
+          >
+            {ders.ders}
+          </p>
+          <div
+            className="ozet-girisi flex w-full max-w-[280px] flex-col gap-2.5"
+            style={{ animationDelay: '640ms' }}
+          >
+            <div className="h-3.5 overflow-hidden rounded-full" style={{ background: 'rgba(48,16,6,.25)' }}>
+              <span
+                className="ozet-serit block h-full rounded-full"
+                style={{
+                  width: `${Math.max(6, Math.round(ders.oran * 100))}%`,
+                  background: FIL_DISI,
+                  animationDelay: '760ms',
+                }}
+              />
+            </div>
+            <div
+              className="rakam flex justify-between"
+              style={{ ...yz(800, 12, 1), color: 'rgba(255,244,225,.85)' }}
+            >
+              <span>{ders.soru} soru</span>
+              <span>haftanın {yuzdeYaz(ders.oran)}</span>
+            </div>
+          </div>
+          <p
+            className="ozet-girisi m-0 mt-1.5 max-w-[280px] text-pretty"
+            style={{ ...yz(700, 16, 1.5), color: 'rgba(255,244,225,.92)', animationDelay: '820ms' }}
+          >
+            Bu hafta seni en çok bu ders yordu.
+          </p>
+        </div>
+      ),
+    })
+  })
 
   // --- Kapanış ---
   kartlar.push({
     id: 'kapanis',
-    sure: 0,
-    renkler: ZEMINLER.kapanis,
+    zemin: ZEMIN.kapanis,
+    bosluk: 18,
+    sonMu: true,
     ses: kapanisSesi,
     paylasim: {
-      ustluk: `Rabi haftalık özeti`,
+      ustluk: 'Rabi haftalık özeti',
       dev: kapanisCumlesi(ozet),
-      alt: `${ozet.toplamSoru} soru · ${dakikaYaz(ozet.pomodoroDakika)} pomodoro · ${
-        ozet.denemeSayisi
-      } deneme`,
-      renkler: ZEMINLER.kapanis,
+      alt: `${ozet.toplamSoru} soru · ${dakikaYaz(ozet.pomodoroDakika)} pomodoro · ${ozet.denemeSayisi} deneme`,
+      renkler: GORSEL_RENKLERI.kapanis,
     },
     icerik: (
-      <Sahne>
-        <div className="ozet-vurgu flex justify-center">
-          <Rabi durum="mutlu" boyut={104} />
+      <>
+        <div className="ozet-girisi flex items-center gap-3.5">
+          <Rabi durum="mutlu" boyut={74} />
+          <div className="min-w-0">
+            <p
+              className="m-0"
+              style={{ ...yz(800, 10, 1), letterSpacing: '0.2em', color: 'rgba(255,255,255,.6)' }}
+            >
+              {haftaEtiketi}
+            </p>
+            <p
+              className="m-0 mt-[7px] text-balance"
+              style={{ ...yz(900, 30, 1.05), letterSpacing: '-0.02em' }}
+            >
+              {kapanisCumlesi(ozet)}
+            </p>
+          </div>
         </div>
-        <p
-          className="ozet-vurgu font-display text-center text-3xl font-semibold leading-tight"
-          style={{ animationDelay: '160ms' }}
-        >
-          {kapanisCumlesi(ozet)}
-        </p>
-        <AltYazi gecikme={420}>
-          <span className="block text-center text-base text-white/80">
-            Bu haftayı paylaş, gelecek hafta daha iyisini yap.
-          </span>
-        </AltYazi>
-      </Sahne>
+        <div className="ozet-girisi grid grid-cols-2 gap-2.5" style={{ animationDelay: '240ms' }}>
+          <SayiKutusu buyuk deger={String(ozet.toplamSoru)} etiket="SORU" />
+          <SayiKutusu buyuk deger={saatKisa(ozet.pomodoroDakika)} etiket="POMODORO" />
+          <SayiKutusu
+            buyuk
+            deger={ozet.denemeEnYuksek ? netYaz(ozet.denemeEnYuksek.net) : '—'}
+            etiket="EN İYİ NET"
+          />
+          <SayiKutusu
+            buyuk
+            deger={ozet.ilkUcDers[0] ? kisaDers(ozet.ilkUcDers[0].ders) : '—'}
+            etiket="HAFTANIN DERSİ"
+          />
+        </div>
+      </>
     ),
   })
 
   return kartlar
 }
 
-function NetKutusu({ etiket, deger }: { etiket: string; deger: string }) {
+// ---------------------------------------------------------------------------
+// Küçük parçalar
+// ---------------------------------------------------------------------------
+
+function Hap({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl bg-white/15 px-4 py-3">
-      <p className="text-xs text-white/70">{etiket}</p>
-      <p className="rakam font-display text-2xl font-semibold">{deger}</p>
+    <span
+      className="rounded-full border border-white/15 bg-white/8 px-3.5 py-2.5 text-white/85"
+      style={{ ...yz(800, 12, 1) }}
+    >
+      {children}
+    </span>
+  )
+}
+
+function Gosterge({ renk, children }: { renk: string; children: React.ReactNode }) {
+  return (
+    <span
+      className="flex items-center gap-[7px] text-white/70"
+      style={{ ...yz(700, 11, 1) }}
+    >
+      <span className="h-2.5 w-2.5 rounded-[3px]" style={{ background: renk }} />
+      {children}
+    </span>
+  )
+}
+
+/**
+ * Bankanın hâlini gösteren kare ızgara — dolular kapatılan, boşlar bekleyen.
+ *
+ * Kare sayısı `IZGARA_SINIRI` ile kapalı: yüz kayıtlık bir bankada ızgara
+ * kartın tamamını yer, kutu kaydırılamadığı için altındaki cümle ekrandan
+ * taşardı. Gerçek sayı kutunun başlığında yazıyor; ızgara oranı gösteriyor.
+ */
+const IZGARA_SINIRI = 30
+
+function BankaIzgarasi({ kapanan, bekleyen }: { kapanan: number; bekleyen: number }) {
+  const toplam = kapanan + bekleyen
+  if (toplam === 0) return null
+
+  const kare = Math.min(IZGARA_SINIRI, toplam)
+  const dolu = Math.round((kapanan / toplam) * kare)
+
+  return (
+    <div className="grid grid-cols-10 gap-1.5" aria-hidden>
+      {Array.from({ length: kare }, (_, i) => (
+        <span
+          key={i}
+          className={cn('aspect-square rounded-md', i < dolu && 'ozet-pop')}
+          style={{
+            background: i < dolu ? VURGU : 'rgba(255,255,255,.12)',
+            animationDelay: `${380 + i * 40}ms`,
+            animationDuration: '420ms',
+          }}
+        />
+      ))}
     </div>
   )
+}
+
+/**
+ * Deneme netlerinin çubukları: geçen dönemin ortalaması ve bu haftanın
+ * denemeleri. Geçen dönem yoksa yalnızca bu hafta çiziliyor — uydurulmuş bir
+ * sıfır çubuğu, ilk kez deneme giren kullanıcıya olmayan bir düşüş gösterirdi.
+ */
+function NetCubuklari({ ozet }: { ozet: HaftalikOzet }) {
+  const cubuklar: { anahtar: string; etiket: string; net: number; buHafta: boolean }[] = []
+  if (ozet.oncekiDonemOrtalama !== null) {
+    cubuklar.push({
+      anahtar: 'gecen',
+      etiket: 'GEÇEN HF.',
+      net: ozet.oncekiDonemOrtalama,
+      buHafta: false,
+    })
+  }
+  // En fazla üç deneme: dördüncüsünden sonra çubuklar okunamayacak kadar
+  // inceliyor ve ad etiketleri üst üste biniyor.
+  for (const deneme of ozet.denemeNetleri.slice(-3)) {
+    cubuklar.push({
+      anahtar: `${deneme.tarih}-${deneme.ad}`,
+      etiket: gunEtiketi(deneme.tarih),
+      net: deneme.net,
+      buHafta: true,
+    })
+  }
+
+  const enYuksek = Math.max(1, ...cubuklar.map((c) => c.net))
+  const rekor = cubuklar.reduce((en, c) => (c.buHafta && c.net >= en ? c.net : en), -Infinity)
+
+  return (
+    <div className="flex h-24 items-end gap-3">
+      {cubuklar.map((cubuk, i) => {
+        const zirve = cubuk.buHafta && cubuk.net === rekor
+        return (
+          <div
+            key={cubuk.anahtar}
+            className="flex h-full flex-1 flex-col items-center justify-end gap-2"
+          >
+            <span
+              className="rakam"
+              style={{ ...yz(900, 12, 1), color: zirve ? '#FFE3C4' : 'rgba(255,255,255,.55)' }}
+            >
+              {netYaz(cubuk.net)}
+            </span>
+            <span
+              className="ozet-bar w-full rounded-t-lg rounded-b"
+              style={{
+                height: `${Math.max(8, Math.round((cubuk.net / enYuksek) * 100))}%`,
+                background: zirve
+                  ? `linear-gradient(180deg,#FFE3C4,${VURGU})`
+                  : cubuk.buHafta
+                    ? 'rgba(255,255,255,.32)'
+                    : 'rgba(255,255,255,.2)',
+                animationDelay: `${480 + i * 80}ms`,
+              }}
+            />
+            <span
+              style={{
+                ...yz(800, 9, 1),
+                color: zirve ? 'rgba(255,255,255,.7)' : 'rgba(255,255,255,.45)',
+              }}
+            >
+              {cubuk.etiket}
+            </span>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function NetKutusu({ etiket, deger, renk }: { etiket: string; deger: string; renk?: string }) {
+  return (
+    <div className="flex-1 rounded-[15px] px-3 py-2.5" style={{ background: 'rgba(0,0,0,.22)' }}>
+      <p
+        className="m-0"
+        style={{ ...yz(700, 9, 1), letterSpacing: '0.12em', color: 'rgba(255,255,255,.5)' }}
+      >
+        {etiket}
+      </p>
+      <p className="rakam m-0 mt-1.5" style={{ ...yz(900, 18, 1), color: renk }}>
+        {deger}
+      </p>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Biçimleme
+// ---------------------------------------------------------------------------
+
+/** Kapak ve kapanış kutucuklarındaki kısa süre — "6:55", bir saatin altında "55dk". */
+function saatKisa(dakika: number): string {
+  if (dakika <= 0) return '—'
+  if (dakika < 60) return `${dakika}dk`
+  return `${Math.floor(dakika / 60)}:${String(dakika % 60).padStart(2, '0')}`
+}
+
+/** Dev sayı olarak süre: "6 sa 55 dk", birimleri küçük punto. */
+function sureParcalari(dakika: number): React.ReactNode {
+  const saat = Math.floor(dakika / 60)
+  const kalan = dakika % 60
+  if (saat === 0) {
+    return (
+      <>
+        {kalan}
+        <Birim>dk</Birim>
+      </>
+    )
+  }
+  return (
+    <>
+      {saat}
+      <Birim>sa</Birim> {kalan}
+      <Birim>dk</Birim>
+    </>
+  )
+}
+
+/** Çubuğun altındaki gün adı — "SALI", "CUMA". */
+function gunEtiketi(iso: string): string {
+  const gunler = ['PAZAR', 'PZT', 'SALI', 'ÇARŞ.', 'PERŞ.', 'CUMA', 'CMT']
+  return gunler[new Date(`${iso}T00:00:00`).getDay()]
+}
+
+/**
+ * Kapanış kutucuğuna sığmayan ders adını kısaltır — "Matematik" → "Mat."
+ *
+ * Sınır 30 piksellik yazıda ızgaranın yarım sütununa sığan harf sayısı;
+ * "Matematik" bu yüzden kısalanların içinde.
+ */
+function kisaDers(ad: string): string {
+  return ad.length <= 8 ? ad : `${ad.slice(0, 3)}.`
 }
 
 // ---------------------------------------------------------------------------
@@ -865,57 +1652,23 @@ function hedefCumlesi(ozet: HaftalikOzet): string {
     return `${ozet.haftalikHedef} soruluk hedefi tutturdun. Söz verip tutmak, en zor kısmıydı.`
   }
   if (ozet.toplamSoru === 0) {
-    return 'Bu hafta hiç soru girilmemiş. Yeni hafta temiz bir sayfa — pazartesi 20 soruyla başla.'
+    return 'Bu hafta hiç soru girilmemiş. Yeni hafta temiz bir sayfa — yarın 20 soruyla başla.'
   }
   return `Hedefe ${Math.abs(ozet.hedefFarki)} soru kalmıştı. Günde ${Math.ceil(
     Math.abs(ozet.hedefFarki) / 7,
   )} soru fazlası bu farkı kapatıyor.`
 }
 
-function seriCumlesi(ozet: HaftalikOzet): string {
-  if (ozet.seri === 0) {
-    return 'Seri kopmuş. Günlük hedefi tutturduğun ilk gün yeniden 1’den başlıyor.'
-  }
-  if (ozet.seri === 1) return 'Seri başladı. Yarın da tuttur, 2 olsun.'
-  if (ozet.seri >= 7) {
-    return `${ozet.seri} gündür günlük hedefini hiç kaçırmadın. Bu artık alışkanlık.`
-  }
-  return `${ozet.seri} gündür günlük hedefini tutturuyorsun. Bir gün boş geçersen sıfırlanır.`
-}
-
-function devamsizlikCumlesi(ozet: HaftalikOzet): string {
-  if (ozet.devamsizlikToplam === 0) return 'Bu hafta hiç devamsızlık yapmadın. Hakkın duruyor.'
-
-  const parcalar: string[] = []
-  if (ozet.devamsizlikOzursuz > 0) {
-    parcalar.push(`${gunYaz(ozet.devamsizlikOzursuz)} gün özürsüz`)
-  }
-  if (ozet.devamsizlikOzurlu > 0) parcalar.push(`${gunYaz(ozet.devamsizlikOzurlu)} gün özürlü`)
-
-  const uyari =
-    ozet.devamsizlikOzursuz > 0
-      ? ' Özürsüz hakkın 10 gün — Devamsızlık ekranından kalanına bak.'
-      : ' Raporlu günler ayrı sayılıyor, panik yok.'
-
-  return parcalar.join(', ') + '.' + uyari
-}
-
 function pomodoroCumlesi(ozet: HaftalikOzet): string {
-  if (ozet.pomodoroDakika === 0) {
-    return 'Bu hafta hiç pomodoro açmamışsın. 25 dakika, tek oturum — başlamak için yeter.'
-  }
   if (ozet.pomodoroDakika >= 600) {
-    return `${ozet.pomodoroSeans} oturum. On saatin üstü — bu hafta masaya gerçekten oturmuşsun.`
+    return 'On saatin üstü — bu hafta masaya gerçekten oturmuşsun.'
   }
-  return `${ozet.pomodoroSeans} oturum. Kesintisiz geçen her dakika, dağınık geçen üç dakikadan değerli.`
+  return 'Kesintisiz geçen her dakika, dağınık geçen üç dakikadan değerli.'
 }
 
 function oyunCumlesi(ozet: HaftalikOzet): string {
-  if (ozet.oyunTur === 0) {
-    return 'Bu hafta mini oyun oynamadın. Bir turu bir dakika — sıradaki molada dene.'
-  }
   const oyunAdi = ozet.enCokOynanan ? oyunBul(ozet.enCokOynanan).ad : null
-  const kuyruk = oyunAdi ? ` En çok ${oyunAdi} oynadın.` : ''
+  const kuyruk = oyunAdi ? ` En çok ${oyunAdi} oynadım.` : ''
   return `${ozet.oyunTur} tur, ${ozet.oyunDogru} doğru cevap.${kuyruk}`
 }
 
@@ -923,18 +1676,15 @@ function bankaCumlesi(ozet: HaftalikOzet): string {
   if (ozet.bankaCozulen === 0) {
     return 'Bu hafta bankadaki yanlışlara dönmemişsin. Bir kez yanlış yapılan soru, iki kez yanlış yapılmaya en yakın sorudur.'
   }
-  if (ozet.bankaCozulen >= 10) {
-    return `${ozet.bankaCozulen} soruyu "çözdüm" işaretledin. Eski yanlışları kapatmak, yeni soru çözmekten daha çok net getirir.`
-  }
-  return `${ozet.bankaCozulen} eski yanlışını kapattın. Bankayı boşaltmak netini doğrudan yükseltir.`
+  return 'Eski yanlışları kapatmak, yeni soru çözmekten daha çok net getirir.'
 }
 
-function denemeCumlesi(ozet: HaftalikOzet): string {
-  if (ozet.denemeSayisi === 0) {
-    return 'Bu hafta deneme girmemişsin. Deneme, çalışmanın karnesi — haftada bir tane bile yön gösterir.'
-  }
-  if (ozet.denemeSayisi === 1) return 'Bir deneme. Düzenli girersen trend çizgisi anlam kazanır.'
-  return `${ozet.denemeSayisi} deneme. Bu tempoda gidişatını okumak kolaylaşıyor.`
+/** 3. ve 2. ders kartlarının alt notu — sıradakine bağlayan cümle. */
+function dereceNotu(sira: 2 | 3, ozet: HaftalikOzet): string {
+  if (sira === 3) return 'Podyumun üçüncü basamağı. Geri kalan iki ders için sıradaki kartlar.'
+  const fark = (ozet.ilkUcDers[0]?.soru ?? 0) - (ozet.ilkUcDers[1]?.soru ?? 0)
+  if (fark <= 0) return 'Zirveyle başa baş gitmiş. Sırada haftanın dersi var.'
+  return `Zirveye ${fark} soru kalmış. Sırada haftanın dersi var.`
 }
 
 function kapanisCumlesi(ozet: HaftalikOzet): string {

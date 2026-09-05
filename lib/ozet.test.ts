@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import {
-  bekleyenOzetHaftasi,
+  bekleyenOzetDonemi,
   dakikaYaz,
+  donem,
+  gunFarki,
   gunYaz,
   haftaAraligi,
   haftaKaydir,
   haftaYaz,
   haftalikOzet,
-  pazarMi,
   sayiEki,
   yuzdeYaz,
   type OzetGirdisi,
@@ -93,23 +94,38 @@ describe('hafta aralığı', () => {
     expect(haftaKaydir(PAZARTESI, 1)).toBe(SONRAKI_PAZARTESI)
   })
 
-  it('pazarMi yalnızca pazarı doğru bulur', () => {
-    expect(pazarMi(PAZAR)).toBe(true)
-    expect(pazarMi(PAZARTESI)).toBe(false)
+  it('donem pazartesiye çekmez, verilen günden başlar', () => {
+    const d = donem(CARSAMBA)
+    expect(d.baslangic).toBe(CARSAMBA)
+    expect(d.bitis).toBe('2026-08-25')
+    expect(d.gunler).toHaveLength(7)
+  })
+
+  it('gunFarki tam gün sayar, iki yönde de', () => {
+    expect(gunFarki(PAZARTESI, PAZAR)).toBe(6)
+    expect(gunFarki(PAZAR, PAZARTESI)).toBe(-6)
   })
 })
 
-describe('bekleyen özet haftası', () => {
-  it('pazar günü, biten haftanın kendisini verir', () => {
-    expect(bekleyenOzetHaftasi(PAZAR)).toBe(PAZARTESI)
+describe('bekleyen özet dönemi', () => {
+  it('kurulumdan yedi gün geçmeden özet doğmaz', () => {
+    expect(bekleyenOzetDonemi(PAZARTESI, PAZARTESI)).toBeNull()
+    expect(bekleyenOzetDonemi(PAZARTESI, PAZAR)).toBeNull()
   })
 
-  it('hafta içinde bir önceki haftayı verir', () => {
-    expect(bekleyenOzetHaftasi(CARSAMBA)).toBe('2026-08-10')
+  it('yedinci gün, kurulum gününden başlayan ilk dönemi verir', () => {
+    expect(bekleyenOzetDonemi(PAZARTESI, SONRAKI_PAZARTESI)).toBe(PAZARTESI)
+    expect(donem(PAZARTESI).bitis).toBe(PAZAR)
   })
 
-  it('pazar ile ertesi pazartesi aynı haftayı gösterir', () => {
-    expect(bekleyenOzetHaftasi(SONRAKI_PAZARTESI)).toBe(bekleyenOzetHaftasi(PAZAR))
+  it('dönem, bir sonraki hafta gününe kadar aynı kalır', () => {
+    expect(bekleyenOzetDonemi(PAZARTESI, '2026-08-29')).toBe(PAZARTESI)
+    expect(bekleyenOzetDonemi(PAZARTESI, '2026-08-31')).toBe(SONRAKI_PAZARTESI)
+  })
+
+  it('kurulum takvim haftasının ortasındaysa da yedişer gün sayar', () => {
+    expect(bekleyenOzetDonemi(CARSAMBA, '2026-08-26')).toBe(CARSAMBA)
+    expect(bekleyenOzetDonemi(CARSAMBA, '2026-09-02')).toBe('2026-08-26')
   })
 })
 

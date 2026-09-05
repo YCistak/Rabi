@@ -6,9 +6,11 @@
  * dosyanın tamamen saf olması: haftalar, sınırlar ve sıralama kuralları
  * test edilebilir kalıyor, ekran yalnızca çiziyor.
  *
- * Hafta **pazartesi–pazar**. Özet pazar günü çıkıyor, yani biten haftanın son
- * gününde: kullanıcı haftayı kapatırken görsün diye. Geçmiş haftalar da
- * görüntülenebiliyor (`haftaKaydir`).
+ * Dönem **kurulum gününe** yaslı, takvim haftasına değil: ilk özet uygulamanın
+ * kurulmasından yedi gün sonra doğuyor ve sonra her hafta aynı gün yenileniyor
+ * (`bekleyenOzetDonemi`). Pazartesi–pazar'a yaslansaydı çarşamba günü
+ * uygulamayı kuran kullanıcı ilk özetini dört gün sonra ve yalnızca dört
+ * günlük veriyle görürdü — "haftalık" demeyen bir haftalık özet.
  */
 
 import type {
@@ -29,53 +31,64 @@ import { haftaBasi, tariheCevir, tariheYaz } from './utils'
 // ---------------------------------------------------------------------------
 
 export type HaftaAraligi = {
-  /** Pazartesi, 'YYYY-AA-GG' */
+  /** Dönemin ilk günü, 'YYYY-AA-GG' */
   baslangic: string
-  /** Pazar, 'YYYY-AA-GG' */
+  /** Dönemin son günü, 'YYYY-AA-GG' */
   bitis: string
-  /** Pazartesiden pazara yedi gün. */
+  /** Baştan sona yedi gün. */
   gunler: string[]
 }
 
-/** Verilen günün ait olduğu haftanın pazartesi–pazar aralığı. */
-export function haftaAraligi(iso: string): HaftaAraligi {
-  const baslangic = haftaBasi(iso)
+/** Verilen günden başlayan yedi günlük dönem. Takvim haftasına yaslanmıyor. */
+export function donem(baslangicIso: string): HaftaAraligi {
   const gunler: string[] = []
-  const gun = tariheCevir(baslangic)
+  const gun = tariheCevir(baslangicIso)
 
   for (let i = 0; i < 7; i++) {
     gunler.push(tariheYaz(gun))
     gun.setDate(gun.getDate() + 1)
   }
 
-  return { baslangic, bitis: gunler[6], gunler }
+  return { baslangic: gunler[0], bitis: gunler[6], gunler }
 }
 
-/** Hafta başını `adim` hafta ileri/geri kaydırır. Geçmiş haftalara bakmak için. */
+/** Verilen günün ait olduğu takvim haftası (pazartesi–pazar). */
+export function haftaAraligi(iso: string): HaftaAraligi {
+  return donem(haftaBasi(iso))
+}
+
+/** Dönem başını `adim` hafta ileri/geri kaydırır. Geçmiş dönemlere bakmak için. */
 export function haftaKaydir(haftaBasiIso: string, adim: number): string {
   const gun = tariheCevir(haftaBasiIso)
   gun.setDate(gun.getDate() + adim * 7)
   return tariheYaz(gun)
 }
 
-/** Bugün pazar mı — özetin çıkma günü. `getDay()`: 0 = pazar. */
-export function pazarMi(iso: string): boolean {
-  return tariheCevir(iso).getDay() === 0
+/** İki gün arasındaki tam gün farkı. Negatif olabilir. */
+export function gunFarki(baslangicIso: string, bitisIso: string): number {
+  const bir = tariheCevir(baslangicIso).getTime()
+  const iki = tariheCevir(bitisIso).getTime()
+  // Yerel gece yarısından yerel gece yarısına: yaz saati geçişlerinde arada
+  // 23 ya da 25 saat olabiliyor, yuvarlama o günü de tam gün sayıyor.
+  return Math.round((iki - bir) / 86_400_000)
 }
 
 /**
- * Özet gösterilmeye hazır mı.
+ * Gösterilmeyi bekleyen özetin dönem başlangıcı; henüz bir hafta dolmadıysa
+ * `null`.
  *
- * Yalnızca pazar günü bakılsaydı, o gün uygulamayı açmayan kullanıcı özeti
- * tamamen kaçırırdı. Bu yüzden özet pazar günü **doğuyor** ve sonraki pazara
- * kadar duruyor: içinde bulunulan haftanın özeti "henüz bitmedi" diye
- * gösterilmiyor, biten haftanınki bekliyor.
+ * Özet kurulumdan yedi gün sonra **doğuyor** ve bir sonraki döneme kadar
+ * duruyor: o gün uygulamayı açmayan kullanıcı özeti kaçırmıyor, izlenmemiş
+ * dönem bekliyor. İçinde bulunulan dönemin özeti "henüz bitmedi" diye
+ * gösterilmiyor — yarım bir haftanın sayıları haftalık hedefin altında kalır
+ * ve iyi geçen bir haftayı kötü gösterirdi.
  */
-export function bekleyenOzetHaftasi(bugunIso: string): string {
-  // Pazar günü, biten hafta **bugünü de kapsıyor** (pazartesi–pazar); diğer
-  // günlerde bir önceki hafta. İkisi de "en son tamamlanmış hafta"yı veriyor.
-  if (pazarMi(bugunIso)) return haftaBasi(bugunIso)
-  return haftaKaydir(haftaBasi(bugunIso), -1)
+export function bekleyenOzetDonemi(kurulumIso: string, bugunIso: string): string | null {
+  const gecen = gunFarki(kurulumIso, bugunIso)
+  if (gecen < 7) return null
+  // Tamamlanmış dönem sayısı; sonuncusunun başlangıcı döndürülüyor.
+  const tamamlanan = Math.floor(gecen / 7)
+  return haftaKaydir(kurulumIso, tamamlanan - 1)
 }
 
 // ---------------------------------------------------------------------------
@@ -97,6 +110,25 @@ export type DenemeNeti = {
   net: number
 }
 
+/** Hedef kartındaki yedi çubuktan biri. */
+export type GunToplami = {
+  /** 'YYYY-AA-GG' */
+  iso: string
+  /** Çubuğun altındaki üç harf — "PZT", "SAL"… */
+  ad: string
+  soru: number
+}
+
+/**
+ * Çubukların altındaki gün adları.
+ *
+ * `toLocaleDateString` yerine sabit liste: statik dışa aktarımda cihazın
+ * yereli farklıysa kısaltmalar değişir ve yedi çubuğun genişliği bozulurdu —
+ * ana sayfadaki `GUN_ADLARI` ile aynı gerekçe. `getDay()` sırasında, yani
+ * pazar başta.
+ */
+const GUN_KISALTMALARI = ['PAZ', 'PZT', 'SAL', 'ÇAR', 'PER', 'CUM', 'CMT']
+
 export type HaftalikOzet = {
   hafta: HaftaAraligi
 
@@ -109,6 +141,10 @@ export type HaftalikOzet = {
   hedefOrani: number
   /** Hafta içinde günlük hedefin tutturulduğu gün sayısı. */
   hedefliGun: number
+  /** Yedi günün soru sayıları — hedef kartındaki çubuklar. */
+  gunler: GunToplami[]
+  /** Haftanın en çok soru çözülen günü; hiç soru yoksa null. */
+  enIyiGun: GunToplami | null
 
   /** Seri — hafta sonunda geçerli olan kesintisiz gün sayısı */
   seri: number
@@ -122,21 +158,41 @@ export type HaftalikOzet = {
   pomodoroDakika: number
   pomodoroSeans: number
   pomodoroDers: { ders: string; dakika: number } | null
+  /** "Haftanın masası" kutusundaki üç ders, çoktan aza. */
+  pomodoroDersleri: { ders: string; dakika: number }[]
 
   /** 5 — Mini oyunlar */
   oyunDakika: number
   oyunTur: number
   oyunDogru: number
+  /**
+   * İsabet oranı (0–1) ve hatasız tur sayısı; ölçülemiyorsa `null`/0.
+   *
+   * Yanlış sayısını taşımayan eski turlar hesaba **girmiyor**: sıfır yanlış
+   * saymak onları %100 isabetli gösterirdi.
+   */
+  oyunIsabet: number | null
+  oyunHatasiz: number
   enCokOynanan: OyunId | null
+  /** En çok oynanan oyunun bu haftaki tur sayısı. */
+  enCokOynananTur: number
 
   /** 6 — Yanlış soru bankası */
   bankaCozulen: number
+  /** Bankada hâlâ bekleyen (çözülmemiş) kayıt sayısı — kartın ızgarası. */
+  bankaBekleyen: number
 
   /** 7–8 — Denemeler */
   denemeSayisi: number
+  /** Haftanın denemeleri, tarih sırasıyla — net kartındaki çubuklar. */
+  denemeNetleri: DenemeNeti[]
   denemeEnYuksek: DenemeNeti | null
   denemeEnDusuk: DenemeNeti | null
   denemeOrtalama: number | null
+  /** Bir önceki dönemin ortalama neti — "GEÇEN HF." çubuğu; deneme yoksa null. */
+  oncekiDonemOrtalama: number | null
+  /** Ortalamanın geçen döneme göre farkı; iki dönemden biri boşsa null. */
+  denemeArtis: number | null
 
   /** 9 — En çok soru çözülen dersler, çoktan aza, en fazla üç */
   ilkUcDers: DersToplami[]
@@ -158,7 +214,9 @@ export type OzetGirdisi = {
 }
 
 export function haftalikOzet(girdi: OzetGirdisi): HaftalikOzet {
-  const hafta = haftaAraligi(girdi.haftaBasiIso)
+  // `haftaBasiIso` dönemin **ilk günü**; pazartesiye çekilmiyor, çünkü dönem
+  // kurulum gününe yaslı (`bekleyenOzetDonemi`).
+  const hafta = donem(girdi.haftaBasiIso)
   const gunKumesi = new Set(hafta.gunler)
   const harita = kayitHaritasi(girdi.gunlukKayitlar)
 
@@ -166,17 +224,26 @@ export function haftalikOzet(girdi: OzetGirdisi): HaftalikOzet {
   let toplamSoru = 0
   let hedefliGun = 0
   const dersToplamlari = new Map<string, number>()
+  const gunler: GunToplami[] = []
 
   for (const gun of hafta.gunler) {
     const kayit = harita.get(gun)
     const ozet = gunOzeti(kayit)
     toplamSoru += ozet.toplam
     if (girdi.gunlukHedef > 0 && ozet.toplam >= girdi.gunlukHedef) hedefliGun++
+    gunler.push({ iso: gun, ad: GUN_KISALTMALARI[tariheCevir(gun).getDay()], soru: ozet.toplam })
 
     for (const satir of kayit?.kayitlar ?? []) {
       dersToplamlari.set(satir.ders, (dersToplamlari.get(satir.ders) ?? 0) + satir.toplam)
     }
   }
+
+  // Eşitlikte **ilk** gün kazanıyor (`>`), böylece "en iyi gün" etiketi aynı
+  // veride her açılışta aynı günü gösteriyor.
+  const enIyiGun = gunler.reduce<GunToplami | null>(
+    (enIyi, gun) => (gun.soru > 0 && (!enIyi || gun.soru > enIyi.soru) ? gun : enIyi),
+    null,
+  )
 
   const haftalikHedef = Math.max(0, girdi.gunlukHedef) * 7
   const hedefFarki = toplamSoru - haftalikHedef
@@ -214,6 +281,11 @@ export function haftalikOzet(girdi: OzetGirdisi): HaftalikOzet {
   let oyunSaniye = 0
   let oyunTur = 0
   let oyunDogru = 0
+  // İsabet yalnızca yanlış sayısını taşıyan turlardan hesaplanıyor; ikisi bu
+  // yüzden ayrı sayaçta birikiyor.
+  let olculenDogru = 0
+  let olculenYanlis = 0
+  let oyunHatasiz = 0
   const oyunTurlari = new Map<OyunId, number>()
 
   for (const kayit of girdi.oyunGecmisi) {
@@ -221,23 +293,39 @@ export function haftalikOzet(girdi: OzetGirdisi): HaftalikOzet {
     oyunSaniye += kayit.saniye
     oyunDogru += kayit.dogru
     oyunTur++
+    if (typeof kayit.yanlis === 'number') {
+      olculenDogru += kayit.dogru
+      olculenYanlis += kayit.yanlis
+    }
+    if (kayit.hatasiz) oyunHatasiz++
     oyunTurlari.set(kayit.oyun, (oyunTurlari.get(kayit.oyun) ?? 0) + 1)
   }
+
+  const olculenToplam = olculenDogru + olculenYanlis
+  const enCokOynanan = enCokOynananBul(oyunTurlari)
 
   // --- Yanlış soru bankası ---
   const bankaCozulen = girdi.yanlisSorular.filter(
     (s) => s.cozuldu && s.cozulmeTarihi !== undefined && gunKumesi.has(s.cozulmeTarihi),
   ).length
+  // Bekleyen, haftaya değil **bugüne** ait: kart "bankanın hâli"ni gösteriyor.
+  const bankaBekleyen = girdi.yanlisSorular.filter((s) => !s.cozuldu).length
 
   // --- Denemeler ---
   const sablonHaritasi = new Map(girdi.sablonlar.map((s) => [s.id, s]))
   const netler: DenemeNeti[] = []
+  const oncekiNetler: number[] = []
+  const oncekiDonem = new Set(donem(haftaKaydir(hafta.baslangic, -1)).gunler)
 
   for (const deneme of girdi.denemeler) {
-    if (!gunKumesi.has(deneme.tarih)) continue
     const sablon = sablonHaritasi.get(deneme.sablonId)
     // Şablonu silinmiş deneme netlenemiyor; ortalamayı 0 ile bozmasın diye atlanıyor.
     if (!sablon) continue
+    if (oncekiDonem.has(deneme.tarih)) {
+      oncekiNetler.push(denemeOzeti(deneme, sablon).toplamNet)
+      continue
+    }
+    if (!gunKumesi.has(deneme.tarih)) continue
     netler.push({
       ad: deneme.ad,
       tarih: deneme.tarih,
@@ -245,9 +333,15 @@ export function haftalikOzet(girdi: OzetGirdisi): HaftalikOzet {
     })
   }
 
+  // Çubuklar soldan sağa zamanla ilerliyor; kaynak liste sıralı gelmiyor.
+  netler.sort((a, b) => a.tarih.localeCompare(b.tarih))
   const sirali = [...netler].sort((a, b) => b.net - a.net)
   const denemeOrtalama =
     netler.length > 0 ? yuvarla(netler.reduce((t, n) => t + n.net, 0) / netler.length) : null
+  const oncekiDonemOrtalama =
+    oncekiNetler.length > 0
+      ? yuvarla(oncekiNetler.reduce((t, n) => t + n, 0) / oncekiNetler.length)
+      : null
 
   // --- İlk üç ders ---
   const ilkUcDers: DersToplami[] = [...dersToplamlari.entries()]
@@ -269,6 +363,8 @@ export function haftalikOzet(girdi: OzetGirdisi): HaftalikOzet {
     hedefDurumu: hedefDurumuBul(toplamSoru, haftalikHedef),
     hedefOrani: haftalikHedef > 0 ? toplamSoru / haftalikHedef : 0,
     hedefliGun,
+    gunler,
+    enIyiGun,
     // Seri haftanın **son gününden** geriye sayılıyor: özet o haftayı kapatıyor,
     // bugünden sayılsaydı geçmiş bir haftanın özeti bugünkü seriyi gösterirdi.
     seri: hedefSerisi(girdi.gunlukKayitlar, girdi.gunlukHedef, hafta.bitis),
@@ -278,15 +374,30 @@ export function haftalikOzet(girdi: OzetGirdisi): HaftalikOzet {
     pomodoroDakika,
     pomodoroSeans,
     pomodoroDers: enBuyuk(dersDakikalari),
+    pomodoroDersleri: [...dersDakikalari.entries()]
+      // Eşitlikte ders adına göre: kutu her açılışta aynı sırayla çizilsin.
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'tr'))
+      .slice(0, 3)
+      .map(([ders, dakika]) => ({ ders, dakika })),
     oyunDakika: Math.round(oyunSaniye / 60),
     oyunTur,
     oyunDogru,
-    enCokOynanan: enCokOynananBul(oyunTurlari),
+    oyunIsabet: olculenToplam > 0 ? olculenDogru / olculenToplam : null,
+    oyunHatasiz,
+    enCokOynanan,
+    enCokOynananTur: enCokOynanan ? (oyunTurlari.get(enCokOynanan) ?? 0) : 0,
     bankaCozulen,
+    bankaBekleyen,
     denemeSayisi: netler.length,
+    denemeNetleri: netler,
     denemeEnYuksek: sirali[0] ?? null,
     denemeEnDusuk: sirali.length > 1 ? sirali[sirali.length - 1] : (sirali[0] ?? null),
     denemeOrtalama,
+    oncekiDonemOrtalama,
+    denemeArtis:
+      denemeOrtalama !== null && oncekiDonemOrtalama !== null
+        ? yuvarla(denemeOrtalama - oncekiDonemOrtalama)
+        : null,
     ilkUcDers,
     bosMu:
       toplamSoru === 0 &&
