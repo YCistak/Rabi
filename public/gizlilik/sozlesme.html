@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kullanıcı Sözleşmesi — Rabi</title>
+<meta name="description" content="Rabi uygulamasını kullanma koşulları: puan tahminleri, odak kilidi, veri sorumluluğu ve haklar.">
+<style>
+  :root {
+    /*
+      Renkler uygulamanın kendi temasından (`app/globals.css`) alındı ve
+      **koyu tema bloğu bilerek yok**: AGENTS.md "tek tema var" diyor, sayfa da
+      Ayarlar'da bir iframe içinde açılıyor. Koyu tema bloğu olsaydı telefonu
+      koyu temada olan kullanıcıda açık zeminli uygulamanın ortasında koyu bir
+      pencere açılırdı.
+    */
+    color-scheme: light;
+    --zemin: #f8f8f7;
+    --metin: #1b1a19;
+    --soluk: #6b6764;
+    --cizgi: #eae9e6;
+    --kutu: #ffffff;
+    --vurgu: #b3491f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2.5rem 1.25rem 5rem;
+    background: var(--zemin);
+    color: var(--metin);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+  main { max-width: 44rem; margin: 0 auto; }
+  h1 { font-size: 1.8rem; line-height: 1.25; margin: 0 0 .35rem; letter-spacing: -.01em; }
+  h2 {
+    font-size: 1.18rem;
+    margin: 2.6rem 0 .7rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--cizgi);
+    letter-spacing: -.005em;
+  }
+  h3 { font-size: 1rem; margin: 1.6rem 0 .4rem; }
+  p, li { color: var(--metin); }
+  ul, ol { padding-left: 1.35rem; }
+  li { margin: .3rem 0; }
+  .ust { color: var(--soluk); font-size: .92rem; margin: 0 0 2rem; }
+  .kutu {
+    background: var(--kutu);
+    border: 1px solid var(--cizgi);
+    border-radius: .75rem;
+    padding: 1rem 1.15rem;
+    margin: 1.2rem 0;
+  }
+  .kutu > :first-child { margin-top: 0; }
+  .kutu > :last-child { margin-bottom: 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .94rem; }
+  th, td { text-align: left; vertical-align: top; padding: .55rem .6rem; border-bottom: 1px solid var(--cizgi); }
+  th { font-weight: 700; color: var(--soluk); font-size: .84rem; text-transform: uppercase; letter-spacing: .04em; }
+  .sar { overflow-x: auto; }
+  a { color: var(--vurgu); }
+  code {
+    background: var(--kutu);
+    border: 1px solid var(--cizgi);
+    border-radius: .3rem;
+    padding: .1rem .3rem;
+    font-size: .9em;
+  }
+  /*
+    Sekme şeridi: iki belge (gizlilik politikası ve kullanıcı sözleşmesi) ayrı
+    sayfalarda duruyor, alt alta değil. Kök adres **gizlilik politikası olarak
+    kalmak zorunda** — Play Console'a verilen bağlantı o ve Google'ın istediği
+    şey bağlantının doğrudan politikaya açılması. Sözleşme `sozlesme.html`de;
+    buradaki şerit yalnızca aralarında geçiş sağlıyor.
+  */
+  .sekmeler {
+    display: flex;
+    gap: .4rem;
+    margin: 0 0 1.6rem;
+    border-bottom: 1px solid var(--cizgi);
+  }
+  .sekmeler a {
+    padding: .55rem .9rem;
+    font-size: .95rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--soluk);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .sekmeler a:hover { color: var(--metin); }
+  /* Açık olan sekme bağlantı değil: kendine giden bir bağlantı tıklanacak
+     bir şey gibi durur ama hiçbir yere gitmez. */
+  .sekmeler span {
+    padding: .55rem .9rem;
+    font-size: .95rem;
+    font-weight: 800;
+    color: var(--vurgu);
+    border-bottom: 2px solid var(--vurgu);
+    margin-bottom: -1px;
+  }
+  footer { margin-top: 3rem; padding-top: 1.4rem; border-top: 1px solid var(--cizgi); color: var(--soluk); font-size: .9rem; }
+</style>
+</head>
+<body>
+<main>
+
+<nav class="sekmeler" aria-label="Belgeler">
+  <a href="./">Gizlilik Politikası</a>
+  <span aria-current="page">Kullanıcı Sözleşmesi</span>
+</nav>
+
+<h1>Rabi — Kullanıcı Sözleşmesi</h1>
+<p class="ust">
+  Uygulama: <b>Rabi</b> (<code>com.fluxifyinteractive.rabi</code>) &middot;
+  Geliştirici: <b>Fluxify Interactive</b><br>
+  Yürürlük tarihi: <b>6 Eylül 2026</b> &middot; Son güncelleme: 6 Eylül 2026
+</p>
+
+<p>
+  Bu sözleşme, Fluxify Interactive tarafından geliştirilen Rabi uygulamasını kullanma koşullarını anlatır. Uygulamayı kurup kullanmaya devam ederek buradaki koşulları kabul etmiş olursun. Kabul etmiyorsan uygulamayı kullanma ve telefonundan kaldır.
+</p>
+
+<p>
+  18 yaşından küçüksen uygulamayı velinin bilgisi dahilinde kullanmalısın. Rabi lise öğrencileri için tasarlandı ve 13 yaşından küçüklere yönelik değildir.
+</p>
+
+<h2>1. Rabi nedir, ne değildir</h2>
+
+<p>
+  Rabi bir çalışma asistanıdır: çalışma süreni tutar, denemelerini ve okul notlarını kaydeder, mini oyunlarla tekrar yapmanı sağlar ve girdiğin verilerden hesaplar yapar.
+</p>
+
+<p>
+  Rabi bir eğitim kurumu, kurs, koçluk hizmeti ya da resmî bir kaynak değildir. ÖSYM ile ya da herhangi bir resmî kurumla bağlantısı yoktur, hiçbiri tarafından desteklenmez veya onaylanmaz. Uygulamadaki hiçbir bilgi resmî kılavuzun yerini tutmaz; sınav, başvuru ve tercih işlemlerinde esas alınacak tek kaynak ÖSYM’nin kendi yayımladığı belgelerdir.
+</p>
+
+<h2>2. Puan ve sıralama sayıları tahmindir</h2>
+
+<p>
+  Uygulamanın gösterdiği puan, net, diploma notu ve sıralama sayıları, senin girdiğin verilerden ve geçmiş yılların açıklanmış yerleştirme sonuçlarından yapılan yaklaşık hesaplardır.
+</p>
+
+<p>
+  Bu sayılar bir garanti değildir. Gerçek sınav sonucunu o yıl sınava girenlerin başarısı, soruların zorluğu ve ÖSYM’nin kendi hesaplama yöntemi belirler. Tercih, okul veya bölüm kararlarını yalnızca uygulamadaki sayılara bakarak verme.
+</p>
+
+<p>
+  Uygulamadaki bir hesabın yanlış çıkmasından doğan sonuçlardan Fluxify Interactive sorumlu tutulamaz.
+</p>
+
+<h2>3. Soru havuzu hata içerebilir</h2>
+
+<p>
+  Mini oyunlardaki sorular elle yazıldı ve içlerinde yanlış cevap ya da bozuk yazım bulunabilir. Bir soruyu hatalı bulursan yanındaki bayrak düğmesiyle bildir; bildirimler okunuyor ve sorular düzeltiliyor.
+</p>
+
+<p>
+  Bildirim sistemini gerçek bir hata olmadan doldurmak, aynı soruyu tekrar tekrar bildirmek ya da otomatik araçlarla bildirim göndermek yasaktır. Günlük bildirim sınırı bu yüzden var.
+</p>
+
+<h2>4. Odak kilidi hakkında bilmen gerekenler</h2>
+
+<p>
+  Odak kilidi, senin seçtiğin uygulamaları çalışma seansı boyunca engeller ve istersen o uygulamaların bildirimlerini de siler. Bu özellik yalnızca sen açtığında ve seçtiğin uygulamalar için çalışır.
+</p>
+
+<p>
+  Susturulan bildirimler arasında sana ulaşmaya çalışan biri olabilir. Acil durumda ulaşılman gerekiyorsa kilit listesine telefon ve mesaj uygulamalarını ekleme; seansı istediğin an bitirebilirsin. Kaçırdığın bir bildirimden doğan sonuçlardan Fluxify Interactive sorumlu değildir.
+</p>
+
+<p>
+  Odak kilidi bir güvenlik ya da ebeveyn denetimi aracı değildir; kendi kararınla kendine koyduğun bir engeldir ve istediğin zaman kaldırabilirsin.
+</p>
+
+<h2>5. Verinin sorumluluğu sende</h2>
+
+<p>
+  Rabi’nin sunucusu yok; denemelerin, notların, fotoğrafların ve çalışma geçmişin yalnızca telefonunda duruyor. Bunun anlamı şudur: uygulamayı silersen, telefonun bozulur ya da kaybolursa veriler geri getirilemez.
+</p>
+
+<p>
+  Ayarlar’daki “Yedeği indir” ile verinin bir dosyasını alabilirsin. Yedek almak senin sorumluluğundur; kaybolan veriden Fluxify Interactive sorumlu tutulamaz.
+</p>
+
+<p>
+  Verinin nasıl işlendiği ayrı bir belgede: Gizlilik Politikası.
+</p>
+
+<h2>6. Ücret ve reklam</h2>
+
+<p>
+  Rabi ücretsizdir. Uygulama içi satın alma, abonelik ve reklam yoktur; ücretli bir özellik eklenmesi hâlinde bu sözleşme güncellenir ve değişiklik uygulama içinde duyurulur.
+</p>
+
+<p>
+  Uygulamanın tek resmî dağıtım yeri Google Play’dir. Başka bir yerden indirilen dosyalar değiştirilmiş olabilir; onlardan doğacak zarardan sorumlu değiliz.
+</p>
+
+<h2>7. Kullanım kuralları</h2>
+
+<p>
+  Uygulamayı tersine mühendislikle çözmeye, kaynak koduna dönüştürmeye, değiştirilmiş sürümünü dağıtmaya ya da içeriğini izinsiz kopyalayıp yayımlamaya çalışma.
+</p>
+
+<p>
+  Uygulamanın çalışmasını bozmaya, gönderilen bildirimleri sahte veriyle doldurmaya veya başkalarının kullanımını engellemeye yönelik davranışlar bu sözleşmenin ihlalidir.
+</p>
+
+<h2>8. Haklar</h2>
+
+<p>
+  Uygulamanın kodu, tasarımı, maskotu, soru havuzu ve metinleri Fluxify Interactive’e aittir. Sana verilen şey uygulamayı kişisel olarak kullanma hakkıdır; mülkiyeti devredilmez.
+</p>
+
+<p>
+  Uygulamadaki lo-fi parçalar CC0 1.0 (kamu malı) lisanslı Open Lo-Fi derlemesinden alınmıştır. Uygulama ayrıca açık kaynaklı bileşenler kullanır ve bunların lisansları kendi sahiplerine aittir.
+</p>
+
+<p>
+  Telefonunda oluşturduğun veriler senindir; onlar üzerinde hiçbir hak talep etmiyoruz.
+</p>
+
+<h2>9. Garanti ve sorumluluk</h2>
+
+<p>
+  Rabi “olduğu gibi” sunulur. Uygulamanın hatasız çalışacağı, her cihazda aynı davranacağı, kesintisiz olacağı ya da belirli bir sonucu sağlayacağı garanti edilmez.
+</p>
+
+<p>
+  Yürürlükteki mevzuatın izin verdiği ölçüde Fluxify Interactive, uygulamanın kullanımından doğan dolaylı zararlardan sorumlu değildir. Bu madde, tüketici mevzuatının sana tanıdığı hakları ortadan kaldırmaz.
+</p>
+
+<h2>10. Değişiklikler ve sona erme</h2>
+
+<p>
+  Bu sözleşme güncellenebilir; güncel metin her zaman uygulamanın içinde durur ve yürürlük tarihi en üstte yazar. Önemli bir değişiklik olursa uygulama içinde duyurulur.
+</p>
+
+<p>
+  Uygulamayı istediğin zaman silerek bu sözleşmeyi sona erdirebilirsin. Sözleşmeyi ihlal eden bir kullanım hâlinde uygulamayı kullanma hakkın sona erer.
+</p>
+
+<h2>11. Uygulanacak hukuk ve iletişim</h2>
+
+<p>
+  Bu sözleşme Türkiye Cumhuriyeti hukukuna tabidir. Uyuşmazlıklarda tüketici mevzuatının öngördüğü merciler yetkilidir.
+</p>
+
+<p>
+  Soruların için: fluxifyinteractive@gmail.com
+</p>
+
+<footer>
+  Bu belge Rabi uygulamasının kullanıcı sözleşmesidir. Yürürlük tarihi: 6 Eylül 2026.
+  Verinin nasıl işlendiği ayrı bir belgede: <a href="./">Gizlilik Politikası</a>.
+</footer>
+
+</main>
+</body>
+</html>

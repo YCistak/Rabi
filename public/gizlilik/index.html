@@ -66,11 +66,49 @@
     padding: .1rem .3rem;
     font-size: .9em;
   }
+  /*
+    Sekme şeridi: iki belge (gizlilik politikası ve kullanıcı sözleşmesi) ayrı
+    sayfalarda duruyor, alt alta değil. Kök adres **gizlilik politikası olarak
+    kalmak zorunda** — Play Console'a verilen bağlantı o ve Google'ın istediği
+    şey bağlantının doğrudan politikaya açılması. Sözleşme `sozlesme.html`de;
+    buradaki şerit yalnızca aralarında geçiş sağlıyor.
+  */
+  .sekmeler {
+    display: flex;
+    gap: .4rem;
+    margin: 0 0 1.6rem;
+    border-bottom: 1px solid var(--cizgi);
+  }
+  .sekmeler a {
+    padding: .55rem .9rem;
+    font-size: .95rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--soluk);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .sekmeler a:hover { color: var(--metin); }
+  /* Açık olan sekme bağlantı değil: kendine giden bir bağlantı tıklanacak
+     bir şey gibi durur ama hiçbir yere gitmez. */
+  .sekmeler span {
+    padding: .55rem .9rem;
+    font-size: .95rem;
+    font-weight: 800;
+    color: var(--vurgu);
+    border-bottom: 2px solid var(--vurgu);
+    margin-bottom: -1px;
+  }
   footer { margin-top: 3rem; padding-top: 1.4rem; border-top: 1px solid var(--cizgi); color: var(--soluk); font-size: .9rem; }
 </style>
 </head>
 <body>
 <main>
+
+<nav class="sekmeler" aria-label="Belgeler">
+  <span aria-current="page">Gizlilik Politikası</span>
+  <a href="sozlesme.html">Kullanıcı Sözleşmesi</a>
+</nav>
 
 <h1>Rabi — Gizlilik Politikası</h1>
 <p class="ust">
