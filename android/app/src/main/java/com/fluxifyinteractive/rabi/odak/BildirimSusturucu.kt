@@ -1,4 +1,4 @@
-package com.rabi.app.odak
+package com.fluxifyinteractive.rabi.odak
 
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification

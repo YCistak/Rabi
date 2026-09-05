@@ -1,4 +1,4 @@
-package com.rabi.app.odak
+package com.fluxifyinteractive.rabi.odak
 
 import com.getcapacitor.JSObject
 import com.getcapacitor.Plugin

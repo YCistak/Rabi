@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
-  appId: 'com.rabi.app',
+  appId: 'com.fluxifyinteractive.rabi',
   appName: 'Rabi',
   webDir: 'out',
 }

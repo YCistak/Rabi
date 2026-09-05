@@ -1,4 +1,4 @@
-package com.rabi.app.odak
+package com.fluxifyinteractive.rabi.odak
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -16,7 +16,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import com.rabi.app.PomodoroKapanis
+import com.fluxifyinteractive.rabi.PomodoroKapanis
 import kotlin.math.max
 
 /**

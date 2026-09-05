@@ -117,6 +117,21 @@ export const ANAHTARLAR = {
    */
   bildirimIzni: 'rabi-bildirim-izni',
   /**
+   * Çökme raporlarının gönderilmesine izin verildi mi.
+   *
+   * `'sorulmadi' | 'verildi' | 'reddedildi'`. `bildirimIzni` ile aynı sebeple
+   * ayrı bir karar: rapor cihazdan çıkan veri ve Play'in politikası çıkmadan
+   * önce belirgin açıklama + kullanıcının olumlu eylemini şart koşuyor.
+   *
+   * Asıl anahtar burası değil — toplamayı gerçekten açıp kapatan şey
+   * Crashlytics'in kendi ayarı ve onu Firebase cihazda saklıyor. Buradaki
+   * değer arayüzün ne göstereceğini ve kararın değişip değişmediğini bilmek
+   * için duruyor.
+   *
+   * Yedeğe **girmiyor**: rıza cihaz başına verilir.
+   */
+  cokmeIzni: 'rabi-cokme-izni',
+  /**
    * Yapılacaklar tahtasındaki not kâğıtları — metin, renk ve konum.
    *
    * Konum da veri: kullanıcının kâğıdı nereye yapıştırdığı onun verdiği bilgi.
