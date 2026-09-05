@@ -142,8 +142,16 @@ export const ANAHTARLAR = {
    * açardı.
    */
   hataBildirimleri: 'rabi-hata-bildirimleri',
-  /** Bildirimleri gruplamaya yarayan anonim cihaz numarası; yedeğe girmiyor. */
-  cihazKimligi: 'rabi-cihaz-kimligi',
+  /**
+   * Bildirimleri gruplamaya yarayan okunur cihaz adı (`mavi-tavsan-42`);
+   * yedeğe girmiyor.
+   *
+   * Anahtar bilerek yeni: eski `rabi-cihaz-kimligi` altında okunamayan
+   * numaralar (`mtoptoc2-1zvbcy`) duruyordu ve hepsinin yenilenmesi istendi.
+   * Anahtarı değiştirmek taşıma kodu yazmadan bunu yapıyor — eski değer
+   * okunmuyor, ilk gerekişinde yeni ad üretiliyor.
+   */
+  cihazKimligi: 'rabi-cihaz-adi',
   /**
    * Hatalı soru bildirimlerinin gönderilmesine izin verildi mi.
    *
@@ -157,20 +165,16 @@ export const ANAHTARLAR = {
    */
   bildirimIzni: 'rabi-bildirim-izni',
   /**
-   * Çökme raporlarının gönderilmesine izin verildi mi.
+   * Çökmeden sonra rapor sorusu çıksın mı (varsayılan `true`).
    *
-   * `'sorulmadi' | 'verildi' | 'reddedildi'`. `bildirimIzni` ile aynı sebeple
-   * ayrı bir karar: rapor cihazdan çıkan veri ve Play'in politikası çıkmadan
-   * önce belirgin açıklama + kullanıcının olumlu eylemini şart koşuyor.
-   *
-   * Asıl anahtar burası değil — toplamayı gerçekten açıp kapatan şey
-   * Crashlytics'in kendi ayarı ve onu Firebase cihazda saklıyor. Buradaki
-   * değer arayüzün ne göstereceğini ve kararın değişip değişmediğini bilmek
-   * için duruyor.
+   * Rıza artık önceden değil, **her çökmeden sonra tek tek** alınıyor; bu
+   * anahtar yalnızca "bana bunu hiç sorma" diyen kullanıcı için. Kapalıyken
+   * bekleyen raporlar sessizce siliniyor — cihazda süresiz bekleyen bir kuyruk
+   * tutmak, sorulmasını istememekle aynı şey değil.
    *
    * Yedeğe **girmiyor**: rıza cihaz başına verilir.
    */
-  cokmeIzni: 'rabi-cokme-izni',
+  cokmeSorusu: 'rabi-cokme-sorusu',
   /**
    * Yapılacaklar tahtasındaki not kâğıtları — metin, renk ve konum.
    *

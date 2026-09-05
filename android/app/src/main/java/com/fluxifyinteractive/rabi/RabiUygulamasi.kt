@@ -18,8 +18,11 @@ import com.fluxifyinteractive.rabi.cokme.CokmeRaporu
  *    kendi handler'ını kuruyor ve bir öncekini zincire alıyor; araya girmek
  *    zincirin kopmasına ve JVM çökmelerinin hiç raporlanmamasına yol açıyor.
  *    İhtiyaç olan yerde `CokmeRaporu.kaydet()` çağrılıyor.
- * 2. Toplamayı açmıyoruz. Varsayılan manifest'te kapalı; yalnızca kullanıcı
- *    Ayarlar'dan onay verince açılıyor (`CokmeEklentisi.izinAyarla`).
+ * 2. Toplamayı açmıyoruz ve **hiçbir zaman açmıyoruz**. Manifest'teki
+ *    `firebase_crashlytics_collection_enabled=false` kalıcı: Crashlytics
+ *    çökmeyi yakalayıp cihazda saklıyor ama kendiliğinden yüklemiyor.
+ *    Yükleme kararı her çökmeden sonra kullanıcıya soruluyor
+ *    (`CokmeEklentisi.bekleyen` / `gonder` / `sil`).
  */
 class RabiUygulamasi : Application() {
 

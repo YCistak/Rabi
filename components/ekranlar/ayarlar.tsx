@@ -45,8 +45,6 @@ import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { izinIste } from '@/lib/bildirim'
 import { saatYaz } from '@/lib/hatirlatma'
 import type { BildirimIzni } from '@/lib/hata-kuyrugu'
-import type { CokmeIzni } from '@/lib/cokme-izni'
-import { testCokmesiTetikle, testKaydiTetikle } from '@/lib/cokme'
 import { AD_EN_AZ, adBiciminde, adGecerliMi } from '@/lib/ad'
 import { cn, yeniId } from '@/lib/utils'
 import type {
@@ -116,9 +114,8 @@ export function AyarlarEkrani({
   bekleyenBildirim,
   bildirimIzni,
   onBildirimIzni,
-  cokmeIzni,
-  onCokmeIzni,
-  cokmeTestVar,
+  cokmeSorulsun,
+  onCokmeSorulsun,
   yedeklenecek,
 }: {
   /** Yedeğe giren kullanıcı şablonları — ekranda düzenlenmiyor. */
@@ -129,11 +126,9 @@ export function AyarlarEkrani({
   /** Gönderim izni — `'verildi'` olmadan hiçbir bildirim ağa çıkmıyor. */
   bildirimIzni: BildirimIzni
   onBildirimIzni: (karar: BildirimIzni) => void
-  /** Çökme raporu izni — `'verildi'` olmadan Crashlytics'te toplama kapalı. */
-  cokmeIzni: CokmeIzni
-  onCokmeIzni: (karar: CokmeIzni) => void
-  /** Debug derlemesi mi — test düğmeleri yalnızca o zaman çizilir. */
-  cokmeTestVar: boolean
+  /** Çökmeden sonra rapor sorusu çıksın mı — rıza her seferinde ayrıca alınıyor. */
+  cokmeSorulsun: boolean
+  onCokmeSorulsun: (deger: boolean) => void
   setAyarlar: (guncelleyici: Ayarlar | ((onceki: Ayarlar) => Ayarlar)) => void
   /** Yedeğe girecek bütün veri — fotoğraflar hariç. */
   yedeklenecek: {
@@ -604,59 +599,35 @@ export function AyarlarEkrani({
 
         {/* ----------------------- Çökme raporları ------------------------ */}
         {/* Hatalı soru bildiriminin hemen altında: ikisi de "cihazdan ne
-            çıkıyor" sorusunun cevabı ve kullanıcı ikisini yan yana görmeli.
-            Ayrı bölüm çünkü gönderilen şey tamamen farklı — biri sorunun
-            kendisi, diğeri uygulamanın nerede çöktüğü. */}
+            çıkıyor" sorusunun cevabı. Ama rıza modeli farklı — burada önceden
+            verilen bir izin yok, her çökmeden sonra tek tek soruluyor. Bu
+            anahtar yalnızca "bana bunu hiç sorma" diyen için. */}
         <Bolum baslik="Çökme raporları">
           <Satir
             Simge={Bug}
             renk="lavanta"
-            baslik="Çökme raporlarını gönder"
-            aciklama="Uygulama çöktüğünde ya da hata verdiğinde sebebini geliştiriciye ulaştırır"
-            onClick={() => onCokmeIzni(cokmeIzni === 'verildi' ? 'reddedildi' : 'verildi')}
-            basiliMi={cokmeIzni === 'verildi'}
-            sag={<Anahtar acik={cokmeIzni === 'verildi'} />}
+            baslik="Çöktüğümde sor"
+            onClick={() => onCokmeSorulsun(!cokmeSorulsun)}
+            basiliMi={cokmeSorulsun}
+            sag={<Anahtar acik={cokmeSorulsun} />}
           />
           <GenisAlan tam>
             <AlanNotu>
-              Gönderilen şey bir <b>hata kaydı</b>: uygulamanın hangi satırda
-              çöktüğü, telefonun modeli, Android ve WebView sürümü, uygulama
-              sürümü. Rapor Google&apos;ın Firebase Crashlytics servisine gider.
+              Uygulama çökerse hata kaydı <b>telefonunda</b> bekler; kendiliğinden
+              hiçbir yere gitmez. Bir sonraki açılışta sana sorarım — &ldquo;Gönder&rdquo;
+              dersen gider, &ldquo;Gönderme&rdquo; dersen silinir.
             </AlanNotu>
             <AlanNotu ust>
-              Adın, denemelerin, notların, fotoğrafların ve puanların{' '}
-              <b>gönderilmez</b>. Kapalıyken hiçbir şey toplanmıyor — bu ayar
-              uygulamanın içinde değil, raporlama servisinin kendisinde kapalı
-              duruyor.
+              Giden şey bir hata kaydı: hatanın hangi satırda olduğu, telefonunun
+              modeli, Android ve uygulama sürümü. Adın, denemelerin, notların ve
+              fotoğrafların <b>gönderilmez</b>.
             </AlanNotu>
-            <AlanNotu ust>
-              {cokmeIzni === 'verildi'
-                ? 'Raporlara izin verdin.'
-                : cokmeIzni === 'reddedildi'
-                  ? 'Rapor gönderilmiyor.'
-                  : 'Henüz karar vermedin; rapor gönderilmiyor.'}
-            </AlanNotu>
-
-            {/* Yalnızca debug derlemede. Gizli bir düğme değil: release APK'da
-                bu blok çizilse bile yerli taraftaki iki yöntem
-                `BuildConfig.DEBUG` kontrolüyle çalışmayı reddediyor. */}
-            {cokmeTestVar && (
-              <GenisAlan tam>
-                <AlanNotu ust>
-                  Geliştirici: raporlamanın gerçekten çalıştığını doğrulamak
-                  için. Çökmeden sonra uygulamayı yeniden açman gerekiyor —
-                  rapor o açılışta gönderiliyor.
-                </AlanNotu>
-                <Cipler>
-                  <Cip secili={false} onClick={() => void testKaydiTetikle()}>
-                    Test kaydı
-                  </Cip>
-                  <Cip secili={false} onClick={() => void testCokmesiTetikle()}>
-                    Test çökmesi
-                  </Cip>
-                </Cipler>
-              </GenisAlan>
+            {!cokmeSorulsun && (
+              <AlanNotu ust>
+                Soru kapalı: bekleyen raporlar açılışta sessizce siliniyor.
+              </AlanNotu>
             )}
+
           </GenisAlan>
         </Bolum>
 

@@ -42,9 +42,6 @@ object CokmeRaporu {
     private fun crashlytics(): FirebaseCrashlytics? =
         runCatching { FirebaseCrashlytics.getInstance() }.getOrNull()
 
-    /** Firebase gerçekten kurulu mu — arayüz buna göre bir şey söylemiyor, sadece log. */
-    fun kullanilabilir(): Boolean = crashlytics() != null
-
     /**
      * Açılışta bir kez: raporun okunabilmesi için gereken sabit bilgiler.
      *
@@ -64,17 +61,43 @@ object CokmeRaporu {
     }
 
     /**
-     * Toplamayı açar/kapatır.
+     * Gönderilmeyi bekleyen rapor var mı — ve önceki oturum çökmeyle mi bitti.
      *
-     * Manifest'te `firebase_crashlytics_collection_enabled=false` yazıyor,
-     * yani varsayılan kapalı. Bu çağrı olmadan hiçbir şey ağa çıkmıyor.
-     * Firebase bu tercihi **cihazda saklıyor**: bir kez açıldıktan sonra
-     * sonraki açılışlarda JS hiç çalışmadan önce olan bir çökme de
-     * yakalanıyor. Onay ekranından gelen karar bu yüzden her açılışta değil,
-     * yalnızca değiştiğinde gönderiliyor.
+     * Otomatik toplama **hiçbir zaman açılmıyor** (manifest'teki
+     * `firebase_crashlytics_collection_enabled=false` kalıcı). Crashlytics bu
+     * durumda çökmeyi yine yakalayıp cihazda saklıyor ama yüklemiyor; karar
+     * kullanıcıya kalıyor. Akış budur:
+     *
+     *   çökme → uygulama yeniden açılır → burası "bekleyen var" der →
+     *   kullanıcıya sorulur → [gonder] ya da [sil]
+     *
+     * `didCrashOnPreviousExecution` ayrıca soruluyor çünkü bekleyen rapor
+     * yalnızca çökmeden gelmiyor: WebView kanallarının yazdığı non-fatal
+     * kayıtlar da kuyruğa giriyor. Soruyu "uygulama çöktü" diye sormak ancak
+     * gerçekten çöktüyse doğru.
      */
-    fun izinAyarla(acik: Boolean) {
-        crashlytics()?.let { runCatching { it.isCrashlyticsCollectionEnabled = acik } }
+    fun bekleyenleriSor(cevap: (bekleyen: Boolean, oncekiCokme: Boolean) -> Unit) {
+        val c = crashlytics()
+        if (c == null) {
+            cevap(false, false)
+            return
+        }
+        val cokmeyleBitti = runCatching { c.didCrashOnPreviousExecution() }.getOrDefault(false)
+        runCatching {
+            c.checkForUnsentReports().addOnCompleteListener { gorev ->
+                cevap(gorev.isSuccessful && gorev.result == true, cokmeyleBitti)
+            }
+        }.onFailure { cevap(false, cokmeyleBitti) }
+    }
+
+    /** Kullanıcı "gönder" dedi. */
+    fun bekleyenleriGonder() {
+        crashlytics()?.let { runCatching { it.sendUnsentReports() } }
+    }
+
+    /** Kullanıcı "gönderme" dedi — kayıtlar cihazdan siliniyor, bir daha sorulmuyor. */
+    fun bekleyenleriSil() {
+        crashlytics()?.let { runCatching { it.deleteUnsentReports() } }
     }
 
     /**

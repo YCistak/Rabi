@@ -38,6 +38,7 @@ import { odakKilidiniBitir } from '@/lib/odak-kilidi'
 import { bekleyenSayisi } from '@/lib/hata-bildirimi'
 import { useHataBildirimi } from '@/lib/hata-kuyrugu'
 import { useCokmeRaporu } from '@/lib/cokme-izni'
+import { CokmeSorusu } from '@/components/cokme-sorusu'
 import { bugun } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import type { KonuDersId, KonuSinifi } from '@/lib/konu'
@@ -854,9 +855,8 @@ export function AppShell() {
               bekleyenBildirim={bekleyenSayisi(hataBildirimi.bildirimler)}
               bildirimIzni={hataBildirimi.izin}
               onBildirimIzni={hataBildirimi.onIzin}
-              cokmeIzni={cokme.izin}
-              onCokmeIzni={cokme.onIzin}
-              cokmeTestVar={cokme.testVar}
+              cokmeSorulsun={cokme.sorulsun}
+              onCokmeSorulsun={cokme.onSorulsun}
               yedeklenecek={{
                 denemeler,
                 okulYillari,
@@ -908,6 +908,7 @@ export function AppShell() {
         />
       )}
       {acilisKatmani}
+      <CokmeSorusu kol={cokme} />
       {gecis !== 'yok' && <MaskotGecisi soluyor={gecis === 'soluyor'} />}
     </>
   )
