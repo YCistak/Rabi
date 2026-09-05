@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import {
   Bell,
-  Bug,
   ChevronDown,
   ChevronRight,
   ClipboardList,
@@ -14,7 +13,6 @@ import {
   Lock,
   Music,
   Target,
-  Flag,
   Trash2,
   Upload,
   UserRound,
@@ -53,7 +51,6 @@ import {
 import type { BankaKaydi } from '@/lib/oyunlar/banka'
 import { izinIste } from '@/lib/bildirim'
 import { saatYaz } from '@/lib/hatirlatma'
-import type { BildirimIzni } from '@/lib/hata-kuyrugu'
 import { AD_EN_AZ, adBiciminde, adGecerliMi } from '@/lib/ad'
 import { cn, yeniId } from '@/lib/utils'
 import type {
@@ -136,10 +133,6 @@ export function AyarlarEkrani({
   ayarlar,
   setAyarlar,
   bekleyenBildirim,
-  bildirimIzni,
-  onBildirimIzni,
-  cokmeSorulsun,
-  onCokmeSorulsun,
   pomodoroAyar,
   setPomodoroAyar,
   yedeklenecek,
@@ -149,12 +142,6 @@ export function AyarlarEkrani({
   ayarlar: Ayarlar
   /** Gönderilmeyi bekleyen hatalı soru bildirimi sayısı. */
   bekleyenBildirim: number
-  /** Gönderim izni — `'verildi'` olmadan hiçbir bildirim ağa çıkmıyor. */
-  bildirimIzni: BildirimIzni
-  onBildirimIzni: (karar: BildirimIzni) => void
-  /** Çökmeden sonra rapor sorusu çıksın mı — rıza her seferinde ayrıca alınıyor. */
-  cokmeSorulsun: boolean
-  onCokmeSorulsun: (deger: boolean) => void
   setAyarlar: (guncelleyici: Ayarlar | ((onceki: Ayarlar) => Ayarlar)) => void
   /** Odak kilidi ayarları pomodoro ayarının içinde duruyor. */
   pomodoroAyar: PomodoroAyar
@@ -709,19 +696,15 @@ export function AyarlarEkrani({
 
         {/* --------------------- Hatalı soru bildirimi -------------------- */}
         {/* Kendi bölümü değil, Veri'nin başı: gönderilen şey de veri ve
-            kullanıcının "cihazdan ne çıkıyor" sorusunun cevabı burada. */}
+            kullanıcının "cihazdan ne çıkıyor" sorusunun cevabı burada.
+
+            Burada bir anahtar ve bir izin seçimi vardı; ikisi de kalktı.
+            Bildirim kendiliğinden olan bir şey değil — kullanıcı bayrağa basıp
+            sebep seçmeden hiçbir kayıt oluşmuyor, ilk bildirimde de ne
+            gönderileceğini gösteren izin kartı çıkıyor. Rıza zaten o iki
+            adımda alınıyordu; ayarlardaki üçüncü kopyası aynı kararı iki ayrı
+            yerde tutup hangisinin geçerli olduğunu belirsizleştiriyordu. */}
         <Bolum baslik="Hatalı soru bildirimi">
-          <Satir
-            Simge={Flag}
-            renk="mercan"
-            baslik="Bildirdiğim soruları gönder"
-            aciklama="Mini oyunlarda hatalı bulduğun soruları geliştiriciye ulaştırır"
-            onClick={() =>
-              setAyarlar((o) => ({ ...o, hataBildirimiAcik: !o.hataBildirimiAcik }))
-            }
-            basiliMi={ayarlar.hataBildirimiAcik}
-            sag={<Anahtar acik={ayarlar.hataBildirimiAcik} />}
-          />
           <GenisAlan tam>
             <AlanNotu>
               Uygulamanın internete çıktığı tek yer burası. Bir soruyu
@@ -734,38 +717,9 @@ export function AyarlarEkrani({
               <b>gönderilmez</b>. Bildirim önce cihaza kaydedilir; internet yoksa
               bekler, bağlanınca kendiliğinden gider.
             </AlanNotu>
-            {/* İzin ayrı bir karar: ayarın açık olması tek başına yetmiyor,
-                kullanıcı ilk bildiriminde ne gönderileceğini görüp "Gönder"
-                demeden hiçbir şey ağa çıkmıyor. Kararı buradan geri alabilsin.
-                (Play'in kullanıcı verisi politikası bunu şart koşuyor.) */}
-            <AlanNotu ust>
-              {bildirimIzni === 'verildi'
-                ? 'Gönderime izin verdin.'
-                : bildirimIzni === 'reddedildi'
-                  ? 'Gönderime izin vermedin — bildirimlerin telefonunda kalıyor.'
-                  : 'Gönderim izni henüz sorulmadı; ilk bildiriminde sorulacak.'}
-            </AlanNotu>
-            {bildirimIzni !== 'sorulmadi' && (
-              <GenisAlan tam>
-                <Cipler>
-                  <Cip
-                    secili={bildirimIzni === 'verildi'}
-                    onClick={() => onBildirimIzni('verildi')}
-                  >
-                    İzin ver
-                  </Cip>
-                  <Cip
-                    secili={bildirimIzni === 'reddedildi'}
-                    onClick={() => onBildirimIzni('reddedildi')}
-                  >
-                    Gönderme
-                  </Cip>
-                </Cipler>
-              </GenisAlan>
-            )}
             {bekleyenBildirim > 0 && (
               <AlanNotu ust>
-                {bekleyenBildirim} bildirim {bildirimIzni === 'verildi' ? 'gönderilmeyi bekliyor' : 'telefonunda bekliyor'}.
+                {bekleyenBildirim} bildirim gönderilmeyi bekliyor.
               </AlanNotu>
             )}
           </GenisAlan>
@@ -773,19 +727,14 @@ export function AyarlarEkrani({
 
         {/* ----------------------- Çökme raporları ------------------------ */}
         {/* Hatalı soru bildiriminin hemen altında: ikisi de "cihazdan ne
-            çıkıyor" sorusunun cevabı. Ama rıza modeli farklı — burada önceden
-            verilen bir izin yok, her çökmeden sonra tek tek soruluyor. Bu
-            anahtar yalnızca "bana bunu hiç sorma" diyen için. */}
+            çıkıyor" sorusunun cevabı. Burada da önceden verilen bir izin yok,
+            her çökmeden sonra tek tek soruluyor.
+
+            "Çöktüğümde sor" anahtarı kalktı: soru zaten çökmeden sonra, gerçek
+            bir olay üzerine çıkıyor ve orada "Gönderme" demek raporu siliyor.
+            Anahtar, aynı hayırı önceden ve soyut olarak söylemekten başka bir
+            işe yaramıyordu. */}
         <Bolum baslik="Çökme raporları">
-          <Satir
-            Simge={Bug}
-            renk="lavanta"
-            baslik="Çöktüğümde sor"
-            aciklama="Uygulama çökerse, açılışta raporu göndermek isteyip istemediğini sorar"
-            onClick={() => onCokmeSorulsun(!cokmeSorulsun)}
-            basiliMi={cokmeSorulsun}
-            sag={<Anahtar acik={cokmeSorulsun} />}
-          />
           <GenisAlan tam>
             <AlanNotu>
               Uygulama çökerse hata kaydı <b>telefonunda</b> bekler; kendiliğinden
@@ -797,12 +746,6 @@ export function AyarlarEkrani({
               modeli, Android ve uygulama sürümü. Adın, denemelerin, notların ve
               fotoğrafların <b>gönderilmez</b>.
             </AlanNotu>
-            {!cokmeSorulsun && (
-              <AlanNotu ust>
-                Soru kapalı: bekleyen raporlar açılışta sessizce siliniyor.
-              </AlanNotu>
-            )}
-
           </GenisAlan>
         </Bolum>
 

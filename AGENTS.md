@@ -16,9 +16,12 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   - **Tek istisna: hatalı soru bildirimi.** Soru havuzları elle yazıldı; içlerindeki
     hataları öğrenmenin başka yolu yok. Ağa çıkan tek dosya `lib/hata-gonder.ts`;
     gönderilen veri `formVerisi()` içinde tek tek sayılan yedi alandan ibaret (soru
-    kimliği, oyun, soru metni, doğru sanılan cevap, sebep, sürüm, anonim cihaz
-    numarası). Kullanıcı Ayarlar'dan kapatabiliyor, ne gönderildiği orada yazıyor.
-    Bu istisnayı genişletme.
+    kimliği, oyun, soru metni, doğru sanılan cevap, sebep, sürüm, cihaz alanı —
+    telefon modeli ve ada bağlı olmayan okunur bir ad). Ne gönderildiği hem
+    Ayarlar'da hem ilk bildirimde çıkan izin kartında yazıyor; kart "Gönder"
+    denmeden hiçbir şey ağa çıkmıyor. Ayarlarda ayrıca bir açma/kapama anahtarı
+    vardı, kaldırıldı: bildirim bayrağa basıp sebep seçmeden zaten oluşmuyor ve
+    aynı karar iki ayrı yerde tutuluyordu. Bu istisnayı genişletme.
   - **İkinci istisna: çökme raporları.** WebView uygulamasında çökmenin sebebi
     çoğu zaman uygulamanın kendi kodu değil, cihazdaki Android System WebView
     sürümü oluyor; bunu kullanıcıdan öğrenmenin yolu yok. Firebase Crashlytics
@@ -27,9 +30,9 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
     Crashlytics'in otomatik gönderimi **hiçbir zaman açılmıyor**
     (`AndroidManifest.xml` → `firebase_crashlytics_collection_enabled=false`
     kalıcı): çökme cihazda saklanıyor ve uygulama yeniden açıldığında
-    gönderilsin mi diye **her seferinde soruluyor**. Ayarlardaki anahtar
-    yalnızca soruyu kapatmaya yarıyor, izin vermeye değil.
-    `firebase-analytics` bilerek eklenmedi.
+    gönderilsin mi diye **her seferinde soruluyor**. Ayarlarda soruyu kapatan
+    bir anahtar vardı, kaldırıldı: soru zaten çökmeden sonra çıkıyor ve
+    "Gönderme" raporu siliyor. `firebase-analytics` bilerek eklenmedi.
     Bu iki istisnanın dışında ağa çıkılmıyor.
 - **State kütüphanesi yok.** `AppShell` üst düzey state'in sahibi, props ile aşağı geçer.
   Yeni bir global state ihtiyacı çıkarsa önce prop ile çözmeyi dene.

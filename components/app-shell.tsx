@@ -179,7 +179,7 @@ export function AppShell() {
    * Bildirilen hatalı sorular. Kuyruk, gönderim ve arayüzün kolu hook'un
    * içinde; buradan yalnızca ayarın açık olup olmadığı geçiyor.
    */
-  const hataBildirimi = useHataBildirimi(ayarlar.hataBildirimiAcik)
+  const hataBildirimi = useHataBildirimi()
   /**
    * Çökme raporlaması. Global JS hata yakalayıcısını da bu kanca kuruyor,
    * onaydan bağımsız olarak — yakalanan hata onay yokken zaten hiçbir yere
@@ -696,10 +696,6 @@ export function AppShell() {
               ayarlar={ayarlar}
               setAyarlar={setAyarlar}
               bekleyenBildirim={bekleyenSayisi(hataBildirimi.bildirimler)}
-              bildirimIzni={hataBildirimi.izin}
-              onBildirimIzni={hataBildirimi.onIzin}
-              cokmeSorulsun={cokme.sorulsun}
-              onCokmeSorulsun={cokme.onSorulsun}
               pomodoroAyar={pomodoroAyar}
               setPomodoroAyar={setPomodoroAyar}
               yedeklenecek={{
