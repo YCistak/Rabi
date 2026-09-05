@@ -1,6 +1,31 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
+/*
+  Firebase eklentileri yalnızca `google-services.json` varsa uygulanır.
+
+  Dosya depoda **yok** (`.gitignore`'da; depo herkese açık). Olmadan da
+  `npm run apk` çalışmaya devam etmeli — yoksa depoyu klonlayan biri
+  derleyemez. Eklentiler uygulanmazsa Crashlytics çalışmaz ama uygulama
+  çalışır: `CokmeRaporu` içindeki her çağrı `runCatching` ile korunuyor.
+
+  Konum önemli: `buildTypes` içindeki `firebaseCrashlytics { }` bloğu bu
+  eklentinin eklediği bir uzantı. Eklenti dosyanın **sonunda** uygulansaydı
+  (Capacitor şablonunun google-services'i koyduğu yer) o blok değerlendirilirken
+  uzantı henüz var olmaz ve derleme "could not find method" ile kırılırdı.
+
+*/
+def googleServicesJson = file('google-services.json')
+def firebaseVar = googleServicesJson.exists() && googleServicesJson.length() > 0
+if (firebaseVar) {
+    apply plugin: 'com.google.gms.google-services'
+    // Sıra önemli: Crashlytics eklentisi google-services'in ürettiği
+    // yapılandırmaya bakıyor, ondan sonra uygulanmalı.
+    apply plugin: 'com.google.firebase.crashlytics'
+} else {
+    logger.lifecycle("google-services.json yok — Firebase eklentileri uygulanmadı, çökme raporlaması kapalı derlenecek.")
+}
+
 // İmza bilgisi önce ortam değişkeninden (CI), yoksa keystore.properties'ten (yerel) okunur.
 // İkisi de yoksa release imzasız derlenir — build çökmez.
 def keystorePropsFile = rootProject.file("keystore.properties")
@@ -14,10 +39,10 @@ def signingValue = { String envName, String propName ->
 def storeFilePath = signingValue('KEYSTORE_FILE', 'storeFile')
 
 android {
-    namespace = "com.rabi.app"
+    namespace = "com.fluxifyinteractive.rabi"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.rabi.app"
+        applicationId "com.fluxifyinteractive.rabi"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // İki dal birleşti: beyaz tema (20) ile oyun modları dalı (19). Android
@@ -39,6 +64,17 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    /*
+      `BuildConfig` sınıfı AGP 8'den beri varsayılan olarak **üretilmiyor**;
+      isteyen açıkça istiyor. Çökme raporlaması iki yerde ihtiyaç duyuyor:
+      raporun hangi derlemeden geldiğini yazmak (`BUILD_TYPE`) ve test
+      çökmesi yöntemlerini release'de kapatmak (`DEBUG`). İkincisi arayüzün
+      gizliliğine değil derleme türüne dayandığı için vazgeçilebilir değil.
+    */
+    buildFeatures {
+        buildConfig true
+    }
+
     signingConfigs {
         if (storeFilePath) {
             release {
@@ -51,9 +87,53 @@ android {
     }
 
     buildTypes {
+        debug {
+            if (firebaseVar) {
+                firebaseCrashlytics {
+                    // Debug'da R8 çalışmıyor, yüklenecek eşleme (mapping)
+                    // dosyası da yok; açık bırakmak her derlemeye boşuna
+                    // bir ağ görevi ekler.
+                    mappingFileUploadEnabled false
+                }
+            }
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (firebaseVar) {
+                firebaseCrashlytics {
+                    /*
+                      Eşleme (mapping) dosyası yüklemesi.
+
+                      `minifyEnabled false` olduğu için şu an yüklenecek bir
+                      dosya **yok** ve yığın izleri zaten açık sınıf adlarıyla
+                      geliyor. Ayar yine de açık: eklenti dosya yoksa görevi
+                      sessizce geçiyor, ileride minify açılırsa hiçbir ek iş
+                      gerekmiyor. Yükleme `assembleRelease`/`bundleRelease`
+                      görevine kendiliğinden bağlanıyor — elle bir adım yok.
+                    */
+                    mappingFileUploadEnabled true
+
+                    /*
+                      Native sembol yüklemesi **kapalı**.
+
+                      Planda açılacak yazıyordu; kodu yazarken projede kendi
+                      C/C++ kaynağımız olmadığı görüldü (ne CMakeLists ne jni
+                      dizini). Paketteki `.so` dosyalarının hepsi ML Kit ve
+                      CameraX'ten geliyor ve satıcı tarafından zaten
+                      soyulmuş (stripped) — yüklenecek sembolümüz yok.
+                      Ayrıca `unstrippedNativeLibsDir` yolu AGP sürümleri
+                      arasında değişiyor, yanlış yol sessizce boş yükleme
+                      yapıyor.
+
+                      Native çökmeler yine de yakalanıyor:
+                      `firebase-crashlytics-ndk` bağımlılığı bunun için.
+                      Play Console tarafındaki okunabilirlik de
+                      `defaultConfig.ndk.debugSymbolLevel` ile zaten sağlanmış.
+                    */
+                    nativeSymbolUploadEnabled false
+                }
+            }
             if (storeFilePath) {
                 signingConfig signingConfigs.release
             }
@@ -73,6 +153,27 @@ dependencies {
     implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
     implementation project(':capacitor-android')
+
+    /*
+      Firebase — çökme raporlaması.
+
+      Sürümler BoM'dan geliyor, tek tek yazılmıyor: Crashlytics ile
+      bağımlılıkları (firebase-common, sessions, installations) arasındaki
+      uyumu BoM garanti ediyor.
+
+      `firebase-analytics` **bilerek yok**. Crashlytics onsuz da çalışıyor;
+      getirdiği tek şey "crash-free users" oranı ve otomatik breadcrumb.
+      Karşılığında Play Data Safety formunda çok daha geniş bir veri toplama
+      beyanı gerekiyor — bu uygulamanın duruşuna uymuyor. Breadcrumb yerine
+      `CokmeRaporu.kaydet` içindeki `log()` çağrıları var.
+
+      `firebase-crashlytics-ndk` **var**: ML Kit ve CameraX dört ABI'de native
+      kütüphane getiriyor ve bu modül olmadan native çökmeler Crashlytics'e
+      hiç düşmüyor, yalnızca Play Console'da görünüyor.
+    */
+    implementation platform('com.google.firebase:firebase-bom:34.18.0')
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-crashlytics-ndk'
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
@@ -81,11 +182,5 @@ dependencies {
 
 apply from: 'capacitor.build.gradle'
 
-try {
-    def servicesJSON = file('google-services.json')
-    if (servicesJSON.text) {
-        apply plugin: 'com.google.gms.google-services'
-    }
-} catch(Exception e) {
-    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
-}
+// NOT: Capacitor şablonunun buraya koyduğu koşullu `google-services` bloğu
+// dosyanın başına taşındı (sebep orada yazıyor).

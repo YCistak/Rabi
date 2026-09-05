@@ -1,4 +1,4 @@
-package com.rabi.app.odak
+package com.fluxifyinteractive.rabi.odak
 
 import android.app.AppOpsManager
 import android.app.NotificationManager

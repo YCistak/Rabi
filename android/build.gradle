@@ -9,6 +9,9 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:8.13.0'
         classpath 'com.google.gms:google-services:4.4.4'
+        // Çökme raporlaması. Sürüm Google Maven'daki en güncel sürüm (3.0.8);
+        // google-services 4.4.4 ile uyumlu, o yüzden onu yükseltmeye gerek yok.
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.8'
         // Odak kilidi yerli Android kodu Kotlin. Sürüm burada sabit: buildscript
         // bloğu variables.gradle'dan önce çalışıyor, oradaki değişkeni göremez.
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.0"

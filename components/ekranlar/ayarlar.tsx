@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import {
   Bell,
+  Bug,
   ChevronDown,
   ChevronRight,
   ClipboardList,
@@ -113,6 +114,8 @@ export function AyarlarEkrani({
   bekleyenBildirim,
   bildirimIzni,
   onBildirimIzni,
+  cokmeSorulsun,
+  onCokmeSorulsun,
   yedeklenecek,
 }: {
   /** Yedeğe giren kullanıcı şablonları — ekranda düzenlenmiyor. */
@@ -123,6 +126,9 @@ export function AyarlarEkrani({
   /** Gönderim izni — `'verildi'` olmadan hiçbir bildirim ağa çıkmıyor. */
   bildirimIzni: BildirimIzni
   onBildirimIzni: (karar: BildirimIzni) => void
+  /** Çökmeden sonra rapor sorusu çıksın mı — rıza her seferinde ayrıca alınıyor. */
+  cokmeSorulsun: boolean
+  onCokmeSorulsun: (deger: boolean) => void
   setAyarlar: (guncelleyici: Ayarlar | ((onceki: Ayarlar) => Ayarlar)) => void
   /** Yedeğe girecek bütün veri — fotoğraflar hariç. */
   yedeklenecek: {
@@ -588,6 +594,40 @@ export function AyarlarEkrani({
                 {bekleyenBildirim} bildirim {bildirimIzni === 'verildi' ? 'gönderilmeyi bekliyor' : 'telefonunda bekliyor'}.
               </AlanNotu>
             )}
+          </GenisAlan>
+        </Bolum>
+
+        {/* ----------------------- Çökme raporları ------------------------ */}
+        {/* Hatalı soru bildiriminin hemen altında: ikisi de "cihazdan ne
+            çıkıyor" sorusunun cevabı. Ama rıza modeli farklı — burada önceden
+            verilen bir izin yok, her çökmeden sonra tek tek soruluyor. Bu
+            anahtar yalnızca "bana bunu hiç sorma" diyen için. */}
+        <Bolum baslik="Çökme raporları">
+          <Satir
+            Simge={Bug}
+            renk="lavanta"
+            baslik="Çöktüğümde sor"
+            onClick={() => onCokmeSorulsun(!cokmeSorulsun)}
+            basiliMi={cokmeSorulsun}
+            sag={<Anahtar acik={cokmeSorulsun} />}
+          />
+          <GenisAlan tam>
+            <AlanNotu>
+              Uygulama çökerse hata kaydı <b>telefonunda</b> bekler; kendiliğinden
+              hiçbir yere gitmez. Bir sonraki açılışta sana sorarım — &ldquo;Gönder&rdquo;
+              dersen gider, &ldquo;Gönderme&rdquo; dersen silinir.
+            </AlanNotu>
+            <AlanNotu ust>
+              Giden şey bir hata kaydı: hatanın hangi satırda olduğu, telefonunun
+              modeli, Android ve uygulama sürümü. Adın, denemelerin, notların ve
+              fotoğrafların <b>gönderilmez</b>.
+            </AlanNotu>
+            {!cokmeSorulsun && (
+              <AlanNotu ust>
+                Soru kapalı: bekleyen raporlar açılışta sessizce siliniyor.
+              </AlanNotu>
+            )}
+
           </GenisAlan>
         </Bolum>
 

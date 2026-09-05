@@ -8,9 +8,18 @@
  * orada süre işliyor ve geri bildirim şeridi yalnızca bir saniye duruyor;
  * yanlış dokunuş puana mal olurdu.
  *
- * Tek dokunuş yeter: bayrağa basıldığı anda bildirim kaydediliyor ve gönderim
- * kuyruğuna giriyor. Altında açılan sebep çipleri isteğe bağlı — ikinci bir
- * adım şart koşulsaydı hiç bildirim gelmezdi.
+ * Akış iki adım: bayrak sebep çiplerini açıyor, çipe basmak bildirimi
+ * kaydediyor ve gönderim kuyruğuna sokuyor. **Sebep zorunlu.**
+ *
+ * Önce tek dokunuşla sebepsiz kaydediliyordu, çipler altında isteğe bağlı
+ * duruyordu. Sonuç: bildirimlerin çoğu "belirtilmedi" ile geliyordu ve o kayıt
+ * "biri bu soruya kızmış" demekten başka bir şey söylemiyor — sorunun gerçekten
+ * bozuk olup olmadığı, bozuksa cevabının mı yazımının mı bozuk olduğu
+ * anlaşılmıyordu. Bildirimin tek işi bunu anlatmak; sebepsiz bildirim işe
+ * yaramıyor.
+ *
+ * İkinci dokunuş bildirim sayısını düşürüyor olabilir, ama gelen her bildirim
+ * artık düzeltilebilir bir şey söylüyor.
  *
  * **İlk** bildirimde bir kez izin soruluyor: ne gönderileceği tek tek yazılı
  * ve karar verilmeden hiçbir şey ağa çıkmıyor. Google Play'in kullanıcı verisi
@@ -34,7 +43,8 @@ export interface BildirimKolu {
   sinirda: boolean
   /** Gönderim izni; `'verildi'` olmadan hiçbir bildirim ağa çıkmıyor. */
   izin: BildirimIzni
-  onBildir: (soru: BankaSorusu) => void
+  /** Sebep zorunlu: sebepsiz bildirim kaydedilmiyor. */
+  onBildir: (soru: BankaSorusu, sebep: HataSebebi) => void
   onSebep: (kimlik: string, sebep: HataSebebi) => void
   onIzin: (karar: BildirimIzni) => void
 }
@@ -52,7 +62,7 @@ const GONDERILENLER = [
   'uygulamanın doğru saydığı cevap',
   'senin seçtiğin sebep',
   'uygulama sürümü',
-  'ada bağlı olmayan bir cihaz numarası',
+  'telefonunun modeli ve ada bağlı olmayan bir cihaz adı',
 ]
 
 /**
@@ -104,21 +114,31 @@ export function BildirimDugmesi({ soru, kol }: { soru: BankaSorusu; kol: Bildiri
   const kimlik = bankaKimligi(soru)
   const kayit = kol.bildirimler.find((b) => b.kimlik === kimlik)
   const bildirildi = kayit !== undefined
-  // Bildirdikten hemen sonra çipler açılıyor: sebep bir dokunuş uzakta dursun.
+  /*
+    Panel açık mı.
+
+    Bayrak artık bildirimi **göndermiyor**, yalnızca sebep çiplerini açıyor.
+    Bildirilmiş bir soruda panel sebebi değiştirmeye yarıyor.
+  */
   const [acik, setAcik] = useState(false)
   const [reddedildi, setReddedildi] = useState(false)
 
   const bas = () => {
-    if (bildirildi) {
-      setAcik((a) => !a)
-      return
-    }
-    if (kol.sinirda) {
+    // Sınır dolmuşsa paneli hiç açma: seçilecek çipler var ama seçmenin bir
+    // sonucu olmayacak; kullanıcıyı boşuna gezdirmek olurdu.
+    if (!bildirildi && kol.sinirda) {
       setReddedildi(true)
       return
     }
-    kol.onBildir(soru)
-    setAcik(true)
+    setAcik((a) => !a)
+  }
+
+  const sebepSec = (sebep: HataSebebi) => {
+    if (bildirildi) {
+      kol.onSebep(kimlik, sebep)
+      return
+    }
+    kol.onBildir(soru, sebep)
   }
 
   return (
@@ -127,6 +147,7 @@ export function BildirimDugmesi({ soru, kol }: { soru: BankaSorusu; kol: Bildiri
         type="button"
         onClick={bas}
         aria-pressed={bildirildi}
+        aria-expanded={acik}
         className={cn(
           'flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-extrabold transition active:scale-[0.97]',
           bildirildi
@@ -144,27 +165,23 @@ export function BildirimDugmesi({ soru, kol }: { soru: BankaSorusu; kol: Bildiri
         </p>
       )}
 
-      {bildirildi && acik && kol.izin === 'sorulmadi' && <IzinKarti kol={kol} />}
-
-      {bildirildi && acik && kol.izin === 'reddedildi' && (
-        <p className="mt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
-          Bildirimin telefonunda kayıtlı; gönderilmiyor. Ayarlar &rsaquo; Veri'den açabilirsin.
-        </p>
-      )}
-
-      {bildirildi && acik && (
+      {acik && (
         <div className="mt-2">
+          {/* Soru **çiplerin üstünde**: seçilecek şeyin ne olduğu, seçenekler
+              görünmeden önce okunuyor. Bildirilmişse aynı yer sebebin
+              değiştirilebildiğini söylüyor — ekranda "Bildirildi" yazarken
+              çiplerin ne işe yaradığı yoksa belirsiz kalıyordu. */}
           <p className="text-[11px] font-bold text-muted-foreground">
-            Nesi hatalı? (isteğe bağlı)
+            {bildirildi ? 'Sebebi değiştir' : 'Nesi hatalı? Birini seç, öyle gönderilsin.'}
           </p>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {SECILEBILIR_SEBEPLER.map((sebep) => {
-              const secili = kayit.sebep === sebep
+              const secili = kayit?.sebep === sebep
               return (
                 <button
                   key={sebep}
                   type="button"
-                  onClick={() => kol.onSebep(kimlik, sebep)}
+                  onClick={() => sebepSec(sebep)}
                   aria-pressed={secili}
                   className={cn(
                     'rounded-full px-2.5 py-1 text-[11.5px] font-bold transition active:scale-[0.97]',
@@ -178,6 +195,16 @@ export function BildirimDugmesi({ soru, kol }: { soru: BankaSorusu; kol: Bildiri
               )
             })}
           </div>
+
+          {/* İzin kartı ve gönderim notu **kayıt açıldıktan sonra**: sebep
+              seçilmeden ortada gönderilecek bir şey yok. */}
+          {bildirildi && kol.izin === 'sorulmadi' && <IzinKarti kol={kol} />}
+
+          {bildirildi && kol.izin === 'reddedildi' && (
+            <p className="mt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
+              Bildirimin telefonunda kayıtlı; gönderilmiyor. Ayarlar &rsaquo; Veri'den açabilirsin.
+            </p>
+          )}
         </div>
       )}
     </div>

@@ -76,9 +76,17 @@ export function useHataBildirimi(acik: boolean): BildirimKolu {
       })
   }, [acik, gorunur, izin, bekleyen, setBildirimler])
 
+  /**
+   * Bildirim **sebebiyle birlikte** açılıyor.
+   *
+   * Önce tek dokunuşla sebepsiz kaydediliyor, sebep sonradan isteğe bağlı
+   * soruluyordu; gelen bildirimlerin çoğu "belirtilmedi" ile geliyor ve
+   * "biri bu soruya kızmış" demekten öteye gitmiyordu. Sorunun bozuk mu
+   * olduğunu, bozuksa nesinin bozuk olduğunu ayırt ettiren tek alan sebep.
+   */
   const onBildir = useCallback(
-    (soru: BankaSorusu) => {
-      setBildirimler((l) => bildirimEkle(l, soru, 'belirtilmedi', new Date()))
+    (soru: BankaSorusu, sebep: HataSebebi) => {
+      setBildirimler((l) => bildirimEkle(l, soru, sebep, new Date()))
     },
     [setBildirimler],
   )

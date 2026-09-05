@@ -24,7 +24,14 @@ export const SEBEP_ADI: Record<HataSebebi, string> = {
   baska: 'Başka',
 }
 
-/** Kullanıcının seçebildiği sebepler — `belirtilmedi` çip değil, varsayılan. */
+/**
+ * Kullanıcının seçebildiği sebepler.
+ *
+ * `belirtilmedi` listede yok ve artık **yeni kayıtlarda hiç oluşmuyor**: sebep
+ * seçmek zorunlu (`components/hata-bildir.tsx`). Tipte durmaya devam ediyor
+ * çünkü kuralın öncesinde açılmış bildirimler telefonlarda duruyor ve onlar
+ * gönderilmeyi beklerken okunabilmeli.
+ */
 export const SECILEBILIR_SEBEPLER: HataSebebi[] = [
   'cevap-yanlis',
   'anlasilmiyor',
@@ -107,6 +114,9 @@ export function sinirdaMi(liste: HataBildirimi[], simdi: Date): boolean {
  * Aynı soru ikinci kez bildirilirse yeni kayıt açılmıyor: tabloda tek satır
  * kalsın diye mevcut kayıt tazeleniyor. Sınır dolmuşsa liste **olduğu gibi**
  * dönüyor; arayüz kimliğin listeye girmediğini görüp kullanıcıyı uyarıyor.
+ *
+ * `sebep` her zaman gerçek bir sebep: arayüz sebep seçilmeden buraya hiç
+ * gelmiyor.
  */
 export function bildirimEkle(
   liste: HataBildirimi[],
@@ -190,6 +200,7 @@ export function formVerisi(
     cevap: b.cevapMetni,
     sebep: SEBEP_ADI[b.sebep],
     surum,
+    // Telefon modeli + okunur cihaz adı; `lib/hata-gonder.ts` → `cihazAlani()`.
     cihaz,
   }
 }
