@@ -25,7 +25,6 @@ const bos: Omit<Yedek, 'uygulama' | 'surum' | 'tarih'> = {
     hatirlatmaSaati: 20,
     hatirlatmaDakikasi: 0,
     bildirimAcik: false,
-    hataBildirimiAcik: true,
     oyunSesi: true,
     oyunMuzigi: true,
   oyunMuzikTuru: 'mod' as const,

@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import {
   Bell,
-  Bug,
   ChevronDown,
   ChevronRight,
   ClipboardList,
@@ -13,7 +12,6 @@ import {
   Images,
   Music,
   Target,
-  Flag,
   Trash2,
   Upload,
   UserRound,
@@ -44,7 +42,6 @@ import type { BankaKaydi } from '@/lib/oyunlar/banka'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { izinIste } from '@/lib/bildirim'
 import { saatYaz } from '@/lib/hatirlatma'
-import type { BildirimIzni } from '@/lib/hata-kuyrugu'
 import { AD_EN_AZ, adBiciminde, adGecerliMi } from '@/lib/ad'
 import { cn, yeniId } from '@/lib/utils'
 import type {
@@ -112,10 +109,8 @@ export function AyarlarEkrani({
   ayarlar,
   setAyarlar,
   bekleyenBildirim,
-  bildirimIzni,
-  onBildirimIzni,
-  cokmeSorulsun,
-  onCokmeSorulsun,
+  pomodoroAyar,
+  setPomodoroAyar,
   yedeklenecek,
 }: {
   /** Yedeğe giren kullanıcı şablonları — ekranda düzenlenmiyor. */
@@ -123,12 +118,6 @@ export function AyarlarEkrani({
   ayarlar: Ayarlar
   /** Gönderilmeyi bekleyen hatalı soru bildirimi sayısı. */
   bekleyenBildirim: number
-  /** Gönderim izni — `'verildi'` olmadan hiçbir bildirim ağa çıkmıyor. */
-  bildirimIzni: BildirimIzni
-  onBildirimIzni: (karar: BildirimIzni) => void
-  /** Çökmeden sonra rapor sorusu çıksın mı — rıza her seferinde ayrıca alınıyor. */
-  cokmeSorulsun: boolean
-  onCokmeSorulsun: (deger: boolean) => void
   setAyarlar: (guncelleyici: Ayarlar | ((onceki: Ayarlar) => Ayarlar)) => void
   /** Yedeğe girecek bütün veri — fotoğraflar hariç. */
   yedeklenecek: {
@@ -544,54 +533,29 @@ export function AyarlarEkrani({
 
         {/* --------------------- Hatalı soru bildirimi -------------------- */}
         {/* Kendi bölümü değil, Veri'nin başı: gönderilen şey de veri ve
-            kullanıcının "cihazdan ne çıkıyor" sorusunun cevabı burada. */}
+            kullanıcının "cihazdan ne çıkıyor" sorusunun cevabı burada.
+
+            Burada bir anahtar ve bir izin seçimi vardı; ikisi de kalktı.
+            Bildirim kendiliğinden olan bir şey değil — kullanıcı bayrağa basıp
+            sebep seçmeden hiçbir kayıt oluşmuyor, ilk bildirimde de ne
+            gönderileceğini gösteren izin kartı çıkıyor. Rıza zaten o iki
+            adımda alınıyordu; ayarlardaki üçüncü kopyası aynı kararı iki ayrı
+            yerde tutup hangisinin geçerli olduğunu belirsizleştiriyordu. */}
         <Bolum baslik="Hatalı soru bildirimi">
-          <Satir
-            Simge={Flag}
-            renk="mercan"
-            baslik="Bildirdiğim soruları gönder"
-            onClick={() =>
-              setAyarlar((o) => ({ ...o, hataBildirimiAcik: !o.hataBildirimiAcik }))
-            }
-            basiliMi={ayarlar.hataBildirimiAcik}
-            sag={<Anahtar acik={ayarlar.hataBildirimiAcik} />}
-          />
           <GenisAlan tam>
-            {/* Ne gönderildiğini tek tek sayan iki paragraf şimdilik kaldırıldı;
-                yerine daha kısası gelecek. İzin satırları duruyor — gönderim
-                kararı hâlâ kullanıcının ve buradan geri alınabiliyor. */}
-            {/* İzin ayrı bir karar: ayarın açık olması tek başına yetmiyor,
-                kullanıcı ilk bildiriminde ne gönderileceğini görüp "Gönder"
-                demeden hiçbir şey ağa çıkmıyor. Kararı buradan geri alabilsin.
-                (Play'in kullanıcı verisi politikası bunu şart koşuyor.) */}
-            <AlanNotu ust>
-              {bildirimIzni === 'verildi'
-                ? 'Gönderime izin verdin.'
-                : bildirimIzni === 'reddedildi'
-                  ? 'Gönderime izin vermedin — bildirimlerin telefonunda kalıyor.'
-                  : 'Gönderim izni henüz sorulmadı; ilk bildiriminde sorulacak.'}
+            {/* Master'da iki uzun paragraf durup kaldırılmıştı ("yerine daha
+                kısası gelecek"); yerine gelen bu. Ne gönderildiğinin tam
+                listesi ilk bildirimde çıkan izin kartında duruyor — burada
+                kalan tek iş, ayarlara bakan kullanıcıya cihazdan ne çıktığını
+                bir cümlede söylemek. */}
+            <AlanNotu>
+              Bildirdiğin soru, hangi oyundan geldiği, seçtiğin sebep ve telefonunun
+              modeli gönderilir. Adın, denemelerin, notların ve fotoğrafların
+              <b> gönderilmez</b>.
             </AlanNotu>
-            {bildirimIzni !== 'sorulmadi' && (
-              <GenisAlan tam>
-                <Cipler>
-                  <Cip
-                    secili={bildirimIzni === 'verildi'}
-                    onClick={() => onBildirimIzni('verildi')}
-                  >
-                    İzin ver
-                  </Cip>
-                  <Cip
-                    secili={bildirimIzni === 'reddedildi'}
-                    onClick={() => onBildirimIzni('reddedildi')}
-                  >
-                    Gönderme
-                  </Cip>
-                </Cipler>
-              </GenisAlan>
-            )}
             {bekleyenBildirim > 0 && (
               <AlanNotu ust>
-                {bekleyenBildirim} bildirim {bildirimIzni === 'verildi' ? 'gönderilmeyi bekliyor' : 'telefonunda bekliyor'}.
+                {bekleyenBildirim} bildirim gönderilmeyi bekliyor.
               </AlanNotu>
             )}
           </GenisAlan>
@@ -599,18 +563,14 @@ export function AyarlarEkrani({
 
         {/* ----------------------- Çökme raporları ------------------------ */}
         {/* Hatalı soru bildiriminin hemen altında: ikisi de "cihazdan ne
-            çıkıyor" sorusunun cevabı. Ama rıza modeli farklı — burada önceden
-            verilen bir izin yok, her çökmeden sonra tek tek soruluyor. Bu
-            anahtar yalnızca "bana bunu hiç sorma" diyen için. */}
+            çıkıyor" sorusunun cevabı. Burada da önceden verilen bir izin yok,
+            her çökmeden sonra tek tek soruluyor.
+
+            "Çöktüğümde sor" anahtarı kalktı: soru zaten çökmeden sonra, gerçek
+            bir olay üzerine çıkıyor ve orada "Gönderme" demek raporu siliyor.
+            Anahtar, aynı hayırı önceden ve soyut olarak söylemekten başka bir
+            işe yaramıyordu. */}
         <Bolum baslik="Çökme raporları">
-          <Satir
-            Simge={Bug}
-            renk="lavanta"
-            baslik="Çöktüğümde sor"
-            onClick={() => onCokmeSorulsun(!cokmeSorulsun)}
-            basiliMi={cokmeSorulsun}
-            sag={<Anahtar acik={cokmeSorulsun} />}
-          />
           <GenisAlan tam>
             <AlanNotu>
               Uygulama çökerse hata kaydı <b>telefonunda</b> bekler; kendiliğinden
@@ -622,12 +582,6 @@ export function AyarlarEkrani({
               modeli, Android ve uygulama sürümü. Adın, denemelerin, notların ve
               fotoğrafların <b>gönderilmez</b>.
             </AlanNotu>
-            {!cokmeSorulsun && (
-              <AlanNotu ust>
-                Soru kapalı: bekleyen raporlar açılışta sessizce siliniyor.
-              </AlanNotu>
-            )}
-
           </GenisAlan>
         </Bolum>
 

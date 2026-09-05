@@ -165,17 +165,6 @@ export const ANAHTARLAR = {
    */
   bildirimIzni: 'rabi-bildirim-izni',
   /**
-   * Çökmeden sonra rapor sorusu çıksın mı (varsayılan `true`).
-   *
-   * Rıza artık önceden değil, **her çökmeden sonra tek tek** alınıyor; bu
-   * anahtar yalnızca "bana bunu hiç sorma" diyen kullanıcı için. Kapalıyken
-   * bekleyen raporlar sessizce siliniyor — cihazda süresiz bekleyen bir kuyruk
-   * tutmak, sorulmasını istememekle aynı şey değil.
-   *
-   * Yedeğe **girmiyor**: rıza cihaz başına verilir.
-   */
-  cokmeSorusu: 'rabi-cokme-sorusu',
-  /**
    * Yapılacaklar tahtasındaki not kâğıtları — metin, renk ve konum.
    *
    * Konum da veri: kullanıcının kâğıdı nereye yapıştırdığı onun verdiği bilgi.
@@ -213,6 +202,9 @@ const ESKI_ANAHTARLAR = [
   'rabi-jokerler',
   // Koyu tema kaldırıldı; anahtar eski kurulumlarda duruyor olabilir.
   'rabi-tema',
+  // "Çöktüğümde sor" anahtarı kaldırıldı: rapor sorusu her çökmeden sonra
+  // çıkıyor ve "Gönderme" zaten orada. Kayıt eski kurulumlarda duruyor olabilir.
+  'rabi-cokme-sorusu',
 ]
 
 /**
@@ -271,7 +263,6 @@ export const VARSAYILAN_AYARLAR: Ayarlar = {
   hatirlatmaSaati: 20,
   hatirlatmaDakikasi: 0,
   bildirimAcik: false,
-  hataBildirimiAcik: true,
   oyunSesi: true,
   oyunMuzigi: true,
   oyunMuzikTuru: 'mod',

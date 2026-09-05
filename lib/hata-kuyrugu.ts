@@ -16,6 +16,10 @@
  * olumlu bir eylemini şart koşuyor; ayarlardaki açıklama tek başına yetmiyor.
  * İzin reddedilirse kayıtlar silinmiyor — kullanıcı fikrini değiştirirse
  * bekleyenler o zaman gidiyor.
+ *
+ * Ayarlarda ayrıca bir "bildirimleri gönder" anahtarı vardı; kalktı. Bildirim
+ * zaten bayrak + sebep + izin kartı olmadan oluşmuyordu, anahtar aynı kararın
+ * dördüncü kopyasıydı.
  */
 
 import { useCallback, useEffect, useMemo, useRef } from 'react'
@@ -47,7 +51,7 @@ const YENIDEN_DENEME = 60_000
 /** Gönderim izninin üç hâli. */
 export type BildirimIzni = 'sorulmadi' | 'verildi' | 'reddedildi'
 
-export function useHataBildirimi(acik: boolean): BildirimKolu {
+export function useHataBildirimi(): BildirimKolu {
   const [bildirimler, setBildirimler] = useYerelDepo<HataBildirimi[]>(
     ANAHTARLAR.hataBildirimleri,
     [],
@@ -61,7 +65,7 @@ export function useHataBildirimi(acik: boolean): BildirimKolu {
 
   useEffect(() => {
     if (izin !== 'verildi') return
-    if (!acik || !gorunur || bekleyen.length === 0 || calisiyor.current) return
+    if (!gorunur || bekleyen.length === 0 || calisiyor.current) return
     if (Date.now() - sonDeneme.current < YENIDEN_DENEME) return
 
     calisiyor.current = true
@@ -74,7 +78,7 @@ export function useHataBildirimi(acik: boolean): BildirimKolu {
       .finally(() => {
         calisiyor.current = false
       })
-  }, [acik, gorunur, izin, bekleyen, setBildirimler])
+  }, [gorunur, izin, bekleyen, setBildirimler])
 
   /**
    * Bildirim **sebebiyle birlikte** açılıyor.

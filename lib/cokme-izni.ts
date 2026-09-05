@@ -17,12 +17,15 @@
  * olarak görüyor. Play'in kullanıcı verisi politikası da olumlu bir eylem
  * istiyor ve bu onun en net hâli.
  *
+ * Sonra ayarlarda "çöktüğümde sor" anahtarı kaldı; o da kalktı. Soru her
+ * çökmeden sonra çıkıyor ve "Gönderme" raporu siliyor — anahtar aynı hayırı
+ * önceden söylemekten başka bir işe yaramıyordu.
+ *
  * Global JS hata yakalayıcıları soruya bakmadan kuruluyor: yakalanan hata
  * zaten ağa çıkmıyor, cihazda bekliyor.
  */
 
 import { useCallback, useEffect, useState } from 'react'
-import { ANAHTARLAR, useYerelDepo } from './depo'
 import { bekleyenCokme, cokmeYakalayiciyiKur, cokmeleriGonder, cokmeleriSil } from './cokme'
 
 export interface CokmeKolu {
@@ -32,40 +35,25 @@ export interface CokmeKolu {
   cokmeyleBitti: boolean
   onGonder: () => void
   onGonderme: () => void
-  /** Kullanıcı "bir daha sorma" dedi mi — Ayarlar'dan geri alınabiliyor. */
-  sorulsun: boolean
-  onSorulsun: (deger: boolean) => void
 }
 
 export function useCokmeRaporu(): CokmeKolu {
-  const [sorulsun, setSorulsun] = useYerelDepo<boolean>(ANAHTARLAR.cokmeSorusu, true)
   const [soruAcik, setSoruAcik] = useState(false)
   const [cokmeyleBitti, setCokmeyleBitti] = useState(false)
 
   useEffect(() => cokmeYakalayiciyiKur(), [])
 
-  /*
-    Açılışta bir kez soruluyor.
-
-    `sorulsun` kapalıysa bekleyenler **siliniyor**: kullanıcı sorulmasını
-    istemiyor demek, cihazda süresiz bekleyen bir kuyruk tutmak değil.
-  */
+  /* Açılışta bir kez soruluyor. */
   useEffect(() => {
     let iptal = false
     void bekleyenCokme().then(({ bekleyen, cokme }) => {
       if (iptal || !bekleyen) return
-      if (!sorulsun) {
-        void cokmeleriSil()
-        return
-      }
       setCokmeyleBitti(cokme)
       setSoruAcik(true)
     })
     return () => {
       iptal = true
     }
-    // Yalnızca açılışta: `sorulsun` sonradan değişirse soru yeniden açılmamalı.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onGonder = useCallback(() => {
@@ -83,7 +71,5 @@ export function useCokmeRaporu(): CokmeKolu {
     cokmeyleBitti,
     onGonder,
     onGonderme,
-    sorulsun,
-    onSorulsun: setSorulsun,
   }
 }

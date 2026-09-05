@@ -25,7 +25,8 @@
  * ve karar verilmeden hiçbir şey ağa çıkmıyor. Google Play'in kullanıcı verisi
  * politikası veri cihazdan çıkmadan önce belirgin açıklama ve kullanıcının
  * olumlu bir eylemini istiyor, bunu gizlilik politikasına havale etmeye izin
- * vermiyor. Soru bir kez soruluyor; karar ayarlardan değiştirilebiliyor.
+ * vermiyor. Soru bir kez soruluyor; "Gönderme" denirse karar aynı yerdeki
+ * "Yine de gönder" ile geri alınabiliyor — ayarlardaki izin bölümü kalktı.
  */
 
 import { useState } from 'react'
@@ -88,7 +89,7 @@ function IzinKarti({ kol }: { kol: BildirimKolu }) {
       <p className="mt-1.5 text-[11.5px] font-medium leading-snug text-muted-foreground">
         Adın, netlerin, notların ve fotoğrafların <b>gönderilmez</b>; onlar telefonunda kalır.
         &ldquo;Gönder&rdquo; dersen <b>bundan sonraki bildirimlerin de</b> aynı şekilde
-        gönderilir. Kararını Ayarlar&nbsp;&rsaquo;&nbsp;Veri'den değiştirebilirsin.
+        gönderilir.
       </p>
       <div className="mt-2.5 flex gap-2">
         <button
@@ -200,10 +201,26 @@ export function BildirimDugmesi({ soru, kol }: { soru: BankaSorusu; kol: Bildiri
               seçilmeden ortada gönderilecek bir şey yok. */}
           {bildirildi && kol.izin === 'sorulmadi' && <IzinKarti kol={kol} />}
 
+          {/* Kararın geri alınabildiği tek yer burası.
+
+              Eskiden Ayarlar'da bir izin seçimi vardı ve bu satır oraya
+              yolluyordu; o bölüm kalkınca "Gönderme" demiş kullanıcının önünde
+              hiçbir kapı kalmıyordu. Düğme aynı kararı verildiği yerde geri
+              alıyor — bekleyen bildirimler silinmediği için basıldığı anda
+              gidiyorlar. */}
           {bildirildi && kol.izin === 'reddedildi' && (
-            <p className="mt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
-              Bildirimin telefonunda kayıtlı; gönderilmiyor. Ayarlar &rsaquo; Veri'den açabilirsin.
-            </p>
+            <div className="mt-1.5">
+              <p className="text-[11px] font-semibold leading-snug text-muted-foreground">
+                Bildirimin telefonunda kayıtlı; gönderilmiyor.
+              </p>
+              <button
+                type="button"
+                onClick={() => kol.onIzin('verildi')}
+                className="mt-1.5 rounded-full bg-foreground/[0.08] px-3 py-1.5 text-[11.5px] font-extrabold text-muted-foreground transition active:scale-[0.97]"
+              >
+                Yine de gönder
+              </button>
+            </div>
           )}
         </div>
       )}
