@@ -252,7 +252,7 @@ okulNotlariniTasi()
  */
 export const HEDEF_EN_AZ = 50
 export const HEDEF_EN_COK = 800
-export const HEDEF_ADIMI = 15
+export const HEDEF_ADIMI = 10
 
 export const VARSAYILAN_AYARLAR: Ayarlar = {
   varsayilanSablonId: VARSAYILAN_SABLON_ID,
