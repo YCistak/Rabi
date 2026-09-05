@@ -1,61 +1,89 @@
 'use client'
 
 /**
- * Çökme raporlaması onayının sahibi.
+ * Çökme raporu sorusunun sahibi.
  *
  * `lib/hata-kuyrugu.ts` ile aynı desen: saf köprü `lib/cokme.ts`'te, React'e
  * bağlı olan kısım burada.
  *
- * İki iş yapıyor:
+ * **Akış:** Crashlytics'in otomatik gönderimi hiç açılmıyor. Çökme cihazda
+ * saklanıyor; uygulama yeniden açıldığında bekleyen rapor olup olmadığı
+ * soruluyor ve varsa kullanıcıya bir pencere çıkıyor. "Gönder" derse
+ * yükleniyor, "Gönderme" derse siliniyor.
  *
- * 1. Global JS hata yakalayıcılarını **onaydan bağımsız** kurar. Yakalanan
- *    hata yerli tarafa geçse bile Crashlytics kapalıyken hiçbir yere
- *    gitmiyor; yakalayıcıyı onaya bağlamak, kullanıcı onayı verdiği anda o
- *    oturumdaki hataların kaybolması demek olurdu.
- * 2. Kararı yerli tarafa yalnızca **değişince** geçirir. Firebase tercihi
- *    cihazda sakladığı için her açılışta tekrarlamak gereksiz; ama ilk
- *    açılışta bir kez gönderiliyor ki depodaki değer ile SDK'nın durumu
- *    ayrışmasın (ör. uygulama verisi silinip localStorage sıfırlanırsa).
+ * Önce Ayarlar'da bir anahtar vardı ve açıksa her şey kendiliğinden
+ * gidiyordu. Çökmeden **sonra** sormak daha dürüst: kullanıcı neyin
+ * gönderileceğini soyut bir ayar olarak değil, gerçekten olmuş bir olay
+ * olarak görüyor. Play'in kullanıcı verisi politikası da olumlu bir eylem
+ * istiyor ve bu onun en net hâli.
+ *
+ * Global JS hata yakalayıcıları soruya bakmadan kuruluyor: yakalanan hata
+ * zaten ağa çıkmıyor, cihazda bekliyor.
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { ANAHTARLAR, useYerelDepo } from './depo'
-import { cokmeDurumu, cokmeIzniniUygula, cokmeYakalayiciyiKur, type CokmeDurumu } from './cokme'
-
-/** Onayın üç hâli — `bildirimIzni` ile aynı sözlük. */
-export type CokmeIzni = 'sorulmadi' | 'verildi' | 'reddedildi'
+import { bekleyenCokme, cokmeYakalayiciyiKur, cokmeleriGonder, cokmeleriSil } from './cokme'
 
 export interface CokmeKolu {
-  izin: CokmeIzni
-  onIzin: (karar: CokmeIzni) => void
-  /** Debug derlemesinde test düğmeleri gösterilsin mi. */
-  testVar: boolean
+  /** Pencere görünsün mü. */
+  soruAcik: boolean
+  /** Önceki oturum gerçekten çökmeyle mi bitti — pencerenin metnini seçiyor. */
+  cokmeyleBitti: boolean
+  onGonder: () => void
+  onGonderme: () => void
+  /** Kullanıcı "bir daha sorma" dedi mi — Ayarlar'dan geri alınabiliyor. */
+  sorulsun: boolean
+  onSorulsun: (deger: boolean) => void
 }
 
 export function useCokmeRaporu(): CokmeKolu {
-  const [izin, setIzin] = useYerelDepo<CokmeIzni>(ANAHTARLAR.cokmeIzni, 'sorulmadi')
-  const [durum, setDurum] = useState<CokmeDurumu>({ firebase: false, test: false })
-  const sonGonderilen = useRef<boolean | null>(null)
+  const [sorulsun, setSorulsun] = useYerelDepo<boolean>(ANAHTARLAR.cokmeSorusu, true)
+  const [soruAcik, setSoruAcik] = useState(false)
+  const [cokmeyleBitti, setCokmeyleBitti] = useState(false)
 
   useEffect(() => cokmeYakalayiciyiKur(), [])
 
+  /*
+    Açılışta bir kez soruluyor.
+
+    `sorulsun` kapalıysa bekleyenler **siliniyor**: kullanıcı sorulmasını
+    istemiyor demek, cihazda süresiz bekleyen bir kuyruk tutmak değil.
+  */
   useEffect(() => {
-    void cokmeDurumu().then(setDurum)
+    let iptal = false
+    void bekleyenCokme().then(({ bekleyen, cokme }) => {
+      if (iptal || !bekleyen) return
+      if (!sorulsun) {
+        void cokmeleriSil()
+        return
+      }
+      setCokmeyleBitti(cokme)
+      setSoruAcik(true)
+    })
+    return () => {
+      iptal = true
+    }
+    // Yalnızca açılışta: `sorulsun` sonradan değişirse soru yeniden açılmamalı.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  useEffect(() => {
-    const acik = izin === 'verildi'
-    if (sonGonderilen.current === acik) return
-    sonGonderilen.current = acik
-    void cokmeIzniniUygula(acik)
-  }, [izin])
+  const onGonder = useCallback(() => {
+    setSoruAcik(false)
+    void cokmeleriGonder()
+  }, [])
 
-  const onIzin = useCallback(
-    (karar: CokmeIzni) => {
-      setIzin(karar)
-    },
-    [setIzin],
-  )
+  const onGonderme = useCallback(() => {
+    setSoruAcik(false)
+    void cokmeleriSil()
+  }, [])
 
-  return { izin, onIzin, testVar: durum.test }
+  return {
+    soruAcik,
+    cokmeyleBitti,
+    onGonder,
+    onGonderme,
+    sorulsun,
+    onSorulsun: setSorulsun,
+  }
 }

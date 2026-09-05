@@ -3,9 +3,10 @@
  *
  * `AGENTS.md`'deki "sunucu yok, dış servise çıkma" kuralının **ikinci**
  * istisnası (ilki `lib/hata-gonder.ts`). Buradan hiçbir şey doğrudan ağa
- * çıkmıyor: yakalanan hata yerli tarafa geçiyor, ağa çıkma kararını
- * Crashlytics veriyor ve o da kullanıcı onay verene kadar kapalı
- * (`AndroidManifest.xml` → `firebase_crashlytics_collection_enabled=false`).
+ * çıkmıyor: yakalanan hata yerli tarafa geçiyor, orada cihazda saklanıyor ve
+ * **her çökmeden sonra tek tek soruluyor**. Crashlytics'in otomatik gönderimi
+ * hiçbir zaman açılmıyor (`AndroidManifest.xml` →
+ * `firebase_crashlytics_collection_enabled=false` kalıcı).
  *
  * React'e bağlı hiçbir şey yok; onay state'ini tutan kanca (hook)
  * `lib/cokme-izni.ts` içinde. Ayrım `hata-gonder.ts` / `hata-kuyrugu.ts`
@@ -14,22 +15,19 @@
 
 import { Capacitor, registerPlugin } from '@capacitor/core'
 
-export type CokmeDurumu = {
-  /** Firebase gerçekten kurulu mu (google-services.json ile derlenmiş mi). */
-  firebase: boolean
-  /** Debug derlemesi mi — test düğmeleri yalnızca o zaman görünüyor. */
-  test: boolean
+/** Açılışta sorulan: gönderilmeyi bekleyen rapor var mı, önceki oturum çöktü mü. */
+export type BekleyenCokme = {
+  bekleyen: boolean
+  /** Önceki oturum gerçekten çökmeyle mi bitti — soruyu doğru kurmak için. */
+  cokme: boolean
 }
 
 type CokmeEklentisi = {
-  durum(): Promise<CokmeDurumu>
-  izinAyarla(secenekler: { acik: boolean }): Promise<void>
+  bekleyen(): Promise<BekleyenCokme>
+  gonder(): Promise<void>
+  sil(): Promise<void>
   bildir(secenekler: { kaynak: string; mesaj: string; yigin?: string }): Promise<void>
-  testCokmesi(): Promise<void>
-  testKayit(): Promise<void>
 }
-
-const KAPALI: CokmeDurumu = { firebase: false, test: false }
 
 /**
  * Tarayıcı sahtesi.
@@ -39,11 +37,10 @@ const KAPALI: CokmeDurumu = { firebase: false, test: false }
  * kullanıcı hatalarının arasına karışırlar.
  */
 const sahte: CokmeEklentisi = {
-  durum: async () => KAPALI,
-  izinAyarla: async () => {},
+  bekleyen: async () => ({ bekleyen: false, cokme: false }),
+  gonder: async () => {},
+  sil: async () => {},
   bildir: async () => {},
-  testCokmesi: async () => {},
-  testKayit: async () => {},
 }
 
 const eklenti = registerPlugin<CokmeEklentisi>('Cokme', { web: () => sahte })
@@ -52,40 +49,38 @@ function destekleniyor(): boolean {
   return Capacitor.isNativePlatform()
 }
 
-export async function cokmeDurumu(): Promise<CokmeDurumu> {
-  if (!destekleniyor()) return KAPALI
+/**
+ * Bekleyen rapor var mı.
+ *
+ * Otomatik gönderim hiç açılmıyor: Crashlytics çökmeyi cihazda saklıyor,
+ * uygulama yeniden açılınca burası sorup kullanıcıya soruyu götürüyor.
+ */
+export async function bekleyenCokme(): Promise<BekleyenCokme> {
+  if (!destekleniyor()) return { bekleyen: false, cokme: false }
   try {
-    return await eklenti.durum()
+    return await eklenti.bekleyen()
   } catch {
-    return KAPALI
+    return { bekleyen: false, cokme: false }
   }
 }
 
-/** Kullanıcının kararını yerli tarafa geçirir. */
-export async function cokmeIzniniUygula(acik: boolean): Promise<void> {
+/** "Gönder" — bekleyen raporlar Crashlytics'e yükleniyor. */
+export async function cokmeleriGonder(): Promise<void> {
   if (!destekleniyor()) return
   try {
-    await eklenti.izinAyarla({ acik })
+    await eklenti.gonder()
   } catch {
-    // Eklenti yoksa yapacak bir şey yok; uygulama çalışmaya devam etmeli.
+    // Gönderilemezse rapor cihazda kalıyor; bir sonraki açılışta yeniden sorulur.
   }
 }
 
-export async function testCokmesiTetikle(): Promise<void> {
+/** "Gönderme" — raporlar cihazdan siliniyor, bir daha sorulmuyor. */
+export async function cokmeleriSil(): Promise<void> {
   if (!destekleniyor()) return
   try {
-    await eklenti.testCokmesi()
+    await eklenti.sil()
   } catch {
-    // Release derlemede `unavailable` dönüyor — beklenen durum.
-  }
-}
-
-export async function testKaydiTetikle(): Promise<void> {
-  if (!destekleniyor()) return
-  try {
-    await eklenti.testKayit()
-  } catch {
-    // Release derlemede `unavailable` dönüyor — beklenen durum.
+    // Silinemezse de bir zararı yok; hiçbir şey ağa çıkmıyor.
   }
 }
 

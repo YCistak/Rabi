@@ -37,6 +37,7 @@ import { odakKilidiniBitir } from '@/lib/odak-kilidi'
 import { bekleyenSayisi } from '@/lib/hata-bildirimi'
 import { useHataBildirimi } from '@/lib/hata-kuyrugu'
 import { useCokmeRaporu } from '@/lib/cokme-izni'
+import { CokmeSorusu } from '@/components/cokme-sorusu'
 import { bugun } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import { kullanildi } from '@/lib/son-kullanilan'
@@ -697,9 +698,8 @@ export function AppShell() {
               bekleyenBildirim={bekleyenSayisi(hataBildirimi.bildirimler)}
               bildirimIzni={hataBildirimi.izin}
               onBildirimIzni={hataBildirimi.onIzin}
-              cokmeIzni={cokme.izin}
-              onCokmeIzni={cokme.onIzin}
-              cokmeTestVar={cokme.testVar}
+              cokmeSorulsun={cokme.sorulsun}
+              onCokmeSorulsun={cokme.onSorulsun}
               pomodoroAyar={pomodoroAyar}
               setPomodoroAyar={setPomodoroAyar}
               yedeklenecek={{
@@ -742,6 +742,7 @@ export function AppShell() {
     <>
       {icerik}
       {acilisKatmani}
+      <CokmeSorusu kol={cokme} />
       {gecis !== 'yok' && <MaskotGecisi soluyor={gecis === 'soluyor'} />}
     </>
   )
