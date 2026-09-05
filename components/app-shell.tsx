@@ -61,6 +61,7 @@ import { KartMenusu } from '@/components/ekranlar/kart-menusu'
 import { DenemelerEkrani } from '@/components/ekranlar/denemeler'
 import { YeniDenemeEkrani } from '@/components/ekranlar/yeni-deneme'
 import { IstatistikEkrani } from '@/components/ekranlar/istatistik'
+import { YasalEkrani } from '@/components/ekranlar/yasal'
 import { OkulEkrani } from '@/components/ekranlar/okul'
 import { AyarlarEkrani } from '@/components/ekranlar/ayarlar'
 import { SoruTakibiEkrani } from '@/components/ekranlar/soru-takibi'
@@ -829,6 +830,7 @@ export function AppShell() {
               varsayilanSablonId={ayarlar.varsayilanSablonId}
             />
           )}
+          {ekran === 'yasal' && <YasalEkrani />}
         </>
       ) : (
         <>
@@ -896,6 +898,7 @@ export function AppShell() {
               ayarlar={ayarlar}
               setAyarlar={setAyarlar}
               bekleyenBildirim={bekleyenSayisi(hataBildirimi.bildirimler)}
+              onYasalAc={() => setEkran('yasal')}
               yedeklenecek={{
                 denemeler,
                 okulYillari,

@@ -17,11 +17,12 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
     hataları öğrenmenin başka yolu yok. Ağa çıkan tek dosya `lib/hata-gonder.ts`;
     gönderilen veri `formVerisi()` içinde tek tek sayılan yedi alandan ibaret (soru
     kimliği, oyun, soru metni, doğru sanılan cevap, sebep, sürüm, cihaz alanı —
-    telefon modeli ve ada bağlı olmayan okunur bir ad). Ne gönderildiği hem
-    Ayarlar'da hem ilk bildirimde çıkan izin kartında yazıyor; kart "Gönder"
-    denmeden hiçbir şey ağa çıkmıyor. Ayarlarda ayrıca bir açma/kapama anahtarı
-    vardı, kaldırıldı: bildirim bayrağa basıp sebep seçmeden zaten oluşmuyor ve
-    aynı karar iki ayrı yerde tutuluyordu. Bu istisnayı genişletme.
+    telefon modeli ve ada bağlı olmayan okunur bir ad). Ne gönderildiği hem ilk
+    bildirimde çıkan izin kartında hem Gizlilik ve Koşullar ekranında yazıyor;
+    kart "Gönder" denmeden hiçbir şey ağa çıkmıyor. Ayarlarda ayrıca bir
+    açma/kapama anahtarı vardı, kaldırıldı: bildirim bayrağa basıp sebep
+    seçmeden zaten oluşmuyor ve aynı karar iki ayrı yerde tutuluyordu.
+    Bu istisnayı genişletme.
   - **İkinci istisna: çökme raporları.** WebView uygulamasında çökmenin sebebi
     çoğu zaman uygulamanın kendi kodu değil, cihazdaki Android System WebView
     sürümü oluyor; bunu kullanıcıdan öğrenmenin yolu yok. Firebase Crashlytics
@@ -760,6 +761,29 @@ erken kapanır, afişin üst yarısı olduğundan koyu çıkardı.
 tur sayısı doğru sayısından türetilemiyor) ve **isteğe bağlı**: eski kayıtlarda
 yoklar ve isabet hesabına hiç girmiyorlar. Sıfır saymak, hatasız oynanmış eski
 turları %100 isabetli gösterirdi.
+
+## Yasal metinler tek yerde
+
+Gizlilik politikası, kullanıcı sözleşmesi ve "cihazından ne çıkıyor" özeti
+`lib/veri/yasal.ts` içinde duruyor; ekranı `components/ekranlar/yasal.tsx`
+çiziyor ve oraya yalnızca Ayarlar › Yasal satırından giriliyor (`Ekran` kimliği
+`yasal`, kart menüsünde yok).
+
+Metinler bir süre Ayarlar'ın içindeydi: "Hatalı soru bildirimi" ve "Çökme
+raporları" başlıklı iki bölüm. Anahtarları kalkınca geriye ayar listesinin
+ortasında duran iki paragraf kaldı — ayarını arayan kullanıcının önüne gizlilik
+metni çıkıyordu. Play'in mağaza sayfasındaki gizlilik politikası bağlantısı ile
+Data Safety formu da aynı metne bakıyor; üçünün ayrı yerlerde yazılması onları
+zamanla birbirinden ayırırdı.
+
+**Biçim düz metin**: bölüm başlığı ve paragraf dizisi, Markdown ayrıştırıcısı
+yok. Kalın yazı, bağlantı ya da madde listesi gerekiyorsa metni o gereksinim
+olmadan yazmak, uygulamaya yalnızca üç sayfa için biçimlendirme dili sokmaktan
+ucuz.
+
+`yururlukTarihi` boş bırakılan belge ekranda "hazırlanıyor" diye görünüyor:
+metni yazılmamış bir sözleşmeye uydurma bir tarih vermek, olmayan bir belgeyi
+yürürlükte göstermek olurdu.
 
 ## Rozet değil başarım
 

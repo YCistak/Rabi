@@ -27,6 +27,8 @@ export type Ekran =
   | 'oyun-bankasi'
   /** Konu Anlatımı haritası — ana sayfada kendi bölümü var, kart menüsünde yok. */
   | 'konu'
+  /** Gizlilik ve Koşullar — yalnızca Ayarlar'dan açılıyor, kart menüsünde yok. */
+  | 'yasal'
 
 /** Kutucuk zeminleri — tasarımdaki aileler. */
 export type KartRengi = 'mavi' | 'pembe' | 'krem' | 'nane' | 'lavanta' | 'deniz'

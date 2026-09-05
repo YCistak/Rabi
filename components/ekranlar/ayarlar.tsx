@@ -11,6 +11,7 @@ import {
   GraduationCap,
   Images,
   Music,
+  Shield,
   Target,
   Trash2,
   Upload,
@@ -109,6 +110,7 @@ export function AyarlarEkrani({
   ayarlar,
   setAyarlar,
   bekleyenBildirim,
+  onYasalAc,
   yedeklenecek,
 }: {
   /** Yedeğe giren kullanıcı şablonları — ekranda düzenlenmiyor. */
@@ -116,6 +118,8 @@ export function AyarlarEkrani({
   ayarlar: Ayarlar
   /** Gönderilmeyi bekleyen hatalı soru bildirimi sayısı. */
   bekleyenBildirim: number
+  /** Gizlilik ve Koşullar ekranını açar. */
+  onYasalAc: () => void
   setAyarlar: (guncelleyici: Ayarlar | ((onceki: Ayarlar) => Ayarlar)) => void
   /** Yedeğe girecek bütün veri — fotoğraflar hariç. */
   yedeklenecek: {
@@ -528,58 +532,28 @@ export function AyarlarEkrani({
               okunmuyor; alanı silmek eski yedekleri bozardı. */}
         </Bolum>
 
-        {/* --------------------- Hatalı soru bildirimi -------------------- */}
-        {/* Kendi bölümü değil, Veri'nin başı: gönderilen şey de veri ve
-            kullanıcının "cihazdan ne çıkıyor" sorusunun cevabı burada.
-
-            Burada bir anahtar ve bir izin seçimi vardı; ikisi de kalktı.
-            Bildirim kendiliğinden olan bir şey değil — kullanıcı bayrağa basıp
-            sebep seçmeden hiçbir kayıt oluşmuyor, ilk bildirimde de ne
-            gönderileceğini gösteren izin kartı çıkıyor. Rıza zaten o iki
-            adımda alınıyordu; ayarlardaki üçüncü kopyası aynı kararı iki ayrı
-            yerde tutup hangisinin geçerli olduğunu belirsizleştiriyordu. */}
-        <Bolum baslik="Hatalı soru bildirimi">
-          <GenisAlan tam>
-            {/* Master'da iki uzun paragraf durup kaldırılmıştı ("yerine daha
-                kısası gelecek"); yerine gelen bu. Ne gönderildiğinin tam
-                listesi ilk bildirimde çıkan izin kartında duruyor — burada
-                kalan tek iş, ayarlara bakan kullanıcıya cihazdan ne çıktığını
-                bir cümlede söylemek. */}
-            <AlanNotu>
-              Bildirdiğin soru, hangi oyundan geldiği, seçtiğin sebep ve telefonunun
-              modeli gönderilir. Adın, denemelerin, notların ve fotoğrafların
-              <b> gönderilmez</b>.
-            </AlanNotu>
-            {bekleyenBildirim > 0 && (
-              <AlanNotu ust>
-                {bekleyenBildirim} bildirim gönderilmeyi bekliyor.
+        {/* -------------------- Gizlilik ve koşullar ---------------------- */}
+        {/* Burada "Hatalı soru bildirimi" ve "Çökme raporları" diye iki bölüm
+            vardı; ikisi de anahtarları kalkınca ayar listesinin ortasında duran
+            birer paragrafa dönüşmüştü. Metinler kendi ekranına taşındı
+            (`components/ekranlar/yasal.tsx`), geriye onu açan tek satır kaldı:
+            gizlilik politikası ve kullanıcı sözleşmesi de orada duruyor ve
+            mağazadaki bağlantıyla aynı metne bakıyor. */}
+        <Bolum baslik="Yasal">
+          <Satir
+            Simge={Shield}
+            renk="lavanta"
+            baslik="Gizlilik ve Koşullar"
+            onClick={onYasalAc}
+            sag={<ChevronRight size={18} className="shrink-0 text-muted-foreground/50" aria-hidden />}
+          />
+          {bekleyenBildirim > 0 && (
+            <GenisAlan tam>
+              <AlanNotu>
+                {bekleyenBildirim} hatalı soru bildirimi gönderilmeyi bekliyor.
               </AlanNotu>
-            )}
-          </GenisAlan>
-        </Bolum>
-
-        {/* ----------------------- Çökme raporları ------------------------ */}
-        {/* Hatalı soru bildiriminin hemen altında: ikisi de "cihazdan ne
-            çıkıyor" sorusunun cevabı. Burada da önceden verilen bir izin yok,
-            her çökmeden sonra tek tek soruluyor.
-
-            "Çöktüğümde sor" anahtarı kalktı: soru zaten çökmeden sonra, gerçek
-            bir olay üzerine çıkıyor ve orada "Gönderme" demek raporu siliyor.
-            Anahtar, aynı hayırı önceden ve soyut olarak söylemekten başka bir
-            işe yaramıyordu. */}
-        <Bolum baslik="Çökme raporları">
-          <GenisAlan tam>
-            <AlanNotu>
-              Uygulama çökerse hata kaydı <b>telefonunda</b> bekler; kendiliğinden
-              hiçbir yere gitmez. Bir sonraki açılışta sana sorarım — &ldquo;Gönder&rdquo;
-              dersen gider, &ldquo;Gönderme&rdquo; dersen silinir.
-            </AlanNotu>
-            <AlanNotu ust>
-              Giden şey bir hata kaydı: hatanın hangi satırda olduğu, telefonunun
-              modeli, Android ve uygulama sürümü. Adın, denemelerin, notların ve
-              fotoğrafların <b>gönderilmez</b>.
-            </AlanNotu>
-          </GenisAlan>
+            </GenisAlan>
+          )}
         </Bolum>
 
         {/* ------------------------------ Veri ---------------------------- */}
