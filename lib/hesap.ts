@@ -244,13 +244,8 @@ export type ObpSonucu = {
   girilenYil: number
   /** Diploma notunun dayandığı yıl sayısı — her zaman 4. */
   toplamYil: number
-  /**
-   * Sonuç kesin mi: dört yıl da girili **ve** hiçbiri dönem sonu notuna dayanmıyor.
-   * Aksi hâlde eksik ya da yarım veriye dayanan bir tahmindir.
-   */
+  /** Sonuç kesin mi: dört yıl da girili. Aksi hâlde eksik veriye dayanan bir tahmin. */
   tamMi: boolean
-  /** Kaç yılın notu 1. dönem sonundan geliyor (yıl sonu değil). */
-  tahminiYil: number
 }
 
 /**
@@ -261,8 +256,10 @@ export type ObpSonucu = {
  * girilmediyse eksik yılların, girilmiş yılların ortalamasıyla aynı olacağı varsayılır;
  * bu durumda `tamMi` false döner ve arayüz sonucun eksik veriye dayandığını yazar.
  *
- * İçinde bulunulan yılın notu 1. dönem sonu notu olabilir (`donemSonu`); o da yılın
- * tamamı için tahmin sayılır, bu yüzden `tahminiYil` ile ayrıca bildiriliyor.
+ * İçinde bulunulan yıl için ayrı bir kip yok: her yıl için tek bir ortalama
+ * giriliyor. 1. dönem sonu notu ayrıca işaretleniyordu ve kaldırıldı — girilen
+ * sayının hangi dönemden geldiğini sormak, karnedeki tek sayıyı yazan
+ * öğrenciye açıklanması gereken ikinci bir kavram getiriyordu.
  */
 export function obpTahmini(yillar: OkulYili[]): ObpSonucu | null {
   const gecerli = yillar.filter((y) => Number.isFinite(y.ortalama))
@@ -279,8 +276,7 @@ export function obpTahmini(yillar: OkulYili[]): ObpSonucu | null {
     obp,
     girilenYil: Math.min(gecerli.length, ORTAOGRETIM_YIL_SAYISI),
     toplamYil: ORTAOGRETIM_YIL_SAYISI,
-    tamMi: gecerli.length >= ORTAOGRETIM_YIL_SAYISI && !gecerli.some((y) => y.donemSonu),
-    tahminiYil: gecerli.filter((y) => y.donemSonu).length,
+    tamMi: gecerli.length >= ORTAOGRETIM_YIL_SAYISI,
   }
 }
 
@@ -302,7 +298,6 @@ export function obpBildirilen(obp: number): ObpSonucu {
     toplamYil: ORTAOGRETIM_YIL_SAYISI,
     // Tahmin değil, bildirilen puan.
     tamMi: true,
-    tahminiYil: 0,
   }
 }
 

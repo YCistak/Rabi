@@ -77,11 +77,10 @@ describe('osymNetleri', () => {
 })
 
 describe('obpTahmini', () => {
-  const yil = (sinif: number, ortalama: number, donemSonu = false) => ({
+  const yil = (sinif: number, ortalama: number) => ({
     id: String(sinif),
     sinif,
     ortalama,
-    donemSonu,
   })
 
   it('diploma notunu beşle çarpar', () => {
@@ -96,17 +95,6 @@ describe('obpTahmini', () => {
     expect(sonuc?.diplomaNotu).toBe(90)
     expect(sonuc?.tamMi).toBe(false)
     expect(sonuc?.girilenYil).toBe(2)
-  })
-
-  /**
-   * Dört yıl da girili olsa bile, biri 1. dönem sonu notuysa yıl bitmemiş
-   * demektir; sonuç kesin OBP değil, tahmindir.
-   */
-  it('dönem sonu notu varsa tamMi false döner', () => {
-    const sonuc = obpTahmini([yil(9, 90), yil(10, 90), yil(11, 90), yil(12, 90, true)])
-    expect(sonuc?.tamMi).toBe(false)
-    expect(sonuc?.tahminiYil).toBe(1)
-    expect(sonuc?.girilenYil).toBe(4)
   })
 
   it('OBP alt sınırı 250', () => {
@@ -237,7 +225,6 @@ describe('elle girilen OBP', () => {
     expect(sonuc.obp).toBe(412.5)
     expect(sonuc.diplomaNotu).toBe(82.5)
     expect(sonuc.tamMi).toBe(true)
-    expect(sonuc.tahminiYil).toBe(0)
   })
 
   it('aralık dışı puanlar 250–500’e kırpılıyor', () => {

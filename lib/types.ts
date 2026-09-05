@@ -85,9 +85,9 @@ export type Deneme = {
 /**
  * Bir lise yılının başarı ortalaması. OBP dört yılın (9–12) ortalamasından çıkar.
  *
- * Bitmiş yıllar için bu **yıl sonu** notudur. İçinde bulunulan yıl için henüz yıl
- * sonu notu yoktur; oraya **1. dönem sonu** notu yazılır ve yılın tamamı için
- * tahmin olarak kullanılır (`donemSonu` bunu işaretler, arayüz de böyle yazar).
+ * Her yıl için **yıl sonu** notu yazılıyor. İçinde bulunulan yılın notu bir süre
+ * "1. dönem sonu" diye ayrıca işaretleniyordu; kaldırıldı, çünkü karnesindeki tek
+ * sayıyı yazan öğrenciye açıklanması gereken ikinci bir kavram çıkarıyordu.
  *
  * Not: ders ders yazılı/sözlü girme sistemi kaldırıldı — kullanıcı zaten karnesindeki
  * tek sayıyı biliyor, on beş dersin notunu tek tek girmek gereksiz emek çıkarıyordu.
@@ -96,8 +96,6 @@ export type OkulYili = {
   id: string
   sinif: number
   ortalama: number
-  /** Yıl bitmediği için girilen değer 1. dönem sonu notu mu. */
-  donemSonu?: boolean
 }
 
 // ---------------------------------------------------------------------------

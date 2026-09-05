@@ -59,7 +59,18 @@ export function IstatistikEkrani({
       seri,
       dersler,
       enGuclu: siraliDersler.slice(0, 3),
-      enZayif: siraliDersler.slice(-3).reverse(),
+      /*
+        Tamamını doğru yaptığın ders zayıf ders değil.
+
+        Liste yalnızca sıralamanın sonundan üç ders alıyordu; bütün dersleri
+        full yapan denemede en güçlü üçü aynı anda "en güçsüz" olarak da
+        yazılıyordu. %100'ler eleniyor, geriye bir şey kalmazsa kart onu
+        söylüyor.
+      */
+      enZayif: siraliDersler
+        .filter((d) => d.yuzde < 100)
+        .slice(-3)
+        .reverse(),
       ortalama: yuvarla(netler.reduce((a, b) => a + b, 0) / netler.length),
       enYuksek: Math.max(...netler),
       sonNet: denemeOzeti(sonDeneme, sablon).toplamNet,
@@ -133,10 +144,7 @@ export function IstatistikEkrani({
       </Kart>
 
       <Kart className="mb-3">
-        <p className="mb-1 font-medium">Ders bazlı ortalama</p>
-        <p className="mb-3 text-xs text-muted-foreground">
-          Çubuk ne kadar doluysa o dersteki sorulardan o kadarını net yapıyorsun.
-        </p>
+        <p className="mb-3 font-medium">Ders bazlı ortalama</p>
 
         <ul className="space-y-3">
           {veri.dersler.map((istatistik) => {
@@ -191,11 +199,6 @@ export function IstatistikEkrani({
             )
           })}
         </ul>
-
-        <p className="mt-3 text-xs text-muted-foreground">
-          Sağdaki ok, son 3 denemeni bütün denemelerinin ortalamasıyla karşılaştırır.
-          Yeşil ve artıysa o derste son zamanlarda yükseliyorsun, kırmızıysa düşüyorsun.
-        </p>
       </Kart>
 
       <div className="grid grid-cols-2 gap-3">
@@ -213,14 +216,18 @@ export function IstatistikEkrani({
 
         <Kart>
           <p className="mb-2 text-sm font-medium text-danger">En güçsüz dersler</p>
-          <ol className="space-y-1.5 text-sm">
-            {veri.enZayif.map((d) => (
-              <li key={d.ders.id} className="flex justify-between gap-2">
-                <span className="truncate">{d.ders.ad}</span>
-                <span className="shrink-0 rakam text-muted-foreground">%{d.yuzde}</span>
-              </li>
-            ))}
-          </ol>
+          {veri.enZayif.length > 0 ? (
+            <ol className="space-y-1.5 text-sm">
+              {veri.enZayif.map((d) => (
+                <li key={d.ders.id} className="flex justify-between gap-2">
+                  <span className="truncate">{d.ders.ad}</span>
+                  <span className="shrink-0 rakam text-muted-foreground">%{d.yuzde}</span>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="text-sm text-muted-foreground">Hepsi tam — zayıf dersin yok.</p>
+          )}
         </Kart>
       </div>
     </div>

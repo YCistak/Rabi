@@ -173,8 +173,8 @@ const ESKI_ANAHTARLAR = [
  * `rabi-okul-yillari` altında; kullanıcı 9, 10, 11. sınıf notlarını yeniden
  * girmek zorunda kalmasın diye kayıtlar olduğu gibi taşınıyor.
  *
- * Ders ders girilmiş **bu yılın** notları taşınmıyor: yeni sistemde onun yerine
- * tek bir "1. dönem sonu" notu yazılıyor, kullanıcı zaten karnesinden biliyor.
+ * Ders ders girilmiş **bu yılın** notları taşınmıyor: yeni sistemde her yıl için
+ * tek bir ortalama yazılıyor, kullanıcı zaten karnesinden biliyor.
  * Eski anahtar silinmiyor — taşıma yanlış giderse veri elde kalsın.
  */
 function okulNotlariniTasi() {
