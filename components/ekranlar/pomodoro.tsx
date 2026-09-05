@@ -43,7 +43,7 @@ import { cn, yeniId } from '@/lib/utils'
 import { BaslikSatiri, Buton, Cip, Kart, Not } from '@/components/ui'
 
 /** Ders çipleri baştan bu kadar gösteriliyor; gerisi "+N ders" ile açılıyor. */
-const KISA_DERS_SAYISI = 8
+const KISA_DERS_SAYISI = 14
 
 export function PomodoroEkrani({
   ayar,
@@ -581,9 +581,9 @@ export function PomodoroEkrani({
             ))}
 
             {/*
-              Liste baştan açık gelmiyor: yirmi çip sayacın üstünde beş satır
-              kaplıyor ve asıl işi (başlat düğmesini) aşağı itiyordu. Seçili
-              ders zaten görünen sekizin dışındaysa liste açık başlıyor, yoksa
+              Liste baştan açık gelmiyor: bütün çipler sayacın üstünde birkaç
+              satır kaplıyor ve asıl işi (başlat düğmesini) aşağı itiyordu.
+              Seçili ders kısa listenin dışındaysa liste açık başlıyor, yoksa
               kullanıcı seçtiği dersi göremezdi.
             */}
             {!hepsiAcik && CALISMA_DERSLERI.length > KISA_DERS_SAYISI && (
@@ -691,11 +691,6 @@ export function PomodoroEkrani({
                 className="w-full accent-[var(--primary)]"
               />
             </label>
-
-            <p className="mt-3 text-xs text-muted-foreground">
-              Dinlemek için soldaki üçgene, seçmek için adına dokun. Parçalar kamu malı
-              (CC0), uygulamanın içinde — internet gerekmiyor. Biri bitince sıradaki başlar.
-            </p>
           </div>
         )}
       </Kart>

@@ -85,18 +85,12 @@ export function OdakKurulum({
         {adim === 0 && (
           <div className="space-y-3 text-[15px]">
             <p>
-              Sayaç çalışırken seçtiğin uygulamaları açmaya kalkarsan karşına ben çıkarım.
-              Molada kilit kendiliğinden açılır.
+              Sayaç çalışırken seçtiğin uygulamaları açmaya kalkarsan karşına çıkarım;
+              molada kilit kendiliğinden açılır. İstediğin an kapatabilirsin.
             </p>
-            <Not>
-              Bu bir kilit değil, engel: istediğin an kapatabilirsin. Amacı refleksle
-              telefona uzanmayı zorlaştırmak.
-            </Not>
             {/* Bedeli izin istenmeden önce yazıyor: sonradan öğrenilen karşılık
                 caydırıcı değil, sürpriz olurdu. */}
-            <Not tur="uyari">
-              Ama bedava değil: çalışma turu sürerken kilidi kaparsan tur baştan başlar.
-            </Not>
+            <Not tur="uyari">Turda kilidi kaparsan tur baştan başlar.</Not>
           </div>
         )}
 
@@ -107,14 +101,12 @@ export function OdakKurulum({
             <div className="space-y-2 text-[15px]">
               <p className="font-medium">Ne yapıyorum</p>
               <p className="text-sm text-muted-foreground">
-                Yalnızca hangi uygulamanın ekranda olduğuna bakıyorum, seçtiklerinin
-                üstüne kendi ekranımı koyuyorum ve tur boyunca telefonu Rahatsız
-                Etme'ye alıyorum.
+                Hangi uygulamanın ekranda olduğuna bakıyorum, seçtiklerinin üstüne kendi
+                ekranımı koyuyorum, tur boyunca telefonu Rahatsız Etme'ye alıyorum.
               </p>
               <p className="font-medium">Ne yapmıyorum</p>
               <p className="text-sm text-muted-foreground">
-                İçeriğini okumuyorum, kaydetmiyorum, hiçbir yere göndermiyorum. Rabi'nin
-                sunucusu yok; her şey telefonunda kalıyor.
+                İçeriğini okumuyorum, kaydetmiyorum, hiçbir yere göndermiyorum.
               </p>
             </div>
 
@@ -156,15 +148,13 @@ export function OdakKurulum({
                 açıklanıyor: hazırlıksız yakalanan kullanıcı onu virüs uyarısı
                 sanıp geri dönüyor ve özellik orada bitiyordu. */}
             <Not>
-              Android bu izinler için &ldquo;bu uygulama ekrandaki her şeyi
-              görebilir&rdquo; gibi sert bir uyarı gösteriyor; bu uyarı izni isteyen
-              her uygulamaya çıkıyor. Rabi virüs değil, reklam da göstermiyor.
+              Android sert bir uyarı gösterecek (&ldquo;ekrandaki her şeyi
+              görebilir&rdquo;); o uyarı bu izni isteyen her uygulamaya çıkıyor.
             </Not>
 
             {!durum.kullanimVerisi || !durum.katman ? (
               <Not tur="uyari">
-                İzinler sistem ayarlarından veriliyor. Açtıktan sonra Rabi'ye geri dön;
-                durum kendiliğinden güncellenir.
+                İzinler sistem ayarlarında veriliyor; açtıktan sonra geri dön.
               </Not>
             ) : (
               <Not>

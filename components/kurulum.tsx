@@ -1187,8 +1187,6 @@ function okulYillariKur(notlar: Record<number, string>, siniflar: number[]): Oku
         id: yeniId(),
         sinif,
         ortalama: Math.min(100, Math.max(0, sayi)),
-        // Buraya yalnızca bitmiş yıllar geliyor; hiçbiri dönem sonu notu değil.
-        donemSonu: false,
       },
     ]
   })

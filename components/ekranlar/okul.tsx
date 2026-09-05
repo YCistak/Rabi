@@ -54,7 +54,6 @@ export function OkulEkrani({
 
   const notuYaz = (sinif: number, metin: string) => {
     const temiz = metin.replace(',', '.').trim()
-    const buYilMi = sinif === ayarlar.buYilSinif
 
     setYillar((onceki) => {
       const kalan = onceki.filter((y) => y.sinif !== sinif)
@@ -70,8 +69,6 @@ export function OkulEkrani({
           id: mevcut?.id ?? yeniId(),
           sinif,
           ortalama: Math.min(100, Math.max(0, sayi)),
-          // Bu yıl bitmediği için girilen değer 1. dönem sonu notudur.
-          donemSonu: buYilMi,
         },
       ].sort((a, b) => a.sinif - b.sinif)
     })
@@ -98,7 +95,7 @@ export function OkulEkrani({
               : `Diploma notu ${netYaz(obp.diplomaNotu)} × 5. ${
                   obp.tamMi
                     ? 'Dört yılın hepsi yıl sonu notuyla girili — tahmin değil, gerçek OBP.'
-                    : aciklama(obp.girilenYil, obp.tahminiYil)
+                    : aciklama(obp.girilenYil)
                 }`}
           </p>
         ) : (
@@ -144,7 +141,6 @@ export function OkulEkrani({
             <YilSatiri
               sinif={sinif}
               yil={yilBul(sinif)}
-              buYilMi={sinif === ayarlar.buYilSinif}
               onDegis={(metin) => notuYaz(sinif, metin)}
             />
           </li>
@@ -155,41 +151,24 @@ export function OkulEkrani({
   )
 }
 
-/** OBP'nin neden tahmin olduğunu anlatan cümle. İki sebep birlikte olabiliyor. */
-function aciklama(girilen: number, tahmini: number): string {
-  const sebepler: string[] = []
-  if (girilen < ORTAOGRETIM_YIL_SAYISI) {
-    sebepler.push(`dört yılın ${yilSayisiYaz(girilen)} girili`)
-  }
-  if (tahmini > 0) {
-    sebepler.push(
-      tahmini === 1
-        ? 'bu yılın notu 1. dönem sonundan geliyor'
-        : `${tahmini} yılın notu 1. dönem sonundan geliyor`,
-    )
-  }
-  // Cümle başı büyük harf: parçalar küçük harfle yazılıyor çünkü hangisinin
-  // başa geleceği duruma göre değişiyor.
-  const metin = sebepler.join('; ')
-  return `${metin.charAt(0).toLocaleUpperCase('tr-TR')}${metin.slice(1)}. Bu yüzden sonuç bir tahmin.`
+/** OBP'nin neden tahmin olduğunu anlatan cümle: tek sebep kaldı, eksik yıl. */
+function aciklama(girilen: number): string {
+  return `Dört yılın ${yilSayisiYaz(girilen)} girili; bu yüzden sonuç bir tahmin.`
 }
 
-/** "Girilen yıl" kutusunun alt notu — eksiklik ile dönem sonu notu ayrı şeyler. */
+/** "Girilen yıl" kutusunun alt notu. */
 function yilAltNotu(obp: ObpSonucu | null): string {
   if (!obp || obp.tamMi) return 'dört yıl tamam'
-  if (obp.girilenYil < ORTAOGRETIM_YIL_SAYISI) return 'eksik yıllar tahmin edilir'
-  return 'biri 1. dönem sonu notu'
+  return 'eksik yıllar tahmin edilir'
 }
 
 function YilSatiri({
   sinif,
   yil,
-  buYilMi,
   onDegis,
 }: {
   sinif: number
   yil: OkulYili | undefined
-  buYilMi: boolean
   onDegis: (metin: string) => void
 }) {
   // Yazarken serbest bırakmak için yerel metin; boş bırakılabilsin diye
@@ -207,9 +186,7 @@ function YilSatiri({
     >
       <div className="min-w-0 flex-1">
         <p className="font-medium">{sinif}. sınıf</p>
-        <p className="text-xs text-muted-foreground">
-          {buYilMi ? '1. dönem sonu notun' : 'yıl sonu notun'}
-        </p>
+        <p className="text-xs text-muted-foreground">yıl sonu notun</p>
       </div>
 
       <Alan
@@ -221,7 +198,7 @@ function YilSatiri({
           onDegis(temiz)
         }}
         placeholder="—"
-        aria-label={`${sinif}. sınıf ${buYilMi ? '1. dönem sonu' : 'yıl sonu'} notu`}
+        aria-label={`${sinif}. sınıf yıl sonu notu`}
         className="rakam h-11 w-24 shrink-0 text-center text-lg font-semibold focus:placeholder:text-transparent"
       />
 
