@@ -239,12 +239,16 @@ okulNotlariniTasi()
  *
  * Üst sınır 800: 500 sınav dönemindeki öğrenciye dar geliyordu ve tavana dayanmış
  * bir hedef, hedef olmaktan çıkıp sınır oluyor. Sayı seçilebilen bir değer olmak
- * zorunda: 800 - 50 = 750 ve bu tam olarak on beşin katı, yani tekerlek sekiz
- * yüzde bitiyor — erişilemeyen bir tavan göstermiyor.
+ * zorunda: 800 - 50 = 750 ve bu onun katı, yani tekerlek tam sekiz yüzde
+ * bitiyor — erişilemeyen bir tavan göstermiyor.
  *
- * Basamak yirmi beşten on beşe indi. Sürüklenen çubuk zamanında elli'şerdi ve
- * ince basamağa parmakla isabet ettirmek zordu; tekerlekte her basamak kendi
- * satırı olduğu için o sorun yok, ince basamağın tek bedeli listenin uzaması.
+ * Basamak yirmi beşten on beşe, oradan ona indi. Sürüklenen çubuk zamanında
+ * elli'şerdi ve ince basamağa parmakla isabet ettirmek zordu; tekerlekte her
+ * basamak kendi satırı olduğu için o sorun yok. On beşer artan bir tekerlek
+ * ise akılda tutulan yuvarlak sayıların çoğunu (100, 150, 250, 300) atlıyordu:
+ * hedefini "yüz elli soru" diye kuran öğrenci onu listede bulamıyordu. Onar
+ * artan basamakta her yuvarlak sayı var; bedeli listenin uzaması ve tekerlekte
+ * uzunluğun görünen bir karşılığı yok.
  */
 export const HEDEF_EN_AZ = 50
 export const HEDEF_EN_COK = 800
