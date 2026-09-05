@@ -34,7 +34,6 @@ export function SayiTekerlegi({
   enAz,
   enCok,
   adim,
-  birim,
   etiket,
   className,
 }: {
@@ -44,8 +43,6 @@ export function SayiTekerlegi({
   enCok: number
   /** Kaçar kaçar artacağı. */
   adim: number
-  /** Seçili sayının yanında yazan birim ("soru" gibi). */
-  birim: string
   /** Ekran okuyucuya söylenen ad. */
   etiket: string
   className?: string
@@ -133,14 +130,10 @@ export function SayiTekerlegi({
         className="pointer-events-none absolute inset-x-6 top-1/2 h-[52px] -translate-y-1/2 rounded-2xl bg-primary-soft"
         aria-hidden
       />
-      {/* Birim, seçili sayının sağında sabit duruyor: sayıyla birlikte
-          kaydırılsaydı her satırda tekrar eden bir gürültü olurdu. */}
-      <span
-        className="pointer-events-none absolute right-8 top-1/2 -translate-y-1/2 text-xs font-extrabold text-primary/70"
-        aria-hidden
-      >
-        {birim}
-      </span>
+      {/* Seçili sayının sağında bir süre birim ("soru") yazıyordu; kaldırıldı.
+          Tekerleğin ne saydığını üstündeki satır başlığı zaten söylüyor ve
+          sabit duran o kelime, kaydırırken hareket eden sayıların yanındaki
+          tek durağan şey olduğu için okunmadan göze takılıyordu. */}
 
       <div
         ref={ref}
