@@ -1020,6 +1020,10 @@ function OkulNotlari({
                   aria-label={`${s}. sınıf yıl sonu notu`}
                   className={cn(
                     'rakam w-20 text-center text-lg font-bold',
+                    // Yer tutucu odaklanınca kayboluyor. Uzun tire ortada
+                    // duruyor ve metin imleci de ortada beliriyor; ikisi üst
+                    // üste gelince ekranda artı işareti gibi görünüyordu.
+                    'focus:placeholder:text-transparent',
                     dolu && 'border-primary/45 text-primary',
                   )}
                 />
@@ -1066,6 +1070,9 @@ function OkulNotlari({
                 aria-label="Elle girilen OBP"
                 className={cn(
                   'rakam w-20 text-center text-lg font-bold',
+                  // Tire + imleç artı görünüyordu; yıl notu alanındaki notun
+                  // aynısı.
+                  'focus:placeholder:text-transparent',
                   obpDolu && 'border-primary/45 text-primary',
                 )}
               />

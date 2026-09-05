@@ -5,6 +5,7 @@ import { Check, HelpCircle, Trophy, X } from 'lucide-react'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
 import { bossSesi, sureUyarisi } from '@/lib/oyunlar/oyun-sesi'
 import { muzikGerginligi } from '@/lib/oyunlar/mod-muzigi'
+import { turSonuBildir } from '@/lib/oyunlar/tur-durumu'
 import { GeriSayim } from '@/components/oyun-geri-sayim'
 import type { OyunId } from '@/lib/types'
 import { sureOrani } from '@/lib/oyunlar/tur'
@@ -825,6 +826,22 @@ export function TurSonu({
     ikinci turda sayımın atlanması, aynı oyunun iki farklı başlangıcı olurdu.
   */
   const [sayiliyor, setSayiliyor] = useState(false)
+
+  /*
+    Tur bitti: müzik sussun.
+
+    Müziği oyunlar.tsx kuruyor ve ölçüsü "oyun ekranı açık mı" idi; tur sonu
+    ekranı da aynı oyun ekranının içinde olduğu için parça özet ekranında
+    çalmaya devam ediyordu. Turun bittiğini bilen tek yer burası.
+
+    Temizlik `false` yazıyor, yani bayrak "Tekrar"da da "Çık"ta da kalkıyor —
+    ilkinde müzik yeni turla geri geliyor, ikincisinde oyun ekranı kapandığı
+    için zaten susuyor.
+  */
+  useEffect(() => {
+    turSonuBildir(true)
+    return () => turSonuBildir(false)
+  }, [])
 
   const maskot: MaskotDurumu = yeniRekor
     ? 'kutlama'

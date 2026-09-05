@@ -43,6 +43,7 @@ import {
   type OyunModu,
 } from '@/lib/oyunlar/mod'
 import { muzikBaslat, muzikDuraklat, muzikDurdur } from '@/lib/oyunlar/mod-muzigi'
+import { useTurSonu } from '@/lib/oyunlar/tur-durumu'
 import { LOFI_PARCALAR } from '@/lib/lofi'
 import { SesCalar } from '@/lib/ses'
 import { useGeriKatmani } from '@/lib/geri'
@@ -196,7 +197,18 @@ export function OyunlarEkrani({
   const gorunur = useUygulamaGorunur()
   const lofiRef = useRef<SesCalar | null>(null)
 
-  const muzikCalsin = acikOyun !== null && muzikAcik
+  /*
+    Tur sonu ekranı açıkken müzik susuyor.
+
+    Ölçü eskiden yalnızca "oyun ekranı açık mı" idi; özet ekranı da o ekranın
+    bir aşaması olduğu için parça tur bittikten sonra çalmaya devam ediyordu.
+    Bayrağı `TurSonu` kuruyor (`lib/oyunlar/tur-durumu.ts`).
+
+    Hem mod müziği hem lofi aynı ölçüye bakıyor: ikisi de turun sesi, ikisi de
+    tur bitince susmalı.
+  */
+  const turSonu = useTurSonu()
+  const muzikCalsin = acikOyun !== null && muzikAcik && !turSonu
 
   /*
     Mod müziği: parçayı tur modu seçiyor (`lib/oyunlar/mod-muzigi.ts`).
