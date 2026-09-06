@@ -1,15 +1,16 @@
 /**
  * Kapalı betada gizlenen bölümler.
  *
- * Play'in kapalı betasına çıkarken bitmemiş iki bölüm kullanıcıdan saklandı.
- * Kodları **silinmedi**: ikisi de çalışır durumda ve sıradaki güncellemelerde
- * tek tek geri açılacaklar. Silinselerdi geri getirmek yeniden yazmak olurdu;
+ * Play'in kapalı betasına çıkarken bitmemiş iki bölüm kullanıcıdan saklandı;
+ * biri (Konu Anlatımı) açıldı ve bayrağı dosyadan düştü, geriye haftalık özet
+ * kaldı. Kodları **silinmiyor**: bölüm çalışır durumda ve sıradaki
+ * güncellemede geri açılacak. Silinseydi geri getirmek yeniden yazmak olurdu;
  * bayrak, o güne kadar kodun derlenmeye ve testlerin koşmaya devam etmesini
- * sağlıyor — çürüyen bir dal olarak beklemiyorlar.
+ * sağlıyor — çürüyen bir dal olarak beklemiyor.
  *
- * Bayraklar burada toplu duruyor ki betada neyin kapalı olduğu tek yerden
- * okunabilsin; ekranların içine serpiştirilmiş `false` sabitleri, açılma
- * zamanı geldiğinde tek tek aranırdı.
+ * Bayrak burada duruyor ki betada neyin kapalı olduğu tek yerden okunabilsin;
+ * ekranların içine serpiştirilmiş `false` sabitleri, açılma zamanı geldiğinde
+ * tek tek aranırdı.
  *
  * **Geri açarken:** bayrağı `true` yap, ekranı telefonda bir uçtan bir uca
  * dene, sonra bu dosyadan da düş. Kalıcı olarak kalan bir bayrak, ölü bir
@@ -19,15 +20,6 @@
  * özellik bayrakla kapatılmaz, kodu silinir — ana sayfadaki kısayol düzenleme
  * penceresinde yapıldığı gibi.
  */
-
-/**
- * Konu Anlatımı (bilgi kartları) — ana sayfadaki "Ders haritasını aç" girişi.
- *
- * İçerik 247 konuda kart taşıyor ama soru metinleri henüz hiçbirinde yazılmadı
- * (`lib/konu/icerik/`), yani bölümün ikinci yarısı boş. Yarım bir bölümü
- * betaya çıkarmak, kullanıcıya bitmiş sanacağı bir şey göstermek olurdu.
- */
-export const KONU_ANLATIMI_ACIK = false
 
 /**
  * Haftalık özet — ana sayfanın en üstündeki davet kartı ve açtığı hikâye.

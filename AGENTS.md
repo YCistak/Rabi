@@ -1492,10 +1492,11 @@ kartı işaretleyip çıkmak konuyu tamamlamanın yolu olurdu.
 
 ### Ana sayfada kısayol değil kendi bölümü
 
-> **Kapalı betada gizli** (`KONU_ANLATIMI_ACIK`, `lib/beta.ts`). Aşağıdaki
-> kart bölümün tek girişiydi; çizilmeyince bölüme ulaşan yol kalmıyor. Ekran ve
-> `AppShell` kaydı yerinde duruyor. Sebep içeriğin yarım olması: 177 konuda
-> kart var ama soru metni hiçbirinde yazılmadı (`lib/konu/icerik/`).
+Bölüm bir süre kapalı betada gizliydi (`KONU_ANLATIMI_ACIK`); konu listesi
+Maarif programına bağlandıktan sonra açıldı ve bayrak `lib/beta.ts`'ten
+düştü. **Soru metinleri hâlâ yazılmadı** ve bu bölümü açmaya engel değil:
+sorusu olmayan konunun destesi sonunda kapanıyor, ekran boş bir sınav
+göstermiyor (bkz. `SoruKarti` yorumu, `lib/konu/tip.ts`).
 
 Ana sayfada bölümün adı **Bilgi Kartları** (kod tarafı `konu` kalıyor):
 ekranın kendisi kart gösteriyor, ders anlatmıyor. Bölüm `KARTLAR` listesinde
