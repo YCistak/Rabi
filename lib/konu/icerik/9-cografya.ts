@@ -3,327 +3,423 @@ import { kart, konu, program, tema } from '../tip'
 /**
  * 9. sınıf Coğrafya — Maarif Modeli.
  *
- * Yedi tema. Eski programın "Doğal Sistemler / Beşerî Sistemler / Küresel
- * Ortam" üçlüsü değil, programın kendi tema adları kullanılıyor;
- * "Mekânsal Bilgi Teknolojileri" ve "Afetler ve Sürdürülebilir Çevre"
- * Maarif ile ayrı tema oldu.
+ * Yedi tema; ikisi (Ekonomik Faaliyetler, Bölgeler) 9. sınıfta yalnızca
+ * dörder saat ve tek konu. Konu adları ve sırası `maarif/iskelet.json`'dan;
+ * `maarif.test.ts` denetliyor.
+ *
+ * Aynı yedi tema 10. sınıfta da var — program konuları temalara **yayarak**
+ * ilerletiyor, tema başlıkları sınıf değiştirmiyor.
  */
-export const cografya9 = program('cografya', 9, 'Coğrafyanın doğasından küresel bağlantılara', [
+export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç', [
   tema('cog9-t1', 'Coğrafyanın Doğası', [
-    konu('cog9-dogasi', 'Coğrafyanın Konusu ve Bölümleri', [
+    konu('cog9-konu-bolum', 'Coğrafya Biliminin Konusu ve Bölümleri', [
       kart(
         'Coğrafya neyi inceler?',
-        'İnsanla doğal ortam arasındaki etkileşimi ve bunun mekâna yansımasını inceler. Sorusu her zaman "nerede ve neden orada".',
+        'İnsan ile doğal ortam arasındaki karşılıklı etkileşimi, dağılış ve yer göstererek inceler.',
       ),
       kart(
-        'İki ana bölüm',
-        'Fizikî coğrafya doğal ortamı (yer şekilleri, iklim, su, toprak), beşerî coğrafya insan etkinliklerini (nüfus, yerleşme, ekonomi) inceler.',
+        'Fizikî coğrafya',
+        'Doğal ortamı inceler: yer şekilleri, iklim, su, toprak ve canlılar.',
       ),
       kart(
-        'İnsan-doğa etkileşimi',
-        'Doğa insanı sınırlar, insan doğayı değiştirir. Baraj, tünel ve sulama bu etkileşimin doğrudan izleridir.',
+        'Beşerî coğrafya',
+        'İnsanın mekândaki izini inceler: nüfus, yerleşme, ekonomi, ulaşım ve kültür.',
       ),
       kart(
-        'Coğrafya niçin öğrenilir?',
-        'Yer seçimi, afet önlemi, tarım planlaması ve kaynak yönetimi hep coğrafi karar gerektirir.',
+        'Üç temel soru',
+        'Nerede, neden orada, sonucu ne? Coğrafyayı öteki bilimlerden ayıran şey ikinci ve üçüncü sorudur.',
+      ),
+    ]),
+    konu('cog9-nicin', 'Niçin Coğrafya Öğrenmeliyiz?', [
+      kart(
+        'Mekânsal düşünme',
+        'Olayları yerle birlikte düşünmeyi öğretir: bir depremin sonucu, olduğu yere göre değişir.',
+      ),
+      kart(
+        'Günlük kararlar',
+        'Nerede oturulacağı, hangi ürünün nerede yetişeceği, hangi yolun seçileceği coğrafi kararlardır.',
+      ),
+      kart(
+        'Afet ve risk',
+        'Fay hattını, taşkın ovasını ve heyelan alanını bilmek doğrudan can güvenliğiyle ilgilidir.',
+      ),
+      kart(
+        'Küresel bakış',
+        'İklim değişikliği, göç ve kaynak paylaşımı gibi sorunlar coğrafi düşünmeden anlaşılmaz.',
+      ),
+    ]),
+    konu('cog9-gelisim', 'Coğrafya Biliminin Gelişimi', [
+      kart(
+        'İlk Çağ',
+        'Eratosthenes dünyanın çevresini şaşırtıcı bir yaklaşıklıkla hesapladı; "coğrafya" sözcüğü de ona dayanır.',
+      ),
+      kart(
+        'İslam dünyasında',
+        'Birunî, İdrisî ve Piri Reis harita ve seyahat bilgisiyle coğrafyayı ilerletti.',
+      ),
+      kart(
+        'Keşifler çağı',
+        'Uzun deniz yolculukları dünya haritasını tamamladı; coğrafya betimlemeden ölçmeye geçti.',
+      ),
+      kart(
+        'Modern coğrafya',
+        'Bugün uydu görüntüsü ve coğrafi bilgi sistemleriyle çalışıyor; veri artık gerçek zamanlı.',
       ),
     ]),
   ]),
   tema('cog9-t2', 'Mekânsal Bilgi Teknolojileri', [
-    konu('cog9-harita', 'Harita Bilgisi', [
+    konu('cog9-harita', 'Mekânın Aynası Haritalar', [
       kart(
         'Harita nedir?',
-        'Yeryüzünün kuş bakışı görünümünün ölçek kullanılarak düzleme aktarılması. Ölçek yoksa o çizim harita değil, krokidir.',
+        'Yeryüzünün tamamının ya da bir bölümünün, ölçek kullanılarak düzleme aktarılmış küçültülmüş çizimi.',
       ),
       kart(
-        'Ölçek türleri',
-        'Kesir ölçek 1/500.000 gibi yazılır, çizgi ölçek çubuk hâlindedir. Paydası büyüdükçe ölçek küçülür.',
+        'Ölçek',
+        'Haritadaki uzunluğun gerçekteki uzunluğa oranı. Payda büyüdükçe ölçek küçülür ve ayrıntı azalır.',
       ),
       kart(
-        'Büyük ve küçük ölçek',
-        'Büyük ölçekli haritada ayrıntı çok, kapsanan alan küçüktür. Küçük ölçekli haritada tam tersi.',
+        'Bileşenleri',
+        'Başlık, ölçek, lejant, yön oku ve koordinat. Biri eksikse harita okunamaz.',
       ),
       kart(
-        'Projeksiyon',
-        'Küre düzleme hatasız açılamaz. Silindirik projeksiyon ekvator çevresini, konik orta enlemleri, düzlem kutupları daha doğru gösterir.',
+        'Bozulma kaçınılmaz',
+        'Küre düzleme aktarılırken alan, açı ya da uzunluktan biri mutlaka bozulur; hiçbir izdüşüm üçünü birden koruyamaz.',
       ),
       kart(
-        'İzohips (eş yükselti eğrisi)',
-        'Aynı yükseltideki noktaları birleştirir. Eğriler sıklaştıkça eğim artar; iç içe halkalar tepeyi ya da çukuru gösterir.',
+        'İzohips',
+        'Aynı yükseltideki noktaları birleştiren eğri. Sıklaştıkça eğim dikleşir.',
       ),
     ]),
     konu('cog9-konum', 'Türkiye’nin Coğrafi Konumu', [
       kart(
         'Matematik konum',
-        'Türkiye 36°–42° kuzey paralelleri, 26°–45° doğu meridyenleri arasındadır.',
+        'Yaklaşık 36°-42° kuzey enlemleri ile 26°-45° doğu boylamları arasında.',
       ),
       kart(
-        'Paralelin sonuçları',
-        'Orta kuşakta olduğu için dört mevsim yaşanır, güneyi kuzeyinden sıcaktır ve gölge boyu güneye gidildikçe kısalır.',
+        'Enlemin sonuçları',
+        'Orta kuşakta olduğu için dört mevsim belirgin yaşanır; güneyden kuzeye sıcaklık azalır.',
       ),
       kart(
-        'Meridyenin sonuçları',
-        '19 meridyen geçtiği için doğusuyla batısı arasında 76 dakikalık yerel saat farkı vardır. Tek saat dilimi kullanılır.',
+        'Boylamın sonuçları',
+        'Doğu ile batı arasında yaklaşık 76 dakikalık yerel saat farkı vardır; ülke tek saat dilimi kullanır.',
       ),
       kart(
         'Özel konum',
-        'Üç tarafı denizlerle çevrili, boğazlara sahip, Asya ile Avrupa arasında; enerji yollarının üzerindedir.',
+        'Üç kıtanın kesiştiği yerde, boğazlara sahip; Asya ile Avrupa arasındaki geçiş konumu stratejik değer taşır.',
+      ),
+      kart(
+        'Yükselti etkisi',
+        'Ortalama yükseltisi fazladır ve doğuya doğru artar; bu, iklimi ve tarımı doğrudan etkiler.',
       ),
     ]),
-    konu('cog9-cbs', 'Coğrafi Bilgi Sistemleri', [
+    konu('cog9-mbt', 'Mekânsal Bilgi Teknolojilerinin Bileşenleri', [
       kart(
         'CBS nedir?',
-        'Konuma bağlı veriyi toplayan, saklayan, çözümleyen ve haritalayan sistem. "Nerede" sorusuna veriyle cevap verir.',
+        'Coğrafi Bilgi Sistemleri; konumlu veriyi toplayan, saklayan, çözümleyen ve haritaya döken sistem.',
+      ),
+      kart(
+        'Bileşenler',
+        'Donanım, yazılım, veri, insan ve yöntem. En kritik ve en pahalı bileşen veridir.',
+      ),
+      kart(
+        'Uzaktan algılama',
+        'Uydu ve hava araçlarıyla temas etmeden veri toplama. Orman yangını ve kuraklık takibinde kullanılır.',
+      ),
+      kart(
+        'GPS',
+        'Uydularla konum belirleme. En az dört uydudan gelen sinyal, alıcının yerini üç boyutlu olarak verir.',
       ),
       kart(
         'Katman mantığı',
-        'Yol, akarsu, nüfus ve arazi kullanımı ayrı katmanlardır; üst üste bindirilerek yeni bilgi üretilir.',
-      ),
-      kart(
-        'GPS ve uzaktan algılama',
-        'GPS konum belirler, uzaktan algılama uydu ve hava görüntüsüyle yüzey hakkında veri toplar. İkisi CBS’yi besler.',
-      ),
-      kart(
-        'Nerede kullanılır?',
-        'Afet risk haritaları, kent planlaması, orman yangını takibi, tarım ve ulaşım güzergâhı seçimi.',
+        'CBS veriyi katmanlar hâlinde üst üste bindirir: yol, akarsu, nüfus. Çözümleme bu bindirmeden çıkar.',
       ),
     ]),
   ]),
   tema('cog9-t3', 'Doğal Sistemler ve Süreçler', [
-    konu('cog9-atmosfer', 'Atmosfer ve Hava Olayları', [
+    konu('cog9-hava-olay', 'Hava Olayları ve Günlük Hayata Etkileri', [
       kart(
         'Hava durumu ve iklim',
-        'Hava durumu kısa süreli ve dar alanlıdır, iklim uzun yıllara (en az 30 yıl) dayanan ortalamadır.',
+        'Hava durumu kısa süreli, iklim ise uzun yılların ortalaması. "Bugün yağmurlu" hava, "yazları kurak" iklimdir.',
       ),
       kart(
-        'Atmosferin katmanları',
-        'Hava olayları troposferde olur. Ozon tabakası stratosferdedir ve zararlı ışınları süzer.',
+        'Sıcaklık ve basınç',
+        'Isınan hava yükselir ve alçak basınç oluşur; soğuyan hava alçalır ve yüksek basınç oluşur.',
       ),
       kart(
-        'Sıcaklığı etkileyen etmenler',
-        'Güneş ışınlarının geliş açısı, yükselti, denize uzaklık, bakı, nem ve rüzgârlar.',
+        'Rüzgâr',
+        'Yüksek basınçtan alçak basınca doğru esen hava. Basınç farkı büyüdükçe hızı artar.',
       ),
       kart(
-        'Yükselti ve sıcaklık',
-        'Troposferde her 100 metrede sıcaklık ortalama 0,5 °C düşer. Dağ zirvelerinin karlı olmasının sebebi.',
+        'Nem ve yağış',
+        'Havadaki su buharı yoğuşunca bulut, bulut damlaları büyüyünce yağış olur.',
       ),
       kart(
-        'Bakı etkisi',
-        'Kuzey yarım kürede güneye bakan yamaçlar daha sıcaktır; tarım ve yerleşme çoğunlukla o yamaçlarda toplanır.',
+        'Günlük etkiler',
+        'Tarım, ulaşım, enerji ve sağlık hava olaylarına bağlıdır; don ve dolu bir yılın ürününü götürebilir.',
       ),
     ]),
-    konu('cog9-basinc', 'Basınç ve Rüzgârlar', [
+    konu('cog9-iklim-sistem', 'İklim Sisteminin Bileşen ve Değişkenleri', [
       kart(
-        'Basınç nasıl değişir?',
-        'Sıcaklık artınca hava genleşir, yükselir ve alçak basınç oluşur. Soğuk havada yüksek basınç görülür.',
+        'Beş bileşen',
+        'Atmosfer, hidrosfer, litosfer, biyosfer ve buzküre. İklim bu beşinin etkileşiminden doğar.',
       ),
       kart(
-        'Rüzgârın yönü',
-        'Rüzgâr her zaman yüksek basınçtan alçak basınca doğru eser. Basınç farkı arttıkça hızı artar.',
+        'Değişkenler',
+        'Sıcaklık, basınç, nem, yağış, rüzgâr ve güneşlenme süresi.',
       ),
       kart(
-        'Sürekli rüzgârlar',
-        'Alizeler, batı rüzgârları ve kutup rüzgârları. Yıl boyu aynı yönde eserler.',
+        'Enlem etkisi',
+        'Güneş ışınlarının geliş açısı enlemle değişir; ekvatordan kutuplara gidildikçe sıcaklık düşer.',
       ),
       kart(
-        'Yerel rüzgârlar',
-        'Meltemler gün içinde yön değiştirir: gündüz denizden karaya, gece karadan denize eser.',
+        'Yükselti ve karasallık',
+        'Her 100 metrede sıcaklık yaklaşık 0,5 °C düşer; denizden uzaklaştıkça sıcaklık farkları büyür.',
       ),
       kart(
-        'Föhn',
-        'Dağı aşarken nemini bırakan hava, öteki yamaçtan sıcak ve kuru iner. İnen yamaçta sıcaklık belirgin artar.',
-      ),
-    ]),
-    konu('cog9-nem', 'Nem ve Yağış', [
-      kart(
-        'Mutlak ve bağıl nem',
-        'Mutlak nem havadaki su buharı miktarıdır. Bağıl nem, havanın taşıyabileceğinin yüzde kaçını taşıdığıdır.',
-      ),
-      kart(
-        'Yoğunlaşma',
-        'Hava soğuyup doyma noktasına gelince su buharı yoğunlaşır; çiy, kırağı, sis ve bulut böyle oluşur.',
-      ),
-      kart(
-        'Yağış türleri',
-        'Yamaç (orografik) yağış dağ yamacında, cephe yağışı sıcak ve soğuk hava kütlesinin karşılaşmasında, konveksiyon yağışı ısınan havanın yükselmesiyle oluşur.',
-      ),
-      kart(
-        'Nem ve sıcaklık farkı',
-        'Nemli havada günlük sıcaklık farkı azdır. Çöllerde nem az olduğu için gece ile gündüz arasındaki fark çok yüksektir.',
+        'Okyanus akıntıları',
+        'Sıcak akıntılar kıyıyı ılıtır, soğuk akıntılar serinletir ve kuraklaştırır.',
       ),
     ]),
-    konu('cog9-iklim', 'İklim Tipleri ve İklim Değişikliği', [
+    konu('cog9-iklim-tur', 'İklim Türleri', [
       kart(
         'Sıcak kuşak iklimleri',
-        'Ekvatoral iklimde yıl boyu sıcak ve yağışlı, savanda yazı yağışlı-kışı kurak, çölde her mevsim kuraktır.',
+        'Ekvatoral (yıl boyu sıcak ve yağışlı), savan (yazı yağışlı), çöl ve muson iklimleri.',
       ),
       kart(
-        'Orta kuşak iklimleri',
-        'Akdeniz ikliminde yaz kurak-kış yağışlı; okyanus ikliminde yıl boyu yağışlı; karasal iklimde kış sert ve yağış azdır.',
+        'Ilıman kuşak iklimleri',
+        'Akdeniz, okyanusal, karasal ve step iklimleri. Türkiye bu kuşaktadır.',
+      ),
+      kart(
+        'Soğuk kuşak iklimleri',
+        'Tundra ve kutup iklimi. Bitki örtüsü cılızdır ya da hiç yoktur.',
       ),
       kart(
         'Türkiye’nin iklimleri',
-        'Kıyı kesimlerde Akdeniz ve Karadeniz iklimi, iç kesimlerde karasal iklim görülür. Dağların uzanışı bu ayrımı belirler.',
+        'Kıyılarda Akdeniz ve Karadeniz iklimi, iç kesimlerde karasal iklim görülür.',
       ),
       kart(
-        'Sera etkisi',
-        'Atmosferdeki gazların yer yüzeyinden yansıyan ısıyı tutmasıdır. Doğal bir olaydır; sorun insan kaynaklı olarak güçlenmesi.',
+        'İklim grafiği okuma',
+        'Sütunlar yağışı, çizgi sıcaklığı gösterir. Yaz kuraklığı belirginse Akdeniz iklimi akla gelir.',
+      ),
+    ]),
+    konu('cog9-iklim-degisim', 'İklim Sisteminde Yaşanan Değişiklikler', [
+      kart(
+        'Doğal değişimler',
+        'Yörünge değişiklikleri, volkanik patlamalar ve güneş etkinliği iklimi jeolojik zaman ölçeğinde değiştirdi.',
       ),
       kart(
-        'İklim değişikliğinin sonuçları',
-        'Buzulların erimesi, deniz seviyesinin yükselmesi, kuraklık, aşırı hava olaylarının sıklaşması ve tarım kuşaklarının kayması.',
+        'İnsan kaynaklı değişim',
+        'Sanayi devriminden bu yana fosil yakıt kullanımı sera gazlarını hızla artırdı.',
+      ),
+      kart(
+        'Sonuçları',
+        'Ortalama sıcaklık artışı, buzul erimesi, deniz seviyesinin yükselmesi ve aşırı hava olaylarında artış.',
+      ),
+      kart(
+        'Türkiye’ye etkisi',
+        'Akdeniz havzası risk bölgesinde; kuraklık, orman yangını ve su sıkıntısı artıyor.',
+      ),
+      kart(
+        'Azaltım ve uyum',
+        'Azaltım salımı düşürmek, uyum ise değişen koşullara göre yaşamı yeniden düzenlemektir.',
       ),
     ]),
   ]),
   tema('cog9-t4', 'Beşerî Sistemler ve Süreçler', [
-    konu('cog9-nufus-dagilis', 'Nüfusun Dağılışı', [
+    konu('cog9-nufus-degisim', 'Nüfusun Tarihsel Değişimi ve Geleceği', [
       kart(
-        'Doğal etmenler',
-        'Ilıman iklim, verimli toprak, su kaynağı ve düz arazi nüfusu çeker. Çöl, kutup ve yüksek dağlar seyrek nüfusludur.',
+        'Yavaş başlangıç',
+        'Tarım devrimine kadar dünya nüfusu çok azdı ve yavaş artıyordu; besin miktarı sınırdı.',
       ),
       kart(
-        'Beşerî etmenler',
-        'Sanayi, ticaret, ulaşım ve turizm nüfusu toplar. Türkiye’de İstanbul, İzmit ve İzmir bu yüzden yoğundur.',
+        'Hızlanma',
+        'Sanayi devrimi ve tıptaki ilerlemeyle ölüm oranı düştü, nüfus hızla arttı.',
       ),
       kart(
-        'Aritmetik nüfus yoğunluğu',
-        'Toplam nüfus / toplam alan. Arazinin kullanılabilir olup olmadığını göstermez, bu yüzden yanıltıcı olabilir.',
+        'Bugün',
+        'Artış hızı yavaşlıyor; bazı ülkelerde nüfus azalmaya başladı.',
       ),
       kart(
-        'Tarımsal nüfus yoğunluğu',
-        'Kırsal nüfus / tarım alanı. Bu değer yüksekse tarım alanı yetersiz ya da verim düşük demektir.',
-      ),
-    ]),
-    konu('cog9-nufus-degisim', 'Nüfusun Değişimi', [
-      kart(
-        'Doğal nüfus artışı',
-        'Doğum sayısı − ölüm sayısı. Göç hesaba katılırsa gerçek artış bulunur.',
-      ),
-      kart(
-        'Demografik dönüşüm',
-        'Doğum ve ölüm oranları yüksek olan toplum, gelişme ile önce ölümlerin sonra doğumların düştüğü bir düzene geçer.',
-      ),
-      kart(
-        'Nüfus piramitleri',
-        'Geniş tabanlı piramit genç ve hızlı artan nüfusu, dar tabanlı piramit yaşlanan nüfusu gösterir.',
-      ),
-      kart(
-        'Genç ve yaşlı nüfus',
-        'Genç nüfus iş gücü potansiyelidir ama eğitim ve istihdam yükü getirir. Yaşlı nüfus sağlık ve emeklilik yükünü artırır.',
+        'Geleceğe bakış',
+        'Nüfusun yüzyılın sonuna doğru durağanlaşması bekleniyor; artış büyük ölçüde Afrika kaynaklı olacak.',
       ),
     ]),
-    konu('cog9-goc', 'Göçler', [
+    konu('cog9-nufus-dagilis', 'Nüfusun Dağılışı ve Hareketleri', [
       kart(
-        'İtici ve çekici güçler',
-        'İşsizlik, kuraklık, savaş ve toprak yetersizliği iter; iş imkânı, eğitim ve güvenlik çeker.',
+        'Doğal faktörler',
+        'İklim, yer şekilleri, su kaynakları ve toprak verimliliği. Ilıman ve düz alanlar yoğun nüfusludur.',
       ),
       kart(
-        'İç ve dış göç',
-        'İç göç ülke içinde nüfusu yeniden dağıtır, ülke nüfusunu değiştirmez. Dış göç ülke nüfusunu değiştirir.',
+        'Beşerî faktörler',
+        'Sanayi, ticaret, ulaşım ve turizm. İş imkânı olan yer nüfus çeker.',
+      ),
+      kart(
+        'Seyrek nüfuslu alanlar',
+        'Kutuplar, çöller, yüksek dağlar ve ekvatoral ormanlar.',
+      ),
+      kart(
+        'Göç türleri',
+        'İç-dış, sürekli-mevsimlik, gönüllü-zorunlu göç. Çoğu göçün sebebi ekonomiktir.',
       ),
       kart(
         'Göçün sonuçları',
-        'Veren yerde nüfus azalır ve yaşlanır; alan yerde çarpık kentleşme, altyapı yetersizliği ve işsizlik görülür.',
+        'Veren yerde nüfus azalır ve yaşlanır; alan yerde konut, altyapı ve işsizlik baskısı artar.',
+      ),
+    ]),
+    konu('cog9-demografik', 'Demografik Dönüşüm ve Nüfus Piramitleri', [
+      kart(
+        'Demografik dönüşüm',
+        'Yüksek doğum-yüksek ölümden, düşük doğum-düşük ölüme geçiş süreci. Aradaki dönemde nüfus hızla artar.',
       ),
       kart(
-        'Mevsimlik göç',
-        'Tarım işçiliği ve yaylacılık gibi geçici hareketler. Kalıcı olmadığı için nüfus kaydını değiştirmez.',
+        'Piramit ne gösterir?',
+        'Yaş gruplarını ve cinsiyet dağılımını. Şekli ülkenin gelişmişliği hakkında doğrudan bilgi verir.',
+      ),
+      kart(
+        'Geniş tabanlı piramit',
+        'Doğum oranı yüksek, genç nüfus çok. Gelişmekte olan ülkelerde görülür.',
+      ),
+      kart(
+        'Dar tabanlı piramit',
+        'Doğum oranı düşük, yaşlı nüfus fazla. Gelişmiş ülkelerde görülür.',
+      ),
+      kart(
+        'Türkiye’nin piramidi',
+        'Tabanı daralıyor, orta kısmı genişliyor: nüfus hâlâ genç ama hızla yaşlanıyor.',
+      ),
+    ]),
+    konu('cog9-nufus-politika', 'Nüfusla İlgili Fırsat, Sorun ve Politikalar', [
+      kart(
+        'Demografik fırsat penceresi',
+        'Çalışma çağındaki nüfusun oranı en yüksek olduğu dönem. Doğru kullanılırsa hızlı kalkınma sağlar.',
+      ),
+      kart(
+        'Genç nüfusun sorunu',
+        'Eğitim ve istihdam yetişmezse fırsat, işsizlik sorununa dönüşür.',
+      ),
+      kart(
+        'Yaşlanmanın sorunu',
+        'Çalışan başına düşen bağımlı sayısı artar; emeklilik ve sağlık harcamaları yükselir.',
+      ),
+      kart(
+        'Nüfus politikaları',
+        'Artırıcı ve azaltıcı olmak üzere iki yönlü olabilir; Türkiye 1965-1983 arasında azaltıcı politika uyguladı.',
+      ),
+      kart(
+        'Bugünkü yönelim',
+        'Doğurganlık yenilenme düzeyinin altına indiği için politikalar artırıcı yöne döndü.',
       ),
     ]),
   ]),
   tema('cog9-t5', 'Ekonomik Faaliyetler ve Etkileri', [
-    konu('cog9-ekonomi', 'Ekonomik Faaliyetler', [
+    konu('cog9-ekonomi-faktor', 'Ekonomik Faaliyetleri Etkileyen Coğrafi Faktörler', [
       kart(
-        'Üç sektör',
-        'Birincil doğadan doğrudan alır (tarım, madencilik), ikincil işler (sanayi), üçüncül hizmet üretir (ticaret, turizm, eğitim).',
+        'Doğal faktörler',
+        'İklim, yer şekilleri, toprak, su ve yer altı kaynakları hangi faaliyetin nerede yapılacağını belirler.',
       ),
       kart(
-        'Gelişmişlik göstergesi',
-        'Gelişmiş ülkelerde hizmet sektörünün payı yüksektir; birincil sektörde çalışan oranı yüksekse ülke gelişmekte olan sayılır.',
+        'İklimin belirleyiciliği',
+        'Çay Doğu Karadeniz’de, pamuk Çukurova’da yetişir; sıcaklık ve yağış isteği bunu zorunlu kılar.',
       ),
       kart(
-        'Coğrafi etmenler',
-        'İklim ve toprak tarımı, yer altı kaynakları madenciliği, ulaşım ve pazar yakınlığı sanayiyi belirler.',
+        'Yer şekillerinin etkisi',
+        'Engebeli arazi tarımı ve ulaşımı zorlaştırır, maliyeti artırır; düz ovalar sanayiyi çeker.',
       ),
       kart(
-        'Ekonominin çevreye etkisi',
-        'Madencilik arazi bozar, sanayi hava ve suyu kirletir, aşırı sulama toprağı tuzlandırır.',
+        'Beşerî faktörler',
+        'Sermaye, iş gücü, teknoloji, pazar ve ulaşım. Doğal koşullar elverişli olsa da bunlar yoksa faaliyet gelişmez.',
+      ),
+      kart(
+        'Karşılıklı etki',
+        'Ekonomik faaliyet de doğayı değiştirir: baraj, madencilik ve aşırı sulama çevreyi dönüştürür.',
       ),
     ]),
   ]),
   tema('cog9-t6', 'Afetler ve Sürdürülebilir Çevre', [
-    konu('cog9-afet-kavram', 'Tehlike, Risk ve Afet', [
+    konu('cog9-tehlike-risk', 'Tehlike, Risk ve Afet', [
       kart(
-        'Üçü ayrı kavram',
-        'Tehlike zarar verme ihtimali olan olay, risk beklenen zararın büyüklüğü, afet ise toplumun kendi imkânlarıyla baş edemediği olaydır.',
+        'Tehlike',
+        'Zarar verme potansiyeli olan doğal ya da beşerî olay. Deprem başlı başına bir tehlikedir.',
       ),
       kart(
-        'Deprem afet değildir',
-        'Boş bir çölde olan deprem afet sayılmaz. Afeti yapan şey olayın kendisi değil, insanla karşılaşmasıdır.',
+        'Risk',
+        'Tehlikenin gerçekleşmesi hâlinde beklenen kayıp. Aynı deprem, hazırlıklı bir şehirde daha düşük risk taşır.',
       ),
       kart(
-        'Doğal ve beşerî afetler',
-        'Deprem, sel ve heyelan doğal; endüstriyel kaza, orman yangını ve nükleer sızıntı büyük ölçüde insan kaynaklıdır.',
-      ),
-    ]),
-    konu('cog9-afet-turleri', 'Afet Türleri', [
-      kart(
-        'Deprem',
-        'Yer kabuğundaki enerjinin fay hattı boyunca boşalmasıdır. Türkiye’nin büyük bölümü aktif fay kuşağı üzerindedir.',
+        'Afet',
+        'Toplumun kendi imkânlarıyla baş edemediği, can ve mal kaybına yol açan olay.',
       ),
       kart(
-        'Heyelan',
-        'Eğimli arazide suya doymuş toprağın kayması. Karadeniz’de yağış ve eğim yüzünden sık görülür.',
-      ),
-      kart(
-        'Sel ve taşkın',
-        'Ani ve şiddetli yağış, dere yataklarının yapılaşmaya açılmasıyla afete dönüşür.',
-      ),
-      kart(
-        'Çığ ve kuraklık',
-        'Çığ dik ve karlı yamaçlarda, ağaçsızlaşmayla artar. Kuraklık yavaş gelişen ama en geniş alanı etkileyen afettir.',
+        'Doğa olayı afet değildir',
+        'İnsan ve yapı yoksa deprem yalnızca bir doğa olayıdır. Afet, olayın toplumla karşılaşmasıyla oluşur.',
       ),
     ]),
-    konu('cog9-afet-yonetimi', 'Bütüncül Afet Yönetimi', [
+    konu('cog9-afet-tur', 'Afet Türleri', [
+      kart(
+        'Jeolojik afetler',
+        'Deprem, volkanik patlama, heyelan ve tsunami.',
+      ),
+      kart(
+        'Meteorolojik afetler',
+        'Sel, kuraklık, fırtına, dolu, çığ ve aşırı sıcaklar.',
+      ),
+      kart(
+        'Biyolojik afetler',
+        'Salgın hastalıklar, orman yangınları ve zararlı böcek istilaları.',
+      ),
+      kart(
+        'Beşerî afetler',
+        'Endüstriyel kazalar, nükleer sızıntılar ve savaşlar; kaynağı insandır.',
+      ),
+      kart(
+        'Türkiye’de en sık',
+        'Deprem, heyelan ve sel. Ülkenin büyük bölümü etkin fay kuşakları üzerindedir.',
+      ),
+    ]),
+    konu('cog9-afet-yonetim', 'Bütüncül Afet Yönetimi', [
       kart(
         'Dört aşama',
-        'Zarar azaltma, hazırlık, müdahale ve iyileştirme. Döngüseldir: iyileştirmede öğrenilenler zarar azaltmaya geri döner.',
+        'Zarar azaltma, hazırlık, müdahale ve iyileştirme. Döngü hiç kapanmaz, iyileştirme yeniden zarar azaltmaya bağlanır.',
       ),
       kart(
-        'Kriz değil risk yönetimi',
-        'Eski anlayış afet olduktan sonra müdahale ediyordu. Bütüncül yönetim, afetten **önce** riski azaltmayı esas alır.',
+        'Zarar azaltma',
+        'En ucuz ve en etkili aşama: doğru yer seçimi, sağlam yapı, imar denetimi.',
       ),
       kart(
-        'Zarar azaltma örnekleri',
-        'Yapı denetimi, zemin etüdü, dere yatağına yapı yasağı, ağaçlandırma ve erken uyarı sistemleri.',
+        'Hazırlık',
+        'Tatbikat, afet çantası, toplanma alanı ve erken uyarı sistemleri.',
       ),
       kart(
-        'Toplum hazırlığı',
-        'Afet çantası, toplanma alanı bilgisi ve tatbikat. Hazırlıklı toplumda aynı deprem daha az kayıpla atlatılır.',
+        'Müdahale ve iyileştirme',
+        'Arama-kurtarma ve acil yardım; sonrasında barınma, altyapı ve psikososyal destek.',
+      ),
+      kart(
+        'Neden bütüncül?',
+        'Yalnızca müdahaleye odaklanan yönetim, her afette baştan başlar. Asıl kazanç afet olmadan alınır.',
       ),
     ]),
   ]),
   tema('cog9-t7', 'Bölgeler, Ülkeler ve Küresel Bağlantılar', [
-    konu('cog9-bolge', 'Bölge Kavramı', [
+    konu('cog9-bolge', 'Bölge ve Bölge Sınırı', [
       kart(
         'Bölge nedir?',
-        'Belirli bir ölçüte göre kendi içinde benzerlik gösteren, çevresinden ayrılan alandır. Ölçüt değişirse sınır da değişir.',
+        'Belirli bir ölçüte göre benzer özellik gösteren, çevresinden ayrılan alan.',
       ),
       kart(
-        'Sınırlar değişkendir',
-        'Coğrafi bölge sınırları siyasi sınırlar gibi kesin değildir; ölçüt seçimine bağlı olduğu için kalıcı da değildir.',
+        'Ölçüt bölgeyi değiştirir',
+        'Aynı yer, iklime göre başka bir bölgede, sanayiye göre başka bir bölgede yer alabilir.',
+      ),
+      kart(
+        'Sınırlar keskin değildir',
+        'Doğal bölgelerin sınırı bir çizgi değil geçiş kuşağıdır; idari sınırlar ise keskin ve yapaydır.',
       ),
       kart(
         'Bölge türleri',
-        'Doğal bölge (iklim, yer şekli), beşerî bölge (nüfus, kültür), ekonomik bölge (tarım, sanayi, turizm).',
+        'Doğal, beşerî ve ekonomik bölgeler; ayrıca büyüklüğüne göre kıta altı, ülke ve yerel ölçekler.',
       ),
       kart(
-        'Ölçek farkı',
-        'Bölge kıtasal ölçekte de olabilir mahalle ölçeğinde de. Kapsam, sorulan soruya göre belirlenir.',
-      ),
-      kart(
-        'Küresel bağlantılar',
-        'Ticaret yolları, enerji hatları ve iletişim ağları uzak bölgeleri birbirine bağlar; bir bölgedeki kriz ötekini etkiler.',
+        'Türkiye’nin coğrafi bölgeleri',
+        'Yedi bölge 1941’de belirlendi ve ölçütü büyük ölçüde doğal koşullardı; idari birim değildir.',
       ),
     ]),
   ]),

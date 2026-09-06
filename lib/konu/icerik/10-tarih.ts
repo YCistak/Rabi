@@ -3,216 +3,330 @@ import { kart, konu, program, tema } from '../tip'
 /**
  * 10. sınıf Tarih — Maarif Modeli.
  *
- * Üç tema, üçü de tarih aralığıyla adlandırılıyor: **Türkistan'dan
- * Türkiye'ye (1040-1299)**, **Beylikten Devlete Osmanlı (1299-1453)**,
- * **Cihan Devleti Osmanlı (1453-1683)**.
+ * Üç tema, üçü de tarih aralığıyla adlandırılıyor. Konu adları ve sırası
+ * `maarif/iskelet.json`'dan; `maarif.test.ts` denetliyor.
+ *
+ * Program konuları **başlık başlık olay** değil, dönem içindeki eksenler
+ * olarak kuruyor: askerî mücadeleler, teşkilat, sosyal-ekonomik yaşam,
+ * bilim-kültür. "İstanbul'un Fethi" ayrı bir konu değil, dönemin siyasi ve
+ * askerî mücadeleleri içinde.
  */
 export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', [
   tema('trh10-t1', 'Türkistan’dan Türkiye’ye (1040-1299)', [
-    konu('trh10-anadolu', 'Anadolu’nun Türkleşmesi', [
+    konu('trh10-mucadele', 'Türkistan’dan Türkiye’ye Askerî Mücadeleler', [
       kart(
         'Dandanakan (1040)',
-        'Selçuklular Gaznelileri yendi ve Büyük Selçuklu Devleti kuruldu. Türklerin batıya yönelmesi burada başlar.',
+        'Selçuklular Gaznelileri yendi ve Büyük Selçuklu Devleti kuruldu. Türklerin batıya yönelişi hızlandı.',
       ),
       kart(
         'Malazgirt (1071)',
-        'Bizans yenildi, Anadolu’nun kapıları açıldı. Fetih değil, **yerleşmenin** başlangıcı olduğu için dönüm noktasıdır.',
+        'Alparslan Bizans ordusunu yendi. Anadolu Türk yerleşimine açıldı; kapı bir daha kapanmadı.',
       ),
       kart(
         'Miryokefalon (1176)',
-        'Anadolu’nun Türk yurdu olduğunun kesinleştiği savaş. Bizans, Anadolu’yu geri alma umudunu yitirdi.',
+        'Bizans’ın Anadolu’yu geri alma umudu bitti. Artık Anadolu’nun Türk yurdu olduğu kabul edildi.',
       ),
       kart(
-        'İskân siyaseti',
-        'Fethedilen yerlere Türkmen boyları yerleştirildi. Anadolu’nun kalıcı olarak Türkleşmesini sağlayan şey savaş değil bu yerleşmedir.',
-      ),
-    ]),
-    konu('trh10-selcuklu', 'Türkiye Selçuklu Devleti', [
-      kart(
-        'Kuruluş',
-        'Süleyman Şah tarafından İznik merkezli kuruldu; başkent sonra Konya’ya taşındı.',
-      ),
-      kart(
-        'Ticaretin devlet politikası olması',
-        'Kervansaraylar, limanların alınması (Sinop, Antalya) ve tüccarın zararını karşılayan uygulamalar ticareti devlet güvencesine aldı.',
+        'Haçlı Seferleri',
+        'Anadolu ve Suriye üzerinden gelen seferler Türk beyliklerini zorladı; sonuçta doğu-batı teması arttı.',
       ),
       kart(
         'Kösedağ (1243)',
-        'Moğollara yenilgi. Devlet dağılmadı ama Moğol egemenliğine girdi ve merkezî otorite zayıfladı.',
-      ),
-      kart(
-        'Kültür ve mimari',
-        'Medrese, darüşşifa, han ve kümbetler bu dönemin eserleridir; taş işçiliği Selçuklu sanatının imzasıdır.',
+        'Moğollar Türkiye Selçuklularını yendi. Merkezî otorite çöktü ve beylikler dönemi başladı.',
       ),
     ]),
-    konu('trh10-ahilik', 'Ahilik ve Toplum Düzeni', [
+    konu('trh10-teskilat', 'Türk Devlet ve Ordu Teşkilatındaki Değişim', [
       kart(
-        'Ahilik nedir?',
-        'Esnaf ve zanaatkârların meslek örgütü. Hem üretimi düzenler hem ahlak eğitimi verirdi.',
+        'Bozkırdan devlete',
+        'Boy birliğine dayalı yapı, İslam ve İran devlet geleneğiyle birleşerek merkezî bir bürokrasiye dönüştü.',
       ),
       kart(
-        'Fütüvvet',
-        'Ahiliğin dayandığı ahlak anlayışı: cömertlik, dürüstlik ve yardımlaşma. Meslek ile ahlak birlikte öğretilirdi.',
+        'Divan teşkilatı',
+        'Büyük Divan yönetimin merkezi oldu; maliye, yazışma ve ordu işleri ayrı divanlara bölündü.',
       ),
       kart(
-        'Kalite denetimi',
-        'Fiyat ve kalite ahi birliklerince belirlenirdi; kuralı çiğneyen esnaf meslekten men edilirdi (yolsuzluk cezası).',
+        'İkta sistemi',
+        'Toprağın geliri hizmet karşılığı komutan ve askerlere verildi. Hazineden para çıkmadan ordu beslendi.',
       ),
       kart(
-        'Çırak-kalfa-usta',
-        'Meslek uzun bir eğitimle kazanılırdı. Bu düzen, Osmanlı’nın esnaf teşkilatının da temeli oldu.',
+        'Ordu unsurları',
+        'Gulam askerleri, ikta askerleri ve boy kuvvetleri. Farklı kaynaklar orduyu hem büyütüyor hem çeşitlendiriyordu.',
+      ),
+      kart(
+        'Ülke hanedanın malı',
+        'Eski Türk anlayışında ülke hanedanın ortak malıydı; bu anlayış taht kavgalarının ve bölünmenin kaynağıydı.',
       ),
     ]),
-    konu('trh10-beylikler', 'Moğol İstilası ve Beylikler', [
+    konu('trh10-sosyal', 'Türklerin Sosyal Yaşamları ve Ekonomik Faaliyetleri', [
       kart(
-        'Moğol istilası',
-        'Cengiz Han ve haleflerinin batıya ilerleyişi, Türkistan’dan Anadolu’ya büyük bir göç dalgası yarattı.',
+        'Yerleşiklik arttı',
+        'Anadolu’ya gelen Türkler zamanla köy ve şehirlere yerleşti; konargöçerlik azaldı ama tümüyle bitmedi.',
       ),
       kart(
-        'İlk Türk beylikleri',
-        'Danişmentliler, Saltuklular, Mengücekliler, Artuklular. Anadolu’da ilk Türk-İslam eserlerini bunlar bıraktı.',
+        'Ahilik',
+        'Esnaf ve zanaatkâr birliği. Kalite denetimi, fiyat düzeni ve mesleki eğitimi birlikte yürütüyordu.',
       ),
       kart(
-        'İkinci beylikler dönemi',
-        'Selçuklu zayıflayınca Karamanoğulları, Germiyanoğulları, Osmanoğulları gibi beylikler kuruldu.',
+        'Vakıf sistemi',
+        'Hayır kurumlarını finanse eden yapı: cami, medrese, imaret, hastane ve köprüler vakıflarla yaşadı.',
       ),
       kart(
-        'Türkçenin resmî dil olması',
-        'Karamanoğlu Mehmet Bey’in fermanı, Türkçenin devlet dili olarak öne çıkışının simgesidir.',
+        'Ticaret ve kervansaray',
+        'Selçuklular yol boyunca kervansaray kurdu; yolcular üç gün ücretsiz konaklardı.',
+      ),
+      kart(
+        'Tarım ve hayvancılık',
+        'Ekonominin temeliydi. İkta sistemi toprağın boş kalmamasını da güvence altına alıyordu.',
+      ),
+    ]),
+    konu('trh10-turk-islam', 'Türk-İslam Medeniyetinde Bilim, Kültür ve Sanat', [
+      kart(
+        'Medreseler',
+        'Nizamülmülk’ün kurduğu Nizamiye medreseleri dönemin en düzenli yükseköğretim kurumlarıydı.',
+      ),
+      kart(
+        'Bilim insanları',
+        'Ömer Hayyam takvim çalışmalarıyla, Harezmî cebirle, İbn Sina tıpla iz bıraktı.',
+      ),
+      kart(
+        'Türkçenin yazı dili olması',
+        'Kutadgu Bilig ve Divânu Lugâti’t-Türk, Türkçenin bir kültür dili olarak yazıya geçişini gösterir.',
+      ),
+      kart(
+        'Tasavvuf',
+        'Mevlânâ, Yunus Emre ve Hacı Bektaş Veli’nin öğretisi Anadolu’nun kültürel dokusunu biçimlendirdi.',
+      ),
+      kart(
+        'Mimari',
+        'Kümbet, medrese, kervansaray ve çini süsleme; taş işçiliğinde Anadolu Selçuklu üslubu belirginleşti.',
       ),
     ]),
   ]),
   tema('trh10-t2', 'Beylikten Devlete Osmanlı (1299-1453)', [
-    konu('trh10-kurulus', 'Osmanlı’nın Kuruluşu', [
+    konu('trh10-kurulus', 'Osmanlı Devleti’nin Kuruluşuna Dair Görüşler', [
       kart(
-        'Coğrafi konumun avantajı',
-        'Osmanlı Beyliği, Bizans sınırında kuruldu. Gaza için insan gücü buldu, öteki Türk beylikleriyle doğrudan çatışmak zorunda kalmadı.',
+        'Gaza ve cihat görüşü',
+        'Osmanlı’yı uç bölgesindeki gaza ruhunun büyüttüğünü savunur. Sınır boyu savaşçıları devlete katıldı.',
       ),
       kart(
-        'Büyümenin sebepleri',
-        'Merkezî otoritenin güçlü olması, hoşgörülü yönetim, düzenli ordu ve doğru zamanlama.',
+        'Aşiret görüşü',
+        'Kayı boyuna dayanan aşiret yapısının çekirdek olduğunu ileri sürer.',
       ),
       kart(
-        'İstimalet',
-        'Fethedilen halkın gönlünü kazanma siyaseti: din ve mülk güvencesi, vergi kolaylığı. Fetihleri kalıcı kılan yöntem.',
+        'Ahilik ve tasavvuf etkisi',
+        'Ahi teşkilatının ve dervişlerin örgütleyici rolüne dikkat çeker.',
       ),
+      kart(
+        'Coğrafi konum',
+        'Bizans sınırında, Balkanlara açılan bir uçta olması Osmanlı’ya büyüme alanı verdi.',
+      ),
+      kart(
+        'Neden farklı görüşler?',
+        'Kuruluş dönemine ait yazılı kaynak çok az; ilk kronikler olaylardan yaklaşık yüz yıl sonra yazıldı.',
+      ),
+    ]),
+    konu('trh10-anadolu-rumeli', 'Anadolu ve Rumeli’deki Siyasi ve Askerî Mücadeleler', [
       kart(
         'Rumeli’ye geçiş',
-        'Çimpe Kalesi’nin alınmasıyla Balkanlara geçildi. Osmanlı böylece bir Avrupa devleti hâline geldi.',
-      ),
-    ]),
-    konu('trh10-kurumlar', 'İskân, Tımar ve Devşirme', [
-      kart(
-        'İskân siyaseti',
-        'Fethedilen bölgelere Anadolu’dan Türk nüfus yerleştirildi. Amaç kalıcılık ve güvenlikti.',
+        'Çimpe Kalesi’nin alınmasıyla (1353) Osmanlı Balkanlara ayak bastı; genişleme buradan hızlandı.',
       ),
       kart(
-        'Tımar sistemi',
-        'Toprağın geliri, asker yetiştirmesi karşılığında sipahiye bırakılırdı. Devlet hem toprağı işletir hem hazineden para çıkmadan ordu beslerdi.',
+        'Balkan zaferleri',
+        'Sırpsındığı, I. Kosova ve Niğbolu ile Balkanlardaki Osmanlı varlığı kalıcılaştı.',
       ),
       kart(
-        'Devşirme',
-        'Hristiyan ailelerden alınan çocukların eğitilip devlet ve ordu kadrolarına yerleştirilmesi. Kapıkulu ordusunun kaynağıydı.',
+        'Anadolu Türk birliği',
+        'Beylikler savaş, satın alma ve evlilik yoluyla Osmanlı’ya katıldı; amaç Anadolu’da tek otoriteydi.',
       ),
-      kart(
-        'Merkezî ordunun anlamı',
-        'Padişaha bağlı, maaşlı ve sürekli bir ordu, beyliklerden devlete geçişin en somut göstergesidir.',
-      ),
-    ]),
-    konu('trh10-fetret', 'Fetret Devri ve Toparlanma', [
       kart(
         'Ankara Savaşı (1402)',
-        'Timur, Yıldırım Bayezid’i yendi. Anadolu birliği bozuldu, beylikler yeniden kuruldu.',
+        'Timur karşısında alınan yenilgi devleti dağıttı; Anadolu birliği bozuldu.',
       ),
       kart(
         'Fetret Devri',
-        'Şehzadeler arası taht mücadelesiyle geçen yaklaşık on bir yıl. Devlet padişahsız kaldı ama yıkılmadı.',
+        'Şehzadeler arasındaki on bir yıllık taht mücadelesi. Devlet Balkanlardaki düzen sayesinde ayakta kaldı.',
       ),
       kart(
-        'Neden yıkılmadı?',
-        'Balkanlardaki iskân ve istimalet politikası tutmuştu; Rumeli toprakları elde kaldı ve devlet oradan toparlandı.',
+        'İstanbul’un Fethi (1453)',
+        'Orta Çağ kapandı. Osmanlı toprak bütünlüğünü sağladı ve imparatorluğa dönüştü.',
+      ),
+    ]),
+    konu('trh10-devletlesme', 'Devletleşme Süreci: Ordu, Hukuk ve Toprak', [
+      kart(
+        'Tımar sistemi',
+        'Toprağın vergi geliri sipahiye bırakıldı; sipahi hem üretimi denetledi hem asker yetiştirdi.',
       ),
       kart(
-        'Toparlanma',
-        'Çelebi Mehmet birliği yeniden kurdu, II. Murat merkezî otoriteyi güçlendirdi; Fetih için zemin böyle hazırlandı.',
+        'Devşirme ve yeniçeri',
+        'Devşirilen çocuklar eğitilerek kapıkulu ordusuna alındı; merkeze bağlı sürekli bir ordu doğdu.',
+      ),
+      kart(
+        'Örfi hukuk',
+        'Şer’i hukukun yanında padişahın koyduğu kanunlar. Kanunnameler devlet düzenini yazılı hâle getirdi.',
+      ),
+      kart(
+        'Divan-ı Hümayun',
+        'Devletin en yüksek karar organı. Her tebaanın şikâyetini götürebildiği bir merci sayılırdı.',
+      ),
+      kart(
+        'Üçü birbirini besledi',
+        'Toprak düzeni orduyu, ordu güvenliği, güvenlik de üretimi ayakta tuttu. Biri bozulunca hepsi sarsıldı.',
+      ),
+    ]),
+    konu('trh10-kalicilik', 'Fethettiği Topraklarda Kalıcı Olma Politikaları', [
+      kart(
+        'İskân politikası',
+        'Fethedilen bölgelere Anadolu’dan nüfus yerleştirildi; bölge hem şenlendirildi hem güvenceye alındı.',
+      ),
+      kart(
+        'İstimalet',
+        'Yerli halka hoşgörülü davranma siyaseti: can, mal ve inanç güvenliği verildi, vergi yükü hafifletildi.',
+      ),
+      kart(
+        'Mevcut düzeni koruma',
+        'Yerel vergi ve toprak düzeni çoğu zaman korundu; ani değişiklik direnç üretiyordu.',
+      ),
+      kart(
+        'İmar faaliyetleri',
+        'Cami, han, hamam ve köprü ile şehirler yeniden canlandırıldı; bunlar aynı zamanda kalıcılığın işaretiydi.',
+      ),
+      kart(
+        'Neden işe yaradı?',
+        'Bizans yönetiminde ağır vergi altındaki köylü için Osmanlı düzeni çoğu zaman daha katlanılırdı.',
+      ),
+    ]),
+    konu('trh10-ilim-irfan', 'İlim ve İrfan Geleneğinin Oluşması', [
+      kart(
+        'İlk medrese',
+        'İznik’te açıldı (1331). Devletin ihtiyaç duyduğu kadı ve müderrisler burada yetişti.',
+      ),
+      kart(
+        'Külliye',
+        'Cami çevresinde medrese, imaret, hamam ve şifahaneden oluşan yapı topluluğu; şehrin çekirdeğiydi.',
+      ),
+      kart(
+        'Öne çıkan adlar',
+        'Molla Fenari ilk şeyhülislam, Davud-i Kayseri ilk medresenin başmüderrisi olarak anılır.',
+      ),
+      kart(
+        'Tekke ve zaviyeler',
+        'Dervişler uç bölgelerde hem yol güvenliği hem yerleşim sağladı; kültürel kaynaşmanın merkezleriydi.',
+      ),
+      kart(
+        'Mekân ve kişi',
+        'Gelenek yalnızca kitapla değil, o kitabın okutulduğu mekân ve onu okutan kişiyle sürüyordu.',
       ),
     ]),
   ]),
   tema('trh10-t3', 'Cihan Devleti Osmanlı (1453-1683)', [
-    konu('trh10-fetih', 'İstanbul’un Fethi', [
+    konu('trh10-siyasi', '1453-1683 Arasındaki Siyasi ve Askerî Mücadeleler', [
       kart(
-        'Fethin sebepleri',
-        'Toprak bütünlüğünü sağlamak, boğazların denetimini almak, ticaret yollarına hâkim olmak ve Bizans’ın kışkırtmalarını bitirmek.',
+        'Doğuda',
+        'Çaldıran (1514) ile Safeviler durduruldu; Ridaniye (1517) ile Memlük toprakları alındı ve halifelik geçti.',
       ),
       kart(
-        'Hazırlıklar',
-        'Rumeli Hisarı yapıldı, büyük toplar döküldü, donanma güçlendirildi ve gemiler karadan yürütüldü.',
+        'Batıda',
+        'Mohaç (1526) ile Macaristan, Preveze (1538) ile Akdeniz’de üstünlük kazanıldı.',
       ),
       kart(
-        'Sonuçları',
-        'Bizans yıkıldı, Orta Çağ kapandı, Yeni Çağ başladı. Osmanlı imparatorluğa dönüştü ve İstanbul başkent oldu.',
+        'En geniş sınırlar',
+        'Kanuni döneminde devlet üç kıtaya yayıldı; Akdeniz bir Osmanlı denizi hâline geldi.',
       ),
       kart(
-        'Fetih ve Avrupa',
-        'Kaçan bilginlerin İtalya’ya gitmesi Rönesans’ı hızlandırdı; surların topla yıkılması feodal kaleyi savunmasız bıraktı.',
-      ),
-    ]),
-    konu('trh10-cihansumul', 'Cihanşümul Devlet Anlayışı', [
-      kart(
-        'Cihanşümul ne demek?',
-        'Evrensel devlet iddiası: farklı din ve milletleri tek bir düzen altında yönetme anlayışı.',
+        'Dönüm noktaları',
+        'İnebahtı (1571) donanmanın yenildiği ilk büyük çarpışma; II. Viyana Kuşatması (1683) batıya ilerleyişin sonu.',
       ),
       kart(
-        'Millet sistemi',
-        'Gayrimüslimler kendi dinî hukuklarına göre örgütlenirdi. İnanç serbestliği, imparatorluğu bir arada tutan bağdı.',
-      ),
-      kart(
-        'Halifeliğin geçişi',
-        'Yavuz’un Mısır seferiyle halifelik Osmanlı’ya geçti; devlet İslam dünyasının siyasi merkezi hâline geldi.',
-      ),
-      kart(
-        'Kanun ve örf',
-        'Şer’i hukukun yanında padişahın koyduğu örfi hukuk vardı. Kanunnameler bu ikili yapının ürünüdür.',
+        'Uzun savaşlar',
+        'İran ve Avusturya ile yıllarca süren savaşlar hazineyi ve tımar düzenini yıprattı.',
       ),
     ]),
-    konu('trh10-kesifler', 'Coğrafi Keşifler ve Osmanlı', [
+    konu('trh10-yonetim-degisim', 'Yönetim ve Ordu Yapısındaki Değişim', [
       kart(
-        'Keşiflerin sebepleri',
-        'Pusula ve gemicilikteki gelişme, doğu mallarına duyulan istek ve Osmanlı’nın ticaret yollarını denetlemesi.',
+        'Sancağa çıkma kalktı',
+        'Şehzadelerin taşrada yönetim öğrenmesi son buldu; yerine kafes usulü geldi ve deneyimsiz padişahlar arttı.',
       ),
       kart(
-        'Ticaret yollarının değişmesi',
-        'İpek ve Baharat yolları önemini yitirdi, Atlas Okyanusu limanları öne çıktı. Osmanlı gümrük gelirlerinden kaybetti.',
+        'Ekber ve erşed',
+        'Tahta hanedanın en yaşlı ve olgun üyesinin geçmesi kuralı; kardeş katlinin yerini aldı.',
+      ),
+      kart(
+        'Tımarın çözülmesi',
+        'Ateşli silahlar öne çıkınca sipahi önemini yitirdi; tımarlar iltizama döndü ve köylünün yükü arttı.',
+      ),
+      kart(
+        'Yeniçerinin bozulması',
+        'Devşirme kuralı gevşedi, sayı arttı, disiplin düştü. Yeniçeriler siyasete karışan bir güce dönüştü.',
+      ),
+      kart(
+        'Sadrazamların ağırlığı',
+        'Padişahlar geri çekilince yönetim sadrazamlara kaydı; Köprülüler dönemi bunun en belirgin örneğidir.',
+      ),
+    ]),
+    konu('trh10-somurge', 'Avrupa’nın Sömürgeci Politikalarının Etkileri', [
+      kart(
+        'Coğrafi keşifler',
+        'Yeni deniz yolları bulununca ticaret okyanuslara kaydı; İpek ve Baharat yolları önemini yitirdi.',
+      ),
+      kart(
+        'Gümrük geliri düştü',
+        'Osmanlı’nın transit ticaretten aldığı pay azaldı. Hazinenin en güvenilir gelirlerinden biri zayıfladı.',
       ),
       kart(
         'Fiyat devrimi',
-        'Amerika’dan gelen altın ve gümüş Avrupa’da enflasyona yol açtı; ucuzlayan gümüş Osmanlı akçesini de değersizleştirdi.',
+        'Amerika’dan gelen gümüş Avrupa’ya, oradan Osmanlı’ya aktı; para değer kaybetti ve enflasyon yükseldi.',
       ),
       kart(
-        'Osmanlı’nın karşılığı',
-        'Hint deniz seferleri ve Süveyş kanalı projesi denendi ama okyanus ticaretine dönük bir donanma kurulamadı.',
+        'Kapitülasyonlar',
+        'Başlangıçta ticareti canlandırmak için verilen ayrıcalıklar, zamanla yerli üreticiyi zorlayan bir yüke dönüştü.',
+      ),
+      kart(
+        'Sanayi dengesi',
+        'Avrupa ucuz ve bol mal üretmeye başlayınca Osmanlı loncaları rekabette geriledi.',
       ),
     ]),
-    konu('trh10-islahat', 'Duraklama ve Islahatlar', [
+    konu('trh10-isyan', 'Önemli İsyanların Neden ve Sonuçları', [
       kart(
-        'Duraklamanın işaretleri',
-        'Fetihlerin durması, tımar sisteminin bozulması, kapıkulu sayısının kontrolsüz artması ve merkezî otoritenin zayıflaması.',
+        'Celali isyanları',
+        'Anadolu’da ağır vergi, iltizam baskısı ve işsiz sekbanlar yüzünden çıktı. Köyler boşaldı, üretim düştü.',
       ),
       kart(
-        'Ekonomik sebepler',
-        'Savaş gelirlerinin kesilmesi, iltizam usulünün yaygınlaşması ve dış ticarette gerileme hazineyi zorladı.',
+        'İstanbul isyanları',
+        'Yeniçeri ve kapıkulu ayaklanmaları; ulufe ve cülus talepleriyle çıkıp padişah değiştirecek güce ulaştı.',
       ),
       kart(
-        'XVII. yüzyıl ıslahatları',
-        'Genellikle **eski düzene dönme** amacı taşıdı ve baskıya dayandı; kalıcı olamamalarının sebebi budur.',
+        'Eyalet isyanları',
+        'Merkezden uzak valilerin ayaklanması. Otoritenin zayıfladığı yerlerde yerel güçler öne çıktı.',
       ),
       kart(
-        'Köprülüler dönemi',
-        'Geniş yetkiyle göreve gelen Köprülü sadrazamları maliyeyi ve orduyu düzeltti; devlet kısa süreli bir toparlanma yaşadı.',
+        'Ortak sebep',
+        'Uzun savaşlar, bozulan para, artan vergi ve tımar düzeninin çöküşü. İsyanlar sebep değil sonuçtu.',
       ),
       kart(
-        'II. Viyana Kuşatması (1683)',
-        'Başarısızlıkla bitti ve gerileme dönemini başlattı. Osmanlı bundan sonra savunmada kalır.',
+        'Sonuçları',
+        'Can ve mal kaybı, göç, tarımsal üretimde düşüş ve merkezî otoritenin daha da zayıflaması.',
+      ),
+    ]),
+    konu('trh10-bilim-kultur', '1453-1683 Arasında Bilim, Kültür ve Sanat', [
+      kart(
+        'Sahn-ı Seman',
+        'Fatih’in kurduğu sekiz medrese, dönemin en üst düzey eğitim kurumuydu.',
+      ),
+      kart(
+        'Coğrafya ve denizcilik',
+        'Piri Reis’in haritası ve Kitab-ı Bahriye’si, Osmanlı denizcilik bilgisinin düzeyini gösterir.',
+      ),
+      kart(
+        'Tarih ve düşünce',
+        'Kâtip Çelebi hem coğrafya hem bibliyografya alanında yazdı; devletin sorunlarını da eleştirel biçimde ele aldı.',
+      ),
+      kart(
+        'Mimar Sinan',
+        'Şehzade, Süleymaniye ve Selimiye ile Osmanlı klasik mimarisinin doruğunu kurdu.',
+      ),
+      kart(
+        'Edebiyat ve sanat',
+        'Divan edebiyatında Fuzuli ve Baki; minyatür, hat ve çini kendi ekollerini oluşturdu.',
       ),
     ]),
   ]),

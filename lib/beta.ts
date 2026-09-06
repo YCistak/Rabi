@@ -23,7 +23,7 @@
 /**
  * Konu Anlatımı (bilgi kartları) — ana sayfadaki "Ders haritasını aç" girişi.
  *
- * İçerik 177 konuda kart taşıyor ama soru metinleri henüz hiçbirinde yazılmadı
+ * İçerik 247 konuda kart taşıyor ama soru metinleri henüz hiçbirinde yazılmadı
  * (`lib/konu/icerik/`), yani bölümün ikinci yarısı boş. Yarım bir bölümü
  * betaya çıkarmak, kullanıcıya bitmiş sanacağı bir şey göstermek olurdu.
  */
