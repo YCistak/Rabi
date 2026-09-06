@@ -3,414 +3,434 @@ import { kart, konu, program, tema } from '../tip'
 /**
  * 9. sınıf Matematik — Maarif Modeli.
  *
- * Yedi tema. Eski programın "Denklem ve Eşitsizlikler / Üçgenler / Veri"
- * ünitelendirmesi değil, programın kendi tema adları kullanılıyor;
- * "Algoritma ve Bilişim" teması Maarif ile geldi.
+ * Yedi tema. **Sıra programın sırası**: Geometrik Şekiller üçüncü, Algoritma
+ * ve Bilişim beşinci. Bu dosya bir süre ikisini yer değiştirmiş hâlde
+ * taşıyordu; `maarif.test.ts` artık sırayı `maarif/iskelet.json` üstünden
+ * denetliyor.
+ *
+ * Eski programın "polinom", "özdeşlik ve çarpanlara ayırma", "şifreleme"
+ * başlıkları bu programda 9. sınıfta **yok**.
  */
 export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
   tema('mat9-t1', 'Sayılar', [
-    konu('mat9-kume', 'Kümeler ve Sayı Aralıkları', [
+    konu('mat9-uslu-koklu', 'Üslü ve Köklü Gösterimlerle İşlemler', [
       kart(
-        'Küme gösterimi',
-        'Liste, ortak özellik ve Venn şeması. Eleman sayısı s(A) ile gösterilir; boş kümenin eleman sayısı sıfırdır.',
+        'Üslü ifade',
+        'aⁿ, a sayısının n kez çarpımıdır. a⁰ = 1 (a ≠ 0), a⁻ⁿ = 1/aⁿ.',
       ),
       kart(
-        'Birleşim ve kesişim',
-        's(A∪B) = s(A) + s(B) − s(A∩B). Ortak elemanları iki kez saymamak için çıkarılır.',
+        'Üslü sayı kuralları',
+        'Aynı tabanda çarpmada üsler toplanır, bölmede çıkarılır; üssün üssü alınırken üsler çarpılır.',
       ),
       kart(
-        'Sayı kümeleri',
-        'Doğal (ℕ) ⊂ tam (ℤ) ⊂ rasyonel (ℚ) ⊂ gerçek (ℝ). İrrasyonel sayılar rasyonel değildir ama gerçek sayıdır: √2, π.',
-      ),
-      kart(
-        'Aralık gösterimi',
-        'Köşeli parantez ucu içeri alır, normal parantez almaz: [2, 5) → 2 dâhil, 5 değil. Sonsuz her zaman açık uçlu yazılır.',
-      ),
-    ]),
-    konu('mat9-uslu', 'Üslü Sayılar', [
-      kart(
-        'Temel kurallar',
-        'aᵐ·aⁿ = aᵐ⁺ⁿ, aᵐ/aⁿ = aᵐ⁻ⁿ, (aᵐ)ⁿ = aᵐ·ⁿ. Taban aynı olmadan üsler toplanmaz.',
-      ),
-      kart(
-        'Sıfır ve negatif üs',
-        'a⁰ = 1 (a ≠ 0), a⁻ⁿ = 1/aⁿ. Negatif üs sayıyı negatif yapmaz, ters çevirir.',
-      ),
-      kart(
-        'İşaret tuzağı',
-        '(−2)⁴ = 16 ama −2⁴ = −16. Parantez yoksa üs yalnız sayıya aittir, eksiye değil.',
-      ),
-      kart(
-        'Bilimsel gösterim',
-        'a × 10ⁿ biçiminde, 1 ≤ a < 10. Çok büyük ve çok küçük sayıları karşılaştırmayı kolaylaştırır.',
-      ),
-    ]),
-    konu('mat9-koklu', 'Köklü Sayılar', [
-      kart(
-        'Kök ve üs ilişkisi',
-        'ⁿ√aᵐ = aᵐ/ⁿ. Kökü kesirli üs olarak yazmak, üslü sayı kurallarını köklerde de kullanmayı sağlar.',
-      ),
-      kart(
-        'Çift dereceli kökün içi',
-        'Negatif olamaz. √x ifadesinde x ≥ 0 olmak zorundadır; tek dereceli kökte böyle bir sınır yok.',
-      ),
-      kart(
-        '√a² = |a|',
-        'Sonuç her zaman pozitiftir. Bu yüzden √(−3)² = 3 olur, −3 değil.',
+        'Köklü ifade',
+        'ⁿ√a, n. kuvveti a olan sayıdır. Köklü ifade kesirli üsle de yazılır: √a = a^(1/2).',
       ),
       kart(
         'Paydayı rasyonel yapma',
-        'Payda tek terimliyse aynı kökle, iki terimliyse eşleniğiyle genişletilir: 1/(√3−1) → (√3+1)/2.',
+        'Paydadaki kök, uygun bir ifadeyle genişletilerek yok edilir; iki terimliyse eşleniğiyle çarpılır.',
+      ),
+      kart(
+        'Dikkat: √(a²) = |a|',
+        'Karekökün sonucu negatif olamaz. Bu yüzden değişkenli ifadelerde mutlak değer gerekir.',
       ),
     ]),
-    konu('mat9-ozdeslik', 'Özdeşlikler ve Çarpanlara Ayırma', [
+    konu('mat9-araliklar', 'Gerçek Sayı Aralıkları ve Küme Sembolleri', [
       kart(
-        'Tam kare',
-        '(a ± b)² = a² ± 2ab + b². Ortadaki 2ab terimini unutmak en sık yapılan hata.',
+        'Aralık gösterimi',
+        'Köşeli parantez uç noktayı içerir, normal parantez içermez: [2, 5) → 2 dâhil, 5 hariç.',
       ),
       kart(
-        'İki kare farkı',
-        'a² − b² = (a − b)(a + b). Kare **toplamı** çarpanlarına ayrılmaz.',
+        'Sayı doğrusunda',
+        'Dolu nokta uç noktanın dâhil olduğunu, boş nokta dâhil olmadığını gösterir.',
       ),
       kart(
-        'Küp özdeşlikleri',
-        'a³ ± b³ = (a ± b)(a² ∓ ab + b²). İkinci parantezteki ortadaki terimin işareti birincinin tersidir.',
+        'Birleşim ve kesişim',
+        'Birleşim iki aralığın tamamı, kesişim ortak kısmıdır. Kesişim boş olabilir.',
       ),
       kart(
-        'Ortak çarpan',
-        'Çarpanlara ayırmada ilk bakılacak yer. Önce ortak çarpanı al, sonra kalan ifadeye özdeşlik uygula.',
+        'Sonsuz uç',
+        'Sonsuz bir sayı değildir, bu yüzden yanına daima normal parantez konur: (−∞, 3].',
+      ),
+    ]),
+    konu('mat9-sayi-kumeleri', 'Sayı Kümeleri ve İşlem Özellikleri', [
+      kart(
+        'Kümeler iç içedir',
+        'Doğal ⊂ tam ⊂ rasyonel ⊂ gerçek. İrrasyonel sayılar rasyonellerin dışındadır.',
       ),
       kart(
-        'Üç terimli ayırma',
-        'x² + bx + c için çarpımı c, toplamı b olan iki sayı aranır: x² + 5x + 6 = (x+2)(x+3).',
+        'Rasyonel sayı',
+        'a/b biçiminde yazılabilen sayı (b ≠ 0). Ondalık açılımı ya sonludur ya devirlidir.',
+      ),
+      kart(
+        'İrrasyonel sayı',
+        'Kesir olarak yazılamayan sayı: √2, π. Ondalık açılımı sonsuz ve devirsizdir.',
+      ),
+      kart(
+        'İşlem özellikleri',
+        'Değişme, birleşme, dağılma; etkisiz eleman toplamada 0 çarpmada 1; ters eleman −a ve 1/a.',
+      ),
+      kart(
+        'Çıkarma ve bölme',
+        'Değişme özelliği yoktur: 5 − 3 ile 3 − 5 aynı değildir. Bu yüzden ayrı işlem sayılırlar.',
+      ),
+    ]),
+    konu('mat9-cebirsel-ifade', 'İşlem Özelliklerini Cebirsel Olarak İfade Etme', [
+      kart(
+        'Neden harf?',
+        'Harf, "her sayı için" demenin kısa yolu. a + b = b + a bir kural değil, sonsuz eşitliğin özetidir.',
+      ),
+      kart(
+        'Dağılma özelliği',
+        'a(b + c) = ab + ac. Çarpanlara ayırmanın da temeli budur, ters yönde okunur.',
+      ),
+      kart(
+        'Genelleme yapmak',
+        'Birkaç sayıda gözlenen örüntü, harfle yazıldığında bütün sayılar için iddiaya dönüşür.',
+      ),
+      kart(
+        'Karşı örnek',
+        'Bir genellemeyi çürütmek için tek bir karşı örnek yeter; doğrulamak için ise ispat gerekir.',
       ),
     ]),
   ]),
   tema('mat9-t2', 'Nicelikler ve Değişimler', [
-    konu('mat9-denklem', 'Birinci Dereceden Denklemler', [
-      kart(
-        'Denklem çözmenin mantığı',
-        'İki tarafa aynı işlemi uygulamak eşitliği bozmaz. Amaç bilinmeyeni yalnız bırakmak.',
-      ),
-      kart(
-        'Çözüm kümesi üç türlü',
-        'Tek çözüm, sonsuz çözüm (0·x = 0) ya da çözümsüz (0·x = 5). Katsayı sıfırlanınca sağ tarafa bak.',
-      ),
-      kart(
-        'Problem kurma',
-        'Bilinmeyeni seç, cümleyi olduğu gibi denkleme çevir. "5 fazlası" → x + 5, "5 katının 3 eksiği" → 5x − 3.',
-      ),
-    ]),
-    konu('mat9-esitsizlik', 'Eşitsizlikler', [
-      kart(
-        'Negatifle çarpma',
-        'Eşitsizliğin iki tarafı negatif bir sayıyla çarpılır ya da bölünürse **yön değişir**. En sık atlanan kural.',
-      ),
-      kart(
-        'Çözüm bir aralıktır',
-        'Denklemin çözümü nokta, eşitsizliğin çözümü aralıktır. Sayı doğrusunda göstermek kontrolü kolaylaştırır.',
-      ),
-      kart(
-        'Çift eşitsizlik',
-        'a < x < b biçimindeki ifadede yapılan işlem üç bölgeye birden uygulanır.',
-      ),
-    ]),
-    konu('mat9-fonksiyon', 'Doğrusal Fonksiyonlar', [
+    konu('mat9-dogrusal', 'Doğrusal Fonksiyonlar ve Nitel Özellikleri', [
       kart(
         'Fonksiyon nedir?',
-        'Her girdiye **tek** çıktı eşleyen kural. Bir girdiye iki çıktı düşüyorsa fonksiyon değildir.',
+        'Her girdiye tam olarak bir çıktı eşleyen kural. Bir girdiye iki çıktı verilirse fonksiyon olmaz.',
       ),
       kart(
         'Doğrusal fonksiyon',
-        'f(x) = ax + b. Grafiği doğrudur; a eğim, b y eksenini kestiği noktadır.',
+        'f(x) = ax + b biçimindedir ve grafiği bir doğrudur.',
       ),
       kart(
-        'Eğimin anlamı',
-        'x bir birim artınca y’nin ne kadar değiştiği. Pozitif eğim artan, negatif eğim azalan doğru demektir.',
+        'Eğim',
+        'a katsayısı eğimdir: x bir birim arttığında y’nin ne kadar değiştiğini söyler.',
       ),
       kart(
-        'İki noktadan eğim',
-        'a = (y₂ − y₁)/(x₂ − x₁). Paydanın sıfır olması doğrunun düşey olduğunu, eğimin tanımsız olduğunu gösterir.',
+        'Artan mı azalan mı?',
+        'a > 0 ise fonksiyon artandır, a < 0 ise azalandır, a = 0 ise sabittir.',
       ),
       kart(
-        'Paralel ve dik doğrular',
-        'Paralel doğruların eğimi eşittir. Dik doğrularda eğimlerin çarpımı −1’dir.',
+        'Kesim noktaları',
+        'b değeri y eksenini kestiği noktadır; x eksenini kestiği yer f(x) = 0 çözülerek bulunur.',
       ),
     ]),
-    konu('mat9-mutlak', 'Mutlak Değer', [
+    konu('mat9-mutlak-deger', 'Mutlak Değer Fonksiyonu ve Nitel Özellikleri', [
       kart(
-        'Tanım',
-        '|x| sayının sıfıra uzaklığıdır, bu yüzden hiçbir zaman negatif olmaz. x ≥ 0 ise |x| = x, x < 0 ise |x| = −x.',
+        'Mutlak değer',
+        'Bir sayının sıfıra olan uzaklığı. Sonucu asla negatif olamaz.',
       ),
       kart(
-        'Denklem çözümü',
-        '|x| = a (a > 0) iki durum verir: x = a veya x = −a. a negatifse çözüm yoktur.',
-      ),
-      kart(
-        'Eşitsizlik',
-        '|x| < a → −a < x < a (arada kalır). |x| > a → x < −a veya x > a (dışarı çıkar).',
+        'Tanımı',
+        '|x| = x (x ≥ 0 ise), |x| = −x (x < 0 ise). Parçalı bir tanımdır.',
       ),
       kart(
         'Grafiği',
-        'f(x) = |x| grafiği V şeklindedir; tepe noktası mutlak değerin içini sıfırlayan yerdedir.',
+        'V şeklindedir ve tepe noktası kırılma noktasıdır. |x| grafiğinin tepesi orijindedir.',
+      ),
+      kart(
+        'Denklem çözerken',
+        '|x| = a denkleminin a > 0 için iki çözümü vardır: x = a ve x = −a.',
+      ),
+      kart(
+        'Eşitsizlikte',
+        '|x| < a ise −a < x < a; |x| > a ise x < −a ya da x > a. İkisi karıştırılıyor.',
+      ),
+    ]),
+    konu('mat9-denklem-esitsizlik', 'Doğrusal Denklem ve Eşitsizlikler İçeren Problemler', [
+      kart(
+        'Denklem kurmak',
+        'Bilinmeyeni seç, cümleyi eşitliğe çevir, çöz, sonucu problemin bağlamında kontrol et.',
+      ),
+      kart(
+        'Eşitsizlikte işaret',
+        'İki tarafı negatif sayıyla çarparken ya da bölerken eşitsizlik yön değiştirir.',
+      ),
+      kart(
+        'Çözüm kümesi',
+        'Denklemin çözümü genellikle tek noktadır; eşitsizliğin çözümü bir aralıktır.',
+      ),
+      kart(
+        'Problemde anlam kontrolü',
+        'Kişi sayısı negatif, yaş kesirli çıkmaz. Matematiksel doğru çözüm bağlamda geçersiz olabilir.',
       ),
     ]),
   ]),
-  tema('mat9-t3', 'Algoritma ve Bilişim', [
-    konu('mat9-algoritma', 'Algoritma ve Akış Şeması', [
-      kart(
-        'Algoritma nedir?',
-        'Bir işi bitiren, sonlu ve sıralı adımlar dizisi. Belirsiz adım içeremez; her adım tek bir anlama gelmelidir.',
-      ),
-      kart(
-        'Akış şeması sembolleri',
-        'Oval başlangıç/bitiş, paralelkenar giriş/çıkış, dikdörtgen işlem, eşkenar dörtgen karar.',
-      ),
-      kart(
-        'Üç temel yapı',
-        'Sıralı işlem, koşul (eğer…ise) ve döngü. Her algoritma bu üçünün birleşimiyle yazılabilir.',
-      ),
-      kart(
-        'İzleme tablosu',
-        'Değişkenlerin adım adım aldığı değerleri yazmak, algoritmanın doğruluğunu sınamanın en pratik yolu.',
-      ),
-    ]),
-    konu('mat9-mantik', 'Mantık Bağlaçları', [
-      kart(
-        'Önerme',
-        'Doğru ya da yanlış olduğu kesin olarak söylenebilen cümle. Soru ve emir cümleleri önerme değildir.',
-      ),
-      kart(
-        've / veya',
-        '"ve" (∧) yalnız ikisi de doğruyken doğrudur. "veya" (∨) en az biri doğruyken doğrudur.',
-      ),
-      kart(
-        'İse (koşullu)',
-        'p → q yalnızca p doğru, q yanlışken yanlış olur. Öncül yanlışsa önerme doğru sayılır.',
-      ),
-      kart(
-        'Karşıt tersi',
-        'p → q ile ~q → ~p her zaman aynı doğruluk değerini taşır. İspatlarda bu eşdeğerlik kullanılır.',
-      ),
-      kart(
-        'Niceleyiciler',
-        '∀ "her" demektir, tek bir karşı örnekle çürütülür. ∃ "en az bir" demektir, tek bir örnekle kanıtlanır.',
-      ),
-    ]),
-    konu('mat9-sifreleme', 'Şifreleme', [
-      kart(
-        'Neden matematik?',
-        'Şifreleme, geri döndürülmesi zor bir işlem bulma problemidir. Modüler aritmetik ve büyük asal sayılar bu yüzden kullanılır.',
-      ),
-      kart(
-        'Sezar şifresi',
-        'Her harfi sabit sayıda kaydırma. 26 olasılık olduğu için denemeyle kolayca kırılır.',
-      ),
-      kart(
-        'Modüler aritmetik',
-        'Saat aritmetiği: 26’ya bölümden kalanla çalışmak. Kaydırma şifrelerinin matematiksel karşılığı budur.',
-      ),
-      kart(
-        'Simetrik ve açık anahtar',
-        'Simetrikte iki taraf aynı anahtarı kullanır. Açık anahtarda şifreleyen anahtar herkese açıktır, çözen anahtar gizlidir.',
-      ),
-    ]),
-  ]),
-  tema('mat9-t4', 'Geometrik Şekiller', [
-    konu('mat9-acilar', 'Açılar ve Doğrular', [
-      kart(
-        'Açı çiftleri',
-        'Tümler açıların toplamı 90°, bütünler açıların toplamı 180°. Ters açılar eşittir.',
-      ),
-      kart(
-        'Paralel doğrular',
-        'Bir kesenle kesilen paralellerde yöndeş, ters ve iç ters açılar eşit; iç yan açılar bütünlerdir.',
-      ),
-      kart(
-        'Z ve F kuralı',
-        'Şekilde Z görüyorsan açılar eşit (iç ters), F görüyorsan eşit (yöndeş). Hızlı kontrol yöntemi.',
-      ),
-    ]),
-    konu('mat9-ucgen', 'Üçgende Açı ve Kenar', [
+  tema('mat9-t3', 'Geometrik Şekiller', [
+    konu('mat9-ucgen-ozellik', 'Üçgende Açı ve Kenarla İlgili Özellikler', [
       kart(
         'İç açılar toplamı',
-        'Her üçgende 180°. Dış açılar toplamı ise her çokgende 360°.',
+        'Bir üçgenin iç açıları toplamı 180°, dış açıları toplamı 360°’dir.',
       ),
       kart(
-        'Dış açı',
-        'Bir dış açı, komşu olmayan iki iç açının toplamına eşittir.',
+        'Dış açı özelliği',
+        'Bir dış açı, kendisine komşu olmayan iki iç açının toplamına eşittir.',
       ),
       kart(
         'Kenar-açı ilişkisi',
-        'Büyük açının karşısında büyük kenar bulunur. Üçgeni sıralamak için önce açıları sırala.',
+        'Büyük açının karşısında büyük kenar bulunur. İkisi aynı yönde değişir.',
       ),
       kart(
         'Üçgen eşitsizliği',
-        'Bir kenar, öteki iki kenarın toplamından küçük ve farkının mutlak değerinden büyüktür: |b−c| < a < b+c.',
+        'İki kenarın toplamı üçüncü kenardan büyük, farkının mutlak değeri ondan küçük olmalıdır.',
       ),
       kart(
-        'Üçgen çeşitleri',
-        'Kenarlarına göre eşkenar, ikizkenar, çeşitkenar; açılarına göre dar, dik, geniş açılı.',
-      ),
-    ]),
-    konu('mat9-yardimci', 'Üçgende Yardımcı Elemanlar', [
-      kart(
-        'Kenarortay',
-        'Köşeden karşı kenarın orta noktasına çizilir. Üçü ağırlık merkezinde kesişir ve orayı 2:1 oranında böler.',
-      ),
-      kart(
-        'Açıortay',
-        'Bir açıyı iki eş parçaya böler. Üzerindeki her nokta açının kollarına eşit uzaklıktadır.',
-      ),
-      kart(
-        'Yükseklik',
-        'Köşeden karşı kenara indirilen dik. Geniş açılı üçgende bazı yükseklikler üçgenin dışında kalır.',
-      ),
-      kart(
-        'Alan',
-        'Alan = (taban × yükseklik)/2. Aynı tabana ve aynı yüksekliğe sahip üçgenlerin alanı eşittir.',
+        'Üçgen türleri',
+        'Kenarlarına göre eşkenar, ikizkenar, çeşitkenar; açılarına göre dar, dik ve geniş açılı.',
       ),
     ]),
   ]),
-  tema('mat9-t5', 'Eşlik ve Benzerlik', [
-    konu('mat9-donusum', 'Dönüşümler', [
+  tema('mat9-t4', 'Eşlik ve Benzerlik', [
+    konu('mat9-donusum', 'Geometrik Dönüşümler', [
       kart(
         'Öteleme',
-        'Şekil aynı yönde, aynı miktarda kaydırılır. Boyut ve yön korunur.',
+        'Şekil belirli bir yönde ve miktarda kaydırılır. Boyut ve şekil değişmez.',
       ),
       kart(
         'Yansıma',
-        'Bir doğruya göre simetrik görüntü alınır. x eksenine göre yansımada y’nin, y eksenine göre yansımada x’in işareti değişir.',
+        'Bir doğruya göre simetrik görüntü alınır. Şekil ters döner ama ölçüleri korunur.',
       ),
       kart(
-        'Dönme',
-        'Bir merkez etrafında belli açı kadar döndürme. Saat yönünün tersi pozitif kabul edilir.',
+        'Döndürme',
+        'Bir nokta çevresinde belirli açıyla çevrilir. Yön ve açı birlikte belirtilmelidir.',
       ),
       kart(
-        'Üçü de eşlik üretir',
-        'Öteleme, yansıma ve dönme şeklin boyutunu değiştirmez; sonuç orijinaline **eş**tir.',
+        'Eşlik dönüşümleri',
+        'Öteleme, yansıma ve döndürme uzunlukları korur; ürettikleri şekil orijinaline eştir.',
+      ),
+      kart(
+        'Benzerlik dönüşümü',
+        'Ölçekleme (homoteti) boyutu değiştirir ama açıları korur; sonuç benzer bir şekildir.',
       ),
     ]),
-    konu('mat9-eslik', 'Eşlik ve Benzerlik', [
+    konu('mat9-eslik-kosul', 'Eşlik ve Benzerlik Koşulları', [
       kart(
-        'Eşlik ve benzerlik farkı',
-        'Eş üçgenlerin hem açıları hem kenarları aynıdır. Benzer üçgenlerde açılar aynı, kenarlar orantılıdır.',
+        'Eşlik nedir?',
+        'İki şeklin bütün karşılıklı kenar ve açılarının eşit olması. Üst üste tam olarak çakışırlar.',
       ),
       kart(
-        'Eşlik ölçütleri',
-        'KKK, KAK, AKA. Üç açının eşit olması eşlik için yetmez — o yalnızca benzerlik verir.',
+        'Eşlik koşulları',
+        'KKK, KAK, AKA ve dik üçgenlerde hipotenüs-kenar. Üç uygun eleman eşliği garanti eder.',
+      ),
+      kart(
+        'Benzerlik nedir?',
+        'Açılar eşit, karşılıklı kenarlar orantılıdır. Şekil aynı, ölçek farklıdır.',
+      ),
+      kart(
+        'Benzerlik koşulları',
+        'AA, KKK (oran) ve KAK (oran). İki açının eşitliği benzerlik için yeter.',
+      ),
+      kart(
+        'Eşlik özel bir benzerliktir',
+        'Benzerlik oranı 1 olan benzerlik, eşliktir. Her eş şekil benzerdir, tersi doğru değildir.',
+      ),
+    ]),
+    konu('mat9-benzer-ucgen', 'Benzer Üçgenler Oluşturma', [
+      kart(
+        'Paralel kesen',
+        'Bir üçgende bir kenara paralel çizilen doğru, orijinaline benzer küçük bir üçgen üretir.',
       ),
       kart(
         'Benzerlik oranı',
-        'Kenarlar k oranındaysa çevreler de k, alanlar ise k² oranındadır. Alan oranını doğrudan k almak sık yapılan hata.',
+        'Karşılıklı kenarların oranı. Çevreler de aynı oranda, alanlar ise oranın karesi kadar değişir.',
+      ),
+      kart(
+        'Karşılıklı elemanlar',
+        'Benzerlik yazılırken köşeler doğru sırayla eşleştirilmelidir; sıra bozulursa oranlar yanlış kurulur.',
+      ),
+      kart(
+        'Günlük kullanım',
+        'Gölge boyu ile ağaç boyunu hesaplamak benzer üçgen kurmaktır.',
       ),
     ]),
-    konu('mat9-tales', 'Tales, Öklid ve Pisagor', [
+    konu('mat9-teoremler', 'Tales, Öklid ve Pisagor Teoremleri', [
       kart(
         'Tales teoremi',
-        'Paralel doğrular, kestikleri doğrularda orantılı parçalar ayırır. Üçgende bir kenara paralel doğru benzer üçgen üretir.',
+        'Paralel doğrular, kestikleri doğrular üzerinde orantılı parçalar ayırır.',
       ),
       kart(
-        'Pisagor',
-        'Dik üçgende a² + b² = c². Yalnız dik üçgende geçerlidir; c hipotenüstür.',
+        'Pisagor teoremi',
+        'Dik üçgende hipotenüsün karesi, dik kenarların karelerinin toplamına eşittir.',
       ),
       kart(
-        'Bilinen üçlüler',
-        '3-4-5, 5-12-13, 8-15-17 ve katları. Tanımak soruda zaman kazandırır.',
+        'Pisagor üçlüleri',
+        '(3,4,5), (5,12,13), (8,15,17) ve katları. Tanımak soruda zaman kazandırır.',
       ),
       kart(
         'Öklid bağıntıları',
-        'Dik üçgende hipotenüse ait yükseklik h için h² = p·q; ayrıca a² = p·c ve b² = q·c olur.',
+        'Dik üçgende hipotenüse indirilen yükseklik, üçgeni kendisine benzer iki üçgene ayırır.',
+      ),
+      kart(
+        'Neden aynı temada?',
+        'Üçünün de ispatı benzerliğe dayanır; ayrı formüller gibi görünen şeyler tek fikrin sonuçlarıdır.',
+      ),
+    ]),
+    konu('mat9-benzerlik-problem', 'Eşlik ve Benzerlik Problemleri', [
+      kart(
+        'Çözüm yolu',
+        'Önce benzer üçgenleri ayır, sonra karşılıklı köşeleri eşleştir, en sonda oranı kur.',
+      ),
+      kart(
+        'En sık hata',
+        'Karşılıklı olmayan kenarları oranlamak. Eşleştirme yanlışsa oran da yanlış olur.',
+      ),
+      kart(
+        'Alan oranı',
+        'Benzerlik oranı k ise alan oranı k²’dir. Uzunluk oranıyla alan oranı karıştırılıyor.',
+      ),
+      kart(
+        'Uygulama',
+        'Harita ölçeği, maket ve gölge boyu hesapları hep benzerlik problemidir.',
+      ),
+    ]),
+  ]),
+  tema('mat9-t5', 'Algoritma ve Bilişim', [
+    konu('mat9-algoritma', 'Algoritma Temelli Problemler', [
+      kart(
+        'Algoritma nedir?',
+        'Bir problemi çözmek için izlenen sonlu, sıralı ve kesin adımlar dizisi.',
+      ),
+      kart(
+        'Üç özellik',
+        'Sonlu olmalı, her adım açık olmalı ve aynı girdide her zaman aynı sonucu vermelidir.',
+      ),
+      kart(
+        'Akış şeması',
+        'Oval başlangıç-bitiş, dikdörtgen işlem, eşkenar dörtgen karar, paralelkenar giriş-çıkış.',
+      ),
+      kart(
+        'Yapılar',
+        'Sıralı, koşullu (eğer) ve tekrarlı (döngü) yapılar. Her algoritma bu üçünün bileşimidir.',
+      ),
+      kart(
+        'Neden matematikte?',
+        'Matematiksel çözüm de bir algoritmadır: bölme işlemi ve denklem çözme adım adım tanımlıdır.',
+      ),
+    ]),
+    konu('mat9-mantik', 'Mantık Bağlaçları ve Niceleyiciler', [
+      kart(
+        'Önerme',
+        'Doğru ya da yanlış olduğu kesin olarak söylenebilen ifade. Soru ve emir cümlesi önerme değildir.',
+      ),
+      kart(
+        'Bağlaçlar',
+        've (∧) ikisi birden doğruysa doğru; veya (∨) en az biri doğruysa doğru; değil (¬) tersine çevirir.',
+      ),
+      kart(
+        'Koşullu önerme',
+        'p ⇒ q yalnızca p doğru ve q yanlışken yanlıştır. Diğer üç durumda doğrudur.',
+      ),
+      kart(
+        'Niceleyiciler',
+        '∀ "her" demektir, ∃ "en az bir" demektir. İkisinin yeri değişince anlam tümüyle değişir.',
+      ),
+      kart(
+        'Olumsuzlama',
+        '"Her" olumsuzlanınca "en az bir", "en az bir" olumsuzlanınca "hiçbir" olur.',
+      ),
+    ]),
+    konu('mat9-mantik-algoritma', 'Mantık Bağlaçlarının Algoritmik Kullanımı', [
+      kart(
+        'Koşullu ifadeler',
+        'Programdaki "eğer" ifadeleri mantık önermeleridir; koşul doğruysa blok çalışır.',
+      ),
+      kart(
+        'Bileşik koşullar',
+        '"Yaş > 18 ve ehliyet var" gibi koşullar mantık bağlaçlarıyla kurulur.',
+      ),
+      kart(
+        'Döngü koşulu',
+        'Döngü, koşul önermesi doğru kaldığı sürece tekrarlanır. Koşul hiç yanlış olmazsa döngü bitmez.',
+      ),
+      kart(
+        'Karar noktaları',
+        'Akış şemasındaki her eşkenar dörtgen bir önermedir ve çıkışları doğru/yanlış diye ayrılır.',
       ),
     ]),
   ]),
   tema('mat9-t6', 'İstatistiksel Araştırma Süreci', [
-    konu('mat9-veri', 'Veri ve Araştırma Süreci', [
+    konu('mat9-veri-dagilim', 'Tek Nicel Değişkenli Veri Dağılımları', [
       kart(
-        'Sürecin adımları',
-        'Soru sor → veri topla → veriyi düzenle ve göster → yorumla. Soru netleşmeden toplanan veri işe yaramaz.',
+        'Nicel ve nitel veri',
+        'Nicel veri sayıyla ölçülür (boy, süre); nitel veri kategoriyle belirtilir (renk, cinsiyet).',
       ),
       kart(
-        'Değişken türleri',
-        'Nicel değişken sayıyla ölçülür (boy, süre); nitel değişken kategoridir (renk, cinsiyet).',
+        'Merkezî eğilim ölçüleri',
+        'Aritmetik ortalama, ortanca (medyan) ve tepe değer (mod).',
       ),
       kart(
-        'Örneklem',
-        'Tüm kitleye ulaşılamadığında seçilen alt grup. Temsil etmiyorsa sonuç yanlıdır.',
-      ),
-    ]),
-    konu('mat9-merkez', 'Merkezî Eğilim ve Yayılım', [
-      kart(
-        'Ortalama, ortanca, tepe değer',
-        'Ortalama toplamın sayıya bölümü, ortanca sıralı verinin ortası, tepe değer en çok tekrarlanan.',
+        'Ortalama mı ortanca mı?',
+        'Aşırı uç değerler varsa ortalama yanıltır; ortanca uçlardan etkilenmez.',
       ),
       kart(
-        'Hangisi daha güvenilir?',
-        'Uç değer varsa ortalama yanılır, ortanca dayanıklıdır. Bir milyarderin girdiği sınıfın ortalama geliri sınıfı anlatmaz.',
+        'Yayılım ölçüleri',
+        'Açıklık, çeyrekler açıklığı ve standart sapma. Verinin ne kadar dağıldığını söyler.',
       ),
       kart(
-        'Açıklık ve çeyrekler',
-        'Açıklık = en büyük − en küçük. Çeyrekler veriyi dörde böler; Ç3 − Ç1 çeyrekler açıklığıdır.',
-      ),
-      kart(
-        'Standart sapma',
-        'Verinin ortalamadan ne kadar yayıldığını gösterir. Küçükse veriler ortalamaya yakın toplanmıştır.',
+        'Grafikler',
+        'Histogram dağılımın şeklini, kutu grafiği ise ortanca ve uç değerleri gösterir.',
       ),
     ]),
-    konu('mat9-grafik', 'Histogram ve Kutu Grafiği', [
+    konu('mat9-dagilim-inceleme', 'Başkalarının Oluşturduğu Veri Dağılımlarını İnceleme', [
       kart(
-        'Histogram',
-        'Sürekli veriyi aralıklara bölüp sıklığı gösterir. Sütun grafiğinden farkı: sütunlar bitişiktir, çünkü aralıklar süreklidir.',
+        'Neye bakılır?',
+        'Eksen aralıkları, örneklem büyüklüğü, veri kaynağı ve grafiğin türü.',
       ),
       kart(
-        'Kutu grafiği',
-        'Beş sayı özetini gösterir: en küçük, Ç1, ortanca, Ç3, en büyük. Kutu verinin ortadaki %50’sidir.',
+        'Kesik eksen',
+        'Y ekseni sıfırdan başlamıyorsa küçük farklar büyük görünür. En sık kullanılan yanıltma budur.',
       ),
       kart(
-        'Grafik yorumlama',
-        'Sağa çarpık dağılımda ortalama ortancadan büyüktür. Kutunun uzun tarafı verinin yayıldığı yönü söyler.',
+        'Örneklem önemli',
+        'Az sayıda ya da taraflı seçilmiş örneklem, doğru hesaplansa bile yanlış sonuç verir.',
       ),
       kart(
-        'Yanıltıcı grafik',
-        'Düşey eksene sıfırdan başlamayan grafik farkı olduğundan büyük gösterir. Önce ekseni oku.',
+        'Korelasyon nedensellik değildir',
+        'İki değişkenin birlikte artması, birinin ötekine sebep olduğunu göstermez.',
       ),
     ]),
   ]),
   tema('mat9-t7', 'Veriden Olasılığa', [
-    konu('mat9-olasilik', 'Olasılığın Temelleri', [
+    konu('mat9-deneysel', 'Deneysel Olasılık', [
       kart(
-        'Örnek uzay',
-        'Bir deneyin bütün olası sonuçları. Zarda 6, iki zarda 36 sonuç vardır.',
+        'Tanımı',
+        'Gerçekleştirilen deneyde, istenen sonucun gözlenme sayısının toplam deneme sayısına oranı.',
       ),
       kart(
-        'Teorik olasılık',
-        'İstenen durum / tüm durumlar. Sonuçların eşit olasılıklı olduğu varsayılır.',
+        'Deneme sayısı önemli',
+        'Deneme arttıkça deneysel olasılık teorik olasılığa yaklaşır. Az denemede sapma büyük olur.',
       ),
       kart(
-        'Deneysel olasılık',
-        'Gözlenen sıklık / deneme sayısı. Deneme sayısı arttıkça teorik değere yaklaşır.',
+        'Neden gerekli?',
+        'Teorik olasılığı hesaplanamayan durumlarda (bozuk zar, hava durumu) tek yol gözlemdir.',
       ),
       kart(
-        'Olasılığın sınırları',
-        'Her olasılık 0 ile 1 arasındadır. İmkânsız olay 0, kesin olay 1’dir.',
+        'Sıklık tablosu',
+        'Deneme sonuçları sıklık tablosuna işlenir; oranlar buradan hesaplanır.',
       ),
     ]),
-    konu('mat9-olay', 'Olay Türleri', [
+    konu('mat9-teorik', 'Teorik Olasılık', [
       kart(
-        'Ayrık olaylar',
-        'Aynı anda gerçekleşemezler. P(A veya B) = P(A) + P(B).',
+        'Tanımı',
+        'İstenen durum sayısının, tüm olası durum sayısına oranı. Sonuçların eşit olasılıklı olması gerekir.',
       ),
       kart(
-        'Ayrık olmayan olaylar',
-        'Ortak sonuçları vardır: P(A∪B) = P(A) + P(B) − P(A∩B). Ortak kısmı iki kez saymamak için çıkarılır.',
+        'Değer aralığı',
+        'Olasılık 0 ile 1 arasındadır. 0 imkânsız, 1 kesin olayı gösterir.',
+      ),
+      kart(
+        'Örnek uzay',
+        'Tüm olası sonuçların kümesi. Bir zarda örnek uzay {1,2,3,4,5,6}, eleman sayısı 6’dır.',
       ),
       kart(
         'Tümleyen olay',
-        'P(A) + P(A′) = 1. "En az bir" içeren sorularda tümleyenden gitmek çoğu zaman daha kısadır.',
+        'Bir olayın olmama olasılığı, 1’den olma olasılığının çıkarılmasıdır.',
       ),
       kart(
-        'Bağımsız olaylar',
-        'Biri ötekini etkilemiyorsa P(A ve B) = P(A) · P(B). Yazı-tura atışlarında önceki sonuç sonrakini etkilemez.',
+        'Yaygın yanılgı',
+        'Yazı gelen bir paranın sonraki atışta tura gelme olasılığı yine 1/2’dir; para geçmişi hatırlamaz.',
       ),
     ]),
   ]),

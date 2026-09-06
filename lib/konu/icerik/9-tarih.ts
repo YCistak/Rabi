@@ -3,247 +3,288 @@ import { kart, konu, program, tema } from '../tip'
 /**
  * 9. sınıf Tarih — Maarif Modeli.
  *
- * Üç tema: **Geçmişin İnşa Sürecinde Tarih**, **Eski Çağ Medeniyetleri**,
- * **Orta Çağ Medeniyetleri**. Eski programın "Tarih ve Zaman / İnsanlığın
- * İlk Dönemleri / Orta Çağ’da Dünya / İlk ve Orta Çağlarda Türk Dünyası"
- * ünitelendirmesi değil; Türk tarihi ayrı ünite değil, temaların içinde.
+ * Üç tema: Geçmişin İnşa Sürecinde Tarih, Eski Çağ Medeniyetleri, Orta Çağ
+ * Medeniyetleri. Konu adları ve sırası `maarif/iskelet.json`'dan;
+ * `maarif.test.ts` denetliyor.
+ *
+ * Program konuları **medeniyet ekseninde** kuruyor: eski programdaki
+ * "Mezopotamya", "Anadolu Medeniyetleri" gibi coğrafya başlıkları yok;
+ * yerine yönetim, hukuk, inanç gibi karşılaştırmalı başlıklar var.
  */
 export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a', [
   tema('trh9-t1', 'Geçmişin İnşa Sürecinde Tarih', [
-    konu('trh9-bilim', 'Tarih Bilimi ve Yöntemi', [
+    konu('trh9-fayda', 'Tarih Öğrenmenin Faydaları', [
       kart(
-        'Tarihin konusu',
-        'Geçmişteki insan topluluklarının yaşayışını, yer ve zaman göstererek, neden-sonuç ilişkisi içinde inceler.',
+        'Neden tarih?',
+        'Bugünkü kurumların, sınırların ve sorunların nereden geldiğini anlatır. Bugünü açıklayan şey çoğu zaman dündür.',
       ),
       kart(
-        'Deney yapılamaz',
-        'Olay bir kez yaşanır ve tekrarlanamaz. Bu yüzden tarihte deney ve gözlem yerine kaynak eleştirisi kullanılır.',
+        'Kimlik ve aidiyet',
+        'Ortak geçmiş bilgisi bir toplumu birbirine bağlar; kendini tanımanın bir yolu da geçmişini bilmektir.',
       ),
       kart(
-        'Yöntemin adımları',
-        'Kaynak tarama → tasnif (sınıflandırma) → tahlil (çözümleme) → tenkit (eleştiri) → terkip (sentez).',
+        'Eleştirel düşünme',
+        'Tarih, kaynak sorgulamayı öğretir: kim söylemiş, neden söylemiş, neyi atlamış?',
       ),
       kart(
-        'Olay ve olgu',
-        'Olay belirli yer ve zamanda olup biten tekil bir şeydir (Malazgirt Savaşı). Olgu uzun sürede oluşan genel durumdur (Anadolu’nun Türkleşmesi).',
-      ),
-      kart(
-        'Tarafsızlık',
-        'Tarihçi kendi çağının değerleriyle geçmişi yargılamaz. Olayı, olduğu dönemin koşullarında değerlendirir.',
+        'Tekrarlamaz ama benzer',
+        'Tarih birebir tekrarlanmaz; benzer koşullar benzer sonuçlar üretir. Ders alınan şey kalıp değil örüntüdür.',
       ),
     ]),
-    konu('trh9-kaynak', 'Kaynaklar ve Yardımcı Bilimler', [
+    konu('trh9-doga', 'Tarihin Doğası', [
       kart(
-        'Birinci ve ikinci el kaynak',
-        'Olayın geçtiği döneme ait kaynaklar birinci eldir. Sonradan bunlara dayanarak yazılanlar ikinci eldir.',
+        'Tarih nedir?',
+        'Geçmişteki insan topluluklarını, yer ve zaman göstererek, sebep-sonuç ilişkisi içinde inceleyen bilim.',
       ),
       kart(
+        'Neden deney yapılamaz?',
+        'Olaylar tek seferliktir ve geri döndürülemez. Bu yüzden tarih deneye değil kaynağa dayanır.',
+      ),
+      kart(
+        'Nesnellik sorunu',
+        'Tarihçi kendi çağının insanıdır. Nesnellik, önyargısızlık iddiası değil, kaynağa sadakat ve yöntem disiplinidir.',
+      ),
+      kart(
+        'Yer ve zaman şart',
+        'Yeri ve zamanı belirsiz bir anlatı tarih değildir. İkisi tarihsel bilginin çerçevesidir.',
+      ),
+    ]),
+    konu('trh9-uretim', 'Tarihsel Bilginin Üretim Süreci', [
+      kart(
         'Kaynak türleri',
-        'Yazılı (ferman, kitabe, mektup), sözlü (destan, efsane), kalıntı (silah, sikke) ve çizili-görsel kaynaklar.',
+        'Birinci elden kaynak olayın çağından gelir (belge, kalıntı); ikinci elden kaynak onu yorumlar.',
+      ),
+      kart(
+        'Kaynak eleştirisi',
+        'Dış eleştiri belgenin gerçek olup olmadığını, iç eleştiri içeriğinin güvenilirliğini sorgular.',
       ),
       kart(
         'Yardımcı bilimler',
-        'Arkeoloji kazı, paleografya eski yazı, epigrafi kitabe, nümizmatik sikke, kronoloji zaman, filoloji dil inceler.',
+        'Arkeoloji kalıntıyı, paleografya eski yazıyı, nümizmatik parayı, epigrafya kitabeyi inceler.',
       ),
       kart(
-        'Tarih öncesi ve tarihî devir',
-        'Ayıran ölçüt yazıdır. Yazının bulunmasından öncesi tarih öncesi devirlerdir ve buluntularla aydınlatılır.',
+        'Adımlar',
+        'Kaynak tarama, tasnif, tahlil, tenkit ve terkip. Son adımda parçalar bütünlüklü bir anlatıya dönüşür.',
+      ),
+      kart(
+        'Tarih yazımı değişir',
+        'Yeni belge bulunduğunda ya da yeni sorular sorulduğunda aynı dönem yeniden yazılır.',
       ),
     ]),
-    konu('trh9-zaman', 'Zaman ve Takvim', [
+    konu('trh9-dijital', 'Tarih Araştırma ve Yazımında Dijitalleşme', [
       kart(
-        'Neden takvim?',
-        'Zamanı ölçmek ve olayları sıralamak için. Takvimler ya Ay’ın ya Güneş’in hareketine dayanır.',
+        'Arşivler açıldı',
+        'Devlet arşivleri belgeleri sayısallaştırdı; eskiden yıllar alan tarama artık uzaktan yapılabiliyor.',
       ),
       kart(
-        'Ay ve Güneş yılı',
-        'Ay yılı 354, Güneş yılı 365 gündür. Aradaki 11 günlük fark, dinî günlerin her yıl kaymasının sebebidir.',
+        'Yeni yöntemler',
+        'Coğrafi bilgi sistemleriyle haritalama, büyük veriyle nüfus ve ticaret analizi tarihçinin araç setine girdi.',
       ),
       kart(
-        'Türklerin kullandığı takvimler',
-        '12 Hayvanlı Türk, Hicri, Celali, Rumi ve Miladi takvim. Miladi takvim 1926’da kabul edildi.',
+        'Doğrulama sorunu',
+        'İnternetteki her metin kaynak değildir. Dijital ortamda kaynak eleştirisi daha da gerekli hâle geldi.',
       ),
       kart(
-        'Yüzyıl hesabı',
-        'Bir yılın hangi yüzyıla ait olduğu, yüzler basamağına 1 eklenerek bulunur: 1453 → 15. yüzyıl.',
-      ),
-      kart(
-        'Dijitalleşme ve tarih',
-        'Arşivlerin sayısallaşması kaynağa erişimi kolaylaştırdı; ama üretilmesi kolay sahte içerik kaynak eleştirisini daha da gerekli kıldı.',
+        'Yapay zekâ ve tarih',
+        'Eski el yazmalarını okumada yardımcı oluyor; ama ürettiği metin doğrulanmadan tarihsel bilgi sayılamaz.',
       ),
     ]),
   ]),
   tema('trh9-t2', 'Eski Çağ Medeniyetleri', [
-    konu('trh9-tarim', 'Tarım Devrimi ve Yerleşik Hayat', [
+    konu('trh9-tarim', 'Tarım Devrimi’nin Yerleşmeye ve Ekonomiye Etkisi', [
       kart(
         'Tarım devrimi',
-        'İnsanın besinini üretmeye başlaması. Avcı-toplayıcılıktan üreticiliğe geçiş, yerleşik hayatı zorunlu kıldı.',
+        'Yaklaşık 12 bin yıl önce insanlar bitkiyi ve hayvanı evcilleştirdi. Toplayıcılıktan üretime geçildi.',
       ),
       kart(
-        'Sonuçları',
-        'Artı ürün doğdu; iş bölümü, mülkiyet, ticaret, sınıflar ve nihayet devlet bu artı üründen çıktı.',
+        'Yerleşik hayat',
+        'Tarla bakım istediği için insan yerleşti. Köyler, sonra şehirler bu zorunluluktan doğdu.',
       ),
       kart(
-        'Anadolu’daki ilk yerleşmeler',
-        'Göbeklitepe, Çatalhöyük, Çayönü ve Hacılar. Göbeklitepe, tapınağın yerleşmeden önce gelmiş olabileceğini gösterdi.',
+        'Artı ürün',
+        'İhtiyaçtan fazla üretim; tarımla uğraşmayan zanaatkâr, asker ve rahip sınıfını mümkün kıldı.',
       ),
       kart(
-        'Maden kullanımı',
-        'İlk işlenen maden bakır. Bakıra kalay katılarak tunç, en son ve en zor işlenen maden olarak demir elde edildi.',
-      ),
-    ]),
-    konu('trh9-mezopotamya', 'Mezopotamya ve Mısır', [
-      kart(
-        'Sümerler',
-        'Yazıyı (çivi yazısı) bularak tarihi başlattılar. Site adı verilen şehir devletleri kurdular; Ur, Uruk, Lagaş.',
+        'Yazının doğuşu',
+        'Artı ürünün kaydını tutma ihtiyacı yazıyı doğurdu. İlk tabletler edebiyat değil, muhasebe kaydıdır.',
       ),
       kart(
-        'İlk yazılı kanunlar',
-        'Urgakina kanunları ilk yazılı kanunlardır. Hammurabi kanunları ise daha sert ve kısasa kısas esaslıdır.',
-      ),
-      kart(
-        'Mısır’ın yalıtılmışlığı',
-        'Çöllerle çevrili olduğu için uzun süre istila görmedi; bu yüzden kendine özgü bir uygarlık gelişti.',
-      ),
-      kart(
-        'Mısır’da bilim',
-        'Nil’in taşmasıyla bozulan tarla sınırlarını yeniden çizmek geometriyi, mumyacılık tıbbı ve anatomiyi geliştirdi.',
-      ),
-      kart(
-        'Fenikeliler ve İbraniler',
-        'Fenikeliler bugünkü alfabenin temelini attı ve deniz ticaretini geliştirdi. İbraniler ilk tek tanrılı inanç sistemini benimsedi.',
+        'Anadolu’dan izler',
+        'Göbeklitepe ve Çatalhöyük, bu geçiş döneminin dünyaca önemli merkezleridir.',
       ),
     ]),
-    konu('trh9-anadolu', 'Anadolu Medeniyetleri', [
+    konu('trh9-yonetim', 'Eski Çağ Medeniyetlerinde Yönetim ve Ordu', [
       kart(
-        'Hititler',
-        'Anadolu’da güçlü bir devlet kurdular. Kralın yanındaki Pankuş meclisi, kralın yetkisini sınırlayan ilk kurumlardandır.',
-      ),
-      kart(
-        'Anal (yıllık)',
-        'Hitit kralları yaptıklarını başarısızlıklarıyla birlikte yazdırdı. Bu, tarih yazıcılığının ilk örneklerinden sayılır.',
-      ),
-      kart(
-        'Frigler ve Lidyalılar',
-        'Frigler tarımı korumak için sert kanunlar koydu. Lidyalılar parayı icat ederek ticareti kolaylaştırdı; Kral Yolu’nu açtılar.',
-      ),
-      kart(
-        'Urartular ve İyonlar',
-        'Urartular kaya mimarisi ve su kanallarıyla, İyonlar ise özgür düşünce ortamı sayesinde bilim ve felsefeyle öne çıktı.',
-      ),
-    ]),
-    konu('trh9-yonetim', 'Yönetim, Ordu ve Hukuk', [
-      kart(
-        'Devletin doğuşu',
-        'Artı ürünün korunması ve dağıtılması için örgütlenme gerekti. Din adamı-yönetici ayrımı böyle başladı.',
+        'Yönetim biçimleri',
+        'Site devletleri, krallıklar ve imparatorluklar. Toprak büyüdükçe yönetim de merkezîleşti.',
       ),
       kart(
         'Teokratik yönetim',
-        'İlk çağ devletlerinde yönetici çoğu zaman aynı zamanda dinî önderdi; gücünü tanrıdan aldığını iddia ederdi.',
+        'Mısır’da firavun tanrı-kral sayılırdı. Din ile devletin ayrılmadığı bu yapı yaygındı.',
       ),
       kart(
-        'Ordu',
-        'Önce halktan toplanan geçici kuvvetler, sonra sürekli ve ücretli ordular kuruldu. Sürekli ordu güçlü merkezî devlet demektir.',
+        'Ordu ve teknoloji',
+        'Tunç ve demir silahlar, savaş arabası ve at, güç dengesini belirledi. Demiri işleyen Hititler öne çıktı.',
       ),
       kart(
-        'Hukukun gelişimi',
-        'Sözlü gelenekten yazılı kanuna geçiş, keyfî cezayı azalttı. Yazılı kanun aynı zamanda devletin gücünün ilanıydı.',
+        'Atina ve demokrasi',
+        'Atina’da yurttaşlar doğrudan karar veriyordu; ama kadınlar, köleler ve yabancılar yurttaş sayılmıyordu.',
+      ),
+      kart(
+        'Roma’nın yönetimi',
+        'Krallıktan cumhuriyete, oradan imparatorluğa geçti. Senato ve konsüllük kalıcı bir yönetim geleneği bıraktı.',
       ),
     ]),
-    konu('trh9-turkler', 'İlk Türk Toplulukları', [
+    konu('trh9-hukuk', 'Eski Çağ Medeniyetlerinde Hukuk', [
       kart(
-        'Konar-göçer hayat',
-        'Hayvancılığa dayalı, otlak peşinde mevsimlik yer değiştiren yaşam. Başıboş dolaşmak değil, belirli güzergâhlarda düzenli hareket.',
+        'Urgakina kanunları',
+        'Bilinen ilk yazılı yasalar Sümerlerde çıktı; amaç güçlünün zayıfı ezmesini sınırlamaktı.',
       ),
       kart(
-        'Yaşamın etkileri',
-        'Taşınabilir eşya (kilim, halı, at koşumu) gelişti; kalıcı mimari ve yazılı edebiyat geç gelişti.',
+        'Hammurabi kanunları',
+        'Babil’de sert ve kısasa dayalı yasalar. Yazılı olması, keyfî cezayı sınırlaması bakımından ileri bir adımdı.',
       ),
       kart(
-        'Orta Asya’dan göçler',
-        'Kuraklık, otlak yetersizliği, nüfus artışı, boylar arası mücadele ve dış baskılar Türk göçlerinin başlıca sebepleridir.',
+        'Hitit hukuku',
+        'Cezalar daha yumuşak ve tazminat ağırlıklıydı; kadınların hukuki durumu çağdaşlarına göre iyiydi.',
       ),
       kart(
-        'Kurultay',
-        'Devlet işlerinin görüşüldüğü meclis. Kağan tek başına değil, boy beyleriyle birlikte karar verirdi.',
+        'Roma hukuku',
+        'On İki Levha ile başladı; bugünkü Avrupa hukuk sistemlerinin temelinde Roma hukuku vardır.',
       ),
       kart(
-        'İlk Türk devletleri',
-        'Asya Hun, Kök Türk ve Uygur. Kök Türkler Türk adını ilk kez devlet adı olarak kullandı; Orhun Yazıtları onlardan kaldı.',
+        'Ortak yön',
+        'Yasanın yazılı olması, hukuku hükümdarın ağzından çıkarıp herkesin bilebileceği bir ölçüye çevirdi.',
+      ),
+    ]),
+    konu('trh9-inanc', 'Eski Çağ’da İnançlar, Bilim ve Sanat', [
+      kart(
+        'Çok tanrılı inançlar',
+        'Doğa olayları tanrılarla açıklanıyordu. Tapınaklar aynı zamanda ekonomik ve idari merkezlerdi.',
+      ),
+      kart(
+        'Tek tanrılı inanışlar',
+        'Musevilik bu çağda ortaya çıktı; Mısır’da Akhenaton’un girişimi kısa sürdü.',
+      ),
+      kart(
+        'Bilim',
+        'Mısırlılar geometri ve takvimde, Babilliler astronomi ve matematikte ilerledi. İhtiyaç bilimi doğurdu.',
+      ),
+      kart(
+        'Felsefe',
+        'Yunan dünyasında olaylar tanrılarla değil akılla açıklanmaya başladı; bilimsel düşüncenin kökü buradadır.',
+      ),
+      kart(
+        'Sanat',
+        'Anıtsal yapılar (piramit, zigurat, tapınak) hem inancın hem gücün gösterisiydi.',
+      ),
+    ]),
+    konu('trh9-konargocer', 'Türklerde Konargöçer Yaşam', [
+      kart(
+        'Konargöçerlik nedir?',
+        'Mevsime göre yaylak ve kışlak arasında düzenli göç. Başıboş dolaşmak değil, planlı bir yaşam biçimidir.',
+      ),
+      kart(
+        'Neden bu yaşam?',
+        'Orta Asya’nın bozkır iklimi tarıma elverişsizdi; hayvancılık otlak takibini zorunlu kılıyordu.',
+      ),
+      kart(
+        'Toplum yapısı',
+        'Oguş (aile), urug, boy, budun ve il biçiminde örgütlenme. Boylar birliği devleti kurardı.',
+      ),
+      kart(
+        'Askerî güç',
+        'At ve demir işçiliği; herkesin savaşçı olduğu ordu-millet yapısı hareket üstünlüğü sağlıyordu.',
+      ),
+      kart(
+        'Kültüre etkisi',
+        'Taşınabilir sanat (at koşumu, halı, madenî eşya) gelişti; anıtsal mimari yerine sözlü kültür öne çıktı.',
       ),
     ]),
   ]),
   tema('trh9-t3', 'Orta Çağ Medeniyetleri', [
-    konu('trh9-kavimler', 'Kavimler Göçü ve Sonuçları', [
+    konu('trh9-goc', 'Orta Çağ’da Yaşanan Kitlesel Göçler', [
       kart(
-        'Göçün başlaması',
-        'Batı Hunlarının baskısıyla Karadeniz’in kuzeyindeki kavimler Avrupa içlerine doğru harekete geçti (375).',
+        'Kavimler Göçü',
+        'Hunların batıya ilerlemesi Germen kavimlerini yerinden etti; 375’te başlayan bu dalga Avrupa’yı yeniden şekillendirdi.',
       ),
       kart(
-        'Roma’nın bölünmesi',
-        'Göç dalgası Roma’yı sarstı; imparatorluk 395’te ikiye ayrıldı, Batı Roma 476’da yıkıldı.',
+        'Sonuçları',
+        'Batı Roma yıkıldı, feodalite doğdu, Avrupa’da bugünkü ulusların temeli atıldı. İlk Çağ kapandı.',
       ),
       kart(
-        'Yeni haritanın doğuşu',
-        'Avrupa’da bugünkü milletlerin temeli atıldı; İlk Çağ kapandı, Orta Çağ başladı.',
+        'Göçün sebepleri',
+        'İklim değişikliği, otlak yetersizliği, nüfus baskısı ve dış saldırılar.',
       ),
+      kart(
+        'Türk göçleri',
+        'Türk boyları Orta Asya’dan Anadolu, İran ve Hindistan’a yayıldı; gittikleri yerlerin kültürünü de dönüştürdüler.',
+      ),
+    ]),
+    konu('trh9-devletler', 'Orta Çağ Devletlerinde Yönetim ve Ordu', [
       kart(
         'Feodalite',
-        'Merkezî otorite çöktüğü için halk toprak sahibi senyörlerin korumasına sığındı. Toprağa bağlı serflik düzeni böyle kuruldu.',
+        'Merkezî otorite zayıflayınca toprak sahibi senyörler güçlendi. Koruma karşılığı hizmet ilişkisi kuruldu.',
+      ),
+      kart(
+        'Bizans',
+        'Roma’nın doğu mirasını sürdürdü; güçlü bürokrasi ve tema sistemiyle uzun süre ayakta kaldı.',
+      ),
+      kart(
+        'İslam devletlerinde yönetim',
+        'Halifelik makamı din ve devlet başkanlığını birleştirdi; divan teşkilatı yönetimi yürüttü.',
+      ),
+      kart(
+        'Türk-İslam devletleri',
+        'Karahanlılar, Gazneliler ve Selçuklularda ikta sistemi hem orduyu besledi hem toprağı işletti.',
+      ),
+      kart(
+        'Ordu yapıları',
+        'Avrupa’da şövalye, Bizans’ta tema askeri, İslam dünyasında gulam ve ikta askerleri.',
       ),
     ]),
-    konu('trh9-islam', 'İslam Medeniyetinin Doğuşu', [
-      kart(
-        'İslamiyet öncesi Arabistan',
-        'Kabile düzeni, kan davaları ve putperestlik hâkimdi. Bu döneme Cahiliye Devri denir.',
-      ),
-      kart(
-        'Hızlı yayılış',
-        'Kısa sürede geniş alana yayıldı; fethedilen yerlerde yerel halkın inancına dokunulmaması bu yayılışı kolaylaştırdı.',
-      ),
-      kart(
-        'Dört Halife Dönemi',
-        'Halifenin seçimle belirlendiği dönem. Bu dönemin sonunda yönetim saltanata dönüştü.',
-      ),
-      kart(
-        'Bilim ve çeviri',
-        'Beytü’l-Hikme’de Yunan, Hint ve İran eserleri Arapçaya çevrildi. İbn Sînâ, Bîrûnî ve Hârizmî bu birikimden çıktı.',
-      ),
-    ]),
-    konu('trh9-turk-islam', 'Türklerin İslamiyet’i Kabulü', [
-      kart(
-        'Talas Savaşı (751)',
-        'Abbasi-Çin savaşında Karluklar Müslümanların yanında yer aldı. Türk-Arap yakınlaşmasının ve kâğıdın İslam dünyasına geçişinin dönüm noktası.',
-      ),
-      kart(
-        'İlk Müslüman Türk devletleri',
-        'Karahanlılar, Gazneliler ve Büyük Selçuklu. Karahanlılar Türkçeyi resmî dil olarak kullandı.',
-      ),
-      kart(
-        'Malazgirt (1071)',
-        'Anadolu’nun kapıları Türklere açıldı. Bu tarih Anadolu’nun Türkleşme sürecinin başlangıcı sayılır.',
-      ),
-      kart(
-        'Selçuklu’da kurumlar',
-        'Nizamülmülk’ün kurduğu medreseler (Nizamiye) eğitimi kurumsallaştırdı; ikta sistemi hem toprağı işletti hem ordu besledi.',
-      ),
-    ]),
-    konu('trh9-ticaret', 'Ticaret Yolları ve Kültürel Etkileşim', [
+    konu('trh9-ticaret', 'Orta Çağ’daki Ticaret Yolları', [
       kart(
         'İpek Yolu',
-        'Çin’den Anadolu’ya uzanan kara yolu. Yalnız mal değil; teknoloji, din ve hastalık da bu yolla taşındı.',
+        'Çin’den Akdeniz’e uzanırdı. Yalnızca ipek değil; kâğıt, barut ve pusula da bu yolla batıya geçti.',
       ),
       kart(
         'Baharat Yolu',
-        'Hindistan’dan Orta Doğu üzerinden Avrupa’ya uzanan yol. Denetimi, devletler arasındaki mücadelenin başlıca sebeplerinden biriydi.',
+        'Hindistan ve Güneydoğu Asya’dan baharatı taşıyordu. Baharat hem lezzet hem koruyucu olduğu için çok değerliydi.',
+      ),
+      kart(
+        'Kürk Yolu',
+        'Kuzey bozkırlarından Doğu Avrupa’ya uzanan yol; kürk ve orman ürünleri taşıyordu.',
+      ),
+      kart(
+        'Yol denetimi güçtür',
+        'Yolları elinde tutan devlet gümrük geliri ve siyasi ağırlık kazanırdı. Savaşların sebebi çoğu zaman buydu.',
       ),
       kart(
         'Kervansaraylar',
-        'Yol güvenliğini ve konaklamayı sağlayan yapılar. Selçuklular tüccarın zararını devlet güvencesine alarak sigortanın erken bir biçimini uyguladı.',
+        'Selçuklular yol güvenliği için kervansaray kurdu ve sigorta benzeri bir tazmin uygulaması geliştirdi.',
+      ),
+    ]),
+    konu('trh9-medeniyet', 'Orta Çağ’da Bilim, Kültür ve Sanat', [
+      kart(
+        'İslam bilim havzası',
+        'Bağdat’taki Beytü’l-Hikme’de Yunan ve Hint eserleri çevrildi; matematik, tıp ve astronomi ilerledi.',
       ),
       kart(
-        'Kültürel alışveriş',
-        'Ticaret yolları boyunca alfabe, sayı sistemi, matbaa ve pusula gibi buluşlar kıtalar arasında dolaştı.',
+        'Öne çıkan adlar',
+        'Harezmî cebiri kurdu, İbn Sina’nın tıp kitabı Avrupa’da yüzyıllarca okutuldu, Birunî dünyanın çevresini ölçtü.',
+      ),
+      kart(
+        'Avrupa’da manastırlar',
+        'Bilgi manastırlarda korundu. Üniversiteler 11. yüzyıldan sonra kuruldu.',
+      ),
+      kart(
+        'Bilgi aktarımı',
+        'Endülüs ve Sicilya, İslam dünyasındaki birikimin Avrupa’ya geçtiği köprülerdi.',
+      ),
+      kart(
+        'Sanat',
+        'Mimaride kubbe, kemer ve çini; Avrupa’da romanesk ve gotik üsluplar. İnanç, sanatın başlıca konusuydu.',
       ),
     ]),
   ]),

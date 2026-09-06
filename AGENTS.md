@@ -1418,6 +1418,45 @@ hatırladığın bir başlık, bu programda başka sınıfta olabilir.
 bir ders eklemek `KonuDersId` ile birlikte yeni bir renk ailesi de gerektirir
 (Fizik'in `fzk` ailesi bu yüzden açıldı — oyunlarda Fizik yok).
 
+### Konu listesi yazılmıyor, çekiliyor
+
+Konu adları ve sıraları bir süre hafızadan yazıldı ve program tutmadı: eski
+(2018) programın başlıkları karıştı, tema sırası kaydı (Matematik 9'da
+Algoritma üçüncü, Geometrik Şekiller dördüncü duruyordu; programda tersi).
+Hata **arada bir** değil sürekliydi ama kimse fark etmedi, çünkü karşılaştırma
+yapan bir şey yoktu.
+
+Ölçü artık `lib/konu/maarif/iskelet.json`: `scripts/maarif-cek.mjs` bunu
+tymm.meb.gov.tr'deki İçerik Çerçevesi'nden çekiyor (ders → sınıf → tema →
+konu, ayrıca anahtar kavramlar ve öğrenme çıktıları). Dosyayı **elle
+düzenleme**; müfredat değişince betiği yeniden çalıştır. Hedef kataloğundaki
+ETL ile aynı gerekçe: yazılan ölçü bayatlıyor, çekilen ölçü bayatlamıyor.
+
+`maarif.test.ts` tema ve konu listelerini bu iskelete göre denetliyor. Dört
+incelik:
+
+- **Eşitlik değil örtüşme aranıyor.** Programın kendi başlıkları haritada
+  gösterilemeyecek kadar uzun ("Türkistan'dan Türkiye'ye Uzanan Süreçte Türk
+  Devlet ve Ordu Teşkilatında Meydana Gelen Değişim" 95 karakter). Uygulama
+  kısaltılmış adı yazıyor, test o adın programdaki karşılığıyla kelime
+  örtüşmesini ölçüyor. Kısaltırken konuyu tanıtan kelimeleri atma — test iki
+  kez tam da bunu yakaladı.
+- **Türk Dili ve Edebiyatı konu listesi denetlenmiyor**
+  (`KONU_LISTESI_DENETLENMEYEN`). O dersin İçerik Çerçevesi konu değil
+  **beceri** sayıyor: dört temanın dördünde de yalnızca "Okuma, Yazma,
+  Dinleme/İzleme, Konuşma" yazıyor. Bunları konu yapmak haritaya on altı
+  düğüm koyup dördünü tekrar etmek olurdu. Tema adları ve sırası bu derste de
+  denetleniyor.
+- **Sınıf sayfasının adresindeki sayı ders başına kayıyor.** Kimya'da 11
+  dokuzuncu sınıf, Türk Dili ve Edebiyatı'nda 11 dokuzuncu ama 10 hazırlık.
+  Betik sınıfı adresten türetmiyor, sayfanın `<title>`'ından okuyor.
+- **İçerik Çerçevesi'nin biçimi derse göre değişiyor** ve dördü de
+  destekleniyor: Kimya kalın başlık + virgüllü liste, Biyoloji kalın başlık +
+  bir alt satırda liste, Matematik tamamı kalın maddeler + açıklama cümleleri,
+  Fizik/Tarih/Coğrafya ayraçsız satırlar. Ayrıştırıcıdaki her kural bu
+  biçimlerden birinin bozduğu bir çıktıyı düzeltmek için var; birini
+  değiştirmeden önce `scripts/maarif-cek.mjs` içindeki yorumları oku.
+
 ### Kart uzunluğu kuralın kendisi
 
 Kartlar ders notu değil, bir konuda akılda kalması gereken birkaç şey.

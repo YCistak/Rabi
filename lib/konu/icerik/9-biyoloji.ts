@@ -3,301 +3,376 @@ import { kart, konu, program, tema } from '../tip'
 /**
  * 9. sınıf Biyoloji — Maarif Modeli.
  *
- * Program iki tema: **Yaşam** (canlılığın ortak özellikleri ve temel
- * bileşenler) ve **Organizasyon** (hücre, sınıflandırma). Eski programın
- * "Canlılar Dünyası" ünitelendirmesi kullanılmıyor.
+ * İki tema: **Yaşam** ve **Organizasyon**. Konu adları ve sırası
+ * `maarif/iskelet.json`'dan; `maarif.test.ts` denetliyor.
+ *
+ * Eski programdaki "canlıların sınıflandırılması" ayrı bir ünite değil,
+ * Organizasyon temasının ikinci bölümü. Kalıtım 9. sınıfta **yok**.
  */
-export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan organizasyona', [
+export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
   tema('byl9-t1', 'Yaşam', [
-    konu('byl9-bilim', 'Biyoloji ve Bilimin Doğası', [
+    konu('byl9-onem', 'Biyolojinin Önemi', [
       kart(
         'Biyoloji neyi inceler?',
-        'Canlıyı ve yaşamı inceler. Moleküllerden ekosisteme kadar her düzeyde çalışır; tıp, tarım ve çevre bilimlerinin temelidir.',
+        'Canlıları ve yaşam olaylarını inceler: moleküllerden ekosistemlere kadar her ölçekte.',
       ),
       kart(
-        'Bilimsel bilgi kesin değildir',
-        'Yeni kanıt geldiğinde değişebilir. Bu bir zayıflık değil, bilimin kendini düzeltme yolu.',
+        'Sağlığa katkısı',
+        'Aşı, antibiyotik ve organ nakli biyolojik bilginin doğrudan sonucu. Ortalama ömür bir yüzyılda ikiye katlandı.',
       ),
       kart(
-        'Hipotez, teori, kanun',
-        'Hipotez sınanabilir tahmin; teori çok sayıda kanıtla desteklenen açıklama; kanun gözlenen düzenli ilişkinin ifadesi. Teori kanuna dönüşmez, ikisi ayrı iş yapar.',
+        'Tarıma katkısı',
+        'Verimli tohum ve hastalığa dayanıklı çeşitler biyoloji sayesinde geliştirildi.',
       ),
       kart(
-        'Kontrol grubu neden var?',
-        'Değişkenin etkisini görebilmek için. Bağımsız değişken uygulanmayan grup, karşılaştırma ölçütüdür.',
-      ),
-      kart(
-        'Bilimsel etik',
-        'Veriyi çarpıtmamak, başkasının çalışmasını kaynak göstermek, canlılara zarar vermemek. Etiği olmayan araştırma bilimsel de sayılmaz.',
+        'Çevreye bakışı değiştirdi',
+        'Ekosistem kavramı, bir türün kaybının bütün ağı etkilediğini gösterdi. Koruma politikaları bu bilgiden doğdu.',
       ),
     ]),
-    konu('byl9-ortak', 'Canlıların Ortak Özellikleri', [
+    konu('byl9-donum', 'Biyoloji Biliminin Gelişimindeki Dönüm Noktaları', [
       kart(
-        'Hepsinde hücre var',
-        'Canlılığın en küçük birimi hücredir. Virüsler hücresel yapıya sahip olmadığı için tam canlı sayılmaz.',
+        'Mikroskobun icadı',
+        'Hooke mantar kesitinde odacıklar gördü ve onlara hücre dedi; Leeuwenhoek ilk mikroorganizmaları gözledi.',
+      ),
+      kart(
+        'Hücre teorisi',
+        'Bütün canlılar hücrelerden oluşur, hücre yaşamın en küçük birimidir ve her hücre başka bir hücreden gelir.',
+      ),
+      kart(
+        'Evrim kuramı',
+        'Darwin, doğal seçilimle türlerin zaman içinde değiştiğini gösterdi. Biyolojiyi tek çatı altında topladı.',
+      ),
+      kart(
+        'DNA’nın yapısı',
+        'Watson, Crick ve Franklin’in çalışmalarıyla 1953’te çift sarmal çözüldü; moleküler biyoloji böyle başladı.',
+      ),
+      kart(
+        'Genom projeleri',
+        'İnsan genomunun okunması hastalık genlerinin bulunmasını ve kişiye özgü tedaviyi mümkün kıldı.',
+      ),
+    ]),
+    konu('byl9-bilimin-dogasi', 'Bilimin Doğası', [
+      kart(
+        'Bilimsel bilgi değişebilir',
+        'Yeni kanıt geldiğinde bilgi güncellenir. Bu bir zayıflık değil, bilimin kendini düzeltme yeteneğidir.',
+      ),
+      kart(
+        'Kanıta dayanır',
+        'İddia gözlem ve deneyle desteklenmelidir. Otoriteye dayanan bir açıklama bilimsel sayılmaz.',
+      ),
+      kart(
+        'Teori ve hipotez',
+        'Hipotez sınanmayı bekleyen açıklama; teori ise defalarca sınanmış, geniş kapsamlı bir açıklama sistemidir.',
+      ),
+      kart(
+        'Yasa ile teori farkı',
+        'Yasa neyin olduğunu tarif eder, teori nedenini açıklar. Teori "kanıtlanmamış yasa" değildir.',
+      ),
+    ]),
+    konu('byl9-arastirma', 'Bilimsel Araştırma Süreçleri', [
+      kart(
+        'Adımlar',
+        'Gözlem, soru, hipotez, deney, veri toplama, analiz ve sonuç. Sonuç yeni bir soruya kapı açar.',
+      ),
+      kart(
+        'Değişkenler',
+        'Bağımsız değişken araştırmacının değiştirdiği, bağımlı değişken ölçülen, kontrol değişkenleri sabit tutulanlardır.',
+      ),
+      kart(
+        'Kontrol grubu',
+        'Denenen etkiyi almayan grup. Onsuz gözlenen değişimin sebebi bilinemez.',
+      ),
+      kart(
+        'Tekrarlanabilirlik',
+        'Aynı koşullarda başkalarının da aynı sonucu alabilmesi gerekir. Tekrarlanamayan sonuç kabul edilmez.',
+      ),
+    ]),
+    konu('byl9-etik', 'Bilim Etiği', [
+      kart(
+        'Veri uydurmak',
+        'Sonuç uydurmak ya da beğenilmeyen veriyi gizlemek en ağır ihlaldir; yayın geri çekilir.',
+      ),
+      kart(
+        'Aşırma',
+        'Başkasının çalışmasını kaynak göstermeden kullanmak. Alıntı yapmak serbest, sahiplenmek değil.',
+      ),
+      kart(
+        'Aydınlatılmış onam',
+        'İnsan üzerinde çalışma yapılacaksa kişi riskleri bilerek ve gönüllü olarak kabul etmelidir.',
+      ),
+      kart(
+        'Hayvan deneyleri',
+        'Etik kurul onayı gerekir; sayı en aza indirilir, acı azaltılır, mümkünse alternatif yöntem seçilir.',
+      ),
+    ]),
+    konu('byl9-ortak-ozellik', 'Canlıların Ortak Özellikleri', [
+      kart(
+        'Hücresel yapı',
+        'Bütün canlılar hücrelerden oluşur. Virüsler hücresel yapıya sahip olmadığı için tartışmalıdır.',
+      ),
+      kart(
+        'Beslenme ve enerji',
+        'Ototroflar besinini kendi üretir, heterotroflar dışarıdan alır. Her canlı enerji üretir ve tüketir.',
       ),
       kart(
         'Metabolizma',
-        'Yapım (anabolizma) ve yıkım (katabolizma) tepkimelerinin toplamı. Yapım enerji harcar, yıkım enerji açığa çıkarır.',
+        'Yapım (anabolizma) ve yıkım (katabolizma) tepkimelerinin tamamı. Yaşam bu iki yönün dengesidir.',
       ),
       kart(
         'Homeostazi',
-        'İç ortamı dengede tutma. Terleme, titreme, kan şekerinin ayarlanması hep bu amaçla olur.',
+        'İç ortamı dengede tutma. Vücut sıcaklığının ve kan şekerinin sabit tutulması buna örnektir.',
       ),
       kart(
-        'Uyarıya tepki',
-        'Canlı, çevresindeki değişimi algılar ve karşılık verir. Bitkinin ışığa yönelmesi de bir tepkidir.',
+        'Uyarılara tepki',
+        'Canlılar çevredeki değişimi algılar ve karşılık verir. Bitkinin ışığa yönelmesi de bir tepkidir.',
       ),
       kart(
-        'Adaptasyon ve varyasyon',
-        'Varyasyon bireyler arasındaki farklılık, adaptasyon ortama uyum sağlatan kalıtsal özellik. Varyasyon olmadan adaptasyon olmaz.',
-      ),
-      kart(
-        'Üreme ve büyüme',
-        'Üreme türün devamı içindir, bireyin yaşaması için şart değildir. Büyüme hücre sayısının ve hacminin artmasıdır.',
+        'Üreme, büyüme, uyum',
+        'Canlılar çoğalır, gelişir; varyasyon ve adaptasyon sayesinde türler değişen koşullara uyum sağlar.',
       ),
     ]),
-    konu('byl9-inorganik', 'Su, Mineraller ve Asit-Baz', [
+    konu('byl9-inorganik', 'İnorganik Moleküller', [
       kart(
         'Su neden vazgeçilmez?',
-        'İyi bir çözücüdür, tepkimelere girer, öz ısısı yüksek olduğu için vücut sıcaklığını dengede tutar. Hücrede en çok bulunan moleküldür.',
+        'Polar yapısı sayesinde iyi çözücüdür; tepkimeler suda gerçekleşir ve maddeler suyla taşınır.',
       ),
       kart(
-        'Mineraller enerji vermez',
-        'Düzenleyicidir. Demir hemoglobinde, kalsiyum kemikte ve kas kasılmasında, iyot tiroit hormonunda görev alır.',
+        'Adezyon ve kohezyon',
+        'Kohezyon su moleküllerini birbirine, adezyon başka yüzeye bağlar. Bitkilerde su bu sayede yükselir.',
       ),
       kart(
-        'pH ölçeği',
-        '0–14 arası. 7 nötr, altı asit, üstü baz. Kan pH’si 7,4 dolayında dar bir aralıkta tutulur; sapması ölümcüldür.',
+        'Suyun ısı dengeleyiciliği',
+        'Öz ısısı yüksek olduğu için geç ısınır geç soğur; vücut ve göl sıcaklığı ani değişmez.',
       ),
       kart(
-        'Tampon çözelti',
-        'Asit ya da baz eklendiğinde pH’nin sert değişmesini engeller. Kandaki karbonat tamponu buna örnektir.',
-      ),
-    ]),
-    konu('byl9-karbonhidrat', 'Karbonhidratlar', [
-      kart(
-        'Birincil enerji kaynağı',
-        'Hücrenin ilk başvurduğu yakıt. 1 gramı yaklaşık 4 kalori verir. C, H, O içerir.',
+        'Mineraller',
+        'Yapıya katılır ve tepkimeleri düzenler: kalsiyum kemikte, demir hemoglobinde, iyot tiroit hormonunda.',
       ),
       kart(
-        'Monosakkaritler',
-        'En küçük birim: glikoz, fruktoz, galaktoz. Sindirilmeden kana geçebilirler.',
-      ),
-      kart(
-        'Disakkaritler',
-        'İki monosakkarit: maltoz (glikoz+glikoz), sükroz (glikoz+fruktoz), laktoz (glikoz+galaktoz).',
-      ),
-      kart(
-        'Polisakkaritler',
-        'Nişasta bitkide depo, glikojen hayvanda depo, selüloz bitki çeperinde yapı, kitin mantar ve böcek dış iskeletinde bulunur.',
-      ),
-      kart(
-        'Selülozu sindiremeyiz',
-        'İnsanda selülaz enzimi yoktur. Yine de posa olarak bağırsak hareketini düzenler.',
+        'Asit, baz ve pH',
+        'pH 7 nötr, altı asidik, üstü baziktir. Enzimler yalnızca dar bir pH aralığında çalışır.',
       ),
     ]),
-    konu('byl9-lipit', 'Lipitler', [
+    konu('byl9-organik', 'Organik Moleküller', [
       kart(
-        'En çok enerji veren molekül',
-        '1 gramı yaklaşık 9 kalori. Yavaş yıkıldığı için birincil değil, depo enerji kaynağıdır.',
+        'Karbonhidratlar',
+        'Hızlı enerji kaynağı. Monosakkarit (glikoz), disakkarit (sükroz) ve polisakkarit (nişasta, glikojen, selüloz) olarak gruplanır.',
       ),
       kart(
-        'Doymuş ve doymamış yağ',
-        'Doymuş yağda çift bağ yoktur, oda sıcaklığında katıdır (tereyağı). Doymamış yağ sıvıdır (zeytinyağı) ve sağlık için daha uygundur.',
+        'Lipitler',
+        'Yoğun enerji deposu, hücre zarının yapı taşı ve bazı hormonların kaynağı. Suda çözünmezler.',
       ),
       kart(
-        'Fosfolipit',
-        'Bir ucu suyu seven, öteki ucu suyu iten molekül. Hücre zarının iki katlı yapısını bu ikilik kurar.',
+        'Proteinler',
+        'Amino asitlerden kurulur. Yapı, taşıma, savunma ve enzim görevleri vardır; sırası işlevi belirler.',
       ),
       kart(
-        'Steroitler',
-        'Kolesterol zarın akıcılığını ayarlar; ayrıca D vitamini ve eşey hormonlarının ham maddesidir.',
-      ),
-    ]),
-    konu('byl9-protein', 'Proteinler', [
-      kart(
-        'Amino asitler',
-        'Proteinin yapı taşı. 20 çeşit vardır; 8’ini insan üretemez, besinle almak zorundadır (temel amino asit).',
+        'Enzimler',
+        'Tepkimeleri hızlandıran protein yapılı katalizörler. Aktivasyon enerjisini düşürür, kendileri tükenmez.',
       ),
       kart(
-        'Peptit bağı',
-        'İki amino asit arasında su açığa çıkararak kurulan bağ. Bağ sayısı = amino asit sayısı − 1.',
+        'Enzimi etkileyen etmenler',
+        'Sıcaklık, pH, substrat ve enzim derişimi. Aşırı sıcak ve uygunsuz pH proteini bozar (denatürasyon).',
       ),
       kart(
-        'Sıra her şeyi belirler',
-        'Amino asit dizilimi değişirse protein de işlevi de değişir. Diziyi belirleyen DNA’dır.',
+        'Nükleik asitler ve vitaminler',
+        'DNA kalıtım bilgisini taşır, RNA onu kullanır. Vitaminler enerji vermez ama tepkimelerin düzenleyicisidir.',
       ),
       kart(
-        'Denatürasyon',
-        'Yüksek sıcaklık ya da uygun olmayan pH proteinin şeklini bozar, işlev kaybolur. Yumurtanın pişmesi geri dönüşsüz örnektir.',
-      ),
-      kart(
-        'Proteinin görevleri',
-        'Yapı (kolajen), taşıma (hemoglobin), savunma (antikor), düzenleme (bazı hormonlar) ve hızlandırma (enzim).',
-      ),
-    ]),
-    konu('byl9-enzim', 'Enzimler', [
-      kart(
-        'Enzim ne yapar?',
-        'Tepkimenin aktivasyon enerjisini düşürerek hızlandırır. Kendisi değişmeden çıkar, tekrar tekrar kullanılır.',
-      ),
-      kart(
-        'Anahtar-kilit',
-        'Her enzim yalnızca kendi substratına uyar. Bu yüzden enzimler özgüldür, bir enzim her işi yapamaz.',
-      ),
-      kart(
-        'Sıcaklık ve pH',
-        'Optimum değerde hız en yüksektir. Sıcaklık çok artarsa enzim denatüre olur ve etkinlik geri gelmez; düşük sıcaklıkta yalnızca yavaşlar.',
-      ),
-      kart(
-        'Substrat derişimi',
-        'Artarken hız artar, ama bütün enzimler dolduğunda hız sabitlenir. Daha fazla substrat artık hızı değiştirmez.',
-      ),
-      kart(
-        'Kofaktör ve koenzim',
-        'Bazı enzimler tek başına çalışamaz. Mineral yardımcıya kofaktör, vitamin kökenli organik yardımcıya koenzim denir.',
-      ),
-    ]),
-    konu('byl9-nukleik', 'Vitaminler, Nükleik Asitler ve ATP', [
-      kart(
-        'Vitaminler enerji vermez',
-        'Düzenleyicidir. A, D, E, K yağda çözünür ve depolanır; B ve C suda çözünür, fazlası atılır, her gün alınmalıdır.',
-      ),
-      kart(
-        'DNA ve RNA farkı',
-        'DNA çift zincir, şekeri deoksiriboz, bazı timin. RNA tek zincir, şekeri riboz, bazı urasil.',
-      ),
-      kart(
-        'Baz eşleşmesi',
-        'DNA’da adenin timinle iki, guanin sitozinle üç hidrojen bağı yapar. Bu yüzden A=T ve G=C sayıları eşittir.',
-      ),
-      kart(
-        'ATP hücrenin parasıdır',
-        'Enerji fosfat bağlarında durur. Son fosfat koptuğunda ADP’ye dönüşür ve enerji açığa çıkar. Depolanmaz, gerektiğinde üretilir.',
+        'Dehidrasyon ve hidroliz',
+        'Büyük moleküller su çıkararak birleşir (dehidrasyon), su eklenerek parçalanır (hidroliz).',
       ),
     ]),
   ]),
   tema('byl9-t2', 'Organizasyon', [
-    konu('byl9-hucre', 'Hücrenin Keşfi ve Çeşitleri', [
+    konu('byl9-hucre-tur', 'Prokaryot ve Ökaryot Hücre', [
       kart(
-        'Hücre teorisi',
-        'Bütün canlılar hücrelerden oluşur, hücre canlılığın temel birimidir ve her hücre kendinden önceki bir hücreden meydana gelir.',
+        'Temel fark',
+        'Prokaryotta zarla çevrili çekirdek ve organel yoktur; ökaryotta ikisi de vardır.',
       ),
       kart(
-        'Prokaryot hücre',
-        'Çekirdeği ve zarlı organeli yoktur; DNA sitoplazmada serbesttir. Yalnız ribozom bulunur. Bakteri ve arkeler böyledir.',
+        'Prokaryotlar',
+        'Bakteri ve arkeler. DNA sitoplazmada serbest durur, ribozomları daha küçüktür.',
       ),
       kart(
-        'Ökaryot hücre',
-        'Zarla çevrili çekirdeği ve organelleri vardır. Protista, bitki, mantar ve hayvan hücreleri bu gruptadır.',
+        'Ökaryotlar',
+        'Protist, mantar, bitki ve hayvanlar. Hücreleri daha büyük ve bölmelidir.',
       ),
       kart(
-        'Bitki ve hayvan hücresi',
-        'Bitkide çeper, kloroplast ve büyük koful vardır. Hayvanda sentrozom bulunur, çeper yoktur.',
+        'Ortak yanları',
+        'İkisinde de hücre zarı, sitoplazma, ribozom ve DNA bulunur. Bunlar yaşamın asgari donanımıdır.',
       ),
     ]),
-    konu('byl9-zar', 'Hücre Zarı ve Madde Geçişi', [
+    konu('byl9-zar', 'Hücre Zarı', [
+      kart(
+        'Yapısı',
+        'Çift katlı fosfolipit tabakası; içine gömülü proteinler, kolesterol ve karbonhidrat zincirleri bulunur.',
+      ),
       kart(
         'Akıcı mozaik model',
-        'Zar iki katlı fosfolipitten oluşur, aralarına proteinler gömülüdür ve bu yapı akışkandır. Seçici geçirgendir.',
+        'Zar sabit bir duvar değil; proteinler lipit denizinde yüzer. Bu yüzden esnek ve onarılabilirdir.',
       ),
       kart(
-        'Pasif taşıma',
-        'Enerji harcanmaz, madde çoktan aza gider. Difüzyon, ozmoz ve kolaylaştırılmış difüzyon bu gruptadır.',
+        'Seçici geçirgenlik',
+        'Zar neyin gireceğine karar verir. Küçük ve yağda çözünenler kolay geçer, büyük ve yüklüler taşıyıcı ister.',
       ),
       kart(
-        'Ozmoz',
-        'Suyun, kendisinin çok olduğu yerden az olduğu yere zardan geçişi. Hücreyi şişirir ya da büzer.',
-      ),
-      kart(
-        'Aktif taşıma',
-        'Azdan çoka, derişim farkına karşı taşıma. ATP ve taşıyıcı protein gerekir. Sodyum-potasyum pompası örnektir.',
-      ),
-      kart(
-        'Endositoz ve ekzositoz',
-        'Büyük moleküller zardan geçemez; kese oluşturularak alınır (endositoz) ya da atılır (ekzositoz). İkisi de enerji ister.',
+        'Hücre duvarı ile karışmasın',
+        'Duvar bitki, mantar ve bakterilerde zarın dışındadır; cansızdır ve tam geçirgendir.',
       ),
     ]),
-    konu('byl9-organel', 'Sitoplazma ve Organeller', [
+    konu('byl9-sitoplazma', 'Sitoplazma', [
+      kart(
+        'Ne içerir?',
+        'Zar ile çekirdek arasını dolduran sıvı (sitozol) ve içindeki organeller ile sitoplazmik yapılar.',
+      ),
+      kart(
+        'Görevi',
+        'Tepkimelerin çoğu burada gerçekleşir; organelleri taşır ve maddelerin dağılmasını sağlar.',
+      ),
+      kart(
+        'İçeriği',
+        'Büyük kısmı su; ayrıca protein, tuz, enzim ve besin molekülleri bulunur.',
+      ),
+      kart(
+        'Sitoplazma hareketi',
+        'Bitki hücrelerinde sitoplazmanın dolaşması maddelerin hücre içinde dağılmasını hızlandırır.',
+      ),
+    ]),
+    konu('byl9-sitoplazmik', 'Sitoplazmik Yapılar', [
+      kart(
+        'Zarsız yapılar',
+        'Ribozom, sentrozom ve sitoiskelet zarla çevrili değildir; bu yüzden organel sayılmayabilirler.',
+      ),
       kart(
         'Ribozom',
-        'Protein üretir. Zarsızdır ve bütün hücrelerde bulunur; prokaryotta da vardır.',
+        'Protein sentezi yapar. Hem prokaryot hem ökaryot hücrede bulunan tek ortak yapıdır.',
       ),
       kart(
-        'Endoplazmik retikulum',
-        'Granüllü ER üzerinde ribozom taşır, protein işler. Granülsüz ER yağ üretir ve zehirleri etkisizleştirir.',
+        'Sitoiskelet',
+        'Protein iplikleri hücreye şekil verir, organelleri yerinde tutar ve hareketi sağlar.',
       ),
       kart(
-        'Golgi',
-        'Gelen maddeyi paketler, salgı hâline getirir. Salgı yapan hücrelerde (tükürük bezi) bol bulunur.',
+        'Sentrozom',
+        'Hayvan hücrelerinde bölünme sırasında iğ ipliklerini oluşturur. Bitki hücrelerinde bulunmaz.',
+      ),
+    ]),
+    konu('byl9-organel', 'Organeller ve Çekirdek', [
+      kart(
+        'Çekirdek',
+        'DNA’yı taşır ve hücreyi yönetir. Çekirdekçikte ribozom parçaları üretilir.',
       ),
       kart(
         'Mitokondri',
-        'Oksijenli solunumla ATP üretir. Kendi DNA’sı ve ribozomu vardır, kendini eşleyebilir. Kas hücresinde sayısı fazladır.',
-      ),
-      kart(
-        'Lizozom ve koful',
-        'Lizozom sindirim enzimi taşır, yaşlı yapıları parçalar. Koful depolama ve boşaltım yapar; bitkide büyüktür.',
+        'Hücresel solunumla ATP üretir. Kendi DNA’sı vardır ve çoğalabilir.',
       ),
       kart(
         'Kloroplast',
-        'Fotosentez yapar, klorofil içerir. Yalnız bitki ve bazı protistalarda bulunur; kendi DNA’sı vardır.',
+        'Bitki hücrelerinde fotosentez yapar. Klorofil pigmenti ışığı yakalar.',
+      ),
+      kart(
+        'Endoplazmik retikulum',
+        'Granüllü ER protein, granülsüz ER lipit üretir ve maddeleri taşır.',
+      ),
+      kart(
+        'Golgi ve lizozom',
+        'Golgi gelen maddeleri paketleyip gönderir; lizozom sindirim enzimleriyle onları parçalar.',
+      ),
+      kart(
+        'Koful',
+        'Depolama ve boşaltım yapar. Bitki hücresinde tek ve büyüktür, hücreye diklik verir.',
       ),
     ]),
-    konu('byl9-cekirdek', 'Çekirdek', [
+    konu('byl9-madde-gecis', 'Hücre Zarından Madde Geçişleri', [
       kart(
-        'Çekirdeğin görevi',
-        'Kalıtım maddesini taşır ve hücrenin bütün etkinliklerini yönetir. Çekirdeği alınan hücre bir süre sonra ölür.',
+        'Pasif taşıma',
+        'Enerji harcanmaz; madde çok olduğu yerden az olduğu yere geçer.',
       ),
       kart(
-        'Çekirdek zarı',
-        'Çift katlıdır ve porludur. Porlar sayesinde RNA ve proteinler sitoplazmayla alışveriş yapabilir.',
+        'Basit difüzyon',
+        'Küçük ve yüksüz moleküller (O₂, CO₂) doğrudan zardan geçer.',
       ),
-      kart('Çekirdekçik', 'Ribozomun yapı taşları burada üretilir. Zarı yoktur.'),
       kart(
-        'Kromatin ve kromozom',
-        'DNA normalde ince iplikler hâlinde (kromatin) durur; bölünme sırasında kısalıp kalınlaşarak kromozoma dönüşür.',
+        'Kolaylaştırılmış difüzyon',
+        'Glikoz gibi büyük moleküller taşıyıcı proteinle geçer; yine enerji harcanmaz.',
+      ),
+      kart(
+        'Ozmoz',
+        'Suyun az yoğun ortamdan çok yoğun ortama geçmesi. Bitkinin diklik kaybı bu dengeyle ilgilidir.',
+      ),
+      kart(
+        'Aktif taşıma',
+        'Az olduğu yerden çok olduğu yere taşıma. ATP harcanır; sodyum-potasyum pompası örnektir.',
+      ),
+      kart(
+        'Endositoz ve ekzositoz',
+        'Çok büyük maddeler zarla kese hâlinde alınır (endositoz) ya da dışarı verilir (ekzositoz).',
       ),
     ]),
-    konu('byl9-siniflandirma', 'Canlıların Sınıflandırılması', [
+    konu('byl9-siniflandirma', 'Sınıflandırmada Temel Yaklaşımlar', [
       kart(
-        'Doğal sınıflandırma',
-        'Canlılar akrabalık ilişkisine (kökene) göre ayrılır. Yalnız benzer görünüşe bakan yapay sınıflandırma bilimsel değildir.',
+        'Neden sınıflandırılır?',
+        'Milyonlarca türü düzenli incelemek için. Sınıflandırma aynı zamanda akrabalık ilişkisini gösterir.',
       ),
       kart(
-        'Birimlerin sırası',
-        'Âlem → şube → sınıf → takım → aile → cins → tür. Aşağı inildikçe birey sayısı azalır, ortak özellik artar.',
-      ),
-      kart(
-        'Tür nedir?',
-        'Ortak atadan gelen, çiftleştiğinde verimli döl verebilen bireyler topluluğu. Katır kısır olduğu için at ve eşek ayrı türdür.',
+        'Yapay ve doğal sınıflandırma',
+        'Yapay sınıflandırma dış görünüşe bakar; doğal (modern) sınıflandırma köken ve akrabalığı esas alır.',
       ),
       kart(
         'İkili adlandırma',
-        'Linnaeus’un yöntemi: birinci sözcük cins (büyük harf), ikincisi tür tanımlayıcısı. Latince yazılır: Homo sapiens.',
+        'Linne’nin yöntemi: cins adı büyük, tür adı küçük harfle yazılır ve ikisi eğik dizilir (Homo sapiens).',
+      ),
+      kart(
+        'Kategoriler',
+        'Âlemden türe doğru daralır: âlem, şube, sınıf, takım, aile, cins, tür. Daraldıkça ortak özellik artar.',
+      ),
+      kart(
+        'Tür nedir?',
+        'Doğada çiftleşip verimli döl verebilen bireyler topluluğu. Katır kısır olduğu için ayrı bir tür değildir.',
       ),
     ]),
-    konu('byl9-alemler', 'Âlemler ve Biyoçeşitlilik', [
+    konu('byl9-uc-alem', 'Üç Üst Âlem Sisteminde Canlılar', [
       kart(
         'Üç domain',
-        'Bakteri, Arke ve Ökarya. Arkeler sıcak su kaynağı, tuz gölü gibi uç ortamlarda yaşayabilir.',
+        'Bakteriler, Arkeler ve Ökaryotlar. Ayrım hücre yapısı ve genetik benzerliğe dayanır.',
       ),
       kart(
         'Bakteriler',
-        'Prokaryottur. Hepsi zararlı değildir: bağırsak florası, yoğurt mayalanması ve azot döngüsü bakterilerle yürür.',
+        'Prokaryot, tek hücreli. Bazıları hastalık yapar ama çoğu yararlıdır: sindirim, toprak, yoğurt.',
       ),
       kart(
-        'Protista',
-        'Ökaryot ama öteki âlemlere uymayan karışık grup: amip, öglena, terliksi hayvan, algler.',
+        'Arkeler',
+        'Prokaryot ama bakterilerden farklı. Çoğu aşırı ortamlarda yaşar: kaynar su, tuz gölü, asit.',
       ),
       kart(
-        'Mantarlar',
-        'Klorofilsizdir, besinini dışarıdan hazır alır. Çeperinde selüloz değil kitin bulunur.',
+        'Protistler ve mantarlar',
+        'Protistler çoğunlukla tek hücreli ökaryotlar; mantarlar hazır beslenir ve dış sindirim yapar.',
       ),
       kart(
-        'Biyoçeşitlilik neden önemli?',
-        'Tür çeşitliliği yüksek ekosistem değişime daha dayanıklıdır. Bir türün yok olması besin ağının tamamını etkileyebilir.',
+        'Bitkiler ve hayvanlar',
+        'Bitkiler fotosentezle kendi besinini üretir; hayvanlar hazır beslenir ve hareket eder.',
+      ),
+    ]),
+    konu('byl9-biyocesitlilik', 'Biyoçeşitlilik', [
+      kart(
+        'Üç düzeyi',
+        'Gen çeşitliliği, tür çeşitliliği ve ekosistem çeşitliliği. Üçü birlikte biyoçeşitliliği oluşturur.',
+      ),
+      kart(
+        'Neden önemli?',
+        'Çeşitlilik ekosistemi dayanıklı kılar. Tek çeşit üretim bir hastalıkla bütünüyle yok olabilir.',
+      ),
+      kart(
+        'Endemik tür',
+        'Yalnızca belirli bir bölgede yaşayan tür. Kaybedilirse dünyadan tümüyle silinir.',
+      ),
+      kart(
+        'Türkiye’nin durumu',
+        'Üç farklı bitki coğrafyasının kesiştiği yerde olduğu için tür sayısı Avrupa’nın tamamına yakındır.',
+      ),
+      kart(
+        'Tehditler',
+        'Habitat kaybı, aşırı avlanma, kirlilik, istilacı türler ve iklim değişikliği.',
       ),
     ]),
   ]),

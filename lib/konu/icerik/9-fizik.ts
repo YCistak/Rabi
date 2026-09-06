@@ -3,266 +3,401 @@ import { kart, konu, program, tema } from '../tip'
 /**
  * 9. sınıf Fizik — Maarif Modeli.
  *
- * Dört tema: **Fizik Bilimi ve Kariyer Keşfi**, **Kuvvet ve Hareket**,
- * **Akışkanlar**, **Enerji**. Eski programdaki "Madde ve Özellikleri"
- * ünitesi 9. sınıfta yok.
+ * Dört tema: Fizik Bilimi ve Kariyer Keşfi, Kuvvet ve Hareket, Akışkanlar,
+ * Enerji. Konu adları ve sırası `maarif/iskelet.json`'dan; `maarif.test.ts`
+ * denetliyor.
+ *
+ * Konu adları programdakinden **kısaltılabiliyor** — haritadaki düğüme
+ * "Isı, Öz Isı, Isı Sığası ve Sıcaklık Farkı Arasındaki İlişki" sığmıyor.
+ * Test eşitlik değil örtüşme arıyor; kısaltırken konuyu tanıtan kelimeleri
+ * atma.
  */
-export const fizik9 = program('fizik', 9, 'Fizik biliminden enerjiye', [
+export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
   tema('fzk9-t1', 'Fizik Bilimi ve Kariyer Keşfi', [
     konu('fzk9-bilim', 'Fizik Bilimi', [
       kart(
         'Fizik neyi inceler?',
-        'Madde, enerji ve bunlar arasındaki etkileşimi inceler. Öteki fen bilimlerinin dayandığı temel bilimdir.',
+        'Madde, enerji ve bunların uzay-zamandaki etkileşimini inceler. Doğanın kurallarını sayı ile ifade etmeye çalışır.',
       ),
       kart(
-        'Alt dalları',
-        'Mekanik hareketi, optik ışığı, termodinamik ısıyı, elektromanyetizma yük ve alanı, atom-nükleer fizik çekirdeği inceler.',
+        'Deney ve model',
+        'Fizik gözlemle başlar, model kurar, deneyle sınar. Deneyle çelişen model ne kadar zarif olursa olsun bırakılır.',
       ),
       kart(
-        'Modelleme',
-        'Fizik gerçeği sadeleştirerek anlatır: sürtünmesiz yüzey, noktasal cisim. Model gerçeğin kendisi değil, işe yarayan yaklaşımıdır.',
+        'Fizik ve matematik',
+        'Matematik fiziğin dili. Bir yasa cümleyle anlatılabilir ama tahmin yapabilmesi için denkleme dönmesi gerekir.',
       ),
       kart(
-        'Fiziğe yön verenler',
-        'Galileo deneyi öne çıkardı, Newton hareketi matematikleştirdi, Einstein uzay ve zamanı birbirine bağladı.',
+        'Ölçme olmadan fizik olmaz',
+        'Her ölçümün bir belirsizliği vardır. Sonucu belirsizliğiyle birlikte vermek, fiziğin dürüstlük kuralıdır.',
+      ),
+    ]),
+    konu('fzk9-altdal', 'Fizik Biliminin Alt Dalları', [
+      kart(
+        'Mekanik',
+        'Kuvvet, hareket ve dengeyi inceler. Köprüden gezegen yörüngesine kadar hareket eden her şey konusudur.',
       ),
       kart(
-        'Fizik tabanlı meslekler',
-        'Mühendislik, tıp fiziği (radyoterapi), meteoroloji, havacılık, malzeme bilimi ve yazılımda simülasyon.',
+        'Termodinamik ve optik',
+        'Termodinamik ısı ve enerji dönüşümlerini, optik ışığın davranışını inceler.',
+      ),
+      kart(
+        'Elektromanyetizma',
+        'Elektrik ve manyetizmayı tek çatı altında toplar. Elektrik motorundan radyo dalgasına kadar her şey buradan çıkar.',
+      ),
+      kart(
+        'Modern fizik',
+        'Atom altı ve ışık hızına yakın olaylar: kuantum fiziği ve görelilik. Klasik fiziğin yetmediği yerde başlar.',
+      ),
+    ]),
+    konu('fzk9-bilim-insanlari', 'Fizik Bilimine Yön Verenler', [
+      kart(
+        'Newton',
+        'Hareket yasalarını ve kütle çekimini tek çatı altında topladı. Gökteki ve yerdeki hareketin aynı yasaya uyduğunu gösterdi.',
+      ),
+      kart(
+        'Einstein',
+        'Görelilik kuramıyla zaman ve uzayın mutlak olmadığını gösterdi. Enerji ile kütlenin bağını da o kurdu.',
+      ),
+      kart(
+        'Marie Curie',
+        'Radyoaktivite üzerine çalıştı, iki ayrı dalda Nobel alan ilk kişi oldu. Polonyum ve radyumu keşfetti.',
+      ),
+      kart(
+        'Türkiye’den bir ad',
+        'Feza Gürsey parçacık fiziğinde simetri kuramlarıyla tanınır; adı uluslararası bir araştırma ödülünde yaşıyor.',
+      ),
+    ]),
+    konu('fzk9-kariyer', 'Fizik Bilimi ile İlgili Kariyer Keşfi', [
+      kart(
+        'Nerede çalışılır?',
+        'Enerji, savunma, sağlık (tıbbi görüntüleme), yarı iletken ve havacılık sektörleri; ayrıca araştırma merkezleri.',
+      ),
+      kart(
+        'Medikal fizik',
+        'Radyoterapi ve görüntüleme cihazlarının doğru dozla çalışmasını sağlar. Hastane ekibinin bir parçasıdır.',
+      ),
+      kart(
+        'Araştırma merkezleri',
+        'TÜBİTAK ve üniversite laboratuvarları; yurt dışında CERN gibi merkezler. Türkiye CERN’e ortak üye.',
+      ),
+      kart(
+        'Beklenmedik alanlar',
+        'Fizik eğitimi veri analizi ve modelleme öğrettiği için finans ve yazılım da fizikçi istihdam eder.',
       ),
     ]),
   ]),
   tema('fzk9-t2', 'Kuvvet ve Hareket', [
-    konu('fzk9-nicelik', 'Nicelikler ve Birimler', [
+    konu('fzk9-nicelik', 'Temel ve Türetilmiş Nicelikler', [
       kart(
         'Temel nicelikler',
-        'Yedi tane: uzunluk (m), kütle (kg), zaman (s), sıcaklık (K), akım (A), madde miktarı (mol), ışık şiddeti (cd).',
+        'SI’da yedi tane: uzunluk, kütle, zaman, akım, sıcaklık, madde miktarı, ışık şiddeti. Başka nicelikten türetilmezler.',
       ),
       kart(
-        'Türetilmiş nicelik',
-        'Temel niceliklerden çıkar: hız (m/s), kuvvet (N = kg·m/s²), enerji (J). Yeni bir tanım değil, birleşimdir.',
+        'Türetilmiş nicelikler',
+        'Temel niceliklerden çarpma ve bölme ile elde edilir: hız (m/s), kuvvet (kg·m/s²), enerji (joule).',
       ),
       kart(
-        'Birim kontrolü işe yarar',
-        'Bir denklemin iki tarafının birimi tutmuyorsa denklem yanlıştır. Sonucu kontrol etmenin en hızlı yolu.',
+        'Birim önemlidir',
+        'Sayı tek başına bilgi değildir. 1999’da bir Mars sondası birim karışıklığı yüzünden kaybedildi.',
       ),
       kart(
-        'Ölçmede belirsizlik',
-        'Her ölçüm bir hata payı taşır. Cetvelin en küçük bölmesi 1 mm ise sonucu 0,01 mm duyarlıkla yazmak sahte bir kesinliktir.',
+        'Ön ekler',
+        'kilo bin katı, santi yüzde biri, mili binde biri, mikro milyonda biri. Hesaba girmeden önce birimler eşitlenir.',
       ),
     ]),
-    konu('fzk9-vektor', 'Skaler ve Vektörel Nicelikler', [
+    konu('fzk9-skaler-vektorel', 'Skaler ve Vektörel Nicelikler', [
       kart(
-        'Fark nedir?',
-        'Skaler yalnızca büyüklüktür (kütle, zaman, sıcaklık). Vektörel nicelikte yön de vardır (kuvvet, hız, yer değiştirme).',
+        'Skaler nicelik',
+        'Yalnızca büyüklükle tanımlanır: kütle, zaman, sıcaklık, sürat, enerji.',
+      ),
+      kart(
+        'Vektörel nicelik',
+        'Büyüklüğün yanında yön de gerekir: kuvvet, hız, ivme, yer değiştirme.',
       ),
       kart(
         'Yol ve yer değiştirme',
-        'Yol gidilen toplam uzunluk (skaler), yer değiştirme başlangıçla bitiş arasındaki vektör. Başladığın yere dönersen yol var, yer değiştirme sıfır.',
+        'Yol gidilen toplam uzunluk (skaler), yer değiştirme başlangıçtan bitişe çizilen ok (vektörel).',
       ),
       kart(
-        'Vektör toplama',
-        'Aynı yönlüler toplanır, zıt yönlüler çıkarılır. Dik iki vektörün bileşkesi Pisagor ile bulunur.',
-      ),
-      kart(
-        'Bileşenlere ayırma',
-        'Eğik bir vektör yatay ve düşey bileşenlerine ayrılabilir. Eğik atış ve eğik düzlem soruları bununla çözülür.',
+        'Sürat ve hız',
+        'Sürat yolun zamana oranı, hız yer değiştirmenin. Pistte bir tur atan araç için ortalama hız sıfırdır.',
       ),
     ]),
-    konu('fzk9-kuvvet', 'Kuvvet ve Denge', [
+    konu('fzk9-vektor', 'Vektörler', [
       kart(
-        'Kuvvet ne yapar?',
-        'Cismin hızını, yönünü ya da şeklini değiştirir. Birimi newton (N), vektörel bir niceliktir.',
+        'Nasıl gösterilir?',
+        'Ok ile: okun uzunluğu büyüklüğü, yönü ise vektörün yönünü verir.',
       ),
       kart(
-        'Net kuvvet',
-        'Cisme etki eden kuvvetlerin bileşkesi. Net kuvvet sıfırsa cisim ya durur ya sabit hızla gider — ikisi de dengedir.',
+        'Uç uca ekleme',
+        'İlk vektörün ucuna ikincinin başı konur; ilkin başından sonuncunun ucuna çizilen ok bileşkedir.',
       ),
       kart(
-        'Doğadaki dört temel kuvvet',
-        'Kütle çekim, elektromanyetik, güçlü nükleer ve zayıf nükleer. Günlük hayatta gördüğümüz sürtünme, gerilme gibi kuvvetler elektromanyetik kökenlidir.',
+        'Paralelkenar yöntemi',
+        'İki vektör aynı noktadan çizilip paralelkenar tamamlanır; köşegen bileşkeyi verir.',
       ),
       kart(
-        'Sürtünme kuvveti',
-        'Harekete zıt yöndedir. Yüzeylerin cinsine ve cismin yüzeye uyguladığı dik kuvvete bağlıdır; temas alanına bağlı değildir.',
+        'Bileşenlerine ayırma',
+        'Bir vektör birbirine dik iki parçaya bölünebilir. Eğik düzlem problemleri bu yolla çözülür.',
       ),
       kart(
-        'Eylemsizlik',
-        'Cisim durumunu korumak ister. Fren yapan otobüste öne savrulmanın sebebi budur; kütle arttıkça eylemsizlik artar.',
+        'En büyük, en küçük bileşke',
+        'Aynı yönlüyse büyüklükler toplanır, zıt yönlüyse çıkarılır. Bileşke bu iki değer arasında kalır.',
       ),
     ]),
-    konu('fzk9-hareket', 'Hareket Türleri', [
+    konu('fzk9-temel-kuvvet', 'Doğadaki Temel Kuvvetler', [
+      kart(
+        'Dört temel kuvvet',
+        'Kütle çekim, elektromanyetik, güçlü nükleer ve zayıf nükleer kuvvet. Bütün etkileşimler bu dördüne indirgenir.',
+      ),
+      kart(
+        'Kütle çekim',
+        'En zayıfı ama menzili sonsuz ve hep çekicidir. Gezegenleri yörüngede tutan budur.',
+      ),
+      kart(
+        'Elektromanyetik kuvvet',
+        'Yükler arasında etkir, hem çeker hem iter. Sürtünme ve tepki gibi günlük kuvvetlerin kaynağı aslında budur.',
+      ),
+      kart(
+        'Nükleer kuvvetler',
+        'Güçlü kuvvet çekirdeği bir arada tutar; zayıf kuvvet radyoaktif bozunmadan sorumludur. Menzilleri çekirdek kadardır.',
+      ),
+    ]),
+    konu('fzk9-hareket', 'Hareket ve Hareket Türleri', [
       kart(
         'Hareket görecelidir',
-        'Bir cismin hareketli olup olmadığı seçilen referans noktasına bağlıdır. Otobüsteki yolcu şoföre göre duruyor, yoldakine göre hareketli.',
+        'Bir cismin hareketli sayılması seçilen referans noktasına bağlıdır. Otobüsteki yolcu yere göre hareketli, koltuğa göre durgundur.',
       ),
       kart(
-        'Düzgün doğrusal hareket',
-        'Hız sabit, ivme sıfır. Eşit zamanlarda eşit yol alınır; yol-zaman grafiği doğrudur.',
+        'Öteleme hareketi',
+        'Cismin tüm noktaları aynı yönde ve aynı miktarda yer değiştirir. Düz yolda giden araba böyledir.',
       ),
       kart(
-        'İvmeli hareket',
-        'Hız zamanla değişir. İvme, hızdaki değişimin zamana oranıdır; hızla aynı yöndeyse hızlanma, zıtsa yavaşlama olur.',
+        'Dönme hareketi',
+        'Cisim bir eksen çevresinde döner; noktalar eksene uzaklığına göre farklı yol alır. Tekerlek ve pervane örnektir.',
       ),
       kart(
-        'Grafik okuma',
-        'Hız-zaman grafiğinde eğim ivmeyi, grafiğin altında kalan alan yer değiştirmeyi verir.',
+        'Titreşim hareketi',
+        'Denge noktası çevresinde ileri geri gidiş. Sarkaç ve yay ucundaki kütle böyle hareket eder.',
       ),
       kart(
-        'Dairesel ve titreşim hareketi',
-        'Dairesel harekette hızın büyüklüğü sabit olsa da yön sürekli değiştiği için hareket ivmelidir. Sarkaç ve yay titreşim hareketi yapar.',
+        'İvme',
+        'Hızın zamana göre değişimi. Hızlanmak, yavaşlamak ve yön değiştirmek — üçü de ivmelidir.',
       ),
     ]),
   ]),
   tema('fzk9-t3', 'Akışkanlar', [
     konu('fzk9-basinc', 'Basınç', [
       kart(
-        'Tanım',
-        'Birim yüzeye dik uygulanan kuvvet: P = F/A. Birimi paskal (Pa). Aynı kuvvet küçük alana uygulanırsa basınç büyür — bıçağın ince olmasının sebebi.',
+        'Tanımı',
+        'Birim yüzeye dik olarak etkiyen kuvvet. Aynı kuvvet küçük alana uygulanırsa basınç büyür.',
+      ),
+      kart(
+        'Birimi',
+        'Pascal (Pa) = N/m². Bir metrekareye bir newtonluk kuvvet uygulandığındaki basınçtır.',
+      ),
+      kart(
+        'Günlük örnekler',
+        'Bıçağın ince ağzı ve çivinin sivri ucu alanı küçültüp basıncı artırır; kar ayakkabısı alanı büyütüp azaltır.',
       ),
       kart(
         'Katı basıncı',
-        'Yalnız ağırlığa ve temas alanına bağlıdır. Katılar basıncı **aynen** iletir, yönünü değiştirmez.',
+        'Katılar basıncı yalnızca temas yüzeyine ve aşağı doğru iletir. Sıvı ve gazlar her yöne iletir.',
+      ),
+    ]),
+    konu('fzk9-sivi-basinc', 'Sıvılarda Basınç', [
+      kart(
+        'Neye bağlı?',
+        'Sıvının yoğunluğuna, derinliğe ve yer çekimi ivmesine bağlıdır. Kabın şekline ve sıvı miktarına bağlı değildir.',
       ),
       kart(
-        'Sıvı basıncı',
-        'P = h·d·g. Yalnız derinliğe, sıvının yoğunluğuna ve yer çekimine bağlıdır; kabın şekli ve sıvının miktarı basıncı değiştirmez.',
+        'Derinlikle artar',
+        'Üstteki sıvı sütununun ağırlığı arttığı için basınç derinlikle doğru orantılı büyür.',
+      ),
+      kart(
+        'Her yöne iletir',
+        'Durgun sıvı basıncı her yöne aynı şiddette iletir. Barajın alt duvarı bu yüzden daha kalın yapılır.',
       ),
       kart(
         'Pascal ilkesi',
-        'Kapalı kaptaki sıvıya uygulanan basınç her yöne aynen iletilir. Hidrolik fren ve kriko bu ilkeyle küçük kuvvetten büyük kuvvet üretir.',
+        'Kapalı kaptaki sıvıya uygulanan basınç her noktaya aynen iletilir. Hidrolik fren ve kriko bununla çalışır.',
       ),
       kart(
-        'Açık hava basıncı',
-        'Deniz seviyesinde yaklaşık 76 cm-Hg. Yükseldikçe azalır; Torricelli deneyiyle ölçülmüştür.',
+        'Bileşik kaplar',
+        'Birbirine bağlı kaplarda aynı sıvı, kapların şekli ne olursa olsun aynı seviyede durur.',
+      ),
+    ]),
+    konu('fzk9-acik-hava', 'Açık Hava Basıncı', [
+      kart(
+        'Havanın da ağırlığı var',
+        'Atmosferdeki hava sütunu yeryüzüne basınç uygular. Deniz seviyesinde yaklaşık 101.325 Pa’dır.',
+      ),
+      kart(
+        'Torricelli deneyi',
+        'Cıva dolu ters çevrilmiş boruda cıva 76 cm’de durur. Bu yükseklik açık hava basıncının ölçüsüdür.',
+      ),
+      kart(
+        'Yükseklikle azalır',
+        'Yukarı çıkıldıkça üstteki hava sütunu kısalır ve basınç düşer. Uçakta kulak tıkanmasının sebebi budur.',
+      ),
+      kart(
+        'Günlük etkileri',
+        'Pipetle içmek, vantuz ve şırınga açık hava basıncıyla çalışır; içerideki basınç düşürülür, dışarıdaki iter.',
       ),
     ]),
     konu('fzk9-kaldirma', 'Kaldırma Kuvveti', [
       kart(
+        'Neden oluşur?',
+        'Cismin alt yüzeyine etkiyen sıvı basıncı üst yüzeyindekinden büyüktür; aradaki fark yukarı doğru bir kuvvet üretir.',
+      ),
+      kart(
         'Arşimet ilkesi',
-        'Sıvıya batan cisme, taşırdığı sıvının ağırlığı kadar yukarı yönlü kuvvet etki eder.',
+        'Kaldırma kuvveti, cismin taşırdığı sıvının ağırlığına eşittir.',
       ),
       kart(
         'Neye bağlı?',
-        'Sıvının yoğunluğuna ve cismin **batan** hacmine bağlıdır. Cismin kütlesine ya da derinliğe bağlı değildir.',
+        'Sıvının yoğunluğuna ve batan hacme bağlıdır. Cismin kütlesine ya da derinliğe bağlı değildir.',
       ),
       kart(
-        'Yüzme, askıda kalma, batma',
-        'Cismin yoğunluğu sıvıdan küçükse yüzer, eşitse askıda kalır, büyükse batar.',
+        'Yüzme koşulu',
+        'Cismin yoğunluğu sıvınınkinden küçükse yüzer, eşitse askıda kalır, büyükse batar.',
       ),
       kart(
         'Gemi neden batmaz?',
-        'Çelik yoğun ama geminin içi boştur; ortalama yoğunluğu suyunkinden küçük kalır.',
+        'Çelik yoğun ama gemi içi boştur; ortalama yoğunluğu suyunkinden küçük kaldığı için yüzer.',
       ),
     ]),
     konu('fzk9-bernoulli', 'Bernoulli İlkesi', [
       kart(
-        'Temel ifade',
-        'Bir akışkanın hızı arttığı yerde basıncı azalır. Enerjinin korunumunun akışkanlardaki hâlidir.',
-      ),
-      kart(
-        'Uçak kanadı',
-        'Kanadın üstünden akan hava daha hızlıdır, orada basınç düşer; alt-üst basınç farkı kaldırma kuvveti üretir.',
-      ),
-      kart(
-        'Günlük örnekler',
-        'İki kâğıdın arasına üflenince kâğıtların birbirine yaklaşması, duş perdesinin içeri çekilmesi, spreyin çalışması.',
+        'Temel fikir',
+        'Akışkanın sürati arttığı yerde çeperlere yaptığı basınç azalır.',
       ),
       kart(
         'Süreklilik',
-        'Boru daralınca akışkanın hızı artar. Hortumun ucunu sıkınca suyun uzağa fışkırması bu yüzden.',
+        'Boru daralınca akışkan hızlanır; aynı miktar sıvı birim zamanda geçmek zorundadır.',
+      ),
+      kart(
+        'Uçak kanadı',
+        'Kanadın üstünden geçen hava daha hızlıdır, basınç düşer; alttaki yüksek basınç kanadı yukarı iter.',
+      ),
+      kart(
+        'Günlük örnek',
+        'Duş perdesinin içeri çekilmesi ve iki yaprağın arasına üflendiğinde birbirine yaklaşması aynı ilkedir.',
       ),
     ]),
   ]),
   tema('fzk9-t4', 'Enerji', [
-    konu('fzk9-is', 'İş, Enerji ve Güç', [
-      kart(
-        'Fizikte iş',
-        'W = F·x, kuvvet yönünde yol alınırsa iş yapılır. Duvarı ittiğin hâlde duvar hareket etmiyorsa fizik açısından iş sıfırdır.',
-      ),
-      kart(
-        'Kuvvet dikse iş yok',
-        'Kuvvet, yer değiştirmeye dikse iş yapmaz. Cebindeki kitabı yatay taşırken yer çekimi iş yapmaz.',
-      ),
-      kart(
-        'Enerji',
-        'İş yapabilme yeteneği. Birimi joule (J); iş ile enerji aynı birimi paylaşır çünkü iş, enerji aktarımıdır.',
-      ),
-      kart(
-        'Güç',
-        'Birim zamanda yapılan iş: P = W/t. Birimi watt. Aynı işi kısa sürede yapan makine daha güçlüdür, daha çok enerji harcamış olmaz.',
-      ),
-    ]),
-    konu('fzk9-mekanik', 'Mekanik Enerji', [
-      kart(
-        'Kinetik enerji',
-        'Hareketten gelen enerji: Ek = ½mv². Hız iki katına çıkarsa enerji dört katına çıkar — fren mesafesinin hızla hızla artmasının sebebi.',
-      ),
-      kart(
-        'Potansiyel enerji',
-        'Konumdan gelir. Çekim potansiyeli Ep = m·g·h; yayda ise esneklik potansiyel enerjisi depolanır.',
-      ),
-      kart(
-        'Korunum',
-        'Sürtünmesiz ortamda kinetik + potansiyel toplamı sabittir. Düşen cisimde potansiyel azalırken kinetik aynı oranda artar.',
-      ),
-      kart(
-        'Sürtünme varsa',
-        'Enerji yok olmaz, ısıya dönüşür. "Enerji kaybı" denen şey aslında biçim değiştirmedir.',
-      ),
-    ]),
-    konu('fzk9-isi', 'Isı ve Sıcaklık', [
-      kart(
-        'Isı ile sıcaklık aynı değil',
-        'Sıcaklık taneciklerin ortalama hareket enerjisidir, termometreyle ölçülür. Isı ise aktarılan enerjidir, kalorimetre kabıyla ölçülür.',
-      ),
-      kart(
-        'Denizle bardak',
-        'Denizin sıcaklığı bardaktaki sudan düşük olabilir ama ısı enerjisi çok daha fazladır: ısı kütleye de bağlıdır.',
-      ),
+    konu('fzk9-ic-enerji', 'İç Enerji, Isı ve Sıcaklık', [
       kart(
         'İç enerji',
-        'Cismi oluşturan bütün taneciklerin enerjilerinin toplamı. Kütle arttıkça artar.',
+        'Maddedeki taneciklerin kinetik ve potansiyel enerjilerinin toplamı. Madde miktarına bağlıdır.',
       ),
       kart(
-        'Isıl denge',
-        'Isı her zaman sıcaktan soğuğa akar. Sıcaklıklar eşitlendiğinde akış durur.',
+        'Sıcaklık',
+        'Taneciklerin ortalama kinetik enerjisinin ölçüsü. Madde miktarından bağımsızdır.',
+      ),
+      kart(
+        'Isı',
+        'Sıcaklık farkı yüzünden aktarılan enerji. Madde ısı içermez; ısı yalnızca aktarım sırasında vardır.',
+      ),
+      kart(
+        'Kıvılcım ve kazan',
+        'Kıvılcımın sıcaklığı yüksektir ama iç enerjisi azdır; ılık bir kazan daha çok enerji taşır.',
+      ),
+      kart(
+        'Aktarım yönü',
+        'Isı her zaman sıcaktan soğuğa akar. Ters yön kendiliğinden olmaz.',
       ),
     ]),
-    konu('fzk9-ozisi', 'Öz Isı ve Hâl Değişimi', [
+    konu('fzk9-oz-isi', 'Isı, Öz Isı ve Isı Sığası', [
       kart(
         'Öz ısı',
-        '1 gram maddenin sıcaklığını 1 °C artırmak için gereken ısı. Maddeye özgüdür; suyun öz ısısı yüksektir, bu yüzden geç ısınır ve geç soğur.',
+        '1 gram maddenin sıcaklığını 1 °C artırmak için gereken ısı. Maddenin ayırt edici özelliğidir.',
+      ),
+      kart(
+        'Suyun öz ısısı yüksek',
+        'Su geç ısınır, geç soğur. Denizin havayı yumuşatması ve motor soğutmada su kullanılması bundandır.',
       ),
       kart(
         'Isı sığası',
-        'Öz ısı × kütle. Maddeye değil **cisme** aittir: aynı maddeden yapılmış iki cismin öz ısısı aynı, ısı sığası farklı olabilir.',
+        'Bütün cismin sıcaklığını 1 °C artırmak için gereken ısı. Öz ısı ile kütlenin çarpımıdır.',
       ),
       kart(
-        'Hâl değişiminde sıcaklık sabit',
-        'Erime ve kaynama sırasında verilen ısı sıcaklığı yükseltmez, hâli değiştirir. Grafikte yatay bölüm burasıdır.',
+        'Hesap',
+        'Q = m · c · ΔT. Alınan ısı; kütle, öz ısı ve sıcaklık farkının çarpımına eşittir.',
+      ),
+    ]),
+    konu('fzk9-hal-degisim', 'Hâl Değişimi', [
+      kart(
+        'Sıcaklık sabit kalır',
+        'Hâl değişirken alınan ısı sıcaklığı değil, tanecikler arası bağları değiştirmeye harcanır.',
       ),
       kart(
-        'Gizli ısı',
-        'Hâl değiştirmek için gereken ısı. Buharlaşma ısısı erime ısısından çok daha büyüktür; ter buharlaşınca vücudu bu yüzden serinletir.',
+        'Erime ve donma ısısı',
+        '1 gram maddeyi eritmek için gereken ısı, aynı maddenin donarken verdiği ısıya eşittir.',
+      ),
+      kart(
+        'Buharlaşma her sıcaklıkta',
+        'Buharlaşma yüzeyde ve her sıcaklıkta olur; kaynama ise belirli bir sıcaklıkta sıvının her yerinde olur.',
+      ),
+      kart(
+        'Neden serinletir?',
+        'Terin buharlaşması için gereken ısı deriden çekilir; bu yüzden ter buharlaşırken vücut serinler.',
+      ),
+    ]),
+    konu('fzk9-isil-denge', 'Isıl Denge', [
+      kart(
+        'Ne demek?',
+        'Temas eden cisimler aynı sıcaklığa geldiğinde net ısı akışı durur; bu duruma ısıl denge denir.',
+      ),
+      kart(
+        'Alınan ısı = verilen ısı',
+        'Yalıtılmış bir kapta sıcak cismin verdiği ısı, soğuk cismin aldığı ısıya eşittir.',
+      ),
+      kart(
+        'Denge sıcaklığı',
+        'Karışımın son sıcaklığı iki başlangıç sıcaklığının arasındadır; kütlesi ve öz ısısı büyük olana yakın çıkar.',
+      ),
+      kart(
+        'Termometre nasıl çalışır?',
+        'Termometre ölçtüğü cisimle ısıl dengeye girer ve kendi sıcaklığını gösterir.',
       ),
     ]),
     konu('fzk9-aktarim', 'Isı Aktarım Yolları', [
       kart(
         'İletim',
-        'Tanecikler yerinde titreşerek enerjiyi komşusuna aktarır. Katılarda, özellikle metallerde etkindir.',
+        'Tanecikler yer değiştirmeden titreşerek enerjiyi komşusuna aktarır. Katılarda, özellikle metallerde baskındır.',
       ),
       kart(
-        'Konveksiyon (taşınma)',
-        'Isınan akışkan genleşir, yoğunluğu düşer ve yükselir. Kalorifer peteğinin altta, klimanın üstte olmasının sebebi.',
+        'Konveksiyon',
+        'Isınan akışkan genleşip yükselir, soğuyan iner. Kalorifer odayı bu döngüyle ısıtır.',
       ),
       kart(
         'Işıma',
-        'Ortam gerekmez, boşlukta da olur. Güneş enerjisi Dünya’ya bu yolla gelir. Koyu ve mat yüzeyler daha çok ışıma soğurur.',
+        'Enerji elektromanyetik dalgalarla taşınır ve ortam gerekmez. Güneş’in ısısı bize böyle ulaşır.',
       ),
       kart(
         'Yalıtım',
-        'Amaç üç yolu da yavaşlatmak: çift cam arasındaki durgun hava iletimi ve taşınmayı, parlak yüzey ışımayı azaltır.',
+        'Termos üç yolu birden keser: çift cidar arasında boşluk iletimi ve konveksiyonu, aynalı yüzey ışımayı engeller.',
+      ),
+    ]),
+    konu('fzk9-iletim-hizi', 'Isı İletim Hızı', [
+      kart(
+        'Neye bağlı?',
+        'Malzemenin cinsine, kesit alanına, iki uç arasındaki sıcaklık farkına ve uzunluğa bağlıdır.',
+      ),
+      kart(
+        'Uzunlukla ters',
+        'Yol uzadıkça iletim yavaşlar. Duvarın kalınlaştırılması ısı kaybını bu yüzden azaltır.',
+      ),
+      kart(
+        'Neden metal soğuk hisseder?',
+        'Metal ısıyı hızlı çektiği için elden ısı hızla akar. Aynı sıcaklıktaki tahta daha ılık hissedilir.',
+      ),
+      kart(
+        'Yalıtkanlar',
+        'Hava, köpük ve yün ısıyı yavaş iletir. Kışlık giysi aslında arasında tuttuğu havayla yalıtır.',
       ),
     ]),
   ]),

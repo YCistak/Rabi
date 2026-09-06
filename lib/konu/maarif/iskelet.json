@@ -1,0 +1,4305 @@
+{
+  "kaynak": "https://tymm.meb.gov.tr",
+  "cekilme": "2026-09-06",
+  "dersler": {
+    "matematik": {
+      "9": [
+        {
+          "id": "21",
+          "sira": 1,
+          "ad": "Sayılar",
+          "dersSaati": 38,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Gerçek Sayıların Üslü ve Köklü Gösterimleri ile Yapılan İşlemler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Gerçek Sayı Aralıklarının Gösterimi ve Aralıklarla İlgili İşlemlerde Küme Sembollerinin Kullanımı",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Sayı Kümeleri ve İşlem Özellikleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Gerçek Sayıların İşlem Özelliklerini Cebirsel Olarak İfade Etme",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "alt küme",
+            "ancak ve ancak",
+            "aralık",
+            "bazı",
+            "bilimsel gösterim",
+            "birleşim işlemi",
+            "boş küme",
+            "eşitsizlik",
+            "eşlenik",
+            "evrensel küme",
+            "fark işlemi",
+            "her",
+            "ise",
+            "ispat",
+            "kapalılık",
+            "kesişim işlemi",
+            "köklü gösterim",
+            "küme",
+            "kümenin elemanı",
+            "mutlak değer",
+            "önerme",
+            "önermenin değili",
+            "özdeşlik",
+            "sayı kümesi",
+            "tümleme",
+            "üslü gösterim",
+            "ve",
+            "veya",
+            "ya da"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "MAT.9.1.1",
+              "metin": "Gerçek sayıların üslü ve köklü gösterimleriyle yapılan işlemlere dair muhakeme yapabilmea) Gerçek sayıların üslü ve köklü gösterimleriyle yapılan işlemlere ilişkin varsayımlarda bulunur.b) Farklı örneklerden elde ettiği örüntüleri listeleyerek varsayımlarına yönelik genellemeler yapar.c) Varsayımları ile genellemelerini karşılaştırır.ç) Elde ettiği genellemelerden üslü ve köklü gösterimlerle ilgili önermeler sunar.d) Üslü ve köklü gösterimlerle ilgili önermelerin kullanışlılığını problem durumlarında değerlendirir.e) Üslü ve köklü gösterimlerle ilgili matematiksel doğrulama yöntemlerini kullanır.f) Kullandığı matematiksel doğrulama yöntemlerini kullanışlılık açısından değerlendirir."
+            },
+            {
+              "kod": "MAT.9.1.2",
+              "metin": "Gerçek sayı aralıklarının gösteriminde ve aralıklarla ilgili işlemlerde küme sembol ve işlemlerinden yararlanabilmea) Gerçek sayı aralıkları ve bunlarla yapılan işlemlerde kullanılan küme sembol ve işlemlerini bağlamlarındaki anlamı ile tanır.b) Gerçek sayı aralıkları ve bunlarla yapılan işlemlerde kullanılan küme sembol ve işlemlerinden matematiksel durum veya probleme uygun olanı belirler.c) Gerçek sayı aralıkları ve bunlarla yapılan işlemlerin içerdiği küme sembol ve işlemlerini matematiksel durum veya probleme uygun şekilde kullanır."
+            },
+            {
+              "kod": "MAT.9.1.3",
+              "metin": "Farklı sayı kümelerinin özellikleri hakkında muhakeme yapabilmea) Doğal sayılar, tam sayılar, rasyonel sayılar ve gerçek sayılara dair temel özelliklere (sıralama, arada olma ve işlem özellikleri) ilişkin varsayımlarda bulunur.b) Farklı sayı kümelerinde elde ettiği örüntüleri listeleyerek varsayımlarına yönelik genellemeler yapar.c) Varsayımları ile genellemelerini karşılaştırır.ç) Elde ettiği genellemelerden sayı kümelerinin özellikleri hakkında önermeler sunar.d) Önermelerin kullanışlılığını problem durumlarında değerlendirir.e) Elde ettiği önermeleri ispatlamak ya da çürütmek için matematiksel ispat yöntemlerini kullanır.f) Kullandığı matematiksel ispat yöntemlerini kullanışlılık açısından değerlendirir."
+            },
+            {
+              "kod": "MAT.9.1.4",
+              "metin": "Gerçek sayıların işlem özelliklerini cebirsel olarak ifade etmede analojik akıl yürütebilmea) Gerçek sayıların işlem özellikleri ile bunların olası cebirsel karşılıklarını gözlemler.b) Gözlemlerinden yola çıkarak gerçek sayıların işlem özellikleri ile bunların cebirsel karşılıklarını tespit eder.c) Tespit ettiği özelliklerden çıkarımlar yapar."
+            }
+          ]
+        },
+        {
+          "id": "23",
+          "sira": 2,
+          "ad": "Nicelikler Ve Değişimler",
+          "dersSaati": 38,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Doğrusal Fonksiyonlar ve Nitel Özellikleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Mutlak Değer Fonksiyonu ve Nitel Özellikleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Doğrusal Fonksiyonlarla İfade Edilebilen Denklem ve Eşitsizlikler İçeren Problemler",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "artanlık-azalanlık",
+            "bağımlı-bağımsız değişken",
+            "bire birlik",
+            "doğrusal denklem ve eşitsizlik",
+            "doğrusal fonksiyon",
+            "doğrusal ilişki",
+            "eğim",
+            "fonksiyonların parçalı gösterimi",
+            "fonksiyonun işareti",
+            "fonksiyonun sıfırı",
+            "katsayı",
+            "kök",
+            "maksimum-minimum noktaları",
+            "mutlak değer fonksiyonu",
+            "sabit fonksiyon",
+            "sabit terim"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "MAT.9.2.1",
+              "metin": "Gerçek sayılarda f(x) = x şeklinde tanımlı doğrusal referans fonksiyonun nitel özellikleri ile bu fonksiyondan türetilen g(x) = a ∙ f(x ±"
+            },
+            {
+              "kod": "MAT.9.2.2",
+              "metin": "Gerçek sayılarda m(x) = ± |ax ± b| ± c (a, b, c ∈ℝ, a ≠ 0) şeklinde tanımlı mutlak değer fonksiyonlarının nitel özelliklerini incelemek için doğrusal fonksiyonlara bağlı analojik akıl yürütebilmea) Gerçek sayılarda f(x) = x şeklinde tanımlı doğrusal referans fonksiyon ile n(x) = ± |x| şeklinde tanımlı mutlak değer fonksiyonu arasındaki ve gerçek sayılarda tanımlı bir h doğrusal fonksiyonu ile m (x) = ± |h(x)| ± c (c ∈ℝ) şeklinde tanımlı mutlak değer fonksiyonu arasındaki cebirsel ve grafiksel benzerlikleri, farklılıkları gözlemler.b) Gözlemlerinden yola çıkarak gerçek sayılarda m(x) = ± |ax ± b| ± c (a, b, c ∈ ℝ, a ≠ 0) şeklinde tanımlı mutlak değer fonksiyonunun nitel özelliklerini tespit eder.c) Tespit ettiği nitel özelliklerinden hareketle gerçek sayılarda m(x) = ± |ax ± b| ± c (a, b, c ∈ ℝ, a ≠ 0) şeklinde tanımlı mutlak değer fonksiyonunun parçalı gösterimine yönelik çıkarımlarda bulunur."
+            },
+            {
+              "kod": "MAT.9.2.3",
+              "metin": "Doğrusal fonksiyonlarla ifade edilebilen denklem ve eşitsizlikler içeren problem çözebilmea) Doğrusal fonksiyonlarla ifade edilebilen denklem ve eşitsizliklere ilişkin bileşenleri (denklemi oluşturan fonksiyonların nitel özellikleri ile cebirsel ve grafik temsilleri) belirler.b) Doğrusal fonksiyonlarla ifade edilebilen denklem ve eşitsizliklere ilişkin matematiksel bileşenlerin aralarındaki ilişkileri belirler.c) Doğrusal fonksiyonlarla ifade edilebilen denklem ve eşitsizliklerin problem bağlamındaki temsillerini farklı temsillere dönüştürür.ç) Dönüştürdüğü temsillerin problem bağlamındaki anlamını ifade eder.d) Elde ettiği ve yorumladığı farklı temsillere dayalı olarak problemin çözümü için strateji oluşturur.e) Belirlediği stratejiyi kullanarak problemi çözer.f) Elde ettiği çözümü uygun yöntemleri seçerek doğrular.g) Problemin olası çözüm stratejilerini gözden geçirir.ğ) Problemin olası çözüm stratejilerine dayalı olarak çıkarımlar yapar.h) Çıkarımlarının geçerliliğini sözel, cebirsel ve grafiksel argümanlarla değerlendirir."
+            }
+          ]
+        },
+        {
+          "id": "25",
+          "sira": 3,
+          "ad": "Geometrik Şekiller",
+          "dersSaati": 12,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Üçgende Açı ve Kenarla İlgili Özellikler ve Bu Özellikler Arasındaki İlişkiler",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "açı",
+            "dış açı",
+            "iç açı",
+            "kenar",
+            "üçgen",
+            "üçgen eşitsizliği"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "MAT.9.3.1",
+              "metin": "Üçgende açı ve kenarla ilgili özellikleri, üçgenin açıları ve kenarları arasındaki ilişkileri doğrulayabilme veya ispatlayabilmea) Üçgende iç ve dış açıların ölçülerinin toplamına, açılara karşılık gelen kenarlarla ilgili özelliklere ve kenarların uzunlukları arasındaki ilişkilere dair farklı doğrulama veya ispatları kullanır.b) Yapılan doğrulama veya ispatları yeni durumlara uyarlayarak değerlendirir."
+            }
+          ]
+        },
+        {
+          "id": "83",
+          "sira": 4,
+          "ad": "Eşlik Ve Benzerlik",
+          "dersSaati": 36,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Geometrik Dönüşümler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Eşlik ve Benzerlik Koşulları",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Benzer Üçgenler Oluşturma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Tales, Öklid ve Pisagor Teoremleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Eşlik ve Benzerlik Problemleri",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "benzerlik",
+            "dönme dönüşümü",
+            "eşlik",
+            "Öklid teoremi",
+            "Pisagor teoremi",
+            "Tales teoremi"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "MAT.9.4.1",
+              "metin": "Geometrik dönüşümlerle ilgili çıkarım yapabilmea) Mevcut bilgisi dâhilinde geometrik dönüşümlerin (yansıma, öteleme, dönme) özelliklerine, bir geometrik şeklin dönüşüm sonrasında oluşan görüntüsüne ilişkin varsayımlarda bulunur.b) İncelediği örnekler üzerinden dönüşümlerin özelliklerine ve şekillerin dönüşümler altındaki görüntüsüne ilişkin varsayımlarına dayalı örüntüleri geneller.c) Dönüşümlerin özellikleri ve şekillerin dönüşümler altındaki görüntüsüne ilişkin varsayımları ile genellemelerini karşılaştırır.ç) Elde ettiği genellemelerden hareketle dönüşümlerin özelliklerine ve şekillerin dönüşümler altındaki görüntüsüne ilişkin önermeler sunar.d) Geometrik dönüşümlerle ilgili elde ettiği önermeleri konu ile ilgili başka çıkarımlar yapmak için kullanarak değerlendirir."
+            },
+            {
+              "kod": "MAT.9.4.2",
+              "metin": "İki üçgenin eş veya benzer olması için gerekli olan asgari koşullarla ilgili çıkarım yapabilmea) İki üçgenin eş veya benzer olma koşullarına ilişkin varsayımlarda bulunur.b) İncelediği örnekler üzerinden iki üçgenin eş veya benzer olma koşullarına ilişkin varsayımlarına dayalı örüntüleri geneller.c) İki üçgenin eş veya benzer olma koşullarına ilişkin varsayımları ile elde ettiği genellemeleri karşılaştırır.ç) Ulaştığı genellemelerden iki üçgenin eş veya benzer olma koşullarına ilişkin önermeler sunar.d) İki üçgenin eş veya benzer olma koşullarına dair elde ettiği önermelerin farklı ve yeni durumların anlamlandırılmasına yönelik sunduğu katkıyı değerlendirir."
+            },
+            {
+              "kod": "MAT.9.4.3",
+              "metin": "Bir üçgenden hareketle ona benzer üçgenler oluşturma ile ilgili yansıtma yapabilmea) Bir üçgene benzer üçgenler oluştururken eşlik ve benzerlik deneyimlerini gözden geçirir.b) Deneyimlerine dayalı çıkarımlar yapar.c) Bir üçgenden hareketle ona benzer üçgenler oluşturma ile ilgili ulaşılan çıkarımları farklı problem durumlarında değerlendirir."
+            },
+            {
+              "kod": "MAT.9.4.4",
+              "metin": "Tales, Öklid ve Pisagor teoremlerini ispatlayabilmea) Tales, Öklid ve Pisagor teoremlerine ilişkin farklı ispatları kullanır.b) Kullandığı matematiksel ispat ve teoremleri yeni durumlara uyarlayarak değerlendirir."
+            },
+            {
+              "kod": "MAT.9.4.5",
+              "metin": "Eşlik ve benzerlikle ilgili çıkarım ve teoremleri içeren problemleri çözebilmea) Problemin verilen ve istenenlerine ilişkin parçaları belirler.b) Problemde verilenler, istenenler ve gerekli işlemler arasındaki ilişkileri belirler.c) Problemin parçaları arasındaki ilişkileri problem bağlamına uygun olarak dönüştürür.ç) Matematiksel temsillere dönüştürdüğü problemi kendi ifadeleri ile açıklar.d) Problemin çözümünü gerçekleştirmek için stratejiler oluşturur.e) Belirlediği stratejiyi çözüm için uygulayarak problemi çözer.f) Problemin çözümünü kontrol eder.g) Problemin çözümü için geliştirdiği, kullandığı stratejilerdeki kısa yolları ve çözüme ulaştırmayan stratejileri belirleyerek çözüme ilişkin deneyimini gözden geçirir.ğ) Çözüme ulaştıran stratejilerden hangilerinin hangi tür problemlere uygulanabileceğine ilişkin çıkarım yapar.h) Ulaştığı çıkarımların geçerliliğini matematiksel örneklerle değerlendirir."
+            }
+          ]
+        },
+        {
+          "id": "24",
+          "sira": 5,
+          "ad": "Algoritma Ve Bilişim",
+          "dersSaati": 30,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Algoritma Temelli Problemler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Mantık Bağlaçları ve Niceleyiciler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Mantık Bağlaçları ve Niceleyicilerin Algoritmik Problemlerde Kullanımı",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "akış şeması",
+            "algoritma",
+            "çizge",
+            "mantık bağlaçları",
+            "niceleyiciler",
+            "sözde kod",
+            "şifreleme"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "MAT.9.5.1",
+              "metin": "Algoritma temelli yaklaşımlarla problem çözebilmea) Algoritmik yaklaşımla ele alınabilecek bir problemdeki işlem ve süreçlere yönelik bileşenleri belirler.b) Problem durumlarında temsillerle (liste, tablo, çizge, akış şeması, algoritmik doğal dil, sözde kod gibi) matematiksel yapılar arasındaki ilişkileri belirler.c) Problem durumlarındaki sözel, görsel veya cebirsel ifadeleri algoritmik dile dönüştürür.ç) Karşılaşılan problem durumlarında geçen algoritmik dili; sözel, görsel veya cebirsel olarak açıklar.d) Karşılaşılan problem durumlarında algoritma temelli bir çözüm stratejisi oluşturur.e) Karşılaşılan problem durumlarında seçtiği algoritma temelli çözüm stratejisini kullanır.f) Karşılaşılan problem durumlarında seçtiği algoritma temelli çözüm stratejisini kontrol eder.g) Algoritma temelli çözülebilen problemlerin olası çözüm stratejilerini gözden geçirir.ğ) Algoritma temelli çözülebilen problemlerde çözüme ulaştıran stratejilere yönelik çıkarımlar yapar.h) Algoritma temelli çözülebilen problemlerde çözüme ulaştıran stratejilere yönelik çıkarımları değerlendirir."
+            },
+            {
+              "kod": "MAT.9.5.2",
+              "metin": "Algoritmik yapılar içerisindeki mantık bağlaçlarını ve niceleyicileri çözümleyebilmea) Algoritmik yapılar içerisinde kullanılan mantık bağlaçlarını ve niceleyicileri belirler.b) Algoritmik yapılar ile mantık bağlaçları ve niceleyiciler arasındaki ilişkileri belirler."
+            },
+            {
+              "kod": "MAT.9.5.3",
+              "metin": "Mantık bağlaçları ve niceleyicilerin algoritmalarda kullanımına yönelik edindiği deneyimi farklı matematiksel görev ve problemlere yansıtabilmea) Karşılaştığı algoritmalardaki mantık bağlaçları ve niceleyicilerin kullanımını gözden geçirir.b) Matematiksel problem çözme, doğrulama ve ispat süreçlerinde mantık bağlaçları ve niceleyicilerin kullanımına yönelik çıkarımlar yapar.c) Mantık bağlaçları ve niceleyicilerin matematiksel dil ve sembolizmin yalınlık ve kesinliğindeki rolünü değerlendirir."
+            }
+          ]
+        },
+        {
+          "id": "91",
+          "sira": 6,
+          "ad": "İstatistiksel Araştırma Süreci",
+          "dersSaati": 34,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Tek Nicel Değişkenli Veri Dağılımları",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Başkaları Tarafından Oluşturulan Tek Nicel Değişkenli Veri Dağılımlarını İnceleme",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "çeyrekler açıklığı",
+            "değişebilirlik",
+            "evren",
+            "histogram",
+            "kutu grafiği",
+            "nicel veri dağılımı",
+            "örneklem",
+            "standart sapma"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "MAT.9.6.1",
+              "metin": "Tek nicel değişkenli veri dağılımları ile çalışabilme ve tek nicel değişken içeren veriye dayalı karar verebilmea) Nicel veriye dayalı istatistiksel araştırma gerektiren gerçek yaşam durumlarını belirler.b) Bağlam içerisinde nicel veri dağılımlarını betimleyen ve karşılaştıran araştırma soruları oluşturur.c) Nicel verileri toplamak/elde etmek için plan yapar.ç) Nicel verileri toplayarak/elde ederek analize hazırlar.d) Araştırma sorusu bağlamında toplanan/elde edilen nicel verileri analiz etmek için görselleştirme (nokta grafiği, histogram, kutu grafiği) ve/veya özetleme [aritmetik ortalama, ortanca (medyan), tepe değer (mod), açıklık, çeyrekler açıklığı, standart sapma] araçlarından uygun olanı seçer.e) Araştırma sorusu bağlamında toplanan/elde edilen nicel verileri belirlediği araçlarla analiz eder.f) Nicel veri dağılımlarına dayalı istatistiksel araştırma sonucu elde edilen çıktılardan hareketle verilerin arasını ve ötesini yorumlayarak sonuç çıkarır.g) Nicel veriye dayalı araştırmadan elde edilen sonuçları, araştırma sorusu bağlamında değerlendirir."
+            },
+            {
+              "kod": "MAT.9.6.2",
+              "metin": "Başkaları tarafından oluşturulan tek nicel değişkenli veri dağılımlarına ilişkin istatistiksel sonuç veya yorumları tartışabilmea) Başkaları tarafından oluşturulan tek nicel değişkenli veri dağılımlarına ilişkin istatistiksel sonuç veya yorumlara yönelik istatistiksel temellendirme yapar.b) Başkaları tarafından oluşturulan tek nicel değişkenli veri dağılımlarına ilişkin istatistiksel sonuç veya yorumlara yönelik hataları ya da yanlılıkları tespit eder.c) Başkaları tarafından oluşturulan tek nicel değişkenli veri dağılımlarına ilişkin istatistiksel sonuç veya yorumları çürütür ya da kabul eder."
+            }
+          ]
+        },
+        {
+          "id": "97",
+          "sira": 7,
+          "ad": "Veriden Olasılığa",
+          "dersSaati": 18,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Deneysel Olasılık",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Teorik Olasılık",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "ayrık olay",
+            "ayrık olmayan olay",
+            "çıktı",
+            "deney",
+            "deneysel olasılık",
+            "olay",
+            "örnek uzay",
+            "teorik olasılık"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "MAT.9.7.1",
+              "metin": "Olayların olasılığını gözleme dayalı tahmin edebilmea) Olayların olasılığını deney yoluyla veri toplayarak istenen olayların göreli sıklıklarıyla ilişkilendirir.b) Deneye ait tekrar sayısı ile deneyin çıktılarının göreli sıklıklarının ilişkisine yönelik çıkarım yapar.c) Çıkarımlardan hareketle yargıda bulunur."
+            },
+            {
+              "kod": "MAT.9.7.2",
+              "metin": "Olayların olasılığına ilişkin tümevarımsal akıl yürütebilmea) Olayların olasılığını teorik olarak incelemeye/hesaplamaya yönelik tüm olası durumları farklı gösterimler (sistematik liste, tablo, ağaç şeması gibi) ile gözlemler.b) Olayların olasılığını teorik olarak incelemeye/hesaplamaya yönelik matematiksel ilişkilere ulaşır.c) Olayların deney yoluyla hesaplanan/elde edilen olasılık değerinin teorik olasılık ile hesaplanan değeri arasındaki ilişkiye yönelik genelleme yapar."
+            }
+          ]
+        }
+      ],
+      "10": [
+        {
+          "id": "260",
+          "sira": 1,
+          "ad": "Geometrik Şekiller",
+          "dersSaati": 36,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Dik Üçgende Trigonometrik Oranlar ve Trigonometrik Özdeşlikler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Üçgende Yardımcı Elemanlar",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Üçgenin Alanı",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Sinüs ve Kosinüs Teoremleri",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "ağırlık merkezi",
+            "alan",
+            "birim çember",
+            "çevrel çember",
+            "dış açıortay",
+            "dış teğet çember",
+            "iç açıortay",
+            "iç teğet çember",
+            "kenar orta dikme",
+            "kosinüs teoremi",
+            "sinüs teoremi",
+            "trigonometrik oranlar",
+            "yönlü açı",
+            "yükseklik"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "MAT.10.1.1",
+              "metin": "Dik üçgende trigonometrik oranlara (sinüs, kosinüs, tanjant, kotanjant) ve trigonometrik özdeşliklere ilişkin çıkarım yapabilmea) Dik üçgende trigonometrik oranlar ve trigonometrik özdeşliklerle ilgili varsayımlarda bulunur.b) Trigonometrik oranlar ve trigonometrik özdeşliklerle ilgili örüntüleri geneller.c) Trigonometrik oranlar ve trigonometrik özdeşliklerle ilgili elde ettiği genellemelerini varsayımlarıyla karşılaştırır.ç) Yaptığı karşılaştırmalardan dik üçgende trigonometrik oranlara ve trigonometrik özdeşliklere ilişkin önermeler sunar.d) Ulaştığı trigonometrik oranları ve trigonometrik özdeşlikleri problemler bağlamında değerlendirir."
+            },
+            {
+              "kod": "MAT.10.1.2",
+              "metin": "Üçgenin yardımcı elemanlarının özellikleri ile ilgili çıkarım yapabilmea) Üçgende iç ve dış açıortayların, kenarortayların, kenar orta dikmelerin ve yüksekliklerin özelliklerine ilişkin varsayımda bulunur.b) Farklı üçgen örneklerini inceleyerek varsayımlarına ilişkin örüntüleri geneller.c) Üçgenin yardımcı elemanlarıyla ilgili genellemelerini varsayımlarıyla karşılaştırır.ç) Elde ettiği genellemelerden hareketle yardımcı elemanların özelliklerine ilişkin önermeler sunar.d) Üçgenin yardımcı elemanlarıyla ilgili önermeleri problemler bağlamında değerlendirir."
+            },
+            {
+              "kod": "MAT.10.1.3",
+              "metin": "Üçgenin bir kenarı ve o kenara ait yüksekliğinin değişimine bağlı olarak alanının değişimine ilişkin çıkarım yapabilmea) Üçgenin bir kenarı ve o kenara ait yüksekliğindeki değişimin üçgenin alanındaki değişime etkisine dair varsayımlarda bulunur.b) Farklı üçgenlerdeki gözlemlerinden yararlanarak varsayımlarına yönelik örüntüleri geneller.c) Genellemelerini varsayımlarıyla karşılaştırır.ç) Elde ettiği genellemelerden üçgenin alanının hangi elemanlara göre değiştiğine ilişkin önermeler sunar.d) Önermeleri gerçek yaşam problemleri bağlamında değerlendirir."
+            },
+            {
+              "kod": "MAT.10.1.4",
+              "metin": "Sinüs ve kosinüs teoremlerini doğrulayabilme veya ispatlayabilmea) Üçgende sinüs ve kosinüs teoremlerine ilişkin farklı doğrulama veya ispatları kullanır.b) Yapılan doğrulama veya ispatları yeni durumlara uyarlayarak değerlendirir."
+            }
+          ]
+        },
+        {
+          "id": "271",
+          "sira": 2,
+          "ad": "İstatistiksel Araştırma Süreci",
+          "dersSaati": 24,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "İki Kategorik Değişkenli Veriler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Başkaları Tarafından Oluşturulan İki Kategorik Değişkenli Verileri İnceleme",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "iki kategorik değişken",
+            "iki yönlü tablo",
+            "ilişkililik",
+            "koşullu göreli sıklıklar",
+            "kümeli sütun grafikleri",
+            "veri dağılımları"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "MAT.10.2.1",
+              "metin": "İki kategorik değişkenli veri ile çalışabilme ve iki kategorik değişken arasındaki ilişkililiğe dayalı karar verebilmea) İki kategorik değişkenli veriye dayalı, istatistiksel araştırma gerektiren gerçek yaşam durumlarını belirler.b) Bağlam içerisinde iki kategorik değişken arasındaki ilişkililiğe odaklanan araştırma soruları oluşturur.c) İki kategorik değişkenli veri toplamak/elde etmek için plan yapar.ç) İki kategorik değişkenli verileri toplayarak/elde ederek analize hazırlar.d) Araştırma sorusu bağlamında toplanan/elde edilen iki kategorik değişkenli verileri analiz etmek için görselleştirme ve/veya özetleme (toplam satır veya sütunlardaki göreli sıklıkları gösteren iki yönlü tablo, koşullu göreli sıklıkları gösteren sütun grafikleri, koşullu göreli sıklıklar gibi) araçlarından uygun olanı seçer.e) Araştırma sorusu bağlamında toplanan/elde edilen verileri belirlediği araçlarla analiz eder.f) İki kategorik değişkenli veri dağılımlarına dayalı istatistiksel araştırmadan hareketle elde edilen bulguları yorumlayarak sonuç çıkarır.g) İki kategorik değişkenli veri dağılımlarına dayalı istatistiksel araştırmadan hareketle elde edilen sonuçları araştırma sorusu bağlamında değerlendirir."
+            },
+            {
+              "kod": "MAT.10.2.2",
+              "metin": "Başkaları tarafından oluşturulan iki kategorik değişkenli verilerin ilişkililiğine dayalı istatistiksel sonuç veya yorumları tartışabilmea) Başkaları tarafından oluşturulan iki kategorik değişkenli verilerin ilişkililiğine dayalı istatistiksel sonuç veya yorumlara yönelik istatistiksel temellendirme yapar.b) Başkaları tarafından oluşturulan iki kategorik değişkenli verilerin ilişkililiğine dayalı istatistiksel sonuç veya yorumlara yönelik hataları ya da yanlılıkları tespit eder.c) Başkaları tarafından oluşturulan iki kategorik değişkenli verilerin ilişkililiğine dayalı istatistiksel sonuç veya yorumları çürütür ya da kabul eder."
+            }
+          ]
+        },
+        {
+          "id": "244",
+          "sira": 3,
+          "ad": "Sayılar",
+          "dersSaati": 20,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Bir Doğal Sayının Asal Çarpanları, Bölenleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "En Büyük Ortak Bölen, En Küçük Ortak Kat",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Bölünebilme",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "aralarında asal",
+            "asal sayı",
+            "bölen",
+            "bölme",
+            "bölüm",
+            "bölünebilme",
+            "çarpan",
+            "en büyük ortak bölen",
+            "en küçük ortak kat",
+            "kalan",
+            "kat",
+            "ortak bölen",
+            "ortak kat"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "MAT.10.3.1",
+              "metin": "Bir doğal sayı ile asal çarpanları ve bölenleri arasındaki ilişkilere dair çıkarım yapabilmea) Bir doğal sayının asal çarpanları ve bölenleri hakkında varsayımlarda bulunur.b) Farklı örneklerden elde ettiği örüntüleri listeleyerek bir doğal sayının asal çarpanları ve bölenleri hakkındaki varsayımlarına yönelik örüntüleri geneller.c) Oluşturduğu genellemelerin varsayımlarını karşılayıp karşılamadığını örneklerle sınar.ç) Bir doğal sayının asal çarpanları ve bölenleri ile ilgili ulaştığı sonuçlara yönelik matematiksel önermeler sunar.d) Elde ettiği önermelerin gerçek yaşam durumları içeren problemlerdeki kullanışlılığını değerlendirir."
+            },
+            {
+              "kod": "MAT.10.3.2",
+              "metin": "Birden çok doğal sayının ortak bölenleriyle bunların en büyüğü ve ortak katlarıyla bunların en küçüğü arasındaki ilişkilere dair muhakeme yapabilmea) Birden çok doğal sayının ortak bölenleriyle bunların en büyüğü ve ortak katlarıyla bunların en küçüğü arasındaki ilişkilere dair varsayımlarda bulunur.b) Farklı örneklerden elde ettiği örüntüleri listeleyerek varsayımlarına yönelik örüntüleri geneller.c) Oluşturduğu genellemelerin varsayımlarını karşılayıp karşılamadığını örneklerle sınar.ç) Birden çok doğal sayının ortak bölenleriyle bunların en büyüğü ve ortak katlarıyla bunların en küçüğü arasındaki ilişkilere dair elde ettiği genellemelere yönelik önermeler sunar.d) Sunduğu önermelerin gerçek yaşam durumları içeren problemlerdeki katkısını değerlendirir.e) Elde ettiği önermeler ile ilgili matematiksel doğrulama yöntemlerini seçer ve kullanır.f) Elde ettiği önermelere ilişkin uyguladığı matematiksel doğrulamayı kullanışlılığı açısından değerlendirir."
+            },
+            {
+              "kod": "MAT.10.3.3",
+              "metin": "Bir doğal sayının belirli doğal sayılara bölümünden kalanlarına dair muhakeme yapabilmea) 2, 3, 4, 5, 9 ve 10 ile bölünebilme özelliklerinden hareketle bir doğal sayının 2, 3, 4, 5, 8, 9 ve 10 ile bölümünden elde edilecek kalanlara ilişkin varsayımlarda bulunur.b) Aynı sayı ile bölme işleminden elde edilecek kalanlara ilişkin farklı örneklerle ilgili örüntüleri listeleyerek varsayımlarına yönelik örüntüleri geneller.c) Oluşturduğu genellemenin kendi varsayımını karşılayıp karşılamadığını örneklerle sınar.ç) Ulaştığı sonuçlara yönelik matematiksel önermeleri doğrulayabileceği şekilde sunar.d) Ulaştığı önermelerin katkısını bu sayıların en küçük ortak katlarından oluşan sayılara bölümünden kalanı bulma bağlamında değerlendirir.e) Önermelere ilişkin matematiksel doğrulama yöntemlerini seçer ve kullanır.f) Önermelere ilişkin uyguladığı matematiksel doğrulama yöntemini kullanışlılığı açısından değerlendirir."
+            }
+          ]
+        },
+        {
+          "id": "250",
+          "sira": 4,
+          "ad": "Nicelikler Ve Değişimler",
+          "dersSaati": 58,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Gerçek Sayılarda Fonksiyon Olma Şartları",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Karesel Fonksiyon ve Nitel Özellikleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Karekök Fonksiyonu ve Nitel Özellikleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Rasyonel Fonksiyon ve Nitel Özellikleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Doğrusal, Karesel, Karekök ve Rasyonel Fonksiyonların Ters Fonksiyonları",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Gerçek Sayılarda Tanımlı Fonksiyonlarla İfade Edilebilen Denklem ve Eşitsizlikler İçeren Problemler",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "artanlık-azalanlık",
+            "bire birlik",
+            "fonksiyon",
+            "fonksiyonun işareti",
+            "fonksiyonun sıfırı",
+            "karekök fonksiyonu",
+            "karesel fonksiyon",
+            "kök",
+            "maksimum-minimum değer",
+            "maksimum-minimum nokta",
+            "örtenlik",
+            "parabol",
+            "rasyonel fonksiyon",
+            "simetri doğrusu",
+            "teklik-çiftlik",
+            "ters fonksiyon"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "MAT.10.4.1",
+              "metin": "Gerçek sayılarda fonksiyon olma şartları ile gerçek sayılarda tanımlı fonksiyonların nitel özelliklerini matematiksel temsillerle değerlendirebilmea) Gerçek sayılarda fonksiyon olma şartları ile gerçek sayılarda tanımlı fonksiyonların nitel özelliklerini (tanım kümesi, görüntü kümesi, işareti, artanlığı-azalanlığı, maksimum-minimum noktaları, sıfırları, bire birliği, tekliği-çiftliği, örtenliği) grafik ve cebirsel temsilleri üzerinden analiz eder.b) Gerçek sayılarda tanımlı fonksiyonların grafik ve cebirsel temsillerini fonksiyon olma şartları ve fonksiyonların nitel özellikleri bakımından karşılaştırır.c) Karşılaştırmalarından hareketle gerçek sayılarda tanımlı fonksiyonların grafik ve cebirsel temsilleri ile nitel özellikleri hakkında yargıda bulunur."
+            },
+            {
+              "kod": "MAT.10.4.2",
+              "metin": "Gerçek sayılarda f(x) = x² şeklinde tanımlı karesel referans fonksiyonun nitel özellikleri ile bu fonksiyondan türetilen (g(x) = a ∙ f(x ±"
+            },
+            {
+              "kod": "MAT.10.4.3",
+              "metin": "Gerçek sayılarda şeklinde tanımlı karekök referans fonksiyonun nitel özellikleri ile bu fonksiyondan türetilen (g(x) = a ∙ f(x ±"
+            },
+            {
+              "kod": "MAT.10.4.4",
+              "metin": "Gerçek sayılarda f(x) = 1/x (x ≠ 0) şeklinde tanımlı rasyonel referans fonksiyonun nitel özellikleri ile bu fonksiyondan türetilen (g(x) = a ∙ f(x ±"
+            },
+            {
+              "kod": "MAT.10.4.5",
+              "metin": "Doğrusal, karesel, karekök ve rasyonel referans fonksiyonlar ile bu fonksiyonlardan türetilebilen fonksiyonların ters fonksiyonlarına dair çıkarım yapabilmea) Referans fonksiyonlar ve bunlardan türetilebilen fonksiyonlar üzerinden bir fonksiyonun ters fonksiyonuna ilişkin varsayımlarda bulunur.b) Varsayımlarından yararlanıp farklı durumlarla ilgili örüntüleri listeleyerek referans fonksiyonlar ve bunlardan türetilen fonksiyonların ters fonksiyonlarına ilişkin genellemeler yapar.c) Referans fonksiyonlar ve bunlardan türetilen fonksiyonların ters fonksiyonlarıyla ilişkisine dair varsayımları ile genellemelerini karşılaştırır.ç) Referans fonksiyonlar ve bunlardan türetilen fonksiyonların ters fonksiyon ilişkisine ait önermeleri matematiksel olarak doğrulanabilecek şekilde sunar.d) Referans fonksiyonlar ve bunlardan türetilen fonksiyonların ters fonksiyonlarına ait elde edilen önermeleri fonksiyonların nitel özellikleri bağlamında değerlendirir."
+            },
+            {
+              "kod": "MAT.10.4.6",
+              "metin": "Doğrusal, karesel, karekök, rasyonel referans fonksiyonlar ve bunlardan türetilen fonksiyonlarla ifade edilebilen denklem ve eşitsizlikler içeren problemleri çözebilmea) Bu fonksiyonlarla ifade edilebilen denklem ve eşitsizliklere ilişkin matematiksel bileşenleri (nitel özellikleri ile cebirsel ve grafik temsilleri) belirler."
+            }
+          ]
+        },
+        {
+          "id": "251",
+          "sira": 5,
+          "ad": "Sayma, Algoritma Ve Bilişim",
+          "dersSaati": 28,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Sayma Stratejileri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Cebirsel ve Fonksiyonel İşlemlerin Algoritmik Yapısı",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "algoritma",
+            "faktöriyel",
+            "sayma",
+            "seçme sayısı",
+            "sıralama sayısı"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "MAT.10.5.1",
+              "metin": "Sayma stratejileri kullanarak problem çözebilmea) Verilen sayma problemindeki sayılacak nesneleri belirler.b) Sayma problemlerinde yer alan nesneler arasındaki ilişkileri belirler.c) Problem durumlarındaki sözel ifadeleri görsel temsillere dönüştürür.ç) Problem durumlarını onlara eş olan başka problem durumlarıyla ya da uygun görsel, tablo veya cebirsel temsillerle yeniden ifade eder.d) Sayma problemlerindeki farklı durumlara uygun çözüm stratejisi oluşturur.e) Seçtiği çözüm stratejisini kullanır."
+            },
+            {
+              "kod": "MAT.10.5.2",
+              "metin": "Cebirsel ve fonksiyonel işlemleri algoritmik bir dille yapılandırabilmea) Karşılaşılan problem durumlarındaki cebirsel ve fonksiyonel işlemlerin algoritmik yapısını ortaya koyar.b) Ön bilgilerini kullanarak cebirsel ve fonksiyonel yapılar ile bu yapıların algoritmaları arasında uyumlu bir bütün oluşturur."
+            }
+          ]
+        },
+        {
+          "id": "263",
+          "sira": 6,
+          "ad": "Analitik İnceleme",
+          "dersSaati": 22,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Dik Koordinat Sisteminde Noktanın Analitik İncelenmesi",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Dik Koordinat Sisteminde Doğrunun Analitik İncelenmesi",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "çakışma",
+            "dik koordinat sistemi",
+            "doğru",
+            "eğim",
+            "eğim açısı",
+            "iki nokta arasındaki uzaklık",
+            "kesişme",
+            "paralellik"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "MAT.10.6.1",
+              "metin": "Dik koordinat sisteminde iki nokta arasındaki uzaklık ve bir doğru parçasını belli oranda bölen noktanın koordinatlarıyla ilgili çıkarım yapabilmea) Dik koordinat sisteminde iki nokta arasındaki uzaklık bağıntısı ve bir doğru parçasını belli oranda bölen noktanın koordinatlarıyla ilgili varsayımda bulunur.b) Farklı örnekler üzerinden varsayımlarına yönelik örüntüleri geneller.c) İki nokta arasındaki uzaklık bağıntısına ve bir doğru parçasını belli oranda bölen noktanın koordinatlarına ilişkin genellemeleri ile varsayımlarını karşılaştırır.ç) İki nokta arasındaki uzaklık bağıntısına ve bir doğru parçasını belli oranda bölen noktanın koordinatlarına yönelik önermeler sunar.d) Önermeleri gerçek yaşam problemleri bağlamında değerlendirir."
+            },
+            {
+              "kod": "MAT.10.6.2",
+              "metin": "Dik koordinat sistemini doğrunun özelliklerini incelemek ve doğru ile ilgili problemleri çözebilmek için uygun bir temsil aracı olarak kullanabilmea) Dik koordinat sistemini doğrunun eğim açısını, eğimini ve doğruların birbirlerine göre konumlarını belirlemede araç olarak tanır.b) Karşılaştığı problem durumlarında dik koordinat sistemini doğrunun eğim açısını, eğimini ve doğruların birbirlerine göre konumlarını belirlemede uygun bir temsil aracı olarak seçer.c) Dik koordinat sistemini doğrunun eğim açısını, eğimini ve doğruların birbirlerine göre konumlarını temsil etme aracı olarak kullanır."
+            }
+          ]
+        },
+        {
+          "id": "274",
+          "sira": 7,
+          "ad": "Veriden Olasılığa",
+          "dersSaati": 18,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Koşullu Olasılık",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Bayes Teoremi",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "bağımlı olay",
+            "bağımsız olay",
+            "Bayes teoremi",
+            "koşullu olasılık"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "MAT.10.7.1",
+              "metin": "Koşullu olasılık ile çıkarım yapabilmea) Bir olayın gerçekleşmesinin diğer bir olayın meydana gelmesine bağlı olduğu durumlara ilişkin mevcut olasılık bilgisini kullanarak varsayımda bulunur.b) Bir olayın gerçekleşmesinin diğer bir olayın meydana gelmesine bağlı olduğu gerçek yaşam durumlarına ilişkin olası tüm çıktıları listeler.c) Bir olayın gerçekleşmesinin diğer bir olayın meydana gelmesine bağlı olduğu ya da olmadığı durumlarda olası tüm çıktıların sayısı ile istenen durumların sayısını karşılaştırır.ç) Bir olayın gerçekleşmesinin diğer bir olayın meydana gelmesine bağlı olduğu durumların olasılığını hesaplamaya yönelik matematiksel önerme sunar.d) Bir olayın gerçekleşmesinin diğer bir olayın meydana gelmesine bağlı olduğu ya da olmadığı gerçek yaşam durumlarının olasılığını koşullu olasılık ile değerlendirir."
+            },
+            {
+              "kod": "MAT.10.7.2",
+              "metin": "Bir olayın gerçekleşmesinin diğer bir olayın meydana gelmesine bağlı olduğu durumların olasılığını mevcut bilgiye/veriye dayalı tahmin edebilmea) Bayes teoreminin kullanıldığı gerçek yaşam durumlarına ilişkin mevcut bilgileri kullanır.b) Mevcut bilgileri kullanarak Bayes teoremine dayalı hesaplama yapar.c) Bayes teoreminin kullanıldığı gerçek yaşam durumlarına ilişkin ileriye yönelik yargıda bulunur."
+            }
+          ]
+        }
+      ]
+    },
+    "turkce": {
+      "9": [
+        {
+          "id": "76",
+          "sira": 1,
+          "ad": "Sözün İnceliği",
+          "dersSaati": 43,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Okuma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Yazma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Dinleme/İzleme",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Konuşma",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "açık ve örtük ileti",
+            "çağrışım",
+            "edebî dil",
+            "gerçeklik",
+            "günlük dil",
+            "hayal gücü",
+            "imge",
+            "kurmaca",
+            "sembol",
+            "sürükleyicilik",
+            "yaratıcılık"
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "101",
+          "sira": 2,
+          "ad": "Anlam Arayışı",
+          "dersSaati": 43,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Okuma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Konuşma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Dinleme/İzleme",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Yazma",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "açık ileti",
+            "ana duygu",
+            "ana düşünce",
+            "çağrışım",
+            "konu",
+            "örtük ileti",
+            "tema",
+            "yardımcı düşünce",
+            "yazarın tutumu",
+            "yazar-metin ilişkisi",
+            "yazma amacı"
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "106",
+          "sira": 3,
+          "ad": "Anlamın Yapı Taşları",
+          "dersSaati": 43,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Okuma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Konuşma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Dinleme/İzleme",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Yazma",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "ahenk unsurları (ölçü",
+            "kafiye",
+            "redif",
+            "durak",
+            "kafiye düzeni vb.)",
+            "anlatıcı",
+            "bakış açısı",
+            "bilgi görseli",
+            "giriş-gelişme-sonuç",
+            "kültürel farkındalık",
+            "mekân",
+            "nesnellik",
+            "olay örgüsü",
+            "öznellik",
+            "serim-düğüm-çözüm",
+            "şahıs kadrosu",
+            "zaman"
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "112",
+          "sira": 4,
+          "ad": "Dilin Zenginliği",
+          "dersSaati": 43,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Okuma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Konuşma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Dinleme/İzleme",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Yazma",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "anlatım özellikleri (duruluk",
+            "akıcılık",
+            "yalınlık",
+            "özgünlük",
+            "tutarlılık vb.)",
+            "anlatım teknikleri (geriye dönüş",
+            "monolog",
+            "diyalog vb.)",
+            "düşünceyi geliştirme yolları (tanımlama",
+            "karşılaştırma vb.)",
+            "edebî dil",
+            "öğretici metin",
+            "tenkit",
+            "üslup"
+          ],
+          "ogrenmeCiktilari": []
+        }
+      ],
+      "10": [
+        {
+          "id": "242",
+          "sira": 1,
+          "ad": "Sözün Ezgisi",
+          "dersSaati": 43,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Okuma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Konuşma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Dinleme/İzleme",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Yazma",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "ahenk",
+            "anonim",
+            "ezgi",
+            "gelenek",
+            "kurmaca",
+            "masal anlatıcısı",
+            "masalın bölümleri",
+            "olağanüstülük",
+            "ritim",
+            "sözlü kültür",
+            "varyant",
+            "yapı unsurları (olay",
+            "kişiler",
+            "zaman",
+            "mekân)"
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "247",
+          "sira": 2,
+          "ad": "Kelimelerin Ritmi",
+          "dersSaati": 43,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Okuma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Yazma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Dinleme/İzleme",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Konuşma",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "açık ve örtük ileti",
+            "ahenk unsurları",
+            "aruz",
+            "beyit",
+            "gerçeklik",
+            "imge",
+            "kafiye",
+            "ölçü",
+            "ritim",
+            "sembol (simge)"
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "256",
+          "sira": 3,
+          "ad": "Dünden Bugüne",
+          "dersSaati": 43,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Okuma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Konuşma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Dinleme/İzleme",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Yazma",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "anlatım biçimleri",
+            "destan",
+            "didaktik üslup",
+            "doğal destan",
+            "fabl",
+            "halk hikâyesi",
+            "kurmaca",
+            "mesnevi",
+            "motif",
+            "olağanüstülük",
+            "sözlü gelenek",
+            "yapma destan"
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "261",
+          "sira": 4,
+          "ad": "Nesillerin Mirası",
+          "dersSaati": 43,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Okuma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Konuşma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Dinleme/İzleme",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Yazma",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "açık ve örtük ileti",
+            "değişim",
+            "dönem",
+            "hikâye",
+            "kurmaca",
+            "millî bilinç",
+            "millî edebiyat",
+            "olağanüstülük",
+            "roman",
+            "sözlü kültür",
+            "şiir",
+            "yaşantı",
+            "yenilik"
+          ],
+          "ogrenmeCiktilari": []
+        }
+      ]
+    },
+    "fizik": {
+      "9": [
+        {
+          "id": "43",
+          "sira": 1,
+          "ad": "Fizik Bilimi Ve Kariyer Keşfi",
+          "dersSaati": 8,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Fizik Bilimi",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Fizik Biliminin Alt Dalları",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Fizik Bilimine Yön Verenler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Fizik Bilimi İle İlgili Kariyer Keşfi",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "fizik bilimi",
+            "bilimsel araştırma merkezi"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "FİZ.9.1.1",
+              "metin": "Fizik biliminin tanımına yönelik tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.9.1.2",
+              "metin": "Fizik biliminin alt dallarını sınıflandırabilme"
+            },
+            {
+              "kod": "FİZ.9.1.3",
+              "metin": "Fizik bilimine katkıda bulunmuş bilim insanlarının deneyimlerini yansıtabilme"
+            },
+            {
+              "kod": "FİZ.9.1.4",
+              "metin": "Bilim ve teknoloji alanında faaliyet gösteren kurum veya kuruluşlarda fizik bilimi ile ilişkili kariyer olanaklarını sorgulayabilme"
+            }
+          ]
+        },
+        {
+          "id": "57",
+          "sira": 2,
+          "ad": "Kuvvet Ve Hareket",
+          "dersSaati": 24,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Temel ve Türetilmiş Nicelikler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Skaler ve Vektörel Nicelikler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Vektörler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Doğadaki Temel Kuvvetler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Hareket ve Hareket Türleri",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "temel nicelik",
+            "türetilmiş nicelik",
+            "skaler nicelik",
+            "vektörel nicelik",
+            "bileşke vektör",
+            "kuvvet",
+            "referans noktası",
+            "konum",
+            "alınan yol",
+            "yer değiştirme",
+            "sürat",
+            "anlık sürat",
+            "ortalama sürat",
+            "hız",
+            "anlık hız",
+            "ortalama hız",
+            "ivme",
+            "öteleme hareketi",
+            "dönme hareketi",
+            "titreşim hareketi"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "FİZ.9.2.1",
+              "metin": "Birimleri SI birim sisteminde verilen temel ve türetilmiş nicelikleri sınıflandırabilme"
+            },
+            {
+              "kod": "FİZ.9.2.2",
+              "metin": "Skaler ve vektörel nicelikleri karşılaştırabilme"
+            },
+            {
+              "kod": "FİZ.9.2.3",
+              "metin": "Aynı doğrultu üzerinde yer alan farklı vektörlerin yön ve büyüklüklerine yönelik bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.9.2.4",
+              "metin": "Vektörlerin toplanmasında kullanılan uç uca ekleme ve paralelkenar yöntemi ile bileşenlerine ayırma işlemine ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.9.2.5",
+              "metin": "Doğadaki temel kuvvetleri karşılaştırabilme"
+            },
+            {
+              "kod": "FİZ.9.2.6",
+              "metin": "Hareketin temel kavramlarının tanımlarına yönelik tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.9.2.7",
+              "metin": "Hareket türlerini sınıflandırabilme"
+            }
+          ]
+        },
+        {
+          "id": "65",
+          "sira": 3,
+          "ad": "Akışkanlar",
+          "dersSaati": 18,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Basınç",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Sıvılarda Basınç",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Açık Hava Basıncı",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Kaldırma Kuvveti",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Bernoulli İlkesi",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "basınç",
+            "kaldırma kuvveti"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "FİZ.9.3.1",
+              "metin": "Basınca yönelik bilimsel çıkarımlarda bulunabilme"
+            },
+            {
+              "kod": "FİZ.9.3.2",
+              "metin": "Durgun sıvılarda basınca yönelik bilimsel çıkarımlarda bulunabilme"
+            },
+            {
+              "kod": "FİZ.9.3.3",
+              "metin": "Sıvılarda basıncın kullanıldığı günlük hayat örneklerine ilişkin sorgulama yapabilme"
+            },
+            {
+              "kod": "FİZ.9.3.4",
+              "metin": "Açık hava basıncına ilişkin çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.9.3.5",
+              "metin": "Kaldırma kuvvetini etkileyen değişkenleri belirlemeye yönelik deney yapabilme"
+            },
+            {
+              "kod": "FİZ.9.3.6",
+              "metin": "Kaldırma kuvveti ile sıvılardaki basınca neden olan kuvvet arasındaki ilişkiye yönelik çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.9.3.7",
+              "metin": "Akışkanın geçtiği borunun kesit alanı ile akışkanın sürati ve boru çeperlerine yaptığı basınç arasındaki ilişkiye yönelik tümevarımsal akıl yürütebilme"
+            }
+          ]
+        },
+        {
+          "id": "82",
+          "sira": 4,
+          "ad": "Enerji",
+          "dersSaati": 18,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "İç Enerji, Isı ve Sıcaklık Arasındaki İlişki",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Isı, Öz Isı, Isı Sığası ve Sıcaklık Farkı Arasındaki İlişki",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Hâl Değişimi",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Isıl Denge",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Isı Aktarım Yolları",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Isı İletim Hızı",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "ısı",
+            "sıcaklık",
+            "iç enerji",
+            "öz ısı",
+            "ısı sığası",
+            "hâl değişimi",
+            "ısıl denge",
+            "ısı aktarımı"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "FİZ.9.4.1",
+              "metin": "İç enerjinin ısı ve sıcaklık ile arasındaki ilişki hakkında tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.9.4.2",
+              "metin": "Isı, öz ısı, ısı sığası ve sıcaklık farkı arasındaki matematiksel modele ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.9.4.3",
+              "metin": "Hâl değiştirme sıcaklığında bulunan saf bir maddenin hâl değiştirmesi için alınan veya verilen ısı miktarının bağlı olduğu değişkenler hakkında bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.9.4.4",
+              "metin": "Isıl denge durumu hakkında bilimsel gözlem yapabilme"
+            },
+            {
+              "kod": "FİZ.9.4.5",
+              "metin": "Isı aktarım yollarını sınıflayabilme"
+            },
+            {
+              "kod": "FİZ.9.4.6",
+              "metin": "Günlük hayattaki deneyimlerinden yola çıkarak katı maddelerdeki ısı iletim hızını etkileyen etmenlere yönelik yansıtma yapabilme"
+            }
+          ]
+        }
+      ],
+      "10": [
+        {
+          "id": "100",
+          "sira": 1,
+          "ad": "Kuvvet Ve Hareket",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Sabit Hızlı Hareket",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Bir Boyutta Sabit İvmeli Hareket",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "FİZ.10.1.1",
+              "metin": "Yatay doğrultuda sabit hızlı hareket ile ilgili tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.10.1.2",
+              "metin": "İvme ve hız değişimi arasındaki ilişkiye yönelik tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.10.1.3",
+              "metin": "Yatay doğrultuda sabit ivmeyle hareket eden cisimlerin hareket grafiklerinden elde edilen matematiksel modelleri yorumlayabilme"
+            }
+          ]
+        },
+        {
+          "id": "108",
+          "sira": 2,
+          "ad": "Enerji",
+          "dersSaati": 16,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "İş, Enerji ve Güç",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Enerji Biçimleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Mekanik Enerji",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Enerji Kaynakları",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "iş",
+            "enerji",
+            "güç",
+            "enerji biçimi",
+            "mekanik enerji",
+            "mekanik enerjinin korunumu",
+            "yenilenebilen enerji",
+            "yenilenemeyen enerji"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "FİZ.10.2.1",
+              "metin": "Kuvvet-yer değiştirme grafiği kullanılarak iş ile ilgili tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.10.2.2",
+              "metin": "İş, enerji ve güç kavramlarına ilişkin çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.10.2.3",
+              "metin": "Enerji biçimlerini karşılaştırabilme"
+            },
+            {
+              "kod": "FİZ.10.2.4",
+              "metin": "Mekanik enerjiyi çözümleyebilme"
+            },
+            {
+              "kod": "FİZ.10.2.5",
+              "metin": "Yenilenebilen ve yenilenemeyen enerji kaynaklarını karşılaştırabilme"
+            }
+          ]
+        },
+        {
+          "id": "111",
+          "sira": 3,
+          "ad": "Elektrik",
+          "dersSaati": 22,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Basit Elektrik Devreleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Elektrik Akımı",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Ohm Yasası",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Dirençlerin Bağlanması",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Üreteçlerin Bağlanması",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Elektrik Akımının Oluşturabileceği Tehlikelere Karşı Alınması Gereken Önlemler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Topraklamanın Önemi",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "elektrik akımı",
+            "potansiyel fark",
+            "direnç",
+            "Ohm Yasası",
+            "kısa devre",
+            "eşdeğer direnç",
+            "topraklama"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "FİZ.10.3.1",
+              "metin": "Basit elektrik devresinde potansiyel fark, elektrik akımı ve direnç kavramlarının tanımına ilişkin analojik akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.10.3.2",
+              "metin": "Elektrik yükünün hareketi üzerinden elektrik akımı kavramını çözümleyebilme"
+            },
+            {
+              "kod": "FİZ.10.3.3",
+              "metin": "Ohm Yasası ile ilgili tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.10.3.4",
+              "metin": "Dirençlerin bağlanma türüne göre eşdeğer dirence ilişkin bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.10.3.5",
+              "metin": "Üreteçlerin bağlanma türüne göre devreye sağladıkları potansiyel farka ilişkin bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "FİZ.10.3.6",
+              "metin": "Elektrik akımının oluşturabileceği tehlikelere karşı alınması gereken önlemlerle ilgili bilgi toplayabilme"
+            },
+            {
+              "kod": "FİZ.10.3.7",
+              "metin": "Topraklama olayının önemini sorgulayabilme"
+            }
+          ]
+        },
+        {
+          "id": "122",
+          "sira": 4,
+          "ad": "Dalgalar",
+          "dersSaati": 16,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Periyodik Hareketler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Dalgaların Temel Kavramları",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Dalgaların Sınıflandırılması",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Dalgaların Yayılma Süratini Etkileyen Etmenler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Su Dalgalarında Yansıma ve Kırılma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Rezonans ve Deprem",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "periyodik hareket",
+            "salınım hareketi",
+            "dalga tepesi",
+            "dalga çukuru",
+            "dalga boyu",
+            "frekans",
+            "periyot",
+            "genlik",
+            "dalgaların yayılma sürati",
+            "mekanik dalga",
+            "elektromanyetik dalga",
+            "titreşim doğrultusu",
+            "doğal titreşim frekansı",
+            "yansıma",
+            "kırılma",
+            "deprem",
+            "rezonans",
+            "odak noktası",
+            "merkez üssü",
+            "depremin şiddeti",
+            "depremin büyüklüğü"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "FİZ.10.4.1",
+              "metin": "Periyodik hareketlere ilişkin deneyimlerini yansıtabilme"
+            },
+            {
+              "kod": "FİZ.10.4.2",
+              "metin": "Dalgaların temel kavramlarına ilişkin operasyonel tanımlama yapabilme"
+            },
+            {
+              "kod": "FİZ.10.4.3",
+              "metin": "Dalgaları özelliklerine göre sınıflandırabilme"
+            },
+            {
+              "kod": "FİZ.10.4.4",
+              "metin": "Dalgaların yayılma süratini etkileyen etmenlere ilişkin bilimsel gözleme dayalı tahmin yapabilme"
+            },
+            {
+              "kod": "FİZ.10.4.5",
+              "metin": "Su dalgalarında yansıma ve kırılma ile ilgili tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "FİZ.10.4.6",
+              "metin": "Rezonans ve depreme ilişkin kavramlar üzerinden depremi sorgulayabilme"
+            },
+            {
+              "kod": "FİZ.10.4.7",
+              "metin": "Depremle ilgili bilimsel model oluşturabilme"
+            }
+          ]
+        }
+      ]
+    },
+    "kimya": {
+      "9": [
+        {
+          "id": "92",
+          "sira": 1,
+          "ad": "Etkileşim",
+          "dersSaati": 22,
+          "bolumler": [
+            {
+              "ad": "Kimya Hayattır",
+              "altKonular": [
+                {
+                  "ad": "Günlük Hayatta Kimya",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Kimyasal Maddelerin Kullanımı ve Güvenlik",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Kimyanın Alt Disiplinleri",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Kimya Alanında Kariyer Olanakları",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": "Atomdan Periyodik Tabloya",
+              "altKonular": [
+                {
+                  "ad": "Atom Teorileri ve Atomun Yapısı",
+                  "ayrinti": "Bohr Atom Teorisi, Modern Atom Teorisi"
+                },
+                {
+                  "ad": "Atom Orbitalleri ve Elektron Dizilimi",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Periyodik Tabloda Yer Bulma",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Periyodik Özellikler",
+                  "ayrinti": "Atom Yarıçapı, İyonlaşma Enerjisi ve Elektronegatiflik"
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "atom yarıçapı",
+            "absorbsiyon",
+            "Aufbau ilkesi",
+            "elektronegatiflik",
+            "emisyon",
+            "Hund kuralı",
+            "iyonlaşma enerjisi",
+            "izoelektronik",
+            "kimya bilimi",
+            "kimyasal madde",
+            "küresel simetri",
+            "orbital",
+            "Pauli dışlama ilkesi",
+            "valans elektron"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "KİM.9.1.1",
+              "metin": "Kimya biliminin günlük hayata katkısına ilişkin bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "KİM.9.1.2",
+              "metin": "Farklı ortamlarda kimyasal maddelerin kullanımından kaynaklanan problemleri çözebilme"
+            },
+            {
+              "kod": "KİM.9.1.3",
+              "metin": "Atom teorilerindeki varsayımları kullanarak bilimsel bilginin değişebilirliliğine ilişkin bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "KİM.9.1.4",
+              "metin": "Atom orbitallerinin bağıl enerjilerine ilişkin bilimsel veriye dayalı tahminde bulunabilme"
+            },
+            {
+              "kod": "KİM.9.1.5",
+              "metin": "Elektronların atom orbitallerine yerleşimine ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.9.1.6",
+              "metin": "Elementlerin periyodik tablodaki yerlerine ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.9.1.7",
+              "metin": "İyon oluşumuna ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.9.1.8",
+              "metin": "Elementlerin periyodik özelliklerinin periyodik tablodaki değişimini çözümleyebilme"
+            }
+          ]
+        },
+        {
+          "id": "121",
+          "sira": 2,
+          "ad": "Çeşitlilik",
+          "dersSaati": 38,
+          "bolumler": [
+            {
+              "ad": "Etkileşimler",
+              "altKonular": [
+                {
+                  "ad": "Metalik Bağ",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "İyonik Bağ",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Kovalent Bağ",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Lewis Nokta Yapısı",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Molekül Polarlığı ve Apolarlığı",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Bileşiklerin Adlandırılması",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": "Etkileşimden Maddeye",
+              "altKonular": [
+                {
+                  "ad": "Moleküller Arası Etkileşimler",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Katılar ve Özellikleri",
+                  "ayrinti": "Amorf ve Kristal Katılar"
+                },
+                {
+                  "ad": "Sıvılar ve Özellikleri",
+                  "ayrinti": "Kaynama Sıcaklığı ve Buhar Basıncı, Viskozite, Adezyon ve Kohezyon Kuvvetleri, Yüzey Gerilimi"
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "adezyon kuvveti",
+            "akışkanlık",
+            "amorf katı",
+            "apolar kovalent",
+            "apolar molekül",
+            "buhar basıncı",
+            "dipol",
+            "dipol-dipol etkileşimi",
+            "dipol moment",
+            "hidrojen bağı",
+            "indüklenmiş dipol",
+            "iyonik bağ",
+            "iyonik katı",
+            "kaynama noktası",
+            "kılcallık (kapiler etki)",
+            "kohezyon kuvveti",
+            "kovalent bağ",
+            "kristal katı",
+            "London kuvveti",
+            "metalik bağ",
+            "metalik katı",
+            "moleküler katı",
+            "polar kovalent",
+            "polar molekül",
+            "van der Waals etkileşimi",
+            "viskozite",
+            "yüzey gerilimi"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "KİM.9.2.1",
+              "metin": "Metalik bağın oluşumuna yönelik tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.9.2.2",
+              "metin": "İyonik bağın oluşumunu bilimsel gözleme dayalı tahmin edebilme"
+            },
+            {
+              "kod": "KİM.9.2.3",
+              "metin": "Kovalent bağ oluşumunu bilimsel gözleme dayalı tahmin edebilme"
+            },
+            {
+              "kod": "KİM.9.2.4",
+              "metin": "Moleküllerin Lewis nokta yapısına ilişkin çıkarımda bulunabilme"
+            },
+            {
+              "kod": "KİM.9.2.5",
+              "metin": "Molekülleri polar ya da apolar olarak sınıflandırabilme"
+            },
+            {
+              "kod": "KİM.9.2.6",
+              "metin": "Bileşikleri adlandırma kurallarına ilişkin tümdengelimsel akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.9.2.7",
+              "metin": "Moleküller arası etkileşimleri sınıflandırabilme"
+            },
+            {
+              "kod": "KİM.9.2.8",
+              "metin": "Etkileşimlerin katıların özellikleri üzerindeki etkilerine ilişkin bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "KİM.9.2.9",
+              "metin": "Sıvıların buhar basıncını etkileyen faktörlere ilişkin hipotez oluşturabilme"
+            },
+            {
+              "kod": "KİM.9.2.10",
+              "metin": "Sıvıların kaynama sıcaklığını etkileyen faktörleri belirlemeye yönelik kanıt kullanabilme"
+            },
+            {
+              "kod": "KİM.9.2.11",
+              "metin": "Sıvıların viskozitesini etkileyen faktörlere ilişkin bilimsel gözlem yapabilme"
+            },
+            {
+              "kod": "KİM.9.2.12",
+              "metin": "Adezyon ve kohezyon kuvvetlerinin sıvıların özelliklerine etkilerine ilişkin bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "KİM.9.2.13",
+              "metin": "Sıvıların yüzey gerilimini etkileyen faktörlere ilişkin bilimsel sorgulama yapabilme"
+            }
+          ]
+        },
+        {
+          "id": "137",
+          "sira": 3,
+          "ad": "Sürdürülebilirlik",
+          "dersSaati": 8,
+          "bolumler": [
+            {
+              "ad": "Nanoparçacıklar ve Ekolojik Sürdürülebilirlik",
+              "altKonular": [
+                {
+                  "ad": "Metal Nanoparçacıklar",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Metal, Alaşım ve Metal Nanoparçacıkların Çevresel Etkileri",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Yeşil Kimyanın Atık Önleme İlkesi",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "ağır metal",
+            "atık önleme",
+            "ekolojik ayak izi",
+            "kimyasal ayak izi",
+            "metal nanoparçacık"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "KİM.9.3.1",
+              "metin": "Evsel atıklardan metal nanoparçacık elde etmek üzere deney yapabilme"
+            },
+            {
+              "kod": "KİM.9.3.2",
+              "metin": "Metal, alaşım ve metal nanoparçacıkların ekosistemdeki etkilerine ilişkin problem çözebilme"
+            }
+          ]
+        }
+      ],
+      "10": [
+        {
+          "id": "138",
+          "sira": 1,
+          "ad": "Etkileşim",
+          "dersSaati": 32,
+          "bolumler": [
+            {
+              "ad": "Kimyasal Tepkimeler",
+              "altKonular": [
+                {
+                  "ad": "Kimyasal Değişimin Göstergeleri",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Kimyasal Tepkimelerin Oluşumu",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Kimyasal Tepkime Türleri",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Mol Kavramı",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Kimyasal Tepkime Denklemlerinin Denkleştirilmesi",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Kimyasal Hesaplamalar",
+                  "ayrinti": "Stokiyometrik"
+                }
+              ]
+            },
+            {
+              "ad": "Gazlar",
+              "altKonular": [
+                {
+                  "ad": "Gazların Özellikleri ve Kinetik Moleküler Teori",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Gaz Yasaları",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "İdeal Gaz Yasası",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Graham Difüzyon ve Efüzyon Yasası",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "asit-baz tepkimesi",
+            "çökelme tepkimesi",
+            "difüzyon",
+            "efüzyon",
+            "gaz basıncı",
+            "hacim",
+            "ideal gaz",
+            "indirgenme-yükseltgenme tepkimesi (redoks)",
+            "kimyasal tepkime",
+            "mol",
+            "mutlak sıcaklık",
+            "sınırlayıcı bileşen",
+            "standart-normal şartlar",
+            "tepkime denklemleri",
+            "yüzde verim"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "KİM.10.1.1",
+              "metin": "Kimyasal değişimlere ilişkin kanıtları belirlemeye yönelik bilimsel gözlem yapabilme"
+            },
+            {
+              "kod": "KİM.10.1.2",
+              "metin": "Kimyasal tepkimelerin oluşumunu açıklamak için bilimsel model oluşturabilme a)Taneciklerin yeniden düzenlenmesi temelinde kimyasal tepkimelerin oluşumu için önerdiği modeli farklı kimyasal tepkimelerin oluşum süreçlerini inceleyerek sınar."
+            },
+            {
+              "kod": "KİM.10.1.3",
+              "metin": "Kimyasal tepkime türlerinin oluşum sürecine ilişkin bilimsel gözlem yapabilme"
+            },
+            {
+              "kod": "KİM.10.1.4",
+              "metin": "Mol kavramına ilişkin operasyonel tanımlama yapabilme"
+            },
+            {
+              "kod": "KİM.10.1.5",
+              "metin": "Saf maddelerin ölçülebilir özellikleri arasındaki ilişkileri belirlemeye yönelik tümdengelimsel akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.10.1.6",
+              "metin": "Kimyasal tepkime denklemlerinde tanecik sayılarının tutarsızlıklarına ilişkin çelişkiyi giderebilme"
+            },
+            {
+              "kod": "KİM.10.1.7",
+              "metin": "Kimyasal tepkimelerde stokiyometrik ilişkilere yönelik tümdengelimsel akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.10.1.8",
+              "metin": "Gazların özelliklerine ilişkin bilimsel gözlem yapabilme"
+            },
+            {
+              "kod": "KİM.10.1.9",
+              "metin": "Gazların özellikleri arasındaki ilişkileri bilimsel sorgulayabilme"
+            },
+            {
+              "kod": "KİM.10.1.10",
+              "metin": "İdeal gaz denklemini tümevarımsal akıl yürütme yoluyla oluşturabilme"
+            },
+            {
+              "kod": "KİM.10.1.11",
+              "metin": "Gazların farklı ortamlarda yayılmasına ilişkin deney yapabilme"
+            }
+          ]
+        },
+        {
+          "id": "159",
+          "sira": 2,
+          "ad": "Çeşitlilik",
+          "dersSaati": 26,
+          "bolumler": [
+            {
+              "ad": "Çözeltiler",
+              "altKonular": [
+                {
+                  "ad": "Çözünme Süreci",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Maddelerin Birbiri İçindeki Çözünebilirliği",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Çözünme Olayının Sınıflandırılması",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Çözünürlük",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Çözünürlüğe Etki Eden Faktörler",
+                  "ayrinti": "Sıcaklık, Basınç ve Madde Cinsi"
+                },
+                {
+                  "ad": "Çözeltilerin Sınıflandırılması",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Derişim Birimleri",
+                  "ayrinti": "Molarite ve ppm"
+                },
+                {
+                  "ad": "Koligatif Özellikler",
+                  "ayrinti": "Kaynama Noktası Yükselmesi ve Donma Noktası Düşmesi"
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "aşırı doymuş çözelti",
+            "çözelti",
+            "çözücü",
+            "çözünen",
+            "çözünme",
+            "çözünürlük",
+            "derişik çözelti",
+            "doymuş çözelti",
+            "doymamış çözelti",
+            "elektrolit çözelti",
+            "elektrolit olmayan çözelti",
+            "iyonik çözünme",
+            "koligatif özellik",
+            "milyonda bir derişim (ppm)",
+            "molar derişim",
+            "moleküler çözünme",
+            "seyreltik çözelti"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "KİM.10.2.1",
+              "metin": "Çözünme sürecine ilişkin bilimsel model oluşturabilme"
+            },
+            {
+              "kod": "KİM.10.2.2",
+              "metin": "Farklı maddelerin birbiri içinde çözünebilirliğini kanıt kullanarak açıklayabilme"
+            },
+            {
+              "kod": "KİM.10.2.3",
+              "metin": "Çözünme olayını sınıflandırabilme"
+            },
+            {
+              "kod": "KİM.10.2.4",
+              "metin": "Çözünürlük kavramına ilişkin operasyonel tanımlama yapabilme"
+            },
+            {
+              "kod": "KİM.10.2.5",
+              "metin": "Çözünürlüğe etki eden faktörleri belirlemeye yönelik kanıt kullanabilme"
+            },
+            {
+              "kod": "KİM.10.2.6",
+              "metin": "Çözeltileri sınıflandırabilme"
+            },
+            {
+              "kod": "KİM.10.2.7",
+              "metin": "Çözeltilerin molar derişimine ilişkin tümevarımsal akıl yürütebilme"
+            },
+            {
+              "kod": "KİM.10.2.8",
+              "metin": "Çözünen maddenin tanecik sayısının çözeltilerin kaynama ve donma noktasına etkisini belirlemeye yönelik hipotez oluşturabilme"
+            }
+          ]
+        },
+        {
+          "id": "160",
+          "sira": 3,
+          "ad": "Sürdürülebilirlik",
+          "dersSaati": 10,
+          "bolumler": [
+            {
+              "ad": "Yeşil Kimya, Çevresel ve Ekolojik Sürdürülebilirlik",
+              "altKonular": [
+                {
+                  "ad": "Makro ve Mikro Ölçekli Deneyler",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Atmosferdeki Tepkimeler ve Küresel Sorunlar",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "asit yağmurları",
+            "atom ekonomisi",
+            "emisyon ayak izi",
+            "hava kirliliği",
+            "küresel ısınma",
+            "makro ölçekli deney",
+            "mikro ölçekli deney",
+            "ozon azalımı",
+            "sera etkisi",
+            "sera gazı",
+            "su ayak izi"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "KİM.10.3.1",
+              "metin": "Kimya dersinde mikro ölçekli deney tercih etmenin sonuçlarını ekosistem açısından değerlendirebilme"
+            },
+            {
+              "kod": "KİM.10.3.2",
+              "metin": "Kimyasal tepkimeler sonucunda atmosferin doğasındaki değişimin ekosisteme etkilerine yönelik problem çözebilme"
+            }
+          ]
+        }
+      ]
+    },
+    "biyoloji": {
+      "9": [
+        {
+          "id": "2",
+          "sira": 1,
+          "ad": "Yaşam",
+          "dersSaati": 44,
+          "bolumler": [
+            {
+              "ad": "Yaşam Bilimi: Biyoloji",
+              "altKonular": [
+                {
+                  "ad": "Biyolojinin Önemi",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Biyoloji Biliminin Gelişimindeki Dönüm Noktaları",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Bilimin Doğası",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Bilimsel Araştırma Süreçleri",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Bilim Etiği",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Canlıların Ortak Özellikleri",
+                  "ayrinti": "Hücresel Yapı, Organizasyon, Beslenme, Enerji Üretimi ve Tüketimi, Boşaltım, Büyüme ve Gelişme, Metabolizma, Uyarılara Tepki, Homeostazi, Üreme, Varyasyon ve Adaptasyon"
+                }
+              ]
+            },
+            {
+              "ad": "Temel Bileşenler",
+              "altKonular": [
+                {
+                  "ad": "İnorganik Moleküller",
+                  "ayrinti": "Su, Mineraller"
+                },
+                {
+                  "ad": "Organik Moleküller",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "bilimsel yöntem",
+            "bilim etiği",
+            "prokaryot",
+            "ökaryot",
+            "beslenme çeşitleri",
+            "adezyon",
+            "kohezyon",
+            "çözücülük",
+            "polimerizasyon",
+            "dehidrasyon",
+            "hidroliz",
+            "denatürasyon",
+            "indüklenmiş uyum",
+            "yüzey gerilimi"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "BİY.9.1.1",
+              "metin": "Biyolojideki dönüm noktalarının insan hayatına katkılarını sorgulayabilme"
+            },
+            {
+              "kod": "BİY.9.1.2",
+              "metin": "Bilimsel araştırma süreçlerinde bilimin doğasını yorumlayabilme"
+            },
+            {
+              "kod": "BİY.9.1.3",
+              "metin": "Bilimsel araştırmaların bilim etiğine uygunluğu ile ilgili bilgi toplayabilme"
+            },
+            {
+              "kod": "BİY.9.1.4",
+              "metin": "Çevresindeki canlıların özelliklerini bilimsel olarak gözlemleyebilme"
+            },
+            {
+              "kod": "BİY.9.1.5",
+              "metin": "İnorganik moleküllerin önemi hakkında bilimsel çıkarım yapabilme"
+            },
+            {
+              "kod": "BİY.9.1.6",
+              "metin": "Organik moleküllerin yapısı ve çeşitleriyle ilgili bilgi toplayabilme"
+            },
+            {
+              "kod": "BİY.9.1.7",
+              "metin": "Besinlerin yapısında karbohidrat, lipit ve protein varlığının belirlenmesiyle ilgili deney yapabilme"
+            },
+            {
+              "kod": "BİY.9.1.8",
+              "metin": "pH ve sıcaklığın enzim aktivitesini etkilediğini gösteren deney yapabilme"
+            }
+          ]
+        },
+        {
+          "id": "3",
+          "sira": 2,
+          "ad": "Organizasyon",
+          "dersSaati": 24,
+          "bolumler": [
+            {
+              "ad": "Hücrenin Organizasyonu",
+              "altKonular": [
+                {
+                  "ad": "Prokaryot ve Ökaryot Hücre",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Hücre Zarı",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Sitoplazma",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Sitoplazmik Yapılar",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Organeller ve Çekirdek",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Hücre Zarından Madde Geçişleri",
+                  "ayrinti": "Pasif Taşıma, Basit Difüzyon, Kolaylaştırılmış Difüzyon, Ozmoz, Aktif Taşıma, Endositoz, Ekzositoz"
+                }
+              ]
+            },
+            {
+              "ad": "Sınıflandırma ve Biyoçeşitlilik",
+              "altKonular": [
+                {
+                  "ad": "Sınıflandırmada Temel Yaklaşımlar ve Modern Sınıflandırma",
+                  "ayrinti": "Linne ve İkili Adlandırma, Sınıflandırma Kategorileri"
+                },
+                {
+                  "ad": "Üç Üst Âlem Sisteminde Yer Alan Canlılar ve Genel Özellikleri",
+                  "ayrinti": "Domain; Bakteriler, Arkeler, Ökaryotlar (Protistler, Bitkiler, Mantarlar, Hayvanlar)"
+                },
+                {
+                  "ad": "Biyoçeşitlilik",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "endositoz",
+            "ekzositoz",
+            "aktif taşıma",
+            "pasif taşıma",
+            "organeller",
+            "sitoplazmik yapılar",
+            "sınıflandırma kategorileri",
+            "ikili adlandırma",
+            "domain",
+            "tür",
+            "arke",
+            "bakteri",
+            "protista",
+            "bitki",
+            "mantar",
+            "hayvan",
+            "endemik tür"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "BİY.9.2.1",
+              "metin": "Hücre alt birimlerini ve bu birimlerin işlevleri arasındaki ilişkileri çözümleyebilme"
+            },
+            {
+              "kod": "BİY.9.2.2",
+              "metin": "Hücre zarından madde geçişlerini sınıflandırabilme"
+            },
+            {
+              "kod": "BİY.9.2.3",
+              "metin": "Küçük moleküllerin hücre zarından pasif geçişi ile ilgili deney yapabilme"
+            },
+            {
+              "kod": "BİY.9.2.4",
+              "metin": "Canlıları sınıflandırabilme"
+            },
+            {
+              "kod": "BİY.9.2.5",
+              "metin": "Üç üst âlem (domain) sisteminde yer alan canlıların özellikleri ile ilgili çıkarım yapabilme"
+            },
+            {
+              "kod": "BİY.9.2.6",
+              "metin": "Biyoçeşitliliği oluşturan unsurlarla ilgili bilimsel çıkarım yapabilme"
+            }
+          ]
+        }
+      ],
+      "10": [
+        {
+          "id": "8",
+          "sira": 1,
+          "ad": "Enerji",
+          "dersSaati": 34,
+          "bolumler": [
+            {
+              "ad": "Güneşten Besinlere",
+              "altKonular": [
+                {
+                  "ad": "Canlılık İçin Enerjinin Önemi",
+                  "ayrinti": "ATP’nin Yapısı ve Enerji Aktarımında ATP’nin Rolü"
+                },
+                {
+                  "ad": "Işık Enerjisi Kullanılarak Besin Sentezi: Fotosentez",
+                  "ayrinti": "Işığın Kullanıldığı Tepkimeler, Işığın Kullanılmadığı Tepkimeler, Fotosentez Hızına Etki Eden Çevresel Faktörler"
+                },
+                {
+                  "ad": "Işık Enerjisi Kullanılmadan Besin Sentezi: Kemosentez",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": "Besinlerden Enerjiye",
+              "altKonular": [
+                {
+                  "ad": "Sindirim",
+                  "ayrinti": "Hücre İçi Sindirim ve Hücre Dışı Sindirim"
+                },
+                {
+                  "ad": "Canlılarda Sindirim Yapıları",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "İnsanda Sindirim",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Emilim ve Taşınma",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Hücresel Solunum",
+                  "ayrinti": "Glikoliz, Sitrik Asit Döngüsü, Elektron Taşıma Sistemi"
+                },
+                {
+                  "ad": "Besinlerin Solunuma Katılma Yolları",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Fermantasyon",
+                  "ayrinti": "Laktik Asit Fermantasyonu, Etil Alkol Fermantasyonu"
+                },
+                {
+                  "ad": "Enerji-Metabolizma İlişkisi",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "ışık enerjisi",
+            "kimyasal enerji",
+            "pigment",
+            "fotoliz",
+            "Calvin döngüsü",
+            "sindirim",
+            "sindirim sistemi",
+            "emilim",
+            "hücresel solunum",
+            "fermantasyon",
+            "elektron taşıma sistemi",
+            "ATP sentezi"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "BİY.10.1.1",
+              "metin": "Canlıların yaşamına devam edebilmesi için enerjinin gerekliliğini sorgulayabilmea) Canlıların yaşamına devam edebilmesi için enerjinin gerekliliğiyle ilgili merakını ifade eder."
+            },
+            {
+              "kod": "BİY.10.1.2",
+              "metin": "Fotosentez reaksiyonlarıyla ilgili bilimsel model oluşturabilmea) Fotosentez reaksiyonlarının işleyişini açıklamak için model önerir."
+            },
+            {
+              "kod": "BİY.10.1.3",
+              "metin": "Fotosentezde kullanılan ve üretilen maddelerle ilgili deney yapabilmea) Fotosentezde kullanılan ve üretilen maddelerle ilgili deney tasarlar.b) Tasarladığı deneyden elde ettiği sonuçların analizini yapar ve bu sonuçları fotosentezi açıklamak için kullanır."
+            },
+            {
+              "kod": "BİY.10.1.4",
+              "metin": "Kemosentez hakkında bilgi toplayabilmea) Kemosentez hakkında bilgiye ulaşmak için kullanacağı araçları belirler.b) Belirlediği araçları kullanarak kemosentez ile ilgili bilgilere ulaşır.c) Kemosentez ile ilgili ulaştığı bilgileri doğrular.ç) Kemosentez ile ilgili ulaştığı bilgileri kaydeder."
+            },
+            {
+              "kod": "BİY.10.1.5",
+              "metin": "Canlılarda sindirim çeşitlerini ve yapılarını sınıflandırabilmea) Canlılarda sindirim çeşitleri ve yapılarını sınıflandırmak için ölçütler belirler.b) Canlılarda sindirim çeşitleri ve yapılarını oluşturduğu ölçütlere göre ayrıştırır.c) Canlılarda sindirim çeşitleri ve yapılarını gruplandırır.ç) Canlılarda sindirim çeşitleri ve yapılarını isimlendirir."
+            },
+            {
+              "kod": "BİY.10.1.6",
+              "metin": "İnsanda enerji eldesi için sindirim, emilim ve taşıma süreçlerinin gerekliliği ile ilgili bilimsel çıkarım yapabilmea) İnsanda sindirim, emilim ve taşıma süreçlerinin niteliklerini tanımlar.b) İnsanda sindirim, emilim ve taşıma süreçlerinin besinlerden enerji eldesi için gerekliliğiyle ilgili bilgileri/verileri toplar ve kaydeder.c) İnsanda sindirim, emilim ve taşıma süreçlerinin besinlerden enerji eldesi için gerekliliğiyle ilgili topladığı bilgileri/verileri yorumlar ve değerlendirir."
+            },
+            {
+              "kod": "BİY.10.1.7",
+              "metin": "Hücresel solunum reaksiyonlarıyla ilgili bilimsel model oluşturabilmea) Hücresel solunum reaksiyonlarının işleyişini açıklamak için model önerir."
+            },
+            {
+              "kod": "BİY.10.1.8",
+              "metin": "Farklı besin gruplarından enerji eldesi süreçlerini karşılaştırabilmea) Farklı besin gruplarından enerji eldesi süreçlerine ilişkin özellikleri belirler.b) Farklı besin gruplarından enerji eldesi süreçlerine ilişkin benzerlikleri listeler.c) Farklı besin gruplarından enerji eldesi süreçlerine ilişkin farklılıkları listeler."
+            },
+            {
+              "kod": "BİY.10.1.9",
+              "metin": "Fermantasyon ile ilgili deney yapabilmea) Fermantasyon ile ilgili deney tasarlar.b) Tasarladığı deneyden elde ettiği sonuçların analizini yapar ve bu sonuçları fermantasyonu açıklamak için kullanır."
+            },
+            {
+              "kod": "BİY.10.1.10",
+              "metin": "Besinlerden elde edilen enerjinin canlının metabolik süreçlerine katkısı ile ilgili bilimsel çıkarım yapabilmea) Besinlerden elde edilen enerjinin özelliklerini tanımlar.b) Besinlerden elde edilen enerjinin canlının metabolik süreçlerine katkısı ile ilgili bilgileri/verileri toplar ve kaydeder.c) Besinlerden elde edilen enerjinin canlının metabolik süreçlerine katkısı ile ilgili topladığı bilgileri/verileri yorumlar ve değerlendirir."
+            }
+          ]
+        },
+        {
+          "id": "10",
+          "sira": 2,
+          "ad": "Ekoloji",
+          "dersSaati": 34,
+          "bolumler": [
+            {
+              "ad": "Ekosistemler",
+              "altKonular": [
+                {
+                  "ad": "Ekosistemin Bileşenleri",
+                  "ayrinti": "Cansız ve Canlı Bileşenler, Popülasyon, Komünite, Ekosistem"
+                },
+                {
+                  "ad": "Tür İçi ve Türler Arası Etkileşimler",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Süksesyon",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Popülasyon Dinamikleri",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Ekosistemde Madde ve Enerji Akışı",
+                  "ayrinti": "Besin Zinciri, Besin Ağı, Ekolojik Piramitler, Biyolojik Birikim ve Etkileri"
+                },
+                {
+                  "ad": "Madde Döngüleri",
+                  "ayrinti": "Su, Karbon, Azot Döngüsü"
+                }
+              ]
+            },
+            {
+              "ad": "Ekolojik Sürdürülebilirlik",
+              "altKonular": [
+                {
+                  "ad": "Ekolojik Sürdürülebilirliğin Önemi",
+                  "ayrinti": null
+                },
+                {
+                  "ad": "Ekolojik Sürdürülebilirliği Kısıtlayan/Engelleyen Durumlar",
+                  "ayrinti": "Habitat Kaybı/Parçalanması, Kirlilik ve Çevre Sorunları, Biyoçeşitlilik Kaybı"
+                },
+                {
+                  "ad": "Ekolojik Sürdürülebilirliğin Sağlanması",
+                  "ayrinti": "Ekolojik Ayak İzinin Küçültülmesi, Doğal Kaynakların ve Biyoçeşitliliğin Korunması, Atık Yönetimi"
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "rekabet",
+            "süksesyon",
+            "erozyon",
+            "endemik",
+            "iklim değişikliği",
+            "ötrofikasyon",
+            "çevre direnci",
+            "taşıma kapasitesi"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "BİY.10.2.1",
+              "metin": "Ekosistemin cansız ve canlı bileşenleri arasındaki ilişkileri çözümleyebilmea) Ekosistemi oluşturan cansız ve canlı bileşenleri belirler.b) Ekosistemin cansız ve canlı bileşenleri arasındaki ilişkileri belirler."
+            },
+            {
+              "kod": "BİY.10.2.2",
+              "metin": "Komünitelerde ve popülasyonlarda görülen etkileşimleri ve değişimleri sorgulayabilmea) Komünitelerde ve popülasyonlarda görülen etkileşimleri ve değişimleri tanımlar.b) Komünitelerde ve popülasyonlarda görülen etkileşimler ve değişimlerle ilgili sorular sorar.c) Komünitelerde ve popülasyonlarda görülen etkileşimler ve değişimlerle ilgili bilgi toplar.ç) Komünitelerde ve popülasyonlarda görülen etkileşimler ve değişimlerle ilgili topladığı bilgilerin doğruluğunu değerlendirir.d) Komünitelerde ve popülasyonlarda görülen etkileşimler ve değişimlerle ilgili topladığı bilgiler üzerinden çıkarım yapar."
+            },
+            {
+              "kod": "BİY.10.2.3",
+              "metin": "Ekosistemdeki enerji akışıyla ilgili tümevarımsal akıl yürütebilmea) Ekosistemdeki enerji akışıyla ilgili gözlem yapar."
+            },
+            {
+              "kod": "BİY.10.2.4",
+              "metin": "Madde döngüleri ile ilgili bilimsel model oluşturabilmea) Madde döngülerinin işleyişini açıklamak için model önerir."
+            },
+            {
+              "kod": "BİY.10.2.5",
+              "metin": "Ekolojik sürdürülebilirliğin önemini yorumlayabilmea) Ekolojik sürdürülebilirliğin önemini inceler.b) Ekolojik sürdürülebilirliğin önemini bağlamdan kopmadan dönüştürür.c) Ekolojik sürdürülebilirliğin önemini anlamı değiştirmeyecek şekilde yeniden ifade eder."
+            },
+            {
+              "kod": "BİY.10.2.6",
+              "metin": "Çevresinde sürdürülebilirliği kısıtlayan durumlarla ilgili gözleme dayalı tahmin yapabilmea) Çevresinde sürdürülebilirliği kısıtlayan durumları gözlem ve deneyimleriyle ilişkilendirir.b) Çevresinde sürdürülebilirliği kısıtlayan durumlara ilişkin çıkarım yapar.c) Çevresinde sürdürülebilirliği kısıtlayan durumlara ilişkin yargıda bulunur."
+            },
+            {
+              "kod": "BİY.10.2.7",
+              "metin": "Ekolojik ayak izini küçültebilme yollarını bilimsel olarak sorgulayabilmea) Ekolojik ayak izini küçültebilme yollarıyla ilgili araştırma sorusu belirler.b) Ekolojik ayak izini küçültebilme yollarıyla ilgili araştırma sorusunu cevaplamak için bir tablo/model oluşturur.c) Ekolojik ayak izini küçültebilme yollarıyla ilgili araştırma planlar.ç) Ekolojik ayak izini küçültebilme yollarıyla ilgili elde ettiği verileri analiz eder ve yorumlar.d) Ekolojik ayak izini küçültebilme yollarıyla ilgili elde ettiği kanıtlara dayalı açıklama yapar ve ekolojik ayak izini küçültebilmeye yönelik çözüm üretir.e) Ekolojik ayak izini küçültebilme yollarıyla ilgili elde ettiği bilgileri değerlendirir ve paylaşır."
+            },
+            {
+              "kod": "BİY.10.2.8",
+              "metin": "Doğal kaynakların ve biyoçeşitliliğin korunması için alınan önlemleri sorgulayabilmea) Doğal kaynakların ve biyoçeşitliliğin korunması için alınan önlemlere ilişkin merakını ifade eder.b) Doğal kaynakların ve biyoçeşitliliğin korunması için alınan önlemler ile ilgili sorular sorar.c) Doğal kaynakların ve biyoçeşitliliğin korunması için alınan önlemler ile ilgili bilgi toplar.ç) Doğal kaynakların ve biyoçeşitliliğin korunması için alınan önlemler ile ilgili topladığı bilgilerin doğruluğunu değerlendirir.d) Doğal kaynakların ve biyoçeşitliliğin korunması için alınan önlemler ile ilgili topladığı bilgiler üzerinden çıkarım yapar."
+            },
+            {
+              "kod": "BİY.10.2.9",
+              "metin": "Çevresinde atık yönetimi konusunda yapılan çalışmalarla ilgili bilgi toplayabilmea) Çevresinde atık yönetimi konusunda yapılan çalışmalarla ilgili bilgilere ulaşmak için kullanacağı araçları belirler.b) Belirlediği araçları kullanarak çevresinde atık yönetimi konusunda yapılan çalışmalarla ilgili bilgilere ulaşır.c) Çevresinde atık yönetimi konusunda yapılan çalışmalarla ilgili ulaştığı bilgileri doğrular.ç) Çevresinde atık yönetim konusunda yapılan çalışmalarla ilgili ulaştığı bilgileri kaydeder."
+            }
+          ]
+        }
+      ]
+    },
+    "tarih": {
+      "9": [
+        {
+          "id": "26",
+          "sira": 1,
+          "ad": "Geçmişin İnşa Sürecinde Tarih",
+          "dersSaati": 18,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Tarih Öğrenmenin Faydaları",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Tarihin Doğası",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Tarihsel Bilginin Üretim Süreci",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Tarih Araştırma ve Yazımında Dijitalleşme",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "arşiv",
+            "dijitalleşme",
+            "geçmiş",
+            "kanıt",
+            "olay",
+            "olgu",
+            "tarih",
+            "tarihçi",
+            "tarihsel bilgi",
+            "tarihsel zaman",
+            "yapay zekâ"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "TAR.9.1.1",
+              "metin": "Tarih öğrenmenin bireye ve topluma faydalarını yorumlayabilmea) Tarih öğrenmenin bireye ve topluma faydalarını kaynaklardan inceler.b) Tarih öğrenmenin bireye ve topluma faydalarıyla ilgili incelediği kaynakları bağlamından kopmadan özetler.c) Tarih öğrenmenin bireye ve topluma faydalarını kendi cümleleriyle açıklar."
+            },
+            {
+              "kod": "TAR.9.1.2",
+              "metin": "Tarihin doğasını farklı kaynaklar üzerinden inceleyebilmea) Farklı kaynaklardan tarihin doğasına ilişkin temel bilgileri tespit eder.b) Farklı kaynakları inceleyerek tarihin doğasına ilişkin temel bilgileri açıklar."
+            },
+            {
+              "kod": "TAR.9.1.3",
+              "metin": "Tarihsel bilginin üretim sürecini çözümleyebilmea) Örnek çalışmalar üzerinden tarihsel bilginin üretim sürecindeki aşamaları belirler.b) Örnek çalışmalar üzerinden tarihsel bilginin üretim sürecindeki aşamalar arasında var olan ilişkileri belirler."
+            },
+            {
+              "kod": "TAR.9.1.4",
+              "metin": "Dijitalleşmenin tarih araştırma ve yazımının dönüşümüne etkisini değerlendirebilmea) Dijitalleşme öncesindeki ve dijital dönemdeki tarih araştırma ve yazım süreçlerini karşılaştırır.b) Tarih araştırma ve yazımında dijitalleşmeyle meydana gelen dönüşüme dair yargıda bulunur."
+            }
+          ]
+        },
+        {
+          "id": "27",
+          "sira": 2,
+          "ad": "Eski Çağ Medeniyetleri",
+          "dersSaati": 24,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Tarım Devrimi’nin Eski Çağ Medeniyetlerindeki Yerleşmeye ve Ekonomiye Etkisi",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Eski Çağ Medeniyetlerinde Yönetim ve Ordu",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Eski Çağ Medeniyetlerinde Hukuk",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Eski Çağ’da İnançlar ile Bilim ve Sanat Anlayışları",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Türklerde Konargöçer Yaşam",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "artı ürün",
+            "kağan",
+            "konargöçer",
+            "kurultay",
+            "medeniyet",
+            "onlu sistem",
+            "piramit",
+            "saban",
+            "senato",
+            "töre",
+            "yazıt",
+            "ziggurat"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "TAR.9.2.1",
+              "metin": "Tarım Devrimi’nin Eski Çağ medeniyetlerindeki yerleşmeye ve ekonomik faaliyetlere etkisini değerlendirebilmea) Tarım Devrimi’nin Eski Çağ medeniyetlerindeki yerleşmeye ve ekonomik faaliyetlere etkisini zaman ve mekân açısından karşılaştırır.b) Tarım Devrimi’nin Eski Çağ medeniyetlerindeki yerleşmeye ve ekonomik faaliyetlere etkileriyle ilgili yargıda bulunur."
+            },
+            {
+              "kod": "TAR.9.2.2",
+              "metin": "Eski Çağ’daki farklı medeniyetlerin yönetim ve ordu sistemlerini özetleyebilmea) Eski Çağ’daki farklı medeniyetlerin yönetim ve ordu özellikleri ile ilgili çözümleme yapar.b) Eski Çağ’daki farklı medeniyetlerin yönetim ve ordu özellikleri ile ilgili sınıflandırma yapar.c) Eski Çağ’daki farklı medeniyetlerin yönetim ve ordu özelliklerini yorumlar."
+            },
+            {
+              "kod": "TAR.9.2.3",
+              "metin": "Eski Çağ medeniyetlerinde hukukun toplumsal düzeni sağlamadaki rolünü sorgulayabilmea) Eski Çağ medeniyetlerinde hukukun toplumsal düzeni sağlamadaki rolü hakkında merak ettiği konuları belirler.b) İlgili konular hakkında sorular sorar.c) Farklı kaynaklar üzerinden konuya ilişkin bilgi toplar.ç) Topladığı bilgilerin doğruluğunu değerlendirir.d) Topladığı bilgiler üzerinden Eski Çağ medeniyetlerinde hukukun toplumsal düzeni sağlamadaki rolüne ilişkin çıkarım yapar."
+            },
+            {
+              "kod": "TAR.9.2.4",
+              "metin": "Eski Çağ toplumlarındaki inançlar ile bilim ve sanat anlayışları arasındaki ilişkiyiyorumlayabilmea) Eski Çağ toplumlarındaki inançlar ile bilim ve sanat anlayışlarına ilişkin kaynakları inceler.b) Eski Çağ toplumlarındaki inançlar ile bilim ve sanat anlayışlarına ilişkin kaynaklarda verilen bilgileri bağlamından kopmadan sözlü, yazılı veya görsel biçimlere dönüştürür.c) Eski Çağ toplumlarındaki inançlar ile bilim ve sanat anlayışları arasındaki ilişkiyi açıklar."
+            },
+            {
+              "kod": "TAR.9.2.5",
+              "metin": "Türklerde konargöçer yaşama ilişkin bakış açısı geliştirebilmea) Türklerde konargöçer yaşamın özelliklerini birinci ve ikinci elden kaynaklardan inceler.b) Türklerde konargöçer yaşamın özelliklerini kendi cümleleriyle ifade eder.c) Türklerde konargöçer yaşamın özelliklerini kaynaklara dayanarak çözümler.ç) Türklerde konargöçer yaşamın temel özelliklerini dönemin koşullarını göz önünde bulundurarak açıklar.d) Geçmiş ve günümüzden hareketle Türklerde konargöçer yaşam koşullarını karşılaştırır.e) Konargöçer yaşamın Türk kültüründeki yeri ve önemine yönelik çıkarımlarda bulunur.f) Türklerde konargöçer yaşamla ilgili kendi bakış açısını ifade eder."
+            }
+          ]
+        },
+        {
+          "id": "29",
+          "sira": 3,
+          "ad": "Orta Çağ Medeniyetleri",
+          "dersSaati": 26,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Orta Çağ’da Yaşanan Kitlesel Göçler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Orta Çağ’daki Başlıca Devletlerin Yönetim ve Ordu Yapıları",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Orta Çağ’daki Ticaret Yolları",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Orta Çağ’daki Başlıca Medeniyet Havzalarında Bilim, Kültür ve Sanat",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "divan",
+            "feodalite",
+            "hicret",
+            "hilafet",
+            "kale",
+            "kervan",
+            "kervansaray",
+            "mevali",
+            "skolastik düşünce"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "TAR.9.3.1",
+              "metin": "Orta Çağ’da yaşanan kitlesel göçlerin Avrupa ve Asya’da oluşturduğu değişimi neden ve sonuçlarıyla birlikte yorumlayabilmea) Orta Çağ’da yaşanan kitlesel göçlere neden olan unsurları inceler.b) Orta Çağ’da yaşanan kitlesel göçlerin etkilediği unsurları inceler.c) Orta Çağ’da yaşanan kitlesel göçlerin Avrupa ve Asya’da oluşturduğu değişimin etkilerini sorgular.ç) Orta Çağ’da yaşanan kitlesel göçlerin Avrupa ve Asya’da oluşturduğu değişimin neden ve sonuçlarını bağlamından kopmadan ifade eder."
+            },
+            {
+              "kod": "TAR.9.3.2",
+              "metin": "Orta Çağ’daki başlıca devletlerin yönetim ve ordu yapılarını karşılaştırabilmea) Orta Çağ’daki başlıca devletlerin yönetim ve ordu yapılarının özelliklerini belirler.b) Orta Çağ’daki başlıca devletlerin yönetim ve ordu yapıları arasındaki benzerlikleri listeler.c) Orta Çağ’daki başlıca devletlerin yönetim ve ordu yapıları arasındaki farklılıkları listeler."
+            },
+            {
+              "kod": "TAR.9.3.3",
+              "metin": "Orta Çağ’daki ticaret yollarının kendi çevresinde meydana getirdiği etkiyi sorgulayabilmea) Orta Çağ’daki ticaret yolları üzerinde yer alan devlet ve toplumların etkileşimleriyle ilgili sorular sorar.b) Orta Çağ’daki ticaret yolları üzerinde yer alan devlet ve toplumların ilişkilerini siyasi, ekonomik ve kültürel boyutlarıyla çözümler.c) Orta Çağ’daki ticaret yollarının devlet ve toplumların siyasi, ekonomik ve kültürel ilişkilerine etkisiyle ilgili çıkarımlarda bulunur."
+            },
+            {
+              "kod": "TAR.9.3.4",
+              "metin": "Orta Çağ’daki başlıca medeniyet havzalarının bilim, kültür ve sanata etkilerine ilişkin oluşturduğu ürünleri paylaşabilmea) Araştırmasında belirlediği kaynaklardan Orta Çağ’daki başlıca medeniyet havzalarının bilim, kültür ve sanata etkilerine ilişkin bilgi toplar.b) Orta Çağ’daki başlıca medeniyet havzalarının bilim, kültür ve sanata etkilerine ilişkin belirlediği kaynakları inceleyerek araştırmasına dair bilgileri tespit eder.c) Orta Çağ’daki başlıca medeniyet havzalarının bilim, kültür ve sanata etkilerine ilişkin kullanacağı kaynakların sınırlılığını sorgular.ç) Orta Çağ’daki başlıca medeniyet havzalarının bilim, kültür ve sanata etkilerine ilişkin kaynaklardan araştırmasına uygun olarak belirlediği bilgileri yorumlar.d) Orta Çağ’daki başlıca medeniyet havzalarının bilim, kültür ve sanata etkilerine ilişkin kanıtlara dayanarak oluşturduğu araştırmasını paylaşır."
+            }
+          ]
+        }
+      ],
+      "10": [
+        {
+          "id": "36",
+          "sira": 1,
+          "ad": "Türkistan’Dan Türkiye’Ye (1040-1299)",
+          "dersSaati": 20,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Türkistan’dan Türkiye’ye Uzanan Süreçte Meydana Gelen Önemli Askerî Mücadeleler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Türkistan’dan Türkiye’ye Uzanan Süreçte Türk Devlet ve Ordu Teşkilatında Meydana Gelen Değişim",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Türkistan’dan Türkiye’ye Uzanan Süreçte Türklerin Sosyal Yaşamları ve Ekonomik Faaliyetleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Türk-İslam Medeniyetinin Bilim, Kültür, Eğitim ve Sanat Alanlarında Ortaya Çıkardığı Etkiler",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Ahilik",
+            "fetih",
+            "fütüvvet",
+            "gaza",
+            "Haçlı",
+            "medrese",
+            "örf",
+            "sultan",
+            "şifahane",
+            "tekke",
+            "Türkiye"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "TAR.10.1.1",
+              "metin": "Türkistan’dan Türkiye’ye uzanan süreçte 1040-1299 yılları arasında meydana gelen önemli askerî mücadelelerin Türk tarihinin seyrine etkilerini karşılaştırabilmea) Türk tarihinin seyrini değiştiren önemli askerî mücadeleleri tarih şeridi üzerinde sıralar.b) Türk tarihinin seyrini değiştiren önemli askerî mücadelelerin özelliklerini belirler.c) Türk tarihinin seyrini değiştiren önemli askerî mücadelelerin etkilerini benzerlik ve farklılıkları açısından listeler."
+            },
+            {
+              "kod": "TAR.10.1.2",
+              "metin": "Türkistan’dan Türkiye’ye uzanan süreçte Türklerde devlet ve ordu teşkilatında meydana gelen değişim ve sürekliliği yorumlayabilmea) Türkistan’dan Türkiye’ye uzanan süreçte Türklerde devlet ve ordu teşkilatında meydana gelen değişim ve sürekliliği sağlayan unsurları inceler.b) Türkistan’dan Türkiye’ye uzanan süreçte Türklerde devlet ve ordu teşkilatında meydana gelen değişim ve sürekliliğin etkilediği unsurları inceler.c) Türkistan’dan Türkiye’ye uzanan süreçte Türklerde devlet ve ordu teşkilatında meydana gelen değişim ve sürekliliğin kurumlara etkilerini sorgular.ç) Türkistan’dan Türkiye’ye uzanan süreçte Türklerde devlet ve ordu teşkilatında meydana gelen değişim ve sürekliliğin neden ve sonuçlarını açıklar."
+            },
+            {
+              "kod": "TAR.10.1.3",
+              "metin": "Türkistan’dan Türkiye’ye uzanan süreçte Türklerin sosyoekonomik faaliyetleri ile yerleşme ve şehirleşme anlayışları arasındaki ilişkiyi sorgulayabilmea) Türkistan’dan Türkiye’ye uzanan süreçte Türklerin sosyoekonomik faaliyetleri ile yerleşme ve şehirleşme anlayışları arasındaki ilişki hakkında merak ettiği konuları belirler.b) İlgili konular hakkında sorular sorar.c) Farklı kaynaklar üzerinden konuya ilişkin bilgi toplar.ç) Topladığı bilgilerin doğruluğunu değerlendirir.d) Topladığı bilgiler üzerinden Türkistan’dan Türkiye’ye uzanan süreçte Türklerin sosyoekonomik faaliyetleri ile yerleşme ve şehirleşme anlayışları arasındaki ilişki hakkında çıkarım yapar."
+            },
+            {
+              "kod": "TAR.10.1.4",
+              "metin": "Türkistan’dan Türkiye’ye uzanan süreçte Türk-İslam medeniyetinde bilim, kültür, eğitim ve sanat alanlarında meydana gelen gelişmeleri Anadolu’nun Türkleşme ve İslamlaşma sürecine etkisi açısından değerlendirebilmea) Türk-İslam medeniyeti ile Batı medeniyetinin bilim, kültür, eğitim ve sanat anlayışını karşılaştırır.b) Türkistan’dan Türkiye’ye uzanan süreçte Türk-İslam medeniyetinde bilim, kültür, eğitim ve sanat alanlarında meydana gelen gelişmelerin Anadolu’nun Türkleşme ve İslamlaşma sürecine etkisine ilişkin kanıtları kullanarak yargıda bulunur.c) Hoca Ahmed Yesevi, Kaşgarlı Mahmud, Ömer Hayyam, Cezeri, İbnülarabi, Mevlana Celaleddin Rumi, Hacı Bektaş Veli, Yunus Emre ve İbni Bibi’nin düşünceleri veya eserleri hakkında insanlığın ortak mirasına katkıları bakımından yargıda bulunur."
+            }
+          ]
+        },
+        {
+          "id": "39",
+          "sira": 2,
+          "ad": "Beylikten Devlete Osmanlı (1299-1453)",
+          "dersSaati": 24,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Osmanlı Devleti’nin Kuruluşuna Dair Farklı Görüşler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Osmanlı Devleti’nin Anadolu ve Rumeli’deki Siyasi ve Askerî Mücadeleleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Osmanlı Devleti’nin Devletleşme Süreci ile Ordu, Hukuk ve Toprak Sistemleri Arasındaki İlişkiler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Osmanlı Devleti’nin Fethettiği Topraklarda Kalıcı Olabilmek İçin İzlediği Politikalar",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Osmanlı Devleti’nin İlim ve İrfan Geleneğinin Oluşmasında Mekânların ve Kişilerin Etkisi",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "devşirme sistemi",
+            "irfan",
+            "iskân",
+            "istimalet",
+            "kapıkulu",
+            "Rumeli Türklüğü",
+            "tımar",
+            "vakıf"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "TAR.10.2.1",
+              "metin": "Osmanlı Devleti’nin kuruluşuna dair farklı görüşleri tartışabilmea) Tarihçilerin Osmanlı Devleti’nin kuruluşuna dair öne sürdüğü farklı görüşlerin benzer ve farklı yönlerini belirler.b) Tarihçilerin Osmanlı Devleti’nin kuruluşuna dair öne sürdüğü görüşlerin güçlü ve zayıf yönleri ile tutarsızlıklarını tespit eder.c) Tarihçilerin Osmanlı Devleti’nin kuruluşuna dair öne sürdüğü görüşleri gerekçeleriyle çürütür veya kabul eder."
+            },
+            {
+              "kod": "TAR.10.2.2",
+              "metin": "1299-1453 yılları arasında Osmanlı Devleti’nin Anadolu ve Rumeli’de gerçekleştirdiği siyasi ve askerî mücadeleleri yorumlayabilmea) Osmanlı Devleti’nin Anadolu ve Rumeli’de gerçekleştirdiği siyasi ve askerî mücadeleleri farklı kaynakları karşılaştırarak inceler.b) Osmanlı Devleti’nin Anadolu ve Rumeli’de gerçekleştirdiği siyasi ve askerî mücadelelere ilişkin farklı kaynaklardaki bilgi ve bakış açılarını görsel bir forma dönüştürür.c) Osmanlı Devleti’nin Anadolu ve Rumeli’de gerçekleştirdiği siyasi ve askerî mücadeleleri verilen kaynaklara dayanarak kendi cümleleriyle ifade eder."
+            },
+            {
+              "kod": "TAR.10.2.3",
+              "metin": "Osmanlı Devleti’nin ordu, hukuk ve toprak sistemi ile devletleşme süreci arasındaki ilişkiyi çözümleyebilmea) Osmanlı Beyliği’nin devletleşmesini sağlayan sistemlerin özelliklerini belirler.b) Osmanlı Beyliği’nin devletleşmesini sağlayan sistemler arasındaki ilişkiyi belirler."
+            },
+            {
+              "kod": "TAR.10.2.4",
+              "metin": "Osmanlı Devleti’nin fethettiği topraklarda kalıcı olabilmek için izlediği politikaları sorgulayabilmea) Osmanlı Devleti’nin fethettiği topraklarda uyguladığı iskân ve istimalet politikalarına yönelik kaynaklardaki farklı bakış açılarının nedenlerine dair sorular sorar.b) Osmanlı Devleti’nin fethettiği topraklarda uyguladığı iskân ve istimalet politikalarına ilişkin kaynaklardaki bilgilerin sınırlılıkları hakkında çıkarım yapar.c) Osmanlı Devleti’nin fethettiği topraklarda uyguladığı iskân ve istimalet politikalarına yönelik kaynaklara dayalı çıkarım yapar."
+            },
+            {
+              "kod": "TAR.10.2.5",
+              "metin": "Osmanlı Devleti’nin ilim ve irfan geleneğinin oluşmasında şehir, kurum ve şahsiyetlerin etkilerine dair fikirler üretebilmea) Osmanlı Devleti’nin ilim ve irfan geleneğinin oluşmasında şehir, kurum ve şahsiyetlerin etkilerini fark eder.b) Osmanlı Devleti’nin ilim ve irfan geleneğinin oluşmasında ilk Türk-İslam devletlerindeki benzer deneyimleri inceler.c) Osmanlı Devleti’nin ilim ve irfan geleneğinin oluşmasında şehir, kurum ve şahsiyetlerin rolüne ilişkin fikir üretir."
+            }
+          ]
+        },
+        {
+          "id": "48",
+          "sira": 3,
+          "ad": "Cihan Devleti Osmanlı (1453-1683)",
+          "dersSaati": 24,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "1453-1683 Yılları Arasındaki Siyasi ve Askerî Mücadeleler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Osmanlı Devleti’nin Yönetim ve Ordu Yapısında Meydana Gelen Değişim",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Avrupa’nın Sömürgeci Politikalarının Etkileri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Osmanlı Devleti’ndeki Önemli İsyanların Neden ve Sonuçları",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "1453-1683 Yılları Arasında Osmanlı Devleti’nde Bilim, Kültür, Eğitim ve Sanat Alanında Yaşanan Gelişmeler",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Celâli",
+            "cihanşümul",
+            "ıslahat",
+            "isyan",
+            "koloni",
+            "rasathane",
+            "sömürgecilik",
+            "vezir"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "TAR.10.3.1",
+              "metin": "1453-1683 yılları arasındaki siyasi ve askerî mücadelelerin Osmanlı Devleti’nin cihan devleti hâline gelmesindeki rolüne ilişkin özgün fikirler üretebilmea) 1453-1683 yılları arasındaki siyasi ve askerî mücadeleleri belirler.b) 1453-1683 yılları arasındaki siyasi ve askerî mücadeleler ile Osmanlı Devleti’nin cihan devleti hâline gelmesini ilişkilendirir.c) 1453-1683 yılları arasındaki siyasi ve askerî mücadelelerin sonucunda bir cihan devleti hâline gelen Osmanlı Devleti’nin politikaları hakkında özgün bir içerik oluşturur."
+            },
+            {
+              "kod": "TAR.10.3.2",
+              "metin": "1453-1683 yılları arasında Osmanlı Devleti’nin yönetim ve ordu yapısında meydana gelen değişim ve sürekliliğe ilişkin kaynakları yorumlayabilmea) 1453-1683 yılları arasında Osmanlı Devleti’nin yönetim ve ordu yapısında meydana gelen değişim ve sürekliliği kaynaklar üzerinden inceler.b) 1453-1683 yılları arasında Osmanlı Devleti’nin yönetim ve ordu yapısında meydana gelen değişimle ilgili farklı kaynaklardaki bilgileri tablo yaparak gösterir.c) 1453-1683 yılları arasında Osmanlı Devleti’nin yönetim ve ordu yapısında meydana gelen değişimleri birden çok kaynaktaki kanıtlara dayanarak ifade eder."
+            },
+            {
+              "kod": "TAR.10.3.3",
+              "metin": "Avrupalıların sömürgeci politikalarının etkilerini tarihsel bağlamı içerisinde değerlendirebilmea) Avrupalıların sömürgeci politikalarını kaynaklara dayanarak çözümler.b) Avrupalıların sömürgeci politikalarıyla ilgili olarak dönemin koşullarını fark ederc) Avrupalıların sömürgeci politikalarının günümüze etkilerini açıklar.ç) Avrupalıların sömürgeci politikalarının etkilerini dönemin koşulları içinde açıklar."
+            },
+            {
+              "kod": "TAR.10.3.4",
+              "metin": "1453-1683 yılları arasında Osmanlı Devleti’nde gerçekleşen önemli isyanların neden ve sonuçlarını müzakere edebilmea) 1453-1683 yılları arasında Osmanlı Devleti’nde gerçekleşen önemli isyanların neden ve sonuçları konusunda bireylerin farklı görüşlerde olabileceğini fark eder.b) 1453-1683 yılları arasında Osmanlı Devleti’nde gerçekleşen önemli isyanların neden ve sonuçları konusunda kendi görüşüyle diğer bireylerin görüşlerini karşılaştırır.c) 1453-1683 yılları arasında Osmanlı Devleti’nde gerçekleşen önemli isyanların nedenlerine ilişkin mevcut görüşlerden hareketle dönemin şartlarını göz önünde bulundurarak isyanların önlenmesine yönelik olası çözümler önerir.ç) 1453-1683 yılları arasında Osmanlı Devleti’nde gerçekleşen önemli isyanların neden ve sonuçlarına ilişkin farklı görüş ve düşünceleri değerlendirerek kendi görüşünü gözden geçirir.d) 1453-1683 yılları arasında Osmanlı Devleti’nde gerçekleşen önemli isyanları ve bunlara karşı alınan önlemlere ilişkin farklı görüş ve düşünceleri değerlendirerek grubun görüşünü ifade eder."
+            },
+            {
+              "kod": "TAR.10.3.5",
+              "metin": "1453-1683 yılları arasında Osmanlı Devleti’nde bilim, kültür, eğitim ve sanat alanlarında ortaya çıkan gelişmelere ilişkin oluşturduğu özgün ürünleri paylaşabilmea) Araştırmasında belirlediği kaynaklardan 1453-1683 yılları arasında bilim, kültür, eğitim ve sanat alanlarında ortaya çıkan gelişmelere ilişkin bilgi toplar.b) 1453-1683 yılları arasında bilim, kültür, eğitim ve sanat alanlarında ortaya çıkan gelişmelere ilişkin belirlediği kaynakları inceleyerek araştırmasına dair bilgileri tespit eder.c) 1453-1683 yılları arasında bilim, kültür, eğitim ve sanat alanlarında ortaya çıkan gelişmelere ilişkin kullanacağı kaynakların sınırlılığını sorgular.ç) 1453-1683 yılları arasında bilim, kültür, eğitim ve sanat alanlarında ortaya çıkan gelişmelere ilişkin kaynaklardan araştırmasına uygun olarak belirlediği bilgileri yorumlar.d) 1453-1683 yılları arasında bilim, kültür, eğitim ve sanat alanlarında ortaya çıkan gelişmelere ilişkin kanıtlara dayanarak oluşturduğu araştırmasını paylaşır."
+            }
+          ]
+        }
+      ]
+    },
+    "cografya": {
+      "9": [
+        {
+          "id": "28",
+          "sira": 1,
+          "ad": "Coğrafyanın Doğası",
+          "dersSaati": 6,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Coğrafya Biliminin Konusu ve Bölümleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Niçin Coğrafya Öğrenmeliyiz?",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Coğrafya Biliminin Gelişimi",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "beşerî coğrafya",
+            "beşerî ortam",
+            "buz küre (kriyosfer)",
+            "coğrafya",
+            "coğrafi bakış",
+            "doğal ortam",
+            "fiziki coğrafya",
+            "hava küre (atmosfer)",
+            "su küre (hidrosfer)",
+            "taş küre (litosfer)",
+            "yaşam küre (biyosfer)"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "COĞ.9.1.1",
+              "metin": "Coğrafya biliminin konusu ve bölümlerini çözümleyebilmea) Coğrafya biliminin konusu ve bölümlerini oluşturan bileşenleri belirler.b) Coğrafya biliminin konusu ve bölümlerini oluşturan bileşenler arasındaki ilişkileri belirler."
+            },
+            {
+              "kod": "COĞ.9.1.2",
+              "metin": "Örnek olay, olgu veya konu üzerinden mekânsal düşünme ile coğrafya öğrenmenin önemini çözümleyebilmea) Mekânda gerçekleşen coğrafi olay, olgu veya konuyu belirler.b) Mekânda gerçekleşen coğrafi olay, olgu veya konu ile coğrafya öğrenmenin önemi arasındaki ilişkiyi belirler."
+            },
+            {
+              "kod": "COĞ.9.1.3",
+              "metin": "Coğrafya biliminin gelişimi hakkında bilgi toplayabilmea) Coğrafya biliminin gelişimiyle ilgili gerekli bilgilere ulaşmak için hangi araçları kullanacağını belirler.b) Belirlediği araçları kullanarak coğrafya biliminin gelişimiyle ilgili ihtiyaç duyduğu bilgilere ulaşır.c) Coğrafya biliminin gelişimiyle ilgili ulaştığı bilgileri doğrular.ç) Coğrafya biliminin gelişimiyle ilgili doğruladığı bilgileri kaydeder."
+            }
+          ]
+        },
+        {
+          "id": "31",
+          "sira": 2,
+          "ad": "Mekânsal Bilgi Teknolojileri",
+          "dersSaati": 10,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Mekânın Aynası Haritalar",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Türkiye’nin Coğrafi Konumu",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Mekânsal Bilgi Teknolojilerinin Bileşenleri",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "coğrafi bilgi sistemleri (CBS)",
+            "göreceli konum",
+            "harita",
+            "izohips",
+            "jeopolitik",
+            "koordinat sistemi",
+            "mekân",
+            "mekânsal bilgi teknolojileri",
+            "mekânsal veri",
+            "mutlak konum",
+            "ölçek",
+            "projeksiyon",
+            "saat dilimleri",
+            "ulusal saat",
+            "uzaktan algılama",
+            "yerel saat"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "COĞ.9.2.1",
+              "metin": "Harita uygulamaları yapabilmea) Haritaya ait bileşenlerden yararlanarak haritaları okur.b) Haritaya ait bileşenlerden yararlanarak haritadaki olay, olgu ve mekânlar arası ilişkileri çözümler.c) Haritada yer alan olay, olgu veya mekânların özellik, konum, dağılış ve ilişkileri ile değişim ve/veya harita türüne ilişkin çıkarım yapar.ç) Harita yapım aşamalarını kullanarak harita oluşturur."
+            },
+            {
+              "kod": "COĞ.9.2.2",
+              "metin": "Türkiye’nin konum özelliklerini algılayabilmea) Türkiye’nin konum özelliklerini belirler.b) Türkiye’nin konum özelliklerini görselleştirir.c) Türkiye’nin konum özelliklerini özetler."
+            },
+            {
+              "kod": "COĞ.9.2.3",
+              "metin": "Mekânsal bilgi teknolojilerini oluşturan bileşenleri çözümleyebilmea) Mekânsal bilgi teknolojilerini oluşturan bileşenleri belirler.b) Mekânsal bilgi teknolojilerini oluşturan bileşenler arasındaki ilişkileri belirler."
+            }
+          ]
+        },
+        {
+          "id": "34",
+          "sira": 3,
+          "ad": "Doğal Sistemler Ve Süreçler",
+          "dersSaati": 20,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Hava Olayları ve Günlük Hayata Etkileri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "İklim Sisteminin Bileşen ve Değişkenleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "İklim Türleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "İklim Sisteminde Yaşanan Değişiklikler",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "aşırı hava olayları",
+            "atmosfer",
+            "basınç",
+            "biyoçeşitlilik",
+            "biyosfer",
+            "denizellik",
+            "dönme ve dolanma hareketi",
+            "ekosistem",
+            "eksen eğikliği",
+            "geoit",
+            "güneşlenme süresi",
+            "halk takvimi",
+            "hidrosfer",
+            "iklim",
+            "iklim sistemi",
+            "karasallık",
+            "kentsel ısı adası",
+            "kriyosfer",
+            "küresel iklim değişikliği",
+            "litosfer",
+            "mevsim",
+            "nem",
+            "okyanus akıntısı",
+            "rüzgâr",
+            "sıcaklık",
+            "topoğrafik faktörler",
+            "yağış"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "COĞ.9.3.1",
+              "metin": "Hava olaylarının günlük hayata etkisini gözleme dayalı tahmin edebilmea) Hava olaylarıyla ilgili deneyim, gözlem, veri ve/veya coğrafi temsillere dayalı elde ettiği bilgilerin günlük hayata etkilerini ilişkilendirir.b) Hava olaylarıyla ilgili deneyim, gözlem, veri ve/veya coğrafi temsillere dayalı elde ettiği bilgilerin günlük hayata etkilerine ilişkin çıkarım yapar.c) Hava olaylarıyla ilgili deneyim, gözlem, veri ve/veya coğrafi temsillere dayalı elde ettiği bilgilerin günlük hayata etkilerine ilişkin yargıda bulunur."
+            },
+            {
+              "kod": "COĞ.9.3.2",
+              "metin": "İklim sisteminin bileşen ve değişkenlerini çözümleyebilmea) İklim sisteminin bileşen ve değişkenlerini belirler.b) İklim sistemine ait değişkenler arasındaki ilişkileri belirler."
+            },
+            {
+              "kod": "COĞ.9.3.3",
+              "metin": "Türkiye ve dünyadaki farklı iklim türlerine sahip yerlerin iklim verilerini kullanarak tablo, grafik, şekil ve/veya diyagram hazırlayabilmea) Türkiye ve dünyadaki farklı iklim türlerine sahip yerlerin iklim verilerini kullanarak oluşturacağı tablo, grafik, şekil ve/veya diyagramın amacını belirler.b) Türkiye ve dünyadaki farklı iklim türlerine sahip yerlerin iklim verilerini kullanarak oluşturacağı tablo, grafik, şekil ve/veya diyagramın türü için gerekli olan araç gereci belirler.c) Türkiye ve dünyadaki farklı iklim türlerine sahip yerlerin iklim verilerini toplar.ç) Türkiye ve dünyadaki farklı iklim türlerine sahip yerlerin iklim verilerini sınıflandırır.d) Türkiye ve dünyadaki farklı iklim türlerine sahip yerlerin iklim verilerini tablo, grafik, şekil ve/veya diyagram şeklinde görselleştirir.e) Türkiye ve dünyadaki farklı iklim türlerine sahip yerlerin iklim verilerini kullanarak görselleştirdiği tablo, grafik, şekil ve/veya diyagramı amacına uygun kullanır."
+            },
+            {
+              "kod": "COĞ.9.3.4",
+              "metin": "İklim sistemi ve sürecinde meydana gelen değişiklikleri algılayabilmea) İklim sistemi ve sürecinde meydana gelen değişiklikleri coğrafi temsiller aracılığıyla karşılaştırır.b) İklim sistemi ve sürecinde meydana gelen değişiklikleri sıralar.c) Küresel iklim değişikliğinin neden ve sonuçlarını yorumlar.ç) Küresel iklim değişikliğini sentezler.d) İklim sistemi ve sürecinde meydana gelebilecek değişime yönelik kanıta dayalı öngörüde bulunur."
+            }
+          ]
+        },
+        {
+          "id": "37",
+          "sira": 4,
+          "ad": "Beşerî Sistemler Ve Süreçler",
+          "dersSaati": 16,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Nüfusun Tarihsel Değişimi ve Geleceği",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Nüfusun Dağılışı ve Hareketleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Demografik Dönüşüm ve Nüfus Piramitleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Nüfusla İlgili Fırsat, Sorun ve Politikalar",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "bağımlı nüfus",
+            "demografik dönüşüm",
+            "doğum oranı",
+            "genç nüfus",
+            "göç",
+            "nüfus artış hızı",
+            "nüfus piramidi",
+            "nüfus politikası",
+            "nüfus yoğunluğu",
+            "ortanca yaş",
+            "ölüm oranı",
+            "yaşlı nüfus"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "COĞ.9.4.1",
+              "metin": "Nüfusun zaman içerisindeki değişimini tablo ve grafikler aracılığı ile yorumlayabilmea) Nüfusun zaman içerisindeki değişimini gösteren tablo ve grafiklerdeki bileşenleri anlamlandırır.b) Nüfusun zaman içerisindeki değişimini gösteren tablo ve grafiklerdeki bileşenler arası ilişkileri çözümler.c) Nüfusun zaman içerisindeki değişimine dair incelediği tablo ve grafiklerden sonuçlar çıkarır.ç) Farklı ülke nüfuslarındaki değişimi, incelediği tablo ve grafikleri kullanarak karşılaştırır."
+            },
+            {
+              "kod": "COĞ.9.4.2",
+              "metin": "Dünya ve Türkiye’deki nüfusun dağılışı ve hareketlerini etkileyen faktörler hakkında haritalar üzerinden çıkarımda bulunabilmeDünya ve Türkiye’de nüfus yoğunluğunun fazla ve az olduğu alanlar ile nüfusun dağılışı ve hareketlerini etkileyen faktörlerin incelenebildiği haritaları ilişkilendirerek çıkarım yapar."
+            },
+            {
+              "kod": "COĞ.9.4.3",
+              "metin": "Türkiye ve farklı ülkelerin nüfus piramitlerinden yararlanarak demografik dönüşüm sürecini yorumlayabilmea) Türkiye ve farklı ülkelerin nüfus piramitlerini demografik dönüşüm modeline göre anlamlandırır.b) Demografik dönüşüm modelinin aşamalarını doğum ve ölüm oranı ile nüfus yapısı arasındaki ilişkiye göre çözümler.c) Türkiye ve farklı ülkelerin nüfus piramitlerini demografik dönüşüm modelinin aşamaları ile ilişkilendirerek buradan sonuç çıkarır.ç) Türkiye ve farklı ülkelerin nüfus piramitleri ile demografik dönüşüm modelinin aşamalarını ilişkilendirerek elde ettiği sonuçları karşılaştırır."
+            },
+            {
+              "kod": "COĞ.9.4.4",
+              "metin": "Türkiye ve farklı ülkelerdeki nüfusla ilgili fırsat ve sorunların nüfus politikalarının belirlenmesindeki etkisini sorgulayabilmea) Türkiye ve farklı ülkelerdeki nüfusla ilgili fırsat ve sorunların nüfus politikalarının belirlenmesindeki etkisine ilişkin sorular sorar.b) Türkiye ve farklı ülkelerdeki nüfusla ilgili fırsat ve sorunların nüfus politikalarının belirlenmesindeki etkisine ilişkin bilgi toplar.c) Türkiye ve farklı ülkelerdeki nüfusla ilgili fırsat ve sorunların nüfus politikalarının belirlenmesindeki etkisine ilişkin topladığı bilgileri düzenler.ç) Türkiye ve farklı ülkelerdeki nüfusla ilgili fırsat ve sorunların nüfus politikalarının belirlenmesindeki etkisine ilişkin düzenlediği bilgileri çözümler.d) Türkiye ve farklı ülkelerdeki nüfusla ilgili fırsat ve sorunların nüfus politikalarının belirlenmesindeki etkisine ilişkin çözümlediği bilgilerden çıkardığı sonuçları paylaşır."
+            }
+          ]
+        },
+        {
+          "id": "40",
+          "sira": 5,
+          "ad": "Ekonomik Faaliyetler Ve Etkileri",
+          "dersSaati": 4,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Ekonomik Faaliyetleri Etkileyen Coğrafi Faktörler",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "bitki örtüsü",
+            "coğrafi konum",
+            "dağıtım",
+            "gelir düzeyi",
+            "ham madde",
+            "iklim",
+            "iş gücü",
+            "nüfus",
+            "sermaye",
+            "su kaynakları",
+            "teknoloji",
+            "topoğrafik faktörler",
+            "toprak",
+            "tüketim",
+            "üretim"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "COĞ.9.5.1",
+              "metin": "Doğal ve beşerî faktörlerin ekonomik faaliyetlere etkilerini sorgulayabilmea) Doğal ve beşerî faktörlerin ekonomik faaliyetlere etkileriyle ilgili merak ettiği soruları sorar.b) Doğal ve beşerî faktörlerin ekonomik faaliyetlere etkileriyle ilgili bilgi toplar.c) Doğal ve beşerî faktörlerin ekonomik faaliyetlere etkileriyle ilgili topladığı bilgileri düzenler.ç) Doğal ve beşerî faktörlerin ekonomik faaliyetlere etkileriyle ilgili düzenlediği bilgileri çözümler.d) Doğal ve beşerî faktörlerin ekonomik faaliyetlere etkileriyle ilgili çözümlediği bilgilerden çıkardığı sonuçları paylaşır."
+            }
+          ]
+        },
+        {
+          "id": "42",
+          "sira": 6,
+          "ad": "Afetler Ve Sürdürülebilir Çevre",
+          "dersSaati": 8,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Tehlike, Risk ve Afet",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Afet Türleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Bütüncül Afet Yönetimi",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "afet",
+            "bütüncül afet yönetimi",
+            "ekstrem doğa olayı",
+            "erken uyarı sistemi",
+            "maruziyet",
+            "risk",
+            "tehlike",
+            "Yeşil Vatan"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "COĞ.9.6.1",
+              "metin": "Tehlike, risk ve afet kavramlarını çözümleyebilmea) Tehlike, risk ve afet kavramlarının özelliklerini belirler.b) Tehlike, risk ve afet kavramları arasındaki ilişkileri belirler."
+            },
+            {
+              "kod": "COĞ.9.6.2",
+              "metin": "Afetleri sınıflandırabilmea) Oluşum kaynağına göre afetleri belirler.b) Oluşum kaynağına göre afetleri ayrıştırır.c) Oluşum kaynağına göre afetleri tasnif eder.ç) Oluşum kaynağına göre afetleri etiketler."
+            },
+            {
+              "kod": "COĞ.9.6.3",
+              "metin": "Bütüncül afet yönetimi uygulamalarını tablo, grafik, şekil ve/veya diyagramlar aracılığıyla yorumlayabilmea) Bütüncül afet yönetimi uygulamalarını gösteren tablo, grafik, şekil ve/veya diyagramlardaki bileşenleri anlamlandırır.b) Bütüncül afet yönetimi uygulamalarını gösteren tablo, grafik, şekil ve/veya diyagramlardaki bileşenleri ve bu bileşenler arası ilişkileri çözümler.c) Bütüncül afet yönetimi uygulamalarını gösteren tablo, grafik, şekil ve/veya diyagramlardaki bileşenlerle ilgili sonuçlar çıkarır.ç) Bütüncül afet yönetimi uygulamalarını gösteren tablo, grafik, şekil ve/veya diyagramlardaki bileşenlerle ilgili ulaştığı sonuçları karşılaştırır."
+            }
+          ]
+        },
+        {
+          "id": "47",
+          "sira": 7,
+          "ad": "Bölgeler, Ülkeler Ve Küresel Bağlantılar",
+          "dersSaati": 4,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Bölge ve Bölge Sınırı",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "bölge",
+            "işlevsel bölge",
+            "şekilsel bölge"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "COĞ.9.7.1",
+              "metin": "Bölgelerin belirlenmesinde kullanılan kriterlere göre bölge hakkında çıkarım yapabilmea) Bölge ve bölge sınırı hakkında varsayımda bulunur.b) Bölge ve bölge sınırındaki örüntüleri listeler.c) Bölgeyi ve bölge sınırlarını karşılaştırır.ç) Bölge ve bölge sınırları hakkında önerme sunar.d) Bölgeyi ve bölge sınırlarını değerlendirir."
+            }
+          ]
+        }
+      ],
+      "10": [
+        {
+          "id": "56",
+          "sira": 1,
+          "ad": "Coğrafyanın Doğası",
+          "dersSaati": 4,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Coğrafi Bakış",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "coğrafi bakış",
+            "dağılış",
+            "değişim",
+            "hareket",
+            "konum",
+            "mekân",
+            "zaman"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "COĞ.10.1.1",
+              "metin": "Örnek olay, olgu ve/veya mekânı coğrafyanın temel kavramları ile ilişkilendirebilmea) Örnek olay, olgu ve/veya mekânın harita üzerindeki konumunu algılar.b) Örnek olay, olgu ve/veya mekânın temel coğrafi koşullarını tanımlar.c) Örnek olay, olgu ve/veya mekânın yakın ve uzak çevresiyle olan ilişkilerini çözümler.ç) Örnek olay, olgu ve/veya mekânın aynı çevrede bulunan diğer olay, olgu veyamekânlar üzerindeki etkisini sorgular."
+            }
+          ]
+        },
+        {
+          "id": "58",
+          "sira": 2,
+          "ad": "Mekânsal Bilgi Teknolojileri",
+          "dersSaati": 6,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "CBS ve Uzaktan Algılamanın Uygulama Alanları",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Mekânsal Verilerin Haritalara Aktarılması",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "CBS",
+            "uydu görüntüsü",
+            "uzaktan algılama",
+            "veri"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "COĞ.10.2.1",
+              "metin": "Örnek uygulamalar üzerinden CBS ve uzaktan algılamanın kullanım alanlarını özetleyebilmea) Örnek uygulamalar üzerinden CBS ve uzaktan algılamanın kullanım alanlarını çözümler.b) Örnek uygulamalar üzerinden CBS ve uzaktan algılamanın kullanım alanlarını sınıflandırır.c) Örnek uygulamalar üzerinden CBS ve uzaktan algılamanın kullanım alanlarını yorumlar."
+            },
+            {
+              "kod": "COĞ.10.2.2",
+              "metin": "Mekânsal bilgi teknolojilerini kullanarak altlık haritalar üzerinde mekânsal veriler oluşturabilmea) Oluşturacağı haritanın amacını belirler.b) Oluşturacağı harita için gerekli olan yöntem ve araç gereçleri kullanır.c) Oluşturacağı haritaya ekleyeceği verileri toplar.ç) Oluşturacağı haritanın türünü belirler.d) Verileri haritaya işler ve haritanın bileşenlerini oluşturur.e) Oluşturduğu haritayı amacına uygun biçimde kullanır.f) Oluşturduğu haritayı ihtiyaç duyduğunda tekrar kullanır."
+            }
+          ]
+        },
+        {
+          "id": "63",
+          "sira": 3,
+          "ad": "Doğal Sistemler Ve Süreçler",
+          "dersSaati": 18,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Tektonik Süreçler",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "İklim ve Kayaç Yapısının Aşınma ve Çözünme Süreçlerine Etkisi",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Aşınım ve Birikim Süreçlerinin Yeryüzü Şekillerinin Oluşumuna Etkisi",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Yeryüzü Şekilleri ile İlgili Gözlem ve Saha Çalışması",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Yeryüzü Şekilleri ile Beşerî Faaliyetler Arasındaki Etkileşim",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "alüvyal",
+            "antroposen",
+            "aşınma",
+            "birikme",
+            "çözünme",
+            "deprem",
+            "fay",
+            "jeolojik zaman",
+            "jeotermal",
+            "karstlaşma",
+            "kayaç döngüsü (kayaç çevrimi)",
+            "levha",
+            "orojenez",
+            "taşınma",
+            "tektonizma",
+            "topoğrafya",
+            "volkanizma"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "COĞ.10.3.1",
+              "metin": "Yerkürenin tektonik yapısını çözümleyebilmea) Levha tektoniğine neden olan süreçleri belirler.b) Yeryüzü şekilleri ile levha tektoniği arasındaki ilişkiyi belirler."
+            },
+            {
+              "kod": "COĞ.10.3.2",
+              "metin": "Yeryüzü şekillerinin oluşumunda etkili olan aşınma ve çözünme süreçleri ile iklim ve kayaç özellikleri arasındaki ilişkileri yapılandırabilmea) Aşınma ve çözünme süreçleri ile iklim ve kayaç yapısı arasındaki ilişkileri neden-sonuç bağlamında ortaya koyar.b) Aşınma ve çözünme süreçlerine ilişkin edindiği bilgilerle kendi bilgilerini anlamlı bir bütün hâline getirir."
+            },
+            {
+              "kod": "COĞ.10.3.3",
+              "metin": "Yeryüzü şekillerinin oluşumunu aşınım ve birikim süreçleri açısından çözümleyebilmea) Aşınım ve birikim süreçlerinde ortaya çıkan yeryüzü şekillerini belirler.b) Aşınım ve birikim süreçleriyle yeryüzü şekilleri arasındaki ilişkiyi belirler."
+            },
+            {
+              "kod": "COĞ.10.3.4",
+              "metin": "Yeryüzü şekillerinin oluşumunda doğal süreçlerin etkilerini saha/sanal saha çalışmalarıyla araştırabilmea) Yeryüzü şekillerinin oluşum ve değişimini incelemek için hazırlık yapar.b) Yeryüzü şekillerinin oluşum ve değişiminde etkili olan faktörleri belirleyebilmek için çalışma sahasında uygulama yapar.c) Yeryüzü şekillerinin oluşum ve değişimiyle ilgili çalışma sahasından bilgi toplar.ç) Yeryüzü şekillerinin oluşum ve değişimiyle ilgili çalışma sahasından elde ettiği bilgileri çözümler.d) Yeryüzü şekillerinin oluşum ve değişimiyle ilgili çözümlediği bilgilere dayalı tahminde bulunur.e) Yeryüzü şekillerinin oluşum ve değişimiyle ilgili tahminlerini raporlar."
+            },
+            {
+              "kod": "COĞ.10.3.5",
+              "metin": "Yakın çevresindeki yeryüzü şekilleri ile beşerî faaliyetler arasındaki etkileşimi sorgulayabilmea) Yakın çevresindeki yeryüzü şekilleri ve beşerî faaliyetler arasındaki etkileşimle ilgili merak ettiği soruları sorar.b) Yakın çevresindeki yeryüzü şekilleri ve beşerî faaliyetler arasındaki etkileşimle ilgili bilgi toplar.c) Yakın çevresindeki yeryüzü şekilleri ve beşerî faaliyetler arasındaki etkileşimle ilgili topladığı bilgileri düzenler.ç) Yakın çevresindeki yeryüzü şekilleri ve beşerî faaliyetler arasındaki etkileşimle ilgili düzenlediği bilgileri çözümler.d) Yakın çevresindeki yeryüzü şekilleri ve beşerî faaliyetler arasındaki etkileşimle ilgili çözümlediği bilgilerden çıkardığı sonuçları paylaşır."
+            }
+          ]
+        },
+        {
+          "id": "81",
+          "sira": 4,
+          "ad": "Beşerî Sistemler Ve Süreçler",
+          "dersSaati": 8,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Yerleşmelerin Kuruluşu ve Gelişimi",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Yerleşmelerin Fonksiyonları",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "bağlantı",
+            "konum",
+            "mekân",
+            "şehir",
+            "yerleşme",
+            "yerleşme fonksiyonu"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "COĞ.10.4.1",
+              "metin": "Yerleşme yeri seçiminde ve yerleşmelerin gelişiminde etkili olan coğrafi faktörleri sorgulayabilmea) Yerleşme yeri seçiminde ve yerleşmelerin gelişiminde etkili olan coğrafi faktörlere yönelik sorular sorar.b) Yerleşme yeri seçiminde ve yerleşmelerin gelişiminde etkili olan coğrafi faktörlere yönelik bilgi toplar.c) Yerleşme yeri seçiminde ve yerleşmelerin gelişiminde etkili olan coğrafi faktörlere yönelik topladığı bilgileri düzenler.ç) Yerleşme yeri seçiminde ve yerleşmelerin gelişiminde etkili olan coğrafi faktörlere yönelik düzenlediği bilgileri çözümler.d) Yerleşme yeri seçiminde ve yerleşmelerin gelişiminde etkili olan coğrafi faktörlere yönelik çözümlediği bilgilerden çıkardığı sonuçları paylaşır."
+            },
+            {
+              "kod": "COĞ.10.4.2",
+              "metin": "Türkiye ve dünyadaki yerleşmeleri fonksiyonlarına göre sınıflandırabilmea) Türkiye ve dünyadaki yerleşmelerin fonksiyonları üzerinde etkili olan değişkenleri belirler.b) Türkiye ve dünyadaki yerleşmelerin fonksiyonları üzerinde etkili olan değişkenleri ayrıştırır.c) Türkiye ve dünyadaki yerleşmelerin fonksiyonları üzerinde etkili olan değişkenleri tasnif eder.ç) Türkiye ve dünyadaki yerleşmeleri fonksiyonlarına göre etiketler."
+            }
+          ]
+        },
+        {
+          "id": "89",
+          "sira": 5,
+          "ad": "Ekonomik Faaliyetler Ve Etkileri",
+          "dersSaati": 10,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Ekonomik Faaliyetlerin Özellikleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Ekonomik Sektörler ve Gelişmişlik",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Türkiye Ekonomisinin Sektörel Dağılımı",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "ekonomik faaliyet",
+            "ekonomik sektör",
+            "gayrisafi millî hasıla (GSMH)",
+            "gayrisafi yurt içi hasıla (GSYİH)",
+            "gelişmişlik",
+            "istihdam"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "COĞ.10.5.1",
+              "metin": "Ekonomik faaliyetleri sektörlere göre sınıflandırabilmea) Ekonomik faaliyetlerin sınıflandırılmasındaki ölçütleri belirler.b) Ekonomik faaliyetleri sektörlere göre ayırır.c) Ekonomik faaliyetleri sektörlere göre tasnif eder.ç) Ekonomik faaliyetleri sektörlere göre etiketler."
+            },
+            {
+              "kod": "COĞ.10.5.2",
+              "metin": "Ekonomik sektörlerin dağılımını gösteren tablo, grafik, şekil ve/veya diyagramlar üzerinden farklı gelişmişlik seviyesine sahip ülkeleri karşılaştırabilmea) Farklı gelişmişlik seviyesine sahip ülkelerde ekonomik sektörlerin dağılımını gösteren tablo, grafik, şekil ve/veya diyagramları bileşenleriyle tanır ve anlamlandırır.b) Farklı gelişmişlik seviyesine sahip ülkelerde ekonomik sektörlerin dağılımını gösteren tablo, grafik, şekil ve/veya diyagramları çözümler.c) Farklı gelişmişlik seviyesine sahip ülkelerde ekonomik sektörlerin dağılımını gösteren tablo, grafik, şekil ve/veya diyagramlardan sonuç çıkarır.ç) Farklı gelişmişlik seviyesine sahip ülkelerde ekonomik sektörlerin dağılımını gösteren tablo, grafik, şekil ve/veya diyagramlardan elde ettiği sonuçları karşılaştırır."
+            },
+            {
+              "kod": "COĞ.10.5.3",
+              "metin": "Ekonomik sektörlerin Türkiye ekonomisindeki yeri ve önemini gösteren tablo, grafik, şekil ve/veya diyagram hazırlayabilmea) Ekonomik sektörlerin Türkiye ekonomisindeki yeri ve önemine ilişkin oluşturacağı tablo, grafik, şekil ve/veya diyagramın amacını belirler.b) Ekonomik sektörlerin Türkiye ekonomisindeki yeri ve önemine ilişkin oluşturacağı tablo, grafik, şekil ve/veya diyagramın türünü ve kullanacağı araç gereci belirler.c) Ekonomik sektörlerin Türkiye ekonomisindeki yeri ve önemine ilişkin oluşturacağı tablo, grafik, şekil ve/veya diyagramla ilgili veri toplar.ç) Topladığı verileri ekonomik sektörlere göre sınıflandırır.d) Ekonomik sektörlere göre sınıflandırdığı verileri görselleştirir.e) Ekonomik sektörlerin Türkiye ekonomisindeki yeri ve önemini gösteren tablo, grafik, şekil ve/veya diyagramları amaca uygun şekilde kullanır."
+            }
+          ]
+        },
+        {
+          "id": "94",
+          "sira": 6,
+          "ad": "Afetler Ve Sürdürülebilir Çevre",
+          "dersSaati": 16,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Afetlerle Mücadelede İyi Uygulama Örnekleri",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Afetlere Karşı Dirençli Yaşam Alanları",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Afetlerden Korunma",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Afet Bilinci",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "afet bilinci",
+            "afete dirençli toplum",
+            "afete dirençli yaşam alanı",
+            "Yeşil Vatan"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "COĞ.10.6.1",
+              "metin": "Afetlerle mücadelede iyi uygulama örneklerini sorgulayabilmea) Afetlerle mücadelede iyi uygulama örneklerine yönelik merak ettiği soruları sorar.b) Afetlerle mücadelede iyi uygulama örnekleri ile ilgili bilgi toplar.c) Afetlerle mücadelede iyi uygulama örnekleri hakkında elde ettiği bilgileri düzenler.ç) Afetlerle mücadelede iyi uygulama örnekleri hakkında düzenlediği bilgileri çözümler.d) Afetle mücadelede iyi uygulama örneklerine ilişkin çözümlediği bilgilerden çıkardığı sonuçları paylaşır."
+            },
+            {
+              "kod": "COĞ.10.6.2",
+              "metin": "Afete dirençli yaşam alanlarının coğrafi koşullarını çözümleyebilmea) Afete dirençli yaşam alanlarının coğrafi koşullarını tanımlar.b) Afete dirençli yaşam alanlarında yer alan mekânsal unsurların kendi aralarındaki ilişkileri çözümler."
+            },
+            {
+              "kod": "COĞ.10.6.3",
+              "metin": "Mekânın özelliklerine göre afetlerden korunma uygulamalarına karar verebilmea) Mekânın özelliklerine göre afetlerden korunma uygulamalarına karar vermeyi amaç olarak belirler.b) Mekânın özelliklerine göre afetlerden korunma uygulamalarına ilişkin bilgi toplar.c) Mekânın özelliklerine göre afetlerden korunma uygulamalarına alternatif seçenekler oluşturur.ç) Mekânın özelliklerine göre afetlerden korunma uygulamalarına alternatif oluşturduğu seçenekler üzerinden çıkarım yapar.d) Mekânın özelliklerine göre afetlerden korunma uygulamaları arasından seçim yapar.e) Mekânın özelliklerine göre seçtiği afetlerden korunma uygulamalarının sonuçları üzerinde yansıtma yapar."
+            },
+            {
+              "kod": "COĞ.10.6.4",
+              "metin": "Afetlerden korunma amacı ile afet bilinci oluşturmanın faydalarını yansıtabilmea) Afetlerden korunma amacı ile afet bilinci oluşturmanın faydalarına ilişkin deneyimlerini gözden geçirir.b) Afetlerden korunma amacı ile afet bilinci oluşturmanın faydalarına ilişkin deneyimlerinden çıkarım yapar.c) Afetlerden korunma amacı ile afet bilinci oluşturmanın faydalarına ilişkin çıkarımlarını değerlendirir."
+            }
+          ]
+        },
+        {
+          "id": "98",
+          "sira": 7,
+          "ad": "Bölgeler, Ülkeler Ve Küresel Bağlantılar",
+          "dersSaati": 6,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Türk Kültürünün Mekânsal Özellikleri",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "kültür ocağı",
+            "kültürel miras",
+            "Türkistan",
+            "Türk dünyası",
+            "Türk kültürü"
+          ],
+          "ogrenmeCiktilari": [
+            {
+              "kod": "COĞ.10.7.1",
+              "metin": "Türk dünyasının ortak kültürel özellikleri hakkında analojik çıkarım yapabilme"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
