@@ -587,6 +587,114 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
     },
   ],
 
+  iklim: [
+    {
+      baslik: 'İklim kuşağı',
+      kural: (
+        <>
+          İşaretli bölgenin iklimini dört şıktan seçersin; çoğu <b>enlemden</b> okunur.
+        </>
+      ),
+      gorunum: (
+        <div className="flex flex-col gap-2">
+          <div className="relative h-14 overflow-hidden rounded-xl border-2 border-border bg-card">
+            {/* Dönenceler ve kutup dairesi: haritanın kesikli çizgileri. */}
+            {[22, 38, 62, 78].map((ust) => (
+              <span
+                key={ust}
+                className="absolute inset-x-0 border-t border-dashed border-border"
+                style={{ top: `${ust}%` }}
+              />
+            ))}
+            <span className="absolute left-[38%] top-[30%] size-4 rounded-full bg-primary-dolu" />
+          </div>
+          <Yonerge>Burada hangi iklim görülür?</Yonerge>
+          <Alt dogru="Çöl iklimi" yanlis="Muson iklimi" />
+        </div>
+      ),
+    },
+  ],
+
+  izohips: [
+    {
+      baslik: 'İzohips okuma',
+      kural: (
+        <>
+          Eğrilerin üstündeki <b>sayılara</b> bak: tepe ile çukurun çizimi aynı, sayıları ters.
+        </>
+      ),
+      gorunum: (
+        <div className="flex flex-col gap-2">
+          <svg viewBox="0 0 120 52" className="mx-auto h-14" aria-hidden>
+            {[26, 18, 10].map((yaricap, sira) => (
+              <ellipse
+                key={yaricap}
+                cx="60"
+                cy="28"
+                rx={yaricap}
+                ry={yaricap * 0.62}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
+            ))}
+            <circle
+              cx="60"
+              cy="28"
+              r="14"
+              fill="none"
+              stroke="var(--primary-dolu)"
+              strokeWidth="2.5"
+            />
+            <text x="86" y="20" fontSize="9" fontWeight="700" fill="currentColor">
+              200
+            </text>
+            <text x="52" y="31" fontSize="9" fontWeight="700" fill="currentColor">
+              400
+            </text>
+          </svg>
+          <Yonerge>Daire içindeki şekil hangisi?</Yonerge>
+          <Alt dogru="Tepe" yanlis="Kapalı çukur" />
+        </div>
+      ),
+    },
+  ],
+
+  periyodik: [
+    {
+      baslik: 'Tabloda bul',
+      kural: <>Elementi periyodik tabloda gösterirsin.</>,
+      gorunum: (
+        <div className="flex items-center gap-3">
+          <Metin className="flex-1 text-center font-display font-extrabold">Kalsiyum</Metin>
+          <div className="flex size-12 flex-none items-center justify-center rounded-xl border-2 border-dashed border-border font-display text-sm font-extrabold">
+            Ca
+          </div>
+        </div>
+      ),
+    },
+    {
+      baslik: 'İşaretli hücre turu',
+      kural: <>Yanıp sönen hücrenin adını ya da ailesini dört şıktan seçersin.</>,
+      gorunum: <Yan sol={<Sik>Potasyum</Sik>} sag={<Sik vurgulu>Kalsiyum</Sik>} />,
+    },
+  ],
+
+  formul: [
+    {
+      baslik: 'Formül eşleştirme',
+      kural: <>Önce formüle, sonra adına dokunursun — sıra fark etmez.</>,
+      gorunum: (
+        <Tahta
+          ustBaslik="Formüller"
+          altBaslik="Adlar"
+          ust={['H₂SO₄', 'HNO₃']}
+          alt={['Nitrik asit', 'Sülfürik asit']}
+        />
+      ),
+    },
+  ],
+
   tuzak: [
     {
       baslik: 'Doğru mu, yanlış mı?',
