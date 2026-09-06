@@ -34,7 +34,7 @@ import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
-import { Cip } from '@/components/ui'
+import { SecimSatiri } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import {
   Bildirim,
@@ -531,28 +531,20 @@ function IslemSecimi({
 }) {
   return (
     <div>
-      <p className="mb-2 text-sm font-medium">Hangi işlemler gelsin?</p>
-      <div className="flex flex-wrap gap-2">
+      <p className="font-display text-lg font-bold">Hangi işlemler gelsin?</p>
+      <div className="mt-3 flex flex-col gap-2.5">
         {TUM_ISLEMLER.map((tur) => (
-          <Cip
+          <SecimSatiri
             key={tur}
+            ad={ISLEM_ADI[tur]}
+            ornek={ISLEM_ORNEGI[tur]}
+            ornekRakam
             secili={secili.includes(tur)}
             onClick={() => onDegis(tur)}
-            className="flex-col items-start px-3 py-1.5 text-left leading-tight"
-          >
-            <span className="block">{ISLEM_ADI[tur]}</span>
-            <span
-              className={cn(
-                'rakam block text-[11px] font-normal',
-                secili.includes(tur) ? 'text-primary-foreground/75' : 'text-muted-foreground/70',
-              )}
-            >
-              {ISLEM_ORNEGI[tur]}
-            </span>
-          </Cip>
+          />
         ))}
       </div>
-      <p className="mt-2 text-xs text-muted-foreground">
+      <p className="mt-2.5 text-xs text-muted-foreground">
         Seçimin saklanır; en az bir işlem açık kalmalı.
       </p>
     </div>

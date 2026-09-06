@@ -353,6 +353,70 @@ export function Not({
 }
 
 /** Seçilebilir çip — ders seçimi ve şablon seçimi bunu kullanır. */
+/**
+ * Tam genişlikte açık/kapalı seçim satırı.
+ *
+ * Çipten farkı: adın altında bir örnek satırı taşıyabiliyor ve sağdaki halka
+ * seçili olup olmadığını yazıdan bağımsız söylüyor. Tanıtım ekranındaki
+ * "hangi sorular gelsin" seçimleri bunu kullanıyor — iki satırlık çipler
+ * yan yana dizildiğinde farklı yükseklikte kalıyor ve örnek metni sıkışıyordu.
+ */
+export function SecimSatiri({
+  ad,
+  ornek,
+  secili,
+  ornekRakam,
+  className,
+  ...props
+}: React.ComponentProps<'button'> & {
+  ad: string
+  /** Adın altındaki tek satırlık örnek. */
+  ornek?: string
+  secili: boolean
+  /** Örnek sayı içeriyorsa rakam biçimiyle çizilsin. */
+  ornekRakam?: boolean
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={secili}
+      className={cn(
+        'flex w-full items-center justify-between gap-3 rounded-2xl border-2 px-4 py-3.5 text-left transition',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+        secili
+          ? 'border-primary-dolu bg-primary-dolu text-white'
+          : 'border-border bg-muted/50 text-foreground active:brightness-95',
+        className,
+      )}
+      {...props}
+    >
+      <span className="min-w-0">
+        <span className="block text-sm font-extrabold leading-tight">{ad}</span>
+        {ornek && (
+          <span
+            className={cn(
+              'mt-0.5 block text-xs leading-tight',
+              ornekRakam && 'rakam',
+              secili ? 'text-white/80' : 'text-muted-foreground',
+            )}
+          >
+            {ornek}
+          </span>
+        )}
+      </span>
+      <span
+        aria-hidden
+        className={cn(
+          'flex size-[26px] flex-none items-center justify-center rounded-full text-sm font-extrabold',
+          secili ? 'bg-white/25 text-white' : 'bg-muted text-muted-foreground',
+        )}
+      >
+        {secili ? '✓' : '+'}
+      </span>
+    </button>
+  )
+}
+
 export function Cip({
   secili,
   className,

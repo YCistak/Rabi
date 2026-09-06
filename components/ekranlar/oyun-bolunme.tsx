@@ -545,15 +545,20 @@ function BolenSecimi({
 }) {
   return (
     <div>
-      <p className="mb-2 text-sm font-medium">Hangi bölenler gelsin?</p>
-      <div className="flex flex-wrap gap-2">
+      <p className="font-display text-lg font-bold">Hangi bölenler gelsin?</p>
+      <div className="mt-3 flex flex-wrap gap-2.5">
         {TUM_BOLENLER.map((bolen) => (
-          <Cip key={bolen} secili={secili.includes(bolen)} onClick={() => onDegis(bolen)}>
+          <Cip
+            key={bolen}
+            secili={secili.includes(bolen)}
+            onClick={() => onDegis(bolen)}
+            className="px-5 py-2.5"
+          >
             <span className="rakam">{bolen}</span>
           </Cip>
         ))}
       </div>
-      <p className="mt-2 text-xs text-muted-foreground">
+      <p className="mt-2.5 text-xs text-muted-foreground">
         Seçimin saklanır; en az bir bölen açık kalmalı.
       </p>
     </div>

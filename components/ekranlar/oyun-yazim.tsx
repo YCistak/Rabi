@@ -57,7 +57,7 @@ import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
-import { Cip } from '@/components/ui'
+import { SecimSatiri } from '@/components/ui'
 import {
   Bildirim,
   EN_COK_YANLIS,
@@ -546,28 +546,19 @@ function TurSecimi({
 }) {
   return (
     <div>
-      <p className="mb-2 text-sm font-medium">Hangi hatalar gelsin?</p>
-      <div className="flex flex-wrap gap-2">
+      <p className="font-display text-lg font-bold">Hangi hatalar gelsin?</p>
+      <div className="mt-3 flex flex-col gap-2.5">
         {TUM_SORU_TURLERI.map((tur) => (
-          <Cip
+          <SecimSatiri
             key={tur}
+            ad={SORU_TURU_ADI[tur]}
+            ornek={SORU_TURU_ORNEGI[tur]}
             secili={secili.includes(tur)}
             onClick={() => onDegis(tur)}
-            className="flex-col items-start px-3 py-1.5 text-left leading-tight"
-          >
-            <span className="block">{SORU_TURU_ADI[tur]}</span>
-            <span
-              className={cn(
-                'block text-[11px] font-normal',
-                secili.includes(tur) ? 'text-primary-foreground/75' : 'text-muted-foreground/70',
-              )}
-            >
-              {SORU_TURU_ORNEGI[tur]}
-            </span>
-          </Cip>
+          />
         ))}
       </div>
-      <p className="mt-2 text-xs text-muted-foreground">
+      <p className="mt-2.5 text-xs text-muted-foreground">
         İkisi de seçiliyse sorular sırayla karışık gelir.
       </p>
     </div>
