@@ -55,15 +55,9 @@ android {
         //
         // Yeni bir dalda numara verirken `git branch -r` üzerinden en yüksek
         // versionCode'a bak, master'ınkine değil.
-        versionCode 53
-        versionName "1.21.2"
+        versionCode 55
+        versionName "1.21.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        // CameraX dört ABI'de native kütüphane getiriyor. Sembol tablosu
-        // yüklenmezse Play Console'daki native çökme raporları okunamıyor ve
-        // Vitals eşiğine (çökme %1,09) neyin dokunduğu görülemiyor.
-        ndk {
-            debugSymbolLevel = 'SYMBOL_TABLE'
-        }
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
              // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
@@ -118,12 +112,48 @@ android {
             // Elde denemek için imzalı ama tek ABI'lik APK: `-PtekAbi`.
             // Play'e giden `bundleRelease` bu bayrağı almıyor, dört ABI'yi de
             // taşımaya devam ediyor.
-            if (project.hasProperty('tekAbi')) {
-                ndk {
+            /*
+              Native sembol tablosu — açık, ama **pakete bir şey koymuyor**.
+
+              Play Console her sürümde "hata ayıklama sembolleri
+              yüklemediniz" uyarısı veriyor. Sebep ayar değil: projede kendi
+              C/C++ kaynağımız yok, paketteki sekiz `.so` dosyasının hepsi
+              ML Kit, CameraX, Crashlytics ve datastore'dan geliyor ve
+              `libcrashlytics-trampoline` dışında hiçbirinde `.symtab`
+              bölümü kalmamış — satıcı zaten soymuş. `extractRelease-
+              NativeSymbolTables` görevi çalışıyor, çıktı dizini boş
+              kalıyor, `BUNDLE-METADATA/...debugsymbols` bu yüzden yok.
+              Uyarı bizim tarafımızdan kapatılamaz, zararsız.
+
+              Ayar yine de burada duruyor: bir gün kendi native kodumuz
+              olursa sembolleri kendiliğinden taşısın. Google'ın dökümanı da
+              `defaultConfig` değil buildType içini gösteriyor.
+            */
+            ndk {
+                debugSymbolLevel = 'SYMBOL_TABLE'
+                // Elde denemek için imzalı ama tek ABI'lik APK: `-PtekAbi`.
+                if (project.hasProperty('tekAbi')) {
                     abiFilters 'arm64-v8a'
                 }
             }
-            minifyEnabled false
+            /*
+              R8 (kod küçültme + karartma) **açık**.
+
+              İki sebep: paketten kullanılmayan kod atılıyor (ML Kit ve
+              CameraX'in dokunulmayan sınıfları epey yer tutuyor) ve
+              App Bundle dökümanının indirme boyutu tavsiyesi bu.
+
+              `shrinkResources` de açık — kaynak eleme yalnız `minifyEnabled`
+              ile birlikte çalışıyor, tek başına derlemeyi kırıyor.
+
+              Kurallar `proguard-rules.pro`'da; kütüphanelerin kendi kuralları
+              AAR'lardan otomatik geliyor (Capacitor eklenti sınıflarını orada
+              koruyor). `proguard-android-optimize.txt` **seçilmedi**: ek
+              optimizasyon turları WebView köprüsü gibi yansımaya dayanan
+              yerlerde sessiz kırılma riski taşıyor, kazancı ise küçük.
+            */
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             if (firebaseVar) {
                 firebaseCrashlytics {
@@ -162,6 +192,31 @@ android {
             if (storeFilePath) {
                 signingConfig signingConfigs.release
             }
+        }
+    }
+
+    /*
+      AAB'nin cihaz başına böldüğü boyutlar.
+
+      Üçü de AGP'nin varsayılanı; açıkça yazılmalarının sebebi varsayılanın
+      bir gün değişmesi hâlinde niyetin kaybolmaması. Bölme kapanırsa paket
+      hâlâ geçerli olur ama her cihaz dört ABI'nin ve bütün ekran
+      yoğunluklarının hepsini indirir — indirme boyutu ~3 katına çıkar.
+
+      `language` bölmesi burada risksiz: arayüz metinleri `strings.xml`'de
+      değil, web varlıklarının içinde (`assets/`) ve varlıklar bölünmüyor.
+      Bölünen tek şey kütüphanelerin (androidx, Play hizmetleri) kendi
+      çevirileri; onlar zaten cihazın diline göre gelmeli.
+    */
+    bundle {
+        language {
+            enableSplit = true
+        }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
         }
     }
 }

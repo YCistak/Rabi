@@ -1029,6 +1029,87 @@ ve kalınlaştırarak sorup olasılıkları ortalamak): o günün 13 satırlık 
 İşi zaten eğitim yapıyor — `scripts/taniyici-egit.mjs` her örneği rastgele
 kalınlıkta gösteriyor. Tekrar deneme.
 
+### `createImageBitmap` kullanılmıyor, `<img>` kullanılıyor
+
+Fotoğraf tuvale `lib/goruntu-yukle.ts` üzerinden çiziliyor: nesne adresi verilen
+bir `<img>`. Önce `createImageBitmap(blob, { imageOrientation: 'from-image' })`
+vardı ve **bozuk piksel döndürüyordu** — Firefox'ta ölçüldü, aynı JPEG:
+
+| | `createImageBitmap` | `<img>` | Node/sharp |
+|---|---|---|---|
+| Gri ortalaması | 110,6 | **125,3** | 125,5 |
+| Kâğıt kırpması | bulunamadı | 1480×1470 | 1480×1470 |
+| Eşikten sonra siyah oran | %37,5 | **%14,2** | %14,1 |
+| Ayrılan satır | 0 | **10** | 11 |
+
+Ekrandaki görüntü düzenli dikey şeritlerdi ve arıza tanıyıcıda sanıldı; oysa
+tanıyıcıya hiç sıra gelmiyordu. Tuvalin kendisi sağlam (`128,128,128` doldurup
+geri okuma sınavı geçiyor), bozuk olan yalnızca o yoldan gelen görüntü.
+
+`<img>` EXIF yönünü de kendisi uyguluyor: `naturalWidth`/`naturalHeight` zaten
+döndürülmüş ölçüyü veriyor, ayrı bir seçenek gerekmiyor.
+
+### OCR tarayıcıda denenebiliyor: `/ocr-deneme`
+
+`npm run dev` sonrası <http://localhost:3000/ocr-deneme> — bir düğme, dosya
+seç, okunan satırlar güvenleriyle listelensin. Başka hiçbir şey yok.
+
+Var olma sebebi: tanıyıcıdaki her değişikliği APK derleyip telefona kurarak
+sınamak bir turu on dakikaya çıkarıyordu. Oysa okuma zincirinin tamamı saf
+TypeScript — kırpma, eşikleme, ayırma, ağ — ve tarayıcıda birebir aynı
+çalışıyor. Cihaza bağlı tek şey ML Kit ve o zaten yalnızca ders adı için.
+
+Sayfa ara adımları da gösteriyor: kırpılmış ve eşiklenmiş görüntü ekranda,
+yanında ölçüler (fotoğraf boyu, kırpık boyu, ham satır sayısı, süre). "Hiçbir
+şey okumadı" ile "kâğıdı yanlış yerden kırptı" bambaşka iki arıza ve sayı
+listesine bakarak ayırt edilemiyor.
+
+Ölçüler ayrıca `/__tani?...` diye bir ping'le geliştirme sunucusunun günlüğüne
+düşüyor. Giden şey cevap değil — yol yok, 404 dönüyor — istenen Next'in isteği
+sorgu dizesiyle günlüğe yazması. Tarayıcıya özgü bir arızayı kullanıcıdan sayı
+okumasını isteyerek kovalamak yerine sayılar doğrudan terminale düşüyor;
+yukarıdaki `createImageBitmap` arızası böyle bulundu.
+
+`?oto=1` ile `public/deneme.jpg` kendiliğinden okunuyor ve okuma `<img>`
+yükünün içinde eşzamanlı bittiği için `firefox --headless --screenshot` bile
+ölçüleri günlüğe düşürebiliyor. Dosya depoda yok; denemek isteyen kendi
+fotoğrafını oraya koyuyor.
+
+Sayfa `NODE_ENV === 'production'` iken `null` dönüyor. Uygulamada ona giden
+bir bağlantı da yok; statik dışa aktarım dosyayı üretiyor ama boş.
+
+### Okunamayan satır listeden düşürülmüyor
+
+Ekran satırları şablonun dersleriyle **sırayla** eşliyor. Okunamayan bir
+satırı listeden atmak, ondan sonraki bütün satırları bir ders yukarı kaydırır:
+ölçüldü, kurşun kalemle yazılmış bir kâğıtta ilk satır okunamayınca dokuz
+dersin sekizi yanlış kutuya düştü — **okunan sayıların hepsi doğruydu, hepsi
+yanlış yerdeydi.** Tek bir eksik satır bütün kâğıdı çöpe çeviriyor.
+
+O yüzden `satirlariOku` her satırı döndürüyor, okunamayanı boş metinle.
+Baştaki boşluk da atılmıyor: soluk yazılmış bir ilk satır gerçek bir satırdır.
+Yalnızca **sondaki** boşluklar buduruyor, onlar hizanın gerisinde kalıyor.
+
+### Cevap, son okunamayan şeyin sağında
+
+Ders adı solda, cevap sağda ve arada hep okunamayan bir şey var (adın
+harfleri, iki nokta üst üste). Ders adının içinden bir küme sızarsa onunla
+gerçek cevap arasında da okunamayan harfler kalıyor — ayıran işaret bu.
+Ölçüldü: "Temel Matematik: 15D 20B" satırı "1B 15D 20B" diye çıkıyordu ve
+"1B", "Temel M" ile "atematik" arasına sıkışmış iki harfti.
+
+Gerçek cevaplar arasında okunamayan bir şey olmuyor: "15D" ile "20B" arasında
+yalnızca boşluk var, ikisi de kalıyor.
+
+### Yatık kutu kuralı yalnızca **alçak** kutulara
+
+Boyundan geniş kutuyu atmak kalın kalemde kazandırıyordu ama kurşun kalemle
+yazılmış yayvan bir "0" da (51×39) o kurala takılıyor ve "30D 10Y" satırı
+tümüyle kayboluyordu. Kural artık iki koşullu: kutu hem boyundan 1,4 kat geniş
+hem de satır boyunun 0,7'sinden alçak olmalı. Gerçek bir rakam yayvan
+olabiliyor ama satırın boyunda duruyor; birleşmiş iki harf ikisini birden
+yapıyor.
+
 ### Ders eşlemesi sıraya göre, kullanıcıya sorulmuyor
 
 Tanıyıcı ders adını okumuyor, o yüzden okuduğu satırlar ad olmadan geliyor.
