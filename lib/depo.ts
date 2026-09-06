@@ -166,6 +166,19 @@ export const ANAHTARLAR = {
    * istemiyorum" ise oyuna göre değişen bir şey değil.
    */
   oyunModu: 'rabi-oyun-modu',
+  /**
+   * Tanıtımı kapatılmış oyunların kimlikleri.
+   *
+   * Tanıtım her turdan önce çıkıyor ve oyunu ezberleyen için bu bir engel:
+   * ayarları seçtikten sonra bir de kuralları geçmek gerekiyor. "Bir daha
+   * gösterme" oyunu bu listeye yazıyor, sonraki turlar ayarlardan doğrudan
+   * geri sayıma gidiyor. Oyun başına ayrı: birini ezberlemek hepsini
+   * ezberlemek değil.
+   *
+   * Kural yine ulaşılabilir — tur sırasındaki "?" düğmesi tanıtımı bu
+   * listeye bakmadan açıyor.
+   */
+  tanitimGizli: 'rabi-tanitim-gizli',
   ayarlar: 'rabi-ayarlar',
   sonBildirim: 'rabi-son-bildirim',
 } as const

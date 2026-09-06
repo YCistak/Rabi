@@ -24,9 +24,9 @@ export function ModSecimi({
 }) {
   return (
     <div>
-      <p className="mb-2 text-sm font-medium">Tur nasıl işlesin?</p>
+      <p className="font-display text-lg font-bold">Tur nasıl işlesin?</p>
 
-      <div className="grid grid-cols-2 gap-2">
+      <div className="mt-3 grid grid-cols-2 gap-2.5">
         {MOD_SIRASI.map((mod) => {
           const tanim = MODLAR[mod]
           const acik = mod === secili
@@ -37,17 +37,17 @@ export function ModSecimi({
               onClick={() => onSec(mod)}
               aria-pressed={acik}
               className={cn(
-                'rounded-2xl border px-2.5 py-2 text-left transition active:brightness-95',
+                'rounded-2xl border-2 px-3 py-3 text-left transition active:brightness-95',
                 acik
-                  ? 'border-primary bg-primary-soft text-primary'
+                  ? 'border-primary-dolu bg-primary-soft text-primary'
                   : 'border-border bg-muted/50 text-muted-foreground',
               )}
             >
-              <span className="flex items-center gap-1.5">
-                <span aria-hidden>{tanim.simge}</span>
-                <span className="text-[13px] font-extrabold leading-tight">{tanim.ad}</span>
+              <span className="flex items-center gap-2">
+                <span aria-hidden className="text-lg leading-none">{tanim.simge}</span>
+                <span className="text-sm font-extrabold leading-tight">{tanim.ad}</span>
               </span>
-              <span className="mt-0.5 block text-[11px] font-semibold leading-tight opacity-80">
+              <span className="mt-1 block text-xs font-semibold leading-tight opacity-80">
                 {tanim.ozet}
               </span>
             </button>
@@ -57,7 +57,7 @@ export function ModSecimi({
 
       {/* Seçilen modun kuralı tam olarak yazıyor: tur ortasında "bu neden
           bitti" diye sorulmasın. */}
-      <p className="mt-2 text-xs leading-snug text-muted-foreground">{MODLAR[secili].kural}</p>
+      <p className="mt-2.5 text-xs leading-snug text-muted-foreground">{MODLAR[secili].kural}</p>
 
       {!modKayitliMi(secili) && (
         <p className="mt-1.5 rounded-xl bg-warning-soft px-2.5 py-1.5 text-[11.5px] font-bold leading-snug text-warning">
