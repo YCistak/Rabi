@@ -119,32 +119,33 @@ export function OyunTanitim({
     <Sayfa onGeri={geri} geriEtiketi={adim === 'tanitim' && secimVar ? 'Geri' : 'Vazgeç'}>
       {adim === 'ayar' ? (
         <>
-          <div className="flex shrink-0 items-center gap-2.5 px-1 pb-3 pt-1">
-            <span aria-hidden className="text-2xl leading-none">
-              {oyun.ikon}
-            </span>
-            <div className="min-w-0">
-              <p className="truncate font-display text-xl font-extrabold leading-tight">
-                {oyun.ad}
-              </p>
-              <p className="truncate text-[13px] text-muted-foreground">Turu ayarla</p>
-            </div>
+          {/* Başlık tanıtım adımıyla aynı: ortada, ikonsuz. İki adım arasında
+              yer değiştiren bir başlık, aynı ekranın devamı olduklarını
+              gizliyordu. */}
+          <div className="shrink-0 px-2 pb-4 pt-3">
+            <p className="text-center font-display text-[26px] font-extrabold leading-tight tracking-tight">
+              {oyun.ad}
+            </p>
+            <p className="mt-1 text-center text-[13px] text-muted-foreground">Turu ayarla</p>
           </div>
 
-          <div className="golge-kart flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto rounded-[24px] bg-card px-4 py-4">
-            {setMod !== null && <ModSecimi secili={mod} onSec={setMod} />}
-            {ekstra}
-          </div>
+          <Orta>
+            <div className="golge-kart flex flex-col gap-4 rounded-[24px] bg-card px-4 py-4">
+              {setMod !== null && <ModSecimi secili={mod} onSec={setMod} />}
+              {ekstra}
+            </div>
+          </Orta>
 
           <BuyukDugme onClick={ayarlardanSonra}>{gizli ? 'Başla  →' : 'Devam  →'}</BuyukDugme>
         </>
       ) : (
         <>
-          <div className="flex shrink-0 justify-center py-2">
-            <Rabi durum="calisiyor" boyut={84} />
-          </div>
+          <Orta>
+            <div className="flex justify-center py-2">
+              <Rabi durum="calisiyor" boyut={84} />
+            </div>
 
-          <div className="golge-kart flex min-h-0 flex-1 flex-col overflow-y-auto rounded-[24px] bg-card px-4 py-4">
+            <div className="golge-kart rounded-[24px] bg-card px-4 py-4">
             <p className="text-center font-display text-[26px] font-extrabold leading-tight tracking-tight">
               {oyun.ad}
             </p>
@@ -168,8 +169,9 @@ export function OyunTanitim({
             <div className="mt-3 flex gap-2">
               <Bilgi simge="⏱️" metin={MODLAR[mod].ozet} />
               {rekor > 0 && <Bilgi simge="🏆" metin={`Rekorun ${rekor} doğru`} />}
+              </div>
             </div>
-          </div>
+          </Orta>
 
           {/* Kutu turu **başlatmıyor**: işaretlemek bir tercih, oynamaya
               başlamak ayrı bir karar. Tek dokunuşta ikisini birden yapan bir
@@ -234,6 +236,22 @@ function Sayfa({
         </div>
         {children}
       </div>
+    </div>
+  )
+}
+
+/**
+ * Geri düğmesiyle alttaki büyük düğmenin arasında kalan boşluk.
+ *
+ * İçerik bu boşluğu **doldurmuyor**, ortasında duruyor: kart esneyip
+ * yüksekliği kaplayınca uzun telefonlarda kartın altında kocaman bir boş
+ * alan kalıyordu. `my-auto` kaydırmayla da uyumlu — içerik sığmadığında
+ * `justify-center` gibi üstü kırpmıyor, normal biçimde kayıyor.
+ */
+function Orta({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+      <div className="my-auto w-full">{children}</div>
     </div>
   )
 }

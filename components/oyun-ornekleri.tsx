@@ -30,10 +30,14 @@ export type OyunOrnegi = {
 }
 
 /* --------------------------------------------------------------------------
-   Ortak parçalar — bütün örnekler bu üç şeyden kuruluyor.
+   Ortak parçalar — bütün örnekler bu dört şeyden kuruluyor.
+
+   Yerleşimler oyun ekranlarından alındı, tahmin edilmedi: dört şıklı
+   oyunların hepsi şıkları **alt alta** diziyor (`flex flex-col`), yalnız
+   noktalama turu, Özel Üçgenler ve Harita Avı'nın şık turu iki sütunlu.
    -------------------------------------------------------------------------- */
 
-/** Beyaz zeminde bir cümle ya da sözcük. */
+/** Beyaz zeminde bir cümle ya da sözcük — oyunun soru kartı. */
 function Metin({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div
@@ -72,12 +76,29 @@ function Sik({
   )
 }
 
-/** Yan yana iki şık. */
-function Ikili({ sol, sag }: { sol: ReactNode; sag: ReactNode }) {
+/** Oyun ekranındaki "…seç" satırı — soruyla şıkların arasında duruyor. */
+function Yonerge({ children }: { children: ReactNode }) {
   return (
-    <div className="flex items-center gap-2.5">
-      <div className="flex-1">{sol}</div>
-      <div className="flex-1">{sag}</div>
+    <p className="text-center text-[12.5px] font-extrabold text-muted-foreground">{children}</p>
+  )
+}
+
+/** Alt alta iki şık: dört şıklı oyunların düzeni. */
+function Alt({ dogru, yanlis }: { dogru: string; yanlis: string }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <Sik>{yanlis}</Sik>
+      <Sik vurgulu>{dogru}</Sik>
+    </div>
+  )
+}
+
+/** Yan yana iki şık: noktalama, üçgen ve haritanın şık turu. */
+function Yan({ sol, sag }: { sol: ReactNode; sag: ReactNode }) {
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      {sol}
+      {sag}
     </div>
   )
 }
@@ -91,36 +112,82 @@ function Isaret({ children }: { children: ReactNode }) {
   )
 }
 
-/** Eşleştirme oyunlarının iki kartı: üstteki soru, alttaki karşılığı. */
-function Eslesme({ ust, alt }: { ust: string; alt: string }) {
+/** Dört şıklı oyunların kısaltması: soru kartı, yönerge, iki şık. */
+function DortSik({
+  soru,
+  yonerge,
+  dogru,
+  yanlis,
+}: {
+  soru: ReactNode
+  yonerge: string
+  dogru: string
+  yanlis: string
+}) {
   return (
     <div className="flex flex-col gap-2">
-      <Metin className="text-center text-sm">{ust}</Metin>
-      <Sik vurgulu>{alt}</Sik>
+      <Metin className="text-center">{soru}</Metin>
+      <Yonerge>{yonerge}</Yonerge>
+      <Alt dogru={dogru} yanlis={yanlis} />
     </div>
   )
 }
 
-/** Dört şıklı oyunların iki şıklık kısaltması. */
-function DortSik({ soru, dogru, yanlis }: { soru: ReactNode; dogru: string; yanlis: string }) {
-  return (
-    <div className="flex flex-col gap-2.5">
-      <Metin>{soru}</Metin>
-      <Ikili sol={<Sik>{yanlis}</Sik>} sag={<Sik vurgulu>{dogru}</Sik>} />
-    </div>
-  )
-}
-
-/** Tuş takımına yazılan cevap. */
-function Yazilan({ soru, cevap }: { soru: string; cevap: string }) {
+/** Tuş takımıyla yazılan cevap. */
+function Yazilan({ soru, cevap }: { soru: ReactNode; cevap: string }) {
   return (
     <div className="flex items-center gap-2.5">
-      <div className="rakam flex-1 rounded-xl border-2 border-border bg-card px-3 py-2.5 text-center text-lg font-extrabold">
+      <div className="flex-1 rounded-xl border-2 border-border bg-card px-3 py-2.5 text-center">
         {soru}
       </div>
       <div className="rakam flex-none rounded-xl bg-primary-dolu px-4 py-2.5 text-lg font-extrabold text-white">
         {cevap}
       </div>
+    </div>
+  )
+}
+
+/**
+ * Eşleştirme tahtasının iki sırası.
+ *
+ * Tahta gerçekte altı çiftlik bir ızgara; buraya sığmıyor. Sığan şey
+ * mekaniğin kendisi: üst sıradan biri, alt sıradan biri seçiliyor.
+ */
+function Tahta({
+  ustBaslik,
+  altBaslik,
+  ust,
+  alt,
+}: {
+  ustBaslik: string
+  altBaslik: string
+  ust: [string, string]
+  alt: [string, string]
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="text-[10.5px] font-extrabold uppercase tracking-wide text-muted-foreground/75">
+        {ustBaslik}
+      </p>
+      <Yan
+        sol={
+          <Sik vurgulu className="text-[13px]">
+            {ust[0]}
+          </Sik>
+        }
+        sag={<Sik className="text-[13px]">{ust[1]}</Sik>}
+      />
+      <p className="mt-0.5 text-[10.5px] font-extrabold uppercase tracking-wide text-muted-foreground/75">
+        {altBaslik}
+      </p>
+      <Yan
+        sol={<Sik className="text-[13px]">{alt[0]}</Sik>}
+        sag={
+          <Sik vurgulu className="text-[13px]">
+            {alt[1]}
+          </Sik>
+        }
+      />
     </div>
   )
 }
@@ -135,24 +202,40 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
       baslik: 'Yazım turu',
       kural: (
         <>
-          <b>Doğru</b> yazılışa dokunursun.
+          <b>Doğru</b> yazılışı şıklardan seçersin.
         </>
       ),
       gorunum: (
-        <Ikili sol={<Sik className="line-through">yanlız</Sik>} sag={<Sik vurgulu>yalnız</Sik>} />
+        <div className="flex flex-col gap-2">
+          <Yonerge>Doğru yazılışı seç</Yonerge>
+          <Alt dogru="yalnız" yanlis="yanlız" />
+        </div>
       ),
     },
     {
       baslik: 'Noktalama turu',
       kural: (
         <>
-          Cümledeki <b>yanlış</b> işarete dokunursun.
+          Cümledeki <b>yanlış</b> işareti şıklardan seçersin.
         </>
       ),
       gorunum: (
-        <Metin>
-          Ali<Isaret>,</Isaret> ve Ayşe geldi.
-        </Metin>
+        <div className="flex flex-col gap-2">
+          <Metin className="text-center font-bold">Ali, ve Ayşe geldi.</Metin>
+          <Yonerge>Yanlış kullanılan işareti seç</Yonerge>
+          <Yan
+            sol={
+              <Sik vurgulu>
+                , <span className="text-[11px] font-semibold">virgül</span>
+              </Sik>
+            }
+            sag={
+              <Sik>
+                . <span className="text-[11px] font-semibold">nokta</span>
+              </Sik>
+            }
+          />
+        </div>
       ),
     },
   ],
@@ -160,10 +243,11 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
   ses: [
     {
       baslik: 'Ses olayı',
-      kural: <>Sözcükte hangi olay yaşanmış, dört şıktan seçersin.</>,
+      kural: <>Sözcükte hangi olayın yaşandığını dört şıktan seçersin.</>,
       gorunum: (
         <DortSik
-          soru={<span className="text-center font-bold">kitabı</span>}
+          soru={<span className="font-display text-lg font-extrabold">kitabı</span>}
+          yonerge="Hangi ses olayı var?"
           dogru="Ünsüz yumuşaması"
           yanlis="Ünlü düşmesi"
         />
@@ -176,7 +260,7 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
       baslik: 'Vurgulu bölüm',
       kural: (
         <>
-          İşaretli bölüm hangi <b>öge</b>, onu seçersin.
+          İşaretli bölüm hangi <b>öge</b>, dört şıktan seçersin.
         </>
       ),
       gorunum: (
@@ -186,8 +270,9 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
               <Isaret>Kardeşim</Isaret> dün kitabı okudu.
             </>
           }
+          yonerge="İşaretli bölüm hangi öge?"
           dogru="Özne"
-          yanlis="Nesne"
+          yanlis="Belirtili nesne"
         />
       ),
     },
@@ -199,7 +284,8 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
       kural: <>Gelen sözün anlamını dört şıktan seçersin.</>,
       gorunum: (
         <DortSik
-          soru={<span className="font-bold">İpe un sermek</span>}
+          soru={<span className="font-display font-extrabold">İpe un sermek</span>}
+          yonerge="Anlamı hangisi?"
           dogru="Bahane uydurmak"
           yanlis="Acele etmek"
         />
@@ -209,12 +295,15 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
 
   bolunme: [
     {
-      baslik: 'Bölünür mü?',
+      baslik: 'Evet mi, hayır mı?',
       kural: <>Sayı bölünüyor mu, iki düğmeden birine dokunursun.</>,
       gorunum: (
-        <div className="flex flex-col gap-2.5">
-          <Metin className="rakam text-center text-lg font-extrabold">126 · 3</Metin>
-          <Ikili sol={<Sik vurgulu>Bölünür</Sik>} sag={<Sik>Bölünmez</Sik>} />
+        <div className="flex flex-col gap-2">
+          <p className="rakam text-center font-display text-2xl font-extrabold tracking-widest">
+            126
+          </p>
+          <Yonerge>3’e bölünür mü?</Yonerge>
+          <Alt dogru="Evet" yanlis="Hayır" />
         </div>
       ),
     },
@@ -225,7 +314,14 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
           Kalanı <b>tuş takımıyla</b> yazarsın.
         </>
       ),
-      gorunum: <Yazilan soru="128 · 5" cevap="3" />,
+      gorunum: (
+        <Yazilan
+          soru={
+            <span className="rakam font-display text-lg font-extrabold tracking-widest">128</span>
+          }
+          cevap="3"
+        />
+      ),
     },
   ],
 
@@ -237,7 +333,12 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
           Sonucu <b>tuş takımıyla</b> yazıp onaylarsın.
         </>
       ),
-      gorunum: <Yazilan soru="24 × 3" cevap="72" />,
+      gorunum: (
+        <Yazilan
+          soru={<span className="rakam font-display text-lg font-extrabold">24 × 3</span>}
+          cevap="72"
+        />
+      ),
     },
   ],
 
@@ -250,21 +351,21 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
         </>
       ),
       gorunum: (
-        <div className="flex items-center gap-3">
-          <svg viewBox="0 0 120 60" className="h-14 flex-1" aria-hidden>
-            <line x1="8" y1="52" x2="112" y2="52" stroke="currentColor" strokeWidth="3" />
-            <line x1="60" y1="52" x2="24" y2="10" stroke="currentColor" strokeWidth="3" />
-            <text x="30" y="46" fontSize="12" fontWeight="700" fill="currentColor">
-              50°
-            </text>
-            <text x="72" y="46" fontSize="13" fontWeight="800" fill="var(--primary-dolu)">
-              x
-            </text>
-          </svg>
-          <div className="rakam flex-none rounded-xl bg-primary-dolu px-4 py-2.5 text-lg font-extrabold text-white">
-            130
-          </div>
-        </div>
+        <Yazilan
+          soru={
+            <svg viewBox="0 0 120 56" className="mx-auto h-12" aria-hidden>
+              <line x1="8" y1="48" x2="112" y2="48" stroke="currentColor" strokeWidth="3" />
+              <line x1="60" y1="48" x2="24" y2="8" stroke="currentColor" strokeWidth="3" />
+              <text x="28" y="42" fontSize="12" fontWeight="700" fill="currentColor">
+                50°
+              </text>
+              <text x="72" y="42" fontSize="13" fontWeight="800" fill="var(--primary-dolu)">
+                x
+              </text>
+            </svg>
+          }
+          cevap="130"
+        />
       ),
     },
   ],
@@ -278,30 +379,20 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
         </>
       ),
       gorunum: (
-        <div className="flex items-center gap-3">
-          <svg viewBox="0 0 90 60" className="h-14 w-20 flex-none" aria-hidden>
-            <polygon
-              points="12,52 78,52 12,10"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-            />
-            <text x="0" y="34" fontSize="12" fontWeight="700" fill="currentColor">
+        <div className="flex flex-col gap-2">
+          <svg viewBox="0 0 90 56" className="mx-auto h-14" aria-hidden>
+            <polygon points="12,48 78,48 12,8" fill="none" stroke="currentColor" strokeWidth="3" />
+            <text x="0" y="32" fontSize="12" fontWeight="700" fill="currentColor">
               3
             </text>
-            <text x="40" y="60" fontSize="12" fontWeight="700" fill="currentColor">
+            <text x="40" y="56" fontSize="12" fontWeight="700" fill="currentColor">
               4
             </text>
-            <text x="48" y="26" fontSize="13" fontWeight="800" fill="var(--primary-dolu)">
+            <text x="46" y="24" fontSize="13" fontWeight="800" fill="var(--primary-dolu)">
               x
             </text>
           </svg>
-          <div className="flex flex-1 gap-2.5">
-            <Sik className="flex-1">6</Sik>
-            <Sik vurgulu className="flex-1">
-              5
-            </Sik>
-          </div>
+          <Yan sol={<Sik>6</Sik>} sag={<Sik vurgulu>5</Sik>} />
         </div>
       ),
     },
@@ -311,22 +402,34 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
     {
       baslik: 'Eşleştirme',
       kural: <>Önce esere, sonra yazarına dokunursun — sıra fark etmez.</>,
-      gorunum: <Eslesme ust="Çalıkuşu" alt="Reşat Nuri Güntekin" />,
+      gorunum: (
+        <Tahta
+          ustBaslik="Eserler"
+          altBaslik="Yazarlar"
+          ust={['Çalıkuşu', 'Kuyucaklı Yusuf']}
+          alt={['Sabahattin Ali', 'Reşat Nuri']}
+        />
+      ),
     },
   ],
 
   harita: [
     {
       baslik: 'Haritada bul',
-      kural: <>İli haritada gösterirsin; harita iki parmakla yakınlaşır.</>,
+      kural: <>İli haritada gösterirsin; küçük iller için yakınlaştırırsın.</>,
       gorunum: (
         <div className="flex items-center gap-3">
-          <Metin className="flex-1 text-center font-bold">Ankara’yı bul</Metin>
-          <div className="flex size-12 flex-none items-center justify-center rounded-xl border-2 border-primary-dolu bg-primary-soft text-xl">
+          <Metin className="flex-1 text-center font-display font-extrabold">Ankara</Metin>
+          <div className="flex size-12 flex-none items-center justify-center rounded-xl border-2 border-dashed border-border text-xl">
             📍
           </div>
         </div>
       ),
+    },
+    {
+      baslik: 'İşaretli il turu',
+      kural: <>Yanıp sönen ilin adını dört şıktan seçersin.</>,
+      gorunum: <Yan sol={<Sik>Çorum</Sik>} sag={<Sik vurgulu>Yozgat</Sik>} />,
     },
   ],
 
@@ -334,7 +437,14 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
     {
       baslik: 'Madde eşleştirme',
       kural: <>Maddeyi ait olduğu antlaşmayla eşleştirirsin.</>,
-      gorunum: <Eslesme ust="Boğazlar komisyonu kurulacak." alt="Lozan" />,
+      gorunum: (
+        <Tahta
+          ustBaslik="Maddeler"
+          altBaslik="Antlaşmalar"
+          ust={['Boğazlar komisyonu', 'Kapitülasyonlar']}
+          alt={['Sevr', 'Lozan']}
+        />
+      ),
     },
   ],
 
@@ -342,7 +452,14 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
     {
       baslik: 'Kavram eşleştirme',
       kural: <>Kavrama, sonra tanımına dokunursun. Bazı tanımların karşılığı yok.</>,
-      gorunum: <Eslesme ust="Tımar" alt="Gelirle geçinen asker toprağı" />,
+      gorunum: (
+        <Tahta
+          ustBaslik="Kavramlar"
+          altBaslik="Tanımlar"
+          ust={['Tımar', 'Divan']}
+          alt={['Devlet meclisi', 'Gelirle geçinen asker toprağı']}
+        />
+      ),
     },
   ],
 
@@ -356,9 +473,10 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
       ),
       gorunum: (
         <DortSik
-          soru="Hiç kimse ona ne yardım etti ne de destek oldu."
-          dogru="Tamlama yanlışı"
-          yanlis="Özne eksikliği"
+          soru="Yaklaşık iki saat kadar bekledik."
+          yonerge="Bozukluğun sebebi hangisi?"
+          dogru="Gereksiz sözcük kullanımı"
+          yanlis="Anlam belirsizliği"
         />
       ),
     },
@@ -369,12 +487,12 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
       baslik: 'Aralığı daralt',
       kural: (
         <>
-          Çubuğun uçlarını sürüklersin; yalnız <b>en dar</b> aralık doğru.
+          Çubuğun uçlarını sürükleyip onaylarsın; yalnız <b>en dar</b> aralık doğru.
         </>
       ),
       gorunum: (
-        <div className="flex flex-col gap-2.5">
-          <Metin className="rakam text-center text-lg font-extrabold">√50</Metin>
+        <div className="flex flex-col gap-2">
+          <p className="rakam text-center font-display text-2xl font-extrabold">√50</p>
           <div className="relative h-9 rounded-full bg-muted">
             <div className="absolute inset-y-0 left-[46%] right-[26%] rounded-full bg-primary-dolu" />
             <span className="rakam absolute inset-y-0 left-[48%] flex items-center text-sm font-extrabold text-white">
@@ -384,6 +502,7 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
               8
             </span>
           </div>
+          <Sik vurgulu>Onayla</Sik>
         </div>
       ),
     },
@@ -396,6 +515,7 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
       gorunum: (
         <DortSik
           soru="Bütün canlılarda bulunan yapı hangisidir?"
+          yonerge="Doğru cevabı seç"
           dogru="Hücre"
           yanlis="Kloroplast"
         />
@@ -410,6 +530,7 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
       gorunum: (
         <DortSik
           soru="İkili adlandırmada ilk sözcük neyi gösterir?"
+          yonerge="Doğru cevabı seç"
           dogru="Cins"
           yanlis="Tür"
         />
@@ -426,14 +547,14 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
         </>
       ),
       gorunum: (
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col gap-2">
           <Metin>
             <span className="mr-2 rounded-md bg-primary-soft px-1.5 py-0.5 text-xs font-extrabold text-primary">
               1. ipucu
             </span>
             Çift zarflıyım.
           </Metin>
-          <Ikili sol={<Sik>Ribozom</Sik>} sag={<Sik vurgulu>Mitokondri</Sik>} />
+          <Alt dogru="Mitokondri" yanlis="Ribozom" />
         </div>
       ),
     },
@@ -444,7 +565,7 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
       baslik: 'Zaman şeridi',
       kural: (
         <>
-          Kartları sürükleyip <b>eskiden yeniye</b> dizersin.
+          Kartları sürükleyip <b>eskiden yeniye</b> dizip onaylarsın.
         </>
       ),
       gorunum: (
@@ -471,16 +592,22 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
       baslik: 'Doğru mu, yanlış mı?',
       kural: (
         <>
-          Doğruysa kartı <b>sağa</b>, yanlışsa <b>sola</b> atarsın.
+          Kartı <b>sağa</b> sürüklersen doğru, <b>sola</b> sürüklersen yanlış demiş olursun.
         </>
       ),
       gorunum: (
-        <div className="flex items-center gap-2.5">
-          <Sik className="flex-none px-3">←</Sik>
-          <Metin className="rakam flex-1 text-center text-lg font-extrabold">
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-2">
+            <span className="flex flex-1 items-center justify-center gap-1 rounded-full border-2 border-ikincil/40 py-1 text-[11.5px] font-extrabold uppercase tracking-wide text-ikincil">
+              ← Yanlış
+            </span>
+            <span className="flex flex-1 items-center justify-center gap-1 rounded-full border-2 border-success/40 py-1 text-[11.5px] font-extrabold uppercase tracking-wide text-success">
+              Doğru →
+            </span>
+          </div>
+          <Metin className="rakam text-center font-display text-lg font-extrabold">
             (a + b)² = a² + b²
           </Metin>
-          <Sik className="flex-none px-3">→</Sik>
         </div>
       ),
     },
