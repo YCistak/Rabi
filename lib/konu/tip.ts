@@ -92,6 +92,14 @@ export type KoordinatGorseli = {
     kapali?: boolean
     /** Köşeler yumuşatılmasın — doğru parçaları ve çokgenler için. */
     kirik?: boolean
+    /**
+     * Son noktaya ok başı konur.
+     *
+     * Vektör için şart: yönü olmayan bir çizgi vektör değil doğru parçasıdır.
+     * Kuvvet, hız ve yer değiştirme çizimlerinde okun ucu, çizginin kendisi
+     * kadar bilgi taşıyor.
+     */
+    ok?: boolean
   }[]
   cemberler?: { x: number; y: number; r: number; ad?: string; renk?: KartRenk }[]
   noktalar?: { x: number; y: number; ad?: string; bos?: boolean; renk?: KartRenk }[]

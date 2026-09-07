@@ -113,17 +113,19 @@ function Koordinat({ g }: { g: KoordinatGorseli }) {
           ? `M ${noktalar.map((p) => p.join(' ')).join(' L ')}${e.kapali ? ' Z' : ''}`
           : yumusakYol(noktalar, e.kapali ?? false)
         return (
-          <path
-            key={i}
-            d={d}
-            fill={e.kapali ? renk(e.renk) : 'none'}
-            fillOpacity={e.kapali ? 0.16 : undefined}
-            stroke={renk(e.renk)}
-            strokeWidth={2.4}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeDasharray={e.kesik ? '6 5' : undefined}
-          />
+          <g key={i}>
+            <path
+              d={d}
+              fill={e.kapali ? renk(e.renk) : 'none'}
+              fillOpacity={e.kapali ? 0.16 : undefined}
+              stroke={renk(e.renk)}
+              strokeWidth={2.4}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeDasharray={e.kesik ? '6 5' : undefined}
+            />
+            {e.ok && <OkBasi noktalar={noktalar} renk={renk(e.renk)} />}
+          </g>
         )
       })}
 
@@ -191,6 +193,23 @@ function Koordinat({ g }: { g: KoordinatGorseli }) {
       )}
     </svg>
   )
+}
+
+/**
+ * Son iki noktanın yönüne bakan ok başı.
+ *
+ * Yön son parçadan okunuyor, ilk noktadan sonuncuya değil: eğri son ucunda
+ * dönüyorsa ok, gittiği yeri değil geldiği yeri gösterirdi.
+ */
+function OkBasi({ noktalar, renk: r }: { noktalar: [number, number][]; renk: string }) {
+  const [ax, ay] = noktalar[noktalar.length - 2]
+  const [bx, by] = noktalar[noktalar.length - 1]
+  const aci = Math.atan2(by - ay, bx - ax)
+  const boy = 9
+  const kanat = 0.42
+  const uc = (yon: number) =>
+    `${bx - boy * Math.cos(aci + yon)} ${by - boy * Math.sin(aci + yon)}`
+  return <path d={`M ${bx} ${by} L ${uc(kanat)} L ${uc(-kanat)} Z`} fill={r} />
 }
 
 /** Izgara için pencereye düşen tam sayılar; çok sıklaşırsa seyreltiliyor. */
