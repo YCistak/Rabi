@@ -6,6 +6,10 @@ import { kart, konu, program, tema } from '../tip'
  * Dört tema: **Sözün Ezgisi**, **Kelimelerin Ritmi**, **Dünden Bugüne**,
  * **Nesillerin Mirası**. Dil bilgisi konuları "Kelimelerin Ritmi" temasının
  * altında duruyor: tema zaten kelimenin kendisine bakıyor.
+ *
+ * Konu listesi bu derste `maarif.test.ts` tarafından denetlenmiyor; sebebi
+ * 9. sınıf dosyasında yazılı (programın İçerik Çerçevesi burada konu değil
+ * beceri sayıyor).
  */
 export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mirasına', [
   tema('trk10-t1', 'Sözün Ezgisi', [
@@ -16,15 +20,34 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       ),
       kart(
         'Bölümleri',
-        'Döşeme (tekerleme), serim, düğüm, çözüm ve dilek bölümü. Tekerleme masalı gerçek dünyadan koparır.',
+        'Beş bölüm sırayla gelir ve ilki masalı gerçek dünyadan koparmak için vardır.',
+        {
+          tur: 'akis',
+          dikey: true,
+          adimlar: [
+            { ad: 'Döşeme', alt: 'tekerleme' },
+            { ad: 'Serim' },
+            { ad: 'Düğüm' },
+            { ad: 'Çözüm' },
+            { ad: 'Dilek', alt: 'kapanış', renk: 'soluk' },
+          ],
+        },
       ),
       kart(
         'Kişiler tiptir',
         'Masal kişileri gelişmez: iyi hep iyi, cimri hep cimridir. Bu yüzden karakter değil tip sayılırlar.',
       ),
       kart(
+        'Olağanüstülük',
+        'Dev, peri, konuşan hayvan ve sihirli nesneler masalın olağan ögeleridir; okuyan bunları sorgulamaz.',
+      ),
+      kart(
         'Amacı',
         'Eğlendirirken ders verir. Sonunda iyiler kazanır; bu, masalın kurduğu adalet duygusudur.',
+      ),
+      kart(
+        'Masal ve fabl',
+        'İkisi de ders verir ama fablın kahramanları hayvandır ve ders sonunda açıkça söylenir.',
       ),
     ]),
     konu('trk10-anonim', 'Anonim Halk Edebiyatı', [
@@ -41,8 +64,31 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Yedili hece ölçüsüyle, aaxa uyak düzeninde dört dizelik ürün. İlk iki dize çoğu zaman doldurmadır, asıl anlam son ikisindedir.',
       ),
       kart(
-        'Bilmece, tekerleme, atasözü',
-        'Hepsi anonimdir. Bilmece buldurmayı, tekerleme ses oyununu, atasözü öğüdü esas alır.',
+        'Anonim ürünler',
+        'Hepsi sözlü gelenekten gelir ama her biri farklı bir işi görür.',
+        {
+          tur: 'tablo',
+          basliklar: ['Ürün', 'İşlevi'],
+          satirlar: [
+            ['Türkü', 'Ezgiyle anlatır'],
+            ['Mani', 'Duygu iletir'],
+            ['Bilmece', 'Buldurur'],
+            ['Tekerleme', 'Ses oyunu'],
+            ['Atasözü', 'Öğüt verir'],
+          ],
+        },
+      ),
+      kart(
+        'Varyant nedir?',
+        'Aynı ürünün yöreden yöreye değişmiş hâli. Sözlü gelenekte tek bir "doğru metin" yoktur.',
+      ),
+      kart(
+        'Neden anonimleşir?',
+        'Söyleyen unutulur ama söz kalır. Halk beğendiği ürünü tekrarlarken kendine göre değiştirir ve sahiplenir.',
+      ),
+      kart(
+        'Derleme',
+        'Anonim ürünler 20. yüzyılda derlenip yazıya geçirildi; bugün bildiğimiz metinler bu derlemelerin ürünü.',
       ),
     ]),
     konu('trk10-ahenk', 'Ahenk Ögeleri', [
@@ -51,12 +97,31 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Şiirdeki ses uyumu. Ölçü, uyak, redif, aliterasyon ve asonansla kurulur.',
       ),
       kart(
+        'Ahengin araçları',
+        'Beş araç birlikte çalışır; şiirin sesi bunların bileşiminden çıkar.',
+        {
+          tur: 'tablo',
+          basliklar: ['Öge', 'Nasıl?'],
+          satirlar: [
+            ['Ölçü', 'Hece düzeni'],
+            ['Uyak', 'Ses benzerliği'],
+            ['Redif', 'Aynı ek ya da söz'],
+            ['Aliterasyon', 'Ünsüz tekrarı'],
+            ['Asonans', 'Ünlü tekrarı'],
+          ],
+        },
+      ),
+      kart(
         'Aliterasyon ve asonans',
         'Aliterasyon aynı ünsüzün, asonans aynı ünlünün tekrarıdır. İkisi de dizeyi kulakta tutar.',
       ),
       kart(
         'Ritim',
         'Vurgulu ve vurgusuz hecelerin düzenli sırası. Ölçü ritmi kurar, serbest şiirde ritmi söyleyiş sağlar.',
+      ),
+      kart(
+        'Serbest şiirde ahenk',
+        'Ölçü ve uyak olmasa da ahenk kaybolmaz; tekrar, sözcük seçimi ve dize uzunluğu ritmi kurar.',
       ),
       kart(
         'Ses ve anlam birlikte',
@@ -73,6 +138,15 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       kart(
         'Açık ve örtük ileti',
         'Açık ileti metinde doğrudan söylenir; örtük ileti çıkarım yoluyla bulunur. Şiirde ileti çoğunlukla örtüktür.',
+        {
+          tur: 'tablo',
+          basliklar: ['Açık ileti', 'Örtük ileti'],
+          satirlar: [
+            ['Metinde yazılı', 'Çıkarılır'],
+            ['Tek anlam', 'Yoruma açık'],
+            ['Öğretici metin', 'Şiir, öykü'],
+          ],
+        },
       ),
       kart(
         'Şiirde gerçeklik',
@@ -82,8 +156,29 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Çağrışım',
         'Bir sözcük kendi anlamının yanında başka anlamları da uyandırır. Şiirin çok anlamlılığı buradan doğar.',
       ),
+      kart(
+        'Üslup',
+        'Şairin kendine özgü söyleyiş biçimi: sözcük seçimi, dize uzunluğu ve imge kurma alışkanlığı.',
+      ),
+      kart(
+        'Yorum sınırsız değil',
+        'Şiir çok anlamlıdır ama her yorum geçerli değildir; yorum metinden delil gösterebiliyorsa ayakta durur.',
+      ),
     ]),
     konu('trk10-sozcuk-turleri', 'Sözcük Türleri', [
+      kart(
+        'Sekiz tür',
+        'Sözcükler isim soylu ve fiil olmak üzere iki büyük öbeğe ayrılır.',
+        {
+          tur: 'tablo',
+          basliklar: ['İsim soylu', 'Fiil'],
+          satirlar: [
+            ['İsim, sıfat, zamir', 'Fiil'],
+            ['Zarf, edat', ''],
+            ['Bağlaç, ünlem', ''],
+          ],
+        },
+      ),
       kart(
         'İsim (ad)',
         'Varlıkları karşılar. Özel-cins, somut-soyut, tekil-çoğul-topluluk olarak sınıflandırılır.',
@@ -97,12 +192,20 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'İsmin yerini tutar. Kişi, işaret, belgisiz, soru ve ilgi zamiri (-ki) olmak üzere çeşitleri vardır.',
       ),
       kart(
+        'Sıfat mı zamir mi?',
+        'Kendinden sonra isim geliyorsa sıfat, ismin yerini tutuyorsa zamirdir: "bu kitap" sıfat, "bu benim" zamir.',
+      ),
+      kart(
         'Zarf (belirteç)',
         'Fiili, sıfatı ya da başka bir zarfı etkiler. Sıfat isme, zarf fiile bağlanır — ayrımın anahtarı budur.',
       ),
       kart(
         'Edat, bağlaç, ünlem',
         'Edat tek başına anlamsızdır, sözcükler arası ilgi kurar. Bağlaç bağlar, çıkarılınca anlam bozulmaz. Ünlem duygu bildirir.',
+      ),
+      kart(
+        'Tür göreve göre değişir',
+        'Bir sözcüğün türü cümledeki görevine göre belirlenir: "güzel" kimi cümlede sıfat, kimi cümlede zarftır.',
       ),
     ]),
     konu('trk10-fiil', 'Fiiller', [
@@ -111,12 +214,30 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'İş, oluş ya da durum bildirir. Mastar eki (-mak/-mek) alabiliyorsa fiildir.',
       ),
       kart(
-        'Haber ve dilek kipleri',
-        'Haber kipleri zaman bildirir (görülen geçmiş, duyulan geçmiş, şimdiki, gelecek, geniş). Dilek kipleri istek, şart, gereklilik ve emir bildirir.',
+        'Kip nedir?',
+        'Fiilin hangi zamanda ya da hangi dilekle söylendiğini gösteren ek. Her çekimli fiilde bir kip vardır.',
+        {
+          tur: 'tablo',
+          basliklar: ['Haber kipleri', 'Dilek kipleri'],
+          satirlar: [
+            ['Görülen geçmiş', 'İstek'],
+            ['Duyulan geçmiş', 'Şart'],
+            ['Şimdiki', 'Gereklilik'],
+            ['Gelecek, geniş', 'Emir'],
+          ],
+        },
+      ),
+      kart(
+        'Haber ve dilek ayrımı',
+        'Haber kipleri zaman bildirir, dilek kipleri bildirmez. "Gelmeli" bir zaman değil bir gereklilik anlatır.',
       ),
       kart(
         'Çatı',
-        'Özneye göre etken-edilgen-dönüşlü-işteş, nesneye göre geçişli-geçişsiz. Çatı yalnızca **yüklemi fiil olan** cümlelerde aranır.',
+        'Özneye göre etken-edilgen-dönüşlü-işteş, nesneye göre geçişli-geçişsiz. Çatı yalnızca yüklemi fiil olan cümlelerde aranır.',
+      ),
+      kart(
+        'Edilgen çatı',
+        'Yapanı belli olmayan cümle kurar: "Kapı açıldı." Özne sözde öznedir, işi kimin yaptığı söylenmez.',
       ),
       kart(
         'Ek fiil',
@@ -125,6 +246,10 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       kart(
         'Fiilimsi',
         'Fiilden türer ama cümlede isim, sıfat ya da zarf görevi görür. Fiilimsi bulunan cümle birleşik cümledir.',
+      ),
+      kart(
+        'Üç fiilimsi',
+        'İsim-fiil (-ma, -ış, -mak), sıfat-fiil (-an, -acak, -dık, -mış, -ası, -maz), zarf-fiil (-ip, -arak, -ken, -ince).',
       ),
     ]),
   ]),
@@ -136,15 +261,31 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       ),
       kart(
         'Oluşum aşamaları',
-        'Olağanüstü bir olay yaşanır, halk arasında anlatılır ve sonunda bir şair tarafından derlenip yazıya geçirilir.',
+        'Doğal destan üç basamakta oluşur ve son basamakta bir şair onu yazıya geçirir.',
+        {
+          tur: 'akis',
+          adimlar: [
+            { ad: 'Doğuş', alt: 'olay yaşanır' },
+            { ad: 'Yayılma', alt: 'anlatılır' },
+            { ad: 'Derleme', alt: 'yazıya geçer' },
+          ],
+        },
       ),
       kart(
         'Türk destanları',
-        'Alp Er Tunga, Oğuz Kağan, Bozkurt, Ergenekon, Göç, Manas. İslamiyet sonrası: Battalname, Danişmendname.',
+        'İslamiyet öncesi: Alp Er Tunga, Oğuz Kağan, Bozkurt, Ergenekon, Göç, Manas. Sonrası: Battalname, Danişmendname.',
       ),
       kart(
         'Destan kahramanı',
         'Milletin ortak değerlerini taşır; kişisel değil toplumsal bir amacı vardır.',
+      ),
+      kart(
+        'Olağanüstülük',
+        'Kahramanın doğuşu, atı ve silahı olağanüstüdür. Bu ögeler destanı efsaneye yaklaştırır ama tarihsel çekirdek durur.',
+      ),
+      kart(
+        'Destan ve tarih',
+        'Destan tarihsel bir olaydan doğar ama tarih değildir; olayı halkın gözünden ve abartarak anlatır.',
       ),
     ]),
     konu('trk10-mesnevi', 'Mesnevi ve Halk Hikâyesi', [
@@ -157,8 +298,25 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Beyit sayısı sınırsız olduğu için romanın işini görürdü: aşk, savaş, öğüt ve din konuları böyle anlatıldı.',
       ),
       kart(
+        'Öne çıkan mesneviler',
+        'Fuzuli’nin Leyla ile Mecnun’u, Şeyh Galib’in Hüsn ü Aşk’ı ve Mevlânâ’nın Mesnevi’si en çok anılanlar.',
+      ),
+      kart(
         'Halk hikâyesi',
         'Destanla roman arasında bir tür. Nazım ve nesir karışıktır; âşık, hikâyeyi sazıyla anlatır.',
+      ),
+      kart(
+        'Üç anlatı yan yana',
+        'Aynı işi gören üç tür farklı çevrelerde gelişti ve dilleri de birbirinden ayrıldı.',
+        {
+          tur: 'tablo',
+          basliklar: ['Tür', 'Çevre'],
+          satirlar: [
+            ['Destan', 'Sözlü, halk'],
+            ['Mesnevi', 'Divan, saray'],
+            ['Halk hikâyesi', 'Âşık geleneği'],
+          ],
+        },
       ),
       kart(
         'Fabl',
@@ -181,12 +339,32 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Arapça ve Farsça kuralların atılması, konuşma dilinin yazı dili yapılması amaçlandı.',
       ),
       kart(
+        'Üç ilke',
+        'Akım üç kararla tanımlanır ve üçü de bir öncekiyle hesaplaşır.',
+        {
+          tur: 'akis',
+          adimlar: [
+            { ad: 'Sade dil' },
+            { ad: 'Hece ölçüsü' },
+            { ad: 'Yerli konu' },
+          ],
+        },
+      ),
+      kart(
         'Ölçü ve konu',
         'Aruz yerine hece ölçüsü benimsendi; konular Anadolu’ya ve halkın hayatına döndü.',
       ),
       kart(
+        'Neden bu dönemde?',
+        'Savaşlar ve toprak kayıpları bir kimlik arayışı doğurdu; edebiyat da halka ve kendi diline döndü.',
+      ),
+      kart(
         'Temsilcileri',
         'Ömer Seyfettin, Ziya Gökalp, Mehmet Emin Yurdakul, Ali Canip Yöntem, Yakup Kadri, Halide Edip, Reşat Nuri.',
+      ),
+      kart(
+        'Servetifünun ile karşıtlığı',
+        'Servetifünun ağır dil ve bireysel konuları, Millî Edebiyat sade dil ve toplumsal konuları seçti.',
       ),
     ]),
     konu('trk10-milli-turler', 'Millî Edebiyatta Türler', [
@@ -203,8 +381,20 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Anadolu ilk kez romanın merkezine geçti. Çalıkuşu ve Yaban bu dönüşün örnekleridir.',
       ),
       kart(
+        'Anadolu’ya bakış',
+        'Yaban aydının halka uzaklığını, Çalıkuşu ise Anadolu’ya gitmeyi bir görev olarak anlatır. İkisi aynı sorunun iki yüzü.',
+      ),
+      kart(
+        'Tiyatro ve deneme',
+        'Millî konular sahneye de taşındı; gazete yazıları ve denemeler sadeleşmeyi geniş kitleye yaydı.',
+      ),
+      kart(
         'Edebiyat ve toplum',
         'Bu dönemde edebiyat, sanat kaygısının yanında toplumu biçimlendirme işini de üstlendi.',
+      ),
+      kart(
+        'Cumhuriyet’e miras',
+        'Sade dil ve Anadolu konusu Cumhuriyet dönemi edebiyatının çıkış noktası oldu; kopuş değil süreklilik var.',
       ),
     ]),
   ]),

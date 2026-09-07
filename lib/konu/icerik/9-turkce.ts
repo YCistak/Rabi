@@ -68,6 +68,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Redif dize sonundaki aynı görevdeki ek ya da sözcüktür. Redifin önündeki ses benzerliği uyaktır.',
         {
           tur: 'akis',
+          dikey: true,
           adimlar: [
             { ad: 'Önce redifi bul' },
             { ad: 'Kalanı karşılaştır' },

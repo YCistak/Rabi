@@ -101,9 +101,18 @@ describe('kart görselleri', () => {
 
     if (g.tur === 'akis') {
       expect(g.adimlar.length, 'tek adımlık akış akış değil').toBeGreaterThan(1)
-      /* Yatay sırada beş kutu 320 birimlik kutuya sığmıyor; uzunu dikey olmalı. */
-      if (!g.dikey)
+      /*
+        Yatay sırada beş kutu 320 birimlik kutuya sığmıyor; uzunu dikey olmalı.
+        Ad uzunluğu da sınırlı: kutular genişliği eşit paylaşıyor ve uzun bir
+        ad taşmıyor ama üç-dört satıra sarıyor — çizim o noktada bir şema
+        değil, kutulara bölünmüş bir paragraf oluyor. Sınır aşılırsa çözüm
+        adı kısaltmak ya da akışı `dikey` yapmak.
+      */
+      if (!g.dikey) {
         expect(g.adimlar.length, 'yatay akış en çok dört adım').toBeLessThanOrEqual(4)
+        for (const a of g.adimlar)
+          expect(a.ad.length, `yatay akış adımı uzun: ${a.ad}`).toBeLessThanOrEqual(17)
+      }
     }
 
     if (g.tur === 'katman') {

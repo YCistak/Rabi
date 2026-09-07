@@ -472,8 +472,10 @@ function Venn({ g }: { g: VennGorseli }) {
       <Yazi x={g.kapsayan ? sagX : sagX + 26} y={oy + 4} renk={renk('ikincil')} ortala>
         {g.sag}
       </Yazi>
+      {/* Kesişim yazısı halkaların **altında**: ortada dursaydı boyalı alanı
+          kapatır, kenarda dursaydı çemberin çizgisiyle çakışırdı. */}
       {g.kesisim && !g.kapsayan && (
-        <Yazi x={(solX + sagX) / 2} y={oy + 46} renk="var(--foreground)" ortala>
+        <Yazi x={(solX + sagX) / 2} y={oy + 66} renk="var(--foreground)" ortala>
           {g.kesisim}
         </Yazi>
       )}
@@ -497,56 +499,58 @@ function Akis({ g }: { g: AkisGorseli }) {
   */
   const dikey = g.dikey ?? false
   return (
-    <ol
-      className={
-        dikey ? 'flex flex-col items-stretch' : 'flex items-stretch gap-1.5 overflow-x-auto'
-      }
-    >
-      {g.adimlar.map((a, i) => (
-        <li
-          key={i}
-          className={
-            dikey ? 'flex flex-col items-center' : 'flex flex-1 items-center gap-1.5'
-          }
-        >
-          <div
-            className="w-full min-w-0 flex-1 rounded-xl px-2.5 py-2 text-center"
-            style={{
-              background: `color-mix(in srgb, ${renk(a.renk)} 14%, transparent)`,
-              borderLeft: `3px solid ${renk(a.renk)}`,
-            }}
+    <div>
+      <ol
+        className={
+          dikey ? 'flex flex-col items-stretch' : 'flex items-stretch gap-1.5'
+        }
+      >
+        {g.adimlar.map((a, i) => (
+          <li
+            key={i}
+            className={
+              dikey ? 'flex flex-col items-center' : 'flex min-w-0 flex-1 items-center gap-1'
+            }
           >
-            <span className="block text-[12.5px] leading-tight font-extrabold text-balance">
-              {a.ad}
-            </span>
-            {a.alt && (
-              <span className="mt-0.5 block text-[11px] leading-tight font-semibold text-muted-foreground">
-                {a.alt}
+            <div
+              className="w-full min-w-0 flex-1 rounded-xl px-2 py-2 text-center"
+              style={{
+                background: `color-mix(in srgb, ${renk(a.renk)} 14%, transparent)`,
+                borderLeft: `3px solid ${renk(a.renk)}`,
+              }}
+            >
+              <span className="block text-[12px] leading-tight font-extrabold text-balance">
+                {a.ad}
+              </span>
+              {a.alt && (
+                <span className="mt-0.5 block text-[10.5px] leading-tight font-semibold text-muted-foreground">
+                  {a.alt}
+                </span>
+              )}
+            </div>
+            {i < g.adimlar.length - 1 && (
+              <span
+                aria-hidden
+                className="shrink-0 text-[13px] leading-none font-extrabold text-muted-foreground"
+              >
+                {dikey ? '↓' : '→'}
               </span>
             )}
-          </div>
-          {(i < g.adimlar.length - 1 || g.donguSel) && (
-            <span
-              aria-hidden
-              className="shrink-0 text-[13px] leading-none font-extrabold text-muted-foreground"
-            >
-              {dikey ? '↓' : '→'}
-            </span>
-          )}
-        </li>
-      ))}
+          </li>
+        ))}
+      </ol>
+      {/*
+        Döngü, sonuna ilk adımın adı yeniden yazılarak gösteriliyordu ve o ad
+        yatay sıraya sığmıyordu: dört kutu zaten kartın genişliğini dolduruyor
+        ve beşinci öge çizimi kaydırma çubuğunun arkasına itiyordu. Satırın
+        altındaki tek cümle aynı şeyi yer kaplamadan söylüyor.
+      */}
       {g.donguSel && (
-        <li
-          className={
-            dikey
-              ? 'self-center text-[11px] font-extrabold text-muted-foreground'
-              : 'shrink-0 self-center text-[11px] font-extrabold text-muted-foreground'
-          }
-        >
-          {g.adimlar[0].ad}
-        </li>
+        <p className="mt-1.5 text-center text-[11px] font-extrabold text-muted-foreground">
+          ↻ {g.adimlar[0].ad} adımına döner
+        </p>
       )}
-    </ol>
+    </div>
   )
 }
 
