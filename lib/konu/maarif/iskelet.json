@@ -901,16 +901,16 @@
             }
           ],
           "anahtarKavramlar": [
-            "açık ve örtük ileti",
+            "açık ve örtük ileti",
             "çağrışım",
             "edebî dil",
             "gerçeklik",
-            "günlük dil",
-            "hayal gücü",
+            "günlük dil",
+            "hayal gücü",
             "imge",
             "kurmaca",
             "sembol",
-            "sürükleyicilik",
+            "sürükleyicilik",
             "yaratıcılık"
           ],
           "ogrenmeCiktilari": []
@@ -1084,17 +1084,17 @@
             "anlatım özellikleri (duruluk",
             "akıcılık",
             "yalınlık",
-            "özgünlük",
+            "özgünlük",
             "tutarlılık vb.)",
-            "anlatım teknikleri (geriye dönüş",
+            "anlatım teknikleri (geriye dönüş",
             "monolog",
             "diyalog vb.)",
-            "düşünceyi geliştirme yolları (tanımlama",
+            "düşünceyi geliştirme yolları (tanımlama",
             "karşılaştırma vb.)",
             "edebî dil",
             "öğretici metin",
             "tenkit",
-            "üslup"
+            "üslup"
           ],
           "ogrenmeCiktilari": []
         }
@@ -1150,10 +1150,10 @@
             "gelenek",
             "kurmaca",
             "masal anlatıcısı",
-            "masalın bölümleri",
-            "olağanüstülük",
+            "masalın bölümleri",
+            "olağanüstülük",
             "ritim",
-            "sözlü kültür",
+            "sözlü kültür",
             "varyant",
             "yapı unsurları (olay",
             "kişiler",
@@ -1206,14 +1206,14 @@
             }
           ],
           "anahtarKavramlar": [
-            "açık ve örtük ileti",
+            "açık ve örtük ileti",
             "ahenk unsurları",
             "aruz",
             "beyit",
             "gerçeklik",
             "imge",
             "kafiye",
-            "ölçü",
+            "ölçü",
             "ritim",
             "sembol (simge)"
           ],
@@ -1265,15 +1265,15 @@
           "anahtarKavramlar": [
             "anlatım biçimleri",
             "destan",
-            "didaktik üslup",
+            "didaktik üslup",
             "doğal destan",
             "fabl",
             "halk hikâyesi",
             "kurmaca",
             "mesnevi",
             "motif",
-            "olağanüstülük",
-            "sözlü gelenek",
+            "olağanüstülük",
+            "sözlü gelenek",
             "yapma destan"
           ],
           "ogrenmeCiktilari": []
@@ -1322,16 +1322,16 @@
             }
           ],
           "anahtarKavramlar": [
-            "açık ve örtük ileti",
+            "açık ve örtük ileti",
             "değişim",
             "dönem",
             "hikâye",
             "kurmaca",
             "millî bilinç",
             "millî edebiyat",
-            "olağanüstülük",
+            "olağanüstülük",
             "roman",
-            "sözlü kültür",
+            "sözlü kültür",
             "şiir",
             "yaşantı",
             "yenilik"
@@ -1418,7 +1418,7 @@
               "ad": null,
               "altKonular": [
                 {
-                  "ad": "Temel ve Türetilmiş Nicelikler",
+                  "ad": "Temel ve Türetilmiş Nicelikler",
                   "ayrinti": null
                 }
               ]
@@ -1454,7 +1454,7 @@
               "ad": null,
               "altKonular": [
                 {
-                  "ad": "Hareket ve Hareket Türleri",
+                  "ad": "Hareket ve Hareket Türleri",
                   "ayrinti": null
                 }
               ]
@@ -1751,7 +1751,7 @@
               "ad": null,
               "altKonular": [
                 {
-                  "ad": "İş, Enerji ve Güç",
+                  "ad": "İş, Enerji ve Güç",
                   "ayrinti": null
                 }
               ]
@@ -1964,7 +1964,7 @@
               "ad": null,
               "altKonular": [
                 {
-                  "ad": "Dalgaların Yayılma Süratini Etkileyen Etmenler",
+                  "ad": "Dalgaların Yayılma Süratini Etkileyen Etmenler",
                   "ayrinti": null
                 }
               ]
@@ -2106,7 +2106,7 @@
             "izoelektronik",
             "kimya bilimi",
             "kimyasal madde",
-            "küresel simetri",
+            "küresel simetri",
             "orbital",
             "Pauli dışlama ilkesi",
             "valans elektron"
@@ -2114,7 +2114,7 @@
           "ogrenmeCiktilari": [
             {
               "kod": "KİM.9.1.1",
-              "metin": "Kimya biliminin günlük hayata katkısına ilişkin bilimsel çıkarım yapabilme"
+              "metin": "Kimya biliminin günlük hayata katkısına ilişkin bilimsel çıkarım yapabilme"
             },
             {
               "kod": "KİM.9.1.2",
@@ -2130,19 +2130,19 @@
             },
             {
               "kod": "KİM.9.1.5",
-              "metin": "Elektronların atom orbitallerine yerleşimine ilişkin tümevarımsal akıl yürütebilme"
+              "metin": "Elektronların atom orbitallerine yerleşimine ilişkin tümevarımsal akıl yürütebilme"
             },
             {
               "kod": "KİM.9.1.6",
-              "metin": "Elementlerin periyodik tablodaki yerlerine ilişkin tümevarımsal akıl yürütebilme"
+              "metin": "Elementlerin periyodik tablodaki yerlerine ilişkin tümevarımsal akıl yürütebilme"
             },
             {
               "kod": "KİM.9.1.7",
-              "metin": "İyon oluşumuna ilişkin tümevarımsal akıl yürütebilme"
+              "metin": "İyon oluşumuna ilişkin tümevarımsal akıl yürütebilme"
             },
             {
               "kod": "KİM.9.1.8",
-              "metin": "Elementlerin periyodik özelliklerinin periyodik tablodaki değişimini çözümleyebilme"
+              "metin": "Elementlerin periyodik özelliklerinin periyodik tablodaki değişimini çözümleyebilme"
             }
           ]
         },

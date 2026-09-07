@@ -33,9 +33,20 @@ type IskeletDers = Iskelet['dersler'][keyof Iskelet['dersler']]
  */
 const KONU_LISTESI_DENETLENMEYEN: KonuDersId[] = ['turkce']
 
-/** Karşılaştırma öncesi ad sadeleştirme: büyük harf, kesme ve noktalama fark etmez. */
+/**
+ * Karşılaştırma öncesi ad sadeleştirme: büyük harf, kesme ve noktalama fark etmez.
+ *
+ * `normalize('NFC')` süs değil: iskelet PDF'ten üretilen bir sayfadan
+ * çekiliyor ve bir süre birleşik (NFD) harfler taşıdı — "ü", "u" artı ayrı
+ * bir aksan işareti. Aşağıdaki noktalama temizliği o işareti boşluğa
+ * çeviriyor ve "üslup" karşılaştırmaya "u slup" olarak giriyordu. Test bunu
+ * yakalamadı çünkü kalan kelimeler örtüşme eşiğini dolduruyordu; yani
+ * bozulma denetimin kendi içinde yaşadı. Kaynak `maarif-cek.mjs` içinde
+ * düzeltildi, bu satır ikinci kapı.
+ */
 const sadelestir = (metin: string) =>
   metin
+    .normalize('NFC')
     .toLocaleLowerCase('tr')
     .replace(/[’'"]/g, '')
     .replace(/[^a-zçğıöşü0-9 ]/g, ' ')

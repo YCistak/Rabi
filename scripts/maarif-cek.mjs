@@ -54,10 +54,21 @@ const DUZELTMELER = {
   ],
 }
 
+/*
+  Gelen metin **NFC'ye çevriliyor**: program sayfası PDF'ten üretildiği için
+  bazı Türkçe harfler birleşik (NFD) geliyor — "ü", "u" artı ayrı bir çift
+  nokta işareti olarak yazılmış. Göze aynı görünüyor ama karakter dizisi
+  farklı ve harf temelli her karşılaştırma sessizce bozuluyor:
+  `maarif.test.ts`in sadeleştirmesi aksan işaretini boşluğa çevirip "üslup"u
+  "u slup" yapıyordu. Test bunu yakalamadı çünkü örtüşme eşiği kalan
+  kelimelerle doluyordu — yani bozulma denetimin **içinde** yaşıyordu.
+  Çevirim burada, tek kapıda: aşağıdaki ayrıştırma kurallarının hepsi bu
+  metni okuyor.
+*/
 const al = async (yol) => {
   const cevap = await fetch(`${KOK}${yol}`)
   if (!cevap.ok) throw new Error(`${yol} → HTTP ${cevap.status}`)
-  return cevap.text()
+  return (await cevap.text()).normalize('NFC')
 }
 
 /**
