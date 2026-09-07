@@ -6,6 +6,7 @@ import type { Konu } from '@/lib/konu'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
 import { Buton } from '@/components/ui'
+import { KartGorseli } from './kart-gorseli'
 
 /**
  * Bilgi kartı destesi.
@@ -143,7 +144,12 @@ export function KartDestesi({
       </header>
 
       <div className="flex min-h-0 flex-1 flex-col px-4 pb-[calc(1rem+var(--guvenli-alt))]">
-        <div className="mx-auto flex w-full max-w-md flex-1 items-center">
+        {/*
+          Kutu **kaydırılabilir**: görselli kartlar yazıdan uzun ve kısa bir
+          telefonda alt kenardan taşıyordu. `items-center` yalnızca sığan
+          kartı ortalıyor; sığmayan kart yukarıdan başlayıp kaydırılıyor.
+        */}
+        <div className="mx-auto flex w-full max-w-md flex-1 items-center overflow-y-auto overscroll-contain">
           <article
             /* `key` sıraya bağlı: React aynı düğümü yeniden kullanırsa yazı
                  değişir ama giriş animasyonu hiç oynamaz ve kart yerinde takas
@@ -172,6 +178,7 @@ export function KartDestesi({
               <p className="mt-3 text-[16.5px] leading-relaxed font-medium text-pretty">
                 {kart.metin}
               </p>
+              {kart.gorsel && <KartGorseli gorsel={kart.gorsel} etiket={kart.baslik} />}
             </div>
           </article>
         </div>
