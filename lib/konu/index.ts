@@ -14,7 +14,23 @@ import { matematik10 } from './icerik/10-matematik'
 import { tarih10 } from './icerik/10-tarih'
 import { turkce10 } from './icerik/10-turkce'
 
-export type { BilgiKarti, DersProgrami, Konu, KonuDersId, KonuSinifi, SoruKarti, Tema } from './tip'
+export type {
+  AkisGorseli,
+  BilgiKarti,
+  DersProgrami,
+  Gorsel,
+  KartRenk,
+  KatmanGorseli,
+  Konu,
+  KonuDersId,
+  KonuSinifi,
+  KoordinatGorseli,
+  SayiDogrusuGorseli,
+  SoruKarti,
+  TabloGorseli,
+  Tema,
+  VennGorseli,
+} from './tip'
 
 /**
  * Ders ailesi — renk kimliği.

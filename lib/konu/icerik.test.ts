@@ -12,8 +12,15 @@ import type { DersProgrami } from './tip'
  */
 const BASLIK_SINIRI = 44
 const METIN_SINIRI = 240
-/** Bir konu bu kadar karttan uzunsa kullanıcı desteyi yarıda bırakıyor. */
-const KART_SINIRI = 8
+/**
+ * Bir konu bu kadar karttan uzunsa kullanıcı desteyi yarıda bırakıyor.
+ *
+ * Sınır sekizdi ve konunun büyüklüğüne bakmıyordu: "Üslü ve Köklü
+ * Gösterimler" ile "Sonsuz Uç" aynı sayıda kart alıyordu. Ona çıkarıldı ama
+ * bu bir hedef değil **tavan** — kart sayısını konunun kendi genişliği
+ * belirliyor, tavanı doldurmak için kart yazmak desteyi uzatır.
+ */
+const KART_SINIRI = 10
 
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.map(
