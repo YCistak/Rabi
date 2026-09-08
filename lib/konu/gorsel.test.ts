@@ -20,21 +20,25 @@ const ETIKET_SINIRI = 24
 /** Tablo hücresi iki satıra sığmalı — üç sütunda kutu zaten dar. */
 const HUCRE_SINIRI = 30
 
-const gorselliKartlar: [string, BilgiKarti & { gorsel: Gorsel }][] = KONU_SINIFLARI.flatMap(
-  (sinif) =>
-    KONU_DERSLERI.flatMap((ders) =>
-      tumKonular(programBul(ders.id, sinif)!).flatMap((konu) =>
-        konu.kartlar
-          .filter((k): k is BilgiKarti & { gorsel: Gorsel } => k.gorsel !== undefined)
-          .map(
-            (k) =>
-              [`${sinif}-${ders.id} · ${konu.ad} · ${k.baslik}`, k] as [
-                string,
-                BilgiKarti & { gorsel: Gorsel },
-              ],
-          ),
-      ),
-    ),
+/*
+  Soru görselleri de aynı denetimden geçiyor: ikisini tek bir bileşen çiziyor
+  (`kart-gorseli.tsx`), yani bir çizimi bozan şey hangi ekranda durduğuna
+  bakmıyor. Ayrı iki liste, kuralların yalnızca birine uygulanması demekti.
+*/
+const gorselliKartlar: [string, { gorsel: Gorsel }][] = KONU_SINIFLARI.flatMap((sinif) =>
+  KONU_DERSLERI.flatMap((ders) =>
+    tumKonular(programBul(ders.id, sinif)!).flatMap((konu) => {
+      const kartlar = konu.kartlar
+        .filter((k): k is BilgiKarti & { gorsel: Gorsel } => k.gorsel !== undefined)
+        .map((k) => [`${sinif}-${ders.id} · ${konu.ad} · ${k.baslik}`, k] as const)
+      const sorular = konu.sorular
+        .filter((s): s is typeof s & { gorsel: Gorsel } => s.gorsel !== undefined)
+        .map((s) => [`${sinif}-${ders.id} · ${konu.ad} · soru: ${s.ifade}`, s] as const)
+      return [...kartlar, ...sorular].map(
+        ([ad, x]) => [ad, x] as [string, { gorsel: Gorsel }],
+      )
+    }),
+  ),
 )
 
 describe('kart görselleri', () => {

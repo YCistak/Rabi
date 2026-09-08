@@ -1374,40 +1374,26 @@
 }
 
 /*
-  Kartın çevrilmesi. İki yüz üst üste duruyor, arkadaki yarım tur çevrili
-  başlıyor; çeviren şey kapsayıcının dönmesi. Soru ile cevabı aynı yüzde
-  değiştirmek de mümkündü ama o zaman "çevirdim" değil "yazı değişti" görünüyor
-  ve kartın arkası diye bir şey olmuyordu.
+  Karardan sonra çıkan gerekçe şeridi.
+
+  Yerinde beliren bir metin, karardan **önce** de orada duruyormuş gibi
+  okunuyordu; aşağıdan kayarak gelmesi onu kararın karşılığı yapıyor.
 */
-.soru-ic {
-  transform-style: preserve-3d;
-  transition: transform 460ms cubic-bezier(0.2, 0.7, 0.3, 1);
+@keyframes soruGerekce {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
 }
 
-.soru-ic.cevrik {
-  transform: rotateY(180deg);
-}
-
-.soru-yuz {
-  backface-visibility: hidden;
-  /* WebView'ın eski sürümleri ön ekli biçimi istiyor; onsuz iki yüz birden
-     görünüyor ve arkadaki yazı aynadaki gibi okunuyor. */
-  -webkit-backface-visibility: hidden;
-}
-
-.soru-yuz-arka {
-  transform: rotateY(180deg);
+.soru-gerekce {
+  animation: soruGerekce 220ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* Deste kartı yerinde beliriyor, cevap dönmeden geliyor: buradaki hareketin
-     hiçbiri bilgi taşımıyor — hangi kartta olunduğu bölmeli çubukta, hangi
-     yüzde olunduğu kartın kendi etiketinde ("SORU" / "CEVAP") yazılı. */
-  .deste-karti {
+  /* Deste kartı ve gerekçe yerinde beliriyor: buradaki hareketin hiçbiri bilgi
+     taşımıyor — hangi kartta olunduğu bölmeli çubukta, kararın sonucu ise
+     şeridin kendi rengiyle ve simgesiyle yazılı. */
+  .deste-karti,
+  .soru-gerekce {
     animation: none;
-  }
-
-  .soru-ic {
-    transition: none;
   }
 }

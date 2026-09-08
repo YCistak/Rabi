@@ -1,4 +1,4 @@
-import { kart, konu, program, tema } from '../tip'
+import { kart, konu, program, soru, tema } from '../tip'
 
 /**
  * 9. sınıf Tarih — Maarif Modeli.
@@ -38,6 +38,11 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
         'Kötüye kullanımı',
         'Geçmiş, bugünün siyasi iddiasını haklı çıkarmak için seçilerek anlatılabilir. Tarih bilgisi bunun panzehiridir.',
       ),
+    ], [
+      soru('Tarih, geçmişteki olayların birebir tekrar edeceğini gösterir.', false, 'Olaylar aynen tekrarlanmaz; benzer koşullar benzer sonuçlar üretebilir.'),
+      soru('Tarih bilgisi, kişinin ait olduğu topluluğu tanımasına katkı sağlar.', true, 'Ortak geçmiş, kimlik ve aidiyet duygusunun kaynaklarından biri.'),
+      soru('Tarihî empati, geçmişteki insanları kendi dönemlerinin koşulları içinde anlamaktır.', true, 'Bugünün ölçüleriyle yargılamak, olayı anlamayı engelliyor.'),
+      soru('Tarih hiçbir zaman siyasi amaçlarla kullanılmaz.', false, 'Seçilmiş olaylarla kurulan anlatılar tarihin kötüye kullanımına örnek.'),
     ]),
     konu('trh9-doga', 'Tarihin Doğası', [
       kart(
@@ -77,6 +82,11 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
         'Takvimler',
         'Toplumlar kendi başlangıç noktalarını seçti: Hicrî takvim ay yılına, Miladî takvim güneş yılına dayanır.',
       ),
+    ], [
+      soru('Tarihî olaylar laboratuvarda deney yapılarak sınanabilir.', false, 'Olay bir kez yaşandı ve tekrarlanamıyor; tarihçi kaynaklara dayanmak zorunda.'),
+      soru('Tarihî bir olay incelenirken yer ve zaman belirtilmek zorundadır.', true, 'Yeri ve zamanı olmayan bir anlatı tarih değil.'),
+      soru('Yazının bulunuşu, tarih öncesi çağların sonu kabul edilir.', true, 'Yazılı kaynakla birlikte tarihî çağlar başlıyor.'),
+      soru('Tarihçi kaynakları seçerken kendi bakış açısından hiç etkilenmez.', false, 'Nesnellik hedeftir ama hangi kaynağın öne çıkacağı bir seçim.'),
     ]),
     konu('trh9-uretim', 'Tarihsel Bilginin Üretim Süreci', [
       kart(
@@ -125,6 +135,11 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
         'Tarih yazımı değişir',
         'Yeni belge bulunduğunda ya da yeni sorular sorulduğunda aynı dönem yeniden yazılır.',
       ),
+    ], [
+      soru('Olayın yaşandığı dönemden kalan belgelere birinci elden kaynak denir.', true, 'Sonradan yazılanlar ikinci elden kaynak sayılıyor.'),
+      soru('Kaynak eleştirisi, belgenin gerçekliğini ve güvenilirliğini sorgular.', true, 'Belge sahte olabilir ya da yazan taraflı olabilir.'),
+      soru('Sikkeleri inceleyen yardımcı bilim paleografyadır.', false, 'Sikkeleri nümizmatik inceler; paleografya eski yazıların bilimi.'),
+      soru('Bir olay hakkındaki tarih yazımı, yeni belgeler bulunsa da değişmez.', false, 'Yeni kaynak, kurulmuş anlatıyı değiştirebiliyor.'),
     ]),
     konu('trh9-dijital', 'Tarih Araştırma ve Yazımında Dijitalleşme', [
       kart(
@@ -151,6 +166,11 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
         'Dijital kaybolma',
         'Kâğıt yüzyıllar dayanır; dosya biçimleri ve diskler onlarca yılda okunamaz hâle gelebilir.',
       ),
+    ], [
+      soru('Dijitalleşme, arşiv belgelerine uzaktan erişimi kolaylaştırmıştır.', true, 'Başka ülkedeki bir arşiv artık ekrandan taranabiliyor.'),
+      soru('İnternette bulunan her tarihî görsel ve belge doğrudur.', false, 'Kaynağı belirsiz ya da üretilmiş içerikler de dolaşımda; doğrulama şart.'),
+      soru('Dijital ortamdaki veriler hiçbir zaman kaybolmaz.', false, 'Kapanan siteler ve eskiyen dosya biçimleri yüzünden dijital kayıp gerçek bir sorun.'),
+      soru('Dijital sergiler, müzeye gidemeyenlerin esere ulaşmasını sağlar.', true, 'Erişimi genişletiyor ama eserin kendisinin yerini tutmuyor.'),
     ]),
   ]),
   tema('trh9-t2', 'Eski Çağ Medeniyetleri', [
@@ -194,6 +214,24 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
         'Anadolu’dan izler',
         'Göbeklitepe ve Çatalhöyük, bu geçiş döneminin dünyaca önemli merkezleridir.',
       ),
+    ], [
+      soru(
+        'Şemaya göre yazı, artı ürün ortaya çıkmadan önce bulunmuştur.',
+        false,
+        'Sıra tersine: artı ürün kayıt tutmayı gerektirdi ve yazı bu ihtiyaçtan doğdu.',
+        {
+          tur: 'akis',
+          adimlar: [
+            { ad: 'Tarım' },
+            { ad: 'Yerleşik hayat' },
+            { ad: 'Artı ürün' },
+            { ad: 'Yazı' },
+          ],
+        },
+      ),
+      soru('Tarım devrimiyle insanlar avcı-toplayıcı yaşamdan yerleşik yaşama geçti.', true, 'Ekilen toprağın başında kalmak gerekiyordu.'),
+      soru('Artı ürün, ticaretin ve meslek çeşitliliğinin ortaya çıkmasını sağladı.', true, 'Herkesin besin üretmesi gerekmeyince başka işler doğdu.'),
+      soru('Tarıma geçişle birlikte özel mülkiyet kavramı ortadan kalktı.', false, 'Toprak ve ürün üzerindeki mülkiyet tam da bu dönemde doğdu.'),
     ]),
     konu('trh9-yonetim', 'Eski Çağ Medeniyetlerinde Yönetim ve Ordu', [
       kart(
@@ -224,6 +262,11 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
         'Ordunun beslenmesi',
         'Sürekli ordu artı ürüne bağlıdır. Vergi düzeni bozulan devletin ordusu da kısa sürede çözülürdü.',
       ),
+    ], [
+      soru('Teokratik yönetimde siyasi güç dinî inanışa dayandırılır.', true, 'Yönetenin yetkisi tanrısal bir kaynaktan geliyor sayılıyordu.'),
+      soru('Atina daki doğrudan demokraside kadınlar ve köleler de oy kullanırdı.', false, 'Yalnızca yurttaş sayılan özgür erkekler katılabiliyordu.'),
+      soru('Sparta askerî temele dayanan bir toplum ve yönetim düzeni kurmuştur.', true, 'Eğitim de yönetim de asker yetiştirmeye göre kurulmuştu.'),
+      soru('Roma tarihi boyunca yalnızca cumhuriyetle yönetilmiştir.', false, 'Krallık, cumhuriyet ve imparatorluk dönemlerinden geçti.'),
     ]),
     konu('trh9-hukuk', 'Eski Çağ Medeniyetlerinde Hukuk', [
       kart(
@@ -258,6 +301,11 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
         'Ortak yön',
         'Yasanın yazılı olması, hukuku hükümdarın ağzından çıkarıp herkesin bilebileceği bir ölçüye çevirdi.',
       ),
+    ], [
+      soru('Bilinen ilk yazılı kanunlar Mezopotamya da ortaya çıkmıştır.', true, 'Urgakina kanunları bilinen en eski örneklerden.'),
+      soru('Hammurabi kanunları kısasa kısas anlayışını benimsemiştir.', true, 'Ceza, işlenen suçun aynısıyla karşılık buluyordu.'),
+      soru('Hitit kanunları, Hammurabi kanunlarına göre daha ağır cezalar içerir.', false, 'Hitit hukuku daha çok tazminat esaslı, yani daha yumuşak.'),
+      soru('Roma hukuku günümüz hukuk sistemlerini etkilememiştir.', false, 'Avrupa hukukunun temel kavramlarının çoğu oradan geliyor.'),
     ]),
     konu('trh9-inanc', 'Eski Çağ’da İnançlar, Bilim ve Sanat', [
       kart(
@@ -288,6 +336,11 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
         'Sanat',
         'Anıtsal yapılar (piramit, zigurat, tapınak) hem inancın hem gücün gösterisiydi.',
       ),
+    ], [
+      soru('Mısır da geometrinin gelişmesinde Nil taşkınlarından sonra tarla sınırlarının yeniden ölçülmesi etkili olmuştur.', true, 'İhtiyaç, bilgiyi doğuran sebeplerden biri.'),
+      soru('Eski Çağ da bütün toplumlar tek tanrılı inanca sahipti.', false, 'Çok tanrılı inançlar yaygındı; tek tanrılı inanışlar daha sınırlı topluluklardaydı.'),
+      soru('Ölümden sonraki yaşam inancı Mısır da mumyalama geleneğine yol açmıştır.', true, 'Bedenin korunması, sonraki yaşam için gerekli görülüyordu.'),
+      soru('Eski Çağ da bilim ile din birbirinden tümüyle ayrılmıştı.', false, 'Gök gözlemleri ve takvim gibi bilgiler çoğu zaman tapınakların işiydi.'),
     ]),
     konu('trh9-konargocer', 'Türklerde Konargöçer Yaşam', [
       kart(
@@ -329,6 +382,11 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
         'Yerleşiklerle ilişki',
         'Bozkır ile tarım havzası birbirini besledi: göçebe hayvan ve at, yerleşik tahıl ve kumaş verdi.',
       ),
+    ], [
+      soru('Konargöçer yaşamda temel geçim kaynağı hayvancılıktır.', true, 'Sürünün otlak ihtiyacı yaşam biçimini belirliyordu.'),
+      soru('Konargöçerlik, yılın her mevsimini aynı yerde geçirmek demektir.', false, 'Yazlak ve kışlak arasında belirli bir düzenle gidip geliniyor; başıboş bir gezinme değil.'),
+      soru('Kut anlayışına göre yönetme yetkisi Tanrı tarafından verilir.', true, 'Yetki hükümdara verilmiş sayılıyor, ailenin erkek üyelerine geçiyordu.'),
+      soru('Konargöçer toplumda ordu ayrı bir meslek grubudur.', false, 'Halkın tamamı gerektiğinde asker; ordu-millet anlayışı buradan geliyor.'),
     ]),
   ]),
   tema('trh9-t3', 'Orta Çağ Medeniyetleri', [
@@ -367,6 +425,11 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
         'Göç tek yönlü değil',
         'Gelen topluluk yerleşiği değiştirdiği kadar kendisi de değişir. Kültür alışverişi her zaman iki yönlüdür.',
       ),
+    ], [
+      soru('Kavimler Göçü, Avrupa nın siyasi haritasının değişmesine yol açtı.', true, 'Yeni krallıklar kuruldu, Roma ikiye ayrıldı.'),
+      soru('Göçlerin sebepleri arasında iklim değişiklikleri ve otlak yetersizliği vardır.', true, 'Nüfus baskısı ve dış saldırılar da göçü tetikleyen sebepler.'),
+      soru('Kavimler Göçü sonucunda Roma İmparatorluğu güçlenmiştir.', false, 'Tersine, ikiye ayrılmasında ve Batı Roma nın yıkılışında etkili oldu.'),
+      soru('Göç eden topluluklar gittikleri yerin kültürünü etkilemez.', false, 'Etkileşim iki yönlü: hem etkilerler hem etkilenirler.'),
     ]),
     konu('trh9-devletler', 'Orta Çağ Devletlerinde Yönetim ve Ordu', [
       kart(
@@ -407,6 +470,24 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
         'Ordu yapıları',
         'Avrupa’da şövalye, Bizans’ta tema askeri, İslam dünyasında gulam ve ikta askerleri.',
       ),
+    ], [
+      soru(
+        'Feodal düzende toprağı işleyen köylüler piramidin en üstünde yer alır.',
+        false,
+        'Köylüler en altta; üstte kral ve toprağı ondan alan soylular bulunuyor.',
+        {
+          tur: 'katman',
+          katmanlar: [
+            { ad: 'Kral' },
+            { ad: 'Soylular' },
+            { ad: 'Şövalyeler' },
+            { ad: 'Köylüler' },
+          ],
+        },
+      ),
+      soru('İkta sisteminde toprağın geliri, karşılığında asker yetiştirmek üzere görevlilere bırakılır.', true, 'Toprağın mülkiyeti devlette kalıyor.'),
+      soru('Bizans ta imparator hem siyasi hem dinî otoriteye sahiptir.', true, 'Kilise üzerinde de söz sahibiydi.'),
+      soru('Feodalitede kralın merkezî otoritesi güçlüdür.', false, 'Toprak ve askerî güç soyluların elinde; kralın otoritesi zayıftır.'),
     ]),
     konu('trh9-ticaret', 'Orta Çağ’daki Ticaret Yolları', [
       kart(
@@ -446,6 +527,11 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
         'Yolun taşıdığı başka şeyler',
         'Veba salgını da ticaret yollarını izleyerek yayıldı; 14. yüzyılda Avrupa nüfusunun büyük kısmını yok etti.',
       ),
+    ], [
+      soru('İpek Yolu, Çin den Avrupa ya uzanan bir ticaret ağıdır.', true, 'Tek bir yol değil, birbirine bağlanan güzergâhlardan oluşuyordu.'),
+      soru('Ticaret yolları yalnızca mal taşımış, düşünce ve inançların yayılmasında rol oynamamıştır.', false, 'Kervanlarla birlikte din, teknoloji ve hastalıklar da yayıldı.'),
+      soru('Kervansaraylar tüccarların konaklamasını ve güvenliğini sağlardı.', true, 'Yol güvenliği ticaretin sürmesinin şartıydı.'),
+      soru('Baharat Yolu, kürk ticareti için kullanılan kuzey güzergâhıdır.', false, 'Kürk Yolu kuzeyde; Baharat Yolu Hindistan ve Güneydoğu Asya ya uzanıyordu.'),
     ]),
     konu('trh9-medeniyet', 'Orta Çağ’da Bilim, Kültür ve Sanat', [
       kart(
@@ -486,6 +572,11 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
         'Sanat',
         'Mimaride kubbe, kemer ve çini; Avrupa’da romanesk ve gotik üsluplar. İnanç, sanatın başlıca konusuydu.',
       ),
+    ], [
+      soru('Kâğıt üretimi Çin den İslam dünyasına, oradan Avrupa ya yayılmıştır.', true, 'Bilginin çoğaltılması bu yolculukla ucuzladı.'),
+      soru('Medreseler Orta Çağ İslam dünyasının eğitim kurumlarıdır.', true, 'Dinî bilimlerin yanında matematik ve tıp da okutuluyordu.'),
+      soru('İbn Sina ve Biruni nin eserleri Avrupa da hiç tanınmamıştır.', false, 'Latinceye çevrildiler ve yüzyıllarca ders kitabı olarak okutuldular.'),
+      soru('Orta Çağ da bilgi tek bir merkezde üretilmiş, aktarım yaşanmamıştır.', false, 'Çeviri hareketleri ve ticaret yollarıyla bilgi sürekli yer değiştirdi.'),
     ]),
   ]),
 ])

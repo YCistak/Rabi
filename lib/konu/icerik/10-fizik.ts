@@ -1,4 +1,4 @@
-import { kart, konu, program, tema } from '../tip'
+import { kart, konu, program, soru, tema } from '../tip'
 
 /**
  * 10. sınıf Fizik — Maarif Modeli.
@@ -80,6 +80,30 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Ortalama hız',
         'Toplam yer değiştirmenin toplam zamana bölümü. Anlık hızların ortalaması değildir; ikisi çoğu zaman farklı çıkar.',
       ),
+    ], [
+      soru(
+        'Konum-zaman grafiğinin eğimi cismin hızını verir.',
+        true,
+        'Eğim, yer değiştirmenin zamana oranı; bu da hızın tanımı.',
+        {
+          tur: 'koordinat',
+          pencere: [0, 5, 0, 10],
+          xAd: 'zaman (s)',
+          yAd: 'konum (m)',
+          egriler: [
+            {
+              noktalar: [
+                [0, 0],
+                [4, 8],
+              ],
+              kirik: true,
+            },
+          ],
+        },
+      ),
+      soru('Sabit hızlı harekette hız-zaman grafiği zaman eksenine paralel bir doğrudur.', true, 'Hız değişmediği için çizgi yatay kalıyor.'),
+      soru('Hız-zaman grafiğinde çizginin altında kalan alan ivmeyi verir.', false, 'Alan alınan yolu verir; ivmeyi eğim gösterir.'),
+      soru('Ortalama hız, hızların toplamının ikiye bölünmesiyle bulunur.', false, 'Toplam yer değiştirmenin toplam zamana bölümüdür.'),
     ]),
     konu('fzk10-sabit-ivme', 'Bir Boyutta Sabit İvmeli Hareket', [
       kart(
@@ -148,6 +172,30 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Düşey atış',
         'Yukarı atılan cisim en yüksek noktada bir an durur ama ivmesi hâlâ aşağı yönlüdür ve büyüklüğü değişmez.',
       ),
+    ], [
+      soru('Yavaşlayan bir cismin ivmesi, hızıyla zıt yöndedir.', true, 'İvme hızla aynı yöndeyse cisim hızlanır.'),
+      soru(
+        'Grafikteki hareketin ivmesi sabittir.',
+        true,
+        'Hız-zaman grafiği doğru; eğimi değişmiyor, yani ivme sabit.',
+        {
+          tur: 'koordinat',
+          pencere: [0, 5, 0, 10],
+          xAd: 'zaman (s)',
+          yAd: 'hız (m/s)',
+          egriler: [
+            {
+              noktalar: [
+                [0, 2],
+                [4, 10],
+              ],
+              kirik: true,
+            },
+          ],
+        },
+      ),
+      soru('Yukarı atılan bir cismin en yüksek noktada ivmesi sıfırdır.', false, 'Hız orada sıfır olur ama ivme hâlâ yer çekimi ivmesi kadardır.'),
+      soru('Sabit ivmeli harekette konum-zaman grafiği bir doğrudur.', false, 'Konum-zaman grafiği parabol biçiminde; doğru olan hız-zaman grafiği.'),
     ]),
   ]),
   tema('fzk10-t2', 'Enerji', [
@@ -185,6 +233,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Verim',
         'Alınan enerjinin ne kadarının işe dönüştüğü. Hiçbir makinede yüzde yüz değildir; kalan kısım ısıya gider.',
       ),
+    ], [
+      soru('Kuvvet uygulanmasına rağmen cisim yer değiştirmiyorsa yapılan iş sıfırdır.', true, 'Fizikte iş, kuvvet ile yer değiştirmenin çarpımı.'),
+      soru('Kuvvet ile yer değiştirme birbirine dikse yapılan iş sıfırdır.', true, 'Kuvvetin hareket doğrultusundaki bileşeni yok.'),
+      soru('Güç, yapılan işin büyüklüğüdür.', false, 'Güç işin yapılma hızı: iş bölü zaman.'),
+      soru('Verimi %100 olan bir makine yapılabilir.', false, 'Verilen enerjinin bir kısmı sürtünme ve ısı olarak kaybediliyor.'),
     ]),
     konu('fzk10-enerji-bicim', 'Enerji Biçimleri', [
       kart(
@@ -220,6 +273,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Enerjinin korunumu',
         'Enerji yoktan var olmaz, yok olmaz; yalnızca biçim değiştirir. Toplam enerji sabit kalır.',
       ),
+    ], [
+      soru('Kinetik enerji hızın karesiyle orantılıdır.', true, 'Bu yüzden hız iki katına çıkınca enerji dört katına çıkıyor.'),
+      soru('Hızı iki katına çıkan bir cismin kinetik enerjisi de iki katına çıkar.', false, 'Dört katına çıkar; enerji hızın karesine bağlı.'),
+      soru('Potansiyel enerji cismin konumundan kaynaklanır.', true, 'Yerden yüksekliği ya da yayın sıkışma miktarı belirliyor.'),
+      soru('Enerji dönüşümlerinde toplam enerji azalır.', false, 'Toplam enerji korunur; yalnızca biçim değiştirir.'),
     ]),
     konu('fzk10-mekanik', 'Mekanik Enerji', [
       kart(
@@ -255,6 +313,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Yol fark etmez',
         'Sürtünmesiz bir kaydırakta son hız, yolun eğimine değil yalnızca yükseklik farkına bağlıdır.',
       ),
+    ], [
+      soru('Mekanik enerji, kinetik ve potansiyel enerjilerin toplamıdır.', true, 'Sürtünmesiz ortamda bu toplam sabit kalıyor.'),
+      soru('Sürtünmesiz bir ortamda mekanik enerji korunur.', true, 'Biri azalırken öteki aynı oranda artıyor.'),
+      soru('Sürtünmeli ortamda mekanik enerji yok olur.', false, 'Isıya dönüşür; enerji yok olmaz, mekanik enerji olmaktan çıkar.'),
+      soru('Sürtünmesiz eğik düzlemde cismin yere ulaştığı andaki hızı, izlediği yola bağlıdır.', false, 'Yalnızca düştüğü yükseklik belirler.'),
     ]),
     konu('fzk10-kaynak', 'Enerji Kaynakları', [
       kart(
@@ -294,6 +357,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Tasarruf da bir kaynaktır',
         'Harcanmayan enerji üretilmesi gerekmeyen enerjidir. Yalıtım ve verimli cihaz en ucuz "kaynak"tır.',
       ),
+    ], [
+      soru('Rüzgâr ve güneş yenilenebilir enerji kaynaklarıdır.', true, 'Kullanıldıkça tükenmiyorlar.'),
+      soru('Yenilenebilir kaynakların süreklilik sorunu vardır.', true, 'Güneş her zaman parlamıyor, rüzgâr her zaman esmiyor.'),
+      soru('Nükleer enerji yenilenebilir bir kaynaktır.', false, 'Yakıtı olan uranyum tükenen bir kaynak.'),
+      soru('Enerji tasarrufu bir enerji kaynağı sayılmaz.', false, 'Tasarruf edilen enerji, üretilmesi gerekmeyen enerjidir.'),
     ]),
   ]),
   tema('fzk10-t3', 'Elektrik', [
@@ -331,6 +399,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Elektriksel enerji',
         'Devrede harcanan enerji, gerilim ile akımın ve sürenin çarpımıdır. Elektrik faturası bu enerjiyi ölçer.',
       ),
+    ], [
+      soru('Elektrik akımının geçebilmesi için devrenin kapalı olması gerekir.', true, 'Açık devrede yükler tam bir tur atamaz.'),
+      soru('Potansiyel fark, devrede akımı sürükleyen sebeptir.', true, 'Su borusundaki basınç farkına benziyor.'),
+      soru('Devre şemasında pilin uzun çizgisi negatif kutbu gösterir.', false, 'Uzun çizgi pozitif kutup, kısa ve kalın olan negatif kutup.'),
+      soru('Ampul, devrede elektriksel enerjiyi üreten elemandır.', false, 'Enerjiyi üreteç sağlar; ampul onu ışığa ve ısıya çevirir.'),
     ]),
     konu('fzk10-akim', 'Elektrik Akımı', [
       kart(
@@ -357,6 +430,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Voltmetre',
         'Gerilimi ölçer ve ölçülecek elemana paralel bağlanır. Seri bağlanırsa devreden akım geçmez.',
       ),
+    ], [
+      soru('Akımın geleneksel yönü, elektronların hareket yönünün tersidir.', true, 'Yön elektron bilinmeden tanımlandığı için böyle kaldı.'),
+      soru('Ampermetre devreye seri, voltmetre paralel bağlanır.', true, 'Ampermetre akımı, voltmetre iki nokta arasındaki farkı ölçüyor.'),
+      soru('Devredeki elektronlar ışık hızıyla hareket eder.', false, 'Elektronlar çok yavaş ilerler; hızla yayılan şey elektriksel etkinin kendisi.'),
+      soru('Voltmetrenin iç direncinin çok küçük olması gerekir.', false, 'Voltmetrenin iç direnci çok büyük olmalı; küçük olması gereken ampermetrenin.'),
     ]),
     konu('fzk10-ohm', 'Ohm Yasası', [
       kart(
@@ -408,6 +486,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Ohmik olmayan elemanlar',
         'Diyot ve lamba gibi bazı elemanlarda grafik doğru çıkmaz; Ohm yasası her elemanda geçerli değildir.',
       ),
+    ], [
+      soru('Ohm yasasına göre gerilim, akım ile direncin çarpımına eşittir.', true, 'V = I · R.'),
+      soru('Bir iletkenin direnci uzunluğuyla doğru, kesit alanıyla ters orantılıdır.', true, 'İnce ve uzun tel daha çok direnç gösteriyor.'),
+      soru('Metallerde sıcaklık arttıkça direnç azalır.', false, 'Metallerde direnç artar; azalan yarı iletkenlerde görülür.'),
+      soru('Bütün devre elemanları Ohm yasasına uyar.', false, 'Diyot ve lamba gibi ohmik olmayan elemanlar var.'),
     ]),
     konu('fzk10-direnc-baglama', 'Dirençlerin Bağlanması', [
       kart(
@@ -443,6 +526,23 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Karışık bağlama',
         'Devre parça parça sadeleştirilir: önce en içteki seri ya da paralel gruplar tek dirence indirilir.',
       ),
+    ], [
+      soru(
+        'Dirençler paralel bağlandığında eş değer direnç, en büyük dirençten büyük olur.',
+        false,
+        'Paralel bağlamada eş değer direnç, en küçük dirençten bile küçük çıkar.',
+        {
+          tur: 'tablo',
+          basliklar: ['Bağlama', 'Eş değer direnç'],
+          satirlar: [
+            ['Seri', 'Toplanır, artar'],
+            ['Paralel', 'Azalır'],
+          ],
+        },
+      ),
+      soru('Ev tesisatında lambalar paralel bağlanır.', true, 'Biri sönünce ötekiler yanmaya devam etsin diye.'),
+      soru('Seri bağlı bir devrede elemanların üzerinden geçen akım aynıdır.', true, 'Tek bir yol olduğu için akım bölünmüyor.'),
+      soru('Kısa devre, akımın direnç üzerinden geçmesi demektir.', false, 'Akımın dirençsiz bir yoldan geçmesi; akım tehlikeli biçimde büyür.'),
     ]),
     konu('fzk10-uretec-baglama', 'Üreteçlerin Bağlanması', [
       kart(
@@ -469,6 +569,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Farklı piller karıştırılmaz',
         'Seri bağlı farklı kapasitedeki piller birbirini zorlar; biten pil ötekiler tarafından ters yönde sürülebilir.',
       ),
+    ], [
+      soru('Özdeş üreteçler seri bağlandığında toplam elektromotor kuvvet artar.', true, 'Gerilimler toplanıyor.'),
+      soru('Özdeş üreteçler paralel bağlandığında gerilim değişmez ama piller daha uzun dayanır.', true, 'Akım kaynaklar arasında paylaşılıyor.'),
+      soru('Üreteçlerin iç direnci yoktur.', false, 'Her üretecin bir iç direnci var; verdiği gerilimin bir kısmını kendi üzerinde harcıyor.'),
+      soru('Farklı marka ve şarj düzeyindeki piller bir arada kullanılabilir.', false, 'Dolu pil boş pili zorlar; ısınma ve akma riski doğar.'),
     ]),
     konu('fzk10-tehlike', 'Elektrik Akımının Tehlikelerine Karşı Önlemler', [
       kart(
@@ -495,6 +600,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Çoklu priz yükü',
         'Aynı prizden çok sayıda yüksek güçlü cihaz beslemek kabloyu ısıtır; ısınan kablo yangının en sık sebebidir.',
       ),
+    ], [
+      soru('İnsan için tehlikeli olan, vücuttan geçen akımın büyüklüğüdür.', true, 'Gerilim tek başına değil, geçen akım zarar veriyor.'),
+      soru('Sigorta, insanı elektrik çarpmasına karşı korur.', false, 'Sigorta tesisatı ve cihazları korur; insanı koruyan kaçak akım rölesi.'),
+      soru('Islak el, vücut direncini düşürdüğü için tehlikeyi artırır.', true, 'Direnç düşünce geçen akım büyüyor.'),
+      soru('Çoklu prize istenildiği kadar cihaz takılabilir.', false, 'Çekilen toplam akım artınca kablo ısınır ve yangın riski doğar.'),
     ]),
     konu('fzk10-topraklama', 'Topraklamanın Önemi', [
       kart(
@@ -517,6 +627,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Paratoner',
         'Yıldırımı binanın üstünden alıp toprağa iletir. Aynı ilkenin bina ölçeğindeki uygulamasıdır.',
       ),
+    ], [
+      soru('Topraklama, cihazda oluşan kaçak akımı toprağa güvenle iletir.', true, 'Akım insan yerine bu yoldan geçiyor.'),
+      soru('Akım, kendisine sunulan en az dirençli yolu izler.', true, 'Topraklama hattı bu yüzden düşük dirençli yapılıyor.'),
+      soru('Topraklaması olmayan bir cihazın gövdesinde kaçak olsa da tehlike oluşmaz.', false, 'Gövdeye dokunan kişi akımın geçtiği yol hâline gelir.'),
+      soru('Paratoner yıldırım düşmesini engeller.', false, 'Yıldırımı engellemez; ona güvenli bir yol sunup toprağa iletir.'),
     ]),
   ]),
   tema('fzk10-t4', 'Dalgalar', [
@@ -564,6 +679,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Yay sarkacı',
         'Periyodu yayın sertliğine ve asılan kütleye bağlıdır; basit sarkacın tersine kütle burada etkilidir.',
       ),
+    ], [
+      soru('Periyot ile frekans birbirinin tersidir.', true, 'Biri bir salınımın süresi, öteki saniyedeki salınım sayısı.'),
+      soru('Basit sarkacın periyodu genliğe bağlı değildir.', true, 'Küçük açılarda salınım süresi genlikten etkilenmiyor.'),
+      soru('Basit sarkacın periyodu asılı kütleye bağlıdır.', false, 'İp uzunluğuna ve yer çekimi ivmesine bağlı; kütle etkilemiyor.'),
+      soru('Frekansın birimi saniyedir.', false, 'Frekansın birimi hertz; saniye periyodun birimi.'),
     ]),
     konu('fzk10-dalga-kavram', 'Dalgaların Temel Kavramları', [
       kart(
@@ -622,6 +742,39 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Genlik enerjidir',
         'Sesin şiddeti genlikle, tizliği frekansla ilgilidir. İkisi bağımsız değişir; yüksek ses tiz olmak zorunda değildir.',
       ),
+    ], [
+      soru(
+        'Şekilde λ ile gösterilen uzunluk dalganın genliğidir.',
+        false,
+        'İki tepe arasındaki uzaklık dalga boyu; genlik denge konumundan tepeye olan yükseklik.',
+        {
+          tur: 'koordinat',
+          pencere: [0, 8, -2.5, 2.5],
+          eksenler: false,
+          egriler: [
+            {
+              noktalar: [
+                [0, 0],
+                [1, 1.5],
+                [2, 0],
+                [3, -1.5],
+                [4, 0],
+                [5, 1.5],
+                [6, 0],
+                [7, -1.5],
+              ],
+            },
+          ],
+          etiketler: [{ x: 3, y: 2.1, ad: 'λ' }],
+          noktalar: [
+            { x: 1, y: 1.5, renk: 'ikincil' },
+            { x: 5, y: 1.5, renk: 'ikincil' },
+          ],
+        },
+      ),
+      soru('Dalga, enerjinin madde taşınmadan aktarılmasıdır.', true, 'Tanecikler yer değiştirmez, yalnızca titreşir.'),
+      soru('Bir dalganın taşıdığı enerji genliğine bağlıdır.', true, 'Genlik büyüdükçe taşınan enerji artıyor.'),
+      soru('Sabit süratte dalga boyu ile frekans doğru orantılıdır.', false, 'Ters orantılıdır: frekans artarken dalga boyu küçülür.'),
     ]),
     konu('fzk10-dalga-sinif', 'Dalgaların Sınıflandırılması', [
       kart(
@@ -671,6 +824,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
           ],
         },
       ),
+    ], [
+      soru('Ses mekanik bir dalgadır ve boşlukta yayılmaz.', true, 'Yayılmak için maddesel ortama ihtiyaç duyuyor.'),
+      soru('Elektromanyetik dalgalar yayılmak için ortama ihtiyaç duymaz.', true, 'Güneş ışığı boşluğu geçerek bize ulaşıyor.'),
+      soru('Işık boyuna bir dalgadır.', false, 'Işık enine dalga; boyuna dalgaya örnek ses.'),
+      soru('Elektromanyetik tayfta yalnızca görünür ışık bulunur.', false, 'Radyo dalgasından gama ışınına kadar geniş bir aralık var.'),
     ]),
     konu('fzk10-yayilma-surati', 'Dalgaların Yayılma Süratini Etkileyen Etmenler', [
       kart(
@@ -705,6 +863,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Yay dalgasında',
         'Gergin ve hafif yayda dalga daha hızlı yayılır. Gitar telinin sesi gerginlikle tizleşir.',
       ),
+    ], [
+      soru('Ses katılarda gazlara göre daha hızlı yayılır.', true, 'Tanecikler birbirine yakın olduğu için titreşim çabuk aktarılıyor.'),
+      soru('Havanın sıcaklığı arttıkça sesin sürati artar.', true, 'Tanecikler daha hızlı hareket ediyor.'),
+      soru('Işık yoğun ortamda daha hızlı yayılır.', false, 'Işık en hızlı boşlukta yayılır; yoğun ortamda yavaşlar.'),
+      soru('Su dalgalarının sürati derinlikten etkilenmez.', false, 'Derin ortamda daha hızlı, sığ ortamda daha yavaş yayılır.'),
     ]),
     konu('fzk10-yansima-kirilma', 'Su Dalgalarında Yansıma ve Kırılma', [
       kart(
@@ -772,6 +935,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         'Kıyıya paralel dalgalar',
         'Sığlaşan suda dalga yavaşlayıp kırıldığı için, açıdan gelen dalgalar kıyıya neredeyse paralel varır.',
       ),
+    ], [
+      soru('Dalgalar yansırken frekansları değişmez.', true, 'Frekansı kaynak belirliyor.'),
+      soru('Su dalgası derin ortamdan sığ ortama geçerken yavaşlar ve dalga boyu küçülür.', true, 'Frekans sabit kaldığı için sürat düşünce dalga boyu da düşüyor.'),
+      soru('Kırılma sırasında dalganın frekansı değişir.', false, 'Frekans değişmez; değişen sürat ve dalga boyu.'),
+      soru('Bir dalga yüzeye dik geldiğinde kırılarak yön değiştirir.', false, 'Doğrultusu değişmez; yalnızca sürati ve dalga boyu değişir.'),
     ]),
     konu('fzk10-rezonans', 'Rezonans ve Deprem', [
       kart(
@@ -811,6 +979,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
           ],
         },
       ),
+    ], [
+      soru('Rezonans, bir cismin doğal frekansına eşit frekansta zorlanmasıyla oluşur.', true, 'Genlik hızla büyüyor.'),
+      soru('Bir binanın doğal frekansı deprem dalgalarının frekansına yakınsa hasar artar.', true, 'Rezonans, sarsıntının etkisini büyütüyor.'),
+      soru('Depremin büyüklüğü ile şiddeti aynı şeydir.', false, 'Büyüklük açığa çıkan enerjiyi, şiddet ise oluşturduğu etkiyi anlatıyor.'),
+      soru('Odak (iç merkez), depremin yeryüzündeki noktasıdır.', false, 'Yeryüzündeki nokta merkez üssü; odak yerin içindeki kırılma noktası.'),
     ]),
   ]),
 ])

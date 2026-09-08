@@ -226,26 +226,43 @@ export type BilgiKarti = {
 }
 
 /**
- * Deste okunduktan sonra sorulan tek soru.
+ * Deste okunduktan sonra sorulan tek soru — **doğru/yanlış**.
  *
- * Kart bir şeyi anlatıyor, soru onu **geri istiyor**: okuduğunu hatırlayıp
- * hatırlamadığını okuyan kişi kendi söylüyor. Soru ile cevap bu yüzden ayrı
- * iki yüz — cevabı görmeden verilen "biliyorum", bilmeyi değil emin olmayı
- * ölçer.
+ * Soru bir soru cümlesi değil bir **iddia**: okuyan onu doğrular ya da
+ * çürütür. Biçim kasten dar tutuldu. Deste okunduktan hemen sonra gelen ekran
+ * ikinci bir ders değil bir yoklama; üzerinde düşünülen, hesaplanan ya da
+ * şıkları elenen bir soru, okumanın arkasına bir sınav ekliyor ve destenin
+ * sonu "bitti" değil "şimdi de bu var" oluyordu. İki düğmelik bir karar
+ * saniyede veriliyor ve deste gerçekten bitiyor.
  *
- * **Sorular henüz yazılmadı ve yazılmayan konu soru sormuyor.** `konu()`ya
- * dördüncü parametre verilmezse deste boş kalıyor; harita da boş desteyi
- * açmıyor (`konu-haritasi.tsx`). Bir süre her konu kart sayısı kadar **boş**
- * soru taşıdı — ekranı boş kartlarla denemek içindi ama koşul "sorusu var mı"
- * diye baktığı için deste biten her konuda metinsiz bir sınav açılıyordu.
- * Soru yazılan konu ekranı kendiliğinden kazanıyor, ötekiler eskisi gibi
- * destenin sonunda kapanıyor.
+ * Kararın kendisi ölçülüyor, kullanıcının kendi beyanı değil: eskiden kart
+ * çevriliyor, cevabı gören kişi "bildim/bilmedim" diyordu — o sayı bilmeyi
+ * değil dürüstlüğü ölçüyordu. `dogru` cevabı taşıdığı için ekran kararı
+ * kendisi tartıyor.
+ *
+ * `aciklama` karardan **sonra** görünüyor ve her zaman var: yanlış bilinen
+ * bir iddiada "yanlış" demek yetmez, doğrusunun ne olduğunu söylemeyen bir
+ * yoklama öğretmiyor.
  */
 export type SoruKarti = {
   /** `${konuId}-s${sıra}` — kart kimlikleriyle çakışmasın diye 's' ekli. */
   id: string
-  soru: string
-  cevap: string
+  /** Doğru ya da yanlış olduğuna karar verilecek iddia. */
+  ifade: string
+  /** İddia doğru mu. */
+  dogru: boolean
+  /** Karardan sonra gösterilen tek cümlelik gerekçe. */
+  aciklama: string
+  /**
+   * İddianın yanındaki çizim — bilgi kartlarındakiyle **aynı** tür kümesi.
+   *
+   * Ayrı bir görsel dili açılmadı: soru da kartın anlattığı şeyi soruyor ve
+   * grafiğe bakarak verilen karar, cümleyi hatırlamaya çalışarak verilenden
+   * hem hızlı hem gerçek. Görsel yalnızca iddianın **kendisi** çizime
+   * bakılarak tartılabiliyorsa konur; iddiayı tekrar eden bir çizim cevabı
+   * okumadan verdirir.
+   */
+  gorsel?: Gorsel
 }
 
 export type Konu = {
@@ -311,9 +328,14 @@ export function konu(
   }
 }
 
-/** Soru kurucusu — `kart` ile aynı kalıp; içerik dosyaları bunu kullanacak. */
-export function soru(soru: string, cevap: string): Omit<SoruKarti, 'id'> {
-  return { soru, cevap }
+/** Soru kurucusu — `kart` ile aynı kalıp. */
+export function soru(
+  ifade: string,
+  dogru: boolean,
+  aciklama: string,
+  gorsel?: Gorsel,
+): Omit<SoruKarti, 'id'> {
+  return gorsel ? { ifade, dogru, aciklama, gorsel } : { ifade, dogru, aciklama }
 }
 
 export function tema(id: string, ad: string, konular: Konu[]): Tema {

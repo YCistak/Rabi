@@ -1,4 +1,4 @@
-import { kart, konu, program, tema } from '../tip'
+import { kart, konu, program, soru, tema } from '../tip'
 
 /**
  * 9. sınıf Biyoloji — Maarif Modeli.
@@ -47,6 +47,11 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Çevreye bakışı değiştirdi',
         'Ekosistem kavramı, bir türün kaybının bütün ağı etkilediğini gösterdi. Koruma politikaları bu bilgiden doğdu.',
       ),
+    ], [
+      soru('Biyolojinin incelediği organizasyon düzeyleri küçükten büyüğe hücre, doku, organ, sistem diye sıralanır.', true, 'Her düzey bir öncekinden kuruluyor.'),
+      soru('Biyoteknoloji, canlıların ya da onlara ait parçaların ürün elde etmek için kullanılmasıdır.', true, 'Yoğurt mayasından insülin üretimine kadar geniş bir alan.'),
+      soru('Biyoloji yalnızca hayvanları inceleyen bilim dalıdır.', false, 'Bitkiler, mantarlar, bakteriler ve virüsler de biyolojinin konusu.'),
+      soru('Tarımdaki verim artışının biyolojiyle bir ilgisi yoktur.', false, 'Tohum ıslahı, gübreleme ve hastalıkla mücadelenin tamamı biyoloji bilgisine dayanıyor.'),
     ]),
     konu('byl9-donum', 'Biyoloji Biliminin Gelişimindeki Dönüm Noktaları', [
       kart(
@@ -88,6 +93,11 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Genom projeleri',
         'İnsan genomunun okunması hastalık genlerinin bulunmasını ve kişiye özgü tedaviyi mümkün kıldı.',
       ),
+    ], [
+      soru('Hücre teorisi, bütün canlıların hücrelerden oluştuğunu söyler.', true, 'Ayrıca her hücrenin kendinden önceki bir hücreden oluştuğunu da belirtir.'),
+      soru('DNA nın çift sarmal yapısını Mendel açıklamıştır.', false, 'Yapıyı Watson ve Crick açıkladı; Mendel kalıtımın kurallarını buldu.'),
+      soru('Mikroskobun icadı hücrenin görülmesini ve incelenmesini sağladı.', true, 'Hücre kavramı ancak mikroskopla ortaya çıkabildi.'),
+      soru('Antibiyotikler virüslere karşı geliştirilmiş ilaçlardır.', false, 'Antibiyotikler bakterilere etki eder; virüslere karşı etkisizdir.'),
     ]),
     konu('byl9-bilimin-dogasi', 'Bilimin Doğası', [
       kart(
@@ -123,6 +133,11 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Hakem değerlendirmesi',
         'Bir çalışma yayımlanmadan önce alandaki başka araştırmacılarca denetlenir. Bu, hatanın ilk süzgecidir.',
       ),
+    ], [
+      soru('Bilimsel bilgi, yeni kanıtlar karşısında değişebilir.', true, 'Değişebilir olması zayıflığı değil, kanıta bağlı olmasının sonucu.'),
+      soru('Bilimsel bir hipotezin yanlışlanabilir olması gerekir.', true, 'Hiçbir gözlemin çürütemeyeceği bir iddia bilimsel olarak sınanamaz.'),
+      soru('Bir teori, yeterince kanıt toplayınca yasaya dönüşür.', false, 'Yasa neyin olduğunu tanımlar, teori niçin olduğunu açıklar; ikisi ayrı işler.'),
+      soru('Hakem değerlendirmesinden geçmemiş bir iddia da bilimsel bilgi sayılır.', false, 'Yayımlanmadan önce alanın uzmanlarınca denetlenmesi sürecin parçası.'),
     ]),
     konu('byl9-arastirma', 'Bilimsel Araştırma Süreçleri', [
       kart(
@@ -159,6 +174,11 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Tekrarlanabilirlik',
         'Aynı koşullarda başkalarının da aynı sonucu alabilmesi gerekir. Tekrarlanamayan sonuç kabul edilmez.',
       ),
+    ], [
+      soru('Kontrol grubu, deney grubuyla karşılaştırma yapabilmek için kullanılır.', true, 'Değişkenin etkisi ancak bu karşılaştırmayla görülüyor.'),
+      soru('Bir deneyde birden çok bağımsız değişken aynı anda değiştirilirse sonucun sebebi anlaşılmaz.', true, 'Hangi değişikliğin sonuca yol açtığı ayırt edilemez.'),
+      soru('Plasebo, deneklere verilen etkin maddedir.', false, 'Plasebo etkisiz bir madde; beklentinin etkisini ayırmak için veriliyor.'),
+      soru('Örneklem küçüldükçe sonuçların güvenilirliği artar.', false, 'Küçük örneklem rastlantıya daha açık; güvenilirlik örneklem büyüdükçe artar.'),
     ]),
     konu('byl9-etik', 'Bilim Etiği', [
       kart(
@@ -185,6 +205,11 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Kişisel verinin gizliliği',
         'Genetik veri kişiye ve ailesine aittir; kimliği açık edecek biçimde paylaşılamaz.',
       ),
+    ], [
+      soru('Beklenen sonuca uymayan verileri çıkarmak bilim etiğine aykırıdır.', true, 'Veriyi seçmek, sonucu önceden yazmak demek.'),
+      soru('Başkasının çalışmasını kaynak göstermeden kullanmak aşırmadır.', true, 'Fikir de bir emek; sahibi belirtilmek zorunda.'),
+      soru('İnsan üzerinde yapılan araştırmalarda kişinin onayı alınmayabilir.', false, 'Aydınlatılmış onam şart: kişi neye katıldığını bilerek kabul etmeli.'),
+      soru('Araştırmayı destekleyen kuruluşun belirtilmesine gerek yoktur.', false, 'Çıkar çatışması açıklanmalı; sonucu okuyanın bunu bilmeye hakkı var.'),
     ]),
     konu('byl9-ortak-ozellik', 'Canlıların Ortak Özellikleri', [
       kart(
@@ -219,6 +244,11 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Virüs canlı mı?',
         'Kalıtım maddesi var ve çoğalabiliyor ama hücresi yok ve konak dışında hiçbir yaşam belirtisi göstermiyor.',
       ),
+    ], [
+      soru('Bütün canlılar hücresel yapıya sahiptir.', true, 'Hücre, canlılığın en küçük yapı ve işlev birimi.'),
+      soru('Virüsler hücresel yapıya sahip olduğu için canlı kabul edilir.', false, 'Hücresel yapıları yok; ancak canlı bir hücrenin içinde çoğalabiliyorlar.'),
+      soru('Homeostazi, canlının değişen koşullara rağmen iç dengesini korumasıdır.', true, 'Vücut sıcaklığının sabit tutulması buna örnek.'),
+      soru('Metabolizma yalnızca yapım tepkimelerini kapsar.', false, 'Yapım (anabolizma) ve yıkım (katabolizma) tepkimelerinin tamamı.'),
     ]),
     konu('byl9-inorganik', 'İnorganik Moleküller', [
       kart(
@@ -268,6 +298,24 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Asitler ve bazlar',
         'Asitler ortama H⁺ verir, bazlar OH⁻ verir ya da H⁺ bağlar. Mide asidik, safra baziktir.',
       ),
+    ], [
+      soru(
+        'pH değeri 7 den büyük olan çözeltiler asit özelliği gösterir.',
+        false,
+        '7 den büyük değerler bazik bölgede; asitler 7 nin altında kalıyor.',
+        {
+          tur: 'sayiDogrusu',
+          aralik: [0, 14],
+          isaretler: [0, 7, 14],
+          parcalar: [
+            { bas: 0, bit: 7, ad: 'asit' },
+            { bas: 7, bit: 14, ad: 'baz', renk: 'ikincil' },
+          ],
+        },
+      ),
+      soru('Suyun öz ısısının yüksek olması, canlıdaki sıcaklık dalgalanmalarını azaltır.', true, 'Su geç ısınıp geç soğuduğu için vücut sıcaklığı ani değişmiyor.'),
+      soru('Mineraller vücutta enerji vermek için kullanılır.', false, 'Mineraller enerji vermez; yapıya katılır ve düzenleyici görev yapar.'),
+      soru('Tampon sistemler kanın pH ını dar bir aralıkta tutar.', true, 'Küçük bir pH değişimi bile enzimleri işlevsiz bırakabilirdi.'),
     ]),
     konu('byl9-organik', 'Organik Moleküller', [
       kart(
@@ -333,6 +381,11 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Dehidrasyon ve hidroliz',
         'Büyük moleküller su çıkararak birleşir (dehidrasyon), su eklenerek parçalanır (hidroliz).',
       ),
+    ], [
+      soru('Enzimler tepkimeyi hızlandırır ve tepkime sonunda değişmeden çıkar.', true, 'Bu yüzden aynı enzim defalarca kullanılabiliyor.'),
+      soru('Her enzim her substratla çalışabilir.', false, 'Enzim substratına özgü; aralarında anahtar-kilit uyumu var.'),
+      soru('Yüksek sıcaklıkta enzimin yapısı bozulur ve işlevini yitirir.', true, 'Protein yapısı bozulunca aktif bölge de bozuluyor.'),
+      soru('Proteinlerin yapı birimi yağ asitleridir.', false, 'Proteinlerin yapı birimi amino asit; yağ asidi lipitlerin.'),
     ]),
   ]),
   tema('byl9-t2', 'Organizasyon', [
@@ -371,6 +424,24 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Ortak yanları',
         'İkisinde de hücre zarı, sitoplazma, ribozom ve DNA bulunur. Bunlar yaşamın asgari donanımıdır.',
       ),
+    ], [
+      soru(
+        'Prokaryot hücrelerde DNA çekirdek zarıyla çevrilidir.',
+        false,
+        'Prokaryotta çekirdek zarı yok; DNA doğrudan sitoplazmada bulunuyor.',
+        {
+          tur: 'tablo',
+          basliklar: ['Özellik', 'Prokaryot', 'Ökaryot'],
+          satirlar: [
+            ['Çekirdek zarı', 'Yok', 'Var'],
+            ['Zarlı organel', 'Yok', 'Var'],
+            ['DNA nın yeri', 'Sitoplazma', 'Çekirdek'],
+          ],
+        },
+      ),
+      soru('Bitki hücresinde hücre duvarı ve kloroplast bulunur.', true, 'İkisi de hayvan hücresinde yok.'),
+      soru('Bakteriler ökaryot hücre yapısına sahiptir.', false, 'Bakteriler prokaryot; çekirdek zarları ve zarlı organelleri yok.'),
+      soru('Ribozom hem prokaryot hem ökaryot hücrede bulunur.', true, 'Protein sentezi bütün canlılarda ortak.'),
     ]),
     konu('byl9-zar', 'Hücre Zarı', [
       kart(
@@ -397,6 +468,11 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Hücre duvarı ile karışmasın',
         'Duvar bitki, mantar ve bakterilerde zarın dışındadır; cansızdır ve tam geçirgendir.',
       ),
+    ], [
+      soru('Hücre zarı seçici geçirgendir.', true, 'Hangi maddenin geçeceğine zarın yapısı karar veriyor.'),
+      soru('Akıcı mozaik modele göre zardaki proteinler yerlerinde sabit durur.', false, 'Proteinler yağ tabakasının içinde hareket edebiliyor; modelin adındaki "akıcı" bunu anlatıyor.'),
+      soru('Hücre zarı çift katlı fosfolipit tabakasından oluşur.', true, 'Su sevmeyen kuyruklar içe, su seven başlar dışa bakıyor.'),
+      soru('Hücre duvarı bütün canlı hücrelerde bulunur.', false, 'Hayvan hücresinde yok; bitki, mantar ve bakterilerde var.'),
     ]),
     konu('byl9-sitoplazma', 'Sitoplazma', [
       kart(
@@ -419,6 +495,11 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Sitoplazma hareketi',
         'Bitki hücrelerinde sitoplazmanın dolaşması maddelerin hücre içinde dağılmasını hızlandırır.',
       ),
+    ], [
+      soru('Sitoplazmanın büyük bölümü sudur.', true, 'Tepkimelerin geçtiği ortamın çözücüsü su.'),
+      soru('Hücredeki tepkimelerin çoğu sitoplazmada gerçekleşir.', true, 'Organeller de bu ortamın içinde duruyor.'),
+      soru('Sitoplazma, organelleri taşıyan cansız bir sıvıdır.', false, 'Canlı bir ortam: tepkimeler orada yürüyor ve kendisi de hareket ediyor.'),
+      soru('Sitoplazma hareketi yalnızca hayvan hücrelerinde görülür.', false, 'Bitki hücrelerinde de görülür; madde dağılımını kolaylaştırıyor.'),
     ]),
     konu('byl9-sitoplazmik', 'Sitoplazmik Yapılar', [
       kart(
@@ -441,6 +522,11 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Sil ve kamçı',
         'Hücrenin hareketini sağlayan uzantılar. Solunum yolundaki siller tozu dışarı süpürür.',
       ),
+    ], [
+      soru('Ribozom zarsız bir yapıdır ve protein sentezler.', true, 'Zarsız olduğu için prokaryotlarda da bulunabiliyor.'),
+      soru('Sentrozom bitki hücrelerinin temel yapılarındandır.', false, 'Sentrozom hayvan hücrelerinde bulunur ve bölünmede rol alır.'),
+      soru('Sitoiskelet hücreye şekil verir ve organelleri yerinde tutar.', true, 'Ayrıca hücre içi taşımaya da yol oluyor.'),
+      soru('Sil ve kamçının hücrenin hareketiyle ilgisi yoktur.', false, 'İkisi de hücrenin ya da çevresindeki sıvının hareketini sağlıyor.'),
     ]),
     konu('byl9-organel', 'Organeller ve Çekirdek', [
       kart(
@@ -484,6 +570,11 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Neden ayrı organeller?',
         'Her organel bir işe ayrılmıştır. Bölmeleme, hücrenin aynı anda hem üretip hem parçalamasını mümkün kılar.',
       ),
+    ], [
+      soru('Mitokondri hücrede enerji üretiminden sorumludur.', true, 'Besinlerdeki enerji burada ATP ye çevriliyor.'),
+      soru('Kloroplast hem bitki hem hayvan hücrelerinde bulunur.', false, 'Yalnızca fotosentez yapan hücrelerde var.'),
+      soru('Lizozom hücre içi sindirimi sağlar.', true, 'İçindeki sindirim enzimleri büyük molekülleri parçalıyor.'),
+      soru('Golgi aygıtı proteinleri üretir.', false, 'Üretimi ribozom yapar; Golgi gelen proteini işleyip paketler.'),
     ]),
     konu('byl9-madde-gecis', 'Hücre Zarından Madde Geçişleri', [
       kart(
@@ -523,6 +614,11 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Endositoz ve ekzositoz',
         'Çok büyük maddeler zarla kese hâlinde alınır (endositoz) ya da dışarı verilir (ekzositoz).',
       ),
+    ], [
+      soru('Difüzyon, maddenin çok yoğun ortamdan az yoğun ortama geçmesidir.', true, 'Yoğunluk farkı yönü belirliyor ve enerji harcanmıyor.'),
+      soru('Aktif taşımada enerji harcanmaz.', false, 'Yoğunluk farkına ters yönde gidildiği için ATP harcanır.'),
+      soru('Ozmoz, suyun az yoğun ortamdan çok yoğun ortama geçmesidir.', true, 'Geçen şey çözünen değil, çözücü olan su.'),
+      soru('Büyük moleküller hücre zarından basit difüzyonla geçer.', false, 'Basit difüzyon küçük moleküller için; büyükler endositozla alınıyor.'),
     ]),
     konu('byl9-siniflandirma', 'Sınıflandırmada Temel Yaklaşımlar', [
       kart(
@@ -561,6 +657,26 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Tür nedir?',
         'Doğada çiftleşip verimli döl verebilen bireyler topluluğu. Katır kısır olduğu için ayrı bir tür değildir.',
       ),
+    ], [
+      soru(
+        'Sınıflandırma kategorilerinde en küçük birim âlemdir.',
+        false,
+        'Âlem en geniş kategori; en küçük ve en özel birim tür.',
+        {
+          tur: 'katman',
+          daralan: true,
+          katmanlar: [
+            { ad: 'Âlem' },
+            { ad: 'Şube' },
+            { ad: 'Sınıf' },
+            { ad: 'Cins' },
+            { ad: 'Tür' },
+          ],
+        },
+      ),
+      soru('İkili adlandırmada önce cins adı, sonra tür adı yazılır.', true, 'Cins adının ilk harfi büyük, tür adı küçük harfle yazılıyor.'),
+      soru('Analog organlar, canlıların ortak atadan geldiğini gösterir.', false, 'Akrabalığı homolog organlar gösterir; analog organlar yalnızca aynı işi yapar.'),
+      soru('Tür, doğal koşullarda çiftleşip verimli döl verebilen bireyler topluluğudur.', true, 'Katır verimli olmadığı için at ve eşek ayrı türler.'),
     ]),
     konu('byl9-uc-alem', 'Üç Üst Âlem Sisteminde Canlılar', [
       kart(
@@ -591,6 +707,11 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Hayvanlar',
         'Hazır beslenir, hareket eder ve çoğu sinir sistemine sahiptir. Hücre duvarları yoktur.',
       ),
+    ], [
+      soru('Arkeler aşırı sıcaklık ve tuzluluk gibi zor koşullarda yaşayabilir.', true, 'Kaplıca ve tuz göllerinde yaşayan türleri var.'),
+      soru('Mantarlar fotosentez yaparak kendi besinini üretir.', false, 'Kloroplastları yok; hazır besini dışarıdan alıp emerler.'),
+      soru('Bakteriler prokaryot canlılardır.', true, 'Çekirdek zarları ve zarlı organelleri bulunmuyor.'),
+      soru('Protistler yalnızca tek hücreli canlılardan oluşur.', false, 'Çok hücreli su yosunları da bu grupta yer alıyor.'),
     ]),
     konu('byl9-biyocesitlilik', 'Biyoçeşitlilik', [
       kart(
@@ -621,6 +742,11 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Koruma yolları',
         'Millî park ve koruma alanları, tohum bankaları, avlanma sınırları ve türlerin doğaya yeniden kazandırılması.',
       ),
+    ], [
+      soru('Endemik tür, yalnızca belirli bir bölgede doğal olarak yaşayan türdür.', true, 'Başka yerde bulunmadığı için yok olması geri dönülmez.'),
+      soru('Biyoçeşitlilik gen, tür ve ekosistem düzeylerinde incelenir.', true, 'Aynı türün içindeki gen farkları da çeşitliliğin parçası.'),
+      soru('Türkiye biyoçeşitlilik bakımından Avrupa nın en fakir ülkelerindendir.', false, 'Farklı iklim ve bitki bölgeleri sayesinde en zengin ülkelerinden biri.'),
+      soru('Bir türün yok olması ekosistemin işleyişini etkilemez.', false, 'Besin ağındaki her tür başka türlere bağlı; kopan halka zinciri etkiliyor.'),
     ]),
   ]),
 ])
