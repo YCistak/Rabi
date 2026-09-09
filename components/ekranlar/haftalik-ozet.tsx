@@ -943,7 +943,7 @@ function kartlariKur(ozet: HaftalikOzet): Kart[] {
       <div className="flex flex-col items-center gap-[22px]">
         <div className="ozet-vurgu relative">
           <div className="grid h-[188px] w-[188px] place-items-center rounded-full border border-white/15 bg-white/6">
-            <Rabi durum="kutlama" boyut={126} />
+            <Rabi durum="kutlama" poz="kupali" boyut={126} />
           </div>
           <span
             className="ozet-pop absolute -top-1.5 -right-[18px] rounded-full px-3 py-[7px] shadow-[0_8px_18px_rgba(0,0,0,.35)]"
@@ -1403,7 +1403,7 @@ function kartlariKur(ozet: HaftalikOzet): Kart[] {
     icerik: (
       <>
         <div className="ozet-girisi flex items-center gap-3.5">
-          <Rabi durum="mutlu" boyut={74} />
+          <Rabi durum="mutlu" poz="sevinen" boyut={74} />
           <div className="min-w-0">
             <p
               className="m-0"

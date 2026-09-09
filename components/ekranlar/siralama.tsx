@@ -61,7 +61,7 @@ export function SiralamaEkrani({
       <div>
         <BaslikSatiri baslik="Sıralama Hesapla" />
         <BosDurum
-          simge={<Rabi durum="uykulu" boyut={96} />}
+          simge={<Rabi durum="uykulu" poz="kahveli" boyut={96} />}
           baslik="Önce alanını seç"
           aciklama="Sıralama tahmini alanına göre hesaplanıyor. Ayarlar › Alanım'dan seçtiğinde burası dolacak."
         />
@@ -74,7 +74,7 @@ export function SiralamaEkrani({
       <div>
         <BaslikSatiri baslik="Sıralama Hesapla" />
         <BosDurum
-          simge={<Rabi durum="uykulu" boyut={96} />}
+          simge={<Rabi durum="uykulu" poz="kahveli" boyut={96} />}
           baslik="Önce bir deneme ekle"
           aciklama="Sıralama tahmini için en az bir TYT ve bir AYT denemesi gerekiyor. Deneme sekmesinden ekleyebilirsin."
         />

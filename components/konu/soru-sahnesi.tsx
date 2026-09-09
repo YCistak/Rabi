@@ -275,7 +275,11 @@ function Sonuc({
 }) {
   return (
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center px-6 pb-[calc(1rem+var(--guvenli-alt))] text-center">
-      <Rabi durum={yanlis === 0 ? 'kutlama' : 'normal'} boyut={104} />
+      <Rabi
+        durum={yanlis === 0 ? 'kutlama' : 'normal'}
+        poz={yanlis === 0 ? 'kupali' : 'dusunen'}
+        boyut={104}
+      />
       <h3 className="mt-3 font-display text-[22px] font-extrabold tracking-tight text-balance">
         {konuAdi} bitti
       </h3>

@@ -3,27 +3,57 @@ import { cn } from '@/lib/utils'
 /**
  * Rabi'nin ruh hâlleri.
  *
- * Maskot artık tek bir görsel (`public/tavsan-yuz.png`) olduğu için durum
- * **çizimi değiştirmiyor**; yalnızca ekran okuyucuya söylenen etiketi ve
- * bazı ekranlardaki eşlik eden yazıyı belirliyor. Çağıran ekranlar durumu
- * zaten hesaplıyor, propu kaldırmak on beş dosyaya dokunmayı gerektirirdi ve
- * ileride ifadeli görseller eklenirse bağlantı yerinde duruyor.
+ * Durum **çizimi değiştirmiyor**; yalnızca ekran okuyucuya söylenen etiketi ve
+ * bazı ekranlardaki eşlik eden yazıyı belirliyor. Çizilecek görseli seçen şey
+ * `poz`.
+ *
+ * İkisinin ayrı kalması bilerek: ifadeli görseller geldiğinde durumu doğrudan
+ * dosyaya bağlamak denendi ve açılışı bozuyordu. Açılış ekranındaki uçan
+ * tavşan ana sayfadaki maskotun tam üstüne konuyor; ikisi aynı `durum`u değil
+ * aynı **görseli** taşımak zorunda ve aralarında boyut farkı var (110'a karşı
+ * 58). Durumdan türeyen bir görsel, katman kalkarken tavşanı başka bir tavşana
+ * çevirirdi.
  */
 export type MaskotDurumu = 'normal' | 'mutlu' | 'uykulu' | 'calisiyor' | 'uzgun' | 'kutlama'
 
 /**
  * Maskotun pozu — hangi görselin çizileceği.
  *
- * Durumdan ayrı bir prop: `durum` yalnızca ekran okuyucuya söylenen etiketi
- * belirliyor ve on beş ekran onu zaten hesaplıyor. Poz ise gerçekten başka bir
- * dosya gösteriyor, o yüzden yalnızca isteyen ekran veriyor.
+ * `yuz` dışındakiler **tam boy**: gövde ancak 70 pikselin üstünde okunuyor,
+ * altında kollar ve tutulan nesne tek bir lekeye dönüşüyor. Oyun başlıkları
+ * (26–54 piksel) ve ana sayfanın selamlaması (58) bu yüzden yüzde kalıyor;
+ * poz vermeyen her çağrı da oraya düşüyor.
  */
-export type MaskotPozu = 'yuz' | 'el-sallayan'
+export type MaskotPozu =
+  | 'yuz'
+  | 'tam'
+  | 'el-sallayan'
+  | 'okuyan'
+  | 'kupali'
+  | 'sevinen'
+  | 'uzgun'
+  | 'dusunen'
+  | 'kahveli'
+  | 'isaretci'
 
-/** Poz → dosya. Hepsi `public/` altında ve aynı kare oranda. */
+/**
+ * Poz → dosya.
+ *
+ * Hepsi `public/` altında, 256'lık kare tuvalde ve **aynı yükseklikte**;
+ * üreten yer `scripts/maskot-uret.mjs`. Elle eklenen bir dosya bu boy
+ * eşitliğini bozar ve maskot poz değiştirdiğinde büyüyüp küçülür.
+ */
 const POZ_GORSELI: Record<MaskotPozu, string> = {
   yuz: '/tavsan-yuz.png',
+  tam: '/tavsan-tam.png',
   'el-sallayan': '/tavsan-el-sallayan.png',
+  okuyan: '/tavsan-okuyan.png',
+  kupali: '/tavsan-kupali.png',
+  sevinen: '/tavsan-sevinen.png',
+  uzgun: '/tavsan-uzgun.png',
+  dusunen: '/tavsan-dusunen.png',
+  kahveli: '/tavsan-kahveli.png',
+  isaretci: '/tavsan-isaretci.png',
 }
 
 type Props = {
@@ -60,9 +90,10 @@ export const MASKOT_YUVASI = 'rabi-maskot-yuvasi'
  *
  * Önce tema değişkenleriyle boyanan bir SVG'ydi. Beyaz temaya geçince kürk de
  * zemin de neredeyse beyaz kaldı ve siluet kayboldu; kontur eklemek çözdü ama
- * çizim uygulamanın geri kalanının yanında hâlâ yabancı duruyordu. Artık
- * açılış ekranıyla aynı görsel kullanılıyor: uygulama açılırken görülen tavşan
- * ile ana sayfadaki aynı tavşan.
+ * çizim uygulamanın geri kalanının yanında hâlâ yabancı duruyordu. Sonra
+ * emojinin (🐰) kendisi bir PNG olarak kullanıldı — o da uygulamaya ait
+ * değildi, telefonun yazı tipinden gelen bir simgeydi. Şimdi maskotun kendi
+ * çizimleri var (`scripts/maskot-uret.mjs`).
  *
  * Yükseklik 130/120 oranında: eski SVG'nin kutusu bu ölçüdeydi ve on beş
  * ekranın yerleşimi ona göre kurulmuştu. Kare görsel `object-contain` ile bu
@@ -90,9 +121,9 @@ export function Rabi({
       }}
       className={cn('shrink-0 object-contain', className)}
       alt={`Rabi — ${DURUM_ETIKETI[durum]}`}
-      // Maskot her ekranda var ve hepsi aynı dosyayı gösteriyor: tarayıcı
-      // önbelleğinden geldiği için geciktirmeye gerek yok, geciktirmek
-      // ekranlar arasında geçerken bir kare boş yer bırakıyordu.
+      // Maskot her ekranda var: geciktirmek ekranlar arasında geçerken bir
+      // kare boş yer bırakıyordu. Pozlar ayrı dosyalar ama her biri yetmiş
+      // kilobaytın altında ve ilk gösterimden sonra önbellekten geliyor.
       loading="eager"
       decoding="async"
       draggable={false}

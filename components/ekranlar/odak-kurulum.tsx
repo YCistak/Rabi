@@ -74,7 +74,7 @@ export function OdakKurulum({
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col">
       <div className="mb-5 flex flex-col items-center text-center">
-        <Rabi durum={adim === 2 ? 'mutlu' : 'normal'} boyut={92} />
+        <Rabi durum={adim === 2 ? 'mutlu' : 'normal'} poz={adim === 2 ? 'sevinen' : 'tam'} boyut={92} />
         <h1 className="mt-3 font-display text-xl font-semibold tracking-tight">
           {BASLIKLAR[adim]}
         </h1>
