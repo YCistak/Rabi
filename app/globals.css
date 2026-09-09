@@ -1411,3 +1411,73 @@
     transition: none;
   }
 }
+
+/*
+  Izgara kartlarının girişi.
+
+  Ana sayfa ve Oyunlar sekmesi tek bir karede tam hâlleriyle beliriyordu:
+  sekmeler arasında gidip gelen kullanıcı ekranın kurulduğunu değil,
+  sıçradığını görüyordu. Kartlar artık aşağıdan ve sırayla geliyor — hareket
+  gözü ızgaranın başına koyuyor, okumanın başlaması gereken yere.
+
+  Gecikmeyi `--sira` değil satır içi `animation-delay` veriyor (bkz.
+  `kartGirisi`, `components/ui.tsx`): tavan JS tarafında konuyor, çünkü CSS'te
+  aynı sınırı yazmanın yolu `min()` ve eski WebView sürümlerinde bildirim
+  sessizce düşüyor — kartlar o telefonlarda sırayla değil, hiç görünmüyordu.
+
+  Ölçek küçük (0.985): kartlar aynı anda hem büyüyüp hem yükselirse ızgara
+  yerine yerine oturan tek tek kutular gibi okunuyor.
+*/
+@keyframes kartGirisi {
+  from {
+    opacity: 0;
+    transform: translateY(9px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.kart-girisi {
+  animation: kartGirisi 260ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+/*
+  Tur sonundaki puan çubuğu dolarak geliyor.
+
+  Çubuğun anlattığı şey bir oran ve dolu hâliyle beliren bir çubuk, oranı bir
+  durum gibi gösteriyor; dolarak gelen çubuk turun **sonucu** gibi görünüyor.
+  Genişlik değil `transform` oynatılıyor: genişlik her karede yeniden yerleşim
+  demek ve rekor çizgisi çubuğun üstünde duruyor, o da her karede kayardı.
+
+  Gecikme kartın kendi girişinden sonra: kart hâlâ süzülürken dolan bir çubuk
+  iki hareketi üst üste bindiriyor.
+*/
+@keyframes turCubugu {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.tur-cubugu {
+  transform-origin: left center;
+  animation: turCubugu 520ms cubic-bezier(0.2, 0.7, 0.3, 1) 160ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* İkisi de yalnızca hareket: kaçıncı kart olduğu ızgaradaki yerinde,
+     oranın kendisi çubuğun boyunda ve hemen altındaki sayılarda yazılı. */
+  .kart-girisi,
+  .tur-cubugu {
+    animation: none;
+  }
+
+  /* `both` olmadan çubuk başlangıç karesinde (scaleX 0) asılı kalırdı. */
+  .tur-cubugu {
+    transform: none;
+  }
+}

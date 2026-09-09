@@ -9,7 +9,7 @@ import { siraYaz } from '@/lib/siralama'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
 import { kisayollar } from '@/lib/son-kullanilan'
 import { doluDersler, oyunlarinDersleri, type DersId, type DersTanimi } from '@/lib/oyunlar/tanim'
-import { Halka, Kart, Not } from '@/components/ui'
+import { Halka, Kart, kartGirisi, Not } from '@/components/ui'
 import { GeriSayim } from '@/components/geri-sayim'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
 
@@ -340,20 +340,28 @@ export function AnaSayfa({
           kutunun içinde dört yüz. Araçlar bir ara başlıksız ve kutusuz
           duruyordu; iki bölüm yan yana iki ayrı tasarım gibi okunuyordu. */}
       <Bolum baslik="Araçlar 🧰" onTumu={onDahaGit}>
-        {gosterilenAraclar.map(({ id, ad, ikon, renk }) => (
-          <Kutucuk key={id} ad={ad} ikon={ikon} renk={KUTUCUK_RENGI[renk]} onSec={() => onKartAc(id)} />
+        {gosterilenAraclar.map(({ id, ad, ikon, renk }, sira) => (
+          <Kutucuk
+            key={id}
+            ad={ad}
+            ikon={ikon}
+            renk={KUTUCUK_RENGI[renk]}
+            sira={sira}
+            onSec={() => onKartAc(id)}
+          />
         ))}
       </Bolum>
 
       {/* Kutucuklar oyunları değil dersleri gösteriyor: adları kısa, dokunuşun
           karşılığı da tam olarak o dersin ızgarası (bkz. `DERS_RENGI`). */}
       <Bolum baslik="Oyunlar 🎮" onTumu={() => onOyunlaraGit()}>
-        {gosterilenDersler.map((ders) => (
+        {gosterilenDersler.map((ders, sira) => (
           <Kutucuk
             key={ders.id}
             ad={ders.ad}
             ikon={ders.ikon}
             renk={DERS_RENGI[ders.aile]}
+            sira={sira}
             onSec={() => onOyunlaraGit(ders.id)}
           />
         ))}
@@ -420,19 +428,28 @@ function Kutucuk({
   ad,
   ikon,
   renk,
+  sira,
   onSec,
 }: {
   ad: string
   ikon: string
   /** Dairenin pastel zemin sınıfı. */
   renk: string
+  /** Izgaradaki sırası — kutucuklar bu sırayla beliriyor. */
+  sira: number
   onSec: () => void
 }) {
+  const giris = kartGirisi(sira)
+
   return (
     <button
       type="button"
       onClick={onSec}
-      className="flex flex-col items-center gap-1.5 rounded-2xl px-1 py-1.5 transition active:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      style={giris.style}
+      className={cn(
+        'flex flex-col items-center gap-1.5 rounded-2xl px-1 py-1.5 transition active:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+        giris.className,
+      )}
     >
       {/* `aspect-square` + `w-full`: kutu sütunun genişliğini alıyor, dar
           telefonda küçülüyor. Üst sınır olmasaydı geniş ekranda dört kocaman

@@ -12,7 +12,7 @@ import { sureOrani } from '@/lib/oyunlar/tur'
 import { BOSS_ARALIGI, bossluMu } from '@/lib/oyunlar/ritim'
 import { MODLAR, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { cn } from '@/lib/utils'
-import { Halka } from '@/components/ui'
+import { Halka, kartGirisi } from '@/components/ui'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
 import { BildirimDugmesi, type BildirimKolu } from '@/components/hata-bildir'
 import type { BankaSorusu } from '@/lib/oyunlar/banka'
@@ -771,6 +771,22 @@ export function olcekOranlari(dogru: number, rekor: number): { dolu: number; ciz
 }
 
 /**
+ * Turun isabet oranı — yüzde, tam sayıya yuvarlanmış.
+ *
+ * Doğru sayısı tek başına "iyi tur muydu" sorusunu cevaplamıyor: 12 doğru,
+ * 3 yanlışın yanında başka bir tur, 12 yanlışın yanında başka. Oran ikisini
+ * tek sayıda topluyor.
+ *
+ * Hiç cevap verilmemiş turda oran **yok** — sıfır yazmak, hiç denemeyeni
+ * hepsini yanlış yapmış gibi gösterirdi.
+ */
+export function isabetYuzdesi(dogru: number, yanlis: number): number | null {
+  const toplam = dogru + yanlis
+  if (toplam === 0) return null
+  return Math.round((dogru / toplam) * 100)
+}
+
+/**
  * Tur sonu başlığının altındaki cümle.
  *
  * `birim` oyuna göre değişiyor ("doğru", "eşleştirme"). Sayıya ek getirmiyoruz
@@ -881,6 +897,20 @@ export function TurSonu({
         ? 'mutlu'
         : 'normal'
 
+  /*
+    Hatasız tur — ölçü `lib/oyunlar/tur.ts`teki `hatasiz` ile aynı: cevap
+    verilmiş ve hiç yanlış yok. Eleme dışarıda kalıyor; süresi biten ya da
+    boss'a takılan turda "hatasız" demek, turu bitiren şeyi görmezden gelmek
+    olurdu.
+
+    Karşılığı konfeti **değil**: konfeti yeni rekora ait ve iki olay aynı
+    kutlamayı paylaşırsa rekorun karşılığı sıradanlaşır. Hatasız turun
+    karşılığı bir şerit — görülüyor ama ekranı kesmiyor.
+  */
+  const hatasiz = !elendi && dogru > 0 && yanlis === 0
+
+  const isabet = isabetYuzdesi(dogru, yanlis)
+
   if (sayiliyor) return <GeriSayim onBitti={onTekrar} />
 
   return (
@@ -909,13 +939,32 @@ export function TurSonu({
 
       {/* Rekorun neden kıpırdamadığı burada yazıyor. İki sebep de aynı
           sonucu veriyor ama sebebi söylemeden sonuç şaşırtıcı olurdu. */}
-      {(bankaTuru || !modKayitliMi(mod)) && (
-        <p className="flex-none self-start rounded-full bg-ikincil-soft px-3 py-1 text-[11.5px] font-extrabold text-ikincil">
-          {bankaTuru ? 'Banka turu' : `${MODLAR[mod].ad} tur`} — rekora sayılmaz
-        </p>
+      {(bankaTuru || !modKayitliMi(mod) || hatasiz) && (
+        <div className="flex flex-none flex-wrap items-center gap-1.5">
+          {(bankaTuru || !modKayitliMi(mod)) && (
+            <p className="rounded-full bg-ikincil-soft px-3 py-1 text-[11.5px] font-extrabold text-ikincil">
+              {bankaTuru ? 'Banka turu' : `${MODLAR[mod].ad} tur`} — rekora sayılmaz
+            </p>
+          )}
+          {hatasiz && (
+            <p className="flex items-center gap-1.5 rounded-full bg-success-soft px-3 py-1 text-[11.5px] font-extrabold text-success">
+              <Check size={13} aria-hidden />
+              Hatasız tur
+            </p>
+          )}
+        </div>
       )}
 
-      <div className="golge-kart flex-none rounded-[20px] bg-card px-4 pb-4 pt-3.5">
+      {/* Kartlar sırayla geliyor: puan kartı, sonra kutular. Tur sonu ekranı
+          turun ortasından bir karede beliriyordu ve oyuncu ekranın değiştiğini
+          değil, oyunun kaybolduğunu görüyordu. */}
+      <div
+        style={kartGirisi(0).style}
+        className={cn(
+          'golge-kart flex-none rounded-[20px] bg-card px-4 pb-4 pt-3.5',
+          kartGirisi(0).className,
+        )}
+      >
         <div className="flex items-baseline justify-between gap-2.5">
           <b className="rakam font-display text-[38px] font-extrabold leading-none">
             {dogru}
@@ -935,7 +984,7 @@ export function TurSonu({
 
         <div className="relative mt-3 h-2.5 rounded-full bg-muted">
           <span
-            className={cn('block h-full rounded-full', aile.dolgu)}
+            className={cn('tur-cubugu block h-full rounded-full', aile.dolgu)}
             style={{ width: `${dolu}%` }}
           />
           {/* Rekor kırılınca çizgi geride kalıyor ve soluyor — artık hedef değil. */}
@@ -966,11 +1015,14 @@ export function TurSonu({
           puan === undefined ? 'grid-cols-3' : 'grid-cols-4',
         )}
       >
-        <Kutu deger={dogru} etiket="Doğru" renk="text-success" />
-        <Kutu deger={yanlis} etiket="Yanlış" renk="text-ikincil" />
-        <Kutu deger={enIyiSeri} etiket="En iyi seri" />
+        {/* Kutunun ilki bir ara "Doğru" idi ve hemen üstündeki 38 piksellik
+            sayıyı tekrar ediyordu. Yerini isabet aldı: turun tek yeni bilgisi
+            o — doğru ile yanlışı tek sayıda toplayan şey. */}
+        <Kutu deger={isabet === null ? '—' : `%${isabet}`} etiket="İsabet" renk="text-success" sira={1} />
+        <Kutu deger={yanlis} etiket="Yanlış" renk="text-ikincil" sira={2} />
+        <Kutu deger={enIyiSeri} etiket="En iyi seri" sira={3} />
         {puan !== undefined && (
-          <Kutu deger={puan.deger} etiket={puan.etiket} renk="text-primary" />
+          <Kutu deger={puan.deger} etiket={puan.etiket} renk="text-primary" sira={4} />
         )}
       </div>
 
@@ -1009,9 +1061,26 @@ export function TurSonu({
   )
 }
 
-function Kutu({ deger, etiket, renk }: { deger: number; etiket: string; renk?: string }) {
+function Kutu({
+  deger,
+  etiket,
+  renk,
+  sira,
+}: {
+  /** Sayı ya da hazır yazılmış değer ("%84", "—"): isabet oranı yüzde işareti taşıyor. */
+  deger: number | string
+  etiket: string
+  renk?: string
+  /** Puan kartından sonraki sırası — kutular arka arkaya beliriyor. */
+  sira: number
+}) {
+  const giris = kartGirisi(sira)
+
   return (
-    <div className="golge-kart rounded-2xl bg-card px-2 py-2.5 text-center">
+    <div
+      style={giris.style}
+      className={cn('golge-kart rounded-2xl bg-card px-2 py-2.5 text-center', giris.className)}
+    >
       <b className={cn('rakam block font-display text-lg font-extrabold leading-tight', renk)}>
         {deger}
       </b>

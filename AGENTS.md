@@ -969,6 +969,46 @@ kullanıcı telefonda hâlâ duymadı. "Başla!" akorunun üç notası ise bunun
 (`AKOR_SEVIYESI`) çünkü kuyrukları üst üste biniyor — üçü de sayım seviyesinde
 çalsaydı çıkış 1'i aşar, akor yüksek değil **kırpılmış** duyulurdu.
 
+## Kartlar sırayla beliriyor
+
+Izgaralar (ana sayfanın Araçlar/Oyunlar kutucukları, Oyunlar sekmesinin ders ve
+oyun kartları, tur sonundaki puan kartı ile kutular) tek bir karede tam
+hâlleriyle çıkıyordu: sekmeler arasında gidip gelen kullanıcı ekranın
+kurulduğunu değil sıçradığını görüyordu. Kartlar artık aşağıdan ve sırayla
+geliyor — hareket gözü ızgaranın başına, okumanın başlaması gereken yere
+koyuyor.
+
+Sınıf tek (`kart-girisi`, `globals.css`), gecikmeyi `kartGirisi(sıra)` veriyor
+(`components/ui.tsx`). Gecikmenin **tavanı JS'te**, CSS'te değil: aynı sınırı
+CSS'te yazmanın yolu `min()` ve eski WebView sürümlerinde o bildirim sessizce
+düşünce gecikmeyle birlikte animasyonun tamamı gidiyordu. Tavan sekizinci
+kartta — ondan sonrası hareketten uzun süren bir bekleme oluyor ve ekran
+açılmıyormuş gibi duruyor.
+
+Hareket bilgi taşımıyor (kaçıncı kart olduğu ızgaradaki yerinde yazılı), o
+yüzden `prefers-reduced-motion` altında susuyor.
+
+## Tur sonunda isabet ve hatasız tur
+
+İki ekleme, ikisi de aynı soruya cevap veriyor: rekor kırmayan iyi turun
+karşılığı yoktu.
+
+- **İsabet oranı** (`isabetYuzdesi`, `oyun-kabuk.tsx`) kutuların ilkinde. Orada
+  bir süre "Doğru" duruyordu ve hemen üstündeki 38 piksellik sayıyı tekrar
+  ediyordu; isabet ise turun tek yeni bilgisi — 12 doğru, 3 yanlışın yanında
+  başka bir tur, 12 yanlışın yanında başka. Hiç cevap verilmemiş turda oran
+  **yok** ("—"): sıfır yazmak, hiç denemeyeni hepsini yanlış yapmış gibi
+  gösterirdi.
+- **Hatasız tur şeridi.** Ölçü `lib/oyunlar/tur.ts`teki `hatasiz` ile aynı,
+  üstüne eleme dışarıda: süresi biten ya da boss'a takılan turda "hatasız"
+  demek, turu bitiren şeyi görmezden gelmek olurdu. Karşılığı konfeti
+  **değil** — konfeti yeni rekora ait ve iki olay aynı kutlamayı paylaşırsa
+  rekorun karşılığı sıradanlaşır.
+
+Puan çubuğu da dolarak geliyor (`tur-cubugu`). Genişlik değil `transform`
+oynatılıyor: genişlik her karede yeniden yerleşim demek ve rekor çizgisi
+çubuğun üstünde durduğu için o da her karede kayardı.
+
 ## Yarıda bırakılan tur da bir tur
 
 Oyundan çıkmak her modda turu **bitiriyor**: tur sonu ekranı çıkıyor ve o turun

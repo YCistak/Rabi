@@ -5,6 +5,28 @@ import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useGeriKatmani } from '@/lib/geri'
 
+/**
+ * Izgaradaki bir kartın giriş animasyonu: sınıf + sıraya göre gecikme.
+ *
+ * Kartlar aynı anda değil arka arkaya geliyor; sıra ızgaradaki dizinden
+ * geliyor (`kartGirisi`, `globals.css`).
+ *
+ * Gecikmenin tavanı var ve tavan burada, CSS'te değil: sekizinci karttan
+ * sonra bekleme hareketin kendisinden uzun sürüyor ve ekran açılmıyormuş gibi
+ * duruyor. Aynı sınırı CSS'te yazmanın yolu `min()`; eski WebView
+ * sürümlerinde o bildirim sessizce düşüyor ve gecikmeyle birlikte animasyonun
+ * tamamı gidiyordu.
+ */
+export function kartGirisi(sira: number): {
+  className: string
+  style: React.CSSProperties
+} {
+  return {
+    className: 'kart-girisi',
+    style: { animationDelay: `${Math.min(sira, 7) * 32}ms` },
+  }
+}
+
 export function Kart({
   className,
   ...props
