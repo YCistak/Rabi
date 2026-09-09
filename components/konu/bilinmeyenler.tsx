@@ -93,7 +93,7 @@ export function BilinmeyenlerEkrani({
 
           {gosterilen.length === 0 ? (
             <div className="flex flex-col items-center px-6 py-14 text-center">
-              <Rabi durum="uykulu" boyut={92} />
+              <Rabi durum="uykulu" poz="kahveli" boyut={92} />
               <p className="mt-3 font-display text-[17px] font-extrabold tracking-tight">
                 Burası boş
               </p>

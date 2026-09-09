@@ -54,7 +54,7 @@ export function Hazirlaniyor({ ad }: { ad: string }) {
     >
       {/* Maskot yuva değil: kurulum sonrası uçuş ana sayfadaki maskota iniyor
           ve aynı kimlikten iki tane olsaydı tavşan buraya inerdi. */}
-      <Rabi durum="mutlu" boyut={140} />
+      <Rabi durum="mutlu" poz="sevinen" boyut={140} />
 
       <h1 className="mt-5 font-display text-2xl font-semibold tracking-tight">
         {/* Ad boş bırakılamıyor ama yine de korunuyor: adsızken cümlenin başına

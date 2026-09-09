@@ -57,8 +57,6 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   `trh` (Tarih, deniz mavisi) · `byl` (Biyoloji, yeşil), her biri `-koyu` ve
   `-ok` tonuyla.
   Kart yüzeyi `golge-kart` sınıfıyla: beyaz kart, sıcak gölge.
-  Maskotun kürkü beyaz olduğu için `--maskot-hat` konturu şart; zemin de
-  neredeyse beyaz, kontursuz siluet kayboluyor.
 - Zemin rengi üç yerde birden yazılı ve **birlikte** değişmeli:
   `--background` (globals.css), `acilis.tsx`'teki `ZEMIN` ve Android'in
   `acilis_zemin` / `uygulama_zemin` renkleri. Ayrılırlarsa açılışta renk
@@ -80,6 +78,48 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   olmadan da uzun basışta görsellerin üstünde sistemin kendi menüsü açılıyor.
   Tek istisna giriş alanları (`input`, `textarea`, `contenteditable`) — orada
   seçim, yazılanı düzeltmenin tek yolu.
+
+### Maskotun pozları
+
+Rabi bir süre **emojiydi**: `public/tavsan-yuz.png` 🐰'nin, `tavsan-el-sallayan.png`
+🙋'nin PNG'ye alınmış hâliydi. Uygulamanın kendi maskotu değildi — telefonun
+yazı tipinden gelen bir simgeydi ve ikonda, bildirimde, engel katmanında da
+o duruyordu. Yerini maskotun kendi çizimleri aldı.
+
+Pozlar elle konmuyor, üretiliyor: kaynak `assets/maskot/*.jpeg`, betik
+`scripts/maskot-uret.mjs`, çıktı `public/tavsan-*.png`. Çıktılar depoya
+giriyor ama **elle düzenlenmemeli** — `ikon-uret.mjs` ile aynı gerekçe.
+Kaynaklar siyah zeminli JPEG; betiğin işi zemini kenardan taşırarak silmek
+(eşikle silmek maskotun gözlerini ve kitabın kapağını da siliyordu) ve bütün
+pozları aynı tuvalde **aynı yükseklikte** vermek. Boy eşitliği şart: `Rabi`
+ölçüyü tek bir sayı olarak biliyor, eşit olmasalardı maskot poz değiştirdiğinde
+büyüyüp küçülürdü.
+
+**`durum` ile `poz` ayrı kalıyor.** `durum` yalnızca ekran okuyucu etiketi,
+çizilecek dosyayı `poz` seçiyor. İkisini birleştirmek — durumdan doğrudan
+dosya türetmek — denenebilir görünüyor ve açılışı bozuyor: açılıştaki uçan
+tavşan ana sayfadaki maskotun tam üstüne konuyor, ikisi farklı boyutta (110'a
+karşı 58) ama **aynı görseli** taşımak zorunda. Durumdan türeyen bir görsel,
+katman kalkarken tavşanı başka bir tavşana çevirirdi.
+
+**Yüz ayrı bir poz ve varsayılan.** `yuz` dışındaki pozlar tam boy ve gövde
+ancak 70 pikselin üstünde okunuyor; oyun başlıkları (26–54) ile ana sayfanın
+selamlaması (58) o yüzden yüzde kalıyor. Açılışın iniş yuvası (ana sayfa
+başlığı ve kurulumun karşılama ekranı) da yüzde kalmak zorunda — yukarıdaki
+sebep. Aynı dosya uygulama ikonunun (`ikon-uret.mjs`), Android'in engel
+katmanının ve pomodoro bildiriminin de kaynağı, yani orada görülen şey de bir
+yüz. Yüz kırpımının kutusu göz kararı değil ölçülerek bulundu: alt kenar
+gövdenin en dar satırı, yan kenarlar yanakların en geniş satırı.
+
+`ikon-uret.mjs` yüzün tuvaldeki kutusunu **sabit sayılarla** biliyor.
+`maskot-uret.mjs` çalışınca o sayıları ekrana yazıyor; kırpma değişirse ikon
+betiğindeki `MASKOT` da değişmeli ve `public/tavsan-yuz.png`
+`android/.../drawable-nodpi/tavsan_yuz.png`e yeniden kopyalanmalı — yerli
+taraf `public/` altını okuyamıyor.
+
+Kaynak klasöründeki her JPEG kullanılmıyor. Dışarıda kalan "sinirli" bilerek
+kaldı: uygulamada karşılığı olan bir ruh hâli değil — Rabi yanlış cevapta
+kullanıcıya kızmıyor, efekt zaten sarsıntıyla "yanlış" diyor.
 
 ### Açılışın son hareketi ana sayfaya bağlanıyor
 
@@ -309,15 +349,9 @@ nokta, soru adımlarının `noktaAdimlari` şeridiyle karışmasın: ikisi ayrı
 şeyler sayıyor ve aynı anda hiç görünmüyorlar.
 
 **Maskotun pozu.** Tanışma ekranında tavşan el sallıyor
-(`poz="el-sallayan"` → `public/tavsan-el-sallayan.png`); karşılamadaki duran
-yüzle aynı görsel olsaydı ekran ileri gitmiş gibi durmazdı. Poz `durum`dan
-ayrı bir prop: `durum` yalnızca ekran okuyucu etiketini belirliyor, poz
-gerçekten başka bir dosya gösteriyor. Görsel eksikse `Rabi` yüze düşüyor —
-kırık görsel simgesi, ekranın ortasında dururken eksik bir dosyadan çok bozuk
-bir uygulama gibi görünüyor. Yeni bir poz eklerken dosyayı `public/` altına
-koy ve kare oranı koru; ölçü `Rabi` içinde 130/120 kutusuna oturuyor —
-`tavsan-el-sallayan.png` de bu yüzden kaynağındaki 247×236'dan 256×256 kare
-tuvale taşındı, yoksa `object-contain` onu yüzden farklı ölçeklerdi.
+(`poz="el-sallayan"`); karşılamadaki duran yüzle aynı görsel olsaydı ekran
+ileri gitmiş gibi durmazdı. Pozların kendisi için aşağıdaki
+**Maskotun pozları** bölümüne bak.
 
 Tasarımda maskotun sağ üstünde ayrıca bir 👋 duruyordu; alınmadı — maskot
 zaten el sallıyor ve iki el aynı anda iki selam gibi okunuyordu.

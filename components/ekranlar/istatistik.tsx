@@ -82,7 +82,7 @@ export function IstatistikEkrani({
       <div>
         <BaslikSatiri baslik="İstatistik" />
         <BosDurum
-          simge={<Rabi durum="uykulu" boyut={96} />}
+          simge={<Rabi durum="uykulu" poz="kahveli" boyut={96} />}
           baslik="Henüz veri yok"
           aciklama="Deneme ekledikçe ortalaman, hangi derste yükselip düştüğün ve net grafiğin burada oluşur."
         />

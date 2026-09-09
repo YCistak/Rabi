@@ -158,7 +158,11 @@ export function RozetlerEkrani({
       />
 
       <Kart className="mb-3 flex items-center gap-4">
-        <Rabi durum={kazanilanSayi > 0 ? 'mutlu' : 'normal'} boyut={72} />
+        <Rabi
+          durum={kazanilanSayi > 0 ? 'mutlu' : 'normal'}
+          poz={kazanilanSayi > 0 ? 'kupali' : 'tam'}
+          boyut={72}
+        />
         <div className="min-w-0 flex-1">
           {sonraki ? (
             <>

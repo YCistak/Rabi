@@ -87,14 +87,14 @@ export function DenemelerEkrani({
 
       {suzgec !== 'hepsi' && satirlar.length > 0 && kartlar.length === 0 ? (
         <BosDurum
-          simge={<Rabi durum="normal" boyut={96} />}
+          simge={<Rabi durum="normal" poz="tam" boyut={96} />}
           baslik="Bu türde deneme yok"
           aciklama={`${TUR_ADLARI[suzgec]} denemesi kaydetmemişsin. Süzgeci kaldırıp hepsine bakabilirsin.`}
           eylem={<Buton onClick={() => setSuzgec('hepsi')}>Tümünü göster</Buton>}
         />
       ) : kartlar.length === 0 ? (
         <BosDurum
-          simge={<Rabi durum="uykulu" boyut={96} />}
+          simge={<Rabi durum="uykulu" poz="kahveli" boyut={96} />}
           baslik="Kayıtlı deneme yok"
           aciklama="İlk denemeni ekle. Girdiğin doğru ve yanlışlardan netini hesaplar, sonrakilerle karşılaştırır."
           eylem={

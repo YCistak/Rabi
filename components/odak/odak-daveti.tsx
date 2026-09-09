@@ -51,7 +51,7 @@ export function OdakDaveti({
       <div className="flex max-h-full w-full max-w-[340px] flex-col overflow-hidden rounded-[26px] bg-card golge-kart">
         <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-1 text-center">
           {/* `mx-auto` şart: maskot bir `img` ve `text-center` onu ortalamıyor. */}
-          <Rabi durum="calisiyor" boyut={104} className="mx-auto" />
+          <Rabi durum="calisiyor" poz="okuyan" boyut={104} className="mx-auto" />
 
           <h2 className="mt-2 font-display text-[20px] font-extrabold leading-tight tracking-tight text-balance">
             Bu turu birlikte koruyalım mı?

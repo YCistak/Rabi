@@ -39,10 +39,10 @@ const res = join(kok, 'android/app/src/main/res')
 const MASKOT = {
   dosya: join(kok, 'public/tavsan-yuz.png'),
   tuval: 256,
-  sol: 27,
-  ust: 3,
-  en: 204,
-  boy: 253,
+  sol: 39,
+  ust: 8,
+  en: 179,
+  boy: 241,
 }
 
 /**
@@ -177,11 +177,15 @@ function zeminSvg(kenar, tasma = 0, maske = 'squircle') {
 }
 
 /**
- * Maskotun saydamlığındaki JPEG kalıntısını siler. `tavsan-yuz.png` sıkıştırılmış
- * bir kaynaktan geliyor ve kenarında beyaza yakın, yarı saydam bir toz halkası
- * taşıyor. 179 piksellik tasarımda görünmüyor ama ikon 512'ye büyütülünce turuncu
- * zeminin üstünde noktalı bir hâle oluyor. Eşiğin altı siliniyor, üstü açılıyor;
- * sert bir ikili eşik kenarları tırtıklardı, bıyıklar da o aralıkta duruyor.
+ * Maskotun kenarındaki yarı saydam kürkü sertleştirir.
+ *
+ * Eskiden bunun işi başkaydı: `tavsan-yuz.png` sıkıştırılmış bir kaynaktan
+ * geliyor ve kenarında beyaza yakın bir toz halkası taşıyordu. O kaynak gitti
+ * (`maskot-uret.mjs` saydamlığı temiz üretiyor) ama eşik kaldı, çünkü ikonun
+ * kendi sorunu duruyor: yüz burada turuncu bir degradenin üstüne biniyor ve
+ * kürkün yumuşak uçları 512 pikselde tavşanın etrafında soluk bir hâle gibi
+ * okunuyor. Eşiğin altı siliniyor, üstü açılıyor; sert bir ikili eşik
+ * kenarları tırtıklardı, bıyıklar da o aralıkta duruyor.
  */
 async function maskotTemiz() {
   const { data, info } = await sharp(MASKOT.dosya).ensureAlpha().raw().toBuffer({ resolveWithObject: true })

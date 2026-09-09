@@ -330,7 +330,7 @@ export function KonuHaritasiEkrani({
 
       {program === null ? (
         <Kart className="flex flex-col items-center px-6 py-10 text-center">
-          <Rabi durum="calisiyor" boyut={92} />
+          <Rabi durum="calisiyor" poz="okuyan" boyut={92} />
           <p className="mt-3 font-display text-[17px] font-extrabold tracking-tight">
             {secim.sinif}. sınıf {ders.ad} hazırlanıyor
           </p>
