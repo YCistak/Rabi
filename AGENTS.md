@@ -1526,6 +1526,41 @@ Karardan sonra kartın çerçevesi renkleniyor ve bu çerçeve `ring` ile değil
 kendi gölgesi (`golge-kart`) onu eziyordu. `outlineOffset` de negatif — dışarı
 taşan çizgi, kaydırılabilir kutunun kenarında kırpılıyordu.
 
+### Kartlardan soruya bir köprüyle geçiliyor
+
+Sahnenin **üç** hâli var ve üçü de `soru-sahnesi.tsx` içinde: giriş (`Giris`),
+soruların kendisi, kapanış (`Sonuc`).
+
+Giriş bir süre yoktu ve yokluğu bilinçliydi — "arada duran bir 'deste bitti'
+ekranı, okumayla soruyu birbirinden ayıran fazladan bir dokunuş". Fazladan
+dokunuşun bedeli doğruydu, ayrılmayan iki işin bedeli hesaba katılmamıştı: son
+kartta "İlerle"ye basan kullanıcı dersin aydınlık, renkli destesinden koyu
+sahnedeki bir **iddianın üstüne** düşüyordu. Yüzey, ton ve iş tek karede birden
+değişiyor ve gelen ilk şey cevaplanmayı bekleyen bir cümle oluyordu. Okumayı
+bitirdiğini sanan kullanıcı kendini cevaplayacağı bir şeyin karşısında
+buluyordu; oradaki dokunuş gecikme değil, bir sonraki ekranın ne olduğunu
+söyleyen tek yer.
+
+Köprü koyu sahnenin **kendi** ilk ekranı, üçüncü bir yüzey değil: renk değişimi
+böylece bir soruyla değil bir açıklamayla geliyor ve sahnenin iki ucu aynı
+bileşende, aynı düzende duruyor. Deste kendi bitiş ekranını hâlâ çizmiyor —
+çizseydi arka arkaya iki kapanış olurdu, biri aydınlık biri koyu, ikisi de aynı
+şeyi söyleyerek.
+
+Ekranda kaç kart okunduğu ve kaç iddia geleceği yazıyor: "kaç iddia" demeyen
+bir köprü, ne kadar süreceğini söylemeden başlat düğmesi gösterirdi — haritadaki
+"4 kart · 3 dk" satırının aynı gerekçesi.
+
+**"Şimdi değil" düğme değil yazı.** Deste zaten okundu ve kaydı yazıldı;
+yoklamayı vermemek konuyu okunmamış yapmıyor ve okumayı bitirmenin bedeli bir
+sınav olmamalı. İki dolu düğme yan yana dursaydı hangisinin ileri götürdüğü de
+okunmazdı — kurulumdaki "Şimdilik atla" kuralı.
+
+`SahneSonucu.bitti` bu yüzden var: yarıda bırakılan yoklama ilerlemeye sayı
+**yazdırmıyor** (`konu-haritasi.tsx`), destenin kuralının aynısı. Bayraksız
+hâlde girişte "Şimdi değil" diyen kullanıcının kaydına, hiç verilmemiş bir
+yoklamanın "0 doğru"su geçiyordu.
+
 ### Ana sayfada kısayol değil kendi bölümü
 
 Bölüm bir süre kapalı betada gizliydi (`KONU_ANLATIMI_ACIK`); konu listesi

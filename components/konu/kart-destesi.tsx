@@ -20,9 +20,11 @@ import { KartGorseli } from './kart-gorseli'
  * Kayıt olarak yalnızca **kaç karta kadar gidildiği** ve destenin bitip
  * bitmediği tutuluyor (`DesteSonucu`); harita bu ikisini gösteriyor.
  *
- * Destenin kendi bitiş ekranı yok: son karttan sonra soru sahnesi geliyor
- * (`soru-sahnesi.tsx`) ve özet orada. Arada duran bir "deste bitti" ekranı,
- * okumayla soruyu birbirinden ayıran fazladan bir dokunuştu.
+ * Destenin kendi bitiş ekranı yok ve olmayacak: son karttan sonra soru sahnesi
+ * geliyor (`soru-sahnesi.tsx`), okumanın bittiğini söyleyen ekran da özet de
+ * orada. Deste kendi bitişini de çizseydi arka arkaya iki kapanış ekranı
+ * olurdu — biri dersin aydınlık zemininde, öteki sahnenin koyusunda, ikisi de
+ * aynı şeyi söyleyerek.
  */
 
 /**

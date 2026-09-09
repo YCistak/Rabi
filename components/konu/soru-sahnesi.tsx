@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Check, X } from 'lucide-react'
+import { ArrowRight, Check, X } from 'lucide-react'
 import type { Konu } from '@/lib/konu'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
@@ -25,6 +25,10 @@ import { KartGorseli } from './kart-gorseli'
  * Şimdi cevap `SoruKarti.dogru` içinde ve ekran kararı kendisi tartıyor;
  * gerekçe karardan sonra çıkıyor, öncesinde değil.
  *
+ * Sahnenin **üç** hâli var ve üçü de burada: kartlardan devralan giriş
+ * (`Giris`), soruların kendisi ve kapanıştaki özet (`Sonuc`). Giriş sonradan
+ * eklendi; gerekçesi kendi yorumunda.
+ *
  * Ekran uygulamanın tek koyu yüzeyi. Gerekçesi `globals.css`teki `.sahne`
  * bloğunda; renkler de orada, burada onaltılık kod yok.
  */
@@ -32,6 +36,15 @@ import { KartGorseli } from './kart-gorseli'
 export type SahneSonucu = {
   dogru: number
   yanlis: number
+  /**
+   * Yoklamanın sonuna gelindi mi.
+   *
+   * Yarıda çıkılan yoklama sayı **yazdırmıyor** (`konu-haritasi.tsx`):
+   * destenin kendi kuralının aynısı — tamamlanma sona gelmekle kazanılıyor.
+   * Bayrak olmadan, girişte "Şimdi değil" diyen kullanıcının kaydına hiç
+   * verilmemiş bir yoklamanın "0 doğru"su yazılıyordu.
+   */
+  bitti: boolean
 }
 
 export function SoruSahnesi({
@@ -51,6 +64,8 @@ export function SoruSahnesi({
   const [dogru, setDogru] = useState(0)
   const [yanlis, setYanlis] = useState(0)
   const [bitti, setBitti] = useState(false)
+  /** Girişteki düğmeye basıldı mı; basılana kadar ilk iddia görünmüyor. */
+  const [basladi, setBasladi] = useState(false)
 
   const soru = konu.sorular[sira]
   const toplam = konu.sorular.length
@@ -61,8 +76,8 @@ export function SoruSahnesi({
     kaydediliyor ve `onKapat`ı çağırdığı anda state'in güncel hâlini görmesi
     gerekiyor.
   */
-  const sonucRef = useRef<SahneSonucu>({ dogru: 0, yanlis: 0 })
-  sonucRef.current = { dogru, yanlis }
+  const sonucRef = useRef<SahneSonucu>({ dogru: 0, yanlis: 0, bitti: false })
+  sonucRef.current = { dogru, yanlis, bitti }
   useGeriKatmani(true, () => onKapat(sonucRef.current))
 
   function karar(cevap: boolean) {
@@ -86,6 +101,22 @@ export function SoruSahnesi({
     window.scrollTo({ top: 0 })
   }, [sira])
 
+  if (!basladi) {
+    return (
+      <div className="sahne fixed inset-0 z-50 flex flex-col text-[var(--sahne-yazi)]">
+        <Giris
+          konuAdi={konu.ad}
+          dersAdi={dersAdi}
+          temaAdi={temaAdi}
+          kartSayisi={konu.kartlar.length}
+          soruSayisi={toplam}
+          onBasla={() => setBasladi(true)}
+          onVazgec={() => onKapat({ dogru: 0, yanlis: 0, bitti: false })}
+        />
+      </div>
+    )
+  }
+
   if (bitti) {
     return (
       <div className="sahne fixed inset-0 z-50 flex flex-col text-[var(--sahne-yazi)]">
@@ -93,7 +124,7 @@ export function SoruSahnesi({
           konuAdi={konu.ad}
           dogru={dogru}
           yanlis={yanlis}
-          onKapat={() => onKapat({ dogru, yanlis })}
+          onKapat={() => onKapat({ dogru, yanlis, bitti: true })}
         />
       </div>
     )
@@ -239,6 +270,94 @@ export function SoruSahnesi({
           )}
         </div>
       </div>
+    </div>
+  )
+}
+
+/**
+ * Yoklamanın giriş ekranı — kartlarla soruların arasındaki köprü.
+ *
+ * Ekran bir süre yoktu ve destenin yorumu bunu bilerek yazıyordu: "arada
+ * duran bir 'deste bitti' ekranı, okumayla soruyu birbirinden ayıran fazladan
+ * bir dokunuş". Fazladan dokunuşun bedeli doğruydu ama ayrılmayan iki iş de
+ * bir bedel ödüyordu: son kartta "İlerle"ye basan kullanıcı dersin aydınlık,
+ * renkli destesinden koyu sahnedeki bir **iddianın üstüne** düşüyordu. Yüzey,
+ * ton ve iş tek karede birden değişiyor ve gelen ilk şey cevaplanmayı bekleyen
+ * bir cümle oluyordu — okumayı bitirdiğini sanan kullanıcı kendini
+ * cevaplayacağı bir şeyin karşısında buluyordu. Fazladan dokunuş burada gecikme
+ * değil, bir sonraki ekranın ne olduğunu söyleyen tek yer.
+ *
+ * Köprü koyu sahnenin **kendi** ilk ekranı, üçüncü bir yüzey değil: renk
+ * değişimi böylece bir soruyla değil bir açıklamayla geliyor ve sahnenin iki
+ * ucu — giriş ile `Sonuc` — aynı bileşende, aynı düzende duruyor.
+ *
+ * Sayılar süs değil: "kaç iddia" yazmayan bir köprü, ne kadar süreceğini
+ * söylemeden başlat düğmesi gösteriyor — haritadaki "4 kart · 3 dk" satırının
+ * aynı gerekçesi.
+ *
+ * **"Şimdi değil" bir düğme değil bir çıkış.** Deste zaten okundu ve kaydı
+ * yazıldı (`konu-haritasi.tsx`); yoklamayı vermemek konuyu okunmamış yapmıyor.
+ * Yoklamayı zorunlu kılmak, okumayı bitirmenin bedelini bir sınav yapardı.
+ */
+function Giris({
+  konuAdi,
+  dersAdi,
+  temaAdi,
+  kartSayisi,
+  soruSayisi,
+  onBasla,
+  onVazgec,
+}: {
+  konuAdi: string
+  dersAdi: string
+  temaAdi: string
+  kartSayisi: number
+  soruSayisi: number
+  onBasla: () => void
+  onVazgec: () => void
+}) {
+  return (
+    <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center px-6 pb-[calc(1rem+var(--guvenli-alt))] text-center">
+      <p className="text-[10.5px] font-extrabold tracking-[0.12em] text-[var(--sahne-soluk)] uppercase">
+        {dersAdi} · {temaAdi}
+      </p>
+
+      {/* Maskot kutluyor: köprünün ilk işi okumanın bittiğini söylemek, sınavı
+          duyurmak ondan sonra geliyor. */}
+      <div className="mt-3">
+        <Rabi durum="kutlama" boyut={104} />
+      </div>
+
+      <h3 className="mt-3 font-display text-[22px] font-extrabold tracking-tight text-balance">
+        {konuAdi} okundu
+      </h3>
+      <p className="mt-1.5 text-[14.5px] leading-snug font-semibold text-[var(--sahne-soluk)] text-pretty">
+        Sırada kısa bir yoklama var: her iddia için doğru mu yanlış mı diyeceksin, gerekçesi hemen
+        altında çıkıyor.
+      </p>
+
+      {/* Zemin nötr (`bg-white/10`, başlıktaki kapatma düğmesiyle aynı):
+          sahnenin doğru/yanlış tonları karar renkleri ve sayaç onların hiçbiri
+          değil — yeşil bir şerit, henüz verilmemiş yoklamayı geçilmiş
+          gösterirdi. */}
+      <p className="rakam mt-4 rounded-full bg-white/10 px-4 py-2 text-[12.5px] font-extrabold text-[var(--sahne-yazi)]">
+        {kartSayisi} kart okundu · {soruSayisi} iddia
+      </p>
+
+      <Buton onClick={onBasla} className="mt-6 w-full bg-[var(--sahne-vurgu)]">
+        Yoklamaya başla
+        <ArrowRight size={18} strokeWidth={3} aria-hidden />
+      </Buton>
+
+      {/* Çıkış düğme değil yazı: iki dolu düğme yan yana dururken hangisinin
+          ileri götürdüğü okunmuyordu — kurulumdaki "Şimdilik atla" kuralı. */}
+      <button
+        type="button"
+        onClick={onVazgec}
+        className="mt-2 px-4 py-3 text-[13.5px] font-extrabold text-[var(--sahne-soluk)] transition active:opacity-70"
+      >
+        Şimdi değil
+      </button>
     </div>
   )
 }
