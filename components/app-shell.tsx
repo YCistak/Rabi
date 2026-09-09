@@ -46,7 +46,7 @@ import { bekleyenSayisi } from '@/lib/hata-bildirimi'
 import { useHataBildirimi } from '@/lib/hata-kuyrugu'
 import { useCokmeRaporu } from '@/lib/cokme-izni'
 import { CokmeSorusu } from '@/components/cokme-sorusu'
-import { bugun } from '@/lib/utils'
+import { bugun, cn } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import type { KonuDersId, KonuSinifi } from '@/lib/konu'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
@@ -705,14 +705,11 @@ export function AppShell() {
     <div className="mx-auto min-h-dvh max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(6rem+var(--guvenli-alt))]">
       {/*
         Ekran ve sekme değişimi tek bir karede oluyordu: içerik tak diye yerine
-        oturuyordu. `key` her değişimde bu kutuyu söküp yeniden kuruyor, böylece
+        oturuyordu. `anahtar` her değişimde kutuyu söküp yeniden kuruyor, böylece
         giriş animasyonu her seferinde baştan oynuyor — sınıf tek başına verilse
         React aynı düğümü koruduğu için animasyon yalnızca ilk açılışta çalışırdı.
-
-        Sınıf opaklıktan ibaret ve öyle kalmalı; sebebi `.sayfa-girisi`in
-        yanındaki yorumda (`app/globals.css`) ve aşağıdaki kök `div` notunda.
       */}
-      <div key={ekran ?? `sekme:${sekme}`} className="sayfa-girisi">
+      <SayfaGecisi key={ekran ?? `sekme:${sekme}`}>
         {ekran !== null ? (
           <>
             <Buton
@@ -922,7 +919,7 @@ export function AppShell() {
             )}
           </>
         )}
-      </div>
+      </SayfaGecisi>
 
       <BottomNav
         sekme={sekme}
@@ -955,5 +952,45 @@ export function AppShell() {
       <CokmeSorusu kol={cokme} />
       {gecis !== 'yok' && <MaskotGecisi soluyor={gecis === 'soluyor'} />}
     </>
+  )
+}
+
+/**
+ * Ekran geçişini oynatan kutu.
+ *
+ * `key` **bu bileşene** konuyor, içindeki `div`e değil: sökülmesi gereken şey
+ * kutu değil bileşenin kendisi — yalnızca `div` yenilenseydi aşağıdaki state
+ * ilk geçişten sonra `true` kalır, duraklatma bir daha hiç çalışmazdı. Kutu **duraklatılmış** doğuyor, iki `requestAnimationFrame` sonra
+ * salınıyor: CSS animasyonu öğenin ilk çizildiği karede başlıyor ve o kare, tam
+ * da yeni ekranın kurulduğu — düzenin hesaplandığı, görsellerin çözüldüğü — en
+ * pahalı kare. Orada başlayan animasyonun ilk kareleri düşüyor ve hareket
+ * akmıyor, kasıyor gibi görünüyor.
+ *
+ * İki kare şart: birincisi tarayıcının kutuyu duraklatılmış hâliyle bir kez
+ * boyaması, ikincisi gerçekten kare ürettiğinin kanıtı. Arkasında bir emniyet
+ * zamanlayıcısı var, çünkü sayfa görünür değilken `rAF` hiç çağrılmıyor ve
+ * duraklatılmış kalan ekran (opaklığı 0'da donmuş) hiç görünmezdi. Açılış
+ * ekranındaki `acilis-bekliyor` ile aynı kural, aynı gerekçe.
+ */
+function SayfaGecisi({ children }: { children: React.ReactNode }) {
+  const [basladi, setBasladi] = useState(false)
+
+  useEffect(() => {
+    let ikinci = 0
+    const birinci = requestAnimationFrame(() => {
+      ikinci = requestAnimationFrame(() => setBasladi(true))
+    })
+    const emniyet = setTimeout(() => setBasladi(true), 400)
+    return () => {
+      cancelAnimationFrame(birinci)
+      cancelAnimationFrame(ikinci)
+      clearTimeout(emniyet)
+    }
+  }, [])
+
+  return (
+    <div className={cn('sayfa-girisi', !basladi && 'sayfa-bekliyor')}>
+      {children}
+    </div>
   )
 }

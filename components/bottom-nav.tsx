@@ -59,8 +59,14 @@ export function BottomNav({
       Menü zeminden ayrılan, üst köşeleri yuvarlatılmış bir yüzey — tasarımda
       ekranın devamı değil, üstüne oturmuş ayrı bir parça. Yanlarda boşluk yok:
       telefonun alt kenarına yapışık duruyor, yalnızca köşeleri kırılıyor.
+
+      Zemin **donuk** ve `backdrop-blur` yok. Bir süre yarı saydam ve bulanıktı;
+      görsel katkısı yoktu (zemin zaten %95 donuktu) ama bedeli büyüktü: menü
+      sayfanın üstünde duruyor ve altındaki içerik her kıpırdadığında —
+      kaydırmada, ekran geçişinde — WebView arkayı yeniden bulanıklaştırmak
+      zorunda kalıyor. Ekran geçişi bu yüzden takılıyordu.
     */
-    <nav className="guvenli-alt fixed inset-x-0 bottom-0 z-40 rounded-t-[26px] border-t border-border bg-card/95 shadow-[0_-6px_22px_rgba(54,33,112,0.12)] backdrop-blur">
+    <nav className="guvenli-alt fixed inset-x-0 bottom-0 z-40 rounded-t-[26px] border-t border-border bg-card shadow-[0_-6px_22px_rgba(54,33,112,0.12)]">
       <ul className="mx-auto flex max-w-md px-3 pt-2.5 pb-1">
         {SEKMELER.map(({ id, ad }) => {
           const aktif = sekme === id

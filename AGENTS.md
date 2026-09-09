@@ -1035,6 +1035,19 @@ uzun bir geçiş ikinci kez izlendiğinde beklemeye dönüşüyor.
   telefonda hiç fark edilmedi: aynı yerde duran iki ekran arasındaki solma,
   geçiş gibi değil ekranın geç çizilmesi gibi görünüyor. Hareket eden bir şey
   yoksa geçiş de yok.
+- **Geçiş duraklatılmış başlıyor** (`SayfaGecisi`, `.sayfa-bekliyor`). CSS
+  animasyonu öğenin ilk çizildiği karede başlıyor ve o kare, yeni ekranın
+  kurulduğu en pahalı kare; orada başlayan animasyonun ilk kareleri düşüyor ve
+  hareket kasıyor gibi görünüyor. İki `rAF` sonra salınıyor, arkasında emniyet
+  zamanlayıcısı var — açılış ekranındaki `acilis-bekliyor` ile aynı kural.
+  Duraklatma alt öğelere de iniyor: kartların sıralı girişi de aynı pahalı
+  karede başlıyordu, artık hepsi tek bir hareket hâlinde salınıyor.
+
+Alt menünün zemini bu yüzden **donuk** ve `backdrop-blur` taşımıyor: menü
+sayfanın üstünde duruyor ve altındaki içerik her kıpırdadığında WebView arkayı
+yeniden bulanıklaştırıyor. Görsel katkısı yoktu (zemin zaten %95 donuktu),
+bedeli takılan bir geçişti. Sayfanın üstünde duran yeni bir çubuk eklersen
+aynı soruyu sor.
 - **Tam ekran katmanlar `clip-path` ile yükseliyor**, `transform` ile değil —
   yukarıdaki ilk sebep. `sahne-iner` ile aynı yöntem, ters yönde: bu katmanlar
   alttan geliyor.
