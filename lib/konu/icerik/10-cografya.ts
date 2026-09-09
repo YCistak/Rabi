@@ -1,4 +1,4 @@
-import { kart, konu, program, tema } from '../tip'
+import { kart, konu, program, soru, tema } from '../tip'
 
 /**
  * 10. sınıf Coğrafya — Maarif Modeli.
@@ -53,6 +53,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Doğa mı belirler insan mı?',
         'Doğa sınırları çizer, insan o sınırlar içinde seçim yapar. Bugünkü coğrafya bu karşılıklı ilişkiyi esas alır.',
       ),
+    ], [
+      soru('Coğrafi bakış, olayları yer ve ölçek ilişkisi içinde değerlendirmektir.', true, 'Aynı olay yerel ve küresel ölçekte farklı okunuyor.'),
+      soru('Bir olay, incelendiği ölçeğe göre farklı görünebilir.', true, 'Mahallede sorun görünmeyen şey ülke ölçeğinde büyük bir örüntü olabiliyor.'),
+      soru('Doğa insanı tümüyle belirler; insanın doğayı değiştirme gücü yoktur.', false, 'İlişki karşılıklı: insan da araziyi, akarsuyu ve bitki örtüsünü değiştiriyor.'),
+      soru('Coğrafyada neden-sonuç ilişkisi aranmaz.', false, 'Bir olayın niçin orada olduğunu sormak coğrafyanın temel işi.'),
     ]),
   ]),
   tema('cog10-t2', 'Mekânsal Bilgi Teknolojileri', [
@@ -85,6 +90,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Zaman boyutu',
         'Uzaktan algılamanın asıl gücü karşılaştırma: aynı yerin on yıl arayla görüntüsü değişimi doğrudan ölçülebilir kılar.',
       ),
+    ], [
+      soru('CBS, afet sonrası hasar tespitinde kullanılır.', true, 'Önceki ve sonraki veriler üst üste konarak değişim görülüyor.'),
+      soru('Uzaktan algılama orman yangınlarının izlenmesinde kullanılır.', true, 'Uydu görüntüleri sıcaklık farkını gösteriyor.'),
+      soru('CBS yalnızca harita çizer, analiz yapamaz.', false, 'Katmanları ilişkilendirip sorgu ve analiz yapmak asıl gücü.'),
+      soru('CBS verilerinde zaman boyutu bulunmaz.', false, 'Farklı tarihli veriler karşılaştırılarak değişim izleniyor.'),
     ]),
     konu('cog10-veri-harita', 'Mekânsal Verilerin Haritalara Aktarılması', [
       kart(
@@ -131,6 +141,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Konum doğruluğu',
         'Verinin hangi koordinat sisteminde toplandığı bilinmezse katmanlar birbirine oturmaz ve harita sessizce kayar.',
       ),
+    ], [
+      soru('Altlık harita, üzerine veri işlenen temel haritadır.', true, 'Kıyı, sınır ve akarsu gibi değişmeyen ögeleri taşıyor.'),
+      soru('Verinin sınıflandırılma biçimi haritanın verdiği izlenimi değiştirir.', true, 'Aynı veri, aralıklar değişince başka bir dağılım gibi görünebiliyor.'),
+      soru('Harita renkleri rastgele seçilebilir, okumayı etkilemez.', false, 'Renk sırası verinin sırasını anlatıyor; rastgele renk haritayı okunmaz kılar.'),
+      soru('Konum doğruluğu düşük veriyle güvenilir bir harita üretilebilir.', false, 'Yanlış konumlanmış veri, haritayı olduğu gibi yanlış yapar.'),
     ]),
   ]),
   tema('cog10-t3', 'Doğal Sistemler ve Süreçler', [
@@ -182,6 +197,25 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Deprem nasıl oluşur?',
         'Levhalar sürtünürken enerji birikir; kayaç dayanma sınırını aşınca kırılır ve biriken enerji dalgalar hâlinde yayılır.',
       ),
+    ], [
+      soru(
+        'Levhalar iç çekirdek üzerinde hareket eder.',
+        false,
+        'Levhalar mantonun üst kısmındaki akışkan tabaka üzerinde hareket ediyor.',
+        {
+          tur: 'katman',
+          eksenAdi: 'derinlik',
+          katmanlar: [
+            { ad: 'Yer kabuğu' },
+            { ad: 'Manto' },
+            { ad: 'Dış çekirdek' },
+            { ad: 'İç çekirdek' },
+          ],
+        },
+      ),
+      soru('Türkiye, deprem riski yüksek bir kuşakta yer alır.', true, 'Alp-Himalaya kuşağı üzerinde bulunuyor.'),
+      soru('Depremler levha sınırlarında ve fay hatlarında yoğunlaşır.', true, 'Gerilme buralarda birikip boşalıyor.'),
+      soru('İç kuvvetler yeryüzünü düzleştirir.', false, 'İç kuvvetler engebelendirir; düzleştiren dış kuvvetlerdir.'),
     ]),
     konu('cog10-asinma', 'İklim ve Kayaç Yapısının Aşınmaya Etkisi', [
       kart(
@@ -221,6 +255,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Bitki örtüsünün rolü',
         'Örtü toprağı tutar ve aşınmayı yavaşlatır; örtüsüz yamaçta aynı yağmur kat kat çok toprak taşır.',
       ),
+    ], [
+      soru('Fiziksel ayrışma, günlük sıcaklık farkının fazla olduğu kurak bölgelerde etkilidir.', true, 'Kayaç ısınıp soğudukça çatlıyor.'),
+      soru('Karstik şekiller kireç taşının çözünmesiyle oluşur.', true, 'Suyun içindeki karbondioksit çözünmeyi hızlandırıyor.'),
+      soru('Kimyasal çözünme kurak ve soğuk bölgelerde en etkilidir.', false, 'Nemli ve sıcak bölgelerde etkili; su ve sıcaklık tepkimeyi hızlandırıyor.'),
+      soru('Bitki örtüsü aşınmayı hızlandırır.', false, 'Kökleriyle toprağı tutarak aşınmayı yavaşlatıyor.'),
     ]),
     konu('cog10-asinim-birikim', 'Aşınım ve Birikim Süreçlerinin Etkisi', [
       kart(
@@ -263,6 +302,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Vadi biçimi anlatır',
         'V biçimli vadi akarsuyun, U biçimli vadi buzulun izidir. Şekil, onu oluşturan kuvveti ele verir.',
       ),
+    ], [
+      soru('Menderesler, eğimin azaldığı yerlerde oluşur.', true, 'Yavaşlayan akarsu yatağında kıvrılarak akıyor.'),
+      soru('Buzul vadileri U biçimli, akarsu vadileri V biçimlidir.', true, 'Vadinin biçimi onu oluşturan kuvveti ele veriyor.'),
+      soru('Dış kuvvetlerin enerji kaynağı yerin iç ısısıdır.', false, 'Dış kuvvetler güneş enerjisi ve yer çekimiyle çalışır; iç ısı iç kuvvetlerin kaynağı.'),
+      soru('Delta ovaları akarsuyun aşındırma gücüyle oluşur.', false, 'Taşıdığı malzemeyi denize dökülürken biriktirmesiyle oluşuyor.'),
     ]),
     konu('cog10-saha', 'Yeryüzü Şekilleri ile İlgili Saha Çalışması', [
       kart(
@@ -289,6 +333,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Raporlama',
         'Toplanan veri çözümlenir ve bulgular haritayla birlikte sunulur. Ham gözlem tek başına sonuç değildir.',
       ),
+    ], [
+      soru('Saha çalışmasında gözlemin yeri ve saati kaydedilmelidir.', true, 'Aynı yerin başka zamanla karşılaştırılabilmesi buna bağlı.'),
+      soru('Saha çalışması öncesinde harita ve kaynak incelemesi yapılır.', true, 'Arazide neye bakılacağı önceden belirleniyor.'),
+      soru('Sanal saha çalışması, gerçek arazi gözleminin bütün kazanımlarını sağlar.', false, 'Erişim sağlar ama arazide edinilen doğrudan gözlemin yerini tutmaz.'),
+      soru('Saha çalışması yalnızca uzman coğrafyacıların yapabileceği bir iştir.', false, 'Planlı bir gözlem ve kayıtla öğrenciler de yürütebiliyor.'),
     ]),
     konu('cog10-beseri-etkilesim', 'Yeryüzü Şekilleri ile Beşerî Faaliyetler', [
       kart(
@@ -319,6 +368,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Karşılıklı ilişki',
         'Arazi insanı sınırlar, insan da araziyi dönüştürür; coğrafyanın baktığı şey bu çift yönlü etkidir.',
       ),
+    ], [
+      soru('Dağlık alanlarda yol yapım maliyeti yüksektir.', true, 'Tünel ve viyadük gerektiriyor.'),
+      soru('Yükselti arttıkça yetiştirilebilen tarım ürünü çeşidi azalır.', true, 'Sıcaklık düşüp yetişme süresi kısalıyor.'),
+      soru('İnsanın araziyi değiştirmesinin çevresel bir bedeli yoktur.', false, 'Erozyon, sel riski ve habitat kaybı bu değişimin bedelleri.'),
+      soru('Yer şekilleri yerleşmelerin dağılışını etkilemez.', false, 'Ovalar ve vadi tabanları yoğun, dağlık alanlar seyrek nüfusludur.'),
     ]),
   ]),
   tema('cog10-t4', 'Beşerî Sistemler ve Süreçler', [
@@ -351,6 +405,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Geçici yerleşmeler',
         'Yayla, oba ve dam mevsimlik kullanılır. Konargöçer geleneğin bugüne kalan izleridir.',
       ),
+    ], [
+      soru('Su kaynaklarına yakınlık, yerleşme yeri seçiminde belirleyici olmuştur.', true, 'İlk yerleşmelerin çoğu akarsu kenarında kuruldu.'),
+      soru('Eski yerleşmelerde savunma kaygısı yer seçimini etkilemiştir.', true, 'Tepe üstleri ve yarımadalar bu yüzden tercih edildi.'),
+      soru('Yayla ve oba sürekli yerleşmelere örnektir.', false, 'İkisi de yılın belirli döneminde kullanılan geçici yerleşmeler.'),
+      soru('Bir yerleşmenin dokusu kurulduğu gibi kalır, zamanla değişmez.', false, 'Nüfus, ekonomi ve ulaşım değiştikçe doku da değişiyor.'),
     ]),
     konu('cog10-yerlesme-fonksiyon', 'Yerleşmelerin Fonksiyonları', [
       kart(
@@ -388,6 +447,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Fonksiyon ve nüfus',
         'İşlev çeşitlendikçe şehir daha çok insanı besler; tek işleve bağlı şehirler o işlev sarsıldığında hızla göç verir.',
       ),
+    ], [
+      soru('Bir yerleşmenin fonksiyonu, orada öne çıkan ekonomik etkinliktir.', true, 'Liman kenti, sanayi kenti gibi adlandırmalar buradan geliyor.'),
+      soru('Büyük şehirler genellikle çok fonksiyonludur.', true, 'Tek bir etkinlik değil, birden çok işlev bir arada yürüyor.'),
+      soru('Bir yerleşmenin fonksiyonu zamanla değişmez.', false, 'Madeni tükenen kent turizm kentine dönüşebiliyor.'),
+      soru('Turizm bir yerleşme fonksiyonu sayılmaz.', false, 'Turizm kenti, fonksiyon türlerinden biri.'),
     ]),
   ]),
   tema('cog10-t5', 'Ekonomik Faaliyetler ve Etkileri', [
@@ -431,6 +495,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Katma değer',
         'Ham maddenin işlenerek kazandığı ek değer. Aynı pamuk, kumaşa ve giysiye dönüştükçe kat kat değerlenir.',
       ),
+    ], [
+      soru('Tarım, madencilik ve balıkçılık birincil ekonomik faaliyetlerdir.', true, 'Doğrudan doğadan üretim yapıyorlar.'),
+      soru('Ham maddenin işlenmesi ikincil faaliyettir.', true, 'Sanayi bu grupta yer alıyor.'),
+      soru('Katma değer, ham maddenin işlenmeden satılmasıyla artar.', false, 'İşlendikçe artar; ham madde ihracı katma değeri düşük tutuyor.'),
+      soru('Ekonomik sektörler birbirinden bağımsız çalışır.', false, 'Sanayi tarımın ürününü, hizmet ikisinin ulaşımını ve satışını üstleniyor.'),
     ]),
     konu('cog10-sektor-gelismislik', 'Ekonomik Sektörler ve Gelişmişlik', [
       kart(
@@ -465,6 +534,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Neden tek gösterge yetmez?',
         'Kişi başına gelir ortalamadır ve dağılımı göstermez; yanına eğitim ve sağlık göstergeleri konmadan yanıltıcı olur.',
       ),
+    ], [
+      soru('Gelişmiş ülkelerde hizmet sektörünün payı yüksektir.', true, 'İstihdamın büyük kısmı üçüncül sektörde.'),
+      soru('Az gelişmiş ülkelerde tarımda çalışan nüfusun payı yüksektir.', true, 'Buna karşılık tarımın gelirdeki payı düşük kalıyor.'),
+      soru('Bir ülkenin gelişmişliği yalnızca kişi başına düşen gelirle ölçülür.', false, 'Eğitim, sağlık ve yaşam süresi gibi göstergeler de hesaba katılıyor.'),
+      soru('Tarımda çalışan nüfusun çok olması, tarım gelirinin de yüksek olduğunu gösterir.', false, 'Çoğu zaman tersini gösterir: çok kişi çalışıyor ama verim ve gelir düşük.'),
     ]),
     konu('cog10-turkiye-ekonomi', 'Türkiye Ekonomisinin Sektörel Dağılımı', [
       kart(
@@ -495,6 +569,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Bölgesel dengesizlik',
         'Sanayi batıda yoğun, doğuda tarım ve hayvancılık ağırlıkta. Teşvik politikaları bu farkı azaltmayı hedefler.',
       ),
+    ], [
+      soru('Türkiye de sanayi tesislerinin en çok yoğunlaştığı bölge Marmara dır.', true, 'Ulaşım, pazar ve iş gücü orada bir arada.'),
+      soru('Türkiye de hizmet sektörünün millî gelirdeki payı en yüksektir.', true, 'Turizm ve ticaret bu payın büyük kısmını oluşturuyor.'),
+      soru('Türkiye de tarımda çalışan nüfusun payı, tarımın millî gelirdeki payından düşüktür.', false, 'Tersi geçerli; bu da tarımda verimin düşük olduğunu gösteriyor.'),
+      soru('Türkiye de ekonomik faaliyetler bölgeler arasında dengeli dağılmıştır.', false, 'Batı ile doğu arasında belirgin bir gelişmişlik farkı var.'),
     ]),
   ]),
   tema('cog10-t6', 'Afetler ve Sürdürülebilir Çevre', [
@@ -527,6 +606,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Ortak nokta',
         'Başarılı örneklerin hepsinde önlem afetten önce alınmış ve bir kurumun sürekli sorumluluğuna bağlanmış.',
       ),
+    ], [
+      soru('Japonya da deprem eğitimleri ve tatbikatlar düzenli olarak yapılır.', true, 'Hazırlık, günlük hayatın parçası hâline getirilmiş durumda.'),
+      soru('Erken uyarı sistemleri can kaybını azaltır.', true, 'Saniyeler bile korunma davranışı için yeterli olabiliyor.'),
+      soru('Hollanda nın su yönetimi deneyimi yalnızca baraj yapımına dayanır.', false, 'Suya alan bırakan planlama ve arazi kullanımı da bu deneyimin parçası.'),
+      soru('İyi uygulama örneklerinin ortak yanı, afet sonrasına odaklanmalarıdır.', false, 'Ortak yanları afet öncesine, yani hazırlığa yatırım yapmaları.'),
     ]),
     konu('cog10-dirençli-alan', 'Afetlere Karşı Dirençli Yaşam Alanları', [
       kart(
@@ -568,6 +652,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
           ],
         },
       ),
+    ], [
+      soru('Zemin özellikleri, yapıların depremden etkilenme derecesini değiştirir.', true, 'Gevşek ve suya doygun zemin sarsıntıyı büyütüyor.'),
+      soru('Şehirlerdeki açık alanlar afet sonrasında toplanma yeri olarak kullanılır.', true, 'Bu yüzden imara açılmamaları önemli.'),
+      soru('Altyapıda yedeklilik gereksiz bir masraftır.', false, 'Bir hat koptuğunda ikinci hat devreye girdiği için şehir işlemeye devam ediyor.'),
+      soru('Dirençli şehir, afette hiç zarar görmeyen şehirdir.', false, 'Zarar görse de işleyişini sürdürebilen ve hızla toparlanan şehir.'),
     ]),
     konu('cog10-korunma', 'Afetlerden Korunma', [
       kart(
@@ -594,6 +683,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Ortak nokta',
         'Korunmanın en etkili adımı afetten önce alınır; sonrasında yapılan her şey daha pahalı ve daha az etkilidir.',
       ),
+    ], [
+      soru('Depremde "çök-kapan-tutun" davranışı önerilir.', true, 'Sağlam bir eşyanın yanına çökmek düşen cisimlerden koruyor.'),
+      soru('Selde araçla su birikintisine girilmemelidir.', true, 'Az bir su bile aracı sürükleyebiliyor.'),
+      soru('Yangında tahliye için asansör kullanılmalıdır.', false, 'Asansör elektrik kesilince kapanabilir; merdiven kullanılmalı.'),
+      soru('Heyelan riski olan bir yamacın eteğine yapı yapılmasında sakınca yoktur.', false, 'Kayan malzemenin geleceği yer tam da orası.'),
     ]),
     konu('cog10-afet-bilinci', 'Afet Bilinci', [
       kart(
@@ -620,6 +714,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Risk algısı sorunu',
         'Uzun süre afet yaşanmayan yerde tehlike unutulur. Hazırlık, en çok da sakin dönemlerde gevşer.',
       ),
+    ], [
+      soru('Afet bilinci, bilgiyi davranışa dönüştürmeyi gerektirir.', true, 'Ne yapılacağını bilmek, yapmakla tamamlanıyor.'),
+      soru('Aile afet planında buluşma noktası belirlenir.', true, 'İletişim kesildiğinde nerede buluşulacağı önceden kararlaştırılıyor.'),
+      soru('Afet çantası, afet olduktan sonra hazırlanır.', false, 'Önceden hazırlanır ve ulaşılabilir bir yerde tutulur.'),
+      soru('İnsanlar afet riskini genellikle olduğundan büyük görür.', false, 'Risk algısı çoğu zaman düşük kalıyor; "bana olmaz" eğilimi yaygın.'),
     ]),
   ]),
   tema('cog10-t7', 'Bölgeler, Ülkeler ve Küresel Bağlantılar', [
@@ -656,6 +755,11 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Yeşil Vatan',
         'Ormanların vatanın bir parçası sayıldığı yaklaşım; ağaçlandırma ve yangınla mücadele bu kavramla anılıyor.',
       ),
+    ], [
+      soru('Türkistan, Türk kültürünün doğduğu ve yayıldığı ana alandır.', true, 'Buradan batıya uzanan göçlerle kültür geniş bir alana yayıldı.'),
+      soru('Konargöçer yaşamın izleri halı, kilim ve mutfak kültüründe sürmektedir.', true, 'Taşınabilir ve dayanıklı ürünler bu yaşamın mirası.'),
+      soru('Yeşil Vatan kavramı denizlerimizi anlatır.', false, 'Yeşil Vatan ormanlarımızı anlatıyor; denizler için kullanılan kavram Mavi Vatan.'),
+      soru('Kültür bölgeleri siyasi sınırlarla birebir örtüşür.', false, 'Kültürel özellikler sınırları aşarak yayılıyor.'),
     ]),
   ]),
 ])

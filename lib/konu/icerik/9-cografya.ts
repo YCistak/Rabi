@@ -1,4 +1,4 @@
-import { kart, konu, program, tema } from '../tip'
+import { kart, konu, program, soru, tema } from '../tip'
 
 /**
  * 9. sınıf Coğrafya — Maarif Modeli.
@@ -47,6 +47,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Dağılış ilkesi',
         'Coğrafya bir olayı tek başına değil, yeryüzüne yayılışıyla inceler. Dağılış haritası coğrafyanın temel aracıdır.',
       ),
+    ], [
+      soru('Coğrafya, insan ile doğal çevre arasındaki karşılıklı ilişkiyi inceler.', true, 'Yalnızca doğayı ya da yalnızca insanı değil, ikisinin etkileşimini ele alıyor.'),
+      soru('Nüfus ve yerleşme fizikî coğrafyanın konusudur.', false, 'İkisi de beşerî coğrafyanın konusu; fizikî coğrafya yer şekilleri ve iklimle ilgilenir.'),
+      soru('Dağılış ilkesi, bir olayın nerede ve nasıl yayıldığını sorar.', true, 'Coğrafyanın olayları yere bağlayan temel ilkelerinden biri.'),
+      soru('Coğrafyada "neden orada" sorusu sorulmaz.', false, 'Nerede, neden orada ve nasıl sorularının üçü birden coğrafyanın temel soruları.'),
     ]),
     konu('cog9-nicin', 'Niçin Coğrafya Öğrenmeliyiz?', [
       kart(
@@ -69,6 +74,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Küresel bakış',
         'İklim değişikliği, göç ve kaynak paylaşımı gibi sorunlar coğrafi düşünmeden anlaşılmaz.',
       ),
+    ], [
+      soru('Mekânsal düşünme, bir olayı yerle ilişkisi içinde değerlendirmektir.', true, 'Aynı olay farklı yerlerde farklı sonuçlar doğurabiliyor.'),
+      soru('Coğrafya bilgisi afet risklerinin azaltılmasında kullanılır.', true, 'Yerleşim yeri seçimi ve risk haritaları doğrudan coğrafi bilgiye dayanıyor.'),
+      soru('Yer seçimiyle ilgili günlük kararlarda coğrafi bilginin bir yararı yoktur.', false, 'Ev, iş yeri ya da tatil yeri seçmek doğrudan mekânsal bir karar.'),
+      soru('Coğrafya, ülke ve başkent ezberlemekten ibarettir.', false, 'Yer adları yalnızca bir araç; asıl konu olayların yerle ilişkisi.'),
     ]),
     konu('cog9-gelisim', 'Coğrafya Biliminin Gelişimi', [
       kart(
@@ -100,6 +110,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
           ],
         },
       ),
+    ], [
+      soru('Batlamyus, Dünya yı evrenin merkezine koyan bir model kurmuştur.', true, 'Bu model yüzyıllarca kabul gördü.'),
+      soru('Coğrafi Keşifler haritacılığın gelişmesini hızlandırmıştır.', true, 'Yeni kıyılar haritalara işlendi, ölçüm yöntemleri gelişti.'),
+      soru('İslam dünyasındaki coğrafyacıların haritacılığa katkısı olmamıştır.', false, 'İdrisi gibi adlar döneminin en ayrıntılı haritalarını çizdi.'),
+      soru('Modern coğrafya, yalnızca yerlerin adlarını listeleyen bir bilimdir.', false, 'Modern coğrafya olayların sebeplerini ve dağılışını açıklamaya çalışıyor.'),
     ]),
   ]),
   tema('cog9-t2', 'Mekânsal Bilgi Teknolojileri', [
@@ -178,6 +193,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Profil çıkarma',
         'İzohips haritasında bir hat boyunca yükseltiler işaretlenip birleştirilirse arazinin yandan görünüşü çıkar.',
       ),
+    ], [
+      soru('Ölçeğin paydası büyüdükçe haritadaki ayrıntı azalır.', true, 'Küçük ölçekli harita geniş alanı, az ayrıntıyla gösterir.'),
+      soru('İzohips eğrileri aynı yükseltideki noktaları birleştirir.', true, 'Bu yüzden iki izohips birbirini kesmez.'),
+      soru('Birbirine yakın geçen izohipsler arazinin eğiminin az olduğunu gösterir.', false, 'Sık izohips dik yamaç demek; seyrek geçenler eğimin azaldığını gösterir.'),
+      soru('Bir haritada alan, açı ve uzunluk aynı anda hatasız gösterilebilir.', false, 'Küre düzleme aktarılırken bozulma kaçınılmaz; hangisinin korunacağı seçilir.'),
     ]),
     konu('cog9-konum', 'Türkiye’nin Coğrafi Konumu', [
       kart(
@@ -208,6 +228,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Konumun ekonomiye etkisi',
         'Enerji hatlarının ve ticaret yollarının kesiştiği yerde olmak, transit geçiş ve turizm avantajı sağlar.',
       ),
+    ], [
+      soru('Türkiye 36°–42° kuzey enlemleri arasında yer alır.', true, 'Bu enlemler ülkeyi orta kuşakta tutuyor.'),
+      soru('Türkiye üç saat dilimine yayıldığı için üç ayrı saat kullanır.', false, 'Üç saat dilimine girse de ülkenin tamamında tek saat uygulanıyor.'),
+      soru('Enlem, Türkiye de dört mevsimin belirgin yaşanmasında etkilidir.', true, 'Orta kuşakta olmak mevsim farklarını belirginleştiriyor.'),
+      soru('Yükseltinin sıcaklık üzerinde bir etkisi yoktur.', false, 'Her 200 metrede sıcaklık yaklaşık 1 °C düşüyor.'),
     ]),
     konu('cog9-mbt', 'Mekânsal Bilgi Teknolojilerinin Bileşenleri', [
       kart(
@@ -247,6 +272,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Veri doğruysa sonuç doğru',
         'CBS eski ya da hatalı veriyle de düzgün görünen bir harita üretir. Çıktının güzelliği doğruluk kanıtı değildir.',
       ),
+    ], [
+      soru('CBS, konumla ilişkili verileri toplayan, saklayan ve çözümleyen bir sistemdir.', true, 'Veriyi katmanlar hâlinde üst üste koyup ilişkilendiriyor.'),
+      soru('Uzaktan algılama, yeryüzüne ait bilginin temas etmeden toplanmasıdır.', true, 'Uydu ve hava fotoğrafları bu yolla elde ediliyor.'),
+      soru('GPS, konum belirlemek için yeryüzündeki radyo istasyonlarını kullanır.', false, 'Uydulardan gelen sinyallerin ulaşma sürelerini kullanıyor.'),
+      soru('CBS ye girilen veri hatalı olsa bile çıkan sonuç doğru olur.', false, 'Sonuç girilen verinin doğruluğu kadar güvenilir.'),
     ]),
   ]),
   tema('cog9-t3', 'Doğal Sistemler ve Süreçler', [
@@ -290,6 +320,25 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Günlük etkiler',
         'Tarım, ulaşım, enerji ve sağlık hava olaylarına bağlıdır; don ve dolu bir yılın ürününü götürebilir.',
       ),
+    ], [
+      soru(
+        'Yağış ve rüzgâr gibi hava olayları termosferde gerçekleşir.',
+        false,
+        'Hava olayları en alttaki katmanda, troposferde olur; su buharı orada bulunuyor.',
+        {
+          tur: 'katman',
+          eksenAdi: 'yükseklik',
+          katmanlar: [
+            { ad: 'Termosfer' },
+            { ad: 'Mezosfer' },
+            { ad: 'Stratosfer' },
+            { ad: 'Troposfer' },
+          ],
+        },
+      ),
+      soru('Hava durumu kısa süreli, iklim ise uzun yılların ortalamasıdır.', true, 'Bir günün yağmuru iklimi değiştirmez.'),
+      soru('Rüzgâr, yüksek basınç alanından alçak basınç alanına doğru eser.', true, 'Basınç farkı büyüdükçe rüzgâr hızlanıyor.'),
+      soru('Bağıl nem arttıkça havadaki su buharı azalır.', false, 'Bağıl nem, havanın taşıyabileceği neme göre taşıdığı nemi gösterir; arttıkça nem de artar.'),
     ]),
     konu('cog9-iklim-sistem', 'İklim Sisteminin Bileşen ve Değişkenleri', [
       kart(
@@ -344,6 +393,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Okyanus akıntıları',
         'Sıcak akıntılar kıyıyı ılıtır, soğuk akıntılar serinletir ve kuraklaştırır.',
       ),
+    ], [
+      soru('Ekvator dan kutuplara gidildikçe sıcaklık azalır.', true, 'Güneş ışınlarının geliş açısı küçülüyor.'),
+      soru('Kuzey Yarım Küre de güneye bakan yamaçlar daha sıcaktır.', true, 'Bakı etkisi: güneş ışınları o yamaca daha dik geliyor.'),
+      soru('Karasallık, denizden uzak yerlerde günlük ve yıllık sıcaklık farkını azaltır.', false, 'Tersine artırır; sıcaklığı dengeleyen su kütlesi uzakta kalıyor.'),
+      soru('Okyanus akıntılarının kıyı iklimleri üzerinde etkisi yoktur.', false, 'Sıcak akıntılar kıyıyı ılıtır, soğuk akıntılar serinletir ve kuraklaştırır.'),
     ]),
     konu('cog9-iklim-tur', 'İklim Türleri', [
       kart(
@@ -385,6 +439,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'İklim grafiği okuma',
         'Sütunlar yağışı, çizgi sıcaklığı gösterir. Yaz kuraklığı belirginse Akdeniz iklimi akla gelir.',
       ),
+    ], [
+      soru('Ekvatoral iklimde yıl boyunca yağış görülür.', true, 'Sıcaklık ve nem yıl boyu yüksek kalıyor.'),
+      soru('Akdeniz ikliminde yazlar sıcak ve kurak, kışlar ılık ve yağışlıdır.', true, 'Bitki örtüsü olan maki bu düzene uyum sağlamış durumda.'),
+      soru('İklim kuşakları enlemden bağımsız olarak dağılır.', false, 'Kuşakların temel belirleyicisi enlem; yükselti ve karasallık onu değiştiriyor.'),
+      soru('Tundra iklimi sıcak kuşakta görülür.', false, 'Soğuk kuşakta, kutuplara yakın alanlarda görülüyor.'),
     ]),
     konu('cog9-iklim-degisim', 'İklim Sisteminde Yaşanan Değişiklikler', [
       kart(
@@ -424,6 +483,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Küresel anlaşmalar',
         'Paris Anlaşması ülkeleri sıcaklık artışını sınırlamaya çağırıyor; salım azaltımı hedefleri ulusal olarak bildiriliyor.',
       ),
+    ], [
+      soru('Sera gazlarının artması yeryüzü sıcaklığının yükselmesine yol açar.', true, 'Atmosferden çıkan uzun dalgalı ışınım tutuluyor.'),
+      soru('İklim değişikliğinin tek sebebi insan etkinlikleridir.', false, 'Volkanlar ve güneş etkinliği gibi doğal sebepler de var; bugünkü hızlı ısınmada insan etkisi baskın.'),
+      soru('Azaltım salımı düşürmeyi, uyum ise değişimin etkileriyle baş etmeyi hedefler.', true, 'İkisi birbirinin yerine geçmiyor, birlikte yürütülüyor.'),
+      soru('Türkiye kuraklıktan etkilenmeyecek bir konumdadır.', false, 'Akdeniz havzası kuraklık riski en yüksek bölgelerden biri.'),
     ]),
   ]),
   tema('cog9-t4', 'Beşerî Sistemler ve Süreçler', [
@@ -469,6 +533,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Geleceğe bakış',
         'Nüfusun yüzyılın sonuna doğru durağanlaşması bekleniyor; artış büyük ölçüde Afrika kaynaklı olacak.',
       ),
+    ], [
+      soru('Dünya nüfusunun hızlı artışında ölüm oranlarının düşmesi etkili olmuştur.', true, 'Sağlık ve beslenme koşulları düzelince ortalama yaşam süresi uzadı.'),
+      soru('Sanayi Devrimi ne kadar dünya nüfusu yavaş artmıştır.', true, 'Yüksek doğum oranını yüksek ölüm oranı dengeliyordu.'),
+      soru('Bugün dünya nüfusunun büyük kısmı kırsal alanda yaşamaktadır.', false, 'Nüfusun yarısından fazlası kentlerde yaşıyor.'),
+      soru('Nüfus artış hızı bugün bütün ülkelerde aynıdır.', false, 'Bazı ülkelerde nüfus hızla artarken bazılarında azalıyor.'),
     ]),
     konu('cog9-nufus-dagilis', 'Nüfusun Dağılışı ve Hareketleri', [
       kart(
@@ -509,6 +578,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Göçün sonuçları',
         'Veren yerde nüfus azalır ve yaşlanır; alan yerde konut, altyapı ve işsizlik baskısı artar.',
       ),
+    ], [
+      soru('Yüksek ve engebeli alanlar genellikle seyrek nüfusludur.', true, 'Tarım ve ulaşım koşulları elverişsiz.'),
+      soru('Aritmetik nüfus yoğunluğu, toplam nüfusun yüz ölçüme bölünmesiyle bulunur.', true, 'Kişi/km² olarak yazılıyor.'),
+      soru('İtici güçler, insanları göç ettikleri yere çeken sebeplerdir.', false, 'İtici güç bulunulan yerden uzaklaştırır; çeken sebeplere çekici güç denir.'),
+      soru('Göç yalnızca göç alan yeri etkiler.', false, 'Göç veren yerde iş gücü ve genç nüfus azalıyor; etki iki taraflı.'),
     ]),
     konu('cog9-demografik', 'Demografik Dönüşüm ve Nüfus Piramitleri', [
       kart(
@@ -544,6 +618,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Türkiye’nin piramidi',
         'Tabanı daralıyor, orta kısmı genişliyor: nüfus hâlâ genç ama hızla yaşlanıyor.',
       ),
+    ], [
+      soru('Geniş tabanlı nüfus piramidi, doğum oranının yüksek olduğunu gösterir.', true, 'Genç nüfus payı büyük demek.'),
+      soru('Dar tabanlı piramit yaşlanan bir nüfusa işaret eder.', true, 'Doğum oranı düşmüş, üst yaş grupları kalabalıklaşmış.'),
+      soru('Nüfus piramidinden yalnızca toplam nüfus okunabilir.', false, 'Yaş grupları ve cinsiyet dağılımı da okunuyor.'),
+      soru('Demografik dönüşümde önce doğum oranı, sonra ölüm oranı düşer.', false, 'Önce ölüm oranı düşer; doğum oranının inmesi gecikir ve arada nüfus hızla artar.'),
     ]),
     konu('cog9-nufus-politika', 'Nüfusla İlgili Fırsat, Sorun ve Politikalar', [
       kart(
@@ -570,6 +649,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Bugünkü yönelim',
         'Doğurganlık yenilenme düzeyinin altına indiği için politikalar artırıcı yöne döndü.',
       ),
+    ], [
+      soru('Demografik fırsat penceresi, çalışma çağındaki nüfusun payının yüksek olduğu dönemdir.', true, 'Doğru politikalarla ekonomik büyümeye çevrilebiliyor.'),
+      soru('Bağımlılık oranı, çalışma çağı dışındaki nüfusun çalışma çağındakilere oranıdır.', true, 'Hem çocuklar hem yaşlılar bu orana giriyor.'),
+      soru('Nüfus politikaları yalnızca nüfusu artırmak amacıyla uygulanır.', false, 'Nüfusu azaltmaya ya da dağılımını değiştirmeye yönelik politikalar da var.'),
+      soru('Yaşlanan nüfus, sağlık ve emeklilik harcamalarını azaltır.', false, 'Tersine artırır; çalışan başına düşen yük büyür.'),
     ]),
   ]),
   tema('cog9-t5', 'Ekonomik Faaliyetler ve Etkileri', [
@@ -606,6 +690,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Karşılıklı etki',
         'Ekonomik faaliyet de doğayı değiştirir: baraj, madencilik ve aşırı sulama çevreyi dönüştürür.',
       ),
+    ], [
+      soru('Tarım faaliyetleri iklim koşullarından doğrudan etkilenir.', true, 'Sıcaklık ve yağış, yetişecek ürünü belirliyor.'),
+      soru('Sanayi ikincil, hizmet ise üçüncül sektör sayılır.', true, 'Birincil sektör doğrudan doğadan üretim yapan tarım ve madencilik.'),
+      soru('Yer şekillerinin ulaşım ağının kurulmasında etkisi yoktur.', false, 'Dağlık alanda yol yapımı hem zor hem pahalı; ağ buna göre şekilleniyor.'),
+      soru('Ekonomik faaliyetleri yalnızca doğal faktörler belirler.', false, 'Sermaye, iş gücü, teknoloji ve pazar gibi beşerî faktörler de belirleyici.'),
     ]),
   ]),
   tema('cog9-t6', 'Afetler ve Sürdürülebilir Çevre', [
@@ -642,6 +731,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Kırılganlık',
         'Aynı şiddetteki olay, yapı kalitesi ve gelir düzeyi düşük yerlerde daha büyük kayıp verir.',
       ),
+    ], [
+      soru('Bir doğa olayı, insana ve yapılara zarar verdiğinde afet hâline gelir.', true, 'Afeti tanımlayan şey olayın kendisi değil sonucu.'),
+      soru('Issız bir çölde meydana gelen büyük bir deprem afet sayılır.', false, 'Zarar görecek insan ya da yapı yoksa olay afete dönüşmez.'),
+      soru('Risk, bir tehlikenin zarara yol açma olasılığıdır.', true, 'Tehlike var olan bir olasılık; risk onun bizi etkileme ihtimali.'),
+      soru('Kırılganlık, bir toplumun afete karşı direncini artıran özelliklerdir.', false, 'Tam tersi: kırılganlık zarar görme ihtimalini artıran özellikler.'),
     ]),
     konu('cog9-afet-tur', 'Afet Türleri', [
       kart(
@@ -682,6 +776,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Türkiye’de en sık',
         'Deprem, heyelan ve sel. Ülkenin büyük bölümü etkin fay kuşakları üzerindedir.',
       ),
+    ], [
+      soru('Deprem ve heyelan jeolojik afetler arasında yer alır.', true, 'Kaynağı yer kabuğundaki hareketler.'),
+      soru('Kuraklık ve sel meteorolojik afetlerdendir.', true, 'İkisinin de kaynağı atmosfer olayları.'),
+      soru('Salgın hastalıklar beşerî afet sayılır.', false, 'Biyolojik afet grubunda yer alıyor.'),
+      soru('Bir afet başka bir afeti tetikleyemez.', false, 'Deprem sonrası çıkan yangın ve tsunami zincirleme afete örnek.'),
     ]),
     konu('cog9-afet-yonetim', 'Bütüncül Afet Yönetimi', [
       kart(
@@ -718,6 +817,25 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Neden bütüncül?',
         'Yalnızca müdahaleye odaklanan yönetim, her afette baştan başlar. Asıl kazanç afet olmadan alınır.',
       ),
+    ], [
+      soru(
+        'Afet yönetimi ancak afet gerçekleştikten sonra başlar.',
+        false,
+        'Döngü zarar azaltma ve hazırlıkla, yani afetten önce başlıyor.',
+        {
+          tur: 'akis',
+          donguSel: true,
+          adimlar: [
+            { ad: 'Zarar azaltma' },
+            { ad: 'Hazırlık' },
+            { ad: 'Müdahale' },
+            { ad: 'İyileştirme' },
+          ],
+        },
+      ),
+      soru('Zarar azaltma aşaması afetten önce yapılan çalışmaları kapsar.', true, 'Yapı denetimi ve risk haritaları bu aşamada.'),
+      soru('İyileştirme aşaması yalnızca yıkılan binaların onarılmasıdır.', false, 'Ekonomik ve toplumsal hayatın yeniden kurulması da bu aşamanın işi.'),
+      soru('Bütüncül afet yönetimi aşamaları birbirine bağlı bir döngü olarak ele alır.', true, 'İyileştirme sırasında alınan dersler yeni zarar azaltma çalışmalarını besliyor.'),
     ]),
   ]),
   tema('cog9-t7', 'Bölgeler, Ülkeler ve Küresel Bağlantılar', [
@@ -746,6 +864,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Türkiye’nin coğrafi bölgeleri',
         'Yedi bölge 1941’de belirlendi ve ölçütü büyük ölçüde doğal koşullardı; idari birim değildir.',
       ),
+    ], [
+      soru('Bölge sınırları, seçilen ölçüte göre değişir.', true, 'İklime göre çizilen bölge ile tarıma göre çizilen bölge aynı olmuyor.'),
+      soru('Türkiye nin coğrafi bölgeleri il sınırlarıyla birebir örtüşür.', false, 'Bazı iller iki bölgeye birden dağılıyor.'),
+      soru('Bölge sınırları keskin çizgiler değildir; geçiş alanları vardır.', true, 'Doğadaki değişim kademeli olduğu için sınır bir kuşak hâlinde.'),
+      soru('Bir yer aynı anda birden çok bölgenin içinde yer alamaz.', false, 'Farklı ölçütlerle çizilen bölgeler üst üste binebilir.'),
     ]),
   ]),
 ])

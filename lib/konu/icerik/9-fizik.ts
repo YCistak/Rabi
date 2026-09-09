@@ -1,4 +1,4 @@
-import { kart, konu, program, tema } from '../tip'
+import { kart, konu, program, soru, tema } from '../tip'
 
 /**
  * 9. sınıf Fizik — Maarif Modeli.
@@ -52,6 +52,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Fiziğin öteki bilimlerle bağı',
         'Kimya atomun elektron düzenine, biyoloji sinir hücresinin elektriğine dayanır. Sınır çizgileri idari, doğal değil.',
       ),
+    ], [
+      soru('Bir kuram yeterince kanıt toplayınca yasaya dönüşür.', false, 'Yasa olayın nasıl olduğunu tanımlar, kuram nedenini açıklar; biri ötekinin ileri hâli değil.'),
+      soru('Bir deneyin başka araştırmacılar tarafından da tekrarlanabilmesi gerekir.', true, 'Tekrarlanamayan sonuç doğrulanamaz; bilimsel yöntemin şartı.'),
+      soru('Model, gerçeğin bütün ayrıntılarını taşıyan birebir kopyasıdır.', false, 'Model gerçeği basitleştirir; yalnızca işe yarayacak ayrıntıları tutar.'),
+      soru('Fizik, öteki doğa bilimlerinin dayandığı temel yasaları da inceler.', true, 'Kimyadaki bağ da biyolojideki sinir iletimi de fiziksel yasalarla açıklanıyor.'),
     ]),
     konu('fzk9-altdal', 'Fizik Biliminin Alt Dalları', [
       kart(
@@ -82,6 +87,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Klasik mi modern mi?',
         'Klasik fizik yanlış değil, sınırlıdır: günlük hız ve boyutlarda doğru sonuç verir, o sınırın dışında modern fizik gerekir.',
       ),
+    ], [
+      soru('Termodinamik, ısı ve sıcaklıkla ilgili olayları inceler.', true, 'Isı alışverişi, hâl değişimi ve enerji dönüşümleri bu alanın konusu.'),
+      soru('Atom altı parçacıkların davranışı klasik fiziğin konusudur.', false, 'Modern fiziğin: kuantum kuramı ve görelilik burada devreye giriyor.'),
+      soru('Yarı iletkenlerin davranışı katıhâl fiziğinin konusudur.', true, 'Katıhâl fiziği maddenin katı hâldeki yapısını ve elektriksel davranışını inceliyor.'),
+      soru('Mekanik yalnızca hareketsiz cisimleri inceler.', false, 'Mekanik kuvvet ve hareketi inceler; durgunluk bunun özel bir hâli.'),
     ]),
     konu('fzk9-bilim-insanlari', 'Fizik Bilimine Yön Verenler', [
       kart(
@@ -112,6 +122,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Türkiye’den bir ad',
         'Feza Gürsey parçacık fiziğinde simetri kuramlarıyla tanınır; adı uluslararası bir araştırma ödülünde yaşıyor.',
       ),
+    ], [
+      soru('Hareket yasalarını ve kütle çekim yasasını Newton ortaya koymuştur.', true, 'Üç hareket yasası ve evrensel çekim yasası ona ait.'),
+      soru('İbn Heysem, görmenin gözden çıkan ışınlarla gerçekleştiğini savunmuştur.', false, 'Tersini gösterdi: görme, cisimden gelen ışığın göze ulaşmasıyla oluyor.'),
+      soru('Marie Curie iki farklı bilim dalında Nobel Ödülü almıştır.', true, 'Biri fizik, öteki kimya alanında.'),
+      soru('Galileo, ağır cisimlerin hafif cisimlerden daha hızlı düştüğünü göstermiştir.', false, 'Bunun tersini savundu: hava direnci yoksa iki cisim aynı anda düşer.'),
     ]),
     konu('fzk9-kariyer', 'Fizik Bilimi ile İlgili Kariyer Keşfi', [
       kart(
@@ -138,6 +153,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Beklenmedik alanlar',
         'Fizik eğitimi veri analizi ve modelleme öğrettiği için finans ve yazılım da fizikçi istihdam eder.',
       ),
+    ], [
+      soru('Medikal fizik uzmanı, hastanelerdeki ışın tedavisi cihazlarının doğru çalışmasıyla ilgilenir.', true, 'Doz hesabı ve cihaz denetimi bu uzmanlığın işi.'),
+      soru('Fizik mezunları yalnızca üniversitede akademisyen olarak çalışabilir.', false, 'Sanayi, hastane, meteoroloji ve araştırma merkezleri de çalışma alanı.'),
+      soru('Meteoroloji ve jeofizik, fizik bilgisinin kullanıldığı alanlardır.', true, 'Atmosfer olayları da yer kabuğu hareketleri de fiziksel yasalarla inceleniyor.'),
+      soru('Yarı iletken üretimi fizikle ilgisi olmayan bir sanayi dalıdır.', false, 'Katıhâl fiziğinin doğrudan uygulama alanı.'),
     ]),
   ]),
   tema('fzk9-t2', 'Kuvvet ve Hareket', [
@@ -179,6 +199,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Boyut denetimi',
         'Bir denklemin iki tarafının birimi aynı olmalıdır. Tutmuyorsa denklem kesin yanlıştır — hesabı yapmadan anlaşılır.',
       ),
+    ], [
+      soru('Kütlenin SI birimi gramdır.', false, 'SI temel birimi kilogram; gram onun ast katı.'),
+      soru('Hız türetilmiş bir niceliktir.', true, 'Uzunluk ve zaman gibi temel niceliklerden türüyor.'),
+      soru('1 nanometre, metrenin milyarda biridir.', true, 'nano ön eki 10⁻⁹ demek.'),
+      soru('Bir denklemin iki tarafının birimleri farklı olabilir.', false, 'Boyut denetimi tutmuyorsa denklem yanlıştır.'),
     ]),
     konu('fzk9-skaler-vektorel', 'Skaler ve Vektörel Nicelikler', [
       kart(
@@ -215,6 +240,44 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'İşaret yön demektir',
         'Tek boyutta yön, artı ve eksi işaretiyle gösterilir. −5 m/s hız, 5 m/s ile aynı süratte ters yönde demektir.',
       ),
+    ], [
+      soru('Yol skaler, yer değiştirme vektörel bir niceliktir.', true, 'Yol yalnızca büyüklük taşır, yer değiştirmenin ayrıca yönü var.'),
+      soru(
+        'Şekildeki hareketin yolu 7 birim, yer değiştirmesi 5 birimdir.',
+        true,
+        'Yol gidilen çizginin uzunluğu (4 + 3), yer değiştirme başlangıcı bitişe bağlayan vektör.',
+        {
+          tur: 'koordinat',
+          pencere: [-1, 5, -1, 4],
+          eksenler: false,
+          egriler: [
+            {
+              noktalar: [
+                [0, 0],
+                [4, 0],
+                [4, 3],
+              ],
+              kirik: true,
+            },
+            {
+              noktalar: [
+                [0, 0],
+                [4, 3],
+              ],
+              kirik: true,
+              kesik: true,
+              ok: true,
+              renk: 'ikincil',
+            },
+          ],
+          etiketler: [
+            { x: 2, y: -0.4, ad: '4' },
+            { x: 4.5, y: 1.5, ad: '3' },
+          ],
+        },
+      ),
+      soru('Kütle vektörel bir niceliktir.', false, 'Kütlenin yönü yok; yönü olan, kütleye etki eden ağırlık kuvveti.'),
+      soru('Bir cismin sürati sabitse hızı da kesinlikle sabittir.', false, 'Yön değişirse hız değişir; çember üzerinde sabit süratli hareket buna örnek.'),
     ]),
     konu('fzk9-vektor', 'Vektörler', [
       kart(
@@ -320,6 +383,43 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Denge',
         'Bir cisme etkiyen vektörlerin bileşkesi sıfırsa cisim dengededir: ya durur ya sabit hızla gider.',
       ),
+    ], [
+      soru(
+        'Şekildeki iki dik vektörün bileşkesi 5 birimdir.',
+        true,
+        'Dik vektörlerde bileşke Pisagor ile bulunuyor: 3² + 4² = 25.',
+        {
+          tur: 'koordinat',
+          pencere: [-1, 5, -1, 4],
+          eksenler: false,
+          egriler: [
+            {
+              noktalar: [
+                [0, 0],
+                [4, 0],
+              ],
+              kirik: true,
+              ok: true,
+            },
+            {
+              noktalar: [
+                [0, 0],
+                [0, 3],
+              ],
+              kirik: true,
+              ok: true,
+              renk: 'ikincil',
+            },
+          ],
+          etiketler: [
+            { x: 2, y: -0.4, ad: '4 birim' },
+            { x: 1, y: 3, ad: '3 birim' },
+          ],
+        },
+      ),
+      soru('Büyüklükleri 5 ve 3 olan iki vektörün bileşkesi 9 birim olabilir.', false, 'Bileşke en çok 8 (aynı yönde), en az 2 (zıt yönde) olur.'),
+      soru('Bir cisme etki eden kuvvetlerin bileşkesi sıfırsa cisim dengededir.', true, 'Net kuvvet yoksa hareket durumu değişmiyor.'),
+      soru('Vektörler uç uca eklenirken ekleme sırası bileşkeyi değiştirir.', false, 'Vektör toplaması değişmeli; sıra sonucu değiştirmez.'),
     ]),
     konu('fzk9-temel-kuvvet', 'Doğadaki Temel Kuvvetler', [
       kart(
@@ -356,6 +456,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Neden en zayıfı baskın?',
         'Kütle çekim en zayıf olsa da yalnızca çekicidir ve birikir; elektrik kuvvetleri zıt yüklerle birbirini götürür.',
       ),
+    ], [
+      soru('Doğadaki dört temel kuvvetin en zayıfı kütle çekim kuvvetidir.', true, 'Bir mıknatıs, Dünya nın çekimine karşı toplu iğneyi kaldırabiliyor.'),
+      soru('Çekirdekteki protonları bir arada tutan güçlü nükleer kuvvettir.', true, 'Aynı yüklü protonların itmesini yenen kuvvet o.'),
+      soru('Zayıf nükleer kuvvet, sürtünmenin bir çeşididir.', false, 'Sürtünme elektromanyetik kökenli; zayıf kuvvet çekirdek bozunmalarında etkili.'),
+      soru('Kütle çekim en zayıf kuvvet olduğu için evrenin büyük yapılarında etkisizdir.', false, 'Menzili sonsuz ve her zaman çekici; büyük kütlelerde baskın olan o.'),
     ]),
     konu('fzk9-hareket', 'Hareket ve Hareket Türleri', [
       kart(
@@ -423,6 +528,30 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Serbest düşme',
         'Hava direnci yokken bütün cisimler aynı ivmeyle düşer: g ≈ 9,8 m/s². Kütle düşme süresini değiştirmez.',
       ),
+    ], [
+      soru(
+        'Grafikteki hareket düzgün doğrusal harekettir.',
+        true,
+        'Konum eşit zaman aralıklarında eşit artıyor, yani hız sabit.',
+        {
+          tur: 'koordinat',
+          pencere: [0, 5, 0, 10],
+          xAd: 'zaman (s)',
+          yAd: 'konum (m)',
+          egriler: [
+            {
+              noktalar: [
+                [0, 0],
+                [4, 8],
+              ],
+              kirik: true,
+            },
+          ],
+        },
+      ),
+      soru('Hareket görecelidir; seçilen referans noktasına göre değişir.', true, 'Otobüste oturan yolcu şoföre göre durgun, yoldaki ağaca göre hareketli.'),
+      soru('Serbest düşmede cismin kütlesi büyüdükçe düşme süresi kısalır.', false, 'Hava direnci yokken bütün cisimler aynı ivmeyle düşer.'),
+      soru('İvme, konumun zamana göre değişme hızıdır.', false, 'İvme hızın değişme hızı; konumun değişme hızı zaten hızın kendisi.'),
     ]),
   ]),
   tema('fzk9-t3', 'Akışkanlar', [
@@ -469,6 +598,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Ağırlıktan gelen basınç',
         'Yere konan bir cismin uyguladığı basınç, ağırlığının temas alanına bölümüdür; cisim yan yatırılırsa basınç değişir.',
       ),
+    ], [
+      soru('Basınç, kuvvetin uygulandığı yüzey alanıyla ters orantılıdır.', true, 'Aynı kuvvet küçük alana uygulanınca basınç büyüyor.'),
+      soru('Kar ayakkabısı, kişinin ağırlığını azalttığı için batmayı önler.', false, 'Ağırlık aynı kalıyor; temas alanı büyüdüğü için basınç azalıyor.'),
+      soru('Basıncın SI birimi pascaldır.', true, '1 Pa, 1 m² ye uygulanan 1 N luk kuvvet demek.'),
+      soru('Bıçağın keskin olması uyguladığı kuvveti artırır.', false, 'Kuvvet aynı; alan küçüldüğü için basınç artıyor.'),
     ]),
     konu('fzk9-sivi-basinc', 'Sıvılarda Basınç', [
       kart(
@@ -514,6 +648,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Farklı sıvılar',
         'Bileşik kapta karışmayan iki sıvı varsa seviyeler eşit olmaz: yoğunluğu küçük olan daha yüksekte durur.',
       ),
+    ], [
+      soru('Sıvı basıncı, kabın şekline ve içindeki sıvı miktarına bağlıdır.', false, 'Yalnızca derinliğe, sıvının yoğunluğuna ve yer çekimine bağlı.'),
+      soru('Kapalı bir kaptaki sıvıya uygulanan basınç her yöne aynen iletilir.', true, 'Pascal ilkesi; hidrolik sistemler buna dayanıyor.'),
+      soru('Hidrolik sistemde küçük pistona uygulanan kuvvet, büyük pistonda büyütülür.', true, 'Basınç aynı kaldığı için geniş yüzeyde daha büyük kuvvet oluşuyor.'),
+      soru('Bileşik kaplarda aynı sıvının seviyesi, kolun genişliğine göre değişir.', false, 'Sıvı bütün kollarda aynı seviyede durur; belirleyen derinlik.'),
     ]),
     konu('fzk9-acik-hava', 'Açık Hava Basıncı', [
       kart(
@@ -549,6 +688,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Günlük etkileri',
         'Pipetle içmek, vantuz ve şırınga açık hava basıncıyla çalışır; içerideki basınç düşürülür, dışarıdaki iter.',
       ),
+    ], [
+      soru('Deniz seviyesinde açık hava basıncı 76 cm yüksekliğindeki cıva sütununun basıncına eşittir.', true, 'Torricelli deneyinin ölçtüğü değer bu.'),
+      soru('Yükseklere çıkıldıkça açık hava basıncı artar.', false, 'Üstteki hava sütunu kısaldığı için basınç azalır.'),
+      soru('Yüksek dağlarda su 100 °C nin altında kaynar.', true, 'Açık hava basıncı düştüğü için sıvı daha düşük sıcaklıkta kaynıyor.'),
+      soru('Torricelli deneyinde cıva sütununun yüksekliği borunun kesit alanına bağlıdır.', false, 'Kesit değişse de yükseklik değişmez; belirleyen açık hava basıncı.'),
     ]),
     konu('fzk9-kaldirma', 'Kaldırma Kuvveti', [
       kart(
@@ -588,6 +732,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Gazlarda da vardır',
         'Balon havadan hafif gazla dolduğunda yükselir; havanın uyguladığı kaldırma kuvveti ağırlığından büyüktür.',
       ),
+    ], [
+      soru('Kaldırma kuvveti, cismin taşırdığı sıvının ağırlığına eşittir.', true, 'Arşimet ilkesi.'),
+      soru('Kaldırma kuvvetinin büyüklüğü cismin kütlesine bağlıdır.', false, 'Batan hacme ve sıvının yoğunluğuna bağlı; aynı hacimli iki cisme aynı kuvvet etkir.'),
+      soru('Yoğunluğu içinde bulunduğu sıvıdan küçük olan cisim yüzer.', true, 'Kaldırma kuvveti ağırlıktan büyük olduğu için cisim yukarı itiliyor.'),
+      soru('Gazlarda kaldırma kuvveti oluşmaz.', false, 'Balonun yükselmesi havanın uyguladığı kaldırma kuvvetiyle.'),
     ]),
     konu('fzk9-bernoulli', 'Bernoulli İlkesi', [
       kart(
@@ -662,6 +811,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Günlük örnek',
         'Duş perdesinin içeri çekilmesi ve iki yaprağın arasına üflendiğinde birbirine yaklaşması aynı ilkedir.',
       ),
+    ], [
+      soru('Bir akışkanın hızı arttığında basıncı azalır.', true, 'Bernoulli ilkesi; enerjinin korunumundan çıkıyor.'),
+      soru('Uçak kanadının üst yüzeyinde hava daha hızlı aktığı için basınç düşer.', true, 'Alttaki yüksek basınç kanadı yukarı iter.'),
+      soru('Dar bir bölümden geçen suyun hızı azalır.', false, 'Süreklilik: kesit daraldıkça hız artar.'),
+      soru('Bernoulli ilkesi enerjinin korunumu yasasıyla çelişir.', false, 'İlke tam da enerjinin korunumundan türetiliyor.'),
     ]),
   ]),
   tema('fzk9-t4', 'Enerji', [
@@ -703,6 +857,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Sıcaklık birimleri',
         'Celsius suyun donma ve kaynamasına, Kelvin mutlak sıfıra dayanır: 0 K = −273,15 °C. Aradaki fark 273,15’tir.',
       ),
+    ], [
+      soru('Isı, sıcaklık farkı nedeniyle bir yerden başka yere aktarılan enerjidir.', true, 'Isı bir enerji aktarımı; cisimde "depolanan" şey iç enerji.'),
+      soru('Bir kıvılcımın sıcaklığı kazandaki sudan yüksek olsa bile iç enerjisi düşüktür.', true, 'İç enerji tanecik sayısına da bağlı; kıvılcımda tanecik az.'),
+      soru('Isı, iç enerjisi büyük olan cisimden küçük olana akar.', false, 'Aktarım yönünü iç enerji değil sıcaklık belirler.'),
+      soru('Sıcaklık, cismin sahip olduğu toplam enerjidir.', false, 'Sıcaklık taneciklerin ortalama kinetik enerjisinin ölçüsü; toplam olan iç enerji.'),
     ]),
     konu('fzk9-oz-isi', 'Isı, Öz Isı ve Isı Sığası', [
       kart(
@@ -754,6 +913,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
           ],
         },
       ),
+    ], [
+      soru('Suyun öz ısısının yüksek olması, geç ısınıp geç soğumasının sebebidir.', true, 'Aynı sıcaklık artışı için daha çok ısı gerekiyor.'),
+      soru('Isı sığası kütleye bağlıdır, öz ısı ise maddenin ayırt edici bir özelliğidir.', true, 'Isı sığası = kütle × öz ısı.'),
+      soru('Q = m · c · ΔT bağıntısında c kütleyi gösterir.', false, 'c öz ısı, m kütle.'),
+      soru('Aynı maddeden yapılmış iki cismin öz ısıları kütleleriyle orantılıdır.', false, 'Öz ısı maddeye ait; kütle değişse de aynı kalır.'),
     ]),
     konu('fzk9-hal-degisim', 'Hâl Değişimi', [
       kart(
@@ -811,6 +975,32 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Suyun tuhaflığı',
         'Su donarken genleşir. Buz sudan hafif olduğu için yüzer ve gölün yüzeyi donarken dibi sıvı kalır.',
       ),
+    ], [
+      soru(
+        'Grafikte yatay kalan bölümde madde hâl değiştiriyor.',
+        true,
+        'Verilen ısı bağları koparmaya harcanıyor, o yüzden sıcaklık artmıyor.',
+        {
+          tur: 'koordinat',
+          pencere: [0, 10, -20, 120],
+          xAd: 'zaman',
+          yAd: 'sıcaklık (°C)',
+          egriler: [
+            {
+              noktalar: [
+                [0, -10],
+                [2, 0],
+                [5, 0],
+                [8, 100],
+              ],
+              kirik: true,
+            },
+          ],
+        },
+      ),
+      soru('Buharlaşma yalnızca kaynama sıcaklığında görülür.', false, 'Buharlaşma her sıcaklıkta yüzeyden olur; kaynama sıvının her yerinde olan hâl değişimi.'),
+      soru('Hâl değişimi sırasında maddeye verilen ısı sıcaklığı artırmaz.', true, 'Isı taneciklerin arasındaki bağları koparmak için harcanıyor.'),
+      soru('Su donarken hacmi küçülür.', false, 'Su donarken genleşir; buzun suda yüzmesinin sebebi bu.'),
     ]),
     konu('fzk9-isil-denge', 'Isıl Denge', [
       kart(
@@ -837,6 +1027,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Denge durgunluk değil',
         'Dengede ısı alışverişi durmaz, iki yöne eşitlenir. Net akış sıfırdır ama tanecikler durmaz.',
       ),
+    ], [
+      soru('Isıl dengeye gelen iki cismin sıcaklıkları eşittir.', true, 'Net ısı akışı, sıcaklıklar eşitlendiğinde duruyor.'),
+      soru('Denge sıcaklığı her zaman iki cismin sıcaklıklarının ortalamasıdır.', false, 'Kütleler ve öz ısılar eşit değilse denge sıcaklığı ortalamaya düşmez.'),
+      soru('Termometre, ölçtüğü cisimle ısıl dengeye gelerek çalışır.', true, 'Okunan değer termometrenin kendi sıcaklığı, o da cismin sıcaklığına eşitlenmiş oluyor.'),
+      soru('Isıl dengedeki cisimlerde taneciklerin hareketi durur.', false, 'Tanecikler hareketine devam eder; duran şey yalnızca net ısı akışı.'),
     ]),
     konu('fzk9-aktarim', 'Isı Aktarım Yolları', [
       kart(
@@ -872,6 +1067,24 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Yalıtım',
         'Termos üç yolu birden keser: çift cidar arasında boşluk iletimi ve konveksiyonu, aynalı yüzey ışımayı engeller.',
       ),
+    ], [
+      soru(
+        'Güneş ten Dünya ya enerji ışıma yoluyla ulaşır.',
+        true,
+        'Aradaki uzay boşluğunda madde yok; yalnızca ışıma ortam gerektirmiyor.',
+        {
+          tur: 'tablo',
+          basliklar: ['Yol', 'Nasıl taşınır'],
+          satirlar: [
+            ['İletim', 'Tanecikten taneciğe'],
+            ['Konveksiyon', 'Akışkanın kendisi taşır'],
+            ['Işıma', 'Ortam gerekmez'],
+          ],
+        },
+      ),
+      soru('Konveksiyon katılarda görülen bir ısı aktarım yoludur.', false, 'Konveksiyonda akışkanın kendisi yer değiştirir; katıda taneciklerin yeri sabit.'),
+      soru('Koyu renkli yüzeyler ışımayı açık renklilerden daha iyi soğurur.', true, 'Aynı yüzey iyi soğurduğu ışımayı iyi de yayar.'),
+      soru('Isı yalıtımı, ısının hiç geçmemesini sağlar.', false, 'Yalıtım aktarımı yavaşlatır, tümüyle durdurmaz.'),
     ]),
     konu('fzk9-iletim-hizi', 'Isı İletim Hızı', [
       kart(
@@ -902,6 +1115,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Çift cam',
         'İki cam arasındaki durgun hava katmanı iletimi keser; camın kendisi değil, aradaki boşluk yalıtır.',
       ),
+    ], [
+      soru('Isı iletim hızı, çubuğun uzunluğuyla ters orantılıdır.', true, 'Yol uzadıkça aynı sürede geçen ısı azalıyor.'),
+      soru('Kesit alanı büyüdükçe iletilen ısı miktarı azalır.', false, 'Doğru orantılı: geniş kesit daha çok ısı geçirir.'),
+      soru('Aynı odadaki metal, tahtadan daha soğuk hissedilir çünkü sıcaklığı daha düşüktür.', false, 'İkisinin sıcaklığı aynı; metal ısıyı elden hızlı çektiği için soğuk hissediliyor.'),
+      soru('Çift camın arasındaki hava tabakası ısı iletimini yavaşlattığı için yalıtım sağlar.', true, 'Hava kötü bir iletken.'),
     ]),
   ]),
 ])

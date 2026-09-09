@@ -1564,13 +1564,82 @@ Tamamlanma destenin sonuna gelmekle kazanılıyor. Yarıda çıkılan destede
 işaretlenen kartlar bankaya düşüyor ama konu bitmiş sayılmıyor — yoksa ilk
 kartı işaretleyip çıkmak konuyu tamamlamanın yolu olurdu.
 
+### Deste bitince doğru/yanlış soruluyor
+
+Her konunun sonunda üç-altı **iddia** geliyor ve iki düğme var: Doğru, Yanlış
+(`components/konu/soru-sahnesi.tsx`). Soru cümlesi kurulmuyor — `icerik.test.ts`
+soru işaretini reddediyor — çünkü ekranda "evet/hayır" değil "doğru/yanlış"
+yazıyor ve ikisi aynı şey değil.
+
+Biçim kasten dar: deste okunduktan sonra gelen ekran ikinci bir ders değil bir
+yoklama. Üzerinde düşünülen, hesaplanan ya da şıkları elenen bir soru, okumanın
+arkasına bir sınav ekliyor ve destenin sonu "bitti" değil "şimdi de bu var"
+oluyordu.
+
+Ekran bir süre **çevrilen** bir kart gösteriyordu: bir yüzünde soru, öteki
+yüzünde cevap ve kararı kullanıcı kendi veriyordu ("bildim / bilmedim"). O sayı
+bilmeyi değil beyanı ölçüyordu — cevabı gördükten sonra "bildim" demek serbest.
+Cevap artık `SoruKarti.dogru` içinde ve ekran kararı kendisi tartıyor; gerekçe
+(`aciklama`) karardan **sonra** çıkıyor ve her soruda var: yanlış bilinen bir
+iddiada "yanlış" demek yetmez.
+
+Testler içeriği değil **dengeyi** denetliyor, çünkü biçimin kendi tuzağı var:
+yazı tura atan da yarısını tutturur. Her destede iki cevap da bulunmak zorunda
+ve uygulamanın tamamındaki doğru oranı %40–60 arasında kalıyor — tek yönlü bir
+deste, cevabı içeriğe bakmadan verdiriyor.
+
+Sorular da bilgi kartlarındaki `Gorsel` türlerini kullanıyor ve ayrı bir çizim
+dili açılmadı. Görselli soruda iddia **çizime bakılarak** tartılabilmeli:
+grafiğin fonksiyon olup olmadığı, eğrinin hangi yöne gittiği, şemadaki sıra.
+İddiayı olduğu gibi tekrar eden bir çizim cevabı okumadan verdiriyor — bu
+yüzden tablo görsellerinin iddiası çoğunlukla **yanlış** olan iddia: okuyan onu
+tabloyla karşılaştırıyor.
+
+Karardan sonra kartın çerçevesi renkleniyor ve bu çerçeve `ring` ile değil
+`outline` ile çiziliyor: Tailwind'in `ring`i gölge olarak uygulanıyor ve kartın
+kendi gölgesi (`golge-kart`) onu eziyordu. `outlineOffset` de negatif — dışarı
+taşan çizgi, kaydırılabilir kutunun kenarında kırpılıyordu.
+
+### Kartlardan soruya bir köprüyle geçiliyor
+
+Sahnenin **üç** hâli var ve üçü de `soru-sahnesi.tsx` içinde: giriş (`Giris`),
+soruların kendisi, kapanış (`Sonuc`).
+
+Giriş bir süre yoktu ve yokluğu bilinçliydi — "arada duran bir 'deste bitti'
+ekranı, okumayla soruyu birbirinden ayıran fazladan bir dokunuş". Fazladan
+dokunuşun bedeli doğruydu, ayrılmayan iki işin bedeli hesaba katılmamıştı: son
+kartta "İlerle"ye basan kullanıcı dersin aydınlık, renkli destesinden koyu
+sahnedeki bir **iddianın üstüne** düşüyordu. Yüzey, ton ve iş tek karede birden
+değişiyor ve gelen ilk şey cevaplanmayı bekleyen bir cümle oluyordu. Okumayı
+bitirdiğini sanan kullanıcı kendini cevaplayacağı bir şeyin karşısında
+buluyordu; oradaki dokunuş gecikme değil, bir sonraki ekranın ne olduğunu
+söyleyen tek yer.
+
+Köprü koyu sahnenin **kendi** ilk ekranı, üçüncü bir yüzey değil: renk değişimi
+böylece bir soruyla değil bir açıklamayla geliyor ve sahnenin iki ucu aynı
+bileşende, aynı düzende duruyor. Deste kendi bitiş ekranını hâlâ çizmiyor —
+çizseydi arka arkaya iki kapanış olurdu, biri aydınlık biri koyu, ikisi de aynı
+şeyi söyleyerek.
+
+Ekranda kaç kart okunduğu ve kaç iddia geleceği yazıyor: "kaç iddia" demeyen
+bir köprü, ne kadar süreceğini söylemeden başlat düğmesi gösterirdi — haritadaki
+"4 kart · 3 dk" satırının aynı gerekçesi.
+
+**"Şimdi değil" düğme değil yazı.** Deste zaten okundu ve kaydı yazıldı;
+yoklamayı vermemek konuyu okunmamış yapmıyor ve okumayı bitirmenin bedeli bir
+sınav olmamalı. İki dolu düğme yan yana dursaydı hangisinin ileri götürdüğü de
+okunmazdı — kurulumdaki "Şimdilik atla" kuralı.
+
+`SahneSonucu.bitti` bu yüzden var: yarıda bırakılan yoklama ilerlemeye sayı
+**yazdırmıyor** (`konu-haritasi.tsx`), destenin kuralının aynısı. Bayraksız
+hâlde girişte "Şimdi değil" diyen kullanıcının kaydına, hiç verilmemiş bir
+yoklamanın "0 doğru"su geçiyordu.
+
 ### Ana sayfada kısayol değil kendi bölümü
 
 Bölüm bir süre kapalı betada gizliydi (`KONU_ANLATIMI_ACIK`); konu listesi
 Maarif programına bağlandıktan sonra açıldı ve bayrak `lib/beta.ts`'ten
-düştü. **Soru metinleri hâlâ yazılmadı** ve bu bölümü açmaya engel değil:
-sorusu olmayan konunun destesi sonunda kapanıyor, ekran boş bir sınav
-göstermiyor (bkz. `SoruKarti` yorumu, `lib/konu/tip.ts`).
+düştü.
 
 Ana sayfada bölümün adı **Bilgi Kartları** (kod tarafı `konu` kalıyor):
 ekranın kendisi kart gösteriyor, ders anlatmıyor. Bölüm `KARTLAR` listesinde

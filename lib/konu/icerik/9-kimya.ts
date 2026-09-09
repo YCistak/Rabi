@@ -1,4 +1,4 @@
-import { kart, konu, program, tema } from '../tip'
+import { kart, konu, program, soru, tema } from '../tip'
 
 /**
  * 9. sınıf Kimya — Maarif Modeli.
@@ -38,6 +38,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Kimya olmadan olmazdı',
         'Gübre olmasa tarım bugünkü nüfusu besleyemezdi; antibiyotik olmasa basit bir enfeksiyon öldürücü kalırdı.',
       ),
+    ], [
+      soru('Kâğıdın yanması kimyasal, yırtılması fiziksel bir değişimdir.', true, 'Yanmada yeni maddeler oluşuyor, yırtılmada kâğıt kâğıt olarak kalıyor.'),
+      soru('Doğal olan her madde insan için zararsızdır.', false, 'Yılan zehri de doğal; zararı doğallığı değil yapısı ve miktarı belirliyor.'),
+      soru('Buzun erimesi kimyasal bir değişimdir.', false, 'Madde yine su; yalnızca hâli değişiyor.'),
+      soru('Sirkenin ekşi tadı yapısındaki asitten gelir.', true, 'Sirkedeki asetik asit bu tadı veriyor.'),
     ]),
     konu('kim9-guvenlik', 'Kimyasal Maddelerin Kullanımı ve Güvenlik', [
       kart(
@@ -75,6 +80,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Atık nereye?',
         'Kimyasal atık lavaboya dökülmez; türüne göre ayrı kaplarda toplanır. Karışan atıklar beklenmedik tepkime verebilir.',
       ),
+    ], [
+      soru('Asit sulandırılırken su, asidin üzerine yavaşça dökülür.', false, 'Tersi yapılır: asit suya eklenir; su üstüne dökülen asit sıçrayabilir.'),
+      soru('Çamaşır suyu ile tuz ruhu birlikte kullanılmamalıdır.', true, 'Karışımdan zehirli klor gazı açığa çıkıyor.'),
+      soru('Laboratuvarda bir kimyasalın kokusu doğrudan burna çekilerek denenir.', false, 'Koklama elle yelpazeleyerek yapılır; tatma hiç yapılmaz.'),
+      soru('Kimyasal atıklar lavaboya değil, ayrılmış atık kaplarına dökülür.', true, 'Lavaboya dökülen atık suyla birlikte çevreye karışıyor.'),
     ]),
     konu('kim9-altdal', 'Kimyanın Alt Disiplinleri', [
       kart(
@@ -101,6 +111,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Polimer kimyası',
         'Küçük birimlerin (monomer) uzun zincirler kurmasını inceler. Lastikten naylona kadar her şey polimerdir.',
       ),
+    ], [
+      soru('Organik kimya, karbon bileşiklerini inceleyen alt disiplindir.', true, 'Yakıtlar, plastikler ve ilaçların çoğu bu alanın konusu.'),
+      soru('Analitik kimya, bir örnekte hangi maddenin ne kadar bulunduğunu belirler.', true, 'Nitel ve nicel analiz bu alanın işi.'),
+      soru('Canlılardaki tepkimeleri inceleyen alt disiplin biyokimya değildir.', false, 'Tam da biyokimyadır; canlıdaki kimyasal süreçleri inceler.'),
+      soru('Plastiklerin yapısını fizikokimya inceler.', false, 'Polimer kimyası inceler; fizikokimya tepkime hızı ve enerji ilişkilerine bakar.'),
     ]),
     konu('kim9-kariyer', 'Kimya Alanında Kariyer Olanakları', [
       kart(
@@ -123,6 +138,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Kimya mühendisi ile farkı',
         'Kimyager tepkimeyi laboratuvarda bulur, kimya mühendisi onu fabrika ölçeğinde ve ekonomik biçimde üretir.',
       ),
+    ], [
+      soru('Adli kimya, suç kanıtlarının çözümlenmesinde kimya bilgisini kullanır.', true, 'Kan, boya ve toz örneklerinin analizi bu alanın işi.'),
+      soru('Kimyager ile kimya mühendisinin işi tümüyle aynıdır.', false, 'Kimyager maddeyi ve tepkimeyi, mühendis üretimin büyük ölçekte kurulmasını ele alır.'),
+      soru('İlaç geliştirme sürecinde kimyacılara ihtiyaç duyulmaz.', false, 'Etken maddenin tasarımı ve sentezi doğrudan kimyanın işi.'),
+      soru('Kalite kontrol laboratuvarları kimya mezunlarının çalıştığı yerlerdendir.', true, 'Ürünün istenen bileşimde olup olmadığı orada ölçülüyor.'),
     ]),
     konu('kim9-atom-teori', 'Atom Teorileri ve Atomun Yapısı', [
       kart(
@@ -181,6 +201,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Emisyon ve absorbsiyon',
         'Elektron üst katmana çıkarken enerji soğurur (absorbsiyon), inerken salar (emisyon). Her elementin çizgileri kendine özgüdür.',
       ),
+    ], [
+      soru('Rutherford un deneyi, atom kütlesinin büyük kısmının küçük bir çekirdekte toplandığını gösterdi.', true, 'Işınların çok azının geri sekmesi bunun kanıtıydı.'),
+      soru('İzotop atomların proton sayıları farklıdır.', false, 'Proton sayıları aynı, nötron sayıları farklıdır; proton değişseydi element değişirdi.'),
+      soru('Bir elementin kimliğini kütle numarası belirler.', false, 'Kimliği atom numarası, yani proton sayısı belirler.'),
+      soru('Elektron üst enerji seviyesinden alt seviyeye inerken ışık yayar.', true, 'Aradaki enerji farkı ışık olarak salınıyor; emisyon spektrumu böyle oluşuyor.'),
     ]),
     konu('kim9-orbital', 'Atom Orbitalleri ve Elektron Dizilimi', [
       kart(
@@ -225,6 +250,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Küresel simetri',
         'Alt katmanın yarı ya da tam dolu olması (p³, p⁶, d⁵, d¹⁰) atoma ek kararlılık verir. Cr ve Cu dizilimi bu yüzden şaşırtır.',
       ),
+    ], [
+      soru('Aufbau ilkesine göre elektronlar önce en düşük enerjili orbitali doldurur.', true, 'Sistem en kararlı, yani en düşük enerjili düzeni seçiyor.'),
+      soru('Aynı orbitaldeki iki elektronun spinleri aynı yöndedir.', false, 'Pauli dışlama ilkesi zıt spin şartı koyuyor.'),
+      soru('4s orbitalinin enerjisi 3d den düşük olduğu için önce dolar.', true, 'Doldurma sırasını baş kuantum sayısı değil enerji belirliyor.'),
+      soru('Hund kuralına göre eş enerjili orbitallere elektronlar önce çiftler hâlinde yerleşir.', false, 'Önce her orbitale birer elektron girer, ancak hepsi dolunca eşleşme başlar.'),
     ]),
     konu('kim9-periyodik-yer', 'Periyodik Tabloda Yer Bulma', [
       kart(
@@ -255,6 +285,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Metal, ametal, yarı metal',
         'Metaller solda ve iletken, ametaller sağda ve yalıtkan; aradaki basamakta duran yarı metaller koşula göre iletir.',
       ),
+    ], [
+      soru('Periyot numarası, atomun elektron bulunan en yüksek enerji seviyesini verir.', true, 'Yatay sıralar bu seviyeye göre kuruluyor.'),
+      soru('Aynı gruptaki elementlerin değerlik elektron sayıları aynıdır.', true, 'Benzer kimyasal davranışlarının sebebi bu.'),
+      soru('Metaller elektron alarak negatif yüklü iyon oluşturur.', false, 'Metaller elektron verir ve pozitif iyon (katyon) olur.'),
+      soru('Periyodik tablonun 1A grubuna soy gazlar denir.', false, '1A alkali metaller; soy gazlar 8A grubunda.'),
     ]),
     konu('kim9-periyodik-ozellik', 'Periyodik Özellikler', [
       kart(
@@ -295,6 +330,24 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Neden bu yönde değişir?',
         'İki şey yarışır: çekirdek yükü elektronu çeker, iç katmanlar onu perdeler. Eğilimlerin tamamı bu yarışın sonucudur.',
       ),
+    ], [
+      soru(
+        'Bir periyotta soldan sağa gidildikçe atom yarıçapı artar.',
+        false,
+        'Çekirdek yükü arttığı için elektronlar içe çekilir; yarıçap küçülür.',
+        {
+          tur: 'tablo',
+          basliklar: ['Özellik', 'Soldan sağa'],
+          satirlar: [
+            ['Atom yarıçapı', 'Azalır'],
+            ['İyonlaşma enerjisi', 'Artar'],
+            ['Elektronegatiflik', 'Artar'],
+          ],
+        },
+      ),
+      soru('İyonlaşma enerjisi, grupta yukarıdan aşağı inildikçe artar.', false, 'Yarıçap büyüyüp değerlik elektronu uzaklaştıkça koparmak kolaylaşır, enerji azalır.'),
+      soru('Ardışık iyonlaşma enerjilerindeki büyük bir sıçrama, değerlik elektronlarının bittiğini gösterir.', true, 'Sıçramadan önceki elektron sayısı grup numarasını veriyor.'),
+      soru('Katyonun yarıçapı, oluştuğu nötr atomun yarıçapından büyüktür.', false, 'Elektron verildiği için küçülür; anyonda tersi olur.'),
     ]),
   ]),
   tema('kim9-t2', 'Çeşitlilik', [
@@ -319,6 +372,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Bağın gücü',
         'Valans elektron sayısı arttıkça ve atom küçüldükçe metalik bağ güçlenir; erime noktası da yükselir.',
       ),
+    ], [
+      soru('Metallerin elektriği iletmesi, serbestçe hareket eden değerlik elektronlarındandır.', true, 'Elektron denizi modeli bunu anlatıyor.'),
+      soru('Metaller darbe aldığında iyonik katılar gibi kırılır.', false, 'Elektron denizi katmanların kaymasına izin verdiği için metal şekil değiştirir.'),
+      soru('Metalik bağ güçlendikçe erime noktası yükselir.', true, 'Taneciği ayırmak için daha çok enerji gerekiyor.'),
+      soru('Metallerin parlaklığı yüzeydeki oksit tabakasından gelir.', false, 'Serbest elektronların ışığı yansıtmasından gelir; oksit tabakası tersine matlaştırır.'),
     ]),
     konu('kim9-iyonik', 'İyonik Bağ', [
       kart(
@@ -341,6 +399,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Ne zaman iletir?',
         'Katı hâlde iletmez, iyonlar yerinde sabittir. Eriyince ya da suda çözününce iyonlar serbest kalır ve iletir.',
       ),
+    ], [
+      soru('İyonik bağ, metal ile ametal arasında elektron aktarımıyla oluşur.', true, 'Metal verir, ametal alır; zıt yüklü iyonlar birbirini çeker.'),
+      soru('İyonik katılar katı hâlde elektriği iyi iletir.', false, 'İyonlar örgüde sabit; iletim ancak erimiş hâlde ya da sulu çözeltide olur.'),
+      soru('İyonik bileşikler hem sert hem kırılgandır.', true, 'Örgü kayınca aynı yüklü iyonlar karşılaşıyor ve kristal çatlıyor.'),
+      soru('İyonik bileşiklerin erime noktaları düşüktür.', false, 'Örgüdeki çekim güçlü olduğu için erime noktaları yüksektir.'),
     ]),
     konu('kim9-kovalent', 'Kovalent Bağ', [
       kart(
@@ -372,6 +435,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
           ],
         },
       ),
+    ], [
+      soru('Kovalent bağda elektronlar ortaklaşa kullanılır.', true, 'Ametaller elektron almak istediği için aktarım yerine ortaklık kuruluyor.'),
+      soru('İki farklı ametal arasında oluşan bağ polar kovalenttir.', true, 'Elektronegatiflik farkı elektronları bir tarafa yaklaştırıyor.'),
+      soru('H₂ molekülündeki bağ polar kovalenttir.', false, 'Aynı iki atom arasında elektronegatiflik farkı yok; bağ apolar.'),
+      soru('Kovalent bağ yalnızca metal atomları arasında oluşur.', false, 'Ametaller arasında oluşur; metaller arasındaki bağ metalik bağdır.'),
     ]),
     konu('kim9-lewis', 'Lewis Nokta Yapısı', [
       kart(
@@ -402,6 +470,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Oktete uymayanlar',
         'BeCl₂ ve BF₃ oktetin altında, PCl₅ ve SF₆ üstünde kalır. Kural her zaman geçerli bir yasa değil, güçlü bir eğilimdir.',
       ),
+    ], [
+      soru('Lewis yapısı atomun değerlik elektronlarını noktalarla gösterir.', true, 'İç katmanlar çizilmiyor; bağı kuran elektronlar değerlik elektronları.'),
+      soru('Oktet kuralına göre atomlar son katmanlarında sekiz elektrona ulaşmaya çalışır.', true, 'Soy gaz düzenine benzemek kararlılık sağlıyor.'),
+      soru('Hidrojen atomu da oktete ulaşmaya çalışır.', false, 'Hidrojen iki elektronla, yani dublet ile kararlı.'),
+      soru('Bir molekülde ortaklanmamış elektron çifti bulunamaz.', false, 'Su molekülündeki oksijenin iki ortaklanmamış çifti var.'),
     ]),
     konu('kim9-polarlik', 'Molekül Polarlığı ve Apolarlığı', [
       kart(
@@ -491,6 +564,36 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Benzer benzeri çözer',
         'Polar maddeler polar çözücüde, apolar maddeler apolar çözücüde çözünür. Yağın suda çözünmemesi bu yüzden.',
       ),
+    ], [
+      soru(
+        'Şekildeki su molekülü doğrusal olduğu için apolardır.',
+        false,
+        'Molekül açılı: bağ polarlıkları birbirini götürmüyor ve su polar bir molekül.',
+        {
+          tur: 'koordinat',
+          pencere: [-2.4, 2.4, -0.8, 2.4],
+          eksenler: false,
+          egriler: [
+            {
+              noktalar: [
+                [-1.5, 0.2],
+                [0, 1.4],
+                [1.5, 0.2],
+              ],
+              kirik: true,
+            },
+          ],
+          etiketler: [
+            { x: 0, y: 1.9, ad: 'O' },
+            { x: -1.8, y: 0.1, ad: 'H' },
+            { x: 1.8, y: 0.1, ad: 'H' },
+            { x: 0, y: 0.7, ad: '104,5°' },
+          ],
+        },
+      ),
+      soru('Bağları polar olan bir molekül apolar olabilir.', true, 'CO₂ de olduğu gibi: simetrik şekilde bağ polarlıkları birbirini götürüyor.'),
+      soru('Polar bir madde apolar bir çözücüde iyi çözünür.', false, 'Benzer benzeri çözer: polar madde polar çözücüde çözünür.'),
+      soru('Bir molekülün polar olup olmadığını yalnızca bağ türü belirler.', false, 'Molekülün şekli de belirleyici; simetrik bir molekülde polar bağlar birbirini götürebiliyor.'),
     ]),
     konu('kim9-adlandirma', 'Bileşiklerin Adlandırılması', [
       kart(
@@ -529,6 +632,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Yaygın adlar',
         'Bazı bileşikler sistematik adıyla anılmaz: H₂O su, NH₃ amonyak, NaCl sofra tuzu, CaCO₃ kireç taşı.',
       ),
+    ], [
+      soru('CO₂ bileşiğinin adı karbon dioksittir.', true, 'İki ametal; ikinci elemente atom sayısını gösteren ön ek geliyor.'),
+      soru('İyonik bileşikler adlandırılırken önce ametal yazılır.', false, 'Önce metal (katyon), sonra ametal yazılır.'),
+      soru('CuSO₄ bileşiği bakır(II) sülfat diye adlandırılır.', true, 'Bakır birden çok değerlik aldığı için değerliği Roma rakamıyla belirtiliyor.'),
+      soru('Kovalent bileşiklerin adlandırılmasında ön ek kullanılmaz.', false, 'mono, di, tri gibi ön ekler atom sayısını gösteriyor.'),
     ]),
     konu('kim9-molekuller-arasi', 'Moleküller Arası Etkileşimler', [
       kart(
@@ -567,6 +675,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'İyon-dipol',
         'Suda çözünen tuzda su molekülleri iyonları sarar. Çözünmeyi mümkün kılan etkileşim budur.',
       ),
+    ], [
+      soru('Moleküller arası etkileşimler kimyasal bağlardan zayıftır.', true, 'Suyu kaynatmak molekülleri ayırıyor, bağlarını koparmıyor.'),
+      soru('Suyun kaynama sıcaklığının beklenenden yüksek olması hidrojen bağlarındandır.', true, 'Hidrojen bağı moleküller arası etkileşimlerin en güçlüsü.'),
+      soru('London kuvvetleri yalnızca polar moleküllerde görülür.', false, 'Bütün moleküllerde var; apolar moleküllerde tek etkileşim odur.'),
+      soru('Hidrojen bağı, hidrojen atomu bulunan her molekülde oluşur.', false, 'Hidrojenin flor, oksijen veya azota bağlı olması gerekiyor.'),
     ]),
     konu('kim9-katilar', 'Katılar ve Özellikleri', [
       kart(
@@ -607,6 +720,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Aynı element, farklı katı',
         'Elmas ve grafit ikisi de karbondur; biri en sert maddelerden, öteki kalem ucu. Farkı yalnızca dizilim yaratıyor.',
       ),
+    ], [
+      soru('Elmas ile grafit aynı elementten oluşur.', true, 'İkisi de karbon; farkı atomların dizilişinde.'),
+      soru('Cam kristal bir katıdır.', false, 'Camın düzenli örgüsü yok; amorf katı.'),
+      soru('Kovalent ağ katılarının erime noktaları çok yüksektir.', true, 'Eritmek için kovalent bağları koparmak gerekiyor.'),
+      soru('Moleküler katılar sert ve yüksek erime noktalıdır.', false, 'Molekülleri zayıf etkileşimler tuttuğu için genelde yumuşak ve düşük erime noktalıdır.'),
     ]),
     konu('kim9-sivilar', 'Sıvılar ve Özellikleri', [
       kart(
@@ -654,6 +772,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Suyun tuhaflığı',
         'Su donarken genleşir ve buz yüzer. Hidrojen bağları katı hâlde molekülleri daha boşluklu bir düzene sokar.',
       ),
+    ], [
+      soru('Bir sıvının buhar basıncı arttıkça kaynama sıcaklığı düşer.', true, 'Sıvı, dış basıncı daha erken karşılıyor.'),
+      soru('Viskozitesi yüksek sıvılar daha zor akar.', true, 'Bal ile suyun farkı bu.'),
+      soru('Yüzey gerilimi, sıvı taneciklerinin kabın çeperine yaptığı çekimden kaynaklanır.', false, 'Yüzey gerilimi kohezyondan, yani taneciklerin birbirini çekmesinden gelir.'),
+      soru('Kılcal boruda cıva da su gibi yükselir.', false, 'Cıvada kohezyon adezyondan güçlü; seviye yükselmek yerine alçalır.'),
     ]),
   ]),
   tema('kim9-t3', 'Sürdürülebilirlik', [
@@ -682,6 +805,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Riski de var',
         'Küçük olmak hücre zarını geçebilmek demek. Nanoparçacıkların sağlık ve çevre etkileri hâlâ araştırılıyor.',
       ),
+    ], [
+      soru('1 nanometre, metrenin milyarda biridir.', true, 'Bir insan saçı yaklaşık 80 bin nanometre kalınlığında.'),
+      soru('Nanoparçacıklar, aynı maddenin iri hâliyle aynı özellikleri gösterir.', false, 'Yüzey/hacim oranı büyüdüğü için renk, erime noktası ve etkinlik değişebiliyor.'),
+      soru('Nanoparçacıklarda yüzey alanının hacme oranı büyüktür.', true, 'Atomların büyük kısmı yüzeyde kalıyor; tepkime etkinliği bu yüzden yüksek.'),
+      soru('Nanoteknoloji ürünlerinin çevresel ve sağlıkla ilgili bir riski yoktur.', false, 'Küçük boyut, canlı dokularda birikme ve hücrelere girme riski getiriyor.'),
     ]),
     konu('kim9-cevresel', 'Metal ve Alaşımların Çevresel Etkileri', [
       kart(
@@ -717,6 +845,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Ekolojik ayak izi',
         'Bir üretimin doğaya bindirdiği yükün ölçüsü. Metal geri kazanımı, cevherden üretime göre bu yükü belirgin biçimde azaltır.',
       ),
+    ], [
+      soru('Ağır metaller besin zincirinde birikerek üst basamaklarda yoğunlaşır.', true, 'Vücuttan atılmadıkları için her basamakta daha çok toplanıyorlar.'),
+      soru('Alaşım, iki metalin kimyasal tepkimesiyle oluşan yeni bir bileşiktir.', false, 'Alaşım bir karışım; bileşenler kendi kimliğini koruyor.'),
+      soru('Paslanmaz çelik, korozyona direnç kazandırmak için üretilmiş bir alaşımdır.', true, 'İçindeki krom yüzeyde koruyucu bir tabaka oluşturuyor.'),
+      soru('Korozyon yalnızca demirde görülür.', false, 'Bakır ve alüminyum gibi metaller de yüzeyde oksitlenir; demirdeki adı pas.'),
     ]),
     konu('kim9-yesil', 'Yeşil Kimyanın Atık Önleme İlkesi', [
       kart(
@@ -754,6 +887,25 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Okulda karşılığı',
         'Mikro ölçekli deney aynı sonucu daha az madde ile verir: hem daha az atık hem daha az risk.',
       ),
+    ], [
+      soru(
+        'Şemaya göre atığı geri kazanmak, hiç oluşturmamaktan daha önceliklidir.',
+        false,
+        'Yeşil kimyanın ilk basamağı önleme; geri kazanım ancak atık oluştuysa devreye giriyor.',
+        {
+          tur: 'akis',
+          dikey: true,
+          adimlar: [
+            { ad: 'Önle' },
+            { ad: 'Azalt' },
+            { ad: 'Geri kazan' },
+            { ad: 'Bertaraf et' },
+          ],
+        },
+      ),
+      soru('Atom ekonomisi yüksek bir tepkimede girenlerin büyük kısmı ürüne dönüşür.', true, 'Ürüne dönüşmeyen kısım atık demek.'),
+      soru('Yeşil kimya yalnızca sanayiyi ilgilendirir, okul laboratuvarında karşılığı yoktur.', false, 'Deneyi küçük ölçekte yapmak ve az kimyasal kullanmak da aynı ilkenin uygulaması.'),
+      soru('Atığı arıtmak, atığı hiç oluşturmamakla aynı değerdedir.', false, 'Arıtma da enerji ve kimyasal harcıyor; en ucuz atık hiç oluşmayan atık.'),
     ]),
   ]),
 ])

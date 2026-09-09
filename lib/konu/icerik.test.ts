@@ -118,3 +118,75 @@ describe('kimlikler', () => {
     }
   })
 })
+
+/**
+ * Doğru/yanlış soruları.
+ *
+ * Biçimin kendisi bir tuzak taşıyor: cevabı bilmeyen kullanıcı da yazı tura
+ * atarak yarısını tutturur, hep aynı düğmeye basan ise iddiaların dengesine
+ * göre kazanır. Testler bu yüzden içeriği değil **dengeyi** denetliyor —
+ * her destede iki cevaptan ikisi de bulunsun ve genel dağılım yarı yarıya
+ * kalsın.
+ */
+const IFADE_SINIRI = 130
+const ACIKLAMA_SINIRI = 170
+/** Yoklama destenin arkasına eklenen kısa bir adım; uzun olursa deste bitmiyor. */
+const SORU_SINIRI = 6
+
+describe('sorular', () => {
+  const tumu = programlar
+    .map(([, program]) => program)
+    .filter((p): p is DersProgrami => p !== null)
+  const tumSorular = tumu.flatMap((p) => tumKonular(p).flatMap((k) => k.sorular))
+
+  it.each(programlar)('%s: her konuda soru var ve sayısı sınırda', (_ad, program) => {
+    for (const konu of tumKonular(program!)) {
+      expect(konu.sorular.length, `${konu.ad} sorusuz`).toBeGreaterThanOrEqual(3)
+      expect(konu.sorular.length, `${konu.ad} çok soru`).toBeLessThanOrEqual(SORU_SINIRI)
+    }
+  })
+
+  it.each(programlar)('%s: iddialar kısa ve gerekçeli', (_ad, program) => {
+    for (const konu of tumKonular(program!)) {
+      for (const s of konu.sorular) {
+        expect(s.ifade.trim().length, `boş iddia: ${konu.ad}`).toBeGreaterThan(0)
+        expect(s.ifade.length, `iddia uzun: ${s.ifade}`).toBeLessThanOrEqual(IFADE_SINIRI)
+        expect(s.aciklama.trim().length, `gerekçesiz: ${s.ifade}`).toBeGreaterThan(0)
+        expect(s.aciklama.length, `gerekçe uzun: ${s.ifade}`).toBeLessThanOrEqual(
+          ACIKLAMA_SINIRI,
+        )
+      }
+    }
+  })
+
+  /*
+    İddia bir soru cümlesi değil. "Kütle korunur mu?" diye soran bir metnin
+    altında Doğru/Yanlış düğmeleri anlamsız — cevap evet/hayır olurdu ve
+    ekran onu doğru/yanlış diye sayardı.
+  */
+  it.each(programlar)('%s: iddialar soru cümlesi değil', (_ad, program) => {
+    for (const konu of tumKonular(program!)) {
+      for (const s of konu.sorular) {
+        expect(s.ifade.includes('?'), `soru cümlesi: ${s.ifade}`).toBe(false)
+      }
+    }
+  })
+
+  /*
+    Tek yönlü deste, cevabı içeriğe bakmadan verdiriyor: ilk iki soruda hep
+    "doğru" çıktığını gören kullanıcı geri kalanını okumuyor.
+  */
+  it.each(programlar)('%s: her destede iki cevap da var', (_ad, program) => {
+    for (const konu of tumKonular(program!)) {
+      const dogru = konu.sorular.filter((s) => s.dogru).length
+      expect(dogru, `${konu.ad}: hepsi yanlış`).toBeGreaterThan(0)
+      expect(dogru, `${konu.ad}: hepsi doğru`).toBeLessThan(konu.sorular.length)
+    }
+  })
+
+  it('genel dağılım yarı yarıya', () => {
+    const oran = tumSorular.filter((s) => s.dogru).length / tumSorular.length
+    expect(oran).toBeGreaterThan(0.4)
+    expect(oran).toBeLessThan(0.6)
+  })
+})

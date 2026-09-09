@@ -1,4 +1,4 @@
-import { kart, konu, program, tema } from '../tip'
+import { kart, konu, program, soru, tema } from '../tip'
 
 /**
  * 9. sınıf Türk Dili ve Edebiyatı — Maarif Modeli.
@@ -49,6 +49,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Güzel sanatlarda edebiyatın yeri',
         'Sanatlar malzemesine göre ayrılır: fonetik (ses), plastik (madde), dramatik (hareket). Edebiyat fonetik sanatlardandır.',
       ),
+    ], [
+      soru('Edebiyatın malzemesi dildir.', true, 'Ressamın boyası neyse yazarın dili odur.'),
+      soru('Kurmaca metinlerde anlatılanların gerçekte yaşanmış olması gerekir.', false, 'Kurmaca gerçeğe benzeyebilir ama gerçek olmak zorunda değil.'),
+      soru('Öğretici metinlerde amaç bilgi vermektir.', true, 'Edebî metinde amaç estetik bir etki bırakmak.'),
+      soru('Edebiyat güzel sanatların içinde yer almaz.', false, 'Dille yapılan bir güzel sanat dalıdır.'),
     ]),
     konu('trk9-siir', 'Şiir Bilgisi', [
       kart(
@@ -101,6 +106,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Ahenk ögeleri',
         'Ölçü, uyak, redif, aliterasyon (ünsüz yinelemesi) ve asonans (ünlü yinelemesi) şiirin sesini kurar.',
       ),
+    ], [
+      soru('Redif, dize sonlarında görevi ve anlamı aynı olan ek ya da sözcüklerin tekrarıdır.', true, 'Uyaktan sonra gelir ve uyakla karıştırılmamalı.'),
+      soru('Hece ölçüsünde dizelerdeki hece sayısı eşittir.', true, 'Ölçü, dizenin hece sayısıyla adlandırılıyor: 7 li, 11 li gibi.'),
+      soru('Nazım birimi dörtlük olan bir şiirde her bölüm iki dizeden oluşur.', false, 'Dörtlük dört dizeden oluşur; iki dizelik birim beyittir.'),
+      soru('İmge, sözcüğün sözlükteki ilk anlamıdır.', false, 'İmge, şairin sözcüklerle kurduğu yeni ve özgün tasarım.'),
     ]),
     konu('trk9-sanat', 'Söz Sanatları', [
       kart(
@@ -145,6 +155,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Abartma ve konuşturma',
         'Abartma (mübalağa) bir niteliği olduğundan çok göstermek; intak ise insan dışı varlıkları konuşturmaktır.',
       ),
+    ], [
+      soru('Benzetmede benzeyen, kendisine benzetilen, benzetme yönü ve benzetme edatı bulunur.', true, 'Dördü de kullanılırsa tam benzetme olur.'),
+      soru('İstiarede benzetmenin temel ögelerinden yalnızca biri kullanılır.', true, 'Yalnız benzeyen varsa kapalı, yalnız kendisine benzetilen varsa açık istiare.'),
+      soru('Kişileştirme yapılan her dizede konuşturma da vardır.', false, 'Konuşturma kişileştirmenin ileri adımı; her kişileştirmede bulunmaz.'),
+      soru('Mecaz-ı mürselde benzetme amacı vardır.', false, 'Benzetme yoktur; parça-bütün, iç-dış gibi bir ilgi kurulur.'),
     ]),
     konu('trk9-deneme', 'Deneme ve Düşünce Yazıları', [
       kart(
@@ -181,6 +196,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Türk edebiyatında',
         'Deneme ve fıkra Tanzimat’la gazeteyle birlikte gelişti; Nurullah Ataç ve Suut Kemal Yetkin deneme türünün öne çıkan adlarıdır.',
       ),
+    ], [
+      soru('Denemede yazar düşüncesini kanıtlama kaygısı gütmez.', true, 'Kendi kendine konuşur gibi yazar; okuru ikna etme zorunluluğu yok.'),
+      soru('Makale, bir düşünceyi kanıtlarla savunan öğretici metindir.', true, 'Bilimsel veriye ve kaynağa dayanır.'),
+      soru('Fıkra, uzun uzun kanıt sunan bilimsel bir yazı türüdür.', false, 'Kısa, günlük dille yazılır ve kanıtlama kaygısı taşımaz.'),
+      soru('Deneme ile makale arasında bir fark yoktur.', false, 'Makale kanıtlar, deneme düşündürür; üslupları da ayrı.'),
     ]),
   ]),
   tema('trk9-t2', 'Anlam Arayışı', [
@@ -226,6 +246,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Nitel ve nicel',
         'Ölçülebilen anlam niceldir (üç metre), niteleme bildiren anlam niteldir (güzel manzara).',
       ),
+    ], [
+      soru('Bir sözcüğün akla ilk gelen anlamına gerçek anlam denir.', true, 'Temel anlam da denir.'),
+      soru('"Ağır bir soru" ifadesinde "ağır" gerçek anlamıyla kullanılmıştır.', false, 'Burada "zor" anlamında; mecaz anlam.'),
+      soru('Terim anlam, bir bilim ya da sanat dalına özgü anlamdır.', true, '"Kök" sözcüğünün matematikteki karşılığı buna örnek.'),
+      soru('Somut anlamlı sözcükler duyu organlarıyla algılanamayan kavramları karşılar.', false, 'Tersi: somut olan algılanabilir, algılanamayan soyuttur.'),
     ]),
     konu('trk9-soz', 'Deyim, Atasözü ve Söz Öbekleri', [
       kart(
@@ -261,6 +286,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Kalıplaşma bozulmaz',
         'Deyim ve atasözlerinin sözcükleri değiştirilemez, sırası bozulamaz: "ağaç yaşken eğilir" başka türlü söylenemez.',
       ),
+    ], [
+      soru('Atasözleri kalıplaşmıştır; sözcükleri değiştirilemez.', true, 'Eş anlamlısıyla değiştirilen bir atasözü artık atasözü sayılmaz.'),
+      soru('Deyimler öğüt verir, atasözleri vermez.', false, 'Öğüt veren atasözüdür; deyim bir durumu anlatır.'),
+      soru('İkilemeler anlatımı pekiştirmek için kullanılır.', true, '"Yavaş yavaş", "irili ufaklı" gibi kalıplar anlamı güçlendiriyor.'),
+      soru('"Güle güle", "geçmiş olsun" gibi sözler deyim sayılır.', false, 'Bunlar kalıp söz: belirli durumlarda söylenen hazır ifadeler.'),
     ]),
     konu('trk9-cumle', 'Cümlede Anlam', [
       kart(
@@ -295,6 +325,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Üslup ve içerik',
         'Üslup nasıl anlatıldığıdır (kısa cümleler, sade dil); içerik ise ne anlatıldığı. Sorularda ikisi sık karıştırılır.',
       ),
+    ], [
+      soru('"Yağmur yağdığı için maç ertelendi." cümlesinde neden-sonuç ilişkisi vardır.', true, 'Ertelenmenin sebebi doğrudan belirtilmiş.'),
+      soru('Nesnel yargılar kişiden kişiye değişir.', false, 'Nesnel yargı doğrulanabilir; değişen öznel yargıdır.'),
+      soru('"Sınavı kazanmak için çok çalıştı." cümlesinde amaç-sonuç ilişkisi vardır.', true, '"için" burada amacı bildiriyor.'),
+      soru('Karşılaştırma cümlelerinde her zaman biri üstün gösterilir.', false, 'Karşılaştırma benzerlik ya da eşitlik için de yapılabilir.'),
     ]),
     konu('trk9-paragraf', 'Paragrafta Anlam', [
       kart(
@@ -343,6 +378,19 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Akışı bozan cümle',
         'Paragrafın konusundan sapan ya da bağlantı kurulamayan cümledir. Çıkarıldığında anlam bütünlüğü bozulmaz.',
       ),
+    ], [
+      soru(
+        'Paragrafın ana düşüncesi yalnızca giriş bölümünde bulunur.',
+        false,
+        'Ana düşünce paragrafın herhangi bir yerinde verilebilir, hatta hiç yazılmadan sezdirilebilir.',
+        {
+          tur: 'akis',
+          adimlar: [{ ad: 'Giriş' }, { ad: 'Gelişme' }, { ad: 'Sonuç' }],
+        },
+      ),
+      soru('Konu "neyden söz ediliyor", ana düşünce "ne anlatılmak isteniyor" sorusuna cevap verir.', true, 'Konu geniş, ana düşünce o konuda söylenen sözdür.'),
+      soru('Paragrafın akışını bozan cümle, konuyla ilgisi olmayan cümledir.', true, 'Anlam bütünlüğünü kırdığı için çıkarılması gerekir.'),
+      soru('Bir paragrafta yalnızca tek bir anlatım biçimi kullanılabilir.', false, 'Açıklama, tartışma, öyküleme ve betimleme bir arada bulunabilir.'),
     ]),
   ]),
   tema('trk9-t3', 'Anlamın Yapı Taşları', [
@@ -380,6 +428,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Çatışma',
         'Anlatıyı ilerleten şey çatışmadır: kişinin başka biriyle, toplumla, doğayla ya da kendisiyle çatışması.',
       ),
+    ], [
+      soru('Anlatmaya bağlı metinlerin yapı ögeleri olay örgüsü, kişiler, mekân ve zamandır.', true, 'Dördü birlikte kurmacanın iskeletini oluşturuyor.'),
+      soru('Olay örgüsü, olayların yaşandıkları sırayla anlatılması demektir.', false, 'Olaylar geri dönüşlerle de verilebilir; olay örgüsü kurgunun düzeni.'),
+      soru('Çatışma yalnızca iki kişi arasında yaşanır.', false, 'Kişinin kendi içinde ya da doğayla, toplumla da çatışması olabilir.'),
+      soru('Mekân, kişiler hakkında da ipucu verebilir.', true, 'Yaşanılan yerin anlatımı çoğu zaman kişinin durumunu da anlatıyor.'),
     ]),
     konu('trk9-anlatici', 'Anlatıcı ve Bakış Açısı', [
       kart(
@@ -415,6 +468,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Güvenilmez anlatıcı',
         'Anlatıcı yanılıyor ya da gizliyor olabilir. Okur, anlatılanla ima edilen arasındaki farkı kendi kurar.',
       ),
+    ], [
+      soru('İlahi bakış açısındaki anlatıcı kişilerin iç dünyasını bilir.', true, 'Her şeyi bilen anlatıcı geçmişi ve geleceği de aktarabilir.'),
+      soru('Kahraman bakış açısında anlatıcı "ben" diliyle konuşur.', true, 'Anlatan, olayın içindeki kişilerden biri.'),
+      soru('Anlatıcı ile yazar aynı kişidir.', false, 'Anlatıcı kurmacanın içindeki ses; yazar onu kuran kişi.'),
+      soru('Gözlemci bakış açısındaki anlatıcı kişilerin aklından geçenleri aktarır.', false, 'Yalnızca dışarıdan görüp duyduklarını aktarabilir.'),
     ]),
     konu('trk9-hikaye', 'Hikâye ve Roman', [
       kart(
@@ -450,6 +508,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Modern anlatı',
         '20. yüzyılda olay örgüsü gevşedi, iç konuşma ve bilinç akışı öne çıktı; anlatı olayı değil bilinci izlemeye başladı.',
       ),
+    ], [
+      soru('Durum hikâyesinde serim-düğüm-çözüm sıralaması belirgin değildir.', true, 'Bir anı ve durumu aktarır; olay örgüsü zayıftır.'),
+      soru('Durum hikâyesinin öncüsü Maupassant tır.', false, 'Maupassant olay hikâyesinin, Çehov durum hikâyesinin öncüsü.'),
+      soru('Türk edebiyatının ilk romanı Taaşşuk-ı Talat ve Fitnat kabul edilir.', true, 'Şemsettin Sami nin bu eseri ilk yerli roman sayılıyor.'),
+      soru('Roman ile hikâye arasındaki tek fark uzunluktur.', false, 'Roman daha çok kişiyi, mekânı ve olayı daha geniş bir zamanda işler.'),
     ]),
     konu('trk9-tiyatro', 'Tiyatro', [
       kart(
@@ -489,6 +552,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Türk tiyatrosunda ilkler',
         'Batılı anlamda ilk tiyatro eseri Şinasi’nin Şair Evlenmesi’dir; Tanzimat’la birlikte sahnelenmeye başlandı.',
       ),
+    ], [
+      soru('Tiyatro metinleri sahnelenmek üzere yazılır.', true, 'Bu yüzden metinde sahne yönergeleri de bulunur.'),
+      soru('Trajedide kahramanlar halktan sıradan kişilerdir.', false, 'Trajedide soylu ve tanınmış kişiler; sıradan kişiler komedinin konusu.'),
+      soru('Karagöz ve orta oyunu geleneksel Türk tiyatrosu içinde yer alır.', true, 'Meddah da bu geleneğin parçası.'),
+      soru('Üç birlik kuralı yer, zaman ve olay birliğinin bozulmasını ister.', false, 'Tersine, üçünün de korunmasını ister.'),
     ]),
   ]),
   tema('trk9-t4', 'Dilin Zenginliği', [
@@ -535,6 +603,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Kaynaştırma harfleri',
         'İki ünlü yan yana gelmesin diye araya y, ş, s, n girer: "araba-y-ı", "iki-ş-er", "kapı-s-ı".',
       ),
+    ], [
+      soru('"Kitabı" sözcüğünde ünsüz yumuşaması vardır.', true, 'Sözcük sonundaki "p" ünlüyle başlayan ek alınca "b" ye dönmüş.'),
+      soru('Büyük ünlü uyumuna göre bir sözcükte kalın ve ince ünlüler bir arada bulunmaz.', true, 'Alıntı sözcükler bu kurala uymayabilir.'),
+      soru('"Gitti" sözcüğünde ünsüz yumuşaması vardır.', false, 'Burada benzeşme var: sert ünsüzden sonra gelen "d" sertleşip "t" olmuş.'),
+      soru('Alıntı sözcükler büyük ünlü uyumuna her zaman uyar.', false, '"Kitap", "televizyon" gibi sözcükler kurala uymuyor.'),
     ]),
     konu('trk9-yazim', 'Yazım Kuralları', [
       kart(
@@ -575,6 +648,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Sayıların yazımı',
         'Metinde geçen küçük sayılar yazıyla yazılır. Büyük harfle başlayan yerlerde ve resmî belgelerde rakam kullanılır.',
       ),
+    ], [
+      soru('Bağlaç olan "de" ayrı yazılır.', true, 'Cümleden çıkarıldığında anlam bozulmuyorsa bağlaçtır.'),
+      soru('Soru eki olan "mi" her zaman ayrı yazılır.', true, 'Kendinden sonra gelen ekler ona bitişik yazılır.'),
+      soru('Bulunma durumu eki olan "-de" ayrı yazılır.', false, 'Ek olan "-de" bitişik yazılır; ayrı yazılan bağlaç olandır.'),
+      soru('Sayılar metin içinde her zaman rakamla yazılır.', false, 'Metin içinde çoğunlukla yazıyla yazılır; ölçü ve tarihlerde rakam kullanılır.'),
     ]),
     konu('trk9-noktalama', 'Noktalama İşaretleri', [
       kart(
@@ -609,6 +687,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Tırnak ve kısa çizgi',
         'Tırnak alıntıyı ve özel vurguyu gösterir; kısa çizgi satır sonunda hece böler ve dil bilgisinde ekleri ayırır.',
       ),
+    ], [
+      soru('Virgülün yeri cümlenin anlamını değiştirebilir.', true, '"Genç, adama baktı." ile "Genç adama baktı." aynı cümle değil.'),
+      soru('İki nokta, açıklama ya da örnek verileceğinde kullanılır.', true, 'Ayrıca alıntıdan önce de konur.'),
+      soru('Kesme işareti özel adlara gelen yapım eklerini de ayırır.', false, 'Yapım ekleri ayrılmaz; kesme yalnızca çekim eklerini ayırıyor.'),
+      soru('Noktalı virgül, birbirine bağlı cümleleri ayırmak için kullanılmaz.', false, 'Aralarında ilişki olan bağımsız cümleleri ayırmak onun işlerinden biri.'),
     ]),
     konu('trk9-varlik', 'Türkçenin Söz Varlığı', [
       kart(
@@ -643,6 +726,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Türk dilinin lehçeleri',
         'Yakutça ve Çuvaşça en erken ayrılan lehçelerdir; Azerice, Kazakça ve Özbekçe ise şive sayılan yakın kollardır.',
       ),
+    ], [
+      soru('Türkçe yeni sözcükleri çoğunlukla türetme yoluyla kazanır.', true, 'Yapım ekleri sayesinde tek kökten çok sözcük üretilebiliyor.'),
+      soru('Lehçe, bir dilin çok eski dönemlerde ayrılmış koludur.', true, 'Yakutça ve Çuvaşça Türkçenin lehçelerinden.'),
+      soru('Ağız, ayrı bir dil sayılır.', false, 'Ağız aynı dilin bir bölgedeki söyleyiş farkı; yazı dili ortak.'),
+      soru('Türkçeye başka dillerden hiç sözcük girmemiştir.', false, 'Arapça, Farsça ve Fransızcadan geçen çok sayıda sözcük var.'),
     ]),
   ]),
 ])

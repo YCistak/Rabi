@@ -1,37 +1,56 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Check, RotateCcw, X } from 'lucide-react'
+import { ArrowRight, Check, X } from 'lucide-react'
 import type { Konu } from '@/lib/konu'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
 import { Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
+import { KartGorseli } from './kart-gorseli'
 
 /**
  * Soru sahnesi — deste okunduktan **hemen sonra** gelen ekran.
  *
- * Kartlar anlatıyor, burası geri istiyor. Akış tek bir cümle: karta dokun,
- * çevrilir, sonra karar ver. Karar iki düğmede — **Yanlış** ve **Doğru** —
- * ve ikisi de cevap görülene kadar pasif: cevabı görmeden basılan "Doğru",
- * bilmeyi değil emin olmayı ölçer.
+ * Kartlar anlatıyor, burası geri istiyor. Sorular doğru/yanlış: ekranda bir
+ * iddia duruyor ve iki düğme var. Akış tek dokunuşluk — karar ver, gerekçeyi
+ * oku, devam et.
+ *
+ * Ekran bir süre **çevrilen** bir kart gösteriyordu: bir yüzünde soru, öteki
+ * yüzünde cevap, kararı da kullanıcı kendi veriyordu ("bildim / bilmedim").
+ * İki sorunu birden vardı. Ölçtüğü şey bilmek değil beyandı — cevabı gördükten
+ * sonra "bildim" demek serbest. Ve deste okunduktan sonra gelen ekranı ikinci
+ * bir işe çeviriyordu: her soruda çevir, oku, karar ver.
+ *
+ * Şimdi cevap `SoruKarti.dogru` içinde ve ekran kararı kendisi tartıyor;
+ * gerekçe karardan sonra çıkıyor, öncesinde değil.
+ *
+ * Sahnenin **üç** hâli var ve üçü de burada: kartlardan devralan giriş
+ * (`Giris`), soruların kendisi ve kapanıştaki özet (`Sonuc`). Giriş sonradan
+ * eklendi; gerekçesi kendi yorumunda.
  *
  * Ekran uygulamanın tek koyu yüzeyi. Gerekçesi `globals.css`teki `.sahne`
  * bloğunda; renkler de orada, burada onaltılık kod yok.
  *
- * **Ekran yalnızca sorusu yazılmış konuda açılıyor.** Soru metinleri henüz
- * hiçbir konuda yok (`lib/konu/icerik/`), o yüzden bugün hiç görünmüyor:
- * harita boş desteyi açmıyor ve deste bitince konu eskisi gibi kapanıyor.
- * Sorular yazıldıkça o konular ekranı kendiliğinden kazanıyor — burada
- * değişmesi gereken bir şey yok.
+ * Katman yukarıdan aşağı açılarak geliyor (`sahne-iner`): deste kapanıp sahne
+ * açıldığında ekran tek karede kırık beyazdan koyuya atlıyordu. Sınıf üç hâlin
+ * kökünde de yazılı ama perde **bir kez** oynuyor: React üçünde de aynı DOM
+ * düğümünü yeniden kullanıyor, animasyon da yalnızca düğüm kurulurken
+ * başlıyor. Ayrı bir "yalnızca girişte" koşulu, olmayan bir tekrarı önlerdi.
  */
-
-/** Kartın çevrilme süresi; `globals.css`teki `.soru-ic` geçişiyle eşleşmeli. */
-const CEVIRME_SURESI = 460
 
 export type SahneSonucu = {
   dogru: number
   yanlis: number
+  /**
+   * Yoklamanın sonuna gelindi mi.
+   *
+   * Yarıda çıkılan yoklama sayı **yazdırmıyor** (`konu-haritasi.tsx`):
+   * destenin kendi kuralının aynısı — tamamlanma sona gelmekle kazanılıyor.
+   * Bayrak olmadan, girişte "Şimdi değil" diyen kullanıcının kaydına hiç
+   * verilmemiş bir yoklamanın "0 doğru"su yazılıyordu.
+   */
+  bitti: boolean
 }
 
 export function SoruSahnesi({
@@ -46,44 +65,41 @@ export function SoruSahnesi({
   onKapat: (sonuc: SahneSonucu) => void
 }) {
   const [sira, setSira] = useState(0)
-  const [cevrik, setCevrik] = useState(false)
+  /** Verilen cevap; `null` ise henüz karar verilmedi. */
+  const [secim, setSecim] = useState<boolean | null>(null)
   const [dogru, setDogru] = useState(0)
   const [yanlis, setYanlis] = useState(0)
   const [bitti, setBitti] = useState(false)
+  /** Girişteki düğmeye basıldı mı; basılana kadar ilk iddia görünmüyor. */
+  const [basladi, setBasladi] = useState(false)
 
   const soru = konu.sorular[sira]
   const toplam = konu.sorular.length
+  const isabet = secim !== null && secim === soru.dogru
 
-  /** Kart kapanırken sorunun değişmesini bekleten zamanlayıcı. */
-  const zamanlayiciRef = useRef<number | undefined>(undefined)
   /*
     Sonuç ref'te de duruyor: geri tuşu katmanı bileşenin ilk çiziminde
     kaydediliyor ve `onKapat`ı çağırdığı anda state'in güncel hâlini görmesi
     gerekiyor.
   */
-  const sonucRef = useRef<SahneSonucu>({ dogru: 0, yanlis: 0 })
-  sonucRef.current = { dogru, yanlis }
+  const sonucRef = useRef<SahneSonucu>({ dogru: 0, yanlis: 0, bitti: false })
+  sonucRef.current = { dogru, yanlis, bitti }
   useGeriKatmani(true, () => onKapat(sonucRef.current))
 
-  function karar(dogruMu: boolean) {
-    if (!cevrik) return
-    if (dogruMu) setDogru((o) => o + 1)
+  function karar(cevap: boolean) {
+    if (secim !== null) return
+    setSecim(cevap)
+    if (cevap === soru.dogru) setDogru((o) => o + 1)
     else setYanlis((o) => o + 1)
+  }
 
+  function ilerle() {
     if (sira >= toplam - 1) {
       setBitti(true)
       return
     }
-    /*
-      Kart önce **kapanıyor**, soru ondan sonra değişiyor. Metni hemen
-      değiştirmek, kart dönerken arkada bir sonraki sorunun cevabını
-      göstermek demekti — cevap, sorusu okunmadan ekrana gelirdi.
-
-      Bekleme boyunca düğmeler zaten pasif (`!cevrik`), yani araya ikinci bir
-      karar sıkışamıyor.
-    */
-    setCevrik(false)
-    zamanlayiciRef.current = window.setTimeout(() => setSira((o) => o + 1), CEVIRME_SURESI)
+    setSira((o) => o + 1)
+    setSecim(null)
   }
 
   // Uzun bir sorudan sonra gelen kısa soru sayfayı ortasından başlatıyordu.
@@ -91,18 +107,30 @@ export function SoruSahnesi({
     window.scrollTo({ top: 0 })
   }, [sira])
 
-  // Ekran kapanırken bekleyen geçiş de iptal ediliyor: sökülmüş bileşende
-  // çalışan bir `setSira`, React'e olmayan bir ekranı güncelletiyor.
-  useEffect(() => () => window.clearTimeout(zamanlayiciRef.current), [])
+  if (!basladi) {
+    return (
+      <div className="sahne sahne-iner fixed inset-0 z-50 flex flex-col text-[var(--sahne-yazi)]">
+        <Giris
+          konuAdi={konu.ad}
+          dersAdi={dersAdi}
+          temaAdi={temaAdi}
+          kartSayisi={konu.kartlar.length}
+          soruSayisi={toplam}
+          onBasla={() => setBasladi(true)}
+          onVazgec={() => onKapat({ dogru: 0, yanlis: 0, bitti: false })}
+        />
+      </div>
+    )
+  }
 
   if (bitti) {
     return (
-      <div className="sahne fixed inset-0 z-50 flex flex-col text-[var(--sahne-yazi)]">
+      <div className="sahne sahne-iner fixed inset-0 z-50 flex flex-col text-[var(--sahne-yazi)]">
         <Sonuc
           konuAdi={konu.ad}
           dogru={dogru}
           yanlis={yanlis}
-          onKapat={() => onKapat({ dogru, yanlis })}
+          onKapat={() => onKapat({ dogru, yanlis, bitti: true })}
         />
       </div>
     )
@@ -149,68 +177,103 @@ export function SoruSahnesi({
       </header>
 
       <div className="flex min-h-0 flex-1 flex-col px-4 pb-[calc(1rem+var(--guvenli-alt))]">
-        {/* Kart bir düğme: dokunulacak yer kartın kendisi ve altındaki
-            "Cevabı görmek için dokun" satırı da onun içinde duruyor. */}
-        {/* Kartın boyu sabit ve ekranın ortasında duruyor: içeriğe göre
-            uzayıp kısalsaydı kısa soruda küçülür, uzun soruda düğmeleri aşağı
-            iterdi — sahnede kartın yeri her soruda aynı olmalı. */}
-        <div
-          className="mx-auto my-auto h-[min(54vh,420px)] w-full max-w-md"
-          style={{ perspective: '1200px' }}
-        >
-          <button
-            type="button"
-            onClick={() => setCevrik((o) => !o)}
-            aria-label={cevrik ? 'Soruya dön' : 'Cevabı gör'}
-            className="relative block h-full w-full text-left"
+        {/*
+          Kartın boyu içeriğe göre değişiyor ve gerekirse kendi içinde
+          kaydırılıyor: görselli soru ile tek cümlelik soru aynı kutuya
+          sığmıyor, sabit boy ikisinden birini bozardı. Dikey ortalama
+          `my-auto` ile, `flex-1` ile değil — artan yeri paylaşan kutu kartı
+          yukarı yapıştırmıyor.
+        */}
+        <div className="mx-auto my-auto w-full max-w-md overflow-y-auto overscroll-contain">
+          {/*
+            Kararın izi kartın **çerçevesinde**: gerekçe şeridi aşağıda ve göz
+            oraya inmeden önce kartın kendisi cevabı söylüyor.
+
+            Çerçeve `ring` ile değil `outline` ile çiziliyor: Tailwind'in
+            `ring`i gölge olarak uygulanıyor ve kartın kendi gölgesi
+            (`golge-kart`) onu eziyor — halka ekranda hiç görünmüyordu.
+          */}
+          <div
+            key={soru.id}
+            className="golge-kart rounded-3xl bg-[var(--sahne-kart)] px-6 py-5 text-foreground"
+            style={{
+              outline:
+                secim === null
+                  ? undefined
+                  : `4px solid ${isabet ? 'var(--sahne-dogru)' : 'var(--sahne-yanlis)'}`,
+              // Çerçeve kartın **içine** çiziliyor: dışarı taşan bir çizgi,
+              // kaydırılabilir kutunun kenarında kırpılıyor ve yatay kaydırma
+              // çubuğu çıkarıyordu.
+              outlineOffset: '-4px',
+            }}
           >
-            <div className={cn('soru-ic relative h-full w-full', cevrik && 'cevrik')}>
-              <Yuz
-                etiket="Soru"
-                metin={soru.soru}
-                altYazi="Cevabı görmek için dokun"
-                key={`${soru.id}-soru`}
-              />
-              <Yuz
-                arka
-                etiket="Cevap"
-                metin={soru.cevap}
-                altYazi="Soruya dönmek için dokun"
-                key={`${soru.id}-cevap`}
-              />
+            <p className="flex items-center gap-2 text-[10.5px] font-extrabold tracking-[0.14em] text-[var(--sahne-vurgu)] uppercase">
+              <span className="size-2 rounded-full bg-current" aria-hidden />
+              Doğru mu, yanlış mı?
+            </p>
+
+            <p className="py-4 text-center text-[17px] leading-relaxed font-semibold text-pretty">
+              {soru.ifade}
+            </p>
+
+            {soru.gorsel && <KartGorseli gorsel={soru.gorsel} etiket={soru.ifade} />}
+          </div>
+
+          {/*
+            Gerekçe kartın **altında**, içinde değil: karardan sonra beliren
+            bir metin kartın içine girseydi kart büyür ve iddia yukarı kayardı
+            — okunan cümle, hakkında karar verilenden başka bir yerde durmuş
+            olurdu.
+          */}
+          {secim !== null && (
+            <div
+              role="status"
+              className="soru-gerekce mt-3 rounded-2xl px-4 py-3.5"
+              style={{
+                backgroundColor: isabet
+                  ? 'var(--sahne-dogru-zemin)'
+                  : 'var(--sahne-yanlis-zemin)',
+                color: isabet ? 'var(--sahne-dogru)' : 'var(--sahne-yanlis)',
+              }}
+            >
+              <p className="flex items-center gap-1.5 text-[13px] font-extrabold">
+                {isabet ? (
+                  <Check size={16} strokeWidth={3} aria-hidden />
+                ) : (
+                  <X size={16} strokeWidth={3} aria-hidden />
+                )}
+                {isabet ? 'Doğru' : soru.dogru ? 'Cevap: Doğru' : 'Cevap: Yanlış'}
+              </p>
+              <p className="mt-1 text-[14px] leading-snug font-semibold text-[var(--sahne-yazi)] text-pretty">
+                {soru.aciklama}
+              </p>
             </div>
-          </button>
+          )}
         </div>
 
-        {/* Pasif düğmenin yanında sebebi yazmayan ekran, kullanıcıyı orada
-            kilitler — kurulumdaki kuralın aynısı. */}
-        <p
-          className={cn(
-            'mb-2 text-center text-[12px] font-extrabold text-[var(--sahne-soluk)] transition-opacity',
-            cevrik && 'opacity-0',
+        <div className="mx-auto mt-4 w-full max-w-md">
+          {secim === null ? (
+            <div className="flex gap-3">
+              <Buton
+                bicim="ikincil"
+                onClick={() => karar(false)}
+                className="h-14 flex-1 bg-[var(--sahne-yanlis-zemin)] text-[15px] text-[var(--sahne-yanlis)]"
+              >
+                <X size={18} strokeWidth={3} aria-hidden /> Yanlış
+              </Buton>
+              <Buton
+                bicim="ikincil"
+                onClick={() => karar(true)}
+                className="h-14 flex-1 bg-[var(--sahne-dogru-zemin)] text-[15px] text-[var(--sahne-dogru)]"
+              >
+                <Check size={18} strokeWidth={3} aria-hidden /> Doğru
+              </Buton>
+            </div>
+          ) : (
+            <Buton onClick={ilerle} className="h-14 w-full bg-[var(--sahne-vurgu)]">
+              {sira >= toplam - 1 ? 'Bitir' : 'Devam'}
+            </Buton>
           )}
-          aria-hidden={cevrik}
-        >
-          Karar vermek için önce cevaba bak
-        </p>
-
-        <div className="mx-auto flex w-full max-w-md gap-3">
-          <Buton
-            bicim="ikincil"
-            onClick={() => karar(false)}
-            disabled={!cevrik}
-            className="h-14 flex-1 bg-[var(--sahne-yanlis-zemin)] text-[15px] text-[var(--sahne-yanlis)]"
-          >
-            <X size={18} strokeWidth={3} aria-hidden /> Yanlış
-          </Buton>
-          <Buton
-            bicim="ikincil"
-            onClick={() => karar(true)}
-            disabled={!cevrik}
-            className="h-14 flex-1 bg-[var(--sahne-dogru-zemin)] text-[15px] text-[var(--sahne-dogru)]"
-          >
-            <Check size={18} strokeWidth={3} aria-hidden /> Doğru
-          </Buton>
         </div>
       </div>
     </div>
@@ -218,45 +281,89 @@ export function SoruSahnesi({
 }
 
 /**
- * Kartın tek yüzü.
+ * Yoklamanın giriş ekranı — kartlarla soruların arasındaki köprü.
  *
- * İki yüz de aynı ölçüde ve üst üste duruyor: arkadaki yüz kısa olsaydı kart
- * çevrilirken boyu değişir, hareket dönmek yerine büzülmek gibi görünürdü.
+ * Ekran bir süre yoktu ve destenin yorumu bunu bilerek yazıyordu: "arada
+ * duran bir 'deste bitti' ekranı, okumayla soruyu birbirinden ayıran fazladan
+ * bir dokunuş". Fazladan dokunuşun bedeli doğruydu ama ayrılmayan iki iş de
+ * bir bedel ödüyordu: son kartta "İlerle"ye basan kullanıcı dersin aydınlık,
+ * renkli destesinden koyu sahnedeki bir **iddianın üstüne** düşüyordu. Yüzey,
+ * ton ve iş tek karede birden değişiyor ve gelen ilk şey cevaplanmayı bekleyen
+ * bir cümle oluyordu — okumayı bitirdiğini sanan kullanıcı kendini
+ * cevaplayacağı bir şeyin karşısında buluyordu. Fazladan dokunuş burada gecikme
+ * değil, bir sonraki ekranın ne olduğunu söyleyen tek yer.
+ *
+ * Köprü koyu sahnenin **kendi** ilk ekranı, üçüncü bir yüzey değil: renk
+ * değişimi böylece bir soruyla değil bir açıklamayla geliyor ve sahnenin iki
+ * ucu — giriş ile `Sonuc` — aynı bileşende, aynı düzende duruyor.
+ *
+ * Sayılar süs değil: "kaç iddia" yazmayan bir köprü, ne kadar süreceğini
+ * söylemeden başlat düğmesi gösteriyor — haritadaki "4 kart · 3 dk" satırının
+ * aynı gerekçesi.
+ *
+ * **"Şimdi değil" bir düğme değil bir çıkış.** Deste zaten okundu ve kaydı
+ * yazıldı (`konu-haritasi.tsx`); yoklamayı vermemek konuyu okunmamış yapmıyor.
+ * Yoklamayı zorunlu kılmak, okumayı bitirmenin bedelini bir sınav yapardı.
  */
-function Yuz({
-  arka = false,
-  etiket,
-  metin,
-  altYazi,
+function Giris({
+  konuAdi,
+  dersAdi,
+  temaAdi,
+  kartSayisi,
+  soruSayisi,
+  onBasla,
+  onVazgec,
 }: {
-  arka?: boolean
-  etiket: string
-  metin: string
-  altYazi: string
+  konuAdi: string
+  dersAdi: string
+  temaAdi: string
+  kartSayisi: number
+  soruSayisi: number
+  onBasla: () => void
+  onVazgec: () => void
 }) {
   return (
-    <div
-      className={cn(
-        'soru-yuz golge-kart absolute inset-0 flex flex-col rounded-3xl bg-[var(--sahne-kart)] px-6 py-5 text-foreground',
-        arka && 'soru-yuz-arka',
-      )}
-    >
-      <p className="flex items-center gap-2 text-[10.5px] font-extrabold tracking-[0.14em] text-[var(--sahne-vurgu)] uppercase">
-        <span className="size-2 rounded-full bg-current" aria-hidden />
-        {etiket}
+    <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center px-6 pb-[calc(1rem+var(--guvenli-alt))] text-center">
+      <p className="text-[10.5px] font-extrabold tracking-[0.12em] text-[var(--sahne-soluk)] uppercase">
+        {dersAdi} · {temaAdi}
       </p>
 
-      {/* Metin ortada duruyor: soru bir başlık değil, ekrandaki tek iş. */}
-      <p className="flex flex-1 items-center justify-center py-4 text-center text-[17px] leading-relaxed font-semibold text-pretty">
-        {metin}
-      </p>
-
-      <div className="mt-auto border-t border-dashed border-black/15 pt-3.5">
-        <span className="flex items-center justify-center gap-2 text-[13.5px] font-extrabold text-[var(--sahne-vurgu)]">
-          <RotateCcw size={15} strokeWidth={2.8} aria-hidden />
-          {altYazi}
-        </span>
+      {/* Maskot kutluyor: köprünün ilk işi okumanın bittiğini söylemek, sınavı
+          duyurmak ondan sonra geliyor. */}
+      <div className="mt-3">
+        <Rabi durum="kutlama" boyut={104} />
       </div>
+
+      <h3 className="mt-3 font-display text-[22px] font-extrabold tracking-tight text-balance">
+        {konuAdi} okundu
+      </h3>
+      <p className="mt-1.5 text-[14.5px] leading-snug font-semibold text-[var(--sahne-soluk)] text-pretty">
+        Sırada kısa bir yoklama var: her iddia için doğru mu yanlış mı diyeceksin, gerekçesi hemen
+        altında çıkıyor.
+      </p>
+
+      {/* Zemin nötr (`bg-white/10`, başlıktaki kapatma düğmesiyle aynı):
+          sahnenin doğru/yanlış tonları karar renkleri ve sayaç onların hiçbiri
+          değil — yeşil bir şerit, henüz verilmemiş yoklamayı geçilmiş
+          gösterirdi. */}
+      <p className="rakam mt-4 rounded-full bg-white/10 px-4 py-2 text-[12.5px] font-extrabold text-[var(--sahne-yazi)]">
+        {kartSayisi} kart okundu · {soruSayisi} iddia
+      </p>
+
+      <Buton onClick={onBasla} className="mt-6 w-full bg-[var(--sahne-vurgu)]">
+        Yoklamaya başla
+        <ArrowRight size={18} strokeWidth={3} aria-hidden />
+      </Buton>
+
+      {/* Çıkış düğme değil yazı: iki dolu düğme yan yana dururken hangisinin
+          ileri götürdüğü okunmuyordu — kurulumdaki "Şimdilik atla" kuralı. */}
+      <button
+        type="button"
+        onClick={onVazgec}
+        className="mt-2 px-4 py-3 text-[13.5px] font-extrabold text-[var(--sahne-soluk)] transition active:opacity-70"
+      >
+        Şimdi değil
+      </button>
     </div>
   )
 }
@@ -285,8 +392,8 @@ function Sonuc({
       </h3>
       <p className="mt-1.5 text-[14.5px] font-semibold text-[var(--sahne-soluk)] text-pretty">
         {yanlis === 0
-          ? 'Bütün sorulara doğru dedin.'
-          : `${yanlis} soruyu yanlış işaretledin; konuyu istediğin zaman yeniden okuyabilirsin.`}
+          ? 'Bütün soruları doğru bildin.'
+          : `${yanlis} soruda yanıldın; konuyu istediğin zaman yeniden okuyabilirsin.`}
       </p>
 
       <div className="mt-5 flex w-full gap-2.5">

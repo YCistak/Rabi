@@ -1,4 +1,4 @@
-import { kart, konu, program, tema } from '../tip'
+import { kart, konu, program, soru, tema } from '../tip'
 
 /**
  * 10. sınıf Türk Dili ve Edebiyatı — Maarif Modeli.
@@ -49,6 +49,11 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Masal ve fabl',
         'İkisi de ders verir ama fablın kahramanları hayvandır ve ders sonunda açıkça söylenir.',
       ),
+    ], [
+      soru('Masallarda yer ve zaman belirsizdir.', true, '"Evvel zaman içinde" kalıbı bu belirsizliği kuruyor.'),
+      soru('Masal kişileri tip özelliği gösterir.', true, 'İyi ya da kötü olarak tek yönlü çizilirler; iç dünyaları anlatılmaz.'),
+      soru('Masallar gerçekte yaşanmış olayları anlatır.', false, 'Tümüyle hayal ürünüdür; olağanüstü ögeler taşır.'),
+      soru('Fabl ile masal aynı türdür.', false, 'Fablın kahramanları hayvanlardır ve sonunda açık bir ders verilir.'),
     ]),
     konu('trk10-anonim', 'Anonim Halk Edebiyatı', [
       kart(
@@ -90,6 +95,11 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Derleme',
         'Anonim ürünler 20. yüzyılda derlenip yazıya geçirildi; bugün bildiğimiz metinler bu derlemelerin ürünü.',
       ),
+    ], [
+      soru('Anonim halk edebiyatı ürünlerinin söyleyeni belli değildir.', true, 'Ürün zamanla halkın ortak malı hâline gelmiş.'),
+      soru('Mani dört dizeden oluşur ve uyak düzeni aaxa dır.', true, 'İlk iki dize çoğu zaman asıl sözü hazırlar.'),
+      soru('Varyant, bir ürünün tek ve değişmez biçimidir.', false, 'Varyant, aynı ürünün yörelere göre değişen biçimleri.'),
+      soru('Türküler yalnızca yazılı olarak aktarılmıştır.', false, 'Sözlü olarak aktarıldılar; derleme çalışmalarıyla yazıya geçirildiler.'),
     ]),
     konu('trk10-ahenk', 'Ahenk Ögeleri', [
       kart(
@@ -127,6 +137,11 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Ses ve anlam birlikte',
         'Ahenk süs değildir: ağır sesler ağırlık, ince ve hızlı sesler kıvraklık duygusu üretir.',
       ),
+    ], [
+      soru('Aliterasyon ünsüz, asonans ünlü tekrarıdır.', true, 'İkisi de sese dayalı ahenk araçları.'),
+      soru('Serbest şiirde de ahenk sağlanabilir.', true, 'Ölçü ve uyak olmadan ses tekrarları ve söyleyişle kuruluyor.'),
+      soru('Ahengi sağlayan tek araç ölçüdür.', false, 'Uyak, redif, ses tekrarları ve vurgu da ahenge katkı sağlıyor.'),
+      soru('Ses tekrarlarının şiirin anlamıyla bir ilgisi yoktur.', false, 'Tekrarlanan ses çoğu zaman anlatılan duyguyu destekliyor.'),
     ]),
   ]),
   tema('trk10-t2', 'Kelimelerin Ritmi', [
@@ -164,6 +179,11 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Yorum sınırsız değil',
         'Şiir çok anlamlıdır ama her yorum geçerli değildir; yorum metinden delil gösterebiliyorsa ayakta durur.',
       ),
+    ], [
+      soru('İmge, okurun zihninde yeni bir tasarım oluşturur.', true, 'Sözcüğün sözlük anlamının ötesine geçiyor.'),
+      soru('Şiirdeki ileti açık ya da örtük olabilir.', true, 'Kimi şiir söyleyeceğini doğrudan söyler, kimi sezdirir.'),
+      soru('Şiir yorumlanırken metinden bağımsız her anlam kabul edilir.', false, 'Yorum, metnin verileriyle desteklenmek zorunda.'),
+      soru('Şiirdeki gerçeklik günlük hayattaki gerçeklikle aynıdır.', false, 'Şiir gerçeği dönüştürerek yeni bir gerçeklik kuruyor.'),
     ]),
     konu('trk10-sozcuk-turleri', 'Sözcük Türleri', [
       kart(
@@ -207,6 +227,11 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Tür göreve göre değişir',
         'Bir sözcüğün türü cümledeki görevine göre belirlenir: "güzel" kimi cümlede sıfat, kimi cümlede zarftır.',
       ),
+    ], [
+      soru('Bir sözcüğün türü, cümledeki görevine göre değişebilir.', true, '"Güzel" kimi cümlede sıfat, kimi cümlede zarf olabiliyor.'),
+      soru('Sıfatlar isimden önce gelerek onu niteler ya da belirtir.', true, 'İsim olmadan sıfat da olmaz.'),
+      soru('"Bu" sözcüğü her cümlede sıfattır.', false, 'Adın yerini tutuyorsa zamir olur: "Bu, benim kitabım."'),
+      soru('Edatlar tek başına anlamlı sözcüklerdir.', false, 'Tek başına anlamları yok; cümlede başka sözcüklerle anlam kazanıyorlar.'),
     ]),
     konu('trk10-fiil', 'Fiiller', [
       kart(
@@ -251,6 +276,11 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Üç fiilimsi',
         'İsim-fiil (-ma, -ış, -mak), sıfat-fiil (-an, -acak, -dık, -mış, -ası, -maz), zarf-fiil (-ip, -arak, -ken, -ince).',
       ),
+    ], [
+      soru('Ek fiil, isim soylu sözcükleri yüklem yapar.', true, '"Öğrenciydi" örneğinde yüklemi kuran ek fiil.'),
+      soru('Fiilimsiler cümlede isim, sıfat ya da zarf görevinde kullanılır.', true, 'Fiil kökünden türerler ama fiil gibi çekimlenmezler.'),
+      soru('Edilgen çatılı cümlelerde işi yapan gerçek özne bellidir.', false, 'Gerçek özne söylenmez; cümlede sözde özne bulunur.'),
+      soru('Dilek kipleri zaman bildirir.', false, 'Zaman bildirenler haber kipleri; dilek kipleri istek, şart ve gereklilik anlatır.'),
     ]),
   ]),
   tema('trk10-t3', 'Dünden Bugüne', [
@@ -287,6 +317,11 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Destan ve tarih',
         'Destan tarihsel bir olaydan doğar ama tarih değildir; olayı halkın gözünden ve abartarak anlatır.',
       ),
+    ], [
+      soru('Doğal destanlar toplumun ortak belleğinde oluşup sonradan yazıya geçirilir.', true, 'Söyleyeni belli değildir.'),
+      soru('Yapma destanların yazarı bellidir.', true, 'Bir şairin doğal destanlara öykünerek yazdığı eserler.'),
+      soru('Destanlar tarihî olayları olduğu gibi aktarır.', false, 'Tarihî bir çekirdek taşır ama olağanüstü ögelerle işlenir.'),
+      soru('Oğuz Kağan Destanı bir yapma destandır.', false, 'Doğal destandır; halkın belleğinde oluşup sonradan yazıya geçmiş.'),
     ]),
     konu('trk10-mesnevi', 'Mesnevi ve Halk Hikâyesi', [
       kart(
@@ -326,6 +361,11 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Sözlüden yazılıya',
         'Sözlü ürün her anlatımda değişir; yazıya geçince tek bir metne dönüşür ve varyantları durur.',
       ),
+    ], [
+      soru('Mesnevide her beyit kendi içinde uyaklıdır.', true, 'Uyak yükü hafif olduğu için uzun anlatıya elverişli.'),
+      soru('Mesnevi nazım biçimi uzun anlatılar için elverişlidir.', true, 'Beyit sayısında bir sınır yok.'),
+      soru('Halk hikâyeleri yalnızca nazımla anlatılır.', false, 'Nazım ile nesir bir arada kullanılır; türküler araya girer.'),
+      soru('Fablın kahramanları insanlardır.', false, 'Kahramanları çoğunlukla hayvanlardır ve insan gibi konuşurlar.'),
     ]),
   ]),
   tema('trk10-t4', 'Nesillerin Mirası', [
@@ -366,6 +406,23 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Servetifünun ile karşıtlığı',
         'Servetifünun ağır dil ve bireysel konuları, Millî Edebiyat sade dil ve toplumsal konuları seçti.',
       ),
+    ], [
+      soru(
+        'Millî Edebiyat sanatçıları ağır ve süslü bir dil kullanmıştır.',
+        false,
+        'Tabloda görüldüğü gibi bu dönemin dili sade ve konuşma diline yakındır.',
+        {
+          tur: 'tablo',
+          basliklar: ['Dönem', 'Dil anlayışı'],
+          satirlar: [
+            ['Servetifünun', 'Ağır ve süslü'],
+            ['Millî Edebiyat', 'Sade, konuşma dili'],
+          ],
+        },
+      ),
+      soru('Millî Edebiyat döneminde hece ölçüsü benimsenmiştir.', true, 'Halk şiirinin ölçüsü olarak görüldüğü için tercih edildi.'),
+      soru('Millî Edebiyat ta konular Anadolu ve halk hayatından seçilmiştir.', true, 'Edebiyatın kapısı İstanbul dışına açıldı.'),
+      soru('Millî Edebiyat, Servetifünun un dil anlayışını sürdürmüştür.', false, 'Tam karşısında durdu: sadeleşmeyi savundu.'),
     ]),
     konu('trk10-milli-turler', 'Millî Edebiyatta Türler', [
       kart(
@@ -396,6 +453,11 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Cumhuriyet’e miras',
         'Sade dil ve Anadolu konusu Cumhuriyet dönemi edebiyatının çıkış noktası oldu; kopuş değil süreklilik var.',
       ),
+    ], [
+      soru('Millî Edebiyat döneminde roman ve hikâyede Anadolu insanı işlenmiştir.', true, 'Mekân İstanbul dan Anadolu ya taşındı.'),
+      soru('Ömer Seyfettin dönemin hikâye türündeki önemli adlarındandır.', true, 'Sade dille yazdığı hikâyeler dönemin dil anlayışını yansıtıyor.'),
+      soru('Millî Edebiyat sanatçıları toplumsal konulardan uzak durmuştur.', false, 'Toplumsal sorunları doğrudan ele aldılar.'),
+      soru('Bu dönemin birikimi Cumhuriyet Dönemi edebiyatını etkilememiştir.', false, 'Dil ve konu anlayışı Cumhuriyet edebiyatına doğrudan miras kaldı.'),
     ]),
   ]),
 ])
