@@ -31,6 +31,12 @@ import { KartGorseli } from './kart-gorseli'
  *
  * Ekran uygulamanın tek koyu yüzeyi. Gerekçesi `globals.css`teki `.sahne`
  * bloğunda; renkler de orada, burada onaltılık kod yok.
+ *
+ * Katman yukarıdan aşağı açılarak geliyor (`sahne-iner`): deste kapanıp sahne
+ * açıldığında ekran tek karede kırık beyazdan koyuya atlıyordu. Sınıf üç hâlin
+ * kökünde de yazılı ama perde **bir kez** oynuyor: React üçünde de aynı DOM
+ * düğümünü yeniden kullanıyor, animasyon da yalnızca düğüm kurulurken
+ * başlıyor. Ayrı bir "yalnızca girişte" koşulu, olmayan bir tekrarı önlerdi.
  */
 
 export type SahneSonucu = {
@@ -103,7 +109,7 @@ export function SoruSahnesi({
 
   if (!basladi) {
     return (
-      <div className="sahne fixed inset-0 z-50 flex flex-col text-[var(--sahne-yazi)]">
+      <div className="sahne sahne-iner fixed inset-0 z-50 flex flex-col text-[var(--sahne-yazi)]">
         <Giris
           konuAdi={konu.ad}
           dersAdi={dersAdi}
@@ -119,7 +125,7 @@ export function SoruSahnesi({
 
   if (bitti) {
     return (
-      <div className="sahne fixed inset-0 z-50 flex flex-col text-[var(--sahne-yazi)]">
+      <div className="sahne sahne-iner fixed inset-0 z-50 flex flex-col text-[var(--sahne-yazi)]">
         <Sonuc
           konuAdi={konu.ad}
           dogru={dogru}

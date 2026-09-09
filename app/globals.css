@@ -1374,6 +1374,35 @@
 }
 
 /*
+  Sahne yukarıdan iniyor.
+
+  Deste kapanıp sahne açıldığında ekran tek karede kırık beyazdan koyuya
+  atlıyordu: iki ayrı yüzey arka arkaya gösterilince geçiş bir hareket değil
+  bir kesme oluyor ve koyu ekran, uygulamanın içindeki bir sonraki adım değil
+  başka bir uygulama gibi duruyordu. Katman şimdi yukarıdan aşağı açılıyor;
+  altında kalan kısımda hâlâ aydınlık zemin duruyor, yani renk değişimi
+  ekranda **olurken** görülüyor.
+
+  Perde `clip-path` ile: katmanın kendisi yerinde duruyor, yalnızca görünen
+  parçası büyüyor. Yükseklikle (ya da `translateY` ile) yapılsaydı içerik de
+  onunla birlikte inerdi — maskot ve yazı aşağı kayarken okunmaya başlar,
+  perde inerken sayfa da kayıyormuş gibi görünürdü. Kırpma içeriği
+  kaydırmıyor, açıyor.
+
+  Süre kısa tutuldu: bu perde bilgi taşımıyor, yalnızca iki yüzeyi
+  birbirine bağlıyor ve her konu sonunda yeniden oynuyor — uzun bir geçiş
+  ikinci kez izlendiğinde beklemeye dönüşür.
+*/
+@keyframes sahneIner {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+.sahne-iner {
+  animation: sahneIner 420ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+/*
   Karardan sonra çıkan gerekçe şeridi.
 
   Yerinde beliren bir metin, karardan **önce** de orada duruyormuş gibi
@@ -1389,10 +1418,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* Deste kartı ve gerekçe yerinde beliriyor: buradaki hareketin hiçbiri bilgi
-     taşımıyor — hangi kartta olunduğu bölmeli çubukta, kararın sonucu ise
-     şeridin kendi rengiyle ve simgesiyle yazılı. */
+  /* Deste kartı, sahne perdesi ve gerekçe yerinde beliriyor: buradaki
+     hareketin hiçbiri bilgi taşımıyor — hangi kartta olunduğu bölmeli
+     çubukta, kararın sonucu ise şeridin kendi rengiyle ve simgesiyle yazılı,
+     sahnenin geldiği de zaten ekranın kendisinden belli. */
   .deste-karti,
+  .sahne-iner,
   .soru-gerekce {
     animation: none;
   }
