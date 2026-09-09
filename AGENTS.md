@@ -1003,6 +1003,46 @@ kullanıcı telefonda hâlâ duymadı. "Başla!" akorunun üç notası ise bunun
 (`AKOR_SEVIYESI`) çünkü kuyrukları üst üste biniyor — üçü de sayım seviyesinde
 çalsaydı çıkış 1'i aşar, akor yüksek değil **kırpılmış** duyulurdu.
 
+## Ekranlar ve katmanlar bağlanarak geliyor
+
+Sekme değiştirmek, bir araç açmak, bir onay penceresi çıkarmak tek bir karede
+oluyordu: içerik "tak" diye yerine oturuyor, kullanıcı ekranın kurulduğunu
+değil sıçradığını görüyordu. Altı ortak sınıf o anı bir hareketle bağlıyor
+(`app/globals.css`): `sayfa-girisi` (sekme/araç ekranı), `katman-zemin`
+(pencerelerin karartması), `pencere-girisi` (ortada açılan pencere),
+`alt-pencere-girisi` (alttan gelen sayfa), `tam-katman-girisi` (tam ekran
+katman), `acilir-giris` (yerinde açılan satır).
+
+Hepsi **giriş** animasyonu, çıkış yok: gelen şeyin nereden geldiğini anlatan
+bir hareket, gidenin nereye gittiğinden çok iş görüyor ve çıkış animasyonu her
+çağrı yerine bir "kapanıyor" durumu eklemek demek — on ayrı katmanın hepsinde
+ikinci bir state. Süreler 160–260 ms: hareketlerin hiçbiri bilgi taşımıyor,
+uzun bir geçiş ikinci kez izlendiğinde beklemeye dönüşüyor.
+
+Üç kural, üçü de bir kez düşülen tuzaktan:
+
+- **Ekranları saran kutuda `transform` yok, yalnızca opaklık.** O kutunun
+  içinden `position: fixed` katmanlar çıkıyor ve transformlu bir öğe onların
+  *kapsayıcı bloğu* olur — katman ekrana değil kutuya göre konumlanır. Aynı
+  tuzağa `AppShell`in kök `div`inde bir kez düşüldü. Hareket hissini içerideki
+  `kart-girisi` şeridi veriyor.
+- **Opaklık animasyonunun dolgusu `backwards`, `both` değil.** Opaklığı
+  canlandıran bir öğe, değeri 1 olsa bile animasyon yürürlükte olduğu sürece
+  kendi *yığın bağlamını* kuruyor; `both` ile dolgu bitmiyor ve içeriden çıkan
+  `z-50` katmanlar dışarıdaki `z-40` alt menünün altında kalıyordu. Bu bir kez
+  yazıldı ve onay penceresi alt menünün arkasında açıldı.
+- **Tam ekran katmanlar `clip-path` ile yükseliyor**, `transform` ile değil —
+  yukarıdaki ilk sebep. `sahne-iner` ile aynı yöntem, ters yönde: bu katmanlar
+  alttan geliyor.
+
+Ekran geçişini oynatan şey `AppShell`deki `key`: sınıf tek başına verilseydi
+React aynı düğümü koruduğu için animasyon yalnızca ilk açılışta çalışırdı.
+
+Yeni bir pencere ya da katman eklersen sınıflardan birini kullan; yenisini
+yazmadan önce listedekilerden hangisinin karşılığı olduğuna bak. Altısı da
+`prefers-reduced-motion` altında susuyor: hangi ekranda olunduğu başlıkta,
+pencerenin neye ait olduğu metninde yazılı — hareket yalnızca bağlıyor.
+
 ## Kartlar sırayla beliriyor
 
 Izgaralar (ana sayfanın Araçlar/Oyunlar kutucukları, Oyunlar sekmesinin ders ve

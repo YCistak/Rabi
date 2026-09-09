@@ -703,215 +703,226 @@ export function AppShell() {
     Açılıştaki yumuşak geçişi artık `components/acilis.tsx` hallediyor.
   */
     <div className="mx-auto min-h-dvh max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(6rem+var(--guvenli-alt))]">
-      {ekran !== null ? (
-        <>
-          <Buton
-            bicim="hayalet"
-            boy="kucuk"
-            onClick={() => setEkran(null)}
-            className="-ml-2 mb-3"
-          >
-            <ArrowLeft size={16} aria-hidden /> Geri
-          </Buton>
+      {/*
+        Ekran ve sekme değişimi tek bir karede oluyordu: içerik tak diye yerine
+        oturuyordu. `key` her değişimde bu kutuyu söküp yeniden kuruyor, böylece
+        giriş animasyonu her seferinde baştan oynuyor — sınıf tek başına verilse
+        React aynı düğümü koruduğu için animasyon yalnızca ilk açılışta çalışırdı.
 
-          {ekran === 'okul' && (
-            <OkulEkrani
-              yillar={okulYillari}
-              setYillar={setOkulYillari}
-              setAyarlar={setAyarlar}
-              ayarlar={ayarlar}
-              hazir={okulHazir}
-            />
-          )}
-          {ekran === 'siralama' && (
-            <SiralamaEkrani
-              denemeler={denemeler}
-              sablonlar={sablonlar}
-              okulYillari={okulYillari}
-              ayarlar={ayarlar}
-            />
-          )}
-          {ekran === 'hedef' && (
-            <HedefEkrani
-              hedef={hedef}
-              setHedef={setHedef}
-              varsayilanTur={ayarlar.puanTuru}
-              guncelSiralama={guncelSiralama}
-              onKaydedildi={() => setEkran(null)}
-            />
-          )}
-          {ekran === 'yanlis-banka' && (
-            <YanlisBankaEkrani sorular={yanlisSorular} setSorular={setYanlisSorular} />
-          )}
-          {ekran === 'oyun-bankasi' && (
-            <OyunBankasiEkrani
-              banka={oyunBankasi}
-              bildir={hataBildirimi}
-              /*
-                Elle kaldırma `bankadanDustu`'ya uğramıyor: sayaç, soruyu genel
-                testte doğru bilmenin karşılığı ve rozet ona bakıyor. Tuşa
-                basmakla artan bir sayaç ölçtüğü şeyi ölçmez olurdu.
-              */
-              onKaldir={(id) => setOyunBankasi((o) => o.filter((k) => k.id !== id))}
-              /*
-                Genel test Oyunlar sekmesinde oynanıyor: her oyun soruları kendi
-                ekranıyla soruyor. Sekme değişiyor çünkü oyun katmanı tam ekran
-                ve testten çıkan kullanıcı oyunların yanında kalmalı.
-              */
-              onTestBaslat={() => {
-                const test = genelTestKur(oyunBankasi)
-                if (test === null) return
-                setGenelTest(test)
-                setEkran(null)
-                setSekme('oyunlar')
-              }}
-            />
-          )}
-          {ekran === 'konu' && (
-            <KonuHaritasiEkrani
-              secim={konuSecimi}
-              setSecim={(secim) => setKonuSecimi(secim)}
-              ilerlemeler={konuIlerleme}
-              setIlerlemeler={setKonuIlerleme}
-            />
-          )}
-          {ekran === 'pomodoro' && (
-            <PomodoroEkrani
-              ayar={pomodoroAyar}
-              setAyar={setPomodoroAyar}
-              onSeansBitti={(seans) => setPomodoroGecmis((o) => [...o, seans])}
-            />
-          )}
-          {ekran === 'notlar' && <YapilacaklarEkrani notlar={notlar} setNotlar={setNotlar} />}
-          {ekran === 'soru' && (
-            <SoruTakibiEkrani
-              kayitlar={gunlukKayitlar}
-              setKayitlar={setGunlukKayitlar}
-              ayarlar={ayarlar}
-            />
-          )}
-          {ekran === 'deneme' && (
-            <DenemelerEkrani
-              denemeler={denemeler}
-              sablonlar={sablonlar}
-              hazir={denemelerHazir}
-              onSil={(id) => setDenemeler((onceki) => onceki.filter((d) => d.id !== id))}
-              onDuzenle={(deneme) => setDenemeFormu({ duzenlenen: deneme })}
-              onYeniyeGit={() => setDenemeFormu({ duzenlenen: null })}
-            />
-          )}
-          {ekran === 'rozetler' && (
-            <RozetlerEkrani
-              denemeler={denemeler}
-              sablonlar={sablonlar}
-              gunlukKayitlar={gunlukKayitlar}
-              gunlukHedef={ayarlar.gunlukHedef}
-              diplomaNotu={diplomaNotu}
-              pomodoroGecmis={pomodoroGecmis}
-              yanlisSorular={yanlisSorular}
-              oyunlar={oyunlar}
-              bankaDusen={bankaDusen}
-              bankaBoyutu={oyunBankasi.length}
-              kazanilmis={rozetler}
-            />
-          )}
-          {ekran === 'devamsizlik' && (
-            <DevamsizlikEkrani kayitlar={devamsizlik} setKayitlar={setDevamsizlik} />
-          )}
-          {ekran === 'istatistik' && (
-            <IstatistikEkrani
-              denemeler={denemeler}
-              sablonlar={sablonlar}
-              varsayilanSablonId={ayarlar.varsayilanSablonId}
-            />
-          )}
-          {ekran === 'yasal' && <YasalEkrani />}
-        </>
-      ) : (
-        <>
-          {sekme === 'ana' && (
-            <AnaSayfa
-              maskotGizli={maskotGizli}
-              ayarlar={ayarlar}
-              gunlukKayitlar={gunlukKayitlar}
-              devamsizlik={devamsizlik}
-              hedef={hedef}
-              guncelSiralama={guncelSiralama}
-              ozetHazir={ozetHazir}
-              onOzetAc={ozetiAc}
-              sonAraclar={sonAraclar}
-              sonOyunlar={sonOyunlar}
-              onKartAc={aracAc}
-              onDahaGit={() => setSekme('daha')}
-              onOyunlaraGit={(ders) => {
-                // Ders kutucuğu doğrudan o dersin ızgarasını açıyor; sekmenin
-                // başına düşen kullanıcı aynı seçimi bir kez daha yapıyordu.
-                setAcilacakDers(ders ?? null)
-                setSekme('oyunlar')
-              }}
-              acilisSuruyor={!acilisBitti}
-            />
-          )}
-          {sekme === 'oyunlar' && (
-            <OyunlarEkrani
-              kayitlar={oyunlar}
-              setKayitlar={setOyunlar}
-              setGecmis={setOyunGecmisi}
-              banka={oyunBankasi}
-              onBankadanDustu={bankadanDustu}
-              setBanka={setOyunBankasi}
-              sesAcik={ayarlar.oyunSesi}
-              muzikAcik={ayarlar.oyunMuzigi}
-              onBankayaGit={() => setEkran('oyun-bankasi')}
-              bankaTuru={bankaTuru}
-              onBankaTuruBitti={() => genelTestiBitir(genelTest)}
-              /*
-                Bir tur bitti: doğrular biriktirilip sıra bir sonraki oyuna
-                geçiyor. Yarıda bırakılan tur testi de bitiriyor — kullanıcı
-                çıkmak istedi; o ana kadar bildikleri yine de sayılıyor.
-              */
-              onGenelTestTuruBitti={(dogrular, yarim) => {
-                if (genelTest === null) return
-                const sonraki = genelTestIlerlet(genelTest, dogrular)
-                if (yarim || genelTestBittiMi(sonraki)) genelTestiBitir(sonraki)
-                else setGenelTest(sonraki)
-              }}
-              acilacakDers={acilacakDers}
-              onDersAcildi={() => setAcilacakDers(null)}
-              onOyunAcildi={oyunAcildi}
-              bildir={hataBildirimi}
-            />
-          )}
-          {sekme === 'daha' && <KartMenusu onKartAc={aracAc} />}
-          {sekme === 'ayarlar' && (
-            <AyarlarEkrani
-              kayitliSablonlar={kayitliSablonlar}
-              ayarlar={ayarlar}
-              setAyarlar={setAyarlar}
-              bekleyenBildirim={bekleyenSayisi(hataBildirimi.bildirimler)}
-              onYasalAc={() => setEkran('yasal')}
-              yedeklenecek={{
-                denemeler,
-                okulYillari,
-                gunlukKayitlar,
-                devamsizlik,
-                yanlisSorular,
-                rozetler,
-                oyunlar,
-                oyunGecmisi,
-                oyunBankasi,
-                bankaDusen,
-                notlar,
-                konuIlerleme,
-                bilinmeyenKartlar,
-                pomodoroGecmis,
-                pomodoroAyar,
-                hedef,
-              }}
-            />
-          )}
-        </>
-      )}
+        Sınıf opaklıktan ibaret ve öyle kalmalı; sebebi `.sayfa-girisi`in
+        yanındaki yorumda (`app/globals.css`) ve aşağıdaki kök `div` notunda.
+      */}
+      <div key={ekran ?? `sekme:${sekme}`} className="sayfa-girisi">
+        {ekran !== null ? (
+          <>
+            <Buton
+              bicim="hayalet"
+              boy="kucuk"
+              onClick={() => setEkran(null)}
+              className="-ml-2 mb-3"
+            >
+              <ArrowLeft size={16} aria-hidden /> Geri
+            </Buton>
+
+            {ekran === 'okul' && (
+              <OkulEkrani
+                yillar={okulYillari}
+                setYillar={setOkulYillari}
+                setAyarlar={setAyarlar}
+                ayarlar={ayarlar}
+                hazir={okulHazir}
+              />
+            )}
+            {ekran === 'siralama' && (
+              <SiralamaEkrani
+                denemeler={denemeler}
+                sablonlar={sablonlar}
+                okulYillari={okulYillari}
+                ayarlar={ayarlar}
+              />
+            )}
+            {ekran === 'hedef' && (
+              <HedefEkrani
+                hedef={hedef}
+                setHedef={setHedef}
+                varsayilanTur={ayarlar.puanTuru}
+                guncelSiralama={guncelSiralama}
+                onKaydedildi={() => setEkran(null)}
+              />
+            )}
+            {ekran === 'yanlis-banka' && (
+              <YanlisBankaEkrani sorular={yanlisSorular} setSorular={setYanlisSorular} />
+            )}
+            {ekran === 'oyun-bankasi' && (
+              <OyunBankasiEkrani
+                banka={oyunBankasi}
+                bildir={hataBildirimi}
+                /*
+                  Elle kaldırma `bankadanDustu`'ya uğramıyor: sayaç, soruyu genel
+                  testte doğru bilmenin karşılığı ve rozet ona bakıyor. Tuşa
+                  basmakla artan bir sayaç ölçtüğü şeyi ölçmez olurdu.
+                */
+                onKaldir={(id) => setOyunBankasi((o) => o.filter((k) => k.id !== id))}
+                /*
+                  Genel test Oyunlar sekmesinde oynanıyor: her oyun soruları kendi
+                  ekranıyla soruyor. Sekme değişiyor çünkü oyun katmanı tam ekran
+                  ve testten çıkan kullanıcı oyunların yanında kalmalı.
+                */
+                onTestBaslat={() => {
+                  const test = genelTestKur(oyunBankasi)
+                  if (test === null) return
+                  setGenelTest(test)
+                  setEkran(null)
+                  setSekme('oyunlar')
+                }}
+              />
+            )}
+            {ekran === 'konu' && (
+              <KonuHaritasiEkrani
+                secim={konuSecimi}
+                setSecim={(secim) => setKonuSecimi(secim)}
+                ilerlemeler={konuIlerleme}
+                setIlerlemeler={setKonuIlerleme}
+              />
+            )}
+            {ekran === 'pomodoro' && (
+              <PomodoroEkrani
+                ayar={pomodoroAyar}
+                setAyar={setPomodoroAyar}
+                onSeansBitti={(seans) => setPomodoroGecmis((o) => [...o, seans])}
+              />
+            )}
+            {ekran === 'notlar' && <YapilacaklarEkrani notlar={notlar} setNotlar={setNotlar} />}
+            {ekran === 'soru' && (
+              <SoruTakibiEkrani
+                kayitlar={gunlukKayitlar}
+                setKayitlar={setGunlukKayitlar}
+                ayarlar={ayarlar}
+              />
+            )}
+            {ekran === 'deneme' && (
+              <DenemelerEkrani
+                denemeler={denemeler}
+                sablonlar={sablonlar}
+                hazir={denemelerHazir}
+                onSil={(id) => setDenemeler((onceki) => onceki.filter((d) => d.id !== id))}
+                onDuzenle={(deneme) => setDenemeFormu({ duzenlenen: deneme })}
+                onYeniyeGit={() => setDenemeFormu({ duzenlenen: null })}
+              />
+            )}
+            {ekran === 'rozetler' && (
+              <RozetlerEkrani
+                denemeler={denemeler}
+                sablonlar={sablonlar}
+                gunlukKayitlar={gunlukKayitlar}
+                gunlukHedef={ayarlar.gunlukHedef}
+                diplomaNotu={diplomaNotu}
+                pomodoroGecmis={pomodoroGecmis}
+                yanlisSorular={yanlisSorular}
+                oyunlar={oyunlar}
+                bankaDusen={bankaDusen}
+                bankaBoyutu={oyunBankasi.length}
+                kazanilmis={rozetler}
+              />
+            )}
+            {ekran === 'devamsizlik' && (
+              <DevamsizlikEkrani kayitlar={devamsizlik} setKayitlar={setDevamsizlik} />
+            )}
+            {ekran === 'istatistik' && (
+              <IstatistikEkrani
+                denemeler={denemeler}
+                sablonlar={sablonlar}
+                varsayilanSablonId={ayarlar.varsayilanSablonId}
+              />
+            )}
+            {ekran === 'yasal' && <YasalEkrani />}
+          </>
+        ) : (
+          <>
+            {sekme === 'ana' && (
+              <AnaSayfa
+                maskotGizli={maskotGizli}
+                ayarlar={ayarlar}
+                gunlukKayitlar={gunlukKayitlar}
+                devamsizlik={devamsizlik}
+                hedef={hedef}
+                guncelSiralama={guncelSiralama}
+                ozetHazir={ozetHazir}
+                onOzetAc={ozetiAc}
+                sonAraclar={sonAraclar}
+                sonOyunlar={sonOyunlar}
+                onKartAc={aracAc}
+                onDahaGit={() => setSekme('daha')}
+                onOyunlaraGit={(ders) => {
+                  // Ders kutucuğu doğrudan o dersin ızgarasını açıyor; sekmenin
+                  // başına düşen kullanıcı aynı seçimi bir kez daha yapıyordu.
+                  setAcilacakDers(ders ?? null)
+                  setSekme('oyunlar')
+                }}
+                acilisSuruyor={!acilisBitti}
+              />
+            )}
+            {sekme === 'oyunlar' && (
+              <OyunlarEkrani
+                kayitlar={oyunlar}
+                setKayitlar={setOyunlar}
+                setGecmis={setOyunGecmisi}
+                banka={oyunBankasi}
+                onBankadanDustu={bankadanDustu}
+                setBanka={setOyunBankasi}
+                sesAcik={ayarlar.oyunSesi}
+                muzikAcik={ayarlar.oyunMuzigi}
+                onBankayaGit={() => setEkran('oyun-bankasi')}
+                bankaTuru={bankaTuru}
+                onBankaTuruBitti={() => genelTestiBitir(genelTest)}
+                /*
+                  Bir tur bitti: doğrular biriktirilip sıra bir sonraki oyuna
+                  geçiyor. Yarıda bırakılan tur testi de bitiriyor — kullanıcı
+                  çıkmak istedi; o ana kadar bildikleri yine de sayılıyor.
+                */
+                onGenelTestTuruBitti={(dogrular, yarim) => {
+                  if (genelTest === null) return
+                  const sonraki = genelTestIlerlet(genelTest, dogrular)
+                  if (yarim || genelTestBittiMi(sonraki)) genelTestiBitir(sonraki)
+                  else setGenelTest(sonraki)
+                }}
+                acilacakDers={acilacakDers}
+                onDersAcildi={() => setAcilacakDers(null)}
+                onOyunAcildi={oyunAcildi}
+                bildir={hataBildirimi}
+              />
+            )}
+            {sekme === 'daha' && <KartMenusu onKartAc={aracAc} />}
+            {sekme === 'ayarlar' && (
+              <AyarlarEkrani
+                kayitliSablonlar={kayitliSablonlar}
+                ayarlar={ayarlar}
+                setAyarlar={setAyarlar}
+                bekleyenBildirim={bekleyenSayisi(hataBildirimi.bildirimler)}
+                onYasalAc={() => setEkran('yasal')}
+                yedeklenecek={{
+                  denemeler,
+                  okulYillari,
+                  gunlukKayitlar,
+                  devamsizlik,
+                  yanlisSorular,
+                  rozetler,
+                  oyunlar,
+                  oyunGecmisi,
+                  oyunBankasi,
+                  bankaDusen,
+                  notlar,
+                  konuIlerleme,
+                  bilinmeyenKartlar,
+                  pomodoroGecmis,
+                  pomodoroAyar,
+                  hedef,
+                }}
+              />
+            )}
+          </>
+        )}
+      </div>
 
       <BottomNav
         sekme={sekme}

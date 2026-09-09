@@ -216,7 +216,7 @@ function Sayfa({
   children: React.ReactNode
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex h-dvh justify-center bg-background">
+    <div className="tam-katman-girisi fixed inset-0 z-50 flex h-dvh justify-center bg-background">
       <div
         className="flex w-full max-w-[480px] flex-col px-5"
         style={{
