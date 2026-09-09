@@ -49,6 +49,7 @@ import { useGeriKatmani } from '@/lib/geri'
 import { useUygulamaGorunur } from '@/lib/gorunurluk'
 import { bugun } from '@/lib/utils'
 import { cn } from '@/lib/utils'
+import { kartGirisi } from '@/components/ui'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { GenelTestSaglayici } from '@/components/genel-test-baglami'
 import { YazimOyunuEkrani } from '@/components/ekranlar/oyun-yazim'
@@ -441,12 +442,14 @@ export function OyunlarEkrani({
               // Tek sayıda ders varsa sonuncusu iki sütunu kaplıyor; yoksa
               // ızgarada yanı boş bir kart kalıyordu.
               const genis = liste.length % 2 === 1 && sira === liste.length - 1
+              const giris = kartGirisi(sira)
 
               return (
                 <button
                   key={ders.id}
                   type="button"
                   onClick={() => setSecilenDers(ders.id)}
+                  style={giris.style}
                   /*
                     Kart bilerek basık: altı ders yan yana dizildiğinde uzun
                     kartlar listeyi üç ekran boyuna çıkarıyordu. Açıklama satırı
@@ -458,6 +461,7 @@ export function OyunlarEkrani({
                     'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                     aile.zemin,
                     genis ? 'col-span-2 flex items-center gap-3.5' : 'flex flex-col',
+                    giris.className,
                   )}
                 >
                   <span
@@ -519,6 +523,7 @@ export function OyunlarEkrani({
                   <BolumKarti
                     key={kart.bolum.id}
                     bolum={kart.bolum}
+                    sira={sira}
                     aile={AILE[dersBul(kart.bolum.ders).aile]}
                     oyunSayisi={bolumOyunlari.length}
                     oynananTur={bolumOyunlari.reduce(
@@ -535,6 +540,7 @@ export function OyunlarEkrani({
                 <OyunKarti
                   key={kart.oyun.id}
                   oyun={kart.oyun}
+                  sira={sira}
                   aile={AILE[dersBul(kart.oyun.ders).aile]}
                   rekor={istatistikAl(kayitlar, kart.oyun.id).enIyiDogru}
                   genis={genis}
@@ -923,6 +929,7 @@ function OyunKarti({
   aile,
   rekor,
   genis,
+  sira,
   onAc,
 }: {
   oyun: OyunTanimi
@@ -930,19 +937,24 @@ function OyunKarti({
   rekor: number
   /** İki sütunu birden kaplayan yatay hâl. */
   genis: boolean
+  /** Izgaradaki sırası — kartlar bu sırayla beliriyor. */
+  sira: number
   onAc: () => void
 }) {
   const [ustSatir, altSatir] = BASLIK_SATIRLARI[oyun.id]
+  const giris = kartGirisi(sira)
 
   return (
     <button
       type="button"
       onClick={onAc}
+      style={giris.style}
       className={cn(
         'relative rounded-[22px] p-4 text-left transition active:brightness-[0.97]',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         aile.zemin,
         genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[186px] flex-col',
+        giris.className,
       )}
     >
       {rekor > 0 && (
@@ -1004,6 +1016,7 @@ function BolumKarti({
   oyunSayisi,
   oynananTur,
   genis,
+  sira,
   onAc,
 }: {
   bolum: BolumTanimi
@@ -1011,17 +1024,23 @@ function BolumKarti({
   oyunSayisi: number
   oynananTur: number
   genis: boolean
+  /** Izgaradaki sırası — kartlar bu sırayla beliriyor. */
+  sira: number
   onAc: () => void
 }) {
+  const giris = kartGirisi(sira)
+
   return (
     <button
       type="button"
       onClick={onAc}
+      style={giris.style}
       className={cn(
         'relative rounded-[22px] p-4 text-left transition active:brightness-[0.97]',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         aile.zemin,
         genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[186px] flex-col',
+        giris.className,
       )}
     >
       <span
