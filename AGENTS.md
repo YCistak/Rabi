@@ -1021,16 +1021,20 @@ uzun bir geçiş ikinci kez izlendiğinde beklemeye dönüşüyor.
 
 Üç kural, üçü de bir kez düşülen tuzaktan:
 
-- **Ekranları saran kutuda `transform` yok, yalnızca opaklık.** O kutunun
-  içinden `position: fixed` katmanlar çıkıyor ve transformlu bir öğe onların
-  *kapsayıcı bloğu* olur — katman ekrana değil kutuya göre konumlanır. Aynı
-  tuzağa `AppShell`in kök `div`inde bir kez düşüldü. Hareket hissini içerideki
-  `kart-girisi` şeridi veriyor.
-- **Opaklık animasyonunun dolgusu `backwards`, `both` değil.** Opaklığı
-  canlandıran bir öğe, değeri 1 olsa bile animasyon yürürlükte olduğu sürece
-  kendi *yığın bağlamını* kuruyor; `both` ile dolgu bitmiyor ve içeriden çıkan
-  `z-50` katmanlar dışarıdaki `z-40` alt menünün altında kalıyordu. Bu bir kez
-  yazıldı ve onay penceresi alt menünün arkasında açıldı.
+- **Ekranları saran kutunun dolgusu `backwards`, `both` değil** — bütün mesele
+  bu. O kutunun içinden `position: fixed` katmanlar çıkıyor; transformlu bir
+  öğe onların *kapsayıcı bloğu* olur (katman ekrana değil kutuya göre
+  konumlanır) ve opaklığı ya da konumu canlandıran bir öğe kendi *yığın
+  bağlamını* kurar (içerideki `z-50` katman, dışarıdaki `z-40` alt menünün
+  altında kalır). İkisi de yalnızca animasyon **yürürlükteyken** oluyor;
+  `backwards` dolgu animasyon biter bitmez etkiyi tümüyle kaldırıyor, `both`
+  ise hiç bitirmiyor. `AppShell`in kök `div`inde bir kez `both` ile yazıldı ve
+  alt menü sayfanın altından taştı; onay penceresi de bir kez alt menünün
+  arkasında açıldı.
+- **Geçiş yalnızca solma olamaz.** İlk hâli 190 ms'lik bir opaklık geçişiydi ve
+  telefonda hiç fark edilmedi: aynı yerde duran iki ekran arasındaki solma,
+  geçiş gibi değil ekranın geç çizilmesi gibi görünüyor. Hareket eden bir şey
+  yoksa geçiş de yok.
 - **Tam ekran katmanlar `clip-path` ile yükseliyor**, `transform` ile değil —
   yukarıdaki ilk sebep. `sahne-iner` ile aynı yöntem, ters yönde: bu katmanlar
   alttan geliyor.

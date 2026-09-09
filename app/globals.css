@@ -1517,33 +1517,40 @@
 /*
   Sekme ve araç ekranlarının girişi.
 
-  **Yalnızca opaklık** — burada `transform` kullanılamaz. Sınıfın konduğu kutu
-  ekranların tamamını sarıyor ve o ekranların içinden `position: fixed`
-  katmanlar (onay penceresi, tam ekran katmanlar) çıkıyor; transformlu bir öğe
-  bu katmanların *kapsayıcı bloğu* olur ve katman ekrana değil bu kutuya göre
-  konumlanır. Aynı tuzağa `AppShell`in kök `div`inde bir kez düşüldü, oradaki
-  yorum da bunu anlatıyor. Hareket hissini içerideki `kart-girisi` şeridi
-  veriyor; buranın işi iki ekranı birbirine bağlamak.
+  Önce yalnızca opaklıktı ve telefonda **hiç fark edilmedi**: aynı yerde duran
+  iki ekran arasındaki 190 ms'lik bir solma, göze geçiş gibi değil ekranın geç
+  çizilmesi gibi geliyor. Hareket eden bir şey yoksa geçiş de yok. Şimdi içerik
+  aşağıdan geliyor.
+
+  Kaymanın **hiçbir iz bırakmaması** şart. Sınıfın konduğu kutu ekranların
+  tamamını sarıyor ve o ekranların içinden `position: fixed` katmanlar (onay
+  penceresi, tam ekran katmanlar) çıkıyor; transformlu bir öğe bu katmanların
+  *kapsayıcı bloğu* olur ve katman ekrana değil bu kutuya göre konumlanır.
+  `AppShell`in kök `div`inde bir kez tam da bu oldu — ama oradaki animasyon
+  `both` ile dolduruluyordu, yani transform bittikten **sonra da** birim matris
+  olarak duruyordu. Buradaki dolgu `backwards`: animasyon biter bitmez
+  transform tümüyle kalkıyor ve kutu sıradan bir kutuya dönüyor.
 */
 @keyframes sayfaGirisi {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
 }
 
 /*
-  Dolgu `both` **değil** `backwards`, ve bu şart. Opaklığı canlandıran bir
-  öğe, değeri 1 olsa bile animasyon "yürürlükte" olduğu sürece kendi *yığın
-  bağlamını* kuruyor; `both` ile dolgu bittikten sonra da yürürlükte kalıyor
-  ve içeriden çıkan `z-50` katmanlar, dışarıdaki `z-40` alt menünün altında
-  eziliyordu. `backwards` yalnızca gecikme boyunca dolduruyor, animasyon
-  bitince etki tümüyle kalkıyor.
+  Dolgu `both` **değil** `backwards`, ve bu şart — yukarıdaki kapsayıcı blok
+  sebebinin yanında bir de yığın bağlamı sebebi var: opaklığı ya da konumu
+  canlandıran bir öğe, değeri son hâline gelmiş olsa bile animasyon
+  "yürürlükte" olduğu sürece kendi yığın bağlamını kuruyor. `both` ile dolgu
+  hiç bitmiyor ve içeriden çıkan `z-50` katmanlar, dışarıdaki `z-40` alt
+  menünün altında eziliyordu — onay penceresi bir kez öyle açıldı.
 
-  Geriye 190 ms'lik bir pencere kalıyor: geçiş sürerken açılan bir katman hâlâ
-  alt menünün altında kalır. Kullanıcı dokunuşu o kadar hızlı gelmiyor ve
-  ekranların hiçbiri kurulur kurulmaz katman açmıyor.
+  Geriye 240 ms'lik bir pencere kalıyor: geçiş sürerken açılan bir katman hâlâ
+  alt menünün altında kalır ve ekrana değil bu kutuya göre konumlanır.
+  Kullanıcı dokunuşu o kadar hızlı gelmiyor ve ekranların hiçbiri kurulur
+  kurulmaz katman açmıyor.
 */
 .sayfa-girisi {
-  animation: sayfaGirisi 190ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+  animation: sayfaGirisi 240ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
 }
 
 /*
