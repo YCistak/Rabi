@@ -26,7 +26,14 @@
 import { sadelestir } from './metin'
 import type { Sablon, SablonDers } from './types'
 
-/** Kullanıcıya gösterilen yazım örneği; okuma bu düzene göre ayarlandı. */
+/**
+ * Kullanıcıya gösterilen yazım örneği; okuma bu düzene göre ayarlandı.
+ *
+ * Ders adı **tam** yazılı ve örnek bunu bilerek gösteriyor. Kısaltmalar
+ * ölçüldü ve okunmuyor: "F" hem Fizik hem Felsefe, "T.E" hiçbir şey — bir
+ * harfi derse bağlamak yazı tura atmak. Adı okuyan taraf ML Kit ve ona bir
+ * kelime vermek, iki harf vermekten belirgin biçimde farklı.
+ */
 export const ORNEK_YAZIM = 'Matematik 38D 2Y'
 
 /**
@@ -106,6 +113,68 @@ type Bulgu = {
   bas: number
   son: number
   uzunluk: number
+  /** Harfi harfine değil, bir harf sapmayla eşleşti. */
+  bulanik: boolean
+}
+
+/**
+ * Bu uzunluktan kısa anahtarda sapma kabul edilmiyor.
+ *
+ * Üç harflik bir anahtarda ("mat", "fel", "din") bir harf sapma, anahtarın
+ * üçte biri demek ve "tar" ile "mat" arası bile iki adım: kısa anahtarlarda
+ * tolerans, ayrı dersleri birbirine karıştırmanın adı olurdu.
+ */
+const EN_KISA_BULANIK = 4
+
+/**
+ * Bir harfe kadar sapmayla eşleşen kelimeyi bulur; yoksa -1.
+ *
+ * Ders adı ML Kit'ten geçiyor ve el yazısı kâğıtta harf harf doğru çıkmıyor:
+ * ölçüldü, "Coğ1" satırı "Cağ1", "Coğrafya" satırı "Ceğratya" diye okundu.
+ * Harfi harfine arayan eşleşme bu satırların hiçbirini bulamıyor ve kutu boş
+ * kalıyordu.
+ *
+ * Tolerans **bir** harf: iki harfe çıkarmak "tar1" ile "tar2"yi, "cog1" ile
+ * "cog2"yi birbirine karıştırır. Ayrıca uzunluk farkı da bir harfle sınırlı,
+ * yani anahtar kelimenin içinde kaybolamıyor.
+ */
+function bulanikYer(satir: string, anahtar: string): number {
+  if (anahtar.length < EN_KISA_BULANIK) return -1
+
+  // Kelime kelime bakılıyor: söz sınırı kuralının bulanık karşılığı bu.
+  const desen = /[a-z0-9]+(?: [a-z0-9]+)*/g
+  const bosluk = anahtar.split(' ').length - 1
+  let eslesme = desen.exec(satir)
+  while (eslesme !== null) {
+    const kelimeler = eslesme[0].split(' ')
+    for (let i = 0; i + bosluk < kelimeler.length; i++) {
+      const parca = kelimeler.slice(i, i + bosluk + 1).join(' ')
+      if (Math.abs(parca.length - anahtar.length) <= 1 && uzaklikBirMi(parca, anahtar)) {
+        const once = kelimeler.slice(0, i).join(' ')
+        return eslesme.index + (i === 0 ? 0 : once.length + 1)
+      }
+    }
+    eslesme = desen.exec(satir)
+  }
+  return -1
+}
+
+/** İki dizinin düzenleme uzaklığı 1'i aşıyor mu (aşıyorsa false). */
+function uzaklikBirMi(a: string, b: string): boolean {
+  if (a === b) return true
+  if (a.length === b.length) {
+    let fark = 0
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] !== b[i] && ++fark > 1) return false
+    }
+    return true
+  }
+  // Uzunluklar bir fark ediyor: uzun olandan bir harf atınca eşitleniyor mu.
+  const [uzun, kisa] = a.length > b.length ? [a, b] : [b, a]
+  for (let i = 0; i < uzun.length; i++) {
+    if (uzun.slice(0, i) + uzun.slice(i + 1) === kisa) return true
+  }
+  return false
 }
 
 /**
@@ -143,16 +212,40 @@ function dersleriBul(satir: string, dersler: SablonDers[]): { bulgular: Bulgu[];
       let yer = satir.indexOf(anahtar)
       while (yer !== -1) {
         if (sozSiniriMi(satir, yer, anahtar.length)) {
-          adaylar.push({ ders, bas: yer, son: yer + anahtar.length, uzunluk: anahtar.length })
+          adaylar.push({
+            ders,
+            bas: yer,
+            son: yer + anahtar.length,
+            uzunluk: anahtar.length,
+            bulanik: false,
+          })
         }
         yer = satir.indexOf(anahtar, yer + 1)
+      }
+
+      // Harfi harfine bulunamadıysa bir harf sapmaya izin veriliyor; OCR'dan
+      // gelen ders adı harf harf doğru çıkmıyor.
+      if (!adaylar.some((a) => a.ders.id === ders.id && !a.bulanik)) {
+        const bulanikBas = bulanikYer(satir, anahtar)
+        if (bulanikBas !== -1) {
+          adaylar.push({
+            ders,
+            bas: bulanikBas,
+            son: bulanikBas + anahtar.length,
+            uzunluk: anahtar.length,
+            bulanik: true,
+          })
+        }
       }
     }
   }
 
-  // Uzundan kısaya: aynı yeri paylaşan eşleşmelerden belirleyici olan önce
-  // yerleşsin, kısası çakışma denetimine takılıp düşsün.
-  adaylar.sort((a, b) => b.uzunluk - a.uzunluk || a.bas - b.bas)
+  // Önce harfi harfine eşleşenler, sonra uzundan kısaya: aynı yeri paylaşan
+  // eşleşmelerden belirleyici olan önce yerleşsin, kısası çakışma denetimine
+  // takılıp düşsün. Kesin bir eşleşme, bir harf sapmış olanı her zaman yener.
+  adaylar.sort(
+    (a, b) => Number(a.bulanik) - Number(b.bulanik) || b.uzunluk - a.uzunluk || a.bas - b.bas,
+  )
 
   const bulgular: Bulgu[] = []
   const belirsiz: string[] = []
@@ -164,9 +257,12 @@ function dersleriBul(satir: string, dersler: SablonDers[]): { bulgular: Bulgu[];
       continue
     }
     // Aynı yerde, aynı uzunlukta, **başka** bir ders: ayırt edilemiyor.
+    // Kesinlik de eşit olmalı — bir harf sapmış eşleşme, harfi harfine
+    // tutan bir dersin yerini belirsiz yapamaz.
     if (
       cakisan.uzunluk === aday.uzunluk &&
       cakisan.bas === aday.bas &&
+      cakisan.bulanik === aday.bulanik &&
       cakisan.ders.id !== aday.ders.id
     ) {
       belirsiz.push(cakisan.ders.ad)

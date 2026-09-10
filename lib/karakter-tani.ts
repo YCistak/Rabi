@@ -68,8 +68,8 @@ export type Tahmin = {
 
 /** Ağın katman ölçüleri; eğitim betiği aynı sayıları kullanıyor. */
 export const OLCULER = {
-  konv1Suzgec: 16,
-  konv2Suzgec: 32,
+  konv1Suzgec: 24,
+  konv2Suzgec: 48,
   cekirdek: 5,
 } as const
 

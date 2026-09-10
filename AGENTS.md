@@ -773,6 +773,7 @@ okuyor, kutular doluyor. İş üç dosyaya bölünmüş ve bölünme kasıtlı:
 | `lib/karakter-ayir.ts` | lekeleri bulup 28×28 kareye oturtur, **saf** | hayır |
 | `lib/karakter-tani.ts` | karenin hangi karakter olduğunu söyler, **saf** | hayır |
 | `lib/kagit-oku.ts` | satır satır sayı kümeleri üretir, **saf** | hayır |
+| `lib/satir-esle.ts` | ders adını sayı satırına hizadan bağlar, **saf** | hayır |
 | `lib/deneme-ocr.ts` | kamera + tuval + ML Kit sarmalayıcısı | evet |
 | `components/ekranlar/yeni-deneme.tsx` | düğme, örnek kartı, satır eşleme, özet | hayır |
 
@@ -879,7 +880,7 @@ denendi ve yetmedi: modelin göremediği şey parlatılarak görünür olmuyor.
 Ama okunması gereken alfabe çok küçük — **0-9 rakamları ile B, D, Y** — ve o
 kadar dar bir tanıyıcı genel el yazısı OCR'ının yanında küçük bir problem.
 `lib/karakter-tani.ts` içinde LeNet'in küçültülmüş hâli duruyor: iki evrişim
-katmanı, 12.917 parametre, 50 KB. Ağırlıklar `lib/karakter-agirliklari.ts`
+katmanı, 40.238 parametre (24 ve 48 süzgeç), 157 KB. Ağırlıklar `lib/karakter-agirliklari.ts`
 içinde base64 olarak gömülü ve **elle düzenlenmiyor** —
 `scripts/taniyici-egit.mjs` üretiyor.
 
@@ -887,6 +888,91 @@ Eğitim betiği saf Node; ileri ve geri geçiş elle yazılı, makineye PyTorch
 kurmak gerekmiyor. Veri EMNIST (NIST'in el yazısı derlemi): rakamlar
 `emnist-digits`, harfler `emnist-letters`. Çalıştırmak için EMNIST'i indirip
 klasörü betiğe vermek yeterli.
+
+**Eğitim çekirdeklere dağıtılıyor.** Tek çekirdekte bir tur saatler sürüyordu
+ve ağırlıklar bir kez eğitilip bırakılmıyor: gerçek kâğıtlarla ölçüp
+çoğaltmayı düzeltip yeniden eğitiyoruz. Bölünme yığının içinde — işçiler aynı
+yığının örneklerini paylaşıyor, ana iş parçacığı eğimleri toplayıp tek bir
+güncelleme yapıyor, yani matematik tek çekirdekli hâliyle birebir aynı.
+Ağırlıklar `SharedArrayBuffer` üzerinde durduğu için güncelleme kopyalanmıyor.
+Yığın 32'den 224'e çıktı (işçi başına sekiz örnek) ve adım karekök kuralıyla
+0,06'dan 0,16'ya. Tur süresi ~90 dakikadan **36 saniyeye** indi.
+
+**Sınıflar eşitleniyor.** EMNIST'te her rakamdan yeterince örnek var ama her
+harften 4.800; olduğu gibi alınınca ağ rakamları 2,5 kat çok görüyor ve
+kararsız kaldığı yerde rakam demeye eğiliyor — kalın uçlu kalemde "D" kutusu
+"0" okunuyordu. Az olan sınıf tekrarlanarak dolduruluyor; kopya olmuyorlar
+çünkü çoğaltma her turda her örneği başka açı, ölçek ve kalınlıkla gösteriyor.
+Ölçüldü: dokuz gerçek kâğıtta %71,6 → %77,0.
+
+**Tek koşuya bakma, gürültü büyük.** Aynı yapılandırma yalnızca tohumu
+değiştirilerek yedi kez eğitildi ve kâğıt başarısı %67,5 ile %75,3 arasında
+oynadı (ortalama ~%72). EMNIST'siz koşularda aralık daha da geniş: %55,8 ve
+%70,1. Yani birkaç puanlık farklara dayanan her karşılaştırma bu gürültünün
+içinde kalıyor; bir değişikliğin kazandırdığını söylemek için **aynı ayarı
+birkaç tohumla** koştur (`TOHUM` çevre değişkeni) ve ortalamalara bak.
+Kurulacak ağırlık da en iyi koşu değil **ortanca** koşu olmalı: en iyisini
+seçmek, ölçüm kümesine uydurmaktır.
+
+**EMNIST sınav puanına bakma.** Ayrılmış sınav kümesindeki başarı gerçek
+kâğıttaki başarıyı anlatmıyor ve yanlış yöne götürüyor: sınavda %95,2 alan
+varyant kâğıtlarda %71,6, %94,6 alan varyant %77,0 verdi. Karar hep
+`lib/ocr-olcum.test.ts` benzeri bir kâğıt ölçümüyle veriliyor.
+
+**Ağ bir kez büyütüldü, ikincisinde durdu.** Süzgeçler 16/32'den 24/48'e
+çıkınca kâğıt başarısı %77,0'den %82,4'e çıktı. 32/64 denendi ve **düştü**
+(%77,0) — sınav puanı yükselirken (%95,75) kâğıt başarısı düşüyor, yani ağ
+EMNIST'in kendi dünyasına yerleşiyor. Daha uzun eğitim de aynı yöne gidiyor:
+aynı ağ 14 tur yerine 26 tur eğitilince %82,4'ten %79,7'ye indi. Büyütmeden
+ya da tur artırmadan önce bu iki ölçümü hatırla.
+
+**Denenip geri alınanlar.** Eşiklemenin bıraktığı kusurları çoğaltmaya eklemek
+(kopuk çizgi ve zemin lekesi) kâğıt başarısını %74,3'ten %64,9'a düşürdü:
+kusurun türü değişti, ağ karakter kaçırmak yerine olmayan karakter uydurmaya
+başladı. Tekrar denenecekse tek başına ve ölçerek.
+
+Ders adını satırın başında hayalet kümeye çeviren lekeleri ("Coğ:" → "60B")
+aradaki boşluğa bakarak atmak da denendi: ad ile cevap arası, cevabın kendi
+kümeleri arasından geniş olduğu için ölçülebilir bir sınır gibi duruyor. Ama
+kazanç yalnızca tek bir katsayıda çıktı (5,0'da %83,8; 4,5 ve 5,5'te %82,4) —
+bir eşik yalnızca tam bir noktada işe yarıyorsa o kural değil, ölçüm
+gürültüsüdür. Geri alındı.
+
+**Gerçek kâğıtlardan da örnek veriliyor.** EMNIST Amerikan el yazısı ve düz
+taranmış; bizim girdimiz telefonla çekilip eşiklenmiş bir kâğıttan geliyor.
+Aradaki farkı kapatmak için kâğıtlardan karakter kesilip EMNIST'in **üstüne**
+ekleniyor (`lib/ocr-ornek-cikar.test.ts`, yerel araç): satırın doğru cevabı
+biliniyor, cevaplar satırın sağ ucunda duruyor ve en sağdaki N kutu o
+karakterlerle eşleştiriliyor.
+
+Ölçüldü ve iki şey birden çıktı:
+
+- **Kazandırıyor ve ezber değil.** Yalnızca yeni kâğıtların karakterleriyle
+  eğitilen ağ, hiç görmediği eski kâğıtlarda da yükseldi (%82,4 → %83,8);
+  toplam %70,1'den %75,3'e çıktı.
+- **Etiket kalitesi miktardan önemli.** Hizalama iki tahmine dayanıyor
+  (cevaplar sağda, fazla satır düşürülür) ve tahmin tutmadığında etiket
+  gürültüsü oluyor. Örnek sayısını 155'ten 272'ye çıkarmak — hizalaması
+  şüpheli kâğıtları da alarak — başarıyı %75,3'ten %57,8'e **düşürdü**.
+  Ölçüsü şu: mevcut ağ o kâğıdın örneklerinin kaçını zaten biliyor; oran
+  rastgeleye yaklaşıyorsa (k7 %21) hizalama kaymış demektir, o kâğıt alınmaz.
+- **Ağırlık da önemli.** Gerçek örnekler tekrar katıyla besleniyor; 60 en iyi,
+  150 ve 300 kötüleştirdi (%69,5 ve %72,1). Az sayıda ve sınıfları eksik bir
+  küme (7, 8, 9 hiç yok) fazla ağırlık alınca EMNIST'ten öğrenileni bozuyor.
+- **Kapsam artırmak kazandırmadı.** Hizalama "en sağdaki N kutu" yerine sırayı
+  koruyan bir aramaya çevrildi (`lib/ocr-ornek-cikar.test.ts`: hem satır↔etiket
+  hem kutu↔karakter için dinamik programlama, güven eşiğiyle eleme). Örnek
+  sayısı 155'ten 220'ye, kapsanan kâğıt 8'den 19'a çıktı — ve kâğıt başarısı
+  %75,3'ten **%69,5'e düştü**. Sınıf başına eşit katkı vererek (600 ve 1500)
+  kısmen toparlandı (%70,8 ve %73,4) ama eski, dar ve yüksek isabetli küme
+  hiçbirinde geçilemedi.
+
+  Sebep ölçülemedi ama iki aday var ve ikisi de aynı yöne bakıyor: arama
+  kutuyu seçerken tanıyıcının olasılıklarına bakıyor, yani ağın **zaten
+  bildiği** karakterleri seçmeye eğilimli (çıkarılan kümenin %95,6'sını
+  mevcut ağ doğru okuyor) — öğretecek yeni bir şey taşımıyor; ve gevşeyen
+  eleme, hizalaması kaymış satırları da içeri alıyor. Kapsamı büyütmeden önce
+  bu iki şeyi ayır.
 
 **Ağa çıkmıyor.** Tanıma tümüyle cihazda; "sunucu yok" kuralı ve Data Safety
 beyanı korunuyor. Bulut OCR (Vision API vb.) bu yüzden baştan elendi.
@@ -966,7 +1052,7 @@ yapıyor ve üç kural birbirinden bağımsız:
 | Kural | Neden | Ölçüm (27 etiketli satır) |
 |---|---|---|
 | Kutu satır boyunun 0,55'inden alçaksa atılıyor | Cevaplar tam boyda yazılıyor; "ğ"nin şapkası, iki noktanın noktası değil | 0,45 → 18 · **0,55 → 19** · 0,75 → 16 |
-| Kutu boyunun 1,3 katından genişse atılıyor | Ne rakam ne B/D/Y enine yayılıyor; yatık leke ya birleşmiş iki harf ya altı çizgisi | 1,0 → 21 · **1,3 → 25** · 1,8 → 24 |
+| Kutu boyunun 1,6 katından genişse atılıyor | Ne rakam ne B/D/Y enine yayılıyor; yatık leke ya birleşmiş iki harf ya altı çizgisi | 74 satırlık ölçümde 1,3 → 53 · **1,6 → 55** · 1,8 → 55. Eşik 1,3'ken kalın uçlu kalemle yazılmış "2" (94×62) eleniyor ve harfsiz kalan küme de düşüyordu |
 | Satır, sayfanın tipik yazı boyunun 0,7'sinden ufaksa hiç okunmuyor | Kâğıtta basılı şeyler de var | Puanı değiştirmiyor, **uydurma satırı kaldırıyor** |
 
 Üçüncüsü puanı yükseltmiyor ama ilaç kutusunun logosunu "7D" diye okuyup
@@ -1014,27 +1100,66 @@ ve kalınlaştırarak sorup olasılıkları ortalamak): o günün 13 satırlık 
 İşi zaten eğitim yapıyor — `scripts/taniyici-egit.mjs` her örneği rastgele
 kalınlıkta gösteriyor. Tekrar deneme.
 
-### Ders eşlemesi sıraya göre, kullanıcıya sorulmuyor
+### Ders eşlemesi satırın hizasından, sıradan değil
 
-Tanıyıcı ders adını okumuyor, o yüzden okuduğu satırlar ad olmadan geliyor.
-Kâğıdın ilk sayı satırı şablonun ilk dersi sayılıyor, ikincisi ikincisi.
+Kâğıtta iki tanıyıcı çalışıyor ve ikisi ayrı şeyi görüyor: sayıları kendi
+ağımız okuyor, ders adını ML Kit. İkisini birleştiren şey **konum** —
+`lib/satir-esle.ts` her sayı satırını, dikey olarak en çok örtüşen metin
+satırıyla eşleştiriyor. Bir metin satırı yalnızca bir sayı satırına ad
+olabiliyor; hizasında ad bulunmayan satır adsız kalıyor.
 
-**Bir dönem her satırın yanında ders seçici vardı ve kaldırıldı.** Gerekçesi
-"şüphedeyken doldurmuyor" kuralıydı: öğrenci kâğıda istediği sırayla
-yazabilir, eşleme yanılabilir. Ama kullanıcı denedi ve seçtirmenin kendisi
-işi elle girmekten hafiflemiyordu — sekiz satır için sekiz açılır liste.
-Kutular ekranda duruyor ve kayan birini düzeltmek tek dokunuş; boş bırakmak
-ise her satırı baştan girdiriyordu. Karar kullanıcınındır, geri alma.
+**Sıra eşlemesi yalnızca yedek.** Bir dönem tek yol oydu — kâğıdın ilk sayı
+satırı şablonun ilk dersi sayılıyordu — ve ölçüldü, iki yerden birden
+bozuluyor:
 
-Kaymanın görülebilmesi için okunan satırlar ekranda **salt gösterim** olarak
-duruyor, kutuları dolduran sırayla. `okumaPuani` süzgeci ikisinde de aynı;
-ayrışırlarsa ekrandaki sıra kutuları dolduran sırayı anlatmaz olur.
+- **Öğrenci kendi sırasıyla yazıyor.** Elimizdeki bir kâğıtta sıra
+  `Türk Dili, Coğ1, Tar2, Mat, Coğ2, Tar1, DKAB, F`; hiçbir şablonunki değil.
+  Satırlar doğru okunsa bile sayılar yanlış dersin kutusuna giriyordu.
+- **Tek bir fazla satır altındaki her şeyi kaydırıyor.** Alta taşan sayı
+  ("… Edebiyat: 36D" ⏎ "1B") iki satır sayılıyor; sayı taşımayan
+  "Edebiyat: Full" satırı da bir satır üretebiliyor. Dokuz gerçek fotoğrafın
+  üçünde bu oldu ve o kâğıtlarda ilk satırdan sonraki bütün kutular kaydı.
+
+Hiçbir satırın adı çözülemediyse yine sıraya düşülüyor: kâğıda "T.E", "C", "F"
+diye yazan öğrencide ad eşlemesi boş dönüyor ve o kâğıtta hiçbir kutuyu
+doldurmamak, kayma riskinden kötü. Adı çözülemeyen **tek tük** satır ise
+çıplak sayı olarak yazılıyor; `denemeyiCoz` yalnızca sayıdan ibaret satırı bir
+öncekine ekliyor ve alta taşan sayı tam olarak bu biçimde geliyor.
 
 Eşlenen satırlar ayrı bir çözümleyiciden geçmiyor: `<ders adı> <sayılar>`
 diye metin kurulup `denemeyiCoz`'e veriliyor, böylece D/Y/B kuralları,
 çıkarım ve "soru sayısını aşan satırı atla" denetimi orada da geçerli oluyor.
-Çakışırsa **ML Kit'in metni** sıra eşlemesini eziyor: ikisi de tahmin ama ML
-Kit ders adını gerçekten okuyor, sıra eşlemesi yalnızca varsayıyor.
+
+Yanlış eşleşmenin görülebilmesi için okunan satırlar ekranda **salt gösterim**
+olarak duruyor — artık adıyla birlikte, çünkü kutuyu dolduran şey o ad.
+`okumaPuani` süzgeci ikisinde de aynı; ayrışırlarsa ekrandaki, kutulara
+yazılanı anlatmaz olur.
+
+**Bir dönem her satırın yanında ders seçici vardı ve kaldırıldı.** Kullanıcı
+denedi ve seçtirmenin kendisi işi elle girmekten hafiflemiyordu — sekiz satır
+için sekiz açılır liste. Karar kullanıcınındır, geri alma.
+
+### ML Kit'e giden kopya da döndürülüyor
+
+Yönü sayı okuması buluyor (`satirlariOku`, üç yönü deneyip en çok küme vereni
+seçiyor) ve ML Kit'e ham yönde görüntü gidiyordu. Ölçüldü: yan duran kâğıtta
+basılı-metin tanıyıcısı tek bir ders adı bile okumuyor, çıktı tümüyle çöp —
+elimizdeki dokuz fotoğrafın dördü öyle. `satirlariOku` bu yüzden seçtiği
+`ceyrek`i de döndürüyor ve `deneme-ocr.ts` hazırlanmış kopyayı tanımadan önce
+o yöne çeviriyor. İkinci bir sebep daha var: iki tanıyıcının kutuları ancak
+aynı uzayda karşılaştırılabiliyor, hiza eşlemesi buna bağlı.
+
+### Ders adında bir harf sapmaya izin var
+
+Ad el yazısından okunuyor ve harf harf doğru çıkmıyor: ölçüldü, "Coğ1" satırı
+"Cağ1", "Coğrafya" satırı "Ceğratya" diye okundu ve harfi harfine arayan
+eşleşme ikisini de bulamıyordu.
+
+Tolerans **bir** harf ve yalnızca dört harften uzun anahtarlarda: ikiye
+çıkarmak "tar1" ile "tar2"yi, üç harflik anahtarlarda ("mat", "fel") ayrı
+dersleri birbirine karıştırır. Harfi harfine tutan bir eşleşme, bir harf
+sapmış olanı her zaman yeniyor; iki ders aynı yere aynı sapmayla uyuyorsa
+satır yine atlanıyor — "şüphedeyken doldurmuyor" kuralı bozulmadı.
 
 ### Örnek kamera açılmadan gösteriliyor
 

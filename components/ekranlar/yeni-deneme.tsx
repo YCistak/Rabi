@@ -30,17 +30,26 @@ function bosGirisler(sablon: Sablon): Record<string, Giris> {
  * metin aynı kalır, kutuların yeniden dolması gerekir. Yalnızca metne bakan
  * bir bağımlılık listesi ikinci okumada hiçbir şey yapmazdı.
  */
-type Okuma = { metin: string; satirlar: SatirOkuma[]; sayac: number }
+type Okuma = { metin: string; satirlar: SatirOkuma[]; adlar: string[]; sayac: number }
 
 /**
- * Sayı satırlarını şablonun ders sırasıyla eşleyip okunabilir bir metne çevirir.
+ * Sayı satırlarını ders adlarıyla eşleyip okunabilir bir metne çevirir.
  *
- * Kendi tanıyıcımız (`lib/karakter-tani.ts`) yalnızca rakamları ve D/Y/B'yi
- * biliyor, ders adını okumuyor. Eşleme bu yüzden **sıraya** dayanıyor: kâğıdın
- * ilk sayı satırı şablonun ilk dersi, ikincisi ikincisi. Bu bir tahmin ve
- * yanılabilir — öğrenci kâğıda başka sırayla yazmışsa kutular kayar. Yine de
- * doldurmak tercih edildi: kutular ekranda duruyor ve düzeltmek tek dokunuş,
- * oysa boş bırakmak her satırı elle girdiriyordu.
+ * Ad, satırın **hizasından** geliyor (`lib/satir-esle.ts`): sayıları kendi
+ * tanıyıcımız okuyor, adı ML Kit, ikisini konum birleştiriyor.
+ *
+ * **Sıra eşlemesi yalnızca yedek.** Eskiden tek yol oydu — kâğıdın ilk sayı
+ * satırı şablonun ilk dersi sayılıyordu — ve ölçüldü, iki yerden bozuluyor:
+ * öğrenci kendi sırasıyla yazıyor (elimizdeki bir kâğıtta sıra
+ * `Türk Dili, Coğ1, Tar2, Mat, …`, hiçbir şablonunki değil) ve fazladan tek
+ * bir satır altındaki bütün dersleri kaydırıyor. Hiçbir satırın adı
+ * çözülemediyse yine de sıraya düşülüyor: ad kısaltmaysa ("T.E", "C")
+ * eşleme boş döner ve o kâğıtta hiçbir kutuyu doldurmamak, kayma riskinden
+ * kötüdür.
+ *
+ * Adı çözülemeyen tek tük satır **çıplak sayı** olarak yazılıyor: `denemeyiCoz`
+ * yalnızca sayıdan ibaret satırı bir öncekine ekliyor ve alta taşan sayı
+ * ("… Edebiyat: 36D" ⏎ "1B") tam olarak bu biçimde geliyor.
  *
  * Sayı taşımayan satırlar (`okumaPuani`) eşlemeye hiç girmiyor; ders adından
  * artakalan bir leke sırayı kaydırıp bütün kutuları bozardı.
@@ -51,11 +60,17 @@ type Okuma = { metin: string; satirlar: SatirOkuma[]; sayac: number }
  */
 function eslesenMetin(sablon: Sablon, okuma: Okuma | null): string {
   if (okuma === null) return ''
-  return okuma.satirlar
-    .filter((satir) => okumaPuani(satir.metin) > 0)
-    .map((satir, sira) => {
+
+  const sayililar = okuma.satirlar
+    .map((satir, sira) => ({ metin: satir.metin, ad: okuma.adlar[sira] ?? '' }))
+    .filter(({ metin }) => okumaPuani(metin) > 0)
+  const adliVar = sayililar.some(({ ad }) => ad !== '')
+
+  return sayililar
+    .map(({ metin, ad }, sira) => {
+      if (adliVar) return ad === '' ? metin : `${ad} ${metin}`
       const ders = sablon.dersler[sira]
-      return ders === undefined ? null : `${ders.ad} ${satir.metin}`
+      return ders === undefined ? null : `${ders.ad} ${metin}`
     })
     .filter((satir): satir is string => satir !== null)
     .join('\n')
@@ -72,9 +87,10 @@ function okumadanGirisler(sablon: Sablon, okuma: Okuma | null): Record<string, G
     }
   }
 
-  // Önce sıraya dayanan eşleme, sonra ML Kit'in metni: ikisi de tahmin ama
-  // ML Kit ders **adını** okuyor, sıra eşlemesi yalnızca varsayıyor. Adı
-  // gören kazanıyor.
+  // Önce satır eşlemesi, sonra ML Kit'in düz metni. İkisi de aynı adları
+  // kullanıyor; düz metin ikinci geliyor çünkü orada ML Kit sayıları da
+  // kendisi okumuş oluyor ve el yazısı sayıda bizim ağımız daha iyi —
+  // yalnızca satır eşlemesinin hiç dolduramadığı dersler ondan geliyor.
   yaz(eslesenMetin(sablon, okuma))
   yaz(okuma.metin)
   return girisler
@@ -189,23 +205,29 @@ export function YeniDenemeEkrani({
       setOkuma((onceki) => ({
         metin: ciktisi.metin,
         satirlar: ciktisi.satirlar,
+        adlar: ciktisi.adlar,
         sayac: (onceki?.sayac ?? 0) + 1,
       }))
     } else if (ciktisi.durum !== 'vazgecildi') setOkumaHatasi(true)
   }
 
   /**
-   * Kullanıcıya gösterilecek satırlar — kutuları dolduran sırayla aynı.
+   * Kullanıcıya gösterilecek satırlar — kutuları dolduranların aynısı.
+   *
+   * Satırın **adı** da gösteriliyor: kutuyu dolduran şey artık sıra değil o ad
+   * ve yanlış eşleşen bir adı kullanıcının görmesinin tek yolu bu. Adı
+   * çözülemeyen satır adsız görünüyor; o satır bir öncekine ekleniyor ya da
+   * hiç kullanılmıyor.
    *
    * İşaretli sayı taşımayanlar eleniyor (`okumaPuani`): ders adının harfleri de
    * tanıyıcıdan geçiyor ve arada bir rakam gibi okunabiliyor. `eslesenMetin`
-   * de aynı süzgeci kullanıyor; ikisi ayrışırsa ekranda görünen sıra kutuları
-   * dolduran sırayı anlatmaz olurdu.
+   * de aynı süzgeci kullanıyor; ikisi ayrışırsa ekranda görünen, kutulara
+   * yazılanı anlatmaz olurdu.
    */
   const okunanSatirlar = useMemo(
     () =>
       (okuma?.satirlar ?? [])
-        .map((satir, sira) => ({ satir, sira }))
+        .map((satir, sira) => ({ satir, sira, ad: okuma?.adlar[sira] ?? '' }))
         .filter(({ satir }) => okumaPuani(satir.metin) > 0),
     [okuma],
   )
@@ -330,9 +352,10 @@ export function YeniDenemeEkrani({
               </p>
               <p className="mt-2 text-[12px] leading-snug font-medium text-muted-foreground">
                 Her ders ayrı satırda. <strong>D</strong> doğru, <strong>Y</strong> yanlış,
-                <strong> B</strong> boş; üçünden ikisini yazman yeter. Ders adını
-                kısaltabilirsin (&ldquo;Mat&rdquo;, &ldquo;Fiz&rdquo;) ama tek harf
-                yazma &mdash; &ldquo;F&rdquo; hem Fizik hem Felsefe olabiliyor.
+                <strong> B</strong> boş; üçünden ikisini yazman yeter. Ders adını{' '}
+                <strong>tam yaz</strong> &mdash; &ldquo;Matematik&rdquo;,
+                &ldquo;Edebiyat&rdquo;, &ldquo;Fizik&rdquo;. Kısaltma okunmuyor:
+                &ldquo;F&rdquo; hem Fizik hem Felsefe, &ldquo;T.E&rdquo; ise hiçbir şey.
                 Okunan sayılar kutulara yazılır,{' '}
                 <strong>kaydetmeden önce sen kontrol edersin</strong>.
               </p>
@@ -354,25 +377,26 @@ export function YeniDenemeEkrani({
           )}
 
           {/*
-            Kâğıttan okunan sayı satırları — yalnızca gösterim.
+            Kâğıttan okunan satırlar — yalnızca gösterim.
 
-            Kutular sıraya göre kendiliğinden doldu ve bu bir tahmin: kâğıdın
-            ilk satırı şablonun ilk dersi sayıldı. Ne okunduğunu göstermek,
-            kayma olduğunda kullanıcının bunu fark etmesinin tek yolu.
+            Kutular bu satırlara göre doldu ve her ikisi de tahmin: adı ML
+            Kit okudu, sayıyı kendi ağımız. Ne okunduğunu göstermek, yanlış
+            eşleşme olduğunda kullanıcının bunu fark etmesinin tek yolu.
           */}
           {okunanSatirlar.length > 0 && (
             <div className="mt-2 rounded-xl border border-border bg-card px-3 py-2.5">
               <p className="text-[12.5px] font-bold">Kâğıttan okunanlar</p>
               <p className="mt-0.5 text-[12px] leading-snug font-medium text-muted-foreground">
-                Kutular bu sırayla dolduruldu. Kayan varsa aşağıdan düzelt.
+                Kutular bunlara göre dolduruldu. Yanlış eşleşen varsa aşağıdan düzelt.
               </p>
               <div className="mt-2 flex flex-wrap gap-1.5">
-                {okunanSatirlar.map(({ satir, sira }) => (
+                {okunanSatirlar.map(({ satir, sira, ad }) => (
                   <span
                     key={sira}
-                    className="rakam rounded-lg bg-muted px-2 py-1 text-[13px] font-extrabold"
+                    className="rounded-lg bg-muted px-2 py-1 text-[13px] font-extrabold"
                   >
-                    {satir.metin}
+                    {ad !== '' && <span className="font-bold">{ad} </span>}
+                    <span className="rakam">{satir.metin}</span>
                   </span>
                 ))}
               </div>

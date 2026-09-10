@@ -9,10 +9,10 @@
  *
  * ## Ne okunuyor, ne okunmuyor
  *
- * Tanıyıcı yalnızca **0-9, B, D, Y** biliyor. Ders adı okunmuyor ve okunması
- * da gerekmiyor: dersi kullanıcı uygulamada seçiyor, zor olan kısım sayılar.
- * Ders adının harfleri tanıyıcıdan "diğer" diye dönüyor ve metne girmiyor;
- * güven eşiğini geçemeyen karakterler de öyle.
+ * Tanıyıcı yalnızca **0-9, B, D, Y** biliyor; ders adının harfleri ondan
+ * "diğer" diye dönüyor ve metne girmiyor, güven eşiğini geçemeyenler de öyle.
+ * Adı ML Kit okuyor ve ikisi **hizadan** birleşiyor (`lib/satir-esle.ts`) —
+ * o yüzden her satır kapladığı dikey aralığı da bildiriyor.
  */
 
 import type { Gri } from './goruntu-esikle'
@@ -25,6 +25,29 @@ export type SatirOkuma = {
   metin: string
   /** Satırdaki karakterlerin ortalama güveni; sıralamada kullanılıyor. */
   guven: number
+  /**
+   * Satırın üst ve alt kenarı — okumanın seçtiği yöndeki piksel uzayında.
+   *
+   * Ders adını ML Kit okuyor ve hangi adın hangi sayı satırına ait olduğu
+   * yalnızca konumdan bilinebiliyor (`lib/satir-esle.ts`). Sıraya göre
+   * eşleştirmek yetmiyordu: taşan bir satır ya da "Full" yazan bir satır
+   * listeyi kaydırıp altındaki bütün dersleri yanlış kutuya yazıyordu.
+   */
+  ustY: number
+  altY: number
+}
+
+/**
+ * Kâğıdın tamamından çıkanlar.
+ *
+ * `ceyrek` de dönüyor çünkü ML Kit'e giden görüntünün aynı yöne çevrilmesi
+ * gerekiyor: ölçüldü, yan duran kâğıtta basılı-metin tanıyıcısı hiçbir ders
+ * adı okumuyor ve `ustY` ile ML Kit'in kutuları ancak aynı uzayda anlamlı.
+ */
+export type KagitOkuma = {
+  /** Kâğıdın okunabildiği yön; `ceyrekDondur`a verilen çeyrek sayısı. */
+  ceyrek: number
+  satirlar: SatirOkuma[]
 }
 
 /**
@@ -94,7 +117,7 @@ const TAM_BOY_ORANI = 0.6
  * ufak parçalar değil. 27 satırda 0,45 → 18, 0,55 → 19, 0,75 → 16: dar bir
  * tepe, çünkü yükseldikçe gerçek rakamlar da elenmeye başlıyor.
  */
-const EN_AZ_BOY_ORANI = 0.55
+const EN_AZ_BOY_ORANI = 0.6
 
 /**
  * Kutunun boyuna göre en fazla genişliği; üstü birleşmiş leke sayılıyor.
@@ -102,7 +125,7 @@ const EN_AZ_BOY_ORANI = 0.55
  * En kazançlı tek kural: 1,0 → 21, 1,3 → 25, 1,8 → 24 satır. Ne rakam ne
  * B/D/Y boyundan belirgin biçimde geniş olabiliyor.
  */
-const EN_GENIS_ORAN = 1.3
+const EN_GENIS_ORAN = 1.6
 
 /**
  * Bir satırın okunması için sayfanın tipik yazı boyuna oranı.
@@ -135,10 +158,10 @@ const SAYFA_BOY_ORANI = 0.7
  * uygulanmış oluyor (`lib/deneme-ocr.ts`). Onu da denemek okumayı üçte bir
  * pahalılaştırıp hiçbir gerçek durumu kurtarmazdı.
  */
-export function satirlariOku(gri: Gri, agirliklar: Agirliklar): SatirOkuma[] {
+export function satirlariOku(gri: Gri, agirliklar: Agirliklar): KagitOkuma {
   // Eşitlikte düz duruş kazanıyor: kâğıtların çoğu düz ve bir yönü sırf
   // eşit puan aldı diye döndürmek için sebep yok.
-  let enIyi: SatirOkuma[] = []
+  let enIyi: KagitOkuma = { ceyrek: 0, satirlar: [] }
   let enIyiPuan = -1
 
   for (const ceyrek of [0, 1, 3]) {
@@ -146,7 +169,7 @@ export function satirlariOku(gri: Gri, agirliklar: Agirliklar): SatirOkuma[] {
     const puan = kumeSayisi(okunanlar)
     if (puan > enIyiPuan) {
       enIyiPuan = puan
-      enIyi = okunanlar
+      enIyi = { ceyrek, satirlar: okunanlar }
     }
   }
 
@@ -180,7 +203,7 @@ function kumeSayisi(satirlar: SatirOkuma[]): number {
 
 function satiriOku(gri: Gri, satir: Satir, agirliklar: Agirliklar): SatirOkuma {
   const kutular = satir.karakterler.flatMap((k) => genisleriBol(gri, k.kutu))
-  if (kutular.length === 0) return { metin: '', guven: 0 }
+  if (kutular.length === 0) return { metin: '', guven: 0, ustY: satir.ustY, altY: satir.altY }
 
   const tipikBoy = tipikKarakterBoyu(kutular)
   // Genişlik ölçüsü yalnızca gerçek karakterlerden: ders adının ufak
@@ -229,6 +252,8 @@ function satiriOku(gri: Gri, satir: Satir, agirliklar: Agirliklar): SatirOkuma {
   return {
     metin: kumeleriYaz(okunanlar),
     guven: guvenToplami / kutular.length,
+    ustY: satir.ustY,
+    altY: satir.altY,
   }
 }
 

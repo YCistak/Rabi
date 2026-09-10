@@ -11,14 +11,32 @@
  *
  * Veri: EMNIST (NIST'in el yazısı derlemi). Rakamlar `emnist-digits`,
  * B/D/Y harfleri `emnist-letters` içinden alınıyor.
+ *
+ * ## Eğitim çekirdeklere dağıtılıyor
+ *
+ * Tek çekirdekte bir tur bu ağda **saatler** sürüyor ve ağırlıkları bir kez
+ * eğitip bırakmıyoruz: gerçek kâğıtlarla ölçüp çoğaltmayı düzeltip yeniden
+ * eğitiyoruz. Yirmi saatlik bir döngüyle o iş yapılamıyor.
+ *
+ * Bölünme **yığın içinde**: her yığının örnekleri işçilere paylaştırılıyor,
+ * her işçi kendi eğimini hesaplıyor, ana iş parçacığı hepsini toplayıp
+ * ağırlıkları bir kez güncelliyor. Yani matematik tek çekirdekli hâliyle
+ * birebir aynı — yalnızca aynı yığının örnekleri aynı anda hesaplanıyor.
+ *
+ * Ağırlıklar `SharedArrayBuffer` üzerinde duruyor ve işçiler ona **görünüm**
+ * (view) açıyor: ana iş parçacığı güncelleyince kopyalamaya gerek kalmadan
+ * işçiler yeni değeri görüyor. Tek kopyalanan şey eğimler.
  */
 
 import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { availableParallelism } from 'node:os'
+import { fileURLToPath } from 'node:url'
+import { isMainThread, parentPort, Worker, workerData } from 'node:worker_threads'
 
 const KARE = 28
 const SINIFLAR = ['0','1','2','3','4','5','6','7','8','9','B','D','Y','diğer']
-const S1 = 16, S2 = 32, C = 5
+const S1 = 24, S2 = 48, C = 5
 const HARF_ETIKETI = { B: 2, D: 4, Y: 25 } // EMNIST letters: 1=A … 26=Z
 
 /**
@@ -31,9 +49,9 @@ const HARF_ETIKETI = { B: 2, D: 4, Y: 25 } // EMNIST letters: 1=A … 26=Z
  */
 const DISARIDA = new Set([2, 4, 25, 15, 9, 19, 26, 7, 17])
 
-const [klasor = '.', turArg] = process.argv.slice(2)
+const [klasor = '.', turArg, gercekKlasor] = process.argv.slice(2)
 const TUR = Number(turArg ?? 8)
-const ORNEK_BASINA = 6000
+const ORNEK_BASINA = 12000
 
 // ---------------------------------------------------------------- veri
 
@@ -78,10 +96,100 @@ function veriyiTopla() {
     if (s >= 0 && kova[s].length < ORNEK_BASINA) kova[s].push(devrikAl(hG.veri, i))
   }
 
+  /*
+    Sınıflar eşitleniyor. EMNIST'te her rakamdan yeterince örnek var ama her
+    harften 4.800; olduğu gibi alınınca ağ rakamları 2,5 kat daha çok görüyor
+    ve kararsız kaldığı yerde rakam demeye eğiliyor. Bu tam da ölçtüğümüz
+    kusurlardan biri: kalın uçlu kalemde "D" kutusu "0" okunuyordu.
+
+    Az olan sınıf **tekrarlanarak** dolduruluyor; kopya olmuyorlar çünkü
+    çoğaltma (`cogalt`) her turda her örneği başka bir açı, ölçek, kalınlık
+    ve lekeyle gösteriyor.
+  */
+  const hedef = Math.max(...kova.map((k) => k.length))
+  for (const liste of kova) {
+    const asil = liste.length
+    if (asil === 0) continue
+    for (let i = asil; i < hedef; i++) liste.push(liste[i % asil])
+  }
+
   const x = [], y = []
   kova.forEach((liste, s) => liste.forEach((k) => { x.push(k); y.push(s) }))
+  gercekleriKat(x, y)
   console.log('sınıf başına:', kova.map((k) => k.length).join(' '))
   return { x, y }
+}
+
+/**
+ * Gerçek kâğıtlardan çıkarılmış karakterleri EMNIST'in **üstüne** ekler.
+ *
+ * EMNIST düz taranmış Amerikan el yazısı; bizim girdimiz telefonla çekilip
+ * eşiklenmiş bir kâğıt ve arada kapanmayan bir fark var. Örnekler
+ * `lib/ocr-ornek-cikar.test.ts` ile çıkarılıyor (yerel araç; kâğıdın doğru
+ * cevabı biliniyor, hangi lekenin hangi karakter olduğu kâğıdın boşluk
+ * desenine bakılarak bulunuyor).
+ *
+ * **Sınıf başına eşit** katkı veriliyor. Ölçüldü: kâğıtlardan çıkan küme
+ * çarpık ("1" ve "D" ellişer, "7" ile "9" hiç yok) ve olduğu gibi
+ * tekrarlanınca EMNIST'in dengesini bozup kâğıt başarısını düşürüyor.
+ * Örneği `EN_AZ_ORNEK`ten az olan sınıf hiç eklenmiyor: üç kareyi altı yüz kez
+ * göstermek öğretmek değil ezberletmek.
+ *
+ * Klasör verilmezse hiçbir şey eklenmiyor; betik EMNIST'le tek başına
+ * çalışmaya devam ediyor.
+ */
+function gercekleriKat(x, y) {
+  if (gercekKlasor === undefined) return
+  const sinifBasina = Number(process.env.SINIF_BASINA ?? 1500)
+  const EN_AZ_ORNEK = 5
+  if (sinifBasina <= 0) return
+
+  const bayt = new Uint8Array(readFileSync(join(gercekKlasor, 'gercek-x.bin')))
+  const { etiketler, kaynak } = JSON.parse(
+    readFileSync(join(gercekKlasor, 'gercek-y.json'), 'utf8'),
+  )
+  // Ölçüm kümesi dışarıda tutulabiliyor: `SADECE` ön eki verilirse yalnızca
+  // adı onunla başlayan kâğıtların örnekleri alınıyor. Böylece "ezberledi mi
+  // yoksa öğrendi mi" sorusu ölçülebiliyor.
+  const sadece = process.env.SADECE
+  const kovalar = SINIFLAR.map(() => [])
+  for (let i = 0; i < etiketler.length; i++) {
+    if (sadece !== undefined && !String(kaynak[i]).startsWith(sadece)) continue
+    const kare = new Float32Array(KARE * KARE)
+    for (let j = 0; j < kare.length; j++) kare[j] = bayt[i * KARE * KARE + j] / 255
+    kovalar[etiketler[i]].push(kare)
+  }
+
+  /*
+    `TEKRAR` verilirse her örnek olduğu gibi o kadar kez ekleniyor; sınıf
+    dengesi kâğıttan geldiği gibi kalıyor. Hangisinin doğru olduğu ölçülerek
+    seçiliyor, ikisi de duruyor.
+  */
+  const tekrar = Number(process.env.TEKRAR ?? 0)
+  if (tekrar > 0) {
+    let toplam = 0
+    kovalar.forEach((liste, s) =>
+      liste.forEach((kare) => {
+        for (let n = 0; n < tekrar; n++) {
+          x.push(kare)
+          y.push(s)
+        }
+        toplam++
+      }),
+    )
+    console.log(`gerçek örnek: ${toplam} × ${tekrar}`)
+    return
+  }
+
+  const eklenen = kovalar.map((liste, s) => {
+    if (liste.length < EN_AZ_ORNEK) return 0
+    for (let n = 0; n < sinifBasina; n++) {
+      x.push(liste[n % liste.length])
+      y.push(s)
+    }
+    return liste.length
+  })
+  console.log(`gerçek örnek (sınıf başına ${sinifBasina}): ${eklenen.join(' ')}`)
 }
 
 // ------------------------------------------------------- veri çoğaltma
@@ -113,8 +221,46 @@ function cogalt(kare, rast) {
 
   // Kalem kalınlığı: yayma (kalın uç) ya da aşındırma (ince uç).
   const kalinlik = rast()
-  if (kalinlik < 0.45) return kalinlastir(cikti, 1)
-  if (kalinlik < 0.55) return inceltilmis(cikti)
+  const kalemli = kalinlik < 0.45 ? kalinlastir(cikti, 1) : kalinlik < 0.55 ? inceltilmis(cikti) : cikti
+
+  return lekele(kalemli, rast)
+}
+
+/**
+ * Eşiklemenin bıraktığı kusurları taklit eder: kopuk çizgi ve zemin lekesi.
+ *
+ * EMNIST düzgün taranmış; bizim girdimiz telefon fotoğrafından uyarlamalı
+ * eşikle geçiyor ve iki kusuru **her zaman** taşıyor. Ölçüldü: kurşun kalemle
+ * yazılmış kâğıtta harfin gövdesi yer yer kopuyor ("5" yarısı silinince "3"e
+ * benziyor) ve kâğıdın dokusundan kalan noktalar kutunun içinde kalıyor.
+ * Ağ bunları eğitimde hiç görmezse sınavda ilk kez görüyor.
+ */
+function lekele(kare, rast) {
+  const cikti = Float32Array.from(kare)
+
+  // Kopuk çizgi: mürekkebin üstünden birkaç küçük kare siliniyor.
+  if (rast() < 0.35) {
+    const adet = 1 + Math.floor(rast() * 3)
+    for (let n = 0; n < adet; n++) {
+      const cx = Math.floor(rast() * KARE)
+      const cy = Math.floor(rast() * KARE)
+      const yari = 1 + Math.floor(rast() * 2)
+      for (let y = cy - yari; y <= cy + yari; y++)
+        for (let x = cx - yari; x <= cx + yari; x++)
+          if (x >= 0 && y >= 0 && x < KARE && y < KARE) cikti[y * KARE + x] = 0
+    }
+  }
+
+  // Zemin lekesi: kâğıdın dokusundan kalan tek tük koyu noktalar.
+  if (rast() < 0.3) {
+    const adet = 1 + Math.floor(rast() * 6)
+    for (let n = 0; n < adet; n++) {
+      const x = Math.floor(rast() * KARE)
+      const y = Math.floor(rast() * KARE)
+      cikti[y * KARE + x] = Math.max(cikti[y * KARE + x], 0.6 + rast() * 0.4)
+    }
+  }
+
   return cikti
 }
 
@@ -163,7 +309,22 @@ function inceltilmis(kare) {
 // ------------------------------------------------------------------ ağ
 
 const rastgeleTohum = (t) => () => ((t = (t * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff)
-const rast = rastgeleTohum(20260903)
+
+/**
+ * Çoğaltmanın rastgeleliği işçi başına ayrı tohumlanıyor.
+ *
+ * Hepsi aynı tohumu kullansaydı bir yığındaki bütün örnekler aynı açı ve
+ * kalınlıkla gösterilirdi — çoğaltma çeşitliliğini yitirirdi.
+ */
+/**
+ * Tohum dışarıdan verilebiliyor (`TOHUM`).
+ *
+ * Aynı yapılandırma iki ayrı tohumla eğitilince kâğıt başarısı birkaç puan
+ * oynuyor; ince farkları tek koşuyla karşılaştırmak yanıltıyor. Karar
+ * verirken aynı ayarı birkaç tohumla koştur.
+ */
+const TOHUM = Number(process.env.TOHUM ?? 20260903)
+const rast = rastgeleTohum(TOHUM + (isMainThread ? 0 : workerData.sira * 7919))
 
 function dizi(n, olcek) {
   const d = new Float32Array(n)
@@ -171,17 +332,44 @@ function dizi(n, olcek) {
   return d
 }
 
-// He başlatması: ReLU'da varyansı koruyor, aksi hâlde derin katman sönüyor.
-const p = {
-  k1: dizi(S1 * C * C, Math.sqrt(2 / (C * C))),
-  b1: new Float32Array(S1),
-  k2: dizi(S2 * S1 * C * C, Math.sqrt(2 / (S1 * C * C))),
-  b2: new Float32Array(S2),
-  w: dizi(SINIFLAR.length * S2 * 16, Math.sqrt(2 / (S2 * 16))),
-  b: new Float32Array(SINIFLAR.length),
+const OLCU = {
+  k1: S1 * C * C,
+  b1: S1,
+  k2: S2 * S1 * C * C,
+  b2: S2,
+  w: SINIFLAR.length * S2 * 16,
+  b: SINIFLAR.length,
 }
-const hiz = Object.fromEntries(Object.keys(p).map((k) => [k, new Float32Array(p[k].length)]))
-const egim = Object.fromEntries(Object.keys(p).map((k) => [k, new Float32Array(p[k].length)]))
+const SIRA = ['k1', 'b1', 'k2', 'b2', 'w', 'b']
+const PARAMETRE = SIRA.reduce((t, ad) => t + OLCU[ad], 0)
+
+/** Verilen tampon üzerinde katman katman görünüm açar. */
+function gorunumler(tampon) {
+  const cikti = {}
+  let yer = 0
+  for (const ad of SIRA) {
+    cikti[ad] = new Float32Array(tampon, yer * 4, OLCU[ad])
+    yer += OLCU[ad]
+  }
+  return cikti
+}
+
+// Ağırlıklar paylaşılan tamponda: ana iş parçacığı günceller, işçiler
+// kopyalamadan aynı sayıları görür.
+const agirlikTamponu = isMainThread
+  ? new SharedArrayBuffer(PARAMETRE * 4)
+  : workerData.agirlikTamponu
+const p = gorunumler(agirlikTamponu)
+
+if (isMainThread) {
+  // He başlatması: ReLU'da varyansı koruyor, aksi hâlde derin katman sönüyor.
+  p.k1.set(dizi(OLCU.k1, Math.sqrt(2 / (C * C))))
+  p.k2.set(dizi(OLCU.k2, Math.sqrt(2 / (S1 * C * C))))
+  p.w.set(dizi(OLCU.w, Math.sqrt(2 / (S2 * 16))))
+}
+
+const hiz = Object.fromEntries(SIRA.map((k) => [k, new Float32Array(OLCU[k])]))
+const egim = Object.fromEntries(SIRA.map((k) => [k, new Float32Array(OLCU[k])]))
 
 function ileri(x) {
   const z1 = new Float32Array(S1 * 576)
@@ -314,49 +502,157 @@ function guncelle(adim, yigin) {
 
 // ------------------------------------------------------------- eğitim
 
-const { x, y } = veriyiTopla()
-const sira = [...x.keys()]
-for (let i = sira.length - 1; i > 0; i--) {
-  const j = Math.floor(rast() * (i + 1))
-  ;[sira[i], sira[j]] = [sira[j], sira[i]]
+/**
+ * Yığın boyu, çekirdek sayısına göre büyütüldü.
+ *
+ * Tek çekirdekte 32'ydi. Yirmi sekiz işçiye 32 örnek bölmek işçi başına bir
+ * örnek demek ve haberleşme hesaptan uzun sürüyor. 224'te her işçiye sekiz
+ * örnek düşüyor; adım da ona göre büyüdü — yığın büyüdükçe eğim daha az
+ * gürültülü oluyor ve aynı adımla ağ daha yavaş öğreniyor. Oran karekök
+ * kuralından: 0.06 × √(224/32) ≈ 0.16.
+ */
+const YIGIN = 224
+const BASLANGIC_ADIMI = 0.16
+
+const ISCI_SAYISI = Math.max(1, Math.min(availableParallelism() - 2, 28))
+
+/** Uint8 örneği ağın beklediği 0-1 aralığına çevirir. */
+function kareAl(veri, n) {
+  const kare = new Float32Array(KARE * KARE)
+  const yer = n * KARE * KARE
+  for (let i = 0; i < kare.length; i++) kare[i] = veri[yer + i] / 255
+  return kare
 }
-const ayirma = Math.floor(sira.length * 0.9)
-const egitim = sira.slice(0, ayirma)
-const sinav = sira.slice(ayirma)
-console.log(`eğitim ${egitim.length}, sınav ${sinav.length}, tur ${TUR}`)
 
-const YIGIN = 32
-for (let tur = 1; tur <= TUR; tur++) {
-  // Son turdaki adım, ilkinin %2'si olacak biçimde soluyor.
-  const adim = 0.06 * Math.pow(Math.pow(0.02, 1 / Math.max(1, TUR - 1)), tur - 1)
-  let kayip = 0
-  const basla = Date.now()
+if (!isMainThread) {
+  // ---------------------------------------------------------------- işçi
+  const veri = new Uint8Array(workerData.veriTamponu)
+  const etiket = new Uint8Array(workerData.etiketTamponu)
+  const paylasilanEgim = gorunumler(workerData.egimTamponu)
 
-  for (let i = egitim.length - 1; i > 0; i--) {
-    const j = Math.floor(rast() * (i + 1))
-    ;[egitim[i], egitim[j]] = [egitim[j], egitim[i]]
-  }
-
-  for (let b = 0; b + YIGIN <= egitim.length; b += YIGIN) {
-    for (let i = 0; i < YIGIN; i++) {
-      const n = egitim[b + i]
-      const girdi = cogalt(x[n], rast)
-      kayip += geri(girdi, ileri(girdi), y[n])
+  parentPort.on('message', (mesaj) => {
+    if (mesaj.tur === 'egit') {
+      for (const ad of SIRA) egim[ad].fill(0)
+      let kayip = 0
+      for (const n of mesaj.indeksler) {
+        const girdi = cogalt(kareAl(veri, n), rast)
+        kayip += geri(girdi, ileri(girdi), etiket[n])
+      }
+      for (const ad of SIRA) paylasilanEgim[ad].set(egim[ad])
+      parentPort.postMessage({ kayip })
+      return
     }
-    guncelle(adim, YIGIN)
+
+    let dogru = 0
+    for (const n of mesaj.indeksler) {
+      const puan = ileri(cogalt(kareAl(veri, n), rast)).puan
+      let en = 0
+      for (let s = 1; s < puan.length; s++) if (puan[s] > puan[en]) en = s
+      if (en === etiket[n]) dogru++
+    }
+    parentPort.postMessage({ dogru })
+  })
+} else {
+  // ----------------------------------------------------------------- ana
+  const { x, y } = veriyiTopla()
+
+  // Veri paylaşılan tampona Uint8 olarak yazılıyor: Float32 olsaydı aynı
+  // küme dört kat yer tutardı ve kaynağı zaten sekiz bitlik.
+  const veriTamponu = new SharedArrayBuffer(x.length * KARE * KARE)
+  const etiketTamponu = new SharedArrayBuffer(x.length)
+  const veri = new Uint8Array(veriTamponu)
+  const etiket = new Uint8Array(etiketTamponu)
+  for (let i = 0; i < x.length; i++) {
+    const yer = i * KARE * KARE
+    for (let j = 0; j < KARE * KARE; j++) veri[yer + j] = Math.round(x[i][j] * 255)
+    etiket[i] = y[i]
   }
 
-  let dogru = 0
-  for (const n of sinav) {
-    const puan = ileri(cogalt(x[n], rast)).puan
-    let en = 0
-    for (let s = 1; s < puan.length; s++) if (puan[s] > puan[en]) en = s
-    if (en === y[n]) dogru++
+  const sira = [...x.keys()]
+  for (let i = sira.length - 1; i > 0; i--) {
+    const j = Math.floor(rast() * (i + 1))
+    ;[sira[i], sira[j]] = [sira[j], sira[i]]
+  }
+  const ayirma = Math.floor(sira.length * 0.9)
+  const egitim = sira.slice(0, ayirma)
+  const sinav = sira.slice(ayirma)
+  console.log(`eğitim ${egitim.length}, sınav ${sinav.length}, tur ${TUR}, işçi ${ISCI_SAYISI}`)
+
+  const bu = fileURLToPath(import.meta.url)
+  const isciler = []
+  const isciEgimleri = []
+  for (let i = 0; i < ISCI_SAYISI; i++) {
+    const egimTamponu = new SharedArrayBuffer(PARAMETRE * 4)
+    isciEgimleri.push(gorunumler(egimTamponu))
+    isciler.push(
+      new Worker(bu, {
+        argv: process.argv.slice(2),
+        workerData: { sira: i, agirlikTamponu, veriTamponu, etiketTamponu, egimTamponu },
+      }),
+    )
   }
 
-  const basari = ((dogru / sinav.length) * 100).toFixed(2)
-  console.log(`tur ${tur}: kayıp ${(kayip / egitim.length).toFixed(4)}  başarı %${basari}  ${((Date.now() - basla) / 1000).toFixed(0)}sn`)
-  yaz(basari)
+  /** Bir mesajı bütün işçilere dağıtıp cevaplarını bekler. */
+  function dagit(tur, parcalar) {
+    return Promise.all(
+      isciler.map(
+        (isci, i) =>
+          new Promise((coz) => {
+            if (parcalar[i].length === 0) {
+              coz({ kayip: 0, dogru: 0 })
+              return
+            }
+            isci.once('message', coz)
+            isci.postMessage({ tur, indeksler: parcalar[i] })
+          }),
+      ),
+    )
+  }
+
+  /** Diziyi işçi sayısı kadar parçaya böler. */
+  function bol(liste) {
+    const parcalar = Array.from({ length: ISCI_SAYISI }, () => [])
+    liste.forEach((n, i) => parcalar[i % ISCI_SAYISI].push(n))
+    return parcalar
+  }
+
+  for (let tur = 1; tur <= TUR; tur++) {
+    // Son turdaki adım, ilkinin %2'si olacak biçimde soluyor.
+    const adim = BASLANGIC_ADIMI * Math.pow(Math.pow(0.02, 1 / Math.max(1, TUR - 1)), tur - 1)
+    let kayip = 0
+    const basla = Date.now()
+
+    for (let i = egitim.length - 1; i > 0; i--) {
+      const j = Math.floor(rast() * (i + 1))
+      ;[egitim[i], egitim[j]] = [egitim[j], egitim[i]]
+    }
+
+    for (let b = 0; b + YIGIN <= egitim.length; b += YIGIN) {
+      const cevaplar = await dagit('egit', bol(egitim.slice(b, b + YIGIN)))
+      for (const c of cevaplar) kayip += c.kayip
+      // İşçilerin eğimleri toplanıyor; güncelleme tek yerden, tek kez.
+      for (const ad of SIRA) {
+        const hedef = egim[ad]
+        hedef.fill(0)
+        for (const isciEgim of isciEgimleri) {
+          const kaynak = isciEgim[ad]
+          for (let i = 0; i < hedef.length; i++) hedef[i] += kaynak[i]
+        }
+      }
+      guncelle(adim, YIGIN)
+    }
+
+    const sinavCevaplari = await dagit('sinav', bol(sinav))
+    const dogru = sinavCevaplari.reduce((t, c) => t + c.dogru, 0)
+
+    const basari = ((dogru / sinav.length) * 100).toFixed(2)
+    console.log(
+      `tur ${tur}: kayıp ${(kayip / egitim.length).toFixed(4)}  başarı %${basari}  ${((Date.now() - basla) / 1000).toFixed(0)}sn`,
+    )
+    yaz(basari)
+  }
+
+  for (const isci of isciler) await isci.terminate()
 }
 
 function yaz(basari) {
