@@ -59,6 +59,15 @@ const MASKOT_MERKEZI = -160 + MASKOT_BOYU / 2
  */
 const UCUS_BASLANGICI = Math.round(ACILIS_SURESI * 0.68)
 
+/**
+ * Emniyet zamanlayıcısının animasyona verdiği pay (ms).
+ *
+ * Ekranı normalde `animationend` kaldırıyor; zamanlayıcı yalnızca olay hiç
+ * gelmezse devreye giriyor. Pay olmasaydı ikisi aynı anda dolar ve zamanlayıcı
+ * yine yarışı kazanabilirdi — düzeltmenin kendisi etkisiz kalırdı.
+ */
+const EMNIYET_PAYI = 700
+
 type Olcum = { dx: number; dy: number; olcek: number }
 
 /** Ölçümün yinelenme aralığı (ms). */
@@ -232,11 +241,37 @@ export function Acilis({ onBitti }: { onBitti: () => void }) {
   const bitisRef = useRef(onBitti)
   bitisRef.current = onBitti
 
+  /**
+   * Katmanı kaldıran şey **animasyonun kendisi**, zamanlayıcı değil.
+   *
+   * Ekranın ömrü bir `setTimeout(ACILIS_SURESI)` idi ve iki saat aynı anda
+   * işliyor sanılıyordu: biri JavaScript'in zamanlayıcısı, öteki tavşanın CSS
+   * animasyonu. Telefonda ikisi ayrışıyor — animasyon `acilis-bekliyor`
+   * kalkınca değil, ondan sonraki ilk **stil hesabında** salınıyor; WebView
+   * açılırken o kare gecikebiliyor, kare düşünce animasyon geride kalıyor ve
+   * uygulama bir an arka plana düşerse CSS animasyonu duruyor ama zamanlayıcı
+   * işlemeye devam ediyor.
+   *
+   * Sonuç her seferinde aynı: süre dolduğunda tavşan hâlâ yolda oluyor,
+   * katman kalkıyor ve tavşan yuvasına **ışınlanıyor**. Dışarıdan bakınca
+   * geçiş yumuşamıyor, "tak" diye oluyor.
+   *
+   * `animationend` bunu tanım gereği çözüyor: tavşan yerine oturmadan olay
+   * gelmiyor. Zamanlayıcı duruyor ama artık emniyet kemeri — animasyon hiç
+   * çalışmazsa (olay düşerse, `animation: none` veren bir tercih çıkarsa)
+   * uygulama açılış katmanının altında kilitlenmesin diye, bir pay ekleyerek.
+   */
+  const [inisBitti, setInisBitti] = useState(false)
+
   useEffect(() => {
     if (!basladi) return
-    const zamanlayici = window.setTimeout(() => bitisRef.current(), ACILIS_SURESI)
+    const zamanlayici = window.setTimeout(() => bitisRef.current(), ACILIS_SURESI + EMNIYET_PAYI)
     return () => clearTimeout(zamanlayici)
   }, [basladi])
+
+  useEffect(() => {
+    if (inisBitti) bitisRef.current()
+  }, [inisBitti])
 
   /*
     Ölçüm hiç tutmadıysa tavşan **uçmuyor**, olduğu yerde sönüyor.
@@ -301,6 +336,15 @@ export function Acilis({ onBitti }: { onBitti: () => void }) {
           marginTop: MASKOT_MERKEZI - MASKOT_KUTUSU / 2,
           marginLeft: -MASKOT_BOYU / 2,
           ...hedef,
+        }}
+        /*
+          Ekranın ömrünü bitiren olay bu. Ad denetimi şart: bu düğümün altında
+          süslemelerin kendi animasyonları da bitiyor ve `animationend`
+          kabarcıklanıyor — denetimsiz bırakılsaydı katman, tavşanın
+          süslemelerinden biri sustuğu anda kalkardı.
+        */
+        onAnimationEnd={(olay) => {
+          if (olay.animationName === 'acilis-inis') setInisBitti(true)
         }}
       >
         {/*
