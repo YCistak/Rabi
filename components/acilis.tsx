@@ -313,7 +313,7 @@ export function Acilis({ onBitti }: { onBitti: () => void }) {
             `acilis-inis`in üstünde değil ayrı bir kapta: ikisi de aynı öğede
             olsaydı opaklığı sonuncusu ele geçirir ve iniş görünmez olurdu. */}
         <span className={cn('block', !olcum && 'acilis-son')}>
-          <Rabi durum="mutlu" boyut={MASKOT_BOYU} />
+          <Rabi durum="mutlu" poz="kafa" boyut={MASKOT_BOYU} />
         </span>
       </div>
 
@@ -405,7 +405,7 @@ export function MaskotGecisi({ soluyor }: { soluyor: boolean }) {
         style={{ top: 'calc(2rem + var(--guvenli-ust))' }}
       >
         <span className="acilis-gecis">
-          <Rabi durum="mutlu" boyut={110} />
+          <Rabi durum="mutlu" poz="kafa" boyut={110} />
         </span>
       </div>
     </div>

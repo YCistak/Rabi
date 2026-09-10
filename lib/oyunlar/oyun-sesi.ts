@@ -250,22 +250,6 @@ export function geriSayimSesi(kalan: number) {
 }
 
 /**
- * Boss sorusunun yenilmesi.
- *
- * Doğru sesinin **üstüne** biniyor, onun yerine geçmiyor: boss da bir doğru
- * cevap, farkı ağırlığında. Küçük bir gecikme iki sesi ayırıyor, yoksa tek bir
- * bulanık ses duyuluyor.
- */
-export function bossSesi() {
-  if (!sesAcik) return
-  cal([
-    { frekans: 523, gecikme: 0.1, sure: 0.11, bicim: 'triangle', seviye: 0.3 },
-    { frekans: 659, gecikme: 0.19, sure: 0.11, bicim: 'triangle', seviye: 0.3 },
-    { frekans: 1046, gecikme: 0.28, sure: 0.3, bicim: 'triangle', seviye: 0.34 },
-  ])
-}
-
-/**
  * Süre tükenmek üzere — tur başına **bir kez**.
  *
  * Her saniye tıklayan bir sayaç öğrenmeyi değil kaygıyı besler; tek bir alçak
@@ -306,8 +290,8 @@ export function yanlisSesi() {
  * kapatan kullanıcı ses altyapısının açılmasını da beklemez.
  */
 export function oyunSesiCal(tur: 'dogru' | 'yanlis' | 'bitis', acik: boolean) {
-  // Ayarın son hâli burada da yakalanıyor: kabuğun çaldığı sesler (`bossSesi`,
-  // `sureUyarisi`) bayrağı parametreyle almıyor, bu değişkene bakıyor.
+  // Ayarın son hâli burada da yakalanıyor: kabuğun çaldığı ses (`sureUyarisi`)
+  // bayrağı parametreyle almıyor, bu değişkene bakıyor.
   sesAcik = acik
   if (!acik) return
   if (tur === 'dogru') dogruSesi()

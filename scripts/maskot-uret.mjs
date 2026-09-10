@@ -90,6 +90,13 @@ const POZLAR = [
   { ad: 'tavsan-dusunen', kaynak: 'düşünen maskot.jpeg' },
   { ad: 'tavsan-kahveli', kaynak: 'kahve içen maskot.jpeg' },
   { ad: 'tavsan-isaretci', kaynak: 'çubuk tutan maskot 3.jpeg' },
+  // Kafa: `tavsan-yuz`ün elle kırpılmış hâlinin aksine kaynağın kendisi zaten
+  // baş çekimi — kırpma gerekmiyor, kulaklar da tam giriyor. Ana sayfanın
+  // selamlaması ve açılış tavşanı bunu kullanıyor.
+  { ad: 'tavsan-kafa', kaynak: 'kafası gözüken maskot.jpeg' },
+  // Zıplayan sevinç: `tavsan-sevinen`den ayrı bir poz, çünkü ikisi aynı anda
+  // kullanılıyor — bu, günlük hedefi tutturan kullanıcıya çıkan hâl.
+  { ad: 'tavsan-ziplayan', kaynak: 'sevinen maskot 3.jpeg' },
 ]
 
 /**

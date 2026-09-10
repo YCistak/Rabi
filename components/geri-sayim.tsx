@@ -60,7 +60,7 @@ export function GeriSayim({
     <section
       aria-label={`${sayim.takvim.yil} YKS geri sayımı`}
       className={cn(
-        'golge-kart overflow-hidden rounded-[26px] p-4',
+        'golge-kart overflow-hidden rounded-[26px] p-3.5',
         doluKart ? 'bg-ikincil text-white' : 'bg-card text-card-foreground',
         className,
       )}
@@ -83,12 +83,12 @@ export function GeriSayim({
       {/* Sayı, "gün kaldı" ve tarih tek satırda. Tarih ayrı satırdayken kartın
           yarısını üç satırlık bir bilgi bloğu kaplıyordu; asıl okunacak şey
           büyük sayı, gerisi onun eki. */}
-      <p className="mt-2 flex flex-wrap items-baseline gap-x-2">
+      <p className="mt-1.5 flex flex-wrap items-baseline gap-x-2">
         {sinavGunu ? (
           <span className="font-display text-[40px] leading-none font-extrabold">Bugün!</span>
         ) : (
           <>
-            <span className="rakam font-display text-[46px] leading-none font-extrabold tracking-tight">
+            <span className="rakam font-display text-[38px] leading-none font-extrabold tracking-tight">
               {sayim.kalanGun}
             </span>
             {/* Nokta ayracı "gün kaldı"nın ucunda, tarihin başında değil:
@@ -115,7 +115,7 @@ export function GeriSayim({
           aldım" sorusunu cevaplamıyordu. */}
       {!doluKart && (
         <div
-          className="mt-3.5 h-2 overflow-hidden rounded-full bg-muted"
+          className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted"
           role="progressbar"
           aria-valuenow={yuzde}
           aria-valuemin={0}
@@ -144,7 +144,7 @@ export function GeriSayim({
       {children && (
         <div
           className={cn(
-            'mt-3 rounded-[18px] p-3',
+            'mt-2.5 rounded-[18px] p-2.5',
             doluKart ? 'bg-white/15' : 'bg-background',
           )}
         >
