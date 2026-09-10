@@ -59,14 +59,19 @@
     </FrameLayout>
 
     <!-- Aşama ve ders tek satırda: "Çalışma · Matematik". İkiye bölünseydi
-         bildirim iki satır uzar, kazanılan bilgi aynı kalırdı. -->
+         bildirim iki satır uzar, kazanılan bilgi aynı kalırdı.
+
+         Kendi hizası ayrıca yazılı: kutusu `match_parent` olduğu için kabın
+         `gravity`si buraya ulaşmıyor, yazıyı kutunun içinde konumlandıran şey
+         bu satır. Yazılmasaydı satır sola yaslanmış bir kabın içinde tek
+         başına ortalanmış kalırdı. -->
     <TextView
         android:id="@+id/bildirim_genis_asama"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:ellipsize="end"
-        android:gravity="center"
+        android:gravity="start"
         android:maxLines="1"
         android:textColor="?android:attr/textColorSecondary"
         android:textSize="13sp"
