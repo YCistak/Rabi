@@ -814,7 +814,9 @@ function AcOk({ acik }: { acik: boolean }) {
 function GenisAlan({ tam, children }: { tam?: boolean; children: React.ReactNode }) {
   return (
     // Ayraç yok: bu alan üstündeki satırın parçası, ondan ayrılmamalı.
-    <div className={cn('pb-3.5 pr-3.5 pt-0.5', tam ? 'pl-3.5' : 'pl-[68px]')}>
+    // `acilir-giris` satırın altında doğmasını sağlıyor: yerinde beliren bir
+    // liste, dokunulan satırla ilgisiz bir şey açılmış gibi duruyordu.
+    <div className={cn('acilir-giris pb-3.5 pr-3.5 pt-0.5', tam ? 'pl-3.5' : 'pl-[68px]')}>
       {children}
     </div>
   )

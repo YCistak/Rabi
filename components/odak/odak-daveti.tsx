@@ -39,7 +39,7 @@ export function OdakDaveti({
   if (!acik) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-5 pt-[calc(1rem+var(--guvenli-ust))] pb-[calc(1rem+var(--guvenli-alt))]">
+    <div className="katman-zemin fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-5 pt-[calc(1rem+var(--guvenli-ust))] pb-[calc(1rem+var(--guvenli-alt))]">
       {/*
         Dikey dikdörtgen: yüksekliği içeriğe bırakılmadı, ekranın çoğunu
         kaplaması bilinçli. Alçak bir kutu "onayla/vazgeç" kutusuna benziyor ve
@@ -48,7 +48,7 @@ export function OdakDaveti({
         İçerik kaydırılabilir çünkü küçük ekranda dört madde + iki düğme
         sığmıyor ve düğmelerin ekran dışında kalması pencereyi kilitler.
       */}
-      <div className="flex max-h-full w-full max-w-[340px] flex-col overflow-hidden rounded-[26px] bg-card golge-kart">
+      <div className="pencere-girisi flex max-h-full w-full max-w-[340px] flex-col overflow-hidden rounded-[26px] bg-card golge-kart">
         <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-1 text-center">
           {/* `mx-auto` şart: maskot bir `img` ve `text-center` onu ortalamıyor. */}
           <Rabi durum="calisiyor" poz="okuyan" boyut={104} className="mx-auto" />

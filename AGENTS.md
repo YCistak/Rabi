@@ -1003,6 +1003,63 @@ kullanıcı telefonda hâlâ duymadı. "Başla!" akorunun üç notası ise bunun
 (`AKOR_SEVIYESI`) çünkü kuyrukları üst üste biniyor — üçü de sayım seviyesinde
 çalsaydı çıkış 1'i aşar, akor yüksek değil **kırpılmış** duyulurdu.
 
+## Ekranlar ve katmanlar bağlanarak geliyor
+
+Sekme değiştirmek, bir araç açmak, bir onay penceresi çıkarmak tek bir karede
+oluyordu: içerik "tak" diye yerine oturuyor, kullanıcı ekranın kurulduğunu
+değil sıçradığını görüyordu. Altı ortak sınıf o anı bir hareketle bağlıyor
+(`app/globals.css`): `sayfa-girisi` (sekme/araç ekranı), `katman-zemin`
+(pencerelerin karartması), `pencere-girisi` (ortada açılan pencere),
+`alt-pencere-girisi` (alttan gelen sayfa), `tam-katman-girisi` (tam ekran
+katman), `acilir-giris` (yerinde açılan satır).
+
+Hepsi **giriş** animasyonu, çıkış yok: gelen şeyin nereden geldiğini anlatan
+bir hareket, gidenin nereye gittiğinden çok iş görüyor ve çıkış animasyonu her
+çağrı yerine bir "kapanıyor" durumu eklemek demek — on ayrı katmanın hepsinde
+ikinci bir state. Süreler 160–260 ms: hareketlerin hiçbiri bilgi taşımıyor,
+uzun bir geçiş ikinci kez izlendiğinde beklemeye dönüşüyor.
+
+Üç kural, üçü de bir kez düşülen tuzaktan:
+
+- **Ekranları saran kutunun dolgusu `backwards`, `both` değil** — bütün mesele
+  bu. O kutunun içinden `position: fixed` katmanlar çıkıyor; transformlu bir
+  öğe onların *kapsayıcı bloğu* olur (katman ekrana değil kutuya göre
+  konumlanır) ve opaklığı ya da konumu canlandıran bir öğe kendi *yığın
+  bağlamını* kurar (içerideki `z-50` katman, dışarıdaki `z-40` alt menünün
+  altında kalır). İkisi de yalnızca animasyon **yürürlükteyken** oluyor;
+  `backwards` dolgu animasyon biter bitmez etkiyi tümüyle kaldırıyor, `both`
+  ise hiç bitirmiyor. `AppShell`in kök `div`inde bir kez `both` ile yazıldı ve
+  alt menü sayfanın altından taştı; onay penceresi de bir kez alt menünün
+  arkasında açıldı.
+- **Geçiş yalnızca solma olamaz.** İlk hâli 190 ms'lik bir opaklık geçişiydi ve
+  telefonda hiç fark edilmedi: aynı yerde duran iki ekran arasındaki solma,
+  geçiş gibi değil ekranın geç çizilmesi gibi görünüyor. Hareket eden bir şey
+  yoksa geçiş de yok.
+- **Geçiş duraklatılmış başlıyor** (`SayfaGecisi`, `.sayfa-bekliyor`). CSS
+  animasyonu öğenin ilk çizildiği karede başlıyor ve o kare, yeni ekranın
+  kurulduğu en pahalı kare; orada başlayan animasyonun ilk kareleri düşüyor ve
+  hareket kasıyor gibi görünüyor. İki `rAF` sonra salınıyor, arkasında emniyet
+  zamanlayıcısı var — açılış ekranındaki `acilis-bekliyor` ile aynı kural.
+  Duraklatma alt öğelere de iniyor: kartların sıralı girişi de aynı pahalı
+  karede başlıyordu, artık hepsi tek bir hareket hâlinde salınıyor.
+
+Alt menünün zemini bu yüzden **donuk** ve `backdrop-blur` taşımıyor: menü
+sayfanın üstünde duruyor ve altındaki içerik her kıpırdadığında WebView arkayı
+yeniden bulanıklaştırıyor. Görsel katkısı yoktu (zemin zaten %95 donuktu),
+bedeli takılan bir geçişti. Sayfanın üstünde duran yeni bir çubuk eklersen
+aynı soruyu sor.
+- **Tam ekran katmanlar `clip-path` ile yükseliyor**, `transform` ile değil —
+  yukarıdaki ilk sebep. `sahne-iner` ile aynı yöntem, ters yönde: bu katmanlar
+  alttan geliyor.
+
+Ekran geçişini oynatan şey `AppShell`deki `key`: sınıf tek başına verilseydi
+React aynı düğümü koruduğu için animasyon yalnızca ilk açılışta çalışırdı.
+
+Yeni bir pencere ya da katman eklersen sınıflardan birini kullan; yenisini
+yazmadan önce listedekilerden hangisinin karşılığı olduğuna bak. Altısı da
+`prefers-reduced-motion` altında susuyor: hangi ekranda olunduğu başlıkta,
+pencerenin neye ait olduğu metninde yazılı — hareket yalnızca bağlıyor.
+
 ## Kartlar sırayla beliriyor
 
 Izgaralar (ana sayfanın Araçlar/Oyunlar kutucukları, Oyunlar sekmesinin ders ve

@@ -299,7 +299,7 @@ export function YeniDenemeEkrani({
       {yanlisAcik && (
         /* Katman tam ekran ve donuk: altındaki form görünür kalsaydı iki ayrı
            "kaydet" düğmesi aynı anda ekranda olurdu. */
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-background">
+        <div className="tam-katman-girisi fixed inset-0 z-50 overflow-y-auto bg-background">
           <div className="mx-auto max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
             {yanlisEkleme.gizliGirdi}
 

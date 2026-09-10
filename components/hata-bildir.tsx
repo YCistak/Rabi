@@ -167,7 +167,7 @@ export function BildirimDugmesi({ soru, kol }: { soru: BankaSorusu; kol: Bildiri
       )}
 
       {acik && (
-        <div className="mt-2">
+        <div className="acilir-giris mt-2">
           {/* Soru **çiplerin üstünde**: seçilecek şeyin ne olduğu, seçenekler
               görünmeden önce okunuyor. Bildirilmişse aynı yer sebebin
               değiştirilebildiğini söylüyor — ekranda "Bildirildi" yazarken

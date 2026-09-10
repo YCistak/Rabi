@@ -50,7 +50,7 @@ export function BilinmeyenlerEkrani({
   const doluDersler = KONU_DERSLERI.filter((d) => (dagilim[d.id] ?? 0) > 0)
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-background">
+    <div className="tam-katman-girisi fixed inset-0 z-50 flex flex-col bg-background">
       <header className="shrink-0 bg-primary-soft px-4 pb-3 pt-[calc(0.75rem+var(--guvenli-ust))]">
         <div className="mx-auto flex max-w-md items-center gap-3">
           <div className="min-w-0 flex-1">

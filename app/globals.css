@@ -1498,3 +1498,185 @@
     transform: none;
   }
 }
+
+/*
+  ── Ekran ve katman geçişleri ────────────────────────────────────────────
+
+  Ekran değiştirmek, bir araç açmak ya da bir onay penceresi çıkarmak tek bir
+  karede oluyordu: içerik "tak" diye yerine oturuyor, kullanıcı ekranın
+  kurulduğunu değil sıçradığını görüyordu. Aşağıdaki dört sınıf o anı bir
+  hareketle bağlıyor. Hepsi **giriş** animasyonu: gelen şeyin nereden geldiğini
+  anlatan bir hareket, gidenin nereye gittiğinden daha çok iş görüyor ve çıkış
+  animasyonu her çağrı yerine bir bekleme durumu eklemek demek.
+
+  Süreler kısa (160–260 ms): bu hareketlerin hiçbiri bilgi taşımıyor, yalnızca
+  iki kareyi birbirine bağlıyor. Uzun bir geçiş ikinci kez izlendiğinde
+  beklemeye dönüşüyor.
+*/
+
+/*
+  Sekme ve araç ekranlarının girişi.
+
+  Önce yalnızca opaklıktı ve telefonda **hiç fark edilmedi**: aynı yerde duran
+  iki ekran arasındaki 190 ms'lik bir solma, göze geçiş gibi değil ekranın geç
+  çizilmesi gibi geliyor. Hareket eden bir şey yoksa geçiş de yok. Şimdi içerik
+  aşağıdan geliyor.
+
+  Kaymanın **hiçbir iz bırakmaması** şart. Sınıfın konduğu kutu ekranların
+  tamamını sarıyor ve o ekranların içinden `position: fixed` katmanlar (onay
+  penceresi, tam ekran katmanlar) çıkıyor; transformlu bir öğe bu katmanların
+  *kapsayıcı bloğu* olur ve katman ekrana değil bu kutuya göre konumlanır.
+  `AppShell`in kök `div`inde bir kez tam da bu oldu — ama oradaki animasyon
+  `both` ile dolduruluyordu, yani transform bittikten **sonra da** birim matris
+  olarak duruyordu. Buradaki dolgu `backwards`: animasyon biter bitmez
+  transform tümüyle kalkıyor ve kutu sıradan bir kutuya dönüyor.
+*/
+@keyframes sayfaGirisi {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+/*
+  Dolgu `both` **değil** `backwards`, ve bu şart — yukarıdaki kapsayıcı blok
+  sebebinin yanında bir de yığın bağlamı sebebi var: opaklığı ya da konumu
+  canlandıran bir öğe, değeri son hâline gelmiş olsa bile animasyon
+  "yürürlükte" olduğu sürece kendi yığın bağlamını kuruyor. `both` ile dolgu
+  hiç bitmiyor ve içeriden çıkan `z-50` katmanlar, dışarıdaki `z-40` alt
+  menünün altında eziliyordu — onay penceresi bir kez öyle açıldı.
+
+  Geriye 240 ms'lik bir pencere kalıyor: geçiş sürerken açılan bir katman hâlâ
+  alt menünün altında kalır ve ekrana değil bu kutuya göre konumlanır.
+  Kullanıcı dokunuşu o kadar hızlı gelmiyor ve ekranların hiçbiri kurulur
+  kurulmaz katman açmıyor.
+*/
+.sayfa-girisi {
+  animation: sayfaGirisi 220ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+}
+
+/*
+  Geçiş, ekran kurulup **çizilene kadar** duraklatılmış bekliyor.
+
+  CSS animasyonu öğe ilk çizildiği karede başlıyor; ekran geçişinde o kare, tam
+  da React'in yeni ekranı kurduğu, düzenin hesaplandığı ve görsellerin çözüldüğü
+  en pahalı kare. Animasyon orada başlayınca ilk kareler düşüyor ve hareket
+  akmıyor, **kasıyor** gibi görünüyor. Duraklatılmış başlayıp iki `rAF` sonra
+  salınınca aynı hareket boş bir karede başlıyor.
+
+  Duraklatma alt öğelere de iniyor (`*`): ızgara kartları kendi sıralı girişini
+  (`kart-girisi`) yapıyor ve onlar da aynı pahalı karede başlıyordu. Hepsi
+  birlikte salınıyor, yani sayfa ile kartları tek bir hareket hâlinde geliyor.
+
+  Açılış ekranındaki `acilis-bekliyor` ile aynı kural; oradaki gibi arkasında
+  bir emniyet zamanlayıcısı var, çünkü sayfa görünür değilken `rAF` hiç
+  çağrılmıyor ve duraklatılmış kalan ekran (opaklığı 0'da donmuş) hiç
+  görünmezdi.
+*/
+.sayfa-bekliyor,
+.sayfa-bekliyor * {
+  animation-play-state: paused;
+}
+
+/*
+  Pencerelerin arkasındaki karartma.
+
+  Karartma pencereyle **aynı anda** ama ondan hızlı geliyor: zemin önce
+  oturuyor, pencere onun üstüne süzülüyor. İkisi aynı sürede gelseydi karartma
+  da pencere gibi "gelen bir şey" olurdu; oysa onun işi arkayı geri çekmek.
+*/
+@keyframes katmanZemini {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.katman-zemin {
+  animation: katmanZemini 160ms ease-out both;
+}
+
+/*
+  Ortada açılan pencereler (onay, çökme sorusu, odak daveti).
+
+  Büyüyerek geliyor ama az (0.96): daha fazlası pencereyi ekrana fırlatılmış
+  gibi gösteriyor. Küçük bir yükselme de var — pencere karartmanın üstüne
+  konuyormuş gibi okunuyor.
+
+  Sınıf **pencerenin kendisine** konuyor, `fixed` olan dış kutuya değil:
+  transformlu dış kutu içindeki `fixed` katmanları kendine bağlardı (bkz.
+  `.sayfa-girisi`).
+*/
+@keyframes pencereGirisi {
+  from { opacity: 0; transform: translateY(10px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+.pencere-girisi {
+  animation: pencereGirisi 220ms cubic-bezier(0.2, 0.7, 0.3, 1) 40ms both;
+}
+
+/*
+  Alttan gelen sayfa (`Onay` gibi ekranın diline yapışan pencereler).
+
+  Ekranın altından çıkan bir yüzey, geldiği yeri kendisi söylüyor; ortada
+  belirseydi hangi düğmeye basıldığı ile ne açıldığı arasındaki bağ kopardı.
+*/
+@keyframes altPencereGirisi {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: none; }
+}
+
+.alt-pencere-girisi {
+  animation: altPencereGirisi 240ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+/*
+  Tam ekran katmanlar (yanlış soru ekleme, bilinmeyenler, oyun tanıtımı,
+  fotoğraf görüntüleyici).
+
+  Yükselme `transform` ile değil `clip-path` ile: katman ekranı kaplıyor ve
+  içinden yeni `fixed` katmanlar çıkabiliyor (tanıtımın içindeki geri sayım
+  gibi) — transform onları kendine bağlardı. Kırpma içeriği kaydırmıyor,
+  açıyor; `sahne-iner`in tersi yönde çalışıyor çünkü bu katmanlar alttan
+  geliyor.
+
+  Katman ekranın tamamını kapladığı için `inset(0 0 0 0)` hiçbir şeyi
+  kırpmıyor; animasyon bittiğinde geriye görünür bir etki kalmıyor.
+*/
+@keyframes tamKatmanGirisi {
+  from { opacity: 0.4; clip-path: inset(35% 0 0 0); }
+  to { opacity: 1; clip-path: inset(0 0 0 0); }
+}
+
+.tam-katman-girisi {
+  animation: tamKatmanGirisi 260ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+/*
+  Yerinde açılan satırlar (Ayarlar'daki seçenek listeleri, hatalı soru
+  bildiriminin sebep çipleri).
+
+  Açılan şey satırın **altında** doğuyor; yerinde beliren bir liste, satıra
+  dokunmakla ilgisiz bir şey açılmış gibi duruyordu. Yükseklik değil opaklık ve
+  kayma oynatılıyor: `height: auto`ya animasyon yazılamıyor ve ölçülen bir
+  yükseklik, içerik değişince bayatlıyor.
+*/
+@keyframes acilirGiris {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.acilir-giris {
+  animation: acilirGiris 200ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Hiçbiri bilgi taşımıyor: hangi ekranda olunduğu başlıkta, pencerenin
+     neye ait olduğu metninde yazılı. Hareket kalkınca geriye tak diye gelen
+     ama doğru duran bir arayüz kalıyor. */
+  .sayfa-girisi,
+  .katman-zemin,
+  .pencere-girisi,
+  .alt-pencere-girisi,
+  .tam-katman-girisi,
+  .acilir-giris {
+    animation: none;
+  }
+}
