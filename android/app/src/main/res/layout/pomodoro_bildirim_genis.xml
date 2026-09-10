@@ -12,11 +12,30 @@
   + `DecoratedCustomViewStyle`). Elle çizilen düğmeler her Android sürümünde ve
   her üreticinin gölgesinde başka türlü duruyor; sistemin kendi düğmesi her
   yerde tıklanabilir ve doğru boyda.
+
+  ## İçerik ortalanmıyor, sola yaslanıyor
+
+  Bir süre `center_horizontal`dı ve bildirim gözle görülür biçimde **sağa
+  kaymış** duruyordu. Sebep düzende değil, düzenin oturduğu yerde:
+  `DecoratedCustomViewStyle` özel görünümü kartın tamamına değil, solunda
+  uygulama simgesi için yer ayrılmış bir şeride koyuyor. Ekran görüntüsünden
+  ölçüldü — kartın kendisi 30..893 piksel, şerit 150..855: solda 120, sağda 38
+  piksel pay var. Şeridin ortası kartın ortasından 41 piksel sağda kalıyor ve
+  "ortalanmış" her şey oraya oturuyor; maskotun, sürenin ve çubuğun ölçülen
+  merkezi 502,5 iken kartınki 461,5'ti.
+
+  Payı sayıyla dengelemek denenebilir görünüyor ve yanlış: o iki sayı Android
+  sürümüne ve üreticinin gölgesine göre değişiyor, sabit bir dolgu bir
+  telefonda düzeltip ötekinde ters yöne bozardı.
+
+  Sola yaslamak ölçüden bağımsız çalışıyor, üstelik doğru hizayı veriyor:
+  sistemin kendi çizdiği "Rabi" başlığı ve alttaki düğmeler zaten şeridin sol
+  kenarından başlıyor. Üçü aynı çizgide durunca bildirim tek parça okunuyor.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_horizontal"
+    android:gravity="start"
     android:orientation="vertical"
     android:paddingTop="4dp"
     android:paddingBottom="8dp">
