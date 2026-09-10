@@ -1,7 +1,6 @@
 'use client'
 
 import { useMemo } from 'react'
-import { Lock } from 'lucide-react'
 import type {
   Deneme,
   GunlukKayit,
@@ -21,7 +20,7 @@ import {
   type RozetKademesi,
   type RozetTuru,
 } from '@/lib/rozetler'
-import { netYaz, tarihYaz } from '@/lib/hesap'
+import { netYaz } from '@/lib/hesap'
 import { cn } from '@/lib/utils'
 import { BaslikSatiri, Deger, Kart, Not } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
@@ -59,6 +58,39 @@ const BIRIM: Partial<Record<RozetTuru, string>> = {
  */
 function degerYaz(tur: RozetTuru, deger: number): string {
   return netYaz(deger, tur === 'diploma' ? 2 : 0)
+}
+
+/**
+ * Kazanılma tarihinin kısa yazımı: "9 May".
+ *
+ * `tarihYaz` uzun yazıyor ("9 Mayıs 2026") ve o satır sağ sütunu genişletiyor:
+ * ortadaki açıklama iki satıra kırılıyor, satırlar birbirinden farklı boyda
+ * kalıyordu. Tarihin buradaki işi kesin bir gün bildirmek değil, "ne zaman
+ * kazandım" sorusunu kabaca yanıtlamak.
+ *
+ * Yıl yalnızca **bu yıl değilse** yazılıyor. Tamamen atılsaydı bir önceki
+ * öğretim yılında kazanılmış rozet bu yılkiyle aynı görünürdü; her zaman
+ * yazılsaydı satırların çoğuna aynı dört rakam eklenirdi.
+ */
+function kisaTarih(isoTarih: string): string {
+  const [yil, ay, gun] = isoTarih.split('-').map(Number)
+  if (!yil || !ay || !gun) return isoTarih
+  return new Date(yil, ay - 1, gun).toLocaleDateString('tr-TR', {
+    day: 'numeric',
+    month: 'short',
+    ...(yil === new Date().getFullYear() ? {} : { year: 'numeric' }),
+  })
+}
+
+/**
+ * Satırın sağ alt köşesindeki tek satır: kazanılmışta tarih, kazanılmamışta
+ * "23 / 25 deneme". Eşiği 1 olan rozetlerde (banka temizliği gibi) sayı
+ * anlamsız — orada ilerleme değil, olup olmadığı yazılıyor.
+ */
+function ilerlemeYazisi({ rozet, mevcut }: RozetIlerlemesi): string {
+  if (rozet.esik <= 1) return 'Henüz olmadı'
+  const birim = BIRIM[rozet.tur]
+  return `${degerYaz(rozet.tur, mevcut)} / ${netYaz(rozet.esik, 0)}${birim ? ` ${birim}` : ''}`
 }
 
 export function RozetlerEkrani({
@@ -217,10 +249,10 @@ export function RozetlerEkrani({
             <h2 className="mb-2 text-xs font-bold tracking-[0.08em] text-muted-foreground">
               {bolum.ad}
             </h2>
-            <ul className="grid grid-cols-2 gap-2">
+            <ul className="flex flex-col gap-2">
               {bolum.satirlar.map((satir) => (
                 <li key={satir.rozet.id}>
-                  <RozetKarti satir={satir} />
+                  <RozetSatiri satir={satir} />
                 </li>
               ))}
             </ul>
@@ -231,73 +263,55 @@ export function RozetlerEkrani({
   )
 }
 
-/**
- * "7 / 10 gün" satırı. Eşiği 1 olan rozetlerde (banka temizliği gibi) sayı
- * anlamsız — orada ilerleme değil, olup olmadığı yazılıyor.
- */
+/** "7 / 10 gün" satırı — sıradaki hedef kartındaki hâli. */
 function Ilerleme({ satir }: { satir: RozetIlerlemesi }) {
-  const { rozet, mevcut } = satir
-  if (rozet.esik <= 1) {
-    return <p className="mt-1 text-xs text-muted-foreground">Henüz olmadı</p>
-  }
-  const birim = BIRIM[rozet.tur]
-  return (
-    <p className="rakam mt-1 text-xs text-muted-foreground">
-      {degerYaz(rozet.tur, mevcut)} / {netYaz(rozet.esik, 0)}
-      {birim ? ` ${birim}` : ''}
-    </p>
-  )
+  return <p className="rakam mt-1 text-xs text-muted-foreground">{ilerlemeYazisi(satir)}</p>
 }
 
-function RozetKarti({ satir }: { satir: RozetIlerlemesi }) {
+/**
+ * Tek başarım satırı: simge · ad ve açıklama · kademe ve ilerleme.
+ *
+ * Kazanılmamışta simge soluk ve gri, ortada bir ilerleme çubuğu var;
+ * kazanılmışta çubuk yok — dolu bir çubuk zaten sağdaki kademe etiketinin
+ * söylediğini tekrarlardı.
+ */
+function RozetSatiri({ satir }: { satir: RozetIlerlemesi }) {
   const { rozet, kazanildi, oran, tarih } = satir
   const renk = KADEME_SINIFI[rozet.kademe]
 
   return (
-    <div
-      className={cn(
-        'h-full rounded-2xl border p-3',
-        kazanildi ? cn(renk.kenar, renk.zemin) : 'border-border bg-card',
-      )}
-    >
-      <div className="flex items-start justify-between gap-1">
-        {/* Kazanılmamış rozetin simgesi soluk: neye çalıştığı görünsün ama
-            kazanılmışlarla karışmasın. */}
-        <span
-          className={cn('text-2xl leading-none', !kazanildi && 'opacity-35 grayscale')}
-          aria-hidden
-        >
-          {rozet.ikon}
-        </span>
-        {kazanildi ? (
-          <span className={cn('mt-0.5 text-[10px] font-medium uppercase tracking-wide', renk.yazi)}>
-            {KADEME_ADI[rozet.kademe]}
-          </span>
-        ) : (
-          <Lock size={13} className="mt-1 shrink-0 text-muted-foreground/60" aria-hidden />
+    <div className="golge-kart flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
+      <span
+        className={cn(
+          'flex size-11 flex-none items-center justify-center rounded-[14px] border text-[22px] leading-none',
+          kazanildi ? cn(renk.kenar, renk.zemin) : 'border-border bg-muted opacity-45 grayscale',
         )}
-      </div>
+        aria-hidden
+      >
+        {rozet.ikon}
+      </span>
 
-      <p className={cn('mt-2 text-sm font-medium', !kazanildi && 'text-muted-foreground')}>
-        {rozet.ad}
-      </p>
-      <p className="mt-0.5 text-xs leading-snug text-muted-foreground">{rozet.aciklama}</p>
-
-      {kazanildi ? (
-        <p className={cn('mt-1.5 text-xs font-medium', renk.yazi)}>
-          {tarih ? tarihYaz(tarih) : 'Kazanıldı'}
-        </p>
-      ) : (
-        <>
-          <div className="mt-2 h-1 overflow-hidden rounded-full bg-muted">
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-bold">{rozet.ad}</p>
+        <p className="mt-0.5 text-xs leading-snug text-muted-foreground">{rozet.aciklama}</p>
+        {!kazanildi && (
+          <div className="mt-[7px] h-1 overflow-hidden rounded-full bg-muted">
             <div
-              className="h-full rounded-full bg-muted-foreground/40"
+              className="h-full rounded-full bg-primary-dolu"
               style={{ width: `${Math.round(oran * 100)}%` }}
             />
           </div>
-          <Ilerleme satir={satir} />
-        </>
-      )}
+        )}
+      </div>
+
+      <div className="flex-none text-right">
+        <p className={cn('text-[11px] font-bold', kazanildi ? renk.yazi : 'text-muted-foreground')}>
+          {kazanildi ? KADEME_ADI[rozet.kademe] : 'Kilitli'}
+        </p>
+        <p className="rakam mt-[3px] text-[11px] text-muted-foreground">
+          {kazanildi ? (tarih ? kisaTarih(tarih) : 'Kazanıldı') : ilerlemeYazisi(satir)}
+        </p>
+      </div>
     </div>
   )
 }
