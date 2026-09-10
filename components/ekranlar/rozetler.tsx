@@ -13,9 +13,7 @@ import type {
 } from '@/lib/types'
 import {
   KADEME_ADI,
-  KADEME_SIRASI,
   ROZETLER,
-  TUR_ADI,
   kademeSayimi,
   rozetDurumu,
   rozetListesi,
@@ -28,33 +26,6 @@ import { cn } from '@/lib/utils'
 import { BaslikSatiri, Deger, Kart, Not } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KADEME_SINIFI } from '@/components/rozet-renk'
-
-/**
- * Grupların ekrandaki sırası — değerliden gündeliğe.
- *
- * Seri en başta: uygulamanın en zor kazanılan ve en çok motive eden ölçüsü o.
- * Mini oyunlar en sonda; mola aktivitesi, ana iş değil.
- */
-const TUR_SIRASI: RozetTuru[] = [
-  'seri',
-  'pomodoro-seans',
-  'pomodoro-dakika',
-  'pomodoro-gun',
-  'gunluk-soru',
-  'haftalik-soru',
-  'deneme',
-  'deneme-yukselis',
-  'diploma',
-  'yanlis-ekleme',
-  'yanlis-cozme',
-  'banka-dusen',
-  'banka-temiz',
-  'oyun-tur',
-  'oyun-rekor',
-  'oyun-hatasiz',
-  'oyun-dogru',
-  'oyun-seri',
-]
 
 /**
  * İlerleme sayısının birimi.
@@ -143,7 +114,14 @@ export function RozetlerEkrani({
     ],
   )
   const liste = useMemo(() => rozetListesi(durum, kazanilmis), [durum, kazanilmis])
-  const kazanilanSayi = liste.filter((s) => s.kazanildi).length
+  /*
+    Liste sırası `rozetListesi`den geliyor ve burada yeniden sıralanmıyor:
+    kazanılanlar yeniden eskiye, kilitliler eşiğe yakınlıklarına göre. İkisi de
+    bu ekranın istediği sıra — en son kazandığın üstte, en az kalan üstte.
+  */
+  const kazanilanlar = useMemo(() => liste.filter((s) => s.kazanildi), [liste])
+  const kilitliler = useMemo(() => liste.filter((s) => !s.kazanildi), [liste])
+  const kazanilanSayi = kazanilanlar.length
   const sayim = useMemo(() => kademeSayimi(liste), [liste])
 
   // Sıradaki hedef: kazanılmamışlar arasında eşiğe en yakın olan.
@@ -225,29 +203,30 @@ export function RozetlerEkrani({
         </Not>
       )}
 
-      {TUR_SIRASI.map((tur) => {
-        const grup = liste.filter((s) => s.rozet.tur === tur)
-        if (grup.length === 0) return null
-        return (
-          <section key={tur} className="mb-4">
-            <h2 className="mb-2 text-sm font-medium text-muted-foreground">{TUR_ADI[tur]}</h2>
+      {/*
+        Bölüm başlığı büyük harfle **yazılıyor**, `uppercase` ile çevrilmiyor:
+        CSS'in büyütmesi "Kilitli"yi Türkçede yanlış olan "KILITLI"ye çeviriyor,
+        tarayıcı sayfanın dilini bilse bile.
+      */}
+      {[
+        { ad: `KAZANILDI · ${kazanilanlar.length}`, satirlar: kazanilanlar },
+        { ad: `KİLİTLİ · ${kilitliler.length}`, satirlar: kilitliler },
+      ].map((bolum) =>
+        bolum.satirlar.length === 0 ? null : (
+          <section key={bolum.ad} className="mb-4">
+            <h2 className="mb-2 text-xs font-bold tracking-[0.08em] text-muted-foreground">
+              {bolum.ad}
+            </h2>
             <ul className="grid grid-cols-2 gap-2">
-              {grup
-                .slice()
-                .sort(
-                  (a, b) =>
-                    KADEME_SIRASI[a.rozet.kademe] - KADEME_SIRASI[b.rozet.kademe] ||
-                    a.rozet.esik - b.rozet.esik,
-                )
-                .map((satir) => (
-                  <li key={satir.rozet.id}>
-                    <RozetKarti satir={satir} />
-                  </li>
-                ))}
+              {bolum.satirlar.map((satir) => (
+                <li key={satir.rozet.id}>
+                  <RozetKarti satir={satir} />
+                </li>
+              ))}
             </ul>
           </section>
-        )
-      })}
+        ),
+      )}
     </div>
   )
 }
