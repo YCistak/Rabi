@@ -39,9 +39,9 @@ const res = join(kok, 'android/app/src/main/res')
 const MASKOT = {
   dosya: join(kok, 'public/tavsan-yuz.png'),
   tuval: 256,
-  sol: 39,
+  sol: 40,
   ust: 8,
-  en: 179,
+  en: 176,
   boy: 241,
 }
 
