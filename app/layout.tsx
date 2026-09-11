@@ -71,6 +71,41 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="tr" className={`${nunito.variable} ${manrope.variable}`}>
+      <head>
+        {/*
+          Tablet ölçeği. Tasarım telefon için; tablette sütun ortada dar
+          kalıyor, iki yan boş duruyordu. Çözüm arayüzü genişletmek değil,
+          telefondaki görüntüyü büyütmek: viewport'a yalnızca `initial-scale`
+          veriliyor, genişlik verilmiyor. Genişlik verilmeyince WebView düzen
+          genişliğini `cihaz genişliği / ölçek` olarak kendisi hesaplıyor;
+          elle `width=` yazınca yuvarlama farkı düzen viewport'unu görsel
+          viewport'tan bir iki piksel geniş bırakıyor, sayfa yana kayıyor ve
+          `position: fixed` alt menü ekrana değil o geniş düzene yapışıyordu.
+
+          `TABLET_TABAN` telefon genişliği (430) değil, biraz üstü: tablet
+          4:3'e yakın olduğu için 430'a ölçeklenince ekrana çok az satır
+          sığıyor, sürekli kaydırmak gerekiyordu. 520'de kartlar telefondaki
+          gibi tek sütun kalıyor (`max-w-md` = 448) ama yazı 1,9 yerine ~1,6
+          kat büyüyor. Kısa kenar 600 px'in altındaysa (telefon) hiçbir şey
+          değişmiyor.
+
+          Hidrasyondan önce, satır içi: React beklenirse ilk kare dar
+          düzende çizilip sonra zıplıyor.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){
+  var TABLET_TABAN = 520, ESIK = 600;
+  var kisa = Math.min(screen.width, screen.height);
+  if (kisa < ESIK) return;
+  var olcek = kisa / TABLET_TABAN;
+  var m = document.querySelector('meta[name="viewport"]');
+  if (!m) { m = document.createElement('meta'); m.name = 'viewport'; document.head.appendChild(m); }
+  m.content = 'initial-scale=' + olcek + ', minimum-scale=' + olcek + ', maximum-scale=' + olcek + ', user-scalable=no, viewport-fit=cover';
+})();`,
+          }}
+        />
+      </head>
       <body className="font-sans antialiased">{children}</body>
     </html>
   )
