@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rabi · Pomodoro 2a</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f0eee9;font-family:Nunito,system-ui,sans-serif}
+  .frame{position:relative;width:390px;height:844px;background:#f8f8f7;border:1px solid rgba(0,0,0,.08);border-radius:28px;box-shadow:0 8px 28px rgba(90,60,35,.10);overflow:hidden}
+  .sc{position:absolute;inset:0;overflow-y:scroll;scrollbar-width:none;padding:20px 16px 130px}
+  .sc::-webkit-scrollbar{display:none}
+  .kip{flex:1;height:36px;border:0;border-radius:10px;font-family:inherit;font-size:13px;font-weight:800;background:transparent;color:#6b6764}
+  .kip[aria-pressed="true"]{background:#fff;color:#b3491f;box-shadow:0 1px 3px rgba(90,60,35,.12)}
+  .cip{border:1px solid #eae9e6;background:#fff;color:#6b6764;font-family:inherit;font-weight:700}
+  .cip[aria-pressed="true"]{border:1.5px solid #d9622f;background:#fbeee7;color:#b3491f;font-weight:800}
+  .satir{display:flex;align-items:center;gap:12px;padding:14px 16px;border-top:1px solid #eae9e6;width:100%;background:transparent;border-left:0;border-right:0;border-bottom:0;text-align:left;font-family:inherit}
+  .satir:first-child{border-top:0}
+  .ad{display:block;font-size:14px;font-weight:800;color:#1b1a19}
+  .not{display:block;font-size:12.5px;color:#6b6764}
+  .eylem{font-size:12.5px;font-weight:800;color:#b3491f}
+  .kart{background:#fff;border-radius:20px;box-shadow:0 6px 20px rgba(90,60,35,.07);overflow:hidden}
+  .etiket{margin:0 0 8px 2px;font-size:12.5px;font-weight:800;color:#6b6764}
+  .grup{margin:0 0 8px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#6b6764}
+  .kutu{height:46px;display:flex;align-items:center;justify-content:center;border-radius:14px;border:1px solid #eae9e6;background:#faf9f7;color:#6b6764;font-size:15px;font-weight:700}
+  .kutu.acik{border:1.5px solid #d9622f;background:#fbeee7;color:#b3491f;font-weight:800}
+  .kutu.ozel{border:1px dashed #ddd8d2;background:transparent;font-size:14px;font-weight:600}
+  .altcubuk{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #eae9e6;border-radius:26px 26px 0 0;box-shadow:0 -6px 22px rgba(54,33,112,.10);padding:12px 16px 10px}
+  .birincil{border:0;border-radius:16px;background:#d9622f;color:#fff;font-family:inherit;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 8px 18px rgba(217,98,47,.26)}
+  .ikon{border:1px solid #eae9e6;background:#fff;border-radius:16px;color:#6b6764;display:inline-flex;align-items:center;justify-content:center}
+  .gizli{display:none !important}
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <!-- ── Hazırlık ekranı ── -->
+  <div id="hazir">
+    <div class="sc">
+      <div style="display:flex;align-items:center;gap:8px;color:#6b6764;font-size:14px;font-weight:700;margin-bottom:12px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg>Geri
+      </div>
+      <div style="margin-bottom:14px">
+        <h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.02em;color:#1b1a19">Pomodoro</h1>
+        <p id="ustEtiket" style="margin:2px 0 0;font-size:14px;color:#6b6764">1. tur · Çalışma</p>
+      </div>
+
+      <div style="display:flex;background:#efeeeb;border-radius:14px;padding:4px;margin-bottom:14px">
+        <button class="kip" id="kipPomodoro" aria-pressed="true">Pomodoro</button>
+        <button class="kip" id="kipProva" aria-pressed="false">Deneme provası</button>
+      </div>
+
+      <div style="background:#fff;border-radius:24px;box-shadow:0 6px 20px rgba(90,60,35,.07);padding:22px 16px 20px;display:flex;flex-direction:column;align-items:center;margin-bottom:14px">
+        <div style="position:relative;width:228px;height:228px">
+          <svg width="228" height="228" style="position:absolute;inset:0;transform:rotate(-90deg)">
+            <circle cx="114" cy="114" r="100" fill="none" stroke="#efeeeb" stroke-width="12"></circle>
+            <circle id="halkaHazir" cx="114" cy="114" r="100" fill="none" stroke="#d9622f" stroke-width="12" stroke-linecap="round" stroke-dasharray="628.3" stroke-dashoffset="628.3"></circle>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <span id="sureHazir" style="font-size:54px;line-height:1;font-weight:800;letter-spacing:-.03em;color:#1b1a19;font-variant-numeric:tabular-nums">25:00</span>
+            <span id="altHazir" style="margin-top:4px;font-size:12.5px;font-weight:700;color:#6b6764;white-space:nowrap">sonra 5 dk mola</span>
+          </div>
+        </div>
+        <div id="turlar" style="display:flex;gap:6px;margin-top:14px;height:5px">
+          <span style="width:24px;height:5px;border-radius:3px;background:#d9622f"></span>
+          <span style="width:24px;height:5px;border-radius:3px;background:#e8d9cf"></span>
+          <span style="width:24px;height:5px;border-radius:3px;background:#e8d9cf"></span>
+          <span style="width:24px;height:5px;border-radius:3px;background:#e8d9cf"></span>
+        </div>
+      </div>
+
+      <!-- Pomodoro kipi -->
+      <div id="bolumPomodoro">
+        <p class="etiket">HANGİ DERSE?</p>
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px">
+          <button class="cip ders" data-ders="Matematik" aria-pressed="true" style="height:44px;border-radius:13px;font-size:12.5px">Matematik</button>
+          <button class="cip ders" data-ders="Fizik" aria-pressed="false" style="height:44px;border-radius:13px;font-size:12.5px">Fizik</button>
+          <button class="cip ders" data-ders="Türkçe" aria-pressed="false" style="height:44px;border-radius:13px;font-size:12.5px">Türkçe</button>
+          <button class="cekmeceAc" style="height:44px;border-radius:13px;border:1px dashed #ddd8d2;background:transparent;color:#6b6764;font-family:inherit;font-size:12.5px;font-weight:700">Diğer</button>
+        </div>
+
+        <div class="kart">
+          <button class="satir cekmeceAc">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b3491f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5V12l3 2"></path></svg>
+            <span style="flex:1;min-width:0"><span class="ad">Süreler</span><span class="not">25 dk · mola 5 / 15 · 4 turda bir</span></span>
+            <span class="eylem">Ayarla</span>
+          </button>
+          <div class="satir">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b6764" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"></path><line x1="22" y1="9" x2="16" y2="15"></line><line x1="16" y1="9" x2="22" y2="15"></line></svg>
+            <span style="flex:1;min-width:0"><span class="ad">Ses</span><span class="not">Sessiz</span></span>
+            <span class="eylem">Değiştir</span>
+          </div>
+          <div class="satir">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b6764" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.4 8.4 8 9 4.6-.6 8-4 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg>
+            <span style="flex:1;min-width:0"><span class="ad">Odak koruması</span><span class="not">Kilit ve rahatsız etme kapalı</span></span>
+            <span class="eylem">Ayarla</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deneme provası kipi -->
+      <div id="bolumProva" class="gizli">
+        <p class="etiket">HANGİ DENEMEYİ ÇÖZÜYORSUN?</p>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px">
+          <button class="cip prova" data-prova="tyt" aria-pressed="true" style="height:60px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px"><span style="font-size:15px;font-weight:800">TYT</span><span style="font-size:11.5px;font-weight:600;opacity:.85">165 dk</span></button>
+          <button class="cip prova" data-prova="ayt" aria-pressed="false" style="height:60px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px"><span style="font-size:15px;font-weight:800">AYT</span><span style="font-size:11.5px;font-weight:600;opacity:.85">180 dk</span></button>
+          <button class="cip prova" data-prova="ydt" aria-pressed="false" style="height:60px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px"><span style="font-size:15px;font-weight:800">YDT</span><span style="font-size:11.5px;font-weight:600;opacity:.85">120 dk</span></button>
+        </div>
+        <div class="kart" style="display:flex;align-items:center;gap:12px;padding:14px 16px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b6764" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.4 8.4 8 9 4.6-.6 8-4 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg>
+          <span style="flex:1;min-width:0"><span class="ad">Odak koruması</span><span class="not">Kitapçık boyunca telefon sussun</span></span>
+          <span class="eylem">Ayarla</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="altcubuk">
+      <button id="baslat" class="birincil" style="width:100%;height:52px;font-size:17px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20"></polygon></svg>Başlat
+      </button>
+    </div>
+
+    <!-- Süreler çekmecesi -->
+    <div id="cekmece" class="gizli" style="position:absolute;inset:0;background:rgba(20,16,12,.38);align-items:flex-end;display:flex">
+      <div style="width:100%;max-height:86%;overflow-y:auto;background:#fff;border-radius:26px 26px 0 0;padding:8px 18px 24px">
+        <div style="display:flex;justify-content:center;padding:6px 0 12px"><span style="width:42px;height:5px;border-radius:3px;background:#e5e1db"></span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+          <p style="margin:0;font-size:18px;font-weight:800;letter-spacing:-.02em;color:#1b1a19">Süreler</p>
+          <button id="cekmeceKapat" style="border:0;background:#efeeeb;color:#1b1a19;font-family:inherit;font-size:13px;font-weight:800;padding:8px 14px;border-radius:12px">Bitti</button>
+        </div>
+        <p class="grup">Çalışma · dakika</p>
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:18px">
+          <span class="kutu">15</span><span class="kutu acik">25</span><span class="kutu">30</span><span class="kutu">45</span>
+          <span class="kutu">50</span><span class="kutu">60</span><span class="kutu ozel" style="grid-column:span 2">Kendim yazayım</span>
+        </div>
+        <p class="grup">Molalar · dakika</p>
+        <div style="display:flex;gap:10px;margin-bottom:18px">
+          <div style="flex:1;border:1px solid #eae9e6;border-radius:16px;padding:12px 14px;background:#faf9f7">
+            <p style="margin:0 0 8px;font-size:12px;font-weight:700;color:#6b6764">Kısa</p>
+            <div style="display:flex;align-items:center;justify-content:space-between"><span style="width:34px;height:34px;border-radius:11px;background:#efeeeb;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#6b6764">−</span><span style="font-size:22px;font-weight:800;color:#1b1a19">5</span><span style="width:34px;height:34px;border-radius:11px;background:#fbeee7;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#b3491f">+</span></div>
+          </div>
+          <div style="flex:1;border:1px solid #eae9e6;border-radius:16px;padding:12px 14px;background:#faf9f7">
+            <p style="margin:0 0 8px;font-size:12px;font-weight:700;color:#6b6764">Uzun</p>
+            <div style="display:flex;align-items:center;justify-content:space-between"><span style="width:34px;height:34px;border-radius:11px;background:#efeeeb;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#6b6764">−</span><span style="font-size:22px;font-weight:800;color:#1b1a19">15</span><span style="width:34px;height:34px;border-radius:11px;background:#fbeee7;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#b3491f">+</span></div>
+          </div>
+        </div>
+        <p class="grup">Uzun moladan önce</p>
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
+          <span class="kutu">2 tur</span><span class="kutu">3 tur</span><span class="kutu acik">4 tur</span><span class="kutu">5 tur</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Çalışma ekranı ── -->
+  <div id="calisiyor" class="gizli" style="position:absolute;inset:0;background:#faf7f4;flex-direction:column;padding:24px 22px 22px;display:flex">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <button id="geri" aria-label="Ekrandan çık" style="width:40px;height:40px;border:0;background:#fff;border-radius:13px;box-shadow:0 4px 12px rgba(90,60,35,.08);color:#6b6764;display:inline-flex;align-items:center;justify-content:center"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button>
+      <span id="durum" style="font-size:12.5px;font-weight:800;letter-spacing:.1em;color:#6b6764">1. TUR · ÇALIŞMA</span>
+      <span style="width:40px"></span>
+    </div>
+
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px">
+      <span id="baslikCalisan" style="font-size:15px;font-weight:800;letter-spacing:.14em;color:#b3491f">MATEMATİK</span>
+      <div style="position:relative;width:300px;height:300px">
+        <svg width="300" height="300" style="position:absolute;inset:0;transform:rotate(-90deg)">
+          <circle cx="150" cy="150" r="140" fill="none" stroke="#eee7e1" stroke-width="10"></circle>
+          <circle id="halkaCalisan" cx="150" cy="150" r="140" fill="none" stroke="#d9622f" stroke-width="10" stroke-linecap="round" stroke-dasharray="879.6" stroke-dashoffset="879.6"></circle>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <span id="sureCalisan" style="font-size:72px;line-height:1;font-weight:800;letter-spacing:-.04em;color:#1b1a19;font-variant-numeric:tabular-nums">25:00</span>
+          <span id="bitis" style="margin-top:8px;font-size:13px;font-weight:600;color:#6b6764">19.42</span>
+        </div>
+      </div>
+      <div id="turlarCalisan" style="display:flex;gap:7px;height:5px">
+        <span style="width:28px;height:5px;border-radius:3px;background:#d9622f"></span>
+        <span style="width:28px;height:5px;border-radius:3px;background:#e8d9cf"></span>
+        <span style="width:28px;height:5px;border-radius:3px;background:#e8d9cf"></span>
+        <span style="width:28px;height:5px;border-radius:3px;background:#e8d9cf"></span>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px">
+      <button id="bitir" class="ikon" aria-label="Turu bitir" style="width:52px;height:54px;flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+      <button id="duraklat" class="birincil" style="flex:1;height:54px;font-size:17px">
+        <svg id="ikonDuraklat" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg>
+        <svg id="ikonDevam" class="gizli" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20"></polygon></svg>
+        <span id="butonCalisan">Duraklat</span>
+      </button>
+      <button class="ikon" aria-label="Atla" style="width:52px;height:54px;flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg></button>
+    </div>
+    <p style="margin:12px 4px 0;text-align:center;font-size:12px;color:#6b6764">Ekran kapalıyken de sayıyor · alt menü kapandı, tek iş sayaç</p>
+  </div>
+</div>
+
+<script>
+const PROVA = { tyt: { sn: 9900, alt: 'TYT · 165 dk · 120 soru', ad: 'TYT DENEMESİ' },
+                ayt: { sn: 10800, alt: 'AYT · 180 dk · 160 soru', ad: 'AYT DENEMESİ' },
+                ydt: { sn: 7200, alt: 'YDT · 120 dk · 80 soru', ad: 'YDT DENEMESİ' } }
+
+const d = { kip: 'pomodoro', prova: 'tyt', ders: 'Matematik', toplam: 1500, kalan: 1500, akiyor: false }
+const el = (id) => document.getElementById(id)
+const yaz = (sn) => String(Math.floor(sn / 60)).padStart(2, '0') + ':' + String(sn % 60).padStart(2, '0')
+const provaKipi = () => d.kip === 'prova'
+
+function ciz() {
+  el('ustEtiket').textContent = provaKipi() ? 'Kitapçık süresi' : '1. tur · Çalışma'
+  el('altHazir').textContent = provaKipi() ? PROVA[d.prova].alt : 'sonra 5 dk mola'
+  el('sureHazir').textContent = yaz(d.toplam)
+  el('halkaHazir').setAttribute('stroke-dashoffset', 628.3 * (d.kalan / d.toplam))
+  el('kipPomodoro').setAttribute('aria-pressed', String(!provaKipi()))
+  el('kipProva').setAttribute('aria-pressed', String(provaKipi()))
+  el('bolumPomodoro').classList.toggle('gizli', provaKipi())
+  el('bolumProva').classList.toggle('gizli', !provaKipi())
+  el('turlar').style.visibility = provaKipi() ? 'hidden' : 'visible'
+  el('turlarCalisan').style.visibility = provaKipi() ? 'hidden' : 'visible'
+  el('durum').textContent = provaKipi() ? 'DENEME PROVASI' : '1. TUR · ÇALIŞMA'
+  el('baslikCalisan').textContent = provaKipi() ? PROVA[d.prova].ad : d.ders.toLocaleUpperCase('tr-TR')
+  el('bitis').textContent = provaKipi() ? '22.15' : '19.42'
+  el('sureCalisan').textContent = yaz(d.kalan)
+  el('halkaCalisan').setAttribute('stroke-dashoffset', 879.6 * (d.kalan / d.toplam))
+  el('butonCalisan').textContent = d.akiyor ? 'Duraklat' : 'Devam et'
+  el('ikonDuraklat').classList.toggle('gizli', !d.akiyor)
+  el('ikonDevam').classList.toggle('gizli', d.akiyor)
+}
+
+el('kipPomodoro').onclick = () => { d.kip = 'pomodoro'; d.toplam = 1500; d.kalan = 1500; ciz() }
+el('kipProva').onclick = () => { d.kip = 'prova'; d.toplam = PROVA[d.prova].sn; d.kalan = d.toplam; ciz() }
+
+document.querySelectorAll('.ders').forEach((b) => {
+  b.onclick = () => {
+    document.querySelectorAll('.ders').forEach((o) => o.setAttribute('aria-pressed', 'false'))
+    b.setAttribute('aria-pressed', 'true')
+    d.ders = b.dataset.ders
+    ciz()
+  }
+})
+
+document.querySelectorAll('.prova').forEach((b) => {
+  b.onclick = () => {
+    document.querySelectorAll('.prova').forEach((o) => o.setAttribute('aria-pressed', 'false'))
+    b.setAttribute('aria-pressed', 'true')
+    d.prova = b.dataset.prova
+    d.toplam = PROVA[d.prova].sn
+    d.kalan = d.toplam
+    ciz()
+  }
+})
+
+document.querySelectorAll('.cekmeceAc').forEach((b) => { b.onclick = () => el('cekmece').classList.remove('gizli') })
+el('cekmeceKapat').onclick = () => el('cekmece').classList.add('gizli')
+
+el('baslat').onclick = () => {
+  d.kalan = d.toplam
+  d.akiyor = true
+  el('hazir').classList.add('gizli')
+  el('calisiyor').classList.remove('gizli')
+  ciz()
+}
+const donus = () => {
+  d.akiyor = false
+  el('calisiyor').classList.add('gizli')
+  el('hazir').classList.remove('gizli')
+  ciz()
+}
+el('geri').onclick = donus
+el('bitir').onclick = donus
+el('duraklat').onclick = () => { d.akiyor = !d.akiyor; ciz() }
+
+setInterval(() => {
+  if (!d.akiyor) return
+  d.kalan = Math.max(0, d.kalan - 1)
+  if (d.kalan === 0) d.akiyor = false
+  ciz()
+}, 1000)
+
+ciz()
+</script>
+</body>
+</html>
