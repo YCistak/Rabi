@@ -2,9 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!--
+      Android'in otomatik yedeği kapalı.
+
+      Açıkken WebView'ın localStorage/IndexedDB'si (ad, denemeler, notlar,
+      soru fotoğrafları) kullanıcıya sorulmadan Google Drive'a kopyalanıyordu.
+      Gizlilik politikası "veri telefonda kalır, tek çıkış Yedeği indir" diyor;
+      bayrak o sözü tutuyor. Telefon değiştiren kullanıcı yedeği uygulamanın
+      kendi Yedeği indir / yükle özelliğiyle taşır.
+    -->
     <application
         android:name=".RabiUygulamasi"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
