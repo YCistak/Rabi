@@ -418,7 +418,6 @@ function GununHali({
           etiket: 'BUGÜN',
           baslik: 'Hedefini tutturdun!',
           alt: `${toplam} soru — bugünlük iş tamam.`,
-          renk: 'bg-success-soft text-success',
         }
       : toplam > 0
         ? {
@@ -427,7 +426,6 @@ function GununHali({
             etiket: 'BUGÜN',
             baslik: 'Çalışmaya başladın',
             alt: `Hedefine ${hedef - toplam} soru kaldı.`,
-            renk: 'bg-primary-soft text-primary',
           }
         : {
             poz: 'uzgun' as const,
@@ -435,7 +433,6 @@ function GununHali({
             etiket: 'BUGÜN',
             baslik: 'Bugün hiç soru çözmedin',
             alt: 'Birkaç soruyla başlasak?',
-            renk: 'bg-muted text-muted-foreground',
           }
 
   return (
@@ -444,9 +441,11 @@ function GununHali({
       onClick={onAc}
       className="golge-kart flex w-full items-center gap-3 rounded-2xl bg-card px-4 py-3 text-left transition active:brightness-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
-      {/* Maskot 64: tam boy pozlar 70'in altında lekeye dönüyor ama bu kutuda
-          zemin arkalarında duruyor ve siluet okunuyor. */}
-      <span className={cn('grid size-[56px] shrink-0 place-items-center rounded-[20px]', hal.renk)}>
+      {/* Maskotun arkasında bir süre hâle göre renklenen bir kutu vardı (gri,
+          amber, yeşil); kaldırıldı. Düz renkli kare, kartın beyaz zemininde
+          yapıştırılmış bir etiket gibi duruyordu — maskot kartın kendi
+          zemininde duruyor. */}
+      <span className="grid size-[56px] shrink-0 place-items-center">
         <Rabi durum={hal.durum} poz={hal.poz} boyut={46} />
       </span>
       <span className="min-w-0 flex-1">
