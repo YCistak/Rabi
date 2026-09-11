@@ -54,7 +54,6 @@
   --color-fzk-kart: var(--fzk-kart);
   --color-fzk-koyu: var(--fzk-koyu);
   --color-fzk-ok: var(--fzk-ok);
-  --color-boss-zemin: var(--boss-zemin);
 
   /* Tasarımın tek yazı tipi Nunito. Başlık ve gövde ayrı aile değil, ayrı
      kalınlık: gövde 500-600, başlık 800-900. */
@@ -199,8 +198,6 @@
   --fzk-koyu: #4a5789;
   --fzk-ok: #6c7cb0;
 
-  /* Boss sorusunda oyun ekranının zemini. */
-  --boss-zemin: var(--ikincil-soft);
 
   /* Maskot artık bir görsel (`public/tavsan-yuz.png`); boyanacak bir çizim
      kalmadığı için maskot renk değişkenleri kaldırıldı. */
@@ -864,59 +861,10 @@
   }
 }
 
-/*
-  Boss sorusunun hissiyatı.
-
-  Kural değişikliğinden sonra her yanlış turu bitiriyor; boss'u ayıran şey artık
-  "elenirsin" uyarısı değil, sorunun bir üst zorluktan gelmesi. Bunu yazıyla
-  söylemek yetmiyor — oyuncu ekrana bakınca **hissetmeli**. Üç katman var:
-  ekranın içine doğru atan kırmızı çerçeve, soru gelirken bir kez çarpan rozet
-  ve zeminin koyulaşması.
-
-  Nabız yavaş (1.8s) ve düşük genlikli: hızlı yanıp sönen bir çerçeve soruyu
-  okumayı zorlaştırırdı, amaç dikkat dağıtmak değil gerginlik.
-*/
-@keyframes bossNabiz {
-  0%, 100% { box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--danger) 55%, transparent), inset 0 0 22px color-mix(in srgb, var(--danger) 18%, transparent); }
-  50% { box-shadow: inset 0 0 0 4px var(--danger), inset 0 0 46px color-mix(in srgb, var(--danger) 34%, transparent); }
-}
-
-.boss-alan::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 10;
-  animation: bossNabiz 1.8s ease-in-out infinite;
-}
-
-/* Rozet her boss sorusunda bir kez çarpıyor: sıra numarası anahtar olduğu için
-   animasyon yeniden başlıyor. */
-@keyframes bossGirisi {
-  0% { transform: scale(0.4); opacity: 0; }
-  55% { transform: scale(1.18); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.boss-rozet {
-  animation: bossGirisi 520ms cubic-bezier(0.2, 1.3, 0.4, 1) both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .boss-alan::after {
-    animation: none;
-    box-shadow: inset 0 0 0 3px var(--danger);
-  }
-
-  .boss-rozet {
-    animation: none;
-  }
-}
-
 /* ---------------------------------------------------------------------------
    Tur içi efektler
 
-   Dördü de `oyun-kabuk.tsx`'te tetikleniyor, yani tek yerde yazılıp 18 oyuna
+   İkisi de `oyun-kabuk.tsx`'te tetikleniyor, yani tek yerde yazılıp 22 oyuna
    birden düşüyorlar. Hepsi `prefers-reduced-motion` altında susuyor: hareket
    burada bilgi taşımıyor, bilgi zaten sayıda ve renkte duruyor.
    --------------------------------------------------------------------------- */
@@ -947,8 +895,6 @@
 
   Renk zaten kırmızıya dönüyor ama renk pasif bir işaret: ekranın başka yerine
   bakan oyuncu onu görmüyor. Hareket görüş alanının kenarından da fark ediliyor.
-  Boss'ta çalışmıyor — orada zaten ekranın çerçevesi atıyor, iki nabız birbirini
-  bozar.
 */
 @keyframes sureNabzi {
   0%, 100% { transform: scale(1); }
@@ -957,76 +903,6 @@
 
 .sure-nabzi {
   animation: sureNabzi 780ms ease-in-out infinite;
-}
-
-/*
-  Boss yenildiğinde patlayan ışık.
-
-  Boss'un girişi vardı, yenilişi yoktu: onuncu soruyu bilmek üçüncüyü bilmekle
-  aynı hissettiriyordu.
-
-  İlk deneme yerinde duran bir altın radyaldi ve iyi durmadı: boss zemini açık
-  bir renk (`--boss-zemin`, mercanın soluğu) ve onun üstünde sabit bir sarı
-  daire ışık gibi değil leke gibi görünüyor. Işık olarak okunması için
-  **büyümesi** gerekiyor — göz parlaklığı değil, yayılmayı ışık sanıyor.
-
-  Üç katman: dışa açılan bir halka (her zeminde okunuyor, biçimi olan tek
-  katman), onun arkasında büyüyen yumuşak bir hâle ve içeriden gelen kısa bir
-  aydınlanma. Halka ötekilerden hızlı gidiyor; hepsi aynı hızda olsaydı tek bir
-  bulanık daire olurdu.
-*/
-@keyframes bossHale {
-  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
-  18% { opacity: 0.7; }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.25); }
-}
-
-@keyframes bossHalka {
-  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.12); border-width: 10px; }
-  15% { opacity: 0.95; }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); border-width: 1px; }
-}
-
-.boss-parlama {
-  position: absolute;
-  inset: 0;
-  z-index: 20;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-/* Hâle: sınırı olmayan yumuşak ışık. Merkez soru kartının hizasında (%42),
-   ekranın tam ortası değil — oyuncunun gözü orada. */
-.boss-parlama::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 42%;
-  width: 150vmax;
-  height: 150vmax;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--warning) 85%, transparent) 0%,
-    color-mix(in srgb, var(--warning) 40%, transparent) 30%,
-    transparent 58%
-  );
-  animation: bossHale 760ms cubic-bezier(0.16, 0.9, 0.3, 1) both;
-}
-
-/* Halka: patlamanın kenarı. Çizgi kalınlığı büyürken inceliyor, yani halka
-   dağılıyormuş gibi duruyor — sabit kalınlıkta bir çember çember gibi görünür,
-   patlama gibi değil. */
-.boss-parlama::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 42%;
-  width: 190vmin;
-  height: 190vmin;
-  border-radius: 50%;
-  border: 10px solid var(--warning);
-  animation: bossHalka 620ms cubic-bezier(0.1, 0.8, 0.25, 1) both;
 }
 
 /*
@@ -1059,8 +935,6 @@
     animation: none;
   }
 
-  /* Parlamanın animasyonu sözde öğelerde; kabı gizlemek üçünü birden susturuyor. */
-  .boss-parlama,
   .konfeti {
     display: none;
   }
@@ -1216,8 +1090,7 @@
    ânı olmadan kalkan bir halka açılma gibi değil, kaybolma gibi okunuyordu.
 
    Hâle dışa **açılıyor**. Yerinde duran bir parlaklık ışık gibi değil leke gibi
-   görünüyor; göz parlaklığı değil yayılmayı ışık sanıyor (boss parlamasındaki
-   kuralın aynısı).
+   görünüyor; göz parlaklığı değil yayılmayı ışık sanıyor.
    --------------------------------------------------------------------------- */
 @keyframes rozetBildirimIn {
   from { transform: translateY(-190%); opacity: 0; }

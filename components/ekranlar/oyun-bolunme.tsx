@@ -30,10 +30,8 @@ import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
-import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
-import { Cip } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import {
   Bildirim,
@@ -133,8 +131,6 @@ export function BolunmeOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
-  mod,
-  setMod,
   onCik,
   bildir,
 }: {
@@ -149,15 +145,11 @@ export function BolunmeOyunuEkrani({
     /** Tur bitmeden çıkıldı mı — yarım tur rekora ve istatistiğe yazılmıyor. */
     yarim: boolean,
   ) => void
-  /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
-  mod: OyunModu
-  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
   const oyun = oyunBul('bolunme')
 
-  const [secili, setSecili] = useYerelDepo<number[]>(ANAHTARLAR.bolenSecimi, [...TUM_BOLENLER])
 
   const [asama, setAsama] = useState<Asama>('tanitim')
   const [yardimAcik, setYardimAcik] = useState(false)
@@ -189,16 +181,16 @@ export function BolunmeOyunuEkrani({
 
   const bankaHavuzu = useMemo(() => bankaSorulariniCoz(bankaSorulari), [bankaSorulari])
   const bankaTuru = bankaHavuzu.length > 0
-  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
-  const gecerliMod = etkinMod(mod, bankaTuru)
+  // Mod artık seçilmiyor: her tur Sıradan, banka turu ise soru saatli.
+  const gecerliMod = etkinMod(bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   /**
    * Turun başladığı an.
    *
-   * Tur artık sabit uzunlukta değil — sınırsız sürüyor ve boss'ta bitiyor. Eski
-   * hesap "tur süresi eksi yanlış cezası" formülüyle türetiliyordu, o formülün
-   * karşılığı kalmadı; süre gerçekten ölçülüyor.
+   * Tur sabit uzunlukta değil — modun kuralına göre bitiyor. Eski hesap "tur
+   * süresi eksi yanlış cezası" formülüyle türetiliyordu, o formülün karşılığı
+   * kalmadı; süre gerçekten ölçülüyor.
    */
   const turBasladiRef = useRef(0)
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -214,7 +206,7 @@ export function BolunmeOyunuEkrani({
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
-    setSorular(bankaTuru ? karistir(bankaHavuzu) : bolunmeTuruHazirla(secili, TUR_SORUSU))
+    setSorular(bankaTuru ? karistir(bankaHavuzu) : bolunmeTuruHazirla(TUM_BOLENLER, TUR_SORUSU))
     setSira(0)
     setGirilen('')
     setCevaplar([])
@@ -224,7 +216,7 @@ export function BolunmeOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru, secili])
+  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru])
 
   const turBitir = useCallback(
     (verilenler: Cevap<BolunmeSorusu>[], yarim = false) => {
@@ -314,7 +306,7 @@ export function BolunmeOyunuEkrani({
   /**
    * Süre dolması cevap vermemekle aynı: soru pas geçilmiş sayılıyor.
    *
-   * Matematik oyunlarında boss yok, dolayısıyla eleme de yok — süre dolunca
+   * Matematik oyunlarında eleme yok — süre dolunca
    * tur bitmiyor, sıradaki soruya geçiliyor.
    */
   const sureDoldu = useCallback(() => {
@@ -352,7 +344,7 @@ export function BolunmeOyunuEkrani({
     yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan,
-    sure: soruSuresi('bolunme', null),
+    sure: soruSuresi('bolunme'),
     anahtar: sira,
     onBitti: sureDoldu,
   })
@@ -394,14 +386,6 @@ export function BolunmeOyunuEkrani({
     setYardimAcik(false)
   }
 
-  const bolenDegistir = (bolen: number) => {
-    setSecili((onceki) => {
-      const varMi = onceki.includes(bolen)
-      // Son bölen çıkarılamıyor: hiçbiri seçili değilken oyun soru üretemezdi.
-      if (varMi && onceki.length === 1) return onceki
-      return varMi ? onceki.filter((b) => b !== bolen) : [...onceki, bolen].sort((a, b) => a - b)
-    })
-  }
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
   const turdekiBolenler = TUM_BOLENLER.filter((b) => sorular.some((s) => s.bolen === b))
@@ -418,7 +402,6 @@ export function BolunmeOyunuEkrani({
                 kalan,
                 toplam,
                 sira: sira + 1,
-                boss: false,
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
@@ -521,41 +504,13 @@ export function BolunmeOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
-        mod={mod}
-        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
-        ekstra={
-          asama === 'tanitim' && !bankaTuru ? (
-            <BolenSecimi secili={secili} onDegis={bolenDegistir} />
-          ) : null
-        }
       />
     </>
   )
 }
 
-/** Tanıtım penceresindeki bölen seçimi. */
-function BolenSecimi({
-  secili,
-  onDegis,
-}: {
-  secili: number[]
-  onDegis: (bolen: number) => void
-}) {
-  return (
-    <div>
-      <p className="mb-2 text-sm font-medium">Hangi bölenler gelsin?</p>
-      <div className="flex flex-wrap gap-2">
-        {TUM_BOLENLER.map((bolen) => (
-          <Cip key={bolen} secili={secili.includes(bolen)} onClick={() => onDegis(bolen)}>
-            <span className="rakam">{bolen}</span>
-          </Cip>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 /** Yazılan rakamın göründüğü alan. */
 function CevapAlani({

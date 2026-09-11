@@ -81,8 +81,6 @@ export function AciOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
-  mod,
-  setMod,
   onCik,
   bildir,
 }: {
@@ -99,9 +97,6 @@ export function AciOyunuEkrani({
     /** Tur bitmeden çıkıldı mı — yarım tur rekora ve istatistiğe yazılmıyor. */
     yarim: boolean,
   ) => void
-  /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
-  mod: OyunModu
-  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -136,16 +131,16 @@ export function AciOyunuEkrani({
 
   const bankaHavuzu = useMemo(() => bankaSorulariniCoz(bankaSorulari), [bankaSorulari])
   const bankaTuru = bankaHavuzu.length > 0
-  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
-  const gecerliMod = etkinMod(mod, bankaTuru)
+  // Mod artık seçilmiyor: her tur Sıradan, banka turu ise soru saatli.
+  const gecerliMod = etkinMod(bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   /**
    * Turun başladığı an.
    *
-   * Tur artık sabit uzunlukta değil — sınırsız sürüyor ve boss'ta bitiyor. Eski
-   * hesap "tur süresi eksi yanlış cezası" formülüyle türetiliyordu, o formülün
-   * karşılığı kalmadı; süre gerçekten ölçülüyor.
+   * Tur sabit uzunlukta değil — modun kuralına göre bitiyor. Eski hesap "tur
+   * süresi eksi yanlış cezası" formülüyle türetiliyordu, o formülün karşılığı
+   * kalmadı; süre gerçekten ölçülüyor.
    */
   const turBasladiRef = useRef(0)
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -256,7 +251,7 @@ export function AciOyunuEkrani({
   /**
    * Süre dolması cevap vermemekle aynı: soru pas geçilmiş sayılıyor.
    *
-   * Matematik oyunlarında boss yok, dolayısıyla eleme de yok — süre dolunca
+   * Matematik oyunlarında eleme yok — süre dolunca
    * tur bitmiyor, sıradaki soruya geçiliyor.
    */
   const sureDoldu = useCallback(() => {
@@ -294,7 +289,7 @@ export function AciOyunuEkrani({
     yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan,
-    sure: soruSuresi('aci', null),
+    sure: soruSuresi('aci'),
     anahtar: sira,
     onBitti: sureDoldu,
   })
@@ -344,7 +339,6 @@ export function AciOyunuEkrani({
                 kalan,
                 toplam,
                 sira: sira + 1,
-                boss: false,
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
@@ -431,8 +425,6 @@ export function AciOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
-        mod={mod}
-        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
       />

@@ -14,8 +14,6 @@ import {
   type NoktalamaKurali,
 } from '@/lib/oyunlar/noktalama-havuzu'
 import {
-  SORU_TURU_ADI,
-  SORU_TURU_ORNEGI,
   TUM_SORU_TURLERI,
   havuzlariSec,
   turHazirla,
@@ -23,7 +21,6 @@ import {
   type OyunSorusu,
   type Sik,
   type SoruIcerigi,
-  type SoruTuru,
 } from '@/lib/oyunlar/yazim-oyunu'
 import {
   guncelSeri,
@@ -39,25 +36,24 @@ import {
   type BankaKaydi,
 } from '@/lib/oyunlar/banka'
 import {
-  bossYerlestir,
-  bossZorlugu,
   elerMi,
+  type Zorluk as ZorlukSeviyesi,
   soruSuresi,
   zorluktaSuz,
-  type SiradakiSoru,
-  type Zorluk,
+  akisUret,
+  akisUzunlugu,
+  tekAkis,
+  type SoruAkisi,
 } from '@/lib/oyunlar/ritim'
 import { etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
-import { ZorlukSecimi } from '@/components/zorluk-secimi'
+import { useUyarlananZorluk } from '@/lib/oyunlar/uyum'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
-import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
-import { SecimSatiri } from '@/components/ui'
 import {
   Bildirim,
   EN_COK_YANLIS,
@@ -107,7 +103,7 @@ function bankaHavuzlari(kayitlar: readonly BankaKaydi[]): Havuzlar {
         yanlisIsaret: isaretler.yanlis,
         dogruIsaret: isaretler.dogru,
         kural: kayit.soru.kural as NoktalamaKurali,
-        // Banka turunda zorluk seçilmiyor, boss da gelmiyor.
+        // Banka turunda zorluk yok.
         zorluk: 'orta',
       })
     } else {
@@ -115,7 +111,7 @@ function bankaHavuzlari(kayitlar: readonly BankaKaydi[]): Havuzlar {
         dogru: kayit.soru.dogru,
         yanlis: kayit.soru.yanlis,
         kural: kayit.soru.kural as YazimKurali,
-        // Banka turunda zorluk seçilmiyor, boss da gelmiyor.
+        // Banka turunda zorluk yok.
         zorluk: 'orta',
       })
     }
@@ -124,9 +120,16 @@ function bankaHavuzlari(kayitlar: readonly BankaKaydi[]): Havuzlar {
   return { yazim, noktalama }
 }
 
-/** Seçili türlerin havuzunu tek bir zorluğa indirir. */
-function zorluktaHavuz(secili: readonly SoruTuru[], zorluk: Zorluk): Havuzlar {
-  const tumu = havuzlariSec(secili)
+/**
+ * Bütün havuzu tek bir zorluğa indirir.
+ *
+ * Soru türü artık seçilmiyor (`TurSecimi` silindi): iki tür de her turda
+ * geliyor. Seçim tanıtım ekranındaki öteki seçimlerle birlikte kaldırıldı —
+ * "hangi tür gelsin" sorusu, oyunun ne olduğunu henüz görmemiş kullanıcıya
+ * soruluyordu.
+ */
+function zorluktaHavuz(zorluk: ZorlukSeviyesi): Havuzlar {
+  const tumu = havuzlariSec(TUM_SORU_TURLERI)
   return {
     yazim: zorluktaSuz(tumu.yazim, zorluk),
     noktalama: zorluktaSuz(tumu.noktalama, zorluk),
@@ -155,8 +158,6 @@ export function YazimOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
-  mod,
-  setMod,
   onCik,
   bildir,
 }: {
@@ -173,9 +174,6 @@ export function YazimOyunuEkrani({
     /** Tur bitmeden çıkıldı mı — yarım tur rekora ve istatistiğe yazılmıyor. */
     yarim: boolean,
   ) => void
-  /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
-  mod: OyunModu
-  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -184,21 +182,20 @@ export function YazimOyunuEkrani({
   const [asama, setAsama] = useState<Asama>('tanitim')
   const [yardimAcik, setYardimAcik] = useState(false)
 
-  // Seçim kalıcı: her turda aynı çipleri yeniden işaretlemek, oyunu açıp hemen
-  // başlamanın önüne geçerdi. (Zihinden İşlem'deki tür seçimiyle aynı yaklaşım.)
-  const [secili, setSecili] = useYerelDepo<SoruTuru[]>(
-    ANAHTARLAR.yazimSecimi,
-    TUM_SORU_TURLERI,
-  )
-
-  const [sorular, setSorular] = useState<SiradakiSoru<OyunSorusu>[]>([])
+  const [sorular, setSorular] = useState<SoruAkisi<OyunSorusu>>(tekAkis([]))
   const [sira, setSira] = useState(0)
   const [cevaplar, setCevaplar] = useState<Cevap<SoruIcerigi>[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
-  /** Turu ne bitirdi — tur sonu ekranı boss ile sıradan yanlışı ayrı söylüyor. */
+  /** Turu ne bitirdi — tur sonu ekranı süreyi ve yanlışı ayrı söylüyor. */
   const [elendi, setElendi] = useState<Eleme>(false)
 
-  const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukYazim, 'kolay')
+  /*
+    Zorluk seçilmiyor, turun içinde kayıyor (`lib/oyunlar/uyum.ts`).
+
+    Tur ortadan başlıyor; ardışık doğrular seviyeyi yükseltiyor, ardışık
+    yanlışlar düşürüyor ve bunun hiçbiri ekranda yazmıyor.
+  */
+  const { zorluk, kaydet: zorlukKaydet, sifirla: zorluguSifirla } = useUyarlananZorluk()
   /** Yardım açıkken sayaç duruyor. */
   const [duraklatilan, setDuraklatilan] = useState(false)
   /**
@@ -216,8 +213,8 @@ export function YazimOyunuEkrani({
   /** Banka turunda havuz bankadaki kayıtlar; normal turda oyunun kendi havuzu. */
   const bankaHavuzu = useMemo(() => bankaHavuzlari(bankaSorulari), [bankaSorulari])
   const bankaTuru = bankaHavuzu.yazim.length + bankaHavuzu.noktalama.length > 0
-  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
-  const gecerliMod = etkinMod(mod, bankaTuru)
+  // Mod artık seçilmiyor: her tur Sıradan, banka turu ise soru saatli.
+  const gecerliMod = etkinMod(bankaTuru)
 
   // Tur başındaki rekor: sonuç ekranı "yeni rekor" derken güncellenmiş değerle
   // değil, tura girerken geçerli olan değerle karşılaştırmalı.
@@ -225,9 +222,9 @@ export function YazimOyunuEkrani({
   /**
    * Turun başladığı an.
    *
-   * Tur artık sabit uzunlukta değil — sınırsız sürüyor ve boss'ta bitiyor. Eski
-   * hesap "tur süresi eksi yanlış cezası" formülüyle türetiliyordu, o formülün
-   * karşılığı kalmadı; süre gerçekten ölçülüyor.
+   * Tur sabit uzunlukta değil — modun kuralına göre bitiyor. Eski hesap "tur
+   * süresi eksi yanlış cezası" formülüyle türetiliyordu, o formülün karşılığı
+   * kalmadı; süre gerçekten ölçülüyor.
    */
   const turBasladiRef = useRef(0)
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -247,18 +244,15 @@ export function YazimOyunuEkrani({
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
-    // Banka turunda zorluk ve boss yok: sorular kullanıcının kendi yanlışları.
-    // Normal turda iki havuz da zorluğa göre süzülüyor; boss sırası bir üst
-    // seviyeden ayrıca kuruluyor ve `bossYerlestir` ikisini tek sıraya örüyor.
+    // Banka turunda zorluk yok: sorular kullanıcının kendi yanlışları. Normal
+    // turda üç seviyenin üçü de kuruluyor, sıradaki soru uyumun o anki
+    // şeridinden geliyor.
     setSorular(
       bankaTuru
-        ? turHazirla(bankaHavuzu).map((soru) => ({ soru, boss: false }))
-        : bossYerlestir(
-            turHazirla(zorluktaHavuz(secili, zorluk)),
-            turHazirla(zorluktaHavuz(secili, bossZorlugu(zorluk).zorluk)),
-            'yazim',
-          ),
+        ? tekAkis(turHazirla(bankaHavuzu))
+        : akisUret((seviye) => turHazirla(zorluktaHavuz(seviye))),
     )
+    zorluguSifirla()
     setSira(0)
     setCevaplar([])
     setGeriBildirim(null)
@@ -266,7 +260,7 @@ export function YazimOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru, secili, zorluk])
+  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<SoruIcerigi>[], yarim = false) => {
@@ -301,9 +295,10 @@ export function YazimOyunuEkrani({
   // Havuz tükenirse tur süre dolmadan biter; yoksa ekranda soru kalmaz ve sayaç
   // boşa işlerdi. Banka turunda bu sık oluyor: banka birkaç soruluk olabilir.
   useEffect(() => {
-    if (asama !== 'oynaniyor' || sorular.length === 0) return
-    if (sira >= sorular.length) turBitir(cevaplarRef.current)
-  }, [asama, sira, sorular.length, turBitir])
+    const uzunluk = akisUzunlugu(sorular)
+    if (asama !== 'oynaniyor' || uzunluk === 0) return
+    if (sira >= uzunluk) turBitir(cevaplarRef.current)
+  }, [asama, sira, sorular, turBitir])
 
   useEffect(() => () => {
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
@@ -319,9 +314,7 @@ export function YazimOyunuEkrani({
     ).catch(() => {})
   }
 
-  const sirali = sorular[sira]
-  const soru = sirali?.soru
-  const boss = sirali?.boss ?? false
+  const soru = sorular[zorluk][sira]
 
   /** Ekrandaki soruyu bankanın ve tur özetinin anladığı biçime çevirir. */
   const icerikAl = (s: OyunSorusu): SoruIcerigi =>
@@ -330,15 +323,24 @@ export function YazimOyunuEkrani({
   /**
    * Cevaptan sonraki geçiş.
    *
-   * Yanlış cevap turu bitiriyor (banka turu hariç); boss'un farkı sorunun bir
-   * üst zorluktan gelmesi. Bekleme süresi ikisinde de aynı: doğrusunu okumadan
-   * ekranın değişmesi, elenirken bile öğretmeyi bırakmak olurdu.
+   * Ani Ölüm'de yanlış cevap turu bitiriyor (banka turu hariç). Bekleme süresi
+   * doğruda da yanlışta da aynı: doğrusunu okumadan ekranın değişmesi,
+   * elenirken bile öğretmeyi bırakmak olurdu.
    */
-  const ilerle = (dogruMu: boolean, bossMuydu: boolean) => {
+  const ilerle = (dogruMu: boolean) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
+      /*
+        Zorluk **ilerlerken** güncelleniyor, cevap verilirken değil.
+
+        Sıradaki soru `sorular[zorluk][sira]` ile okunuyor; seviye cevap
+        anında kaysaydı ekrandaki soru, oyuncu geri bildirimi okurken
+        değişirdi. İkisi aynı karede güncellenince değişen tek şey bir
+        sonraki soru oluyor.
+      */
+      zorlukKaydet(dogruMu)
       if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
-        setElendi(bossMuydu ? 'boss' : 'yanlis')
+        setElendi('yanlis')
         turBitir(cevaplarRef.current)
       } else {
         setSira((s) => s + 1)
@@ -355,7 +357,7 @@ export function YazimOyunuEkrani({
     setCevaplar((onceki) => [...onceki, { soru: icerik, dogruMu }])
     setGeriBildirim({ secilenMetin: sik.metin, dogruMu, icerik })
     geriBildir(dogruMu)
-    ilerle(dogruMu, boss)
+    ilerle(dogruMu)
   }
 
   /** Süre dolması cevap vermemekle aynı: yanlış sayılıyor ve turu bitiriyor. */
@@ -365,9 +367,9 @@ export function YazimOyunuEkrani({
     setCevaplar((onceki) => [...onceki, { soru: icerik, dogruMu: false }])
     setGeriBildirim({ secilenMetin: null, dogruMu: false, icerik })
     geriBildir(false)
-    ilerle(false, boss)
+    ilerle(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asama, geriBildirim, soru, boss])
+  }, [asama, geriBildirim, soru])
 
   /** Tur saati bitti: yanlış değil, tur biter. */
   const turSuresiDoldu = () => {
@@ -400,18 +402,10 @@ export function YazimOyunuEkrani({
     yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
-    sure: soruSuresi('yazim', boss ? bossZorlugu(zorluk) : null),
+    sure: soruSuresi('yazim'),
     anahtar: sira,
     onBitti: sureDoldu,
   })
-
-  const turDegistir = (tur: SoruTuru) => {
-    setSecili((onceki) => {
-      const varMi = onceki.includes(tur)
-      if (varMi && onceki.length === 1) return onceki
-      return varMi ? onceki.filter((t) => t !== tur) : [...onceki, tur]
-    })
-  }
 
   const yardimAc = () => {
     setDuraklatilan(true)
@@ -443,7 +437,6 @@ export function YazimOyunuEkrani({
                 kalan,
                 toplam,
                 sira: sira + 1,
-                boss,
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
@@ -517,53 +510,13 @@ export function YazimOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
-        mod={mod}
-        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
-        // Banka turunda tür seçimi gösterilmiyor: sorular bankadan geliyor,
-        // seçim onları değiştirmiyor.
-        ekstra={
-          asama === 'tanitim' && !bankaTuru ? (
-            <div className="flex flex-col gap-4">
-              <ZorlukSecimi secili={zorluk} onSec={setZorluk} bossVar />
-              <TurSecimi secili={secili} onDegis={turDegistir} />
-            </div>
-          ) : null
-        }
       />
     </>
   )
 }
 
-/** Tanıtım penceresindeki soru türü seçimi. */
-function TurSecimi({
-  secili,
-  onDegis,
-}: {
-  secili: SoruTuru[]
-  onDegis: (tur: SoruTuru) => void
-}) {
-  return (
-    <div>
-      <p className="font-display text-lg font-bold">Hangi hatalar gelsin?</p>
-      <div className="mt-3 flex flex-col gap-2.5">
-        {TUM_SORU_TURLERI.map((tur) => (
-          <SecimSatiri
-            key={tur}
-            ad={SORU_TURU_ADI[tur]}
-            ornek={SORU_TURU_ORNEGI[tur]}
-            secili={secili.includes(tur)}
-            onClick={() => onDegis(tur)}
-          />
-        ))}
-      </div>
-      <p className="mt-2.5 text-xs text-muted-foreground">
-        İkisi de seçiliyse sorular sırayla karışık gelir.
-      </p>
-    </div>
-  )
-}
 
 /** Cevaptan sonra çıkan şerit; iki soru türü farklı şey söylüyor. */
 function CevapBildirimi({ geriBildirim }: { geriBildirim: GeriBildirim }) {

@@ -6,7 +6,6 @@ import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
 import type { OyunIstatistigi } from '@/lib/types'
 import {
   ISLEM_ADI,
-  ISLEM_ORNEGI,
   TUM_ISLEMLER,
   islemTuruHazirla,
   type IslemSorusu,
@@ -31,10 +30,8 @@ import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
-import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
-import { Cip } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import {
   Bildirim,
@@ -138,8 +135,6 @@ export function IslemOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
-  mod,
-  setMod,
   onCik,
   bildir,
 }: {
@@ -156,9 +151,6 @@ export function IslemOyunuEkrani({
     /** Tur bitmeden çıkıldı mı — yarım tur rekora ve istatistiğe yazılmıyor. */
     yarim: boolean,
   ) => void
-  /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
-  mod: OyunModu
-  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -167,7 +159,6 @@ export function IslemOyunuEkrani({
   // Seçim kalıcı: her turda altı çipi yeniden işaretlemek, oyunu açıp hemen
   // başlamayı imkânsız kılardı. Yalnızca bu ekranın kullandığı bir tercih,
   // o yüzden AppShell'e taşınmadı.
-  const [secili, setSecili] = useYerelDepo<IslemTuru[]>(ANAHTARLAR.islemSecimi, TUM_ISLEMLER)
 
   const [asama, setAsama] = useState<Asama>('tanitim')
   const [yardimAcik, setYardimAcik] = useState(false)
@@ -199,16 +190,16 @@ export function IslemOyunuEkrani({
 
   const bankaHavuzu = useMemo(() => bankaSorulariniCoz(bankaSorulari), [bankaSorulari])
   const bankaTuru = bankaHavuzu.length > 0
-  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
-  const gecerliMod = etkinMod(mod, bankaTuru)
+  // Mod artık seçilmiyor: her tur Sıradan, banka turu ise soru saatli.
+  const gecerliMod = etkinMod(bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   /**
    * Turun başladığı an.
    *
-   * Tur artık sabit uzunlukta değil — sınırsız sürüyor ve boss'ta bitiyor. Eski
-   * hesap "tur süresi eksi yanlış cezası" formülüyle türetiliyordu, o formülün
-   * karşılığı kalmadı; süre gerçekten ölçülüyor.
+   * Tur sabit uzunlukta değil — modun kuralına göre bitiyor. Eski hesap "tur
+   * süresi eksi yanlış cezası" formülüyle türetiliyordu, o formülün karşılığı
+   * kalmadı; süre gerçekten ölçülüyor.
    */
   const turBasladiRef = useRef(0)
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -224,7 +215,7 @@ export function IslemOyunuEkrani({
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
-    setSorular(bankaTuru ? karistir(bankaHavuzu) : islemTuruHazirla(secili, TUR_SORUSU))
+    setSorular(bankaTuru ? karistir(bankaHavuzu) : islemTuruHazirla(TUM_ISLEMLER, TUR_SORUSU))
     setSira(0)
     setGirilen('')
     setCevaplar([])
@@ -234,7 +225,7 @@ export function IslemOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru, secili])
+  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru])
 
   const turBitir = useCallback(
     (verilenler: Cevap<IslemSorusu>[], yarim = false) => {
@@ -357,7 +348,7 @@ export function IslemOyunuEkrani({
     yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan,
-    sure: soruSuresi('islem', null),
+    sure: soruSuresi('islem'),
     anahtar: sira,
     onBitti: sureDoldu,
   })
@@ -393,14 +384,6 @@ export function IslemOyunuEkrani({
     setYardimAcik(false)
   }
 
-  const turDegistir = (tur: IslemTuru) => {
-    setSecili((onceki) => {
-      const varMi = onceki.includes(tur)
-      // Son işlem çıkarılamıyor: hiçbiri seçili değilken oyun soru üretemezdi.
-      if (varMi && onceki.length === 1) return onceki
-      return varMi ? onceki.filter((t) => t !== tur) : [...onceki, tur]
-    })
-  }
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
   const soru = sorular[sira]
@@ -419,7 +402,6 @@ export function IslemOyunuEkrani({
                 kalan,
                 toplam,
                 sira: sira + 1,
-                boss: false,
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
@@ -505,56 +487,13 @@ export function IslemOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
-        mod={mod}
-        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
-        // Banka turunda tür seçimi gösterilmiyor: sorular bankadan geliyor,
-        // seçim onları değiştirmiyor.
-        ekstra={
-          asama === 'tanitim' && !bankaTuru ? (
-            <IslemSecimi secili={secili} onDegis={turDegistir} />
-          ) : null
-        }
       />
     </>
   )
 }
 
-/** Tanıtım penceresindeki işlem türü seçimi. */
-function IslemSecimi({
-  secili,
-  onDegis,
-}: {
-  secili: IslemTuru[]
-  onDegis: (tur: IslemTuru) => void
-}) {
-  return (
-    <div>
-      <p className="mb-2 text-sm font-medium">Hangi işlemler gelsin?</p>
-      <div className="flex flex-wrap gap-2">
-        {TUM_ISLEMLER.map((tur) => (
-          <Cip
-            key={tur}
-            secili={secili.includes(tur)}
-            onClick={() => onDegis(tur)}
-            className="flex-col items-start px-3 py-1.5 text-left leading-tight"
-          >
-            <span className="block">{ISLEM_ADI[tur]}</span>
-            <span
-              className={cn(
-                'rakam block text-[11px] font-normal',
-                secili.includes(tur) ? 'text-primary-foreground/75' : 'text-muted-foreground/70',
-              )}
-            >
-              {ISLEM_ORNEGI[tur]}
-            </span>
-          </Cip>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 function SonucGorunumu({
   sonuc,

@@ -27,17 +27,17 @@ import {
 } from '@/lib/oyunlar/tur'
 import { haritadanBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
 import {
-  bossZorlugu,
   elerMi,
   soruSuresi,
   turSirasi,
-  type SiradakiSoru,
-  type Zorluk,
+  akisUzunlugu,
+  akisiEsle,
+  tekAkis,
+  type SoruAkisi,
 } from '@/lib/oyunlar/ritim'
 import { etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
-import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
-import { ZorlukSecimi } from '@/components/zorluk-secimi'
+import { useUyarlananZorluk } from '@/lib/oyunlar/uyum'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
@@ -89,8 +89,6 @@ export function HaritaOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
-  mod,
-  setMod,
   onCik,
   bildir,
 }: {
@@ -105,9 +103,6 @@ export function HaritaOyunuEkrani({
     /** Tur bitmeden çıkıldı mı — yarım tur rekora ve istatistiğe yazılmıyor. */
     yarim: boolean,
   ) => void
-  /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
-  mod: OyunModu
-  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -116,14 +111,20 @@ export function HaritaOyunuEkrani({
   const [asama, setAsama] = useState<Asama>('tanitim')
   const [yardimAcik, setYardimAcik] = useState(false)
 
-  const [sorular, setSorular] = useState<SiradakiSoru<HaritaSorusu>[]>([])
+  const [sorular, setSorular] = useState<SoruAkisi<HaritaSorusu>>(tekAkis([]))
   const [sira, setSira] = useState(0)
   const [cevaplar, setCevaplar] = useState<Cevap<HaritaSorusu>[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
-  /** Turu ne bitirdi — tur sonu ekranı boss ile sıradan yanlışı ayrı söylüyor. */
+  /** Turu ne bitirdi — tur sonu ekranı süreyi ve yanlışı ayrı söylüyor. */
   const [elendi, setElendi] = useState<Eleme>(false)
 
-  const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukHarita, 'kolay')
+  /*
+    Zorluk seçilmiyor, turun içinde kayıyor (`lib/oyunlar/uyum.ts`).
+
+    Tur ortadan başlıyor; ardışık doğrular seviyeyi yükseltiyor, ardışık
+    yanlışlar düşürüyor ve bunun hiçbiri ekranda yazmıyor.
+  */
+  const { zorluk, kaydet: zorlukKaydet, sifirla: zorluguSifirla } = useUyarlananZorluk()
   /** Yardım açıkken sayaç duruyor. */
   const [duraklatilan, setDuraklatilan] = useState(false)
   /**
@@ -141,8 +142,8 @@ export function HaritaOyunuEkrani({
 
   const havuz = useMemo(() => bankaSorulariniCoz(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
-  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
-  const gecerliMod = etkinMod(mod, bankaTuru)
+  // Mod artık seçilmiyor: her tur Sıradan, banka turu ise soru saatli.
+  const gecerliMod = etkinMod(bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   const turBasladiRef = useRef(0)
@@ -161,12 +162,10 @@ export function HaritaOyunuEkrani({
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
     setSorular(
       bankaTuru
-        ? havuz.map((soru) => ({ soru, boss: false }))
-        : turSirasi(ILLER, 'harita', zorluk).map(({ soru, boss }) => ({
-            soru: soruKur(soru),
-            boss,
-          })),
+        ? tekAkis(havuz)
+        : akisiEsle(turSirasi(ILLER), (sorular) => sorular.map((soru) => soruKur(soru))),
     )
+    zorluguSifirla()
     setSira(0)
     setCevaplar([])
     setGeriBildirim(null)
@@ -174,7 +173,7 @@ export function HaritaOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluk])
+  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<HaritaSorusu>[], yarim = false) => {
@@ -206,9 +205,10 @@ export function HaritaOyunuEkrani({
 
   // Havuz tükenirse tur biter — banka turunda sık oluyor.
   useEffect(() => {
-    if (asama !== 'oynaniyor' || sorular.length === 0) return
-    if (sira >= sorular.length) turBitir(cevaplarRef.current)
-  }, [asama, sira, sorular.length, turBitir])
+    const uzunluk = akisUzunlugu(sorular)
+    if (asama !== 'oynaniyor' || uzunluk === 0) return
+    if (sira >= uzunluk) turBitir(cevaplarRef.current)
+  }, [asama, sira, sorular, turBitir])
 
   useEffect(() => () => {
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
@@ -223,15 +223,22 @@ export function HaritaOyunuEkrani({
     ).catch(() => {})
   }
 
-  const sirali = sorular[sira]
-  const soru = sirali?.soru
-  const boss = sirali?.boss ?? false
+  const soru = sorular[zorluk][sira]
 
-  const ilerle = (dogruMu: boolean, bossMuydu: boolean) => {
+  const ilerle = (dogruMu: boolean) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
+      /*
+        Zorluk **ilerlerken** güncelleniyor, cevap verilirken değil.
+
+        Sıradaki soru `sorular[zorluk][sira]` ile okunuyor; seviye cevap
+        anında kaysaydı ekrandaki soru, oyuncu geri bildirimi okurken
+        değişirdi. İkisi aynı karede güncellenince değişen tek şey bir
+        sonraki soru oluyor.
+      */
+      zorlukKaydet(dogruMu)
       if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
-        setElendi(bossMuydu ? 'boss' : 'yanlis')
+        setElendi('yanlis')
         turBitir(cevaplarRef.current)
       } else {
         setSira((s) => s + 1)
@@ -246,7 +253,7 @@ export function HaritaOyunuEkrani({
     setCevaplar((onceki) => [...onceki, { soru, dogruMu }])
     setGeriBildirim({ secilen: secilenAd === '' ? null : secilenAd, dogruMu, soru })
     geriBildir(dogruMu)
-    ilerle(dogruMu, boss)
+    ilerle(dogruMu)
   }
 
   /** Süre dolması cevap vermemekle aynı: yanlış sayılıyor ve turu bitiriyor. */
@@ -255,9 +262,9 @@ export function HaritaOyunuEkrani({
     setCevaplar((onceki) => [...onceki, { soru, dogruMu: false }])
     setGeriBildirim({ secilen: null, dogruMu: false, soru })
     geriBildir(false)
-    ilerle(false, boss)
+    ilerle(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asama, geriBildirim, soru, boss])
+  }, [asama, geriBildirim, soru])
 
   /** Tur saati bitti: yanlış değil, tur biter. */
   const turSuresiDoldu = () => {
@@ -290,7 +297,7 @@ export function HaritaOyunuEkrani({
     yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
-    sure: soruSuresi('harita', boss ? bossZorlugu(zorluk) : null),
+    sure: soruSuresi('harita'),
     anahtar: sira,
     onBitti: sureDoldu,
   })
@@ -319,7 +326,6 @@ export function HaritaOyunuEkrani({
                 kalan,
                 toplam,
                 sira: sira + 1,
-                boss,
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
@@ -385,15 +391,8 @@ export function HaritaOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
-        mod={mod}
-        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
-        ekstra={
-          asama === 'tanitim' && !bankaTuru ? (
-            <ZorlukSecimi secili={zorluk} onSec={setZorluk} bossVar />
-          ) : null
-        }
       />
     </>
   )
