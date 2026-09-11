@@ -49,8 +49,8 @@ android {
         // daha küçük bir versionCode ile kurulumu reddediyor ve telefonda daha
         // büyüğü duruyorsa "uygulama yüklenemedi" diyor; numara bu yüzden
         // ikisinin de üstünden, 21den devam etti.
-        versionCode 64
-        versionName "0.7.4"
+        versionCode 65
+        versionName "0.7.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // CameraX dört ABI'de native kütüphane getiriyor. Sembol tablosu
         // yüklenmezse Play Console'daki native çökme raporları okunamıyor ve
