@@ -57,6 +57,18 @@ android {
         // Vitals eşiğine (çökme %1,09) neyin dokunduğu görülemiyor.
         ndk {
             debugSymbolLevel = 'SYMBOL_TABLE'
+            /*
+              Elden kurulan APK tek ABI ile derleniyor: `-PtekAbi`.
+
+              CameraX ile Crashlytics dört ABI'de native kütüphane getiriyor ve
+              dördü birden APK'yı 4,7 MB şişiriyor; telefon bunlardan yalnız
+              birini kullanıyor. Play'e giden AAB'de filtre **yok** — orada
+              bölmeyi Play kendisi yapıyor ve filtre koyulursa x86 cihazlar
+              (Chromebook, emülatör) uygulamayı hiç göremez.
+            */
+            if (project.hasProperty('tekAbi')) {
+                abiFilters 'arm64-v8a'
+            }
         }
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -98,19 +110,33 @@ android {
             }
         }
         release {
-            minifyEnabled false
+            /*
+              R8 açık.
+
+              Kapalıyken dex 15,6 MB tutuyordu: Capacitor, CameraX, AppCompat
+              ve Firebase'in tamamı kırpılmadan giriyordu. Açınca 3,6 MB'a
+              indi — paketin en büyük tek kalemi buydu.
+
+              Kırpılan sınıflar yalnız yansımayla (reflection) çağrılsaydı
+              çalışma anında düşerdi; Capacitor eklentileri ile Firebase kendi
+              `consumer-rules.pro` dosyalarını getiriyor ve köprüye bakan
+              `@JavascriptInterface` metotları o kurallarla korunuyor.
+              `proguard-rules.pro` bu yüzden boş kalabiliyor.
+            */
+            minifyEnabled true
+            // Kullanılmayan kaynakları da at: R8'in kırptığı sınıflara bağlı
+            // çizimler ve düzenler paketten düşüyor.
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             if (firebaseVar) {
                 firebaseCrashlytics {
                     /*
                       Eşleme (mapping) dosyası yüklemesi.
 
-                      `minifyEnabled false` olduğu için şu an yüklenecek bir
-                      dosya **yok** ve yığın izleri zaten açık sınıf adlarıyla
-                      geliyor. Ayar yine de açık: eklenti dosya yoksa görevi
-                      sessizce geçiyor, ileride minify açılırsa hiçbir ek iş
-                      gerekmiyor. Yükleme `assembleRelease`/`bundleRelease`
-                      görevine kendiliğinden bağlanıyor — elle bir adım yok.
+                      R8 açık olduğu için yığın izleri artık kısaltılmış
+                      adlarla geliyor ve okunabilmesi bu dosyaya bağlı.
+                      Yükleme `assembleRelease`/`bundleRelease` görevine
+                      kendiliğinden bağlanıyor — elle bir adım yok.
                     */
                     mappingFileUploadEnabled true
 
