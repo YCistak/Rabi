@@ -1,7 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
-import { Lock } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import type {
   Deneme,
   GunlukKayit,
@@ -13,48 +12,16 @@ import type {
 } from '@/lib/types'
 import {
   KADEME_ADI,
-  KADEME_SIRASI,
   ROZETLER,
-  TUR_ADI,
-  kademeSayimi,
   rozetDurumu,
   rozetListesi,
   type RozetIlerlemesi,
-  type RozetKademesi,
   type RozetTuru,
 } from '@/lib/rozetler'
-import { netYaz, tarihYaz } from '@/lib/hesap'
+import { netYaz } from '@/lib/hesap'
 import { cn } from '@/lib/utils'
-import { BaslikSatiri, Deger, Kart, Not } from '@/components/ui'
-import { Rabi } from '@/components/maskot/rabi'
+import { BaslikSatiri, Not } from '@/components/ui'
 import { KADEME_SINIFI } from '@/components/rozet-renk'
-
-/**
- * Grupların ekrandaki sırası — değerliden gündeliğe.
- *
- * Seri en başta: uygulamanın en zor kazanılan ve en çok motive eden ölçüsü o.
- * Mini oyunlar en sonda; mola aktivitesi, ana iş değil.
- */
-const TUR_SIRASI: RozetTuru[] = [
-  'seri',
-  'pomodoro-seans',
-  'pomodoro-dakika',
-  'pomodoro-gun',
-  'gunluk-soru',
-  'haftalik-soru',
-  'deneme',
-  'deneme-yukselis',
-  'diploma',
-  'yanlis-ekleme',
-  'yanlis-cozme',
-  'banka-dusen',
-  'banka-temiz',
-  'oyun-tur',
-  'oyun-rekor',
-  'oyun-hatasiz',
-  'oyun-dogru',
-  'oyun-seri',
-]
 
 /**
  * İlerleme sayısının birimi.
@@ -90,6 +57,62 @@ function degerYaz(tur: RozetTuru, deger: number): string {
   return netYaz(deger, tur === 'diploma' ? 2 : 0)
 }
 
+/**
+ * Kazanılma tarihinin kısa yazımı: "9 May".
+ *
+ * `tarihYaz` uzun yazıyor ("9 Mayıs 2026") ve o satır sağ sütunu genişletiyor:
+ * ortadaki açıklama iki satıra kırılıyor, satırlar birbirinden farklı boyda
+ * kalıyordu. Tarihin buradaki işi kesin bir gün bildirmek değil, "ne zaman
+ * kazandım" sorusunu kabaca yanıtlamak.
+ *
+ * Yıl yalnızca **bu yıl değilse** yazılıyor. Tamamen atılsaydı bir önceki
+ * öğretim yılında kazanılmış rozet bu yılkiyle aynı görünürdü; her zaman
+ * yazılsaydı satırların çoğuna aynı dört rakam eklenirdi.
+ */
+function kisaTarih(isoTarih: string): string {
+  const [yil, ay, gun] = isoTarih.split('-').map(Number)
+  if (!yil || !ay || !gun) return isoTarih
+  return new Date(yil, ay - 1, gun).toLocaleDateString('tr-TR', {
+    day: 'numeric',
+    month: 'short',
+    ...(yil === new Date().getFullYear() ? {} : { year: 'numeric' }),
+  })
+}
+
+/**
+ * Satırın sağ alt köşesindeki tek satır: kazanılmışta tarih, kazanılmamışta
+ * "23 / 25 deneme". Eşiği 1 olan rozetlerde (banka temizliği gibi) sayı
+ * anlamsız — orada ilerleme değil, olup olmadığı yazılıyor.
+ */
+function ilerlemeYazisi({ rozet, mevcut }: RozetIlerlemesi): string {
+  if (rozet.esik <= 1) return 'Henüz olmadı'
+  const birim = BIRIM[rozet.tur]
+  return `${degerYaz(rozet.tur, mevcut)} / ${netYaz(rozet.esik, 0)}${birim ? ` ${birim}` : ''}`
+}
+
+type Suzgec = 'tumu' | 'kazanilan' | 'kilitli'
+
+/**
+ * Başarımlar ekranı.
+ *
+ * Ekran bir süre dört katmanlıydı: sıradaki hedefi gösteren maskot kartı, kademe
+ * sayacı (bronz/gümüş/altın/efsane), altı ölçülük istatistik ızgarası ve türe
+ * göre **on sekiz** başlık altında iki sütunlu kart ızgarası. Dört ayrı özet,
+ * hepsi aynı kırk rozeti başka bir şekilde sayıyordu; ekranın kendisi ise
+ * ancak üçüncü ekranda başlıyordu.
+ *
+ * Şimdi tek bir sayaç (12/40 ve çubuğu), tek bir süzgeç ve iki bölüm var:
+ * kazanılanlar ve kilitliler. Türe göre gruplama kalktı — on sekiz başlık,
+ * aradığı rozeti bilen için bile uzun bir kaydırmaydı ve rozetler zaten
+ * adlarıyla kendilerini anlatıyor.
+ *
+ * Kartlar da ızgaradan **tam genişlik satıra** geçti. İki sütunda ad, açıklama,
+ * çubuk ve tarih 170 piksele sığmak zorundaydı ve açıklamalar üç satıra
+ * kırılıyordu; satırda hepsi yan yana duruyor.
+ *
+ * İstatistik ızgarası (en uzun seri, odak saati, deneme sayısı…) buradan
+ * kaldırıldı: hiçbiri başarımla ilgili değil, hepsi İstatistik ekranının işi.
+ */
 export function RozetlerEkrani({
   denemeler,
   sablonlar,
@@ -115,6 +138,8 @@ export function RozetlerEkrani({
   bankaBoyutu: number
   kazanilmis: KazanilanRozet[]
 }) {
+  const [suzgec, setSuzgec] = useState<Suzgec>('tumu')
+
   const durum = useMemo(
     () =>
       rozetDurumu({
@@ -142,183 +167,187 @@ export function RozetlerEkrani({
       bankaBoyutu,
     ],
   )
-  const liste = useMemo(() => rozetListesi(durum, kazanilmis), [durum, kazanilmis])
-  const kazanilanSayi = liste.filter((s) => s.kazanildi).length
-  const sayim = useMemo(() => kademeSayimi(liste), [liste])
 
-  // Sıradaki hedef: kazanılmamışlar arasında eşiğe en yakın olan.
-  const sonraki = liste.find((s) => !s.kazanildi)
-  const odakSaati = Math.floor(durum.pomodoroDakikasi / 60)
+  /*
+    Liste sırası `rozetListesi`den geliyor ve burada yeniden sıralanmıyor:
+    kazanılanlar yeniden eskiye, kilitliler eşiğe yakınlıklarına göre. İkisi de
+    bu ekranın istediği sıra — en son kazandığın üstte, en az kalan üstte.
+  */
+  const liste = useMemo(() => rozetListesi(durum, kazanilmis), [durum, kazanilmis])
+  const kazanilanlar = useMemo(() => liste.filter((s) => s.kazanildi), [liste])
+  const kilitliler = useMemo(() => liste.filter((s) => !s.kazanildi), [liste])
+
+  const toplam = ROZETLER.length
+  const oran = toplam > 0 ? kazanilanlar.length / toplam : 0
+
+  const bolumler: { ad: string; satirlar: RozetIlerlemesi[] }[] = [
+    ...(suzgec !== 'kilitli'
+      ? [{ ad: `KAZANILDI · ${kazanilanlar.length}`, satirlar: kazanilanlar }]
+      : []),
+    ...(suzgec !== 'kazanilan'
+      ? [{ ad: `KİLİTLİ · ${kilitliler.length}`, satirlar: kilitliler }]
+      : []),
+  ]
 
   return (
     <div>
-      <BaslikSatiri
-        baslik="Başarımlar"
-        aciklama={`${kazanilanSayi} / ${ROZETLER.length} kazanıldı`}
-      />
+      <BaslikSatiri baslik="Başarımlar" />
 
-      <Kart className="mb-3 flex items-center gap-4">
-        <Rabi
-          durum={kazanilanSayi > 0 ? 'mutlu' : 'normal'}
-          poz={kazanilanSayi > 0 ? 'kupali' : 'tam'}
-          boyut={72}
-        />
-        <div className="min-w-0 flex-1">
-          {sonraki ? (
-            <>
-              <p className="text-sm font-medium">Sıradaki: {sonraki.rozet.ad}</p>
-              <p className="mt-0.5 text-sm text-muted-foreground">{sonraki.rozet.aciklama}</p>
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
-                <div
-                  className="h-full rounded-full bg-primary transition-all"
-                  style={{ width: `${Math.round(sonraki.oran * 100)}%` }}
-                />
-              </div>
-              <Ilerleme satir={sonraki} />
-            </>
-          ) : (
-            <p className="text-sm font-medium">Bütün başarımları topladın. 🐰</p>
-          )}
+      {/* Sayaç ve çubuk tek satırda: "12/40" ne kadarını topladığını söylüyor,
+          çubuk aynı şeyi bakmadan okunur hâle getiriyor. */}
+      <div className="flex items-center gap-3">
+        <p className="rakam text-sm font-bold text-primary">
+          {kazanilanlar.length}
+          <span className="font-medium text-muted-foreground">/{toplam}</span>
+        </p>
+        <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-full rounded-full bg-primary-dolu transition-[width] duration-300 ease-out"
+            style={{ width: `${Math.round(oran * 100)}%` }}
+          />
         </div>
-      </Kart>
-
-      {/* Kademe sayacı: kaç tane değil, ne kadar değerlisini topladığını gösterir. */}
-      <div className="mb-4 grid grid-cols-4 gap-2">
-        {(Object.keys(KADEME_ADI) as RozetKademesi[]).map((kademe) => {
-          const renk = KADEME_SINIFI[kademe]
-          const toplam = ROZETLER.filter((r) => r.kademe === kademe).length
-          return (
-            <div
-              key={kademe}
-              className={cn('rounded-2xl border px-2 py-2 text-center', renk.kenar, renk.zemin)}
-            >
-              <p className={cn('rakam font-display text-lg font-semibold', renk.yazi)}>
-                {sayim[kademe]}
-                <span className="text-xs font-normal opacity-70">/{toplam}</span>
-              </p>
-              <p className={cn('text-[11px]', renk.yazi)}>{KADEME_ADI[kademe]}</p>
-            </div>
-          )
-        })}
       </div>
 
-      <div className="mb-4 grid grid-cols-3 gap-3">
-        <Deger etiket="En uzun seri" deger={String(durum.enUzunSeri)} altNot="gün" />
-        <Deger etiket="Odak" deger={String(odakSaati)} altNot="saat" />
-        <Deger etiket="Deneme" deger={String(durum.denemeSayisi)} />
-        <Deger etiket="Bankadan düşen" deger={String(durum.bankaDusen)} altNot="soru" />
-        <Deger etiket="Yanlış çözülen" deger={String(durum.yanlisCozulen)} altNot="soru" />
-        <Deger etiket="Oyun rekoru" deger={String(durum.oyunRekoru)} altNot="doğru" />
+      <div className="mt-4 flex gap-1.5 rounded-full bg-muted p-1">
+        <SuzgecDugmesi secili={suzgec === 'tumu'} onClick={() => setSuzgec('tumu')} sayi={toplam}>
+          Tümü
+        </SuzgecDugmesi>
+        <SuzgecDugmesi
+          secili={suzgec === 'kazanilan'}
+          onClick={() => setSuzgec('kazanilan')}
+          sayi={kazanilanlar.length}
+        >
+          Kazanılan
+        </SuzgecDugmesi>
+        <SuzgecDugmesi
+          secili={suzgec === 'kilitli'}
+          onClick={() => setSuzgec('kilitli')}
+          sayi={kilitliler.length}
+        >
+          Kilitli
+        </SuzgecDugmesi>
       </div>
 
       {gunlukHedef <= 0 && (
-        <Not className="mb-4">
+        <Not className="mt-4">
           Seri rozetleri günlük soru hedefine göre sayılıyor. Ayarlar’dan bir hedef belirlemeden
           bu grup ilerlemiyor.
         </Not>
       )}
 
       {durum.diplomaNotu === null && (
-        <Not className="mb-4">
+        <Not className="mt-4">
           Okul notu rozetleri için Okul Notları ekranından derslerini gir — diploma notun
           hesaplanınca burada da görünür.
         </Not>
       )}
 
-      {TUR_SIRASI.map((tur) => {
-        const grup = liste.filter((s) => s.rozet.tur === tur)
-        if (grup.length === 0) return null
-        return (
-          <section key={tur} className="mb-4">
-            <h2 className="mb-2 text-sm font-medium text-muted-foreground">{TUR_ADI[tur]}</h2>
-            <ul className="grid grid-cols-2 gap-2">
-              {grup
-                .slice()
-                .sort(
-                  (a, b) =>
-                    KADEME_SIRASI[a.rozet.kademe] - KADEME_SIRASI[b.rozet.kademe] ||
-                    a.rozet.esik - b.rozet.esik,
-                )
-                .map((satir) => (
-                  <li key={satir.rozet.id}>
-                    <RozetKarti satir={satir} />
-                  </li>
-                ))}
-            </ul>
-          </section>
-        )
-      })}
+      {bolumler.map((bolum) => (
+        <section key={bolum.ad} className="mt-5">
+          {/*
+            Başlık büyük harfle **yazılıyor**, `uppercase` ile çevrilmiyor:
+            CSS'in büyütmesi "Kilitli"yi Türkçede yanlış olan "KILITLI"ye
+            çeviriyor, tarayıcı sayfanın dilini bilse bile.
+          */}
+          <h2 className="mb-2.5 text-xs font-bold tracking-[0.08em] text-muted-foreground">
+            {bolum.ad}
+          </h2>
+          <ul className="flex flex-col gap-2">
+            {bolum.satirlar.map((satir) => (
+              <li key={satir.rozet.id}>
+                <RozetSatiri satir={satir} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
     </div>
   )
 }
 
 /**
- * "7 / 10 gün" satırı. Eşiği 1 olan rozetlerde (banka temizliği gibi) sayı
- * anlamsız — orada ilerleme değil, olup olmadığı yazılıyor.
+ * Süzgecin tek düğmesi.
+ *
+ * Çip değil şeritteki bölme: üç seçenek birbirini dışlıyor ve şerit hangisinin
+ * açık olduğunu, seçili olmayanların da nerede durduğunu tek bakışta veriyor.
+ * Ayrı çipler olsaydı "hepsi kapalı" gibi bir hâl de mümkün görünürdü, oysa
+ * burada her zaman biri seçili.
  */
-function Ilerleme({ satir }: { satir: RozetIlerlemesi }) {
-  const { rozet, mevcut } = satir
-  if (rozet.esik <= 1) {
-    return <p className="mt-1 text-xs text-muted-foreground">Henüz olmadı</p>
-  }
-  const birim = BIRIM[rozet.tur]
+function SuzgecDugmesi({
+  secili,
+  sayi,
+  children,
+  ...props
+}: React.ComponentProps<'button'> & { secili: boolean; sayi: number }) {
   return (
-    <p className="rakam mt-1 text-xs text-muted-foreground">
-      {degerYaz(rozet.tur, mevcut)} / {netYaz(rozet.esik, 0)}
-      {birim ? ` ${birim}` : ''}
-    </p>
+    <button
+      type="button"
+      aria-pressed={secili}
+      className={cn(
+        'flex-1 rounded-full py-2 text-[13px] font-bold transition',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+        secili
+          ? 'bg-card text-primary shadow-[0_1px_4px_rgba(90,60,35,0.12)]'
+          : 'text-muted-foreground active:bg-card/50',
+      )}
+      {...props}
+    >
+      {children} <span className="rakam opacity-60">{sayi}</span>
+    </button>
   )
 }
 
-function RozetKarti({ satir }: { satir: RozetIlerlemesi }) {
+/**
+ * Tek başarım satırı: simge · ad ve açıklama · kademe ve ilerleme.
+ *
+ * Kazanılmamışta simge soluk ve gri, ortada bir ilerleme çubuğu var; kazanılmışta
+ * çubuk yok — dolu bir çubuk zaten sağdaki kademe etiketinin söylediğini
+ * tekrarlardı.
+ */
+function RozetSatiri({ satir }: { satir: RozetIlerlemesi }) {
   const { rozet, kazanildi, oran, tarih } = satir
   const renk = KADEME_SINIFI[rozet.kademe]
 
   return (
-    <div
-      className={cn(
-        'h-full rounded-2xl border p-3',
-        kazanildi ? cn(renk.kenar, renk.zemin) : 'border-border bg-card',
-      )}
-    >
-      <div className="flex items-start justify-between gap-1">
-        {/* Kazanılmamış rozetin simgesi soluk: neye çalıştığı görünsün ama
-            kazanılmışlarla karışmasın. */}
-        <span
-          className={cn('text-2xl leading-none', !kazanildi && 'opacity-35 grayscale')}
-          aria-hidden
-        >
-          {rozet.ikon}
-        </span>
-        {kazanildi ? (
-          <span className={cn('mt-0.5 text-[10px] font-medium uppercase tracking-wide', renk.yazi)}>
-            {KADEME_ADI[rozet.kademe]}
-          </span>
-        ) : (
-          <Lock size={13} className="mt-1 shrink-0 text-muted-foreground/60" aria-hidden />
+    <div className="golge-kart flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
+      <span
+        className={cn(
+          'flex size-11 flex-none items-center justify-center rounded-[14px] border text-[22px] leading-none',
+          kazanildi
+            ? cn(renk.kenar, renk.zemin)
+            : 'border-border bg-muted opacity-45 grayscale',
         )}
-      </div>
+        aria-hidden
+      >
+        {rozet.ikon}
+      </span>
 
-      <p className={cn('mt-2 text-sm font-medium', !kazanildi && 'text-muted-foreground')}>
-        {rozet.ad}
-      </p>
-      <p className="mt-0.5 text-xs leading-snug text-muted-foreground">{rozet.aciklama}</p>
-
-      {kazanildi ? (
-        <p className={cn('mt-1.5 text-xs font-medium', renk.yazi)}>
-          {tarih ? tarihYaz(tarih) : 'Kazanıldı'}
-        </p>
-      ) : (
-        <>
-          <div className="mt-2 h-1 overflow-hidden rounded-full bg-muted">
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-bold">{rozet.ad}</p>
+        <p className="mt-0.5 text-xs leading-snug text-muted-foreground">{rozet.aciklama}</p>
+        {!kazanildi && (
+          <div className="mt-[7px] h-1 overflow-hidden rounded-full bg-muted">
             <div
-              className="h-full rounded-full bg-muted-foreground/40"
+              className="h-full rounded-full bg-primary-dolu"
               style={{ width: `${Math.round(oran * 100)}%` }}
             />
           </div>
-          <Ilerleme satir={satir} />
-        </>
-      )}
+        )}
+      </div>
+
+      <div className="flex-none text-right">
+        <p
+          className={cn(
+            'text-[11px] font-bold',
+            kazanildi ? renk.yazi : 'text-muted-foreground',
+          )}
+        >
+          {kazanildi ? KADEME_ADI[rozet.kademe] : 'Kilitli'}
+        </p>
+        <p className="rakam mt-[3px] text-[11px] text-muted-foreground">
+          {kazanildi ? (tarih ? kisaTarih(tarih) : 'Kazanıldı') : ilerlemeYazisi(satir)}
+        </p>
+      </div>
     </div>
   )
 }

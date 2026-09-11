@@ -833,6 +833,34 @@ kimliği `rozetler`, depo anahtarı `rabi-rozetler` ve yedekteki `rozetler`
 alanı. Kimliği değiştirmek kazanılmış rozetleri kayıtta öksüz bırakırdı; ad
 yalnızca görünen yüzde değişti.
 
+### Ekran dört özet değil bir liste
+
+Başarımlar ekranı bir süre dört katmandı: sıradaki hedefi gösteren maskot
+kartı, kademe sayacı (bronz/gümüş/altın/efsane), altı ölçülük istatistik
+ızgarası ve türe göre **on sekiz** başlık altında iki sütunlu kart ızgarası.
+Dört ayrı özet, hepsi aynı kırk rozeti başka bir şekilde sayıyordu; listenin
+kendisi ancak üçüncü ekranda başlıyordu.
+
+Şimdi tek sayaç (12/40 ve çubuğu), tek süzgeç (Tümü · Kazanılan · Kilitli) ve
+iki bölüm var. Türe göre gruplama kalktı: on sekiz başlık, aradığı rozeti bilen
+için bile uzun bir kaydırmaydı ve rozetler zaten adlarıyla kendilerini
+anlatıyor. Kartlar da ızgaradan tam genişlik satıra geçti — iki sütunda ad,
+açıklama, çubuk ve tarih 170 piksele sığmak zorundaydı.
+
+**İstatistik ızgarası bilerek gitti**: en uzun seri, odak saati, deneme sayısı,
+bankadan düşen, yanlış çözülen, oyun rekoru. Hiçbiri başarımla ilgili değil,
+hepsi İstatistik ekranının işi. Geri koymadan önce sorulacak soru şu: bu sayı
+kullanıcının hangi rozete ne kadar kaldığını mı söylüyor, yoksa başka bir
+ekranın özetini burada mı tekrarlıyor?
+
+`kademeSayimi` ve `KADEME_SIRASI` `lib/rozetler.ts`te duruyor; ekran artık
+kullanmıyor ama testleri ve kutlama bildirimi kullanıyor.
+
+**Tarih kısa yazılıyor** ("9 May"), `tarihYaz` ile değil. Uzun yazım sağ sütunu
+genişletiyor ve ortadaki açıklamayı iki satıra kırıyordu. Yıl yalnızca içinde
+bulunulan yıl değilse ekleniyor — tümüyle atılsaydı geçen öğretim yılında
+kazanılmış rozet bu yılkiyle aynı görünürdü.
+
 ## Başarım kutlaması pencere değil, bildirim
 
 Kutlama ekranın ortasına bir pencere açıyordu (`RozetKutlama`) ve kapatılmayı
