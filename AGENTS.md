@@ -407,25 +407,53 @@ provada:
   dolmadı. Oyunlardaki "yarım tur da bir tur" kuralının tersi: orada kayıt
   bankaya düşüyor, burada ölçülen şey sürenin kendisi.
 
-**Prova, Süreler kartının ilk satırı.** Bir süre sayacın üstünde kendi kartında
-duruyordu ve iki kart aynı soruya cevap veriyordu: "bu tur kaç dakika sürecek".
-Ayrı dururken seçim de ayrı iki karar gibi görünüyordu; oysa prova seçmek,
-çalışma/mola sürelerinin **yerine** ÖSYM'nin süresini koymak demek. Satır
-ötekilerle aynı biçimde etiketleniyor (küçük, büyük harf) — kendi başlığı ve
-simgesi olsaydı kartın içinde ikinci bir kart gibi dururdu.
+**Prova ekranın kipi, Süreler'in bir satırı değil.** Bir süre sayacın
+üstünde kendi kartındaydı, sonra Süreler kartının ilk satırı oldu; şimdi
+başlığın altındaki **kip anahtarı** (Pomodoro · Deneme provası,
+`tasarim/pomodoro-2a.html`). Prova seçmek çalışma/mola sürelerinin **yerine**
+ÖSYM'nin süresini koymak demek ve o karar sürelerin bir satırı gibi değil
+ekranın hâli gibi duruyor: kip değişince sayacın altındaki soru da değişiyor
+("Hangi derse?" → "Hangi denemeyi çözüyorsun?"). Provaya geçmek TYT'yi
+seçiyor — boş bir prova kipi yok, kitapçık seçilmeden sayacın süresi de yok.
+Süreler satırı provada çizilmiyor; ayarlar kaybolmuyor, Pomodoro'ya dönünce
+aynı değerlerle geri geliyor.
 
-Çiplerin altındaki açıklama yalnızca **prova seçiliyken** var ve o zaman turun
-kuralını yazıyor (kaç soru, kaç dakika, mola yok). Seçili değilken cümle yok:
-etiket zaten ne olduğunu söylüyor ve boş durumda duran bir açıklama, kartın en
-çok görülen hâlini uzatıyordu.
+Prova çiplerinin altındaki açıklama yok: soru ve dakika sayısı sayacın
+altında yazıyor ve mola olmadığı zaten tur noktalarının gizlenmesinden
+görülüyor.
 
-Kart artık her hâlde çiziliyor. Tümüyle gizlenseydi provayı **kapatmanın yolu**
-da onunla birlikte kaybolurdu — eskiden prova kendi kartındaydı ve bu sorun
-yoktu. Aynı sebeple "çalışırken ekran açık kalsın" anahtarı süre satırlarının
-dışında duruyor: provada da geçerli ve 165 dakikalık bir turda ona ulaşılamaz
-olurdu. O anahtar sayaç çalışırken de değiştirilebiliyor, süreler ise kilitli —
-başlamış bir turun uzunluğu değişmemeli, ekranın açık kalması ise turun
-ortasında verilebilecek bir karar.
+### Başlat'a basınca sayaç tam ekrana çıkıyor
+
+Sayaç ayarların arasında bir karttı; tur boyunca ekranda Süreler, Ses ve alt
+menü de duruyordu. Şimdi Başlat, sayacı tam ekran bir **sahneye**
+(`CalismaSahnesi`) çıkarıyor: üstte tur ve aşama, ortada ders adı, büyük
+halka ve bitiş saati, altta üç düğme (turu bitir · duraklat/devam · atla).
+Alt menü ve ayarlar arkada kalıyor — turun içindeyken yapılacak tek iş sayaç.
+Katman `tam-katman-girisi` ile geliyor ve geri tuşu (donanım dahil) turu
+**bitirmiyor**: sahneyi kapatıp turu duraklatıyor; hazırlık ekranı kalan
+süreyi ve "Devam et"i gösteriyor, oradan basınca sahne aynı yerden açılıyor.
+
+Sahne `calisiyor`dan ayrı bir state (`sahne`): duraklatmak sahneyi kapatmıyor
+ve aşama bitince de açık kalıyor — mola sahnedeki Başlat ile başlıyor.
+Kapatan üç şey var: geri oku, "Turu bitir" ve provadan çıkış (bitmesi ya da
+atlanması; "prova bitti" notu hazırlık ekranında).
+
+Sahnenin altında bir süre "Ekran kapalıyken de sayıyor · alt menü kapandı"
+yazıyordu; kaldırıldı — kullanıcı istedi, sayaç kendini açıklamak zorunda
+değil.
+
+Hazırlık ekranında süre, prova ve kip **tur içinde** (`turIcinde`, yani
+duraklatılmış tur dahil) kilitli: başlamış bir turun uzunluğu değişmemeli.
+Süreler bir çekmecede (`Cekmece`, alttan açılır), ders listesinin tamamı da
+öyle: hazırlıkta yalnızca üç ders ve "Diğer" var, bütün çipler sayacın altında
+birkaç satır kaplayıp Başlat'ı aşağı itiyordu. "Çalışırken ekran açık kalsın"
+anahtarı çekmecede değil ayar kartının kendi satırında ve her iki kipte de
+duruyor: provada da geçerli ve çekmeceye konsaydı prova kipinde ona hiç
+ulaşılamazdı. Tur içinde ona da ulaşılmıyor (sahne her şeyi örtüyor); sonraki
+turda geçerli oluyor.
+
+Başlat düğmesi sayfanın dibine **yapışık** (`sticky`, alt menünün hemen
+üstünde): ayarlar uzadıkça düğme kaydırmanın sonuna gitmesin.
 
 Soru sayıları elle yazılmıyor, `OSYM_TEST_SORU`dan toplanıyor: aynı sayı
 `sablonlar.ts`te zaten duruyor ve iki yere yazılan bir sayı dağılım
@@ -533,9 +561,10 @@ Tek yerleri artık Pomodoro'daki **"Odak koruması"** satırı; içeriği
 `components/odak/odak-ayarlari.tsx`, iki ekran arasında paylaşılmıyor çünkü
 ikinci ekran kalmadı. Satır **kapalı** başlıyor ve açık korumaları altında
 yazıyor: sayaç ekranın asıl işi, iki anahtar sürekli açık dururken sayacı aşağı
-itiyorlardı. Yeri değişmedi (sayacın üstünde) çünkü gerekçe değişmedi — karar
-her turda değişiyor ve turu başlatmadan önce görülmeyen bir ayar, o turda
-yanlış kurulmuş bir ayardır.
+itiyorlardı. Satır sayacın **altındaki** ayar kartında (Süreler ve Ses ile
+yan yana) ama hâlâ hazırlık ekranında, sahnede değil, çünkü gerekçe
+değişmedi — karar her turda değişiyor ve turu başlatmadan önce görülmeyen bir
+ayar, o turda yanlış kurulmuş bir ayardır.
 
 Anahtarın kilidi doğrudan açmadığı kural duruyor: önce davet penceresi
 (`odak-daveti.tsx`), kilit ancak "İstiyorum" denince açılıyor ve izin ekranı
