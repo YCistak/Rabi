@@ -86,14 +86,18 @@ Rabi bir süre **emojiydi**: `public/tavsan-yuz.png` 🐰'nin, `tavsan-el-sallay
 yazı tipinden gelen bir simgeydi ve ikonda, bildirimde, engel katmanında da
 o duruyordu. Yerini maskotun kendi çizimleri aldı.
 
-Pozlar elle konmuyor, üretiliyor: kaynak `assets/maskot/*.jpeg`, betik
+Pozlar elle konmuyor, üretiliyor: kaynak `assets/maskot/*.png`, betik
 `scripts/maskot-uret.mjs`, çıktı `public/tavsan-*.png`. Çıktılar depoya
 giriyor ama **elle düzenlenmemeli** — `ikon-uret.mjs` ile aynı gerekçe.
-Kaynaklar siyah zeminli JPEG; betiğin işi zemini kenardan taşırarak silmek
-(eşikle silmek maskotun gözlerini ve kitabın kapağını da siliyordu) ve bütün
-pozları aynı tuvalde **aynı yükseklikte** vermek. Boy eşitliği şart: `Rabi`
-ölçüyü tek bir sayı olarak biliyor, eşit olmasalardı maskot poz değiştirdiğinde
-büyüyüp küçülürdü.
+Kaynaklar zemini kesilmiş, gerçek alfa taşıyan 2048'lik PNG; betik saydamlığı
+kaynaktan okuyor ve tek işi ölçü: bütün pozları aynı tuvalde **aynı
+yükseklikte** vermek. Boy eşitliği şart: `Rabi` ölçüyü tek bir sayı olarak
+biliyor, eşit olmasalardı maskot poz değiştirdiğinde büyüyüp küçülürdü.
+
+Kaynaklar bir süre siyah zeminli JPEG'di ve betik zemini kenardan taşırarak
+siliyordu. O yol maskotu bozdu: taşma gövdedeki koyu geçişlere sızıyor, kürkün
+yanında düz bir kesik bırakıyordu. Zemin silme işi artık depoya girmeden,
+kaynağın kendisinde bitiyor.
 
 **`durum` ile `poz` ayrı kalıyor.** `durum` yalnızca ekran okuyucu etiketi,
 çizilecek dosyayı `poz` seçiyor. İkisini birleştirmek — durumdan doğrudan
@@ -117,7 +121,7 @@ betiğindeki `MASKOT` da değişmeli ve `public/tavsan-yuz.png`
 `android/.../drawable-nodpi/tavsan_yuz.png`e yeniden kopyalanmalı — yerli
 taraf `public/` altını okuyamıyor.
 
-Kaynak klasöründeki her JPEG kullanılmıyor. Dışarıda kalan "sinirli" bilerek
+Kaynak klasöründeki her PNG kullanılmıyor. Dışarıda kalan "sinirli" bilerek
 kaldı: uygulamada karşılığı olan bir ruh hâli değil — Rabi yanlış cevapta
 kullanıcıya kızmıyor, efekt zaten sarsıntıyla "yanlış" diyor.
 

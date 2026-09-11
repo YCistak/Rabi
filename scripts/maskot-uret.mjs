@@ -3,30 +3,20 @@
  *
  *   node scripts/maskot-uret.mjs
  *
- * Kaynak `assets/maskot/*.jpeg`, çıktı `public/tavsan-*.png`. Üretilen dosyalar
- * depoya giriyor ama **elle düzenlenmemeli** — poz değişecekse kaynak JPEG
+ * Kaynak `assets/maskot/*.png`, çıktı `public/tavsan-*.png`. Üretilen dosyalar
+ * depoya giriyor ama **elle düzenlenmemeli** — poz değişecekse kaynak PNG
  * değiştirilip betik yeniden çalıştırılmalı. `ikon-uret.mjs` ile aynı gerekçe.
  *
- * ## Neden bir betik gerekiyor
+ * ## Zemin artık burada silinmiyor
  *
- * Kaynaklar 2048'lik JPEG ve zeminleri **siyah**; uygulamanın zemini kırık
- * beyaz. Doğrudan konsalardı her maskot siyah bir karenin içinde dururdu.
- * Üstelik JPEG'in kendi sıkıştırma gürültüsü kenarlarda gri bir hâle bırakıyor.
+ * Kaynaklar bir süre siyah zeminli JPEG'di ve betik zemini kenardan taşırarak
+ * siliyordu. O yol maskotu bozuyordu: taşma tavşanın kendi gövdesindeki koyu
+ * geçişlere de sızıyor, gövdenin yanında düz bir kesik bırakıyordu — kürk
+ * yuvarlak biterken kenar bıçakla kesilmiş gibi duruyordu.
  *
- * ## Zemin taşma ile bulunuyor, eşikle değil
- *
- * "Karanlık pikseli sil" kuralı ilk denenen yoldu ve maskotun **içini** de
- * siliyordu: gözlerin bebeği, kitabın kahverengi kapağı, kupanın gölgesi hep
- * eşiğin altında. Zemin bu yüzden kenardan taşırılarak bulunuyor — silinen
- * şey "karanlık olan" değil, "karanlık olan ve kenara bağlı olan".
- *
- * ## Kenar yumuşaklığı kürkten geliyor
- *
- * Taşma ikili bir maske veriyor ve tek başına kullanılsaydı kürk tırtıklı
- * kesilirdi. Zemine komşu birkaç piksellik bantta saydamlık parlaklıktan
- * okunuyor: siyah zeminin üstündeki yarı saydam kürk zaten `alfa × renk` olarak
- * kaydedilmiş durumda, o çarpım geri bölünüyor. Bölünmeseydi kenarlar
- * uygulamanın açık zemininde koyu bir çizgi olarak kalırdı.
+ * Yeni kaynaklar zemini kesilmiş, gerçek alfa taşıyan 2048'lik PNG'ler. Silinecek
+ * bir zemin yok; betik saydamlığı kaynağın kendisinden okuyor. Kalan iş yalnızca
+ * ölçü: kırpma, ölçekleme ve ortak tuvale oturtma.
  *
  * ## Pozların boyu eşitleniyor
  *
@@ -52,44 +42,31 @@ const TUVAL = 256
 const DOLULUK = 0.94
 
 /**
- * Kenara bağlı bir pikselin "zemin" sayılması için parlaklık sınırı.
+ * Kutu hesabında pikselin "var" sayılması için alfa alt sınırı.
  *
- * Kaynaklar tam siyah zeminli ama JPEG gürültüsü onu 0'da tutmuyor; 30'un
- * altında kalan her şey zemin. Maskotun en koyu yeri (göz bebeği) bunun
- * üstünde ve zaten kenara bağlı değil.
+ * Kesim aracı kenarda birkaç birimlik saydamlık bırakıyor; sıfır alınsaydı kutu
+ * gözle görünmeyen bir tozla birlikte büyür, maskot da tuvalde küçülürdü.
  */
-const ZEMIN_SINIRI = 30
-
-/** Saydamlığın okunduğu bandın kalınlığı (piksel, 2048'lik kaynakta). */
-const BANT = 4
-
-/**
- * Bantta parlaklığın saydamlığa çevrildiği aralık.
- *
- * Üst uç maskotun kürkünün parlaklığı: siyah zeminin üstünde tam opak bir kürk
- * pikseli bu değere yakın okunuyor, dolayısıyla ondan sonrası tam opak sayılıyor.
- * Alt uç JPEG gürültüsünü eliyor.
- */
-const [BANT_ALT, BANT_UST] = [16, 190]
+const KUTU_ALFA = 8
 
 /**
  * Üretilecek pozlar: çıktı adı → kaynak dosya.
  *
- * Kaynak klasöründeki her JPEG kullanılmıyor. Dışarıda kalanların gerekçesi:
+ * Kaynak klasöründeki her PNG kullanılmıyor. Dışarıda kalanların gerekçesi:
  * "sinirli" (ve onun ikinci kopyası "uyuyan") uygulamada karşılığı olmayan bir
  * ruh hâli — Rabi kullanıcıya kızmıyor; "sevinen 1/3" ile "çubuk tutan 1/2"
  * seçilenlerin başka açıdan çekilmiş eşleri.
  */
 const POZLAR = [
-  { ad: 'tavsan-tam', kaynak: 'normal maskot.jpeg' },
-  { ad: 'tavsan-el-sallayan', kaynak: 'selam veren maskot.jpeg' },
-  { ad: 'tavsan-okuyan', kaynak: 'kitap okuyan maskot.jpeg' },
-  { ad: 'tavsan-kupali', kaynak: 'kupa kaldıran maskot.jpeg' },
-  { ad: 'tavsan-sevinen', kaynak: 'sevinen maskot 2.jpeg' },
-  { ad: 'tavsan-uzgun', kaynak: 'üzülen maskot.jpeg' },
-  { ad: 'tavsan-dusunen', kaynak: 'düşünen maskot.jpeg' },
-  { ad: 'tavsan-kahveli', kaynak: 'kahve içen maskot.jpeg' },
-  { ad: 'tavsan-isaretci', kaynak: 'çubuk tutan maskot 3.jpeg' },
+  { ad: 'tavsan-tam', kaynak: 'normal maskot.png' },
+  { ad: 'tavsan-el-sallayan', kaynak: 'selam veren maskot.png' },
+  { ad: 'tavsan-okuyan', kaynak: 'kitap okuyan maskot.png' },
+  { ad: 'tavsan-kupali', kaynak: 'kupa kaldıran maskot.png' },
+  { ad: 'tavsan-sevinen', kaynak: 'sevinen maskot 2.png' },
+  { ad: 'tavsan-uzgun', kaynak: 'üzülen maskot.png' },
+  { ad: 'tavsan-dusunen', kaynak: 'düşünen maskot.png' },
+  { ad: 'tavsan-kahveli', kaynak: 'kahve içen maskot.png' },
+  { ad: 'tavsan-isaretci', kaynak: 'çubuk tutan maskot 3.png' },
 ]
 
 /**
@@ -109,110 +86,14 @@ const POZLAR = [
  * - Yan kenarlar yanakların en geniş satırından (x 606–1446) pay bırakılarak
  *   alındı; ilk denemede sağ yanak kutunun dışında kalmıştı.
  */
-const YUZ = { kaynak: 'normal maskot.jpeg', sol: 590, ust: 15, en: 870, boy: 1150 }
-
-/**
- * Parlaklık — saydamlık kararları buna bakıyor.
- *
- * `i` kaynak tamponundaki bayt indisi; kaynak JPEG olduğu için kanal sayısı
- * 3 (bir kez 4 varsayıldı ve maskot okunmaz bir mozaiğe döndü).
- */
-function parlaklik(veri, i) {
-  return (veri[i] * 299 + veri[i + 1] * 587 + veri[i + 2] * 114) / 1000
-}
-
-function kirp(deger) {
-  return deger < 0 ? 0 : deger > 255 ? 255 : Math.round(deger)
-}
-
-/**
- * Siyah zemini saydamlaştırır.
- *
- * Dönen tampon RGBA; kaynak JPEG'in kendisi saydamlık taşımıyor.
- */
-function zeminiSil(veri, en, boy, kanal) {
-  const zemin = new Uint8Array(en * boy)
-  const yigin = []
-
-  // Kenardaki karanlık pikselleri tohum al: zemin dışarıdan içeri taşıyor.
-  for (let x = 0; x < en; x++) {
-    for (const y of [0, boy - 1]) yigin.push(y * en + x)
-  }
-  for (let y = 0; y < boy; y++) {
-    for (const x of [0, en - 1]) yigin.push(y * en + x)
-  }
-
-  while (yigin.length > 0) {
-    const p = yigin.pop()
-    if (zemin[p] === 1) continue
-    if (parlaklik(veri, p * kanal) >= ZEMIN_SINIRI) continue
-    zemin[p] = 1
-    const x = p % en
-    const y = (p - x) / en
-    if (x > 0) yigin.push(p - 1)
-    if (x < en - 1) yigin.push(p + 1)
-    if (y > 0) yigin.push(p - en)
-    if (y < boy - 1) yigin.push(p + en)
-  }
-
-  // Zemine komşu bant: saydamlık orada parlaklıktan okunuyor, ötesi tam opak.
-  const uzaklik = new Uint8Array(en * boy).fill(255)
-  let sinir = []
-  for (let p = 0; p < zemin.length; p++) {
-    if (zemin[p] === 1) {
-      uzaklik[p] = 0
-      sinir.push(p)
-    }
-  }
-  for (let adim = 1; adim <= BANT && sinir.length > 0; adim++) {
-    const sonraki = []
-    for (const p of sinir) {
-      const x = p % en
-      const y = (p - x) / en
-      const komsular = []
-      if (x > 0) komsular.push(p - 1)
-      if (x < en - 1) komsular.push(p + 1)
-      if (y > 0) komsular.push(p - en)
-      if (y < boy - 1) komsular.push(p + en)
-      for (const k of komsular) {
-        if (uzaklik[k] !== 255) continue
-        uzaklik[k] = adim
-        sonraki.push(k)
-      }
-    }
-    sinir = sonraki
-  }
-
-  const cikti = Buffer.alloc(en * boy * 4)
-  for (let p = 0; p < en * boy; p++) {
-    if (zemin[p] === 1) continue // alfa 0, renk 0 — Buffer zaten sıfır dolu
-    const kaynak = p * kanal
-    const hedef = p * 4
-
-    let alfa = 255
-    if (uzaklik[p] <= BANT) {
-      const l = parlaklik(veri, kaynak)
-      alfa = kirp(((l - BANT_ALT) / (BANT_UST - BANT_ALT)) * 255)
-    }
-    cikti[hedef + 3] = alfa
-    if (alfa === 0) continue
-
-    // Çarpımı geri böl: siyah zeminin üstündeki yarı saydam kürk `alfa × renk`
-    // olarak kaydedilmiş, bölünmezse açık zeminde koyu bir kenar bırakıyor.
-    const carpan = 255 / alfa
-    cikti[hedef] = kirp(veri[kaynak] * carpan)
-    cikti[hedef + 1] = kirp(veri[kaynak + 1] * carpan)
-    cikti[hedef + 2] = kirp(veri[kaynak + 2] * carpan)
-  }
-  return cikti
-}
+const YUZ = { kaynak: 'normal maskot.png', sol: 590, ust: 15, en: 870, boy: 1150 }
 
 /** Saydam kenarları atıp maskotun kendi kutusunu döndürür. */
 function kutuBul(rgba, en, boy) {
   let [sol, ust, sag, alt] = [en, boy, -1, -1]
   for (let y = 0; y < boy; y++) {
     for (let x = 0; x < en; x++) {
-      if (rgba[(y * en + x) * 4 + 3] < 8) continue
+      if (rgba[(y * en + x) * 4 + 3] < KUTU_ALFA) continue
       if (x < sol) sol = x
       if (x > sag) sag = x
       if (y < ust) ust = y
@@ -222,9 +103,9 @@ function kutuBul(rgba, en, boy) {
   return { sol, ust, en: sag - sol + 1, boy: alt - ust + 1 }
 }
 
-/** Bir kaynağı saydamlaştırıp tuvale oturtur; yazılan dosyanın yolunu döner. */
+/** Bir kaynağı tuvale oturtur; yazılan dosyanın yolunu döner. */
 async function uret(ad, kaynak, kirpma) {
-  let girdi = sharp(join(kaynakKlasoru, kaynak))
+  let girdi = sharp(join(kaynakKlasoru, kaynak)).ensureAlpha()
   if (kirpma) {
     girdi = girdi.extract({
       left: kirpma.sol,
@@ -234,8 +115,7 @@ async function uret(ad, kaynak, kirpma) {
     })
   }
 
-  const { data, info } = await girdi.raw().toBuffer({ resolveWithObject: true })
-  const rgba = zeminiSil(data, info.width, info.height, info.channels)
+  const { data: rgba, info } = await girdi.raw().toBuffer({ resolveWithObject: true })
   const kutu = kutuBul(rgba, info.width, info.height)
 
   // Ölçek boydan alınıyor: bir poz kollarını açtığında (sevinen) enden
