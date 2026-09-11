@@ -196,7 +196,11 @@ export type PomodoroAyar = {
   rahatsizEtme: boolean
   /** Engellenecek uygulamaların paket adları. */
   kilitliUygulamalar: string[]
-  /** Odak kilidi tanıtımı bir kez gösterilir; kullanıcı geçtiyse bir daha sorulmaz. */
+  /**
+   * Eski tanıtım akışının bayrağı. Tanıtım ve davet penceresi kaldırıldı,
+   * hiçbir yerden okunmuyor; alan kayıt ve yedek uyumu için duruyor
+   * (`oyunMuzikTuru` ile aynı gerekçe).
+   */
   kilitTanitimiGoruldu: boolean
 }
 

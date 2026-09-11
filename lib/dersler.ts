@@ -28,6 +28,28 @@ export const CALISMA_DERSLERI: string[] = [
   'Tekrar',
 ]
 
+/**
+ * Pomodoro'nun ders listesi.
+ *
+ * Soru takibiyle aynı listeyi kullanıyordu ve ondan uzun düşüyordu: Geometri
+ * ile Edebiyat kâğıtta ayrı test ama çalışırken Matematik ve Türkçe'nin
+ * içinde; Psikoloji, Sosyoloji, Mantık seçmeli ve çoğu öğrencide yok; "Deneme
+ * Çözümü" prova kipinin işi, "Soru Çözümü" ve "Tekrar" da ders değil.
+ * Listeden **süzülüyor**, ikinci bir liste yazılmıyor: soru takibine yeni bir
+ * ders eklenince burada da görünmeli.
+ */
+const POMODORO_DISI = new Set([
+  'Geometri',
+  'Edebiyat',
+  'Psikoloji',
+  'Sosyoloji',
+  'Mantık',
+  'Deneme Çözümü',
+  'Soru Çözümü',
+  'Tekrar',
+])
+export const POMODORO_DERSLERI: string[] = CALISMA_DERSLERI.filter((d) => !POMODORO_DISI.has(d))
+
 /** Türkçe harfleri de doğru karşılaştırmak için sadeleştirir: "İNGİLİZCE" → "ingilizce". */
 export function sadelestir(metin: string): string {
   return metin

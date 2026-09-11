@@ -444,9 +444,13 @@ değil.
 
 Hazırlık ekranında süre, prova ve kip **tur içinde** (`turIcinde`, yani
 duraklatılmış tur dahil) kilitli: başlamış bir turun uzunluğu değişmemeli.
-Süreler bir çekmecede (`Cekmece`, alttan açılır), ders listesinin tamamı da
-öyle: hazırlıkta yalnızca üç ders ve "Diğer" var, bütün çipler sayacın altında
-birkaç satır kaplayıp Başlat'ı aşağı itiyordu. "Çalışırken ekran açık kalsın"
+Süreler bir çekmecede (`Cekmece`, alttan açılır). Ders seçimi Ses ile aynı
+biçimde: ayar kartında Süreler'in hemen altında bir satır, dokununca altında
+liste açılıyor. Tasarımdaki dört kutuluk ders ızgarası ("Hangi derse?")
+denendi ve kalktı — ekranda iki ayrı seçim dili vardı. Listesi
+`POMODORO_DERSLERI` (`lib/dersler.ts`), `CALISMA_DERSLERI`nden süzülüyor:
+Geometri, Edebiyat, Psikoloji, Sosyoloji, Mantık, Deneme Çözümü, Soru Çözümü
+ve Tekrar burada yok — soru takibinde duruyorlar. "Çalışırken ekran açık kalsın"
 anahtarı çekmecede değil ayar kartının kendi satırında ve her iki kipte de
 duruyor: provada da geçerli ve çekmeceye konsaydı prova kipinde ona hiç
 ulaşılamazdı. Tur içinde ona da ulaşılmıyor (sahne her şeyi örtüyor); sonraki
@@ -566,9 +570,18 @@ yan yana) ama hâlâ hazırlık ekranında, sahnede değil, çünkü gerekçe
 değişmedi — karar her turda değişiyor ve turu başlatmadan önce görülmeyen bir
 ayar, o turda yanlış kurulmuş bir ayardır.
 
-Anahtarın kilidi doğrudan açmadığı kural duruyor: önce davet penceresi
-(`odak-daveti.tsx`), kilit ancak "İstiyorum" denince açılıyor ve izin ekranı
-yalnızca adı yazılı düğmeye basılınca gidiyor.
+**Davet penceresi ve ilk giriş sihirbazı kaldırıldı** (`odak-daveti.tsx`,
+`odak-kurulum.tsx` silindi). Anahtar bir süre doğrudan açmıyordu: önce
+"bu turu birlikte koruyalım mı" penceresi çıkıyor, Pomodoro'ya ilk girişte de
+üç adımlık bir tanıtım geliyordu. Kullanıcı ikisini de istemedi. Şimdi
+"Odak koruması" satırının altında iki anahtar var (Uygulama kilidi, Rahatsız
+etme) ve dokununca açılıyorlar. İzin **ilk açılışta** isteniyor: anahtar
+açılırken eksik izin varsa sistem ekranı o an açılıyor; izin bir kez
+verildikten sonra anahtarı kapatıp açmak bir daha sormuyor, çünkü sorulan şey
+izin durumu ve o artık var. Kilidin iki izni var ve tek seferde biri
+açılıyor; ikincisi kullanıcı döndüğünde satırın altındaki uyarıdan
+isteniyor. `Ayarlar.kilitTanitimiGoruldu` kayıtta duruyor ama okunmuyor
+(`oyunMuzikTuru` ile aynı gerekçe).
 
 ### Engel katmanı uygulamanın devamı gibi görünüyor
 

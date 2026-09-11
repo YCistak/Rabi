@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { KeepAwake } from '@capacitor-community/keep-awake'
 import { Capacitor } from '@capacitor/core'
 import {
+  BookOpen,
   ChevronLeft,
   Clock,
   Music,
@@ -27,7 +28,7 @@ import {
 } from '@/lib/pomodoro'
 import { SesCalar } from '@/lib/ses'
 import { LOFI_PARCALAR } from '@/lib/lofi'
-import { CALISMA_DERSLERI } from '@/lib/dersler'
+import { POMODORO_DERSLERI } from '@/lib/dersler'
 import { PROVALAR, PROVA_DERSI, type Prova } from '@/lib/sinav-provasi'
 import { izinIste, pomodoroIptal, pomodoroPlanla } from '@/lib/bildirim'
 import {
@@ -40,17 +41,9 @@ import {
   type PomodoroKomutu,
 } from '@/lib/odak-kilidi'
 import { useGeriKatmani } from '@/lib/geri'
-import { OdakKurulum } from '@/components/ekranlar/odak-kurulum'
 import { OdakAyarlari } from '@/components/odak/odak-ayarlari'
 import { cn, yeniId } from '@/lib/utils'
 import { Anahtar, BaslikSatiri, Buton, Cip, Kart, Not } from '@/components/ui'
-
-/**
- * Hazırlık ekranında ders ızgarası dört kutu: üç ders ve "Diğer". Gerisi
- * çekmecede — bütün liste sayacın altında birkaç satır kaplıyor ve Başlat'ı
- * aşağı itiyordu.
- */
-const KISA_DERS_SAYISI = 3
 
 export function PomodoroEkrani({
   ayar,
@@ -93,8 +86,8 @@ export function PomodoroEkrani({
    */
   const [sahne, setSahne] = useState(false)
   const [sesPaneli, setSesPaneli] = useState(false)
+  const [dersPaneli, setDersPaneli] = useState(false)
   const [sureCekmecesi, setSureCekmecesi] = useState(false)
-  const [dersCekmecesi, setDersCekmecesi] = useState(false)
   /**
    * Önizlemesi çalan parçanın dosya adı.
    *
@@ -103,16 +96,8 @@ export function PomodoroEkrani({
    * saymak, kararı onun yerine vermek olurdu.
    */
   const [onizlenen, setOnizlenen] = useState<string | null>(null)
-  /**
-   * Odak kilidi tanıtımı pomodoroya ilk girişte bir kez çıkıyor. Tarayıcıda
-   * özellik hiç yok; orada tanıtım da gösterilmiyor.
-   */
-  const [kurulumAcik, setKurulumAcik] = useState(false)
   /** Koruma paneli açık mı — kapalı başlıyor, sayaç ekranın asıl işi. */
   const [korumaPaneli, setKorumaPaneli] = useState(false)
-  useEffect(() => {
-    if (odakKilidiDesteklenir() && !ayar.kilitTanitimiGoruldu) setKurulumAcik(true)
-  }, [ayar.kilitTanitimiGoruldu])
 
   /**
    * Kilit kırıldı mı — bir sonraki başlatmaya kadar ekranda duruyor.
@@ -514,27 +499,7 @@ export function PomodoroEkrani({
       ? `sonra ${ayar.calisma} dk çalışma`
       : `sonra ${asamaSuresi(sonrakiAsama('calisma', tur, ayar), ayar)} dk mola`
 
-  /*
-    Hazırlıktaki ders ızgarası: ilk üç ders ve "Diğer". Seçili ders ilk üçte
-    değilse başa alınıyor, yoksa kullanıcı çekmeceden seçtiği dersin nereye
-    gittiğini göremezdi.
-  */
-  const kisaListe = CALISMA_DERSLERI.slice(0, KISA_DERS_SAYISI)
-  const gorunenDersler =
-    ders !== null && !kisaListe.includes(ders)
-      ? [ders, ...kisaListe.slice(0, KISA_DERS_SAYISI - 1)]
-      : kisaListe
-
   const sureOzeti = `${ayar.calisma} dk · mola ${ayar.kisaMola} / ${ayar.uzunMola} · ${ayar.turSayisi} turda bir`
-
-  if (kurulumAcik) {
-    return (
-      <div>
-        <BaslikSatiri baslik="Pomodoro" aciklama="Odak kilidi" />
-        <OdakKurulum ayar={ayar} setAyar={setAyar} onBitir={() => setKurulumAcik(false)} />
-      </div>
-    )
-  }
 
   return (
     <div>
@@ -581,37 +546,7 @@ export function PomodoroEkrani({
         <TurNoktalari tur={tur} turSayisi={ayar.turSayisi} gizli={prova !== null} className="mt-4" />
       </Kart>
 
-      {prova === null ? (
-        /* Provada ders sorulmuyor: seans `PROVA_DERSI` ile kaydediliyor ve
-           ekranda iki ayrı "ne çalışıyorsun" cevabı olamaz. Molada da yok —
-           sıradaki çalışma turu başlarken yeniden görünüyor. */
-        !molaMi && (
-          <div className={cn('mb-4', turIcinde && 'pointer-events-none opacity-50')}>
-            <p className="mb-2 ml-0.5 text-[12.5px] font-extrabold text-muted-foreground">
-              HANGİ DERSE?
-            </p>
-            <div className="grid grid-cols-4 gap-2">
-              {gorunenDersler.map((d) => (
-                <SecimKutusu
-                  key={d}
-                  secili={ders === d}
-                  onClick={() => setDers(ders === d ? null : d)}
-                  className="h-11 text-[12.5px]"
-                >
-                  {d}
-                </SecimKutusu>
-              ))}
-              <button
-                type="button"
-                onClick={() => setDersCekmecesi(true)}
-                className="h-11 rounded-[13px] border border-dashed border-border text-[12.5px] font-bold text-muted-foreground transition active:bg-muted"
-              >
-                Diğer
-              </button>
-            </div>
-          </div>
-        )
-      ) : (
+      {prova !== null && (
         <div className={cn('mb-4', turIcinde && 'pointer-events-none opacity-50')}>
           <p className="mb-2 ml-0.5 text-[12.5px] font-extrabold text-muted-foreground">
             HANGİ DENEMEYİ ÇÖZÜYORSUN?
@@ -646,6 +581,46 @@ export function PomodoroEkrani({
             onClick={() => setSureCekmecesi(true)}
             kilitli={turIcinde}
           />
+        )}
+
+        {/* Provada ders sorulmuyor: seans `PROVA_DERSI` ile kaydediliyor ve
+            ekranda iki ayrı "ne çalışıyorsun" cevabı olamaz. Ders ızgarası
+            bir süre sayacın altında ayrı duruyordu; Ses ile aynı biçimde
+            satır + açılan liste oldu, ekranda iki ayrı seçim dili vardı. */}
+        {prova === null && (
+          <>
+            <AyarSatiri
+              simge={<BookOpen size={18} aria-hidden />}
+              vurgulu={ders !== null}
+              ad="Ders"
+              not={ders ?? 'Seçilmedi'}
+              eylem={dersPaneli ? 'Kapat' : 'Değiştir'}
+              onClick={() => setDersPaneli((a) => !a)}
+            />
+            {dersPaneli && (
+              <div className="acilir-giris border-t border-border p-4">
+                <div className="space-y-1.5">
+                  <Cip
+                    secili={ders === null}
+                    onClick={() => setDers(null)}
+                    className="w-full !rounded-2xl text-left"
+                  >
+                    Ders yok
+                  </Cip>
+                  {POMODORO_DERSLERI.map((d) => (
+                    <Cip
+                      key={d}
+                      secili={ders === d}
+                      onClick={() => setDers(d)}
+                      className="w-full !rounded-2xl text-left"
+                    >
+                      {d}
+                    </Cip>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         <AyarSatiri
@@ -802,22 +777,6 @@ export function PomodoroEkrani({
         <SureAyarlari ayar={ayar} setAyar={setAyar} />
       </Cekmece>
 
-      <Cekmece acik={dersCekmecesi} baslik="Hangi derse?" onKapat={() => setDersCekmecesi(false)}>
-        <div className="flex flex-wrap gap-2">
-          {CALISMA_DERSLERI.map((d) => (
-            <Cip
-              key={d}
-              secili={ders === d}
-              onClick={() => {
-                setDers(ders === d ? null : d)
-                setDersCekmecesi(false)
-              }}
-            >
-              {d}
-            </Cip>
-          ))}
-        </div>
-      </Cekmece>
 
       {sahne && (
         <CalismaSahnesi

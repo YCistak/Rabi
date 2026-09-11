@@ -5,19 +5,25 @@ import { BellOff, Lock } from 'lucide-react'
 import type { PomodoroAyar } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { Anahtar, Buton, Not } from '@/components/ui'
-import { OdakDaveti } from '@/components/odak/odak-daveti'
 import { UygulamaSecici } from '@/components/odak/uygulama-secici'
 import { odakDurumu, odakIzniIste, type OdakDurumu } from '@/lib/odak-kilidi'
 
 /**
- * Odak kilidi ve Rahatsız Etme ayarları.
+ * Odak kilidi ve Rahatsız Etme ayarları — Pomodoro'daki "Odak koruması"
+ * satırının altında açılan iki anahtar.
  *
  * İkisi bir süre hem Ayarlar ekranında hem Pomodoro'nun tepesinde duruyordu ve
- * iki kopya birbirinden ayrı düşüyordu (biri uygulama listesini açıyordu,
- * öteki açmıyordu). Artık tek yer var ve orası **Pomodoro**: ikisi de yalnızca
- * çalışma turu boyunca yaşıyor, turdan bağımsız bir anlamları yok. Ayarlar'da
- * dururken kullanıcı onları turu başlatmadan önce görmüyordu — turu başlatmadan
- * önce görülmeyen bir ayar, o turda yanlış kurulmuş bir ayardır.
+ * iki kopya birbirinden ayrı düşüyordu. Artık tek yer var ve orası Pomodoro:
+ * ikisi de yalnızca çalışma turu boyunca yaşıyor, turdan bağımsız bir anlamları
+ * yok.
+ *
+ * **Davet penceresi ve ilk giriş sihirbazı kaldırıldı.** Anahtarı açmadan
+ * önce bir pencere "bu turu birlikte koruyalım mı" diye soruyor, Pomodoro'ya
+ * ilk girişte de üç adımlık bir tanıtım çıkıyordu. Kullanıcı ikisini de
+ * istemedi: anahtar bir anahtar, dokununca açılıyor. İzin **ilk açılışta**
+ * isteniyor — anahtar açılırken eksik izin varsa sistem ekranı o an açılıyor;
+ * izin bir kez verildikten sonra anahtarı kapatıp açmak bir daha sormuyor,
+ * çünkü sorulan şey izin durumu ve o artık var.
  *
  * Bileşen izin durumunu kendi soruyor: izinler sistem ayarlarından veriliyor ve
  * kullanıcı Rabi'ye döndüğünde durum yeniden sorulmalı, yoksa panel hâlâ "izin
@@ -37,15 +43,6 @@ export function OdakAyarlari({
     calisiyor: false,
   })
   const [seciciAcik, setSeciciAcik] = useState(false)
-  /**
-   * Kilit daveti açık mı.
-   *
-   * Anahtar kilidi doğrudan açmıyor: önce pencere çıkıyor, kilit ancak
-   * "İstiyorum" denince açılıyor. Sebep izin ekranlarının kendisi — ne işe
-   * yaradığını bilmeden oraya düşen kullanıcı geri dönüyor ve anahtar açık ama
-   * kilit çalışmıyor kalıyordu (`components/odak/odak-daveti.tsx`).
-   */
-  const [davetAcik, setDavetAcik] = useState(false)
 
   useEffect(() => {
     const tazele = () => void odakDurumu().then(setIzinler)
@@ -55,34 +52,43 @@ export function OdakAyarlari({
     return () => document.removeEventListener('visibilitychange', gorunurluk)
   }, [])
 
+  /*
+    Kilidin iki izni var ve sistem ekranı tek seferde birini gösteriyor; eksik
+    olanların ilki açılıyor. İkincisi kullanıcı döndüğünde satırın altındaki
+    uyarıdan isteniyor — iki sistem ekranını art arda açmak, ilkinden dönen
+    kullanıcıyı sormadan ikincisine düşürmek olurdu.
+  */
+  const kilidiDegistir = () => {
+    if (ayar.odakKilidi) {
+      setAyar((o) => ({ ...o, odakKilidi: false }))
+      return
+    }
+    setAyar((o) => ({ ...o, odakKilidi: true }))
+    if (!izinler.kullanimVerisi) void odakIzniIste('kullanimVerisi')
+    else if (!izinler.katman) void odakIzniIste('katman')
+  }
+
+  const susturmayiDegistir = () => {
+    if (ayar.rahatsizEtme) {
+      setAyar((o) => ({ ...o, rahatsizEtme: false }))
+      return
+    }
+    setAyar((o) => ({ ...o, rahatsizEtme: true }))
+    if (!izinler.rahatsizEtme) void odakIzniIste('rahatsizEtme')
+  }
+
   return (
     <>
       <KorumaSatiri
         Simge={Lock}
-        baslik="Odak kilidi"
+        baslik="Uygulama kilidi"
         aciklama="Seçtiğin uygulamaları açmaya kalkarsan karşına çıkarım"
         acik={ayar.odakKilidi}
-        /*
-          Açarken davet penceresi, kapatırken doğrudan: vazgeçmek için ikna
-          edilmesi gereken bir anahtar, anahtar değil tuzaktır.
-        */
-        onDegis={() => {
-          if (ayar.odakKilidi) {
-            setAyar((o) => ({ ...o, odakKilidi: false }))
-            return
-          }
-          setDavetAcik(true)
-        }}
+        onDegis={kilidiDegistir}
       />
 
       {ayar.odakKilidi && (
         <div className="border-b border-border px-4 py-3">
-          {/*
-            Anahtar izin **istemiyor**, yalnızca isteği kaydediyor: izin
-            ekranını açan tek şey adı yazılı düğme. Anahtarın kendisi sistem
-            ekranını açsaydı, özelliği merak edip deneyen kullanıcı istemediği
-            bir izin akışının ortasında bulurdu kendini.
-          */}
           {(!izinler.kullanimVerisi || !izinler.katman) && (
             <Not tur="uyari" className="mb-2.5">
               İzin verilmediği sürece kilit çalışmaz; sayaç normal şekilde işler.
@@ -125,16 +131,13 @@ export function OdakAyarlari({
         farklı şeyler engelliyor, farklı izin istiyor ve ayrı ayrı isteniyorlar.
         Kilidin altına konsaydı, kilit izinlerini veremeyen kullanıcı (Xiaomi'de
         sık) susturmaya da hiç ulaşamazdı.
-
-        Davet penceresi burada yok: bu izin korkutucu değil, sıradan bir sistem
-        ayarı. Pencerenin işi kilidin izin ekranlarına hazırlamaktı.
       */}
       <KorumaSatiri
         Simge={BellOff}
         baslik="Rahatsız etme"
         aciklama="Tur boyunca telefon susar, bitince eski hâline döner"
         acik={ayar.rahatsizEtme}
-        onDegis={() => setAyar((o) => ({ ...o, rahatsizEtme: !o.rahatsizEtme }))}
+        onDegis={susturmayiDegistir}
       />
 
       {ayar.rahatsizEtme && !izinler.rahatsizEtme && (
@@ -164,35 +167,6 @@ export function OdakAyarlari({
           </Not>
         </div>
       )}
-
-      <OdakDaveti
-        acik={davetAcik}
-        /*
-          "İstemiyorum" kayda da yazılıyor; pencereyi kapatmak yetmiyordu.
-          Tanıtım görülmüş sayılmadığı için kullanıcı Pomodoro'ya girdiğinde
-          kurulum ekranı devralıyor ve az önce istemediği özellik yeniden
-          karşısına çıkıyordu. Hayır bir kez söylenir.
-        */
-        onIstemiyorum={() => {
-          setDavetAcik(false)
-          setAyar((o) => ({ ...o, odakKilidi: false, kilitTanitimiGoruldu: true }))
-        }}
-        /*
-          Kilit burada açılıyor ama henüz çalışmıyor: izinler eksikken anahtar
-          açık durur ve altındaki uyarı ne eksik olduğunu söyler. Anahtarı
-          izinler gelene kadar kapalı tutmak, kullanıcının "istiyorum" dediği
-          anı kaybetmek olurdu.
-
-          İzin ekranı buradan **açılmıyor**. Bir süre eksik izinlerden ilki
-          kendiliğinden açılıyordu ve kullanıcı bunu "uygulama izni kendi aldı"
-          diye okudu — haklı olarak: "istiyorum" özelliği istemek demek, sistem
-          izinlerini vermek değil.
-        */
-        onIstiyorum={() => {
-          setDavetAcik(false)
-          setAyar((o) => ({ ...o, odakKilidi: true }))
-        }}
-      />
     </>
   )
 }
