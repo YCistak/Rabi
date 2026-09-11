@@ -22,17 +22,13 @@ import {
   type BankaKaydi,
 } from '@/lib/oyunlar/banka'
 import {
-  bossElMi,
-  bossZorlugu,
   elerMi,
   soruSuresi,
   zorluktaSuz,
-  type Zorluk,
 } from '@/lib/oyunlar/ritim'
 import { etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
-import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
-import { ZorlukSecimi } from '@/components/zorluk-secimi'
+import { useUyarlananZorluk } from '@/lib/oyunlar/uyum'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
@@ -164,8 +160,6 @@ export function EdebiyatOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
-  mod,
-  setMod,
   onCik,
   bildir,
 }: {
@@ -182,9 +176,6 @@ export function EdebiyatOyunuEkrani({
     /** Tur bitmeden çıkıldı mı — yarım tur rekora ve istatistiğe yazılmıyor. */
     yarim: boolean,
   ) => void
-  /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
-  mod: OyunModu
-  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -203,16 +194,18 @@ export function EdebiyatOyunuEkrani({
   /** Yanlışlarla aynı sıradaki seçimler — tur sonunda "sen X dedin" için. */
   const [yanlisGirdileri, setYanlisGirdileri] = useState<string[]>([])
 
-  /** Bu el boss mu — kırmızı ekran, kısa süre, tek yanlışta eleme. */
-  const [bossEl, setBossEl] = useState(false)
-  /** Kaç boss el verildi — sıradakinin boss olup olmayacağı buna bakıyor. */
-  const [verilenBoss, setVerilenBoss] = useState(0)
-  /** Boss elinde yanılıp elendi mi. */
+  /** Yanlış eşleştirmeyle elendi mi. */
   const [elendi, setElendi] = useState<Eleme>(false)
   /** Kaçıncı el — sayaç her elde sıfırlansın diye. */
   const [elSayisi, setElSayisi] = useState(0)
 
-  const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukEdebiyat, 'kolay')
+  /*
+    Zorluk seçilmiyor, turun içinde kayıyor (`lib/oyunlar/uyum.ts`).
+
+    Tur ortadan başlıyor; ardışık doğrular seviyeyi yükseltiyor, ardışık
+    yanlışlar düşürüyor ve bunun hiçbiri ekranda yazmıyor.
+  */
+  const { zorlukRef, kaydet: zorlukKaydet, sifirla: zorluguSifirla } = useUyarlananZorluk()
   /** Yardım açıkken sayaç duruyor. */
   const [duraklatilan, setDuraklatilan] = useState(false)
   /**
@@ -229,16 +222,16 @@ export function EdebiyatOyunuEkrani({
 
   const bankaHavuzu = useMemo(() => bankaEsleri(bankaSorulari), [bankaSorulari])
   const bankaTuru = bankaHavuzu.length > 0
-  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
-  const gecerliMod = etkinMod(mod, bankaTuru)
+  // Mod artık seçilmiyor: her tur Sıradan, banka turu ise soru saatli.
+  const gecerliMod = etkinMod(bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   /**
    * Turun başladığı an.
    *
-   * Tur artık sabit uzunlukta değil — sınırsız sürüyor ve boss'ta bitiyor. Eski
-   * hesap "tur süresi eksi yanlış cezası" formülüyle türetiliyordu, o formülün
-   * karşılığı kalmadı; süre gerçekten ölçülüyor.
+   * Tur sabit uzunlukta değil — modun kuralına göre bitiyor. Eski hesap "tur
+   * süresi eksi yanlış cezası" formülüyle türetiliyordu, o formülün karşılığı
+   * kalmadı; süre gerçekten ölçülüyor.
    */
   const turBasladiRef = useRef(0)
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -252,9 +245,9 @@ export function EdebiyatOyunuEkrani({
 
   /** Sıradaki el: banka turunda banka öncelikli, normal turda havuzdan. */
   const sonrakiEl = useCallback(
-    (boss: boolean) => {
+    () => {
       if (bankaTuru) return bankaEliHazirla(bankaHavuzu, kullanilanRef.current)
-      const seviye = boss ? bossZorlugu(zorluk).zorluk : zorluk
+      const seviye = zorlukRef.current
       const suzulmus = zorluktaSuz(EDEBIYAT_HAVUZU, seviye)
       // Seçilen seviyede el kuracak kadar eser kalmadıysa tüm havuza düşülüyor:
       // turun ortasında durmak, bir soru fazla kolay gelmesinden kötü.
@@ -262,7 +255,7 @@ export function EdebiyatOyunuEkrani({
         elHazirla(kullanilanRef.current, suzulmus) ?? elHazirla(kullanilanRef.current)
       )
     },
-    [bankaHavuzu, bankaTuru, zorluk],
+    [bankaHavuzu, bankaTuru, zorlukRef],
   )
 
   const turBaslat = useCallback(() => {
@@ -272,9 +265,8 @@ export function EdebiyatOyunuEkrani({
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
     kullanilanRef.current = new Set()
-    setEl(sonrakiEl(false))
-    setBossEl(false)
-    setVerilenBoss(0)
+    setEl(sonrakiEl())
+    zorluguSifirla()
     setElendi(false)
     setElSayisi(0)
     setSecim(BOS_SECIM)
@@ -288,7 +280,7 @@ export function EdebiyatOyunuEkrani({
     setSonuc(null)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [istatistik.enIyiDogru, sonrakiEl])
+  }, [istatistik.enIyiDogru, sonrakiEl, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<EdebiyatEsi>[], yarim = false) => {
@@ -343,15 +335,13 @@ export function EdebiyatOyunuEkrani({
   /**
    * Sıradaki eli dağıtır.
    *
-   * Boss kararı burada veriliyor: on eşleştirme tamamlandıysa bu el boss olur
-   * ve bir üst seviyeden kurulur.
+   * Elin seviyesi burada belli oluyor: `sonrakiEl` uyumun o anki seviyesini
+   * ref'ten okuyor (`lib/oyunlar/uyum.ts`), çünkü bu çağrı bir zamanlayıcının
+   * içinden geliyor ve zamanlayıcı kurulurken yakalanan seviye eskimiş olur.
    */
   const elDagit = () => {
     for (const e of el?.esler ?? []) kullanilanRef.current.add(e.eser)
-    const boss = bossElMi(cevaplarRef.current.length, verilenBoss)
-    if (boss) setVerilenBoss((v) => v + 1)
-    setBossEl(boss)
-    setEl(sonrakiEl(boss))
+    setEl(sonrakiEl())
     setEslesenler([])
     setElBekliyor(false)
     setElSayisi((n) => n + 1)
@@ -369,14 +359,15 @@ export function EdebiyatOyunuEkrani({
     setCevaplar((onceki) => [...onceki, ...kalanEsler.map((soru) => ({ soru, dogruMu: false }))])
     setYanlisGirdileri((onceki) => [...onceki, ...kalanEsler.map(() => 'süre doldu')])
     geriBildir(false)
+    zorlukKaydet(false)
     if (elerMi(false, bankaTuru, gecerliMod)) {
-      setElendi(bossEl ? 'boss' : 'yanlis')
+      setElendi('yanlis')
       zamanlayiciRef.current = setTimeout(() => turBitir(cevaplarRef.current), CEVAP_BEKLEMESI)
       return
     }
     zamanlayiciRef.current = setTimeout(elDagit, CEVAP_BEKLEMESI)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asama, bankaTuru, bossEl, el, eslesenler])
+  }, [asama, bankaTuru, el, eslesenler])
 
   /** Tur saati bitti: yanlış değil, tur biter. */
   const turSuresiDoldu = () => {
@@ -409,7 +400,7 @@ export function EdebiyatOyunuEkrani({
     yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && !duraklatilan && !elBekliyor && el !== null,
-    sure: soruSuresi('edebiyat', bossEl ? bossZorlugu(zorluk) : null),
+    sure: soruSuresi('edebiyat'),
     anahtar: elSayisi,
     onBitti: sureDoldu,
   })
@@ -427,6 +418,7 @@ export function EdebiyatOyunuEkrani({
 
     setCevaplar((onceki) => [...onceki, { soru: es, dogruMu }])
     geriBildir(dogruMu)
+    zorlukKaydet(dogruMu)
 
     if (!dogruMu) {
       setYanlisGirdileri((onceki) => [...onceki, yazar])
@@ -436,7 +428,7 @@ export function EdebiyatOyunuEkrani({
         setSecim(BOS_SECIM)
         // Tek yanlış eşleştirme turu bitiriyor; banka turu bunun dışında.
         if (elerMi(false, bankaTuru, gecerliMod)) {
-          setElendi(bossEl ? 'boss' : 'yanlis')
+          setElendi('yanlis')
           turBitir(cevaplarRef.current)
         }
       }, CEVAP_BEKLEMESI)
@@ -500,7 +492,6 @@ export function EdebiyatOyunuEkrani({
                 kalan,
                 toplam,
                 sira: elSayisi + 1,
-                boss: bossEl,
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
@@ -572,15 +563,8 @@ export function EdebiyatOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
-        mod={mod}
-        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
-        ekstra={
-          asama === 'tanitim' && !bankaTuru ? (
-            <ZorlukSecimi secili={zorluk} onSec={setZorluk} bossVar />
-          ) : null
-        }
       />
     </>
   )

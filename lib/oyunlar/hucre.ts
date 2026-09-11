@@ -35,8 +35,8 @@ export const ORGANELLER = HUCRE_HAVUZU.map((s) => s.organel)
  * ve bekleme "oyun donmuş" gibi duruyordu. Şimdi son ipucu sürenin yarısında
  * açılıyor; kalan yarı kararı vermeye ayrılıyor.
  *
- * Oran olarak duruyor, sabit saniye olarak değil: boss sorusunda süre uzuyor
- * ve sabit aralık orada da aynı sorunu geri getirirdi.
+ * Oran olarak duruyor, sabit saniye olarak değil: süre tabloda değişebiliyor
+ * (`SORU_SURESI`) ve sabit aralık orada aynı sorunu geri getirirdi.
  */
 const IPUCU_PAYI = 0.5
 
@@ -44,8 +44,8 @@ const IPUCU_PAYI = 0.5
  * Şu an kaçıncı ipucu görünüyor: 1, 2 ya da `IPUCU_SAYISI`.
  *
  * İpuçları soru süresinin `IPUCU_PAYI` kadarını eşit üçe bölüyor, sabit
- * saniyeye değil: boss sorusunda süre uzuyor ve sabit aralık kalsaydı ipuçları
- * turdan tura farklı hızda gelirdi.
+ * saniyeye değil: süre tabloda değişebiliyor ve sabit aralık kalsaydı ipuçları
+ * ona göre farklı hızda gelirdi.
  *
  * Geçen süreyi besleyen saat **turun sayacı değil** (`oyun-hucre.tsx`,
  * `useAcikIpucu`): Sıradan ve Turbo'da saat tura ait, Rahat'ta hiç yok. İkisi
@@ -80,8 +80,8 @@ export function siklariKur(
  * Turun soruları.
  *
  * `karistirilsin` yalnızca sıra **dışarıda** kurulduğunda kapatılıyor:
- * `ritim.ts` boss sorularını belirli konumlara yerleştiriyor, burada yeniden
- * karıştırmak o yerleşimi bozardı.
+ * Ekran şeritleri ayrı ayrı eşliyor ve sıralarını koruması gerekiyor: yeniden
+ * karıştırmak aynı `sira` numarasını üç şeritte farklı yerlere düşürürdü.
  */
 export function turHazirla(
   havuz: readonly OrganelSorusu[] = HUCRE_HAVUZU,

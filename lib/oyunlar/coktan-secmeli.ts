@@ -76,8 +76,8 @@ export function siklariKur<T>(
  * çekilseydi aynı soru tur içinde iki kez çıkabilirdi.
  *
  * `karistirilsin` yalnızca sıra **dışarıda** kurulduğunda kapatılıyor:
- * `ritim.ts` boss sorularını belirli konumlara yerleştiriyor, burada yeniden
- * karıştırmak o yerleşimi bozardı.
+ * Ekran şeritleri ayrı ayrı eşliyor ve sıralarını koruması gerekiyor: yeniden
+ * karıştırmak aynı `sira` numarasını üç şeritte farklı yerlere düşürürdü.
  */
 export function turHazirla<S, T>(
   havuz: readonly S[],

@@ -21,11 +21,18 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import { tuzaktanBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
-import { TUR_SORU_SINIRI, elerMi, soruSuresi, type Zorluk } from '@/lib/oyunlar/ritim'
+import {
+  TUR_SORU_SINIRI,
+  akisUret,
+  akisUzunlugu,
+  elerMi,
+  soruSuresi,
+  tekAkis,
+  type SoruAkisi,
+} from '@/lib/oyunlar/ritim'
 import { etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
-import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
-import { ZorlukSecimi } from '@/components/zorluk-secimi'
+import { useUyarlananZorluk } from '@/lib/oyunlar/uyum'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
@@ -47,8 +54,7 @@ import { OyunTanitim } from '@/components/oyun-tanitim'
 /**
  * Kural Tuzağı — mini oyun.
  *
- * Matematik oyunu olduğu için boss yok, tur kuralı da öteki oyunlarla aynı:
- * modun belirlediği kural (`mod.ts`). Cevap ikili olduğu için şansın payı var;
+ * Tur kuralı öteki oyunlarla aynı: modun belirlediği kural (`mod.ts`). Cevap ikili olduğu için şansın payı var;
  * buna karşılık Ani Ölüm'de süre sekiz saniye ve kural bilinmiyorsa o sürede
  * sağlaması yapılamıyor — atılan yazı tura uzun vadede tutmuyor.
  */
@@ -84,8 +90,6 @@ export function TuzakOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
-  mod,
-  setMod,
   onCik,
   bildir,
 }: {
@@ -101,9 +105,6 @@ export function TuzakOyunuEkrani({
     /** Tur bitmeden çıkıldı mı — yarım tur rekora ve istatistiğe yazılmıyor. */
     yarim: boolean,
   ) => void
-  /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
-  mod: OyunModu
-  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -112,7 +113,7 @@ export function TuzakOyunuEkrani({
   const [asama, setAsama] = useState<Asama>('tanitim')
   const [yardimAcik, setYardimAcik] = useState(false)
 
-  const [sorular, setSorular] = useState<TuzakSorusu[]>([])
+  const [sorular, setSorular] = useState<SoruAkisi<TuzakSorusu>>(tekAkis([]))
   const [sira, setSira] = useState(0)
   const [cevaplar, setCevaplar] = useState<Cevap<TuzakSorusu>[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
@@ -128,7 +129,13 @@ export function TuzakOyunuEkrani({
    * ortasında da sıfır olabiliyor (`tur-sayaci.ts`).
    */
   const [turNo, setTurNo] = useState(0)
-  const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukTuzak, 'kolay')
+  /*
+    Zorluk seçilmiyor, turun içinde kayıyor (`lib/oyunlar/uyum.ts`).
+
+    Tur ortadan başlıyor; ardışık doğrular seviyeyi yükseltiyor, ardışık
+    yanlışlar düşürüyor ve bunun hiçbiri ekranda yazmıyor.
+  */
+  const { zorluk, kaydet: zorlukKaydet, sifirla: zorluguSifirla } = useUyarlananZorluk()
 
   const [sonuc, setSonuc] = useState<{
     ozet: TurOzeti<TuzakSorusu>
@@ -137,8 +144,8 @@ export function TuzakOyunuEkrani({
 
   const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
-  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
-  const gecerliMod = etkinMod(mod, bankaTuru)
+  // Mod artık seçilmiyor: her tur Sıradan, banka turu ise soru saatli.
+  const gecerliMod = etkinMod(bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   const turBasladiRef = useRef(0)
@@ -155,7 +162,12 @@ export function TuzakOyunuEkrani({
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
-    setSorular(bankaTuru ? bankadanSorular(havuz) : tuzakTuruHazirla(TUR_SORUSU, zorluk))
+    setSorular(
+      bankaTuru
+        ? tekAkis(bankadanSorular(havuz))
+        : akisUret((seviye) => tuzakTuruHazirla(TUR_SORUSU, seviye)),
+    )
+    zorluguSifirla()
     setSira(0)
     setCevaplar([])
     setGeriBildirim(null)
@@ -163,7 +175,7 @@ export function TuzakOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluk])
+  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<TuzakSorusu>[], yarim = false) => {
@@ -197,9 +209,10 @@ export function TuzakOyunuEkrani({
 
   // Banka turunda liste bankadaki kayıt kadar; tükenirse tur erken biter.
   useEffect(() => {
-    if (asama !== 'oynaniyor' || sorular.length === 0) return
-    if (sira >= sorular.length) turBitir(cevaplarRef.current)
-  }, [asama, sira, sorular.length, turBitir])
+    const uzunluk = akisUzunlugu(sorular)
+    if (asama !== 'oynaniyor' || uzunluk === 0) return
+    if (sira >= uzunluk) turBitir(cevaplarRef.current)
+  }, [asama, sira, sorular, turBitir])
 
   useEffect(
     () => () => {
@@ -217,12 +230,21 @@ export function TuzakOyunuEkrani({
     ).catch(() => {})
   }
 
-  const soru = sorular[sira]
+  const soru = sorular[zorluk][sira]
 
   /** Cevaptan sonra: yanlışsa tur biter, doğruysa sıradaki soru gelir. */
   const ilerle = (dogruMu: boolean) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
+      /*
+        Zorluk **ilerlerken** güncelleniyor, cevap verilirken değil.
+
+        Sıradaki soru `sorular[zorluk][sira]` ile okunuyor; seviye cevap
+        anında kaysaydı ekrandaki soru, oyuncu geri bildirimi okurken
+        değişirdi. İkisi aynı karede güncellenince değişen tek şey bir
+        sonraki soru oluyor.
+      */
+      zorlukKaydet(dogruMu)
       if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
         setElendi('yanlis')
         turBitir(cevaplarRef.current)
@@ -287,7 +309,7 @@ export function TuzakOyunuEkrani({
     yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
-    sure: soruSuresi('tuzak', null),
+    sure: soruSuresi('tuzak'),
     anahtar: sira,
     onBitti: sureDoldu,
   })
@@ -322,7 +344,6 @@ export function TuzakOyunuEkrani({
                 kalan,
                 toplam,
                 sira: sira + 1,
-                boss: false,
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
@@ -398,15 +419,8 @@ export function TuzakOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
-        mod={mod}
-        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
-        ekstra={
-          asama === 'tanitim' && !bankaTuru ? (
-            <ZorlukSecimi secili={zorluk} onSec={setZorluk} bossVar={false} />
-          ) : null
-        }
       />
     </>
   )

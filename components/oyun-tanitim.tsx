@@ -4,47 +4,46 @@ import { useEffect, useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import type { OyunTanimi } from '@/lib/oyunlar/tanim'
 import type { OyunId } from '@/lib/types'
-import { MODLAR, type OyunModu } from '@/lib/oyunlar/mod'
+import { MODLAR, VARSAYILAN_MOD } from '@/lib/oyunlar/mod'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { vurgulariAyir } from '@/lib/metin'
 import { useGeriKatmani } from '@/lib/geri'
 import { useGenelTest } from '@/components/genel-test-baglami'
 import { cn } from '@/lib/utils'
 import { Rabi } from '@/components/maskot/rabi'
-import { ModSecimi } from '@/components/mod-secimi'
 import { GeriSayim } from '@/components/oyun-geri-sayim'
 import { OYUN_ORNEKLERI, type OyunOrnegi } from '@/components/oyun-ornekleri'
 
 /**
- * Turdan önceki iki ekran: **ayarlar**, sonra **tanıtım**.
+ * Turdan önceki tek ekran: **tanıtım**.
  *
- * Sıra bilerek böyle. Tek ekranda toplandığında (maskot, kurallar, mod,
- * seviye, oyuna özgü seçimler, "Başla") hiçbir telefona sığmıyordu ve
- * "Başla" kaydırmanın altında kalıyordu. Bölününce ikisi de sığıyor;
- * kaydırma hiçbir adımda yok.
+ * Önünde bir de "ayarlar" adımı vardı — mod seçimi, zorluk seçimi, oyuna özgü
+ * seçimler (`ekstra`). Üçü de kaldırıldı: mod artık her turda Sıradan
+ * (`lib/oyunlar/mod.ts`), zorluk tur içinde kendiliğinden kayıyor
+ * (`lib/oyunlar/uyum.ts`), soru türü seçimleri de havuzun tamamına döndü.
+ * Ekranın kendisi ayakta kalamazdı: seçilecek bir şey kalmayınca geriye
+ * "Devam" yazan boş bir kart kalıyordu.
  *
- * Ayarlar önde çünkü seçim turu ilgilendiriyor: kuralları okuyup "Başla"ya
- * bastıktan sonra "bir de mod seçeyim" diye geri dönmek istemezsin. Tanıtım
- * son adım — okunduğu anda tur başlıyor.
+ * Sebebi seçimlerin zorluğuydu. Oyunu ilk açan öğrenciye sorulan üç sorunun
+ * (hangi mod, hangi seviye, hangi soru türü) cevabı ancak oynayarak
+ * öğrenilebiliyor ve "Başla" o üç sorunun arkasında, bir ekran ötede
+ * duruyordu.
  *
  * Tanıtımda "Bir daha gösterme" var: oyunu ezberleyen için her turda
  * geçilecek bir ekran değil (`ANAHTARLAR.tanitimGizli`). Gizlenmiş oyunda
- * ayarlardaki düğme doğrudan geri sayıma gidiyor; kural yine kayıp değil,
- * tur sırasındaki "?" tanıtımı her hâlükârda açıyor.
+ * ekran hiç çizilmiyor, doğrudan geri sayıma gidiliyor; kural yine kayıp
+ * değil, tur sırasındaki "?" tanıtımı her hâlükârda açıyor.
  *
  * "Başla" turu **hemen** başlatmıyor: ekranın yerini 3 · 2 · 1 geri sayımı
  * alıyor ve tur sayım bitince açılıyor (`onBasla`). Ekran o sırada
  * gizleniyor ama bileşen ayakta kalıyor — sayımı ayrı bir katmana taşımak,
- * onu 19 oyun dosyasına da eklemek demekti.
+ * onu 22 oyun dosyasına da eklemek demekti.
  */
 export function OyunTanitim({
   oyun,
   acik,
   rekor,
   baslatir,
-  mod,
-  setMod,
-  ekstra,
   onBasla,
   onKapat,
 }: {
@@ -54,44 +53,33 @@ export function OyunTanitim({
   rekor: number
   /** Düğme turu başlatıyor mu, yoksa yalnızca ekranı mı kapatıyor. */
   baslatir: boolean
-  /** Seçili tur modu — bütün oyunlarda ortak. */
-  mod: OyunModu
-  /**
-   * Mod seçimi. `null` verilirse seçim hiç çıkmıyor: Oyun Bankası turu modu
-   * dinlemiyor (`lib/oyunlar/mod.ts`), orada seçim sunmak yalan olurdu.
-   */
-  setMod: ((mod: OyunModu) => void) | null
-  /**
-   * Oyuna özgü başlangıç seçimi (zorluk, Zihinden İşlem'de işlem türleri). Tur
-   * devam ederken "?" ile açılan ekranda verilmez — ayar tur ortasında
-   * değişmemeli.
-   */
-  ekstra?: React.ReactNode
   onBasla: () => void
   onKapat: () => void
 }) {
   const [sayiliyor, setSayiliyor] = useState(false)
-  const [adim, setAdim] = useState<'ayar' | 'tanitim'>('ayar')
   const [gizliler, setGizliler] = useYerelDepo<OyunId[]>(ANAHTARLAR.tanitimGizli, [])
   const genelTest = useGenelTest()
 
-  const secimVar = baslatir && (setMod !== null || ekstra != null)
   const gizli = gizliler.includes(oyun.id)
 
-  // Ekran her açıldığında baştan başlıyor: bir önceki turda tanıtımda
-  // kalınmışsa yeni tur ayarlarla açılmalı.
+  /*
+    Ekran her açıldığında baştan başlıyor: bir önceki turda sayım yarıda
+    kalmışsa yeni tur tanıtımla açılmalı.
+
+    Tanıtımı gizlenmiş oyunda tur başlatılırken sayım doğrudan açılıyor —
+    "bir daha gösterme" denen ekranı bir kare için bile çizmemek gerekiyor.
+    Turun içinden "?" ile açılan ekran (`baslatir` yok) gizlemeyi dinlemiyor:
+    orada istenen şey zaten kuralı okumak.
+  */
   useEffect(() => {
     if (!acik) return
-    setSayiliyor(false)
-    setAdim(secimVar ? 'ayar' : 'tanitim')
-  }, [acik, secimVar])
+    setSayiliyor(gizli && baslatir)
+  }, [acik, gizli, baslatir])
 
-  // Tanıtımdayken geri hareketi ayarlara döner, oyundan çıkmaz.
-  const geri = adim === 'tanitim' && secimVar ? () => setAdim('ayar') : onKapat
-  useGeriKatmani(acik, geri)
+  useGeriKatmani(acik, onKapat)
 
   /*
-    Genel testte tur kendiliğinden başlıyor.
+    Tanıtımı gizlenmiş oyunda ve genel testte tur kendiliğinden başlıyor.
 
     Etki ikinci kez işlemiyor: `onBasla` turu başlatınca oyunun aşaması
     değişiyor ve ekran `acik` olmaktan çıkıyor. Turun içinden "?" ile açılan
@@ -104,103 +92,77 @@ export function OyunTanitim({
 
   if (!acik) return null
   /* Genel test bankadaki oyunları arka arkaya oynatıyor; her oyunun başında
-     ayar ve tanıtım ekranı, tek bir testi yarım düzine ekrana bölerdi. */
+     bir tanıtım ekranı, tek bir testi yarım düzine ekrana bölerdi. */
   if (genelTest && baslatir) return null
 
-  // Sayım sürerken ekran yok: seçimler yapıldı, sıra hazırlanmada.
+  // Sayım sürerken ekran yok: sıra hazırlanmada.
   if (sayiliyor) return <GeriSayim onBitti={onBasla} />
 
   const ornekler = OYUN_ORNEKLERI[oyun.id]
 
-  /** Ayarlardan sonraki adım: tanıtım gizliyse doğrudan geri sayım. */
-  const ayarlardanSonra = () => (gizli ? setSayiliyor(true) : setAdim('tanitim'))
-
   return (
-    <Sayfa onGeri={geri} geriEtiketi={adim === 'tanitim' && secimVar ? 'Geri' : 'Vazgeç'}>
-      {adim === 'ayar' ? (
-        <>
-          {/* Başlık tanıtım adımıyla aynı: ortada, ikonsuz. İki adım arasında
-              yer değiştiren bir başlık, aynı ekranın devamı olduklarını
-              gizliyordu. */}
-          <div className="shrink-0 px-2 pb-4 pt-3">
-            <p className="text-center font-display text-[26px] font-extrabold leading-tight tracking-tight">
-              {oyun.ad}
-            </p>
-            <p className="mt-1 text-center text-[13px] text-muted-foreground">Turu ayarla</p>
+    <Sayfa onGeri={onKapat} geriEtiketi="Vazgeç">
+      <Orta>
+        <div className="flex justify-center py-2">
+          <Rabi durum="calisiyor" poz="isaretci" boyut={84} />
+        </div>
+
+        <div className="golge-kart rounded-[24px] bg-card px-4 py-4">
+          <p className="text-center font-display text-[26px] font-extrabold leading-tight tracking-tight">
+            {oyun.ad}
+          </p>
+          <p className="mt-1 text-center text-[13px] text-muted-foreground">
+            {oyun.kisaAciklama}
+          </p>
+
+          <div className="mt-3 flex flex-col gap-2.5">
+            {ornekler.length > 0 ? (
+              ornekler.map((ornek) => <OrnekKutusu key={ornek.baslik} ornek={ornek} />)
+            ) : (
+              /* Örneği olmayan bir oyun kalırsa kural yazısı devrede. */
+              <div className="rounded-[18px] border border-border bg-muted/50 px-3.5 py-3">
+                <p className="text-[13px] leading-relaxed">
+                  <Vurgulu metin={oyun.ozet} />
+                </p>
+              </div>
+            )}
           </div>
 
-          <Orta>
-            <div className="golge-kart flex flex-col gap-4 rounded-[24px] bg-card px-4 py-4">
-              {setMod !== null && <ModSecimi secili={mod} onSec={setMod} />}
-              {ekstra}
-            </div>
-          </Orta>
+          {/* Mod artık seçilmiyor ama süresi hâlâ turun kuralı: çip "60
+              saniyen var" diyor, seçim sunmuyor. */}
+          <div className="mt-3 flex gap-2">
+            <Bilgi simge="⏱️" metin={MODLAR[VARSAYILAN_MOD].ozet} />
+            {rekor > 0 && <Bilgi simge="🏆" metin={`Rekorun ${rekor} doğru`} />}
+          </div>
+        </div>
+      </Orta>
 
-          <BuyukDugme onClick={ayarlardanSonra}>{gizli ? 'Başla  →' : 'Devam  →'}</BuyukDugme>
-        </>
-      ) : (
-        <>
-          <Orta>
-            <div className="flex justify-center py-2">
-              <Rabi durum="calisiyor" poz="isaretci" boyut={84} />
-            </div>
+      {/* Kutu turu **başlatmıyor**: işaretlemek bir tercih, oynamaya
+          başlamak ayrı bir karar. Tek dokunuşta ikisini birden yapan bir
+          düğme, tanıtımı bir daha görmek istemeyen kullanıcıyı hazır
+          olmadan tura sokuyordu. */}
+      <Kutu
+        isaretli={gizli}
+        onDegis={() =>
+          setGizliler((onceki) =>
+            onceki.includes(oyun.id)
+              ? onceki.filter((id) => id !== oyun.id)
+              : [...onceki, oyun.id],
+          )
+        }
+      >
+        Bu oyunda bir daha gösterme
+      </Kutu>
 
-            <div className="golge-kart rounded-[24px] bg-card px-4 py-4">
-            <p className="text-center font-display text-[26px] font-extrabold leading-tight tracking-tight">
-              {oyun.ad}
-            </p>
-            <p className="mt-1 text-center text-[13px] text-muted-foreground">
-              {oyun.kisaAciklama}
-            </p>
-
-            <div className="mt-3 flex flex-col gap-2.5">
-              {ornekler.length > 0 ? (
-                ornekler.map((ornek) => <OrnekKutusu key={ornek.baslik} ornek={ornek} />)
-              ) : (
-                /* Örneği olmayan bir oyun kalırsa kural yazısı devrede. */
-                <div className="rounded-[18px] border border-border bg-muted/50 px-3.5 py-3">
-                  <p className="text-[13px] leading-relaxed">
-                    <Vurgulu metin={oyun.ozet} />
-                  </p>
-                </div>
-              )}
-            </div>
-
-            <div className="mt-3 flex gap-2">
-              <Bilgi simge="⏱️" metin={MODLAR[mod].ozet} />
-              {rekor > 0 && <Bilgi simge="🏆" metin={`Rekorun ${rekor} doğru`} />}
-              </div>
-            </div>
-          </Orta>
-
-          {/* Kutu turu **başlatmıyor**: işaretlemek bir tercih, oynamaya
-              başlamak ayrı bir karar. Tek dokunuşta ikisini birden yapan bir
-              düğme, tanıtımı bir daha görmek istemeyen kullanıcıyı hazır
-              olmadan tura sokuyordu. */}
-          <Kutu
-            isaretli={gizli}
-            onDegis={() =>
-              setGizliler((onceki) =>
-                onceki.includes(oyun.id)
-                  ? onceki.filter((id) => id !== oyun.id)
-                  : [...onceki, oyun.id],
-              )
-            }
-          >
-            Bu oyunda bir daha gösterme
-          </Kutu>
-
-          <BuyukDugme onClick={() => (baslatir ? setSayiliyor(true) : onKapat())}>
-            {baslatir ? 'Başla  →' : 'Kapat'}
-          </BuyukDugme>
-        </>
-      )}
+      <BuyukDugme onClick={() => (baslatir ? setSayiliyor(true) : onKapat())}>
+        {baslatir ? 'Başla  →' : 'Kapat'}
+      </BuyukDugme>
     </Sayfa>
   )
 }
 
 /**
- * İki adımın ortak iskeleti.
+ * Ekranın iskeleti.
  *
  * Yükseklik ekranın kendisi (`h-dvh`) ve içerik üç parçaya bölünüyor: üstte
  * geri düğmesi, ortada esneyen kart, altta büyük düğme. Kart taşarsa yalnız

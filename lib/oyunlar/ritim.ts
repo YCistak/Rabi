@@ -1,5 +1,5 @@
 /**
- * Turun ritmi — soru başına süre, boss soruları ve eleme kuralları.
+ * Turun ritmi — soru başına süre, zorluk şeritleri ve eleme kuralları.
  *
  * Buradaki süreler **soru** başına ve yalnızca Ani Ölüm modunda işliyor; öteki
  * modlarda saat tura ait ya da hiç yok (`mod.ts`). İkisi ayrı dosyada çünkü
@@ -7,6 +7,18 @@
  *
  * `tur.ts` puanlama ve rekor mantığını tutuyor, burası zamanlama ve eleme;
  * ikisi ayrı çünkü ritim oyundan oyuna değişiyor, puanlama değişmiyor.
+ * Sorunun hangi seviyeden geleceğine karar veren yer ise `uyum.ts` — burası
+ * yalnızca üç seviyenin şeridini hazırlıyor.
+ *
+ * ## Boss soruları kaldırıldı
+ *
+ * Her onuncu soru bir üst seviyeden gelen, ekranı kırmızıya çeviren ve tek
+ * yanlışta turu bitiren bir "boss"tu. Zorluk artık turun içinde
+ * kendiliğinden kayıyor (`uyum.ts`) ve boss o kuralın üstünde ikinci,
+ * habersiz bir zorluk sıçraması oluyordu: oyuncu iyi gittiği için zaten zor
+ * sorulardayken onuncu soruda bir de "bir üst seviye" geliyordu — zorun üstü
+ * olmadığı için de aynı soru daha kısa süreyle. Ölçülen şey bilgi olmaktan
+ * çıkıp sayaca yetişmek oluyordu.
  */
 
 import type { OyunId } from '../types'
@@ -21,75 +33,6 @@ export const ZORLUK_ADI: Record<Zorluk, string> = {
   kolay: 'Kolay',
   orta: 'Orta',
   zor: 'Zor',
-}
-
-/**
- * Boss sorusunun zorluğu.
- *
- * Kural: seçilenin **bir üstü**. `zor` seçildiğinde üstü kalmadığı için soru
- * yine `zor` havuzundan geliyor ama `cetin` işaretiyle: süresi kısalıyor ve
- * çoktan seçmelide bir şık daha ekleniyor. Havuza dördüncü bir zorluk sınıfı
- * uydurmaktansa bunu tercih ettim — "çetin ses olayı" diye bir kategori yok,
- * ama az süreyle beş şık arasından seçmek gerçekten daha zor.
- */
-export type BossZorlugu = { zorluk: Zorluk; cetin: boolean }
-
-export function bossZorlugu(secilen: Zorluk): BossZorlugu {
-  if (secilen === 'kolay') return { zorluk: 'orta', cetin: false }
-  if (secilen === 'orta') return { zorluk: 'zor', cetin: false }
-  return { zorluk: 'zor', cetin: true }
-}
-
-/** Kaç soruda bir boss geliyor. */
-export const BOSS_ARALIGI = 10
-
-/**
- * Edebiyat'ta boss ne zaman geliyor.
- *
- * Orada "soru" bir eşleştirme ama sorular altılı ellerde dağıtılıyor; on
- * soruda bir eli ortasından bölmek mümkün değil. Kural şuna dönüşüyor: her on
- * eşleştirme tamamlandığında **sıradaki el** boss oluyor. Altılı ellerde bu
- * yaklaşık iki elde bir demek.
- */
-export function bossElMi(gecilenSoru: number, verilenBoss: number): boolean {
-  return Math.floor(gecilenSoru / BOSS_ARALIGI) > verilenBoss
-}
-
-/**
- * Sıradaki soru boss mu? `sira` 1'den başlıyor.
- *
- * Bosssuz oyunlarda (matematik) hiçbir zaman boss gelmiyor.
- */
-export function bossMu(oyun: OyunId, sira: number): boolean {
-  if (!bossluMu(oyun)) return false
-  return sira > 0 && sira % BOSS_ARALIGI === 0
-}
-
-/**
- * Boss'suz oyunlar.
- *
- * Matematik dışarıda: oradaki sorular havuzdan değil üretiliyor, "bir üst
- * zorluk" karşılığı yok — 43828'i 9'a bölmenin zor hâli, sayıyı büyütmekten
- * ibaret kalırdı.
- *
- * Liste burada elle duruyor, `tanim.ts`'ten `ders === 'matematik'` diye
- * okunmuyor: `tanim.ts` bu dosyadaki süreleri kendi tanıtım metinlerinde
- * kullanıyor ve iki dosya birbirini import edince döngü çıkıyor. Listenin
- * derse uygun kaldığını `ritim.test.ts` denetliyor — matematiğe yeni bir oyun
- * eklenip buraya yazılmazsa test kırılıyor.
- */
-export const BOSSSUZ_OYUNLAR: readonly OyunId[] = [
-  'islem',
-  'bolunme',
-  'aci',
-  'ucgen',
-  'koklu',
-  'tuzak',
-]
-
-/** Bu oyunda boss var mı. */
-export function bossluMu(oyun: OyunId): boolean {
-  return !BOSSSUZ_OYUNLAR.includes(oyun)
 }
 
 /**
@@ -186,33 +129,25 @@ export const SORU_SURESI: Record<OyunId, number> = {
   formul: 40,
 }
 
-/** Boss sorusuna verilen ek süre çarpanı. */
-export const BOSS_SURE_CARPANI = 2
-
 /**
- * Çetin boss'ta çarpan daha düşük.
+ * Sorunun süresi.
  *
- * Zorluğun bir kısmı buradan geliyor: soru zaten `zor` havuzundan, üstüne bir
- * de rahat rahat düşünecek vakit yok.
+ * Zorluk **süreyi değiştirmiyor**: seviye sorunun kendisini seçiyor, üstüne
+ * bir de saati kısaltmak aynı kararı iki kez uygulamak olurdu. (Boss
+ * sorularında öyleydi ve tam bu sebeple kaldırıldı.)
  */
-export const CETIN_SURE_CARPANI = 1.4
-
-export function soruSuresi(oyun: OyunId, boss: BossZorlugu | null): number {
-  const taban = SORU_SURESI[oyun]
-  if (boss === null) return taban
-  return Math.round(taban * (boss.cetin ? CETIN_SURE_CARPANI : BOSS_SURE_CARPANI))
+export function soruSuresi(oyun: OyunId): number {
+  return SORU_SURESI[oyun]
 }
 
 /*
   Tur uzunluğu hiçbir oyunda sabit soru sayısıyla ölçülmüyor.
 
-  Eskiden bosssuz oyunlar yirmi soru sürerdi ve rekor yirmide tavan yapıyordu:
-  yirmi doğruyu bir kez çıkaran oyuncunun kıracak rekoru kalmıyor, ilerlemeyi
-  ölçen sayı ölü bir sayıya dönüyordu. Artık turu bitiren şey moda göre süre ya
-  da eleme; soru listesi yalnızca sonsuz dizi üretilemediği için sınırlı
-  (`TUR_SORU_SINIRI`). Matematiği ötekilerden ayıran tek şey boss'un olmaması —
-  sorular üretiliyor, "bir üst zorluk havuzu" diye bir karşılığı yok.
-  (`bossluMu`)
+  Eskiden yirmi soruluk turlar vardı ve rekor yirmide tavan yapıyordu: yirmi
+  doğruyu bir kez çıkaran oyuncunun kıracak rekoru kalmıyor, ilerlemeyi ölçen
+  sayı ölü bir sayıya dönüyordu. Artık turu bitiren şey moda göre süre ya da
+  eleme; soru listesi yalnızca sonsuz dizi üretilemediği için sınırlı
+  (`TUR_SORU_SINIRI`).
 */
 
 /**
@@ -245,17 +180,29 @@ export function elerMi(
 /**
  * Hazırlanan en fazla soru.
  *
- * Tur sınırsız ama sonsuz bir dizi üretilemez. İki yüz soru, on soruda bir
- * eleyici boss geçen bir turda kimsenin ulaşamayacağı bir sayı; ulaşan olursa
- * da tur burada biter.
+ * Tur sınırsız ama sonsuz bir dizi üretilemez. İki yüz soru, süresi ya da tek
+ * yanlışla biten bir turda kimsenin ulaşamayacağı bir sayı; ulaşan olursa da
+ * tur burada biter.
  */
 export const TUR_SORU_SINIRI = 200
 
-export type SiradakiSoru<T> = {
-  soru: T
-  /** Bu soru boss mu — eleyici olan ve tasarımı değişen. */
-  boss: boolean
-}
+/**
+ * Turun üç zorluk şeridi.
+ *
+ * Zorluk tur başlamadan seçilmiyor, tur içinde kayıyor (`uyum.ts`) — yani
+ * sıradaki sorunun hangi havuzdan geleceği ancak o soruya gelindiğinde belli
+ * oluyor. Tek bir liste önceden kurulamaz.
+ *
+ * Şeritler bunu çözüyor: üç seviyenin **her biri** için ayrı, karıştırılmış ve
+ * tur sınırına kadar döndürülmüş bir liste hazırlanıyor. Oyun `akis[zorluk]`
+ * şeridini aynı `sira` numarasıyla okuyor, yani seviye değişince yalnızca
+ * şerit değişiyor; ekranın soru sayacı, tur sonu koşulu ve sırayı tutan state
+ * olduğu gibi kalıyor.
+ *
+ * Şeritler birbirinden bağımsız karıştığı için seviye değiştirmek soruyu
+ * atlamıyor ya da tekrar ettirmiyor: havuzlar `zorluk` alanına göre ayrık.
+ */
+export type SoruAkisi<T> = Record<Zorluk, T[]>
 
 /** Havuzu zorluğa göre süzer. */
 export function zorluktaSuz<T extends { zorluk: Zorluk }>(
@@ -266,66 +213,87 @@ export function zorluktaSuz<T extends { zorluk: Zorluk }>(
 }
 
 /**
- * Turun soru sırası.
+ * Turun soru şeritleri.
  *
- * Normal sorular seçilen zorluktan, her `BOSS_ARALIGI`'ncı soru bir üst
- * zorluktan geliyor. Havuz karıştırılıp sırayla tüketiliyor; tükenirse baştan
- * dönülüyor — sınırsız turda kaçınılmaz, ama tekrar ancak havuzun tamamı
- * bittikten sonra başlıyor.
+ * Her şerit karıştırılıp sırayla tüketiliyor; tükenirse baştan dönülüyor —
+ * sınırsız turda kaçınılmaz, ama tekrar ancak havuzun tamamı bittikten sonra
+ * başlıyor.
  *
- * Seçilen zorlukta hiç soru yoksa (küçük havuzlarda olabilir) tüm havuza
- * düşülüyor: oyunun hiç açılmaması, kolay bir soru fazla çıkmasından kötü.
+ * Bir zorlukta hiç soru yoksa (küçük havuzlarda olabilir) o şerit tüm havuzdan
+ * kuruluyor: oyunun ortasında durmak, bir soru fazla kolay gelmesinden kötü.
  */
 export function turSirasi<T extends { zorluk: Zorluk }>(
   havuz: readonly T[],
-  oyun: OyunId,
-  zorluk: Zorluk,
   rastgele: () => number = Math.random,
   sinir: number = TUR_SORU_SINIRI,
-): SiradakiSoru<T>[] {
-  return bossYerlestir(
-    dongu(zorluktaSuz(havuz, zorluk), havuz, rastgele),
-    dongu(zorluktaSuz(havuz, bossZorlugu(zorluk).zorluk), havuz, rastgele),
-    oyun,
-    sinir,
-  )
+): SoruAkisi<T> {
+  return {
+    kolay: serit(zorluktaSuz(havuz, 'kolay'), havuz, rastgele, sinir),
+    orta: serit(zorluktaSuz(havuz, 'orta'), havuz, rastgele, sinir),
+    zor: serit(zorluktaSuz(havuz, 'zor'), havuz, rastgele, sinir),
+  }
 }
 
 /**
- * Hazır iki listeyi tek sıraya örer: normal sorular ile boss soruları.
+ * Hazır tek bir listeden şerit kümesi.
  *
- * `turSirasi` tek havuzdan çalışıyor; Yazım Ustası ise iki havuzu (yazım ve
- * noktalama) harmanlayarak kendi sırasını kuruyor. Yerleştirme kuralı ikisinde
- * de aynı olmalı, o yüzden burada ayrı duruyor.
- *
- * İki liste de sonuna gelince başa dönüyor — sınırsız turda kaçınılmaz, ama
- * tekrar ancak listenin tamamı bittikten sonra başlıyor.
+ * Oyun Bankası turunda zorluk yok: sorular kullanıcının kendi yanlışları ve
+ * hepsi bir kez sorulacak. Üç şerit de aynı listeye bakıyor, yani uyum
+ * kayarsa da soru sırası değişmiyor.
  */
-export function bossYerlestir<T>(
-  normal: readonly T[],
-  boss: readonly T[],
-  oyun: OyunId,
-  sinir: number = TUR_SORU_SINIRI,
-): SiradakiSoru<T>[] {
-  if (normal.length === 0) return []
-  const bossListesi = boss.length > 0 ? boss : normal
-
-  const sira: SiradakiSoru<T>[] = []
-  let n = 0
-  let b = 0
-  for (let i = 1; i <= sinir; i++) {
-    if (bossMu(oyun, i)) {
-      sira.push({ soru: bossListesi[b % bossListesi.length], boss: true })
-      b++
-    } else {
-      sira.push({ soru: normal[n % normal.length], boss: false })
-      n++
-    }
-  }
-  return sira
+export function tekAkis<T>(sorular: readonly T[]): SoruAkisi<T> {
+  const liste = [...sorular]
+  return { kolay: liste, orta: liste, zor: liste }
 }
 
-/** Süzülmüş havuz boşsa tamamına düşer; her hâlükârda karıştırır. */
-function dongu<T>(suzulmus: readonly T[], tamami: readonly T[], rastgele: () => number): T[] {
-  return karistir(suzulmus.length > 0 ? suzulmus : tamami, rastgele)
+/**
+ * Üretilen sorulardan şerit kümesi.
+ *
+ * Soruları havuzdan değil üreterek kuran oyunlar (izohips, kural tuzağı, zaman
+ * şeridi) için: `uret` her seviye için bir kez çağrılıyor. Havuzlu oyunlardaki
+ * `turSirasi`'nın karşılığı.
+ */
+export function akisUret<T>(uret: (zorluk: Zorluk) => T[]): SoruAkisi<T> {
+  return { kolay: uret('kolay'), orta: uret('orta'), zor: uret('zor') }
+}
+
+/**
+ * Şeritlerin her birini dönüştürür.
+ *
+ * Oyunlar havuzdaki ham soruya şıklarını burada ekliyor. Şerit başına
+ * çağrılıyor çünkü şıkların üretimi listeyi yeniden karıştırabiliyor ve
+ * şeritler birbirinden bağımsız.
+ */
+export function akisiEsle<T, U>(
+  akis: SoruAkisi<T>,
+  donustur: (sorular: T[]) => U[],
+): SoruAkisi<U> {
+  return {
+    kolay: donustur(akis.kolay),
+    orta: donustur(akis.orta),
+    zor: donustur(akis.zor),
+  }
+}
+
+/**
+ * Turun kaç soru sürebileceği.
+ *
+ * En **kısa** şerit belirliyor: `sira` üç şeritte de aynı sayı ve daha uzun
+ * bir şeridin sonuna kadar gitmek, kısa şeride geçildiğinde tanımsız soru
+ * demek olurdu.
+ */
+export function akisUzunlugu<T>(akis: SoruAkisi<T>): number {
+  return Math.min(akis.kolay.length, akis.orta.length, akis.zor.length)
+}
+
+/** Süzülmüş havuz boşsa tamamına düşer; karıştırıp sınıra kadar döndürür. */
+function serit<T>(
+  suzulmus: readonly T[],
+  tamami: readonly T[],
+  rastgele: () => number,
+  sinir: number,
+): T[] {
+  const kaynak = karistir(suzulmus.length > 0 ? suzulmus : tamami, rastgele)
+  if (kaynak.length === 0) return []
+  return Array.from({ length: sinir }, (_, i) => kaynak[i % kaynak.length])
 }

@@ -6,7 +6,6 @@ import {
   VARSAYILAN_MOD,
   etkinMod,
   modKayitliMi,
-  moduNormalize,
   type OyunModu,
 } from './mod'
 import { elerMi } from './ritim'
@@ -73,30 +72,15 @@ describe('katalog', () => {
   })
 })
 
-describe('moduNormalize', () => {
-  it('bilinen modu olduğu gibi bırakıyor', () => {
-    for (const mod of MOD_SIRASI) expect(moduNormalize(mod)).toBe(mod)
-  })
-
-  /* Kayıt elle kurcalanabiliyor; tanınmayan değerde oyun hiç açılmazdı. */
-  it('tanınmayan değeri varsayılana düşürüyor', () => {
-    expect(moduNormalize('kolay')).toBe(VARSAYILAN_MOD)
-    expect(moduNormalize(undefined)).toBe(VARSAYILAN_MOD)
-    expect(moduNormalize(7)).toBe(VARSAYILAN_MOD)
-    expect(moduNormalize(null)).toBe(VARSAYILAN_MOD)
-  })
-})
-
 describe('etkinMod', () => {
-  it('normal turda seçilen mod geçerli', () => {
-    for (const mod of MOD_SIRASI) expect(etkinMod(mod, false)).toBe(mod)
+  /* Mod seçimi kaldırıldı: sıradan tur artık her turun kuralı. */
+  it('normal tur varsayılan modla işliyor', () => {
+    expect(etkinMod(false)).toBe(VARSAYILAN_MOD)
   })
 
   /* Banka turu modu dinlemiyor: süreli bir tur onu yarıda keserdi. */
-  it('banka turu her zaman soru başına süreyle işliyor', () => {
-    for (const mod of MOD_SIRASI) {
-      expect(MODLAR[etkinMod(mod, true)].soruSayaci, mod).toBe(true)
-    }
+  it('banka turu soru başına süreyle işliyor', () => {
+    expect(MODLAR[etkinMod(true)].soruSayaci).toBe(true)
   })
 })
 

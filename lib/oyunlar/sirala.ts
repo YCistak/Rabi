@@ -30,16 +30,6 @@ import { karistir, sec } from './tur'
 /** Normal sorudaki kart sayısı. Beş kart telefon ekranına sürüklenebilir boyutta sığıyor. */
 export const KART_SAYISI = 5
 
-/**
- * Boss sorusunda kart sayısı bir fazla.
- *
- * Boss'un zorluğu öteki oyunlarda "bir üst havuz"dan geliyor; burada o tek
- * başına yetmiyor, çünkü asıl zorluk kart sayısında: beş kartın 120, altı
- * kartın 720 dizilişi var. Havuzdaki her dönem altı olay taşıyor, o yüzden
- * boss elini kuracak kadar olay her zaman bulunuyor.
- */
-export const BOSS_KART_SAYISI = 6
-
 /** Tam sırayı tutturmanın komşuluk puanına eklediği bonus. */
 export const TAM_BONUS = 2
 
@@ -205,32 +195,23 @@ function dogrudanFarkliKaristir(
 }
 
 /**
- * Turun soruları.
+ * Bir zorluk şeridinin soruları.
  *
  * `ritim.ts`'teki `turSirasi` burada kullanılamıyor: orada havuzun tek bir
- * elemanı bir soru, burada bir soru havuzdan beş eleman istiyor. Boss'un
- * hangi sıralarda geleceği kuralı yine `ritim.ts`'ten okunuyor, kopyalanmıyor.
+ * elemanı bir soru, burada bir soru havuzdan beş eleman istiyor. Ekran üç
+ * şeridi `akisUret` ile kuruyor.
  */
 export function siralaTuruHazirla(
   zorluk: Zorluk,
-  bossSiralari: (sira: number) => boolean,
-  bossZorluk: Zorluk,
   sinir: number,
   havuz: readonly SiraliOlay[] = SIRALA_HAVUZU,
   rastgele: () => number = Math.random,
-): { soru: SiralamaSorusu; boss: boolean }[] {
-  const sira: { soru: SiralamaSorusu; boss: boolean }[] = []
+): SiralamaSorusu[] {
+  const sira: SiralamaSorusu[] = []
   const kullanilan = new Set<string>()
 
   for (let i = 1; i <= sinir; i++) {
-    const boss = bossSiralari(i)
-    const soru = soruKur(
-      boss ? bossZorluk : zorluk,
-      boss ? BOSS_KART_SAYISI : KART_SAYISI,
-      kullanilan,
-      havuz,
-      rastgele,
-    )
+    const soru = soruKur(zorluk, KART_SAYISI, kullanilan, havuz, rastgele)
     /*
       Havuz tükendi.
 
@@ -245,7 +226,7 @@ export function siralaTuruHazirla(
       continue
     }
     for (const olay of soru.olaylar) kullanilan.add(olay.olay)
-    sira.push({ soru, boss })
+    sira.push(soru)
   }
   return sira
 }

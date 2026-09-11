@@ -88,40 +88,6 @@ export const ANAHTARLAR = {
    */
   sonAraclar: 'rabi-son-araclar',
   sonOyunlar: 'rabi-son-oyunlar',
-  /** Zihinden İşlem'de seçili işlem türleri — yedeğe girmeyen küçük bir tercih. */
-  islemSecimi: 'rabi-islem-secimi',
-  /** Yazım Ustası'nda seçili soru türleri (yazım / noktalama). */
-  yazimSecimi: 'rabi-yazim-secimi',
-  /** Bölünebilme Kuralları'nda seçili bölenler. */
-  bolenSecimi: 'rabi-bolen-secimi',
-  /**
-   * Mini oyunlarda seçili zorluk — oyun başına ayrı.
-   *
-   * Tek bir ortak anahtar olsaydı edebiyatta kolayda kalmak isteyen biri sesi
-   * de kolaya düşürürdü; seviyeler oyundan oyuna gerçekten farklı.
-   */
-  zorlukYazim: 'rabi-zorluk-yazim',
-  zorlukSes: 'rabi-zorluk-ses',
-  zorlukOge: 'rabi-zorluk-oge',
-  zorlukSoz: 'rabi-zorluk-soz',
-  zorlukEdebiyat: 'rabi-zorluk-edebiyat',
-  zorlukIslem: 'rabi-zorluk-islem',
-  zorlukBolunme: 'rabi-zorluk-bolunme',
-  zorlukAci: 'rabi-zorluk-aci',
-  zorlukUcgen: 'rabi-zorluk-ucgen',
-  zorlukHarita: 'rabi-zorluk-harita',
-  zorlukIklim: 'rabi-zorluk-iklim',
-  zorlukIzohips: 'rabi-zorluk-izohips',
-  zorlukAntlasma: 'rabi-zorluk-antlasma',
-  zorlukKavram: 'rabi-zorluk-kavram',
-  zorlukAnlatim: 'rabi-zorluk-anlatim',
-  zorlukOrtak: 'rabi-zorluk-ortak',
-  zorlukSiniflandirma: 'rabi-zorluk-siniflandirma',
-  zorlukHucre: 'rabi-zorluk-hucre',
-  zorlukSirala: 'rabi-zorluk-sirala',
-  zorlukTuzak: 'rabi-zorluk-tuzak',
-  zorlukPeriyodik: 'rabi-zorluk-periyodik',
-  zorlukFormul: 'rabi-zorluk-formul',
   /**
    * Bildirilen hatalı sorular — gönderim kuyruğu.
    *
@@ -158,14 +124,6 @@ export const ANAHTARLAR = {
    * Konum da veri: kullanıcının kâğıdı nereye yapıştırdığı onun verdiği bilgi.
    */
   notlar: 'rabi-notlar',
-  /**
-   * Mini oyunların modu — bütün oyunlarda ortak.
-   *
-   * Zorluk oyun başına ayrı duruyor (`zorlukYazim` ve arkadaşları) çünkü
-   * seviyeler oyundan oyuna gerçekten değişiyor; "bugün acele etmek
-   * istemiyorum" ise oyuna göre değişen bir şey değil.
-   */
-  oyunModu: 'rabi-oyun-modu',
   /**
    * Tanıtımı kapatılmış oyunların kimlikleri.
    *
@@ -212,7 +170,26 @@ const ESKI_ANAHTARLAR = [
   */
   'rabi-sabit-araclar',
   'rabi-sabit-dersler',
+  /*
+    Tur öncesi seçimler kaldırıldı: mod her turda Sıradan (`lib/oyunlar/mod.ts`),
+    zorluk tur içinde kendiliğinden kayıyor (`lib/oyunlar/uyum.ts`), soru türü
+    seçimleri de havuzun tamamına döndü. Yirmi iki oyunun zorluk anahtarı elle
+    değil desenle temizleniyor (`eskiDesenler`), gerisi burada.
+  */
+  'rabi-oyun-modu',
+  'rabi-islem-secimi',
+  'rabi-yazim-secimi',
+  'rabi-bolen-secimi',
 ]
+
+/**
+ * Desenle silinen eski anahtarlar.
+ *
+ * Zorluk seçimi oyun başına ayrı bir anahtarda duruyordu (`rabi-zorluk-ses`
+ * ve yirmi bir kardeşi). Hepsini `ESKI_ANAHTARLAR`a tek tek yazmak, artık
+ * hiçbir yerde tanımlı olmayan bir listeyi elle sürdürmek olurdu.
+ */
+const ESKI_DESENLER = [/^rabi-zorluk-/]
 
 /**
  * Tek seferlik taşıma: okul notları ders ders girilirken bitmiş yılların
@@ -290,7 +267,7 @@ export const VARSAYILAN_AYARLAR: Ayarlar = {
 /**
  * Bir tura yazılabilecek en uzun süre, saniye.
  *
- * Tur artık sınırsız: boss'ta elenene kadar sürüyor ve iyi bir oyuncuda
+ * Tur sabit uzunlukta değil: modun kuralına göre bitiyor ve iyi bir oyuncuda
  * dakikalarca gidebiliyor. Bu sınır turu kısıtlamıyor, yalnızca bozuk ya da
  * elle kurcalanmış bir kaydın istatistiği uçurmasını engelliyor.
  */
@@ -736,5 +713,20 @@ export function tumVeriyiSil() {
     } catch {
       // yoksay
     }
+  }
+
+  try {
+    // Desenle eşleşenler: liste kopyalanıyor çünkü silmek `key(i)` sırasını
+    // kaydırıyor ve indeksle dönen bir döngü aradan atlardı.
+    const eslesenler: string[] = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const anahtar = localStorage.key(i)
+      if (anahtar !== null && ESKI_DESENLER.some((desen) => desen.test(anahtar))) {
+        eslesenler.push(anahtar)
+      }
+    }
+    for (const anahtar of eslesenler) localStorage.removeItem(anahtar)
+  } catch {
+    // yoksay
   }
 }

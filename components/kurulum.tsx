@@ -472,6 +472,7 @@ export function Kurulum({
             oncekiKutu={maskotKutusu}
             adimAnahtari={suanki}
             durum="mutlu"
+            poz="kafa"
             boyut={BUYUK_MASKOT}
             gizli={maskotGizli}
             yuvaMi
@@ -939,7 +940,7 @@ function KurulumMaskotu({
   /** Değiştiğinde uçuş kuruluyor; aynı adımdaki çizimler tavşana dokunmuyor. */
   adimAnahtari: string
   durum: 'normal' | 'mutlu'
-  poz?: 'yuz' | 'el-sallayan'
+  poz?: 'yuz' | 'kafa' | 'el-sallayan'
   boyut: number
   gizli: boolean
   yuvaMi?: boolean

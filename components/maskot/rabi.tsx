@@ -19,10 +19,16 @@ export type MaskotDurumu = 'normal' | 'mutlu' | 'uykulu' | 'calisiyor' | 'uzgun'
 /**
  * Maskotun pozu — hangi görselin çizileceği.
  *
- * `yuz` dışındakiler **tam boy**: gövde ancak 70 pikselin üstünde okunuyor,
- * altında kollar ve tutulan nesne tek bir lekeye dönüşüyor. Oyun başlıkları
- * (26–54 piksel) ve ana sayfanın selamlaması (58) bu yüzden yüzde kalıyor;
- * poz vermeyen her çağrı da oraya düşüyor.
+ * `yuz` ile `kafa` dışındakiler **tam boy**: gövde ancak 70 pikselin üstünde
+ * okunuyor, altında kollar ve tutulan nesne tek bir lekeye dönüşüyor. Oyun
+ * başlıkları (26–54 piksel) bu yüzden yüzde kalıyor; poz vermeyen her çağrı da
+ * oraya düşüyor.
+ *
+ * `kafa` ikinci bir baş çekimi ve `yuz`den şuna göre ayrı duruyor: `yuz`
+ * "normal maskot"un elle ölçülmüş kırpımı ve aynı zamanda uygulama ikonunun,
+ * Android engel katmanının ve pomodoro bildiriminin kaynağı — onu değiştirmek
+ * ikon üretimini de dokundurur. `kafa` kendi kaynağından geliyor ve yalnızca
+ * arayüzde kullanılıyor.
  */
 export type MaskotPozu =
   | 'yuz'
@@ -35,6 +41,8 @@ export type MaskotPozu =
   | 'dusunen'
   | 'kahveli'
   | 'isaretci'
+  | 'kafa'
+  | 'ziplayan'
 
 /**
  * Poz → dosya.
@@ -54,6 +62,8 @@ const POZ_GORSELI: Record<MaskotPozu, string> = {
   dusunen: '/tavsan-dusunen.png',
   kahveli: '/tavsan-kahveli.png',
   isaretci: '/tavsan-isaretci.png',
+  kafa: '/tavsan-kafa.png',
+  ziplayan: '/tavsan-ziplayan.png',
 }
 
 type Props = {

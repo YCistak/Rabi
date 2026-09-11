@@ -9,7 +9,7 @@ import {
   turHazirla,
 } from './hucre'
 import { HUCRE_HAVUZU } from './hucre-havuzu'
-import { SORU_SURESI, ZORLUKLAR, soruSuresi } from './ritim'
+import { SORU_SURESI, ZORLUKLAR } from './ritim'
 
 describe('gorunenIpucu', () => {
   const sure = SORU_SURESI.hucre
@@ -28,21 +28,6 @@ describe('gorunenIpucu', () => {
   it('süre bitse de son ipucunda kalıyor', () => {
     expect(gorunenIpucu(sure, sure)).toBe(IPUCU_SAYISI)
     expect(gorunenIpucu(sure * 2, sure)).toBe(IPUCU_SAYISI)
-  })
-
-  /**
-   * Boss'ta süre uzuyor; aralık oranla hesaplandığı için ipuçları orada da
-   * sürenin ilk yarısında bitiyor — sabit saniye olsaydı ipucu ritmi soru
-   * uzunluğuna göre değişirdi.
-   */
-  it('boss süresinde aralık da uzuyor', () => {
-    const bossSuresi = soruSuresi('hucre', { zorluk: 'zor', cetin: false })
-    expect(bossSuresi).toBeGreaterThan(sure)
-    expect(gorunenIpucu(0, bossSuresi)).toBe(1)
-    expect(gorunenIpucu(bossSuresi / 2, bossSuresi)).toBe(IPUCU_SAYISI)
-    // Aralık gerçekten uzuyor: normal sorunun son ipucu anında boss hâlâ
-    // erken bir ipucunda.
-    expect(gorunenIpucu(sure / 2, bossSuresi)).toBeLessThan(IPUCU_SAYISI)
   })
 })
 

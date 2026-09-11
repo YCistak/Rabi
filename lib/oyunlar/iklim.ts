@@ -1,9 +1,8 @@
 /**
  * İklim Kuşakları'na özgü kısım: şıklar ve haritadaki işaret.
  *
- * Havuz `iklim-havuzu.ts`, harita `dunya-havuzu.ts`, tur sırası ve boss
- * yerleşimi `ritim.ts` içinde; burada yalnızca "bu bölge nasıl sorulur" kararı
- * duruyor.
+ * Havuz `iklim-havuzu.ts`, harita `dunya-havuzu.ts`, tur sırası `ritim.ts`
+ * içinde; burada yalnızca "bu bölge nasıl sorulur" kararı duruyor.
  */
 
 import { siklariKur as secenekleriKur, type Sik } from './coktan-secmeli'
@@ -51,8 +50,8 @@ export function siklariKur(
  * Turun soruları.
  *
  * `karistirilsin` yalnızca sıra **dışarıda** kurulduğunda kapatılıyor:
- * `ritim.ts` boss sorularını belirli konumlara yerleştiriyor, burada yeniden
- * karıştırmak o yerleşimi bozardı.
+ * Ekran şeritleri ayrı ayrı eşliyor ve sıralarını koruması gerekiyor: yeniden
+ * karıştırmak aynı `sira` numarasını üç şeritte farklı yerlere düşürürdü.
  */
 export function turHazirla(
   havuz: readonly IklimSorusu[],

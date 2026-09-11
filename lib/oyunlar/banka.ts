@@ -121,7 +121,7 @@ export type BankaSorusu =
   // olmadan oyun oynanamaz.
   | { oyun: 'hucre'; hucre: OrganelSorusu }
   /**
-   * Sıralama sorusu beş (boss'ta altı) olayı birden taşıyor.
+   * Sıralama sorusu beş olayı birden taşıyor.
    *
    * Soru tek bir bilgi değil, olaylar **arasındaki** ilişki: tek olay
    * saklansaydı bankadan yeniden kurulan soru başka bir soru olurdu. Kartların

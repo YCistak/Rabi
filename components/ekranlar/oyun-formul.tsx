@@ -24,16 +24,12 @@ import {
 } from '@/lib/oyunlar/tur'
 import { formuldenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
 import {
-  bossElMi,
-  bossZorlugu,
   elerMi,
   soruSuresi,
-  type Zorluk,
 } from '@/lib/oyunlar/ritim'
 import { etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
-import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
-import { ZorlukSecimi } from '@/components/zorluk-secimi'
+import { useUyarlananZorluk } from '@/lib/oyunlar/uyum'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
@@ -171,8 +167,6 @@ export function FormulOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
-  mod,
-  setMod,
   onCik,
   bildir,
 }: {
@@ -186,8 +180,6 @@ export function FormulOyunuEkrani({
     gecenSaniye: number,
     yarim: boolean,
   ) => void
-  mod: OyunModu
-  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -206,13 +198,17 @@ export function FormulOyunuEkrani({
   /** Yanlışlarla aynı sıradaki seçimler — tur sonunda "sen X dedin" için. */
   const [yanlisGirdileri, setYanlisGirdileri] = useState<string[]>([])
 
-  const [bossEl, setBossEl] = useState(false)
-  const [verilenBoss, setVerilenBoss] = useState(0)
   const [elendi, setElendi] = useState<Eleme>(false)
   /** Kaçıncı el — sayaç her elde sıfırlansın diye. */
   const [elSayisi, setElSayisi] = useState(0)
 
-  const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukFormul, 'kolay')
+  /*
+    Zorluk seçilmiyor, turun içinde kayıyor (`lib/oyunlar/uyum.ts`).
+
+    Tur ortadan başlıyor; ardışık doğrular seviyeyi yükseltiyor, ardışık
+    yanlışlar düşürüyor ve bunun hiçbiri ekranda yazmıyor.
+  */
+  const { zorlukRef, kaydet: zorlukKaydet, sifirla: zorluguSifirla } = useUyarlananZorluk()
   const [duraklatilan, setDuraklatilan] = useState(false)
   const [turNo, setTurNo] = useState(0)
 
@@ -222,8 +218,8 @@ export function FormulOyunuEkrani({
 
   const bankaHavuzu = useMemo(() => bankaEsleri(bankaSorulari), [bankaSorulari])
   const bankaTuru = bankaHavuzu.length > 0
-  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
-  const gecerliMod = etkinMod(mod, bankaTuru)
+  // Mod artık seçilmiyor: her tur Sıradan, banka turu ise soru saatli.
+  const gecerliMod = etkinMod(bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   const turBasladiRef = useRef(0)
@@ -237,13 +233,13 @@ export function FormulOyunuEkrani({
   useGeriKatmani(asama !== 'tanitim' && !yardimAcik, onCik)
 
   const sonrakiEl = useCallback(
-    (boss: boolean) => {
+    () => {
       if (bankaTuru) return bankaEliHazirla(bankaHavuzu, kullanilanRef.current)
       // Zorluk elin türünü değil içindeki bileşikleri seçiyor; gerekçesi
       // `lib/oyunlar/formul.ts` içinde.
-      return elHazirla(kullanilanRef.current, boss ? bossZorlugu(zorluk).zorluk : zorluk)
+      return elHazirla(kullanilanRef.current, zorlukRef.current)
     },
-    [bankaHavuzu, bankaTuru, zorluk],
+    [bankaHavuzu, bankaTuru, zorlukRef],
   )
 
   const turBaslat = useCallback(() => {
@@ -253,9 +249,8 @@ export function FormulOyunuEkrani({
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
     kullanilanRef.current = new Set()
-    setEl(sonrakiEl(false))
-    setBossEl(false)
-    setVerilenBoss(0)
+    setEl(sonrakiEl())
+    zorluguSifirla()
     setElendi(false)
     setElSayisi(0)
     setSecim(BOS_SECIM)
@@ -267,7 +262,7 @@ export function FormulOyunuEkrani({
     setSonuc(null)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [istatistik.enIyiDogru, sonrakiEl])
+  }, [istatistik.enIyiDogru, sonrakiEl, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<FormulEsi>[], yarim = false) => {
@@ -318,10 +313,7 @@ export function FormulOyunuEkrani({
 
   const elDagit = () => {
     for (const e of el?.esler ?? []) kullanilanRef.current.add(e.formul)
-    const boss = bossElMi(cevaplarRef.current.length, verilenBoss)
-    if (boss) setVerilenBoss((v) => v + 1)
-    setBossEl(boss)
-    setEl(sonrakiEl(boss))
+    setEl(sonrakiEl())
     setEslesenler([])
     setElBekliyor(false)
     setElSayisi((n) => n + 1)
@@ -339,14 +331,15 @@ export function FormulOyunuEkrani({
     setCevaplar((onceki) => [...onceki, ...kalanEsler.map((soru) => ({ soru, dogruMu: false }))])
     setYanlisGirdileri((onceki) => [...onceki, ...kalanEsler.map(() => 'süre doldu')])
     geriBildir(false)
+    zorlukKaydet(false)
     if (elerMi(false, bankaTuru, gecerliMod)) {
-      setElendi(bossEl ? 'boss' : 'yanlis')
+      setElendi('yanlis')
       zamanlayiciRef.current = setTimeout(() => turBitir(cevaplarRef.current), CEVAP_BEKLEMESI)
       return
     }
     zamanlayiciRef.current = setTimeout(elDagit, CEVAP_BEKLEMESI)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asama, bankaTuru, bossEl, el, eslesenler])
+  }, [asama, bankaTuru, el, eslesenler])
 
   /** Tur saati bitti: yanlış değil, tur biter. */
   const turSuresiDoldu = () => {
@@ -372,7 +365,7 @@ export function FormulOyunuEkrani({
     yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && !duraklatilan && !elBekliyor && el !== null,
-    sure: soruSuresi('formul', bossEl ? bossZorlugu(zorluk) : null),
+    sure: soruSuresi('formul'),
     anahtar: elSayisi,
     onBitti: sureDoldu,
   })
@@ -389,6 +382,7 @@ export function FormulOyunuEkrani({
 
     setCevaplar((onceki) => [...onceki, { soru: es, dogruMu }])
     geriBildir(dogruMu)
+    zorlukKaydet(dogruMu)
 
     if (!dogruMu) {
       setYanlisGirdileri((onceki) => [...onceki, ad])
@@ -397,7 +391,7 @@ export function FormulOyunuEkrani({
         setYanlisCift(null)
         setSecim(BOS_SECIM)
         if (elerMi(false, bankaTuru, gecerliMod)) {
-          setElendi(bossEl ? 'boss' : 'yanlis')
+          setElendi('yanlis')
           turBitir(cevaplarRef.current)
         }
       }, CEVAP_BEKLEMESI)
@@ -465,7 +459,6 @@ export function FormulOyunuEkrani({
                 kalan,
                 toplam,
                 sira: elSayisi + 1,
-                boss: bossEl,
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
@@ -571,15 +564,8 @@ export function FormulOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
-        mod={mod}
-        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
-        ekstra={
-          asama === 'tanitim' && !bankaTuru ? (
-            <ZorlukSecimi secili={zorluk} onSec={setZorluk} bossVar />
-          ) : null
-        }
       />
     </>
   )

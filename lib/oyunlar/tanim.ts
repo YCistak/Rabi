@@ -135,11 +135,9 @@ export type OyunTanimi = {
    *
    * Önce sekiz maddelik bir "nasıl oynanır" listesiydi ve kimse okumuyordu:
    * pencere turu başlatan yer, ders kitabı değil. Maddelerin çoğu zaten
-   * pencerenin kendisinde yazıyor — turun kuralı mod seçiminde
-   * (`components/mod-secimi.tsx`), boss'un nereden geldiği zorluk seçiminde
-   * (`components/zorluk-secimi.tsx`), oyuna özgü seçimler de tanıtımın
-   * `ekstra` bölümünde. Geriye kalan tek soru "ben ne yapacağım"; cevabı
-   * burada duruyor.
+   * pencerenin kendisinde yazıyor — turun süresi kartın altındaki çipte,
+   * kuralın kendisi de her turda aynı (`lib/oyunlar/mod.ts`). Geriye kalan tek
+   * soru "ben ne yapacağım"; cevabı burada duruyor.
    *
    * Havuz boyu, çeldirici mantığı, kural listesi gibi ayrıntılar bilerek
    * yok: hiçbiri ilk turu oynamak için gerekmiyor.

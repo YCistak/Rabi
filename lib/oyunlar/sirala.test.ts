@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import {
-  BOSS_KART_SAYISI,
   KART_SAYISI,
   TAM_BONUS,
   dogruKomsuSayisi,
@@ -123,41 +122,34 @@ describe('soruKur', () => {
 })
 
 describe('siralaTuruHazirla', () => {
-  const bossVar = (sira: number) => sira % 10 === 0
-
   it('istenen sayıda soru üretiyor', () => {
-    const tur = siralaTuruHazirla('kolay', bossVar, 'orta', 30)
-    expect(tur).toHaveLength(30)
+    expect(siralaTuruHazirla('kolay', 30)).toHaveLength(30)
   })
 
-  it('boss sorularında bir kart fazla veriyor', () => {
-    const tur = siralaTuruHazirla('kolay', bossVar, 'orta', 20)
-    expect(tur[9].boss).toBe(true)
-    expect(tur[9].soru.olaylar).toHaveLength(BOSS_KART_SAYISI)
-    expect(tur[0].boss).toBe(false)
-    expect(tur[0].soru.olaylar).toHaveLength(KART_SAYISI)
+  it('her soru aynı kart sayısını taşıyor', () => {
+    for (const soru of siralaTuruHazirla('kolay', 20)) {
+      expect(soru.olaylar).toHaveLength(KART_SAYISI)
+    }
   })
 
   it('havuz tükenince baştan dönüyor, erken kesmiyor', () => {
     // Kolay havuzda iki dönem × altı olay var: sınırsız tur ancak tekrara
     // dönerek sürebilir.
-    const tur = siralaTuruHazirla('kolay', () => false, 'orta', 25)
-    expect(tur).toHaveLength(25)
+    expect(siralaTuruHazirla('kolay', 25)).toHaveLength(25)
   })
 
   it('tek dönemlik havuzda bile soru üretiyor', () => {
     const tekDonem = SIRALA_HAVUZU.filter((o) => o.donem === 'kurtulus')
-    const tur = siralaTuruHazirla('kolay', () => false, 'orta', 5, tekDonem)
-    expect(tur).toHaveLength(5)
+    expect(siralaTuruHazirla('kolay', 5, tekDonem)).toHaveLength(5)
   })
 })
 
 describe('SIRALA_HAVUZU', () => {
-  it('her dönemde boss sorusunu kuracak kadar olay var', () => {
+  it('her dönemde bir soruyu kuracak kadar olay var', () => {
     const sayilar = new Map<string, number>()
     for (const o of SIRALA_HAVUZU) sayilar.set(o.donem, (sayilar.get(o.donem) ?? 0) + 1)
     for (const [donem, sayi] of sayilar) {
-      expect(sayi, `${donem} dönemi`).toBeGreaterThanOrEqual(BOSS_KART_SAYISI)
+      expect(sayi, `${donem} dönemi`).toBeGreaterThanOrEqual(KART_SAYISI)
     }
   })
 

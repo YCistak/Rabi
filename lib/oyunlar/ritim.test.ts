@@ -1,17 +1,19 @@
 import { describe, expect, it } from 'vitest'
 import type { OyunId } from '../types'
 import {
-  BOSS_ARALIGI,
-  bossElMi,
   SORU_SURESI,
+  TUR_SORU_SINIRI,
   ZORLUKLAR,
-  bossMu,
-  bossZorlugu,
-  bossluMu,
+  akisUret,
+  akisUzunlugu,
+  akisiEsle,
   elerMi,
   soruSuresi,
+  tekAkis,
+  turSirasi,
+  zorluktaSuz,
+  type Zorluk,
 } from './ritim'
-import { TUR_SORU_SINIRI, turSirasi, zorluktaSuz, type Zorluk } from './ritim'
 import { OYUNLAR } from './tanim'
 
 type Ornek = { ad: string; zorluk: Zorluk }
@@ -29,107 +31,68 @@ describe('zorluktaSuz', () => {
 })
 
 describe('turSirasi', () => {
-  it('normal sorular seçilen zorluktan geliyor', () => {
-    const sira = turSirasi(havuz, 'ses', 'kolay')
-    for (const { soru, boss } of sira) if (!boss) expect(soru.zorluk).toBe('kolay')
+  it('her şerit kendi zorluğundan geliyor', () => {
+    const akis = turSirasi(havuz)
+    for (const zorluk of ZORLUKLAR) {
+      for (const soru of akis[zorluk]) expect(soru.zorluk, zorluk).toBe(zorluk)
+    }
   })
 
-  it('boss bir üst zorluktan geliyor', () => {
-    const sira = turSirasi(havuz, 'ses', 'kolay')
-    const bosslar = sira.filter((s) => s.boss)
-    expect(bosslar.length).toBeGreaterThan(0)
-    for (const { soru } of bosslar) expect(soru.zorluk).toBe('orta')
-  })
-
-  it('zor seçilince boss da zor havuzundan geliyor', () => {
-    const sira = turSirasi(havuz, 'ses', 'zor')
-    for (const { soru } of sira) expect(soru.zorluk).toBe('zor')
-  })
-
-  it('boss tam onda bir geliyor', () => {
-    const sira = turSirasi(havuz, 'ses', 'kolay')
-    sira.forEach(({ boss }, i) => expect(boss).toBe((i + 1) % 10 === 0))
-  })
-
-  it('matematik sırasında hiç boss yok', () => {
-    expect(turSirasi(havuz, 'islem', 'kolay').some((s) => s.boss)).toBe(false)
+  /*
+    Şeritler aynı `sira` numarasıyla okunuyor: uyum seviyeyi kaydırdığında
+    oyunun elinde her seviye için o numarada bir soru olmalı, yoksa seviye
+    değişimi turu tanımsız bir soruya düşürür.
+  */
+  it('üç şerit de sınır kadar soru taşıyor', () => {
+    const akis = turSirasi(havuz)
+    for (const zorluk of ZORLUKLAR) expect(akis[zorluk], zorluk).toHaveLength(TUR_SORU_SINIRI)
+    expect(akisUzunlugu(akis)).toBe(TUR_SORU_SINIRI)
   })
 
   it('havuz tükenmeden tekrar başlamıyor', () => {
-    // 12 kolay soru var; ilk 12 normal sorunun hepsi farklı olmalı.
-    const normaller = turSirasi(havuz, 'ses', 'kolay')
-      .filter((s) => !s.boss)
-      .slice(0, 12)
-      .map((s) => s.soru.ad)
-    expect(new Set(normaller).size).toBe(12)
+    // 12 kolay soru var; ilk 12'sinin hepsi farklı olmalı.
+    const ilkler = turSirasi(havuz).kolay.slice(0, 12).map((s) => s.ad)
+    expect(new Set(ilkler).size).toBe(12)
   })
 
-  it('sınır kadar soru üretiyor', () => {
-    expect(turSirasi(havuz, 'ses', 'kolay')).toHaveLength(TUR_SORU_SINIRI)
-  })
-
-  it('seçilen zorlukta soru yoksa tüm havuza düşüyor', () => {
+  it('bir zorlukta soru yoksa o şerit tüm havuza düşüyor', () => {
     const yalnizKolay = havuz.filter((s) => s.zorluk === 'kolay')
-    const sira = turSirasi(yalnizKolay, 'ses', 'zor', Math.random, 5)
-    expect(sira).toHaveLength(5)
+    const akis = turSirasi(yalnizKolay, Math.random, 5)
+    expect(akis.zor).toHaveLength(5)
+    for (const soru of akis.zor) expect(soru.zorluk).toBe('kolay')
   })
 
-  it('boş havuzda boş sıra veriyor', () => {
-    expect(turSirasi([] as Ornek[], 'ses', 'kolay')).toEqual([])
-  })
-})
-
-describe('bossZorlugu', () => {
-  it('seçilenin bir üstünü veriyor', () => {
-    expect(bossZorlugu('kolay')).toEqual({ zorluk: 'orta', cetin: false })
-    expect(bossZorlugu('orta')).toEqual({ zorluk: 'zor', cetin: false })
-  })
-
-  it('zorda üst kalmadığı için çetine geçiyor', () => {
-    expect(bossZorlugu('zor')).toEqual({ zorluk: 'zor', cetin: true })
-  })
-
-  it('her zorluk için bir boss tanımlı', () => {
-    for (const z of ZORLUKLAR) expect(ZORLUKLAR).toContain(bossZorlugu(z).zorluk)
+  it('boş havuzda boş şerit veriyor', () => {
+    const akis = turSirasi([] as Ornek[])
+    expect(akisUzunlugu(akis)).toBe(0)
   })
 })
 
-describe('bossMu', () => {
-  it('sözel oyunda onda bir geliyor', () => {
-    expect(bossMu('ses', 9)).toBe(false)
-    expect(bossMu('ses', 10)).toBe(true)
-    expect(bossMu('ses', 11)).toBe(false)
-    expect(bossMu('ses', 20)).toBe(true)
-  })
-
-  it('sıfırıncı soru boss değil', () => {
-    expect(bossMu('ses', 0)).toBe(false)
-  })
-
-  it('matematik oyunlarında hiç gelmiyor', () => {
-    for (const sira of [10, 20, 30, 100]) {
-      expect(bossMu('islem', sira)).toBe(false)
-      expect(bossMu('bolunme', sira)).toBe(false)
-      expect(bossMu('aci', sira)).toBe(false)
-      expect(bossMu('ucgen', sira)).toBe(false)
-    }
+describe('tekAkis', () => {
+  it('üç şerit de aynı listeyi veriyor', () => {
+    const akis = tekAkis(['a', 'b', 'c'])
+    expect(akis.kolay).toEqual(akis.orta)
+    expect(akis.orta).toEqual(akis.zor)
+    expect(akisUzunlugu(akis)).toBe(3)
   })
 })
 
-describe('bossElMi', () => {
-  it('on eşleştirme dolunca sıradaki el boss', () => {
-    expect(bossElMi(6, 0)).toBe(false)
-    expect(bossElMi(12, 0)).toBe(true)
-    expect(bossElMi(12, 1)).toBe(false)
-    expect(bossElMi(24, 1)).toBe(true)
+describe('akisUret', () => {
+  it('her seviye için bir kez çağrılıyor', () => {
+    const cagrilar: Zorluk[] = []
+    const akis = akisUret((zorluk) => {
+      cagrilar.push(zorluk)
+      return [zorluk]
+    })
+    expect(new Set(cagrilar)).toEqual(new Set(ZORLUKLAR))
+    expect(akis.zor).toEqual(['zor'])
   })
 })
 
-describe('bossluMu', () => {
-  it('matematik dersini dışarıda bırakıyor', () => {
-    for (const oyun of OYUNLAR) {
-      expect(bossluMu(oyun.id)).toBe(oyun.ders !== 'matematik')
-    }
+describe('akisiEsle', () => {
+  it('her şeridi ayrı ayrı dönüştürüyor', () => {
+    const akis = akisiEsle(tekAkis([1, 2]), (sayilar) => sayilar.map((s) => s * 2))
+    expect(akis.orta).toEqual([2, 4])
   })
 })
 
@@ -151,22 +114,11 @@ describe('soruSuresi', () => {
     }
   })
 
-  it('boss normalden uzun', () => {
-    const normal = soruSuresi('ses', null)
-    expect(soruSuresi('ses', { zorluk: 'orta', cetin: false })).toBeGreaterThan(normal)
-  })
-
-  it('çetin boss normal bosstan kısa ama normal sorudan uzun', () => {
-    const normal = soruSuresi('ses', null)
-    const boss = soruSuresi('ses', { zorluk: 'zor', cetin: false })
-    const cetin = soruSuresi('ses', { zorluk: 'zor', cetin: true })
-    expect(cetin).toBeLessThan(boss)
-    expect(cetin).toBeGreaterThan(normal)
-  })
-
-  it('tam sayı saniye döndürüyor', () => {
+  /* Zorluk süreyi değiştirmiyor: seviye sorunun kendisini seçiyor. */
+  it('tablodaki sayıyı olduğu gibi veriyor', () => {
     for (const oyun of OYUNLAR) {
-      expect(Number.isInteger(soruSuresi(oyun.id, { zorluk: 'zor', cetin: true }))).toBe(true)
+      expect(soruSuresi(oyun.id), oyun.id).toBe(SORU_SURESI[oyun.id])
+      expect(Number.isInteger(soruSuresi(oyun.id))).toBe(true)
     }
   })
 })

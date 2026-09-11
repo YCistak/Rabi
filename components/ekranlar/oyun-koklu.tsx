@@ -102,8 +102,6 @@ export function KokluOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
-  mod,
-  setMod,
   onCik,
   bildir,
 }: {
@@ -119,9 +117,6 @@ export function KokluOyunuEkrani({
     /** Tur bitmeden çıkıldı mı — yarım tur rekora ve istatistiğe yazılmıyor. */
     yarim: boolean,
   ) => void
-  /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
-  mod: OyunModu
-  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -166,8 +161,8 @@ export function KokluOyunuEkrani({
 
   const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
-  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
-  const gecerliMod = etkinMod(mod, bankaTuru)
+  // Mod artık seçilmiyor: her tur Sıradan, banka turu ise soru saatli.
+  const gecerliMod = etkinMod(bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   const turBasladiRef = useRef(0)
@@ -360,7 +355,7 @@ export function KokluOyunuEkrani({
     yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
-    sure: evre === 'bonus' ? BONUS_SURESI : soruSuresi('koklu', null),
+    sure: evre === 'bonus' ? BONUS_SURESI : soruSuresi('koklu'),
     // İki evre ayrı sayaç: aynı anahtar kalsaydı bonusa geçerken sayaç
     // sıfırlanmaz, aralıktan kalan süreyle devam ederdi.
     anahtar: sira * 2 + (evre === 'bonus' ? 1 : 0),
@@ -398,7 +393,6 @@ export function KokluOyunuEkrani({
                 kalan,
                 toplam,
                 sira: sira + 1,
-                boss: false,
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
@@ -495,8 +489,6 @@ export function KokluOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
-        mod={mod}
-        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
       />

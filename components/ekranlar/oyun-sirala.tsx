@@ -26,16 +26,16 @@ import {
 import { siraladanBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
 import {
   TUR_SORU_SINIRI,
-  bossMu,
-  bossZorlugu,
+  akisUret,
+  akisUzunlugu,
   elerMi,
   soruSuresi,
-  type Zorluk,
+  tekAkis,
+  type SoruAkisi,
 } from '@/lib/oyunlar/ritim'
 import { etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
-import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
-import { ZorlukSecimi } from '@/components/zorluk-secimi'
+import { useUyarlananZorluk } from '@/lib/oyunlar/uyum'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
@@ -99,8 +99,6 @@ export function SiralaOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
-  mod,
-  setMod,
   onCik,
   bildir,
 }: {
@@ -116,9 +114,6 @@ export function SiralaOyunuEkrani({
     /** Tur bitmeden çıkıldı mı — yarım tur rekora ve istatistiğe yazılmıyor. */
     yarim: boolean,
   ) => void
-  /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
-  mod: OyunModu
-  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -127,7 +122,7 @@ export function SiralaOyunuEkrani({
   const [asama, setAsama] = useState<Asama>('tanitim')
   const [yardimAcik, setYardimAcik] = useState(false)
 
-  const [sorular, setSorular] = useState<{ soru: SiralamaSorusu; boss: boolean }[]>([])
+  const [sorular, setSorular] = useState<SoruAkisi<SiralamaSorusu>>(tekAkis([]))
   const [sira, setSira] = useState(0)
   const [cevaplar, setCevaplar] = useState<Cevap<Yanlis>[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
@@ -152,7 +147,13 @@ export function SiralaOyunuEkrani({
    * ortasında da sıfır olabiliyor (`tur-sayaci.ts`).
    */
   const [turNo, setTurNo] = useState(0)
-  const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukSirala, 'kolay')
+  /*
+    Zorluk seçilmiyor, turun içinde kayıyor (`lib/oyunlar/uyum.ts`).
+
+    Tur ortadan başlıyor; ardışık doğrular seviyeyi yükseltiyor, ardışık
+    yanlışlar düşürüyor ve bunun hiçbiri ekranda yazmıyor.
+  */
+  const { zorluk, kaydet: zorlukKaydet, sifirla: zorluguSifirla } = useUyarlananZorluk()
 
   const [sonuc, setSonuc] = useState<{
     ozet: TurOzeti<Yanlis>
@@ -162,8 +163,8 @@ export function SiralaOyunuEkrani({
 
   const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
-  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
-  const gecerliMod = etkinMod(mod, bankaTuru)
+  // Mod artık seçilmiyor: her tur Sıradan, banka turu ise soru saatli.
+  const gecerliMod = etkinMod(bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   const turBasladiRef = useRef(0)
@@ -183,17 +184,12 @@ export function SiralaOyunuEkrani({
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
 
-    const yeni = bankaTuru
-      ? bankadanSorular(havuz).map((soru) => ({ soru, boss: false }))
-      : siralaTuruHazirla(
-          zorluk,
-          (s) => bossMu('sirala', s),
-          bossZorlugu(zorluk).zorluk,
-          TUR_SORU_SINIRI,
-        )
-
-    setSorular(yeni)
-    setDizilim(yeni[0]?.soru.olaylar ?? [])
+    setSorular(
+      bankaTuru
+        ? tekAkis(bankadanSorular(havuz))
+        : akisUret((seviye) => siralaTuruHazirla(seviye, TUR_SORU_SINIRI)),
+    )
+    zorluguSifirla()
     setSira(0)
     setCevaplar([])
     setPuan(0)
@@ -202,7 +198,7 @@ export function SiralaOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluk])
+  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<Yanlis>[], yarim = false) => {
@@ -237,9 +233,10 @@ export function SiralaOyunuEkrani({
 
   // Banka turunda liste bankadaki kayıt kadar; tükenirse tur erken biter.
   useEffect(() => {
-    if (asama !== 'oynaniyor' || sorular.length === 0) return
-    if (sira >= sorular.length) turBitir(cevaplarRef.current)
-  }, [asama, sira, sorular.length, turBitir])
+    const uzunluk = akisUzunlugu(sorular)
+    if (asama !== 'oynaniyor' || uzunluk === 0) return
+    if (sira >= uzunluk) turBitir(cevaplarRef.current)
+  }, [asama, sira, sorular, turBitir])
 
   useEffect(
     () => () => {
@@ -257,9 +254,21 @@ export function SiralaOyunuEkrani({
     ).catch(() => {})
   }
 
-  const sirali = sorular[sira]
-  const soru = sirali?.soru
-  const boss = sirali?.boss ?? false
+  const soru = sorular[zorluk][sira]
+
+  /*
+    Kartların açılış düzeni sorunun kendi karışık sırası.
+
+    Eskiden `setDizilim` iki yerde elle çağrılıyordu: tur başlarken ve bir
+    sonraki soruya geçerken. Sıradaki sorunun hangi zorluk şeridinden geleceği
+    artık ancak uyum işledikten sonra belli oluyor (`lib/oyunlar/uyum.ts`), o
+    yüzden düzen sorudan türetiliyor: soru değişince kartlar da yeniden
+    diziliyor. Sürükleme yalnızca `dizilim`i değiştiriyor, `soru` sabit —
+    yani bu etki oyuncunun düzenini bozmuyor.
+  */
+  useEffect(() => {
+    setDizilim(soru?.olaylar ?? [])
+  }, [soru])
 
   /**
    * Cevabı işler.
@@ -278,15 +287,14 @@ export function SiralaOyunuEkrani({
     setGeriBildirim({ dogruMu, soru, dizilim: verilen, puan: kazanilan })
     geriBildir(dogruMu)
 
-    const bossMuydu = boss
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
+      /* Zorluk ilerlerken kayıyor — bkz. öteki oyunlardaki aynı yorum. */
+      zorlukKaydet(dogruMu)
       if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
-        setElendi(bossMuydu ? 'boss' : 'yanlis')
+        setElendi('yanlis')
         turBitir(cevaplarRef.current)
       } else {
-        const sonraki = sorular[sira + 1]
-        if (sonraki) setDizilim(sonraki.soru.olaylar)
         setSira((s) => s + 1)
       }
     }, CEVAP_BEKLEMESI)
@@ -297,7 +305,7 @@ export function SiralaOyunuEkrani({
     // `onayla` her renderda yeniden kuruluyor; sayaç yalnızca güncel olanı
     // çağırsın diye bağımlılıklar bilerek dar tutuldu.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asama, geriBildirim, soru, boss, dizilim, sorular, sira])
+  }, [asama, geriBildirim, soru, dizilim])
 
   /** Tur saati bitti: yanlış değil, tur biter. */
   const turSuresiDoldu = () => {
@@ -330,7 +338,7 @@ export function SiralaOyunuEkrani({
     yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
-    sure: soruSuresi('sirala', boss ? bossZorlugu(zorluk) : null),
+    sure: soruSuresi('sirala'),
     anahtar: sira,
     onBitti: sureDoldu,
   })
@@ -366,7 +374,6 @@ export function SiralaOyunuEkrani({
                 kalan,
                 toplam,
                 sira: sira + 1,
-                boss,
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
@@ -460,15 +467,8 @@ export function SiralaOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
-        mod={mod}
-        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
-        ekstra={
-          asama === 'tanitim' && !bankaTuru ? (
-            <ZorlukSecimi secili={zorluk} onSec={setZorluk} bossVar />
-          ) : null
-        }
       />
     </>
   )

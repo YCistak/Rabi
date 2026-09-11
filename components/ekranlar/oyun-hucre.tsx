@@ -24,17 +24,17 @@ import {
 } from '@/lib/oyunlar/tur'
 import { hucredenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
 import {
-  bossZorlugu,
   elerMi,
   soruSuresi,
   turSirasi,
-  type SiradakiSoru,
-  type Zorluk,
+  akisUzunlugu,
+  akisiEsle,
+  tekAkis,
+  type SoruAkisi,
 } from '@/lib/oyunlar/ritim'
 import { etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
-import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
-import { ZorlukSecimi } from '@/components/zorluk-secimi'
+import { useUyarlananZorluk } from '@/lib/oyunlar/uyum'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
@@ -82,16 +82,12 @@ type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 /**
  * `ritim.ts`'in kurduğu sıraya şıkları ekler.
  *
- * Sıra korunmalı: boss soruları belirli konumlara yerleştirilmiş durumda,
- * `turHazirla` varsayılan hâlinde yeniden karıştırıp o yerleşimi bozardı.
+ * Şeritler ayrı ayrı eşleniyor ve sıraları korunuyor: `turHazirla` varsayılan
+ * hâlinde yeniden karıştırırdı ve aynı `sira` numarası üç şeritte farklı bir
+ * yere denk gelirdi.
  */
-function sirayiKur(sira: SiradakiSoru<OrganelSorusu>[]): SiradakiSoru<HucreOyunSorusu>[] {
-  const sorular = turHazirla(
-    sira.map((s) => s.soru),
-    Math.random,
-    false,
-  )
-  return sorular.map((soru, i) => ({ soru, boss: sira[i].boss }))
+function sirayiKur(akis: SoruAkisi<OrganelSorusu>): SoruAkisi<HucreOyunSorusu> {
+  return akisiEsle(akis, (sorular) => turHazirla(sorular, Math.random, false))
 }
 
 /** `secilen` süre dolduğunda `null`: oyuncu bir şık işaretlemedi, kart dönmüyor. */
@@ -119,8 +115,6 @@ export function HucreOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
-  mod,
-  setMod,
   onCik,
   bildir,
 }: {
@@ -136,9 +130,6 @@ export function HucreOyunuEkrani({
     /** Tur bitmeden çıkıldı mı — yarım tur rekora ve istatistiğe yazılmıyor. */
     yarim: boolean,
   ) => void
-  /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
-  mod: OyunModu
-  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -147,7 +138,7 @@ export function HucreOyunuEkrani({
   const [asama, setAsama] = useState<Asama>('tanitim')
   const [yardimAcik, setYardimAcik] = useState(false)
 
-  const [sorular, setSorular] = useState<SiradakiSoru<HucreOyunSorusu>[]>([])
+  const [sorular, setSorular] = useState<SoruAkisi<HucreOyunSorusu>>(tekAkis([]))
   const [sira, setSira] = useState(0)
   const [cevaplar, setCevaplar] = useState<Cevap<OrganelSorusu>[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
@@ -156,7 +147,13 @@ export function HucreOyunuEkrani({
   /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
   const [elendi, setElendi] = useState<Eleme>(false)
 
-  const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukHucre, 'kolay')
+  /*
+    Zorluk seçilmiyor, turun içinde kayıyor (`lib/oyunlar/uyum.ts`).
+
+    Tur ortadan başlıyor; ardışık doğrular seviyeyi yükseltiyor, ardışık
+    yanlışlar düşürüyor ve bunun hiçbiri ekranda yazmıyor.
+  */
+  const { zorluk, kaydet: zorlukKaydet, sifirla: zorluguSifirla } = useUyarlananZorluk()
   /** Yardım açıkken sayaç duruyor. */
   const [duraklatilan, setDuraklatilan] = useState(false)
   /**
@@ -175,8 +172,8 @@ export function HucreOyunuEkrani({
 
   const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
-  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
-  const gecerliMod = etkinMod(mod, bankaTuru)
+  // Mod artık seçilmiyor: her tur Sıradan, banka turu ise soru saatli.
+  const gecerliMod = etkinMod(bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   const turBasladiRef = useRef(0)
@@ -197,9 +194,10 @@ export function HucreOyunuEkrani({
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
     setSorular(
       bankaTuru
-        ? turHazirla(havuz).map((soru) => ({ soru, boss: false }))
-        : sirayiKur(turSirasi(HUCRE_HAVUZU, 'hucre', zorluk)),
+        ? tekAkis(turHazirla(havuz))
+        : sirayiKur(turSirasi(HUCRE_HAVUZU)),
     )
+    zorluguSifirla()
     setSira(0)
     setCevaplar([])
     setPuan(0)
@@ -208,7 +206,7 @@ export function HucreOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluk])
+  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<OrganelSorusu>[], yarim = false) => {
@@ -241,9 +239,10 @@ export function HucreOyunuEkrani({
 
   // Havuz tükenirse tur biter — banka turunda ve soru sınırına varılınca.
   useEffect(() => {
-    if (asama !== 'oynaniyor' || sorular.length === 0) return
-    if (sira >= sorular.length) turBitir(cevaplarRef.current)
-  }, [asama, sira, sorular.length, turBitir])
+    const uzunluk = akisUzunlugu(sorular)
+    if (asama !== 'oynaniyor' || uzunluk === 0) return
+    if (sira >= uzunluk) turBitir(cevaplarRef.current)
+  }, [asama, sira, sorular, turBitir])
 
   useEffect(
     () => () => {
@@ -261,16 +260,23 @@ export function HucreOyunuEkrani({
     ).catch(() => {})
   }
 
-  const sirali = sorular[sira]
-  const soru = sirali?.soru
-  const boss = sirali?.boss ?? false
-  const sure = soruSuresi('hucre', boss ? bossZorlugu(zorluk) : null)
+  const soru = sorular[zorluk][sira]
+  const sure = soruSuresi('hucre')
 
-  const ilerle = (dogruMu: boolean, bossMuydu: boolean) => {
+  const ilerle = (dogruMu: boolean) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
+      /*
+        Zorluk **ilerlerken** güncelleniyor, cevap verilirken değil.
+
+        Sıradaki soru `sorular[zorluk][sira]` ile okunuyor; seviye cevap
+        anında kaysaydı ekrandaki soru, oyuncu geri bildirimi okurken
+        değişirdi. İkisi aynı karede güncellenince değişen tek şey bir
+        sonraki soru oluyor.
+      */
+      zorlukKaydet(dogruMu)
       if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
-        setElendi(bossMuydu ? 'boss' : 'yanlis')
+        setElendi('yanlis')
         turBitir(cevaplarRef.current)
       } else {
         setSira((s) => s + 1)
@@ -338,7 +344,7 @@ export function HucreOyunuEkrani({
       kazanilanPuan: kazanilan,
     })
     geriBildir(dogruMu)
-    ilerle(dogruMu, boss)
+    ilerle(dogruMu)
   }
 
   /**
@@ -357,11 +363,11 @@ export function HucreOyunuEkrani({
       kazanilanPuan: 0,
     })
     geriBildir(false)
-    ilerle(false, boss)
+    ilerle(false)
     // `ilerle` ve `geriBildir` her renderda yeniden kuruluyor; sayaç yalnızca
     // güncel olanı çağırsın diye bağımlılıklar bilerek dar tutuldu.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asama, geriBildirim, soru, boss])
+  }, [asama, geriBildirim, soru])
 
   const yardimAc = () => {
     setDuraklatilan(true)
@@ -395,7 +401,6 @@ export function HucreOyunuEkrani({
                 kalan,
                 toplam,
                 sira: sira + 1,
-                boss,
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
@@ -469,15 +474,8 @@ export function HucreOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
-        mod={mod}
-        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
-        ekstra={
-          asama === 'tanitim' && !bankaTuru ? (
-            <ZorlukSecimi secili={zorluk} onSec={setZorluk} bossVar />
-          ) : null
-        }
       />
     </>
   )
