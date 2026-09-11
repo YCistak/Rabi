@@ -13,18 +13,18 @@ geldi" sorusu çıkarsa cevabı burada dursun.
 
 | Dosya | Ad |
 |---|---|
-| `dust-on-the-morning-keys.mp3` | Dust on the Morning Keys |
-| `candlelit-at-70-bpm.mp3` | Candlelit at 70 BPM |
-| `glow-on-the-overpass.mp3` | Glow on the Overpass |
-| `almost-floating.mp3` | Almost Floating |
-| `after-school-rain.mp3` | After School Rain |
-| `2-am-debug-loop.mp3` | 2 AM Debug Loop |
-| `graphite-in-the-quiet.mp3` | Graphite in the Quiet |
-| `stacks-of-quiet-hours.mp3` | Stacks of Quiet Hours |
-| `chapter-by-lamplight.mp3` | Chapter by Lamplight |
-| `coffee-ring-notebook.mp3` | Coffee Ring Notebook |
-| `margin-notes-at-dusk.mp3` | Margin Notes at Dusk |
-| `stacks-of-quiet-books.mp3` | Stacks of Quiet Books |
+| `dust-on-the-morning-keys.ogg` | Dust on the Morning Keys |
+| `candlelit-at-70-bpm.ogg` | Candlelit at 70 BPM |
+| `glow-on-the-overpass.ogg` | Glow on the Overpass |
+| `almost-floating.ogg` | Almost Floating |
+| `after-school-rain.ogg` | After School Rain |
+| `2-am-debug-loop.ogg` | 2 AM Debug Loop |
+| `graphite-in-the-quiet.ogg` | Graphite in the Quiet |
+| `stacks-of-quiet-hours.ogg` | Stacks of Quiet Hours |
+| `chapter-by-lamplight.ogg` | Chapter by Lamplight |
+| `coffee-ring-notebook.ogg` | Coffee Ring Notebook |
+| `margin-notes-at-dusk.ogg` | Margin Notes at Dusk |
+| `stacks-of-quiet-books.ogg` | Stacks of Quiet Books |
 
 ## Dosyalarda yapılan değişiklik
 
@@ -35,7 +35,7 @@ Arka planda çalan çalışma müziği için bu yeterli; kulaklıkta bile fark e
 Dönüştürme komutu:
 
 ```bash
-ffmpeg -i girdi.mp3 -ac 1 -ar 32000 -b:a 64k -map_metadata -1 cikti.mp3
+ffmpeg -i girdi.ogg -ac 1 -ar 32000 -b:a 64k -map_metadata -1 cikti.ogg
 ```
 
 CC0 türev çalışmalara izin verdiği için bu değişiklik serbesttir.
