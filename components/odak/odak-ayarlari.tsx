@@ -157,16 +157,6 @@ export function OdakAyarlari({
           </Not>
         </div>
       )}
-
-      {ayar.rahatsizEtme && izinler.rahatsizEtme && (
-        <div className="border-t border-border px-4 py-3">
-          <Not>
-            Telefonun tamamı susar, yalnızca seçtiğin uygulamalar değil. Alarmların ve
-            kendi Rahatsız Etme istisnaların (kişilerden gelen aramalar gibi) geçmeye
-            devam eder.
-          </Not>
-        </div>
-      )}
     </>
   )
 }

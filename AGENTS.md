@@ -456,8 +456,11 @@ duruyor: provada da geçerli ve çekmeceye konsaydı prova kipinde ona hiç
 ulaşılamazdı. Tur içinde ona da ulaşılmıyor (sahne her şeyi örtüyor); sonraki
 turda geçerli oluyor.
 
-Başlat düğmesi sayfanın dibine **yapışık** (`sticky`, alt menünün hemen
-üstünde): ayarlar uzadıkça düğme kaydırmanın sonuna gitmesin.
+Başlat düğmesi alt menünün hemen üstünde **sabit** (`fixed`): ayarlar
+uzadıkça düğme kaydırmanın sonuna gitmesin. Bir süre `sticky` idi; sayfa
+kısayken akışta durup uzayınca yapışıyor, açılan bir panel düğmeyi aşağı
+yukarı oynatıyordu. Sayfanın sonunda düğme boyunda bir boşluk var, yoksa son
+satır düğmenin altında kalırdı.
 
 Soru sayıları elle yazılmıyor, `OSYM_TEST_SORU`dan toplanıyor: aynı sayı
 `sablonlar.ts`te zaten duruyor ve iki yere yazılan bir sayı dağılım
