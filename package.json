@@ -10,7 +10,8 @@
     "test:izle": "vitest",
     "sync": "next build && cap sync android",
     "apk": "npm run sync && cd android && ./gradlew assembleDebug",
-    "aab": "npm run sync && cd android && ./gradlew bundleRelease"
+    "aab": "npm run sync && cd android && ./gradlew bundleRelease",
+    "apk:imzali": "npm run sync && cd android && ./gradlew assembleRelease -PtekAbi"
   },
   "dependencies": {
     "@capacitor-community/keep-awake": "^8.0.1",
