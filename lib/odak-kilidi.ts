@@ -17,6 +17,14 @@ export type OdakDurumu = {
   /** Diğer uygulamaların üzerine çizme izni verildi mi. */
   katman: boolean
   /**
+   * Xiaomi'ye özgü "arka planda açılır pencere" izni verildi mi.
+   *
+   * MIUI/HyperOS'ta üste çizme izni tek başına yetmiyor: Rabi alta
+   * alınmışken engel katmanı bu izin olmadan sessizce görünmüyor. Xiaomi
+   * olmayan cihazda her zaman `true` — satır arayüzde hiç çıkmıyor.
+   */
+  arkaPlanPencere: boolean
+  /**
    * Rahatsız Etme erişimi verildi mi — tur boyunca telefon sussun diye.
    *
    * **İsteğe bağlı**: verilmezse kilit çalışır, yalnızca telefon susmaz. Bu
@@ -34,7 +42,7 @@ export type OdakDurumu = {
   calisiyor: boolean
 }
 
-export type OdakIzni = 'kullanimVerisi' | 'katman' | 'rahatsizEtme'
+export type OdakIzni = 'kullanimVerisi' | 'katman' | 'arkaPlanPencere' | 'rahatsizEtme'
 
 type OdakKilidiEklentisi = {
   durum(): Promise<OdakDurumu>
@@ -74,6 +82,8 @@ export type PomodoroKomutu = {
 const KAPALI_DURUM: OdakDurumu = {
   kullanimVerisi: false,
   katman: false,
+  // "Yok" değil "gerekmiyor": yalnızca Xiaomi'de sorulan bir izin.
+  arkaPlanPencere: true,
   rahatsizEtme: false,
   calisiyor: false,
 }

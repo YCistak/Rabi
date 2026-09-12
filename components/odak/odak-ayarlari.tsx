@@ -33,6 +33,7 @@ export function OdakAyarlari({
   const [izinler, setIzinler] = useState<OdakDurumu>({
     kullanimVerisi: false,
     katman: false,
+    arkaPlanPencere: true,
     rahatsizEtme: false,
     calisiyor: false,
   })
@@ -83,9 +84,13 @@ export function OdakAyarlari({
             ekranını açsaydı, özelliği merak edip deneyen kullanıcı istemediği
             bir izin akışının ortasında bulurdu kendini.
           */}
-          {(!izinler.kullanimVerisi || !izinler.katman) && (
+          {(!izinler.kullanimVerisi || !izinler.katman || !izinler.arkaPlanPencere) && (
             <Not tur="uyari" className="mb-2.5">
-              İzin verilmediği sürece kilit çalışmaz; sayaç normal şekilde işler.
+              {!izinler.kullanimVerisi || !izinler.katman
+                ? 'İzin verilmediği sürece kilit çalışmaz; sayaç normal şekilde işler.'
+                : // Yalnızca Xiaomi'de çıkıyor; öteki iki izin tamamken kilidin
+                  // hâlâ neden çalışmadığını bu satır açıklıyor.
+                  'Xiaomi telefonda bir izin daha gerekiyor: "Arka planda çalışırken açılır pencere göster". Açılan ekranda bu satırı bul ve izin ver.'}
               <span className="mt-2 flex flex-wrap gap-1.5">
                 {!izinler.kullanimVerisi && (
                   <Buton
@@ -99,6 +104,15 @@ export function OdakAyarlari({
                 {!izinler.katman && (
                   <Buton bicim="ikincil" boy="kucuk" onClick={() => void odakIzniIste('katman')}>
                     Üste çizme izni
+                  </Buton>
+                )}
+                {!izinler.arkaPlanPencere && (
+                  <Buton
+                    bicim="ikincil"
+                    boy="kucuk"
+                    onClick={() => void odakIzniIste('arkaPlanPencere')}
+                  >
+                    Arka plan pencere izni
                   </Buton>
                 )}
               </span>

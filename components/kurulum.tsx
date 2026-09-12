@@ -318,8 +318,19 @@ export function Kurulum({
   const geri = () => setAdim(Math.max(0, siradaki - 1))
 
   const adGecerli = adGecerliMi(ad)
-  /** Notlar adımında girilmiş tek bir sayı var mı. */
-  const notVar = Object.values(notlar).some((n) => n.trim() !== '') || obpMetni.trim() !== ''
+  /**
+   * Notlar adımı tamam mı: **bütün** yıllar dolu ya da (mezunda) OBP yazılmış.
+   *
+   * Eskiden tek bir yıl yazmak yetiyordu ve eksik yıllarla kurulan OBP
+   * tahmini sessizce yanlış çıkıyordu; kullanıcı Okulum ekranına dönüp
+   * eksik yılları tamamlamıyordu, çünkü bir şeyin eksik olduğunu bilmiyordu.
+   * Yarım liste artık "daha sonra" yolundan geçmek zorunda.
+   */
+  const doluYilSayisi = notluSiniflar.filter((s) => (notlar[s] ?? '').trim() !== '').length
+  const yillarTamam = notluSiniflar.length > 0 && doluYilSayisi === notluSiniflar.length
+  const notVar = yillarTamam || (mezun && obpMetni.trim() !== '')
+  /** Bazı yıllar yazılmış ama hepsi değil — Devam'ın neden pasif olduğunu söylemek için. */
+  const notlarEksik = doluYilSayisi > 0 && !notVar && !notlarSonra
   /**
    * Devam düğmesi basılabilir mi.
    *
@@ -598,6 +609,7 @@ export function Kurulum({
           mezun={mezun}
           obpMetni={obpMetni}
           onObp={setObpMetni}
+          eksik={notlarEksik}
         />
       ) : (
         /* Tekerlekli iki adımda kart kalan boşlukta ortalanıyor (`my-auto`):
@@ -1301,6 +1313,7 @@ function OkulNotlari({
   mezun,
   obpMetni,
   onObp,
+  eksik,
 }: {
   siniflar: number[]
   notlar: Record<number, string>
@@ -1309,6 +1322,8 @@ function OkulNotlari({
   mezun: boolean
   obpMetni: string
   onObp: (deger: string) => void
+  /** Yıllar yarım bırakılmış: pasif Devam düğmesinin sebebi burada yazıyor. */
+  eksik: boolean
 }) {
   const obpDolu = obpMetni.trim() !== ''
 
@@ -1356,6 +1371,17 @@ function OkulNotlari({
           )
         })}
       </div>
+
+      {/* Uyarı listenin hemen altında, ad adımındaki ipucuyla aynı dilde:
+          pasif düğmenin sebebi kullanıcının baktığı yerde yazmalı. */}
+      {eksik && (
+        <p role="alert" className="mt-2.5 flex items-center gap-1 text-xs font-medium text-danger">
+          <AlertCircle size={13} aria-hidden className="shrink-0" />
+          {mezun
+            ? 'Bütün yılları doldur ya da OBP’ni yaz'
+            : 'Devam etmek için bütün yılları doldur'}
+        </p>
+      )}
 
       {/* OBP kutusu **yalnızca mezunda**.
 

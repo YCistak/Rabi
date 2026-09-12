@@ -23,6 +23,7 @@ class OdakKilidiEklentisi : Plugin() {
         val sonuc = JSObject()
         sonuc.put("kullanimVerisi", Izinler.kullanimVerisiVar(context))
         sonuc.put("katman", Izinler.katmanVar(context))
+        sonuc.put("arkaPlanPencere", Izinler.arkaPlanPencereVar(context))
         sonuc.put("rahatsizEtme", Izinler.rahatsizEtmeVar(context))
         sonuc.put("calisiyor", OdakServisi.calisiyor)
         cagri.resolve(sonuc)
@@ -38,6 +39,7 @@ class OdakKilidiEklentisi : Plugin() {
         val acildi = when (hangi) {
             "kullanimVerisi" -> Izinler.kullanimVerisiEkraniniAc(context)
             "katman" -> Izinler.katmanEkraniniAc(context)
+            "arkaPlanPencere" -> Izinler.arkaPlanPencereEkraniniAc(context)
             "rahatsizEtme" -> Izinler.rahatsizEtmeEkraniniAc(context)
             else -> false
         }
