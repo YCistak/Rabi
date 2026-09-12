@@ -3,6 +3,7 @@ import { YAZIM_HAVUZU } from './yazim-havuzu'
 import type { NoktalamaSorusu } from './noktalama-havuzu'
 import { ISARET_ADI, ISARET_SIMGESI, NOKTALAMA_HAVUZU } from './noktalama-havuzu'
 import { karistir } from './tur'
+import { yakinlariSonaAt, type Anahtar } from './gecmis'
 
 /**
  * Yazım Ustası'na özgü mantık. Süre, ceza, rekor gibi bütün oyunlarda ortak
@@ -140,10 +141,25 @@ function noktalamadanSoru(soru: NoktalamaSorusu, rastgele: () => number): OyunSo
 export function turHazirla(
   havuzlar: Havuzlar = VARSAYILAN_HAVUZLAR,
   rastgele: () => number = Math.random,
+  /**
+   * Yakın turlarda görülenler sona atılıyor (`gecmis.ts`). İki havuzun
+   * kimliği ayrı üretildiği için anahtar da ikiye ayrı.
+   */
+  gecmis?: {
+    gorulenler: readonly string[]
+    yazim: Anahtar<YazimSorusu>
+    noktalama: Anahtar<NoktalamaSorusu>
+  },
 ): OyunSorusu[] {
-  const yazim = karistir(havuzlar.yazim, rastgele).map((soru) => yazimdanSoru(soru, rastgele))
-  const noktalama = karistir(havuzlar.noktalama, rastgele).map((soru) =>
-    noktalamadanSoru(soru, rastgele),
-  )
+  const yazimSirasi = karistir(havuzlar.yazim, rastgele)
+  const noktalamaSirasi = karistir(havuzlar.noktalama, rastgele)
+  const yazim = (
+    gecmis ? yakinlariSonaAt(yazimSirasi, gecmis.gorulenler, gecmis.yazim) : yazimSirasi
+  ).map((soru) => yazimdanSoru(soru, rastgele))
+  const noktalama = (
+    gecmis
+      ? yakinlariSonaAt(noktalamaSirasi, gecmis.gorulenler, gecmis.noktalama)
+      : noktalamaSirasi
+  ).map((soru) => noktalamadanSoru(soru, rastgele))
   return harmanla(yazim, noktalama, rastgele)
 }

@@ -21,6 +21,7 @@ import type { TuzakKurali } from './tuzak-havuzu'
 import { TUZAK_HAVUZU } from './tuzak-havuzu'
 import type { Zorluk } from './ritim'
 import { karistir } from './tur'
+import { yakinlariSonaAt, type Anahtar } from './gecmis'
 
 export type TuzakSorusu = {
   kural: TuzakKurali
@@ -90,9 +91,12 @@ export function tuzakTuruHazirla(
   zorluk: Zorluk,
   havuz: readonly TuzakKurali[] = TUZAK_HAVUZU,
   rastgele: () => number = Math.random,
+  /** Yakın turlarda görülen kurallar sona atılıyor (`gecmis.ts`). */
+  gecmis?: { gorulenler: readonly string[]; anahtar: Anahtar<TuzakKurali> },
 ): TuzakSorusu[] {
   const suzulmus = havuz.filter((k) => k.zorluk === zorluk)
-  const kaynak = karistir(suzulmus.length > 0 ? suzulmus : havuz, rastgele)
+  const karisik = karistir(suzulmus.length > 0 ? suzulmus : havuz, rastgele)
+  const kaynak = gecmis ? yakinlariSonaAt(karisik, gecmis.gorulenler, gecmis.anahtar) : karisik
   if (kaynak.length === 0) return []
 
   const sorular: TuzakSorusu[] = []

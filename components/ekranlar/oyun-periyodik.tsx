@@ -19,7 +19,11 @@ import {
   soruKur,
   tipteSoruKur,
   type PeriyodikSorusu,
+  type PeriyodikTipi,
 } from '@/lib/oyunlar/periyodik'
+
+/** Aynı element üç tiple kaydediliyor; geçmişte herhangi biri görüldüyse element görülmüş sayılıyor. */
+const PERIYODIK_TIPLERI: readonly PeriyodikTipi[] = ['bul', 'sec', 'sinif']
 import {
   guncelSeri,
   rekorKirildiMi,
@@ -27,11 +31,12 @@ import {
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
-import { periyodiktenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { periyodiktenBanka, bankaKimligi, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
 import {
   elerMi,
   soruSuresi,
   turSirasi,
+  TUR_SORU_SINIRI,
   akisUzunlugu,
   akisiEsle,
   tekAkis,
@@ -93,6 +98,7 @@ export function PeriyodikOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler,
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
@@ -105,6 +111,8 @@ export function PeriyodikOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  /** Yakın turlarda sorulan soru kimlikleri — yenisi öne alınıyor (`lib/oyunlar/gecmis.ts`). */
+  gorulenler: readonly string[]
 }) {
   const oyun = oyunBul('periyodik')
 
@@ -155,7 +163,10 @@ export function PeriyodikOyunuEkrani({
     setSorular(
       bankaTuru
         ? tekAkis(havuz)
-        : akisiEsle(turSirasi(ELEMENTLER), (sorular) => sorular.map((soru) => soruKur(soru))),
+        : akisiEsle(turSirasi(ELEMENTLER, Math.random, TUR_SORU_SINIRI, {
+              gorulenler,
+              anahtar: (s) => PERIYODIK_TIPLERI.map((tip) => bankaKimligi(periyodiktenBanka({ tip, element: s }))),
+            }), (sorular) => sorular.map((soru) => soruKur(soru))),
     )
     zorluguSifirla()
     setSira(0)
@@ -165,7 +176,7 @@ export function PeriyodikOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluguSifirla])
+  }, [bankaTuru, gorulenler, havuz, istatistik.enIyiDogru, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<PeriyodikSorusu>[], yarim = false) => {

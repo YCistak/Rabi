@@ -20,11 +20,12 @@ import {
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
-import { biyolojidenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { biyolojidenBanka, bankaKimligi, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
 import {
   elerMi,
   soruSuresi,
   turSirasi,
+  TUR_SORU_SINIRI,
   akisUzunlugu,
   akisiEsle,
   tekAkis,
@@ -120,6 +121,7 @@ export function BiyolojiOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler,
 }: {
   oyunId: BiyolojiOyunId
   istatistik: OyunIstatistigi
@@ -136,6 +138,8 @@ export function BiyolojiOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  /** Yakın turlarda sorulan soru kimlikleri — yenisi öne alınıyor (`lib/oyunlar/gecmis.ts`). */
+  gorulenler: readonly string[]
 }) {
   const oyun = oyunBul(oyunId)
   const ayar = AYAR[oyunId]
@@ -195,7 +199,10 @@ export function BiyolojiOyunuEkrani({
     setSorular(
       bankaTuru
         ? tekAkis(turHazirla(havuz))
-        : sirayiKur(turSirasi(ayar.havuz)),
+        : sirayiKur(turSirasi(ayar.havuz, Math.random, TUR_SORU_SINIRI, {
+              gorulenler,
+              anahtar: (s) => bankaKimligi(biyolojidenBanka(oyunId, s)),
+            })),
     )
     zorluguSifirla()
     setSira(0)
@@ -205,7 +212,7 @@ export function BiyolojiOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [ayar.havuz, bankaTuru, havuz, istatistik.enIyiDogru, oyunId, zorluk])
+  }, [ayar.havuz, bankaTuru, gorulenler, havuz, istatistik.enIyiDogru, oyunId, zorluk])
 
   const turBitir = useCallback(
     (verilenler: Cevap<BiyolojiSorusu>[], yarim = false) => {

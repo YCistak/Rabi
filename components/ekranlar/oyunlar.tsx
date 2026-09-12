@@ -27,12 +27,14 @@ import {
 } from '@/lib/oyunlar/tur'
 import {
   bankaDagilimi,
+  bankaKimligi,
   bankayiGuncelle,
   dusenSayisi,
   type BankaCevabi,
   type BankaKaydi,
   type BankaTuru,
 } from '@/lib/oyunlar/banka'
+import { gecmiseIsle, type SoruGecmisi } from '@/lib/oyunlar/gecmis'
 import { sesleriHazirla } from '@/lib/oyunlar/oyun-sesi'
 import { ANAHTARLAR, OYUN_GECMIS_SINIRI, TUR_EN_UZUN, useYerelDepo } from '@/lib/depo'
 import { etkinMod, modKayitliMi } from '@/lib/oyunlar/mod'
@@ -138,6 +140,8 @@ export function OyunlarEkrani({
   kayitlar,
   setKayitlar,
   setGecmis,
+  soruGecmisi,
+  setSoruGecmisi,
   banka,
   setBanka,
   sesAcik,
@@ -156,6 +160,9 @@ export function OyunlarEkrani({
   kayitlar: OyunKayitlari
   setKayitlar: (guncelleyici: OyunKayitlari | ((onceki: OyunKayitlari) => OyunKayitlari)) => void
   setGecmis: (guncelleyici: (onceki: OyunTurKaydi[]) => OyunTurKaydi[]) => void
+  /** Oyun başına yakın zamanda sorulan sorular; ekranlar yenisini öne alıyor. */
+  soruGecmisi: SoruGecmisi
+  setSoruGecmisi: (guncelleyici: (onceki: SoruGecmisi) => SoruGecmisi) => void
   banka: BankaKaydi[]
   setBanka: (guncelleyici: (onceki: BankaKaydi[]) => BankaKaydi[]) => void
   sesAcik: boolean
@@ -271,6 +278,19 @@ export function OyunlarEkrani({
     /** Tur bitmeden çıkıldı mı. */
     yarim: boolean,
   ) => {
+    /*
+      Görülen soru görülmüştür: geçmiş, tur yarım kalsa da, banka turu olsa
+      da yazılıyor. Sıradaki turun aynı soruyla açılmaması için kayıtlı
+      olmak yetiyor; rekor ve istatistik gibi "sayılır mı" sorusu yok.
+    */
+    setSoruGecmisi((onceki) =>
+      gecmiseIsle(
+        onceki,
+        id,
+        cevaplar.map((c) => bankaKimligi(c.soru)),
+      ),
+    )
+
     /*
       Genel test bankaya **yazmıyor**: doğru bilinenler testin sonunda bir
       kerede düşüyor (`AppShell`), yanlış bilinenler olduğu gibi kalıyor —
@@ -550,6 +570,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('yazim', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.yazim ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -560,6 +581,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('ses', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.ses ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -570,6 +592,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('oge', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.oge ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -580,6 +603,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('soz', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.soz ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -630,6 +654,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('harita', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.harita ?? []}
           onCik={oyunuKapat}
           bildir={bildir}
         />
@@ -640,6 +665,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('iklim', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.iklim ?? []}
           onCik={oyunuKapat}
           bildir={bildir}
         />
@@ -680,6 +706,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('anlatim', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.anlatim ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -702,6 +729,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti(acikOyun, ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi[acikOyun] ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -712,6 +740,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('hucre', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.hucre ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -732,6 +761,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('tuzak', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.tuzak ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -752,6 +782,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('periyodik', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.periyodik ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />

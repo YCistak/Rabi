@@ -15,11 +15,12 @@ import {
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
-import { ogedenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { ogedenBanka, bankaKimligi, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
 import {
   elerMi,
   soruSuresi,
   turSirasi,
+  TUR_SORU_SINIRI,
   akisUzunlugu,
   akisiEsle,
   tekAkis,
@@ -103,6 +104,7 @@ export function OgeOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler,
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
@@ -118,6 +120,8 @@ export function OgeOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  /** Yakın turlarda sorulan soru kimlikleri — yenisi öne alınıyor (`lib/oyunlar/gecmis.ts`). */
+  gorulenler: readonly string[]
 }) {
   const oyun = oyunBul('oge')
 
@@ -184,7 +188,10 @@ export function OgeOyunuEkrani({
     setSorular(
       bankaTuru
         ? tekAkis(turHazirla(havuz))
-        : sirayiKur(turSirasi(OGE_HAVUZU)),
+        : sirayiKur(turSirasi(OGE_HAVUZU, Math.random, TUR_SORU_SINIRI, {
+              gorulenler,
+              anahtar: (s) => bankaKimligi(ogedenBanka(s)),
+            })),
     )
     zorluguSifirla()
     setSira(0)
@@ -194,7 +201,7 @@ export function OgeOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluguSifirla])
+  }, [bankaTuru, gorulenler, havuz, istatistik.enIyiDogru, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<OgeSorusu>[], yarim = false) => {

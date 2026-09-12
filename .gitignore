@@ -1,5 +1,8 @@
 # bağımlılıklar
-node_modules/
+# Eğik çizgisiz: `node_modules/` yalnızca klasörü yakalıyor, aynı adlı bir
+# sembolik bağlantı (başka bir klonun node_modules’ına bağlanmış) depoya
+# giriyordu ve checkout eden herkesin gerçek node_modules’ını siliyordu.
+node_modules
 
 # Next.js
 .next/
