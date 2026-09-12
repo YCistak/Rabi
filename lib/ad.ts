@@ -9,10 +9,12 @@
 /**
  * Adın en az kaç harf olacağı.
  *
- * Tek harf ("a") ya da boş bırakılan ad selamlamayı anlamsızlaştırıyor; üç,
- * gerçek adların hepsini geçirip baştan savma girişleri eleyen en küçük sınır.
+ * Tek harf ("a") ya da boş bırakılan ad selamlamayı anlamsızlaştırıyor. Sınır
+ * bir süre üçtü; iki harfli gerçek adlar var ("Su", "Ay", "Ali" değil "Al")
+ * ve onları yazan kullanıcı kurulumda kilitleniyordu — Devam pasif, sebebi
+ * "en az 3 harf". İki, gerçek adların hepsini geçiren en küçük sınır.
  */
-export const AD_EN_AZ = 3
+export const AD_EN_AZ = 2
 
 export function adGecerliMi(ad: string): boolean {
   return ad.trim().length >= AD_EN_AZ

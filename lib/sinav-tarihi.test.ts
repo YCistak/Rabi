@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { geriSayim, gunFarki, yilinTakvimi } from './sinav-tarihi'
+import { geriSayim, gunFarki, sinavYili, yilinTakvimi } from './sinav-tarihi'
+import { MEZUN } from './hesap'
 import { sinavSozu } from './sinav-sozleri'
 
 describe('yilinTakvimi', () => {
@@ -81,6 +82,36 @@ describe('geriSayim', () => {
       expect(s.gecenGun).toBeGreaterThanOrEqual(0)
       expect(s.gecenGun).toBeLessThanOrEqual(s.toplamGun)
     }
+  })
+})
+
+describe('sınıfa göre sınav yılı', () => {
+  it('12. sınıf ve mezun bu ders yılının haziranına sayar', () => {
+    expect(sinavYili('2026-10-01', 12)).toBe(2027)
+    expect(sinavYili('2026-10-01', MEZUN)).toBe(2027)
+    // Ders yılı eylülde dönüyor: mayısta 12. sınıf olan aynı haziranda giriyor.
+    expect(sinavYili('2027-05-01', 12)).toBe(2027)
+  })
+
+  it('alt sınıflar 12yi bitirecekleri yıla sayar', () => {
+    expect(sinavYili('2026-10-01', 11)).toBe(2028)
+    expect(sinavYili('2026-10-01', 9)).toBe(2030)
+    // Temmuzda kayıt hâlâ 11 (eylülde 12 olacak): sınav sıradaki haziran.
+    expect(sinavYili('2026-07-15', 11)).toBe(2027)
+  })
+
+  it('11. sınıfın geri sayımı sıradaki sınavı atlar', () => {
+    const s = geriSayim('2026-10-01', 11)
+    expect(s.takvim.yil).toBe(2028)
+    expect(s.oturum).toBe('tyt')
+    // Çubuk geçen son sınavdan başlıyor (Haziran 2026), 2027'yi beklemiyor.
+    expect(s.gecenGun).toBe(gunFarki('2026-06-21', '2026-10-01'))
+    expect(s.toplamGun).toBe(gunFarki('2026-06-21', s.takvim.tyt))
+  })
+
+  it('12. sınıfın sınavı geçtiyse sıradakine düşer', () => {
+    // Temmuzda kayıt hâlâ 12 ve ders yılı 2025-26: sınav 2026 geçti, 2027'ye.
+    expect(geriSayim('2026-07-01', 12).takvim.yil).toBe(2027)
   })
 })
 

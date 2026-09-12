@@ -73,19 +73,14 @@ const PUAN_TURU_ADI: Record<PuanTuru, string> = {
 }
 
 /**
- * Çip olarak sunulan alanlar — **Dil yok**.
+ * Çip olarak sunulan alanlar — dördü de.
  *
- * Dil kurulumdan da buradan da çıktı: Dil öğrencisi azınlıkta ve dördüncü kart
- * her iki listeyi de uzatıyordu. Ad tablosunda duruyor çünkü `PuanTuru` hâlâ
- * dört değer taşıyor: katalogdaki DİL programları yerinde ve biri hedef olarak
- * seçilirse `Hedef.puanTuru` 'dil' oluyor.
- *
- * Kayıtlı ayarı 'dil' olan eski kullanıcıya çip **gösteriliyor** (`turler`):
- * gösterilmeseydi satırda "Dil" yazarken altındaki çiplerin hiçbiri seçili
- * görünmez, kullanıcı ayarını bozuk sanırdı. Başka bir türe geçtiği anda çip
- * listeden düşüyor ve geri dönüşü olmuyor — istenen de bu.
+ * Dil bir süre listede yoktu ("azınlıkta, listeyi uzatıyor" diye) ve yalnızca
+ * ayarı zaten 'dil' olan eski kullanıcıya gösteriliyordu; kurulumla birlikte
+ * geri geldi. Dil öğrencisi alanını seçemeyince hedef listesi süzülmüyor ve
+ * YDT şablonu önerilmiyordu.
  */
-const SECILEBILIR_TURLER: PuanTuru[] = ['say', 'ea', 'soz']
+const SECILEBILIR_TURLER: PuanTuru[] = ['say', 'ea', 'soz', 'dil']
 
 /**
  * Seçenekleri açılıp kapanan ayarların kimlikleri. Serbest metin yerine birlik
@@ -299,7 +294,7 @@ export function AyarlarEkrani({
             <GenisAlan tam>
               <div className="mb-1.5 flex items-baseline justify-between gap-3">
                 <Etiket className="mb-0">Adın</Etiket>
-                {/* Uzunluk kuralı kurulumdakiyle aynı: orada üç harf isteyip
+                {/* Uzunluk kuralı kurulumdakiyle aynı: orada iki harf isteyip
                     burada tek harfe izin vermek, aynı alanın iki ekranda iki
                     ayrı kural tanıması olurdu. */}
                 {adUyarisi && (
@@ -374,10 +369,7 @@ export function AyarlarEkrani({
           {acikAyar === 'alan' && (
           <GenisAlan>
             <Cipler>
-              {(ayarlar.puanTuru === 'dil'
-                ? [...SECILEBILIR_TURLER, 'dil' as PuanTuru]
-                : SECILEBILIR_TURLER
-              ).map((tur) => (
+              {SECILEBILIR_TURLER.map((tur) => (
                 <Cip
                   key={tur}
                   secili={ayarlar.puanTuru === tur}

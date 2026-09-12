@@ -144,13 +144,12 @@ const PUAN_TURU_ADI: Record<PuanTuru, string> = {
 }
 
 /**
- * Kurulumda sorulan alanlar.
+ * Kurulumda sorulan alanlar — dört tür ve "karar vermedim".
  *
- * **Dil burada yok**, `PuanTuru` içinde duruyor: Dil öğrencisi azınlıkta ve
- * kurulumdaki dördüncü kart listeyi kararsızlara kapatıyordu. Dil'i seçmek
- * gerekirse yolu Ayarlar &rsaquo; Alanım -- oradaki çip listesi dört türü de
- * gösteriyor. Katalogdaki DİL programları da yerinde; yalnızca kurulumdaki
- * soru sadeleşti.
+ * Dil bir süre listede **yoktu** (azınlıkta diye çıkarılmıştı) ve Dil öğrencisi
+ * kurulumda kendi alanını göremeyip "Karar vermedim" demek zorunda kalıyordu;
+ * sonra hedef listesi süzülmüyor, YDT şablonu önerilmiyordu. Azınlık olmak
+ * yok sayılmak değil: dördüncü kart bir satır daha demek, o kadar.
  *
  * `'yok'` gerçek bir puan türü değil, "karar vermedim"in kart listesindeki
  * karşılığı; kayda `null` olarak geçiyor. Kararsız öğrenciye bir alan
@@ -163,6 +162,7 @@ const PUAN_TURLERI: { id: PuanTuru | typeof ALANSIZ; ad: string }[] = [
   { id: 'say', ad: 'Sayısal' },
   { id: 'ea', ad: 'Eşit Ağırlık' },
   { id: 'soz', ad: 'Sözel' },
+  { id: 'dil', ad: 'Dil' },
   { id: ALANSIZ, ad: 'Karar vermedim' },
 ]
 
