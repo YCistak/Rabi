@@ -169,10 +169,11 @@ kullanılıyor: `ziplayan` ana sayfada günlük hedefi tutturan kullanıcıya
 çıkıyor, `sevinen` başka yerlerde duruyor. Tek poza indirilseydi aynı görsel
 iki ayrı bağlamda tekrarlanırdı.
 
-**İki poz hâlâ JPEG'den geliyor.** `kafa` ve `ziplayan`ın temiz (saydam PNG)
-kaynağı yok; `maskot-uret.mjs` yalnızca bu ikisi için siyah zemini kenardan
-taşırarak siliyor — öteki pozlarda #70 ile bırakılan yöntem. Temiz PNG'leri
-gelince kaynak adı değişip o dal silinmeli.
+**Bütün pozlar saydam PNG'den geliyor.** `kafa` ve `ziplayan` bir süre siyah
+zeminli JPEG'den geliyordu ve betik yalnızca o ikisi için zemini kenardan
+taşırarak siliyordu; kulak ve pati kenarlarında koyu bir hare bırakıyordu.
+Temiz kaynakları gelince JPEG dalı betikten tümüyle silindi — yeni bir poz
+eklerken kaynak saydam PNG olmak zorunda, betikte zemin silecek bir şey yok.
 
 Kaynak klasöründeki her kaynak kullanılmıyor. Dışarıda kalan "sinirli" bilerek
 kaldı: uygulamada karşılığı olan bir ruh hâli değil — Rabi yanlış cevapta
