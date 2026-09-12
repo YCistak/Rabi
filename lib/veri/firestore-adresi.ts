@@ -26,10 +26,10 @@
  */
 
 /** Firebase proje kimliği — Proje ayarları → Genel → "Proje kimliği". */
-export const PROJE_KIMLIGI: string = ''
+export const PROJE_KIMLIGI: string = 'rabi-fbd8e'
 
 /** Web API anahtarı — aynı sayfada "Web API anahtarı". */
-export const API_ANAHTARI: string = ''
+export const API_ANAHTARI: string = 'AIzaSyBNgczKHxhi5O4nFES-89Pm9ZvkCfpUTM4'
 
 /** Koleksiyon adları; Firestore kurallarındaki adlarla birebir. */
 export const KOLEKSIYONLAR = {
