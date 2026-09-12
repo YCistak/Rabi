@@ -1,7 +1,7 @@
 /**
  * Periyodik Tablo Avı'na özgü kısım: soru tipi seçimi ve çeldiriciler.
  *
- * Havuz `periyodik-havuzu.ts` içinde, tur sırası ve boss yerleşimi `ritim.ts`
+ * Havuz `periyodik-havuzu.ts` içinde, tur sırası `ritim.ts`
  * içinde; burada yalnızca "bu element nasıl sorulur" kararı duruyor. Harita
  * Avı'ndaki (`harita.ts`) ayrımın aynısı.
  */

@@ -125,7 +125,7 @@ describe('tur', () => {
     expect(new Set(sorular.map((s) => s.soru.ad)).size).toBe(IKLIM_HAVUZU.length)
   })
 
-  it('karıştırma kapalıyken sıra korunuyor — boss yerleşimi bozulmasın', () => {
+  it('karıştırma kapalıyken sıra korunuyor — şerit hizası bozulmasın', () => {
     const sorular = turHazirla(IKLIM_HAVUZU, uretec(11), false)
     expect(sorular.map((s) => s.soru.ad)).toEqual(IKLIM_HAVUZU.map((s) => s.ad))
   })

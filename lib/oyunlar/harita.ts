@@ -1,7 +1,7 @@
 /**
  * Harita Avı'na özgü kısım: soru tipi seçimi ve çeldiriciler.
  *
- * Havuz `harita-havuzu.ts` içinde, tur sırası ve boss yerleşimi `ritim.ts`
+ * Havuz `harita-havuzu.ts` içinde, tur sırası `ritim.ts`
  * içinde; burada yalnızca "bu il nasıl sorulur" kararı duruyor.
  */
 

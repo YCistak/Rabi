@@ -7,6 +7,7 @@ import { devamsizlikOzeti, gunOzeti, kayitHaritasi } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
 import { siraYaz } from '@/lib/siralama'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
+import { KONU_ANLATIMI_ACIK } from '@/lib/beta'
 import { kisayollar } from '@/lib/son-kullanilan'
 import { doluDersler, oyunlarinDersleri, type DersId, type DersTanimi } from '@/lib/oyunlar/tanim'
 import { Halka, Kart, kartGirisi, Not } from '@/components/ui'
@@ -181,7 +182,7 @@ export function AnaSayfa({
 
       {/* Selamlama — tasarımda ad sorulmuyor, kurulumda ad adımı yok. */}
       <header className="flex items-center gap-3 px-0.5 pt-2 pb-1">
-        <Rabi durum={maskotDurumu} boyut={58} gizli={maskotGizli} yuvaMi />
+        <Rabi durum={maskotDurumu} poz="kafa" boyut={58} gizli={maskotGizli} yuvaMi />
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-extrabold tracking-wide text-ikincil">Rabi</p>
           <h1 className="mt-px font-display text-[22px] font-extrabold tracking-tight text-balance">
@@ -203,7 +204,7 @@ export function AnaSayfa({
       {/* Günlük hedef. Yedi günlük seri buranın altında, ayrı kart değil: seri
           "bugünkü hedefi tutturdun mu"nun yedi günlük hâli, ayrı kartta
           dururken iki ayrı ölçü gibi okunuyordu. */}
-      <Kart className="px-5 py-5">
+      <Kart className="px-4 py-4">
         {/* Halka ve yanındaki satır tıklanabilir: karttaki sayı "bugün kaç soru
             çözdün" ve o sayıyı büyütmenin tek yolu soru takibi ekranı. Kartın
             tamamı değil yalnızca bu satır — altındaki hafta şeridi yedi günü
@@ -216,8 +217,8 @@ export function AnaSayfa({
           {/* Halkanın içinde hedef ("/300") yazmıyor: hedef zaten yanda,
               "300 hedefin var" cümlesinde geçiyordu ve iki kez yazılınca göz
               hangisinin bugünkü sayı olduğunu ayırt edemiyordu. */}
-          <Halka deger={bugunku.toplam} hedef={ayarlar.gunlukHedef} boyut={92} kalinlik={9}>
-            <span className="rakam font-display text-[27px] leading-none font-extrabold">
+          <Halka deger={bugunku.toplam} hedef={ayarlar.gunlukHedef} boyut={78} kalinlik={8}>
+            <span className="rakam font-display text-[23px] leading-none font-extrabold">
               {bugunku.toplam}
             </span>
             <span className="mt-1 text-[9.5px] font-extrabold uppercase tracking-[0.12em] text-muted-foreground">
@@ -264,7 +265,7 @@ export function AnaSayfa({
             yer kaplıyordu. */}
         <ul
           aria-label={`Bu hafta ${tamamlanan} günde hedef tuttu`}
-          className="mt-4 flex gap-1.5"
+          className="mt-3 flex gap-1.5"
         >
           {gunler.map((gun) => (
             <li key={gun.iso} className="flex-1">
@@ -273,7 +274,7 @@ export function AnaSayfa({
                   gun.gelecekMi ? 'henüz gelmedi' : gun.tuttu ? 'hedef tuttu' : 'hedef tutmadı'
                 }`}
                 className={cn(
-                  'grid h-8 place-items-center rounded-full text-[11.5px] font-extrabold',
+                  'grid h-7 place-items-center rounded-full text-[11.5px] font-extrabold',
                   gun.bugunMu
                     ? 'bg-primary text-primary-foreground'
                     : gun.tuttu
@@ -289,6 +290,13 @@ export function AnaSayfa({
           ))}
         </ul>
       </Kart>
+
+      {/* Günün hâli, hedef kartının hemen altında: yukarıdaki kart "kaç soru"
+          diyor, bu kart o sayının ne anlama geldiğini Rabi'nin yüzüyle
+          söylüyor. Ayrı kart olması şart — halkanın yanına konsaydı maskot
+          sayıyla aynı satırda ikinci bir gösterge olurdu ve ikisi de aynı
+          şeyi ölçtüğü için biri gereksiz görünürdü. */}
+      <GununHali toplam={bugunku.toplam} hedef={ayarlar.gunlukHedef} onAc={() => onKartAc('soru')} />
 
       {/* Devamsızlık uyarısı — yalnızca gerektiğinde görünür */}
       {(devamsizlikDurumu.asildi || devamsizlikDurumu.uyari) && (
@@ -310,31 +318,37 @@ export function AnaSayfa({
         yerde duran bir kapı — Araçlar'a kutucuk olarak konsaydı son
         kullanılanlarla birlikte sıraya girip kayardı.
       */}
-      <section>
-        <div className="mb-2 px-1">
-          <h2 className="font-display text-base font-extrabold tracking-tight">
-            Bilgi Kartları 📚
-          </h2>
-        </div>
-        <button
-          type="button"
-          onClick={() => onKartAc('konu')}
-          className="golge-kart flex w-full items-center gap-3.5 rounded-2xl bg-card px-4 py-4 text-left transition active:brightness-[0.98]"
-        >
-          <span
-            className="grid size-12 shrink-0 place-items-center rounded-[18px] bg-primary-soft text-[24px]"
-            aria-hidden
+      {/*
+        0.7.0'a kadar kapalı (`KONU_ANLATIMI_ACIK`): kart çizilmeyince bölüme
+        ulaşan yol kalmıyor.
+      */}
+      {KONU_ANLATIMI_ACIK && (
+        <section>
+          <div className="mb-2 px-1">
+            <h2 className="font-display text-base font-extrabold tracking-tight">
+              Bilgi Kartları 📚
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={() => onKartAc('konu')}
+            className="golge-kart flex w-full items-center gap-3.5 rounded-2xl bg-card px-4 py-4 text-left transition active:brightness-[0.98]"
           >
-            🗺️
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block font-display text-[15.5px] font-extrabold tracking-tight">
-              Ders haritasını aç
+            <span
+              className="grid size-12 shrink-0 place-items-center rounded-[18px] bg-primary-soft text-[24px]"
+              aria-hidden
+            >
+              🗺️
             </span>
-          </span>
-          <ChevronRight size={19} className="shrink-0 text-muted-foreground" aria-hidden />
-        </button>
-      </section>
+            <span className="min-w-0 flex-1">
+              <span className="block font-display text-[15.5px] font-extrabold tracking-tight">
+                Ders haritasını aç
+              </span>
+            </span>
+            <ChevronRight size={19} className="shrink-0 text-muted-foreground" aria-hidden />
+          </button>
+        </section>
+      )}
 
       {/* Araçlar ve Oyunlar aynı biçimde: başlık + "Tümü", altında tek bir
           kutunun içinde dört yüz. Araçlar bir ara başlıksız ve kutusuz
@@ -367,6 +381,87 @@ export function AnaSayfa({
         ))}
       </Bolum>
     </div>
+  )
+}
+
+/**
+ * "Bugün çalıştın mı" kartı — günün hâlini Rabi'nin pozıyla söylüyor.
+ *
+ * Üç hâl var ve ölçü yukarıdaki halkayla **aynı** sayı: hiç soru girilmediyse
+ * üzgün, girildi ama hedef tutmadıysa okuyan, hedef tuttuysa zıplayan Rabi.
+ * Sayının kendisi burada yazmıyor; halka onu zaten üç kez söylüyor ve kartın
+ * işi sayıyı tekrar etmek değil, ona bir yüz vermek.
+ *
+ * Hedef sıfırken kart **çizilmiyor**: hedefi olmayan kullanıcıda "ulaştın" da
+ * "ulaşmadın" da anlamsız — ölçülecek bir eşik yok. Karar çağıran tarafta
+ * değil burada, çünkü kartın kendi kuralı.
+ *
+ * Dokunuş soru takibi ekranını açıyor: kart bir haber veriyor ve o haberi
+ * değiştirmenin tek yolu oraya soru girmek.
+ */
+function GununHali({
+  toplam,
+  hedef,
+  onAc,
+}: {
+  toplam: number
+  hedef: number
+  onAc: () => void
+}) {
+  if (hedef <= 0) return null
+
+  const hal =
+    toplam >= hedef
+      ? {
+          poz: 'ziplayan' as const,
+          durum: 'kutlama' as const,
+          etiket: 'BUGÜN',
+          baslik: 'Hedefini tutturdun!',
+          alt: `${toplam} soru — bugünlük iş tamam.`,
+        }
+      : toplam > 0
+        ? {
+            poz: 'okuyan' as const,
+            durum: 'calisiyor' as const,
+            etiket: 'BUGÜN',
+            baslik: 'Çalışmaya başladın',
+            alt: `Hedefine ${hedef - toplam} soru kaldı.`,
+          }
+        : {
+            poz: 'uzgun' as const,
+            durum: 'uzgun' as const,
+            etiket: 'BUGÜN',
+            baslik: 'Bugün hiç soru çözmedin',
+            alt: 'Birkaç soruyla başlasak?',
+          }
+
+  return (
+    <button
+      type="button"
+      onClick={onAc}
+      className="golge-kart flex w-full items-center gap-3 rounded-2xl bg-card px-4 py-3 text-left transition active:brightness-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+    >
+      {/* Maskotun arkasında bir süre hâle göre renklenen bir kutu vardı (gri,
+          amber, yeşil); kaldırıldı. Düz renkli kare, kartın beyaz zemininde
+          yapıştırılmış bir etiket gibi duruyordu — maskot kartın kendi
+          zemininde duruyor. Kutu gidince 46'lık maskot yanındaki üç satırın
+          yanında küçük kaldı; 64'e çıktı ve kutuyu tümüyle dolduruyor. */}
+      <span className="grid size-[64px] shrink-0 place-items-center">
+        <Rabi durum={hal.durum} poz={hal.poz} boyut={64} />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[10px] font-extrabold tracking-[0.16em] text-muted-foreground">
+          {hal.etiket}
+        </span>
+        <span className="mt-0.5 block font-display text-[15.5px] leading-tight font-extrabold tracking-tight">
+          {hal.baslik}
+        </span>
+        <span className="mt-0.5 block text-[12.5px] font-semibold text-muted-foreground">
+          {hal.alt}
+        </span>
+      </span>
+      <ChevronRight size={19} className="shrink-0 text-muted-foreground" aria-hidden />
+    </button>
   )
 }
 

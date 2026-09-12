@@ -1,12 +1,11 @@
 /**
  * Kapalı betada gizlenen bölümler.
  *
- * Play'in kapalı betasına çıkarken bitmemiş iki bölüm kullanıcıdan saklandı;
- * biri (Konu Anlatımı) açıldı ve bayrağı dosyadan düştü, geriye haftalık özet
- * kaldı. Kodları **silinmiyor**: bölüm çalışır durumda ve sıradaki
- * güncellemede geri açılacak. Silinseydi geri getirmek yeniden yazmak olurdu;
- * bayrak, o güne kadar kodun derlenmeye ve testlerin koşmaya devam etmesini
- * sağlıyor — çürüyen bir dal olarak beklemiyor.
+ * Play'in kapalı betasına çıkarken bitmemiş iki bölüm kullanıcıdan saklandı.
+ * Kodları **silinmiyor**: ikisi de çalışır durumda ve sürüm planındaki
+ * (#82) sırayla geri açılacak. Silinselerdi geri getirmek yeniden yazmak
+ * olurdu; bayrak, o güne kadar kodun derlenmeye ve testlerin koşmaya devam
+ * etmesini sağlıyor — çürüyen bir dal olarak beklemiyorlar.
  *
  * Bayrak burada duruyor ki betada neyin kapalı olduğu tek yerden okunabilsin;
  * ekranların içine serpiştirilmiş `false` sabitleri, açılma zamanı geldiğinde
@@ -33,3 +32,13 @@
  * kaybetmemiş oluyor.
  */
 export const HAFTALIK_OZET_ACIK = false
+
+/**
+ * Bilgi Kartları (Konu Anlatımı) — ana sayfadaki "Ders haritasını aç" kartı.
+ *
+ * Bayrak bir kez açılıp dosyadan düşmüştü; sürüm planı bölümü 0.7.0'a
+ * ayırınca 0.6.0 için geri geldi. Kart bölümün **tek** girişi (Araçlar
+ * şeridinde ve kart menüsünde yok); çizilmeyince bölüme ulaşan yol kalmıyor,
+ * ekranın kendisi ve `AppShell`teki kaydı yerinde duruyor.
+ */
+export const KONU_ANLATIMI_ACIK = false

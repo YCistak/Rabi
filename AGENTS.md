@@ -106,14 +106,24 @@ tavşan ana sayfadaki maskotun tam üstüne konuyor, ikisi farklı boyutta (110'
 karşı 58) ama **aynı görseli** taşımak zorunda. Durumdan türeyen bir görsel,
 katman kalkarken tavşanı başka bir tavşana çevirirdi.
 
-**Yüz ayrı bir poz ve varsayılan.** `yuz` dışındaki pozlar tam boy ve gövde
-ancak 70 pikselin üstünde okunuyor; oyun başlıkları (26–54) ile ana sayfanın
-selamlaması (58) o yüzden yüzde kalıyor. Açılışın iniş yuvası (ana sayfa
-başlığı ve kurulumun karşılama ekranı) da yüzde kalmak zorunda — yukarıdaki
-sebep. Aynı dosya uygulama ikonunun (`ikon-uret.mjs`), Android'in engel
-katmanının ve pomodoro bildiriminin de kaynağı, yani orada görülen şey de bir
-yüz. Yüz kırpımının kutusu göz kararı değil ölçülerek bulundu: alt kenar
-gövdenin en dar satırı, yan kenarlar yanakların en geniş satırı.
+**İki baş çekimi var: `yuz` ve `kafa`.** Tam boy pozlar 70 pikselin altında
+lekeye dönüşüyor (gövde, kollar ve tutulan nesne tek bir şey oluyor), o yüzden
+küçük yerlerde baş kullanılıyor: oyun başlıkları (26–54) `yuz`de, ana sayfanın
+selamlaması ve açılışın iniş yuvası `kafa`da.
+
+İkisi ayrı duruyor çünkü kaynakları ve işleri ayrı. `yuz`, "normal maskot"un
+elle ölçülmüş bir kırpımı ve aynı zamanda uygulama ikonunun (`ikon-uret.mjs`),
+Android'in engel katmanının ve pomodoro bildiriminin kaynağı — onu değiştirmek
+ikon üretimini de dokundurur. Kırpımın kutusu göz kararı değil ölçülerek
+bulundu: alt kenar gövdenin en dar satırı, yan kenarlar yanakların en geniş
+satırı. `kafa` ise kendi kaynağından ("kafası gözüken maskot") geliyor,
+kırpılmıyor ve yalnızca arayüzde kullanılıyor.
+
+**İniş yuvası ile uçan tavşan aynı pozda olmak zorunda.** Ana sayfanın
+selamlaması `kafa` olunca açılış ekranındaki uçan tavşan (`acilis.tsx`),
+kurulum sonrası geçiş (`MaskotGecisi`) ve kurulumun karşılama ekranındaki yuva
+da `kafa`ya geçti. Biri geride kalsaydı katman kalkarken tavşan başka bir
+tavşana dönüşürdü — yukarıdaki `durum`/`poz` kuralının aynı sebebi.
 
 `ikon-uret.mjs` yüzün tuvaldeki kutusunu **sabit sayılarla** biliyor.
 `maskot-uret.mjs` çalışınca o sayıları ekrana yazıyor; kırpma değişirse ikon
@@ -121,7 +131,18 @@ betiğindeki `MASKOT` da değişmeli ve `public/tavsan-yuz.png`
 `android/.../drawable-nodpi/tavsan_yuz.png`e yeniden kopyalanmalı — yerli
 taraf `public/` altını okuyamıyor.
 
-Kaynak klasöründeki her PNG kullanılmıyor. Dışarıda kalan "sinirli" bilerek
+**Zıplayan sevinç ayrı bir poz.** `sevinen` ("sevinen maskot 2") ile
+`ziplayan` ("sevinen maskot 3") aynı ruh hâlinin iki çizimi ve ikisi de
+kullanılıyor: `ziplayan` ana sayfada günlük hedefi tutturan kullanıcıya
+çıkıyor, `sevinen` başka yerlerde duruyor. Tek poza indirilseydi aynı görsel
+iki ayrı bağlamda tekrarlanırdı.
+
+**İki poz hâlâ JPEG'den geliyor.** `kafa` ve `ziplayan`ın temiz (saydam PNG)
+kaynağı yok; `maskot-uret.mjs` yalnızca bu ikisi için siyah zemini kenardan
+taşırarak siliyor — öteki pozlarda #70 ile bırakılan yöntem. Temiz PNG'leri
+gelince kaynak adı değişip o dal silinmeli.
+
+Kaynak klasöründeki her kaynak kullanılmıyor. Dışarıda kalan "sinirli" bilerek
 kaldı: uygulamada karşılığı olan bir ruh hâli değil — Rabi yanlış cevapta
 kullanıcıya kızmıyor, efekt zaten sarsıntıyla "yanlış" diyor.
 
@@ -959,7 +980,7 @@ soruyu geç: kullanıcı ödülü, veriyi uydurarak alabiliyor mu?
 
 ## Tur içi efektler
 
-Dört efekt var ve hepsi **ortak koddan** çıkıyor: ses `lib/oyunlar/oyun-sesi.ts`,
+Üç efekt var ve hepsi **ortak koddan** çıkıyor: ses `lib/oyunlar/oyun-sesi.ts`,
 görsel olanlar `components/oyun-kabuk.tsx` ile `app/globals.css`. Oyun
 dosyalarına hiç dokunmuyorlar.
 
@@ -967,20 +988,17 @@ dosyalarına hiç dokunmuyorlar.
 | --- | --- | --- |
 | Sarsıntı | yanlış cevap | kabuk + `oyun-sarsinti` |
 | Süre nabzı + tek uyarı | kalan süre toplamın ¼'ünün altına inince | kabuk + `sure-nabzi` |
-| Boss parlaması | boss sorusu bilinerek kapanınca | kabuk + `boss-parlama` |
 | Kart kalkması | bankada tike basınca | `oyun-bankasi.tsx` + `banka-kalkiyor` |
 | Konfeti | yalnızca yeni rekorda | `TurSonu` + `konfeti` |
 
 Kabuk olayları **sayaçtan türetiyor**, oyunlardan geri çağrı almıyor: `dogru`,
-`yanlis`, `boss` ve `kalan` zaten props olarak geliyor ve bir sayının artması
-"bir şey oldu" demek. 18 oyuna kanca eklemek aynı kuralı 18 kez yazmak olurdu;
-böyle yazınca yeni bir oyun hiçbir şey yapmadan efektlere kavuşuyor.
+`yanlis` ve `kalan` zaten props olarak geliyor ve bir sayının artması "bir şey
+oldu" demek. 22 oyuna kanca eklemek aynı kuralı 22 kez yazmak olurdu; böyle
+yazınca yeni bir oyun hiçbir şey yapmadan efektlere kavuşuyor.
 
-Boss parlamasında tek incelik şu: oyunlar cevabı **hemen** sayıyor ama soruyu
-geri bildirim bittikten sonra değiştiriyor. Yani doğru sayısı boss hâlâ
-ekrandayken artıyor, boss kapandığı çizimde artmış olmuyor. O yüzden bir bayrak
-(`bossVuruldu`) iki anı birbirine bağlıyor; "kapanırken sayı arttı mı" diye
-bakan bir kural hiç çalışmaz.
+Dördüncü bir efekt vardı — boss sorusu bilinerek kapanınca patlayan bir ışık
+(`boss-parlama`). Boss soruları kaldırılınca o da gitti; CSS'i, sesi
+(`bossSesi`) ve tetikleyen bayrağı silindi.
 
 **Doğru sesinin perdesi sabit.** Bir süre ardışık doğrularda kademe kademe
 yükseliyordu: önce yarım ton, sonra "çok belirgin" diye çeyrek tona indirildi,
@@ -1007,12 +1025,6 @@ notaları onun altıda biri kadardı (0.07–0.11), yani seviye arttıkça duyul
 dengesinde**: vuruş indi, ezgi ve bas çıktı, çıkışa bir sınırlayıcı kondu
 (`RitimMotoru.kur`) ve ana seviye onun arkasında 0.85'e çıkabildi. Bir daha
 "duyulmuyor" gelirse önce tepelere bak, ana seviyeye değil.
-
-Boss parlaması ilk denemede yerinde duran bir altın radyaldi ve iyi durmadı:
-boss zemini açık bir renk ve onun üstünde sabit bir sarı daire ışık gibi değil
-leke gibi görünüyor. Göz parlaklığı değil **yayılmayı** ışık sanıyor — şimdi
-dışa açılan bir halka ve onun arkasında büyüyen bir hâle var, halka ötekinden
-hızlı gidiyor. Yeni bir parlama eklersen aynı kural: büyümeyen ışık, ışık değil.
 
 Bankadaki tik kaydı anında silmiyor; kart önce onaylanıp süzülüyor
 (`KALKMA_SURESI`, CSS'teki süreyle eşleşmeli). Anında silmek dokunuşun
@@ -1152,7 +1164,7 @@ karşılığı yoktu.
   **yok** ("—"): sıfır yazmak, hiç denemeyeni hepsini yanlış yapmış gibi
   gösterirdi.
 - **Hatasız tur şeridi.** Ölçü `lib/oyunlar/tur.ts`teki `hatasiz` ile aynı,
-  üstüne eleme dışarıda: süresi biten ya da boss'a takılan turda "hatasız"
+  üstüne eleme dışarıda: süresi biten ya da yanlışta elenen turda "hatasız"
   demek, turu bitiren şeyi görmezden gelmek olurdu. Karşılığı konfeti
   **değil** — konfeti yeni rekora ait ve iki olay aynı kutlamayı paylaşırsa
   rekorun karşılığı sıradanlaşır.
@@ -1277,10 +1289,13 @@ tekrar çözmek hâlâ mümkün, ama o tur kaydı düşürmüyor. Havuzu süzen 
 
 ## Oyun modları
 
-Turun nasıl işleyeceğini **mod** belirliyor (`lib/oyunlar/mod.ts`); seçim bütün
-oyunlarda ortak (`rabi-oyun-modu`) ve tanıtım penceresinden yapılıyor. Zorluk
-oyun başına ayrı duruyor çünkü seviyeler oyundan oyuna gerçekten değişiyor;
-"bugün acele etmek istemiyorum" oyuna göre değişmiyor.
+Turun nasıl işleyeceğini **mod** belirliyor (`lib/oyunlar/mod.ts`).
+
+**Mod artık seçilmiyor.** Tur başlamadan önce bir seçim ekranı vardı (mod +
+zorluk + oyuna özgü soru türleri) ve üçü de kaldırıldı; her tur **Sıradan**
+kuralıyla açılıyor, tek istisna Oyun Bankası turu (`etkinMod`). Sebep: oyunu
+ilk açan öğrenciye sorulan üç sorunun cevabı ancak oynayarak öğrenilebiliyor
+ve "Başla" o üç sorunun arkasında, bir ekran ötede duruyordu.
 
 | Mod | Saat | Yanlış | Kayıt |
 | --- | --- | --- | --- |
@@ -1289,24 +1304,81 @@ oyun başına ayrı duruyor çünkü seviyeler oyundan oyuna gerçekten değişi
 | Ani Ölüm | soruya ait (`SORU_SURESI`) | tur biter | var |
 | Rahat | yok | hiçbir şey | **yok** |
 
-Dört mod olmasının sebebi tek kuralın iki kullanıcıyı birden idare edememesi:
-her yanlışın turu bitirdiği tasarım bileni ödüllendiriyor ama yeni öğrenene
-öğretmeyi bırakıp onu eliyor. Rahat modun karşılığı yok — süresiz bir turda "kaç
-doğru yaptın" sabrı ölçer, bilgiyi değil; o yüzden rekora, istatistiğe ve oyun
-geçmişine yazılmıyor (yanlışlar yine bankaya düşüyor). Bunun tek kapısı
+Tablo yine dört satır ama yalnızca ikisine ulaşılıyor: `siradan` her tur,
+`ani-olum` banka turu. `turbo` ile `rahat` şu an hiçbir yerden seçilemiyor;
+tanımları duruyor çünkü mod müziği (`mod-muzigi.ts`) dördünü de besteliyor ve
+tabloyu budamak, geri getirilmesi bir satır olan bir kuralı yeniden yazmak
+demek olurdu. Rekora yazılmama kuralı (`kayitliMi`) da yerinde: kapısı
 `oyunlar.tsx` içindeki `turBitti`.
 
-İki kural moddan bağımsız:
+**Oyun Bankası turu** modu dinlemiyor (`etkinMod`): oradaki sorular zaten bir
+kez yanlış bilinmiş olanlar ve turun amacı hepsini bir kez daha görmek — tur
+saatli bir mod o işi yarıda keser.
 
-- **Oyun Bankası turu** modu dinlemiyor (`etkinMod`): süreli bir tur onu yarıda
-  keser, eleyen bir tur "üç kez doğru bil" işini imkânsız kılardı.
-- **Rahat turda çıkış turu bitiriyor**, doğrudan kapatmıyor; yoksa o turda
-  öğrenilen yanlışlar bankaya hiç düşmezdi.
+**Çıkış turu bitiriyor**, doğrudan kapatmıyor; yoksa o turda öğrenilen
+yanlışlar bankaya hiç düşmezdi.
 
 Sayaç tek yerde: `lib/oyunlar/tur-sayaci.ts`. Toplamı sıfır dönmesi "sayaç yok"
 demek ve arayüz halkayı ona bakarak gizliyor. Yeni bir mod eklersen saatin tura
 mı soruya mı ait olduğuna karar ver — ikisi birden olmaz, `mod.test.ts` bunu
 denetliyor.
+
+## Zorluk seçilmiyor, turun içinde kayıyor
+
+Tur başlamadan önce bir "Hangi seviye?" sorusu vardı (`ZorlukSecimi`, silindi)
+ve cevap oyun başına kayıtta duruyordu. İki sorunu vardı: **seçim bilgi
+istiyordu** — oyuna ilk giren öğrenci kendi seviyesini bilmiyor, cevabı ancak
+oynayarak öğrenilecek bir soruydu — ve **seçim tur boyunca donuyordu**; kolayda
+arka arkaya on doğru yapana oyun kolay soru vermeye devam ediyordu.
+
+Kural artık `lib/oyunlar/uyum.ts` içinde ve saf: tur **orta**dan başlıyor, üç
+ardışık doğru bir üst seviyeye çıkarıyor, iki ardışık yanlış bir alt seviyeye
+indiriyor. Düşme yükselmeden hızlı — yanlış zorlandığının doğrudan işareti,
+doğru ise şıklı soruda tahminle de gelebiliyor.
+
+Kullanıcıya **söylenmiyor**: ekranda bir "seviye atladın" bildirimi, ölçülen
+şeyi (bilgi) bir ödüle çevirir ve oyuncu seviyeyi kovalamaya başlar.
+
+### Şeritler: seviye değişince soru sırası bozulmuyor
+
+Seviye tur içinde kaydığı için sıradaki sorunun hangi havuzdan geleceği ancak
+oraya gelindiğinde belli oluyor; tek bir liste önceden kurulamaz. `turSirasi`
+bu yüzden **üç şerit** döndürüyor (`SoruAkisi`): her seviye için ayrı,
+karıştırılmış ve tur sınırına kadar döndürülmüş bir liste. Oyun `akis[zorluk]`
+şeridini aynı `sira` numarasıyla okuyor — yani seviye değişince yalnızca şerit
+değişiyor, soru sayacı ve tur sonu koşulu olduğu gibi kalıyor. Üç şerit de
+**aynı boyda** olmak zorunda (`ritim.test.ts` denetliyor): kısa bir şeride
+geçmek turu tanımsız bir soruya düşürürdü.
+
+Havuzu olmayan oyunlar (izohips, kural tuzağı, zaman şeridi) şeritlerini
+`akisUret` ile kuruyor; Oyun Bankası turunda zorluk olmadığı için üç şerit de
+aynı listeye bakıyor (`tekAkis`).
+
+**Uyum ilerlerken işleniyor, cevap verilirken değil.** Ekrandaki soru
+`sorular[zorluk][sira]` ile okunuyor; seviye cevap anında kaysaydı soru,
+oyuncu geri bildirimi okurken değişirdi. `zorlukKaydet` bu yüzden `ilerle`nin
+zamanlayıcısında, `setSira` ile aynı karede çağrılıyor.
+
+Eşleştirme oyunlarında (edebiyat, antlaşma, kavram, formül) el bir
+zamanlayıcının içinde kuruluyor ve orada seviye `zorlukRef.current`'tan
+okunuyor: zamanlayıcı kurulurken yakalanan `zorluk`, cevabın seviyeyi
+kaydırmasından önceki değer olurdu.
+
+### Boss soruları kaldırıldı
+
+Her onuncu soru bir üst seviyeden gelen, ekranı kırmızıya çeviren ve tek
+yanlışta turu bitiren bir "boss"tu. Uyum geldikten sonra ikinci ve habersiz bir
+zorluk sıçraması oluyordu: oyuncu iyi gittiği için zaten zor sorulardayken
+onuncu soruda bir de "bir üst seviye" geliyor, zorun üstü olmadığı için de aynı
+soru daha kısa süreyle veriliyordu. Ölçülen şey bilgi olmaktan çıkıp sayaca
+yetişmek oluyordu.
+
+Kaldırılanlar: `bossZorlugu`, `bossMu`, `bossElMi`, `bossluMu`,
+`bossYerlestir`, `BOSS_ARALIGI`, süre çarpanları, `Eleme`'deki `'boss'` değeri,
+kabuktaki kırmızı zemin/rozet/parlama, `bossSesi` ve `boss-*` CSS sınıfları.
+`soruSuresi` artık tek argüman alıyor: zorluk **süreyi değiştirmiyor**, seviye
+sorunun kendisini seçiyor — üstüne bir de saati kısaltmak aynı kararı iki kez
+uygulamak olurdu.
 
 ## Coğrafyanın iki harita oyunu
 
@@ -1501,6 +1573,32 @@ bütün havuzdan seçiliyor, seçilen zorluk o türün içinde öne alınıyor: 
 seviyeden yeterince bileşik varsa el tümüyle oradan çıkıyor, yoksa aynı türün
 öteki seviyeleri tamamlıyor. `formul.test.ts` üç zorlukta da elin tek türden
 kurulduğunu denetliyor.
+
+## Ana sayfada günün hâli
+
+Soru hedefi kartının hemen altında bir kart daha var (`GununHali`,
+`components/ekranlar/ana-sayfa.tsx`): "bugün çalıştın mı" sorusuna Rabi'nin
+pozuyla cevap veriyor. Üç hâl, ölçüsü halkadakiyle **aynı** sayı:
+
+| Durum | Poz |
+| --- | --- |
+| Hiç soru girilmedi | `uzgun` |
+| Girildi ama hedef tutmadı | `okuyan` |
+| Hedef tuttu | `ziplayan` |
+
+Sayının kendisi kartta **yazmıyor** (yalnızca "kaç soru kaldı" gibi türetilmiş
+bir cümle): halka zaten sayıyı üç kez söylüyor ve kartın işi onu tekrar etmek
+değil, ona bir yüz vermek. Ayrı kart olması da bundan — maskot halkanın yanına
+konsaydı aynı satırda ikinci bir gösterge olurdu ve ikisi aynı şeyi ölçtüğü
+için biri gereksiz görünürdü.
+
+Günlük hedef sıfırken kart **çizilmiyor**: ölçülecek bir eşik yokken "ulaştın"
+da "ulaşmadın" da anlamsız. Karar bileşenin kendi içinde, çağıran tarafta
+değil.
+
+Karta yer açmak için üstündeki iki kart kısaldı (geri sayımın dev sayısı 46'dan
+38'e, halka 92'den 78'e). Üçü birden ekranı kaydırmadan görünmeli: kartın işi
+o gün fark edilmek.
 
 ## Ana sayfadaki dört kutucuk
 
@@ -1755,9 +1853,9 @@ yoklamanın "0 doğru"su geçiyordu.
 
 ### Ana sayfada kısayol değil kendi bölümü
 
-Bölüm bir süre kapalı betada gizliydi (`KONU_ANLATIMI_ACIK`); konu listesi
-Maarif programına bağlandıktan sonra açıldı ve bayrak `lib/beta.ts`'ten
-düştü.
+Bölüm kapalı betada bayrakla gizli (`KONU_ANLATIMI_ACIK`, `lib/beta.ts`).
+Konu listesi Maarif programına bağlanınca bir kez açılıp bayrağı düşmüştü;
+sürüm planı (#82) bölümü 0.7.0'a ayırınca bayrak 0.6.0 için geri geldi.
 
 Ana sayfada bölümün adı **Bilgi Kartları** (kod tarafı `konu` kalıyor):
 ekranın kendisi kart gösteriyor, ders anlatmıyor. Bölüm `KARTLAR` listesinde

@@ -25,17 +25,13 @@ import {
 } from '@/lib/oyunlar/tur'
 import { kavramdanBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
 import {
-  bossElMi,
-  bossZorlugu,
   elerMi,
   soruSuresi,
   zorluktaSuz,
-  type Zorluk,
 } from '@/lib/oyunlar/ritim'
 import { etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
-import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
-import { ZorlukSecimi } from '@/components/zorluk-secimi'
+import { useUyarlananZorluk } from '@/lib/oyunlar/uyum'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
@@ -149,8 +145,6 @@ export function KavramOyunuEkrani({
   sesAcik,
   bankaSorulari,
   onTurBitti,
-  mod,
-  setMod,
   onCik,
   bildir,
 }: {
@@ -166,9 +160,6 @@ export function KavramOyunuEkrani({
     /** Tur bitmeden çıkıldı mı — yarım tur rekora ve istatistiğe yazılmıyor. */
     yarim: boolean,
   ) => void
-  /** Seçili tur modu — bütün oyunlarda ortak (`lib/oyunlar/mod.ts`). */
-  mod: OyunModu
-  setMod: (mod: OyunModu) => void
   onCik: () => void
   bildir: BildirimKolu
 }) {
@@ -187,16 +178,18 @@ export function KavramOyunuEkrani({
   /** Yanlışlarla aynı sıradaki tanım seçimleri — "sen bunu dedin" için. */
   const [yanlisGirdileri, setYanlisGirdileri] = useState<string[]>([])
 
-  /** Bu tahta boss mu — kısa süre, tek yanlışta eleme. */
-  const [bossTahta, setBossTahta] = useState(false)
-  /** Kaç boss tahta verildi — sıradakinin boss olup olmayacağı buna bakıyor. */
-  const [verilenBoss, setVerilenBoss] = useState(0)
   /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
   const [elendi, setElendi] = useState<Eleme>(false)
   /** Kaçıncı tahta — sayaç her tahtada sıfırlansın diye. */
   const [tahtaSayisi, setTahtaSayisi] = useState(0)
 
-  const [zorluk, setZorluk] = useYerelDepo<Zorluk>(ANAHTARLAR.zorlukKavram, 'kolay')
+  /*
+    Zorluk seçilmiyor, turun içinde kayıyor (`lib/oyunlar/uyum.ts`).
+
+    Tur ortadan başlıyor; ardışık doğrular seviyeyi yükseltiyor, ardışık
+    yanlışlar düşürüyor ve bunun hiçbiri ekranda yazmıyor.
+  */
+  const { zorlukRef, kaydet: zorlukKaydet, sifirla: zorluguSifirla } = useUyarlananZorluk()
   /** Yardım açıkken sayaç duruyor. */
   const [duraklatilan, setDuraklatilan] = useState(false)
   /**
@@ -213,8 +206,8 @@ export function KavramOyunuEkrani({
 
   const bankaHavuzu = useMemo(() => bankaEsleri(bankaSorulari), [bankaSorulari])
   const bankaTuru = bankaHavuzu.length > 0
-  // Banka turu modu dinlemiyor; kural tek yerden okunuyor.
-  const gecerliMod = etkinMod(mod, bankaTuru)
+  // Mod artık seçilmiyor: her tur Sıradan, banka turu ise soru saatli.
+  const gecerliMod = etkinMod(bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   /** Turun başladığı an — tur sınırsız olduğu için süre gerçekten ölçülüyor. */
@@ -238,16 +231,16 @@ export function KavramOyunuEkrani({
    * kavram kalmaz, tahta konu bütünlüğünü kaybederdi.
    */
   const sonrakiTahta = useCallback(
-    (boss: boolean) => {
+    () => {
       if (bankaTuru) return bankaTahtasiHazirla(bankaHavuzu, kullanilanRef.current)
-      const seviye = boss ? bossZorlugu(zorluk).zorluk : zorluk
+      const seviye = zorlukRef.current
       const suzulmus = zorluktaSuz(KAVRAM_HAVUZU, seviye)
       return (
         tahtaHazirla(kullanilanRef.current, suzulmus, Math.random, KAVRAM_HAVUZU) ??
         tahtaHazirla(kullanilanRef.current)
       )
     },
-    [bankaHavuzu, bankaTuru, zorluk],
+    [bankaHavuzu, bankaTuru, zorlukRef],
   )
 
   const turBaslat = useCallback(() => {
@@ -257,9 +250,8 @@ export function KavramOyunuEkrani({
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
     kullanilanRef.current = new Set()
-    setTahta(sonrakiTahta(false))
-    setBossTahta(false)
-    setVerilenBoss(0)
+    setTahta(sonrakiTahta())
+    zorluguSifirla()
     setElendi(false)
     setTahtaSayisi(0)
     setSecim(BOS_SECIM)
@@ -271,7 +263,7 @@ export function KavramOyunuEkrani({
     setSonuc(null)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [istatistik.enIyiDogru, sonrakiTahta])
+  }, [istatistik.enIyiDogru, sonrakiTahta, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<KavramEsi>[], yarim = false) => {
@@ -322,15 +314,14 @@ export function KavramOyunuEkrani({
   /**
    * Sıradaki tahtayı dağıtır.
    *
-   * Boss kararı burada: on eşleştirme tamamlandıysa bu tahta boss olur ve bir
-   * üst seviyeden kurulur.
+   * Tahtanın seviyesi burada belli oluyor: `sonrakiTahta` uyumun o anki
+   * seviyesini ref'ten okuyor (`lib/oyunlar/uyum.ts`), çünkü bu çağrı bir
+   * zamanlayıcının içinden geliyor ve zamanlayıcı kurulurken yakalanan seviye
+   * eskimiş olur.
    */
   const tahtaDagit = () => {
     for (const e of tahta?.esler ?? []) kullanilanRef.current.add(e.kavram)
-    const boss = bossElMi(cevaplarRef.current.length, verilenBoss)
-    if (boss) setVerilenBoss((v) => v + 1)
-    setBossTahta(boss)
-    setTahta(sonrakiTahta(boss))
+    setTahta(sonrakiTahta())
     setEslesenler([])
     setTahtaBekliyor(false)
     setTahtaSayisi((n) => n + 1)
@@ -348,14 +339,15 @@ export function KavramOyunuEkrani({
     setCevaplar((onceki) => [...onceki, ...kalanEsler.map((soru) => ({ soru, dogruMu: false }))])
     setYanlisGirdileri((onceki) => [...onceki, ...kalanEsler.map(() => 'süre doldu')])
     geriBildir(false)
+    zorlukKaydet(false)
     if (elerMi(false, bankaTuru, gecerliMod)) {
-      setElendi(bossTahta ? 'boss' : 'yanlis')
+      setElendi('yanlis')
       zamanlayiciRef.current = setTimeout(() => turBitir(cevaplarRef.current), CEVAP_BEKLEMESI)
       return
     }
     zamanlayiciRef.current = setTimeout(tahtaDagit, CEVAP_BEKLEMESI)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asama, bankaTuru, bossTahta, tahta, eslesenler])
+  }, [asama, bankaTuru, tahta, eslesenler])
 
   /** Tur saati bitti: yanlış değil, tur biter. */
   const turSuresiDoldu = () => {
@@ -388,7 +380,7 @@ export function KavramOyunuEkrani({
     yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && !duraklatilan && !tahtaBekliyor && tahta !== null,
-    sure: soruSuresi('kavram', bossTahta ? bossZorlugu(zorluk) : null),
+    sure: soruSuresi('kavram'),
     anahtar: tahtaSayisi,
     onBitti: sureDoldu,
   })
@@ -405,6 +397,7 @@ export function KavramOyunuEkrani({
 
     setCevaplar((onceki) => [...onceki, { soru: es, dogruMu }])
     geriBildir(dogruMu)
+    zorlukKaydet(dogruMu)
 
     if (!dogruMu) {
       setYanlisGirdileri((onceki) => [...onceki, tanim])
@@ -414,7 +407,7 @@ export function KavramOyunuEkrani({
         setSecim(BOS_SECIM)
         // Tek yanlış eşleştirme turu bitiriyor; banka turu bunun dışında.
         if (elerMi(false, bankaTuru, gecerliMod)) {
-          setElendi(bossTahta ? 'boss' : 'yanlis')
+          setElendi('yanlis')
           turBitir(cevaplarRef.current)
         }
       }, CEVAP_BEKLEMESI)
@@ -486,7 +479,6 @@ export function KavramOyunuEkrani({
                 kalan,
                 toplam,
                 sira: tahtaSayisi + 1,
-                boss: bossTahta,
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
@@ -597,15 +589,8 @@ export function KavramOyunuEkrani({
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
-        mod={mod}
-        setMod={bankaTuru ? null : setMod}
         onBasla={turBaslat}
         onKapat={asama === 'tanitim' ? onCik : yardimKapat}
-        ekstra={
-          asama === 'tanitim' && !bankaTuru ? (
-            <ZorlukSecimi secili={zorluk} onSec={setZorluk} bossVar />
-          ) : null
-        }
       />
     </>
   )
