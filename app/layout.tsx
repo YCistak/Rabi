@@ -96,9 +96,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           dangerouslySetInnerHTML={{
             __html: `(function(){
   var TELEFON_GENISLIGI = 430, ESIK = 480;
+  // Masaüstü tarayıcıda (fare + imleç) kapalı: geliştirirken pencere
+  // yüksekliği tablet sayılıp her şey 2 kat büyüyordu. DevTools cihaz modu
+  // dokunmatik taklit ettiği için orada tablet emülasyonu çalışmaya devam eder.
+  var masaustu = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   function uygula(){
     var kisa = Math.min(window.innerWidth, window.innerHeight);
-    document.documentElement.style.zoom = kisa < ESIK ? '' : String(kisa / TELEFON_GENISLIGI);
+    document.documentElement.style.zoom = masaustu || kisa < ESIK ? '' : String(kisa / TELEFON_GENISLIGI);
   }
   uygula();
   window.addEventListener('resize', uygula);
