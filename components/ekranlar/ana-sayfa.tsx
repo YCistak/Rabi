@@ -444,9 +444,10 @@ function GununHali({
       {/* Maskotun arkasında bir süre hâle göre renklenen bir kutu vardı (gri,
           amber, yeşil); kaldırıldı. Düz renkli kare, kartın beyaz zemininde
           yapıştırılmış bir etiket gibi duruyordu — maskot kartın kendi
-          zemininde duruyor. */}
-      <span className="grid size-[56px] shrink-0 place-items-center">
-        <Rabi durum={hal.durum} poz={hal.poz} boyut={46} />
+          zemininde duruyor. Kutu gidince 46'lık maskot yanındaki üç satırın
+          yanında küçük kaldı; 64'e çıktı ve kutuyu tümüyle dolduruyor. */}
+      <span className="grid size-[64px] shrink-0 place-items-center">
+        <Rabi durum={hal.durum} poz={hal.poz} boyut={64} />
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-[10px] font-extrabold tracking-[0.16em] text-muted-foreground">
