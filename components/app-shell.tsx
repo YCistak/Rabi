@@ -46,6 +46,8 @@ import { bekleyenSayisi } from '@/lib/hata-bildirimi'
 import { useHataBildirimi } from '@/lib/hata-kuyrugu'
 import { useCokmeRaporu } from '@/lib/cokme-izni'
 import { CokmeSorusu } from '@/components/cokme-sorusu'
+import { useGuncelleme } from '@/lib/guncelleme-kolu'
+import { GuncellemeSeridi } from '@/components/guncelleme-seridi'
 import { bugun, cn } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import type { KonuDersId, KonuSinifi } from '@/lib/konu'
@@ -251,6 +253,7 @@ export function AppShell() {
    * dinleyiciler baştan takılı duruyor.
    */
   const cokme = useCokmeRaporu()
+  const guncelleme = useGuncelleme()
   /** İzlenmiş haftalık özetlerin hafta başı tarihleri. */
   /*
     Bildirim kuyruğu. Aynı anda birden fazla rozet gelebiliyor ve ekranda hep
@@ -950,6 +953,9 @@ export function AppShell() {
       )}
       {acilisKatmani}
       <CokmeSorusu kol={cokme} />
+      {/* Şerit açılış bitip kurulum tamamlanınca: kurulumun ortasına inen bir
+          "güncelle" şeridi, ilk açılışta kullanıcıya iki iş birden verirdi. */}
+      {acilisBitti && ayarlar.kurulumTamamlandi && <GuncellemeSeridi kol={guncelleme} />}
       {gecis !== 'yok' && <MaskotGecisi soluyor={gecis === 'soluyor'} />}
     </>
   )

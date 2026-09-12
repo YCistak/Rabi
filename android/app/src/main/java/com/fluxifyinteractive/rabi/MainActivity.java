@@ -12,6 +12,7 @@ import com.getcapacitor.BridgeActivity;
 import com.fluxifyinteractive.rabi.cokme.CokmeEklentisi;
 import com.fluxifyinteractive.rabi.cokme.RaporlayanWebChromeClient;
 import com.fluxifyinteractive.rabi.cokme.RaporlayanWebViewClient;
+import com.fluxifyinteractive.rabi.guncelleme.GuncellemeEklentisi;
 import com.fluxifyinteractive.rabi.odak.OdakKilidiEklentisi;
 
 public class MainActivity extends BridgeActivity {
@@ -31,6 +32,7 @@ public class MainActivity extends BridgeActivity {
         // kendiliğinden bulamıyor, elle kaydedilmesi gerekiyor.
         registerPlugin(OdakKilidiEklentisi.class);
         registerPlugin(CokmeEklentisi.class);
+        registerPlugin(GuncellemeEklentisi.class);
         SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         webHatalariniRaporla();

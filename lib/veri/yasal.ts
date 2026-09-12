@@ -64,7 +64,7 @@ const GIZLILIK: YasalBelge = {
     {
       paragraflar: [
         'Bu belge, Rabi’nin hangi bilgilere eriştiğini, bunları ne için kullandığını, telefonundan neyin çıktığını ve nasıl sildirebileceğini anlatır. Uygulama: Rabi (com.fluxifyinteractive.rabi). Geliştirici: Fluxify Interactive.',
-        'Kısaca: Rabi’nin sunucusu yok. Denemelerin, notların, fotoğrafların, puanların ve adın telefonundan hiç çıkmaz. Ağa çıkan yalnızca iki şey var ve ikisi de sen izin verene kadar gerçekleşmez: hatalı bir soruyu bildirmen ve uygulama çöktükten sonra çökme kaydını göndermeyi seçmen. Reklam yok, kullanım analizi yok, hesap yok, giriş yok.',
+        'Kısaca: Rabi’nin sunucusu yok. Denemelerin, notların, fotoğrafların, puanların ve adın telefonundan hiç çıkmaz. Ağa çıkan yalnızca iki şey var ve ikisi de sen izin verene kadar gerçekleşmez: hatalı bir soruyu bildirmen ve uygulama çöktükten sonra çökme kaydını göndermeyi seçmen. Bunların dışında uygulama açılırken telefonundaki Google Play, Rabi’nin yeni bir sürümü olup olmadığına bakar; bu sorguyu Rabi değil Play yapar ve sana ait hiçbir bilgi taşımaz (bkz. 4a). Reklam yok, kullanım analizi yok, hesap yok, giriş yok.',
       ],
     },
     {
@@ -102,9 +102,16 @@ const GIZLILIK: YasalBelge = {
       ],
     },
     {
+      baslik: '4a. Güncelleme denetimi',
+      paragraflar: [
+        'Uygulama açılırken telefonundaki Google Play uygulamasına Rabi’nin yeni bir sürümü olup olmadığı sorulur. Bu sorguyu Rabi değil Play yapar ve Play’in zaten bildiği tek şeyi kullanır: uygulamanın paket adı ve kurulu sürümü. Adın, kullanımın ya da başka bir bilgi geçmez. Yeni sürüm varsa ekranın üstünde bir şerit çıkar; indirme ancak sen “Güncelle” dersen ve Play’in kendi onay penceresinden geçerek başlar. Şeridi kapatabilirsin; kapatman kaydedilmez, bir sonraki açılışta yeniden hatırlatılır.',
+        'Rabi Play dışından (doğrudan APK olarak) kurulduysa bu denetim çalışmaz ve şerit hiç görünmez.',
+      ],
+    },
+    {
       baslik: '5. İzinler ve neden isteniyor',
       paragraflar: [
-        'İnternet izni yalnızca yukarıdaki iki gönderim için. Bildirim gönderme izni çalışma hatırlatması ve pomodoro sayacı için; bildirimler telefonunda üretilir, dışarı çıkmaz. Kamera ve galeri sistem seçicisi üzerinden açılır.',
+        'İnternet izni yukarıdaki iki gönderim ve Play’in güncelleme denetimi için. Bildirim gönderme izni çalışma hatırlatması ve pomodoro sayacı için; bildirimler telefonunda üretilir, dışarı çıkmaz. Kamera ve galeri sistem seçicisi üzerinden açılır.',
         'Odak kilidi üç izin kullanır ve hiçbirinden okunan bilgi telefondan çıkmaz: kullanım verisi erişimi hangi uygulamanın ön planda olduğunu anlamak için, diğer uygulamaların üzerinde gösterme uyarı katmanı için, ön plan servisi ise pomodoro turu boyunca sayacı ve kilidi ayakta tutmak için. Xiaomi telefonlarda üreticinin kendi “arka planda açılır pencere” ayarı da açık olmalıdır; bu bir Android izni değil, üstte gösterme izninin o telefonlardaki ek şartıdır.',
         'Rahatsız Etme erişimi isteğe bağlıdır: verirsen pomodoro turu boyunca telefon Rahatsız Etme moduna alınır ve tur bitince önceki ayarına döner; vermezsen odak kilidinin geri kalanı çalışmaya devam eder. Bu izinle bildirimlerin içeriği okunmaz, saklanmaz, gönderilmez — Rabi yalnızca modu açıp kapatır.',
         'Sayaç, telefonun kilit ekranında bir bildirim olarak durur ve o bildirimde aşama ile seçtiğin ders adı (“Çalışma · Matematik” gibi) yazar. Bu, telefon kilitliyken görünen tek Rabi verisidir ve telefondan çıkmaz.',
@@ -114,7 +121,7 @@ const GIZLILIK: YasalBelge = {
     {
       baslik: '6. Üçüncü taraflar',
       paragraflar: [
-        'Rabi’nin veri gönderdiği tek şirket Google’dır ve yalnızca iki durumda: hatalı soru bildirimlerinin toplandığı Google Forms ile gönderdiğin çökme raporlarının toplandığı Firebase Crashlytics. Google bu verileri bizim adımıza ve talimatımızla işler. Google’ın gizlilik politikası: policies.google.com/privacy',
+        'Rabi’nin veri gönderdiği tek şirket Google’dır ve yalnızca iki durumda: hatalı soru bildirimlerinin toplandığı Google Forms ile gönderdiğin çökme raporlarının toplandığı Firebase Crashlytics. Google bu verileri bizim adımıza ve talimatımızla işler. Güncelleme denetimi (4a) bunlardan ayrıdır: o sorguyu telefonundaki Google Play kendi adına yapar ve Play’in gizlilik politikasına tabidir. Google’ın gizlilik politikası: policies.google.com/privacy',
         'Rabi’de reklam ağı yoktur, kullanım analizi aracı yoktur, reklam kimliği okunmaz ve davranışını izleyen başka bir araç bulunmaz. Hiçbir veri satılmaz, kiralanmaz veya pazarlama amacıyla paylaşılmaz. Uygulamada hesap, giriş veya üyelik yoktur.',
       ],
     },
@@ -291,7 +298,7 @@ const SOZLESME: YasalBelge = {
 const VERI_OZETI: YasalBelge = {
   id: 'veri-ozeti',
   ad: 'Cihazından ne çıkıyor?',
-  ozet: 'İnternete giden iki şey ve ikisi de sana sorularak gidiyor',
+  ozet: 'İnternete giden iki şey ve ikisi de sana sorularak gidiyor; bir de Play’in sürüm sorgusu',
   bolumler: [
     {
       paragraflar: [
@@ -311,6 +318,13 @@ const VERI_OZETI: YasalBelge = {
       paragraflar: [
         'Uygulama çökerse hata kaydı telefonunda bekliyor; kendiliğinden hiçbir yere gitmiyor. Bir sonraki açılışta gönderilsin mi diye soruluyor — “Gönder” dersen gidiyor, “Gönderme” dersen siliniyor.',
         'Giden şey bir hata kaydı: hatanın hangi satırda olduğu, telefonunun modeli, Android ve uygulama sürümü. Adın, denemelerin, notların ve fotoğrafların gönderilmiyor.',
+      ],
+    },
+    {
+      baslik: 'Play’in sürüm sorgusu',
+      paragraflar: [
+        'Uygulama açılırken telefonundaki Google Play’e “Rabi’nin yeni sürümü var mı” diye soruluyor. Bunu Rabi değil Play yapıyor ve Play’in zaten bildiği şeyle: uygulamanın adı ve kurulu sürümü. Sana ait hiçbir şey geçmiyor.',
+        'Yeni sürüm varsa üstte bir şerit çıkıyor; indirme sen “Güncelle” demeden başlamıyor. Kapatırsan bir sonraki açılışta yeniden hatırlatılıyor.',
       ],
     },
   ],
