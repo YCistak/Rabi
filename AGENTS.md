@@ -34,7 +34,23 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
     gönderilsin mi diye **her seferinde soruluyor**. Ayarlarda soruyu kapatan
     bir anahtar vardı, kaldırıldı: soru zaten çökmeden sonra çıkıyor ve
     "Gönderme" raporu siliyor. `firebase-analytics` bilerek eklenmedi.
-    Bu iki istisnanın dışında ağa çıkılmıyor.
+  - **Üçüncü istisna, öteki ikisinden ayrı türde: Play'in güncelleme
+    denetimi.** Play güncellemeyi itmiyor, haber de vermiyor; otomatik
+    güncellemesi kapalı kullanıcı düzeltilmiş bir hatayı haftalarca eski
+    sürümde yaşıyordu. Açılışta bir kez Play In-App Updates ile soruluyor
+    (`lib/guncelleme.ts` köprü, `lib/guncelleme-kolu.ts` state,
+    `components/guncelleme-seridi.tsx` şerit, yerli taraf
+    `guncelleme/GuncellemeEklentisi.kt`). Ağa çıkan bizim kodumuz değil
+    telefondaki Play Store; giden tek şey paket adı ve kurulu sürüm — Play'in
+    zaten bildiği bilgi. Kip **esnek**: indirme ancak "Güncelle" denince ve
+    Play'in kendi onay penceresinden geçerek başlıyor, yeniden başlatmaya
+    kullanıcı karar veriyor. Şerit ekranın üstünde, pencere değil — kullanıcı
+    uygulamayı bir iş için açtı, güncelleme onun önüne geçmemeli. Kapatma
+    oturumluk ve kayda girmiyor: kalıcı "bir daha sorma", eski sürümde kalmak
+    demek. Elden kurulan APK'da `appUpdateInfo` hata döndürüyor ve her yöntem
+    bunu yutup "güncelleme yok" diyor. Zorunlu kipe (`IMMEDIATE`) geçmeden
+    önce sor: bu sürüm kullanıcıyı turun ortasında durdurmayı hak ediyor mu?
+    Bu üç istisnanın dışında ağa çıkılmıyor.
 - **State kütüphanesi yok.** `AppShell` üst düzey state'in sahibi, props ile aşağı geçer.
   Yeni bir global state ihtiyacı çıkarsa önce prop ile çözmeyi dene.
 - **Saf mantık `lib/` altında.** React'e bağlı olmayan her hesap `lib/`'e; bileşenler
