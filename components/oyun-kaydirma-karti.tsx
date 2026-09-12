@@ -68,16 +68,24 @@ export function KaydirmaKarti({
     setKayma(0)
   }
 
-  /** Kilitliyken kart, verilen cevabın yönünde durmuş görünüyor. */
-  const gosterilenKayma = kilitli
-    ? sonuc?.dogruDedi === null || sonuc === null
+  /*
+    Kilitliyken kart **ortaya dönüyor**, gittiği yönde kalmıyor.
+
+    Bir süre cevabın yönünde eşik kadar kaymış ve eğik duruyordu: kartın
+    yarısı kenara yaslanıyor, damga metnin üstüne biniyor ve geri bildirim
+    süresince soru okunamıyordu. Verilen cevabı damga ile yön şeridi zaten
+    söylüyor; kartın kendisinin yamuk durmasına gerek yok.
+  */
+  const gosterilenKayma = kilitli ? 0 : kayma
+
+  /** Damga ve şeridin doluluğu: sürüklerken mesafeden, kilitliyken cevaptan. */
+  const oran = kilitli
+    ? sonuc === null || sonuc.dogruDedi === null
       ? 0
       : sonuc.dogruDedi
-        ? ESIK
-        : -ESIK
-    : kayma
-
-  const oran = Math.max(-1, Math.min(1, gosterilenKayma / ESIK))
+        ? 1
+        : -1
+    : Math.max(-1, Math.min(1, gosterilenKayma / ESIK))
 
   return (
     <div className="flex flex-col gap-3">
@@ -102,7 +110,9 @@ export function KaydirmaKarti({
         }}
         className={cn(
           'golge-kart relative grid min-h-[240px] w-full touch-none place-items-center',
-          'overflow-hidden rounded-[26px] border-2 px-5 py-8 text-center',
+          // Üst pay damganın boyu kadar: damga köşede, metin ortada ama kısa
+          // bir eşitlikte ikisi çakışıyor ve ilk satır damganın altında kalıyordu.
+          'overflow-hidden rounded-[26px] border-2 px-5 pt-14 pb-8 text-center',
           kilitli
             ? sonuc?.dogruMu
               ? 'border-success bg-card'

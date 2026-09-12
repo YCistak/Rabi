@@ -14,15 +14,16 @@ import { SORU_SURESI, ZORLUKLAR } from './ritim'
 describe('gorunenIpucu', () => {
   const sure = SORU_SURESI.hucre
 
-  it('üç ipucu da sürenin ilk yarısında açılıyor', () => {
-    // 9 saniyelik soruda aralık 1,5 saniye: son ipucu 3. saniyede, yani
-    // sürenin yarısında tamamlanıyor ve kalan yarı karar vermeye kalıyor.
+  it('ipuçları üçer saniye arayla açılıyor, son çeyrek karara kalıyor', () => {
+    // 12 saniyelik soruda aralık 3 saniye: son ipucu 6. saniyede açılıyor,
+    // kalan altı saniye karar vermeye kalıyor.
     expect(gorunenIpucu(0, sure)).toBe(1)
-    expect(gorunenIpucu(1.4, sure)).toBe(1)
-    expect(gorunenIpucu(1.5, sure)).toBe(2)
-    expect(gorunenIpucu(3, sure)).toBe(3)
-    // Yarıyı geçtikten sonra açılacak yeni bir ipucu yok.
-    expect(gorunenIpucu(sure / 2, sure)).toBe(IPUCU_SAYISI)
+    expect(gorunenIpucu(2.9, sure)).toBe(1)
+    expect(gorunenIpucu(3, sure)).toBe(2)
+    expect(gorunenIpucu(5.9, sure)).toBe(2)
+    expect(gorunenIpucu(6, sure)).toBe(3)
+    // Dörtte üçü geçtikten sonra açılacak yeni bir ipucu yok.
+    expect(gorunenIpucu(sure * 0.75, sure)).toBe(IPUCU_SAYISI)
   })
 
   it('süre bitse de son ipucunda kalıyor', () => {
