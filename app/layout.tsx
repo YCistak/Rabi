@@ -71,6 +71,45 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="tr" className={`${nunito.variable} ${manrope.variable}`}>
+      <head>
+        {/*
+          Tablet ölçeği. Tasarım telefon için; tablette sütun ortada dar
+          kalıyor, iki yan boş duruyordu. Çözüm arayüzü genişletmek değil,
+          telefondaki görüntüyü büyütmek: `<html>`e `zoom` veriliyor, düzen
+          `TELEFON_GENISLIGI` CSS pikseline göre kuruluyor ve ekrana sığacak
+          kadar büyütülüyor. Telefonda (kısa kenar `ESIK` altı) `zoom` 1.
+
+          `zoom` seçildi, viewport meta değil: meta'yı betikle sonradan
+          değiştirmek tarayıcı emülasyonunda tutarsızdı. `zoom` viewport
+          birimlerini (`dvh`, `vw`) ve `position: fixed`i etkilemiyor — alt
+          menü ve tam ekran katmanlar ekrana yapışık kalıyor; yalnızca
+          px/rem ölçüler büyüyor, istenen de bu.
+
+          Değerler: 430 en geniş telefonun CSS genişliği; eşik 480, çünkü
+          telefonlar 360–430, 8" tabletler 533'ten başlıyor. Ölçek kısa
+          kenardan hesaplanıyor ki döndürünce yazı boyutu değişmesin.
+
+          Hidrasyondan önce, satır içi: React beklenirse ilk kare dar
+          düzende çizilip sonra zıplıyor.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){
+  var TELEFON_GENISLIGI = 430, ESIK = 480;
+  // Masaüstü tarayıcıda (fare + imleç) kapalı: geliştirirken pencere
+  // yüksekliği tablet sayılıp her şey 2 kat büyüyordu. DevTools cihaz modu
+  // dokunmatik taklit ettiği için orada tablet emülasyonu çalışmaya devam eder.
+  var masaustu = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  function uygula(){
+    var kisa = Math.min(window.innerWidth, window.innerHeight);
+    document.documentElement.style.zoom = masaustu || kisa < ESIK ? '' : String(kisa / TELEFON_GENISLIGI);
+  }
+  uygula();
+  window.addEventListener('resize', uygula);
+})();`,
+          }}
+        />
+      </head>
       <body className="font-sans antialiased">{children}</body>
     </html>
   )
