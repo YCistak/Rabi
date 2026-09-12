@@ -7,7 +7,6 @@ import { devamsizlikOzeti, gunOzeti, kayitHaritasi } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
 import { siraYaz } from '@/lib/siralama'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
-import { KONU_ANLATIMI_ACIK } from '@/lib/beta'
 import { kisayollar } from '@/lib/son-kullanilan'
 import { doluDersler, oyunlarinDersleri, type DersId, type DersTanimi } from '@/lib/oyunlar/tanim'
 import { Halka, Kart, kartGirisi, Not } from '@/components/ui'
@@ -318,37 +317,31 @@ export function AnaSayfa({
         yerde duran bir kapı — Araçlar'a kutucuk olarak konsaydı son
         kullanılanlarla birlikte sıraya girip kayardı.
       */}
-      {/*
-        0.7.0'a kadar kapalı (`KONU_ANLATIMI_ACIK`): kart çizilmeyince bölüme
-        ulaşan yol kalmıyor.
-      */}
-      {KONU_ANLATIMI_ACIK && (
-        <section>
-          <div className="mb-2 px-1">
-            <h2 className="font-display text-base font-extrabold tracking-tight">
-              Bilgi Kartları 📚
-            </h2>
-          </div>
-          <button
-            type="button"
-            onClick={() => onKartAc('konu')}
-            className="golge-kart flex w-full items-center gap-3.5 rounded-2xl bg-card px-4 py-4 text-left transition active:brightness-[0.98]"
+      <section>
+        <div className="mb-2 px-1">
+          <h2 className="font-display text-base font-extrabold tracking-tight">
+            Bilgi Kartları 📚
+          </h2>
+        </div>
+        <button
+          type="button"
+          onClick={() => onKartAc('konu')}
+          className="golge-kart flex w-full items-center gap-3.5 rounded-2xl bg-card px-4 py-4 text-left transition active:brightness-[0.98]"
+        >
+          <span
+            className="grid size-12 shrink-0 place-items-center rounded-[18px] bg-primary-soft text-[24px]"
+            aria-hidden
           >
-            <span
-              className="grid size-12 shrink-0 place-items-center rounded-[18px] bg-primary-soft text-[24px]"
-              aria-hidden
-            >
-              🗺️
+            🗺️
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-display text-[15.5px] font-extrabold tracking-tight">
+              Ders haritasını aç
             </span>
-            <span className="min-w-0 flex-1">
-              <span className="block font-display text-[15.5px] font-extrabold tracking-tight">
-                Ders haritasını aç
-              </span>
-            </span>
-            <ChevronRight size={19} className="shrink-0 text-muted-foreground" aria-hidden />
-          </button>
-        </section>
-      )}
+          </span>
+          <ChevronRight size={19} className="shrink-0 text-muted-foreground" aria-hidden />
+        </button>
+      </section>
 
       {/* Araçlar ve Oyunlar aynı biçimde: başlık + "Tümü", altında tek bir
           kutunun içinde dört yüz. Araçlar bir ara başlıksız ve kutusuz

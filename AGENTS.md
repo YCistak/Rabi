@@ -1885,9 +1885,9 @@ yoklamanın "0 doğru"su geçiyordu.
 
 ### Ana sayfada kısayol değil kendi bölümü
 
-Bölüm kapalı betada bayrakla gizli (`KONU_ANLATIMI_ACIK`, `lib/beta.ts`).
-Konu listesi Maarif programına bağlanınca bir kez açılıp bayrağı düşmüştü;
-sürüm planı (#82) bölümü 0.7.0'a ayırınca bayrak 0.6.0 için geri geldi.
+Bölüm kapalı betada bir süre bayrakla gizliydi (`KONU_ANLATIMI_ACIK`,
+`lib/beta.ts`): sürüm planı (#82) onu 0.7.0'a ayırmıştı. 0.7.0 ile açıldı ve
+bayrak `beta.ts`'in kendi kuralına göre dosyadan düştü.
 
 Ana sayfada bölümün adı **Bilgi Kartları** (kod tarafı `konu` kalıyor):
 ekranın kendisi kart gösteriyor, ders anlatmıyor. Bölüm `KARTLAR` listesinde
