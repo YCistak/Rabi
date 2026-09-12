@@ -75,18 +75,19 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {/*
           Tablet ölçeği. Tasarım telefon için; tablette sütun ortada dar
           kalıyor, iki yan boş duruyordu. Çözüm arayüzü genişletmek değil,
-          telefondaki görüntüyü büyütmek: viewport'a yalnızca `initial-scale`
-          veriliyor, genişlik verilmiyor. Genişlik verilmeyince WebView düzen
-          genişliğini `cihaz genişliği / ölçek` olarak kendisi hesaplıyor;
-          elle `width=` yazınca yuvarlama farkı düzen viewport'unu görsel
-          viewport'tan bir iki piksel geniş bırakıyor, sayfa yana kayıyor ve
-          `position: fixed` alt menü ekrana değil o geniş düzene yapışıyordu.
+          telefondaki görüntüyü büyütmek: `<html>`e `zoom` veriliyor, düzen
+          `TELEFON_GENISLIGI` CSS pikseline göre kuruluyor ve ekrana sığacak
+          kadar büyütülüyor. Telefonda (kısa kenar `ESIK` altı) `zoom` 1.
 
-          `TABLET_TABAN` = 430, en geniş telefonun CSS genişliği: tablette
-          düzen tam telefondaki gibi kuruluyor, sadece büyük. `ESIK` = 480:
-          telefonlar 360–430 arasında, 8" tabletler 533'ten başlıyor (800 px
-          fiziksel / 1,5 dpr); 600 alınsaydı küçük tabletler telefon
-          sayılırdı. Kısa kenar eşiğin altındaysa hiçbir şey değişmiyor.
+          `zoom` seçildi, viewport meta değil: meta'yı betikle sonradan
+          değiştirmek tarayıcı emülasyonunda tutarsızdı. `zoom` viewport
+          birimlerini (`dvh`, `vw`) ve `position: fixed`i etkilemiyor — alt
+          menü ve tam ekran katmanlar ekrana yapışık kalıyor; yalnızca
+          px/rem ölçüler büyüyor, istenen de bu.
+
+          Değerler: 430 en geniş telefonun CSS genişliği; eşik 480, çünkü
+          telefonlar 360–430, 8" tabletler 533'ten başlıyor. Ölçek kısa
+          kenardan hesaplanıyor ki döndürünce yazı boyutu değişmesin.
 
           Hidrasyondan önce, satır içi: React beklenirse ilk kare dar
           düzende çizilip sonra zıplıyor.
@@ -94,13 +95,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){
-  var TABLET_TABAN = 430, ESIK = 480;
-  var kisa = Math.min(screen.width, screen.height);
-  if (kisa < ESIK) return;
-  var olcek = kisa / TABLET_TABAN;
-  var m = document.querySelector('meta[name="viewport"]');
-  if (!m) { m = document.createElement('meta'); m.name = 'viewport'; document.head.appendChild(m); }
-  m.content = 'initial-scale=' + olcek + ', minimum-scale=' + olcek + ', maximum-scale=' + olcek + ', user-scalable=no, viewport-fit=cover';
+  var TELEFON_GENISLIGI = 430, ESIK = 480;
+  function uygula(){
+    var kisa = Math.min(window.innerWidth, window.innerHeight);
+    document.documentElement.style.zoom = kisa < ESIK ? '' : String(kisa / TELEFON_GENISLIGI);
+  }
+  uygula();
+  window.addEventListener('resize', uygula);
 })();`,
           }}
         />
