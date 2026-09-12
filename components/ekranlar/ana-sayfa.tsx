@@ -197,7 +197,7 @@ export function AnaSayfa({
           görünür yerinde. Kalan gün, sayfadaki her sayının bağlamı. Hedef
           özeti kartın içine, geri sayımın altına giriyor: ikisi de aynı soruya
           bakıyor, ayrı kartlarda dururken aralarındaki bağ kayboluyordu. */}
-      <GeriSayim tarih={tarih}>
+      <GeriSayim tarih={tarih} sinif={ayarlar.buYilSinif}>
         <HedefOzeti hedef={hedef} guncelSiralama={guncelSiralama} onAc={() => onKartAc('hedef')} />
       </GeriSayim>
 

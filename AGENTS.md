@@ -1574,6 +1574,22 @@ seviyeden yeterince bileşik varsa el tümüyle oradan çıkıyor, yoksa aynı t
 öteki seviyeleri tamamlıyor. `formul.test.ts` üç zorlukta da elin tek türden
 kurulduğunu denetliyor.
 
+## Geri sayım öğrencinin kendi sınavına
+
+Ana sayfadaki YKS geri sayımı bir süre herkese bugünden sonraki ilk sınavı
+sayıyordu; 11. sınıftaki öğrenci girmeyeceği bir sınava "273 gün kaldı" diye
+bakıyordu. Artık `geriSayim(bugun, sinif)` (`lib/sinav-tarihi.ts`) sınıfa
+bakıyor: sınav, öğrencinin 12. sınıfı bitirdiği ders yılının haziranı
+(`sinavYili`) — 12 ve mezun sıradaki hazirana, 11 bir sonrakine, 9 üç
+sonrakine. Ders yılı eylülde döndüğü için temmuzda hâlâ "11" kayıtlı öğrenci
+sıradaki hazirana sayıyor; kayıtlı sınıf eylülde `ilerlemisSinif` ile
+kendiliğinden ilerliyor, burada ikinci kez ilerletilmiyor.
+
+İlerleme çubuğu **geçen son sınavdan** başlıyor, "bir önceki yılın
+sınavından" değil: 11. sınıf için o sınav henüz yapılmadı ve çubuk bütün yıl
+sıfırda dururdu. Yani 11. sınıfta çubuk iki yıllık yolu gösteriyor ve ilk
+yılın sonunda yarıda; bu kasıtlı — çubuğun sorusu "hazırlığın neresindeyim".
+
 ## Ana sayfada günün hâli
 
 Soru hedefi kartının hemen altında bir kart daha var (`GununHali`,
@@ -1986,21 +2002,13 @@ sayı göstermek olurdu — o sayı tahmin değil uydurma olurdu. Kararsızken
 `guncelTahmin` `null` dönüyor, sıralama ekranı boş durum çiziyor ve hedef
 listesi süzülmüyor.
 
-**Dil hiçbir yerde sorulmuyor.** Ne kurulumdaki kart listesinde ne Ayarlar ›
-Alanım'daki çiplerde var (`SECILEBILIR_TURLER`): Dil öğrencisi azınlıkta ve
-dördüncü seçenek iki listeyi de uzatıyordu.
-
-`PuanTuru` yine de dört değer taşımaya devam ediyor ve `PUAN_TURU_ADI`
-tablosunda 'dil' duruyor. İki sebebi var:
-
-- **Katalogdaki DİL programları yerinde.** Biri hedef olarak seçilirse
-  `Hedef.puanTuru` 'dil' oluyor ve satırda adı yazılıyor. Alanı Dil olmayan
-  kullanıcıya bu programlar listede süzülü görünmüyor; ulaşma yolu "Alanım
-  dışındaki bölümleri de göster" anahtarı.
-- **Ayarı 'dil' kalmış eski kullanıcı var.** Ona çip gösteriliyor, yoksa satırda
-  "Dil" yazarken altındaki çiplerin hiçbiri seçili görünmez ve kullanıcı ayarını
-  bozuk sanardı. Başka bir türe geçtiği anda çip listeden düşüyor; geri dönüşü
-  yok, istenen de bu.
+**Dil de soruluyor.** Kurulumdaki kart listesinde ve Ayarlar › Alanım'daki
+çiplerde (`SECILEBILIR_TURLER`) dört tür de var. Dil bir süre ikisinden de
+çıkarılmıştı ("azınlıkta, listeyi uzatıyor") ve yalnızca ayarı zaten 'dil'
+olan eski kullanıcıya gösteriliyordu; sonucu Dil öğrencisinin kurulumda
+"Karar vermedim" demek zorunda kalması, hedef listesinin süzülmemesi ve YDT
+şablonunun önerilmemesiydi. Azınlık olmak yok sayılmak değil; bedeli bir
+satır daha.
 
 ### Elle giriş kipi kalıyor
 

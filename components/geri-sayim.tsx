@@ -33,10 +33,13 @@ import { cn } from '@/lib/utils'
  */
 export function GeriSayim({
   tarih,
+  sinif,
   className,
   children,
 }: {
   tarih: string
+  /** Öğrencinin sınıfı: geri sayım herkese sıradaki YKS'yi değil, onun gireceği YKS'yi sayıyor. */
+  sinif: number
   className?: string
   /**
    * Kartın en altına, zeminden ayrışan bir iç kutuya giren içerik — ana sayfa
@@ -45,7 +48,7 @@ export function GeriSayim({
    */
   children?: React.ReactNode
 }) {
-  const sayim = useMemo(() => geriSayim(tarih), [tarih])
+  const sayim = useMemo(() => geriSayim(tarih, sinif), [tarih, sinif])
 
   const oturumAdi = sayim.oturum === 'tyt' ? 'TYT' : 'AYT'
   const sinavGunu = sayim.kalanGun === 0
@@ -111,7 +114,7 @@ export function GeriSayim({
         )}
       </p>
 
-      {/* Hazırlık yılının çubuğu: geri sayım sayısı tek başına "ne kadar yol
+      {/* Hazırlığın çubuğu (11. sınıfta iki yıllık): geri sayım sayısı tek başına "ne kadar yol
           aldım" sorusunu cevaplamıyordu. */}
       {!doluKart && (
         <div
@@ -120,7 +123,7 @@ export function GeriSayim({
           aria-valuenow={yuzde}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={`Hazırlık yılında geçen süre: %${yuzde}`}
+          aria-label={`Hazırlıkta geçen süre: %${yuzde}`}
         >
           <div
             className="h-1.5 overflow-hidden rounded-full bg-muted"
@@ -128,7 +131,7 @@ export function GeriSayim({
             aria-valuenow={yuzde}
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-label="Hazırlık yılında geçen süre"
+            aria-label="Hazırlıkta geçen süre"
           >
             <div
               className={cn(

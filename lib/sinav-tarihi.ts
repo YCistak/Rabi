@@ -13,6 +13,7 @@
  */
 
 import { tariheCevir, tariheYaz } from './utils'
+import { SON_SINIF, egitimYili, mezunMu } from './hesap'
 
 /** Bir yılın YKS hafta sonu: cumartesi TYT, pazar AYT ve YDT. */
 export type YksTakvimi = {
@@ -77,25 +78,49 @@ export type GeriSayim = {
 }
 
 /**
- * Bugünden sonraki ilk YKS oturumuna geri sayım.
+ * Öğrencinin **kendi** sınavının yılı.
+ *
+ * Geri sayım bir süre herkese bugünden sonraki ilk YKS'yi sayıyordu; 11.
+ * sınıftaki öğrenci girmeyeceği bir sınava "273 gün kaldı" diye bakıyordu.
+ * Sınav, öğrencinin 12. sınıfı bitirdiği ders yılının haziranı: 2026-2027'de
+ * 11. sınıf olan 2028'de giriyor. Mezun da 12 gibi — sıradaki sınav onun.
+ *
+ * Ders yılı eylülde döndüğü için `egitimYili` kullanılıyor: temmuzda hâlâ
+ * "11. sınıf" kayıtlı olan öğrenci eylülde 12 olacak ve sınavı bir sonraki
+ * haziran. Kayıtlı sınıf `ilerlemisSinif` ile eylülde kendiliğinden ilerliyor,
+ * burada ayrıca ilerletilmiyor.
+ */
+export function sinavYili(bugunIso: string, sinif: number): number {
+  const bugun = tariheCevir(bugunIso)
+  const kalanYil = mezunMu(sinif) ? 0 : Math.max(0, SON_SINIF - sinif)
+  return egitimYili(bugun) + 1 + kalanYil
+}
+
+/**
+ * Öğrencinin sınavına geri sayım.
  *
  * `bugunIso` dışarıdan alınıyor: fonksiyon saf kalsın, testte de sınav haftası
- * canlandırılabilsin diye.
+ * canlandırılabilsin diye. `sinif` verilmezse son sınıf sayılıyor — yani
+ * bugünden sonraki ilk YKS.
  */
-export function geriSayim(bugunIso: string): GeriSayim {
-  const yil = tariheCevir(bugunIso).getFullYear()
-
-  // Bu yılın sınavı geçtiyse sıradaki yılın takvimine geçilir.
-  let takvim = yilinTakvimi(yil)
-  if (gunFarki(bugunIso, takvim.ayt) < 0) takvim = yilinTakvimi(yil + 1)
+export function geriSayim(bugunIso: string, sinif: number = SON_SINIF): GeriSayim {
+  // Sınıfın sınavı geçtiyse (12. sınıfın haziran sonrası, telefon saati
+  // şaşmışsa) bugünden sonraki ilk sınava düşülür; geçmiş bir sınava geri
+  // saymak "-40 gün kaldı" demek olurdu.
+  let takvim = yilinTakvimi(sinavYili(bugunIso, sinif))
+  while (gunFarki(bugunIso, takvim.ayt) < 0) takvim = yilinTakvimi(takvim.yil + 1)
 
   const tyteKalan = gunFarki(bugunIso, takvim.tyt)
   const oturum = tyteKalan >= 0 ? 'tyt' : 'ayt'
   const sinavTarihi = oturum === 'tyt' ? takvim.tyt : takvim.ayt
 
-  // İlerleme çubuğu bir önceki sınavın ertesi gününden başlar: "hazırlık yılının
-  // neresindeyim" sorusunun cevabı bu.
-  const oncekiAyt = yilinTakvimi(takvim.yil - 1).ayt
+  // İlerleme çubuğu geçen **son** sınavın ertesi gününden başlar: "hazırlığın
+  // neresindeyim" sorusunun cevabı bu. 11. sınıfta bu iki yıllık bir yol ve
+  // çubuk onu olduğu gibi gösteriyor; "bir önceki yılın sınavı"ndan başlasaydı
+  // 11. sınıf boyunca sıfırda dururdu — o sınav daha yapılmadı.
+  let oncekiYil = tariheCevir(bugunIso).getFullYear()
+  while (gunFarki(bugunIso, yilinTakvimi(oncekiYil).ayt) >= 0) oncekiYil--
+  const oncekiAyt = yilinTakvimi(oncekiYil).ayt
   const toplamGun = gunFarki(oncekiAyt, takvim.tyt)
 
   return {
