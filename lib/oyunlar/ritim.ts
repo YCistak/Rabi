@@ -97,10 +97,12 @@ export const SORU_SURESI: Record<OyunId, number> = {
   /**
    * Organel Kartı'nın süresi mekaniğin kendisi.
    *
-   * Üç ipucu süreyi eşit üçe bölüyor (`hucre.ts`): dokuz saniye, ipucu başına
-   * üç saniye demek. Süre değişirse ipucu ritmi de değişir.
+   * İpuçları sürenin ilk dörtte üçünü eşit üçe bölüyor (`hucre.ts`): on iki
+   * saniye, ipucu başına üç saniye ve sonda üç saniyelik karar payı demek.
+   * Dokuzdu; ipucular bir buçuk saniyede bir geliyor ve okunamıyordu.
+   * Süre değişirse ipucu ritmi de değişir.
    */
-  hucre: 9,
+  hucre: 12,
   /**
    * Zaman Şeridi'nde süre **soru** başına ama soru beş kart.
    *

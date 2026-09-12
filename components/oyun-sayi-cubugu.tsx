@@ -1,7 +1,6 @@
 'use client'
 
 import { useRef } from 'react'
-import { Minus, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 /**
@@ -11,9 +10,9 @@ import { cn } from '@/lib/utils'
  * iki ucu sürükleyerek aralığı daraltıyor. Sayı doğrusunda düşünmek, köklü
  * sayının nereye düştüğünü zaten aynı şekilde gerektiriyor.
  *
- * Sürüklemenin yanında artı/eksi düğmeleri de var: 25 basamaklı bir çubukta
- * parmakla tek basamak isabet ettirmek dar ekranlarda zor, ve son bir basamağı
- * düzeltmek için bütün cevabı yeniden sürüklemek gerekirdi.
+ * Bir süre çubuğun altında iki ucun artı/eksi kutuları da vardı; kaldırıldı.
+ * Çubuk tek başına yetiyordu ve kutular cevap alanını ikiye bölüyordu: göz
+ * bir çubuğa bir kutulara gidiyor, aynı sayı iki yerde birden yazıyordu.
  */
 
 export type Aralik = { alt: number; ust: number }
@@ -39,12 +38,9 @@ export function SayiCubugu({
   /** Yanlış cevapta doğrunun nerede olduğunu gösteren işaret. */
   dogruAlt?: number
   /**
-   * Yeni aralık — güncelleyici olarak veriliyor, hazır değer olarak değil.
-   *
-   * Artı/eksi düğmelerine hızlı hızlı basıldığında React araya render sokmuyor
-   * ve her dokunuş **aynı** eski değerden hesap yapıyordu: beş dokunuş bir adım
-   * ilerletiyordu. Güncelleyici biçiminde her dokunuş bir öncekinin sonucunu
-   * görüyor.
+   * Yeni aralık — güncelleyici olarak veriliyor, hazır değer olarak değil:
+   * sürükleme olayları art arda düşüyor ve her biri bir öncekinin sonucunu
+   * görmeli, yoksa öteki uç eski değerinden okunup geri sıçrıyor.
    */
   onDegis: (guncelle: (onceki: Aralik) => Aralik) => void
 }) {
@@ -68,15 +64,6 @@ export function SayiCubugu({
       uc === 'alt'
         ? { alt: Math.max(enAz, Math.min(deger, onceki.ust - 1)), ust: onceki.ust }
         : { alt: onceki.alt, ust: Math.min(enCok, Math.max(deger, onceki.alt + 1)) },
-    )
-  }
-
-  /** Artı/eksi: hedef değer bir öncekinin sonucundan hesaplanıyor. */
-  const adimla = (uc: 'alt' | 'ust', fark: number) => {
-    onDegis((onceki) =>
-      uc === 'alt'
-        ? { alt: Math.max(enAz, Math.min(onceki.alt + fark, onceki.ust - 1)), ust: onceki.ust }
-        : { alt: onceki.alt, ust: Math.min(enCok, Math.max(onceki.ust + fark, onceki.alt + 1)) },
     )
   }
 
@@ -176,27 +163,6 @@ export function SayiCubugu({
           )
         })}
       </div>
-
-      <div className="mt-1 grid grid-cols-2 gap-2">
-        <UcAyari
-          etiket="Alt uç"
-          deger={alt}
-          kilitli={kilitli}
-          azaltilabilir={alt > enAz}
-          artirilabilir={alt < ust - 1}
-          onAzalt={() => adimla('alt', -1)}
-          onArtir={() => adimla('alt', 1)}
-        />
-        <UcAyari
-          etiket="Üst uç"
-          deger={ust}
-          kilitli={kilitli}
-          azaltilabilir={ust > alt + 1}
-          artirilabilir={ust < enCok}
-          onAzalt={() => adimla('ust', -1)}
-          onArtir={() => adimla('ust', 1)}
-        />
-      </div>
     </div>
   )
 }
@@ -222,74 +188,5 @@ function Tutamak({
     >
       {deger}
     </span>
-  )
-}
-
-/** Bir ucun artı/eksi kutusu — sürüklemeden sonra son ayarı yapmak için. */
-function UcAyari({
-  etiket,
-  deger,
-  kilitli,
-  azaltilabilir,
-  artirilabilir,
-  onAzalt,
-  onArtir,
-}: {
-  etiket: string
-  deger: number
-  kilitli: boolean
-  azaltilabilir: boolean
-  artirilabilir: boolean
-  onAzalt: () => void
-  onArtir: () => void
-}) {
-  return (
-    <div className="golge-kart flex items-center justify-between rounded-[15px] bg-card px-1.5 py-1.5">
-      <Adim
-        etiket={`${etiket} azalt`}
-        edilgin={kilitli || !azaltilabilir}
-        onBas={onAzalt}
-      >
-        <Minus size={16} aria-hidden />
-      </Adim>
-
-      <span className="flex flex-col items-center leading-none">
-        <span className="rakam font-display text-[15px] font-extrabold">{deger}</span>
-        <span className="mt-0.5 text-[9.5px] font-bold text-muted-foreground">{etiket}</span>
-      </span>
-
-      <Adim etiket={`${etiket} artır`} edilgin={kilitli || !artirilabilir} onBas={onArtir}>
-        <Plus size={16} aria-hidden />
-      </Adim>
-    </div>
-  )
-}
-
-function Adim({
-  etiket,
-  edilgin,
-  onBas,
-  children,
-}: {
-  etiket: string
-  edilgin: boolean
-  onBas: () => void
-  children: React.ReactNode
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={etiket}
-      disabled={edilgin}
-      onClick={onBas}
-      className={cn(
-        'grid h-8 w-8 shrink-0 place-items-center rounded-full transition',
-        edilgin
-          ? 'bg-muted text-muted-foreground/50'
-          : 'bg-isl text-isl-koyu active:brightness-95',
-      )}
-    >
-      {children}
-    </button>
   )
 }

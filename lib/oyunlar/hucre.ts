@@ -28,17 +28,20 @@ export type HucreOyunSorusu = { soru: OrganelSorusu; siklar: HucreSikki[] }
 export const ORGANELLER = HUCRE_HAVUZU.map((s) => s.organel)
 
 /**
- * İpuçları sorunun **ilk yarısında** tükeniyor.
+ * İpuçları sorunun **ilk dörtte üçünde** tükeniyor; son çeyrek karara kalıyor.
  *
- * Bir süre soru süresinin tamamına yayılıyorlardı: üçüncü ipucu tam süre
- * dolarken geliyordu, yani gördüğü an oyuncunun cevaplayacak vakti kalmıyordu
- * ve bekleme "oyun donmuş" gibi duruyordu. Şimdi son ipucu sürenin yarısında
- * açılıyor; kalan yarı kararı vermeye ayrılıyor.
+ * İki uç da denendi. Süreye tamamen yayılınca üçüncü ipucu tam süre dolarken
+ * geliyordu — gördüğü an cevaplayacak vakit kalmıyor, bekleme "oyun donmuş"
+ * gibi duruyordu. İlk yarıya sıkıştırılınca (dokuz saniyede bir buçuk saniye
+ * arayla) ikinci ve üçüncü ipucu, ilki daha okunmadan geliyordu: kart üç
+ * satırı üst üste yığıyor, oyuncu ilk ipucuyla düşünme fırsatını hiç
+ * bulamıyordu. On iki saniyelik soruda üçer saniye — bir ipucunu okuyup
+ * şıklara bir kez bakmaya yetecek kadar.
  *
  * Oran olarak duruyor, sabit saniye olarak değil: süre tabloda değişebiliyor
  * (`SORU_SURESI`) ve sabit aralık orada aynı sorunu geri getirirdi.
  */
-const IPUCU_PAYI = 0.5
+const IPUCU_PAYI = 0.75
 
 /**
  * Şu an kaçıncı ipucu görünüyor: 1, 2 ya da `IPUCU_SAYISI`.

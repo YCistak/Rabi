@@ -314,7 +314,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Kural Tuzağı',
     kisaAciklama: 'Eşitlik doğru mu, yanlış mı?',
     ikon: '🪤',
-    ozet: `Gelen eşitlik doğruysa kartı **sağa**, yanlışsa **sola** atarsın; alttaki iki düğme de aynı işi görür.`,
+    ozet: `Gelen eşitlik doğruysa kartı **sağa**, yanlışsa **sola** atarsın. Yarım itip bırakırsan kart yerine döner, cevap sayılmaz.`,
   },
   {
     id: 'periyodik',

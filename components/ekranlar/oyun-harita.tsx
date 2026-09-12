@@ -246,12 +246,11 @@ export function HaritaOyunuEkrani({
     }, CEVAP_BEKLEMESI)
   }
 
-  /** Boş ad pas demek: hiçbir ile dokunulmadı, cevap yanlış sayılıyor. */
   const cevapla = (secilenAd: string) => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     const dogruMu = secilenAd === soru.il.ad
     setCevaplar((onceki) => [...onceki, { soru, dogruMu }])
-    setGeriBildirim({ secilen: secilenAd === '' ? null : secilenAd, dogruMu, soru })
+    setGeriBildirim({ secilen: secilenAd, dogruMu, soru })
     geriBildir(dogruMu)
     ilerle(dogruMu)
   }
@@ -577,21 +576,14 @@ function CevapAlani({
   if (soru.tip === 'bul') {
     return (
       <div className="flex h-[108px] flex-none flex-col items-center justify-center gap-2.5 rounded-[18px] border-[1.5px] border-dashed border-border px-4">
+        {/* Pas düğmesi yoktu değil, vardı ve kaldırıldı: "bilmiyorum" deyip
+            geçmek, haritaya bakıp tahmin etmekten kolay olunca ilk tercih
+            oluyordu ve tur haritaya hiç dokunmadan bitiyordu. */}
         <p className="text-center text-[12.5px] font-semibold text-muted-foreground">
           Haritada dokun — yanlış il de bir cevaptır.
           <br />
           <span className="text-[11.5px]">Küçük iller için yakınlaştır.</span>
         </p>
-        {/* Pas, bilmediğini kabul etmenin yolu: rastgele bir ile dokunup şansa
-            bırakmaktansa geçmek hem daha dürüst hem tur sonunda doğru ders. */}
-        <button
-          type="button"
-          disabled={geriBildirim !== null}
-          onClick={() => onSec('')}
-          className="rounded-lg px-3 py-1.5 text-[12.5px] font-extrabold text-muted-foreground transition active:bg-foreground/10 disabled:opacity-45"
-        >
-          Bilmiyorum, pas geç
-        </button>
       </div>
     )
   }

@@ -158,7 +158,7 @@ export function BolunmeOyunuEkrani({
   const [sira, setSira] = useState(0)
   const [girilen, setGirilen] = useState('')
   const [cevaplar, setCevaplar] = useState<Cevap<BolunmeSorusu>[]>([])
-  /** Yanlışlarla aynı sıradaki girdiler; null pas geçildiğini gösterir. */
+  /** Yanlışlarla aynı sıradaki girdiler; null süre dolduğunu gösterir. */
   const [yanlisGirdileri, setYanlisGirdileri] = useState<(Girdi | null)[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
 
@@ -265,7 +265,8 @@ export function BolunmeOyunuEkrani({
     ).catch(() => {})
   }
 
-  /** `girdi` null ise pas geçiliyor; yanlış sayılır. */
+  /** `girdi` null ise süre dolmuş; yanlış sayılır. Pas geçme düğmesi yok — soruyu
+      denemeden bırakmak, oyunun ölçtüğü şeyi ölçülemez yapıyordu. */
   const cevapla = useCallback(
     (girdi: Girdi | null) => {
       if (asama !== 'oynaniyor' || geriBildirim !== null) return
@@ -304,7 +305,7 @@ export function BolunmeOyunuEkrani({
   // değiştiriyor: yanlış tuşa basan önce silmek zorunda kalmasın.
 
   /**
-   * Süre dolması cevap vermemekle aynı: soru pas geçilmiş sayılıyor.
+   * Süre dolması cevap vermemekle aynı: soru yanlış sayılıyor.
    *
    * Matematik oyunlarında eleme yok — süre dolunca
    * tur bitmiyor, sıradaki soruya geçiliyor.
@@ -469,15 +470,6 @@ export function BolunmeOyunuEkrani({
                     />
                   )}
 
-                  {/* Pas geçmek soruyu yanlış sayıyor; bedeli yalnızca bu. */}
-                  <button
-                    type="button"
-                    onClick={() => cevapla(null)}
-                    disabled={geriBildirim !== null}
-                    className="mx-auto rounded-lg px-2.5 py-1 text-[12.5px] font-extrabold text-muted-foreground transition active:bg-foreground/10 disabled:opacity-45"
-                  >
-                    Pas geç
-                  </button>
                 </div>
               </div>
 
@@ -766,7 +758,7 @@ function SonucGorunumu({
                 <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
                   {kuralIzi(yanlis.sayi, yanlis.bolen)}
                   {girdi === null ? (
-                    ' · pas geçtin'
+                    ' · süre doldu'
                   ) : (
                     <>
                       {' · sen '}
