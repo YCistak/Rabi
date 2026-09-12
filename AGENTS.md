@@ -24,15 +24,21 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
     seçmeden zaten oluşmuyor ve aynı karar iki ayrı yerde tutuluyordu.
     Aynı dosyadan çıkan ikinci kayıt türü **öneri/hata bildirimi**
     (`lib/geri-bildirim.ts` saf mantık, `lib/geri-bildirim-kolu.ts` kuyruk,
-    `components/ekranlar/geri-bildirim.tsx` ekran; ayrı bir Google Form,
-    adresi `lib/veri/geri-bildirim-adresi.ts`). Play yorumları bunun yerini
+    `components/ekranlar/geri-bildirim.tsx` ekran). Play yorumları bunun yerini
     tutmuyordu: yorumda sürüm ve telefon yazmıyor, cevap da verilemiyor.
     Giden beş alan `geriBildirimFormVerisi()` içinde sayılı; biri serbest
     metin ve ekran kullanıcıya kişisel bilgi yazmamasını söylüyor. İzin kartı
     yok — kullanıcı metni yazıp "Gönder"e basıyor, liste düğmenin üstünde.
-    Bu istisnayı bu iki kayıt türünün ötesine genişletme; alan eklersen
-    ekrandaki liste, `lib/veri/yasal.ts`, `public/gizlilik/index.html` ve
-    Play'in Data Safety formu birlikte değişmeli.
+    İki kayıt türü de **Firestore**'a gidiyor (`lib/veri/firestore-adresi.ts`,
+    koleksiyonlar `hatali-sorular` ve `geri-bildirimler`), SDK ile değil
+    REST ile — yeni yerli bağımlılık yok. Önce iki Google Form'du; formun
+    `entry` numaralarını elle kopyalamak ve yanıtların Firebase'den ayrı bir
+    Sheets'te durması yüzünden bırakıldı. Güvenlik API anahtarında değil
+    kuralda: kural yalnızca `create`e izin veriyor, alan adları ve boyları
+    sayılı (`PLANNED.md` → "Firestore kuralları"). Bu istisnayı bu iki kayıt
+    türünün ötesine genişletme; alan eklersen kural, ekrandaki liste,
+    `lib/veri/yasal.ts`, `public/gizlilik/index.html` ve Play'in Data Safety
+    beyanı birlikte değişmeli.
   - **İkinci istisna: çökme raporları.** WebView uygulamasında çökmenin sebebi
     çoğu zaman uygulamanın kendi kodu değil, cihazdaki Android System WebView
     sürümü oluyor; bunu kullanıcıdan öğrenmenin yolu yok. Firebase Crashlytics

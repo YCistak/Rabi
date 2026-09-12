@@ -10,7 +10,7 @@
  * yazan kişi mesajının gidip gitmediğini görmek istiyor; hatalı soruda
  * kullanıcı bayrağa basıp turuna dönüyor, orada beklemek yok.
  *
- * Hemen gitmezse (internet yok, form adresi henüz girilmemiş) kayıt cihazda
+ * Hemen gitmezse (internet yok, Firestore kimliği henüz girilmemiş) kayıt cihazda
  * kalıyor ve uygulama bir sonraki öne gelişinde yeniden deneniyor.
  */
 

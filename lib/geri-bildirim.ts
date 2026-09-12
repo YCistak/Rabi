@@ -34,8 +34,8 @@ export const TURLER: GeriBildirimTuru[] = ['oneri', 'hata', 'baska']
  * Metin sınırları.
  *
  * Alt sınır "iyi" ya da "kötü" gibi tek kelimelik kayıtları eliyor; onlardan
- * düzeltilecek bir şey çıkmıyor. Üst sınır formun rahat okunması için —
- * Google Forms'un kendi sınırı çok daha yüksek ama bin karakteri geçen bir
+ * düzeltilecek bir şey çıkmıyor. Üst sınır konsolda rahat okunsun diye ve
+ * Firestore kuralı da aynı sayıyı denetliyor; bin karakteri geçen bir
  * bildirim zaten e-posta olmalı.
  */
 export const METIN_EN_AZ = 10
@@ -149,10 +149,11 @@ export function bekleyenSayisi(liste: GeriBildirim[]): number {
 /**
  * Gönderilen alanlar — **tam olarak** dışarı çıkan veri.
  *
- * `entry.NNN` eşlemesi `lib/veri/geri-bildirim-adresi.ts` içinde. Buraya
- * alan eklenirse ekrandaki liste (`components/ekranlar/geri-bildirim.tsx`),
+ * Alan adları Firestore belgesine olduğu gibi yazılıyor ve kural yalnızca
+ * bu adları kabul ediyor (`PLANNED.md`). Buraya alan eklenirse kural,
+ * ekrandaki liste (`components/ekranlar/geri-bildirim.tsx`),
  * `lib/veri/yasal.ts`, `public/gizlilik/index.html` ve Play'in Data Safety
- * formu da güncellenmeli.
+ * beyanı da güncellenmeli.
  */
 export function geriBildirimFormVerisi(
   b: GeriBildirim,

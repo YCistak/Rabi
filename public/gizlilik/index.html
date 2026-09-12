@@ -212,7 +212,7 @@
 <p>
   Model bilgisi, bazı arızaların yalnızca belirli ekran ölçülerinde çıkması yüzünden var.
   Takma ad rastgele üretilir, adınla ya da hesabınla ilgisi yoktur; tek işi aynı telefondan
-  gelen bildirimleri tabloda gruplamaktır. Bu ad kalıcı olduğu için, Google Play'in
+  gelen bildirimleri gruplamaktır. Bu ad kalıcı olduğu için, Google Play'in
   sınıflandırmasında <b>&ldquo;cihaz veya diğer kimlikler&rdquo;</b> kategorisine girer ve
   Data Safety formunda böyle beyan edilir.
 </p>
@@ -225,9 +225,10 @@
 </div>
 
 <p>
-  Bildirim, bize ait bir <b>Google Formu</b>na gönderilir ve yanıtlar Google'ın sunucularındaki
-  bir tabloda toplanır. Bağlantı HTTPS ile şifrelenir. Burada Google, bizim adımıza veri
-  işleyen taraftır (bkz. §6).
+  Bildirim, bize ait Firebase projesindeki bir veri tabanına (<b>Cloud Firestore</b>)
+  kaydedilir; bu Google'ın sunucularında durur. Bağlantı HTTPS ile şifrelenir. Uygulamanın bu
+  veri tabanında yapabildiği tek şey yeni kayıt eklemektir: kendi gönderdiği dahil hiçbir kaydı
+  okuyamaz, değiştiremez, silemez. Burada Google, bizim adımıza veri işleyen taraftır (bkz. §6).
 </p>
 
 <h2>4. Telefonundan çıkan ikinci şey — çökme raporu</h2>
@@ -301,8 +302,9 @@
 </div>
 
 <p>
-  Mesaj, bize ait <b>ayrı bir Google Formu</b>na gönderilir ve yanıtlar Google'ın
-  sunucularındaki bir tabloda toplanır. Bağlantı HTTPS ile şifrelenir.
+  Mesaj, hatalı soru bildirimleriyle aynı veri tabanına (<b>Cloud Firestore</b>) ayrı bir
+  bölümde kaydedilir. Bağlantı HTTPS ile şifrelenir; uygulama burada da yalnızca yeni kayıt
+  ekleyebilir.
 </p>
 
 <h2>4b. Güncelleme denetimi</h2>
@@ -358,9 +360,12 @@
 
 <p>Rabi'nin veri gönderdiği tek şirket Google'dır ve yalnızca yukarıdaki üç durumda:</p>
 <ul>
-  <li><b>Google Forms / Google Sheets</b> — hatalı soru bildirimlerinin ve öneri/hata
-      mesajlarının toplandığı yer (iki ayrı form).</li>
+  <li><b>Firebase Cloud Firestore</b> — hatalı soru bildirimlerinin ve öneri/hata
+      mesajlarının kaydedildiği yer.</li>
   <li><b>Firebase Crashlytics</b> — gönderdiğin çökme raporlarının toplandığı yer.</li>
+</ul>
+<p>İkisi de aynı Firebase projesinin parçasıdır.</p>
+<ul>
 </ul>
 <p>
   Google bu verileri bizim adımıza ve talimatımızla işler. Güncelleme denetimi (§4b)
@@ -382,8 +387,8 @@
       (<code>http://</code>) bağlantı kullanılmaz.</li>
   <li>Bize ulaşan verilere yalnızca uygulamayı geliştiren kişi erişir ve bunlar yalnızca
       soruları düzeltmek, hataları gidermek ve önerileri değerlendirmek için kullanılır.</li>
-  <li>Bizim işlettiğimiz bir sunucu ya da veri tabanı yoktur; toplanan az sayıdaki kayıt
-      Google'ın hesap korumaları arkasında durur.</li>
+  <li>Bizim işlettiğimiz bir sunucu yoktur; kayıtlar Google'ın Firebase hizmetinde, Google
+      hesabı korumasının arkasında durur ve uygulamanın kendisi oradan hiçbir şey okuyamaz.</li>
 </ul>
 
 <h2>8. Saklama ve silme</h2>
@@ -396,7 +401,7 @@
 
 <h3>Bize ulaşan hatalı soru bildirimleri</h3>
 <p>
-  Soru düzeltilene kadar tutulur, sonra tablodan silinir. Daha önce silinmesini istersen
+  Soru düzeltilene kadar tutulur, sonra veri tabanından silinir. Daha önce silinmesini istersen
   aşağıdaki adrese yaz — hangi soruları ve yaklaşık hangi tarihlerde bildirdiğini yazman
   yeterli; ilgili satırları sileriz ve sildiğimizi sana yazarız. Talepler en geç
   <b>30 gün</b> içinde sonuçlandırılır.
@@ -410,7 +415,7 @@
 
 <h3>Öneri ve hata mesajları</h3>
 <p>
-  Konu ele alınana kadar tutulur ve en geç <b>1 yıl</b> sonra tablodan silinir. Daha önce
+  Konu ele alınana kadar tutulur ve en geç <b>1 yıl</b> sonra veri tabanından silinir. Daha önce
   silinmesini istersen yaklaşık tarihini ve ne yazdığını belirterek aşağıdaki adrese yaz.
 </p>
 

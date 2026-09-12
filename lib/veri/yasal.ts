@@ -88,9 +88,9 @@ const GIZLILIK: YasalBelge = {
         'Sorular elle yazıldı; içlerinde yanlış cevap veya bozuk yazım olabilir. Bir sorunun yanındaki bayrağa basıp sebep seçersen o bildirim bize ulaşır ve soruyu düzeltiriz.',
         'Bildirim kendiliğinden oluşmaz: bayrağa basman ve bir sebep seçmen gerekir. İlk bildirimde ekranda ne gönderileceğinin listesi çıkar ve “Gönder” demeden hiçbir şey telefonundan çıkmaz. “Gönderme” dersen bildirim telefonunda kalır; kararını aynı yerdeki “Yine de gönder” ile sonradan değiştirebilirsin. İnternet yoksa bildirim bekler, bağlanınca gider. Günde en fazla 20 bildirim açılabilir.',
         'Gönderilen tam liste yedi alandır: sorunun havuzdaki kimliği; sorunun hangi oyundan geldiği; sorunun metni; uygulamanın doğru saydığı cevap; senin seçtiğin sebep; uygulama sürümü; telefonunun üreticisi ve modeli, yanında cihazına verilen rastgele takma ad.',
-        'Model bilgisi, bazı arızaların yalnızca belirli ekran ölçülerinde çıkması yüzünden var. Takma ad rastgele üretilir, adınla ya da hesabınla ilgisi yoktur; tek işi aynı telefondan gelen bildirimleri tabloda gruplamaktır. Bu ad kalıcı olduğu için Google Play’in sınıflandırmasında “cihaz veya diğer kimlikler” kategorisine girer ve Data Safety formunda böyle beyan edilir.',
+        'Model bilgisi, bazı arızaların yalnızca belirli ekran ölçülerinde çıkması yüzünden var. Takma ad rastgele üretilir, adınla ya da hesabınla ilgisi yoktur; tek işi aynı telefondan gelen bildirimleri gruplamaktır. Bu ad kalıcı olduğu için Google Play’in sınıflandırmasında “cihaz veya diğer kimlikler” kategorisine girer ve Data Safety formunda böyle beyan edilir.',
         'Bu bildirimde gönderilmeyenler: adın, e-postan, telefon numaran, konumun, denemelerin ve netlerin, okul notların, yapılacaklar notların, fotoğrafların, çalışma süren, oyun puanların, kilitli uygulama listen, rehberin, mesajların.',
-        'Bildirim, bize ait bir Google Formu’na gönderilir ve yanıtlar Google’ın sunucularındaki bir tabloda toplanır. Bağlantı HTTPS ile şifrelenir.',
+        'Bildirim, bize ait Firebase projesindeki bir veri tabanına (Cloud Firestore) kaydedilir; bu Google’ın sunucularında durur. Bağlantı HTTPS ile şifrelenir. Uygulamanın bu veri tabanında yapabildiği tek şey yeni kayıt eklemektir: kendi gönderdiği dahil hiçbir kaydı okuyamaz, değiştiremez, silemez.',
       ],
     },
     {
@@ -108,7 +108,7 @@ const GIZLILIK: YasalBelge = {
         'Gönderilen tam liste beş alandır: seçtiğin tür (öneri, hata, başka); yazdığın metin, olduğu gibi; uygulama sürümü; telefonunun üreticisi ve modeli, yanında cihazına verilen rastgele takma ad (3. bölümdekiyle aynı ad); gönderim tarihi.',
         'Metni sen yazdığın için içine ne koyduğun sana bağlı. Ekran, adını, telefon numaranı ya da başka bir kişisel bilgiyi yazmamanı söyler; bu kutu tek yönlüdür, sana geri dönemeyiz. Yine de yazarsan o bilgi metnin parçası olarak bize ulaşır ve 8. bölümdeki adrese yazarak sildirebilirsin.',
         'Bu bildirimde gönderilmeyenler, hatalı soru bildirimindekiyle aynıdır: adın, e-postan, telefon numaran, konumun, denemelerin ve netlerin, okul notların, yapılacaklar notların, fotoğrafların, çalışma süren, oyun puanların, kilitli uygulama listen, rehberin, mesajların.',
-        'Mesaj, bize ait ayrı bir Google Formu’na gönderilir ve yanıtlar Google’ın sunucularındaki bir tabloda toplanır. Bağlantı HTTPS ile şifrelenir.',
+        'Mesaj, hatalı soru bildirimleriyle aynı veri tabanına (Cloud Firestore) ayrı bir bölümde kaydedilir. Bağlantı HTTPS ile şifrelenir; uygulama burada da yalnızca yeni kayıt ekleyebilir.',
       ],
     },
     {
@@ -131,7 +131,7 @@ const GIZLILIK: YasalBelge = {
     {
       baslik: '6. Üçüncü taraflar',
       paragraflar: [
-        'Rabi’nin veri gönderdiği tek şirket Google’dır ve yalnızca üç durumda: hatalı soru bildirimlerinin ve öneri/hata mesajlarının toplandığı Google Forms ile gönderdiğin çökme raporlarının toplandığı Firebase Crashlytics. Google bu verileri bizim adımıza ve talimatımızla işler. Güncelleme denetimi (4b) bunlardan ayrıdır: o sorguyu telefonundaki Google Play kendi adına yapar ve Play’in gizlilik politikasına tabidir. Google’ın gizlilik politikası: policies.google.com/privacy',
+        'Rabi’nin veri gönderdiği tek şirket Google’dır ve yalnızca üç durumda: hatalı soru bildirimlerinin ve öneri/hata mesajlarının kaydedildiği Firebase Cloud Firestore ile gönderdiğin çökme raporlarının toplandığı Firebase Crashlytics. İkisi de aynı Firebase projesinin parçasıdır. Google bu verileri bizim adımıza ve talimatımızla işler. Güncelleme denetimi (4b) bunlardan ayrıdır: o sorguyu telefonundaki Google Play kendi adına yapar ve Play’in gizlilik politikasına tabidir. Google’ın gizlilik politikası: policies.google.com/privacy',
         'Rabi’de reklam ağı yoktur, kullanım analizi aracı yoktur, reklam kimliği okunmaz ve davranışını izleyen başka bir araç bulunmaz. Hiçbir veri satılmaz, kiralanmaz veya pazarlama amacıyla paylaşılmaz. Uygulamada hesap, giriş veya üyelik yoktur.',
       ],
     },
@@ -139,16 +139,16 @@ const GIZLILIK: YasalBelge = {
       baslik: '7. Güvenlik',
       paragraflar: [
         'Telefondaki veriler işletim sisteminin uygulamalara ayırdığı özel alanda tutulur; başka uygulamalar buraya erişemez. Dışarı çıkan üç gönderim de HTTPS/TLS ile şifrelenerek iletilir; şifresiz bağlantı kullanılmaz.',
-        'Bize ulaşan verilere yalnızca uygulamayı geliştiren kişi erişir ve bunlar yalnızca soruları düzeltmek, hataları gidermek ve önerileri değerlendirmek için kullanılır. Bizim işlettiğimiz bir sunucu ya da veri tabanı yoktur.',
+        'Bize ulaşan verilere yalnızca uygulamayı geliştiren kişi erişir ve bunlar yalnızca soruları düzeltmek, hataları gidermek ve önerileri değerlendirmek için kullanılır. Bizim işlettiğimiz bir sunucu yoktur; kayıtlar Google’ın Firebase hizmetinde, Google hesabı korumasının arkasında durur ve uygulamanın kendisi oradan hiçbir şey okuyamaz.',
       ],
     },
     {
       baslik: '8. Saklama ve silme',
       paragraflar: [
         'Telefonundaki veriler sen silene kadar durur. Ayarlar’daki “Tüm veriyi sil” hepsini temizler; uygulamayı kaldırmak da aynı sonucu verir.',
-        'Bize ulaşan hatalı soru bildirimleri, soru düzeltilene kadar tutulur ve sonra tablodan silinir. Daha önce silinmesini istersen aşağıdaki adrese yaz — hangi soruları ve yaklaşık hangi tarihlerde bildirdiğini yazman yeterli. Talepler en geç 30 gün içinde sonuçlandırılır.',
+        'Bize ulaşan hatalı soru bildirimleri, soru düzeltilene kadar tutulur ve sonra veri tabanından silinir. Daha önce silinmesini istersen aşağıdaki adrese yaz — hangi soruları ve yaklaşık hangi tarihlerde bildirdiğini yazman yeterli. Talepler en geç 30 gün içinde sonuçlandırılır.',
         'Firebase Crashlytics, çökme kayıtlarını ve bunlara bağlı kurulum numaralarını 90 gün sonra silmeye başlar. Bir raporun daha önce silinmesini istersen bize yaz.',
-        'Bize ulaşan öneri ve hata mesajları, konu ele alınana kadar tutulur ve en geç 1 yıl sonra tablodan silinir. Daha önce silinmesini istersen yaklaşık tarihini ve ne yazdığını belirterek aşağıdaki adrese yaz.',
+        'Bize ulaşan öneri ve hata mesajları, konu ele alınana kadar tutulur ve en geç 1 yıl sonra veri tabanından silinir. Daha önce silinmesini istersen yaklaşık tarihini ve ne yazdığını belirterek aşağıdaki adrese yaz.',
         'Silme talebi için fluxifyinteractive@gmail.com adresine, konuya “Rabi veri silme” yazarak ulaşabilirsin. Rabi’de hesap olmadığı için silinecek bir hesabın yoktur; silinebilecek tek şey yukarıdaki üç kayıt türüdür.',
       ],
     },
