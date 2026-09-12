@@ -97,10 +97,13 @@ jobs:
       - name: Çıktıları topla
         run: |
           mkdir -p dist
+          # Dal adındaki "/" (surum/0.6.3) dosya adında klasör ayracı olur ve
+          # cp olmayan bir klasöre yazmaya çalışır; tire ile değiştiriliyor.
+          AD="${GITHUB_REF_NAME//\//-}"
           APK=$(find android/app/build/outputs/apk/release -name '*.apk' | head -1)
-          cp "$APK" "dist/rabi-${GITHUB_REF_NAME}.apk"
+          cp "$APK" "dist/rabi-${AD}.apk"
           AAB=$(find android/app/build/outputs/bundle/release -name '*.aab' | head -1)
-          cp "$AAB" "dist/rabi-${GITHUB_REF_NAME}.aab"
+          cp "$AAB" "dist/rabi-${AD}.aab"
 
       - name: Sürüm oluştur
         if: startsWith(github.ref, 'refs/tags/')
