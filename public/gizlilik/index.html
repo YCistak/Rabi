@@ -125,10 +125,13 @@
 
 <div class="kutu">
   <p><b>Kısaca:</b> Rabi'nin sunucusu yok. Denemelerin, notların, fotoğrafların, puanların ve
-  adın <b>telefonundan hiç çıkmaz</b>. Rabi'nin ağa çıktığı yalnızca iki durum vardır ve
-  ikisi de sen izin verene kadar gerçekleşmez: <b>(1)</b> hatalı bir soruyu bildirmen,
-  <b>(2)</b> uygulama çöktükten sonra çökme kaydını göndermeyi seçmen. Reklam yok, analiz
-  (analytics) yok, hesap yok, giriş yok.</p>
+  adın <b>telefonundan hiç çıkmaz</b>. Rabi'nin ağa çıktığı yalnızca üç durum vardır ve
+  üçü de sen izin verene kadar gerçekleşmez: <b>(1)</b> hatalı bir soruyu bildirmen,
+  <b>(2)</b> uygulama çöktükten sonra çökme kaydını göndermeyi seçmen, <b>(3)</b> Ayarlar'daki
+  &ldquo;Öneri ve hata bildir&rdquo; ekranından bize bir mesaj yazıp göndermen. Bunların
+  dışında uygulama açılırken telefonundaki Google Play, Rabi'nin yeni bir sürümü olup
+  olmadığına bakar; bu sorguyu Rabi değil Play yapar ve sana ait hiçbir bilgi taşımaz
+  (bkz. §4b). Reklam yok, analiz (analytics) yok, hesap yok, giriş yok.</p>
 </div>
 
 <h2>1. Telefonunda kalan veriler</h2>
@@ -258,12 +261,71 @@
   Çökme raporları <b>Google Firebase Crashlytics</b> üzerinden toplanır.
 </p>
 
+<h2>4a. Telefonundan çıkan üçüncü şey — öneri ve hata bildirimi</h2>
+
+<p>
+  Ayarlar'daki <b>&ldquo;Öneri ve hata bildir&rdquo;</b> ekranından bize bir mesaj
+  yazabilirsin: bir öneri, bozuk bir şeyin tarifi ya da başka bir not.
+</p>
+
+<h3>Nasıl izin veriliyor</h3>
+<ul>
+  <li>Mesaj yalnızca sen <b>&ldquo;Gönder&rdquo;</b> dediğinde telefonundan çıkar; düğmenin
+      hemen üstünde ne gönderileceği yazar.</li>
+  <li>İnternet yoksa mesaj telefonunda bekler, bağlanınca gider.</li>
+  <li>Günde en fazla 5 mesaj gönderilebilir.</li>
+</ul>
+
+<h3>Gönderilen tam liste (beş alan)</h3>
+<ol>
+  <li>Seçtiğin tür (öneri, hata, başka)</li>
+  <li>Yazdığın metin, olduğu gibi</li>
+  <li>Uygulama sürümü</li>
+  <li>Telefonunun üreticisi ve modeli, yanında cihazına verilen rastgele takma ad
+      (§3'teki ile aynı ad)</li>
+  <li>Gönderim tarihi</li>
+</ol>
+
+<p>
+  Metni sen yazdığın için içine ne koyduğun sana bağlı. Ekran, adını, telefon numaranı ya da
+  başka bir kişisel bilgiyi yazmamanı söyler; bu kutu tek yönlüdür, sana geri dönemeyiz.
+  Yine de yazarsan o bilgi metnin parçası olarak bize ulaşır ve §8'deki adrese yazarak
+  sildirebilirsin.
+</p>
+
+<div class="kutu">
+  <p><b>Bu bildirimde gönderilmeyenler</b> §3'tekiyle aynıdır: adın, e-postan, telefon
+  numaran, konumun, denemelerin ve netlerin, okul notların, yapılacaklar notların,
+  fotoğrafların, çalışma süren, oyun puanların, kilitli uygulama listen, rehberin,
+  mesajların.</p>
+</div>
+
+<p>
+  Mesaj, bize ait <b>ayrı bir Google Formu</b>na gönderilir ve yanıtlar Google'ın
+  sunucularındaki bir tabloda toplanır. Bağlantı HTTPS ile şifrelenir.
+</p>
+
+<h2>4b. Güncelleme denetimi</h2>
+
+<p>
+  Uygulama açılırken telefonundaki Google Play uygulamasına Rabi'nin yeni bir sürümü olup
+  olmadığı sorulur. Bu sorguyu Rabi değil Play yapar ve Play'in zaten bildiği tek şeyi
+  kullanır: uygulamanın paket adı ve kurulu sürümü. Adın, kullanımın ya da başka bir bilgi
+  geçmez. Yeni sürüm varsa ekranın üstünde bir şerit çıkar; indirme ancak sen
+  &ldquo;Güncelle&rdquo; dersen ve Play'in kendi onay penceresinden geçerek başlar. Şeridi
+  kapatabilirsin; kapatman kaydedilmez, bir sonraki açılışta yeniden hatırlatılır.
+</p>
+<p>
+  Rabi Play dışından (doğrudan APK olarak) kurulduysa bu denetim çalışmaz ve şerit hiç
+  görünmez.
+</p>
+
 <h2>5. İzinler ve neden isteniyor</h2>
 
 <div class="sar">
 <table>
   <tr><th>İzin</th><th>Ne için</th><th>Veri dışarı çıkıyor mu</th></tr>
-  <tr><td>İnternet</td><td>Yalnızca §3 ve §4'teki iki gönderim</td><td>Yalnızca izin verirsen</td></tr>
+  <tr><td>İnternet</td><td>§3, §4 ve §4a'daki üç gönderim ile Play'in güncelleme denetimi (§4b)</td><td>Yalnızca izin verirsen</td></tr>
   <tr><td>Bildirim gönderme</td><td>Çalışma hatırlatması ve pomodoro sayacı</td><td>Hayır — bildirimler telefonunda üretilir</td></tr>
   <tr><td>Kamera / galeri (sistem seçicisi üzerinden)</td><td>Yanlış soru fotoğrafı</td><td>Hayır</td></tr>
   <tr><td>Kullanım verisi erişimi (<code>PACKAGE_USAGE_STATS</code>)</td><td>Odak kilidi sırasında hangi uygulamanın ön planda olduğunu anlamak</td><td>Hayır — okunan bilgi telefondan çıkmaz</td></tr>
@@ -294,13 +356,16 @@
 
 <h2>6. Üçüncü taraflar</h2>
 
-<p>Rabi'nin veri gönderdiği tek şirket Google'dır ve yalnızca yukarıdaki iki durumda:</p>
+<p>Rabi'nin veri gönderdiği tek şirket Google'dır ve yalnızca yukarıdaki üç durumda:</p>
 <ul>
-  <li><b>Google Forms / Google Sheets</b> — hatalı soru bildirimlerinin toplandığı yer.</li>
+  <li><b>Google Forms / Google Sheets</b> — hatalı soru bildirimlerinin ve öneri/hata
+      mesajlarının toplandığı yer (iki ayrı form).</li>
   <li><b>Firebase Crashlytics</b> — gönderdiğin çökme raporlarının toplandığı yer.</li>
 </ul>
 <p>
-  Google bu verileri bizim adımıza ve talimatımızla işler. Google'ın gizlilik politikası:
+  Google bu verileri bizim adımıza ve talimatımızla işler. Güncelleme denetimi (§4b)
+  bunlardan ayrıdır: o sorguyu telefonundaki Google Play kendi adına yapar ve Play'in
+  gizlilik politikasına tabidir. Google'ın gizlilik politikası:
   <a href="https://policies.google.com/privacy?hl=tr" rel="noopener">policies.google.com/privacy</a>.
 </p>
 <p>
@@ -313,10 +378,10 @@
 <ul>
   <li>Telefondaki veriler işletim sisteminin uygulamalara ayırdığı özel alanda tutulur;
       başka uygulamalar buraya erişemez.</li>
-  <li>Dışarı çıkan iki gönderim de <b>HTTPS/TLS</b> ile şifrelenerek iletilir; şifresiz
+  <li>Dışarı çıkan üç gönderim de <b>HTTPS/TLS</b> ile şifrelenerek iletilir; şifresiz
       (<code>http://</code>) bağlantı kullanılmaz.</li>
   <li>Bize ulaşan verilere yalnızca uygulamayı geliştiren kişi erişir ve bunlar yalnızca
-      soruları düzeltmek ve hataları gidermek için kullanılır.</li>
+      soruları düzeltmek, hataları gidermek ve önerileri değerlendirmek için kullanılır.</li>
   <li>Bizim işlettiğimiz bir sunucu ya da veri tabanı yoktur; toplanan az sayıdaki kayıt
       Google'ın hesap korumaları arkasında durur.</li>
 </ul>
@@ -343,10 +408,16 @@
   <b>90 gün</b> sonra silmeye başlar. Bir raporun daha önce silinmesini istersen bize yaz.
 </p>
 
+<h3>Öneri ve hata mesajları</h3>
+<p>
+  Konu ele alınana kadar tutulur ve en geç <b>1 yıl</b> sonra tablodan silinir. Daha önce
+  silinmesini istersen yaklaşık tarihini ve ne yazdığını belirterek aşağıdaki adrese yaz.
+</p>
+
 <div class="kutu">
   <p><b>Silme talebi için:</b> <a href="mailto:fluxifyinteractive@gmail.com">fluxifyinteractive@gmail.com</a>
   adresine yaz, konuya &ldquo;Rabi veri silme&rdquo; yaz. Rabi'de hesap olmadığı için
-  silinecek bir hesabın yoktur; silinebilecek tek şey yukarıdaki iki kayıt türüdür.</p>
+  silinecek bir hesabın yoktur; silinebilecek tek şey yukarıdaki üç kayıt türüdür.</p>
 </div>
 
 <h2>9. Çocuklar ve gençler</h2>
@@ -373,7 +444,7 @@
 <p>
   Rabi ad, e-posta veya hesap bilgisi toplamadığı için, bize ulaşan kayıtların hangisinin
   sana ait olduğunu kendiliğimizden bulamıyoruz; talebinde bildirimi yaptığın yaklaşık
-  tarihi ve soruları belirtirsen kaydı bulup silebiliriz.
+  tarihi ve soruları ya da mesajı belirtirsen kaydı bulup silebiliriz.
 </p>
 
 <h2>11. Bu politikadaki değişiklikler</h2>

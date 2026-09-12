@@ -10,6 +10,7 @@ import {
   Download,
   GraduationCap,
   Images,
+  MessageSquare,
   Music,
   Shield,
   Target,
@@ -106,6 +107,8 @@ export function AyarlarEkrani({
   setAyarlar,
   bekleyenBildirim,
   onYasalAc,
+  onGeriBildirimAc,
+  bekleyenGeriBildirim,
   yedeklenecek,
 }: {
   /** Yedeğe giren kullanıcı şablonları — ekranda düzenlenmiyor. */
@@ -115,6 +118,8 @@ export function AyarlarEkrani({
   bekleyenBildirim: number
   /** Gizlilik ve Koşullar ekranını açar. */
   onYasalAc: () => void
+  onGeriBildirimAc: () => void
+  bekleyenGeriBildirim: number
   setAyarlar: (guncelleyici: Ayarlar | ((onceki: Ayarlar) => Ayarlar)) => void
   /** Yedeğe girecek bütün veri — fotoğraflar hariç. */
   yedeklenecek: {
@@ -543,6 +548,27 @@ export function AyarlarEkrani({
             <GenisAlan tam>
               <AlanNotu>
                 {bekleyenBildirim} hatalı soru bildirimi gönderilmeyi bekliyor.
+              </AlanNotu>
+            </GenisAlan>
+          )}
+        </Bolum>
+
+        {/* ----------------------------- Destek --------------------------- */}
+        {/* Play yorumları buranın yerini tutmuyor: yorumda sürüm ve telefon
+            yazmıyor, cevap da verilemiyor. Ekranın kendisi
+            `components/ekranlar/geri-bildirim.tsx`. */}
+        <Bolum baslik="Destek">
+          <Satir
+            Simge={MessageSquare}
+            renk="mavi"
+            baslik="Öneri ve hata bildir"
+            onClick={onGeriBildirimAc}
+            sag={<ChevronRight size={18} className="shrink-0 text-muted-foreground/50" aria-hidden />}
+          />
+          {bekleyenGeriBildirim > 0 && (
+            <GenisAlan tam>
+              <AlanNotu>
+                {bekleyenGeriBildirim} bildirim gönderilmeyi bekliyor.
               </AlanNotu>
             </GenisAlan>
           )}

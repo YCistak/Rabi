@@ -64,7 +64,7 @@ const GIZLILIK: YasalBelge = {
     {
       paragraflar: [
         'Bu belge, Rabi’nin hangi bilgilere eriştiğini, bunları ne için kullandığını, telefonundan neyin çıktığını ve nasıl sildirebileceğini anlatır. Uygulama: Rabi (com.fluxifyinteractive.rabi). Geliştirici: Fluxify Interactive.',
-        'Kısaca: Rabi’nin sunucusu yok. Denemelerin, notların, fotoğrafların, puanların ve adın telefonundan hiç çıkmaz. Ağa çıkan yalnızca iki şey var ve ikisi de sen izin verene kadar gerçekleşmez: hatalı bir soruyu bildirmen ve uygulama çöktükten sonra çökme kaydını göndermeyi seçmen. Bunların dışında uygulama açılırken telefonundaki Google Play, Rabi’nin yeni bir sürümü olup olmadığına bakar; bu sorguyu Rabi değil Play yapar ve sana ait hiçbir bilgi taşımaz (bkz. 4a). Reklam yok, kullanım analizi yok, hesap yok, giriş yok.',
+        'Kısaca: Rabi’nin sunucusu yok. Denemelerin, notların, fotoğrafların, puanların ve adın telefonundan hiç çıkmaz. Ağa çıkan yalnızca üç şey var ve üçü de sen izin verene kadar gerçekleşmez: hatalı bir soruyu bildirmen, uygulama çöktükten sonra çökme kaydını göndermeyi seçmen ve Ayarlar’daki “Öneri ve hata bildir” ekranından bize bir mesaj yazıp göndermen. Bunların dışında uygulama açılırken telefonundaki Google Play, Rabi’nin yeni bir sürümü olup olmadığına bakar; bu sorguyu Rabi değil Play yapar ve sana ait hiçbir bilgi taşımaz (bkz. 4b). Reklam yok, kullanım analizi yok, hesap yok, giriş yok.',
       ],
     },
     {
@@ -102,7 +102,17 @@ const GIZLILIK: YasalBelge = {
       ],
     },
     {
-      baslik: '4a. Güncelleme denetimi',
+      baslik: '4a. Telefonundan çıkan üçüncü şey: öneri ve hata bildirimi',
+      paragraflar: [
+        'Ayarlar’daki “Öneri ve hata bildir” ekranından bize bir mesaj yazabilirsin: bir öneri, bozuk bir şeyin tarifi ya da başka bir not. Mesaj yalnızca sen “Gönder” dediğinde telefonundan çıkar; düğmenin hemen üstünde ne gönderileceği yazar. İnternet yoksa mesaj telefonunda bekler, bağlanınca gider. Günde en fazla 5 mesaj gönderilebilir.',
+        'Gönderilen tam liste beş alandır: seçtiğin tür (öneri, hata, başka); yazdığın metin, olduğu gibi; uygulama sürümü; telefonunun üreticisi ve modeli, yanında cihazına verilen rastgele takma ad (3. bölümdekiyle aynı ad); gönderim tarihi.',
+        'Metni sen yazdığın için içine ne koyduğun sana bağlı. Ekran, adını, telefon numaranı ya da başka bir kişisel bilgiyi yazmamanı söyler; bu kutu tek yönlüdür, sana geri dönemeyiz. Yine de yazarsan o bilgi metnin parçası olarak bize ulaşır ve 8. bölümdeki adrese yazarak sildirebilirsin.',
+        'Bu bildirimde gönderilmeyenler, hatalı soru bildirimindekiyle aynıdır: adın, e-postan, telefon numaran, konumun, denemelerin ve netlerin, okul notların, yapılacaklar notların, fotoğrafların, çalışma süren, oyun puanların, kilitli uygulama listen, rehberin, mesajların.',
+        'Mesaj, bize ait ayrı bir Google Formu’na gönderilir ve yanıtlar Google’ın sunucularındaki bir tabloda toplanır. Bağlantı HTTPS ile şifrelenir.',
+      ],
+    },
+    {
+      baslik: '4b. Güncelleme denetimi',
       paragraflar: [
         'Uygulama açılırken telefonundaki Google Play uygulamasına Rabi’nin yeni bir sürümü olup olmadığı sorulur. Bu sorguyu Rabi değil Play yapar ve Play’in zaten bildiği tek şeyi kullanır: uygulamanın paket adı ve kurulu sürümü. Adın, kullanımın ya da başka bir bilgi geçmez. Yeni sürüm varsa ekranın üstünde bir şerit çıkar; indirme ancak sen “Güncelle” dersen ve Play’in kendi onay penceresinden geçerek başlar. Şeridi kapatabilirsin; kapatman kaydedilmez, bir sonraki açılışta yeniden hatırlatılır.',
         'Rabi Play dışından (doğrudan APK olarak) kurulduysa bu denetim çalışmaz ve şerit hiç görünmez.',
@@ -111,7 +121,7 @@ const GIZLILIK: YasalBelge = {
     {
       baslik: '5. İzinler ve neden isteniyor',
       paragraflar: [
-        'İnternet izni yukarıdaki iki gönderim ve Play’in güncelleme denetimi için. Bildirim gönderme izni çalışma hatırlatması ve pomodoro sayacı için; bildirimler telefonunda üretilir, dışarı çıkmaz. Kamera ve galeri sistem seçicisi üzerinden açılır.',
+        'İnternet izni yukarıdaki üç gönderim ve Play’in güncelleme denetimi için. Bildirim gönderme izni çalışma hatırlatması ve pomodoro sayacı için; bildirimler telefonunda üretilir, dışarı çıkmaz. Kamera ve galeri sistem seçicisi üzerinden açılır.',
         'Odak kilidi üç izin kullanır ve hiçbirinden okunan bilgi telefondan çıkmaz: kullanım verisi erişimi hangi uygulamanın ön planda olduğunu anlamak için, diğer uygulamaların üzerinde gösterme uyarı katmanı için, ön plan servisi ise pomodoro turu boyunca sayacı ve kilidi ayakta tutmak için. Xiaomi telefonlarda üreticinin kendi “arka planda açılır pencere” ayarı da açık olmalıdır; bu bir Android izni değil, üstte gösterme izninin o telefonlardaki ek şartıdır.',
         'Rahatsız Etme erişimi isteğe bağlıdır: verirsen pomodoro turu boyunca telefon Rahatsız Etme moduna alınır ve tur bitince önceki ayarına döner; vermezsen odak kilidinin geri kalanı çalışmaya devam eder. Bu izinle bildirimlerin içeriği okunmaz, saklanmaz, gönderilmez — Rabi yalnızca modu açıp kapatır.',
         'Sayaç, telefonun kilit ekranında bir bildirim olarak durur ve o bildirimde aşama ile seçtiğin ders adı (“Çalışma · Matematik” gibi) yazar. Bu, telefon kilitliyken görünen tek Rabi verisidir ve telefondan çıkmaz.',
@@ -121,15 +131,15 @@ const GIZLILIK: YasalBelge = {
     {
       baslik: '6. Üçüncü taraflar',
       paragraflar: [
-        'Rabi’nin veri gönderdiği tek şirket Google’dır ve yalnızca iki durumda: hatalı soru bildirimlerinin toplandığı Google Forms ile gönderdiğin çökme raporlarının toplandığı Firebase Crashlytics. Google bu verileri bizim adımıza ve talimatımızla işler. Güncelleme denetimi (4a) bunlardan ayrıdır: o sorguyu telefonundaki Google Play kendi adına yapar ve Play’in gizlilik politikasına tabidir. Google’ın gizlilik politikası: policies.google.com/privacy',
+        'Rabi’nin veri gönderdiği tek şirket Google’dır ve yalnızca üç durumda: hatalı soru bildirimlerinin ve öneri/hata mesajlarının toplandığı Google Forms ile gönderdiğin çökme raporlarının toplandığı Firebase Crashlytics. Google bu verileri bizim adımıza ve talimatımızla işler. Güncelleme denetimi (4b) bunlardan ayrıdır: o sorguyu telefonundaki Google Play kendi adına yapar ve Play’in gizlilik politikasına tabidir. Google’ın gizlilik politikası: policies.google.com/privacy',
         'Rabi’de reklam ağı yoktur, kullanım analizi aracı yoktur, reklam kimliği okunmaz ve davranışını izleyen başka bir araç bulunmaz. Hiçbir veri satılmaz, kiralanmaz veya pazarlama amacıyla paylaşılmaz. Uygulamada hesap, giriş veya üyelik yoktur.',
       ],
     },
     {
       baslik: '7. Güvenlik',
       paragraflar: [
-        'Telefondaki veriler işletim sisteminin uygulamalara ayırdığı özel alanda tutulur; başka uygulamalar buraya erişemez. Dışarı çıkan iki gönderim de HTTPS/TLS ile şifrelenerek iletilir; şifresiz bağlantı kullanılmaz.',
-        'Bize ulaşan verilere yalnızca uygulamayı geliştiren kişi erişir ve bunlar yalnızca soruları düzeltmek ile hataları gidermek için kullanılır. Bizim işlettiğimiz bir sunucu ya da veri tabanı yoktur.',
+        'Telefondaki veriler işletim sisteminin uygulamalara ayırdığı özel alanda tutulur; başka uygulamalar buraya erişemez. Dışarı çıkan üç gönderim de HTTPS/TLS ile şifrelenerek iletilir; şifresiz bağlantı kullanılmaz.',
+        'Bize ulaşan verilere yalnızca uygulamayı geliştiren kişi erişir ve bunlar yalnızca soruları düzeltmek, hataları gidermek ve önerileri değerlendirmek için kullanılır. Bizim işlettiğimiz bir sunucu ya da veri tabanı yoktur.',
       ],
     },
     {
@@ -138,7 +148,8 @@ const GIZLILIK: YasalBelge = {
         'Telefonundaki veriler sen silene kadar durur. Ayarlar’daki “Tüm veriyi sil” hepsini temizler; uygulamayı kaldırmak da aynı sonucu verir.',
         'Bize ulaşan hatalı soru bildirimleri, soru düzeltilene kadar tutulur ve sonra tablodan silinir. Daha önce silinmesini istersen aşağıdaki adrese yaz — hangi soruları ve yaklaşık hangi tarihlerde bildirdiğini yazman yeterli. Talepler en geç 30 gün içinde sonuçlandırılır.',
         'Firebase Crashlytics, çökme kayıtlarını ve bunlara bağlı kurulum numaralarını 90 gün sonra silmeye başlar. Bir raporun daha önce silinmesini istersen bize yaz.',
-        'Silme talebi için fluxifyinteractive@gmail.com adresine, konuya “Rabi veri silme” yazarak ulaşabilirsin. Rabi’de hesap olmadığı için silinecek bir hesabın yoktur; silinebilecek tek şey yukarıdaki iki kayıt türüdür.',
+        'Bize ulaşan öneri ve hata mesajları, konu ele alınana kadar tutulur ve en geç 1 yıl sonra tablodan silinir. Daha önce silinmesini istersen yaklaşık tarihini ve ne yazdığını belirterek aşağıdaki adrese yaz.',
+        'Silme talebi için fluxifyinteractive@gmail.com adresine, konuya “Rabi veri silme” yazarak ulaşabilirsin. Rabi’de hesap olmadığı için silinecek bir hesabın yoktur; silinebilecek tek şey yukarıdaki üç kayıt türüdür.',
       ],
     },
     {
@@ -152,7 +163,7 @@ const GIZLILIK: YasalBelge = {
       baslik: '10. Haklarınız',
       paragraflar: [
         '6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) ve ilgili mevzuat kapsamında; hakkında veri işlenip işlenmediğini öğrenme, işlenmişse bilgi talep etme, düzeltilmesini veya silinmesini isteme haklarına sahipsin. Bu haklarını kullanmak için fluxifyinteractive@gmail.com adresine yazabilirsin.',
-        'Rabi ad, e-posta veya hesap bilgisi toplamadığı için bize ulaşan kayıtların hangisinin sana ait olduğunu kendiliğimizden bulamıyoruz; talebinde bildirimi yaptığın yaklaşık tarihi ve soruları belirtirsen kaydı bulup silebiliriz.',
+        'Rabi ad, e-posta veya hesap bilgisi toplamadığı için bize ulaşan kayıtların hangisinin sana ait olduğunu kendiliğimizden bulamıyoruz; talebinde bildirimi yaptığın yaklaşık tarihi ve soruları ya da mesajı belirtirsen kaydı bulup silebiliriz.',
       ],
     },
     {
@@ -292,17 +303,18 @@ const SOZLESME: YasalBelge = {
  * Cihazdan ne çıkıyor — Ayarlar'daki iki bölümün taşındığı yer.
  *
  * Bu metin kullanıcıdan gelmiyor, uygulamanın kendi davranışını anlatıyor ve
- * koddaki gerçekle birlikte değişmesi gerekiyor: `lib/hata-gonder.ts` ile
- * `lib/cokme.ts` dışında ağa çıkan bir yol açılırsa buraya da yazılmalı.
+ * koddaki gerçekle birlikte değişmesi gerekiyor: `lib/hata-gonder.ts` (hatalı
+ * soru + öneri/hata mesajı) ile `lib/cokme.ts` dışında ağa çıkan bir yol
+ * açılırsa buraya da yazılmalı.
  */
 const VERI_OZETI: YasalBelge = {
   id: 'veri-ozeti',
   ad: 'Cihazından ne çıkıyor?',
-  ozet: 'İnternete giden iki şey ve ikisi de sana sorularak gidiyor; bir de Play’in sürüm sorgusu',
+  ozet: 'İnternete giden üç şey ve üçü de sana sorularak gidiyor; bir de Play’in sürüm sorgusu',
   bolumler: [
     {
       paragraflar: [
-        'Rabi’nin sunucusu yok. Denemelerin, notların, fotoğrafların, puanların ve ayarların telefonunda duruyor; uygulama onları hiçbir yere göndermiyor. İnternete çıkan yalnızca iki şey var ve ikisi de sen izin vermeden gitmiyor.',
+        'Rabi’nin sunucusu yok. Denemelerin, notların, fotoğrafların, puanların ve ayarların telefonunda duruyor; uygulama onları hiçbir yere göndermiyor. İnternete çıkan yalnızca üç şey var ve üçü de sen izin vermeden gitmiyor.',
       ],
     },
     {
@@ -318,6 +330,13 @@ const VERI_OZETI: YasalBelge = {
       paragraflar: [
         'Uygulama çökerse hata kaydı telefonunda bekliyor; kendiliğinden hiçbir yere gitmiyor. Bir sonraki açılışta gönderilsin mi diye soruluyor — “Gönder” dersen gidiyor, “Gönderme” dersen siliniyor.',
         'Giden şey bir hata kaydı: hatanın hangi satırda olduğu, telefonunun modeli, Android ve uygulama sürümü. Adın, denemelerin, notların ve fotoğrafların gönderilmiyor.',
+      ],
+    },
+    {
+      baslik: 'Öneri ve hata mesajların',
+      paragraflar: [
+        'Ayarlar’daki “Öneri ve hata bildir” ekranından yazdığın mesaj, sen “Gönder” demeden gitmiyor. Giden şey: seçtiğin tür, yazdığın metin, uygulama sürümü, telefonunun modeli ve cihazına verilen rastgele ad, bir de tarih.',
+        'Metni sen yazıyorsun; içine adını ya da telefonunu yazma, sana geri dönemeyiz. İnternet yoksa mesaj bekliyor, bağlanınca gidiyor.',
       ],
     },
     {

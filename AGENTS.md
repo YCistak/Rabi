@@ -22,7 +22,17 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
     kart "Gönder" denmeden hiçbir şey ağa çıkmıyor. Ayarlarda ayrıca bir
     açma/kapama anahtarı vardı, kaldırıldı: bildirim bayrağa basıp sebep
     seçmeden zaten oluşmuyor ve aynı karar iki ayrı yerde tutuluyordu.
-    Bu istisnayı genişletme.
+    Aynı dosyadan çıkan ikinci kayıt türü **öneri/hata bildirimi**
+    (`lib/geri-bildirim.ts` saf mantık, `lib/geri-bildirim-kolu.ts` kuyruk,
+    `components/ekranlar/geri-bildirim.tsx` ekran; ayrı bir Google Form,
+    adresi `lib/veri/geri-bildirim-adresi.ts`). Play yorumları bunun yerini
+    tutmuyordu: yorumda sürüm ve telefon yazmıyor, cevap da verilemiyor.
+    Giden beş alan `geriBildirimFormVerisi()` içinde sayılı; biri serbest
+    metin ve ekran kullanıcıya kişisel bilgi yazmamasını söylüyor. İzin kartı
+    yok — kullanıcı metni yazıp "Gönder"e basıyor, liste düğmenin üstünde.
+    Bu istisnayı bu iki kayıt türünün ötesine genişletme; alan eklersen
+    ekrandaki liste, `lib/veri/yasal.ts`, `public/gizlilik/index.html` ve
+    Play'in Data Safety formu birlikte değişmeli.
   - **İkinci istisna: çökme raporları.** WebView uygulamasında çökmenin sebebi
     çoğu zaman uygulamanın kendi kodu değil, cihazdaki Android System WebView
     sürümü oluyor; bunu kullanıcıdan öğrenmenin yolu yok. Firebase Crashlytics

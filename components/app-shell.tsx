@@ -44,6 +44,7 @@ import { hatirlatmaIptal, hatirlatmaPlanla, pomodoroIptal } from '@/lib/bildirim
 import { odakKilidiniBitir } from '@/lib/odak-kilidi'
 import { bekleyenSayisi } from '@/lib/hata-bildirimi'
 import { useHataBildirimi } from '@/lib/hata-kuyrugu'
+import { useGeriBildirim } from '@/lib/geri-bildirim-kolu'
 import { useCokmeRaporu } from '@/lib/cokme-izni'
 import { CokmeSorusu } from '@/components/cokme-sorusu'
 import { useGuncelleme } from '@/lib/guncelleme-kolu'
@@ -64,6 +65,7 @@ import { DenemelerEkrani } from '@/components/ekranlar/denemeler'
 import { YeniDenemeEkrani } from '@/components/ekranlar/yeni-deneme'
 import { IstatistikEkrani } from '@/components/ekranlar/istatistik'
 import { YasalEkrani } from '@/components/ekranlar/yasal'
+import { GeriBildirimEkrani } from '@/components/ekranlar/geri-bildirim'
 import { OkulEkrani } from '@/components/ekranlar/okul'
 import { AyarlarEkrani } from '@/components/ekranlar/ayarlar'
 import { SoruTakibiEkrani } from '@/components/ekranlar/soru-takibi'
@@ -246,6 +248,7 @@ export function AppShell() {
    * içinde; buradan yalnızca ayarın açık olup olmadığı geçiyor.
    */
   const hataBildirimi = useHataBildirimi()
+  const geriBildirim = useGeriBildirim()
   /**
    * Çökme raporlaması. Global JS hata yakalayıcısını da bu kanca kuruyor,
    * onaydan bağımsız olarak — yakalanan hata onay yokken zaten hiçbir yere
@@ -836,6 +839,7 @@ export function AppShell() {
               />
             )}
             {ekran === 'yasal' && <YasalEkrani />}
+            {ekran === 'geri-bildirim' && <GeriBildirimEkrani kol={geriBildirim} />}
           </>
         ) : (
           <>
@@ -900,6 +904,8 @@ export function AppShell() {
                 setAyarlar={setAyarlar}
                 bekleyenBildirim={bekleyenSayisi(hataBildirimi.bildirimler)}
                 onYasalAc={() => setEkran('yasal')}
+                onGeriBildirimAc={() => setEkran('geri-bildirim')}
+                bekleyenGeriBildirim={geriBildirim.bekleyen}
                 yedeklenecek={{
                   denemeler,
                   okulYillari,

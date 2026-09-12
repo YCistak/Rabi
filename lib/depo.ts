@@ -97,6 +97,11 @@ export const ANAHTARLAR = {
    */
   hataBildirimleri: 'rabi-hata-bildirimleri',
   /**
+   * Öneri ve hata bildirimleri — gönderim kuyruğu. Yedeğe girmiyor,
+   * `hataBildirimleri` ile aynı sebepten.
+   */
+  geriBildirimler: 'rabi-geri-bildirimler',
+  /**
    * Bildirimleri gruplamaya yarayan okunur cihaz adı (`mavi-tavsan-42`);
    * yedeğe girmiyor.
    *
