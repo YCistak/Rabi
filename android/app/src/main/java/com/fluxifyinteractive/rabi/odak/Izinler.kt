@@ -57,6 +57,75 @@ object Izinler {
 
     fun hepsiVar(baglam: Context): Boolean = kullanimVerisiVar(baglam) && katmanVar(baglam)
 
+    /** MIUI/HyperOS mu — `ro.miui.ui.version.name` yalnızca Xiaomi'de dolu. */
+    private val miui: Boolean by lazy { sistemOzelligi("ro.miui.ui.version.name").isNotBlank() }
+
+    /**
+     * Xiaomi'nin kendi izni: "Arka planda çalışırken açılır pencere göster".
+     *
+     * MIUI/HyperOS'ta üste çizme izni tek başına yetmiyor. Uygulama önde
+     * değilken — kilit için tam da o an — `TYPE_APPLICATION_OVERLAY`
+     * penceresi bu izin olmadan **sessizce** görünmüyor: `addView` hata
+     * fırlatmıyor, pencere ekrana gelmiyor. Sonuç, izinleri vermiş kullanıcının
+     * Rabi'yi alta alıp yasaklı uygulamayı engelsiz açabilmesiydi.
+     *
+     * Bu bir AOSP izni değil, `AppOpsManager`'da sayısı 10021 olan MIUI'ye özgü
+     * bir işlem; sabitin adı olmadığı için yansımayla soruluyor. Xiaomi
+     * olmayan cihazda ve sorgu başarısız olursa "var" dönülüyor: yanlış bir
+     * "yok", her cihazda gereksiz bir izin satırı çıkarırdı.
+     */
+    fun arkaPlanPencereVar(baglam: Context): Boolean {
+        if (!miui) return true
+        val ops = baglam.getSystemService(Context.APP_OPS_SERVICE) as? AppOpsManager ?: return true
+        return try {
+            val sorgu = AppOpsManager::class.java.getMethod(
+                "checkOpNoThrow",
+                Int::class.javaPrimitiveType,
+                Int::class.javaPrimitiveType,
+                String::class.java,
+            )
+            sorgu.invoke(ops, MIUI_ARKA_PLAN_PENCERE, Process.myUid(), baglam.packageName) ==
+                AppOpsManager.MODE_ALLOWED
+        } catch (hata: Exception) {
+            true
+        }
+    }
+
+    /**
+     * Xiaomi'nin uygulama izin düzenleyicisi; satır orada "Arka planda çalışırken
+     * açılır pencere göster" diye geçiyor. Etkinlik adı sürümden sürüme
+     * değişebildiği için açılamazsa uygulama bilgi sayfasına düşülüyor —
+     * oradan da "Diğer izinler" ile aynı yere gidiliyor.
+     */
+    fun arkaPlanPencereEkraniniAc(baglam: Context): Boolean {
+        val duzenleyici = Intent("miui.intent.action.APP_PERM_EDITOR").apply {
+            setClassName(
+                "com.miui.securitycenter",
+                "com.miui.permcenter.permissions.PermissionsEditorActivity",
+            )
+            putExtra("extra_pkgname", baglam.packageName)
+        }
+        if (ekraniAc(baglam, duzenleyici)) return true
+        return ekraniAc(
+            baglam,
+            Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.parse("package:${baglam.packageName}"),
+            ),
+        )
+    }
+
+    /** `android.os.SystemProperties` gizli; yansımayla okunuyor, okunamazsa boş. */
+    private fun sistemOzelligi(ad: String): String = try {
+        val sinif = Class.forName("android.os.SystemProperties")
+        sinif.getMethod("get", String::class.java).invoke(null, ad) as? String ?: ""
+    } catch (hata: Exception) {
+        ""
+    }
+
+    /** MIUI'nin `OP_BACKGROUND_START_ACTIVITY` işlemi — arka planda pencere açma. */
+    private const val MIUI_ARKA_PLAN_PENCERE = 10021
+
     fun kullanimVerisiEkraniniAc(baglam: Context): Boolean =
         ekraniAc(baglam, Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
 

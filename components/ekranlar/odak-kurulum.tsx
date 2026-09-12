@@ -33,6 +33,7 @@ export function OdakKurulum({
   const [durum, setDurum] = useState<OdakDurumu>({
     kullanimVerisi: false,
     katman: false,
+    arkaPlanPencere: true,
     rahatsizEtme: false,
     calisiyor: false,
   })
@@ -124,6 +125,18 @@ export function OdakKurulum({
               verildi={durum.katman}
               onAc={() => izinAc('katman')}
             />
+            {/* Yalnızca Xiaomi'de var: MIUI/HyperOS üste çizme iznini uygulama
+                arka plandayken ayrıca bir izne bağlıyor ve o olmadan engel
+                ekranı sessizce hiç görünmüyor. Öteki cihazlarda satır çıkmıyor. */}
+            {!durum.arkaPlanPencere && (
+              <IzinSatiri
+                Simge={Layers}
+                ad="Arka planda açılır pencere (Xiaomi)"
+                aciklama='Açılan listede "Arka planda çalışırken açılır pencere göster" satırını aç'
+                verildi={durum.arkaPlanPencere}
+                onAc={() => izinAc('arkaPlanPencere')}
+              />
+            )}
             {/* Üçüncüsü isteğe bağlı ve öyle de yazıyor: verilmezse kilit
                 çalışmaya devam ediyor, yalnızca telefon susmuyor. */}
             <IzinSatiri
@@ -152,7 +165,7 @@ export function OdakKurulum({
               görebilir&rdquo;); o uyarı bu izni isteyen her uygulamaya çıkıyor.
             </Not>
 
-            {!durum.kullanimVerisi || !durum.katman ? (
+            {!durum.kullanimVerisi || !durum.katman || !durum.arkaPlanPencere ? (
               <Not tur="uyari">
                 İzinler sistem ayarlarında veriliyor; açtıktan sonra geri dön.
               </Not>
@@ -187,7 +200,9 @@ export function OdakKurulum({
           <Buton
             className="flex-1"
             onClick={() => setAdim((a) => a + 1)}
-            disabled={adim === 1 && (!durum.kullanimVerisi || !durum.katman)}
+            disabled={
+              adim === 1 && (!durum.kullanimVerisi || !durum.katman || !durum.arkaPlanPencere)
+            }
           >
             {adim === 0 ? 'Kuralım' : 'Devam'}
             <ArrowRight size={18} aria-hidden />
