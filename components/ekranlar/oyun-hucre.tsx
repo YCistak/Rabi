@@ -22,11 +22,12 @@ import {
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
-import { hucredenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { hucredenBanka, bankaKimligi, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
 import {
   elerMi,
   soruSuresi,
   turSirasi,
+  TUR_SORU_SINIRI,
   akisUzunlugu,
   akisiEsle,
   tekAkis,
@@ -117,6 +118,7 @@ export function HucreOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler,
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
@@ -132,6 +134,8 @@ export function HucreOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  /** Yakın turlarda sorulan soru kimlikleri — yenisi öne alınıyor (`lib/oyunlar/gecmis.ts`). */
+  gorulenler: readonly string[]
 }) {
   const oyun = oyunBul('hucre')
 
@@ -195,7 +199,10 @@ export function HucreOyunuEkrani({
     setSorular(
       bankaTuru
         ? tekAkis(turHazirla(havuz))
-        : sirayiKur(turSirasi(HUCRE_HAVUZU)),
+        : sirayiKur(turSirasi(HUCRE_HAVUZU, Math.random, TUR_SORU_SINIRI, {
+              gorulenler,
+              anahtar: (s) => bankaKimligi(hucredenBanka(s)),
+            })),
     )
     zorluguSifirla()
     setSira(0)
@@ -206,7 +213,7 @@ export function HucreOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluguSifirla])
+  }, [bankaTuru, gorulenler, havuz, istatistik.enIyiDogru, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<OrganelSorusu>[], yarim = false) => {

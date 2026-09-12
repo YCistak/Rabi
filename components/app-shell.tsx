@@ -42,6 +42,7 @@ import { egitimYili, gunlukToplam, ilerlemisSinif } from '@/lib/hesap'
 import { bildirilecekler, rozetDurumu, yeniRozetler, type Rozet } from '@/lib/rozetler'
 import { hatirlatmaIptal, hatirlatmaPlanla, pomodoroIptal } from '@/lib/bildirim'
 import { odakKilidiniBitir } from '@/lib/odak-kilidi'
+import type { SoruGecmisi } from '@/lib/oyunlar/gecmis'
 import { bekleyenSayisi } from '@/lib/hata-bildirimi'
 import { useHataBildirimi } from '@/lib/hata-kuyrugu'
 import { useCokmeRaporu } from '@/lib/cokme-izni'
@@ -162,6 +163,7 @@ export function AppShell() {
     {},
   )
   const [oyunGecmisi, setOyunGecmisi] = useYerelDepo<OyunTurKaydi[]>(ANAHTARLAR.oyunGecmisi, [])
+  const [soruGecmisi, setSoruGecmisi] = useYerelDepo<SoruGecmisi>(ANAHTARLAR.soruGecmisi, {})
   /*
     Haftalık özetin takvimi.
 
@@ -867,6 +869,8 @@ export function AppShell() {
                 kayitlar={oyunlar}
                 setKayitlar={setOyunlar}
                 setGecmis={setOyunGecmisi}
+                soruGecmisi={soruGecmisi}
+                setSoruGecmisi={setSoruGecmisi}
                 banka={oyunBankasi}
                 onBankadanDustu={bankadanDustu}
                 setBanka={setOyunBankasi}

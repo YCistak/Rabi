@@ -45,6 +45,8 @@ export const ANAHTARLAR = {
   rozetler: 'rabi-rozetler',
   oyunlar: 'rabi-oyunlar',
   oyunGecmisi: 'rabi-oyun-gecmisi',
+  /** Oyun başına yakın zamanda sorulan soru kimlikleri (`lib/oyunlar/gecmis.ts`). */
+  soruGecmisi: 'rabi-soru-gecmisi',
   /** Oyun Bankası — mini oyunlarda karıştırılan sorular. */
   oyunBankasi: 'rabi-oyun-bankasi',
   /**

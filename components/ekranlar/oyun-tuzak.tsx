@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
 import type { OyunIstatistigi } from '@/lib/types'
-import { TUZAK_KONU_ADI, type TuzakKurali } from '@/lib/oyunlar/tuzak-havuzu'
+import { TUZAK_HAVUZU, TUZAK_KONU_ADI, type TuzakKurali } from '@/lib/oyunlar/tuzak-havuzu'
 import {
   bankadanSorular,
   cevapDogruMu,
@@ -20,7 +20,7 @@ import {
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
-import { tuzaktanBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { tuzaktanBanka, bankaKimligi, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
 import {
   TUR_SORU_SINIRI,
   akisUret,
@@ -92,6 +92,7 @@ export function TuzakOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler,
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
@@ -107,6 +108,8 @@ export function TuzakOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  /** Yakın turlarda sorulan soru kimlikleri — yenisi öne alınıyor (`lib/oyunlar/gecmis.ts`). */
+  gorulenler: readonly string[]
 }) {
   const oyun = oyunBul('tuzak')
 
@@ -165,7 +168,14 @@ export function TuzakOyunuEkrani({
     setSorular(
       bankaTuru
         ? tekAkis(bankadanSorular(havuz))
-        : akisUret((seviye) => tuzakTuruHazirla(TUR_SORUSU, seviye)),
+        : akisUret((seviye) =>
+            tuzakTuruHazirla(TUR_SORUSU, seviye, TUZAK_HAVUZU, Math.random, {
+              gorulenler,
+              // Kimlik kuralın doğru hâlinden geliyor; kartın hangi yüzü
+              // gösterdiği fark etmiyor, o yüzden `dogruHali` uydurma.
+              anahtar: (kural) => bankaKimligi(tuzaktanBanka({ kural, dogruHali: true })),
+            }),
+          ),
     )
     zorluguSifirla()
     setSira(0)
@@ -175,7 +185,7 @@ export function TuzakOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluguSifirla])
+  }, [bankaTuru, gorulenler, havuz, istatistik.enIyiDogru, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<TuzakSorusu>[], yarim = false) => {

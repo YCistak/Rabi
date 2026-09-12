@@ -11,7 +11,7 @@ import {
   ILLER,
   type Il,
 } from '@/lib/oyunlar/harita-havuzu'
-import { ilBul, soruKur, type HaritaSorusu } from '@/lib/oyunlar/harita'
+import { ilBul, soruKur, type HaritaSorusu, type HaritaTipi } from '@/lib/oyunlar/harita'
 import {
   EN_COK_OLCEK,
   gorunumBoyu,
@@ -25,11 +25,12 @@ import {
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
-import { haritadanBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { haritadanBanka, bankaKimligi, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
 import {
   elerMi,
   soruSuresi,
   turSirasi,
+  TUR_SORU_SINIRI,
   akisUzunlugu,
   akisiEsle,
   tekAkis,
@@ -54,6 +55,9 @@ import {
   type Eleme,
 } from '@/components/oyun-kabuk'
 import { OyunTanitim } from '@/components/oyun-tanitim'
+
+/** Aynı il iki tiple kaydediliyor; geçmişte ikisinden biri görüldüyse il görülmüş sayılıyor. */
+const HARITA_TIPLERI: readonly HaritaTipi[] = ['bul', 'sec']
 
 /** Cevaptan sonra doğrusunun haritada görünmesi için beklenen süre. */
 const CEVAP_BEKLEMESI = 1400
@@ -91,6 +95,7 @@ export function HaritaOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler,
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
@@ -105,6 +110,8 @@ export function HaritaOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  /** Yakın turlarda sorulan soru kimlikleri — yenisi öne alınıyor (`lib/oyunlar/gecmis.ts`). */
+  gorulenler: readonly string[]
 }) {
   const oyun = oyunBul('harita')
 
@@ -163,7 +170,10 @@ export function HaritaOyunuEkrani({
     setSorular(
       bankaTuru
         ? tekAkis(havuz)
-        : akisiEsle(turSirasi(ILLER), (sorular) => sorular.map((soru) => soruKur(soru))),
+        : akisiEsle(turSirasi(ILLER, Math.random, TUR_SORU_SINIRI, {
+              gorulenler,
+              anahtar: (s) => HARITA_TIPLERI.map((tip) => bankaKimligi(haritadanBanka({ tip, il: s }))),
+            }), (sorular) => sorular.map((soru) => soruKur(soru))),
     )
     zorluguSifirla()
     setSira(0)
@@ -173,7 +183,7 @@ export function HaritaOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluguSifirla])
+  }, [bankaTuru, gorulenler, havuz, istatistik.enIyiDogru, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<HaritaSorusu>[], yarim = false) => {

@@ -15,11 +15,12 @@ import {
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
-import { sozdenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { sozdenBanka, bankaKimligi, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
 import {
   elerMi,
   soruSuresi,
   turSirasi,
+  TUR_SORU_SINIRI,
   akisUzunlugu,
   akisiEsle,
   tekAkis,
@@ -102,6 +103,7 @@ export function SozOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler,
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
@@ -117,6 +119,8 @@ export function SozOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  /** Yakın turlarda sorulan soru kimlikleri — yenisi öne alınıyor (`lib/oyunlar/gecmis.ts`). */
+  gorulenler: readonly string[]
 }) {
   const oyun = oyunBul('soz')
 
@@ -183,7 +187,10 @@ export function SozOyunuEkrani({
     setSorular(
       bankaTuru
         ? tekAkis(turHazirla(havuz))
-        : sirayiKur(turSirasi(SOZ_HAVUZU)),
+        : sirayiKur(turSirasi(SOZ_HAVUZU, Math.random, TUR_SORU_SINIRI, {
+              gorulenler,
+              anahtar: (s) => bankaKimligi(sozdenBanka(s)),
+            })),
     )
     zorluguSifirla()
     setSira(0)
@@ -193,7 +200,7 @@ export function SozOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluguSifirla])
+  }, [bankaTuru, gorulenler, havuz, istatistik.enIyiDogru, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<SozSorusu>[], yarim = false) => {

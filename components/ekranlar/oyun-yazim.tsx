@@ -30,6 +30,7 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import {
+  bankaKimligi,
   noktalamadanBanka,
   yazimdanBanka,
   type BankaCevabi,
@@ -160,6 +161,7 @@ export function YazimOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler,
 }: {
   istatistik: OyunIstatistigi
   /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
@@ -176,6 +178,8 @@ export function YazimOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  /** Yakın turlarda sorulan soru kimlikleri — yenisi öne alınıyor (`lib/oyunlar/gecmis.ts`). */
+  gorulenler: readonly string[]
 }) {
   const oyun = oyunBul('yazim')
 
@@ -250,7 +254,13 @@ export function YazimOyunuEkrani({
     setSorular(
       bankaTuru
         ? tekAkis(turHazirla(bankaHavuzu))
-        : akisUret((seviye) => turHazirla(zorluktaHavuz(seviye))),
+        : akisUret((seviye) =>
+            turHazirla(zorluktaHavuz(seviye), Math.random, {
+              gorulenler,
+              yazim: (s) => bankaKimligi(yazimdanBanka(s)),
+              noktalama: (s) => bankaKimligi(noktalamadanBanka(s)),
+            }),
+          ),
     )
     zorluguSifirla()
     setSira(0)
@@ -260,7 +270,7 @@ export function YazimOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru, zorluguSifirla])
+  }, [bankaHavuzu, bankaTuru, gorulenler, istatistik.enIyiDogru, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<SoruIcerigi>[], yarim = false) => {

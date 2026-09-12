@@ -24,6 +24,7 @@
 import type { OyunId } from '../types'
 import { MODLAR, type OyunModu } from './mod'
 import { karistir } from './tur'
+import { yakinlariSonaAt, type Anahtar } from './gecmis'
 
 export type Zorluk = 'kolay' | 'orta' | 'zor'
 
@@ -215,11 +216,23 @@ export function zorluktaSuz<T extends { zorluk: Zorluk }>(
 }
 
 /**
+ * Önceki turlardan devralınan geçmiş: hangi sorular yakınlarda soruldu ve
+ * havuzdaki bir soru o kayıtta hangi kimlikle anılıyor (`gecmis.ts`).
+ */
+export type TurGecmisi<T> = {
+  gorulenler: readonly string[]
+  anahtar: Anahtar<T>
+}
+
+/**
  * Turun soru şeritleri.
  *
  * Her şerit karıştırılıp sırayla tüketiliyor; tükenirse baştan dönülüyor —
  * sınırsız turda kaçınılmaz, ama tekrar ancak havuzun tamamı bittikten sonra
  * başlıyor.
+ *
+ * `gecmis` verilirse yakın turlarda görülen sorular şeridin sonuna atılıyor;
+ * karıştırma yine yapılıyor, geçmiş yalnızca görülmeyenleri öne alıyor.
  *
  * Bir zorlukta hiç soru yoksa (küçük havuzlarda olabilir) o şerit tüm havuzdan
  * kuruluyor: oyunun ortasında durmak, bir soru fazla kolay gelmesinden kötü.
@@ -228,11 +241,12 @@ export function turSirasi<T extends { zorluk: Zorluk }>(
   havuz: readonly T[],
   rastgele: () => number = Math.random,
   sinir: number = TUR_SORU_SINIRI,
+  gecmis?: TurGecmisi<T>,
 ): SoruAkisi<T> {
   return {
-    kolay: serit(zorluktaSuz(havuz, 'kolay'), havuz, rastgele, sinir),
-    orta: serit(zorluktaSuz(havuz, 'orta'), havuz, rastgele, sinir),
-    zor: serit(zorluktaSuz(havuz, 'zor'), havuz, rastgele, sinir),
+    kolay: serit(zorluktaSuz(havuz, 'kolay'), havuz, rastgele, sinir, gecmis),
+    orta: serit(zorluktaSuz(havuz, 'orta'), havuz, rastgele, sinir, gecmis),
+    zor: serit(zorluktaSuz(havuz, 'zor'), havuz, rastgele, sinir, gecmis),
   }
 }
 
@@ -288,14 +302,21 @@ export function akisUzunlugu<T>(akis: SoruAkisi<T>): number {
   return Math.min(akis.kolay.length, akis.orta.length, akis.zor.length)
 }
 
-/** Süzülmüş havuz boşsa tamamına düşer; karıştırıp sınıra kadar döndürür. */
+/**
+ * Süzülmüş havuz boşsa tamamına düşer; karıştırıp sınıra kadar döndürür.
+ *
+ * Geçmiş karıştırmadan **sonra** uygulanıyor: görülmeyenlerin kendi arasındaki
+ * sıra karışık kalmalı, geçmiş yalnızca görülenleri arkaya itmeli.
+ */
 function serit<T>(
   suzulmus: readonly T[],
   tamami: readonly T[],
   rastgele: () => number,
   sinir: number,
+  gecmis?: TurGecmisi<T>,
 ): T[] {
-  const kaynak = karistir(suzulmus.length > 0 ? suzulmus : tamami, rastgele)
+  const karisik = karistir(suzulmus.length > 0 ? suzulmus : tamami, rastgele)
+  const kaynak = gecmis ? yakinlariSonaAt(karisik, gecmis.gorulenler, gecmis.anahtar) : karisik
   if (kaynak.length === 0) return []
   return Array.from({ length: sinir }, (_, i) => kaynak[i % kaynak.length])
 }
