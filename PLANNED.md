@@ -512,3 +512,89 @@ uygulamada çökme raporu hiç çalışmaz.**
   sürümünün `versionCode 10000` olacağını yazıyor, `android/app/build.gradle`
   ise `55` diyor. Bu Crashlytics işinin parçası değil, dokunmadım — ama Play'e
   yüklemeden önce hangisinin doğru olduğuna karar vermen gerekiyor.
+
+---
+
+## Firestore kuralları — bildirimler
+
+**Durum: kod hazır, konsol tarafı bekliyor (12 Eylül 2026).** Hatalı soru
+bildirimleri ve öneri/hata mesajları Google Form yerine Firestore'a
+yazılıyor (`lib/hata-gonder.ts`, `lib/veri/firestore-adresi.ts`). Kod
+`PROJE_KIMLIGI` ve `API_ANAHTARI` boşken hiçbir şey göndermiyor.
+
+### Neden kural, neden anahtar değil
+
+Web API anahtarı APK'dan sökülebilir; Firebase bunu zaten varsayıyor. Yazma
+izni tümüyle aşağıdaki kurala dayanıyor: yalnızca `create`, yalnızca sayılı
+alanlar, her alan metin ve boyu sınırlı. Okuma/güncelleme/silme herkese
+kapalı — uygulama kendi yazdığını bile okuyamıyor, bu yüzden bir kullanıcı
+başka bir kullanıcının kaydına ulaşamıyor.
+
+### Kural metni (Firebase konsolu → Firestore Database → Rules)
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function metin(alan, enCok) {
+      return request.resource.data[alan] is string
+        && request.resource.data[alan].size() <= enCok;
+    }
+
+    match /hatali-sorular/{belge} {
+      allow read, update, delete: if false;
+      allow create: if
+        request.resource.data.keys().hasOnly(['kimlik', 'oyun', 'soru', 'cevap', 'sebep', 'surum', 'cihaz'])
+        && request.resource.data.keys().hasAll(['kimlik', 'oyun', 'soru', 'cevap', 'sebep', 'surum', 'cihaz'])
+        && metin('kimlik', 200) && metin('oyun', 40) && metin('soru', 2000)
+        && metin('cevap', 500) && metin('sebep', 40) && metin('surum', 40)
+        && metin('cihaz', 120);
+    }
+
+    match /geri-bildirimler/{belge} {
+      allow read, update, delete: if false;
+      allow create: if
+        request.resource.data.keys().hasOnly(['tur', 'metin', 'surum', 'cihaz', 'tarih'])
+        && request.resource.data.keys().hasAll(['tur', 'metin', 'surum', 'cihaz', 'tarih'])
+        && metin('tur', 20) && metin('metin', 1000) && metin('surum', 40)
+        && metin('cihaz', 120) && metin('tarih', 40);
+    }
+
+    match /{diger=**} {
+      allow read, write: if false;
+    }
+  }
+}
+```
+
+Alan listeleri `formVerisi()` (`lib/hata-bildirimi.ts`) ve
+`geriBildirimFormVerisi()` (`lib/geri-bildirim.ts`) ile **birebir** aynı olmak
+zorunda; biri değişince kural da değişmeli, yoksa gönderim 403 ile düşer ve
+kayıtlar cihazda birikir. `metin` sınırı 1000, `METIN_EN_COK` ile aynı.
+
+### Sınır
+
+Kural spam'i engellemiyor, yalnızca çöpün şeklini sınırlıyor. Firestore'un
+ücretsiz kotası günde 20 bin yazma; bir kötü niyetli kişi bunu doldurabilir.
+Olursa: anahtarı GCP konsolundan Android imzasına kısıtla (aşağıda), o da
+yetmezse App Check. Şimdilik ikisi de gereksiz — uygulamanın kullanıcı sayısı
+bunu hak etmiyor.
+
+### Senin yapacakların
+
+1. Firebase konsolu → **Firestore Database → Create database** → production
+   mode → konum `europe-west` (bir kez seçiliyor, sonra değişmiyor).
+2. **Rules** sekmesine yukarıdaki metni yapıştır → Publish.
+3. Proje ayarları → Genel: **Proje kimliği** ve **Web API anahtarı**nı
+   `lib/veri/firestore-adresi.ts` içine yaz.
+4. Google Cloud konsolu → APIs & Services → Credentials → o anahtar →
+   **API restrictions: Cloud Firestore API** (yalnızca bu). Application
+   restrictions şimdilik None — Android kısıtı REST çağrısında `X-Android-*`
+   başlıkları ister, kod onları göndermiyor.
+5. Telefonda dene: bayrakla bir soru bildir ve Ayarlar → Destek'ten bir mesaj
+   yaz; konsolda `hatali-sorular` ve `geri-bildirimler` koleksiyonlarında
+   belge görünmeli. 403 görürsen kural, 400 görürsen alan adı uyuşmuyor.
+6. Eski Google Form'lar artık kullanılmıyor; içindeki bildirimleri
+   okuduktan sonra formu kapatabilirsin. Eski sürümdeki kullanıcılar
+   güncellenene kadar form adresine göndermeye devam eder — formu hemen
+   silme, birkaç sürüm bekle.

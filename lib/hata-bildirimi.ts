@@ -183,10 +183,9 @@ export function bekleyenSayisi(liste: HataBildirimi[]): number {
 /**
  * Gönderilecek alanlar.
  *
- * Burada biten liste **tam olarak** dışarı çıkan veridir; `entry.NNN`
- * eşlemesi `lib/veri/bildirim-adresi.ts` içinde. Ayrı durmalarının sebebi
- * gözden geçirilebilirlik: bu fonksiyona bakan biri ne gönderildiğini form
- * numaralarını okumadan görüyor.
+ * Burada biten liste **tam olarak** dışarı çıkan veridir; alan adları
+ * Firestore belgesine olduğu gibi yazılıyor ve kural (`PLANNED.md`) yalnızca
+ * bu adları kabul ediyor — alan eklersen kuralı da güncelle.
  */
 export function formVerisi(
   b: HataBildirimi,

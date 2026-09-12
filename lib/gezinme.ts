@@ -29,6 +29,8 @@ export type Ekran =
   | 'konu'
   /** Gizlilik ve Koşullar — yalnızca Ayarlar'dan açılıyor, kart menüsünde yok. */
   | 'yasal'
+  /** Öneri ve hata bildir — o da yalnızca Ayarlar'dan. */
+  | 'geri-bildirim'
 
 /** Kutucuk zeminleri — tasarımdaki aileler. */
 export type KartRengi = 'mavi' | 'pembe' | 'krem' | 'nane' | 'lavanta' | 'deniz'
