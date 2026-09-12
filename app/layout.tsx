@@ -82,12 +82,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           viewport'tan bir iki piksel geniş bırakıyor, sayfa yana kayıyor ve
           `position: fixed` alt menü ekrana değil o geniş düzene yapışıyordu.
 
-          `TABLET_TABAN` telefon genişliği (430) değil, biraz üstü: tablet
-          4:3'e yakın olduğu için 430'a ölçeklenince ekrana çok az satır
-          sığıyor, sürekli kaydırmak gerekiyordu. 520'de kartlar telefondaki
-          gibi tek sütun kalıyor (`max-w-md` = 448) ama yazı 1,9 yerine ~1,6
-          kat büyüyor. Kısa kenar 600 px'in altındaysa (telefon) hiçbir şey
-          değişmiyor.
+          `TABLET_TABAN` = 430, en geniş telefonun CSS genişliği: tablette
+          düzen tam telefondaki gibi kuruluyor, sadece büyük. `ESIK` = 480:
+          telefonlar 360–430 arasında, 8" tabletler 533'ten başlıyor (800 px
+          fiziksel / 1,5 dpr); 600 alınsaydı küçük tabletler telefon
+          sayılırdı. Kısa kenar eşiğin altındaysa hiçbir şey değişmiyor.
 
           Hidrasyondan önce, satır içi: React beklenirse ilk kare dar
           düzende çizilip sonra zıplıyor.
@@ -95,7 +94,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){
-  var TABLET_TABAN = 520, ESIK = 600;
+  var TABLET_TABAN = 430, ESIK = 480;
   var kisa = Math.min(screen.width, screen.height);
   if (kisa < ESIK) return;
   var olcek = kisa / TABLET_TABAN;
