@@ -59,7 +59,7 @@ const GIZLILIK: YasalBelge = {
   id: 'gizlilik',
   ad: 'Gizlilik Politikası',
   ozet: 'Hangi veriyi tutuyoruz, nereye gidiyor',
-  yururlukTarihi: '2026-09-06',
+  yururlukTarihi: '2026-09-12',
   bolumler: [
     {
       paragraflar: [
@@ -72,14 +72,14 @@ const GIZLILIK: YasalBelge = {
       paragraflar: [
         'Rabi’nin kullandığı verinin neredeyse tamamı yalnızca telefonunda, uygulamanın kendi özel alanında durur. Hiçbir sunucuya gönderilmez; Fluxify Interactive bunları göremez.',
         'Telefonunda duranlar: ayarlarda yazdığın ad, sınıfın, alanın ve hedeflerin; deneme sonuçların, netlerin, şablonların, okul notların ve devamsızlığın; yanlış soru kayıtların ve bunlara eklediğin fotoğraflar; çalışma sayacı geçmişin, günlük kayıtların ve başarımların; mini oyun istatistiklerin, Oyun Bankası’n ve zorluk tercihlerin; yapılacaklar tahtasındaki notların; odak kilidinde seçtiğin uygulama listesi; ve cihazına verilen rastgele takma ad.',
-        'Uygulamayı silersen bunların tamamı telefonundan silinir. Uygulama içinden de Ayarlar’daki “Tüm veriyi sil” ile temizleyebilirsin. Yedek alırsan dosya senin telefonuna iner; onu kiminle paylaşacağına yalnızca sen karar verirsin.',
+        'Uygulamayı silersen bunların tamamı telefonundan silinir. Uygulama içinden de Ayarlar’daki “Tüm veriyi sil” ile temizleyebilirsin. Android’in otomatik uygulama yedeği Rabi için kapalıdır: verin Google hesabına ya da telefon yedeğine kopyalanmaz, telefon değiştirdiğinde kendiliğinden taşınmaz. Yedek alırsan (Ayarlar’daki “Yedeği indir”) dosya telefonunun İndirilenler klasörüne iner; o klasörü başka uygulamalar da okuyabilir ve dosyayı kiminle paylaşacağına yalnızca sen karar verirsin.',
       ],
     },
     {
-      baslik: '2. Kamera, fotoğraflar ve metin okuma',
+      baslik: '2. Kamera ve fotoğraflar',
       paragraflar: [
-        'Yanlış soru eklerken veya deneme kâğıdını okuturken telefonunun kamerası ya da galerisi açılır. İki durum birbirinden farklıdır: yanlış soru fotoğrafı uygulamanın kendi deposuna kaydedilir ve orada kalır, kaydı silersen fotoğraf da silinir; deneme kâğıdı fotoğrafı ise hiç saklanmaz, yalnızca kâğıttaki sayıları okumak için kullanılır ve okuma bitince atılır.',
-        'Kâğıttaki yazıyı okuyan metin tanıma modeli uygulamanın içine gömülüdür; okuma tümüyle telefonda yapılır ve uçak modunda da çalışır. Hiçbir fotoğraf, hiçbir zaman internete yüklenmez — ne bize ne bir bulut servisine. Rabi galerinin geri kalanını taramaz; yalnızca sistem seçicisinde senin seçtiğin fotoğrafı alır.',
+        'Yanlış soru eklerken telefonunun kamerası ya da galerisi sistemin kendi seçicisiyle açılır; Rabi kameraya doğrudan erişmez ve kamera izni istemez. Çektiğin ya da seçtiğin fotoğraf küçültülüp uygulamanın kendi deposuna kaydedilir ve orada kalır; kaydı silersen fotoğraf da silinir.',
+        'Hiçbir fotoğraf, hiçbir zaman internete yüklenmez — ne bize ne bir bulut servisine. Rabi galerinin geri kalanını taramaz; yalnızca sistem seçicisinde senin seçtiğin fotoğrafı alır.',
       ],
     },
     {
@@ -96,8 +96,8 @@ const GIZLILIK: YasalBelge = {
     {
       baslik: '4. Telefonundan çıkan ikinci şey: çökme raporu',
       paragraflar: [
-        'Uygulama beklenmedik şekilde kapanırsa hatanın kaydı telefonunda tutulur. Kendiliğinden hiçbir yere gitmez: otomatik gönderim uygulamanın içinde kalıcı olarak kapalıdır. Bir sonraki açılışta sana sorulur — “Gönder” dersen kayıt gider, “Gönderme” dersen telefonundan silinir. Bu soru her çökmeden sonra tek tek sorulur; önceden verilmiş kalıcı bir izin yoktur.',
-        'Gönderdiğinde giden kayıt şunları içerir: hatanın teknik dökümü, uygulama sürümü ve derleme türü, Android sürümü ve cihazdaki Android System WebView sürümü, telefonun üreticisi ve modeli, ve çökme aracının kendi eklediği teknik bilgiler — cihaza özel rastgele bir kurulum numarası ile cihaz durumu (bellek ve disk doluluğu, ekran yönü, root durumu, işlemci mimarisi).',
+        'Uygulama beklenmedik şekilde kapanırsa ya da kapanmadan bir hata yakalarsa (ekrandaki bir bölümün çizilememesi, yüklenemeyen bir dosya gibi) hatanın kaydı telefonunda tutulur. Kendiliğinden hiçbir yere gitmez: otomatik gönderim uygulamanın içinde kalıcı olarak kapalıdır. Bir sonraki açılışta sana sorulur — “Gönder” dersen kayıt gider, “Gönderme” dersen telefonundan silinir. Bu soru her kayıttan sonra tek tek sorulur; önceden verilmiş kalıcı bir izin yoktur.',
+        'Gönderdiğinde giden kayıt şunları içerir: hatanın teknik dökümü ve hata mesajı (yüklenemeyen bir dosya söz konusuysa o dosyanın uygulama içindeki adresi), uygulama sürümü ve derleme türü, Android sürümü ve cihazdaki Android System WebView sürümü, telefonun üreticisi ve modeli, ve çökme aracının kendi eklediği teknik bilgiler — cihaza özel rastgele bir kurulum numarası ile cihaz durumu (bellek ve disk doluluğu, ekran yönü, root durumu, işlemci mimarisi).',
         'Bu kayıtta adın, denemelerin, notların, fotoğrafların ve puanların yer almaz. Çökme raporları Google Firebase Crashlytics üzerinden toplanır.',
       ],
     },
@@ -105,8 +105,9 @@ const GIZLILIK: YasalBelge = {
       baslik: '5. İzinler ve neden isteniyor',
       paragraflar: [
         'İnternet izni yalnızca yukarıdaki iki gönderim için. Bildirim gönderme izni çalışma hatırlatması ve pomodoro sayacı için; bildirimler telefonunda üretilir, dışarı çıkmaz. Kamera ve galeri sistem seçicisi üzerinden açılır.',
-        'Odak kilidi üç izin kullanır ve hiçbirinden okunan bilgi telefondan çıkmaz: kullanım verisi erişimi hangi uygulamanın ön planda olduğunu anlamak için, diğer uygulamaların üzerinde gösterme uyarı katmanı için, ön plan servisi ise pomodoro turu boyunca kilidi ayakta tutmak için.',
-        'Bildirim erişimi izni isteğe bağlıdır: kilitli uygulamaların bildirimlerini susturur, vermezsen odak kilidinin geri kalanı çalışmaya devam eder. Bildirimlerin içeriği okunmaz, saklanmaz, gönderilmez — yalnızca hangi uygulamadan geldiğine bakılır.',
+        'Odak kilidi üç izin kullanır ve hiçbirinden okunan bilgi telefondan çıkmaz: kullanım verisi erişimi hangi uygulamanın ön planda olduğunu anlamak için, diğer uygulamaların üzerinde gösterme uyarı katmanı için, ön plan servisi ise pomodoro turu boyunca sayacı ve kilidi ayakta tutmak için. Xiaomi telefonlarda üreticinin kendi “arka planda açılır pencere” ayarı da açık olmalıdır; bu bir Android izni değil, üstte gösterme izninin o telefonlardaki ek şartıdır.',
+        'Rahatsız Etme erişimi isteğe bağlıdır: verirsen pomodoro turu boyunca telefon Rahatsız Etme moduna alınır ve tur bitince önceki ayarına döner; vermezsen odak kilidinin geri kalanı çalışmaya devam eder. Bu izinle bildirimlerin içeriği okunmaz, saklanmaz, gönderilmez — Rabi yalnızca modu açıp kapatır.',
+        'Sayaç, telefonun kilit ekranında bir bildirim olarak durur ve o bildirimde aşama ile seçtiğin ders adı (“Çalışma · Matematik” gibi) yazar. Bu, telefon kilitliyken görünen tek Rabi verisidir ve telefondan çıkmaz.',
         'Kurulu uygulamaları görme izni odak kilidinde engellenecek uygulamaları listelemek için. Titreşim, uyanık tutma, açılışta başlama ve tam zamanlı alarm izinleri sayaç ile hatırlatmaların doğru saatte çalışması için. Kullanım verisi ve ekran üstü gösterme izinlerini telefonunun ayarlarından istediğin zaman geri alabilirsin.',
       ],
     },
@@ -136,7 +137,7 @@ const GIZLILIK: YasalBelge = {
     {
       baslik: '9. Çocuklar ve gençler',
       paragraflar: [
-        'Rabi lise öğrencileri için tasarlandı ve 13 yaşından küçüklere yönelik değildir. Rabi kimseden ad, e-posta, telefon, konum veya doğum tarihi istemez; hesap açtırmaz, reklam göstermez, kullanıcı profili çıkarmaz ve kimseyi izlemez. Ayarlardaki ad alanı isteğe bağlıdır, boş bırakılabilir ve yazılsa bile telefondan çıkmaz.',
+        'Rabi lise öğrencileri için tasarlandı ve 13 yaşından küçüklere yönelik değildir. Rabi kimseden ad, e-posta, telefon, konum veya doğum tarihi istemez; hesap açtırmaz, reklam göstermez, kullanıcı profili çıkarmaz ve kimseyi izlemez. Kurulumda sana hitap etmek için bir ad sorulur; gerçek adın olmak zorunda değildir, takma ad yazabilirsin ve yazdığın ad telefondan çıkmaz.',
         'Veli veya vasiysen ve çocuğuna ait bir kaydın silinmesini istiyorsan 8. bölümdeki adrese yazman yeterlidir.',
       ],
     },
@@ -177,8 +178,8 @@ const GIZLILIK: YasalBelge = {
  * ya da kullanıcı içeriği barındıran uygulamalarda ve Child Safety Standards
  * kapsamındakilerde şart; Rabi bunların hiçbiri değil. Yine de yazıldı, çünkü
  * iki şeyin bir yerde durması gerekiyordu: puan ve sıralama sayılarının tahmin
- * olduğu (Play'in Yanıltıcı İddialar politikası) ve odak kilidinin bildirim
- * susturabildiği (kullanıcı önemli bir bildirimi kaçırabilir).
+ * olduğu (Play'in Yanıltıcı İddialar politikası) ve odak kilidinin telefonu
+ * Rahatsız Etme'ye alabildiği (kullanıcı önemli bir bildirimi kaçırabilir).
  *
  * Gizlilik politikasına **girmedi**: o belge veriyi anlatıyor, bu belge
  * kullanımı. İkisini birleştirmek, veriyle ilgili bir cümle arayan kullanıcıyı
@@ -188,7 +189,7 @@ const SOZLESME: YasalBelge = {
   id: 'sozlesme',
   ad: 'Kullanıcı Sözleşmesi',
   ozet: 'Uygulamayı kullanma koşulları',
-  yururlukTarihi: '2026-09-06',
+  yururlukTarihi: '2026-09-12',
   bolumler: [
     {
       paragraflar: [
@@ -221,8 +222,8 @@ const SOZLESME: YasalBelge = {
     {
       baslik: '4. Odak kilidi hakkında bilmen gerekenler',
       paragraflar: [
-        'Odak kilidi, senin seçtiğin uygulamaları çalışma seansı boyunca engeller ve istersen o uygulamaların bildirimlerini de siler. Bu özellik yalnızca sen açtığında ve seçtiğin uygulamalar için çalışır.',
-        'Susturulan bildirimler arasında sana ulaşmaya çalışan biri olabilir. Acil durumda ulaşılman gerekiyorsa kilit listesine telefon ve mesaj uygulamalarını ekleme; seansı istediğin an bitirebilirsin. Kaçırdığın bir bildirimden doğan sonuçlardan Fluxify Interactive sorumlu değildir.',
+        'Odak kilidi, senin seçtiğin uygulamaları çalışma seansı boyunca engeller; engellenen uygulama arkadan ses çalıyorsa (video, müzik) o ses de kesilir. İstersen tur boyunca telefonu Rahatsız Etme moduna alır. Bu özellik yalnızca sen açtığında çalışır ve tur bitince telefon eski hâline döner.',
+        'Rahatsız Etme telefonun tamamını susturur, yalnızca seçtiğin uygulamaları değil; alarmların ve kendi Rahatsız Etme istisnaların (kişilerden gelen aramalar gibi) geçmeye devam eder. Susturulan bildirimler arasında sana ulaşmaya çalışan biri olabilir. Acil durumda ulaşılman gerekiyorsa Rahatsız Etme’yi açma ve kilit listesine telefon ve mesaj uygulamalarını ekleme; seansı istediğin an bitirebilirsin. Kaçırdığın bir bildirimden ya da aramadan doğan sonuçlardan Fluxify Interactive sorumlu değildir.',
         'Odak kilidi bir güvenlik ya da ebeveyn denetimi aracı değildir; kendi kararınla kendine koyduğun bir engeldir ve istediğin zaman kaldırabilirsin.',
       ],
     },
@@ -230,7 +231,7 @@ const SOZLESME: YasalBelge = {
       baslik: '5. Verinin sorumluluğu sende',
       paragraflar: [
         'Rabi’nin sunucusu yok; denemelerin, notların, fotoğrafların ve çalışma geçmişin yalnızca telefonunda duruyor. Bunun anlamı şudur: uygulamayı silersen, telefonun bozulur ya da kaybolursa veriler geri getirilemez.',
-        'Ayarlar’daki “Yedeği indir” ile verinin bir dosyasını alabilirsin. Yedek almak senin sorumluluğundur; kaybolan veriden Fluxify Interactive sorumlu tutulamaz.',
+        'Android’in otomatik uygulama yedeği Rabi için kapalıdır; verin telefon değiştirdiğinde kendiliğinden taşınmaz. Ayarlar’daki “Yedeği indir” ile verinin bir dosyasını alabilir, yeni telefonda “Yedeği yükle” ile geri getirebilirsin. Yedek almak senin sorumluluğundur; kaybolan veriden Fluxify Interactive sorumlu tutulamaz.',
         'Verinin nasıl işlendiği ayrı bir belgede: Gizlilik Politikası.',
       ],
     },

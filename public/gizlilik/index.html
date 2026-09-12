@@ -114,7 +114,7 @@
 <p class="ust">
   Uygulama: <b>Rabi</b> (<code>com.fluxifyinteractive.rabi</code>) &middot;
   Geliştirici: <b>Fluxify Interactive</b><br>
-  Yürürlük tarihi: <b>6 Eylül 2026</b> &middot; Son güncelleme: 6 Eylül 2026
+  Yürürlük tarihi: <b>12 Eylül 2026</b> &middot; Son güncelleme: 12 Eylül 2026
 </p>
 
 <p>
@@ -155,26 +155,22 @@
 
 <p>
   Uygulamayı silersen bu verilerin tamamı telefonundan silinir. Uygulama içinden de
-  <b>Ayarlar → Tüm veriyi sil</b> ile temizleyebilirsin. Yedek alırsan
-  (<b>Ayarlar → Yedeği indir</b>) dosya senin telefonuna iner; onu kiminle paylaşacağına
-  yalnızca sen karar verirsin.
+  <b>Ayarlar → Tüm veriyi sil</b> ile temizleyebilirsin. Android'in otomatik uygulama
+  yedeği Rabi için <b>kapalıdır</b>: verin Google hesabına ya da telefon yedeğine
+  kopyalanmaz, telefon değiştirdiğinde kendiliğinden taşınmaz. Yedek alırsan
+  (<b>Ayarlar → Yedeği indir</b>) dosya telefonunun İndirilenler klasörüne iner; o klasörü
+  başka uygulamalar da okuyabilir ve dosyayı kiminle paylaşacağına yalnızca sen karar verirsin.
 </p>
 
-<h2>2. Kamera, fotoğraflar ve metin okuma</h2>
+<h2>2. Kamera ve fotoğraflar</h2>
 
 <p>
-  Yanlış soru eklerken veya deneme kâğıdını okuturken telefonunun kamerası ya da galerisi
-  açılır. İki durum birbirinden farklıdır:
+  Yanlış soru eklerken telefonunun kamerası ya da galerisi <b>sistemin kendi seçicisiyle</b>
+  açılır; Rabi kameraya doğrudan erişmez ve kamera izni istemez.
 </p>
 <ul>
-  <li><b>Yanlış soru fotoğrafı</b> uygulamanın kendi deposuna kaydedilir ve orada kalır;
-      kaydı silersen fotoğraf da silinir.</li>
-  <li><b>Deneme kâğıdı fotoğrafı hiç saklanmaz.</b> Yalnızca kâğıttaki sayıları okumak için
-      kullanılır, okuma bitince atılır.</li>
-</ul>
-<ul>
-  <li>Kâğıttaki yazıyı okuyan metin tanıma modeli <b>uygulamanın içine gömülüdür</b>; okuma
-      tümüyle telefonda yapılır ve uçak modunda da çalışır.</li>
+  <li>Çektiğin ya da seçtiğin fotoğraf küçültülüp uygulamanın kendi deposuna kaydedilir ve
+      orada kalır; kaydı silersen fotoğraf da silinir.</li>
   <li>Hiçbir fotoğraf, hiçbir zaman internete yüklenmez — ne bize, ne bir bulut servisine.</li>
   <li>Rabi galerinin geri kalanını taramaz; yalnızca sistem seçicisinde senin seçtiğin
       fotoğrafı alır.</li>
@@ -234,19 +230,21 @@
 <h2>4. Telefonundan çıkan ikinci şey — çökme raporu</h2>
 
 <p>
-  Uygulama beklenmedik şekilde kapanırsa, hatanın kaydı <b>telefonunda</b> tutulur.
+  Uygulama beklenmedik şekilde kapanırsa ya da kapanmadan bir hata yakalarsa (ekrandaki bir
+  bölümün çizilememesi, yüklenemeyen bir dosya gibi), hatanın kaydı <b>telefonunda</b> tutulur.
   Kendiliğinden hiçbir yere gitmez: otomatik gönderim uygulamanın içinde kalıcı olarak
   kapalıdır.
 </p>
 <ul>
   <li>Bir sonraki açılışta sana sorulur. <b>&ldquo;Gönder&rdquo;</b> dersen kayıt gider;
       <b>&ldquo;Gönderme&rdquo;</b> dersen telefonundan silinir.</li>
-  <li>Bu soru her çökmeden sonra tek tek sorulur; önceden verilmiş kalıcı bir izin yoktur.</li>
+  <li>Bu soru her kayıttan sonra tek tek sorulur; önceden verilmiş kalıcı bir izin yoktur.</li>
 </ul>
 
 <p><b>Gönderdiğinde giden kayıt şunları içerir:</b></p>
 <ul>
-  <li>Hatanın teknik dökümü (hangi kodun, hangi satırda kırıldığı)</li>
+  <li>Hatanın teknik dökümü ve hata mesajı (hangi kodun, hangi satırda kırıldığı; yüklenemeyen
+      bir dosya söz konusuysa o dosyanın uygulama içindeki adresi)</li>
   <li>Uygulama sürümü ve derleme türü</li>
   <li>Android sürümü ve cihazdaki Android System WebView sürümü</li>
   <li>Telefonun üreticisi ve modeli</li>
@@ -267,20 +265,31 @@
   <tr><th>İzin</th><th>Ne için</th><th>Veri dışarı çıkıyor mu</th></tr>
   <tr><td>İnternet</td><td>Yalnızca §3 ve §4'teki iki gönderim</td><td>Yalnızca izin verirsen</td></tr>
   <tr><td>Bildirim gönderme</td><td>Çalışma hatırlatması ve pomodoro sayacı</td><td>Hayır — bildirimler telefonunda üretilir</td></tr>
-  <tr><td>Kamera / galeri (sistem seçicisi üzerinden)</td><td>Soru fotoğrafı ve deneme kâğıdı okuma</td><td>Hayır</td></tr>
+  <tr><td>Kamera / galeri (sistem seçicisi üzerinden)</td><td>Yanlış soru fotoğrafı</td><td>Hayır</td></tr>
   <tr><td>Kullanım verisi erişimi (<code>PACKAGE_USAGE_STATS</code>)</td><td>Odak kilidi sırasında hangi uygulamanın ön planda olduğunu anlamak</td><td>Hayır — okunan bilgi telefondan çıkmaz</td></tr>
   <tr><td>Diğer uygulamaların üzerinde gösterme</td><td>Kilitli bir uygulamayı açtığında uyarı katmanını göstermek</td><td>Hayır</td></tr>
-  <tr><td>Ön plan servisi</td><td>Pomodoro turu boyunca odak kilidini ayakta tutmak</td><td>Hayır</td></tr>
-  <tr><td>Bildirim erişimi (isteğe bağlı)</td><td>Odak kilidi açıkken kilitli uygulamaların bildirimlerini susturmak</td><td>Hayır — bildirim içerikleri okunmaz, saklanmaz, gönderilmez</td></tr>
+  <tr><td>Ön plan servisi</td><td>Pomodoro turu boyunca sayacı ve odak kilidini ayakta tutmak</td><td>Hayır</td></tr>
+  <tr><td>Rahatsız Etme erişimi (isteğe bağlı)</td><td>Pomodoro turu boyunca telefonu Rahatsız Etme moduna almak, tur bitince eski ayarına döndürmek</td><td>Hayır — bildirim içerikleri okunmaz, saklanmaz, gönderilmez</td></tr>
   <tr><td>Kurulu uygulamaları görme</td><td>Odak kilidinde engellenecek uygulamaları listelemek</td><td>Hayır</td></tr>
   <tr><td>Titreşim, uyanık tutma, açılışta başlama, tam zamanlı alarm</td><td>Sayaç ve hatırlatmaların doğru saatte çalışması</td><td>Hayır</td></tr>
 </table>
 </div>
 
 <p>
-  Bildirim erişimi izni <b>isteğe bağlıdır</b>: vermezsen odak kilidinin geri kalanı
-  çalışmaya devam eder, yalnızca bildirimler susturulmaz. Kullanım verisi ve ekran üstü
-  gösterme izinlerini telefonunun ayarlarından istediğin zaman geri alabilirsin.
+  Rahatsız Etme erişimi <b>isteğe bağlıdır</b>: vermezsen odak kilidinin geri kalanı
+  çalışmaya devam eder, yalnızca telefon susturulmaz. Rabi bu izinle yalnızca modu açıp
+  kapatır. Kullanım verisi ve ekran üstü gösterme izinlerini telefonunun ayarlarından
+  istediğin zaman geri alabilirsin.
+</p>
+<p>
+  Xiaomi telefonlarda üreticinin kendi <b>&ldquo;arka planda açılır pencere&rdquo;</b> ayarı
+  da açık olmalıdır; bu bir Android izni değil, üstte gösterme izninin o telefonlardaki ek
+  şartıdır.
+</p>
+<p>
+  Sayaç, telefonun kilit ekranında bir bildirim olarak durur ve o bildirimde aşama ile
+  seçtiğin ders adı (&ldquo;Çalışma · Matematik&rdquo; gibi) yazar. Bu, telefon kilitliyken
+  görünen tek Rabi verisidir ve telefondan çıkmaz.
 </p>
 
 <h2>6. Üçüncü taraflar</h2>
@@ -344,8 +353,9 @@
 <p>
   Rabi lise öğrencileri için tasarlandı ve 13 yaşından küçüklere yönelik değildir. Rabi
   kimseden ad, e-posta, telefon, konum veya doğum tarihi <b>istemez</b>; hesap açtırmaz,
-  reklam göstermez, kullanıcı profili çıkarmaz ve kimseyi izlemez. Ayarlardaki ad alanı
-  isteğe bağlıdır, boş bırakılabilir ve yazılsa bile telefondan çıkmaz.
+  reklam göstermez, kullanıcı profili çıkarmaz ve kimseyi izlemez. Kurulumda sana hitap
+  etmek için bir ad sorulur; gerçek adın olmak zorunda değildir, takma ad yazabilirsin ve
+  yazdığın ad telefondan çıkmaz.
 </p>
 <p>
   Veli veya vasiysen ve çocuğuna ait bir kaydın silinmesini istiyorsan §8'deki adrese
@@ -392,7 +402,7 @@
 </p>
 
 <footer>
-  Bu belge Rabi uygulamasının gizlilik politikasıdır. Yürürlük tarihi: 6 Eylül 2026.
+  Bu belge Rabi uygulamasının gizlilik politikasıdır. Yürürlük tarihi: 12 Eylül 2026.
 </footer>
 
 </main>
