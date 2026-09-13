@@ -560,9 +560,6 @@ export function KonuHaritasiEkrani({
             />
           ))}
 
-          <p className="px-4 pt-1 text-center text-[12.5px] font-bold text-pretty text-muted-foreground">
-            {sirali.length} konu bitince yolun sonundaki sandık açılıyor.
-          </p>
         </div>
       )}
 
