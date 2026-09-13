@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, type ComponentType } from 'react'
+import { useEffect, useMemo, useState, type ComponentType } from 'react'
 import {
   Atom,
   Beaker,
@@ -204,6 +204,13 @@ const BOLUM_ARASI = ALT_PAY + KITAP_BOY / 2 + BANT_PAYI + UST_PAY + KITAP_BOY / 
 const YOL_GENISLIGI = 400
 
 /**
+ * Harita sekmesi açılınca ortada beliren Rabi'nin ekranda kalma süresi, ms.
+ * `globals.css`teki `haritaSelam` animasyonuyla **eşleşmeli**: kısa olursa
+ * katman çıkış solması bitmeden sökülür, uzun olursa boş bir karartma kalır.
+ */
+const SELAM_SURESI = 1600
+
+/**
  * Zemin simgelerinin ikon tablosu.
  *
  * Adlar `lib/konu/harita-temasi.ts`teki `CizimAdi` ile birebir; tablo o
@@ -311,6 +318,20 @@ export function KonuHaritasiEkrani({
     kalıyordu; oysa seçim bir kez yapılıp aylarca değişmiyor.
   */
   const [secimAcik, setSecimAcik] = useState(false)
+  /*
+    Sekme açılınca Rabi bir iki saniye ekranın ortasında beliriyor, harita
+    arkasında hafif kararmış. Bileşen sekmeye her geçişte yeniden kurulduğu
+    için (`SayfaGecisi`nin `key`i) bu bir kuruluş etkisi; desteden ya da
+    sorudan haritaya dönüşte tekrar çıkmıyor — orada sekme değişmiyor.
+    Hareketten rahatsız olan kullanıcıda hiç çıkmıyor: bilgi taşımıyor.
+  */
+  const [selam, setSelam] = useState(false)
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    setSelam(true)
+    const zamanlayici = window.setTimeout(() => setSelam(false), SELAM_SURESI)
+    return () => window.clearTimeout(zamanlayici)
+  }, [])
 
   const ders = dersBul(secim.ders)
   const bicim = haritaTemasi(secim.ders)
@@ -421,6 +442,14 @@ export function KonuHaritasiEkrani({
 
   return (
     <div className="space-y-4">
+      {selam && (
+        <div
+          className="harita-selam pointer-events-none fixed inset-0 z-30 grid place-items-center bg-black/35"
+          aria-hidden
+        >
+          <Rabi durum="calisiyor" poz="dusunen" boyut={150} className="harita-selam-maskot" />
+        </div>
+      )}
       {/*
         Ekranın tepesinde başlık yok. Bir süre "9. sınıf Türkçe / 2. konu
         sırada / ★ 1/16" satırı duruyordu; kaldırıldı (kullanıcı kararı):
@@ -559,7 +588,6 @@ export function KonuHaritasiEkrani({
               }
             />
           ))}
-
         </div>
       )}
 
