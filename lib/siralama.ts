@@ -54,7 +54,7 @@ function icDeger(
  * Tablo artan puan sırasında [eşik, eşiğin üstündeki aday sayısı] çiftleri
  * tutuyor; puan yükseldikçe sayı düşüyor.
  */
-export function yilSiralamasi(puan: number, tur: PuanTuru, yil: number): YilSiralamasi {
+export function yilSiralamasi(puan: number, tur: PuanTuru | 'tyt', yil: number): YilSiralamasi {
   const noktalar = yilVerisi(yil).yerlestirme[tur]
   if (!noktalar || noktalar.length === 0) {
     return { yil, siralama: 0, tabloDisi: true }
@@ -84,7 +84,7 @@ export function yilSiralamasi(puan: number, tur: PuanTuru, yil: number): YilSira
 }
 
 /** Veri bulunan bütün yıllar için sıralama ve bunların oluşturduğu bant. */
-export function siralamaTahmini(puan: number, tur: PuanTuru): SiralamaSonucu {
+export function siralamaTahmini(puan: number, tur: PuanTuru | 'tyt'): SiralamaSonucu {
   const yillar = VERI_YILLARI.map((yil) => yilSiralamasi(puan, tur, yil))
   const sayilar = yillar.map((y) => y.siralama)
   return {
