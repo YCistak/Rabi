@@ -1813,17 +1813,22 @@ iki kez eklenmesini önlüyor; içerik güncellendiğinde kullanıcının kaydet
 bilgi yerinde kalıyor. Yeni bir kart alanı eklersen (görsel, formül) onu da
 kayda koy, kimliğe güvenme.
 
-### Kilit var, kapısı yok
+### Kilit var, anahtarı kullanıcıda
 
 Konular sırayla açılıyor: bir konu, bir öncekinin kartları okunup soruları
-geçilmeden (`GECME_ORANI`, %50) açılmıyor (`konuKilitli`, `lib/konu/ilerleme.ts`).
-Üç evre geçti. Önce kilit hiç yoktu ("sınav hazırlığındaki öğrenci yarın
-işlenecek konuya bugün bakmak ister"). Sonra kilit geldi ama konu sayfasında
-"Yine de aç" duruyordu — yavaşlatma, dayatma değil. Sonunda o kapı da
-kaldırıldı (kullanıcı kararı): sorusunu geçmeden bir sonrakine geçilen konu
-geçilmiş sayılmıyor. `acildi` alanı ve `kilidiAc` duruyor — eski kayıtlarda
-elden açılmış konular var ve onları yeniden kilitlemek okunmuş kartları geri
-almak olurdu; arayüzden çağıran yok.
+geçilmeden (`GECME_ORANI`, %50) açılmıyor (`konuKilitli`, `lib/konu/ilerleme.ts`)
+ve kitabı haritada renksiz duruyor. Sorusu olan konuda **cevaplanmamış**
+yoklama geçilmiş sayılmıyor (`konuTamam`) — `soruOrani`nin `null`ü "soru yok"
+ile "girilmedi"yi ayırt etmiyor, ayrım soru sayısından yapılıyor.
+
+Kilitli kitabın kartındaki düğme **"Kilidi aç"** ve doğrudan açmıyor: önce
+onay penceresi uyarıyor (önceki konuları okuyup sorularını geçerek gelmek
+daha sağlıklı, kartlar onların üstüne kuruluyor) ama kararı kullanıcıya
+bırakıyor. Kapı bir ara tümüyle kapatıldı ve geri açıldı: sınav
+hazırlığındaki öğrenci yarın işlenecek konuya bugün bakabilmeli. Kartın
+içinde ayrıca sarı bir uyarı paragrafı vardı, kaldırıldı — uyarıyı onay
+penceresi söylüyor. Açılan kilit kayda giriyor (`acildi`), uyarı aynı konuda
+ikinci kez çıkmıyor.
 
 Eşik %80'den %50'ye indi: destede üç-altı iddia var ve seksen demek altı
 sorunun beşi demekti; tek yanlış konuyu kilitliyor, öğrenci aynı yoklamayı
@@ -1975,8 +1980,8 @@ aynı düzen, ayrı ton (yeşil / turuncu kurdele ve düğme), ayrı maskot pozu
 soru: %90 üç, geçme sınırı iki, altı bir) ve düğmenin yazısı ayrı ("Anlatımı
 oku" / "Soruları çöz"). Eskiden iki basamağı alt alta listeleyen tek bir konu
 sayfası vardı ve hangi kitaba basıldığı sayfada görünmüyordu. Kilitli
-konunun kartı açılıyor ama düğmesi pasif ve hangi konunun onu tuttuğu
-yazıyor; kapıyı açan düğme yok (bkz. **Kilit var, kapısı yok**).
+konunun kartında düğme "Kilidi aç" ve önce onay penceresi çıkıyor (bkz.
+**Kilit var, anahtarı kullanıcıda**).
 
 ## Hedef kataloğu
 
