@@ -86,9 +86,9 @@ import { SoruSahnesi, type SahneSonucu } from '@/components/konu/soru-sahnesi'
  * Patika bir kez denenip listeye dönülmüştü çünkü ad düğümün altında iki üç
  * kelimeye sığmak zorundaydı ve "kaç kart, ne kadar sürer" hiçbir yere
  * yazılamıyordu. Bu sefer o yazıların hiçbiri haritada değil: kitaba basınca
- * aşağıdan **konu sayfası** geliyor ve ad, süre, kart sayısı, soru durumu
- * orada duruyor. Harita yalnızca sırayı ve nerede kalındığını gösteriyor —
- * tek bakışta okunması gereken şey o.
+ * ortada **konu kartı** açılıyor (`KonuKarti`) ve ad, süre, kart sayısı, soru
+ * durumu orada duruyor. Harita yalnızca sırayı ve nerede kalındığını
+ * gösteriyor — tek bakışta okunması gereken şey o.
  *
  * Harita bir oyun dünyası gibi çiziliyor: kitapların altından geçen bir yol,
  * geçilen kısmı bir tık koyu; zemine dersin simgeleri serpili (Matematik'te
@@ -277,11 +277,10 @@ export function KonuHaritasiEkrani({
     konu: Konu
     temaAdi: string
   } | null>(null)
-  /** Düğüme basınca aşağıdan gelen konu sayfası. Haritanın üstüne biniyor. */
+  /** Kitaba basınca ortada açılan konu kartı. Haritanın üstüne biniyor. */
   const [sayfa, setSayfa] = useState<{
-    konu: Konu
-    temaAdi: string
-    sira: number
+    basamak: Basamak
+    bolum: { sira: number; biten: number; toplam: number }
   } | null>(null)
   /** Kilidi açılmak istenen konu — "emin misin" onayı bunu bekliyor. */
   const [kilitOnayi, setKilitOnayi] = useState<Konu | null>(null)
@@ -422,7 +421,7 @@ export function KonuHaritasiEkrani({
               ? 'Konu Anlatımı'
               : siradaki === null
                 ? 'Tüm konular bitti'
-                : `${siradaki.no}. basamak sırada`}
+                : `${siradaki.konuSirasi}. konu sırada`}
           </h1>
         </div>
 
@@ -558,9 +557,12 @@ export function KonuHaritasiEkrani({
               siradakiNo={siradaki?.no ?? null}
               onAc={(b) =>
                 setSayfa({
-                  konu: b.konu,
-                  temaAdi: b.temaAdi,
-                  sira: b.konuSirasi,
+                  basamak: b,
+                  bolum: {
+                    sira: ti + 1,
+                    biten: temadaBiten(tema, ilerlemeler),
+                    toplam: tema.konular.length,
+                  },
                 })
               }
             />
@@ -589,22 +591,20 @@ export function KonuHaritasiEkrani({
       )}
 
       {sayfa !== null && (
-        <KonuSayfasi
-          konu={sayfa.konu}
-          temaAdi={sayfa.temaAdi}
-          sira={sayfa.sira}
-          kilitli={konuKilitli(ilerlemeler, sirali, sayfa.sira - 1)}
-          oncekiAd={sayfa.sira > 1 ? sirali[sayfa.sira - 2].ad : ''}
+        <KonuKarti
+          basamak={sayfa.basamak}
+          bolum={sayfa.bolum}
+          durum={basamakDurumu(sayfa.basamak)}
+          kilitli={konuKilitli(ilerlemeler, sirali, sayfa.basamak.konuSirasi - 1)}
+          oncekiAd={sayfa.basamak.konuSirasi > 1 ? sirali[sayfa.basamak.konuSirasi - 2].ad : ''}
           ilerlemeler={ilerlemeler}
           onKapat={() => setSayfa(null)}
-          onKilidiAc={() => setKilitOnayi(sayfa.konu)}
-          onKartlariOku={() => {
+          onKilidiAc={() => setKilitOnayi(sayfa.basamak.konu)}
+          onBasla={() => {
+            const { konu, temaAdi } = sayfa.basamak
             setSayfa(null)
-            setAcikKonu({ konu: sayfa.konu, temaAdi: sayfa.temaAdi })
-          }}
-          onSorulariCoz={() => {
-            setSayfa(null)
-            setAcikSorular({ konu: sayfa.konu, temaAdi: sayfa.temaAdi })
+            if (sayfa.basamak.tur === 'kart') setAcikKonu({ konu, temaAdi })
+            else setAcikSorular({ konu, temaAdi })
           }}
         />
       )}
@@ -996,7 +996,7 @@ function Dugum({
       type="button"
       role="listitem"
       onClick={onAc}
-      aria-label={`${basamak.no}. basamak — ${soru ? 'sorular' : 'bilgi kartları'} — ${nedeni}`}
+      aria-label={`${basamak.konuSirasi}. konu — ${soru ? 'sorular' : 'bilgi kartları'} — ${nedeni}`}
       className={cn('absolute grid place-items-center', durum === 'yazilmadi' && 'opacity-60')}
       style={{
         left: `calc(50% + ${x}px)`,
@@ -1026,7 +1026,7 @@ function Dugum({
       {soru ? (
         <SoruKitabi gri={gri} simdi={simdi} />
       ) : (
-        <KartKitabi no={basamak.no} gri={gri} simdi={simdi} />
+        <KartKitabi no={basamak.konuSirasi} gri={gri} simdi={simdi} />
       )}
 
       {durum === 'bitti' && (
@@ -1164,71 +1164,121 @@ function SoruKitabi({ gri, simdi }: { gri: boolean; simdi: boolean }) {
 }
 
 /**
- * Konu sayfası — düğüme basınca aşağıdan gelen yüzey.
+ * Konu kartı — kitaba basınca ortada açılan pencere.
  *
- * Haritada olmayan her şey burada: adı, hangi temaya ait olduğu, iki basamak
- * (kartlar, sorular) ve her birinin nerede kaldığı. Kart ve soru düğümlerinin
- * ikisi de aynı sayfayı açıyor: ikisi de aynı konunun basamağı ve hangisine
- * basıldığına göre başka bir ekran göstermek için sebep yok.
+ * Yeşil kitap **anlatım** kartını, turuncu kitap **soru** kartını açıyor;
+ * ikisi aynı düzende ama ayrı kart: tonu (yeşil / turuncu), maskotun pozu
+ * (okuyan / düşünen), yıldızların neyi saydığı ve düğmenin yazısı ayrı. Tek
+ * bir "konu sayfası" iki basamağı alt alta listeliyordu ve hangi kitaba
+ * basıldığı sayfada görünmüyordu; şimdi basılan kitap neyse kart o.
+ *
+ * Kart ekranın **ortasında**, alttan gelen bir yüzey değil: üç satırlık bir
+ * karar (ne, ne kadar, başla) ve alttan gelen yarım sayfa onu bir ekran gibi
+ * gösteriyordu.
+ *
+ * Kilit burada da açılıyor: kilitli konunun kartı uyarıyı ve "Yine de aç"
+ * düğmesini taşıyor. Tasarım kilitli kitapta yalnızca bir uyarı gösteriyordu;
+ * uygulamada kilit yavaşlatma, dayatma değil (bkz. dosya başındaki not), o
+ * yüzden kapının anahtarı karttan hiç eksilmiyor.
  */
-function KonuSayfasi({
-  konu,
-  temaAdi,
-  sira,
+function KonuKarti({
+  basamak,
+  bolum,
+  durum,
   kilitli,
   oncekiAd,
   ilerlemeler,
   onKapat,
   onKilidiAc,
-  onKartlariOku,
-  onSorulariCoz,
+  onBasla,
 }: {
-  konu: Konu
-  temaAdi: string
-  sira: number
+  basamak: Basamak
+  bolum: { sira: number; biten: number; toplam: number }
+  durum: DugumDurumu
   kilitli: boolean
   /** Kilidi tutan konunun adı — uyarı hangi kapının kapalı olduğunu söylüyor. */
   oncekiAd: string
   ilerlemeler: KonuIlerlemeleri
   onKapat: () => void
   onKilidiAc: () => void
-  onKartlariOku: () => void
-  onSorulariCoz: () => void
+  onBasla: () => void
 }) {
   useGeriKatmani(true, onKapat)
 
-  const ilerleme = ilerlemeler[konu.id]
+  const { konu, tur } = basamak
+  const soru = tur === 'soru'
+  const ton = soru ? 'var(--primary)' : 'var(--success)'
+  const tonKoyu = soru
+    ? 'color-mix(in srgb, var(--primary) 85%, #000)'
+    : 'color-mix(in srgb, var(--success) 72%, #000)'
+
   const kartBitti = konuBitti(ilerlemeler, konu.id)
-  const okunan = ilerleme?.okunan ?? 0
-  const toplamKart = konu.kartlar.length
-  const soruVar = konu.sorular.length > 0
+  const okunan = ilerlemeler[konu.id]?.okunan ?? 0
   const oran = soruOrani(ilerlemeler, konu)
   const gecti = oran !== null && oran >= GECME_ORANI
 
   /*
-    İkinci basamağın hâli tek bir üçlü karar: kartlar okunmadan kapalı, sorusu
-    yazılmamış konuda yine kapalı ama sebebi başka, geçildiyse yeşil.
+    Yıldız üçlü ve iki kartta başka şeyi sayıyor. Anlatımda okumanın kendisi:
+    bitti üç, başlandı bir, hiç açılmadı sıfır. Soruda oran: %90 üç, geçme
+    sınırı iki, geçilemedi bir. Yıldız bir puan değil, "burada ne kadar iş
+    kaldı"nın resmi.
   */
-  const soruKapali = !kartBitti || !soruVar
-  const soruAlt = !soruVar
-    ? 'Bu konunun soruları henüz yazılmadı'
-    : !kartBitti
-      ? `Kartlar bitince açılır · ${konu.sorular.length} soru`
-      : oran === null
-        ? `${konu.sorular.length} soru · geçmek için %${GECME_ORANI}`
+  const yildiz = soru
+    ? oran === null
+      ? 0
+      : oran >= 90
+        ? 3
         : gecti
-          ? `%${oran} doğru · geçtin`
-          : `%${oran} doğru · %${GECME_ORANI} gerekiyor`
+          ? 2
+          : 1
+    : kartBitti
+      ? 3
+      : okunan > 0
+        ? 1
+        : 0
+
+  const olcu = soru
+    ? oran === null
+      ? `${konu.sorular.length} soru · geçmek için %${GECME_ORANI}`
+      : gecti
+        ? `%${oran} doğru · geçtin`
+        : `%${oran} doğru · %${GECME_ORANI} gerekiyor`
+    : kartBitti
+      ? `${konu.kartlar.length} kart okundu`
+      : okunan > 0
+        ? `${okunan}/${konu.kartlar.length} kart okudun`
+        : `${konu.kartlar.length} kart ~ ${okumaDakikasi(konu.kartlar.length)} dk`
+
+  /*
+    Soru kartı iki sebeple kapalı olabiliyor ve ikisi ayrı yazıyor: kartlar
+    okunmadıysa kapı öğrencide, soru yazılmadıysa içerikte. Kilitli anlatım
+    kartında düğme "Yine de aç"a dönüyor — o yol kapalı değil, sorulu.
+  */
+  const kapali = !kilitli && soru && (durum === 'yazilmadi' || !kartBitti)
+  const dugme = kilitli
+    ? 'Yine de aç'
+    : soru
+      ? durum === 'yazilmadi'
+        ? 'Sorular henüz yazılmadı'
+        : !kartBitti
+          ? 'Kartlar bitince açılır'
+          : oran === null
+            ? 'Soruları çöz'
+            : gecti
+              ? 'Soruları tekrar çöz'
+              : 'Tekrar dene'
+      : kartBitti
+        ? 'Anlatımı tekrar oku'
+        : okunan > 0
+          ? 'Kaldığın yerden oku'
+          : 'Anlatımı oku'
+
+  const bitti = durum === 'bitti'
+  const yuzde = bolum.toplam === 0 ? 0 : Math.round((bolum.biten / bolum.toplam) * 100)
 
   return (
-    /*
-      `z-50`, alt menünün (`z-40`) üstünde: sayfa alt menüyle aynı katmanda
-      dururken menü DOM'da sonra geldiği için sayfanın alt satırını örtüyor,
-      "Sorular" basamağı menünün altında kalıyordu.
-    */
-    <div className="katman-zemin fixed inset-0 z-50 flex items-end justify-center bg-black/45">
-      {/* Zemine basmak kapatıyor: yarıya kadar gelen bir yüzeyin altındaki
-          haritaya dokunmak, o haritayı kullanmaya çalışmak demek. */}
+    <div className="katman-zemin fixed inset-0 z-50 grid place-items-center bg-black/35 px-6">
+      {/* Zemine basmak kapatıyor: kartın dışına dokunmak haritaya dönmek demek. */}
       <button
         type="button"
         aria-label="Kapat"
@@ -1236,158 +1286,131 @@ function KonuSayfasi({
         className="absolute inset-0 cursor-default"
       />
 
-      <div className="konu-sayfasi relative w-full max-w-md rounded-t-[28px] bg-card px-4 pt-4 pb-[calc(1.25rem+var(--guvenli-alt))]">
-        <div className="flex items-start gap-3">
-          <div className="min-w-0 flex-1">
-            <p className="text-[10.5px] font-extrabold tracking-[0.1em] text-warning uppercase">
-              {sira}. konu · {temaAdi}
-            </p>
-            <h3 className="mt-0.5 font-display text-[19px] leading-tight font-extrabold tracking-tight text-balance">
-              {konu.ad}
-            </h3>
+      <div
+        className="pencere-girisi golge-kart relative w-full max-w-[322px] rounded-[22px] bg-card"
+        role="dialog"
+        aria-labelledby="konu-karti-baslik"
+      >
+        {/* Kurdele kartın tonunda: kartın hangi kitaba ait olduğunu, yazı
+            okunmadan renk söylüyor. */}
+        <span
+          aria-hidden
+          className="absolute -top-[3px] right-14 h-[34px] w-5"
+          style={{ background: ton, clipPath: 'polygon(0 0,100% 0,100% 100%,50% 74%,0 100%)' }}
+        />
+        <button
+          type="button"
+          onClick={onKapat}
+          aria-label="Kapat"
+          className="absolute top-3 right-3 grid size-8 place-items-center rounded-full bg-muted text-muted-foreground"
+        >
+          <X size={15} strokeWidth={3} aria-hidden />
+        </button>
+
+        {/* Anlatım kartında Rabi kitap okuyor, soru kartında düşünüyor:
+            maskotun pozu kartın işini söylüyor. */}
+        <div
+          className="pointer-events-none absolute top-3 left-3"
+          style={{ filter: 'drop-shadow(0 8px 10px var(--patika-golge))' }}
+        >
+          <Rabi durum="calisiyor" poz={soru ? 'dusunen' : 'okuyan'} boyut={76} />
+        </div>
+
+        <div className="flex flex-col gap-3 pt-[18px] pr-[18px] pb-3.5 pl-[94px]">
+          <div className="flex min-h-[37px] flex-col items-start gap-1.5 pr-[70px]">
+            <span
+              className="text-[9.5px] font-black tracking-[0.15em] uppercase"
+              style={{ color: ton }}
+            >
+              {soru ? 'Sorular' : 'Anlatım'}
+            </span>
+            {kilitli ? (
+              <span className="inline-flex h-[19px] items-center gap-1 rounded-full bg-muted px-2 text-[9.5px] font-black tracking-[0.04em] whitespace-nowrap text-muted-foreground">
+                <Lock size={10} strokeWidth={3} aria-hidden />
+                Kilitli
+              </span>
+            ) : bitti ? (
+              <span className="inline-flex h-[19px] items-center gap-1 rounded-full bg-success-soft px-2 text-[9.5px] font-black tracking-[0.04em] whitespace-nowrap text-success">
+                <Check size={10} strokeWidth={4} aria-hidden />
+                Bitti
+              </span>
+            ) : (
+              <span className="inline-flex h-[19px] items-center gap-1 rounded-full bg-primary-soft px-2 text-[9.5px] font-black tracking-[0.04em] whitespace-nowrap text-primary">
+                <span className="size-[5px] rounded-full bg-primary" aria-hidden />
+                Bekliyor
+              </span>
+            )}
           </div>
-          <button
-            type="button"
-            onClick={onKapat}
-            aria-label="Kapat"
-            className="grid size-9 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground"
+
+          <h3
+            id="konu-karti-baslik"
+            className="-mt-1.5 font-display text-[19px] leading-tight font-extrabold tracking-tight text-pretty"
           >
-            <X size={16} strokeWidth={2.6} aria-hidden />
-          </button>
+            {konu.ad}
+          </h3>
+
+          <div className="flex items-center gap-2">
+            <span className="flex gap-[3px]" aria-label={`${yildiz}/3 yıldız`}>
+              {[1, 2, 3].map((i) => (
+                <Star
+                  key={i}
+                  size={16}
+                  strokeWidth={0}
+                  className={i <= yildiz ? 'fill-warning' : 'fill-grid'}
+                  aria-hidden
+                />
+              ))}
+            </span>
+            <span className="rakam text-[11.5px] font-extrabold text-muted-foreground">{olcu}</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span
+              className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-muted"
+              aria-hidden
+            >
+              <span
+                className="absolute inset-y-0 left-0 rounded-full"
+                style={{ width: `${yuzde}%`, background: ton }}
+              />
+            </span>
+            <span className="rakam text-[10.5px] font-extrabold whitespace-nowrap text-muted-foreground">
+              {bolum.sira}. bölüm · {bolum.biten}/{bolum.toplam}
+            </span>
+          </div>
         </div>
 
         {kilitli && (
-          <div className="mt-3.5 rounded-2xl bg-warning-soft p-3.5">
-            <p className="text-[13.5px] leading-snug font-bold text-pretty text-warning">
-              “{oncekiAd}” bitmeden bu konu açılmıyor. Yine de bakmak istersen aç, ama sıralı gitmek
-              daha kolay.
-            </p>
-            <button
-              type="button"
-              onClick={onKilidiAc}
-              className="mt-2.5 h-11 w-full rounded-xl bg-warning text-[14px] font-extrabold text-white transition active:brightness-95"
-            >
-              Yine de aç
-            </button>
-          </div>
-        )}
-
-        {/* Kilitliyken basamaklar soluk ama görünür: neyin arkada beklediğini
-            gizlemek, kilidi açma kararını körlemesine verdirmek olurdu. */}
-        <div className={cn('mt-3.5 space-y-2.5', kilitli && 'pointer-events-none opacity-40')}>
-          <Adim
-            no={sira * 2 - 1}
-            noZemin="bg-success"
-            baslik="Bilgi kartları"
-            alt={
-              kartBitti
-                ? `${toplamKart} kart okundu`
-                : okunan > 0
-                  ? `${okunan}/${toplamKart} kart okudun`
-                  : `${toplamKart} kart · ${okumaDakikasi(toplamKart)} dk`
-            }
-            eylem={kartBitti ? 'Tekrar oku' : 'Oku'}
-            vurgulu={!kartBitti}
-            onTikla={onKartlariOku}
-          />
-
-          <Adim
-            no={sira * 2}
-            noZemin={soruKapali ? 'bg-muted text-muted-foreground' : 'bg-primary-parlak'}
-            baslik="Sorular"
-            alt={soruAlt}
-            eylem={
-              soruKapali
-                ? 'Kilitli'
-                : oran === null
-                  ? 'Başla'
-                  : gecti
-                    ? 'Tekrar çöz'
-                    : 'Tekrar dene'
-            }
-            vurgulu={!soruKapali && !gecti}
-            kapali={soruKapali}
-            onTikla={onSorulariCoz}
-          />
-        </div>
-
-        {soruVar && (
-          <p className="mt-3 px-0.5 text-[12px] font-bold text-pretty text-muted-foreground">
-            Sorular çevrilen kart: cevabı gör, sonra kendini işaretle.
+          <p className="px-[18px] pb-3 text-[12.5px] leading-snug font-bold text-pretty text-warning">
+            “{oncekiAd}” bitmeden bu konu açılmıyor. Yine de bakmak istersen aç, ama sıralı gitmek
+            daha kolay.
           </p>
         )}
-      </div>
-    </div>
-  )
-}
 
-/**
- * Konu sayfasındaki numaralı basamak satırı.
- *
- * Numara haritadaki basamak numarasının **aynısı** ve rozet de haritadaki
- * gibi bir kitap sırtı: yeşil kartlar, turuncu sorular. Sayfada 1–2 diye
- * yeniden başlayan bir numaralandırma, öğrencinin az önce bastığı kitabı
- * sayfada bulamaması demekti.
- */
-function Adim({
-  no,
-  noZemin,
-  baslik,
-  alt,
-  eylem,
-  vurgulu,
-  kapali = false,
-  onTikla,
-}: {
-  no: number
-  noZemin: string
-  baslik: string
-  alt: string
-  eylem: string
-  /** Sıradaki iş bu mu — dolu düğme yalnızca bir basamakta duruyor. */
-  vurgulu: boolean
-  kapali?: boolean
-  onTikla: () => void
-}) {
-  return (
-    <div
-      className={cn(
-        'flex items-center gap-3 rounded-[20px] bg-background px-3.5 py-3',
-        kapali && 'opacity-70',
-      )}
-    >
-      <span
-        className={cn(
-          'rakam relative grid h-9 w-8 shrink-0 place-items-center rounded-[5px_9px_9px_5px] pl-1 text-[13px] font-extrabold text-white',
-          noZemin,
-        )}
-        aria-hidden
-      >
-        <span className="absolute inset-y-0 left-0 w-1 rounded-l-[5px] bg-black/20" />
-        {no}
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="block font-display text-[14.5px] font-extrabold tracking-tight">
-          {baslik}
-        </span>
-        <span className="rakam block text-[12px] font-bold text-muted-foreground">{alt}</span>
-      </span>
-      <button
-        type="button"
-        onClick={onTikla}
-        disabled={kapali}
-        className={cn(
-          'h-9 shrink-0 rounded-full px-4 text-[13.5px] font-extrabold transition active:brightness-95',
-          'disabled:pointer-events-none',
-          kapali
-            ? 'bg-muted text-muted-foreground'
-            : vurgulu
-              ? 'bg-primary-dolu text-white'
-              : 'bg-muted text-muted-foreground',
-        )}
-      >
-        {eylem}
-      </button>
+        <div className="px-[18px] pb-[18px]">
+          <button
+            type="button"
+            onClick={kilitli ? onKilidiAc : onBasla}
+            disabled={kapali}
+            className={cn(
+              'grid h-12 w-full place-items-center rounded-[15px] text-[14.5px] font-extrabold text-white transition-transform active:translate-y-[3px]',
+              'disabled:pointer-events-none disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none',
+            )}
+            style={
+              kapali
+                ? undefined
+                : kilitli
+                  ? {
+                      background: 'var(--warning)',
+                      boxShadow: '0 4px 0 color-mix(in srgb, var(--warning) 75%, #000)',
+                    }
+                  : { background: ton, boxShadow: `0 4px 0 ${tonKoyu}` }
+            }
+          >
+            {dugme}
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

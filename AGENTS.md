@@ -1952,7 +1952,22 @@ bandın iki yanında düz kesilirdi.
 
 Sıradaki kitabı ayıran şey renk değil boy, altındaki ışık ve genişleyen halka
 (`patika-halka`) — bitmiş kitaplar da aynı yeşil. "Başla" balonu kaldırıldı:
-başlık zaten "N. basamak sırada" diyor.
+başlık zaten "N. konu sırada" diyor.
+
+**Numara yalnızca yeşil kitapta ve konuyu sayıyor** (1, 2, 3…). Bir süre
+basamaklar sayılıyordu — yeşiller 1, 3, 5 diye gidiyordu ve "3. kitap"
+dendiğinde ikinci konu anlaşılıyordu. Turuncu kitabın kapağında numara değil
+liste simgesi var: sorular sayılmıyor, çözülüyor.
+
+**Kitaba basınca ortada bir kart açılıyor** (`KonuKarti`), alttan gelen bir
+sayfa değil. Yeşil kitap anlatım kartını, turuncu kitap soru kartını açıyor:
+aynı düzen, ayrı ton (yeşil / turuncu kurdele ve düğme), ayrı maskot pozu
+(okuyan / düşünen), yıldızlar ayrı şeyi sayıyor (okuma: bitti 3, başlandı 1;
+soru: %90 üç, geçme sınırı iki, altı bir) ve düğmenin yazısı ayrı ("Anlatımı
+oku" / "Soruları çöz"). Eskiden iki basamağı alt alta listeleyen tek bir konu
+sayfası vardı ve hangi kitaba basıldığı sayfada görünmüyordu. Kilitli
+konunun kartı uyarıyı ve "Yine de aç"ı taşıyor — kilit yavaşlatma, dayatma
+değil; kapının anahtarı karttan eksilmiyor.
 
 ## Hedef kataloğu
 
