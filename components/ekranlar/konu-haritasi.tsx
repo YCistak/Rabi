@@ -1307,76 +1307,86 @@ function KonuKarti({
           <X size={15} strokeWidth={3} aria-hidden />
         </button>
 
-        {/* Anlatım kartında Rabi kitap okuyor, soru kartında düşünüyor:
-            maskotun pozu kartın işini söylüyor. */}
-        <div
-          className="pointer-events-none absolute top-3 left-3"
-          style={{ filter: 'drop-shadow(0 8px 10px var(--patika-golge))' }}
-        >
-          <Rabi durum="calisiyor" poz={soru ? 'dusunen' : 'okuyan'} boyut={76} />
-        </div>
-
-        <div className="flex flex-col gap-3 pt-[18px] pr-[18px] pb-3.5 pl-[94px]">
-          <div className="flex min-h-[37px] flex-col items-start gap-1.5 pr-[70px]">
-            <span
-              className="text-[9.5px] font-black tracking-[0.15em] uppercase"
-              style={{ color: ton }}
-            >
-              {soru ? 'Sorular' : 'Anlatım'}
-            </span>
-            {kilitli ? (
-              <span className="inline-flex h-[19px] items-center gap-1 rounded-full bg-muted px-2 text-[9.5px] font-black tracking-[0.04em] whitespace-nowrap text-muted-foreground">
-                <Lock size={10} strokeWidth={3} aria-hidden />
-                Kilitli
-              </span>
-            ) : bitti ? (
-              <span className="inline-flex h-[19px] items-center gap-1 rounded-full bg-success-soft px-2 text-[9.5px] font-black tracking-[0.04em] whitespace-nowrap text-success">
-                <Check size={10} strokeWidth={4} aria-hidden />
-                Bitti
-              </span>
-            ) : (
-              <span className="inline-flex h-[19px] items-center gap-1 rounded-full bg-primary-soft px-2 text-[9.5px] font-black tracking-[0.04em] whitespace-nowrap text-primary">
-                <span className="size-[5px] rounded-full bg-primary" aria-hidden />
-                Bekliyor
-              </span>
-            )}
-          </div>
-
-          <h3
-            id="konu-karti-baslik"
-            className="-mt-1.5 font-display text-[19px] leading-tight font-extrabold tracking-tight text-pretty"
+        {/*
+          Maskot metnin solundaki sütunda ve o sütunun tam ortasında — köşeye
+          yapışık değil. Sütun metin bloğuyla aynı boyda (flex satırı), o
+          yüzden tavşan başlık uzayıp kısaldıkça hep ortada kalıyor. Anlatım
+          kartında Rabi kitap okuyor, soru kartında düşünüyor: pozu kartın
+          işini söylüyor.
+        */}
+        <div className="flex items-stretch pt-[18px] pr-[18px] pb-3.5">
+          <div
+            className="pointer-events-none grid w-[100px] shrink-0 place-items-center"
+            style={{ filter: 'drop-shadow(0 8px 10px var(--patika-golge))' }}
+            aria-hidden
           >
-            {konu.ad}
-          </h3>
-
-          <div className="flex items-center gap-2">
-            <span className="flex gap-[3px]" aria-label={`${yildiz}/3 yıldız`}>
-              {[1, 2, 3].map((i) => (
-                <Star
-                  key={i}
-                  size={16}
-                  strokeWidth={0}
-                  className={i <= yildiz ? 'fill-warning' : 'fill-grid'}
-                  aria-hidden
-                />
-              ))}
-            </span>
-            <span className="rakam text-[11.5px] font-extrabold text-muted-foreground">{olcu}</span>
+            <Rabi durum="calisiyor" poz={soru ? 'dusunen' : 'okuyan'} boyut={84} />
           </div>
 
-          <div className="flex items-center gap-2">
-            <span
-              className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-muted"
-              aria-hidden
-            >
+          <div className="flex min-w-0 flex-1 flex-col gap-3">
+            <div className="flex min-h-[37px] flex-col items-start gap-1.5 pr-[70px]">
               <span
-                className="absolute inset-y-0 left-0 rounded-full"
-                style={{ width: `${yuzde}%`, background: ton }}
-              />
-            </span>
-            <span className="rakam text-[10.5px] font-extrabold whitespace-nowrap text-muted-foreground">
-              {bolum.sira}. bölüm · {bolum.biten}/{bolum.toplam}
-            </span>
+                className="text-[9.5px] font-black tracking-[0.15em] uppercase"
+                style={{ color: ton }}
+              >
+                {soru ? 'Sorular' : 'Anlatım'}
+              </span>
+              {kilitli ? (
+                <span className="inline-flex h-[19px] items-center gap-1 rounded-full bg-muted px-2 text-[9.5px] font-black tracking-[0.04em] whitespace-nowrap text-muted-foreground">
+                  <Lock size={10} strokeWidth={3} aria-hidden />
+                  Kilitli
+                </span>
+              ) : bitti ? (
+                <span className="inline-flex h-[19px] items-center gap-1 rounded-full bg-success-soft px-2 text-[9.5px] font-black tracking-[0.04em] whitespace-nowrap text-success">
+                  <Check size={10} strokeWidth={4} aria-hidden />
+                  Bitti
+                </span>
+              ) : (
+                <span className="inline-flex h-[19px] items-center gap-1 rounded-full bg-primary-soft px-2 text-[9.5px] font-black tracking-[0.04em] whitespace-nowrap text-primary">
+                  <span className="size-[5px] rounded-full bg-primary" aria-hidden />
+                  Bekliyor
+                </span>
+              )}
+            </div>
+
+            <h3
+              id="konu-karti-baslik"
+              className="-mt-1.5 font-display text-[19px] leading-tight font-extrabold tracking-tight text-pretty"
+            >
+              {konu.ad}
+            </h3>
+
+            <div className="flex items-center gap-2">
+              <span className="flex gap-[3px]" aria-label={`${yildiz}/3 yıldız`}>
+                {[1, 2, 3].map((i) => (
+                  <Star
+                    key={i}
+                    size={16}
+                    strokeWidth={0}
+                    className={i <= yildiz ? 'fill-warning' : 'fill-grid'}
+                    aria-hidden
+                  />
+                ))}
+              </span>
+              <span className="rakam text-[11.5px] font-extrabold text-muted-foreground">
+                {olcu}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span
+                className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-muted"
+                aria-hidden
+              >
+                <span
+                  className="absolute inset-y-0 left-0 rounded-full"
+                  style={{ width: `${yuzde}%`, background: ton }}
+                />
+              </span>
+              <span className="rakam text-[10.5px] font-extrabold whitespace-nowrap text-muted-foreground">
+                {bolum.sira}. bölüm · {bolum.biten}/{bolum.toplam}
+              </span>
+            </div>
           </div>
         </div>
 
