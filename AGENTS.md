@@ -1813,12 +1813,21 @@ iki kez eklenmesini önlüyor; içerik güncellendiğinde kullanıcının kaydet
 bilgi yerinde kalıyor. Yeni bir kart alanı eklersen (görsel, formül) onu da
 kayda koy, kimliğe güvenme.
 
-### Kilit yok, sıra var
+### Kilit var, kapısı yok
 
-Konular sırayla açılmıyor. Sınav hazırlığındaki öğrenci yarın işlenecek
-konuya bugün bakmak ister ve kilitli bir harita onu kendi müfredatından uzak
-tutar. Patika sırayı **gösteriyor**, dayatmıyor; sıradaki konunun düğümündeki
-halka aynı işi zorlamadan yapıyor.
+Konular sırayla açılıyor: bir konu, bir öncekinin kartları okunup soruları
+geçilmeden (`GECME_ORANI`, %50) açılmıyor (`konuKilitli`, `lib/konu/ilerleme.ts`).
+Üç evre geçti. Önce kilit hiç yoktu ("sınav hazırlığındaki öğrenci yarın
+işlenecek konuya bugün bakmak ister"). Sonra kilit geldi ama konu sayfasında
+"Yine de aç" duruyordu — yavaşlatma, dayatma değil. Sonunda o kapı da
+kaldırıldı (kullanıcı kararı): sorusunu geçmeden bir sonrakine geçilen konu
+geçilmiş sayılmıyor. `acildi` alanı ve `kilidiAc` duruyor — eski kayıtlarda
+elden açılmış konular var ve onları yeniden kilitlemek okunmuş kartları geri
+almak olurdu; arayüzden çağıran yok.
+
+Eşik %80'den %50'ye indi: destede üç-altı iddia var ve seksen demek altı
+sorunun beşi demekti; tek yanlış konuyu kilitliyor, öğrenci aynı yoklamayı
+üst üste veriyordu.
 
 Haritanın tepesinde bir süre "Kaldığın yer" kısayolu duruyordu; kaldırıldı.
 Ekranın işi seçtirmek ve seçilecek yer zaten patikanın kendisi — kısayol,
@@ -1966,8 +1975,8 @@ aynı düzen, ayrı ton (yeşil / turuncu kurdele ve düğme), ayrı maskot pozu
 soru: %90 üç, geçme sınırı iki, altı bir) ve düğmenin yazısı ayrı ("Anlatımı
 oku" / "Soruları çöz"). Eskiden iki basamağı alt alta listeleyen tek bir konu
 sayfası vardı ve hangi kitaba basıldığı sayfada görünmüyordu. Kilitli
-konunun kartı uyarıyı ve "Yine de aç"ı taşıyor — kilit yavaşlatma, dayatma
-değil; kapının anahtarı karttan eksilmiyor.
+konunun kartı açılıyor ama düğmesi pasif ve hangi konunun onu tuttuğu
+yazıyor; kapıyı açan düğme yok (bkz. **Kilit var, kapısı yok**).
 
 ## Hedef kataloğu
 

@@ -83,8 +83,8 @@ describe('soru oranı ve tamamlanma', () => {
   })
 
   it('sorusu olan konu geçme oranının altında tamamlanmaz', () => {
-    const yarim = ilerlemeyiYaz({}, 's1', { okunan: 1, bitti: true, dogru: 1 }, '2026-09-01')
-    expect(soruOrani(yarim, soruluKonu)).toBe(50)
+    const yarim = ilerlemeyiYaz({}, 's1', { okunan: 1, bitti: true, dogru: 0 }, '2026-09-01')
+    expect(soruOrani(yarim, soruluKonu)).toBe(0)
     expect(soruOrani(yarim, soruluKonu)!).toBeLessThan(GECME_ORANI)
     expect(konuTamam(yarim, soruluKonu)).toBe(false)
     // Kartlar bitti ama borç kaldı: düğümdeki soru işaretinin ölçütü bu.

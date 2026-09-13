@@ -62,7 +62,6 @@ import {
   GECME_ORANI,
   dersOrani,
   ilerlemeyiYaz,
-  kilidiAc,
   konuBitti,
   konuKilitli,
   soruOrani,
@@ -72,7 +71,7 @@ import {
 import { haritaTemasi, type CizimAdi, type HaritaTemasi } from '@/lib/konu/harita-temasi'
 import { bugun, cn } from '@/lib/utils'
 import { useGeriKatmani } from '@/lib/geri'
-import { Kart, Onay } from '@/components/ui'
+import { Kart } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartDestesi, type DesteSonucu } from '@/components/konu/kart-destesi'
 import { SoruSahnesi, type SahneSonucu } from '@/components/konu/soru-sahnesi'
@@ -96,13 +95,12 @@ import { SoruSahnesi, type SahneSonucu } from '@/components/konu/soru-sahnesi'
  * göre değişmiyor, yalnızca band ve simgeler değişiyor — bkz.
  * `lib/konu/harita-temasi.ts`.
  *
- * **Kilit var.** Bir konu, bir öncekinin kartları okunup soruları geçilmeden
- * açılmıyor. Kilit dayatma değil yavaşlatma: konu sayfasındaki "Yine de aç"
- * kilidi kaldırıyor, ama önce "emin misin" diye soruyor. Sınav
- * hazırlığındaki öğrenci yarın işlenecek konuya bugün bakabilsin diye
- * kapının anahtarı hep elinde; sorunun tek işi kapıyı yanlışlıkla
- * açmamasını sağlamak. Açılan kilit kayda giriyor (`acildi`), yani uyarı
- * aynı konuda ikinci kez çıkmıyor.
+ * **Kilit var ve kapısı yok.** Bir konu, bir öncekinin kartları okunup
+ * soruları geçilmeden (`GECME_ORANI`) açılmıyor. Bir süre konu sayfasında
+ * "Yine de aç" duruyordu — kilit yavaşlatma sayılıyordu, dayatma değil.
+ * Kaldırıldı (kullanıcı kararı): sorusunu geçmeden bir sonrakine geçilen
+ * konu, geçilmiş sayılmıyor. Kilitli kitabın kartı yalnızca hangi kapının
+ * kapalı olduğunu söylüyor.
  */
 
 /**
@@ -282,8 +280,6 @@ export function KonuHaritasiEkrani({
     basamak: Basamak
     bolum: { sira: number; biten: number; toplam: number }
   } | null>(null)
-  /** Kilidi açılmak istenen konu — "emin misin" onayı bunu bekliyor. */
-  const [kilitOnayi, setKilitOnayi] = useState<Konu | null>(null)
   /*
     Program seçici **kapalı** başlıyor. Sınıf hapları ve yedi ders çipi
     sürekli açıkken ekranın ilk yarısını kaplıyor, patika katlamanın altında
@@ -599,7 +595,6 @@ export function KonuHaritasiEkrani({
           oncekiAd={sayfa.basamak.konuSirasi > 1 ? sirali[sayfa.basamak.konuSirasi - 2].ad : ''}
           ilerlemeler={ilerlemeler}
           onKapat={() => setSayfa(null)}
-          onKilidiAc={() => setKilitOnayi(sayfa.basamak.konu)}
           onBasla={() => {
             const { konu, temaAdi } = sayfa.basamak
             setSayfa(null)
@@ -608,22 +603,6 @@ export function KonuHaritasiEkrani({
           }}
         />
       )}
-
-      {/*
-        Kilidi açmak tek dokunuşla olmuyor: "Yine de aç" düğmesi sayfanın
-        içinde, parmağın zaten gezindiği yerde duruyor ve yanlışlıkla basmak
-        sıradaki konuyu sessizce değiştirirdi.
-      */}
-      <Onay
-        acik={kilitOnayi !== null}
-        baslik="Kilidi açılsın mı?"
-        aciklama={`“${kilitOnayi?.ad ?? ''}” sırası gelmeden açılıyor. Önceki konuyu atlamak, buradaki kartların dayandığı bilgiyi atlamak olabilir.`}
-        onayMetni="Aç"
-        onOnayla={() => {
-          if (kilitOnayi) setIlerlemeler((onceki) => kilidiAc(onceki, kilitOnayi.id, bugun()))
-        }}
-        onIptal={() => setKilitOnayi(null)}
-      />
     </div>
   )
 }
@@ -1177,10 +1156,9 @@ function SoruKitabi({ gri, simdi }: { gri: boolean; simdi: boolean }) {
  * karar (ne, ne kadar, başla) ve alttan gelen yarım sayfa onu bir ekran gibi
  * gösteriyordu.
  *
- * Kilit burada da açılıyor: kilitli konunun kartı uyarıyı ve "Yine de aç"
- * düğmesini taşıyor. Tasarım kilitli kitapta yalnızca bir uyarı gösteriyordu;
- * uygulamada kilit yavaşlatma, dayatma değil (bkz. dosya başındaki not), o
- * yüzden kapının anahtarı karttan hiç eksilmiyor.
+ * Kilitli konunun kartı açılıyor ama düğmesi pasif: kapalı kapının ardında
+ * ne olduğu görünüyor, hangi konunun onu tuttuğu yazıyor. Kapıyı açan bir
+ * düğme yok (bkz. dosya başındaki not).
  */
 function KonuKarti({
   basamak,
@@ -1190,7 +1168,6 @@ function KonuKarti({
   oncekiAd,
   ilerlemeler,
   onKapat,
-  onKilidiAc,
   onBasla,
 }: {
   basamak: Basamak
@@ -1201,7 +1178,6 @@ function KonuKarti({
   oncekiAd: string
   ilerlemeler: KonuIlerlemeleri
   onKapat: () => void
-  onKilidiAc: () => void
   onBasla: () => void
 }) {
   useGeriKatmani(true, onKapat)
@@ -1251,13 +1227,13 @@ function KonuKarti({
         : `${konu.kartlar.length} kart ~ ${okumaDakikasi(konu.kartlar.length)} dk`
 
   /*
-    Soru kartı iki sebeple kapalı olabiliyor ve ikisi ayrı yazıyor: kartlar
-    okunmadıysa kapı öğrencide, soru yazılmadıysa içerikte. Kilitli anlatım
-    kartında düğme "Yine de aç"a dönüyor — o yol kapalı değil, sorulu.
+    Düğme üç sebeple kapalı olabiliyor ve üçü ayrı yazıyor: önceki konu
+    geçilmediyse kapı bir önceki kitapta, kartlar okunmadıysa öğrencide,
+    soru yazılmadıysa içerikte.
   */
-  const kapali = !kilitli && soru && (durum === 'yazilmadi' || !kartBitti)
+  const kapali = kilitli || (soru && (durum === 'yazilmadi' || !kartBitti))
   const dugme = kilitli
-    ? 'Yine de aç'
+    ? 'Önceki konu bitince açılır'
     : soru
       ? durum === 'yazilmadi'
         ? 'Sorular henüz yazılmadı'
@@ -1393,30 +1369,21 @@ function KonuKarti({
 
         {kilitli && (
           <p className="px-[18px] pb-3 text-[12.5px] leading-snug font-bold text-pretty text-warning">
-            “{oncekiAd}” bitmeden bu konu açılmıyor. Yine de bakmak istersen aç, ama sıralı gitmek
-            daha kolay.
+            “{oncekiAd}” konusunun kartlarını okuyup sorularında %{GECME_ORANI} tutturunca bu konu
+            açılıyor.
           </p>
         )}
 
         <div className="px-[18px] pb-[18px]">
           <button
             type="button"
-            onClick={kilitli ? onKilidiAc : onBasla}
+            onClick={onBasla}
             disabled={kapali}
             className={cn(
               'grid h-12 w-full place-items-center rounded-[15px] text-[14.5px] font-extrabold text-white transition-transform active:translate-y-[3px]',
               'disabled:pointer-events-none disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none',
             )}
-            style={
-              kapali
-                ? undefined
-                : kilitli
-                  ? {
-                      background: 'var(--warning)',
-                      boxShadow: '0 4px 0 color-mix(in srgb, var(--warning) 75%, #000)',
-                    }
-                  : { background: ton, boxShadow: `0 4px 0 ${tonKoyu}` }
-            }
+            style={kapali ? undefined : { background: ton, boxShadow: `0 4px 0 ${tonKoyu}` }}
           >
             {dugme}
           </button>

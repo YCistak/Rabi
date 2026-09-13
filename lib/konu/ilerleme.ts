@@ -78,11 +78,14 @@ export const BILINMEYEN_SINIRI = 300
 /**
  * Soruların geçme oranı, yüzde.
  *
- * Sayı yuvarlak değil bir eşik: altında kalan konu haritada yeşile dönmüyor,
- * düğümünde soru işareti kalıyor. Kartları okumak konuyu "gördüm" yapıyor,
- * soruları geçmek "biliyorum" yapıyor ve harita ikincisini sayıyor.
+ * Bir eşik: altında kalan konu bitmiş sayılmıyor ve **bir sonraki konu
+ * açılmıyor**. Kartları okumak konuyu "gördüm" yapıyor, soruları geçmek
+ * "biliyorum" yapıyor ve kilit ikincisine bakıyor. Yüzde 50, 80'den indi:
+ * doğru/yanlış sorusunda yarısını tutturmak yazı turayla da olur, ama
+ * destede üç-altı iddia var ve seksen demek altı sorunun beşi demekti —
+ * tek yanlış konuyu kilitliyor, öğrenci aynı yoklamayı üst üste veriyordu.
  */
-export const GECME_ORANI = 80
+export const GECME_ORANI = 50
 
 /** Bir konunun destesi sonuna kadar okundu mu. */
 export function konuBitti(ilerlemeler: KonuIlerlemeleri, konuId: string): boolean {
@@ -127,8 +130,14 @@ export function soruBekliyor(ilerlemeler: KonuIlerlemeleri, konu: Konu): boolean
  * Konu kilitli mi.
  *
  * Kilit **bir önceki konuya** bakıyor, tema sınırına değil: patika program
- * boyunca tek bir sıra ve tema başlığı o sırayı bölmüyor. İlk konu hep açık;
- * kilidi elle açılan konu (`acildi`) da açık sayılıyor.
+ * boyunca tek bir sıra ve tema başlığı o sırayı bölmüyor. Önceki konunun
+ * kartları okunmuş **ve** soruları geçilmiş (`GECME_ORANI`) olmalı; sorusu
+ * yazılmamış konuda deste yetiyor. İlk konu hep açık.
+ *
+ * `acildi` hâlâ okunuyor: kilit bir süre "Yine de aç" ile elden
+ * açılabiliyordu ve o kayıtlar duruyor. Kapı kalktı (kullanıcı kararı:
+ * sorular geçilmeden yeni konuya geçilmesin), ama açılmış bir konuyu
+ * yeniden kilitlemek kullanıcının zaten okuduğu kartları geri almak olurdu.
  */
 export function konuKilitli(
   ilerlemeler: KonuIlerlemeleri,
@@ -140,7 +149,11 @@ export function konuKilitli(
   return !konuTamam(ilerlemeler, sirali[sira - 1])
 }
 
-/** Kilidi elle açar. Kayıt yoksa açılıyor; okunan kart bilgisi bozulmuyor. */
+/**
+ * Kilidi elle açar. Kayıt yoksa açılıyor; okunan kart bilgisi bozulmuyor.
+ * Arayüzde çağıran kalmadı (bkz. `konuKilitli`); eski kayıtların anlamı ve
+ * testi için duruyor.
+ */
 export function kilidiAc(
   ilerlemeler: KonuIlerlemeleri,
   konuId: string,
