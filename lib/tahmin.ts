@@ -71,6 +71,12 @@ export function obpHesapla(
  * Seçilen TYT ve AYT denemesinden tahmin üretir. İkisi de yoksa null döner.
  * Aynı deneme her iki tarafta da seçilebilir (seviye tespit sınavı gibi ikisini de
  * kapsayan şablonlarda bu normaldir).
+ *
+ * `tur: 'tyt'` yalnızca TYT puanı ve TYT sıralaması demek: AYT'ye girmeyen
+ * (ya da henüz AYT denemesi olmayan) öğrenci için. Bu durumda AYT denemesi
+ * hesaba hiç girmiyor — verilse bile. Eskiden tek yol AYT'yi boş sayıp alan
+ * puanı hesaplamaktı ve sonuç "gerçekte olacağından çok düşük" uyarısıyla
+ * geliyordu; TYT'nin kendi dağılımı (`yerlestirme.tyt`) zaten veride var.
  */
 export function tahminUret({
   tytDenemesi,
@@ -83,10 +89,11 @@ export function tahminUret({
   tytDenemesi: Deneme | undefined
   aytDenemesi: Deneme | undefined
   sablonlar: Sablon[]
-  tur: PuanTuru
+  tur: PuanTuru | 'tyt'
   obp: number | null
   yil?: number
 }): Tahmin | null {
+  if (tur === 'tyt') aytDenemesi = undefined
   if (!tytDenemesi && !aytDenemesi) return null
 
   const ham: Netler = {}

@@ -111,6 +111,18 @@ describe('tahminUret', () => {
     const t = tahminUret({ ...temel, tytDenemesi, aytDenemesi: undefined })!
     expect(t.aytVar).toBe(false)
   })
+
+  it("'tyt' türünde AYT denemesi hesaba girmez ve TYT sıralaması üretilir", () => {
+    const yalniz = tahminUret({ ...temel, tur: 'tyt', tytDenemesi, aytDenemesi: undefined })!
+    const aytli = tahminUret({ ...temel, tur: 'tyt', tytDenemesi, aytDenemesi })!
+    expect(aytli.sinavPuani).toBe(yalniz.sinavPuani)
+    expect(aytli.aytVar).toBe(false)
+    expect(yalniz.sinavPuani).toBeGreaterThan(100)
+    expect(yalniz.siralama.yillar.every((y) => !y.tabloDisi)).toBe(true)
+    // Alan puanı AYT'siz hesaplanınca düşük çıkıyordu; TYT puanı ondan yüksek olmalı.
+    const alanPuani = tahminUret({ ...temel, tytDenemesi, aytDenemesi: undefined })!
+    expect(yalniz.sinavPuani).toBeGreaterThan(alanPuani.sinavPuani)
+  })
 })
 
 describe('şablon bütünlüğü', () => {

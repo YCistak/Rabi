@@ -6,7 +6,8 @@ import type { Ayarlar, Deneme, OkulYili, Sablon } from '@/lib/types'
 import { netYaz, tarihYaz } from '@/lib/hesap'
 import { bantYaz, siraYaz } from '@/lib/siralama'
 import { aytAdaylari, enYeni, obpHesapla, tahminUret, tytAdaylari } from '@/lib/tahmin'
-import { BaslikSatiri, BosDurum, Deger, Kart, Not, SecmeliAlan } from '@/components/ui'
+import { Anahtar, BaslikSatiri, BosDurum, Deger, Kart, Not, SecmeliAlan } from '@/components/ui'
+import { cn } from '@/lib/utils'
 import { Rabi } from '@/components/maskot/rabi'
 
 export function SiralamaEkrani({
@@ -29,6 +30,14 @@ export function SiralamaEkrani({
 
   const [tytId, setTytId] = useState<string>(() => enYeni(tytListesi)?.id ?? '')
   const [aytId, setAytId] = useState<string>(() => enYeni(aytListesi)?.id ?? '')
+  /*
+    "AYT'ye girmedim": yalnızca TYT puanı ve TYT sıralaması. Eskiden AYT'siz
+    hesap, alan puanını AYT netleri sıfırmış gibi çıkarıp "ciddiye alma"
+    uyarısı basıyordu; AYT'ye girmeyecek ya da henüz AYT denemesi çözmemiş
+    öğrenci için bu bir sonuç değildi. AYT denemesi hiç yoksa anahtar açık
+    başlıyor — boş bir seçiciye bakıp ne yapacağını düşünmesin.
+  */
+  const [aytYok, setAytYok] = useState<boolean>(() => aytListesi.length === 0)
 
   const obpSonucu = useMemo(
     () => obpHesapla(okulYillari, ayarlar.elleObp),
@@ -43,10 +52,10 @@ export function SiralamaEkrani({
             tytDenemesi: denemeler.find((d) => d.id === tytId),
             aytDenemesi: denemeler.find((d) => d.id === aytId),
             sablonlar,
-            tur,
+            tur: aytYok ? 'tyt' : tur,
             obp: obpSonucu?.obp ?? null,
           }),
-    [denemeler, tytId, aytId, sablonlar, tur, obpSonucu],
+    [denemeler, tytId, aytId, aytYok, sablonlar, tur, obpSonucu],
   )
 
   /*
@@ -76,7 +85,7 @@ export function SiralamaEkrani({
         <BosDurum
           simge={<Rabi durum="uykulu" poz="kahveli" boyut={96} />}
           baslik="Önce bir deneme ekle"
-          aciklama="Sıralama tahmini için en az bir TYT ve bir AYT denemesi gerekiyor. Deneme sekmesinden ekleyebilirsin."
+          aciklama="Sıralama tahmini için en az bir TYT denemesi gerekiyor. Deneme sekmesinden ekleyebilirsin."
         />
       </div>
     )
@@ -93,12 +102,34 @@ export function SiralamaEkrani({
           secili={tytId}
           onSec={setTytId}
         />
-        <DenemeSecici
-          etiket={tur === 'dil' ? 'YDT denemesi' : 'AYT denemesi'}
-          denemeler={aytListesi}
-          secili={aytId}
-          onSec={setAytId}
-        />
+        {!aytYok && (
+          <DenemeSecici
+            etiket={tur === 'dil' ? 'YDT denemesi' : 'AYT denemesi'}
+            denemeler={aytListesi}
+            secili={aytId}
+            onSec={setAytId}
+          />
+        )}
+
+        <button
+          type="button"
+          onClick={() => setAytYok((a) => !a)}
+          aria-pressed={aytYok}
+          className={cn(
+            'flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition',
+            aytYok ? 'bg-primary-soft' : 'bg-muted/60 active:bg-muted',
+          )}
+        >
+          <span>
+            <span className="block font-medium">
+              {tur === 'dil' ? "YDT'ye" : "AYT'ye"} girmedim
+            </span>
+            <span className="block text-xs text-muted-foreground">
+              Yalnızca TYT puanı ve TYT sıralaması hesaplanır
+            </span>
+          </span>
+          <Anahtar acik={aytYok} />
+        </button>
 
         <div className="flex items-center justify-between rounded-xl bg-muted/60 px-3 py-2.5 text-sm">
           <span className="text-muted-foreground">OBP</span>
@@ -119,15 +150,19 @@ export function SiralamaEkrani({
         <Not tur="uyari">Hesap için en az bir deneme seç.</Not>
       ) : (
         <>
-          {!tahmin.aytVar && (
+          {!aytYok && !tahmin.aytVar && (
             <Not tur="uyari" className="mb-3">
               {tur === 'dil' ? 'YDT' : 'AYT'} denemesi seçmedin. O testlerin netleri boş
-              sayıldığı için puan gerçekte olacağından çok düşük çıkar — sonucu ciddiye alma.
+              sayıldığı için puan gerçekte olacağından çok düşük çıkar. Girmeyeceksen
+              yukarıdaki anahtarı aç, yalnızca TYT hesaplansın.
             </Not>
           )}
 
           <div className="mb-3 grid grid-cols-2 gap-3">
-            <Deger etiket="Tahmini sınav puanı" deger={netYaz(tahmin.sinavPuani)} />
+            <Deger
+              etiket={aytYok ? 'Tahmini TYT puanı' : 'Tahmini sınav puanı'}
+              deger={netYaz(tahmin.sinavPuani)}
+            />
             <Deger
               etiket="Yerleştirme puanı"
               deger={netYaz(tahmin.yerlestirmePuani)}
@@ -137,7 +172,7 @@ export function SiralamaEkrani({
           </div>
 
           <Kart className="mb-3">
-            <p className="mb-3 font-medium">Tahmini sıralama</p>
+            <p className="mb-3 font-medium">{aytYok ? 'Tahmini TYT sıralaması' : 'Tahmini sıralama'}</p>
             <ul className="space-y-2">
               {tahmin.siralama.yillar.map((yil) => (
                 <li key={yil.yil} className="flex items-baseline justify-between gap-2">
