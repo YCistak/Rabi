@@ -1338,6 +1338,9 @@ function KonuKarti({
               </span>
             </div>
 
+            {/* Çubuğun yanında yalnızca bölüm numarası; "1/8" sayısı bölüm
+                bandında zaten yazıyor ve burada ikinci kez yazması kartı
+                kalabalıklaştırıyordu. Çubuk doluluğu aynı oranı gösteriyor. */}
             <div className="flex items-center gap-2">
               <span
                 className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-muted"
@@ -1349,7 +1352,7 @@ function KonuKarti({
                 />
               </span>
               <span className="rakam text-[10.5px] font-extrabold whitespace-nowrap text-muted-foreground">
-                {bolum.sira}. bölüm · {bolum.biten}/{bolum.toplam}
+                {bolum.sira}. bölüm
               </span>
             </div>
           </div>
