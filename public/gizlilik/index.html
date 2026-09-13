@@ -9,10 +9,8 @@
   :root {
     /*
       Renkler uygulamanın kendi temasından (`app/globals.css`) alındı ve
-      **koyu tema bloğu bilerek yok**: AGENTS.md "tek tema var" diyor, sayfa da
-      Ayarlar'da bir iframe içinde açılıyor. Koyu tema bloğu olsaydı telefonu
-      koyu temada olan kullanıcıda açık zeminli uygulamanın ortasında koyu bir
-      pencere açılırdı.
+      **koyu tema bloğu bilerek yok**: AGENTS.md "tek tema var" diyor; sayfa
+      uygulamadan tarayıcıya açılıyor ve uygulamayla aynı görünmeli.
     */
     color-scheme: light;
     --zemin: #f8f8f7;
@@ -106,6 +104,7 @@
 <main>
 
 <nav class="sekmeler" aria-label="Belgeler">
+  <a href="veri-ozeti.html">Cihazından ne çıkıyor?</a>
   <span aria-current="page">Gizlilik Politikası</span>
   <a href="sozlesme.html">Kullanıcı Sözleşmesi</a>
 </nav>
@@ -114,7 +113,7 @@
 <p class="ust">
   Uygulama: <b>Rabi</b> (<code>com.fluxifyinteractive.rabi</code>) &middot;
   Geliştirici: <b>Fluxify Interactive</b><br>
-  Yürürlük tarihi: <b>12 Eylül 2026</b> &middot; Son güncelleme: 12 Eylül 2026
+  Yürürlük tarihi: <b>12 Eylül 2026</b> &middot; Son güncelleme: 13 Eylül 2026
 </p>
 
 <p>
@@ -161,8 +160,10 @@
   <b>Ayarlar → Tüm veriyi sil</b> ile temizleyebilirsin. Android'in otomatik uygulama
   yedeği Rabi için <b>kapalıdır</b>: verin Google hesabına ya da telefon yedeğine
   kopyalanmaz, telefon değiştirdiğinde kendiliğinden taşınmaz. Yedek alırsan
-  (<b>Ayarlar → Yedeği indir</b>) dosya telefonunun İndirilenler klasörüne iner; o klasörü
-  başka uygulamalar da okuyabilir ve dosyayı kiminle paylaşacağına yalnızca sen karar verirsin.
+  (<b>Ayarlar → Yedeği indir</b>) Android'in paylaş penceresi açılır ve dosyayı nereye
+  kaydedeceğine ya da kime göndereceğine yalnızca sen karar verirsin; Rabi dosyayı kendisi
+  hiçbir yere göndermez. Seçtiğin uygulama (Drive, Dosyalar, mesajlaşma…) o andan sonra
+  dosyayı kendi kurallarıyla saklar.
 </p>
 
 <h2>2. Kamera ve fotoğraflar</h2>

@@ -4,14 +4,15 @@ name: Gizlilik politikasını yayınla
 # düzenlenemez bir HTML adreste durmasını istiyor. Adres:
 # https://ycistak.github.io/Rabi/
 #
-# Yayınlanan site **yalnızca o tek sayfadan** ibaret: aşağıdaki iş, deponun
-# geri kalanını değil `public/gizlilik/` klasörünü yüklüyor. Pages'i "master
-# dalı + /docs klasörü" ile açmak daha kısa olurdu ama o zaman `docs/ekran`
-# altındaki ekran görüntüleri de yayına girerdi.
+# Yayınlanan site üç sayfa: `index.html` (gizlilik politikası — adresi
+# değişmez, Play'de kayıtlı), `sozlesme.html`, `veri-ozeti.html`. Aşağıdaki
+# iş deponun geri kalanını değil `public/gizlilik/` klasörünü yüklüyor. Pages'i
+# "master dalı + /docs klasörü" ile açmak daha kısa olurdu ama o zaman
+# `docs/ekran` altındaki ekran görüntüleri de yayına girerdi.
 #
-# Metnin kaynağı tek: `public/gizlilik/index.html`. Aynı dosya `npm run build`
-# ile APK'nın içine de giriyor; uygulamadaki düz metin karşılığı
-# `lib/veri/yasal.ts` içinde ve ikisi birlikte güncellenmeli.
+# Metinlerin tek kaynağı bu klasör: uygulama içindeki Gizlilik ve Koşullar
+# ekranı (`components/ekranlar/yasal.tsx`) metni göstermiyor, bu sayfaları
+# tarayıcıda açıyor. Adresler `lib/veri/yasal.ts` içinde.
 
 on:
   push:
@@ -45,7 +46,7 @@ jobs:
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          # Klasörün tamamı yükleniyor ve içinde tek dosya var: index.html.
+          # Klasörün tamamı yükleniyor: index, sozlesme, veri-ozeti.
           path: public/gizlilik
 
       - id: dagitim

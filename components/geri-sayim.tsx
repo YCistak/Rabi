@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils'
 /**
  * Ana sayfanın üstündeki YKS geri sayımı.
  *
- * Kart dört parçadan ibaret ve sırası tasarımdan geliyor: yıl/oturum satırı,
+ * Kart dört parçadan ibaret ve sırası tasarımdan geliyor: yıl satırı,
  * dev sayı ve devamındaki tarih, hazırlık yılının çubuğu, en altta hedef
  * paneli. Motivasyon cümlesi de sağ üstteki tek kelimelik rozet ("Uzun yol")
  * de kaldırıldı: ikisi de `lib/sinav-sozleri.ts` havuzundan geliyordu ve
@@ -50,7 +50,6 @@ export function GeriSayim({
 }) {
   const sayim = useMemo(() => geriSayim(tarih, sinif), [tarih, sinif])
 
-  const oturumAdi = sayim.oturum === 'tyt' ? 'TYT' : 'AYT'
   const sinavGunu = sayim.kalanGun === 0
   // Son hafta kartın tamamı fuşya; öncesinde yalnızca vurgular renk değiştiriyor.
   const doluKart = sayim.kalanGun <= 7
@@ -72,13 +71,16 @@ export function GeriSayim({
           dev sayı söylüyor ve rozet aynı bilgiyi bir de kelimeyle tekrar
           ediyordu. Söz havuzu (`lib/sinav-sozleri.ts`) duruyor ama artık
           arayüzde hiçbir yerde kullanılmıyor. */}
+      {/* Oturum adı ("· TYT") kaldırıldı: TYT ile AYT aynı hafta sonunda, gün
+          sayısı bir gün oynuyor; satırda TYT yazması "AYT'ye kaç gün var"
+          diye ikinci bir soru doğuruyordu. */}
       <span
         className={cn(
           'block text-[12.5px] font-bold',
           doluKart ? 'text-white/85' : 'text-muted-foreground',
         )}
       >
-        {sayim.takvim.yil} YKS · {oturumAdi}
+        {sayim.takvim.yil} YKS
       </span>
 
       {/* Sayının kendisi. Sınav günü sayı yerine "Bugün" yazıyor: "0 gün kaldı"

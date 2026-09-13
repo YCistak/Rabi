@@ -316,12 +316,12 @@ export type KazanilanRozet = {
 // ---------------------------------------------------------------------------
 
 /**
- * Oyun müziği seçimi.
+ * Oyun müziği seçimi — **artık okunmuyor.**
  *
- * `'mod'` eskiden `'sakin'`di ve tek bir pad'i anlatıyordu; artık her tur modu
- * kendi parçasını çalıyor (`lib/oyunlar/mod-muzigi.ts`) ve Rahat modun parçası
- * o eski pad. Kayıttaki `'sakin'` değeri `ayarlariNormalize` içinde `'mod'`a
- * çevriliyor — eski kurulumlar ayarlarını kaybetmesin.
+ * Mini oyunlarda arka plan müziği kaldırıldı (`mod-muzigi.ts` silindi). Tip ve
+ * `Ayarlar.oyunMuzikTuru` alanı yalnızca kayıt ve yedek uyumluluğu için
+ * duruyor; `ayarlariNormalize` bilinen ikiliye zorlamaya devam ediyor ki eski
+ * yedekler geçerli kalsın.
  */
 export type OyunMuzikTuru = 'mod' | 'lofi'
 
@@ -373,12 +373,9 @@ export type Ayarlar = {
   bildirimAcik: boolean
   /** Mini oyunlarda doğru/yanlış/bitiş ses efektleri. */
   oyunSesi: boolean
-  /** Mini oyunlarda arkada müzik çalsın mı. Sesten ayrı: biri kapalı, öteki açık olabilir. */
+  /** Eski "Mini oyun müziği" anahtarı. Müzik kaldırıldı; alan yedek uyumluluğu için duruyor, okunmuyor. */
   oyunMuzigi: boolean
-  /**
-   * Hangi müzik: `sakin` koddan üretilen yumuşak pad, `lofi` pomodoro'nun
-   * parçaları. Zevk meselesi olduğu için seçim kullanıcıda.
-   */
+  /** Eski müzik seçimi; okunmuyor (bkz. `OyunMuzikTuru`). */
   oyunMuzikTuru: OyunMuzikTuru
   /** İlk açılış kurulumu tamamlandı mı; false ise kurulum ekranı gösterilir. */
   kurulumTamamlandi: boolean
