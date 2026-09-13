@@ -101,6 +101,13 @@ const ROZET_BEKLEME = 1200
 const useYerlesimEtkisi = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
 export function AppShell() {
+  // Açılış teşhisi (app/layout.tsx'teki satır içi betik) bu işareti bekliyor:
+  // React buraya kadar gelemezse 8 saniye sonra beyaz ekran yerine hata
+  // panelini gösteriyor. İlk boyamada koyuluyor; sonrası betiği ilgilendirmiyor.
+  useEffect(() => {
+    document.documentElement.dataset.rabiAcildi = '1'
+  }, [])
+
   const [sekme, setSekme] = useState<Sekme>('ana')
   const [ekran, setEkran] = useState<Ekran | null>(null)
   /** Deneme ekleme/düzenleme, sekmenin üstünde açılan bir alt ekran. */

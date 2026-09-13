@@ -73,6 +73,46 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="tr" className={`${nunito.variable} ${manrope.variable}`}>
       <head>
         {/*
+          Açılış teşhisi — beyaz ekrana karşı.
+
+          Bir telefonda (vivo Y18, Play sürümü) uygulama bembeyaz kaldı ve
+          elimizde hiçbir iz yoktu: Crashlytics raporu ancak uygulama açılıp
+          kullanıcı onay verince gidiyor, açılamayan uygulama soramıyor.
+          Bu betik React'ten ve her şeyden önce çalışıyor; ilk karedeki JS
+          hatalarını (bundle'ın çözümlenememesi dahil) biriktiriyor ve
+          `AppShell` 8 saniye içinde `data-rabi-acildi` işaretini koymazsa
+          beyaz ekranın yerine hata metni + cihaz bilgisi basıyor. Kullanıcı
+          ekran görüntüsünü gönderiyor, sebebi oradan okuyoruz.
+
+          Ağa çıkmıyor, hiçbir şeyi kaydetmiyor; yalnızca ekrana yazıyor.
+          Normal açılışta hiçbir izi yok.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){
+  var hatalar = [];
+  function kaydet(m){ if (hatalar.length < 8) hatalar.push(String(m).slice(0, 400)); }
+  window.addEventListener('error', function(e){
+    kaydet((e.message || 'hata') + (e.filename ? ' @ ' + e.filename.split('/').pop() + ':' + e.lineno : ''));
+  }, true);
+  window.addEventListener('unhandledrejection', function(e){
+    var r = e.reason; kaydet('promise: ' + (r && (r.stack || r.message) || r));
+  });
+  setTimeout(function(){
+    if (document.documentElement.getAttribute('data-rabi-acildi') === '1') return;
+    var d = document.createElement('div');
+    d.setAttribute('style', 'position:fixed;inset:0;z-index:2147483647;background:#fff;color:#111;padding:24px 16px;font:15px/1.5 sans-serif;overflow:auto;white-space:pre-wrap;word-break:break-word');
+    d.textContent = 'Rabi açılamadı.\n\nBu ekranın görüntüsünü geliştiriciye gönderir misin?\n\n'
+      + 'Cihaz: ' + navigator.userAgent + '\n'
+      + 'Ekran: ' + window.innerWidth + 'x' + window.innerHeight + '\n'
+      + 'Adres: ' + location.href + '\n\n'
+      + (hatalar.length ? 'Hatalar:\n' + hatalar.join('\n\n') : 'Hata yakalanmadı (JS hiç çalışmamış ya da yükleme takılmış olabilir).');
+    document.body ? document.body.appendChild(d) : document.documentElement.appendChild(d);
+  }, 8000);
+})();`,
+          }}
+        />
+        {/*
           Tablet ölçeği. Tasarım telefon için; tablette sütun ortada dar
           kalıyor, iki yan boş duruyordu. Çözüm arayüzü genişletmek değil,
           telefondaki görüntüyü büyütmek: `<html>`e `zoom` veriliyor, düzen
