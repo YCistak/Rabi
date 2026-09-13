@@ -102,11 +102,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     if (document.documentElement.getAttribute('data-rabi-acildi') === '1') return;
     var d = document.createElement('div');
     d.setAttribute('style', 'position:fixed;inset:0;z-index:2147483647;background:#fff;color:#111;padding:24px 16px;font:15px/1.5 sans-serif;overflow:auto;white-space:pre-wrap;word-break:break-word');
-    d.textContent = 'Rabi açılamadı.\n\nBu ekranın görüntüsünü geliştiriciye gönderir misin?\n\n'
-      + 'Cihaz: ' + navigator.userAgent + '\n'
-      + 'Ekran: ' + window.innerWidth + 'x' + window.innerHeight + '\n'
-      + 'Adres: ' + location.href + '\n\n'
-      + (hatalar.length ? 'Hatalar:\n' + hatalar.join('\n\n') : 'Hata yakalanmadı (JS hiç çalışmamış ya da yükleme takılmış olabilir).');
+    d.textContent = 'Rabi açılamadı.\\n\\nBu ekranın görüntüsünü geliştiriciye gönderir misin?\\n\\n'
+      + 'Cihaz: ' + navigator.userAgent + '\\n'
+      + 'Ekran: ' + window.innerWidth + 'x' + window.innerHeight + '\\n'
+      + 'Adres: ' + location.href + '\\n\\n'
+      + (hatalar.length ? 'Hatalar:\\n' + hatalar.join('\\n\\n') : 'Hata yakalanmadı (JS hiç çalışmamış ya da yükleme takılmış olabilir).');
     document.body ? document.body.appendChild(d) : document.documentElement.appendChild(d);
   }, 8000);
 })();`,
