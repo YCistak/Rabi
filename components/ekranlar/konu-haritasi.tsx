@@ -461,12 +461,25 @@ export function KonuHaritasiEkrani({
           document.body,
         )}
       {/*
-        Ekranın tepesinde başlık yok. Bir süre "9. sınıf Türkçe / 2. konu
-        sırada / ★ 1/16" satırı duruyordu; kaldırıldı (kullanıcı kararı):
-        program adı hemen altındaki kartta zaten yazıyor, sıradaki konuyu
-        haritadaki halka gösteriyor ve bitenlerin sayısı bölüm bantlarında.
-        Üç bilgi de bir satır aşağıda tekrarlanıyordu.
+        Başlık Araçlar ve Oyunlar sekmeleriyle aynı kalıpta: "RABİ" üst yazısı,
+        büyük sekme adı, sağ üstte emoji kutusu. Bir süre burada "9. sınıf
+        Türkçe / 2. konu sırada / ★ 1/16" satırı duruyordu; kaldırıldı —
+        program adı altındaki kartta, sıradaki konu haritadaki halkada,
+        bitenlerin sayısı bölüm bantlarında zaten yazıyor. Sekme olunca
+        ötekilerle aynı başlığı aldı.
       */}
+      <header className="flex items-start gap-3 px-0.5 pt-1">
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
+          <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Harita</h1>
+        </div>
+        <span
+          className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart text-[21px] leading-none"
+          aria-hidden
+        >
+          🗺️
+        </span>
+      </header>
       <Kart className="overflow-hidden p-0">
         <button
           type="button"
