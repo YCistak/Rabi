@@ -152,8 +152,8 @@ export function bekleyenSayisi(liste: GeriBildirim[]): number {
  * Alan adları Firestore belgesine olduğu gibi yazılıyor ve kural yalnızca
  * bu adları kabul ediyor (`PLANNED.md`). Buraya alan eklenirse kural,
  * ekrandaki liste (`components/ekranlar/geri-bildirim.tsx`),
- * `lib/veri/yasal.ts`, `public/gizlilik/index.html` ve Play'in Data Safety
- * beyanı da güncellenmeli.
+ * `public/gizlilik/index.html`, `public/gizlilik/veri-ozeti.html` ve Play'in
+ * Data Safety beyanı da güncellenmeli.
  */
 export function geriBildirimFormVerisi(
   b: GeriBildirim,

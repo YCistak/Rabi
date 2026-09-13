@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cihazından ne çıkıyor? — Rabi</title>
+<meta name="description" content="Rabi uygulamasından internete giden üç şey ve Play’in sürüm sorgusu — kısa özet.">
+<style>
+  :root {
+    /*
+      Renkler uygulamanın kendi temasından (`app/globals.css`) alındı ve
+      **koyu tema bloğu bilerek yok**: AGENTS.md "tek tema var" diyor; sayfa
+      uygulamadan tarayıcıya açılıyor ve uygulamayla aynı görünmeli.
+    */
+    color-scheme: light;
+    --zemin: #f8f8f7;
+    --metin: #1b1a19;
+    --soluk: #6b6764;
+    --cizgi: #eae9e6;
+    --kutu: #ffffff;
+    --vurgu: #b3491f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2.5rem 1.25rem 5rem;
+    background: var(--zemin);
+    color: var(--metin);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+  main { max-width: 44rem; margin: 0 auto; }
+  h1 { font-size: 1.8rem; line-height: 1.25; margin: 0 0 .35rem; letter-spacing: -.01em; }
+  h2 {
+    font-size: 1.18rem;
+    margin: 2.6rem 0 .7rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--cizgi);
+    letter-spacing: -.005em;
+  }
+  h3 { font-size: 1rem; margin: 1.6rem 0 .4rem; }
+  p, li { color: var(--metin); }
+  ul, ol { padding-left: 1.35rem; }
+  li { margin: .3rem 0; }
+  .ust { color: var(--soluk); font-size: .92rem; margin: 0 0 2rem; }
+  .kutu {
+    background: var(--kutu);
+    border: 1px solid var(--cizgi);
+    border-radius: .75rem;
+    padding: 1rem 1.15rem;
+    margin: 1.2rem 0;
+  }
+  .kutu > :first-child { margin-top: 0; }
+  .kutu > :last-child { margin-bottom: 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .94rem; }
+  th, td { text-align: left; vertical-align: top; padding: .55rem .6rem; border-bottom: 1px solid var(--cizgi); }
+  th { font-weight: 700; color: var(--soluk); font-size: .84rem; text-transform: uppercase; letter-spacing: .04em; }
+  .sar { overflow-x: auto; }
+  a { color: var(--vurgu); }
+  code {
+    background: var(--kutu);
+    border: 1px solid var(--cizgi);
+    border-radius: .3rem;
+    padding: .1rem .3rem;
+    font-size: .9em;
+  }
+  /*
+    Sekme şeridi: iki belge (gizlilik politikası ve kullanıcı sözleşmesi) ayrı
+    sayfalarda duruyor, alt alta değil. Kök adres **gizlilik politikası olarak
+    kalmak zorunda** — Play Console'a verilen bağlantı o ve Google'ın istediği
+    şey bağlantının doğrudan politikaya açılması. Sözleşme `sozlesme.html`de;
+    buradaki şerit yalnızca aralarında geçiş sağlıyor.
+  */
+  .sekmeler {
+    display: flex;
+    gap: .4rem;
+    margin: 0 0 1.6rem;
+    border-bottom: 1px solid var(--cizgi);
+  }
+  .sekmeler a {
+    padding: .55rem .9rem;
+    font-size: .95rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--soluk);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .sekmeler a:hover { color: var(--metin); }
+  /* Açık olan sekme bağlantı değil: kendine giden bir bağlantı tıklanacak
+     bir şey gibi durur ama hiçbir yere gitmez. */
+  .sekmeler span {
+    padding: .55rem .9rem;
+    font-size: .95rem;
+    font-weight: 800;
+    color: var(--vurgu);
+    border-bottom: 2px solid var(--vurgu);
+    margin-bottom: -1px;
+  }
+  footer { margin-top: 3rem; padding-top: 1.4rem; border-top: 1px solid var(--cizgi); color: var(--soluk); font-size: .9rem; }
+</style>
+</head>
+<body>
+<main>
+
+<nav class="sekmeler" aria-label="Belgeler">
+  <span aria-current="page">Cihazından ne çıkıyor?</span>
+  <a href="./">Gizlilik Politikası</a>
+  <a href="sozlesme.html">Kullanıcı Sözleşmesi</a>
+</nav>
+
+<h1>Rabi — Cihazından ne çıkıyor?</h1>
+<p class="ust">
+  Uygulama: <b>Rabi</b> (<code>com.fluxifyinteractive.rabi</code>) &middot;
+  Geliştirici: <b>Fluxify Interactive</b><br>
+  Bu sayfa gizlilik politikasının kısa özeti; bağlayıcı metin <a href="./">Gizlilik Politikası</a>.
+</p>
+
+<p>
+  Rabi’nin sunucusu yok. Denemelerin, notların, fotoğrafların, puanların ve ayarların telefonunda duruyor; uygulama onları hiçbir yere göndermiyor. İnternete çıkan yalnızca üç şey var ve üçü de sen izin vermeden gitmiyor.
+</p>
+
+<h2>1. Bildirdiğin hatalı sorular</h2>
+
+<p>
+  Mini oyunlardaki bir soruyu hatalı bulup bildirdiğinde şunlar gönderiliyor: sorunun kendisi ve havuzdaki kimliği, hangi oyundan geldiği, uygulamanın doğru saydığı cevap, senin seçtiğin sebep, uygulama sürümü, telefonunun modeli ve cihazına verilen rastgele bir ad.
+</p>
+
+<p>
+  Adın, e-postan, denemelerin, notların, fotoğrafların ve puanların gönderilmiyor. Bildirim önce cihaza kaydediliyor; internet yoksa bekliyor, bağlanınca kendiliğinden gidiyor.
+</p>
+
+<p>
+  İlk bildiriminde ne gönderileceğini gösteren bir kart çıkıyor ve “Gönder” demeden hiçbir şey ağa çıkmıyor. “Gönderme” dersen bildirimlerin telefonunda kalıyor; aynı yerdeki “Yine de gönder” ile kararını sonradan değiştirebiliyorsun.
+</p>
+
+<h2>2. Çökme raporları</h2>
+
+<p>
+  Uygulama çökerse hata kaydı telefonunda bekliyor; kendiliğinden hiçbir yere gitmiyor. Bir sonraki açılışta gönderilsin mi diye soruluyor — “Gönder” dersen gidiyor, “Gönderme” dersen siliniyor.
+</p>
+
+<p>
+  Giden şey bir hata kaydı: hatanın hangi satırda olduğu, telefonunun modeli, Android ve uygulama sürümü. Adın, denemelerin, notların ve fotoğrafların gönderilmiyor.
+</p>
+
+<h2>3. Öneri ve hata mesajların</h2>
+
+<p>
+  Ayarlar’daki “Öneri ve hata bildir” ekranından yazdığın mesaj, sen “Gönder” demeden gitmiyor. Giden şey: seçtiğin tür, yazdığın metin, uygulama sürümü, telefonunun modeli ve cihazına verilen rastgele ad, bir de tarih.
+</p>
+
+<p>
+  Metni sen yazıyorsun; içine adını ya da telefonunu yazma, sana geri dönemeyiz. İnternet yoksa mesaj bekliyor, bağlanınca gidiyor.
+</p>
+
+<h2>4. Play’in sürüm sorgusu</h2>
+
+<p>
+  Uygulama açılırken telefonundaki Google Play’e “Rabi’nin yeni sürümü var mı” diye soruluyor. Bunu Rabi değil Play yapıyor ve Play’in zaten bildiği şeyle: uygulamanın adı ve kurulu sürümü. Sana ait hiçbir şey geçmiyor.
+</p>
+
+<p>
+  Yeni sürüm varsa üstte bir şerit çıkıyor; indirme sen “Güncelle” demeden başlamıyor. Kapatırsan bir sonraki açılışta yeniden hatırlatılıyor.
+</p>
+
+<footer>
+  Bu sayfa, Rabi uygulamasının internete ne gönderdiğinin özetidir ve koddaki davranışla birlikte güncellenir.
+  Ayrıntı: <a href="./">Gizlilik Politikası</a> &middot; <a href="sozlesme.html">Kullanıcı Sözleşmesi</a>.
+</footer>
+
+</main>
+</body>
+</html>
