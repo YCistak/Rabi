@@ -1962,7 +1962,10 @@ yatayda esneyen bir kutu işe yaramazdı; taşan kısmı bölüm kutusu
 `overflow: clip` ile kırpıyor (`hidden` değil: kaydırma kabı olur, yapışkan
 bandın hesabını bozar). Bölüm kutusu bandın altına `BANT_PAYI` kadar
 sokuluyor ki yol bölümden bölüme bandın **altından** geçsin; sokulmasaydı
-bandın iki yanında düz kesilirdi.
+bandın iki yanında düz kesilirdi. Sınırı geçen parça iki kutuda da çiziliyor
+(kuyruk ve baş) ve ikisi aynı eğri olmak zorunda: sanal uçlar komşu kitabın
+gerçekten durduğu yerde (`BOLUM_ARASI`, düzenden türüyor). Yapışkan bandın
+sarmalında zemin degradesi yok — donuk üst yarısı yolu kesiyordu.
 
 Sıradaki kitabı ayıran şey renk değil boy, altındaki ışık ve genişleyen halka
 (`patika-halka`) — bitmiş kitaplar da aynı yeşil. "Başla" balonu kaldırıldı:

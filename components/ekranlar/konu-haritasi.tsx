@@ -174,6 +174,19 @@ const UST_PAY = 22
 const ALT_PAY = 26
 
 /**
+ * Bir bölümün son kitabıyla sonrakinin ilk kitabı arasındaki uzaklık.
+ *
+ * Yol bölüm bölüm çiziliyor ve iki bölümün kutusu sınırda birleşiyor; sınırı
+ * geçen parça her iki kutuda da çiziliyor (biri kuyruk, öteki baş). İkisi
+ * **aynı** eğri olmak zorunda, yoksa kutu sınırında yol kırılıyor — bir süre
+ * kuyruk bir adım artı bant payı, baş da öyle sanıyordu ve ikisi gerçek
+ * uzaklığı tutmadığı için bandın altında iki ayrı yol birleşiyordu. Sayı
+ * düzenin kendisinden türüyor: alt pay, yarım kitap, bant, üst pay, yarım
+ * kitap.
+ */
+const BOLUM_ARASI = ALT_PAY + KITAP_BOY / 2 + BANT_PAYI + UST_PAY + KITAP_BOY / 2
+
+/**
  * Yolun SVG'si sabit genişlikte ve ortalanmış: kayma piksel cinsinden
  * olduğu için yolun koordinatları da piksel ve viewBox'un yatay ekseni
  * ekranın ortasından başlıyor. 400 px, en dar telefondan (360) geniş; taşan
@@ -643,16 +656,16 @@ function TemaBolumu({
   }))
   const ilkNo = basamaklar[0].no
   const sonNo = basamaklar[basamaklar.length - 1].no
-  // Sanal uçlar bir adım artı bant payı kadar ötede: iki bölüm arasındaki
-  // mesafe bir adımdan uzun ve kısa tutulan uç, bandın altında dik bir
-  // dirsek yapıyordu. Programın ilk bölümünde baş ucu yok: yol ilk kitapta
-  // **başlıyor**, bandın altından gelmiyor — gelecek bir yer yok.
+  // Sanal uçlar komşu bölümün kitabının **gerçekten** durduğu yerde
+  // (`BOLUM_ARASI`); kuyruk ve baş böylece aynı eğri oluyor. Programın ilk
+  // bölümünde baş ucu yok: yol ilk kitapta **başlıyor**, bandın altından
+  // gelmiyor — gelecek bir yer yok.
   const tumu = [
-    ...(ilk ? [] : [{ x: kayma(ilkNo - 1), y: noktalar[0].y - ADIM - BANT_PAYI }]),
+    ...(ilk ? [] : [{ x: kayma(ilkNo - 1), y: noktalar[0].y - BOLUM_ARASI }]),
     ...noktalar,
     {
       x: kayma(sonNo + 1),
-      y: noktalar[noktalar.length - 1].y + ADIM + BANT_PAYI,
+      y: noktalar[noktalar.length - 1].y + BOLUM_ARASI,
     },
   ]
 
@@ -672,9 +685,14 @@ function TemaBolumu({
 
   return (
     <section>
-      {/* Degrade bandın altında bitmiyor: düz kesilen yapışkan başlık,
-          altından geçen düğümü ortasından kırpıyordu. */}
-      <div className="sticky top-[var(--guvenli-ust)] z-20 -mx-4 bg-gradient-to-b from-background from-62% to-transparent px-4 pt-2 pb-2.5">
+      {/*
+        Yapışkan sarmalın zemini yok: bir süre alta doğru saydamlaşan bir
+        degrade taşıyordu (kaydırırken altından geçen kitabı yumuşak kessin
+        diye) ama degradenin donuk üst yarısı bölümler arasında yolu da
+        kesiyordu. Yol bandın **altından** geçiyor ve görünmeli; kaydırırken
+        kitabı kesen şey artık bandın kendisi, yuvarlak köşeli bir kart.
+      */}
+      <div className="sticky top-[var(--guvenli-ust)] z-20 -mx-4 px-4 pt-2 pb-2.5">
         <div
           className="flex items-center gap-2.5 rounded-[18px] border px-3.5 py-2.5"
           style={{ background: bicim.zemin, borderColor: bicim.kenar }}
