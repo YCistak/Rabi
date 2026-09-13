@@ -11,7 +11,6 @@ import {
   GraduationCap,
   Images,
   MessageSquare,
-  Music,
   Shield,
   Target,
   Trash2,
@@ -46,6 +45,7 @@ import { izinIste } from '@/lib/bildirim'
 import { saatYaz } from '@/lib/hatirlatma'
 import { AD_EN_AZ, adBiciminde, adGecerliMi } from '@/lib/ad'
 import { cn, yeniId } from '@/lib/utils'
+import { dosyayiPaylas } from '@/lib/paylas'
 import type {
   Ayarlar,
   Deneme,
@@ -230,15 +230,26 @@ export function AyarlarEkrani({
   const dosyayaIndir = async (fotograflarla: boolean) => {
     setDurum('Yedek hazırlanıyor…')
     const json = await yedekJson(fotograflarla)
-    const bag = URL.createObjectURL(new Blob([json], { type: 'application/json' }))
-    const link = document.createElement('a')
-    link.href = bag
-    link.download = `rabi-yedek-${new Date().toISOString().slice(0, 10)}${
+    const ad = `rabi-yedek-${new Date().toISOString().slice(0, 10)}${
       fotograflarla ? '-fotografli' : ''
     }.json`
-    link.click()
-    URL.revokeObjectURL(bag)
-    setDurum('Yedek dosyası indirildi (İndirilenler klasörüne bak).')
+    // Cihazda paylaş penceresi açılıyor (WebView blob indiremiyor, bkz.
+    // `lib/paylas.ts`); tarayıcıda doğrudan iniyor.
+    const sonuc = await dosyayiPaylas(
+      new Blob([json], { type: 'application/json' }),
+      ad,
+      'Rabi yedeği',
+      `Rabi yedeği · ${ad}`,
+    )
+    setDurum(
+      sonuc === 'indirildi'
+        ? 'Yedek dosyası indirildi (İndirilenler klasörüne bak).'
+        : sonuc === 'paylasildi'
+          ? 'Yedek gönderildi.'
+          : sonuc === 'iptal'
+            ? ''
+            : 'Yedek kaydedilemedi, tekrar dene.',
+    )
   }
 
   const geriYukle = async (ham: string) => {
@@ -512,30 +523,20 @@ export function AyarlarEkrani({
             basiliMi={ayarlar.oyunSesi}
             sag={<Anahtar acik={ayarlar.oyunSesi} />}
           />
-          <Satir
-            Simge={Music}
-            renk="lavanta"
-            baslik="Mini oyun müziği"
-            onClick={() => setAyarlar((o) => ({ ...o, oyunMuzigi: !o.oyunMuzigi }))}
-            basiliMi={ayarlar.oyunMuzigi}
-            sag={<Anahtar acik={ayarlar.oyunMuzigi} />}
-          />
 
-          {/* "Müzik parçası" satırı kaldırıldı: turda artık her zaman mod müziği
-              çalıyor, lo-fi listesi oyunun içine girmiyor. Tempo turun kuralının
-              parçası (`mod-muzigi.ts`); onu seçilebilir kılmak, kuralı bir zevk
-              meselesi gibi gösteriyordu. Anahtar duruyor — müziği kapatmak hâlâ
-              kullanıcının kararı. `ayarlar.oyunMuzikTuru` kayıtta duruyor ama
-              okunmuyor; alanı silmek eski yedekleri bozardı. */}
+          {/* "Mini oyun müziği" anahtarı ve "Müzik parçası" satırı kaldırıldı:
+              oyunlarda artık arka plan müziği yok, yalnızca efektler var.
+              `ayarlar.oyunMuzigi` ve `ayarlar.oyunMuzikTuru` kayıtta duruyor
+              ama okunmuyor; alanları silmek eski yedekleri bozardı. */}
         </Bolum>
 
         {/* -------------------- Gizlilik ve koşullar ---------------------- */}
         {/* Burada "Hatalı soru bildirimi" ve "Çökme raporları" diye iki bölüm
             vardı; ikisi de anahtarları kalkınca ayar listesinin ortasında duran
             birer paragrafa dönüşmüştü. Metinler kendi ekranına taşındı
-            (`components/ekranlar/yasal.tsx`), geriye onu açan tek satır kaldı:
-            gizlilik politikası ve kullanıcı sözleşmesi de orada duruyor ve
-            mağazadaki bağlantıyla aynı metne bakıyor. */}
+            (`components/ekranlar/yasal.tsx`), geriye onu açan tek satır kaldı.
+            O ekran da metni kendisi göstermiyor, GitHub Pages'teki sayfaları
+            tarayıcıda açıyor — tek kopya. */}
         <Bolum baslik="Yasal">
           <Satir
             Simge={Shield}
@@ -655,11 +656,6 @@ export function AyarlarEkrani({
           e.target.value = ''
         }}
       />
-
-      <p className="mt-4 pb-2 text-center text-[11.5px] font-semibold text-muted-foreground">
-        Rabi · çevrimdışı çalışır · bildirdiğin hatalı sorular dışında veri cihazdan
-        çıkmaz
-      </p>
 
       <Onay
         acik={sifirlamaAcik}
