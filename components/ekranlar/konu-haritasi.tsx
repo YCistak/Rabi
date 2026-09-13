@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState, type ComponentType } from 'react'
+import { createPortal } from 'react-dom'
 import {
   Atom,
   Beaker,
@@ -442,14 +443,23 @@ export function KonuHaritasiEkrani({
 
   return (
     <div className="space-y-4">
-      {selam && (
-        <div
-          className="harita-selam pointer-events-none fixed inset-0 z-30 grid place-items-center bg-black/35"
-          aria-hidden
-        >
-          <Rabi durum="calisiyor" poz="dusunen" boyut={150} className="harita-selam-maskot" />
-        </div>
-      )}
+      {/*
+        Katman `document.body`ye taşınıyor (portal), sayfanın içinde durmuyor.
+        Sekme geçişi (`SayfaGecisi`) sayfayı bir kare boyunca kaydırıp
+        soldurarak getiriyor ve dönüşümlü bir ata `position: fixed` katmanı
+        ekrana değil kendine bağlıyor: karartma sayfayla birlikte kayıyor,
+        ekranın bir yanı önce, öteki yanı sonra kararıyordu.
+      */}
+      {selam &&
+        createPortal(
+          <div
+            className="harita-selam pointer-events-none fixed inset-0 z-50 grid place-items-center bg-black/70"
+            aria-hidden
+          >
+            <Rabi durum="calisiyor" poz="dusunen" boyut={150} className="harita-selam-maskot" />
+          </div>,
+          document.body,
+        )}
       {/*
         Ekranın tepesinde başlık yok. Bir süre "9. sınıf Türkçe / 2. konu
         sırada / ★ 1/16" satırı duruyordu; kaldırıldı (kullanıcı kararı):
