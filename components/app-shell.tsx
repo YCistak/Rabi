@@ -886,7 +886,6 @@ export function AppShell() {
                 onBankadanDustu={bankadanDustu}
                 setBanka={setOyunBankasi}
                 sesAcik={ayarlar.oyunSesi}
-                muzikAcik={ayarlar.oyunMuzigi}
                 onBankayaGit={() => setEkran('oyun-bankasi')}
                 bankaTuru={bankaTuru}
                 onBankaTuruBitti={() => genelTestiBitir(genelTest)}
@@ -964,7 +963,9 @@ export function AppShell() {
       {ozetAcik && ozet && (
         <HaftalikOzetEkrani
           ozet={ozet}
-          sesAcik={ayarlar.oyunMuzigi}
+          // Mini oyun müziği anahtarı kalktı; özetin sesi de artık tek ses
+          // tercihine bakıyor.
+          sesAcik={ayarlar.oyunSesi}
           onKapat={() => setOzetAcik(null)}
         />
       )}

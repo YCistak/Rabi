@@ -335,9 +335,8 @@ export function ayarlariNormalize(ham: Partial<Ayarlar> | null | undefined): Aya
     gunlukHedef: Number.isFinite(birlesik.gunlukHedef) && birlesik.gunlukHedef > 0
       ? birlesik.gunlukHedef
       : VARSAYILAN_AYARLAR.gunlukHedef,
-    // Eski kurulumlarda bu alan yok; bilinmeyen bir değer gelirse müzik hiç
-    // çalmazdı, o yüzden bilinen ikiliye zorlanıyor.
-    // Eski kurulumlarda 'sakin' yazıyor; karşılığı artık 'mod'.
+    // Alan artık okunmuyor (oyun müziği kaldırıldı) ama yedek uyumluluğu için
+    // bilinen ikiliye zorlanmaya devam ediyor; eski kurulumlarda 'sakin' var.
     oyunMuzikTuru: birlesik.oyunMuzikTuru === 'lofi' ? 'lofi' : 'mod',
   }
 }

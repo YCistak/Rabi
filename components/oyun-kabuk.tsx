@@ -3,8 +3,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Check, HelpCircle, Trophy, X } from 'lucide-react'
 import { sureUyarisi } from '@/lib/oyunlar/oyun-sesi'
-import { muzikGerginligi } from '@/lib/oyunlar/mod-muzigi'
-import { turSonuBildir } from '@/lib/oyunlar/tur-durumu'
 import { GeriSayim } from '@/components/oyun-geri-sayim'
 import type { OyunId } from '@/lib/types'
 import { sureOrani } from '@/lib/oyunlar/tur'
@@ -300,19 +298,6 @@ function useTurEfektleri(sayac: SayacBilgisi | null) {
 
   const oran = sayac && sayac.toplam > 0 ? sayac.kalan / sayac.toplam : 1
 
-  /*
-    Müziğin gerginliği de aynı orandan besleniyor.
-
-    Mod müziği tempoyu buna göre kuruyor (`lib/oyunlar/mod-muzigi.ts`): Sıradan
-    turda süre azaldıkça hızlanıyor, Turbo son çeyrekte vites atıyor. Sayacı
-    olmayan modlarda oran 1 kalıyor ve o parçalar zaten gerginliğe bakmıyor.
-
-    Beslemenin burada olması efektlerdeki kuralın aynısı: kabuk sayacı zaten
-    biliyor, 18 oyun dosyasına müziği anlatmak gerekmiyor.
-  */
-  useEffect(() => {
-    muzikGerginligi(1 - oran)
-  }, [oran])
   const baski = sayac !== null && sayac.toplam > 0 && sayac.kalan > 0 && oran <= BASKI_ORANI
 
   useEffect(() => {
@@ -776,22 +761,6 @@ export function TurSonu({
     ikinci turda sayımın atlanması, aynı oyunun iki farklı başlangıcı olurdu.
   */
   const [sayiliyor, setSayiliyor] = useState(false)
-
-  /*
-    Tur bitti: müzik sussun.
-
-    Müziği oyunlar.tsx kuruyor ve ölçüsü "oyun ekranı açık mı" idi; tur sonu
-    ekranı da aynı oyun ekranının içinde olduğu için parça özet ekranında
-    çalmaya devam ediyordu. Turun bittiğini bilen tek yer burası.
-
-    Temizlik `false` yazıyor, yani bayrak "Tekrar"da da "Çık"ta da kalkıyor —
-    ilkinde müzik yeni turla geri geliyor, ikincisinde oyun ekranı kapandığı
-    için zaten susuyor.
-  */
-  useEffect(() => {
-    turSonuBildir(true)
-    return () => turSonuBildir(false)
-  }, [])
 
   const maskot: MaskotDurumu = yeniRekor
     ? 'kutlama'

@@ -30,8 +30,8 @@
  * Her tur artık **Sıradan** kuralıyla işliyor; tek istisna Oyun Bankası turu
  * (`etkinMod`). Tablo yine dört satır: `siradan` ile `ani-olum` kullanılıyor,
  * `turbo` ile `rahat` şu an hiçbir yerden seçilemiyor ama tanımları duruyor —
- * mod müziği (`mod-muzigi.ts`) dördünü de besteliyor ve tabloyu budamak, geri
- * getirilmesi bir satır olan bir kuralı yeniden yazmak demek olurdu.
+ * tabloyu budamak, geri getirilmesi bir satır olan bir kuralı yeniden yazmak
+ * demek olurdu.
  */
 
 import { TUR_SURESI, YANLIS_CEZASI } from './tur'
