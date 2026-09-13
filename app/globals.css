@@ -254,6 +254,11 @@
   --patika-kitap-kilitli-sirt: #d6d0c4;
   --patika-kitap-kilitli-yazi: #57534e;
   --patika-serit: #f6e0a6;
+  /* Yolun sonundaki hazine sandığı: ahşap üç ton ve altın bant. */
+  --patika-sandik: #9a6234;
+  --patika-sandik-acik: #b5793f;
+  --patika-sandik-koyu: #6f4322;
+  --patika-altin: #e2b23c;
   /* Zemin simgelerinin mürekkebi: yedi derste de aynı, opaklık burada. */
   --patika-simge: rgba(94, 76, 50, 0.085);
 

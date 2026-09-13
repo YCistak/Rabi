@@ -1934,7 +1934,10 @@ Harita (`components/ekranlar/konu-haritasi.tsx`) bir oyun dünyası gibi
 çiziliyor (`tasarim/konu-haritasi.html`): kitapların altından geçen kıvrımlı
 bir yol, geçilen kısmı bir tık koyu; her basamak bir **kitap** — yeşil
 kapaklı tek kitap anlatıma, turuncu kapaklı eğik kitap çifti sorulara
-açılıyor; kilitli kitap gri. Kitabın rengi **işe** ait ve derse göre
+açılıyor; kilitli kitap gri. Yol son kitapta bitmiyor, biraz daha sürüp bir
+**hazine sandığında** duruyor (`Sandik`, elle çizilmiş SVG; bütün konular
+bitince kapağı açılıyor) — eskiden bayraklı bir bitiş dairesi vardı. Kitabın
+rengi **işe** ait ve derse göre
 değişmiyor: yedi derste yedi kitap rengi, "yeşile bas, oku" kuralını her
 derste yeniden öğretmek olurdu. Yeşil `--success`, turuncu `--primary-parlak`;
 ayrı bir kitap paleti yok.

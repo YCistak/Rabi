@@ -15,7 +15,6 @@ import {
   Dna,
   Feather,
   Fish,
-  Flag,
   Flame,
   FlaskConical,
   Flower2,
@@ -172,6 +171,16 @@ const BANT_PAYI = 80
 /** Bölümün ilk kitabından önceki (bant payı hariç) ve son kitabından sonraki pay. */
 const UST_PAY = 22
 const ALT_PAY = 26
+
+/**
+ * Son kitaptan sandığa uzaklık ve sandığın altındaki pay.
+ *
+ * Yol son kitapta bitmiyor; bir adımdan biraz uzun sürüp sandıkta duruyor —
+ * bir adım olsaydı sandık yolun bir basamağı gibi dururdu. Sandık ödül,
+ * durak değil.
+ */
+const SANDIK_UZAKLIGI = 150
+const SANDIK_PAYI = SANDIK_UZAKLIGI + 20
 
 /**
  * Bir bölümün son kitabıyla sonrakinin ilk kitabı arasındaki uzaklık.
@@ -531,6 +540,8 @@ export function KonuHaritasiEkrani({
               tema={tema}
               sira={ti + 1}
               ilk={ti === 0}
+              son={ti === program.temalar.length - 1}
+              hepsiBitti={siradaki === null}
               bicim={bicim}
               ilerlemeler={ilerlemeler}
               basamaklar={basamaklar.filter((b) => b.temaId === tema.id)}
@@ -549,25 +560,9 @@ export function KonuHaritasiEkrani({
             />
           ))}
 
-          {/* Yolun sonundaki bayrak: patikanın bittiği yer görünmezse harita
-              kaydırmanın nerede duracağını söylemiyor. */}
-          <div className="flex flex-col items-center gap-2 pt-3 pb-1">
-            <span className="relative grid size-[72px] place-items-center" aria-hidden>
-              <span className="absolute -inset-2 rounded-full border-2 border-dashed border-grid" />
-              <span
-                className="grid size-full place-items-center rounded-full border-2 border-border bg-card"
-                style={{ boxShadow: '0 5px 0 var(--grid)' }}
-              >
-                <Flag size={26} strokeWidth={2.4} className="text-muted-foreground" />
-              </span>
-            </span>
-            <p className="mt-1 text-[10px] font-black tracking-[0.16em] text-muted-foreground uppercase">
-              Bitiş
-            </p>
-            <p className="text-center text-[12.5px] font-bold text-pretty text-muted-foreground">
-              Yolun sonu. {sirali.length} konu bitince buraya bayrağı dikiyorsun.
-            </p>
-          </div>
+          <p className="px-4 pt-1 text-center text-[12.5px] font-bold text-pretty text-muted-foreground">
+            {sirali.length} konu bitince yolun sonundaki sandık açılıyor.
+          </p>
         </div>
       )}
 
@@ -619,6 +614,8 @@ function TemaBolumu({
   tema,
   sira,
   ilk,
+  son,
+  hepsiBitti,
   bicim,
   ilerlemeler,
   basamaklar,
@@ -630,6 +627,10 @@ function TemaBolumu({
   sira: number
   /** Programın ilk bölümü — pusula yalnızca burada, yolun başında duruyor. */
   ilk: boolean
+  /** Programın son bölümü — yol son kitaptan sonra sürüp sandıkta bitiyor. */
+  son: boolean
+  /** Bütün konular bitti: sandık açık. */
+  hepsiBitti: boolean
   bicim: HaritaTemasi
   ilerlemeler: KonuIlerlemeleri
   /** Bu temaya düşen basamaklar — her konudan iki tane. */
@@ -642,7 +643,7 @@ function TemaBolumu({
   const yuzde = tema.konular.length === 0 ? 0 : Math.round((biten / tema.konular.length) * 100)
 
   const ust = BANT_PAYI + UST_PAY
-  const boy = ust + (basamaklar.length - 1) * ADIM + KITAP_BOY + ALT_PAY
+  const boy = ust + (basamaklar.length - 1) * ADIM + KITAP_BOY + (son ? SANDIK_PAYI : ALT_PAY)
 
   /*
     Yolun geçtiği noktalar: kitapların ortası. Başa ve sona birer sanal
@@ -660,13 +661,16 @@ function TemaBolumu({
   // (`BOLUM_ARASI`); kuyruk ve baş böylece aynı eğri oluyor. Programın ilk
   // bölümünde baş ucu yok: yol ilk kitapta **başlıyor**, bandın altından
   // gelmiyor — gelecek bir yer yok.
+  // Son bölümde kuyruk komşu kitaba değil sandığa gidiyor: yol son kitapta
+  // bitmiyor, biraz daha sürüp sandığın altında duruyor.
+  const sandik = {
+    x: kayma(sonNo + 1),
+    y: noktalar[noktalar.length - 1].y + SANDIK_UZAKLIGI,
+  }
   const tumu = [
     ...(ilk ? [] : [{ x: kayma(ilkNo - 1), y: noktalar[0].y - BOLUM_ARASI }]),
     ...noktalar,
-    {
-      x: kayma(sonNo + 1),
-      y: noktalar[noktalar.length - 1].y + BOLUM_ARASI,
-    },
+    son ? sandik : { x: kayma(sonNo + 1), y: noktalar[noktalar.length - 1].y + BOLUM_ARASI },
   ]
 
   /*
@@ -745,6 +749,7 @@ function TemaBolumu({
         <Yol noktalar={tumu} gecilen={gecilen} boy={boy} />
 
         {ilk && <Pusula />}
+        {son && <Sandik x={sandik.x} y={sandik.y} acik={hepsiBitti} />}
 
         {basamaklar.map((b, i) => (
           <Dugum
@@ -1400,6 +1405,74 @@ function KonuKarti({
           </button>
         </div>
       </div>
+    </div>
+  )
+}
+
+/**
+ * Yolun sonundaki hazine sandığı.
+ *
+ * Bütün konular bitince kapağı açılıyor ve içinden ışık taşıyor; kapalıyken
+ * kilitli. Çizim elde, ikon kütüphanesinden değil: kapağı açılan bir sandık
+ * lucide'de yok ve iki hâl aynı çizimin iki kapak açısı olmalı, yoksa
+ * "açıldı" bir sandığın yerine başka bir sandığın gelmesi gibi okunur.
+ */
+function Sandik({ x, y, acik }: { x: number; y: number; acik: boolean }) {
+  return (
+    <div
+      className="pointer-events-none absolute"
+      style={{ left: `calc(50% + ${x}px)`, top: y, transform: 'translate(-50%, -58%)' }}
+      aria-label={acik ? 'Hazine sandığı, açık' : 'Hazine sandığı, kapalı'}
+      role="img"
+    >
+      {acik && (
+        <span
+          aria-hidden
+          className="absolute top-1/2 left-1/2 size-36 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{
+            background:
+              'radial-gradient(circle, color-mix(in srgb, var(--patika-altin) 45%, transparent), transparent 66%)',
+          }}
+        />
+      )}
+      <svg viewBox="0 0 84 72" width="84" height="72" className="relative" aria-hidden>
+        {/* Gövde */}
+        <rect x="8" y="34" width="68" height="32" rx="6" fill="var(--patika-sandik)" />
+        <rect x="8" y="58" width="68" height="8" rx="4" fill="var(--patika-sandik-koyu)" />
+        <rect x="14" y="34" width="4" height="30" fill="var(--patika-sandik-koyu)" opacity=".5" />
+        <rect x="66" y="34" width="4" height="30" fill="var(--patika-sandik-koyu)" opacity=".5" />
+        {/* Kapak — açıkken arkaya yatıyor */}
+        <g
+          style={{
+            transformOrigin: '42px 34px',
+            transform: acik ? 'rotate(-28deg) translateY(-6px)' : undefined,
+          }}
+        >
+          <path
+            d="M8 34 V26 a12 12 0 0 1 12 -12 h44 a12 12 0 0 1 12 12 v8 z"
+            fill="var(--patika-sandik-acik)"
+          />
+          <rect x="8" y="30" width="68" height="4" fill="var(--patika-sandik-koyu)" opacity=".35" />
+          <rect x="36" y="14" width="12" height="20" fill="var(--patika-altin)" />
+        </g>
+        {acik ? (
+          <g fill="var(--patika-altin)">
+            <circle cx="30" cy="36" r="5" />
+            <circle cx="42" cy="33" r="6" />
+            <circle cx="55" cy="36" r="5" />
+            <circle cx="36" cy="40" r="4" />
+            <circle cx="49" cy="40" r="4" />
+          </g>
+        ) : (
+          <g>
+            <rect x="34" y="30" width="16" height="14" rx="3" fill="var(--patika-altin)" />
+            <rect x="40" y="35" width="4" height="6" rx="1" fill="var(--patika-sandik-koyu)" />
+          </g>
+        )}
+        {/* Bantlar */}
+        <rect x="22" y="34" width="6" height="32" fill="var(--patika-altin)" opacity=".85" />
+        <rect x="56" y="34" width="6" height="32" fill="var(--patika-altin)" opacity=".85" />
+      </svg>
     </div>
   )
 }
