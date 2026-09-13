@@ -1928,12 +1928,10 @@ alt menüye istedi ve ana sayfadaki kart kalktı: iki kapı aynı yere
 açılıyordu. Bölüm `KARTLAR` listesinde **yok**. Bilmediklerim de ayrı bir
 araç değil, haritanın içinde: kartlar oraya buradan düşüyor.
 
-Sekme açılınca Rabi (düşünen poz) bir buçuk saniye ekranın ortasında
-beliriyor, harita arkasında hafif kararmış (`harita-selam`, süre
-`SELAM_SURESI` ile CSS'te eşleşmeli). Bir kuruluş etkisi: bileşen sekmeye
-her geçişte yeniden kurulduğu için sekmeye her basışta çıkıyor, desteden
-haritaya dönüşte çıkmıyor. Dokunuşu geçiriyor ve `prefers-reduced-motion`
-altında hiç çıkmıyor — bilgi taşımıyor.
+Sekme açılırken ayrıca bir karşılama yok. Bir süre Rabi bir buçuk saniye
+ekranın ortasında beliriyor, harita arkasında kararıyordu; kullanıcı
+kaldırdı — her açılışta beklenen bir buçuk saniye, haritaya giden yolu
+uzatıyordu.
 
 ### Patika kitaplı bir yol
 
