@@ -1412,12 +1412,19 @@ function KonuKarti({
 /**
  * Yolun sonundaki hazine sandığı.
  *
- * Bütün konular bitince kapağı açılıyor ve içinden ışık taşıyor; kapalıyken
- * kilitli. Çizim elde, ikon kütüphanesinden değil: kapağı açılan bir sandık
+ * Bütün konular bitip testleri geçilene kadar **renksiz** — kilitli
+ * kitaplarla aynı gri, yolun sonunda henüz kazanılmamış bir şey. Hepsi
+ * bitince renkleniyor, kapağı açılıyor ve içinden ışık taşıyor. Gri hâl
+ * ayrı bir çizim değil, aynı çizimin ahşap ve altın tonları kilitli kitabın
+ * tonlarıyla değiştirilmiş hâli. Çizim elde, ikon kütüphanesinden değil: kapağı açılan bir sandık
  * lucide'de yok ve iki hâl aynı çizimin iki kapak açısı olmalı, yoksa
  * "açıldı" bir sandığın yerine başka bir sandığın gelmesi gibi okunur.
  */
 function Sandik({ x, y, acik }: { x: number; y: number; acik: boolean }) {
+  const ahsap = acik ? 'var(--patika-sandik)' : 'var(--patika-kitap-kilitli-arka)'
+  const ahsapAcik = acik ? 'var(--patika-sandik-acik)' : 'var(--patika-kitap-kilitli)'
+  const ahsapKoyu = acik ? 'var(--patika-sandik-koyu)' : 'var(--patika-kitap-kilitli-golge)'
+  const altin = acik ? 'var(--patika-altin)' : 'var(--patika-yol)'
   return (
     <div
       className="pointer-events-none absolute"
@@ -1437,10 +1444,10 @@ function Sandik({ x, y, acik }: { x: number; y: number; acik: boolean }) {
       )}
       <svg viewBox="0 0 84 72" width="84" height="72" className="relative" aria-hidden>
         {/* Gövde */}
-        <rect x="8" y="34" width="68" height="32" rx="6" fill="var(--patika-sandik)" />
-        <rect x="8" y="58" width="68" height="8" rx="4" fill="var(--patika-sandik-koyu)" />
-        <rect x="14" y="34" width="4" height="30" fill="var(--patika-sandik-koyu)" opacity=".5" />
-        <rect x="66" y="34" width="4" height="30" fill="var(--patika-sandik-koyu)" opacity=".5" />
+        <rect x="8" y="34" width="68" height="32" rx="6" fill={ahsap} />
+        <rect x="8" y="58" width="68" height="8" rx="4" fill={ahsapKoyu} />
+        <rect x="14" y="34" width="4" height="30" fill={ahsapKoyu} opacity=".5" />
+        <rect x="66" y="34" width="4" height="30" fill={ahsapKoyu} opacity=".5" />
         {/* Kapak — açıkken arkaya yatıyor */}
         <g
           style={{
@@ -1448,15 +1455,12 @@ function Sandik({ x, y, acik }: { x: number; y: number; acik: boolean }) {
             transform: acik ? 'rotate(-28deg) translateY(-6px)' : undefined,
           }}
         >
-          <path
-            d="M8 34 V26 a12 12 0 0 1 12 -12 h44 a12 12 0 0 1 12 12 v8 z"
-            fill="var(--patika-sandik-acik)"
-          />
-          <rect x="8" y="30" width="68" height="4" fill="var(--patika-sandik-koyu)" opacity=".35" />
-          <rect x="36" y="14" width="12" height="20" fill="var(--patika-altin)" />
+          <path d="M8 34 V26 a12 12 0 0 1 12 -12 h44 a12 12 0 0 1 12 12 v8 z" fill={ahsapAcik} />
+          <rect x="8" y="30" width="68" height="4" fill={ahsapKoyu} opacity=".35" />
+          <rect x="36" y="14" width="12" height="20" fill={altin} />
         </g>
         {acik ? (
-          <g fill="var(--patika-altin)">
+          <g fill={altin}>
             <circle cx="30" cy="36" r="5" />
             <circle cx="42" cy="33" r="6" />
             <circle cx="55" cy="36" r="5" />
@@ -1465,13 +1469,13 @@ function Sandik({ x, y, acik }: { x: number; y: number; acik: boolean }) {
           </g>
         ) : (
           <g>
-            <rect x="34" y="30" width="16" height="14" rx="3" fill="var(--patika-altin)" />
-            <rect x="40" y="35" width="4" height="6" rx="1" fill="var(--patika-sandik-koyu)" />
+            <rect x="34" y="30" width="16" height="14" rx="3" fill={altin} />
+            <rect x="40" y="35" width="4" height="6" rx="1" fill={ahsapKoyu} />
           </g>
         )}
         {/* Bantlar */}
-        <rect x="22" y="34" width="6" height="32" fill="var(--patika-altin)" opacity=".85" />
-        <rect x="56" y="34" width="6" height="32" fill="var(--patika-altin)" opacity=".85" />
+        <rect x="22" y="34" width="6" height="32" fill={altin} opacity=".85" />
+        <rect x="56" y="34" width="6" height="32" fill={altin} opacity=".85" />
       </svg>
     </div>
   )
