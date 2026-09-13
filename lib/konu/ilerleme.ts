@@ -106,16 +106,22 @@ export function soruOrani(ilerlemeler: KonuIlerlemeleri, konu: Konu): number | n
 }
 
 /**
- * Konu tamamlandı mı — haritadaki yeşil düğümün ölçütü.
+ * Konu tamamlandı mı — kilidin ve haritadaki bitmişliğin ölçütü.
  *
  * Sorusu olan konuda deste **ve** geçme oranı gerekiyor; sorusu olmayanda
  * deste tek başına yetiyor. Yoksa sorusu yazılmamış her konu sonsuza kadar
  * yarım kalır ve harita hiç bitmezdi.
+ *
+ * Ayrım `soruOrani`nin `null`ü üstünden **yapılamıyor**: o değer hem "soru
+ * yok" hem "soru var, henüz cevaplanmadı" için `null`. Bir süre ikisi bir
+ * sayıldı ve kartlarını okuyup soruya hiç girmeyen öğrencinin bir sonraki
+ * konusu açılıyordu — yoklamayı atlamak geçmekten kolaydı.
  */
 export function konuTamam(ilerlemeler: KonuIlerlemeleri, konu: Konu): boolean {
   if (!konuBitti(ilerlemeler, konu.id)) return false
+  if (konu.sorular.length === 0) return true
   const oran = soruOrani(ilerlemeler, konu)
-  return oran === null || oran >= GECME_ORANI
+  return oran !== null && oran >= GECME_ORANI
 }
 
 /**
