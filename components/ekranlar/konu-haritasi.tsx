@@ -60,7 +60,6 @@ import {
 } from '@/lib/konu'
 import {
   GECME_ORANI,
-  dersOrani,
   ilerlemeyiYaz,
   konuBitti,
   konuKilitli,
@@ -394,46 +393,15 @@ export function KonuHaritasiEkrani({
     )
   }
 
-  const oran = program ? dersOrani(program, ilerlemeler) : null
-
   return (
     <div className="space-y-4">
       {/*
-        Başlık patikanın bir parçası: solda hangi programda olunduğu, ortada
-        sırayı gösteren tek cümle, sağda kaç konunun bittiği. Eskiden burada
-        program özetini taşıyan büyük bir kapak ve "Sıradaki · Devam" düğmesi
-        vardı; ikisi de patikanın söylediğini ikinci kez söylüyordu.
+        Ekranın tepesinde başlık yok. Bir süre "9. sınıf Türkçe / 2. konu
+        sırada / ★ 1/16" satırı duruyordu; kaldırıldı (kullanıcı kararı):
+        program adı hemen altındaki kartta zaten yazıyor, sıradaki konuyu
+        haritadaki halka gösteriyor ve bitenlerin sayısı bölüm bantlarında.
+        Üç bilgi de bir satır aşağıda tekrarlanıyordu.
       */}
-      <header className="flex items-center gap-3 px-0.5">
-        <div className="min-w-0 flex-1">
-          <p
-            className="text-[10px] font-extrabold tracking-[0.12em] uppercase"
-            style={{ color: bicim.murekkep }}
-          >
-            {secim.sinif}. sınıf {ders.ad}
-          </p>
-          <h1 className="mt-0.5 truncate font-display text-[19px] font-extrabold tracking-tight">
-            {program === null
-              ? 'Konu Anlatımı'
-              : siradaki === null
-                ? 'Tüm konular bitti'
-                : `${siradaki.konuSirasi}. konu sırada`}
-          </h1>
-        </div>
-
-        {/*
-          Sayaç basamağı değil **konuyu** sayıyor. Yoldaki basamakların yarısı
-          soru ve soru metni bugün hiçbir konuda yazılmadı; "8/44" diyen bir
-          sayaç hiçbir zaman dolmazdı.
-        */}
-        {oran !== null && (
-          <span className="rakam inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-warning-soft px-3 text-[13px] font-extrabold text-warning">
-            <Star size={14} className="fill-current" aria-hidden />
-            {oran.biten}/{oran.toplam}
-          </span>
-        )}
-      </header>
-
       <Kart className="overflow-hidden p-0">
         <button
           type="button"
