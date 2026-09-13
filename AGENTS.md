@@ -1914,19 +1914,19 @@ okunmazdı — kurulumdaki "Şimdilik atla" kuralı.
 hâlde girişte "Şimdi değil" diyen kullanıcının kaydına, hiç verilmemiş bir
 yoklamanın "0 doğru"su geçiyordu.
 
-### Ana sayfada kısayol değil kendi bölümü
+### Alt menüde kendi sekmesi
 
 Bölüm kapalı betada bir süre bayrakla gizliydi (`KONU_ANLATIMI_ACIK`,
 `lib/beta.ts`): sürüm planı (#82) onu 0.7.0'a ayırmıştı. 0.7.0 ile açıldı ve
 bayrak `beta.ts`'in kendi kuralına göre dosyadan düştü.
 
-Ana sayfada bölümün adı **Bilgi Kartları** (kod tarafı `konu` kalıyor):
-ekranın kendisi kart gösteriyor, ders anlatmıyor. Bölüm `KARTLAR` listesinde
-**yok** — Araçlar şeridine bir kutucuk
-olarak konsaydı son kullanılanlarla birlikte sıraya girip kayardı ve hemen
-altındaki kutuda ikinci bir kopyası dururdu. Buradaki iş "aç ve oku", her gün
-aynı yerde durması gerekiyor. Bilmediklerim de ayrı bir araç değil, haritanın
-içinde: kartlar oraya buradan düşüyor.
+Harita alt menüdeki beşinci sekme (**Harita**, Oyunlar ile Araçlar
+arasında; kod tarafı `konu` kalıyor). Önce ana sayfada "Bilgi Kartları"
+başlıklı kendi kartıyla açılıyordu — Araçlar şeridine kutucuk olarak
+konsaydı son kullanılanlarla sıraya girip kayacaktı — sonra kullanıcı onu
+alt menüye istedi ve ana sayfadaki kart kalktı: iki kapı aynı yere
+açılıyordu. Bölüm `KARTLAR` listesinde **yok**. Bilmediklerim de ayrı bir
+araç değil, haritanın içinde: kartlar oraya buradan düşüyor.
 
 ### Patika kitaplı bir yol
 

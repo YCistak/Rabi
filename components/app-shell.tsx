@@ -782,14 +782,6 @@ export function AppShell() {
                 }}
               />
             )}
-            {ekran === 'konu' && (
-              <KonuHaritasiEkrani
-                secim={konuSecimi}
-                setSecim={(secim) => setKonuSecimi(secim)}
-                ilerlemeler={konuIlerleme}
-                setIlerlemeler={setKonuIlerleme}
-              />
-            )}
             {ekran === 'pomodoro' && (
               <PomodoroEkrani
                 ayar={pomodoroAyar}
@@ -898,6 +890,14 @@ export function AppShell() {
                 onDersAcildi={() => setAcilacakDers(null)}
                 onOyunAcildi={oyunAcildi}
                 bildir={hataBildirimi}
+              />
+            )}
+            {sekme === 'harita' && (
+              <KonuHaritasiEkrani
+                secim={konuSecimi}
+                setSecim={(secim) => setKonuSecimi(secim)}
+                ilerlemeler={konuIlerleme}
+                setIlerlemeler={setKonuIlerleme}
               />
             )}
             {sekme === 'daha' && <KartMenusu onKartAc={aracAc} />}
