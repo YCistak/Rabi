@@ -678,9 +678,10 @@ function TemaBolumu({
   const sonNo = basamaklar[basamaklar.length - 1].no
   // Sanal uçlar bir adım artı bant payı kadar ötede: iki bölüm arasındaki
   // mesafe bir adımdan uzun ve kısa tutulan uç, bandın altında dik bir
-  // dirsek yapıyordu.
+  // dirsek yapıyordu. Programın ilk bölümünde baş ucu yok: yol ilk kitapta
+  // **başlıyor**, bandın altından gelmiyor — gelecek bir yer yok.
   const tumu = [
-    { x: kayma(ilkNo - 1), y: noktalar[0].y - ADIM - BANT_PAYI },
+    ...(ilk ? [] : [{ x: kayma(ilkNo - 1), y: noktalar[0].y - ADIM - BANT_PAYI }]),
     ...noktalar,
     {
       x: kayma(sonNo + 1),
@@ -697,7 +698,7 @@ function TemaBolumu({
   const siradakiIndeks = basamaklar.findIndex((b) => b.no === siradakiNo)
   const gecilen =
     siradakiIndeks >= 0
-      ? siradakiIndeks + 1
+      ? siradakiIndeks + (ilk ? 0 : 1)
       : siradakiNo === null || siradakiNo > sonNo
         ? tumu.length - 1
         : 0
