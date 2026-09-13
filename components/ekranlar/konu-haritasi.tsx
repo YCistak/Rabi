@@ -1,7 +1,51 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { Check, ChevronDown, Flag, Star, X } from 'lucide-react'
+import { useMemo, useState, type ComponentType } from 'react'
+import {
+  Atom,
+  Beaker,
+  BookOpen,
+  Bug,
+  Castle,
+  Check,
+  ChevronDown,
+  CloudRain,
+  Compass,
+  Crown,
+  Dna,
+  Feather,
+  Fish,
+  Flag,
+  Flame,
+  FlaskConical,
+  Flower2,
+  Gauge,
+  Globe,
+  Hourglass,
+  Landmark,
+  Languages,
+  Leaf,
+  Lock,
+  Magnet,
+  Map,
+  Microscope,
+  Mountain,
+  Orbit,
+  PenLine,
+  Quote,
+  Rocket,
+  Scroll,
+  Snowflake,
+  Sprout,
+  Star,
+  Sun,
+  Swords,
+  TestTube,
+  TreePine,
+  Wind,
+  X,
+  Zap,
+} from 'lucide-react'
 import {
   KONU_DERSLERI,
   KONU_SINIFLARI,
@@ -10,7 +54,6 @@ import {
   programBul,
   tumKonular,
   type Konu,
-  type KonuAilesi,
   type KonuDersId,
   type KonuSinifi,
   type Tema,
@@ -26,6 +69,7 @@ import {
   temadaBiten,
   type KonuIlerlemeleri,
 } from '@/lib/konu/ilerleme'
+import { haritaTemasi, type CizimAdi, type HaritaTemasi } from '@/lib/konu/harita-temasi'
 import { bugun, cn } from '@/lib/utils'
 import { useGeriKatmani } from '@/lib/geri'
 import { Kart, Onay } from '@/components/ui'
@@ -34,15 +78,23 @@ import { KartDestesi, type DesteSonucu } from '@/components/konu/kart-destesi'
 import { SoruSahnesi, type SahneSonucu } from '@/components/konu/soru-sahnesi'
 
 /**
- * Konu Anlatımı haritası — yılan patika.
+ * Konu Anlatımı haritası — kitaplı yol.
  *
- * Konular ekranın ortasında sağa sola sallanan bir yola diziliyor; düğümün
- * üstünde konunun adı **yazmıyor**. Patika bir kez denenip listeye
- * dönülmüştü çünkü ad düğümün altında iki üç kelimeye sığmak zorundaydı ve
- * "kaç kart, ne kadar sürer" hiçbir yere yazılamıyordu. Bu sefer o yazıların
- * hiçbiri haritada değil: düğüme basınca aşağıdan **konu sayfası** geliyor ve
- * ad, süre, kart sayısı, soru durumu orada duruyor. Harita yalnızca sırayı ve
- * nerede kalındığını gösteriyor — tek bakışta okunması gereken şey o.
+ * Konular ekranın ortasında sağa sola sallanan bir yola diziliyor ve her
+ * basamak bir **kitap**: yeşil kapaklı tek kitap anlatıma, turuncu kapaklı
+ * kitap çifti sorulara açılıyor. Düğümün üstünde konunun adı **yazmıyor**.
+ * Patika bir kez denenip listeye dönülmüştü çünkü ad düğümün altında iki üç
+ * kelimeye sığmak zorundaydı ve "kaç kart, ne kadar sürer" hiçbir yere
+ * yazılamıyordu. Bu sefer o yazıların hiçbiri haritada değil: kitaba basınca
+ * aşağıdan **konu sayfası** geliyor ve ad, süre, kart sayısı, soru durumu
+ * orada duruyor. Harita yalnızca sırayı ve nerede kalındığını gösteriyor —
+ * tek bakışta okunması gereken şey o.
+ *
+ * Harita bir oyun dünyası gibi çiziliyor: kitapların altından geçen bir yol,
+ * geçilen kısmı bir tık koyu; zemine dersin simgeleri serpili (Matematik'te
+ * karekök ve π, Tarih'te tüy ve parşömen). Yolun ve kitapların rengi derse
+ * göre değişmiyor, yalnızca band ve simgeler değişiyor — bkz.
+ * `lib/konu/harita-temasi.ts`.
  *
  * **Kilit var.** Bir konu, bir öncekinin kartları okunup soruları geçilmeden
  * açılmıyor. Kilit dayatma değil yavaşlatma: konu sayfasındaki "Yine de aç"
@@ -56,14 +108,14 @@ import { SoruSahnesi, type SahneSonucu } from '@/components/konu/soru-sahnesi'
 /**
  * Patikadaki tek basamak.
  *
- * Bir konu yolda **iki** basamak açıyor: kartları (yuvarlak) ve soruları
- * (altıgen). Numara ikisi boyunca kesintisiz akıyor — 1. kartlar, 2. sorular,
- * 3. kartlar, 4. sorular… Sorular bir konunun içine gömülü alt adım değil,
- * yolun üstünde durup geçilmesi gereken kendi basamağı; "kaç durak kaldı"
- * sorusunun cevabı haritada sayılabilmeli.
+ * Bir konu yolda **iki** basamak açıyor: kartları (yeşil kitap) ve soruları
+ * (turuncu kitap çifti). Numara ikisi boyunca kesintisiz akıyor — 1. kartlar,
+ * 2. sorular, 3. kartlar, 4. sorular… Sorular bir konunun içine gömülü alt
+ * adım değil, yolun üstünde durup geçilmesi gereken kendi basamağı; "kaç
+ * durak kaldı" sorusunun cevabı haritada sayılabilmeli.
  *
- * Şekil ayrı çünkü iş ayrı: yuvarlak okumak, altıgen sınanmak. Aynı şekli iki
- * kez kullansaydık yol, birbirinin aynı kırk dört boncuğa dönerdi.
+ * Kitap ayrı çünkü iş ayrı: tek kitap okumak, açık duran çift sınanmak. Aynı
+ * şekli iki kez kullansaydık yol, birbirinin aynı kırk dört boncuğa dönerdi.
  */
 type Basamak = {
   tur: 'kart' | 'soru'
@@ -84,73 +136,122 @@ type Basamak = {
  * uçlarda yavaşlayan bir yılan; ara değerler o yumuşamayı veriyor.
  *
  * En büyük kayma 82 px: ekranın dar kenarı (`max-w-md`, yanlarda 1 rem
- * dolgu) 416 px ve 82 + yarım düğüm (36) = 118 px, yarı genişliğin altında.
+ * dolgu) 416 px ve 82 + yarım kitap (30) = 112 px, yarı genişliğin altında.
  */
 const KAYMA = [0, 56, 82, 56, 0, -56, -82, -56]
 
+function kayma(no: number): number {
+  // `no` 1'den başlıyor; sıfır ve eksi (sanal öncül) için de çevrim tutuyor.
+  const i = (((no - 1) % KAYMA.length) + KAYMA.length) % KAYMA.length
+  return KAYMA[i]
+}
+
 /**
- * Altıgenin köşeleri — sivri tepeli, kare kutuya oturuyor.
+ * İki basamak arasındaki düşey adım, piksel.
  *
- * `clip-path` kullanılıyor, ayrı bir SVG değil: düğümün zemini durum rengiyle
- * değişiyor ve tek bir `background` ile boyanan kutu, rengi ikinci kez
- * yazmadan kırpılabiliyor. %6.7 ve %93.3 düzgün altıgenin genişlik oranından
- * (√3/2) geliyor, yani şekil kutuda basık durmuyor.
+ * Kitaplar 68–76 px boyunda; aradaki boşluk yolun kıvrımını gösteriyor.
+ * Daha sık dizilince yol kitapların arasında görünmez oluyor ve harita bir
+ * yola değil bir kitap yığınına dönüyordu.
  */
-const ALTIGEN = 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)'
+const ADIM = 112
 
-/** Zemin sınıfları tam yazılı: birleştirilen ad Tailwind taramasından düşer. */
-const AILE_ZEMIN: Record<KonuAilesi, string> = {
-  yzm: 'bg-yzm-kart',
-  isl: 'bg-isl-kart',
-  edb: 'bg-edb-kart',
-  cog: 'bg-cog-kart',
-  trh: 'bg-trh-kart',
-  byl: 'bg-byl-kart',
-  fzk: 'bg-fzk-kart',
+/** Kitap kutusunun ölçüsü — yol bu kutunun ortasından geçiyor. */
+const KITAP_EN = 60
+const KITAP_BOY = 76
+
+/**
+ * Yol bölümün başlık bandının **altından** geçiyor.
+ *
+ * Bölüm kutusu bandın altına bu kadar sokuluyor (eksi kenar boşluğu) ve
+ * kitaplar aynı kadar aşağıdan başlıyor; yol ise o boşluğu da kullanıyor.
+ * Sokulmasaydı yol bandın iki yanında düz bir çizgiyle kesilir, bir
+ * bölümden ötekine geçerken kopardı — bandın zemini alta doğru saydamlaşıyor
+ * ve altından geçen yol görünüyor.
+ */
+const BANT_PAYI = 80
+
+/** Bölümün ilk kitabından önceki (bant payı hariç) ve son kitabından sonraki pay. */
+const UST_PAY = 22
+const ALT_PAY = 26
+
+/**
+ * Yolun SVG'si sabit genişlikte ve ortalanmış: kayma piksel cinsinden
+ * olduğu için yolun koordinatları da piksel ve viewBox'un yatay ekseni
+ * ekranın ortasından başlıyor. 400 px, en dar telefondan (360) geniş; taşan
+ * kısmı bölümün kutusu kırpıyor (`overflow: clip`).
+ */
+const YOL_GENISLIGI = 400
+
+/**
+ * Zemin simgelerinin ikon tablosu.
+ *
+ * Adlar `lib/konu/harita-temasi.ts`teki `CizimAdi` ile birebir; tablo o
+ * türle tiplendiği için eksik bir ad derlemede yakalanıyor. Simgeler
+ * lucide'den, emoji değil: emoji telefondan telefona başka çiziliyor ve
+ * %8 opaklıkta renkli bir emoji soluk bir leke oluyor. Çizgi ikon tek
+ * renk, mürekkep gibi soluyor.
+ */
+const CIZIMLER: Record<CizimAdi, ComponentType<{ size?: number; strokeWidth?: number }>> = {
+  tuy: Feather,
+  parsomen: Scroll,
+  'kum-saati': Hourglass,
+  sutun: Landmark,
+  tac: Crown,
+  kale: Castle,
+  kilic: Swords,
+  dunya: Globe,
+  pusula: Compass,
+  dag: Mountain,
+  harita: Map,
+  bulut: CloudRain,
+  gunes: Sun,
+  ruzgar: Wind,
+  cam: TreePine,
+  kar: Snowflake,
+  dna: Dna,
+  yaprak: Leaf,
+  mikroskop: Microscope,
+  bocek: Bug,
+  filiz: Sprout,
+  balik: Fish,
+  cicek: Flower2,
+  erlen: FlaskConical,
+  tup: TestTube,
+  beher: Beaker,
+  atom: Atom,
+  alev: Flame,
+  miknatis: Magnet,
+  simsek: Zap,
+  yorunge: Orbit,
+  roket: Rocket,
+  olcek: Gauge,
+  tirnak: Quote,
+  kalem: PenLine,
+  kitap: BookOpen,
+  diller: Languages,
 }
 
-const AILE_YAZI: Record<KonuAilesi, string> = {
-  yzm: 'text-yzm-koyu',
-  isl: 'text-isl-koyu',
-  edb: 'text-edb-koyu',
-  cog: 'text-cog-koyu',
-  trh: 'text-trh-koyu',
-  byl: 'text-byl-koyu',
-  fzk: 'text-fzk-koyu',
-}
+/**
+ * Simgelerin boyu ve satır içindeki düşey kayması, düğüm sırasına göre
+ * dönen iki çevrim. İkisi de kayma çevriminden (8) başka uzunlukta ki aynı
+ * yerdeki simge her turda aynı boyda çıkmasın.
+ */
+const SIMGE_BOYU = [42, 26, 36, 46, 24, 40, 28]
+const SIMGE_KAYMASI = [8, 58, 30, 72, 16, 48]
 
 /**
  * Düğümün dört hâli.
  *
- * Tasarımda her bölümün kendi rengi vardı; buraya taşınmadı. Uygulamada
- * **renk derse ait** (bkz. `AGENTS.md`) ve yedi temayı yedi ayrı renge
- * boyamak, aynı ekranda Matematik'i yeşil de mor da gösterirdi. Tema bandı
- * dersin ailesini kullanıyor, düğüm ise durumu.
+ * Renk **işe** ait: bitmiş ve sıradaki kitap işinin renginde (yeşil ya da
+ * turuncu), kilitli kitap gri. Sıradaki olanı ayıran şey renk değil boyu,
+ * altındaki ışık ve çevresindeki halka; bitmiş olanı köşedeki tik.
  *
  * `yazilmadi` yalnızca soru basamağında görülüyor: konunun soru metni henüz
  * yazılmadı (`lib/konu/icerik/`). Kilitliden ayrı bir hâl çünkü kilitli
- * basamak açılabilir, bu açılamaz — beklenen şey öğrencide değil içerikte.
+ * basamak açılabilir, bu açılamaz — beklenen şey öğrencide değil içerikte;
+ * o yüzden kilit rozeti de yok, kitap yalnızca soluk.
  */
-const DUGUM_BICIMI = {
-  bitti: {
-    zemin: 'bg-success text-white',
-    golge: 'color-mix(in srgb, var(--success) 72%, #000)',
-  },
-  aktif: {
-    zemin: 'bg-primary-parlak text-white',
-    golge: 'var(--primary)',
-  },
-  kilitli: {
-    zemin: 'bg-muted text-muted-foreground',
-    golge: 'var(--grid)',
-  },
-  yazilmadi: {
-    zemin: 'bg-muted text-muted-foreground/45',
-    golge: 'var(--grid)',
-  },
-} as const
-
-type DugumDurumu = keyof typeof DUGUM_BICIMI
+type DugumDurumu = 'bitti' | 'aktif' | 'kilitli' | 'yazilmadi'
 
 export function KonuHaritasiEkrani({
   secim,
@@ -164,14 +265,24 @@ export function KonuHaritasiEkrani({
   setIlerlemeler: (guncelle: (onceki: KonuIlerlemeleri) => KonuIlerlemeleri) => void
 }) {
   /** Açık deste; null ise harita görünüyor. */
-  const [acikKonu, setAcikKonu] = useState<{ konu: Konu; temaAdi: string } | null>(null)
+  const [acikKonu, setAcikKonu] = useState<{
+    konu: Konu
+    temaAdi: string
+  } | null>(null)
   /*
     Açık soru sahnesi. Deste bitince kendiliğinden açılıyor: soru, kartların
     devamı ve arada haritaya dönmek okumayla soruyu birbirinden ayırıyordu.
   */
-  const [acikSorular, setAcikSorular] = useState<{ konu: Konu; temaAdi: string } | null>(null)
+  const [acikSorular, setAcikSorular] = useState<{
+    konu: Konu
+    temaAdi: string
+  } | null>(null)
   /** Düğüme basınca aşağıdan gelen konu sayfası. Haritanın üstüne biniyor. */
-  const [sayfa, setSayfa] = useState<{ konu: Konu; temaAdi: string; sira: number } | null>(null)
+  const [sayfa, setSayfa] = useState<{
+    konu: Konu
+    temaAdi: string
+    sira: number
+  } | null>(null)
   /** Kilidi açılmak istenen konu — "emin misin" onayı bunu bekliyor. */
   const [kilitOnayi, setKilitOnayi] = useState<Konu | null>(null)
   /*
@@ -182,6 +293,7 @@ export function KonuHaritasiEkrani({
   const [secimAcik, setSecimAcik] = useState(false)
 
   const ders = dersBul(secim.ders)
+  const bicim = haritaTemasi(secim.ders)
   const program = useMemo(() => programBul(secim.ders, secim.sinif), [secim])
   /** Program boyunca tek sıra: kilit tema sınırına değil, bir önceki konuya bakıyor. */
   const sirali = useMemo(() => (program ? tumKonular(program) : []), [program])
@@ -220,7 +332,7 @@ export function KonuHaritasiEkrani({
     return oran !== null && oran >= GECME_ORANI ? 'bitti' : 'aktif'
   }
 
-  /** Yoldaki ilk yapılabilir basamak — halka ve "Başla" balonu buna bakıyor. */
+  /** Yoldaki ilk yapılabilir basamak — halka ve geçilen yol buna bakıyor. */
   const siradaki = basamaklar.find((b) => basamakDurumu(b) === 'aktif') ?? null
 
   function desteBitti(acik: { konu: Konu; temaAdi: string }, sonuc: DesteSonucu) {
@@ -281,7 +393,7 @@ export function KonuHaritasiEkrani({
         konu={acikKonu.konu}
         temaAdi={acikKonu.temaAdi}
         dersAdi={ders.ad}
-        zeminSinifi={AILE_ZEMIN[ders.aile]}
+        zeminRengi={bicim.zemin}
         onKapat={(sonuc) => desteBitti(acikKonu, sonuc)}
       />
     )
@@ -300,10 +412,8 @@ export function KonuHaritasiEkrani({
       <header className="flex items-center gap-3 px-0.5">
         <div className="min-w-0 flex-1">
           <p
-            className={cn(
-              'text-[10px] font-extrabold tracking-[0.12em] uppercase',
-              AILE_YAZI[ders.aile],
-            )}
+            className="text-[10px] font-extrabold tracking-[0.12em] uppercase"
+            style={{ color: bicim.murekkep }}
           >
             {secim.sinif}. sınıf {ders.ad}
           </p>
@@ -337,20 +447,16 @@ export function KonuHaritasiEkrani({
           className="flex w-full items-center gap-3 px-3.5 py-3 text-left transition active:brightness-[0.98]"
         >
           <span
-            className={cn(
-              'grid size-10 shrink-0 place-items-center rounded-[14px] text-[20px]',
-              AILE_ZEMIN[ders.aile],
-            )}
+            className="grid size-10 shrink-0 place-items-center rounded-[14px] text-[20px]"
+            style={{ background: bicim.zemin }}
             aria-hidden
           >
             {ders.ikon}
           </span>
           <span className="min-w-0 flex-1">
             <span
-              className={cn(
-                'block text-[10px] font-extrabold tracking-[0.09em] uppercase',
-                AILE_YAZI[ders.aile],
-              )}
+              className="block text-[10px] font-extrabold tracking-[0.09em] uppercase"
+              style={{ color: bicim.murekkep }}
             >
               Çalıştığın program
             </span>
@@ -390,24 +496,38 @@ export function KonuHaritasiEkrani({
               ))}
             </div>
 
+            {/* Çipin rengi haritanın rengi: seçilen dersin bandı hangi
+                tondaysa çip de o tonda; ders değişince ekranın ne renge
+                döneceği çipten okunuyor. */}
             <div className="-mx-3.5 flex gap-2 overflow-x-auto px-3.5 pb-1">
-              {KONU_DERSLERI.map((d) => (
-                <button
-                  key={d.id}
-                  type="button"
-                  onClick={() => setSecim({ ...secim, ders: d.id })}
-                  aria-pressed={secim.ders === d.id}
-                  className={cn(
-                    'flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-extrabold transition active:brightness-95',
-                    secim.ders === d.id
-                      ? cn(AILE_ZEMIN[d.aile], AILE_YAZI[d.aile], 'ring-2 ring-current/25')
-                      : 'bg-muted text-muted-foreground',
-                  )}
-                >
-                  <span aria-hidden>{d.ikon}</span>
-                  {d.ad}
-                </button>
-              ))}
+              {KONU_DERSLERI.map((d) => {
+                const secili = secim.ders === d.id
+                const db = haritaTemasi(d.id)
+                return (
+                  <button
+                    key={d.id}
+                    type="button"
+                    onClick={() => setSecim({ ...secim, ders: d.id })}
+                    aria-pressed={secili}
+                    className={cn(
+                      'flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-extrabold transition active:brightness-95',
+                      !secili && 'bg-muted text-muted-foreground',
+                    )}
+                    style={
+                      secili
+                        ? {
+                            background: db.zemin,
+                            color: db.murekkep,
+                            boxShadow: `0 0 0 2px ${db.kenar}`,
+                          }
+                        : undefined
+                    }
+                  >
+                    <span aria-hidden>{d.ikon}</span>
+                    {d.ad}
+                  </button>
+                )
+              })}
             </div>
           </div>
         )}
@@ -430,25 +550,37 @@ export function KonuHaritasiEkrani({
               key={tema.id}
               tema={tema}
               sira={ti + 1}
-              aile={ders.aile}
+              ilk={ti === 0}
+              bicim={bicim}
               ilerlemeler={ilerlemeler}
               basamaklar={basamaklar.filter((b) => b.temaId === tema.id)}
               durumu={basamakDurumu}
               siradakiNo={siradaki?.no ?? null}
-              onAc={(b) => setSayfa({ konu: b.konu, temaAdi: b.temaAdi, sira: b.konuSirasi })}
+              onAc={(b) =>
+                setSayfa({
+                  konu: b.konu,
+                  temaAdi: b.temaAdi,
+                  sira: b.konuSirasi,
+                })
+              }
             />
           ))}
 
           {/* Yolun sonundaki bayrak: patikanın bittiği yer görünmezse harita
               kaydırmanın nerede duracağını söylemiyor. */}
-          <div className="flex flex-col items-center gap-2 pt-2 pb-1">
-            <span
-              className="grid size-16 place-items-center rounded-full bg-muted"
-              style={{ boxShadow: '0 5px 0 var(--grid)' }}
-              aria-hidden
-            >
-              <Flag size={26} strokeWidth={2.4} className="text-muted-foreground" />
+          <div className="flex flex-col items-center gap-2 pt-3 pb-1">
+            <span className="relative grid size-[72px] place-items-center" aria-hidden>
+              <span className="absolute -inset-2 rounded-full border-2 border-dashed border-grid" />
+              <span
+                className="grid size-full place-items-center rounded-full border-2 border-border bg-card"
+                style={{ boxShadow: '0 5px 0 var(--grid)' }}
+              >
+                <Flag size={26} strokeWidth={2.4} className="text-muted-foreground" />
+              </span>
             </span>
+            <p className="mt-1 text-[10px] font-black tracking-[0.16em] text-muted-foreground uppercase">
+              Bitiş
+            </p>
             <p className="text-center text-[12.5px] font-bold text-pretty text-muted-foreground">
               Yolun sonu. {sirali.length} konu bitince buraya bayrağı dikiyorsun.
             </p>
@@ -497,15 +629,17 @@ export function KonuHaritasiEkrani({
 }
 
 /**
- * Tek tema: üstte yapışkan başlık bandı, altında basamakların yılan yolu.
+ * Tek tema: üstte yapışkan başlık bandı, altında basamakların kitaplı yolu.
  *
  * Bant yapışkan çünkü patikada konu adı yok; kaydırırken "burası hangi tema"
  * sorusunun cevabı ekranda kalmazsa düğümler numaralı boncuklara dönüyor.
+ * Bandın rengi dersin rengi (`HaritaTemasi`): yedi derste yedi ton.
  */
 function TemaBolumu({
   tema,
   sira,
-  aile,
+  ilk,
+  bicim,
   ilerlemeler,
   basamaklar,
   durumu,
@@ -514,7 +648,9 @@ function TemaBolumu({
 }: {
   tema: Tema
   sira: number
-  aile: KonuAilesi
+  /** Programın ilk bölümü — pusula yalnızca burada, yolun başında duruyor. */
+  ilk: boolean
+  bicim: HaritaTemasi
   ilerlemeler: KonuIlerlemeleri
   /** Bu temaya düşen basamaklar — her konudan iki tane. */
   basamaklar: Basamak[]
@@ -523,19 +659,62 @@ function TemaBolumu({
   onAc: (b: Basamak) => void
 }) {
   const biten = temadaBiten(tema, ilerlemeler)
+  const yuzde = tema.konular.length === 0 ? 0 : Math.round((biten / tema.konular.length) * 100)
+
+  const ust = BANT_PAYI + UST_PAY
+  const boy = ust + (basamaklar.length - 1) * ADIM + KITAP_BOY + ALT_PAY
+
+  /*
+    Yolun geçtiği noktalar: kitapların ortası. Başa ve sona birer sanal
+    nokta ekleniyor (bir önceki ve bir sonraki basamağın olacağı yer) ki yol
+    bölümün ilk kitabında başlayıp son kitabında bitmesin, bandın altından
+    gelip bir sonraki bölüme doğru çıksın. Taşan kısmı kutu kırpıyor.
+  */
+  const noktalar = basamaklar.map((b, i) => ({
+    x: kayma(b.no),
+    y: ust + i * ADIM + KITAP_BOY / 2,
+  }))
+  const ilkNo = basamaklar[0].no
+  const sonNo = basamaklar[basamaklar.length - 1].no
+  // Sanal uçlar bir adım artı bant payı kadar ötede: iki bölüm arasındaki
+  // mesafe bir adımdan uzun ve kısa tutulan uç, bandın altında dik bir
+  // dirsek yapıyordu.
+  const tumu = [
+    { x: kayma(ilkNo - 1), y: noktalar[0].y - ADIM - BANT_PAYI },
+    ...noktalar,
+    {
+      x: kayma(sonNo + 1),
+      y: noktalar[noktalar.length - 1].y + ADIM + BANT_PAYI,
+    },
+  ]
+
+  /*
+    Geçilen yol: baştan sıradaki kitaba kadar. Sıradaki bu bölümdeyse ona
+    kadar; daha sonraki bir bölümdeyse (ya da hiç kalmadıysa) yol sona kadar
+    koyu; daha önceki bir bölümdeyse hiç yok. Sıradaki kitabın *kendisine*
+    kadar boyanıyor, ötesine değil — kullanıcı oraya yürüdü, orada duruyor.
+  */
+  const siradakiIndeks = basamaklar.findIndex((b) => b.no === siradakiNo)
+  const gecilen =
+    siradakiIndeks >= 0
+      ? siradakiIndeks + 1
+      : siradakiNo === null || siradakiNo > sonNo
+        ? tumu.length - 1
+        : 0
 
   return (
     <section>
       {/* Degrade bandın altında bitmiyor: düz kesilen yapışkan başlık,
           altından geçen düğümü ortasından kırpıyordu. */}
       <div className="sticky top-[var(--guvenli-ust)] z-20 -mx-4 bg-gradient-to-b from-background from-62% to-transparent px-4 pt-2 pb-2.5">
-        <div className={cn('flex items-center gap-2.5 rounded-2xl px-3.5 py-2.5', AILE_ZEMIN[aile])}>
+        <div
+          className="flex items-center gap-2.5 rounded-[18px] border px-3.5 py-2.5"
+          style={{ background: bicim.zemin, borderColor: bicim.kenar }}
+        >
           <div className="min-w-0 flex-1">
             <p
-              className={cn(
-                'text-[10px] font-extrabold tracking-[0.14em] uppercase',
-                AILE_YAZI[aile],
-              )}
+              className="text-[10px] font-extrabold tracking-[0.14em] uppercase"
+              style={{ color: bicim.murekkep }}
             >
               {sira}. bölüm
             </p>
@@ -543,58 +722,267 @@ function TemaBolumu({
               {tema.ad}
             </h2>
           </div>
-          <span className={cn('rakam shrink-0 text-[13px] font-extrabold', AILE_YAZI[aile])}>
+          {/* Çubuk sayının yanında: "2/4" okunuyor ama yarısı mı çeyreği mi
+              olduğu sayılmadan görünmüyor. */}
+          <span
+            className="relative h-1.5 w-[74px] shrink-0 overflow-hidden rounded-full"
+            style={{ background: bicim.cubuk }}
+            aria-hidden
+          >
+            <span
+              className="absolute inset-y-0 left-0 rounded-full"
+              style={{ width: `${yuzde}%`, background: bicim.murekkep }}
+            />
+          </span>
+          <span
+            className="rakam shrink-0 text-[13px] font-extrabold"
+            style={{ color: bicim.murekkep }}
+          >
             {biten}/{tema.konular.length}
           </span>
         </div>
       </div>
 
       {/*
-        Üstteki boşluk süs değil: sıradaki düğümün "Başla" balonu düğümün 26 px
-        üstünde duruyor ve bir bölümün ilk düğümünde yapışkan tema bandının
-        altında kalıyordu. Balonu bandın üstüne çıkarmak daha kötüsü olurdu —
-        kaydırırken başlığın üstünde yüzerdi.
+        `overflow: clip`, `hidden` değil: yol SVG'si kutudan geniş ve taşan
+        kısmı kırpılmalı, ama `hidden` kutuyu kaydırma kabı yapıyor ve
+        üstteki yapışkan bandın hesabını bozuyordu.
       */}
-      <ol className="flex flex-col items-center gap-3.5 pt-8 pb-4">
-        {basamaklar.map((b) => (
+      <div
+        className="relative"
+        style={{ height: boy, marginTop: -BANT_PAYI, overflow: 'clip' }}
+        role="list"
+        aria-label={`${sira}. bölüm basamakları`}
+      >
+        <Simgeler basamaklar={basamaklar} simgeler={bicim.simgeler} ust={ust} />
+
+        <Yol noktalar={tumu} gecilen={gecilen} boy={boy} />
+
+        {ilk && <Pusula />}
+
+        {basamaklar.map((b, i) => (
           <Dugum
             key={`${b.konu.id}-${b.tur}`}
             basamak={b}
-            kayma={KAYMA[(b.no - 1) % KAYMA.length]}
+            x={kayma(b.no)}
+            y={ust + i * ADIM}
             durum={durumu(b)}
             simdi={b.no === siradakiNo}
             onAc={() => onAc(b)}
           />
         ))}
-      </ol>
+      </div>
     </section>
   )
 }
 
 /**
- * Patikadaki tek düğüm.
+ * Zemine serpilen ders simgeleri.
  *
- * Kart basamağı yuvarlak, soru basamağı altıgen. Yuvarlak, uygulamanın geri
- * kalanındaki yuvarlatılmış kareler değil: harita bir yol ve yolun üstündeki
- * basamak elle basılacak bir taş gibi görünmeli. Altındaki düz gölge de bunun
- * için — dokunulunca gölgenin içine çöküyor.
+ * Her basamak satırına bir simge, kitabın **karşı** yanına: kitap sağdaysa
+ * simge solda. Kitapla aynı yanda dursaydı kitabın altından çıkıp ona
+ * yapışırdı.
+ *
+ * Simgeler süs, bilgi değil; o yüzden okuyucudan gizli ve dokunuşu
+ * geçiriyor.
+ */
+function Simgeler({
+  basamaklar,
+  simgeler,
+  ust,
+}: {
+  basamaklar: Basamak[]
+  simgeler: HaritaTemasi['simgeler']
+  /** İlk kitabın üst kenarı — simgeler kitap satırlarına göre diziliyor. */
+  ust: number
+}) {
+  return (
+    <div
+      className="pointer-events-none absolute inset-0 font-serif italic"
+      style={{ color: 'var(--patika-simge)' }}
+      aria-hidden
+    >
+      {basamaklar.map((b, i) => {
+        const simge = simgeler[(b.no - 1) % simgeler.length]
+        const k = kayma(b.no)
+        // Ortadaki kitap çevrimde iki kez geliyor (1. ve 5.); ilkinde simge
+        // solda, ikincisinde sağda — yoksa çevrimin beşi sola, üçü sağa düşüyordu.
+        const solda = k > 0 || (k === 0 && (b.no - 1) % KAYMA.length === 0)
+        const boy = SIMGE_BOYU[(b.no - 1) % SIMGE_BOYU.length]
+        const tepe = ust + i * ADIM + SIMGE_KAYMASI[(b.no - 1) % SIMGE_KAYMASI.length]
+        // Kitap kenara ne kadar yakınsa simge kenara o kadar sokuluyor;
+        // yoksa uçtaki kitabın karşısındaki simge yolun altında kalıyordu.
+        const kenar = Math.abs(k) >= 82 ? 14 : Math.abs(k) >= 56 ? 22 : 34
+        return (
+          <span
+            key={b.no}
+            className="absolute leading-none"
+            style={{
+              top: tepe,
+              [solda ? 'left' : 'right']: kenar,
+              fontSize: simge.tur === 'yazi' ? boy : undefined,
+            }}
+          >
+            {simge.tur === 'yazi' ? simge.metin : <Cizim ad={simge.ad} boy={boy} />}
+          </span>
+        )
+      })}
+    </div>
+  )
+}
+
+function Cizim({ ad, boy }: { ad: CizimAdi; boy: number }) {
+  const Ikon = CIZIMLER[ad]
+  /*
+    Çizgi ikon aynı opaklıkta yazıdan hafif duruyor: yazı dolu, ikon çizgi.
+    Kalınlık bu yüzden 2.4 ve ikon aynı boydaki yazıdan biraz büyük;
+    opaklığın kendisi (`--patika-simge`) yedi derste de aynı.
+  */
+  return <Ikon size={Math.round(boy * 1.1)} strokeWidth={2.4} />
+}
+
+/**
+ * Kitapların altından geçen yol.
+ *
+ * Dört katman: dış gölge, kenar, iç dolgu ve ortadaki kesik çizgi; üstüne
+ * aynı katmanların geçilen kısmı, bir tık koyu. Kıvrım kübik Bezier ve
+ * teğetler düşey: yol her kitaba yukarıdan girip aşağıdan çıkıyor, kitabın
+ * yanından sıyırıp geçmiyor.
+ */
+function Yol({
+  noktalar,
+  gecilen,
+  boy,
+}: {
+  noktalar: { x: number; y: number }[]
+  /** Kaç parçası geçildi — 0 ise koyu katman hiç çizilmiyor. */
+  gecilen: number
+  boy: number
+}) {
+  function yol(parca: number): string {
+    if (parca < 1) return ''
+    const [ilk, ...gerisi] = noktalar.slice(0, parca + 1)
+    let onceki = ilk
+    let d = `M${ilk.x} ${ilk.y}`
+    for (const n of gerisi) {
+      const yarim = (n.y - onceki.y) / 2
+      d += ` C${onceki.x} ${onceki.y + yarim} ${n.x} ${n.y - yarim} ${n.x} ${n.y}`
+      onceki = n
+    }
+    return d
+  }
+
+  const tam = yol(noktalar.length - 1)
+  const koyu = yol(gecilen)
+
+  const katmanlar = (d: string, kenar: string, ic: string, cizgi: string) => (
+    <>
+      <path d={d} fill="none" stroke={kenar} strokeWidth={44} strokeLinecap="round" />
+      <path d={d} fill="none" stroke={ic} strokeWidth={36} strokeLinecap="round" />
+      <path
+        d={d}
+        fill="none"
+        stroke={cizgi}
+        strokeWidth={30}
+        strokeDasharray="3 17"
+        strokeLinecap="round"
+      />
+    </>
+  )
+
+  return (
+    <svg
+      viewBox={`${-YOL_GENISLIGI / 2} 0 ${YOL_GENISLIGI} ${boy}`}
+      width={YOL_GENISLIGI}
+      height={boy}
+      className="absolute top-0 left-1/2 -translate-x-1/2"
+      aria-hidden
+    >
+      <path
+        d={tam}
+        fill="none"
+        stroke="var(--patika-golge)"
+        strokeWidth={48}
+        strokeLinecap="round"
+        transform="translate(0 5)"
+      />
+      {katmanlar(tam, 'var(--patika-yol)', 'var(--patika-yol-ic)', 'var(--patika-yol-cizgi)')}
+      {koyu &&
+        katmanlar(
+          koyu,
+          'var(--patika-gecilen)',
+          'var(--patika-gecilen-ic)',
+          'var(--patika-gecilen-cizgi)',
+        )}
+    </svg>
+  )
+}
+
+/** Yolun başındaki pusula — süs; haritanın bir harita olduğunu söylüyor. */
+function Pusula() {
+  return (
+    <div className="absolute right-4 size-[54px]" style={{ top: BANT_PAYI + 30 }} aria-hidden>
+      <div
+        className="absolute inset-0 rounded-full border-2 bg-card"
+        style={{
+          borderColor: 'var(--patika-gecilen-ic)',
+          boxShadow: '0 3px 8px var(--patika-golge), 0 0 0 5px rgba(255,255,255,.5)',
+        }}
+      />
+      <svg viewBox="0 0 54 54" width="54" height="54" className="absolute inset-0">
+        <circle cx="27" cy="27" r="18" fill="none" stroke="var(--patika-yol-ic)" strokeWidth="2" />
+        <g stroke="var(--patika-gecilen)" strokeWidth="2.6" strokeLinecap="round">
+          <path d="M27 7v5M27 42v5M7 27h5M42 27h5" />
+        </g>
+        <polygon points="27,10 32,27 27,44 22,27" fill="var(--primary)" />
+        <polygon points="27,27 32,27 27,44 22,27" fill="var(--primary-parlak)" />
+        <circle
+          cx="27"
+          cy="27"
+          r="3.2"
+          fill="var(--card)"
+          stroke="var(--patika-gecilen)"
+          strokeWidth="1.6"
+        />
+      </svg>
+    </div>
+  )
+}
+
+/**
+ * Patikadaki tek düğüm: bir kitap.
+ *
+ * Kart basamağı yeşil kapaklı tek bir kitap, soru basamağı turuncu kapaklı
+ * ve hafif çapraz duran bir kitap çifti. Kitabın altında düz bir gölge var
+ * ve dokunulunca gölgenin içine çöküyor — yolun üstündeki basamak elle
+ * basılacak bir şey gibi durmalı.
+ *
+ * Sıradaki kitap ötekilerden biraz büyük, altında bir ışık ve çevresinde
+ * genişleyen bir halka var: patikada kırk kitap var ve hepsi aynı boyda;
+ * hangisinin sırada olduğunu renk tek başına söylemiyordu — bitmiş kitaplar
+ * da aynı yeşil.
  */
 function Dugum({
   basamak,
-  kayma,
+  x,
+  y,
   durum,
   simdi,
   onAc,
 }: {
   basamak: Basamak
-  kayma: number
+  /** Kutunun ortasının ekran ortasından kayması, piksel. */
+  x: number
+  /** Kutunun üst kenarı, bölüm kutusundan piksel. */
+  y: number
   durum: DugumDurumu
-  /** Sıradaki basamak: halka döner, üstünde "Başla" balonu durur. */
+  /** Sıradaki basamak: halka genişler, kitap büyür. */
   simdi: boolean
   onAc: () => void
 }) {
-  const bicim = DUGUM_BICIMI[durum]
-  const altigen = basamak.tur === 'soru'
+  const soru = basamak.tur === 'soru'
+  const gri = durum === 'kilitli' || durum === 'yazilmadi'
+  const ton = soru ? 'var(--primary-parlak)' : 'var(--success)'
 
   const nedeni =
     durum === 'yazilmadi'
@@ -604,79 +992,174 @@ function Dugum({
         : basamak.konu.ad
 
   return (
-    /*
-      Kayma satırın kendisine değil **düğümün kutusuna** uygulanıyor. Tam
-      genişlikteki bir satırı 82 px ötelemek satırın sağ kenarını kabın dışına
-      taşırıyor ve sayfa yatayda kayıyordu; 72 piksellik kutu ortadan
-      ötelendiğinde merkeze uzaklığı 118 px kalıyor, `max-w-md`in yarısının
-      altında.
-    */
-    <li className="relative flex w-full justify-center">
-      <span
-        className="relative flex flex-col items-center"
-        style={{ transform: `translateX(${kayma}px)` }}
-      >
-        <button
-          type="button"
-          onClick={onAc}
-          aria-label={`${basamak.no}. basamak — ${altigen ? 'sorular' : 'bilgi kartları'} — ${nedeni}`}
-          className="relative grid size-[72px] place-items-center"
-        >
-          {simdi && (
-            <span
-              aria-hidden
-              className={cn('patika-halka absolute size-[68px]', altigen ? '' : 'rounded-full')}
-              style={
-                altigen
-                  ? { clipPath: ALTIGEN, background: 'var(--primary-parlak)' }
-                  : { border: '3px solid var(--primary-parlak)' }
-              }
-            />
-          )}
-
-          {/*
-            Altıgende gölge `box-shadow` olamaz: `clip-path` gölgeyi de
-            kırpıyor ve düğüm düz duruyordu. `drop-shadow` şeklin kendisini
-            izliyor, o yüzden kırpılan kutunun **dışındaki** kapsayıcıya
-            konuyor.
-          */}
+    <button
+      type="button"
+      role="listitem"
+      onClick={onAc}
+      aria-label={`${basamak.no}. basamak — ${soru ? 'sorular' : 'bilgi kartları'} — ${nedeni}`}
+      className={cn('absolute grid place-items-center', durum === 'yazilmadi' && 'opacity-60')}
+      style={{
+        left: `calc(50% + ${x}px)`,
+        top: y,
+        width: KITAP_EN,
+        height: KITAP_BOY,
+        transform: 'translateX(-50%)',
+      }}
+    >
+      {simdi && (
+        <>
           <span
-            className="relative grid size-16 place-items-center"
-            style={
-              altigen
-                ? { filter: `drop-shadow(0 4px 0 ${bicim.golge})` }
-                : { boxShadow: `0 5px 0 ${bicim.golge}`, borderRadius: '9999px' }
-            }
-          >
-            <span
-              className={cn(
-                'rakam grid size-16 place-items-center font-display text-[23px] font-extrabold transition-transform active:translate-y-[3px]',
-                altigen ? '' : 'rounded-full',
-                bicim.zemin,
-              )}
-              style={altigen ? { clipPath: ALTIGEN } : undefined}
-            >
-              {basamak.no}
-            </span>
-          </span>
+            aria-hidden
+            className="absolute size-32 rounded-full"
+            style={{
+              background: `radial-gradient(circle, color-mix(in srgb, ${ton} 20%, transparent), transparent 68%)`,
+            }}
+          />
+          <span
+            aria-hidden
+            className="patika-halka absolute -inset-1 rounded-[13px_19px_19px_13px] border-[3px]"
+            style={{ borderColor: ton }}
+          />
+        </>
+      )}
 
-          {durum === 'bitti' && (
-            <span
-              aria-hidden
-              className="golge-kart absolute right-0 bottom-0.5 grid size-[22px] place-items-center rounded-full bg-card"
-            >
-              <Check size={13} strokeWidth={3.6} className="text-success" />
-            </span>
-          )}
-        </button>
+      {soru ? (
+        <SoruKitabi gri={gri} simdi={simdi} />
+      ) : (
+        <KartKitabi no={basamak.no} gri={gri} simdi={simdi} />
+      )}
 
-        {simdi && (
-          <span className="patika-balon golge-kart absolute -top-[26px] left-1/2 z-10 -translate-x-1/2 rounded-xl bg-card px-3 py-1.5 text-[11.5px] font-extrabold tracking-[0.08em] whitespace-nowrap text-primary uppercase">
-            Başla
-          </span>
-        )}
+      {durum === 'bitti' && (
+        <span
+          aria-hidden
+          className="golge-kart absolute -right-1 -bottom-1 grid size-[22px] place-items-center rounded-full bg-card"
+        >
+          <Check size={13} strokeWidth={3.6} className="text-success" />
+        </span>
+      )}
+      {durum === 'kilitli' && (
+        <span
+          aria-hidden
+          className="absolute -right-1 -bottom-0.5 grid size-5 place-items-center rounded-full border-[1.5px] border-border bg-card"
+        >
+          <Lock size={11} strokeWidth={2.6} className="text-muted-foreground" />
+        </span>
+      )}
+    </button>
+  )
+}
+
+/**
+ * Anlatım kitabı: yeşil kapak, sol kenarda koyu sırt, üstte ince bir ışık
+ * çizgisi, ortada basamak numarası. Kapak rengi `--success` — bitmiş ve
+ * sıradaki aynı yeşil, "bitti" bilgisini köşedeki tik taşıyor.
+ */
+function KartKitabi({ no, gri, simdi }: { no: number; gri: boolean; simdi: boolean }) {
+  return (
+    <span
+      className={cn(
+        'rakam relative grid place-items-center font-display font-extrabold transition-transform active:translate-y-[3px]',
+        simdi
+          ? 'h-[76px] w-[60px] rounded-[10px_16px_16px_10px] text-[25px]'
+          : 'h-[68px] w-[56px] rounded-[9px_15px_15px_9px] text-[23px]',
+        gri ? 'text-[var(--patika-kitap-kilitli-yazi)]' : 'text-white',
+      )}
+      style={{
+        background: gri
+          ? 'var(--patika-kitap-kilitli)'
+          : 'linear-gradient(color-mix(in srgb, var(--success) 82%, #9dd08a), var(--success))',
+        boxShadow: gri
+          ? '0 5px 0 var(--patika-kitap-kilitli-golge)'
+          : simdi
+            ? '0 6px 0 color-mix(in srgb, var(--success) 72%, #000), 0 12px 20px color-mix(in srgb, var(--success) 24%, transparent)'
+            : '0 5px 0 color-mix(in srgb, var(--success) 72%, #000), 0 9px 16px color-mix(in srgb, var(--success) 18%, transparent)',
+        paddingLeft: 9,
+        paddingTop: 6,
+      }}
+    >
+      <span
+        aria-hidden
+        className="absolute inset-y-0 left-0 w-[9px] rounded-l-[9px]"
+        style={{
+          background: gri ? 'var(--patika-kitap-kilitli-sirt)' : 'rgba(0,0,0,.22)',
+        }}
+      />
+      {!gri && (
+        <span
+          aria-hidden
+          className="absolute top-[11px] left-[15px] h-[3px] w-[26px] rounded-sm bg-white/30"
+        />
+      )}
+      {no}
+    </span>
+  )
+}
+
+/**
+ * Soru kitabı: iki kitap, arkadaki eğik. Kapakta numara değil bir liste
+ * simgesi — sorular sayılmıyor, çözülüyor. Sağ üstte bir kurdele.
+ */
+function SoruKitabi({ gri, simdi }: { gri: boolean; simdi: boolean }) {
+  return (
+    <span
+      className="relative block h-[66px] w-14 transition-transform active:translate-y-[3px]"
+      style={{ transform: simdi ? 'scale(1.08)' : undefined }}
+    >
+      <span
+        aria-hidden
+        className="absolute top-3.5 left-px h-[46px] w-12 rounded-[6px_11px_11px_6px]"
+        style={{
+          background: gri
+            ? 'var(--patika-kitap-kilitli-arka)'
+            : 'color-mix(in srgb, var(--primary-parlak) 80%, var(--primary))',
+          boxShadow: gri
+            ? '0 3px 0 var(--patika-kitap-kilitli-golge)'
+            : '0 3px 0 color-mix(in srgb, var(--primary) 85%, #000)',
+          transform: 'rotate(-13deg)',
+        }}
+      />
+      <span
+        className="absolute top-2.5 left-1.5 grid h-[50px] w-[47px] place-items-center rounded-[7px_12px_12px_7px]"
+        style={{
+          background: gri
+            ? 'var(--patika-kitap-kilitli)'
+            : 'linear-gradient(color-mix(in srgb, var(--primary-parlak) 88%, #fff), var(--primary-parlak))',
+          boxShadow: gri ? '0 4px 0 var(--patika-kitap-kilitli-golge)' : '0 4px 0 var(--primary)',
+          transform: 'rotate(-3deg)',
+        }}
+      >
+        <span
+          aria-hidden
+          className="absolute inset-y-0 left-0 w-2 rounded-l-[7px]"
+          style={{
+            background: gri ? 'var(--patika-kitap-kilitli-sirt)' : 'rgba(0,0,0,.22)',
+          }}
+        />
+        <span
+          aria-hidden
+          className="absolute top-[9px] left-3.5 h-[3px] w-[22px] rounded-sm"
+          style={{
+            background: gri ? 'rgba(255,255,255,.55)' : 'rgba(255,255,255,.3)',
+          }}
+        />
+        <span
+          aria-hidden
+          className="absolute -top-px right-[11px] h-[15px] w-2"
+          style={{
+            background: gri ? 'var(--patika-yol)' : 'var(--patika-serit)',
+            clipPath: 'polygon(0 0,100% 0,100% 100%,50% 76%,0 100%)',
+          }}
+        />
+        <svg viewBox="0 0 24 24" width="22" height="22" className="mt-1 ml-2" aria-hidden>
+          <g fill={gri ? 'var(--patika-kitap-kilitli-yazi)' : '#fff'}>
+            <rect x="4" y="6" width="5" height="5" rx="1.4" />
+            <rect x="11.5" y="7" width="9" height="3" rx="1.5" />
+            <rect x="4" y="14" width="5" height="5" rx="1.4" />
+            <rect x="11.5" y="15" width="9" height="3" rx="1.5" />
+          </g>
+        </svg>
       </span>
-    </li>
+    </span>
   )
 }
 
@@ -738,7 +1221,12 @@ function KonuSayfasi({
           : `%${oran} doğru · %${GECME_ORANI} gerekiyor`
 
   return (
-    <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/45">
+    /*
+      `z-50`, alt menünün (`z-40`) üstünde: sayfa alt menüyle aynı katmanda
+      dururken menü DOM'da sonra geldiği için sayfanın alt satırını örtüyor,
+      "Sorular" basamağı menünün altında kalıyordu.
+    */
+    <div className="katman-zemin fixed inset-0 z-50 flex items-end justify-center bg-black/45">
       {/* Zemine basmak kapatıyor: yarıya kadar gelen bir yüzeyin altındaki
           haritaya dokunmak, o haritayı kullanmaya çalışmak demek. */}
       <button
@@ -789,7 +1277,7 @@ function KonuSayfasi({
         <div className={cn('mt-3.5 space-y-2.5', kilitli && 'pointer-events-none opacity-40')}>
           <Adim
             no={sira * 2 - 1}
-            noZemin={kartBitti ? 'bg-success' : 'bg-primary-parlak'}
+            noZemin="bg-success"
             baslik="Bilgi kartları"
             alt={
               kartBitti
@@ -805,14 +1293,17 @@ function KonuSayfasi({
 
           <Adim
             no={sira * 2}
-            altigen
-            noZemin={
-              soruKapali ? 'bg-muted text-muted-foreground' : gecti ? 'bg-success' : 'bg-ikincil'
-            }
+            noZemin={soruKapali ? 'bg-muted text-muted-foreground' : 'bg-primary-parlak'}
             baslik="Sorular"
             alt={soruAlt}
             eylem={
-              soruKapali ? 'Kilitli' : oran === null ? 'Başla' : gecti ? 'Tekrar çöz' : 'Tekrar dene'
+              soruKapali
+                ? 'Kilitli'
+                : oran === null
+                  ? 'Başla'
+                  : gecti
+                    ? 'Tekrar çöz'
+                    : 'Tekrar dene'
             }
             vurgulu={!soruKapali && !gecti}
             kapali={soruKapali}
@@ -833,14 +1324,13 @@ function KonuSayfasi({
 /**
  * Konu sayfasındaki numaralı basamak satırı.
  *
- * Numara haritadaki basamak numarasının **aynısı** ve rozetin şekli de öyle:
- * yuvarlak kartlar, altıgen sorular. Sayfada 1–2 diye yeniden başlayan bir
- * numaralandırma, öğrencinin az önce bastığı düğümü sayfada bulamaması
- * demekti.
+ * Numara haritadaki basamak numarasının **aynısı** ve rozet de haritadaki
+ * gibi bir kitap sırtı: yeşil kartlar, turuncu sorular. Sayfada 1–2 diye
+ * yeniden başlayan bir numaralandırma, öğrencinin az önce bastığı kitabı
+ * sayfada bulamaması demekti.
  */
 function Adim({
   no,
-  altigen = false,
   noZemin,
   baslik,
   alt,
@@ -850,7 +1340,6 @@ function Adim({
   onTikla,
 }: {
   no: number
-  altigen?: boolean
   noZemin: string
   baslik: string
   alt: string
@@ -869,13 +1358,12 @@ function Adim({
     >
       <span
         className={cn(
-          'rakam grid size-8 shrink-0 place-items-center text-[13px] font-extrabold text-white',
-          altigen ? '' : 'rounded-full',
+          'rakam relative grid h-9 w-8 shrink-0 place-items-center rounded-[5px_9px_9px_5px] pl-1 text-[13px] font-extrabold text-white',
           noZemin,
         )}
-        style={altigen ? { clipPath: ALTIGEN } : undefined}
         aria-hidden
       >
+        <span className="absolute inset-y-0 left-0 w-1 rounded-l-[5px] bg-black/20" />
         {no}
       </span>
       <span className="min-w-0 flex-1">

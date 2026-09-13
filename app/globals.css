@@ -198,6 +198,65 @@
   --fzk-koyu: #4a5789;
   --fzk-ok: #6c7cb0;
 
+  /* Konu haritasının ders renkleri.
+
+     Harita kâğıt zeminli bir oyun dünyası gibi çiziliyor ve her dersin bandı
+     kendi tonunda: Matematik pembe, Türkçe hardal, Fizik çivit, Kimya
+     lavanta, Biyoloji yeşil, Tarih kahverengi, Coğrafya gök mavisi. Oyun
+     aileleriyle (`--isl`, `--trh`…) aynı **değil** — o aileler rozetlerde ve
+     oyun kartlarında; harita kendi paletini `lib/konu/harita-temasi.ts`
+     üstünden okuyor. Dört ton: zemin, kenar, koyu (yazı) ve çubuk
+     (ilerleme çubuğunun boş kısmı). */
+  --konu-matematik: #f9ebee;
+  --konu-matematik-kenar: #f3dfe1;
+  --konu-matematik-koyu: #b4523c;
+  --konu-matematik-cubuk: #f0d8d9;
+  --konu-turkce: #f7f0dc;
+  --konu-turkce-kenar: #ecdfb8;
+  --konu-turkce-koyu: #8d691a;
+  --konu-turkce-cubuk: #ecdfb8;
+  --konu-fizik: #e8eaf6;
+  --konu-fizik-kenar: #d6dbee;
+  --konu-fizik-koyu: #4a5789;
+  --konu-fizik-cubuk: #d6dbee;
+  --konu-kimya: #eee9f7;
+  --konu-kimya-kenar: #dfd7ee;
+  --konu-kimya-koyu: #6b5ca5;
+  --konu-kimya-cubuk: #dfd7ee;
+  --konu-biyoloji: #e9f1e4;
+  --konu-biyoloji-kenar: #d6e5cc;
+  --konu-biyoloji-koyu: #4f7a3a;
+  --konu-biyoloji-cubuk: #d6e5cc;
+  --konu-tarih: #f1e8de;
+  --konu-tarih-kenar: #e3d5c5;
+  --konu-tarih-koyu: #7a4f2a;
+  --konu-tarih-cubuk: #e3d5c5;
+  --konu-cografya: #e4eef7;
+  --konu-cografya-kenar: #cfdfee;
+  --konu-cografya-koyu: #2f5f8a;
+  --konu-cografya-cubuk: #cfdfee;
+
+  /* Patikanın kendi renkleri: yol, geçilmiş yol ve kilitli kitap.
+
+     Hepsi kâğıt tonu; yol ders rengine boyanmıyor çünkü yolun işi bir zemin
+     olmak, kitapların ve bandın önüne geçmek değil. Geçilen kısım bir tık
+     daha koyu ve sarımsı: "buradan yürüdün" bilgisi renkten okunuyor. */
+  --patika-golge: rgba(120, 98, 66, 0.09);
+  --patika-yol: #ddd5c6;
+  --patika-yol-ic: #f4efe6;
+  --patika-yol-cizgi: #e1dacb;
+  --patika-gecilen: #cdb98f;
+  --patika-gecilen-ic: #efe2c4;
+  --patika-gecilen-cizgi: #d8c6a0;
+  --patika-kitap-kilitli: #e7e2d9;
+  --patika-kitap-kilitli-arka: #d9d3c7;
+  --patika-kitap-kilitli-golge: #cdc7bb;
+  --patika-kitap-kilitli-sirt: #d6d0c4;
+  --patika-kitap-kilitli-yazi: #57534e;
+  --patika-serit: #f6e0a6;
+  /* Zemin simgelerinin mürekkebi: yedi derste de aynı, opaklık burada. */
+  --patika-simge: rgba(94, 76, 50, 0.085);
+
 
   /* Maskot artık bir görsel (`public/tavsan-yuz.png`); boyanacak bir çizim
      kalmadığı için maskot renk değişkenleri kaldırıldı. */
@@ -1191,8 +1250,9 @@
   zeminde kart havada duruyormuş gibi değil, zemine yapışmış gibi görünüyordu.
   Nokta deseni gölgeye bir yüzey veriyor.
 
-  Desen `background-image` ile geliyor, zemin rengi ise sınıfla (`bg-*-kart`) —
-  ikisi tek bildirimde yazılsaydı sınıfın rengi kısayolun altında kalırdı.
+  Desen `background-image` ile geliyor, zemin rengi ise satır içi
+  `background-color` ile (haritanın ders rengi) — ikisi tek `background`
+  kısayolunda yazılsaydı renk deseni ezerdi.
 */
 .deste-zemin {
   background-image: radial-gradient(circle, rgba(24, 23, 22, 0.07) 1.2px, transparent 1.2px);
@@ -1562,28 +1622,20 @@
 --------------------------------------------------------------------------- */
 
 /*
-  Sıradaki konunun düğümünü saran halka.
+  Sıradaki kitabı saran halka.
 
-  Patikada yirmi düğüm var ve hepsi aynı boyda; hangisinin sırada olduğunu
-  renk tek başına söylemiyordu — göz hareketi renkten önce buluyor.
+  Patikada kırk kitap var ve bitmiş olanlar da sıradakiyle aynı renkte;
+  hangisinin sırada olduğunu renk tek başına söylemiyordu — göz hareketi
+  renkten önce buluyor. Halka kitabın köşe yuvarlağını izliyor, o yüzden
+  daire değil yuvarlatılmış dikdörtgen.
 */
 @keyframes patikaHalka {
-  0% { transform: scale(1); opacity: 0.55; }
+  0% { transform: scale(1); opacity: 0.45; }
   100% { transform: scale(1.5); opacity: 0; }
 }
 
 .patika-halka {
-  animation: patikaHalka 1.9s ease-out infinite;
-}
-
-/* "Başla" balonu düğümün üstüne bir kez iniyor; sürekli hareket etmiyor. */
-@keyframes patikaBalon {
-  from { opacity: 0; transform: translate(-50%, 6px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
-}
-
-.patika-balon {
-  animation: patikaBalon 240ms ease-out both;
+  animation: patikaHalka 2.2s ease-out infinite;
 }
 
 /*
@@ -1604,11 +1656,10 @@
 
 @media (prefers-reduced-motion: reduce) {
   /*
-    Halka duruyor ama düğüm renksiz kalmıyor: sıradaki konu zaten dolu turuncu
-    ve altındaki "Başla" balonu yazıyla söylüyor.
+    Halka duruyor ama sıradaki kitap kaybolmuyor: ötekilerden büyük, altında
+    ışığı var ve başlık "N. basamak sırada" diye yazıyla söylüyor.
   */
   .patika-halka,
-  .patika-balon,
   .konu-sayfasi {
     animation: none;
   }

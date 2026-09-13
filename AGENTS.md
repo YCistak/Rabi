@@ -1914,17 +1914,45 @@ altındaki kutuda ikinci bir kopyası dururdu. Buradaki iş "aç ve oku", her g�
 aynı yerde durması gerekiyor. Bilmediklerim de ayrı bir araç değil, haritanın
 içinde: kartlar oraya buradan düşüyor.
 
-### Patikanın şeritleri
+### Patika kitaplı bir yol
 
-Düğümler üç şeride yayılıyor (`SERITLER = [1, 2, 1, 0]`) ve aralarındaki eğri
-`preserveAspectRatio="none"` bir SVG. Şerit konumları yüzde olarak biliniyor
-ama piksel karşılığı ekran genişliğine bağlı; yatayda esneyen bir kutu bunu
-**ölçüm yapmadan** çözüyor. Düğüm daire değil yuvarlatılmış kare — uygulamanın
-geri kalanı (ana sayfa kutucukları, kartlar) bu dili konuşuyor.
+Harita (`components/ekranlar/konu-haritasi.tsx`) bir oyun dünyası gibi
+çiziliyor (`tasarim/konu-haritasi.html`): kitapların altından geçen kıvrımlı
+bir yol, geçilen kısmı bir tık koyu; her basamak bir **kitap** — yeşil
+kapaklı tek kitap anlatıma, turuncu kapaklı eğik kitap çifti sorulara
+açılıyor; kilitli kitap gri. Kitabın rengi **işe** ait ve derse göre
+değişmiyor: yedi derste yedi kitap rengi, "yeşile bas, oku" kuralını her
+derste yeniden öğretmek olurdu. Yeşil `--success`, turuncu `--primary-parlak`;
+ayrı bir kitap paleti yok.
 
-Ders zeminleri `AILE_ZEMIN` / `AILE_YAZI` tablolarında **tam yazılı**;
-`bg-${aile}-kart` gibi birleştirilen bir ad Tailwind'in taramasından düşer ve
-şerit renksiz kalır.
+**Derse ait olan iki şey var**: tema bandının rengi ve zemine serpilen
+simgeler (`lib/konu/harita-temasi.ts`). Matematik pembe ve kareköklü, Tarih
+kahverengi ve tüylü, Coğrafya gök mavisi ve pusulalı. Renkler
+`globals.css`teki `--konu-<ders>-*` değişkenlerinde; oyunların ders
+aileleriyle (`--isl`, `--trh`…) **aynı değil** — o aileler rozetlerde ve oyun
+kartlarında, yediye ancak yetiyor ve Tarih'in deniz mavisi kâğıt zeminli bir
+haritada tarih gibi durmuyordu. Kart destesinin zemini de bu renkten
+(`zeminRengi`): haritadan desteye geçerken renk değişmemeli.
+
+Simgeler ya serif italik yazı (`√x`, `MÖ`) ya lucide'den çizgi ikon (tüy,
+parşömen). Emoji değil: emoji telefondan telefona başka çiziliyor ve %8
+opaklıkta renkli bir emoji soluk bir leke oluyor. Opaklık tek ve yedi derste
+aynı (`--patika-simge`); düğüm başına bir simge, kitabın **karşı** yanında.
+Süs, bilgi değil — okuyucudan gizli, dokunuşu geçiriyor.
+
+**Yol ölçülmüyor, hesaplanıyor.** Kitaplar mutlak konumda, sekizlik bir
+kayma çevrimiyle (`KAYMA`) diziliyor ve yol SVG'si aynı sayılardan kübik
+Bezier ile kuruluyor; teğetler düşey, yol her kitaba yukarıdan girip aşağıdan
+çıkıyor. SVG sabit 400 px ve ortalanmış — kayma piksel cinsinden olduğu için
+yatayda esneyen bir kutu işe yaramazdı; taşan kısmı bölüm kutusu
+`overflow: clip` ile kırpıyor (`hidden` değil: kaydırma kabı olur, yapışkan
+bandın hesabını bozar). Bölüm kutusu bandın altına `BANT_PAYI` kadar
+sokuluyor ki yol bölümden bölüme bandın **altından** geçsin; sokulmasaydı
+bandın iki yanında düz kesilirdi.
+
+Sıradaki kitabı ayıran şey renk değil boy, altındaki ışık ve genişleyen halka
+(`patika-halka`) — bitmiş kitaplar da aynı yeşil. "Başla" balonu kaldırıldı:
+başlık zaten "N. basamak sırada" diyor.
 
 ## Hedef kataloğu
 

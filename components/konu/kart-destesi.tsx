@@ -48,16 +48,18 @@ export function KartDestesi({
   konu,
   temaAdi,
   dersAdi,
-  zeminSinifi,
+  zeminRengi,
   onKapat,
 }: {
   konu: Konu
   temaAdi: string
   dersAdi: string
-  /** Ekranın zemin sınıfı; dersin renk ailesinden geliyor.
-   *  Sınıf adı **dışarıdan tam yazılı** geliyor: `bg-${aile}-kart` gibi
-   *  birleştirilen bir ad Tailwind'in taramasından düşer ve zemin renksiz kalır. */
-  zeminSinifi: string
+  /**
+   * Ekranın zemin rengi; haritanın ders rengi (`lib/konu/harita-temasi.ts`).
+   * Haritadan buraya geçerken renk değişmiyor: Matematik'in pembe bandından
+   * krem bir desteye düşmek, başka bir derse geçilmiş gibi duruyordu.
+   */
+  zeminRengi: string
   onKapat: (sonuc: DesteSonucu) => void
 }) {
   const [sira, setSira] = useState(0)
@@ -104,7 +106,10 @@ export function KartDestesi({
   }, [sira])
 
   return (
-    <div className={cn('deste-zemin fixed inset-0 z-50 flex flex-col', zeminSinifi)}>
+    <div
+      className="deste-zemin fixed inset-0 z-50 flex flex-col"
+      style={{ backgroundColor: zeminRengi }}
+    >
       <header className="shrink-0 px-4 pt-[calc(0.75rem+var(--guvenli-ust))] pb-3">
         <div className="mx-auto flex max-w-md items-center gap-3">
           {/* Kapatma beyaz bir daire: zemin dersin rengiyle dolu ve o zeminin
