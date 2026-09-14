@@ -30,7 +30,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
             { ad: 'Ekosistem' },
           ],
         },
-        { not: 'Basamakları ezberleme; her basamakta "bir öncekinde olmayan ne var" diye sor.' },
+        { not: 'Hücre → doku → organ → sistem → organizma → popülasyon → komünite → ekosistem → biyosfer. Bitkide \'sistem\' yok.' },
       ),
       kart(
         'Sağlığa katkısı',
@@ -77,7 +77,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Hücre teorisi',
         'Bütün canlılar hücrelerden oluşur, hücre yaşamın en küçük birimidir ve her hücre başka bir hücreden gelir.',
         undefined,
-        { not: 'Üç cümle, üçü de sınavda tek tek soruluyor; birini atlama.' },
+        { not: 'Virüs hücre teorisine uymaz: hücresi yok, tek başına bölünemez. \'En küçük canlı birim\' şıkkında virüs seçme.' },
       ),
       kart(
         'Evrim kuramı',
@@ -156,7 +156,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
             ['Teori', 'Nedenini açıklar'],
           ],
         },
-        { not: '"Sadece bir teori" cümlesi bilimde küçümseme değil; teori en güçlü açıklama.' },
+        { not: 'Mendel yasaları oranı söyler (3:1), evrim teorisi neden öyle olduğunu açıklar. Teori kanıtsız değildir.' },
       ),
       kart(
         'Yanlışlanabilirlik',
@@ -205,7 +205,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Değişkenler',
         'Bağımsız değişken araştırmacının değiştirdiği, bağımlı değişken ölçülen, kontrol değişkenleri sabit tutulanlardır.',
         undefined,
-        { not: 'Bir deney gördüğünde ilk iş üç değişkeni adlandırmak; soruların çoğu bunu istiyor.' },
+        { not: '\'Işık bitki boyunu etkiler mi\': bağımsız = ışık, bağımlı = boy, kontrol = su, toprak, sıcaklık (sabit tutulan).' },
       ),
       kart(
         'Örnek deney',
@@ -269,7 +269,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Çıkar çatışması',
         'Araştırmayı finanse eden kuruluşun sonuçtan çıkarı varsa bu açıkça bildirilmelidir.',
         undefined,
-        { not: 'Sonucu doğru bulmak yetmez; kimin ödediğini sormayı da öğren.' },
+        { not: 'Şeker firmasının finanse ettiği \'şeker zararsız\' araştırması: sonuç yanlış olmayabilir ama şüpheyle okunur.' },
       ),
       kart(
         'Kişisel verinin gizliliği',
@@ -328,7 +328,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Virüs canlı mı?',
         'Kalıtım maddesi var ve çoğalabiliyor ama hücresi yok ve konak dışında hiçbir yaşam belirtisi göstermiyor.',
         undefined,
-        { not: 'Ortak özellikleri virüse tek tek uygula; hangilerinde takıldığını gör.' },
+        { not: 'Virüs: metabolizma yok, hücre yok, ribozom yok; konakta çoğalır. Bu yüzden antibiyotik virüse işlemez.' },
       ),
       kart(
         'Organizasyon',
@@ -401,7 +401,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Tampon sistemler',
         'Kan pH’ı 7,4 dolayında dar bir aralıkta tutulur; küçük bir sapma bile enzimleri durdurabilir.',
         undefined,
-        { not: 'pH değerini değil dar aralığın neden şart olduğunu tut: enzimler.' },
+        { not: 'Kan pH\'ı 7,35–7,45; 7\'ye inse enzimler durur. HCO₃⁻ tamponu fazla H⁺\'yı yakalar. Sınav: \'kanın pH\'ı nötrdür\' yanlış.' },
       ),
       kart(
         'Asitler ve bazlar',
@@ -505,7 +505,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
             },
           ],
         },
-        { not: '"Artar" diye ezberleme; sıcaklık ve pH\'ın bir tepesi var, ötesi düşüş.' },
+        { not: 'Enzim 37 °C\'de en hızlı, 60 °C\'de bozulur (geri dönmez); 0 °C\'de yavaşlar ama bozulmaz. Soğuk durdurur, sıcak öldürür.' },
       ),
       kart(
         'Nükleik asitler ve vitaminler',
@@ -583,7 +583,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Neden bölmeli?',
         'Zarla ayrılmış bölmeler farklı tepkimelerin birbirine karışmadan aynı anda yürümesini sağlar.',
         undefined,
-        { not: 'Ökaryotun farkını çekirdekle sınırlama; bölmelemenin neyi mümkün kıldığını anla.' },
+        { not: 'Lizozomun sindirim enzimi sitoplazmaya dökülse hücre kendini sindirir; zar o enzimi bölmede tutar.' },
       ),
       kart(
         'Bitki ve hayvan hücresi',
@@ -635,7 +635,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Neden çift katlı?',
         'Fosfolipitin bir ucu suyu sever, öteki ucu sevmez. Suda kendiliğinden su sevmez uçlar içeride kalacak biçimde dizilirler.',
         undefined,
-        { not: 'Zarın yapısını ezberlemek yerine suyu seven-sevmeyen uçları çiz; yapı kendiliğinden çıkar.' },
+        { not: 'Fosfat başlar dışa (su), yağ kuyrukları içe bakar. Yağda çözünen O₂ kolay geçer, iyonlar kanal ister.' },
       ),
       kart(
         'Akıcı mozaik model',
@@ -698,7 +698,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Sitoplazmada gerçekleşen olaylar',
         'Glikoliz (solunumun ilk basamağı), protein sentezi (ribozomda) ve birçok enzim tepkimesi sitoplazmada yürür.',
         undefined,
-        { not: '"Sitoplazmada" derken sitozolü mü organeli mi kastettiğini ayır; glikoliz sitozolde.' },
+        { not: 'Glikoliz sitozolde (oksijensiz, her hücrede); Krebs mitokondride. \'Glikoliz mitokondride\' şıkkı yanlış.' },
       ),
     ], [
       soru('Sitoplazmanın büyük bölümü sudur.', true, 'Tepkimelerin geçtiği ortamın çözücüsü su.'),
@@ -729,7 +729,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Ribozom',
         'Protein sentezi yapar. Hem prokaryot hem ökaryot hücrede bulunan tek ortak yapıdır.',
         undefined,
-        { not: 'Prokaryotla ökaryotun tek ortak yapısı; "her hücrede bulunur" sorusunun cevabı bu.' },
+        { not: 'Bakteride de ribozom var: "prokaryotta organel yok" derken tek istisna bu. Antibiyotikler bakteri ribozomunu hedefler.' },
       ),
       kart(
         'Sitoiskelet',
@@ -800,7 +800,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
             { ad: 'Zar' },
           ],
         },
-        { not: 'Sırayı bir kez kendin çiz: ER → Golgi → kese → zar. Sınav bu sırayı soruyor.' },
+        { not: 'Protein yolu: ribozom → granüllü ER → Golgi → salgı kesesi → hücre zarı. Tükürük amilazı bu yoldan çıkar.' },
       ),
       kart(
         'Koful',
@@ -879,7 +879,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Hangisi hangisi?',
         'Az yoğundan çok yoğuna ve ATP harcanıyorsa aktif; çok yoğundan az yoğuna ve ATP yoksa pasif. Taşıyıcı protein iki tarafta da olabilir.',
         undefined,
-        { not: 'İki soru sor: yön ne, ATP var mı? Adı sonra koy.' },
+        { not: 'O₂ girişi difüzyon (ATP yok), glikoz girişi kolaylaştırılmış (taşıyıcı, ATP yok), Na⁺ dışarı atma aktif (ATP var).' },
       ),
     ], [
       soru('Difüzyon, maddenin çok yoğun ortamdan az yoğun ortama geçmesidir.', true, 'Yoğunluk farkı yönü belirliyor ve enerji harcanmıyor.'),
@@ -916,7 +916,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Analog ve homolog',
         'Homolog organlar ortak kökenlidir (yarasa kanadı ile insan kolu); analog organlar yalnızca aynı işi görür.',
         undefined,
-        { not: 'Görevi değil kökeni sor; kanat kanada benzer ama akraba olmayabilir.' },
+        { not: 'Yarasa kanadı–insan kolu homolog (aynı kemikler); kuş kanadı–sinek kanadı analog (aynı iş, farklı yapı).' },
       ),
       kart(
         'İkili adlandırma',
@@ -990,7 +990,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Arkeler',
         'Prokaryot ama bakterilerden farklı. Çoğu aşırı ortamlarda yaşar: kaynar su, tuz gölü, asit.',
         undefined,
-        { not: 'Prokaryot ama bakteri değil; "prokaryot = bakteri" ezberini burada kır.' },
+        { not: 'Arke kaynar suda ve tuz gölünde yaşar, hücre duvarında peptidoglikan yok; bu yüzden bakteriden ayrı domain.' },
       ),
       kart(
         'Protistler',
@@ -1042,7 +1042,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Gen çeşitliliği',
         'Aynı türün bireyleri arasındaki farklılık. Bir hastalığa direnç çoğu zaman bu farklılıkta saklıdır.',
         undefined,
-        { not: 'Tür sayısıyla yetinme; aynı türün içindeki fark ekosistemi ayakta tutan şey.' },
+        { not: '1840\'ta İrlanda\'da tek çeşit patates: bir mantar hepsini vurdu, kıtlık. Gen çeşitliliği sigortadır.' },
       ),
       kart(
         'Endemik tür',
