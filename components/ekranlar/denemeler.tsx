@@ -11,7 +11,7 @@ import {
   TrendingDown,
   TrendingUp,
 } from 'lucide-react'
-import { BaslikSatiri, BosDurum, Buton, Cip, Kart, Onay } from '@/components/ui'
+import { BaslikSatiri, BosDurum, Buton, Kart, Onay } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { netYaz, tarihYaz } from '@/lib/hesap'
 import {
@@ -273,22 +273,17 @@ function SuzgecCubugu({
         // Tür sayısı arttıkça çipler taşabilir; alt alta sarmak yerine yatay
         // kaydırma tercih edildi — sıralama düğmesi hep aynı hizada kalsın.
         <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-0.5">
-          <Cip secili={suzgec === 'hepsi'} onClick={() => onSuzgec('hepsi')} className="shrink-0">
+          <TurKutusu secili={suzgec === 'hepsi'} onClick={() => onSuzgec('hepsi')}>
             Tümü
             <span className="rakam ml-1 opacity-70">{sayilar.length}</span>
-          </Cip>
+          </TurKutusu>
           {turler.map((tur) => (
-            <Cip
-              key={tur}
-              secili={suzgec === tur}
-              onClick={() => onSuzgec(tur)}
-              className="shrink-0"
-            >
+            <TurKutusu key={tur} secili={suzgec === tur} onClick={() => onSuzgec(tur)}>
               {TUR_ADLARI[tur]}
               <span className="rakam ml-1 opacity-70">
                 {sayilar.filter((s) => s.sablon?.tur === tur).length}
               </span>
-            </Cip>
+            </TurKutusu>
           ))}
         </div>
       )}
@@ -353,5 +348,34 @@ function SuzgecCubugu({
         )}
       </div>
     </div>
+  )
+}
+
+/**
+ * Tür süzgeci kutusu — Pomodoro'daki ders kutularının (`DersKutusu`) küçük
+ * hâli: köşesi yuvarlatılmış dikdörtgen, seçiliyken dolu turuncu değil açık
+ * zemin + turuncu çerçeve. Yuvarlak `Cip` burada dolu turuncuyla ekranın
+ * üstündeki "Deneme ekle" düğmesiyle yarışıyordu; ikisi aynı ağırlıkta
+ * görünüp hangisinin eylem hangisinin süzgeç olduğunu belirsizleştiriyordu.
+ */
+function TurKutusu({
+  secili,
+  className,
+  ...props
+}: React.ComponentProps<'button'> & { secili: boolean }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={secili}
+      className={cn(
+        'flex h-9 shrink-0 items-center justify-center rounded-[11px] border px-3 text-[13px] transition',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+        secili
+          ? 'border-[1.5px] border-primary-parlak bg-primary-soft font-extrabold text-primary'
+          : 'border-border bg-card font-bold text-muted-foreground active:bg-muted',
+        className,
+      )}
+      {...props}
+    />
   )
 }
