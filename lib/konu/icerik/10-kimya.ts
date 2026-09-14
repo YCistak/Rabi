@@ -1,4 +1,4 @@
-import { kart, konu, program, soru, tema } from '../tip'
+import { kart, konu, program, sikli, soru, tema } from '../tip'
 
 /**
  * 10. sınıf Kimya — Maarif Modeli.
@@ -53,6 +53,9 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Renk değişimi her zaman kimyasal değişimin göstergesidir.', false, 'Boya karıştırmak gibi fiziksel olaylarda da renk değişebiliyor.'),
       soru('Şekerin suda çözünmesi kimyasal bir değişimdir.', false, 'Şeker şeker olarak kalıyor; bu fiziksel bir değişim.'),
       soru('Gaz çıkışı ve çökelek oluşumu kimyasal değişim belirtilerindendir.', true, 'İkisi de yeni bir maddenin oluştuğuna işaret ediyor.'),
+      sikli('Kimyasal değişimin kesin ölçütü nedir?', ['Yeni özellikli madde oluşması', 'Renk değişmesi'], 0, 'Tek gösterge kanıt sayılmaz.'),
+      sikli('Yanmış kâğıt neden geri gelmez?', ['Kimyasal değişim geri alınamaz', 'Kâğıt buharlaştı'], 0, 'Geri almak yeni bir tepkime ister.'),
+      soru('Tuzun suda çözünmesi kimyasal değişimdir.', false, 'Su buharlaştırılınca tuz geri alınır.'),
     ], [
       {
         soru: 'Kaynayan suda kabarcık çıkması kimyasal değişim midir?',
@@ -144,6 +147,11 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Kimyasal tepkimelerde toplam kütle korunur.', true, 'Atomlar yok olmuyor, yalnızca yeniden diziliyor.'),
       soru('Tepkimenin gerçekleşmesi için taneciklerin uygun yönde ve yeterli enerjiyle çarpışması gerekir.', true, 'Her çarpışma tepkimeye yol açmıyor.'),
       soru('Katalizör aktivasyon enerjisini artırarak tepkimeyi hızlandırır.', false, 'Aktivasyon enerjisini düşürerek hızlandırır.'),
+      sikli('Bağ kırmak enerji ister mi, verir mi?', ['İster', 'Verir'], 0, 'Bağ kurmak enerji verir.'),
+      sikli('Katalizör neyi değiştirmez?', ['Ürün miktarını', 'Tepkime hızını'], 0, 'Aktivasyon enerjisini düşürür, tükenmez.'),
+      sikli('Isıtmak tepkimeyi neden hızlandırır?', ['Etkin çarpışma sayısı artar', 'Bağlar zayıflar'], 0, 'Tanecikler yeterli enerjiyle çarpışır.'),
+      soru('Tepkimede atomlar yok olup yeniden yaratılır.', false, 'Bağlar kopar, atomlar yeniden düzenlenir.'),
+      soru('Temas yüzeyi arttıkça tepkime hızlanır.', true, 'Toz şeker küp şekerden hızlı yanar.'),
     ], [
       {
         soru: 'Tepkime sırasında ortam soğuyorsa tepkime nasıldır?',
@@ -207,6 +215,12 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Eksik yanmada karbon monoksit ve is oluşabilir.', true, 'Oksijen yetersizse yanma tamamlanmıyor.'),
       soru('Nötrleşme tepkimesinde her zaman gaz açığa çıkar.', false, 'Asit ile bazın tepkimesinden tuz ve su oluşur; gaz her durumda çıkmaz.'),
       soru('Redoks tepkimelerinde elektron alışverişi olmaz.', false, 'Tanımı tam da elektron alışverişine dayanıyor.'),
+      sikli('Eksik yanmada oluşan zehirli gaz?', ['Karbonmonoksit', 'Karbondioksit'], 0, 'Soba zehirlenmelerinin sebebi.'),
+      sikli('İki çözelti karışınca oluşan çözünmeyen katıya ne denir?', ['Çökelek', 'Katalizör'], 0, 'Çökelme tepkimesi.'),
+      sikli('Elektron veren madde ne olur?', ['Yükseltgenir', 'İndirgenir'], 0, 'Alan indirgenir.'),
+      sikli('CH₄ + 2O₂ → CO₂ + 2H₂O hangi türdür?', ['Yanma', 'Nötrleşme'], 0, 'Hidrokarbon + O₂.'),
+      sikli('Tek maddenin parçalanmasına ne denir?', ['Sentez', 'Analiz'], 1, 'Sentezde birden çok madde birleşir.'),
+      soru('Paslanma bir redoks tepkimesidir.', true, 'Demir elektron verir.'),
     ], [
       {
         soru: 'HCl + NaOH → NaCl + H₂O tepkimesi hangi türdendir?',
@@ -277,6 +291,14 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Normal koşullarda 1 mol gaz 22,4 litre hacim kaplar.', true, 'Gazın cinsi değişse de bu hacim aynı.'),
       soru('Mol bir kütle birimidir.', false, 'Mol bir sayı birimi: belirli sayıda tanecik demek.'),
       soru('Farklı iki maddenin birer molünün kütleleri eşittir.', false, 'Tanecik sayıları eşit ama tanecik kütleleri farklı.'),
+      sikli('Avogadro sayısı yaklaşık kaçtır?', ['6,02×10²³', '6,02×10²²'], 0, '1 mol tanecik sayısı.'),
+      sikli('CO₂\'nin molar kütlesi? (C:12, O:16)', ['44 g/mol', '28 g/mol'], 0, '12 + 2·16.'),
+      sikli('36 g su kaç moldür?', ['2', '36'], 0, 'Molar kütle 18.'),
+      sikli('11,2 L O₂ (NŞA) kaç gramdır?', ['16', '32'], 0, '0,5 mol × 32.'),
+      sikli('3 mol CO₂\'de kaç mol O atomu vardır?', ['3', '6'], 1, 'Her molde 2 mol O.'),
+      sikli('Yoğunluğu 1,25 g/L olan gazın molar kütlesi (NŞA)?', ['22,4', '28'], 1, '1,25 × 22,4.'),
+      sikli('1 mol He ile 1 mol O₂ için ne söylenir?', ['Kütleleri eşit', 'Hacimleri eşit, kütleleri farklı'], 1, 'Mol sayısı eşit, kütle 4 ve 32 g.'),
+      soru('1 mol demir ile 1 mol su aynı sayıda tanecik içerir.', true, 'Mol bir sayıdır.'),
     ], [
       {
         soru: 'Normal şartlarda 1 mol ideal gaz kaç litre yer kaplar?',
@@ -344,6 +366,10 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Denkleştirme, kütlenin korunumu yasasının bir gereğidir.', true, 'İki tarafta her elementin atom sayısı eşit olmalı.'),
       soru('Denklemdeki (k), (s), (g) gösterimleri maddenin fiziksel hâlini belirtir.', true, 'Katı, sıvı ve gaz hâlleri böyle yazılıyor.'),
       soru('Denkleştirmede kesirli katsayı hiçbir şekilde kullanılamaz.', false, 'Ara adımda kullanılabilir; sonunda tamamı genişletilip tam sayıya çevrilir.'),
+      sikli('Denklemde (suda) ne demektir?', ['Sıvı hâl', 'Sulu çözelti'], 1, 'Sıvı için (s).'),
+      sikli('4Fe + 3O₂ → 2Fe₂O₃ denkleminde O₂ katsayısı kaç?', ['2', '3'], 1, '6 O atomu iki tarafta.'),
+      sikli('Denkleştirmede en sona bırakılan element hangisidir?', ['İlk yazılan', 'Birden çok bileşikte geçen'], 1, 'En esnek olan sona kalır.'),
+      soru('Ara adımda kesirli katsayı kullanılabilir.', true, 'Sonunda tam sayıya çevrilir.'),
     ], [
       {
         soru: 'Denklem denkleştirilirken hangisine dokunulmaz?',
@@ -403,6 +429,11 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Sınırlayıcı bileşen, tepkime bittiğinde artan maddedir.', false, 'Sınırlayıcı bileşen önce tükenen maddedir; tepkimeyi o durdurur.'),
       soru('Yüzde verim, gerçekte elde edilenin teorik miktara oranıdır.', true, 'Yüz ile çarpılarak yüzde olarak yazılıyor.'),
       soru('Yüzde verim %100 ün üzerinde olabilir.', false, 'Teorik miktardan fazlası elde edilemez; fazlası ölçüm hatası ya da safsızlık demek.'),
+      sikli('4 g H₂ tamamen yanarsa kaç g su oluşur? (H:1, O:16)', ['18', '36'], 1, '2 mol H₂ → 2 mol H₂O.'),
+      sikli('Stokiyometride atlanamayan adım hangisidir?', ['Gram\'a çevirme', 'Mol\'e çevirme'], 1, 'Oranlar mol cinsinden.'),
+      sikli('Verimin %100\'e ulaşmamasının sebeplerinden biri?', ['Katalizör', 'Yan tepkimeler'], 1, 'Kayıplar teorik değeri düşürür.'),
+      sikli('2 L H₂ için kaç L O₂ gerekir? (2H₂ + O₂)', ['2', '1'], 1, 'Aynı koşulda katsayı oranı hacim oranı.'),
+      soru('Sınırlayıcı bileşen tükenince tepkime durur.', true, 'Artan maddenin fazlası tepkimeye giremez.'),
     ], [
       {
         soru: 'Sınırlayıcı bileşen nedir?',
@@ -445,6 +476,9 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Gaz basıncı, taneciklerin kabın çeperlerine çarpmasından kaynaklanır.', true, 'Çarpışma sayısı ve şiddeti arttıkça basınç artıyor.'),
       soru('Sıcaklık arttıkça gaz taneciklerinin ortalama hızı azalır.', false, 'Sıcaklık taneciklerin ortalama kinetik enerjisinin ölçüsü; hız artar.'),
       soru('Gazlar sıkıştırılamaz.', false, 'Tanecikler arasındaki boşluk büyük olduğu için kolayca sıkışırlar.'),
+      sikli('Gaz hesaplarında sıcaklık hangi birimle alınır?', ['Santigrat', 'Kelvin'], 1, 'Mutlak sıcaklık ortalama kinetik enerjiyle orantılı.'),
+      sikli('Gazın kolayca sıkışmasının sebebi?', ['Tanecikler küçük', 'Tanecikler arası boşluk büyük'], 1, 'Katı ve sıvıda boşluk yok denecek kadar az.'),
+      soru('Kinetik teoriye göre gaz çarpışmaları esnektir.', true, 'Enerji kaybı yok.'),
     ], [
       {
         soru: 'Gazın basıncı nereden gelir?',
@@ -555,6 +589,10 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Charles yasasına göre sabit basınçta hacim, mutlak sıcaklıkla doğru orantılıdır.', true, 'Isıtılan gaz genişliyor.'),
       soru('Gaz yasalarında sıcaklık Celsius cinsinden kullanılır.', false, 'Kelvin kullanılır; sıfır noktası farklı olduğu için Celsius ile orantı bozulur.'),
       soru('Avogadro yasasına göre aynı koşullarda eşit hacimli gazlar eşit sayıda tanecik içerir.', true, 'Gazın cinsi sonucu değiştirmiyor.'),
+      sikli('Sabit basınçta hacim ile mutlak sıcaklık arasındaki ilişki?', ['Ters orantı', 'Doğru orantı'], 1, 'Charles yasası.'),
+      sikli('Isınan kapalı kabın patlaması hangi yasayı anlatır?', ['Boyle', 'Gay-Lussac'], 1, 'Sabit hacimde basınç sıcaklıkla artar.'),
+      sikli('27 °C kaç kelvindir?', ['27', '300'], 1, '+273.'),
+      soru('Aynı koşullardaki eşit hacimli gazlarda eşit sayıda tanecik vardır.', true, 'Avogadro yasası.'),
     ], [
       {
         soru: 'Sabit sıcaklıkta gazın hacmi yarıya inerse basıncı?',
@@ -605,6 +643,11 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Gazlar yüksek basınç ve düşük sıcaklıkta ideale yaklaşır.', false, 'Tersi: düşük basınç ve yüksek sıcaklıkta ideale yakın davranırlar.'),
       soru('Bir gaz karışımında toplam basınç, kısmi basınçların toplamına eşittir.', true, 'Dalton un kısmi basınçlar yasası.'),
       soru('Bir gazın kısmi basıncı, karışımdaki kütlesiyle doğru orantılıdır.', false, 'Mol oranıyla orantılıdır; kütle değil tanecik sayısı belirleyici.'),
+      sikli('PV = nRT\'de R nedir?', ['Gaz sabiti', 'Yoğunluk'], 0, 'Birim seçimine göre değeri değişir.'),
+      sikli('Gaz karışımında toplam basınç nasıl bulunur?', ['Kısmi basınçlar toplanır', 'En büyük kısmi basınç alınır'], 0, 'Dalton kısmi basınçlar.'),
+      sikli('Bir gazın kısmi basıncı neyle orantılıdır?', ['Mol kesriyle', 'Molar kütlesiyle'], 0, 'P_gaz = mol kesri × toplam.'),
+      soru('İdeal gaz denkleminde santigrat kullanılabilir.', false, 'Kelvin şart.'),
+      soru('Yüksek basınçta gaz ideallikten sapar.', true, 'Tanecik hacmi ve çekimler işe girer.'),
     ], [
       {
         soru: 'Gaz hangi koşulda ideale en yakın davranır?',
@@ -647,6 +690,9 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Efüzyon, gazın küçük bir delikten dışarı sızmasıdır.', true, 'Difüzyon ise gazın başka bir gaz içinde yayılması.'),
       soru('İki gazın yayılma hızlarının oranı, molar kütlelerinin oranına eşittir.', false, 'Molar kütlelerin kareköküyle ters orantılıdır.'),
       soru('Odada açılan parfümün kokusunun yayılması efüzyona örnektir.', false, 'Bu difüzyona örnek; efüzyonda gaz küçük bir delikten geçiyor.'),
+      sikli('H₂ (2) ile O₂ (32) hız oranı kaçtır?', ['4', '16'], 0, '√(32/2).'),
+      sikli('Gazın küçük delikten sızmasına ne denir?', ['Efüzyon', 'Difüzyon'], 0, 'Difüzyon başka gaz içinde yayılma.'),
+      soru('Aynı sıcaklıkta ağır gazın ortalama kinetik enerjisi hafif gazınkinden büyüktür.', false, 'Eşittir; ağır olan daha yavaş hareket eder.'),
     ], [
       {
         soru: 'Aynı sıcaklıkta hangi gaz daha hızlı yayılır?',
@@ -700,6 +746,9 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Çözünme sırasında hem enerji harcanır hem de enerji açığa çıkar.', true, 'Bağları koparmak enerji ister, yeni etkileşimler kurulurken enerji açığa çıkar.'),
       soru('Bütün çözünme olayları ısı verir.', false, 'Bazıları ısı alır; amonyum nitratın suda çözünmesi ortamı soğutuyor.'),
       soru('Çözünen maddenin tanecik boyutunu küçültmek çözünürlüğü artırır.', false, 'Çözünme hızını artırır; çözünürlük değişmez.'),
+      sikli('Sulu çözeltilerde çözücü hangisidir?', ['Miktarca çok olan', 'Su'], 1, 'Sulu çözeltide su her zaman çözücü sayılır.'),
+      sikli('Soğutucu jel paketi hangi çözünmeyi kullanır?', ['Isı veren', 'Isı alan'], 1, 'Isıtıcı el paketleri ısı veren.'),
+      soru('Ufalamak maddenin çözünürlüğünü artırır.', false, 'Yalnızca hızı.'),
     ], [
       {
         soru: 'Karıştırmak ve ısıtmak çözünmenin neyini değiştirir?',
@@ -742,6 +791,9 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Yağ suda çözünmez çünkü apolar bir maddedir.', true, 'Su polar; aralarında yeterli çekim kurulmuyor.'),
       soru('Sabun molekülünün iki ucu da polardır.', false, 'Bir ucu polar, öteki ucu apolar; yağ ile suyu bu yüzden birleştirebiliyor.'),
       soru('Karbon zinciri uzadıkça alkollerin sudaki çözünürlüğü artar.', false, 'Azalır; apolar kısım büyüdükçe su ile uyum bozuluyor.'),
+      sikli('Tuz hangi çözücüde çözünür?', ['Su', 'Benzin'], 0, 'Polar çözücü.'),
+      sikli('Alkolün hem suda hem yağda çözünmesinin sebebi?', ['Hem polar hem apolar ucu var', 'Çok küçük molekül'], 0, 'Zincir uzadıkça suda çözünürlük düşer.'),
+      soru('Suyu iyi çözücü yapan şey polar olması ve hidrojen bağı yapabilmesidir.', true, 'İyonları ve polar molekülleri sarar.'),
     ], [
       {
         soru: 'Yağ neden suda çözünmez?',
@@ -793,6 +845,9 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Şekerin suda çözünmesi moleküler çözünmedir.', true, 'Moleküller dağılıyor ama iyonlara ayrılmıyor.'),
       soru('Saf su elektriği iyi iletir.', false, 'Saf suda serbest iyon yok denecek kadar az; ileten şey içindeki çözünmüş tuzlar.'),
       soru('Zayıf elektrolitler suda tümüyle iyonlaşır.', false, 'Kısmen iyonlaşırlar; tümüyle iyonlaşan kuvvetli elektrolittir.'),
+      sikli('Suda iyonlarına ayrılan madde nasıl çözünmüştür?', ['İyonik', 'Moleküler'], 0, 'Çözelti akım iletir.'),
+      sikli('Bir kısmı iyonlaşan madde nedir?', ['Zayıf elektrolit', 'Kuvvetli elektrolit'], 0, 'Lamba sönük yanar.'),
+      soru('Saf su elektriği iyi iletir.', false, 'Neredeyse yalıtkan; ileten çözünmüş iyonlar.'),
     ], [
       {
         soru: 'Şeker çözeltisi elektriği iletir mi?',
@@ -887,6 +942,10 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Doymuş çözelti, o sıcaklıkta çözebileceği en çok maddeyi çözmüş çözeltidir.', true, 'Eklenen fazla madde dibe çöküyor.'),
       soru('Aşırı doymuş çözelti kararsızdır.', true, 'Küçük bir sarsıntı bile fazlalığın kristalleşmesine yol açabiliyor.'),
       soru('Çözünürlük sıcaklıktan etkilenmeyen sabit bir değerdir.', false, 'Sıcaklığa bağlı; her sıcaklık için ayrı bir çözünürlük değeri var.'),
+      sikli('Çözünürlük hangi miktar suya göre tanımlanır?', ['100 g', '1 L'], 0, 'Belirli sıcaklıkta 100 g çözücü.'),
+      sikli('Sıcak doymuş çözelti soğutulunca ne olur?', ['Fazlalık kristalleşir', 'Daha çok çözünür'], 0, 'Kristallendirme.'),
+      sikli('80 °C\'de 60 g, 20 °C\'de 30 g çözünüyorsa soğutunca ne kadar çöker?', ['30 g', '60 g'], 0, 'Fark çöker.'),
+      soru('Aşırı doymuş çözelti kararlıdır.', false, 'Küçük sarsıntı çökertir.'),
     ], [
       {
         soru: 'Çözünürlük eğrisinin üstünde kalan nokta hangi çözeltidir?',
@@ -939,6 +998,9 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Gazların çözünürlüğü sıcaklık arttıkça azalır.', true, 'Isınan gazlı içeceğin gazının kaçması bu yüzden.'),
       soru('Basınç, katıların çözünürlüğünü belirgin biçimde etkiler.', false, 'Basıncın belirgin etkisi gazlarda görülür.'),
       soru('Karıştırmak çözünürlüğü artırır.', false, 'Çözünme hızını artırır; çözünürlük aynı kalır.'),
+      sikli('Basınç hangi maddelerin çözünürlüğünü etkiler?', ['Katıların', 'Yalnızca gazların'], 1, 'Gazoz şişesi.'),
+      sikli('Sıcak suda balık için oksijenin azalmasının sebebi?', ['Su buharlaşır', 'Gaz çözünürlüğü sıcaklıkla azalır'], 1, 'Isınan su gazı tutamaz.'),
+      soru('Karıştırmak çözünürlüğü artırır.', false, 'Yalnızca çözünme hızını.'),
     ], [
       {
         soru: 'Gazoz ısındığında neden köpürür?',
@@ -990,6 +1052,9 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Doymuş bir çözelti aynı zamanda seyreltik olabilir.', true, 'Çözünürlüğü düşük bir maddede doymuş çözelti az madde içeriyor.'),
       soru('Çözeltiler heterojen karışımlardır.', false, 'Homojen olmak çözelti olmanın şartı.'),
       soru('Alaşımlar çözelti sayılmaz.', false, 'Katı hâldeki çözeltilere örnek.'),
+      sikli('Hava hangi tür çözeltidir?', ['Katı çözelti', 'Gaz çözeltisi'], 1, 'Alaşımlar katı çözelti.'),
+      sikli('Tanecikleri görünür boyutta olan karışım nedir?', ['Çözelti', 'Süspansiyon'], 1, 'Çözelti homojendir.'),
+      soru('Derişik çözelti her zaman doymuştur.', false, 'İkisi ayrı sınıflama.'),
     ], [
       {
         soru: 'Doymuş bir çözelti aynı zamanda seyreltik olabilir mi?',
@@ -1048,6 +1113,11 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Molarite hesabında çözücünün değil çözeltinin hacmi kullanılır.', true, 'Katı eklenince toplam hacim değişebiliyor.'),
       soru('Seyreltme sırasında çözünen maddenin mol sayısı değişir.', false, 'Mol sayısı aynı kalır; değişen hacim, dolayısıyla derişim.'),
       soru('Kütlece yüzde derişim, çözünenin kütlesinin çözücü kütlesine oranıdır.', false, 'Çözelti kütlesine oranıdır; çözelti çözücü ile çözünenin toplamı.'),
+      sikli('4 g NaOH (40 g/mol) ile 500 mL çözelti: molarite?', ['0,1 M', '0,2 M'], 1, '0,1 mol / 0,5 L.'),
+      sikli('2 M\'lik 100 mL çözeltiye 300 mL su eklenirse?', ['1,5 M', '0,5 M'], 1, 'M₁V₁ = M₂V₂.'),
+      sikli('İçme suyundaki kurşun sınırı hangi birimle verilir?', ['Molarite', 'ppm'], 1, 'Milyonda bir kısım.'),
+      sikli('Molarite hangi hacme bölünür?', ['Çözücünün', 'Çözeltinin'], 1, 'Katı eklemek hacmi değiştirir.'),
+      soru('İki çözelti karışınca toplam mol ve toplam hacim toplanır.', true, 'Yeni derişim bölüm.'),
     ], [
       {
         soru: '1 M çözeltiye su eklenince mol sayısı ne olur?',
@@ -1099,6 +1169,9 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Tuzlu suyun kaynama noktası saf sudan yüksektir.', true, 'Çözünen tanecikler buharlaşmayı zorlaştırıyor.'),
       soru('Yollara tuz atılması suyun donma noktasını yükseltir.', false, 'Donma noktasını düşürür; buz bu yüzden erir.'),
       soru('Aynı derişimdeki şeker ve tuz çözeltileri kaynama noktasını aynı ölçüde yükseltir.', false, 'Tuz iyonlarına ayrıldığı için daha çok tanecik verir ve etkisi büyüktür.'),
+      sikli('Koligatif özellik neye bağlıdır?', ['Tanecik sayısına', 'Çözünenin cinsine'], 0, 'Cinsi değil sayısı.'),
+      sikli('Aynı molde NaCl, şekerin kaç katı etki yapar?', ['2', '1'], 0, 'İki iyona ayrılır.'),
+      soru('Çözünen eklenince kaynama noktası düşer.', false, 'Yükselir; düşen donma noktası.'),
     ], [
       {
         soru: 'Yollara kışın tuz atılmasının sebebi?',
@@ -1143,6 +1216,9 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Mikro ölçekli çalışmak oluşan atık miktarını azaltır.', true, 'Yeşil kimyanın atık önleme ilkesiyle örtüşüyor.'),
       soru('Mikro ölçekli deneylerin sonuçları her zaman daha kesindir.', false, 'Küçük miktarlarda ölçüm hatasının payı büyüyebiliyor.'),
       soru('Atom ekonomisi ile yüzde verim aynı şeyi ölçer.', false, 'Verim ne kadar elde edildiğini, atom ekonomisi girenlerin ne kadarının ürüne geçtiğini ölçer.'),
+      sikli('Atom ekonomisi neyi ölçer?', ['Kaç atomun ürüne geçtiğini', 'Ne kadar ürün elde edildiğini'], 0, 'Verim ikincisini ölçer.'),
+      sikli('Titrasyonu 5 mL ile yapmak neyi değiştirir?', ['Atığı', 'Sonucu'], 0, 'Aynı sonuç, onda bir atık.'),
+      soru('Her deney mikro ölçeğe küçültülebilir.', false, 'Bazı ölçümler görünür miktar ister.'),
     ], [
       {
         soru: 'Mikro ölçekli deneyin kazançlarından biri hangisidir?',
@@ -1202,6 +1278,11 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Stratosferdeki ozon tabakası zararlı morötesi ışınları süzer.', true, 'İncelmesi cilt kanseri riskini artırıyor.'),
       soru('Asit yağmurlarının sebebi ozon tabakasının incelmesidir.', false, 'Sebep kükürt ve azot oksitlerinin havada aside dönüşmesi; iki sorun ayrı.'),
       soru('Ozon bulunduğu her yükseklikte yararlıdır.', false, 'Yer seviyesinde kirletici; yararlı olan stratosferdeki ozon.'),
+      sikli('Asit yağmurunu hangi gazlar oluşturur?', ['Kükürt ve azot oksitleri', 'CFC\'ler'], 0, 'CFC ozonu parçalar.'),
+      sikli('Yer seviyesindeki ozon nedir?', ['Solunumu bozan kirletici', 'Koruyucu tabaka'], 0, 'Yüksekteki koruyucu.'),
+      sikli('Sera etkisinin doğal hâli için ne söylenir?', ['Yaşamı mümkün kılar', 'Zararlıdır'], 0, 'Olmasaydı dünya çok soğuk olurdu.'),
+      sikli('Katalitik konvertör neye örnektir?', ['Sorunu geri çevirme çabası', 'Fosil yakıt'], 0, 'Egzoz gazlarını dönüştürür.'),
+      soru('Metan bir sera gazıdır.', true, 'CO₂ gibi ısıyı tutar.'),
     ], [
       {
         soru: 'Ozon tabakasını parçalayan gazlar hangileridir?',
