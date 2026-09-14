@@ -45,6 +45,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'Üssün üssü',
         '(aᵐ)ⁿ = aᵐⁿ — üsler çarpılır. (2³)² = 2⁶ = 64; 2³·2² = 2⁵ = 32 ile karıştırılıyor.',
+        undefined,
+        { not: '2³·2² ile (2³)² arasındaki farkı bir kez elle hesapla; kural sonra kendiliğinden gelir.' },
       ),
       kart(
         'Farklı taban, aynı üs',
@@ -152,6 +154,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
           isaretler: [-4, -2, 0, 3],
           parcalar: [{ bas: null, bit: 3, kapaliBit: true, ad: '(−∞, 3]' }],
         },
+        { not: 'Parantezi şekle göre değil anlama göre koy: sonsuza "dâhil" denemez.' },
       ),
       kart(
         'Birleşim ve kesişim',
@@ -257,6 +260,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'Kapalılık',
         'İki doğal sayının farkı doğal olmayabilir (3 − 5), iki tam sayının bölümü tam olmayabilir. Küme genişledikçe kapalılık artar.',
+        undefined,
+        { not: 'Kümenin dışına çıkan tek bir örnek bulman yeter; kural ezberine gerek yok.' },
       ),
     ], [
       soru(
@@ -323,6 +328,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'Karşı örnek',
         'Bir genellemeyi çürütmek için tek bir karşı örnek yeter; doğrulamak için ise ispat gerekir.',
+        undefined,
+        { not: 'Bir iddiayı yıkmak bir örnek, kurmak ispat ister; ikisi aynı ağırlıkta değil.' },
       ),
     ], [
       soru('3x ile 3x² benzer terimdir.', false, 'Benzer terimlerde değişkenler ve üsleri aynı olmalı; burada üsler farklı.'),
@@ -438,6 +445,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
             { x: 2.45, y: 2, ad: '+2', renk: 'ikincil' },
           ],
         },
+        { not: 'a sayısını "sağa bir adım, yukarı kaç adım" diye oku; formülü unutsan da bu kalır.' },
       ),
       kart(
         'Artan mı azalan mı?',
@@ -654,6 +662,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'Uzaklık olarak okumak',
         '|x − 5| ifadesi "x ile 5 arasındaki uzaklık" demektir. |x − 5| < 2 → x, 5’e 2 birimden yakın.',
+        undefined,
+        { not: 'Mutlak değeri uzaklık diye okuyunca eşitsizliklerin çoğu ezbersiz çözülür.' },
       ),
     ], [
       soru(
@@ -738,6 +748,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'Anlam kontrolü',
         'Kişi sayısı negatif, yaş kesirli çıkmaz. Matematiksel doğru çözüm bağlamda geçersiz olabilir.',
+        undefined,
+        { not: 'Cevabı bulunca soruya geri dön: bu sayı bu problemde olabilir mi?' },
       ),
       kart(
         'Oran ve orantı',
@@ -822,6 +834,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'Üçüncü kenarın aralığı',
         'İki kenar a ve b ise üçüncü kenar |a − b| ile a + b arasındadır. Uçlar dâhil değildir.',
+        undefined,
+        { not: 'Uçların dâhil olmadığını unutma; tam sayı sorularında hata hep uçlarda.' },
       ),
       kart(
         'Kenar sorusu kalıbı',
@@ -973,6 +987,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'Bileşke dönüşüm',
         'İki dönüşüm art arda uygulanabilir ve sıraları önemlidir: önce döndürüp ötelemek ile tersi farklı sonuç verir.',
+        undefined,
+        { not: 'Sıra değişince sonuç değişir; iki dönüşümü hep verilen sırayla uygula.' },
       ),
       kart(
         'Simetri ekseni',
@@ -1022,6 +1038,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'AAA neden yetmez?',
         'Üç açısı eşit iki üçgen aynı biçimdedir ama aynı boyda olmak zorunda değildir; bu eşlik değil benzerliktir.',
+        undefined,
+        { not: 'Bu kart eşlik ile benzerliğin sınırı; ikisini ayıran tek soru boyut.' },
       ),
       kart(
         'Benzerlik nedir?',
@@ -1107,6 +1125,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'Alan oranı karesidir',
         'Benzerlik oranı k ise çevreler oranı k, alanlar oranı k²’dir. Uzunluk oranıyla alan oranı sık karıştırılır.',
+        undefined,
+        { not: 'Uzunluk k, alan k²; soruda hangisinin verildiğini iki kez oku.' },
       ),
       kart(
         'Karşılıklı elemanlar',
@@ -1281,6 +1301,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'Neden aynı temada?',
         'Üçünün de ispatı benzerliğe dayanır; ayrı formüller gibi görünen şeyler tek fikrin sonuçlarıdır.',
+        undefined,
+        { not: 'Üç teoremi üç formül gibi değil, benzerliğin üç sonucu gibi tut.' },
       ),
     ], [
       soru('Pisagor teoremi her üçgende geçerlidir.', false, 'Yalnızca dik üçgende: dik kenarların kareleri toplamı hipotenüsün karesine eşit.'),
@@ -1338,6 +1360,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'Şekli ayırmak',
         'İç içe geçmiş benzer üçgenleri iki ayrı şekil olarak yeniden çizmek, eşleştirme hatasını büyük ölçüde bitirir.',
+        undefined,
+        { not: 'İç içe üçgeni ayrı çizmeden oran kurma; hataların çoğu çizilmeyen şekilde.' },
       ),
       kart(
         'En sık hata',
@@ -1429,6 +1453,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'Sonsuz döngü',
         'Döngüyü bitiren koşul hiçbir zaman sağlanmazsa algoritma durmaz — "sonlu olma" özelliği bu yüzden şart.',
+        undefined,
+        { not: 'Bir algoritma yazınca ilk sorun şu: ne zaman duruyor?' },
       ),
       kart(
         'Neden matematikte?',
@@ -1508,6 +1534,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'Koşullu önerme',
         'p ⇒ q yalnızca p doğru ve q yanlışken yanlıştır. Diğer üç durumda doğrudur.',
+        undefined,
+        { not: 'Yalnız bir satırı ezberle: D ⇒ Y yanlış. Gerisi doğru.' },
       ),
       kart(
         'Karşıt tersi',
@@ -1590,6 +1618,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'Koşulun olumsuzu',
         'Bir koşulu tersine çevirmek, akış şemasındaki iki dalın yer değiştirmesi demektir; algoritma aynı işi yapar.',
+        undefined,
+        { not: '"ve"nin olumsuzu "veya" olur; koşulu tersine çevirirken bağlacı da çevir.' },
       ),
       kart(
         'İç içe koşul',
@@ -1655,6 +1685,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
             ['2, 3, 4, 5, 96', '22', '4'],
           ],
         },
+        { not: 'Veride uç değer görünce ortalamaya güvenme; önce ortancaya bak.' },
       ),
       kart(
         'Yayılım ölçüleri',
@@ -1703,6 +1734,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'Kesik eksen',
         'Y ekseni sıfırdan başlamıyorsa küçük farklar büyük görünür. En sık kullanılan yanıltma budur.',
+        undefined,
+        { not: 'Bir grafiğe bakınca ilk iş: y ekseni sıfırdan mı başlıyor?' },
       ),
       kart(
         'Ölçek oyunu',
@@ -1775,6 +1808,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'İkisi arasındaki fark',
         'Teorik olasılık hesaplanır, deneysel olasılık ölçülür. Aynı deneyde ikisi genelde birbirine yakın ama eşit değildir.',
+        undefined,
+        { not: 'Deneysel ölçülür, teorik hesaplanır; soru hangisini istiyor, ona göre işlem yap.' },
       ),
     ], [
       soru('Deneysel olasılık, gözlenen sıklığın toplam deneme sayısına bölümüdür.', true, 'Hesap yapılan deneyden çıkıyor, kuramdan değil.'),
@@ -1845,6 +1880,8 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       kart(
         'Yaygın yanılgı',
         'Yazı gelen bir paranın sonraki atışta tura gelme olasılığı yine 1/2’dir; para geçmişi hatırlamaz.',
+        undefined,
+        { not: 'Paranın hafızası yok; önceki atışlar sonrakini değiştirmez.' },
       ),
     ], [
       soru('Bir olayın olasılığı 1,5 olabilir.', false, 'Olasılık 0 ile 1 arasında; 1 kesin olan olayın değeri.'),

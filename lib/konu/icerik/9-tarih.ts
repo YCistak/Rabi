@@ -37,6 +37,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       kart(
         'Kötüye kullanımı',
         'Geçmiş, bugünün siyasi iddiasını haklı çıkarmak için seçilerek anlatılabilir. Tarih bilgisi bunun panzehiridir.',
+        undefined,
+        { not: 'Bir anlatı sana çok net geliyorsa sor: neyi atlamış olabilir?' },
       ),
     ], [
       soru('Tarih, geçmişteki olayların birebir tekrar edeceğini gösterir.', false, 'Olaylar aynen tekrarlanmaz; benzer koşullar benzer sonuçlar üretebilir.'),
@@ -66,6 +68,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       kart(
         'Neden deney yapılamaz?',
         'Olaylar tek seferliktir ve geri döndürülemez. Bu yüzden tarih deneye değil kaynağa dayanır.',
+        undefined,
+        { not: 'Tarihi "kesin değil" diye küçümseme; deneyi olmayan bilimin yöntemi kaynak.' },
       ),
       kart(
         'Nesnellik sorunu',
@@ -134,6 +138,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       kart(
         'Kaynak eleştirisi',
         'Dış eleştiri belgenin gerçek olup olmadığını, iç eleştiri içeriğinin güvenilirliğini sorgular.',
+        undefined,
+        { not: 'Dış eleştiri "gerçek mi", iç eleştiri "doğru mu"; ikisi ayrı soru, sınav ayrı soruyor.' },
       ),
       kart(
         'Yardımcı bilimler',
@@ -210,6 +216,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       kart(
         'Doğrulama sorunu',
         'İnternetteki her metin kaynak değildir. Dijital ortamda kaynak eleştirisi daha da gerekli hâle geldi.',
+        undefined,
+        { not: 'Erişim kolaylaştı, doğrulama zorlaştı; ikisi aynı anda geldi.' },
       ),
       kart(
         'Yapay zekâ ve tarih',
@@ -260,6 +268,7 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
             { ad: 'Şehir ve devlet' },
           ],
         },
+        { not: 'Sonuçları liste gibi değil zincir gibi oku; her halka bir öncekinden çıkıyor.' },
       ),
       kart(
         'Yerleşik hayat',
@@ -331,6 +340,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       kart(
         'Atina ve demokrasi',
         'Atina’da yurttaşlar doğrudan karar veriyordu; ama kadınlar, köleler ve yabancılar yurttaş sayılmıyordu.',
+        undefined,
+        { not: '"Demokrasi" kelimesini bugünkü anlamıyla okuma; kimin dışarıda kaldığına bak.' },
       ),
       kart(
         'Sparta',
@@ -397,6 +408,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       kart(
         'Ortak yön',
         'Yasanın yazılı olması, hukuku hükümdarın ağzından çıkarıp herkesin bilebileceği bir ölçüye çevirdi.',
+        undefined,
+        { not: 'Yasaların içeriği değişiyor, yazılı olmanın anlamı değişmiyor; bu kartı tut.' },
       ),
     ], [
       soru('Bilinen ilk yazılı kanunlar Mezopotamya da ortaya çıkmıştır.', true, 'Urgakina kanunları bilinen en eski örneklerden.'),
@@ -438,6 +451,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       kart(
         'Neden geometri Mısır’da?',
         'Nil her yıl taşıp tarla sınırlarını siliyordu; arazi yeniden ölçülmek zorundaydı.',
+        undefined,
+        { not: 'Bilimi "kim buldu" diye değil "hangi ihtiyaçtan doğdu" diye oku.' },
       ),
       kart(
         'Felsefe',
@@ -472,6 +487,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       kart(
         'Konargöçerlik nedir?',
         'Mevsime göre yaylak ve kışlak arasında düzenli göç. Başıboş dolaşmak değil, planlı bir yaşam biçimidir.',
+        undefined,
+        { not: '"Göçebe" kelimesi seni yanıltmasın: düzenli, planlı bir yaşam biçimi.' },
       ),
       kart(
         'Neden bu yaşam?',
@@ -565,6 +582,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       kart(
         'Göç tek yönlü değil',
         'Gelen topluluk yerleşiği değiştirdiği kadar kendisi de değişir. Kültür alışverişi her zaman iki yönlüdür.',
+        undefined,
+        { not: 'Göç sorularında iki tarafı da düşün; gelen de giden de değişiyor.' },
       ),
     ], [
       soru('Kavimler Göçü, Avrupa nın siyasi haritasının değişmesine yol açtı.', true, 'Yeni krallıklar kuruldu, Roma ikiye ayrıldı.'),
@@ -620,6 +639,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       kart(
         'İkta nasıl işler?',
         'Toprağın vergisi bir komutana bırakılır, o da karşılığında asker besler. Devlet nakit ödemeden ordu kurmuş olur.',
+        undefined,
+        { not: 'Tek cümle: toprak vergisi asker besler. Feodaliteyle farkını buradan kur.' },
       ),
       kart(
         'Ordu yapıları',
@@ -688,6 +709,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       kart(
         'Yol denetimi güçtür',
         'Yolları elinde tutan devlet gümrük geliri ve siyasi ağırlık kazanırdı. Savaşların sebebi çoğu zaman buydu.',
+        undefined,
+        { not: 'Yolların ne taşıdığından çok kimin elinde olduğuna bak; savaşların çoğu oradan.' },
       ),
       kart(
         'Kervansaraylar',
@@ -748,6 +771,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       kart(
         'Bilgi aktarımı',
         'Endülüs ve Sicilya, İslam dünyasındaki birikimin Avrupa’ya geçtiği köprülerdi.',
+        undefined,
+        { not: 'Bilgi kaybolmadı, yer değiştirdi; Endülüs\'ü bir köprü olarak hatırla.' },
       ),
       kart(
         'Medreseler',

@@ -36,6 +36,8 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       kart(
         'Kişiler tiptir',
         'Masal kişileri gelişmez: iyi hep iyi, cimri hep cimridir. Bu yüzden karakter değil tip sayılırlar.',
+        undefined,
+        { not: 'Masalda karakter gelişimi arama; tip, masalın kuralı, eksiği değil.' },
       ),
       kart(
         'Olağanüstülük',
@@ -100,6 +102,8 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       kart(
         'Varyant nedir?',
         'Aynı ürünün yöreden yöreye değişmiş hâli. Sözlü gelenekte tek bir "doğru metin" yoktur.',
+        undefined,
+        { not: '"Hangisi doğru" diye sorma; sözlü gelenekte her varyant aynı ürünün bir yüzü.' },
       ),
       kart(
         'Neden anonimleşir?',
@@ -165,6 +169,8 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       kart(
         'Ses ve anlam birlikte',
         'Ahenk süs değildir: ağır sesler ağırlık, ince ve hızlı sesler kıvraklık duygusu üretir.',
+        undefined,
+        { not: 'Ahenk sorusunda sesi anlamdan ayırma; şair sesi anlam için seçiyor.' },
       ),
     ], [
       soru('Aliterasyon ünsüz, asonans ünlü tekrarıdır.', true, 'İkisi de sese dayalı ahenk araçları.'),
@@ -221,6 +227,8 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       kart(
         'Yorum sınırsız değil',
         'Şiir çok anlamlıdır ama her yorum geçerli değildir; yorum metinden delil gösterebiliyorsa ayakta durur.',
+        undefined,
+        { not: '"Her yorum geçerli" değil; yorumu metinden bir kanıtla destekle.' },
       ),
     ], [
       soru('İmge, okurun zihninde yeni bir tasarım oluşturur.', true, 'Sözcüğün sözlük anlamının ötesine geçiyor.'),
@@ -283,6 +291,8 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       kart(
         'Tür göreve göre değişir',
         'Bir sözcüğün türü cümledeki görevine göre belirlenir: "güzel" kimi cümlede sıfat, kimi cümlede zarftır.',
+        undefined,
+        { not: 'Sözcüğü ezberden sınıflandırma; cümledeki görevine bak, tür oradan çıkar.' },
       ),
       kart(
         'Zarf mı sıfat mı testi',
@@ -358,6 +368,8 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       kart(
         'Fiilimsi tanıma',
         'Ekleri ezberle: -ma/-ış/-mak isim-fiil, -an/-acak/-dık/-mış/-ası/-maz sıfat-fiil, -ip/-arak/-ken/-ince/-madan zarf-fiil. Bir cümlede fiilimsi varsa o cümle birleşiktir.',
+        undefined,
+        { not: 'Ekleri bir kâğıda yaz; fiilimsi sorusu ek tanımayla çözülüyor, başka yolu yok.' },
       ),
     ], [
       soru('Ek fiil, isim soylu sözcükleri yüklem yapar.', true, '"Öğrenciydi" örneğinde yüklemi kuran ek fiil.'),
@@ -417,6 +429,8 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       kart(
         'Destan ve tarih',
         'Destan tarihsel bir olaydan doğar ama tarih değildir; olayı halkın gözünden ve abartarak anlatır.',
+        undefined,
+        { not: 'Destanı belge sanma; tarihsel çekirdek var ama anlatan halk, ölçen değil.' },
       ),
     ], [
       soru('Doğal destanlar toplumun ortak belleğinde oluşup sonradan yazıya geçirilir.', true, 'Söyleyeni belli değildir.'),
@@ -467,6 +481,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
             ['Halk hikâyesi', 'Âşık geleneği'],
           ],
         },
+        { not: 'Üç türü rakip değil komşu diye oku; aynı işi üç ayrı çevre yapmış.' },
       ),
       kart(
         'Fabl',
@@ -519,6 +534,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
             { ad: 'Yerli konu' },
           ],
         },
+        { not: 'İlkeleri tek tek değil, her birinin neye karşı çıktığıyla birlikte tut.' },
       ),
       kart(
         'Ölçü ve konu',
@@ -585,6 +601,8 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       kart(
         'Anadolu’ya bakış',
         'Yaban aydının halka uzaklığını, Çalıkuşu ise Anadolu’ya gitmeyi bir görev olarak anlatır. İkisi aynı sorunun iki yüzü.',
+        undefined,
+        { not: 'İki roman aynı Anadolu\'ya iki ayrı gözle bakıyor; farkı kavrarsan dönemi kavrarsın.' },
       ),
       kart(
         'Tiyatro ve deneme',

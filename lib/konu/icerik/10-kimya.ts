@@ -35,6 +35,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       kart(
         'Aldatıcı olabilir',
         'Kaynayan suda da kabarcık çıkar ama bu kimyasal değişim değil. Tek bir gösterge kanıt sayılmaz.',
+        undefined,
+        { not: 'Göstergeleri listeleyip geçme; her birinin nerede yanılttığını da bil.' },
       ),
       kart(
         'Kesin ölçüt',
@@ -120,6 +122,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       kart(
         'Katalizör ne yapar, ne yapmaz?',
         'Aktivasyon enerjisini düşürerek hızlandırır; tepkimeden harcanmadan çıkar. Ürün miktarını ve tepkime ısısını değiştirmez.',
+        undefined,
+        { not: '"Ne yapmaz" kısmı sınavda çıkan kısım; katalizör tepkimeye girmez, dengeyi oynatmaz.' },
       ),
     ], [
       soru(
@@ -209,6 +213,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       kart(
         'Türü nasıl tanırsın?',
         'O₂ giriyor ve CO₂ çıkıyorsa yanma; asit + baz → tuz + su ise nötrleşme; ürün (k) ise çökelme; yükseltgenme sayıları değişiyorsa redoks.',
+        undefined,
+        { not: 'Denklemi gördüğünde önce giren ve çıkanlara bak; tür adı ondan sonra gelir.' },
       ),
     ], [
       soru('Yanma tepkimeleri ekzotermiktir.', true, 'Isı ve ışık açığa çıkıyor.'),
@@ -265,6 +271,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
             { ad: 'Tanecik' },
           ],
         },
+        { not: 'Nereden nereye gidersen git, yol moldan geçer; doğrudan gram-tanecik geçişi yok.' },
       ),
       kart(
         'Formülden mol',
@@ -329,6 +336,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       kart(
         'Katsayı değişir, indis değişmez',
         'Formülün alt indisine dokunulmaz — değiştirmek maddeyi değiştirir. Yalnızca önündeki katsayı büyütülür.',
+        undefined,
+        { not: 'Denkleşmiyor diye indise dokunursan başka bir madde yazmış olursun.' },
       ),
       kart(
         'İzlenecek sıra',
@@ -407,6 +416,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       kart(
         'Sınırlayıcı bileşen',
         'Önce biten madde tepkimeyi durdurur; ürün miktarını o belirler. Artan maddenin fazlası tepkimeye giremez.',
+        undefined,
+        { not: 'İki madde verilmişse önce hangisinin biteceğini bul; ürün miktarını o belirler.' },
       ),
       kart(
         'Nasıl bulunur?',
@@ -458,6 +469,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       kart(
         'Basınç nereden gelir?',
         'Taneciklerin kap çeperine çarpmasından. Tanecik sayısı ya da hızı arttıkça basınç artar.',
+        undefined,
+        { not: 'Bütün gaz yasaları bu çarpma resminden çıkıyor; yasaları buradan türet.' },
       ),
       kart(
         'Sıcaklık ve hız',
@@ -558,6 +571,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       kart(
         'Neden Kelvin?',
         'Santigratta sıfır keyfî bir noktadır; orantı ancak mutlak sıfırdan başlayan ölçekte doğru çalışır.',
+        undefined,
+        { not: 'Sıcaklık gördüğünde ilk iş +273; santigratla orantı kurmak sonucu baştan bozar.' },
       ),
       kart(
         'Hesap kalıbı',
@@ -629,6 +644,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       kart(
         'Ne zaman ideale yakın?',
         'Düşük basınç ve yüksek sıcaklıkta. Bu koşullarda tanecikler birbirinden uzak ve hızlıdır.',
+        undefined,
+        { not: 'Sapmayı ezberleme: tanecikler ne zaman birbirini fark etmez, onu düşün.' },
       ),
       kart(
         'Kısmi basınç',
@@ -672,6 +689,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       kart(
         'Neden böyle?',
         'Aynı sıcaklıkta bütün gazların ortalama kinetik enerjisi eşittir; eşit enerjide hafif tanecik daha hızlı hareket eder.',
+        undefined,
+        { not: 'Formülü değil eşit enerji fikrini tut; hız oranı buradan kendiliğinden çıkar.' },
       ),
       kart(
         'Günlük karşılığı',
@@ -728,6 +747,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
             { ad: 'Sarma', alt: 'enerji verir', renk: 'ikincil' },
           ],
         },
+        { not: 'Isı alan mı veren mi sorusunun cevabı üç adımın toplamında; ezberle değil topla.' },
       ),
       kart(
         'Isı alan mı veren mi?',
@@ -777,6 +797,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       kart(
         'Sabun ikisini birleştirir',
         'Sabun molekülünün bir ucu polar, öteki ucu apolardır; yağı kavrar ve su tarafına taşır.',
+        undefined,
+        { not: 'Sabun molekülünü çizebiliyorsan "benzer benzeri çözer"i anlamışsın demektir.' },
       ),
       kart(
         'Kısmen çözünenler',
@@ -835,6 +857,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       kart(
         'Nasıl anlaşılır?',
         'Basit bir devreye lamba bağlanır: çözeltiye daldırıldığında lamba yanıyorsa çözünme iyoniktir.',
+        undefined,
+        { not: 'Lamba deneyini aklında tut; iletkenlik sorusu hep buna dayanır.' },
       ),
       kart(
         'Saf su iletmez',
@@ -915,6 +939,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       kart(
         'Eğri sorusu kalıbı',
         '80 °C\'de 100 g suda 60 g çözünen madde 20 °C\'de 30 g çözünüyorsa soğutunca 30 g çöker. 200 g su için sayılar iki katı.',
+        undefined,
+        { not: 'Grafik sorusunda iki sıcaklıktaki değeri oku, farkı al; hesap bu kadar.' },
       ),
     ], [
       soru(
@@ -988,6 +1014,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
             ['Sıcaklık', 'İkisi de'],
           ],
         },
+        { not: 'Hız ile miktar ayrı sorular; karıştırma hızlandırır ama sınırı değiştirmez.' },
       ),
       kart(
         'Ortak iyon etkisi',
@@ -1025,6 +1052,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       kart(
         'İkisi neden farklı?',
         'Çözünürlüğü düşük bir madde az miktarda bile doymuş çözelti verir; o çözelti doymuştur ama seyreltiktir.',
+        undefined,
+        { not: 'Derişik ve doymuş aynı şey değil; az çözünen madde seyreltikken doyar.' },
       ),
       kart(
         'Hâline göre',
@@ -1079,6 +1108,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       kart(
         'Dikkat: çözelti hacmi',
         'Molarite çözücünün değil çözeltinin hacmine bölünür. Katıyı eklemek hacmi değiştirir.',
+        undefined,
+        { not: 'Çözücü değil çözelti; bu tek kelime farkı hesabı değiştiriyor.' },
       ),
       kart(
         'Kütlece yüzde',
@@ -1159,6 +1190,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
             ['CaCl₂', '3 mol'],
           ],
         },
+        { not: 'Mol sayma, tanecik say; tuz suda ikiye ayrılıyor.' },
       ),
       kart(
         'Osmotik basınç',
@@ -1202,6 +1234,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       kart(
         'Verim ile farkı',
         'Verim ne kadar ürün elde edildiğini söyler; atom ekonomisi ise kaç atomun boşa gittiğini. İkisi ayrı ölçülerdir.',
+        undefined,
+        { not: 'İki ölçü iki ayrı soruya cevap; birini ötekinin yerine koyma.' },
       ),
       kart(
         'Sınırı',
@@ -1260,6 +1294,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
             ['Asit yağmuru', 'SO₂, NOₓ'],
           ],
         },
+        { not: 'Her sorunu kendi gazıyla eşle; "sera gazı ozonu deliyor" en sık hata.' },
       ),
       kart(
         'Ozon iki yüzlü',

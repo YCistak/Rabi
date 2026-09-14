@@ -87,6 +87,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       kart(
         'Birim tuzağı',
         'Hız km/h, zaman dakika verilmişse önce birimleri eşitle: 72 km/h = 20 m/s. Çoğu hata hesapta değil birimde çıkar.',
+        undefined,
+        { not: 'Soruya başlamadan birimleri eşitle; hataların çoğu hesapta değil burada.' },
       ),
     ], [
       soru(
@@ -207,6 +209,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       kart(
         'Sık yapılan hata',
         'En yüksek noktada hız sıfırdır ama ivme sıfır değildir. İvme sıfır olsaydı cisim orada asılı kalırdı.',
+        undefined,
+        { not: '"Tepede hız sıfır" cümlesini bitirmeden "ama ivme g" diye ekle.' },
       ),
     ], [
       soru('Yavaşlayan bir cismin ivmesi, hızıyla zıt yöndedir.', true, 'İvme hızla aynı yöndeyse cisim hızlanır.'),
@@ -281,6 +285,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
             ['Kuvvet yok', '0'],
           ],
         },
+        { not: 'Günlük dilin "iş"ini unut; fizik yalnızca yol yönündeki kuvveti sayar.' },
       ),
       kart(
         'Yatayla açılı kuvvet',
@@ -341,6 +346,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       kart(
         'Neden hızın karesi?',
         'Fren mesafesi bunun günlük karşılığıdır: hızı iki katına çıkan araç, durmak için dört katı mesafeye ihtiyaç duyar.',
+        undefined,
+        { not: 'Kare demek dört kat demek; fren mesafesiyle düşün, formülle değil.' },
       ),
       kart(
         'Potansiyel enerji',
@@ -426,6 +433,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       kart(
         'Yükseklik nereden ölçülür?',
         'Potansiyel enerji seçilen sıfır düzeyine göredir. Değişimi ise seçimden bağımsızdır; hesaba giren o değişimdir.',
+        undefined,
+        { not: 'Sıfır düzeyini sen seçersin; seçim değişince değişim değişmez.' },
       ),
       kart(
         'Sürtünme varsa',
@@ -482,6 +491,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
             ['Tükenme', 'Var', 'Yok'],
           ],
         },
+        { not: 'Bir kaynağı "iyi" ya da "kötü" diye değil, hangi ölçütte üstün diye oku.' },
       ),
       kart(
         'Hidroelektrik nasıl çalışır?',
@@ -561,6 +571,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
             ['Direnç', 'Dar boru'],
           ],
         },
+        { not: 'Benzetme akım, gerilim ve direnci oturtur; ama suyla elektrik aynı şey değil.' },
       ),
       kart(
         'Şema çizimi',
@@ -628,6 +639,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       kart(
         'Ölçü aletleri özeti',
         'Ampermetre seri ve direnci sıfıra yakın; voltmetre paralel ve direnci sonsuza yakın. Yerleri değişirse ölçüm değil kısa devre ya da açık devre olur.',
+        undefined,
+        { not: 'Seri mi paralel mi diye ezberleme; aletin direncinden yola çıkarsan kendin bulursun.' },
       ),
     ], [
       soru('Akımın geleneksel yönü, elektronların hareket yönünün tersidir.', true, 'Yön elektron bilinmeden tanımlandığı için böyle kaldı.'),
@@ -697,6 +710,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
             },
           ],
         },
+        { not: 'Eğim direnç: dik doğru büyük direnç. Grafik sorusunda önce eksenleri kontrol et.' },
       ),
       kart(
         'Sıcaklık etkisi',
@@ -762,6 +776,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
             ['Eşdeğer R', 'Artar', 'Azalır'],
           ],
         },
+        { not: 'Seride akım, paralelde gerilim ortak; bu iki kelime çoğu soruyu çözer.' },
       ),
       kart(
         'Ev tesisatı neden paralel?',
@@ -842,6 +857,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       kart(
         'Neden paralel bağlanır?',
         'Gerilim artmaz ama toplam kapasite artar: iki özdeş pil paralelde devreyi iki kat uzun süre besler ve her pilden yarım akım çeker.',
+        undefined,
+        { not: 'Seri gerilimi, paralel süreyi artırır; hangisinin istendiğine sor.' },
       ),
     ], [
       soru('Özdeş üreteçler seri bağlandığında toplam elektromotor kuvvet artar.', true, 'Gerilimler toplanıyor.'),
@@ -884,6 +901,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       kart(
         'Sigorta insanı korumaz',
         'Sigorta kabloyu, kaçak akım rölesi insanı korur. İkisi farklı işler yapar ve biri ötekinin yerini tutmaz.',
+        undefined,
+        { not: 'İki cihazın işi ayrı; birinin ötekinin yerini tutmadığını unutma.' },
       ),
       kart(
         'Islak elle dokunma',
@@ -931,6 +950,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       kart(
         'En az dirençli yol',
         'Akım tek bir yoldan gitmez, yolları dirençleriyle ters orantılı paylaşır. Topraklamanın işi insandan daha kolay bir yol açmaktır.',
+        undefined,
+        { not: 'Akım en kolay yolu seçer; topraklamanın tek işi o yolu insandan daha kolay yapmak.' },
       ),
       kart(
         'Paratoner',
@@ -978,6 +999,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       kart(
         'Basit sarkaç',
         'Periyodu ipin uzunluğuna ve yer çekimine bağlıdır; asılan kütleye bağlı değildir.',
+        undefined,
+        { not: 'Kütle listede yok; sınavda kütleyi değiştiren şık çeldirici.' },
       ),
       kart(
         'Genlik periyodu değiştirmez',
@@ -1088,6 +1111,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       kart(
         'Yayılma sürati',
         'Dalga boyu ile frekansın çarpımı. Frekansı kaynak, sürati ortam belirler.',
+        undefined,
+        { not: 'Frekans kaynağın, sürat ortamın; bu ayrım kırılma konusunda da geri gelecek.' },
       ),
       kart(
         'Genlik enerjidir',
@@ -1159,6 +1184,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
             ['Titreşim yönü', 'Enine / Boyuna'],
           ],
         },
+        { not: 'Bir dalga iki sınıfa birden girer: ses hem mekanik hem boyuna. İki soruyu ayrı sor.' },
       ),
       kart(
         'Mekanik dalga',
@@ -1245,6 +1271,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       kart(
         'Işıkta tersi',
         'Işık en hızlı boşlukta yayılır; yoğun ortamda yavaşlar. Ses ile ışık bu açıdan birbirinin tersidir.',
+        undefined,
+        { not: 'Ses ile ışığı aynı kefeye koyma; yoğun ortam birini hızlandırır, ötekini yavaşlatır.' },
       ),
       kart(
         'Su dalgalarında derinlik',
@@ -1327,6 +1355,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       kart(
         'Frekans değişmez',
         'Kırılmada frekans sabittir; onu kaynak belirler. Değişen şey sürat ve dalga boyudur.',
+        undefined,
+        { not: 'Kırılmada değişen ve değişmeyeni bir tabloya yaz; soru hep buradan gelir.' },
       ),
       kart(
         'Hangi yöne kırılır?',
@@ -1397,6 +1427,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
             ['Enerji', 'Etki'],
           ],
         },
+        { not: 'Büyüklük tek sayı, şiddet yere göre değişir; haberlerdeki karışıklığı sen yapma.' },
       ),
       kart(
         'Rezonanstan korunma',

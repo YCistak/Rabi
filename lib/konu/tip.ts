@@ -238,6 +238,13 @@ export type BilgiKarti = {
    * ezberleme; her okun neden o yöne baktığını sor"). Notu olmayan kartta
    * balon da maskot da çizilmiyor: boş bir balonun yanında duran tavşan,
    * söyleyecek sözü olmayan bir rehber gibi görünür.
+   *
+   * **Her konuda bir kartta var, hepsinde değil.** Fizik 9'un örnek konusu
+   * dışında 247 konunun her birinde tek karta not yazıldı — konunun en
+   * sık yanlış okunan, en çok tuzak barındıran kartına. Her karta not
+   * konsaydı tavşan destenin her sayfasında konuşur ve sözü değerini
+   * yitirirdi; arada bir çıkan not "buraya dikkat" demek. Yeni konu eklerken
+   * de kural bu: bir kart seç, ona "nasıl okunmalı" yaz.
    */
   not?: string
 }

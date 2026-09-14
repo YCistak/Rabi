@@ -27,6 +27,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       kart(
         'ATP depolanmaz',
         'Hücre ATP’yi biriktirmez, ihtiyaç oldukça üretir. Depo, besin moleküllerinin kendisidir.',
+        undefined,
+        { not: 'ATP\'yi para gibi değil bozuk para gibi düşün: her an harcanır, biriktirilmez.' },
       ),
       kart(
         'Döngü',
@@ -92,6 +94,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       kart(
         'Oksijen sudan gelir',
         'Açığa çıkan oksijenin kaynağı karbondioksit değil, parçalanan sudur. Bu, izotoplu deneylerle gösterildi.',
+        undefined,
+        { not: '"CO₂\'den çıkar" en yaygın hata; bunu bir kez yanlış yapan bir daha yapmaz.' },
       ),
       kart(
         'Pigmentler',
@@ -201,6 +205,7 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
             ['Oksijen', 'Çıkar', 'Çıkmaz'],
           ],
         },
+        { not: 'İkisi de üretici; farkı enerji kaynağında ara, üründe değil.' },
       ),
       kart(
         'Döngülerdeki rolü',
@@ -250,6 +255,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       kart(
         'Neden ikisi birden?',
         'Enzim yalnızca yüzeyde çalışır. Mekanik sindirim yüzeyi büyütmeseydi kimyasal sindirim çok yavaş kalırdı.',
+        undefined,
+        { not: 'Mekanik sindirimi "çiğneme" diye geçme; kimyasal sindirimin ön şartı.' },
       ),
       kart(
         'Hidroliz',
@@ -300,6 +307,7 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
             { ad: 'Uzman organlar' },
           ],
         },
+        { not: 'Yapıları tek tek ezberleme; tek açıklıktan iki açıklığa geçişi anlat, gerisi sıralanır.' },
       ),
       kart(
         'Otçul ve etçillerde',
@@ -354,6 +362,7 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
             ['Yağ', 'İnce bağırsak', 'İnce bağırsak'],
           ],
         },
+        { not: 'Üç besin, üç başlangıç, tek bitiş; tabloyu kendin çiz.' },
       ),
       kart(
         'Safranın işi',
@@ -406,6 +415,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       kart(
         'Neyin nereye gittiği',
         'Glikoz ve amino asitler kana; yağ asitleri ve gliserol önce lenf sistemine geçer.',
+        undefined,
+        { not: 'Yağların lenften gittiğini ayrıca ezberle; "hepsi kana" diye geçme.' },
       ),
       kart(
         'Karaciğerin rolü',
@@ -484,6 +495,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       kart(
         'Nerede ne oluyor?',
         'Glikoliz sitoplazmada, sitrik asit döngüsü matrikste, elektron taşıma iç zarda. CO₂ döngüde, H₂O zincirin sonunda oluşur.',
+        undefined,
+        { not: 'Üç evreyi üç yerle eşle; sınav evreyi değil yerini soruyor.' },
       ),
     ], [
       soru('Glikoliz sitoplazmada gerçekleşir ve oksijen gerektirmez.', true, 'Solunumun ortak ilk basamağı.'),
@@ -536,6 +549,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       kart(
         'Neden protein son?',
         'Protein aynı zamanda yapı ve enzim malzemesidir; yakıt olarak kullanılması dokuların eritilmesi demektir.',
+        undefined,
+        { not: 'Sıralamayı değil sebebini tut: protein yakıt değil, malzeme.' },
       ),
       kart(
         'Ortak yol',
@@ -585,6 +600,7 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
             ['Alkol', 'Etanol + CO₂', 'Maya'],
           ],
         },
+        { not: 'Ayrılma noktası piruvat; öncesi aynı, sonrası ürün. ATP her ikisinde de az.' },
       ),
       kart(
         'Verimi düşük',
@@ -630,6 +646,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       kart(
         'Neden hep enerji harcanır?',
         'Uyurken bile kalp, solunum ve iyon pompaları çalışır. Düzeni korumak sürekli enerji ister.',
+        undefined,
+        { not: '"Dinlenirken harcamıyorum" yanılgısını kır; düzeni korumak bile iş.' },
       ),
       kart(
         'Kas kütlesi ve metabolizma',
@@ -696,6 +714,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       kart(
         'Habitat ve niş',
         'Habitat canlının adresi, niş ise oradaki mesleğidir; iki tür aynı nişi uzun süre paylaşamaz.',
+        undefined,
+        { not: 'Adres ile meslek; bu benzetme kalırsa niş sorusu bir daha yanıltmaz.' },
       ),
       kart(
         'Sınırlayıcı etmen',
@@ -775,6 +795,7 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
             ['Rekabet', '−', '−'],
           ],
         },
+        { not: 'Her ilişkiyi iki işaretle yaz: kim kazanıyor, kim kaybediyor. Adlar sonra.' },
       ),
       kart(
         'Mutualizm',
@@ -840,6 +861,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       kart(
         'Neden ikincisi hızlı?',
         'Toprak zaten var ve içinde tohum ile kök kalıntıları duruyor; en uzun adım olan toprak oluşumu atlanmış olur.',
+        undefined,
+        { not: 'Toprak var mı? Süksesyon sorularının çoğu bu tek soruya iniyor.' },
       ),
       kart(
         'Klimaks',
@@ -912,6 +935,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       kart(
         'Yoğunluğa bağlı ve bağımsız',
         'Rekabet ve hastalık kalabalıkla şiddetlenir; kuraklık ve don ise popülasyon büyüklüğünden bağımsız etkiler.',
+        undefined,
+        { not: 'Etkeni gördüğünde sor: kalabalık artınca etkisi artıyor mu?' },
       ),
       kart(
         'Yaş piramidi',
@@ -1012,6 +1037,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       kart(
         'Enerji akar, madde döner',
         'Enerji güneşten gelir ve ısı olarak çıkar; madde ise döngülerle sürekli yeniden kullanılır.',
+        undefined,
+        { not: 'Bu cümle bütün konunun özeti; ikisini karıştırırsan döngüler de karışır.' },
       ),
       kart(
         'Biyolojik birikim',
@@ -1089,6 +1116,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       kart(
         'Fosfor döngüsü',
         'Gaz evresi yoktur; kayaların aşınmasıyla toprağa geçer. Bu yüzden en yavaş döngüdür ve çoğu zaman sınırlayıcıdır.',
+        undefined,
+        { not: 'Gaz evresi yok; öteki döngülerden ayrıldığı tek yer bu ve sınav bunu soruyor.' },
       ),
       kart(
         'Neden döngü şart?',
@@ -1145,6 +1174,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       kart(
         'Devrilme noktası',
         'Bazı değişimler belirli bir eşiği geçince kendini hızlandırır; o noktadan sonra durdurmak çok daha zordur.',
+        undefined,
+        { not: 'Doğrusal düşünme; eşik geçilince küçük değişim büyük sonuç doğurur.' },
       ),
       kart(
         'Ekonomiyle ilişkisi',
@@ -1200,6 +1231,7 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
             { ad: 'Oksijen tükenir', renk: 'ikincil' },
           ],
         },
+        { not: '"Gübre iyi bir şey" diye düşünme; suya karışınca zinciri oksijenden başlatıp bozar.' },
       ),
       kart(
         'İstilacı türler',
@@ -1254,6 +1286,7 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
             { ad: 'Geri dönüştür' },
           ],
         },
+        { not: 'Sırayı ezberleme, mantığını tut: hiç üretmemek geri dönüştürmekten ucuz.' },
       ),
       kart(
         'Korunan alanlar',
