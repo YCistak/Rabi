@@ -235,6 +235,22 @@ describe('kart notu ve hızlı kontrol', () => {
     }
   })
 
+  /*
+    Doğru şık hep A'da olsaydı soru okunmadan cevaplanırdı; deste sonundaki
+    doğru/yanlış dengesinin aynısı. Konu başına değil bütünde ölçülüyor —
+    tek sorulu konuda denge kurulamaz.
+  */
+  it('kontrollerde doğru şık A ile B arasında dengeli', () => {
+    const hepsi = programlar
+      .map(([, p]) => p)
+      .filter((p): p is DersProgrami => p !== null)
+      .flatMap((p) => tumKonular(p).flatMap((k) => k.kontroller))
+    if (hepsi.length < 10) return
+    const b = hepsi.filter((k) => k.dogru === 1).length / hepsi.length
+    expect(b).toBeGreaterThan(0.35)
+    expect(b).toBeLessThan(0.65)
+  })
+
   it.each(programlar)('%s: hızlı kontrol var olan bir karta dayanıyor ve kısa', (_ad, program) => {
     for (const konu of tumKonular(program!)) {
       for (const k of konu.kontroller) {
