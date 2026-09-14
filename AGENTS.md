@@ -1554,27 +1554,41 @@ yılın sonunda yarıda; bu kasıtlı — çubuğun sorusu "hazırlığın neres
 
 Soru hedefi kartının hemen altında bir kart daha var (`GununHali`,
 `components/ekranlar/ana-sayfa.tsx`): "bugün çalıştın mı" sorusuna Rabi'nin
-pozuyla cevap veriyor. Üç hâl, ölçüsü halkadakiyle **aynı** sayı:
+pozuyla cevap veriyor. Cümleyi ve pozu `lib/gunun-hali.ts` seçiyor — saf,
+`gunun-hali.test.ts` her kuralı ayrı denetliyor.
 
-| Durum | Poz |
-| --- | --- |
-| Hiç soru girilmedi | `uzgun` |
-| Girildi ama hedef tutmadı | `okuyan` |
-| Hedef tuttu | `ziplayan` |
+Kart bir süre yalnızca üç şey diyordu: hiç soru yok / başladın / hedef tuttu.
+Doğruydu ama her gün aynıydı ve "başladın" hâli hiçbir şey önermiyordu. Şimdi
+ana sayfanın zaten bildiği veriden bir **öneri** çıkıyor ve kurallar sıralı,
+ilk tutan kazanıyor:
 
-Sayının kendisi kartta **yazmıyor** (yalnızca "kaç soru kaldı" gibi türetilmiş
-bir cümle): halka zaten sayıyı üç kez söylüyor ve kartın işi onu tekrar etmek
-değil, ona bir yüz vermek. Ayrı kart olması da bundan — maskot halkanın yanına
-konsaydı aynı satırda ikinci bir gösterge olurdu ve ikisi aynı şeyi ölçtüğü
-için biri gereksiz görünürdü.
+| Sıra | Kural | Koşul | Dokunuş |
+| --- | --- | --- | --- |
+| 1 | Sınava yakın | kalan gün ≤ 30 | soru |
+| 2 | Seri kırılıyor | dün hedef tuttu, bugün 0 | soru |
+| 3 | Seri sürüyor | bugün ve dün hedef tuttu | soru |
+| 4 | Banka bekliyor | çözülmemiş yanlış var, bugün çalışılmış | yanlış bankası |
+| 5 | Tek derse yığılma | ≥ 20 soru ve %80'i tek dersten | soru |
+| 6 | İhmal edilen ders | son 30 günde çalışılmış, 7+ gündür yok | soru |
+| 7 | Deneme zamanı | son deneme 10+ gün önce (ya da hiç yok, 7+ günlük geçmiş var) | denemeler |
+| 8 | Temel | eski üç hâl | soru |
 
-Günlük hedef sıfırken kart **çizilmiyor**: ölçülecek bir eşik yokken "ulaştın"
-da "ulaşmadın" da anlamsız. Karar bileşenin kendi içinde, çağıran tarafta
-değil.
+Sıra puanla değil listeyle: "neden bunu söyledi" sorusuna sıralı liste cevap
+verebiliyor, puan veremiyor. Sınav en önde çünkü o dönemde başka öneri
+gürültü; seri ondan sonra çünkü kırılan alışkanlık en pahalı kayıp.
 
-Karta yer açmak için üstündeki iki kart kısaldı (geri sayımın dev sayısı 46'dan
-38'e, halka 92'den 78'e). Üçü birden ekranı kaydırmadan görünmeli: kartın işi
-o gün fark edilmek.
+Her kuralın birden çok cümlesi var ve seçim **günün tarihinden** türeyen bir
+sayıyla yapılıyor: kart gün içinde sabit, günden güne değişiyor. Rastgele
+olsaydı her yeniden çizimde başka cümle söylerdi.
+
+Ders adına **ek getirilmiyor** ("Kimya 9 gündür bekliyor", "Kimya'ya … " değil):
+ünlü uyumu ders adına göre değişiyor ve yanlış ek, yanlış bilgiden daha çok
+göze batıyor.
+
+Sayının kendisi kartta **yazmıyor**: halka zaten sayıyı üç kez söylüyor ve
+kartın işi onu tekrar etmek değil, ona bir yüz vermek. Günlük hedef sıfırken
+kart çizilmiyor: ölçülecek bir eşik yokken "ulaştın" da "ulaşmadın" da
+anlamsız.
 
 ## Ana sayfadaki dört kutucuk
 
