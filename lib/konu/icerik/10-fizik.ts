@@ -1,4 +1,4 @@
-import { kart, konu, program, soru, tema } from '../tip'
+import { kart, konu, program, sikli, soru, tema } from '../tip'
 
 /**
  * 10. sınıf Fizik — Maarif Modeli.
@@ -112,6 +112,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Sabit hızlı harekette hız-zaman grafiği zaman eksenine paralel bir doğrudur.', true, 'Hız değişmediği için çizgi yatay kalıyor.'),
       soru('Hız-zaman grafiğinde çizginin altında kalan alan ivmeyi verir.', false, 'Alan alınan yolu verir; ivmeyi eğim gösterir.'),
       soru('Ortalama hız, hızların toplamının ikiye bölünmesiyle bulunur.', false, 'Toplam yer değiştirmenin toplam zamana bölümüdür.'),
+      sikli('Hız-zaman grafiğinin altındaki alan neyi verir?', ['Alınan yolu', 'İvmeyi'], 0, 'Sabit hızda alan dikdörtgen: v·t.'),
+      sikli('Zıt yönde giden iki araç birbirine hangi hızla yaklaşır?', ['Hızların toplamıyla', 'Hızların farkıyla'], 0, 'Aynı yönde fark, zıt yönde toplam.'),
+      sikli('72 km/h kaç m/s\'dir?', ['20', '72'], 0, '3,6\'ya böl.'),
+      soru('Sabit hızlı harekette ivme sıfırdır.', true, 'Hız büyüklüğü ve yönü değişmiyor.'),
+      soru('Konum-zaman grafiğinde yatay doğru sabit hızla giden cismi gösterir.', false, 'Yatay doğru duran cisim; sabit hız eğik doğru.'),
     ], [
       {
         soru: 'Konum-zaman grafiğinde eğim neyi verir?',
@@ -227,6 +232,14 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       ),
       soru('Yukarı atılan bir cismin en yüksek noktada ivmesi sıfırdır.', false, 'Hız orada sıfır olur ama ivme hâlâ yer çekimi ivmesi kadardır.'),
       soru('Sabit ivmeli harekette konum-zaman grafiği bir doğrudur.', false, 'Konum-zaman grafiği parabol biçiminde; doğru olan hız-zaman grafiği.'),
+      sikli('v = v₀ + a·t denklemi hangi koşulda geçerlidir?', ['Her harekette', 'İvme sabitken'], 1, 'Denklemlerin hepsi sabit ivme varsayar.'),
+      sikli('Zaman bilinmezken hız ile yolu bağlayan denklem?', ['x = v₀t + ½at²', 'v² = v₀² + 2ax'], 1, 'Zamansız denklem.'),
+      sikli('Yukarı atılan cismin çıkış süresi ile iniş süresi nasıldır?', ['Çıkış daha uzun', 'Eşit'], 1, 'Simetri: geri düşüş hızı da atış hızına eşit.'),
+      sikli('Sabit ivmede ortalama hız nasıl bulunur?', ['v₀ · v', '(v₀ + v) / 2'], 1, 'İlk ve son hızın ortalaması; yalnızca sabit ivmede.'),
+      sikli('Hız-zaman grafiğinde eksenin altındaki alan neyi anlatır?', ['Ters yönde alınan yolu', 'Negatif ivmeyi'], 0, 'Hız negatif: cisim geri gidiyor.'),
+      soru('Serbest düşmede hava direnci ihmal edilirse kütle düşme süresini etkilemez.', true, 'Hepsi 9,8 m/s² ile düşer.'),
+      soru('İvmesi negatif olan cisim mutlaka yavaşlıyordur.', false, 'İvme hızla aynı yöndeyse (ikisi de negatif) cisim hızlanır.'),
+      soru('Tepe noktasına çıkış süresi v₀ / g\'dir.', true, 'Hız sıfırlanana kadar geçen süre.'),
     ], [
       {
         soru: 'İvme ile hız zıt yöndeyse cisim ne yapar?',
@@ -302,6 +315,12 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Kuvvet ile yer değiştirme birbirine dikse yapılan iş sıfırdır.', true, 'Kuvvetin hareket doğrultusundaki bileşeni yok.'),
       soru('Güç, yapılan işin büyüklüğüdür.', false, 'Güç işin yapılma hızı: iş bölü zaman.'),
       soru('Verimi %100 olan bir makine yapılabilir.', false, 'Verilen enerjinin bir kısmı sürtünme ve ısı olarak kaybediliyor.'),
+      sikli('Kuvvet-yer değiştirme grafiğinin altındaki alan neyi verir?', ['Gücü', 'Yapılan işi'], 1, 'Kuvvet değişkense iş bu alandan bulunur.'),
+      sikli('Aynı işi daha kısa sürede yapan makine için ne denir?', ['Daha verimli', 'Daha güçlü'], 1, 'Güç = iş / zaman.'),
+      sikli('1 kWh kaç joule\'dür?', ['1000', '3,6 milyon'], 1, '1000 W × 3600 s.'),
+      sikli('Sabit hızla giden araçta güç nasıl hesaplanır?', ['P = F / v', 'P = F · v'], 1, 'Güç kuvvet ile hızın çarpımı.'),
+      soru('Hiçbir makinenin verimi yüzde yüz değildir.', true, 'Bir kısım enerji ısıya gider.'),
+      soru('Kuvvet yola dik olduğunda yapılan iş en büyüktür.', false, 'Dik kuvvet iş yapmaz; en büyük iş kuvvet yol yönündeyken.'),
     ], [
       {
         soru: 'Çantayı sabit hızla yatay yolda taşıyan kişi çantaya iş yapar mı?',
@@ -361,6 +380,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Hızı iki katına çıkan bir cismin kinetik enerjisi de iki katına çıkar.', false, 'Dört katına çıkar; enerji hızın karesine bağlı.'),
       soru('Potansiyel enerji cismin konumundan kaynaklanır.', true, 'Yerden yüksekliği ya da yayın sıkışma miktarı belirliyor.'),
       soru('Enerji dönüşümlerinde toplam enerji azalır.', false, 'Toplam enerji korunur; yalnızca biçim değiştirir.'),
+      sikli('Hızı iki katına çıkan aracın fren mesafesi kaç katına çıkar?', ['2', '4'], 1, 'Kinetik enerji hızın karesiyle orantılı.'),
+      sikli('Yerden yükseklik hangi enerjiyi belirler?', ['Kinetik enerji', 'Yer çekimi potansiyel enerjisi'], 1, 'E = m·g·h.'),
+      sikli('Yayın uzama miktarı iki katına çıkarsa depoladığı enerji?', ['2 katına çıkar', '4 katına çıkar'], 1, 'E = ½·k·x².'),
+      soru('Enerji yoktan var olmaz, yok olmaz; biçim değiştirir.', true, 'Enerjinin korunumu.'),
+      soru('Dönüşüm zincirinin her adımında bir miktar enerji ısıya gider.', true, 'Bu yüzden verim yüzde yüz olmaz.'),
     ], [
       {
         soru: 'Hızı üç katına çıkan cismin kinetik enerjisi kaç katına çıkar?',
@@ -420,6 +444,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Sürtünmesiz bir ortamda mekanik enerji korunur.', true, 'Biri azalırken öteki aynı oranda artıyor.'),
       soru('Sürtünmeli ortamda mekanik enerji yok olur.', false, 'Isıya dönüşür; enerji yok olmaz, mekanik enerji olmaktan çıkar.'),
       soru('Sürtünmesiz eğik düzlemde cismin yere ulaştığı andaki hızı, izlediği yola bağlıdır.', false, 'Yalnızca düştüğü yükseklik belirler.'),
+      sikli('Sürtünmesiz düşüşte son hız neye bağlıdır?', ['Kütleye ve yüksekliğe', 'Yalnızca yüksekliğe'], 1, 'v = √(2gh); kütle sadeleşir.'),
+      sikli('Sürtünmeli yolda kaybolan mekanik enerji ne olur?', ['Yok olur', 'Isıya dönüşür'], 1, 'Toplam enerji korunur, mekanik enerji azalır.'),
+      sikli('Sarkaç en alçak noktadayken hangi enerji en büyüktür?', ['Potansiyel', 'Kinetik'], 1, 'Tepede potansiyel, altta kinetik.'),
+      soru('Potansiyel enerjinin değeri seçilen sıfır düzeyine bağlıdır.', true, 'Değişimi ise seçimden bağımsız.'),
+      soru('Sürtünme varken mekanik enerji korunur.', false, 'Bir kısmı ısıya gider; korunan toplam enerjidir.'),
     ], [
       {
         soru: 'Aynı yükseklikteki dik ve yatık sürtünmesiz kaydıraklardan kayanların son hızı?',
@@ -483,6 +512,12 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Yenilenebilir kaynakların süreklilik sorunu vardır.', true, 'Güneş her zaman parlamıyor, rüzgâr her zaman esmiyor.'),
       soru('Nükleer enerji yenilenebilir bir kaynaktır.', false, 'Yakıtı olan uranyum tükenen bir kaynak.'),
       soru('Enerji tasarrufu bir enerji kaynağı sayılmaz.', false, 'Tasarruf edilen enerji, üretilmesi gerekmeyen enerjidir.'),
+      sikli('Hidroelektrikte enerji dönüşüm zinciri nedir?', ['Kimyasal → ısı → elektrik', 'Potansiyel → kinetik → elektrik'], 1, 'Düşen su türbini döndürür.'),
+      sikli('Nükleer enerjinin başlıca sorunu?', ['Yüksek karbon salımı', 'Uzun süre saklanması gereken atık'], 1, 'Salım açısından temiz ama atık sorunu var.'),
+      sikli('Güneş ve rüzgârın ortak zayıflığı?', ['Yüksek salım', 'Süreklilik (gece, durgun hava)'], 1, 'Depolama bu yüzden kritik.'),
+      sikli('Yenilenebilire geçişin asıl gerekçesi?', ['Kaynakların hemen tükenmesi', 'Karbon salımı'], 1, 'Fosil yakıt CO₂ salar; küresel ısınmanın ana kaynağı.'),
+      soru('Harcanmayan enerji üretilmesi gerekmeyen enerjidir.', true, 'Tasarruf en ucuz kaynak.'),
+      soru('Doğal gaz yenilenebilir bir kaynaktır.', false, 'Fosil yakıt; milyonlarca yılda oluşur.'),
     ], [
       {
         soru: 'Aşağıdakilerden hangisi yenilenebilir enerji kaynağıdır?',
@@ -544,6 +579,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Potansiyel fark, devrede akımı sürükleyen sebeptir.', true, 'Su borusundaki basınç farkına benziyor.'),
       soru('Devre şemasında pilin uzun çizgisi negatif kutbu gösterir.', false, 'Uzun çizgi pozitif kutup, kısa ve kalın olan negatif kutup.'),
       soru('Ampul, devrede elektriksel enerjiyi üreten elemandır.', false, 'Enerjiyi üreteç sağlar; ampul onu ışığa ve ısıya çevirir.'),
+      sikli('Devrede enerji harcayan eleman hangisidir?', ['Direnç', 'Üreteç'], 0, 'Üreteç verir, direnç harcar.'),
+      sikli('Elektrik faturası neyi ölçer?', ['Harcanan enerjiyi', 'Gücü'], 0, 'Enerji = gerilim × akım × süre; kWh.'),
+      sikli('Lambanın parlaklığını ne belirler?', ['Üstünden geçen akım ve güç', 'Kablonun uzunluğu'], 0, 'Aynı lambada büyük akım daha parlak.'),
+      soru('Devre şeması devrenin fiziksel görüntüsünü gösterir.', false, 'Bağlantıyı gösterir, görüntüyü değil.'),
+      soru('Potansiyel farkın birimi volttur.', true, 'Akımı iten enerji farkı.'),
     ], [
       {
         soru: 'Anahtar açıkken devrede ne olur?',
@@ -594,6 +634,12 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Ampermetre devreye seri, voltmetre paralel bağlanır.', true, 'Ampermetre akımı, voltmetre iki nokta arasındaki farkı ölçüyor.'),
       soru('Devredeki elektronlar ışık hızıyla hareket eder.', false, 'Elektronlar çok yavaş ilerler; hızla yayılan şey elektriksel etkinin kendisi.'),
       soru('Voltmetrenin iç direncinin çok küçük olması gerekir.', false, 'Voltmetrenin iç direnci çok büyük olmalı; küçük olması gereken ampermetrenin.'),
+      sikli('2 A akım 10 saniyede kaç coulomb yük taşır?', ['5', '20'], 1, 'q = I · t.'),
+      sikli('Ampermetre devreye nasıl bağlanır?', ['Paralel', 'Seri'], 1, 'Paralel bağlanırsa kısa devre olur.'),
+      sikli('Elektronlar gerçekte hangi yönde hareket eder?', ['Artıdan eksiye', 'Eksiden artıya'], 1, 'Geleneksel akım yönü ters kabul edilir.'),
+      sikli('Voltmetrenin direnci nasıldır?', ['Sıfıra yakın', 'Çok büyük'], 1, 'Paralel bağlandığı elemandan akım çalmasın diye.'),
+      soru('Lamba anında yanar çünkü elektronlar telde ışık hızıyla ilerler.', false, 'Elektronlar yavaş; hızlı yayılan elektriksel etki.'),
+      soru('Potansiyel farkı ortadan kalkarsa akım durur.', true, 'Elektronları iten şey fark.'),
     ], [
       {
         soru: 'Voltmetre devreye nasıl bağlanır?',
@@ -669,6 +715,12 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Bir iletkenin direnci uzunluğuyla doğru, kesit alanıyla ters orantılıdır.', true, 'İnce ve uzun tel daha çok direnç gösteriyor.'),
       soru('Metallerde sıcaklık arttıkça direnç azalır.', false, 'Metallerde direnç artar; azalan yarı iletkenlerde görülür.'),
       soru('Bütün devre elemanları Ohm yasasına uyar.', false, 'Diyot ve lamba gibi ohmik olmayan elemanlar var.'),
+      sikli('12 V üretece 4 Ω direnç bağlanırsa akım kaç amperdir?', ['3', '48'], 0, 'I = V / R.'),
+      sikli('Kesit alanı büyüyen telin direnci?', ['Azalır', 'Artar'], 0, 'Kesitle ters orantılı; kalın kablo az direnç.'),
+      sikli('Gerilim-akım grafiğinin eğimi neyi verir?', ['Direnci', 'Gücü'], 0, 'V = I·R; eğim R.'),
+      sikli('Aynı boy ve kesitteki bakır ile demir teli ayıran nedir?', ['Öz direnç', 'Sıcaklık'], 0, 'Maddeye özgü.'),
+      soru('Diyot ve lamba için Ohm yasası her zaman geçerlidir.', false, 'Ohmik olmayan elemanlarda grafik doğru çıkmaz.'),
+      soru('Metallerde sıcaklık arttıkça direnç artar.', true, 'Yanan lamba teli soğukkinden çok direnç gösterir.'),
     ], [
       {
         soru: 'Telin uzunluğu iki katına çıkarsa direnci ne olur?',
@@ -744,6 +796,12 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Ev tesisatında lambalar paralel bağlanır.', true, 'Biri sönünce ötekiler yanmaya devam etsin diye.'),
       soru('Seri bağlı bir devrede elemanların üzerinden geçen akım aynıdır.', true, 'Tek bir yol olduğu için akım bölünmüyor.'),
       soru('Kısa devre, akımın direnç üzerinden geçmesi demektir.', false, 'Akımın dirençsiz bir yoldan geçmesi; akım tehlikeli biçimde büyür.'),
+      sikli('6 Ω ile 3 Ω paralel bağlanırsa eşdeğer direnç?', ['9 Ω', '2 Ω'], 1, 'Çarpım bölü toplam: 18/9.'),
+      sikli('4 tane 8 Ω direnç paralel bağlanırsa eşdeğer?', ['32 Ω', '2 Ω'], 1, 'R/n.'),
+      sikli('Paralel kollarda akım nasıl paylaşılır?', ['Bütün kollarda eşit', 'Küçük dirençli koldan büyük akım'], 1, 'Gerilim ortak, akım dirençle ters orantılı.'),
+      sikli('Ev tesisatı neden paralel bağlıdır?', ['Daha az kablo gerekir', 'Biri bozulunca ötekiler çalışsın'], 1, 'Her cihaz aynı gerilimi de görür.'),
+      soru('Paralel bağlamada eşdeğer direnç en küçük dirençten de küçüktür.', true, 'Yollar çoğaldıkça toplam direnç düşer.'),
+      soru('Seri bağlı dirençlerde gerilim bütün elemanlarda aynıdır.', false, 'Seride akım aynı, gerilim bölünür.'),
     ], [
       {
         soru: 'Seri bağlı dirençlerde hangisi bütün elemanlarda aynıdır?',
@@ -790,6 +848,10 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Özdeş üreteçler paralel bağlandığında gerilim değişmez ama piller daha uzun dayanır.', true, 'Akım kaynaklar arasında paylaşılıyor.'),
       soru('Üreteçlerin iç direnci yoktur.', false, 'Her üretecin bir iç direnci var; verdiği gerilimin bir kısmını kendi üzerinde harcıyor.'),
       soru('Farklı marka ve şarj düzeyindeki piller bir arada kullanılabilir.', false, 'Dolu pil boş pili zorlar; ısınma ve akma riski doğar.'),
+      sikli('İki özdeş pil paralel bağlanınca ne kazanılır?', ['Daha uzun süre besleme', 'Daha yüksek gerilim'], 0, 'Gerilim aynı kalır, kapasite artar.'),
+      sikli('Pil biterken uçlarındaki gerilimin düşmesinin sebebi?', ['İç direncin büyümesi', 'Elektronların tükenmesi'], 0, 'Kimyasal madde tükenirken iç direnç artar.'),
+      soru('Ters bağlanan iki üretecin gerilimleri toplanır.', false, 'Birbirini götürür.'),
+      soru('Farklı kapasitedeki piller seri bağlanmamalıdır.', true, 'Biten pil ötekiler tarafından ters yönde sürülebilir.'),
     ], [
       {
         soru: '1,5 V\'luk iki pil seri bağlanırsa toplam gerilim?',
@@ -836,6 +898,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Sigorta, insanı elektrik çarpmasına karşı korur.', false, 'Sigorta tesisatı ve cihazları korur; insanı koruyan kaçak akım rölesi.'),
       soru('Islak el, vücut direncini düşürdüğü için tehlikeyi artırır.', true, 'Direnç düşünce geçen akım büyüyor.'),
       soru('Çoklu prize istenildiği kadar cihaz takılabilir.', false, 'Çekilen toplam akım artınca kablo ısınır ve yangın riski doğar.'),
+      sikli('İnsan için asıl tehlikeli olan nedir?', ['Gerilimin büyüklüğü', 'Vücuttan geçen akımın şiddeti ve süresi'], 1, 'Aynı gerilim ıslak vücutta çok daha büyük akım geçirir.'),
+      sikli('Islak elle prize dokunmak neden daha tehlikelidir?', ['Gerilim artar', 'Vücut direnci düşer'], 1, 'Düşük dirençte aynı gerilim daha büyük akım.'),
+      sikli('Kaç miliamperde kas kasılıp el bırakamaz?', ['Yaklaşık 1 A', 'Yaklaşık 10 mA'], 1, '50 mA üstü kalbi durdurabilir.'),
+      soru('Sigorta insanı elektrik çarpmasından korur.', false, 'Sigorta kabloyu korur; insanı kaçak akım rölesi.'),
+      soru('Çoklu prize çok cihaz takmak kablo yangınına yol açabilir.', true, 'Isınan kablo en sık yangın sebebi.'),
     ], [
       {
         soru: 'İnsanı elektrik çarpmasına karşı koruyan hangisidir?',
@@ -878,6 +945,9 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Akım, kendisine sunulan en az dirençli yolu izler.', true, 'Topraklama hattı bu yüzden düşük dirençli yapılıyor.'),
       soru('Topraklaması olmayan bir cihazın gövdesinde kaçak olsa da tehlike oluşmaz.', false, 'Gövdeye dokunan kişi akımın geçtiği yol hâline gelir.'),
       soru('Paratoner yıldırım düşmesini engeller.', false, 'Yıldırımı engellemez; ona güvenli bir yol sunup toprağa iletir.'),
+      sikli('Prizdeki üçüncü uç nedir?', ['Topraklama hattı', 'Yedek faz'], 0, 'Topraksız uzatma kablosu korumayı kaldırır.'),
+      sikli('Paratoner ne yapar?', ['Yıldırımı toprağa iletir', 'Yıldırımı engeller'], 0, 'Aynı ilkenin bina ölçeği.'),
+      soru('Plastik gövdeli çift yalıtımlı cihazlarda topraklama ucu yoktur.', true, 'Metal gövdeli cihazlarda şart.'),
     ], [
       {
         soru: 'Topraklama kaçak akımı nereye yönlendirir?',
@@ -949,6 +1019,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Basit sarkacın periyodu genliğe bağlı değildir.', true, 'Küçük açılarda salınım süresi genlikten etkilenmiyor.'),
       soru('Basit sarkacın periyodu asılı kütleye bağlıdır.', false, 'İp uzunluğuna ve yer çekimi ivmesine bağlı; kütle etkilemiyor.'),
       soru('Frekansın birimi saniyedir.', false, 'Frekansın birimi hertz; saniye periyodun birimi.'),
+      sikli('Saniyede 5 kez salınan cismin periyodu?', ['5 s', '0,2 s'], 1, 'T = 1/f.'),
+      sikli('Yay sarkacının periyodu neye bağlıdır?', ['İp uzunluğu', 'Yayın sertliği ve kütle'], 1, 'Basit sarkacın tersine kütle etkili.'),
+      sikli('Aynı sarkaç Ay\'da nasıl salınır?', ['Daha hızlı', 'Daha yavaş'], 1, 'Yer çekimi azalınca periyot büyür.'),
+      sikli('Frekansın birimi nedir?', ['Saniye', 'Hertz'], 1, 'Periyodun birimi saniye.'),
+      soru('Küçük salınımlarda sarkacın periyodu genliğe bağlı değildir.', true, 'Sarkaçlı saatin çalışma sebebi.'),
     ], [
       {
         soru: 'Basit sarkacın periyodu hangisine bağlıdır?',
@@ -1055,6 +1130,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Dalga, enerjinin madde taşınmadan aktarılmasıdır.', true, 'Tanecikler yer değiştirmez, yalnızca titreşir.'),
       soru('Bir dalganın taşıdığı enerji genliğine bağlıdır.', true, 'Genlik büyüdükçe taşınan enerji artıyor.'),
       soru('Sabit süratte dalga boyu ile frekans doğru orantılıdır.', false, 'Ters orantılıdır: frekans artarken dalga boyu küçülür.'),
+      sikli('Frekansı 50 Hz, dalga boyu 2 m olan dalganın sürati?', ['100 m/s', '25 m/s'], 0, 'v = λ·f.'),
+      sikli('Sesin tizliğini ne belirler?', ['Frekans', 'Genlik'], 0, 'Şiddeti genlik, tizliği frekans.'),
+      sikli('Dalganın süratini kim belirler?', ['Ortam', 'Kaynak'], 0, 'Kaynak frekansı belirler.'),
+      soru('Denizdeki şamandıra dalgayla birlikte kıyıya ilerler.', false, 'Yalnızca inip kalkar; dalga enerjiyi taşır, maddeyi değil.'),
+      soru('Ardışık iki tepe arasındaki uzaklık dalga boyudur.', true, 'İki çukur arası da aynı.'),
     ], [
       {
         soru: 'Bir dalganın taşıdığı enerjiyi hangisi belirler?',
@@ -1124,6 +1204,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Elektromanyetik dalgalar yayılmak için ortama ihtiyaç duymaz.', true, 'Güneş ışığı boşluğu geçerek bize ulaşıyor.'),
       soru('Işık boyuna bir dalgadır.', false, 'Işık enine dalga; boyuna dalgaya örnek ses.'),
       soru('Elektromanyetik tayfta yalnızca görünür ışık bulunur.', false, 'Radyo dalgasından gama ışınına kadar geniş bir aralık var.'),
+      sikli('Işık hangi tür dalgadır?', ['Elektromanyetik ve enine', 'Mekanik ve boyuna'], 0, 'Boşlukta yayılır, titreşim yayılmaya dik.'),
+      sikli('Depremde önce gelen dalga hangisidir?', ['P dalgası', 'S dalgası'], 0, 'P boyuna ve hızlı; S enine ve yıkıcı.'),
+      sikli('Elektromanyetik tayfta frekansı en yüksek olan?', ['Gama ışını', 'Radyo dalgası'], 0, 'Sıra radyo → … → gama.'),
+      soru('Uzay boşluğunda ses yayılamaz ama ışık yayılır.', true, 'Ses mekanik, ışık elektromanyetik.'),
+      soru('Su dalgaları boyuna dalgadır.', false, 'Enine: titreşim yayılma yönüne dik.'),
     ], [
       {
         soru: 'Ses dalgası hangi türdendir?',
@@ -1174,6 +1259,9 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Havanın sıcaklığı arttıkça sesin sürati artar.', true, 'Tanecikler daha hızlı hareket ediyor.'),
       soru('Işık yoğun ortamda daha hızlı yayılır.', false, 'Işık en hızlı boşlukta yayılır; yoğun ortamda yavaşlar.'),
       soru('Su dalgalarının sürati derinlikten etkilenmez.', false, 'Derin ortamda daha hızlı, sığ ortamda daha yavaş yayılır.'),
+      sikli('Havada sıcaklık artınca sesin sürati?', ['Azalır', 'Artar'], 1, 'Tanecikler hızlanır.'),
+      sikli('Işık hangi ortamda en hızlıdır?', ['Camda', 'Boşlukta'], 1, 'Ses ile ışık bu açıdan ters.'),
+      soru('Kıyıya yaklaşan dalga sığ suda yavaşlar.', true, 'Derin suda hızlı, sığda yavaş.'),
     ], [
       {
         soru: 'Ses hangi ortamda en hızlı yayılır?',
@@ -1257,6 +1345,9 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Su dalgası derin ortamdan sığ ortama geçerken yavaşlar ve dalga boyu küçülür.', true, 'Frekans sabit kaldığı için sürat düşünce dalga boyu da düşüyor.'),
       soru('Kırılma sırasında dalganın frekansı değişir.', false, 'Frekans değişmez; değişen sürat ve dalga boyu.'),
       soru('Bir dalga yüzeye dik geldiğinde kırılarak yön değiştirir.', false, 'Doğrultusu değişmez; yalnızca sürati ve dalga boyu değişir.'),
+      sikli('Derinden sığa geçen dalga normale göre nasıl kırılır?', ['Normalden uzaklaşır', 'Normale yaklaşır'], 1, 'Yavaşlayan dalga normale yaklaşır.'),
+      sikli('Yansımada gelme açısı ile yansıma açısı?', ['Yansıma daha büyük', 'Eşittir'], 1, 'Dalga boyu ve frekans da değişmez.'),
+      soru('Sınıra dik gelen dalganın doğrultusu değişmez.', true, 'Yalnızca sürat ve dalga boyu değişir.'),
     ], [
       {
         soru: 'Kırılmada hangisi değişmez?',
@@ -1316,6 +1407,11 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Bir binanın doğal frekansı deprem dalgalarının frekansına yakınsa hasar artar.', true, 'Rezonans, sarsıntının etkisini büyütüyor.'),
       soru('Depremin büyüklüğü ile şiddeti aynı şeydir.', false, 'Büyüklük açığa çıkan enerjiyi, şiddet ise oluşturduğu etkiyi anlatıyor.'),
       soru('Odak (iç merkez), depremin yeryüzündeki noktasıdır.', false, 'Yeryüzündeki nokta merkez üssü; odak yerin içindeki kırılma noktası.'),
+      sikli('Yüksek binaların doğal frekansı nasıldır?', ['Yüksek', 'Düşük'], 1, 'Alçak bina yüksek frekans.'),
+      sikli('Odağın yeryüzündeki izdüşümüne ne denir?', ['Fay', 'Merkez üssü'], 1, 'Odak yer altındaki kırılma noktası.'),
+      sikli('Depremin şiddeti neye göre değişir?', ['Tektir, değişmez', 'Yere göre'], 1, 'Büyüklük tek, şiddet hissedilen etki.'),
+      sikli('Salıncakta yanlış anda itmek ne yapar?', ['Salınımı büyütür', 'Salınımı söndürür'], 1, 'Doğru zamanlama rezonans.'),
+      soru('Rezonanstan korunmak için binaya sönümleyici konabilir.', true, 'Taban yalıtımı da sarsıntıyı geçirmez.'),
     ], [
       {
         soru: 'Rezonans ne zaman olur?',
