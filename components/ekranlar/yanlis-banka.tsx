@@ -19,7 +19,7 @@ import {
 import { useGeriKatmani } from '@/lib/geri'
 import { tarihYaz } from '@/lib/hesap'
 import { bugun } from '@/lib/utils'
-import { BaslikSatiri, BosDurum, Buton, Cip, Kart, Not, Onay } from '@/components/ui'
+import { BaslikSatiri, BosDurum, Buton, Kart, Not, Onay, SuzgecKutusu } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 
 export function YanlisBankaEkrani({
@@ -123,27 +123,27 @@ export function YanlisBankaEkrani({
       ) : (
         <>
           <div className="mb-3 flex gap-2">
-            <Cip secili={sekme === 'bekleyen'} onClick={() => setSekme('bekleyen')}>
+            <SuzgecKutusu secili={sekme === 'bekleyen'} onClick={() => setSekme('bekleyen')}>
               Bekleyen ({ozet.bekleyen})
-            </Cip>
-            <Cip secili={sekme === 'cozulen'} onClick={() => setSekme('cozulen')}>
+            </SuzgecKutusu>
+            <SuzgecKutusu secili={sekme === 'cozulen'} onClick={() => setSekme('cozulen')}>
               Çözdüklerim ({ozet.cozulen})
-            </Cip>
+            </SuzgecKutusu>
           </div>
 
           {dersler.length > 1 && (
             <div className="mb-3 flex flex-wrap gap-2">
-              <Cip secili={seciliDers === ''} onClick={() => setDersSuzgec('')}>
+              <SuzgecKutusu secili={seciliDers === ''} onClick={() => setDersSuzgec('')}>
                 Tümü
-              </Cip>
+              </SuzgecKutusu>
               {dersler.map((d) => (
-                <Cip
+                <SuzgecKutusu
                   key={d.ders}
                   secili={seciliDers === d.ders}
                   onClick={() => setDersSuzgec(d.ders)}
                 >
                   {d.ders} ({d.sayi})
-                </Cip>
+                </SuzgecKutusu>
               ))}
             </div>
           )}
