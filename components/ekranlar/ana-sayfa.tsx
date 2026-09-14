@@ -12,6 +12,8 @@ import { doluDersler, oyunlarinDersleri, type DersId, type DersTanimi } from '@/
 import { Halka, Kart, kartGirisi, Not } from '@/components/ui'
 import { GeriSayim } from '@/components/geri-sayim'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
+import { gununHali } from '@/lib/gunun-hali'
+import { geriSayim } from '@/lib/sinav-tarihi'
 
 /** Seride gösterilen gün sayısı. Tasarımda hedef kartının altındaki yedi kutucuk. */
 const SERI_GUNU = 7
@@ -63,6 +65,8 @@ export function AnaSayfa({
   devamsizlik,
   hedef,
   guncelSiralama,
+  bekleyenYanlis,
+  sonDenemeTarihi,
   ozetHazir,
   onOzetAc,
   sonAraclar,
@@ -80,6 +84,10 @@ export function AnaSayfa({
   hedef: Hedef | null
   /** Son denemelerden çıkan tahmini sıralama; deneme yoksa null. */
   guncelSiralama: number | null
+  /** Yanlış soru bankasında henüz çözülmemiş soru sayısı — günün hâli kartı için. */
+  bekleyenYanlis: number
+  /** En yeni denemenin tarihi; yoksa null. Günün hâli kartı için. */
+  sonDenemeTarihi: string | null
   /** Konu Anlatımı'nda "bilmiyorum" denen kart sayısı — bölümün alt satırı. */
   /**
    * Biten haftanın özeti izlenmeyi bekliyor mu.
@@ -295,7 +303,17 @@ export function AnaSayfa({
           söylüyor. Ayrı kart olması şart — halkanın yanına konsaydı maskot
           sayıyla aynı satırda ikinci bir gösterge olurdu ve ikisi de aynı
           şeyi ölçtüğü için biri gereksiz görünürdü. */}
-      <GununHali toplam={bugunku.toplam} hedef={ayarlar.gunlukHedef} onAc={() => onKartAc('soru')} />
+      <GununHali
+        hal={gununHali({
+          bugun: tarih,
+          hedef: ayarlar.gunlukHedef,
+          gunlukKayitlar,
+          bekleyenYanlis,
+          sonDenemeTarihi,
+          kalanGun: geriSayim(tarih, ayarlar.buYilSinif).kalanGun,
+        })}
+        onAc={onKartAc}
+      />
 
       {/* Devamsızlık uyarısı — yalnızca gerektiğinde görünür */}
       {(devamsizlikDurumu.asildi || devamsizlikDurumu.uyari) && (
@@ -378,60 +396,33 @@ export function AnaSayfa({
 }
 
 /**
- * "Bugün çalıştın mı" kartı — günün hâlini Rabi'nin pozıyla söylüyor.
+ * "Bugün çalıştın mı" kartı — günün hâlini Rabi'nin pozuyla söylüyor.
  *
- * Üç hâl var ve ölçü yukarıdaki halkayla **aynı** sayı: hiç soru girilmediyse
- * üzgün, girildi ama hedef tutmadıysa okuyan, hedef tuttuysa zıplayan Rabi.
- * Sayının kendisi burada yazmıyor; halka onu zaten üç kez söylüyor ve kartın
- * işi sayıyı tekrar etmek değil, ona bir yüz vermek.
+ * Cümleyi ve pozu `lib/gunun-hali.ts` seçiyor: eskiden üç sabit hâl vardı
+ * (hiç soru / başladın / hedef tuttu), şimdi seri, banka, ders dengesi,
+ * ihmal edilen ders, deneme ve sınav yakınlığından bir öneri çıkıyor; hiçbiri
+ * tutmazsa üç hâl duruyor. Sayının kendisi burada yazmıyor; halka onu zaten
+ * üç kez söylüyor ve kartın işi sayıyı tekrar etmek değil, ona bir yüz vermek.
  *
- * Hedef sıfırken kart **çizilmiyor**: hedefi olmayan kullanıcıda "ulaştın" da
- * "ulaşmadın" da anlamsız — ölçülecek bir eşik yok. Karar çağıran tarafta
- * değil burada, çünkü kartın kendi kuralı.
+ * Hedef sıfırken `gununHali` null döner ve kart **çizilmiyor**: hedefi olmayan
+ * kullanıcıda "ulaştın" da "ulaşmadın" da anlamsız — ölçülecek bir eşik yok.
  *
- * Dokunuş soru takibi ekranını açıyor: kart bir haber veriyor ve o haberi
- * değiştirmenin tek yolu oraya soru girmek.
+ * Dokunuş önerinin işaret ettiği ekranı açıyor (`hal.ekran`): bankayı
+ * hatırlatan kart bankayı, denemeyi hatırlatan kart denemeleri.
  */
 function GununHali({
-  toplam,
-  hedef,
+  hal,
   onAc,
 }: {
-  toplam: number
-  hedef: number
-  onAc: () => void
+  hal: ReturnType<typeof gununHali>
+  onAc: (ekran: Ekran) => void
 }) {
-  if (hedef <= 0) return null
-
-  const hal =
-    toplam >= hedef
-      ? {
-          poz: 'ziplayan' as const,
-          durum: 'kutlama' as const,
-          etiket: 'BUGÜN',
-          baslik: 'Hedefini tutturdun!',
-          alt: `${toplam} soru — bugünlük iş tamam.`,
-        }
-      : toplam > 0
-        ? {
-            poz: 'okuyan' as const,
-            durum: 'calisiyor' as const,
-            etiket: 'BUGÜN',
-            baslik: 'Çalışmaya başladın',
-            alt: `Hedefine ${hedef - toplam} soru kaldı.`,
-          }
-        : {
-            poz: 'uzgun' as const,
-            durum: 'uzgun' as const,
-            etiket: 'BUGÜN',
-            baslik: 'Bugün hiç soru çözmedin',
-            alt: 'Birkaç soruyla başlasak?',
-          }
+  if (!hal) return null
 
   return (
     <button
       type="button"
-      onClick={onAc}
+      onClick={() => onAc(hal.ekran)}
       className="golge-kart flex w-full items-center gap-3 rounded-2xl bg-card px-4 py-3 text-left transition active:brightness-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       {/* Maskotun arkasında bir süre hâle göre renklenen bir kutu vardı (gri,
@@ -444,7 +435,7 @@ function GununHali({
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-[10px] font-extrabold tracking-[0.16em] text-muted-foreground">
-          {hal.etiket}
+          BUGÜN
         </span>
         <span className="mt-0.5 block font-display text-[15.5px] leading-tight font-extrabold tracking-tight">
           {hal.baslik}
