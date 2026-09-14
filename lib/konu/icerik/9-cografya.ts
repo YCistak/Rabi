@@ -42,6 +42,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Üç temel soru',
         'Nerede, neden orada, sonucu ne? Coğrafyayı öteki bilimlerden ayıran şey ikinci ve üçüncü sorudur.',
+        undefined,
+        { not: 'Her konuda bu üç soruyu sor; "neden orada" cevaplanmıyorsa öğrenmemişsin.' },
       ),
       kart(
         'Dağılış ilkesi',
@@ -91,6 +93,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Coğrafi düşünmenin ölçütü',
         'Bir olayı "nerede" diye sormakla kalmayıp "neden orada" ve "başka yerde nasıl olurdu" diye sormak; cevap yerle birlikte değişiyorsa coğrafi bir sorudur.',
+        undefined,
+        { not: '"Nerede" ile yetinme; "başka yerde neden olmuyor" asıl soru.' },
       ),
     ], [
       soru('Mekânsal düşünme, bir olayı yerle ilişkisi içinde değerlendirmektir.', true, 'Aynı olay farklı yerlerde farklı sonuçlar doğurabiliyor.'),
@@ -132,6 +136,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Keşifler çağı',
         'Uzun deniz yolculukları dünya haritasını tamamladı; coğrafya betimlemeden ölçmeye geçti.',
+        undefined,
+        { not: 'Betimlemeden ölçmeye geçiş; bu tek cümle coğrafyanın bilim olma anı.' },
       ),
       kart(
         'Modern coğrafya',
@@ -250,6 +256,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Büyük mü küçük mü?',
         '1/25.000 büyük ölçek: az yer, çok ayrıntı (şehir planı). 1/5.000.000 küçük ölçek: çok yer, az ayrıntı (dünya haritası).',
+        undefined,
+        { not: 'Payda büyük, ölçek küçük; bu ters ilişkiyi bir kez sindir, her soruda lazım.' },
       ),
     ], [
       soru('Ölçeğin paydası büyüdükçe haritadaki ayrıntı azalır.', true, 'Küçük ölçekli harita geniş alanı, az ayrıntıyla gösterir.'),
@@ -290,6 +298,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Yerel saat hesabı',
         'Doğudaki yer önde: 45° ile 26° arasındaki fark 19 boylam × 4 dk = 76 dk. Iğdır\'da güneş Edirne\'den 76 dakika önce doğar.',
+        undefined,
+        { not: 'Doğudaki önde; hesabı yapmadan önce yönü belirle, hata hep işarette.' },
       ),
       kart(
         'Tek saat dilimi',
@@ -366,6 +376,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Veri doğruysa sonuç doğru',
         'CBS eski ya da hatalı veriyle de düzgün görünen bir harita üretir. Çıktının güzelliği doğruluk kanıtı değildir.',
+        undefined,
+        { not: 'Düzgün görünen harita doğru harita değil; veriyi sorgulamayı bırakma.' },
       ),
     ], [
       soru('CBS, konumla ilişkili verileri toplayan, saklayan ve çözümleyen bir sistemdir.', true, 'Veriyi katmanlar hâlinde üst üste koyup ilişkilendiriyor.'),
@@ -394,6 +406,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Hava durumu ve iklim',
         'Hava durumu kısa süreli, iklim ise uzun yılların ortalaması. "Bugün yağmurlu" hava, "yazları kurak" iklimdir.',
+        undefined,
+        { not: 'Bir cümlede "bugün" geçiyorsa hava, "yıllardır" geçiyorsa iklim.' },
       ),
       kart(
         'Atmosferin katmanları',
@@ -510,6 +524,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Karasallık',
         'Denizden uzaklaştıkça gece-gündüz ve yaz-kış sıcaklık farkları büyür; kara çabuk ısınıp çabuk soğur.',
+        undefined,
+        { not: 'Denizden uzaklık gece-gündüz farkını da yaz-kış farkını da büyütür; ikisini birlikte tut.' },
       ),
       kart(
         'Bakı',
@@ -580,6 +596,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'İklim grafiği okuma',
         'Sütunlar yağışı, çizgi sıcaklığı gösterir. Yaz kuraklığı belirginse Akdeniz iklimi akla gelir.',
+        undefined,
+        { not: 'Grafikte önce yaz aylarına bak: yağış düşüyorsa Akdeniz ihtimali baştan güçlü.' },
       ),
     ], [
       soru('Ekvatoral iklimde yıl boyunca yağış görülür.', true, 'Sıcaklık ve nem yıl boyu yüksek kalıyor.'),
@@ -636,6 +654,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
             ['Ağaçlandırma', 'Kuraklığa dayanıklı tohum'],
           ],
         },
+        { not: 'İki kelime iki ayrı iş: biri sebebi, öteki sonucu hedefliyor.' },
       ),
       kart(
         'Küresel anlaşmalar',
@@ -694,6 +713,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Neden ölüm oranı düştü?',
         'Temiz su, kanalizasyon, aşı ve antibiyotik; nüfus artışının sebebi doğum patlaması değil ölümün azalmasıdır.',
+        undefined,
+        { not: 'Artışı doğuma bağlama; düşen ölüm oranı, sebep orada.' },
       ),
       kart(
         'Bugün',
@@ -761,6 +782,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
             ['Hizmet yetersizliği', 'Eğitim ve sağlık'],
           ],
         },
+        { not: 'Göçü tek sebeple açıklama; hep bir iten, bir çeken var.' },
       ),
       kart(
         'Göçün sonuçları',
@@ -816,6 +838,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Piramitteki çentikler',
         'Bir yaş grubundaki ani daralma savaş, salgın ya da büyük göç gibi bir olayın izidir.',
+        undefined,
+        { not: 'Piramidin şeklinden önce çentiklerine bak; her biri bir olayın izi.' },
       ),
       kart(
         'Türkiye’nin piramidi',
@@ -845,6 +869,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Demografik fırsat penceresi',
         'Çalışma çağındaki nüfusun oranı en yüksek olduğu dönem. Doğru kullanılırsa hızlı kalkınma sağlar.',
+        undefined,
+        { not: '"Fırsat" kelimesi aldatmasın: pencere kullanılmazsa sorun olur.' },
       ),
       kart(
         'Bağımlılık oranı',
@@ -920,6 +946,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Karşılıklı etki',
         'Ekonomik faaliyet de doğayı değiştirir: baraj, madencilik ve aşırı sulama çevreyi dönüştürür.',
+        undefined,
+        { not: 'Ok tek yönlü değil: doğa ekonomiyi, ekonomi doğayı biçimliyor.' },
       ),
     ], [
       soru('Tarım faaliyetleri iklim koşullarından doğrudan etkilenir.', true, 'Sıcaklık ve yağış, yetişecek ürünü belirliyor.'),
@@ -971,6 +999,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Doğa olayı afet değildir',
         'İnsan ve yapı yoksa deprem yalnızca bir doğa olayıdır. Afet, olayın toplumla karşılaşmasıyla oluşur.',
+        undefined,
+        { not: 'Deprem afet değil, hazırlıksız şehir afet; ayrımı bu cümleyle tut.' },
       ),
       kart(
         'Kırılganlık',
@@ -1030,6 +1060,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Zincirleme afet',
         'Bir afet ötekini tetikler: deprem heyelanı, heyelan taşkını, taşkın salgını doğurabilir.',
+        undefined,
+        { not: 'Afeti tek başına düşünme; sonrasında neyi tetiklediğini de sor.' },
       ),
       kart(
         'Türkiye’de en sık',
@@ -1090,6 +1122,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Neden bütüncül?',
         'Yalnızca müdahaleye odaklanan yönetim, her afette baştan başlar. Asıl kazanç afet olmadan alınır.',
+        undefined,
+        { not: 'Aşamaları sırayla ezberleme; döngünün neden kapanmadığını anla.' },
       ),
     ], [
       soru(
@@ -1135,6 +1169,8 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Ölçüt bölgeyi değiştirir',
         'Aynı yer, iklime göre başka bir bölgede, sanayiye göre başka bir bölgede yer alabilir.',
+        undefined,
+        { not: 'Bölge yerin özelliği değil, seçtiğin ölçütün sonucu.' },
       ),
       kart(
         'Sınırlar keskin değildir',
