@@ -234,35 +234,65 @@ body {
      aileleriyle (`--isl`, `--trh`…) aynı **değil** — o aileler rozetlerde ve
      oyun kartlarında; harita kendi paletini `lib/konu/harita-temasi.ts`
      üstünden okuyor. Dört ton: zemin, kenar, koyu (yazı) ve çubuk
-     (ilerleme çubuğunun boş kısmı). */
+     (ilerleme çubuğunun boş kısmı).
+
+     Üç ton daha yoklama bileti için (`components/konu/yoklama-bileti.tsx`):
+     bilet (koyu zemin), vurgu ve vurgunun açığı. Tasarım Fizik için
+     lacivert bilet üstüne altın çizildi; ötekilerde aynı zıtlık aranıyor —
+     bilet dersin mürekkebinden bir tık koyu, vurgu ise renk çemberinde
+     karşısına düşen sıcak ya da soğuk bir ton: kızıl bilete nane, hardala
+     gök, mora limon, yeşile kehribar, kahveye turkuaz, maviye turuncu.
+     Vurgu her zaman biletten çok daha açık: sayı ve halka onunla yazılıyor
+     ve koyu zeminde okunacak. */
   --konu-matematik: #f9ebee;
   --konu-matematik-kenar: #f3dfe1;
   --konu-matematik-koyu: #b4523c;
   --konu-matematik-cubuk: #f0d8d9;
+  --konu-matematik-bilet: #7a2f3b;
+  --konu-matematik-vurgu: #74d1bd;
+  --konu-matematik-vurgu-acik: #bdeee2;
   --konu-turkce: #f7f0dc;
   --konu-turkce-kenar: #ecdfb8;
   --konu-turkce-koyu: #8d691a;
   --konu-turkce-cubuk: #ecdfb8;
+  --konu-turkce-bilet: #5b4412;
+  --konu-turkce-vurgu: #8cc7ff;
+  --konu-turkce-vurgu-acik: #c9e4ff;
   --konu-fizik: #e8eaf6;
   --konu-fizik-kenar: #d6dbee;
   --konu-fizik-koyu: #4a5789;
   --konu-fizik-cubuk: #d6dbee;
+  --konu-fizik-bilet: #3b4776;
+  --konu-fizik-vurgu: #e2b23c;
+  --konu-fizik-vurgu-acik: #f4d78a;
   --konu-kimya: #eee9f7;
   --konu-kimya-kenar: #dfd7ee;
   --konu-kimya-koyu: #6b5ca5;
   --konu-kimya-cubuk: #dfd7ee;
+  --konu-kimya-bilet: #463a7c;
+  --konu-kimya-vurgu: #d3e35a;
+  --konu-kimya-vurgu-acik: #ecf3a6;
   --konu-biyoloji: #e9f1e4;
   --konu-biyoloji-kenar: #d6e5cc;
   --konu-biyoloji-koyu: #4f7a3a;
   --konu-biyoloji-cubuk: #d6e5cc;
+  --konu-biyoloji-bilet: #2f5228;
+  --konu-biyoloji-vurgu: #f2b34d;
+  --konu-biyoloji-vurgu-acik: #fad995;
   --konu-tarih: #f1e8de;
   --konu-tarih-kenar: #e3d5c5;
   --konu-tarih-koyu: #7a4f2a;
   --konu-tarih-cubuk: #e3d5c5;
+  --konu-tarih-bilet: #4f3418;
+  --konu-tarih-vurgu: #79cbd9;
+  --konu-tarih-vurgu-acik: #bde7ee;
   --konu-cografya: #e4eef7;
   --konu-cografya-kenar: #cfdfee;
   --konu-cografya-koyu: #2f5f8a;
   --konu-cografya-cubuk: #cfdfee;
+  --konu-cografya-bilet: #234666;
+  --konu-cografya-vurgu: #f5a04a;
+  --konu-cografya-vurgu-acik: #fbd39c;
 
   /* Patikanın kendi renkleri: yol, geçilmiş yol ve kilitli kitap.
 
@@ -1361,6 +1391,113 @@ body {
 }
 
 /*
+  Yoklama bileti (`components/konu/yoklama-bileti.tsx`) — destenin kapanışı.
+
+  Sıra bir hikâye anlatıyor ve gecikmeler ona göre: önce bilet aşağıdan
+  geliyor (120 ms), maskot kupayla onun arkasından çıkıp yerinde süzülüyor
+  (200 ms), halka doluyor (700 ms), üç sayı sırayla belirip yerine oturuyor
+  (760/840/920 ms), en son damga basılıyor (820 ms) ve bilet basıncın
+  altında bir an eziliyor (1040 ms). Damga en son, çünkü "BİTTİ" ekrandaki
+  her şeyin özeti; ötekilerden önce gelseydi neyi mühürlediği görülmezdi.
+
+  Halkanın dolması `stroke-dashoffset` ile ve çevre `--cevre` değişkeninden:
+  yarıçap bileşende yazılı, çevreyi burada ikinci kez yazmak ikisini
+  birbirinden ayırırdı.
+
+  Süzülme molanınkiyle aynı (`mola-suzul`), ayrı sınıf açılmadı.
+*/
+@keyframes biletGiris {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes biletMaskot {
+  0% { opacity: 0; transform: translateY(46px) scale(0.8); }
+  62% { opacity: 1; transform: translateY(-6px) scale(1.04); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes biletHale {
+  0% { opacity: 0; transform: scale(0.6); }
+  55% { opacity: 0.95; transform: scale(1.08); }
+  100% { opacity: 0.7; transform: scale(1); }
+}
+
+@keyframes biletPop {
+  0% { opacity: 0; transform: scale(0.6); }
+  62% { opacity: 1; transform: scale(1.09); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes biletHalka {
+  from { stroke-dashoffset: var(--cevre); }
+}
+
+@keyframes biletDamga {
+  0% { opacity: 0; transform: rotate(-11deg) scale(1.3) translateY(-7px); }
+  52% { opacity: 1; transform: rotate(-11deg) scale(0.945) translateY(2px); }
+  74% { transform: rotate(-11deg) scale(1.015) translateY(0); }
+  100% { opacity: 1; transform: rotate(-11deg) scale(1); }
+}
+
+@keyframes biletDamgaHalka {
+  0% { opacity: 0; transform: rotate(-11deg) scale(0.9); }
+  30% { opacity: 0.5; }
+  100% { opacity: 0; transform: rotate(-11deg) scale(1.42); }
+}
+
+@keyframes biletBasinc {
+  0%, 100% { transform: scale(1); }
+  45% { transform: scale(0.995); }
+}
+
+@keyframes biletKivilcim {
+  0% { opacity: 0; transform: translateY(0) scale(0.3) rotate(0deg); }
+  30% { opacity: 1; transform: translateY(-9px) scale(1) rotate(60deg); }
+  100% { opacity: 0; transform: translateY(-24px) scale(0.45) rotate(140deg); }
+}
+
+.bilet-giris {
+  animation: biletGiris 460ms cubic-bezier(0.2, 0.75, 0.3, 1) both;
+}
+
+.bilet-kart {
+  animation: biletGiris 560ms cubic-bezier(0.16, 1, 0.3, 1) 120ms both;
+}
+
+.bilet-maskot {
+  animation: biletMaskot 780ms cubic-bezier(0.2, 0.75, 0.3, 1) 200ms both;
+}
+
+.bilet-hale {
+  animation: biletHale 900ms ease-out both;
+}
+
+.bilet-pop {
+  animation: biletPop 480ms cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.bilet-halka {
+  animation: biletHalka 1100ms cubic-bezier(0.16, 1, 0.3, 1) 700ms both;
+}
+
+.bilet-damga {
+  animation: biletDamga 440ms cubic-bezier(0.24, 0.72, 0.26, 1) 820ms both;
+}
+
+.bilet-damga-halka {
+  animation: biletDamgaHalka 420ms cubic-bezier(0.2, 0.7, 0.3, 1) 1060ms both;
+}
+
+.bilet-basinc {
+  animation: biletBasinc 300ms cubic-bezier(0.3, 0.7, 0.3, 1) 1040ms both;
+}
+
+.bilet-kivilcim {
+  animation: biletKivilcim 2.5s ease-out infinite;
+}
+
+/*
   Soru sahnesi (`components/konu/soru-sahnesi.tsx`).
 
   Ekran uygulamanın kırık beyaz zemininden **kopuk**, kendi koyu paletinde
@@ -1448,6 +1585,16 @@ body {
   .mola-suzul,
   .mola-yazi,
   .mola-serit,
+  .bilet-giris,
+  .bilet-kart,
+  .bilet-maskot,
+  .bilet-hale,
+  .bilet-pop,
+  .bilet-halka,
+  .bilet-damga,
+  .bilet-damga-halka,
+  .bilet-basinc,
+  .bilet-kivilcim,
   .sahne-iner,
   .soru-gerekce {
     animation: none;

@@ -1868,43 +1868,53 @@ yoklamadan bırakıyordu. Her konuda iki biçimden en az ikişer tane var; A/B
 ve doğru/yanlış dengesi bütünde %40–60 arasında tutuluyor — tek yönlü deste
 cevabı içeriğe bakmadan verdirir.
 
-### Kartlardan soruya bir köprüyle geçiliyor
+### Deste bir biletle kapanıyor
 
-Sahnenin **iki** hâli var ve ikisi de `soru-sahnesi.tsx` içinde: giriş
-(`Giris`) ve soruların kendisi. Bir de kapanış vardı (`Sonuc`: maskot, doğru
-ve yanlış sayısı, "Haritaya dön"); kullanıcı isteğiyle kaldırıldı — son
-sorunun gerekçesinden sonra "Bitir" sahneyi kapatıp doğrudan haritaya
-dönüyor. Sayılar kayda yine giriyor, yalnızca ayrı bir ekranda gösterilmiyor.
-"Şimdilik" dendi; geri gelirse `git log -- components/konu/soru-sahnesi.tsx`.
+Sahnenin **iki** hâli var: destenin kapanışı — **yoklama bileti**
+(`components/konu/yoklama-bileti.tsx`, `tasarim/yoklama-bileti.html`) —
+ve soruların kendisi (`soru-sahnesi.tsx`). Bir de kapanış vardı (`Sonuc`:
+maskot, doğru ve yanlış sayısı, "Haritaya dön"); kullanıcı isteğiyle
+kaldırıldı — son sorunun gerekçesinden sonra "Bitir" sahneyi kapatıp
+doğrudan haritaya dönüyor. Sayılar kayda yine giriyor, gösterilmiyor.
 
-Giriş bir süre yoktu ve yokluğu bilinçliydi — "arada duran bir 'deste bitti'
-ekranı, okumayla soruyu birbirinden ayıran fazladan bir dokunuş". Fazladan
-dokunuşun bedeli doğruydu, ayrılmayan iki işin bedeli hesaba katılmamıştı: son
-kartta "İlerle"ye basan kullanıcı dersin aydınlık, renkli destesinden koyu
-sahnedeki bir **iddianın üstüne** düşüyordu. Yüzey, ton ve iş tek karede birden
-değişiyor ve gelen ilk şey cevaplanmayı bekleyen bir cümle oluyordu. Okumayı
+Bilet bir süre yoktu ve yokluğu bilinçliydi — "arada duran bir 'deste
+bitti' ekranı, okumayla soruyu birbirinden ayıran fazladan bir dokunuş".
+Fazladan dokunuşun bedeli doğruydu, ayrılmayan iki işin bedeli hesaba
+katılmamıştı: son kartta "İlerle"ye basan kullanıcı dersin aydınlık
+destesinden koyu sahnedeki bir **iddianın üstüne** düşüyordu. Okumayı
 bitirdiğini sanan kullanıcı kendini cevaplayacağı bir şeyin karşısında
-buluyordu; oradaki dokunuş gecikme değil, bir sonraki ekranın ne olduğunu
+buluyordu; aradaki dokunuş gecikme değil, sonraki ekranın ne olduğunu
 söyleyen tek yer.
 
-Köprü koyu sahnenin **kendi** ilk ekranı, üçüncü bir yüzey değil: renk değişimi
-böylece bir soruyla değil bir açıklamayla geliyor ve giriş sorularla aynı
-bileşende, aynı düzende duruyor. Deste kendi bitiş ekranını hâlâ çizmiyor —
-çizseydi arka arkaya iki kapanış olurdu, biri aydınlık biri koyu, ikisi de aynı
-şeyi söyleyerek.
+Önce koyu sahnenin kendi ilk ekranıydı (`Giris`); tasarım onu destenin
+**aydınlık** tarafına aldı: üstte dersin rengine boyalı noktalı bant, ortada
+koyu bir bilet, kupayı kaldıran Rabi biletin arkasından çıkıyor, sağ üste
+"BİTTİ" damgası basılıyor, koçanda üç sayı (kart, soru, ~dakika) ve dolan
+bir %100 halkası. Koyu perde (`sahne-iner`) artık "Yoklamaya başla" denince
+iniyor; iki kök ayrı `key` taşıyor, yoksa React aynı `div`i yeniden kullanır
+ve perde hiç oynamazdı.
 
-Ekranda kaç kart okunduğu ve kaç iddia geleceği yazıyor: "kaç iddia" demeyen
-bir köprü, ne kadar süreceğini söylemeden başlat düğmesi gösterirdi — haritadaki
-"4 kart · 3 dk" satırının aynı gerekçesi.
-
-**"Şimdi değil" düğme değil yazı.** Deste zaten okundu ve kaydı yazıldı;
-yoklamayı vermemek konuyu okunmamış yapmıyor ve okumayı bitirmenin bedeli bir
-sınav olmamalı. İki dolu düğme yan yana dursaydı hangisinin ileri götürdüğü de
-okunmazdı — kurulumdaki "Şimdilik atla" kuralı.
+- **Biletin rengi derse ait, ama mürekkep değil.** Üç ton daha var
+  (`--konu-<ders>-bilet`, `-vurgu`, `-vurgu-acik`; `HaritaTemasi.bilet`,
+  `vurgu`, `vurguAcik`): bilet mürekkepten bir tık koyu, vurgu onun
+  karşıtı. Tasarım Fizik için lacivert üstüne altın çizdi; ötekilerde aynı
+  zıtlık — kızıla nane, hardala gök, mora limon, yeşile kehribar, kahveye
+  turkuaz, maviye turuncu. Biletin yazısı yedi derste de aynı kırık beyaz.
+- **Koçan çentiği gerçek bir satırda.** Mockup çentiği `mask-image` ile 177
+  piksele kesiyordu; konu adı iki satıra kırılınca çizgi kayar, çentik
+  kalırdı. Çentik kesik çizginin kendi satırındaki iki daire, `overflow`
+  dış yarısını kırpıyor.
+- **Halka hep %100**: bilet yalnızca deste sonuna kadar okununca geliyor.
+- **"Bu destede öğrendiklerin" alt sayfa**, biletin içinde liste değil: on
+  altı kartlık konuda liste bileti taşırırdı.
+- **"Şimdi değil" düğme değil yazı.** Deste zaten okundu ve kaydı yazıldı;
+  yoklamayı vermemek konuyu okunmamış yapmıyor. İki dolu düğme yan yana
+  dursaydı hangisinin ileri götürdüğü okunmazdı — kurulumdaki "Şimdilik
+  atla" kuralı.
 
 `SahneSonucu.bitti` bu yüzden var: yarıda bırakılan yoklama ilerlemeye sayı
 **yazdırmıyor** (`konu-haritasi.tsx`), destenin kuralının aynısı. Bayraksız
-hâlde girişte "Şimdi değil" diyen kullanıcının kaydına, hiç verilmemiş bir
+hâlde bilette "Şimdi değil" diyen kullanıcının kaydına, hiç verilmemiş bir
 yoklamanın "0 doğru"su geçiyordu.
 
 ### Alt menüde kendi sekmesi

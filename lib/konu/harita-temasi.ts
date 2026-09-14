@@ -74,6 +74,18 @@ export type HaritaTemasi = {
   /** İlerleme çubuğunun boş kısmı. */
   cubuk: string
   /**
+   * Yoklama biletinin koyu zemini (`components/konu/yoklama-bileti.tsx`).
+   * Mürekkepten bir tık koyu: bilet aydınlık zeminde tek koyu parça.
+   */
+  bilet: string
+  /**
+   * Biletin üstündeki vurgu — halka, sayılar, damga. Biletle zıt bir ton
+   * (Fizik'te lacivert üstüne altın); seçim gerekçesi `globals.css`te.
+   */
+  vurgu: string
+  /** Vurgunun açığı: biletteki büyük sayı ve altı çizili bağlantı. */
+  vurguAcik: string
+  /**
    * Zemin simgeleri. Sıra rastgele değil: haritada düğüm başına bir simge
    * düşüyor ve liste başa sarıyor, yani yan yana iki düğümde aynı simgenin
    * çıkmaması için listenin bir düğüm çevriminden (8) uzun olması gerek.
@@ -84,12 +96,15 @@ export type HaritaTemasi = {
 const yazi = (metin: string): HaritaSimgesi => ({ tur: 'yazi', metin })
 const cizim = (ad: CizimAdi): HaritaSimgesi => ({ tur: 'cizim', ad })
 
-function renkler(ders: KonuDersId): Pick<HaritaTemasi, 'zemin' | 'kenar' | 'murekkep' | 'cubuk'> {
+function renkler(ders: KonuDersId): Omit<HaritaTemasi, 'simgeler'> {
   return {
     zemin: `var(--konu-${ders})`,
     kenar: `var(--konu-${ders}-kenar)`,
     murekkep: `var(--konu-${ders}-koyu)`,
     cubuk: `var(--konu-${ders}-cubuk)`,
+    bilet: `var(--konu-${ders}-bilet)`,
+    vurgu: `var(--konu-${ders}-vurgu)`,
+    vurguAcik: `var(--konu-${ders}-vurgu-acik)`,
   }
 }
 

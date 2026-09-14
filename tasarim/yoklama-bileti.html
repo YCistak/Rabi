@@ -1,0 +1,160 @@
+<title>Ders haritası · Yoklama bileti (destenin kapanışı)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+<!--
+  Destenin kapanış ekranı: son kart okununca gelen "yoklama bileti".
+  Tasarım aracının paketinden yalnızca seçilen yön (5a) alındı; ötekiler
+  (1a mevcut hâl, 2a–2c, 3a, 4a–4c) tasarım sürecinin ara adımlarıydı.
+
+  Fizik üstünden çizildi: bilet lacivert (#3b4776), vurgu altın (#e2b23c /
+  #f4d78a), üst bant Fizik'in zemini (#e8eaf6). Uygulamada bu üçlü derse
+  göre değişiyor (`--konu-<ders>-bilet`, `-vurgu`, `-vurgu-acik`) ve her
+  derste aynı zıtlık aranıyor — gerekçe `app/globals.css`te.
+
+  `{{ }}` yer tutucuları ve `sc-if` etiketi tasarım aracının şablon dili;
+  bilet koçanının çentiği burada `mask-image` ile 177 piksele kesiliyor,
+  uygulamada kesik çizginin satırındaki iki daireyle
+  (`components/konu/yoklama-bileti.tsx`). Kupalı maskot uygulamanın kendi
+  pozu (`public/tavsan-kupali.png`).
+-->
+<style>
+body{margin:0;background:#f0eee9;font-family:Nunito,ui-sans-serif,system-ui,sans-serif}
+a{color:#b3491f;text-decoration:none}a:hover{color:#d9622f}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:800 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1b1a19;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:800 13px/1.2 Nunito,sans-serif;color:#1b1a19}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:800 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1b1a19;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:600 11.5px/1.3 Nunito,sans-serif;color:rgba(0,0,0,.55)}
+.dv-opt:target .dv-oid{background:#d9622f;color:#fff}
+.dv-next{margin:22px 0 0;font:600 12px/1.5 Nunito,sans-serif;color:rgba(0,0,0,.5)}
+.tel{position:relative;width:390px;height:844px;border-radius:38px;overflow:hidden;box-shadow:0 10px 40px rgba(60,40,25,.18),0 0 0 1px rgba(0,0,0,.06)}
+.rakam{font-variant-numeric:tabular-nums}
+@keyframes kGiris{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes kMaskot{0%{opacity:0;transform:translateY(46px) scale(.8)}62%{opacity:1;transform:translateY(-6px) scale(1.04)}100%{opacity:1;transform:none}}
+@keyframes kSuzul{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-10px) rotate(1.5deg)}}
+@keyframes kHale{0%{opacity:0;transform:scale(.6)}55%{opacity:.95;transform:scale(1.08)}100%{opacity:.7;transform:scale(1)}}
+@keyframes kIsin{0%{opacity:0;transform:scale(.4) rotate(0deg)}100%{opacity:.5;transform:scale(1) rotate(24deg)}}
+@keyframes kPop{0%{opacity:0;transform:scale(.6)}62%{opacity:1;transform:scale(1.09)}100%{opacity:1;transform:scale(1)}}
+@keyframes kKonfeti{0%{transform:translateY(-20px) rotate(0);opacity:0}12%{opacity:1}100%{transform:translateY(560px) rotate(520deg);opacity:0}}
+@keyframes kSerit{0%{transform:translateY(-190%);opacity:0}70%{transform:translateY(6%);opacity:1}100%{transform:translateY(0);opacity:1}}
+@keyframes kHalka{from{stroke-dashoffset:var(--cevre)}}
+@keyframes kMuhur{0%{opacity:0;transform:scale(1.8) rotate(-24deg)}70%{opacity:1;transform:scale(.96) rotate(-9deg)}100%{opacity:1;transform:scale(1) rotate(-11deg)}}
+@keyframes kSheet{from{transform:translateY(102%)}to{transform:none}}
+@keyframes kPerde{from{opacity:0}to{opacity:1}}
+@keyframes kParla{0%,100%{opacity:.35}50%{opacity:.8}}
+@keyframes kDamga{0%{opacity:0;transform:rotate(-11deg) scale(1.3) translateY(-7px);filter:drop-shadow(0 10px 12px rgba(20,26,56,.35))}52%{opacity:1;transform:rotate(-11deg) scale(.945) translateY(2px);filter:drop-shadow(0 1px 2px rgba(20,26,56,.3))}74%{transform:rotate(-11deg) scale(1.015) translateY(0);filter:drop-shadow(0 3px 5px rgba(20,26,56,.26))}100%{opacity:1;transform:rotate(-11deg) scale(1) translateY(0);filter:drop-shadow(0 2px 4px rgba(20,26,56,.22))}}
+@keyframes kDamgaHalka{0%{opacity:0;transform:rotate(-11deg) scale(.9)}30%{opacity:.5}100%{opacity:0;transform:rotate(-11deg) scale(1.42)}}
+@keyframes kBasinc{0%,100%{transform:scale(1)}45%{transform:scale(.995)}}
+@keyframes kSarsinti{0%,100%{transform:translateX(0)}15%{transform:translateX(-5px)}30%{transform:translateX(4px)}45%{transform:translateX(-3px)}60%{transform:translateX(2px)}80%{transform:translateX(-1px)}}
+@keyframes kKivilcim{0%{opacity:0;transform:translateY(0) scale(.3) rotate(0deg)}30%{opacity:1;transform:translateY(-9px) scale(1) rotate(60deg)}100%{opacity:0;transform:translateY(-24px) scale(.45) rotate(140deg)}}
+</style>
+<body style="padding:20px;background:#f0eee9">
+<div class="dv-opt" id="5a">
+<div class="dv-olabel"><a class="dv-oid" href="#5a">5a</a>Koyu lacivert bilet: altın bandrol, koçan istatistikleri, rozet satırı, alt sayfa</div>
+<div class="tel" style="background:#f8f8f7">
+  <div aria-hidden style="position:absolute;top:0;left:0;right:0;height:430px;background-color:#e8eaf6;background-image:radial-gradient(circle, rgba(24,23,22,.07) 1.2px, transparent 1.2px);background-size:18px 18px;border-radius:0 0 34px 34px"></div>
+  <div aria-hidden style="position:absolute;top:104px;left:50%;width:330px;height:330px;margin-left:-165px;border-radius:999px;background:radial-gradient(closest-side, rgba(255,252,244,.98), rgba(255,246,226,.5) 55%, rgba(255,255,255,0));animation:kHale 900ms ease-out both"></div>
+
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding:54px 20px 26px">
+    <div style="display:flex;align-items:center;gap:10px;width:100%">
+      <span style="display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.7);color:#4a5789;font:900 15px Nunito,sans-serif;cursor:pointer">✕</span>
+      <span style="flex:1;height:6px;border-radius:999px;background:#d6dbee"></span>
+      <span class="rakam" style="font:900 13px Nunito,sans-serif;color:#4a5789">8/8</span>
+    </div>
+
+    <p style="margin:14px 0 0;font:800 10.5px/1.2 Nunito,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#4a5789;animation:kGiris 420ms cubic-bezier(.2,.75,.3,1) 620ms both">Fizik · Fizik Bilimi ve Kariyer Keşfi</p>
+
+    <div style="position:relative;width:100%;max-width:330px;margin-top:166px;animation:kGiris 560ms cubic-bezier(.16,1,.3,1) 120ms both">
+      <div style="position:absolute;top:-150px;left:50%;margin-left:-104px;width:208px;height:208px;z-index:0;animation:kMaskot 780ms cubic-bezier(.2,.75,.3,1) 200ms both">
+        <div style="position:relative;animation:kSuzul 3.6s ease-in-out 1s infinite">
+          <img src="../public/tavsan-kupali.png" alt="Rabi kupasını kaldırıyor" width="208" height="208" style="display:block;width:208px;height:208px;object-fit:contain;filter:drop-shadow(0 20px 24px rgba(48,58,104,.32))">
+          <span aria-hidden style="position:absolute;top:26px;left:122px;font:900 13px Nunito,sans-serif;color:#e2b23c;animation:kKivilcim 2.4s ease-out 900ms infinite">✦</span>
+          <span aria-hidden style="position:absolute;top:8px;left:152px;font:900 10px Nunito,sans-serif;color:#f4d78a;animation:kKivilcim 2.6s ease-out 1300ms infinite">✦</span>
+          <span aria-hidden style="position:absolute;top:34px;left:176px;font:900 11px Nunito,sans-serif;color:#e2b23c;animation:kKivilcim 2.8s ease-out 1700ms infinite">✦</span>
+          <span aria-hidden style="position:absolute;top:2px;left:134px;font:900 9px Nunito,sans-serif;color:#f4d78a;animation:kKivilcim 2.5s ease-out 2100ms infinite">✦</span>
+          <span aria-hidden style="position:absolute;top:46px;left:158px;font:900 9px Nunito,sans-serif;color:#e2b23c;animation:kKivilcim 2.7s ease-out 2500ms infinite">✦</span>
+        </div>
+      </div>
+
+      <div style="position:relative;z-index:1;border-radius:24px;background:#3b4776;filter:drop-shadow(0 18px 34px rgba(31,38,72,.4));overflow:hidden;animation:kBasinc 300ms cubic-bezier(.3,.7,.3,1) 1040ms both;-webkit-mask-image:radial-gradient(circle 13px at 0 177px, transparent 13px, #000 13.5px),radial-gradient(circle 13px at 100% 177px, transparent 13px, #000 13.5px);-webkit-mask-composite:source-in;mask-image:radial-gradient(circle 13px at 0 177px, transparent 13px, #000 13.5px),radial-gradient(circle 13px at 100% 177px, transparent 13px, #000 13.5px);mask-composite:intersect">
+        <span aria-hidden style="position:absolute;inset:0;background:radial-gradient(120% 62% at 50% -12%, rgba(226,178,60,.26), transparent 68%)"></span>
+        <span aria-hidden style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg, rgba(226,178,60,0), #e2b23c 50%, rgba(226,178,60,0))"></span>
+
+        <div style="position:relative;padding:54px 22px 0;text-align:center">
+          <p style="margin:0;font:800 9.5px/1.2 Nunito,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:#e2b23c">Yoklama bileti</p>
+          <h3 style="margin:8px 0 0;font:900 26px/1.12 Nunito,sans-serif;letter-spacing:-.5px;color:#fbf7ef">Fizik Bilimi okundu</h3>
+          <p style="margin:8px 0 0;font:600 13.5px/1.4 Nunito,sans-serif;color:rgba(251,247,239,.72);text-wrap:pretty">Sırada 9 soruluk kısa bir yoklama var; gerekçesi her soruda hemen altında.</p>
+        </div>
+
+        <div aria-hidden style="position:relative;height:26px;margin-top:16px">
+          <span style="position:absolute;top:50%;left:18px;right:18px;height:0;border-top:2px dashed rgba(251,247,239,.26)"></span>
+        </div>
+
+        <div style="position:relative;display:flex;align-items:center;gap:14px;padding:0 22px">
+          <span style="position:relative;display:grid;place-items:center;width:74px;height:74px;flex:none">
+            <svg width="74" height="74" viewBox="0 0 74 74" style="transform:rotate(-90deg)" aria-hidden>
+              <circle cx="37" cy="37" r="32" fill="none" stroke="rgba(251,247,239,.16)" stroke-width="9"></circle>
+              <circle cx="37" cy="37" r="32" fill="none" stroke="#e2b23c" stroke-width="9" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="0" style="--cevre:201px;animation:kHalka 1100ms cubic-bezier(.16,1,.3,1) 700ms both"></circle>
+            </svg>
+            <span class="rakam" style="position:absolute;font:900 18px Nunito,sans-serif;color:#f4d78a">%100</span>
+          </span>
+          <span style="display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-width:0;text-align:left">
+            <span style="font:900 14.5px/1.25 Nunito,sans-serif;color:#fbf7ef">8 kartın hepsi okundu</span>
+            <button type="button" onClick="{{ sheet5aAc }}" style="padding:0;border:0;background:none;color:#f4d78a;font:800 12.5px/1.2 Nunito,sans-serif;text-decoration:underline;cursor:pointer">Bu destede öğrendiklerin</button>
+          </span>
+        </div>
+
+        <div style="position:relative;display:flex;gap:8px;padding:16px 22px 0">
+          <div style="flex:1;padding:9px 6px;border-radius:13px;background:rgba(251,247,239,.09);text-align:center;animation:kPop 480ms cubic-bezier(.2,1.4,.4,1) 760ms both">
+            <span class="rakam" style="display:block;font:900 18px/1 Nunito,sans-serif;color:#fbf7ef">{{ kart }}</span>
+            <span style="display:block;margin-top:3px;font:800 9.5px/1 Nunito,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:rgba(251,247,239,.6)">kart</span>
+          </div>
+          <div style="flex:1;padding:9px 6px;border-radius:13px;background:rgba(251,247,239,.09);text-align:center;animation:kPop 480ms cubic-bezier(.2,1.4,.4,1) 840ms both">
+            <span class="rakam" style="display:block;font:900 18px/1 Nunito,sans-serif;color:#fbf7ef">{{ soru }}</span>
+            <span style="display:block;margin-top:3px;font:800 9.5px/1 Nunito,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:rgba(251,247,239,.6)">soru</span>
+          </div>
+          <div style="flex:1;padding:9px 6px;border-radius:13px;background:rgba(226,178,60,.16);text-align:center;animation:kPop 480ms cubic-bezier(.2,1.4,.4,1) 920ms both">
+            <span class="rakam" style="display:block;font:900 18px/1 Nunito,sans-serif;color:#f4d78a">~4</span>
+            <span style="display:block;margin-top:3px;font:800 9.5px/1 Nunito,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:rgba(244,215,138,.75)">dakika</span>
+          </div>
+        </div>
+
+        <div style="height:20px"></div>
+
+      </div>
+
+      <span aria-hidden style="position:absolute;top:-14px;right:6px;z-index:3;display:grid;place-items:center;width:76px;height:76px;border:2.5px solid rgba(226,178,60,.72);border-radius:999px;background:#3b4776;color:#f4d78a;font:900 15px/1.15 Nunito,sans-serif;letter-spacing:.08em;text-align:center;transform:rotate(-11deg);animation:kDamga 440ms cubic-bezier(.24,.72,.26,1) 820ms both">BİTTİ</span>
+      <span aria-hidden style="position:absolute;top:-14px;right:6px;z-index:2;width:76px;height:76px;border:2px solid rgba(226,178,60,.55);border-radius:999px;animation:kDamgaHalka 420ms cubic-bezier(.2,.7,.3,1) 1060ms both"></span>
+    </div>
+
+    <div style="flex:1;min-height:16px"></div>
+
+    <button type="button" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:58px;border:0;border-radius:16px;background:#d9622f;box-shadow:0 3px 0 #b3491f;color:#fff;font:800 16.5px Nunito,sans-serif;cursor:pointer;animation:kGiris 460ms cubic-bezier(.2,.75,.3,1) 900ms both" style-active="transform:translateY(2px);box-shadow:0 1px 0 #b3491f">
+      Yoklamaya başla
+      <span aria-hidden style="display:grid;place-items:center;width:26px;height:26px;border-radius:9px;background:rgba(255,255,255,.18);font:900 15px Nunito,sans-serif">→</span>
+    </button>
+    <button type="button" style="margin-top:6px;padding:12px 16px;border:0;background:none;color:#6b6764;font:800 13.5px Nunito,sans-serif;cursor:pointer">Şimdi değil</button>
+  </div>
+
+  <sc-if value="{{ sheet5a }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:0;display:flex;align-items:flex-end;background:rgba(27,26,25,.42);animation:kPerde 200ms ease-out both" onClick="{{ sheet5aKapat }}">
+      <div style="width:100%;padding:20px 20px 26px;border-radius:26px 26px 0 0;background:#fff;animation:kSheet 300ms cubic-bezier(.2,.8,.25,1) both">
+        <span aria-hidden style="display:block;width:44px;height:5px;margin:0 auto 14px;border-radius:999px;background:#eae9e6"></span>
+        <p style="margin:0;font:800 10.5px/1.2 Nunito,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#6b6764">Bu destede öğrendiklerin</p>
+        <ul style="display:flex;flex-direction:column;gap:11px;margin:14px 0 0;padding:0;list-style:none">
+          <li style="display:flex;align-items:center;gap:10px"><span aria-hidden style="display:grid;place-items:center;width:21px;height:21px;border-radius:7px;background:#3b4776;color:#fff;font:900 11px Nunito,sans-serif;flex:none">✓</span><span style="font:800 14px/1.3 Nunito,sans-serif;color:rgba(27,26,25,.85)">Fizik neyi inceler?</span></li>
+          <li style="display:flex;align-items:center;gap:10px"><span aria-hidden style="display:grid;place-items:center;width:21px;height:21px;border-radius:7px;background:#3b4776;color:#fff;font:900 11px Nunito,sans-serif;flex:none">✓</span><span style="font:800 14px/1.3 Nunito,sans-serif;color:rgba(27,26,25,.85)">Ölçme ve birimler</span></li>
+          <li style="display:flex;align-items:center;gap:10px"><span aria-hidden style="display:grid;place-items:center;width:21px;height:21px;border-radius:7px;background:#3b4776;color:#fff;font:900 11px Nunito,sans-serif;flex:none">✓</span><span style="font:800 14px/1.3 Nunito,sans-serif;color:rgba(27,26,25,.85)">Fiziğin alt dalları</span></li>
+          <li style="display:flex;align-items:center;gap:10px"><span aria-hidden style="display:grid;place-items:center;width:21px;height:21px;border-radius:7px;background:#3b4776;color:#fff;font:900 11px Nunito,sans-serif;flex:none">✓</span><span style="font:800 14px/1.3 Nunito,sans-serif;color:rgba(27,26,25,.85)">Fizikçiler nerede çalışır?</span></li>
+        </ul>
+        <button type="button" onClick="{{ sheet5aKapat }}" style="width:100%;height:50px;margin-top:18px;border:0;border-radius:14px;background:#efeeeb;color:#1b1a19;font:800 15px Nunito,sans-serif;cursor:pointer">Kapat</button>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</div>
+</div>

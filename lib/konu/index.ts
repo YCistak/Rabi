@@ -122,6 +122,16 @@ export function okumaDakikasi(kartSayisi: number): number {
   return Math.max(1, Math.round(kartSayisi * 0.75))
 }
 
+/**
+ * Yoklamanın kaba süresi, dakika — biletteki "~4 dakika" kutusu.
+ *
+ * Soru başına yirmi beş saniye: iki şık ya da doğru/yanlış, üstüne gerekçeyi
+ * okumak. `okumaDakikasi` ile aynı gerekçe ve aynı yuvarlama.
+ */
+export function yoklamaDakikasi(soruSayisi: number): number {
+  return Math.max(1, Math.round(soruSayisi * 0.4))
+}
+
 /** Programın tema ve konu sayısı — harita başlığındaki "7 tema · 22 konu". */
 export function programSayilari(program: DersProgrami): { tema: number; konu: number } {
   return { tema: program.temalar.length, konu: tumKonular(program).length }
