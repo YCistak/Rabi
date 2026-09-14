@@ -25,6 +25,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       kart(
         'Değişimi nasıl ayırt edersin?',
         'Renk, koku ve gaz çıkışı, çökelek oluşması ya da geri döndürülememe kimyasal değişimin işaretidir. Erime, çözünme ve kırılma fizikseldir.',
+        undefined,
+        { not: 'Belirtileri ezberleme; tek soru sor: madde geri döndürülebiliyor mu?' },
       ),
       kart(
         'Temizlik ürünleri',
@@ -91,6 +93,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       kart(
         'Asidi suya ekle',
         'Suyu aside dökmek şiddetli ısı açığa çıkarır ve sıvı sıçrar. Doğrusu asidi yavaşça suya eklemektir.',
+        undefined,
+        { not: 'Sırayı kafiyeyle tut: "asit suya, su aside değil". Sınavda değil laboratuvarda lazım.' },
       ),
       kart(
         'Koklama, tatma',
@@ -162,6 +166,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       kart(
         'Hangi dal hangi soruyu sorar?',
         '"Bu madde ne?" analitik, "nasıl ve neden tepkir?" fizikokimya, "canlıda ne olur?" biyokimya, "karbon bileşiği mi?" organik kimyanın sorusu.',
+        undefined,
+        { not: 'Dalları adıyla değil sorduğu soruyla ayır; soru aklında daha uzun kalır.' },
       ),
     ], [
       soru('Organik kimya, karbon bileşiklerini inceleyen alt disiplindir.', true, 'Yakıtlar, plastikler ve ilaçların çoğu bu alanın konusu.'),
@@ -208,6 +214,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       kart(
         'Kimya mühendisi ile farkı',
         'Kimyager tepkimeyi laboratuvarda bulur, kimya mühendisi onu fabrika ölçeğinde ve ekonomik biçimde üretir.',
+        undefined,
+        { not: 'Laboratuvar ile fabrika; iki mesleği bu tek çizgi ayırıyor.' },
       ),
       kart(
         'Çevre ve arıtma',
@@ -249,6 +257,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
             { ad: 'Modern', alt: 'olasılık bulutu' },
           ],
         },
+        { not: 'Modelleri sırayla değil, her birinin hangi deneyle çürüdüğünü sorarak oku.' },
       ),
       kart(
         'Dalton\'dan Thomson\'a',
@@ -369,6 +378,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       kart(
         'Neden 4s, 3d’den önce?',
         'Sıralamayı katman numarası değil enerji belirler ve 4s orbitalinin enerjisi 3d’den düşüktür.',
+        undefined,
+        { not: 'Katman numarasına bakıp aldanma; sırayı enerji belirliyor.' },
       ),
       kart(
         'Pauli dışlama ilkesi',
@@ -465,6 +476,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       kart(
         'Örnek',
         'Ca (20): [Ar] 4s² → 4. periyot, 2A. Al (13): [Ne] 3s² 3p¹ → 3. periyot, 3A. Ar (18): 3s² 3p⁶ → 8A, soy gaz.',
+        undefined,
+        { not: 'Üç örneği kendin dizilimden çıkar; formülü ezberlemek yerine bir kez yap.' },
       ),
       kart(
         'Yükü tahmin etme',
@@ -548,6 +561,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       kart(
         'Neden bu yönde değişir?',
         'İki şey yarışır: çekirdek yükü elektronu çeker, iç katmanlar onu perdeler. Eğilimlerin tamamı bu yarışın sonucudur.',
+        undefined,
+        { not: 'Dört eğilimin dördü de aynı iki güçten çıkar; yönleri ezberleme, çekim ile perdelemeyi düşün.' },
       ),
       kart(
         'Metalik ve ametalik karakter',
@@ -600,6 +615,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       kart(
         'Elektron denizi',
         'Metal atomları valans elektronlarını ortak bir havuza bırakır. Pozitif çekirdekler bu elektron denizinde yüzer.',
+        undefined,
+        { not: 'Bu tek benzetme metallerin dört özelliğini birden açıklıyor; önce bunu otur.' },
       ),
       kart(
         'Neden iletken?',
@@ -649,6 +666,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       kart(
         'Formül nasıl bulunur?',
         'Yükler çaprazlanır: Al³⁺ ile O²⁻ → Al₂O₃; Ca²⁺ ile Cl⁻ → CaCl₂. Toplam yük sıfır olmalı; oran sadeleşiyorsa sadeleştir (Mg²⁺ + O²⁻ → MgO).',
+        undefined,
+        { not: 'Çaprazladıktan sonra hep kontrol et: toplam yük sıfır mı?' },
       ),
       kart(
         'Örgü yapısı',
@@ -725,6 +744,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
             ['Metal + metal', 'Metalik'],
           ],
         },
+        { not: 'Metal-ametal iyonik, ametal-ametal kovalent; ilk soru bu, gerisi sonra.' },
       ),
       kart(
         'Bağ enerjisi',
@@ -776,6 +796,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
             { ad: 'Kalanı dağıt' },
           ],
         },
+        { not: 'Çizmeden önce toplam valans elektronunu say; çoğu hata sayım atlanınca oluyor.' },
       ),
       kart(
         'Ortaklanmamış çift',
@@ -852,6 +873,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
             { x: 5, y: 1.4, ad: 'toplam sıfır', renk: 'soluk' },
           ],
         },
+        { not: 'Bağa değil şekle bak; CO₂ örneği bu ayrımın kendisi.' },
       ),
       kart(
         'Suyun açısı',
@@ -980,6 +1002,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
             ['NH₄⁺', 'Amonyum'],
           ],
         },
+        { not: 'Poliatomik iyonları bir kâğıda yaz, birkaç gün gözünün önünde dursun.' },
       ),
       kart(
         'Yaygın adlar',
@@ -1051,6 +1074,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       kart(
         'Kaynama noktasını tahmin etme',
         'Önce hidrojen bağına bak, sonra polarlığa, sonra molekül kütlesine. HF > HCl\'yi hidrojen bağı, I₂ > Br₂ > Cl₂\'yi molekül büyüklüğü açıklar.',
+        undefined,
+        { not: 'Sıralama sorusunda üç adımı hep aynı sırayla uygula: hidrojen bağı, polarlık, kütle.' },
       ),
     ], [
       soru('Moleküller arası etkileşimler kimyasal bağlardan zayıftır.', true, 'Suyu kaynatmak molekülleri ayırıyor, bağlarını koparmıyor.'),
@@ -1093,6 +1118,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
             ['Moleküler', 'Düşük'],
           ],
         },
+        { not: 'Katının türü belliyse özellikleri tek tek ezberleme; tutan etkileşimden türet.' },
       ),
       kart(
         'İyonik katı',
@@ -1161,6 +1187,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       kart(
         'Kaynama sıcaklığı',
         'Buhar basıncı dış basınca eşitlendiğinde kaynar. Yüksek rakımda dış basınç düşük olduğu için su 100 °C’den önce kaynar.',
+        undefined,
+        { not: 'Kaynama bir sıcaklık değil, iki basıncın eşitlendiği an; rakım sorusu buradan çıkar.' },
       ),
       kart(
         'Viskozite',
@@ -1218,6 +1246,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       kart(
         'Yüzey/hacim oranı',
         'Bir küpü ikiye bölmek hacmi değiştirmez ama yüzeyi büyütür. Tepkime yüzeyde olduğu için etkinlik artar.',
+        undefined,
+        { not: 'Küpü bölme örneğini kendin yap: neden nano daha tepkin, sayıyla gör.' },
       ),
       kart(
         'Kullanım alanları',
@@ -1268,6 +1298,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
             { ad: 'İnsan', alt: 'çok', renk: 'ikincil' },
           ],
         },
+        { not: 'Az miktar zararsız değil; zincirin sonunda kimin olduğunu unutma.' },
       ),
       kart(
         'Alaşım nedir?',
@@ -1328,6 +1359,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
             { ad: 'Bertaraf et', alt: 'son çare', renk: 'soluk' },
           ],
         },
+        { not: 'Sıra ters çevrilemez; "geri dönüşüm" en iyisi değil, üçüncüsü.' },
       ),
       kart(
         'Kimyasal ayak izi',
