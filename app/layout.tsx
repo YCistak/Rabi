@@ -70,7 +70,14 @@ export const viewport: Viewport = {
 */
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="tr" className={`${nunito.variable} ${manrope.variable}`}>
+    <html
+      lang="tr"
+      className={`${nunito.variable} ${manrope.variable}`}
+      // Tablet betiği hidrasyondan önce `style="--olcek: …"` yazıyor; React
+      // bunu sunucu çıktısıyla karşılaştırıp uyarıyordu. Uyarı dev'de kalıyor
+      // ama gürültü; öznitelik bilerek farklı.
+      suppressHydrationWarning
+    >
       <head>
         {/*
           Açılış teşhisi — beyaz ekrana karşı.
@@ -115,15 +122,18 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {/*
           Tablet ölçeği. Tasarım telefon için; tablette sütun ortada dar
           kalıyor, iki yan boş duruyordu. Çözüm arayüzü genişletmek değil,
-          telefondaki görüntüyü büyütmek: `<html>`e `zoom` veriliyor, düzen
+          telefondaki görüntüyü büyütmek: betik `<html>`e `--olcek` yazıyor,
+          `globals.css` onu `<body>`ye `zoom` olarak veriyor; düzen
           `TELEFON_GENISLIGI` CSS pikseline göre kuruluyor ve ekrana sığacak
-          kadar büyütülüyor. Telefonda (kısa kenar `ESIK` altı) `zoom` 1.
+          kadar büyütülüyor. Telefonda (kısa kenar `ESIK` altı) ölçek 1.
 
           `zoom` seçildi, viewport meta değil: meta'yı betikle sonradan
-          değiştirmek tarayıcı emülasyonunda tutarsızdı. `zoom` viewport
-          birimlerini (`dvh`, `vw`) ve `position: fixed`i etkilemiyor — alt
-          menü ve tam ekran katmanlar ekrana yapışık kalıyor; yalnızca
-          px/rem ölçüler büyüyor, istenen de bu.
+          değiştirmek tarayıcı emülasyonunda tutarsızdı. `zoom` `position:
+          fixed`i etkilemiyor — alt menü ve tam ekran katmanlar ekrana yapışık
+          kalıyor; px/rem ölçüler büyüyor, istenen de bu. Viewport birimlerini
+          de etkilemiyor ve bu istenmiyor: ekranı dolduran yükseklikler
+          `--olcek`e bölünüyor (`.yuk-ekran`, `.en-az-ekran`). Zoom neden
+          `html`de değil, `globals.css`te yazıyor: kökte kaydırma bozuluyordu.
 
           Değerler: 430 en geniş telefonun CSS genişliği; eşik 480, çünkü
           telefonlar 360–430, 8" tabletler 533'ten başlıyor. Ölçek kısa
@@ -142,7 +152,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   var masaustu = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   function uygula(){
     var kisa = Math.min(window.innerWidth, window.innerHeight);
-    document.documentElement.style.zoom = masaustu || kisa < ESIK ? '' : String(kisa / TELEFON_GENISLIGI);
+    document.documentElement.style.setProperty('--olcek', masaustu || kisa < ESIK ? '1' : String(kisa / TELEFON_GENISLIGI));
   }
   uygula();
   window.addEventListener('resize', uygula);

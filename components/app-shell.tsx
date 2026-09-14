@@ -671,7 +671,7 @@ export function AppShell() {
 
   // Veri okunmadan ekran çizilirse "kayıt yok" bir an yanıp söner.
   const icerik = !ayarlarHazir ? (
-    <div className="min-h-dvh" aria-busy="true" />
+    <div className="en-az-ekran" aria-busy="true" />
   ) : !ayarlar.kurulumTamamlandi ? (
     <Kurulum
       maskotGizli={maskotGizli}
@@ -693,7 +693,7 @@ export function AppShell() {
       }}
     />
   ) : denemeFormu !== null ? (
-    <div className="mx-auto min-h-dvh max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
+    <div className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
       <YeniDenemeEkrani
         sablonlar={sablonlar}
         varsayilanSablonId={ayarlar.varsayilanSablonId}
@@ -712,12 +712,12 @@ export function AppShell() {
     hesaplanan değer `none` değil **birim matris** olarak kalıyor ve transformlu
     bir öğe, içindeki `position: fixed` katmanların *kapsayıcı bloğu* olur.
     Sonuç: alt menü, oyun katmanı ve haftalık özet ekrana değil bu `div`e göre
-    konumlanıyordu. `min-h-dvh` içerikle birlikte büyüdüğü için alt menü,
+    konumlanıyordu. `en-az-ekran` içerikle birlikte büyüdüğü için alt menü,
     sayfanın en üstündeyken ekranın altından taşıyor ve yarısı görünmez oluyordu.
 
     Açılıştaki yumuşak geçişi artık `components/acilis.tsx` hallediyor.
   */
-    <div className="mx-auto min-h-dvh max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(6rem+var(--guvenli-alt))]">
+    <div className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(6rem+var(--guvenli-alt))]">
       {/*
         Ekran ve sekme değişimi tek bir karede oluyordu: içerik tak diye yerine
         oturuyordu. `anahtar` her değişimde kutuyu söküp yeniden kuruyor, böylece
