@@ -74,6 +74,17 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       soru('Malazgirt Savaşı ndan sonra Anadolu ya Türk göçleri hızlanmıştır.', true, 'Anadolu nun kapıları Türklere açıldı.'),
       soru('Miryokefalon Savaşı, Anadolu nun Türk yurdu olduğunu kesinleştirmiştir.', true, 'Bizans ın Anadolu yu geri alma umudu bitti.'),
       soru('Kösedağ Savaşı ndan sonra Anadolu Selçuklu Devleti güçlenmiştir.', false, 'Devlet dağılma sürecine girdi ve Anadolu da beylikler kuruldu.'),
+    ], [
+      {
+        soru: 'Malazgirt Savaşı\'nın en önemli sonucu nedir?',
+        siklar: ['Anadolu Türk yerleşimine açıldı', 'Büyük Selçuklu Devleti kuruldu'],
+        dogru: 0,
+        aciklama: {
+          dogru: '1071\'den sonra Türk boyları Anadolu\'ya akmaya başladı.',
+          yanlis: 'Büyük Selçuklu\'nun kuruluşu Dandanakan\'ın (1040) sonucu. Malazgirt Anadolu\'nun kapısını açtı.',
+        },
+        kart: 2,
+      },
     ]),
     konu('trh10-teskilat', 'Türk Devlet ve Ordu Teşkilatındaki Değişim', [
       kart(
@@ -118,6 +129,17 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       soru('Divan, devlet işlerinin görüşüldüğü kuruldur.', true, 'Hükümdar başkanlığında toplanıyordu.'),
       soru('İkta sisteminde askerlerin maaşı hazineden nakit olarak ödenirdi.', false, 'İkta tam da bunu ortadan kaldırıyor: asker toprağın gelirinden geçiniyordu.'),
       soru('Türk devletlerinde ülke, hükümdarın kişisel mülkü sayılırdı.', false, 'Hanedanın ortak malı sayılıyordu; bu anlayış taht kavgalarına yol açtı.'),
+    ], [
+      {
+        soru: 'Taht kavgalarının kaynağı olan anlayış hangisidir?',
+        siklar: ['Ülke halkın malıdır', 'Ülke hanedanın ortak malıdır'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Her şehzade hak sahibi sayıldığı için ölen hükümdarın ardından bölünme sık yaşandı.',
+          yanlis: 'Eski Türk anlayışında ülke hanedan üyelerinin ortak malıydı; bu, her şehzadeye taht iddiası verdi.',
+        },
+        kart: 6,
+      },
     ]),
     konu('trh10-sosyal', 'Türklerin Sosyal Yaşamları ve Ekonomik Faaliyetleri', [
       kart(
@@ -153,6 +175,17 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       soru('Vakıflar, gelir getiren mülkleriyle kendi giderlerini karşıladığı için kalıcı olabilmiştir.', true, 'Han ve hamam gelirleri vakfın hizmetlerini ayakta tutuyordu.'),
       soru('Ahilikte kalitesiz mal üreten esnafa herhangi bir yaptırım uygulanmazdı.', false, 'Meslekten çıkarmaya kadar giden yaptırımlar vardı.'),
       soru('Kervansaraylar yalnızca askerî amaçla kullanılırdı.', false, 'Tüccarların konakladığı, yol güvenliğini sağlayan yapılardı.'),
+    ], [
+      {
+        soru: 'Esnaf ve zanaatkârları örgütleyen, kaliteyi denetleyen kurum?',
+        siklar: ['Vakıf', 'Ahilik'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Çırak-kalfa-usta basamağı ve kötü mal üretene ceza ahiliğin işi.',
+          yanlis: 'Vakıf hayır kurumlarını finanse eder. Esnafı örgütleyen ve kaliteyi denetleyen ahilik.',
+        },
+        kart: 2,
+      },
     ]),
     konu('trh10-turk-islam', 'Türk-İslam Medeniyetinde Bilim, Kültür ve Sanat', [
       kart(
@@ -198,6 +231,17 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       soru('Karahanlılar döneminde Türkçe yazı dili olarak kullanılmıştır.', true, 'Bu dönemin eserleri Türkçenin yazılı mirasının temeli.'),
       soru('Medreselerde yalnızca dinî ilimler okutulurdu.', false, 'Matematik, astronomi ve tıp da okutuluyordu.'),
       soru('Tasavvufun Anadolu nun Türkleşmesinde bir etkisi olmamıştır.', false, 'Tekke ve zaviyeler hem iskânda hem kültürel kaynaşmada rol oynadı.'),
+    ], [
+      {
+        soru: 'Kutadgu Bilig hangi türde bir eserdir?',
+        siklar: ['Siyasetname', 'Sözlük'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'Yusuf Has Hacib yöneticiye nasıl davranacağını anlatır.',
+          yanlis: 'Sözlük olan Divânu Lugâti\'t-Türk (Kâşgarlı Mahmud). Kutadgu Bilig yöneticiye öğüt veren bir siyasetname.',
+        },
+        kart: 4,
+      },
     ]),
   ]),
   tema('trh10-t2', 'Beylikten Devlete Osmanlı (1299-1453)', [
@@ -245,6 +289,17 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       soru('Gaza ve cihat görüşü, beyliğin sınır boyundaki konumunu öne çıkarır.', true, 'Uç beyliği olmak sürekli bir hareket alanı sağlıyordu.'),
       soru('Osmanlı Beyliği nin Bizans sınırında bulunması büyümesini kolaylaştırmıştır.', true, 'Genişleyeceği yönde başka bir Türk beyliği yoktu.'),
       soru('Anadolu daki öteki beylikler de Osmanlı ile aynı sınır konumuna sahipti.', false, 'Çoğu Anadolu içindeydi; genişleyecekleri yönde başka Türk beylikleri vardı.'),
+    ], [
+      {
+        soru: 'Osmanlı\'nın kuruluşu hakkında neden farklı görüşler var?',
+        siklar: ['Görüşler birbiriyle çelişiyor', 'Döneme ait yazılı kaynak çok az'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'İlk kronikler olaylardan yüz yıl sonra yazıldı; boşluğu yorumlar dolduruyor.',
+          yanlis: 'Görüşler birbirini dışlamıyor, her biri bir yanı anlatıyor. Çokluğun sebebi kuruluş dönemine ait belgelerin azlığı.',
+        },
+        kart: 6,
+      },
     ]),
     konu('trh10-anadolu-rumeli', 'Anadolu ve Rumeli’deki Siyasi ve Askerî Mücadeleler', [
       kart(
@@ -284,6 +339,17 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       soru('İstanbul un fethi Orta Çağ ın sonu kabul edilir.', true, 'Surların top ateşiyle yıkılması çağ değiştiren bir gelişme sayılıyor.'),
       soru('Fetret Devri nde Balkanlardaki topraklar tümüyle kaybedilmiştir.', false, 'İskân ve istimalet politikaları sayesinde Balkanlardaki düzen ayakta kaldı.'),
       soru('Osmanlı, Rumeli ye Ankara Savaşı ndan sonra geçmiştir.', false, 'Rumeli ye geçiş 14. yüzyıl ortasında, Ankara Savaşı ndan çok önce oldu.'),
+    ], [
+      {
+        soru: 'Fetret Devri\'nde Balkanların elde kalmasını sağlayan neydi?',
+        siklar: ['İskân ve istimalet politikası', 'Güçlü donanma'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'Yerel halk yabancılaştırılmamıştı; merkez dağılırken bölge ayaklanmadı.',
+          yanlis: 'Donanma o dönemde güçlü değildi. Bölgeyi tutan şey halkın Osmanlı düzenine bağlılığıydı: iskân ve istimalet.',
+        },
+        kart: 6,
+      },
     ]),
     konu('trh10-devletlesme', 'Devletleşme Süreci: Ordu, Hukuk ve Toprak', [
       kart(
@@ -328,6 +394,17 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       soru('Devşirme sistemiyle alınan çocuklar eğitilerek devlet hizmetine alınırdı.', true, 'Kimileri yeniçeri oldu, kimileri saray görevlerine yükseldi.'),
       soru('Tımarlı sipahiler maaşlarını hazineden nakit olarak alırdı.', false, 'Geçimlerini kendilerine bırakılan toprağın gelirinden sağlıyorlardı.'),
       soru('Divan-ı Hümayun un kararları padişahın onayına sunulmazdı.', false, 'Son söz padişahındı; divan kararları onun onayıyla yürürlüğe giriyordu.'),
+    ], [
+      {
+        soru: 'Tımar sisteminde sipahi karşılığında ne yapar?',
+        siklar: ['Hazineye nakit vergi öder', 'Asker yetiştirir ve üretimi denetler'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Toprağın vergisi sipahide kalır, sipahi cebelü besler.',
+          yanlis: 'Nakit hazineye gitmez, sipahide kalır. Karşılığı asker yetiştirmek ve toprağın işlenmesini sağlamak.',
+        },
+        kart: 1,
+      },
     ]),
     konu('trh10-kalicilik', 'Fethettiği Topraklarda Kalıcı Olma Politikaları', [
       kart(
@@ -363,6 +440,17 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       soru('İskân politikasıyla Anadolu dan Rumeli ye nüfus yerleştirilmiştir.', true, 'Konargöçerler ve dervişler bu iskânda öne çıkıyordu.'),
       soru('Fethedilen yerlerdeki bütün yerel düzenler hemen kaldırılırdı.', false, 'Uygun görülen vergi ve toprak uygulamaları bir süre korunuyordu.'),
       soru('Millet sistemi, gayrimüslimlerin kendi hukukî işlerini yürütmesine izin vermezdi.', false, 'Cemaatler kendi inanç ve hukuk işlerinde serbestti.'),
+    ], [
+      {
+        soru: 'Fethedilen yerlerdeki halka hoşgörü siyasetine ne denir?',
+        siklar: ['İskân', 'İstimalet'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Can, mal ve inanç güvenliği verilip vergi hafifletildi.',
+          yanlis: 'İskân, bölgeye Anadolu\'dan nüfus yerleştirmek. Yerli halka hoşgörü göstermek istimalet.',
+        },
+        kart: 3,
+      },
     ]),
     konu('trh10-ilim-irfan', 'İlim ve İrfan Geleneğinin Oluşması', [
       kart(
@@ -394,6 +482,17 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       soru('Tekke ve zaviyeler yalnızca ibadet için kullanılan yapılardı.', false, 'Konaklama, iskân ve eğitim gibi işlevleri de vardı.'),
       soru('İlk Osmanlı medresesi İznik te kurulmuştur.', true, 'Orhan Bey döneminde açıldı.'),
       soru('Külliyeler yalnızca eğitim veren yapılar olduğu için halkın günlük hayatına dokunmazdı.', false, 'İmaretiyle, hamamıyla, çarşısıyla mahallenin merkezini oluşturuyorlardı.'),
+    ], [
+      {
+        soru: 'Osmanlı\'nın ilk medresesi nerede açıldı?',
+        siklar: ['İznik', 'İstanbul'],
+        dogru: 0,
+        aciklama: {
+          dogru: '1331\'de İznik\'te; İstanbul\'un fethi bir yüzyıl sonra.',
+          yanlis: 'İstanbul 1453\'te fethedildi; Sahn-ı Seman ondan sonra. İlk medrese 1331\'de İznik\'te.',
+        },
+        kart: 1,
+      },
     ]),
   ]),
   tema('trh10-t3', 'Cihan Devleti Osmanlı (1453-1683)', [
@@ -446,6 +545,17 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       soru('Uzun süren savaşlar hazineyi zorlamıştır.', true, 'Sürekli asker beslemek gider yükünü büyütüyordu.'),
       soru('Osmanlı, Avrupa devletleriyle birlikte okyanus ötesi koloni yarışına girmiştir.', false, 'Osmanlı bu yarışın dışında kaldı; genişlemesi kara üzerinden sürdü.'),
       soru('1683 teki II. Viyana Kuşatması Osmanlı için zaferle sonuçlanmıştır.', false, 'Kuşatma bozgunla bitti ve uzun savaşlar dönemini başlattı.'),
+    ], [
+      {
+        soru: 'Halifeliğin Osmanlı\'ya geçmesini sağlayan savaş?',
+        siklar: ['Ridaniye (1517)', 'Çaldıran (1514)'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'Memlük toprakları alındı, halifelik Osmanlı\'ya geçti.',
+          yanlis: 'Çaldıran Safevilere karşı; halifelik Memlüklerin yenildiği Ridaniye ile geçti.',
+        },
+        kart: 1,
+      },
     ]),
     konu('trh10-yonetim-degisim', 'Yönetim ve Ordu Yapısındaki Değişim', [
       kart(
@@ -493,6 +603,17 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       soru('İltizam usulünde vergi toplama hakkı açık artırmayla kişilere devredilirdi.', true, 'Devlet peşin gelir elde ediyor, halk daha ağır vergiyle karşılaşıyordu.'),
       soru('Tımar sisteminin bozulması ordunun güçlenmesini sağlamıştır.', false, 'Tersine, tımarlı sipahi sayısı azaldı ve ordunun gücü zayıfladı.'),
       soru('Islahatlar toplumun her alanını kapsadığı için kalıcı sonuçlar vermiştir.', false, 'Çoğu askerî alanla sınırlı kaldı ve köklü olmadığı için kalıcı olmadı.'),
+    ], [
+      {
+        soru: 'İltizam sisteminde köylü neden ezildi?',
+        siklar: ['Vergi devlete gitmedi', 'Mültezim yatırdığından fazlasını almak istedi'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Vergi hakkını peşin parayla alan mültezim kârını köylüden çıkardı.',
+          yanlis: 'Vergi devlete peşin gitti; sorun sonrasında: mültezim ödediğinden fazlasını köylüden toplamak istedi.',
+        },
+        kart: 4,
+      },
     ]),
     konu('trh10-somurge', 'Avrupa’nın Sömürgeci Politikalarının Etkileri', [
       kart(
@@ -551,6 +672,17 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       soru('Ticaret yollarının yön değiştirmesi Osmanlı nın gümrük gelirlerini azaltmıştır.', true, 'Kervan yollarının yerini okyanus yolları aldı.'),
       soru('Kapitülasyonlar başlangıçta Osmanlı nın kendi isteğiyle verdiği ayrıcalıklardı.', true, 'Sonradan sürekli hâle gelip ekonomiyi zorlayan bir yüke dönüştü.'),
       soru('Lonca düzeni, Avrupa daki fabrika üretimiyle rekabet edebilmiştir.', false, 'Ucuz ve seri üretilen mallar karşısında lonca üretimi yetişemedi.'),
+    ], [
+      {
+        soru: 'Fiyat devriminin Osmanlı\'ya etkisi ne oldu?',
+        siklar: ['Para değer kaybetti, enflasyon yükseldi', 'Gümrük geliri arttı'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'Amerika gümüşü akçenin değerini düşürdü.',
+          yanlis: 'Gümrük geliri keşifler yüzünden tam tersine düştü. Fiyat devrimi paranın değer kaybı ve enflasyon demek.',
+        },
+        kart: 4,
+      },
     ]),
     konu('trh10-isyan', 'Önemli İsyanların Neden ve Sonuçları', [
       kart(
@@ -595,6 +727,17 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       soru('Büyük kaçgun, köylülerin topraklarını bırakıp göç etmesidir.', true, 'Vergi baskısı ve güvensizlik bunun sebebiydi.'),
       soru('İstanbul isyanlarının kaynağı taşradaki köylülerdi.', false, 'Kaynağı kapıkulu askerleri ve saray çevresiydi.'),
       soru('İsyanların devletin vergi düzeni üzerinde bir etkisi olmamıştır.', false, 'Üretim düşünce vergi geliri de azaldı ve yeni vergiler kondu.'),
+    ], [
+      {
+        soru: 'Celali baskısıyla köylünün toprağı bırakıp kaçmasına ne denir?',
+        siklar: ['Fetret', 'Büyük kaçgun'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Köyler boşaldı, tarımsal üretim uzun süre toparlanamadı.',
+          yanlis: 'Fetret, Ankara Savaşı sonrası taht mücadelesi dönemi. Köylünün toprağı bırakması büyük kaçgun.',
+        },
+        kart: 2,
+      },
     ]),
     konu('trh10-bilim-kultur', '1453-1683 Arasında Bilim, Kültür ve Sanat', [
       kart(
@@ -642,6 +785,17 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       soru('Piri Reis in haritaları dönemin denizcilik bilgisini yansıtır.', true, 'Kitab-ı Bahriye kıyı bilgilerini toplayan bir eser.'),
       soru('İstanbul Rasathanesi kurulduktan sonra uzun yıllar çalışmalarını sürdürmüştür.', false, 'Kuruluşundan kısa süre sonra yıktırıldı.'),
       soru('Matbaa Osmanlı da Avrupa ile aynı dönemde yaygınlaşmıştır.', false, 'Türkçe basım yaklaşık iki yüzyıl sonra başladı.'),
+    ], [
+      {
+        soru: 'Mimar Sinan\'ın ustalık eseri hangisidir?',
+        siklar: ['Selimiye', 'Süleymaniye'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'Şehzade çıraklık, Süleymaniye kalfalık, Selimiye ustalık.',
+          yanlis: 'Süleymaniye\'yi kalfalık eseri saymıştır. Ustalık eseri Edirne\'deki Selimiye.',
+        },
+        kart: 6,
+      },
     ]),
   ]),
 ])
