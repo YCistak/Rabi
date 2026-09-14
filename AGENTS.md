@@ -37,8 +37,8 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
     kuralda: kural yalnızca `create`e izin veriyor, alan adları ve boyları
     sayılı (`PLANNED.md` → "Firestore kuralları"). Bu istisnayı bu iki kayıt
     türünün ötesine genişletme; alan eklersen kural, ekrandaki liste,
-    `lib/veri/yasal.ts`, `public/gizlilik/index.html` ve Play'in Data Safety
-    beyanı birlikte değişmeli.
+    `public/gizlilik/index.html`, `public/gizlilik/veri-ozeti.html` ve Play'in
+    Data Safety beyanı birlikte değişmeli.
   - **İkinci istisna: çökme raporları.** WebView uygulamasında çökmenin sebebi
     çoğu zaman uygulamanın kendi kodu değil, cihazdaki Android System WebView
     sürümü oluyor; bunu kullanıcıdan öğrenmenin yolu yok. Firebase Crashlytics
@@ -514,20 +514,19 @@ Soru sayıları elle yazılmıyor, `OSYM_TEST_SORU`dan toplanıyor: aynı sayı
 değiştiğinde birinde eski kalırdı. Süreler ise elle yazılı — ÖSYM'nin kararı,
 soru sayısından türetilemez.
 
-### Oyunda lo-fi çalmıyor
+### Oyunda müzik yok
 
-Ayarlardaki **"Müzik parçası"** satırı (Mod müziği / Lo-fi) kaldırıldı: turda
-artık her zaman modun kendi parçası çalıyor. Tempo turun kuralının parçası
-(`mod-muzigi.ts` — Sıradan hızlanır, Turbo son çeyrekte vites atar, Ani Ölüm
-hiç yavaşlamaz); onu seçilebilir kılmak, kuralı bir zevk meselesi gibi
-gösteriyordu. **"Mini oyun müziği"** anahtarı duruyor — müziği kapatmak hâlâ
-kullanıcının kararı.
+Mini oyunların arka plan müziği **kaldırıldı**: `mod-muzigi.ts`,
+`oyun-muzigi.ts` ve tur sonunu müziğe haber veren `tur-durumu.ts` silindi,
+Ayarlar'daki "Mini oyun müziği" anahtarı da gitti. Soru okurken arkada müzik
+dikkati dağıtıyordu ve kullanıcılar kapatıyordu. Efektler (`oyun-sesi.ts`)
+duruyor: doğru/yanlış geri bildirimi müzik değil, "Mini oyun sesleri" anahtarı
+onları yönetiyor. Haftalık özetin sesi de artık o anahtara bakıyor.
 
-`Ayarlar.oyunMuzikTuru` kayıtta ve yedekte duruyor ama hiçbir yerden
-okunmuyor; alanı silmek eski yedekleri geçersiz kılardı (`varsayilanSablonId`
-ile aynı gerekçe). Lo-fi çalarının kendisi de duruyor: aşağıdaki ses paneli
-**Pomodoro'nun** paneli ve orada seçim hâlâ anlamlı — çalışma turunda çalan şey
-bir modun temposu değil, arka plan müziği.
+`Ayarlar.oyunMuzigi` ve `Ayarlar.oyunMuzikTuru` kayıtta ve yedekte duruyor
+ama hiçbir yerden okunmuyor; alanları silmek eski yedekleri geçersiz kılardı
+(`varsayilanSablonId` ile aynı gerekçe). Lo-fi çalarının kendisi duruyor:
+aşağıdaki ses paneli **Pomodoro'nun** paneli ve orada seçim hâlâ anlamlı.
 
 ### Müzik seçilmeden önce dinleniyor
 
@@ -889,28 +888,29 @@ tur sayısı doğru sayısından türetilemiyor) ve **isteğe bağlı**: eski ka
 yoklar ve isabet hesabına hiç girmiyorlar. Sıfır saymak, hatasız oynanmış eski
 turları %100 isabetli gösterirdi.
 
-## Yasal metinler tek yerde
+## Yasal metinler tek yerde — GitHub Pages'te
 
 Gizlilik politikası, kullanıcı sözleşmesi ve "cihazından ne çıkıyor" özeti
-`lib/veri/yasal.ts` içinde duruyor; ekranı `components/ekranlar/yasal.tsx`
-çiziyor ve oraya yalnızca Ayarlar › Yasal satırından giriliyor (`Ekran` kimliği
-`yasal`, kart menüsünde yok).
+`public/gizlilik/` altında üç HTML sayfa (`index.html`, `sozlesme.html`,
+`veri-ozeti.html`) ve `.github/workflows/gizlilik.yml` ile
+`https://ycistak.github.io/Rabi/` adresine yayınlanıyor. Uygulama içindeki
+Gizlilik ve Koşullar ekranı (`components/ekranlar/yasal.tsx`, Ayarlar › Yasal
+satırından açılıyor) metni **göstermiyor**, üç bağlantı veriyor; adresler
+`lib/veri/yasal.ts` içinde.
 
-Metinler bir süre Ayarlar'ın içindeydi: "Hatalı soru bildirimi" ve "Çökme
-raporları" başlıklı iki bölüm. Anahtarları kalkınca geriye ayar listesinin
-ortasında duran iki paragraf kaldı — ayarını arayan kullanıcının önüne gizlilik
-metni çıkıyordu. Play'in mağaza sayfasındaki gizlilik politikası bağlantısı ile
-Data Safety formu da aynı metne bakıyor; üçünün ayrı yerlerde yazılması onları
-zamanla birbirinden ayırırdı.
+Bir süre metinlerin uygulama içinde düz metin kopyası da vardı ve iki kopyanın
+birlikte güncellenmesi gerekiyordu. Kopya kopyayı unutturuyor: sitede güncellenen
+bir alan uygulamada eski kalıyor ve Play'in "içerideki metin ile mağazadaki
+bağlantı aynı şeyi söylemeli" şartı sessizce bozuluyordu. Tek kaynak kaldı.
 
-**Biçim düz metin**: bölüm başlığı ve paragraf dizisi, Markdown ayrıştırıcısı
-yok. Kalın yazı, bağlantı ya da madde listesi gerekiyorsa metni o gereksinim
-olmadan yazmak, uygulamaya yalnızca üç sayfa için biçimlendirme dili sokmaktan
-ucuz.
+**Gizlilik politikasının adresi değişmez.** `YASAL_SITE` Play Console'da kayıtlı
+ve Data Safety formundan bağlanıyor; dosya adı ya da klasör değişirse mağaza
+kaydı ölü bağlantıya düşer. Yeni bir belge eklenirse yanına yeni bir HTML
+gelir, `index.html` yerinden oynamaz.
 
-`yururlukTarihi` boş bırakılan belge ekranda "hazırlanıyor" diye görünüyor:
-metni yazılmamış bir sözleşmeye uydurma bir tarih vermek, olmayan bir belgeyi
-yürürlükte göstermek olurdu.
+Bağlantılar düz `<a target="_blank">`: Capacitor'ın WebView'i yabancı bir
+adrese gidilmek istenince sayfayı içinde yüklemiyor, sistem tarayıcısına
+veriyor (`Bridge.launchIntent`). `@capacitor/browser` eklemeye gerek kalmadı.
 
 ## Rozet değil başarım
 
@@ -1042,41 +1042,9 @@ hem tizleşiyor hem kısalıyor ve kaydedilmiş efekt kendi kimliğinden uzakla�
 ekranda duruyor; efektin işi yalnızca "doğru" demek. Geri getirmek istersen
 perdeyi oynatma, ayrı bir ses ekle.
 
-Efekt seviyesiyle oyun müziğinin seviyesi (`mod-muzigi.ts`, `MUZIK_SEVIYESI`)
-tek bir dengenin iki ucu ve ikisi de telefonda dinlenerek ayarlandı: efekt
-1'den 0.42'ye indi (çok gürdü). **Sayıların eşit olması gürlüğün eşit olması
-demek değil**: efektler ustalanmış mp3, dalgaları baştan sona tepeye yakın;
-parçalar sıfırdan sentezlenmiş ince dalgalar ve aralarında sessizlik var. Bu
-yüzden müzik sayıca efektin üstünde duruyor. Birine dokunursan ötekine de bak;
-sıralamayı `mod-muzigi.test.ts` denetliyor.
-
-**Ana seviye yanlış koldu.** Müzik üç kez yükseltildi (0.09 → 0.26 → 0.5) ve
-kullanıcı üçünde de "duyulmuyor" dedi. Sebep şu: ana seviye karışımdaki her
-şeyi birlikte kaldırıyor ve karışımın en yükseği vuruştu (`tepe` 0.9) — ezgi
-notaları onun altıda biri kadardı (0.07–0.11), yani seviye arttıkça duyulan
-şey davul oluyordu. "Müzik" diye duyulan şey ezgi. Düzeltme parçaların **kendi
-dengesinde**: vuruş indi, ezgi ve bas çıktı, çıkışa bir sınırlayıcı kondu
-(`RitimMotoru.kur`) ve ana seviye onun arkasında 0.85'e çıkabildi. Bir daha
-"duyulmuyor" gelirse önce tepelere bak, ana seviyeye değil.
-
-Bankadaki tik kaydı anında silmiyor; kart önce onaylanıp süzülüyor
-(`KALKMA_SURESI`, CSS'teki süreyle eşleşmeli). Anında silmek dokunuşun
-karşılığını görünmez kılıyordu: liste kısalıyor ama hangi kartın gittiği
-anlaşılmıyordu.
-
-Efekt dosyalarının seviyesi 1 değil (`DOSYA_SEVIYESI`): tam seviyede çalıyorlardı
-ve kullanıcı "çok fazla geliyor" dedi. Efekt oyunun içinden gelen bir işaret,
-ortamı bastırması gerekmiyor; ama duyulmayan efekt de hiç olmamış demek, o yüzden
-sessize yaklaşmıyor — kapatmak isteyene ayarda anahtar zaten var.
-
-Doğru sesi bunun da altında (`DOGRU_SEVIYESI`, `DOSYA_SEVIYESI` × 0.72). Fark
-sayıdan değil **sıklıktan**: doğru sesi bir turda onlarca kez çalıyor, yanlış
-birkaç kez, ve çok tekrarlanan bir ses aynı seviyede daha gür duyuluyor. Yanlış
-aşağı çekilmedi — turu kesen, dikkat isteyen olay o.
-
-Hepsi `prefers-reduced-motion` altında susuyor. Yeni bir efekt eklersen o
-medya sorgusuna da ekle: buradaki hareketlerin hiçbiri bilgi taşımıyor, bilgi
-sayıda ve renkte duruyor.
+Efekt seviyesi (`DOSYA_SEVIYESI`, 0.42) telefonda dinlenerek ayarlandı: 1'den
+indi, çok gürdü. Bir zamanlar bu sayı oyun müziğiyle dengeleniyordu; müzik
+kaldırıldı, efekt tek başına kaldı.
 
 ## Tur öncesi geri sayım
 
@@ -1220,54 +1188,14 @@ Sayılsaydı yarısında çıkılan turlar hem "oynanan tur" sayısını hem ort
 süreyi bozardı. Tur sonu ekranındaki rekor rozeti de bu yüzden yarım turda
 kutlamıyor.
 
-## Mod müzikleri
+## Mod müzikleri (kaldırıldı)
 
-Dört modun dört ayrı parçası var (`lib/oyunlar/mod-muzigi.ts`); üçü orada
-sentezleniyor, Rahat'ınki eski pad (`oyun-muzigi.ts`).
-
-| Mod | Parça | Tempo |
-| --- | --- | --- |
-| Rahat | vuruşsuz pad | yok |
-| Sıradan | "Yürüyüş" (Am/F/C/G, marimba arpej) | 88 → 134, sürekli hızlanır |
-| Turbo | "Koşu" (Dm/B♭/F/C, senkoplu kare bas) | 138, son çeyrekte 168 |
-| Ani Ölüm | "Nefes yok" (Em pedal, inen kromatik) | 152 sabit |
-
-Üçü **ayrı beste**, aynı ezginin hızlandırılmışı değil: farklı tonalite, farklı
-enstrüman, farklı vuruş deseni. Aynı melodiyi hızlandırmak dört modu tek bir
-modun dört ayarı gibi gösterirdi; aralarındaki fark tempo değil kural.
-
-Tempo kuralı saf ve dışa açık (`tempo(mod, gerginlik)`, `mod-muzigi.test.ts`).
-Gerginliği besleyen yer oyun kabuğu: `kalan / toplam` zaten orada ve
-`muzikGerginligi` ile geçiyor — efektlerdeki kuralın aynısı, oyun dosyaları
-müzikten habersiz. Sayacı olmayan modlarda oran sabit kalıyor, o parçalar zaten
-gerginliğe bakmıyor.
-
-Müzik modül düzeyinde **tekil**: parçayı kuran yer oyunlar ekranı, gerginliği
-besleyen yer kabuk; ikisinin aynı nesneye ulaşması gerekiyordu.
-
-Ayarlardaki seçim "Mod müziği" ya da "Lo-fi" (`OyunMuzikTuru`). Eski kurulumlarda
-kayıtlı `'sakin'` değeri `ayarlariNormalize` içinde `'mod'`a çevriliyor.
-
-Ses dengesi iki katmanlı ve **ikisi birlikte** okunmalı:
-
-- **Parçanın içi.** Duyulan şeyi ezgi belirliyor, ana seviye değil: nota
-  tepeleri (`nota`'nın `tepe`'si) vuruşun (`vurus`) altında ama ondan kopuk
-  değil. Vuruş 0.9'dan ~0.5'e indi, ezgi ve bas iki katına çıktı; ters oran
-  parçayı davul soloya çeviriyordu.
-- **Ana seviye.** `MUZIK_SEVIYESI` (0.85) efekt dosyalarının seviyesinin
-  (`DOSYA_SEVIYESI`, 0.42) sayıca üstünde ama kulakta hizasında — sentezlenmiş
-  dalga, ustalanmış mp3'le aynı sayıda daha kısık duyuluyor. Bu kadar
-  yükselebilmesi çıkıştaki sınırlayıcıya bağlı (`RitimMotoru.kur`);
-  sınırlayıcı olmadan üst sınırı kırpılma koyuyordu ve kırpılan parça yüksek
-  değil bozuk duyuluyor.
-
-Rahat modun pad'i ana seviyeden türeyen `RAHAT_SEVIYESI` ile altta kalıyor:
-vuruşsuz ve sürekli olduğu için aynı sayıda daha çok fark ediliyor — kullanıcı
-Rahat turda pad'i "rahatsız edici" buldu. Ana seviye yükselince oran 0.35'ten
-0.22'ye indi ki **çarpım yerinde kalsın**; yükseltilen şey ritmik parçaların
-ezgisiydi, pad'in öyle bir sorunu yok. Sürekli çalan bir seste ölçü "duyuluyor
-mu" değil "farkında olmadan dinlenebiliyor mu". `mod-muzigi.test.ts` iki
-sınırı da denetliyor.
+Dört modun dört ayrı sentezlenmiş parçası vardı (`mod-muzigi.ts`, Rahat'ınki
+`oyun-muzigi.ts`), tempo turun gerginliğini izliyordu, ses dengesi efektlerle
+birlikte kurulmuştu. Hepsi silindi — bkz. "Oyunda müzik yok". Geri getirmek
+istersen tarihçe `git log -- lib/oyunlar/mod-muzigi.ts`; oradaki iki ders hâlâ
+geçerli: ana seviyeyi değil parçanın kendi dengesini oynat, ve sürekli çalan
+sesin ölçüsü "duyuluyor mu" değil "farkında olmadan dinlenebiliyor mu".
 
 ## Oyun Bankası
 
@@ -1339,9 +1267,8 @@ ve "Başla" o üç sorunun arkasında, bir ekran ötede duruyordu.
 
 Tablo yine dört satır ama yalnızca ikisine ulaşılıyor: `siradan` her tur,
 `ani-olum` banka turu. `turbo` ile `rahat` şu an hiçbir yerden seçilemiyor;
-tanımları duruyor çünkü mod müziği (`mod-muzigi.ts`) dördünü de besteliyor ve
-tabloyu budamak, geri getirilmesi bir satır olan bir kuralı yeniden yazmak
-demek olurdu. Rekora yazılmama kuralı (`kayitliMi`) da yerinde: kapısı
+tanımları duruyor çünkü tabloyu budamak, geri getirilmesi bir satır olan bir
+kuralı yeniden yazmak demek olurdu. Rekora yazılmama kuralı (`kayitliMi`) da yerinde: kapısı
 `oyunlar.tsx` içindeki `turBitti`.
 
 **Oyun Bankası turu** modu dinlemiyor (`etkinMod`): oradaki sorular zaten bir

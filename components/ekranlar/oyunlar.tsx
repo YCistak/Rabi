@@ -39,10 +39,7 @@ import { sesleriHazirla } from '@/lib/oyunlar/oyun-sesi'
 import { ANAHTARLAR, OYUN_GECMIS_SINIRI, TUR_EN_UZUN, useYerelDepo } from '@/lib/depo'
 import { etkinMod, modKayitliMi } from '@/lib/oyunlar/mod'
 import { dogruKimlikler } from '@/lib/oyunlar/genel-test'
-import { muzikBaslat, muzikDuraklat, muzikDurdur } from '@/lib/oyunlar/mod-muzigi'
-import { useTurSonu } from '@/lib/oyunlar/tur-durumu'
 import { useGeriKatmani } from '@/lib/geri'
-import { useUygulamaGorunur } from '@/lib/gorunurluk'
 import { bugun } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 import { kartGirisi } from '@/components/ui'
@@ -145,7 +142,6 @@ export function OyunlarEkrani({
   banka,
   setBanka,
   sesAcik,
-  muzikAcik,
   onBankayaGit,
   onBankadanDustu,
   /** Genel testin o anki oyunu; test yoksa null. */
@@ -166,7 +162,6 @@ export function OyunlarEkrani({
   banka: BankaKaydi[]
   setBanka: (guncelleyici: (onceki: BankaKaydi[]) => BankaKaydi[]) => void
   sesAcik: boolean
-  muzikAcik: boolean
   onBankayaGit: () => void
   /** Turda bankadan düşen soru sayısı — rozet sayacını besliyor. */
   onBankadanDustu: (adet: number) => void
@@ -214,52 +209,10 @@ export function OyunlarEkrani({
 
   const dagilim = useMemo(() => bankaDagilimi(banka), [banka])
 
-  // --- Arka plan müziği ---
-  // Yalnızca bir oyun açıkken ve uygulama öndeyken çalıyor. Liste ekranında
-  // müzik başlaması menüde gezinen kullanıcıyı şaşırtırdı; ana tuşa basıldıktan
-  // sonra çalmaya devam etmesi ise uygulama görev listesinden silinene kadar
-  // sürüyordu.
-  // Turda çalan parça artık seçilmiyor: lo-fi listesi ayarlardan kaldırıldı ve
-  // her turda modun kendi müziği çalıyor. Parça bir zevk meselesi olarak
-  // sunulduğu sürece tempo da öyle okunuyordu; oysa tempo turun kuralının
-  // parçası (`mod-muzigi.ts`), arkada çalan bir liste değil.
-  const gorunur = useUygulamaGorunur()
-
-  /*
-    Tur sonu ekranı açıkken müzik susuyor.
-
-    Ölçü eskiden yalnızca "oyun ekranı açık mı" idi; özet ekranı da o ekranın
-    bir aşaması olduğu için parça tur bittikten sonra çalmaya devam ediyordu.
-    Bayrağı `TurSonu` kuruyor (`lib/oyunlar/tur-durumu.ts`).
-
-    Ölçü tek yerde duruyor: turun sesi tur bitince susmalı.
-  */
-  const turSonu = useTurSonu()
-  const muzikCalsin = acikOyun !== null && muzikAcik && !turSonu
-
-  /*
-    Mod müziği: parçayı tur modu seçiyor (`lib/oyunlar/mod-muzigi.ts`).
-
-    Seviye dengesi orada tek yerde duruyor (`MUZIK_SEVIYESI`): müzik, efektlerin
-    (`oyun-sesi.ts`) hizasında duyulmalı ama onları bastırmamalı — oyunun tek
-    sesli geri bildirimi doğru/yanlış efektleri. Efekt seviyesine dokunursan
-    oraya da bak; ikisi tek bir dengenin iki ucu.
-
-    Mod artık seçilmiyor ama banka turu yine ayrı işliyor (`etkinMod`); müzik
-    de onu izliyor, yoksa soru saatli bir turda tur saatine göre kurulmuş bir
-    parça çalardı.
-  */
-  useEffect(() => {
-    if (!muzikCalsin) {
-      muzikDurdur()
-      return
-    }
-    if (gorunur) muzikBaslat(etkinMod(bankaTuru !== null))
-    else muzikDuraklat()
-  }, [muzikCalsin, gorunur, bankaTuru])
-
-  // Ekrandan çıkarken bağlam da kapanmalı; yukarıdaki efekt duraklatmakla yetiniyor.
-  useEffect(() => () => muzikDurdur(), [])
+  // Arka plan müziği yok. Bir süre her tur modunun kendi sentezlenmiş parçası
+  // çalıyordu (`mod-muzigi.ts`); kaldırıldı — soru okurken arkada müzik dikkati
+  // dağıtıyordu ve kullanıcılar zaten kapatıyordu. Efektler (`oyun-sesi.ts`)
+  // duruyor: doğru/yanlış geri bildirimi müzik değil.
 
   /**
    * Biten tur.

@@ -49,9 +49,11 @@ const SIMGELER: Record<Sekme, React.ReactNode> = {
 
 const SEKMELER: { id: Sekme; ad: string }[] = [
   { id: 'ana', ad: 'Ana Sayfa' },
-  { id: 'oyunlar', ad: 'Oyunlar' },
-  { id: 'harita', ad: 'Harita' },
+  // Araçlar Oyunlar'dan önce: deneme girişi, sıralama, hedef gibi asıl işler
+  // orada; oyun ikinci sırada. Harita ikisinin arasında, menünün ortasında.
   { id: 'daha', ad: 'Araçlar' },
+  { id: 'harita', ad: 'Harita' },
+  { id: 'oyunlar', ad: 'Oyunlar' },
   { id: 'ayarlar', ad: 'Ayarlar' },
 ]
 

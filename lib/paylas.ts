@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * Görsel paylaşma.
+ * Dosya paylaşma (haftalık özet görseli, yedek dosyası).
  *
  * Cihazda ve tarayıcıda iki ayrı yol var:
  *
@@ -27,7 +27,7 @@ export type PaylasimSonucu = 'paylasildi' | 'indirildi' | 'iptal' | 'hata'
 function base64Cevir(blob: Blob): Promise<string> {
   return new Promise((coz, reddet) => {
     const okuyucu = new FileReader()
-    okuyucu.onerror = () => reddet(new Error('Görsel okunamadı'))
+    okuyucu.onerror = () => reddet(new Error('Dosya okunamadı'))
     okuyucu.onload = () => {
       const sonuc = String(okuyucu.result)
       // "data:image/png;base64,XXXX" → yalnızca XXXX kısmı isteniyor.
@@ -48,14 +48,33 @@ export async function gorseliPaylas(
    */
   metin: string = baslik,
 ): Promise<PaylasimSonucu> {
+  return dosyayiPaylas(blob, dosyaAdi, baslik, metin)
+}
+
+/**
+ * Herhangi bir dosyayı paylaşır ya da indirir — görsel de, yedek JSON'u da.
+ *
+ * Yedek indirme uzun süre yalnızca `<a download>` ile blob adresiydi; tarayıcıda
+ * çalışıyor ama Android WebView'de hiçbir şey olmuyordu: WebView `blob:`
+ * adresini indiriciye veriyor, indirici de blob'u okuyamıyor. Cihazda dosya
+ * önce yazılıyor, sonra paylaş penceresi açılıyor; kullanıcı Drive, Dosyalar
+ * ya da WhatsApp'a oradan kaydediyor.
+ */
+export async function dosyayiPaylas(
+  blob: Blob,
+  dosyaAdi: string,
+  baslik: string,
+  metin: string = baslik,
+): Promise<PaylasimSonucu> {
   if (Capacitor.isNativePlatform()) {
     try {
       const yazma = await Filesystem.writeFile({
         path: dosyaAdi,
         data: await base64Cevir(blob),
-        // Önbellek klasörü: paylaşılan görselin kalıcı olması gerekmiyor,
+        // Önbellek klasörü: paylaşılan dosyanın kalıcı olması gerekmiyor,
         // sistem yer açtığında silebilir. Belgeler klasörü olsaydı kullanıcının
-        // galerisi her hafta bir dosyayla dolardı.
+        // galerisi her hafta bir dosyayla dolardı; yedek de zaten paylaş
+        // penceresinden seçilen yere gidiyor.
         directory: Directory.Cache,
       })
       await Share.share({ title: baslik, text: metin, files: [yazma.uri] })
@@ -67,8 +86,11 @@ export async function gorseliPaylas(
     }
   }
 
-  const dosya = new File([blob], dosyaAdi, { type: 'image/png' })
-  if (navigator.canShare?.({ files: [dosya] })) {
+  const dosya = new File([blob], dosyaAdi, { type: blob.type })
+  // Tarayıcıda görsel için paylaşım penceresi, ama JSON için değil: masaüstü
+  // tarayıcılar JSON'u paylaşamıyor, telefondaki tarayıcıda da yedeğin gideceği
+  // yer indirilenler. Görselde ise paylaşım asıl amaç.
+  if (blob.type.startsWith('image/') && navigator.canShare?.({ files: [dosya] })) {
     try {
       await navigator.share({ files: [dosya], title: baslik, text: metin })
       return 'paylasildi'
