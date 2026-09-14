@@ -230,7 +230,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
       ),
       kart(
         'Türkiye neden depremsel?',
-        'Anadolu levhası, Avrasya ile Arap levhaları arasında sıkışıyor ve batıya doğru itiliyor.',
+        'Anadolu levhası, Avrasya ve Arap levhaları arasında sıkışıyor ve batıya doğru itiliyor.',
       ),
       kart(
         'Fay hatları',
@@ -260,7 +260,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
       soru('Depremler levha sınırlarında ve fay hatlarında yoğunlaşır.', true, 'Gerilme buralarda birikip boşalıyor.'),
       soru('İç kuvvetler yeryüzünü düzleştirir.', false, 'İç kuvvetler engebelendirir; düzleştiren dış kuvvetlerdir.'),
       sikli('Uzaklaşan levha sınırında ne olur?', ['Dalma-batma', 'Yeni kabuk oluşur'], 1, 'Yaklaşanda dalma-batma.'),
-      sikli('Anadolu levhası neden batıya itiliyor?', ['Manto soğuyor', 'Avrasya ile Arap levhaları arasında sıkışıyor'], 1, 'Türkiye\'nin depremselliği.'),
+      sikli('Anadolu levhası neden batıya itiliyor?', ['Manto soğuyor', 'Avrasya ve Arap levhaları arasında sıkışıyor'], 1, 'Türkiye\'nin depremselliği.'),
       sikli('Dağ oluşumuna ne denir?', ['Epirojenez', 'Orojenez'], 1, 'Epirojenez kıta oluşumu.'),
       sikli('Deprem enerjisi nasıl birikir?', ['Volkan patlayınca', 'Levhalar sürtünürken'], 1, 'Kayaç dayanma sınırını aşınca kırılır.'),
       soru('Çekirdek yerin en sıcak bölümüdür.', true, 'Kabuk ince ve katı.'),
