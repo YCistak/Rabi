@@ -32,10 +32,16 @@ describe('gununHali', () => {
     expect(gununHali({ ...sakin, gunlukKayitlar: [gun(BUGUN, ['Mat', 50])] })?.poz).toBe('ziplayan')
   })
 
-  it('sınava yakınken sınav her şeyin önünde', () => {
-    const h = gununHali({ ...sakin, kalanGun: 12, bekleyenYanlis: 5 })!
-    expect(h.baslik).toContain('Sınava 12 gün')
-    expect(h.ekran).toBe('soru')
+  it('son haftada sınav her gün önde, 8–30 günde gün aşırı', () => {
+    // BUGUN'ün gün sayısı çift: sınav günü. Ertesi gün tek: öteki kurallar.
+    const bugunku = gununHali({ ...sakin, kalanGun: 12, bekleyenYanlis: 5 })!
+    const yarinki = gununHali({ ...sakin, bugun: '2026-09-15', kalanGun: 11, bekleyenYanlis: 5 })!
+    const basliklar = [bugunku.baslik, yarinki.baslik]
+    expect(basliklar.some((b) => b.includes('Sınava'))).toBe(true)
+    expect(basliklar.some((b) => !b.includes('Sınava'))).toBe(true)
+    // Son hafta: iki gün de sınav
+    expect(gununHali({ ...sakin, kalanGun: 5 })!.baslik).toContain('Sınava 5 gün')
+    expect(gununHali({ ...sakin, bugun: '2026-09-15', kalanGun: 4 })!.baslik).toContain('Sınava 4 gün')
     expect(gununHali({ ...sakin, kalanGun: 0 })!.baslik).toContain('Sınav günü')
     // 31 gün: sınav kuralı devrede değil
     expect(gununHali({ ...sakin, kalanGun: 31 })!.baslik).toBe('Bugün hiç soru çözmedin')

@@ -59,8 +59,10 @@ export type GununHaliGirdisi = {
   kalanGun: number
 }
 
-/** Sınava bu kadar gün kalınca kart yalnızca sınavı konuşuyor. */
+/** Sınava bu kadar gün kalınca sınav cümlesi gün aşırı öne geçiyor. */
 export const SINAV_YAKIN_GUN = 30
+/** Bu kadar gün kalınca her gün sınav cümlesi. */
+export const SINAV_SON_HAFTA = 7
 /** Bir dersin "ihmal edildi" sayılması için son kayıttan bu yana geçen gün. */
 export const IHMAL_GUNU = 7
 /** İhmal bakılırken geriye bu kadar gün taranıyor; daha eskisi zaten bırakılmış ders. */
@@ -93,10 +95,18 @@ function sec<T>(b: Baglam, secenekler: T[]): T {
 
 // --- Kurallar ---------------------------------------------------------------
 
-/** Sınava ≤ 30 gün: üç hâlin de sınav cümlesi var. */
+/**
+ * Sınava ≤ 30 gün: üç hâlin de sınav cümlesi var.
+ *
+ * Son haftada her gün; 8–30 gün arasında **gün aşırı**. Otuz gün boyunca her
+ * sabah aynı "sınava N gün" cümlesi, kartı bir takvime çevirirdi ve öteki
+ * öneriler (banka, ihmal edilen ders) tam da en gerekli oldukları dönemde
+ * hiç görünmezdi. Seçim tarihten (`secim`) — gün içinde sabit.
+ */
 const sinavaYakin: Kural = (b) => {
   const n = b.g.kalanGun
   if (n < 0 || n > SINAV_YAKIN_GUN) return null
+  if (n > SINAV_SON_HAFTA && b.secim(2) === 1) return null
   const gun = n === 0 ? 'Sınav günü' : `Sınava ${n} gün`
   if (tuttu(b)) {
     return {

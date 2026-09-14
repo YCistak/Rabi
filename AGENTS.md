@@ -1564,7 +1564,7 @@ ilk tutan kazanıyor:
 
 | Sıra | Kural | Koşul | Dokunuş |
 | --- | --- | --- | --- |
-| 1 | Sınava yakın | kalan gün ≤ 30 | soru |
+| 1 | Sınava yakın | kalan gün ≤ 7 her gün; 8–30 gün aşırı | soru |
 | 2 | Seri kırılıyor | dün hedef tuttu, bugün 0 | soru |
 | 3 | Seri sürüyor | bugün ve dün hedef tuttu | soru |
 | 4 | Banka bekliyor | çözülmemiş yanlış var, bugün çalışılmış | yanlış bankası |
@@ -1574,8 +1574,10 @@ ilk tutan kazanıyor:
 | 8 | Temel | eski üç hâl | soru |
 
 Sıra puanla değil listeyle: "neden bunu söyledi" sorusuna sıralı liste cevap
-verebiliyor, puan veremiyor. Sınav en önde çünkü o dönemde başka öneri
-gürültü; seri ondan sonra çünkü kırılan alışkanlık en pahalı kayıp.
+verebiliyor, puan veremiyor. Sınav en önde ama son hafta dışında **gün aşırı**: otuz gün her sabah aynı
+"sınava N gün" cümlesi kartı takvime çevirir ve öteki öneriler tam en gerekli
+dönemde hiç görünmezdi. Seri ondan sonra çünkü kırılan alışkanlık en pahalı
+kayıp.
 
 Her kuralın birden çok cümlesi var ve seçim **günün tarihinden** türeyen bir
 sayıyla yapılıyor: kart gün içinde sabit, günden güne değişiyor. Rastgele
