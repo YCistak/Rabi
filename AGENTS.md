@@ -1848,6 +1848,23 @@ Karardan sonra kartın çerçevesi renkleniyor ve bu çerçeve `ring` ile değil
 kendi gölgesi (`golge-kart`) onu eziyordu. `outlineOffset` de negatif — dışarı
 taşan çizgi, kaydırılabilir kutunun kenarında kırpılıyordu.
 
+### Yoklamada iki soru biçimi, sayısı kart sayısına bağlı
+
+Sahne bir süre yalnızca doğru/yanlış iddia soruyordu; "hangisi" diye
+sormak mümkün değildi (Pisagor üçlüsü hangisi, hangi organel ATP üretir).
+`SoruKarti` artık iki biçimden biri: **iddia** (`soru()`, Doğru/Yanlış) ya da
+**iki şıklı soru** (`sikli()`, A/B). Şık sayısı ikide kalıyor — dört şıklı
+soru okumanın arkasına bir sınav ekler; hızlı kontrolle aynı kalıp. Sahne iki
+biçimi tek koddan çiziyor: karar bir sayıya iniyor (`secim`/`beklenen`),
+gerekçe ve çerçeve ikisinde de aynı.
+
+Soru sayısı **kart sayısıyla orantılı** (`icerik.test.ts`): en az kart+1,
+en çok kart×1,3+1 — altı kartlık konuda yedi–sekiz, on altı kartlıkta yirmiye
+yakın. Sabit dört soru kısa konuyu sınava çeviriyor, uzun konunun yarısını
+yoklamadan bırakıyordu. Her konuda iki biçimden en az ikişer tane var; A/B
+ve doğru/yanlış dengesi bütünde %40–60 arasında tutuluyor — tek yönlü deste
+cevabı içeriğe bakmadan verdirir.
+
 ### Kartlardan soruya bir köprüyle geçiliyor
 
 Sahnenin **üç** hâli var ve üçü de `soru-sahnesi.tsx` içinde: giriş (`Giris`),
@@ -1889,8 +1906,8 @@ Bölüm kapalı betada bir süre bayrakla gizliydi (`KONU_ANLATIMI_ACIK`,
 `lib/beta.ts`): sürüm planı (#82) onu 0.7.0'a ayırmıştı. 0.7.0 ile açıldı ve
 bayrak `beta.ts`'in kendi kuralına göre dosyadan düştü.
 
-Harita alt menüdeki beşinci sekme (**Harita**, Oyunlar ile Araçlar
-arasında; kod tarafı `konu` kalıyor). Önce ana sayfada "Bilgi Kartları"
+Harita alt menüdeki beşinci sekme (**Harita**, Araçlar ile Oyunlar
+arasında, menünün ortasında; kod tarafı `konu` kalıyor). Önce ana sayfada "Bilgi Kartları"
 başlıklı kendi kartıyla açılıyordu — Araçlar şeridine kutucuk olarak
 konsaydı son kullanılanlarla sıraya girip kayacaktı — sonra kullanıcı onu
 alt menüye istedi ve ana sayfadaki kart kalktı: iki kapı aynı yere
