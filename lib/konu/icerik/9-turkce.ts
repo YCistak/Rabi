@@ -23,7 +23,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Kurmaca nedir?',
         'Edebî metin gerçeği aktarmaz, yeniden kurar. Anlatılan yaşanmış olsa bile metindeki hâli kurmacadır.',
         undefined,
-        { not: '"Gerçek mi" sorusu edebî metne sorulmaz; "nasıl kurulmuş" sorulur.' },
+        { not: 'Çalıkuşu\'ndaki Feride yaşamadı ama Anadolu öğretmeninin gerçeği orada. Kurmaca yalan değil, yeniden kurma.' },
       ),
       kart(
         'Edebî ve öğretici metin',
@@ -126,7 +126,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Uyak sorusunda yol',
         'Önce dize sonlarındaki ortak eki/sözcüğü (redif) at, kalan ses benzerliğini say: 1 ses yarım, 2 ses tam, 3+ zengin. "Gözlerim / sözlerim": -lerim redif, öz tam uyak.',
         undefined,
-        { not: 'Redifi atmadan uyağa bakma; hataların çoğu ilk adım atlanınca oluyor.' },
+        { not: '\'gözlerim / sözlerim\': -lerim redif, \'göz/söz\'de z tek ses → yarım uyak. Önce redifi at, sonra say.' },
       ),
     ], [
       soru('Redif, dize sonlarında görevi ve anlamı aynı olan ek ya da sözcüklerin tekrarıdır.', true, 'Uyaktan sonra gelir ve uyakla karıştırılmamalı.'),
@@ -199,7 +199,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Sanatı tanımada kısayol',
         '"Gibi, kadar" varsa benzetme; benzeyen ya da benzetilenden yalnız biri varsa istiare; insan dışı varlık insan gibi davranıyorsa kişileştirme; parça-bütün, yer-insan ilişkisi varsa mecaz-ı mürsel.',
         undefined,
-        { not: 'Kısayolu ezberleme, iki ögeyi say: benzeyen var mı, benzetilen var mı?' },
+        { not: '\'Aslan gibi adam\' benzetme; \'Aslanım geldi\' açık istiare (benzeyen yok); \'Rüzgâr ağlıyor\' kişileştirme.' },
       ),
     ], [
       soru('Benzetmede benzeyen, kendisine benzetilen, benzetme yönü ve benzetme edatı bulunur.', true, 'Dördü de kullanılırsa tam benzetme olur.'),
@@ -254,7 +254,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
             ['Eleştiri', 'Ölçüt', 'Karma'],
           ],
         },
-        { not: 'Türü konudan değil kanıt ve dilden tanı; aynı konu dört türde yazılabilir.' },
+        { not: 'Aynı konu: makale kaynak gösterip kanıtlar, deneme \'bence\' der, fıkra güncel ve kısa, eleştiri eseri tartar.' },
       ),
       kart(
         'Türk edebiyatında',
@@ -307,7 +307,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
             ['Mecaz', 'Dalına basmak'],
           ],
         },
-        { not: 'Tek soru: gerçek anlamla bağ koptu mu? Koptuysa mecaz, kopmadıysa yan.' },
+        { not: '\'Masanın ayağı\' yan anlam (taşıma işlevi sürüyor), \'işin ayağı\' mecaz (bağ kopmuş). Bağ var mı sor.' },
       ),
       kart(
         'Terim anlam',
@@ -387,7 +387,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Terim mi deyim mi?',
         'Deyimde sözcükler kendi anlamlarından uzaklaşır. "Göze girmek" deyim, "göz kapağı" değildir.',
         undefined,
-        { not: 'Sözcüklerin kendi anlamından uzaklaşıp uzaklaşmadığına bak; ad benzerliğine değil.' },
+        { not: '\'Göz kapağı\' terim (sözcükler gerçek), \'göze girmek\' deyim (mecaz). Deyimde sözcük kendi anlamını bırakır.' },
       ),
       kart(
         'Kalıplaşma bozulmaz',
@@ -450,7 +450,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Neden mi amaç mı?',
         '"Hasta olduğu için gelmedi" neden (gerçekleşmiş sebep). "Görüşmek için geldi" amaç (henüz olmamış niyet). "İçin" ikisinde de var; bakılacak şey sebebin olup olmadığı.',
         undefined,
-        { not: '"için" gördüğünde durma; olay gerçekleşmiş mi, niyet mi diye sor.' },
+        { not: '\'Hasta olduğu için gelmedi\' → neden (olmuş). \'Görüşmek için geldi\' → amaç (niyet). \'için\' ikisinde de var.' },
       ),
     ], [
       soru('"Yağmur yağdığı için maç ertelendi." cümlesinde neden-sonuç ilişkisi vardır.', true, 'Ertelenmenin sebebi doğrudan belirtilmiş.'),
@@ -526,7 +526,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Soruya göre strateji',
         'Ana düşünce için son cümleye ve tekrar eden fikre bak; konu için "neden söz ediyor" de; "değinilmemiştir" için şıkları tek tek metinle eşleştir; akışı bozan cümle için önceki-sonraki cümleyle bağ ara.',
         undefined,
-        { not: 'Soruyu okumadan paragrafı okuma; ne arayacağını bilmeden okumak iki kat zaman.' },
+        { not: 'Ana düşünce: son cümle + tekrar eden fikir. \'Değinilmemiştir\': şıkları paragrafta tek tek ara, bulamadığın cevap.' },
       ),
     ], [
       soru(
@@ -594,7 +594,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Çatışma',
         'Anlatıyı ilerleten şey çatışmadır: kişinin başka biriyle, toplumla, doğayla ya da kendisiyle çatışması.',
         undefined,
-        { not: 'Olay örgüsünü çatışmadan başlat; çatışma yoksa anlatılacak bir şey de yok.' },
+        { not: 'Kişi–toplum (Yaban\'daki aydın), kişi–kendisi (Suç ve Ceza), kişi–doğa (Yaşlı Adam ve Deniz). Çatışma yoksa anlatı yok.' },
       ),
     ], [
       soru('Anlatmaya bağlı metinlerin yapı ögeleri olay örgüsü, kişiler, mekân ve zamandır.', true, 'Dördü birlikte kurmacanın iskeletini oluşturuyor.'),
@@ -646,7 +646,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Anlatıcı yazar değildir',
         'Anlatıcı da kurmacanın bir parçasıdır. "Ben" diyen anlatıcıyı yazarla karıştırmamak gerekir.',
         undefined,
-        { not: '"Ben" diyen anlatıcı yazarın kendisi değil; bu ayrım soruların çoğunda saklı.' },
+        { not: 'Sait Faik \'ben\' diyen hikâye yazar ama anlatıcı Sait Faik değildir; sınav \'yazar anlatıcıdır\' derse yanlış.' },
       ),
       kart(
         'Güvenilmez anlatıcı',
@@ -694,7 +694,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Durum hikâyesi',
         'Çehov tarzı: belirgin bir olay ve çözüm yoktur, bir an ve izlenim anlatılır. Türk edebiyatında Sait Faik.',
         undefined,
-        { not: '"Bir şey olmuyor" diye şaşırma; olmayışın kendisi anlatılan şey.' },
+        { not: 'Ömer Seyfettin olay (Kaşağı: sonu var), Sait Faik durum (Hişt Hişt: olay yok, an var). İkisini örnekle tut.' },
       ),
       kart(
         'Roman türleri',
@@ -733,7 +733,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Sahnelenmek için yazılır',
         'Tiyatro metni okunmak için değil oynanmak için yazılır. Bu yüzden anlatıcı yoktur, her şey diyalogla verilir.',
         undefined,
-        { not: 'Metni okurken sahneyi hayal et; anlatıcının yokluğu buradan geliyor.' },
+        { not: 'Tiyatroda anlatıcı yok, her şey konuşma (replik) ve sahne notu; \'anlatıcı bakış açısı\' sorusu tiyatroya sorulmaz.' },
       ),
       kart(
         'Perde, sahne, replik',
@@ -805,7 +805,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Ünsüz benzeşmesi',
         'Sert ünsüzle biten sözcüğe "c, d, g" ile başlayan ek gelirse ek sertleşir: "kitap-cı" değil kitapçı.',
         undefined,
-        { not: 'Sertleşme ile yumuşamayı karıştırma: biri eke, öteki sözcüğün sonuna oluyor.' },
+        { not: 'kitap-cı → kitapçı (ek sertleşti, sözcük aynı); kitap-ı → kitabı (sözcük yumuşadı). Ek mi sözcük mü değişiyor, bak.' },
       ),
       kart(
         'Ünsüz yumuşaması',
@@ -890,7 +890,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
             ['Bağlaç ki', 'Ayrı'],
           ],
         },
-        { not: 'Üç kuralı ayrı ezberleme; "çıkarınca bozuluyor mu" sorusu üçünü de çözer.' },
+        { not: '\'Sen de gel\' (çıkar: \'Sen gel\' ✓ → ayrı). \'Evde kaldı\' (çıkar: \'Ev kaldı\' ✗ → bitişik). Çıkarınca bozuluyorsa ek.' },
       ),
       kart(
         'Büyük harf',
@@ -939,7 +939,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Virgül anlamı değiştirir',
         'Yer değiştiren tek bir virgül cümlenin öznesini değiştirebilir; bu yüzden virgül süs değil, anlam işaretidir.',
         undefined,
-        { not: 'Virgülü süs değil anlam işareti olarak oku; yerini değiştirip cümleyi yeniden oku.' },
+        { not: '\'Yaşlı, adamı gördü\' (yaşlı olan gören) / \'Yaşlı adamı gördü\' (yaşlı olan görülen). Tek virgül özneyi değiştirir.' },
       ),
       kart(
         'Noktalı virgül',
@@ -1011,7 +1011,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
             { ad: 'Lehçe', alt: 'eski ayrılma' },
           ],
         },
-        { not: 'Üçünü ayıran şey ayrılmanın derinliği; adları değil derece sırasını tut.' },
+        { not: 'Ağız: Ege–Karadeniz (aynı dil). Şive: Azerice (anlaşılır). Lehçe: Yakutça, Çuvaşça (anlaşılmaz). Uzaklık sırası.' },
       ),
       kart(
         'Türk dilinin lehçeleri',

@@ -16,16 +16,18 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
   tema('fzk9-t1', 'Fizik Bilimi ve Kariyer Keşfi', [
     /*
       Bu konu, kart etiketi / Rabi notu / hızlı kontrol alanlarının **örneği**:
-      tasarım (`tasarim/bilgi-karti.html`) bu konu üstünden çizildi ve
-      metinler oradan. Etiket ve hızlı kontrol öteki konularda henüz boş;
-      Rabi notu ise her konuda **bir** kartta var (bkz. `tip.ts`).
+      tasarım (`tasarim/bilgi-karti.html`) bu konu üstünden çizildi. Etiket ve
+      hızlı kontrol öteki konularda henüz boş; Rabi notu her konuda **bir**
+      kartta var (bkz. `tip.ts`). Buradaki yedi not tasarımın "ezberleme, anla"
+      cümleleriydi; öteki notlarla aynı ölçüye (somut örnek, sayı, tuzak)
+      çekildi.
     */
     konu('fzk9-bilim', 'Fizik Bilimi', [
       kart(
         'Fizik neyi inceler?',
         'Madde, enerji ve bunların uzay-zamandaki etkileşimini inceler. Doğanın kurallarını sayı ile ifade etmeye çalışır.',
         undefined,
-        { etiket: 'Tanım', not: 'Bu kartı bir tanım olarak değil, dersin geri kalanının çerçevesi olarak oku.' },
+        { etiket: 'Tanım', not: 'Yaprağın düşüşü fizik, çürümesi kimya, büyümesi biyoloji: aynı yaprak, üç soru. Fizik enerji ve hareketi sorar.' },
       ),
       kart(
         'Bilimsel yöntem',
@@ -39,19 +41,19 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
             { ad: 'Kuram' },
           ],
         },
-        { etiket: 'Ölçme', not: 'Sıralamayı ezberleme; her okun neden o yöne baktığını sor.' },
+        { etiket: 'Ölçme', not: '\'Ağır cisim hızlı düşer\' hipotezi tüyle taşı vakumda bırakınca çöktü; deney kazandı, sezgi kaybetti.' },
       ),
       kart(
         'Deney ve model',
         'Model gerçeğin sadeleştirilmiş hâlidir. Deneyle çelişen model ne kadar zarif olursa olsun bırakılır.',
         undefined,
-        { etiket: 'Yöntem', not: '"Sürtünmesiz ortam" bir yalan değil, bilinçli bir sadeleştirmedir.' },
+        { etiket: 'Yöntem', not: '\'Sürtünmesiz ortam\' gerçek değil ama 100 m\'lik kaydırakta hata %2; model işe yaradığı yerde doğru sayılır.' },
       ),
       kart(
         'Hipotez, kuram, yasa',
         'Hipotez sınanmayı bekleyen öneri, kuram sınanmış açıklama, yasa ise gözlenen düzenliliğin kısa ifadesidir.',
         undefined,
-        { etiket: 'Kavramlar', not: 'Üçünü bir merdiven gibi düşünme; yasa kuramın yukarısı değil, başka bir iş.' },
+        { etiket: 'Kavramlar', not: 'Kütle çekim yasası F = Gm₁m₂/r² (ne oluyor), görelilik kuramı (neden oluyor). Yasa kuramın üst basamağı değil.' },
       ),
       kart(
         'Bilimsel bilgi değişebilir',
@@ -61,19 +63,19 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Fizik ve matematik',
         'Matematik fiziğin dili. Bir yasa cümleyle anlatılabilir ama tahmin yapabilmesi için denkleme dönmesi gerekir.',
         undefined,
-        { etiket: 'Dil', not: 'Formül bir cümlenin kısaltmasıdır; cümleyi anlamadan kısaltmayı hatırlamak işe yaramaz.' },
+        { etiket: 'Dil', not: 'x = ½gt² cümlesi: \'düşen cisim her saniye daha çok yol alır.\' Cümleyi biliyorsan formülü t = 2\'de sınayabilirsin.' },
       ),
       kart(
         'Ölçme olmadan fizik olmaz',
         'Her ölçümün bir belirsizliği vardır. Sonucu belirsizliğiyle birlikte vermek, fiziğin dürüstlük kuralıdır.',
         undefined,
-        { etiket: 'Birimler', not: 'Bir soruda birim tutmuyorsa işlem de tutmuyordur — önce birimi kontrol et.' },
+        { etiket: 'Birimler', not: 'Cetvelle ölçülen 12,3 cm aslında 12,3 ± 0,1 cm; \'12,3456\' yazan öğrenci ölçmüyor, uyduruyor.' },
       ),
       kart(
         'Fiziğin öteki bilimlerle bağı',
         'Kimya atomun elektron düzenine, biyoloji sinir hücresinin elektriğine dayanır. Sınır çizgileri idari, doğal değil.',
         undefined,
-        { etiket: 'Kapanış', not: 'Desteyi bitirmeden önce bir kartı kendi cümlelerinle anlatmayı dene.' },
+        { etiket: 'Kapanış', not: 'MR cihazı fizik (manyetizma), okuyan doktor tıp; EKG\'deki elektrik fizik, kalp biyoloji. Sınır yok.' },
       ),
     ], [
       soru('Bir kuram yeterince kanıt toplayınca yasaya dönüşür.', false, 'Yasa olayın nasıl olduğunu tanımlar, kuram nedenini açıklar; biri ötekinin ileri hâli değil.'),
@@ -134,7 +136,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Hangi dal hangi soruyu sorar?',
         'Cisim nasıl hareket eder → mekanik; ısı nereye gider → termodinamik; ışık ne yapar → optik; yük ne yapar → elektromanyetizma.',
         undefined,
-        { not: 'Dalları listeleme; her birini bir soruyla eşle, soru aklında kalır.' },
+        { not: 'Ses dalgası ve deprem dalgası aynı dala girer: akustik/dalgalar. Ses için \'optik\' işaretleme.' },
       ),
     ], [
       soru('Termodinamik, ısı ve sıcaklıkla ilgili olayları inceler.', true, 'Isı alışverişi, hâl değişimi ve enerji dönüşümleri bu alanın konusu.'),
@@ -168,7 +170,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Galileo',
         'Deneyi fiziğin merkezine koydu. Serbest düşmede farklı kütlelerin aynı ivmeyle düştüğünü savundu.',
         undefined,
-        { not: 'Adları değil, her birinin fiziğe kattığı tek cümleyi tut.' },
+        { not: 'Sınav tuzağı: serbest düşmede eşit ivmeyi Galileo söyledi, Newton değil. Newton yasayı yazdı.' },
       ),
       kart(
         'Newton',
@@ -254,7 +256,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Hangi ders neye açılır?',
         'Mekanik → makine ve inşaat; elektromanyetizma → elektrik-elektronik; modern fizik → nükleer ve malzeme; optik → görüntüleme.',
         undefined,
-        { not: 'Bu kart seçim yaptırmak için değil, dersle meslek arasındaki bağı görmen için.' },
+        { not: 'Tıbbi görüntüleme (MR, tomografi) da fizik işi: \'medikal fizik\' şıkta çıkarsa yabancı gelmesin.' },
       ),
     ], [
       soru('Medikal fizik uzmanı, hastanelerdeki ışın tedavisi cihazlarının doğru çalışmasıyla ilgilenir.', true, 'Doz hesabı ve cihaz denetimi bu uzmanlığın işi.'),
@@ -322,7 +324,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Boyut denetimi',
         'Bir denklemin iki tarafının birimi aynı olmalıdır. Tutmuyorsa denklem kesin yanlıştır — hesabı yapmadan anlaşılır.',
         undefined,
-        { not: 'Sınavda çıkmaza girdiğinde ilk yapacağın şey bu: birimler tutuyor mu?' },
+        { not: 'Hızlı kontrol: yol = hız × zaman → m = (m/s)·s ✓. \'m = m/s\' çıkıyorsa formül ters yazılmış.' },
       ),
       kart(
         'Birim çevirme',
@@ -378,7 +380,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Sürat ve hız',
         'Sürat yolun zamana oranı, hız yer değiştirmenin. Pistte bir tur atan araç için ortalama hız sıfırdır.',
         undefined,
-        { not: 'Tur atan araç örneğini aklında tut; skaler ile vektörelin farkı orada.' },
+        { not: '400 m pisti 100 s\'de tur atan koşucu: sürat 4 m/s, hız 0. Sınav \'ortalama hız\' derken bunu sorar.' },
       ),
       kart(
         'Kütle ve ağırlık',
@@ -547,7 +549,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'En büyük, en küçük bileşke',
         'Aynı yönlüyse büyüklükler toplanır, zıt yönlüyse çıkarılır. Bileşke bu iki değer arasında kalır.',
         undefined,
-        { not: 'Bileşke sorusunda önce bu iki sınırı yaz; cevap ikisinin arasında olmalı.' },
+        { not: '3 ve 5 birimlik iki vektörün bileşkesi 2 ile 8 arasında; 9 ya da 1 diyen şık baştan elenir.' },
       ),
       kart(
         'Dik vektörler',
@@ -651,7 +653,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Neden en zayıfı baskın?',
         'Kütle çekim en zayıf olsa da yalnızca çekicidir ve birikir; elektrik kuvvetleri zıt yüklerle birbirini götürür.',
         undefined,
-        { not: 'Zayıf ile baskın aynı şey değil; bu kart ikisini ayırıyor.' },
+        { not: 'Küçük bir mıknatıs, koca Dünya\'nın çektiği çiviyi kaldırır — kütle çekim gerçekten en zayıf.' },
       ),
       kart(
         'Günlük kuvvetlerin kökeni',
@@ -752,7 +754,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Hız-zaman grafiğinde alan',
         'Grafiğin altında kalan alan yer değiştirmeyi, eğimi ise ivmeyi verir. Yatay çizgi sabit hız, eğik çizgi sabit ivmedir.',
         undefined,
-        { not: 'Grafik sorusunda önce eksenleri oku; eğim mi alan mı istendiğine sonra karar ver.' },
+        { not: 'Eksenin altındaki alan negatif yer değiştirme; iki alanı toplarken işareti unutma, yol için mutlak değer.' },
       ),
       kart(
         'Ortalama hız hesabı',
@@ -861,7 +863,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Dik duran kutu, yatan kutu',
         'Aynı kutu dar yüzeyi üstünde dururken basıncı büyük, geniş yüzeyi üstündeyken küçüktür; ağırlık ikisinde de aynıdır.',
         undefined,
-        { not: 'Kuvvet aynı, alan değişiyor; basınç sorularının çoğu bu cümleden çıkıyor.' },
+        { not: 'Kutu devrilince ağırlık aynı kalır, sadece alan değişir: alan 2 katsa basınç yarı. Kuvvete dokunma.' },
       ),
     ], [
       soru('Basınç, kuvvetin uygulandığı yüzey alanıyla ters orantılıdır.', true, 'Aynı kuvvet küçük alana uygulanınca basınç büyüyor.'),
@@ -913,7 +915,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Kabın şekli önemsiz',
         'Tabanı aynı, şekli farklı üç kapta aynı sıvı aynı yükseklikteyse taban basınçları eşittir; kaptaki sıvı miktarı farklı olsa bile.',
         undefined,
-        { not: 'Şekli görünce şaşırtmaya çalışıyorlar; sen yalnızca yüksekliğe bak.' },
+        { not: 'P = h·d·g: aynı sıvı, aynı yükseklik → aynı basınç. Geniş kapta \'daha çok su var\' diye basınç artmaz.' },
       ),
       kart(
         'Her yöne iletir',
@@ -971,7 +973,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Neden 76 cm?',
         'Cıva sütununun ağırlığı, dışarıdaki havanın basıncını dengeler. Su kullanılsaydı sütun yaklaşık 10 metre olurdu.',
         undefined,
-        { not: 'Sayıyı ezberleme; cıva yerine su konsa ne olacağını anlatabiliyor musun?' },
+        { not: 'Su ile deney: 76 cm × 13,6 (cıva/su yoğunluk oranı) ≈ 10,3 m. Sayı sorulursa hesap böyle.' },
       ),
       kart(
         'Yükseklikle azalır',
@@ -1033,7 +1035,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Neye bağlı?',
         'Sıvının yoğunluğuna ve batan hacme bağlıdır. Cismin kütlesine ya da derinliğe bağlı değildir.',
         undefined,
-        { not: 'Bağlı olmadığı şeyleri de ezberle: derinlik ve kütle çeldirici olarak gelir.' },
+        { not: 'F = V_batan · d_sıvı · g. Cismin kütlesi ve derinlik formülde yok; ikisi de şıkta çeldirici olarak gelir.' },
       ),
       kart(
         'Yüzme koşulu',
@@ -1096,7 +1098,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Temel fikir',
         'Akışkanın sürati arttığı yerde çeperlere yaptığı basınç azalır.',
         undefined,
-        { not: 'Tek cümle: hızlanan akışkan basıncı düşer. Örneklerin hepsi bunun tekrarı.' },
+        { not: 'İki kâğıdı yan yana tutup arasına üfle: kâğıtlar birbirine yaklaşır. Hızlı hava = düşük basınç.' },
       ),
       kart(
         'Süreklilik',
@@ -1213,7 +1215,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
             ['Isı', 'Aktarılan enerji'],
           ],
         },
-        { not: 'Kıvılcım ve kazan örneğini kendi cümlelerinle anlatmadan geçme.' },
+        { not: 'Buz dolu kova, kaynar su damlasından daha çok iç enerji taşır; sıcaklık madde miktarını bilmez.' },
       ),
       kart(
         'Kıvılcım ve kazan',
@@ -1270,7 +1272,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Öz ısı mı, ısı sığası mı?',
         'Öz ısı maddeye aittir ve kütleyle değişmez; ısı sığası o cisme aittir ve kütle büyüdükçe büyür.',
         undefined,
-        { not: 'Biri maddeye, öteki cisme ait; hangisinin kütleyle değiştiğini sor.' },
+        { not: '1 kg su ile 2 kg su: öz ısı aynı (4,18), ısı sığası ikincide 2 kat. Kütle değişince yalnızca sığa değişir.' },
       ),
       kart(
         'Hesap',
@@ -1358,7 +1360,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
             { x: 7.3, y: 82, ad: 'kaynama', renk: 'ikincil' },
           ],
         },
-        { not: 'Grafikte yatay çizgi gördüğünde hâl değişiyor demek; ısı boşa gitmiyor.' },
+        { not: 'Grafikte yatay bölüm = hâl değişimi; o sırada verilen ısı Q = m·L, sıcaklık formülü (m·c·ΔT) kullanılmaz.' },
       ),
       kart(
         'Hâl değişimleri',
@@ -1452,7 +1454,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Denge ortalama değildir',
         'İki farklı madde karıştığında sonuç iki sıcaklığın ortalaması olmaz; öz ısılar farklıysa denge ortadan kayar.',
         undefined,
-        { not: 'Ortalama alıp cevabı işaretleme; öz ısılar farklıysa denge kaydırılır.' },
+        { not: '100 g 80 °C su + 100 g 20 °C su = 50 °C, ama su + demir olsa denge suya yakın çıkar (c_su > c_demir).' },
       ),
       kart(
         'Termometre nasıl çalışır?',
@@ -1516,7 +1518,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Yalıtım',
         'Termos üç yolu birden keser: çift cidar arasında boşluk iletimi ve konveksiyonu, aynalı yüzey ışımayı engeller.',
         undefined,
-        { not: 'Termos üç yolu nasıl kesiyor, kendine anlat; üç yol tek örnekte oturur.' },
+        { not: 'Işıma için ortam gerekmez: Güneş\'ten ısı boşluktan geliyor. \'Boşlukta ısı aktarılmaz\' şıkkı yanlış.' },
       ),
       kart(
         'Sıcak hava neden yükselir?',
@@ -1578,7 +1580,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Neden metal soğuk hisseder?',
         'Metal ısıyı hızlı çektiği için elden ısı hızla akar. Aynı sıcaklıktaki tahta daha ılık hissedilir.',
         undefined,
-        { not: 'Elin sıcaklığı değil, ısının akış hızını ölçüyor; bu farkı unutma.' },
+        { not: 'Aynı odadaki tahta ve metal aynı sıcaklıkta; elin ölçtüğü şey sıcaklık değil ısı iletim hızı.' },
       ),
       kart(
         'Yalıtkanlar',

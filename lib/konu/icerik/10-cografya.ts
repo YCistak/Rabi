@@ -41,7 +41,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Ölçek meselesi',
         'Aynı olay yerel, bölgesel ve küresel ölçekte farklı görünür. Ölçeği değiştirmek sonucu da değiştirir.',
         undefined,
-        { not: 'Bir yorum yaparken hangi ölçekte konuştuğunu söyle; ölçek değişince cevap değişir.' },
+        { not: 'Bir baraj yerelde köyü sular, bölgesel ölçekte tarımı sular, küresel ölçekte karbon salımını azaltır.' },
       ),
       kart(
         'Etkileşim',
@@ -106,7 +106,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Zaman boyutu',
         'Uzaktan algılamanın asıl gücü karşılaştırma: aynı yerin on yıl arayla görüntüsü değişimi doğrudan ölçülebilir kılar.',
         undefined,
-        { not: 'Tek görüntü fotoğraf, iki görüntü bilgi; karşılaştırma olmadan uzaktan algılama işe yaramaz.' },
+        { not: 'Aral Gölü\'nün 1989 ve 2014 uydu görüntüsü yan yana: tek görüntü göl gösterir, iki görüntü kaybı.' },
       ),
     ], [
       soru('CBS, afet sonrası hasar tespitinde kullanılır.', true, 'Önceki ve sonraki veriler üst üste konarak değişim görülüyor.'),
@@ -166,7 +166,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Sınıflandırma önemlidir',
         'Aynı veri farklı aralıklarla sınıflandırılırsa harita bambaşka bir izlenim verir.',
         undefined,
-        { not: 'Aynı veri, farklı aralık, farklı izlenim; haritaya bakınca aralıkları da oku.' },
+        { not: 'Nüfus yoğunluğu 0-50-100 aralıklarında \'boş\' görünen il, 0-10-20 aralıklarında \'kalabalık\' görünür.' },
       ),
       kart(
         'Renk seçimi',
@@ -238,7 +238,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Türkiye neden depremsel?',
         'Anadolu levhası, Avrasya ve Arap levhaları arasında sıkışıyor ve batıya doğru itiliyor.',
         undefined,
-        { not: 'Fay adlarını değil sıkışmayı anla: iki levha bastırıyor, Anadolu batıya kaçıyor.' },
+        { not: 'Arap levhası kuzeye iter, Avrasya tutar, Anadolu batıya kaçar: KAF ve DAF bu kaçışın iki kenarı.' },
       ),
       kart(
         'Fay hatları',
@@ -305,7 +305,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
             ['Örnek', 'Donma-çözülme', 'Karstlaşma'],
           ],
         },
-        { not: 'İki soru: kayaç ne, iklim ne? Cevap ikisinin kesişiminde.' },
+        { not: 'Toroslar\'da kireç taşı + yağış → mağara ve obruk (kimyasal). Çölde granit + sıcaklık farkı → çatlama (fiziksel).' },
       ),
       kart(
         'Kayaç türü belirleyici',
@@ -386,7 +386,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Vadi biçimi anlatır',
         'V biçimli vadi akarsuyun, U biçimli vadi buzulun izidir. Şekil, onu oluşturan kuvveti ele verir.',
         undefined,
-        { not: 'Şekle bakınca kuvveti oku: V akarsu, U buzul. Sınav bunu ters yönde soruyor.' },
+        { not: 'V vadi akarsu (Fırat), U vadi buzul (Kaçkarlar), boğaz vadi akarsuyun sert kayayı derin yarması.' },
       ),
     ], [
       soru('Menderesler, eğimin azaldığı yerlerde oluşur.', true, 'Yavaşlayan akarsu yatağında kıvrılarak akıyor.'),
@@ -428,7 +428,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Neden yer ve saat?',
         'Konumu ve zamanı yazılmayan bir gözlem, sonradan hiçbir haritaya oturtulamaz ve veri olmaktan çıkar.',
         undefined,
-        { not: 'Yeri yazılmamış gözlem coğrafi değil; ölçmeden önce nerede olduğunu yaz.' },
+        { not: 'Ölçümde koordinat ve saat yoksa \'sıcaklık 12 °C\' hiçbir şey demez: nerede, sabah mı öğle mi?' },
       ),
       kart(
         'Sanal saha çalışması',
@@ -483,7 +483,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Değiştirmenin bedeli',
         'Dere yatağını daraltmak taşkını, yamacı kesmek heyelanı davet eder. Araziye yapılan müdahale hep bir karşılık üretir.',
         undefined,
-        { not: 'Her müdahalenin bir karşılığı var; "ne kazandırır" kadar "neyi davet eder" diye sor.' },
+        { not: 'Dere yatağına yapılan mahalle: 10 yıl sorunsuz, 11. yılda taşkın. Dere yatağını unutmaz.' },
       ),
       kart(
         'Karşılıklı ilişki',
@@ -537,7 +537,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Neden değişir?',
         'Kuruluş sebebi ortadan kalksa da şehir kalabilir: savunma için kurulan bir kale şehri bugün turizmle yaşıyor olabilir.',
         undefined,
-        { not: 'Kuruluş sebebi ile bugünkü sebep aynı olmak zorunda değil; ikisini ayrı sor.' },
+        { not: 'Ankara başkent olmadan önce 30 bin nüfuslu kasabaydı; idari karar şehri kurdu. Kuruluş sebebi: siyasi.' },
       ),
       kart(
         'Geçici yerleşmeler',
@@ -592,7 +592,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Fonksiyon değişebilir',
         'Maden tükenince ya da yol değişince şehir küçülebilir ya da yeni bir işleve geçebilir.',
         undefined,
-        { not: 'Şehri işleviyle ezberleme; işlev değişince şehir de değişiyor.' },
+        { not: 'Zonguldak kömürle büyüdü, maden azalınca nüfus kaybetti. Tek işlevli şehir, işlev bitince küçülür.' },
       ),
       kart(
         'Çok fonksiyonlu şehirler',
@@ -664,7 +664,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Katma değer',
         'Ham maddenin işlenerek kazandığı ek değer. Aynı pamuk, kumaşa ve giysiye dönüştükçe kat kat değerlenir.',
         undefined,
-        { not: 'Aynı pamuk üç sektörden geçince neden üç kat eder? Cevap katma değer.' },
+        { not: '1 kg pamuk 1 lira, kumaş olunca 10, gömlek olunca 100. Sanayi olmayan ülke pamuğu 1 liraya satar.' },
       ),
     ], [
       soru('Tarım, madencilik ve balıkçılık birincil ekonomik faaliyetlerdir.', true, 'Doğrudan doğadan üretim yapıyorlar.'),
@@ -712,7 +712,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
             ['Gelişmiş', 'Çok düşük', 'Yüksek'],
           ],
         },
-        { not: '"Çok kişi çalışıyor" ile "çok gelir üretiyor" ayrı şeyler; tarım tam bu tuzak.' },
+        { not: 'Türkiye\'de tarım çalışanların ~%15\'i, millî gelirin ~%6\'sı: çok kişi, az gelir = düşük verim.' },
       ),
       kart(
         'Göstergeler',
@@ -763,7 +763,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Sanayi neden Marmara’da?',
         'Liman, pazar, iş gücü ve ulaşım ağı orada toplanmış durumda; sanayi kendini besleyen bir yığılma üretiyor.',
         undefined,
-        { not: 'Cevabı tek sebeple verme; liman, pazar, iş gücü, ulaşım — dördü birden orada.' },
+        { not: 'Marmara: İstanbul limanı + 25 milyon tüketici + iş gücü + Avrupa yolu. Sanayi kesiştikleri yere kurulur.' },
       ),
       kart(
         'Hizmetler',
@@ -825,7 +825,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Ortak nokta',
         'Başarılı örneklerin hepsinde önlem afetten önce alınmış ve bir kurumun sürekli sorumluluğuna bağlanmış.',
         undefined,
-        { not: 'Ülkeleri değil ortak paydayı tut: önlem afetten önce ve bir kurumun sürekli işi.' },
+        { not: 'Japonya\'da okullar deprem tatbikatını her ay yapar; hazırlık afet günü değil, sakin günlerin işi.' },
       ),
     ], [
       soru('Japonya da deprem eğitimleri ve tatbikatlar düzenli olarak yapılır.', true, 'Hazırlık, günlük hayatın parçası hâline getirilmiş durumda.'),
@@ -861,7 +861,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Zemin önemli',
         'Gevşek ve suya doygun zemin deprem dalgasını büyütür; aynı bina sağlam kayada çok daha az zorlanır.',
         undefined,
-        { not: 'Binanın sağlamlığı yetmez; aynı bina hangi zeminde, onu da sor.' },
+        { not: '1985 Meksika depremi 350 km uzakta ama şehir eski göl dolgusu üstündeydi: zemin sarsıntıyı 5 kat büyüttü.' },
       ),
       kart(
         'Açık alanlar',
@@ -936,7 +936,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Ortak nokta',
         'Korunmanın en etkili adımı afetten önce alınır; sonrasında yapılan her şey daha pahalı ve daha az etkilidir.',
         undefined,
-        { not: 'Beş afet, tek kural: en ucuz önlem afetten önce alınan.' },
+        { not: 'Deprem: eşya sabitle. Sel: dere yatağına yapma. Heyelan: yamacı kesme. Hepsi \'olmadan önce\'.' },
       ),
     ], [
       soru('Depremde "çök-kapan-tutun" davranışı önerilir.', true, 'Sağlam bir eşyanın yanına çökmek düşen cisimlerden koruyor.'),
@@ -983,7 +983,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Risk algısı sorunu',
         'Uzun süre afet yaşanmayan yerde tehlike unutulur. Hazırlık, en çok da sakin dönemlerde gevşer.',
         undefined,
-        { not: 'Sakin dönem hazırlık dönemi; "burada olmaz" cümlesi en büyük risk.' },
+        { not: 'İstanbul\'da son büyük deprem 1766: 250 yıl sessizlik \'olmaz\' hissi verir, oysa fay hattı enerji biriktirir.' },
       ),
     ], [
       soru('Afet bilinci, bilgiyi davranışa dönüştürmeyi gerektirir.', true, 'Ne yapılacağını bilmek, yapmakla tamamlanıyor.'),
@@ -1032,7 +1032,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Kültür bölgesi',
         'Sınırları devlet sınırlarıyla çakışmayan, ortak dil ve gelenekle tanımlanan alan. Geçiş kuşakları keskin değildir.',
         undefined,
-        { not: 'Kültür bölgesinin sınırı devlet sınırı değil; haritada ikisini üst üste koyma.' },
+        { not: 'Türk kültür bölgesi Balkanlar\'dan Sibirya\'ya 7 devlet + özerk bölgeler; sınırı dil ve gelenek çizer.' },
       ),
       kart(
         'Bugünkü bağlar',
