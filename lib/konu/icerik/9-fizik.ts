@@ -16,16 +16,18 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
   tema('fzk9-t1', 'Fizik Bilimi ve Kariyer Keşfi', [
     /*
       Bu konu, kart etiketi / Rabi notu / hızlı kontrol alanlarının **örneği**:
-      tasarım (`tasarim/bilgi-karti.html`) bu konu üstünden çizildi ve
-      metinler oradan. Etiket ve hızlı kontrol öteki konularda henüz boş;
-      Rabi notu ise her konuda **bir** kartta var (bkz. `tip.ts`).
+      tasarım (`tasarim/bilgi-karti.html`) bu konu üstünden çizildi. Etiket ve
+      hızlı kontrol öteki konularda henüz boş; Rabi notu her konuda **bir**
+      kartta var (bkz. `tip.ts`). Buradaki yedi not tasarımın "ezberleme, anla"
+      cümleleriydi; öteki notlarla aynı ölçüye (somut örnek, sayı, tuzak)
+      çekildi.
     */
     konu('fzk9-bilim', 'Fizik Bilimi', [
       kart(
         'Fizik neyi inceler?',
         'Madde, enerji ve bunların uzay-zamandaki etkileşimini inceler. Doğanın kurallarını sayı ile ifade etmeye çalışır.',
         undefined,
-        { etiket: 'Tanım', not: 'Bu kartı bir tanım olarak değil, dersin geri kalanının çerçevesi olarak oku.' },
+        { etiket: 'Tanım', not: 'Yaprağın düşüşü fizik, çürümesi kimya, büyümesi biyoloji: aynı yaprak, üç soru. Fizik enerji ve hareketi sorar.' },
       ),
       kart(
         'Bilimsel yöntem',
@@ -39,19 +41,19 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
             { ad: 'Kuram' },
           ],
         },
-        { etiket: 'Ölçme', not: 'Sıralamayı ezberleme; her okun neden o yöne baktığını sor.' },
+        { etiket: 'Ölçme', not: '\'Ağır cisim hızlı düşer\' hipotezi tüyle taşı vakumda bırakınca çöktü; deney kazandı, sezgi kaybetti.' },
       ),
       kart(
         'Deney ve model',
         'Model gerçeğin sadeleştirilmiş hâlidir. Deneyle çelişen model ne kadar zarif olursa olsun bırakılır.',
         undefined,
-        { etiket: 'Yöntem', not: '"Sürtünmesiz ortam" bir yalan değil, bilinçli bir sadeleştirmedir.' },
+        { etiket: 'Yöntem', not: '\'Sürtünmesiz ortam\' gerçek değil ama 100 m\'lik kaydırakta hata %2; model işe yaradığı yerde doğru sayılır.' },
       ),
       kart(
         'Hipotez, kuram, yasa',
         'Hipotez sınanmayı bekleyen öneri, kuram sınanmış açıklama, yasa ise gözlenen düzenliliğin kısa ifadesidir.',
         undefined,
-        { etiket: 'Kavramlar', not: 'Üçünü bir merdiven gibi düşünme; yasa kuramın yukarısı değil, başka bir iş.' },
+        { etiket: 'Kavramlar', not: 'Kütle çekim yasası F = Gm₁m₂/r² (ne oluyor), görelilik kuramı (neden oluyor). Yasa kuramın üst basamağı değil.' },
       ),
       kart(
         'Bilimsel bilgi değişebilir',
@@ -61,19 +63,19 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'Fizik ve matematik',
         'Matematik fiziğin dili. Bir yasa cümleyle anlatılabilir ama tahmin yapabilmesi için denkleme dönmesi gerekir.',
         undefined,
-        { etiket: 'Dil', not: 'Formül bir cümlenin kısaltmasıdır; cümleyi anlamadan kısaltmayı hatırlamak işe yaramaz.' },
+        { etiket: 'Dil', not: 'x = ½gt² cümlesi: \'düşen cisim her saniye daha çok yol alır.\' Cümleyi biliyorsan formülü t = 2\'de sınayabilirsin.' },
       ),
       kart(
         'Ölçme olmadan fizik olmaz',
         'Her ölçümün bir belirsizliği vardır. Sonucu belirsizliğiyle birlikte vermek, fiziğin dürüstlük kuralıdır.',
         undefined,
-        { etiket: 'Birimler', not: 'Bir soruda birim tutmuyorsa işlem de tutmuyordur — önce birimi kontrol et.' },
+        { etiket: 'Birimler', not: 'Cetvelle ölçülen 12,3 cm aslında 12,3 ± 0,1 cm; \'12,3456\' yazan öğrenci ölçmüyor, uyduruyor.' },
       ),
       kart(
         'Fiziğin öteki bilimlerle bağı',
         'Kimya atomun elektron düzenine, biyoloji sinir hücresinin elektriğine dayanır. Sınır çizgileri idari, doğal değil.',
         undefined,
-        { etiket: 'Kapanış', not: 'Desteyi bitirmeden önce bir kartı kendi cümlelerinle anlatmayı dene.' },
+        { etiket: 'Kapanış', not: 'MR cihazı fizik (manyetizma), okuyan doktor tıp; EKG\'deki elektrik fizik, kalp biyoloji. Sınır yok.' },
       ),
     ], [
       soru('Bir kuram yeterince kanıt toplayınca yasaya dönüşür.', false, 'Yasa olayın nasıl olduğunu tanımlar, kuram nedenini açıklar; biri ötekinin ileri hâli değil.'),
