@@ -463,6 +463,36 @@ export function SecimSatiri({
   )
 }
 
+/**
+ * Süzgeç kutusu — `Cip`in köşeli, açık zeminli hâli. Pomodoro'daki ders
+ * kutularından (`DersKutusu`) türedi: seçiliyken dolu turuncu değil, açık
+ * zemin + turuncu çerçeve. Dolu turuncu yuvarlak çip, ekranın asıl eylem
+ * düğmesiyle ("Deneme ekle", "Soru ekle") aynı ağırlıkta görünüyordu; süzgeç
+ * bir eylem değil. Denemeler'in tür süzgeci ve Yanlış Soru Bankası'nın
+ * sekme/ders süzgeçleri bunu kullanıyor.
+ */
+export function SuzgecKutusu({
+  secili,
+  className,
+  ...props
+}: React.ComponentProps<'button'> & { secili: boolean }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={secili}
+      className={cn(
+        'flex h-9 shrink-0 items-center justify-center rounded-[11px] border px-3 text-[13px] transition',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+        secili
+          ? 'border-[1.5px] border-primary-parlak bg-primary-soft font-extrabold text-primary'
+          : 'border-border bg-card font-bold text-muted-foreground active:bg-muted',
+        className,
+      )}
+      {...props}
+    />
+  )
+}
+
 export function Cip({
   secili,
   className,
