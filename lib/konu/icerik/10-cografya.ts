@@ -111,7 +111,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
       soru('CBS verilerinde zaman boyutu bulunmaz.', false, 'Farklı tarihli veriler karşılaştırılarak değişim izleniyor.'),
       sikli('Salgın haritası ne için kullanılır?', ['Kaynakları yoğunluğa göre dağıtmak', 'Hastalığı tedavi etmek'], 0, 'Sağlıkta CBS.'),
       sikli('Kargo takibi ve navigasyon hangi teknolojinin ürünü?', ['CBS ve GPS', 'Uzaktan algılama'], 0, 'Günlük hayatta.'),
-      sikli('Buzul erimesi nasıl ölçülür?', ['Yıllar arası uydu görüntüsü karşılaştırılarak', 'Yerinde termometreyle'], 0, 'Çevre izleme.'),
+      sikli('Buzul erimesi nasıl ölçülür?', ['Yıllar arası uydu görüntüsü karşılaştırarak', 'Yerinde termometreyle'], 0, 'Çevre izleme.'),
       soru('Uydu görüntüsü afetin ilk saatlerinde hasar tespitinde kullanılır.', true, 'Hayat kurtarır.'),
     ], [
       {
