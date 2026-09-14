@@ -82,9 +82,17 @@ describe('soru oranı ve tamamlanma', () => {
     expect(konuTamam(tam, ornekKonu)).toBe(true)
   })
 
+  it('sorusu olan konu, sorulara hiç girilmeden tamamlanmaz', () => {
+    // Kartlar okundu, yoklama verilmedi: oran yok ama borç var. Bir sonraki
+    // konu bununla açılsaydı yoklamayı atlamak geçmekten kolay olurdu.
+    const okundu = ilerlemeyiYaz({}, 's1', { okunan: 1, bitti: true }, '2026-09-01')
+    expect(soruOrani(okundu, soruluKonu)).toBeNull()
+    expect(konuTamam(okundu, soruluKonu)).toBe(false)
+  })
+
   it('sorusu olan konu geçme oranının altında tamamlanmaz', () => {
-    const yarim = ilerlemeyiYaz({}, 's1', { okunan: 1, bitti: true, dogru: 1 }, '2026-09-01')
-    expect(soruOrani(yarim, soruluKonu)).toBe(50)
+    const yarim = ilerlemeyiYaz({}, 's1', { okunan: 1, bitti: true, dogru: 0 }, '2026-09-01')
+    expect(soruOrani(yarim, soruluKonu)).toBe(0)
     expect(soruOrani(yarim, soruluKonu)!).toBeLessThan(GECME_ORANI)
     expect(konuTamam(yarim, soruluKonu)).toBe(false)
     // Kartlar bitti ama borç kaldı: düğümdeki soru işaretinin ölçütü bu.

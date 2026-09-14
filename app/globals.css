@@ -282,6 +282,11 @@ body {
   --patika-kitap-kilitli-sirt: #d6d0c4;
   --patika-kitap-kilitli-yazi: #57534e;
   --patika-serit: #f6e0a6;
+  /* Yolun sonundaki hazine sandığı: ahşap üç ton ve altın bant. */
+  --patika-sandik: #9a6234;
+  --patika-sandik-acik: #b5793f;
+  --patika-sandik-koyu: #6f4322;
+  --patika-altin: #e2b23c;
   /* Zemin simgelerinin mürekkebi: yedi derste de aynı, opaklık burada. */
   --patika-simge: rgba(94, 76, 50, 0.085);
 
@@ -1302,6 +1307,60 @@ body {
 }
 
 /*
+  Kartın altındaki Rabi notu, karttan biraz sonra ve aşağıdan geliyor: kartla
+  aynı anda gelseydi ikisi tek bir blok gibi okunurdu; not kartın ardından
+  söylenen bir söz.
+*/
+@keyframes desteNot {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+.deste-not {
+  animation: desteNot 320ms cubic-bezier(0.22, 0.7, 0.25, 1) both;
+}
+
+/*
+  Ara ekranlar (kısa mola, hızlı kontrol — `components/konu/`): maskot
+  aşağıdan büyüyerek geliyor, sonra yerinde süzülüyor; yazı ve şeritler
+  arkasından sırayla. Süzülme sonsuz ama yavaş (3.6 s): sürekli kıpırdayan bir
+  şey göz ucunda kalıyor, bu hız nefes alma gibi.
+
+  Şeritlerin gecikmesi satır içi `animation-delay` ile geliyor — sıra
+  ekrandan ekrana değişiyor ve her sıra için ayrı sınıf yazmak gereksiz.
+*/
+@keyframes molaMaskot {
+  from { opacity: 0; transform: translateY(26px) scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes molaSuzul {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+
+@keyframes molaYazi {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+.mola-maskot {
+  animation: molaMaskot 420ms cubic-bezier(0.2, 0.75, 0.3, 1) both;
+}
+
+.mola-suzul {
+  animation: molaSuzul 3.6s ease-in-out 420ms infinite;
+}
+
+.mola-yazi {
+  animation: molaYazi 420ms cubic-bezier(0.2, 0.75, 0.3, 1) 180ms both;
+}
+
+.mola-serit {
+  animation: molaYazi 380ms cubic-bezier(0.2, 0.75, 0.3, 1) both;
+}
+
+/*
   Soru sahnesi (`components/konu/soru-sahnesi.tsx`).
 
   Ekran uygulamanın kırık beyaz zemininden **kopuk**, kendi koyu paletinde
@@ -1384,6 +1443,11 @@ body {
      çubukta, kararın sonucu ise şeridin kendi rengiyle ve simgesiyle yazılı,
      sahnenin geldiği de zaten ekranın kendisinden belli. */
   .deste-karti,
+  .deste-not,
+  .mola-maskot,
+  .mola-suzul,
+  .mola-yazi,
+  .mola-serit,
   .sahne-iner,
   .soru-gerekce {
     animation: none;

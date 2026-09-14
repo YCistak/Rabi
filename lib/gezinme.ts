@@ -1,12 +1,13 @@
 /**
- * Alt menüdeki dört sekme.
+ * Alt menüdeki beş sekme.
  *
- * Beş sekmeden dörde indi: Pomodoro, Soru ve Deneme kart menüsüne taşındı,
- * yerlerine Oyunlar ve Ayarlar geldi. Gerekçe tasarımda: beş sekmede yazılar
- * sıkışıyordu ve Ayarlar her seferinde iki dokunuş uzaktaydı. Taşınan üçü
- * ana sayfadaki "Araçlar" kutucuklarından tek dokunuşla açılıyor.
+ * Bir süre dörttü: Pomodoro, Soru ve Deneme kart menüsüne taşınmış, yerlerine
+ * Oyunlar ve Ayarlar gelmişti — beş sekmede yazılar sıkışıyordu ve Ayarlar
+ * iki dokunuş uzaktaydı. Beşinci sekme (Harita, ders haritası) sonradan
+ * geldi: harita ana sayfada kendi bölümüyle açılıyordu, kullanıcı onu alt
+ * menüye istedi. Sekme adı kısa ("Harita") ki beşli sırada yazı sıkışmasın.
  */
-export type Sekme = 'ana' | 'oyunlar' | 'daha' | 'ayarlar'
+export type Sekme = 'ana' | 'oyunlar' | 'harita' | 'daha' | 'ayarlar'
 
 /**
  * Alt menüde yeri olmayan, kart menüsünden açılan ekranlar.
@@ -25,8 +26,6 @@ export type Ekran =
   | 'rozetler'
   | 'istatistik'
   | 'oyun-bankasi'
-  /** Konu Anlatımı haritası — ana sayfada kendi bölümü var, kart menüsünde yok. */
-  | 'konu'
   /** Gizlilik ve Koşullar — yalnızca Ayarlar'dan açılıyor, kart menüsünde yok. */
   | 'yasal'
   /** Öneri ve hata bildir — o da yalnızca Ayarlar'dan. */

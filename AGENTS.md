@@ -1740,12 +1740,26 @@ iki kez eklenmesini önlüyor; içerik güncellendiğinde kullanıcının kaydet
 bilgi yerinde kalıyor. Yeni bir kart alanı eklersen (görsel, formül) onu da
 kayda koy, kimliğe güvenme.
 
-### Kilit yok, sıra var
+### Kilit var, anahtarı kullanıcıda
 
-Konular sırayla açılmıyor. Sınav hazırlığındaki öğrenci yarın işlenecek
-konuya bugün bakmak ister ve kilitli bir harita onu kendi müfredatından uzak
-tutar. Patika sırayı **gösteriyor**, dayatmıyor; sıradaki konunun düğümündeki
-halka aynı işi zorlamadan yapıyor.
+Konular sırayla açılıyor: bir konu, bir öncekinin kartları okunup soruları
+geçilmeden (`GECME_ORANI`, %50) açılmıyor (`konuKilitli`, `lib/konu/ilerleme.ts`)
+ve kitabı haritada renksiz duruyor. Sorusu olan konuda **cevaplanmamış**
+yoklama geçilmiş sayılmıyor (`konuTamam`) — `soruOrani`nin `null`ü "soru yok"
+ile "girilmedi"yi ayırt etmiyor, ayrım soru sayısından yapılıyor.
+
+Kilitli kitabın kartındaki düğme **"Kilidi aç"** ve doğrudan açmıyor: önce
+onay penceresi uyarıyor (önceki konuları okuyup sorularını geçerek gelmek
+daha sağlıklı, kartlar onların üstüne kuruluyor) ama kararı kullanıcıya
+bırakıyor. Kapı bir ara tümüyle kapatıldı ve geri açıldı: sınav
+hazırlığındaki öğrenci yarın işlenecek konuya bugün bakabilmeli. Kartın
+içinde ayrıca sarı bir uyarı paragrafı vardı, kaldırıldı — uyarıyı onay
+penceresi söylüyor. Açılan kilit kayda giriyor (`acildi`), uyarı aynı konuda
+ikinci kez çıkmıyor.
+
+Eşik %80'den %50'ye indi: destede üç-altı iddia var ve seksen demek altı
+sorunun beşi demekti; tek yanlış konuyu kilitliyor, öğrenci aynı yoklamayı
+üst üste veriyordu.
 
 Haritanın tepesinde bir süre "Kaldığın yer" kısayolu duruyordu; kaldırıldı.
 Ekranın işi seçtirmek ve seçilecek yer zaten patikanın kendisi — kısayol,
@@ -1755,6 +1769,48 @@ anlatıyordu.
 Tamamlanma destenin sonuna gelmekle kazanılıyor. Yarıda çıkılan destede
 işaretlenen kartlar bankaya düşüyor ama konu bitmiş sayılmıyor — yoksa ilk
 kartı işaretleyip çıkmak konuyu tamamlamanın yolu olurdu.
+
+### Destenin arasına mola ve hızlı kontrol giriyor
+
+Deste yalnızca kart değil (`tasarim/bilgi-karti.html`, akış
+`lib/konu/deste-akisi.ts`): kartların arasına bir **kısa mola** (Rabi
+zıplıyor, okunan kartların adları listeleniyor) ve bir–iki **hızlı kontrol**
+(okunmuş bir karttan iki şıklı soru) giriyor. Üç ekranın başlığı ortak
+(`deste-basligi.tsx`), zemin dersin rengi, vurgu dersin mürekkebi
+(`bicim.murekkep`) — mockup Fizik'in mavisiyle çizildi, o mavi burada derse
+göre değişiyor.
+
+- **Yer rastgele, kenarlar yasak.** Ara ekran ilk iki ve son iki kartın
+  arasına girmiyor: ikinci karttan sonraki mola okuma başlamadan verilen bir
+  mola, son karttan önceki kontrol soru sahnesiyle üst üste biniyor. Yer
+  yoksa (üç kartlık deste) ara ekran hiç yok. Rastgelelik deste açılırken
+  bir kez atılıyor ve `Math.random` `desteAkisi`nin **dışından** geliyor —
+  test aynı yerleşimi görebilmeli.
+- **Ara ekranlar kart sayılmıyor.** `okunan` ve bölmeli çubuk yalnızca
+  kartları sayıyor; Geri ara ekranı atlayıp bir önceki karta dönüyor.
+- **Kontrol sayısı kartla orantılı**: on karttan uzun destede iki, kısasında
+  bir (`icerik.test.ts`). Her kontrol dayandığı kartı (`kart`) söylüyor; o
+  kart okunmadan sorulmuyor ve "Tekrar oku" oraya dönüyor. Yanlışta "Devam
+  et" önce uyarıyor ("Kartı atlıyorsun") ama engellemiyor — kilitli kitabın
+  onay penceresiyle aynı kural.
+- **Mola metni beş varyasyondan biri** (`MOLA_METINLERI`), destede bir kez
+  seçiliyor. Konfeti yok: mockup'ta vardı, ama her destede patlayan kutlama
+  oyunlardaki rekor konfetisini sıradanlaştırırdı. "+10 puan" satırı da
+  alınmadı — puan sistemi yok (bkz. **Seviye, havuç ve mağaza kaldırıldı**).
+- **Kartın etiketi ve Rabi'nin notu** (`BilgiKarti.etiket`, `not`) isteğe
+  bağlı: etiket yoksa "Kart 3/7" yazıyor, not yoksa balon da maskot da
+  çizilmiyor. Boş balonun yanındaki tavşan söyleyecek sözü olmayan bir
+  rehber gibi durur.
+
+### Kart sayısı konunun genişliğine göre: 6–16
+
+Konu başına kart sayısı bir süre en fazla sekiz, sonra on'du ve konunun
+genişliğine bakmıyordu. Aralık artık 6–16 (`icerik.test.ts`): taban
+"konuyu anlatmaya yetmeyen deste", tavan "yarıda bırakılan deste" sınırı.
+Tavan hedef değil — tavanı doldurmak için kart yazmak desteyi uzatır. Kartın
+ölçütü şu: öğrencinin sınavda ya da konuyu anlamada **işine yarayan** bir
+şey söylüyor mu? Söylemiyorsa yazılmıyor; kart uzunluğu sınırı da aynı
+sebeple duruyor.
 
 ### Deste bitince doğru/yanlış soruluyor
 
@@ -1792,6 +1848,23 @@ Karardan sonra kartın çerçevesi renkleniyor ve bu çerçeve `ring` ile değil
 kendi gölgesi (`golge-kart`) onu eziyordu. `outlineOffset` de negatif — dışarı
 taşan çizgi, kaydırılabilir kutunun kenarında kırpılıyordu.
 
+### Yoklamada iki soru biçimi, sayısı kart sayısına bağlı
+
+Sahne bir süre yalnızca doğru/yanlış iddia soruyordu; "hangisi" diye
+sormak mümkün değildi (Pisagor üçlüsü hangisi, hangi organel ATP üretir).
+`SoruKarti` artık iki biçimden biri: **iddia** (`soru()`, Doğru/Yanlış) ya da
+**iki şıklı soru** (`sikli()`, A/B). Şık sayısı ikide kalıyor — dört şıklı
+soru okumanın arkasına bir sınav ekler; hızlı kontrolle aynı kalıp. Sahne iki
+biçimi tek koddan çiziyor: karar bir sayıya iniyor (`secim`/`beklenen`),
+gerekçe ve çerçeve ikisinde de aynı.
+
+Soru sayısı **kart sayısıyla orantılı** (`icerik.test.ts`): en az kart+1,
+en çok kart×1,3+1 — altı kartlık konuda yedi–sekiz, on altı kartlıkta yirmiye
+yakın. Sabit dört soru kısa konuyu sınava çeviriyor, uzun konunun yarısını
+yoklamadan bırakıyordu. Her konuda iki biçimden en az ikişer tane var; A/B
+ve doğru/yanlış dengesi bütünde %40–60 arasında tutuluyor — tek yönlü deste
+cevabı içeriğe bakmadan verdirir.
+
 ### Kartlardan soruya bir köprüyle geçiliyor
 
 Sahnenin **üç** hâli var ve üçü de `soru-sahnesi.tsx` içinde: giriş (`Giris`),
@@ -1827,19 +1900,24 @@ okunmazdı — kurulumdaki "Şimdilik atla" kuralı.
 hâlde girişte "Şimdi değil" diyen kullanıcının kaydına, hiç verilmemiş bir
 yoklamanın "0 doğru"su geçiyordu.
 
-### Ana sayfada kısayol değil kendi bölümü
+### Alt menüde kendi sekmesi
 
 Bölüm kapalı betada bir süre bayrakla gizliydi (`KONU_ANLATIMI_ACIK`,
 `lib/beta.ts`): sürüm planı (#82) onu 0.7.0'a ayırmıştı. 0.7.0 ile açıldı ve
 bayrak `beta.ts`'in kendi kuralına göre dosyadan düştü.
 
-Ana sayfada bölümün adı **Bilgi Kartları** (kod tarafı `konu` kalıyor):
-ekranın kendisi kart gösteriyor, ders anlatmıyor. Bölüm `KARTLAR` listesinde
-**yok** — Araçlar şeridine bir kutucuk
-olarak konsaydı son kullanılanlarla birlikte sıraya girip kayardı ve hemen
-altındaki kutuda ikinci bir kopyası dururdu. Buradaki iş "aç ve oku", her gün
-aynı yerde durması gerekiyor. Bilmediklerim de ayrı bir araç değil, haritanın
-içinde: kartlar oraya buradan düşüyor.
+Harita alt menüdeki beşinci sekme (**Harita**, Araçlar ile Oyunlar
+arasında, menünün ortasında; kod tarafı `konu` kalıyor). Önce ana sayfada "Bilgi Kartları"
+başlıklı kendi kartıyla açılıyordu — Araçlar şeridine kutucuk olarak
+konsaydı son kullanılanlarla sıraya girip kayacaktı — sonra kullanıcı onu
+alt menüye istedi ve ana sayfadaki kart kalktı: iki kapı aynı yere
+açılıyordu. Bölüm `KARTLAR` listesinde **yok**. Bilmediklerim de ayrı bir
+araç değil, haritanın içinde: kartlar oraya buradan düşüyor.
+
+Sekme açılırken ayrıca bir karşılama yok. Bir süre Rabi bir buçuk saniye
+ekranın ortasında beliriyor, harita arkasında kararıyordu; kullanıcı
+kaldırdı — her açılışta beklenen bir buçuk saniye, haritaya giden yolu
+uzatıyordu.
 
 ### Patika kitaplı bir yol
 
@@ -1847,7 +1925,10 @@ Harita (`components/ekranlar/konu-haritasi.tsx`) bir oyun dünyası gibi
 çiziliyor (`tasarim/konu-haritasi.html`): kitapların altından geçen kıvrımlı
 bir yol, geçilen kısmı bir tık koyu; her basamak bir **kitap** — yeşil
 kapaklı tek kitap anlatıma, turuncu kapaklı eğik kitap çifti sorulara
-açılıyor; kilitli kitap gri. Kitabın rengi **işe** ait ve derse göre
+açılıyor; kilitli kitap gri. Yol son kitapta bitmiyor, biraz daha sürüp bir
+**hazine sandığında** duruyor (`Sandik`, elle çizilmiş SVG; kilitli kitap
+gibi gri, bütün konular bitip testleri geçilince renklenip kapağı açılıyor) — eskiden bayraklı bir bitiş dairesi vardı. Kitabın
+rengi **işe** ait ve derse göre
 değişmiyor: yedi derste yedi kitap rengi, "yeşile bas, oku" kuralını her
 derste yeniden öğretmek olurdu. Yeşil `--success`, turuncu `--primary-parlak`;
 ayrı bir kitap paleti yok.
@@ -1875,11 +1956,29 @@ yatayda esneyen bir kutu işe yaramazdı; taşan kısmı bölüm kutusu
 `overflow: clip` ile kırpıyor (`hidden` değil: kaydırma kabı olur, yapışkan
 bandın hesabını bozar). Bölüm kutusu bandın altına `BANT_PAYI` kadar
 sokuluyor ki yol bölümden bölüme bandın **altından** geçsin; sokulmasaydı
-bandın iki yanında düz kesilirdi.
+bandın iki yanında düz kesilirdi. Sınırı geçen parça iki kutuda da çiziliyor
+(kuyruk ve baş) ve ikisi aynı eğri olmak zorunda: sanal uçlar komşu kitabın
+gerçekten durduğu yerde (`BOLUM_ARASI`, düzenden türüyor). Yapışkan bandın
+sarmalında zemin degradesi yok — donuk üst yarısı yolu kesiyordu.
 
 Sıradaki kitabı ayıran şey renk değil boy, altındaki ışık ve genişleyen halka
 (`patika-halka`) — bitmiş kitaplar da aynı yeşil. "Başla" balonu kaldırıldı:
-başlık zaten "N. basamak sırada" diyor.
+başlık zaten "N. konu sırada" diyor.
+
+**Numara yalnızca yeşil kitapta ve konuyu sayıyor** (1, 2, 3…). Bir süre
+basamaklar sayılıyordu — yeşiller 1, 3, 5 diye gidiyordu ve "3. kitap"
+dendiğinde ikinci konu anlaşılıyordu. Turuncu kitabın kapağında numara değil
+liste simgesi var: sorular sayılmıyor, çözülüyor.
+
+**Kitaba basınca ortada bir kart açılıyor** (`KonuKarti`), alttan gelen bir
+sayfa değil. Yeşil kitap anlatım kartını, turuncu kitap soru kartını açıyor:
+aynı düzen, ayrı ton (yeşil / turuncu kurdele ve düğme), ayrı maskot pozu
+(okuyan / düşünen), yıldızlar ayrı şeyi sayıyor (okuma: bitti 3, başlandı 1;
+soru: %90 üç, geçme sınırı iki, altı bir) ve düğmenin yazısı ayrı ("Anlatımı
+oku" / "Soruları çöz"). Eskiden iki basamağı alt alta listeleyen tek bir konu
+sayfası vardı ve hangi kitaba basıldığı sayfada görünmüyordu. Kilitli
+konunun kartında düğme "Kilidi aç" ve önce onay penceresi çıkıyor (bkz.
+**Kilit var, anahtarı kullanıcıda**).
 
 ## Hedef kataloğu
 

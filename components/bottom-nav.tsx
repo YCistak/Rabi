@@ -6,9 +6,10 @@ import type { Sekme } from '@/lib/gezinme'
 /**
  * Alt menü simgeleri elle çiziliyor, hazır setten alınmıyor.
  *
- * Tasarımdaki dört simgenin görsel ağırlığı birbirine eşit; lucide'ın
- * `Gamepad2`si diğerlerinin yanında basık duruyordu. Dördü de 24×24 kutuda,
- * aynı çizgi kalınlığında ve aynı optik yükseklikte.
+ * Tasarımdaki simgelerin görsel ağırlığı birbirine eşit; lucide'ın
+ * `Gamepad2`si diğerlerinin yanında basık duruyordu. Hepsi 24×24 kutuda,
+ * aynı çizgi kalınlığında ve aynı optik yükseklikte. Harita simgesi katlanmış
+ * bir harita — sonradan eklendi, aynı kurala göre çizildi.
  */
 const SIMGELER: Record<Sekme, React.ReactNode> = {
   ana: (
@@ -22,6 +23,12 @@ const SIMGELER: Record<Sekme, React.ReactNode> = {
       <path d="M9.3 4.6h5.4a5.7 5.7 0 0 1 5.7 5.7v2a2.4 2.4 0 0 1-.1.8l-1.7 5a3.2 3.2 0 0 1-6-.3l-.5-1.7h-1.6l-.5 1.7a3.2 3.2 0 0 1-6 .3l-1.7-5a2.4 2.4 0 0 1-.1-.8v-2a5.7 5.7 0 0 1 5.7-5.7Z" />
       <path d="M8.4 9.4v3.2M6.8 11h3.2" />
       <path d="M15.4 9.9h.01M17.2 12.1h.01" />
+    </>
+  ),
+  harita: (
+    <>
+      <path d="M3.5 6.5 9 4l6 2.5L20.5 4v13.5L15 20l-6-2.5-5.5 2.5Z" />
+      <path d="M9 4v13.5M15 6.5V20" />
     </>
   ),
   daha: (
@@ -43,8 +50,9 @@ const SIMGELER: Record<Sekme, React.ReactNode> = {
 const SEKMELER: { id: Sekme; ad: string }[] = [
   { id: 'ana', ad: 'Ana Sayfa' },
   // Araçlar Oyunlar'dan önce: deneme girişi, sıralama, hedef gibi asıl işler
-  // orada; oyun ikinci sırada.
+  // orada; oyun ikinci sırada. Harita ikisinin arasında, menünün ortasında.
   { id: 'daha', ad: 'Araçlar' },
+  { id: 'harita', ad: 'Harita' },
   { id: 'oyunlar', ad: 'Oyunlar' },
   { id: 'ayarlar', ad: 'Ayarlar' },
 ]
@@ -69,7 +77,7 @@ export function BottomNav({
       zorunda kalıyor. Ekran geçişi bu yüzden takılıyordu.
     */
     <nav className="guvenli-alt fixed inset-x-0 bottom-0 z-40 rounded-t-[26px] border-t border-border bg-card shadow-[0_-6px_22px_rgba(54,33,112,0.12)]">
-      <ul className="mx-auto flex max-w-md px-3 pt-2.5 pb-1">
+      <ul className="mx-auto flex max-w-md px-2 pt-2.5 pb-1">
         {SEKMELER.map(({ id, ad }) => {
           const aktif = sekme === id
           return (

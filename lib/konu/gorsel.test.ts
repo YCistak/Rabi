@@ -33,7 +33,7 @@ const gorselliKartlar: [string, { gorsel: Gorsel }][] = KONU_SINIFLARI.flatMap((
         .map((k) => [`${sinif}-${ders.id} · ${konu.ad} · ${k.baslik}`, k] as const)
       const sorular = konu.sorular
         .filter((s): s is typeof s & { gorsel: Gorsel } => s.gorsel !== undefined)
-        .map((s) => [`${sinif}-${ders.id} · ${konu.ad} · soru: ${s.ifade}`, s] as const)
+        .map((s) => [`${sinif}-${ders.id} · ${konu.ad} · soru: ${s.tur === 'sikli' ? s.soru : s.ifade}`, s] as const)
       return [...kartlar, ...sorular].map(
         ([ad, x]) => [ad, x] as [string, { gorsel: Gorsel }],
       )

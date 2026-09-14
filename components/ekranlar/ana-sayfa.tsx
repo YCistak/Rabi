@@ -311,38 +311,9 @@ export function AnaSayfa({
         </Not>
       )}
 
-      {/*
-        Bilgi Kartları'nın **tek** girişi bu kart: Araçlar şeridinde de kart
-        menüsünde de yok. Bölüm aranıp açılan bir araç değil, her gün aynı
-        yerde duran bir kapı — Araçlar'a kutucuk olarak konsaydı son
-        kullanılanlarla birlikte sıraya girip kayardı.
-      */}
-      <section>
-        <div className="mb-2 px-1">
-          <h2 className="font-display text-base font-extrabold tracking-tight">
-            Bilgi Kartları 📚
-          </h2>
-        </div>
-        <button
-          type="button"
-          onClick={() => onKartAc('konu')}
-          className="golge-kart flex w-full items-center gap-3.5 rounded-2xl bg-card px-4 py-4 text-left transition active:brightness-[0.98]"
-        >
-          <span
-            className="grid size-12 shrink-0 place-items-center rounded-[18px] bg-primary-soft text-[24px]"
-            aria-hidden
-          >
-            🗺️
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block font-display text-[15.5px] font-extrabold tracking-tight">
-              Ders haritasını aç
-            </span>
-          </span>
-          <ChevronRight size={19} className="shrink-0 text-muted-foreground" aria-hidden />
-        </button>
-      </section>
-
+      {/* Ders haritasının ana sayfada girişi yok: alt menüde kendi sekmesi
+          (Harita) var. Bir süre burada "Bilgi Kartları" başlıklı bir kart
+          duruyordu; iki kapı aynı yere açılıyordu. */}
       {/* Araçlar ve Oyunlar aynı biçimde: başlık + "Tümü", altında tek bir
           kutunun içinde dört yüz. Araçlar bir ara başlıksız ve kutusuz
           duruyordu; iki bölüm yan yana iki ayrı tasarım gibi okunuyordu. */}

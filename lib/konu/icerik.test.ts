@@ -13,14 +13,16 @@ import type { DersProgrami } from './tip'
 const BASLIK_SINIRI = 44
 const METIN_SINIRI = 240
 /**
- * Bir konu bu kadar karttan uzunsa kullanıcı desteyi yarıda bırakıyor.
+ * Konu başına kart sayısı: en az 6, en fazla 16.
  *
- * Sınır sekizdi ve konunun büyüklüğüne bakmıyordu: "Üslü ve Köklü
- * Gösterimler" ile "Sonsuz Uç" aynı sayıda kart alıyordu. Ona çıkarıldı ama
- * bu bir hedef değil **tavan** — kart sayısını konunun kendi genişliği
- * belirliyor, tavanı doldurmak için kart yazmak desteyi uzatır.
+ * Tavan sekizdi, sonra on; ikisi de konunun genişliğine bakmıyordu ve
+ * "Üslü ve Köklü Gösterimler" dört kartla geçiştiriliyordu. Aralık artık
+ * Maarif programındaki konunun genişliğine göre kullanılıyor; tavan hâlâ
+ * hedef değil **tavan** — tavanı doldurmak için kart yazmak desteyi uzatır,
+ * taban ise "konuyu anlatmaya yetmeyen deste" sınırı.
  */
-const KART_SINIRI = 10
+const KART_TABANI = 6
+const KART_SINIRI = 16
 
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.map(
@@ -38,7 +40,7 @@ describe('programlar', () => {
     for (const tema of program!.temalar) {
       expect(tema.konular.length, `${tema.ad} boş`).toBeGreaterThan(0)
       for (const konu of tema.konular) {
-        expect(konu.kartlar.length, `${konu.ad} boş`).toBeGreaterThan(2)
+        expect(konu.kartlar.length, `${konu.ad} kısa`).toBeGreaterThanOrEqual(KART_TABANI)
         expect(konu.kartlar.length, `${konu.ad} çok uzun`).toBeLessThanOrEqual(KART_SINIRI)
       }
     }
@@ -120,41 +122,73 @@ describe('kimlikler', () => {
 })
 
 /**
- * Doğru/yanlış soruları.
+ * Deste sonu soruları — doğru/yanlış iddialar ve iki şıklı sorular.
  *
  * Biçimin kendisi bir tuzak taşıyor: cevabı bilmeyen kullanıcı da yazı tura
- * atarak yarısını tutturur, hep aynı düğmeye basan ise iddiaların dengesine
+ * atarak yarısını tutturur, hep aynı düğmeye basan ise cevapların dengesine
  * göre kazanır. Testler bu yüzden içeriği değil **dengeyi** denetliyor —
  * her destede iki cevaptan ikisi de bulunsun ve genel dağılım yarı yarıya
- * kalsın.
+ * kalsın. Aynı kural iki şıklıda A/B için geçerli.
+ *
+ * Soru sayısı kart sayısıyla **orantılı**: altı kartlık konuda yedi–sekiz,
+ * on altı kartlıkta yirmiye yakın soru. Sabit bir sayı kısa konuyu sınava
+ * çevirir, uzun konunun yarısını yoklamadan bırakırdı.
  */
 const IFADE_SINIRI = 130
 const ACIKLAMA_SINIRI = 170
-/** Yoklama destenin arkasına eklenen kısa bir adım; uzun olursa deste bitmiyor. */
-const SORU_SINIRI = 6
+const SIKLI_SORU_SINIRI = 110
+const SIKLI_SIK_SINIRI = 44
+
+function soruAraligi(kartSayisi: number): [number, number] {
+  return [kartSayisi + 1, Math.floor(kartSayisi * 1.3) + 1]
+}
 
 describe('sorular', () => {
   const tumu = programlar
     .map(([, program]) => program)
     .filter((p): p is DersProgrami => p !== null)
   const tumSorular = tumu.flatMap((p) => tumKonular(p).flatMap((k) => k.sorular))
+  const iddialar = tumSorular.filter((s) => s.tur !== 'sikli')
+  const sikliler = tumSorular.filter((s) => s.tur === 'sikli')
 
-  it.each(programlar)('%s: her konuda soru var ve sayısı sınırda', (_ad, program) => {
+  it.each(programlar)('%s: soru sayısı kart sayısıyla orantılı', (_ad, program) => {
     for (const konu of tumKonular(program!)) {
-      expect(konu.sorular.length, `${konu.ad} sorusuz`).toBeGreaterThanOrEqual(3)
-      expect(konu.sorular.length, `${konu.ad} çok soru`).toBeLessThanOrEqual(SORU_SINIRI)
+      const [enAz, enCok] = soruAraligi(konu.kartlar.length)
+      expect(konu.sorular.length, `${konu.ad}: ${konu.kartlar.length} karta ${konu.sorular.length} soru az`).toBeGreaterThanOrEqual(enAz)
+      expect(konu.sorular.length, `${konu.ad}: ${konu.kartlar.length} karta ${konu.sorular.length} soru çok`).toBeLessThanOrEqual(enCok)
     }
   })
 
-  it.each(programlar)('%s: iddialar kısa ve gerekçeli', (_ad, program) => {
+  /*
+    Her konuda iki biçim de var: yalnızca iddia soran yoklama "hangisi" diye
+    soramıyor, yalnızca şık soran yoklama ise iddiayı tartma alışkanlığını
+    kaybettiriyor. En az ikişer — tek bir örnekle denge kurulamaz.
+  */
+  it.each(programlar)('%s: her konuda iki soru biçimi de var', (_ad, program) => {
+    for (const konu of tumKonular(program!)) {
+      const sikli = konu.sorular.filter((s) => s.tur === 'sikli').length
+      expect(sikli, `${konu.ad}: iki şıklı soru az`).toBeGreaterThanOrEqual(2)
+      expect(konu.sorular.length - sikli, `${konu.ad}: doğru/yanlış az`).toBeGreaterThanOrEqual(2)
+    }
+  })
+
+  it.each(programlar)('%s: iddialar ve sorular kısa, gerekçeli', (_ad, program) => {
     for (const konu of tumKonular(program!)) {
       for (const s of konu.sorular) {
-        expect(s.ifade.trim().length, `boş iddia: ${konu.ad}`).toBeGreaterThan(0)
-        expect(s.ifade.length, `iddia uzun: ${s.ifade}`).toBeLessThanOrEqual(IFADE_SINIRI)
-        expect(s.aciklama.trim().length, `gerekçesiz: ${s.ifade}`).toBeGreaterThan(0)
-        expect(s.aciklama.length, `gerekçe uzun: ${s.ifade}`).toBeLessThanOrEqual(
-          ACIKLAMA_SINIRI,
-        )
+        expect(s.aciklama.trim().length, `gerekçesiz: ${konu.ad}`).toBeGreaterThan(0)
+        expect(s.aciklama.length, `gerekçe uzun: ${s.aciklama}`).toBeLessThanOrEqual(ACIKLAMA_SINIRI)
+        if (s.tur === 'sikli') {
+          expect(s.soru.trim().length, `boş soru: ${konu.ad}`).toBeGreaterThan(0)
+          expect(s.soru.length, `soru uzun: ${s.soru}`).toBeLessThanOrEqual(SIKLI_SORU_SINIRI)
+          expect(s.siklar[0]).not.toBe(s.siklar[1])
+          for (const sik of s.siklar) {
+            expect(sik.trim().length).toBeGreaterThan(0)
+            expect(sik.length, `şık uzun: ${sik}`).toBeLessThanOrEqual(SIKLI_SIK_SINIRI)
+          }
+        } else {
+          expect(s.ifade.trim().length, `boş iddia: ${konu.ad}`).toBeGreaterThan(0)
+          expect(s.ifade.length, `iddia uzun: ${s.ifade}`).toBeLessThanOrEqual(IFADE_SINIRI)
+        }
       }
     }
   })
@@ -167,6 +201,7 @@ describe('sorular', () => {
   it.each(programlar)('%s: iddialar soru cümlesi değil', (_ad, program) => {
     for (const konu of tumKonular(program!)) {
       for (const s of konu.sorular) {
+        if (s.tur === 'sikli') continue
         expect(s.ifade.includes('?'), `soru cümlesi: ${s.ifade}`).toBe(false)
       }
     }
@@ -178,15 +213,99 @@ describe('sorular', () => {
   */
   it.each(programlar)('%s: her destede iki cevap da var', (_ad, program) => {
     for (const konu of tumKonular(program!)) {
-      const dogru = konu.sorular.filter((s) => s.dogru).length
+      const iddia = konu.sorular.filter((s) => s.tur !== 'sikli')
+      const dogru = iddia.filter((s) => s.dogru === true).length
       expect(dogru, `${konu.ad}: hepsi yanlış`).toBeGreaterThan(0)
-      expect(dogru, `${konu.ad}: hepsi doğru`).toBeLessThan(konu.sorular.length)
+      expect(dogru, `${konu.ad}: hepsi doğru`).toBeLessThan(iddia.length)
     }
   })
 
-  it('genel dağılım yarı yarıya', () => {
-    const oran = tumSorular.filter((s) => s.dogru).length / tumSorular.length
+  it('doğru/yanlış genel dağılımı yarı yarıya', () => {
+    const oran = iddialar.filter((s) => s.dogru === true).length / iddialar.length
     expect(oran).toBeGreaterThan(0.4)
     expect(oran).toBeLessThan(0.6)
+  })
+
+  it('iki şıklı sorularda doğru şık A ile B arasında dengeli', () => {
+    if (sikliler.length < 10) return
+    const b = sikliler.filter((s) => s.dogru === 1).length / sikliler.length
+    expect(b).toBeGreaterThan(0.4)
+    expect(b).toBeLessThan(0.6)
+  })
+})
+
+/**
+ * Kart etiketi ve Rabi'nin notu; hızlı kontrol.
+ *
+ * Üçü de isteğe bağlı ve çoğu kartta henüz yok; testler yalnızca yazılmış
+ * olanın ekrana sığdığını ve kontrolün **var olan** bir karta dayandığını
+ * denetliyor. Var olmayan karta dayanan kontrol "Tekrar oku" deyince hiçbir
+ * yere dönemez.
+ */
+const ETIKET_SINIRI = 18
+const NOT_SINIRI = 120
+const KONTROL_SORU_SINIRI = 90
+const SIK_SINIRI = 44
+const KONTROL_ACIKLAMA_SINIRI = 170
+
+describe('kart notu ve hızlı kontrol', () => {
+  it.each(programlar)('%s: etiket ve not kısa', (_ad, program) => {
+    for (const konu of tumKonular(program!)) {
+      for (const kart of konu.kartlar) {
+        if (kart.etiket !== undefined) {
+          expect(kart.etiket.trim().length, `boş etiket: ${kart.baslik}`).toBeGreaterThan(0)
+          expect(kart.etiket.length, `etiket uzun: ${kart.etiket}`).toBeLessThanOrEqual(ETIKET_SINIRI)
+        }
+        if (kart.not !== undefined) {
+          expect(kart.not.trim().length, `boş not: ${kart.baslik}`).toBeGreaterThan(0)
+          expect(kart.not.length, `not uzun: ${kart.not}`).toBeLessThanOrEqual(NOT_SINIRI)
+        }
+      }
+    }
+  })
+
+  /*
+    On karttan uzun destede iki kontrol, kısasında bir: tek soru uzun
+    destenin ikinci yarısını hiç yoklamıyor, iki soru kısa desteyi sınava
+    çeviriyor. Sayı sabit ki içerik yazarken unutulmasın.
+  */
+  it.each(programlar)('%s: her konuda uzunluğuna göre bir ya da iki kontrol var', (_ad, program) => {
+    for (const konu of tumKonular(program!)) {
+      const beklenen = konu.kartlar.length > 10 ? 2 : 1
+      expect(konu.kontroller.length, `${konu.ad}: kontrol sayısı`).toBe(beklenen)
+    }
+  })
+
+  /*
+    Doğru şık hep A'da olsaydı soru okunmadan cevaplanırdı; deste sonundaki
+    doğru/yanlış dengesinin aynısı. Konu başına değil bütünde ölçülüyor —
+    tek sorulu konuda denge kurulamaz.
+  */
+  it('kontrollerde doğru şık A ile B arasında dengeli', () => {
+    const hepsi = programlar
+      .map(([, p]) => p)
+      .filter((p): p is DersProgrami => p !== null)
+      .flatMap((p) => tumKonular(p).flatMap((k) => k.kontroller))
+    if (hepsi.length < 10) return
+    const b = hepsi.filter((k) => k.dogru === 1).length / hepsi.length
+    expect(b).toBeGreaterThan(0.35)
+    expect(b).toBeLessThan(0.65)
+  })
+
+  it.each(programlar)('%s: hızlı kontrol var olan bir karta dayanıyor ve kısa', (_ad, program) => {
+    for (const konu of tumKonular(program!)) {
+      for (const k of konu.kontroller) {
+      expect(k.kart, `${konu.ad}: kontrol kartı yok`).toBeGreaterThanOrEqual(1)
+      expect(k.kart, `${konu.ad}: kontrol kartı yok`).toBeLessThanOrEqual(konu.kartlar.length)
+      expect(k.soru.length, `soru uzun: ${k.soru}`).toBeLessThanOrEqual(KONTROL_SORU_SINIRI)
+      expect(k.siklar[0]).not.toBe(k.siklar[1])
+      for (const sik of k.siklar) {
+        expect(sik.trim().length).toBeGreaterThan(0)
+        expect(sik.length, `şık uzun: ${sik}`).toBeLessThanOrEqual(SIK_SINIRI)
+      }
+      expect(k.aciklama.dogru.length).toBeLessThanOrEqual(KONTROL_ACIKLAMA_SINIRI)
+      expect(k.aciklama.yanlis.length).toBeLessThanOrEqual(KONTROL_ACIKLAMA_SINIRI)
+      }
+    }
   })
 })

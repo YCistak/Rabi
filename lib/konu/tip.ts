@@ -223,17 +223,62 @@ export type BilgiKarti = {
   baslik: string
   metin: string
   gorsel?: Gorsel
+  /**
+   * Kartın başlığının üstündeki küçük etiket — "Tanım", "Ölçme", "Kapanış".
+   *
+   * Kartın destede ne iş gördüğünü söylüyor; yoksa deste o yere "Kart 3/7"
+   * yazıyor. İçerik dosyalarının çoğunda henüz yok: alan tasarımla birlikte
+   * açıldı, metinler sonra yazılacak.
+   */
+  etiket?: string
+  /**
+   * Rabi'nin notu — kartın altında, maskotun yanındaki balonda.
+   *
+   * Kartı tekrar etmiyor, kartı **nasıl okuyacağını** söylüyor ("Sıralamayı
+   * ezberleme; her okun neden o yöne baktığını sor"). Notu olmayan kartta
+   * balon da maskot da çizilmiyor: boş bir balonun yanında duran tavşan,
+   * söyleyecek sözü olmayan bir rehber gibi görünür.
+   */
+  not?: string
 }
 
 /**
- * Deste okunduktan sonra sorulan tek soru — **doğru/yanlış**.
+ * Hızlı kontrol — destenin **ortasında**, okunmuş kartlardan sorulan tek
+ * iki şıklı soru.
  *
- * Soru bir soru cümlesi değil bir **iddia**: okuyan onu doğrular ya da
- * çürütür. Biçim kasten dar tutuldu. Deste okunduktan hemen sonra gelen ekran
- * ikinci bir ders değil bir yoklama; üzerinde düşünülen, hesaplanan ya da
- * şıkları elenen bir soru, okumanın arkasına bir sınav ekliyor ve destenin
- * sonu "bitti" değil "şimdi de bu var" oluyordu. İki düğmelik bir karar
- * saniyede veriliyor ve deste gerçekten bitiyor.
+ * Deste sonundaki doğru/yanlış yoklamasından ayrı: o yoklama okumanın
+ * bittiğini söylüyor, bu ise okuma sürerken "önceki kartlar oturdu mu" diye
+ * bakıyor. İki şık yeter — şıkları elenen dört seçenekli bir soru, okumanın
+ * ortasına bir sınav koyar.
+ *
+ * Yanlış cevapta "Tekrar oku" `kart` numaralı karta dönüyor; soru bu yüzden
+ * hangi karta dayandığını kendisi söylüyor. Deste soruyu ancak o kart
+ * okunduktan sonra araya koyuyor (`deste-akisi.ts`).
+ *
+ * Konu başına bir ya da iki soru: on karttan uzun destede iki, kısasında bir
+ * (`icerik.test.ts` denetliyor). Uzun destede tek soru, ikinci yarının hiç
+ * yoklanmaması demek.
+ */
+export type HizliKontrol = {
+  soru: string
+  /** İki şık; `dogru` bunlardan hangisinin doğru olduğunu söylüyor (0 ya da 1). */
+  siklar: [string, string]
+  dogru: 0 | 1
+  /** Karardan sonra Rabi'nin balonunda çıkan gerekçe — doğruya ve yanlışa ayrı. */
+  aciklama: { dogru: string; yanlis: string }
+  /** Sorunun dayandığı kartın sırası (1'den başlar). "Tekrar oku" oraya döner. */
+  kart: number
+}
+
+/**
+ * Deste okunduktan sonra sorulan sorular — iki biçim.
+ *
+ * İlk biçim **doğru/yanlış**: bir iddia ve iki düğme. Biçim kasten dar
+ * tutuldu; deste okunduktan hemen sonra gelen ekran ikinci bir ders değil
+ * bir yoklama. İkinci biçim **iki şıklı soru** sonradan eklendi: yalnızca
+ * iddia soran bir yoklama, "hangisi" diye soramıyordu (Pisagor üçlüsü hangisi,
+ * hangi organel ATP üretir). Şık sayısı yine ikiyle sınırlı — dört şıklı bir
+ * soru okumanın arkasına bir sınav ekler.
  *
  * Kararın kendisi ölçülüyor, kullanıcının kendi beyanı değil: eskiden kart
  * çevriliyor, cevabı gören kişi "bildim/bilmedim" diyordu — o sayı bilmeyi
@@ -244,9 +289,13 @@ export type BilgiKarti = {
  * bir iddiada "yanlış" demek yetmez, doğrusunun ne olduğunu söylemeyen bir
  * yoklama öğretmiyor.
  */
-export type SoruKarti = {
+export type SoruKarti = DogruYanlisSorusu | SikliSoru
+
+export type DogruYanlisSorusu = {
   /** `${konuId}-s${sıra}` — kart kimlikleriyle çakışmasın diye 's' ekli. */
   id: string
+  /** Biçim ayırıcı; doğru/yanlışta yazılmıyor — eski içerik olduğu gibi duruyor. */
+  tur?: 'dogru-yanlis'
   /** Doğru ya da yanlış olduğuna karar verilecek iddia. */
   ifade: string
   /** İddia doğru mu. */
@@ -265,11 +314,24 @@ export type SoruKarti = {
   gorsel?: Gorsel
 }
 
+/** İki şıklı soru: soru cümlesi, iki şık ve doğrunun dizini. Hızlı kontrolle aynı kalıp. */
+export type SikliSoru = {
+  id: string
+  tur: 'sikli'
+  soru: string
+  siklar: [string, string]
+  dogru: 0 | 1
+  aciklama: string
+  gorsel?: Gorsel
+}
+
 export type Konu = {
   id: string
   ad: string
   kartlar: BilgiKarti[]
   sorular: SoruKarti[]
+  /** Destenin ortasındaki hızlı kontroller; her biri dayandığı karttan sonra araya giriyor. */
+  kontroller: HizliKontrol[]
 }
 
 export type Tema = {
@@ -299,8 +361,17 @@ export function kart(
   baslik: string,
   metin: string,
   gorsel?: Gorsel,
+  ek?: Pick<BilgiKarti, 'etiket' | 'not'>,
 ): Omit<BilgiKarti, 'id'> {
-  return gorsel ? { baslik, metin, gorsel } : { baslik, metin }
+  // Boş alan yazılmıyor: `gorsel: undefined` taşıyan bir kart testte ve
+  // yedekte "görseli var ama boş" gibi okunuyordu.
+  return {
+    baslik,
+    metin,
+    ...(gorsel ? { gorsel } : {}),
+    ...(ek?.etiket ? { etiket: ek.etiket } : {}),
+    ...(ek?.not ? { not: ek.not } : {}),
+  }
 }
 
 /**
@@ -316,15 +387,16 @@ export function konu(
   ad: string,
   kartlar: Omit<BilgiKarti, 'id'>[],
   sorular?: Omit<SoruKarti, 'id'>[],
+  kontroller?: HizliKontrol[],
 ): Konu {
   return {
     id,
     ad,
     kartlar: kartlar.map((k, sira) => ({ ...k, id: `${id}-${sira + 1}` })),
-    sorular: (sorular ?? []).map((s, sira) => ({
-      ...s,
-      id: `${id}-s${sira + 1}`,
-    })),
+    sorular: (sorular ?? []).map(
+      (s, sira) => ({ ...s, id: `${id}-s${sira + 1}` }) as SoruKarti,
+    ),
+    kontroller: kontroller ?? [],
   }
 }
 
@@ -334,8 +406,21 @@ export function soru(
   dogru: boolean,
   aciklama: string,
   gorsel?: Gorsel,
-): Omit<SoruKarti, 'id'> {
+): Omit<DogruYanlisSorusu, 'id'> {
   return gorsel ? { ifade, dogru, aciklama, gorsel } : { ifade, dogru, aciklama }
+}
+
+/** İki şıklı soru kurucusu. `dogru` şıkların dizini: 0 birinci, 1 ikinci. */
+export function sikli(
+  soru: string,
+  siklar: [string, string],
+  dogru: 0 | 1,
+  aciklama: string,
+  gorsel?: Gorsel,
+): Omit<SikliSoru, 'id'> {
+  return gorsel
+    ? { tur: 'sikli', soru, siklar, dogru, aciklama, gorsel }
+    : { tur: 'sikli', soru, siklar, dogru, aciklama }
 }
 
 export function tema(id: string, ad: string, konular: Konu[]): Tema {
