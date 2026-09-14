@@ -52,6 +52,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('Nüfus ve yerleşme fizikî coğrafyanın konusudur.', false, 'İkisi de beşerî coğrafyanın konusu; fizikî coğrafya yer şekilleri ve iklimle ilgilenir.'),
       soru('Dağılış ilkesi, bir olayın nerede ve nasıl yayıldığını sorar.', true, 'Coğrafyanın olayları yere bağlayan temel ilkelerinden biri.'),
       soru('Coğrafyada "neden orada" sorusu sorulmaz.', false, 'Nerede, neden orada ve nasıl sorularının üçü birden coğrafyanın temel soruları.'),
+    ], [
+      {
+        soru: 'Nüfus ve yerleşmeyi inceleyen coğrafya dalı hangisidir?',
+        siklar: ['Beşerî coğrafya', 'Fizikî coğrafya'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'İnsanın mekândaki izi beşerî coğrafyanın konusu.',
+          yanlis: 'Fizikî coğrafya doğal ortamı (iklim, yer şekli, su) inceler. Nüfus ve yerleşme beşerî coğrafyanın konusu.',
+        },
+        kart: 3,
+      },
     ]),
     konu('cog9-nicin', 'Niçin Coğrafya Öğrenmeliyiz?', [
       kart(
@@ -74,11 +85,26 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Küresel bakış',
         'İklim değişikliği, göç ve kaynak paylaşımı gibi sorunlar coğrafi düşünmeden anlaşılmaz.',
       ),
+      kart(
+        'Coğrafi düşünmenin ölçütü',
+        'Bir olayı "nerede" diye sormakla kalmayıp "neden orada" ve "başka yerde nasıl olurdu" diye sormak; cevap yerle birlikte değişiyorsa coğrafi bir sorudur.',
+      ),
     ], [
       soru('Mekânsal düşünme, bir olayı yerle ilişkisi içinde değerlendirmektir.', true, 'Aynı olay farklı yerlerde farklı sonuçlar doğurabiliyor.'),
       soru('Coğrafya bilgisi afet risklerinin azaltılmasında kullanılır.', true, 'Yerleşim yeri seçimi ve risk haritaları doğrudan coğrafi bilgiye dayanıyor.'),
       soru('Yer seçimiyle ilgili günlük kararlarda coğrafi bilginin bir yararı yoktur.', false, 'Ev, iş yeri ya da tatil yeri seçmek doğrudan mekânsal bir karar.'),
       soru('Coğrafya, ülke ve başkent ezberlemekten ibarettir.', false, 'Yer adları yalnızca bir araç; asıl konu olayların yerle ilişkisi.'),
+    ], [
+      {
+        soru: 'Fay hattını ve taşkın ovasını bilmek hangi faydaya girer?',
+        siklar: ['Afet ve risk bilinci', 'Küresel bakış'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'Nerede yaşamanın tehlikeli olduğunu bilmek doğrudan can güvenliği.',
+          yanlis: 'Küresel bakış iklim değişikliği ve göç gibi dünya ölçekli sorunlar. Fay ve taşkın alanı bilgisi afet ve risk konusu.',
+        },
+        kart: 3,
+      },
     ]),
     konu('cog9-gelisim', 'Coğrafya Biliminin Gelişimi', [
       kart(
@@ -92,6 +118,10 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'İslam dünyasında',
         'Birunî, İdrisî ve Piri Reis harita ve seyahat bilgisiyle coğrafyayı ilerletti.',
+      ),
+      kart(
+        'Piri Reis haritası',
+        '1513 tarihli dünya haritası Amerika kıyılarını gösteren en eski haritalardandır; Kitab-ı Bahriye Akdeniz limanlarını tek tek anlatır.',
       ),
       kart(
         'Keşifler çağı',
@@ -115,6 +145,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('Coğrafi Keşifler haritacılığın gelişmesini hızlandırmıştır.', true, 'Yeni kıyılar haritalara işlendi, ölçüm yöntemleri gelişti.'),
       soru('İslam dünyasındaki coğrafyacıların haritacılığa katkısı olmamıştır.', false, 'İdrisi gibi adlar döneminin en ayrıntılı haritalarını çizdi.'),
       soru('Modern coğrafya, yalnızca yerlerin adlarını listeleyen bir bilimdir.', false, 'Modern coğrafya olayların sebeplerini ve dağılışını açıklamaya çalışıyor.'),
+    ], [
+      {
+        soru: 'Dünyanın çevresini İlk Çağ\'da hesaplayan bilgin kimdir?',
+        siklar: ['Eratosthenes', 'Batlamyus'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'Gölge açılarından yola çıkıp şaşırtıcı bir yaklaşıklıkla buldu; "coğrafya" sözcüğü de ona dayanır.',
+          yanlis: 'Batlamyus enlem-boylam ağıyla harita çizdi. Çevreyi hesaplayan ve coğrafya sözcüğünü kullanan Eratosthenes.',
+        },
+        kart: 1,
+      },
     ]),
   ]),
   tema('cog9-t2', 'Mekânsal Bilgi Teknolojileri', [
@@ -134,6 +175,10 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
             ['1/500.000', 'Geniş', 'Az'],
           ],
         },
+      ),
+      kart(
+        'Ölçek hesabı',
+        '1/500.000 ölçekli haritada 1 cm gerçekte 5 km. Gerçek uzunluk = harita uzunluğu × ölçek paydası; cm\'yi km\'ye çevirmek için beş sıfır at.',
       ),
       kart(
         'Bileşenleri',
@@ -193,11 +238,26 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
         'Profil çıkarma',
         'İzohips haritasında bir hat boyunca yükseltiler işaretlenip birleştirilirse arazinin yandan görünüşü çıkar.',
       ),
+      kart(
+        'Büyük mü küçük mü?',
+        '1/25.000 büyük ölçek: az yer, çok ayrıntı (şehir planı). 1/5.000.000 küçük ölçek: çok yer, az ayrıntı (dünya haritası).',
+      ),
     ], [
       soru('Ölçeğin paydası büyüdükçe haritadaki ayrıntı azalır.', true, 'Küçük ölçekli harita geniş alanı, az ayrıntıyla gösterir.'),
       soru('İzohips eğrileri aynı yükseltideki noktaları birleştirir.', true, 'Bu yüzden iki izohips birbirini kesmez.'),
       soru('Birbirine yakın geçen izohipsler arazinin eğiminin az olduğunu gösterir.', false, 'Sık izohips dik yamaç demek; seyrek geçenler eğimin azaldığını gösterir.'),
       soru('Bir haritada alan, açı ve uzunluk aynı anda hatasız gösterilebilir.', false, 'Küre düzleme aktarılırken bozulma kaçınılmaz; hangisinin korunacağı seçilir.'),
+    ], [
+      {
+        soru: 'İzohipsler sıklaştıkça arazi nasıl olur?',
+        siklar: ['Eğim azalır', 'Eğim dikleşir'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Kısa mesafede çok yükselti değişiyor demek.',
+          yanlis: 'Seyrek izohips yatık yamaç demek. Sık izohips kısa yolda büyük yükselti farkı, yani dik yamaç.',
+        },
+        kart: 6,
+      },
     ]),
     konu('cog9-konum', 'Türkiye’nin Coğrafi Konumu', [
       kart(
@@ -211,6 +271,10 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       kart(
         'Boylamın sonuçları',
         'Doğu ile batı arasında 19 boylam farkı vardır; her boylam 4 dakika ettiği için yerel saat farkı 76 dakikadır.',
+      ),
+      kart(
+        'Yerel saat hesabı',
+        'Doğudaki yer önde: 45° ile 26° arasındaki fark 19 boylam × 4 dk = 76 dk. Iğdır\'da güneş Edirne\'den 76 dakika önce doğar.',
       ),
       kart(
         'Tek saat dilimi',
@@ -233,6 +297,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('Türkiye üç saat dilimine yayıldığı için üç ayrı saat kullanır.', false, 'Üç saat dilimine girse de ülkenin tamamında tek saat uygulanıyor.'),
       soru('Enlem, Türkiye de dört mevsimin belirgin yaşanmasında etkilidir.', true, 'Orta kuşakta olmak mevsim farklarını belirginleştiriyor.'),
       soru('Yükseltinin sıcaklık üzerinde bir etkisi yoktur.', false, 'Her 200 metrede sıcaklık yaklaşık 1 °C düşüyor.'),
+    ], [
+      {
+        soru: 'Türkiye\'de dört mevsimin belirgin yaşanmasının sebebi?',
+        siklar: ['Üç tarafının denizle çevrili olması', 'Orta kuşakta olması'],
+        dogru: 1,
+        aciklama: {
+          dogru: '36°-42° kuzey enlemleri ılıman kuşak; güneş ışınlarının açısı yıl içinde belirgin değişir.',
+          yanlis: 'Denizler iklimi yumuşatır ama mevsimleri yaratmaz. Dört mevsim orta kuşak enlemlerinin sonucu.',
+        },
+        kart: 2,
+      },
     ]),
     konu('cog9-mbt', 'Mekânsal Bilgi Teknolojilerinin Bileşenleri', [
       kart(
@@ -277,6 +352,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('Uzaktan algılama, yeryüzüne ait bilginin temas etmeden toplanmasıdır.', true, 'Uydu ve hava fotoğrafları bu yolla elde ediliyor.'),
       soru('GPS, konum belirlemek için yeryüzündeki radyo istasyonlarını kullanır.', false, 'Uydulardan gelen sinyallerin ulaşma sürelerini kullanıyor.'),
       soru('CBS ye girilen veri hatalı olsa bile çıkan sonuç doğru olur.', false, 'Sonuç girilen verinin doğruluğu kadar güvenilir.'),
+    ], [
+      {
+        soru: 'GPS alıcısı konum için en az kaç uydudan sinyal alır?',
+        siklar: ['Bir', 'Dört'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Üç uydu düzlemde yer, dördüncüsü yükseklik ve zaman düzeltmesi için.',
+          yanlis: 'Tek uydu yalnızca uzaklık verir, yer vermez. Üç boyutlu konum için en az dört uydu gerekir.',
+        },
+        kart: 4,
+      },
     ]),
   ]),
   tema('cog9-t3', 'Doğal Sistemler ve Süreçler', [
@@ -339,6 +425,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('Hava durumu kısa süreli, iklim ise uzun yılların ortalamasıdır.', true, 'Bir günün yağmuru iklimi değiştirmez.'),
       soru('Rüzgâr, yüksek basınç alanından alçak basınç alanına doğru eser.', true, 'Basınç farkı büyüdükçe rüzgâr hızlanıyor.'),
       soru('Bağıl nem arttıkça havadaki su buharı azalır.', false, 'Bağıl nem, havanın taşıyabileceği neme göre taşıdığı nemi gösterir; arttıkça nem de artar.'),
+    ], [
+      {
+        soru: 'Rüzgâr hangi yöne eser?',
+        siklar: ['Alçak basınçtan yüksek basınca', 'Yüksek basınçtan alçak basınca'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Hava fazla olduğu yerden az olduğu yere akar; fark büyüdükçe hızlanır.',
+          yanlis: 'Tersi: hava yüksek basınç alanından alçak basınç alanına doğru akar. Alçak basınç merkezleri havayı çeker.',
+        },
+        kart: 4,
+      },
     ]),
     konu('cog9-iklim-sistem', 'İklim Sisteminin Bileşen ve Değişkenleri', [
       kart(
@@ -398,6 +495,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('Kuzey Yarım Küre de güneye bakan yamaçlar daha sıcaktır.', true, 'Bakı etkisi: güneş ışınları o yamaca daha dik geliyor.'),
       soru('Karasallık, denizden uzak yerlerde günlük ve yıllık sıcaklık farkını azaltır.', false, 'Tersine artırır; sıcaklığı dengeleyen su kütlesi uzakta kalıyor.'),
       soru('Okyanus akıntılarının kıyı iklimleri üzerinde etkisi yoktur.', false, 'Sıcak akıntılar kıyıyı ılıtır, soğuk akıntılar serinletir ve kuraklaştırır.'),
+    ], [
+      {
+        soru: 'Deniz seviyesinde 20 °C iken 2000 m yükseklikte sıcaklık yaklaşık kaç °C olur?',
+        siklar: ['15 °C', '10 °C'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Her 100 m\'de 0,5 °C: 2000 m\'de 10 °C düşer, 20 − 10 = 10.',
+          yanlis: 'Her 100 metrede 0,5 °C düşer; 2000 m\'de düşüş 10 °C. Sonuç 20 − 10 = 10 °C.',
+        },
+        kart: 4,
+      },
     ]),
     konu('cog9-iklim-tur', 'İklim Türleri', [
       kart(
@@ -444,6 +552,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('Akdeniz ikliminde yazlar sıcak ve kurak, kışlar ılık ve yağışlıdır.', true, 'Bitki örtüsü olan maki bu düzene uyum sağlamış durumda.'),
       soru('İklim kuşakları enlemden bağımsız olarak dağılır.', false, 'Kuşakların temel belirleyicisi enlem; yükselti ve karasallık onu değiştiriyor.'),
       soru('Tundra iklimi sıcak kuşakta görülür.', false, 'Soğuk kuşakta, kutuplara yakın alanlarda görülüyor.'),
+    ], [
+      {
+        soru: 'Yaz kuraklığı belirgin olan iklim grafiği hangi iklimi gösterir?',
+        siklar: ['Karadeniz', 'Akdeniz'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Akdeniz ikliminde yağış kışa toplanır, yaz kurak geçer; bitki örtüsü maki.',
+          yanlis: 'Karadeniz ikliminde her mevsim yağış var, yaz kuraklığı yok. Kurak yaz Akdeniz\'in imzası.',
+        },
+        kart: 7,
+      },
     ]),
     konu('cog9-iklim-degisim', 'İklim Sisteminde Yaşanan Değişiklikler', [
       kart(
@@ -488,6 +607,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('İklim değişikliğinin tek sebebi insan etkinlikleridir.', false, 'Volkanlar ve güneş etkinliği gibi doğal sebepler de var; bugünkü hızlı ısınmada insan etkisi baskın.'),
       soru('Azaltım salımı düşürmeyi, uyum ise değişimin etkileriyle baş etmeyi hedefler.', true, 'İkisi birbirinin yerine geçmiyor, birlikte yürütülüyor.'),
       soru('Türkiye kuraklıktan etkilenmeyecek bir konumdadır.', false, 'Akdeniz havzası kuraklık riski en yüksek bölgelerden biri.'),
+    ], [
+      {
+        soru: 'Sera gazı salımını düşürmeye ne denir?',
+        siklar: ['Azaltım', 'Uyum'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'Uyum, değişen koşullara göre yaşamı düzenlemek; azaltım sebebe yönelik.',
+          yanlis: 'Uyum sonuçla yaşamayı öğrenmek (kuraklığa dayanıklı tohum). Salımı düşürmek sebebe yönelik: azaltım.',
+        },
+        kart: 6,
+      },
     ]),
   ]),
   tema('cog9-t4', 'Beşerî Sistemler ve Süreçler', [
@@ -538,6 +668,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('Sanayi Devrimi ne kadar dünya nüfusu yavaş artmıştır.', true, 'Yüksek doğum oranını yüksek ölüm oranı dengeliyordu.'),
       soru('Bugün dünya nüfusunun büyük kısmı kırsal alanda yaşamaktadır.', false, 'Nüfusun yarısından fazlası kentlerde yaşıyor.'),
       soru('Nüfus artış hızı bugün bütün ülkelerde aynıdır.', false, 'Bazı ülkelerde nüfus hızla artarken bazılarında azalıyor.'),
+    ], [
+      {
+        soru: 'Sanayi devriminden sonra nüfusun hızla artmasının asıl sebebi?',
+        siklar: ['Ölüm oranının düşmesi', 'Doğum oranının artması'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'Temiz su, aşı ve antibiyotik ölümü azalttı; doğum zaten yüksekti.',
+          yanlis: 'Doğum oranı zaten yüksekti ve sonra düştü. Artışı yaratan şey ölümün azalması: aşı, temiz su, antibiyotik.',
+        },
+        kart: 3,
+      },
     ]),
     konu('cog9-nufus-dagilis', 'Nüfusun Dağılışı ve Hareketleri', [
       kart(
@@ -583,6 +724,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('Aritmetik nüfus yoğunluğu, toplam nüfusun yüz ölçüme bölünmesiyle bulunur.', true, 'Kişi/km² olarak yazılıyor.'),
       soru('İtici güçler, insanları göç ettikleri yere çeken sebeplerdir.', false, 'İtici güç bulunulan yerden uzaklaştırır; çeken sebeplere çekici güç denir.'),
       soru('Göç yalnızca göç alan yeri etkiler.', false, 'Göç veren yerde iş gücü ve genç nüfus azalıyor; etki iki taraflı.'),
+    ], [
+      {
+        soru: 'Aritmetik nüfus yoğunluğu neden yanıltıcıdır?',
+        siklar: ['Yalnızca kentleri sayar', 'Kullanılamayan alanları da sayar'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Çöl ve dağ da paydaya girer; Mısır\'ın gerçek yoğunluğu Nil vadisinde çok daha yüksek.',
+          yanlis: 'Toplam nüfus / toplam alan; kırı da sayar. Sorun çöl ve dağ gibi yaşanmayan yerlerin paydayı şişirmesi.',
+        },
+        kart: 4,
+      },
     ]),
     konu('cog9-demografik', 'Demografik Dönüşüm ve Nüfus Piramitleri', [
       kart(
@@ -623,6 +775,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('Dar tabanlı piramit yaşlanan bir nüfusa işaret eder.', true, 'Doğum oranı düşmüş, üst yaş grupları kalabalıklaşmış.'),
       soru('Nüfus piramidinden yalnızca toplam nüfus okunabilir.', false, 'Yaş grupları ve cinsiyet dağılımı da okunuyor.'),
       soru('Demografik dönüşümde önce doğum oranı, sonra ölüm oranı düşer.', false, 'Önce ölüm oranı düşer; doğum oranının inmesi gecikir ve arada nüfus hızla artar.'),
+    ], [
+      {
+        soru: 'Geniş tabanlı nüfus piramidi neyi gösterir?',
+        siklar: ['Yüksek doğum oranı', 'Yaşlı nüfus fazlalığı'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'Taban en genç yaş grubu; geniş taban çok çocuk demek.',
+          yanlis: 'Yaşlı nüfus tepede görünür ve dar tabanlı piramitte fazladır. Geniş taban genç ve çok doğuran nüfus.',
+        },
+        kart: 3,
+      },
     ]),
     konu('cog9-nufus-politika', 'Nüfusla İlgili Fırsat, Sorun ve Politikalar', [
       kart(
@@ -654,6 +817,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('Bağımlılık oranı, çalışma çağı dışındaki nüfusun çalışma çağındakilere oranıdır.', true, 'Hem çocuklar hem yaşlılar bu orana giriyor.'),
       soru('Nüfus politikaları yalnızca nüfusu artırmak amacıyla uygulanır.', false, 'Nüfusu azaltmaya ya da dağılımını değiştirmeye yönelik politikalar da var.'),
       soru('Yaşlanan nüfus, sağlık ve emeklilik harcamalarını azaltır.', false, 'Tersine artırır; çalışan başına düşen yük büyür.'),
+    ], [
+      {
+        soru: 'Hem çok genç hem çok yaşlı nüfus hangi oranı yükseltir?',
+        siklar: ['Doğurganlık oranı', 'Bağımlılık oranı'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'İkisi de çalışma çağı dışında; çalışan başına düşen yük artar.',
+          yanlis: 'Doğurganlık yalnızca doğumla ilgili. Çalışmayan yaş gruplarının çalışanlara oranı bağımlılık oranı.',
+        },
+        kart: 2,
+      },
     ]),
   ]),
   tema('cog9-t5', 'Ekonomik Faaliyetler ve Etkileri', [
@@ -695,6 +869,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('Sanayi ikincil, hizmet ise üçüncül sektör sayılır.', true, 'Birincil sektör doğrudan doğadan üretim yapan tarım ve madencilik.'),
       soru('Yer şekillerinin ulaşım ağının kurulmasında etkisi yoktur.', false, 'Dağlık alanda yol yapımı hem zor hem pahalı; ağ buna göre şekilleniyor.'),
       soru('Ekonomik faaliyetleri yalnızca doğal faktörler belirler.', false, 'Sermaye, iş gücü, teknoloji ve pazar gibi beşerî faktörler de belirleyici.'),
+    ], [
+      {
+        soru: 'Çayın Doğu Karadeniz\'de yetişmesini belirleyen faktör?',
+        siklar: ['Sermaye', 'İklim'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Bol yağış ve ılıman sıcaklık çayın isteği; başka yerde para da yetmez.',
+          yanlis: 'Sermaye beşerî faktör; iklim uygun değilse çay yetişmez. Belirleyen bol yağışlı ılıman iklim.',
+        },
+        kart: 2,
+      },
     ]),
   ]),
   tema('cog9-t6', 'Afetler ve Sürdürülebilir Çevre', [
@@ -736,6 +921,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('Issız bir çölde meydana gelen büyük bir deprem afet sayılır.', false, 'Zarar görecek insan ya da yapı yoksa olay afete dönüşmez.'),
       soru('Risk, bir tehlikenin zarara yol açma olasılığıdır.', true, 'Tehlike var olan bir olasılık; risk onun bizi etkileme ihtimali.'),
       soru('Kırılganlık, bir toplumun afete karşı direncini artıran özelliklerdir.', false, 'Tam tersi: kırılganlık zarar görme ihtimalini artıran özellikler.'),
+    ], [
+      {
+        soru: 'Boş bir çölde olan deprem nedir?',
+        siklar: ['Afet', 'Doğa olayı'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'İnsan ve yapı yoksa kayıp yok; afet olayın toplumla karşılaşmasıdır.',
+          yanlis: 'Afet için can ve mal kaybı gerekir. Kimsenin olmadığı yerdeki deprem yalnızca bir doğa olayı.',
+        },
+        kart: 5,
+      },
     ]),
     konu('cog9-afet-tur', 'Afet Türleri', [
       kart(
@@ -781,6 +977,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('Kuraklık ve sel meteorolojik afetlerdendir.', true, 'İkisinin de kaynağı atmosfer olayları.'),
       soru('Salgın hastalıklar beşerî afet sayılır.', false, 'Biyolojik afet grubunda yer alıyor.'),
       soru('Bir afet başka bir afeti tetikleyemez.', false, 'Deprem sonrası çıkan yangın ve tsunami zincirleme afete örnek.'),
+    ], [
+      {
+        soru: 'Heyelan hangi afet grubundadır?',
+        siklar: ['Meteorolojik', 'Jeolojik'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Kaynağı yer kabuğu ve kütle hareketi; yağış tetikleyebilir ama grup jeolojik.',
+          yanlis: 'Yağış tetikler ama olay yer kütlesinin kaymasıdır; jeolojik afetlerden. Meteorolojik olanlar sel, fırtına, dolu.',
+        },
+        kart: 2,
+      },
     ]),
     konu('cog9-afet-yonetim', 'Bütüncül Afet Yönetimi', [
       kart(
@@ -836,6 +1043,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('Zarar azaltma aşaması afetten önce yapılan çalışmaları kapsar.', true, 'Yapı denetimi ve risk haritaları bu aşamada.'),
       soru('İyileştirme aşaması yalnızca yıkılan binaların onarılmasıdır.', false, 'Ekonomik ve toplumsal hayatın yeniden kurulması da bu aşamanın işi.'),
       soru('Bütüncül afet yönetimi aşamaları birbirine bağlı bir döngü olarak ele alır.', true, 'İyileştirme sırasında alınan dersler yeni zarar azaltma çalışmalarını besliyor.'),
+    ], [
+      {
+        soru: 'Afet yönetiminin en ucuz ve en etkili aşaması?',
+        siklar: ['Zarar azaltma', 'Müdahale'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'Sağlam yapı ve doğru yer seçimi afet olmadan kazandırır.',
+          yanlis: 'Müdahale en pahalı ve en geç aşama. Asıl kazanç afet olmadan önce: zarar azaltma.',
+        },
+        kart: 2,
+      },
     ]),
   ]),
   tema('cog9-t7', 'Bölgeler, Ülkeler ve Küresel Bağlantılar', [
@@ -869,6 +1087,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       soru('Türkiye nin coğrafi bölgeleri il sınırlarıyla birebir örtüşür.', false, 'Bazı iller iki bölgeye birden dağılıyor.'),
       soru('Bölge sınırları keskin çizgiler değildir; geçiş alanları vardır.', true, 'Doğadaki değişim kademeli olduğu için sınır bir kuşak hâlinde.'),
       soru('Bir yer aynı anda birden çok bölgenin içinde yer alamaz.', false, 'Farklı ölçütlerle çizilen bölgeler üst üste binebilir.'),
+    ], [
+      {
+        soru: 'Türkiye\'nin yedi coğrafi bölgesi hangi ölçüte göre belirlendi?',
+        siklar: ['Doğal koşullar', 'İdari sınırlar'],
+        dogru: 0,
+        aciklama: {
+          dogru: '1941\'de iklim, yer şekli ve bitki örtüsü esas alındı; idari birim değiller.',
+          yanlis: 'Bölgeler idari birim değil. 1941\'de büyük ölçüde doğal koşullara göre çizildi.',
+        },
+        kart: 6,
+      },
     ]),
   ]),
 ])
