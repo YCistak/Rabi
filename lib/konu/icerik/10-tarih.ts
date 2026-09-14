@@ -572,7 +572,7 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       ),
       kart(
         'İltizam nedir?',
-        'Verginin toplanma hakkı peşin parayla satılırdı. Mültezim yatırdığından fazlasını almak istediği için köylü ezildi.',
+        'Verginin toplanma hakkı peşin parayla satılırdı. Mültezim ödediğinden fazlasını almak istediği için köylü ezildi.',
         {
           tur: 'akis',
           adimlar: [
@@ -606,7 +606,7 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     ], [
       {
         soru: 'İltizam sisteminde köylü neden ezildi?',
-        siklar: ['Vergi devlete gitmedi', 'Mültezim yatırdığından fazlasını almak istedi'],
+        siklar: ['Vergi devlete gitmedi', 'Mültezim ödediğinden fazlasını almak istedi'],
         dogru: 1,
         aciklama: {
           dogru: 'Vergi hakkını peşin parayla alan mültezim kârını köylüden çıkardı.',
