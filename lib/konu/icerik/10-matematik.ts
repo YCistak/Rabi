@@ -81,6 +81,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       kart(
         'Oran açıya bağlıdır',
         'Benzer iki dik üçgende kenarlar farklı, oranlar aynıdır. Trigonometri tam da bu yüzden işe yarar.',
+        undefined,
+        { not: 'Tabloyu ezberlemeden önce bu kartı anla: oranların neden kenara bağlı olmadığını.' },
       ),
       kart(
         'Nerede kullanılır?',
@@ -169,6 +171,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
             ['Orta dikme', 'Çevrel çember'],
           ],
         },
+        { not: 'Dört elemanı dört merkeziyle eşle; "hangisi nerede kesişir" sorusu buradan gelir.' },
       ),
       kart(
         'İkizkenar üçgende',
@@ -224,6 +227,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       kart(
         'Hangi formül ne zaman?',
         'Elde ne olduğuna bakılır: taban ve yükseklik varsa temel formül, iki kenar ve açı varsa sinüslü formül.',
+        undefined,
+        { not: 'Formülü değil elindeki veriyi say; veri hangi formülü istediğini söyler.' },
       ),
     ], [
       soru('Üçgenin alanı, taban ile ona ait yüksekliğin çarpımının yarısıdır.', true, 'Hangi kenar taban seçilirse seçilsin sonuç aynı.'),
@@ -270,6 +275,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
             ['Üç kenar', 'Kosinüs'],
           ],
         },
+        { not: 'Eldeki üçlüyü yaz: kenar-açı çifti mi, iki kenar bir açı mı? Teorem ona göre.' },
       ),
       kart(
         'Çevrel çemberle bağı',
@@ -321,6 +327,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       kart(
         'Satır ve sütun yüzdesi',
         'Aynı tablodan farklı yüzdeler çıkar; hangisine bölündüğü söylenmezse sonuç yanıltıcı olur.',
+        undefined,
+        { not: 'Yüzde görünce sor: neyin yüzdesi? Payda söylenmeden sayı bir şey demez.' },
       ),
       kart(
         'Marjinal dağılım',
@@ -378,6 +386,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       kart(
         'Cevap vermeyenler',
         'Ankete katılmayanlar rastgele değildir. Yanıt oranı düşükse sonuç katılanların değil, katılmayı seçenlerin görüşüdür.',
+        undefined,
+        { not: 'Sonucun kimi temsil ettiğini sor; katılmayanlar sessizce eksiliyor.' },
       ),
     ], [
       soru('Anket sorusunun nasıl sorulduğu verilen cevapları etkileyebilir.', true, 'Yönlendirici soru, sonucu önceden şekillendiriyor.'),
@@ -429,6 +439,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       kart(
         'Asal olan bölen sayısı',
         'Toplam bölen sayısıyla karıştırılır: 360’ın 24 pozitif böleni vardır ama asal böleni yalnızca üçtür (2, 3, 5).',
+        undefined,
+        { not: '"Bölen sayısı" ile "asal bölen sayısı" soruda iki ayrı soru; ikisini karıştırma.' },
       ),
       kart(
         'Bölenlerin toplamı',
@@ -501,6 +513,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       kart(
         'Problemi ayırmak',
         'Soru "en büyük parça" ya da "kaç eşit gruba" diyorsa EBOB; "kaç dakika sonra yine birlikte" diyorsa EKOK.',
+        undefined,
+        { not: 'Soruyu okurken "en büyük parça" mı "ilk buluşma" mı diye kendine sor, formülden önce.' },
       ),
       kart(
         'Hesap örneği',
@@ -565,6 +579,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       kart(
         'Sık yapılan hata',
         '12’ye bölünme için 2 ve 6’ya bakmak yetmez: 2 ile 6 aralarında asal değildir. Doğrusu 3 ve 4’tür.',
+        undefined,
+        { not: 'Bileşik kuralda iki bölenin aralarında asal olduğunu kontrol etmeden bölme.' },
       ),
       kart(
         'Kalan bulma',
@@ -606,6 +622,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       kart(
         'Tanım kümesi',
         'Paydayı sıfır yapan ve çift dereceden kökün içini negatif yapan değerler tanım kümesinden çıkarılır.',
+        undefined,
+        { not: 'İki yasak var: payda sıfır, çift kök içi negatif. Önce ikisini yaz, sonra çöz.' },
       ),
       kart(
         'Görüntü kümesi',
@@ -730,6 +748,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
             ['Δ < 0', 'Yok', 'Kesmez'],
           ],
         },
+        { not: 'Δ\'nın işareti kökleri hesaplamadan grafiği anlatır; önce ona bak.' },
       ),
       kart(
         'Simetri ekseni',
@@ -827,6 +846,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       kart(
         'Kaydırmalar',
         '√(x − 2) grafiği sağa iki birim kayar ve tanım kümesi x ≥ 2 olur; √x + 3 ise yukarı kayar.',
+        undefined,
+        { not: 'İçerideki sayı ters yönde kaydırır; tanım kümesi de onunla kayar.' },
       ),
       kart(
         'Kareselin tersi',
@@ -902,6 +923,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       kart(
         'Asimptota değilmez',
         'Grafik düşey asimptotu hiç kesmez; yatay asimptotu ise ortada kesebilir, önemli olan sonsuzdaki davranıştır.',
+        undefined,
+        { not: 'Düşeye asla, yataya bazen; ikisini aynı kefeye koyma.' },
       ),
       kart(
         'Nerede karşımıza çıkar?',
@@ -1027,6 +1050,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       kart(
         'Ters ile çarpmaya göre ters',
         'f⁻¹(x) ile 1/f(x) aynı şey değildir. Üstteki −1 kuvvet değil, ters fonksiyon işaretidir.',
+        undefined,
+        { not: 'Üstteki −1 kuvvet değil; bu ayrımı bir kez yanlış yapan bir daha yapmaz.' },
       ),
     ], [
       soru('Bir fonksiyonun tersinin olması için bire bir ve örten olması gerekir.', true, 'Aksi hâlde geri dönüş tek anlamlı olmuyor.'),
@@ -1075,6 +1100,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       kart(
         'Çift kat kökte işaret',
         'Kök çift katlıysa işaret o noktada değişmez. Tabloyu kurarken kökün katı da yazılmalıdır.',
+        undefined,
+        { not: 'İşaret tablosu kurarken her kökün katını yaz; çift katta çizgi zıplamaz.' },
       ),
       kart(
         'İki fonksiyonu karşılaştırmak',
@@ -1136,6 +1163,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
             ['Takım kurma', 'Kombinasyon'],
           ],
         },
+        { not: 'Sıra önemli mi? Bu tek soru permütasyonla kombinasyonu ayırır.' },
       ),
       kart(
         'Tekrarlı sayma',
@@ -1201,6 +1229,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       kart(
         'Özyineleme',
         'Bir işlem kendi küçüğüyle tanımlanabilir: n! = n·(n−1)!. Durma koşulu olmazsa tanım hiç kapanmaz.',
+        undefined,
+        { not: 'Kendini çağıran tanımda ilk aranacak şey durma koşulu.' },
       ),
       kart(
         'Verimlilik',
@@ -1284,6 +1314,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       kart(
         'Analitik düşünmenin gücü',
         'Geometrik bir soru koordinat verilerek cebirsel bir hesaba dönüşür; çizim yapmadan ispat yapılabilir.',
+        undefined,
+        { not: 'Şekil zor görünüyorsa koordinat ver; geometri cebire dönünce çizmek gerekmez.' },
       ),
     ], [
       soru('A(1, 2) ile B(4, 6) noktaları arasındaki uzaklık 5 birimdir.', true, 'Farklar 3 ve 4; karekök içinde 9 + 16 = 25.'),
@@ -1344,6 +1376,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
             },
           ],
         },
+        { not: 'Paralelde eğimler eşit, dikte çarpım −1; ikisini yan yana ezberle.' },
       ),
       kart(
         'Eksenleri kesme',
@@ -1417,6 +1450,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       kart(
         'Sık yapılan hata',
         'P(A|B) ile P(B|A) aynı şey değildir. İkisini karıştırmak günlük hayatta da yanlış sonuçlar üretir.',
+        undefined,
+        { not: 'P(A|B) ile P(B|A) yer değiştirince anlam değişir; hangisinin verildiğini yaz.' },
       ),
     ], [
       soru('P(A|B), B nin gerçekleştiği bilindiğinde A nın olasılığıdır.', true, 'Bilgi, hesabın yapıldığı zemini değiştiriyor.'),
@@ -1468,6 +1503,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       kart(
         'Taban oranı yanılgısı',
         'İnsanlar test doğruluğuna bakıp önsel olasılığı unutuyor. Bayes, unutulan o sayıyı hesaba geri sokuyor.',
+        undefined,
+        { not: 'Test doğruluğuna bakmadan önce hastalığın ne kadar nadir olduğunu sor.' },
       ),
       kart(
         'Neden önemli?',
