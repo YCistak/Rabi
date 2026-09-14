@@ -25,16 +25,19 @@ import { KartGorseli } from './kart-gorseli'
  * Şimdi cevap `SoruKarti.dogru` içinde ve ekran kararı kendisi tartıyor;
  * gerekçe karardan sonra çıkıyor, öncesinde değil.
  *
- * Sahnenin **üç** hâli var ve üçü de burada: kartlardan devralan giriş
- * (`Giris`), soruların kendisi ve kapanıştaki özet (`Sonuc`). Giriş sonradan
- * eklendi; gerekçesi kendi yorumunda.
+ * Sahnenin **iki** hâli var ve ikisi de burada: kartlardan devralan giriş
+ * (`Giris`) ve soruların kendisi. Giriş sonradan eklendi; gerekçesi kendi
+ * yorumunda. Kapanışta bir özet (`Sonuc`: iki sayı, maskot, "Haritaya dön")
+ * vardı; kaldırıldı — son sorunun gerekçesi okunup "Bitir"e basılınca sahne
+ * doğrudan haritaya dönüyor. Kullanıcı istedi: şimdilik bitiş ekranı yok.
+ * Sayı kayda yine giriyor (`SahneSonucu`), yalnızca ekranda gösterilmiyor.
  *
  * Ekran uygulamanın tek koyu yüzeyi. Gerekçesi `globals.css`teki `.sahne`
  * bloğunda; renkler de orada, burada onaltılık kod yok.
  *
  * Katman yukarıdan aşağı açılarak geliyor (`sahne-iner`): deste kapanıp sahne
- * açıldığında ekran tek karede kırık beyazdan koyuya atlıyordu. Sınıf üç hâlin
- * kökünde de yazılı ama perde **bir kez** oynuyor: React üçünde de aynı DOM
+ * açıldığında ekran tek karede kırık beyazdan koyuya atlıyordu. Sınıf iki hâlin
+ * kökünde de yazılı ama perde **bir kez** oynuyor: React ikisinde de aynı DOM
  * düğümünü yeniden kullanıyor, animasyon da yalnızca düğüm kurulurken
  * başlıyor. Ayrı bir "yalnızca girişte" koşulu, olmayan bir tekrarı önlerdi.
  */
@@ -76,7 +79,6 @@ export function SoruSahnesi({
   const [secim, setSecim] = useState<number | null>(null)
   const [dogru, setDogru] = useState(0)
   const [yanlis, setYanlis] = useState(0)
-  const [bitti, setBitti] = useState(false)
   /** Girişteki düğmeye basıldı mı; basılana kadar ilk iddia görünmüyor. */
   const [basladi, setBasladi] = useState(false)
 
@@ -92,7 +94,7 @@ export function SoruSahnesi({
     gerekiyor.
   */
   const sonucRef = useRef<SahneSonucu>({ dogru: 0, yanlis: 0, bitti: false })
-  sonucRef.current = { dogru, yanlis, bitti }
+  sonucRef.current = { dogru, yanlis, bitti: false }
   useGeriKatmani(true, () => onKapat(sonucRef.current))
 
   function karar(cevap: number) {
@@ -103,8 +105,9 @@ export function SoruSahnesi({
   }
 
   function ilerle() {
+    // Son sorudan sonra ekran yok: sayı kayda gidiyor, sahne kapanıyor.
     if (sira >= toplam - 1) {
-      setBitti(true)
+      onKapat({ dogru, yanlis, bitti: true })
       return
     }
     setSira((o) => o + 1)
@@ -127,19 +130,6 @@ export function SoruSahnesi({
           soruSayisi={toplam}
           onBasla={() => setBasladi(true)}
           onVazgec={() => onKapat({ dogru: 0, yanlis: 0, bitti: false })}
-        />
-      </div>
-    )
-  }
-
-  if (bitti) {
-    return (
-      <div className="sahne sahne-iner fixed inset-0 z-50 flex flex-col text-[var(--sahne-yazi)]">
-        <Sonuc
-          konuAdi={konu.ad}
-          dogru={dogru}
-          yanlis={yanlis}
-          onKapat={() => onKapat({ dogru, yanlis, bitti: true })}
         />
       </div>
     )
@@ -335,8 +325,8 @@ export function SoruSahnesi({
  * değil, bir sonraki ekranın ne olduğunu söyleyen tek yer.
  *
  * Köprü koyu sahnenin **kendi** ilk ekranı, üçüncü bir yüzey değil: renk
- * değişimi böylece bir soruyla değil bir açıklamayla geliyor ve sahnenin iki
- * ucu — giriş ile `Sonuc` — aynı bileşende, aynı düzende duruyor.
+ * değişimi böylece bir soruyla değil bir açıklamayla geliyor ve giriş,
+ * sorularla aynı bileşende, aynı düzende duruyor.
  *
  * Sayılar süs değil: "kaç iddia" yazmayan bir köprü, ne kadar süreceğini
  * söylemeden başlat düğmesi gösteriyor — haritadaki "4 kart · 3 dk" satırının
@@ -409,75 +399,3 @@ function Giris({
   )
 }
 
-/** Sorular bitince: iki sayı ve tek bir çıkış. */
-function Sonuc({
-  konuAdi,
-  dogru,
-  yanlis,
-  onKapat,
-}: {
-  konuAdi: string
-  dogru: number
-  yanlis: number
-  onKapat: () => void
-}) {
-  return (
-    <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center px-6 pb-[calc(1rem+var(--guvenli-alt))] text-center">
-      <Rabi
-        durum={yanlis === 0 ? 'kutlama' : 'normal'}
-        poz={yanlis === 0 ? 'kupali' : 'dusunen'}
-        boyut={104}
-      />
-      <h3 className="mt-3 font-display text-[22px] font-extrabold tracking-tight text-balance">
-        {konuAdi} bitti
-      </h3>
-      <p className="mt-1.5 text-[14.5px] font-semibold text-[var(--sahne-soluk)] text-pretty">
-        {yanlis === 0
-          ? 'Bütün soruları doğru bildin.'
-          : `${yanlis} soruda yanıldın; konuyu istediğin zaman yeniden okuyabilirsin.`}
-      </p>
-
-      <div className="mt-5 flex w-full gap-2.5">
-        <Sayi
-          deger={dogru}
-          etiket="doğru"
-          zemin="var(--sahne-dogru-zemin)"
-          yazi="var(--sahne-dogru)"
-        />
-        <Sayi
-          deger={yanlis}
-          etiket="yanlış"
-          zemin="var(--sahne-yanlis-zemin)"
-          yazi="var(--sahne-yanlis)"
-        />
-      </div>
-
-      {/* Zemin markanın dolgu tonunda, yazı beyaz: sahnenin koyu zemininde
-          `bg-primary-dolu`nun kendi tonu tuğlaya kaçıyordu. */}
-      <Buton onClick={onKapat} className="mt-6 w-full bg-[var(--sahne-vurgu)]">
-        Haritaya dön
-      </Buton>
-    </div>
-  )
-}
-
-function Sayi({
-  deger,
-  etiket,
-  zemin,
-  yazi,
-}: {
-  deger: number
-  etiket: string
-  zemin: string
-  yazi: string
-}) {
-  return (
-    <div className="flex-1 rounded-2xl px-3 py-3.5" style={{ backgroundColor: zemin, color: yazi }}>
-      <p className="font-display text-[26px] leading-none font-extrabold">{deger}</p>
-      <p className="mt-1 text-[11px] font-extrabold tracking-[0.08em] uppercase opacity-80">
-        {etiket}
-      </p>
-    </div>
-  )
-}

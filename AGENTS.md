@@ -1870,8 +1870,12 @@ cevabı içeriğe bakmadan verdirir.
 
 ### Kartlardan soruya bir köprüyle geçiliyor
 
-Sahnenin **üç** hâli var ve üçü de `soru-sahnesi.tsx` içinde: giriş (`Giris`),
-soruların kendisi, kapanış (`Sonuc`).
+Sahnenin **iki** hâli var ve ikisi de `soru-sahnesi.tsx` içinde: giriş
+(`Giris`) ve soruların kendisi. Bir de kapanış vardı (`Sonuc`: maskot, doğru
+ve yanlış sayısı, "Haritaya dön"); kullanıcı isteğiyle kaldırıldı — son
+sorunun gerekçesinden sonra "Bitir" sahneyi kapatıp doğrudan haritaya
+dönüyor. Sayılar kayda yine giriyor, yalnızca ayrı bir ekranda gösterilmiyor.
+"Şimdilik" dendi; geri gelirse `git log -- components/konu/soru-sahnesi.tsx`.
 
 Giriş bir süre yoktu ve yokluğu bilinçliydi — "arada duran bir 'deste bitti'
 ekranı, okumayla soruyu birbirinden ayıran fazladan bir dokunuş". Fazladan
@@ -1884,7 +1888,7 @@ buluyordu; oradaki dokunuş gecikme değil, bir sonraki ekranın ne olduğunu
 söyleyen tek yer.
 
 Köprü koyu sahnenin **kendi** ilk ekranı, üçüncü bir yüzey değil: renk değişimi
-böylece bir soruyla değil bir açıklamayla geliyor ve sahnenin iki ucu aynı
+böylece bir soruyla değil bir açıklamayla geliyor ve giriş sorularla aynı
 bileşende, aynı düzende duruyor. Deste kendi bitiş ekranını hâlâ çizmiyor —
 çizseydi arka arkaya iki kapanış olurdu, biri aydınlık biri koyu, ikisi de aynı
 şeyi söyleyerek.
