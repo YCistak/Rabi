@@ -1843,6 +1843,48 @@ Tamamlanma destenin sonuna gelmekle kazanılıyor. Yarıda çıkılan destede
 işaretlenen kartlar bankaya düşüyor ama konu bitmiş sayılmıyor — yoksa ilk
 kartı işaretleyip çıkmak konuyu tamamlamanın yolu olurdu.
 
+### Destenin arasına mola ve hızlı kontrol giriyor
+
+Deste yalnızca kart değil (`tasarim/bilgi-karti.html`, akış
+`lib/konu/deste-akisi.ts`): kartların arasına bir **kısa mola** (Rabi
+zıplıyor, okunan kartların adları listeleniyor) ve bir–iki **hızlı kontrol**
+(okunmuş bir karttan iki şıklı soru) giriyor. Üç ekranın başlığı ortak
+(`deste-basligi.tsx`), zemin dersin rengi, vurgu dersin mürekkebi
+(`bicim.murekkep`) — mockup Fizik'in mavisiyle çizildi, o mavi burada derse
+göre değişiyor.
+
+- **Yer rastgele, kenarlar yasak.** Ara ekran ilk iki ve son iki kartın
+  arasına girmiyor: ikinci karttan sonraki mola okuma başlamadan verilen bir
+  mola, son karttan önceki kontrol soru sahnesiyle üst üste biniyor. Yer
+  yoksa (üç kartlık deste) ara ekran hiç yok. Rastgelelik deste açılırken
+  bir kez atılıyor ve `Math.random` `desteAkisi`nin **dışından** geliyor —
+  test aynı yerleşimi görebilmeli.
+- **Ara ekranlar kart sayılmıyor.** `okunan` ve bölmeli çubuk yalnızca
+  kartları sayıyor; Geri ara ekranı atlayıp bir önceki karta dönüyor.
+- **Kontrol sayısı kartla orantılı**: on karttan uzun destede iki, kısasında
+  bir (`icerik.test.ts`). Her kontrol dayandığı kartı (`kart`) söylüyor; o
+  kart okunmadan sorulmuyor ve "Tekrar oku" oraya dönüyor. Yanlışta "Devam
+  et" önce uyarıyor ("Kartı atlıyorsun") ama engellemiyor — kilitli kitabın
+  onay penceresiyle aynı kural.
+- **Mola metni beş varyasyondan biri** (`MOLA_METINLERI`), destede bir kez
+  seçiliyor. Konfeti yok: mockup'ta vardı, ama her destede patlayan kutlama
+  oyunlardaki rekor konfetisini sıradanlaştırırdı. "+10 puan" satırı da
+  alınmadı — puan sistemi yok (bkz. **Seviye, havuç ve mağaza kaldırıldı**).
+- **Kartın etiketi ve Rabi'nin notu** (`BilgiKarti.etiket`, `not`) isteğe
+  bağlı: etiket yoksa "Kart 3/7" yazıyor, not yoksa balon da maskot da
+  çizilmiyor. Boş balonun yanındaki tavşan söyleyecek sözü olmayan bir
+  rehber gibi durur.
+
+### Kart sayısı konunun genişliğine göre: 6–16
+
+Konu başına kart sayısı bir süre en fazla sekiz, sonra on'du ve konunun
+genişliğine bakmıyordu. Aralık artık 6–16 (`icerik.test.ts`): taban
+"konuyu anlatmaya yetmeyen deste", tavan "yarıda bırakılan deste" sınırı.
+Tavan hedef değil — tavanı doldurmak için kart yazmak desteyi uzatır. Kartın
+ölçütü şu: öğrencinin sınavda ya da konuyu anlamada **işine yarayan** bir
+şey söylüyor mu? Söylemiyorsa yazılmıyor; kart uzunluğu sınırı da aynı
+sebeple duruyor.
+
 ### Deste bitince doğru/yanlış soruluyor
 
 Her konunun sonunda üç-altı **iddia** geliyor ve iki düğme var: Doğru, Yanlış

@@ -19,6 +19,7 @@ export type {
   BilgiKarti,
   DersProgrami,
   Gorsel,
+  HizliKontrol,
   KartRenk,
   KatmanGorseli,
   Konu,

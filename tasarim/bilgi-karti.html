@@ -1,0 +1,534 @@
+<title>Ders haritası · Bilgi kartı, Kısa mola, Hızlı kontrol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+
+<!--
+  Ders haritasının kart destesi — üç ekran: bilgi kartı, kısa mola, hızlı
+  kontrol. Fizik üstünden çizildi, mavi (#2f4f9e) Fizik'in rengi; uygulamada
+  o rengin yerine dersin mürekkebi (`--konu-<ders>-koyu`) geçiyor.
+
+  Tasarım aracının kendi paketinden çıkarıldı (`{{ }}` yer tutucuları ve
+  `sc-for`/`sc-if` etiketleri o aracın şablon dili, `uploads/` altındaki
+  maskot görselleri paketle gelmedi). Uygulamaya bağlı değil (`AGENTS.md`:
+  tasarım kaynağı `tasarim/` altındaki HTML'ler, derlemeye girmiyorlar).
+
+  Uygulamada bilerek alınmayanlar: serif başlık (tek yazı tipi Nunito),
+  "+10 puan · seri sürüyor" (puan sistemi yok), konfeti (yalnızca rekora
+  ait).
+-->
+<!-- ==================== 1 · Bilgi kartı ==================== -->
+<style>body{margin:0;background:#eceae5;font-family:Nunito,ui-sans-serif,system-ui,sans-serif;color:#1f2430}a{color:#2f4f9e}a:hover{color:#8f3a18}@keyframes sayfaGelir{from{opacity:0;transform:translateX(calc(var(--yon) * 26px)) rotate(calc(var(--yon) * -.6deg))}to{opacity:1;transform:none}}@keyframes maskotGelir{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}.sayfa-gelir{animation:sayfaGelir 260ms cubic-bezier(.22,.7,.25,1) both}.maskot-gelir{animation:maskotGelir 320ms cubic-bezier(.22,.7,.25,1) both}@media (prefers-reduced-motion:reduce){.sayfa-gelir,.maskot-gelir{animation:none}}</style>
+
+
+<div style="display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start;padding:40px 44px;background:#eceae5">
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:700 11.5px/1.35 Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:rgba(31,36,48,.45)">Ders haritası · bilgi kartı</div>
+
+<div style="position:relative;width:390px;height:844px;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;background:#f4f1ea;box-shadow:0 2px 4px rgba(31,36,48,.1)">
+
+  <div style="position:relative;flex:none;display:flex;align-items:center;gap:14px;padding:26px 20px 0">
+    <button type="button" aria-label="Dersten çık" style="width:44px;height:44px;flex:none;border:0;border-radius:14px;background:#fffdf8;box-shadow:0 1px 2px rgba(31,36,48,.14);display:grid;place-items:center;font:700 17px Nunito,sans-serif;color:#3b4256">✕</button>
+    <div style="min-width:0;flex:1">
+      <div style="font:600 18px/1.15 'Source Serif 4',Georgia,serif;letter-spacing:-.01em;color:#1f2430">Fizik Bilimi</div>
+      <div style="margin-top:3px;font:700 11px/1.2 Nunito,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#6f7690">Fizik · Kariyer Keşfi</div>
+    </div>
+    <div style="flex:none;display:flex;align-items:baseline;gap:1px;height:44px;padding:0 13px;border-radius:14px;background:#fffdf8;box-shadow:0 1px 2px rgba(31,36,48,.12);align-self:center">
+      <span style="font:700 17px/44px 'Source Serif 4',Georgia,serif;color:#2f4f9e">{{ sayfaNo }}</span>
+      <span style="font:700 12px/44px Nunito,sans-serif;color:#6f7690">/{{ toplam }}</span>
+    </div>
+  </div>
+
+  <div style="position:relative;flex:none;display:flex;gap:5px;padding:18px 20px 0">
+    <sc-for list="{{ adimlar }}" as="adim" hint-placeholder-count="7">
+      <span style="height:5px;flex:{{ adim.esnek }};border-radius:3px;background:{{ adim.renk }}"></span>
+    </sc-for>
+  </div>
+
+  <div style="position:relative;display:flex;flex-direction:column;flex:1;min-height:0;padding:0 20px 24px">
+    <div style="display:flex;flex-direction:column;flex:1;min-height:0">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;min-height:74px">
+        <span aria-hidden="true" style="font-size:40px;line-height:1;filter:drop-shadow(0 6px 8px rgba(31,36,48,.14))">⚛️</span>
+        <span style="width:100%;height:1px;background:rgba(31,36,48,.14)"></span>
+      </div>
+      <div style="position:relative;width:100%">
+        <span style="position:absolute;left:16px;right:16px;top:-10px;height:20px;border-radius:16px 16px 0 0;background:#e7e2d6"></span>
+        <span style="position:absolute;left:8px;right:8px;top:-5px;height:16px;border-radius:16px 16px 0 0;background:#f2ecdf"></span>
+
+        <article ref="{{ kartRef }}" class="sayfa-gelir" style="--yon:{{ yon }};position:relative;overflow:hidden;border-radius:20px;background:#fffdf8;box-shadow:0 1px 2px rgba(31,36,48,.12),0 16px 34px -18px rgba(31,36,48,.35)">
+          <span style="position:absolute;left:0;right:0;top:0;height:4px;background:#2f4f9e"></span>
+          <span style="position:absolute;right:-56px;bottom:-56px;width:176px;height:176px;border-radius:999px;border:1.5px solid rgba(74,87,137,.13)"></span>
+          <span style="position:absolute;right:-24px;bottom:-24px;width:112px;height:112px;border-radius:999px;border:1.5px solid rgba(47,79,158,.16)"></span>
+
+          <div style="position:relative;padding:28px 24px 26px">
+            <div style="display:flex;align-items:center;gap:9px">
+              <span style="width:6px;height:6px;border-radius:999px;background:#2f4f9e"></span>
+              <span style="font:800 10.5px/1 Nunito,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#6f7690">{{ ustBaslik }}</span>
+            </div>
+            <h3 style="margin:16px 0 0;font:600 29px/1.18 'Source Serif 4',Georgia,serif;letter-spacing:-.02em;color:#1f2430;text-wrap:pretty">{{ baslik }}</h3>
+            <p style="margin:16px 0 0;font:600 16.5px/1.7 Nunito,sans-serif;color:#434a5c;text-wrap:pretty">{{ metin }}</p>
+
+            <sc-if value="{{ akisVar }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:22px;padding:16px;border-radius:14px;background:#f6f3ec">
+                <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:8px">
+                  <sc-for list="{{ akis }}" as="adim" hint-placeholder-count="3">
+                    <span style="display:contents">
+                      <span style="display:grid;place-items:center;padding:10px 6px;border-radius:10px;background:#fffdf8;box-shadow:0 1px 2px rgba(31,36,48,.12);font:700 13px/1.2 Nunito,sans-serif;color:#3b4256;text-align:center">{{ adim.ad }}</span>
+                      <sc-if value="{{ adim.ok }}" hint-placeholder-val="{{ true }}"><span style="font:700 15px Nunito,sans-serif;color:#6f7690">→</span></sc-if>
+                    </span>
+                  </sc-for>
+                </div>
+                <div style="margin-top:12px;font:600 13px/1.5 Nunito,sans-serif;color:#6f7690">{{ akisAlt }}</div>
+              </div>
+            </sc-if>
+          </div>
+        </article>
+
+        <div ref="{{ maskotRef }}" class="maskot-gelir" style="position:relative;display:flex;align-items:flex-end;gap:12px;margin:14px 0 0;padding-right:4px">
+          <div style="position:relative;flex:1;min-width:0;margin-bottom:18px;padding:13px 15px;border-radius:14px;background:#3b4256;box-shadow:0 1px 2px rgba(31,36,48,.16)">
+            <span style="position:absolute;right:-6px;bottom:15px;width:12px;height:12px;border-radius:2px;background:#3b4256;transform:rotate(45deg)"></span>
+            <span style="position:relative;display:block;font:700 10px/1 Nunito,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#c3b9a4">Rabi'nin notu</span>
+            <p style="position:relative;margin:7px 0 0;font:600 13.5px/1.5 Nunito,sans-serif;color:#fffdf8;text-wrap:pretty">{{ ipucu }}</p>
+          </div>
+          <img src="uploads/%C3%A7ubuk%20tutan%20maskot%201-Photoroom-5e0dbe8e.png" alt="Rehber tavşan, işaret çubuğuyla karta işaret ediyor" height="112" style="flex:none;width:auto;height:112px;object-fit:contain;object-position:bottom;filter:drop-shadow(0 8px 12px rgba(31,36,48,.16))">
+        </div>
+      </div>
+      <div style="flex:1;min-height:0"></div>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:18px">
+      <button type="button" onClick="{{ geri }}" disabled="{{ ilkSayfa }}" aria-label="Önceki kart" style="width:64px;height:58px;flex:none;border:0;border-radius:16px;background:#fffdf8;box-shadow:0 1px 2px rgba(31,36,48,.14);color:#3b4256;font:700 20px Nunito,sans-serif;display:grid;place-items:center;opacity:{{ geriOpaklik }}">‹</button>
+      <button type="button" onClick="{{ ilerle }}" style="flex:1;height:58px;border:0;border-radius:16px;background:#b3491f;box-shadow:0 3px 0 #8f3a18;color:#fffdf8;font:800 16px Nunito,sans-serif;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:10px">{{ ilerleMetni }}<span style="display:grid;place-items:center;width:26px;height:26px;border-radius:9px;background:rgba(255,253,248,.16);font-size:14px">›</span></button>
+    </div>
+  </div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:700 11.5px/1.35 Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:rgba(31,36,48,.45)">Akış kartı · 3/7 · Rabi düşünüyor</div>
+<div style="position:relative;width:390px;box-sizing:border-box;border-radius:30px;overflow:hidden;background:#f4f1ea;padding:28px 20px 32px;box-shadow:0 2px 4px rgba(31,36,48,.1)">
+  <div style="position:relative">
+    <span style="position:absolute;left:16px;right:16px;top:-10px;height:20px;border-radius:16px 16px 0 0;background:#e7e2d6"></span>
+    <span style="position:absolute;left:8px;right:8px;top:-5px;height:16px;border-radius:16px 16px 0 0;background:#f2ecdf"></span>
+    <article style="position:relative;overflow:hidden;border-radius:20px;background:#fffdf8;box-shadow:0 1px 2px rgba(31,36,48,.12),0 16px 34px -18px rgba(31,36,48,.35)">
+      <span style="position:absolute;left:0;right:0;top:0;height:4px;background:#2f4f9e"></span>
+      <span style="position:absolute;right:-56px;bottom:-56px;width:176px;height:176px;border-radius:999px;border:1.5px solid rgba(74,87,137,.13)"></span>
+      <div style="position:relative;padding:28px 24px 26px">
+        <div style="display:flex;align-items:center;gap:9px">
+          <span style="width:6px;height:6px;border-radius:999px;background:#2f4f9e"></span>
+          <span style="font:800 10.5px/1 Nunito,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#6f7690">Ölçme</span>
+        </div>
+        <h3 style="margin:16px 0 0;font:600 29px/1.18 'Source Serif 4',Georgia,serif;letter-spacing:-.02em;color:#1f2430">Bilimsel yöntem nasıl işler?</h3>
+        <p style="margin:16px 0 0;font:600 16.5px/1.7 Nunito,sans-serif;color:#434a5c;text-wrap:pretty">Gözlemle başlar, bir tahminle sürer ve deney o tahmini sınar. Sonuç tahmini tutmazsa yöntem baştan işler.</p>
+        <div style="margin-top:22px;padding:16px;border-radius:14px;background:#f6f3ec">
+          <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:8px">
+            <span style="display:grid;place-items:center;padding:10px 6px;border-radius:10px;background:#fffdf8;box-shadow:0 1px 2px rgba(31,36,48,.12);font:700 13px/1.2 Nunito,sans-serif;color:#3b4256">Gözlem</span>
+            <span style="font:700 15px Nunito,sans-serif;color:#6f7690">→</span>
+            <span style="display:grid;place-items:center;padding:10px 6px;border-radius:10px;background:#fffdf8;box-shadow:0 1px 2px rgba(31,36,48,.12);font:700 13px/1.2 Nunito,sans-serif;color:#3b4256">Hipotez</span>
+            <span style="font:700 15px Nunito,sans-serif;color:#6f7690">→</span>
+            <span style="display:grid;place-items:center;padding:10px 6px;border-radius:10px;background:#fffdf8;box-shadow:0 1px 2px rgba(31,36,48,.12);font:700 13px/1.2 Nunito,sans-serif;color:#3b4256">Deney</span>
+          </div>
+          <div style="margin-top:12px;font:600 13px/1.5 Nunito,sans-serif;color:#6f7690">Deney tahmini çürütürse zincir başa döner.</div>
+        </div>
+      </div>
+    </article>
+    <div style="display:flex;align-items:flex-end;gap:12px;margin-top:14px;padding-left:4px">
+      <img src="uploads/d%C3%BC%C5%9F%C3%BCnen%20maskot-Photoroom.png" alt="Rehber tavşan düşünüyor" height="112" style="flex:none;width:auto;height:112px;object-fit:contain;object-position:bottom;filter:drop-shadow(0 8px 12px rgba(31,36,48,.16))">
+      <div style="position:relative;flex:1;min-width:0;margin-bottom:18px;padding:13px 15px;border-radius:14px;background:#3b4256">
+        <span style="position:absolute;left:-6px;bottom:15px;width:12px;height:12px;border-radius:2px;background:#3b4256;transform:rotate(45deg)"></span>
+        <span style="position:relative;display:block;font:700 10px/1 Nunito,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#c3b9a4">Rabi'nin notu</span>
+        <p style="position:relative;margin:7px 0 0;font:600 13.5px/1.5 Nunito,sans-serif;color:#fffdf8">Sıralamayı ezberleme; her okun neden o yöne baktığını sor.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<script type="text/x-dc" data-dc-script data-props="{&quot;ilerleMetni&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Sayfayı çevir&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Kart&quot;}}">
+class Component extends DCLogic {
+  state = { sira: 0, yon: 1 };
+  kartRef = React.createRef();
+  maskotRef = React.createRef();
+
+  kartlar = [
+    { ustBaslik: 'Tanım', baslik: 'Fizik neyi inceler?', metin: 'Madde, enerji ve bunların uzay-zamandaki etkileşimini inceler. Doğanın kurallarını sayı ile ifade etmeye çalışır.', ipucu: 'Bu kartı bir tanım olarak değil, dersin geri kalanının çerçevesi olarak oku.' },
+    { ustBaslik: 'Kapsam', baslik: 'Fiziğin alt dalları', metin: 'Mekanik, termodinamik, optik, elektrik ve modern fizik. Her dal aynı doğayı farklı ölçekte okur.', ipucu: 'Beş dalı saymak yerine hangisinin hangi ölçekte çalıştığını hatırla.' },
+    { ustBaslik: 'Ölçme', baslik: 'Bilimsel yöntem nasıl işler?', metin: 'Gözlemle başlar, bir tahminle sürer ve deney o tahmini sınar. Sonuç tahmini tutmazsa yöntem baştan işler.', akis: [{ ad: 'Gözlem', ok: true }, { ad: 'Hipotez', ok: true }, { ad: 'Deney', ok: false }], akisAlt: 'Deney tahmini çürütürse zincir başa döner.', ipucu: 'Sıralamayı ezberleme; her okun neden o yöne baktığını sor.' },
+    { ustBaslik: 'Birimler', baslik: 'Neden SI birimleri?', metin: 'Ortak birim olmadan iki ölçüm karşılaştırılamaz. Uzunluk metre, kütle kilogram, zaman saniye ile yazılır.', ipucu: 'Bir soruda birim tutmuyorsa işlem de tutmuyordur — önce birimi kontrol et.' },
+    { ustBaslik: 'Kariyer', baslik: 'Fizik nerede iş olur?', metin: 'Mühendislik, tıp teknolojileri, enerji, meteoroloji ve yazılım. Ortak nokta ölçmek ve model kurmak.', ipucu: 'Listeye bakarken kendine sor: hangisi senin sevdiğin işe benziyor?' },
+    { ustBaslik: 'Yöntem', baslik: 'Model ne işe yarar?', metin: 'Model gerçeğin sadeleştirilmiş hâlidir. Doğru model, ihmal ettiği şeyleri bilerek ihmal eder.', ipucu: '"Sürtünmesiz ortam" bir yalan değil, bilinçli bir sadeleştirmedir.' },
+    { ustBaslik: 'Kapanış', baslik: 'Fizik ezber değildir', metin: 'Formül bir cümlenin kısaltmasıdır. Cümleyi anlamadan kısaltmayı hatırlamak işe yaramaz.', ipucu: 'Desteyi bitirmeden önce bir kartı kendi cümlelerinle anlatmayı dene.' },
+  ];
+
+  componentDidUpdate(_, onceki) {
+    if (onceki.sira === this.state.sira) return;
+    for (const ref of [this.kartRef, this.maskotRef]) {
+      const el = ref.current;
+      if (!el) continue;
+      el.style.animation = 'none';
+      void el.offsetWidth;
+      el.style.animation = '';
+    }
+  }
+
+  renderVals() {
+    const toplam = this.kartlar.length;
+    const i = this.state.sira;
+    const k = this.kartlar[i];
+    const son = i >= toplam - 1;
+    return {
+      toplam,
+      sayfaNo: i + 1,
+      yon: this.state.yon,
+      kartRef: this.kartRef,
+      maskotRef: this.maskotRef,
+      adimlar: this.kartlar.map((_, n) => ({
+        esnek: n === i ? 2.2 : 1,
+        renk: n < i ? '#93a6d2' : n === i ? '#2f4f9e' : 'rgba(31,36,48,.13)',
+      })),
+      ustBaslik: k.ustBaslik,
+      baslik: k.baslik,
+      metin: k.metin,
+      ipucu: k.ipucu,
+      akisVar: !!k.akis,
+      akis: k.akis ?? [],
+      akisAlt: k.akisAlt ?? '',
+      ilkSayfa: i === 0,
+      geriOpaklik: i === 0 ? 0.4 : 1,
+      ilerleMetni: son ? 'Desteyi bitir' : (this.props.ilerleMetni ?? 'Sayfayı çevir'),
+      ilerle: () => this.setState((s) => ({ sira: Math.min(s.sira + 1, toplam - 1), yon: 1 })),
+      geri: () => this.setState((s) => ({ sira: Math.max(s.sira - 1, 0), yon: -1 })),
+    };
+  }
+}
+</script>
+
+<!-- ==================== 2 · Kısa mola ==================== -->
+<style>body{margin:0;background:#eceae5;font-family:Nunito,ui-sans-serif,system-ui,sans-serif;color:#1f2430}a{color:#2f4f9e}a:hover{color:#233c7a}@keyframes maskotGiris{from{opacity:0;transform:translateY(26px) scale(.94)}to{opacity:1;transform:none}}@keyframes suzul{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}@keyframes yaziGiris{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}@keyframes seritGiris{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}@keyframes sayacDolar{from{transform:scaleX(0)}to{transform:scaleX(1)}}@keyframes konfetiDuser{0%{opacity:0;transform:translate3d(0,-40px,0) rotate(0deg)}12%{opacity:1}100%{opacity:0;transform:translate3d(var(--kayma),560px,0) rotate(var(--donus))}}@media (prefers-reduced-motion:reduce){.maskot-giris,.maskot-suzul,.yazi-giris,.serit-giris,.konfeti span,.sayac{animation:none!important}.konfeti{display:none}}</style>
+
+
+<div style="display:flex;justify-content:center;padding:40px 44px;background:#eceae5">
+<div style="position:relative;width:390px;height:844px;box-sizing:border-box;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;align-items:center;background:#f4f1ea;box-shadow:0 2px 4px rgba(31,36,48,.1);padding:0 28px 34px">
+
+  <span style="position:absolute;left:50%;top:190px;width:620px;height:620px;margin-left:-310px;margin-top:-310px;border-radius:999px;background:radial-gradient(closest-side,rgba(255,253,248,.95),rgba(255,253,248,0))"></span>
+  <span style="position:absolute;left:50%;top:190px;width:330px;height:330px;margin-left:-165px;margin-top:-165px;border-radius:999px;background:radial-gradient(closest-side,rgba(47,79,158,.09),rgba(47,79,158,0))"></span>
+
+  <div class="konfeti" ref="{{ konfetiRef }}" style="position:absolute;left:0;right:0;top:0;height:100%;pointer-events:none">
+    <sc-for list="{{ konfetiler }}" as="p" hint-placeholder-count="0">
+      <span style="position:absolute;left:{{ p.sol }};top:{{ p.ust }};width:{{ p.en }};height:{{ p.boy }};border-radius:{{ p.yuvarlak }};background:{{ p.renk }};--kayma:{{ p.kayma }};--donus:{{ p.donus }};animation:konfetiDuser {{ p.sure }} cubic-bezier(.25,.6,.4,1) {{ p.gecikme }} both"></span>
+    </sc-for>
+  </div>
+
+  <div class="serit-giris" style="position:relative;flex:none;display:flex;align-items:center;gap:12px;width:100%;padding:26px 0 0;animation:seritGiris 380ms cubic-bezier(.2,.75,.3,1) 60ms both">
+    <div style="min-width:0;flex:1">
+      <div style="font:600 17px/1.15 'Source Serif 4',Georgia,serif;letter-spacing:-.01em;color:#1f2430">Fizik Bilimi</div>
+      <div style="margin-top:3px;font:700 11px/1.2 Nunito,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#6f7690">Fizik · Kariyer Keşfi</div>
+    </div>
+    <span style="flex:none;display:inline-flex;align-items:center;height:30px;padding:0 12px;border-radius:999px;background:#fffdf8;box-shadow:0 1px 2px rgba(31,36,48,.12);font:700 11px/1 Nunito,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#2f4f9e">Kısa mola</span>
+  </div>
+
+  <div style="position:relative;flex:none;display:flex;gap:5px;width:100%;margin-top:16px">
+    <sc-for list="{{ noktalar }}" as="n" hint-placeholder-count="7">
+      <span style="height:5px;flex:1;border-radius:3px;background:{{ n.renk }}"></span>
+    </sc-for>
+  </div>
+
+  <div style="flex:none;height:44px"></div>
+
+  <div class="maskot-giris" ref="{{ maskotRef }}" style="position:relative;flex:none;animation:maskotGiris 420ms cubic-bezier(.2,.75,.3,1) both">
+    <div class="maskot-suzul" style="animation:suzul 3.6s ease-in-out 420ms infinite">
+      <img src="uploads/sevinen%20maskot%203-Photoroom.png" alt="Rehber tavşan Rabi sevinçle zıplıyor" height="210" style="display:block;width:auto;height:210px;object-fit:contain;filter:drop-shadow(0 16px 20px rgba(31,36,48,.18))">
+    </div>
+  </div>
+
+  <div class="yazi-giris" style="position:relative;flex:none;margin-top:26px;text-align:center;animation:yaziGiris 420ms cubic-bezier(.2,.75,.3,1) 180ms both">
+    <h2 style="margin:0;font:600 34px/1.15 'Source Serif 4',Georgia,serif;letter-spacing:-.02em;color:#1f2430">Böyle devam et!</h2>
+    <p style="margin:14px 0 0;font:600 16.5px/1.65 Nunito,sans-serif;color:#434a5c;text-wrap:pretty">{{ altMetin }}</p>
+  </div>
+
+  <div class="serit-giris" style="position:relative;flex:none;display:flex;align-items:center;gap:12px;margin-top:24px;padding:12px 16px;border-radius:16px;background:#fffdf8;box-shadow:0 1px 2px rgba(31,36,48,.12);animation:seritGiris 380ms cubic-bezier(.2,.75,.3,1) 300ms both">
+    <div style="display:flex;align-items:baseline;gap:2px">
+      <span style="font:600 22px/1 'Source Serif 4',Georgia,serif;color:#2f4f9e">{{ okunan }}</span>
+      <span style="font:700 13px/1 Nunito,sans-serif;color:#6f7690">/{{ toplam }}</span>
+    </div>
+    <span style="width:1px;height:22px;background:rgba(31,36,48,.12)"></span>
+    <span style="font:700 13px/1.3 Nunito,sans-serif;color:#434a5c">kart okundu</span>
+  </div>
+
+  <div style="flex:1;min-height:14px"></div>
+  <div class="serit-giris" style="position:relative;flex:none;width:100%;padding:16px 18px;border-radius:18px;background:#fffdf8;box-shadow:0 1px 2px rgba(31,36,48,.12);animation:seritGiris 380ms cubic-bezier(.2,.75,.3,1) 340ms both">
+    <div style="font:800 10.5px/1 Nunito,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#6f7690">Bu molada öğrendiklerin</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="display:grid;place-items:center;width:20px;height:20px;flex:none;border-radius:7px;background:#2f4f9e;color:#fffdf8;font:800 11px Nunito,sans-serif">✓</span><span style="font:700 14px/1.35 Nunito,sans-serif;color:#434a5c">Fizik neyi inceler?</span></div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="display:grid;place-items:center;width:20px;height:20px;flex:none;border-radius:7px;background:#2f4f9e;color:#fffdf8;font:800 11px Nunito,sans-serif">✓</span><span style="font:700 14px/1.35 Nunito,sans-serif;color:#434a5c">Fiziğin alt dalları</span></div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="display:grid;place-items:center;width:20px;height:20px;flex:none;border-radius:7px;background:#2f4f9e;color:#fffdf8;font:800 11px Nunito,sans-serif">✓</span><span style="font:700 14px/1.35 Nunito,sans-serif;color:#434a5c">Bilimsel yöntem nasıl işler?</span></div>
+    </div>
+  </div>
+  <div style="flex:1;min-height:14px"></div>
+
+  <button type="button" onClick="{{ ilerle }}" class="serit-giris" ref="{{ sayacRef }}" style="position:relative;flex:none;width:100%;height:58px;border:0;border-radius:16px;background:#b3491f;box-shadow:0 3px 0 #8f3a18;color:#fffdf8;font:800 16px Nunito,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:10px;animation:seritGiris 380ms cubic-bezier(.2,.75,.3,1) 380ms both">İlerle<span style="display:grid;place-items:center;width:26px;height:26px;border-radius:9px;background:rgba(255,253,248,.16);font-size:14px">›</span></button>
+</div>
+</div>
+
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:478,&quot;height&quot;:924},&quot;altMetin&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;3 kartı bitirdin. Aynı tempoyla devam edersen bu konuyu bugün kapatırsın.&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { tur: 0 };
+  konfetiRef = React.createRef();
+  maskotRef = React.createRef();
+  sayacRef = React.createRef();
+
+  componentDidMount() { this.zamanla(); }
+  componentWillUnmount() { clearTimeout(this.sayac); }
+
+  zamanla() {
+    clearTimeout(this.sayac);
+    // 2 sn sonra otomatik geçiş; mockta akışı görebilmek için sahne yeniden oynar
+    this.sayac = setTimeout(() => this.setState((s) => ({ tur: s.tur + 1 })), 2600);
+  }
+
+  componentDidUpdate() {
+    for (const ref of [this.konfetiRef, this.maskotRef, this.sayacRef]) {
+      const kok = ref.current;
+      if (!kok) continue;
+      for (const el of [kok, ...kok.querySelectorAll('*')]) {
+        el.style.animation = 'none';
+        void el.offsetWidth;
+        el.style.animation = '';
+      }
+    }
+    this.zamanla();
+  }
+
+  renderVals() {
+    const toplam = 7, okunan = 3;
+    const renkler = ['#2f4f9e', '#b3491f', '#93a6d2', '#e3c76a', '#fffdf8'];
+    const konfetiler = Array.from({ length: 26 }, (_, n) => {
+      const t = (n * 97) % 100 / 100;
+      const u = (n * 53) % 100 / 100;
+      const kare = n % 3 === 0;
+      return {
+        sol: (4 + t * 90).toFixed(1) + '%',
+        ust: (-6 - u * 14).toFixed(0) + 'px',
+        en: (kare ? 8 : 6) + 'px',
+        boy: (kare ? 8 : 12) + 'px',
+        yuvarlak: kare ? '2px' : '999px',
+        renk: renkler[n % renkler.length],
+        kayma: ((u - 0.5) * 120).toFixed(0) + 'px',
+        donus: (180 + u * 540).toFixed(0) + 'deg',
+        sure: (1500 + u * 900).toFixed(0) + 'ms',
+        gecikha: null,
+        gecikme: (t * 420).toFixed(0) + 'ms',
+      };
+    });
+    return {
+      altMetin: this.props.altMetin ?? '3 kartı bitirdin. Aynı tempoyla devam edersen bu konuyu bugün kapatırsın.',
+      okunan,
+      toplam,
+      noktalar: Array.from({ length: toplam }, (_, n) => ({ renk: n < okunan ? '#2f4f9e' : 'rgba(31,36,48,.15)' })),
+      konfetiler,
+      ilerle: () => this.setState((s) => ({ tur: s.tur + 1 })),
+      konfetiRef: this.konfetiRef,
+      maskotRef: this.maskotRef,
+      sayacRef: this.sayacRef,
+    };
+  }
+}
+</script>
+
+<!-- ==================== 3 · Hızlı kontrol ==================== -->
+<style>body{margin:0;background:#eceae5;font-family:Nunito,ui-sans-serif,system-ui,sans-serif;color:#1f2430}a{color:#2f4f9e}a:hover{color:#233c7a}@keyframes maskotGiris{from{opacity:0;transform:translateY(24px) scale(.95)}to{opacity:1;transform:none}}@keyframes suzul{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}@keyframes yaziGiris{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}@keyframes sikGiris{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}@keyframes popUp{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}@keyframes perde{from{opacity:0}to{opacity:1}}@keyframes sallan{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}@keyframes konfetiDuser{0%{opacity:0;transform:translate3d(0,-30px,0) rotate(0)}12%{opacity:1}100%{opacity:0;transform:translate3d(var(--kayma),620px,0) rotate(var(--donus))}}@media (prefers-reduced-motion:reduce){.maskot-giris,.maskot-suzul,.yazi-giris,.sik-giris,.pop,.perde,.sallan,.konfeti span{animation:none!important}.konfeti{display:none}}</style>
+
+
+<div style="display:flex;justify-content:center;padding:40px 44px;background:#eceae5">
+<div style="position:relative;width:390px;height:844px;box-sizing:border-box;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;align-items:center;background:#f4f1ea;box-shadow:0 2px 4px rgba(31,36,48,.1);padding:0 28px 34px">
+
+  <span style="position:absolute;left:50%;top:230px;width:620px;height:620px;margin-left:-310px;margin-top:-310px;border-radius:999px;background:radial-gradient(closest-side,rgba(255,253,248,.95),rgba(255,253,248,0))"></span>
+
+  <div class="konfeti" ref="{{ konfetiRef }}" style="position:absolute;left:0;right:0;top:0;height:100%;pointer-events:none;z-index:4">
+    <sc-for list="{{ konfetiler }}" as="p" hint-placeholder-count="0">
+      <span style="position:absolute;left:{{ p.sol }};top:-14px;width:{{ p.en }};height:{{ p.boy }};border-radius:{{ p.yuvarlak }};background:{{ p.renk }};--kayma:{{ p.kayma }};--donus:{{ p.donus }};animation:konfetiDuser {{ p.sure }} cubic-bezier(.25,.6,.4,1) {{ p.gecikme }} both;opacity:{{ p.acik }}"></span>
+    </sc-for>
+  </div>
+
+  <div style="position:relative;flex:none;display:flex;align-items:center;gap:12px;width:100%;padding:26px 0 0">
+    <div style="min-width:0;flex:1">
+      <div style="font:600 17px/1.15 'Source Serif 4',Georgia,serif;letter-spacing:-.01em">Fizik Bilimi</div>
+      <div style="margin-top:3px;font:700 11px/1.2 Nunito,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#6f7690">Fizik · Kariyer Keşfi</div>
+    </div>
+    <span style="flex:none;display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:999px;background:#fffdf8;box-shadow:0 1px 2px rgba(31,36,48,.12);font:700 11px/1 Nunito,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#2f4f9e"><span aria-hidden="true" style="font-size:12px">🧠</span>Hızlı kontrol</span>
+  </div>
+
+  <div style="position:relative;flex:none;display:flex;gap:5px;width:100%;margin-top:16px">
+    <sc-for list="{{ noktalar }}" as="n" hint-placeholder-count="7">
+      <span style="height:5px;flex:1;border-radius:3px;background:{{ n.renk }}"></span>
+    </sc-for>
+  </div>
+
+  <div class="maskot-giris" style="position:relative;flex:none;margin-top:56px;animation:maskotGiris 420ms cubic-bezier(.2,.75,.3,1) both">
+    <div class="maskot-suzul" style="animation:suzul 3.8s ease-in-out 420ms infinite">
+      <img src="uploads/d%C3%BC%C5%9F%C3%BCnen%20maskot-Photoroom-db35f178.png" alt="Rehber tavşan Rabi düşünüyor" height="196" style="display:block;width:auto;height:196px;object-fit:contain;filter:drop-shadow(0 16px 20px rgba(31,36,48,.18))">
+    </div>
+    <span aria-hidden="true" style="position:absolute;right:-6px;top:6px;display:grid;place-items:center;width:44px;height:44px;border-radius:15px;background:#fffdf8;box-shadow:0 1px 2px rgba(31,36,48,.14),0 10px 18px -12px rgba(31,36,48,.4);font-size:21px;line-height:1">💭</span>
+  </div>
+
+  <div class="yazi-giris" style="position:relative;flex:none;margin-top:18px;text-align:center;animation:yaziGiris 400ms cubic-bezier(.2,.75,.3,1) 150ms both">
+    <div style="font:800 10.5px/1 Nunito,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#6f7690">Önceki kartlardan</div>
+    <h2 style="margin:12px 0 0;font:600 26px/1.22 'Source Serif 4',Georgia,serif;letter-spacing:-.02em;text-wrap:pretty">{{ soru }}</h2>
+  </div>
+
+  <div style="flex:none;height:22px"></div>
+
+  <div class="sik-giris" style="position:relative;flex:none;display:flex;flex-direction:column;gap:12px;width:100%;animation:sikGiris 400ms cubic-bezier(.2,.75,.3,1) 260ms both">
+    <sc-for list="{{ siklar }}" as="s" hint-placeholder-count="2">
+      <button type="button" onClick="{{ s.sec }}" style="display:flex;align-items:center;gap:14px;width:100%;min-height:66px;padding:14px 16px;border:1.5px solid {{ s.kenar }};border-radius:18px;background:{{ s.zemin }};box-shadow:{{ s.golge }};text-align:left;cursor:pointer">
+        <span style="flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:12px;background:{{ s.harfZemin }};color:{{ s.harfRenk }};font:800 14px Nunito,sans-serif">{{ s.harf }}</span>
+        <span style="min-width:0;flex:1;font:700 15.5px/1.35 Nunito,sans-serif;color:#1f2430;text-wrap:pretty">{{ s.metin }}</span>
+        <span aria-hidden="true" style="flex:none;font-size:19px;line-height:1;opacity:{{ s.isaretAcik }}">{{ s.isaret }}</span>
+      </button>
+    </sc-for>
+  </div>
+
+  <div style="flex:1;min-height:16px"></div>
+
+  <sc-if value="{{ sonucVar }}" hint-placeholder-val="{{ false }}">
+    <div class="perde" style="position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;justify-content:flex-end;background:rgba(31,36,48,.34);animation:perde 180ms ease-out both">
+      <div class="pop" style="position:relative;padding:26px 24px 28px;border-radius:28px 28px 30px 30px;background:#fffdf8;box-shadow:0 -8px 30px -12px rgba(31,36,48,.4);animation:popUp 300ms cubic-bezier(.2,.75,.3,1) both">
+        <span style="position:absolute;left:50%;top:12px;width:44px;height:4px;margin-left:-22px;border-radius:3px;background:rgba(31,36,48,.14)"></span>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:14px">
+          <span aria-hidden="true" style="flex:none;display:grid;place-items:center;width:48px;height:48px;border-radius:17px;background:{{ sonucZemin }};font-size:25px;line-height:1">{{ sonucSimge }}</span>
+          <div style="min-width:0;flex:1">
+            <div style="font:600 23px/1.2 'Source Serif 4',Georgia,serif;color:#1f2430">{{ sonucBaslik }}</div>
+            <div style="margin-top:5px;font:700 13px/1.4 Nunito,sans-serif;color:{{ sonucRenk }}">{{ sonucEtiket }}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:10px;margin-top:18px">
+          <img src="uploads/d%C3%BC%C5%9F%C3%BCnen%20maskot-Photoroom-db35f178.png" alt="Rabi" height="86" style="flex:none;width:auto;height:86px;object-fit:contain;filter:drop-shadow(0 6px 9px rgba(31,36,48,.16))">
+          <div style="position:relative;flex:1;min-width:0;margin-bottom:12px;padding:14px 16px;border-radius:16px;background:#3b4256">
+            <span style="position:absolute;left:-6px;bottom:16px;width:12px;height:12px;border-radius:2px;background:#3b4256;transform:rotate(45deg)"></span>
+            <p style="position:relative;margin:0;font:600 14px/1.6 Nunito,sans-serif;color:#fffdf8;text-wrap:pretty">{{ aciklama }}</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:20px">
+          <sc-if value="{{ tekrarVar }}" hint-placeholder-val="{{ false }}">
+            <button type="button" onClick="{{ tekrar }}" style="flex:1;height:56px;border:1.5px solid rgba(31,36,48,.14);border-radius:16px;background:#fffdf8;color:#434a5c;font:800 15px Nunito,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer"><span aria-hidden="true" style="font-size:16px">↺</span>Tekrar oku</button>
+          </sc-if>
+          <button type="button" onClick="{{ devam }}" style="flex:1;height:56px;border:0;border-radius:16px;background:#b3491f;box-shadow:0 3px 0 #8f3a18;color:#fffdf8;font:800 16px Nunito,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:10px;cursor:pointer">Devam et<span style="display:grid;place-items:center;width:26px;height:26px;border-radius:9px;background:rgba(255,253,248,.16);font-size:14px">›</span></button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ uyariVar }}" hint-placeholder-val="{{ false }}">
+    <div class="perde" style="position:absolute;inset:0;z-index:6;display:grid;place-items:center;padding:28px;background:rgba(31,36,48,.44);animation:perde 160ms ease-out both">
+      <div class="pop" style="width:100%;max-width:300px;padding:24px 22px;border-radius:24px;background:#fffdf8;box-shadow:0 20px 40px -16px rgba(31,36,48,.5);text-align:center;animation:popUp 260ms cubic-bezier(.2,.75,.3,1) both">
+        <span aria-hidden="true" style="display:grid;place-items:center;width:56px;height:56px;margin:0 auto;border-radius:19px;background:#fbefe9;font-size:27px;line-height:1">⚠️</span>
+        <div style="margin-top:16px;font:600 20px/1.25 'Source Serif 4',Georgia,serif;color:#1f2430">Kartı atlıyorsun</div>
+        <p style="margin:10px 0 0;font:600 14px/1.6 Nunito,sans-serif;color:#434a5c;text-wrap:pretty">Bu soruyu bilemedin. Kartı tekrar okumadan devam edersen sonraki konular eksik oturabilir.</p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
+          <button type="button" onClick="{{ tekrar }}" style="width:100%;height:52px;border:0;border-radius:16px;background:#2f4f9e;box-shadow:0 3px 0 #233c7a;color:#fffdf8;font:800 15px Nunito,sans-serif;cursor:pointer">Kartı tekrar oku</button>
+          <button type="button" onClick="{{ yineDeDevam }}" style="width:100%;height:48px;border:0;border-radius:14px;background:transparent;color:#6f7690;font:700 14px Nunito,sans-serif;cursor:pointer">Yine de devam et</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</div>
+
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:478,&quot;height&quot;:924},&quot;soru&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Bilimsel yöntemde deney neyi sınar?&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { secim: null, uyari: false };
+  konfetiRef = React.createRef();
+
+  soru = 'Bilimsel yöntemde deney neyi sınar?';
+  siklar = [
+    { harf: 'A', metin: 'Kurulan hipotezi', dogru: true },
+    { harf: 'B', metin: 'Ölçüm biriminin adını', dogru: false },
+  ];
+  aciklamalar = {
+    dogru: 'Aynen öyle. Gözlem soruyu doğurur, hipotez bir tahmindir; deney o tahmini sınar ve tutmazsa zincir başa döner.',
+    yanlis: 'Tam değil. Deney, kurulan hipotezi sınar. Birim seçimi ölçmeyi karşılaştırılabilir kılar ama sınanan şey tahmindir.',
+  };
+
+  componentDidUpdate(_, onceki) {
+    if (onceki.secim === this.state.secim) return;
+    const kok = this.konfetiRef.current;
+    if (!kok) return;
+    for (const el of kok.querySelectorAll('span')) {
+      el.style.animation = 'none';
+      void el.offsetWidth;
+      el.style.animation = '';
+    }
+  }
+
+  renderVals() {
+    const secim = this.state.secim;
+    const secili = secim === null ? null : this.siklar[secim];
+    const dogru = !!(secili && secili.dogru);
+    const renkler = ['#2f4f9e', '#b3491f', '#93a6d2', '#e3c76a', '#fffdf8'];
+
+    return {
+      soru: this.props.soru ?? this.soru,
+      noktalar: Array.from({ length: 7 }, (_, n) => ({ renk: n < 3 ? '#2f4f9e' : 'rgba(31,36,48,.15)' })),
+      siklar: this.siklar.map((s, i) => {
+        const bu = secim === i;
+        const yesil = bu && s.dogru;
+        const kirmizi = bu && !s.dogru;
+        return {
+          harf: s.harf,
+          metin: s.metin,
+          sec: () => this.setState({ secim: i, uyari: false }),
+          kenar: yesil ? '#3d7a4f' : kirmizi ? '#b3491f' : 'rgba(31,36,48,.12)',
+          zemin: yesil ? '#eef6ef' : kirmizi ? '#fbefe9' : '#fffdf8',
+          golge: bu ? 'none' : '0 1px 2px rgba(31,36,48,.12)',
+          harfZemin: yesil ? '#3d7a4f' : kirmizi ? '#b3491f' : '#f4f1ea',
+          harfRenk: bu ? '#fffdf8' : '#434a5c',
+          isaret: yesil ? '✅' : kirmizi ? '❌' : '',
+          isaretAcik: bu ? 1 : 0,
+        };
+      }),
+      ilerlePasif: secim === null,
+      ilerleZemin: secim === null ? '#e4e1da' : '#b3491f',
+      ilerleGolge: secim === null ? 'none' : '0 3px 0 #8f3a18',
+      ilerleRenk: secim === null ? '#8d8e94' : '#fffdf8',
+      ilerleOpaklik: secim === null ? 0.75 : 1,
+      ilerleImlec: secim === null ? 'default' : 'pointer',
+      ilerleOkZemin: secim === null ? 'rgba(31,36,48,.07)' : 'rgba(255,253,248,.16)',
+      sonucVar: secim !== null,
+      sonucSimge: dogru ? '🎉' : '💡',
+      sonucZemin: dogru ? '#eef6ef' : '#fbefe9',
+      sonucBaslik: dogru ? 'Doğru bildin!' : 'Neredeyse',
+      sonucEtiket: dogru ? '+10 puan · seri sürüyor' : 'Kartı bir kez daha oku',
+      sonucRenk: dogru ? '#3d7a4f' : '#b3491f',
+      aciklama: dogru ? this.aciklamalar.dogru : this.aciklamalar.yanlis,
+      tekrarVar: secim !== null && !dogru,
+      uyariVar: this.state.uyari,
+      tekrar: () => this.setState({ secim: null, uyari: false }),
+      devam: () => (secim !== null && !dogru)
+        ? this.setState({ uyari: true })
+        : this.setState({ secim: null, uyari: false }),
+      yineDeDevam: () => this.setState({ secim: null, uyari: false }),
+      konfetiRef: this.konfetiRef,
+      konfetiler: !dogru ? [] : Array.from({ length: 22 }, (_, n) => {
+        const t = (n * 97) % 100 / 100;
+        const u = (n * 53) % 100 / 100;
+        const kare = n % 3 === 0;
+        return {
+          sol: (5 + t * 88).toFixed(1) + '%',
+          en: (kare ? 8 : 6) + 'px',
+          boy: (kare ? 8 : 12) + 'px',
+          yuvarlak: kare ? '2px' : '999px',
+          renk: renkler[n % renkler.length],
+          kayma: ((u - 0.5) * 110).toFixed(0) + 'px',
+          donus: (180 + u * 520).toFixed(0) + 'deg',
+          sure: (1500 + u * 900).toFixed(0) + 'ms',
+          gecikme: (t * 360).toFixed(0) + 'ms',
+          acik: 1,
+        };
+      }),
+    };
+  }
+}
+</script>

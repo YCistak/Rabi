@@ -13,14 +13,16 @@ import type { DersProgrami } from './tip'
 const BASLIK_SINIRI = 44
 const METIN_SINIRI = 240
 /**
- * Bir konu bu kadar karttan uzunsa kullanıcı desteyi yarıda bırakıyor.
+ * Konu başına kart sayısı: en az 6, en fazla 16.
  *
- * Sınır sekizdi ve konunun büyüklüğüne bakmıyordu: "Üslü ve Köklü
- * Gösterimler" ile "Sonsuz Uç" aynı sayıda kart alıyordu. Ona çıkarıldı ama
- * bu bir hedef değil **tavan** — kart sayısını konunun kendi genişliği
- * belirliyor, tavanı doldurmak için kart yazmak desteyi uzatır.
+ * Tavan sekizdi, sonra on; ikisi de konunun genişliğine bakmıyordu ve
+ * "Üslü ve Köklü Gösterimler" dört kartla geçiştiriliyordu. Aralık artık
+ * Maarif programındaki konunun genişliğine göre kullanılıyor; tavan hâlâ
+ * hedef değil **tavan** — tavanı doldurmak için kart yazmak desteyi uzatır,
+ * taban ise "konuyu anlatmaya yetmeyen deste" sınırı.
  */
-const KART_SINIRI = 10
+const KART_TABANI = 6
+const KART_SINIRI = 16
 
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.map(
@@ -38,7 +40,7 @@ describe('programlar', () => {
     for (const tema of program!.temalar) {
       expect(tema.konular.length, `${tema.ad} boş`).toBeGreaterThan(0)
       for (const konu of tema.konular) {
-        expect(konu.kartlar.length, `${konu.ad} boş`).toBeGreaterThan(2)
+        expect(konu.kartlar.length, `${konu.ad} kısa`).toBeGreaterThanOrEqual(KART_TABANI)
         expect(konu.kartlar.length, `${konu.ad} çok uzun`).toBeLessThanOrEqual(KART_SINIRI)
       }
     }
@@ -188,5 +190,65 @@ describe('sorular', () => {
     const oran = tumSorular.filter((s) => s.dogru).length / tumSorular.length
     expect(oran).toBeGreaterThan(0.4)
     expect(oran).toBeLessThan(0.6)
+  })
+})
+
+/**
+ * Kart etiketi ve Rabi'nin notu; hızlı kontrol.
+ *
+ * Üçü de isteğe bağlı ve çoğu kartta henüz yok; testler yalnızca yazılmış
+ * olanın ekrana sığdığını ve kontrolün **var olan** bir karta dayandığını
+ * denetliyor. Var olmayan karta dayanan kontrol "Tekrar oku" deyince hiçbir
+ * yere dönemez.
+ */
+const ETIKET_SINIRI = 18
+const NOT_SINIRI = 120
+const KONTROL_SORU_SINIRI = 90
+const SIK_SINIRI = 44
+const KONTROL_ACIKLAMA_SINIRI = 170
+
+describe('kart notu ve hızlı kontrol', () => {
+  it.each(programlar)('%s: etiket ve not kısa', (_ad, program) => {
+    for (const konu of tumKonular(program!)) {
+      for (const kart of konu.kartlar) {
+        if (kart.etiket !== undefined) {
+          expect(kart.etiket.trim().length, `boş etiket: ${kart.baslik}`).toBeGreaterThan(0)
+          expect(kart.etiket.length, `etiket uzun: ${kart.etiket}`).toBeLessThanOrEqual(ETIKET_SINIRI)
+        }
+        if (kart.not !== undefined) {
+          expect(kart.not.trim().length, `boş not: ${kart.baslik}`).toBeGreaterThan(0)
+          expect(kart.not.length, `not uzun: ${kart.not}`).toBeLessThanOrEqual(NOT_SINIRI)
+        }
+      }
+    }
+  })
+
+  /*
+    On karttan uzun destede iki kontrol, kısasında bir: tek soru uzun
+    destenin ikinci yarısını hiç yoklamıyor, iki soru kısa desteyi sınava
+    çeviriyor. Sayı sabit ki içerik yazarken unutulmasın.
+  */
+  it.each(programlar)('%s: her konuda uzunluğuna göre bir ya da iki kontrol var', (_ad, program) => {
+    for (const konu of tumKonular(program!)) {
+      const beklenen = konu.kartlar.length > 10 ? 2 : 1
+      expect(konu.kontroller.length, `${konu.ad}: kontrol sayısı`).toBe(beklenen)
+    }
+  })
+
+  it.each(programlar)('%s: hızlı kontrol var olan bir karta dayanıyor ve kısa', (_ad, program) => {
+    for (const konu of tumKonular(program!)) {
+      for (const k of konu.kontroller) {
+      expect(k.kart, `${konu.ad}: kontrol kartı yok`).toBeGreaterThanOrEqual(1)
+      expect(k.kart, `${konu.ad}: kontrol kartı yok`).toBeLessThanOrEqual(konu.kartlar.length)
+      expect(k.soru.length, `soru uzun: ${k.soru}`).toBeLessThanOrEqual(KONTROL_SORU_SINIRI)
+      expect(k.siklar[0]).not.toBe(k.siklar[1])
+      for (const sik of k.siklar) {
+        expect(sik.trim().length).toBeGreaterThan(0)
+        expect(sik.length, `şık uzun: ${sik}`).toBeLessThanOrEqual(SIK_SINIRI)
+      }
+      expect(k.aciklama.dogru.length).toBeLessThanOrEqual(KONTROL_ACIKLAMA_SINIRI)
+      expect(k.aciklama.yanlis.length).toBeLessThanOrEqual(KONTROL_ACIKLAMA_SINIRI)
+      }
+    }
   })
 })

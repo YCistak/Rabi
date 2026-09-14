@@ -14,10 +14,17 @@ import { kart, konu, program, soru, tema } from '../tip'
  */
 export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
   tema('fzk9-t1', 'Fizik Bilimi ve Kariyer Keşfi', [
+    /*
+      Bu konu, kart etiketi / Rabi notu / hızlı kontrol alanlarının **örneği**:
+      tasarım (`tasarim/bilgi-karti.html`) bu konu üstünden çizildi ve
+      metinler oradan. Öteki konularda alanlar henüz boş.
+    */
     konu('fzk9-bilim', 'Fizik Bilimi', [
       kart(
         'Fizik neyi inceler?',
         'Madde, enerji ve bunların uzay-zamandaki etkileşimini inceler. Doğanın kurallarını sayı ile ifade etmeye çalışır.',
+        undefined,
+        { etiket: 'Tanım', not: 'Bu kartı bir tanım olarak değil, dersin geri kalanının çerçevesi olarak oku.' },
       ),
       kart(
         'Bilimsel yöntem',
@@ -31,33 +38,53 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
             { ad: 'Kuram' },
           ],
         },
+        { etiket: 'Ölçme', not: 'Sıralamayı ezberleme; her okun neden o yöne baktığını sor.' },
       ),
       kart(
         'Deney ve model',
         'Model gerçeğin sadeleştirilmiş hâlidir. Deneyle çelişen model ne kadar zarif olursa olsun bırakılır.',
+        undefined,
+        { etiket: 'Yöntem', not: '"Sürtünmesiz ortam" bir yalan değil, bilinçli bir sadeleştirmedir.' },
       ),
       kart(
         'Hipotez, kuram, yasa',
         'Hipotez sınanmayı bekleyen öneri, kuram sınanmış açıklama, yasa ise gözlenen düzenliliğin kısa ifadesidir.',
+        undefined,
+        { etiket: 'Kavramlar', not: 'Üçünü bir merdiven gibi düşünme; yasa kuramın yukarısı değil, başka bir iş.' },
       ),
       kart(
         'Fizik ve matematik',
         'Matematik fiziğin dili. Bir yasa cümleyle anlatılabilir ama tahmin yapabilmesi için denkleme dönmesi gerekir.',
+        undefined,
+        { etiket: 'Dil', not: 'Formül bir cümlenin kısaltmasıdır; cümleyi anlamadan kısaltmayı hatırlamak işe yaramaz.' },
       ),
       kart(
         'Ölçme olmadan fizik olmaz',
         'Her ölçümün bir belirsizliği vardır. Sonucu belirsizliğiyle birlikte vermek, fiziğin dürüstlük kuralıdır.',
+        undefined,
+        { etiket: 'Birimler', not: 'Bir soruda birim tutmuyorsa işlem de tutmuyordur — önce birimi kontrol et.' },
       ),
       kart(
         'Fiziğin öteki bilimlerle bağı',
         'Kimya atomun elektron düzenine, biyoloji sinir hücresinin elektriğine dayanır. Sınır çizgileri idari, doğal değil.',
+        undefined,
+        { etiket: 'Kapanış', not: 'Desteyi bitirmeden önce bir kartı kendi cümlelerinle anlatmayı dene.' },
       ),
     ], [
       soru('Bir kuram yeterince kanıt toplayınca yasaya dönüşür.', false, 'Yasa olayın nasıl olduğunu tanımlar, kuram nedenini açıklar; biri ötekinin ileri hâli değil.'),
       soru('Bir deneyin başka araştırmacılar tarafından da tekrarlanabilmesi gerekir.', true, 'Tekrarlanamayan sonuç doğrulanamaz; bilimsel yöntemin şartı.'),
       soru('Model, gerçeğin bütün ayrıntılarını taşıyan birebir kopyasıdır.', false, 'Model gerçeği basitleştirir; yalnızca işe yarayacak ayrıntıları tutar.'),
       soru('Fizik, öteki doğa bilimlerinin dayandığı temel yasaları da inceler.', true, 'Kimyadaki bağ da biyolojideki sinir iletimi de fiziksel yasalarla açıklanıyor.'),
-    ]),
+    ], [{
+      soru: 'Bilimsel yöntemde deney neyi sınar?',
+      siklar: ['Kurulan hipotezi', 'Ölçüm biriminin adını'],
+      dogru: 0,
+      aciklama: {
+        dogru: 'Aynen öyle. Gözlem soruyu doğurur, hipotez bir tahmindir; deney o tahmini sınar ve tutmazsa zincir başa döner.',
+        yanlis: 'Tam değil. Deney, kurulan hipotezi sınar. Birim seçimi ölçmeyi karşılaştırılabilir kılar ama sınanan şey tahmindir.',
+      },
+      kart: 2,
+    }]),
     konu('fzk9-altdal', 'Fizik Biliminin Alt Dalları', [
       kart(
         'Mekanik',

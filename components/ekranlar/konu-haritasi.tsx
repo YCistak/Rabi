@@ -413,7 +413,8 @@ export function KonuHaritasiEkrani({
         konu={acikKonu.konu}
         temaAdi={acikKonu.temaAdi}
         dersAdi={ders.ad}
-        zeminRengi={bicim.zemin}
+        dersIkonu={ders.ikon}
+        bicim={bicim}
         onKapat={(sonuc) => desteBitti(acikKonu, sonuc)}
       />
     )
