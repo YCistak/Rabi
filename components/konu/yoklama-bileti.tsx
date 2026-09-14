@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ArrowRight, Check, X } from 'lucide-react'
 import type { Konu } from '@/lib/konu'
 import { yoklamaDakikasi } from '@/lib/konu'
 import { useGeriKatmani } from '@/lib/geri'
+import { damgaSesi } from '@/lib/oyunlar/oyun-sesi'
+import { titret } from '@/lib/titresim'
 import { Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 
@@ -46,17 +48,29 @@ import { Rabi } from '@/components/maskot/rabi'
  * yazıldı; yoklamayı vermemek konuyu okunmamış yapmıyor. İki dolu düğme yan
  * yana dursaydı hangisinin ileri götürdüğü okunmazdı — kurulumdaki "Şimdilik
  * atla" kuralı.
+ *
+ * **Üç efekt, üçü de damgaya bağlı** (kullanıcı seçti): koçandaki sayılar
+ * sıfırdan sayarak doluyor (`useSayac`, halkayla aynı anda), damga basılınca
+ * kısa bir "tak" sesi ve titreşim geliyor (`damgaSesi`, `titret`), hemen
+ * ardından biletin üstünden bir kez altın toz süzülüyor (`Toz`). Zamanlar
+ * `globals.css`teki damga gecikmesiyle **eşleşmeli** (`DAMGA_MS`); ses
+ * görüntüden önce gelirse neyi doğruladığı anlaşılmıyor. Konfeti yok — o
+ * oyunlardaki rekora ait. Ses "Mini oyun sesleri" anahtarına bakıyor.
+ * `prefers-reduced-motion` altında damga anında basılı, sayılar dolu, toz
+ * yok; ses ve titreşim yine geliyor — hareket değiller.
  */
 export function YoklamaBileti({
   konu,
   dersAdi,
   temaAdi,
+  sesAcik,
   onBasla,
   onVazgec,
 }: {
   konu: Konu
   dersAdi: string
   temaAdi: string
+  sesAcik: boolean
   onBasla: () => void
   onVazgec: () => void
 }) {
@@ -65,6 +79,33 @@ export function YoklamaBileti({
 
   const kartSayisi = konu.kartlar.length
   const soruSayisi = konu.sorular.length
+  const dakika = yoklamaDakikasi(soruSayisi)
+
+  const sakin = hareketAzaltilmis()
+  const kartSayaci = useSayac(kartSayisi, sakin ? 0 : 760)
+  const soruSayaci = useSayac(soruSayisi, sakin ? 0 : 840)
+  const dakikaSayaci = useSayac(dakika, sakin ? 0 : 920)
+
+  /*
+    Damga ânı: ses + titreşim, hemen ardından toz. Hareket kapalıysa damga
+    ilk karede basılı, o yüzden ikisi de beklemeden geliyor.
+  */
+  const [toz, setToz] = useState(false)
+  useEffect(() => {
+    const damga = window.setTimeout(
+      () => {
+        damgaSesi(sesAcik)
+        titret()
+      },
+      sakin ? 0 : DAMGA_MS,
+    )
+    const tozZ = window.setTimeout(() => setToz(true), sakin ? 0 : TOZ_MS)
+    return () => {
+      window.clearTimeout(damga)
+      window.clearTimeout(tozZ)
+    }
+    // Ses ayarı ekran açıkken değişmiyor; efekt yalnızca ilk çizimde kuruluyor.
+  }, [])
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-white">
@@ -72,7 +113,7 @@ export function YoklamaBileti({
           tavşan havada duruyordu. */}
       <div
         aria-hidden
-        className="bilet-hale pointer-events-none absolute top-[104px] left-1/2 size-[330px] -translate-x-1/2 rounded-full"
+        className="bilet-hale pointer-events-none absolute top-[136px] left-1/2 size-[330px] -translate-x-1/2 rounded-full"
         style={{
           opacity: 0.7,
           background:
@@ -110,7 +151,7 @@ export function YoklamaBileti({
           {dersAdi} · {temaAdi}
         </p>
 
-        <div className="bilet-kart relative mt-[166px] w-full max-w-[330px]">
+        <div className="bilet-kart relative mt-[198px] w-full max-w-[330px]">
           {/* Maskot biletin arkasından çıkıyor (z-0, bilet z-1): kupa biletin
               üstünde, gövde arkasında — tavşan bileti tutuyormuş gibi. */}
           <div className="bilet-maskot absolute -top-[150px] left-1/2 z-0 size-[208px] -translate-x-1/2">
@@ -246,9 +287,9 @@ export function YoklamaBileti({
             </div>
 
             <div className="relative flex gap-2 px-5.5 pt-4 pb-5">
-              <Kutu deger={kartSayisi} etiket="kart" gecikme={760} />
-              <Kutu deger={soruSayisi} etiket="soru" gecikme={840} />
-              <Kutu deger={`~${yoklamaDakikasi(soruSayisi)}`} etiket="dakika" gecikme={920} vurgu />
+              <Kutu deger={kartSayaci} etiket="kart" gecikme={760} />
+              <Kutu deger={soruSayaci} etiket="soru" gecikme={840} />
+              <Kutu deger={`~${dakikaSayaci}`} etiket="dakika" gecikme={920} vurgu />
             </div>
           </div>
 
@@ -265,6 +306,8 @@ export function YoklamaBileti({
             className="bilet-damga-halka absolute -top-3.5 right-1.5 z-[2] size-[76px] rounded-full border-2"
             style={{ borderColor: 'var(--bilet-vurgu)', opacity: 0 }}
           />
+
+          {toz && !sakin && <Toz />}
         </div>
 
         <div className="min-h-4 flex-1" />
@@ -329,6 +372,91 @@ export function YoklamaBileti({
 
 /** Biletin yazısı: koyu zeminde kırık beyaz. */
 const BILET_YAZI = '#fbf7ef'
+
+/** Damganın basıldığı an — `globals.css`teki `.bilet-damga` gecikmesiyle aynı. */
+const DAMGA_MS = 820
+/** Tozun başladığı an — biletin basınç altında ezildiği kare (`.bilet-basinc`). */
+const TOZ_MS = 1040
+
+function hareketAzaltilmis(): boolean {
+  return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
+/**
+ * Sıfırdan hedefe sayan sayaç. `gecikme` sonra başlıyor, `SAYAC_SURESI`
+ * boyunca yavaşlayarak doluyor (küp ease-out): son sayılar ağır geçiyor,
+ * gözün sayıyı okuduğu yer orası. Gecikme sıfırsa hiç saymıyor, hedefi
+ * yazıyor — hareket kapalı kullanıcı için.
+ */
+function useSayac(hedef: number, gecikme: number): number {
+  const [deger, setDeger] = useState(gecikme === 0 ? hedef : 0)
+  useEffect(() => {
+    if (gecikme === 0) {
+      setDeger(hedef)
+      return
+    }
+    let kare = 0
+    let baslangic = 0
+    const adim = (simdi: number) => {
+      if (!baslangic) baslangic = simdi
+      const t = Math.min(1, (simdi - baslangic) / SAYAC_SURESI)
+      const e = 1 - Math.pow(1 - t, 3)
+      setDeger(Math.round(hedef * e))
+      if (t < 1) kare = requestAnimationFrame(adim)
+    }
+    const z = window.setTimeout(() => {
+      kare = requestAnimationFrame(adim)
+    }, gecikme)
+    return () => {
+      window.clearTimeout(z)
+      cancelAnimationFrame(kare)
+    }
+  }, [hedef, gecikme])
+  return deger
+}
+
+const SAYAC_SURESI = 620
+
+/**
+ * Altın toz — biletin üst kenarından bir kez süzülen parçacıklar.
+ *
+ * Konum ve zamanlama parçacık başına ve rastgele, ama **bir kez** atılıyor
+ * (`useState` başlangıcı): her çizimde yeniden atılsaydı parçacıklar
+ * sıçrardı. Sayı az (18) ve hepsi 2,2 saniyede bitiyor — konfeti değil.
+ */
+function Toz() {
+  const [parcalar] = useState(() =>
+    Array.from({ length: 18 }, (_, i) => ({
+      sol: 6 + Math.random() * 88,
+      boy: 3 + Math.random() * 3,
+      gecikme: Math.random() * 700,
+      sure: 1700 + Math.random() * 900,
+      kayma: (Math.random() - 0.5) * 60,
+      acik: i % 3 === 0,
+    })),
+  )
+  return (
+    <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-0">
+      {parcalar.map((p, i) => (
+        <span
+          key={i}
+          className="bilet-toz absolute rounded-full"
+          style={{
+            left: `${p.sol}%`,
+            top: -6,
+            width: p.boy,
+            height: p.boy,
+            opacity: 0,
+            background: p.acik ? 'var(--bilet-vurgu-acik)' : 'var(--bilet-vurgu)',
+            animationDelay: `${p.gecikme}ms`,
+            animationDuration: `${p.sure}ms`,
+            ['--kayma' as string]: `${p.kayma}px`,
+          }}
+        />
+      ))}
+    </span>
+  )
+}
 
 const HALKA_YARICAP = 32
 /** Halkanın çevresi (2πr, yukarı yuvarlandı) — dolma animasyonunun yolu. */

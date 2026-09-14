@@ -1430,6 +1430,23 @@ body {
   45% { transform: scale(0.995); }
 }
 
+/*
+  Altın toz: damga basılınca biletin üst kenarından bir kez süzülen ince
+  parçacıklar. Konfeti **değil** — konfeti oyunlardaki rekora ait ve bunun
+  parçacıkları küçük, sayıca az ve iki saniyede bitiyor. Konum, gecikme ve
+  süre parçacık başına satır içi; hepsi aynı anda düşseydi yağmur değil
+  perde olurdu.
+*/
+@keyframes biletToz {
+  0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(0deg); }
+  12% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(var(--kayma), 260px, 0) rotate(300deg); }
+}
+
+.bilet-toz {
+  animation: biletToz 2200ms cubic-bezier(0.3, 0.4, 0.6, 1) both;
+}
+
 @keyframes biletKivilcim {
   0% { opacity: 0; transform: translateY(0) scale(0.3) rotate(0deg); }
   30% { opacity: 1; transform: translateY(-9px) scale(1) rotate(60deg); }
@@ -1574,6 +1591,7 @@ body {
   .bilet-damga-halka,
   .bilet-basinc,
   .bilet-kivilcim,
+  .bilet-toz,
   .sahne-iner,
   .soru-gerekce {
     animation: none;

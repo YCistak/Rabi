@@ -62,11 +62,13 @@ export function SoruSahnesi({
   konu,
   temaAdi,
   dersAdi,
+  sesAcik,
   onKapat,
 }: {
   konu: Konu
   temaAdi: string
   dersAdi: string
+  sesAcik: boolean
   onKapat: (sonuc: SahneSonucu) => void
 }) {
   const [sira, setSira] = useState(0)
@@ -128,6 +130,7 @@ export function SoruSahnesi({
         konu={konu}
         dersAdi={dersAdi}
         temaAdi={temaAdi}
+        sesAcik={sesAcik}
         onBasla={() => setBasladi(true)}
         onVazgec={() => onKapat({ dogru: 0, yanlis: 0, bitti: false })}
       />

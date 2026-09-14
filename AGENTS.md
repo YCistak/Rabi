@@ -1907,6 +1907,15 @@ oynamazdı.
   kalırdı. Çentik kesik çizginin kendi satırındaki iki daire, `overflow`
   dış yarısını kırpıyor.
 - **Halka hep %100**: bilet yalnızca deste sonuna kadar okununca geliyor.
+- **Üç efekt, üçü de damgaya bağlı** (kullanıcı seçti): koçandaki sayılar
+  sıfırdan sayarak doluyor, damga basılırken kısa bir "tak" sesi
+  (`damgaSesi`, "Mini oyun sesleri" anahtarına bakıyor) ve titreşim
+  (`lib/titresim.ts`, manifestte VIBRATE izni), ardından biletin üstünden
+  bir kez altın toz süzülüyor (`bilet-toz`). Konfeti değil — konfeti
+  oyunlardaki rekora ait. Bileşendeki `DAMGA_MS`/`TOZ_MS`, `globals.css`teki
+  damga ve basınç gecikmeleriyle eşleşmeli; ses görüntüden önce gelirse neyi
+  doğruladığı anlaşılmıyor. `prefers-reduced-motion` altında sayılar dolu,
+  damga basılı, toz yok; ses ve titreşim hareket olmadığı için kalıyor.
 - **"Bu destede öğrendiklerin" alt sayfa**, biletin içinde liste değil: on
   altı kartlık konuda liste bileti taşırırdı.
 - **"Şimdi değil" düğme değil yazı.** Deste zaten okundu ve kaydı yazıldı;

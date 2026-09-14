@@ -279,11 +279,14 @@ export function KonuHaritasiEkrani({
   setSecim,
   ilerlemeler,
   setIlerlemeler,
+  sesAcik,
 }: {
   secim: { ders: KonuDersId; sinif: KonuSinifi }
   setSecim: (secim: { ders: KonuDersId; sinif: KonuSinifi }) => void
   ilerlemeler: KonuIlerlemeleri
   setIlerlemeler: (guncelle: (onceki: KonuIlerlemeleri) => KonuIlerlemeleri) => void
+  /** "Mini oyun sesleri" ayarı — yoklama biletinin damga sesi ona bakıyor. */
+  sesAcik: boolean
 }) {
   /** Açık deste; null ise harita görünüyor. */
   const [acikKonu, setAcikKonu] = useState<{
@@ -402,6 +405,7 @@ export function KonuHaritasiEkrani({
         konu={acikSorular.konu}
         temaAdi={acikSorular.temaAdi}
         dersAdi={ders.ad}
+        sesAcik={sesAcik}
         onKapat={(sonuc) => sorularBitti(acikSorular.konu, sonuc)}
       />
     )
