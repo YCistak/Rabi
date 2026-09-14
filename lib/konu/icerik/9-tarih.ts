@@ -1,4 +1,4 @@
-import { kart, konu, program, soru, tema } from '../tip'
+import { kart, konu, program, sikli, soru, tema } from '../tip'
 
 /**
  * 9. sınıf Tarih — Maarif Modeli.
@@ -43,6 +43,9 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Tarih bilgisi, kişinin ait olduğu topluluğu tanımasına katkı sağlar.', true, 'Ortak geçmiş, kimlik ve aidiyet duygusunun kaynaklarından biri.'),
       soru('Tarihî empati, geçmişteki insanları kendi dönemlerinin koşulları içinde anlamaktır.', true, 'Bugünün ölçüleriyle yargılamak, olayı anlamayı engelliyor.'),
       soru('Tarih hiçbir zaman siyasi amaçlarla kullanılmaz.', false, 'Seçilmiş olaylarla kurulan anlatılar tarihin kötüye kullanımına örnek.'),
+      sikli('"Kim söylemiş, neden söylemiş, neyi atlamış?" sorusu neyi öğretir?', ['Eleştirel düşünme', 'Kimlik'], 0, 'Kaynak sorgulama.'),
+      sikli('Geçmişin bugünkü siyasi iddia için seçilerek anlatılmasına karşı panzehir?', ['Tarih bilgisi', 'Takvim'], 0, 'Kötüye kullanımı fark ettirir.'),
+      soru('Tarih birebir tekrarlanır.', false, 'Benzer koşullar benzer sonuç; kalıp değil örüntü.'),
     ], [
       {
         soru: 'Geçmişteki insanı kendi çağının koşullarıyla anlamaya ne denir?',
@@ -102,6 +105,11 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Tarihî bir olay incelenirken yer ve zaman belirtilmek zorundadır.', true, 'Yeri ve zamanı olmayan bir anlatı tarih değil.'),
       soru('Yazının bulunuşu, tarih öncesi çağların sonu kabul edilir.', true, 'Yazılı kaynakla birlikte tarihî çağlar başlıyor.'),
       soru('Tarihçi kaynakları seçerken kendi bakış açısından hiç etkilenmez.', false, 'Nesnellik hedeftir ama hangi kaynağın öne çıkacağı bir seçim.'),
+      sikli('Tarih neden deney yapamaz?', ['Olaylar tek seferlik', 'Belge yoktur'], 0, 'Geri döndürülemez; kaynağa dayanır.'),
+      sikli('Hicrî takvim neye dayanır?', ['Ay yılına', 'Güneş yılına'], 0, 'Miladî güneş yılı.'),
+      sikli('Hicret hangi yıldır?', ['622', '1453'], 0, 'Hicrî takvimin başlangıcı.'),
+      sikli('Tarihçinin nesnelliği ne demektir?', ['Kaynağa sadakat ve yöntem', 'Hiç önyargısı olmaması'], 0, 'Tarihçi kendi çağının insanı.'),
+      soru('İnsanlar 476\'da Orta Çağ\'ın başladığını hemen fark etti.', false, 'Çağ sınırı tarihçilerin kolaylık için koyduğu ölçü.'),
     ], [
       {
         soru: 'Tarih öncesi ile tarihî çağları ayıran nedir?',
@@ -170,6 +178,10 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Kaynak eleştirisi, belgenin gerçekliğini ve güvenilirliğini sorgular.', true, 'Belge sahte olabilir ya da yazan taraflı olabilir.'),
       soru('Sikkeleri inceleyen yardımcı bilim paleografyadır.', false, 'Sikkeleri nümizmatik inceler; paleografya eski yazıların bilimi.'),
       soru('Bir olay hakkındaki tarih yazımı, yeni belgeler bulunsa da değişmez.', false, 'Yeni kaynak, kurulmuş anlatıyı değiştirebiliyor.'),
+      sikli('Bir Osmanlı fermanı hangi kaynak türüdür?', ['İkinci elden', 'Birinci elden'], 1, 'Onu inceleyen kitap ikinci elden.'),
+      sikli('Sikke ve mezar buluntusu hangi kaynak türüdür?', ['Yazılı', 'Yazısız'], 1, 'Kitabe yazılı.'),
+      sikli('Tarihsel bilgi üretiminin son adımı?', ['Tasnif', 'Terkip'], 1, 'Parçalar bütün anlatıya dönüşür.'),
+      soru('Aynı dönem yeni belge bulununca yeniden yazılabilir.', true, 'Tarih yazımı değişir.'),
     ], [
       {
         soru: 'Belgenin sahte olup olmadığını sorgulamak hangi eleştiridir?',
@@ -212,6 +224,9 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('İnternette bulunan her tarihî görsel ve belge doğrudur.', false, 'Kaynağı belirsiz ya da üretilmiş içerikler de dolaşımda; doğrulama şart.'),
       soru('Dijital ortamdaki veriler hiçbir zaman kaybolmaz.', false, 'Kapanan siteler ve eskiyen dosya biçimleri yüzünden dijital kayıp gerçek bir sorun.'),
       soru('Dijital sergiler, müzeye gidemeyenlerin esere ulaşmasını sağlar.', true, 'Erişimi genişletiyor ama eserin kendisinin yerini tutmuyor.'),
+      sikli('Kâğıt ile dijital dosyayı kalıcılıkta ayıran nedir?', ['Dosya biçimleri okunamaz hâle gelebilir', 'Kâğıt çabuk çürür'], 0, 'Kâğıt yüzyıllar dayanır.'),
+      sikli('Coğrafi bilgi sistemleri tarihçiye ne verir?', ['Haritalama', 'Doğrulama'], 0, 'Ticaret ve nüfus analizi de büyük veriyle.'),
+      soru('İnternetteki her metin tarihsel kaynak sayılır.', false, 'Kaynak eleştirisi dijitalde daha gerekli.'),
     ], [
       {
         soru: 'Yapay zekânın ürettiği bir metin ne zaman tarihsel bilgi sayılır?',
@@ -284,6 +299,10 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Tarım devrimiyle insanlar avcı-toplayıcı yaşamdan yerleşik yaşama geçti.', true, 'Ekilen toprağın başında kalmak gerekiyordu.'),
       soru('Artı ürün, ticaretin ve meslek çeşitliliğinin ortaya çıkmasını sağladı.', true, 'Herkesin besin üretmesi gerekmeyince başka işler doğdu.'),
       soru('Tarıma geçişle birlikte özel mülkiyet kavramı ortadan kalktı.', false, 'Toprak ve ürün üzerindeki mülkiyet tam da bu dönemde doğdu.'),
+      sikli('İhtiyaçtan fazla üretime ne denir?', ['Mülkiyet', 'Artı ürün'], 1, 'Zanaatkâr, asker ve rahip sınıfını mümkün kıldı.'),
+      sikli('Toplumsal eşitsizlik hangi kökten çıktı?', ['Yazı', 'Mülkiyet'], 1, '"Kimin" sorusu.'),
+      sikli('Göbeklitepe ve Çatalhöyük neyin merkezidir?', ['Roma dönemi', 'Tarıma geçiş dönemi'], 1, 'Anadolu\'dan izler.'),
+      soru('Tarım devrimi yaklaşık 12 bin yıl önce başladı.', true, 'Bitki ve hayvan evcilleştirildi.'),
     ], [
       {
         soru: 'Yazının doğmasına yol açan ihtiyaç neydi?',
@@ -330,6 +349,10 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Atina daki doğrudan demokraside kadınlar ve köleler de oy kullanırdı.', false, 'Yalnızca yurttaş sayılan özgür erkekler katılabiliyordu.'),
       soru('Sparta askerî temele dayanan bir toplum ve yönetim düzeni kurmuştur.', true, 'Eğitim de yönetim de asker yetiştirmeye göre kurulmuştu.'),
       soru('Roma tarihi boyunca yalnızca cumhuriyetle yönetilmiştir.', false, 'Krallık, cumhuriyet ve imparatorluk dönemlerinden geçti.'),
+      sikli('Firavunun tanrı-kral sayıldığı yönetim?', ['Demokratik', 'Teokratik'], 1, 'Din ile devlet ayrılmaz.'),
+      sikli('Demiri işleyerek öne çıkan uygarlık?', ['Mısırlılar', 'Hititler'], 1, 'Savaş teknolojisi güç dengesini belirledi.'),
+      sikli('Eğitimi savaşçı yetiştirmeye ayarlı şehir?', ['Atina', 'Sparta'], 1, 'Yönetim dar bir grupta.'),
+      soru('Roma krallıktan cumhuriyete, sonra imparatorluğa geçti.', true, 'Senato kalıcı bir gelenek bıraktı.'),
     ], [
       {
         soru: 'Atina demokrasisinde kimler yurttaş sayılmıyordu?',
@@ -380,6 +403,9 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Hammurabi kanunları kısasa kısas anlayışını benimsemiştir.', true, 'Ceza, işlenen suçun aynısıyla karşılık buluyordu.'),
       soru('Hitit kanunları, Hammurabi kanunlarına göre daha ağır cezalar içerir.', false, 'Hitit hukuku daha çok tazminat esaslı, yani daha yumuşak.'),
       soru('Roma hukuku günümüz hukuk sistemlerini etkilememiştir.', false, 'Avrupa hukukunun temel kavramlarının çoğu oradan geliyor.'),
+      sikli('Kısasa dayalı sert yasalar hangisinde?', ['Hammurabi', 'Hitit'], 0, 'Hitit cezaları tazminat ağırlıklı.'),
+      sikli('Avrupa hukukunun temelinde hangi hukuk vardır?', ['Roma', 'Sümer'], 0, 'On İki Levha ile başladı.'),
+      soru('Yazılı yasa hukuku hükümdarın ağzından çıkarıp herkesin bilebileceği ölçüye çevirdi.', true, 'Ortak yön.'),
     ], [
       {
         soru: 'Bilinen ilk yazılı yasalar hangi uygarlıkta çıktı?',
@@ -426,6 +452,10 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Eski Çağ da bütün toplumlar tek tanrılı inanca sahipti.', false, 'Çok tanrılı inançlar yaygındı; tek tanrılı inanışlar daha sınırlı topluluklardaydı.'),
       soru('Ölümden sonraki yaşam inancı Mısır da mumyalama geleneğine yol açmıştır.', true, 'Bedenin korunması, sonraki yaşam için gerekli görülüyordu.'),
       soru('Eski Çağ da bilim ile din birbirinden tümüyle ayrılmıştı.', false, 'Gök gözlemleri ve takvim gibi bilgiler çoğu zaman tapınakların işiydi.'),
+      sikli('Mumyalamayı ve anıt mezarları doğuran inanç?', ['Çok tanrıcılık', 'Öbür dünya inancı'], 1, 'İnanç mimariyi biçimlendirdi.'),
+      sikli('Olayları tanrılarla değil akılla açıklama nerede başladı?', ['Mısır\'da', 'Yunan dünyasında'], 1, 'Felsefe.'),
+      sikli('Astronomi ve matematikte ilerleyen uygarlık?', ['Hititler', 'Babilliler'], 1, 'Mısırlılar geometri ve takvim.'),
+      soru('Tapınaklar yalnızca ibadet yeriydi.', false, 'Ekonomik ve idari merkezlerdi.'),
     ], [
       {
         soru: 'Geometrinin Mısır\'da gelişmesinin sebebi?',
@@ -483,6 +513,10 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Konargöçerlik, yılın her mevsimini aynı yerde geçirmek demektir.', false, 'Yazlak ve kışlak arasında belirli bir düzenle gidip geliniyor; başıboş bir gezinme değil.'),
       soru('Kut anlayışına göre yönetme yetkisi Tanrı tarafından verilir.', true, 'Yetki hükümdara verilmiş sayılıyor, ailenin erkek üyelerine geçiyordu.'),
       soru('Konargöçer toplumda ordu ayrı bir meslek grubudur.', false, 'Halkın tamamı gerektiğinde asker; ordu-millet anlayışı buradan geliyor.'),
+      sikli('Yönetme yetkisinin Tanrı\'dan geldiği inancı?', ['Kut', 'İkta'], 0, 'Kan yoluyla geçtiği için taht kavgaları sık.'),
+      sikli('Konargöçerlerde hangi sanat gelişti?', ['Taşınabilir sanat', 'Anıtsal mimari'], 0, 'Halı, madenî eşya, at koşumu.'),
+      sikli('Bozkır ile tarım havzası nasıl ilişkideydi?', ['Birbirini besledi', 'Hiç temas etmedi'], 0, 'At ve hayvan karşılığında tahıl ve kumaş.'),
+      soru('Konargöçerlik başıboş dolaşmaktır.', false, 'Yaylak-kışlak arasında planlı göç.'),
     ], [
       {
         soru: 'Türklerde konargöçerlik neden yaygındı?',
@@ -537,6 +571,9 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Göçlerin sebepleri arasında iklim değişiklikleri ve otlak yetersizliği vardır.', true, 'Nüfus baskısı ve dış saldırılar da göçü tetikleyen sebepler.'),
       soru('Kavimler Göçü sonucunda Roma İmparatorluğu güçlenmiştir.', false, 'Tersine, ikiye ayrılmasında ve Batı Roma nın yıkılışında etkili oldu.'),
       soru('Göç eden topluluklar gittikleri yerin kültürünü etkilemez.', false, 'Etkileşim iki yönlü: hem etkilerler hem etkilenirler.'),
+      sikli('Kavimler Göçü hangi yılda başladı?', ['375', '1071'], 0, 'Hun baskısı.'),
+      sikli('Kavimler Göçü\'nün sonuçlarından biri?', ['Feodalitenin doğuşu', 'Rönesans'], 0, 'Batı Roma yıkıldı, İlk Çağ kapandı.'),
+      soru('Göçte yalnızca gelen topluluk değişir.', false, 'Kültür alışverişi iki yönlü.'),
     ], [
       {
         soru: 'Kavimler Göçü\'nü başlatan olay nedir?',
@@ -606,6 +643,10 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('İkta sisteminde toprağın geliri, karşılığında asker yetiştirmek üzere görevlilere bırakılır.', true, 'Toprağın mülkiyeti devlette kalıyor.'),
       soru('Bizans ta imparator hem siyasi hem dinî otoriteye sahiptir.', true, 'Kilise üzerinde de söz sahibiydi.'),
       soru('Feodalitede kralın merkezî otoritesi güçlüdür.', false, 'Toprak ve askerî güç soyluların elinde; kralın otoritesi zayıftır.'),
+      sikli('Feodalitede koruma karşılığında ne verilirdi?', ['Hizmet', 'Vergi muafiyeti'], 0, 'Senyör-vasal ilişkisi.'),
+      sikli('Bizans\'ın ordu düzeni?', ['Tema sistemi', 'İkta'], 0, 'Güçlü bürokrasi ile uzun süre ayakta kaldı.'),
+      sikli('İslam devletlerinde yönetimi yürüten kurum?', ['Divan', 'Senato'], 0, 'Halifelik din ve devlet başkanlığını birleştirdi.'),
+      soru('Avrupa\'da şövalye, İslam dünyasında gulam askerleri vardı.', true, 'Ordu yapıları farklıydı.'),
     ], [
       {
         soru: 'İkta sisteminde devlet ne kazanır?',
@@ -661,6 +702,10 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Ticaret yolları yalnızca mal taşımış, düşünce ve inançların yayılmasında rol oynamamıştır.', false, 'Kervanlarla birlikte din, teknoloji ve hastalıklar da yayıldı.'),
       soru('Kervansaraylar tüccarların konaklamasını ve güvenliğini sağlardı.', true, 'Yol güvenliği ticaretin sürmesinin şartıydı.'),
       soru('Baharat Yolu, kürk ticareti için kullanılan kuzey güzergâhıdır.', false, 'Kürk Yolu kuzeyde; Baharat Yolu Hindistan ve Güneydoğu Asya ya uzanıyordu.'),
+      sikli('Baharatın değerli olmasının sebebi?', ['Lezzet ve koruyuculuk', 'Nadir bulunması'], 0, 'Hindistan ve Güneydoğu Asya\'dan.'),
+      sikli('Selçukluların yol güvenliği için kurduğu yapı?', ['Kervansaray', 'Medrese'], 0, 'Sigorta benzeri tazmin de vardı.'),
+      sikli('14. yüzyılda ticaret yollarıyla yayılan salgın?', ['Veba', 'Kolera'], 0, 'Avrupa nüfusunun büyük kısmını yok etti.'),
+      soru('Ticaret yollarını denetleyen devlet gümrük geliri kazanırdı.', true, 'Savaşların sebebi çoğu zaman buydu.'),
     ], [
       {
         soru: 'Kâğıt, barut ve pusula batıya hangi yolla geçti?',
@@ -717,6 +762,10 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Medreseler Orta Çağ İslam dünyasının eğitim kurumlarıdır.', true, 'Dinî bilimlerin yanında matematik ve tıp da okutuluyordu.'),
       soru('İbn Sina ve Biruni nin eserleri Avrupa da hiç tanınmamıştır.', false, 'Latinceye çevrildiler ve yüzyıllarca ders kitabı olarak okutuldular.'),
       soru('Orta Çağ da bilgi tek bir merkezde üretilmiş, aktarım yaşanmamıştır.', false, 'Çeviri hareketleri ve ticaret yollarıyla bilgi sürekli yer değiştirdi.'),
+      sikli('Beytü\'l-Hikme neredeydi?', ['Bağdat', 'Endülüs'], 0, 'Yunan ve Hint eserleri çevrildi.'),
+      sikli('Kâğıt Avrupa\'ya hangi yolla ulaştı?', ['Çin → Semerkant → İslam dünyası → Avrupa', 'Doğrudan Çin\'den'], 0, 'Bilgi ucuzladı.'),
+      sikli('Nizamiye medreselerini kuran devlet?', ['Selçuklular', 'Bizans'], 0, 'Din ve pozitif bilim okutuluyordu.'),
+      soru('Avrupa üniversiteleri 11. yüzyıldan sonra kuruldu.', true, 'Öncesinde bilgi manastırlarda korundu.'),
     ], [
       {
         soru: 'İslam dünyasındaki bilgi Avrupa\'ya hangi köprülerden geçti?',
