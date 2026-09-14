@@ -904,7 +904,6 @@ export function AppShell() {
                 setSecim={(secim) => setKonuSecimi(secim)}
                 ilerlemeler={konuIlerleme}
                 setIlerlemeler={setKonuIlerleme}
-                sesAcik={ayarlar.oyunSesi}
               />
             )}
             {sekme === 'daha' && <KartMenusu onKartAc={aracAc} />}

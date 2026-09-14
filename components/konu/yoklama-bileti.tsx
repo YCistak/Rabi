@@ -5,7 +5,6 @@ import { ArrowRight, Check, X } from 'lucide-react'
 import type { Konu } from '@/lib/konu'
 import { yoklamaDakikasi } from '@/lib/konu'
 import { useGeriKatmani } from '@/lib/geri'
-import { damgaSesi } from '@/lib/oyunlar/oyun-sesi'
 import { titret } from '@/lib/titresim'
 import { Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
@@ -51,26 +50,24 @@ import { Rabi } from '@/components/maskot/rabi'
  *
  * **Üç efekt, üçü de damgaya bağlı** (kullanıcı seçti): koçandaki sayılar
  * sıfırdan sayarak doluyor (`useSayac`, halkayla aynı anda), damga basılınca
- * kısa bir "tak" sesi ve titreşim geliyor (`damgaSesi`, `titret`), hemen
- * ardından biletin üstünden bir kez altın toz süzülüyor (`Toz`). Zamanlar
- * `globals.css`teki damga gecikmesiyle **eşleşmeli** (`DAMGA_MS`); ses
- * görüntüden önce gelirse neyi doğruladığı anlaşılmıyor. Konfeti yok — o
- * oyunlardaki rekora ait. Ses "Mini oyun sesleri" anahtarına bakıyor.
- * `prefers-reduced-motion` altında damga anında basılı, sayılar dolu, toz
- * yok; ses ve titreşim yine geliyor — hareket değiller.
+ * kısa bir titreşim geliyor (`titret`), hemen ardından biletin üstünden bir
+ * kez altın toz süzülüyor (`Toz`). Zamanlar `globals.css`teki damga
+ * gecikmesiyle **eşleşmeli** (`DAMGA_MS`); titreşim görüntüden önce gelirse
+ * neyi doğruladığı anlaşılmıyor. Damganın bir de sesi vardı (alçak bir
+ * "tak"); kullanıcı kaldırdı — titreşim tek başına yetiyor. Konfeti yok — o
+ * oyunlardaki rekora ait. `prefers-reduced-motion` altında damga anında
+ * basılı, sayılar dolu, toz yok; titreşim yine geliyor — hareket değil.
  */
 export function YoklamaBileti({
   konu,
   dersAdi,
   temaAdi,
-  sesAcik,
   onBasla,
   onVazgec,
 }: {
   konu: Konu
   dersAdi: string
   temaAdi: string
-  sesAcik: boolean
   onBasla: () => void
   onVazgec: () => void
 }) {
@@ -87,25 +84,18 @@ export function YoklamaBileti({
   const dakikaSayaci = useSayac(dakika, sakin ? 0 : 920)
 
   /*
-    Damga ânı: ses + titreşim, hemen ardından toz. Hareket kapalıysa damga
-    ilk karede basılı, o yüzden ikisi de beklemeden geliyor.
+    Damga ânı: titreşim, hemen ardından toz. Hareket kapalıysa damga ilk
+    karede basılı, o yüzden ikisi de beklemeden geliyor.
   */
   const [toz, setToz] = useState(false)
   useEffect(() => {
-    const damga = window.setTimeout(
-      () => {
-        damgaSesi(sesAcik)
-        titret()
-      },
-      sakin ? 0 : DAMGA_MS,
-    )
+    const damga = window.setTimeout(titret, sakin ? 0 : DAMGA_MS)
     const tozZ = window.setTimeout(() => setToz(true), sakin ? 0 : TOZ_MS)
     return () => {
       window.clearTimeout(damga)
       window.clearTimeout(tozZ)
     }
-    // Ses ayarı ekran açıkken değişmiyor; efekt yalnızca ilk çizimde kuruluyor.
-  }, [])
+  }, [sakin])
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-white">

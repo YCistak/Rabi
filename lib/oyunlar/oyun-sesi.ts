@@ -260,23 +260,6 @@ export function sureUyarisi() {
   cal([{ frekans: 392, gecikme: 0, sure: 0.16, bicim: 'triangle', seviye: 0.26 }])
 }
 
-/**
- * Yoklama biletine "BİTTİ" damgası basılırken — bir kez.
- *
- * Alçak ve kısa bir "tak": tepeden düşen bir triangle (mühürün vuruşu) ve
- * hemen altında kısa bir sinüs gövdesi (masanın tınısı). Yüksek bir ton
- * olmadı çünkü damga bir kutlama değil bir kapanış; sesin işi görüntüyü
- * doğrulamak. Ayar kapalıysa `AudioContext` bile kurulmuyor.
- */
-export function damgaSesi(acik: boolean) {
-  sesAcik = acik
-  if (!acik) return
-  cal([
-    { frekans: 520, hedefFrekans: 170, gecikme: 0, sure: 0.07, bicim: 'triangle', seviye: 0.55 },
-    { frekans: 110, hedefFrekans: 70, gecikme: 0.01, sure: 0.11, bicim: 'sine', seviye: 0.5 },
-  ])
-}
-
 /** Tur bitişi: üç notalık küçük bir kapanış. */
 export function bitisSesi() {
   cal([
