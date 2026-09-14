@@ -17,7 +17,8 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
     /*
       Bu konu, kart etiketi / Rabi notu / hızlı kontrol alanlarının **örneği**:
       tasarım (`tasarim/bilgi-karti.html`) bu konu üstünden çizildi ve
-      metinler oradan. Öteki konularda alanlar henüz boş.
+      metinler oradan. Etiket ve hızlı kontrol öteki konularda henüz boş;
+      Rabi notu ise her konuda **bir** kartta var (bkz. `tip.ts`).
     */
     konu('fzk9-bilim', 'Fizik Bilimi', [
       kart(

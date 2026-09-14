@@ -1800,7 +1800,10 @@ göre değişiyor.
 - **Kartın etiketi ve Rabi'nin notu** (`BilgiKarti.etiket`, `not`) isteğe
   bağlı: etiket yoksa "Kart 3/7" yazıyor, not yoksa balon da maskot da
   çizilmiyor. Boş balonun yanındaki tavşan söyleyecek sözü olmayan bir
-  rehber gibi durur.
+  rehber gibi durur. Not **her konuda bir kartta** var, her kartta değil:
+  konunun en çok tuzak barındıran kartına "nasıl okunmalı" cümlesi. Her
+  karta yazılsaydı tavşan destenin her sayfasında konuşur, sözü değerini
+  yitirirdi. Yeni konuya da tek not; 120 karakter sınırı testte.
 
 ### Kart sayısı konunun genişliğine göre: 6–16
 
