@@ -1,4 +1,4 @@
-import { kart, konu, program, soru, tema } from '../tip'
+import { kart, konu, program, sikli, soru, tema } from '../tip'
 
 /**
  * 9. sınıf Matematik — Maarif Modeli.
@@ -79,6 +79,14 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       soru('(2³)² ile 2³ · 2² aynı sonucu verir.', false, 'Üssün üssünde üsler çarpılır (2⁶ = 64), aynı tabanda çarpmada toplanır (2⁵ = 32).'),
       soru('0,0032 sayısının bilimsel gösterimi 3,2 · 10⁻³ tür.', true, 'Virgül üç basamak sağa kaydı, yani üs −3 oldu; baştaki sayı 1 ile 10 arasında.'),
       soru('√2 + √3 = √5 tir.', false, 'Kökler çarpma ve bölmede birleşir, toplamada birleşmez.'),
+      sikli('2⁻³ kaçtır?', ['−8', '1/8'], 1, 'Negatif üs ters çevirir.'),
+      sikli('2³ · 2² kaçtır?', ['2⁶ = 64', '2⁵ = 32'], 1, 'Aynı tabanda üsler toplanır.'),
+      sikli('0,0032 sayısının bilimsel gösterimi?', ['32 · 10⁻⁴', '3,2 · 10⁻³'], 1, '1 ≤ a < 10 olmalı.'),
+      sikli('³√a² ifadesi kesirli üsle nasıl yazılır?', ['a^(3/2)', 'a^(2/3)'], 1, 'Kökün derecesi paydaya.'),
+      sikli('√(a²) neye eşittir?', ['|a|', 'a'], 0, 'Karekök negatif olamaz.'),
+      sikli('2⁵ · 5⁵ kaçtır?', ['10⁵', '10¹⁰'], 0, 'Aynı üs, tabanlar çarpılır.'),
+      sikli('1/(√3 − 1) paydası nasıl rasyonel yapılır?', ['Eşleniği (√3 + 1) ile çarparak', '√3 ile çarparak'], 0, 'İki terimli payda.'),
+      soru('√2 · √3 = √6\'dır.', true, 'Çarpımda kökler birleşir.'),
     ], [
       {
         soru: '(2³)² ifadesinin değeri kaçtır?',
@@ -177,6 +185,11 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       soru('(3, 7) aralığında 3 sayısı da vardır.', false, 'Parantez ucu açık: 3 aralığa dâhil değil, 3 ten büyük sayılar dâhil.'),
       soru('Sonsuz uçlu aralıklar her zaman parantezle yazılır: (−∞, 4].', true, 'Sonsuz bir sayı değil bir yön; dâhil edilecek bir uç olmadığı için kapalı yazılamaz.'),
       soru('Boş küme yalnızca kendisinin alt kümesidir.', false, 'Boş küme her kümenin alt kümesidir.'),
+      sikli('Sonsuzun yanına hangi parantez konur?', ['Köşeli parantez', 'Normal parantez'], 1, 'Sonsuz ulaşılan bir yer değil.'),
+      sikli('Sayı doğrusunda boş nokta ne demektir?', ['Uç dâhil', 'Uç dâhil değil'], 1, 'Dolu nokta dâhil.'),
+      sikli('Tam sayılar için {2, 3, 4} yazılıp aralık yazılmamasının sebebi?', ['Tam sayılar sınırsız', 'Aralık gerçek sayılara özgü'], 1, 'Arada sonsuz eleman gerekir.'),
+      sikli('İki aralığın ortak kısmına ne denir?', ['Birleşim', 'Kesişim'], 1, 'Boş küme olabilir.'),
+      soru('Boş küme her kümenin alt kümesidir.', true, 'Hiç elemanı yok.'),
     ], [
       {
         soru: '[2, 5) aralığında 5 dâhil midir?',
@@ -264,6 +277,12 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       soru('√2 rasyonel bir sayıdır.', false, 'Ondalık açılımı ne bitiyor ne de devirli tekrar ediyor; irrasyonel.'),
       soru('Çıkarma işleminin değişme özelliği vardır.', false, '5 − 3 ile 3 − 5 aynı değil; değişme özelliği toplama ve çarpmada var.'),
       soru('Doğal sayılar kümesi çıkarma işlemine göre kapalı değildir.', true, '3 − 5 = −2 doğal sayı değil; sonuç kümenin dışına çıkıyor.'),
+      sikli('√2 hangi kümeye girer?', ['İrrasyonel', 'Rasyonel'], 0, 'Kesir yazılamaz, açılım devirsiz.'),
+      sikli('Çarpmada etkisiz eleman?', ['1', '0'], 0, 'Toplamada 0.'),
+      sikli('İki doğal sayının farkı her zaman doğal mıdır?', ['Hayır', 'Evet'], 0, '3 − 5 doğal değil; kapalılık yok.'),
+      sikli('Sayma sayıları ile doğal sayıları ayıran?', ['Sıfır', 'Negatifler'], 0, 'Doğal sayılar sıfırı içerir.'),
+      sikli('a(b + c) = ab + ac hangi özelliktir?', ['Birleşme', 'Dağılma'], 1, 'İki işlemi bağlayan tek özellik.'),
+      soru('Çıkarmanın değişme özelliği vardır.', false, '5 − 3 ≠ 3 − 5.'),
     ], [
       {
         soru: '0,333… (devirli) sayısı hangi kümeye girer?',
@@ -310,6 +329,10 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       soru('2(x + 5) = 2x + 10 dur.', true, 'Dağılma özelliği çarpanı parantezdeki iki terime de dağıtıyor.'),
       soru('Bir genellemenin yanlış olduğunu göstermek için tek bir karşı örnek yeter.', true, 'Kural her sayı için geçerli olmalı; tutmadığı tek bir örnek onu çürütüyor.'),
       soru('5x ifadesinde 5 değişken, x katsayıdır.', false, 'Tersi: 5 katsayı, x değişken.'),
+      sikli('3x² + 5x − 2 ifadesinde sabit terim?', ['−2', '3'], 0, 'Değişkensiz terim.'),
+      sikli('6x + 9 = 3(2x + 3) işlemi nedir?', ['Ortak çarpan parantezine alma', 'Dağılma'], 0, 'Dağılmanın ters yönü.'),
+      sikli('Bir genellemeyi çürütmek için ne yeter?', ['Tek karşı örnek', 'Birçok örnek'], 0, 'Doğrulamak için ispat.'),
+      soru('−(x − 3) = −x + 3\'tür.', true, 'Parantez önündeki eksi işaretleri değiştirir.'),
     ], [
       {
         soru: '3x + 5x² ifadesi sadeleşir mi?',
@@ -513,6 +536,14 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       soru('f(x) = ax + b fonksiyonunda b sayısı doğrunun eğimidir.', false, 'b, doğrunun y eksenini kestiği değer; eğim a.'),
       soru('Sabit fonksiyonun grafiği x eksenine paralel bir doğrudur.', true, 'Her x için aynı değer üretiliyor, yani grafik yatay bir doğru.'),
+      sikli('Bir girdiye iki çıktı veren kural?', ['Fonksiyondur', 'Fonksiyon değildir'], 1, 'Tam olarak bir çıktı.'),
+      sikli('f(x) = 1/x için hangi değer tanımlı değildir?', ['1', '0'], 1, 'Payda sıfır.'),
+      sikli('f(x) = ax + b\'de b nedir?', ['Eğim', 'y eksenini kestiği değer'], 1, 'a eğim.'),
+      sikli('f(x) = 3 fonksiyonunun grafiği?', ['Dikey doğru', 'Yatay doğru'], 1, 'Sabit fonksiyon.'),
+      sikli('(1, 3) ve (3, 7) noktalarından geçen doğrunun eğimi?', ['2', '4'], 0, '4/2.'),
+      sikli('x eksenini kestiği nokta nasıl bulunur?', ['f(x) = 0 çözülür', 'x = 0 yazılır'], 0, 'x = 0 y eksenini verir.'),
+      sikli('Eğim 2 ise x bir birim artınca y?', ['2 artar', '2 azalır'], 0, 'Sağa bir, yukarı iki.'),
+      soru('Eğimi pozitif fonksiyon azalandır.', false, 'Artandır.'),
     ], [
       {
         soru: 'f(x) = −3x + 2 fonksiyonu nasıldır?',
@@ -660,6 +691,11 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
         },
       ),
       soru('|x| > 2 eşitsizliğinin çözümü tek bir aralıktır.', false, 'Çözüm iki ayrı aralık: x < −2 veya x > 2.'),
+      sikli('|x| = −2 denkleminin çözümü?', ['x = −2', 'Yoktur'], 1, 'Uzaklık negatif olamaz.'),
+      sikli('|x − 2| grafiği |x|\'e göre nasıl kayar?', ['Yukarı 2', 'Sağa 2'], 1, 'İçerideki değişim yatay.'),
+      sikli('|x − 5| < 2 ne demektir?', ['x, 5\'ten büyük', 'x, 5\'e 2 birimden yakın'], 1, 'Uzaklık okuması.'),
+      sikli('|x| < 3 eşitsizliğinin çözümü?', ['x < 3', '−3 < x < 3'], 1, 'Tek aralık.'),
+      soru('|x| = 4 denkleminin iki çözümü vardır.', true, '4 ve −4.'),
     ], [
       {
         soru: '|x| > 3 eşitsizliğinin çözümü nedir?',
@@ -717,6 +753,10 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       soru('Kişi sayısı için kurulan bir denklemin çözümü 4,5 çıkarsa sonuç kabul edilir.', false, 'Kişi sayısı tam sayı olmalı; anlam kontrolü kurulan denklemin hatalı olduğunu söylüyor.'),
       soru('Yüzde 20 indirimden sonra yüzde 20 zam yapılırsa ilk fiyata dönülür.', false, 'Zam küçülmüş fiyat üzerinden alınıyor: 100 → 80 → 96.'),
       soru('x/3 = 4/6 orantısında x = 2 dir.', true, 'İçler dışlar çarpımı: 6x = 12, yani x = 2.'),
+      sikli('Bilinmeyen sadeleşip 0 = 5 kalırsa?', ['Her sayı çözümdür', 'Çözüm yoktur'], 1, '0 = 0 her sayı.'),
+      sikli('%20 artış hangi sayıyla çarpmaktır?', ['0,2', '1,2'], 1, 'Yüzde bir oran.'),
+      sikli('Ters orantıda ne sabit kalır?', ['Oran', 'Çarpım'], 1, 'Doğru orantıda oran.'),
+      soru('%20 artıp %20 azalan sayı başlangıca döner.', false, '1,2 × 0,8 = 0,96.'),
     ], [
       {
         soru: '−2x < 6 eşitsizliğinin çözümü?',
@@ -837,6 +877,14 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
         },
       ),
       soru('Eşkenar üçgende yükseklik, kenarortay ve açıortay farklı doğrulardır.', false, 'Eşkenar üçgende her köşe için üçü de aynı doğru.'),
+      sikli('Bir üçgenin dış açıları toplamı?', ['180°', '360°'], 1, 'İç açılar 180°.'),
+      sikli('Bir dış açı neye eşittir?', ['Komşu iç açıya', 'Komşu olmayan iki iç açının toplamına'], 1, '180° kuralından çıkar.'),
+      sikli('En küçük açının karşısında?', ['En uzun kenar', 'En kısa kenar'], 1, 'Aynı yönde değişir.'),
+      sikli('İkizkenar üçgende tepeden inen yükseklik aynı zamanda?', ['Yalnızca yükseklik', 'Açıortay ve kenarortay'], 1, 'Üçü çakışır.'),
+      sikli('Kenarları 4 ve 9 olan üçgende tam sayı üçüncü kenar kaç değer alır?', ['7', '9'], 0, '6\'dan 12\'ye.'),
+      sikli('Alan formülünde yükseklik nedir?', ['Tabana dik uzaklık', 'Yan kenar'], 0, 'Yan kenar yükseklik değil.'),
+      sikli('Kenarlarına göre bütün kenarları farklı üçgen?', ['Çeşitkenar', 'İkizkenar'], 0, 'Eşkenar hepsi eşit.'),
+      soru('Kenarortay kenarı ortalar, açıortay açıyı böler.', true, 'Genelde farklı doğrular.'),
     ], [
       {
         soru: 'Kenarları 4 ve 9 olan üçgenin üçüncü kenarı hangi aralıktadır?',
@@ -935,6 +983,11 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       soru('(x, y) noktasının y eksenine göre yansıması (x, −y) olur.', false, 'y eksenine göre yansımada x işaret değiştirir: (−x, y).'),
       soru('Benzerlik dönüşümü açıları korur, kenar uzunluklarını aynı oranda değiştirir.', true, 'Şeklin biçimi aynı kalıyor, yalnızca ölçeği değişiyor.'),
       soru('Karenin simetri ekseni sayısı ikidir.', false, 'Karede dört simetri ekseni var: iki köşegen ve karşılıklı kenarların orta dikmeleri.'),
+      sikli('Bir doğruya göre simetrik görüntü alma?', ['Yansıma', 'Öteleme'], 0, 'Şekil ters döner.'),
+      sikli('Döndürmede neler belirtilmelidir?', ['Merkez, açı ve yön', 'Yalnızca açı'], 0, 'Üçü birlikte.'),
+      sikli('Eşkenar üçgenin kaç simetri ekseni vardır?', ['3', '1'], 0, 'Her köşeden bir tane.'),
+      sikli('Önce döndürüp sonra ötelemek ile tersi?', ['Farklı sonuç verebilir', 'Hep aynı sonuç'], 0, 'Sıra önemli.'),
+      soru('Öteleme şeklin boyutunu değiştirir.', false, 'Yalnızca konum değişir.'),
     ], [
       {
         soru: 'Hangi dönüşüm uzunlukları korumaz?',
@@ -995,6 +1048,11 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       soru('Eşlik, benzerlik oranı 1 olan özel bir benzerliktir.', true, 'Eş şekiller hem aynı biçimde hem aynı büyüklükte.'),
       soru('KKK, KAK ve AKA birer eşlik koşuludur.', true, 'Üçü de üçgeni tek bir biçimde belirliyor.'),
       soru('ABC ≅ DEF yazılışında A köşesi F köşesine karşılık gelir.', false, 'Yazım sırası eşleşmeyi veriyor: A ile D, B ile E, C ile F karşılıklı.'),
+      sikli('Eşlik için en az kaç uygun eleman gerekir?', ['3', '6'], 0, 'KAK, AKA, KKK.'),
+      sikli('İki açısı eşit iki üçgen için ne söylenir?', ['Benzerdir', 'Eştir'], 0, 'AA yeter; üçüncü açı kendiliğinden.'),
+      sikli('Benzerlik oranı 1 olan benzerlik nedir?', ['Eşlik', 'Yansıma'], 0, 'Her eş şekil benzer.'),
+      sikli('ABC ≅ DEF yazımında B kiminle eşleşir?', ['E', 'F'], 0, 'Sıra korunur.'),
+      soru('Nehrin genişliği benzerlikle hesaplanabilir.', true, 'Ölçülemeyen uzunluklar.'),
     ], [
       {
         soru: 'Üç açısı eşit iki üçgen için ne söylenir?',
@@ -1102,6 +1160,10 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       soru('Benzerlik oranı 2 olan iki üçgenin alanları oranı da 2 dir.', false, 'Alan oranı benzerlik oranının karesi, yani 4.'),
       soru('Benzer üçgenlerde çevrelerin oranı benzerlik oranına eşittir.', true, 'Çevre kenarların toplamı ve her kenar aynı oranla büyüyor.'),
       soru('Kelebek benzerliğinde üçgenler ters yönde durduğu için benzer olamazlar.', false, 'Ters dönmüş olmak benzerliği bozmaz; ters açılar ve paralellik eşit açılar veriyor.'),
+      sikli('Bir kenara paralel kesen ne üretir?', ['Eş üçgen', 'Benzer küçük üçgen'], 1, 'Temel benzerlik teoremi.'),
+      sikli('Benzerlik oranı k ise çevreler oranı?', ['k²', 'k'], 1, 'Alan k².'),
+      sikli('Gölge boyuyla ağaç boyunu bulmak neye dayanır?', ['Pisagor\'a', 'Benzer üçgenlere'], 1, 'Aynı anda ölçülen gölgeler aynı oran.'),
+      soru('Kelebek benzerliğinde ters açılar eşittir.', true, 'Kesişen iki doğru.'),
     ], [
       {
         soru: 'Benzerlik oranı 1/3 olan iki üçgenin alanları oranı?',
@@ -1250,6 +1312,12 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       soru('Kenarları a² + b² = c² şartını sağlayan üçgen dik üçgendir.', true, 'Teoremin tersi de doğru: bağıntı sağlanıyorsa c kenarını gören açı 90°.'),
       soru('Öklid bağıntıları dik olmayan üçgenlerde de kullanılır.', false, 'Öklid bağıntıları dik üçgende, hipotenüse indirilen yükseklikle kuruluyor.'),
+      sikli('Hipotenüse indirilen yükseklik h ise h² neye eşittir?', ['p·q', 'p·c'], 0, 'p ve q hipotenüsteki parçalar.'),
+      sikli('(5, 12, 13) üçlüsünün iki katı?', ['(10, 24, 26)', '(7, 14, 15)'], 0, 'Katlar da Pisagor üçlüsü.'),
+      sikli('30-60-90 üçgeninde kenar oranı?', ['1, √3, 2', '1, 1, √2'], 0, '45-45-90\'da 1, 1, √2.'),
+      sikli('a² + b² = c² sağlanıyorsa üçgen?', ['Diktir', 'Eşkenardır'], 0, 'Teoremin tersi.'),
+      sikli('Paralel doğruların kestikleri doğrularda orantılı parça ayırması?', ['Öklid teoremi', 'Tales teoremi'], 1, 'Orantı.'),
+      soru('Tales, Öklid ve Pisagor teoremlerinin ispatı benzerliğe dayanır.', true, 'Tek fikrin sonuçları.'),
     ], [
       {
         soru: 'Dik kenarları 6 ve 8 olan dik üçgenin hipotenüsü?',
@@ -1296,6 +1364,10 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       soru('1/500 ölçekli haritada 3 cm olan yol gerçekte 1500 m dir.', false, '3 × 500 = 1500 cm, yani 15 m.'),
       soru('Boyu 1,8 m olan kişinin gölgesi 1,2 m iken 4 m gölgesi olan ağaç 6 m dir.', true, 'Aynı anda oran sabit: 1,8/1,2 = 1,5 ve 4 × 1,5 = 6.'),
       soru('Benzerlik oranı kurulurken hangi kenarın hangisiyle eşleştiği önemli değildir.', false, 'Oran yalnızca karşılıklı kenarlar arasında kurulur; en sık hata burada yapılıyor.'),
+      sikli('1/25.000 ölçekte haritadaki 1 cm gerçekte?', ['25 m', '250 m'], 1, '25.000 cm.'),
+      sikli('İç içe benzer üçgenlerde ilk yapılacak?', ['Alan hesaplamak', 'Şekli iki ayrı üçgene ayırmak'], 1, 'Eşleştirme hatasını bitirir.'),
+      sikli('Benzerlik oranı 1/2 ise alan oranı?', ['1/2', '1/4'], 1, 'k².'),
+      soru('Karşılıklı olmayan kenarları oranlamak en sık hatadır.', true, 'Eşleştirme yanlışsa oran yanlış.'),
     ], [
       {
         soru: 'Ölçeği iki katına çıkan bir maketin hacmi kaç katına çıkar?',
@@ -1375,6 +1447,11 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
         },
       ),
       soru('Çıkış koşulu hiçbir zaman sağlanmayan bir döngü sonsuza kadar çalışır.', true, 'Döngüyü bitiren şey koşulun bozulması; koşulu değiştiren adım yoksa döngü hiç bitmez.'),
+      sikli('Algoritmanın üç özelliğinden biri?', ['Sonlu olmak', 'Rastgele olmak'], 0, 'Açık adım, aynı girdide aynı sonuç.'),
+      sikli('Değer tutan adlandırılmış kutu?', ['Değişken', 'Döngü'], 0, 'Güncellenebilir.'),
+      sikli('Akış şemasında oval ne gösterir?', ['Başlangıç-bitiş', 'İşlem'], 0, 'Dikdörtgen işlem.'),
+      sikli('Her algoritma hangi üç yapının bileşimidir?', ['Sıralı, koşullu, tekrarlı', 'Girdi, işlem, çıktı'], 0, 'Temel yapılar.'),
+      soru('Bölme işlemi de bir algoritmadır.', true, 'Adım adım tanımlı.'),
     ], [
       {
         soru: 'Akış şemasında karar (koşul) hangi şekille gösterilir?',
@@ -1463,6 +1540,12 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       soru('p ∨ q önermesi ikisi de doğru olduğunda yanlıştır.', false, '"veya" en az biri doğruysa doğrudur; ikisi de doğruyken de doğru.'),
       soru('Bir koşullu önerme ile karşıt tersinin doğruluk değerleri her zaman aynıdır.', true, 'p → q ile ¬q → ¬p denk önermeler.'),
+      sikli('Soru cümlesi önerme midir?', ['Evet', 'Hayır'], 1, 'Doğruluk değeri yok.'),
+      sikli('p ∧ q ne zaman doğrudur?', ['En az biri doğruyken', 'İkisi de doğruyken'], 1, 'veya en az biri.'),
+      sikli('¬(¬p) neye eşittir?', ['¬p', 'p'], 1, 'Başa dönülür.'),
+      sikli('"Her" olumsuzlanınca ne olur?', ['Hiçbir', 'En az bir'], 1, '"En az bir" olumsuzu "hiçbir".'),
+      sikli('p ⇒ q ile hangisi eşdeğerdir?', ['¬q ⇒ ¬p', 'q ⇒ p'], 0, 'Karşıt tersi.'),
+      soru('Mantıktaki "veya" günlük dildeki "ya o ya bu" anlamındadır.', false, 'İkisi de olabilir.'),
     ], [
       {
         soru: 'p ⇒ q önermesi hangi durumda yanlıştır?',
@@ -1517,6 +1600,10 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       soru('"ve" ile bağlanan bir koşulda tek şartın sağlanması yeterlidir.', false, '"ve" iki şartı da ister; biri yetiyorsa bağlaç "veya" olmalı.'),
       soru('İç içe koşullarda dıştaki koşul sağlanmazsa içteki hiç denenmez.', true, 'İçteki koşula ancak dıştaki doğruysa geliniyor.'),
       soru('Bir döngünün koşulunda geçen değer, döngü gövdesinde asla değişmemelidir.', false, 'Değişmezse koşul hep aynı kalır ve döngü hiç bitmez.'),
+      sikli('Akış şemasında karar noktasının kaç çıkışı vardır?', ['2', '3'], 0, 'Doğru/yanlış.'),
+      sikli('İç içe iki koşul hangi bağlaca denk gelir?', ['ve', 'veya'], 0, 'İkisi de sağlanmalı.'),
+      sikli('Koşulu tersine çevirmek şemada ne yapar?', ['İki dalın yer değişmesi', 'Algoritmayı bozar'], 0, 'Aynı iş.'),
+      soru('Eğer-değilse yapısında iki dal da çalışabilir.', false, 'Yalnızca biri.'),
     ], [
       {
         soru: 'Döngü koşulu hiç yanlış olmazsa ne olur?',
@@ -1590,6 +1677,12 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       soru('Aşırı uç değer bulunan bir veride ortanca, ortalamadan daha güvenilir bir merkez ölçüsüdür.', true, 'Tek bir büyük değer ortalamayı çeker, ortancayı yerinden oynatmaz.'),
       soru('Standart sapma büyükse veriler ortalamanın etrafında sıkışmıştır.', false, 'Tersi: standart sapma büyüdükçe veriler ortalamadan uzağa yayılır.'),
       soru('Bir sınıftaki öğrenci sayısı kesikli bir değişkendir.', true, 'Sayılabilir ve arada değer almıyor; 24 ile 25 arasında öğrenci sayısı yok.'),
+      sikli('Kardeş sayısı hangi veri türüdür?', ['Sürekli', 'Kesikli'], 1, 'Boy sürekli.'),
+      sikli('Standart sapma küçükse?', ['Veri dağılmış', 'Veri ortalamaya yakın'], 1, 'Ortalamadan ortalama uzaklık.'),
+      sikli('Sağa çarpık dağılımda ortalama ile ortanca?', ['Eşit', 'Ortalama daha büyük'], 1, 'Uç değerler çeker.'),
+      sikli('En sık tekrar eden değere ne denir?', ['Ortanca', 'Tepe değer (mod)'], 1, 'Merkezî eğilim.'),
+      sikli('Dağılımın şeklini gösteren grafik?', ['Histogram', 'Nokta grafiği'], 0, 'Kutu grafiği ortanca ve uçlar.'),
+      soru('Araştırma süreci veri toplamayla biter.', false, 'Yorumlanıp soruya dönülmeli.'),
     ], [
       {
         soru: 'Veride aşırı uç değerler varsa hangi ölçü daha güvenilirdir?',
@@ -1636,6 +1729,10 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       soru('İki değişken birlikte artıyorsa biri diğerinin sebebidir.', false, 'Birlikte değişmek nedensellik değil; ikisini birden etkileyen üçüncü bir sebep olabilir.'),
       soru('Verinin kimin tarafından toplandığı sonucun güvenilirliğini etkilemez.', false, 'Sonuçtan çıkarı olan birinin topladığı veri taraflı olabilir.'),
       soru('Yalnızca kendi sınıfında yapılan bir anket bütün okul hakkında sonuç vermez.', true, 'Örneklem okulun tamamını temsil etmiyor.'),
+      sikli('İki değişkenin birlikte artması ne gösterir?', ['Nedensellik', 'İlişki, nedensellik değil'], 1, 'Üçüncü bir sebep olabilir.'),
+      sikli('"%50 arttı" ifadesi ne zaman yanıltıcıdır?', ['Her zaman', 'Toplam sayı yazılmıyorsa'], 1, '2\'den 3\'e de %50.'),
+      sikli('Taraflı örneklem sonucu ne yapar?', ['Sonucu güçlendirir', 'Yanlış sonuç verir'], 1, 'Doğru hesaplansa bile.'),
+      soru('Grafik başlık okunmadan yorumlanabilir.', false, 'Eksen, örneklem, kaynak okunmalı.'),
     ], [
       {
         soru: 'Y ekseni sıfırdan başlamayan grafik ne yapar?',
@@ -1684,6 +1781,10 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       soru('Deneme sayısı arttıkça deneysel olasılık teorik olasılıktan uzaklaşır.', false, 'Tersi olur: deneme arttıkça deneysel olasılık teoriğe yaklaşır.'),
       soru('Hileli olabileceğinden şüphelenilen bir zar yalnızca teorik olasılıkla incelenir.', false, 'Zarın gerçekten hileli olup olmadığı ancak atılarak, yani deneysel olasılıkla anlaşılır.'),
       soru('20 atışın 7 sinde tura gelen paranın deneysel tura olasılığı 0,35 tir.', true, '7/20 = 0,35.'),
+      sikli('Bozuk zarın olasılığı nasıl bulunur?', ['Deneyle ölçülür', 'Hesaplanır'], 0, 'Teorik hesap yapılamaz.'),
+      sikli('Deneme sonuçlarının işlendiği tablo?', ['Sıklık tablosu', 'Örnek uzay'], 0, 'Göreli sıklık.'),
+      sikli('Tek bir çıktıya ne denir?', ['Sonuç', 'Olay'], 0, 'Olay sonuçlardan oluşan küme.'),
+      soru('Teorik olasılık ölçülür, deneysel olasılık hesaplanır.', false, 'Tersi.'),
     ], [
       {
         soru: 'Deneme sayısı arttıkça deneysel olasılık ne yapar?',
@@ -1750,6 +1851,11 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       soru('Bir zar atıldığında çift sayı gelme olasılığı 1/2 dir.', true, 'Altı sonuçtan üçü çift: 3/6 = 1/2.'),
       soru('Bir olayın tümleyeninin olasılığı 1 − P(A) dır.', true, 'Olay ya olur ya olmaz; ikisinin olasılığı toplamda 1.'),
       soru('Arka arkaya beş kez yazı gelen para altıncı atışta daha yüksek olasılıkla tura gelir.', false, 'Para önceki atışları hatırlamaz; her atışta tura olasılığı 1/2.'),
+      sikli('Bir zarda 3\'ten büyük sayı gelme olasılığı?', ['1/3', '1/2'], 1, '4, 5, 6: 3/6.'),
+      sikli('"En az bir" sorularında kısa yol?', ['Toplama', 'Tümleyen olay'], 1, '1 − hiç olmama.'),
+      sikli('Aynı anda gerçekleşemeyen iki olay?', ['Bağımsız', 'Ayrık'], 1, 'Olasılıkları toplanır.'),
+      sikli('Olasılık 1,2 çıkarsa?', ['Kesin olay', 'Hesap hatası'], 1, '0 ile 1 arasında.'),
+      soru('Üst üste üç yazı gelen para dördüncüde daha çok tura gelir.', false, 'Para geçmişi hatırlamaz.'),
     ], [
       {
         soru: 'Üst üste iki kez tura gelme olasılığı?',
