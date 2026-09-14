@@ -402,7 +402,6 @@ export function KonuHaritasiEkrani({
         konu={acikSorular.konu}
         temaAdi={acikSorular.temaAdi}
         dersAdi={ders.ad}
-        bicim={bicim}
         onKapat={(sonuc) => sorularBitti(acikSorular.konu, sonuc)}
       />
     )

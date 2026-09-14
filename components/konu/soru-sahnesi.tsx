@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Check, X } from 'lucide-react'
 import type { Konu } from '@/lib/konu'
-import type { HaritaTemasi } from '@/lib/konu/harita-temasi'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
 import { Buton } from '@/components/ui'
@@ -63,14 +62,11 @@ export function SoruSahnesi({
   konu,
   temaAdi,
   dersAdi,
-  bicim,
   onKapat,
 }: {
   konu: Konu
   temaAdi: string
   dersAdi: string
-  /** Dersin harita rengi — bilet onunla boyanıyor, koyu sahne değil. */
-  bicim: HaritaTemasi
   onKapat: (sonuc: SahneSonucu) => void
 }) {
   const [sira, setSira] = useState(0)
@@ -132,7 +128,6 @@ export function SoruSahnesi({
         konu={konu}
         dersAdi={dersAdi}
         temaAdi={temaAdi}
-        bicim={bicim}
         onBasla={() => setBasladi(true)}
         onVazgec={() => onKapat({ dogru: 0, yanlis: 0, bitti: false })}
       />

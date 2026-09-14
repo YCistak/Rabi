@@ -166,6 +166,15 @@ body {
      çağırıyor ve ileride birbirinden ayrılabilirler. */
   --primary-dolu: var(--primary-parlak);
 
+  /* Yoklama bileti (`components/konu/yoklama-bileti.tsx`): markanın
+     turuncusundan koyu bir bilet, üstüne altın. Derse göre **değişmiyor** —
+     bir süre yedi dersin yedi bileti vardı (lacivert+altın, şarap+nane…),
+     kullanıcı tek temaya çevirdi: bilet uygulamanın kendi rengi, dersin
+     değil. Tasarımın lacivert–altın zıtlığı burada kızıl kahve–altın. */
+  --bilet: #7e2f12;
+  --bilet-vurgu: #f0be48;
+  --bilet-vurgu-acik: #fbe2a0;
+
   /* İkinci kimlik rengi: tuğla. Marka yazısı, yanlışlar, dikkat çeken eylem.
      Turuncudan ayrışsın diye daha koyu ve kırmızıya yakın, ama aynı sıcaklıkta. */
   --ikincil: #a8432b;
@@ -234,65 +243,35 @@ body {
      aileleriyle (`--isl`, `--trh`…) aynı **değil** — o aileler rozetlerde ve
      oyun kartlarında; harita kendi paletini `lib/konu/harita-temasi.ts`
      üstünden okuyor. Dört ton: zemin, kenar, koyu (yazı) ve çubuk
-     (ilerleme çubuğunun boş kısmı).
-
-     Üç ton daha yoklama bileti için (`components/konu/yoklama-bileti.tsx`):
-     bilet (koyu zemin), vurgu ve vurgunun açığı. Tasarım Fizik için
-     lacivert bilet üstüne altın çizildi; ötekilerde aynı zıtlık aranıyor —
-     bilet dersin mürekkebinden bir tık koyu, vurgu ise renk çemberinde
-     karşısına düşen sıcak ya da soğuk bir ton: kızıl bilete nane, hardala
-     gök, mora limon, yeşile kehribar, kahveye turkuaz, maviye turuncu.
-     Vurgu her zaman biletten çok daha açık: sayı ve halka onunla yazılıyor
-     ve koyu zeminde okunacak. */
+     (ilerleme çubuğunun boş kısmı). */
   --konu-matematik: #f9ebee;
   --konu-matematik-kenar: #f3dfe1;
   --konu-matematik-koyu: #b4523c;
   --konu-matematik-cubuk: #f0d8d9;
-  --konu-matematik-bilet: #7a2f3b;
-  --konu-matematik-vurgu: #74d1bd;
-  --konu-matematik-vurgu-acik: #bdeee2;
   --konu-turkce: #f7f0dc;
   --konu-turkce-kenar: #ecdfb8;
   --konu-turkce-koyu: #8d691a;
   --konu-turkce-cubuk: #ecdfb8;
-  --konu-turkce-bilet: #5b4412;
-  --konu-turkce-vurgu: #8cc7ff;
-  --konu-turkce-vurgu-acik: #c9e4ff;
   --konu-fizik: #e8eaf6;
   --konu-fizik-kenar: #d6dbee;
   --konu-fizik-koyu: #4a5789;
   --konu-fizik-cubuk: #d6dbee;
-  --konu-fizik-bilet: #3b4776;
-  --konu-fizik-vurgu: #e2b23c;
-  --konu-fizik-vurgu-acik: #f4d78a;
   --konu-kimya: #eee9f7;
   --konu-kimya-kenar: #dfd7ee;
   --konu-kimya-koyu: #6b5ca5;
   --konu-kimya-cubuk: #dfd7ee;
-  --konu-kimya-bilet: #463a7c;
-  --konu-kimya-vurgu: #d3e35a;
-  --konu-kimya-vurgu-acik: #ecf3a6;
   --konu-biyoloji: #e9f1e4;
   --konu-biyoloji-kenar: #d6e5cc;
   --konu-biyoloji-koyu: #4f7a3a;
   --konu-biyoloji-cubuk: #d6e5cc;
-  --konu-biyoloji-bilet: #2f5228;
-  --konu-biyoloji-vurgu: #f2b34d;
-  --konu-biyoloji-vurgu-acik: #fad995;
   --konu-tarih: #f1e8de;
   --konu-tarih-kenar: #e3d5c5;
   --konu-tarih-koyu: #7a4f2a;
   --konu-tarih-cubuk: #e3d5c5;
-  --konu-tarih-bilet: #4f3418;
-  --konu-tarih-vurgu: #79cbd9;
-  --konu-tarih-vurgu-acik: #bde7ee;
   --konu-cografya: #e4eef7;
   --konu-cografya-kenar: #cfdfee;
   --konu-cografya-koyu: #2f5f8a;
   --konu-cografya-cubuk: #cfdfee;
-  --konu-cografya-bilet: #234666;
-  --konu-cografya-vurgu: #f5a04a;
-  --konu-cografya-vurgu-acik: #fbd39c;
 
   /* Patikanın kendi renkleri: yol, geçilmiş yol ve kilitli kitap.
 

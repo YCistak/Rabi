@@ -1887,19 +1887,21 @@ buluyordu; aradaki dokunuş gecikme değil, sonraki ekranın ne olduğunu
 söyleyen tek yer.
 
 Önce koyu sahnenin kendi ilk ekranıydı (`Giris`); tasarım onu destenin
-**aydınlık** tarafına aldı: üstte dersin rengine boyalı noktalı bant, ortada
-koyu bir bilet, kupayı kaldıran Rabi biletin arkasından çıkıyor, sağ üste
-"BİTTİ" damgası basılıyor, koçanda üç sayı (kart, soru, ~dakika) ve dolan
-bir %100 halkası. Koyu perde (`sahne-iner`) artık "Yoklamaya başla" denince
-iniyor; iki kök ayrı `key` taşıyor, yoksa React aynı `div`i yeniden kullanır
-ve perde hiç oynamazdı.
+**aydınlık** tarafına aldı: bembeyaz zemin, ortada koyu bir bilet, kupayı
+kaldıran Rabi biletin arkasından çıkıyor, sağ üste "BİTTİ" damgası
+basılıyor, koçanda üç sayı (kart, soru, ~dakika) ve dolan bir %100 halkası.
+Koyu perde (`sahne-iner`) artık "Yoklamaya başla" denince iniyor; iki kök
+ayrı `key` taşıyor, yoksa React aynı `div`i yeniden kullanır ve perde hiç
+oynamazdı.
 
-- **Biletin rengi derse ait, ama mürekkep değil.** Üç ton daha var
-  (`--konu-<ders>-bilet`, `-vurgu`, `-vurgu-acik`; `HaritaTemasi.bilet`,
-  `vurgu`, `vurguAcik`): bilet mürekkepten bir tık koyu, vurgu onun
-  karşıtı. Tasarım Fizik için lacivert üstüne altın çizdi; ötekilerde aynı
-  zıtlık — kızıla nane, hardala gök, mora limon, yeşile kehribar, kahveye
-  turkuaz, maviye turuncu. Biletin yazısı yedi derste de aynı kırık beyaz.
+- **Bilet dersin değil uygulamanın rengi.** Mockup Fizik'in lacivertiyle
+  çizildi ve üstte dersin rengine boyalı noktalı bir bant vardı; uygulama
+  bir süre yedi derse yedi bilet taşıdı (şarap+nane, mor+limon, kahve+
+  turkuaz…). Kullanıcı ikisini de geri aldı: zemin düz beyaz, bilet
+  markanın turuncusundan koyu bir ton ve üstüne altın (`--bilet`,
+  `--bilet-vurgu`, `--bilet-vurgu-acik`; `globals.css`). Bileşen bu yüzden
+  `bicim` almıyor ve `SoruSahnesi` de almıyor — koyu sahne zaten derse göre
+  renk almıyordu, bilet de almıyor.
 - **Koçan çentiği gerçek bir satırda.** Mockup çentiği `mask-image` ile 177
   piksele kesiyordu; konu adı iki satıra kırılınca çizgi kayar, çentik
   kalırdı. Çentik kesik çizginin kendi satırındaki iki daire, `overflow`
