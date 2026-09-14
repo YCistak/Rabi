@@ -1907,6 +1907,11 @@ oynamazdı.
   kalırdı. Çentik kesik çizginin kendi satırındaki iki daire, `overflow`
   dış yarısını kırpıyor.
 - **Halka hep %100**: bilet yalnızca deste sonuna kadar okununca geliyor.
+- **Bilet destenin ucundan gelince var, turuncu kitaptan girince yok**
+  (`SoruSahnesi.biletli`). Bilet destenin kapanışı, yoklamanın girişi
+  değil; haritadan doğrudan soruya giren kullanıcı bir şey okumadı ve
+  "okundu" diyen bir bilet ona yalan söylerdi. Oradan sahne ilk soruyla
+  açılıyor.
 - **Üç efekt, üçü de damgaya bağlı** (kullanıcı seçti): koçandaki sayılar
   sıfırdan sayarak doluyor, damga basılırken kısa bir titreşim
   (`lib/titresim.ts`, manifestte VIBRATE izni), ardından biletin üstünden

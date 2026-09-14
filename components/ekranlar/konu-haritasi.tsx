@@ -293,10 +293,15 @@ export function KonuHaritasiEkrani({
   /*
     Açık soru sahnesi. Deste bitince kendiliğinden açılıyor: soru, kartların
     devamı ve arada haritaya dönmek okumayla soruyu birbirinden ayırıyordu.
+    `biletli` yalnızca destenin ucundan gelince doğru: bilet destenin
+    kapanışı, turuncu kitaptan girilen yoklamanın girişi değil — oradan
+    gelen kullanıcı hiçbir şey okumadı, "okundu" diyen bir bilet ona yalan
+    söylerdi.
   */
   const [acikSorular, setAcikSorular] = useState<{
     konu: Konu
     temaAdi: string
+    biletli: boolean
   } | null>(null)
   /** Kitaba basınca ortada açılan konu kartı. Haritanın üstüne biniyor. */
   const [sayfa, setSayfa] = useState<{
@@ -370,7 +375,7 @@ export function KonuHaritasiEkrani({
 
     // Sorular yalnızca deste **sonuna kadar** okunduysa geliyor: yarıda
     // bırakılan bir konunun sorusu, okunmamış kartları sormak olurdu.
-    if (sonuc.bitti && acik.konu.sorular.length > 0) setAcikSorular(acik)
+    if (sonuc.bitti && acik.konu.sorular.length > 0) setAcikSorular({ ...acik, biletli: true })
   }
 
   function sorularBitti(konu: Konu, sonuc: SahneSonucu) {
@@ -402,6 +407,7 @@ export function KonuHaritasiEkrani({
         konu={acikSorular.konu}
         temaAdi={acikSorular.temaAdi}
         dersAdi={ders.ad}
+        biletli={acikSorular.biletli}
         onKapat={(sonuc) => sorularBitti(acikSorular.konu, sonuc)}
       />
     )
@@ -589,7 +595,7 @@ export function KonuHaritasiEkrani({
             const { konu, temaAdi } = sayfa.basamak
             setSayfa(null)
             if (sayfa.basamak.tur === 'kart') setAcikKonu({ konu, temaAdi })
-            else setAcikSorular({ konu, temaAdi })
+            else setAcikSorular({ konu, temaAdi, biletli: false })
           }}
         />
       )}

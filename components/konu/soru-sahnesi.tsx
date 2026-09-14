@@ -62,11 +62,18 @@ export function SoruSahnesi({
   konu,
   temaAdi,
   dersAdi,
+  biletli,
   onKapat,
 }: {
   konu: Konu
   temaAdi: string
   dersAdi: string
+  /**
+   * Önce yoklama bileti gelsin mi. Destenin ucundan gelince evet; haritadaki
+   * turuncu kitaptan gelince hayır — bilet destenin kapanışı, yoklamanın
+   * girişi değil, ve kitaptan giren kullanıcı bir şey okumadı.
+   */
+  biletli: boolean
   onKapat: (sonuc: SahneSonucu) => void
 }) {
   const [sira, setSira] = useState(0)
@@ -81,8 +88,8 @@ export function SoruSahnesi({
   const [secim, setSecim] = useState<number | null>(null)
   const [dogru, setDogru] = useState(0)
   const [yanlis, setYanlis] = useState(0)
-  /** Girişteki düğmeye basıldı mı; basılana kadar ilk iddia görünmüyor. */
-  const [basladi, setBasladi] = useState(false)
+  /** Biletteki düğmeye basıldı mı; basılana kadar ilk soru görünmüyor. Biletsiz açılışta hemen doğru. */
+  const [basladi, setBasladi] = useState(!biletli)
 
   const soru = konu.sorular[sira]
   const toplam = konu.sorular.length
