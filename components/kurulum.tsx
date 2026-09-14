@@ -471,7 +471,7 @@ export function Kurulum({
   */
   if (suanki === 'karsilama') {
     return (
-      <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
+      <div className="mx-auto flex en-az-ekran max-w-md flex-col px-4 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
         {/* Üstteki boşluk alttakinden küçük: maskot tam ortada dururken ekran
             aşağı sarkmış gibi görünüyor, göz ağırlık merkezini ortanın biraz
             üstünde arıyor. */}
@@ -529,7 +529,7 @@ export function Kurulum({
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[calc(1.5rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
+    <div className="mx-auto flex en-az-ekran max-w-md flex-col px-4 pt-[calc(1.5rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
       {/*
         İlerleme çubuğu — eskiden alttaki nokta şeridiydi.
 
@@ -1097,7 +1097,7 @@ function TanismaEkrani({
   const temizAd = ad.trim()
 
   return (
-    <div className="relative mx-auto flex min-h-dvh max-w-md flex-col overflow-hidden px-5 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(1.5rem+var(--guvenli-alt))]">
+    <div className="relative mx-auto flex en-az-ekran max-w-md flex-col overflow-hidden px-5 pt-[calc(2rem+var(--guvenli-ust))] pb-[calc(1.5rem+var(--guvenli-alt))]">
       <div className="flex-[0.9]" aria-hidden />
 
       <div className="flex flex-col items-center text-center">
