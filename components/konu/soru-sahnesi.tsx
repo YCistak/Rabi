@@ -65,8 +65,15 @@ export function SoruSahnesi({
   onKapat: (sonuc: SahneSonucu) => void
 }) {
   const [sira, setSira] = useState(0)
-  /** Verilen cevap; `null` ise henüz karar verilmedi. */
-  const [secim, setSecim] = useState<boolean | null>(null)
+  /**
+   * Verilen cevap; `null` ise henüz karar verilmedi.
+   *
+   * İki soru biçimi tek sayıda buluşuyor: doğru/yanlışta 1 "doğru", 0
+   * "yanlış"; iki şıklıda şıkkın dizini. Beklenen cevap da aynı sayıya
+   * çevriliyor (`beklenen`), böylece karar ve gerekçe iki biçimde tek koddan
+   * çıkıyor.
+   */
+  const [secim, setSecim] = useState<number | null>(null)
   const [dogru, setDogru] = useState(0)
   const [yanlis, setYanlis] = useState(0)
   const [bitti, setBitti] = useState(false)
@@ -75,7 +82,9 @@ export function SoruSahnesi({
 
   const soru = konu.sorular[sira]
   const toplam = konu.sorular.length
-  const isabet = secim !== null && secim === soru.dogru
+  const sikli = soru.tur === 'sikli'
+  const beklenen = soru.tur === 'sikli' ? soru.dogru : soru.dogru ? 1 : 0
+  const isabet = secim !== null && secim === beklenen
 
   /*
     Sonuç ref'te de duruyor: geri tuşu katmanı bileşenin ilk çiziminde
@@ -86,10 +95,10 @@ export function SoruSahnesi({
   sonucRef.current = { dogru, yanlis, bitti }
   useGeriKatmani(true, () => onKapat(sonucRef.current))
 
-  function karar(cevap: boolean) {
+  function karar(cevap: number) {
     if (secim !== null) return
     setSecim(cevap)
-    if (cevap === soru.dogru) setDogru((o) => o + 1)
+    if (cevap === beklenen) setDogru((o) => o + 1)
     else setYanlis((o) => o + 1)
   }
 
@@ -209,14 +218,19 @@ export function SoruSahnesi({
           >
             <p className="flex items-center gap-2 text-[10.5px] font-extrabold tracking-[0.14em] text-[var(--sahne-vurgu)] uppercase">
               <span className="size-2 rounded-full bg-current" aria-hidden />
-              Doğru mu, yanlış mı?
+              {sikli ? 'Hangisi?' : 'Doğru mu, yanlış mı?'}
             </p>
 
             <p className="py-4 text-center text-[17px] leading-relaxed font-semibold text-pretty">
-              {soru.ifade}
+              {soru.tur === 'sikli' ? soru.soru : soru.ifade}
             </p>
 
-            {soru.gorsel && <KartGorseli gorsel={soru.gorsel} etiket={soru.ifade} />}
+            {soru.gorsel && (
+              <KartGorseli
+                gorsel={soru.gorsel}
+                etiket={soru.tur === 'sikli' ? soru.soru : soru.ifade}
+              />
+            )}
           </div>
 
           {/*
@@ -242,7 +256,13 @@ export function SoruSahnesi({
                 ) : (
                   <X size={16} strokeWidth={3} aria-hidden />
                 )}
-                {isabet ? 'Doğru' : soru.dogru ? 'Cevap: Doğru' : 'Cevap: Yanlış'}
+                {isabet
+                  ? 'Doğru'
+                  : soru.tur === 'sikli'
+                    ? `Cevap: ${soru.siklar[soru.dogru]}`
+                    : soru.dogru
+                      ? 'Cevap: Doğru'
+                      : 'Cevap: Yanlış'}
               </p>
               <p className="mt-1 text-[14px] leading-snug font-semibold text-[var(--sahne-yazi)] text-pretty">
                 {soru.aciklama}
@@ -252,18 +272,39 @@ export function SoruSahnesi({
         </div>
 
         <div className="mx-auto mt-4 w-full max-w-md">
-          {secim === null ? (
+          {secim === null && soru.tur === 'sikli' ? (
+            /*
+              İki şıklı soruda düğmeler alt alta ve şıkkın metnini taşıyor;
+              doğru/yanlışın renkli iki düğmesi burada anlamsız — hangisinin
+              doğru olduğu düğmenin renginden okunmamalı, ikisi de nötr.
+            */
+            <div className="flex flex-col gap-2.5">
+              {soru.siklar.map((metin, i) => (
+                <Buton
+                  key={metin}
+                  bicim="ikincil"
+                  onClick={() => karar(i)}
+                  className="h-auto min-h-14 w-full justify-start gap-3 bg-white/10 px-4 py-3 text-left text-[15px] text-[var(--sahne-yazi)] active:bg-white/20"
+                >
+                  <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-white/15 text-[13px] font-extrabold">
+                    {i === 0 ? 'A' : 'B'}
+                  </span>
+                  <span className="min-w-0 flex-1 leading-snug text-pretty">{metin}</span>
+                </Buton>
+              ))}
+            </div>
+          ) : secim === null ? (
             <div className="flex gap-3">
               <Buton
                 bicim="ikincil"
-                onClick={() => karar(false)}
+                onClick={() => karar(0)}
                 className="h-14 flex-1 bg-[var(--sahne-yanlis-zemin)] text-[15px] text-[var(--sahne-yanlis)]"
               >
                 <X size={18} strokeWidth={3} aria-hidden /> Yanlış
               </Buton>
               <Buton
                 bicim="ikincil"
-                onClick={() => karar(true)}
+                onClick={() => karar(1)}
                 className="h-14 flex-1 bg-[var(--sahne-dogru-zemin)] text-[15px] text-[var(--sahne-dogru)]"
               >
                 <Check size={18} strokeWidth={3} aria-hidden /> Doğru
@@ -338,8 +379,8 @@ function Giris({
         {konuAdi} okundu
       </h3>
       <p className="mt-1.5 text-[14.5px] leading-snug font-semibold text-[var(--sahne-soluk)] text-pretty">
-        Sırada kısa bir yoklama var: her iddia için doğru mu yanlış mı diyeceksin, gerekçesi hemen
-        altında çıkıyor.
+        Sırada kısa bir yoklama var: kimi soruda doğru mu yanlış mı diyeceksin, kiminde iki şıktan
+        birini seçeceksin; gerekçesi hemen altında çıkıyor.
       </p>
 
       {/* Zemin nötr (`bg-white/10`, başlıktaki kapatma düğmesiyle aynı):
@@ -347,7 +388,7 @@ function Giris({
           değil — yeşil bir şerit, henüz verilmemiş yoklamayı geçilmiş
           gösterirdi. */}
       <p className="rakam mt-4 rounded-full bg-white/10 px-4 py-2 text-[12.5px] font-extrabold text-[var(--sahne-yazi)]">
-        {kartSayisi} kart okundu · {soruSayisi} iddia
+        {kartSayisi} kart okundu · {soruSayisi} soru
       </p>
 
       <Buton onClick={onBasla} className="mt-6 w-full bg-[var(--sahne-vurgu)]">

@@ -27,6 +27,8 @@ export type {
   KonuSinifi,
   KoordinatGorseli,
   SayiDogrusuGorseli,
+  SikliSoru,
+  DogruYanlisSorusu,
   SoruKarti,
   TabloGorseli,
   Tema,

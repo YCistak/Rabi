@@ -271,14 +271,14 @@ export type HizliKontrol = {
 }
 
 /**
- * Deste okunduktan sonra sorulan tek soru — **doğru/yanlış**.
+ * Deste okunduktan sonra sorulan sorular — iki biçim.
  *
- * Soru bir soru cümlesi değil bir **iddia**: okuyan onu doğrular ya da
- * çürütür. Biçim kasten dar tutuldu. Deste okunduktan hemen sonra gelen ekran
- * ikinci bir ders değil bir yoklama; üzerinde düşünülen, hesaplanan ya da
- * şıkları elenen bir soru, okumanın arkasına bir sınav ekliyor ve destenin
- * sonu "bitti" değil "şimdi de bu var" oluyordu. İki düğmelik bir karar
- * saniyede veriliyor ve deste gerçekten bitiyor.
+ * İlk biçim **doğru/yanlış**: bir iddia ve iki düğme. Biçim kasten dar
+ * tutuldu; deste okunduktan hemen sonra gelen ekran ikinci bir ders değil
+ * bir yoklama. İkinci biçim **iki şıklı soru** sonradan eklendi: yalnızca
+ * iddia soran bir yoklama, "hangisi" diye soramıyordu (Pisagor üçlüsü hangisi,
+ * hangi organel ATP üretir). Şık sayısı yine ikiyle sınırlı — dört şıklı bir
+ * soru okumanın arkasına bir sınav ekler.
  *
  * Kararın kendisi ölçülüyor, kullanıcının kendi beyanı değil: eskiden kart
  * çevriliyor, cevabı gören kişi "bildim/bilmedim" diyordu — o sayı bilmeyi
@@ -289,9 +289,13 @@ export type HizliKontrol = {
  * bir iddiada "yanlış" demek yetmez, doğrusunun ne olduğunu söylemeyen bir
  * yoklama öğretmiyor.
  */
-export type SoruKarti = {
+export type SoruKarti = DogruYanlisSorusu | SikliSoru
+
+export type DogruYanlisSorusu = {
   /** `${konuId}-s${sıra}` — kart kimlikleriyle çakışmasın diye 's' ekli. */
   id: string
+  /** Biçim ayırıcı; doğru/yanlışta yazılmıyor — eski içerik olduğu gibi duruyor. */
+  tur?: 'dogru-yanlis'
   /** Doğru ya da yanlış olduğuna karar verilecek iddia. */
   ifade: string
   /** İddia doğru mu. */
@@ -307,6 +311,17 @@ export type SoruKarti = {
    * bakılarak tartılabiliyorsa konur; iddiayı tekrar eden bir çizim cevabı
    * okumadan verdirir.
    */
+  gorsel?: Gorsel
+}
+
+/** İki şıklı soru: soru cümlesi, iki şık ve doğrunun dizini. Hızlı kontrolle aynı kalıp. */
+export type SikliSoru = {
+  id: string
+  tur: 'sikli'
+  soru: string
+  siklar: [string, string]
+  dogru: 0 | 1
+  aciklama: string
   gorsel?: Gorsel
 }
 
@@ -378,10 +393,9 @@ export function konu(
     id,
     ad,
     kartlar: kartlar.map((k, sira) => ({ ...k, id: `${id}-${sira + 1}` })),
-    sorular: (sorular ?? []).map((s, sira) => ({
-      ...s,
-      id: `${id}-s${sira + 1}`,
-    })),
+    sorular: (sorular ?? []).map(
+      (s, sira) => ({ ...s, id: `${id}-s${sira + 1}` }) as SoruKarti,
+    ),
     kontroller: kontroller ?? [],
   }
 }
@@ -392,8 +406,21 @@ export function soru(
   dogru: boolean,
   aciklama: string,
   gorsel?: Gorsel,
-): Omit<SoruKarti, 'id'> {
+): Omit<DogruYanlisSorusu, 'id'> {
   return gorsel ? { ifade, dogru, aciklama, gorsel } : { ifade, dogru, aciklama }
+}
+
+/** İki şıklı soru kurucusu. `dogru` şıkların dizini: 0 birinci, 1 ikinci. */
+export function sikli(
+  soru: string,
+  siklar: [string, string],
+  dogru: 0 | 1,
+  aciklama: string,
+  gorsel?: Gorsel,
+): Omit<SikliSoru, 'id'> {
+  return gorsel
+    ? { tur: 'sikli', soru, siklar, dogru, aciklama, gorsel }
+    : { tur: 'sikli', soru, siklar, dogru, aciklama }
 }
 
 export function tema(id: string, ad: string, konular: Konu[]): Tema {
