@@ -48,7 +48,7 @@ export function Hazirlaniyor({ ad }: { ad: string }) {
 
   return (
     <div
-      className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center px-8 text-center"
+      className="mx-auto flex en-az-ekran max-w-md flex-col items-center justify-center px-8 text-center"
       role="status"
       aria-live="polite"
     >

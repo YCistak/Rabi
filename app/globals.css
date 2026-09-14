@@ -115,6 +115,34 @@
   --guvenli-alt: max(var(--safe-area-inset-bottom, 0px), env(safe-area-inset-bottom, 0px));
 }
 
+/*
+  Tablet ölçeği (`app/layout.tsx` içindeki betik `--olcek`i yazıyor; telefonda 1).
+
+  `zoom` **body**de, `html`de değil. Bir süre `html`deydi ve tablette sayfa
+  kaydırılamıyordu: WebView kaydırma alanını kök öğenin kendi (büyütülmemiş)
+  ölçüsünden hesaplıyor, body'nin büyütülmüş içeriği viewport'a sığıyor
+  sanılıyor ve Pomodoro'daki Başlat düğmesi ekranın altında kalıyordu. Kök
+  büyütülmeyince html, body'nin büyümüş kutusunu görüyor ve taşan kısım
+  kaydırılabiliyor.
+
+  Viewport birimleri `zoom`dan etkilenmiyor: büyütülmüş bir öğede `100dvh`
+  hâlâ ekranın tamamı kadar CSS pikseli, yani ekranın 1,8 katı gerçek piksel.
+  Ekranı doldurması gereken her yükseklik bu yüzden `--olcek`e bölünüyor:
+  `.yuk-ekran` / `.en-az-ekran`, Tailwind'in `h-dvh` / `min-h-dvh`i yerine.
+*/
+:root {
+  --olcek: 1;
+}
+body {
+  zoom: var(--olcek);
+}
+.yuk-ekran {
+  height: calc(100dvh / var(--olcek));
+}
+.en-az-ekran {
+  min-height: calc(100dvh / var(--olcek));
+}
+
 :root {
   color-scheme: light;
   --background: #f8f8f7;
