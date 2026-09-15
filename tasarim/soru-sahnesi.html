@@ -1,0 +1,121 @@
+<title>Ders haritası · Soru sahnesi (3a — işlemeli çerçeve, anında efekt)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+<!--
+  Turuncu kitabın açtığı soru sahnesi. Tasarım aracının paketinden yalnızca
+  seçilen yön (3a) alındı; 3b (alttan gelen gerekçe sheet'i) ve 3c (flamalı
+  ödül kartı) tasarım sürecinin ara adımlarıydı.
+
+  3a'nın kuralı: karar pop-up açmıyor. Kartın amber paspartusu ve düğmeler
+  anında yeşile/kırmızıya dönüyor, köşeye ✓/✕ rozeti düşüyor, 850 ms sonra
+  sıradaki soru geliyor. Gerekçe gösterilmiyor.
+
+  Soldaki telefon doğru/yanlış biçimi, karar verilmiş hâlde ("Yanlış" seçildi,
+  cevap "Yanlış"tı → isabet). Sağdaki iki şıklı biçim, karar öncesi.
+
+  Renkler uygulamanın tokenlarından: amber #d09b34 / #a87c24 (--warning) /
+  #f9f0d9 (--warning-soft), yeşil #4f7a4a (--success), kırmızı #b23b2b
+  (--danger). Zemin #faf3e1 sahneye özel.
+-->
+
+<style>
+  body { margin:0; background:#efeeeb; font-family:'Nunito',ui-sans-serif,system-ui,sans-serif; -webkit-font-smoothing:antialiased; display:flex; gap:48px; padding:56px 64px; flex-wrap:wrap; }
+  @keyframes rbPop { from { opacity:0; transform:translateY(18px) scale(.9); } to { opacity:1; transform:none; } }
+  .tel { position:relative; width:430px; height:932px; overflow:hidden; border-radius:44px; box-shadow:0 30px 70px rgba(27,26,25,.22); background:#faf3e1; background-image:repeating-linear-gradient(0deg,rgba(168,124,36,.14) 0 1px,transparent 1px 8px); }
+  .cerceve { position:absolute; inset:14px; border-radius:32px; border:1px solid rgba(208,155,52,.5); pointer-events:none; }
+  .cerceve-ic { position:absolute; inset:20px; border-radius:26px; border:1px solid rgba(208,155,52,.2); pointer-events:none; }
+  .icerik { position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:100%; padding:34px 30px; }
+  .ust { display:flex; align-items:center; gap:12px; }
+  .kapat { display:grid; place-items:center; width:46px; height:46px; flex:none; border:1px solid rgba(208,155,52,.55); border-radius:16px; background:#fff; color:#1b1a19; font-size:19px; font-weight:800; box-shadow:0 2px 6px rgba(27,26,25,.08); }
+  .barlar { display:flex; flex:1; gap:5px; }
+  .barlar span { flex:1; height:7px; border-radius:999px; background:rgba(27,26,25,.12); }
+  .barlar .gecti { background:#d09b34; } .barlar .acik { background:#d09b34; flex:2.1; }
+  .no { flex:none; padding:5px 11px; border-radius:999px; background:#f9f0d9; color:#8d691a; font-size:14px; font-weight:900; }
+  .baslik { margin-top:22px; display:flex; flex-direction:column; align-items:center; gap:7px; text-align:center; }
+  .baslik small { font-size:11px; font-weight:900; letter-spacing:.16em; text-transform:uppercase; color:rgba(27,26,25,.55); }
+  .baslik h2 { margin:0; font-size:21px; font-weight:900; letter-spacing:-.01em; color:#1b1a19; }
+  .sus { display:flex; align-items:center; gap:8px; }
+  .sus i { display:block; width:38px; height:1px; background:linear-gradient(90deg,transparent,rgba(208,155,52,.9)); }
+  .sus i + b + i { background:linear-gradient(90deg,rgba(208,155,52,.9),transparent); }
+  .sus b { display:block; width:6px; height:6px; transform:rotate(45deg); background:#d09b34; }
+  .orta { margin:auto 0; padding-bottom:120px; display:flex; flex-direction:column; gap:18px; }
+  .maskot { position:relative; height:0; }
+  .maskot img { position:absolute; bottom:14px; left:50%; transform:translateX(-50%); width:134px; height:134px; object-fit:contain; filter:drop-shadow(0 12px 16px rgba(27,26,25,.14)); }
+  .paspartu { position:relative; padding:7px; border-radius:33px; background:rgba(208,155,52,.35); }
+  .paspartu.dogru { background:#4f7a4a; }
+  .rozet { position:absolute; top:-16px; right:-10px; z-index:2; display:grid; place-items:center; width:58px; height:58px; border-radius:50%; background:#4f7a4a; color:#fff; font-size:26px; font-weight:900; box-shadow:0 8px 18px rgba(79,122,74,.4); animation:rbPop 220ms cubic-bezier(.2,.8,.25,1) both; }
+  .kart { position:relative; box-sizing:border-box; min-height:214px; display:flex; flex-direction:column; justify-content:center; padding:30px 26px 32px; border-radius:27px; background:#fff; box-shadow:0 12px 26px rgba(27,26,25,.1); }
+  .etiket { position:absolute; top:-1px; left:50%; transform:translate(-50%,-50%); display:flex; align-items:center; gap:8px; padding:8px 20px; border-radius:999px; background:#f9f0d9; border:1px solid rgba(208,155,52,.6); white-space:nowrap; font-size:10px; font-weight:900; letter-spacing:.1em; text-transform:uppercase; color:#8d691a; }
+  .etiket::before { content:''; width:7px; height:7px; border-radius:50%; background:#a87c24; }
+  .kart p { margin:14px 0 0; text-align:center; font-size:20px; line-height:1.5; font-weight:800; color:#1b1a19; text-wrap:pretty; }
+  .kart .sus { margin:22px auto 0; } .kart .sus i { width:26px; background:rgba(27,26,25,.18); } .kart .sus b { width:7px; height:7px; }
+  .dugmeler { display:flex; gap:14px; }
+  .dugme { flex:1; height:60px; display:flex; align-items:center; justify-content:center; gap:9px; border:none; border-radius:999px; background:#fff; font-family:inherit; font-size:16px; font-weight:900; box-shadow:0 5px 0 #eae9e6; }
+  .dugme.yanlis { color:#b23b2b; } .dugme.dogru { color:#4f7a4a; }
+  .dugme.dolu-dogru { background:#4f7a4a; color:#fff; } .dugme.sonuk { color:rgba(27,26,25,.35); }
+  .siklar { display:flex; flex-direction:column; gap:12px; }
+  .sik { display:flex; align-items:center; gap:14px; min-height:64px; padding:14px 18px; border:none; border-radius:20px; background:#fff; color:#1b1a19; font-family:inherit; font-size:15.5px; font-weight:800; text-align:left; box-shadow:0 5px 0 #eae9e6; }
+  .sik b { display:grid; place-items:center; width:34px; height:34px; flex:none; border-radius:12px; background:#f9f0d9; color:#8d691a; font-size:14px; font-weight:900; }
+</style>
+
+<div class="tel">
+  <div class="cerceve"></div><div class="cerceve-ic"></div>
+  <div class="icerik">
+    <div class="ust">
+      <span class="kapat">✕</span>
+      <div class="barlar"><span class="acik"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <span class="no">1/9</span>
+    </div>
+    <div class="baslik">
+      <small>Fizik · Fizik Bilimi ve Kariyer Keşfi</small>
+      <h2>Fizik Bilimi</h2>
+      <div class="sus"><i></i><b></b><i></i></div>
+    </div>
+    <div class="orta">
+      <div class="maskot"><img src="../public/tavsan-kahveli.png" alt=""></div>
+      <div class="paspartu dogru">
+        <span class="rozet">✓</span>
+        <div class="kart">
+          <span class="etiket">Doğru mu, yanlış mı?</span>
+          <p>Bir kuram yeterince kanıt toplayınca yasaya dönüşür.</p>
+          <div class="sus"><i></i><b></b><i></i></div>
+        </div>
+      </div>
+      <div class="dugmeler">
+        <span class="dugme dolu-dogru">✕ Yanlış</span>
+        <span class="dugme sonuk">✓ Doğru</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tel">
+  <div class="cerceve"></div><div class="cerceve-ic"></div>
+  <div class="icerik">
+    <div class="ust">
+      <span class="kapat">✕</span>
+      <div class="barlar"><span class="gecti"></span><span class="gecti"></span><span class="acik"></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <span class="no">3/9</span>
+    </div>
+    <div class="baslik">
+      <small>Fizik · Fizik Bilimi ve Kariyer Keşfi</small>
+      <h2>Fizik Bilimi</h2>
+      <div class="sus"><i></i><b></b><i></i></div>
+    </div>
+    <div class="orta">
+      <div class="maskot"><img src="../public/tavsan-kahveli.png" alt=""></div>
+      <div class="paspartu">
+        <div class="kart">
+          <span class="etiket">Hangisi?</span>
+          <p>Hangisi fizik biliminin alt alanlarından biri değildir?</p>
+          <div class="sus"><i></i><b></b><i></i></div>
+        </div>
+      </div>
+      <div class="siklar">
+        <span class="sik"><b>A</b><span>Termodinamik</span></span>
+        <span class="sik"><b>B</b><span>Stokiyometri</span></span>
+      </div>
+    </div>
+  </div>
+</div>
