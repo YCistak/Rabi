@@ -462,8 +462,17 @@ function Sus({ genislik, soluk = false }: { genislik: number; soluk?: boolean })
  *   konuyu ikinci kez çözen öğrenci hızlandığını buradan görüyor.
  * - **Tekrar bakılacaklar**: yanlış bilinen soruların metni. Sayı "kaç"ı
  *   söylüyor, liste "hangisi"ni — kartlara geri dönecek öğrencinin aradığı
- *   ikincisi. Liste üçle kesiliyor: altı yanlışın altısı da yazılsaydı sayfa
- *   düğmeyi ekranın altına iterdi; kalanı tek satırda sayılıyor.
+ *   ikincisi. Liste ikiyle kesiliyor ve her satır iki satırda kırpılıyor;
+ *   kalanı tek satırda sayılıyor.
+ *
+ * **Sayfa kaydırılmıyor.** Tasarım 860 piksellik bir tuvale çizildi;
+ * uygulama 360×740'lık telefona. Ölçüler tasarımdan küçültüldü (maskot 150 →
+ * 112, halka 188 → 148, başlık 27 → 23, düğme 60 → 56) ve liste ikiyle
+ * sınırlandı ki her şey — düğme dahil — kaydırmadan görünsün: kaydırmanın
+ * altında kalan bir "Haritaya dön", ekranın nasıl kapandığını bilmeyen bir
+ * kullanıcı demek. 680 pikselden kısa ekranda (eski 16:9 telefonlar) maskot
+ * çekiliyor ve halka küçülüyor (`globals.css`); kaydırma yalnızca ondan da
+ * kısa ekranlar için emniyet olarak duruyor, tasarımın parçası değil.
  *
  * Parçalar sırayla beliriyor (gecikmeler tasarımdan): önce maskot ve halka,
  * sonra üç kutu, en son liste. Maskot kademeye göre seviniyor ya da
@@ -497,83 +506,85 @@ function Kapanis({
 
   return (
     <>
-      <header className="shrink-0 px-4 pt-[calc(1.1rem+var(--guvenli-ust))] text-center">
-        <p className="text-[11px] font-extrabold tracking-[0.14em] text-[var(--kapanis-altin)] uppercase">
+      <header className="shrink-0 px-4 pt-[calc(0.9rem+var(--guvenli-ust))] text-center">
+        <p className="text-[10.5px] font-extrabold tracking-[0.14em] text-[var(--kapanis-altin)] uppercase">
           {dersAdi} · {temaAdi}
         </p>
-        <h2 className="mt-1 font-display text-[17px] font-extrabold tracking-tight text-balance">
+        <h2 className="mt-0.5 font-display text-[16px] leading-tight font-extrabold tracking-tight text-balance">
           {konuAdi} · yoklama bitti
         </h2>
       </header>
 
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-5">
-        <div className="mx-auto my-auto w-full max-w-md py-4">
+        <div className="mx-auto my-auto w-full max-w-md py-2">
           <div className="kapanis-gel flex flex-col items-center">
-            <div className="kapanis-suzul">
+            <div className="kapanis-suzul kapanis-maskot">
               <Rabi
                 durum={kademe === 'tekrar' ? 'normal' : 'kutlama'}
                 poz={kademe === 'tekrar' ? 'dusunen' : 'sevinen'}
-                boyut={150}
-                className="drop-shadow-[0_14px_18px_rgba(31,36,48,0.18)]"
+                boyut={112}
+                className="drop-shadow-[0_12px_16px_rgba(31,36,48,0.18)]"
               />
             </div>
 
-            <div className="relative mt-0.5 grid size-[188px] place-items-center">
+            {/* Ekrandaki boyu CSS veriyor (`--kapanis-halka-boyu`, kısa ekranda
+                küçülüyor); tuval ölçüsü yalnızca viewBox'ta. */}
+            <div className="kapanis-halka-kutu relative grid place-items-center">
               <svg
-                width="188"
-                height="188"
-                viewBox="0 0 188 188"
-                className="absolute inset-0 -rotate-90"
+                viewBox={`0 0 ${HALKA_BOYU} ${HALKA_BOYU}`}
+                className="absolute inset-0 size-full -rotate-90"
                 aria-hidden
               >
                 <circle
-                  cx="94"
-                  cy="94"
+                  cx={HALKA_BOYU / 2}
+                  cy={HALKA_BOYU / 2}
                   r={HALKA_YARICAP}
                   fill="none"
                   stroke="var(--kapanis-halka-zemin)"
-                  strokeWidth="15"
+                  strokeWidth="13"
                 />
                 <circle
-                  cx="94"
-                  cy="94"
+                  cx={HALKA_BOYU / 2}
+                  cy={HALKA_BOYU / 2}
                   r={HALKA_YARICAP}
                   fill="none"
                   stroke="var(--kapanis-cerceve)"
-                  strokeWidth="14"
+                  strokeWidth="12"
                 />
                 <circle
                   className="kapanis-halka"
-                  cx="94"
-                  cy="94"
+                  cx={HALKA_BOYU / 2}
+                  cy={HALKA_BOYU / 2}
                   r={HALKA_YARICAP}
                   fill="none"
                   stroke={renk}
-                  strokeWidth="14"
+                  strokeWidth="12"
                   strokeLinecap="round"
                   strokeDasharray={HALKA_CEVRESI}
                   strokeDashoffset={HALKA_CEVRESI * (1 - yuzde / 100)}
+                  // Keyframe'in başlangıcı: halka bu çevreden (boştan) doluyor.
+                  style={{ '--kapanis-cevre': HALKA_CEVRESI } as React.CSSProperties}
                 />
               </svg>
               <div className="relative text-center">
-                <p className="rakam text-[46px] leading-none font-black tracking-tight">
+                <p className="rakam text-[38px] leading-none font-black tracking-tight">
                   {yuzde}
-                  <span className="text-[22px] font-extrabold text-[var(--kapanis-altin-koyu)]">
+                  <span className="text-[19px] font-extrabold text-[var(--kapanis-altin-koyu)]">
                     %
                   </span>
                 </p>
-                <p className="mt-1.5 text-[10.5px] font-extrabold tracking-[0.16em] text-[var(--kapanis-altin)] uppercase">
+                <p className="mt-1 text-[10px] font-extrabold tracking-[0.16em] text-[var(--kapanis-altin)] uppercase">
                   İsabet
                 </p>
               </div>
             </div>
 
-            <h3 className="mt-5 text-center font-display text-[27px] font-black tracking-tight text-balance">
+            <h3 className="mt-3 text-center font-display text-[23px] font-black tracking-tight text-balance">
               {KADEME_BASLIGI[kademe]}
             </h3>
           </div>
 
-          <div className="mt-6 flex gap-2.5">
+          <div className="mt-4 flex gap-2.5">
             <Kutu deger={dogru} etiket="Doğru" renk="var(--success)" gecikme={900} />
             <Kutu deger={yanlis} etiket="Yanlış" renk="var(--danger)" gecikme={1020} />
             <Kutu
@@ -586,13 +597,13 @@ function Kapanis({
 
           {listelenen.length > 0 && (
             <div
-              className="kapanis-gel mt-3 rounded-[20px] border border-[var(--kapanis-cerceve)] bg-white px-4.5 py-4 shadow-[var(--kapanis-golge)]"
+              className="kapanis-gel mt-2.5 rounded-[18px] border border-[var(--kapanis-cerceve)] bg-white px-4 py-3 shadow-[var(--kapanis-golge)]"
               style={{ animationDelay: '1260ms' }}
             >
-              <p className="text-[10.5px] font-extrabold tracking-[0.18em] text-[var(--kapanis-soluk)] uppercase">
+              <p className="text-[10px] font-extrabold tracking-[0.18em] text-[var(--kapanis-soluk)] uppercase">
                 Tekrar bakılacaklar
               </p>
-              <ul className="mt-3 flex flex-col gap-2.5">
+              <ul className="mt-2 flex flex-col gap-2">
                 {listelenen.map((metin) => (
                   <li key={metin} className="flex items-start gap-2.5">
                     <span
@@ -601,14 +612,15 @@ function Kapanis({
                     >
                       <X size={12} strokeWidth={3.5} />
                     </span>
-                    <span className="text-[13.5px] leading-snug font-bold text-[var(--kapanis-yazi-govde)] text-pretty">
+                    {/* Uzun soru iki satırda kesiliyor: liste sayfayı büyütemez. */}
+                    <span className="line-clamp-2 text-[13px] leading-snug font-bold text-[var(--kapanis-yazi-govde)]">
                       {metin}
                     </span>
                   </li>
                 ))}
               </ul>
               {kalan > 0 && (
-                <p className="mt-2.5 text-[12.5px] font-bold text-[var(--kapanis-soluk)]">
+                <p className="mt-1.5 text-[12px] font-bold text-[var(--kapanis-soluk)]">
                   … ve {kalan} soru daha
                 </p>
               )}
@@ -623,13 +635,13 @@ function Kapanis({
         geniş ekranda (web, tablet) içerik ortada dururken düğme sola
         yapışıyordu. Öteki ekranlardaki gibi `max-w-md`li bir blok sarıyor.
       */}
-      <div className="shrink-0 px-4 pt-3 pb-[calc(1.4rem+var(--guvenli-alt))]">
+      <div className="shrink-0 px-4 pt-2 pb-[calc(1.1rem+var(--guvenli-alt))]">
         <div className="mx-auto w-full max-w-md">
           {/* Dolgu markanın parlak tonu, altındaki çizgi koyu tonu: tasarımın
               "basılabilir" düğmesi. Basınca çizgi kadar iniyor. */}
           <Buton
             onClick={onKapat}
-            className="h-[60px] w-full gap-2.5 rounded-[20px] bg-primary-parlak text-[16.5px] font-extrabold text-white shadow-[0_3px_0_var(--primary)] active:translate-y-0.5 active:shadow-[0_1px_0_var(--primary)] active:brightness-100"
+            className="h-14 w-full gap-2.5 rounded-[18px] bg-primary-parlak text-[16.5px] font-extrabold text-white shadow-[0_3px_0_var(--primary)] active:translate-y-0.5 active:shadow-[0_1px_0_var(--primary)] active:brightness-100"
           >
             Haritaya dön
             <span className="grid size-[26px] place-items-center rounded-[9px] bg-white/18">
@@ -642,12 +654,16 @@ function Kapanis({
   )
 }
 
-/** Halkanın yarıçapı ve çevresi; `kapanisHalka` keyframe'i çevreyi bilmek zorunda. */
-const HALKA_YARICAP = 84
+/**
+ * Halkanın tuvali, yarıçapı ve çevresi. Çevre `kapanisHalka` keyframe'ine
+ * `--kapanis-cevre` ile geçiyor; CSS'te ayrıca yazılı bir sayı yok.
+ */
+const HALKA_BOYU = 148
+const HALKA_YARICAP = 66
 const HALKA_CEVRESI = Math.round(2 * Math.PI * HALKA_YARICAP * 10) / 10
 
 /** "Tekrar bakılacaklar" en çok bu kadar soru yazıyor; kalanı sayılıyor. */
-const LISTE_SINIRI = 3
+const LISTE_SINIRI = 2
 
 const KADEME_BASLIGI = {
   harika: 'Harika iş!',
@@ -676,13 +692,13 @@ function Kutu({
 }) {
   return (
     <div
-      className="kapanis-gel flex-1 rounded-[18px] border border-[var(--kapanis-cerceve)] bg-white px-2 py-3 text-center shadow-[var(--kapanis-golge)]"
+      className="kapanis-gel flex-1 rounded-[16px] border border-[var(--kapanis-cerceve)] bg-white px-2 py-2.5 text-center shadow-[var(--kapanis-golge)]"
       style={{ animationDelay: `${gecikme}ms` }}
     >
-      <p className="rakam text-[24px] leading-none font-black" style={{ color: renk }}>
+      <p className="rakam text-[22px] leading-none font-black" style={{ color: renk }}>
         {deger}
       </p>
-      <p className="mt-1.5 text-[11px] font-extrabold tracking-[0.08em] text-[var(--kapanis-soluk)] uppercase">
+      <p className="mt-1 text-[10.5px] font-extrabold tracking-[0.08em] text-[var(--kapanis-soluk)] uppercase">
         {etiket}
       </p>
     </div>
