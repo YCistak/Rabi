@@ -1830,9 +1830,25 @@ oluyordu.
 Ekran bir süre **çevrilen** bir kart gösteriyordu: bir yüzünde soru, öteki
 yüzünde cevap ve kararı kullanıcı kendi veriyordu ("bildim / bilmedim"). O sayı
 bilmeyi değil beyanı ölçüyordu — cevabı gördükten sonra "bildim" demek serbest.
-Cevap artık `SoruKarti.dogru` içinde ve ekran kararı kendisi tartıyor; gerekçe
-(`aciklama`) karardan **sonra** çıkıyor ve her soruda var: yanlış bilinen bir
-iddiada "yanlış" demek yetmez.
+Cevap artık `SoruKarti.dogru` içinde ve ekran kararı kendisi tartıyor.
+
+**Karar pencere açmıyor, sıradaki soru kendiliğinden geliyor** (tasarımın 3a
+yönü, `tasarim/soru-sahnesi.html`). Bir süre karardan sonra kartın altında
+gerekçe şeridi çıkıyor ve "Devam" bekliyordu; her soruda bir dokunuş daha,
+yoklamayı okumanın arkasına eklenen ikinci bir ekran gibi uzatıyordu. Şimdi
+kararın karşılığı kartın kendisinde: amber paspartu yeşile ya da kırmızıya
+dönüyor, köşeye ✓/✕ rozeti düşüyor, doğru şık her hâlde yeşile, seçilen
+yanlış kırmızıya boyanıyor ve `BEKLEME` (850 ms) sonra sıradaki soru
+geliyor. Gerekçe (`aciklama`) içerikte **duruyor** ve testi hâlâ zorunlu
+tutuyor — ekranda gösterilmiyor; geri getirilecekse 3b/3c'deki gibi bir
+katman gerekir, kartın altına sığmaz.
+
+Sahne aydınlık: krem, ince çizgili kâğıt zemin; sayfanın kenarında amber çift
+çerçeve; kartın çevresinde amber paspartu. Bir süre uygulamanın tek koyu
+yüzeyiydi ("aydınlık zeminde kart zeminle aynı renkte kalıyor" diye); tasarım
+o işi renkle değil işlemeyle çözdü. Renkler `globals.css`teki `.sahne`
+bloğunda; #d09b34 Matematik'in `--isl-ok`u ile aynı sayı ama o değişkene
+bağlanmadı — burada ders rengi değil, işlemenin rengi.
 
 Testler içeriği değil **dengeyi** denetliyor, çünkü biçimin kendi tuzağı var:
 yazı tura atan da yarısını tutturur. Her destede iki cevap da bulunmak zorunda
@@ -1846,10 +1862,11 @@ grafiğin fonksiyon olup olmadığı, eğrinin hangi yöne gittiği, şemadaki s
 yüzden tablo görsellerinin iddiası çoğunlukla **yanlış** olan iddia: okuyan onu
 tabloyla karşılaştırıyor.
 
-Karardan sonra kartın çerçevesi renkleniyor ve bu çerçeve `ring` ile değil
-`outline` ile çiziliyor: Tailwind'in `ring`i gölge olarak uygulanıyor ve kartın
-kendi gölgesi (`golge-kart`) onu eziyordu. `outlineOffset` de negatif — dışarı
-taşan çizgi, kaydırılabilir kutunun kenarında kırpılıyordu.
+Kararın rengi kartın çerçevesinde değil **paspartusunda**: kart, çevresindeki
+7 piksellik amber dolgunun içinde duruyor ve renklenen o dolgu. Eskiden kartın
+kendi `outline`ı boyanıyordu (`ring` gölge olarak uygulandığı için `golge-kart`
+onu eziyordu). Rozet paspartunun dışına taşıyor; kaydırma kutusunun üstünde ve
+yanlarında pay var, paysız `overflow` rozeti kırpıyordu.
 
 ### Yoklamada iki soru biçimi, sayısı kart sayısına bağlı
 
@@ -1859,7 +1876,7 @@ sormak mümkün değildi (Pisagor üçlüsü hangisi, hangi organel ATP üretir)
 **iki şıklı soru** (`sikli()`, A/B). Şık sayısı ikide kalıyor — dört şıklı
 soru okumanın arkasına bir sınav ekler; hızlı kontrolle aynı kalıp. Sahne iki
 biçimi tek koddan çiziyor: karar bir sayıya iniyor (`secim`/`beklenen`),
-gerekçe ve çerçeve ikisinde de aynı.
+rozet, paspartu ve düğme tonu ikisinde de aynı.
 
 Soru sayısı **kart sayısıyla orantılı** (`icerik.test.ts`): en az kart+1,
 en çok kart×1,3+1 — altı kartlık konuda yedi–sekiz, on altı kartlıkta yirmiye
@@ -1874,7 +1891,7 @@ Sahnenin **iki** hâli var: destenin kapanışı — **yoklama bileti**
 (`components/konu/yoklama-bileti.tsx`, `tasarim/yoklama-bileti.html`) —
 ve soruların kendisi (`soru-sahnesi.tsx`). Bir de kapanış vardı (`Sonuc`:
 maskot, doğru ve yanlış sayısı, "Haritaya dön"); kullanıcı isteğiyle
-kaldırıldı — son sorunun gerekçesinden sonra "Bitir" sahneyi kapatıp
+kaldırıldı — son sorunun kararından sonra sahne kendiliğinden kapanıp
 doğrudan haritaya dönüyor. Sayılar kayda yine giriyor, gösterilmiyor.
 
 Bilet bir süre yoktu ve yokluğu bilinçliydi — "arada duran bir 'deste
@@ -1890,9 +1907,9 @@ söyleyen tek yer.
 **aydınlık** tarafına aldı: bembeyaz zemin, ortada koyu bir bilet, kupayı
 kaldıran Rabi biletin arkasından çıkıyor, sağ üste "BİTTİ" damgası
 basılıyor, koçanda üç sayı (kart, soru, ~dakika) ve dolan bir %100 halkası.
-Koyu perde (`sahne-iner`) artık "Yoklamaya başla" denince iniyor; iki kök
-ayrı `key` taşıyor, yoksa React aynı `div`i yeniden kullanır ve perde hiç
-oynamazdı.
+Perde (`sahne-iner`; sahne o zaman koyuydu, şimdi krem) "Yoklamaya başla"
+denince iniyor; iki kök ayrı `key` taşıyor, yoksa React aynı `div`i yeniden
+kullanır ve perde hiç oynamazdı.
 
 - **Bilet dersin değil uygulamanın rengi.** Mockup Fizik'in lacivertiyle
   çizildi ve üstte dersin rengine boyalı noktalı bir bant vardı; uygulama

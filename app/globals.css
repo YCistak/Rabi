@@ -1494,47 +1494,91 @@ body {
 }
 
 /*
-  Soru sahnesi (`components/konu/soru-sahnesi.tsx`).
+  Soru sahnesi (`components/konu/soru-sahnesi.tsx`) — tasarımın 3a yönü,
+  `tasarim/soru-sahnesi.html`.
 
-  Ekran uygulamanın kırık beyaz zemininden **kopuk**, kendi koyu paletinde
-  duruyor ve renkler tema değişkenlerinden gelmiyor — haftalık özetteki
-  istisnanın aynısı, farklı gerekçeyle: burada ekranda tek bir şey var,
-  cevaplanmayı bekleyen bir kart. Aydınlık bir zeminde kart zeminle aynı renkte
-  kalıyor ve "şimdi buna bak" diyen hiçbir şey olmuyordu; koyu sahnede ışık
-  yalnızca kartın üstünde.
+  Ekran bir süre uygulamanın tek koyu yüzeyiydi: "aydınlık zeminde kart
+  zeminle aynı renkte kalıyor, 'şimdi buna bak' diyen bir şey olmuyor"
+  gerekçesiyle. Tasarım o işi renkle değil **işlemeyle** çözdü: zemin krem
+  ve ince çizgili bir kâğıt, sayfanın kenarında amber çift çerçeve, kartın
+  çevresinde amber bir paspartu. Kart yine ekranın tek parlak yüzeyi, ama
+  koyu bir odaya değil işlenmiş bir kâğıda konmuş gibi.
 
-  Renkler yine de tek yerde toplu duruyor: bileşenin içine serpiştirilmiş
-  onaltılık kodlar, ekranın tonunu değiştirmeyi altı ayrı satırı bulmaya
-  çevirirdi.
+  Renkler tek yerde toplu duruyor: bileşenin içine serpiştirilmiş onaltılık
+  kodlar, ekranın tonunu değiştirmeyi on ayrı satırı bulmaya çevirirdi.
+  Amber tonları `--warning` ailesinden; #d09b34 Matematik'in `--isl-ok`
+  tonuyla aynı sayı ama o değişkene bağlanmadı — burada bir ders rengi değil,
+  işlemenin rengi. Alfa'lı tonlar `color-mix` ile değil düz rgba ile: eski
+  WebView `color-mix`i tanımıyor ve bildirim düşünce çerçeve tümüyle gidiyor.
 */
 .sahne {
-  --sahne-zemin: #211510;
-  --sahne-kart: #faf6ec;
-  --sahne-yazi: #f7f1e8;
-  --sahne-soluk: rgba(247, 241, 232, 0.55);
-  --sahne-vurgu: #d9622f;
-  --sahne-dogru: #cbe6a0;
-  --sahne-dogru-zemin: rgba(120, 160, 70, 0.3);
-  --sahne-yanlis: #f4ab99;
-  --sahne-yanlis-zemin: rgba(196, 68, 44, 0.3);
+  --sahne-zemin: #faf3e1;
+  --sahne-cizgi: rgba(168, 124, 36, 0.14);
+  --sahne-amber: #d09b34;
+  --sahne-amber-koyu: var(--warning);
+  --sahne-amber-zemin: var(--warning-soft);
+  --sahne-amber-yazi: #8d691a;
+  --sahne-cerceve-cizgi: rgba(208, 155, 52, 0.5);
+  --sahne-cerceve-dolgu: rgba(208, 155, 52, 0.35);
+  --sahne-dogru: var(--success);
+  --sahne-dogru-golge: rgba(79, 122, 74, 0.4);
+  --sahne-yanlis: var(--danger);
+  --sahne-yanlis-golge: rgba(178, 59, 43, 0.4);
 
   background-color: var(--sahne-zemin);
-  /* Işık üstte ve altta, ortada değil: kart ekranın ortasında duruyor ve
-     arkasındaki parlaklık kartın kenarını yutuyordu. */
-  background-image:
-    radial-gradient(120% 42% at 50% -6%, rgba(217, 98, 47, 0.4), transparent 72%),
-    radial-gradient(120% 38% at 50% 106%, rgba(217, 98, 47, 0.24), transparent 72%);
+  /* Sekiz pikselde bir çizgi: defter kâğıdı. Kartın altında kayboluyor,
+     kenarlarda çerçevenin arkasından görünüyor. */
+  background-image: repeating-linear-gradient(
+    0deg,
+    var(--sahne-cizgi) 0 1px,
+    transparent 1px 8px
+  );
+}
+
+/* Sayfanın kenarındaki çift çerçeve: dıştaki belirgin, içteki soluk. */
+.sahne-cerceve {
+  border: 1px solid var(--sahne-cerceve-cizgi);
+}
+.sahne-cerceve-ic {
+  border: 1px solid rgba(208, 155, 52, 0.2);
+}
+
+.sahne-kapat {
+  border: 1px solid rgba(208, 155, 52, 0.55);
+  box-shadow: 0 2px 6px rgba(27, 26, 25, 0.08);
+}
+
+.sahne-kart {
+  box-shadow: 0 12px 26px rgba(27, 26, 25, 0.1);
+}
+
+.sahne-maskot {
+  filter: drop-shadow(0 12px 16px rgba(27, 26, 25, 0.14));
+}
+
+/*
+  Karar düğmeleri: alt kenarında kalın bir gölge, basınca gömülüyor. Karar
+  verildikten sonra pasifler ama solmuyorlar — o an düğmenin rengi cevabı
+  gösteriyor; `Buton`un `disabled:opacity-45`i burada bu yüzden yok.
+*/
+.sahne-dugme {
+  box-shadow: 0 5px 0 var(--border);
+}
+.sahne-dugme:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--border);
 }
 
 /*
   Sahne yukarıdan iniyor.
 
-  Deste kapanıp sahne açıldığında ekran tek karede kırık beyazdan koyuya
-  atlıyordu: iki ayrı yüzey arka arkaya gösterilince geçiş bir hareket değil
-  bir kesme oluyor ve koyu ekran, uygulamanın içindeki bir sonraki adım değil
-  başka bir uygulama gibi duruyordu. Katman şimdi yukarıdan aşağı açılıyor;
-  altında kalan kısımda hâlâ aydınlık zemin duruyor, yani renk değişimi
-  ekranda **olurken** görülüyor.
+  Deste kapanıp sahne açıldığında ekran tek karede bir yüzeyden ötekine
+  atlıyordu (sahne o zaman koyuydu, şimdi krem — fark küçüldü, kesme
+  kalmadı değil): iki ayrı yüzey arka arkaya gösterilince geçiş bir hareket
+  değil bir kesme oluyor ve sahne, uygulamanın içindeki bir sonraki adım
+  değil başka bir uygulama gibi duruyordu. Katman yukarıdan aşağı açılıyor;
+  altında kalan kısımda hâlâ önceki zemin duruyor, yani değişim ekranda
+  **olurken** görülüyor.
 
   Perde `clip-path` ile: katmanın kendisi yerinde duruyor, yalnızca görünen
   parçası büyüyor. Yükseklikle (ya da `translateY` ile) yapılsaydı içerik de
@@ -1556,24 +1600,26 @@ body {
 }
 
 /*
-  Karardan sonra çıkan gerekçe şeridi.
+  Karardan sonra çerçevenin köşesine düşen rozet (✓ / ✕).
 
-  Yerinde beliren bir metin, karardan **önce** de orada duruyormuş gibi
-  okunuyordu; aşağıdan kayarak gelmesi onu kararın karşılığı yapıyor.
+  Yerinde beliren bir rozet karardan **önce** de orada duruyormuş gibi
+  okunuyordu; aşağıdan büyüyerek gelmesi onu kararın karşılığı yapıyor.
+  Süre `BEKLEME`nin (850 ms) içinde bitiyor: sıradaki soru gelmeden rozet
+  yerine oturmuş olmalı.
 */
-@keyframes soruGerekce {
-  from { opacity: 0; transform: translateY(8px); }
+@keyframes soruRozetPop {
+  from { opacity: 0; transform: translateY(18px) scale(0.9); }
   to { opacity: 1; transform: none; }
 }
 
-.soru-gerekce {
-  animation: soruGerekce 220ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+.soru-rozet-pop {
+  animation: soruRozetPop 220ms cubic-bezier(0.2, 0.8, 0.25, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* Deste kartı, sahne perdesi ve gerekçe yerinde beliriyor: buradaki
+  /* Deste kartı, sahne perdesi ve rozet yerinde beliriyor: buradaki
      hareketin hiçbiri bilgi taşımıyor — hangi kartta olunduğu bölmeli
-     çubukta, kararın sonucu ise şeridin kendi rengiyle ve simgesiyle yazılı,
+     çubukta, kararın sonucu ise rozetin kendi rengiyle ve simgesiyle yazılı,
      sahnenin geldiği de zaten ekranın kendisinden belli. */
   .deste-karti,
   .deste-not,
@@ -1593,7 +1639,7 @@ body {
   .bilet-kivilcim,
   .bilet-toz,
   .sahne-iner,
-  .soru-gerekce {
+  .soru-rozet-pop {
     animation: none;
   }
 }
