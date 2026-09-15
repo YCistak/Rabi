@@ -51,6 +51,9 @@ import { YoklamaBileti } from './yoklama-bileti'
 /** Karardan sıradaki soruya kadar geçen süre (ms). Rozetin pop'u bu sürenin içinde bitiyor. */
 const BEKLEME = 850
 
+/** Kapanış perdesinin çekilme süresi (ms); `globals.css` → `.kapanis-cikar` ile aynı. */
+const CIKIS_SURESI = 420
+
 export type SahneSonucu = {
   dogru: number
   yanlis: number
@@ -71,6 +74,8 @@ export function SoruSahnesi({
   dersAdi,
   biletli,
   onKapat,
+  cikiyor = false,
+  onCikisBitti,
 }: {
   konu: Konu
   temaAdi: string
@@ -82,6 +87,15 @@ export function SoruSahnesi({
    */
   biletli: boolean
   onKapat: (sonuc: SahneSonucu) => void
+  /**
+   * Kapanış perdesi çekiliyor mu. `onKapat`tan sonra üst bileşen sahneyi
+   * hemen sökmüyor, bu bayrakla perdeyi çektiriyor ve `onCikisBitti`
+   * gelince söküyor. Perde yalnızca kapanış ekranından çekiliyor: soruların
+   * ortasında ✕ ile çıkış anında kapanıyor — yarıda bırakılan bir yoklamanın
+   * arkasından perde çekmek, bitmiş gibi göstermek olurdu.
+   */
+  cikiyor?: boolean
+  onCikisBitti?: () => void
 }) {
   const [sira, setSira] = useState(0)
   /**
@@ -112,6 +126,22 @@ export function SoruSahnesi({
   const baslangicRef = useRef(Date.now())
   /** Son soru cevaplanınca ölçülen süre; sonra donuyor. */
   const [sureMs, setSureMs] = useState(0)
+
+  /*
+    Perde çekilince sahne sökülüyor. Süre CSS'teki `kapanis-cikar` ile
+    **eşleşmeli** (`CIKIS_SURESI`): `animationend` dinlenmiyor, çünkü
+    hareket kapalıyken (`prefers-reduced-motion`) animasyon hiç yok ve olay
+    hiç gelmezdi — sahne ekranda asılı kalırdı. Hareket kapalıysa bekleme de
+    yok.
+  */
+  useEffect(() => {
+    if (!cikiyor || !onCikisBitti) return
+    const hareketsiz = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const sayac = window.setTimeout(onCikisBitti, hareketsiz ? 0 : CIKIS_SURESI)
+    return () => window.clearTimeout(sayac)
+    // `onCikisBitti` her çizimde yeni bir işlev; bağımlılığa girse sayaç her
+    // çizimde baştan kurulurdu.
+  }, [cikiyor])
 
   const soru = konu.sorular[sira]
   const toplam = konu.sorular.length
@@ -185,7 +215,10 @@ export function SoruSahnesi({
 
   if (bitti) {
     return (
-      <div key="kapanis" className="kapanis fixed inset-0 z-50 flex flex-col">
+      <div
+        key="kapanis"
+        className={cn('kapanis fixed inset-0 z-50 flex flex-col', cikiyor && 'kapanis-cikar')}
+      >
         <Kapanis
           konuAdi={konu.ad}
           dersAdi={dersAdi}

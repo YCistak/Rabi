@@ -1693,6 +1693,26 @@ body {
 }
 
 /*
+  Kapanış perdesi — `sahne-iner`in tersi. Sahne yukarıdan inerek gelmişti;
+  "Haritaya dön" denince aynı yoldan yukarı çekiliyor ve altından güncellenmiş
+  harita çıkıyor. Uygulamadaki öteki katmanların çıkış animasyonu yok
+  (bkz. AGENTS.md → "Ekranlar ve katmanlar bağlanarak geliyor") ve bu bilinçli
+  bir istisna: yoklamanın sonu bir kapanış anı, sahnenin bir karede yok olması
+  o anı yarım bırakıyordu. Süre `soru-sahnesi.tsx`teki `CIKIS_SURESI` ile
+  **aynı** olmak zorunda: sahne o süre sonra sökülüyor. Perde çekilirken
+  dokunuş geçmiyor — kalkan bir sayfaya ikinci kez basılmasın.
+*/
+@keyframes kapanisCikar {
+  from { clip-path: inset(0 0 0 0); }
+  to { clip-path: inset(0 0 100% 0); }
+}
+
+.kapanis-cikar {
+  animation: kapanisCikar 420ms cubic-bezier(0.4, 0, 0.7, 1) both;
+  pointer-events: none;
+}
+
+/*
   Kısa ekranda (eski 16:9 telefonlar, 360×640) sayfa kaydırmadan sığmıyordu.
   Maskot çekiliyor, halka küçülüyor: sayfanın işi sonucu söylemek ve o iş
   halka, üç kutu, liste ve düğmede; maskot sonucu süslüyor, taşımıyor.
@@ -1732,7 +1752,8 @@ body {
   .soru-rozet-pop,
   .kapanis-gel,
   .kapanis-suzul,
-  .kapanis-halka {
+  .kapanis-halka,
+  .kapanis-cikar {
     animation: none;
   }
 }

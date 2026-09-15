@@ -303,6 +303,14 @@ export function KonuHaritasiEkrani({
     temaAdi: string
     biletli: boolean
   } | null>(null)
+  /**
+   * Kapanış perdesi çekilirken sahne hâlâ ekranda: "Haritaya dön" denince
+   * sonuç hemen yazılıyor (harita altta güncelleniyor) ama sahne sökülmüyor,
+   * perde kalkana kadar bu değişkende tutuluyor. Sahne bu yüzden haritanın
+   * **üstünde** bir katman olarak çiziliyor, haritanın yerine değil — eski
+   * hâlde perde kalkınca altından boş bir sayfa çıkardı.
+   */
+  const [kapananSorular, setKapananSorular] = useState<typeof acikSorular>(null)
   /** Kitaba basınca ortada açılan konu kartı. Haritanın üstüne biniyor. */
   const [sayfa, setSayfa] = useState<{
     basamak: Basamak
@@ -379,6 +387,7 @@ export function KonuHaritasiEkrani({
   }
 
   function sorularBitti(konu: Konu, sonuc: SahneSonucu) {
+    setKapananSorular(acikSorular)
     setAcikSorular(null)
     setIlerlemeler((onceki) =>
       ilerlemeyiYaz(
@@ -401,17 +410,26 @@ export function KonuHaritasiEkrani({
     )
   }
 
-  if (acikSorular) {
-    return (
-      <SoruSahnesi
-        konu={acikSorular.konu}
-        temaAdi={acikSorular.temaAdi}
-        dersAdi={ders.ad}
-        biletli={acikSorular.biletli}
-        onKapat={(sonuc) => sorularBitti(acikSorular.konu, sonuc)}
-      />
-    )
-  }
+  /*
+    Sahne haritanın yerine geçmiyor, üstüne biniyor; ağaçtaki yeri de sabit.
+    Yeri değişseydi perde çekilirken bileşen yeniden kurulur, kapanış
+    ekranı gidip ilk soru gelirdi. Perde çekilirken `acikSorular` boş,
+    `kapananSorular` dolu; ikisi de boşsa sahne yok.
+  */
+  const sahne = acikSorular ?? kapananSorular
+  const sahneKatmani = sahne && (
+    <SoruSahnesi
+      konu={sahne.konu}
+      temaAdi={sahne.temaAdi}
+      dersAdi={ders.ad}
+      biletli={sahne.biletli}
+      cikiyor={acikSorular === null}
+      onKapat={(sonuc) => {
+        if (acikSorular) sorularBitti(acikSorular.konu, sonuc)
+      }}
+      onCikisBitti={() => setKapananSorular(null)}
+    />
+  )
 
   if (acikKonu) {
     return (
@@ -615,6 +633,8 @@ export function KonuHaritasiEkrani({
         }}
         onIptal={() => setKilitOnayi(null)}
       />
+
+      {sahneKatmani}
     </div>
   )
 }
