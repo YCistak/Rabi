@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { ArrowRight, Check, X } from 'lucide-react'
+import { ArrowRight, Check, ChevronRight, X } from 'lucide-react'
 import type { Konu } from '@/lib/konu'
+import { isabetOrani, kapanisKademesi, sureYaz } from '@/lib/konu/kapanis'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
 import { Buton } from '@/components/ui'
@@ -25,21 +26,24 @@ import { KartGorseli } from './kart-gorseli'
  * Şimdi cevap `SoruKarti.dogru` içinde ve ekran kararı kendisi tartıyor;
  * gerekçe karardan sonra çıkıyor, öncesinde değil.
  *
- * Sahnenin **iki** hâli var ve ikisi de burada: kartlardan devralan giriş
- * (`Giris`) ve soruların kendisi. Giriş sonradan eklendi; gerekçesi kendi
- * yorumunda. Kapanışta bir özet (`Sonuc`: iki sayı, maskot, "Haritaya dön")
- * vardı; kaldırıldı — son sorunun gerekçesi okunup "Bitir"e basılınca sahne
- * doğrudan haritaya dönüyor. Kullanıcı istedi: şimdilik bitiş ekranı yok.
- * Sayı kayda yine giriyor (`SahneSonucu`), yalnızca ekranda gösterilmiyor.
+ * Sahnenin **üç** hâli var ve üçü de burada: kartlardan devralan giriş
+ * (`Giris`), soruların kendisi ve kapanış (`Kapanis`). Giriş sonradan
+ * eklendi; gerekçesi kendi yorumunda. Kapanış öteki ikisinden ayrı bir
+ * yüzeyde — kâğıt zemin — ve gerekçesi de kendi yorumunda. Bir süre kapanış
+ * hiç yoktu: koyu sahnedeki ilk özet (`Sonuc`) kullanıcı isteğiyle
+ * kaldırılmış, "Bitir" doğrudan haritaya dönüyordu; tasarım gelince yeni
+ * hâliyle geri geldi.
  *
- * Ekran uygulamanın tek koyu yüzeyi. Gerekçesi `globals.css`teki `.sahne`
- * bloğunda; renkler de orada, burada onaltılık kod yok.
+ * Giriş ve sorular uygulamanın tek koyu yüzeyi. Gerekçesi `globals.css`teki
+ * `.sahne` bloğunda; renkler de orada, burada onaltılık kod yok.
  *
  * Katman yukarıdan aşağı açılarak geliyor (`sahne-iner`): deste kapanıp sahne
- * açıldığında ekran tek karede kırık beyazdan koyuya atlıyordu. Sınıf iki hâlin
- * kökünde de yazılı ama perde **bir kez** oynuyor: React ikisinde de aynı DOM
- * düğümünü yeniden kullanıyor, animasyon da yalnızca düğüm kurulurken
- * başlıyor. Ayrı bir "yalnızca girişte" koşulu, olmayan bir tekrarı önlerdi.
+ * açıldığında ekran tek karede kırık beyazdan koyuya atlıyordu. Sınıf giriş ve
+ * soru hâllerinin kökünde yazılı ama perde **bir kez** oynuyor: React ikisinde
+ * de aynı DOM düğümünü yeniden kullanıyor, animasyon da yalnızca düğüm
+ * kurulurken başlıyor. Ayrı bir "yalnızca girişte" koşulu, olmayan bir tekrarı
+ * önlerdi. Kapanışın kökünde sınıf yok — kâğıt sayfa ayrıca perdeyle gelmiyor,
+ * parçaları kendi sırasıyla beliriyor.
  */
 
 export type SahneSonucu = {
@@ -79,8 +83,23 @@ export function SoruSahnesi({
   const [secim, setSecim] = useState<number | null>(null)
   const [dogru, setDogru] = useState(0)
   const [yanlis, setYanlis] = useState(0)
+  const [bitti, setBitti] = useState(false)
   /** Girişteki düğmeye basıldı mı; basılana kadar ilk iddia görünmüyor. */
   const [basladi, setBasladi] = useState(false)
+  /**
+   * Yanlış bilinen soruların metinleri, sırayla — kapanış "tekrar
+   * bakılacaklar" diye listeliyor. Sayaç (`yanlis`) kaç tane olduğunu
+   * söylüyor, hangileri olduğunu değil.
+   */
+  const [yanlislar, setYanlislar] = useState<string[]>([])
+  /**
+   * İlk soruya geçilen an; kapanıştaki süre buradan ölçülüyor. Giriş
+   * ekranında geçen süre sayılmıyor — orada okunan bir açıklama var, cevap
+   * verilen bir soru değil.
+   */
+  const baslangicRef = useRef(0)
+  /** Son soru cevaplanıp Bitir'e basıldığında ölçülen süre; sonra donuyor. */
+  const [sureMs, setSureMs] = useState(0)
 
   const soru = konu.sorular[sira]
   const toplam = konu.sorular.length
@@ -94,20 +113,23 @@ export function SoruSahnesi({
     gerekiyor.
   */
   const sonucRef = useRef<SahneSonucu>({ dogru: 0, yanlis: 0, bitti: false })
-  sonucRef.current = { dogru, yanlis, bitti: false }
+  sonucRef.current = { dogru, yanlis, bitti }
   useGeriKatmani(true, () => onKapat(sonucRef.current))
 
   function karar(cevap: number) {
     if (secim !== null) return
     setSecim(cevap)
     if (cevap === beklenen) setDogru((o) => o + 1)
-    else setYanlis((o) => o + 1)
+    else {
+      setYanlis((o) => o + 1)
+      setYanlislar((o) => [...o, soru.tur === 'sikli' ? soru.soru : soru.ifade])
+    }
   }
 
   function ilerle() {
-    // Son sorudan sonra ekran yok: sayı kayda gidiyor, sahne kapanıyor.
     if (sira >= toplam - 1) {
-      onKapat({ dogru, yanlis, bitti: true })
+      setSureMs(Date.now() - baslangicRef.current)
+      setBitti(true)
       return
     }
     setSira((o) => o + 1)
@@ -128,8 +150,28 @@ export function SoruSahnesi({
           temaAdi={temaAdi}
           kartSayisi={konu.kartlar.length}
           soruSayisi={toplam}
-          onBasla={() => setBasladi(true)}
+          onBasla={() => {
+            baslangicRef.current = Date.now()
+            setBasladi(true)
+          }}
           onVazgec={() => onKapat({ dogru: 0, yanlis: 0, bitti: false })}
+        />
+      </div>
+    )
+  }
+
+  if (bitti) {
+    return (
+      <div className="kapanis fixed inset-0 z-50 flex flex-col">
+        <Kapanis
+          konuAdi={konu.ad}
+          dersAdi={dersAdi}
+          temaAdi={temaAdi}
+          dogru={dogru}
+          yanlis={yanlis}
+          yanlislar={yanlislar}
+          sureMs={sureMs}
+          onKapat={() => onKapat({ dogru, yanlis, bitti: true })}
         />
       </div>
     )
@@ -325,8 +367,8 @@ export function SoruSahnesi({
  * değil, bir sonraki ekranın ne olduğunu söyleyen tek yer.
  *
  * Köprü koyu sahnenin **kendi** ilk ekranı, üçüncü bir yüzey değil: renk
- * değişimi böylece bir soruyla değil bir açıklamayla geliyor ve giriş,
- * sorularla aynı bileşende, aynı düzende duruyor.
+ * değişimi böylece bir soruyla değil bir açıklamayla geliyor ve sahnenin iki
+ * ucu — giriş ile `Sonuc` — aynı bileşende, aynı düzende duruyor.
  *
  * Sayılar süs değil: "kaç iddia" yazmayan bir köprü, ne kadar süreceğini
  * söylemeden başlat düğmesi gösteriyor — haritadaki "4 kart · 3 dk" satırının
@@ -399,3 +441,240 @@ function Giris({
   )
 }
 
+/**
+ * Kapanış — sorular bitince gelen sayfa (`tasarim/soru-kapanis.dc.html` → 2a).
+ *
+ * Öteki iki hâlin koyu sahnesinde değil, **kâğıt zeminde**: yoklamanın sonu
+ * bir sınav sonucu değil çevrilen bir sayfa ve tasarım onu krem zemin, defter
+ * çizgisi ve altın etiketlerle çiziyor. Renkler `globals.css`teki `.kapanis`
+ * bloğunda.
+ *
+ * Bir süre burada koyu sahnede iki sayı ve bir düğme vardı ("N soruda
+ * yanıldın"); tasarımın eklediği üç şey var:
+ *
+ * - **İsabet halkası** sıfırdan dolarak geliyor ve rengi kademeye göre:
+ *   yeşil, turuncu, kırmızı. Kademelerin eşiği haritadaki yıldızlarla aynı
+ *   (`lib/konu/kapanis.ts`); başlık da oradan ("Harika iş!" / "İyi iş
+ *   çıkardın" / "Tekrar bakmaya değer").
+ * - **Süre** üçüncü kutu. Yoklama kısa ve süre bir puan değil; ama aynı
+ *   konuyu ikinci kez çözen öğrenci hızlandığını buradan görüyor.
+ * - **Tekrar bakılacaklar**: yanlış bilinen soruların metni. Sayı "kaç"ı
+ *   söylüyor, liste "hangisi"ni — kartlara geri dönecek öğrencinin aradığı
+ *   ikincisi. Liste üçle kesiliyor: altı yanlışın altısı da yazılsaydı sayfa
+ *   düğmeyi ekranın altına iterdi; kalanı tek satırda sayılıyor.
+ *
+ * Parçalar sırayla beliriyor (gecikmeler tasarımdan): önce maskot ve halka,
+ * sonra üç kutu, en son liste. Maskot kademeye göre seviniyor ya da
+ * düşünüyor — tasarım tek pozla çizildi ama yarısı yanlış çıkan yoklamanın
+ * üstünde zıplayan bir tavşan sonucu değil ekranı kutlardı.
+ */
+function Kapanis({
+  konuAdi,
+  dersAdi,
+  temaAdi,
+  dogru,
+  yanlis,
+  yanlislar,
+  sureMs,
+  onKapat,
+}: {
+  konuAdi: string
+  dersAdi: string
+  temaAdi: string
+  dogru: number
+  yanlis: number
+  yanlislar: string[]
+  sureMs: number
+  onKapat: () => void
+}) {
+  const kademe = kapanisKademesi(dogru, yanlis)
+  const yuzde = isabetOrani(dogru, yanlis)
+  const renk = KADEME_RENGI[kademe]
+  const listelenen = yanlislar.slice(0, LISTE_SINIRI)
+  const kalan = yanlislar.length - listelenen.length
+
+  return (
+    <>
+      <header className="shrink-0 px-4 pt-[calc(1.1rem+var(--guvenli-ust))] text-center">
+        <p className="text-[11px] font-extrabold tracking-[0.14em] text-[var(--kapanis-altin)] uppercase">
+          {dersAdi} · {temaAdi}
+        </p>
+        <h2 className="mt-1 font-display text-[17px] font-extrabold tracking-tight text-balance">
+          {konuAdi} · yoklama bitti
+        </h2>
+      </header>
+
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-5">
+        <div className="mx-auto my-auto w-full max-w-md py-4">
+          <div className="kapanis-gel flex flex-col items-center">
+            <div className="kapanis-suzul">
+              <Rabi
+                durum={kademe === 'tekrar' ? 'normal' : 'kutlama'}
+                poz={kademe === 'tekrar' ? 'dusunen' : 'sevinen'}
+                boyut={150}
+                className="drop-shadow-[0_14px_18px_rgba(31,36,48,0.18)]"
+              />
+            </div>
+
+            <div className="relative mt-0.5 grid size-[188px] place-items-center">
+              <svg
+                width="188"
+                height="188"
+                viewBox="0 0 188 188"
+                className="absolute inset-0 -rotate-90"
+                aria-hidden
+              >
+                <circle
+                  cx="94"
+                  cy="94"
+                  r={HALKA_YARICAP}
+                  fill="none"
+                  stroke="var(--kapanis-halka-zemin)"
+                  strokeWidth="15"
+                />
+                <circle
+                  cx="94"
+                  cy="94"
+                  r={HALKA_YARICAP}
+                  fill="none"
+                  stroke="var(--kapanis-cerceve)"
+                  strokeWidth="14"
+                />
+                <circle
+                  className="kapanis-halka"
+                  cx="94"
+                  cy="94"
+                  r={HALKA_YARICAP}
+                  fill="none"
+                  stroke={renk}
+                  strokeWidth="14"
+                  strokeLinecap="round"
+                  strokeDasharray={HALKA_CEVRESI}
+                  strokeDashoffset={HALKA_CEVRESI * (1 - yuzde / 100)}
+                />
+              </svg>
+              <div className="relative text-center">
+                <p className="rakam text-[46px] leading-none font-black tracking-tight">
+                  {yuzde}
+                  <span className="text-[22px] font-extrabold text-[var(--kapanis-altin-koyu)]">
+                    %
+                  </span>
+                </p>
+                <p className="mt-1.5 text-[10.5px] font-extrabold tracking-[0.16em] text-[var(--kapanis-altin)] uppercase">
+                  İsabet
+                </p>
+              </div>
+            </div>
+
+            <h3 className="mt-5 text-center font-display text-[27px] font-black tracking-tight text-balance">
+              {KADEME_BASLIGI[kademe]}
+            </h3>
+          </div>
+
+          <div className="mt-6 flex gap-2.5">
+            <Kutu deger={dogru} etiket="Doğru" renk="var(--success)" gecikme={900} />
+            <Kutu deger={yanlis} etiket="Yanlış" renk="var(--danger)" gecikme={1020} />
+            <Kutu
+              deger={sureYaz(sureMs)}
+              etiket="Süre"
+              renk="var(--kapanis-altin-koyu)"
+              gecikme={1140}
+            />
+          </div>
+
+          {listelenen.length > 0 && (
+            <div
+              className="kapanis-gel mt-3 rounded-[20px] border border-[var(--kapanis-cerceve)] bg-white px-4.5 py-4 shadow-[var(--kapanis-golge)]"
+              style={{ animationDelay: '1260ms' }}
+            >
+              <p className="text-[10.5px] font-extrabold tracking-[0.18em] text-[var(--kapanis-soluk)] uppercase">
+                Tekrar bakılacaklar
+              </p>
+              <ul className="mt-3 flex flex-col gap-2.5">
+                {listelenen.map((metin) => (
+                  <li key={metin} className="flex items-start gap-2.5">
+                    <span
+                      aria-hidden
+                      className="mt-px grid size-5 shrink-0 place-items-center rounded-[7px] bg-danger-soft text-danger"
+                    >
+                      <X size={12} strokeWidth={3.5} />
+                    </span>
+                    <span className="text-[13.5px] leading-snug font-bold text-[var(--kapanis-yazi-govde)] text-pretty">
+                      {metin}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              {kalan > 0 && (
+                <p className="mt-2.5 text-[12.5px] font-bold text-[var(--kapanis-soluk)]">
+                  … ve {kalan} soru daha
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="shrink-0 px-4 pt-3 pb-[calc(1.4rem+var(--guvenli-alt))]">
+        {/* Dolgu markanın parlak tonu, altındaki çizgi koyu tonu: tasarımın
+            "basılabilir" düğmesi. Basınca çizgi kadar iniyor. */}
+        <Buton
+          onClick={onKapat}
+          className="mx-auto h-[60px] w-full max-w-md gap-2.5 rounded-[20px] bg-primary-parlak text-[16.5px] font-extrabold text-white shadow-[0_3px_0_var(--primary)] active:translate-y-0.5 active:shadow-[0_1px_0_var(--primary)] active:brightness-100"
+        >
+          Haritaya dön
+          <span className="grid size-[26px] place-items-center rounded-[9px] bg-white/18">
+            <ChevronRight size={16} strokeWidth={3} aria-hidden />
+          </span>
+        </Buton>
+      </div>
+    </>
+  )
+}
+
+/** Halkanın yarıçapı ve çevresi; `kapanisHalka` keyframe'i çevreyi bilmek zorunda. */
+const HALKA_YARICAP = 84
+const HALKA_CEVRESI = Math.round(2 * Math.PI * HALKA_YARICAP * 10) / 10
+
+/** "Tekrar bakılacaklar" en çok bu kadar soru yazıyor; kalanı sayılıyor. */
+const LISTE_SINIRI = 3
+
+const KADEME_BASLIGI = {
+  harika: 'Harika iş!',
+  iyi: 'İyi iş çıkardın',
+  tekrar: 'Tekrar bakmaya değer',
+} as const
+
+/* Halkanın rengi kademenin kendisi: yeşil geçti, turuncu geçti ama eksik
+   var, kırmızı geçemedi. Üçü de temanın kendi tonları. */
+const KADEME_RENGI = {
+  harika: 'var(--success)',
+  iyi: 'var(--primary-parlak)',
+  tekrar: 'var(--danger)',
+} as const
+
+function Kutu({
+  deger,
+  etiket,
+  renk,
+  gecikme,
+}: {
+  deger: number | string
+  etiket: string
+  renk: string
+  gecikme: number
+}) {
+  return (
+    <div
+      className="kapanis-gel flex-1 rounded-[18px] border border-[var(--kapanis-cerceve)] bg-white px-2 py-3 text-center shadow-[var(--kapanis-golge)]"
+      style={{ animationDelay: `${gecikme}ms` }}
+    >
+      <p className="rakam text-[24px] leading-none font-black" style={{ color: renk }}>
+        {deger}
+      </p>
+      <p className="mt-1.5 text-[11px] font-extrabold tracking-[0.08em] text-[var(--kapanis-soluk)] uppercase">
+        {etiket}
+      </p>
+    </div>
+  )
+}
