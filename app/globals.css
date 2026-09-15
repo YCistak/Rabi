@@ -1437,6 +1437,76 @@ body {
   animation: soruGerekce 220ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
 }
 
+/*
+  Yoklama kapanışı (`components/konu/soru-sahnesi.tsx` → `Kapanis`),
+  tasarımı `tasarim/soru-kapanis.dc.html` → 2a.
+
+  Kapanış koyu sahnede değil, kâğıt zeminde: tasarım yoklamanın sonunu
+  "sınav bitti" karanlığı değil çevrilen bir sayfa olarak çiziyor — krem
+  zemin, çizgili defter kâğıdı, altın etiketler. Renkler burada ayrı
+  değişkenler olarak duruyor çünkü uygulamanın paletinde bu kâğıt tonu yok
+  ve `.sahne` gibi tek bir yerde yazılmalı; bileşende onaltılık kod yok.
+  Doğru/yanlış/vurgu tonları ise temanın kendisinden.
+*/
+.kapanis {
+  --kapanis-zemin: #f7f0dc;
+  --kapanis-cizgi: rgba(141, 105, 26, 0.075);
+  --kapanis-altin: #a68a43;
+  --kapanis-altin-koyu: #8d691a;
+  --kapanis-cerceve: #ecdfb8;
+  --kapanis-halka-zemin: #fffdf6;
+  --kapanis-yazi: #1b1a19;
+  --kapanis-yazi-govde: #33302c;
+  --kapanis-soluk: #6b6764;
+  --kapanis-golge: 0 6px 20px rgba(90, 60, 35, 0.07);
+
+  color: var(--kapanis-yazi);
+  background-color: var(--kapanis-zemin);
+  /* Defter çizgisi: 34 pikselde bir, bir piksel. */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--kapanis-cizgi) 0 1px,
+    transparent 1px 34px
+  );
+}
+
+/*
+  Parçalar sırayla geliyor: önce maskot ve halka (halka sıfırdan dolarak),
+  sonra üç kutu tek tek, en son yanlış listesi. Gecikmeler bileşende satır
+  içi (`animationDelay`) — sıra içeriğe bağlı ve CSS'te sabit bir sınıf
+  listesi kaç kutu olduğunu bilemez.
+
+  Halkanın `stroke-dasharray`i bileşende çevreyle birlikte yazılı; buradaki
+  `from` değeri de o çevre (2π·84). İkisi eşleşmezse halka boştan değil
+  yarıdan dolmaya başlar.
+*/
+@keyframes kapanisGel {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes kapanisSuzul {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes kapanisHalka {
+  from { stroke-dashoffset: 527.8; }
+}
+
+.kapanis-gel {
+  animation: kapanisGel 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Maskot halkanın üstünde süzülüyor: bitmiş bir sayfada kıpırdayan tek şey. */
+.kapanis-suzul {
+  animation: kapanisSuzul 3.6s ease-in-out infinite;
+}
+
+.kapanis-halka {
+  animation: kapanisHalka 1200ms cubic-bezier(0.22, 1, 0.3, 1) 260ms both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   /* Deste kartı, sahne perdesi ve gerekçe yerinde beliriyor: buradaki
      hareketin hiçbiri bilgi taşımıyor — hangi kartta olunduğu bölmeli
@@ -1449,7 +1519,10 @@ body {
   .mola-yazi,
   .mola-serit,
   .sahne-iner,
-  .soru-gerekce {
+  .soru-gerekce,
+  .kapanis-gel,
+  .kapanis-suzul,
+  .kapanis-halka {
     animation: none;
   }
 }

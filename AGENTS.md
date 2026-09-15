@@ -1870,12 +1870,11 @@ cevabı içeriğe bakmadan verdirir.
 
 ### Kartlardan soruya bir köprüyle geçiliyor
 
-Sahnenin **iki** hâli var ve ikisi de `soru-sahnesi.tsx` içinde: giriş
-(`Giris`) ve soruların kendisi. Bir de kapanış vardı (`Sonuc`: maskot, doğru
-ve yanlış sayısı, "Haritaya dön"); kullanıcı isteğiyle kaldırıldı — son
-sorunun gerekçesinden sonra "Bitir" sahneyi kapatıp doğrudan haritaya
-dönüyor. Sayılar kayda yine giriyor, yalnızca ayrı bir ekranda gösterilmiyor.
-"Şimdilik" dendi; geri gelirse `git log -- components/konu/soru-sahnesi.tsx`.
+Sahnenin **üç** hâli var ve üçü de `soru-sahnesi.tsx` içinde: giriş (`Giris`),
+soruların kendisi, kapanış (`Kapanis`). Kapanış bir kez gidip geldi: koyu
+sahnedeki ilk hâli (`Sonuc`: maskot, iki sayı, "Haritaya dön") kullanıcı
+isteğiyle kaldırılmış, "Bitir" doğrudan haritaya dönüyordu; tasarım gelince
+kâğıt zeminli yeni hâliyle geri geldi (aşağıda **Kapanış kâğıt zeminde**).
 
 Giriş bir süre yoktu ve yokluğu bilinçliydi — "arada duran bir 'deste bitti'
 ekranı, okumayla soruyu birbirinden ayıran fazladan bir dokunuş". Fazladan
@@ -1888,7 +1887,7 @@ buluyordu; oradaki dokunuş gecikme değil, bir sonraki ekranın ne olduğunu
 söyleyen tek yer.
 
 Köprü koyu sahnenin **kendi** ilk ekranı, üçüncü bir yüzey değil: renk değişimi
-böylece bir soruyla değil bir açıklamayla geliyor ve giriş sorularla aynı
+böylece bir soruyla değil bir açıklamayla geliyor ve sahnenin iki ucu aynı
 bileşende, aynı düzende duruyor. Deste kendi bitiş ekranını hâlâ çizmiyor —
 çizseydi arka arkaya iki kapanış olurdu, biri aydınlık biri koyu, ikisi de aynı
 şeyi söyleyerek.
@@ -1906,6 +1905,27 @@ okunmazdı — kurulumdaki "Şimdilik atla" kuralı.
 **yazdırmıyor** (`konu-haritasi.tsx`), destenin kuralının aynısı. Bayraksız
 hâlde girişte "Şimdi değil" diyen kullanıcının kaydına, hiç verilmemiş bir
 yoklamanın "0 doğru"su geçiyordu.
+
+### Kapanış kâğıt zeminde
+
+Kapanış (`Kapanis`, tasarımı `tasarim/soru-kapanis.dc.html` → 2a) koyu
+sahnede **değil**: krem kâğıt, defter çizgisi, altın etiketler
+(`globals.css` → `.kapanis`). Yoklamanın sonu bir sınav sonucu değil
+çevrilen bir sayfa. Koyu sahne giriş ve sorularda kalıyor; iki yüzeyin sınırı
+"Bitir"e basılan an. Kapanış bir süre hiç yoktu (kullanıcı "şimdilik bitiş
+ekranı yok" demişti); bu ekran o boşluğa tasarımla geldi — kaldırılan koyu
+özetin geri dönüşü değil.
+
+Ekranda dört şey var: sıfırdan dolan isabet halkası, üç kutu (doğru · yanlış
+· süre), yanlış bilinen soruların listesi ve tek düğme. Halkanın rengi ile
+başlık **kademeden** geliyor (`lib/konu/kapanis.ts`: harika ≥ %90, iyi ≥
+geçme sınırı, altı tekrar) ve eşikler haritadaki yıldızlarla **aynı** — iki
+ekran aynı sonucu iki ölçekle okumasın. Süre ilk soruya geçilince başlıyor,
+girişteki okuma sayılmıyor; "Bitir"de donuyor. Yanlış listesi üçle kesiliyor,
+kalanı sayılıyor — altı yanlış düğmeyi ekranın altına itiyordu. Maskot
+kademeye göre seviniyor ya da düşünüyor; tasarım tek pozla çizildi ama
+yarısı yanlış çıkan yoklamanın üstünde zıplayan bir tavşan sonucu değil
+ekranı kutlardı.
 
 ### Alt menüde kendi sekmesi
 
