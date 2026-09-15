@@ -617,18 +617,26 @@ function Kapanis({
         </div>
       </div>
 
+      {/*
+        Sütun sınırı düğmenin kendisinde değil, saran kutuda: `Buton`
+        `inline-flex` ve satır içi bir öğe `mx-auto` ile ortalanmıyor —
+        geniş ekranda (web, tablet) içerik ortada dururken düğme sola
+        yapışıyordu. Öteki ekranlardaki gibi `max-w-md`li bir blok sarıyor.
+      */}
       <div className="shrink-0 px-4 pt-3 pb-[calc(1.4rem+var(--guvenli-alt))]">
-        {/* Dolgu markanın parlak tonu, altındaki çizgi koyu tonu: tasarımın
-            "basılabilir" düğmesi. Basınca çizgi kadar iniyor. */}
-        <Buton
-          onClick={onKapat}
-          className="mx-auto h-[60px] w-full max-w-md gap-2.5 rounded-[20px] bg-primary-parlak text-[16.5px] font-extrabold text-white shadow-[0_3px_0_var(--primary)] active:translate-y-0.5 active:shadow-[0_1px_0_var(--primary)] active:brightness-100"
-        >
-          Haritaya dön
-          <span className="grid size-[26px] place-items-center rounded-[9px] bg-white/18">
-            <ChevronRight size={16} strokeWidth={3} aria-hidden />
-          </span>
-        </Buton>
+        <div className="mx-auto w-full max-w-md">
+          {/* Dolgu markanın parlak tonu, altındaki çizgi koyu tonu: tasarımın
+              "basılabilir" düğmesi. Basınca çizgi kadar iniyor. */}
+          <Buton
+            onClick={onKapat}
+            className="h-[60px] w-full gap-2.5 rounded-[20px] bg-primary-parlak text-[16.5px] font-extrabold text-white shadow-[0_3px_0_var(--primary)] active:translate-y-0.5 active:shadow-[0_1px_0_var(--primary)] active:brightness-100"
+          >
+            Haritaya dön
+            <span className="grid size-[26px] place-items-center rounded-[9px] bg-white/18">
+              <ChevronRight size={16} strokeWidth={3} aria-hidden />
+            </span>
+          </Buton>
+        </div>
       </div>
     </>
   )
