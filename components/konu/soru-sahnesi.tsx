@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartGorseli } from './kart-gorseli'
 import { YoklamaBileti } from './yoklama-bileti'
+import { CikisOnayi } from './cikis-onayi'
 
 /**
  * Soru sahnesi — deste okunduktan **hemen sonra** gelen ekran.
@@ -108,7 +109,16 @@ export function SoruSahnesi({
   */
   const sonucRef = useRef<SahneSonucu>({ dogru: 0, yanlis: 0, bitti: false })
   sonucRef.current = { dogru, yanlis, bitti: false }
-  useGeriKatmani(true, () => onKapat(sonucRef.current))
+
+  /*
+    Soruların ortasında çarpı ve geri tuşu önce soruyor (`CikisOnayi`);
+    bilette sormuyor — oradan çıkış zaten bilinçli bir düğme ("Şimdi değil").
+  */
+  const [cikisSoruluyor, setCikisSoruluyor] = useState(false)
+  useGeriKatmani(true, () => {
+    if (!basladi) onKapat({ dogru: 0, yanlis: 0, bitti: false })
+    else setCikisSoruluyor(true)
+  })
 
   function karar(cevap: number) {
     if (secim !== null) return
@@ -190,7 +200,7 @@ export function SoruSahnesi({
         <div className="mx-auto flex max-w-md items-center gap-3">
           <button
             type="button"
-            onClick={() => onKapat(sonucRef.current)}
+            onClick={() => setCikisSoruluyor(true)}
             aria-label="Kapat"
             className="sahne-kapat grid size-[46px] shrink-0 place-items-center rounded-2xl bg-card transition active:brightness-95"
           >
@@ -371,6 +381,12 @@ export function SoruSahnesi({
           )}
         </div>
       </div>
+      <CikisOnayi
+        acik={cikisSoruluyor}
+        aciklama="Yarıda kalan yoklama kayda geçmez; konuyu geçmiş sayılmazsın. Birkaç soru kaldıysa bitirmek daha iyi."
+        onKal={() => setCikisSoruluyor(false)}
+        onCik={() => onKapat(sonucRef.current)}
+      />
     </div>
   )
 }
