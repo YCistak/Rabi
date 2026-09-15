@@ -87,6 +87,8 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Yoklama biletinin damgası kısa titreşiyor (`lib/titresim.ts`). -->
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <!--
       Odak kilidi izinleri.

@@ -1830,9 +1830,25 @@ oluyordu.
 Ekran bir süre **çevrilen** bir kart gösteriyordu: bir yüzünde soru, öteki
 yüzünde cevap ve kararı kullanıcı kendi veriyordu ("bildim / bilmedim"). O sayı
 bilmeyi değil beyanı ölçüyordu — cevabı gördükten sonra "bildim" demek serbest.
-Cevap artık `SoruKarti.dogru` içinde ve ekran kararı kendisi tartıyor; gerekçe
-(`aciklama`) karardan **sonra** çıkıyor ve her soruda var: yanlış bilinen bir
-iddiada "yanlış" demek yetmez.
+Cevap artık `SoruKarti.dogru` içinde ve ekran kararı kendisi tartıyor.
+
+**Karar pencere açmıyor, sıradaki soru kendiliğinden geliyor** (tasarımın 3a
+yönü, `tasarim/soru-sahnesi.html`). Bir süre karardan sonra kartın altında
+gerekçe şeridi çıkıyor ve "Devam" bekliyordu; her soruda bir dokunuş daha,
+yoklamayı okumanın arkasına eklenen ikinci bir ekran gibi uzatıyordu. Şimdi
+kararın karşılığı kartın kendisinde: amber paspartu yeşile ya da kırmızıya
+dönüyor, köşeye ✓/✕ rozeti düşüyor, doğru şık her hâlde yeşile, seçilen
+yanlış kırmızıya boyanıyor ve `BEKLEME` (850 ms) sonra sıradaki soru
+geliyor. Gerekçe (`aciklama`) içerikte **duruyor** ve testi hâlâ zorunlu
+tutuyor — ekranda gösterilmiyor; geri getirilecekse 3b/3c'deki gibi bir
+katman gerekir, kartın altına sığmaz.
+
+Sahne aydınlık: krem, ince çizgili kâğıt zemin; sayfanın kenarında amber çift
+çerçeve; kartın çevresinde amber paspartu. Bir süre uygulamanın tek koyu
+yüzeyiydi ("aydınlık zeminde kart zeminle aynı renkte kalıyor" diye); tasarım
+o işi renkle değil işlemeyle çözdü. Renkler `globals.css`teki `.sahne`
+bloğunda; #d09b34 Matematik'in `--isl-ok`u ile aynı sayı ama o değişkene
+bağlanmadı — burada ders rengi değil, işlemenin rengi.
 
 Testler içeriği değil **dengeyi** denetliyor, çünkü biçimin kendi tuzağı var:
 yazı tura atan da yarısını tutturur. Her destede iki cevap da bulunmak zorunda
@@ -1846,10 +1862,11 @@ grafiğin fonksiyon olup olmadığı, eğrinin hangi yöne gittiği, şemadaki s
 yüzden tablo görsellerinin iddiası çoğunlukla **yanlış** olan iddia: okuyan onu
 tabloyla karşılaştırıyor.
 
-Karardan sonra kartın çerçevesi renkleniyor ve bu çerçeve `ring` ile değil
-`outline` ile çiziliyor: Tailwind'in `ring`i gölge olarak uygulanıyor ve kartın
-kendi gölgesi (`golge-kart`) onu eziyordu. `outlineOffset` de negatif — dışarı
-taşan çizgi, kaydırılabilir kutunun kenarında kırpılıyordu.
+Kararın rengi kartın çerçevesinde değil **paspartusunda**: kart, çevresindeki
+7 piksellik amber dolgunun içinde duruyor ve renklenen o dolgu. Eskiden kartın
+kendi `outline`ı boyanıyordu (`ring` gölge olarak uygulandığı için `golge-kart`
+onu eziyordu). Rozet paspartunun dışına taşıyor; kaydırma kutusunun üstünde ve
+yanlarında pay var, paysız `overflow` rozeti kırpıyordu.
 
 ### Yoklamada iki soru biçimi, sayısı kart sayısına bağlı
 
@@ -1859,7 +1876,7 @@ sormak mümkün değildi (Pisagor üçlüsü hangisi, hangi organel ATP üretir)
 **iki şıklı soru** (`sikli()`, A/B). Şık sayısı ikide kalıyor — dört şıklı
 soru okumanın arkasına bir sınav ekler; hızlı kontrolle aynı kalıp. Sahne iki
 biçimi tek koddan çiziyor: karar bir sayıya iniyor (`secim`/`beklenen`),
-gerekçe ve çerçeve ikisinde de aynı.
+rozet, paspartu ve düğme tonu ikisinde de aynı.
 
 Soru sayısı **kart sayısıyla orantılı** (`icerik.test.ts`): en az kart+1,
 en çok kart×1,3+1 — altı kartlık konuda yedi–sekiz, on altı kartlıkta yirmiye
@@ -1868,42 +1885,71 @@ yoklamadan bırakıyordu. Her konuda iki biçimden en az ikişer tane var; A/B
 ve doğru/yanlış dengesi bütünde %40–60 arasında tutuluyor — tek yönlü deste
 cevabı içeriğe bakmadan verdirir.
 
-### Kartlardan soruya bir köprüyle geçiliyor
+### Deste bir biletle kapanıyor
 
-Sahnenin **üç** hâli var ve üçü de `soru-sahnesi.tsx` içinde: giriş (`Giris`),
-soruların kendisi, kapanış (`Kapanis`). Kapanış bir kez gidip geldi: koyu
-sahnedeki ilk hâli (`Sonuc`: maskot, iki sayı, "Haritaya dön") kullanıcı
-isteğiyle kaldırılmış, "Bitir" doğrudan haritaya dönüyordu; tasarım gelince
-kâğıt zeminli yeni hâliyle geri geldi (aşağıda **Kapanış kâğıt zeminde**).
+Üç ekran var: destenin kapanışı — **yoklama bileti**
+(`components/konu/yoklama-bileti.tsx`, `tasarim/yoklama-bileti.html`) —,
+soruların kendisi ve yoklamanın kapanışı (ikisi `soru-sahnesi.tsx` içinde,
+`Kapanis`). Kapanış bir kez gidip geldi: koyu sahnedeki ilk hâli (`Sonuc`:
+maskot, iki sayı, "Haritaya dön") kullanıcı isteğiyle kaldırılmış, son
+sorudan sonra sahne doğrudan haritaya dönüyordu; tasarım gelince kâğıt
+zeminli yeni hâliyle geri geldi (aşağıda **Kapanış kâğıt zeminde**).
 
-Giriş bir süre yoktu ve yokluğu bilinçliydi — "arada duran bir 'deste bitti'
-ekranı, okumayla soruyu birbirinden ayıran fazladan bir dokunuş". Fazladan
-dokunuşun bedeli doğruydu, ayrılmayan iki işin bedeli hesaba katılmamıştı: son
-kartta "İlerle"ye basan kullanıcı dersin aydınlık, renkli destesinden koyu
-sahnedeki bir **iddianın üstüne** düşüyordu. Yüzey, ton ve iş tek karede birden
-değişiyor ve gelen ilk şey cevaplanmayı bekleyen bir cümle oluyordu. Okumayı
+Bilet bir süre yoktu ve yokluğu bilinçliydi — "arada duran bir 'deste
+bitti' ekranı, okumayla soruyu birbirinden ayıran fazladan bir dokunuş".
+Fazladan dokunuşun bedeli doğruydu, ayrılmayan iki işin bedeli hesaba
+katılmamıştı: son kartta "İlerle"ye basan kullanıcı dersin aydınlık
+destesinden koyu sahnedeki bir **iddianın üstüne** düşüyordu. Okumayı
 bitirdiğini sanan kullanıcı kendini cevaplayacağı bir şeyin karşısında
-buluyordu; oradaki dokunuş gecikme değil, bir sonraki ekranın ne olduğunu
+buluyordu; aradaki dokunuş gecikme değil, sonraki ekranın ne olduğunu
 söyleyen tek yer.
 
-Köprü koyu sahnenin **kendi** ilk ekranı, üçüncü bir yüzey değil: renk değişimi
-böylece bir soruyla değil bir açıklamayla geliyor ve sahnenin iki ucu aynı
-bileşende, aynı düzende duruyor. Deste kendi bitiş ekranını hâlâ çizmiyor —
-çizseydi arka arkaya iki kapanış olurdu, biri aydınlık biri koyu, ikisi de aynı
-şeyi söyleyerek.
+Önce koyu sahnenin kendi ilk ekranıydı (`Giris`); tasarım onu destenin
+**aydınlık** tarafına aldı: bembeyaz zemin, ortada koyu bir bilet, kupayı
+kaldıran Rabi biletin arkasından çıkıyor, sağ üste "BİTTİ" damgası
+basılıyor, koçanda üç sayı (kart, soru, ~dakika) ve dolan bir %100 halkası.
+Perde (`sahne-iner`; sahne o zaman koyuydu, şimdi krem) "Yoklamaya başla"
+denince iniyor; iki kök ayrı `key` taşıyor, yoksa React aynı `div`i yeniden
+kullanır ve perde hiç oynamazdı.
 
-Ekranda kaç kart okunduğu ve kaç iddia geleceği yazıyor: "kaç iddia" demeyen
-bir köprü, ne kadar süreceğini söylemeden başlat düğmesi gösterirdi — haritadaki
-"4 kart · 3 dk" satırının aynı gerekçesi.
-
-**"Şimdi değil" düğme değil yazı.** Deste zaten okundu ve kaydı yazıldı;
-yoklamayı vermemek konuyu okunmamış yapmıyor ve okumayı bitirmenin bedeli bir
-sınav olmamalı. İki dolu düğme yan yana dursaydı hangisinin ileri götürdüğü de
-okunmazdı — kurulumdaki "Şimdilik atla" kuralı.
+- **Bilet dersin değil uygulamanın rengi.** Mockup Fizik'in lacivertiyle
+  çizildi ve üstte dersin rengine boyalı noktalı bir bant vardı; uygulama
+  bir süre yedi derse yedi bilet taşıdı (şarap+nane, mor+limon, kahve+
+  turkuaz…). Kullanıcı ikisini de geri aldı: zemin düz beyaz, bilet
+  markanın turuncusundan koyu bir ton ve üstüne altın (`--bilet`,
+  `--bilet-vurgu`, `--bilet-vurgu-acik`; `globals.css`). Bileşen bu yüzden
+  `bicim` almıyor ve `SoruSahnesi` de almıyor — koyu sahne zaten derse göre
+  renk almıyordu, bilet de almıyor.
+- **Koçan çentiği gerçek bir satırda.** Mockup çentiği `mask-image` ile 177
+  piksele kesiyordu; konu adı iki satıra kırılınca çizgi kayar, çentik
+  kalırdı. Çentik kesik çizginin kendi satırındaki iki daire, `overflow`
+  dış yarısını kırpıyor.
+- **Halka hep %100**: bilet yalnızca deste sonuna kadar okununca geliyor.
+- **Bilet destenin ucundan gelince var, turuncu kitaptan girince yok**
+  (`SoruSahnesi.biletli`). Bilet destenin kapanışı, yoklamanın girişi
+  değil; haritadan doğrudan soruya giren kullanıcı bir şey okumadı ve
+  "okundu" diyen bir bilet ona yalan söylerdi. Oradan sahne ilk soruyla
+  açılıyor.
+- **Üç efekt, üçü de damgaya bağlı** (kullanıcı seçti): koçandaki sayılar
+  sıfırdan sayarak doluyor, damga basılırken kısa bir titreşim
+  (`lib/titresim.ts`, manifestte VIBRATE izni), ardından biletin üstünden
+  bir kez altın toz süzülüyor (`bilet-toz`). Damganın sesi de vardı (alçak
+  bir "tak", oyun sesleri anahtarına bağlı); kullanıcı kaldırdı, titreşim
+  tek başına yetiyor. Konfeti değil — konfeti oyunlardaki rekora ait.
+  Bileşendeki `DAMGA_MS`/`TOZ_MS`, `globals.css`teki damga ve basınç
+  gecikmeleriyle eşleşmeli; titreşim görüntüden önce gelirse neyi
+  doğruladığı anlaşılmıyor. `prefers-reduced-motion` altında sayılar dolu,
+  damga basılı, toz yok; titreşim hareket olmadığı için kalıyor.
+- **"Bu destede öğrendiklerin" alt sayfa**, biletin içinde liste değil: on
+  altı kartlık konuda liste bileti taşırırdı.
+- **"Şimdi değil" düğme değil yazı.** Deste zaten okundu ve kaydı yazıldı;
+  yoklamayı vermemek konuyu okunmamış yapmıyor. İki dolu düğme yan yana
+  dursaydı hangisinin ileri götürdüğü okunmazdı — kurulumdaki "Şimdilik
+  atla" kuralı.
 
 `SahneSonucu.bitti` bu yüzden var: yarıda bırakılan yoklama ilerlemeye sayı
 **yazdırmıyor** (`konu-haritasi.tsx`), destenin kuralının aynısı. Bayraksız
-hâlde girişte "Şimdi değil" diyen kullanıcının kaydına, hiç verilmemiş bir
+hâlde bilette "Şimdi değil" diyen kullanıcının kaydına, hiç verilmemiş bir
 yoklamanın "0 doğru"su geçiyordu.
 
 ### Kapanış kâğıt zeminde

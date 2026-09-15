@@ -84,7 +84,7 @@ export type HaritaTemasi = {
 const yazi = (metin: string): HaritaSimgesi => ({ tur: 'yazi', metin })
 const cizim = (ad: CizimAdi): HaritaSimgesi => ({ tur: 'cizim', ad })
 
-function renkler(ders: KonuDersId): Pick<HaritaTemasi, 'zemin' | 'kenar' | 'murekkep' | 'cubuk'> {
+function renkler(ders: KonuDersId): Omit<HaritaTemasi, 'simgeler'> {
   return {
     zemin: `var(--konu-${ders})`,
     kenar: `var(--konu-${ders}-kenar)`,
