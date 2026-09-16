@@ -562,7 +562,7 @@ export function PomodoroEkrani({
       */}
       <div
         className={cn(
-          'mb-4 flex rounded-[14px] bg-muted p-1',
+          'mb-3 flex rounded-[14px] bg-muted p-1',
           turIcinde && 'pointer-events-none opacity-50',
         )}
         role="tablist"
@@ -576,9 +576,15 @@ export function PomodoroEkrani({
         </KipDugmesi>
       </div>
 
-      <Kart className="mb-4 flex flex-col items-center rounded-3xl px-4 pt-6 pb-5">
-        <Sayac kalan={kalan} oran={oran} mola={molaMi} boyut={228} kalinlik={12} altYazi={siradaki} />
-        <TurNoktalari tur={tur} turSayisi={ayar.turSayisi} gizli={prova !== null} className="mt-4" />
+      {/*
+        Hazırlık ekranındaki halka sahnedekinden küçük (168, sahnede 300):
+        halka burada ekranın asıl işi değil, altındaki ders seçimi ve ayarlar
+        kaydırmadan görünmeli. 228'deyken Başlat'a kadar bir ekran boyu
+        kaydırmak gerekiyordu.
+      */}
+      <Kart className="mb-3 flex flex-col items-center rounded-3xl px-4 pt-4 pb-3.5">
+        <Sayac kalan={kalan} oran={oran} mola={molaMi} boyut={168} kalinlik={10} altYazi={siradaki} />
+        <TurNoktalari tur={tur} turSayisi={ayar.turSayisi} gizli={prova !== null} className="mt-3" />
       </Kart>
 
       {prova === null ? (
@@ -586,7 +592,7 @@ export function PomodoroEkrani({
            ekranda iki ayrı "ne çalışıyorsun" cevabı olamaz. Molada da yok —
            sıradaki çalışma turu başlarken yeniden görünüyor. */
         !molaMi && (
-          <div className={cn('mb-4', turIcinde && 'pointer-events-none opacity-50')}>
+          <div className={cn('mb-3', turIcinde && 'pointer-events-none opacity-50')}>
             <p className="mb-2 ml-0.5 text-[12.5px] font-extrabold text-muted-foreground">
               HANGİ DERSE?
             </p>
@@ -612,7 +618,7 @@ export function PomodoroEkrani({
           </div>
         )
       ) : (
-        <div className={cn('mb-4', turIcinde && 'pointer-events-none opacity-50')}>
+        <div className={cn('mb-3', turIcinde && 'pointer-events-none opacity-50')}>
           <p className="mb-2 ml-0.5 text-[12.5px] font-extrabold text-muted-foreground">
             HANGİ DENEMEYİ ÇÖZÜYORSUN?
           </p>
@@ -632,7 +638,7 @@ export function PomodoroEkrani({
         </div>
       )}
 
-      <Kart className="mb-4 p-0">
+      <Kart className="mb-3 p-0">
         {/* Süreler provada yok: o turda kullanılmıyorlar ve kilitli bir satır,
             kullanılıyormuş izlenimi verirdi. Ayarlar kaybolmuyor, prova
             kapatılınca aynı değerlerle geri geliyor. */}
@@ -771,7 +777,7 @@ export function PomodoroEkrani({
         {/* Ekran anahtarı her iki kipte de burada: provada da geçerli ve
             Süreler çekmecesine konsaydı 165 dakikalık bir turda ona hiç
             ulaşılamazdı. */}
-        <label className="flex w-full cursor-pointer items-center gap-3 border-t border-border p-4">
+        <label className="flex w-full cursor-pointer items-center gap-3 border-t border-border px-4 py-3.5">
           <Sun size={18} className="shrink-0 text-muted-foreground" aria-hidden />
           <span className="min-w-0 flex-1">
             <span className="block text-sm font-extrabold">Çalışırken ekran açık kalsın</span>
@@ -1056,7 +1062,7 @@ function AyarSatiri({
       type="button"
       onClick={onClick}
       disabled={kilitli}
-      className="flex w-full items-center gap-3 border-t border-border p-4 text-left first:border-t-0 disabled:opacity-50"
+      className="flex w-full items-center gap-3 border-t border-border px-4 py-3.5 text-left first:border-t-0 disabled:opacity-50"
     >
       <span className={cn('shrink-0', vurgulu ? 'text-primary' : 'text-muted-foreground')}>
         {simge}
@@ -1160,7 +1166,7 @@ function Sayac({
         <span
           className={cn(
             'rakam font-display font-extrabold leading-none tabular-nums',
-            buyuk ? 'text-[72px] tracking-[-0.04em]' : 'text-[54px] tracking-[-0.03em]',
+            buyuk ? 'text-[72px] tracking-[-0.04em]' : 'text-[40px] tracking-[-0.03em]',
           )}
         >
           {sureYaz(kalan)}
