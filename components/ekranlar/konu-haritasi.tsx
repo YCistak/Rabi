@@ -457,7 +457,14 @@ export function KonuHaritasiEkrani({
       <header className="flex items-start gap-3 px-0.5 pt-1">
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
-          <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Harita</h1>
+          <h1 className="mt-1 flex items-center gap-2 font-display text-[27px] font-extrabold tracking-tight">
+            Harita
+            {/* Bölüm kapalı betada: içerik ve kilit kuralı hâlâ oturuyor,
+                kullanıcı bir hatayı bilerek beta olan bir yerde görmeli. */}
+            <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[10px] font-black tracking-[0.12em] text-primary uppercase">
+              Beta
+            </span>
+          </h1>
         </div>
         <span
           className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart text-[21px] leading-none"
