@@ -1638,6 +1638,7 @@ body {
   --kapanis-yazi-govde: #33302c;
   --kapanis-soluk: #6b6764;
   --kapanis-golge: 0 6px 20px rgba(90, 60, 35, 0.07);
+  --kapanis-halka-boyu: 148px;
 
   color: var(--kapanis-yazi);
   background-color: var(--kapanis-zemin);
@@ -1655,9 +1656,9 @@ body {
   içi (`animationDelay`) — sıra içeriğe bağlı ve CSS'te sabit bir sınıf
   listesi kaç kutu olduğunu bilemez.
 
-  Halkanın `stroke-dasharray`i bileşende çevreyle birlikte yazılı; buradaki
-  `from` değeri de o çevre (2π·84). İkisi eşleşmezse halka boştan değil
-  yarıdan dolmaya başlar.
+  Halkanın çevresi bileşenden `--kapanis-cevre` ile geliyor; keyframe
+  oradan başlıyor (boş halka). Sayı CSS'te de yazılsaydı halkanın ölçüsü
+  değiştiğinde biri eski kalır, halka boştan değil yarıdan dolmaya başlardı.
 */
 @keyframes kapanisGel {
   from { opacity: 0; transform: translateY(14px); }
@@ -1670,7 +1671,7 @@ body {
 }
 
 @keyframes kapanisHalka {
-  from { stroke-dashoffset: 527.8; }
+  from { stroke-dashoffset: var(--kapanis-cevre); }
 }
 
 .kapanis-gel {
@@ -1684,6 +1685,45 @@ body {
 
 .kapanis-halka {
   animation: kapanisHalka 1200ms cubic-bezier(0.22, 1, 0.3, 1) 260ms both;
+}
+
+.kapanis-halka-kutu {
+  width: var(--kapanis-halka-boyu);
+  height: var(--kapanis-halka-boyu);
+}
+
+/*
+  Kapanış perdesi — `sahne-iner`in tersi. Sahne yukarıdan inerek gelmişti;
+  "Haritaya dön" denince aynı yoldan yukarı çekiliyor ve altından güncellenmiş
+  harita çıkıyor. Uygulamadaki öteki katmanların çıkış animasyonu yok
+  (bkz. AGENTS.md → "Ekranlar ve katmanlar bağlanarak geliyor") ve bu bilinçli
+  bir istisna: yoklamanın sonu bir kapanış anı, sahnenin bir karede yok olması
+  o anı yarım bırakıyordu. Süre `soru-sahnesi.tsx`teki `CIKIS_SURESI` ile
+  **aynı** olmak zorunda: sahne o süre sonra sökülüyor. Perde çekilirken
+  dokunuş geçmiyor — kalkan bir sayfaya ikinci kez basılmasın.
+*/
+@keyframes kapanisCikar {
+  from { clip-path: inset(0 0 0 0); }
+  to { clip-path: inset(0 0 100% 0); }
+}
+
+.kapanis-cikar {
+  animation: kapanisCikar 420ms cubic-bezier(0.4, 0, 0.7, 1) both;
+  pointer-events: none;
+}
+
+/*
+  Kısa ekranda (eski 16:9 telefonlar, 360×640) sayfa kaydırmadan sığmıyordu.
+  Maskot çekiliyor, halka küçülüyor: sayfanın işi sonucu söylemek ve o iş
+  halka, üç kutu, liste ve düğmede; maskot sonucu süslüyor, taşımıyor.
+*/
+@media (max-height: 680px) {
+  .kapanis {
+    --kapanis-halka-boyu: 120px;
+  }
+  .kapanis-maskot {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1712,7 +1752,8 @@ body {
   .soru-rozet-pop,
   .kapanis-gel,
   .kapanis-suzul,
-  .kapanis-halka {
+  .kapanis-halka,
+  .kapanis-cikar {
     animation: none;
   }
 }
