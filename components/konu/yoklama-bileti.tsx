@@ -141,7 +141,7 @@ export function YoklamaBileti({
           {dersAdi} · {temaAdi}
         </p>
 
-        <div className="bilet-kart relative mt-[198px] w-full max-w-[330px]">
+        <div className="bilet-kart relative mt-[198px] w-full max-w-[330px] shrink-0">
           {/* Maskot biletin arkasından çıkıyor (z-0, bilet z-1): kupa biletin
               üstünde, gövde arkasında — tavşan bileti tutuyormuş gibi. */}
           <div className="bilet-maskot absolute -top-[150px] left-1/2 z-0 size-[208px] -translate-x-1/2">
@@ -302,9 +302,12 @@ export function YoklamaBileti({
 
         <div className="min-h-4 flex-1" />
 
+        {/* `shrink-0` şart: sütun kaydırılabilir bir flex kutusu ve içerik
+            ekrana sığmadığında iki düğme yüksekliğinden veriyor — küçük
+            telefonda "Yoklamaya başla" birkaç piksellik bir çizgiye iniyordu. */}
         <Buton
           onClick={onBasla}
-          className="bilet-giris h-14 w-full text-[16.5px]"
+          className="bilet-giris h-14 w-full shrink-0 text-[16.5px]"
           style={{ animationDelay: '900ms' }}
         >
           Yoklamaya başla
@@ -313,7 +316,7 @@ export function YoklamaBileti({
         <button
           type="button"
           onClick={onVazgec}
-          className="mt-1.5 px-4 py-3 text-[13.5px] font-extrabold text-muted-foreground transition active:opacity-70"
+          className="mt-1.5 shrink-0 px-4 py-3 text-[13.5px] font-extrabold text-muted-foreground transition active:opacity-70"
         >
           Şimdi değil
         </button>
