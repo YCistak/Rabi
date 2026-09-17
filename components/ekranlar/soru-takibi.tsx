@@ -550,11 +550,13 @@ function SayiKutusu({
         readOnly={okunur}
         aria-label={ariaEtiket}
         // 0 yerine boş gösteriliyor: kutuya dokunup yazmaya başlayınca
-        // önce sıfırı silmek gerekmesin.
+        // önce sıfırı silmek gerekmesin. Placeholder'daki 0 da odakta
+        // kayboluyor: imlecin yanında duran sıfır, silinmesi gereken bir
+        // değer gibi okunuyordu.
         value={deger}
         onChange={(e) => onDegis(e.target.value)}
         className={cn(
-          'rakam rounded-[14px] bg-card px-1 text-center text-[17px] font-extrabold',
+          'rakam rounded-[14px] bg-card px-1 text-center text-[17px] font-extrabold focus:placeholder:text-transparent',
           buyuk ? 'h-[52px] rounded-[15px] text-[19px]' : 'h-[46px]',
           KUTU_TONLARI[ton].odak,
           okunur && 'bg-muted/60 text-muted-foreground',

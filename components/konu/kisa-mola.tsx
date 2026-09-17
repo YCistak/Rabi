@@ -63,9 +63,15 @@ export function KisaMola({
         <DesteCubugu toplam={toplam} okunan={okunan} bicim={bicim} />
       </header>
 
+      {/*
+        Sütunun içindeki hiçbir parça esnemiyor (`shrink-0`): esneselerdi uzun
+        bir liste önce İlerle düğmesini eziyordu — 58 piksellik düğme on altı
+        kartlık destede 20 piksele iniyordu. Yer yetmezse sayfa kayıyor,
+        parçalar küçülmüyor.
+      */}
       <div className="mx-auto flex w-full max-w-md min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-5 pb-[calc(1rem+var(--guvenli-alt))]">
         {/* Işıma maskotun arkasında: düz zeminde tavşan havada duruyordu. */}
-        <div className="relative mt-8 flex flex-col items-center">
+        <div className="relative mt-8 flex shrink-0 flex-col items-center">
           <span
             aria-hidden
             className="pointer-events-none absolute top-1/2 left-1/2 size-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full"
@@ -113,24 +119,30 @@ export function KisaMola({
 
         <div className="min-h-3.5 flex-1" />
 
+        {/*
+          Liste ince ve kendi içinde kayıyor: satırlar tek satıra kırpılıyor,
+          kart en fazla dört-beş satır boyunda (`max-h`) — kalanına listenin
+          içinde kaydırılarak ulaşılıyor. Kartın boyu deste boyuna göre
+          değişseydi düğme her destede başka yerde dururdu.
+        */}
         <div
-          className="mola-serit golge-kart w-full rounded-[18px] bg-card px-[18px] py-4"
+          className="mola-serit golge-kart flex max-h-[184px] w-full shrink-0 flex-col rounded-[18px] bg-card px-[18px] pt-3.5 pb-3"
           style={{ animationDelay: '340ms' }}
         >
-          <p className="text-[10.5px] font-extrabold tracking-[0.18em] text-muted-foreground uppercase">
+          <p className="shrink-0 text-[10.5px] font-extrabold tracking-[0.18em] text-muted-foreground uppercase">
             Bu molada öğrendiklerin
           </p>
-          <ul className="mt-3.5 flex flex-col gap-2.5">
+          <ul className="mt-2.5 flex min-h-0 flex-col gap-1.5 overflow-y-auto overscroll-contain">
             {okunanKartlar.map((k) => (
-              <li key={k.id} className="flex items-center gap-2.5">
+              <li key={k.id} className="flex shrink-0 items-center gap-2">
                 <span
-                  className="grid size-5 shrink-0 place-items-center rounded-[7px] text-white"
+                  className="grid size-4 shrink-0 place-items-center rounded-[5px] text-white"
                   style={{ background: bicim.murekkep }}
                   aria-hidden
                 >
-                  <Check size={12} strokeWidth={3.5} />
+                  <Check size={10} strokeWidth={3.5} />
                 </span>
-                <span className="text-[14px] leading-snug font-bold text-foreground/85">
+                <span className="truncate text-[13px] leading-snug font-bold text-foreground/85">
                   {k.baslik}
                 </span>
               </li>
@@ -142,7 +154,7 @@ export function KisaMola({
 
         <Buton
           onClick={onIlerle}
-          className="mola-serit h-[58px] w-full text-[16px] shadow-[0_3px_0_var(--primary)]"
+          className="mola-serit h-[58px] w-full shrink-0 text-[16px] shadow-[0_3px_0_var(--primary)]"
           style={{ animationDelay: '380ms' }}
         >
           İlerle
