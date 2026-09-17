@@ -1944,14 +1944,17 @@ kullanır ve perde hiç oynamazdı.
   damga basılı, toz yok; titreşim hareket olmadığı için kalıyor.
 - **"Bu destede öğrendiklerin" alt sayfa**, biletin içinde liste değil: on
   altı kartlık konuda liste bileti taşırırdı.
-- **"Şimdi değil" düğme değil yazı.** Deste zaten okundu ve kaydı yazıldı;
+- **"Haritaya dön" düğme değil yazı.** Deste zaten okundu ve kaydı yazıldı;
   yoklamayı vermemek konuyu okunmamış yapmıyor. İki dolu düğme yan yana
   dursaydı hangisinin ileri götürdüğü okunmazdı — kurulumdaki "Şimdilik
-  atla" kuralı.
+  atla" kuralı. Yazı bir süre "Şimdi değil"di; nereye gidildiğini
+  söylemiyordu. Çıkış da kapanış ekranındaki perdeyle (`kapanis-cikar`,
+  `cikiyor` bayrağı `SoruSahnesi`den geliyor): bilet tek karede sökülünce
+  kullanıcı haritaya döndüğünü değil atıldığını görüyordu.
 
 `SahneSonucu.bitti` bu yüzden var: yarıda bırakılan yoklama ilerlemeye sayı
 **yazdırmıyor** (`konu-haritasi.tsx`), destenin kuralının aynısı. Bayraksız
-hâlde bilette "Şimdi değil" diyen kullanıcının kaydına, hiç verilmemiş bir
+hâlde bilette "Haritaya dön" diyen kullanıcının kaydına, hiç verilmemiş bir
 yoklamanın "0 doğru"su geçiyordu.
 
 ### Kapanış kâğıt zeminde

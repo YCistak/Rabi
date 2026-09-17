@@ -400,7 +400,7 @@ export function KonuHaritasiEkrani({
             Sayı yalnızca yoklama **sonuna kadar** verildiyse yazılıyor;
             yarıda çıkanda alan hiç konmuyor. Destenin kuralının aynısı:
             tamamlanma sona gelmekle kazanılıyor. Koşulsuz yazılsaydı,
-            köprüde "Şimdi değil" diyen kullanıcının kaydına hiç verilmemiş
+            bilette "Haritaya dön" diyen kullanıcının kaydına hiç verilmemiş
             bir yoklamanın "0 doğru"su geçerdi.
           */
           ...(sonuc.bitti ? { dogru: sonuc.dogru } : {}),
