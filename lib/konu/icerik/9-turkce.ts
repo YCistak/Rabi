@@ -17,39 +17,50 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-edebiyat', 'Edebiyat ve Güzel Sanatlar', [
       kart(
         'Edebiyatın malzemesi dildir',
-        'Ressamın boyası, bestecinin sesi neyse yazarın da dili odur. Edebiyat, güzel sanatların "dille yapılan" koludur.',
-      ),
-      kart(
-        'Kurmaca nedir?',
-        'Edebî metin gerçeği aktarmaz, yeniden kurar. Anlatılan yaşanmış olsa bile metindeki hâli kurmacadır.',
+        'Ressam tuvale boya sürer, besteci notaları dizer. Yazar ne yapar? Sözcükleri dizer. Edebiyat, yani dille yapılan güzel sanat. Bir şiir de bir roman da aynı malzemeden, dilden yapılır.',
         undefined,
-        { not: '"Gerçek mi" sorusu edebî metne sorulmaz; "nasıl kurulmuş" sorulur.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Edebî ve öğretici metin',
-        'Edebî metin çağrıştırır ve çok anlamlıdır; öğretici metin bilgi verir ve tek anlamlı olmayı hedefler.',
+        'Yaşanmış olay bile metinde kurmacadır',
+        'Bir yazar dedesinin savaş anısını romana çevirdi. Olay yaşanmış; ama romandaki hâli yazarın sözcükleriyle yeniden kurulmuş. Kurmaca, yani yazarın hayal gücüyle kurduğu dünya. Edebî metne "gerçek mi" diye sorma; "nasıl kurulmuş" diye sor.',
+        undefined,
+        { not: 'Soruda "yaşanmış olay" geçince şaşırma: romana girdiği anda o olay artık kurmacadır.' },
+      ),
+      kart(
+        'Edebî metin sezdirir, öğretici bilgi verir',
+        '"Gözlerin bir deniz" ile "Göz, ışığı algılayan organdır" aynı şeyi anlatmıyor. İlki edebî: seni düşündürür, herkeste ayrı bir şey çağrıştırır. İkincisi öğretici: bilgi verir, tek anlam taşır. Şiir edebî, ansiklopedi öğreticidir.',
         {
           tur: 'tablo',
-          basliklar: ['Edebî metin', 'Öğretici metin'],
+          basliklar: ['Özellik', 'Edebî metin', 'Öğretici metin'],
           satirlar: [
-            ['Kurmaca', 'Gerçek'],
-            ['Çok anlamlı', 'Tek anlamlı'],
-            ['Sezdirir', 'Bilgi verir'],
-            ['Sanatsal dil', 'Açık dil'],
+            ['Amaç', 'Sezdirir', 'Bilgi verir'],
+            ['Anlam', 'Çok anlamlı', 'Tek anlamlı'],
+            ['Dünya', 'Kurmaca', 'Gerçek'],
+            ['Örnek', 'Şiir', 'Ansiklopedi'],
           ],
         },
       ),
       kart(
-        'Edebiyatın öteki bilimlerle ilişkisi',
-        'Tarih dönemin olaylarını, sosyoloji toplumu, psikoloji insanı anlamak için edebî metne başvurur.',
+        'Metin olay, duygu ya da düşünce anlatır',
+        'Hikâye okurken "sonra ne oldu" dersin: olay çevresinde gelişen metin (hikâye, roman, tiyatro). Şiirde bir duygu sana geçer: duygu ağırlıklı metin. Denemede yazar bir fikri açar: düşünce ağırlıklı metin (deneme, makale, fıkra).',
       ),
       kart(
-        'Metin türleri',
-        'Olay çevresinde gelişen (hikâye, roman, tiyatro), duygu ağırlıklı (şiir) ve düşünce ağırlıklı (deneme, makale, fıkra) metinler.',
+        'Edebiyat ses sanatlarındandır',
+        'Sanatlar malzemesine göre ayrılır. Heykel taştan, resim boyadan: plastik, yani maddeyle yapılan sanat. Tiyatro ve dans hareketle: dramatik sanat. Müzik ve edebiyat sesle: fonetik sanat. Dil sesten kurulduğu için edebiyat fonetik sanattır.',
+        {
+          tur: 'tablo',
+          basliklar: ['Tür', 'Malzeme', 'Örnek'],
+          satirlar: [
+            ['Fonetik', 'Ses', 'Müzik, edebiyat'],
+            ['Plastik', 'Madde', 'Resim, heykel'],
+            ['Dramatik', 'Hareket', 'Tiyatro, dans'],
+          ],
+        },
       ),
       kart(
-        'Güzel sanatlarda edebiyatın yeri',
-        'Sanatlar malzemesine göre ayrılır: fonetik (ses), plastik (madde), dramatik (hareket). Edebiyat fonetik sanatlardandır.',
+        'Tarihçi de romana bakar',
+        'Tanzimat dönemini merak eden tarihçi o dönemin romanlarını okur; sokak, ev, konuşma orada. Psikolog kıskançlığı Othello\'da görür. Edebiyat; tarih, sosyoloji (toplum bilimi) ve psikolojiyle böyle bağlanır: metin, çağının aynası.',
       ),
     ], [
       soru('Edebiyatın malzemesi dildir.', true, 'Ressamın boyası neyse yazarın dili odur.'),
@@ -73,20 +84,26 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     ]),
     konu('trk9-siir', 'Şiir Bilgisi', [
       kart(
-        'Nazım birimi',
-        'Şiirin yapı taşı: dize (mısra), beyit (iki dize), dörtlük. Halk şiirinde dörtlük, divan şiirinde beyit kullanılır.',
+        'Dize, beyit, dörtlük: şiirin yapı taşları',
+        'Şiirin bir satırına dize (mısra) denir. İki dize bir araya gelince beyit, dört dize dörtlük olur. Bunlara nazım birimi, yani şiirin yapı taşı denir. Halk şiiri (Karacaoğlan) dörtlükle, divan şiiri (Fuzuli) beyitle yazılır.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Ölçü',
-        'Hece ölçüsünde dizelerin hece sayısı eşittir. Aruzda hecelerin uzunluk-kısalığı esastır. Serbest şiirde ölçü aranmaz.',
+        'Hece ölçüsünde her dize eşit hecelidir',
+        '"İncecikten bir kar yağar" dizesini hecele: sekiz hece. Şiirin öteki dizeleri de sekizse bu hece ölçüsü, yani her dizede eşit hece sayısı. Aruz ölçüsünde sayı değil hecelerin uzun-kısa oluşu sayılır. Serbest şiirde ölçü yoktur.',
       ),
       kart(
-        'Durak',
-        'Hece ölçüsünde dizenin bölündüğü yer. Durak sözcüğü ortadan bölmez; hece sayısı tutsa bile sözcüğü kesen bölüm durak sayılmaz.',
+        'Durak sözcüğü ortadan bölmez',
+        '"İncecikten bir kar yağar" sekiz heceli; okurken "İncecikten / bir kar yağar" diye 4+4 durursun. Durak, yani dizenin nefes aldığı yer. Durak sözcüğün ortasına gelmez: "İnceci / kten bir kar" olmaz, hece sayısı tutsa bile.',
       ),
       kart(
-        'Uyak ve redif',
-        'Redif dize sonundaki aynı görevdeki ek ya da sözcüktür. Redifin önündeki ses benzerliği uyaktır.',
+        'Redif dize sonundaki aynı ektir',
+        '"Gözlerim / sözlerim" dizelerine bak. İkisinde de "-lerim" eki var, görevi aynı. Bu redif, yani dize sonunda tekrarlanan aynı görevdeki ek ya da sözcük. Redif ses benzerliği değildir; aynı ek ya da aynı sözcük olması şart.',
+      ),
+      kart(
+        'Redifi at, kalan ses uyaktır',
+        '"Gözlerim / sözlerim"de "-lerim"i at: "göz" ve "söz" kalır. Ortak ses "öz". İşte bu uyak (kafiye), yani redifin önündeki ses benzerliği. Sırayı bozma: önce redifi bul, sonra uyağa bak. Redifi atmadan uyağa bakmak en sık hata.',
         {
           tur: 'akis',
           dikey: true,
@@ -96,37 +113,32 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
             { ad: 'Uyak türünü söyle' },
           ],
         },
+        { etiket: 'Sık hata', not: 'Dize sonlarını gördüğünde önce aynı eki ayır; uyağı ancak kalan kısımda ara.' },
       ),
       kart(
-        'Uyak çeşitleri',
-        'Yarım uyak tek ses, tam uyak iki ses, zengin uyak ikiden çok ses benzerliğidir.',
+        'Uyak ses sayısına göre ad alır',
+        '"Göz / söz"de ortak ses "öz": iki ses, tam uyak. "Gel / al"da yalnız "l": tek ses, yarım uyak. "Gölge / bölge"de "ölge": dört ses, zengin uyak. Kural: bir ses yarım, iki ses tam, üç ve daha çok ses zengin uyak.',
         {
           tur: 'tablo',
-          basliklar: ['Uyak', 'Benzerlik'],
+          basliklar: ['Uyak', 'Benzerlik', 'Örnek'],
           satirlar: [
-            ['Yarım', '1 ses'],
-            ['Tam', '2 ses'],
-            ['Zengin', '2’den çok ses'],
+            ['Yarım', '1 ses', 'gel / al'],
+            ['Tam', '2 ses', 'göz / söz'],
+            ['Zengin', '3 ve üstü', 'gölge / bölge'],
           ],
         },
       ),
       kart(
-        'Uyak düzeni',
-        'Düz (aaab), çapraz (abab), sarma (abba) ve mesnevi (aabb) düzenleri vardır. Düzen, nazım biçimini tanımaya yarar.',
+        'Uyak düzeni harflerle yazılır',
+        'Dörtlüğün dize sonlarına harf ver; uyaklı dizeler aynı harfi alır. 1. ile 3., 2. ile 4. uyaklıysa abab: çapraz. Dıştakiler ve içtekiler kendi arasında uyaklıysa abba: sarma. Hepsi uyaklıysa aaaa ya da aaab: düz. İkişerli aabb: mesnevi.',
       ),
       kart(
-        'İmge',
-        'Şairin sözcükleri alışılmadık biçimde birleştirip zihinde yeni bir görüntü kurmasıdır. Şiiri düzyazıdan ayıran asıl şey.',
+        'Ses tekrarı şiire ahenk verir',
+        '"Sessiz sessiz süzülür sular"da "s" sesi tekrarlanıyor: aliterasyon, yani ünsüz tekrarı. "Karşı yatan kara dağlar"da "a" tekrarlanıyor: asonans, yani ünlü tekrarı. Ölçü, uyak, redif ve bu tekrarlar birlikte ahengi, yani ses uyumunu kurar.',
       ),
       kart(
-        'Ahenk ögeleri',
-        'Ölçü, uyak, redif, aliterasyon (ünsüz yinelemesi) ve asonans (ünlü yinelemesi) şiirin sesini kurar.',
-      ),
-      kart(
-        'Uyak sorusunda yol',
-        'Önce dize sonlarındaki ortak eki/sözcüğü (redif) at, kalan ses benzerliğini say: 1 ses yarım, 2 ses tam, 3+ zengin. "Gözlerim / sözlerim": -lerim redif, öz tam uyak.',
-        undefined,
-        { not: 'Redifi atmadan uyağa bakma; hataların çoğu ilk adım atlanınca oluyor.' },
+        'İmge zihinde yeni bir görüntü kurar',
+        '"Saçların bir yaz akşamı" dersen saçla akşamı ilk kez yan yana getirmiş olursun. Okuyanın zihninde yeni bir resim belirir. İmge, yani sözcüklerin alışılmadık birleşimiyle kurulan görüntü. Şiiri düzyazıdan ayıran asıl şey bu.',
       ),
     ], [
       soru('Redif, dize sonlarında görevi ve anlamı aynı olan ek ya da sözcüklerin tekrarıdır.', true, 'Uyaktan sonra gelir ve uyakla karıştırılmamalı.'),
@@ -154,12 +166,14 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     ]),
     konu('trk9-sanat', 'Söz Sanatları', [
       kart(
-        'Benzetme (teşbih)',
-        'Bir şeyi ortak yönü olan başka bir şeye benzetme. Dört ögesi vardır: benzeyen, kendisine benzetilen, benzetme yönü, benzetme edatı.',
+        'Benzetme iki şeyi ortak yönle bağlar',
+        '"Aslan gibi güçlü çocuk" dersin. Çocuğu aslana benzettin; ortak yön güç. Benzetme (teşbih), yani bir şeyi ortak yönü olan başka bir şeye benzetmek. Zayıf olanı güçlü olana benzetirsin: çocuk aslana, aslan çocuğa değil.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Benzetmenin ögeleri',
-        'İki temel öge benzeyen ile kendisine benzetilendir; ötekiler düşebilir. "Aslan gibi güçlü çocuk" dördünü de taşır.',
+        'Benzetmenin dört ögesi vardır',
+        '"Aslan gibi güçlü çocuk"ta dört parça var: benzeyen (çocuk), kendisine benzetilen (aslan), benzetme yönü (güçlü), benzetme edatı (gibi). Benzeyen ile benzetilen temel ögeler; yön ve edat düşebilir: "Aslan çocuk."',
         {
           tur: 'tablo',
           basliklar: ['Öge', 'Örnek'],
@@ -172,34 +186,48 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         },
       ),
       kart(
-        'İstiare',
-        'Benzetmenin iki temel ögesinden yalnız biri söylenirse istiare olur. "Aslanım geldi" derken benzeyen (kişi) söylenmemiştir.',
-      ),
-      kart(
-        'Açık ve kapalı istiare',
-        'Yalnız benzetilen söylenirse açık, yalnız benzeyen söylenip benzetilene ait bir özellik verilirse kapalı istiare olur.',
-      ),
-      kart(
-        'Kişileştirme',
-        'İnsana özgü nitelikleri başka varlıklara vermek: "Rüzgâr fısıldıyordu." Kişileştirme varsa kapalı istiare de vardır.',
-      ),
-      kart(
-        'Mecaz-ı mürsel',
-        'Benzetme amacı olmadan bir sözü başka bir sözün yerine kullanma: "Ankara açıklama yaptı" (hükûmet yerine şehir).',
-      ),
-      kart(
-        'Tezat ve tevriye',
-        'Tezat karşıt kavramları bir arada kullanmak; tevriye ise iki anlamlı bir sözü uzak anlamını kastederek söylemektir.',
-      ),
-      kart(
-        'Abartma ve konuşturma',
-        'Abartma (mübalağa) bir niteliği olduğundan çok göstermek; intak ise insan dışı varlıkları konuşturmaktır.',
-      ),
-      kart(
-        'Sanatı tanımada kısayol',
-        '"Gibi, kadar" varsa benzetme; benzeyen ya da benzetilenden yalnız biri varsa istiare; insan dışı varlık insan gibi davranıyorsa kişileştirme; parça-bütün, yer-insan ilişkisi varsa mecaz-ı mürsel.',
+        'Tek temel öge kalınca istiare olur',
+        '"Aslanım geldi" dersin; aslan var, çocuk yok. Yani benzetilen söylenmiş, benzeyen söylenmemiş. Temel ögelerden yalnız biri varsa buna istiare (eğretileme) denir. İki temel öge de varsa benzetme, biri yoksa istiare.',
         undefined,
-        { not: 'Kısayolu ezberleme, iki ögeyi say: benzeyen var mı, benzetilen var mı?' },
+        { not: '"Aslanım" gördüğünde sor: benzeyen söylenmiş mi, benzetilen mi? İkisi de varsa benzetme, biri varsa istiare.' },
+      ),
+      kart(
+        'Açık istiarede benzetilen söylenir',
+        '"Aslanım geldi": yalnız benzetilen (aslan) var, açık istiare. "Çocuk kükredi": yalnız benzeyen (çocuk) var, aslana ait bir özellik (kükremek) ona verilmiş, kapalı istiare. Benzetilen söylendiyse açık, benzeyen söylendiyse kapalı.',
+        {
+          tur: 'tablo',
+          basliklar: ['Tür', 'Söylenen', 'Örnek'],
+          satirlar: [
+            ['Açık', 'Benzetilen', 'Aslanım geldi'],
+            ['Kapalı', 'Benzeyen', 'Çocuk kükredi'],
+          ],
+        },
+      ),
+      kart(
+        'Kişileştirme: insan olmayan insan gibi',
+        '"Rüzgâr fısıldıyordu." Fısıldamak insana özgü; rüzgâra verilmiş. Kişileştirme (teşhis), yani insan dışı varlığa insan özelliği vermek. Rüzgâr insana benzetilmiş ama insan söylenmemiş; bu yüzden her kişileştirmede kapalı istiare de var.',
+      ),
+      kart(
+        'Mecaz-ı mürselde benzetme yoktur',
+        '"Ankara açıklama yaptı." Açıklamayı şehir değil hükûmet yaptı; şehir, içindeki kurumun yerine geçmiş. Benzetme yok, yalnız bir ilgi var: yer-insan, parça-bütün, iç-dış. Buna mecaz-ı mürsel (ad aktarması) denir. "Bardağı içti": aslında su.',
+      ),
+      kart(
+        'Tezat karşıt iki kavramı buluşturur',
+        '"Ağlarım hatıra geldikçe gülüştüklerimiz." Ağlamak ve gülmek aynı cümlede. Tezat, yani karşıt anlamlı iki kavramı bir arada kullanmak. Yalnızca zıt sözcük geçmesi yetmez; ikisi de aynı düşünceye bağlanmalı.',
+      ),
+      kart(
+        'Tevriye: iki anlam, uzak olanı kastet',
+        '"Beyaz gerdanında bir de ben gerek." "Ben" hem "vücuttaki nokta" hem "kişi" demek. Yakın anlam söylenmiş, uzak olan da kastedilmiş. Tevriye, yani iki anlamlı bir sözü uzak anlamını düşünerek kullanmak. İki anlam da cümleye uyar.',
+      ),
+      kart(
+        'Abartma olduğundan çok gösterir',
+        '"Bir ah çeksem dağı taşı eritir." Bir ah dağı eritmez; duygu büyütülmüş. Abartma (mübalağa), yani bir şeyi olduğundan çok ya da az gösterme. Sık hata: her büyük sayıyı abartma sanmak; gerçekte olamayacak bir şey olmalı.',
+        undefined,
+        { etiket: 'Sık hata' },
+      ),
+      kart(
+        'İntak: konuşan hayvan, konuşan eşya',
+        '"Karga dedi ki: Bu peynir benim." Karga konuşmuş. İntak (konuşturma), yani insan dışı bir varlığı konuşturmak. Konuşan varlık zaten insan gibi davranır; bu yüzden her intakta kişileştirme vardır. Ama her kişileştirmede intak yoktur.',
       ),
     ], [
       soru('Benzetmede benzeyen, kendisine benzetilen, benzetme yönü ve benzetme edatı bulunur.', true, 'Dördü de kullanılırsa tam benzetme olur.'),
@@ -212,6 +240,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       sikli('İki anlamlı sözü uzak anlamıyla kastetmek?', ['Tezat', 'Tevriye'], 1, 'Tezat karşıt kavramlar.'),
       sikli('İnsan dışı varlıkları konuşturmak?', ['İntak', 'Mübalağa'], 0, 'Mübalağa abartma.'),
       soru('"Ankara açıklama yaptı" cümlesinde benzetme amacı vardır.', false, 'Mecaz-ı mürsel: benzetme amacı yok.'),
+      soru('Tezatta karşıt anlamlı iki kavram bir arada kullanılır.', true, 'Ağlamak ile gülmek aynı cümlede.'),
     ], [
       {
         soru: '"Bütün sınıf ayağa kalktı" cümlesindeki sanat?',
@@ -226,24 +255,30 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     ]),
     konu('trk9-deneme', 'Deneme ve Düşünce Yazıları', [
       kart(
-        'Deneme',
-        'Yazarın bir konuda kendi düşüncelerini, kanıtlama kaygısı gütmeden, samimi bir dille anlattığı yazı. Kurucusu Montaigne.',
+        'Deneme yazarın kendiyle konuşmasıdır',
+        'Bir yazar "Yalnızlık iyi midir?" diye düşünüp aklından geçenleri yazıyor; kanıt getirmiyor, seni ikna etmeye çalışmıyor. Bu deneme: yazarın bir konuda kendi düşüncelerini samimi bir dille anlattığı yazı. Türün kurucusu Fransız Montaigne.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Makale',
-        'Bir düşünceyi kanıtlarla savunur. Nesnel dil kullanılır, kaynak gösterilir.',
+        'Makale düşünceyi kanıtla savunur',
+        'Aynı konuyu bir bilim insanı yazıyor: anket sonuçları, kaynaklar, rakamlar. "Bence" yok, "araştırmalara göre" var. Bu makale: bir düşünceyi kanıtlarla savunan yazı. Dili nesnel, yani kişisel duygudan arınmış; kaynak gösterilir.',
       ),
       kart(
-        'Fıkra (köşe yazısı)',
-        'Güncel bir konuyu kısa ve kişisel bir üslupla ele alır; kanıtlama zorunluluğu yoktur.',
+        'Fıkra güncel konuyu kısa ve kişisel yazar',
+        'Gazetenin köşesinde dünkü maç ya da zam hakkında kısa, kişisel bir yazı görürsün. Bu fıkra (köşe yazısı): güncel bir konuyu kısa ve kişisel üslupla ele alır, kanıt zorunlu değil. Güldürü fıkrasıyla karıştırma; bu bir gazete yazısı.',
       ),
       kart(
-        'Söyleşi ve eleştiri',
-        'Söyleşi karşısında biri varmış gibi yazılır. Eleştiri bir eserin değerini ölçütlerle değerlendirir.',
+        'Söyleşi seninle konuşur gibi yazılır',
+        '"Sen de fark etmişsindir, değil mi?" diye yazan bir yazar düşün. Sanki karşısında sen varsın. Söyleşi (sohbet), yani yazarın okurla konuşur gibi, sorular sorarak yazdığı yazı. Konu günlük, dil rahat.',
       ),
       kart(
-        'Nerede ayrışırlar?',
-        'Dört türü ayıran şey konusu değil, kanıt ve dil tercihi.',
+        'Eleştiri eseri ölçütlerle tartar',
+        'Bir yazar yeni bir romanı okuyup "kişiler inandırıcı, ama olay örgüsü dağınık" diye yazıyor. Bu eleştiri (tenkit): bir eserin iyi ve zayıf yanlarını ölçütlerle değerlendiren yazı. "Beğendim" demek eleştiri değil; gerekçe ister.',
+      ),
+      kart(
+        'Türü konudan değil kanıt ve dilden tanı',
+        '"Yalnızlık" konusu makalede de denemede de fıkrada da yazılabilir. Ayıran konu değil. Şunu sor: kanıt var mı? Dil nesnel mi, kişisel mi? İki cevap türü verir.',
         {
           tur: 'tablo',
           basliklar: ['Tür', 'Kanıt', 'Dil'],
@@ -254,11 +289,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
             ['Eleştiri', 'Ölçüt', 'Karma'],
           ],
         },
-        { not: 'Türü konudan değil kanıt ve dilden tanı; aynı konu dört türde yazılabilir.' },
+        { not: 'Türü soran soruda konuya bakma; "kanıt var mı, dil kişisel mi" diye iki soru sor, tür ortaya çıkar.' },
       ),
       kart(
-        'Türk edebiyatında',
-        'Deneme ve fıkra Tanzimat’la gazeteyle birlikte gelişti; Nurullah Ataç ve Suut Kemal Yetkin deneme türünün öne çıkan adlarıdır.',
+        'Deneme bize gazeteyle geldi',
+        'Tanzimat\'ta (1839 sonrası) gazete çıkmaya başladı; deneme ve fıkra o sayfalarda doğdu. Türk denemesinin öne çıkan adları Nurullah Ataç ve Suut Kemal Yetkin. Sorulunca aklına önce Ataç gelsin.',
       ),
     ], [
       soru('Denemede yazar düşüncesini kanıtlama kaygısı gütmez.', true, 'Kendi kendine konuşur gibi yazar; okuru ikna etme zorunluluğu yok.'),
@@ -268,6 +303,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       sikli('Denemenin kurucusu kimdir?', ['Ataç', 'Montaigne'], 1, 'Nurullah Ataç Türk edebiyatında.'),
       sikli('Güncel bir konuyu kısa ve kişisel üslupla ele alan?', ['Makale', 'Fıkra'], 1, 'Köşe yazısı.'),
       soru('Eleştiri bir eseri ölçütlerle değerlendirir.', true, 'Söyleşi karşısında biri varmış gibi.'),
+      sikli('Bir eserin iyi ve zayıf yanlarını gerekçeyle tartan yazı?', ['Eleştiri', 'Söyleşi'], 0, 'Söyleşi okurla konuşur gibi yazılır.'),
     ], [
       {
         soru: 'Kaynak gösterip kanıtla savunan düşünce yazısı?',
