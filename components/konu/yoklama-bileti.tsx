@@ -49,10 +49,16 @@ import { Rabi } from '@/components/maskot/rabi'
  * "Bu destede öğrendiklerin" alttan açılan bir sayfa, biletin içinde liste
  * değil: on altı kartlık konuda liste bileti ekranın dışına taşırırdı.
  *
- * **"Şimdi değil" bir düğme değil bir çıkış.** Deste zaten okundu ve kaydı
+ * **"Haritaya dön" bir düğme değil bir çıkış.** Deste zaten okundu ve kaydı
  * yazıldı; yoklamayı vermemek konuyu okunmamış yapmıyor. İki dolu düğme yan
  * yana dursaydı hangisinin ileri götürdüğü okunmazdı — kurulumdaki "Şimdilik
- * atla" kuralı.
+ * atla" kuralı. Yazı bir süre "Şimdi değil"di; nereye gidildiğini
+ * söylemiyordu ve kullanıcı haritaya değil ana sayfaya atılacağını sanıyordu.
+ *
+ * **Çıkış perdeyle.** "Haritaya dön" denince bilet tek karede sökülmüyor;
+ * kapanış ekranındaki perdenin aynısı (`kapanis-cikar`, yukarıdan aşağı
+ * kırpılarak) burada da çekiliyor. Bayrak (`cikiyor`) üst bileşenden geliyor
+ * — sökme kararını o veriyor ve süreyi o bekliyor (`SoruSahnesi`).
  *
  * **Üç efekt, üçü de damgaya bağlı** (kullanıcı seçti): koçandaki sayılar
  * sıfırdan sayarak doluyor (`useSayac`, halkayla aynı anda), damga basılınca
@@ -70,12 +76,15 @@ export function YoklamaBileti({
   temaAdi,
   onBasla,
   onVazgec,
+  cikiyor,
 }: {
   konu: Konu
   dersAdi: string
   temaAdi: string
   onBasla: () => void
   onVazgec: () => void
+  /** Perde çekiliyor; bkz. yukarıdaki yorum. */
+  cikiyor?: boolean
 }) {
   const [liste, setListe] = useState(false)
   useGeriKatmani(liste, () => setListe(false))
@@ -104,7 +113,7 @@ export function YoklamaBileti({
   }, [sakin])
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-background">
+    <div className={cn('fixed inset-0 z-50 flex flex-col bg-background', cikiyor && 'kapanis-cikar')}>
       {/* Işıma maskotun arkasında, markanın sıcak tonunda: düz zeminde
           tavşan havada duruyordu. */}
       <div
@@ -305,7 +314,7 @@ export function YoklamaBileti({
           onClick={onVazgec}
           className="mt-1.5 shrink-0 px-4 py-3 text-[13.5px] font-extrabold text-muted-foreground transition active:opacity-70"
         >
-          Şimdi değil
+          Haritaya dön
         </button>
       </div>
 

@@ -62,7 +62,7 @@ export type SahneSonucu = {
    *
    * Yarıda çıkılan yoklama sayı **yazdırmıyor** (`konu-haritasi.tsx`):
    * destenin kendi kuralının aynısı — tamamlanma sona gelmekle kazanılıyor.
-   * Bayrak olmadan, girişte "Şimdi değil" diyen kullanıcının kaydına hiç
+   * Bayrak olmadan, bilette "Haritaya dön" diyen kullanıcının kaydına hiç
    * verilmemiş bir yoklamanın "0 doğru"su yazılıyordu.
    */
   bitti: boolean
@@ -90,7 +90,8 @@ export function SoruSahnesi({
   /**
    * Kapanış perdesi çekiliyor mu. `onKapat`tan sonra üst bileşen sahneyi
    * hemen sökmüyor, bu bayrakla perdeyi çektiriyor ve `onCikisBitti`
-   * gelince söküyor. Perde yalnızca kapanış ekranından çekiliyor: soruların
+   * gelince söküyor. Perde iki uçtan çekiliyor — bilette "Haritaya dön" ve
+   * kapanış ekranı; ikisi de sahnenin düzenli bir kapısı. Soruların
    * ortasında ✕ ile çıkış anında kapanıyor — yarıda bırakılan bir yoklamanın
    * arkasından perde çekmek, bitmiş gibi göstermek olurdu.
    */
@@ -209,6 +210,7 @@ export function SoruSahnesi({
           setBasladi(true)
         }}
         onVazgec={() => onKapat({ dogru: 0, yanlis: 0, bitti: false })}
+        cikiyor={cikiyor}
       />
     )
   }
