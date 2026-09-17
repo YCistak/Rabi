@@ -81,9 +81,14 @@ import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
 import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
 import { KonuHaritasiEkrani } from '@/components/ekranlar/konu-haritasi'
 import { YapilacaklarEkrani } from '@/components/ekranlar/yapilacaklar'
-import { HaftalikOzetEkrani } from '@/components/ekranlar/haftalik-ozet'
-import { HAFTALIK_OZET_ACIK } from '@/lib/beta'
-import { bekleyenOzetDonemi, haftalikOzet } from '@/lib/ozet'
+import { AylikOzetEkrani } from '@/components/ekranlar/aylik-ozet'
+import {
+  arsivdeEksikAylar,
+  aylikOzet,
+  bekleyenOzetAyi,
+  sonrakiOzetGunu,
+  type AylikOzetArsivi,
+} from '@/lib/ozet'
 import { RozetBildirimi } from '@/components/rozet-bildirimi'
 
 /** Rozet kontrolünün, veri durulana kadar beklediği süre (ms). */
@@ -174,18 +179,23 @@ export function AppShell() {
   const [oyunGecmisi, setOyunGecmisi] = useYerelDepo<OyunTurKaydi[]>(ANAHTARLAR.oyunGecmisi, [])
   const [soruGecmisi, setSoruGecmisi] = useYerelDepo<SoruGecmisi>(ANAHTARLAR.soruGecmisi, {})
   /*
-    Haftalık özetin takvimi.
+    Aylık özetin takvimi.
 
-    `kurulumTarihi` uygulamanın ilk açıldığı gün, `ozetGorulen` izlenmiş
-    dönemlerin listesi. İkisi ayrı anahtarda: biri bir kez yazılıp bir daha
-    değişmiyor, öteki her özette büyüyor.
+    `kurulumTarihi` uygulamanın ilk açıldığı gün (arşiv oradan başlıyor),
+    `ozetGorulen` izlenmiş ayların listesi, `aylikOzetler` kapanmış ayların
+    hesaplanmış özetleri. Üçü ayrı anahtarda: biri bir kez yazılıp bir daha
+    değişmiyor, ötekiler her ay büyüyor.
   */
   const [kurulumTarihi, setKurulumTarihi, kurulumTarihiHazir] = useYerelDepo<string | null>(
     ANAHTARLAR.kurulumTarihi,
     null,
   )
   const [ozetGorulen, setOzetGorulen] = useYerelDepo<string[]>(ANAHTARLAR.ozetGorulen, [])
-  /** Katmanda açık olan dönemin başlangıcı; kapalıyken null. */
+  const [aylikOzetler, setAylikOzetler, aylikOzetlerHazir] = useYerelDepo<AylikOzetArsivi>(
+    ANAHTARLAR.aylikOzetler,
+    {},
+  )
+  /** Katmanda açık olan ay; kapalıyken null. */
   const [ozetAcik, setOzetAcik] = useState<string | null>(null)
   const [oyunBankasi, setOyunBankasi] = useYerelDepo<BankaKaydi[]>(ANAHTARLAR.oyunBankasi, [])
   /**
@@ -324,80 +334,103 @@ export function AppShell() {
     izlenmemiş bir dönem varken duruyor.
   */
 
-  // Kurulum günü bir kez damgalanıyor: özetin takvimi buna yaslı ve sonradan
-  // değişirse kullanıcının haftası ortadan kayardı.
+  // Kurulum günü bir kez damgalanıyor: arşiv oradan başlıyor.
   useEffect(() => {
     if (!kurulumTarihiHazir || kurulumTarihi) return
     setKurulumTarihi(bugun())
   }, [kurulumTarihiHazir, kurulumTarihi, setKurulumTarihi])
 
-  /** İzlenmeyi bekleyen dönemin başlangıcı; yoksa null. */
-  const bekleyenDonem = useMemo(() => {
-    if (!kurulumTarihi) return null
-    const donemBasi = bekleyenOzetDonemi(kurulumTarihi, bugun())
-    if (!donemBasi || ozetGorulen.includes(donemBasi)) return null
-    return donemBasi
-  }, [kurulumTarihi, ozetGorulen])
+  /**
+   * Bir ayın özetini ham kayıtlardan hesaplar.
+   *
+   * Tek yerden: hem katmanın açtığı ay hem arşive yazılan aylar aynı hesaptan
+   * geçiyor, yoksa arşivdeki sayı ekrandakinden ayrışırdı.
+   */
+  const ayiHesapla = useCallback(
+    (ay: string) =>
+      aylikOzet({
+        ay,
+        gunlukKayitlar,
+        gunlukHedef: ayarlar.gunlukHedef,
+        pomodoroGecmis,
+        oyunGecmisi,
+        denemeler,
+        sablonlar,
+        konuIlerleme,
+      }),
+    [gunlukKayitlar, ayarlar.gunlukHedef, pomodoroGecmis, oyunGecmisi, denemeler, sablonlar, konuIlerleme],
+  )
 
   /*
-    Hesabın dayandığı dönem: katman açıksa onunki, değilse bekleyen.
-
-    İkisi **tek** bir memo'da: dönem açılır açılmaz "izlendi" işaretleniyor ve
-    `bekleyenDonem` o anda `null`a düşüyor — hesap yalnızca ona bağlı olsaydı
-    katman açıldığı karede boşalırdı. Açılış anında `ozetAcik` aynı dönemi
-    tuttuğu için memo yeniden koşmuyor, yani hesap hafta başına bir kez
-    yapılıyor.
+    Arşiv: kapanmış her ay, görülsün görülmemiş olsun, bir kez hesaplanıp
+    saklanıyor. Hesap ay kapandıktan sonra yapıldığı için o ayın kayıtları
+    artık değişmiyor; bir kez yazılan kayıt bir daha ele alınmıyor. Veri
+    durulmadan (ilk açılışta depo okunmadan) yazılsaydı boş bir ay arşive
+    geçer ve bir daha düzelmezdi — o yüzden hazır bayrakları bekleniyor.
   */
-  const ozetDonemi = ozetAcik ?? bekleyenDonem
-  const ozet = useMemo(() => {
-    if (!ozetDonemi) return null
-    return haftalikOzet({
-      haftaBasiIso: ozetDonemi,
-      gunlukKayitlar,
-      gunlukHedef: ayarlar.gunlukHedef,
-      devamsizlik,
-      pomodoroGecmis,
-      oyunGecmisi,
-      yanlisSorular,
-      denemeler,
-      sablonlar,
+  useEffect(() => {
+    if (!aylikOzetlerHazir || !kurulumTarihiHazir || !kurulumTarihi) return
+    if (!gunlukHazir || !denemelerHazir || !oyunlarHazir) return
+    const eksikler = arsivdeEksikAylar(aylikOzetler, kurulumTarihi, bugun())
+    if (eksikler.length === 0) return
+    setAylikOzetler((onceki) => {
+      const yeni = { ...onceki }
+      for (const ay of eksikler) if (!yeni[ay]) yeni[ay] = ayiHesapla(ay)
+      return yeni
     })
   }, [
-    ozetDonemi,
-    gunlukKayitlar,
-    ayarlar.gunlukHedef,
-    devamsizlik,
-    pomodoroGecmis,
-    oyunGecmisi,
-    yanlisSorular,
-    denemeler,
-    sablonlar,
+    aylikOzetlerHazir,
+    kurulumTarihiHazir,
+    kurulumTarihi,
+    gunlukHazir,
+    denemelerHazir,
+    oyunlarHazir,
+    aylikOzetler,
+    setAylikOzetler,
+    ayiHesapla,
   ])
 
+  /** Bugün izlenmeyi bekleyen ay; bugün ayın 1'i değilse ya da izlendiyse null. */
+  const bekleyenAy = useMemo(() => {
+    const ay = bekleyenOzetAyi(bugun())
+    if (!ay || ozetGorulen.includes(ay)) return null
+    return ay
+  }, [ozetGorulen])
+
   /*
-    Dönem "izlendi" sayılıyor — kapatıldığında değil, **açıldığında**.
+    Hesabın dayandığı ay: katman açıksa onunki, değilse bekleyen.
 
-    Kapanışta işaretlenseydi uygulamayı özet açıkken kapatan kullanıcı aynı
-    özeti bir dahaki açılışta yeniden bulurdu; hikâye bir kez izleniyor.
+    İkisi **tek** bir memo'da: ay açılır açılmaz "izlendi" işaretleniyor ve
+    `bekleyenAy` o anda `null`a düşüyor — hesap yalnızca ona bağlı olsaydı
+    katman açıldığı karede boşalırdı. Arşivde varsa oradan okunuyor; ham
+    kayıtlar ay kapandıktan sonra değişmediği için ikisi aynı sayı.
   */
-  /**
-   * Davet kartı görünsün mü.
-   *
-   * Boş dönemde **görünmüyor**: hiç soru, hiç pomodoro, hiç deneme girilmemiş
-   * bir haftanın on kartı da boş çıkıyor ve o hikâye kullanıcıya kendi
-   * yapmadıklarını on kez tekrar ediyor. O hafta özet doğmuyor, gelecek hafta
-   * yeniden bakılıyor.
-   */
-  const ozetHazir =
-    HAFTALIK_OZET_ACIK && bekleyenDonem !== null && ozet !== null && !ozet.bosMu
+  const ozetAyi = ozetAcik ?? bekleyenAy
+  const ozet = useMemo(() => {
+    if (!ozetAyi) return null
+    return aylikOzetler[ozetAyi] ?? ayiHesapla(ozetAyi)
+  }, [ozetAyi, aylikOzetler, ayiHesapla])
 
+  /**
+   * Davet kartının hâli.
+   *
+   * Kart ana sayfada hep var: özet bekliyorsa **en üstte ve renkli**, yoksa
+   * **en altta ve pasif**, üstünde bir sonraki açılış günü. Boş ayda (hiç
+   * kayıt yok) kart aktif olmuyor — on sayfası da boş bir hikâye, kullanıcıya
+   * kendi yapmadıklarını on kez tekrar eder.
+   */
+  const ozetHazir = bekleyenAy !== null && ozet !== null && !ozet.bosMu
+  const sonrakiOzet = sonrakiOzetGunu(bugun())
+
+  // Ay "izlendi" sayılıyor — kapatıldığında değil, **açıldığında**: özet
+  // açıkken uygulamayı kapatan kullanıcı aynı hikâyeyi yeniden bulmasın.
   const ozetiAc = useCallback(() => {
-    if (!bekleyenDonem) return
-    setOzetAcik(bekleyenDonem)
+    if (!bekleyenAy) return
+    setOzetAcik(bekleyenAy)
     setOzetGorulen((onceki) =>
-      onceki.includes(bekleyenDonem) ? onceki : [...onceki, bekleyenDonem].slice(-52),
+      onceki.includes(bekleyenAy) ? onceki : [...onceki, bekleyenAy].slice(-36),
     )
-  }, [bekleyenDonem, setOzetGorulen])
+  }, [bekleyenAy, setOzetGorulen])
 
   // Hedef kartı ve ana sayfa, en yeni denemelerden çıkan tahmini gösteriyor.
   const tahmin = guncelTahmin(denemeler, sablonlar, okulYillari, ayarlar.puanTuru, ayarlar.elleObp)
@@ -853,6 +886,7 @@ export function AppShell() {
                 hedef={hedef}
                 guncelSiralama={guncelSiralama}
                 ozetHazir={ozetHazir}
+                sonrakiOzet={sonrakiOzet}
                 onOzetAc={ozetiAc}
                 sonAraclar={sonAraclar}
                 sonOyunlar={sonOyunlar}
@@ -930,6 +964,7 @@ export function AppShell() {
                   notlar,
                   konuIlerleme,
                   bilinmeyenKartlar,
+                  aylikOzetler,
                   pomodoroGecmis,
                   pomodoroAyar,
                   hedef,
@@ -961,7 +996,7 @@ export function AppShell() {
       {/* Özet katmanı açılış ekranının **altında**: uygulama açılırken tavşan
           yuvasına inmeli, üstüne kocaman bir hikâye katmanı düşmemeli. */}
       {ozetAcik && ozet && (
-        <HaftalikOzetEkrani
+        <AylikOzetEkrani
           ozet={ozet}
           // Mini oyun müziği anahtarı kalktı; özetin sesi de artık tek ses
           // tercihine bakıyor.

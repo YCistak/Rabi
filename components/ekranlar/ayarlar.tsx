@@ -23,6 +23,7 @@ import { Alan, Anahtar, Buton, Cip, Etiket, Not, Onay } from '@/components/ui'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { SINIF_SECENEKLERI, egitimYili, mezunMu, sinifAdi } from '@/lib/hesap'
 import type { NotKagidi } from '@/lib/yapilacaklar'
+import type { AylikOzetArsivi } from '@/lib/ozet'
 import {
   HEDEF_ADIMI,
   HEDEF_EN_AZ,
@@ -137,6 +138,8 @@ export function AyarlarEkrani({
     /** Konu Anlatımı kayıtları — okunan konular ve bilinmeyen kartlar. */
     konuIlerleme?: KonuIlerlemeleri
     bilinmeyenKartlar?: BilinmeyenKart[]
+    /** Aylık özet arşivi — yıllık özetin dayanağı. */
+    aylikOzetler?: AylikOzetArsivi
     /** Yapılacaklar tahtası — kâğıdın konumu da veri. */
     notlar?: NotKagidi[]
     pomodoroGecmis: PomodoroSeans[]
