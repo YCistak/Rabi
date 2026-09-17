@@ -260,7 +260,7 @@ kareye dönüyordu.
 
 Karar kullanıcının: açılış animasyonu her koşulda oynuyor. Açılış ekranı o
 yüzden `@media (prefers-reduced-motion: reduce)` bloğunda **yok**; uygulamanın
-geri kalanı (haftalık özet, harita, kurulum sonrası geçiş) tercihi izlemeye
+geri kalanı (aylık özet, harita, kurulum sonrası geçiş) tercihi izlemeye
 devam ediyor. Bu istisnayı geri almadan önce yukarıdaki sebebe bak.
 
 ### Kurulum soru sormayan iki ekranla açılıyor
@@ -521,7 +521,7 @@ Mini oyunların arka plan müziği **kaldırıldı**: `mod-muzigi.ts`,
 Ayarlar'daki "Mini oyun müziği" anahtarı da gitti. Soru okurken arkada müzik
 dikkati dağıtıyordu ve kullanıcılar kapatıyordu. Efektler (`oyun-sesi.ts`)
 duruyor: doğru/yanlış geri bildirimi müzik değil, "Mini oyun sesleri" anahtarı
-onları yönetiyor. Haftalık özetin sesi de artık o anahtara bakıyor.
+onları yönetiyor. Aylık özetin sesi de artık o anahtara bakıyor.
 
 `Ayarlar.oyunMuzigi` ve `Ayarlar.oyunMuzikTuru` kayıtta ve yedekte duruyor
 ama hiçbir yerden okunmuyor; alanları silmek eski yedekleri geçersiz kılardı
@@ -785,108 +785,94 @@ galeride görüntüsü olmayan bir kart kalırdı.
 Katman kayıttan sonra kapanıyor: asıl iş deneme formuna dönmek, art arda çekim
 isteyen kullanıcı düğmeye yeniden basıyor.
 
-## Haftalık özet kurulum gününe yaslı
+## Aylık özet ayın 1'inde, yalnızca o gün
 
-> **Kapalı betada gizli** (`HAFTALIK_OZET_ACIK`, `lib/beta.ts`). Bölüm çalışır
-> durumda ve kodu yerinde; davet kartı çizilmiyor, dolayısıyla hikâyeye ulaşan
-> bir yol yok. Kapalıyken dönem "izlendi" diye işaretlenmiyor — bayrak
-> açıldığında bekleyen dönem hâlâ orada duruyor. Aşağıdaki kurallar bayrak
-> açıldığında geçerli olan kurallar.
+Özet (`components/ekranlar/aylik-ozet.tsx`, hesabı `lib/ozet.ts`, afişi
+`lib/ozet-gorsel.ts`, tasarımı `tasarim/aylik-ozet.dc.html`) Araçlar
+listesinde **yok** ve olmayacak: aranıp açılan bir araç değil, ayda bir
+kendiliğinden gelen bir kapanış. Bir süre **haftalıktı** ve kurulum gününe
+yaslı yedi günlük dönemlerle geliyordu; aylığa çevrildi — haftada bir gelen
+hikâye kendini tekrar ediyordu ve yedi günün sayısı tek bir kötü günle
+bozuluyordu. Ay takvim ayı, kuruluma yaslanmıyor: "Eylül özeti" herkes için
+aynı şey ve ileride yıllık özet bu kayıtları ay ay toplayacak.
 
-Özet (`components/ekranlar/haftalik-ozet.tsx`, hesabı `lib/ozet.ts`, afişi
-`lib/ozet-gorsel.ts`) Araçlar listesinde **yok** ve olmayacak: aranıp açılan bir
-araç değil, haftada bir kendiliğinden gelen bir kapanış. Kutucuk olarak konsaydı
-son kullanılanlarla birlikte sıraya girer ve hafta ortasında açıldığında yarım
-bir haftanın sayılarını gösterirdi.
+### Tek gün açık, kaçıran kaçırıyor
 
-Tek girişi ana sayfanın **en üstündeki** davet kartı (`OzetDaveti`). Yeri
-tesadüf değil: özet haftada bir gün doğuyor ve o gün görülmezse bir hafta daha
-bekliyor; selamlamanın altına ya da Araçlar şeridinin arasına konsaydı
-kaydırılıp geçilirdi. Kapatma düğmesi de yok — kart zaten kendiliğinden
-kalkıyor, ikinci bir kapatma yolu hikâyeyi hiç görmeden özeti tüketmenin yolu
-olurdu.
+Ağustos'un özeti **yalnızca 1 Eylül'de** görülüyor (`bekleyenOzetAyi`); 2
+Eylül'de kart pasife dönüyor ve o ay bir daha açılmıyor. Kullanıcının
+kararı: hikâye bir kapanış ânı, haftalarca duran bir kart değil. Ana
+sayfadaki kart bu yüzden **hep var**, iki hâlde:
 
-### Hafta pazartesiden değil, kurulumdan başlıyor
+- **Aktif** — özet bekliyor: sayfanın en üstünde, renkli (`OzetDaveti`).
+  Selamlamanın altına konsaydı görülmeden kaydırılıp geçilirdi; o gün
+  kaçırılınca telafisi yok.
+- **Pasif** — beklemiyor: sayfanın en altında, gri, üstünde bir sonraki
+  açılış günü ("1 Ekim'de açılır", `OzetBekliyor`). Kart ortada hiç
+  görünmeseydi ilk çıktığında nereden geldiği anlaşılmazdı.
 
-Özet eskiden takvim haftasına (pazartesi–pazar) yaslıydı ve pazar günü
-doğuyordu. Çarşamba günü uygulamayı kuran öğrenci ilk özetini dört gün sonra ve
-yalnızca dört günlük veriyle görüyordu — "haftalık" demeyen bir haftalık özet.
+Kapatma düğmesi yok — kart zaten gün dönünce kalkıyor.
 
-Artık dönem `rabi-kurulum-tarihi`ne yaslı: ilk özet kurulumdan **yedi gün
-sonra** doğuyor, sonra her hafta aynı gün yenileniyor (`bekleyenOzetDonemi`).
-`haftaAraligi` hâlâ duruyor ama yalnızca takvim haftası isteyen yerler için;
-özetin kendisi `donem()` kullanıyor ve pazartesiye **çekmiyor**. Çubukların gün
-adları da bu yüzden kullanıcıdan kullanıcıya farklı başlıyor (ÇAR, PER, …).
+### Arşiv silinmiyor
 
-Kurulum günü bir kez damgalanıyor ve yedeğe **girmiyor**: yedeği yeni telefona
-yükleyen kullanıcı özetini o cihazdaki kendi gününde görmeli, eski cihazın
-kurulum gününde değil.
+Kapanmış her ayın özeti, görülsün görülmesin, bir kez hesaplanıp
+`rabi-aylik-ozetler` altında saklanıyor (`AylikOzetArsivi`,
+`arsivdeEksikAylar`). Ekranda yalnızca bir gün duran hikâyenin sayıları
+kalıcı: ham kayıtlar zamanla budanıyor (çözülen yanlış sorular düşüyor, oyun
+geçmişi kısalıyor) ve ileride yıllık özetin dayanacağı tek yer burası.
+Arşiv **yedeğe giriyor** ve geri yüklemede cihazdakiyle birleştiriliyor,
+üstüne yazılmıyor. Kayıt ay kapandıktan sonra yazıldığı için bir daha ele
+alınmıyor; hesap veri depodan okunmadan yazılmasın diye hazır bayrakları
+bekleniyor — boş bir ay arşive geçseydi bir daha düzelmezdi.
 
-### Veri olmayan kart üretilmiyor
+### Veri olmayan sayfa üretilmiyor
 
-Kart sayısı sabit değil. Kapak, soru hedefi ve kapanış her zaman var; pomodoro,
-mini oyun, banka, deneme ve ders kartları yalnızca o hafta veri varsa
-üretiliyor. "Bu hafta deneme yok" diyen bir kart, beş saniye boyunca hiçbir şey
-söylemeyen bir ekran. Üstteki şeridin bölme sayısı da kart sayısından geliyor,
-yani şerit gerçekten kaç kart olduğunu gösteriyor.
+Sayfa sayısı sabit değil. Kapak ve kapanış her zaman var; konu, soru, deneme,
+pomodoro, oyun ve ders sayfaları yalnızca o ay veri varsa üretiliyor. Üstteki
+şeridin dilim sayısı da sayfa sayısından geliyor. Aynı kuralın büyüğü: hiç
+veri olmayan ayda (`bosMu`) kart aktif olmuyor.
 
-Aynı kuralın büyüğü: hiç veri olmayan haftada (`bosMu`) davet kartı da
-görünmüyor. On kartı da boş bir hikâye, kullanıcıya kendi yapmadıklarını on kez
-tekrar ediyor.
+Sayfalar **kendiliğinden ilerlemiyor**, dokunarak çevriliyor (tasarım "SAĞA
+DOKUN →" diyor). Haftalık özet zamanlayıcıyla akıyordu; okunacak sayı
+çoğalınca beş saniye ya kısa ya uzun geliyordu.
 
-Seri ve devamsızlık kartları kaldırıldı — sıra kapak → soru hedefi → pomodoro →
-mini oyunlar → yanlış bankası → deneme netleri → 3. ders → 2. ders → haftanın
-dersi → kapanış. `HaftalikOzet` alanları duruyor (afiş ve `bosMu` kullanıyor),
-yalnızca kartları gitti.
+### Ay açılınca izlendi sayılıyor
 
-### Dönem açılınca izlendi sayılıyor
-
-`ozetGorulen` dönem başlarının listesi ve işaret katman **açılırken** konuyor,
-kapanırken değil: kapanışta işaretlenseydi uygulamayı özet açıkken kapatan
-kullanıcı aynı hikâyeyi bir dahaki açılışta yeniden bulurdu. Bu yüzden
-`AppShell` açık dönemi ayrı bir state'te (`ozetAcik`) tutuyor ve hesap
-`ozetAcik ?? bekleyenDonem` üstünden yapılıyor — yalnızca `bekleyenDonem`e
-bağlı olsaydı katman açıldığı karede boşalırdı.
+`ozetGorulen` ay anahtarlarının ('YYYY-AA') listesi ve işaret katman
+**açılırken** konuyor, kapanırken değil: kapanışta işaretlenseydi uygulamayı
+özet açıkken kapatan kullanıcı aynı hikâyeyi bir dahaki açılışta yeniden
+bulurdu. `AppShell` açık ayı ayrı bir state'te (`ozetAcik`) tutuyor ve hesap
+`ozetAcik ?? bekleyenAy` üstünden yapılıyor — yalnızca `bekleyenAy`e bağlı
+olsaydı katman açıldığı karede boşalırdı.
 
 ### Renkler tema değişkenlerinden gelmiyor
 
-Ekran uygulamanın kırık beyaz zemininden tümüyle kopuk, kendi koyu/amber
-paletinde duruyor ve renkler bileşenin içinde yazılı. Sebep paylaşılan görsel:
-afiş tuvale çiziliyor ve tuval `var(--primary)` metnini çözemiyor. Aynı renkler
-`ozet-gorsel.ts` içinde de duruyor (`GORSEL_RENKLERI`); ikisi **birlikte**
-değişmeli, yoksa ekranda gördüğü kartı paylaşan kullanıcı başka renkte bir
-görsel alıyor.
+Ekran kâğıt zeminli (krem, defter çizgili, çift amber çerçeve) ve renkler
+bileşenin içinde yazılı. Sebep paylaşılan görsel: afiş tuvale çiziliyor ve
+tuval `var(--primary)` metnini çözemiyor. Aynı renkler `ozet-gorsel.ts`
+içinde de duruyor; ikisi **birlikte** değişmeli. Tek koyu sayfa ayın dersi
+(kızıl zemin, altın vurgu): geri sayımın sonu, ötekilerden ayrılmalı.
 
-Kart başına ayrı degrade de yok: üç zemin dönüşümlü kullanılıyor (koyu radial,
-amber, kızıl). On kartın onunda ayrı renk, hikâyeyi bir renk geçidine
-çeviriyordu.
+Kapaktaki ay adı **Manrope** (`font-marka`): açılış ekranındaki "RABİ" ile
+aynı gerekçe — tasarım o başlığı 66 pikselde Manrope ile çizdi. Üçüncü bir
+yerde kullanmadan önce yukarıdaki yazı tipi istisnasına bak.
 
-Punto ve kalınlıklar Tailwind sınıfı değil `yz()` yardımcısıyla satır içi. CSS'in
-`font` kısayolu kullanılamıyor: aile adı zorunlu ve oraya `inherit` yazmak
-geçersiz bir bildirim üretiyor, tarayıcı satırın tamamını atıyor. Ölçek adımları
-da yetmiyor — 132 piksellik "1" ile 88 piksellik süre aynı boya iner.
+Punto ve kalınlıklar Tailwind sınıfı değil `yz()` yardımcısıyla satır içi.
+CSS'in `font` kısayolu kullanılamıyor: aile adı zorunlu ve oraya `inherit`
+yazmak geçersiz bir bildirim üretiyor, tarayıcı satırın tamamını atıyor.
 
 ### Afişte harf aralığı elle çiziliyor
 
-Paylaşım afişi 1080×1920 ve tasarımın büyük harfli etiketlerinin hepsi aralıklı.
-Tuvalin `letterSpacing`i her WebView sürümünde yok, o yüzden `aralikliYaz`
-harfleri tek tek çiziyor; kutuya sığdırma da `harfAraliginaGore` ile ölçülüyor.
-`measureText` ile ölçülseydi etiketler aralıksız sığar, aralıklı taşardı — bir
-kez öyle oldu.
-
-Etiket önce **küçülüyor**, sonra kısalıyor: "EN YÜKSEK NET · 2 DENEME"
-kesildiğinde geriye kutunun ne anlattığını söylemeyen bir baş kalıyordu.
-
-Zeminin radyal degradesi elips (`120% 60%`), tuvalin radyal geçişi ise yalnızca
-daire çizebiliyor; elips dikey ölçekle kuruluyor. Düz daire kullanılsaydı geçiş
-erken kapanır, afişin üst yarısı olduğundan koyu çıkardı.
+Paylaşım afişi 1080×1920 ve büyük harfli etiketlerin hepsi aralıklı. Tuvalin
+`letterSpacing`i her WebView sürümünde yok, o yüzden `aralikliYaz` harfleri
+tek tek çiziyor; kutuya sığdırma da `harfAraliginaGore` ile ölçülüyor.
+Etiket önce **küçülüyor**, sonra kısalıyor: kesilen etiketten geriye kutunun
+ne anlattığını söylemeyen bir baş kalıyordu.
 
 ### Oyun kaydı yanlışı da tutuyor
 
-`OyunTurKaydi.yanlis` ve `hatasiz` özet için eklendi (isabet oranı ve hatasız
-tur sayısı doğru sayısından türetilemiyor) ve **isteğe bağlı**: eski kayıtlarda
-yoklar ve isabet hesabına hiç girmiyorlar. Sıfır saymak, hatasız oynanmış eski
-turları %100 isabetli gösterirdi.
+`OyunTurKaydi.yanlis` ve `hatasiz` **isteğe bağlı**: eski kayıtlarda yoklar.
+Aylık özet oyun sorusunu doğru + yanlış diye sayıyor; yanlışı olmayan eski
+turda yalnızca doğru sayılıyor — uydurma bir yanlış eklemek sayıyı şişirirdi.
 
 ## Yasal metinler tek yerde — GitHub Pages'te
 

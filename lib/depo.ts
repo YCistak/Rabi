@@ -31,6 +31,7 @@ import { dakikayiKirp, saatiKirp } from './hatirlatma'
 import { yeniId } from './utils'
 import { notlariNormalize, type NotKagidi } from './yapilacaklar'
 import type { BilinmeyenKart, KonuIlerlemeleri } from './konu/ilerleme'
+import type { AylikOzetArsivi } from './ozet'
 
 export const ANAHTARLAR = {
   denemeler: 'rabi-denemeler',
@@ -68,18 +69,27 @@ export const ANAHTARLAR = {
    * kaybetmemeli.
    */
   konuSecimi: 'rabi-konu-secimi',
-  /** Haftalık özetin hangi dönemlerinin izlendiği — dönem başı tarihlerinin listesi. */
+  /**
+   * Aylık özetin hangi aylarının izlendiği — 'YYYY-AA' listesi.
+   *
+   * Anahtar haftalık dönemden kalma; eski listedeki 'YYYY-AA-GG' değerleri
+   * hiçbir aya eşleşmediği için zararsız, temizlenmesi gerekmiyor.
+   */
   ozetGorulen: 'rabi-ozet-gorulen',
+  /**
+   * Kapanmış ayların hesaplanmış özetleri, ay anahtarına göre.
+   *
+   * Özet ekranda **yalnızca ayın 1'inde** görülüyor ama hesabı silinmiyor:
+   * ham kayıtlar zamanla budanıyor (yanlış sorular çözülünce düşüyor, oyun
+   * geçmişi kısalıyor) ve ileride yıllık özetin dayanacağı tek yer burası.
+   * Görülmeyen ay da yazılıyor. Yedeğe giriyor.
+   */
+  aylikOzetler: 'rabi-aylik-ozetler',
   /**
    * Uygulamanın ilk açıldığı gün, 'YYYY-AA-GG'.
    *
-   * Haftalık özet buna bağlı: ilk özet kurulumdan **yedi gün sonra** doğuyor ve
-   * sonra her hafta aynı gün yenileniyor. Takvim haftasına (pazartesi–pazar)
-   * bağlanmadı — çarşamba günü uygulamayı kuran kullanıcı ilk özetini dört gün
-   * sonra, üstelik yalnızca dört günlük veriyle görürdü.
-   *
-   * Yedeğe **girmiyor**: yedeği yeni telefona yükleyen kullanıcı özetini o
-   * cihazdaki kendi gününde görmeli, eski cihazın kurulum gününde değil.
+   * Aylık özet arşivi buradan başlıyor: kurulumdan önceki aylar için boş
+   * kayıt yazılmıyor. Yedeğe **girmiyor** — bu cihazın günü.
    */
   kurulumTarihi: 'rabi-kurulum-tarihi',
   /**
@@ -267,9 +277,9 @@ export const VARSAYILAN_AYARLAR: Ayarlar = {
 /**
  * Saklanan tur kaydı sayısı.
  *
- * Haftalık özet yalnızca son yedi güne bakıyor; günde on tur oynansa bile 400
- * kayıt iki aydan uzunu kapsıyor. Sınırsız büyütmenin tek etkisi localStorage
- * kotasını yemek olurdu.
+ * Aylık özet kapanan aya bakıyor ve hesap ayın 1'inde yapılıyor; günde on tur
+ * oynansa bile 400 kayıt bir aydan uzunu kapsıyor. Sınırsız büyütmenin tek
+ * etkisi localStorage kotasını yemek olurdu.
  */
 /**
  * Bir tura yazılabilecek en uzun süre, saniye.
@@ -482,6 +492,7 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
       // kullanıcının mevcut konu kaydına dokunulmuyor.
       konuIlerleme: nesne.konuIlerleme as KonuIlerlemeleri | undefined,
+      aylikOzetler: nesne.aylikOzetler as AylikOzetArsivi | undefined,
       bilinmeyenKartlar: Array.isArray(nesne.bilinmeyenKartlar)
         ? (nesne.bilinmeyenKartlar as BilinmeyenKart[])
         : undefined,
@@ -530,7 +541,7 @@ function oyunKayitlariniCoz(ham: unknown): OyunKayitlari {
  * Yedekteki tur geçmişini süzer.
  *
  * Yalnızca tarihi ve oyunu tanınan kayıtlar geçiyor. Süre `TUR_EN_UZUN`u aşamaz:
- * bozuk tek bir kayıt haftalık özette "oyunda 9 saat geçirdin" gibi saçma bir
+ * bozuk tek bir kayıt aylık özette "oyunda 9 saat geçirdin" gibi saçma bir
  * sayıya dönüşürdü.
  */
 function oyunGecmisiniCoz(ham: unknown): OyunTurKaydi[] {
@@ -696,6 +707,11 @@ export function yedegiUygula(yedek: Yedek) {
   yaz(ANAHTARLAR.bankaDusen, yedek.bankaDusen ?? 0)
   // Eski yedeklerde konu kaydı yok; boş yazmak okunan konuları silerdi.
   if (yedek.konuIlerleme) yaz(ANAHTARLAR.konuIlerleme, yedek.konuIlerleme)
+  // Arşiv birleştiriliyor, üstüne yazılmıyor: bu cihazda biriken aylar
+  // yedekteki eski aylarla yan yana durmalı.
+  if (yedek.aylikOzetler) {
+    yaz(ANAHTARLAR.aylikOzetler, { ...oku<AylikOzetArsivi>(ANAHTARLAR.aylikOzetler, {}), ...yedek.aylikOzetler })
+  }
   if (yedek.bilinmeyenKartlar) yaz(ANAHTARLAR.bilinmeyenKartlar, yedek.bilinmeyenKartlar)
   // Eski yedeklerde tahta yok; boş dizi yazmak kullanıcının kâğıtlarını silerdi.
   if (yedek.notlar) yaz(ANAHTARLAR.notlar, yedek.notlar)

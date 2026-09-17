@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Manrope:wght@600;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#efeeeb;font-family:Nunito,ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#b3491f}a:hover{color:#8d691a}
+@keyframes ozGel{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes ozPop{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes ozYaslan{from{opacity:0;transform:translateY(-12px) rotate(-11deg)}to{opacity:1;transform:translateY(0) rotate(-6deg)}}
+@keyframes ozYaslanSag{from{opacity:0;transform:translateY(-12px) rotate(11deg)}to{opacity:1;transform:translateY(0) rotate(5deg)}}
+@keyframes ozSuzul{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes ozIsima{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(.94)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}}
+@keyframes ozHalkaTyt{from{stroke-dashoffset:314.2}to{stroke-dashoffset:67.4}}
+@keyframes ozHalkaAyt{from{stroke-dashoffset:314.2}to{stroke-dashoffset:68.8}}
+@keyframes ozHalka{from{stroke-dashoffset:263.9}to{stroke-dashoffset:246.2}}
+@keyframes ozCubuk{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes ozSerit{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes ozSars{0%{transform:translate(0,0) rotate(-6deg)}25%{transform:translate(2px,-2px) rotate(-4deg)}50%{transform:translate(-2px,1px) rotate(-8deg)}75%{transform:translate(1px,1px) rotate(-5deg)}100%{transform:translate(0,0) rotate(-6deg)}}
+@keyframes ozIsin{from{opacity:0;transform:translate(-50%,-50%) rotate(0deg) scale(.6)}to{opacity:.5;transform:translate(-50%,-50%) rotate(22deg) scale(1)}}
+@keyframes ozDon{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes ozKonfeti{0%{opacity:0;transform:translateY(-40px) rotate(0)}18%{opacity:1}100%{opacity:0;transform:translateY(340px) rotate(420deg)}}
+</style></helmet>
+
+<div style="min-height:100%;display:flex;justify-content:center;align-items:flex-start;padding:34px 20px 46px;background:#efeeeb">
+<div style="position:relative;width:412px;height:892px;border-radius:40px;overflow:hidden;background:#faf3e1;background-image:repeating-linear-gradient(0deg,rgba(168,124,36,.14) 0 1px,transparent 1px 8px);background-image:{{ kagitDesen }};box-shadow:0 26px 60px -22px rgba(90,60,35,.45),0 0 0 1px rgba(208,155,52,.35);user-select:none;color:#1b1a19">
+
+  <span aria-hidden="true" style="position:absolute;inset:10px;border-radius:32px;border:1px solid rgba(208,155,52,.5);pointer-events:none;z-index:6"></span>
+  <span aria-hidden="true" style="position:absolute;inset:16px;border-radius:27px;border:1px solid rgba(208,155,52,.2);pointer-events:none;z-index:6"></span>
+
+  <!-- 1 · kapak -->
+  <sc-if value="{{ e1 }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:0;padding:104px 34px 104px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+      <span aria-hidden="true" style="position:absolute;left:50%;top:56%;width:330px;height:330px;margin:-165px 0 0 -165px;border-radius:999px;background:radial-gradient(closest-side,rgba(255,255,255,.95),rgba(255,255,255,0));animation:ozIsima 5s ease-in-out infinite"></span>
+      <span aria-hidden="true" style="position:absolute;left:-26px;top:96px;width:150px;height:34px;background:rgba(208,155,52,.28);border-left:2px dashed rgba(168,124,36,.45);border-right:2px dashed rgba(168,124,36,.45);transform:rotate(-7deg);animation:ozYaslan 520ms cubic-bezier(.16,1,.3,1) both"></span>
+      <span aria-hidden="true" style="position:absolute;right:-30px;bottom:150px;width:160px;height:34px;background:rgba(217,98,47,.16);border-left:2px dashed rgba(179,73,31,.35);border-right:2px dashed rgba(179,73,31,.35);transform:rotate(5deg);animation:ozYaslanSag 560ms cubic-bezier(.16,1,.3,1) 80ms both"></span>
+
+      <p style="position:relative;margin:0;font-size:11px;font-weight:800;letter-spacing:.26em;color:#a68a43;animation:ozGel 460ms cubic-bezier(.16,1,.3,1) both">RABİ · AYLIK ÖZET</p>
+      <h1 style="position:relative;margin:6px 0 0;font-family:Manrope,Nunito,sans-serif;font-size:66px;font-weight:800;letter-spacing:-.045em;line-height:.94;color:#b3491f;animation:ozGel 520ms cubic-bezier(.16,1,.3,1) 60ms both">{{ ay }}</h1>
+      <div style="position:relative;display:flex;align-items:center;gap:9px;margin-top:12px;animation:ozGel 480ms cubic-bezier(.16,1,.3,1) 140ms both">
+        <span style="width:30px;height:1px;background:rgba(168,124,36,.4)"></span>
+        <span style="width:7px;height:7px;background:#d09b34;transform:rotate(45deg)"></span>
+        <span style="font-size:11.5px;font-weight:800;letter-spacing:.13em;white-space:nowrap;color:#8d691a">{{ tarihAraligi }}</span>
+        <span style="width:7px;height:7px;background:#d09b34;transform:rotate(45deg)"></span>
+        <span style="width:30px;height:1px;background:rgba(168,124,36,.4)"></span>
+      </div>
+
+      <div style="position:relative;margin-top:18px;animation:ozSuzul 4.2s ease-in-out infinite">
+        <sc-if value="{{ maskotVar }}" hint-placeholder-val="{{ true }}"><img src="public/tavsan-el-sallayan.png" alt="Rabi selam veriyor" width="248" height="269" style="width:248px;height:269px;object-fit:contain;filter:drop-shadow(0 20px 24px rgba(27,26,25,.2));animation:ozPop 620ms cubic-bezier(.16,1,.3,1) 120ms both"></sc-if>
+      </div>
+
+      <div style="position:relative;margin-top:6px;animation:ozGel 520ms cubic-bezier(.16,1,.3,1) 220ms both">
+        <p style="margin:0;font-size:21px;font-weight:900;line-height:1.35;letter-spacing:-.02em;text-wrap:balance">30 günü senin için topladım.<br>Sayfaları çevirelim mi?</p>
+        <span aria-hidden="true" style="display:block;width:96px;height:4px;margin:14px auto 0;border-radius:999px;background:#d09b34"></span>
+      </div>
+
+      <p style="position:absolute;left:0;right:0;bottom:58px;margin:0;font-size:11px;font-weight:800;letter-spacing:.18em;color:#a68a43;animation:ozGel 600ms ease 420ms both">SAĞA DOKUN →</p>
+    </div>
+  </sc-if>
+
+  <!-- 2 · okunan konu -->
+  <sc-if value="{{ e2 }}">
+    <div style="position:absolute;inset:0;padding:96px 32px 96px;display:flex;flex-direction:column;justify-content:center;gap:18px">
+      <p style="position:relative;margin:0;font-size:11px;font-weight:800;letter-spacing:.22em;color:#a68a43;animation:ozGel 440ms cubic-bezier(.16,1,.3,1) both">KONU HARİTASINDA</p>
+      <div style="position:relative;display:flex;align-items:flex-end;gap:10px;animation:ozGel 500ms cubic-bezier(.16,1,.3,1) 60ms both">
+        <span style="font-variant-numeric:tabular-nums;font-size:112px;font-weight:900;line-height:.82;letter-spacing:-.05em;color:#b3491f">{{ sayac }}</span>
+        <span style="margin-bottom:12px;font-size:20px;font-weight:900;color:#8d691a">konu</span>
+      </div>
+      <p style="position:relative;margin:0;max-width:280px;font-size:17px;font-weight:700;line-height:1.5;color:#33302c;text-wrap:pretty;animation:ozGel 520ms cubic-bezier(.16,1,.3,1) 160ms both">Bu ay baştan sona okuyup bitirdiğin konu sayısı.</p>
+
+      <div style="position:relative;display:flex;gap:9px;animation:ozGel 560ms cubic-bezier(.16,1,.3,1) 240ms both">
+        <div style="flex:1;background:#fff;border:2px solid #d09b34;border-radius:18px;padding:13px 8px;text-align:center;box-shadow:0 4px 14px -6px rgba(141,105,26,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:21px;font-weight:900;white-space:nowrap;color:#b3491f">21</p>
+          <p style="margin:3px 0 0;font-size:9.5px;font-weight:800;letter-spacing:.04em;white-space:nowrap;color:#6b6764">GÜN ÇALIŞTIN</p>
+        </div>
+        <div style="flex:1;background:#fff;border:2px solid #d09b34;border-radius:18px;padding:13px 8px;text-align:center;box-shadow:0 4px 14px -6px rgba(141,105,26,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:21px;font-weight:900;white-space:nowrap;color:#b3491f">14</p>
+          <p style="margin:3px 0 0;font-size:9.5px;font-weight:800;letter-spacing:.04em;white-space:nowrap;color:#6b6764">SERİ</p>
+        </div>
+        <div style="flex:1;background:#fff;border:2px solid #d09b34;border-radius:18px;padding:13px 8px;text-align:center;box-shadow:0 4px 14px -6px rgba(141,105,26,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:21px;font-weight:900;white-space:nowrap;color:#b3491f">31sa</p>
+          <p style="margin:3px 0 0;font-size:9.5px;font-weight:800;letter-spacing:.04em;white-space:nowrap;color:#6b6764">GEÇEN SÜRE</p>
+        </div>
+      </div>
+
+      <sc-if value="{{ maskotVar }}" hint-placeholder-val="{{ true }}"><img src="public/tavsan-okuyan.png" alt="Rabi kitap okuyor" width="168" height="182" style="position:absolute;right:14px;bottom:62px;width:168px;height:182px;object-fit:contain;filter:drop-shadow(0 16px 20px rgba(27,26,25,.18));animation:ozPop 620ms cubic-bezier(.16,1,.3,1) 200ms both"></sc-if>
+    </div>
+  </sc-if>
+
+  <!-- 3 · çözülen soru -->
+  <sc-if value="{{ e3 }}">
+    <div style="position:absolute;inset:0;padding:96px 32px 96px;display:flex;flex-direction:column;justify-content:center;gap:20px">
+      <div style="position:relative;display:flex;align-items:baseline;gap:12px;animation:ozGel 440ms cubic-bezier(.16,1,.3,1) both">
+        <p style="margin:0;font-size:10.5px;font-weight:800;letter-spacing:.18em;white-space:nowrap;color:#a68a43">TOPLAM ÇÖZÜLEN SORU</p>
+      </div>
+      <div style="position:relative;animation:ozGel 500ms cubic-bezier(.16,1,.3,1) 60ms both">
+        <span style="position:relative;font-variant-numeric:tabular-nums;font-size:96px;font-weight:900;line-height:.86;letter-spacing:-.05em;color:#1b1a19">{{ sayac }}</span>
+      </div>
+      <div style="position:relative;animation:ozGel 560ms cubic-bezier(.16,1,.3,1) 230ms both">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding-bottom:10px">
+          <p style="margin:0;font-size:10.5px;font-weight:800;letter-spacing:.18em;white-space:nowrap;color:#a68a43">HAFTA HAFTA</p>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:12px;height:146px;border-bottom:2px solid rgba(168,124,36,.35)">
+          <sc-for list="{{ haftalar }}" as="h" hint-placeholder-count="4">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:8px;height:100%">
+              <span style="font-variant-numeric:tabular-nums;font-size:13px;font-weight:900;white-space:nowrap;color:{{ h.yaziRenk }}">{{ h.deger }}</span>
+              <span style="width:100%;border-radius:10px 10px 0 0;transform-origin:bottom;background:{{ h.bg }};box-shadow:{{ h.golge }};height:{{ h.yuksek }};animation:ozCubuk 620ms cubic-bezier(.16,1,.3,1) both;animation-delay:{{ h.gecikme }}"></span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:12px;padding-top:9px">
+          <sc-for list="{{ haftalar }}" as="h" hint-placeholder-count="4">
+            <span style="flex:1;text-align:center;font-size:9.5px;font-weight:800;letter-spacing:.02em;white-space:nowrap;color:#8d691a">{{ h.ad }}</span>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- 4 · en yüksek net -->
+  <sc-if value="{{ e4 }}">
+    <div style="position:absolute;inset:0;padding:96px 30px 92px;display:flex;flex-direction:column;justify-content:center;gap:22px">
+      <p style="margin:0;font-size:11px;font-weight:800;letter-spacing:.22em;white-space:nowrap;color:#a68a43;animation:ozGel 440ms cubic-bezier(.16,1,.3,1) both">AYIN EN İYİ DENEMELERİ</p>
+      <h2 style="margin:0;font-size:32px;font-weight:900;letter-spacing:-.03em;line-height:1.12;animation:ozGel 480ms cubic-bezier(.16,1,.3,1) 60ms both">Rekorların<br>burada.</h2>
+
+      <div style="display:flex;gap:14px;animation:ozGel 540ms cubic-bezier(.16,1,.3,1) 140ms both">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:10px;background:#f7f0dc;border:2px solid #d09b34;border-radius:22px;padding:18px 12px;box-shadow:0 6px 18px -8px rgba(141,105,26,.45)">
+          <div style="position:relative;width:118px;height:118px">
+            <svg width="118" height="118" viewBox="0 0 118 118" style="transform:rotate(-90deg)" aria-hidden="true">
+              <circle cx="59" cy="59" r="50" fill="none" stroke="rgba(208,155,52,.3)" stroke-width="11"></circle>
+              <circle cx="59" cy="59" r="50" fill="none" stroke="#d9622f" stroke-width="11" stroke-linecap="round" stroke-dasharray="314.2" style="animation:ozHalkaTyt 1s cubic-bezier(.16,1,.3,1) 200ms both"></circle>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <p style="margin:0;font-variant-numeric:tabular-nums;font-size:28px;font-weight:900;line-height:1;letter-spacing:-.03em;white-space:nowrap;color:#b3491f">94,25</p>
+              <p style="margin:4px 0 0;font-size:9px;font-weight:800;letter-spacing:.14em;white-space:nowrap;color:#8d691a">/ 120 NET</p>
+            </div>
+          </div>
+          <p style="margin:0;font-size:12px;font-weight:900;letter-spacing:.14em;white-space:nowrap;color:#8d691a">TYT</p>
+          <p style="margin:0;font-size:11px;font-weight:800;white-space:nowrap;color:#6b6764">14 Eylül</p>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:10px;background:#f7f0dc;border:2px solid #d09b34;border-radius:22px;padding:18px 12px;box-shadow:0 6px 18px -8px rgba(141,105,26,.45)">
+          <div style="position:relative;width:118px;height:118px">
+            <svg width="118" height="118" viewBox="0 0 118 118" style="transform:rotate(-90deg)" aria-hidden="true">
+              <circle cx="59" cy="59" r="50" fill="none" stroke="rgba(208,155,52,.3)" stroke-width="11"></circle>
+              <circle cx="59" cy="59" r="50" fill="none" stroke="#8d691a" stroke-width="11" stroke-linecap="round" stroke-dasharray="314.2" style="animation:ozHalkaAyt 1s cubic-bezier(.16,1,.3,1) 320ms both"></circle>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <p style="margin:0;font-variant-numeric:tabular-nums;font-size:28px;font-weight:900;line-height:1;letter-spacing:-.03em;white-space:nowrap;color:#b3491f">62,50</p>
+              <p style="margin:4px 0 0;font-size:9px;font-weight:800;letter-spacing:.14em;white-space:nowrap;color:#8d691a">/ 80 NET</p>
+            </div>
+          </div>
+          <p style="margin:0;font-size:12px;font-weight:900;letter-spacing:.14em;white-space:nowrap;color:#8d691a">AYT</p>
+          <p style="margin:0;font-size:11px;font-weight:800;white-space:nowrap;color:#6b6764">27 Eylül</p>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:14px;animation:ozGel 560ms cubic-bezier(.16,1,.3,1) 240ms both">
+        <sc-if value="{{ maskotVar }}" hint-placeholder-val="{{ true }}"><img src="public/tavsan-kupali.png" alt="Rabi kupa kaldırıyor" width="118" height="128" style="width:118px;height:128px;object-fit:contain;flex:none;filter:drop-shadow(0 14px 18px rgba(27,26,25,.18))"></sc-if>
+        <p style="margin:0;font-size:16px;font-weight:800;line-height:1.45;text-wrap:pretty">İkisi de ayın son yarısında geldi — yükseliş sürüyor.</p>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- 5 · pomodoro -->
+  <sc-if value="{{ e5 }}">
+    <div style="position:absolute;inset:0;padding:92px 32px 92px;display:flex;flex-direction:column;justify-content:center;gap:16px">
+      <p style="position:relative;margin:0;font-size:10.5px;font-weight:800;letter-spacing:.17em;white-space:nowrap;color:#a68a43;animation:ozGel 440ms cubic-bezier(.16,1,.3,1) both">POMODORO'DA GEÇEN SÜRE</p>
+
+      <p style="position:relative;margin:0;font-variant-numeric:tabular-nums;font-size:66px;font-weight:900;line-height:.9;letter-spacing:-.05em;white-space:nowrap;color:#b3491f;animation:ozGel 500ms cubic-bezier(.16,1,.3,1) 60ms both">{{ sayacSure }}</p>
+
+      <div style="position:relative;display:flex;align-items:center;gap:16px;animation:ozGel 520ms cubic-bezier(.16,1,.3,1) 160ms both">
+        <div style="position:relative;width:104px;height:104px;flex:none">
+          <svg width="104" height="104" viewBox="0 0 104 104" style="transform:rotate(-90deg)" aria-hidden="true">
+            <circle cx="52" cy="52" r="42" fill="none" stroke="rgba(208,155,52,.28)" stroke-width="9"></circle>
+            <circle cx="52" cy="52" r="42" fill="none" stroke="#d9622f" stroke-width="9" stroke-linecap="round" stroke-dasharray="263.9" style="animation:ozHalka 1100ms cubic-bezier(.16,1,.3,1) 220ms both"></circle>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <p style="margin:0;font-variant-numeric:tabular-nums;font-size:20px;font-weight:900;line-height:1;white-space:nowrap">%6,7</p>
+            <p style="margin:3px 0 0;font-size:8.5px;font-weight:800;letter-spacing:.12em;color:#8d691a">AYIN</p>
+          </div>
+        </div>
+        <p style="margin:0;flex:1;font-size:16px;font-weight:800;line-height:1.4;white-space:nowrap;color:#33302c">Ayın <b style="color:#b3491f">%6,7'si</b> masadaydı.</p>
+      </div>
+
+      <div style="position:relative;display:flex;gap:10px;width:100%;animation:ozGel 560ms cubic-bezier(.16,1,.3,1) 280ms both">
+        <div style="flex:1;background:#fff;border:2px solid #d09b34;border-radius:18px;padding:13px 10px;text-align:center;box-shadow:0 4px 14px -6px rgba(141,105,26,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:24px;font-weight:900;color:#1b1a19">116</p>
+          <p style="margin:3px 0 0;font-size:10.5px;font-weight:800;letter-spacing:.08em;color:#6b6764">SEANS</p>
+        </div>
+        <div style="flex:1;background:#fff;border:2px solid #d09b34;border-radius:18px;padding:13px 10px;text-align:center;box-shadow:0 4px 14px -6px rgba(141,105,26,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:24px;font-weight:900;white-space:nowrap;color:#1b1a19">3sa 10dk</p>
+          <p style="margin:3px 0 0;font-size:10.5px;font-weight:800;letter-spacing:.08em;color:#6b6764">EN UZUN GÜN</p>
+        </div>
+        <div style="flex:1;background:#fff;border:2px solid #d09b34;border-radius:18px;padding:13px 10px;text-align:center;box-shadow:0 4px 14px -6px rgba(141,105,26,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:24px;font-weight:900;color:#4f7a4a">22</p>
+          <p style="margin:3px 0 0;font-size:10.5px;font-weight:800;letter-spacing:.08em;color:#6b6764">GÜN SERİ</p>
+        </div>
+      </div>
+
+      <sc-if value="{{ maskotVar }}" hint-placeholder-val="{{ true }}"><img src="public/tavsan-kahveli.png" alt="Rabi kahve içiyor" width="176" height="191" style="position:absolute;right:10px;bottom:52px;width:176px;height:191px;object-fit:contain;filter:drop-shadow(0 18px 22px rgba(27,26,25,.2));animation:ozPop 620ms cubic-bezier(.16,1,.3,1) 320ms both"></sc-if>
+    </div>
+  </sc-if>
+
+  <!-- 6 · minioyunlar -->
+  <sc-if value="{{ e6 }}">
+    <div style="position:absolute;inset:0;padding:96px 32px 96px;display:flex;flex-direction:column;justify-content:center;gap:18px">
+      <p style="position:relative;margin:0;font-size:11px;font-weight:800;letter-spacing:.22em;color:#a68a43;animation:ozGel 440ms cubic-bezier(.16,1,.3,1) both">MİNİ OYUNLARDA</p>
+      <div style="position:relative;display:flex;align-items:flex-end;gap:10px;animation:ozGel 500ms cubic-bezier(.16,1,.3,1) 60ms both">
+        <span style="font-variant-numeric:tabular-nums;font-size:104px;font-weight:900;line-height:.84;letter-spacing:-.05em;color:#b3491f">{{ sayac }}</span>
+        <span style="margin-bottom:12px;font-size:20px;font-weight:900;color:#8d691a">soru</span>
+      </div>
+      <div style="position:relative;display:flex;gap:10px;animation:ozGel 520ms cubic-bezier(.16,1,.3,1) 150ms both">
+        <div style="flex:1;background:#fff;border:2px solid #d09b34;border-radius:18px;padding:13px;text-align:center;box-shadow:0 4px 14px -6px rgba(141,105,26,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:23px;font-weight:900;white-space:nowrap;color:#b3491f">41</p>
+          <p style="margin:3px 0 0;font-size:10px;font-weight:800;letter-spacing:.06em;white-space:nowrap;color:#6b6764">TOPLAM TUR</p>
+        </div>
+        <div style="flex:1;background:#fff;border:2px solid #d09b34;border-radius:18px;padding:13px;text-align:center;box-shadow:0 4px 14px -6px rgba(141,105,26,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:23px;font-weight:900;white-space:nowrap;color:#b3491f">5sa 42dk</p>
+          <p style="margin:3px 0 0;font-size:10px;font-weight:800;letter-spacing:.06em;white-space:nowrap;color:#6b6764">GEÇEN SÜRE</p>
+        </div>
+      </div>
+
+      <div style="position:relative;display:flex;flex-direction:column;gap:11px;animation:ozGel 560ms cubic-bezier(.16,1,.3,1) 240ms both">
+        <p style="margin:0;font-size:10.5px;font-weight:800;letter-spacing:.18em;white-space:nowrap;color:#a68a43">EN ÇOK OYNADIĞIN OYUNLAR</p>
+        <sc-for list="{{ oyunlar }}" as="o" hint-placeholder-count="4">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+              <span style="font-size:13.5px;font-weight:800">{{ o.ad }}</span>
+              <span style="font-variant-numeric:tabular-nums;font-size:12.5px;font-weight:900;color:#8d691a">{{ o.deger }}</span>
+            </div>
+            <span style="height:9px;border-radius:999px;background:rgba(208,155,52,.28);overflow:hidden">
+              <span style="display:block;height:100%;border-radius:999px;transform-origin:left;background:{{ o.bg }};width:{{ o.genis }};animation:ozSerit 700ms cubic-bezier(.16,1,.3,1) both;animation-delay:{{ o.gecikme }}"></span>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ maskotVar }}" hint-placeholder-val="{{ true }}"><img src="public/tavsan-ziplayan.png" alt="Rabi zıplıyor" width="152" height="165" style="position:absolute;right:10px;bottom:54px;width:152px;height:165px;object-fit:contain;filter:drop-shadow(0 16px 20px rgba(27,26,25,.18));animation:ozPop 620ms cubic-bezier(.16,1,.3,1) 300ms both"></sc-if>
+    </div>
+  </sc-if>
+
+  <!-- 7 · 3. ders -->
+  <sc-if value="{{ e7 }}">
+    <div style="position:absolute;inset:0;padding:100px 32px 96px;display:flex;flex-direction:column;justify-content:center;gap:16px">
+      <span aria-hidden="true" style="position:absolute;left:0;right:0;top:0;height:200px;background:linear-gradient(#f7f0dc,rgba(247,240,220,0))"></span>
+      <p style="position:relative;margin:0;font-size:11px;font-weight:800;letter-spacing:.22em;color:#a68a43;animation:ozGel 440ms cubic-bezier(.16,1,.3,1) both">EN ÇOK SORU ÇÖZDÜĞÜN DERSLER</p>
+      <div style="position:relative;display:flex;align-items:center;gap:18px;margin-top:8px;animation:ozGel 520ms cubic-bezier(.16,1,.3,1) 120ms both">
+        <span style="font-variant-numeric:tabular-nums;font-size:104px;font-weight:900;line-height:.8;letter-spacing:-.06em;color:rgba(168,124,36,.3)">3</span>
+        <div style="min-width:0;flex:1">
+          <p style="margin:0;font-size:34px;font-weight:900;letter-spacing:-.03em;line-height:1.05">Türkçe</p>
+          <p style="margin:6px 0 0;font-variant-numeric:tabular-nums;font-size:13.5px;font-weight:800;color:#8d691a">712 soru · toplamın %18'i</p>
+        </div>
+      </div>
+
+      <div style="position:relative;height:14px;border-radius:999px;background:#ecdfb8;overflow:hidden;animation:ozGel 520ms cubic-bezier(.16,1,.3,1) 220ms both">
+        <span style="display:block;height:100%;width:58%;border-radius:999px;background:#8d691a;transform-origin:left;animation:ozSerit 760ms cubic-bezier(.16,1,.3,1) 300ms both"></span>
+      </div>
+
+      <div style="position:relative;display:flex;gap:10px;margin-top:6px;animation:ozGel 560ms cubic-bezier(.16,1,.3,1) 300ms both">
+        <div style="flex:1;background:#f7f0dc;border:2px solid #d09b34;border-radius:18px;padding:14px;text-align:center;box-shadow:0 4px 14px -6px rgba(141,105,26,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:22px;font-weight:900;white-space:nowrap;color:#8d691a">%74</p>
+          <p style="margin:3px 0 0;font-size:10.5px;font-weight:800;letter-spacing:.08em;white-space:nowrap;color:#6b6764">BAŞARI</p>
+        </div>
+        <div style="flex:1;background:#f7f0dc;border:2px solid #d09b34;border-radius:18px;padding:14px;text-align:center;box-shadow:0 4px 14px -6px rgba(141,105,26,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:22px;font-weight:900;white-space:nowrap;color:#8d691a">19</p>
+          <p style="margin:3px 0 0;font-size:10.5px;font-weight:800;letter-spacing:.08em;white-space:nowrap;color:#6b6764">GÜN ÇALIŞTIN</p>
+        </div>
+      </div>
+
+      <div style="position:relative;display:flex;gap:9px;margin-top:2px;animation:ozGel 560ms cubic-bezier(.16,1,.3,1) 380ms both">
+        <div style="flex:1;background:#f7f0dc;border:2px solid #d09b34;border-radius:16px;padding:12px 10px;text-align:center;box-shadow:0 4px 14px -6px rgba(141,105,26,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:21px;font-weight:900;white-space:nowrap;color:#8d691a">527</p>
+          <p style="margin:3px 0 0;font-size:10px;font-weight:800;letter-spacing:.08em;white-space:nowrap;color:#6b6764">DOĞRU</p>
+        </div>
+        <div style="flex:1;background:#f7f0dc;border:2px solid #d09b34;border-radius:16px;padding:12px 10px;text-align:center;box-shadow:0 4px 14px -6px rgba(141,105,26,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:21px;font-weight:900;white-space:nowrap;color:#8d691a">168</p>
+          <p style="margin:3px 0 0;font-size:10px;font-weight:800;letter-spacing:.08em;white-space:nowrap;color:#6b6764">YANLIŞ</p>
+        </div>
+        <div style="flex:1;background:#f7f0dc;border:2px solid #d09b34;border-radius:16px;padding:12px 10px;text-align:center;box-shadow:0 4px 14px -6px rgba(141,105,26,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:21px;font-weight:900;white-space:nowrap;color:#8d691a">17</p>
+          <p style="margin:3px 0 0;font-size:10px;font-weight:800;letter-spacing:.08em;white-space:nowrap;color:#6b6764">BOŞ</p>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- 8 · 2. ders -->
+  <sc-if value="{{ e8 }}">
+    <div style="position:absolute;inset:0;padding:96px 32px 96px;display:flex;flex-direction:column;justify-content:center;gap:16px">
+      <p style="position:relative;margin:0;font-size:11px;font-weight:800;letter-spacing:.22em;white-space:nowrap;color:#a68a43;animation:ozGel 440ms cubic-bezier(.16,1,.3,1) both">İKİNCİ SIRADA</p>
+
+      <div style="position:relative;display:flex;align-items:center;gap:16px;animation:ozGel 520ms cubic-bezier(.16,1,.3,1) 80ms both">
+        <span style="font-variant-numeric:tabular-nums;font-size:132px;font-weight:900;line-height:.78;letter-spacing:-.07em;color:#6c7cb0">2</span>
+        <div style="min-width:0;flex:1">
+          <p style="margin:0;font-size:42px;font-weight:900;letter-spacing:-.035em;line-height:1;color:#4a5789">Fizik</p>
+          <p style="margin:8px 0 0;font-variant-numeric:tabular-nums;font-size:14px;font-weight:800;color:#4a5789">1.024 soru · toplamın %26'sı</p>
+        </div>
+      </div>
+
+      <div style="position:relative;height:16px;border-radius:999px;background:rgba(208,155,52,.28);overflow:hidden;animation:ozGel 520ms cubic-bezier(.16,1,.3,1) 200ms both">
+        <span style="display:block;height:100%;width:80%;border-radius:999px;background:#4a5789;transform-origin:left;animation:ozSerit 800ms cubic-bezier(.16,1,.3,1) 280ms both"></span>
+      </div>
+
+      <div style="position:relative;display:flex;gap:10px;margin-top:6px;animation:ozGel 560ms cubic-bezier(.16,1,.3,1) 300ms both">
+        <div style="flex:1;background:#f7f0dc;border:2px solid #6c7cb0;border-radius:18px;padding:14px;text-align:center;box-shadow:0 4px 14px -6px rgba(74,87,137,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:22px;font-weight:900;white-space:nowrap;color:#4a5789">%79</p>
+          <p style="margin:3px 0 0;font-size:10.5px;font-weight:800;letter-spacing:.08em;white-space:nowrap;color:#6b6764">BAŞARI</p>
+        </div>
+        <div style="flex:1;background:#f7f0dc;border:2px solid #6c7cb0;border-radius:18px;padding:14px;text-align:center;box-shadow:0 4px 14px -6px rgba(74,87,137,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:22px;font-weight:900;white-space:nowrap;color:#4a5789">24</p>
+          <p style="margin:3px 0 0;font-size:10.5px;font-weight:800;letter-spacing:.08em;white-space:nowrap;color:#6b6764">GÜN ÇALIŞTIN</p>
+        </div>
+      </div>
+
+      <div style="position:relative;display:flex;gap:9px;margin-top:2px;animation:ozGel 560ms cubic-bezier(.16,1,.3,1) 380ms both">
+        <div style="flex:1;background:#f7f0dc;border:2px solid #6c7cb0;border-radius:16px;padding:12px 10px;text-align:center;box-shadow:0 4px 14px -6px rgba(74,87,137,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:21px;font-weight:900;white-space:nowrap;color:#4a5789">809</p>
+          <p style="margin:3px 0 0;font-size:10px;font-weight:800;letter-spacing:.08em;white-space:nowrap;color:#6b6764">DOĞRU</p>
+        </div>
+        <div style="flex:1;background:#f7f0dc;border:2px solid #6c7cb0;border-radius:16px;padding:12px 10px;text-align:center;box-shadow:0 4px 14px -6px rgba(74,87,137,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:21px;font-weight:900;white-space:nowrap;color:#4a5789">198</p>
+          <p style="margin:3px 0 0;font-size:10px;font-weight:800;letter-spacing:.08em;white-space:nowrap;color:#6b6764">YANLIŞ</p>
+        </div>
+        <div style="flex:1;background:#f7f0dc;border:2px solid #6c7cb0;border-radius:16px;padding:12px 10px;text-align:center;box-shadow:0 4px 14px -6px rgba(74,87,137,.4)">
+          <p style="margin:0;font-variant-numeric:tabular-nums;font-size:21px;font-weight:900;white-space:nowrap;color:#4a5789">17</p>
+          <p style="margin:3px 0 0;font-size:10px;font-weight:800;letter-spacing:.08em;white-space:nowrap;color:#6b6764">BOŞ</p>
+        </div>
+      </div>
+
+      <sc-if value="{{ maskotVar }}" hint-placeholder-val="{{ true }}"><img src="public/tavsan-dusunen.png" alt="Rabi düşünüyor" width="126" height="137" style="position:absolute;right:16px;bottom:56px;width:126px;height:137px;object-fit:contain;filter:drop-shadow(0 16px 20px rgba(27,26,25,.18));animation:ozPop 620ms cubic-bezier(.16,1,.3,1) 420ms both"></sc-if>
+    </div>
+  </sc-if>
+
+  <!-- 9 · 1. ders -->
+  <sc-if value="{{ e9 }}">
+    <div style="position:absolute;inset:0;overflow:hidden;background:linear-gradient(168deg,#b3491f 0%,#7e2f12 62%,#5c2410 100%)">
+      <span aria-hidden="true" style="position:absolute;left:50%;top:40%;width:760px;height:760px;background:repeating-conic-gradient(from 0deg,rgba(240,190,72,.16) 0deg 7deg,transparent 7deg 20deg);transform:translate(-50%,-50%);animation:ozIsin 900ms cubic-bezier(.16,1,.3,1) both,ozDon 70s linear 900ms infinite"></span>
+      <sc-if value="{{ konfetiAcik }}" hint-placeholder-val="{{ true }}"><sc-for list="{{ konfeti }}" as="k" hint-placeholder-count="10">
+        <span aria-hidden="true" style="position:absolute;top:-30px;width:9px;height:14px;border-radius:2px;left:{{ k.sol }};background:{{ k.bg }};animation:ozKonfeti 2600ms linear both;animation-delay:{{ k.gecikme }}"></span>
+      </sc-for></sc-if>
+
+      <div style="position:absolute;inset:0;padding:112px 32px 72px;display:flex;flex-direction:column;justify-content:center;gap:12px;color:#fff">
+        <p style="margin:0 0 30px;font-size:11px;font-weight:800;letter-spacing:.26em;white-space:nowrap;color:#f0be48;animation:ozGel 440ms cubic-bezier(.16,1,.3,1) both">AYIN DERSİ</p>
+
+        <div style="position:relative;display:flex;justify-content:center;animation:ozSuzul 4s ease-in-out infinite">
+          <span aria-hidden="true" style="position:absolute;left:50%;top:52%;width:210px;height:210px;margin:-105px 0 0 -105px;border-radius:999px;background:radial-gradient(closest-side,rgba(240,190,72,.4),rgba(240,190,72,0))"></span>
+          <sc-if value="{{ maskotVar }}" hint-placeholder-val="{{ true }}"><img src="public/tavsan-kupali.png" alt="Rabi kupa kaldırıyor" width="168" height="182" style="position:relative;width:168px;height:182px;object-fit:contain;filter:drop-shadow(0 18px 22px rgba(0,0,0,.35));animation:ozPop 700ms cubic-bezier(.16,1,.3,1) 200ms both"></sc-if>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:14px;animation:ozGel 540ms cubic-bezier(.16,1,.3,1) 80ms both">
+          <span style="font-variant-numeric:tabular-nums;font-size:150px;font-weight:900;line-height:.74;letter-spacing:-.08em;color:#f0be48;text-shadow:0 8px 24px rgba(0,0,0,.28)">1</span>
+          <div style="min-width:0;flex:1">
+            <p style="margin:0;font-size:46px;font-weight:900;letter-spacing:-.04em;line-height:1">Matematik</p>
+            <p style="margin:10px 0 0;font-variant-numeric:tabular-nums;font-size:15px;font-weight:800;color:#fbe2a0">{{ sayac }} soru · toplamın %38'i</p>
+          </div>
+        </div>
+
+        <div style="height:18px;border-radius:999px;background:rgba(0,0,0,.25);overflow:hidden;animation:ozGel 520ms cubic-bezier(.16,1,.3,1) 220ms both">
+          <span style="display:block;height:100%;width:100%;border-radius:999px;background:linear-gradient(90deg,#f0be48,#fbe2a0);transform-origin:left;animation:ozSerit 900ms cubic-bezier(.16,1,.3,1) 320ms both"></span>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:2px;animation:ozGel 560ms cubic-bezier(.16,1,.3,1) 360ms both">
+          <div style="flex:1;background:rgba(255,255,255,.12);border:2px solid #f0be48;border-radius:18px;padding:13px 15px;text-align:center;box-shadow:0 4px 16px -6px rgba(0,0,0,.45)">
+            <p style="margin:0;font-variant-numeric:tabular-nums;font-size:24px;font-weight:900;white-space:nowrap;color:#f0be48">%81</p>
+            <p style="margin:3px 0 0;font-size:10.5px;font-weight:800;letter-spacing:.1em;white-space:nowrap;color:rgba(255,255,255,.8)">BAŞARI</p>
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,.12);border:2px solid #f0be48;border-radius:18px;padding:13px 15px;text-align:center;box-shadow:0 4px 16px -6px rgba(0,0,0,.45)">
+            <p style="margin:0;font-variant-numeric:tabular-nums;font-size:24px;font-weight:900;white-space:nowrap;color:#f0be48">28</p>
+            <p style="margin:3px 0 0;font-size:10.5px;font-weight:800;letter-spacing:.1em;white-space:nowrap;color:rgba(255,255,255,.8)">GÜN ÇALIŞTIN</p>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:9px;animation:ozGel 560ms cubic-bezier(.16,1,.3,1) 440ms both">
+          <div style="flex:1;background:rgba(255,255,255,.1);border:2px solid #f0be48;border-radius:16px;padding:11px 10px;text-align:center;box-shadow:0 4px 16px -6px rgba(0,0,0,.45)">
+            <p style="margin:0;font-variant-numeric:tabular-nums;font-size:20px;font-weight:900;white-space:nowrap;color:#fff">1.212</p>
+            <p style="margin:3px 0 0;font-size:10px;font-weight:800;letter-spacing:.08em;white-space:nowrap;color:rgba(255,255,255,.75)">DOĞRU</p>
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,.1);border:2px solid #f0be48;border-radius:16px;padding:11px 10px;text-align:center;box-shadow:0 4px 16px -6px rgba(0,0,0,.45)">
+            <p style="margin:0;font-variant-numeric:tabular-nums;font-size:20px;font-weight:900;white-space:nowrap;color:#fff">247</p>
+            <p style="margin:3px 0 0;font-size:10px;font-weight:800;letter-spacing:.08em;white-space:nowrap;color:rgba(255,255,255,.75)">YANLIŞ</p>
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,.1);border:2px solid #f0be48;border-radius:16px;padding:11px 10px;text-align:center;box-shadow:0 4px 16px -6px rgba(0,0,0,.45)">
+            <p style="margin:0;font-variant-numeric:tabular-nums;font-size:20px;font-weight:900;white-space:nowrap;color:#fff">37</p>
+            <p style="margin:3px 0 0;font-size:10px;font-weight:800;letter-spacing:.08em;white-space:nowrap;color:rgba(255,255,255,.75)">BOŞ</p>
+          </div>
+        </div>
+
+        <div style="position:absolute;left:32px;top:132px;transform:rotate(-6deg);background:#f0be48;border-radius:10px;padding:9px 16px;box-shadow:0 10px 24px -8px rgba(0,0,0,.45);animation:ozSars 420ms ease-out 700ms both">
+          <span style="display:block;font-size:12.5px;font-weight:900;letter-spacing:.14em;white-space:nowrap;color:#5c2410">EYLÜL ŞAMPİYONU</span>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- 10 · kapanış -->
+  <sc-if value="{{ e10 }}">
+    <div style="position:absolute;inset:0;padding:92px 30px 96px;display:flex;flex-direction:column;justify-content:center;gap:16px">
+      <span aria-hidden="true" style="position:absolute;left:-30px;top:104px;width:170px;height:32px;background:rgba(208,155,52,.26);border-left:2px dashed rgba(168,124,36,.45);border-right:2px dashed rgba(168,124,36,.45);transform:rotate(-6deg);animation:ozYaslan 520ms cubic-bezier(.16,1,.3,1) both"></span>
+      <p style="position:relative;margin:0;font-size:11px;font-weight:800;letter-spacing:.22em;color:#a68a43;animation:ozGel 440ms cubic-bezier(.16,1,.3,1) both">EYLÜL · TEK SAYFADA</p>
+      <h2 style="position:relative;margin:0;font-size:31px;font-weight:900;letter-spacing:-.03em;line-height:1.12;animation:ozGel 480ms cubic-bezier(.16,1,.3,1) 60ms both">Sayfayı kapatırken<br>hepsi burada.</h2>
+
+      <div style="position:relative;display:grid;grid-template-columns:1fr 1fr;gap:10px;animation:ozGel 540ms cubic-bezier(.16,1,.3,1) 140ms both">
+        <sc-for list="{{ ozet }}" as="s" hint-placeholder-count="6">
+          <div style="background:#fff;border:2px solid #d09b34;border-radius:18px;padding:14px;text-align:center;box-shadow:0 4px 14px -6px rgba(141,105,26,.4)">
+            <p style="margin:0;font-variant-numeric:tabular-nums;font-size:23px;font-weight:900;letter-spacing:-.02em;white-space:nowrap;color:{{ s.renk }}">{{ s.deger }}</p>
+            <p style="margin:4px 0 0;font-size:10px;font-weight:800;letter-spacing:.09em;line-height:1.3;color:#6b6764">{{ s.etiket }}</p>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="position:relative;display:flex;align-items:center;gap:14px;background:#f7f0dc;border:1px solid #ecdfb8;border-radius:22px;padding:14px 16px;animation:ozGel 560ms cubic-bezier(.16,1,.3,1) 240ms both">
+        <sc-if value="{{ maskotVar }}" hint-placeholder-val="{{ true }}"><img src="public/tavsan-sevinen.png" alt="Rabi seviniyor" width="104" height="113" style="width:104px;height:113px;object-fit:contain;flex:none;filter:drop-shadow(0 12px 14px rgba(27,26,25,.16))"></sc-if>
+        <p style="margin:0;font-size:15px;font-weight:800;line-height:1.45;text-wrap:pretty">Ekim'de hedef net: <b style="color:#b3491f">4.200 soru</b>. Yarın yine buradayım.</p>
+      </div>
+
+      <div style="position:relative;display:flex;gap:10px;animation:ozGel 580ms cubic-bezier(.16,1,.3,1) 320ms both">
+        <button type="button" onClick="{{ paylas }}" style="flex:1;height:54px;display:inline-flex;align-items:center;justify-content:center;gap:10px;border:none;border-radius:18px;background:#d9622f;box-shadow:0 4px 0 #b3491f;color:#fff;font-family:Nunito,sans-serif;font-size:15.5px;font-weight:900;cursor:pointer" style-active="transform:translateY(2px);box-shadow:0 2px 0 #b3491f">
+          {{ paylasMetni }}
+        </button>
+        <button type="button" onClick="{{ bastanBasla }}" aria-label="Özeti baştan izle" style="width:54px;height:54px;display:grid;place-items:center;border:1px solid #ecdfb8;border-radius:18px;background:#fff;color:#8d691a;font-family:Nunito,sans-serif;font-size:19px;font-weight:900;cursor:pointer" style-active="background:#f7f0dc">↻</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- dokunma alanları -->
+  <button type="button" aria-label="Önceki" onClick="{{ geri }}" style="position:absolute;left:0;top:0;bottom:0;width:34%;z-index:4;border:none;background:transparent;cursor:pointer"></button>
+  <button type="button" aria-label="Sonraki" onClick="{{ ilerle }}" style="position:absolute;right:0;top:0;bottom:0;width:66%;z-index:4;border:none;background:transparent;cursor:pointer"></button>
+
+  <!-- üst çubuk -->
+  <div style="position:absolute;left:0;right:0;top:0;z-index:7;padding:26px 26px 0;pointer-events:none">
+    <div style="display:flex;gap:4px">
+      <sc-for list="{{ dilimler }}" as="d" hint-placeholder-count="10">
+        <span style="flex:1;height:4px;border-radius:999px;background:{{ d.bg }}"></span>
+      </sc-for>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px">
+      <span style="display:inline-flex;align-items:center;gap:8px;background:{{ hapZemin }};border:1px solid {{ hapKenar }};border-radius:999px;padding:7px 13px">
+        <span style="width:6px;height:6px;background:#d9622f;transform:rotate(45deg)"></span>
+        <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;color:{{ hapYazi }}">{{ ustEtiket }}</span>
+      </span>
+      <span style="font-variant-numeric:tabular-nums;font-size:11px;font-weight:900;letter-spacing:.06em;color:{{ hapYazi }}">{{ sayfa }}</span>
+    </div>
+  </div>
+
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:460,&quot;height&quot;:980},&quot;ay&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;EYLÜL&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;İçerik&quot;},&quot;tarihAraligi&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;1 — 30 EYLÜL&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;İçerik&quot;},&quot;maskotlar&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Görünüm&quot;},&quot;konfetiVar&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Görünüm&quot;},&quot;defterCizgisi&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Görünüm&quot;}}">
+const TOPLAM = 10
+
+// Ekran başına sayaç hedefi: [hedef, biçim]
+const SAYACLAR = {
+  2: { hedef: 142, bicim: 'tam' },
+  3: { hedef: 3860, bicim: 'tam' },
+  5: { hedef: 2900, bicim: 'sure' },
+  6: { hedef: 1240, bicim: 'tam' },
+  9: { hedef: 1496, bicim: 'tam' },
+}
+
+function tamYaz(n) {
+  return Math.round(n).toLocaleString('tr-TR')
+}
+
+function sureYaz(dakika) {
+  const d = Math.round(dakika)
+  return `${Math.floor(d / 60)}sa ${String(d % 60).padStart(2, '0')}dk`
+}
+
+class Component extends DCLogic {
+  state = { i: 1, oran: 0, paylasildi: false }
+
+  componentDidMount() {
+    window.addEventListener('keydown', this.tus)
+    this.sayacBaslat()
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.tus)
+    clearInterval(this.zaman)
+  }
+
+  tus = (o) => {
+    if (o.key === 'ArrowRight' || o.key === ' ') { o.preventDefault(); this.ilerle() }
+    if (o.key === 'ArrowLeft') { o.preventDefault(); this.geri() }
+  }
+
+  git = (n) => {
+    const i = Math.min(TOPLAM, Math.max(1, n))
+    if (i === this.state.i) return
+    this.setState({ i, oran: 0 }, this.sayacBaslat)
+  }
+
+  ilerle = () => this.git(this.state.i + 1)
+  geri = () => this.git(this.state.i - 1)
+  bastanBasla = () => this.setState({ i: 1, oran: 0, paylasildi: false }, this.sayacBaslat)
+  paylas = () => this.setState({ paylasildi: true })
+
+  // Sayılar sıfırdan hedefe sayıyor: hikâyede sayı bir sonuç değil, olay.
+  sayacBaslat = () => {
+    clearInterval(this.zaman)
+    if (!SAYACLAR[this.state.i]) return
+    const bas = Date.now()
+    const sure = 1100
+    this.zaman = setInterval(() => {
+      const p = Math.min(1, (Date.now() - bas) / sure)
+      this.setState({ oran: 1 - Math.pow(1 - p, 3) })
+      if (p >= 1) clearInterval(this.zaman)
+    }, 33)
+  }
+
+  renderVals() {
+    const { i, oran } = this.state
+    const koyuEkran = i === 9
+
+    const s = SAYACLAR[i]
+    const sayac = s && s.bicim !== 'sure' ? tamYaz(s.hedef * oran) : ''
+    // Süre halkanın içinde iki satır: saat büyük, dakika küçük — tek satır
+    // 116 pikselik halka boşluğuna sığmıyor ve etikete biniyordu.
+    const dk = s && s.bicim === 'sure' ? Math.round(s.hedef * oran) : 0
+    // Ekranın taşıyıcı sayısı tek satır: "48sa 20dk" bölünürse vurgu dağılıyor.
+    const sayacSure = `${Math.floor(dk / 60)}sa ${String(dk % 60).padStart(2, '0')}dk`
+
+    const ekranlar = {}
+    for (let n = 1; n <= TOPLAM; n++) ekranlar['e' + n] = i === n
+
+    const dilimler = Array.from({ length: TOPLAM }, (_, n) => ({
+      bg: n < i
+        ? (koyuEkran ? '#f0be48' : '#d9622f')
+        : (koyuEkran ? 'rgba(255,255,255,.28)' : 'rgba(168,124,36,.25)'),
+    }))
+
+    const haftaVerisi = [
+      { ad: '1-7 Eyl', deger: 782 },
+      { ad: '8-14 Eyl', deger: 908 },
+      { ad: '15-21 Eyl', deger: 1004 },
+      { ad: '22-30 Eyl', deger: 1166 },
+    ]
+    const enYuksek = Math.max(...haftaVerisi.map((h) => h.deger))
+    // Çubuklar kâğıdın üstünde duruyor: beyaz kart, kâğıt işlemesini kesip
+    // ekranın ortasına ikinci bir yüzey koyuyordu. Zirve haftası dolu turuncu,
+    // ötekiler kâğıdın kendi amber tonunda.
+    const haftalar = haftaVerisi.map((h, n) => {
+      const zirve = n === haftaVerisi.length - 1
+      return {
+        ad: h.ad,
+        deger: tamYaz(h.deger),
+        yuksek: Math.round((h.deger / enYuksek) * 100) + '%',
+        bg: zirve ? '#d9622f' : 'rgba(208,155,52,.32)',
+        golge: zirve ? '0 8px 18px -8px rgba(179,73,31,.6)' : 'none',
+        yaziRenk: zirve ? '#b3491f' : '#a68a43',
+        gecikme: 240 + n * 90 + 'ms',
+      }
+    })
+
+    const oyunVerisi = [
+      { ad: 'Bölünme', deger: 318, bg: '#b4523c' },
+      { ad: 'Periyodik Tablo', deger: 264, bg: '#6b5ca5' },
+      { ad: 'Harita', deger: 221, bg: '#4a7a52' },
+      { ad: 'Formül Avı', deger: 186, bg: '#a87c24' },
+    ]
+    const oyunEn = Math.max(...oyunVerisi.map((o) => o.deger))
+    const oyunlar = oyunVerisi.map((o, n) => ({
+      ad: o.ad,
+      deger: tamYaz(o.deger) + ' soru',
+      genis: Math.round((o.deger / oyunEn) * 100) + '%',
+      bg: o.bg,
+      gecikme: 320 + n * 90 + 'ms',
+    }))
+
+    const konfeti = Array.from({ length: 14 }, (_, n) => ({
+      sol: 6 + ((n * 37) % 88) + '%',
+      bg: ['#f0be48', '#fbe2a0', '#fff4e1', '#d9622f'][n % 4],
+      gecikme: n * 150 + 'ms',
+    }))
+
+    const ozet = [
+      { deger: '142', etiket: 'OKUNAN KONU', renk: '#b3491f' },
+      { deger: '3.860', etiket: 'ÇÖZÜLEN SORU', renk: '#b3491f' },
+      { deger: '94,25', etiket: 'EN YÜKSEK TYT NETİ', renk: '#4f7a4a' },
+      { deger: '62,50', etiket: 'EN YÜKSEK AYT NETİ', renk: '#4f7a4a' },
+      { deger: '48sa 20dk', etiket: 'POMODORO SÜRESİ', renk: '#8d691a' },
+      { deger: '1.240', etiket: 'MİNİ OYUN SORUSU', renk: '#8d691a' },
+    ]
+
+    const ay = this.props.ay ?? 'EYLÜL'
+
+    return {
+      ...ekranlar,
+      ay,
+      tarihAraligi: this.props.tarihAraligi ?? '1 — 30 EYLÜL',
+      ustEtiket: `${ay} ÖZETİ`,
+      maskotVar: this.props.maskotlar ?? true,
+      konfetiAcik: this.props.konfetiVar ?? true,
+      kagitDesen: (this.props.defterCizgisi ?? true)
+        ? 'repeating-linear-gradient(0deg,rgba(168,124,36,.14) 0 1px,transparent 1px 8px)'
+        : 'none',
+      sayac,
+      sayacSure,
+      sayfa: `${i}/${TOPLAM}`,
+      dilimler,
+      haftalar,
+      oyunlar,
+      konfeti,
+      ozet,
+      hapZemin: koyuEkran ? 'rgba(0,0,0,.28)' : 'rgba(255,255,255,.72)',
+      hapKenar: koyuEkran ? 'rgba(240,190,72,.4)' : '#ecdfb8',
+      hapYazi: koyuEkran ? '#fbe2a0' : '#8d691a',
+      paylasMetni: this.state.paylasildi ? 'Görsel hazır ✓' : 'Özeti paylaş',
+      ilerle: this.ilerle,
+      geri: this.geri,
+      bastanBasla: this.bastanBasla,
+      paylas: this.paylas,
+    }
+  }
+}
+</script>
+</body>
+</html>

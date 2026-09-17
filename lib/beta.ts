@@ -20,15 +20,6 @@
  * penceresinde yapıldığı gibi.
  */
 
-/**
- * Haftalık özet — ana sayfanın en üstündeki davet kartı ve açtığı hikâye.
- *
- * Kapalı: özet haftada bir kendiliğinden doğuyor ve betadaki kullanıcı onu
- * uygulamanın en görünür yerinde, üstelik hiç beklemediği bir anda buluyor.
- * Bölüm çalışıyor, ama ilk izlenim olarak çıkacak hâlde değil.
- *
- * Kapalıyken dönem "izlendi" diye **işaretlenmiyor** (`ozetGorulen`): bayrak
- * açıldığında bekleyen dönem hâlâ orada duruyor ve kullanıcı ilk özetini
- * kaybetmemiş oluyor.
- */
-export const HAFTALIK_OZET_ACIK = false
+// Şu an kapalı bölüm yok. Haftalık özet 0.7.x'te aylık özete dönüşüp açıldı ve
+// bayrağı buradan düştü; yeni bir bölüm gizlenirse bayrağı buraya gelir.
+export {}

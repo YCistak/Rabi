@@ -5,6 +5,7 @@
 import type { BankaKaydi } from './oyunlar/banka'
 import type { NotKagidi } from './yapilacaklar'
 import type { BilinmeyenKart, KonuIlerlemeleri } from './konu/ilerleme'
+import type { AylikOzetArsivi } from './ozet'
 
 // ---------------------------------------------------------------------------
 // Deneme
@@ -266,11 +267,11 @@ export type OyunKayitlari = Partial<Record<OyunId, OyunIstatistigi>>
  * Oynanan tek bir tur.
  *
  * `OyunIstatistigi` her şeyi toplayarak tuttuğu için "bu hafta oyunda ne kadar
- * vakit geçirdin" sorusuna cevap veremiyordu — haftalık özet bunu istiyor.
+ * vakit geçirdin" sorusuna cevap veremiyordu — özet bunu istiyor.
  * Turlar bu yüzden ayrıca, tarihiyle birlikte tutuluyor.
  *
- * Liste `OYUN_GECMIS_SINIRI` kadar tutuluyor; eskiler düşüyor. Haftalık özet
- * yalnızca son haftaya bakıyor, sınırsız büyütmek localStorage kotasını
+ * Liste `OYUN_GECMIS_SINIRI` kadar tutuluyor; eskiler düşüyor. Aylık özet
+ * yalnızca kapanan aya bakıyor, sınırsız büyütmek localStorage kotasını
  * gereksiz yere yiyor.
  */
 export type OyunTurKaydi = {
@@ -283,7 +284,7 @@ export type OyunTurKaydi = {
   /**
    * Turdaki yanlış sayısı ve turun hatasız bitip bitmediği.
    *
-   * İkisi de sonradan eklendi ve **isteğe bağlı**: haftalık özetin oyun kartı
+   * İkisi de sonradan eklendi ve **isteğe bağlı**: özetin oyun kartı
    * isabet oranı ("%89") ve hatasız tur sayısı istiyor, ikisi de doğru sayısı
    * tek başınayken hesaplanamıyordu. Eski kayıtlarda yoklar — o turlar isabet
    * hesabına hiç girmiyor; sıfır saymak, hatasız oynanmış eski turları %100
@@ -427,6 +428,11 @@ export type Yedek = {
    */
   konuIlerleme?: KonuIlerlemeleri
   bilinmeyenKartlar?: BilinmeyenKart[]
+  /**
+   * Kapanmış ayların hesaplanmış özetleri. Eski yedeklerde yok; geri
+   * yüklemede cihazdaki arşivle **birleştiriliyor**, üstüne yazılmıyor.
+   */
+  aylikOzetler?: AylikOzetArsivi
   pomodoroGecmis: PomodoroSeans[]
   /**
    * Pomodoro ayarı. Eski yedeklerde yok — o zaman geri yüklemede yazılmıyor,
