@@ -331,18 +331,11 @@ export function SoruTakibiEkrani({
             Soru ekle
           </Buton>
         ) : (
-          <Not className="rounded-2xl text-[13px]">
-            Geçmiş günler okunur. Soru yalnızca{' '}
-            <b className="font-extrabold text-foreground">bugüne</b> girilir — sonradan doldurulan
-            bir gün tahmine dayanır, oysa günlük hedef, seri ve haftalık özet bu sayıların o gün
-            gerçekten çözüldüğünü sayıyor.{' '}
-            <button
-              type="button"
-              onClick={bugunDon}
-              className="font-extrabold text-primary underline underline-offset-2"
-            >
-              Bugüne dön
-            </button>
+          // Tek satırlık sarı şerit: eskiden gerekçeyi anlatan üç cümlelik bir
+          // not ve "Bugüne dön" bağlantısı vardı; kullanıcı yalnızca kuralı
+          // istedi. Bugüne dönmenin yolu takvimin kendisi.
+          <Not tur="uyari" className="rounded-2xl text-center text-[13px] font-extrabold">
+            Sadece bugüne soru girebilirsin
           </Not>
         )}
 
@@ -365,7 +358,7 @@ export function SoruTakibiEkrani({
             <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
               {duzenlenebilir
                 ? '"Soru ekle" ile bir ders seç, sayıları gir.'
-                : 'Geçmiş günler yalnızca okunur.'}
+                : 'Sadece bugüne soru girebilirsin.'}
             </p>
           </div>
         ) : (
