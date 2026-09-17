@@ -49,6 +49,11 @@ describe('ilerleme', () => {
 
   it('biten konu haritada tamamlanmış görünür', () => {
     const tam = ilerlemeyiYaz({}, 'k1', { okunan: 2, bitti: true }, '2026-09-01')
+    expect(tam.k1.bitisTarihi).toBe('2026-09-01')
+    // İkinci okuma bitiş gününü oynatmıyor, son okuma günü ilerliyor.
+    const tekrar = ilerlemeyiYaz(tam, 'k1', { okunan: 2, bitti: true }, '2026-10-05')
+    expect(tekrar.k1.bitisTarihi).toBe('2026-09-01')
+    expect(tekrar.k1.tarih).toBe('2026-10-05')
     expect(konuBitti(tam, 'k1')).toBe(true)
     expect(temadaBiten(ornekProgram.temalar[0], tam)).toBe(1)
     expect(dersOrani(ornekProgram, tam)).toEqual({ biten: 1, toplam: 2 })
@@ -59,7 +64,7 @@ describe('ilerleme', () => {
     let ilerlemeler = ilerlemeyiYaz({}, 'k1', { okunan: 1, bitti: false }, '2026-09-01')
     ilerlemeler = ilerlemeyiYaz(ilerlemeler, 'k1', { okunan: 2, bitti: true }, '2026-09-05')
     expect(Object.keys(ilerlemeler)).toHaveLength(1)
-    expect(ilerlemeler.k1).toEqual({ okunan: 2, bitti: true, tarih: '2026-09-05' })
+    expect(ilerlemeler.k1).toEqual({ okunan: 2, bitti: true, tarih: '2026-09-05', bitisTarihi: '2026-09-05' })
   })
 })
 

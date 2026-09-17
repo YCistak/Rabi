@@ -259,9 +259,14 @@ describe('aylık özet — konu ve kapanış', () => {
     const ozet = aylikOzet(
       girdi({
         konuIlerleme: {
-          a: { bitti: true, tarih: '2026-09-10' },
+          // Bu ay bitti.
+          a: { bitti: true, tarih: '2026-09-10', bitisTarihi: '2026-09-10' },
+          // Bitmedi.
           b: { bitti: false, tarih: '2026-09-11' },
-          c: { bitti: true, tarih: '2026-08-11' },
+          // Geçen ay bitti, bu ay yeniden okundu — geçen aya ait.
+          c: { bitti: true, tarih: '2026-09-11', bitisTarihi: '2026-08-11' },
+          // Eski kayıt, bitiş günü yok — hiçbir aya sayılmıyor.
+          d: { bitti: true, tarih: '2026-09-12' },
         },
       }),
     )

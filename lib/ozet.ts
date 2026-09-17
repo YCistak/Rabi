@@ -340,11 +340,11 @@ export function aylikOzet(girdi: OzetGirdisi): AylikOzet {
   }
 
   // --- Konu haritası ---
-  // Bitiş günü tutulmuyor, son okuma günü tutuluyor (`tarih`): bitirilmiş bir
-  // konu bu ay yeniden okunduysa bu aya sayılıyor. Ayrı bir bitiş damgası
-  // eklemek eski kayıtları öksüz bırakırdı.
+  // İlk bitiş gününe göre (`bitisTarihi`): konu hangi ay bitirildiyse o aya
+  // sayılıyor, sonraki okumalar saymıyor. Alanı olmayan eski kayıtlar hiçbir
+  // aya girmiyor.
   const okunanKonu = Object.values(girdi.konuIlerleme).filter(
-    (k) => k.bitti && gunKumesi.has(k.tarih),
+    (k) => k.bitisTarihi !== undefined && gunKumesi.has(k.bitisTarihi),
   ).length
 
   // --- Konu okuma süresi ---

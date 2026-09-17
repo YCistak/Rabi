@@ -42,6 +42,16 @@ export type KonuIlerlemesi = {
   acildi?: boolean
   /** Son okuma günü, 'YYYY-AA-GG'. */
   tarih: string
+  /**
+   * Destenin **ilk kez** bitirildiği gün, 'YYYY-AA-GG'.
+   *
+   * Bir kez yazılıyor, sonraki okumalarda değişmiyor: aylık özet "bu ay
+   * bitirilen konu"yu buradan sayıyor ve `tarih` (son okuma günü) ona
+   * uymuyordu — Temmuz'da bitirilip Ağustos'ta tekrar açılan konu Ağustos'a
+   * sayılıyordu. Alan sonradan geldi, eski kayıtlarda yok: onlar hiçbir aya
+   * sayılmıyor, bitmiş görünmeye devam ediyor.
+   */
+  bitisTarihi?: string
 }
 
 export type KonuIlerlemeleri = Record<string, KonuIlerlemesi>
@@ -202,7 +212,13 @@ export function ilerlemeyiYaz(
   sonuc: { okunan: number; bitti: boolean; dogru?: number },
   bugun: string,
 ): KonuIlerlemeleri {
-  return { ...ilerlemeler, [konuId]: { ...ilerlemeler[konuId], ...sonuc, tarih: bugun } }
+  const onceki = ilerlemeler[konuId]
+  // Bitiş günü yalnızca ilk bitişte damgalanıyor; ikinci okuma onu oynatmıyor.
+  const bitisTarihi = onceki?.bitisTarihi ?? (sonuc.bitti ? bugun : undefined)
+  return {
+    ...ilerlemeler,
+    [konuId]: { ...onceki, ...sonuc, tarih: bugun, ...(bitisTarihi ? { bitisTarihi } : {}) },
+  }
 }
 
 /**
