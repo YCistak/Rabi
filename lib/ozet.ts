@@ -27,6 +27,7 @@ import type {
   Sablon,
 } from './types'
 import type { KonuIlerlemeleri } from './konu/ilerleme'
+import type { OkumaSeansi } from './konu/okuma-suresi'
 import { denemeOzeti, gunOzeti, kayitHaritasi, yuvarla } from './hesap'
 import { tariheCevir, tariheYaz } from './utils'
 
@@ -174,8 +175,8 @@ export type AylikOzet = {
   calisilanGun: number
   /** Ay içinde art arda çalışılan en uzun gün dizisi. */
   enUzunSeri: number
-  /** Pomodoro + mini oyun dakikası — "geçen süre". */
-  toplamDakika: number
+  /** Konu destesinde geçen dakika — "geçen süre". Pomodoro ve oyun ayrı. */
+  okumaDakika: number
 
   /** 3 — Çözülen soru */
   toplamSoru: number
@@ -224,6 +225,7 @@ export type OzetGirdisi = {
   denemeler: Deneme[]
   sablonlar: Sablon[]
   konuIlerleme: KonuIlerlemeleri
+  okumaGecmisi: OkumaSeansi[]
 }
 
 export function aylikOzet(girdi: OzetGirdisi): AylikOzet {
@@ -345,6 +347,14 @@ export function aylikOzet(girdi: OzetGirdisi): AylikOzet {
     (k) => k.bitti && gunKumesi.has(k.tarih),
   ).length
 
+  // --- Konu okuma süresi ---
+  let okumaSaniye = 0
+  for (const seans of girdi.okumaGecmisi) {
+    if (!gunKumesi.has(seans.tarih)) continue
+    okumaSaniye += seans.saniye
+    aktifGunler.add(seans.tarih)
+  }
+
   // --- Dersler ---
   const ilkUcDers: DersToplami[] = [...dersler.entries()]
     // Eşitlikte ders adına göre: sıralama her açılışta aynı çıksın, kart değişmesin.
@@ -368,7 +378,7 @@ export function aylikOzet(girdi: OzetGirdisi): AylikOzet {
     okunanKonu,
     calisilanGun: aktifGunler.size,
     enUzunSeri: enUzunSeri(ay.gunler, aktifGunler),
-    toplamDakika: pomodoroDakika + Math.round(oyunSaniye / 60),
+    okumaDakika: Math.round(okumaSaniye / 60),
     toplamSoru,
     haftalar,
     enIyiTyt,
@@ -392,7 +402,8 @@ export function aylikOzet(girdi: OzetGirdisi): AylikOzet {
       pomodoroDakika === 0 &&
       oyunTur === 0 &&
       denemeSayisi === 0 &&
-      okunanKonu === 0,
+      okunanKonu === 0 &&
+      okumaSaniye === 0,
   }
 }
 

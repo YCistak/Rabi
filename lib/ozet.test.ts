@@ -79,6 +79,7 @@ function girdi(ek: Partial<OzetGirdisi> = {}): OzetGirdisi {
     denemeler: [],
     sablonlar: [TYT, AYT],
     konuIlerleme: {},
+    okumaGecmisi: [],
     ...ek,
   }
 }
@@ -249,7 +250,7 @@ describe('aylık özet — pomodoro ve oyunlar', () => {
     expect(ozet.oyunSoru).toBe(18)
     expect(ozet.oyunTur).toBe(3)
     expect(ozet.enCokOynananlar[0]).toEqual({ oyun: 'islem', soru: 15, tur: 2 })
-    expect(ozet.toplamDakika).toBe(3)
+    expect(ozet.okumaDakika).toBe(0)
   })
 })
 
@@ -265,6 +266,21 @@ describe('aylık özet — konu ve kapanış', () => {
       }),
     )
     expect(ozet.okunanKonu).toBe(1)
+    expect(ozet.bosMu).toBe(false)
+  })
+
+  it('okuma süresini yalnızca ayın seanslarından toplar', () => {
+    const ozet = aylikOzet(
+      girdi({
+        okumaGecmisi: [
+          { konuId: 'a', tarih: '2026-09-03', saniye: 600 },
+          { konuId: 'a', tarih: '2026-09-04', saniye: 330 },
+          { konuId: 'b', tarih: EKIM_1, saniye: 9000 },
+        ],
+      }),
+    )
+    expect(ozet.okumaDakika).toBe(16)
+    expect(ozet.calisilanGun).toBe(2)
     expect(ozet.bosMu).toBe(false)
   })
 

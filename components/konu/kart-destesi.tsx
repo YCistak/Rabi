@@ -6,6 +6,7 @@ import type { BilgiKarti, Konu } from '@/lib/konu'
 import type { HaritaTemasi } from '@/lib/konu/harita-temasi'
 import { desteAkisi, molaSecimi, type DesteAdimi } from '@/lib/konu/deste-akisi'
 import { useGeriKatmani } from '@/lib/geri'
+import { useUygulamaGorunur } from '@/lib/gorunurluk'
 import { Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartGorseli } from './kart-gorseli'
@@ -48,6 +49,14 @@ export type DesteSonucu = {
   okunan: number
   /** Destenin sonuna gelindi mi. Yarıda çıkıldıysa `false`. */
   bitti: boolean
+  /**
+   * Deste açıkken ve uygulama **öndeyken** geçen süre, saniye.
+   *
+   * Ekranda gösterilmiyor; aylık özetin "konu haritasında geçen süre"
+   * kutusu için ölçülüyor. Arka plandaki süre sayılmıyor: ana tuşa basılınca
+   * WebView durmuyor ve deste açık kalıyor, o dakikalar okuma değil.
+   */
+  saniye: number
 }
 
 export function KartDestesi({
@@ -98,13 +107,36 @@ export function KartDestesi({
     [akis, adim],
   )
 
-  const sonucRef = useRef<DesteSonucu>({ okunan: 1, bitti: false })
-  sonucRef.current = { okunan: Math.min(enIleri, toplam), bitti: false }
-  useGeriKatmani(true, () => onKapat(sonucRef.current))
+  /*
+    Süre ölçümü: görünür olunan her aralığın başı damgalanıyor, aralık
+    kapanınca (arka plana gidiş ya da deste kapanışı) fark birikiyor. Sayaç
+    yok, state yok — her saniye çizim yenilenmesin; okunan değer yalnızca
+    kapanışta lazım.
+  */
+  const gorunur = useUygulamaGorunur()
+  const birikenRef = useRef(0)
+  const araBasiRef = useRef<number | null>(null)
+  useEffect(() => {
+    if (gorunur) {
+      araBasiRef.current = Date.now()
+      return
+    }
+    if (araBasiRef.current !== null) birikenRef.current += Date.now() - araBasiRef.current
+    araBasiRef.current = null
+  }, [gorunur])
+  const gecenSaniye = () => {
+    const acik = araBasiRef.current !== null ? Date.now() - araBasiRef.current : 0
+    return Math.round((birikenRef.current + acik) / 1000)
+  }
+
+  const sonucRef = useRef<DesteSonucu>({ okunan: 1, bitti: false, saniye: 0 })
+  sonucRef.current = { okunan: Math.min(enIleri, toplam), bitti: false, saniye: 0 }
+  const sonucla = (): DesteSonucu => ({ ...sonucRef.current, saniye: gecenSaniye() })
+  useGeriKatmani(true, () => onKapat(sonucla()))
 
   function ilerle() {
     if (sonAdim) {
-      onKapat({ okunan: toplam, bitti: true })
+      onKapat({ okunan: toplam, bitti: true, saniye: gecenSaniye() })
       return
     }
     setYon(1)
@@ -137,7 +169,7 @@ export function KartDestesi({
     window.scrollTo({ top: 0 })
   }, [adim])
 
-  const kapat = () => onKapat(sonucRef.current)
+  const kapat = () => onKapat(sonucla())
 
   return (
     <div

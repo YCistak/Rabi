@@ -581,7 +581,7 @@ function Halka({
 function kartlariKur(ozet: AylikOzet): Kart[] {
   const kartlar: Kart[] = [kapakKarti(ozet)]
 
-  if (ozet.okunanKonu > 0 || ozet.calisilanGun > 0) kartlar.push(konuKarti(ozet))
+  if (ozet.okunanKonu > 0 || ozet.okumaDakika > 0 || ozet.calisilanGun > 0) kartlar.push(konuKarti(ozet))
   if (ozet.toplamSoru > 0) kartlar.push(soruKarti(ozet))
   if (ozet.enIyiTyt || ozet.enIyiAyt) kartlar.push(denemeKarti(ozet))
   if (ozet.pomodoroDakika > 0) kartlar.push(pomodoroKarti(ozet))
@@ -680,7 +680,7 @@ function konuKarti(ozet: AylikOzet): Kart {
         <Giris gecikme={240} className="flex gap-[9px]">
           <Kutu deger={String(ozet.calisilanGun)} etiket="GÜN ÇALIŞTIN" />
           <Kutu deger={String(ozet.enUzunSeri)} etiket="SERİ" />
-          <Kutu deger={sureKisa(ozet.toplamDakika)} etiket="GEÇEN SÜRE" />
+          <Kutu deger={sureKisa(ozet.okumaDakika)} etiket="GEÇEN SÜRE" />
         </Giris>
         <KoseMaskotu poz="okuyan" boyut={150} gecikme={200} />
       </Sayfa>

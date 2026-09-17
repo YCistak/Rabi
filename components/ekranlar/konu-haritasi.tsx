@@ -73,6 +73,7 @@ import { useGeriKatmani } from '@/lib/geri'
 import { Kart, Onay } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartDestesi, type DesteSonucu } from '@/components/konu/kart-destesi'
+import type { OkumaSeansi } from '@/lib/konu/okuma-suresi'
 import { SoruSahnesi, type SahneSonucu } from '@/components/konu/soru-sahnesi'
 
 /**
@@ -279,11 +280,14 @@ export function KonuHaritasiEkrani({
   setSecim,
   ilerlemeler,
   setIlerlemeler,
+  onOkumaSeansi,
 }: {
   secim: { ders: KonuDersId; sinif: KonuSinifi }
   setSecim: (secim: { ders: KonuDersId; sinif: KonuSinifi }) => void
   ilerlemeler: KonuIlerlemeleri
   setIlerlemeler: (guncelle: (onceki: KonuIlerlemeleri) => KonuIlerlemeleri) => void
+  /** Deste kapanınca geçen süre buraya yazılıyor; kayıt `AppShell`de. */
+  onOkumaSeansi: (seans: OkumaSeansi) => void
 }) {
   /** Açık deste; null ise harita görünüyor. */
   const [acikKonu, setAcikKonu] = useState<{
@@ -380,6 +384,9 @@ export function KonuHaritasiEkrani({
     setIlerlemeler((onceki) =>
       ilerlemeyiYaz(onceki, acik.konu.id, { okunan: sonuc.okunan, bitti: sonuc.bitti }, bugun()),
     )
+    // Yarıda bırakılan destenin süresi de okuma: kart okundu, sadece sona
+    // gelinmedi. Sıfır süreyi elemek `okumaSeansiEkle`nin işi.
+    onOkumaSeansi({ konuId: acik.konu.id, tarih: bugun(), saniye: sonuc.saniye })
 
     // Sorular yalnızca deste **sonuna kadar** okunduysa geliyor: yarıda
     // bırakılan bir konunun sorusu, okunmamış kartları sormak olurdu.
