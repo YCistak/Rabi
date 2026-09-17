@@ -6,6 +6,7 @@ import type { BankaKaydi } from './oyunlar/banka'
 import type { NotKagidi } from './yapilacaklar'
 import type { BilinmeyenKart, KonuIlerlemeleri } from './konu/ilerleme'
 import type { AylikOzetArsivi } from './ozet'
+import type { OkumaSeansi } from './konu/okuma-suresi'
 
 // ---------------------------------------------------------------------------
 // Deneme
@@ -433,6 +434,8 @@ export type Yedek = {
    * yüklemede cihazdaki arşivle **birleştiriliyor**, üstüne yazılmıyor.
    */
   aylikOzetler?: AylikOzetArsivi
+  /** Konu destesinde geçen süre seansları. Eski yedeklerde yok. */
+  okumaGecmisi?: OkumaSeansi[]
   pomodoroGecmis: PomodoroSeans[]
   /**
    * Pomodoro ayarı. Eski yedeklerde yok — o zaman geri yüklemede yazılmıyor,

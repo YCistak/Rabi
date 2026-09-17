@@ -824,6 +824,28 @@ Arşiv **yedeğe giriyor** ve geri yüklemede cihazdakiyle birleştiriliyor,
 alınmıyor; hesap veri depodan okunmadan yazılmasın diye hazır bayrakları
 bekleniyor — boş bir ay arşive geçseydi bir daha düzelmezdi.
 
+### Okunan konu ilk bitiş gününe göre sayılıyor
+
+Konu sayfasındaki sayı, o ay **ilk kez** bitirilen desteler.
+`KonuIlerlemesi.bitisTarihi` yalnızca ilk bitişte damgalanıyor
+(`ilerlemeyiYaz`), sonraki okumalar oynatmıyor; son okuma günü (`tarih`)
+ayrı yaşamaya devam ediyor. Sayım bir süre `tarih`e bakıyordu ve Temmuz'da
+bitirilip Ağustos'ta tekrar açılan konu Ağustos'a sayılıyordu. Alan sonradan
+geldi: eski kayıtlarda yok, o konular hiçbir aya sayılmıyor — uydurma bir
+gün yazmak yanlış aya yazmak olurdu.
+
+### Konu okuma süresi arkadan ölçülüyor
+
+Konu sayfasındaki "GEÇEN SÜRE" kutusu destede geçen süre — pomodoro ve
+oyun süresi değil, onlar ayrı ölçüler. Ölçüm `KartDestesi` içinde ve
+kullanıcıya **gösterilmiyor**: kart okurken akan bir kronometre okumayı
+yarışa çevirirdi. Yalnızca uygulama **öndeyken** akıyor (`useUygulamaGorunur`);
+ana tuşa basılınca deste açık kalıyor ve o dakikalar okuma değil. Seans
+`rabi-okuma-gecmisi`ne konu + gün + saniye olarak düşüyor
+(`lib/konu/okuma-suresi.ts`); konu kaydına yazılmadı çünkü orada gün tek ve
+aynı konu iki ayda da okunabiliyor. Tek seans iki saatte kırpılıyor —
+masada unutulan telefon özete "14 saat okudun" yazdırmasın. Yedeğe giriyor.
+
 ### Veri olmayan sayfa üretilmiyor
 
 Sayfa sayısı sabit değil. Kapak ve kapanış her zaman var; konu, soru, deneme,

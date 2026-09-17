@@ -82,6 +82,7 @@ import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
 import { KonuHaritasiEkrani } from '@/components/ekranlar/konu-haritasi'
 import { YapilacaklarEkrani } from '@/components/ekranlar/yapilacaklar'
 import { AylikOzetEkrani } from '@/components/ekranlar/aylik-ozet'
+import { okumaSeansiEkle, type OkumaSeansi } from '@/lib/konu/okuma-suresi'
 import {
   arsivdeEksikAylar,
   aylikOzet,
@@ -207,6 +208,8 @@ export function AppShell() {
     ANAHTARLAR.konuIlerleme,
     {},
   )
+  /** Konu destesinde geçen süre seansları — yalnızca aylık özet okuyor. */
+  const [okumaGecmisi, setOkumaGecmisi] = useYerelDepo<OkumaSeansi[]>(ANAHTARLAR.okumaGecmisi, [])
   /*
     Bilinmeyenler bankası arayüze bağlı değil: deste karar sormayı bıraktı
     (`components/konu/kart-destesi.tsx`), yani listeye yeni kayıt düşmüyor.
@@ -357,8 +360,9 @@ export function AppShell() {
         denemeler,
         sablonlar,
         konuIlerleme,
+        okumaGecmisi,
       }),
-    [gunlukKayitlar, ayarlar.gunlukHedef, pomodoroGecmis, oyunGecmisi, denemeler, sablonlar, konuIlerleme],
+    [gunlukKayitlar, ayarlar.gunlukHedef, pomodoroGecmis, oyunGecmisi, denemeler, sablonlar, konuIlerleme, okumaGecmisi],
   )
 
   /*
@@ -938,6 +942,7 @@ export function AppShell() {
                 setSecim={(secim) => setKonuSecimi(secim)}
                 ilerlemeler={konuIlerleme}
                 setIlerlemeler={setKonuIlerleme}
+                onOkumaSeansi={(seans) => setOkumaGecmisi((onceki) => okumaSeansiEkle(onceki, seans))}
               />
             )}
             {sekme === 'daha' && <KartMenusu onKartAc={aracAc} />}
@@ -965,6 +970,7 @@ export function AppShell() {
                   konuIlerleme,
                   bilinmeyenKartlar,
                   aylikOzetler,
+                  okumaGecmisi,
                   pomodoroGecmis,
                   pomodoroAyar,
                   hedef,

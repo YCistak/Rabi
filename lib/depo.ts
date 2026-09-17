@@ -32,6 +32,7 @@ import { yeniId } from './utils'
 import { notlariNormalize, type NotKagidi } from './yapilacaklar'
 import type { BilinmeyenKart, KonuIlerlemeleri } from './konu/ilerleme'
 import type { AylikOzetArsivi } from './ozet'
+import { okumaGecmisiniCoz, type OkumaSeansi } from './konu/okuma-suresi'
 
 export const ANAHTARLAR = {
   denemeler: 'rabi-denemeler',
@@ -85,6 +86,11 @@ export const ANAHTARLAR = {
    * Görülmeyen ay da yazılıyor. Yedeğe giriyor.
    */
   aylikOzetler: 'rabi-aylik-ozetler',
+  /**
+   * Konu destesinde geçen sürenin seansları. Kullanıcıya gösterilmiyor,
+   * yalnızca aylık özet okuyor. Yedeğe giriyor.
+   */
+  okumaGecmisi: 'rabi-okuma-gecmisi',
   /**
    * Uygulamanın ilk açıldığı gün, 'YYYY-AA-GG'.
    *
@@ -493,6 +499,7 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       // kullanıcının mevcut konu kaydına dokunulmuyor.
       konuIlerleme: nesne.konuIlerleme as KonuIlerlemeleri | undefined,
       aylikOzetler: nesne.aylikOzetler as AylikOzetArsivi | undefined,
+      okumaGecmisi: Array.isArray(nesne.okumaGecmisi) ? okumaGecmisiniCoz(nesne.okumaGecmisi) : undefined,
       bilinmeyenKartlar: Array.isArray(nesne.bilinmeyenKartlar)
         ? (nesne.bilinmeyenKartlar as BilinmeyenKart[])
         : undefined,
@@ -709,6 +716,7 @@ export function yedegiUygula(yedek: Yedek) {
   if (yedek.konuIlerleme) yaz(ANAHTARLAR.konuIlerleme, yedek.konuIlerleme)
   // Arşiv birleştiriliyor, üstüne yazılmıyor: bu cihazda biriken aylar
   // yedekteki eski aylarla yan yana durmalı.
+  if (yedek.okumaGecmisi) yaz(ANAHTARLAR.okumaGecmisi, yedek.okumaGecmisi)
   if (yedek.aylikOzetler) {
     yaz(ANAHTARLAR.aylikOzetler, { ...oku<AylikOzetArsivi>(ANAHTARLAR.aylikOzetler, {}), ...yedek.aylikOzetler })
   }

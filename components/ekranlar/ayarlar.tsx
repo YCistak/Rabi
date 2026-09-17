@@ -24,6 +24,7 @@ import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { SINIF_SECENEKLERI, egitimYili, mezunMu, sinifAdi } from '@/lib/hesap'
 import type { NotKagidi } from '@/lib/yapilacaklar'
 import type { AylikOzetArsivi } from '@/lib/ozet'
+import type { OkumaSeansi } from '@/lib/konu/okuma-suresi'
 import {
   HEDEF_ADIMI,
   HEDEF_EN_AZ,
@@ -140,6 +141,7 @@ export function AyarlarEkrani({
     bilinmeyenKartlar?: BilinmeyenKart[]
     /** Aylık özet arşivi — yıllık özetin dayanağı. */
     aylikOzetler?: AylikOzetArsivi
+    okumaGecmisi?: OkumaSeansi[]
     /** Yapılacaklar tahtası — kâğıdın konumu da veri. */
     notlar?: NotKagidi[]
     pomodoroGecmis: PomodoroSeans[]

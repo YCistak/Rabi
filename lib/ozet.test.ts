@@ -79,6 +79,7 @@ function girdi(ek: Partial<OzetGirdisi> = {}): OzetGirdisi {
     denemeler: [],
     sablonlar: [TYT, AYT],
     konuIlerleme: {},
+    okumaGecmisi: [],
     ...ek,
   }
 }
@@ -249,7 +250,7 @@ describe('aylık özet — pomodoro ve oyunlar', () => {
     expect(ozet.oyunSoru).toBe(18)
     expect(ozet.oyunTur).toBe(3)
     expect(ozet.enCokOynananlar[0]).toEqual({ oyun: 'islem', soru: 15, tur: 2 })
-    expect(ozet.toplamDakika).toBe(3)
+    expect(ozet.okumaDakika).toBe(0)
   })
 })
 
@@ -258,13 +259,33 @@ describe('aylık özet — konu ve kapanış', () => {
     const ozet = aylikOzet(
       girdi({
         konuIlerleme: {
-          a: { bitti: true, tarih: '2026-09-10' },
+          // Bu ay bitti.
+          a: { bitti: true, tarih: '2026-09-10', bitisTarihi: '2026-09-10' },
+          // Bitmedi.
           b: { bitti: false, tarih: '2026-09-11' },
-          c: { bitti: true, tarih: '2026-08-11' },
+          // Geçen ay bitti, bu ay yeniden okundu — geçen aya ait.
+          c: { bitti: true, tarih: '2026-09-11', bitisTarihi: '2026-08-11' },
+          // Eski kayıt, bitiş günü yok — hiçbir aya sayılmıyor.
+          d: { bitti: true, tarih: '2026-09-12' },
         },
       }),
     )
     expect(ozet.okunanKonu).toBe(1)
+    expect(ozet.bosMu).toBe(false)
+  })
+
+  it('okuma süresini yalnızca ayın seanslarından toplar', () => {
+    const ozet = aylikOzet(
+      girdi({
+        okumaGecmisi: [
+          { konuId: 'a', tarih: '2026-09-03', saniye: 600 },
+          { konuId: 'a', tarih: '2026-09-04', saniye: 330 },
+          { konuId: 'b', tarih: EKIM_1, saniye: 9000 },
+        ],
+      }),
+    )
+    expect(ozet.okumaDakika).toBe(16)
+    expect(ozet.calisilanGun).toBe(2)
     expect(ozet.bosMu).toBe(false)
   })
 
