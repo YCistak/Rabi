@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { elenenSoruSayisi, yedegiDogrula, yedekOlustur } from './depo'
+import { ayarlariNormalize, elenenSoruSayisi, yedegiDogrula, yedekOlustur } from './depo'
 import type { Yedek } from './types'
 
 const bos: Omit<Yedek, 'uygulama' | 'surum' | 'tarih'> = {
@@ -187,5 +187,14 @@ describe('elenenSoruSayisi', () => {
       resimler: { r1: 'data:image/jpeg;base64,AAA' },
     })
     expect(elenenSoruSayisi(yedek)).toBe(1)
+  })
+})
+
+describe('ayarlariNormalize', () => {
+  it('bozuk sınıfı (null/NaN) son sınıfa düşürür, sayıyı korur', () => {
+    // NaN JSON'a `null` olarak yazılıyor; eski bir hata bunu kayda geçirmişti.
+    expect(ayarlariNormalize({ buYilSinif: null as unknown as number }).buYilSinif).toBe(12)
+    expect(ayarlariNormalize({ buYilSinif: Number.NaN }).buYilSinif).toBe(12)
+    expect(ayarlariNormalize({ buYilSinif: 11 }).buYilSinif).toBe(11)
   })
 })

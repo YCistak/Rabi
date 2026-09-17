@@ -344,6 +344,9 @@ export function ayarlariNormalize(ham: Partial<Ayarlar> | null | undefined): Aya
   return {
     ...birlesik,
     sinifYili: Number.isFinite(birlesik.sinifYili) ? birlesik.sinifYili : egitimYili(),
+    // Bozuk kayıtta (NaN → JSON `null`) sınıf son sınıfa düşüyor; NaN geri
+    // sayımı on iki yıl ileri atıyor, OBP hesabını da bozuyordu.
+    buYilSinif: Number.isFinite(birlesik.buYilSinif) ? birlesik.buYilSinif : VARSAYILAN_AYARLAR.buYilSinif,
     // Eski kurulumlarda alan yok; sayı olmayan her şey "girilmemiş" sayılıyor.
     elleObp: Number.isFinite(birlesik.elleObp as number) ? (birlesik.elleObp as number) : null,
     hatirlatmaSaati: saatiKirp(birlesik.hatirlatmaSaati),

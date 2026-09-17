@@ -470,17 +470,26 @@ export function AppShell() {
     }
   }, [acilisGorunur])
 
-  // Eylülde yeni ders yılı başlayınca kullanıcı bir üst sınıfa kendiliğinden geçer.
+  /*
+    Eylülde yeni ders yılı başlayınca kullanıcı bir üst sınıfa kendiliğinden
+    geçer. Hesap **normalize edilmiş** ayarlara bakıyor, hama değil: `sinifYili`
+    alanı olmayan eski kurulumda ham değer `undefined` ve `ilerlemisSinif`
+    NaN döndürüyordu; NaN kayda yazılıp JSON'da `null` oluyor ve ana sayfa
+    "2039 YKS · 4673 gün kaldı" gösteriyordu. Bir kez yazılınca da bir daha
+    düzelmiyordu.
+  */
   useEffect(() => {
-    if (!ayarlarHazir || !ayarlarHam.kurulumTamamlandi) return
+    if (!ayarlarHazir || !ayarlar.kurulumTamamlandi) return
     const buYil = egitimYili()
-    const yeniSinif = ilerlemisSinif(ayarlarHam.buYilSinif, ayarlarHam.sinifYili, buYil)
+    const yeniSinif = ilerlemisSinif(ayarlar.buYilSinif, ayarlar.sinifYili, buYil)
     if (yeniSinif !== ayarlarHam.buYilSinif || buYil !== ayarlarHam.sinifYili) {
       setAyarlar((o) => ({ ...o, buYilSinif: yeniSinif, sinifYili: buYil }))
     }
   }, [
     ayarlarHazir,
-    ayarlarHam.kurulumTamamlandi,
+    ayarlar.kurulumTamamlandi,
+    ayarlar.buYilSinif,
+    ayarlar.sinifYili,
     ayarlarHam.buYilSinif,
     ayarlarHam.sinifYili,
     setAyarlar,
