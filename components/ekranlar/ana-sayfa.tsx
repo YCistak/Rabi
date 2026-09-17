@@ -6,6 +6,7 @@ import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef } from '@/lib/types'
 import { devamsizlikOzeti, gunOzeti, kayitHaritasi } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
 import { siraYaz } from '@/lib/siralama'
+import { gunDe } from '@/lib/ozet'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
 import { kisayollar } from '@/lib/son-kullanilan'
 import { doluDersler, oyunlarinDersleri, type DersId, type DersTanimi } from '@/lib/oyunlar/tanim'
@@ -64,6 +65,7 @@ export function AnaSayfa({
   hedef,
   guncelSiralama,
   ozetHazir,
+  sonrakiOzet,
   onOzetAc,
   sonAraclar,
   sonOyunlar,
@@ -82,14 +84,17 @@ export function AnaSayfa({
   guncelSiralama: number | null
   /** Konu Anlatımı'nda "bilmiyorum" denen kart sayısı — bölümün alt satırı. */
   /**
-   * Biten haftanın özeti izlenmeyi bekliyor mu.
+   * Biten ayın özeti izlenmeyi bekliyor mu.
    *
-   * Bekliyorsa sayfanın **en üstünde** davet kartı duruyor. Yeri tesadüf
-   * değil: özet haftada bir gün doğuyor ve o gün açılmazsa bir hafta daha
-   * beklemesi gerekiyor — selamlamanın altına, Araçlar şeridinin arasına
-   * konsaydı görülmeden kaydırılıp geçilirdi.
+   * Bekliyorsa davet kartı sayfanın **en üstünde** ve renkli. Yeri tesadüf
+   * değil: özet ayda bir gün doğuyor ve o gün açılmazsa bir daha çıkmıyor —
+   * selamlamanın altına, Araçlar şeridinin arasına konsaydı görülmeden
+   * kaydırılıp geçilirdi. Beklemiyorsa kart sayfanın **en altında** ve
+   * pasif: kullanıcı özetin var olduğunu ve ne zaman geleceğini görsün.
    */
   ozetHazir: boolean
+  /** Bir sonraki özetin açılacağı gün, 'YYYY-AA-GG' — pasif kartın satırı. */
+  sonrakiOzet: string
   onOzetAc: () => void
   /** En son açılan araçlar ve oynanan oyunlar — kısayol kutucuklarının sırası. */
   sonAraclar: string[]
@@ -344,6 +349,9 @@ export function AnaSayfa({
           />
         ))}
       </Bolum>
+
+      {/* Özet beklemiyorken kart en altta ve pasif: ne zaman geleceğini söylüyor. */}
+      {!ozetHazir && <OzetBekliyor tarih={sonrakiOzet} />}
     </div>
   )
 }
@@ -554,20 +562,50 @@ function OzetDaveti({ onAc }: { onAc: () => void }) {
         className="pointer-events-none absolute -top-10 -left-8 h-36 w-36 rounded-full"
         style={{ background: 'radial-gradient(circle,rgba(255,244,225,.35),transparent 68%)' }}
       />
-      <Rabi durum="kutlama" boyut={46} className="relative shrink-0" />
+      <Rabi durum="kutlama" poz="el-sallayan" boyut={46} className="relative shrink-0" />
       <span className="relative min-w-0 flex-1">
         <span className="block text-[10px] font-extrabold tracking-[0.18em] text-white/70">
-          HAFTA KAPANDI
+          AY KAPANDI · BUGÜNE ÖZEL
         </span>
         <span className="mt-1 block font-display text-[17px] leading-tight font-extrabold">
-          Haftalık özetin hazır
+          Aylık özetin hazır
         </span>
         <span className="mt-0.5 block text-[12.5px] font-semibold text-white/80">
-          Bu haftayı Rabi’yle kapat
+          Yalnızca bugün açılıyor — Rabi’yle sayfaları çevir
         </span>
       </span>
       <ChevronRight size={20} className="relative shrink-0 text-white/75" aria-hidden />
     </button>
+  )
+}
+
+/**
+ * Özetin pasif hâli — sayfanın en altında, dokunulamıyor.
+ *
+ * Kartın var olması bilerek: özet ayda bir gün ve yalnızca o gün geliyor;
+ * ortada hiç görünmeyen bir özet, ilk kez çıktığında nereden geldiği
+ * anlaşılmayan bir kart olurdu. Pasif kart tarihi söylüyor, gün gelince
+ * aynı kart sayfanın tepesine çıkıp renkleniyor.
+ */
+function OzetBekliyor({ tarih }: { tarih: string }) {
+  return (
+    <div
+      aria-disabled
+      className="flex w-full items-center gap-3.5 rounded-2xl border border-dashed border-muted-foreground/30 bg-card/60 px-4 py-3.5 text-left opacity-70"
+    >
+      <Rabi durum="uykulu" poz="kahveli" boyut={40} className="shrink-0 grayscale" />
+      <span className="min-w-0 flex-1">
+        <span className="block text-[10px] font-extrabold tracking-[0.18em] text-muted-foreground">
+          AYLIK ÖZET
+        </span>
+        <span className="mt-0.5 block font-display text-[15px] leading-tight font-extrabold text-muted-foreground">
+          {gunDe(tarih)} açılır
+        </span>
+        <span className="mt-0.5 block text-[12px] font-semibold text-muted-foreground/80">
+          Ayın hikâyesi yalnızca o gün görülür
+        </span>
+      </span>
+    </div>
   )
 }
 

@@ -586,67 +586,67 @@ body {
     animation: acilis-yol 1700ms ease-in-out infinite;
   }
 
-  /* --- Haftalık özet (components/ekranlar/haftalik-ozet.tsx) --- */
+  /* --- Aylık özet (components/ekranlar/aylik-ozet.tsx) --- */
 
   /*
     Kartın içeriği alttan yükselerek gelir. Gecikmeler `style` ile veriliyor;
     her kartta üç dört öğe sırayla belirdiği için sabit sınıf yetmiyordu.
+    Tasarım: `ozGel`.
   */
   .ozet-girisi {
-    animation: ozet-girisi 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: ozet-girisi 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
-  /* Büyük sayılar için: aşağıdan gelip hafifçe büyüyerek oturur. */
-  .ozet-vurgu {
-    animation: ozet-vurgu 760ms cubic-bezier(0.2, 1.3, 0.4, 1) both;
-  }
-  /* Geri sayımın 1. sırası: kalp atışı gibi iki kez nabız atar. */
-  .ozet-nabiz {
-    animation: ozet-nabiz 1300ms ease-out both;
-  }
-  /*
-    Üstteki hikâye çubuğu. Süre `style` ile veriliyor çünkü her kartın kendi
-    süresi var. Dolu/boş iki durum varken kartın ne zaman geçeceği belli
-    olmuyordu; dolan çubuk "ne kadar kaldı"yı gösteren asıl parça.
-    `animation-play-state` ile duraklatılıyor: parmak basılıyken ya da uygulama
-    arka plandayken çubuk da beklemeli, yoksa sayaçla arası açılırdı.
-  */
-  .ozet-cubuk {
-    animation-name: ozet-cubuk;
-    animation-timing-function: linear;
-    animation-fill-mode: both;
-  }
-  /*
-    Kartın kendi açılışı: içerik yukarıdan aşağı sıyrılarak beliriyor.
-    `opacity` yerine `clip-path`: iki kart arasında zemin rengi de değişiyor ve
-    solarak gelen bir kart, altındaki eski kartın rengiyle bir kare karışıyordu.
-  */
-  .ozet-kart {
-    animation: ozet-kart 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
-  /* Çıkartma etiket ("EN İYİ GÜN · 95") — hafifçe eğik oturuyor. */
+  /* Maskot ve kutular: hafif büyüyerek oturur (`ozPop`). */
   .ozet-pop {
-    animation: ozet-pop 560ms cubic-bezier(0.2, 1.4, 0.4, 1) both;
+    animation: ozet-pop 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
-  /* Yedi günlük çubuk: tabandan yukarı büyüyor. */
+  /* Kapaktaki maskot ve şampiyonun kupası: sürekli, yavaş süzülüyor. */
+  .ozet-suzul {
+    animation: ozet-suzul 4.2s ease-in-out infinite;
+  }
+  /* Kapağın arkasındaki beyaz ışıma — nefes alıyor. */
+  .ozet-isima {
+    animation: ozet-isima 5s ease-in-out infinite;
+  }
+  /* Kapak ve kapanıştaki yapışkan bant: yukarıdan eğik düşüyor. */
+  .ozet-bant {
+    animation: ozet-bant 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .ozet-bant-sag {
+    animation: ozet-bant-sag 560ms cubic-bezier(0.16, 1, 0.3, 1) 80ms both;
+  }
+  /* Haftalık çubuk: tabandan yukarı büyüyor. */
   .ozet-bar {
     transform-origin: bottom;
-    animation: ozet-bar 560ms cubic-bezier(0.2, 1.2, 0.4, 1) both;
+    animation: ozet-bar 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
-  /* Yatay şerit (ders dağılımı): soldan açılıyor. */
+  /* Yatay şerit (ders payı, oyun listesi): soldan açılıyor. */
   .ozet-serit {
     transform-origin: left;
     animation: ozet-serit 720ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   /*
     Halkanın dolması. `stroke-dashoffset` çevrenin tamamından hedefe iniyor;
-    başlangıç değeri `style` ile veriliyor çünkü her halkanın yarıçapı farklı.
+    iki değer de `style` ile veriliyor çünkü her halkanın yarıçapı ve oranı
+    farklı. Bitiş değeri keyframe'de değil öğede: keyframe içindeki `var()`
+    öğe başına çözülüyor ve bir halka çok, on halka tek keyframe.
   */
   .ozet-halka {
-    animation: ozet-halka 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: ozet-halka 1s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
-  /* Kapak ve birincilik kartındaki ışıma — sürekli, çok yavaş nefes alıyor. */
-  .ozet-parla {
-    animation: ozet-parla 4s ease-in-out infinite;
+  /* Şampiyon kartının ışınları: bir kez açılıp sonra çok yavaş dönüyor. */
+  .ozet-isin {
+    animation:
+      ozet-isin 900ms cubic-bezier(0.16, 1, 0.3, 1) both,
+      ozet-don 70s linear 900ms infinite;
+  }
+  /* "ŞAMPİYONU" etiketi damga gibi basılıp sarsılıyor. */
+  .ozet-damga {
+    animation: ozet-damga 420ms ease-out 700ms both;
+  }
+  /* Şampiyon kartının konfetisi: yukarıdan düşüp dönerek kayboluyor. */
+  .ozet-konfeti {
+    animation: ozet-konfeti 2600ms linear both;
   }
 }
 
@@ -774,85 +774,72 @@ body {
 @keyframes ozet-girisi {
   from {
     opacity: 0;
-    transform: translateY(22px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
     transform: none;
-  }
-}
-
-@keyframes ozet-vurgu {
-  from {
-    opacity: 0;
-    transform: translateY(28px) scale(0.72);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes ozet-nabiz {
-  0% {
-    opacity: 0;
-    transform: scale(0.6);
-  }
-  35% {
-    opacity: 1;
-    transform: scale(1.12);
-  }
-  50% {
-    transform: scale(1);
-  }
-  68% {
-    transform: scale(1.07);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/*
-  Hareket azaltma tercihi açıksa süslemeler durur — açılış ekranı hariç, sebebi
-  aşağıdaki blokta yazılı.
-*/
-@keyframes ozet-cubuk {
-  from {
-    width: 0%;
-  }
-  to {
-    width: 100%;
-  }
-}
-
-@keyframes ozet-kart {
-  from {
-    clip-path: inset(0 0 100% 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
   }
 }
 
 @keyframes ozet-pop {
-  0% {
+  from {
     opacity: 0;
-    transform: scale(0.5) rotate(-8deg);
+    transform: scale(0.8);
   }
-  60% {
+  to {
     opacity: 1;
-    transform: scale(1.08) rotate(-3deg);
+    transform: scale(1);
   }
+}
+
+@keyframes ozet-suzul {
+  0%,
   100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes ozet-isima {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(0.94);
+  }
+  50% {
     opacity: 1;
-    transform: scale(1) rotate(-4deg);
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+@keyframes ozet-bant {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) rotate(-11deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(-6deg);
+  }
+}
+
+@keyframes ozet-bant-sag {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) rotate(11deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(5deg);
   }
 }
 
 @keyframes ozet-bar {
   from {
-    transform: scaleY(0.03);
+    transform: scaleY(0);
   }
   to {
     transform: scaleY(1);
@@ -872,20 +859,57 @@ body {
   from {
     stroke-dashoffset: var(--halka-cevre);
   }
+  to {
+    stroke-dashoffset: var(--halka-hedef);
+  }
 }
 
-@keyframes ozet-parla {
+@keyframes ozet-isin {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.6);
+  }
+  to {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) rotate(22deg) scale(1);
+  }
+}
+
+@keyframes ozet-don {
+  to {
+    transform: translate(-50%, -50%) rotate(382deg);
+  }
+}
+
+@keyframes ozet-damga {
   0% {
-    opacity: 0.25;
-    transform: scale(0.9);
+    transform: translate(0, 0) rotate(-6deg);
+  }
+  25% {
+    transform: translate(2px, -2px) rotate(-4deg);
   }
   50% {
-    opacity: 0.6;
-    transform: scale(1.04);
+    transform: translate(-2px, 1px) rotate(-8deg);
+  }
+  75% {
+    transform: translate(1px, 1px) rotate(-5deg);
   }
   100% {
-    opacity: 0.25;
-    transform: scale(0.9);
+    transform: translate(0, 0) rotate(-6deg);
+  }
+}
+
+@keyframes ozet-konfeti {
+  0% {
+    opacity: 0;
+    transform: translateY(-40px) rotate(0);
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(340px) rotate(420deg);
   }
 }
 
@@ -911,24 +935,45 @@ body {
   }
   .acilis-girisi,
   .ozet-girisi,
-  .ozet-vurgu,
-  .ozet-nabiz,
-  .ozet-kart,
   .ozet-pop,
+  .ozet-suzul,
+  .ozet-isima,
+  .ozet-bant,
+  .ozet-bant-sag,
   .ozet-bar,
   .ozet-serit,
   .ozet-halka,
-  .ozet-parla {
+  .ozet-isin,
+  .ozet-damga,
+  .ozet-konfeti {
     animation: none;
   }
-  /* Animasyon susunca çubuklar ve şeritler tam boyunda durmalı; `both`
-     olmadan başlangıç karesinde (scale 0) asılı kalırlardı. */
+  /* Animasyon susunca çubuklar, şeritler ve halkalar bitmiş hâlinde durmalı;
+     `both` olmadan başlangıç karesinde (scale 0) asılı kalırlardı. */
   .ozet-bar,
   .ozet-serit {
     transform: none;
   }
-  /* `ozet-cubuk` bilerek listede yok: süsleme değil, kartın ne zaman
-     geçeceğini gösteren tek işaret. */
+  .ozet-halka {
+    stroke-dashoffset: var(--halka-hedef);
+  }
+  .ozet-bant {
+    transform: rotate(-6deg);
+  }
+  .ozet-bant-sag {
+    transform: rotate(5deg);
+  }
+  .ozet-isin {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) rotate(22deg);
+  }
+  .ozet-damga {
+    transform: rotate(-6deg);
+  }
+  /* Konfeti hareketsiz bir leke olurdu; hiç çizilmiyor. */
+  .ozet-konfeti {
+    display: none;
+  }
 }
 
 /*

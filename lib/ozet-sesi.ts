@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * Haftalık özetin sesleri.
+ * Aylık özetin sesleri.
  *
  * Hepsi Web Audio ile üretiliyor. Mini oyunun doğru/yanlış sesleri dosyaya
  * çevrilmişti çünkü orada ses **geri bildirim** — cevabın doğru mu yanlış mı

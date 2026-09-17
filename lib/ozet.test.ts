@@ -1,29 +1,29 @@
 import { describe, expect, it } from 'vitest'
 import {
-  bekleyenOzetDonemi,
+  arsivdeEksikAylar,
+  ayAraligi,
+  ayAraligiYaz,
+  ayKaydir,
+  aylikOzet,
+  bekleyenOzetAyi,
+  dakikaKisa,
   dakikaYaz,
-  donem,
-  gunFarki,
-  gunYaz,
-  haftaAraligi,
-  haftaKaydir,
-  haftaYaz,
-  haftalikOzet,
+  ondalikYuzdeYaz,
   sayiEki,
+  sonrakiOzetGunu,
+  tamYaz,
   yuzdeYaz,
+  type AylikOzet,
   type OzetGirdisi,
 } from './ozet'
-import type { Deneme, GunlukKayit, Sablon } from './types'
+import type { Deneme, GunlukKayit, OyunTurKaydi, PomodoroSeans, Sablon } from './types'
 
-// 2026-08-17 pazartesi → hafta 17–23 Ağustos 2026
-const PAZARTESI = '2026-08-17'
-const CARSAMBA = '2026-08-19'
-const PAZAR = '2026-08-23'
-/** Haftanın dışında bir gün — sızıntı testleri için. */
-const SONRAKI_PAZARTESI = '2026-08-24'
+const EYLUL = '2026-09'
+/** Ayın dışında bir gün — sızıntı testleri için. */
+const EKIM_1 = '2026-10-01'
 
-const SABLON: Sablon = {
-  id: 's1',
+const TYT: Sablon = {
+  id: 'tyt',
   ad: 'TYT',
   tur: 'tyt',
   yanlisKatsayi: 4,
@@ -33,18 +33,24 @@ const SABLON: Sablon = {
     { id: 'mat', ad: 'Matematik', soruSayisi: 40 },
   ],
 }
+const AYT: Sablon = { ...TYT, id: 'ayt', ad: 'AYT', tur: 'ayt' }
 
-function gun(tarih: string, ...satirlar: [string, number][]): GunlukKayit {
+function gun(tarih: string, ...satirlar: [string, number, number?][]): GunlukKayit {
   return {
     tarih,
-    kayitlar: satirlar.map(([ders, toplam]) => ({ ders, toplam, dogru: toplam, yanlis: 0 })),
+    kayitlar: satirlar.map(([ders, toplam, yanlis = 0]) => ({
+      ders,
+      toplam,
+      dogru: toplam - yanlis,
+      yanlis,
+    })),
   }
 }
 
-function deneme(id: string, tarih: string, dogru: number): Deneme {
+function deneme(id: string, tarih: string, dogru: number, sablonId = 'tyt'): Deneme {
   return {
     id,
-    sablonId: 's1',
+    sablonId,
     ad: `Deneme ${id}`,
     tarih,
     sonuclar: [
@@ -54,343 +60,250 @@ function deneme(id: string, tarih: string, dogru: number): Deneme {
   }
 }
 
+function seans(tarih: string, dakika: number): PomodoroSeans {
+  // Yerel öğle saati: UTC kaymasıyla gün değişmesin.
+  return { id: tarih + dakika, baslangic: new Date(`${tarih}T12:00:00`).toISOString(), dakika }
+}
+
+function tur(tarih: string, oyun: OyunTurKaydi['oyun'], dogru: number, yanlis?: number): OyunTurKaydi {
+  return { tarih, oyun, saniye: 60, dogru, yanlis }
+}
+
 function girdi(ek: Partial<OzetGirdisi> = {}): OzetGirdisi {
   return {
-    haftaBasiIso: PAZARTESI,
+    ay: EYLUL,
     gunlukKayitlar: [],
     gunlukHedef: 100,
-    devamsizlik: [],
     pomodoroGecmis: [],
     oyunGecmisi: [],
-    yanlisSorular: [],
     denemeler: [],
-    sablonlar: [SABLON],
+    sablonlar: [TYT, AYT],
+    konuIlerleme: {},
     ...ek,
   }
 }
 
-describe('hafta aralığı', () => {
-  it('pazartesiden pazara yedi gün üretir', () => {
-    const hafta = haftaAraligi(CARSAMBA)
-    expect(hafta.baslangic).toBe(PAZARTESI)
-    expect(hafta.bitis).toBe(PAZAR)
-    expect(hafta.gunler).toHaveLength(7)
-    expect(hafta.gunler[0]).toBe(PAZARTESI)
-    expect(hafta.gunler[6]).toBe(PAZAR)
+describe('ay aralığı', () => {
+  it('ayın bütün günlerini üretir', () => {
+    const ay = ayAraligi(EYLUL)
+    expect(ay.baslangic).toBe('2026-09-01')
+    expect(ay.bitis).toBe('2026-09-30')
+    expect(ay.gunler).toHaveLength(30)
+    expect(ayAraligi('2028-02').gunler).toHaveLength(29)
   })
 
-  it('pazar günü kendi haftasına aittir, sonrakine değil', () => {
-    expect(haftaAraligi(PAZAR).baslangic).toBe(PAZARTESI)
+  it('ayKaydir yıl sınırını geçer', () => {
+    expect(ayKaydir('2026-12', 1)).toBe('2027-01')
+    expect(ayKaydir('2026-01', -1)).toBe('2025-12')
   })
 
-  it('ay sınırını aşan haftada da yedi gün üretir', () => {
-    const hafta = haftaAraligi('2026-08-31')
-    expect(hafta.baslangic).toBe('2026-08-31')
-    expect(hafta.bitis).toBe('2026-09-06')
-  })
-
-  it('haftaKaydir ileri ve geri gider', () => {
-    expect(haftaKaydir(PAZARTESI, -1)).toBe('2026-08-10')
-    expect(haftaKaydir(PAZARTESI, 1)).toBe(SONRAKI_PAZARTESI)
-  })
-
-  it('donem pazartesiye çekmez, verilen günden başlar', () => {
-    const d = donem(CARSAMBA)
-    expect(d.baslangic).toBe(CARSAMBA)
-    expect(d.bitis).toBe('2026-08-25')
-    expect(d.gunler).toHaveLength(7)
-  })
-
-  it('gunFarki tam gün sayar, iki yönde de', () => {
-    expect(gunFarki(PAZARTESI, PAZAR)).toBe(6)
-    expect(gunFarki(PAZAR, PAZARTESI)).toBe(-6)
+  it('ayAraligiYaz gün sayısını yazar', () => {
+    expect(ayAraligiYaz(ayAraligi(EYLUL))).toBe('1 — 30 Eylül')
+    expect(ayAraligiYaz(ayAraligi('2026-02'))).toBe('1 — 28 Şubat')
   })
 })
 
-describe('bekleyen özet dönemi', () => {
-  it('kurulumdan yedi gün geçmeden özet doğmaz', () => {
-    expect(bekleyenOzetDonemi(PAZARTESI, PAZARTESI)).toBeNull()
-    expect(bekleyenOzetDonemi(PAZARTESI, PAZAR)).toBeNull()
+describe('bekleyen özet ayı', () => {
+  it('yalnızca ayın 1inde bir önceki ayı verir', () => {
+    expect(bekleyenOzetAyi('2026-10-01')).toBe(EYLUL)
+    expect(bekleyenOzetAyi('2026-10-02')).toBeNull()
+    expect(bekleyenOzetAyi('2026-09-30')).toBeNull()
+    expect(bekleyenOzetAyi('2027-01-01')).toBe('2026-12')
   })
 
-  it('yedinci gün, kurulum gününden başlayan ilk dönemi verir', () => {
-    expect(bekleyenOzetDonemi(PAZARTESI, SONRAKI_PAZARTESI)).toBe(PAZARTESI)
-    expect(donem(PAZARTESI).bitis).toBe(PAZAR)
+  it('sonraki özet günü bir sonraki ayın 1i', () => {
+    expect(sonrakiOzetGunu('2026-09-17')).toBe('2026-10-01')
+    // Ayın 1'inde bile bir sonraki ayı gösteriyor: o günkü özet ya aktif ya izlenmiş.
+    expect(sonrakiOzetGunu('2026-10-01')).toBe('2026-11-01')
+    expect(sonrakiOzetGunu('2026-12-05')).toBe('2027-01-01')
   })
 
-  it('dönem, bir sonraki hafta gününe kadar aynı kalır', () => {
-    expect(bekleyenOzetDonemi(PAZARTESI, '2026-08-29')).toBe(PAZARTESI)
-    expect(bekleyenOzetDonemi(PAZARTESI, '2026-08-31')).toBe(SONRAKI_PAZARTESI)
-  })
-
-  it('kurulum takvim haftasının ortasındaysa da yedişer gün sayar', () => {
-    expect(bekleyenOzetDonemi(CARSAMBA, '2026-08-26')).toBe(CARSAMBA)
-    expect(bekleyenOzetDonemi(CARSAMBA, '2026-09-02')).toBe('2026-08-26')
+  it('arşivde eksik ayları ilk veriden bugüne kadar sayar, bu ayı saymaz', () => {
+    const bos = {} as AylikOzet
+    expect(arsivdeEksikAylar({}, '2026-07-20', '2026-10-01')).toEqual(['2026-07', '2026-08', '2026-09'])
+    expect(arsivdeEksikAylar({ '2026-08': bos }, '2026-07-20', '2026-10-01')).toEqual(['2026-07', '2026-09'])
+    expect(arsivdeEksikAylar({}, '2026-10-05', '2026-10-20')).toEqual([])
+    expect(arsivdeEksikAylar({}, null, '2026-10-20')).toEqual([])
   })
 })
 
-describe('haftalık özet — soru ve hedef', () => {
-  it('yalnızca haftanın günlerini toplar', () => {
-    const ozet = haftalikOzet(
+describe('aylık özet — soru ve haftalar', () => {
+  it('yalnızca ayın günlerini toplar', () => {
+    const ozet = aylikOzet(
       girdi({
         gunlukKayitlar: [
-          gun(PAZARTESI, ['Matematik', 120]),
-          gun(PAZAR, ['Türkçe', 80]),
-          gun(SONRAKI_PAZARTESI, ['Fizik', 500]),
+          gun('2026-09-01', ['Matematik', 120]),
+          gun('2026-09-30', ['Türkçe', 80]),
+          gun(EKIM_1, ['Fizik', 500]),
+          gun('2026-08-31', ['Fizik', 500]),
         ],
       }),
     )
     expect(ozet.toplamSoru).toBe(200)
+    expect(ozet.calisilanGun).toBe(2)
   })
 
-  it('hedefi belirgin şekilde aşınca "asti" der', () => {
-    const ozet = haftalikOzet(
-      girdi({ gunlukHedef: 100, gunlukKayitlar: [gun(PAZARTESI, ['Matematik', 900])] }),
-    )
-    expect(ozet.haftalikHedef).toBe(700)
-    expect(ozet.hedefDurumu).toBe('asti')
-    expect(ozet.hedefFarki).toBe(200)
-  })
-
-  it('hedefin hemen altını "tutturdu" sayar — %2 tolerans', () => {
-    const ozet = haftalikOzet(
-      girdi({ gunlukHedef: 100, gunlukKayitlar: [gun(PAZARTESI, ['Matematik', 695])] }),
-    )
-    expect(ozet.hedefDurumu).toBe('tutturdu')
-  })
-
-  it('hedefin gerisinde kalınca farkı eksi verir', () => {
-    const ozet = haftalikOzet(
-      girdi({ gunlukHedef: 100, gunlukKayitlar: [gun(PAZARTESI, ['Matematik', 100])] }),
-    )
-    expect(ozet.hedefDurumu).toBe('geride')
-    expect(ozet.hedefFarki).toBe(-600)
-  })
-
-  it('günlük hedefin tutturulduğu günleri sayar', () => {
-    const ozet = haftalikOzet(
+  it('haftaları 1-7, 8-14, 15-21, 22-son diye böler', () => {
+    const ozet = aylikOzet(
       girdi({
-        gunlukHedef: 100,
-        gunlukKayitlar: [
-          gun(PAZARTESI, ['Matematik', 100]),
-          gun(CARSAMBA, ['Matematik', 99]),
-          gun(PAZAR, ['Matematik', 300]),
-        ],
+        gunlukKayitlar: [gun('2026-09-07', ['M', 10]), gun('2026-09-08', ['M', 20]), gun('2026-09-30', ['M', 30])],
       }),
     )
-    expect(ozet.hedefliGun).toBe(2)
+    expect(ozet.haftalar.map((h) => h.ad)).toEqual(['1-7 Eyl', '8-14 Eyl', '15-21 Eyl', '22-30 Eyl'])
+    expect(ozet.haftalar.map((h) => h.soru)).toEqual([10, 20, 0, 30])
+    expect(aylikOzet(girdi({ ay: '2026-02' })).haftalar.map((h) => h.ad)).toEqual([
+      '1-7 Şub', '8-14 Şub', '15-21 Şub', '22-28 Şub',
+    ])
   })
 
-  it('seri haftanın son gününden geriye sayılır, bugünden değil', () => {
-    // Pazartesi–pazar hepsi hedefi tutturuyor → yedi günlük seri.
-    const kayitlar = haftaAraligi(PAZARTESI).gunler.map((g) => gun(g, ['Matematik', 150]))
-    const ozet = haftalikOzet(girdi({ gunlukHedef: 100, gunlukKayitlar: kayitlar }))
-    expect(ozet.seri).toBe(7)
-  })
-
-  it('hedefin tutturulmadığı gün seriyi keser', () => {
-    const gunler = haftaAraligi(PAZARTESI).gunler
-    const kayitlar = gunler.map((g, i) => gun(g, ['Matematik', i === 4 ? 10 : 150]))
-    const ozet = haftalikOzet(girdi({ gunlukHedef: 100, gunlukKayitlar: kayitlar }))
-    // Cuma (indeks 4) düştü; cumartesi–pazar kaldı.
-    expect(ozet.seri).toBe(2)
+  it('en uzun seri art arda çalışılan günleri sayar', () => {
+    const ozet = aylikOzet(
+      girdi({
+        gunlukKayitlar: [gun('2026-09-01', ['M', 1]), gun('2026-09-02', ['M', 1])],
+        pomodoroGecmis: [seans('2026-09-03', 25)],
+        oyunGecmisi: [tur('2026-09-05', 'islem', 5)],
+      }),
+    )
+    expect(ozet.calisilanGun).toBe(4)
+    expect(ozet.enUzunSeri).toBe(3)
   })
 })
 
-describe('haftalık özet — diğer alanlar', () => {
-  it('devamsızlıkta yarım günü 0,5 sayar ve türlere ayırır', () => {
-    const ozet = haftalikOzet(
+describe('aylık özet — dersler', () => {
+  it('ilk üç dersi doğru/yanlış/boş ve gün sayısıyla verir', () => {
+    const ozet = aylikOzet(
       girdi({
-        devamsizlik: [
-          { id: '1', tarih: PAZARTESI, tur: 'ozursuz', yarimGun: false },
-          { id: '2', tarih: CARSAMBA, tur: 'ozursuz', yarimGun: true },
-          { id: '3', tarih: PAZAR, tur: 'ozurlu', yarimGun: false },
-          { id: '4', tarih: SONRAKI_PAZARTESI, tur: 'ozursuz', yarimGun: false },
+        gunlukKayitlar: [
+          gun('2026-09-01', ['Matematik', 100, 20], ['Türkçe', 50], ['Fizik', 30], ['Tarih', 10]),
+          gun('2026-09-02', ['Matematik', 100, 10]),
         ],
       }),
     )
-    expect(ozet.devamsizlikOzursuz).toBe(1.5)
-    expect(ozet.devamsizlikOzurlu).toBe(1)
-    expect(ozet.devamsizlikToplam).toBe(2.5)
+    expect(ozet.ilkUcDers.map((d) => d.ders)).toEqual(['Matematik', 'Türkçe', 'Fizik'])
+    const mat = ozet.ilkUcDers[0]
+    expect(mat.soru).toBe(200)
+    expect(mat.yanlis).toBe(30)
+    expect(mat.dogru).toBe(170)
+    expect(mat.bos).toBe(0)
+    expect(mat.basari).toBeCloseTo(0.85)
+    expect(mat.gunSayisi).toBe(2)
+    expect(mat.oran).toBeCloseTo(200 / 290)
   })
 
-  it('pomodoro dakikasını toplar ve en çok çalışılan dersi bulur', () => {
-    const ozet = haftalikOzet(
+  it('boş sayılır: toplam − doğru − yanlış', () => {
+    const ozet = aylikOzet(
       girdi({
-        pomodoroGecmis: [
-          { id: '1', baslangic: `${PAZARTESI}T10:00:00.000Z`, dakika: 25, ders: 'Matematik' },
-          { id: '2', baslangic: `${CARSAMBA}T10:00:00.000Z`, dakika: 50, ders: 'Fizik' },
-          { id: '3', baslangic: `${PAZAR}T10:00:00.000Z`, dakika: 30, ders: 'Matematik' },
-          { id: '4', baslangic: `${SONRAKI_PAZARTESI}T10:00:00.000Z`, dakika: 999, ders: 'Kimya' },
-        ],
+        gunlukKayitlar: [{ tarih: '2026-09-01', kayitlar: [{ ders: 'M', toplam: 40, dogru: 30, yanlis: 5 }] }],
       }),
     )
-    expect(ozet.pomodoroDakika).toBe(105)
-    expect(ozet.pomodoroSeans).toBe(3)
-    expect(ozet.pomodoroDers).toEqual({ ders: 'Matematik', dakika: 55 })
+    expect(ozet.ilkUcDers[0].bos).toBe(5)
   })
+})
 
-  it('gece yarısına yakın seansı yerel güne göre sayar, UTC gününe göre değil', () => {
-    // Yerel saatle pazartesi 00.30'da başlayan seans. UTC+3'te bu, UTC'de
-    // pazar 21.30 — ham damganın ilk on karakteri alınsaydı seans bir önceki
-    // haftaya düşerdi.
-    const yerelGeceYarisi = new Date(2026, 7, 17, 0, 30).toISOString()
-    const ozet = haftalikOzet(
-      girdi({ pomodoroGecmis: [{ id: '1', baslangic: yerelGeceYarisi, dakika: 25 }] }),
-    )
-    expect(ozet.pomodoroDakika).toBe(25)
-  })
-
-  it('dersi olmayan pomodoro seansı süreye girer ama ders sıralamasına girmez', () => {
-    const ozet = haftalikOzet(
-      girdi({
-        pomodoroGecmis: [{ id: '1', baslangic: `${PAZARTESI}T10:00:00.000Z`, dakika: 40 }],
-      }),
-    )
-    expect(ozet.pomodoroDakika).toBe(40)
-    expect(ozet.pomodoroDers).toBeNull()
-  })
-
-  it('oyun süresini dakikaya çevirir ve en çok oynananı bulur', () => {
-    const ozet = haftalikOzet(
-      girdi({
-        oyunGecmisi: [
-          { tarih: PAZARTESI, oyun: 'yazim', saniye: 60, dogru: 10 },
-          { tarih: PAZARTESI, oyun: 'yazim', saniye: 54, dogru: 8 },
-          { tarih: CARSAMBA, oyun: 'islem', saniye: 60, dogru: 12 },
-          { tarih: SONRAKI_PAZARTESI, oyun: 'edebiyat', saniye: 60, dogru: 5 },
-        ],
-      }),
-    )
-    expect(ozet.oyunTur).toBe(3)
-    expect(ozet.oyunDogru).toBe(30)
-    expect(ozet.oyunDakika).toBe(3)
-    expect(ozet.enCokOynanan).toBe('yazim')
-  })
-
-  it('bankada yalnızca o hafta çözülmüş işaretlenenleri sayar', () => {
-    const soru = (id: string, cozuldu: boolean, cozulmeTarihi?: string) => ({
-      id,
-      ders: 'Matematik',
-      tarih: PAZARTESI,
-      resimId: `r${id}`,
-      cozuldu,
-      cozulmeTarihi,
-    })
-    const ozet = haftalikOzet(
-      girdi({
-        yanlisSorular: [
-          soru('1', true, PAZARTESI),
-          soru('2', true, SONRAKI_PAZARTESI),
-          // Tarihi olmayan eski kayıt hiçbir haftaya sayılmaz.
-          soru('3', true),
-          soru('4', false),
-        ],
-      }),
-    )
-    expect(ozet.bankaCozulen).toBe(1)
-  })
-
-  it('deneme netlerini en yüksek, en düşük ve ortalama olarak verir', () => {
-    const ozet = haftalikOzet(
+describe('aylık özet — denemeler', () => {
+  it('TYT ve AYT için ayrı ayrı en yüksek neti bulur', () => {
+    const ozet = aylikOzet(
       girdi({
         denemeler: [
-          deneme('a', PAZARTESI, 30),
-          deneme('b', CARSAMBA, 20),
-          deneme('c', PAZAR, 40),
-          deneme('d', SONRAKI_PAZARTESI, 80),
+          deneme('a', '2026-09-03', 20),
+          deneme('b', '2026-09-14', 35),
+          deneme('c', '2026-09-20', 25, 'ayt'),
+          deneme('d', EKIM_1, 40),
         ],
       }),
     )
     expect(ozet.denemeSayisi).toBe(3)
-    expect(ozet.denemeEnYuksek?.net).toBe(40)
-    expect(ozet.denemeEnDusuk?.net).toBe(20)
-    expect(ozet.denemeOrtalama).toBe(30)
+    expect(ozet.enIyiTyt?.net).toBe(35)
+    expect(ozet.enIyiTyt?.tarih).toBe('2026-09-14')
+    expect(ozet.enIyiTyt?.toplamSoru).toBe(80)
+    expect(ozet.enIyiAyt?.net).toBe(25)
   })
 
-  it('tek deneme varsa en yüksek ve en düşük aynıdır', () => {
-    const ozet = haftalikOzet(girdi({ denemeler: [deneme('a', PAZARTESI, 25)] }))
-    expect(ozet.denemeEnYuksek?.net).toBe(25)
-    expect(ozet.denemeEnDusuk?.net).toBe(25)
-    expect(ozet.denemeOrtalama).toBe(25)
+  it('deneme yoksa ikisi de null', () => {
+    const ozet = aylikOzet(girdi())
+    expect(ozet.enIyiTyt).toBeNull()
+    expect(ozet.enIyiAyt).toBeNull()
   })
+})
 
-  it('şablonu silinmiş deneme ortalamayı bozmaz', () => {
-    const oksuz: Deneme = { ...deneme('x', PAZARTESI, 10), sablonId: 'yok' }
-    const ozet = haftalikOzet(girdi({ denemeler: [deneme('a', PAZARTESI, 30), oksuz] }))
-    expect(ozet.denemeSayisi).toBe(1)
-    expect(ozet.denemeOrtalama).toBe(30)
-  })
-
-  it('en çok soru çözülen üç dersi çoktan aza sıralar', () => {
-    const ozet = haftalikOzet(
+describe('aylık özet — pomodoro ve oyunlar', () => {
+  it('pomodoro toplamını, en uzun günü ve seriyi sayar', () => {
+    const ozet = aylikOzet(
       girdi({
-        gunlukKayitlar: [
-          gun(PAZARTESI, ['Matematik', 100], ['Türkçe', 60], ['Fizik', 40]),
-          gun(CARSAMBA, ['Türkçe', 50], ['Kimya', 10]),
-        ],
+        pomodoroGecmis: [seans('2026-09-01', 25), seans('2026-09-01', 50), seans('2026-09-02', 25), seans(EKIM_1, 90)],
       }),
     )
-    expect(ozet.ilkUcDers.map((d) => d.ders)).toEqual(['Türkçe', 'Matematik', 'Fizik'])
-    expect(ozet.ilkUcDers[0].soru).toBe(110)
-    expect(ozet.ilkUcDers[0].oran).toBeCloseTo(110 / 260, 5)
+    expect(ozet.pomodoroDakika).toBe(100)
+    expect(ozet.pomodoroSeans).toBe(3)
+    expect(ozet.enUzunGunDakika).toBe(75)
+    expect(ozet.pomodoroSeri).toBe(2)
+    expect(ozet.pomodoroOrani).toBeCloseTo(100 / (30 * 24 * 60))
   })
 
-  it('eşit soruda ders adına göre sıralar — sıra her açılışta aynı kalsın', () => {
-    const ozet = haftalikOzet(
-      girdi({ gunlukKayitlar: [gun(PAZARTESI, ['Zooloji', 50], ['Anatomi', 50])] }),
-    )
-    expect(ozet.ilkUcDers.map((d) => d.ders)).toEqual(['Anatomi', 'Zooloji'])
-  })
-
-  it('hiç veri yoksa bosMu doğrudur', () => {
-    expect(haftalikOzet(girdi()).bosMu).toBe(true)
-  })
-
-  it('tek bir pomodoro seansı bile özeti dolu sayar', () => {
-    const ozet = haftalikOzet(
+  it('oyun sorusu doğru + yanlış; yanlışı olmayan eski turda yalnızca doğru', () => {
+    const ozet = aylikOzet(
       girdi({
-        pomodoroGecmis: [{ id: '1', baslangic: `${PAZARTESI}T09:00:00.000Z`, dakika: 25 }],
+        oyunGecmisi: [tur('2026-09-01', 'islem', 8, 2), tur('2026-09-02', 'islem', 5), tur('2026-09-02', 'koklu', 3, 0)],
       }),
     )
+    expect(ozet.oyunSoru).toBe(18)
+    expect(ozet.oyunTur).toBe(3)
+    expect(ozet.enCokOynananlar[0]).toEqual({ oyun: 'islem', soru: 15, tur: 2 })
+    expect(ozet.toplamDakika).toBe(3)
+  })
+})
+
+describe('aylık özet — konu ve kapanış', () => {
+  it('bu ay bitirilen konuları sayar', () => {
+    const ozet = aylikOzet(
+      girdi({
+        konuIlerleme: {
+          a: { bitti: true, tarih: '2026-09-10' },
+          b: { bitti: false, tarih: '2026-09-11' },
+          c: { bitti: true, tarih: '2026-08-11' },
+        },
+      }),
+    )
+    expect(ozet.okunanKonu).toBe(1)
     expect(ozet.bosMu).toBe(false)
+  })
+
+  it('sonraki ayın hedefi günlük hedef × gün', () => {
+    expect(aylikOzet(girdi({ gunlukHedef: 100 })).sonrakiAyHedefi).toBe(3100)
+    expect(aylikOzet(girdi({ gunlukHedef: 0 })).sonrakiAyHedefi).toBe(0)
+  })
+
+  it('hiç veri yoksa boş', () => {
+    expect(aylikOzet(girdi()).bosMu).toBe(true)
   })
 })
 
 describe('yazı yardımcıları', () => {
-  it('aynı ay içindeki haftayı tek ay adıyla yazar', () => {
-    expect(haftaYaz(haftaAraligi(PAZARTESI))).toBe('17–23 Ağustos')
-  })
-
-  it('ay değiştiren haftada iki ay adı yazar', () => {
-    expect(haftaYaz(haftaAraligi('2026-08-31'))).toBe('31 Ağustos – 6 Eylül')
-  })
-
-  it('dakikayı saate çevirir', () => {
+  it('dakikaYaz ve dakikaKisa', () => {
     expect(dakikaYaz(45)).toBe('45 dk')
-    expect(dakikaYaz(60)).toBe('1 sa')
-    expect(dakikaYaz(95)).toBe('1 sa 35 dk')
+    expect(dakikaYaz(120)).toBe('2 sa')
+    expect(dakikaYaz(80)).toBe('1 sa 20 dk')
+    expect(dakikaKisa(2900)).toBe('48sa 20dk')
+    expect(dakikaKisa(5)).toBe('5dk')
   })
 
-  it('yarım günü virgüllü yazar', () => {
-    expect(gunYaz(2)).toBe('2')
-    expect(gunYaz(1.5)).toBe('1,5')
+  it('tamYaz binlik ayraç koyar', () => {
+    expect(tamYaz(3860)).toBe('3.860')
   })
 
-  it('yüzde ekini sayının okunuşuna göre seçer', () => {
-    // Birler basamağı belirleyici: "kırk dokuz" → u, "kırk" → ı
+  it('sayı eki okunuşa uyar', () => {
+    expect(sayiEki(49)).toBe('u')
+    expect(sayiEki(40)).toBe('ı')
+    expect(sayiEki(42)).toBe('si')
+    expect(sayiEki(100)).toBe('ü')
+    expect(sayiEki(0)).toBe('ı')
     expect(yuzdeYaz(0.49)).toBe("%49'u")
-    expect(yuzdeYaz(0.4)).toBe("%40'ı")
-    expect(yuzdeYaz(0.03)).toBe("%3'ü")
-    expect(yuzdeYaz(0.11)).toBe("%11'i")
-    expect(yuzdeYaz(0.7)).toBe("%70'i")
-    // "yüz" ile bitiyor
-    expect(yuzdeYaz(1)).toBe("%100'ü")
+    expect(yuzdeYaz(0.26)).toBe("%26'sı")
   })
 
-  it('sayiEki her birler basamağı için bir ek verir', () => {
-    for (let i = 0; i <= 100; i++) {
-      expect(sayiEki(i)).toMatch(/^[ıiuü]$/)
-    }
+  it('ondalıklı yüzde eki', () => {
+    expect(ondalikYuzdeYaz(0.067)).toBe("%6,7'si")
+    expect(ondalikYuzdeYaz(0.063)).toBe("%6,3'ü")
+    expect(ondalikYuzdeYaz(0.07)).toBe("%7'si")
   })
 })

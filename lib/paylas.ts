@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * Dosya paylaşma (haftalık özet görseli, yedek dosyası).
+ * Dosya paylaşma (aylık özet görseli, yedek dosyası).
  *
  * Cihazda ve tarayıcıda iki ayrı yol var:
  *
@@ -44,7 +44,7 @@ export async function gorseliPaylas(
   /**
    * Görselin yanında gidecek yazı. Ayrı veriliyor çünkü paylaşım penceresinde
    * bazı uygulamalar (mesajlaşma, not) görseli değil yalnızca yazıyı alıyor;
-   * o durumda "rabi-haftalik-ozet-2026-08-17.png" yerine haftanın özeti gitsin.
+   * o durumda "rabi-aylik-ozet-2026-08.png" yerine ayın özeti gitsin.
    */
   metin: string = baslik,
 ): Promise<PaylasimSonucu> {

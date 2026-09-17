@@ -1,457 +1,450 @@
 /**
- * Haftalık özet — Rabi'nin "yıllık özet" tarzı hafta kapanışı.
+ * Aylık özet — Rabi'nin "yıllık özet" tarzı ay kapanışı.
  *
  * Burada yalnızca **hesap** var; nasıl gösterileceği
- * `components/ekranlar/haftalik-ozet.tsx` içinde. Ayrı durmasının sebebi bu
- * dosyanın tamamen saf olması: haftalar, sınırlar ve sıralama kuralları
- * test edilebilir kalıyor, ekran yalnızca çiziyor.
+ * `components/ekranlar/aylik-ozet.tsx` içinde. Ayrı durmasının sebebi bu
+ * dosyanın tamamen saf olması: ay sınırları, hafta dilimleri ve sıralama
+ * kuralları test edilebilir kalıyor, ekran yalnızca çiziyor.
  *
- * Dönem **kurulum gününe** yaslı, takvim haftasına değil: ilk özet uygulamanın
- * kurulmasından yedi gün sonra doğuyor ve sonra her hafta aynı gün yenileniyor
- * (`bekleyenOzetDonemi`). Pazartesi–pazar'a yaslansaydı çarşamba günü
- * uygulamayı kuran kullanıcı ilk özetini dört gün sonra ve yalnızca dört
- * günlük veriyle görürdü — "haftalık" demeyen bir haftalık özet.
+ * Özet bir süre **haftalıktı** ve kurulum gününe yaslı yedi günlük dönemlerle
+ * geliyordu. Aylığa geçti: haftada bir gelen hikâye kendini tekrar ediyordu ve
+ * yedi günün sayıları tek bir kötü günle kolayca bozuluyordu. Ay takvim ayı —
+ * kuruluma yaslanmıyor, çünkü "Eylül özeti" dediğinde herkes aynı şeyi
+ * anlamalı ve ileride yıllık özet bu kayıtları ay ay toplayacak.
+ *
+ * Özet ayın kapanışından sonraki **ilk gün** ve yalnızca o gün görülüyor
+ * (`bekleyenOzetAyi`); kaçırılan ay bir daha çıkmıyor ama hesabı arşive
+ * yazılıyor (`AylikOzetArsivi`) — silinseydi yıllık özetin dayanacağı bir
+ * şey kalmazdı.
  */
 
 import type {
   Deneme,
-  Devamsizlik,
   GunlukKayit,
   OyunId,
   OyunTurKaydi,
   PomodoroSeans,
   Sablon,
-  YanlisSoru,
 } from './types'
-import { denemeOzeti, gunOzeti, hedefSerisi, kayitHaritasi, yuvarla } from './hesap'
-import { haftaBasi, tariheCevir, tariheYaz } from './utils'
+import type { KonuIlerlemeleri } from './konu/ilerleme'
+import { denemeOzeti, gunOzeti, kayitHaritasi, yuvarla } from './hesap'
+import { tariheCevir, tariheYaz } from './utils'
 
 // ---------------------------------------------------------------------------
-// Hafta aralığı
+// Ay
 // ---------------------------------------------------------------------------
 
-export type HaftaAraligi = {
-  /** Dönemin ilk günü, 'YYYY-AA-GG' */
+/** Ayın anahtarı — 'YYYY-AA'. Arşivin ve "izlendi" listesinin kimliği. */
+export type AyAnahtari = string
+
+export type AyAraligi = {
+  /** 'YYYY-AA' */
+  anahtar: AyAnahtari
+  yil: number
+  /** 1–12 */
+  ay: number
+  /** Ayın ilk günü, 'YYYY-AA-GG' */
   baslangic: string
-  /** Dönemin son günü, 'YYYY-AA-GG' */
+  /** Ayın son günü, 'YYYY-AA-GG' */
   bitis: string
-  /** Baştan sona yedi gün. */
+  /** Baştan sona bütün günler. */
   gunler: string[]
 }
 
-/** Verilen günden başlayan yedi günlük dönem. Takvim haftasına yaslanmıyor. */
-export function donem(baslangicIso: string): HaftaAraligi {
+/** Türkçe ay adları; `toLocaleDateString` yerine sabit — statik dışa aktarımda cihaz yereli değişebiliyor. */
+export const AY_ADLARI = [
+  'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+  'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık',
+]
+
+/** 'YYYY-AA' anahtarından ay aralığı. */
+export function ayAraligi(anahtar: AyAnahtari): AyAraligi {
+  const [yil, ay] = anahtar.split('-').map(Number)
+  const gunSayisi = new Date(yil, ay, 0).getDate()
   const gunler: string[] = []
-  const gun = tariheCevir(baslangicIso)
-
-  for (let i = 0; i < 7; i++) {
-    gunler.push(tariheYaz(gun))
-    gun.setDate(gun.getDate() + 1)
-  }
-
-  return { baslangic: gunler[0], bitis: gunler[6], gunler }
+  for (let g = 1; g <= gunSayisi; g++) gunler.push(tariheYaz(new Date(yil, ay - 1, g)))
+  return { anahtar, yil, ay, baslangic: gunler[0], bitis: gunler[gunSayisi - 1], gunler }
 }
 
-/** Verilen günün ait olduğu takvim haftası (pazartesi–pazar). */
-export function haftaAraligi(iso: string): HaftaAraligi {
-  return donem(haftaBasi(iso))
+/** Günün ait olduğu ayın anahtarı. */
+export function ayAnahtari(iso: string): AyAnahtari {
+  return iso.slice(0, 7)
 }
 
-/** Dönem başını `adim` hafta ileri/geri kaydırır. Geçmiş dönemlere bakmak için. */
-export function haftaKaydir(haftaBasiIso: string, adim: number): string {
-  const gun = tariheCevir(haftaBasiIso)
-  gun.setDate(gun.getDate() + adim * 7)
-  return tariheYaz(gun)
-}
-
-/** İki gün arasındaki tam gün farkı. Negatif olabilir. */
-export function gunFarki(baslangicIso: string, bitisIso: string): number {
-  const bir = tariheCevir(baslangicIso).getTime()
-  const iki = tariheCevir(bitisIso).getTime()
-  // Yerel gece yarısından yerel gece yarısına: yaz saati geçişlerinde arada
-  // 23 ya da 25 saat olabiliyor, yuvarlama o günü de tam gün sayıyor.
-  return Math.round((iki - bir) / 86_400_000)
+/** Anahtarı `adim` ay ileri/geri kaydırır. */
+export function ayKaydir(anahtar: AyAnahtari, adim: number): AyAnahtari {
+  const [yil, ay] = anahtar.split('-').map(Number)
+  const t = new Date(yil, ay - 1 + adim, 1)
+  return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}`
 }
 
 /**
- * Gösterilmeyi bekleyen özetin dönem başlangıcı; henüz bir hafta dolmadıysa
- * `null`.
+ * Bugün gösterilmeyi bekleyen özetin ayı; bugün ayın 1'i değilse `null`.
  *
- * Özet kurulumdan yedi gün sonra **doğuyor** ve bir sonraki döneme kadar
- * duruyor: o gün uygulamayı açmayan kullanıcı özeti kaçırmıyor, izlenmemiş
- * dönem bekliyor. İçinde bulunulan dönemin özeti "henüz bitmedi" diye
- * gösterilmiyor — yarım bir haftanın sayıları haftalık hedefin altında kalır
- * ve iyi geçen bir haftayı kötü gösterirdi.
+ * Özet **yalnızca** ayın ilk günü görülüyor: Ağustos'un özeti 1 Eylül'de
+ * çıkıyor, 2 Eylül'de kapanıyor. Kullanıcının kararı — hikâye bir kapanış
+ * ânı, haftalarca duran bir kart değil. O gün açmayan kullanıcı o ayın
+ * hikâyesini kaçırıyor; sayıları arşivde duruyor.
  */
-export function bekleyenOzetDonemi(kurulumIso: string, bugunIso: string): string | null {
-  const gecen = gunFarki(kurulumIso, bugunIso)
-  if (gecen < 7) return null
-  // Tamamlanmış dönem sayısı; sonuncusunun başlangıcı döndürülüyor.
-  const tamamlanan = Math.floor(gecen / 7)
-  return haftaKaydir(kurulumIso, tamamlanan - 1)
+export function bekleyenOzetAyi(bugunIso: string): AyAnahtari | null {
+  if (tariheCevir(bugunIso).getDate() !== 1) return null
+  return ayKaydir(ayAnahtari(bugunIso), -1)
+}
+
+/**
+ * Bir sonraki özetin açılacağı gün — pasif kartın üstündeki tarih.
+ *
+ * Bugün ayın 1'iyse bugünü **değil** bir sonraki ayı veriyor: kart o gün ya
+ * aktif (özet bekliyor) ya da izlenmiş/boş, iki hâlde de "bugün açılır"
+ * yazmak anlamsız.
+ */
+export function sonrakiOzetGunu(bugunIso: string): string {
+  return ayAraligi(ayKaydir(ayAnahtari(bugunIso), 1)).baslangic
+}
+
+/**
+ * Kapanmış ama arşivde olmayan aylar, eskiden yeniye.
+ *
+ * Arşiv özet **görülsün görülmesin** doluyor: kaçırılan ay da yıllık özete
+ * girmeli. `ilkVeriIso`dan (en eski kaydın günü) önceki aylar taranmıyor —
+ * hiç veri olmayan ay için boş kayıt yazmanın anlamı yok.
+ */
+export function arsivdeEksikAylar(
+  arsiv: AylikOzetArsivi,
+  ilkVeriIso: string | null,
+  bugunIso: string,
+): AyAnahtari[] {
+  if (!ilkVeriIso) return []
+  const buAy = ayAnahtari(bugunIso)
+  const eksik: AyAnahtari[] = []
+  // En fazla 24 ay geriye: sonsuz döngü kalkanı ve zaten ondan eskisi kimseyi ilgilendirmiyor.
+  for (let ay = ayAnahtari(ilkVeriIso), i = 0; ay < buAy && i < 24; ay = ayKaydir(ay, 1), i++) {
+    if (!arsiv[ay]) eksik.push(ay)
+  }
+  return eksik
 }
 
 // ---------------------------------------------------------------------------
 // Özet
 // ---------------------------------------------------------------------------
 
-export type HedefDurumu = 'asti' | 'tutturdu' | 'geride'
-
 export type DersToplami = {
   ders: string
   soru: number
-  /** Haftanın toplam sorusundaki payı, 0–1. */
+  /** Ayın toplam sorusundaki payı, 0–1. */
   oran: number
+  dogru: number
+  yanlis: number
+  bos: number
+  /** Doğru / (doğru + yanlış), 0–1; hiç işaretli soru yoksa null. */
+  basari: number | null
+  /** Bu derste soru çözülen gün sayısı. */
+  gunSayisi: number
 }
 
 export type DenemeNeti = {
   ad: string
   tarih: string
   net: number
+  /** Şablonun toplam soru sayısı — halkadaki "/ 120 NET". */
+  toplamSoru: number
 }
 
-/** Hedef kartındaki yedi çubuktan biri. */
-export type GunToplami = {
-  /** 'YYYY-AA-GG' */
-  iso: string
-  /** Çubuğun altındaki üç harf — "PZT", "SAL"… */
+/** Soru kartındaki çubuklardan biri — ayın bir haftası. */
+export type HaftaToplami = {
+  /** "1-7 Eyl" */
   ad: string
+  baslangic: string
+  bitis: string
   soru: number
 }
 
-/**
- * Çubukların altındaki gün adları.
- *
- * `toLocaleDateString` yerine sabit liste: statik dışa aktarımda cihazın
- * yereli farklıysa kısaltmalar değişir ve yedi çubuğun genişliği bozulurdu —
- * ana sayfadaki `GUN_ADLARI` ile aynı gerekçe. `getDay()` sırasında, yani
- * pazar başta.
- */
-const GUN_KISALTMALARI = ['PAZ', 'PZT', 'SAL', 'ÇAR', 'PER', 'CUM', 'CMT']
+export type OyunToplami = {
+  oyun: OyunId
+  soru: number
+  tur: number
+}
 
-export type HaftalikOzet = {
-  hafta: HaftaAraligi
+export type AylikOzet = {
+  ay: AyAraligi
 
-  /** 1 — Haftalık soru hedefi */
+  /** 2 — Konu haritası */
+  okunanKonu: number
+  /** Herhangi bir kayıt (soru, pomodoro, oyun) girilen gün sayısı. */
+  calisilanGun: number
+  /** Ay içinde art arda çalışılan en uzun gün dizisi. */
+  enUzunSeri: number
+  /** Pomodoro + mini oyun dakikası — "geçen süre". */
+  toplamDakika: number
+
+  /** 3 — Çözülen soru */
   toplamSoru: number
-  haftalikHedef: number
-  hedefFarki: number
-  hedefDurumu: HedefDurumu
-  /** Hedefin ne kadarı tamamlandı, 0–1 arasına kırpılmamış (aşınca 1'i geçer). */
-  hedefOrani: number
-  /** Hafta içinde günlük hedefin tutturulduğu gün sayısı. */
-  hedefliGun: number
-  /** Yedi günün soru sayıları — hedef kartındaki çubuklar. */
-  gunler: GunToplami[]
-  /** Haftanın en çok soru çözülen günü; hiç soru yoksa null. */
-  enIyiGun: GunToplami | null
+  haftalar: HaftaToplami[]
 
-  /** Seri — hafta sonunda geçerli olan kesintisiz gün sayısı */
-  seri: number
+  /** 4 — Ayın en iyi denemeleri; o türden deneme yoksa null. */
+  enIyiTyt: DenemeNeti | null
+  enIyiAyt: DenemeNeti | null
+  denemeSayisi: number
 
-  /** 2 — Devamsızlık */
-  devamsizlikOzurlu: number
-  devamsizlikOzursuz: number
-  devamsizlikToplam: number
-
-  /** 3–4 — Pomodoro */
+  /** 5 — Pomodoro */
   pomodoroDakika: number
   pomodoroSeans: number
-  pomodoroDers: { ders: string; dakika: number } | null
-  /** "Haftanın masası" kutusundaki üç ders, çoktan aza. */
-  pomodoroDersleri: { ders: string; dakika: number }[]
+  /** Ayın toplam dakikasındaki payı, 0–1. */
+  pomodoroOrani: number
+  enUzunGunDakika: number
+  /** Art arda pomodoro yapılan en uzun gün dizisi. */
+  pomodoroSeri: number
 
-  /** 5 — Mini oyunlar */
-  oyunDakika: number
+  /** 6 — Mini oyunlar */
+  oyunSoru: number
   oyunTur: number
-  oyunDogru: number
-  /**
-   * İsabet oranı (0–1) ve hatasız tur sayısı; ölçülemiyorsa `null`/0.
-   *
-   * Yanlış sayısını taşımayan eski turlar hesaba **girmiyor**: sıfır yanlış
-   * saymak onları %100 isabetli gösterirdi.
-   */
-  oyunIsabet: number | null
-  oyunHatasiz: number
-  enCokOynanan: OyunId | null
-  /** En çok oynanan oyunun bu haftaki tur sayısı. */
-  enCokOynananTur: number
+  oyunDakika: number
+  /** En çok soru çözülen dört oyun, çoktan aza. */
+  enCokOynananlar: OyunToplami[]
 
-  /** 6 — Yanlış soru bankası */
-  bankaCozulen: number
-  /** Bankada hâlâ bekleyen (çözülmemiş) kayıt sayısı — kartın ızgarası. */
-  bankaBekleyen: number
-
-  /** 7–8 — Denemeler */
-  denemeSayisi: number
-  /** Haftanın denemeleri, tarih sırasıyla — net kartındaki çubuklar. */
-  denemeNetleri: DenemeNeti[]
-  denemeEnYuksek: DenemeNeti | null
-  denemeEnDusuk: DenemeNeti | null
-  denemeOrtalama: number | null
-  /** Bir önceki dönemin ortalama neti — "GEÇEN HF." çubuğu; deneme yoksa null. */
-  oncekiDonemOrtalama: number | null
-  /** Ortalamanın geçen döneme göre farkı; iki dönemden biri boşsa null. */
-  denemeArtis: number | null
-
-  /** 9 — En çok soru çözülen dersler, çoktan aza, en fazla üç */
+  /** 7–9 — En çok soru çözülen dersler, çoktan aza, en fazla üç */
   ilkUcDers: DersToplami[]
+
+  /** 10 — Gelecek ayın hedefi (günlük hedef × gün sayısı); hedef yoksa 0. */
+  sonrakiAyHedefi: number
 
   /** Hiçbir alanda veri yoksa özet gösterilmez. */
   bosMu: boolean
 }
 
+/** Arşiv: ay anahtarı → o ayın özeti. Yıllık özet buradan okuyacak. */
+export type AylikOzetArsivi = Record<AyAnahtari, AylikOzet>
+
 export type OzetGirdisi = {
-  haftaBasiIso: string
+  ay: AyAnahtari
   gunlukKayitlar: GunlukKayit[]
   gunlukHedef: number
-  devamsizlik: Devamsizlik[]
   pomodoroGecmis: PomodoroSeans[]
   oyunGecmisi: OyunTurKaydi[]
-  yanlisSorular: YanlisSoru[]
   denemeler: Deneme[]
   sablonlar: Sablon[]
+  konuIlerleme: KonuIlerlemeleri
 }
 
-export function haftalikOzet(girdi: OzetGirdisi): HaftalikOzet {
-  // `haftaBasiIso` dönemin **ilk günü**; pazartesiye çekilmiyor, çünkü dönem
-  // kurulum gününe yaslı (`bekleyenOzetDonemi`).
-  const hafta = donem(girdi.haftaBasiIso)
-  const gunKumesi = new Set(hafta.gunler)
+export function aylikOzet(girdi: OzetGirdisi): AylikOzet {
+  const ay = ayAraligi(girdi.ay)
+  const gunKumesi = new Set(ay.gunler)
   const harita = kayitHaritasi(girdi.gunlukKayitlar)
+  /** Herhangi bir şey yapılan günler — "gün çalıştın" ve seri buradan. */
+  const aktifGunler = new Set<string>()
 
   // --- Soru sayıları ve dersler ---
   let toplamSoru = 0
-  let hedefliGun = 0
-  const dersToplamlari = new Map<string, number>()
-  const gunler: GunToplami[] = []
+  const gunSorulari = new Map<string, number>()
+  const dersler = new Map<string, { soru: number; dogru: number; yanlis: number; gunler: Set<string> }>()
 
-  for (const gun of hafta.gunler) {
+  for (const gun of ay.gunler) {
     const kayit = harita.get(gun)
     const ozet = gunOzeti(kayit)
     toplamSoru += ozet.toplam
-    if (girdi.gunlukHedef > 0 && ozet.toplam >= girdi.gunlukHedef) hedefliGun++
-    gunler.push({ iso: gun, ad: GUN_KISALTMALARI[tariheCevir(gun).getDay()], soru: ozet.toplam })
+    gunSorulari.set(gun, ozet.toplam)
+    if (ozet.toplam > 0) aktifGunler.add(gun)
 
     for (const satir of kayit?.kayitlar ?? []) {
-      dersToplamlari.set(satir.ders, (dersToplamlari.get(satir.ders) ?? 0) + satir.toplam)
+      if (satir.toplam <= 0) continue
+      const d = dersler.get(satir.ders) ?? { soru: 0, dogru: 0, yanlis: 0, gunler: new Set() }
+      d.soru += satir.toplam
+      d.dogru += satir.dogru
+      d.yanlis += satir.yanlis
+      d.gunler.add(gun)
+      dersler.set(satir.ders, d)
     }
   }
 
-  // Eşitlikte **ilk** gün kazanıyor (`>`), böylece "en iyi gün" etiketi aynı
-  // veride her açılışta aynı günü gösteriyor.
-  const enIyiGun = gunler.reduce<GunToplami | null>(
-    (enIyi, gun) => (gun.soru > 0 && (!enIyi || gun.soru > enIyi.soru) ? gun : enIyi),
-    null,
-  )
-
-  const haftalikHedef = Math.max(0, girdi.gunlukHedef) * 7
-  const hedefFarki = toplamSoru - haftalikHedef
-
-  // --- Devamsızlık ---
-  let devamsizlikOzurlu = 0
-  let devamsizlikOzursuz = 0
-  for (const kayit of girdi.devamsizlik) {
-    if (!gunKumesi.has(kayit.tarih)) continue
-    const gun = kayit.yarimGun ? 0.5 : 1
-    if (kayit.tur === 'ozurlu') devamsizlikOzurlu += gun
-    else devamsizlikOzursuz += gun
+  // Haftalar 1–7, 8–14, 15–21, 22–son: takvim haftasına değil ayın kendi
+  // sayısına yaslı, yoksa ilk ve son dilim iki üç günlük kırıntı olurdu.
+  // Son dilim 7–10 gün; dörde bölünen bir ay okunur, beşe bölünen sıkışır.
+  const haftalar: HaftaToplami[] = []
+  for (let bas = 0; bas < ay.gunler.length; bas += 7) {
+    const sonDilim = bas + 14 > ay.gunler.length
+    const son = sonDilim ? ay.gunler.length : bas + 7
+    const dilim = ay.gunler.slice(bas, son)
+    haftalar.push({
+      ad: `${bas + 1}-${son} ${AY_ADLARI[ay.ay - 1].slice(0, 3)}`,
+      baslangic: dilim[0],
+      bitis: dilim[dilim.length - 1],
+      soru: dilim.reduce((t, g) => t + (gunSorulari.get(g) ?? 0), 0),
+    })
+    if (sonDilim) break
   }
 
   // --- Pomodoro ---
   let pomodoroDakika = 0
   let pomodoroSeans = 0
-  const dersDakikalari = new Map<string, number>()
+  const gunDakikalari = new Map<string, number>()
 
   for (const seans of girdi.pomodoroGecmis) {
     /*
       `baslangic` UTC bir zaman damgası (`toISOString`); ilk on karakteri
       kesmek **yanlış gün** verir. Türkiye'de gece 01.30'da başlayan bir seans
-      UTC'de bir önceki günde görünür — pazartesi gecesi çalışan biri o seansı
-      geçen haftanın özetinde bulurdu. Yerel tarihe çevriliyor.
+      UTC'de bir önceki günde görünür — ayın ilk gecesi çalışan biri o seansı
+      geçen ayın özetinde bulurdu. Yerel tarihe çevriliyor.
     */
-    if (!gunKumesi.has(tariheYaz(new Date(seans.baslangic)))) continue
+    const gun = tariheYaz(new Date(seans.baslangic))
+    if (!gunKumesi.has(gun)) continue
     pomodoroDakika += seans.dakika
     pomodoroSeans++
-    const ders = seans.ders?.trim()
-    if (ders) dersDakikalari.set(ders, (dersDakikalari.get(ders) ?? 0) + seans.dakika)
+    gunDakikalari.set(gun, (gunDakikalari.get(gun) ?? 0) + seans.dakika)
+    aktifGunler.add(gun)
   }
 
   // --- Mini oyunlar ---
   let oyunSaniye = 0
   let oyunTur = 0
-  let oyunDogru = 0
-  // İsabet yalnızca yanlış sayısını taşıyan turlardan hesaplanıyor; ikisi bu
-  // yüzden ayrı sayaçta birikiyor.
-  let olculenDogru = 0
-  let olculenYanlis = 0
-  let oyunHatasiz = 0
-  const oyunTurlari = new Map<OyunId, number>()
+  let oyunSoru = 0
+  const oyunlar = new Map<OyunId, OyunToplami>()
 
   for (const kayit of girdi.oyunGecmisi) {
     if (!gunKumesi.has(kayit.tarih)) continue
+    // Yanlış sayısı eski kayıtlarda yok; o turlarda yalnızca doğru sayılıyor —
+    // uydurma bir yanlış eklemek soru sayısını şişirirdi.
+    const soru = kayit.dogru + (kayit.yanlis ?? 0)
     oyunSaniye += kayit.saniye
-    oyunDogru += kayit.dogru
     oyunTur++
-    if (typeof kayit.yanlis === 'number') {
-      olculenDogru += kayit.dogru
-      olculenYanlis += kayit.yanlis
-    }
-    if (kayit.hatasiz) oyunHatasiz++
-    oyunTurlari.set(kayit.oyun, (oyunTurlari.get(kayit.oyun) ?? 0) + 1)
+    oyunSoru += soru
+    aktifGunler.add(kayit.tarih)
+    const o = oyunlar.get(kayit.oyun) ?? { oyun: kayit.oyun, soru: 0, tur: 0 }
+    o.soru += soru
+    o.tur++
+    oyunlar.set(kayit.oyun, o)
   }
-
-  const olculenToplam = olculenDogru + olculenYanlis
-  const enCokOynanan = enCokOynananBul(oyunTurlari)
-
-  // --- Yanlış soru bankası ---
-  const bankaCozulen = girdi.yanlisSorular.filter(
-    (s) => s.cozuldu && s.cozulmeTarihi !== undefined && gunKumesi.has(s.cozulmeTarihi),
-  ).length
-  // Bekleyen, haftaya değil **bugüne** ait: kart "bankanın hâli"ni gösteriyor.
-  const bankaBekleyen = girdi.yanlisSorular.filter((s) => !s.cozuldu).length
 
   // --- Denemeler ---
   const sablonHaritasi = new Map(girdi.sablonlar.map((s) => [s.id, s]))
-  const netler: DenemeNeti[] = []
-  const oncekiNetler: number[] = []
-  const oncekiDonem = new Set(donem(haftaKaydir(hafta.baslangic, -1)).gunler)
+  let enIyiTyt: DenemeNeti | null = null
+  let enIyiAyt: DenemeNeti | null = null
+  let denemeSayisi = 0
 
   for (const deneme of girdi.denemeler) {
-    const sablon = sablonHaritasi.get(deneme.sablonId)
-    // Şablonu silinmiş deneme netlenemiyor; ortalamayı 0 ile bozmasın diye atlanıyor.
-    if (!sablon) continue
-    if (oncekiDonem.has(deneme.tarih)) {
-      oncekiNetler.push(denemeOzeti(deneme, sablon).toplamNet)
-      continue
-    }
     if (!gunKumesi.has(deneme.tarih)) continue
-    netler.push({
+    const sablon = sablonHaritasi.get(deneme.sablonId)
+    // Şablonu silinmiş deneme netlenemiyor; atlanıyor.
+    if (!sablon) continue
+    denemeSayisi++
+    const neti: DenemeNeti = {
       ad: deneme.ad,
       tarih: deneme.tarih,
-      net: denemeOzeti(deneme, sablon).toplamNet,
-    })
+      net: yuvarla(denemeOzeti(deneme, sablon).toplamNet),
+      toplamSoru: sablon.dersler.reduce((t, d) => t + d.soruSayisi, 0),
+    }
+    // Eşitlikte **ilk** deneme kalıyor (`>`): aynı veride her açılışta aynı tarih.
+    if (sablon.tur === 'tyt' && (!enIyiTyt || neti.net > enIyiTyt.net)) enIyiTyt = neti
+    if (sablon.tur === 'ayt' && (!enIyiAyt || neti.net > enIyiAyt.net)) enIyiAyt = neti
   }
 
-  // Çubuklar soldan sağa zamanla ilerliyor; kaynak liste sıralı gelmiyor.
-  netler.sort((a, b) => a.tarih.localeCompare(b.tarih))
-  const sirali = [...netler].sort((a, b) => b.net - a.net)
-  const denemeOrtalama =
-    netler.length > 0 ? yuvarla(netler.reduce((t, n) => t + n.net, 0) / netler.length) : null
-  const oncekiDonemOrtalama =
-    oncekiNetler.length > 0
-      ? yuvarla(oncekiNetler.reduce((t, n) => t + n, 0) / oncekiNetler.length)
-      : null
+  // --- Konu haritası ---
+  // Bitiş günü tutulmuyor, son okuma günü tutuluyor (`tarih`): bitirilmiş bir
+  // konu bu ay yeniden okunduysa bu aya sayılıyor. Ayrı bir bitiş damgası
+  // eklemek eski kayıtları öksüz bırakırdı.
+  const okunanKonu = Object.values(girdi.konuIlerleme).filter(
+    (k) => k.bitti && gunKumesi.has(k.tarih),
+  ).length
 
-  // --- İlk üç ders ---
-  const ilkUcDers: DersToplami[] = [...dersToplamlari.entries()]
-    .filter(([, soru]) => soru > 0)
+  // --- Dersler ---
+  const ilkUcDers: DersToplami[] = [...dersler.entries()]
     // Eşitlikte ders adına göre: sıralama her açılışta aynı çıksın, kart değişmesin.
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'tr'))
+    .sort((a, b) => b[1].soru - a[1].soru || a[0].localeCompare(b[0], 'tr'))
     .slice(0, 3)
-    .map(([ders, soru]) => ({
+    .map(([ders, d]) => ({
       ders,
-      soru,
-      oran: toplamSoru > 0 ? soru / toplamSoru : 0,
+      soru: d.soru,
+      oran: toplamSoru > 0 ? d.soru / toplamSoru : 0,
+      dogru: d.dogru,
+      yanlis: d.yanlis,
+      bos: Math.max(0, d.soru - d.dogru - d.yanlis),
+      basari: d.dogru + d.yanlis > 0 ? d.dogru / (d.dogru + d.yanlis) : null,
+      gunSayisi: d.gunler.size,
     }))
 
+  const sonrakiAy = ayAraligi(ayKaydir(ay.anahtar, 1))
+
   return {
-    hafta,
+    ay,
+    okunanKonu,
+    calisilanGun: aktifGunler.size,
+    enUzunSeri: enUzunSeri(ay.gunler, aktifGunler),
+    toplamDakika: pomodoroDakika + Math.round(oyunSaniye / 60),
     toplamSoru,
-    haftalikHedef,
-    hedefFarki,
-    hedefDurumu: hedefDurumuBul(toplamSoru, haftalikHedef),
-    hedefOrani: haftalikHedef > 0 ? toplamSoru / haftalikHedef : 0,
-    hedefliGun,
-    gunler,
-    enIyiGun,
-    // Seri haftanın **son gününden** geriye sayılıyor: özet o haftayı kapatıyor,
-    // bugünden sayılsaydı geçmiş bir haftanın özeti bugünkü seriyi gösterirdi.
-    seri: hedefSerisi(girdi.gunlukKayitlar, girdi.gunlukHedef, hafta.bitis),
-    devamsizlikOzurlu,
-    devamsizlikOzursuz,
-    devamsizlikToplam: devamsizlikOzurlu + devamsizlikOzursuz,
+    haftalar,
+    enIyiTyt,
+    enIyiAyt,
+    denemeSayisi,
     pomodoroDakika,
     pomodoroSeans,
-    pomodoroDers: enBuyuk(dersDakikalari),
-    pomodoroDersleri: [...dersDakikalari.entries()]
-      // Eşitlikte ders adına göre: kutu her açılışta aynı sırayla çizilsin.
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'tr'))
-      .slice(0, 3)
-      .map(([ders, dakika]) => ({ ders, dakika })),
-    oyunDakika: Math.round(oyunSaniye / 60),
+    pomodoroOrani: pomodoroDakika / (ay.gunler.length * 24 * 60),
+    enUzunGunDakika: Math.max(0, ...gunDakikalari.values()),
+    pomodoroSeri: enUzunSeri(ay.gunler, new Set(gunDakikalari.keys())),
+    oyunSoru,
     oyunTur,
-    oyunDogru,
-    oyunIsabet: olculenToplam > 0 ? olculenDogru / olculenToplam : null,
-    oyunHatasiz,
-    enCokOynanan,
-    enCokOynananTur: enCokOynanan ? (oyunTurlari.get(enCokOynanan) ?? 0) : 0,
-    bankaCozulen,
-    bankaBekleyen,
-    denemeSayisi: netler.length,
-    denemeNetleri: netler,
-    denemeEnYuksek: sirali[0] ?? null,
-    denemeEnDusuk: sirali.length > 1 ? sirali[sirali.length - 1] : (sirali[0] ?? null),
-    denemeOrtalama,
-    oncekiDonemOrtalama,
-    denemeArtis:
-      denemeOrtalama !== null && oncekiDonemOrtalama !== null
-        ? yuvarla(denemeOrtalama - oncekiDonemOrtalama)
-        : null,
+    oyunDakika: Math.round(oyunSaniye / 60),
+    enCokOynananlar: [...oyunlar.values()]
+      .sort((a, b) => b.soru - a.soru || b.tur - a.tur || a.oyun.localeCompare(b.oyun))
+      .slice(0, 4),
     ilkUcDers,
+    sonrakiAyHedefi: Math.max(0, girdi.gunlukHedef) * sonrakiAy.gunler.length,
     bosMu:
       toplamSoru === 0 &&
       pomodoroDakika === 0 &&
       oyunTur === 0 &&
-      bankaCozulen === 0 &&
-      netler.length === 0 &&
-      devamsizlikOzurlu + devamsizlikOzursuz === 0,
+      denemeSayisi === 0 &&
+      okunanKonu === 0,
   }
 }
 
-function hedefDurumuBul(toplam: number, hedef: number): HedefDurumu {
-  if (hedef <= 0) return 'tutturdu'
-  // "Tutturdu" bir aralık, tek bir sayı değil: hedefin %98'ini yapmış birine
-  // "geride kaldın" demek, haftanın tamamını yok saymak olurdu.
-  if (toplam >= hedef * 1.1) return 'asti'
-  if (toplam >= hedef * 0.98) return 'tutturdu'
-  return 'geride'
-}
-
-function enBuyuk(harita: Map<string, number>): { ders: string; dakika: number } | null {
-  let enIyi: { ders: string; dakika: number } | null = null
-  for (const [ders, dakika] of harita) {
-    if (!enIyi || dakika > enIyi.dakika) enIyi = { ders, dakika }
+/** Sıralı gün listesinde kümeye ait art arda en uzun dizi. */
+function enUzunSeri(gunler: string[], kume: Set<string>): number {
+  let enUzun = 0
+  let simdiki = 0
+  for (const gun of gunler) {
+    simdiki = kume.has(gun) ? simdiki + 1 : 0
+    if (simdiki > enUzun) enUzun = simdiki
   }
-  return enIyi
-}
-
-function enCokOynananBul(harita: Map<OyunId, number>): OyunId | null {
-  let enIyi: OyunId | null = null
-  let enCok = 0
-  for (const [oyun, adet] of harita) {
-    if (adet > enCok) {
-      enIyi = oyun
-      enCok = adet
-    }
-  }
-  return enIyi
+  return enUzun
 }
 
 // ---------------------------------------------------------------------------
 // Yazı yardımcıları
 // ---------------------------------------------------------------------------
 
-/** "12–18 Ocak" gibi bir hafta başlığı. */
-export function haftaYaz(hafta: HaftaAraligi): string {
-  const bas = tariheCevir(hafta.baslangic)
-  const son = tariheCevir(hafta.bitis)
-  const ay = (t: Date) => t.toLocaleDateString('tr-TR', { month: 'long' })
+/** "Eylül" — kapaktaki büyük başlık için ay adı. */
+export function ayAdi(ay: AyAraligi): string {
+  return AY_ADLARI[ay.ay - 1]
+}
 
-  if (bas.getMonth() === son.getMonth()) {
-    return `${bas.getDate()}–${son.getDate()} ${ay(son)}`
-  }
-  return `${bas.getDate()} ${ay(bas)} – ${son.getDate()} ${ay(son)}`
+/** "1 — 30 Eylül" gibi tarih aralığı. */
+export function ayAraligiYaz(ay: AyAraligi): string {
+  return `1 — ${ay.gunler.length} ${ayAdi(ay)}`
+}
+
+/*
+  Ayın bulunma hâli: ünsüz uyumu ve ünlü uyumuna göre "-de/-da/-te/-ta".
+  Tabloya yazıldı — kural üretmek on iki ad için gereksiz.
+*/
+const AY_DE = [
+  "Ocak'ta", "Şubat'ta", "Mart'ta", "Nisan'da", "Mayıs'ta", "Haziran'da",
+  "Temmuz'da", "Ağustos'ta", "Eylül'de", "Ekim'de", "Kasım'da", "Aralık'ta",
+]
+
+/** "Ekim'de" — 1–12 arası ay numarasından bulunma hâli. */
+export function ayDe(ay: number): string {
+  return AY_DE[ay - 1]
+}
+
+/** "1 Ekim'de" — bir günün bulunma hâli; ekran "… açılır" diye tamamlıyor. */
+export function gunDe(iso: string): string {
+  const t = tariheCevir(iso)
+  return `${t.getDate()} ${ayDe(t.getMonth() + 1)}`
+}
+
+/** "14 Eylül" — deneme tarihi. */
+export function gunAyYaz(iso: string): string {
+  const t = tariheCevir(iso)
+  return `${t.getDate()} ${AY_ADLARI[t.getMonth()]}`
 }
 
 /** Dakikayı "1 sa 20 dk" biçiminde yazar; bir saatin altında sadece dakika. */
@@ -462,20 +455,33 @@ export function dakikaYaz(dakika: number): string {
   return kalan === 0 ? `${saat} sa` : `${saat} sa ${kalan} dk`
 }
 
+/** Tasarımın sıkışık biçimi: "48sa 20dk". Kutulara sığması için boşluksuz. */
+export function dakikaKisa(dakika: number): string {
+  const d = Math.max(0, Math.round(dakika))
+  if (d < 60) return `${d}dk`
+  return `${Math.floor(d / 60)}sa ${String(d % 60).padStart(2, '0')}dk`
+}
+
+/** Binlik ayraçlı tam sayı: 3860 → "3.860". */
+export function tamYaz(n: number): string {
+  return Math.round(n).toLocaleString('tr-TR')
+}
+
 /*
   Yüzdenin ardına gelen iyelik eki, sayının **okunuşundaki son sözcüğe** göre
   değişiyor: %49 "kırk dokuz" okunduğu için "%49'u", %40 "kırk" olduğu için
-  "%40'ı", %100 "yüz" olduğu için "%100'ü". Sabit bir ek yazmak ("%49'i")
-  hepsinde yanlış olur.
+  "%40'ı", %100 "yüz" olduğu için "%100'ü". Ünlüyle biten sözcükler ("iki",
+  "altı", "yedi", "yirmi", "elli") kaynaştırma harfi de alıyor: "%42'si".
+  Sabit bir ek yazmak ("%49'i") hepsinde yanlış olur.
 */
 const BIRLER_EKI: Record<number, string> = {
-  1: 'i', 2: 'i', 3: 'ü', 4: 'ü', 5: 'i', 6: 'ı', 7: 'i', 8: 'i', 9: 'u',
+  1: 'i', 2: 'si', 3: 'ü', 4: 'ü', 5: 'i', 6: 'sı', 7: 'si', 8: 'i', 9: 'u',
 }
 const ONLAR_EKI: Record<number, string> = {
-  10: 'u', 20: 'i', 30: 'u', 40: 'ı', 50: 'i', 60: 'ı', 70: 'i', 80: 'i', 90: 'ı',
+  10: 'u', 20: 'si', 30: 'u', 40: 'ı', 50: 'si', 60: 'ı', 70: 'i', 80: 'i', 90: 'ı',
 }
 
-/** Sayının okunuşuna uyan iyelik eki: 49 → "u", 40 → "ı", 100 → "ü". */
+/** Sayının okunuşuna uyan iyelik eki: 49 → "u", 40 → "ı", 42 → "si", 100 → "ü". */
 export function sayiEki(sayi: number): string {
   const tam = Math.abs(Math.round(sayi))
   const birler = tam % 10
@@ -494,7 +500,10 @@ export function yuzdeYaz(oran: number): string {
   return `%${yuzde}'${sayiEki(yuzde)}`
 }
 
-/** Yarım günleri "1,5" gibi yazar; tam sayılarda virgül göstermez. */
-export function gunYaz(gun: number): string {
-  return Number.isInteger(gun) ? String(gun) : gun.toFixed(1).replace('.', ',')
+/** "%6,7'si" — tek ondalıklı yüzde; ondalık sıfırsa tam sayı gibi ("%7'si"). */
+export function ondalikYuzdeYaz(oran: number): string {
+  const yuzde = Math.round(oran * 1000) / 10
+  const ondalik = Math.round((yuzde % 1) * 10)
+  if (ondalik === 0) return yuzdeYaz(Math.round(yuzde) / 100)
+  return `%${yuzde.toFixed(1).replace('.', ',')}'${BIRLER_EKI[ondalik]}`
 }

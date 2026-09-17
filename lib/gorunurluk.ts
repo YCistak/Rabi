@@ -5,8 +5,8 @@
  *
  * Android'de ana tuşa basıldığında WebView **durdurulmuyor**: `<audio>` çalmaya,
  * `setTimeout` işlemeye devam ediyor. Sonuç, uygulama görev listesinden
- * silinene kadar arkadan ses gelmesi ve haftalık özetin kimse bakmazken kart
- * kart ilerleyip bitmesiydi.
+ * silinene kadar arkadan ses gelmesi ve aylık özetin müziğinin kimse bakmazken
+ * çalmaya devam etmesiydi.
  *
  * İki kaynak birlikte dinleniyor:
  *
