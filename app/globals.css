@@ -166,15 +166,6 @@ body {
      çağırıyor ve ileride birbirinden ayrılabilirler. */
   --primary-dolu: var(--primary-parlak);
 
-  /* Yoklama bileti (`components/konu/yoklama-bileti.tsx`): markanın
-     turuncusundan koyu bir bilet, üstüne altın. Derse göre **değişmiyor** —
-     bir süre yedi dersin yedi bileti vardı (lacivert+altın, şarap+nane…),
-     kullanıcı tek temaya çevirdi: bilet uygulamanın kendi rengi, dersin
-     değil. Tasarımın lacivert–altın zıtlığı burada kızıl kahve–altın. */
-  --bilet: #7e2f12;
-  --bilet-vurgu: #f0be48;
-  --bilet-vurgu-acik: #fbe2a0;
-
   /* İkinci kimlik rengi: tuğla. Marka yazısı, yanlışlar, dikkat çeken eylem.
      Turuncudan ayrışsın diye daha koyu ve kırmızıya yakın, ama aynı sıcaklıkta. */
   --ikincil: #a8432b;

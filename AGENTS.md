@@ -1915,11 +1915,13 @@ kullanır ve perde hiç oynamazdı.
 - **Bilet dersin değil uygulamanın rengi.** Mockup Fizik'in lacivertiyle
   çizildi ve üstte dersin rengine boyalı noktalı bir bant vardı; uygulama
   bir süre yedi derse yedi bilet taşıdı (şarap+nane, mor+limon, kahve+
-  turkuaz…). Kullanıcı ikisini de geri aldı: zemin düz beyaz, bilet
-  markanın turuncusundan koyu bir ton ve üstüne altın (`--bilet`,
-  `--bilet-vurgu`, `--bilet-vurgu-acik`; `globals.css`). Bileşen bu yüzden
-  `bicim` almıyor ve `SoruSahnesi` de almıyor — koyu sahne zaten derse göre
-  renk almıyordu, bilet de almıyor.
+  turkuaz…), sonra tek bir koyu kızıl kahve + altın bilete indi
+  (`--bilet*`). Kullanıcı onu da geri aldı: bilet artık uygulamanın kendi
+  paletinde — zemin `--background`, bilet `--card`, yazı ve damga
+  `--primary`, dolgular (üst şerit, halka, tik) `--primary-parlak`. Ayrı
+  bir bilet paleti yok; koyu bilet açık zeminli uygulamada tek koyu
+  yüzeydi. Bileşen bu yüzden `bicim` almıyor ve `SoruSahnesi` de
+  almıyor — koyu sahne zaten derse göre renk almıyordu, bilet de almıyor.
 - **Koçan çentiği gerçek bir satırda.** Mockup çentiği `mask-image` ile 177
   piksele kesiyordu; konu adı iki satıra kırılınca çizgi kayar, çentik
   kalırdı. Çentik kesik çizginin kendi satırındaki iki daire, `overflow`
