@@ -777,12 +777,12 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-etkilesim', 'Tür İçi ve Türler Arası Etkileşimler', [
       kart(
-        'Tür içi rekabet',
-        'Aynı türün bireyleri aynı kaynağı istediği için en şiddetli rekabet tür içinde olur.',
+        'En sert rekabet aynı türün içinde',
+        'İki aslan aynı ceylanı, aynı gölgeyi, aynı dişiyi ister; ihtiyaçları birebir aynı. Bu yüzden en şiddetli rekabet tür içinde olur. Aslan ile akbaba da leş için yarışır ama ihtiyaçları tam örtüşmez; o rekabet daha hafif.',
       ),
       kart(
-        'Av-avcı ilişkisi',
-        'Avcı av popülasyonunu dengeler; av azalınca avcı da azalır. İki popülasyon birbirini izler.',
+        'Av ve avcı birbirini izler',
+        'Tavşan çoğalınca tilki bol yer ve çoğalır. Tilki çoğalınca tavşan azalır. Tavşan azalınca tilki aç kalır ve azalır; tavşan yine çoğalır. Grafikte iki dalga var: avcı, avı biraz geriden takip eder.',
         {
           tur: 'koordinat',
           pencere: [0, 8, 0, 6],
@@ -816,8 +816,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'Etkileşimlerin haritası',
-        'Türler arası ilişkiler, iki tarafın kazanıp kaybetmesine göre adlandırılır.',
+        'İlişkiyi iki işaretle oku: kim kazanır',
+        'Türler arası ilişkiyi adıyla değil işaretle düşün. Her taraf için sor: kazanıyor mu (+), kaybediyor mu (−), etkilenmiyor mu (0)? İki artı mutualizm, artı sıfır kommensalizm, artı eksi parazitlik, iki eksi rekabet.',
         {
           tur: 'tablo',
           basliklar: ['İlişki', 'A', 'B'],
@@ -828,23 +828,23 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
             ['Rekabet', '−', '−'],
           ],
         },
-        { not: 'Her ilişkiyi iki işaretle yaz: kim kazanıyor, kim kaybediyor. Adlar sonra.' },
+        { not: 'Her ilişkiyi iki işaretle yaz: kim kazanıyor, kim kaybediyor. Adlar sonra gelir.' },
       ),
       kart(
-        'Mutualizm',
-        'İki tür de kazanır: arı ile çiçek, baklagil ile azot bakterisi.',
+        'Mutualizmde iki taraf da kazanır',
+        'Arı çiçekten bal özü alır, çiçek arı sayesinde tozlaşır: ikisi de kazandı. Baklagilin kökündeki bakteri bitkiye azot verir, bitki bakteriye şeker. Liken, yani mantar ile algin ortak yaşamı, aynı ilişki.',
       ),
       kart(
-        'Kommensalizm',
-        'Biri kazanır, öteki etkilenmez. Ağaç dalında yaşayan bir bitki buna örnektir.',
+        'Kommensalizmde biri kazanır, öteki nötr',
+        'Köpek balığının altında yüzen küçük balık artıkları yer; köpek balığı bundan ne kazanır ne kaybeder. Ağaç dalına tutunan orkide de öyle: ışığa yaklaşır, ağaca zarar vermez. Artı ve sıfır.',
       ),
       kart(
-        'Parazitlik',
-        'Biri kazanır, öteki zarar görür. Parazit konağını genellikle öldürmez; öldürürse kendi yaşamı da biter.',
+        'Parazit konağı yavaş yavaş sömürür',
+        'Bağırsak solucanı sende yaşar, senin besininle beslenir; sen zayıflarsın, o kazanır. Parazit konağını genelde öldürmez: konak ölürse parazitin evi ve yemeği biter. Bit, kene ve tenya bu yüzden "az az" zarar verir.',
       ),
       kart(
-        'Rekabetçi dışlama',
-        'Aynı nişi paylaşan iki türden biri ötekini eninde sonunda o alandan uzaklaştırır ya da niş ayrışır.',
+        'Aynı nişte iki tür kalamaz',
+        'İki tür aynı böceği aynı saatte aynı ağaçta avlıyorsa biri er geç kaybeder ve o alandan silinir: rekabetçi dışlama. Ya da biri gündüz, öteki gece avlanmaya başlar; niş ayrışır ve ikisi de kalır.',
       ),
     ], [
       soru('Mutualizmde iki taraf da yarar görür.', true, 'Likendeki alg ve mantar ilişkisi buna örnek.'),
@@ -869,12 +869,14 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-suksesyon', 'Süksesyon', [
       kart(
-        'Tanımı',
-        'Bir alandaki canlı topluluğunun zamanla düzenli biçimde değişmesi.',
+        'Terk edilen tarla yavaşça ormana döner',
+        'Bir tarlayı ekmeyi bırak. İlk yıl otlar, birkaç yıl sonra çalılar, on yıllar sonra ağaçlar gelir. Alandaki canlı topluluğu zamanla düzenli biçimde değişir; buna süksesyon denir. Rastgele değil, sıralı bir değişim.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Birincil süksesyon',
-        'Toprağın hiç olmadığı yerde başlar: lav akıntısı ya da çıplak kaya. Öncü tür çoğunlukla likenlerdir.',
+        'Birincil süksesyon çıplak kayada başlar',
+        'Volkan soğudu, ortada yalnızca kaya var; toprak yok. İlk gelen likenler, yani mantar ile algin ortak canlısı. Liken kayayı ufalar, ölünce ilk toprağı yapar. Sonra yosun, ot, çalı, ağaç. Öncü tür: liken.',
         {
           tur: 'akis',
           dikey: true,
@@ -888,22 +890,22 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'İkincil süksesyon',
-        'Toprak varken başlar: yangın ya da terk edilmiş tarla. Birincilden çok daha hızlı ilerler.',
+        'İkincil süksesyon toprağın üstünde başlar',
+        'Orman yandı ama toprak yerinde. Toprakta tohumlar, kökler, bakteriler zaten var. Yangın ya da terk edilmiş tarladan başlayan süksesyona bu yüzden ikincil denir. Sıfırdan değil, yarıdan başlar.',
       ),
       kart(
-        'Neden ikincisi hızlı?',
-        'Toprak zaten var ve içinde tohum ile kök kalıntıları duruyor; en uzun adım olan toprak oluşumu atlanmış olur.',
+        'Toprak hazırsa süksesyon hızlı gider',
+        'Birincil süksesyonda en uzun iş kayadan toprak yapmak; yüzyıllar sürer. İkincil süksesyon bu adımı atlar; on yıllarda orman geri gelir. Soruda önce şunu sor: toprak var mı? Varsa ikincil ve hızlı, yoksa birincil ve yavaş.',
         undefined,
         { not: 'Toprak var mı? Süksesyon sorularının çoğu bu tek soruya iniyor.' },
       ),
       kart(
-        'Klimaks',
-        'Süksesyonun kararlı son aşaması. Tür bileşimi artık büyük ölçüde değişmez.',
+        'Klimaks, değişimin durduğu son topluluk',
+        'Sonunda öyle bir topluluk gelir ki türler artık yerini bırakmaz; orman ormana dönüşür. Bu kararlı son aşamaya klimaks denir. Büyük bir yangın ya da sel olmadıkça tür bileşimi sabit kalır.',
       ),
       kart(
-        'Klimaks bölgeye göre değişir',
-        'Aynı süksesyon ormanla değil, iklime göre çayır ya da çalılıkla da bitebilir. Son durağı iklim belirler.',
+        'Klimaksı iklim belirler',
+        'Her yerde son durak orman değil. Yağış azsa bozkır, yani ot çayırı; daha da azsa çalılık ya da çöl bitkileri klimaks olur. Aynı süksesyon, farklı iklimde farklı yerde biter.',
       ),
     ], [
       soru('Birincil süksesyon, daha önce canlı barındırmamış bir alanda başlar.', true, 'Kayalık ya da yeni soğumuş lav alanı buna örnek.'),
@@ -927,12 +929,12 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-populasyon', 'Popülasyon Dinamikleri', [
       kart(
-        'Büyümeyi belirleyenler',
-        'Doğum ve içe göç sayıyı artırır; ölüm ve dışa göç azaltır.',
+        'Doğum ve göç sayıyı değiştirir',
+        'Bir adada 100 geyik var. Yıl içinde 20 doğdu, 5 öldü, 3 yüzerek geldi, 2 gitti: yeni sayı 116. Doğum ve içe göç artırır, ölüm ve dışa göç azaltır. Popülasyon büyüklüğü bu dört sayıyla değişir.',
       ),
       kart(
-        'Taşıma kapasitesi',
-        'Ortamın sürekli besleyebileceği en büyük birey sayısı. Aşılırsa popülasyon çöker.',
+        'Ortam ancak belli sayıda bireyi besler',
+        'Adadaki ot ancak 300 geyiği doyurur. Geyik sayısı 300\'e yaklaştıkça büyüme yavaşlar, grafik yataylaşır. Bu sınıra taşıma kapasitesi denir. Aşılırsa ot biter, geyikler açlıktan ölür ve sayı çöker.',
         {
           tur: 'koordinat',
           pencere: [0, 8, 0, 6],
@@ -962,22 +964,22 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'Çevre direnci',
-        'Büyümeyi sınırlayan etkenlerin tamamı: besin kıtlığı, rekabet, avcı, hastalık.',
+        'Çevre direnci büyümeyi frenler',
+        'Geyik neden sonsuza kadar çoğalmıyor? Ot azalıyor, kurt artıyor, hastalık yayılıyor, kış geliyor. Büyümeyi frenleyen bu etkenlerin toplamına çevre direnci denir. Taşıma kapasitesi bu direncin çizdiği sınırdır.',
       ),
       kart(
-        'Yoğunluğa bağlı ve bağımsız',
-        'Rekabet ve hastalık kalabalıkla şiddetlenir; kuraklık ve don ise popülasyon büyüklüğünden bağımsız etkiler.',
+        'Bazı etkenler kalabalıkla sertleşir',
+        'Geyik çoğaldıkça ot daha çabuk biter, hastalık daha hızlı bulaşır: bunlar yoğunluğa bağlı etkenler. Kuraklık, don ve sel ise 10 geyiği de 1000 geyiği de aynı vurur: yoğunluktan bağımsız etkenler.',
         undefined,
-        { not: 'Etkeni gördüğünde sor: kalabalık artınca etkisi artıyor mu?' },
+        { not: 'Etkeni gördüğünde sor: kalabalık artınca etkisi artıyor mu? Evetse yoğunluğa bağlı.' },
       ),
       kart(
-        'Yaş piramidi',
-        'Genç birey oranı yüksekse popülasyon büyüyecek, yaşlı ağırlıklıysa küçülecek demektir.',
+        'Yaş piramidi geleceği gösterir',
+        'Popülasyonu yaşlara göre çiz: altta gençler, üstte yaşlılar. Taban genişse çok genç var, yakında üreyecekler; popülasyon büyür. Taban darsa yaşlı ağırlıklı; küçülür. Türkiye\'nin nüfus piramidi de böyle okunur.',
       ),
       kart(
-        'Popülasyon büyüklüğü nasıl ölçülür?',
-        'Tek tek saymak çoğu zaman imkânsız; işaretle-yakala yöntemiyle örneklemden tahmin edilir.',
+        'Sayı, işaretle-yakala ile tahmin edilir',
+        'Göldeki balığı tek tek sayamazsın. 50 balık yakala, işaretle, bırak. Ertesi hafta 100 balık yakala; 10\'u işaretli çıksın. İşaretli oranı onda bir; demek ki gölde yaklaşık 500 balık var. Buna işaretle-yakala yöntemi denir.',
       ),
     ], [
       soru(
@@ -1033,8 +1035,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-madde-enerji', 'Ekosistemde Madde ve Enerji Akışı', [
       kart(
-        'Besin zinciri',
-        'Üreticiden tüketiciye doğru tek yönlü enerji aktarımı. Ayrıştırıcılar her basamağa bağlanır.',
+        'Besin zinciri enerjinin izlediği yol',
+        'Ot güneşle şeker yapar, çekirge otu yer, kurbağa çekirgeyi, yılan kurbağayı. Enerji üreticiden tüketiciye ok yönünde, tek yönde geçer. Besin zinciri, yani "kim kimi yer" sırası. Ayrıştırıcılar her halkanın ölüsünü çürütür.',
         {
           tur: 'akis',
           adimlar: [
@@ -1046,12 +1048,12 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'Besin ağı',
-        'Zincirlerin birbirine bağlanmış hâli. Gerçek ekosistemler zincir değil ağ biçimindedir.',
+        'Gerçek doğa zincir değil ağdır',
+        'Kurbağa yalnız çekirge yemez; sinek de yer. Yılan kurbağa da fare de yer. Zincirler birbirine dolanınca besin ağı çıkar. Bir tür yok olunca ağ yırtılmaz ama gerilir; ağ ne kadar çok halkalıysa o kadar dayanıklı.',
       ),
       kart(
-        'Enerji piramidi',
-        'Her basamakta enerjinin yaklaşık onda biri aktarılır; kalanı ısı olarak kaybolur.',
+        'Her basamağa enerjinin onda biri geçer',
+        'Otta 1000 birim enerji var. Çekirge bunu yer ama çoğunu hareket ve ısıya harcar; vücudunda 100 birim kalır. Kurbağa çekirgeden 10, yılan kurbağadan 1 birim alır. Her basamakta yaklaşık %10 aktarılır, %90 ısı olarak kaybolur.',
         {
           tur: 'katman',
           daralan: true,
@@ -1064,22 +1066,22 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'Neden basamak azdır?',
-        'Her adımda enerjinin çoğu kaybolduğu için beşinci basamağa yetecek enerji kalmaz.',
+        'Zincir bu yüzden 4–5 halkada biter',
+        'Yılana 1 birim kaldı; onu yiyecek kartala 0,1 birim. Kartalı yiyecek bir canlıya enerji kalmaz. Basamak sayısını enerji kaybı sınırlar; zincirler dört beş halkayı geçmez. Tepedeki avcı sayısı bu yüzden hep azdır.',
       ),
       kart(
         'Enerji akar, madde döner',
-        'Enerji güneşten gelir ve ısı olarak çıkar; madde ise döngülerle sürekli yeniden kullanılır.',
+        'Güneşten gelen enerji zincirde ilerler ve ısı olarak çıkar; geri dönmez. Ama karbon, azot, su gibi maddeler geri döner: ölen yılanı bakteri çürütür, karbon toprağa ve havaya geçer, ot yeniden kullanır. Enerji tek yön, madde döngü.',
         undefined,
-        { not: 'Bu cümle bütün konunun özeti; ikisini karıştırırsan döngüler de karışır.' },
+        { not: 'Bu cümle bütün konunun özeti: enerji "döner" diyen şık yanlış, madde "akar ve tükenir" diyen şık yanlış.' },
       ),
       kart(
-        'Biyolojik birikim',
-        'Parçalanmayan zehirler her basamakta derişir. En büyük zararı zincirin tepesindeki tür görür.',
+        'Zehir zincirde yukarı çıktıkça birikir',
+        'Suya karışan cıva parçalanmıyor. Plankton azıcık alır; küçük balık binlerce plankton yer, cıvası artar; ton balığı yüzlerce küçük balık yer. Zincirin tepesindeki canlıda zehir en yoğun. Buna biyolojik birikim denir.',
       ),
       kart(
-        'Neden bitkisel beslenme verimli?',
-        'Aynı alandan doğrudan bitki tüketmek, o bitkiyle beslenen hayvanı tüketmekten on kat çok enerji sağlar.',
+        'Bitki yemek daha çok enerji taşır',
+        'Aynı tarladaki mısırı sen yersen 100 birim alırsın. Mısırı ineğe verip ineği yersen inekte yalnızca 10 birim kalmıştır. Bir basamak atlamak enerjinin %90\'ını kaybettirir; bitkisel beslenme aynı alandan on kat çok insan doyurur.',
       ),
     ], [
       soru(
@@ -1117,8 +1119,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-dongu', 'Madde Döngüleri', [
       kart(
-        'Su döngüsü',
-        'Buharlaşma, yoğuşma, yağış ve akış. Güneş enerjisi döngüyü çeviren motordur.',
+        'Su döngüsünü güneş çevirir',
+        'Güneş denizi ısıtır, su buharlaşır. Buhar yükselince soğur ve yoğuşur, yani damlaya döner: bulut. Yağmur olarak yağar, dere olarak denize akar, yine buharlaşır. Su tükenmez, yalnızca yer ve hâl değiştirir. Motoru güneş.',
         {
           tur: 'akis',
           donguSel: true,
@@ -1131,30 +1133,30 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'Karbon döngüsü',
-        'Fotosentez karbonu havadan alır, solunum ve yanma geri verir. Fosil yakıtlar dengeyi bozdu.',
+        'Karbon havadan yaprağa, yapraktan havaya',
+        'Havadaki CO₂\'yi bitki fotosentezle alır ve şekere bağlar. Sen bitkiyi yer, solunumla karbonu CO₂ olarak havaya geri verirsin. Odun yanınca da karbon havaya döner. Fotosentez alır, solunum ve yanma verir: karbon döngüsü.',
       ),
       kart(
-        'Karbon depoları',
-        'Atmosfer, okyanuslar, canlılar, toprak ve fosil yakıtlar. Fosil yakıt milyonlarca yıl kilitli kalmış karbondur.',
+        'Fosil yakıt gömülü karbonu havaya saldı',
+        'Kömür ve petrol, milyonlarca yıl önce gömülmüş canlıların karbonu; toprağın altında kilitli duruyordu. İnsan bunları yakınca kilitli karbon CO₂ olarak havaya çıktı. Havadaki CO₂ arttı; sera etkisi ve küresel ısınma bu artıştan.',
       ),
       kart(
-        'Azot döngüsü',
-        'Havadaki azotu canlılar doğrudan kullanamaz; bakteriler bağlar, nitrifikasyon ve denitrifikasyon çevrimi tamamlar.',
+        'Havadaki azotu canlılar doğrudan kullanamaz',
+        'Soluduğun havanın %78\'i azot; ama ne sen ne bitki onu kullanabilir. Azot molekülündeki iki atom üçlü bağla kenetli; koparmak çok zor. Bunu yalnızca bazı bakteriler ve yıldırım yapar. Buna azot bağlama denir.',
       ),
       kart(
-        'Neden azot bağlanmalı?',
-        'Atmosferin dörtte üçü azot ama moleküldeki üçlü bağ çok güçlü; onu koparabilen yalnızca bazı bakteriler ve yıldırımdır.',
+        'Azot döngüsünü bakteriler döndürür',
+        'Bağlanan azot amonyağa, sonra nitrite ve nitrata çevrilir: nitrifikasyon. Bitki nitratı alır ve protein yapar; sen bitkiyi yersin. Ölüler çürüyünce azot toprağa döner. Başka bakteriler nitratı gaza çevirip havaya yollar: denitrifikasyon.',
       ),
       kart(
-        'Fosfor döngüsü',
-        'Gaz evresi yoktur; kayaların aşınmasıyla toprağa geçer. Bu yüzden en yavaş döngüdür ve çoğu zaman sınırlayıcıdır.',
+        'Fosfor havaya hiç çıkmaz',
+        'Karbon ve azot bir ara gaz olup havada dolaşır; fosfor olmaz. Fosfor kayada durur, kaya aşındıkça toprağa ve suya sızar, bitki alır. Gaz evresi yok; bu yüzden en yavaş döngü. Fosfor çoğu ekosistemde en kıt kaynak, yani sınırlayıcı etmen.',
         undefined,
-        { not: 'Gaz evresi yok; öteki döngülerden ayrıldığı tek yer bu ve sınav bunu soruyor.' },
+        { not: 'Gaz evresi olmayan tek döngü fosfor; öteki döngülerden ayrıldığı yer bu ve sınav bunu soruyor.' },
       ),
       kart(
-        'Neden döngü şart?',
-        'Dünyaya dışarıdan madde gelmiyor. Elimizdeki atomlar sürekli yeniden kullanılıyor.',
+        'Dünyaya dışarıdan madde gelmez',
+        'Vücudundaki karbon atomları bir zamanlar bir dinozorun, bir ağacın, bir bulutun içindeydi. Dünyaya uzaydan yeni madde gelmiyor; elimizdeki atomlar milyarlarca yıldır dönüp duruyor. Döngü olmasaydı madde ölülerde kilitlenir, yaşam dururdu.',
       ),
     ], [
       soru(
@@ -1193,30 +1195,32 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-surdurulebilirlik', 'Ekolojik Sürdürülebilirliğin Önemi', [
       kart(
-        'Tanımı',
-        'Doğal kaynakları, gelecek kuşakların da kullanabileceği biçimde ve yenilenme hızını aşmadan kullanmak.',
-      ),
-      kart(
-        'Ekosistem hizmetleri',
-        'Temiz hava, su döngüsü, tozlaşma ve toprak verimliliği. Bedava sanılan bu hizmetler yerine konulamaz.',
-      ),
-      kart(
-        'Neden acil?',
-        'Kaynak tüketim hızı yenilenme hızını geçtiğinde açık büyür ve geri dönüş giderek zorlaşır.',
-      ),
-      kart(
-        'Devrilme noktası',
-        'Bazı değişimler belirli bir eşiği geçince kendini hızlandırır; o noktadan sonra durdurmak çok daha zordur.',
+        'Kestiğin ağaç kadar ağaç büyüsün',
+        'Ormandan yılda 100 ağaç kesiyorsun, orman yılda 100 ağaç büyütüyor: orman hep yerinde. 500 kesersen otuz yıla orman biter. Sürdürülebilirlik, yani kaynağı gelecek kuşaklara da kalacak biçimde, yenilenme hızını aşmadan kullanmak.',
         undefined,
-        { not: 'Doğrusal düşünme; eşik geçilince küçük değişim büyük sonuç doğurur.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Ekonomiyle ilişkisi',
-        'Sürdürülebilirlik üretimi durdurmak değil, üretimi doğanın yenilenme hızına uydurmaktır.',
+        'Doğa sana bedava hizmet veriyor',
+        'Arı meyve ağacını tozlaştırır, orman havayı temizler, toprak suyu süzer, bakteri atığı çürütür. Bunlara ekosistem hizmetleri denir. Fatura gelmediği için bedava sanılır; ama arı yok olursa tozlaşmayı elle yapmak milyarlar tutar.',
       ),
       kart(
-        'Üç ayak',
-        'Sürdürülebilirlik çevre, ekonomi ve toplumsal adaleti birlikte gözetir; biri gözetilmezse öteki ikisi de tutmaz.',
+        'Yenilenmeden hızlı tüketince açık büyür',
+        'Bankadaki paranın yalnızca faizini harcarsan para hiç bitmez; anaparayı yemeye başlarsan gitgide azalır. Balık, orman, temiz su da böyle: tüketim yenilenmeyi geçince "anapara" erir ve geri gelmesi her yıl zorlaşır.',
+      ),
+      kart(
+        'Eşik geçilince değişim kendini hızlandırır',
+        'Buzul beyazdır, güneşi yansıtır. Biraz eriyince koyu deniz açılır, deniz ısıyı emer, daha çok buz erir, daha çok deniz açılır. Belli bir eşikten sonra bu kendi kendine hızlanır ve durdurulamaz: devrilme noktası.',
+        undefined,
+        { not: 'Doğrusal düşünme; eşik geçilince küçük bir değişim büyük ve geri dönmez bir sonuç doğurur.' },
+      ),
+      kart(
+        'Sürdürülebilirlik üretimi durdurmak değil',
+        'Balıkçıyı yasaklamak değil, balığın çoğaldığı kadar avlatmak. Fabrikayı kapatmak değil, atığını arıtmak. Sürdürülebilirlik üretimi doğanın yenilenme hızına uydurmaktır; ekonomi ile çevre karşı karşıya değil.',
+      ),
+      kart(
+        'Üç ayağı var: çevre, ekonomi, toplum',
+        'Bir masa üç ayakta durur. Çevreyi korurken insanlar işsiz kalırsa toplum ayağı kırılır; ekonomi büyürken nehir kirlenirse çevre ayağı kırılır. Sürdürülebilirlik üçünü birlikte gözetir; biri eksikse öteki ikisi de tutmaz.',
       ),
     ], [
       soru('Ekosistem hizmetleri, doğanın insana sağladığı yararlardır.', true, 'Temiz su, tozlaşma ve iklim düzenlemesi bunlardan.'),
@@ -1240,20 +1244,20 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-kisitlayan', 'Sürdürülebilirliği Kısıtlayan Durumlar', [
       kart(
-        'Habitat kaybı',
-        'Tür kayıplarının en büyük sebebi. Yaşam alanı bölününce popülasyonlar birbirinden kopar ve küçülür.',
+        'Tür kaybının ilk sebebi habitat kaybı',
+        'Bir orman kesilip tarla yapıldı: oradaki sincap, baykuş, mantar gidecek yer bulamaz. Habitat, yani canlının yaşadığı yer, yok olunca canlı da yok olur. Türlerin yok oluşunda bir numaralı sebep bu; avlanma değil.',
       ),
       kart(
-        'Habitat parçalanması',
-        'Yol ve yerleşim bir alanı böldüğünde küçük popülasyonlar birbirinden yalıtılır ve gen çeşitliliği düşer.',
+        'Habitat bölününce popülasyon kopar',
+        'Ormanın ortasından otoyol geçti. Orman hâlâ orada ama iki parça. Bir taraftaki geyik öbür tarafa geçemez; iki küçük sürü birbirinden yalıtılır. Küçük sürüde akraba çiftleşmesi artar, gen çeşitliliği düşer. Buna habitat parçalanması denir.',
       ),
       kart(
-        'Kirlilik',
-        'Hava, su ve toprak kirliliği; ayrıca ışık ve gürültü kirliliği canlıların davranışını bozar.',
+        'Işık ve gürültü de kirliliktir',
+        'Fabrika dumanı havayı, atık su nehri, plastik toprağı kirletir. Ama şehir ışıkları da kirliliktir: deniz kaplumbağası yavruları ay yerine otel ışığına gider ve ölür. Gürültü kuşların ötüşünü, balinanın yönünü bozar.',
       ),
       kart(
-        'Ötrofikasyon',
-        'Sulara karışan gübre yosunu aşırı çoğaltır; ölen yosunlar çürürken oksijen tükenir ve balıklar ölür.',
+        'Gübre suya karışınca oksijen biter',
+        'Tarladaki gübre yağmurla göle iner. Göl besinle dolar, yosun patlar. Yosunlar ölür; bakteriler çürütürken suyun oksijenini tüketir. Balıklar boğulur. Buna ötrofikasyon denir: çok besinden ölen göl.',
         {
           tur: 'akis',
           dikey: true,
@@ -1267,16 +1271,16 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         { not: '"Gübre iyi bir şey" diye düşünme; suya karışınca zinciri oksijenden başlatıp bozar.' },
       ),
       kart(
-        'İstilacı türler',
-        'Doğal düşmanı olmayan bir tür yeni ortamda hızla çoğalır ve yerli türleri dışlar.',
+        'Düşmansız yabancı tür yerliyi siler',
+        'Avustralya\'ya av için tavşan getirildi; orada tavşanı yiyen yoktu. Tavşan milyonlara ulaştı, otlakları bitirdi, yerli türleri açlığa itti. Doğal düşmanı olmayan yabancı türe istilacı tür denir.',
       ),
       kart(
-        'Biyoçeşitlilik kaybı',
-        'Tür azaldıkça ekosistemin şoklara dayanma gücü düşer. Kayıp geri alınamaz.',
+        'Az tür, kırılgan ekosistem',
+        'Bir ağda halka azaldıkça ağ zayıflar. Bir gölde beş balık türü varken biri ölürse ötekiler açığı kapatır; tek tür varken o ölürse göl çöker. Biyoçeşitlilik, yani tür sayısı, ekosistemin şoka dayanma gücüdür. Yok olan tür geri gelmez.',
       ),
       kart(
-        'İklim değişikliği',
-        'Sıcaklık ve yağış düzeni değişince türlerin yayılış alanı kayar; uyum sağlayamayanlar yok olur.',
+        'İklim ısınınca türler yerinden kayar',
+        'Sıcaklık artınca dağdaki bitki daha yükseğe, denizdeki balık daha kuzeye kaçar. Kaçamayan, mercan gibi yerinde kalan türler ölür. Yağış düzeni değişince kuraklık ve yangın artar. İklim değişikliği bütün habitatları aynı anda değiştirir.',
       ),
     ], [
       soru('Ötrofikasyon, sulara karışan aşırı besin maddeleri yüzünden oluşur.', true, 'Aşırı üreyen algler suyun oksijenini tüketiyor.'),
@@ -1301,16 +1305,18 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-saglanmasi', 'Ekolojik Sürdürülebilirliğin Sağlanması', [
       kart(
-        'Ekolojik ayak izi',
-        'Bir kişinin ya da toplumun doğaya bindirdiği yükün alan cinsinden ölçüsü. Küçültmenin ilk adımı ölçmektir.',
+        'Ayak izi, doğaya yükünü alanla ölçer',
+        'Yediğin ekmek için tarla, içtiğin su için havza, attığın çöp için alan gerekir. Bunların toplamına ekolojik ayak izi denir: senin yaşamını karşılamak için gereken doğa alanı. Herkes ortalama bir Avrupalı gibi yaşasa üç Dünya gerekirdi.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Nasıl küçültülür?',
-        'Enerji ve su tasarrufu, toplu taşıma, yerel ve mevsiminde beslenme, gereksiz tüketimi azaltma.',
+        'Ayak izi günlük seçimlerle küçülür',
+        'Duşu kısa tut, ışığı söndür, otobüse bin, mevsiminde ve yakından gelen sebzeyi al, kullanmayacağın şeyi alma. Her seçim tarla, su ve enerji demek. Küçültmenin ilk adımı ölçmek: kendi izini hesaplayan siteler var.',
       ),
       kart(
-        'Atık yönetimi',
-        'Sıra önemlidir: önce azalt, sonra yeniden kullan, en son geri dönüştür.',
+        'Atıkta sıra: azalt, yeniden kullan, dönüştür',
+        'Plastik şişe için üç yol var. En iyisi hiç almamak: azalt. İkincisi aynı şişeyi tekrar doldurmak: yeniden kullan. En sonuncusu eritip yeni şişe yapmak: geri dönüştür. Geri dönüşüm enerji ve su ister; o yüzden en sonda.',
         {
           tur: 'akis',
           adimlar: [
@@ -1319,23 +1325,23 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
             { ad: 'Geri dönüştür' },
           ],
         },
-        { not: 'Sırayı ezberleme, mantığını tut: hiç üretmemek geri dönüştürmekten ucuz.' },
+        { not: 'Sırayı ezberleme, mantığını tut: hiç üretmemek, geri dönüştürmekten her zaman ucuz.' },
       ),
       kart(
-        'Korunan alanlar',
-        'Millî parklar ve tabiat koruma alanları habitatı bütün hâlinde korur; tohum bankaları gen çeşitliliğini saklar.',
+        'Millî park habitatı bütün olarak korur',
+        'Yalnız kaplanı korumak yetmez; kaplanın ormanı, avı, suyu da kalmalı. Millî parklar ve tabiat koruma alanları habitatı bütün hâlinde korur. Tohum bankaları ise bitki tohumlarını dondurup gen çeşitliliğini saklar; tür yok olursa yedeği var.',
       ),
       kart(
-        'Ekolojik koridorlar',
-        'Parçalanmış habitatları birbirine bağlayan şeritler; popülasyonların karışmasını ve gen akışını sürdürür.',
+        'Koridor, bölünmüş habitatı bağlar',
+        'Otoyolun böldüğü iki orman parçasını, üstünden geçen ağaçlı bir köprü ya da altından geçen tünel birleştirir. Buna ekolojik koridor denir. Geyik öbür tarafa geçer, iki sürü karışır, gen akışı sürer. Parçalanmanın panzehri.',
       ),
       kart(
-        'Sürdürülebilir tarım',
-        'Nöbetleşe ekim, damla sulama ve biyolojik mücadele toprağı yormadan üretim yapmanın yolları.',
+        'Toprağı yormadan üretmek mümkün',
+        'Her yıl aynı tarlaya buğday ekersen toprak yorulur. Bir yıl buğday, bir yıl baklagil ekersen (nöbetleşe ekim) baklagil toprağa azot katar. Damla sulama suyu doğrudan köke verir. Zararlıyı ilaç yerine avcı böcekle yenmek: biyolojik mücadele.',
       ),
       kart(
-        'Bireysel katkının sınırı',
-        'Bireysel çaba önemlidir ama yeterli değil; asıl fark üretim ve enerji politikalarında ortaya çıkar.',
+        'Bireysel çaba gerekli ama yetmez',
+        'Sen duşu kısaltırken bir fabrika bir dakikada bin duşluk su harcıyor. Bireysel çaba önemli; ama enerjinin nereden geldiğini ve fabrikaların nasıl üreteceğini politikalar belirler. Asıl fark üretim ve enerji politikalarında çıkar.',
       ),
     ], [
       soru('Ekolojik ayak izi, doğaya bindirdiğimiz yükün ölçüsüdür.', true, 'Tükettiğimizi karşılamak için gereken alanı gösteriyor.'),
