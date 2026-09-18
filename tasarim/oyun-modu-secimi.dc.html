@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"><style>body{margin:0;background:#EFEAE6;font-family:Nunito,system-ui,sans-serif}a{color:#C9552B}a:hover{color:#9E3F1D}</style></helmet>
+
+<div style="min-height:100%;display:flex;justify-content:center;padding:32px 16px;box-sizing:border-box">
+<div style="width:390px;height:844px;background:#FBF6F3;border-radius:44px;overflow:hidden;box-shadow:0 30px 70px -30px rgba(60,34,22,.4);position:relative">
+
+<div style="position:absolute;inset:0;padding:54px 22px;display:flex;flex-direction:column;gap:14px;filter:blur(1.5px)">
+<div style="display:flex;align-items:center;justify-content:space-between">
+<div style="font:900 17px/1 Nunito,sans-serif;color:#1F1B18">Kelime Oyunları</div>
+<div style="width:38px;height:38px;border-radius:50%;background:#EFE5DF"></div>
+</div>
+<div style="height:96px;border-radius:22px;background:linear-gradient(135deg,#E2703F,#C9552B)"></div>
+<div style="height:76px;border-radius:20px;background:#fff;border:1px solid #F0E7E2"></div>
+<div style="height:76px;border-radius:20px;background:#fff;border:1px solid #F0E7E2"></div>
+<div style="height:76px;border-radius:20px;background:#fff;border:1px solid #F0E7E2"></div>
+</div>
+
+<div style="{{ backdropStyle }}" onClick="{{ close }}"></div>
+
+<div style="{{ modalStyle }}">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+<div>
+<div style="font:900 10.5px/1 Nunito,sans-serif;letter-spacing:.18em;color:#C9552B">YAZIM KURALLARI</div>
+<h1 style="margin:7px 0 0;font:900 21px/1.15 Nunito,sans-serif;color:#1F1B18">Turu ayarla</h1>
+<div style="display:inline-flex;align-items:center;gap:7px;margin-top:10px;background:#C9552B;border-radius:999px;padding:7px 13px;box-shadow:0 8px 18px -10px rgba(180,71,31,.9)">
+<span style="font:900 12.5px/1 Nunito,sans-serif;color:#fff">Rekor - 17</span>
+</div>
+</div>
+<button type="button" onClick="{{ close }}" aria-label="Kapat" style="flex:none;width:44px;height:44px;border-radius:14px;border:none;background:#F4EEEA;color:#5A4A42;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#EBE1DB"><svg width="15" height="15" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+
+
+<div style="display:flex;align-items:baseline;justify-content:space-between;margin-top:18px">
+<h2 style="margin:0;font:900 11.5px/1 Nunito,sans-serif;letter-spacing:.14em;color:#7A6F67">OYUN MODU</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px">
+<button type="button" onClick="{{ pickNormal }}" style="position:relative;text-align:left;background:#FBF8F6;border:1.5px solid #F0E7E2;border-radius:18px;padding:13px;cursor:pointer;min-height:104px;display:flex;flex-direction:column;gap:6px">
+<div style="{{ selNormal }}"></div>
+<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#C9552B" stroke-width="2.3" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 12V7.5"></path></svg>
+<div style="font:900 15px/1.1 Nunito,sans-serif;color:#1F1B18">Sıradan</div>
+<div style="font:700 11.5px/1.3 Nunito,sans-serif;color:#6B615A">60 saniye, 3 can</div>
+</button>
+<button type="button" onClick="{{ pickSudden }}" style="position:relative;text-align:left;background:#FBF8F6;border:1.5px solid #F0E7E2;border-radius:18px;padding:13px;cursor:pointer;min-height:104px;display:flex;flex-direction:column;gap:6px">
+<div style="{{ selSudden }}"></div>
+<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#C9552B" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5L21 20H3z"></path><path d="M12 9.5v4.5M12 17h.01"></path></svg>
+<div style="font:900 15px/1.1 Nunito,sans-serif;color:#1F1B18">Ani ölüm</div>
+<div style="font:700 11.5px/1.3 Nunito,sans-serif;color:#6B615A">Tek hata, tur biter</div>
+</button>
+<button type="button" onClick="{{ pickTurbo }}" style="position:relative;text-align:left;background:#FBF8F6;border:1.5px solid #F0E7E2;border-radius:18px;padding:13px;cursor:pointer;min-height:104px;display:flex;flex-direction:column;gap:6px">
+<div style="{{ selTurbo }}"></div>
+<svg width="19" height="19" viewBox="0 0 24 24" fill="#C9552B"><path d="M13 2L4.5 13.4h5.2L9 22l8.7-11.6h-5.3z"></path></svg>
+<div style="font:900 15px/1.1 Nunito,sans-serif;color:#1F1B18">Turbo</div>
+<div style="font:700 11.5px/1.3 Nunito,sans-serif;color:#6B615A">30 saniye, çift puan</div>
+</button>
+<button type="button" onClick="{{ pickCalm }}" style="position:relative;text-align:left;background:#FBF8F6;border:1.5px solid #F0E7E2;border-radius:18px;padding:13px;cursor:pointer;min-height:104px;display:flex;flex-direction:column;gap:6px">
+<div style="{{ selCalm }}"></div>
+<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#C9552B" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"></path></svg>
+<div style="font:900 15px/1.1 Nunito,sans-serif;color:#1F1B18">Rahat</div>
+<div style="font:700 11.5px/1.3 Nunito,sans-serif;color:#6B615A">Süre yok, öğrenme</div>
+</button>
+</div>
+
+<div style="display:flex;align-items:baseline;justify-content:space-between;margin-top:18px">
+<h2 style="margin:0;font:900 11.5px/1 Nunito,sans-serif;letter-spacing:.14em;color:#7A6F67">ZORLUK</h2>
+</div>
+<div style="margin-top:10px;position:relative;background:#F6F1ED;border:1.5px solid #F0E7E2;border-radius:18px;padding:5px;display:flex">
+<div style="{{ diffIndicator }}"></div>
+<button type="button" onClick="{{ pickEasy }}" style="{{ easyText }}">Kolay</button>
+<button type="button" onClick="{{ pickMid }}" style="{{ midText }}">Orta</button>
+<button type="button" onClick="{{ pickHard }}" style="{{ hardText }}">Zor</button>
+</div>
+
+<button type="button" style="width:100%;margin-top:18px;padding:19px;border:none;border-radius:18px;background:#C9552B;color:#fff;font:900 17px/1 Nunito,sans-serif;cursor:pointer;box-shadow:0 14px 30px -14px rgba(180,71,31,.85)" style-hover="background:#B4471F" style-active="transform:translateY(2px)">{{ ctaLabel }}</button>
+</div>
+
+<button type="button" onClick="{{ open }}" style="{{ reopenStyle }}">Ayarları aç</button>
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:430,&quot;height&quot;:920}}">
+const MODES = {
+  normal: { name: 'Sıradan', time: '60 sn', life: '3', mult: 1 },
+  sudden: { name: 'Ani ölüm', time: '60 sn', life: '1', mult: 2.5 },
+  turbo:  { name: 'Turbo',   time: '30 sn', life: '2', mult: 2 },
+  calm:   { name: 'Rahat',   time: 'Süresiz', life: '∞', mult: 0.5 }
+};
+const DIFFS = {
+  easy: { name: 'Kolay', hint: 'Sık karıştırılan, tanıdık cümleler. Şıklar belirgin.', pool: '210', mult: 1 },
+  mid:  { name: 'Orta',  hint: 'Karışık havuz: günlük dil ve kural istisnaları birlikte.', pool: '621', mult: 1.4 },
+  hard: { name: 'Zor',   hint: 'Tuzaklı örnekler, benzer işaretler ve kısa süreli ipucu.', pool: '380', mult: 2 }
+};
+
+class Component extends DCLogic {
+  state = { mode: 'normal', diff: 'mid', open: true };
+  set(k, v) { return () => this.setState({ [k]: v }); }
+  renderVals() {
+    const m = MODES[this.state.mode], d = DIFFS[this.state.diff];
+    const base = { position: 'absolute', inset: '-1.5px', borderRadius: 20, pointerEvents: 'none', transition: 'all .18s' };
+    const sel = key => this.state.mode === key
+      ? { ...base, border: '2px solid #C9552B', background: 'rgba(201,85,43,.07)', boxShadow: '0 10px 24px -14px rgba(180,71,31,.9)' }
+      : { ...base, border: '2px solid transparent' };
+    const order = ['easy', 'mid', 'hard'];
+    const idx = order.indexOf(this.state.diff);
+    const txt = key => ({ position: 'relative', flex: 1, minHeight: 48, border: 'none', background: 'none', cursor: 'pointer', font: '900 14px/1 Nunito,sans-serif', color: this.state.diff === key ? '#fff' : '#6B615A' });
+    const mult = (m.mult * d.mult).toFixed(1).replace('.0', '').replace('.', ',');
+    return {
+      pickNormal: this.set('mode', 'normal'), pickSudden: this.set('mode', 'sudden'),
+      pickTurbo: this.set('mode', 'turbo'), pickCalm: this.set('mode', 'calm'),
+      pickEasy: this.set('diff', 'easy'), pickMid: this.set('diff', 'mid'), pickHard: this.set('diff', 'hard'),
+      selNormal: sel('normal'), selSudden: sel('sudden'), selTurbo: sel('turbo'), selCalm: sel('calm'),
+      diffIndicator: { position: 'absolute', top: 5, bottom: 5, left: 5, width: 'calc((100% - 10px) / 3)', borderRadius: 14, background: '#C9552B', boxShadow: '0 8px 18px -8px rgba(180,71,31,.8)', transition: 'transform .22s cubic-bezier(.4,1.3,.5,1)', transform: `translateX(${idx * 100}%)` },
+      easyText: txt('easy'), midText: txt('mid'), hardText: txt('hard'),
+      close: () => this.setState({ open: false }),
+      open: () => this.setState({ open: true }),
+      backdropStyle: { position: 'absolute', inset: 0, background: 'rgba(31,27,24,.55)', backdropFilter: 'blur(2px)', opacity: this.state.open ? 1 : 0, pointerEvents: this.state.open ? 'auto' : 'none', transition: 'opacity .22s' },
+      modalStyle: { position: 'absolute', left: 18, right: 18, top: '50%', background: '#fff', borderRadius: 28, padding: '22px 18px 20px', boxShadow: '0 30px 60px -20px rgba(60,34,22,.55)', transition: 'transform .26s cubic-bezier(.3,1.25,.5,1), opacity .2s', transform: this.state.open ? 'translateY(-50%) scale(1)' : 'translateY(-46%) scale(.94)', opacity: this.state.open ? 1 : 0, pointerEvents: this.state.open ? 'auto' : 'none' },
+      reopenStyle: { position: 'absolute', left: '50%', bottom: 40, transform: 'translateX(-50%)', padding: '15px 26px', borderRadius: 999, border: 'none', background: '#1F1B18', color: '#fff', font: '900 15px/1 Nunito,sans-serif', cursor: 'pointer', opacity: this.state.open ? 0 : 1, pointerEvents: this.state.open ? 'none' : 'auto', transition: 'opacity .2s' },
+      modeName: m.name, diffName: d.name, diffHint: d.hint,
+      timeVal: m.time, lifeVal: m.life, poolVal: d.pool, multiplier: '×' + mult,
+      ctaLabel: 'Başlat',
+      recordNote: this.state.mode === 'calm' ? 'Rahat modda rekor sayılmaz' : 'Bu tur rekora sayılır'
+    };
+  }
+}
+</script>
+</body>
+</html>

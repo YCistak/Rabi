@@ -20,18 +20,22 @@
  *   **sayılmıyor**. Süresiz bir turda "kaç doğru yaptın" sorusunun cevabı
  *   oyuncunun sabrını ölçer, bilgisini değil.
  *
- * ## Mod artık seçilmiyor
+ * ## Mod tur başlamadan seçiliyor
  *
- * Tur başlamadan önce bir mod seçimi vardı (`ModSecimi`, silindi) ve seçim
- * `rabi-oyun-modu` altında saklanıyordu. Kaldırıldı: turu başlatmak isteyen
- * kullanıcının önüne, cevabını ancak oynayarak öğreneceği iki soru birden
- * (mod ve zorluk) çıkıyordu ve ikisi de "Başla"yı bir ekran öteye itiyordu.
+ * Seçim `ModSecimi` ile tanıtım ekranının ilk adımında ve dördü de açık.
+ * Bir süre kaldırılmıştı — turu başlatmak isteyen kullanıcının önüne, cevabını
+ * ancak oynayarak öğreneceği iki soru birden (mod ve zorluk) çıkıyor ve ikisi
+ * de "Başla"yı bir ekran öteye itiyordu. O sorun seçimin kendisinde değil
+ * **zorunluluğunda**: seçim artık varsayılanıyla geliyor (`VARSAYILAN_MOD`),
+ * hiçbir şeye dokunmayan kullanıcı Sıradan turu oynuyor ve adım tek dokunuşla
+ * geçiliyor.
  *
- * Her tur artık **Sıradan** kuralıyla işliyor; tek istisna Oyun Bankası turu
- * (`etkinMod`). Tablo yine dört satır: `siradan` ile `ani-olum` kullanılıyor,
- * `turbo` ile `rahat` şu an hiçbir yerden seçilemiyor ama tanımları duruyor —
- * tabloyu budamak, geri getirilmesi bir satır olan bir kuralı yeniden yazmak
- * demek olurdu.
+ * Seçim bütün oyunlarda ortak ve saklanıyor (`ANAHTARLAR.oyunModu`): mod turun
+ * nasıl işleyeceğini söylüyor, oyunun ne sorduğunu değil — "Turbo sevdim"
+ * diyen kullanıcı bunu her oyunda yeniden seçmemeli. Zorluk ise oyun başına
+ * ayrı, çünkü o oyunun sorduğu şeye ait.
+ *
+ * Tek istisna Oyun Bankası turu (`etkinMod`): seçim orada sorulmuyor.
  */
 
 import { TUR_SURESI, YANLIS_CEZASI } from './tur'
@@ -133,12 +137,16 @@ export function modKayitliMi(mod: OyunModu): boolean {
 /**
  * Turun hangi modla işlediği.
  *
- * Sıradan tur artık tek seçenek, ama Oyun Bankası turu onu dinlemiyor:
- * oradaki sorular zaten bir kez yanlış bilinmiş olanlar ve turun amacı
- * hepsini bir kez daha görmek. Tur saatli bir mod o işi yarıda keser, o yüzden
- * banka turu soru başına süreyle işliyor; eleme de `elerMi` içinde ayrıca
- * kapatılıyor (`ritim.ts`).
+ * Oyun Bankası turu seçimi **dinlemiyor**: oradaki sorular zaten bir kez
+ * yanlış bilinmiş olanlar ve turun amacı hepsini bir kez daha görmek. Tur
+ * saatli bir mod o işi yarıda keser, o yüzden banka turu soru başına süreyle
+ * işliyor; eleme de `elerMi` içinde ayrıca kapatılıyor (`ritim.ts`). Seçim
+ * ekranı da bu yüzden banka turunda hiç çıkmıyor — sunulup dinlenmeyen bir
+ * seçim, yalan söyleyen bir arayüzdür.
+ *
+ * Oyun ekranları bunu doğrudan çağırmıyor, seçimi bağlamdan okuyan
+ * `useEtkinMod` sarmalını kullanıyor (`components/tur-ayari-baglami.tsx`).
  */
-export function etkinMod(bankaTuru: boolean): OyunModu {
-  return bankaTuru ? 'ani-olum' : VARSAYILAN_MOD
+export function etkinMod(bankaTuru: boolean, secilen: OyunModu = VARSAYILAN_MOD): OyunModu {
+  return bankaTuru ? 'ani-olum' : secilen
 }

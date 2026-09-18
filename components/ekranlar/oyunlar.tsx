@@ -37,7 +37,9 @@ import {
 import { gecmiseIsle, type SoruGecmisi } from '@/lib/oyunlar/gecmis'
 import { sesleriHazirla } from '@/lib/oyunlar/oyun-sesi'
 import { ANAHTARLAR, OYUN_GECMIS_SINIRI, TUR_EN_UZUN, useYerelDepo } from '@/lib/depo'
-import { etkinMod, modKayitliMi } from '@/lib/oyunlar/mod'
+import { VARSAYILAN_MOD, etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
+import { BASLANGIC_ZORLUGU } from '@/lib/oyunlar/uyum'
+import type { Zorluk } from '@/lib/oyunlar/ritim'
 import { dogruKimlikler } from '@/lib/oyunlar/genel-test'
 import { useGeriKatmani } from '@/lib/geri'
 import { bugun } from '@/lib/utils'
@@ -45,6 +47,7 @@ import { cn } from '@/lib/utils'
 import { kartGirisi } from '@/components/ui'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { GenelTestSaglayici } from '@/components/genel-test-baglami'
+import { TurAyariSaglayici } from '@/components/tur-ayari-baglami'
 import { YazimOyunuEkrani } from '@/components/ekranlar/oyun-yazim'
 import { SesOyunuEkrani } from '@/components/ekranlar/oyun-ses'
 import { OgeOyunuEkrani } from '@/components/ekranlar/oyun-oge'
@@ -189,6 +192,19 @@ export function OyunlarEkrani({
   const acikOyun = bankaTuru?.oyun ?? secilenOyun
 
   /*
+    Tur öncesi seçimler. Sahibi burası: kayda yazan ve bağlamı kuran yer tek
+    olmalı, yoksa yirmi iki oyun dosyası aynı anahtarı ayrı ayrı açardı.
+
+    Mod tek değer (bütün oyunlarda ortak), zorluk bir tablo (oyun başına ayrı).
+    Gerekçeleri `lib/depo.ts` içindeki anahtar açıklamalarında.
+  */
+  const [mod, setMod] = useYerelDepo<OyunModu>(ANAHTARLAR.oyunModu, VARSAYILAN_MOD)
+  const [zorluklar, setZorluklar] = useYerelDepo<Partial<Record<OyunId, Zorluk>>>(
+    ANAHTARLAR.oyunZorlugu,
+    {},
+  )
+
+  /*
     Ana sayfadan gelen ders isteği bir kez tüketiliyor.
 
     Prop doğrudan okunsaydı kullanıcı dersten çıkamazdı: geri tuşu `secilenDers`i
@@ -271,7 +287,7 @@ export function OyunlarEkrani({
       çıkılan turları saymak "oynanan tur" sayısını da ortalama süreyi de
       bozardı.
     */
-    if (!modKayitliMi(etkinMod(bankaTuru !== null)) || yarim) return
+    if (!modKayitliMi(etkinMod(bankaTuru !== null, mod)) || yarim) return
 
     setKayitlar((onceki) => ({
       ...onceki,
@@ -322,6 +338,31 @@ export function OyunlarEkrani({
     setSecilenDers(null)
   }
 
+  /*
+    Bağlama giden ayar paketi.
+
+    `useMemo` şart: yeni bir nesne her çizimde bağlamı değiştirilmiş sayar ve
+    tur içindeki bütün oyun ekranı boşuna yeniden çizilirdi — sayaç her saniye
+    tikliyor, yani çizim de her saniye geliyor.
+
+    Zorluk açık oyunun satırından okunuyor; oyun seçilmemişken (ızgaradayken)
+    kimse okumuyor ve varsayılan yeterli. `secilebilir` banka turunda kapalı:
+    o tur ne modu ne zorluğu dinliyor (`etkinMod`).
+  */
+  const turAyari = useMemo(
+    () => ({
+      mod,
+      zorluk: (acikOyun && zorluklar[acikOyun]) || BASLANGIC_ZORLUGU,
+      setMod,
+      setZorluk: (yeni: Zorluk) => {
+        if (!acikOyun) return
+        setZorluklar((onceki) => ({ ...onceki, [acikOyun]: yeni }))
+      },
+      secilebilir: bankaTuru === null,
+    }),
+    [mod, setMod, zorluklar, setZorluklar, acikOyun, bankaTuru],
+  )
+
   /**
    * Açık dersin ızgarasındaki kartlar.
    *
@@ -360,6 +401,7 @@ export function OyunlarEkrani({
       biri kendi çiziyor ve prop olsaydı aynı satır on sekiz kez yazılacaktı.
     */
     <GenelTestSaglayici value={bankaTuru !== null}>
+    <TurAyariSaglayici value={turAyari}>
     <div>
       <header className="flex items-start gap-3 px-0.5 pt-1">
         <div className="min-w-0 flex-1">
@@ -751,6 +793,7 @@ export function OyunlarEkrani({
         />
       )}
     </div>
+    </TurAyariSaglayici>
     </GenelTestSaglayici>
   )
 }

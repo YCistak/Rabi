@@ -29,7 +29,8 @@ import {
 } from '@/lib/oyunlar/tur'
 import { kokludenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
 import { TUR_SORU_SINIRI, elerMi, soruSuresi } from '@/lib/oyunlar/ritim'
-import { etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
+import { modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
+import { useEtkinMod } from '@/components/tur-ayari-baglami'
 import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
@@ -161,8 +162,8 @@ export function KokluOyunuEkrani({
 
   const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
-  // Mod artık seçilmiyor: her tur Sıradan, banka turu ise soru saatli.
-  const gecerliMod = etkinMod(bankaTuru)
+  // Seçilen mod (tanıtımın ayar adımı); banka turu seçimi dinlemiyor.
+  const gecerliMod = useEtkinMod(bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   const turBasladiRef = useRef(0)

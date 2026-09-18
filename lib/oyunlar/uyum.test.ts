@@ -17,15 +17,47 @@ function seri(durum: UyumDurumu, dogruMu: boolean, sayi: number): UyumDurumu {
 }
 
 describe('uyumBasla', () => {
-  it('ortadan başlıyor', () => {
+  it('seçim verilmeyince ortadan başlıyor', () => {
     expect(uyumBasla().zorluk).toBe(BASLANGIC_ZORLUGU)
     expect(ZORLUKLAR).toContain(BASLANGIC_ZORLUGU)
   })
 
-  /* Uyum iki yöne de gidebilmeli: uçtan başlayan tur bir yönü hiç kullanamaz. */
-  it('başlangıç uçlarda değil', () => {
+  /*
+    Varsayılan uçlarda değil: seçim yapılmamış turda uyum iki yöne de
+    gidebilmeli, uçtan başlayan tur bir yönü hiç kullanamaz. Kullanıcı ucu
+    **kendi** seçebiliyor — o zaman tek yön onun kararı.
+  */
+  it('varsayılan başlangıç uçlarda değil', () => {
     expect(BASLANGIC_ZORLUGU).not.toBe(ZORLUKLAR[0])
     expect(BASLANGIC_ZORLUGU).not.toBe(ZORLUKLAR[ZORLUKLAR.length - 1])
+  })
+
+  it('seçilen seviyeden başlıyor', () => {
+    for (const zorluk of ZORLUKLAR) {
+      expect(uyumBasla(zorluk).zorluk, zorluk).toBe(zorluk)
+      expect(uyumBasla(zorluk).seri, zorluk).toBe(0)
+    }
+  })
+})
+
+/*
+  Seçim başlangıcı belirliyor, tavanı değil: uyum seçilen seviyenin üstünde
+  de altında da çalışmaya devam ediyor. İkisinin birlikte yaşadığı yer burası —
+  biri ötekini dondurursa bu testler kırılır.
+*/
+describe('seçim ile uyum birlikte', () => {
+  it('kolay seçilse de yükselebiliyor', () => {
+    expect(seri(uyumBasla('kolay'), true, YUKSELME_SERISI).zorluk).toBe('orta')
+  })
+
+  it('zor seçilse de düşebiliyor', () => {
+    expect(seri(uyumBasla('zor'), false, DUSME_SERISI).zorluk).toBe('orta')
+  })
+
+  /* Uçta gidecek yer yok: seçim de olsa uyum da olsa liste taşmıyor. */
+  it('seçilen uçtan dışarı çıkmıyor', () => {
+    expect(seri(uyumBasla('zor'), true, YUKSELME_SERISI * 3).zorluk).toBe('zor')
+    expect(seri(uyumBasla('kolay'), false, DUSME_SERISI * 3).zorluk).toBe('kolay')
   })
 })
 

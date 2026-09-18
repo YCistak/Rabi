@@ -73,14 +73,27 @@ describe('katalog', () => {
 })
 
 describe('etkinMod', () => {
-  /* Mod seçimi kaldırıldı: sıradan tur artık her turun kuralı. */
-  it('normal tur varsayılan modla işliyor', () => {
+  /* Seçim yapılmamışsa (banka turu, eski kayıt) tur sıradan işliyor. */
+  it('seçim verilmeyince varsayılan mod', () => {
     expect(etkinMod(false)).toBe(VARSAYILAN_MOD)
   })
 
-  /* Banka turu modu dinlemiyor: süreli bir tur onu yarıda keserdi. */
-  it('banka turu soru başına süreyle işliyor', () => {
-    expect(MODLAR[etkinMod(true)].soruSayaci).toBe(true)
+  it('normal tur seçilen modla işliyor', () => {
+    for (const mod of MOD_SIRASI) {
+      expect(etkinMod(false, mod), mod).toBe(mod)
+    }
+  })
+
+  /*
+    Banka turu modu dinlemiyor: süreli bir tur onu yarıda keserdi. Seçim
+    ekranı da orada çıkmıyor ama fonksiyon yine de seçimi yok saymalı —
+    kayıtta duran bir "Rahat" tercihi banka turunu sessizce kayıtsız yapardı.
+  */
+  it('banka turu seçimi yok sayıp soru başına süreyle işliyor', () => {
+    for (const mod of MOD_SIRASI) {
+      expect(MODLAR[etkinMod(true, mod)].soruSayaci, mod).toBe(true)
+      expect(MODLAR[etkinMod(true, mod)].kayitliMi, mod).toBe(true)
+    }
   })
 })
 

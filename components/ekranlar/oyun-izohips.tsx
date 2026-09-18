@@ -33,9 +33,9 @@ import {
   tekAkis,
   type SoruAkisi,
 } from '@/lib/oyunlar/ritim'
-import { etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
+import { modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
-import { useUyarlananZorluk } from '@/lib/oyunlar/uyum'
+import { useEtkinMod, useUyarlananZorluk } from '@/components/tur-ayari-baglami'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
@@ -140,7 +140,7 @@ export function IzohipsOyunuEkrani({
 
   const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
-  const gecerliMod = etkinMod(bankaTuru)
+  const gecerliMod = useEtkinMod(bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   const turBasladiRef = useRef(0)

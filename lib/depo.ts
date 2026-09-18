@@ -160,6 +160,28 @@ export const ANAHTARLAR = {
    * listeye bakmadan açıyor.
    */
   tanitimGizli: 'rabi-tanitim-gizli',
+  /**
+   * Tur öncesi seçilen oyun modu — bütün oyunlarda **ortak**.
+   *
+   * Mod turun nasıl işleyeceğini söylüyor, oyunun ne sorduğunu değil:
+   * "Turbo sevdim" diyen kullanıcı bunu her oyunda yeniden seçmemeli.
+   */
+  oyunModu: 'rabi-oyun-modu',
+  /**
+   * Tur öncesi seçilen başlangıç zorluğu — oyun başına ayrı, tek anahtarda
+   * bir tablo (`Record<OyunId, Zorluk>`).
+   *
+   * Oyun başına, çünkü zorluk o oyunun sorduğu şeye ait: biri edebiyatta
+   * kolayda kalırken sesi zorda oynayabiliyor. Eskiden her oyunun kendi
+   * anahtarı vardı (`rabi-zorluk-ses` ve yirmi bir kardeşi) ve yeni bir oyun
+   * eklemek yeni bir anahtar açmak demekti; tablo `tanitimGizli` ile aynı
+   * kalıpta, oyun listesi büyüyünce anahtar sayısı artmıyor.
+   *
+   * Tuttuğu şey turun **başlangıcı**; seviye tur içinde kayıyor
+   * (`lib/oyunlar/uyum.ts`) ve kaydığı yer buraya yazılmıyor — o, kullanıcının
+   * kararı değil turun sonucu.
+   */
+  oyunZorlugu: 'rabi-oyun-zorlugu',
   ayarlar: 'rabi-ayarlar',
   sonBildirim: 'rabi-son-bildirim',
 } as const
@@ -194,12 +216,14 @@ const ESKI_ANAHTARLAR = [
   'rabi-sabit-araclar',
   'rabi-sabit-dersler',
   /*
-    Tur öncesi seçimler kaldırıldı: mod her turda Sıradan (`lib/oyunlar/mod.ts`),
-    zorluk tur içinde kendiliğinden kayıyor (`lib/oyunlar/uyum.ts`), soru türü
-    seçimleri de havuzun tamamına döndü. Yirmi iki oyunun zorluk anahtarı elle
-    değil desenle temizleniyor (`eskiDesenler`), gerisi burada.
+    Oyuna özgü soru türü seçimleri kaldırıldı; havuzun tamamı soruluyor.
+
+    Mod ve zorluk seçimleri geri geldi ama anahtarları aynı değil:
+    `rabi-oyun-modu` yeniden kullanılıyor (aynı şeyi, aynı biçimde tutuyor) ve
+    bu yüzden listede **yok**. Zorluk ise oyun başına ayrı anahtarlardan tek
+    bir tabloya taşındı (`ANAHTARLAR.oyunZorlugu`), eski anahtarlar aşağıdaki
+    desenle siliniyor.
   */
-  'rabi-oyun-modu',
   'rabi-islem-secimi',
   'rabi-yazim-secimi',
   'rabi-bolen-secimi',
@@ -210,7 +234,12 @@ const ESKI_ANAHTARLAR = [
  *
  * Zorluk seçimi oyun başına ayrı bir anahtarda duruyordu (`rabi-zorluk-ses`
  * ve yirmi bir kardeşi). Hepsini `ESKI_ANAHTARLAR`a tek tek yazmak, artık
- * hiçbir yerde tanımlı olmayan bir listeyi elle sürdürmek olurdu.
+ * hiçbir yerde tanımlı olmayan bir listeyi elle sürdürmek olurdu. Seçim geri
+ * geldi ama tek bir tabloda (`ANAHTARLAR.oyunZorlugu`); eski anahtarlar
+ * taşınmıyor, siliniyor — aradan geçen sürümlerde seviye zaten tur içinde
+ * kayıyordu ve o kayıtlar kullanıcının bugünkü tercihini temsil etmiyor.
+ *
+ * Desen `rabi-oyun-zorlugu` ile çakışmıyor: o `rabi-oyun-` ile başlıyor.
  */
 const ESKI_DESENLER = [/^rabi-zorluk-/]
 

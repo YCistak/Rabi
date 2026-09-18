@@ -1,33 +1,41 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, X } from 'lucide-react'
 import type { OyunTanimi } from '@/lib/oyunlar/tanim'
 import type { OyunId } from '@/lib/types'
-import { MODLAR, VARSAYILAN_MOD } from '@/lib/oyunlar/mod'
+import { MODLAR, type OyunModu } from '@/lib/oyunlar/mod'
+import type { Zorluk } from '@/lib/oyunlar/ritim'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { vurgulariAyir } from '@/lib/metin'
 import { useGeriKatmani } from '@/lib/geri'
 import { useGenelTest } from '@/components/genel-test-baglami'
+import { useTurAyari } from '@/components/tur-ayari-baglami'
 import { cn } from '@/lib/utils'
 import { Rabi } from '@/components/maskot/rabi'
+import { ModSecimi } from '@/components/mod-secimi'
+import { ZorlukSecimi } from '@/components/zorluk-secimi'
 import { GeriSayim } from '@/components/oyun-geri-sayim'
 import { OYUN_ORNEKLERI, type OyunOrnegi } from '@/components/oyun-ornekleri'
 
 /**
- * Turdan önceki tek ekran: **tanıtım**.
+ * Turdan önceki iki ekran: **ayarlar**, sonra **tanıtım**.
  *
- * Önünde bir de "ayarlar" adımı vardı — mod seçimi, zorluk seçimi, oyuna özgü
- * seçimler (`ekstra`). Üçü de kaldırıldı: mod artık her turda Sıradan
- * (`lib/oyunlar/mod.ts`), zorluk tur içinde kendiliğinden kayıyor
- * (`lib/oyunlar/uyum.ts`), soru türü seçimleri de havuzun tamamına döndü.
- * Ekranın kendisi ayakta kalamazdı: seçilecek bir şey kalmayınca geriye
- * "Devam" yazan boş bir kart kalıyordu.
+ * Sıra bilerek böyle. Tek ekranda toplandığında (maskot, kurallar, mod,
+ * seviye, "Başla") hiçbir telefona sığmıyordu ve "Başla" kaydırmanın altında
+ * kalıyordu. Bölününce ikisi de sığıyor; kaydırma hiçbir adımda yok.
  *
- * Sebebi seçimlerin zorluğuydu. Oyunu ilk açan öğrenciye sorulan üç sorunun
+ * Ayarlar önde çünkü seçim turu ilgilendiriyor: kuralları okuyup "Başla"ya
+ * bastıktan sonra "bir de mod seçeyim" diye geri dönmek istemezsin.
+ *
+ * Adım bir süre kaldırılmıştı: oyunu ilk açan öğrenciye sorulan üç sorunun
  * (hangi mod, hangi seviye, hangi soru türü) cevabı ancak oynayarak
- * öğrenilebiliyor ve "Başla" o üç sorunun arkasında, bir ekran ötede
- * duruyordu.
+ * öğrenilebiliyor ve "Başla" o üç sorunun arkasında duruyordu. Geri gelirken
+ * ikisi değişti — soru türü seçimi geri gelmedi (havuzun tamamı soruluyor) ve
+ * kalan iki soru da **cevaplanmak zorunda değil**: ikisi de varsayılanıyla
+ * geliyor, dokunulmazsa Sıradan/Orta bir tur açılıyor ve adım tek dokunuşla
+ * geçiliyor. Zorluk da artık turu dondurmuyor, yalnızca başlangıcı seçiyor
+ * (`lib/oyunlar/uyum.ts`).
  *
  * Tanıtımda "Bir daha gösterme" var: oyunu ezberleyen için her turda
  * geçilecek bir ekran değil (`ANAHTARLAR.tanitimGizli`). Gizlenmiş oyunda
@@ -57,9 +65,17 @@ export function OyunTanitim({
   onKapat: () => void
 }) {
   const [sayiliyor, setSayiliyor] = useState(false)
+  const [adim, setAdim] = useState<'ayar' | 'tanitim'>('ayar')
   const [gizliler, setGizliler] = useYerelDepo<OyunId[]>(ANAHTARLAR.tanitimGizli, [])
   const genelTest = useGenelTest()
+  /* Ayarlar prop olarak gelmiyor: pencereyi çizen yirmi iki oyun dosyasının
+     her birine aynı dört satırı yazmak gerekirdi (`tur-ayari-baglami.tsx`). */
+  const { mod, zorluk, setMod, setZorluk, secilebilir } = useTurAyari()
 
+  /* Ayarlar yalnızca tur başlatan ekranda: turun içinden "?" ile açılan
+     tanıtım kuralı okutuyor, ayar değiştirmiyor — başlamış bir turun modu
+     değişmemeli. */
+  const secimVar = baslatir && secilebilir
   const gizli = gizliler.includes(oyun.id)
 
   /*
@@ -73,10 +89,13 @@ export function OyunTanitim({
   */
   useEffect(() => {
     if (!acik) return
-    setSayiliyor(gizli && baslatir)
-  }, [acik, gizli, baslatir])
+    setSayiliyor(!secimVar && gizli && baslatir)
+    setAdim(secimVar ? 'ayar' : 'tanitim')
+  }, [acik, gizli, baslatir, secimVar])
 
-  useGeriKatmani(acik, onKapat)
+  // Tanıtımdayken geri hareketi ayarlara döner, oyundan çıkmaz.
+  const geri = adim === 'tanitim' && secimVar ? () => setAdim('ayar') : onKapat
+  useGeriKatmani(acik, geri)
 
   /*
     Tanıtımı gizlenmiş oyunda ve genel testte tur kendiliğinden başlıyor.
@@ -100,8 +119,25 @@ export function OyunTanitim({
 
   const ornekler = OYUN_ORNEKLERI[oyun.id]
 
+  /** Ayarlardan sonraki adım: tanıtım gizliyse doğrudan geri sayım. */
+  const ayarlardanSonra = () => (gizli ? setSayiliyor(true) : setAdim('tanitim'))
+
+  if (adim === 'ayar' && secimVar) {
+    return <AyarPenceresi
+      oyun={oyun}
+      rekor={rekor}
+      mod={mod}
+      setMod={setMod}
+      zorluk={zorluk}
+      setZorluk={setZorluk}
+      dugmeMetni={gizli ? 'Başlat' : 'Devam'}
+      onDevam={ayarlardanSonra}
+      onKapat={onKapat}
+    />
+  }
+
   return (
-    <Sayfa onGeri={onKapat} geriEtiketi="Vazgeç">
+    <Sayfa onGeri={geri} geriEtiketi={secimVar ? 'Geri' : 'Vazgeç'}>
       <Orta>
         <div className="flex justify-center py-2">
           <Rabi durum="calisiyor" poz="isaretci" boyut={84} />
@@ -128,10 +164,10 @@ export function OyunTanitim({
             )}
           </div>
 
-          {/* Mod artık seçilmiyor ama süresi hâlâ turun kuralı: çip "60
-              saniyen var" diyor, seçim sunmuyor. */}
+          {/* Seçilen modun süresi turun kuralı: çip "60 saniyen var" diyor.
+              Banka turunda seçim yok ve çip o turun gerçek modunu yazıyor. */}
           <div className="mt-3 flex gap-2">
-            <Bilgi simge="⏱️" metin={MODLAR[VARSAYILAN_MOD].ozet} />
+            <Bilgi simge="⏱️" metin={MODLAR[mod].ozet} />
             {rekor > 0 && <Bilgi simge="🏆" metin={`Rekorun ${rekor} doğru`} />}
           </div>
         </div>
@@ -158,6 +194,98 @@ export function OyunTanitim({
         {baslatir ? 'Başla  →' : 'Kapat'}
       </BuyukDugme>
     </Sayfa>
+  )
+}
+
+/**
+ * "Turu ayarla" penceresi (`tasarim/oyun-modu-secimi.dc.html`).
+ *
+ * Tam ekran bir adım değil, oyunun üstünde açılan bir **pencere**: tasarımın
+ * kendi kararı ve ekranın işine de uyuyor — ayar turu değiştiriyor, oyunu
+ * değil, ve arkasında hangi oyuna girildiği görünüyor. Bu yüzden tanıtım
+ * adımıyla aynı iskeleti kullanmıyor; tanıtım bir sayfa (okunacak metin,
+ * örnekler), bu bir karar kutusu.
+ *
+ * Arkada soru **yok**: oyun ekranı tahtayı ancak `asama === 'oynaniyor'`
+ * olunca çiziyor, tanıtım aşamasında yalnızca kabuk (başlık, sayaçlar)
+ * duruyor. Bulanık zeminin altından okunacak bir soru sızmıyor.
+ *
+ * Pencere kaydırılabilir (`overflow-y-auto` + yükseklik sınırı): dört mod
+ * kutusu, zorluk şeridi ve iki açıklama satırı kısa telefonlarda taşıyor ve
+ * düğme ekranın dışında kalıyordu.
+ */
+function AyarPenceresi({
+  oyun,
+  rekor,
+  mod,
+  setMod,
+  zorluk,
+  setZorluk,
+  dugmeMetni,
+  onDevam,
+  onKapat,
+}: {
+  oyun: OyunTanimi
+  rekor: number
+  mod: OyunModu
+  setMod: (mod: OyunModu) => void
+  zorluk: Zorluk
+  setZorluk: (zorluk: Zorluk) => void
+  dugmeMetni: string
+  onDevam: () => void
+  onKapat: () => void
+}) {
+  return (
+    <div
+      className="katman-zemin fixed inset-0 z-50 flex items-center justify-center bg-black/55 px-4 backdrop-blur-[2px]"
+      onClick={onKapat}
+    >
+      <div
+        className="pencere-girisi max-h-[86%] w-full max-w-[400px] overflow-y-auto rounded-[28px] bg-card px-4.5 pb-5 pt-5.5"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            {/* Oyunun adı üstte ve küçük: pencerenin başlığı "Turu ayarla",
+                oyun adı ise hangi turun ayarlandığını söyleyen bağlam. */}
+            <p className="truncate text-[10.5px] font-black uppercase leading-none tracking-[0.18em] text-primary">
+              {oyun.ad}
+            </p>
+            <h1 className="mt-1.5 font-display text-[21px] font-black leading-tight">
+              Turu ayarla
+            </h1>
+            {/* Rekor yalnızca varsa: "Rekor 0" bir haber değil, boş bir rozet. */}
+            {rekor > 0 && (
+              <p className="mt-2.5 inline-flex items-center rounded-full bg-primary-dolu px-3.5 py-1.5 text-[12.5px] font-black leading-none text-white shadow-[0_8px_18px_-10px_rgba(180,71,31,0.9)]">
+                <span className="rakam">Rekor — {rekor}</span>
+              </p>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={onKapat}
+            aria-label="Kapat"
+            className="inline-flex size-11 flex-none items-center justify-center rounded-[14px] bg-muted/70 text-muted-foreground transition active:bg-muted"
+          >
+            <X size={15} strokeWidth={2.8} aria-hidden />
+          </button>
+        </div>
+
+        <div className="mt-4.5 flex flex-col gap-4.5">
+          <ModSecimi secili={mod} onSec={setMod} />
+          <ZorlukSecimi secili={zorluk} onSec={setZorluk} />
+        </div>
+
+        <button
+          type="button"
+          onClick={onDevam}
+          className="mt-4.5 w-full rounded-[18px] bg-primary-dolu py-[19px] font-display text-[17px] font-black leading-none text-white transition active:brightness-95"
+        >
+          {dugmeMetni}
+        </button>
+      </div>
+    </div>
   )
 }
 
