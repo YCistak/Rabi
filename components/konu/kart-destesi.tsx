@@ -12,6 +12,7 @@ import { KartGorseli } from './kart-gorseli'
 import { DesteBasligi, DesteCubugu } from './deste-basligi'
 import { KisaMola } from './kisa-mola'
 import { HizliKontrolEkrani } from './hizli-kontrol'
+import { CikisOnayi } from './cikis-onayi'
 
 /**
  * Bilgi kartı destesi.
@@ -100,7 +101,14 @@ export function KartDestesi({
 
   const sonucRef = useRef<DesteSonucu>({ okunan: 1, bitti: false })
   sonucRef.current = { okunan: Math.min(enIleri, toplam), bitti: false }
-  useGeriKatmani(true, () => onKapat(sonucRef.current))
+
+  /*
+    Çarpı ve geri tuşu doğrudan kapatmıyor, önce soruyor (`CikisOnayi`).
+    Pencere açıkken geri tuşu pencereyi kapatıyor: onay kendi katmanını
+    yığının üstüne koyuyor ve önce o çıkıyor.
+  */
+  const [cikisSoruluyor, setCikisSoruluyor] = useState(false)
+  useGeriKatmani(true, () => setCikisSoruluyor(true))
 
   function ilerle() {
     if (sonAdim) {
@@ -137,7 +145,7 @@ export function KartDestesi({
     window.scrollTo({ top: 0 })
   }, [adim])
 
-  const kapat = () => onKapat(sonucRef.current)
+  const kapat = () => setCikisSoruluyor(true)
 
   return (
     <div
@@ -192,6 +200,12 @@ export function KartDestesi({
           onIlerle={ilerle}
         />
       )}
+      <CikisOnayi
+        acik={cikisSoruluyor}
+        aciklama="Kaldığın kartı hatırlarım ama konu bitmiş sayılmaz. Birkaç kart kaldıysa bitirmek daha iyi."
+        onKal={() => setCikisSoruluyor(false)}
+        onCik={() => onKapat(sonucRef.current)}
+      />
     </div>
   )
 }

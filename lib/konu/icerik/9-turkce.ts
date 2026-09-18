@@ -17,39 +17,50 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-edebiyat', 'Edebiyat ve Güzel Sanatlar', [
       kart(
         'Edebiyatın malzemesi dildir',
-        'Ressamın boyası, bestecinin sesi neyse yazarın da dili odur. Edebiyat, güzel sanatların "dille yapılan" koludur.',
-      ),
-      kart(
-        'Kurmaca nedir?',
-        'Edebî metin gerçeği aktarmaz, yeniden kurar. Anlatılan yaşanmış olsa bile metindeki hâli kurmacadır.',
+        'Ressam tuvale boya sürer, besteci notaları dizer. Yazar ne yapar? Sözcükleri dizer. Edebiyat, yani dille yapılan güzel sanat. Bir şiir de bir roman da aynı malzemeden, dilden yapılır.',
         undefined,
-        { not: '"Gerçek mi" sorusu edebî metne sorulmaz; "nasıl kurulmuş" sorulur.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Edebî ve öğretici metin',
-        'Edebî metin çağrıştırır ve çok anlamlıdır; öğretici metin bilgi verir ve tek anlamlı olmayı hedefler.',
+        'Yaşanmış olay bile metinde kurmacadır',
+        'Bir yazar dedesinin savaş anısını romana çevirdi. Olay yaşanmış; ama romandaki hâli yazarın sözcükleriyle yeniden kurulmuş. Kurmaca, yani yazarın hayal gücüyle kurduğu dünya. Edebî metne "gerçek mi" diye sorma; "nasıl kurulmuş" diye sor.',
+        undefined,
+        { not: 'Soruda "yaşanmış olay" geçince şaşırma: romana girdiği anda o olay artık kurmacadır.' },
+      ),
+      kart(
+        'Edebî metin sezdirir, öğretici bilgi verir',
+        '"Gözlerin bir deniz" ile "Göz, ışığı algılayan organdır" aynı şeyi anlatmıyor. İlki edebî: seni düşündürür, herkeste ayrı bir şey çağrıştırır. İkincisi öğretici: bilgi verir, tek anlam taşır. Şiir edebî, ansiklopedi öğreticidir.',
         {
           tur: 'tablo',
-          basliklar: ['Edebî metin', 'Öğretici metin'],
+          basliklar: ['Özellik', 'Edebî metin', 'Öğretici metin'],
           satirlar: [
-            ['Kurmaca', 'Gerçek'],
-            ['Çok anlamlı', 'Tek anlamlı'],
-            ['Sezdirir', 'Bilgi verir'],
-            ['Sanatsal dil', 'Açık dil'],
+            ['Amaç', 'Sezdirir', 'Bilgi verir'],
+            ['Anlam', 'Çok anlamlı', 'Tek anlamlı'],
+            ['Dünya', 'Kurmaca', 'Gerçek'],
+            ['Örnek', 'Şiir', 'Ansiklopedi'],
           ],
         },
       ),
       kart(
-        'Edebiyatın öteki bilimlerle ilişkisi',
-        'Tarih dönemin olaylarını, sosyoloji toplumu, psikoloji insanı anlamak için edebî metne başvurur.',
+        'Metin olay, duygu ya da düşünce anlatır',
+        'Hikâye okurken "sonra ne oldu" dersin: olay çevresinde gelişen metin (hikâye, roman, tiyatro). Şiirde bir duygu sana geçer: duygu ağırlıklı metin. Denemede yazar bir fikri açar: düşünce ağırlıklı metin (deneme, makale, fıkra).',
       ),
       kart(
-        'Metin türleri',
-        'Olay çevresinde gelişen (hikâye, roman, tiyatro), duygu ağırlıklı (şiir) ve düşünce ağırlıklı (deneme, makale, fıkra) metinler.',
+        'Edebiyat ses sanatlarındandır',
+        'Sanatlar malzemesine göre ayrılır. Heykel taştan, resim boyadan: plastik, yani maddeyle yapılan sanat. Tiyatro ve dans hareketle: dramatik sanat. Müzik ve edebiyat sesle: fonetik sanat. Dil sesten kurulduğu için edebiyat fonetik sanattır.',
+        {
+          tur: 'tablo',
+          basliklar: ['Tür', 'Malzeme', 'Örnek'],
+          satirlar: [
+            ['Fonetik', 'Ses', 'Müzik, edebiyat'],
+            ['Plastik', 'Madde', 'Resim, heykel'],
+            ['Dramatik', 'Hareket', 'Tiyatro, dans'],
+          ],
+        },
       ),
       kart(
-        'Güzel sanatlarda edebiyatın yeri',
-        'Sanatlar malzemesine göre ayrılır: fonetik (ses), plastik (madde), dramatik (hareket). Edebiyat fonetik sanatlardandır.',
+        'Tarihçi de romana bakar',
+        'Tanzimat dönemini merak eden tarihçi o dönemin romanlarını okur; sokak, ev, konuşma orada. Psikolog kıskançlığı Othello\'da görür. Edebiyat; tarih, sosyoloji (toplum bilimi) ve psikolojiyle böyle bağlanır: metin, çağının aynası.',
       ),
     ], [
       soru('Edebiyatın malzemesi dildir.', true, 'Ressamın boyası neyse yazarın dili odur.'),
@@ -73,20 +84,26 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     ]),
     konu('trk9-siir', 'Şiir Bilgisi', [
       kart(
-        'Nazım birimi',
-        'Şiirin yapı taşı: dize (mısra), beyit (iki dize), dörtlük. Halk şiirinde dörtlük, divan şiirinde beyit kullanılır.',
+        'Dize, beyit, dörtlük: şiirin yapı taşları',
+        'Şiirin bir satırına dize (mısra) denir. İki dize bir araya gelince beyit, dört dize dörtlük olur. Bunlara nazım birimi, yani şiirin yapı taşı denir. Halk şiiri (Karacaoğlan) dörtlükle, divan şiiri (Fuzuli) beyitle yazılır.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Ölçü',
-        'Hece ölçüsünde dizelerin hece sayısı eşittir. Aruzda hecelerin uzunluk-kısalığı esastır. Serbest şiirde ölçü aranmaz.',
+        'Hece ölçüsünde her dize eşit hecelidir',
+        '"İncecikten bir kar yağar" dizesini hecele: sekiz hece. Şiirin öteki dizeleri de sekizse bu hece ölçüsü, yani her dizede eşit hece sayısı. Aruz ölçüsünde sayı değil hecelerin uzun-kısa oluşu sayılır. Serbest şiirde ölçü yoktur.',
       ),
       kart(
-        'Durak',
-        'Hece ölçüsünde dizenin bölündüğü yer. Durak sözcüğü ortadan bölmez; hece sayısı tutsa bile sözcüğü kesen bölüm durak sayılmaz.',
+        'Durak sözcüğü ortadan bölmez',
+        '"İncecikten bir kar yağar" sekiz heceli; okurken "İncecikten / bir kar yağar" diye 4+4 durursun. Durak, yani dizenin nefes aldığı yer. Durak sözcüğün ortasına gelmez: "İnceci / kten bir kar" olmaz, hece sayısı tutsa bile.',
       ),
       kart(
-        'Uyak ve redif',
-        'Redif dize sonundaki aynı görevdeki ek ya da sözcüktür. Redifin önündeki ses benzerliği uyaktır.',
+        'Redif dize sonundaki aynı ektir',
+        '"Gözlerim / sözlerim" dizelerine bak. İkisinde de "-lerim" eki var, görevi aynı. Bu redif, yani dize sonunda tekrarlanan aynı görevdeki ek ya da sözcük. Redif ses benzerliği değildir; aynı ek ya da aynı sözcük olması şart.',
+      ),
+      kart(
+        'Redifi at, kalan ses uyaktır',
+        '"Gözlerim / sözlerim"de "-lerim"i at: "göz" ve "söz" kalır. Ortak ses "öz". İşte bu uyak (kafiye), yani redifin önündeki ses benzerliği. Sırayı bozma: önce redifi bul, sonra uyağa bak. Redifi atmadan uyağa bakmak en sık hata.',
         {
           tur: 'akis',
           dikey: true,
@@ -96,37 +113,32 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
             { ad: 'Uyak türünü söyle' },
           ],
         },
+        { etiket: 'Sık hata', not: 'Dize sonlarını gördüğünde önce aynı eki ayır; uyağı ancak kalan kısımda ara.' },
       ),
       kart(
-        'Uyak çeşitleri',
-        'Yarım uyak tek ses, tam uyak iki ses, zengin uyak ikiden çok ses benzerliğidir.',
+        'Uyak ses sayısına göre ad alır',
+        '"Göz / söz"de ortak ses "öz": iki ses, tam uyak. "Gel / al"da yalnız "l": tek ses, yarım uyak. "Gölge / bölge"de "ölge": dört ses, zengin uyak. Kural: bir ses yarım, iki ses tam, üç ve daha çok ses zengin uyak.',
         {
           tur: 'tablo',
-          basliklar: ['Uyak', 'Benzerlik'],
+          basliklar: ['Uyak', 'Benzerlik', 'Örnek'],
           satirlar: [
-            ['Yarım', '1 ses'],
-            ['Tam', '2 ses'],
-            ['Zengin', '2’den çok ses'],
+            ['Yarım', '1 ses', 'gel / al'],
+            ['Tam', '2 ses', 'göz / söz'],
+            ['Zengin', '3 ve üstü', 'gölge / bölge'],
           ],
         },
       ),
       kart(
-        'Uyak düzeni',
-        'Düz (aaab), çapraz (abab), sarma (abba) ve mesnevi (aabb) düzenleri vardır. Düzen, nazım biçimini tanımaya yarar.',
+        'Uyak düzeni harflerle yazılır',
+        'Dörtlüğün dize sonlarına harf ver; uyaklı dizeler aynı harfi alır. 1. ile 3., 2. ile 4. uyaklıysa abab: çapraz. Dıştakiler ve içtekiler kendi arasında uyaklıysa abba: sarma. Hepsi uyaklıysa aaaa ya da aaab: düz. İkişerli aabb: mesnevi.',
       ),
       kart(
-        'İmge',
-        'Şairin sözcükleri alışılmadık biçimde birleştirip zihinde yeni bir görüntü kurmasıdır. Şiiri düzyazıdan ayıran asıl şey.',
+        'Ses tekrarı şiire ahenk verir',
+        '"Sessiz sessiz süzülür sular"da "s" sesi tekrarlanıyor: aliterasyon, yani ünsüz tekrarı. "Karşı yatan kara dağlar"da "a" tekrarlanıyor: asonans, yani ünlü tekrarı. Ölçü, uyak, redif ve bu tekrarlar birlikte ahengi, yani ses uyumunu kurar.',
       ),
       kart(
-        'Ahenk ögeleri',
-        'Ölçü, uyak, redif, aliterasyon (ünsüz yinelemesi) ve asonans (ünlü yinelemesi) şiirin sesini kurar.',
-      ),
-      kart(
-        'Uyak sorusunda yol',
-        'Önce dize sonlarındaki ortak eki/sözcüğü (redif) at, kalan ses benzerliğini say: 1 ses yarım, 2 ses tam, 3+ zengin. "Gözlerim / sözlerim": -lerim redif, öz tam uyak.',
-        undefined,
-        { not: 'Redifi atmadan uyağa bakma; hataların çoğu ilk adım atlanınca oluyor.' },
+        'İmge zihinde yeni bir görüntü kurar',
+        '"Saçların bir yaz akşamı" dersen saçla akşamı ilk kez yan yana getirmiş olursun. Okuyanın zihninde yeni bir resim belirir. İmge, yani sözcüklerin alışılmadık birleşimiyle kurulan görüntü. Şiiri düzyazıdan ayıran asıl şey bu.',
       ),
     ], [
       soru('Redif, dize sonlarında görevi ve anlamı aynı olan ek ya da sözcüklerin tekrarıdır.', true, 'Uyaktan sonra gelir ve uyakla karıştırılmamalı.'),
@@ -154,12 +166,14 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     ]),
     konu('trk9-sanat', 'Söz Sanatları', [
       kart(
-        'Benzetme (teşbih)',
-        'Bir şeyi ortak yönü olan başka bir şeye benzetme. Dört ögesi vardır: benzeyen, kendisine benzetilen, benzetme yönü, benzetme edatı.',
+        'Benzetme iki şeyi ortak yönle bağlar',
+        '"Aslan gibi güçlü çocuk" dersin. Çocuğu aslana benzettin; ortak yön güç. Benzetme (teşbih), yani bir şeyi ortak yönü olan başka bir şeye benzetmek. Zayıf olanı güçlü olana benzetirsin: çocuk aslana, aslan çocuğa değil.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Benzetmenin ögeleri',
-        'İki temel öge benzeyen ile kendisine benzetilendir; ötekiler düşebilir. "Aslan gibi güçlü çocuk" dördünü de taşır.',
+        'Benzetmenin dört ögesi vardır',
+        '"Aslan gibi güçlü çocuk"ta dört parça var: benzeyen (çocuk), kendisine benzetilen (aslan), benzetme yönü (güçlü), benzetme edatı (gibi). Benzeyen ile benzetilen temel ögeler; yön ve edat düşebilir: "Aslan çocuk."',
         {
           tur: 'tablo',
           basliklar: ['Öge', 'Örnek'],
@@ -172,34 +186,48 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         },
       ),
       kart(
-        'İstiare',
-        'Benzetmenin iki temel ögesinden yalnız biri söylenirse istiare olur. "Aslanım geldi" derken benzeyen (kişi) söylenmemiştir.',
-      ),
-      kart(
-        'Açık ve kapalı istiare',
-        'Yalnız benzetilen söylenirse açık, yalnız benzeyen söylenip benzetilene ait bir özellik verilirse kapalı istiare olur.',
-      ),
-      kart(
-        'Kişileştirme',
-        'İnsana özgü nitelikleri başka varlıklara vermek: "Rüzgâr fısıldıyordu." Kişileştirme varsa kapalı istiare de vardır.',
-      ),
-      kart(
-        'Mecaz-ı mürsel',
-        'Benzetme amacı olmadan bir sözü başka bir sözün yerine kullanma: "Ankara açıklama yaptı" (hükûmet yerine şehir).',
-      ),
-      kart(
-        'Tezat ve tevriye',
-        'Tezat karşıt kavramları bir arada kullanmak; tevriye ise iki anlamlı bir sözü uzak anlamını kastederek söylemektir.',
-      ),
-      kart(
-        'Abartma ve konuşturma',
-        'Abartma (mübalağa) bir niteliği olduğundan çok göstermek; intak ise insan dışı varlıkları konuşturmaktır.',
-      ),
-      kart(
-        'Sanatı tanımada kısayol',
-        '"Gibi, kadar" varsa benzetme; benzeyen ya da benzetilenden yalnız biri varsa istiare; insan dışı varlık insan gibi davranıyorsa kişileştirme; parça-bütün, yer-insan ilişkisi varsa mecaz-ı mürsel.',
+        'Tek temel öge kalınca istiare olur',
+        '"Aslanım geldi" dersin; aslan var, çocuk yok. Yani benzetilen söylenmiş, benzeyen söylenmemiş. Temel ögelerden yalnız biri varsa buna istiare (eğretileme) denir. İki temel öge de varsa benzetme, biri yoksa istiare.',
         undefined,
-        { not: 'Kısayolu ezberleme, iki ögeyi say: benzeyen var mı, benzetilen var mı?' },
+        { not: '"Aslanım" gördüğünde sor: benzeyen söylenmiş mi, benzetilen mi? İkisi de varsa benzetme, biri varsa istiare.' },
+      ),
+      kart(
+        'Açık istiarede benzetilen söylenir',
+        '"Aslanım geldi": yalnız benzetilen (aslan) var, açık istiare. "Çocuk kükredi": yalnız benzeyen (çocuk) var, aslana ait bir özellik (kükremek) ona verilmiş, kapalı istiare. Benzetilen söylendiyse açık, benzeyen söylendiyse kapalı.',
+        {
+          tur: 'tablo',
+          basliklar: ['Tür', 'Söylenen', 'Örnek'],
+          satirlar: [
+            ['Açık', 'Benzetilen', 'Aslanım geldi'],
+            ['Kapalı', 'Benzeyen', 'Çocuk kükredi'],
+          ],
+        },
+      ),
+      kart(
+        'Kişileştirme: insan olmayan insan gibi',
+        '"Rüzgâr fısıldıyordu." Fısıldamak insana özgü; rüzgâra verilmiş. Kişileştirme (teşhis), yani insan dışı varlığa insan özelliği vermek. Rüzgâr insana benzetilmiş ama insan söylenmemiş; bu yüzden her kişileştirmede kapalı istiare de var.',
+      ),
+      kart(
+        'Mecaz-ı mürselde benzetme yoktur',
+        '"Ankara açıklama yaptı." Açıklamayı şehir değil hükûmet yaptı; şehir, içindeki kurumun yerine geçmiş. Benzetme yok, yalnız bir ilgi var: yer-insan, parça-bütün, iç-dış. Buna mecaz-ı mürsel (ad aktarması) denir. "Bardağı içti": aslında su.',
+      ),
+      kart(
+        'Tezat karşıt iki kavramı buluşturur',
+        '"Ağlarım hatıra geldikçe gülüştüklerimiz." Ağlamak ve gülmek aynı cümlede. Tezat, yani karşıt anlamlı iki kavramı bir arada kullanmak. Yalnızca zıt sözcük geçmesi yetmez; ikisi de aynı düşünceye bağlanmalı.',
+      ),
+      kart(
+        'Tevriye: iki anlam, uzak olanı kastet',
+        '"Beyaz gerdanında bir de ben gerek." "Ben" hem "vücuttaki nokta" hem "kişi" demek. Yakın anlam söylenmiş, uzak olan da kastedilmiş. Tevriye, yani iki anlamlı bir sözü uzak anlamını düşünerek kullanmak. İki anlam da cümleye uyar.',
+      ),
+      kart(
+        'Abartma olduğundan çok gösterir',
+        '"Bir ah çeksem dağı taşı eritir." Bir ah dağı eritmez; duygu büyütülmüş. Abartma (mübalağa), yani bir şeyi olduğundan çok ya da az gösterme. Sık hata: her büyük sayıyı abartma sanmak; gerçekte olamayacak bir şey olmalı.',
+        undefined,
+        { etiket: 'Sık hata' },
+      ),
+      kart(
+        'İntak: konuşan hayvan, konuşan eşya',
+        '"Karga dedi ki: Bu peynir benim." Karga konuşmuş. İntak (konuşturma), yani insan dışı bir varlığı konuşturmak. Konuşan varlık zaten insan gibi davranır; bu yüzden her intakta kişileştirme vardır. Ama her kişileştirmede intak yoktur.',
       ),
     ], [
       soru('Benzetmede benzeyen, kendisine benzetilen, benzetme yönü ve benzetme edatı bulunur.', true, 'Dördü de kullanılırsa tam benzetme olur.'),
@@ -212,6 +240,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       sikli('İki anlamlı sözü uzak anlamıyla kastetmek?', ['Tezat', 'Tevriye'], 1, 'Tezat karşıt kavramlar.'),
       sikli('İnsan dışı varlıkları konuşturmak?', ['İntak', 'Mübalağa'], 0, 'Mübalağa abartma.'),
       soru('"Ankara açıklama yaptı" cümlesinde benzetme amacı vardır.', false, 'Mecaz-ı mürsel: benzetme amacı yok.'),
+      soru('Tezatta karşıt anlamlı iki kavram bir arada kullanılır.', true, 'Ağlamak ile gülmek aynı cümlede.'),
     ], [
       {
         soru: '"Bütün sınıf ayağa kalktı" cümlesindeki sanat?',
@@ -226,24 +255,30 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     ]),
     konu('trk9-deneme', 'Deneme ve Düşünce Yazıları', [
       kart(
-        'Deneme',
-        'Yazarın bir konuda kendi düşüncelerini, kanıtlama kaygısı gütmeden, samimi bir dille anlattığı yazı. Kurucusu Montaigne.',
+        'Deneme yazarın kendiyle konuşmasıdır',
+        'Bir yazar "Yalnızlık iyi midir?" diye düşünüp aklından geçenleri yazıyor; kanıt getirmiyor, seni ikna etmeye çalışmıyor. Bu deneme: yazarın bir konuda kendi düşüncelerini samimi bir dille anlattığı yazı. Türün kurucusu Fransız Montaigne.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Makale',
-        'Bir düşünceyi kanıtlarla savunur. Nesnel dil kullanılır, kaynak gösterilir.',
+        'Makale düşünceyi kanıtla savunur',
+        'Aynı konuyu bir bilim insanı yazıyor: anket sonuçları, kaynaklar, rakamlar. "Bence" yok, "araştırmalara göre" var. Bu makale: bir düşünceyi kanıtlarla savunan yazı. Dili nesnel, yani kişisel duygudan arınmış; kaynak gösterilir.',
       ),
       kart(
-        'Fıkra (köşe yazısı)',
-        'Güncel bir konuyu kısa ve kişisel bir üslupla ele alır; kanıtlama zorunluluğu yoktur.',
+        'Fıkra güncel konuyu kısa ve kişisel yazar',
+        'Gazetenin köşesinde dünkü maç ya da zam hakkında kısa, kişisel bir yazı görürsün. Bu fıkra (köşe yazısı): güncel bir konuyu kısa ve kişisel üslupla ele alır, kanıt zorunlu değil. Güldürü fıkrasıyla karıştırma; bu bir gazete yazısı.',
       ),
       kart(
-        'Söyleşi ve eleştiri',
-        'Söyleşi karşısında biri varmış gibi yazılır. Eleştiri bir eserin değerini ölçütlerle değerlendirir.',
+        'Söyleşi seninle konuşur gibi yazılır',
+        '"Sen de fark etmişsindir, değil mi?" diye yazan bir yazar düşün. Sanki karşısında sen varsın. Söyleşi (sohbet), yani yazarın okurla konuşur gibi, sorular sorarak yazdığı yazı. Konu günlük, dil rahat.',
       ),
       kart(
-        'Nerede ayrışırlar?',
-        'Dört türü ayıran şey konusu değil, kanıt ve dil tercihi.',
+        'Eleştiri eseri ölçütlerle tartar',
+        'Bir yazar yeni bir romanı okuyup "kişiler inandırıcı, ama olay örgüsü dağınık" diye yazıyor. Bu eleştiri (tenkit): bir eserin iyi ve zayıf yanlarını ölçütlerle değerlendiren yazı. "Beğendim" demek eleştiri değil; gerekçe ister.',
+      ),
+      kart(
+        'Türü konudan değil kanıt ve dilden tanı',
+        '"Yalnızlık" konusu makalede de denemede de fıkrada da yazılabilir. Ayıran konu değil. Şunu sor: kanıt var mı? Dil nesnel mi, kişisel mi? İki cevap türü verir.',
         {
           tur: 'tablo',
           basliklar: ['Tür', 'Kanıt', 'Dil'],
@@ -254,11 +289,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
             ['Eleştiri', 'Ölçüt', 'Karma'],
           ],
         },
-        { not: 'Türü konudan değil kanıt ve dilden tanı; aynı konu dört türde yazılabilir.' },
+        { not: 'Türü soran soruda konuya bakma; "kanıt var mı, dil kişisel mi" diye iki soru sor, tür ortaya çıkar.' },
       ),
       kart(
-        'Türk edebiyatında',
-        'Deneme ve fıkra Tanzimat’la gazeteyle birlikte gelişti; Nurullah Ataç ve Suut Kemal Yetkin deneme türünün öne çıkan adlarıdır.',
+        'Deneme bize gazeteyle geldi',
+        'Tanzimat\'ta (1839 sonrası) gazete çıkmaya başladı; deneme ve fıkra o sayfalarda doğdu. Türk denemesinin öne çıkan adları Nurullah Ataç ve Suut Kemal Yetkin. Sorulunca aklına önce Ataç gelsin.',
       ),
     ], [
       soru('Denemede yazar düşüncesini kanıtlama kaygısı gütmez.', true, 'Kendi kendine konuşur gibi yazar; okuru ikna etme zorunluluğu yok.'),
@@ -268,6 +303,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       sikli('Denemenin kurucusu kimdir?', ['Ataç', 'Montaigne'], 1, 'Nurullah Ataç Türk edebiyatında.'),
       sikli('Güncel bir konuyu kısa ve kişisel üslupla ele alan?', ['Makale', 'Fıkra'], 1, 'Köşe yazısı.'),
       soru('Eleştiri bir eseri ölçütlerle değerlendirir.', true, 'Söyleşi karşısında biri varmış gibi.'),
+      sikli('Bir eserin iyi ve zayıf yanlarını gerekçeyle tartan yazı?', ['Eleştiri', 'Söyleşi'], 0, 'Söyleşi okurla konuşur gibi yazılır.'),
     ], [
       {
         soru: 'Kaynak gösterip kanıtla savunan düşünce yazısı?',
@@ -284,20 +320,22 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
   tema('trk9-t2', 'Anlam Arayışı', [
     konu('trk9-sozcuk', 'Sözcükte Anlam', [
       kart(
-        'Gerçek anlam',
-        'Sözcüğün akla ilk gelen, sözlükteki temel anlamı. "Soğuk su" gerçek anlamdır.',
+        'Gerçek anlam sözlükteki ilk anlamdır',
+        '"Soğuk su" dediğinde soğuk, sıcaklığı düşük demek; sözlükte ilk yazan anlam bu. Gerçek (temel) anlam, yani sözcüğün akla ilk gelen anlamı. Sözcüğü tek başına duyunca aklına gelen resim gerçek anlamdır.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Mecaz anlam',
-        'Sözcüğün gerçek anlamından tamamen uzaklaşarak kazandığı anlam: "soğuk davranış".',
+        'Yan anlam gerçek anlama benzer',
+        '"Masanın ayağı" dersin. Masa canlı değil ama ayağı masayı taşıyor, tıpkı senin ayağın gibi. Benzerlik bağı duruyor. Yan anlam, yani gerçek anlamla bağı kopmadan kazanılan yeni anlam. "Dağın eteği", "iğnenin gözü" de yan anlam.',
       ),
       kart(
-        'Yan anlam',
-        'Gerçek anlamla bağı sürerken kazanılan yeni anlam: "masanın ayağı". Mecazla karıştırılır; yan anlamda benzerlik bağı durur.',
+        'Mecaz anlamda gerçekle bağ kopar',
+        '"Soğuk davranış" dedin. Davranışın sıcaklığı yok; "soğuk" burada "ilgisiz" demek. Gerçek anlamla bağ tümüyle kopmuş. Mecaz anlam, yani sözcüğün gerçek anlamından uzaklaşarak kazandığı anlam. "Ağır söz", "boş konuşma" da mecaz.',
       ),
       kart(
-        'Üçünü ayırmak',
-        'Sorulacak soru şu: gerçek anlamla bağ tümüyle koptu mu, yoksa bir benzerlik hâlâ duruyor mu?',
+        'Tek soru üçünü ayırır: bağ koptu mu',
+        '"Ağaç dalı" gerçek. "Bilim dalı": ağaçtan kola ayrılma benzerliği sürüyor, yan. "Dalına basmak": dalla ilgi yok, "sinirlendirmek" demek, mecaz. Sınavda sözcüğü somut resmiyle düşün; resim tümüyle kayboldu mu, mecaz.',
         {
           tur: 'tablo',
           basliklar: ['Anlam', 'Örnek'],
@@ -307,31 +345,40 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
             ['Mecaz', 'Dalına basmak'],
           ],
         },
-        { not: 'Tek soru: gerçek anlamla bağ koptu mu? Koptuysa mecaz, kopmadıysa yan.' },
+        { etiket: 'Sık hata', not: 'Gerçek anlamla bağ koptu mu? Koptuysa mecaz, benzerlik hâlâ duruyorsa yan anlam.' },
       ),
       kart(
-        'Terim anlam',
-        'Bir bilim, sanat ya da meslek alanına özgü anlam: "kök" matematikte, dil bilgisinde ve biyolojide ayrı şey demektir.',
+        'Terim anlam bir alana özgüdür',
+        '"Kök" matematikte √ işareti, biyolojide bitkinin toprak altı, dil bilgisinde sözcüğün eksiz hâli. Her alanda ayrı, kesin bir anlam. Terim anlam, yani bir bilim, sanat ya da meslek dalına özgü anlam. Alan söylenince anlaşılır.',
       ),
       kart(
-        'Somut ve soyut',
-        'Duyularla algılanabilen somut, algılanamayan soyuttur. "Ağır çanta" somut, "ağır söz" soyut kullanımdır.',
+        'Somut dokunulur, soyut dokunulmaz',
+        '"Ağır çanta": çantayı kaldırır, ağırlığını hissedersin; somut. "Ağır söz": sözü tartamazsın; soyut. Somut, yani beş duyuyla algılanan; soyut, yani algılanamayan (sevgi, korku, hız). Aynı sözcük bir yerde somut, bir yerde soyut olabilir.',
       ),
       kart(
-        'Genel ve özel anlam',
-        'Kapsamı geniş olan genel, dar olan özeldir: varlık → bitki → ağaç → çam. Sıra daraldıkça anlam özelleşir.',
+        'Genelden özele kapsam daralır',
+        'Varlık → bitki → ağaç → çam. "Varlık" her şeyi kapsar, "çam" tek bir türü. Kapsamı geniş olan genel anlamlı, dar olan özel anlamlı. Sıralama sorusunda "hangisi ötekinin içinde" diye sor; içteki daha özel.',
+        {
+          tur: 'akis',
+          adimlar: [
+            { ad: 'Varlık' },
+            { ad: 'Bitki' },
+            { ad: 'Ağaç' },
+            { ad: 'Çam' },
+          ],
+        },
       ),
       kart(
-        'Nitel ve nicel',
-        'Ölçülebilen anlam niceldir (üç metre), niteleme bildiren anlam niteldir (güzel manzara).',
+        'Nicel sayılır, nitel niteler',
+        '"Üç metre kumaş": ölçebilirsin, sayıya vurulur; nicel anlam. "Güzel manzara": güzelliği ölçemezsin, niteliyorsun; nitel anlam. Nicel, yani miktar bildiren; nitel, yani nasıl olduğunu bildiren. "Ağır çanta" nicel, "ağır adam" nitel.',
       ),
       kart(
-        'Soru kalıbı',
-        '"Altı çizili sözcük hangisinde mecaz anlamda?" → sözcüğü somut karşılığıyla düşün; somut karşılık tümüyle kaybolmuşsa mecaz, benzerlik bağı duruyorsa yan anlam.',
+        'Dolaylama tek şeyi birkaç sözle anlatır',
+        'Pamuk yerine "beyaz altın", aslan yerine "ormanların kralı", İstanbul yerine "yedi tepeli şehir". Tek sözcükle söylenecek şey birkaç sözcükle söylenmiş. Dolaylama, yani bir kavramı birden çok sözcükle anlatmak.',
       ),
       kart(
-        'Dolaylama ve yansıma',
-        'Dolaylama bir kavramı birden çok sözcükle anlatma ("beyaz altın" = pamuk); yansıma doğadaki sesi taklit eden sözcük ("şırıl şırıl").',
+        'Yansıma doğadaki sesi taklit eder',
+        '"Şırıl şırıl", "çat", "miyav", "gürül gürül". Bu sözcükler bir sesi taklit ediyor. Yansıma, yani doğadaki sesten türemiş sözcük. "Miyavlamak", "çatırdamak" da yansımadan türemiş. "Parıl parıl" ses değil ışık taklidi; yansıma sayılmaz.',
       ),
     ], [
       soru('Bir sözcüğün akla ilk gelen anlamına gerçek anlam denir.', true, 'Temel anlam da denir.'),
@@ -354,17 +401,19 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
           dogru: 'Gerçek anlamla benzerlik bağı duruyor: taşıma işlevi ve konum.',
           yanlis: 'Mecazda gerçek anlamla bağ tümüyle kopar ("ayağını kesmek"). Masanın ayağı hâlâ ayak gibi taşıyor: yan anlam.',
         },
-        kart: 3,
+        kart: 2,
       },
     ]),
     konu('trk9-soz', 'Deyim, Atasözü ve Söz Öbekleri', [
       kart(
-        'Deyim',
-        'En az iki sözcükten oluşan, kalıplaşmış, çoğunlukla mecazlı anlatım. Öğüt vermez, bir durumu anlatır.',
+        'Deyim bir durumu kısa yoldan anlatır',
+        '"Göze girmek" dediğinde kimse gözün içine girmiyor; "beğenilmek" demek. Deyim, yani en az iki sözcükten oluşan, kalıplaşmış, çoğu mecazlı anlatım. Deyim öğüt vermez; bir durumu, bir duyguyu anlatır.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Atasözü',
-        'Uzun deneyimden çıkmış, öğüt veren ya da genel kural bildiren kalıplaşmış söz. Deyimden ayıran şey budur.',
+        'Atasözü öğüt verir, deyim vermez',
+        '"Damlaya damlaya göl olur." Bu söz sana bir şey öğütlüyor: biriktir. Atasözü, yani uzun deneyimden çıkmış, öğüt ya da genel kural bildiren kalıplaşmış söz. Ayırt etmek için sor: cümle bana bir ders veriyor mu?',
         {
           tur: 'tablo',
           basliklar: ['Deyim', 'Atasözü'],
@@ -374,24 +423,25 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
             ['Göze girmek', 'Damlaya damlaya göl olur'],
           ],
         },
+        { not: 'Sözü gördüğünde "bana ders veriyor mu" diye sor; veriyorsa atasözü, yalnız bir durumu anlatıyorsa deyim.' },
       ),
       kart(
-        'İkileme',
-        'Anlamı güçlendirmek için sözcüklerin yinelenmesi: "yavaş yavaş", "eğri büğrü". Arasına noktalama girmez.',
+        'İkileme sözcüğü tekrarlayıp güçlendirir',
+        '"Yavaş yavaş yürüdü" derken "yavaş"ı iki kez söyledin; anlam güçlendi. "Eğri büğrü", "irili ufaklı", "aşağı yukarı" da ikileme. İkileme, yani anlamı pekiştirmek için sözcük tekrarı. İki sözcük ayrı yazılır, arasına virgül konmaz.',
       ),
       kart(
-        'Kalıp sözler',
-        'Belirli durumlarda söylenen hazır ifadeler: "geçmiş olsun", "kolay gelsin". Deyimden farkı, bir toplumsal duruma bağlı olmalarıdır.',
+        'Kalıp söz belli durumda söylenir',
+        'Hasta birine "geçmiş olsun", çalışana "kolay gelsin", yemekte "afiyet olsun" dersin. Bunlar kalıp söz: belirli durumlarda söylenen hazır ifadeler. Deyimden farkı, mecaz anlatmaması ve bir toplumsal duruma bağlı olması.',
       ),
       kart(
-        'Terim mi deyim mi?',
-        'Deyimde sözcükler kendi anlamlarından uzaklaşır. "Göze girmek" deyim, "göz kapağı" değildir.',
+        'Her iki sözcüklü öbek deyim değildir',
+        '"Göze girmek" deyim; "göz" gerçek anlamından çıkmış. "Göz kapağı" deyim değil; iki sözcük de kendi anlamında, bir organ adı, yani terim. Sık hata: içinde "göz, el, baş" geçen her öbeği deyim sanmak. Anlamdan uzaklaştı mı diye bak.',
         undefined,
-        { not: 'Sözcüklerin kendi anlamından uzaklaşıp uzaklaşmadığına bak; ad benzerliğine değil.' },
+        { etiket: 'Sık hata' },
       ),
       kart(
-        'Kalıplaşma bozulmaz',
-        'Deyim ve atasözlerinin sözcükleri değiştirilemez, sırası bozulamaz: "ağaç yaşken eğilir" başka türlü söylenemez.',
+        'Kalıplaşan söz değiştirilemez',
+        '"Ağaç yaşken eğilir"i "ağaç tazeyken bükülür" diye söyleyemezsin; artık atasözü olmaz. Deyim de öyle: "göze girmek" var, "göze dalmak" yok. Kalıplaşma, yani sözcüklerin ve sıranın sabit olması. Yalnız çekim eki değişir: girdi, girecek.',
       ),
     ], [
       soru('Atasözleri kalıplaşmıştır; sözcükleri değiştirilemez.', true, 'Eş anlamlısıyla değiştirilen bir atasözü artık atasözü sayılmaz.'),
@@ -415,42 +465,49 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     ]),
     konu('trk9-cumle', 'Cümlede Anlam', [
       kart(
-        'Neden-sonuç',
-        'Bir yargı ötekinin gerekçesidir: "Yağmur yağdığı için maç ertelendi." "İçin, -dığından, ile" bağlar.',
+        'Neden cümlesinde sebep zaten olmuş',
+        '"Yağmur yağdığı için maç ertelendi." Yağmur yağdı, bu oldu; sonucu maçın ertelenmesi. Neden-sonuç, yani bir yargının ötekinin gerekçesi olması. "İçin, -dığından, -den dolayı, çünkü" bunu kurar. Sebep gerçekleşmiş bir olaydır.',
       ),
       kart(
-        'Amaç-sonuç',
-        'Eylemin niyetini bildirir: "Sınavı kazanmak için çalıştı." Neden-sonuçtan ayıran şey, sonucun henüz gerçekleşmemiş olmasıdır.',
+        'Amaç cümlesinde niyet henüz olmamış',
+        '"Sınavı kazanmak için çalıştı." Sınavı kazanmak bir niyet, daha olmadı. Amaç-sonuç, yani eylemin ne için yapıldığını söylemek. "İçin, amacıyla, üzere, diye" amaç kurar. Sık hata: her "için"i neden sanmak.',
       ),
       kart(
-        'Koşul',
-        'Bir yargı ötekine bağlıdır: "Erken gelirsen görüşürüz." Koşul gerçekleşmezse öteki yargı da gerçekleşmez.',
+        '"İçin" hem neden hem amaç kurar',
+        '"Hasta olduğu için gelmedi": hastalık oldu, neden. "Görüşmek için geldi": görüşme henüz olmadı, amaç. Şu sınamayı yap: "için"in önündeki şeyi -mak/-mek ile söyleyebiliyorsan amaç, olmuş bir olaysa neden.',
+        {
+          tur: 'tablo',
+          basliklar: ['Cümle', '"İçin" önü', 'İlişki'],
+          satirlar: [
+            ['Hasta olduğu için gelmedi', 'Olmuş olay', 'Neden'],
+            ['Görüşmek için geldi', 'Niyet', 'Amaç'],
+          ],
+        },
+        { etiket: 'Sık hata', not: '"için" gördüğünde durma; öncesindeki şey olmuş bir olay mı, yoksa istenen bir şey mi diye sor.' },
       ),
       kart(
-        'Öznellik ve nesnellik',
-        'Doğruluğu kanıtlanabiliyorsa nesnel, kişiden kişiye değişiyorsa özneldir. "Roman 300 sayfa" nesnel, "roman sıkıcı" özneldir.',
+        'Koşul: biri olmadan öteki olmaz',
+        '"Erken gelirsen görüşürüz." Görüşme, erken gelmene bağlı. Gelmezsen görüşme yok. Koşul, yani bir yargının gerçekleşmesinin ötekine bağlı olması. "-se/-sa, -ince, -dıkça, ancak … -se" koşul kurar: "Çalışırsan kazanırsın."',
       ),
       kart(
-        'Örtülü anlam',
-        'Söylenmediği hâlde cümleden çıkarılan yargı: "Bu yıl da kazanamadı" cümlesi önceki yılları da anlatır.',
+        'Nesnel kanıtlanır, öznel kişiye göre değişir',
+        '"Roman 300 sayfa": sayar, kanıtlarsın; herkes için aynı. Nesnel yargı, yani doğruluğu ölçülebilen. "Roman sıkıcı": sana sıkıcı, bana değil. Öznel yargı, yani kişiden kişiye değişen. "Güzel, en iyi, sıkıcı" gibi sözler öznellik işareti.',
       ),
       kart(
-        'Karşılaştırma',
-        'İki varlık ya da durum bir yönüyle kıyaslanır. Karşılaştırmada üstünlük olmak zorunda değildir.',
+        'Örtülü anlam satır arasında saklıdır',
+        '"Bu yıl da kazanamadı." Cümlede "geçen yıl" geçmiyor ama "da" sana önceki yılları da söylüyor. Örtülü anlam, yani cümlede yazılmadığı hâlde çıkarılan yargı. "Artık, bile, da, hâlâ, en azından" sözcükleri örtülü anlam taşır.',
       ),
       kart(
-        'Tanım cümlesi',
-        '"Nedir?" sorusuna cevap veren cümledir. Yargı bildirmeyen bir betimleme tanım sayılmaz.',
+        'Karşılaştırmada üstünlük şart değil',
+        '"Ali, Ayşe\'den uzun": üstünlük var. "Ali de Ayşe kadar çalışkan": eşitlik var; bu da karşılaştırma. Karşılaştırma, yani iki şeyi bir yönüyle kıyaslamak. Sık hata: "kadar, gibi" geçen eşitlik cümlesini karşılaştırma saymamak.',
       ),
       kart(
-        'Üslup ve içerik',
-        'Üslup nasıl anlatıldığıdır (kısa cümleler, sade dil); içerik ise ne anlatıldığı. Sorularda ikisi sık karıştırılır.',
+        'Tanım "bu nedir" sorusuna cevaptır',
+        '"Deyim, kalıplaşmış söz öbeğidir." Sor: deyim nedir? Cevap cümlede. Bu bir tanım cümlesi. "Deyimler güzeldir" ise tanım değil; ne olduğunu değil nasıl olduğunu söylüyor. Tanımda "X, … -dır" kalıbı sık görülür.',
       ),
       kart(
-        'Neden mi amaç mı?',
-        '"Hasta olduğu için gelmedi" neden (gerçekleşmiş sebep). "Görüşmek için geldi" amaç (henüz olmamış niyet). "İçin" ikisinde de var; bakılacak şey sebebin olup olmadığı.',
-        undefined,
-        { not: '"için" gördüğünde durma; olay gerçekleşmiş mi, niyet mi diye sor.' },
+        'Üslup "nasıl", içerik "ne" sorusudur',
+        '"Yazar kısa cümleler kurmuş, sade bir dil seçmiş." Bu üslup: nasıl anlattığı. "Yazar köy hayatını anlatmış." Bu içerik: ne anlattığı. Sınavda "anlatım özelliği" üslubu, "konu" içeriği sorar. İkisini karıştırma.',
       ),
     ], [
       soru('"Yağmur yağdığı için maç ertelendi." cümlesinde neden-sonuç ilişkisi vardır.', true, 'Ertelenmenin sebebi doğrudan belirtilmiş.'),
@@ -472,61 +529,72 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
           dogru: 'Sayfa sayısı ölçülebilir, kanıtlanabilir.',
           yanlis: 'Öznel yargı kişiye göre değişir ("sıkıcı"). Sayfa sayısı herkes için aynı: nesnel.',
         },
-        kart: 4,
+        kart: 5,
       },
     ]),
     konu('trk9-paragraf', 'Paragrafta Anlam', [
       kart(
-        'Ana düşünce',
-        'Paragrafın yazılma amacı, verilmek istenen asıl mesaj. Tek cümleyle özetlenebilir ve paragrafın tamamını kapsar.',
+        'Konu: paragraf neden söz ediyor',
+        'Bir paragraf okudun; baştan sona kitap okumaktan bahsediyor. Konu "kitap okuma". Konu, yani paragrafın üzerinde durduğu şey. Bir sözcük ya da öbekle söylenir: "kitap okuma", "çevre kirliliği". Konu bir yargı değil, bir addır.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Yardımcı düşünce',
-        'Ana düşünceyi destekleyen ara yargılar. "Paragrafta değinilmemiştir" sorularının aradığı yer burasıdır.',
+        'Ana düşünce: yazar ne demek istiyor',
+        'Aynı paragrafta yazar "kitap okumak insanı yalnızlıktan kurtarır" diyor. Bu ana düşünce, yani yazarın paragrafı yazma amacı. Tek bir yargı cümlesidir ve bütün paragrafı kapsar. Çoğu zaman son cümlede ya da tekrarlanan fikirde saklıdır.',
       ),
       kart(
-        'Konu ile ana düşünce farkı',
-        'Konu "neden söz ediyor" sorusunun cevabı, ana düşünce "ne demek istiyor" sorusunun. Konu bir sözcük, ana düşünce bir yargıdır.',
-      ),
-      kart(
-        'Anlatım biçimleri',
-        'Dört biçim, yazarın metne aldığı tavrı gösterir.',
+        'Konu bir ad, ana düşünce bir yargıdır',
+        'Konu: kitap okuma. Ana düşünce: kitap okumak yalnızlıktan kurtarır. İlki "neden söz ediyor", ikincisi "ne demek istiyor" sorusunun cevabı. Şık bir sözcükse konu, cümleyse ana düşünce. Sık hata: konuyu ana düşünce sanmak.',
         {
           tur: 'tablo',
-          basliklar: ['Biçim', 'Ne yapar?'],
+          basliklar: ['Soru', 'Cevap', 'Biçim'],
           satirlar: [
-            ['Açıklayıcı', 'Bilgi verir'],
-            ['Tartışmacı', 'Karşı görüşü çürütür'],
-            ['Betimleyici', 'Gösterir'],
-            ['Öyküleyici', 'Olayı anlatır'],
+            ['Neden söz ediyor?', 'Kitap okuma', 'Ad'],
+            ['Ne demek istiyor?', 'Okumak kurtarır', 'Yargı'],
           ],
         },
+        { etiket: 'Sık hata' },
       ),
       kart(
-        'Düşünceyi geliştirme yolları',
-        'Tanımlama, örneklendirme, karşılaştırma, tanık gösterme, sayısal veri. Tanık göstermede söyleyenin adı geçer, örnekte geçmez.',
+        'Yardımcı düşünce ana fikri destekler',
+        '"Kitap kelime dağarcığını genişletir, hayal gücünü besler" cümleleri ana düşünceyi desteklemek için var. Yardımcı düşünce, yani ana düşünceyi açan ara yargılar. "Paragrafta değinilmemiştir" sorusu bunları arar: şıkları metinle eşleştir.',
+        undefined,
+        { not: '"Değinilmemiştir" sorusunda ana düşünceye değil cümlelere bak; her şıkkı metindeki bir cümleyle eşleştir.' },
       ),
       kart(
-        'Paragrafın yapısı',
-        'Giriş bağımsız cümleyle başlar, gelişme açar, sonuç toparlar.',
+        'Paragraf giriş, gelişme, sonuçtan kurulur',
+        'İlk cümle konuyu açar; kendinden önce bir şey olmadığı bellidir, bu giriş. Ortadaki cümleler konuyu örnekle, sebeple genişletir; gelişme. Son cümle toparlar, ana düşünceyi verir; sonuç. Giriş cümlesi "bu yüzden, ama" ile başlamaz.',
         {
           tur: 'akis',
           adimlar: [
-            { ad: 'Giriş', alt: 'bağımsız cümle' },
-            { ad: 'Gelişme', alt: 'açar' },
+            { ad: 'Giriş', alt: 'konuyu açar' },
+            { ad: 'Gelişme', alt: 'genişletir' },
             { ad: 'Sonuç', alt: 'toparlar' },
           ],
         },
       ),
       kart(
-        'Akışı bozan cümle',
-        'Paragrafın konusundan sapan ya da bağlantı kurulamayan cümledir. Çıkarıldığında anlam bütünlüğü bozulmaz.',
+        'Akışı bozan cümle konudan sapar',
+        'Kitap okuma paragrafında birden "Kütüphane binası 1970\'te yapıldı" cümlesi geliyor. Konuyla bağı yok; çıkarınca paragraf bozulmuyor. Bu akışı bozan cümle. Bulmak için her cümleye "öncekiyle sonrakine bağlı mı" diye sor.',
       ),
       kart(
-        'Soruya göre strateji',
-        'Ana düşünce için son cümleye ve tekrar eden fikre bak; konu için "neden söz ediyor" de; "değinilmemiştir" için şıkları tek tek metinle eşleştir; akışı bozan cümle için önceki-sonraki cümleyle bağ ara.',
-        undefined,
-        { not: 'Soruyu okumadan paragrafı okuma; ne arayacağını bilmeden okumak iki kat zaman.' },
+        'Anlatım biçimi yazarın tavrını gösterir',
+        'Yazar bilgi veriyorsa açıklayıcı; bir görüşü çürütüp kendi görüşünü savunuyorsa tartışmacı; bir yeri resim gibi çiziyorsa betimleyici; olay anlatıyorsa öyküleyici. Anlatım biçimi, yani yazarın metne yaklaşma tarzı. Birkaçı bir arada olur.',
+        {
+          tur: 'tablo',
+          basliklar: ['Biçim', 'Ne yapar?', 'İpucu'],
+          satirlar: [
+            ['Açıklayıcı', 'Bilgi verir', 'Ansiklopedi'],
+            ['Tartışmacı', 'Görüş çürütür', '"Oysa…"'],
+            ['Betimleyici', 'Gösterir', 'Renk, koku'],
+            ['Öyküleyici', 'Olay anlatır', '"Sonra ne oldu"'],
+          ],
+        },
+      ),
+      kart(
+        'Yazar düşüncesini beş yolla geliştirir',
+        'Ana düşünceyi güçlendirmek için: tanımlar ("Deyim, … -dır"), örnek verir ("Mesela göze girmek"), karşılaştırır ("Roman hikâyeden uzun"), tanık gösterir ("Ataç der ki: …"), sayı verir ("%40\'ı"). Tanıkta ad geçer, örnekte geçmez.',
       ),
     ], [
       soru(
@@ -544,7 +612,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       sikli('"Paragrafta değinilmemiştir" sorusu nerede aranır?', ['Başlıkta', 'Yardımcı düşüncelerde'], 1, 'Ara yargılar.'),
       sikli('Tanık göstermeyi örnekten ayıran nedir?', ['Sayı verilir', 'Söyleyenin adı geçer'], 1, 'Sayısal veri ayrı yol.'),
       sikli('Konu nasıl ifade edilir?', ['Bir yargıyla', 'Bir sözcük ya da öbekle'], 1, 'Ana düşünce yargı.'),
-      sikli('Paragrafın hangi bölümü bağımsız cümleyle başlar?', ['Sonuç', 'Giriş'], 1, 'Gelişme açar, sonuç toparlar.'),
+      sikli('Paragrafın hangi bölümü konuyu açan bağımsız cümledir?', ['Sonuç', 'Giriş'], 1, 'Gelişme genişletir, sonuç toparlar.'),
       soru('Akışı bozan cümle çıkarılınca anlam bütünlüğü bozulur.', false, 'Bozulmaz; zaten konudan sapıyor.'),
     ], [
       {
@@ -562,8 +630,8 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
   tema('trk9-t3', 'Anlamın Yapı Taşları', [
     konu('trk9-yapi', 'Anlatmaya Bağlı Metinlerin Yapısı', [
       kart(
-        'Dört yapı ögesi',
-        'Anlatmaya bağlı her metin bu dördünden kurulur; biri eksikse metin anlatı olmaz.',
+        'Her anlatı dört ögeden kurulur',
+        'Bir hikâye düşün: bir şey olur (olay), birilerinin başına gelir (kişiler), bir yerde (mekân) ve bir zamanda geçer. Anlatmaya bağlı metin, yani hikâye, roman, masal gibi olay anlatan metin. Dördünden biri eksikse anlatı yoktur.',
         {
           tur: 'akis',
           adimlar: [
@@ -575,26 +643,26 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         },
       ),
       kart(
-        'Olay örgüsü',
-        'Olayların metindeki diziliş biçimi. Gerçek zaman sırası değil, yazarın kurduğu sıradır.',
+        'Olay örgüsü yazarın seçtiği sıradır',
+        'Bir film cenazeyle başlar, sonra ölenin gençliğine döner. Gerçekte önce gençlik, sonra ölüm vardı; yazar sırayı değiştirdi. Olay örgüsü, yani olayların metindeki dizilişi. Yaşandığı sıra değil, yazarın kurduğu sıra.',
       ),
       kart(
-        'Kişiler',
-        'Metni ilerleten kişiler. Karakter değişip gelişir, tip ise tek bir özelliğin temsilcisidir (cimri tipi).',
-      ),
-      kart(
-        'Mekân',
-        'Yalnızca dekor değildir; kişinin ruh hâlini ve toplumsal konumunu da anlatır.',
-      ),
-      kart(
-        'Zaman',
-        'Olayın geçtiği süre ile anlatılma süresi farklı olabilir. Geri dönüşle geçmişe gidilebilir.',
-      ),
-      kart(
-        'Çatışma',
-        'Anlatıyı ilerleten şey çatışmadır: kişinin başka biriyle, toplumla, doğayla ya da kendisiyle çatışması.',
+        'Tip tek özellik, karakter çok yönlü',
+        'Bir hikâyede "cimri amca" hep cimri; başka bir yanı yok. Bu tip, yani tek bir özelliğin temsilcisi. Roman kahramanı ise korkar, cesaret bulur, değişir: karakter, yani çok yönlü ve gelişen kişi. Sorularda "değişiyor mu" diye bak.',
         undefined,
-        { not: 'Olay örgüsünü çatışmadan başlat; çatışma yoksa anlatılacak bir şey de yok.' },
+        { not: 'Kişi soruda "değişmiyor, hep aynı" diye anlatılıyorsa tip; metin boyunca değişiyorsa karakter.' },
+      ),
+      kart(
+        'Mekân kişiyi de anlatır',
+        'Kahraman rutubetli, karanlık bir bodrumda yaşıyor. Bu yalnızca yer bilgisi değil; yoksulluğunu ve sıkışmışlığını da söylüyor. Mekân, yani olayın geçtiği yer, kişinin ruh hâlini ve toplumsal durumunu da anlatır. Dekor sanma.',
+      ),
+      kart(
+        'Olayın süresi ile anlatma süresi ayrı',
+        '"On yıl geçti" cümlesi on yılı tek satırda anlatır. Bir gün de yüz sayfada anlatılabilir. Olayın gerçek süresi ile anlatımın süresi ayrıdır. Geri dönüş, yani anlatının geçmişe gitmesi, zaman sırasını kırar.',
+      ),
+      kart(
+        'Çatışma anlatıyı ilerletir',
+        'Kahraman bir şey istiyor, biri ya da bir şey engelliyor: işte çatışma. Başka bir kişiyle (düşman), toplumla (gelenek), doğayla (fırtına) ya da kendisiyle (vicdan) olabilir. Çatışma yoksa gerilim yok; anlatacak bir şey de yok.',
       ),
     ], [
       soru('Anlatmaya bağlı metinlerin yapı ögeleri olay örgüsü, kişiler, mekân ve zamandır.', true, 'Dördü birlikte kurmacanın iskeletini oluşturuyor.'),
@@ -618,39 +686,39 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     ]),
     konu('trk9-anlatici', 'Anlatıcı ve Bakış Açısı', [
       kart(
-        'İlahi (hâkim) bakış açısı',
-        'Anlatıcı her şeyi bilir; kişilerin aklından geçeni bile aktarır. Üçüncü kişi ağzından anlatılır.',
+        'İlahi anlatıcı her şeyi bilir',
+        '"Ali korkuyordu; Ayşe onun korktuğunu bilmeden gülümsedi." Anlatıcı, yani hikâyeyi anlatan ses, ikisinin de içini biliyor. İlahi (hâkim) bakış açısı, yani anlatıcının her şeyi bilmesi: geçmişi, geleceği, akıldan geçeni. "O" diliyle anlatır.',
       ),
       kart(
-        'Kahraman bakış açısı',
-        'Anlatıcı olayın içindeki kişidir, yalnız kendi bildiğini anlatır. "Ben" ağzıyla yazılır.',
+        'Kahraman anlatıcı "ben" der',
+        '"Kapıyı açtım, içeride kimse yoktu; ne düşündüklerini bilemedim." Anlatan, olayın içindeki kişi; yalnız kendi gördüğünü ve düşündüğünü bilir. Kahraman bakış açısı, yani anlatıcının hikâyenin bir kişisi olması. "Ben" diliyle yazılır.',
       ),
       kart(
-        'Gözlemci bakış açısı',
-        'Anlatıcı yalnızca dışarıdan görüleni aktarır, iç dünyaya giremez. Kamera gibi davranır.',
+        'Gözlemci anlatıcı kamera gibidir',
+        '"Adam pencereye baktı, uzun süre kıpırdamadı." Ne düşündüğü yazmıyor; yalnız görünen anlatılıyor. Gözlemci bakış açısı, yani anlatıcının dışarıdan görüleni aktarması. İç dünyaya giremez. "O" diliyle ama sınırlı bilgiyle.',
       ),
       kart(
-        'Üçünü ayırmak',
-        'Ölçü tek: anlatıcı ne kadarını biliyor ve hangi kişi ağzından konuşuyor?',
+        'Ölçü tek: anlatıcı ne kadar biliyor',
+        'Üçünü ayırmak için iki soru sor: "Ben" mi "o" mu diyor? Kişilerin aklından geçeni biliyor mu? "Ben" diyorsa kahraman. "O" deyip iç dünyayı biliyorsa ilahi, bilmiyorsa gözlemci.',
         {
           tur: 'tablo',
-          basliklar: ['Bakış açısı', 'Bilgisi'],
+          basliklar: ['Bakış açısı', 'Kişi', 'Bilgisi'],
           satirlar: [
-            ['İlahi', 'Her şeyi bilir'],
-            ['Kahraman', 'Kendi bildiğini'],
-            ['Gözlemci', 'Yalnız görüneni'],
+            ['İlahi', 'O', 'Her şeyi bilir'],
+            ['Kahraman', 'Ben', 'Kendi bildiğini'],
+            ['Gözlemci', 'O', 'Yalnız görüneni'],
           ],
         },
       ),
       kart(
         'Anlatıcı yazar değildir',
-        'Anlatıcı da kurmacanın bir parçasıdır. "Ben" diyen anlatıcıyı yazarla karıştırmamak gerekir.',
+        'Bir yazar romanda "Ben bir katilim" diye yazsa kendisi katil olmaz. "Ben" diyen anlatıcı, yazarın kurduğu kurmaca bir kişi. Yazar gerçek, anlatıcı metnin içindeki ses. Sorularda "anlatıcı" yerine "yazar" diyen şıkka dikkat.',
         undefined,
-        { not: '"Ben" diyen anlatıcı yazarın kendisi değil; bu ayrım soruların çoğunda saklı.' },
+        { etiket: 'Sık hata', not: '"Ben" diyen anlatıcıyı gördüğünde bunu yazar sanma; o da hikâyenin kurgulanmış bir parçası.' },
       ),
       kart(
-        'Güvenilmez anlatıcı',
-        'Anlatıcı yanılıyor ya da gizliyor olabilir. Okur, anlatılanla ima edilen arasındaki farkı kendi kurar.',
+        'Güvenilmez anlatıcı yanıltabilir',
+        'Bir çocuk anlatıcı "babam çok iyi bir adam" der; ama anlattığı olaylar babanın kötü olduğunu gösterir. Anlatıcı yanılıyor ya da gizliyor. Güvenilmez anlatıcı, yani sözüne tam güvenilmeyen anlatıcı. Okur gerçeği satır arasından kendi kurar.',
       ),
     ], [
       soru('İlahi bakış açısındaki anlatıcı kişilerin iç dünyasını bilir.', true, 'Her şeyi bilen anlatıcı geçmişi ve geleceği de aktarabilir.'),
@@ -674,8 +742,8 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     ]),
     konu('trk9-hikaye', 'Hikâye ve Roman', [
       kart(
-        'Hikâye',
-        'Tek bir olay çevresinde, az kişiyle, kısa sürede geçen anlatı. Roman ise çok olaylı ve geniş zamanlıdır.',
+        'Hikâye tek olay, roman çok olay',
+        'Bir hikâye bir günde, iki kişiyle, tek bir olayla biter: bir gencin ilk iş günü. Roman yıllara yayılır, onlarca kişi, iç içe olaylar. Fark yalnız uzunluk değil: olay, kişi ve zaman genişliği. Kısa roman yine romandır.',
         {
           tur: 'tablo',
           basliklar: ['Hikâye', 'Roman'],
@@ -687,26 +755,35 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         },
       ),
       kart(
-        'Olay hikâyesi',
-        'Maupassant tarzı: serim-düğüm-çözüm vardır, sonu bağlanır. Türk edebiyatında Ömer Seyfettin.',
+        'Olay hikâyesinde düğüm çözülür',
+        'Ömer Seyfettin\'in "Kaşağı"sı: çocuk kaşağıyı kırar, suçu kardeşine atar, kardeşi ölür, pişmanlık. Serim (tanıtma), düğüm (sorun), çözüm (sonuç) sırayla gelir, son bağlanır. Olay hikâyesi, yani Fransız yazar Maupassant tarzı.',
       ),
       kart(
-        'Durum hikâyesi',
-        'Çehov tarzı: belirgin bir olay ve çözüm yoktur, bir an ve izlenim anlatılır. Türk edebiyatında Sait Faik.',
+        'Durum hikâyesinde büyük bir şey olmaz',
+        'Sait Faik\'in bir hikâyesinde adam sahilde oturur, balıkçıları izler, hikâye biter. Büyük olay yok, çözüm yok; bir an ve bir duygu var. Durum hikâyesi, yani Rus yazar Çehov tarzı. "Olay örgüsü zayıf, izlenim ağır" derse budur.',
+        {
+          tur: 'tablo',
+          basliklar: ['Tarz', 'Öncü', 'Bizde'],
+          satirlar: [
+            ['Olay', 'Maupassant', 'Ömer Seyfettin'],
+            ['Durum', 'Çehov', 'Sait Faik'],
+          ],
+        },
+        { not: '"Bir şey olmuyor" diye şaşırma; o hikâye sana olayı değil bir anın duygusunu vermek istiyor.' },
+      ),
+      kart(
+        'Roman ağırlık verdiği konuya göre adlanır',
+        'Kurtuluş Savaşı\'nı anlatıyorsa tarihî, köy sorunlarını anlatıyorsa sosyal, bir kişinin iç dünyasını anlatıyorsa psikolojik, cinayet çözüyorsa polisiye, tehlikeli yolculuksa macera romanı. Ayrım konudan; bir roman iki türe de girebilir.',
+      ),
+      kart(
+        'İlk yerli roman ile ilk edebî roman ayrı',
+        'Şemsettin Sami\'nin Taaşşuk-ı Talat ve Fitnat\'ı (1872) Türkçe yazılmış ilk roman: ilk yerli roman. Namık Kemal\'in İntibah\'ı (1876) sanat değeri taşıyan ilk roman: ilk edebî roman. Sık hata: ikisini karıştırmak; "ilk"in yanına bak.',
         undefined,
-        { not: '"Bir şey olmuyor" diye şaşırma; olmayışın kendisi anlatılan şey.' },
+        { etiket: 'Sık hata' },
       ),
       kart(
-        'Roman türleri',
-        'Tarihî, sosyal, psikolojik, macera, polisiye. Ayrım, romanın ağırlık verdiği konuya göre yapılır.',
-      ),
-      kart(
-        'Türk romanının başlangıcı',
-        'İlk yerli roman Şemsettin Sami’nin Taaşşuk-ı Talat ve Fitnat’ı; ilk edebî roman ise Namık Kemal’in İntibah’ı sayılır.',
-      ),
-      kart(
-        'Modern anlatı',
-        '20. yüzyılda olay örgüsü gevşedi, iç konuşma ve bilinç akışı öne çıktı; anlatı olayı değil bilinci izlemeye başladı.',
+        'Modern romanda olay değil bilinç izlenir',
+        'Eski romanda "sonra ne oldu" diye okurdun. 20. yüzyıl romanında kahramanın kafasından geçenler sayfalarca akar, olay neredeyse yok. Bilinç akışı, yani düşüncelerin düzensizce, olduğu gibi yazılması. İç konuşma da bu dönemin aracı.',
       ),
     ], [
       soru('Durum hikâyesinde serim-düğüm-çözüm sıralaması belirgin değildir.', true, 'Bir anı ve durumu aktarır; olay örgüsü zayıftır.'),
@@ -730,18 +807,18 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     ]),
     konu('trk9-tiyatro', 'Tiyatro', [
       kart(
-        'Sahnelenmek için yazılır',
-        'Tiyatro metni okunmak için değil oynanmak için yazılır. Bu yüzden anlatıcı yoktur, her şey diyalogla verilir.',
+        'Tiyatro oynanmak için yazılır',
+        'Bir romanı koltukta okursun; tiyatro metni sahnede oyuncular tarafından oynanır. Bu yüzden anlatıcı yoktur: kimse "Ali içeri girdi" demez, Ali sahneye girer. Her şey diyalog (karşılıklı konuşma) ve hareketle verilir.',
         undefined,
-        { not: 'Metni okurken sahneyi hayal et; anlatıcının yokluğu buradan geliyor.' },
+        { not: 'Metni okurken sahneyi gözünde canlandır; parantez içindeki yönergeler oyuncuya, konuşmalar sana.' },
       ),
       kart(
-        'Perde, sahne, replik',
-        'Perde büyük bölüm, sahne kişilerin değişmesiyle oluşan alt bölüm, replik oyuncunun söylediği sözdür.',
+        'Perde, sahne, replik: büyükten küçüğe',
+        'Oyunun büyük bölümleri perde: perde kapanır, dekor değişir. Perdenin içinde kişiler girip çıktıkça sahne değişir. Bir oyuncunun tek seferde söylediği söz replik. Uzun, tek başına söylenen replik tirat.',
       ),
       kart(
-        'Trajedi ve komedi',
-        'Trajedide soylu kişiler ve acı son, yüksek üslup vardır. Komedi güldürerek düşündürür, halktan kişileri konu alır.',
+        'Trajedi acıyla, komedi gülmeyle biter',
+        'Kral Oidipus: soylu bir kral, kader, acı son; ağır bir dil. Bu trajedi. Molière\'in Cimri\'si: sıradan bir adamın huyu, gülünç durumlar, mutlu son. Bu komedi. Komedi güldürürken toplumun kusurunu gösterir.',
         {
           tur: 'tablo',
           basliklar: ['Trajedi', 'Komedi'],
@@ -753,20 +830,20 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         },
       ),
       kart(
-        'Üç birlik kuralı',
-        'Klasik trajedide olay, yer ve zaman birliği aranırdı: tek olay, tek mekân ve bir gün içinde geçen bir eylem.',
+        'Üç birlik: tek olay, tek yer, tek gün',
+        'Klasik trajedide oyun tek bir olayı, tek bir mekânda, 24 saat içinde anlatır. Bu üç birlik kuralı: olay, yer ve zaman birliği. Kişi bir sahnede İstanbul\'da, sonrakinde Paris\'te olamazdı. Modern tiyatro bu kuralı bıraktı.',
       ),
       kart(
-        'Dram',
-        'Hayatı acı ve gülünç yanlarıyla birlikte verir, üslup sınırı yoktur. Modern tiyatronun temeli.',
+        'Dram acıyı ve gülüncü birlikte verir',
+        'Gerçek hayatta bir günde hem ağlarsın hem gülersin. Dram bunu sahneye taşır: soylu-sıradan ayrımı yok, dil serbest, son acı da mutlu da olabilir. Üç birlik kuralına uymaz. Modern tiyatronun temeli dramdır.',
       ),
       kart(
-        'Geleneksel Türk tiyatrosu',
-        'Karagöz, orta oyunu, meddah ve köy seyirlik oyunları. Yazılı metne değil doğaçlamaya dayanır.',
+        'Geleneksel tiyatromuz doğaçlamadır',
+        'Karagöz perde arkasında deriden figürlerle, orta oyunu meydanda Kavuklu ile Pişekâr\'la, meddah tek kişiyle anlatarak oynanır. Köy seyirlik oyunları da bu ailede. Ortak özellik: yazılı metin yok, doğaçlama, yani o an uydurma.',
       ),
       kart(
-        'Türk tiyatrosunda ilkler',
-        'Batılı anlamda ilk tiyatro eseri Şinasi’nin Şair Evlenmesi’dir; Tanzimat’la birlikte sahnelenmeye başlandı.',
+        'İlk Batılı oyunumuz Şair Evlenmesi',
+        '1860\'ta Şinasi, Şair Evlenmesi\'ni yazdı: görücü usulü evliliği eleştiren tek perdelik komedi. Batılı anlamda, yani yazılı metne dayanan, ilk Türk tiyatro eseri. Tanzimat\'la birlikte sahnede oynanmaya başlandı.',
       ),
     ], [
       soru('Tiyatro metinleri sahnelenmek üzere yazılır.', true, 'Bu yüzden metinde sahne yönergeleri de bulunur.'),
@@ -794,52 +871,62 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
   tema('trk9-t4', 'Dilin Zenginliği', [
     konu('trk9-ses', 'Ses Bilgisi', [
       kart(
-        'Büyük ünlü uyumu',
-        'Bir sözcüğün ünlüleri ya hep kalın (a, ı, o, u) ya hep incedir (e, i, ö, ü). "Kardeş, anne, kitap" gibi sözcükler kurala uymaz.',
-      ),
-      kart(
-        'Küçük ünlü uyumu',
-        'Düz ünlüden sonra düz; yuvarlak ünlüden sonra ya dar yuvarlak ya düz-geniş ünlü gelir.',
-      ),
-      kart(
-        'Ünsüz benzeşmesi',
-        'Sert ünsüzle biten sözcüğe "c, d, g" ile başlayan ek gelirse ek sertleşir: "kitap-cı" değil kitapçı.',
+        'Büyük ünlü uyumu: hep kalın ya da hep ince',
+        '"Okul"da o ve u; ikisi de kalın. "Kelebek"te üç e; hepsi ince. Büyük ünlü uyumu, yani sözcükteki ünlülerin ya hep kalın (a, ı, o, u) ya hep ince (e, i, ö, ü) olması. "Kardeş, anne, kitap" uymaz: kalın ve ince karışmış.',
         undefined,
-        { not: 'Sertleşme ile yumuşamayı karıştırma: biri eke, öteki sözcüğün sonuna oluyor.' },
+        { etiket: 'Kural' },
       ),
       kart(
-        'Ünsüz yumuşaması',
-        'p, ç, t, k ile biten sözcüğe ünlüyle başlayan ek gelince b, c, d, ğ olur: kitap → kitabı. Tek heceli sözcüklerin çoğu yumuşamaz.',
+        'Küçük ünlü uyumu bir önceki ünlüye bakar',
+        '"Kapı"da a düz, sonra ı düz: uyar. "Okul"da o yuvarlak, sonra u dar yuvarlak: uyar. "Yorgan"da o yuvarlak, sonra a düz geniş: uyar. "Çamur"da a düz, sonra u yuvarlak: uymaz. Kural: düzden sonra düz; yuvarlaktan sonra u, ü ya da a, e.',
         {
           tur: 'tablo',
-          basliklar: ['Sert', 'Yumuşak'],
+          basliklar: ['Önceki ünlü', 'Sonra gelen', 'Örnek'],
           satirlar: [
-            ['p', 'b'],
-            ['ç', 'c'],
-            ['t', 'd'],
-            ['k', 'ğ'],
+            ['Düz (a, e, ı, i)', 'Düz', 'kapı, kelebek'],
+            ['Yuvarlak (o, ö, u, ü)', 'u, ü / a, e', 'okul, yorgan'],
           ],
         },
       ),
       kart(
-        'Ünlü düşmesi',
-        'İki heceli bazı sözcükler ünlüyle başlayan ek alınca bir hecesini kaybeder: burun → burnu, oğul → oğlu.',
+        'Yumuşama: p, ç, t, k ünlü gelince yumuşar',
+        '"Kitap" + ı → kitabı: p, b oldu. "Ağaç" + a → ağaca: ç, c oldu. Sözcük sonundaki sert ünsüz (p, ç, t, k), ünlüyle başlayan ek gelince yumuşar (b, c, d, ğ). Tek heceli sözcüklerin çoğu yumuşamaz: "top" → topu, "at" → atı.',
+        {
+          tur: 'tablo',
+          basliklar: ['Sert', 'Yumuşak', 'Örnek'],
+          satirlar: [
+            ['p', 'b', 'kitap → kitabı'],
+            ['ç', 'c', 'ağaç → ağaca'],
+            ['t', 'd', 'kanat → kanadı'],
+            ['k', 'ğ', 'ekmek → ekmeği'],
+          ],
+        },
       ),
       kart(
-        'Ünlü türemesi',
-        'Araya bir ses girer: "bir" sözcüğü sıra sayısı yapılırken "birinci" olur; pekiştirmede de görülür (sapasağlam).',
+        'Benzeşme: sert sese gelen ek sertleşir',
+        '"Kitap" + cı → kitapçı: ekin c\'si ç oldu. "Git" + di → gitti. Ünsüz benzeşmesi (sertleşme), yani sert ünsüzle (f, s, t, k, ç, ş, h, p) biten sözcüğe gelen c, d, g\'nin ç, t, k olması. Yumuşamada sözcüğün sonu, benzeşmede ek değişir.',
+        undefined,
+        { etiket: 'Sık hata', not: 'Sertleşme mi yumuşama mı? Değişen ses ekte ise benzeşme, sözcüğün sonunda ise yumuşama.' },
       ),
       kart(
-        'Ünsüz türemesi',
-        'Bazı alıntı sözcükler ek alınca ünsüz ikizleşir: his → hissi, af → affı.',
+        'Ünlü düşmesinde bir hece kaybolur',
+        '"Burun" + u → burnu: ikinci hecedeki u düştü. "Oğul" → oğlu, "ağız" → ağzı, "şehir" → şehri. İki heceli organ ve akrabalık adları ünlüyle başlayan ek alınca çoğu zaman böyle. "Ne" + için → niçin de ünlü düşmesi.',
       ),
       kart(
-        'Kaynaştırma harfleri',
-        'İki ünlü yan yana gelmesin diye araya y, ş, s, n girer: "araba-y-ı", "iki-ş-er", "kapı-s-ı".',
+        'Ünlü türemesinde araya ünlü girer',
+        '"Bir" + -inci → birinci: r ile n arasına i girdi. "Az" + -cık → azıcık, "genç" + -cik → gencecik. Pekiştirmede de olur: sap-a-sağlam, güp-e-gündüz. Ünlü türemesi, yani sözcükte olmayan bir ünlünün ek alınca ortaya çıkması.',
       ),
       kart(
-        'Ünlü daralması',
-        '"-yor" eki a, e ünlüsünü daraltır: bekle-yor → bekliyor, anla-yor → anlıyor. "De, ye" fiilleri de "diyor, yiyor" olur.',
+        'Ünsüz türemesinde ses ikizleşir',
+        '"His" + i → hissi: tek s, çift s oldu. "Af" + ı → affı, "hak" + ı → hakkı, "zan" + ı → zannı. Bunlar Arapçadan alıntı, aslında çift sesli; ek alınca ikinci ses geri geliyor. Ünsüz türemesi, yani ek alınca yeni bir ünsüzün belirmesi.',
+      ),
+      kart(
+        'Kaynaştırma harfi iki ünlüyü ayırır',
+        '"Araba" + ı dersen iki ünlü yan yana gelir: "arabaı" olmaz. Araya y girer: arabayı. "İki" + er → ikişer, "kapı" + ı → kapısı, "evi" + de → evinde. Kaynaştırma harfleri y, ş, s, n; iki ünlü çarpışmasın diye araya girer, anlamı yok.',
+      ),
+      kart(
+        'Daralma: -yor eki a ve e\'yi daraltır',
+        '"Bekle" + yor → bekliyor: e daralıp i oldu. "Anla" + yor → anlıyor: a, ı oldu. Ünlü daralması, yani -yor eki önündeki geniş ünlünün (a, e) dar ünlüye (ı, i, u, ü) dönmesi. "De" ve "ye" fiilleri y ile de daralır: diyor, yiyor.',
       ),
     ], [
       soru('"Kitabı" sözcüğünde ünsüz yumuşaması vardır.', true, 'Sözcük sonundaki "p" ünlüyle başlayan ek alınca "b" ye dönmüş.'),
@@ -861,48 +948,49 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
           dogru: 'Sert p, ünlüyle başlayan ek gelince b oldu.',
           yanlis: 'Benzeşmede ek sertleşir (kitap-çı). Burada sözcüğün sonundaki sert ünsüz yumuşadı.',
         },
-        kart: 4,
+        kart: 3,
       },
     ]),
     konu('trk9-yazim', 'Yazım Kuralları', [
       kart(
-        '"de" ayrı mı bitişik mi?',
-        'Bulunma eki "-de" bitişik, bağlaç "de" ayrı yazılır. Cümleden çıkarıldığında anlam bozulmuyorsa bağlaçtır, ayrı yazılır.',
+        'Bağlaç "de" ayrı, ek "-de" bitişik',
+        '"Sen de gel." "de"yi at: "Sen gel." Cümle hâlâ düzgün; bu bağlaç, ayrı yazılır. "Evde kaldım." "-de"yi at: "Ev kaldım." Bozuldu; bu bulunma eki, bitişik yazılır. Sınama: çıkarınca cümle bozuluyor mu? Bozulmuyorsa ayrı.',
+        undefined,
+        { not: 'de/da gördüğünde onu cümleden çıkar; cümle yürüyorsa ayrı yaz, yürümüyorsa bitişik.' },
       ),
       kart(
-        '"ki" kuralı',
-        'Bağlaç olan "ki" ayrı yazılır. Yalnız "hâlbuki, mademki, sanki, oysaki, çünkü" kalıplaşmıştır, bitişiktir.',
+        'Bağlaç "ki" ayrı, sıfat "-ki" bitişik',
+        '"Duydum ki gelmişsin." Buradaki "ki" iki cümleyi bağlıyor, ayrı yazılır. "Masadaki kitap." Buradaki "-ki" sıfat yapıyor, "hangi kitap" sorusuna cevap veriyor; bitişik. Beşi kalıplaşmış, hep bitişik: hâlbuki, mademki, sanki, oysaki, çünkü.',
       ),
       kart(
-        'Soru eki mi',
-        'Her zaman ayrı yazılır, kendinden önceki sözcüğe uyar: "geldi mi", "güzel mi güzel".',
+        'Soru eki "mi" her zaman ayrı yazılır',
+        '"Geldi mi?", "Güzel mi güzel.", "Bakar mısın?" Üçünde de "mi" ayrı. Soru eki, yani mi/mı/mu/mü, her zaman ayrı yazılır; önceki sözcüğe göre ünlüsü değişir. Kendinden sonra gelen ekler ona bitişir: "geldin mi", "gelecek misin".',
       ),
       kart(
-        'Üç ek, tek sınama',
-        'Üçünde de aynı soru sorulur: sözcükten çıkarılınca cümle bozuluyor mu?',
+        'Tek sınama üç kuralı çözer',
+        'de, ki ve mi\'de aynı soru: sözcüğü çıkarınca cümle bozuluyor mu? "Sen gel" bozulmadı, bağlaç, ayrı. "Ev kaldım" bozuldu, ek, bitişik. "Duydum gelmişsin" bozulmadı, bağlaç ki ayrı. "Masa kitap" bozuldu, -ki bitişik.',
         {
           tur: 'tablo',
-          basliklar: ['Yapı', 'Yazım'],
+          basliklar: ['Yapı', 'Yazım', 'Örnek'],
           satirlar: [
-            ['Hâl eki -de', 'Bitişik'],
-            ['Bağlaç de', 'Ayrı'],
-            ['Sıfat -ki', 'Bitişik'],
-            ['Bağlaç ki', 'Ayrı'],
+            ['Hâl eki -de', 'Bitişik', 'evde'],
+            ['Bağlaç de', 'Ayrı', 'sen de'],
+            ['Sıfat -ki', 'Bitişik', 'masadaki'],
+            ['Bağlaç ki', 'Ayrı', 'duydum ki'],
           ],
         },
-        { not: 'Üç kuralı ayrı ezberleme; "çıkarınca bozuluyor mu" sorusu üçünü de çözer.' },
       ),
       kart(
-        'Büyük harf',
-        'Özel adlar büyük harfle başlar. Özel ada gelen çekim ekleri kesme ile ayrılır: "Ankara’ya". Yapım eki ayrılmaz: "Türkçe".',
+        'Özel ada gelen çekim eki kesmeyle ayrılır',
+        '"Ankara\'ya gittim." Ankara özel ad, büyük harfle başlar; -ya çekim eki kesmeyle ayrılır. "Türkçe"de Türk özel ad ama -çe yapım eki: kesme yok. Çekim eki (-ya, -da, -yı) ayrılır, yapım eki (-çe, -li, -lı) ayrılmaz: "Ankaralı".',
       ),
       kart(
-        'Birleşik sözcükler',
-        'Anlamca kaynaşmışsa bitişik yazılır (hanımeli), kaynaşmamışsa ayrı (deniz kabuğu). Ses düşmesi varsa bitişiktir (kaynana).',
+        'Birleşik sözcük kaynaştıysa bitişik',
+        '"Hanımeli" bir çiçek; ne hanım var ne el. Sözcükler kendi anlamını yitirmiş, kaynaşmış: bitişik. "Deniz kabuğu": deniz de kabuk da kendi anlamında: ayrı. Ses düşmesi olduysa yine bitişik: kayın ana → kaynana, pazar ertesi → pazartesi.',
       ),
       kart(
-        'Sayıların yazımı',
-        'Metinde geçen küçük sayılar yazıyla yazılır. Büyük harfle başlayan yerlerde ve resmî belgelerde rakam kullanılır.',
+        'Metinde sayı yazıyla, ölçüde rakamla',
+        '"Sınıfta üç öğrenci kaldı": metin içinde küçük sayı yazıyla. "Saat 14.30", "25 kg", "1923" gibi saat, ölçü, tarih ve para rakamla. Yazıyla yazılan sayı ayrı yazılır: "yirmi beş". Yalnız çek ve senette bitişik: "yirmibeş".',
       ),
     ], [
       soru('Bağlaç olan "de" ayrı yazılır.', true, 'Cümleden çıkarıldığında anlam bozulmuyorsa bağlaçtır.'),
@@ -928,38 +1016,40 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     ]),
     konu('trk9-noktalama', 'Noktalama İşaretleri', [
       kart(
-        'Nokta',
-        'Cümleyi bitirir; ayrıca kısaltmalarda, tarihlerde ve sıra sayılarında kullanılır: "3. sınıf", "12.09.2025".',
+        'Nokta cümleyi bitirir, sayıyı sıralar',
+        '"Ders bitti." Nokta cümleyi bitirdi. "3. sınıf": sıra sayısı, "üçüncü" demek. "12.09.2025": tarihte gün, ay ve yılı ayırıyor. "Dr., vb.": kısaltmalarda da nokta. Sıra sayısı gördüğünde noktayı "-ıncı" diye oku.',
       ),
       kart(
-        'Virgül',
-        'Eş görevli sözcükleri, sıralı cümleleri ve uzun özneyi ayırır. Ancak "ve" bağlacından önce virgül konmaz.',
+        'Virgül eş görevlileri ayırır',
+        '"Elma, armut, kiraz aldım." Üç eş görevli sözcük virgülle ayrıldı. "Geldi, oturdu, konuştu." Sıralı cümleler de virgülle. Uzun özneden sonra da virgül gelir. Ama "ve, veya, ya da" bağlacından önce virgül konmaz: "elma ve armut".',
       ),
       kart(
-        'Virgül anlamı değiştirir',
-        'Yer değiştiren tek bir virgül cümlenin öznesini değiştirebilir; bu yüzden virgül süs değil, anlam işaretidir.',
+        'Virgülün yeri anlamı değiştirir',
+        '"Genç, adama baktı": bakan kişi genç. "Genç adama baktı": bakılan kişi genç. Tek bir virgül özneyi değiştirdi. Virgül süs değil; yeri değişince cümlenin anlamı değişir. Sorularda virgülü kaldırıp cümleyi yeniden oku.',
         undefined,
-        { not: 'Virgülü süs değil anlam işareti olarak oku; yerini değiştirip cümleyi yeniden oku.' },
+        { not: 'Virgül sorusunda önce virgülü sil, cümleyi tekrar oku; anlam değiştiyse virgül orada anlam işareti.' },
       ),
       kart(
-        'Noktalı virgül',
-        'İçinde virgül bulunan sıralı cümleleri ayırır; ayrıca aynı türden öbekleri gruplar.',
+        'Noktalı virgül virgüllüleri ayırır',
+        '"Elma, armut, kiraz; havuç, ıspanak aldım." İçinde zaten virgül olan iki öbek noktalı virgülle ayrıldı: meyveler; sebzeler. "Hava soğuktu, kar yağıyordu; yine de çıktık." Virgüllü sıralı cümleleri de noktalı virgül ayırır.',
       ),
       kart(
-        'İki nokta',
-        'Açıklama, örnek ya da alıntı gelecekse kullanılır. Sonrası cümleyse büyük, öbekse küçük harfle başlar.',
+        'İki noktadan sonra açıklama gelir',
+        '"Üç şey aldım: defter, kalem, silgi." İki nokta "şimdi sayıyorum" der. Alıntıdan önce de: Öğretmen sordu: "Hazır mısınız?" Kural: iki noktadan sonra cümle geliyorsa büyük, yalnız sözcükler geliyorsa küçük harfle başlar.',
       ),
       kart(
-        'Kesme işareti',
-        'Özel adlara gelen çekim eklerini ayırır. Kurum adlarına gelen ekler ayrılmaz: "Türk Dil Kurumuna".',
+        'Kesme kişi ve yer adının ekini ayırır',
+        '"Ali\'ye", "Ankara\'ya", "Türkiye\'nin": kişi ve yer adlarına gelen çekim eki kesmeyle ayrılır. Kurum adlarında ayrılmaz: "Türk Dil Kurumuna", "Millî Eğitim Bakanlığına". Yapım ekinde de kesme yok: "Ankaralı". Sık hata: kurum adına kesme.',
+        undefined,
+        { etiket: 'Sık hata' },
       ),
       kart(
-        'Üç nokta',
-        'Sözün bittirilmediğini, alıntıda atlama yapıldığını ya da kaba sayılan sözlerin gizlendiğini gösterir.',
+        'Üç nokta bitmemiş sözü gösterir',
+        '"Bunu sana nasıl anlatsam…" Söz yarım kaldı, üç nokta. Alıntıdan bir kısmı atladıysan da üç nokta: "Ne mutlu … diyene!" Kaba bir sözü gizlemek için de: "Seni a…" Üç noktadan sonra ayrıca nokta konmaz; toplam üç.',
       ),
       kart(
-        'Tırnak ve kısa çizgi',
-        'Tırnak alıntıyı ve özel vurguyu gösterir; kısa çizgi satır sonunda hece böler ve dil bilgisinde ekleri ayırır.',
+        'Tırnak alıntıyı, kısa çizgi eki gösterir',
+        'Ataç\'ın sözü: "Okumak düşünmektir." Başkasının sözü tırnağa alınır; vurgulanan bir sözcük de. Kısa çizgi satır sonunda sözcüğü böler (kitap-), dil bilgisinde eki gösterir (-lık) ve "İstanbul-Ankara" gibi aralık bildirir.',
       ),
     ], [
       soru('Virgülün yeri cümlenin anlamını değiştirebilir.', true, '"Genç, adama baktı." ile "Genç adama baktı." aynı cümle değil.'),
@@ -985,24 +1075,35 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     ]),
     konu('trk9-varlik', 'Türkçenin Söz Varlığı', [
       kart(
-        'Söz varlığı nedir?',
-        'Bir dilin bütün sözcükleri, deyimleri, atasözleri ve kalıp sözleri. Dilin zenginliği sözcük sayısıyla değil, anlatım gücüyle ölçülür.',
+        'Söz varlığı dilin bütün sözleridir',
+        'Sözlükteki sözcükler, "göze girmek" gibi deyimler, "damlaya damlaya…" gibi atasözleri, "kolay gelsin" gibi kalıp sözler: hepsi Türkçenin söz varlığı. Zenginlik sözcük sayısıyla değil, bir şeyi kaç türlü söyleyebildiğinle ölçülür.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Türetme gücü',
-        'Türkçe eklemeli bir dildir: tek kökten "göz, gözlük, gözlemci, gözetmek" gibi bir aile üretilebilir.',
+        'Türkçe tek kökten aile üretir',
+        '"Göz" kökünü al: gözlük, gözcü, gözlem, gözetmek, gözlükçü. Bir kökten bir aile çıktı. Türkçe eklemeli dil, yani kök sabit kalır, ekler arka arkaya eklenir. Bu türetme gücü yeni sözcük ihtiyacını çoğunlukla kendi içinden karşılar.',
       ),
       kart(
-        'Alıntı sözcükler',
-        'Her dil başka dillerden sözcük alır. Sorun alıntı değil, karşılığı varken kullanılan gereksiz alıntıdır.',
+        'Alıntı sorun değil, gereksiz alıntı sorun',
+        '"Kitap" Arapçadan, "pencere" Farsçadan, "kanepe" Fransızcadan geldi; hepsi Türkçenin malı oldu. Sorun bu değil. Sorun "toplantı" varken "meeting" demek: karşılığı olan sözcüğü dışarıdan almak. Buna gereksiz alıntı denir.',
       ),
       kart(
-        'Anlam ilişkileri',
-        'Eş anlamlı (kara-siyah), zıt anlamlı (uzun-kısa), eş sesli (yüz: sayı / surat / eylem) sözcükler.',
+        'Eş anlamlı, zıt anlamlı, eş sesli',
+        '"Kara" ile "siyah" aynı şeyi söyler: eş anlamlı. "Uzun" ile "kısa" karşıt: zıt anlamlı. "Yüz" sayı, surat ve yüzmek: yazılışı aynı, anlamı bambaşka: eş sesli (sesteş). Eş seslide anlamlar birbirine bağlı değil; yan anlamla karıştırma.',
+        {
+          tur: 'tablo',
+          basliklar: ['İlişki', 'Örnek'],
+          satirlar: [
+            ['Eş anlamlı', 'kara - siyah'],
+            ['Zıt anlamlı', 'uzun - kısa'],
+            ['Eş sesli', 'yüz: sayı / surat'],
+          ],
+        },
       ),
       kart(
-        'Ağız, şive, lehçe',
-        'Ayrım ayrılma derinliğine göredir: ağız aynı dilin bölgesel söyleyişi, lehçe ise çok eski bir ayrılmadır.',
+        'Ağız yakın, lehçe çok eski ayrılma',
+        'Egeli "geliyom" der: ağız, yani aynı dilin bölgesel söyleyişi; yazı dili aynı. Azerice "gelirem": şive, yani yakın zamanda ayrılmış kol; anlaşılır. Yakutça: lehçe, yani çok eski ayrılma; anlamak güç. Ayıran şey ayrılmanın derinliği.',
         {
           tur: 'akis',
           adimlar: [
@@ -1011,11 +1112,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
             { ad: 'Lehçe', alt: 'eski ayrılma' },
           ],
         },
-        { not: 'Üçünü ayıran şey ayrılmanın derinliği; adları değil derece sırasını tut.' },
+        { not: 'Üçünü ayırırken adı değil dereceyi düşün: anlaşılıyorsa ağız ya da şive, anlaşılmıyorsa lehçe.' },
       ),
       kart(
-        'Türk dilinin lehçeleri',
-        'Yakutça ve Çuvaşça en erken ayrılan lehçelerdir; Azerice, Kazakça ve Özbekçe ise şive sayılan yakın kollardır.',
+        'Yakutça ve Çuvaşça lehçe sayılır',
+        'Türkçeden en erken ayrılan kollar Yakutça (Sibirya) ve Çuvaşça (Volga): Türkiye Türkü bunları anlamaz, lehçe. Azerice, Kazakça, Özbekçe, Türkmence daha geç ayrıldı, kısmen anlaşılır: şive. Sınavda "lehçe" sorulursa Yakutça ve Çuvaşça.',
       ),
     ], [
       soru('Türkçe yeni sözcükleri çoğunlukla türetme yoluyla kazanır.', true, 'Yapım ekleri sayesinde tek kökten çok sözcük üretilebiliyor.'),

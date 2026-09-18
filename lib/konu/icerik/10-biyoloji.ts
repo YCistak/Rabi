@@ -13,26 +13,22 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
   tema('byl10-t1', 'Enerji', [
     konu('byl10-enerji-onem', 'Canlılık İçin Enerjinin Önemi', [
       kart(
-        'Neden enerji gerekir?',
-        'Büyüme, onarım, madde taşınması ve hareket enerji ister. Enerji kesilirse hücre düzenini koruyamaz.',
+        'Her hücre işi enerji ister',
+        'Koşarken kasların kasılır, yaran iyileşirken yeni hücre yapılır, sinirlerin mesaj taşır. Hiçbiri bedava değil; hepsi enerji ister. Enerji kesilirse hücre düzenini koruyamaz ve ölür.',
       ),
       kart(
-        'ATP nedir?',
-        'Hücrenin kullanıma hazır enerji birimi. Adenin, riboz ve üç fosfattan oluşur.',
-      ),
-      kart(
-        'Enerji nerede saklı?',
-        'Fosfatlar arasındaki bağlarda. Son fosfat koptuğunda açığa çıkan enerji hücre işlerinde kullanılır.',
-      ),
-      kart(
-        'ATP depolanmaz',
-        'Hücre ATP’yi biriktirmez, ihtiyaç oldukça üretir. Depo, besin moleküllerinin kendisidir.',
+        'ATP, hücrenin hazır enerjisidir',
+        'Yediğin ekmekteki enerjiyi kas doğrudan kullanamaz; önce ATP\'ye çevrilir. ATP, yani hücrenin her işte harcadığı küçük enerji paketi. Üç parçası var: adenin, riboz şekeri ve üç fosfat.',
         undefined,
-        { not: 'ATP\'yi para gibi değil bozuk para gibi düşün: her an harcanır, biriktirilmez.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Döngü',
-        'ATP parçalanıp ADP olur, solunumla yeniden ATP’ye çevrilir. Bu döngü hiç durmaz.',
+        'Enerji son fosfatın bağında saklıdır',
+        'Üç fosfat yan yana duruyor; aralarındaki bağlar gergin bir yay gibi. Son fosfat koptuğunda bağdaki enerji açığa çıkar, hücre onu iş yapmakta kullanır. Yani enerji şekerde değil, fosfat bağında.',
+      ),
+      kart(
+        'ATP kullanılınca ADP olur, geri döner',
+        'Son fosfat kopunca elinde iki fosfatlı molekül kalır: ADP. Hücre solunumla ADP\'ye yeniden fosfat takar ve ATP geri gelir. Bu döngü sen uyurken bile durmaz.',
         {
           tur: 'akis',
           donguSel: true,
@@ -43,8 +39,14 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'Neden ATP, doğrudan besin değil?',
-        'Besindeki enerji büyük ve kullanışsız bir paketti. ATP, hücrenin her işine yetecek büyüklükte bozuk paradır.',
+        'Hücre ATP biriktirmez, gerektikçe üretir',
+        'Vücudundaki ATP birkaç saniyelik işe yeter; ama sürekli yenilendiği için bitmez. Depo ATP değil, besindir: glikojen ve yağ. ATP\'yi cüzdanındaki bozuk para gibi düşün: harcanır, biriktirilmez.',
+        undefined,
+        { not: '"Enerji deposu ATP\'dir" diyen bir şık görürsen dur: depo besin, ATP anlık harcanan bozuk para.' },
+      ),
+      kart(
+        'Besin büyük, ATP küçük paketlidir',
+        'Bir glikozda çok enerji var; tek seferde salınsa hücre onu kullanamaz, ısı olarak kaybolur. Bu yüzden glikozun enerjisi onlarca küçük ATP paketine bölünür. Her iş kendine yetecek paketi alır.',
       ),
     ], [
       soru('ATP, hücrenin doğrudan kullanabildiği enerji molekülüdür.', true, 'Besindeki enerji önce ATP ye çevriliyor.'),
@@ -68,12 +70,14 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-fotosentez', 'Işık Enerjisiyle Besin Sentezi: Fotosentez', [
       kart(
-        'Özet denklem',
-        'Karbondioksit ve su, ışık enerjisiyle glikoz ve oksijene dönüşür. Kloroplastta gerçekleşir.',
+        'Bitki besinini ışıkla kendi yapar',
+        'Saksıdaki bitki hiç yemek yemez ama büyür. Havadan karbondioksit, kökten su alır; güneş ışığıyla bunlardan glikoz, yani şeker yapar. Yan ürün olarak oksijen çıkar. Buna fotosentez denir; yaprak hücresindeki kloroplastta olur.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'İki evre',
-        'Fotosentez iki basamakta yürür ve ikincisi doğrudan birincinin ürünleriyle çalışır.',
+        'Fotosentez iki evrede yürür',
+        'Önce ışık yakalanır, sonra şeker yapılır. Işıklı evre ışığın enerjisini ATP ve NADPH\'a çevirir; NADPH, yani elektron taşıyan bir molekül. İkinci evre bu ikisiyle şekeri kurar. Sıra bozulmaz: ikincisi birincinin ürününü bekler.',
         {
           tur: 'akis',
           adimlar: [
@@ -84,26 +88,26 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'Işığın kullanıldığı tepkimeler',
-        'Tilakoit zarda olur. Su parçalanır (fotoliz), oksijen açığa çıkar, ATP ve NADPH üretilir.',
+        'Işıklı evre suyu parçalar, enerji toplar',
+        'Kloroplastın içindeki tilakoit zarlarda ışık suyu parçalar; buna fotoliz denir. Sudan çıkan oksijen havaya verilir. Işığın enerjisi ATP ve NADPH\'ta saklanır. Bu evrede henüz şeker yok.',
       ),
       kart(
-        'Işığın kullanılmadığı tepkimeler',
-        'Stromada geçen Calvin döngüsü. Karbondioksit, ışık tepkimelerinin ürettiği enerjiyle glikoza bağlanır.',
+        'Calvin döngüsü CO₂\'yi şekere çevirir',
+        'İkinci evre stromada, yani kloroplastın sıvı iç kısmında geçer. Havadan alınan karbondioksit, ışıklı evrenin ATP ve NADPH\'ıyla glikoza bağlanır. Işık burada doğrudan kullanılmaz; adı bu yüzden "ışıktan bağımsız evre".',
       ),
       kart(
-        'Oksijen sudan gelir',
-        'Açığa çıkan oksijenin kaynağı karbondioksit değil, parçalanan sudur. Bu, izotoplu deneylerle gösterildi.',
+        'Çıkan oksijen CO₂\'den değil, sudan gelir',
+        'Bitki CO₂ alıp O₂ veriyor; oksijen CO₂\'den çıkıyor sanırsın. Yanlış. Bilim insanları suya işaretli oksijen koydu, havaya işaretli oksijen çıktı. O₂ suyun parçalanmasından gelir. CO₂\'nin oksijeni şekere gider.',
         undefined,
-        { not: '"CO₂\'den çıkar" en yaygın hata; bunu bir kez yanlış yapan bir daha yapmaz.' },
+        { etiket: 'Sık hata', not: '"O₂ karbondioksitten çıkar" şıkkını gördüğünde dur: oksijenin kaynağı fotolizle parçalanan su.' },
       ),
       kart(
-        'Pigmentler',
-        'Klorofil ışığın kırmızı ve mavisini soğurur, yeşili yansıtır. Yaprakların yeşil görünmesi bundandır.',
+        'Klorofil yeşili yansıtır, kırmızıyı emer',
+        'Yaprak neden yeşil? Klorofil, yani ışığı yakalayan pigment, kırmızı ve mavi ışığı soğurur, yani emer. Yeşili emmez, geri yansıtır; gözüne gelen o yansıyan yeşil. Yeşil ışık fotosentezde en az işe yarar.',
       ),
       kart(
-        'Hızını etkileyen etmenler',
-        'Işık, karbondioksit ve sıcaklık artarken hız bir noktaya kadar yükselir, sonra sabitlenir.',
+        'Işık arttıkça hız artar, sonra durur',
+        'Bitkiye lambayı yaklaştır: fotosentez hızlanır. Biraz daha yaklaştır: yine hızlanır. Bir noktadan sonra ne kadar ışık verirsen ver hız değişmez, grafik yatay çizer. CO₂ ve sıcaklık için de aynı eğri geçerli.',
         {
           tur: 'koordinat',
           pencere: [0, 6, 0, 6],
@@ -123,16 +127,18 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'Sınırlayıcı etmen',
-        'Hız her zaman en yetersiz olan etmene takılır. Işığı artırmak, karbondioksit azsa hızı artırmaz.',
+        'Hız en kıt olan etmene takılır',
+        'Grafiğin yataylaştığı yerde ışık artık bol; hızı başka bir şey tutuyor, örneğin havadaki karbondioksit. En az bulunan etmene sınırlayıcı etmen denir. Serada ışığı artırmak yerine CO₂ vermek çoğu zaman daha çok işe yarar.',
       ),
       kart(
-        'Neden hayati?',
-        'Atmosferdeki oksijenin ve besin zincirindeki enerjinin neredeyse tamamının kaynağı fotosentezdir.',
+        'Fotosentez olmasa nefes de yemek de yok',
+        'Soluduğun oksijenin neredeyse tamamı bitkiler ve alglerden, yani su yosunlarından çıktı. Yediğin her şeyin enerjisi de bir yaprakta yakalanan güneş ışığından geliyor. Et yesen bile o hayvan bitki yemişti.',
       ),
       kart(
-        'Sık sorulan kalıp',
-        'Işık tepkimeleri gündüz, karanlık tepkimeleri ışığa doğrudan bağlı değil ama ATP ve NADPH bitince durur; yani gece uzun sürmez.',
+        'Işıktan bağımsız evre gece uzun sürmez',
+        'Calvin döngüsü ışığa doğrudan bakmaz; gece de çalışabilir. Ama ATP ve NADPH\'ı ışıklı evre üretir. Işık kesilince elde kalanlar birkaç dakikada biter, döngü durur. "Karanlık evre gece olur" demek sık hata.',
+        undefined,
+        { etiket: 'Sık hata' },
       ),
     ], [
       soru(
@@ -182,20 +188,24 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-kemosentez', 'Işık Kullanılmadan Besin Sentezi: Kemosentez', [
       kart(
-        'Tanımı',
-        'Bazı bakterilerin, ışık yerine kimyasal tepkimelerden aldıkları enerjiyle besin üretmesi.',
+        'Bazı bakteriler ışıksız besin yapar',
+        'Okyanusun dibinde, güneşin hiç ulaşmadığı yerde bakteriler yaşıyor ve besin üretiyor. Işık yok; enerjiyi kimyasal maddelerden alıyorlar. Kemosentez, yani ışık yerine kimyasal enerjiyle karbondioksitten besin yapmak.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Kimler yapar?',
-        'Nitrit, kükürt ve demir bakterileri gibi bazı prokaryotlar. Ökaryotlarda görülmez.',
+        'Enerji, maddeyi yükseltgemekten gelir',
+        'Nitrit bakterisi toprakta amonyağı alır, onu oksijenle tepkimeye sokar, yani yükseltger. Bu tepkime enerji verir; bakteri o enerjiyle şeker kurar. Kükürt bakterisi kükürtle, demir bakterisi demirle aynı işi yapar.',
       ),
       kart(
-        'Nerede önemli?',
-        'Işığın ulaşmadığı okyanus tabanındaki hidrotermal bacalarda besin zincirini kemosentez başlatır.',
+        'Kemosentezi yalnızca prokaryotlar yapar',
+        'Kemosentez yapanlar bazı bakteriler ve arkeler, yani çekirdeksiz hücreli canlılar (prokaryotlar). Hiçbir bitki, hayvan ya da mantar, yani ökaryot, kemosentez yapamaz. "Bitki kemosentez yapar" şıkkına kanma.',
+        undefined,
+        { etiket: 'Sık hata' },
       ),
       kart(
-        'Fotosentezden farkı',
-        'İki süreç de üretici; ayrıldıkları yer enerji kaynağı ve yan üründür.',
+        'Fotosentezden farkı enerjinin kaynağı',
+        'İkisi de CO₂\'den besin üretir; yani ikisi de üreticidir. Ayrıldıkları yer: fotosentez ışıkla, kemosentez kimyasal tepkimeyle çalışır. Bir fark daha: kemosentezde su parçalanmadığı için oksijen çıkmaz.',
         {
           tur: 'tablo',
           basliklar: ['', 'Fotosentez', 'Kemosentez'],
@@ -205,15 +215,15 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
             ['Oksijen', 'Çıkar', 'Çıkmaz'],
           ],
         },
-        { not: 'İkisi de üretici; farkı enerji kaynağında ara, üründe değil.' },
+        { not: 'Soru "üretici" diyorsa aklına yalnızca bitki gelmesin; kemosentez bakterisi de üretici.' },
       ),
       kart(
-        'Döngülerdeki rolü',
-        'Azot döngüsündeki nitrit ve nitrat bakterileri kemosentez yapar; toprağın verimliliği buna bağlıdır.',
+        'Hidrotermal bacada zincir bakteriyle başlar',
+        'Okyanus tabanındaki sıcak su bacalarından kükürtlü su fışkırır. Kükürt bakterileri bununla besin yapar; kurtlar ve yengeçler bakterileri yer. Işık olmadan koca bir besin zinciri kurulur. Zincirin üreticisi bitki değil, bakteri.',
       ),
       kart(
-        'Ortak nokta',
-        'Kemosentez de fotosentez gibi CO₂\'yi organik besine çevirir; fark yalnızca enerjinin ışıktan değil inorganik maddenin oksidasyonundan gelmesi.',
+        'Toprağı verimli yapan da kemosentezdir',
+        'Toprakta amonyağı nitrite, nitriti nitrata çeviren bakteriler kemosentez yapar. Bitki azotu ancak nitrat olarak alabilir. Bu bakteriler olmasa gübre bile işe yaramazdı. Azot döngüsünde bu adıma nitrifikasyon denir.',
       ),
     ], [
       soru('Kemosentez yapan canlılar enerjiyi kimyasal maddeleri yükseltgeyerek sağlar.', true, 'Işığa ihtiyaç duymuyorlar.'),
@@ -232,35 +242,37 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
           dogru: 'Amonyak, kükürt ya da demir bileşiklerini yükseltgeyerek enerji elde ederler.',
           yanlis: 'Işık fotosentezin enerjisi. Kemosentez ışıksız ortamda, inorganik maddelerin oksidasyonundan enerji alır.',
         },
-        kart: 1,
+        kart: 2,
       },
     ]),
     konu('byl10-sindirim', 'Sindirim', [
       kart(
-        'Neden gerekli?',
-        'Büyük besin molekülleri hücre zarından geçemez; yapı taşlarına ayrılmaları gerekir.',
-      ),
-      kart(
-        'Hücre içi sindirim',
-        'Besin hücre içine alınır ve lizozom enzimleriyle parçalanır. Amip ve terliksi hayvan böyle beslenir.',
-      ),
-      kart(
-        'Hücre dışı sindirim',
-        'Enzimler dışarı salgılanır, besin dışarıda parçalanıp sonra emilir. Mantarlar ve çok hücreliler böyle yapar.',
-      ),
-      kart(
-        'Mekanik ve kimyasal',
-        'Mekanik sindirim besini küçültür ve yüzey alanını artırır; kimyasal sindirim enzimlerle bağları koparır.',
-      ),
-      kart(
-        'Neden ikisi birden?',
-        'Enzim yalnızca yüzeyde çalışır. Mekanik sindirim yüzeyi büyütmeseydi kimyasal sindirim çok yavaş kalırdı.',
+        'Büyük besin hücreye sığmaz',
+        'Ekmekteki nişasta binlerce glikozdan kurulu dev bir molekül. Hücre zarından geçemez; kapı küçük, o büyük. Sindirim, yani büyük besin moleküllerini zarı geçecek küçük yapı taşlarına ayırmak. Nişasta glikoza, protein amino aside iner.',
         undefined,
-        { not: 'Mekanik sindirimi "çiğneme" diye geçme; kimyasal sindirimin ön şartı.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Hidroliz',
-        'Kimyasal sindirimin tamamı su eklenerek bağ koparmadır; bu yüzden sindirime hidroliz de denir.',
+        'Mekanik sindirim yalnızca küçültür',
+        'Ekmeği dişlerinle ufalıyorsun. Parçalar küçüldü ama hâlâ nişasta; molekül değişmedi. Buna mekanik sindirim denir: besini fiziksel olarak parçalamak. Midenin çalkalaması da mekanik. Kimyasal yapı aynı kalır.',
+      ),
+      kart(
+        'Kimyasal sindirim bağları koparır',
+        'Tükürükteki amilaz, yani nişastayı parçalayan enzim, glikozlar arasındaki bağı koparır. Artık elde nişasta değil glikoz var; molekül değişti. Buna kimyasal sindirim denir ve her zaman bir enzim iş başındadır.',
+      ),
+      kart(
+        'Kimyasal sindirim su harcar: hidroliz',
+        'Enzim bağı koparırken araya bir su molekülü sokar. Su ikiye bölünür; yarısı bir parçaya, yarısı öbürüne takılır. Buna hidroliz denir: su ile parçalama. Sindirimde su hep harcanır, açığa çıkmaz.',
+      ),
+      kart(
+        'Ufalamak enzimin işini kolaylaştırır',
+        'Şekeri suda erit: küp şeker yavaş, toz şeker hızlı erir; toz şekerin yüzeyi daha geniş. Enzim de yalnızca yüzeye dokunabilir. Mekanik sindirim yüzeyi büyütür, kimyasal sindirim hızlanır. Lokmayı iyi çiğnemek bu yüzden işe yarar.',
+        undefined,
+        { not: 'Mekanik sindirimi "yalnızca çiğneme" diye geçme; enzimin dokunacağı yüzeyi o hazırlıyor.' },
+      ),
+      kart(
+        'Sindirim hücre içinde ya da dışında olur',
+        'Amip besini hücresine alır; lizozom, yani enzim dolu kese, onu içeride parçalar: hücre içi sindirim. Sen ise enzimi mideye salgılarsın; besin hücrenin dışında, kanalda parçalanır: hücre dışı sindirim. Mantar da enzimi dışarı salar.',
       ),
     ], [
       soru('Sindirim, büyük moleküllerin hücre zarından geçebilecek küçüklüğe getirilmesidir.', true, 'Bu olmadan besin hücreye giremiyor.'),
@@ -284,20 +296,20 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-sindirim-yapi', 'Canlılarda Sindirim Yapıları', [
       kart(
-        'Tek hücrelilerde',
-        'Ayrı bir sistem yoktur; besin kofulu ile lizozom birleşir ve sindirim hücre içinde tamamlanır.',
+        'Tek hücrelide sindirim kofulda olur',
+        'Amipin ağzı yok. Besini hücre zarıyla sarıp içine alır; bu keseye besin kofulu denir. Lizozom, yani enzim dolu kese, kofulla birleşir ve besini içeride parçalar. Sindirim sistemi yok; tek hücre her işi yapıyor.',
       ),
       kart(
-        'Sölenterelerde',
-        'Tek açıklıklı bir sindirim boşluğu vardır; ağız hem giriş hem çıkıştır.',
+        'Hidrada ağız hem giriş hem çıkıştır',
+        'Hidra ve denizanası, yani sölenterler, torba gibi bir sindirim boşluğu taşır. Torbanın tek deliği var. Besin oradan girer, artık yine oradan çıkar. Eski artık çıkmadan yeni lokma giremez; verim düşük.',
       ),
       kart(
-        'Solucanlarda',
-        'İki açıklıklı sindirim kanalı gelişir; besin tek yönde ilerler ve bölümler uzmanlaşır.',
+        'Solucanda kanal iki açıklıklıdır',
+        'Toprak solucanında besin ağızdan girer, anüsten çıkar; arada bir boru var. Besin tek yönde ilerlediği için borunun her bölümü ayrı işe uzmanlaşır: biri öğütür, biri sindirir, biri emer. Yemekle atık karışmaz.',
       ),
       kart(
-        'Gelişim çizgisi',
-        'Sindirim yapıları basitten karmaşığa doğru uzmanlaşır; her adımda daha çok besin daha verimli işlenir.',
+        'Sindirim yapıları basitten karmaşığa gider',
+        'Sırayı mantıkla tut. Tek hücrede koful. Hidrada tek delikli torba. Solucanda iki delikli boru. Omurgalıda borunun üstüne mide ve karaciğer gibi uzman organlar. Her adım daha çok besini daha verimli işler.',
         {
           tur: 'akis',
           adimlar: [
@@ -307,15 +319,15 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
             { ad: 'Uzman organlar' },
           ],
         },
-        { not: 'Yapıları tek tek ezberleme; tek açıklıktan iki açıklığa geçişi anlat, gerisi sıralanır.' },
+        { not: 'Yapıları tek tek ezberleme; "tek delikten iki deliğe geçiş" cümlesini tut, gerisi sıralanır.' },
       ),
       kart(
-        'Otçul ve etçillerde',
-        'Otçulların bağırsağı uzun ve selüloz sindirimi için mikroplu; etçillerin bağırsağı kısadır.',
+        'Otçulun bağırsağı uzundur',
+        'Ot selüloz dolu; selüloz, yani bitki hücre duvarını kuran sert karbonhidrat, zor sindirilir. Bu yüzden inek gibi otçulların bağırsağı uzun ve bakteri dolu. Et kolay sindirilir; aslan gibi etçilin bağırsağı kısa.',
       ),
       kart(
-        'Geviş getirenler',
-        'Dört bölmeli midede bakteriler selülozu parçalar. Hayvan selülozu kendi enzimiyle sindiremez.',
+        'Selülozu inek değil, bakterileri sindirir',
+        'Hiçbir hayvanda selülozu parçalayan enzim yok; inekte de yok. İneğin dört bölmeli midesindeki bakteriler selülozu parçalar, inek onların ürününü kullanır. Geviş getirmek, yani otu geri çıkarıp yeniden çiğnemek, bakteriye yardım eder.',
       ),
     ], [
       soru('Sölenterelerde sindirim boşluğunun tek açıklığı vardır.', true, 'Ağız aynı zamanda atık çıkışı olarak kullanılıyor.'),
@@ -324,7 +336,7 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       soru('Geviş getirenler selülozu kendi enzimleriyle sindirir.', false, 'Midelerindeki mikroorganizmalar sindiriyor.'),
       sikli('İki açıklıklı sindirim kanalı ilk hangi grupta gelişir?', ['Solucanlar', 'Sölenterler'], 0, 'Besin tek yönde ilerler.'),
       sikli('Otçulların bağırsağı etçillere göre nasıldır?', ['Uzun', 'Kısa'], 0, 'Selüloz sindirimi için mikroplu.'),
-      soru('Geviş getirenler selülozu kendi enzimleriyle sindirir.', false, 'Midedeki bakteriler parçalar.'),
+      soru('Amip besini hücre dışında parçaladıktan sonra içeri alır.', false, 'Koful ile lizozom birleşir; sindirim hücrenin içinde.'),
     ], [
       {
         soru: 'Sölenterelerde sindirim sistemi kaç açıklıklıdır?',
@@ -339,20 +351,24 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-insan-sindirim', 'İnsanda Sindirim', [
       kart(
-        'Ağızda',
-        'Dişler mekanik olarak parçalar; tükürükteki amilaz nişastanın kimyasal sindirimini başlatır.',
+        'Besin ağızdan anüse bir borudan geçer',
+        'Yediğin lokma ağız, yemek borusu, mide, ince bağırsak, kalın bağırsak, anüs yolunu izler; toplam yaklaşık 9 metre. Karaciğer ve pankreas bu borunun dışında; salgılarını boruya kanalla dökerler. Besin onların içine girmez.',
       ),
       kart(
-        'Midede',
-        'Asidik ortamda pepsin proteinleri parçalar. Karbonhidrat sindirimi asit yüzünden burada durur.',
+        'Ağızda nişasta sindirimi başlar',
+        'Ekmeği uzun süre çiğne: tatlılaşır. Tükürükteki amilaz nişastayı şekere çevirmeye başladı. Dişler mekanik, amilaz kimyasal sindirim yapar. Ağızda yalnızca karbonhidrat sindirimi başlar; protein ve yağa dokunulmaz.',
       ),
       kart(
-        'İnce bağırsakta',
-        'Sindirimin tamamlandığı yer. Pankreas enzimleri ve safra buraya dökülür.',
+        'Midede protein sindirimi başlar',
+        'Mide asit dolu bir torba. Asit, pepsin adlı enzimi çalıştırır; pepsin proteinleri parçalamaya başlar. Amilaz asitte çalışamaz; bu yüzden nişasta sindirimi midede durur. Yağa da mide dokunmaz.',
       ),
       kart(
-        'Nerede ne sindirilir?',
-        'Üç besin grubunun sindirimi farklı yerlerde başlar ama üçü de ince bağırsakta biter.',
+        'Mukus mideyi kendi asidinden korur',
+        'Mide et sindiriyor, kendi duvarı da et; neden erimiyor? İç yüzeyi kalın bir mukus, yani sümüksü tabaka, kaplar ve asidi duvara değdirmez. Pepsin de etkisiz hâlde salgılanır, ancak asitle aktifleşir. Mukus azalırsa ülser olur.',
+      ),
+      kart(
+        'İnce bağırsakta üçü de biter',
+        'İnce bağırsak sindirimin son durağı. Pankreas, yani karnının arkasındaki bez, buraya amilaz, tripsin ve lipaz yollar. Karbonhidrat, protein ve yağ, hangi organda başlamış olursa olsun burada yapı taşına iner.',
         {
           tur: 'tablo',
           basliklar: ['Besin', 'Başlar', 'Biter'],
@@ -362,23 +378,21 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
             ['Yağ', 'İnce bağırsak', 'İnce bağırsak'],
           ],
         },
-        { not: 'Üç besin, üç başlangıç, tek bitiş; tabloyu kendin çiz.' },
+        { not: 'Başlangıçlar üç ayrı organ, bitiş hep ince bağırsak; tabloyu kapatıp kendin çiz.' },
       ),
       kart(
-        'Safranın işi',
-        'Enzim değildir; yağ damlalarını küçültüp (emülsiyon) enzimlerin ulaşacağı yüzeyi artırır.',
+        'Safra enzim değil, yağı damlacığa böler',
+        'Karaciğer safra yapar, safra kesesi depolar, ince bağırsağa döker. Safra yağ damlasını deterjan gibi minik damlacıklara ayırır: emülsiyon. Bağ koparmaz, yani kimyasal sindirim yapmaz; lipazın ulaşacağı yüzeyi büyütür.',
+        undefined,
+        { etiket: 'Sık hata' },
       ),
       kart(
-        'Mide kendini neden sindirmez?',
-        'Mukus tabakası asidi yüzeyden uzak tutar ve pepsin etkisiz bir öncül olarak salgılanır.',
+        'Enzimin adı hangi besini kestiğini söyler',
+        'Amilaz nişastayı keser (ağız, ince bağırsak). Pepsin proteini (mide), tripsin proteini (pankreastan ince bağırsağa). Lipaz yağı (ince bağırsak). Akılda tutmak için: lipaz–lipit, yani yağ; pepsin ve tripsin ikisi de protein.',
       ),
       kart(
-        'Kalın bağırsakta',
-        'Sindirim olmaz. Su ve mineral emilir; bağırsak florası bazı vitaminleri üretir.',
-      ),
-      kart(
-        'Enzim tablosu',
-        'Amilaz nişasta (ağız, ince bağırsak); pepsin protein (mide); lipaz yağ (ince bağırsak); tripsin protein (pankreastan ince bağırsağa).',
+        'Kalın bağırsak sindirmez, su emer',
+        'İnce bağırsaktan çıkan artık sulu bir bulamaç. Kalın bağırsak bundan suyu ve mineralleri geri alır; dışkı böyle katılaşır. Burada enzim yok, sindirim yok. İçindeki bakteriler, yani bağırsak florası, K vitamini gibi bazı vitaminleri üretir.',
       ),
     ], [
       soru('Karbonhidratların kimyasal sindirimi ağızda başlar.', true, 'Tükürükteki amilaz nişastayı parçalamaya başlıyor.'),
@@ -400,35 +414,37 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
           dogru: 'Safra enzim değil; yağ damlalarını küçültüp lipazın çalışacağı yüzeyi artırır.',
           yanlis: 'Kimyasal sindirimi lipaz yapar. Safra enzim içermez, yalnızca yağı küçük damlalara ayırır.',
         },
-        kart: 5,
+        kart: 6,
       },
     ]),
     konu('byl10-emilim', 'Emilim ve Taşınma', [
       kart(
-        'Nerede olur?',
-        'Büyük ölçüde ince bağırsakta. Villus ve mikrovilluslar emilim yüzeyini kat kat artırır.',
-      ),
-      kart(
-        'Neden yüzey önemli?',
-        'Emilim yüzeyde olur. Kıvrımlar, villuslar ve mikrovilluslar bağırsağın iç yüzeyini yüzlerce kat büyütür.',
-      ),
-      kart(
-        'Neyin nereye gittiği',
-        'Glikoz ve amino asitler kana; yağ asitleri ve gliserol önce lenf sistemine geçer.',
+        'Sindirilen besin bağırsaktan kana geçer',
+        'Glikoz artık yeterince küçük; ama hâlâ bağırsağın içinde, vücudun "dışında" sayılır. Bağırsak duvarından geçip kana karışmasına emilim denir. Emilimin büyük kısmı ince bağırsakta olur; kalın bağırsak yalnızca su ve mineral alır.',
         undefined,
-        { not: 'Yağların lenften gittiğini ayrıca ezberle; "hepsi kana" diye geçme.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Karaciğerin rolü',
-        'Bağırsaktan gelen kan önce karaciğere uğrar; fazla glikoz glikojen olarak depolanır, zararlılar süzülür.',
+        'Villuslar emilim yüzeyini büyütür',
+        'İnce bağırsağın iç yüzü düz değil; parmak gibi çıkıntılarla kaplı. Bunlara villus denir; her villusun üstünde daha ince mikrovilluslar var. Havlu düz bezden çok su emer; bağırsak da yüzeyi katlayıp yüzlerce kat büyütür.',
       ),
       kart(
-        'Taşıma',
-        'Dolaşım sistemi besinleri hücrelere ulaştırır; hücreye giriş difüzyon ve aktif taşımayla olur.',
+        'Glikoz ve amino asit kana gider',
+        'Villusun içinde iki tür damar var: kan kılcalı ve lenf kılcalı. Glikoz ve amino asitler kan kılcalına geçer. Suda çözünen vitaminler ve mineraller de kana gider. Bu yol kapı toplardamarıyla karaciğere çıkar.',
       ),
       kart(
-        'Su nerede emilir?',
-        'Suyun büyük kısmı ince bağırsakta, kalanı kalın bağırsakta emilir. Emilim bozulursa ishal görülür.',
+        'Yağ ürünleri önce lenfe geçer',
+        'Yağ asitleri ve gliserol villusun içinde yeniden yağa birleşir; bu paket kan kılcalına sığmaz. Lenf kılcalına geçer; lenf, yani damarlarda dolaşan renksiz sıvı. Göğüste kana katılır. Yağda çözünen A, D, E, K vitaminleri de bu yoldan.',
+        undefined,
+        { etiket: 'Sık hata', not: '"Hepsi kana geçer" diye ezberleme; yağ ve A, D, E, K vitaminleri lenften dolanıp kana katılır.' },
+      ),
+      kart(
+        'Emilen kan önce karaciğere uğrar',
+        'Yemekten sonra bağırsaktan gelen kan doğrudan kalbe gitmez; kapı toplardamarıyla karaciğere girer. Karaciğer fazla glikozu glikojen olarak depolar, zararlı maddeleri süzer. Kan şekerin öğün sonrası fırlamıyorsa sebebi bu.',
+      ),
+      kart(
+        'Su ince bağırsakta emilir, kalanı kalında',
+        'Günde yaklaşık 9 litre sıvı bağırsağa girer: içtiğin su artı salgılar. Çoğunu ince bağırsak geri alır, kalın bağırsak son litreyi emer. Kalın bağırsak suyu alamazsa dışkı sulu kalır: ishal.',
       ),
     ], [
       soru('Emilimin büyük kısmı ince bağırsakta gerçekleşir.', true, 'Yüzeyi villuslarla katlanarak genişletilmiş durumda.'),
@@ -447,17 +463,19 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
           dogru: 'Glikoz ve amino asitler kana, yağ ürünleri önce lenfe geçer.',
           yanlis: 'Doğrudan kana geçenler glikoz ve amino asitler. Yağ asidi ve gliserol lenf yoluyla dolaşıma katılır.',
         },
-        kart: 3,
+        kart: 4,
       },
     ]),
     konu('byl10-solunum', 'Hücresel Solunum', [
       kart(
-        'Ne yapar?',
-        'Besindeki kimyasal enerjiyi ATP’ye çevirir. Oksijenli solunumda son ürünler karbondioksit ve sudur.',
+        'Solunum besindeki enerjiyi ATP\'ye çevirir',
+        'Glikozun enerjisi hücreye ATP olarak lazım. Hücresel solunum, yani glikozu adım adım parçalayıp enerjisini ATP\'ye aktarmak. Oksijenli solunumda glikoz sonuna kadar parçalanır; geriye CO₂ ve su kalır. Nefes almak değil; hücrenin içinde olur.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Üç evre',
-        'Her evre farklı yerde geçer ve ATP’nin büyük kısmı sonuncusunda üretilir.',
+        'Solunum üç evrede yürür',
+        'Glikoz tek hamlede yakılmaz; üç durak var. Glikoliz sitoplazmada; sitrik asit döngüsü mitokondri matriksinde, yani iç sıvısında; elektron taşıma sistemi mitokondrinin iç zarında. ATP\'nin büyük kısmı en sonda çıkar.',
         {
           tur: 'akis',
           dikey: true,
@@ -469,34 +487,34 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'Glikoliz',
-        'Sitoplazmada olur, oksijen gerekmez. Glikoz iki piruvata ayrılır ve az miktarda ATP üretilir.',
+        'Glikoliz glikozu ikiye böler',
+        'İlk durak sitoplazmada. Altı karbonlu glikoz, üçer karbonlu iki piruvata bölünür. Oksijen gerekmez; bu yüzden oksijensiz canlılar da glikoliz yapar. Az miktarda ATP çıkar, elektron taşıyıcılar yüklenmeye başlar.',
       ),
       kart(
-        'Sitrik asit döngüsü',
-        'Mitokondri matriksinde. Karbon atomları karbondioksit olarak ayrılır, elektron taşıyıcılar yüklenir.',
+        'Sitrik asit döngüsü karbonu CO₂ olarak atar',
+        'Piruvat mitokondriye girer ve matriksteki döngüye katılır. Her turda karbon atomları CO₂ olarak ayrılır; nefesinle verdiğin CO₂ buradan çıkıyor. Asıl kazanç ATP değil, elektronla yüklenen taşıyıcılar (NADH gibi).',
       ),
       kart(
-        'Elektron taşıma sistemi',
-        'İç zarda. ATP’nin büyük kısmı burada üretilir; son elektron alıcısı oksijendir ve su oluşur.',
+        'ATP\'nin çoğu elektron taşıma sisteminde',
+        'Yüklü taşıyıcılar elektronlarını iç zardaki zincire bırakır. Elektron zincirde ilerlerken enerjisiyle bol ATP üretilir. Zincirin sonunda elektronu oksijen alır ve su oluşur. Glikoliz birkaç ATP verir; asıl kazanç burada.',
       ),
       kart(
-        'Oksijen neden şart?',
-        'Elektronları en sonda alacak biri yoksa taşıma zinciri tıkanır ve ATP üretimi durur.',
+        'Oksijen olmazsa zincir tıkanır',
+        'Oksijen, zincirin sonundaki son elektron alıcısı. Elektronları alacak kimse yoksa zincir dolar ve durur; ATP üretimi kesilir. Oksijeni bu yüzden soluyorsun: yakmak için değil, elektronları boşaltmak için.',
       ),
       kart(
-        'Verim',
-        'Bir glikozdan oksijenli solunumla çok sayıda ATP elde edilir; fermantasyonda bu sayı çok küçüktür.',
+        'Oksijenli solunum çok, fermantasyon az verir',
+        'Bir glikozdan oksijenli solunumla yaklaşık 30 ATP çıkar. Aynı glikoz oksijensiz parçalanırsa (fermantasyon) yalnızca 2 ATP. Fark, glikozun sonuna kadar parçalanıp parçalanmamasında.',
       ),
       kart(
-        'Fotosentezin tersi mi?',
-        'Girenler ve çıkanlar birbirinin tersi ama tepkimeler aynı yolun geri sarılması değil, ayrı süreçlerdir.',
+        'Solunum fotosentezin geri sarılması değil',
+        'Fotosentez: CO₂ + su → glikoz + O₂. Solunum: glikoz + O₂ → CO₂ + su. Girenler ve çıkanlar birbirinin tersi; ama içerideki yol farklı. Fotosentez kloroplastta ışıkla, solunum mitokondride. "Biri ötekinin tersi" yalnızca denklem için doğru.',
       ),
       kart(
-        'Nerede ne oluyor?',
-        'Glikoliz sitoplazmada, sitrik asit döngüsü matrikste, elektron taşıma iç zarda. CO₂ döngüde, H₂O zincirin sonunda oluşur.',
+        'Her evreyi yeriyle eşle',
+        'Sınav çoğu zaman evreyi değil yerini sorar. Glikoliz: sitoplazma. Sitrik asit döngüsü: matriks. Elektron taşıma: iç zar. CO₂ döngüde, su zincirin sonunda oluşur. Oksijen yalnızca son evrede kullanılır.',
         undefined,
-        { not: 'Üç evreyi üç yerle eşle; sınav evreyi değil yerini soruyor.' },
+        { not: 'Üç evre, üç yer: sitoplazma, matriks, iç zar. Şıkta "mitokondride glikoliz" görürsen çiz.' },
       ),
     ], [
       soru('Glikoliz sitoplazmada gerçekleşir ve oksijen gerektirmez.', true, 'Solunumun ortak ilk basamağı.'),
@@ -507,7 +525,7 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       sikli('Sitrik asit döngüsü nerede olur?', ['Mitokondri matriksinde', 'İç zarda'], 0, 'CO₂ burada ayrılır.'),
       sikli('Elektron taşıma sisteminin son elektron alıcısı?', ['Oksijen', 'Karbondioksit'], 0, 'Su oluşur.'),
       sikli('Glikozun iki piruvata ayrılması hangi evredir?', ['Glikoliz', 'Sitrik asit döngüsü'], 0, 'Az ATP üretilir.'),
-      sikli('Oksijen yoksa ATP üretimi neden durur?', ['Glikoz bitir', 'Taşıma zinciri tıkanır'], 1, 'Elektronları alacak kimse kalmaz.'),
+      sikli('Oksijen yoksa ATP üretimi neden durur?', ['Glikoz biter', 'Taşıma zinciri tıkanır'], 1, 'Elektronları alacak kimse kalmaz.'),
       soru('Solunum, fotosentezin aynı yolun geri sarılmasıdır.', false, 'Girenler-çıkanlar ters ama ayrı süreçler.'),
     ], [
       {
@@ -523,8 +541,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-katilma', 'Besinlerin Solunuma Katılma Yolları', [
       kart(
-        'Öncelik sırası',
-        'Hücre önce karbonhidratı kullanır, sonra yağı; protein en son başvurulan kaynaktır.',
+        'Hücre önce karbonhidratı yakar',
+        'Koşmaya başladın: kasların önce kandaki glikozu, sonra karaciğerdeki glikojeni yakar. Yağa ancak dakikalar sonra sıra gelir. Protein en son; hücre ona ancak açlıkta başvurur. Sıra: karbonhidrat → yağ → protein.',
         {
           tur: 'akis',
           adimlar: [
@@ -535,26 +553,26 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'Karbonhidratlar',
-        'Glikoza çevrilip doğrudan glikolize girer. En hızlı kullanılan yakıttır.',
+        'Karbonhidrat en hızlı yakıttır',
+        'Ekmek, pirinç, şeker: hepsi sindirimde glikoza iner. Glikoz doğrudan glikolize girer; hazırlık gerekmez. Bu yüzden şeker yiyince enerji hemen gelir. Depo hâli glikojen; karaciğer ve kasta bekler.',
       ),
       kart(
-        'Yağlar',
-        'Gliserol ve yağ asitlerine ayrılır; gram başına en çok enerjiyi verirler ama kullanımı yavaştır.',
+        'Yağ gramda en çok enerji verir',
+        'Bir gram yağ, bir gram karbonhidratın iki katından fazla enerji taşır. Bu yüzden vücut uzun süreli depoyu yağ olarak tutar. Ama yağ önce gliserol ve yağ asidine ayrılmalı; kullanımı yavaş. Uzun yürüyüşte yağ, kısa koşuda glikoz yanar.',
       ),
       kart(
-        'Proteinler',
-        'Amino asitlerin azotu ayrılır (bu atık boşaltımla atılır), kalan kısım döngüye katılır.',
+        'Protein yakılmadan önce azotu atılır',
+        'Protein amino asitlere ayrılır. Amino asit yakıt olmadan önce azotlu kısmı koparılır; bu kısım amonyağa, sonra üreye dönüp idrarla atılır. Kalan iskelet solunum döngüsüne katılır. Azot yalnızca proteinde var; karbonhidrat ve yağda yok.',
       ),
       kart(
-        'Neden protein son?',
-        'Protein aynı zamanda yapı ve enzim malzemesidir; yakıt olarak kullanılması dokuların eritilmesi demektir.',
+        'Protein son çare, çünkü yapı malzemesi',
+        'Kas, enzim, saç, antikor: hepsi protein. Hücre proteini yakarsa kendi tuğlasını yakmış olur. Uzun açlıkta kasların erimesi tam bu. O yüzden vücut proteini ancak karbonhidrat ve yağ bitince yakıt yapar.',
         undefined,
-        { not: 'Sıralamayı değil sebebini tut: protein yakıt değil, malzeme.' },
+        { not: 'Sıralamayı değil sebebini tut: protein yakıt değil, malzeme; yakılması dokunun erimesi demek.' },
       ),
       kart(
-        'Ortak yol',
-        'Üç besin de sonunda aynı döngüye girer. Bu yüzden fazla alınan karbonhidrat da yağa çevrilip depolanabilir.',
+        'Üç yol aynı döngüde birleşir',
+        'Glikoz, yağ asidi ve amino asit farklı kapılardan girer ama hepsi mitokondrideki aynı döngüye ulaşır. Yollar ortak olduğu için tersine de çevrilir: fazla yediğin ekmek yağa dönüp depolanır. "Yağ yemedim, kilo almam" yanlış.',
       ),
     ], [
       soru('Solunumda öncelikle karbonhidratlar kullanılır.', true, 'En hızlı ve kolay parçalanan besin grubu.'),
@@ -578,20 +596,26 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-fermantasyon', 'Fermantasyon', [
       kart(
-        'Ne zaman olur?',
-        'Oksijen yetersizken. Glikoliz sürsün diye elektron taşıyıcılar başka yolla boşaltılır.',
+        'Oksijen yoksa hücre fermantasyona geçer',
+        'Yüz metre koşuyorsun; kas oksijeni yetiştiremiyor. Elektron taşıma zinciri durur ama glikoliz sürebilir. Fermantasyon, yani glikolizden sonra oksijen kullanmadan devam eden kısa yol. Amaç: glikolizi çalışır tutmak.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Laktik asit fermantasyonu',
-        'Piruvat laktik aside dönüşür. Yoğurt ve turşu bununla yapılır; kaslarda da yorgunlukla ilişkilidir.',
+        'Fermantasyon dolu taşıyıcıyı boşaltır',
+        'Glikoliz sürsün diye elektronla dolan taşıyıcı (NADH) boşaltılmalı. Oksijen yokken elektron piruvata verilir. Piruvat bu elektronu alınca laktik aside ya da etil alkole dönüşür. Ürün bir "çöp kutusu"; asıl iş taşıyıcıyı boşaltmak.',
       ),
       kart(
-        'Etil alkol fermantasyonu',
-        'Mayalarda piruvat etil alkol ve karbondioksite dönüşür. Hamurun kabarması bu gazdandır.',
+        'Laktik asit: yoğurt, turşu ve kas',
+        'Sütü mayalarsın; bakteriler sütteki şekeri laktik aside çevirir, yoğurt bu yüzden ekşi. Turşuda da aynı bakteriler. Kasın da oksijen yetmeyince laktik asit yapar; yanma ve yorgunluk o yüzden. Gaz çıkmaz.',
       ),
       kart(
-        'İkisinin karşılaştırması',
-        'Başlangıç aynı, ayrılma piruvattan sonra. Ürün ne olursa olsun kazanılan ATP sayısı değişmez.',
+        'Etil alkol: maya, hamur ve CO₂',
+        'Maya mantarı piruvatı etil alkol ve karbondioksite çevirir. Hamur bu CO₂ kabarcıklarıyla kabarır, alkol fırında uçar. İnsan hücresi etil alkol fermantasyonu yapamaz; kasında alkol oluşmaz.',
+      ),
+      kart(
+        'İki yol piruvatta ayrılır',
+        'Başlangıç ikisinde de aynı: glikoliz, 2 piruvat, 2 ATP. Ayrılma piruvattan sonra: bakteri ve kas laktik asit, maya alkol + CO₂ yapar. Ürün ne olursa olsun kazanılan ATP aynı: yalnızca glikolizden gelen 2.',
         {
           tur: 'tablo',
           basliklar: ['Tür', 'Ürün', 'Yapan'],
@@ -600,15 +624,11 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
             ['Alkol', 'Etanol + CO₂', 'Maya'],
           ],
         },
-        { not: 'Ayrılma noktası piruvat; öncesi aynı, sonrası ürün. ATP her ikisinde de az.' },
+        { not: 'Ayrılma noktası piruvat; öncesi aynı, sonrası ürün. ATP sayısı iki yolda da eşit.' },
       ),
       kart(
-        'Verimi düşük',
-        'Yalnızca glikolizden gelen az sayıda ATP üretilir; besindeki enerjinin çoğu ürün içinde kalır.',
-      ),
-      kart(
-        'Neden hâlâ yapılır?',
-        'Az ATP hiç ATP’den iyidir. Oksijensiz ortamda tek seçenek budur ve çok hızlı işler.',
+        'Az ATP, hiç ATP\'den iyidir',
+        'Bir glikozdan oksijenli solunum yaklaşık 30 ATP verir, fermantasyon 2. Enerjinin çoğu laktik asit ya da alkolün içinde kalır. Yine de oksijensiz ortamda tek seçenek bu ve çok hızlı işler; sprintte kasını bu kurtarır.',
       ),
     ], [
       soru('Fermantasyon, oksijenin yetersiz olduğu durumlarda gerçekleşir.', true, 'Glikoliz sonrası yol oksijensiz devam ediyor.'),
@@ -627,35 +647,46 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
           dogru: 'Maya piruvatı etil alkol ve CO₂\'ye çevirir; kabartan gaz CO₂.',
           yanlis: 'Laktik asit fermantasyonu gaz çıkarmaz (yoğurt, turşu). Hamurdaki CO₂ mayanın etil alkol fermantasyonundan.',
         },
-        kart: 3,
+        kart: 4,
       },
     ]),
     konu('byl10-metabolizma', 'Enerji-Metabolizma İlişkisi', [
       kart(
-        'Anabolizma ve katabolizma',
-        'Anabolizma enerji harcayarak yapar, katabolizma parçalayıp enerji verir. Metabolizma ikisinin toplamıdır.',
-      ),
-      kart(
-        'Bazal metabolizma',
-        'Dinlenme hâlinde yaşamı sürdürmek için harcanan en az enerji. Yaş, cinsiyet ve kas kütlesiyle değişir.',
-      ),
-      kart(
-        'Enerji dengesi',
-        'Alınan enerji harcanandan fazlaysa depolanır, azsa depolar kullanılır.',
-      ),
-      kart(
-        'Neden hep enerji harcanır?',
-        'Uyurken bile kalp, solunum ve iyon pompaları çalışır. Düzeni korumak sürekli enerji ister.',
+        'Metabolizma, hücredeki tepkimelerin toplamı',
+        'Şu an vücudunda binlerce kimyasal tepkime yürüyor: bir kısmı besini parçalıyor, bir kısmı yeni protein kuruyor. Bu tepkimelerin tamamına metabolizma denir. İkiye ayrılır: yıkım (katabolizma) ve yapım (anabolizma).',
         undefined,
-        { not: '"Dinlenirken harcamıyorum" yanılgısını kır; düzeni korumak bile iş.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Kas kütlesi ve metabolizma',
-        'Kas dokusu dinlenirken bile yağ dokusundan çok enerji harcar; bazal metabolizmayı en çok etkileyen etken budur.',
+        'Katabolizma yıkar, anabolizma kurar',
+        'Solunum glikozu parçalar ve ATP verir: katabolizma, yani yıkım. Amino asitlerden kas proteini yapmak ATP harcar: anabolizma, yani yapım. Yıkım enerji verir, yapım enerji ister. İkisi aynı anda sürer.',
+        {
+          tur: 'tablo',
+          basliklar: ['', 'Katabolizma', 'Anabolizma'],
+          satirlar: [
+            ['İş', 'Parçalar', 'Kurar'],
+            ['Enerji', 'Verir', 'Harcar'],
+            ['Örnek', 'Solunum', 'Protein sentezi'],
+          ],
+        },
       ),
       kart(
-        'Metabolizma hormonlarla ayarlanır',
-        'Tiroit hormonları hızı belirler; insülin ve glukagon kan şekerini dengede tutar.',
+        'Uyurken bile enerji harcanır',
+        'Yatakta hiç kıpırdamadan yat: kalbin atar, akciğerin çalışır, hücrelerin iyon pompalar, vücut sıcaklığın korunur. Hepsi ATP harcar. "Dinlenirken enerji harcamam" yanlış; hücrenin düzenini korumak bile iş.',
+        undefined,
+        { not: '"Dinlenirken harcamıyorum" yanılgısını kır: kalp, solunum ve pompalar uykuda da ATP yer.' },
+      ),
+      kart(
+        'Bazal metabolizma, dinlenmenin faturası',
+        'Sabah aç karnına, hareketsiz, ılık odada harcadığın enerjiye bazal metabolizma denir: yaşamı sürdürmenin en düşük faturası. Günlük enerjinin yarıdan fazlası buna gider. Yaşla düşer; erkekte genelde kadından yüksek.',
+      ),
+      kart(
+        'Kas, yağdan çok enerji yakar',
+        'Aynı kiloda iki kişi: birinin kası çok, ötekinin yağı. Kaslı olan otururken bile daha çok enerji harcar; kas dokusu dinlenirken de aktif, yağ dokusu neredeyse hiç harcamaz. Bazal metabolizmayı en çok kas kütlesi belirler.',
+      ),
+      kart(
+        'Fazla enerji yağa gider, açık depodan çıkar',
+        'Yediğin enerji harcadığından fazlaysa fark glikojen ve yağ olarak depolanır; kilo alırsın. Azsa vücut depoyu yakar; kilo verirsin. Tiroit hormonu bu harcamanın hızını ayarlar; insülin ve glukagon kan şekerini dengede tutar.',
       ),
     ], [
       soru('Anabolizma yapım, katabolizma yıkım tepkimelerini kapsar.', true, 'İkisinin toplamı metabolizmayı oluşturuyor.'),
@@ -664,7 +695,7 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       soru('Uyku sırasında vücut enerji harcamaz.', false, 'Zorunlu yaşamsal işler sürdüğü için enerji harcanmaya devam ediyor.'),
       sikli('Alınan enerji harcanandan fazlaysa?', ['Atılır', 'Depolanır'], 1, 'Enerji dengesi.'),
       sikli('Metabolizma hızını hangi hormonlar belirler?', ['İnsülin', 'Tiroit hormonları'], 1, 'İnsülin kan şekeri.'),
-      soru('Uyurken vücut enerji harcamaz.', false, 'Kalp, solunum ve pompalar çalışır.'),
+      soru('Solunum bir anabolizma örneğidir.', false, 'Solunum parçalar ve enerji verir; katabolizma.'),
     ], [
       {
         soru: 'Bazal metabolizmayı en çok etkileyen etken hangisidir?',
@@ -681,16 +712,26 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
   tema('byl10-t2', 'Ekoloji', [
     konu('byl10-bilesen', 'Ekosistemin Bileşenleri', [
       kart(
-        'Cansız bileşenler',
-        'Işık, sıcaklık, su, toprak, mineraller ve pH. Hangi canlının nerede yaşayacağını büyük ölçüde bunlar belirler.',
+        'Ekosistem canlı ve cansızdan kurulur',
+        'Bir gölü düşün: balık, kurbağa, saz, bakteri var; bir de su, ışık, sıcaklık, çamur var. Canlılar ve cansız çevre birbirini etkiler. Ekosistem, yani bir alandaki canlılar ile cansız çevrenin kurduğu bütün. İki tür bileşen: canlı ve cansız.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Canlı bileşenler',
-        'Üreticiler, tüketiciler ve ayrıştırıcılar. Ayrıştırıcılar olmasa madde döngüsü kapanmazdı.',
+        'Işık ve sıcaklık kimin yaşayacağını seçer',
+        'Kaktüs çölde, kutup ayısı buzda. Bunu seçen şey ışık, sıcaklık, su, toprak, mineral ve pH gibi cansız etmenler. Bunlara abiyotik etmenler denir. Bir yerde hangi canlının yaşayacağını önce bunlar belirler.',
       ),
       kart(
-        'Organizasyon basamakları',
-        'Ekoloji bireyden başlayıp biyosfere kadar iç içe basamaklarda çalışır.',
+        'Canlılar üretici, tüketici, ayrıştırıcıdır',
+        'Gölde saz güneşle kendi besinini yapar: üretici. Balık sazı ya da başka balığı yer: tüketici. Ölen balığı bakteri ve mantar çürütür: ayrıştırıcı. Ayrıştırıcı olmasa ölüler yığılır, mineraller toprağa dönmez, üretici aç kalırdı.',
+      ),
+      kart(
+        'Aynı türün bireyleri popülasyondur',
+        'Gölde 400 sazan yaşıyor: bu bir popülasyon, yani aynı alanda yaşayan aynı türden bireyler. Gölün sazanı, kurbağası, sazı, bakterisi, yani bütün popülasyonlar bir arada komüniteyi kurar. Komünitede yalnızca canlılar var.',
+      ),
+      kart(
+        'Basamaklar bireyden biyosfere büyür',
+        'Bir sazan: birey. Gölün sazanları: popülasyon. Gölün bütün canlıları: komünite. Komünite artı su, ışık, çamur: ekosistem. Dünyadaki bütün ekosistemler: biyosfer. Her basamak öncekini içine alır.',
         {
           tur: 'katman',
           daralan: true,
@@ -704,22 +745,14 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'Popülasyon ve komünite',
-        'Popülasyon aynı türden bireyler; komünite aynı alandaki tüm popülasyonlar.',
-      ),
-      kart(
-        'Ekosistem ve biyosfer',
-        'Komünite ile cansız çevre birlikte ekosistemi kurar. Tüm ekosistemlerin toplamı biyosferdir.',
-      ),
-      kart(
-        'Habitat ve niş',
-        'Habitat canlının adresi, niş ise oradaki mesleğidir; iki tür aynı nişi uzun süre paylaşamaz.',
+        'Habitat adres, niş meslektir',
+        'Sazanın habitatı, yani yaşadığı yer, gölün dibi. Nişi ise orada ne yediği, ne zaman avlandığı, kime yem olduğu: yani mesleği. İki tür aynı adreste yaşayabilir ama aynı mesleği uzun süre paylaşamaz; biri ötekini iter.',
         undefined,
         { not: 'Adres ile meslek; bu benzetme kalırsa niş sorusu bir daha yanıltmaz.' },
       ),
       kart(
-        'Sınırlayıcı etmen',
-        'Bir canlının yayılışını, en az bulunan kaynak belirler. Bolluk değil, kıtlık sınırı çizer.',
+        'Yayılışı en kıt kaynak sınırlar',
+        'Bir tarlada ışık bol, su bol ama azot az; bitki azotun izin verdiği kadar büyür. En az bulunan kaynağa sınırlayıcı etmen denir. Bolluk değil, kıtlık sınır çizer. Fotosentez hızındaki kural burada tür yayılışına uygulanıyor.',
       ),
     ], [
       soru('Popülasyon, belirli bir alanda yaşayan aynı türden bireylerin oluşturduğu topluluktur.', true, 'Farklı popülasyonlar bir araya gelince komünite oluşuyor.'),
@@ -744,12 +777,12 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-etkilesim', 'Tür İçi ve Türler Arası Etkileşimler', [
       kart(
-        'Tür içi rekabet',
-        'Aynı türün bireyleri aynı kaynağı istediği için en şiddetli rekabet tür içinde olur.',
+        'En sert rekabet aynı türün içinde',
+        'İki aslan aynı ceylanı, aynı gölgeyi, aynı dişiyi ister; ihtiyaçları birebir aynı. Bu yüzden en şiddetli rekabet tür içinde olur. Aslan ile akbaba da leş için yarışır ama ihtiyaçları tam örtüşmez; o rekabet daha hafif.',
       ),
       kart(
-        'Av-avcı ilişkisi',
-        'Avcı av popülasyonunu dengeler; av azalınca avcı da azalır. İki popülasyon birbirini izler.',
+        'Av ve avcı birbirini izler',
+        'Tavşan çoğalınca tilki bol yer ve çoğalır. Tilki çoğalınca tavşan azalır. Tavşan azalınca tilki aç kalır ve azalır; tavşan yine çoğalır. Grafikte iki dalga var: avcı, avı biraz geriden takip eder.',
         {
           tur: 'koordinat',
           pencere: [0, 8, 0, 6],
@@ -783,8 +816,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'Etkileşimlerin haritası',
-        'Türler arası ilişkiler, iki tarafın kazanıp kaybetmesine göre adlandırılır.',
+        'İlişkiyi iki işaretle oku: kim kazanır',
+        'Türler arası ilişkiyi adıyla değil işaretle düşün. Her taraf için sor: kazanıyor mu (+), kaybediyor mu (−), etkilenmiyor mu (0)? İki artı mutualizm, artı sıfır kommensalizm, artı eksi parazitlik, iki eksi rekabet.',
         {
           tur: 'tablo',
           basliklar: ['İlişki', 'A', 'B'],
@@ -795,23 +828,23 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
             ['Rekabet', '−', '−'],
           ],
         },
-        { not: 'Her ilişkiyi iki işaretle yaz: kim kazanıyor, kim kaybediyor. Adlar sonra.' },
+        { not: 'Her ilişkiyi iki işaretle yaz: kim kazanıyor, kim kaybediyor. Adlar sonra gelir.' },
       ),
       kart(
-        'Mutualizm',
-        'İki tür de kazanır: arı ile çiçek, baklagil ile azot bakterisi.',
+        'Mutualizmde iki taraf da kazanır',
+        'Arı çiçekten bal özü alır, çiçek arı sayesinde tozlaşır: ikisi de kazandı. Baklagilin kökündeki bakteri bitkiye azot verir, bitki bakteriye şeker. Liken, yani mantar ile algin ortak yaşamı, aynı ilişki.',
       ),
       kart(
-        'Kommensalizm',
-        'Biri kazanır, öteki etkilenmez. Ağaç dalında yaşayan bir bitki buna örnektir.',
+        'Kommensalizmde biri kazanır, öteki nötr',
+        'Köpek balığının altında yüzen küçük balık artıkları yer; köpek balığı bundan ne kazanır ne kaybeder. Ağaç dalına tutunan orkide de öyle: ışığa yaklaşır, ağaca zarar vermez. Artı ve sıfır.',
       ),
       kart(
-        'Parazitlik',
-        'Biri kazanır, öteki zarar görür. Parazit konağını genellikle öldürmez; öldürürse kendi yaşamı da biter.',
+        'Parazit konağı yavaş yavaş sömürür',
+        'Bağırsak solucanı sende yaşar, senin besininle beslenir; sen zayıflarsın, o kazanır. Parazit konağını genelde öldürmez: konak ölürse parazitin evi ve yemeği biter. Bit, kene ve tenya bu yüzden "az az" zarar verir.',
       ),
       kart(
-        'Rekabetçi dışlama',
-        'Aynı nişi paylaşan iki türden biri ötekini eninde sonunda o alandan uzaklaştırır ya da niş ayrışır.',
+        'Aynı nişte iki tür kalamaz',
+        'İki tür aynı böceği aynı saatte aynı ağaçta avlıyorsa biri er geç kaybeder ve o alandan silinir: rekabetçi dışlama. Ya da biri gündüz, öteki gece avlanmaya başlar; niş ayrışır ve ikisi de kalır.',
       ),
     ], [
       soru('Mutualizmde iki taraf da yarar görür.', true, 'Likendeki alg ve mantar ilişkisi buna örnek.'),
@@ -836,12 +869,14 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-suksesyon', 'Süksesyon', [
       kart(
-        'Tanımı',
-        'Bir alandaki canlı topluluğunun zamanla düzenli biçimde değişmesi.',
+        'Terk edilen tarla yavaşça ormana döner',
+        'Bir tarlayı ekmeyi bırak. İlk yıl otlar, birkaç yıl sonra çalılar, on yıllar sonra ağaçlar gelir. Alandaki canlı topluluğu zamanla düzenli biçimde değişir; buna süksesyon denir. Rastgele değil, sıralı bir değişim.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Birincil süksesyon',
-        'Toprağın hiç olmadığı yerde başlar: lav akıntısı ya da çıplak kaya. Öncü tür çoğunlukla likenlerdir.',
+        'Birincil süksesyon çıplak kayada başlar',
+        'Volkan soğudu, ortada yalnızca kaya var; toprak yok. İlk gelen likenler, yani mantar ile algin ortak canlısı. Liken kayayı ufalar, ölünce ilk toprağı yapar. Sonra yosun, ot, çalı, ağaç. Öncü tür: liken.',
         {
           tur: 'akis',
           dikey: true,
@@ -855,22 +890,22 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'İkincil süksesyon',
-        'Toprak varken başlar: yangın ya da terk edilmiş tarla. Birincilden çok daha hızlı ilerler.',
+        'İkincil süksesyon toprağın üstünde başlar',
+        'Orman yandı ama toprak yerinde. Toprakta tohumlar, kökler, bakteriler zaten var. Yangın ya da terk edilmiş tarladan başlayan süksesyona bu yüzden ikincil denir. Sıfırdan değil, yarıdan başlar.',
       ),
       kart(
-        'Neden ikincisi hızlı?',
-        'Toprak zaten var ve içinde tohum ile kök kalıntıları duruyor; en uzun adım olan toprak oluşumu atlanmış olur.',
+        'Toprak hazırsa süksesyon hızlı gider',
+        'Birincil süksesyonda en uzun iş kayadan toprak yapmak; yüzyıllar sürer. İkincil süksesyon bu adımı atlar; on yıllarda orman geri gelir. Soruda önce şunu sor: toprak var mı? Varsa ikincil ve hızlı, yoksa birincil ve yavaş.',
         undefined,
         { not: 'Toprak var mı? Süksesyon sorularının çoğu bu tek soruya iniyor.' },
       ),
       kart(
-        'Klimaks',
-        'Süksesyonun kararlı son aşaması. Tür bileşimi artık büyük ölçüde değişmez.',
+        'Klimaks, değişimin durduğu son topluluk',
+        'Sonunda öyle bir topluluk gelir ki türler artık yerini bırakmaz; orman ormana dönüşür. Bu kararlı son aşamaya klimaks denir. Büyük bir yangın ya da sel olmadıkça tür bileşimi sabit kalır.',
       ),
       kart(
-        'Klimaks bölgeye göre değişir',
-        'Aynı süksesyon ormanla değil, iklime göre çayır ya da çalılıkla da bitebilir. Son durağı iklim belirler.',
+        'Klimaksı iklim belirler',
+        'Her yerde son durak orman değil. Yağış azsa bozkır, yani ot çayırı; daha da azsa çalılık ya da çöl bitkileri klimaks olur. Aynı süksesyon, farklı iklimde farklı yerde biter.',
       ),
     ], [
       soru('Birincil süksesyon, daha önce canlı barındırmamış bir alanda başlar.', true, 'Kayalık ya da yeni soğumuş lav alanı buna örnek.'),
@@ -894,12 +929,12 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-populasyon', 'Popülasyon Dinamikleri', [
       kart(
-        'Büyümeyi belirleyenler',
-        'Doğum ve içe göç sayıyı artırır; ölüm ve dışa göç azaltır.',
+        'Doğum ve göç sayıyı değiştirir',
+        'Bir adada 100 geyik var. Yıl içinde 20 doğdu, 5 öldü, 3 yüzerek geldi, 2 gitti: yeni sayı 116. Doğum ve içe göç artırır, ölüm ve dışa göç azaltır. Popülasyon büyüklüğü bu dört sayıyla değişir.',
       ),
       kart(
-        'Taşıma kapasitesi',
-        'Ortamın sürekli besleyebileceği en büyük birey sayısı. Aşılırsa popülasyon çöker.',
+        'Ortam ancak belli sayıda bireyi besler',
+        'Adadaki ot ancak 300 geyiği doyurur. Geyik sayısı 300\'e yaklaştıkça büyüme yavaşlar, grafik yataylaşır. Bu sınıra taşıma kapasitesi denir. Aşılırsa ot biter, geyikler açlıktan ölür ve sayı çöker.',
         {
           tur: 'koordinat',
           pencere: [0, 8, 0, 6],
@@ -929,22 +964,22 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'Çevre direnci',
-        'Büyümeyi sınırlayan etkenlerin tamamı: besin kıtlığı, rekabet, avcı, hastalık.',
+        'Çevre direnci büyümeyi frenler',
+        'Geyik neden sonsuza kadar çoğalmıyor? Ot azalıyor, kurt artıyor, hastalık yayılıyor, kış geliyor. Büyümeyi frenleyen bu etkenlerin toplamına çevre direnci denir. Taşıma kapasitesi bu direncin çizdiği sınırdır.',
       ),
       kart(
-        'Yoğunluğa bağlı ve bağımsız',
-        'Rekabet ve hastalık kalabalıkla şiddetlenir; kuraklık ve don ise popülasyon büyüklüğünden bağımsız etkiler.',
+        'Bazı etkenler kalabalıkla sertleşir',
+        'Geyik çoğaldıkça ot daha çabuk biter, hastalık daha hızlı bulaşır: bunlar yoğunluğa bağlı etkenler. Kuraklık, don ve sel ise 10 geyiği de 1000 geyiği de aynı vurur: yoğunluktan bağımsız etkenler.',
         undefined,
-        { not: 'Etkeni gördüğünde sor: kalabalık artınca etkisi artıyor mu?' },
+        { not: 'Etkeni gördüğünde sor: kalabalık artınca etkisi artıyor mu? Evetse yoğunluğa bağlı.' },
       ),
       kart(
-        'Yaş piramidi',
-        'Genç birey oranı yüksekse popülasyon büyüyecek, yaşlı ağırlıklıysa küçülecek demektir.',
+        'Yaş piramidi geleceği gösterir',
+        'Popülasyonu yaşlara göre çiz: altta gençler, üstte yaşlılar. Taban genişse çok genç var, yakında üreyecekler; popülasyon büyür. Taban darsa yaşlı ağırlıklı; küçülür. Türkiye\'nin nüfus piramidi de böyle okunur.',
       ),
       kart(
-        'Popülasyon büyüklüğü nasıl ölçülür?',
-        'Tek tek saymak çoğu zaman imkânsız; işaretle-yakala yöntemiyle örneklemden tahmin edilir.',
+        'Sayı, işaretle-yakala ile tahmin edilir',
+        'Göldeki balığı tek tek sayamazsın. 50 balık yakala, işaretle, bırak. Ertesi hafta 100 balık yakala; 10\'u işaretli çıksın. İşaretli oranı onda bir; demek ki gölde yaklaşık 500 balık var. Buna işaretle-yakala yöntemi denir.',
       ),
     ], [
       soru(
@@ -1000,8 +1035,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-madde-enerji', 'Ekosistemde Madde ve Enerji Akışı', [
       kart(
-        'Besin zinciri',
-        'Üreticiden tüketiciye doğru tek yönlü enerji aktarımı. Ayrıştırıcılar her basamağa bağlanır.',
+        'Besin zinciri enerjinin izlediği yol',
+        'Ot güneşle şeker yapar, çekirge otu yer, kurbağa çekirgeyi, yılan kurbağayı. Enerji üreticiden tüketiciye ok yönünde, tek yönde geçer. Besin zinciri, yani "kim kimi yer" sırası. Ayrıştırıcılar her halkanın ölüsünü çürütür.',
         {
           tur: 'akis',
           adimlar: [
@@ -1013,12 +1048,12 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'Besin ağı',
-        'Zincirlerin birbirine bağlanmış hâli. Gerçek ekosistemler zincir değil ağ biçimindedir.',
+        'Gerçek doğa zincir değil ağdır',
+        'Kurbağa yalnız çekirge yemez; sinek de yer. Yılan kurbağa da fare de yer. Zincirler birbirine dolanınca besin ağı çıkar. Bir tür yok olunca ağ yırtılmaz ama gerilir; ağ ne kadar çok halkalıysa o kadar dayanıklı.',
       ),
       kart(
-        'Enerji piramidi',
-        'Her basamakta enerjinin yaklaşık onda biri aktarılır; kalanı ısı olarak kaybolur.',
+        'Her basamağa enerjinin onda biri geçer',
+        'Otta 1000 birim enerji var. Çekirge bunu yer ama çoğunu hareket ve ısıya harcar; vücudunda 100 birim kalır. Kurbağa çekirgeden 10, yılan kurbağadan 1 birim alır. Her basamakta yaklaşık %10 aktarılır, %90 ısı olarak kaybolur.',
         {
           tur: 'katman',
           daralan: true,
@@ -1031,22 +1066,22 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'Neden basamak azdır?',
-        'Her adımda enerjinin çoğu kaybolduğu için beşinci basamağa yetecek enerji kalmaz.',
+        'Zincir bu yüzden 4–5 halkada biter',
+        'Yılana 1 birim kaldı; onu yiyecek kartala 0,1 birim. Kartalı yiyecek bir canlıya enerji kalmaz. Basamak sayısını enerji kaybı sınırlar; zincirler dört beş halkayı geçmez. Tepedeki avcı sayısı bu yüzden hep azdır.',
       ),
       kart(
         'Enerji akar, madde döner',
-        'Enerji güneşten gelir ve ısı olarak çıkar; madde ise döngülerle sürekli yeniden kullanılır.',
+        'Güneşten gelen enerji zincirde ilerler ve ısı olarak çıkar; geri dönmez. Ama karbon, azot, su gibi maddeler geri döner: ölen yılanı bakteri çürütür, karbon toprağa ve havaya geçer, ot yeniden kullanır. Enerji tek yön, madde döngü.',
         undefined,
-        { not: 'Bu cümle bütün konunun özeti; ikisini karıştırırsan döngüler de karışır.' },
+        { not: 'Bu cümle bütün konunun özeti: enerji "döner" diyen şık yanlış, madde "akar ve tükenir" diyen şık yanlış.' },
       ),
       kart(
-        'Biyolojik birikim',
-        'Parçalanmayan zehirler her basamakta derişir. En büyük zararı zincirin tepesindeki tür görür.',
+        'Zehir zincirde yukarı çıktıkça birikir',
+        'Suya karışan cıva parçalanmıyor. Plankton azıcık alır; küçük balık binlerce plankton yer, cıvası artar; ton balığı yüzlerce küçük balık yer. Zincirin tepesindeki canlıda zehir en yoğun. Buna biyolojik birikim denir.',
       ),
       kart(
-        'Neden bitkisel beslenme verimli?',
-        'Aynı alandan doğrudan bitki tüketmek, o bitkiyle beslenen hayvanı tüketmekten on kat çok enerji sağlar.',
+        'Bitki yemek daha çok enerji taşır',
+        'Aynı tarladaki mısırı sen yersen 100 birim alırsın. Mısırı ineğe verip ineği yersen inekte yalnızca 10 birim kalmıştır. Bir basamak atlamak enerjinin %90\'ını kaybettirir; bitkisel beslenme aynı alandan on kat çok insan doyurur.',
       ),
     ], [
       soru(
@@ -1084,8 +1119,8 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-dongu', 'Madde Döngüleri', [
       kart(
-        'Su döngüsü',
-        'Buharlaşma, yoğuşma, yağış ve akış. Güneş enerjisi döngüyü çeviren motordur.',
+        'Su döngüsünü güneş çevirir',
+        'Güneş denizi ısıtır, su buharlaşır. Buhar yükselince soğur ve yoğuşur, yani damlaya döner: bulut. Yağmur olarak yağar, dere olarak denize akar, yine buharlaşır. Su tükenmez, yalnızca yer ve hâl değiştirir. Motoru güneş.',
         {
           tur: 'akis',
           donguSel: true,
@@ -1098,30 +1133,30 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         },
       ),
       kart(
-        'Karbon döngüsü',
-        'Fotosentez karbonu havadan alır, solunum ve yanma geri verir. Fosil yakıtlar dengeyi bozdu.',
+        'Karbon havadan yaprağa, yapraktan havaya',
+        'Havadaki CO₂\'yi bitki fotosentezle alır ve şekere bağlar. Sen bitkiyi yer, solunumla karbonu CO₂ olarak havaya geri verirsin. Odun yanınca da karbon havaya döner. Fotosentez alır, solunum ve yanma verir: karbon döngüsü.',
       ),
       kart(
-        'Karbon depoları',
-        'Atmosfer, okyanuslar, canlılar, toprak ve fosil yakıtlar. Fosil yakıt milyonlarca yıl kilitli kalmış karbondur.',
+        'Fosil yakıt gömülü karbonu havaya saldı',
+        'Kömür ve petrol, milyonlarca yıl önce gömülmüş canlıların karbonu; toprağın altında kilitli duruyordu. İnsan bunları yakınca kilitli karbon CO₂ olarak havaya çıktı. Havadaki CO₂ arttı; sera etkisi ve küresel ısınma bu artıştan.',
       ),
       kart(
-        'Azot döngüsü',
-        'Havadaki azotu canlılar doğrudan kullanamaz; bakteriler bağlar, nitrifikasyon ve denitrifikasyon çevrimi tamamlar.',
+        'Havadaki azotu canlılar doğrudan kullanamaz',
+        'Soluduğun havanın %78\'i azot; ama ne sen ne bitki onu kullanabilir. Azot molekülündeki iki atom üçlü bağla kenetli; koparmak çok zor. Bunu yalnızca bazı bakteriler ve yıldırım yapar. Buna azot bağlama denir.',
       ),
       kart(
-        'Neden azot bağlanmalı?',
-        'Atmosferin dörtte üçü azot ama moleküldeki üçlü bağ çok güçlü; onu koparabilen yalnızca bazı bakteriler ve yıldırımdır.',
+        'Azot döngüsünü bakteriler döndürür',
+        'Bağlanan azot amonyağa, sonra nitrite ve nitrata çevrilir: nitrifikasyon. Bitki nitratı alır ve protein yapar; sen bitkiyi yersin. Ölüler çürüyünce azot toprağa döner. Başka bakteriler nitratı gaza çevirip havaya yollar: denitrifikasyon.',
       ),
       kart(
-        'Fosfor döngüsü',
-        'Gaz evresi yoktur; kayaların aşınmasıyla toprağa geçer. Bu yüzden en yavaş döngüdür ve çoğu zaman sınırlayıcıdır.',
+        'Fosfor havaya hiç çıkmaz',
+        'Karbon ve azot bir ara gaz olup havada dolaşır; fosfor olmaz. Fosfor kayada durur, kaya aşındıkça toprağa ve suya sızar, bitki alır. Gaz evresi yok; bu yüzden en yavaş döngü. Fosfor çoğu ekosistemde en kıt kaynak, yani sınırlayıcı etmen.',
         undefined,
-        { not: 'Gaz evresi yok; öteki döngülerden ayrıldığı tek yer bu ve sınav bunu soruyor.' },
+        { not: 'Gaz evresi olmayan tek döngü fosfor; öteki döngülerden ayrıldığı yer bu ve sınav bunu soruyor.' },
       ),
       kart(
-        'Neden döngü şart?',
-        'Dünyaya dışarıdan madde gelmiyor. Elimizdeki atomlar sürekli yeniden kullanılıyor.',
+        'Dünyaya dışarıdan madde gelmez',
+        'Vücudundaki karbon atomları bir zamanlar bir dinozorun, bir ağacın, bir bulutun içindeydi. Dünyaya uzaydan yeni madde gelmiyor; elimizdeki atomlar milyarlarca yıldır dönüp duruyor. Döngü olmasaydı madde ölülerde kilitlenir, yaşam dururdu.',
       ),
     ], [
       soru(
@@ -1160,30 +1195,32 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-surdurulebilirlik', 'Ekolojik Sürdürülebilirliğin Önemi', [
       kart(
-        'Tanımı',
-        'Doğal kaynakları, gelecek kuşakların da kullanabileceği biçimde ve yenilenme hızını aşmadan kullanmak.',
-      ),
-      kart(
-        'Ekosistem hizmetleri',
-        'Temiz hava, su döngüsü, tozlaşma ve toprak verimliliği. Bedava sanılan bu hizmetler yerine konulamaz.',
-      ),
-      kart(
-        'Neden acil?',
-        'Kaynak tüketim hızı yenilenme hızını geçtiğinde açık büyür ve geri dönüş giderek zorlaşır.',
-      ),
-      kart(
-        'Devrilme noktası',
-        'Bazı değişimler belirli bir eşiği geçince kendini hızlandırır; o noktadan sonra durdurmak çok daha zordur.',
+        'Kestiğin ağaç kadar ağaç büyüsün',
+        'Ormandan yılda 100 ağaç kesiyorsun, orman yılda 100 ağaç büyütüyor: orman hep yerinde. 500 kesersen otuz yıla orman biter. Sürdürülebilirlik, yani kaynağı gelecek kuşaklara da kalacak biçimde, yenilenme hızını aşmadan kullanmak.',
         undefined,
-        { not: 'Doğrusal düşünme; eşik geçilince küçük değişim büyük sonuç doğurur.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Ekonomiyle ilişkisi',
-        'Sürdürülebilirlik üretimi durdurmak değil, üretimi doğanın yenilenme hızına uydurmaktır.',
+        'Doğa sana bedava hizmet veriyor',
+        'Arı meyve ağacını tozlaştırır, orman havayı temizler, toprak suyu süzer, bakteri atığı çürütür. Bunlara ekosistem hizmetleri denir. Fatura gelmediği için bedava sanılır; ama arı yok olursa tozlaşmayı elle yapmak milyarlar tutar.',
       ),
       kart(
-        'Üç ayak',
-        'Sürdürülebilirlik çevre, ekonomi ve toplumsal adaleti birlikte gözetir; biri gözetilmezse öteki ikisi de tutmaz.',
+        'Yenilenmeden hızlı tüketince açık büyür',
+        'Bankadaki paranın yalnızca faizini harcarsan para hiç bitmez; anaparayı yemeye başlarsan gitgide azalır. Balık, orman, temiz su da böyle: tüketim yenilenmeyi geçince "anapara" erir ve geri gelmesi her yıl zorlaşır.',
+      ),
+      kart(
+        'Eşik geçilince değişim kendini hızlandırır',
+        'Buzul beyazdır, güneşi yansıtır. Biraz eriyince koyu deniz açılır, deniz ısıyı emer, daha çok buz erir, daha çok deniz açılır. Belli bir eşikten sonra bu kendi kendine hızlanır ve durdurulamaz: devrilme noktası.',
+        undefined,
+        { not: 'Doğrusal düşünme; eşik geçilince küçük bir değişim büyük ve geri dönmez bir sonuç doğurur.' },
+      ),
+      kart(
+        'Sürdürülebilirlik üretimi durdurmak değil',
+        'Balıkçıyı yasaklamak değil, balığın çoğaldığı kadar avlatmak. Fabrikayı kapatmak değil, atığını arıtmak. Sürdürülebilirlik üretimi doğanın yenilenme hızına uydurmaktır; ekonomi ile çevre karşı karşıya değil.',
+      ),
+      kart(
+        'Üç ayağı var: çevre, ekonomi, toplum',
+        'Bir masa üç ayakta durur. Çevreyi korurken insanlar işsiz kalırsa toplum ayağı kırılır; ekonomi büyürken nehir kirlenirse çevre ayağı kırılır. Sürdürülebilirlik üçünü birlikte gözetir; biri eksikse öteki ikisi de tutmaz.',
       ),
     ], [
       soru('Ekosistem hizmetleri, doğanın insana sağladığı yararlardır.', true, 'Temiz su, tozlaşma ve iklim düzenlemesi bunlardan.'),
@@ -1207,20 +1244,20 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-kisitlayan', 'Sürdürülebilirliği Kısıtlayan Durumlar', [
       kart(
-        'Habitat kaybı',
-        'Tür kayıplarının en büyük sebebi. Yaşam alanı bölününce popülasyonlar birbirinden kopar ve küçülür.',
+        'Tür kaybının ilk sebebi habitat kaybı',
+        'Bir orman kesilip tarla yapıldı: oradaki sincap, baykuş, mantar gidecek yer bulamaz. Habitat, yani canlının yaşadığı yer, yok olunca canlı da yok olur. Türlerin yok oluşunda bir numaralı sebep bu; avlanma değil.',
       ),
       kart(
-        'Habitat parçalanması',
-        'Yol ve yerleşim bir alanı böldüğünde küçük popülasyonlar birbirinden yalıtılır ve gen çeşitliliği düşer.',
+        'Habitat bölününce popülasyon kopar',
+        'Ormanın ortasından otoyol geçti. Orman hâlâ orada ama iki parça. Bir taraftaki geyik öbür tarafa geçemez; iki küçük sürü birbirinden yalıtılır. Küçük sürüde akraba çiftleşmesi artar, gen çeşitliliği düşer. Buna habitat parçalanması denir.',
       ),
       kart(
-        'Kirlilik',
-        'Hava, su ve toprak kirliliği; ayrıca ışık ve gürültü kirliliği canlıların davranışını bozar.',
+        'Işık ve gürültü de kirliliktir',
+        'Fabrika dumanı havayı, atık su nehri, plastik toprağı kirletir. Ama şehir ışıkları da kirliliktir: deniz kaplumbağası yavruları ay yerine otel ışığına gider ve ölür. Gürültü kuşların ötüşünü, balinanın yönünü bozar.',
       ),
       kart(
-        'Ötrofikasyon',
-        'Sulara karışan gübre yosunu aşırı çoğaltır; ölen yosunlar çürürken oksijen tükenir ve balıklar ölür.',
+        'Gübre suya karışınca oksijen biter',
+        'Tarladaki gübre yağmurla göle iner. Göl besinle dolar, yosun patlar. Yosunlar ölür; bakteriler çürütürken suyun oksijenini tüketir. Balıklar boğulur. Buna ötrofikasyon denir: çok besinden ölen göl.',
         {
           tur: 'akis',
           dikey: true,
@@ -1234,16 +1271,16 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
         { not: '"Gübre iyi bir şey" diye düşünme; suya karışınca zinciri oksijenden başlatıp bozar.' },
       ),
       kart(
-        'İstilacı türler',
-        'Doğal düşmanı olmayan bir tür yeni ortamda hızla çoğalır ve yerli türleri dışlar.',
+        'Düşmansız yabancı tür yerliyi siler',
+        'Avustralya\'ya av için tavşan getirildi; orada tavşanı yiyen yoktu. Tavşan milyonlara ulaştı, otlakları bitirdi, yerli türleri açlığa itti. Doğal düşmanı olmayan yabancı türe istilacı tür denir.',
       ),
       kart(
-        'Biyoçeşitlilik kaybı',
-        'Tür azaldıkça ekosistemin şoklara dayanma gücü düşer. Kayıp geri alınamaz.',
+        'Az tür, kırılgan ekosistem',
+        'Bir ağda halka azaldıkça ağ zayıflar. Bir gölde beş balık türü varken biri ölürse ötekiler açığı kapatır; tek tür varken o ölürse göl çöker. Biyoçeşitlilik, yani tür sayısı, ekosistemin şoka dayanma gücüdür. Yok olan tür geri gelmez.',
       ),
       kart(
-        'İklim değişikliği',
-        'Sıcaklık ve yağış düzeni değişince türlerin yayılış alanı kayar; uyum sağlayamayanlar yok olur.',
+        'İklim ısınınca türler yerinden kayar',
+        'Sıcaklık artınca dağdaki bitki daha yükseğe, denizdeki balık daha kuzeye kaçar. Kaçamayan, mercan gibi yerinde kalan türler ölür. Yağış düzeni değişince kuraklık ve yangın artar. İklim değişikliği bütün habitatları aynı anda değiştirir.',
       ),
     ], [
       soru('Ötrofikasyon, sulara karışan aşırı besin maddeleri yüzünden oluşur.', true, 'Aşırı üreyen algler suyun oksijenini tüketiyor.'),
@@ -1268,16 +1305,18 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     ]),
     konu('byl10-saglanmasi', 'Ekolojik Sürdürülebilirliğin Sağlanması', [
       kart(
-        'Ekolojik ayak izi',
-        'Bir kişinin ya da toplumun doğaya bindirdiği yükün alan cinsinden ölçüsü. Küçültmenin ilk adımı ölçmektir.',
+        'Ayak izi, doğaya yükünü alanla ölçer',
+        'Yediğin ekmek için tarla, içtiğin su için havza, attığın çöp için alan gerekir. Bunların toplamına ekolojik ayak izi denir: senin yaşamını karşılamak için gereken doğa alanı. Herkes ortalama bir Avrupalı gibi yaşasa üç Dünya gerekirdi.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Nasıl küçültülür?',
-        'Enerji ve su tasarrufu, toplu taşıma, yerel ve mevsiminde beslenme, gereksiz tüketimi azaltma.',
+        'Ayak izi günlük seçimlerle küçülür',
+        'Duşu kısa tut, ışığı söndür, otobüse bin, mevsiminde ve yakından gelen sebzeyi al, kullanmayacağın şeyi alma. Her seçim tarla, su ve enerji demek. Küçültmenin ilk adımı ölçmek: kendi izini hesaplayan siteler var.',
       ),
       kart(
-        'Atık yönetimi',
-        'Sıra önemlidir: önce azalt, sonra yeniden kullan, en son geri dönüştür.',
+        'Atıkta sıra: azalt, yeniden kullan, dönüştür',
+        'Plastik şişe için üç yol var. En iyisi hiç almamak: azalt. İkincisi aynı şişeyi tekrar doldurmak: yeniden kullan. En sonuncusu eritip yeni şişe yapmak: geri dönüştür. Geri dönüşüm enerji ve su ister; o yüzden en sonda.',
         {
           tur: 'akis',
           adimlar: [
@@ -1286,23 +1325,23 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
             { ad: 'Geri dönüştür' },
           ],
         },
-        { not: 'Sırayı ezberleme, mantığını tut: hiç üretmemek geri dönüştürmekten ucuz.' },
+        { not: 'Sırayı ezberleme, mantığını tut: hiç üretmemek, geri dönüştürmekten her zaman ucuz.' },
       ),
       kart(
-        'Korunan alanlar',
-        'Millî parklar ve tabiat koruma alanları habitatı bütün hâlinde korur; tohum bankaları gen çeşitliliğini saklar.',
+        'Millî park habitatı bütün olarak korur',
+        'Yalnız kaplanı korumak yetmez; kaplanın ormanı, avı, suyu da kalmalı. Millî parklar ve tabiat koruma alanları habitatı bütün hâlinde korur. Tohum bankaları ise bitki tohumlarını dondurup gen çeşitliliğini saklar; tür yok olursa yedeği var.',
       ),
       kart(
-        'Ekolojik koridorlar',
-        'Parçalanmış habitatları birbirine bağlayan şeritler; popülasyonların karışmasını ve gen akışını sürdürür.',
+        'Koridor, bölünmüş habitatı bağlar',
+        'Otoyolun böldüğü iki orman parçasını, üstünden geçen ağaçlı bir köprü ya da altından geçen tünel birleştirir. Buna ekolojik koridor denir. Geyik öbür tarafa geçer, iki sürü karışır, gen akışı sürer. Parçalanmanın panzehri.',
       ),
       kart(
-        'Sürdürülebilir tarım',
-        'Nöbetleşe ekim, damla sulama ve biyolojik mücadele toprağı yormadan üretim yapmanın yolları.',
+        'Toprağı yormadan üretmek mümkün',
+        'Her yıl aynı tarlaya buğday ekersen toprak yorulur. Bir yıl buğday, bir yıl baklagil ekersen (nöbetleşe ekim) baklagil toprağa azot katar. Damla sulama suyu doğrudan köke verir. Zararlıyı ilaç yerine avcı böcekle yenmek: biyolojik mücadele.',
       ),
       kart(
-        'Bireysel katkının sınırı',
-        'Bireysel çaba önemlidir ama yeterli değil; asıl fark üretim ve enerji politikalarında ortaya çıkar.',
+        'Bireysel çaba gerekli ama yetmez',
+        'Sen duşu kısaltırken bir fabrika bir dakikada bin duşluk su harcıyor. Bireysel çaba önemli; ama enerjinin nereden geldiğini ve fabrikaların nasıl üreteceğini politikalar belirler. Asıl fark üretim ve enerji politikalarında çıkar.',
       ),
     ], [
       soru('Ekolojik ayak izi, doğaya bindirdiğimiz yükün ölçüsüdür.', true, 'Tükettiğimizi karşılamak için gereken alanı gösteriyor.'),

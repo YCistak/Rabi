@@ -13,12 +13,14 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
   tema('byl9-t1', 'Yaşam', [
     konu('byl9-onem', 'Biyolojinin Önemi', [
       kart(
-        'Biyoloji neyi inceler?',
-        'Canlıları ve yaşam olaylarını inceler: moleküllerden ekosistemlere kadar her ölçekte.',
+        'Biyoloji canlıları ve yaşamı inceler',
+        'Kedi karanlıkta nasıl görür, yaprak neden yeşil, bakteri nasıl çoğalır? Hepsi biyolojinin sorusu. Biyoloji, yani canlıları ve yaşam olaylarını inceleyen bilim. Yalnızca hayvanlar değil; bitki, mantar ve bakteri de konusu.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Organizasyon düzeyleri',
-        'Yaşam iç içe basamaklardan kurulur ve her basamakta bir öncekinde olmayan yeni özellikler ortaya çıkar.',
+        'Yaşam küçükten büyüğe basamaklıdır',
+        'Vücudunda önce moleküller var; moleküller hücreyi kurar. Hücreler dokuyu, dokular organı, organlar seni, yani organizmayı kurar. Organizmalar bir arada ekosistemi oluşturur. Her basamak bir öncekinin üstüne kurulur.',
         {
           tur: 'akis',
           dikey: true,
@@ -30,31 +32,33 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
             { ad: 'Ekosistem' },
           ],
         },
-        { not: 'Basamakları ezberleme; her basamakta "bir öncekinde olmayan ne var" diye sor.' },
+        { not: 'Sıra sorulursa şunu düşün: hangisi ötekinin içinde? Molekül hücrenin, hücre dokunun içinde. Küçük olan önce gelir.' },
       ),
       kart(
-        'Sağlığa katkısı',
-        'Aşı, antibiyotik ve organ nakli biyolojik bilginin doğrudan sonucu. Ortalama ömür bir yüzyılda ikiye katlandı.',
+        'Aşı ve antibiyotik biyolojiden çıktı',
+        'Çocukken vurulduğun aşılar, boğaz iltihabında içtiğin antibiyotik, böbrek nakli: hepsi biyoloji bilgisinin sağlığa katkısı. Yüz yıl önce insanlar ortalama 40 yıl yaşıyordu; bugün bu süre iki katına yakın.',
       ),
       kart(
-        'Tarıma katkısı',
-        'Verimli tohum ve hastalığa dayanıklı çeşitler biyoloji sayesinde geliştirildi.',
+        'Bol ürün veren tohumu biyoloji üretti',
+        'Dedenin zamanında bir tarla bugünün yarısı kadar buğday verirdi. Hastalığa dayanıklı ve bol ürün veren tohumlar biyoloji sayesinde geliştirildi. Tarımdaki verim artışının arkasında biyoloji var.',
       ),
       kart(
-        'Biyoteknoloji',
-        'Canlıları ya da parçalarını üretimde kullanmak: insülinin bakteriye ürettirilmesi bunun en bilinen örneği.',
+        'Biyoteknoloji: canlıya iş yaptırmak',
+        'Şeker hastaları insülin iğnesi yapar. Bu insülini bakteriler üretiyor: insan geni bakteriye aktarıldı, bakteri fabrika gibi çalışıyor. Biyoteknoloji, yani canlıları ya da parçalarını üretimde kullanmak. Yoğurt mayası da bir örnek.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Çevreye bakışı değiştirdi',
-        'Ekosistem kavramı, bir türün kaybının bütün ağı etkilediğini gösterdi. Koruma politikaları bu bilgiden doğdu.',
+        'Bir türün kaybı bütün ağı sarsar',
+        'Bir gölden kurbağaları çekersen sivrisinekler çoğalır, sivrisinekle beslenen kuşlar azalır. Ekosistem, yani bir yerdeki canlılar ve çevrelerinin kurduğu ağ. Bu bilgiyle millî parklar ve koruma yasaları doğdu.',
       ),
     ], [
-      soru('Biyolojinin incelediği organizasyon düzeyleri küçükten büyüğe hücre, doku, organ, sistem diye sıralanır.', true, 'Her düzey bir öncekinden kuruluyor.'),
+      soru('Organizasyon düzeyleri küçükten büyüğe hücre, doku, organ, organizma diye sıralanır.', true, 'Her düzey bir öncekinden kuruluyor.'),
       soru('Biyoteknoloji, canlıların ya da onlara ait parçaların ürün elde etmek için kullanılmasıdır.', true, 'Yoğurt mayasından insülin üretimine kadar geniş bir alan.'),
       soru('Biyoloji yalnızca hayvanları inceleyen bilim dalıdır.', false, 'Bitkiler, mantarlar, bakteriler ve virüsler de biyolojinin konusu.'),
-      soru('Tarımdaki verim artışının biyolojiyle bir ilgisi yoktur.', false, 'Tohum ıslahı, gübreleme ve hastalıkla mücadelenin tamamı biyoloji bilgisine dayanıyor.'),
+      soru('Tarımdaki verim artışının biyolojiyle bir ilgisi yoktur.', false, 'Dayanıklı ve bol ürün veren tohumlar biyoloji bilgisiyle geliştirildi.'),
       sikli('Aşı ve antibiyotik biyolojinin hangi alana katkısıdır?', ['Tarım', 'Sağlık'], 1, 'Ortalama ömür bir yüzyılda ikiye katlandı.'),
-      sikli('Bir türün kaybının bütün ağı etkilediğini gösteren kavram?', ['Biyoteknoloji', 'Ekosistem'], 1, 'Koruma politikaları bu bilgiden doğdu.'),
+      sikli('Bir türün kaybının bütün ağı etkilediğini gösteren kavram?', ['Biyoteknoloji', 'Ekosistem'], 1, 'Koruma yasaları bu bilgiden doğdu.'),
       soru('Biyoloji yalnızca hücre düzeyindeki olayları inceler.', false, 'Molekülden ekosisteme her ölçek.'),
     ], [
       {
@@ -70,26 +74,26 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
     ]),
     konu('byl9-donum', 'Biyoloji Biliminin Gelişimindeki Dönüm Noktaları', [
       kart(
-        'Mikroskobun icadı',
-        'Hooke mantar kesitinde odacıklar gördü ve onlara hücre dedi; Leeuwenhoek ilk mikroorganizmaları gözledi.',
+        'Mikroskop hücreyi görünür kıldı',
+        '1665\'te Hooke bir şişe mantarı parçasına mikroskopla baktı. Küçük odacıklar gördü ve onlara "hücre" dedi. Leeuwenhoek ise bir su damlasında kıpırdayan küçük canlıları, yani mikroorganizmaları ilk gören kişi.',
       ),
       kart(
-        'Hücre teorisi',
-        'Bütün canlılar hücrelerden oluşur, hücre yaşamın en küçük birimidir ve her hücre başka bir hücreden gelir.',
+        'Her canlı hücrelerden kurulur',
+        'Bir fil de bir bakteri de hücrelerden yapılmış. Hücre teorisi üç cümle söyler: Bütün canlılar hücrelerden oluşur. Hücre, yaşamın en küçük birimidir. Her hücre başka bir hücrenin bölünmesiyle oluşur; çamurdan hücre çıkmaz.',
         undefined,
-        { not: 'Üç cümle, üçü de sınavda tek tek soruluyor; birini atlama.' },
+        { not: 'Üç cümlenin üçü de ayrı ayrı soruluyor; özellikle "her hücre başka hücreden gelir" cümlesini atlama.' },
       ),
       kart(
-        'Evrim kuramı',
-        'Darwin, doğal seçilimle türlerin zaman içinde değiştiğini gösterdi. Biyolojiyi tek çatı altında topladı.',
+        'Darwin: türler zamanla değişir',
+        'Uzun boyunlu zürafalar yüksek dallara ulaşıp yaşadı, kısa boyunlular aç kaldı. Nesiller sonra sürü uzun boyunlu oldu. Darwin buna doğal seçilim dedi: ortama uyan yaşar ve çoğalır. Türün böyle değişmesine evrim denir.',
       ),
       kart(
-        'Mendel ve kalıtım',
-        'Bezelyelerle yaptığı çaprazlamalarda kalıtımın belirli oranlarla işlediğini gösterdi; genetik böyle doğdu.',
+        'Mendel bezelyeyle kalıtımı çözdü',
+        'Mendel sarı bezelyeyle yeşil bezelyeyi çaprazladı, yani tozlaştırdı. Torun kuşakta hep 3 sarıya 1 yeşil çıktı. Kalıtım, yani özelliklerin anne babadan çocuğa geçişi, belirli oranlarla işliyordu. Genetik böyle doğdu.',
       ),
       kart(
-        'DNA’nın yapısı',
-        'Watson, Crick ve Franklin’in çalışmalarıyla 1953’te çift sarmal çözüldü; moleküler biyoloji böyle başladı.',
+        'DNA bükülmüş bir merdivene benzer',
+        '1953\'te Watson ve Crick, Franklin\'in çektiği görüntülerle DNA\'nın şeklini çözdü: iki iplik birbirine sarılmış, bükülmüş bir merdiven gibi. Buna çift sarmal denir. Kalıtımın nasıl kopyalandığı bu şekilden anlaşıldı.',
         {
           tur: 'akis',
           dikey: true,
@@ -103,12 +107,14 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         },
       ),
       kart(
-        'Antibiyotiğin bulunuşu',
-        'Fleming’in küf mantarında gözlediği bir kaza, bakteriyel enfeksiyonların öldürücü olmaktan çıkmasını sağladı.',
+        'Antibiyotik bir kazayla bulundu',
+        '1928\'de Fleming bakteri yetiştirdiği kabı açık unuttu. Kaba küf düştü ve küfün çevresindeki bakteriler öldü. Küfün ürettiği madde penisilin, yani ilk antibiyotik. Antibiyotik bakteriyi öldürür; virüse etki etmez, gribe içilmez.',
+        undefined,
+        { etiket: 'Sık hata' },
       ),
       kart(
-        'Genom projeleri',
-        'İnsan genomunun okunması hastalık genlerinin bulunmasını ve kişiye özgü tedaviyi mümkün kıldı.',
+        'Genom okundu, tedavi kişiye özel oldu',
+        '2003\'te insanın bütün DNA\'sı, yani genomu harf harf okundu. Artık bir hastalığın hangi gende olduğu bulunabiliyor. Doktor ilacı senin genine göre seçebiliyor; buna kişiye özgü tedavi denir.',
       ),
     ], [
       soru('Hücre teorisi, bütün canlıların hücrelerden oluştuğunu söyler.', true, 'Ayrıca her hücrenin kendinden önceki bir hücreden oluştuğunu da belirtir.'),
@@ -118,7 +124,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       sikli('Mantar kesitinde odacıklar görüp "hücre" diyen kimdir?', ['Leeuwenhoek', 'Hooke'], 1, 'Leeuwenhoek ilk mikroorganizmaları gözledi.'),
       sikli('Bezelyelerle kalıtımın oranlarını gösteren kimdir?', ['Darwin', 'Mendel'], 1, 'Genetik böyle doğdu.'),
       sikli('DNA çift sarmalı hangi yılda çözüldü?', ['1859', '1953'], 1, 'Watson, Crick ve Franklin.'),
-      soru('Antibiyotik planlı bir araştırmayla bulunmuştur.', false, 'Fleming\'in küf mantarında gözlediği bir kaza.'),
+      soru('Antibiyotik planlı bir araştırmayla bulunmuştur.', false, 'Fleming\'in açık unuttuğu kaba düşen küf; bir kaza.'),
     ], [
       {
         soru: 'Hücre teorisine göre yeni bir hücre nereden gelir?',
@@ -133,38 +139,45 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
     ]),
     konu('byl9-bilimin-dogasi', 'Bilimin Doğası', [
       kart(
-        'Bilimsel bilgi değişebilir',
-        'Yeni kanıt geldiğinde bilgi güncellenir. Bu bir zayıflık değil, bilimin kendini düzeltme yeteneğidir.',
+        'Bilimsel bilgi yeni kanıtla değişir',
+        'Eskiden mide ülserinin sebebi stres sanılıyordu. 1980\'lerde bir bakterinin ülser yaptığı kanıtlandı ve ders kitapları değişti. Bilim yanlışını kanıt gelince düzeltir. Bu zayıflık değil, bilimi güçlü yapan şey.',
       ),
       kart(
-        'Kanıta dayanır',
-        'İddia gözlem ve deneyle desteklenmelidir. Otoriteye dayanan bir açıklama bilimsel sayılmaz.',
+        'İddia kanıt ister, unvan değil',
+        'Ünlü bir profesör "bu bitki kanseri iyileştirir" dese bile bu bilimsel bilgi olmaz. Deney yapılmalı, sonuç ölçülmeli. Bilimde iddia gözlem ve deneyle desteklenir; kimin söylediği değil, kanıt önemli.',
       ),
       kart(
-        'Teori ve hipotez',
-        'Hipotez sınanmayı bekleyen açıklama; teori ise defalarca sınanmış, geniş kapsamlı bir açıklama sistemidir.',
+        'Hipotez sınanmayı bekleyen tahmindir',
+        'Bitkin sararınca "az su verdim galiba" dersin. Bu bir hipotez, yani sınanabilir bir tahmin. Suyu artırıp bakarsın: yeşerirse hipotez desteklenir, sararmaya devam ederse çürür. Hipotez henüz kanıtlanmış bir şey değil.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Yasa ile teori farkı',
-        'Yasa neyin olduğunu tarif eder, teori nedenini açıklar. Teori "kanıtlanmamış yasa" değildir.',
+        'Teori, defalarca sınanmış açıklamadır',
+        'Hücre teorisi yüzlerce yıldır her mikroskop görüntüsüyle sınandı ve hiç çürümedi. Bilimde teori, çok kez sınanmış ve geniş bir alanı açıklayan sistemdir. Günlük dildeki "bence şöyle" anlamındaki teori değil.',
+        undefined,
+        { not: '"Sadece bir teori" cümlesini duyunca dur: bilimde teori en güçlü açıklama, tahmin değil.' },
+      ),
+      kart(
+        'Yasa ne olduğunu, teori nedenini söyler',
+        'Bıraktığın kalem yere düşer: bu bir yasa, yani her zaman ne olduğunu söyleyen kural. Neden düştüğünü kütle çekim teorisi açıklar. Teori zamanla yasaya dönüşmez; ikisi ayrı işler yapar.',
         {
           tur: 'tablo',
-          basliklar: ['Kavram', 'Ne yapar?'],
+          basliklar: ['Kavram', 'Ne yapar?', 'Örnek'],
           satirlar: [
-            ['Hipotez', 'Sınanmayı bekler'],
-            ['Yasa', 'Ne olduğunu söyler'],
-            ['Teori', 'Nedenini açıklar'],
+            ['Hipotez', 'Sınanmayı bekler', '"Az su verdim"'],
+            ['Yasa', 'Ne olduğunu söyler', 'Kalem düşer'],
+            ['Teori', 'Nedenini açıklar', 'Kütle çekimi'],
           ],
         },
-        { not: '"Sadece bir teori" cümlesi bilimde küçümseme değil; teori en güçlü açıklama.' },
       ),
       kart(
-        'Yanlışlanabilirlik',
-        'Bilimsel bir iddia, yanlış olduğunu gösterebilecek bir gözleme açık olmalıdır. Hiçbir şeyle çürütülemeyen iddia bilim dışıdır.',
+        'Çürütülemeyen iddia bilim değildir',
+        'Biri "bahçemde görünmez bir ejderha var, hiçbir alet onu bulamaz" dese bunu asla sınayamazsın. Bilimsel iddia yanlışlanabilir olmalı: onu çürütebilecek bir gözlem düşünülebilmeli. Yanlışlanabilirlik, yani çürütmeye açık olma.',
       ),
       kart(
-        'Hakem değerlendirmesi',
-        'Bir çalışma yayımlanmadan önce alandaki başka araştırmacılarca denetlenir. Bu, hatanın ilk süzgecidir.',
+        'Makale önce hakemden geçer',
+        'Bir bilim insanı sonucunu yazar ve dergiye gönderir. Dergi bunu alandan iki üç uzmana okutur; hata varsa geri yollar. Buna hakem değerlendirmesi denir. Yayımlanmadan önce yapılır; hatanın ilk süzgeci.',
       ),
     ], [
       soru('Bilimsel bilgi, yeni kanıtlar karşısında değişebilir.', true, 'Değişebilir olması zayıflığı değil, kanıta bağlı olmasının sonucu.'),
@@ -174,6 +187,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       sikli('Hiçbir gözlemle çürütülemeyen iddia için ne söylenir?', ['Kesin doğrudur', 'Bilim dışıdır'], 1, 'Yanlışlanabilirlik şart.'),
       sikli('Yasa ne yapar?', ['Nedenini açıklar', 'Neyin olduğunu tarif eder'], 1, 'Nedeni teori açıklar.'),
       soru('Hakem değerlendirmesi çalışma yayımlandıktan sonra yapılır.', false, 'Yayımlanmadan önce; hatanın ilk süzgeci.'),
+      soru('Hipotez, kanıtlanmış kesin bir bilgidir.', false, 'Hipotez sınanmayı bekleyen tahmin; kanıtlanmış değil.'),
     ], [
       {
         soru: 'Bilimde "teori" ne demektir?',
@@ -183,13 +197,13 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
           dogru: 'Teori defalarca sınanmış açıklama sistemi; "sadece bir teori" deyişi bilimdeki anlamı taşımaz.',
           yanlis: 'Kanıtlanmamış tahmin hipotezdir. Teori ise onlarca sınamadan geçmiş, geniş kapsamlı bir açıklama.',
         },
-        kart: 3,
+        kart: 4,
       },
     ]),
     konu('byl9-arastirma', 'Bilimsel Araştırma Süreçleri', [
       kart(
-        'Adımlar',
-        'Gözlem, soru, hipotez, deney, veri toplama, analiz ve sonuç. Sonuç yeni bir soruya kapı açar.',
+        'Araştırma gözlemle başlar, soruyla sürer',
+        'Pencere kenarındaki bitkin öbüründen uzun; bu bir gözlem. "Işık bitkiyi uzatır mı?" bu bir soru. Sonra tahmin (hipotez), deney, ölçüm ve sonuç gelir. Sonuç çoğu zaman yeni bir soru doğurur; süreç bir döngü.',
         {
           tur: 'akis',
           donguSel: true,
@@ -202,30 +216,32 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         },
       ),
       kart(
-        'Değişkenler',
-        'Bağımsız değişken araştırmacının değiştirdiği, bağımlı değişken ölçülen, kontrol değişkenleri sabit tutulanlardır.',
+        'Bağımsız değişken senin değiştirdiğin',
+        'Bitkilere farklı miktarda ışık veriyorsun: ışık bağımsız değişken, yani senin bilerek değiştirdiğin şey. Ölçtüğün boy bağımlı değişken; ışığa bağlı değişiyor. Su, toprak, sıcaklık sabit kalır: kontrol değişkenleri.',
         undefined,
-        { not: 'Bir deney gördüğünde ilk iş üç değişkeni adlandırmak; soruların çoğu bunu istiyor.' },
+        { not: 'Deney sorusunda ilk iş: "Ne değiştirildi, ne ölçüldü, ne sabit?" Üçünü adlandırmadan şıklara bakma.' },
       ),
       kart(
-        'Örnek deney',
-        '"Işık miktarı bitki boyunu etkiler mi?" Bağımsız değişken ışık, bağımlı değişken boy; su, toprak ve sıcaklık sabit tutulur.',
+        'Tek seferde tek şeyi değiştir',
+        'Hem ışığı hem suyu aynı anda artırırsan bitki uzayınca sebebini bilemezsin: ışık mı, su mu? Bir deneyde tek bağımsız değişken değişir, gerisi sabit tutulur. Sık hata: iki şeyi birden değiştirip sonucu birine bağlamak.',
+        undefined,
+        { etiket: 'Sık hata' },
       ),
       kart(
-        'Kontrol grubu',
-        'Denenen etkiyi almayan grup. Onsuz gözlenen değişimin sebebi bilinemez.',
+        'Kontrol grubu karşılaştırma ölçüsüdür',
+        'Bir saksıya gübre verdin, bitki 20 cm oldu. İyi mi? Bilemezsin; gübresiz bir saksı lazım. Gübresiz saksı kontrol grubu, yani denenen etkiyi almayan grup. Onsuz değişimin sebebi gübre mi, mevsim mi anlaşılmaz.',
       ),
       kart(
-        'Plasebo',
-        'Etkisiz bir uygulama alan grup. İnsanlarda beklentinin kendisi sonucu değiştirdiği için gereklidir.',
+        'Plasebo: etkisiz hap, gerçek beklenti',
+        'Baş ağrılılara şekerden hap veriyorsun, yarısı "geçti" diyor. Bu plasebo etkisi: iyileşeceğine inanmak bile sonucu değiştirir. O yüzden ilaç denemesinde bir grup etkisiz hap, yani plasebo alır; gerçek ilaç onunla karşılaştırılır.',
       ),
       kart(
-        'Örneklem',
-        'Az sayıda ya da taraflı seçilmiş denek, doğru yapılmış bir deneyi bile yanlış sonuca götürür.',
+        'Üç kişiyle deney sonuç vermez',
+        'İlacı yalnızca üç kişide denedin, ikisi iyileşti. Şans da olabilir. Örneklem, yani deneye alınan grup, yeterince büyük ve karışık olmalı. Sadece gençleri seçersen sonuç yaşlılar için geçerli olmaz; buna taraflı örneklem denir.',
       ),
       kart(
-        'Tekrarlanabilirlik',
-        'Aynı koşullarda başkalarının da aynı sonucu alabilmesi gerekir. Tekrarlanamayan sonuç kabul edilmez.',
+        'Başkası tekrarlayamıyorsa sonuç sayılmaz',
+        'Bir deneyde şaşırtıcı bir sonuç aldın. Başka bir ekip aynı koşullarda deneyi yapıp aynı sonucu almalı. Alamıyorsa hata ya da şans olabilir; sonuç kabul edilmez. Buna tekrarlanabilirlik denir.',
       ),
     ], [
       soru('Kontrol grubu, deney grubuyla karşılaştırma yapabilmek için kullanılır.', true, 'Değişkenin etkisi ancak bu karşılaştırmayla görülüyor.'),
@@ -250,30 +266,30 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
     ]),
     konu('byl9-etik', 'Bilim Etiği', [
       kart(
-        'Veri uydurmak',
-        'Sonuç uydurmak ya da beğenilmeyen veriyi gizlemek en ağır ihlaldir; yayın geri çekilir.',
+        'Veriyi uydurmak en ağır ihlaldir',
+        'Deneyi 10 kez yaptın, 7\'sinde ilaç işe yaramadı. Yalnızca işe yarayan 3\'ünü yazarsan bu veri gizlemek. Hiç deney yapmadan sayı yazmak ise veri uydurmak. İkisi de etik ihlal; ortaya çıkınca makale geri çekilir.',
       ),
       kart(
-        'Aşırma',
-        'Başkasının çalışmasını kaynak göstermeden kullanmak. Alıntı yapmak serbest, sahiplenmek değil.',
+        'Alıntı serbest, sahiplenmek aşırma',
+        'Ödevine internetten bir paragrafı kaynağını yazmadan koyarsan bu aşırma, yani intihal. Aynı paragrafı "Kaynak: …" diye belirtirsen alıntı olur ve serbesttir. Fark tek şey: emeğin sahibini söylemek.',
       ),
       kart(
-        'Aydınlatılmış onam',
-        'İnsan üzerinde çalışma yapılacaksa kişi riskleri bilerek ve gönüllü olarak kabul etmelidir.',
+        'Denek riskleri bilerek evet demeli',
+        'Yeni bir ilacı insanda deneyeceksin. Katılacak kişiye yan etkileri anlatırsın, yazılı onayını alırsın, istediği an çıkabileceğini söylersin. Buna aydınlatılmış onam denir: bilerek ve gönüllü kabul. Onamsız insan deneyi yapılmaz.',
       ),
       kart(
-        'Hayvan deneyleri',
-        'Etik kurul onayı gerekir; sayı en aza indirilir, acı azaltılır, mümkünse alternatif yöntem seçilir.',
+        'Hayvan deneyi izinle ve en az sayıyla',
+        'Fareyle deney yapacaksan önce etik kurul onayı gerekir. Üç kural: kullanılan hayvan sayısı en aza indirilir, acı azaltılır, hücre kültürü gibi bir alternatif varsa o seçilir.',
       ),
       kart(
-        'Çıkar çatışması',
-        'Araştırmayı finanse eden kuruluşun sonuçtan çıkarı varsa bu açıkça bildirilmelidir.',
+        'Araştırmayı kimin ödediği yazılmalı',
+        'Bir şeker şirketi "şeker zararsızdır" diyen bir araştırmaya para ödemiş olsun. Sonuç doğru olabilir ama okuyan bunu bilmeli. Buna çıkar çatışması denir: sonuçtan kazancı olanın bunu açıkça bildirmesi zorunlu.',
         undefined,
-        { not: 'Sonucu doğru bulmak yetmez; kimin ödediğini sormayı da öğren.' },
+        { not: 'Bir araştırma sonucunu okurken yanına "kim ödedi" sorusunu koy; cevap gizliyse şüphelen.' },
       ),
       kart(
-        'Kişisel verinin gizliliği',
-        'Genetik veri kişiye ve ailesine aittir; kimliği açık edecek biçimde paylaşılamaz.',
+        'Genetik verin sadece sana ait değil',
+        'DNA testin yalnızca seni değil anneni, kardeşini de anlatır; çünkü genleriniz ortak. Bu yüzden genetik veri kimliği açık edecek biçimde paylaşılamaz. Araştırmalarda isimler silinir, veri şifrelenir.',
       ),
     ], [
       soru('Beklenen sonuca uymayan verileri çıkarmak bilim etiğine aykırıdır.', true, 'Veriyi seçmek, sonucu önceden yazmak demek.'),
@@ -297,42 +313,54 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
     ]),
     konu('byl9-ortak-ozellik', 'Canlıların Ortak Özellikleri', [
       kart(
-        'Hücresel yapı',
-        'Bütün canlılar hücrelerden oluşur. Virüsler hücresel yapıya sahip olmadığı için tartışmalıdır.',
+        'Her canlı hücreden yapılmıştır',
+        'Sen yaklaşık 30 trilyon hücresin; bir bakteri tek bir hücre. Canlıların ilk ortak özelliği hücresel yapı: hücresiz canlı yok. Virüsün hücresi yok; o yüzden canlı sayılıp sayılmayacağı tartışmalı.',
       ),
       kart(
-        'Beslenme ve enerji',
-        'Ototroflar besinini kendi üretir, heterotroflar dışarıdan alır. Her canlı enerji üretir ve tüketir.',
+        'Besinini ya üretirsin ya bulursun',
+        'Bir elma ağacı güneş ışığıyla kendi şekerini yapar: ototrof, yani kendi besinini üreten. Sen elmayı yersin: heterotrof, yani besini dışarıdan alan. Her canlı beslenir; fark besini nereden bulduğu.',
       ),
       kart(
-        'Metabolizma',
-        'Yapım (anabolizma) ve yıkım (katabolizma) tepkimelerinin tamamı. Yaşam bu iki yönün dengesidir.',
+        'Solunum besindeki enerjiyi açığa çıkarır',
+        'Yediğin ekmek doğrudan enerji vermez; hücre onu parçalar ve enerjiyi ATP adlı moleküle yükler. ATP, yani hücrenin enerji parası. Bu işe hücresel solunum denir ve her canlıda olur; bitkide de.',
       ),
       kart(
-        'Homeostazi',
-        'İç ortamı dengede tutma. Vücut sıcaklığının ve kan şekerinin sabit tutulması buna örnektir.',
-      ),
-      kart(
-        'Uyarılara tepki',
-        'Canlılar çevredeki değişimi algılar ve karşılık verir. Bitkinin ışığa yönelmesi de bir tepkidir.',
-      ),
-      kart(
-        'Boşaltım ve solunum',
-        'Metabolizmanın artıkları dışarı atılır; solunumla besindeki enerji kullanılabilir hâle getirilir.',
-      ),
-      kart(
-        'Üreme, büyüme, uyum',
-        'Canlılar çoğalır, gelişir; varyasyon ve adaptasyon sayesinde türler değişen koşullara uyum sağlar.',
-      ),
-      kart(
-        'Virüs canlı mı?',
-        'Kalıtım maddesi var ve çoğalabiliyor ama hücresi yok ve konak dışında hiçbir yaşam belirtisi göstermiyor.',
+        'Metabolizma yapım ve yıkımın toplamıdır',
+        'Kas proteini yaparken küçük amino asitleri birleştirirsin: yapım, yani anabolizma. Şekeri parçalayıp enerji alırken: yıkım, yani katabolizma. Hücredeki bütün bu tepkimelerin toplamı metabolizma.',
         undefined,
-        { not: 'Ortak özellikleri virüse tek tek uygula; hangilerinde takıldığını gör.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Organizasyon',
-        'Her canlıda hücreden başlayan düzenli bir yapı vardır; çok hücrelilerde hücre → doku → organ → sistem → organizma sırası.',
+        'Vücut iç dengesini sabit tutar',
+        'Dışarısı 40 derece de olsa −10 da olsa vücudun 36,5\'te kalır; terlersin ya da titrersin. Buna homeostazi denir: iç ortamı dengede tutmak. Kan şekerinin sabit kalması da homeostazi.',
+      ),
+      kart(
+        'Canlı uyarana tepki verir',
+        'Elini sobaya değdirince çekersin. Pencerede duran bitki güneşe doğru eğilir. İkisi de uyarana tepki: çevredeki değişimi algılayıp karşılık vermek. Bitkinin tepkisi yavaş ama var.',
+      ),
+      kart(
+        'Metabolizma artıkları dışarı atılır',
+        'Hücre çalışınca çöp çıkar: karbondioksit, üre gibi. Nefes verirken CO₂ atarsın, idrarla üreyi. Buna boşaltım denir: metabolizma artıklarını dışarı atmak. Sindirilmemiş besinin dışkıyla atılması boşaltım değil.',
+        undefined,
+        { etiket: 'Sık hata' },
+      ),
+      kart(
+        'Canlı büyür ve çoğalır',
+        'Bir fasulye tohumu filiz verir, boy atar: büyüme. Ergin bitki tohum yapar, yeni bitkiler çıkar: üreme. Bakteri ikiye bölünerek çoğalır. Bireyin yaşaması için üreme şart değil, türün sürmesi için şart.',
+      ),
+      kart(
+        'Aynı türde küçük farklar uyum sağlar',
+        'Aynı sürüdeki tavşanların kürkü biraz açık, biraz koyu: buna varyasyon denir, yani tür içi farklılık. Karlı yerde açık renkli olan saklanır ve yaşar. Ortama uygun özelliğin yerleşmesine adaptasyon, yani uyum denir.',
+      ),
+      kart(
+        'Virüs canlı ile cansızın sınırında',
+        'Virüsün DNA\'sı ya da RNA\'sı var ve çoğalabiliyor; bu canlı gibi. Ama hücresi yok, kendi başına beslenmiyor, solunum yapmıyor. Ancak bir hücrenin içine girince çoğalıyor. Dışarıda cansız bir taneciğe benziyor.',
+        undefined,
+        { not: 'Virüs sorusunda listeyi tek tek dene: hücre var mı, yok. Solunum var mı, yok. Takıldığı yer cevabın.' },
+      ),
+      kart(
+        'Hücreden organizmaya sıra vardır',
+        'Kas hücreleri kas dokusunu, kas dokusu kalbi (organ), kalp damarlarla dolaşım sistemini kurar. Sistemler seni, yani organizmayı oluşturur. Buna organizasyon denir; her canlıda düzenli bir yapı var.',
       ),
     ], [
       soru('Bütün canlılar hücresel yapıya sahiptir.', true, 'Hücre, canlılığın en küçük yapı ve işlev birimi.'),
@@ -345,6 +373,8 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       sikli('Virüsün canlılığı neden tartışmalıdır?', ['Kalıtım maddesi yok', 'Hücresi yok'], 1, 'Konak dışında yaşam belirtisi göstermez.'),
       soru('Çok hücrelide sıra hücre → doku → organ → sistem → organizmadır.', true, 'Organizasyon.'),
       soru('Solunum besindeki enerjiyi kullanılabilir hâle getirir.', true, 'ATP üretimi.'),
+      sikli('Nefes verirken CO₂ atman hangi ortak özelliktir?', ['Boşaltım', 'Beslenme'], 0, 'Metabolizma artığını dışarı atmak boşaltım.'),
+      soru('Bakterinin ikiye bölünerek çoğalması üremedir.', true, 'Tek hücreli de ürer; bölünme onun üreme yolu.'),
     ], [
       {
         soru: 'Vücut sıcaklığının sabit tutulması hangi ortak özelliktir?',
@@ -354,39 +384,56 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
           dogru: 'İç ortamı dengede tutmak homeostazinin tanımı.',
           yanlis: 'Metabolizma yapım-yıkım tepkimelerinin tamamı. İç dengenin korunması ayrı bir özellik: homeostazi.',
         },
-        kart: 4,
+        kart: 5,
+      },
+      {
+        soru: 'Virüs canlıların hangi ortak özelliğini taşımaz?',
+        siklar: ['Kalıtım maddesi', 'Hücresel yapı'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Virüsün DNA ya da RNA\'sı var ama hücresi yok; tartışma bu yüzden.',
+          yanlis: 'Virüsün kalıtım maddesi var, DNA ya da RNA taşır. Eksik olan hücre: virüs hücresiz bir tanecik.',
+        },
+        kart: 10,
       },
     ]),
     konu('byl9-inorganik', 'İnorganik Moleküller', [
       kart(
-        'Su neden vazgeçilmez?',
-        'Polar yapısı sayesinde iyi çözücüdür; tepkimeler suda gerçekleşir ve maddeler suyla taşınır.',
+        'İnorganik madde dışarıdan alınır',
+        'Su içersin, tuz yersin; vücudun bunları üretemez, dışarıdan alır. Böyle moleküllere inorganik denir: su, mineral, asit, baz, tuz. Enerji vermez ve sindirilmezler; oldukları gibi kullanılırlar. Şeker ve protein ise organik.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Adezyon ve kohezyon',
-        'Kohezyon su moleküllerini birbirine, adezyon başka yüzeye bağlar. Bitkilerde su bu sayede yükselir.',
+        'Su çoğu şeyi çözer',
+        'Şekeri suya at, kaybolur; yağı at, üstte kalır. Su molekülünün bir ucu hafif artı, öteki hafif eksi yüklü; buna polar denir. Bu yüzden yüklü maddeleri çözer. Hücrede tepkimeler suda olur, besin ve atık suyla taşınır.',
       ),
       kart(
-        'Suyun ısı dengeleyiciliği',
-        'Öz ısısı yüksek olduğu için geç ısınır geç soğur; vücut ve göl sıcaklığı ani değişmez.',
+        'Su suya yapışır, yüzeye yapışır',
+        'Bardağı biraz taşır doldur, su dökülmeden kabarır: su molekülleri birbirini tutar, buna kohezyon denir. Suyun cam yüzeye yapışması adezyon: başka yüzeye tutunma. Ağaçta su bu ikisiyle kökten yaprağa tırmanır.',
       ),
       kart(
-        'Mineraller',
-        'Yapıya katılır ve tepkimeleri düzenler; eksikliği belirli hastalıklarla kendini gösterir.',
+        'Su geç ısınır, geç soğur',
+        'Yazın deniz öğlen bile kumdan serin; akşam kum soğur, deniz ılık kalır. Suyun öz ısısı yüksek: ısınması için çok ısı gerekir. Vücudunun büyük kısmı su olduğu için sıcaklığın güneşte bir anda fırlamaz.',
+      ),
+      kart(
+        'Mineral yapıya girer, enerji vermez',
+        'Kemiğindeki kalsiyum, kanındaki demir birer mineral. Kalsiyum kemiği kurar, demir oksijeni taşıyan hemoglobine girer. Mineraller yapıya katılır ve tepkimeleri düzenler; eksiğinde hastalık çıkar. Enerji vermezler.',
         {
           tur: 'tablo',
-          basliklar: ['Mineral', 'Görevi'],
+          basliklar: ['Mineral', 'Görevi', 'Eksikliğinde'],
           satirlar: [
-            ['Kalsiyum', 'Kemik ve kas'],
-            ['Demir', 'Hemoglobin'],
-            ['İyot', 'Tiroit hormonu'],
-            ['Magnezyum', 'Klorofil, enzim'],
+            ['Kalsiyum', 'Kemik ve kas', 'Kemik erimesi'],
+            ['Demir', 'Hemoglobin', 'Kansızlık'],
+            ['İyot', 'Tiroit hormonu', 'Guatr'],
+            ['Magnezyum', 'Klorofil, enzim', 'Kas krampı'],
           ],
         },
+        { etiket: 'Sık hata' },
       ),
       kart(
-        'Asit, baz ve pH',
-        'pH 7 nötr, altı asidik, üstü baziktir. Enzimler yalnızca dar bir pH aralığında çalışır.',
+        'pH 7 orta, altı asit, üstü baz',
+        'Limon suyu pH 2: asidik. Sabun pH 9: bazik. Saf su pH 7: nötr, yani ne asit ne baz. pH, bir sıvının ne kadar asidik olduğunu 0–14 arası bir sayıyla söyler. Sayı küçüldükçe asit güçlenir.',
         {
           tur: 'sayiDogrusu',
           aralik: [0, 14],
@@ -398,18 +445,14 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         },
       ),
       kart(
-        'Tampon sistemler',
-        'Kan pH’ı 7,4 dolayında dar bir aralıkta tutulur; küçük bir sapma bile enzimleri durdurabilir.',
+        'Asit H⁺ verir, baz H⁺ alır',
+        'Mide sıvısı asidik: ortama H⁺, yani hidrojen iyonu bırakır. Safra bazik: OH⁻ verir ya da H⁺\'yı bağlar. Asit ve baz karışınca birbirini nötrler; mide asidi ince bağırsakta safrayla nötrlenir.',
+      ),
+      kart(
+        'Kan pH\'ı 7,4\'te tutulur',
+        'Kanın pH\'ı 7,4; küçük bir sapma bile hayati tehlike. Çünkü enzimler, yani tepkimeleri yürüten proteinler, dar bir pH dışında çalışmaz. Tampon sistemler fazla H⁺ ya da OH⁻\'yi bağlayıp pH\'ı sabit tutar.',
         undefined,
-        { not: 'pH değerini değil dar aralığın neden şart olduğunu tut: enzimler.' },
-      ),
-      kart(
-        'Asitler ve bazlar',
-        'Asitler ortama H⁺ verir, bazlar OH⁻ verir ya da H⁺ bağlar. Mide asidik, safra baziktir.',
-      ),
-      kart(
-        'İnorganik mi organik mi?',
-        'İnorganik moleküller canlı tarafından üretilmez, dışarıdan alınır: su, mineral, asit, baz, tuz. Enerji vermezler ve sindirilmezler.',
+        { not: 'Tampon sorusu "neden dar aralık" diye gelirse aklına enzim gelsin: enzim dar pH dışında durur.' },
       ),
     ], [
       soru(
@@ -443,51 +486,57 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
           dogru: 'Tampon, ortama gelen fazla H⁺ ya da OH⁻\'yi bağlayıp pH\'ı sabitler.',
           yanlis: 'Mineraller yapıya katılır ve tepkimeleri düzenler; pH\'ı dar aralıkta tutan tampon sistemler.',
         },
-        kart: 6,
+        kart: 8,
       },
     ]),
     konu('byl9-organik', 'Organik Moleküller', [
       kart(
-        'Dört temel grup',
-        'Canlıdaki büyük moleküller dört sınıfta toplanır ve her biri kendi küçük biriminden kurulur.',
+        'Büyük molekül küçük tuğlalardan kurulur',
+        'Bir duvar tuğlalardan kurulur; nişasta da yüzlerce glikozdan. Canlıdaki büyük organik moleküller dört grup ve her birinin kendi tuğlası, yani yapı birimi var. Organik: canlının ürettiği, karbon içeren molekül.',
         {
           tur: 'tablo',
-          basliklar: ['Molekül', 'Yapı taşı'],
+          basliklar: ['Molekül', 'Yapı taşı', 'Örnek'],
           satirlar: [
-            ['Karbonhidrat', 'Monosakkarit'],
-            ['Lipit', 'Yağ asidi'],
-            ['Protein', 'Amino asit'],
-            ['Nükleik asit', 'Nükleotit'],
+            ['Karbonhidrat', 'Monosakkarit', 'Nişasta'],
+            ['Lipit', 'Yağ asidi', 'Tereyağı'],
+            ['Protein', 'Amino asit', 'Kas, enzim'],
+            ['Nükleik asit', 'Nükleotit', 'DNA, RNA'],
           ],
         },
       ),
       kart(
-        'Karbonhidratlar',
-        'Hızlı enerji kaynağı. Monosakkarit (glikoz), disakkarit (sükroz) ve polisakkarit (nişasta, glikojen, selüloz) olarak gruplanır.',
+        'Karbonhidrat en hızlı enerjidir',
+        'Sınavdan önce yediğin çikolata seni hemen toparlar: karbonhidrat hızlı yakılır. En küçük birimi monosakkarit (glikoz). İkisi birleşince disakkarit (çay şekeri sükroz), yüzlercesi birleşince polisakkarit (nişasta).',
       ),
       kart(
-        'Lipitler',
-        'Yoğun enerji deposu, hücre zarının yapı taşı ve bazı hormonların kaynağı. Suda çözünmezler.',
+        'Nişasta, glikojen ve selüloz hep glikoz',
+        'Patatesteki nişasta, karaciğerindeki glikojen, kâğıttaki selüloz: üçü de glikoz zinciri, bağlanışları farklı. Bitki nişasta depolar, hayvan glikojen. Selüloz bitki hücresinin duvarı; insan onu sindiremez, lif olarak geçer.',
       ),
       kart(
-        'Proteinler',
-        'Amino asitlerden kurulur. Yapı, taşıma, savunma ve enzim görevleri vardır; sırası işlevi belirler.',
+        'Yağ en çok enerjiyi depolar',
+        'Bir gram yağ, bir gram şekerin iki katından fazla enerji taşır; vücut fazla enerjiyi bu yüzden yağ olarak biriktirir. Lipit, yani yağ ve benzerleri. Suda çözünmezler; hücre zarını kurarlar, bazı hormonlar yağdan yapılır.',
       ),
       kart(
-        'Karbonhidrat depoları',
-        'Bitki nişasta, hayvan glikojen depolar; selüloz bitki duvarıdır ve insan onu sindiremez. Üçü de glikoz zinciridir.',
+        'Enerji sırası: şeker, yağ, protein',
+        'Koşarken vücudun önce karbonhidratı yakar; hızlı. Uzun sürerse yağa geçer; bol ama yavaş. Proteini en son yakar, çünkü protein yapı malzemesi. Sık hata: yağ "en çok enerji verir" diye ilk kullanılan sanmak.',
+        undefined,
+        { etiket: 'Sık hata' },
       ),
       kart(
-        'Enzimler',
-        'Tepkimeleri hızlandıran protein yapılı katalizörler. Aktivasyon enerjisini düşürür, kendileri tükenmez.',
+        'Protein amino asit zinciridir',
+        'Kasın, saçın, tırnağın protein. Protein, amino asit denen 20 çeşit tuğlanın dizilmesiyle kurulur. Diziliş değişince protein değişir; harflerin sırası değişince kelimenin değişmesi gibi. Yapı, taşıma, savunma ve enzim işi görür.',
       ),
       kart(
-        'Enzim-substrat uyumu',
-        'Enzim yalnızca kendi substratına uyar; anahtar-kilit benzetmesi bu seçiciliği anlatır.',
+        'Enzim tepkimeyi hızlandırır, tükenmez',
+        'Ağzındaki amilaz enzimi ekmeği saniyeler içinde parçalamaya başlar; enzimsiz bu yıllar sürerdi. Enzim, tepkimeyi hızlandıran protein. Tepkimeye girip değişmeden çıkar, binlerce kez kullanılır. Tükenen substrat, enzim değil.',
       ),
       kart(
-        'Enzimi etkileyen etmenler',
-        'Sıcaklık ve pH belirli bir değere kadar hızı artırır, o noktadan sonra proteini bozar ve hız düşer.',
+        'Enzim yalnızca kendi maddesine uyar',
+        'Amilaz nişastayı parçalar ama proteine dokunmaz. Enzimin etkilediği maddeye substrat denir. Enzim ile substrat anahtar-kilit gibi uyar: her anahtar tek kilidi açar. Bu yüzden vücutta binlerce farklı enzim var.',
+      ),
+      kart(
+        'Sıcaklık enzimi hızlandırır, sonra bozar',
+        'Enzim 37 derecede en hızlı çalışır. 40\'ın üstünde hız aniden düşer, çünkü enzim protein ve ısı proteinin şeklini bozar; yumurta pişince katılaşır ya. Bozulan enzim substratına uymaz. pH da aynı: tepesi var, iki yanı düşüş.',
         {
           tur: 'koordinat',
           pencere: [0, 6, 0, 6],
@@ -505,19 +554,19 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
             },
           ],
         },
-        { not: '"Artar" diye ezberleme; sıcaklık ve pH\'ın bir tepesi var, ötesi düşüş.' },
+        { not: 'Grafiği tepeden ikiye böl: sola kadar artış, sağda düşüş. Düşüşün sebebi enzimin şeklinin bozulması.' },
       ),
       kart(
-        'Nükleik asitler ve vitaminler',
-        'DNA kalıtım bilgisini taşır, RNA onu kullanır. Vitaminler enerji vermez ama tepkimelerin düzenleyicisidir.',
+        'DNA bilgiyi taşır, RNA kullanır',
+        'Hücrenin yapacağı her protein DNA\'da yazılı: DNA kalıtım bilgisini saklar. RNA bu yazının kopyasını alıp ribozoma götürür, protein orada yapılır. İkisi de nükleik asit; tuğlaları nükleotit.',
       ),
       kart(
-        'Dehidrasyon ve hidroliz',
-        'Büyük moleküller su çıkararak birleşir (dehidrasyon), su eklenerek parçalanır (hidroliz).',
+        'Vitamin enerji vermez, düzenler',
+        'C vitamini eksikse diş etin kanar; ama vitamin seni doyurmaz. Vitaminler enerji vermez, tepkimelerin düzenleyicisidir; çoğu enzime yardımcı olur. Az miktarda gerekirler ve çoğunu vücut üretemez.',
       ),
       kart(
-        'Enerji önceliği',
-        'Enerji için önce karbonhidrat, sonra yağ, en son protein kullanılır. Yağ en çok enerji verir ama en yavaş yıkılır.',
+        'Birleşirken su çıkar, ayrılırken su girer',
+        'İki glikoz birleşip sükroz olurken aradan bir su molekülü çıkar: dehidrasyon, yani su çıkarma. Sindirimde sükroz suyla parçalanıp iki glikoza döner: hidroliz, yani suyla parçalama. Yapmak su verir, yıkmak su alır.',
       ),
     ], [
       soru('Enzimler tepkimeyi hızlandırır ve tepkime sonunda değişmeden çıkar.', true, 'Bu yüzden aynı enzim defalarca kullanılabiliyor.'),
@@ -532,6 +581,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       sikli('Büyük moleküllerin su çıkararak birleşmesi?', ['Hidroliz', 'Dehidrasyon'], 1, 'Hidroliz su ekleyerek parçalar.'),
       sikli('Vitaminler ne yapar?', ['Enerji verir', 'Tepkimeleri düzenler'], 1, 'Enerji vermez.'),
       soru('Lipitler suda çözünür.', false, 'Çözünmezler; hücre zarının yapı taşı.'),
+      soru('Vücut enerji için önce karbonhidratı, en son proteini kullanır.', true, 'Sıra: karbonhidrat, yağ, protein.'),
     ], [
       {
         soru: 'Enzim tepkimeden sonra ne olur?',
@@ -541,7 +591,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
           dogru: 'Enzim katalizör; tepkimeye girer, hızlandırır ve olduğu gibi çıkar.',
           yanlis: 'Tükenen substrat. Enzim tepkimeden değişmeden çıkar ve aynı enzim binlerce tepkimeyi art arda hızlandırır.',
         },
-        kart: 5,
+        kart: 7,
       },
       {
         soru: 'Yüksek sıcaklıkta enzim hızının düşmesinin sebebi?',
@@ -551,15 +601,21 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
           dogru: 'Enzim proteindir; belli sıcaklığın üstünde şekli bozulur ve substratına uyamaz.',
           yanlis: 'Substrat sıcaklıkla tükenmez. Isı enzimin üç boyutlu şeklini bozar; şekli bozulan enzim çalışmaz.',
         },
-        kart: 8,
+        kart: 9,
       },
     ]),
   ]),
   tema('byl9-t2', 'Organizasyon', [
     konu('byl9-hucre-tur', 'Prokaryot ve Ökaryot Hücre', [
       kart(
-        'Temel fark',
-        'Prokaryotta zarla çevrili çekirdek ve organel yoktur; ökaryotta ikisi de vardır.',
+        'Prokaryotta DNA ortada serbest durur',
+        'Bakteri hücresine bak: DNA\'sı sitoplazmanın ortasında çıplak duruyor, çevresinde zar yok. Buna prokaryot denir: zarla çevrili çekirdeği ve zarlı organeli olmayan hücre. Organel, yani hücre içinde belli bir işi yapan yapı.',
+        undefined,
+        { etiket: 'Tanım' },
+      ),
+      kart(
+        'Ökaryotta DNA çekirdeğin içindedir',
+        'Senin hücrelerinde DNA, zarla çevrili bir odada durur: çekirdek. Ayrıca mitokondri gibi zarlı organeller var. Buna ökaryot denir: gerçek çekirdekli hücre. Protist, mantar, bitki ve hayvan hücreleri ökaryot.',
         {
           tur: 'tablo',
           basliklar: ['Özellik', 'Prokaryot', 'Ökaryot'],
@@ -572,26 +628,22 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         },
       ),
       kart(
-        'Prokaryotlar',
-        'Bakteri ve arkeler. DNA sitoplazmada serbest durur, ribozomları daha küçüktür.',
+        'Bakteri ve arke prokaryottur',
+        'Yoğurttaki bakteri, kaplıcadaki arke: ikisi de prokaryot ve tek hücreli. DNA\'ları halka biçimli, ribozomları ökaryotunkinden küçük. Ribozom, yani protein üreten küçük yapı. Prokaryot küçük, ökaryot çok daha büyük.',
       ),
       kart(
-        'Ökaryotlar',
-        'Protist, mantar, bitki ve hayvanlar. Hücreleri daha büyük ve bölmelidir.',
-      ),
-      kart(
-        'Neden bölmeli?',
-        'Zarla ayrılmış bölmeler farklı tepkimelerin birbirine karışmadan aynı anda yürümesini sağlar.',
+        'Bölme, işlerin karışmasını önler',
+        'Mutfakta yemek pişerken banyoda çamaşır yıkanır; odalar ayrı olduğu için karışmaz. Ökaryot hücre de bölmeli: lizozomda parçalama, mitokondride enerji üretimi aynı anda yürür. Zarlar bölmeleri ayırır.',
         undefined,
-        { not: 'Ökaryotun farkını çekirdekle sınırlama; bölmelemenin neyi mümkün kıldığını anla.' },
+        { not: 'Ökaryotun farkı iki şey: zarlı çekirdek ve zarlı organeller. Sınav ikisini de sayıyor, yalnız çekirdeği değil.' },
       ),
       kart(
-        'Bitki ve hayvan hücresi',
-        'Bitki hücresinde duvar, kloroplast ve büyük koful bulunur; hayvan hücresinde sentrozom vardır.',
+        'Bitkide duvar ve kloroplast var',
+        'Bitki hücresinin dışında sert bir duvar var, içinde yeşil kloroplast ve büyük bir koful, yani su dolu kese. Hayvan hücresinde bunlar yok; onun yerine bölünmede iş gören sentrozom var. İkisi de ökaryot.',
       ),
       kart(
-        'Ortak yanları',
-        'İkisinde de hücre zarı, sitoplazma, ribozom ve DNA bulunur. Bunlar yaşamın asgari donanımıdır.',
+        'Dört şey her hücrede var',
+        'Bakteri de senin hücren de dört şey taşır: dışarıdan ayıran hücre zarı, içini dolduran sitoplazma, protein yapan ribozom ve bilgiyi taşıyan DNA. Bu dördü yaşamın en az donanımı. Çekirdek bu listede yok.',
       ),
     ], [
       soru(
@@ -628,30 +680,34 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
     ]),
     konu('byl9-zar', 'Hücre Zarı', [
       kart(
-        'Yapısı',
-        'Çift katlı fosfolipit tabakası; içine gömülü proteinler, kolesterol ve karbonhidrat zincirleri bulunur.',
-      ),
-      kart(
-        'Neden çift katlı?',
-        'Fosfolipitin bir ucu suyu sever, öteki ucu sevmez. Suda kendiliğinden su sevmez uçlar içeride kalacak biçimde dizilirler.',
+        'Zar iki sıra yağ molekülünden kurulur',
+        'Hücre zarı sabun köpüğü gibi ince bir tabaka. Malzemesi fosfolipit, yani bir başı ve iki kuyruğu olan yağ molekülü. Fosfolipitler iki sıra hâlinde dizilir; aralarına protein, kolesterol ve şeker zincirleri gömülüdür.',
         undefined,
-        { not: 'Zarın yapısını ezberlemek yerine suyu seven-sevmeyen uçları çiz; yapı kendiliğinden çıkar.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Akıcı mozaik model',
-        'Zar sabit bir duvar değil; proteinler lipit denizinde yüzer. Bu yüzden esnek ve onarılabilirdir.',
+        'Kuyruklar sudan kaçar, başlar suya döner',
+        'Fosfolipitin başı suyu sever, kuyrukları sudan kaçar. Hücrenin içi de dışı da sulu. Bu yüzden kuyruklar birbirine dönük, başlar dışa bakar: çift kat kendiliğinden kurulur. Kimse dizmez, su dizer.',
+        undefined,
+        { not: 'Zarın yapısı sorulunca şunu çiz: başlar dışta, kuyruklar içte. Çizdiğinde çift kat kendiliğinden çıkar.' },
       ),
       kart(
-        'Zar proteinleri',
-        'Kimi taşıyıcı, kimi kanal, kimi alıcıdır. Hücrenin dış dünyayla konuşması bu proteinlerle olur.',
+        'Zar akışkandır, proteinler yüzer',
+        'Zarı buzda kaymaya değil, yağda yüzmeye benzet: fosfolipitler yer değiştirir, proteinler aralarında yüzer. Buna akıcı mozaik model denir; mozaik, çünkü farklı parçalardan kurulu. Zar bu yüzden esner ve yırtılınca onarılır.',
       ),
       kart(
-        'Seçici geçirgenlik',
-        'Zar neyin gireceğine karar verir. Küçük ve yağda çözünenler kolay geçer, büyük ve yüklüler taşıyıcı ister.',
+        'Zar proteinleri kapı ve anten görevinde',
+        'Bazı proteinler kanal: su ve iyon oradan geçer. Bazıları taşıyıcı: glikozu tutup içeri alır. Bazıları alıcı: hormon yapışınca hücreye haber verir. Hücre dışarıyla bu proteinlerle konuşur.',
       ),
       kart(
-        'Hücre duvarı ile karışmasın',
-        'Duvar bitki, mantar ve bakterilerde zarın dışındadır; cansızdır ve tam geçirgendir.',
+        'Zar herkesi içeri almaz',
+        'Oksijen küçük ve yağda çözünür; zardan doğrudan geçer. Glikoz büyük; taşıyıcı protein ister. Sodyum iyonu yüklü; kanal ister. Zar neyin gireceğini seçer: buna seçici geçirgenlik denir.',
+      ),
+      kart(
+        'Hücre duvarı zarın dışında ayrı bir kat',
+        'Bitki, mantar ve bakteri hücresinde zarın dışında bir de sert duvar var. Duvar cansız ve tam geçirgen: seçmez, her şey geçer. Seçen zardır. Hayvan hücresinde duvar yok. Sık hata: duvarı seçici sanmak.',
+        undefined,
+        { etiket: 'Sık hata' },
       ),
     ], [
       soru('Hücre zarı seçici geçirgendir.', true, 'Hangi maddenin geçeceğine zarın yapısı karar veriyor.'),
@@ -675,37 +731,39 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
     ]),
     konu('byl9-sitoplazma', 'Sitoplazma', [
       kart(
-        'Ne içerir?',
-        'Zar ile çekirdek arasını dolduran sıvı (sitozol) ve içindeki organeller ile sitoplazmik yapılar.',
-      ),
-      kart(
-        'Görevi',
-        'Tepkimelerin çoğu burada gerçekleşir; organelleri taşır ve maddelerin dağılmasını sağlar.',
-      ),
-      kart(
-        'İçeriği',
-        'Büyük kısmı su; ayrıca protein, tuz, enzim ve besin molekülleri bulunur.',
-      ),
-      kart(
-        'Neden çoğu su?',
-        'Tepkimeler çözelti içinde yürür. Susuz bir sitoplazmada moleküller birbirini bulamaz.',
-      ),
-      kart(
-        'Sitoplazma hareketi',
-        'Bitki hücrelerinde sitoplazmanın dolaşması maddelerin hücre içinde dağılmasını hızlandırır.',
-      ),
-      kart(
-        'Sitoplazmada gerçekleşen olaylar',
-        'Glikoliz (solunumun ilk basamağı), protein sentezi (ribozomda) ve birçok enzim tepkimesi sitoplazmada yürür.',
+        'Sitoplazma zar ile çekirdek arasıdır',
+        'Bir yumurtayı düşün: kabuk zar, sarısı çekirdek, beyazı sitoplazma. Sitoplazma, zar ile çekirdek arasını dolduran her şey: sıvı kısım (sitozol) ve içinde yüzen organeller.',
         undefined,
-        { not: '"Sitoplazmada" derken sitozolü mü organeli mi kastettiğini ayır; glikoliz sitozolde.' },
+        { etiket: 'Tanım' },
+      ),
+      kart(
+        'Sitoplazmanın çoğu sudur',
+        'Sitoplazmanın büyük kısmı su; içinde protein, tuz, enzim ve besin çözünmüş. Kıvamı jöle gibi. Neden su? İki molekül tepkimeye girmek için birbirini bulmalı; su içinde hareket edip bulurlar. Kuru ortamda tepkime olmaz.',
+      ),
+      kart(
+        'Tepkimelerin çoğu burada olur',
+        'Yediğin şekerin parçalanmaya başladığı yer sitoplazma; protein de burada, ribozomda yapılır. Hücrenin kimyasal işlerinin çoğu sitoplazmada yürür. Organeller de bu ortamın içinde durur.',
+      ),
+      kart(
+        'Sitoplazma organelleri ve maddeyi taşır',
+        'Sitoplazma organellerin yüzdüğü ortam; besin, enzim ve atık bu sıvıyla hücrenin bir ucundan öbürüne dağılır. Ayrıca hücreye dolgunluk verir. Cansız bir sıvı değil; canlı bir ortam.',
+      ),
+      kart(
+        'Bitkide sitoplazma döner',
+        'Mikroskopta bir yaprak hücresine bak: yeşil kloroplastlar sitoplazmayla birlikte döner. Buna sitoplazma hareketi denir. Dolaşan sıvı maddeleri hücrede daha hızlı dağıtır.',
+      ),
+      kart(
+        'Glikoliz sitozolde olur',
+        'Glikozun parçalanmasının ilk adımı glikoliz; mitokondride değil, sitozolde, yani sıvı kısımda olur. Protein sentezi ribozomda. Sınav "sitoplazmada mı, organelde mi" diye ayırır.',
+        undefined,
+        { not: '"Sitoplazmada olur" cümlesini duyunca sor: sıvıda mı, içindeki bir organelde mi? Glikoliz sıvıda.' },
       ),
     ], [
       soru('Sitoplazmanın büyük bölümü sudur.', true, 'Tepkimelerin geçtiği ortamın çözücüsü su.'),
       soru('Hücredeki tepkimelerin çoğu sitoplazmada gerçekleşir.', true, 'Organeller de bu ortamın içinde duruyor.'),
       soru('Sitoplazma, organelleri taşıyan cansız bir sıvıdır.', false, 'Canlı bir ortam: tepkimeler orada yürüyor ve kendisi de hareket ediyor.'),
-      soru('Sitoplazma hareketi yalnızca hayvan hücrelerinde görülür.', false, 'Bitki hücrelerinde de görülür; madde dağılımını kolaylaştırıyor.'),
-      sikli('Solunumun ilk basamağı olan glikoliz nerede olur?', ['Çekirdekte', 'Sitoplazmada'], 1, 'Sitoplazmada yürür.'),
+      soru('Sitoplazma hareketi yalnızca hayvan hücrelerinde görülür.', false, 'Bitki hücrelerinde görülür; madde dağılımını hızlandırıyor.'),
+      sikli('Solunumun ilk basamağı olan glikoliz nerede olur?', ['Çekirdekte', 'Sitoplazmada'], 1, 'Sitozolde yürür.'),
       sikli('Sitoplazmanın dolaşması ne sağlar?', ['Hücreyi böler', 'Maddelerin dağılmasını hızlandırır'], 1, 'Bitki hücrelerinde.'),
       soru('Sitozol, zar ile çekirdek arasını dolduran sıvıdır.', true, 'Organeller içinde durur.'),
     ], [
@@ -717,35 +775,35 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
           dogru: 'Tepkimeler çözeltide yürür; sitoplazmanın büyük kısmı sudur.',
           yanlis: 'Protein var ama az. Sitoplazmanın büyük kısmı su; moleküllerin birbirini bulması için çözelti gerekir.',
         },
-        kart: 3,
+        kart: 2,
       },
     ]),
     konu('byl9-sitoplazmik', 'Sitoplazmik Yapılar', [
       kart(
-        'Zarsız yapılar',
-        'Ribozom, sentrozom ve sitoiskelet zarla çevrili değildir; bu yüzden organel sayılmayabilirler.',
+        'Zarsız yapılar organel sayılmayabilir',
+        'Mitokondrinin çevresinde zar var; ribozomun çevresinde yok. Ribozom, sentrozom ve sitoiskelet zarsız. Bazı kitaplar zarsız olanlara organel demez, "sitoplazmik yapı" der. İkisini de duyabilirsin.',
       ),
       kart(
-        'Ribozom',
-        'Protein sentezi yapar. Hem prokaryot hem ökaryot hücrede bulunan tek ortak yapıdır.',
+        'Ribozom protein fabrikasıdır',
+        'Hücrenin her proteini ribozomda yapılır: amino asitler burada zincire dizilir. Ribozom hem bakteride hem senin hücrende var; prokaryot ve ökaryotun tek ortak yapısı. Zarsız ve çok küçük.',
         undefined,
-        { not: 'Prokaryotla ökaryotun tek ortak yapısı; "her hücrede bulunur" sorusunun cevabı bu.' },
+        { not: '"Her hücrede bulunan yapı hangisi" sorusunun cevabı ribozom; çekirdek ya da mitokondri değil.' },
       ),
       kart(
-        'Sitoiskelet',
-        'Protein iplikleri hücreye şekil verir, organelleri yerinde tutar ve hareketi sağlar.',
+        'Ribozom serbest ya da ER\'ye bağlı olur',
+        'Sitoplazmada serbest yüzen ribozom, hücrenin kendi içinde kullanacağı proteini yapar. Endoplazmik retikulum (ER) adlı zar ağına bağlı olanlar ise dışarı salgılanacak ya da zara gidecek proteini yapar.',
       ),
       kart(
-        'Sentrozom',
-        'Hayvan hücrelerinde bölünme sırasında iğ ipliklerini oluşturur. Bitki hücrelerinde bulunmaz.',
+        'Sitoiskelet hücrenin iskeletidir',
+        'Sen kemiksiz olsan yığılırdın; hücre de sitoiskeletsiz yığılır. Sitoiskelet, sitoplazma içine yayılmış protein iplikleri. Hücreye şekil verir, organelleri yerinde tutar ve hücre içinde yol gibi taşıma sağlar.',
       ),
       kart(
-        'Sil ve kamçı',
-        'Hücrenin hareketini sağlayan uzantılar. Solunum yolundaki siller tozu dışarı süpürür.',
+        'Sentrozom bölünmede iğ ipliği üretir',
+        'Hayvan hücresi bölünürken kromozomları iki yana çeken iğ iplikleri gerekir. Bu iplikleri sentrozom üretir. Sentrozom yalnızca hayvan hücresinde var; bitki hücresi iğ ipliğini sentrozomsuz yapar.',
       ),
       kart(
-        'Ribozom nerede bulunur?',
-        'Sitoplazmada serbest ya da granüllü ER\'ye bağlı. Serbest olanlar hücre içi proteinleri, bağlı olanlar salgı ve zar proteinlerini üretir.',
+        'Sil kısa ve çok, kamçı uzun ve tek',
+        'Boğazındaki hücrelerin üstünde binlerce kısa tüy var: siller. Süpürge gibi çalışıp tozu yukarı iter. Sperm hücresinin tek uzun kuyruğu ise kamçı; hücreyi yüzdürür. İkisi de hareket sağlayan uzantı.',
       ),
     ], [
       soru('Ribozom zarsız bir yapıdır ve protein sentezler.', true, 'Zarsız olduğu için prokaryotlarda da bulunabiliyor.'),
@@ -753,7 +811,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Sitoiskelet hücreye şekil verir ve organelleri yerinde tutar.', true, 'Ayrıca hücre içi taşımaya da yol oluyor.'),
       soru('Sil ve kamçının hücrenin hareketiyle ilgisi yoktur.', false, 'İkisi de hücrenin ya da çevresindeki sıvının hareketini sağlıyor.'),
       sikli('Bölünmede iğ ipliklerini oluşturan yapı?', ['Ribozom', 'Sentrozom'], 1, 'Yalnızca hayvan hücresinde.'),
-      sikli('Solunum yolundaki tozu dışarı süpüren?', ['Kamçı', 'Siller'], 1, 'Hareket uzantıları.'),
+      sikli('Solunum yolundaki tozu dışarı süpüren?', ['Kamçı', 'Siller'], 1, 'Kısa ve çok sayıda.'),
       soru('Granüllü ER\'ye bağlı ribozomlar salgı proteinlerini üretir.', true, 'Serbest olanlar hücre içi proteinleri.'),
     ], [
       {
@@ -769,28 +827,34 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
     ]),
     konu('byl9-organel', 'Organeller ve Çekirdek', [
       kart(
-        'Çekirdek',
-        'DNA’yı taşır ve hücreyi yönetir. Çekirdekçikte ribozom parçaları üretilir.',
+        'Çekirdek hücrenin yönetim merkezidir',
+        'Çekirdek DNA\'yı taşır; hangi proteinin ne zaman yapılacağı oradan söylenir. İçindeki koyu bölge çekirdekçik, ribozomun parçalarını üretir. Çekirdek zarındaki gözeneklerden RNA sitoplazmaya çıkar.',
       ),
       kart(
-        'Mitokondri',
-        'Hücresel solunumla ATP üretir. Kendi DNA’sı vardır ve çoğalabilir.',
+        'Mitokondri enerji santralidir',
+        'Kas hücrelerinde binlerce mitokondri var, çünkü kas çok enerji ister. Mitokondri besini oksijenle yakıp ATP üretir; buna hücresel solunum denir. Kendi DNA\'sı var ve hücre içinde kendi kendine çoğalabilir.',
       ),
       kart(
-        'Kloroplast',
-        'Bitki hücrelerinde fotosentez yapar. Klorofil pigmenti ışığı yakalar.',
+        'Kloroplast güneşten şeker yapar',
+        'Yaprağın yeşil rengi kloroplasttaki klorofil pigmentinden gelir. Klorofil ışığı yakalar; kloroplast su ve CO₂\'den şeker üretir: fotosentez. Yalnızca bitki ve alg hücrelerinde var; hayvan hücresinde yok.',
       ),
       kart(
-        'Endoplazmik retikulum',
-        'Granüllü ER protein, granülsüz ER lipit üretir ve maddeleri taşır.',
+        'ER hücre içindeki zar ağıdır',
+        'Endoplazmik retikulum (ER) çekirdekten başlayan zar kanalları. Üstünde ribozom olan granüllü ER protein üretir. Ribozomsuz granülsüz ER yağ üretir ve zehirleri etkisiz hâle getirir. İkisi de ürettiğini taşır.',
       ),
       kart(
-        'Golgi ve lizozom',
-        'Golgi gelen maddeleri paketleyip gönderir; lizozom sindirim enzimleriyle onları parçalar.',
+        'Golgi paketler ve gönderir',
+        'Postane gibi: ER\'den gelen protein Golgi\'de işlenir, kese içine paketlenir ve gideceği yere gönderilir. Golgi protein üretmez; sık hata bu. Üretim ribozomda, işleme ve paketleme Golgi\'de.',
+        undefined,
+        { etiket: 'Sık hata' },
       ),
       kart(
-        'Salgı yolu',
-        'Üretilen bir protein hücreyi hep aynı sırayla terk eder.',
+        'Lizozom hücrenin çöp öğütücüsüdür',
+        'Bakteri yutan akyuvar onu lizozomla parçalar. Lizozom içi sindirim enzimi dolu bir kese; yaşlı organelleri ve alınan besini parçalar. Enzimler kesenin içinde kalır; kese patlarsa hücre kendini sindirir.',
+      ),
+      kart(
+        'Salgı proteini hep aynı yolu izler',
+        'Pankreasın ürettiği insülin şu yolu izler: ribozomda yapılır, ER\'de katlanır, Golgi\'de paketlenir, keseyle zara gider ve dışarı atılır. Sınav bu sırayı sorar.',
         {
           tur: 'akis',
           adimlar: [
@@ -800,19 +864,26 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
             { ad: 'Zar' },
           ],
         },
-        { not: 'Sırayı bir kez kendin çiz: ER → Golgi → kese → zar. Sınav bu sırayı soruyor.' },
+        { not: 'Sırayı bir kez kendin yaz: ribozom → ER → Golgi → kese → zar. Yazınca ER ile Golgi\'nin yeri karışmaz.' },
       ),
       kart(
-        'Koful',
-        'Depolama ve boşaltım yapar. Bitki hücresinde tek ve büyüktür, hücreye diklik verir.',
+        'Koful depo yapar, bitkiyi dik tutar',
+        'Bitki hücresinin ortasında koca bir su kesesi var: koful. Suyla dolunca hücreyi içeriden iter, bitki dik durur. Susuz kalınca boşalır, bitki solar. Depolama ve atık biriktirme yapar; hayvan hücresinde küçük ve çok.',
       ),
       kart(
-        'Neden ayrı organeller?',
-        'Her organel bir işe ayrılmıştır. Bölmeleme, hücrenin aynı anda hem üretip hem parçalamasını mümkün kılar.',
-      ),
-      kart(
-        'Hangi organel hangi hücrede?',
-        'Kloroplast ve hücre duvarı yalnızca bitkide, sentrozom yalnızca hayvanda; mitokondri, ribozom ve çekirdek her ökaryotta.',
+        'Bitkide kloroplast, hayvanda sentrozom',
+        'Kloroplast, hücre duvarı ve büyük koful yalnızca bitkide. Sentrozom yalnızca hayvanda. Mitokondri, ribozom, ER, Golgi ve çekirdek ikisinde de var. Sık hata: bitkide mitokondri yok sanmak; bitki de solunum yapar.',
+        {
+          tur: 'tablo',
+          basliklar: ['Yapı', 'Bitki', 'Hayvan'],
+          satirlar: [
+            ['Kloroplast', 'Var', 'Yok'],
+            ['Hücre duvarı', 'Var', 'Yok'],
+            ['Sentrozom', 'Yok', 'Var'],
+            ['Mitokondri', 'Var', 'Var'],
+          ],
+        },
+        { etiket: 'Sık hata' },
       ),
     ], [
       soru('Mitokondri hücrede enerji üretiminden sorumludur.', true, 'Besinlerdeki enerji burada ATP ye çevriliyor.'),
@@ -823,7 +894,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       sikli('Fotosentez hangi organelde olur?', ['Mitokondri', 'Kloroplast'], 1, 'Klorofil ışığı yakalar.'),
       sikli('Lipit üreten organel?', ['Golgi', 'Granülsüz ER'], 1, 'Granüllü ER protein.'),
       sikli('Sindirim enzimleriyle maddeleri parçalayan?', ['Koful', 'Lizozom'], 1, 'Golgi paketler, lizozom parçalar.'),
-      sikli('Bitki hücresine diklik veren?', ['Büyük koful', 'Sentrozom'], 0, 'Tek ve büyük.'),
+      sikli('Bitki hücresine diklik veren?', ['Büyük koful', 'Sentrozom'], 0, 'Suyla dolunca hücreyi içeriden iter.'),
       soru('Mitokondrinin kendi DNA\'sı vardır.', true, 'Çoğalabilir.'),
     ], [
       {
@@ -839,8 +910,14 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
     ]),
     konu('byl9-madde-gecis', 'Hücre Zarından Madde Geçişleri', [
       kart(
-        'Pasif ve aktif',
-        'Ayrım tek bir soruda: geçiş için ATP harcanıyor mu, harcanmıyor mu.',
+        'Madde çoktan aza kendiliğinden yayılır',
+        'Odanın köşesinde parfüm sıkarsın, biraz sonra her yerde kokar. Molekül çok olduğu yerden az olduğu yere kendiliğinden yayılır; buna difüzyon denir. Enerji gerekmez.',
+        undefined,
+        { etiket: 'Tanım' },
+      ),
+      kart(
+        'Pasif enerji istemez, aktif ister',
+        'Yokuş aşağı bisiklet pedalsız iner; yokuş yukarı pedal gerekir. Zardan geçiş de öyle: çoktan aza gidiş pasif, ATP harcanmaz. Azdan çoğa gidiş aktif, ATP harcanır. Ayrım tek soru: enerji harcanıyor mu?',
         {
           tur: 'tablo',
           basliklar: ['Geçiş', 'Enerji', 'Yön'],
@@ -852,34 +929,36 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         },
       ),
       kart(
-        'Basit difüzyon',
-        'Küçük ve yüksüz moleküller (O₂, CO₂) doğrudan zardan geçer.',
+        'Küçük moleküller doğrudan geçer',
+        'Oksijen ve karbondioksit küçük ve yüksüz; zarın yağ tabakasından doğrudan süzülür. Buna basit difüzyon denir. Akciğerinde oksijen kana böyle geçer.',
       ),
       kart(
-        'Kolaylaştırılmış difüzyon',
-        'Glikoz gibi büyük moleküller taşıyıcı proteinle geçer; yine enerji harcanmaz.',
-      ),
-      kart(
-        'Ozmoz',
-        'Suyun az yoğun ortamdan çok yoğun ortama geçmesi. Bitkinin diklik kaybı bu dengeyle ilgilidir.',
-      ),
-      kart(
-        'Hücre ve ortam',
-        'Ortam derişik ise hücre su kaybedip büzülür (plazmoliz), ortam seyreltik ise su alıp şişer.',
-      ),
-      kart(
-        'Aktif taşıma',
-        'Az olduğu yerden çok olduğu yere taşıma. ATP harcanır; sodyum-potasyum pompası örnektir.',
-      ),
-      kart(
-        'Endositoz ve ekzositoz',
-        'Çok büyük maddeler zarla kese hâlinde alınır (endositoz) ya da dışarı verilir (ekzositoz).',
-      ),
-      kart(
-        'Hangisi hangisi?',
-        'Az yoğundan çok yoğuna ve ATP harcanıyorsa aktif; çok yoğundan az yoğuna ve ATP yoksa pasif. Taşıyıcı protein iki tarafta da olabilir.',
+        'Glikoz kapıdan geçer, enerji yine yok',
+        'Glikoz büyük, yağ tabakasından geçemez. Zardaki taşıyıcı protein ona kapı olur; yine çoktan aza ve ATP\'siz. Buna kolaylaştırılmış difüzyon denir. Sık hata: taşıyıcı protein var diye aktif sanmak.',
         undefined,
-        { not: 'İki soru sor: yön ne, ATP var mı? Adı sonra koy.' },
+        { etiket: 'Sık hata' },
+      ),
+      kart(
+        'Ozmozda geçen şey sudur',
+        'Salatalığa tuz atınca su salar: su, tuzun yoğun olduğu tarafa geçti. Ozmoz, suyun zardan az yoğun ortamdan çok yoğun ortama geçmesi. Yoğunluk çözüneni sayar; suyun az olduğu yere su gider. Pasif; enerji yok.',
+        undefined,
+        { not: 'Ozmoz sorusunda "yoğun" kelimesini tuz miktarı olarak oku: tuz nerede çoksa su oraya gider.' },
+      ),
+      kart(
+        'Tuzlu suda hücre büzülür',
+        'Kan hücresini tuzlu suya koy: su dışarı çıkar, hücre büzülür. Bitki hücresinde buna plazmoliz denir; zar duvardan ayrılır. Saf suya koy: su içeri dolar, hücre şişer. Hayvan hücresi patlayabilir, bitki hücresini duvar korur.',
+      ),
+      kart(
+        'Aktif taşıma yokuş yukarı pompalar',
+        'Sinir hücren sodyumu dışarı, potasyumu içeri pompalar; ikisi de az olduğu yere doğru, yani yokuş yukarı. Buna aktif taşıma denir; ATP harcanır, taşıyıcı protein kullanılır. Sodyum-potasyum pompası klasik örnek.',
+      ),
+      kart(
+        'Çok büyük madde keseyle girer çıkar',
+        'Akyuvar bakteriyi yutarken zarını bakterinin çevresine sarar, kese yapar ve içeri alır: endositoz. Hücre insülini dışarı verirken kese zarla birleşir, içindekini boşaltır: ekzositoz. İkisi de ATP harcar.',
+      ),
+      kart(
+        'İki soru sor: yön ne, ATP var mı',
+        'Karşına bir geçiş çıkınca iki soru: Çoktan aza mı, azdan çoğa mı? ATP harcanıyor mu? Çoktan aza ve ATP yoksa pasif (difüzyon, ozmoz). Azdan çoğa ve ATP varsa aktif. Taşıyıcı protein iki tarafta da olabilir.',
       ),
     ], [
       soru('Difüzyon, maddenin çok yoğun ortamdan az yoğun ortama geçmesidir.', true, 'Yoğunluk farkı yönü belirliyor ve enerji harcanmıyor.'),
@@ -891,6 +970,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       sikli('Sodyum-potasyum pompası hangi taşımadır?', ['Ozmoz', 'Aktif taşıma'], 1, 'ATP harcanır.'),
       sikli('Derişik ortamda hücre ne olur?', ['Su alıp şişer', 'Su kaybedip büzülür'], 1, 'Plazmoliz.'),
       soru('Ekzositozla büyük maddeler dışarı verilir.', true, 'Zarla kese hâlinde.'),
+      sikli('Endositoz ve ekzositozda enerji harcanır mı?', ['Hayır, pasiftir', 'Evet, ATP harcanır'], 1, 'Kese yapmak ve zarla birleştirmek enerji ister.'),
     ], [
       {
         soru: 'Ozmozda su hangi yöne geçer?',
@@ -900,31 +980,31 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
           dogru: 'Su, çözünen derişiminin yüksek olduğu tarafa geçerek dengeyi kurmaya çalışır.',
           yanlis: 'Yoğunluk çözüneni sayar: su, çözünenin çok olduğu (yani suyun az olduğu) tarafa geçer.',
         },
-        kart: 4,
+        kart: 5,
       },
     ]),
     konu('byl9-siniflandirma', 'Sınıflandırmada Temel Yaklaşımlar', [
       kart(
-        'Neden sınıflandırılır?',
-        'Milyonlarca türü düzenli incelemek için. Sınıflandırma aynı zamanda akrabalık ilişkisini gösterir.',
+        'Sınıflandırma düzen ve akrabalık verir',
+        'Kütüphanede kitaplar konuya göre raflanmasa aradığını bulamazsın. Milyonlarca canlı da gruplara ayrılır; buna sınıflandırma denir. Modern sınıflandırma ayrıca akrabalığı gösterir: hangi tür hangisiyle yakın.',
       ),
       kart(
-        'Yapay ve doğal sınıflandırma',
-        'Yapay sınıflandırma dış görünüşe bakar; doğal (modern) sınıflandırma köken ve akrabalığı esas alır.',
+        'Yapay görünüşe, doğal kökene bakar',
+        'Yarasa uçar, kuş uçar; ikisini "uçanlar" diye aynı gruba koyarsan bu yapay sınıflandırma: dış görünüşe bakar. Yarasa aslında memeli. Doğal sınıflandırma köken ve akrabalığa bakar; bugün kullanılan bu.',
       ),
       kart(
-        'Analog ve homolog',
-        'Homolog organlar ortak kökenlidir (yarasa kanadı ile insan kolu); analog organlar yalnızca aynı işi görür.',
+        'Homolog aynı kökten, analog aynı işten',
+        'İnsan kolu ile yarasa kanadının kemikleri aynı düzende: aynı atadan gelmiş, buna homolog denir. Kuş kanadı ile sinek kanadı ikisi de uçurur ama yapıları bambaşka: analog, yani yalnızca aynı işi gören organlar.',
         undefined,
-        { not: 'Görevi değil kökeni sor; kanat kanada benzer ama akraba olmayabilir.' },
+        { not: 'Organ sorusunda göreve değil kemik düzenine bak: düzen aynıysa homolog, yalnız iş aynıysa analog.' },
       ),
       kart(
-        'İkili adlandırma',
-        'Linne’nin yöntemi: cins adı büyük, tür adı küçük harfle yazılır ve ikisi eğik dizilir (Homo sapiens).',
+        'Her türün iki kelimelik adı var',
+        'İnsanın bilimsel adı Homo sapiens. İlk kelime cins (Homo), büyük harfle; ikinci kelime tür (sapiens), küçük harfle; ikisi de eğik yazılır. Bu Linne\'nin ikili adlandırması. Dünyanın her yerinde aynı ad.',
       ),
       kart(
-        'Kategoriler',
-        'Âlemden türe doğru daralır ve daraldıkça ortak özellik artar, birey sayısı azalır.',
+        'Âlemden türe daralır, benzerlik artar',
+        'Âlem en geniş kutu: bütün hayvanlar. İçinde şube, sınıf, takım, aile, cins var; en dipte tür. Kutu küçüldükçe canlı sayısı azalır, ortak özellik artar. Kedi ve aslan aynı ailede; kedi ve insan yalnızca aynı âlemde.',
         {
           tur: 'katman',
           daralan: true,
@@ -939,8 +1019,10 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         },
       ),
       kart(
-        'Tür nedir?',
-        'Doğada çiftleşip verimli döl verebilen bireyler topluluğu. Katır kısır olduğu için ayrı bir tür değildir.',
+        'Tür, verimli döl veren topluluktur',
+        'At ile eşek çiftleşince katır doğar ama katır kısırdır, yavru yapamaz. O yüzden at ve eşek ayrı tür. Tür, doğada çiftleşip verimli, yani üreyebilen yavru veren bireyler topluluğu.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
     ], [
       soru(
@@ -962,7 +1044,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('İkili adlandırmada önce cins adı, sonra tür adı yazılır.', true, 'Cins adının ilk harfi büyük, tür adı küçük harfle yazılıyor.'),
       soru('Analog organlar, canlıların ortak atadan geldiğini gösterir.', false, 'Akrabalığı homolog organlar gösterir; analog organlar yalnızca aynı işi yapar.'),
       soru('Tür, doğal koşullarda çiftleşip verimli döl verebilen bireyler topluluğudur.', true, 'Katır verimli olmadığı için at ve eşek ayrı türler.'),
-      sikli('Yarasa kanadı ile insan kolu nasıl organlardır?', ['Homolog', 'Analog'], 0, 'Ortak köken.'),
+      sikli('Yarasa kanadı ile insan kolu nasıl organlardır?', ['Homolog', 'Analog'], 0, 'Kemik düzeni aynı, ortak köken.'),
       sikli('Katır neden ayrı tür değildir?', ['Kısırdır', 'Küçüktür'], 0, 'Verimli döl veremez.'),
       soru('Doğal sınıflandırma dış görünüşe dayanır.', false, 'Köken ve akrabalığa; yapay olan görünüşe.'),
     ], [
@@ -979,44 +1061,55 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
     ]),
     konu('byl9-uc-alem', 'Üç Üst Âlem Sisteminde Canlılar', [
       kart(
-        'Üç domain',
-        'Bakteriler, Arkeler ve Ökaryotlar. Ayrım hücre yapısı ve genetik benzerliğe dayanır.',
-      ),
-      kart(
-        'Bakteriler',
-        'Prokaryot, tek hücreli. Bazıları hastalık yapar ama çoğu yararlıdır: sindirim, toprak, yoğurt.',
-      ),
-      kart(
-        'Arkeler',
-        'Prokaryot ama bakterilerden farklı. Çoğu aşırı ortamlarda yaşar: kaynar su, tuz gölü, asit.',
+        'Canlılar en tepede üçe ayrılır',
+        'Bütün canlılar en tepede üç gruba ayrılır: Bakteriler, Arkeler ve Ökaryotlar. Bu üç gruba üst âlem ya da domain denir. Ayrım hücre yapısına ve genlerin benzerliğine dayanır; görünüşe değil.',
         undefined,
-        { not: 'Prokaryot ama bakteri değil; "prokaryot = bakteri" ezberini burada kır.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Protistler',
-        'Çoğunlukla tek hücreli ökaryotlar. Amip, öglena ve terliksi hayvan bu gruptadır.',
+        'Bakterilerin çoğu zararsız, hatta yararlı',
+        'Yoğurdu mayalayan, bağırsağında vitamin üreten, toprakta çürütme yapan canlılar bakteri. Prokaryot ve tek hücreli. Bazıları hastalık yapar (verem, kolera) ama çoğunluğu yararlı. Sık hata: her bakteriyi mikrop sanmak.',
       ),
       kart(
-        'Mantarlar',
-        'Hazır beslenir ve dış sindirim yapar: enzimini dışarı salıp çözdüğünü emer. Hücre duvarı kitindir.',
+        'Arke bakteriye benzer ama değildir',
+        'Kaynar kaplıcada, Tuz Gölü\'nde, asitli suda yaşayan canlılar var: arkeler. Prokaryot, yani çekirdeksiz; bu yüzden bakteri sanılır. Ama genleri ve hücre duvarı bakteriden farklı, ayrı üst âlem. Çoğu aşırı ortamda yaşar.',
+        undefined,
+        { not: 'Prokaryot gördüğünde iki seçenek düşün: bakteri mi, arke mi? Aşırı ortamdan söz ediyorsa arke.' },
       ),
       kart(
-        'Bitkiler',
-        'Fotosentezle kendi besinini üretir. Hücre duvarı selülozdur ve yerleşiktirler.',
+        'Protistler kalan ökaryotlardır',
+        'Göl suyundaki amip, öglena ve terliksi hayvan protist. Ökaryot, yani çekirdekli; çoğu tek hücreli. Bitki, mantar ve hayvan olmayan ökaryotlar bu gruba konur. Çok hücreli su yosunları da burada.',
       ),
       kart(
-        'Hayvanlar',
-        'Hazır beslenir, hareket eder ve çoğu sinir sistemine sahiptir. Hücre duvarları yoktur.',
+        'Mantar besinini dışarıda sindirir',
+        'Ekmekteki küf enzimini dışarı salar, ekmeği dışarıda çözer ve çözüneni emer: dış sindirim. Mantarlar hazır beslenir, fotosentez yapmaz; bitki değildir. Hücre duvarı kitinden. Maya, küf, şapkalı mantar bu gruptan.',
+      ),
+      kart(
+        'Bitki güneşle kendi besinini yapar',
+        'Bitki ototrof: kloroplastıyla fotosentez yapar, kendi şekerini üretir. Hücre duvarı selülozdan. Yerleşik yaşar, hareket etmez. Ökaryot ve çok hücreli.',
+      ),
+      kart(
+        'Hayvan hazır yer, hareket eder',
+        'Hayvanlar heterotrof: besini dışarıdan alır. Çoğu hareket eder ve sinir sistemi vardır. Hücre duvarı yok; ökaryotlar içinde duvarı olmayan tek grup. Sen de bu gruptasın.',
+        {
+          tur: 'tablo',
+          basliklar: ['Grup', 'Beslenme', 'Hücre duvarı'],
+          satirlar: [
+            ['Mantar', 'Hazır, dış sindirim', 'Kitin'],
+            ['Bitki', 'Kendi üretir', 'Selüloz'],
+            ['Hayvan', 'Hazır', 'Yok'],
+          ],
+        },
       ),
     ], [
       soru('Arkeler aşırı sıcaklık ve tuzluluk gibi zor koşullarda yaşayabilir.', true, 'Kaplıca ve tuz göllerinde yaşayan türleri var.'),
-      soru('Mantarlar fotosentez yaparak kendi besinini üretir.', false, 'Kloroplastları yok; hazır besini dışarıdan alıp emerler.'),
+      soru('Mantarlar fotosentez yaparak kendi besinini üretir.', false, 'Kloroplastları yok; hazır besini dışarıda çözüp emerler.'),
       soru('Bakteriler prokaryot canlılardır.', true, 'Çekirdek zarları ve zarlı organelleri bulunmuyor.'),
       soru('Protistler yalnızca tek hücreli canlılardan oluşur.', false, 'Çok hücreli su yosunları da bu grupta yer alıyor.'),
       sikli('Dış sindirim yapan ve hücre duvarı kitin olan?', ['Bitkiler', 'Mantarlar'], 1, 'Bitkinin duvarı selüloz.'),
       sikli('Amip ve öglena hangi gruptadır?', ['Bakteriler', 'Protistler'], 1, 'Tek hücreli ökaryotlar.'),
       sikli('Hücre duvarı olmayan ökaryot grubu?', ['Bitkiler', 'Hayvanlar'], 1, 'Hareket eder, sinir sistemi var.'),
-      soru('Bakterilerin çoğu hastalık yapar.', false, 'Çoğu yararlı: sindirim, toprak, yoğurt.'),
+      soru('Bakterilerin çoğu hastalık yapar.', false, 'Çoğu yararlı: yoğurt, bağırsak, toprak.'),
     ], [
       {
         soru: 'Kaynar su ve tuz gölü gibi aşırı ortamlarda yaşayan prokaryotlar?',
@@ -1031,44 +1124,46 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
     ]),
     konu('byl9-biyocesitlilik', 'Biyoçeşitlilik', [
       kart(
-        'Üç düzeyi',
-        'Gen çeşitliliği, tür çeşitliliği ve ekosistem çeşitliliği. Üçü birlikte biyoçeşitliliği oluşturur.',
-      ),
-      kart(
-        'Neden önemli?',
-        'Çeşitlilik ekosistemi dayanıklı kılar. Tek çeşit üretim bir hastalıkla bütünüyle yok olabilir.',
-      ),
-      kart(
-        'Gen çeşitliliği',
-        'Aynı türün bireyleri arasındaki farklılık. Bir hastalığa direnç çoğu zaman bu farklılıkta saklıdır.',
+        'Biyoçeşitlilik üç katmanda sayılır',
+        'Bir ormanda meşe, çam, geyik, kurt: tür çeşitliliği. Aynı meşelerin bazısı kuraklığa dayanıklı, bazısı değil: gen çeşitliliği. Orman, göl, bozkır bir arada: ekosistem çeşitliliği. Biyoçeşitlilik üçünün toplamı.',
         undefined,
-        { not: 'Tür sayısıyla yetinme; aynı türün içindeki fark ekosistemi ayakta tutan şey.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Endemik tür',
-        'Yalnızca belirli bir bölgede yaşayan tür. Kaybedilirse dünyadan tümüyle silinir.',
+        'Tek çeşit ekersen tek hastalık bitirir',
+        '1840\'larda İrlanda tek çeşit patates ekiyordu. Bir mantar hastalığı geldi, bütün patatesler çürüdü, bir milyon insan öldü. Çeşit çok olsaydı bazıları dayanırdı. Çeşitlilik ekosistemi dayanıklı kılar.',
       ),
       kart(
-        'Türkiye’nin durumu',
-        'Üç farklı bitki coğrafyasının kesiştiği yerde olduğu için tür sayısı Avrupa’nın tamamına yakındır.',
+        'Direnç aynı türün içindeki farkta saklı',
+        'Bir tavuk çiftliğine grip girdi; bazı tavuklar hastalanmadı, çünkü genleri farklıydı. Gen çeşitliliği, yani aynı türün bireyleri arasındaki farklılık. Tür sayısı kadar bu farklılık da önemli.',
+        undefined,
+        { not: 'Çeşitlilik sorusunda iki şeyi say: kaç tür var ve bir türün içinde ne kadar fark var.' },
       ),
       kart(
-        'Tehditler',
-        'Habitat kaybı, aşırı avlanma, kirlilik, istilacı türler ve iklim değişikliği.',
+        'Endemik tür başka yerde yoktur',
+        'Van Gölü\'ndeki inci kefali balığı dünyanın başka hiçbir yerinde yaşamaz. Endemik tür, yalnızca belirli bir bölgede doğal olarak yaşayan tür. Orada kaybolursa dünyadan tamamen silinir.',
       ),
       kart(
-        'Koruma yolları',
-        'Millî park ve koruma alanları, tohum bankaları, avlanma sınırları ve türlerin doğaya yeniden kazandırılması.',
+        'Türkiye üç bitki bölgesinin kesişimi',
+        'Türkiye\'de yaklaşık 12 bin bitki türü var; bu sayı Avrupa\'nın tamamına yakın. Sebep: Akdeniz, Avrupa-Sibirya ve İran-Turan bitki coğrafyaları burada kesişiyor. Üç bölgenin türleri tek ülkede toplanmış.',
+      ),
+      kart(
+        'En büyük tehdit yaşam alanı kaybı',
+        'Sulak alan kurutulunca oradaki kuşlar gidecek yer bulamaz: habitat, yani yaşam alanı kaybı en büyük tehdit. Diğerleri: aşırı avlanma, kirlilik, dışarıdan gelip yerli türü bastıran istilacı türler ve iklim değişikliği.',
+      ),
+      kart(
+        'Koruma: alan, tohum, yasa, geri getirme',
+        'Millî park kurup habitatı koruyabilirsin. Tohum bankasına tohum koyup gen çeşitliliğini saklayabilirsin. Av yasağıyla türü kurtarabilirsin. Kaybolan türü yetiştirip doğaya geri bırakabilirsin. Dört yol da kullanılıyor.',
       ),
     ], [
       soru('Endemik tür, yalnızca belirli bir bölgede doğal olarak yaşayan türdür.', true, 'Başka yerde bulunmadığı için yok olması geri dönülmez.'),
       soru('Biyoçeşitlilik gen, tür ve ekosistem düzeylerinde incelenir.', true, 'Aynı türün içindeki gen farkları da çeşitliliğin parçası.'),
-      soru('Türkiye biyoçeşitlilik bakımından Avrupa nın en fakir ülkelerindendir.', false, 'Farklı iklim ve bitki bölgeleri sayesinde en zengin ülkelerinden biri.'),
+      soru('Türkiye biyoçeşitlilik bakımından Avrupa nın en fakir ülkelerindendir.', false, 'Üç bitki coğrafyasının kesişimi sayesinde en zengin ülkelerinden biri.'),
       soru('Bir türün yok olması ekosistemin işleyişini etkilemez.', false, 'Besin ağındaki her tür başka türlere bağlı; kopan halka zinciri etkiliyor.'),
       sikli('Aynı türün bireyleri arasındaki farklılık?', ['Ekosistem çeşitliliği', 'Gen çeşitliliği'], 1, 'Hastalığa direnç burada saklı.'),
       sikli('Türkiye\'nin tür zenginliğinin sebebi?', ['Geniş çöl alanları', 'Üç bitki coğrafyasının kesişimi'], 1, 'Avrupa\'nın tamamına yakın tür.'),
       sikli('Tohum bankası neyi korur?', ['Habitatı', 'Gen çeşitliliğini'], 1, 'Millî park habitatı korur.'),
-      soru('Tek çeşit üretim bir hastalıkla tümüyle yok olabilir.', true, 'Çeşitlilik dayanıklılık.'),
+      soru('Tek çeşit üretim bir hastalıkla tümüyle yok olabilir.', true, 'İrlanda patates kıtlığı; çeşitlilik dayanıklılık.'),
     ], [
       {
         soru: 'Yalnızca belirli bir bölgede yaşayan türe ne denir?',
@@ -1076,7 +1171,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         dogru: 1,
         aciklama: {
           dogru: 'Endemik tür başka yerde yok; orada kaybolursa dünyadan silinir.',
-          yanlis: 'İstilacı tür geldiği yeri bozan yabancı tür. Yalnızca bir bölgeye özgü olan endemik tür.',
+          yanlis: 'İstilacı tür dışarıdan gelip yerli türü bastıran tür. Yalnızca bir bölgeye özgü olan endemik tür.',
         },
         kart: 4,
       },

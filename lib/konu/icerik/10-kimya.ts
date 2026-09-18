@@ -14,12 +14,14 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
   tema('kim10-t1', 'Etkileşim', [
     konu('kim10-gosterge', 'Kimyasal Değişimin Göstergeleri', [
       kart(
-        'Fiziksel mi kimyasal mı?',
-        'Fiziksel değişimde madde aynı kalır, yalnızca hâli ya da şekli değişir. Kimyasal değişimde yeni madde oluşur.',
+        'Kimyasal değişimde yeni madde oluşur',
+        'Kâğıdı yırt: hâlâ kâğıt. Kâğıdı yak: kül ve duman çıktı, kâğıt gitti. İlki fiziksel değişim, yani madde aynı kalır, yalnızca şekli ya da hâli değişir. İkincisi kimyasal değişim, yani ortaya yeni bir madde çıkar.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Gözle görülen kanıtlar',
-        'Beş gösterge kimyasal değişimi işaret eder ama hiçbiri tek başına kesin kanıt değildir.',
+        'Beş belirti kimyasal değişimi haber verir',
+        'Demir paslanınca rengi değişir. Kabartma tozu sirkeyle köpürünce gaz çıkar. Süt bozulunca kokar. Odun yanınca ısı ve ışık verir. Bu belirtilere gösterge denir, yani değişimi haber veren ipucu.',
         {
           tur: 'tablo',
           basliklar: ['Gösterge', 'Örnek'],
@@ -33,22 +35,28 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
         },
       ),
       kart(
-        'Aldatıcı olabilir',
-        'Kaynayan suda da kabarcık çıkar ama bu kimyasal değişim değil. Tek bir gösterge kanıt sayılmaz.',
+        'Çökelek, sıvının içinde oluşan katıdır',
+        'İki berrak sıvıyı karıştırdın, dipte beyaz bir katı belirdi. Bu katıya çökelek denir, yani çözeltide oluşup dibe inen katı. Çaydanlıktaki kireç de böyle oluşur. Çökelek gördüğünde kimyasal değişim düşün.',
+      ),
+      kart(
+        'Tek gösterge kesin kanıt değildir',
+        'Kaynayan suda kabarcık çıkar ama bu su buharı; yeni madde yok. Boyaları karıştırınca renk değişir ama bu da fiziksel. Gösterge yalnızca ipucu. "Kabarcık gördüm, kimyasal değişim var" deme.',
         undefined,
-        { not: 'Göstergeleri listeleyip geçme; her birinin nerede yanılttığını da bil.' },
+        { etiket: 'Sık hata', not: 'Kabarcık ya da renk değişimi gördüğünde dur ve sor: ortaya yeni bir madde çıktı mı? Cevap oradan gelir.' },
       ),
       kart(
-        'Kesin ölçüt',
-        'Sorulacak soru şu: ortaya yeni özellikleri olan bir madde çıktı mı? Çıkmadıysa değişim fizikseldir.',
+        'Kesin ölçüt: yeni özellikli madde çıktı mı',
+        'Yanan kâğıttan çıkan kül ne yanar ne yazı tutar; özellikleri kâğıttan bambaşka. Kesin ölçüt bu: yeni özellikleri olan bir madde çıktıysa değişim kimyasal. Çıkmadıysa fiziksel.',
+        undefined,
+        { etiket: 'Kural' },
       ),
       kart(
-        'Geri dönüşümlü mü?',
-        'Buzun erimesi kolayca geri alınır; yanmış kâğıt geri gelmez. Kimyasal değişimi geri almak yeni bir tepkime ister.',
+        'Kimyasal değişim kolay geri alınmaz',
+        'Eriyen buzu dondurucuya koy, yine buz olur. Yanan kâğıdı geri getiremezsin. Fiziksel değişim kolayca geri alınır; kimyasal değişimi geri almak yeni bir tepkime ister.',
       ),
       kart(
-        'Çözünme hangisi?',
-        'Tuzun suda çözünmesi fizikseldir: su buharlaştırıldığında tuz geri alınır ve kimliği değişmemiştir.',
+        'Tuzun suda çözünmesi fizikseldir',
+        'Tuzu suda çözdün, tuz kaybolmuş gibi. Suyu buharlaştır: tuz olduğu gibi geri gelir, tadı aynı. Yeni madde oluşmadı; çözünme fiziksel değişim. Sınavda çözünmeyi kimyasal sanma.',
       ),
     ], [
       soru('Kimyasal değişimin kesin ölçütü yeni bir maddenin oluşmasıdır.', true, 'Gözle görülen belirtiler ipucu; kesin ölçüt bu.'),
@@ -58,6 +66,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       sikli('Kimyasal değişimin kesin ölçütü nedir?', ['Yeni özellikli madde oluşması', 'Renk değişmesi'], 0, 'Tek gösterge kanıt sayılmaz.'),
       sikli('Yanmış kâğıt neden geri gelmez?', ['Kimyasal değişim geri alınamaz', 'Kâğıt buharlaştı'], 0, 'Geri almak yeni bir tepkime ister.'),
       soru('Tuzun suda çözünmesi kimyasal değişimdir.', false, 'Su buharlaştırılınca tuz geri alınır.'),
+      soru('Çökelek, çözeltinin içinde oluşup dibe inen katıdır.', true, 'Çaydanlıktaki kireç buna örnek.'),
     ], [
       {
         soru: 'Kaynayan suda kabarcık çıkması kimyasal değişim midir?',
@@ -67,21 +76,39 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
           dogru: 'Kabarcık su buharı; yeni madde yok. Gaz çıkışı tek başına kanıt değil.',
           yanlis: 'Kabarcıklar su buharıdır, yeni madde oluşmadı. Gösterge tek başına kanıt sayılmaz; kesin ölçüt yeni maddedir.',
         },
-        kart: 3,
+        kart: 4,
       },
     ]),
     konu('kim10-olusum', 'Kimyasal Tepkimelerin Oluşumu', [
       kart(
-        'Bağlar kopar, yenisi kurulur',
-        'Tepkimede atomlar yok olmaz; yalnızca aralarındaki bağlar kopar ve atomlar yeniden düzenlenir.',
+        'Tepkimede atomlar yer değiştirir, yok olmaz',
+        'Hidrojen oksijenle yanınca su oluşur: H₂ + O₂ → H₂O. Hidrojen atomları kaybolmadı, oksijene bağlandı. Kimyasal tepkime, yani atomlar arasındaki bağların kopup yeniden kurulması. Atom yok olmaz, yalnızca eşi değişir.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Kütle korunur',
-        'Girenlerin toplam kütlesi ürünlerin toplam kütlesine eşittir. Atom sayısı iki tarafta da aynıdır.',
+        'Kütle korunur: giren kadar çıkar',
+        '4 g hidrojen 32 g oksijenle yanınca 36 g su oluşur; 4 + 32 = 36. Atomlar kaybolmadığı için toplam kütle de değişmez. Buna kütlenin korunumu denir. İki tarafta her atomdan aynı sayıda var.',
       ),
       kart(
-        'Enerji alışverişi',
-        'Bağ kırmak enerji ister, bağ kurmak enerji verir. Farkı pozitifse ortam soğur, negatifse ısınır.',
+        'Bağ kırmak enerji ister, bağ kurmak verir',
+        'Bir ipi koparmak için güç harcarsın; düğüm ise kendiliğinden tutar. Bağlar da böyle: kırmak enerji ister, kurmak enerji verir. Tepkimenin ısı alıp vermesi bu ikisinin farkına bağlı.',
+      ),
+      kart(
+        'Ekzotermik tepkime ortamı ısıtır',
+        'Odun yanınca elini ısıtır: tepkime dışarı ısı veriyor. Buna ekzotermik denir, yani ısı veren tepkime. Kurulan bağların verdiği enerji, kırılan bağların istediğinden fazla; fazlası ısı olarak çıkar.',
+      ),
+      kart(
+        'Endotermik tepkime ortamı soğutur',
+        'Soğuk kompres paketini kır ve sık: soğur, çünkü içindeki tepkime çevreden ısı alıyor. Buna endotermik denir, yani ısı alan tepkime. Ortam soğuyorsa endotermik, ısınıyorsa ekzotermik.',
+      ),
+      kart(
+        'Tepkime için tanecikler çarpışmalı',
+        'İki bilye birbirine değmeden çarpışamaz. Tanecikler de tepkimeye girmek için çarpışmalı. Ama her çarpışma yetmez: yeterli hızla ve uygun yönden çarpmalı. Isıtınca tanecikler hızlanır, tepkime hızlanır.',
+      ),
+      kart(
+        'Aktivasyon enerjisi başlangıç eşiğidir',
+        'Kibrit kutuda kendiliğinden yanmaz; sürtmen gerekir. O sürtme tepkimeyi başlatan enerji. Aktivasyon enerjisi, yani tepkimenin başlaması için aşılması gereken eşik. Grafikte tepe noktası bu eşik.',
         {
           tur: 'koordinat',
           pencere: [0, 8, 0, 6],
@@ -104,26 +131,14 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
         },
       ),
       kart(
-        'Ekzotermik ve endotermik',
-        'Ekzotermik tepkime ısı verir ve ortam ısınır; endotermik tepkime ısı alır ve ortam soğur.',
+        'Dört etken tepkimeyi hızlandırır',
+        'Toz şeker küp şekerden hızlı yanar: temas yüzeyi büyük. Sıcak madde, derişik yani içinde çok tanecik olan madde ve ufalanmış madde daha hızlı tepkir. Dördüncü etken katalizör. Hepsi etkin çarpışmayı artırır.',
       ),
       kart(
-        'Çarpışma gerekir',
-        'Tanecikler yeterli enerjiyle ve uygun yönde çarpışmazsa tepkime olmaz. Isıtmak bu yüzden hızlandırır.',
-      ),
-      kart(
-        'Aktivasyon enerjisi',
-        'Tepkimenin başlaması için aşılması gereken eşik. Katalizör bu eşiği düşürür, tepkimeyi değiştirmez.',
-      ),
-      kart(
-        'Hızı etkileyen etmenler',
-        'Sıcaklık, derişim, temas yüzeyi ve katalizör. Dördü de çarpışma sayısını ya da başarısını artırır.',
-      ),
-      kart(
-        'Katalizör ne yapar, ne yapmaz?',
-        'Aktivasyon enerjisini düşürerek hızlandırır; tepkimeden harcanmadan çıkar. Ürün miktarını ve tepkime ısısını değiştirmez.',
+        'Katalizör eşiği düşürür, kendisi tükenmez',
+        'Patates parçası oksijenli suyu anında köpürtür; patates tepkimeden olduğu gibi çıkar. Katalizör, yani aktivasyon enerjisini düşürüp tepkimeyi hızlandıran madde. Ürün miktarını ve tepkime ısısını değiştirmez.',
         undefined,
-        { not: '"Ne yapmaz" kısmı sınavda çıkan kısım; katalizör tepkimeye girmez, dengeyi oynatmaz.' },
+        { not: 'Katalizör sorusunda "ne yapmaz" sorulur: ürünü artırmaz, tepkime ısısını değiştirmez, tükenmez.' },
       ),
     ], [
       soru(
@@ -156,6 +171,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       sikli('Isıtmak tepkimeyi neden hızlandırır?', ['Etkin çarpışma sayısı artar', 'Bağlar zayıflar'], 0, 'Tanecikler yeterli enerjiyle çarpışır.'),
       soru('Tepkimede atomlar yok olup yeniden yaratılır.', false, 'Bağlar kopar, atomlar yeniden düzenlenir.'),
       soru('Temas yüzeyi arttıkça tepkime hızlanır.', true, 'Toz şeker küp şekerden hızlı yanar.'),
+      sikli('Kibriti sürtmek tepkimeye hangi enerjiyi sağlar?', ['Bağ enerjisi', 'Aktivasyon enerjisi'], 1, 'Başlangıç eşiğini aşmak için gereken enerji.'),
     ], [
       {
         soru: 'Tepkime sırasında ortam soğuyorsa tepkime nasıldır?',
@@ -165,56 +181,60 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
           dogru: 'Tepkime ortamdan ısı alıyor; ortam bu yüzden soğuyor.',
           yanlis: 'Ekzotermik tepkime ısı verir ve ortamı ısıtır. Soğuyan ortam tepkimenin ısı aldığını, endotermik olduğunu gösterir.',
         },
-        kart: 4,
+        kart: 5,
       },
     ]),
     konu('kim10-tur', 'Kimyasal Tepkime Türleri', [
       kart(
-        'Yanma tepkimeleri',
-        'Madde oksijenle birleşir, ısı ve ışık açığa çıkar. Organik yanmada ürünler karbondioksit ve sudur.',
+        'Yanma: madde oksijenle birleşir',
+        'Mumu yak: mum oksijenle birleşir, ısı ve ışık çıkar. Yanma tepkimesi, yani maddenin oksijenle hızla birleşmesi. Mum, odun, doğal gaz gibi karbonlu maddeler yanınca karbondioksit ve su oluşur.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Tam ve eksik yanma',
-        'Oksijen yeterliyse CO₂ çıkar; yetersizse zehirli karbonmonoksit ve is oluşur. Soba zehirlenmelerinin sebebi budur.',
+        'Yanma denklemi: yakıt + O₂ → CO₂ + H₂O',
+        'Doğal gaz metandır: CH₄ + 2O₂ → CO₂ + 2H₂O. Solda oksijen giriyor, sağda karbondioksit ve su çıkıyor. Bu kalıbı gördüğünde yanma de. Hidrokarbon, yani yalnız karbon ve hidrojenden yapılmış madde, hep böyle yanar.',
       ),
       kart(
-        'Yanma denklemi',
-        'Hidrokarbon + O₂ → CO₂ + H₂O. Örnek: CH₄ + 2O₂ → CO₂ + 2H₂O. Sınavda en sık denkleştirilen tepkime türüdür.',
+        'Oksijen azsa eksik yanma olur',
+        'Soba bacası tıkalıysa oksijen az gelir. Karbon CO₂ yerine karbonmonoksit (CO) ve is verir. CO kokusuz ve zehirlidir; soba zehirlenmesi bundan. Oksijen bolsa tam yanma, azsa eksik yanma.',
+        undefined,
+        { etiket: 'Dikkat' },
       ),
       kart(
-        'Asit-baz tepkimesi',
-        'Asit ile baz birleşerek tuz ve su verir. Nötrleşme de denir; mide ilacı bu ilkeyle çalışır.',
+        'Asit + baz → tuz + su: nötrleşme',
+        'Miden fazla asit yaptı, mide ilacı aldın. İlaç bir baz; asitle birleşip tuz ve su verdi, yanma geçti. Buna nötrleşme denir: HCl + NaOH → NaCl + H₂O. Asit ile bazın etkisi birbirini siler.',
       ),
       kart(
-        'Çökelme tepkimesi',
-        'İki çözelti karışınca suda çözünmeyen bir katı oluşur. Oluşan katıya çökelek denir.',
+        'Çökelme: iki sıvıdan katı çıkar',
+        'İki berrak çözeltiyi karıştırdın, dipte beyaz katı oluştu. Bu katı çökelek, yani suda çözünmeyen ürün. Denklemde (k) ile gösterilir. İki çözelti karışıp katı veriyorsa çökelme tepkimesidir.',
       ),
       kart(
-        'Redoks tepkimesi',
-        'Elektron alışverişi vardır: elektron veren yükseltgenir, alan indirgenir. Paslanma ve pil tepkimeleri böyledir.',
+        'Redoks: elektron el değiştirir',
+        'Demir paslanırken oksijene elektron verir. Elektron veren yükseltgenir, alan indirgenir. Redoks tepkimesi, yani elektron alışverişi olan tepkime. Pil de böyle çalışır: bir madde verir, öteki alır.',
       ),
       kart(
-        'Sentez ve analiz',
-        'Sentezde birden çok madde birleşip tek ürün verir; analizde tek madde parçalanır.',
+        'Sentez birleştirir, analiz parçalar',
+        'Hidrojen ve oksijen birleşip su verir: 2H₂ + O₂ → 2H₂O, bu sentez. Suya elektrik ver, hidrojen ve oksijene ayrılır: bu analiz. Sentezde birden çok madde tek ürün olur; analizde tek madde parçalanır.',
         {
           tur: 'tablo',
-          basliklar: ['Tür', 'Kalıp'],
+          basliklar: ['Tür', 'Kalıp', 'Örnek'],
           satirlar: [
-            ['Sentez', 'A + B → AB'],
-            ['Analiz', 'AB → A + B'],
-            ['Yer değiştirme', 'A + BC → AC + B'],
+            ['Sentez', 'A + B → AB', '2H₂ + O₂ → 2H₂O'],
+            ['Analiz', 'AB → A + B', '2H₂O → 2H₂ + O₂'],
+            ['Yer değiştirme', 'A + BC → AC + B', 'Zn + CuSO₄ → ZnSO₄ + Cu'],
           ],
         },
       ),
       kart(
-        'Yer değiştirme',
-        'Aktif bir element, bileşikteki daha az aktif elementin yerini alır. Aktiflik sırası hangi yönde olacağını söyler.',
+        'Yer değiştirme: aktif olan yerini alır',
+        'Çinko parçasını bakır sülfat çözeltisine at: çinko çözünür, bakır ayrılır. Zn + CuSO₄ → ZnSO₄ + Cu. Çinko bakırdan aktif, yani daha kolay tepkimeye girer; bakırın yerini alır. Aktif olan, az aktif olanı kovar.',
       ),
       kart(
-        'Türü nasıl tanırsın?',
-        'O₂ giriyor ve CO₂ çıkıyorsa yanma; asit + baz → tuz + su ise nötrleşme; ürün (k) ise çökelme; yükseltgenme sayıları değişiyorsa redoks.',
+        'Denklemde önce giren ve çıkana bak',
+        'Türü tanımak için ezber değil bakış gerek. O₂ giriyor, CO₂ çıkıyor: yanma. Asit + baz → tuz + su: nötrleşme. Ürünlerde (k) var: çökelme. Bir element bileşiğe girip başkasını çıkarıyor: yer değiştirme.',
         undefined,
-        { not: 'Denklemi gördüğünde önce giren ve çıkanlara bak; tür adı ondan sonra gelir.' },
+        { not: 'Tür sorusunda adı değil kalıbı ara: önce girenlere, sonra çıkanlara bak; tür adı ondan sonra gelir.' },
       ),
     ], [
       soru('Yanma tepkimeleri ekzotermiktir.', true, 'Isı ve ışık açığa çıkıyor.'),
@@ -241,28 +261,38 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
     ]),
     konu('kim10-mol', 'Mol Kavramı', [
       kart(
-        'Mol nedir?',
-        'Tanecik saymanın birimi. 1 mol, 6,02×10²³ tanecik demektir; bu sayıya Avogadro sayısı denir.',
+        'Mol, düzine gibi bir sayma birimidir',
+        '1 düzine yumurta 12 tane. 1 mol tanecik 6,02×10²³ tane; bu sayıya Avogadro sayısı denir. Mol, yani tanecik saymanın birimi. Farkı yalnızca büyüklüğü: atomlar o kadar küçük ki ancak böyle bir sayıyla sayılır.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Neden gerekli?',
-        'Atomlar tek tek tartılamaz. Mol, laboratuvarda tartılan gramı tanecik sayısına çeviren köprüdür.',
+        'Mol, gram ile tanecik arasında köprüdür',
+        'Teraziye tek bir atom koyamazsın; ama 18 g su koyabilirsin ve bu 1 mol, yani 6,02×10²³ molekül. Mol, tarttığın gramı tanecik sayısına çevirir. Kimyacı bu yüzden gram yerine mol ile konuşur.',
       ),
       kart(
-        'Molar kütle',
-        '1 molün gram cinsinden kütlesi. Sayıca atom ya da molekül kütlesine eşittir: su için 18 g/mol.',
+        'Molar kütle, 1 molün gram cinsinden kütlesi',
+        'Bir su molekülünün kütlesi 18 akb; 1 mol suyun kütlesi 18 gram. Molar kütle, yani 1 mol maddenin gram cinsinden kütlesi. Birimi g/mol. Sayı olarak atom ya da molekül kütlesiyle aynı.',
       ),
       kart(
-        'Molar kütle hesabı',
-        'Atom kütlelerini alt indisle çarpıp topla: H₂SO₄ = 2·1 + 32 + 4·16 = 98 g/mol. CO₂ = 12 + 2·16 = 44 g/mol.',
+        'Molar kütle: atom kütlelerini topla',
+        'CO₂: 1 karbon (12) + 2 oksijen (2·16) = 44 g/mol. H₂SO₄: 2·1 + 32 + 4·16 = 98 g/mol. Her atomun kütlesini alt indisiyle çarp, hepsini topla. Alt indis, yani formülde elementin sağ altındaki küçük sayı.',
       ),
       kart(
-        'Gazlarda molar hacim',
-        'Normal şartlarda (0 °C, 1 atm) her ideal gazın 1 molü 22,4 litre yer kaplar; gazın cinsi fark etmez.',
+        'Kütleden mole: molar kütleye böl',
+        '36 g su kaç mol? Suyun molar kütlesi 18; 36 / 18 = 2 mol. Kural: mol = kütle / molar kütle. Ters yönde de çalışır: 3 mol su = 3 · 18 = 54 g.',
       ),
       kart(
-        'Üç yönlü çevrim',
-        'Kütle, mol ve tanecik sayısı arasında gidip gelmenin tek bir yolu var: her zaman önce mole çevrilir.',
+        '1 mol gaz normal şartlarda 22,4 litredir',
+        '0 °C ve 1 atm basınca normal şartlar denir, kısaca NŞA. Bu koşulda 1 mol oksijen de 1 mol helyum da 22,4 L yer kaplar; gazın cinsi fark etmez. 11,2 L O₂ (NŞA) = 0,5 mol.',
+      ),
+      kart(
+        'Molden taneciğe: Avogadro sayısıyla çarp',
+        '2 mol su kaç molekül? 2 × 6,02×10²³ = 12,04×10²³ molekül. Ters yön: 3,01×10²³ molekül kaç mol? 3,01 / 6,02 = 0,5 mol. Tanecik sayısı = mol × Avogadro sayısı.',
+      ),
+      kart(
+        'Her çevrim moldan geçer',
+        '22 g CO₂ kaç molekül? Gramdan taneciğe doğrudan yol yok. Önce mol: 22 / 44 = 0,5 mol. Sonra tanecik: 0,5 × 6,02×10²³ = 3,01×10²³. Kütle, hacim ve tanecik arasında yol hep moldan geçer.',
         {
           tur: 'akis',
           adimlar: [
@@ -271,27 +301,21 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
             { ad: 'Tanecik' },
           ],
         },
-        { not: 'Nereden nereye gidersen git, yol moldan geçer; doğrudan gram-tanecik geçişi yok.' },
+        { not: 'Gramdan taneciğe doğrudan atlamaya kalkarsan dur: önce mole çevir, sonra Avogadro sayısıyla çarp.' },
       ),
       kart(
-        'Formülden mol',
-        '1 mol H₂SO₄ içinde 2 mol H, 1 mol S ve 4 mol O atomu bulunur. Alt indisler mol oranını verir.',
+        'Alt indisler mol oranını da verir',
+        '1 su molekülünde 2 H ve 1 O atomu var. 1 mol suda da 2 mol H atomu ve 1 mol O atomu var. 3 mol CO₂\'de 3 · 2 = 6 mol O atomu. Alt indis, molekül başına da mol başına da aynı oranı söyler.',
       ),
       kart(
-        'Mol bir sayıdır',
-        'Düzine gibi düşünülebilir: 1 düzine 12 tane, 1 mol 6,02×10²³ tane demek. Farkı yalnızca büyüklüğü.',
+        'Gazın yoğunluğu molar kütleyi verir',
+        'NŞA\'da bir gazın 1 litresi 1,25 g geldi. 1 mol 22,4 L olduğuna göre: 1,25 × 22,4 = 28 g/mol. Bu azot gazı (N₂). Kural: molar kütle = yoğunluk (g/L) × 22,4.',
       ),
       kart(
-        'Hızlı örnekler',
-        '36 g su = 2 mol = 12,04×10²³ molekül. 11,2 L O₂ (NŞA) = 0,5 mol = 16 g. 3 mol CO₂\'de 6 mol O atomu var.',
-      ),
-      kart(
-        'Gaz yoğunluğundan molar kütle',
-        'Molar kütle = yoğunluk (g/L) × 22,4. Normal şartlarda yoğunluğu 1,25 g/L olan gazın molar kütlesi 28: azot.',
-      ),
-      kart(
-        'Sık hata',
-        'Mol sayısı gazın cinsine bağlı değil ama kütle bağlı: 1 mol He 4 g, 1 mol O₂ 32 g; ikisi de normal şartlarda 22,4 L.',
+        'Eşit mol, eşit hacim ama farklı kütle',
+        '1 mol He 4 g, 1 mol O₂ 32 g. İkisi de NŞA\'da 22,4 L. Hacim molden gelir, cinse bakmaz; kütle cinse bağlı. "Hacimleri eşitse kütleleri de eşittir" deme.',
+        undefined,
+        { etiket: 'Sık hata' },
       ),
     ], [
       soru('1 mol madde 6,02 · 10²³ tanecik içerir.', true, 'Bu sayıya Avogadro sayısı deniyor.'),
@@ -315,7 +339,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
           dogru: '0 °C ve 1 atm\'de her ideal gazın 1 molü 22,4 L; gazın cinsi fark etmez.',
           yanlis: '18, suyun molar kütlesi (g/mol). Gazların molar hacmi normal şartlarda 22,4 litre.',
         },
-        kart: 4,
+        kart: 6,
       },
       {
         soru: '1 mol H₂SO₄ içinde kaç mol O atomu vardır?',
@@ -325,23 +349,25 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
           dogru: 'Alt indis mol oranını verir: her molekülde 4 O, her molde 4 mol O.',
           yanlis: '1 mol molekül var ama her molekülde 4 oksijen atomu; alt indis mol oranını verir: 4 mol O.',
         },
-        kart: 7,
+        kart: 9,
       },
     ]),
     konu('kim10-denklestirme', 'Kimyasal Tepkime Denklemlerinin Denkleştirilmesi', [
       kart(
-        'Neden denkleştirilir?',
-        'Atom yoktan var olmaz. İki tarafta her elementin atom sayısı eşit olmalıdır.',
-      ),
-      kart(
-        'Katsayı değişir, indis değişmez',
-        'Formülün alt indisine dokunulmaz — değiştirmek maddeyi değiştirir. Yalnızca önündeki katsayı büyütülür.',
+        'Denkleştirme atom sayısını eşitler',
+        'H₂ + O₂ → H₂O yaz: solda 2 O var, sağda 1. Bir oksijen atomu kayboldu; olamaz, atom yok olmaz. Denkleştirme, yani iki tarafta her elementin atom sayısını eşitleme. Doğrusu: 2H₂ + O₂ → 2H₂O.',
         undefined,
-        { not: 'Denkleşmiyor diye indise dokunursan başka bir madde yazmış olursun.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'İzlenecek sıra',
-        'Sıra keyfî değil: en sona bırakılan elementler birden çok bileşikte geçtiği için en esnek olanlardır.',
+        'Katsayıyı değiştir, alt indise dokunma',
+        'H₂O\'daki 2 alt indis; su molekülünün kimliği. Onu H₂O₂ yaparsan su değil oksijenli su yazmış olursun. Katsayı, yani formülün önündeki sayı, kaç molekül olduğunu söyler. Yalnızca katsayı değişir.',
+        undefined,
+        { etiket: 'Sık hata', not: 'Denkleşmiyor diye alt indise el atarsan dur; o sayı maddenin kimliği, değiştirince başka madde olur.' },
+      ),
+      kart(
+        'Sıra: önce tek yerde geçen element',
+        'Fe + O₂ → Fe₂O₃\'te demir yalnız bir bileşikte geçiyor; onunla başla. Hidrojen ve oksijen çoğu denklemde birkaç yerde geçer; onları sona bırak. Sona kalan element en esnek olandır.',
         {
           tur: 'akis',
           dikey: true,
@@ -355,20 +381,20 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
         },
       ),
       kart(
-        'Hâl gösterimi',
-        'Denklemde (k) katı, (s) sıvı, (g) gaz, (suda) sulu çözelti demektir. Çökelek ve gaz çıkışı buradan okunur.',
+        'Kesirli katsayı ara adımdır',
+        'Fe + O₂ → Fe₂O₃. Demir için 2Fe. Sağda 3 O var; soldan 3 O için 3/2 O₂ gerekir. Kesir ara adımda serbest; sonunda hepsini 2 ile çarp: 4Fe + 3O₂ → 2Fe₂O₃. Son hâlde kesir kalmaz.',
       ),
       kart(
-        'Denetleme',
-        'Bittiğinde her element için iki tarafın atom sayısı tek tek sayılır. Bir tanesi tutmuyorsa denklem denk değildir.',
+        'Bitince her atomu tek tek say',
+        '4Fe + 3O₂ → 2Fe₂O₃. Fe: solda 4, sağda 2 · 2 = 4. O: solda 3 · 2 = 6, sağda 2 · 3 = 6. İkisi de tutuyor; denklem denk. Bir element bile tutmuyorsa baştan bak.',
       ),
       kart(
-        'Kesirli katsayı',
-        'Ara adımda kesir kullanılabilir; sonunda tüm denklem uygun sayıyla çarpılarak tam sayıya çevrilir.',
+        'Parantez içindeki harf hâli söyler',
+        'NaCl(k) katı, H₂O(s) sıvı, CO₂(g) gaz, NaCl(suda) suda çözünmüş demek. Ürünlerde (k) görürsen çökelek, (g) görürsen gaz çıkışı var. Hâl, yani maddenin katı, sıvı ya da gaz olması.',
       ),
       kart(
-        'Çözümlü örnek',
-        'Fe + O₂ → Fe₂O₃: önce Fe (2), sonra O; 3 O için 3/2 O₂. Kesirden kurtulmak için tümü 2 ile çarpılır: 4Fe + 3O₂ → 2Fe₂O₃.',
+        'Katsayılar en küçük tam sayı olmalı',
+        '4H₂ + 2O₂ → 4H₂O denk ama sadeleşir: hepsini 2\'ye böl, 2H₂ + O₂ → 2H₂O. Katsayıların ortak böleni varsa en küçük tam sayıya indir. 1 katsayısı yazılmaz.',
       ),
     ], [
       soru('Denkleştirme yapılırken formüllerdeki indisler değiştirilebilir.', false, 'İndis değişirse madde değişir; yalnızca katsayılar değiştirilir.'),
@@ -393,12 +419,12 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
     ]),
     konu('kim10-hesap', 'Kimyasal Hesaplamalar', [
       kart(
-        'Katsayılar oran verir',
-        'Denkleştirilmiş denklemdeki katsayılar mol oranıdır. Bütün hesaplar bu orandan yürür.',
+        'Katsayılar mol oranıdır',
+        '2H₂ + O₂ → 2H₂O: 2 mol hidrojen, 1 mol oksijenle 2 mol su verir. Katsayılar gram değil mol oranı söyler. 4 mol H₂ alırsan 2 mol O₂ gerekir, 4 mol su çıkar. Stokiyometri, yani denklemle miktar hesabı, bu orana dayanır.',
       ),
       kart(
-        'Hesabın yolu',
-        'Her stokiyometri sorusu aynı üç adımdan geçer; ortadaki adım atlanamaz.',
+        'Hesap üç adımdan geçer: mol, oran, birim',
+        'Verilen gram, istenen litre olsa bile yol aynı. Önce verileni mole çevir. Sonra katsayı oranını uygula. Sonunda istenen birime dön. Ortadaki adım atlanamaz; oran yalnız mol ile çalışır.',
         {
           tur: 'akis',
           dikey: true,
@@ -410,30 +436,32 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
         },
       ),
       kart(
-        'Çözümlü örnek',
-        '2H₂ + O₂ → 2H₂O. 4 g H₂ (2 mol) kaç g su verir? Oran 2:2, yani 2 mol su = 36 g. Adımlar: gram → mol → oran → gram.',
-      ),
-      kart(
-        'Sınırlayıcı bileşen',
-        'Önce biten madde tepkimeyi durdurur; ürün miktarını o belirler. Artan maddenin fazlası tepkimeye giremez.',
+        'Örnek: 4 g H₂ kaç g su verir',
+        '2H₂ + O₂ → 2H₂O. Adım 1: 4 g H₂ = 4 / 2 = 2 mol. Adım 2: oran 2:2, yani 2 mol su. Adım 3: 2 × 18 = 36 g su. Yol: gram → mol → oran → gram.',
         undefined,
-        { not: 'İki madde verilmişse önce hangisinin biteceğini bul; ürün miktarını o belirler.' },
+        { etiket: 'Örnek' },
       ),
       kart(
-        'Nasıl bulunur?',
-        'Her giren madde için katsayıya bölünmüş mol sayısı hesaplanır; en küçük değeri veren madde sınırlayıcıdır.',
+        'Önce biten madde tepkimeyi durdurur',
+        '10 ekmek, 3 köfte varsa 3 sandviç yaparsın; köfte biter, ekmek artar. Tepkimede de önce tükenen madde tepkimeyi durdurur. Buna sınırlayıcı bileşen denir; ürün miktarını o belirler. Artan maddenin fazlası boşta kalır.',
+        undefined,
+        { not: 'İki maddenin de miktarı verilmişse dur: önce hangisinin biteceğini bul, ürünü ondan hesapla.' },
       ),
       kart(
-        'Yüzde verim',
-        'Gerçekte elde edilen ürünün, teorik olarak beklenene oranı. Kayıplar yüzünden pratikte %100’e ulaşılmaz.',
+        'Sınırlayıcıyı bulmak için katsayıya böl',
+        '2H₂ + O₂ → 2H₂O\'da 3 mol H₂ ve 2 mol O₂ var. H₂: 3 / 2 = 1,5. O₂: 2 / 1 = 2. Küçük olan H₂; sınırlayıcı odur. Çok olan değil, katsayısına göre az olan biter. 3 mol su oluşur, 0,5 mol O₂ artar.',
       ),
       kart(
-        'Neden verim düşük?',
-        'Yan tepkimeler, geri dönüşlü tepkimeler ve aktarma sırasındaki kayıplar. Hepsi teorik değeri aşağı çeker.',
+        'Yüzde verim: beklenenin ne kadarı çıktı',
+        'Hesap 36 g su dedi, deneyde 27 g topladın. Verim = 27 / 36 × 100 = %75. Yüzde verim, yani gerçekte elde edilenin teorik olarak beklenene oranı. %100\'ün üstüne çıkamaz.',
       ),
       kart(
-        'Gaz hacmiyle hesap',
-        'Normal şartlarda mol sayısı = hacim / 22,4. Aynı koşuldaki gazlarda katsayı oranı doğrudan hacim oranıdır: 2 L H₂ için 1 L O₂.',
+        'Verim neden %100 olmaz',
+        'Ürünün bir kısmı kapta kalır, bir kısmı yan tepkimeye gider, bazı tepkimeler geri döner. Her biri toplanan ürünü azaltır. Verim %100 çıktıysa ölçüm hatası ya da safsızlık düşün.',
+      ),
+      kart(
+        'Gazlarda katsayı oranı hacim oranıdır',
+        '2H₂ + O₂ → 2H₂O: 2 L hidrojene 1 L oksijen yeter. Aynı sıcaklık ve basınçtaki gazlarda katsayı oranı doğrudan hacim oranı; mole çevirmeye gerek yok. NŞA\'da mol = hacim / 22,4.',
       ),
     ], [
       soru('Denklemdeki katsayılar maddeler arasındaki mol oranını verir.', true, 'Hesaplar bu orandan yürüyor.'),
@@ -459,30 +487,36 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
     ]),
     konu('kim10-gaz-ozellik', 'Gazların Özellikleri ve Kinetik Moleküler Teori', [
       kart(
-        'Gazın dört değişkeni',
-        'Basınç, hacim, sıcaklık ve mol sayısı. Gaz yasalarının tamamı bu dördü arasındaki ilişkidir.',
+        'Gaz, kabın her yerini doldurur',
+        'Parfüm sıkıldığında odanın her köşesine ulaşır. Gaz, bulunduğu kabı tümüyle doldurur; belli bir şekli ve hacmi yok. Su bardağın dibinde durur, gaz kabın tamamına yayılır.',
       ),
       kart(
-        'Kinetik moleküler teori',
-        'Tanecikler sürekli ve rastgele hareket eder, aralarındaki hacim taneciklerin yanında çok büyüktür, çarpışmalar esnektir.',
+        'Gaz sıkışır: tanecikler arası boşluk çok',
+        'Şırınganın ucunu kapat, pistonu it: hava sıkışır. Aynı şırıngayı suyla doldur: itemezsin. Gazda tanecikler arasındaki boşluk taneciklerin kendisinden çok büyük; sıkışır. Sıvı ve katıda boşluk yok denecek kadar az.',
       ),
       kart(
-        'Basınç nereden gelir?',
-        'Taneciklerin kap çeperine çarpmasından. Tanecik sayısı ya da hızı arttıkça basınç artar.',
+        'Kinetik teori: tanecikler durmadan uçuşur',
+        'Gaz taneciklerini odada rastgele uçuşan sinekler gibi düşün. Kinetik moleküler teori bunu söyler: tanecikler sürekli ve rastgele hareket eder, aralarında büyük boşluk var, çarpışmalar esnektir, yani çarpışırken enerji kaybolmaz.',
         undefined,
-        { not: 'Bütün gaz yasaları bu çarpma resminden çıkıyor; yasaları buradan türet.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Sıcaklık ve hız',
-        'Mutlak sıcaklık, taneciklerin ortalama kinetik enerjisiyle doğru orantılıdır. Hesaplarda Kelvin kullanılır.',
+        'Basınç, taneciklerin çepere çarpmasıdır',
+        'Balona üfle, balon gerilir. İçerideki tanecikler balonun duvarına durmadan çarpar; her çarpma bir itme. Gaz basıncı, yani taneciklerin kabın çeperine çarpmasından doğan kuvvet. Daha çok ya da daha hızlı tanecik, daha büyük basınç.',
+        undefined,
+        { not: 'Bir gaz yasası aklından çıkarsa bu resme dön: tanecikler çepere ne kadar sık ve sert çarpıyor?' },
       ),
       kart(
-        'Gazın üç özelliği',
-        'Gaz bulunduğu kabın hacmini tümüyle doldurur, kolayca sıkıştırılır ve her yöne aynı basıncı uygular.',
+        'Gaz her yöne aynı basıncı yapar',
+        'Balon her yöne aynı biçimde şişer, tek taraflı değil. Tanecikler rastgele uçtuğu için her duvara eşit çarpar. Gaz basıncı her yönde aynıdır; aşağı yönlü ağırlık gibi değil.',
       ),
       kart(
-        'Neden sıkışır?',
-        'Tanecikler arasındaki boşluk taneciklerin kendi hacminden çok büyük. Katı ve sıvıda bu boşluk yok denecek kadar azdır.',
+        'Sıcaklık, taneciklerin hızını gösterir',
+        'Gazı ısıt: tanecikler hızlanır. Mutlak sıcaklık, yani Kelvin ile ölçülen sıcaklık, taneciklerin ortalama hareket enerjisiyle doğru orantılı. Kelvin = °C + 273. Gaz hesaplarında sıcaklık hep Kelvin.',
+      ),
+      kart(
+        'Gazı dört şey tanımlar: P, V, T, n',
+        'Bir gazı anlatmak için dört sayı yeter: basınç (P), hacim (V), sıcaklık (T) ve mol sayısı (n). Bisiklet lastiği: pompaladıkça n artar, güneşte T artar. Gaz yasaları bu dördü arasındaki ilişkidir.',
       ),
     ], [
       soru('Bir gazın durumunu basınç, hacim, sıcaklık ve mol sayısı belirler.', true, 'Dördü birbirine bağlı olarak değişiyor.'),
@@ -492,6 +526,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       sikli('Gaz hesaplarında sıcaklık hangi birimle alınır?', ['Santigrat', 'Kelvin'], 1, 'Mutlak sıcaklık ortalama kinetik enerjiyle orantılı.'),
       sikli('Gazın kolayca sıkışmasının sebebi?', ['Tanecikler küçük', 'Tanecikler arası boşluk büyük'], 1, 'Katı ve sıvıda boşluk yok denecek kadar az.'),
       soru('Kinetik teoriye göre gaz çarpışmaları esnektir.', true, 'Enerji kaybı yok.'),
+      soru('Gaz basıncı yalnızca aşağı yönde etki eder.', false, 'Tanecikler her duvara eşit çarpar; basınç her yönde aynı.'),
     ], [
       {
         soru: 'Gazın basıncı nereden gelir?',
@@ -501,13 +536,13 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
           dogru: 'Her çarpma çepere kuvvet uygular; sık ve hızlı çarpma büyük basınç.',
           yanlis: 'Gaz her yöne aynı basıncı uygular, ağırlık aşağı yönlü olurdu. Basınç taneciklerin çepere çarpmasından gelir.',
         },
-        kart: 3,
+        kart: 4,
       },
     ]),
     konu('kim10-gaz-yasa', 'Gaz Yasaları', [
       kart(
-        'Boyle yasası',
-        'Sabit sıcaklıkta basınç ile hacim ters orantılıdır. Şırıngayı sıkıştırmak bunun günlük örneği.',
+        'Boyle: sıkıştırırsan basınç artar',
+        'Ucu kapalı şırıngayı it: hacim yarıya inince pistonu iki kat zor itersin, basınç ikiye katlandı. Boyle yasası: sabit sıcaklıkta basınç ile hacim ters orantılı, P·V sabit. Grafikte eğri aşağı iner.',
         {
           tur: 'koordinat',
           pencere: [0, 6, 0, 6],
@@ -528,8 +563,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
         },
       ),
       kart(
-        'Charles yasası',
-        'Sabit basınçta hacim ile mutlak sıcaklık doğru orantılıdır. Isınan balon şişer.',
+        'Charles: ısınan gaz genleşir',
+        'Balonu güneşe bırak: şişer. Sabit basınçta gaz ısındıkça hacmi büyür. Charles yasası: hacim ile mutlak sıcaklık doğru orantılı, V/T sabit. Grafikte düz çizgi sıfırdan başlar.',
         {
           tur: 'koordinat',
           pencere: [0, 6, 0, 6],
@@ -547,16 +582,16 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
         },
       ),
       kart(
-        'Gay-Lussac yasası',
-        'Sabit hacimde basınç ile mutlak sıcaklık doğru orantılıdır. Isınan kapalı kap patlayabilir.',
+        'Gay-Lussac: kapalı kap ısınınca basınç artar',
+        'Deodorant kutusu ateşe atılırsa patlar: hacim sabit, sıcaklık artınca basınç artar. Gay-Lussac yasası: sabit hacimde basınç ile mutlak sıcaklık doğru orantılı, P/T sabit. Kutuların üstünde bu yüzden "ısıtmayın" yazar.',
       ),
       kart(
-        'Avogadro yasası',
-        'Aynı sıcaklık ve basınçta eşit hacimli gazlarda eşit sayıda tanecik vardır.',
+        'Avogadro: eşit hacimde eşit sayıda tanecik',
+        'Aynı sıcaklık ve basınçta 1 litre helyum ile 1 litre oksijende aynı sayıda tanecik var. Avogadro yasası: eşit hacimli gazlar eşit sayıda tanecik içerir. Hacim ile mol sayısı doğru orantılı.',
       ),
       kart(
-        'Dördünün özeti',
-        'Her yasa bir değişkeni sabit tutup kalan ikisi arasındaki ilişkiyi söyler.',
+        'Her yasa bir değişkeni sabit tutar',
+        'Dört yasa dört ayrı deney. Boyle sıcaklığı sabit tutar, Charles basıncı, Gay-Lussac hacmi. Sabit olan değişkeni bul; kalan ikisinin ilişkisi yasanın kendisi.',
         {
           tur: 'tablo',
           basliklar: ['Yasa', 'Sabit', 'İlişki'],
@@ -569,14 +604,14 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
         },
       ),
       kart(
-        'Neden Kelvin?',
-        'Santigratta sıfır keyfî bir noktadır; orantı ancak mutlak sıfırdan başlayan ölçekte doğru çalışır.',
+        'Sıcaklığı Kelvin\'e çevir: °C + 273',
+        '27 °C\'deki gaz 54 °C\'ye ısıtılırsa hacmi iki katına çıkmaz. Kelvin\'e çevir: 300 K → 327 K, hacim ancak %9 artar. Santigratta sıfır keyfî; orantı yalnız mutlak sıfırdan başlayan Kelvin ile çalışır.',
         undefined,
-        { not: 'Sıcaklık gördüğünde ilk iş +273; santigratla orantı kurmak sonucu baştan bozar.' },
+        { etiket: 'Sık hata', not: 'Sıcaklık gördüğünde ilk iş +273; santigratla orantı kurmak sonucu baştan bozar.' },
       ),
       kart(
-        'Hesap kalıbı',
-        'Birleşik gaz denklemi P₁V₁/T₁ = P₂V₂/T₂. Sabit olanı at, kalanı oranla. Sıcaklık her zaman Kelvin: °C + 273.',
+        'Birleşik gaz denklemi: P₁V₁/T₁ = P₂V₂/T₂',
+        '2 atm, 300 K\'de 6 L gaz 600 K\'ye ısıtılıp 4 L\'ye sıkıştırılırsa basıncı? 2·6/300 = P₂·4/600 → P₂ = 6 atm. Üç yasa tek denklemde birleşir. Sabit olan değişkeni at, kalanı oranla.',
       ),
     ], [
       soru(
@@ -622,38 +657,46 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
     ]),
     konu('kim10-ideal', 'İdeal Gaz Yasası', [
       kart(
-        'PV = nRT',
-        'Dört değişkeni tek denklemde birleştirir. R gaz sabitidir; birim seçimine göre değeri değişir.',
+        'PV = nRT dört değişkeni birleştirir',
+        'Boyle, Charles ve Gay-Lussac birer değişkeni sabit tutuyordu. İdeal gaz yasası dördünü birden bağlar: PV = nRT. P basınç, V hacim, n mol sayısı, T Kelvin sıcaklık. R gaz sabiti, yani her gaz için aynı olan sayı.',
       ),
       kart(
-        'Hesap örneği',
-        '2 mol gaz, 27 °C (300 K), 22,4 L kapta: P = nRT/V = 2·0,082·300/22,4 ≈ 2,2 atm. R = 0,082 L·atm/mol·K.',
+        'R = 0,082 L·atm/mol·K',
+        'Basınç atm, hacim litre ile verilmişse R = 0,082. Birimler değişirse R\'nin sayısı da değişir; soruda hangi birim varsa ona bak. Sınavda çoğu zaman 0,082 ya da 22,4/273 kullanılır.',
       ),
       kart(
-        'Öteki yasaları içerir',
-        'İki değişken sabit tutulunca denklem sırayla Boyle, Charles ve Gay-Lussac yasalarına dönüşür.',
-      ),
-      kart(
-        'Sıcaklık Kelvin',
-        'Denklemde sıcaklık mutlak olmalıdır. Santigrat kullanmak sonucu doğrudan yanlış çıkarır.',
-      ),
-      kart(
-        'İdeallikten sapma',
-        'Yüksek basınç ve düşük sıcaklıkta tanecik hacmi ve çekimler önemli hâle gelir; gaz ideal davranmaz.',
-      ),
-      kart(
-        'Ne zaman ideale yakın?',
-        'Düşük basınç ve yüksek sıcaklıkta. Bu koşullarda tanecikler birbirinden uzak ve hızlıdır.',
+        'Örnek: 2 mol gaz, 300 K, 22,4 L',
+        '27 °C = 300 K. P = nRT / V = 2 · 0,082 · 300 / 22,4 ≈ 2,2 atm. Bilinmeyeni yalnız bırak, sayıları yerine koy. Sıcaklığı Kelvin yapmayı unutursan sonuç baştan yanlış.',
         undefined,
-        { not: 'Sapmayı ezberleme: tanecikler ne zaman birbirini fark etmez, onu düşün.' },
+        { etiket: 'Örnek' },
       ),
       kart(
-        'Kısmi basınç',
-        'Gaz karışımında toplam basınç, her gazın tek başına yapacağı basınçların toplamıdır.',
+        'İki değişken sabitse eski yasalar çıkar',
+        'n ve T sabitse PV = sabit: Boyle. n ve P sabitse V/T = sabit: Charles. n ve V sabitse P/T = sabit: Gay-Lussac. Üç yasa da PV = nRT\'nin özel hâli; hepsini ayrı ezberlemene gerek yok.',
       ),
       kart(
-        'Kısmi basınç ve mol oranı',
-        'Bir gazın kısmi basıncı, toplam basıncın mol kesri kadarıdır. Havadaki oksijenin payı bu şekilde hesaplanır.',
+        'İdeal gaz: tanecikler birbirini fark etmez',
+        'İdeal gaz, yani taneciklerinin hacmi sıfır sayılan ve birbirini çekmeyen hayali gaz. Gerçek gazlar çoğu koşulda buna çok yakın davranır. Yasa bu hayali gaz için yazıldı.',
+        undefined,
+        { etiket: 'Tanım' },
+      ),
+      kart(
+        'Seyrek ve sıcak gaz ideale yakın davranır',
+        'Tanecikler birbirinden uzak (düşük basınç) ve hızlı (yüksek sıcaklık) olunca birbirini çekmeye fırsat bulamaz; gaz ideale yakın davranır. Helyum gibi küçük, apolar tanecikler ideale en yakın gazlardır.',
+        undefined,
+        { not: 'Sapma sorusunda şunu düşün: tanecikler ne zaman birbirine yaklaşıp çekişir? Sıkışınca ve yavaşlayınca.' },
+      ),
+      kart(
+        'Sıkışan, soğuyan gaz idealden sapar',
+        'Gazı çok sıkıştır: tanecikler yaklaşır, kendi hacimleri fark edilir. Çok soğut: yavaşlayan tanecikler birbirini çeker, gaz sıvılaşmaya başlar. Yüksek basınç ve düşük sıcaklıkta PV = nRT tutmaz.',
+      ),
+      kart(
+        'Karışımda basınçlar toplanır',
+        'Havada oksijen ve azot birlikte. Her gazın kapta tek başına olsaydı yapacağı basınca kısmi basınç denir. Toplam basınç, kısmi basınçların toplamı. Buna Dalton yasası denir.',
+      ),
+      kart(
+        'Kısmi basınç mol oranı kadardır',
+        'Kapta 1 mol O₂, 3 mol N₂ var; toplam 4 mol, toplam basınç 2 atm. O₂\'nin mol kesri 1/4; kısmi basıncı 2 · 1/4 = 0,5 atm. Mol kesri, yani gazın molünün toplam mole oranı. Kütle değil mol sayar.',
       ),
     ], [
       soru('PV = nRT bağıntısında T mutlak sıcaklıktır.', true, 'Kelvin cinsinden yazılmak zorunda.'),
@@ -665,6 +708,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       sikli('Bir gazın kısmi basıncı neyle orantılıdır?', ['Mol kesriyle', 'Molar kütlesiyle'], 0, 'P_gaz = mol kesri × toplam.'),
       soru('İdeal gaz denkleminde santigrat kullanılabilir.', false, 'Kelvin şart.'),
       soru('Yüksek basınçta gaz ideallikten sapar.', true, 'Tanecik hacmi ve çekimler işe girer.'),
+      sikli('2 mol gaz, 300 K, 22,4 L kapta: basınç yaklaşık?', ['22 atm', '2,2 atm'], 1, '2 · 0,082 · 300 / 22,4.'),
     ], [
       {
         soru: 'Gaz hangi koşulda ideale en yakın davranır?',
@@ -679,30 +723,36 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
     ]),
     konu('kim10-graham', 'Graham Difüzyon ve Efüzyon Yasası', [
       kart(
-        'Difüzyon ve efüzyon',
-        'Difüzyon gazın başka bir gaz içinde yayılması, efüzyon küçük bir delikten dışarı sızmasıdır.',
-      ),
-      kart(
-        'Graham yasası',
-        'Yayılma hızı, molar kütlenin kareköküyle ters orantılıdır. Hafif gaz daha hızlı yayılır.',
-      ),
-      kart(
-        'Neden böyle?',
-        'Aynı sıcaklıkta bütün gazların ortalama kinetik enerjisi eşittir; eşit enerjide hafif tanecik daha hızlı hareket eder.',
+        'Difüzyon: gaz başka gazın içinde yayılır',
+        'Odanın köşesinde parfüm sıkıldı, birkaç saniye sonra sen de kokuyu aldın. Parfüm tanecikleri hava içinde yayıldı. Difüzyon, yani bir gazın başka bir gazın içinde yayılması.',
         undefined,
-        { not: 'Formülü değil eşit enerji fikrini tut; hız oranı buradan kendiliğinden çıkar.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Günlük karşılığı',
-        'Mutfakta doğal gaz kaçağı, ağır kokulardan daha çabuk hissedilir; hidrojen balonu heliumdan hızlı söner.',
+        'Efüzyon: gaz küçük delikten sızar',
+        'Şişirdiğin balon ertesi gün sönmüş. Gaz, balonun kauçuğundaki gözle görülmeyen deliklerden sızdı. Efüzyon, yani gazın küçük bir delikten dışarı kaçması. Yayılma değil, sızma.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Karşılaştırma',
-        'İki gazın hız oranı, molar kütlelerinin ters oranının kareköküdür; sayı vermeden bile hangisinin hızlı olduğu söylenir.',
+        'Hafif gaz daha hızlı yayılır',
+        'Helyum balonu bir günde söner, hava dolu balon günlerce dayanır. Helyum (4 g/mol) havadan (29 g/mol) hafif ve hızlı. Graham yasası: hafif gaz hem daha hızlı yayılır hem daha hızlı sızar.',
       ),
       kart(
-        'Hesap örneği',
-        'H₂ (2) ile O₂ (32): hız oranı √(32/2) = 4. Hidrojen oksijenden dört kat hızlı yayılır; aynı delikten dört kat çabuk kaçar.',
+        'Aynı sıcaklıkta enerji eşit, hız farklı',
+        'Aynı sıcaklıkta bütün gaz taneciklerinin ortalama hareket enerjisi eşit. Aynı enerjiyle atılan tenis topu bowling topundan hızlı gider. Hafif tanecik de aynı enerjiyle ağırdan hızlı uçar. Yasa buradan çıkar.',
+        undefined,
+        { not: 'Formülü unutsan bile "eşit enerji, hafif olan hızlı" fikrini tut; hız oranı ondan kendiliğinden çıkar.' },
+      ),
+      kart(
+        'Hız oranı, kütle oranının kareköküdür',
+        'H₂ (2 g/mol) ile O₂ (32 g/mol): kütle oranı 32/2 = 16, karekökü 4. Hidrojen oksijenden 4 kat hızlı yayılır. Kural: v₁/v₂ = √(M₂/M₁). Ağır olanın kütlesi üste gelir.',
+      ),
+      kart(
+        'Kütle 4 kat büyükse hız 4 kat değil 2 kat',
+        'He (4) ile CH₄ (16): kütle 4 kat, hız oranı √4 = 2. Helyum metandan 2 kat hızlı, 4 kat değil. Karekökü unutmak en sık hata. Sayı vermeden de söylenir: hafif olan hızlı, ama kütle oranı kadar değil.',
+        undefined,
+        { etiket: 'Sık hata' },
       ),
     ], [
       soru('Graham yasasına göre molekül kütlesi küçük olan gaz daha hızlı yayılır.', true, 'Hafif tanecik aynı sıcaklıkta daha hızlı hareket ediyor.'),
@@ -721,23 +771,25 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
           dogru: 'Hız molar kütlenin kareköküyle ters orantılı; hafif gaz hızlı.',
           yanlis: 'Ağır gaz aynı kinetik enerjiyle daha yavaş hareket eder. Helyum CO₂\'den √11 ≈ 3,3 kat hızlı yayılır.',
         },
-        kart: 2,
+        kart: 3,
       },
     ]),
   ]),
   tema('kim10-t2', 'Çeşitlilik', [
     konu('kim10-cozunme', 'Çözünme Süreci', [
       kart(
-        'Çözelti nedir?',
-        'Bir maddenin başka bir madde içinde tanecik boyutunda ve homojen biçimde dağılmasıyla oluşan karışım.',
+        'Çözelti: bir madde ötekinin içinde dağılır',
+        'Şekeri çaya at, karıştır: şeker kayboldu ama çay tatlı. Şeker tanecikleri çayın her yerine eşit dağıldı. Çözelti, yani bir maddenin ötekinin içinde tanecik boyutunda ve her yerde eşit dağıldığı karışım.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Çözen ve çözünen',
-        'Miktarca çok olan çözücü, az olan çözünendir. Sulu çözeltilerde su her zaman çözücü sayılır.',
+        'Çok olan çözücü, az olan çözünen',
+        'Şekerli çayda çay çok, şeker az. Çok olan çözücü, az olan çözünen. Bir istisna var: su varsa hep çözücü sayılır. %70\'lik alkolde alkol çok ama çözücü yine su.',
       ),
       kart(
-        'Üç adım',
-        'İlk iki adım enerji ister, üçüncüsü enerji verir. Toplam işaret çözeltinin ısınıp soğumasını belirler.',
+        'Çözünme üç adımda olur',
+        'Tuz suya girince önce tuz tanecikleri birbirinden ayrılır. Sonra su molekülleri aralanıp yer açar. Son adımda su molekülleri tuz taneciklerini sarar. İlk iki adım enerji ister, üçüncüsü enerji verir.',
         {
           tur: 'akis',
           dikey: true,
@@ -747,19 +799,22 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
             { ad: 'Sarma', alt: 'enerji verir', renk: 'ikincil' },
           ],
         },
-        { not: 'Isı alan mı veren mi sorusunun cevabı üç adımın toplamında; ezberle değil topla.' },
       ),
       kart(
-        'Isı alan mı veren mi?',
-        'Sarma adımında açığa çıkan enerji, ayırma adımlarının istediğinden büyükse çözelti ısınır; küçükse soğur.',
+        'Sarma çok verirse çözelti ısınır',
+        'NaOH suda çözünürken kap ısınır: sarma adımının verdiği enerji, ayırma adımlarının istediğinden büyük. Amonyum nitratta tersi: kap soğur, çünkü sarma az verir. Toplam artıysa ısı çıkar, eksiyse ısı alınır.',
+        undefined,
+        { not: 'Isı alan mı veren mi sorusunda üç adımı topla: sarma fazla veriyorsa ısınır, az veriyorsa soğur.' },
       ),
       kart(
-        'Günlük örnekler',
-        'Soğutucu jel paketleri ısı alan çözünmeyi, ısıtıcı el paketleri ısı veren çözünmeyi kullanır.',
+        'Soğuk kompres ısı alan çözünmeyle çalışır',
+        'Burkulan bileğe konan soğuk kompreste amonyum nitrat ile su ayrı bölmelerde. Paketi sıkınca karışır, çözünme ısı alır, paket soğur. Isıtıcı el paketi ise ısı veren çözünme kullanır.',
       ),
       kart(
-        'Çözünme hızı',
-        'Karıştırmak, ısıtmak ve maddeyi ufalamak çözünmeyi hızlandırır ama ne kadar çözüneceğini değiştirmez.',
+        'Karıştırmak hızı artırır, miktarı değil',
+        'Çayı karıştırınca şeker daha çabuk çözünür ama daha çok şeker çözünmez. Karıştırmak, ısıtmak ve ufalamak çözünmeyi hızlandırır. Ne kadar çözüneceğini değil, ne kadar sürede çözüneceğini değiştirir.',
+        undefined,
+        { etiket: 'Sık hata' },
       ),
     ], [
       soru('Bir çözeltide miktarı çok olan bileşen çözücüdür.', true, 'Az olan çözünen.'),
@@ -783,30 +838,34 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
     ]),
     konu('kim10-cozunebilirlik', 'Maddelerin Birbiri İçindeki Çözünebilirliği', [
       kart(
-        'Benzer benzeri çözer',
-        'Polar madde polar çözücüde, apolar madde apolar çözücüde çözünür. Tuz suda, yağ benzinde çözünür.',
-      ),
-      kart(
-        'Su neden iyi çözücü?',
-        'Polar ve hidrojen bağı yapabildiği için iyonları ve polar molekülleri kolayca sarar.',
-      ),
-      kart(
-        'Yağ ile su',
-        'Su molekülleri birbirini yağdan güçlü çeker; yağ dışarı itilir ve iki faz ayrı kalır.',
-      ),
-      kart(
-        'Sabun ikisini birleştirir',
-        'Sabun molekülünün bir ucu polar, öteki ucu apolardır; yağı kavrar ve su tarafına taşır.',
+        'Polar molekülün iki ucu farklı yüklüdür',
+        'Su molekülü küçük bir mıknatıs gibi: oksijen tarafı hafif eksi, hidrojen tarafı hafif artı. Buna polar denir, yani yükü iki uca dağılmış. Yağ moleküllerinde böyle uçlar yok; onlar apolar.',
         undefined,
-        { not: 'Sabun molekülünü çizebiliyorsan "benzer benzeri çözer"i anlamışsın demektir.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Kısmen çözünenler',
-        'Alkol hem polar hem apolar uç taşıdığı için hem suda hem yağlı maddelerde bir ölçüde çözünür.',
+        'Benzer benzeri çözer',
+        'Tuz suda çözünür, benzinde çözünmez. Yağ benzinde çözünür, suda çözünmez. Kural: polar madde polar çözücüde, apolar madde apolar çözücüde çözünür. Tuz ve su polar, yağ ve benzin apolar.',
+        undefined,
+        { etiket: 'Kural' },
       ),
       kart(
-        'Zincir uzadıkça',
-        'Alkolün karbon zinciri uzadıkça apolar kısmı ağır basar ve suda çözünürlüğü düşer.',
+        'Su, iyonları sarıp çeker',
+        'Tuz (NaCl) artı ve eksi iyonlardan yapılı. Suyun eksi ucu Na⁺\'yı, artı ucu Cl⁻\'yi sarar ve kristalden koparır. Su bu yüzden iyi çözücü: polar ve hidrojen bağı yapabiliyor, yani başka moleküllere sıkı tutunabiliyor.',
+      ),
+      kart(
+        'Yağ suda çözünmez, üstte kalır',
+        'Salata sosunu çalkala, biraz sonra yağ yine üste çıkar. Su molekülleri birbirini yağdan daha güçlü çeker; yağı aralarına almaz, dışarı iter. Yağ apolar, su polar: benzer değil, çözünmez.',
+      ),
+      kart(
+        'Sabunun bir ucu suyu, öteki yağı sever',
+        'Yağlı tabağı yalnız suyla yıkayamazsın; sabun ekleyince çıkar. Sabun molekülünün bir ucu polar, öteki ucu apolar. Apolar uç yağa tutunur, polar uç suya; yağ suyla birlikte akar gider.',
+        undefined,
+        { not: 'Sabun molekülünü kafanda iki uçlu bir çubuk gibi çiz: bir ucu yağda, öteki suda. Kural buradan görünür.' },
+      ),
+      kart(
+        'Alkol iki tarafa da tutunur',
+        'Etil alkol hem suda hem yağda bir ölçüde çözünür. Molekülünde polar –OH ucu ve apolar karbon zinciri var. Zincir uzadıkça apolar taraf ağır basar; uzun alkoller suda az çözünür.',
       ),
     ], [
       soru('Polar maddeler polar çözücülerde iyi çözünür.', true, '"Benzer benzeri çözer" kuralı.'),
@@ -825,25 +884,27 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
           dogru: 'Benzer benzeri çözer; su molekülleri birbirini yağdan güçlü çeker, yağ dışarı itilir.',
           yanlis: 'Yoğunluk yüzmeyi belirler, çözünmeyi değil. Yağ apolar, su polar; polar su apolar yağı saramaz.',
         },
-        kart: 1,
+        kart: 4,
       },
     ]),
     konu('kim10-siniflandirma', 'Çözünme Olayının Sınıflandırılması', [
       kart(
-        'İyonik çözünme',
-        'Madde suda iyonlarına ayrılır. Çözelti elektrik akımını iletir; tuz ve asitler böyledir.',
+        'Tuz suda iyonlarına ayrılır',
+        'Tuz (NaCl) suya girince Na⁺ ve Cl⁻ iyonlarına ayrılır. İyon, yani elektrik yükü taşıyan tanecik. Buna iyonik çözünme denir. Asitler ve bazlar da suda iyonlarına ayrılır.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Moleküler çözünme',
-        'Madde molekül hâlinde dağılır, iyon oluşmaz. Şeker çözeltisi elektriği iletmez.',
+        'Şeker molekül olarak dağılır',
+        'Şeker suya girince molekülleri birbirinden ayrılır ama parçalanmaz; yüklü tanecik oluşmaz. Buna moleküler çözünme denir. Alkol ve glikoz da böyle çözünür.',
       ),
       kart(
-        'Elektrolit çözelti',
-        'İçinde serbest iyon bulunduran ve akımı ileten çözelti. İyon sayısı arttıkça iletkenlik artar.',
+        'İyon varsa çözelti akımı iletir',
+        'Elektrik akımı yüklü taneciklerin hareketidir. Tuzlu suda serbest iyonlar var; akımı taşırlar. Şekerli suda yüklü tanecik yok; akım geçmez. Akım ileten çözeltiye elektrolit denir.',
       ),
       kart(
-        'Kuvvetli ve zayıf elektrolit',
-        'Tamamı iyonlaşan madde kuvvetli, bir kısmı iyonlaşan zayıf elektrolittir. Lambanın parlaklığı bunu gösterir.',
+        'Lamba deneyi iyonu gösterir',
+        'Basit devreye lamba bağla, iki ucunu çözeltiye daldır. Tuzlu suda lamba parlak yanar, şekerli suda hiç yanmaz. Lamba yanıyorsa çözünme iyonik; yanmıyorsa moleküler.',
         {
           tur: 'tablo',
           basliklar: ['Çözelti', 'İletkenlik'],
@@ -853,16 +914,17 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
             ['Şekerli su', 'Yok'],
           ],
         },
+        { not: 'İletkenlik sorusunda lamba deneyini düşün: parlak, sönük ya da yanmıyor; üçü üç ayrı cevap.' },
       ),
       kart(
-        'Nasıl anlaşılır?',
-        'Basit bir devreye lamba bağlanır: çözeltiye daldırıldığında lamba yanıyorsa çözünme iyoniktir.',
+        'Tamamı ayrılan kuvvetli, kısmı zayıf',
+        'Tuzun bütün tanecikleri iyonlaşır: kuvvetli elektrolit, lamba parlak. Sirkedeki asetik asidin yalnız küçük bir kısmı iyonlaşır: zayıf elektrolit, lamba sönük yanar. İyon ne kadar çoksa iletkenlik o kadar yüksek.',
+      ),
+      kart(
+        'Saf su neredeyse iletmez',
+        'Saf suda serbest iyon yok denecek kadar az; akımı iletmez. Musluk suyu iletir, çünkü içinde çözünmüş tuzlar var. Islak elle prize dokunmak tehlikeli; ileten su değil, içindeki iyonlar.',
         undefined,
-        { not: 'Lamba deneyini aklında tut; iletkenlik sorusu hep buna dayanır.' },
-      ),
-      kart(
-        'Saf su iletmez',
-        'Saf su neredeyse yalıtkandır; musluk suyunu iletken yapan şey içindeki çözünmüş iyonlardır.',
+        { etiket: 'Sık hata' },
       ),
     ], [
       soru('İyonik çözünmede oluşan çözelti elektrik akımını iletir.', true, 'Serbest iyonlar yükü taşıyor.'),
@@ -871,7 +933,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Zayıf elektrolitler suda tümüyle iyonlaşır.', false, 'Kısmen iyonlaşırlar; tümüyle iyonlaşan kuvvetli elektrolittir.'),
       sikli('Suda iyonlarına ayrılan madde nasıl çözünmüştür?', ['İyonik', 'Moleküler'], 0, 'Çözelti akım iletir.'),
       sikli('Bir kısmı iyonlaşan madde nedir?', ['Zayıf elektrolit', 'Kuvvetli elektrolit'], 0, 'Lamba sönük yanar.'),
-      soru('Saf su elektriği iyi iletir.', false, 'Neredeyse yalıtkan; ileten çözünmüş iyonlar.'),
+      soru('Sirke çözeltisi kuvvetli bir elektrolittir.', false, 'Asetik asidin küçük bir kısmı iyonlaşır; zayıf elektrolit, lamba sönük yanar.'),
     ], [
       {
         soru: 'Şeker çözeltisi elektriği iletir mi?',
@@ -886,20 +948,22 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
     ]),
     konu('kim10-cozunurluk', 'Çözünürlük', [
       kart(
-        'Tanımı',
-        'Belirli sıcaklıkta 100 g çözücüde çözünebilen en fazla madde miktarı. Maddenin ayırt edici özelliğidir.',
+        'Çözünürlük: 100 g suda en çok kaç gram',
+        '20 °C\'de 100 g suya tuz ekle: 36 g çözünür, fazlası dipte kalır. Tuzun 20 °C\'deki çözünürlüğü 36 g. Çözünürlük, yani belirli sıcaklıkta 100 g çözücüde çözünebilen en çok madde. Her maddenin kendi değeri var.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Doymuş çözelti',
-        'Daha fazla madde çözemeyen çözelti. Eklenen fazlalık dibe çöker.',
+        'Doymuş çözelti daha fazlasını alamaz',
+        '100 g suya 36 g tuz kondu, hepsi çözündü; bir gram daha ekledin, dipte kaldı. Bu çözelti doymuş, yani o sıcaklıkta çözebileceği kadarını çözmüş. Daha azı çözülmüşse doymamış.',
       ),
       kart(
-        'Aşırı doymuş çözelti',
-        'Kararsız biçimde sınırın üstünde madde taşır. Küçük bir sarsıntı ya da kristal fazlalığı çökertir.',
+        'Aşırı doymuş çözelti kararsızdır',
+        'Sıcakken bol şeker çözdün, yavaşça soğuttun; şeker çökmeden çözeltide kaldı. Şimdi sınırın üstünde madde taşıyor: aşırı doymuş. Küçük bir sarsıntı ya da tek bir kristal fazlalığı hemen çökertir.',
       ),
       kart(
-        'Çözünürlük eğrisi',
-        'Sıcaklığa karşı çözünürlüğü gösteren grafik. Eğrinin üstü aşırı doymuş, altı doymamış bölgedir.',
+        'Eğri, sıcaklıkla çözünürlüğü gösterir',
+        'Yatay eksen sıcaklık, düşey eksen 100 g sudaki gram. Katıların çizgisi çoğunlukla yukarı çıkar: ısındıkça daha çok çözünür. Gazların çizgisi aşağı iner: ısındıkça daha az çözünür.',
         {
           tur: 'koordinat',
           pencere: [0, 6, 0, 6],
@@ -929,18 +993,18 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
         },
       ),
       kart(
-        'Eğriden ne okunur?',
-        'Belirli bir sıcaklıkta en çok ne kadar çözüneceği, ne kadarının çökeceği ve çözeltinin doymuş olup olmadığı.',
+        'Eğrinin üstü aşırı doymuş, altı doymamış',
+        'Grafikte bir nokta işaretle. Çizginin tam üstündeyse çözelti doymuş. Çizginin altındaysa doymamış; daha madde alır. Çizginin üstündeyse aşırı doymuş; fazlası çökmeye hazır.',
       ),
       kart(
-        'Kristallendirme',
-        'Sıcakken doyurulan çözelti soğutulunca fazlalık kristal hâlinde ayrılır. Şeker ve tuz bu yolla saflaştırılır.',
-      ),
-      kart(
-        'Eğri sorusu kalıbı',
-        '80 °C\'de 100 g suda 60 g çözünen madde 20 °C\'de 30 g çözünüyorsa soğutunca 30 g çöker. 200 g su için sayılar iki katı.',
+        'Soğutunca fazlası kristal olur',
+        '80 °C\'de 100 g suda 60 g madde çözündü. 20 °C\'de çözünürlük 30 g. Soğutunca 60 − 30 = 30 g kristal çöker. Buna kristallendirme denir; şeker ve tuz bu yolla saflaştırılır.',
         undefined,
-        { not: 'Grafik sorusunda iki sıcaklıktaki değeri oku, farkı al; hesap bu kadar.' },
+        { not: 'Grafik sorusunda iki sıcaklıktaki değeri oku, farkı al; çöken miktar bu kadar. Su 200 g ise sayıları ikiyle çarp.' },
+      ),
+      kart(
+        'Su miktarı değişirse orantı kur',
+        'Çözünürlük 100 g su için verilir. 200 g suda her sayı iki katı: 80 °C\'de 120 g çözünür, 20 °C\'ye soğutunca 60 g çöker. 50 g suda yarısı. Önce suyu 100 g\'a oranla.',
       ),
     ], [
       soru(
@@ -981,29 +1045,31 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
           dogru: 'Eğri sınırı gösterir; üstü sınırdan fazla madde taşıyan kararsız çözelti.',
           yanlis: 'Doymamış çözelti eğrinin altında kalır. Eğrinin üstü sınırdan fazlasını taşıyan aşırı doymuş bölge.',
         },
-        kart: 4,
+        kart: 5,
       },
     ]),
     konu('kim10-etkileyen', 'Çözünürlüğe Etki Eden Faktörler', [
       kart(
-        'Madde cinsi',
-        'Çözünürlük öncelikle çözücü ile çözünenin türüne bağlıdır. Aynı koşulda her madde farklı çözünür.',
+        'Çözünürlük önce maddenin cinsine bağlıdır',
+        'Aynı 100 g suya 20 °C\'de 36 g tuz, 200 g şeker, 0,001 g kireç sığar. Su aynı, sıcaklık aynı, sayılar bambaşka. Çözünürlüğü ilk belirleyen şey çözücü ile çözünenin cinsi.',
       ),
       kart(
-        'Sıcaklık — katılar',
-        'Çoğu katının çözünürlüğü sıcaklıkla artar. Sıcak çayda şekerin çabuk çözünmesi bundan.',
+        'Katılar sıcak suda daha çok çözünür',
+        'Soğuk çayda üç şeker dipte kalır; sıcak çayda üçü de erir, dördüncü de sığar. Çoğu katının çözünürlüğü sıcaklıkla artar. Sıcak su yalnızca daha hızlı değil, daha çok da çözer.',
       ),
       kart(
-        'Sıcaklık — gazlar',
-        'Gazların çözünürlüğü sıcaklıkla azalır. Isınan gazoz köpürür, ısınan suda balık için oksijen azalır.',
+        'Gazlar sıcak suda daha az çözünür',
+        'Sıcak gazoz açılınca fışkırır; buzdolabındaki sessizce açılır. Isınan suda çözünmüş gaz kaçar. Gazların çözünürlüğü sıcaklıkla azalır. Yazın ısınan gölde balıklar bu yüzden oksijensiz kalır.',
+        undefined,
+        { etiket: 'Dikkat' },
       ),
       kart(
-        'Basınç',
-        'Yalnızca gazları etkiler ve çözünürlüğü artırır. Gazoz şişesi açılınca basınç düşer ve gaz kaçar.',
+        'Basınç yalnızca gazın çözünürlüğünü artırır',
+        'Gazoz şişesinde CO₂ yüksek basınçla suda tutulur. Kapağı aç: basınç düşer, gaz kaçar, köpürür. Basınç arttıkça gazın çözünürlüğü artar. Katı ve sıvıların çözünürlüğüne basıncın belirgin etkisi yok.',
       ),
       kart(
-        'Etkilemeyenler',
-        'Bu üçü çözünürlüğü değil yalnızca çözünme hızını değiştirir; ayrımı karıştırmak sık yapılan bir hatadır.',
+        'Karıştırma ve ufalama sınırı değiştirmez',
+        'Şekeri toz yap, hızla karıştır: daha çabuk çözünür ama 100 g suya yine aynı miktar sığar. Hız ile miktar ayrı iki soru. Yalnız sıcaklık ikisini birden değiştirir.',
         {
           tur: 'tablo',
           basliklar: ['Etken', 'Neyi değiştirir?'],
@@ -1014,11 +1080,11 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
             ['Sıcaklık', 'İkisi de'],
           ],
         },
-        { not: 'Hız ile miktar ayrı sorular; karıştırma hızlandırır ama sınırı değiştirmez.' },
+        { etiket: 'Sık hata', not: 'Soru "hız" mı "çözünürlük" mü soruyor, önce ona bak: karıştırma yalnız hızı, sıcaklık ikisini değiştirir.' },
       ),
       kart(
-        'Ortak iyon etkisi',
-        'Çözeltide zaten bulunan bir iyonu eklemek, o iyonu içeren tuzun çözünürlüğünü düşürür.',
+        'Ortak iyon çözünürlüğü düşürür',
+        'Doymuş tuzlu suya (NaCl) bir tutam KCl at: içinde zaten Cl⁻ var. Çözeltideki Cl⁻ artınca NaCl\'nin bir kısmı çöker. Ortak iyon etkisi, yani çözeltide zaten bulunan bir iyonu eklemek, o tuzun çözünürlüğünü düşürür.',
       ),
     ], [
       soru('Katıların çözünürlüğü genellikle sıcaklık arttıkça artar.', true, 'Şekerin sıcak suda daha çok çözünmesi buna örnek.'),
@@ -1027,7 +1093,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Karıştırmak çözünürlüğü artırır.', false, 'Çözünme hızını artırır; çözünürlük aynı kalır.'),
       sikli('Basınç hangi maddelerin çözünürlüğünü etkiler?', ['Katıların', 'Yalnızca gazların'], 1, 'Gazoz şişesi.'),
       sikli('Sıcak suda balık için oksijenin azalmasının sebebi?', ['Su buharlaşır', 'Gaz çözünürlüğü sıcaklıkla azalır'], 1, 'Isınan su gazı tutamaz.'),
-      soru('Karıştırmak çözünürlüğü artırır.', false, 'Yalnızca çözünme hızını.'),
+      soru('Ortak iyon eklemek tuzun çözünürlüğünü artırır.', false, 'Düşürür; zaten bulunan iyon artınca tuzun bir kısmı çöker.'),
     ], [
       {
         soru: 'Gazoz ısındığında neden köpürür?',
@@ -1042,22 +1108,24 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
     ]),
     konu('kim10-cozelti-sinif', 'Çözeltilerin Sınıflandırılması', [
       kart(
-        'Derişik ve seyreltik',
-        'Aynı çözücüde çok çözünen varsa derişik, az varsa seyreltiktir. Göreli bir karşılaştırmadır.',
-      ),
-      kart(
-        'Doymuş, doymamış, aşırı doymuş',
-        'Çözünürlük sınırına göre yapılan sınıflama. Derişik olmakla doymuş olmak aynı şey değildir.',
-      ),
-      kart(
-        'İkisi neden farklı?',
-        'Çözünürlüğü düşük bir madde az miktarda bile doymuş çözelti verir; o çözelti doymuştur ama seyreltiktir.',
+        'Derişik çok, seyreltik az çözünen taşır',
+        'Bir bardağa bir kaşık, öbürüne beş kaşık şeker koydun. Beş kaşıklı derişik, bir kaşıklı seyreltik. Derişik, yani çözünen miktarı çok olan; seyreltik, az olan. Kesin bir sınır yok; karşılaştırma göreli.',
         undefined,
-        { not: 'Derişik ve doymuş aynı şey değil; az çözünen madde seyreltikken doyar.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Hâline göre',
-        'Çözelti sıvı olmak zorunda değil: hava gaz çözeltisi, alaşımlar katı çözeltidir.',
+        'Doymuşluk sınıra, derişiklik miktara bakar',
+        'Doymuş, doymamış, aşırı doymuş: çözünürlük sınırına göre sınıflama. Derişik ve seyreltik: içindeki miktara göre sınıflama. İki ayrı soru; biri ötekini söylemez.',
+      ),
+      kart(
+        'Az çözünen madde seyreltikken doyar',
+        'Kireç (CaCO₃) 100 g suda ancak 0,001 g çözünür. Bu kadarcık madde çözeltiyi doyurur ama içinde neredeyse hiç madde yok: doymuş ve seyreltik. Şekerli su ise 150 g şekerle doymamış ama derişik.',
+        undefined,
+        { not: 'Derişik ile doymuşu aynı sanma: az çözünen madde bir tutamla doyar, çözelti yine seyreltik kalır.' },
+      ),
+      kart(
+        'Çözelti sıvı olmak zorunda değil',
+        'Hava bir çözelti: azot içinde oksijen çözünmüş, gaz hâlde. Çelik de çözelti: demir içinde karbon dağılmış, katı hâlde. Çözelti, hâline göre gaz, sıvı ya da katı olabilir.',
         {
           tur: 'tablo',
           basliklar: ['Hâl', 'Örnek'],
@@ -1069,12 +1137,12 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
         },
       ),
       kart(
-        'İletkenliğine göre',
-        'Elektrolit çözeltiler akımı iletir, elektrolit olmayanlar iletmez.',
+        'Elektrolit iletir, öteki iletmez',
+        'Tuzlu su akımı iletir: elektrolit çözelti, içinde iyon var. Şekerli su iletmez: elektrolit olmayan çözelti, içinde yalnız molekül var. İletkenliğe göre sınıflama bu ikisi.',
       ),
       kart(
-        'Homojen olmak şart',
-        'Çözelti her noktasında aynı özelliği taşır. Tanecikler görünür boyuttaysa o bir çözelti değil süspansiyondur.',
+        'Çözelti her yerinde aynıdır',
+        'Tuzlu suyun üstünden de dibinden de aynı tuzlulukta örnek alırsın: homojen, yani her yeri aynı. Kum-su karışımında kum dipte: bu çözelti değil, süspansiyon. Tanecikler görünüyorsa çözelti değil.',
       ),
     ], [
       soru('Derişik ve seyreltik ayrımı, çözünen madde miktarına göre yapılır.', true, 'Göreli bir ayrım; kesin bir sınır yok.'),
@@ -1098,30 +1166,34 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
     ]),
     konu('kim10-derisim', 'Derişim Birimleri', [
       kart(
-        'Molarite',
-        '1 litre çözeltide çözünen madde mol sayısı. Birimi mol/L ve sembolü M’dir.',
-      ),
-      kart(
-        'Hesap örneği',
-        '4 g NaOH (0,1 mol) ile 500 mL çözelti hazırlanırsa molarite 0,1 / 0,5 = 0,2 M. Önce mol, sonra litre.',
-      ),
-      kart(
-        'Dikkat: çözelti hacmi',
-        'Molarite çözücünün değil çözeltinin hacmine bölünür. Katıyı eklemek hacmi değiştirir.',
+        'Molarite: 1 litrede kaç mol çözünmüş',
+        '1 L çözeltide 1 mol tuz varsa çözelti 1 molar, yazılışı 1 M. Molarite, yani 1 litre çözeltideki çözünen mol sayısı. Birimi mol/L. Formül: M = n / V, V litre cinsinden.',
         undefined,
-        { not: 'Çözücü değil çözelti; bu tek kelime farkı hesabı değiştiriyor.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Kütlece yüzde',
-        'Çözünenin kütlesinin, çözeltinin toplam kütlesine oranı. Etiketlerde en sık görülen derişim birimidir.',
+        'Örnek: 4 g NaOH, 500 mL çözelti',
+        'NaOH\'nin molar kütlesi 40; 4 g = 0,1 mol. 500 mL = 0,5 L. Molarite = 0,1 / 0,5 = 0,2 M. Sıra hep aynı: önce gramı mole çevir, sonra mL\'yi litreye, sonra böl.',
+        undefined,
+        { etiket: 'Örnek' },
       ),
       kart(
-        'ppm',
-        'Milyonda bir kısım. Çok seyreltik derişimlerde kullanılır: içme suyundaki kurşun sınırı ppm ile verilir.',
+        'Çözeltinin hacmine böl, çözücünün değil',
+        '500 mL suya tuz attın, hacim 510 mL oldu. Molaritede 510 mL kullanılır; suyun 500 mL\'si değil. Çözelti = çözücü + çözünen; katı eklenince hacim büyür. "Su" ile "çözelti" sınavda kasten karıştırılır.',
+        undefined,
+        { etiket: 'Sık hata', not: 'Soruda "mL su" mu "mL çözelti" mi yazıyor, altını çiz; molarite çözeltinin hacmine bölünür.' },
       ),
       kart(
-        'Seyreltme',
-        'Su eklemek mol sayısını değiştirmez, yalnızca hacmi büyütür. Bu yüzden derişim küçülür.',
+        'Kütlece yüzde: 100 g çözeltide kaç gram',
+        '20 g tuz + 80 g su = 100 g çözelti; tuz kütlece %20. Kütlece yüzde = çözünenin kütlesi / çözeltinin kütlesi × 100. Payda çözücü değil, çözelti. Sirke şişesindeki "%5 asit" böyle yazılır.',
+      ),
+      kart(
+        'ppm: milyonda bir',
+        '1 kg suda 1 mg kurşun varsa derişim 1 ppm; milyonda bir parça. ppm, yani çok seyreltik derişimlerin birimi. İçme suyu sınırları ve hava kirliliği ppm ile verilir; yüzde bu kadar küçük sayıya elverişsiz.',
+      ),
+      kart(
+        'Su eklemek molü değil hacmi değiştirir',
+        'Bir bardak şerbete su kat: tadı açılır. Şeker miktarı aynı, hacim büyüdü; derişim düştü. Seyreltme, yani çözücü ekleyerek derişimi düşürme. Mol sayısı değişmez, bu yüzden M₁V₁ = M₂V₂.',
         {
           tur: 'akis',
           adimlar: [
@@ -1132,12 +1204,12 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
         },
       ),
       kart(
-        'Karıştırma',
-        'İki çözelti karışınca toplam mol ve toplam hacim toplanır; yeni derişim ikisinin bölümüdür.',
+        'Seyreltme örneği: M₁V₁ = M₂V₂',
+        '2 M\'lik 100 mL çözeltiye 300 mL su ekledin; son hacim 400 mL. 2 · 100 = M₂ · 400 → M₂ = 0,5 M. Sol taraf başlangıçtaki mol, sağ taraf sondaki mol; ikisi eşit.',
       ),
       kart(
-        'Seyreltme formülü',
-        'M₁V₁ = M₂V₂. 2 M\'lik 100 mL çözeltiye 300 mL su eklenirse: 2·100 = M₂·400 → 0,5 M.',
+        'Karıştırınca moller ve hacimler toplanır',
+        '1 M\'lik 100 mL ile 3 M\'lik 100 mL aynı tuz çözeltisi karıştı. Mol: 0,1 + 0,3 = 0,4. Hacim: 200 mL = 0,2 L. Yeni derişim 0,4 / 0,2 = 2 M. Derişimleri toplama; molü topla, hacme böl.',
       ),
     ], [
       soru('Molarite, çözünen maddenin mol sayısının çözelti hacmine bölünmesidir.', true, 'Birimi mol/L.'),
@@ -1163,24 +1235,26 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
     ]),
     konu('kim10-koligatif', 'Koligatif Özellikler', [
       kart(
-        'Neye bağlı?',
-        'Çözünenin cinsine değil, çözeltideki tanecik sayısına bağlı özelliklerdir.',
+        'Koligatif özellik tanecik sayısına bakar',
+        'Suya 1 mol şeker de 1 mol üre de koysan kaynama noktası aynı miktarda yükselir. Ne koyduğun değil, kaç tanecik koyduğun önemli. Koligatif özellik, yani çözünenin cinsine değil tanecik sayısına bağlı özellik.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Kaynama noktası yükselmesi',
-        'Çözünen eklenince çözeltinin kaynama sıcaklığı saf çözücününkinden yüksek olur.',
+        'Çözünen buharlaşmayı zorlaştırır',
+        'Su yüzeyinden moleküller uçup gider; üstte biriken buharın basıncına buhar basıncı denir. Tuz ekleyince yüzeyin bir kısmını tuz iyonları kaplar; daha az su molekülü uçar. Buhar basıncı düşer. Öteki özellikler buradan çıkar.',
       ),
       kart(
-        'Donma noktası düşmesi',
-        'Çözelti saf çözücüden daha düşük sıcaklıkta donar. Kışın yollara tuz atılmasının sebebi budur.',
+        'Tuzlu su daha yüksek sıcaklıkta kaynar',
+        'Saf su 100 °C\'de kaynar; makarna suyuna tuz atınca biraz daha geç kaynar. Sıvı, buhar basıncı dış basınca eşitlenince kaynar; çözünen buhar basıncını düşürdüğü için daha çok ısı gerekir. Kaynama noktası yükselir.',
       ),
       kart(
-        'Buhar basıncı düşmesi',
-        'Yüzeydeki çözünen tanecikleri buharlaşmayı engeller; buhar basıncı düşer. Öteki iki özellik bundan türer.',
+        'Tuzlu su daha düşük sıcaklıkta donar',
+        'Kışın yola tuz atılır: buz erir, çünkü tuzlu su 0 °C\'nin altında da sıvı kalır. Çözünen, donma noktasını düşürür. Arabanın antifrizi de aynı ilkeyle radyatörü donmaktan korur.',
       ),
       kart(
-        'İyonik çözünen daha etkili',
-        'NaCl suda iki iyona ayrıldığı için aynı moldeki şekerin iki katı etki yapar.',
+        'Tuz ikiye ayrılır, etkisi iki kat',
+        '1 mol şeker suda 1 mol tanecik verir. 1 mol NaCl suda Na⁺ ve Cl⁻\'ye ayrılır: 2 mol tanecik. Aynı molde tuzun etkisi şekerin iki katı. CaCl₂ üç iyona ayrılır; üç kat.',
         {
           tur: 'tablo',
           basliklar: ['1 mol madde', 'Tanecik'],
@@ -1190,11 +1264,11 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
             ['CaCl₂', '3 mol'],
           ],
         },
-        { not: 'Mol sayma, tanecik say; tuz suda ikiye ayrılıyor.' },
+        { not: 'Mol sayma, tanecik say: tuz suda ikiye, CaCl₂ üçe ayrılır; şeker olduğu gibi kalır.' },
       ),
       kart(
-        'Osmotik basınç',
-        'Yarı geçirgen zardan su geçişini durdurmak için gereken basınç. Hücrelerin su dengesi buna bağlıdır.',
+        'Osmotik basınç suyu durdurur',
+        'Yarı geçirgen zar, yani suyu geçiren ama çözüneni geçirmeyen zar. İki yanda derişim farklıysa su seyreltik taraftan derişik tarafa geçer. Bu geçişi durdurmak için gereken basınca osmotik basınç denir. Hücre tuzlu suda bu yüzden büzülür.',
       ),
     ], [
       soru('Koligatif özellikler, çözünen taneciklerin sayısına bağlıdır.', true, 'Taneciğin cinsi değil sayısı belirleyici.'),
@@ -1213,37 +1287,41 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
           dogru: 'Tuzlu su saf sudan daha düşük sıcaklıkta donar; buz çözülür.',
           yanlis: 'Kaynama noktası da yükselir ama yolda önemli olan donma: tuzlu su 0 °C\'nin altında sıvı kalır.',
         },
-        kart: 3,
+        kart: 4,
       },
     ]),
   ]),
   tema('kim10-t3', 'Sürdürülebilirlik', [
     konu('kim10-mikro', 'Makro ve Mikro Ölçekli Deneyler', [
       kart(
-        'Fark nedir?',
-        'Mikro ölçekli deney aynı sonucu çok daha az madde ve küçük düzenekle verir.',
-      ),
-      kart(
-        'Üç kazanç',
-        'Daha az atık, daha az maliyet, daha az risk. Az miktarda kimyasal daha az zarar verir.',
-      ),
-      kart(
-        'Atom ekonomisi',
-        'Girenlerdeki atomların ne kadarının ürüne geçtiğinin ölçüsü. Yüksek atom ekonomisi az atık demektir.',
-      ),
-      kart(
-        'Verim ile farkı',
-        'Verim ne kadar ürün elde edildiğini söyler; atom ekonomisi ise kaç atomun boşa gittiğini. İkisi ayrı ölçülerdir.',
+        'Mikro ölçek: aynı deney, çok az madde',
+        'Okul laboratuvarında asit-baz deneyini 50 mL yerine 5 mL ile yaparsın; damlalık ve küçük tüp yeter. Sonuç aynı çıkar. Mikro ölçekli deney, yani aynı deneyi çok az madde ve küçük düzenekle yapmak.',
         undefined,
-        { not: 'İki ölçü iki ayrı soruya cevap; birini ötekinin yerine koyma.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Sınırı',
-        'Her deney küçültülemez: bazı ölçümler görünür miktarda madde ister. Ölçek, doğruluğu bozmadan küçültülür.',
+        'Az madde: az atık, az para, az tehlike',
+        '5 mL asit dökülürse bir peçeteyle silinir; 500 mL dökülürse laboratuvar boşaltılır. Az madde kullanmak üç kazanç getirir: daha az atık, daha düşük maliyet, daha küçük risk.',
       ),
       kart(
-        'Örnek',
-        'Titrasyonu 50 mL yerine 5 mL ile yapmak sonucu değiştirmez, atığı onda birine indirir. Aynı sonuç, daha az madde.',
+        'Atom ekonomisi: atomların kaçı ürüne gitti',
+        'Tepkimeye giren 100 atomdan 80\'i istenen ürüne, 20\'si yan ürüne gittiyse atom ekonomisi %80. Atom ekonomisi, yani girenlerdeki atomların ne kadarının istenen üründe toplandığı. Yüksekse atık az.',
+      ),
+      kart(
+        'Verim başka, atom ekonomisi başka',
+        'Verim: beklenen 10 g üründen 8 g topladım, %80. Atom ekonomisi: girenlerin atomlarının %80\'i ürüne gitti, gerisi yan ürün. İlki deneyin ne kadarını kurtardığını, ikincisi tepkimenin ne kadar israfsız olduğunu söyler.',
+        undefined,
+        { not: 'Verim "ne kadar topladım" der, atom ekonomisi "kaç atom boşa gitti"; ikisini birbirinin yerine koyma.' },
+      ),
+      kart(
+        'Her deney küçültülemez',
+        'Yoğunluk ölçmek için tartılacak kadar madde gerekir; bir damlayla ölçüm hatası büyür. Ölçek, sonucun doğruluğunu bozmadan küçültülür. Küçük her zaman daha doğru değil.',
+        undefined,
+        { etiket: 'Dikkat' },
+      ),
+      kart(
+        'Mikro ölçek yeşil kimyanın parçasıdır',
+        'Yeşil kimya, yani doğaya en az zarar veren kimya yapma anlayışı. İlk ilkesi: atığı oluştuktan sonra temizlemek yerine hiç oluşturmamak. Mikro ölçekli deney tam bunu yapar: az madde, az atık.',
       ),
     ], [
       soru('Mikro ölçekli deneylerde daha az kimyasal kullanılır.', true, 'Maliyet de risk de düşüyor.'),
@@ -1251,7 +1329,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Mikro ölçekli deneylerin sonuçları her zaman daha kesindir.', false, 'Küçük miktarlarda ölçüm hatasının payı büyüyebiliyor.'),
       soru('Atom ekonomisi ile yüzde verim aynı şeyi ölçer.', false, 'Verim ne kadar elde edildiğini, atom ekonomisi girenlerin ne kadarının ürüne geçtiğini ölçer.'),
       sikli('Atom ekonomisi neyi ölçer?', ['Kaç atomun ürüne geçtiğini', 'Ne kadar ürün elde edildiğini'], 0, 'Verim ikincisini ölçer.'),
-      sikli('Titrasyonu 5 mL ile yapmak neyi değiştirir?', ['Atığı', 'Sonucu'], 0, 'Aynı sonuç, onda bir atık.'),
+      sikli('Deneyi 50 mL yerine 5 mL ile yapmak neyi değiştirir?', ['Atığı', 'Sonucu'], 0, 'Aynı sonuç, onda bir atık.'),
       soru('Her deney mikro ölçeğe küçültülebilir.', false, 'Bazı ölçümler görünür miktar ister.'),
     ], [
       {
@@ -1267,24 +1345,30 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
     ]),
     konu('kim10-atmosfer', 'Atmosferdeki Tepkimeler ve Küresel Sorunlar', [
       kart(
-        'Sera etkisi',
-        'Karbondioksit ve metan gibi sera gazları yerden yayılan ısıyı tutar. Doğal hâli yaşamı mümkün kılar.',
+        'Sera gazı ısıyı tutar',
+        'Serada cam güneşi içeri alır, ısının kaçmasını engeller. Atmosferdeki karbondioksit (CO₂) ve metan (CH₄) da yerden yayılan ısıyı tutar. Sera etkisi, yani bu gazların gezegeni battaniye gibi sarması. Olmasaydı Dünya buz kesilirdi.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Küresel ısınma',
-        'Fosil yakıtların yakılması sera gazı derişimini artırdı; tutulan ısı arttıkça ortalama sıcaklık yükseliyor.',
+        'Fazla sera gazı gezegeni ısıtır',
+        'Kömür, petrol ve doğal gaz yakılınca CO₂ çıkar. Sanayi öncesine göre havadaki CO₂ yarı yarıya arttı; battaniye kalınlaştı. Küresel ısınma, yani ortalama sıcaklığın yükselmesi. Sorun sera etkisi değil, fazlası.',
       ),
       kart(
-        'Asit yağmurları',
-        'Kükürt ve azot oksitleri suyla birleşip asit oluşturur. Toprağı, ormanı ve yapıları aşındırır.',
+        'Kükürt ve azot oksitleri asit yağmuru yapar',
+        'Kömürlü santral bacasından SO₂, araba egzozundan NOₓ çıkar. Bu gazlar havadaki suyla birleşip sülfürik ve nitrik asit olur, yağmurla iner. Asit yağmuru heykelleri aşındırır, gölleri ve ormanları öldürür.',
       ),
       kart(
-        'Ozon azalımı',
-        'Ozon tabakası morötesi ışınları süzer. Kloroflorokarbonlar ozonu parçaladığı için üretimleri kısıtlandı.',
+        'Ozon tabakası morötesi ışını süzer',
+        'Yerden 20–30 km yukarıda ozon (O₃) tabakası var. Güneşin morötesi ışınlarının, yani cilt kanseri yapan görünmez ışınların büyük kısmını yutar. Bu tabaka olmasa güneşlenmek tehlikeli olurdu.',
       ),
       kart(
-        'Üç sorun karıştırılıyor',
-        'Sera etkisi, ozon azalımı ve asit yağmuru ayrı gazlardan kaynaklanır ve ayrı sonuçlar üretir.',
+        'CFC gazları ozonu parçalar',
+        'Eski buzdolabı ve spreylerdeki kloroflorokarbonlar (CFC) yükseklere çıkıp klor salar; bir klor atomu binlerce ozon molekülünü parçalar. Ozon tabakası inceldi, kutuplarda delik açıldı. CFC üretimi bu yüzden yasaklandı.',
+      ),
+      kart(
+        'Üç sorun, üç ayrı gaz',
+        'Sera gazı ozonu delmez; CFC gezegeni ısıtmaz; asit yağmurunu CO₂ yapmaz. Üç sorunun gazı da sonucu da ayrı. Küresel ısınma: CO₂, CH₄. Ozon azalımı: CFC. Asit yağmuru: SO₂, NOₓ.',
         {
           tur: 'tablo',
           basliklar: ['Sorun', 'Sorumlu gaz'],
@@ -1294,19 +1378,19 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
             ['Asit yağmuru', 'SO₂, NOₓ'],
           ],
         },
-        { not: 'Her sorunu kendi gazıyla eşle; "sera gazı ozonu deliyor" en sık hata.' },
+        { etiket: 'Sık hata', not: 'Her sorunu kendi gazıyla eşle; "sera gazı ozonu deliyor" en sık hata.' },
       ),
       kart(
-        'Ozon iki yüzlü',
-        'Yüksekteki ozon koruyucudur, yer seviyesindeki ozon ise solunumu bozan bir kirleticidir.',
+        'Yerdeki ozon zehir, yukarıdaki kalkan',
+        'Yazın büyük şehirde egzoz gazları güneşle tepkimeye girip yer seviyesinde ozon üretir; bu ozon akciğeri ve gözü yakar. Aynı gaz 25 km yukarıda koruyucu. Ozonun yararı bulunduğu yere bağlı.',
       ),
       kart(
-        'Ayak izleri',
-        'Karbon, su ve emisyon ayak izi bir etkinliğin doğaya bindirdiği yükü ölçer; azaltmanın ilk adımı ölçmektir.',
+        'Karbon ayak izi doğaya yükü ölçer',
+        'Bir hamburger için yaklaşık 3 kg CO₂ salınır; bir uçak yolculuğu için yüzlerce kg. Karbon ayak izi, yani bir etkinliğin doğaya saldığı sera gazı miktarı. Su ayak izi harcanan suyu ölçer. Azaltmanın ilk adımı ölçmek.',
       ),
       kart(
-        'Çözüm de kimya',
-        'Karbon yakalama, katalitik konvertör ve CFC yerine geçen gazlar, aynı bilimin sorunu geri çevirme çabası.',
+        'Kimya sorunu geri çevirmeye çalışır',
+        'Arabanın egzozundaki katalitik konvertör zehirli NOₓ ve CO\'yu zararsız gaza çevirir. Fabrika bacasında CO₂ yakalanıp yer altına gömülür. CFC\'nin yerine ozonu parçalamayan gazlar bulundu. Sorunu yapan bilim, çözümü de üretiyor.',
       ),
     ], [
       soru('Sera etkisi doğal bir olaydır ve Dünya yı yaşanabilir sıcaklıkta tutar.', true, 'Sorun etkinin kendisi değil, insan kaynaklı gazlarla güçlenmesi.'),
@@ -1318,6 +1402,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       sikli('Sera etkisinin doğal hâli için ne söylenir?', ['Yaşamı mümkün kılar', 'Zararlıdır'], 0, 'Olmasaydı dünya çok soğuk olurdu.'),
       sikli('Katalitik konvertör neye örnektir?', ['Sorunu geri çevirme çabası', 'Fosil yakıt'], 0, 'Egzoz gazlarını dönüştürür.'),
       soru('Metan bir sera gazıdır.', true, 'CO₂ gibi ısıyı tutar.'),
+      sikli('Karbon ayak izi neyi ölçer?', ['Harcanan suyu', 'Salınan sera gazını'], 1, 'Su ayak izi harcanan suyu ölçer.'),
     ], [
       {
         soru: 'Ozon tabakasını parçalayan gazlar hangileridir?',
@@ -1327,7 +1412,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
           dogru: 'CFC\'ler yüksekte klor salar, klor ozonu parçalar; üretimleri bu yüzden kısıtlandı.',
           yanlis: 'CO₂ sera gazıdır, küresel ısınmayla ilgili. Ozonu parçalayan CFC\'ler; üç sorunun gazları ayrı.',
         },
-        kart: 4,
+        kart: 5,
       },
     ]),
   ]),
