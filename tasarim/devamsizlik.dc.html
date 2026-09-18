@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"><style>
+body{margin:0;background:#f0eee9;font-family:Nunito,ui-sans-serif,system-ui,sans-serif}
+a{color:#b3491f}a:hover{color:#d9622f}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:800 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:800 13px/1.2 Nunito,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:800 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:600 11px/1.3 Nunito,sans-serif;color:rgba(0,0,0,.55)}
+.dv-card{width:390px;background:#f8f8f7;border:1px solid rgba(0,0,0,.08);border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden;color:#1b1a19}
+.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+.dv-next{margin:22px 0 0;font:600 12px/1.5 Nunito,sans-serif;color:rgba(0,0,0,.5)}
+input{font-family:Nunito,sans-serif}
+</style></helmet>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Devamsızlık — mevcut ekran ve iki yeni yön</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Bugünkü ekran (birebir kopya)</div>
+<div class="dv-card">
+<div style="padding:20px 16px 32px">
+  <p style="margin:0 0 10px;font:700 14px Nunito,sans-serif;color:#6b6764">← Geri</p>
+  <div style="margin-bottom:16px">
+    <h1 style="margin:0;font:900 24px/1.1 Nunito,sans-serif;letter-spacing:-.02em">Devamsızlık</h1>
+    <p style="margin:2px 0 0;font:600 14px Nunito,sans-serif;color:#6b6764">2026-2027 ders yılı</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+    <div style="background:#fff;border-radius:24px;padding:16px;box-shadow:0 6px 20px rgba(90,60,35,.07)">
+      <p style="margin:0;font:600 12px Nunito,sans-serif;color:#6b6764">Özürsüz</p>
+      <p style="margin:0;font:600 24px/1.2 Nunito,sans-serif"><span style="font-variant-numeric:tabular-nums">0</span><span style="font:400 14px Nunito,sans-serif;color:#6b6764;font-variant-numeric:tabular-nums"> / 10</span></p>
+      <div style="margin-top:8px;height:6px;border-radius:999px;background:#efeeeb;overflow:hidden"><div style="height:100%;width:0%;border-radius:999px;background:#d9622f"></div></div>
+      <p style="margin:6px 0 0;font:600 12px Nunito,sans-serif;color:#6b6764">10 gün hakkın kaldı</p>
+    </div>
+    <div style="background:#fff;border-radius:24px;padding:16px;box-shadow:0 6px 20px rgba(90,60,35,.07)">
+      <p style="margin:0;font:600 12px Nunito,sans-serif;color:#6b6764">Özürlü</p>
+      <p style="margin:0;font:600 24px/1.2 Nunito,sans-serif"><span style="font-variant-numeric:tabular-nums">0</span><span style="font:400 14px Nunito,sans-serif;color:#6b6764;font-variant-numeric:tabular-nums"> / 20</span></p>
+      <div style="margin-top:8px;height:6px;border-radius:999px;background:#efeeeb;overflow:hidden"><div style="height:100%;width:0%;border-radius:999px;background:#d9622f"></div></div>
+      <p style="margin:6px 0 0;font:600 12px Nunito,sans-serif;color:#6b6764">20 gün hakkın kaldı</p>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:16px;border:1px dashed #eae9e6;border-radius:24px">
+    <img src="public/tavsan-yuz.png" alt="Rabi — seviniyor" width="56" height="61" style="width:56px;height:61px;flex-shrink:0;object-fit:contain" draggable="false">
+    <p style="margin:0;font:600 14px/1.5 Nunito,sans-serif;color:#6b6764">Hiç devamsızlığın yok. Takvimden gün seçip aşağıdan ekleyebilirsin.</p>
+  </div>
+
+  <div style="background:#fff;border-radius:24px;padding:16px;box-shadow:0 6px 20px rgba(90,60,35,.07);margin-bottom:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <button type="button" onClick="{{ aGeri }}" aria-label="Önceki ay" style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:0;background:transparent;color:#6b6764;border-radius:18px;font:600 18px Nunito,sans-serif;cursor:pointer">‹</button>
+      <p style="margin:0;font:800 16px Nunito,sans-serif">{{ aAy }}</p>
+      <button type="button" onClick="{{ aIleri }}" aria-label="Sonraki ay" style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:0;background:transparent;color:#6b6764;border-radius:18px;font:600 18px Nunito,sans-serif;cursor:pointer">›</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center">
+      <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Pt</span>
+      <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Sa</span>
+      <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Ça</span>
+      <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Pe</span>
+      <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Cu</span>
+      <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Ct</span>
+      <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Pz</span>
+      <sc-for list="{{ aHucreler }}" as="h" hint-placeholder-count="35">
+        <button type="button" onClick="{{ h.tap }}" style="{{ h.style }}"><span>{{ h.gun }}</span></button>
+      </sc-for>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-top:12px;font:600 12px Nunito,sans-serif;color:#6b6764">
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:999px;background:#b23b2b"></span>özürsüz</span>
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:999px;background:#a87c24"></span>özürlü</span>
+    </div>
+  </div>
+
+  <div style="background:#fff;border-radius:24px;padding:16px;box-shadow:0 6px 20px rgba(90,60,35,.07)">
+    <p style="margin:0 0 8px;font:600 16px Nunito,sans-serif">{{ aTarih }}</p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+      <button type="button" onClick="{{ aTurOzursuz }}" style="{{ aCip1 }}">Özürsüz</button>
+      <button type="button" onClick="{{ aTurOzurlu }}" style="{{ aCip2 }}">Özürlü (raporlu)</button>
+      <button type="button" onClick="{{ aYarimTikla }}" style="{{ aCip3 }}">Yarım gün</button>
+    </div>
+    <div style="display:flex;gap:8px">
+      <input placeholder="Not (isteğe bağlı)" aria-label="Devamsızlık notu" style="flex:1;height:44px;min-width:0;border-radius:18px;border:1px solid #eae9e6;background:#f8f8f7;padding:0 12px;font:500 15px Nunito,sans-serif;color:#1b1a19">
+      <button type="button" style="height:44px;padding:0 16px;border:0;border-radius:18px;background:#d9622f;color:#fff;font:800 15px Nunito,sans-serif;cursor:pointer">Ekle</button>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Hafta şeridi + katlanır takvim (Soru Takibi ritmi)</div>
+<div class="dv-card">
+<div style="padding:20px 16px 32px;display:flex;flex-direction:column;gap:14px">
+  <div>
+    <p style="margin:0 0 10px;font:700 14px Nunito,sans-serif;color:#6b6764">← Geri</p>
+    <h1 style="margin:0;font:900 24px/1.1 Nunito,sans-serif;letter-spacing:-.02em">Devamsızlık</h1>
+    <p style="margin:2px 0 0;font:600 14px Nunito,sans-serif;color:#6b6764">2026-2027 ders yılı</p>
+  </div>
+
+  <sc-if value="{{ uyariVar }}" hint-placeholder-val="{{ false }}">
+    <div style="border-radius:18px;padding:10px 12px;background:rgba(168,124,36,.12);color:#a87c24;font:700 13px/1.5 Nunito,sans-serif">Sınıra yaklaştın. Kalan günlerini dikkatli kullan.</div>
+  </sc-if>
+
+  <div style="background:#fff;border-radius:26px;padding:16px;box-shadow:0 6px 20px rgba(90,60,35,.07)">
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px">
+      <p style="margin:0;font:900 17px Nunito,sans-serif;letter-spacing:-.01em">Kalan hakkın</p>
+      <p style="margin:0 0 0 auto;font:700 12.5px Nunito,sans-serif;color:#6b6764;font-variant-numeric:tabular-nums">{{ bKullanilan }} / 30 gün kullanıldı</p>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <p style="margin:0;width:64px;font:700 12.5px Nunito,sans-serif;color:#6b6764">Özürsüz</p>
+      <div style="flex:1;height:10px;border-radius:999px;background:#efeeeb;overflow:hidden"><div style="{{ bOzursuzBar }}"></div></div>
+      <p style="margin:0;font:900 15px Nunito,sans-serif;font-variant-numeric:tabular-nums;color:#b3491f">{{ bOzursuz }}<span style="font:600 12px Nunito,sans-serif;color:#6b6764"> / 10</span></p>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <p style="margin:0;width:64px;font:700 12.5px Nunito,sans-serif;color:#6b6764">Özürlü</p>
+      <div style="flex:1;height:10px;border-radius:999px;background:#efeeeb;overflow:hidden"><div style="{{ bOzurluBar }}"></div></div>
+      <p style="margin:0;font:900 15px Nunito,sans-serif;font-variant-numeric:tabular-nums;color:#b3491f">{{ bOzurlu }}<span style="font:600 12px Nunito,sans-serif;color:#6b6764"> / 20</span></p>
+    </div>
+
+  </div>
+
+  <div style="background:#fff;border-radius:26px;padding:14px 12px 12px;box-shadow:0 6px 20px rgba(90,60,35,.07)">
+    <div style="display:flex;align-items:baseline;gap:8px;padding:0 4px 10px">
+      <p style="margin:0;font:900 15px Nunito,sans-serif;letter-spacing:-.01em">Bu hafta</p>
+      <p style="margin:0;font:700 12.5px Nunito,sans-serif;color:rgba(107,103,100,.7);font-variant-numeric:tabular-nums">{{ bHaftaOzet }}</p>
+      <button type="button" onClick="{{ bTakvimTikla }}" aria-label="Takvimi aç" style="{{ bTakvimDugme }}"><span style="display:block;width:14px;height:13px;border:1.6px solid currentColor;border-radius:3px;border-top-width:4px"></span></button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">
+      <sc-for list="{{ bHafta }}" as="g" hint-placeholder-count="7">
+        <button type="button" onClick="{{ g.tap }}" style="{{ g.style }}">
+          <span style="{{ g.adStyle }}">{{ g.ad }}</span>
+          <span style="{{ g.sayiStyle }}">{{ g.sayi }}</span>
+          <span style="{{ g.dotStyle }}"></span>
+        </button>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ bTakvimAcik }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:14px;border-top:1px solid rgba(234,233,230,.7);padding-top:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <button type="button" onClick="{{ bGeri }}" aria-label="Önceki ay" style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:0;background:transparent;color:#6b6764;border-radius:18px;font:600 18px Nunito,sans-serif;cursor:pointer">‹</button>
+          <p style="margin:0;font:800 16px Nunito,sans-serif">{{ bAy }}</p>
+          <button type="button" onClick="{{ bIleri }}" aria-label="Sonraki ay" style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:0;background:transparent;color:#6b6764;border-radius:18px;font:600 18px Nunito,sans-serif;cursor:pointer">›</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center">
+          <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Pt</span>
+          <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Sa</span>
+          <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Ça</span>
+          <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Pe</span>
+          <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Cu</span>
+          <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Ct</span>
+          <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Pz</span>
+          <sc-for list="{{ bHucreler }}" as="h" hint-placeholder-count="35">
+            <button type="button" onClick="{{ h.tap }}" style="{{ h.style }}"><span>{{ h.gun }}</span><sc-if value="{{ h.dot }}" hint-placeholder-val="{{ false }}"><span style="{{ h.dotStyle }}"></span></sc-if></button>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-top:12px;font:600 12px Nunito,sans-serif;color:#6b6764">
+          <span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:999px;background:#b23b2b"></span>özürsüz</span>
+          <span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:999px;background:#a87c24"></span>özürlü</span>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ bPanelKapali }}" hint-placeholder-val="{{ true }}">
+    <button type="button" onClick="{{ bPanelAc }}" style="height:54px;width:100%;border:0;border-radius:18px;background:#d9622f;color:#fff;font:900 16px Nunito,sans-serif;cursor:pointer;box-shadow:0 8px 18px rgba(217,98,47,.24);display:flex;align-items:center;justify-content:center;gap:8px">{{ bPanelDugmeMetni }}</button>
+  </sc-if>
+
+  <sc-if value="{{ bPanelAcik }}" hint-placeholder-val="{{ false }}">
+    <div style="background:#fff;border-radius:26px;padding:12px 16px 18px;box-shadow:0 -8px 30px -12px rgba(31,36,48,.25)">
+      <div style="margin:0 auto 12px;height:4px;width:42px;border-radius:999px;background:#eae9e6"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <p style="margin:0;font:900 18px Nunito,sans-serif;letter-spacing:-.01em">Devamsızlık ekle</p>
+        <p style="margin:0 0 0 auto;font:700 12.5px Nunito,sans-serif;color:rgba(107,103,100,.7)">{{ bTarih }}</p>
+        <button type="button" onClick="{{ bPanelKapat }}" aria-label="Kapat" style="width:34px;height:34px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:12px;background:rgba(239,238,235,.7);color:#6b6764;font:700 15px Nunito,sans-serif;cursor:pointer">✕</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button type="button" onClick="{{ bTurOzursuz }}" style="{{ bSatir1 }}">
+          <span style="min-width:0"><span style="display:block;font:900 14px/1.2 Nunito,sans-serif">Özürsüz</span><span style="{{ bSatir1Alt }}">Kalan 10 günden düşer</span></span>
+          <span style="{{ bSatir1Isaret }}">{{ bSatir1Im }}</span>
+        </button>
+        <button type="button" onClick="{{ bTurOzurlu }}" style="{{ bSatir2 }}">
+          <span style="min-width:0"><span style="display:block;font:900 14px/1.2 Nunito,sans-serif">Özürlü (raporlu)</span><span style="{{ bSatir2Alt }}">Kalan 20 günden düşer</span></span>
+          <span style="{{ bSatir2Isaret }}">{{ bSatir2Im }}</span>
+        </button>
+      </div>
+      <label style="display:flex;align-items:center;gap:12px;margin-top:12px;padding:10px 4px;cursor:pointer">
+        <span style="flex:1;font:700 14px Nunito,sans-serif">Yarım gün</span>
+        <button type="button" onClick="{{ bYarimTikla }}" aria-label="Yarım gün" style="{{ bAnahtar }}"><span style="{{ bAnahtarTopu }}"></span></button>
+      </label>
+      <div style="position:relative">
+        <input value="{{ bNot }}" onChange="{{ bNotDegis }}" maxLength="32" placeholder="Not (isteğe bağlı)" aria-label="Devamsızlık notu" style="height:48px;width:100%;box-sizing:border-box;border-radius:18px;border:1px solid #eae9e6;background:#f8f8f7;padding:0 58px 0 14px;font:500 15px Nunito,sans-serif;color:#1b1a19">
+        <span style="{{ bNotSayac }}">{{ bNotSayaciMetni }}</span>
+      </div>
+      <button type="button" onClick="{{ bKaydet }}" style="{{ bKaydetStil }}">{{ bKaydetMetni }}</button>
+    </div>
+  </sc-if>
+
+  <div style="background:#fff;border-radius:26px;padding:0;box-shadow:0 6px 20px rgba(90,60,35,.07);overflow:hidden">
+    <div style="display:flex;align-items:baseline;gap:8px;padding:14px 16px 12px">
+      <p style="margin:0;font:900 15px Nunito,sans-serif">Tüm kayıtlar</p>
+      <p style="margin:0 0 0 auto;font:700 12.5px Nunito,sans-serif;color:#6b6764;font-variant-numeric:tabular-nums">{{ bKayitSayisi }}</p>
+    </div>
+    <sc-if value="{{ bBosMu }}" hint-placeholder-val="{{ false }}">
+      <p style="margin:0;padding:0 16px 18px;font:600 13px/1.6 Nunito,sans-serif;color:#6b6764">Bu ders yılında hiç devamsızlığın yok. Takvimden bir gün seçip ekleyebilirsin.</p>
+    </sc-if>
+    <sc-for list="{{ bKayitlar }}" as="k" hint-placeholder-count="3">
+      <div style="{{ k.satirStil }}">
+        <span style="{{ k.etiketStil }}">{{ k.tur }}</span>
+        <span style="flex:1;min-width:0">
+          <span style="{{ k.baslikStil }}">{{ k.tarih }}</span>
+          <span style="{{ k.notStyle }}">{{ k.not }}</span>
+        </span>
+        <span style="flex-shrink:0;font:700 12px Nunito,sans-serif;color:#6b6764;font-variant-numeric:tabular-nums">{{ k.gun }} gün</span>
+        <button type="button" onClick="{{ k.sil }}" aria-label="Kaydı sil" style="flex-shrink:0;width:28px;height:28px;border:0;background:transparent;color:#6b6764;font:600 14px Nunito,sans-serif;cursor:pointer;font-size:17px;line-height:1">×</button>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Yıl karnesi — tek şerit, açık takvim, satır içi giriş</div>
+<div class="dv-card">
+<div style="padding:20px 16px 32px;display:flex;flex-direction:column;gap:14px">
+  <div>
+    <p style="margin:0 0 10px;font:700 14px Nunito,sans-serif;color:#6b6764">← Geri</p>
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+      <div>
+        <h1 style="margin:0;font:900 24px/1.1 Nunito,sans-serif;letter-spacing:-.02em">Devamsızlık</h1>
+        <p style="margin:2px 0 0;font:600 14px Nunito,sans-serif;color:#6b6764">2026-2027 ders yılı</p>
+      </div>
+      <p style="margin:0;padding:6px 12px;border-radius:999px;background:#fbeee7;color:#b3491f;font:900 12.5px Nunito,sans-serif">{{ cDurum }}</p>
+    </div>
+  </div>
+
+  <div style="background:#fff;border-radius:26px;padding:18px 16px 16px;box-shadow:0 6px 20px rgba(90,60,35,.07)">
+    <div style="display:flex;align-items:flex-end;gap:10px">
+      <p style="margin:0;font:900 44px/1 Nunito,sans-serif;font-variant-numeric:tabular-nums;color:#b3491f">{{ cKalan }}</p>
+      <p style="margin:0 0 4px;font:700 13.5px/1.35 Nunito,sans-serif;color:#6b6764">gün hakkın<br>kaldı</p>
+      <p style="margin:0 0 5px auto;text-align:right;font:700 12.5px/1.4 Nunito,sans-serif;color:#6b6764;font-variant-numeric:tabular-nums">{{ cKullanilan }} gün kullanıldı<br><span style="color:rgba(107,103,100,.65)">toplam 30 gün</span></p>
+    </div>
+
+    <div style="display:flex;height:14px;margin-top:14px;border-radius:999px;background:#efeeeb;overflow:hidden">
+      <span style="{{ cBar1 }}"></span>
+      <span style="{{ cBar2 }}"></span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:10px">
+      <span style="display:flex;align-items:center;gap:6px;font:700 12px Nunito,sans-serif;color:#6b6764"><span style="width:8px;height:8px;border-radius:999px;background:#b23b2b"></span>Özürsüz {{ cOzursuz }}/10</span>
+      <span style="display:flex;align-items:center;gap:6px;font:700 12px Nunito,sans-serif;color:#6b6764"><span style="width:8px;height:8px;border-radius:999px;background:#a87c24"></span>Özürlü {{ cOzurlu }}/20</span>
+    </div>
+  </div>
+
+  <div style="background:#fff;border-radius:26px;padding:14px 12px 12px;box-shadow:0 6px 20px rgba(90,60,35,.07)">
+    <div style="display:flex;align-items:baseline;gap:8px;padding:0 4px 10px">
+      <p style="margin:0;font:900 15px Nunito,sans-serif;letter-spacing:-.01em">{{ cHaftaBaslik }}</p>
+      <p style="margin:0;font:700 12.5px Nunito,sans-serif;color:rgba(107,103,100,.7)">{{ cHaftaOzet }}</p>
+      <button type="button" onClick="{{ cBugunDon }}" style="margin-left:auto;height:32px;padding:0 12px;border:0;border-radius:11px;background:rgba(239,238,235,.6);color:#6b6764;font:800 12px Nunito,sans-serif;cursor:pointer">Bugün</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">
+      <sc-for list="{{ cHafta }}" as="g" hint-placeholder-count="7">
+        <button type="button" onClick="{{ g.tap }}" style="{{ g.style }}">
+          <span style="{{ g.adStyle }}">{{ g.ad }}</span>
+          <span style="{{ g.sayiStyle }}">{{ g.sayi }}</span>
+          <span style="{{ g.dotStyle }}"></span>
+        </button>
+      </sc-for>
+    </div>
+    <div style="margin-top:14px;border-top:1px solid rgba(234,233,230,.7);padding-top:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <button type="button" onClick="{{ cGeri }}" aria-label="Önceki ay" style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:0;background:transparent;color:#6b6764;border-radius:18px;font:600 18px Nunito,sans-serif;cursor:pointer">‹</button>
+        <p style="margin:0;font:800 16px Nunito,sans-serif">{{ cAy }}</p>
+        <button type="button" onClick="{{ cIleri }}" aria-label="Sonraki ay" style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:0;background:transparent;color:#6b6764;border-radius:18px;font:600 18px Nunito,sans-serif;cursor:pointer">›</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center">
+        <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Pt</span>
+        <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Sa</span>
+        <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Ça</span>
+        <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Pe</span>
+        <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Cu</span>
+        <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Ct</span>
+        <span style="padding-bottom:4px;font:700 12px Nunito,sans-serif;color:#6b6764">Pz</span>
+        <sc-for list="{{ cHucreler }}" as="h" hint-placeholder-count="35">
+          <button type="button" onClick="{{ h.tap }}" style="{{ h.style }}"><span>{{ h.gun }}</span><sc-if value="{{ h.dot }}" hint-placeholder-val="{{ false }}"><span style="{{ h.dotStyle }}"></span></sc-if></button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#fff;border-radius:26px;padding:14px 14px 16px;box-shadow:0 6px 20px rgba(90,60,35,.07)">
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px">
+      <p style="margin:0;font:900 15px Nunito,sans-serif">{{ cTarih }}</p>
+      <p style="margin:0 0 0 auto;font:700 12px Nunito,sans-serif;color:#6b6764">{{ cGunDurum }}</p>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:10px">
+      <button type="button" onClick="{{ cTurOzursuz }}" style="{{ cKutu1 }}">Özürsüz</button>
+      <button type="button" onClick="{{ cTurOzurlu }}" style="{{ cKutu2 }}">Özürlü</button>
+      <button type="button" onClick="{{ cYarimTikla }}" style="{{ cKutu3 }}">Yarım gün</button>
+    </div>
+    <div style="display:flex;gap:8px">
+      <input value="{{ cNot }}" onChange="{{ cNotDegis }}" placeholder="Not (isteğe bağlı)" aria-label="Devamsızlık notu" style="flex:1;min-width:0;height:46px;border-radius:16px;border:1px solid #eae9e6;background:#f8f8f7;padding:0 12px;font:500 15px Nunito,sans-serif;color:#1b1a19">
+      <button type="button" onClick="{{ cKaydet }}" style="{{ cEkleStil }}">{{ cEkleMetni }}</button>
+    </div>
+    <sc-if value="{{ cGunDolu }}" hint-placeholder-val="{{ false }}">
+      <p style="margin:10px 0 0;font:700 12.5px/1.5 Nunito,sans-serif;color:#a87c24">Bu güne kayıt girilmiş. Değiştirmek için aşağıdaki listeden sil.</p>
+    </sc-if>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <p style="margin:0 0 2px 4px;font:900 12.5px Nunito,sans-serif;text-transform:uppercase;letter-spacing:.06em;color:#6b6764">Geçmiş</p>
+    <sc-for list="{{ cKayitlar }}" as="k" hint-placeholder-count="3">
+      <div style="display:flex;align-items:center;gap:12px;background:#fff;border-radius:18px;padding:11px 14px;box-shadow:0 6px 20px rgba(90,60,35,.07)">
+        <span style="{{ k.serit }}"></span>
+        <span style="flex:1;min-width:0">
+          <span style="display:block;font:900 13.5px Nunito,sans-serif">{{ k.baslik }}</span>
+          <span style="{{ k.notStyle }}">{{ k.not }}</span>
+        </span>
+        <span style="flex-shrink:0;font:800 12px Nunito,sans-serif;color:#6b6764;font-variant-numeric:tabular-nums">{{ k.gun }} gün</span>
+        <button type="button" onClick="{{ k.sil }}" aria-label="Kaydı sil" style="flex-shrink:0;width:28px;height:28px;border:0;background:transparent;color:#6b6764;font:600 14px Nunito,sans-serif;cursor:pointer;font-size:17px;line-height:1">×</button>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Şunları deneyebilirsin: “<a class="dv-oid" href="#1b">1b</a>’yi al ama sayaçları <a class="dv-oid" href="#1c">1c</a>’deki tek şeritle değiştir” · “<a class="dv-oid" href="#1c">1c</a>’de takvim de katlanır olsun” · “kayıt listesini aylara göre grupla”</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;ornekVeri&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;İçerik&quot;},&quot;uyariSeridi&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;İçerik&quot;}}">
+const AY = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık']
+const GUN = ['Pt','Sa','Ça','Pe','Cu','Ct','Pz']
+const BUGUN = '2026-09-18'
+const P = '#b3491f', PP = '#d9622f', PS = '#fbeee7', FG = '#1b1a19', MF = '#6b6764'
+const BORDER = '#eae9e6', MUTED = '#efeeeb', DANGER = '#b23b2b', WARN = '#a87c24'
+const OZURSUZ_SINIR = 10, OZURLU_SINIR = 20
+
+function pad(n) { return String(n).padStart(2, '0') }
+function isoOf(y, m, d) { return y + '-' + pad(m + 1) + '-' + pad(d) }
+function parse(s) { const p = s.split('-').map(Number); return new Date(p[0], p[1] - 1, p[2]) }
+function tarihYaz(s) { const d = parse(s); return d.getDate() + ' ' + AY[d.getMonth()] + ' ' + d.getFullYear() }
+function kisaYaz(s) { const d = parse(s); return d.getDate() + ' ' + AY[d.getMonth()] }
+function sayiYaz(n) { return (Math.round(n * 10) / 10).toString().replace('.', ',') }
+
+function ozetle(recs) {
+  let ozursuz = 0, ozurlu = 0
+  for (const r of recs) {
+    const g = r.yarim ? 0.5 : 1
+    if (r.tur === 'ozursuz') ozursuz += g; else ozurlu += g
+  }
+  return {
+    ozursuz, ozurlu,
+    ozursuzKalan: OZURSUZ_SINIR - ozursuz,
+    ozurluKalan: OZURLU_SINIR - ozurlu,
+  }
+}
+
+const ORNEK = [
+  { id: 'r1', tarih: '2026-09-04', tur: 'ozursuz', yarim: false, not: '' },
+  { id: 'r2', tarih: '2026-09-11', tur: 'ozurlu', yarim: false, not: 'Grip — rapor teslim edildi' },
+  { id: 'r3', tarih: '2026-09-15', tur: 'ozursuz', yarim: true, not: '' },
+]
+
+class Component extends DCLogic {
+  state = {
+    aSel: BUGUN, aY: 2026, aM: 8, aTur: 'ozursuz', aYarim: false,
+    bSel: BUGUN, bY: 2026, bM: 8, bCal: true, bTur: 'ozursuz', bYarim: false, bNot: '', bPanel: false,
+    bRecs: (this.props.ornekVeri ?? true) ? ORNEK.slice() : [],
+    cSel: '2026-09-15', cY: 2026, cM: 8, cTur: 'ozursuz', cYarim: false, cNot: '',
+    cRecs: (this.props.ornekVeri ?? true) ? ORNEK.slice() : [],
+  }
+
+  set(k, v) { this.setState({ [k]: v }) }
+
+  ayKaydir(pre, fark) {
+    const y = this.state[pre + 'Y'], m = this.state[pre + 'M']
+    const d = new Date(y, m + fark, 1)
+    this.setState({ [pre + 'Y']: d.getFullYear(), [pre + 'M']: d.getMonth() })
+  }
+
+  gunSec(pre, iso) {
+    const d = parse(iso)
+    this.setState({ [pre + 'Sel']: iso, [pre + 'Y']: d.getFullYear(), [pre + 'M']: d.getMonth() })
+  }
+
+  hucreler(pre, recs) {
+    const y = this.state[pre + 'Y'], m = this.state[pre + 'M'], sel = this.state[pre + 'Sel']
+    const ilk = new Date(y, m, 1)
+    const gunSayisi = new Date(y, m + 1, 0).getDate()
+    const bosluk = (ilk.getDay() + 6) % 7
+    const out = []
+    for (let i = 0; i < bosluk; i++) out.push({ key: 'bos' + i, gun: '', style: 'visibility:hidden;border:0;background:none;aspect-ratio:1', tap: () => {} })
+    for (let d = 1; d <= gunSayisi; d++) {
+      const iso = isoOf(y, m, d)
+      const rec = recs.find((r) => r.tarih === iso)
+      const seciliMi = iso === sel, bugunMu = iso === BUGUN, kapali = iso > BUGUN
+      let s = 'position:relative;display:flex;align-items:center;justify-content:center;aspect-ratio:1;padding:0;border:0;border-radius:13px;'
+        + 'font:800 14px Nunito,sans-serif;font-variant-numeric:tabular-nums;background:'
+        + (rec ? PS : 'transparent') + ';color:' + (kapali ? 'rgba(107,103,100,.35)' : (seciliMi ? P : FG))
+        + ';cursor:' + (kapali ? 'default' : 'pointer') + ';transition:background .15s'
+      if (seciliMi) s += ';box-shadow:inset 0 0 0 2px ' + P
+      else if (bugunMu) s += ';box-shadow:inset 0 0 0 1px ' + BORDER
+      out.push({
+        key: iso, gun: String(d), style: s,
+        dot: !!rec,
+        dotStyle: 'position:absolute;bottom:4px;width:4px;height:4px;border-radius:999px;background:'
+          + (rec && rec.tur === 'ozursuz' ? DANGER : WARN),
+        tap: kapali ? () => {} : () => this.gunSec(pre, iso),
+      })
+    }
+    return out
+  }
+
+  hafta(pre, recs) {
+    const sel = this.state[pre + 'Sel']
+    const g = parse(sel)
+    const pzt = new Date(g.getFullYear(), g.getMonth(), g.getDate() - ((g.getDay() + 6) % 7))
+    return Array.from({ length: 7 }, (_, i) => {
+      const t = new Date(pzt.getFullYear(), pzt.getMonth(), pzt.getDate() + i)
+      const iso = isoOf(t.getFullYear(), t.getMonth(), t.getDate())
+      const rec = recs.find((r) => r.tarih === iso)
+      const seciliMi = iso === sel, kapali = iso > BUGUN
+      const renk = seciliMi ? P : kapali ? 'rgba(107,103,100,.45)' : FG
+      return {
+        key: iso, ad: GUN[i], sayi: String(t.getDate()),
+        style: 'position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 0 14px;border:0;border-radius:16px;cursor:'
+          + (kapali ? 'default' : 'pointer') + ';background:' + (seciliMi ? PS : 'transparent'),
+        adStyle: 'font:800 10px Nunito,sans-serif;letter-spacing:.04em;color:'
+          + (seciliMi ? P : kapali ? 'rgba(107,103,100,.45)' : 'rgba(107,103,100,.8)'),
+        sayiStyle: 'font:900 15px/1 Nunito,sans-serif;font-variant-numeric:tabular-nums;color:' + renk,
+        dotStyle: rec
+          ? 'position:absolute;bottom:6px;width:5px;height:5px;border-radius:999px;background:' + (rec.tur === 'ozursuz' ? DANGER : WARN)
+          : 'display:none',
+        tap: kapali ? () => {} : () => this.gunSec(pre, iso),
+      }
+    })
+  }
+
+  kayitlar(pre, recs) {
+    return recs.slice().sort((a, b) => b.tarih.localeCompare(a.tarih)).map((k) => ({
+      key: k.id,
+      baslik: tarihYaz(k.tarih) + ' · ' + (k.tur === 'ozursuz' ? 'Özürsüz' : 'Özürlü'),
+      tarih: tarihYaz(k.tarih),
+      tur: k.tur === 'ozursuz' ? 'Özürsüz' : 'Özürlü',
+      satirStil: 'display:flex;align-items:center;gap:10px;border-top:1px solid #eae9e6;padding:11px 16px;background:'
+        + (k.tur === 'ozursuz' ? 'rgba(178,59,43,.05)' : 'rgba(168,124,36,.06)'),
+      etiketStil: 'flex-shrink:0;width:62px;box-sizing:border-box;text-align:center;padding:4px 0;border-radius:999px;font:800 11px Nunito,sans-serif;background:'
+        + (k.tur === 'ozursuz' ? 'rgba(178,59,43,.12)' : 'rgba(168,124,36,.14)')
+        + ';color:' + (k.tur === 'ozursuz' ? DANGER : WARN),
+      baslikStil: 'display:block;font:800 13.5px Nunito,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:'
+        + (k.tur === 'ozursuz' ? DANGER : WARN),
+      not: k.not || '',
+      notStyle: k.not
+        ? 'display:block;margin-top:1px;font:600 11.5px Nunito,sans-serif;color:' + MF
+          + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis'
+        : 'display:none',
+      gun: k.yarim ? '0,5' : '1',
+      dotStyle: 'flex-shrink:0;width:8px;height:8px;border-radius:999px;background:' + (k.tur === 'ozursuz' ? DANGER : WARN),
+      serit: 'flex-shrink:0;width:4px;height:30px;border-radius:999px;background:' + (k.tur === 'ozursuz' ? DANGER : WARN),
+      sil: () => this.setState((s) => ({ [pre + 'Recs']: s[pre + 'Recs'].filter((r) => r.id !== k.id) })),
+    }))
+  }
+
+  ekle(pre) {
+    const s = this.state
+    const iso = s[pre + 'Sel']
+    if (iso > BUGUN) return
+    if (s[pre + 'Recs'].some((r) => r.tarih === iso)) return
+    const kayit = {
+      id: 'k' + Date.now(),
+      tarih: iso,
+      tur: s[pre + 'Tur'],
+      yarim: s[pre + 'Yarim'],
+      not: (s[pre + 'Not'] || '').trim().slice(0, 32),
+    }
+    this.setState({ [pre + 'Recs']: s[pre + 'Recs'].concat([kayit]), [pre + 'Not']: '', [pre + 'Yarim']: false, [pre + 'Panel']: false })
+  }
+
+  cip(secili) {
+    return 'border-radius:999px;padding:7px 12px;font:700 14px Nunito,sans-serif;cursor:pointer;border:1px solid '
+      + (secili ? PP : BORDER) + ';background:' + (secili ? PP : '#fff') + ';color:' + (secili ? '#fff' : MF)
+  }
+
+  kutu(secili) {
+    return 'flex:1;height:38px;border-radius:12px;font:800 12.5px Nunito,sans-serif;cursor:pointer;'
+      + (secili
+        ? 'border:1.5px solid ' + PP + ';background:' + PS + ';color:' + P
+        : 'border:1px solid ' + BORDER + ';background:#fff;color:' + MF)
+  }
+
+  satir(secili) {
+    return 'display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;border-radius:20px;text-align:left;cursor:pointer;border:2px solid '
+      + (secili ? PP : BORDER) + ';background:' + (secili ? PP : 'rgba(239,238,235,.5)')
+      + ';color:' + (secili ? '#fff' : FG)
+  }
+
+  renderVals() {
+    const s = this.state
+    const bOzet = ozetle(s.bRecs), cOzet = ozetle(s.cRecs)
+    const bSecGun = s.bRecs.find((r) => r.tarih === s.bSel)
+    const cSecGun = s.cRecs.find((r) => r.tarih === s.cSel)
+    const bHafta = this.hafta('b', s.bRecs)
+    const cHafta = this.hafta('c', s.cRecs)
+    const bHaftaGun = ozetle(s.bRecs.filter((r) => bHafta.some((g) => g.key === r.tarih)))
+    const cHaftaGun = ozetle(s.cRecs.filter((r) => cHafta.some((g) => g.key === r.tarih)))
+    const bHaftaToplam = bHaftaGun.ozursuz + bHaftaGun.ozurlu
+    const cHaftaToplam = cHaftaGun.ozursuz + cHaftaGun.ozurlu
+    const cKullanilan = cOzet.ozursuz + cOzet.ozurlu
+
+    return {
+      uyariVar: this.props.uyariSeridi ?? false,
+
+      // 1a — mevcut ekran
+      aAy: AY[s.aM] + ' ' + s.aY,
+      aHucreler: this.hucreler('a', []),
+      aTarih: tarihYaz(s.aSel),
+      aGeri: () => this.ayKaydir('a', -1),
+      aIleri: () => this.ayKaydir('a', 1),
+      aCip1: this.cip(s.aTur === 'ozursuz'),
+      aCip2: this.cip(s.aTur === 'ozurlu'),
+      aCip3: this.cip(s.aYarim),
+      aTurOzursuz: () => this.set('aTur', 'ozursuz'),
+      aTurOzurlu: () => this.set('aTur', 'ozurlu'),
+      aYarimTikla: () => this.set('aYarim', !s.aYarim),
+
+      // 1b — hafta şeridi + katlanır takvim
+      bAy: AY[s.bM] + ' ' + s.bY,
+      bHucreler: this.hucreler('b', s.bRecs),
+      bHafta,
+      bHaftaOzet: bHaftaToplam === 0 ? 'devamsızlık yok' : sayiYaz(bHaftaToplam) + ' gün',
+      bTakvimAcik: s.bCal,
+      bTakvimTikla: () => this.set('bCal', !s.bCal),
+      bTakvimDugme: 'margin-left:auto;align-self:center;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:11px;cursor:pointer;font-size:14px;background:'
+        + (s.bCal ? PS : 'rgba(239,238,235,.6)') + ';color:' + (s.bCal ? P : MF),
+      bGeri: () => this.ayKaydir('b', -1),
+      bIleri: () => this.ayKaydir('b', 1),
+      bOzursuz: sayiYaz(bOzet.ozursuz),
+      bOzurlu: sayiYaz(bOzet.ozurlu),
+      bOzursuzKalan: sayiYaz(Math.max(0, bOzet.ozursuzKalan)),
+      bOzurluKalan: sayiYaz(Math.max(0, bOzet.ozurluKalan)),
+      bKullanilan: sayiYaz(bOzet.ozursuz + bOzet.ozurlu),
+      bOzursuzBar: 'height:100%;border-radius:999px;background:' + PP + ';width:' + Math.min(100, (bOzet.ozursuz / OZURSUZ_SINIR) * 100) + '%',
+      bOzurluBar: 'height:100%;border-radius:999px;background:' + PP + ';width:' + Math.min(100, (bOzet.ozurlu / OZURLU_SINIR) * 100) + '%',
+      bTarih: kisaYaz(s.bSel),
+      bPanelAcik: s.bPanel,
+      bPanelKapali: !s.bPanel,
+      bPanelDugmeMetni: bSecGun ? kisaYaz(s.bSel) + ' zaten kayıtlı' : kisaYaz(s.bSel) + ' için devamsızlık ekle',
+      bPanelAc: () => this.set('bPanel', true),
+      bPanelKapat: () => this.set('bPanel', false),
+      bSatir1: this.satir(s.bTur === 'ozursuz'),
+      bSatir2: this.satir(s.bTur === 'ozurlu'),
+      bSatir1Alt: 'display:block;margin-top:2px;font:600 11.5px Nunito,sans-serif;color:' + (s.bTur === 'ozursuz' ? 'rgba(255,255,255,.8)' : MF),
+      bSatir2Alt: 'display:block;margin-top:2px;font:600 11.5px Nunito,sans-serif;color:' + (s.bTur === 'ozurlu' ? 'rgba(255,255,255,.8)' : MF),
+      bSatir1Isaret: 'display:flex;flex:none;width:26px;height:26px;align-items:center;justify-content:center;border-radius:999px;font:900 14px Nunito,sans-serif;'
+        + (s.bTur === 'ozursuz' ? 'background:rgba(255,255,255,.25);color:#fff' : 'background:' + MUTED + ';color:' + MF),
+      bSatir2Isaret: 'display:flex;flex:none;width:26px;height:26px;align-items:center;justify-content:center;border-radius:999px;font:900 14px Nunito,sans-serif;'
+        + (s.bTur === 'ozurlu' ? 'background:rgba(255,255,255,.25);color:#fff' : 'background:' + MUTED + ';color:' + MF),
+      bSatir1Im: s.bTur === 'ozursuz' ? '✓' : '+',
+      bSatir2Im: s.bTur === 'ozurlu' ? '✓' : '+',
+      bTurOzursuz: () => this.set('bTur', 'ozursuz'),
+      bTurOzurlu: () => this.set('bTur', 'ozurlu'),
+      bYarimTikla: () => this.set('bYarim', !s.bYarim),
+      bAnahtar: 'position:relative;width:46px;height:27px;flex:none;border:0;padding:0;border-radius:999px;cursor:pointer;background:' + (s.bYarim ? PP : MUTED),
+      bAnahtarTopu: 'position:absolute;top:3px;left:' + (s.bYarim ? '22px' : '3px')
+        + ';width:21px;height:21px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:left .15s',
+      bNot: s.bNot,
+      bNotDegis: (e) => this.set('bNot', e.target.value.slice(0, 32)),
+      bNotSayaciMetni: (s.bNot || '').length + '/32',
+      bNotSayac: 'position:absolute;right:14px;top:50%;transform:translateY(-50%);pointer-events:none;font:700 11.5px Nunito,sans-serif;font-variant-numeric:tabular-nums;color:'
+        + ((s.bNot || '').length >= 32 ? P : 'rgba(107,103,100,.65)'),
+      bKaydet: () => this.ekle('b'),
+      bKaydetMetni: bSecGun ? 'Bu güne kayıt var' : 'Kaydet',
+      bKaydetStil: 'margin-top:14px;height:52px;width:100%;border:0;border-radius:17px;font:900 16px Nunito,sans-serif;'
+        + (bSecGun ? 'background:' + MUTED + ';color:' + MF + ';cursor:default' : 'background:' + PP + ';color:#fff;cursor:pointer'),
+      bKayitlar: this.kayitlar('b', s.bRecs),
+      bKayitSayisi: s.bRecs.length + ' kayıt',
+      bBosMu: s.bRecs.length === 0,
+
+      // 1c — yıl karnesi
+      cDurum: cKullanilan === 0 ? 'Tam devam' : cOzet.ozursuzKalan <= 2 ? 'Sınıra yakın' : 'İyi gidiyor',
+      cKalan: sayiYaz(Math.max(0, OZURSUZ_SINIR + OZURLU_SINIR - cKullanilan)),
+      cKullanilan: sayiYaz(cKullanilan),
+      cOzursuz: sayiYaz(cOzet.ozursuz),
+      cOzurlu: sayiYaz(cOzet.ozurlu),
+      cBar1: 'background:' + DANGER + ';width:' + (cOzet.ozursuz / 30) * 100 + '%',
+      cBar2: 'background:' + WARN + ';width:' + (cOzet.ozurlu / 30) * 100 + '%',
+      cAy: AY[s.cM] + ' ' + s.cY,
+      cHucreler: this.hucreler('c', s.cRecs),
+      cHafta,
+      cHaftaBaslik: 'Hafta',
+      cHaftaOzet: cHaftaToplam === 0 ? 'devamsızlık yok' : sayiYaz(cHaftaToplam) + ' gün',
+      cBugunDon: () => this.gunSec('c', BUGUN),
+      cGeri: () => this.ayKaydir('c', -1),
+      cIleri: () => this.ayKaydir('c', 1),
+      cTarih: tarihYaz(s.cSel),
+      cGunDurum: cSecGun ? (cSecGun.tur === 'ozursuz' ? 'Özürsüz kayıtlı' : 'Özürlü kayıtlı') : 'Kayıt yok',
+      cGunDolu: !!cSecGun,
+      cKutu1: this.kutu(s.cTur === 'ozursuz'),
+      cKutu2: this.kutu(s.cTur === 'ozurlu'),
+      cKutu3: this.kutu(s.cYarim),
+      cTurOzursuz: () => this.set('cTur', 'ozursuz'),
+      cTurOzurlu: () => this.set('cTur', 'ozurlu'),
+      cYarimTikla: () => this.set('cYarim', !s.cYarim),
+      cNot: s.cNot,
+      cNotDegis: (e) => this.set('cNot', e.target.value),
+      cKaydet: () => this.ekle('c'),
+      cEkleMetni: 'Ekle',
+      cEkleStil: 'height:46px;padding:0 18px;border:0;border-radius:16px;font:900 15px Nunito,sans-serif;'
+        + (cSecGun ? 'background:' + MUTED + ';color:' + MF + ';cursor:default' : 'background:' + PP + ';color:#fff;cursor:pointer'),
+      cKayitlar: this.kayitlar('c', s.cRecs),
+    }
+  }
+}
+</script>
+</body>
+</html>
