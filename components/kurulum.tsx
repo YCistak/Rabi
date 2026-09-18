@@ -989,14 +989,34 @@ function KurulumMaskotu({
     // Bu hareket bilgi taşımıyor — nerede olduğunu zaten düzen söylüyor.
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
+    /*
+      Katman uçuştan **önce** hazırlanıyor.
+
+      Ters dönüşüm konurken `will-change` da konuyor: WebView tavşana kendi
+      kompozitör katmanını ancak o zaman veriyor ve ilk kareler ana iş
+      parçacığında boyanmaktan kurtuluyor. Geçiş anında konsaydı katman
+      kurulurken bir iki kare düşüyor, uçuş tam başlarken tıkanıyordu.
+
+      Uçuş bitince kalkıyor: `will-change` kalıcı bir katman demek ve dönüşen
+      bir öğe `position: fixed` çocukları için kapsayıcı blok olup kendi yığın
+      bağlamını kuruyor — animasyon bittikten sonra da sürerse sarmalın içine
+      konacak bir katman ekranın değil bu kutunun içine hapsolurdu.
+    */
+    oge.style.willChange = 'transform'
     oge.style.transform = `translate(${dx}px, ${dy}px) scale(${olcek})`
 
     let salindi = false
+    let bitis = 0
     const sal = () => {
       if (salindi) return
       salindi = true
       oge.style.transition = `transform ${MASKOT_UCUS_SURESI}ms cubic-bezier(0.22, 1, 0.36, 1)`
       oge.style.transform = ''
+      // `transitionend` yetmiyor: uçuş iptal edilirse ya da sayfa görünmezken
+      // geçiş hiç başlamazsa olay gelmiyor ve katman sonsuza kadar kalırdı.
+      bitis = window.setTimeout(() => {
+        oge.style.willChange = ''
+      }, MASKOT_UCUS_SURESI + 60)
     }
 
     let ikinciKare = 0
@@ -1015,6 +1035,8 @@ function KurulumMaskotu({
       cancelAnimationFrame(ilkKare)
       cancelAnimationFrame(ikinciKare)
       clearTimeout(emniyet)
+      clearTimeout(bitis)
+      oge.style.willChange = ''
     }
   }, [adimAnahtari, oncekiKutu])
 
