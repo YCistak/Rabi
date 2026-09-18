@@ -1260,11 +1260,18 @@ tekrar çözmek hâlâ mümkün, ama o tur kaydı düşürmüyor. Havuzu süzen 
 
 Turun nasıl işleyeceğini **mod** belirliyor (`lib/oyunlar/mod.ts`).
 
-**Mod artık seçilmiyor.** Tur başlamadan önce bir seçim ekranı vardı (mod +
-zorluk + oyuna özgü soru türleri) ve üçü de kaldırıldı; her tur **Sıradan**
-kuralıyla açılıyor, tek istisna Oyun Bankası turu (`etkinMod`). Sebep: oyunu
-ilk açan öğrenciye sorulan üç sorunun cevabı ancak oynayarak öğrenilebiliyor
-ve "Başla" o üç sorunun arkasında, bir ekran ötede duruyordu.
+**Mod tur başlamadan seçiliyor** (`ModSecimi`, tanıtımın "Turu ayarla"
+adımında) ve dördü de açık. Seçim bütün oyunlarda ortak ve saklanıyor
+(`ANAHTARLAR.oyunModu`): mod turun nasıl işleyeceğini söylüyor, oyunun ne
+sorduğunu değil — "Turbo sevdim" diyen kullanıcı bunu her oyunda yeniden
+seçmemeli.
+
+Seçim bir süre kaldırılmıştı: oyunu ilk açan öğrenciye sorulan üç sorunun
+(mod, zorluk, soru türü) cevabı ancak oynayarak öğrenilebiliyor ve "Başla" o
+üç sorunun arkasında, bir ekran ötede duruyordu. Geri gelirken sorun seçimin
+kendisinde değil **zorunluluğunda** olduğu görüldü: iki soru da varsayılanıyla
+geliyor (Sıradan · Orta), hiçbir şeye dokunmayan kullanıcı tek dokunuşla
+adımı geçiyor. Soru türü seçimi geri gelmedi — havuzun tamamı soruluyor.
 
 | Mod | Saat | Yanlış | Kayıt |
 | --- | --- | --- | --- |
@@ -1273,15 +1280,24 @@ ve "Başla" o üç sorunun arkasında, bir ekran ötede duruyordu.
 | Ani Ölüm | soruya ait (`SORU_SURESI`) | tur biter | var |
 | Rahat | yok | hiçbir şey | **yok** |
 
-Tablo yine dört satır ama yalnızca ikisine ulaşılıyor: `siradan` her tur,
-`ani-olum` banka turu. `turbo` ile `rahat` şu an hiçbir yerden seçilemiyor;
-tanımları duruyor çünkü tabloyu budamak, geri getirilmesi bir satır olan bir
-kuralı yeniden yazmak demek olurdu. Rekora yazılmama kuralı (`kayitliMi`) da yerinde: kapısı
-`oyunlar.tsx` içindeki `turBitti`.
+Dördü de seçilebiliyor. Rekora yazılmama kuralının (`kayitliMi`) kapısı
+`oyunlar.tsx` içindeki `turBitti` ve seçimi okuyor — Rahat turda sayı hiçbir
+yere yazılmıyor. Seçim ekranı bunu seçildiği anda sarı bir şeritle söylüyor:
+turun sonunda öğrenilen bir kural, o turu boşa harcatır.
 
 **Oyun Bankası turu** modu dinlemiyor (`etkinMod`): oradaki sorular zaten bir
 kez yanlış bilinmiş olanlar ve turun amacı hepsini bir kez daha görmek — tur
-saatli bir mod o işi yarıda keser.
+saatli bir mod o işi yarıda keser. Ayarlar adımı o turda hiç çıkmıyor
+(`secilebilir`): sunulup dinlenmeyen bir seçim, yalan söyleyen bir arayüzdür.
+
+**Seçim prop'la değil bağlamla iniyor** (`components/tur-ayari-baglami.tsx`,
+`genel-test-baglami.tsx` ile aynı kalıp). Seçtiren yer tek (`oyun-tanitim.tsx`)
+ama tanıtım penceresini çizen ve ayarı kullanan yer yirmi iki oyun dosyasının
+her biri; prop olsaydı aynı dört satır yirmi iki kez yazılacaktı ve yeni bir
+oyun eklendiğinde unutulan satır, seçimi sessizce yok sayan bir oyun demekti.
+Oyun dosyaları saf fonksiyonları değil `useEtkinMod` / `useUyarlananZorluk`
+sarmallarını çağırıyor; `etkinMod` ile `uyumBasla` saf kalıyor ve testlerde
+seçim elle veriliyor.
 
 **Çıkış turu bitiriyor**, doğrudan kapatmıyor; yoksa o turda öğrenilen
 yanlışlar bankaya hiç düşmezdi.
@@ -1291,21 +1307,33 @@ demek ve arayüz halkayı ona bakarak gizliyor. Yeni bir mod eklersen saatin tur
 mı soruya mı ait olduğuna karar ver — ikisi birden olmaz, `mod.test.ts` bunu
 denetliyor.
 
-## Zorluk seçilmiyor, turun içinde kayıyor
+## Zorluk seçiliyor, sonra turun içinde kayıyor
 
-Tur başlamadan önce bir "Hangi seviye?" sorusu vardı (`ZorlukSecimi`, silindi)
-ve cevap oyun başına kayıtta duruyordu. İki sorunu vardı: **seçim bilgi
-istiyordu** — oyuna ilk giren öğrenci kendi seviyesini bilmiyor, cevabı ancak
-oynayarak öğrenilecek bir soruydu — ve **seçim tur boyunca donuyordu**; kolayda
-arka arkaya on doğru yapana oyun kolay soru vermeye devam ediyordu.
+İki kural üst üste duruyor ve ikisi ayrı soruya cevap veriyor: **seçim**
+(`ZorlukSecimi`) turun nereden başlayacağını, **uyum** (`lib/oyunlar/uyum.ts`)
+nereye gideceğini söylüyor.
 
-Kural artık `lib/oyunlar/uyum.ts` içinde ve saf: tur **orta**dan başlıyor, üç
-ardışık doğru bir üst seviyeye çıkarıyor, iki ardışık yanlış bir alt seviyeye
-indiriyor. Düşme yükselmeden hızlı — yanlış zorlandığının doğrudan işareti,
-doğru ise şıklı soruda tahminle de gelebiliyor.
+İkisi sırayla denendi ve ikisi de tek başına eksik kaldı. Yalnızca seçim
+varken **seçim tur boyunca donuyordu**: kolayda arka arkaya on doğru yapana
+oyun kolay soru vermeye devam ediyordu. Yalnızca uyum varken **seviyesini
+bilen oyuncu her turu ortadan başlamak zorunda** kalıyordu. Şimdi seçim
+başlangıcı veriyor, uyum onun üstünde çalışmaya devam ediyor.
 
-Kullanıcıya **söylenmiyor**: ekranda bir "seviye atladın" bildirimi, ölçülen
-şeyi (bilgi) bir ödüle çevirir ve oyuncu seviyeyi kovalamaya başlar.
+Uyum kuralı saf: üç ardışık doğru bir üst seviyeye çıkarıyor, iki ardışık
+yanlış bir alt seviyeye indiriyor. Düşme yükselmeden hızlı — yanlış
+zorlandığının doğrudan işareti, doğru ise şıklı soruda tahminle de gelebiliyor.
+Seçim yapılmamışsa (Oyun Bankası turu, eski kayıt) başlangıç **orta**:
+oradan uyum iki yöne de aynı hızda gidebiliyor.
+
+Seçim oyun başına saklanıyor (`ANAHTARLAR.oyunZorlugu`, tek anahtarda bir
+tablo): biri edebiyatta kolayda kalırken sesi zorda oynayabiliyor. Tuttuğu şey
+turun **başlangıcı**; seviyenin kaydığı yer kayda yazılmıyor — o, kullanıcının
+kararı değil turun sonucu. `uyum.test.ts` ikisinin birlikte yaşadığını
+denetliyor: kolay seçilse de yükselebiliyor, zor seçilse de düşebiliyor.
+
+Kaymanın kendisi kullanıcıya **söylenmiyor**: ekranda bir "seviye atladın"
+bildirimi, ölçülen şeyi (bilgi) bir ödüle çevirir ve oyuncu seviyeyi
+kovalamaya başlar.
 
 ### Şeritler: seviye değişince soru sırası bozulmuyor
 

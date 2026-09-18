@@ -1,24 +1,29 @@
 'use client'
 
 /**
- * Zorluk turun içinde kendiliğinden ayarlanıyor.
+ * Zorluk tur içinde kendiliğinden kayıyor — seçilen seviyeden başlayarak.
  *
- * Eskiden tur başlamadan önce bir seviye seçiliyordu (`ZorlukSecimi`,
- * silindi) ve seçim tur boyunca sabit kalıyordu. İki sorunu vardı:
+ * İki kural üst üste duruyor ve ikisi ayrı soruya cevap veriyor:
  *
- * - **Seçim bilgi istiyordu.** Oyuna ilk giren öğrenci kendi seviyesini
- *   bilmiyor; "Kolay/Orta/Zor" sorusu, cevabı ancak oynadıktan sonra
- *   öğrenilecek bir soruydu. Çoğu kullanıcı ilk gördüğünü seçip orada
- *   kalıyordu.
- * - **Seçim tur boyunca donuyordu.** Kolayda arka arkaya on doğru yapan
- *   oyuncuya oyun kolay soru vermeye devam ediyor, zorda üst üste elenen
- *   oyuncu ise turu kapatıyordu.
+ * - **Seçim** (`ZorlukSecimi`) turun **nereden başlayacağını** söylüyor.
+ *   Kendi seviyesini bilen oyuncu üç soru boyunca ısınmayı beklemiyor.
+ * - **Uyum** turun **nereye gideceğini**: üç ardışık doğru bir üst
+ *   seviyeye çıkarıyor, iki ardışık yanlış bir alt seviyeye indiriyor.
  *
- * Artık tur **orta**dan başlıyor ve seviye cevaplara göre kayıyor. Kullanıcıya
- * söylenmiyor: ekranda bir "seviye atladın" bildirimi, ölçülen şeyi (bilgi)
- * bir ödüle çevirir ve oyuncu seviyeyi kovalamaya başlar.
+ * Bir süre yalnızca seçim vardı ve seçim tur boyunca **donuyordu**: kolayda
+ * arka arkaya on doğru yapan oyuncuya oyun kolay soru vermeye devam ediyor,
+ * zorda üst üste elenen oyuncu turu kapatıyordu. Sonra yalnızca uyum kaldı
+ * ve bu sefer seviyesini bilen oyuncu her turu ortadan başlamak zorunda
+ * kalıyordu. İkisi birlikte: seçim başlangıcı, uyum gidişi belirliyor.
+ *
+ * Kayma kullanıcıya **söylenmiyor**: ekranda bir "seviye atladın" bildirimi,
+ * ölçülen şeyi (bilgi) bir ödüle çevirir ve oyuncu seviyeyi kovalamaya
+ * başlar.
  *
  * Kural saf ve test edilebilir; React'e bakan tek şey en alttaki kanca.
+ * Kancanın seçimi **okuduğu yer burası değil**: seviyeyi bağlam taşıyor
+ * (`components/tur-ayari-baglami.tsx`) ve buraya parametre olarak geliyor —
+ * `lib/` bir bileşenden içeri bakmaz.
  */
 
 import { useCallback, useRef, useState } from 'react'
@@ -26,11 +31,12 @@ import type { Zorluk } from './ritim'
 import { ZORLUKLAR } from './ritim'
 
 /**
- * Turun başladığı seviye.
+ * Seçim yapılmamışsa turun başladığı seviye.
  *
  * Orta, çünkü uyum iki yöne de aynı hızda gidebilmeli: kolaydan başlayan bir
  * tur, iyi oyuncuyu zora çıkarmak için iki basamak tırmanmak zorunda kalır ve
- * kısa turlarda oraya hiç ulaşamaz.
+ * kısa turlarda oraya hiç ulaşamaz. Oyun Bankası turunda seçim hiç
+ * sorulmuyor ve başlangıç bu değer oluyor.
  */
 export const BASLANGIC_ZORLUGU: Zorluk = 'orta'
 
@@ -55,8 +61,8 @@ export const DUSME_SERISI = 2
  */
 export type UyumDurumu = { zorluk: Zorluk; seri: number }
 
-export function uyumBasla(): UyumDurumu {
-  return { zorluk: BASLANGIC_ZORLUGU, seri: 0 }
+export function uyumBasla(baslangic: Zorluk = BASLANGIC_ZORLUGU): UyumDurumu {
+  return { zorluk: baslangic, seri: 0 }
 }
 
 /** Seviye listesinde `adim` kadar kayar; uçlarda yerinde kalır. */
@@ -88,21 +94,31 @@ export function uyumIsle(durum: UyumDurumu, dogruMu: boolean): UyumDurumu {
 }
 
 /**
- * Oyun ekranlarının kullandığı kanca.
+ * Uyumun React tarafı.
  *
  * `zorluk` çizim sırasında okunuyor (sıradaki soru o şeritten geliyor),
  * `kaydet` her cevaptan sonra, `sifirla` tur başında çağrılıyor. Durum oyun
  * başına ayrı **saklanmıyor**: uyum turun kendi ölçüsü ve iki tur arasında
  * taşınan bir seviye, yeni turu oyuncunun o anki hâline değil bir öncekine
- * göre kurardı.
+ * göre kurardı. Seçilen başlangıç saklanıyor ama o ayrı bir şey — kullanıcının
+ * kendi kararı, turun ölçtüğü bir sonuç değil.
+ *
+ * `sifirla` seçilen seviyeye dönüyor, ortaya değil: tur baştan alınınca
+ * oyuncunun seçimi de baştan geçerli olmalı. `baslangic` bu yüzden `sifirla`nın
+ * bağımlılığında; seçim tur içinde değişmiyor ama "Tekrar" ile yeni bir tura
+ * girilirken değişmiş olabiliyor.
  *
  * `zorlukRef` eşleştirme oyunları için: orada sıradaki el bir zamanlayıcının
  * içinde kuruluyor ve zamanlayıcı kurulurken yakalanan `zorluk`, cevabın
  * seviyeyi kaydırmasından **önceki** değer olurdu. Ref çizim sırasında
  * tazeleniyor — dosyaların geri kalanındaki `cevaplarRef` kalıbının aynısı.
+ *
+ * Oyun ekranları bunu doğrudan çağırmıyor: başlangıcı bağlamdan okuyup buraya
+ * geçiren `useUyarlananZorluk` sarmalını kullanıyorlar
+ * (`components/tur-ayari-baglami.tsx`).
  */
-export function useUyarlananZorluk() {
-  const [durum, setDurum] = useState<UyumDurumu>(uyumBasla)
+export function useUyum(baslangic: Zorluk = BASLANGIC_ZORLUGU) {
+  const [durum, setDurum] = useState<UyumDurumu>(() => uyumBasla(baslangic))
   const zorlukRef = useRef(durum.zorluk)
   zorlukRef.current = durum.zorluk
 
@@ -111,8 +127,8 @@ export function useUyarlananZorluk() {
   }, [])
 
   const sifirla = useCallback(() => {
-    setDurum(uyumBasla())
-  }, [])
+    setDurum(uyumBasla(baslangic))
+  }, [baslangic])
 
   return { zorluk: durum.zorluk, zorlukRef, kaydet, sifirla }
 }

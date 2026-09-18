@@ -4,30 +4,37 @@ import { useEffect, useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import type { OyunTanimi } from '@/lib/oyunlar/tanim'
 import type { OyunId } from '@/lib/types'
-import { MODLAR, VARSAYILAN_MOD } from '@/lib/oyunlar/mod'
+import { MODLAR } from '@/lib/oyunlar/mod'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { vurgulariAyir } from '@/lib/metin'
 import { useGeriKatmani } from '@/lib/geri'
 import { useGenelTest } from '@/components/genel-test-baglami'
+import { useTurAyari } from '@/components/tur-ayari-baglami'
 import { cn } from '@/lib/utils'
 import { Rabi } from '@/components/maskot/rabi'
+import { ModSecimi } from '@/components/mod-secimi'
+import { ZorlukSecimi } from '@/components/zorluk-secimi'
 import { GeriSayim } from '@/components/oyun-geri-sayim'
 import { OYUN_ORNEKLERI, type OyunOrnegi } from '@/components/oyun-ornekleri'
 
 /**
- * Turdan önceki tek ekran: **tanıtım**.
+ * Turdan önceki iki ekran: **ayarlar**, sonra **tanıtım**.
  *
- * Önünde bir de "ayarlar" adımı vardı — mod seçimi, zorluk seçimi, oyuna özgü
- * seçimler (`ekstra`). Üçü de kaldırıldı: mod artık her turda Sıradan
- * (`lib/oyunlar/mod.ts`), zorluk tur içinde kendiliğinden kayıyor
- * (`lib/oyunlar/uyum.ts`), soru türü seçimleri de havuzun tamamına döndü.
- * Ekranın kendisi ayakta kalamazdı: seçilecek bir şey kalmayınca geriye
- * "Devam" yazan boş bir kart kalıyordu.
+ * Sıra bilerek böyle. Tek ekranda toplandığında (maskot, kurallar, mod,
+ * seviye, "Başla") hiçbir telefona sığmıyordu ve "Başla" kaydırmanın altında
+ * kalıyordu. Bölününce ikisi de sığıyor; kaydırma hiçbir adımda yok.
  *
- * Sebebi seçimlerin zorluğuydu. Oyunu ilk açan öğrenciye sorulan üç sorunun
+ * Ayarlar önde çünkü seçim turu ilgilendiriyor: kuralları okuyup "Başla"ya
+ * bastıktan sonra "bir de mod seçeyim" diye geri dönmek istemezsin.
+ *
+ * Adım bir süre kaldırılmıştı: oyunu ilk açan öğrenciye sorulan üç sorunun
  * (hangi mod, hangi seviye, hangi soru türü) cevabı ancak oynayarak
- * öğrenilebiliyor ve "Başla" o üç sorunun arkasında, bir ekran ötede
- * duruyordu.
+ * öğrenilebiliyor ve "Başla" o üç sorunun arkasında duruyordu. Geri gelirken
+ * ikisi değişti — soru türü seçimi geri gelmedi (havuzun tamamı soruluyor) ve
+ * kalan iki soru da **cevaplanmak zorunda değil**: ikisi de varsayılanıyla
+ * geliyor, dokunulmazsa Sıradan/Orta bir tur açılıyor ve adım tek dokunuşla
+ * geçiliyor. Zorluk da artık turu dondurmuyor, yalnızca başlangıcı seçiyor
+ * (`lib/oyunlar/uyum.ts`).
  *
  * Tanıtımda "Bir daha gösterme" var: oyunu ezberleyen için her turda
  * geçilecek bir ekran değil (`ANAHTARLAR.tanitimGizli`). Gizlenmiş oyunda
@@ -57,9 +64,17 @@ export function OyunTanitim({
   onKapat: () => void
 }) {
   const [sayiliyor, setSayiliyor] = useState(false)
+  const [adim, setAdim] = useState<'ayar' | 'tanitim'>('ayar')
   const [gizliler, setGizliler] = useYerelDepo<OyunId[]>(ANAHTARLAR.tanitimGizli, [])
   const genelTest = useGenelTest()
+  /* Ayarlar prop olarak gelmiyor: pencereyi çizen yirmi iki oyun dosyasının
+     her birine aynı dört satırı yazmak gerekirdi (`tur-ayari-baglami.tsx`). */
+  const { mod, zorluk, setMod, setZorluk, secilebilir } = useTurAyari()
 
+  /* Ayarlar yalnızca tur başlatan ekranda: turun içinden "?" ile açılan
+     tanıtım kuralı okutuyor, ayar değiştirmiyor — başlamış bir turun modu
+     değişmemeli. */
+  const secimVar = baslatir && secilebilir
   const gizli = gizliler.includes(oyun.id)
 
   /*
@@ -73,10 +88,13 @@ export function OyunTanitim({
   */
   useEffect(() => {
     if (!acik) return
-    setSayiliyor(gizli && baslatir)
-  }, [acik, gizli, baslatir])
+    setSayiliyor(!secimVar && gizli && baslatir)
+    setAdim(secimVar ? 'ayar' : 'tanitim')
+  }, [acik, gizli, baslatir, secimVar])
 
-  useGeriKatmani(acik, onKapat)
+  // Tanıtımdayken geri hareketi ayarlara döner, oyundan çıkmaz.
+  const geri = adim === 'tanitim' && secimVar ? () => setAdim('ayar') : onKapat
+  useGeriKatmani(acik, geri)
 
   /*
     Tanıtımı gizlenmiş oyunda ve genel testte tur kendiliğinden başlıyor.
@@ -100,8 +118,36 @@ export function OyunTanitim({
 
   const ornekler = OYUN_ORNEKLERI[oyun.id]
 
+  /** Ayarlardan sonraki adım: tanıtım gizliyse doğrudan geri sayım. */
+  const ayarlardanSonra = () => (gizli ? setSayiliyor(true) : setAdim('tanitim'))
+
+  if (adim === 'ayar' && secimVar) {
+    return (
+      <Sayfa onGeri={onKapat} geriEtiketi="Vazgeç">
+        {/* Başlık tanıtım adımıyla aynı: ortada, ikonsuz. İki adım arasında
+            yer değiştiren bir başlık, aynı ekranın devamı olduklarını
+            gizliyordu. */}
+        <div className="shrink-0 px-2 pb-4 pt-3">
+          <p className="text-center font-display text-[26px] font-extrabold leading-tight tracking-tight">
+            {oyun.ad}
+          </p>
+          <p className="mt-1 text-center text-[13px] text-muted-foreground">Turu ayarla</p>
+        </div>
+
+        <Orta>
+          <div className="golge-kart flex flex-col gap-4 rounded-[24px] bg-card px-4 py-4">
+            <ModSecimi secili={mod} onSec={setMod} />
+            <ZorlukSecimi secili={zorluk} onSec={setZorluk} />
+          </div>
+        </Orta>
+
+        <BuyukDugme onClick={ayarlardanSonra}>{gizli ? 'Başla  →' : 'Devam  →'}</BuyukDugme>
+      </Sayfa>
+    )
+  }
+
   return (
-    <Sayfa onGeri={onKapat} geriEtiketi="Vazgeç">
+    <Sayfa onGeri={geri} geriEtiketi={secimVar ? 'Geri' : 'Vazgeç'}>
       <Orta>
         <div className="flex justify-center py-2">
           <Rabi durum="calisiyor" poz="isaretci" boyut={84} />
@@ -128,10 +174,10 @@ export function OyunTanitim({
             )}
           </div>
 
-          {/* Mod artık seçilmiyor ama süresi hâlâ turun kuralı: çip "60
-              saniyen var" diyor, seçim sunmuyor. */}
+          {/* Seçilen modun süresi turun kuralı: çip "60 saniyen var" diyor.
+              Banka turunda seçim yok ve çip o turun gerçek modunu yazıyor. */}
           <div className="mt-3 flex gap-2">
-            <Bilgi simge="⏱️" metin={MODLAR[VARSAYILAN_MOD].ozet} />
+            <Bilgi simge="⏱️" metin={MODLAR[mod].ozet} />
             {rekor > 0 && <Bilgi simge="🏆" metin={`Rekorun ${rekor} doğru`} />}
           </div>
         </div>

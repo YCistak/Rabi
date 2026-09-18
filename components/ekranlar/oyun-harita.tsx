@@ -36,9 +36,9 @@ import {
   tekAkis,
   type SoruAkisi,
 } from '@/lib/oyunlar/ritim'
-import { etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
+import { modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { useTurSayaci } from '@/lib/oyunlar/tur-sayaci'
-import { useUyarlananZorluk } from '@/lib/oyunlar/uyum'
+import { useEtkinMod, useUyarlananZorluk } from '@/components/tur-ayari-baglami'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
@@ -149,8 +149,8 @@ export function HaritaOyunuEkrani({
 
   const havuz = useMemo(() => bankaSorulariniCoz(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
-  // Mod artık seçilmiyor: her tur Sıradan, banka turu ise soru saatli.
-  const gecerliMod = etkinMod(bankaTuru)
+  // Seçilen mod (tanıtımın ayar adımı); banka turu seçimi dinlemiyor.
+  const gecerliMod = useEtkinMod(bankaTuru)
 
   const turBasiRekor = useRef(istatistik.enIyiDogru)
   const turBasladiRef = useRef(0)
