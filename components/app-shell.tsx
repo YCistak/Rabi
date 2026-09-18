@@ -324,6 +324,12 @@ export function AppShell() {
     rozet ölçüleri) her çizimde yeniden çalışırdı.
   */
   const sablonlar = useMemo(() => sablonlariBirlestir(kayitliSablonlar), [kayitliSablonlar])
+  // Günün hâli kartı "son deneme ne zamandı" diye soruyor; liste tarih
+  // sırasında tutulmuyor, en yeni burada bir kez bulunuyor.
+  const enYeniDenemeTarihi = useMemo(
+    () => denemeler.reduce<string | null>((e, d) => (e === null || d.tarih > e ? d.tarih : e), null),
+    [denemeler],
+  )
 
   /*
     ---- Haftalık özet ----
@@ -898,6 +904,8 @@ export function AppShell() {
                 devamsizlik={devamsizlik}
                 hedef={hedef}
                 guncelSiralama={guncelSiralama}
+                bekleyenYanlis={yanlisSorular.filter((s) => !s.cozuldu).length}
+                sonDenemeTarihi={enYeniDenemeTarihi}
                 ozetHazir={ozetHazir}
                 sonrakiOzet={sonrakiOzet}
                 onOzetAc={ozetiAc}
