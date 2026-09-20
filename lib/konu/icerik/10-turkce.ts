@@ -37,7 +37,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Kişiler tiptir',
         'Masal kişileri gelişmez: iyi hep iyi, cimri hep cimridir. Bu yüzden karakter değil tip sayılırlar.',
         undefined,
-        { not: 'Masalda karakter gelişimi arama; tip, masalın kuralı, eksiği değil.' },
+        { not: 'Keloğlan her masalda aynı kurnaz Keloğlan; roman kahramanı gibi değişmez. Sınav \'karakter\' derse masal dışıdır.' },
       ),
       kart(
         'Olağanüstülük',
@@ -103,7 +103,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Varyant nedir?',
         'Aynı ürünün yöreden yöreye değişmiş hâli. Sözlü gelenekte tek bir "doğru metin" yoktur.',
         undefined,
-        { not: '"Hangisi doğru" diye sorma; sözlü gelenekte her varyant aynı ürünün bir yüzü.' },
+        { not: '\'Çanakkale Türküsü\'nün İzmir ve Erzurum söylenişi farklı sözlerle var; ikisi de doğru, ikisi de varyant.' },
       ),
       kart(
         'Neden anonimleşir?',
@@ -170,7 +170,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Ses ve anlam birlikte',
         'Ahenk süs değildir: ağır sesler ağırlık, ince ve hızlı sesler kıvraklık duygusu üretir.',
         undefined,
-        { not: 'Ahenk sorusunda sesi anlamdan ayırma; şair sesi anlam için seçiyor.' },
+        { not: '\'Karşı yaka\'da k ve a tekrarı sertlik, \'yeşil yeşil\' yumuşaklık verir: aliterasyon anlamı taşır, süslemez.' },
       ),
     ], [
       soru('Aliterasyon ünsüz, asonans ünlü tekrarıdır.', true, 'İkisi de sese dayalı ahenk araçları.'),
@@ -228,7 +228,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Yorum sınırsız değil',
         'Şiir çok anlamlıdır ama her yorum geçerli değildir; yorum metinden delil gösterebiliyorsa ayakta durur.',
         undefined,
-        { not: '"Her yorum geçerli" değil; yorumu metinden bir kanıtla destekle.' },
+        { not: '\'Kalbimin kapısı\' imgesini \'şair marangoz\' diye yorumlayamazsın; yorum metindeki başka dizelerle tutmalı.' },
       ),
     ], [
       soru('İmge, okurun zihninde yeni bir tasarım oluşturur.', true, 'Sözcüğün sözlük anlamının ötesine geçiyor.'),
@@ -292,7 +292,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Tür göreve göre değişir',
         'Bir sözcüğün türü cümledeki görevine göre belirlenir: "güzel" kimi cümlede sıfat, kimi cümlede zarftır.',
         undefined,
-        { not: 'Sözcüğü ezberden sınıflandırma; cümledeki görevine bak, tür oradan çıkar.' },
+        { not: '\'Güzel kız\' sıfat, \'güzel konuştu\' zarf, \'güzeller yarıştı\' isim. Aynı sözcük üç tür; cümleye bak.' },
       ),
       kart(
         'Zarf mı sıfat mı testi',
@@ -369,7 +369,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Fiilimsi tanıma',
         'Ekleri ezberle: -ma/-ış/-mak isim-fiil, -an/-acak/-dık/-mış/-ası/-maz sıfat-fiil, -ip/-arak/-ken/-ince/-madan zarf-fiil. Bir cümlede fiilimsi varsa o cümle birleşiktir.',
         undefined,
-        { not: 'Ekleri bir kâğıda yaz; fiilimsi sorusu ek tanımayla çözülüyor, başka yolu yok.' },
+        { not: '-ma/-ış/-mak isim-fiil (koşma, geliş); -an/-acak/-dık/-mış sıfat-fiil (koşan, gelecek); -ip/-ken/-erek zarf-fiil.' },
       ),
     ], [
       soru('Ek fiil, isim soylu sözcükleri yüklem yapar.', true, '"Öğrenciydi" örneğinde yüklemi kuran ek fiil.'),
@@ -430,7 +430,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Destan ve tarih',
         'Destan tarihsel bir olaydan doğar ama tarih değildir; olayı halkın gözünden ve abartarak anlatır.',
         undefined,
-        { not: 'Destanı belge sanma; tarihsel çekirdek var ama anlatan halk, ölçen değil.' },
+        { not: 'Ergenekon\'da demir dağ eritilir (olağanüstü) ama Göktürklerin çıkışı tarihsel çekirdek. Belge değil, iz.' },
       ),
     ], [
       soru('Doğal destanlar toplumun ortak belleğinde oluşup sonradan yazıya geçirilir.', true, 'Söyleyeni belli değildir.'),
@@ -481,7 +481,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
             ['Halk hikâyesi', 'Âşık geleneği'],
           ],
         },
-        { not: 'Üç türü rakip değil komşu diye oku; aynı işi üç ayrı çevre yapmış.' },
+        { not: 'Mesnevi saray (aruz, Farsça sözcük), halk hikâyesi köy meydanı (saz, nesir+nazım), destan boy (sözlü). Aynı iş, üç dil.' },
       ),
       kart(
         'Fabl',
@@ -534,7 +534,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
             { ad: 'Yerli konu' },
           ],
         },
-        { not: 'İlkeleri tek tek değil, her birinin neye karşı çıktığıyla birlikte tut.' },
+        { not: 'Aruz yerine hece (Servetifünun\'a karşı), Osmanlıca yerine sade Türkçe, bireysel yerine millî konu. Üçü de tepki.' },
       ),
       kart(
         'Ölçü ve konu',
@@ -602,7 +602,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Anadolu’ya bakış',
         'Yaban aydının halka uzaklığını, Çalıkuşu ise Anadolu’ya gitmeyi bir görev olarak anlatır. İkisi aynı sorunun iki yüzü.',
         undefined,
-        { not: 'İki roman aynı Anadolu\'ya iki ayrı gözle bakıyor; farkı kavrarsan dönemi kavrarsın.' },
+        { not: 'Yaban: aydın köylüye yabancı, köylü aydına düşman. Çalıkuşu: Anadolu\'ya gitmek görev. Aynı dönem, iki tavır.' },
       ),
       kart(
         'Tiyatro ve deneme',
