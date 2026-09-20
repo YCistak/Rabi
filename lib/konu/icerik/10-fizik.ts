@@ -13,12 +13,18 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
   tema('fzk10-t1', 'Kuvvet ve Hareket', [
     konu('fzk10-sabit-hiz', 'Sabit Hızlı Hareket', [
       kart(
-        'Tanımı',
-        'Cisim eşit zaman aralıklarında eşit yer değiştirir. Hız büyüklüğü ve yönü değişmez, ivme sıfırdır.',
+        'Sabit hız: her saniye aynı kadar yol',
+        'Bir araba her saniye 20 m gidiyor: 1 s\'de 20 m, 2 s\'de 40 m, 3 s\'de 60 m. Buna sabit hızlı hareket denir. Hızın büyüklüğü de yönü de değişmez; ivme sıfırdır.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Konum-zaman grafiği',
-        'Doğrusaldır ve eğimi hızı verir. Eğim dikleştikçe hız büyür; yatay doğru duran cismi gösterir.',
+        'Yol = hız × zaman',
+        '20 m/s ile 5 s giden araç 20·5 = 100 m yol alır. Formül: x = v·t. Hızı bulmak istersen yolu zamana böl: v = x/t.',
+      ),
+      kart(
+        'Konum-zaman grafiği eğik bir doğrudur',
+        'Her saniye aynı yol eklendiği için çizgi düz çıkar. Çizgi ne kadar dikse hız o kadar büyük. Eğim, yani çizginin dikliği, hızı verir. Yatay çizgi duran cisim demek: konum değişmiyor.',
         {
           tur: 'koordinat',
           pencere: [0, 6, 0, 6],
@@ -46,8 +52,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         },
       ),
       kart(
-        'Hız-zaman grafiği',
-        'Zaman eksenine paralel bir doğrudur. Grafiğin altında kalan alan alınan yolu verir.',
+        'Hız-zaman grafiği yatay bir çizgidir',
+        'Hız 3 m/s ve hiç değişmiyor: çizgi 3 hizasında düz gider. Çizginin altındaki dikdörtgenin alanı 3·5 = 15, yani alınan yol. Alan = hız × zaman = yol.',
         {
           tur: 'koordinat',
           pencere: [0, 6, 0, 6],
@@ -69,26 +75,24 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         },
       ),
       kart(
-        'Yol hesabı',
-        'x = v · t. Sabit hızda yol, hız ile zamanın çarpımıdır.',
-      ),
-      kart(
-        'İki hareketli',
-        'Aynı yönde giden iki araç birbirine hızların farkıyla, zıt yönde gidenler hızların toplamıyla yaklaşır. Karşılaşma süresi = aradaki uzaklık / yaklaşma hızı.',
-      ),
-      kart(
-        'Grafik dönüşümü',
-        'Konum-zamanın eğimi hız-zamanı, hız-zamanın altındaki alan konum değişimini verir. İki grafik aynı hareketi anlatır.',
-      ),
-      kart(
-        'Ortalama hız',
-        'Toplam yer değiştirmenin toplam zamana bölümü. Anlık hızların ortalaması değildir; ikisi çoğu zaman farklı çıkar.',
-      ),
-      kart(
-        'Birim tuzağı',
-        'Hız km/h, zaman dakika verilmişse önce birimleri eşitle: 72 km/h = 20 m/s. Çoğu hata hesapta değil birimde çıkar.',
+        'Eğim mi alan mı? Grafiğe göre değişir',
+        'Konum-zaman grafiğinde eğime bak: hız. Hız-zaman grafiğinde alana bak: yol. Hız-zaman grafiğinin altındaki alan ivme değil, yoldur. İki grafik aynı hareketi iki ayrı pencereden gösterir.',
         undefined,
-        { not: 'Soruya başlamadan birimleri eşitle; hataların çoğu hesapta değil burada.' },
+        { etiket: 'Sık hata' },
+      ),
+      kart(
+        'Ortalama hız: toplam yol bölü toplam süre',
+        'Araç 2 saatte 100 km, sonra 3 saatte 200 km gitsin. Ortalama hız 300/5 = 60 km/h. Hızları toplayıp ikiye bölme; yolları topla, süreleri topla, sonra böl.',
+      ),
+      kart(
+        'Aynı yönde fark, zıt yönde toplam',
+        'Sen 5 m/s, arkadaşın karşıdan 3 m/s koşuyor: aranız her saniye 8 m kapanır, hızlar toplandı. Aynı yöne koşsaydınız aranız saniyede 2 m değişirdi, hızlar çıkarıldı. Karşılaşma süresi = aradaki uzaklık / yaklaşma hızı.',
+      ),
+      kart(
+        'Hesaba başlamadan birimleri eşitle',
+        '72 km/h ile 10 dakika giden araç kaç m gider? Önce çevir: 72 km/h = 72/3,6 = 20 m/s, 10 dk = 600 s. Yol 20·600 = 12.000 m. km/h\'yi m/s\'ye çevirmek için 3,6\'ya böl.',
+        undefined,
+        { not: 'Soruda km/h ve saniye bir arada görürsen dur; önce 3,6\'ya böl, sonra hesapla.' },
       ),
     ], [
       soru(
@@ -112,8 +116,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         },
       ),
       soru('Sabit hızlı harekette hız-zaman grafiği zaman eksenine paralel bir doğrudur.', true, 'Hız değişmediği için çizgi yatay kalıyor.'),
-      soru('Hız-zaman grafiğinde çizginin altında kalan alan ivmeyi verir.', false, 'Alan alınan yolu verir; ivmeyi eğim gösterir.'),
-      soru('Ortalama hız, hızların toplamının ikiye bölünmesiyle bulunur.', false, 'Toplam yer değiştirmenin toplam zamana bölümüdür.'),
+      soru('Hız-zaman grafiğinde çizginin altında kalan alan ivmeyi verir.', false, 'Alan alınan yolu verir; sabit hızda ivme zaten sıfır.'),
+      soru('Ortalama hız, hızların toplamının ikiye bölünmesiyle bulunur.', false, 'Toplam yolun toplam süreye bölümüdür.'),
       sikli('Hız-zaman grafiğinin altındaki alan neyi verir?', ['Alınan yolu', 'İvmeyi'], 0, 'Sabit hızda alan dikdörtgen: v·t.'),
       sikli('Zıt yönde giden iki araç birbirine hangi hızla yaklaşır?', ['Hızların toplamıyla', 'Hızların farkıyla'], 0, 'Aynı yönde fark, zıt yönde toplam.'),
       sikli('72 km/h kaç m/s\'dir?', ['20', '72'], 0, '3,6\'ya böl.'),
@@ -128,21 +132,29 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
           dogru: 'Konum / zaman = hız. Eğim dikleştikçe hız büyür.',
           yanlis: 'İvme hız-zaman grafiğinin eğimidir. Konum-zamanın eğimi hızı verir; yatay doğru duran cisim demek.',
         },
-        kart: 2,
+        kart: 3,
       },
     ]),
     konu('fzk10-sabit-ivme', 'Bir Boyutta Sabit İvmeli Hareket', [
       kart(
-        'İvme nedir?',
-        'Hızın zamana göre değişimi. Sabit ivmede hız eşit zaman aralıklarında eşit miktarda değişir.',
+        'İvme, hızın ne kadar hızlı değiştiğidir',
+        'Araba duruyor. 1 s sonra 2 m/s, 2 s sonra 4 m/s, 3 s sonra 6 m/s. Hız her saniye 2 m/s artıyor. İşte bu 2 m/s² ivme, yani hızın saniyedeki değişimi. Değişim her saniye aynıysa ivme sabittir.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Hızlanma ve yavaşlama',
-        'İvme hızla aynı yöndeyse cisim hızlanır, zıt yöndeyse yavaşlar. İvmenin işareti tek başına yeterli bilgi değildir.',
+        'Hız formülü: v = v₀ + a·t',
+        '10 m/s ile giden araç 3 m/s² ivmeyle 4 s hızlansın: v = 10 + 3·4 = 22 m/s. v₀ ilk hız, a ivme, t süre. Formül yalnızca ivme sabitken geçerli.',
       ),
       kart(
-        'Hız-zaman grafiği',
-        'Eğimi ivmeyi, altında kalan alan yer değiştirmeyi verir. Eksenin altındaki alan ters yönde yol demektir.',
+        'İvme hızla aynı yöndeyse hızlanır',
+        'Gaz pedalı: ivme ileri, hız ileri, araç hızlanır. Fren: ivme geri, hız ileri, araç yavaşlar. Yönleri karşılaştır, işarete bakma. İvmesi eksi olan cisim de hızlanabilir: hızı da eksiyse, yani geri gidiyorsa.',
+        undefined,
+        { etiket: 'Sık hata' },
+      ),
+      kart(
+        'Hız-zaman grafiğinin eğimi ivmedir',
+        'Hız 4 s\'de 1\'den 5\'e çıkıyor: eğim (5−1)/4 = 1 m/s². Çizgi düz olduğu için ivme sabit. Çizginin altındaki alan yine yer değiştirme. Eksenin altına inen alan geri gidilen yol demek.',
         {
           tur: 'koordinat',
           pencere: [0, 6, 0, 6],
@@ -161,8 +173,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         },
       ),
       kart(
-        'Konum-zaman grafiği',
-        'Sabit ivmede parabol olur: hız arttıkça aynı sürede alınan yol da artar ve eğri dikleşir.',
+        'Konum-zaman grafiği parabol olur',
+        'Hızlanan araç her saniye bir öncekinden daha çok yol alıyor. Bu yüzden çizgi düz değil, gittikçe dikleşen bir eğri: parabol. Sabit hızda doğru, sabit ivmede parabol.',
         {
           tur: 'koordinat',
           pencere: [0, 6, 0, 6],
@@ -183,34 +195,30 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         },
       ),
       kart(
-        'Ortalama hız kısayolu',
-        'Sabit ivmede ortalama hız, ilk ve son hızın ortalamasıdır: (v₀ + v) / 2. Yol da bu ortalama ile zamanın çarpımı.',
+        'Ortalama hız, ilk ve son hızın ortası',
+        'Hız 0\'dan 6 m/s\'ye düzgün çıktıysa ortalama 3 m/s. 3 s sürdüyse yol 3·3 = 9 m. Kural: v_ort = (v₀ + v)/2, yol = v_ort·t. Bu kısayol yalnızca sabit ivmede çalışır.',
       ),
       kart(
-        'Denklemler',
-        'v = v₀ + a·t ve x = v₀·t + ½·a·t². İkisi de yalnızca ivme sabitken geçerlidir.',
+        'Yol formülü: x = v₀·t + ½·a·t²',
+        'Aynı örnek: v₀ = 0, a = 2, t = 3. x = 0·3 + ½·2·3² = 9 m. İki yol da aynı sonucu verir. Formülde t² var: süre iki katına çıkarsa yol dörde katlanır.',
       ),
       kart(
-        'Zamansız denklem',
-        'v² = v₀² + 2·a·x. Zaman bilinmiyorken hız ile yol arasındaki bağı doğrudan verir.',
+        'Zaman verilmediyse: v² = v₀² + 2·a·x',
+        'Duran araç 2 m/s² ile 9 m gitti, hızı kaç? v² = 0 + 2·2·9 = 36, v = 6 m/s. Süreyi hiç kullanmadın. Soruda t yoksa bu formülü seç.',
       ),
       kart(
-        'Serbest düşme',
-        'Hava direnci ihmal edilirse tüm cisimler aynı ivmeyle (yaklaşık 9,8 m/s²) düşer; kütle fark etmez.',
+        'Serbest düşmede herkes aynı ivmeyle düşer',
+        'Havası boşaltılmış tüpte taş ve tüy aynı anda yere varır. İkisinin ivmesi de g ≈ 9,8 m/s², yani yer çekimi ivmesi. Kütle düşüşü hızlandırmaz. Hesapta g çoğu zaman 10 alınır.',
       ),
       kart(
-        'Düşey atış',
-        'Yukarı atılan cisim en yüksek noktada bir an durur ama ivmesi hâlâ aşağı yönlüdür ve büyüklüğü değişmez.',
-      ),
-      kart(
-        'Düşey atışta simetri',
-        'Çıkış süresi iniş süresine, atış hızı da geri düşüş hızına eşittir. Tepeye çıkış süresi v₀ / g\'dir.',
-      ),
-      kart(
-        'Sık yapılan hata',
-        'En yüksek noktada hız sıfırdır ama ivme sıfır değildir. İvme sıfır olsaydı cisim orada asılı kalırdı.',
+        'Tepede top durur, ivmesi durmaz',
+        'Topu 20 m/s ile yukarı at. Hızı her saniye 10 azalır: 2 s sonra tepede hız 0. Ama ivme hâlâ 10 m/s² aşağı; o yüzden top hemen geri düşer. İvme sıfır olsaydı top havada asılı kalırdı.',
         undefined,
-        { not: '"Tepede hız sıfır" cümlesini bitirmeden "ama ivme g" diye ekle.' },
+        { not: '"Tepede hız sıfır" deyince cümleyi bitirme; "ama ivme g, aşağı" diye ekle.' },
+      ),
+      kart(
+        'Çıkış süresi iniş süresine eşit',
+        '20 m/s ile atılan top 2 s\'de tepeye çıkar, 2 s\'de geri iner. Yere 20 m/s ile döner, yani atıldığı hızla. Tepeye çıkış süresi v₀/g.',
       ),
     ], [
       soru('Yavaşlayan bir cismin ivmesi, hızıyla zıt yöndedir.', true, 'İvme hızla aynı yöndeyse cisim hızlanır.'),
@@ -251,9 +259,9 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         dogru: 1,
         aciklama: {
           dogru: 'İvme hızı kendi yönüne çeker; zıt yöndeyse hızı küçültür.',
-          yanlis: 'Hızlanma yalnızca ivme hızla aynı yöndeyken olur. Zıt yönlü ivme freni temsil eder.',
+          yanlis: 'Hızlanma yalnızca ivme hızla aynı yöndeyken olur. Zıt yönlü ivme fren demek.',
         },
-        kart: 2,
+        kart: 3,
       },
       {
         soru: 'Yukarı atılan cisim en yüksek noktadayken ivmesi nedir?',
@@ -263,57 +271,80 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
           dogru: 'Yer çekimi her an aynı; tepe noktasında yalnızca hız sıfırlanır.',
           yanlis: 'Sıfır olan hız, ivme değil. İvme sıfır olsaydı hız değişmez ve cisim tepede asılı kalırdı.',
         },
-        kart: 8,
+        kart: 10,
       },
     ]),
   ]),
   tema('fzk10-t2', 'Enerji', [
     konu('fzk10-is-guc', 'İş, Enerji ve Güç', [
       kart(
-        'Fizikte iş',
-        'Kuvvetin, yer değiştirme yönündeki bileşeni ile yer değiştirmenin çarpımı. Birimi joule.',
+        'Fizikte iş: kuvvet cismi yol boyunca iter',
+        'Bir kutuyu 20 N kuvvetle 3 m ittin: iş 20·3 = 60 joule. Formül W = F·x; joule (J) işin birimi. Kuvvet yoksa ya da yol yoksa iş de yok.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Ne zaman iş sıfırdır?',
-        'Üç durumda iş yapılmaz ve üçü de günlük dildeki "iş" ile çelişir.',
+        'Duvarı itmek iş değildir',
+        'Duvarı bütün gücünle itiyorsun, yoruluyorsun ama duvar kımıldamıyor: yol 0, iş 0. Çantayla yatay yolda yürümek de iş değil: kuvvet yukarı, yol yana. Fizik yalnızca yol yönündeki kuvveti sayar.',
         {
           tur: 'tablo',
-          basliklar: ['Durum', 'İş'],
+          basliklar: ['Durum', 'Örnek', 'İş'],
           satirlar: [
-            ['Yer değiştirme yok', '0'],
-            ['Kuvvet yola dik', '0'],
-            ['Kuvvet yok', '0'],
+            ['Yol yok', 'duvarı itmek', '0'],
+            ['Kuvvet yola dik', 'çanta taşımak', '0'],
+            ['Kuvvet yok', 'buzda kayan taş', '0'],
           ],
         },
-        { not: 'Günlük dilin "iş"ini unut; fizik yalnızca yol yönündeki kuvveti sayar.' },
+        { not: 'Çanta taşırken yorulmana bakma: kuvvet yukarı, yol yana, fizikte iş sıfır.' },
       ),
       kart(
-        'Yatayla açılı kuvvet',
-        'Kuvvet yola açılıysa yalnızca yol yönündeki bileşen iş yapar: W = F · cosθ · x. Dik bileşen hiç iş yapmaz.',
+        'Açılı kuvvette yalnızca yol yönü sayılır',
+        'Bavulu yukarı doğru açıyla çekiyorsun. Kuvvetin bir kısmı bavulu ileri, bir kısmı yukarı çeker. İş yapan ileri kısım: W = F·cosθ·x. Yukarı çeken kısım iş yapmaz.',
       ),
       kart(
-        'Kuvvet-yer değiştirme grafiği',
-        'Grafiğin altında kalan alan yapılan işi verir. Kuvvet değişkense iş bu alandan bulunur.',
+        'Kuvvet-yol grafiğinde alan iş',
+        '10 N kuvvetle 4 m: grafik dikdörtgen, alanı 40 J. Kuvvet yol boyunca değişiyorsa formül işe yaramaz; grafiğin altındaki alanı hesaplarsın.',
+        {
+          tur: 'koordinat',
+          pencere: [0, 6, 0, 14],
+          xAd: 'yol (m)',
+          yAd: 'kuvvet (N)',
+          egriler: [
+            {
+              noktalar: [
+                [0, 10],
+                [4, 10],
+                [4, 0],
+                [0, 0],
+              ],
+              kirik: true,
+              kapali: true,
+            },
+          ],
+          etiketler: [{ x: 2, y: 5, ad: 'alan = iş', renk: 'ikincil' }],
+        },
       ),
       kart(
-        'İş enerjiyi değiştirir',
-        'Bir cisme yapılan net iş, kinetik enerjisindeki değişime eşittir. İş ile enerji aynı birimi paylaşır.',
+        'Yapılan iş enerjiye dönüşür',
+        'Duran arabayı 60 J işle ittin: araba 60 J kinetik enerji kazanır, yani hareket enerjisi. Net iş = kinetik enerjideki değişim. İş ve enerji aynı birimi paylaşır: joule.',
       ),
       kart(
-        'Güç',
-        'Birim zamanda yapılan iş. Birimi watt; aynı işi kısa sürede yapan makine daha güçlüdür.',
+        'Güç: işi ne kadar hızlı yaptığın',
+        'İki asansör aynı yükü aynı kata çıkarıyor; biri 10 s\'de, öteki 20 s\'de. İşleri eşit, hızlı olanın gücü iki kat. Güç = iş / zaman, birimi watt (W). 1 W, saniyede 1 J demek.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Verim',
-        'Alınan enerjinin ne kadarının işe dönüştüğü. Hiçbir makinede yüzde yüz değildir; kalan kısım ısıya gider.',
+        'Sabit hızda güç = kuvvet × hız',
+        '20 m/s ile giden araba sürtünmeye karşı 500 N itiyor: güç 500·20 = 10.000 W. Formül P = F·v. Yokuşta aynı hız daha çok kuvvet, yani daha çok güç ister.',
       ),
       kart(
-        'Güç ve hız',
-        'Sabit hızla giden araçta güç, kuvvet ile hızın çarpımıdır: P = F · v. Yokuşta aynı hızı korumak daha çok güç ister.',
+        'Verim: enerjinin işe dönen payı',
+        'Ampul 100 J alıp 10 J ışık veriyorsa verimi %10; kalan 90 J ısı oldu. Verim = alınan iş / verilen enerji. Hiçbir makinede %100 olmaz; bir kısım hep ısıya kaçar.',
       ),
       kart(
-        'Birimler',
-        'İş ve enerji joule (J), güç watt (W = J/s). 1 kWh = 3,6 milyon joule; elektrik faturası güç değil enerji sayar.',
+        'Fatura güç değil enerji sayar',
+        '2000 W\'lık ısıtıcı 3 saat çalışsın: 2 kW · 3 h = 6 kWh. Fatura bu sayıyı yazar. 1 kWh = 1000 W · 3600 s = 3,6 milyon joule. Watt harcanan miktar değil, harcama hızı.',
       ),
     ], [
       soru('Kuvvet uygulanmasına rağmen cisim yer değiştirmiyorsa yapılan iş sıfırdır.', true, 'Fizikte iş, kuvvet ile yer değiştirmenin çarpımı.'),
@@ -340,47 +371,51 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
     ]),
     konu('fzk10-enerji-bicim', 'Enerji Biçimleri', [
       kart(
-        'Kinetik enerji',
-        'Hareketten gelen enerji. Kütleyle doğru, hızın karesiyle orantılıdır — hız iki katına çıkınca enerji dörde katlanır.',
-      ),
-      kart(
-        'Neden hızın karesi?',
-        'Fren mesafesi bunun günlük karşılığıdır: hızı iki katına çıkan araç, durmak için dört katı mesafeye ihtiyaç duyar.',
+        'Hareket eden her şeyin kinetik enerjisi var',
+        'Yuvarlanan top, koşan sen, uçan kuş. Hareketten gelen enerjiye kinetik enerji denir. Formül E = ½·m·v². 2 kg\'lık top 3 m/s ile gidiyorsa E = ½·2·9 = 9 J.',
         undefined,
-        { not: 'Kare demek dört kat demek; fren mesafesiyle düşün, formülle değil.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Potansiyel enerji',
-        'Konumdan ya da şekilden gelen depolanmış enerji: yerden yükseklik veya sıkışmış bir yay.',
+        'Hız iki katsa enerji dört kat',
+        'Aynı top 6 m/s ile: E = ½·2·36 = 36 J. Hız 2 katına çıktı, enerji 4 katına. Sebep formüldeki v², hızın karesi. Fren mesafesi de böyle: iki kat hız, dört kat mesafe.',
+        undefined,
+        { not: '"Hız 3 kat" deyince "enerji 3 kat" deme; kareyi al, 9 kat.' },
       ),
       kart(
-        'Yer çekimi potansiyel enerjisi',
-        'E = m · g · h. Kütle, yer çekimi ivmesi ve yükseklik; yükseklik iki katına çıkınca enerji de iki katına çıkar.',
+        'Potansiyel enerji: depolanmış, beklemede',
+        'Rafın üstündeki vazo, gerilmiş yay, çekilmiş sapan. Hiçbiri hareket etmiyor ama bırakılınca edecek. Konumdan ya da şekilden gelen bu depolanmış enerjiye potansiyel enerji denir.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Diğer biçimler',
-        'Isı, ışık, ses, elektrik, kimyasal ve nükleer enerji. Hepsi birbirine dönüşebilir.',
+        'Yükseklik enerjisi: E = m·g·h',
+        '2 kg\'lık kitap 3 m yüksekte: E = 2·10·3 = 60 J. Kitabı 6 m\'ye çıkarırsan 120 J: yükseklik 2 kat, enerji 2 kat. Burada kare yok, doğru orantı. g yer çekimi ivmesi, hesapta 10.',
       ),
       kart(
-        'Dönüşüm zinciri',
-        'Bir enerji biçimi ötekine geçerken her adımda bir miktarı ısıya gider.',
+        'Yayı ne kadar gerersen o kadar enerji',
+        'Yayı 2 cm çekince biriken enerji 4 birim, 4 cm çekince 16 birim. Formül E = ½·k·x²; x uzama, k yayın sertliği. Yine kare var: uzama 2 kat, enerji 4 kat.',
+      ),
+      kart(
+        'Enerji biçim değiştirir',
+        'Pil (kimyasal) feneri yakar (ışık ve ısı). Şelale (potansiyel) düşer (kinetik), türbini döndürür (elektrik). Isı, ışık, ses, elektrik, kimyasal, nükleer: hepsi birbirine dönüşebilir.',
+      ),
+      kart(
+        'Her dönüşümde bir pay ısıya kaçar',
+        'Termik santral: kömür yanar, kimyasal enerji ısı olur. Buhar türbini döndürür, ısı mekanik olur. Türbin jeneratörü çevirir, mekanik elektrik olur. Her okta bir kısım ısı olarak havaya gider.',
         {
           tur: 'akis',
           adimlar: [
-            { ad: 'Kimyasal', alt: 'yakıt' },
-            { ad: 'Isı' },
-            { ad: 'Mekanik' },
+            { ad: 'Kimyasal', alt: 'kömür' },
+            { ad: 'Isı', alt: 'buhar' },
+            { ad: 'Mekanik', alt: 'türbin' },
             { ad: 'Elektrik' },
           ],
         },
       ),
       kart(
-        'Enerjinin korunumu',
-        'Enerji yoktan var olmaz, yok olmaz; yalnızca biçim değiştirir. Toplam enerji sabit kalır.',
-      ),
-      kart(
-        'Esneklik potansiyel enerjisi',
-        'Sıkışan ya da uzayan yayda depolanan enerji, uzama miktarının karesiyle orantılıdır: E = ½ · k · x².',
+        'Enerji yok olmaz, toplam sabit kalır',
+        'Fener pilinin 100 J\'ü ışığa ve ısıya dağılır; toplarsan yine 100 J. Enerji yoktan var olmaz, yok olmaz; yalnızca biçim değiştirir. Buna enerjinin korunumu denir. "Enerji kayboldu" demek, ısıya gitti demek.',
       ),
     ], [
       soru('Kinetik enerji hızın karesiyle orantılıdır.', true, 'Bu yüzden hız iki katına çıkınca enerji dört katına çıkıyor.'),
@@ -401,21 +436,23 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
           dogru: 'Kinetik enerji hızın karesiyle orantılı: 3² = 9.',
           yanlis: 'Kinetik enerji hızla değil hızın karesiyle orantılıdır; 3 kat hız 9 kat enerji demek.',
         },
-        kart: 1,
+        kart: 2,
       },
     ]),
     konu('fzk10-mekanik', 'Mekanik Enerji', [
       kart(
-        'Tanımı',
-        'Kinetik enerji ile potansiyel enerjinin toplamı.',
+        'Mekanik enerji = kinetik + potansiyel',
+        'Havada uçan top hem hareket ediyor (kinetik) hem yüksekte (potansiyel). İkisinin toplamı mekanik enerji. 3 m yükseklikte 4 m/s ile giden 1 kg top: 30 + 8 = 38 J.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Korunum',
-        'Sürtünme ve hava direnci yoksa mekanik enerji sabit kalır; biri azalırken öteki aynı kadar artar.',
+        'Sürtünme yoksa toplam değişmez',
+        'Top düşerken yükseklik azalır, hız artar. Potansiyel 30\'dan 0\'a inerken kinetik 8\'den 38\'e çıkar; toplam hep 38 J. Buna mekanik enerjinin korunumu denir. Şart: sürtünme ve hava direnci yok.',
       ),
       kart(
-        'Sarkaç',
-        'En yüksek noktada potansiyel en büyük, kinetik sıfırdır; en alçak noktada tersi olur.',
+        'Sarkaç: tepede potansiyel, altta kinetik',
+        'Salıncak en yükseğe çıkınca bir an durur: kinetik 0, potansiyel en büyük. En alttan geçerken en hızlı: kinetik en büyük, potansiyel 0. Arada ikisi de var, toplam hep aynı.',
         {
           tur: 'tablo',
           basliklar: ['Konum', 'Potansiyel', 'Kinetik'],
@@ -427,26 +464,26 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         },
       ),
       kart(
-        'Hesap kalıbı',
-        'Sürtünmesiz düşüşte m·g·h = ½·m·v²; kütle sadeleşir ve son hız v = √(2gh) çıkar. Kütle büyük ya da küçük, hız aynı.',
+        'Düşen cismin hızı kütleye bağlı değil',
+        '5 m\'den bırakılan taş: m·g·h = ½·m·v². Kütle iki tarafta da var, sadeleşir: v = √(2gh) = √(2·10·5) = 10 m/s. Taş 1 kg da olsa 10 kg da olsa yere aynı hızla varır.',
       ),
       kart(
-        'Yükseklik nereden ölçülür?',
-        'Potansiyel enerji seçilen sıfır düzeyine göredir. Değişimi ise seçimden bağımsızdır; hesaba giren o değişimdir.',
+        'Yolun şekli son hızı değiştirmez',
+        'Aynı yükseklikten biri dik, biri yatık iki sürtünmesiz kaydırak. Yatıktan kayan daha geç iner ama yere aynı hızla varır. Son hız yalnızca yükseklik farkına bağlı; yol ne kadar dolambaçlı olursa olsun.',
+      ),
+      kart(
+        'Sıfır yüksekliği sen seçersin',
+        'Masadaki kitap: yeri sıfır alırsan 1 m yüksekte, masayı sıfır alırsan 0 m. Potansiyel enerji seçime göre değişir. Ama kitap 0,5 m düşünce kaybettiği enerji ikisinde de aynı. Hesaba giren o değişim.',
         undefined,
-        { not: 'Sıfır düzeyini sen seçersin; seçim değişince değişim değişmez.' },
+        { not: 'Yükseklik sorusunda önce "sıfır nerede" diye bak; tek değeri değil, farkı hesapla.' },
       ),
       kart(
-        'Sürtünme varsa',
-        'Mekanik enerjinin bir kısmı ısıya dönüşür. Toplam enerji yine korunur ama mekanik enerji azalır.',
+        'Sürtünme varsa mekanik enerji azalır',
+        'Kaydıraktan inen çocuğun pantolonu ısınır. Enerjinin bir kısmı ısı oldu; mekanik enerji azaldı ama toplam enerji korunuyor. Kayıp değil, dönüşüm.',
       ),
       kart(
-        'Yol fark etmez',
-        'Sürtünmesiz bir kaydırakta son hız, yolun eğimine değil yalnızca yükseklik farkına bağlıdır.',
-      ),
-      kart(
-        'Isıya giden enerji',
-        'Sürtünmeli yolda kaybolan mekanik enerji sürtünme kuvveti ile yolun çarpımı kadardır: bu enerji yok olmaz, ısı olur.',
+        'Isıya giden enerji = sürtünme × yol',
+        '10 N sürtünme kuvvetiyle 3 m kayan kutu 30 J mekanik enerji kaybeder. Bu 30 J ısı olarak yüzeylere geçer. Kaybolan mekanik enerji sorulursa sürtünme kuvvetiyle yolu çarp.',
       ),
     ], [
       soru('Mekanik enerji, kinetik ve potansiyel enerjilerin toplamıdır.', true, 'Sürtünmesiz ortamda bu toplam sabit kalıyor.'),
@@ -467,21 +504,33 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
           dogru: 'Son hız yalnızca yükseklik farkına bağlı; yolun eğimi süreyi değiştirir, hızı değil.',
           yanlis: 'Dik kaydırak daha kısa sürede indirir ama son hızı değiştirmez; mekanik enerji korunuyor ve yükseklik aynı.',
         },
-        kart: 6,
+        kart: 5,
       },
     ]),
     konu('fzk10-kaynak', 'Enerji Kaynakları', [
       kart(
-        'Yenilenebilir',
-        'Güneş, rüzgâr, hidroelektrik, jeotermal ve biyokütle. Kendini yenileyen kaynaklardır.',
+        'Yenilenebilir: kullandıkça bitmez',
+        'Güneş her sabah yine doğar, rüzgâr yine eser, nehir yine akar. Güneş, rüzgâr, hidroelektrik (akan su), jeotermal (yerin ısısı) ve biyokütle (bitki, atık) yenilenebilir kaynaklardır.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Yenilenemez',
-        'Kömür, petrol, doğal gaz ve nükleer yakıt. Oluşumları milyonlarca yıl sürer, tükenirler.',
+        'Yenilenemez: tükenince yenisi gelmez',
+        'Kömür, petrol ve doğal gaz milyonlarca yılda oluştu; yakınca biter. Bunlara fosil yakıt denir. Nükleer yakıt uranyum da yenilenemez: madende ne kadar varsa o kadar.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Karşılaştırma',
-        'İki grubun üstünlükleri farklı yerlerde; hiçbiri her ölçüte göre üstün değil.',
+        'Fosil yakıt yanınca karbondioksit çıkar',
+        'Arabanın egzozu, kömür sobasının bacası: yanan yakıt havaya CO₂ salar. CO₂ ısıyı tutar; küresel ısınmanın ana sebebi bu. Yenilenebilire geçişin asıl gerekçesi tükenme değil, bu salım.',
+      ),
+      kart(
+        'Güneş gece, rüzgâr durgun havada üretmez',
+        'Güneş paneli akşam durur, rüzgâr türbini rüzgârsız günde dönmez. Yenilenebilirin zayıf noktası süreklilik. Çözüm: üretileni pilde depolamak ya da başka kaynakla desteklemek.',
+      ),
+      kart(
+        'Hiçbiri her ölçütte üstün değil',
+        'Kömür santrali günün her saati çalışır ama havayı kirletir. Rüzgâr temiz ama hava durumuna bağlı. Soruda "hangisi daha iyi" değil, "hangi ölçütte üstün" diye bak.',
         {
           tur: 'tablo',
           basliklar: ['', 'Fosil', 'Yenilenebilir'],
@@ -491,31 +540,31 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
             ['Tükenme', 'Var', 'Yok'],
           ],
         },
-        { not: 'Bir kaynağı "iyi" ya da "kötü" diye değil, hangi ölçütte üstün diye oku.' },
+        { not: '"En iyi kaynak hangisi" diye soran şıkta dur; tabloya bak, hangi satırı soruyor?' },
       ),
       kart(
-        'Hidroelektrik nasıl çalışır?',
-        'Baraj suyun potansiyel enerjisini depolar; su düşerken türbini döndürür, türbin jeneratörü. Zincir: potansiyel → kinetik → elektrik.',
+        'Barajda su düşer, türbin döner',
+        'Baraj gölündeki su yüksekte: potansiyel enerji. Kapak açılınca su düşer: kinetik enerji. Su türbini döndürür, türbin jeneratörü çevirir: elektrik.',
+        {
+          tur: 'akis',
+          adimlar: [
+            { ad: 'Potansiyel', alt: 'yüksekteki su' },
+            { ad: 'Kinetik', alt: 'düşen su' },
+            { ad: 'Elektrik', alt: 'jeneratör' },
+          ],
+        },
       ),
       kart(
-        'Süreklilik sorunu',
-        'Güneş gece, rüzgâr durgun havada üretmez. Bu yüzden depolama ve şebeke esnekliği en kritik konu.',
+        'Nükleer: temiz baca, sorunlu atık',
+        'Nükleer santral CO₂ salmaz ve bir avuç uranyumdan çok büyük enerji çıkar. Ama yakıt tükenir ve kullanılmış yakıt binlerce yıl ışıma yapar; güvenli saklanması gerekir.',
       ),
       kart(
-        'Nükleer enerji',
-        'Salım açısından temiz, enerji yoğunluğu çok yüksek; ama yakıt tükenir ve atık uzun süre saklanmalıdır.',
+        'Türkiye\'de jeotermal ve su güçlü',
+        'Denizli ve Aydın çevresindeki sıcak su kaynakları jeotermal santral çalıştırıyor. Barajlar uzun süredir elektriğin büyük payı. Rüzgâr ve güneş kurulu gücü her yıl artıyor.',
       ),
       kart(
-        'Türkiye’de durum',
-        'Jeotermal ve hidroelektrikte güçlü bir potansiyel var; rüzgâr ve güneş kurulu gücü hızla artıyor.',
-      ),
-      kart(
-        'Tasarruf da bir kaynaktır',
-        'Harcanmayan enerji üretilmesi gerekmeyen enerjidir. Yalıtım ve verimli cihaz en ucuz "kaynak"tır.',
-      ),
-      kart(
-        'Fosil yakıtın bedeli',
-        'Yanan kömür ve petrol karbondioksit salar; küresel ısınmanın ana kaynağı bu. Yenilenebilire geçişin asıl gerekçesi tükenme değil salım.',
+        'Harcanmayan enerji en ucuz kaynak',
+        'Evi yalıtırsan kışın daha az doğal gaz yakarsın: o gaz üretilmedi bile. LED ampul aynı ışığı beşte bir elektrikle verir. Tasarruf, üretilmesi gerekmeyen enerjidir.',
       ),
     ], [
       soru('Rüzgâr ve güneş yenilenebilir enerji kaynaklarıdır.', true, 'Kullanıldıkça tükenmiyorlar.'),
@@ -544,24 +593,39 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
   tema('fzk10-t3', 'Elektrik', [
     konu('fzk10-devre', 'Basit Elektrik Devreleri', [
       kart(
-        'Devre elemanları',
-        'Üreteç enerji verir, iletken taşır, direnç harcar, anahtar yolu açıp kapatır.',
+        'Devre: pil, kablo, ampul, anahtar',
+        'El fenerini aç: pil enerji verir, kablo taşır, ampul harcar (ışık verir), düğme yolu açıp kapatır. Fizik dilinde: üreteç, iletken, direnç, anahtar.',
+        {
+          tur: 'tablo',
+          basliklar: ['Eleman', 'Örnek', 'İşi'],
+          satirlar: [
+            ['Üreteç', 'pil', 'enerji verir'],
+            ['İletken', 'kablo', 'taşır'],
+            ['Direnç', 'ampul', 'harcar'],
+            ['Anahtar', 'düğme', 'açar, kapar'],
+          ],
+        },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Akım, gerilim, direnç',
-        'Üç temel büyüklük: akım (A) geçen yük, gerilim (V) iten fark, direnç (Ω) karşı koyma. Devre soruları bu üçünün ilişkisidir.',
+        'Akım geçmesi için yol kapalı olmalı',
+        'Anahtar açık: kabloda boşluk var, yükler tur atamaz, ampul yanmaz. Anahtar kapalı: yol tam, akım geçer. "Kapalı devre" çalışan devre demek; kelime seni şaşırtmasın.',
+        undefined,
+        { etiket: 'Sık hata' },
       ),
       kart(
-        'Kapalı devre şart',
-        'Akımın akması için yolun kesintisiz olması gerekir. Anahtar açıksa devre kopar ve akım geçmez.',
+        'Gerilim, akımı iten şeydir',
+        'Pilin iki ucu arasında enerji farkı var. Buna potansiyel fark ya da gerilim denir. Birimi volt (V). Kalem pil 1,5 V, priz 220 V. Fark yoksa itme yok, akım yok.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Potansiyel fark',
-        'İki nokta arasındaki enerji farkı; akımı iten şey budur. Birimi volt.',
+        'Akım telden geçen yük, direnç karşı koyma',
+        'Gerilim itince yükler telde akar. Saniyede geçen yük miktarı akımdır, birimi amper (A). Direnç ise akıma karşı koymadır, birimi ohm (Ω). Devre soruları bu üçünü birbirine bağlar.',
       ),
       kart(
-        'Su benzetmesi',
-        'Devreyi anlamanın en kolay yolu su devresidir; benzetme sınırlı ama üç kavramı yerine oturtur.',
+        'Su borusu gibi düşün',
+        'Su deposu yüksekteyse (basınç farkı) su akar (debi), boru darsa az akar (direnç). Gerilim basınç farkı, akım debi, direnç dar boru. Benzetme üçünü oturtur ama su elektrik değil.',
         {
           tur: 'tablo',
           basliklar: ['Elektrik', 'Su'],
@@ -571,19 +635,19 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
             ['Direnç', 'Dar boru'],
           ],
         },
-        { not: 'Benzetme akım, gerilim ve direnci oturtur; ama suyla elektrik aynı şey değil.' },
+        { not: 'Akım mı gerilim mi karıştırdığında boruyu düşün: iten şey basınç, akan şey su.' },
       ),
       kart(
-        'Şema çizimi',
-        'Elemanlar standart sembollerle gösterilir. Şema, devrenin fiziksel görüntüsünü değil bağlantısını anlatır.',
+        'Şema bağlantıyı gösterir, görüntüyü değil',
+        'Şemada pil iki çizgi: uzun çizgi artı (+), kısa kalın çizgi eksi (−). Ampul daire içinde çarpı, direnç zikzak ya da dikdörtgen. Kablonun uzunluğu ve rengi şemada yok; yalnızca kim kime bağlı.',
       ),
       kart(
-        'Elektriksel enerji',
-        'Devrede harcanan enerji, gerilim ile akımın ve sürenin çarpımıdır. Elektrik faturası bu enerjiyi ölçer.',
+        'Harcanan enerji = gerilim × akım × süre',
+        '220 V\'ta 2 A çeken ısıtıcı 10 s\'de 220·2·10 = 4400 J harcar. Formül E = V·I·t. Elektrik faturası bu enerjiyi sayar, kWh olarak.',
       ),
       kart(
-        'Lamba parlaklığı neye bağlı?',
-        'Lambanın parlaklığını üstünden geçen akım ve harcadığı güç belirler; devrede aynı lambadan geçen akım büyükse daha parlak yanar.',
+        'Çok akım çeken ampul parlak yanar',
+        'Aynı ampulden 0,5 A yerine 1 A geçerse daha parlak yanar, daha çok güç harcar. Parlaklığı belirleyen akım ve güç; kablonun uzunluğu ya da rengi değil.',
       ),
     ], [
       soru('Elektrik akımının geçebilmesi için devrenin kapalı olması gerekir.', true, 'Açık devrede yükler tam bir tur atamaz.'),
@@ -604,43 +668,54 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
           dogru: 'Açık anahtar yolu keser; kapalı devre yoksa akım hiç akmaz.',
           yanlis: 'Azalmaz, tümüyle durur. Akım için kesintisiz kapalı bir yol şart; açık anahtar o yolu koparır.',
         },
-        kart: 3,
+        kart: 2,
       },
     ]),
     konu('fzk10-akim', 'Elektrik Akımı', [
       kart(
-        'Tanımı',
-        'Birim zamanda bir kesitten geçen yük miktarı. Birimi amper.',
-      ),
-      kart(
-        'Yük ve akım hesabı',
-        'I = q / t. 1 amper, kesitten saniyede 1 coulomb yük geçmesi demek. 2 A akım 10 saniyede 20 C taşır.',
-      ),
-      kart(
-        'Yönü',
-        'Gerçekte elektronlar eksiden artıya gider; geleneksel akım yönü ise artıdan eksiye kabul edilir.',
-      ),
-      kart(
-        'Neden hareket eder?',
-        'Potansiyel farkı serbest elektronlara kuvvet uygular. Fark ortadan kalkarsa akım durur.',
-      ),
-      kart(
-        'Elektron yavaş, sinyal hızlı',
-        'Elektronlar telde çok yavaş ilerler ama elektriksel etki neredeyse ışık hızıyla yayılır; lamba anında yanar.',
-      ),
-      kart(
-        'Ampermetre',
-        'Akımı ölçer ve devreye seri bağlanır. Paralel bağlanırsa kısa devre olur.',
-      ),
-      kart(
-        'Voltmetre',
-        'Gerilimi ölçer ve ölçülecek elemana paralel bağlanır. Seri bağlanırsa devreden akım geçmez.',
-      ),
-      kart(
-        'Ölçü aletleri özeti',
-        'Ampermetre seri ve direnci sıfıra yakın; voltmetre paralel ve direnci sonsuza yakın. Yerleri değişirse ölçüm değil kısa devre ya da açık devre olur.',
+        'Akım: saniyede geçen yük',
+        'Telin bir kesitini kapı gibi düşün. Kapıdan saniyede 1 coulomb yük geçiyorsa akım 1 amper. Coulomb (C) yükün birimi. Formül I = q/t.',
         undefined,
-        { not: 'Seri mi paralel mi diye ezberleme; aletin direncinden yola çıkarsan kendin bulursun.' },
+        { etiket: 'Tanım' },
+      ),
+      kart(
+        'Yük = akım × süre',
+        '2 A akım 10 s aktı: q = 2·10 = 20 C geçti. Tersini sorarsa böl: 30 C, 5 s\'de geçtiyse akım 30/5 = 6 A.',
+      ),
+      kart(
+        'Elektron eksiden artıya, akım artıdan eksiye',
+        'Pilde elektronlar eksi kutuptan çıkar, artı kutba koşar. Ama fizikte akım yönü artıdan eksiye kabul edilir; elektron bilinmeden önce böyle tanımlandı. Şemadaki ok artıdan eksiye.',
+        undefined,
+        { etiket: 'Sık hata' },
+      ),
+      kart(
+        'Fark yoksa akım durur',
+        'Pil bittiğinde iki kutup arasındaki gerilim sıfıra iner; elektronları iten kalmaz, akım durur. Akımı yürüten şey potansiyel fark.',
+      ),
+      kart(
+        'Elektron yavaş, etki hızlı',
+        'Düğmeye basınca lamba anında yanar. Ama elektronlar telde saniyede milimetreler ilerler. Hızlı olan elektron değil, itme. Tel su dolu bir boru gibi: bir ucundan itince öteki uçtan hemen çıkar.',
+      ),
+      kart(
+        'Ampermetre akımı ölçer, seri bağlanır',
+        'Akımı ölçmek için akım aletin içinden geçmeli. Ampermetre kabloyu kesip araya girer; buna seri bağlama denir. İç direnci sıfıra yakın ki akımı azaltmasın.',
+      ),
+      kart(
+        'Voltmetre gerilimi ölçer, paralel bağlanır',
+        'Gerilim iki nokta arasındaki fark. Voltmetre o iki noktaya iki teliyle dokunur, kabloyu kesmez; buna paralel bağlama denir. İç direnci çok büyük ki kendisi akım çekmesin.',
+      ),
+      kart(
+        'Yerleri karışırsa ölçüm değil kaza',
+        'Ampermetre paralel bağlanırsa sıfır dirençli kestirme yol olur: kısa devre, akım aşırı büyür. Voltmetre seri bağlanırsa çok büyük direnç yolu tıkar: akım geçmez.',
+        {
+          tur: 'tablo',
+          basliklar: ['Alet', 'Bağlantı', 'Direnç'],
+          satirlar: [
+            ['Ampermetre', 'seri', 'sıfıra yakın'],
+            ['Voltmetre', 'paralel', 'çok büyük'],
+          ],
+        },
+        { not: 'Seri mi paralel mi diye ezberleme; direncinden yola çık: sıfıra yakınsa seri, çok büyükse paralel.' },
       ),
     ], [
       soru('Akımın geleneksel yönü, elektronların hareket yönünün tersidir.', true, 'Yön elektron bilinmeden tanımlandığı için böyle kaldı.'),
@@ -667,24 +742,18 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
     ]),
     konu('fzk10-ohm', 'Ohm Yasası', [
       kart(
-        'Bağıntı',
-        'V = I · R. Potansiyel fark, akım ile direncin çarpımına eşittir.',
+        'Gerilim = akım × direnç',
+        '4 Ω\'luk dirence 12 V uygulandı: akım 12/4 = 3 A. Formül V = I·R; buna Ohm yasası denir. Üçünden ikisi verilirse üçüncüyü bulursun.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Direnç nedir?',
-        'Akıma karşı gösterilen zorluk. Birimi ohm; iletkenin cinsine, uzunluğuna, kesitine ve sıcaklığına bağlıdır.',
+        'Gerilim iki katsa akım iki kat',
+        'Aynı 4 Ω direnç, gerilim 24 V: akım 6 A. Direnç sabitken akım gerilimle doğru orantılı. Direnç iki kat olursa akım yarıya iner: ters orantı.',
       ),
       kart(
-        'Öz direnç',
-        'Aynı boy ve kesitteki bakır ile demir teli ayıran şey öz dirençtir; maddeye özgüdür. R = ρ · L / A.',
-      ),
-      kart(
-        'Uzunluk ve kesit',
-        'Direnç uzunlukla doğru, kesit alanıyla ters orantılıdır. Kalın kablo daha az direnç gösterir.',
-      ),
-      kart(
-        'Grafiği',
-        'Gerilim-akım grafiği doğrusaldır ve eğimi direnci verir.',
+        'Grafikte eğim direnci verir',
+        'Yatay eksen akım, düşey eksen gerilim. 3 A\'da 12 V: eğim 12/3 = 4 Ω. Dik çizgi büyük direnç, yatık çizgi küçük direnç. Önce eksenlere bak; ters çizilirse eğim 1/R olur.',
         {
           tur: 'koordinat',
           pencere: [0, 6, 0, 6],
@@ -710,30 +779,40 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
             },
           ],
         },
-        { not: 'Eğim direnç: dik doğru büyük direnç. Grafik sorusunda önce eksenleri kontrol et.' },
+        { not: 'Grafik sorusunda hemen eğime koşma; önce hangi eksen akım, hangisi gerilim diye bak.' },
       ),
       kart(
-        'Sıcaklık etkisi',
-        'Metallerde sıcaklık arttıkça direnç artar. Lamba teli soğukken daha az, yanarken daha çok direnç gösterir.',
+        'Direnç: akıma karşı koyma',
+        'Aynı pil ince telde az, kalın telde çok akım geçirir. Telin akımı zorlaştırmasına direnç denir, birimi ohm (Ω). Direnç telin maddesine, uzunluğuna, kalınlığına ve sıcaklığına bağlı.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Ohmik olmayan elemanlar',
-        'Diyot ve lamba gibi bazı elemanlarda grafik doğru çıkmaz; Ohm yasası her elemanda geçerli değildir.',
+        'Uzun tel çok, kalın tel az direnç',
+        '1 m tel 2 Ω ise 2 m aynı tel 4 Ω. Kesiti (kalınlığı) iki kat olan tel 1 Ω. Direnç uzunlukla doğru, kesit alanıyla ters orantılı. Evdeki kalın kablolar bu yüzden az ısınır.',
       ),
       kart(
-        'Hesap örneği',
-        '12 V\'luk üretece 4 Ω direnç bağlanırsa akım 3 A olur. Gerilim iki katına çıkarsa aynı dirençte akım da iki katına çıkar.',
+        'Öz direnç maddeye özgü',
+        'Aynı boy ve kalınlıkta bakır tel ile demir tel: demir daha çok direnç gösterir. Fark maddeden geliyor; buna öz direnç (ρ) denir. Formül R = ρ·L/A: L uzunluk, A kesit alanı.',
+      ),
+      kart(
+        'Metal ısınınca direnci artar',
+        'Ampulün teli soğukken 30 Ω, yanıp ısınınca 300 Ω olabilir. Metalde sıcaklık artınca atomlar daha çok titreşir, elektronlar daha zor geçer. Sıcak tel, büyük direnç.',
+      ),
+      kart(
+        'Her eleman Ohm\'a uymaz',
+        'Diyot ve ampul için gerilim-akım grafiği düz çizgi çıkmaz; direnç akımla değişir. Bunlara ohmik olmayan eleman denir. Ohm yasası düz çizgi verenler için: metaller, sabit dirençler.',
       ),
     ], [
       soru('Ohm yasasına göre gerilim, akım ile direncin çarpımına eşittir.', true, 'V = I · R.'),
       soru('Bir iletkenin direnci uzunluğuyla doğru, kesit alanıyla ters orantılıdır.', true, 'İnce ve uzun tel daha çok direnç gösteriyor.'),
       soru('Metallerde sıcaklık arttıkça direnç azalır.', false, 'Metallerde direnç artar; azalan yarı iletkenlerde görülür.'),
-      soru('Bütün devre elemanları Ohm yasasına uyar.', false, 'Diyot ve lamba gibi ohmik olmayan elemanlar var.'),
+      soru('Bütün devre elemanları Ohm yasasına uyar.', false, 'Diyot ve ampul gibi ohmik olmayan elemanlar var.'),
       sikli('12 V üretece 4 Ω direnç bağlanırsa akım kaç amperdir?', ['3', '48'], 0, 'I = V / R.'),
       sikli('Kesit alanı büyüyen telin direnci?', ['Azalır', 'Artar'], 0, 'Kesitle ters orantılı; kalın kablo az direnç.'),
       sikli('Gerilim-akım grafiğinin eğimi neyi verir?', ['Direnci', 'Gücü'], 0, 'V = I·R; eğim R.'),
       sikli('Aynı boy ve kesitteki bakır ile demir teli ayıran nedir?', ['Öz direnç', 'Sıcaklık'], 0, 'Maddeye özgü.'),
-      soru('Diyot ve lamba için Ohm yasası her zaman geçerlidir.', false, 'Ohmik olmayan elemanlarda grafik doğru çıkmaz.'),
+      soru('Diyot ve ampul için Ohm yasası her zaman geçerlidir.', false, 'Ohmik olmayan elemanlarda grafik doğru çıkmaz.'),
       soru('Metallerde sıcaklık arttıkça direnç artar.', true, 'Yanan lamba teli soğukkinden çok direnç gösterir.'),
     ], [
       {
@@ -744,29 +823,37 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
           dogru: 'Direnç uzunlukla doğru orantılı; uzun tel elektronlara daha uzun yol demek.',
           yanlis: 'Yarıya inen, kesit alanı iki katına çıktığında olur. Uzunluk artınca direnç de artar.',
         },
-        kart: 3,
+        kart: 5,
       },
     ]),
     konu('fzk10-direnc-baglama', 'Dirençlerin Bağlanması', [
       kart(
-        'Seri bağlama',
-        'Dirençler uç uca eklenir. Eşdeğer direnç dirençlerin toplamıdır; akım her elemanda aynıdır.',
+        'Seri: uç uca, tek yol',
+        'İki ampulü ip gibi art arda bağla: akımın tek yolu var. 2 Ω ve 3 Ω seri → eşdeğer 5 Ω, toplanır. Akım her elemandan aynı geçer; gerilim dirençlere paylaşılır.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Paralel bağlama',
-        'Dirençler aynı iki nokta arasına bağlanır. Eşdeğer direnç en küçük dirençten de küçüktür; gerilim ortaktır.',
+        'Seride biri sönerse hepsi söner',
+        'Eski yılbaşı ışıkları: bir ampul patlayınca dizinin tamamı söner. Tek yol kesildi, akım hiçbir yerde geçmez. Seride her eleman aynı akımı taşır.',
       ),
       kart(
-        'Paralel eşdeğer hesabı',
-        '1/R = 1/R₁ + 1/R₂. İki direnç için kısa yol: çarpım bölü toplam. 6 Ω ile 3 Ω paralel → 18/9 = 2 Ω.',
+        'Paralel: aynı iki nokta arasında, çok yol',
+        'İki ampulü yan yana, aynı iki noktaya bağla. Akım ikiye ayrılır, her ampul aynı gerilimi görür. Bir ampul sönse öteki yanmaya devam eder: yolu ayrı.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Özdeş dirençler',
-        'n tane özdeş R direnci seri bağlanırsa n·R, paralel bağlanırsa R/n olur. 4 tane 8 Ω paralelde 2 Ω eder.',
+        'Paralelde eşdeğer direnç küçülür',
+        '6 Ω ile 3 Ω paralel: 1/R = 1/6 + 1/3 = 1/2, R = 2 Ω. İki direnç için kısayol: çarpım bölü toplam = 18/9 = 2. Sonuç en küçük dirençten (3) bile küçük: yol çoğaldı, geçiş kolaylaştı.',
       ),
       kart(
-        'İkisinin karşılaştırması',
-        'Hangi büyüklüğün ortak, hangisinin bölündüğü iki bağlamada tam tersidir.',
+        'Özdeş dirençlerde kısayol',
+        '4 tane 8 Ω seri: 4·8 = 32 Ω. Aynı 4 tane paralel: 8/4 = 2 Ω. n tane R direnci seride n·R, paralelde R/n.',
+      ),
+      kart(
+        'Seride akım, paralelde gerilim ortak',
+        'Seride tek yol var, akım paylaşılamaz: ortak. Paralelde her kol aynı iki noktaya bağlı, gerilim aynı: ortak. Biri ortaksa öteki bölünür.',
         {
           tur: 'tablo',
           basliklar: ['', 'Seri', 'Paralel'],
@@ -776,23 +863,25 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
             ['Eşdeğer R', 'Artar', 'Azalır'],
           ],
         },
-        { not: 'Seride akım, paralelde gerilim ortak; bu iki kelime çoğu soruyu çözer.' },
+        { not: 'Soruda "hangisi eşit" diye sorulunca önce bağlantıya bak: seride akım, paralelde gerilim.' },
       ),
       kart(
-        'Ev tesisatı neden paralel?',
-        'Biri bozulunca ötekiler çalışmaya devam etsin ve her cihaz aynı gerilimi görsün diye.',
+        'Paralelde akım küçük dirençten çok geçer',
+        '12 V\'a paralel 6 Ω ve 3 Ω: ikisi de 12 V görür. 6 Ω\'dan 12/6 = 2 A, 3 Ω\'dan 12/3 = 4 A geçer. Küçük direnç, büyük akım: akım kolay yolu daha çok kullanır.',
       ),
       kart(
-        'Kısa devre',
-        'Akım dirençsiz bir yol bulursa aşırı büyür; kablo ısınır ve yangın çıkabilir. Sigorta bunu keser.',
+        'Ev tesisatı paralel',
+        'Buzdolabı çalışırken lambayı söndürebiliyorsun; televizyon kapanınca fırın durmuyor. Her cihaz kendi yolunda ve hepsi aynı 220 V\'u görüyor. Seri olsaydı biri kapanınca hepsi dururdu.',
       ),
       kart(
-        'Karışık bağlama',
-        'Devre parça parça sadeleştirilir: önce en içteki seri ya da paralel gruplar tek dirence indirilir.',
+        'Kısa devre: dirençsiz kestirme yol',
+        'Pilin iki ucunu kabloyla doğrudan birleştir: dirençsiz yoldan akım aşırı büyür, kablo ısınır, yangın çıkabilir. Sigorta bu akımı keser. Kısa devre akımın dirençten geçmesi değil, direnci atlaması.',
+        undefined,
+        { etiket: 'Dikkat' },
       ),
       kart(
-        'Akım hangi koldan çok geçer?',
-        'Paralel kollarda gerilim eşit, akım dirençle ters orantılı paylaşılır: küçük dirençli koldan büyük akım geçer.',
+        'Karışık devreyi parça parça sadeleştir',
+        'Önce en içteki gruba bak: seri mi paralel mi? Onu tek dirence indir, sonra bir dışarı çık. Her adımda devre küçülür, sonunda tek direnç kalır.',
       ),
     ], [
       soru(
@@ -815,6 +904,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       sikli('4 tane 8 Ω direnç paralel bağlanırsa eşdeğer?', ['32 Ω', '2 Ω'], 1, 'R/n.'),
       sikli('Paralel kollarda akım nasıl paylaşılır?', ['Bütün kollarda eşit', 'Küçük dirençli koldan büyük akım'], 1, 'Gerilim ortak, akım dirençle ters orantılı.'),
       sikli('Ev tesisatı neden paralel bağlıdır?', ['Daha az kablo gerekir', 'Biri bozulunca ötekiler çalışsın'], 1, 'Her cihaz aynı gerilimi de görür.'),
+      sikli('Seri bağlı dizide bir ampul patlarsa ötekiler ne olur?', ['Söner', 'Yanmaya devam eder'], 0, 'Tek yol kesilir; akım hiçbir yerde geçmez.'),
       soru('Paralel bağlamada eşdeğer direnç en küçük dirençten de küçüktür.', true, 'Yollar çoğaldıkça toplam direnç düşer.'),
       soru('Seri bağlı dirençlerde gerilim bütün elemanlarda aynıdır.', false, 'Seride akım aynı, gerilim bölünür.'),
     ], [
@@ -831,34 +921,44 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
     ]),
     konu('fzk10-uretec-baglama', 'Üreteçlerin Bağlanması', [
       kart(
-        'Seri bağlama',
-        'Üreteçlerin gerilimleri toplanır. Uzaktan kumandada iki pilin uç uca konması bu yüzdendir.',
+        'Seri piller: gerilimler toplanır',
+        'Kumandaya iki 1,5 V pil uç uca konur: 1,5 + 1,5 = 3 V. Birinin artısı ötekinin eksisine değer. Cihaz daha yüksek gerilim istiyorsa piller seri bağlanır.',
       ),
       kart(
-        'Paralel bağlama',
-        'Özdeş üreteçlerde gerilim tek üretecinki kadar kalır, ama devre daha uzun süre beslenir.',
+        'Paralel piller: gerilim aynı, süre uzar',
+        'İki özdeş 1,5 V pil yan yana, artılar birbirine, eksiler birbirine: gerilim yine 1,5 V. Ama her pil akımın yarısını verir; ikisi birlikte iki kat uzun dayanır.',
       ),
       kart(
-        'Ters bağlama',
-        'Zıt yönde bağlanan üreteçlerin gerilimleri birbirini götürür; devreye net katkı azalır.',
+        'Seri gerilimi, paralel süreyi artırır',
+        'Daha parlak ışık istiyorsan seri: gerilim toplanır. Daha uzun süre istiyorsan paralel: gerilim aynı kalır, pil geç biter. İkisi aynı anda olmaz.',
+        {
+          tur: 'tablo',
+          basliklar: ['', 'Seri', 'Paralel'],
+          satirlar: [
+            ['Gerilim', 'toplanır', 'tek pil kadar'],
+            ['Süre', 'tek pil kadar', 'uzar'],
+            ['Örnek', 'kumanda', 'yedek güç'],
+          ],
+        },
+        { not: 'Soruda "daha parlak" mı "daha uzun" mu isteniyor diye bak: parlak seri, uzun paralel.' },
       ),
       kart(
-        'İç direnç',
-        'Gerçek üreteçlerin kendi direnci vardır; bu yüzden uçlarındaki gerilim yük altında bir miktar düşer.',
+        'Ters bağlı pil geriye iter',
+        'İki 1,5 V pilden birini ters koydun: artı artıya bakıyor. Gerilimler birbirini götürür, 1,5 − 1,5 = 0 V, lamba yanmaz. Kumandada pil ters takılınca çalışmaması bundan.',
       ),
       kart(
-        'Neden pil biter?',
-        'Kimyasal madde tükenirken iç direnç büyür; uçlardaki gerilim yük altında hızla düşer ve cihaz çalışmaz olur.',
+        'Pilin kendi içinde de direnç var',
+        'Pil 1,5 V yazar ama lamba takınca uçlarında 1,3 V ölçersin. Fark pilin iç direncinde harcandı. Gerçek pilin uçlarındaki gerilim, akım çekilince biraz düşer.',
       ),
       kart(
-        'Farklı piller karıştırılmaz',
-        'Seri bağlı farklı kapasitedeki piller birbirini zorlar; biten pil ötekiler tarafından ters yönde sürülebilir.',
+        'Pil biterken iç direnci büyür',
+        'Bitmek üzere olan pil boşta 1,4 V gösterir ama cihaz takınca 0,8 V\'a düşer. Kimyasal madde tükendikçe iç direnç artar, gerilim yük altında çöker. Cihaz "pil bitti" der.',
       ),
       kart(
-        'Neden paralel bağlanır?',
-        'Gerilim artmaz ama toplam kapasite artar: iki özdeş pil paralelde devreyi iki kat uzun süre besler ve her pilden yarım akım çeker.',
+        'Dolu pille boş pili karıştırma',
+        'Kumandaya bir yeni bir eski pil koydun: dolu pil boş pili ters yönde zorlar, ısınır, akabilir. Seri bağlı piller aynı tür ve aynı dolulukta olmalı.',
         undefined,
-        { not: 'Seri gerilimi, paralel süreyi artırır; hangisinin istendiğine sor.' },
+        { etiket: 'Dikkat' },
       ),
     ], [
       soru('Özdeş üreteçler seri bağlandığında toplam elektromotor kuvvet artar.', true, 'Gerilimler toplanıyor.'),
@@ -868,7 +968,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       sikli('İki özdeş pil paralel bağlanınca ne kazanılır?', ['Daha uzun süre besleme', 'Daha yüksek gerilim'], 0, 'Gerilim aynı kalır, kapasite artar.'),
       sikli('Pil biterken uçlarındaki gerilimin düşmesinin sebebi?', ['İç direncin büyümesi', 'Elektronların tükenmesi'], 0, 'Kimyasal madde tükenirken iç direnç artar.'),
       soru('Ters bağlanan iki üretecin gerilimleri toplanır.', false, 'Birbirini götürür.'),
-      soru('Farklı kapasitedeki piller seri bağlanmamalıdır.', true, 'Biten pil ötekiler tarafından ters yönde sürülebilir.'),
+      soru('Farklı kapasitedeki piller seri bağlanmamalıdır.', true, 'Dolu pil boş pili ters yönde zorlar.'),
     ], [
       {
         soru: '1,5 V\'luk iki pil seri bağlanırsa toplam gerilim?',
@@ -883,34 +983,45 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
     ]),
     konu('fzk10-tehlike', 'Elektrik Akımının Tehlikelerine Karşı Önlemler', [
       kart(
-        'Tehlikeli olan akımdır',
-        'İnsan için asıl tehlike gerilim değil, vücuttan geçen akımın şiddeti ve süresidir.',
+        'Zarar veren gerilim değil, geçen akım',
+        'Kuşlar 10.000 V\'luk telde oturur, hiçbir şey olmaz: içlerinden akım geçmiyor. İnsanı yakan, vücuttan geçen akımın büyüklüğü ve süresi. Gerilim yalnızca akımı doğuran sebep.',
       ),
       kart(
-        'Kaç miliamper tehlikeli?',
-        'Birkaç mA hissedilir, yaklaşık 10 mA\'de kas kasılır ve el bırakamaz, 50 mA üstü kalbi durdurabilir. Priz gerilimi ıslak vücutta bu sınırı kolay aşar.',
+        'Miliamperler bile yeter',
+        '1 mA (amperin binde biri) karıncalanma. 10 mA\'de kaslar kasılır, el teli bırakamaz. 50 mA üstü kalbi durdurabilir. Priz 220 V; ıslak vücutta bu sınırlar kolay aşılır.',
+        {
+          tur: 'tablo',
+          basliklar: ['Akım', 'Etki'],
+          satirlar: [
+            ['1 mA', 'karıncalanma'],
+            ['10 mA', 'el bırakamaz'],
+            ['50 mA', 'kalp durabilir'],
+          ],
+        },
       ),
       kart(
-        'Sigorta',
-        'Akım güvenli sınırı aşınca devreyi otomatik keser. Kablo yangınlarının önündeki ilk engeldir.',
+        'Islak el direnci düşürür, akımı büyütür',
+        'Kuru derinin direnci yüksek, 220 V\'ta küçük akım geçer. Islak deride direnç onda birine iner; aynı gerilimde on kat akım. Ohm yasası: V aynı, R düşer, I artar. Banyoda priz kuralı bundan.',
       ),
       kart(
-        'Kaçak akım rölesi',
-        'Giren ve çıkan akımı karşılaştırır; fark varsa akım insan üzerinden kaçıyor demektir ve devre anında kesilir.',
+        'Sigorta kabloyu korur',
+        'Bir kablodan güvenli sınırın üstünde akım geçince sigorta atar, devreyi keser. Kablo ısınmaz, yangın çıkmaz. Sigorta amperleri sayar: 16 A sigorta 16 A üstünde atar.',
       ),
       kart(
-        'Sigorta insanı korumaz',
-        'Sigorta kabloyu, kaçak akım rölesi insanı korur. İkisi farklı işler yapar ve biri ötekinin yerini tutmaz.',
+        'Kaçak akım rölesi insanı korur',
+        'Röle giren ve çıkan akımı karşılaştırır: 5 A girdi, 4,97 A çıktı, 30 mA nereye gitti? İnsana. Röle bunu anında görüp keser. Sigorta o 30 mA\'yi fark etmez bile.',
+      ),
+      kart(
+        'İkisinin işi ayrı',
+        'Sigorta kabloyu, röle insanı korur. Biri ötekinin yerini tutmaz: "sigorta var, çarpılmam" demek yanlış. Evde ikisi de olmalı.',
         undefined,
-        { not: 'İki cihazın işi ayrı; birinin ötekinin yerini tutmadığını unutma.' },
+        { not: 'Sigorta ile röleyi karıştırıyorsan sor: kimi koruyor? Kabloyu mu, insanı mı?' },
       ),
       kart(
-        'Islak elle dokunma',
-        'Su vücut direncini düşürür ve aynı gerilimde çok daha büyük akım geçer. Banyoda priz kuralları bundandır.',
-      ),
-      kart(
-        'Çoklu priz yükü',
-        'Aynı prizden çok sayıda yüksek güçlü cihaz beslemek kabloyu ısıtır; ısınan kablo yangının en sık sebebidir.',
+        'Çoklu prize yığma',
+        'Bir prize ısıtıcı, ütü ve su ısıtıcısı taktın: hepsinin akımı tek kablodan geçer, kablo ısınır. Isınan kablo ev yangınlarının en sık sebebi. Yüksek güçlü cihaz ayrı prize.',
+        undefined,
+        { etiket: 'Dikkat' },
       ),
     ], [
       soru('İnsan için tehlikeli olan, vücuttan geçen akımın büyüklüğüdür.', true, 'Gerilim tek başına değil, geçen akım zarar veriyor.'),
@@ -931,35 +1042,37 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
           dogru: 'Röle giren ve çıkan akımı karşılaştırır; fark varsa akım insandan kaçıyor demek ve anında keser.',
           yanlis: 'Sigorta kabloyu aşırı akımdan korur; insandan geçen birkaç miliamper onu hiç açtırmaz. İnsanı koruyan kaçak akım rölesi.',
         },
-        kart: 4,
+        kart: 5,
       },
     ]),
     konu('fzk10-topraklama', 'Topraklamanın Önemi', [
       kart(
-        'Ne yapar?',
-        'Cihazın gövdesini toprağa bağlar. Kaçak akım insan yerine düşük dirençli bu yoldan toprağa gider.',
-      ),
-      kart(
-        'Neden gerekli?',
-        'Yalıtımı bozulan bir cihazın metal gövdesi gerilim altında kalabilir; topraklama olmadan dokunan kişi yolu tamamlar.',
-      ),
-      kart(
-        'Üçüncü uç',
-        'Prizdeki üçüncü uç topraklama hattıdır. Topraksız uzatma kabloları bu korumayı ortadan kaldırır.',
-      ),
-      kart(
-        'En az dirençli yol',
-        'Akım tek bir yoldan gitmez, yolları dirençleriyle ters orantılı paylaşır. Topraklamanın işi insandan daha kolay bir yol açmaktır.',
+        'Gövde topraklanınca kaçak toprağa gider',
+        'Çamaşır makinesinin metal gövdesi bir kabloyla toprağa bağlı. İçeride bir kablo sıyrılıp gövdeye değerse akım gövdeden bu kabloyla toprağa akar, sana değil. Buna topraklama denir.',
         undefined,
-        { not: 'Akım en kolay yolu seçer; topraklamanın tek işi o yolu insandan daha kolay yapmak.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Paratoner',
-        'Yıldırımı binanın üstünden alıp toprağa iletir. Aynı ilkenin bina ölçeğindeki uygulamasıdır.',
+        'Topraklama yoksa yolu sen tamamlarsın',
+        'Aynı makine topraksız: gövde 220 V\'ta bekler, kimse fark etmez. Sen dokununca akım gövdeden sana, senden yere geçer. Topraklama olmayan yerde insan kablo olur.',
       ),
       kart(
-        'Nerede şart?',
-        'Metal gövdeli cihazlar: buzdolabı, çamaşır makinesi, fırın, su ısıtıcı. Plastik gövdeli cihazlar çift yalıtımlıdır ve topraklama ucu taşımaz.',
+        'Akım kolay yolu daha çok kullanır',
+        'Akım tek bir yol seçmez, yolları dirençlerine göre paylaşır. Topraklama kablosu birkaç ohm, insan vücudu binlerce ohm. Akımın neredeyse tamamı kablodan gider; sana düşen pay zararsız.',
+        undefined,
+        { not: 'Topraklama akımı yok etmez; sadece senden daha kolay bir yol açar.' },
+      ),
+      kart(
+        'Prizdeki üçüncü uç toprak hattıdır',
+        'Fişin iki ucu faz ve nötr, yanlardaki metal tırnaklar toprak. Topraksız uzatma kablosu bu tırnağı taşımaz: cihaz çalışır ama koruma gider.',
+      ),
+      kart(
+        'Metal gövdeli cihaza şart',
+        'Buzdolabı, çamaşır makinesi, fırın, su ısıtıcı: gövdeleri metal, kaçak olursa gövde elektriklenir. Plastik gövdeli cihazlar (saç kurutma, şarj aleti) çift yalıtımlı: fişlerinde toprak ucu yok.',
+      ),
+      kart(
+        'Paratoner, binanın topraklaması',
+        'Çatının tepesindeki sivri çubuk kalın bir kabloyla toprağa iner. Yıldırım çubuğa düşer, kablodan toprağa gider; binaya girmez. Yıldırımı engellemez, ona kolay bir yol sunar.',
       ),
     ], [
       soru('Topraklama, cihazda oluşan kaçak akımı toprağa güvenle iletir.', true, 'Akım insan yerine bu yoldan geçiyor.'),
@@ -985,30 +1098,32 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
   tema('fzk10-t4', 'Dalgalar', [
     konu('fzk10-periyodik', 'Periyodik Hareketler', [
       kart(
-        'Tanımı',
-        'Belirli zaman aralıklarında kendini tekrarlayan hareket. Sarkaç, yay ve dönen tekerlek örnektir.',
-      ),
-      kart(
-        'Periyot ve frekans',
-        'Periyot bir tam hareketin süresi, frekans birim zamandaki tekrar sayısı. Biri ötekinin tersidir.',
-      ),
-      kart(
-        'Hesap',
-        'T = 1 / f. Saniyede 5 kez salınan cismin periyodu 0,2 s. Frekansın birimi hertz (Hz), periyodunki saniye.',
-      ),
-      kart(
-        'Basit sarkaç',
-        'Periyodu ipin uzunluğuna ve yer çekimine bağlıdır; asılan kütleye bağlı değildir.',
+        'Periyodik hareket: aynı şeyi tekrar tekrar',
+        'Salıncak gidip geliyor, saat sarkacı sallanıyor, tekerlek dönüyor, yaydaki ağırlık zıplıyor. Belirli sürede kendini tekrarlayan harekete periyodik hareket denir.',
         undefined,
-        { not: 'Kütle listede yok; sınavda kütleyi değiştiren şık çeldirici.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Genlik periyodu değiştirmez',
-        'Küçük salınımlarda sarkacın periyodu, ne kadar açıldığından bağımsızdır. Saatlerin sarkaçla çalışmasının sebebi budur.',
+        'Periyot: bir turun süresi',
+        'Salıncak bir gidip gelmeyi 2 saniyede tamamlıyorsa periyodu 2 s. Periyot (T) bir tam hareketin süresi, birimi saniye.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Salınım',
-        'Denge konumu çevresindeki gidip gelme. Dalgayı üreten hareket budur.',
+        'Frekans: saniyedeki tur sayısı',
+        'Aynı salıncak 2 s\'de bir tur yapıyorsa saniyede yarım tur: frekans 0,5 Hz. Frekans (f) birim zamandaki tekrar sayısı, birimi hertz (Hz). T = 1/f: biri ötekinin tersi.',
+        undefined,
+        { etiket: 'Tanım' },
+      ),
+      kart(
+        'Hesap: T = 1/f, f = 1/T',
+        'Saniyede 5 kez titreşen yayın periyodu 1/5 = 0,2 s. Periyodu 4 s olan sarkacın frekansı 1/4 = 0,25 Hz. Birimleri karıştırma: frekans hertz, periyot saniye.',
+        undefined,
+        { etiket: 'Sık hata' },
+      ),
+      kart(
+        'Salınım: denge noktasının iki yanına gidiş',
+        'Sarkaç ortada dururken denge konumunda. Çekip bırakınca ortanın bir o yanına bir bu yanına geçer; buna salınım denir. Grafik zamanla uzaklığı gösterir: tepe, çukur, tepe.',
         {
           tur: 'koordinat',
           pencere: [0, 8, -3, 3],
@@ -1030,12 +1145,18 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         },
       ),
       kart(
-        'Yay sarkacı',
-        'Periyodu yayın sertliğine ve asılan kütleye bağlıdır; basit sarkacın tersine kütle burada etkilidir.',
+        'Sarkaç periyodu: ip uzunluğu ve yer çekimi',
+        'Uzun ipli sarkaç yavaş, kısa ipli hızlı salınır. Ay\'da yer çekimi az: aynı sarkaç daha yavaş. Kütle listede yok: ağır ya da hafif top, periyot aynı.',
+        undefined,
+        { not: 'Sarkaç sorusunda kütleyi değiştiren şık çeldirici; ipe ve yer çekimine bak.' },
       ),
       kart(
-        'Sarkaç periyodunu neler değiştirir?',
-        'İp uzarsa periyot büyür, yer çekimi artarsa küçülür. Ay\'da aynı sarkaç daha yavaş salınır; kütle ve küçük genlik etkisiz.',
+        'Ne kadar açtığın periyodu değiştirmez',
+        'Sarkacı az ya da biraz daha çok çekip bıraksan gidiş geliş süresi aynı. Küçük salınımlarda genlik, yani açılma miktarı, periyodu etkilemez. Sarkaçlı saatler bu yüzden doğru çalışır.',
+      ),
+      kart(
+        'Yay sarkacında kütle etkili',
+        'Yaya asılı ağırlık: ağır kütle yavaş, sert yay hızlı salınır. Periyot yayın sertliğine ve kütleye bağlı. İp sarkacının tersine kütle burada iş yapar.',
       ),
     ], [
       soru('Periyot ile frekans birbirinin tersidir.', true, 'Biri bir salınımın süresi, öteki saniyedeki salınım sayısı.'),
@@ -1056,17 +1177,19 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
           dogru: 'Uzun ip yavaş salınır; kütle ne olursa olsun periyot aynı kalır.',
           yanlis: 'Kütle basit sarkacın periyodunu değiştirmez; onu ipin uzunluğu ve yer çekimi belirler. Kütlenin işe girdiği yay sarkacı.',
         },
-        kart: 3,
+        kart: 6,
       },
     ]),
     konu('fzk10-dalga-kavram', 'Dalgaların Temel Kavramları', [
       kart(
-        'Dalga nedir?',
-        'Enerjinin, madde taşınmadan ortamda yayılması. Denizde şamandıra ilerlemez, yalnızca inip kalkar.',
+        'Dalga enerjiyi taşır, maddeyi değil',
+        'Denizde şamandıra: dalga geçerken inip kalkar ama kıyıya gitmez. Su yerinde kalır, giden enerjidir. Dalga: enerjinin madde taşınmadan yayılması.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Dalga boyu',
-        'Ardışık iki tepe ya da iki çukur arasındaki uzaklık.',
+        'Dalga boyu: iki tepe arası',
+        'Tepe dalganın en yüksek, çukur en alçak noktası. Ardışık iki tepe (ya da iki çukur) arasındaki uzaklık dalga boyu; sembolü λ (lambda), birimi metre.',
         {
           tur: 'koordinat',
           pencere: [0, 8, -3, 3],
@@ -1101,26 +1224,26 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         },
       ),
       kart(
-        'Genlik',
-        'Denge konumundan en büyük uzaklık. Dalganın taşıdığı enerjiyi genlik belirler.',
+        'Genlik: ortadan tepeye yükseklik',
+        'Denge çizgisi (dalga yokken suyun düz hâli) ile tepe arası genlik. Büyük genlik büyük dalga: daha çok enerji taşır. Enerjiyi dalga boyu değil genlik belirler.',
       ),
       kart(
-        'Periyot ve frekans',
-        'Bir tam dalganın geçme süresi periyot, saniyedeki dalga sayısı frekanstır. Frekansı kaynak belirler.',
+        'Dalgada da periyot ve frekans var',
+        'Şamandıra saniyede 2 kez inip kalkıyorsa frekans 2 Hz: saniyede geçen dalga sayısı. Bir dalganın geçme süresi periyot: 0,5 s. Frekansı dalgayı yaratan kaynak belirler.',
       ),
       kart(
-        'Yayılma sürati',
-        'Dalga boyu ile frekansın çarpımı. Frekansı kaynak, sürati ortam belirler.',
+        'Ses: şiddeti genlik, tizliği frekans',
+        'Sesi açtığında genlik büyür, ses yükselir. İnce ses (tiz) yüksek frekans, kalın ses (pes) düşük frekans. İkisi ayrı ayrı değişir: yüksek ses tiz olmak zorunda değil.',
+      ),
+      kart(
+        'Sürat = dalga boyu × frekans',
+        'Frekans 50 Hz, dalga boyu 2 m: sürat 50·2 = 100 m/s. Formül v = λ·f. Periyot verilirse önce f = 1/T ile frekansa çevir.',
+      ),
+      kart(
+        'Frekans kaynağın, sürat ortamın',
+        'Aynı hoparlör suda ve havada aynı frekansta ses üretir; ama ses suda daha hızlı gider. Ortam değişince sürat değişir, frekans değişmez; o yüzden dalga boyu değişir.',
         undefined,
-        { not: 'Frekans kaynağın, sürat ortamın; bu ayrım kırılma konusunda da geri gelecek.' },
-      ),
-      kart(
-        'Genlik enerjidir',
-        'Sesin şiddeti genlikle, tizliği frekansla ilgilidir. İkisi bağımsız değişir; yüksek ses tiz olmak zorunda değildir.',
-      ),
-      kart(
-        'Hesap kalıbı',
-        'v = λ · f. Frekansı 50 Hz, dalga boyu 2 m olan dalganın sürati 100 m/s. Periyot verilirse önce frekansa çevir: f = 1/T.',
+        { not: 'Sürat sabitken f artarsa λ küçülür; ikisini hep v = λ·f ile birlikte düşün.' },
       ),
     ], [
       soru(
@@ -1174,41 +1297,47 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
     ]),
     konu('fzk10-dalga-sinif', 'Dalgaların Sınıflandırılması', [
       kart(
-        'İki ölçüt',
-        'Dalgalar iki ayrı soruya göre sınıflandırılır: ortam gerekiyor mu, titreşim hangi yönde?',
+        'Mekanik dalga ortam ister',
+        'Ses havada, dalga suda, titreşim yayda ilerler; her birinin bir taşıyıcısı var. Taşıyıcı ortamı olan dalgaya mekanik dalga denir. Ortam yoksa dalga yok.',
+        undefined,
+        { etiket: 'Tanım' },
+      ),
+      kart(
+        'Elektromanyetik dalga boşlukta da gider',
+        'Güneş ışığı milyonlarca kilometre boşluğu geçip bize ulaşıyor. Işık, radyo dalgası ve röntgen ışını ortam istemez. Bunlara elektromanyetik (EM) dalga denir.',
+        undefined,
+        { etiket: 'Tanım' },
+      ),
+      kart(
+        'Uzayda patlama duyulmaz',
+        'Filmlerdeki uzay patlaması gürültüsü yanlış: ses mekanik, taşıyacak hava yok. Patlamanın ışığını görürsün, sesini duymazsın.',
+        undefined,
+        { etiket: 'Sık hata' },
+      ),
+      kart(
+        'Enine dalga: titreşim yayılmaya dik',
+        'İpi yukarı aşağı salla: dalga ileri gider, ip yukarı aşağı titrer. Titreşim yönü ile yayılma yönü birbirine dik. Su dalgaları ve ışık enine.',
+      ),
+      kart(
+        'Boyuna dalga: titreşim yayılmayla aynı yönde',
+        'Yayı ileri geri it: sıkışmış halkalar ileri gider, halkalar da ileri geri titrer. Ses böyle: hava sıkışıp seyrelerek ilerler. Buna boyuna dalga denir.',
+      ),
+      kart(
+        'Bir dalga iki soruya birden cevap verir',
+        'Ses ortam ister (mekanik) ve ileri geri titreşir (boyuna). Işık ortam istemez (EM) ve dik titreşir (enine). İki soruyu ayrı sor: ortam gerekiyor mu, titreşim hangi yönde?',
         {
           tur: 'tablo',
-          basliklar: ['Ölçüt', 'Türler'],
+          basliklar: ['Ölçüt', 'Türler', 'Örnek'],
           satirlar: [
-            ['Ortam', 'Mekanik / EM'],
-            ['Titreşim yönü', 'Enine / Boyuna'],
+            ['Ortam', 'Mekanik / EM', 'ses / ışık'],
+            ['Titreşim yönü', 'Boyuna / Enine', 'ses / ışık'],
           ],
         },
-        { not: 'Bir dalga iki sınıfa birden girer: ses hem mekanik hem boyuna. İki soruyu ayrı sor.' },
+        { not: 'Bir dalga iki sınıfa birden girer: ses hem mekanik hem boyuna. Tek cevapla yetinme.' },
       ),
       kart(
-        'Mekanik dalga',
-        'Yayılmak için ortama ihtiyaç duyar: ses, su ve yay dalgaları. Boşlukta yayılamaz.',
-      ),
-      kart(
-        'Elektromanyetik dalga',
-        'Ortam gerektirmez, boşlukta da yayılır. Işık, radyo dalgası ve röntgen ışını bu türdendir.',
-      ),
-      kart(
-        'Enine dalga',
-        'Titreşim doğrultusu yayılma doğrultusuna diktir. Su dalgaları ve ışık böyledir.',
-      ),
-      kart(
-        'Boyuna dalga',
-        'Titreşim yayılma yönüyle aynı doğrultudadır. Ses dalgası sıkışma ve seyrelmelerle ilerler.',
-      ),
-      kart(
-        'Uzayda ses yok',
-        'Ses mekanik bir dalgadır ve taşıyacak tanecik ister; boşlukta hiçbir ses yayılmaz, ama ışık yayılır.',
-      ),
-      kart(
-        'Elektromanyetik tayf',
-        'Radyo, mikrodalga, kızılötesi, görünür ışık, morötesi, X ve gama ışınları. Sıra frekans arttıkça ilerler.',
+        'EM tayf: radyodan gamaya',
+        'Radyo, mikrodalga, kızılötesi, görünür ışık, morötesi, X ve gama ışını. Hepsi aynı tür dalga; farkları frekans. Radyo en düşük, gama en yüksek frekans.',
         {
           tur: 'katman',
           eksenAdi: 'FREKANS ARTAR',
@@ -1222,8 +1351,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         },
       ),
       kart(
-        'Deprem dalgaları',
-        'P dalgası boyuna ve hızlıdır, önce gelir; S dalgası enine, yavaş ve daha yıkıcıdır. İkisi arasındaki süre merkez üssüne uzaklığı verir.',
+        'Depremde önce P gelir, sonra S',
+        'P dalgası boyuna ve hızlı: önce ulaşır, hafif sarsar. S dalgası enine ve yavaş: sonra gelir, asıl yıkım ondan. Aradaki süre uzunsa merkez üssü uzak.',
       ),
     ], [
       soru('Ses mekanik bir dalgadır ve boşlukta yayılmaz.', true, 'Yayılmak için maddesel ortama ihtiyaç duyuyor.'),
@@ -1244,17 +1373,17 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
           dogru: 'Ses ortam ister (mekanik) ve tanecikleri yayılma yönünde sıkıştırır (boyuna).',
           yanlis: 'Elektromanyetik ve enine olan ışık. Ses ortam ister ve sıkışma-seyrelmeyle ilerler: mekanik, boyuna.',
         },
-        kart: 5,
+        kart: 6,
       },
     ]),
     konu('fzk10-yayilma-surati', 'Dalgaların Yayılma Süratini Etkileyen Etmenler', [
       kart(
-        'Ortam belirler',
-        'Sürat kaynağın değil ortamın özelliğidir. Kaynağı değiştirmek frekansı değiştirir, sürati değil.',
+        'Sürati ortam belirler, kaynak değil',
+        'Aynı ıslığı havada da suda da çal: frekans aynı, ama ses suda dört kat hızlı gider. Daha güçlü çalmak sesi hızlandırmaz. Kaynak frekansı, ortam sürati belirler.',
       ),
       kart(
-        'Ses hangi ortamda hızlı?',
-        'Katıda en hızlı, gazda en yavaş yayılır; tanecikler birbirine yakın olduğunda titreşim daha çabuk aktarılır.',
+        'Ses katıda hızlı, gazda yavaş',
+        'Rayı tıklat: kulağını raya dayayan, sesi havadan önce duyar. Katıda tanecikler sıkı sıkı yan yana, titreşim komşuya hemen geçer. Havada tanecikler seyrek. Sıra: katı > sıvı > gaz.',
         {
           tur: 'akis',
           adimlar: [
@@ -1265,22 +1394,22 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
         },
       ),
       kart(
-        'Sıcaklık etkisi',
-        'Havada sıcaklık arttıkça ses sürati artar. Tanecikler daha hızlı hareket eder.',
+        'Sıcak havada ses hızlanır',
+        '0 °C\'de ses 331 m/s, 20 °C\'de 343 m/s. Sıcak havada tanecikler daha hızlı hareket eder, titreşimi daha çabuk iletir. Sıcaklık artınca sesin sürati artar.',
       ),
       kart(
-        'Işıkta tersi',
-        'Işık en hızlı boşlukta yayılır; yoğun ortamda yavaşlar. Ses ile ışık bu açıdan birbirinin tersidir.',
+        'Işıkta tam tersi: boşlukta en hızlı',
+        'Işık boşlukta 300.000 km/s, camda bunun üçte ikisi kadar. Yoğun ortam ışığı yavaşlatır, sesi hızlandırır. İkisini aynı kefeye koyma.',
         undefined,
-        { not: 'Ses ile ışığı aynı kefeye koyma; yoğun ortam birini hızlandırır, ötekini yavaşlatır.' },
+        { not: '"Yoğun ortamda hızlanır" cümlesini duyunca sor: ses mi, ışık mı? Cevap ikisinde ters.' },
       ),
       kart(
-        'Su dalgalarında derinlik',
-        'Derin suda dalga hızlı, sığ suda yavaş ilerler. Kıyıya yaklaşan dalganın yükselmesi bundandır.',
+        'Derin suda dalga hızlı',
+        'Kıyıya yaklaşan dalga sığ suya girince yavaşlar; arkadan gelenler ona yetişir, dalga yükselir ve devrilir. Derinde hızlı, sığda yavaş.',
       ),
       kart(
-        'Yay dalgasında',
-        'Gergin ve hafif yayda dalga daha hızlı yayılır. Gitar telinin sesi gerginlikle tizleşir.',
+        'Gergin ve hafif yayda dalga hızlı',
+        'Gitar telini akort ederken gerdikçe ses tizleşir: dalga telde daha hızlı ilerliyor. Kalın (ağır) tel daha yavaş, kalın ses verir. Gerginlik sürati artırır, kütle azaltır.',
       ),
     ], [
       soru('Ses katılarda gazlara göre daha hızlı yayılır.', true, 'Tanecikler birbirine yakın olduğu için titreşim çabuk aktarılıyor.'),
@@ -1304,8 +1433,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
     ]),
     konu('fzk10-yansima-kirilma', 'Su Dalgalarında Yansıma ve Kırılma', [
       kart(
-        'Yansıma',
-        'Dalga engele çarpıp geri döner. Gelme açısı yansıma açısına eşittir; dalga boyu ve frekans değişmez.',
+        'Yansıma: dalga engele çarpıp geri döner',
+        'Havuz kenarına çarpan dalga geri gelir. Geliş açısı ne kadarsa dönüş açısı o kadar; açı engele dik çizgiden (normal) ölçülür. Yansıyan dalganın sürati, dalga boyu ve frekansı değişmez.',
         {
           tur: 'koordinat',
           pencere: [0, 10, 0, 6],
@@ -1347,28 +1476,39 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
             },
           ],
         },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Kırılma',
-        'Dalga derinliği farklı bölgeye geçerken sürati ve dalga boyu değişir, doğrultusu kırılır.',
-      ),
-      kart(
-        'Frekans değişmez',
-        'Kırılmada frekans sabittir; onu kaynak belirler. Değişen şey sürat ve dalga boyudur.',
+        'Kırılma: derinlik değişince yön değişir',
+        'Dalga derin sudan sığ suya açıyla geçsin. Sığda yavaşlar; önce giren taraf geri kalır, dalga döner. Sürat ve dalga boyu değişir, doğrultu kırılır. Buna kırılma denir.',
         undefined,
-        { not: 'Kırılmada değişen ve değişmeyeni bir tabloya yaz; soru hep buradan gelir.' },
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Hangi yöne kırılır?',
-        'Yavaşlayan dalga normale yaklaşır, hızlanan dalga normalden uzaklaşır. Derinden sığa geçiş yavaşlatır.',
+        'Kırılmada frekans değişmez',
+        'Frekansı kaynak belirliyordu; kaynak hâlâ aynı hızla titreşiyor. Sığ suda sürat düşünce v = λ·f\'de λ da düşer. Değişen sürat ve dalga boyu; değişmeyen frekans.',
+        {
+          tur: 'tablo',
+          basliklar: ['Büyüklük', 'Kırılmada'],
+          satirlar: [
+            ['Frekans', 'değişmez'],
+            ['Sürat', 'değişir'],
+            ['Dalga boyu', 'değişir'],
+          ],
+        },
+        { not: 'Kırılma sorusu hep "hangisi değişmez" diye gelir; ezberleme, kaynağı düşün: frekans.' },
       ),
       kart(
-        'Doğru gelirse',
-        'Dalga sınıra dik gelirse doğrultu değişmez, yalnızca sürat ve dalga boyu değişir.',
+        'Yavaşlayan dalga normale yaklaşır',
+        'Normal, sınıra dik çizgi. Derinden sığa geçen dalga yavaşlar ve normale yaklaşır: açı küçülür. Sığdan derine geçen hızlanır, normalden uzaklaşır: açı büyür.',
       ),
       kart(
-        'Kıyıya paralel dalgalar',
-        'Sığlaşan suda dalga yavaşlayıp kırıldığı için, açıdan gelen dalgalar kıyıya neredeyse paralel varır.',
+        'Dik gelen dalga dönmez',
+        'Dalga sınıra tam dik gelirse iki tarafı aynı anda yavaşlar; dönmesi için sebep yok. Doğrultu aynı kalır, yalnızca sürat ve dalga boyu değişir.',
+      ),
+      kart(
+        'Dalgalar kıyıya neden paralel vurur',
+        'Açıkta dalgalar kıyıya açılı gelir. Kıyıya yaklaştıkça su sığlaşır; dalga yavaşlayıp normale yaklaşır. Sonuç: dalgalar kıyıya neredeyse paralel vurur. Kırılmanın gözle görülür hâli.',
       ),
     ], [
       soru('Dalgalar yansırken frekansları değişmez.', true, 'Frekansı kaynak belirliyor.'),
@@ -1392,32 +1532,40 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
     ]),
     konu('fzk10-rezonans', 'Rezonans ve Deprem', [
       kart(
-        'Doğal frekans',
-        'Her cismin kendiliğinden titreştiği bir frekans vardır. Bardağın tınlaması bu frekanstadır.',
+        'Her cismin kendi frekansı var',
+        'Bardağa vur: hep aynı notada tınlar. Salıncağı bırak: hep aynı sürede gidip gelir. Cismin kendiliğinden titreştiği frekansa doğal frekans denir.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Rezonans',
-        'Dış etkinin frekansı cismin doğal frekansına eşitse genlik hızla büyür. Az kuvvetle büyük salınım oluşur.',
+        'Doğru anda itersen az kuvvet yeter',
+        'Salıncağı tam sana geri geldiği anda hafifçe it: her seferinde biraz daha yükselir. Yanlış anda itersen salınım söner. İtme frekansı salıncağın doğal frekansına eşitse genlik hızla büyür.',
       ),
       kart(
-        'Salıncak örneği',
-        'Salıncağı iten kişi doğru anda ittiğinde küçük itmeler büyük salınım üretir; yanlış anda itmek salınımı söndürür.',
+        'Buna rezonans denir',
+        'Dış etkinin frekansı cismin doğal frekansına eşitse genlik büyür: rezonans. Küçük kuvvet, büyük salınım. Opera sanatçısının bardağı sesle kırması bu: sesin frekansı bardağınkine denk geldi.',
+        undefined,
+        { etiket: 'Tanım' },
       ),
       kart(
-        'Depremde neden önemli?',
-        'Yer sarsıntısının frekansı binanın doğal frekansına yakınsa bina daha şiddetli sallanır ve hasar artar.',
+        'Deprem binayı rezonansa sokabilir',
+        'Sarsıntının frekansı binanın doğal frekansına yakınsa bina her sarsıntıda biraz daha çok sallanır. Salıncak gibi. Hasar bu yüzden bazı binalarda çok, yanındakinde az.',
       ),
       kart(
-        'Bina yüksekliği',
-        'Alçak binaların doğal frekansı yüksek, yüksek binalarınki düşüktür. Aynı deprem farklı yükseklikteki binaları farklı zorlar.',
+        'Alçak bina hızlı, yüksek bina yavaş sallanır',
+        'Kısa cetveli masadan sarkıtıp titret: hızlı titrer. Uzunu: yavaş. Alçak binanın doğal frekansı yüksek, yüksek binanınki düşük. Aynı deprem, frekansına göre farklı boydaki binayı zorlar.',
       ),
       kart(
-        'Odak ve merkez üssü',
-        'Odak, kırılmanın yer altındaki noktası; merkez üssü ise odağın yeryüzündeki izdüşümüdür.',
+        'Binayı rezonanstan çıkarmak',
+        'Binanın doğal frekansı sarsıntıdan uzaklaştırılır. Ya da sönümleyici konur: salınımı emen bir ağırlık. Ya da taban yalıtımı: bina yaylı yastıklar üstüne oturur, sarsıntı ona geçmez.',
       ),
       kart(
-        'Şiddet ve büyüklük',
-        'Büyüklük açığa çıkan enerjidir ve tektir; şiddet ise hissedilen etkidir ve yere göre değişir.',
+        'Odak yerin altında, merkez üssü yüzeyde',
+        'Kırılma yerin 10 km altında oldu: orası odak. Tam üstündeki yeryüzü noktası merkez üssü. Haberde "merkez üssü Elazığ" derken yüzeydeki noktadan söz edilir.',
+      ),
+      kart(
+        'Büyüklük tek sayı, şiddet yere göre',
+        '"7,4 büyüklüğünde deprem": açığa çıkan enerji, aletle ölçülür, tek sayı. Şiddet ise hissedilen etki: merkez üssünde yıkıcı, 300 km ötede hafif sarsıntı.',
         {
           tur: 'tablo',
           basliklar: ['Büyüklük', 'Şiddet'],
@@ -1427,11 +1575,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
             ['Enerji', 'Etki'],
           ],
         },
-        { not: 'Büyüklük tek sayı, şiddet yere göre değişir; haberlerdeki karışıklığı sen yapma.' },
-      ),
-      kart(
-        'Rezonanstan korunma',
-        'Binanın doğal frekansı sarsıntıdan uzaklaştırılır ya da sönümleyici konur; taban yalıtımı sarsıntıyı binaya geçirmez.',
+        { not: 'Haberde "şiddetinde deprem" duyarsan düzelt: tek sayıyla verilen büyüklüktür.' },
       ),
     ], [
       soru('Rezonans, bir cismin doğal frekansına eşit frekansta zorlanmasıyla oluşur.', true, 'Genlik hızla büyüyor.'),
@@ -1452,7 +1596,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
           dogru: 'Küçük ama doğru zamanlı itmeler genliği büyütür; salıncak örneği bu.',
           yanlis: 'Kuvvetin büyüklüğü değil zamanlaması: dış etkinin frekansı doğal frekansa eşitse az kuvvetle büyük salınım olur.',
         },
-        kart: 2,
+        kart: 3,
       },
     ]),
   ]),
