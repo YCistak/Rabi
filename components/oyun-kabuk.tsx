@@ -272,6 +272,7 @@ const BASKI_ORANI = 0.25
 function useTurEfektleri(sayac: SayacBilgisi | null) {
   const [sarsiliyor, setSarsiliyor] = useState(false)
   const oncekiRef = useRef({ dogru: 0, yanlis: 0 })
+  const oncekiKalanRef = useRef<number | null>(null)
   /** Süre uyarısı bu sayaç için çaldı mı — her turda/soruda bir kez. */
   const uyarildiRef = useRef(false)
 
@@ -301,16 +302,25 @@ function useTurEfektleri(sayac: SayacBilgisi | null) {
   const baski = sayac !== null && sayac.toplam > 0 && sayac.kalan > 0 && oran <= BASKI_ORANI
 
   useEffect(() => {
+    const oncekiKalan = oncekiKalanRef.current
+    const kalan = sayac?.kalan ?? null
+    oncekiKalanRef.current = kalan
+
     // Eşiğin üstüne çıkmak uyarıyı yeniden kuruyor: soru saatli modda her
     // sorunun kendi son saniyeleri var.
     if (!baski) {
       uyarildiRef.current = false
       return
     }
+    // Uyarı yalnızca sayaç gerçekten azalırken çalar. Mod değiştiğinde yeni
+    // toplam uygulanmadan önce kalan süre bir çizim boyunca eski değerde
+    // kalabiliyor (Ani Ölüm 10/10 → Sıradan 10/60); bu bir süre olayı değil,
+    // yalnızca ayar değişimi ve ses üretmemeli.
+    if (oncekiKalan === null || kalan === null || kalan >= oncekiKalan) return
     if (uyarildiRef.current) return
     uyarildiRef.current = true
     sureUyarisi()
-  }, [baski])
+  }, [baski, sayac?.kalan])
 
   return { sarsiliyor, baski }
 }

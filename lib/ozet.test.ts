@@ -9,6 +9,7 @@ import {
   dakikaKisa,
   dakikaYaz,
   ondalikYuzdeYaz,
+  ozetGosterilebilirMi,
   sayiEki,
   sonrakiOzetGunu,
   tamYaz,
@@ -167,6 +168,36 @@ describe('aylık özet — soru ve haftalar', () => {
     )
     expect(ozet.calisilanGun).toBe(4)
     expect(ozet.enUzunSeri).toBe(3)
+  })
+})
+
+describe('aylık özet — gösterim uygunluğu', () => {
+  it.each([
+    [0, false],
+    [1, false],
+    [6, false],
+    [7, true],
+  ])('%i etkin günde gösterim kararı %s olur', (gunSayisi, beklenen) => {
+    const gunlukKayitlar = Array.from({ length: gunSayisi }, (_, sira) =>
+      gun(`2026-09-${String(sira + 1).padStart(2, '0')}`, ['Matematik', 1]),
+    )
+    const ozet = aylikOzet(girdi({ gunlukKayitlar }))
+
+    expect(ozet.calisilanGun).toBe(gunSayisi)
+    expect(ozetGosterilebilirMi(ozet)).toBe(beklenen)
+  })
+
+  it('deneme ve bitirilen konu günlerini de etkin sayar', () => {
+    const ozet = aylikOzet(
+      girdi({
+        denemeler: [deneme('a', '2026-09-03', 20)],
+        konuIlerleme: {
+          konu: { bitti: true, bitisTarihi: '2026-09-04', tarih: '2026-09-04' },
+        },
+      }),
+    )
+
+    expect(ozet.calisilanGun).toBe(2)
   })
 })
 

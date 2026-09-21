@@ -131,7 +131,7 @@
 
     <sc-if value="{{ okunur }}" hint-placeholder-val="{{ false }}">
       <div style="border-radius:16px;background:#f0efec;padding:11px 13px;font-size:13px;line-height:1.55;color:#6b6764">
-        Geçmiş günler okunur. Soru yalnızca <b style="font-weight:800;color:#1b1a19">bugüne</b> girilir — sonradan doldurulan bir gün tahmine dayanır, oysa günlük hedef, seri ve haftalık özet bu sayıların o gün gerçekten çözüldüğünü sayıyor.
+        Soru yalnızca <b style="font-weight:800;color:#1b1a19">bugüne ve düne</b> girilir. Daha eski günler okunur kalır.
         <button type="button" onClick="{{ bugunDon }}" style="border:0;background:transparent;padding:0;font-size:13px;font-weight:800;color:#b3491f;text-decoration:underline;text-underline-offset:2px">Bugüne dön</button>
       </div>
     </sc-if>
@@ -324,7 +324,11 @@ class Component extends DCLogic {
   }
 
   get hedef() { return Number(this.props.gunlukHedef ?? 80) }
-  get duzenlenebilir() { return this.state.secili === this.state.bugun }
+  get duzenlenebilir() {
+    const dun = cevir(this.state.bugun)
+    dun.setDate(dun.getDate() - 1)
+    return this.state.secili === this.state.bugun || this.state.secili === iso(dun)
+  }
   kayit(tarih) { return this.state.kayitlar.find((k) => k.tarih === tarih) }
 
   ozet(tarih) {
@@ -451,6 +455,10 @@ class Component extends DCLogic {
     const hedef = this.hedef
     const ozet = this.ozet(secili)
     const duz = this.duzenlenebilir
+    const dun = cevir(bugun)
+    dun.setDate(dun.getDate() - 1)
+    const bugunMu = secili === bugun
+    const dunMu = secili === iso(dun)
     const oran = hedef > 0 ? Math.min(1, ozet.toplam / hedef) : 0
     const hedefTuttu = ozet.toplam >= hedef && hedef > 0
     const satirlarHam = this.kayit(secili)?.kayitlar ?? []
@@ -549,7 +557,7 @@ class Component extends DCLogic {
       halkaRenk: hedefTuttu ? '#4f7a4a' : '#d9622f',
       halkaKayma: (320.4 * (1 - oran)).toFixed(1),
       yuzdeEn: `${Math.round(oran * 100)}%`,
-      gunEtiketi: duz ? 'Bugün' : this.tarihYaziKisa(secili),
+      gunEtiketi: bugunMu ? 'Bugün' : dunMu ? 'Dün' : this.tarihYaziKisa(secili),
       mesaj: !duz
         ? ozet.toplam === 0 ? 'O gün soru girilmemiş.' : `O gün ${ozet.toplam} soru çözmüşsün.`
         : ozet.toplam === 0 ? 'Henüz soru girmedin.'
@@ -566,12 +574,12 @@ class Component extends DCLogic {
       hafta, hucreler, satirlar,
       haftaToplamMetni: `${hafta.reduce((t, g) => t + g.toplam, 0)} soru`,
       seciliGunSayi: cevir(secili).getDate(),
-      seciliTarihMetni: duz ? 'Bugün' : this.tarihYaziKisa(secili),
+      seciliTarihMetni: bugunMu ? 'Bugün' : dunMu ? 'Dün' : this.tarihYaziKisa(secili),
       seciliOzetMetni: ozet.toplam === 0 ? 'soru girilmemiş' : `${ozet.toplam} soru · %${ozet.toplam > 0 ? Math.round((ozet.dogru / ozet.toplam) * 100) : 0} doğru`,
       dersYok: satirlar.length === 0,
       dersSayisiMetni: satirlar.length === 0 ? '' : `${satirlar.length} ders`,
-      bosBaslik: duz ? 'Bu güne henüz ders eklemedin' : 'O gün hiç ders girilmemiş',
-      bosAciklama: duz ? 'Aşağıdan bir ders seç, sayıları gir.' : 'Geçmiş günler yalnızca okunur.',
+      bosBaslik: bugunMu ? 'Bugüne henüz ders eklemedin' : dunMu ? 'Düne henüz ders eklemedin' : 'O gün hiç ders girilmemiş',
+      bosAciklama: duz ? 'Aşağıdan bir ders seç, sayıları gir.' : 'Daha eski günler yalnızca okunur.',
       bugunDon: () => this.setState((o) => ({ secili: o.bugun, ay: cevir(o.bugun) })),
       cipler: (this.state.ciplerAcik ? uygun : uygun.slice(0, 8)).map((ad) => ({ anahtar: ad, ad, ekle: () => this.dersEkle(ad) })),
       ciplerBitti: uygun.length === 0,

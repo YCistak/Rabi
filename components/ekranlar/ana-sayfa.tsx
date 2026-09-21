@@ -6,7 +6,7 @@ import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef } from '@/lib/types'
 import { devamsizlikOzeti, gunOzeti, kayitHaritasi } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
 import { siraYaz } from '@/lib/siralama'
-import { gunDe } from '@/lib/ozet'
+import { AYLIK_OZET_EN_AZ_ETKIN_GUN, gunDe } from '@/lib/ozet'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
 import { kisayollar } from '@/lib/son-kullanilan'
 import { doluDersler, oyunlarinDersleri, type DersId, type DersTanimi } from '@/lib/oyunlar/tanim'
@@ -65,6 +65,7 @@ export function AnaSayfa({
   hedef,
   guncelSiralama,
   ozetHazir,
+  ozetYetersiz,
   sonrakiOzet,
   onOzetAc,
   sonAraclar,
@@ -93,6 +94,8 @@ export function AnaSayfa({
    * pasif: kullanıcı özetin var olduğunu ve ne zaman geleceğini görsün.
    */
   ozetHazir: boolean
+  /** Bugün ayın 1'i ama kapanan ay yedi etkin gün eşiğine ulaşmadı mı. */
+  ozetYetersiz: boolean
   /** Bir sonraki özetin açılacağı gün, 'YYYY-AA-GG' — pasif kartın satırı. */
   sonrakiOzet: string
   onOzetAc: () => void
@@ -351,7 +354,7 @@ export function AnaSayfa({
       </Bolum>
 
       {/* Özet beklemiyorken kart en altta ve pasif: ne zaman geleceğini söylüyor. */}
-      {!ozetHazir && <OzetBekliyor tarih={sonrakiOzet} />}
+      {!ozetHazir && <OzetBekliyor tarih={sonrakiOzet} yetersiz={ozetYetersiz} />}
     </div>
   )
 }
@@ -587,7 +590,7 @@ function OzetDaveti({ onAc }: { onAc: () => void }) {
  * anlaşılmayan bir kart olurdu. Pasif kart tarihi söylüyor, gün gelince
  * aynı kart sayfanın tepesine çıkıp renkleniyor.
  */
-function OzetBekliyor({ tarih }: { tarih: string }) {
+function OzetBekliyor({ tarih, yetersiz }: { tarih: string; yetersiz: boolean }) {
   return (
     <div
       aria-disabled
@@ -599,10 +602,12 @@ function OzetBekliyor({ tarih }: { tarih: string }) {
           AYLIK ÖZET
         </span>
         <span className="mt-0.5 block font-display text-[15px] leading-tight font-extrabold text-muted-foreground">
-          {gunDe(tarih)} açılır
+          {yetersiz ? 'Geçen ay yeterli etkin gün oluşmadı' : `${gunDe(tarih)} açılır`}
         </span>
         <span className="mt-0.5 block text-[12px] font-semibold text-muted-foreground/80">
-          Ayın hikâyesi yalnızca o gün görülür
+          {yetersiz
+            ? `En az ${AYLIK_OZET_EN_AZ_ETKIN_GUN} gün gerekiyor · Sonraki özet ${gunDe(tarih)} açılır`
+            : 'Ayın hikâyesi yalnızca o gün görülür'}
         </span>
       </span>
     </div>

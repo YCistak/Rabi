@@ -171,7 +171,7 @@ export type AylikOzet = {
 
   /** 2 — Konu haritası */
   okunanKonu: number
-  /** Herhangi bir kayıt (soru, pomodoro, oyun) girilen gün sayısı. */
+  /** Soru, Pomodoro, oyun, deneme veya konu etkinliği bulunan farklı gün sayısı. */
   calisilanGun: number
   /** Ay içinde art arda çalışılan en uzun gün dizisi. */
   enUzunSeri: number
@@ -209,8 +209,21 @@ export type AylikOzet = {
   /** 10 — Gelecek ayın hedefi (günlük hedef × gün sayısı); hedef yoksa 0. */
   sonrakiAyHedefi: number
 
-  /** Hiçbir alanda veri yoksa özet gösterilmez. */
+  /** Hiçbir alanda veri yok mu; arşiv ve hesap ayrımı için korunur. */
   bosMu: boolean
+}
+
+/**
+ * Bir aylık hikâyeyi anlamlı kılan en az etkin gün sayısı.
+ *
+ * Yayın günü kişiye göre kaymıyor: uygun özetler yine ayın 1'inde açılıyor.
+ * Bu eşik yalnızca bir-iki günlük veriyi "aylık özet" diye sunmayı engelliyor.
+ */
+export const AYLIK_OZET_EN_AZ_ETKIN_GUN = 7
+
+/** Arşiv kaydı tutulsa bile aylık hikâye gösterilecek kadar veri var mı. */
+export function ozetGosterilebilirMi(ozet: Pick<AylikOzet, 'calisilanGun'>): boolean {
+  return ozet.calisilanGun >= AYLIK_OZET_EN_AZ_ETKIN_GUN
 }
 
 /** Arşiv: ay anahtarı → o ayın özeti. Yıllık özet buradan okuyacak. */
@@ -328,6 +341,7 @@ export function aylikOzet(girdi: OzetGirdisi): AylikOzet {
     // Şablonu silinmiş deneme netlenemiyor; atlanıyor.
     if (!sablon) continue
     denemeSayisi++
+    aktifGunler.add(deneme.tarih)
     const neti: DenemeNeti = {
       ad: deneme.ad,
       tarih: deneme.tarih,
@@ -343,9 +357,12 @@ export function aylikOzet(girdi: OzetGirdisi): AylikOzet {
   // İlk bitiş gününe göre (`bitisTarihi`): konu hangi ay bitirildiyse o aya
   // sayılıyor, sonraki okumalar saymıyor. Alanı olmayan eski kayıtlar hiçbir
   // aya girmiyor.
-  const okunanKonu = Object.values(girdi.konuIlerleme).filter(
-    (k) => k.bitisTarihi !== undefined && gunKumesi.has(k.bitisTarihi),
-  ).length
+  let okunanKonu = 0
+  for (const ilerleme of Object.values(girdi.konuIlerleme)) {
+    if (ilerleme.bitisTarihi === undefined || !gunKumesi.has(ilerleme.bitisTarihi)) continue
+    okunanKonu++
+    aktifGunler.add(ilerleme.bitisTarihi)
+  }
 
   // --- Konu okuma süresi ---
   let okumaSaniye = 0

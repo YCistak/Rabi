@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
 import androidx.core.content.ContextCompat;
 import androidx.core.splashscreen.SplashScreen;
 import com.getcapacitor.BridgeActivity;
@@ -34,6 +35,11 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(CokmeEklentisi.class);
         registerPlugin(GuncellemeEklentisi.class);
         SplashScreen.installSplashScreen(this);
+        // Android 15'te zorunlu olan uçtan uca görünümü eski sürümlerde de
+        // aynı davranacak şekilde aç. WebView'ın sistem çubuklarının altında
+        // kalmaması gereken içeriği Capacitor'ın SystemBars eklentisinin
+        // sağladığı güvenli alan CSS değişkenleri koruyor.
+        EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
         webHatalariniRaporla();
         gorevTaniminiAyarla();

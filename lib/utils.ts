@@ -29,6 +29,13 @@ export function tariheCevir(iso: string): Date {
   return new Date(yil, ay - 1, gun)
 }
 
+/** Yerel takvimde tarihi belirtilen gün kadar ileri veya geri taşır. */
+export function gunKaydir(iso: string, fark: number): string {
+  const tarih = tariheCevir(iso)
+  tarih.setDate(tarih.getDate() + fark)
+  return tariheYaz(tarih)
+}
+
 /** 'YYYY-AA-GG' → "16 Ağustos Pazar" — yıl yazılmaz, takvimde zaten görünüyor. */
 export function tarihYaziKisa(iso: string): string {
   return tariheCevir(iso).toLocaleDateString('tr-TR', {
