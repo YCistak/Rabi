@@ -1,4 +1,4 @@
-import type { OsymTest, Sablon } from './types'
+import type { OsymTest, PuanTuru, Sablon } from './types'
 
 /**
  * ÖSYM test bloklarının gerçek soru sayıları (2026 YKS).
@@ -168,4 +168,33 @@ export function sablonBul(sablonlar: Sablon[], id: string): Sablon {
 export function sablonlariBirlestir(kayitli: Sablon[]): Sablon[] {
   const hazirIdler = new Set(HAZIR_SABLONLAR.map((s) => s.id))
   return [...HAZIR_SABLONLAR, ...kayitli.filter((s) => !hazirIdler.has(s.id))]
+}
+
+/**
+ * Yeni deneme ekranında **seçilebilen** şablonlar. Seviye tespit ve TYT
+ * herkeste; AYT ve YDT yalnızca 11, 12 ve mezunda, o da öğrencinin kendi
+ * alanının sınavı (`Ayarlar.puanTuru`): sayısal öğrenciye AYT Sözel çipi,
+ * 9. sınıfa AYT'nin kendisi giremeyeceği bir sınavı gösteriyordu. Alanını
+ * seçmemiş 11/12 yalnızca ilk ikisini görüyor — bir alanın sınavını
+ * varsayılan diye önermek, kullanıcının vermediği bir kararı vermek olurdu.
+ *
+ * Kullanıcının kendi şablonları süzülmüyor: onları o oluşturdu.
+ * Süzgeç yalnızca seçim listesine ait; kayıtlı denemenin şablonu
+ * `sablonBul` ile tam listeden bulunmaya devam ediyor.
+ */
+export function secilebilirSablonlar(
+  sablonlar: Sablon[],
+  sinif: number,
+  puanTuru: PuanTuru | null,
+): Sablon[] {
+  const alanSinavi: Record<PuanTuru, string> = {
+    say: 'ayt-say',
+    ea: 'ayt-ea',
+    soz: 'ayt-soz',
+    dil: 'ydt',
+  }
+  const alanSinaviId = sinif >= 11 && puanTuru ? alanSinavi[puanTuru] : null
+  return sablonlar.filter(
+    (s) => !s.hazir || s.id === 'okul' || s.id === 'tyt' || s.id === alanSinaviId,
+  )
 }

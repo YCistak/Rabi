@@ -743,6 +743,8 @@ export function AppShell() {
       <YeniDenemeEkrani
         sablonlar={sablonlar}
         varsayilanSablonId={ayarlar.varsayilanSablonId}
+        sinif={ayarlar.buYilSinif}
+        puanTuru={ayarlar.puanTuru}
         duzenlenen={denemeFormu.duzenlenen}
         denemeSayisi={denemeler.length}
         setYanlisSorular={setYanlisSorular}
