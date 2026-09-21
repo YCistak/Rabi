@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { AlertCircle, Camera, Check, X } from 'lucide-react'
-import { Alan, Buton, Cip, Etiket, Kart, Not } from '@/components/ui'
+import { Alan, Buton, Etiket, Kart, Not } from '@/components/ui'
 import {
   EklemeFormu,
   FotografDugmeleri,
@@ -10,9 +10,9 @@ import {
 } from '@/components/yanlis-soru-ekle'
 import { useGeriKatmani } from '@/lib/geri'
 import { katsayiYaz, net, netYaz, sonucGecerliMi, yuvarla } from '@/lib/hesap'
-import { toplamSoru } from '@/lib/sablonlar'
+import { secilebilirSablonlar, toplamSoru } from '@/lib/sablonlar'
 import { bugun, cn, yeniId } from '@/lib/utils'
-import type { Deneme, Sablon, YanlisSoru } from '@/lib/types'
+import type { Deneme, PuanTuru, Sablon, YanlisSoru } from '@/lib/types'
 
 type Giris = { dogru: string; yanlis: string }
 
@@ -28,6 +28,8 @@ function sayi(metin: string): number {
 export function YeniDenemeEkrani({
   sablonlar,
   varsayilanSablonId,
+  sinif,
+  puanTuru,
   duzenlenen,
   denemeSayisi,
   setYanlisSorular,
@@ -36,15 +38,23 @@ export function YeniDenemeEkrani({
 }: {
   sablonlar: Sablon[]
   varsayilanSablonId: string
+  sinif: number
+  puanTuru: PuanTuru | null
   duzenlenen: Deneme | null
   denemeSayisi: number
   setYanlisSorular: (guncelleyici: (onceki: YanlisSoru[]) => YanlisSoru[]) => void
   onKaydet: (deneme: Deneme) => void
   onVazgec: () => void
 }) {
-  const ilkSablon =
-    sablonlar.find((s) => s.id === (duzenlenen?.sablonId ?? varsayilanSablonId)) ??
-    sablonlar[0]
+  /*
+    Seçim listesi sınıfa ve alana göre süzülü (`secilebilirSablonlar`);
+    düzenlenen deneme ise şablonunu tam listeden buluyor — 10. sınıfta
+    girilmiş bir AYT denemesi bugün seçilemese de düzenlenebilmeli.
+  */
+  const secenekler = secilebilirSablonlar(sablonlar, sinif, puanTuru)
+  const ilkSablon = duzenlenen
+    ? (sablonlar.find((s) => s.id === duzenlenen.sablonId) ?? sablonlar[0])
+    : (secenekler.find((s) => s.id === varsayilanSablonId) ?? secenekler[0])
 
   const [sablonId, setSablonId] = useState(ilkSablon.id)
   const [tarih, setTarih] = useState(duzenlenen?.tarih ?? bugun())
@@ -164,11 +174,23 @@ export function YeniDenemeEkrani({
       {!duzenlenen && (
         <div className="mb-4">
           <Etiket>Deneme türü</Etiket>
-          <div className="flex flex-wrap gap-2">
-            {sablonlar.map((s) => (
-              <Cip key={s.id} secili={s.id === sablonId} onClick={() => setSablonId(s.id)}>
+          {/* Pomodoro'nun ders kutularıyla aynı biçim: dikdörtgen, ızgarada. */}
+          <div className="grid grid-cols-2 gap-2">
+            {secenekler.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                aria-pressed={s.id === sablonId}
+                onClick={() => setSablonId(s.id)}
+                className={cn(
+                  'flex h-11 items-center justify-center rounded-[13px] border px-2 text-[12.5px] transition',
+                  s.id === sablonId
+                    ? 'border-[1.5px] border-primary-parlak bg-primary-soft font-extrabold text-primary'
+                    : 'border-border bg-card font-bold text-muted-foreground active:bg-muted',
+                )}
+              >
                 {s.ad}
-              </Cip>
+              </button>
             ))}
           </div>
         </div>
