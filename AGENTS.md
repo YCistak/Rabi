@@ -229,6 +229,22 @@ Ayrı bir solma adımı yok: ekran kendi çıkışını kendi yapıyor (`acilis-
 `acilis-zemin-son`), üstüne bir de opaklık geçişi koymak biten bir geçişin
 üstüne ikincisini koymak olurdu.
 
+### Android'de uçtan uca ekran bütün sürümlerde açık
+
+`MainActivity`, `super.onCreate`ten önce `EdgeToEdge.enable(this)` çağırıyor.
+Android 15 bunu hedef SDK 35 ve üstünde zaten zorluyor; çağrı daha eski Android
+sürümlerindeki davranışı da aynı yapıyor ve Play Console'un kısmi uçtan uca
+ekran uyarısını önlüyor. Play'in Java için önerdiği yüksek seviye AndroidX
+API'si bu; yerine eski `setStatusBarColor`, `setNavigationBarColor` veya
+`layoutInDisplayCutoutMode` API'lerini elle çağırma; AndroidX uyumluluk katmanı
+güncel sürüme göre doğru yolu seçiyor.
+
+WebView içeriğinin sistem çubuklarının altında kalmaması
+`viewport-fit=cover`, Capacitor `SystemBars` eklentisinin enjekte ettiği
+`--safe-area-inset-*` değerleri ve `app/globals.css` içindeki
+`--guvenli-ust` / `--guvenli-alt` değişkenleriyle çözülüyor. Yerli tarafta
+ayrıca dolgu eklemek aynı boşluğu iki kez uygular.
+
 ### Açılış animasyonunu susturan iki tuzak
 
 İkisi de bir kez uygulamaya girdi ve ekranı "animasyonsuz" gösterdi. Yeni bir
@@ -785,6 +801,13 @@ galeride görüntüsü olmayan bir kart kalırdı.
 Katman kayıttan sonra kapanıyor: asıl iş deneme formuna dönmek, art arda çekim
 isteyen kullanıcı düğmeye yeniden basıyor.
 
+## Soru Takibi bir günlük telafi kabul ediyor
+
+Soru Takibi'nde bugün ve yalnızca bir önceki gün düzenlenebilir. Daha eski
+günler geçmişi incelemek için seçilebilir fakat salt okunur kalır; gelecek
+günler seçilemez. Önceki gün `gunKaydir(bugunIso, -1)` ile yerel takvimden
+hesaplanır; böylece ay, yıl ve artık yıl sınırlarında da aynı kural geçerlidir.
+
 ## Aylık özet ayın 1'inde, yalnızca o gün
 
 Özet (`components/ekranlar/aylik-ozet.tsx`, hesabı `lib/ozet.ts`, afişi
@@ -811,6 +834,18 @@ sayfadaki kart bu yüzden **hep var**, iki hâlde:
   görünmeseydi ilk çıktığında nereden geldiği anlaşılmazdı.
 
 Kapatma düğmesi yok — kart zaten gün dönünce kalkıyor.
+
+### Yedi etkin günden azı aylık hikâye değil
+
+Ortak takvim korunuyor ama her kayıt özet olarak gösterilmiyor: kapanan ayda
+en az **7 farklı etkin gün** varsa hikâye ayın 1'inde açılıyor
+(`ozetGosterilebilirMi`). Bir gün önce kurup tek kayıt giren kullanıcıya on
+sayfalık “aylık” özet göstermek, aylık olmayan veriyi aylıkmış gibi sunardı.
+
+Etkin gün uygulamayı yalnızca açmak değil; soru, Pomodoro, mini oyun, deneme,
+konu bitirme veya konu okuma kaydı bulunan gün. Yedi gün oluşmadıysa pasif kart
+sebebi ve bir sonraki ortak tarihi söylüyor. Ay yine arşive yazılıyor: gösterim
+eşiği yıllık toplamdan veri silmiyor, yalnızca aylık hikâyeyi bastırıyor.
 
 ### Arşiv silinmiyor
 

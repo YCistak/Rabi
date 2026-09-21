@@ -87,6 +87,7 @@ import {
   arsivdeEksikAylar,
   aylikOzet,
   bekleyenOzetAyi,
+  ozetGosterilebilirMi,
   sonrakiOzetGunu,
   type AylikOzetArsivi,
 } from '@/lib/ozet'
@@ -425,11 +426,13 @@ export function AppShell() {
    * Davet kartının hâli.
    *
    * Kart ana sayfada hep var: özet bekliyorsa **en üstte ve renkli**, yoksa
-   * **en altta ve pasif**, üstünde bir sonraki açılış günü. Boş ayda (hiç
-   * kayıt yok) kart aktif olmuyor — on sayfası da boş bir hikâye, kullanıcıya
-   * kendi yapmadıklarını on kez tekrar eder.
+   * **en altta ve pasif**, üstünde bir sonraki açılış günü. Yedi etkin güne
+   * ulaşmayan ayda kart aktif olmuyor — birkaç günlük veriyi on sayfalık
+   * "aylık" hikâye diye sunmuyor.
    */
-  const ozetHazir = bekleyenAy !== null && ozet !== null && !ozet.bosMu
+  const gosterilebilirOzet = ozet !== null && ozetGosterilebilirMi(ozet)
+  const ozetHazir = bekleyenAy !== null && gosterilebilirOzet
+  const ozetYetersiz = bekleyenAy !== null && ozet !== null && !gosterilebilirOzet
   const sonrakiOzet = sonrakiOzetGunu(bugun())
 
   // Ay "izlendi" sayılıyor — kapatıldığında değil, **açıldığında**: özet
@@ -909,6 +912,7 @@ export function AppShell() {
                 bekleyenYanlis={yanlisSorular.filter((s) => !s.cozuldu).length}
                 sonDenemeTarihi={enYeniDenemeTarihi}
                 ozetHazir={ozetHazir}
+                ozetYetersiz={ozetYetersiz}
                 sonrakiOzet={sonrakiOzet}
                 onOzetAc={ozetiAc}
                 sonAraclar={sonAraclar}

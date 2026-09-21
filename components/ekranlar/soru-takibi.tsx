@@ -6,7 +6,7 @@ import type { Ayarlar, GunlukKayit, SoruKaydi } from '@/lib/types'
 import { bosSayisi, gunOzeti } from '@/lib/hesap'
 import { CALISMA_DERSLERI, sadelestir } from '@/lib/dersler'
 import { useGeriKatmani } from '@/lib/geri'
-import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
+import { bugun, cn, gunKaydir, tariheCevir, tariheYaz } from '@/lib/utils'
 import { Alan, BaslikSatiri, Buton, Halka, Kart, Not } from '@/components/ui'
 import { Takvim, type GunIsareti } from '@/components/takvim'
 
@@ -102,14 +102,15 @@ export function SoruTakibiEkrani({
   }, [kayitlar, hedef])
 
   /**
-   * Soru yalnızca **bugüne** girilebilir.
+   * Soru yalnızca **bugüne ve düne** girilebilir.
    *
-   * Geçmiş günler açılıyor ama okunur: sonradan doldurulan bir gün tahmine
-   * dayanır, oysa günlük hedef, seri ve haftalık özet bu sayıların o gün
-   * gerçekten çözüldüğünü varsayıyor. Gelecek günler takvimde hiç
-   * seçilemiyor — orada bakılacak bir şey de yok.
+   * Bir günlük telafi payı var; daha eski günler açılıyor ama okunur. Gelecek
+   * günler takvimde hiç seçilemiyor — orada bakılacak bir şey de yok.
    */
-  const duzenlenebilir = secili === bugunIso
+  const dunIso = gunKaydir(bugunIso, -1)
+  const bugunMu = secili === bugunIso
+  const dunMu = secili === dunIso
+  const duzenlenebilir = bugunMu || dunMu
 
   const gunSec = (tarih: string) => {
     setSecili(tarih)
@@ -207,7 +208,7 @@ export function SoruTakibiEkrani({
             </Halka>
             <div className="min-w-0 flex-1">
               <p className="font-display text-[21px] font-extrabold tracking-tight">
-                {duzenlenebilir ? 'Bugün' : gunBasligi(secili)}
+                {bugunMu ? 'Bugün' : dunMu ? 'Dün' : gunBasligi(secili)}
               </p>
               <p className="mt-1 text-[13.5px] leading-snug text-muted-foreground">
                 {!duzenlenebilir
@@ -335,7 +336,7 @@ export function SoruTakibiEkrani({
           // not ve "Bugüne dön" bağlantısı vardı; kullanıcı yalnızca kuralı
           // istedi. Bugüne dönmenin yolu takvimin kendisi.
           <Not tur="uyari" className="rounded-2xl text-center text-[13px] font-extrabold">
-            Sadece bugüne soru girebilirsin
+            Sadece bugüne ve düne soru girebilirsin
           </Not>
         )}
 
@@ -353,12 +354,16 @@ export function SoruTakibiEkrani({
         {satirlar.length === 0 ? (
           <div className="rounded-[20px] border border-dashed border-border px-4 py-6 text-center">
             <p className="text-sm font-bold">
-              {duzenlenebilir ? 'Bu güne henüz ders eklemedin' : 'O gün hiç ders girilmemiş'}
+              {bugunMu
+                ? 'Bugüne henüz ders eklemedin'
+                : dunMu
+                  ? 'Düne henüz ders eklemedin'
+                  : 'O gün hiç ders girilmemiş'}
             </p>
             <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
               {duzenlenebilir
                 ? '"Soru ekle" ile bir ders seç, sayıları gir.'
-                : 'Sadece bugüne soru girebilirsin.'}
+                : 'Sadece bugüne ve düne soru girebilirsin.'}
             </p>
           </div>
         ) : (

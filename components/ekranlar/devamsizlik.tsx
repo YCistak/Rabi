@@ -12,7 +12,7 @@ import {
   tarihYaz,
 } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz, yeniId } from '@/lib/utils'
-import { Alan, Anahtar, BaslikSatiri, Buton, Kart, Not, Onay, SecimSatiri } from '@/components/ui'
+import { Alan, BaslikSatiri, Buton, Kart, Not, Onay, SecimSatiri } from '@/components/ui'
 import { Takvim, type GunIsareti } from '@/components/takvim'
 import { useGeriKatmani } from '@/lib/geri'
 
@@ -514,15 +514,15 @@ function DevamsizlikEkleSayfasi({
           />
         </div>
 
-        <button
-          type="button"
-          onClick={() => setYarimGun((y) => !y)}
-          aria-pressed={yarimGun}
-          className="mt-3 flex w-full items-center gap-3 px-1 py-2.5 text-left"
-        >
-          <span className="flex-1 text-sm font-bold">Yarım gün</span>
-          <Anahtar acik={yarimGun} />
-        </button>
+        <label className="mt-3 flex cursor-pointer items-center gap-3 px-1 py-2.5">
+          <input
+            type="checkbox"
+            checked={yarimGun}
+            onChange={(e) => setYarimGun(e.target.checked)}
+            className="size-5 shrink-0 accent-[var(--primary)]"
+          />
+          <span className="text-sm font-bold">Yarım gün</span>
+        </label>
 
         <div className="relative">
           <Alan

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { haftaBasi, tariheCevir, tariheYaz } from './utils'
+import { gunKaydir, haftaBasi, tariheCevir, tariheYaz } from './utils'
 
 describe('haftaBasi', () => {
   it('haftayı pazartesiden başlatır', () => {
@@ -33,5 +33,19 @@ describe('tariheYaz / tariheCevir', () => {
 
   it('tek haneli ay ve günü sıfırla doldurur', () => {
     expect(tariheYaz(new Date(2026, 0, 5))).toBe('2026-01-05')
+  })
+})
+
+describe('gunKaydir', () => {
+  it('önceki günü ay sınırında doğru bulur', () => {
+    expect(gunKaydir('2026-10-01', -1)).toBe('2026-09-30')
+  })
+
+  it('önceki günü yıl sınırında doğru bulur', () => {
+    expect(gunKaydir('2027-01-01', -1)).toBe('2026-12-31')
+  })
+
+  it('artık yıldaki 29 Şubat üzerinden ilerler', () => {
+    expect(gunKaydir('2028-03-01', -1)).toBe('2028-02-29')
   })
 })

@@ -48,6 +48,7 @@ import { saatYaz } from '@/lib/hatirlatma'
 import { AD_EN_AZ, adBiciminde, adGecerliMi } from '@/lib/ad'
 import { cn, yeniId } from '@/lib/utils'
 import { dosyayiPaylas } from '@/lib/paylas'
+import { useGeriKatmani } from '@/lib/geri'
 import type {
   Ayarlar,
   Deneme,
@@ -170,6 +171,7 @@ export function AyarlarEkrani({
   const adMetni = adTaslagi ?? ayarlar.ad
   const adUyarisi = adTaslagi !== null && !adGecerliMi(adTaslagi)
   const [sifirlamaAcik, setSifirlamaAcik] = useState(false)
+  const [yedekSecimiAcik, setYedekSecimiAcik] = useState(false)
   const [durum, setDurum] = useState<string | null>(null)
   const [izinReddedildi, setIzinReddedildi] = useState(false)
   const [fotoBoyut, setFotoBoyut] = useState(0)
@@ -584,25 +586,17 @@ export function AyarlarEkrani({
         {/* Yedekleme işlemleri önce tek satırın altında çerçeveli düğmelerden
             oluşan ayrı bir blok hâlindeydi; ekranın geri kalanı satır diliyle
             konuşurken orası gri bir levha gibi duruyordu. Her işlem kendi satırı
-            oldu, fotoğraf uyarısı da satırların açıklamasına girdi. */}
+            oldu. Fotoğraf seçimi ayrı bir işlem değil, indirmenin içindeki karar. */}
         <Bolum baslik="Veri">
           <Satir
             Simge={Download}
             renk="mavi"
             baslik="Yedeği indir"
-            onClick={() => void dosyayaIndir(false)}
+            onClick={() => {
+              if (resimIdleri.length > 0) setYedekSecimiAcik(true)
+              else void dosyayaIndir(false)
+            }}
           />
-
-          {fotoBoyut > 0 && (
-            <Satir
-              Simge={Images}
-              renk="pembe"
-              baslik="Fotoğraflarla yedekle"
-              // Base64'e çevrilince veri yaklaşık 4/3 büyüyor.
-              deger={`~${boyutYaz((fotoBoyut * 4) / 3)}`}
-              onClick={() => void dosyayaIndir(true)}
-            />
-          )}
 
           <Satir
             Simge={Upload}
@@ -677,6 +671,85 @@ export function AyarlarEkrani({
         onIptal={() => setSifirlamaAcik(false)}
       />
 
+      <YedekSecimi
+        acik={yedekSecimiAcik}
+        fotografBoyutu={fotoBoyut}
+        onSec={(fotograflarla) => {
+          setYedekSecimiAcik(false)
+          void dosyayaIndir(fotograflarla)
+        }}
+        onKapat={() => setYedekSecimiAcik(false)}
+      />
+
+    </div>
+  )
+}
+
+/** Yedek dosyasına Yanlış Soru Bankası fotoğraflarının eklenip eklenmeyeceğini sorar. */
+function YedekSecimi({
+  acik,
+  fotografBoyutu,
+  onSec,
+  onKapat,
+}: {
+  acik: boolean
+  fotografBoyutu: number
+  onSec: (fotograflarla: boolean) => void
+  onKapat: () => void
+}) {
+  useGeriKatmani(acik, onKapat)
+
+  if (!acik) return null
+
+  return (
+    <div
+      className="katman-zemin fixed inset-0 z-50 flex items-end justify-center bg-black/40 px-4 pt-[calc(1rem+var(--guvenli-ust))] pb-[calc(1rem+var(--guvenli-alt))]"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="yedek-secimi-baslik"
+    >
+      <div className="alt-pencere-girisi w-full max-w-md rounded-2xl border border-border bg-card p-5">
+        <div className="flex items-start gap-3">
+          <div className="grid size-10 shrink-0 place-items-center rounded-[14px] bg-yzm-kart text-yzm-koyu">
+            <Images size={19} aria-hidden />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p id="yedek-secimi-baslik" className="font-display text-lg font-extrabold">
+              Fotoğraflar da indirilsin mi?
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+              Yanlış Soru Bankası’ndaki fotoğrafları da yedek dosyasına ekleyebilirsin.
+              {fotografBoyutu > 0 && (
+                <>
+                  {' '}Fotoğraflı dosya yaklaşık{' '}
+                  {/* Base64'e çevrilince veri yaklaşık 4/3 büyüyor. */}
+                  <span className="font-extrabold text-foreground">
+                    {boyutYaz((fotografBoyutu * 4) / 3)}
+                  </span>{' '}
+                  daha büyük olur.
+                </>
+              )}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onKapat}
+            aria-label="Kapat"
+            className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted/70 text-muted-foreground active:bg-muted"
+          >
+            <X size={16} strokeWidth={2.4} aria-hidden />
+          </button>
+        </div>
+
+        <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+          <Buton bicim="ikincil" className="flex-1" onClick={() => onSec(false)}>
+            Fotoğrafsız indir
+          </Buton>
+          <Buton className="flex-1" onClick={() => onSec(true)}>
+            Fotoğraflarla indir
+          </Buton>
+        </div>
+      </div>
     </div>
   )
 }

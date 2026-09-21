@@ -2100,7 +2100,10 @@ body {
 }
 
 .acilir-giris {
-  animation: acilirGiris 200ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  /* İçinden Odak Kilidi daveti gibi `fixed` katmanlar açılabiliyor. `both`
+     dolgu animasyon bittikten sonra da yığın/kapsayıcı bağlamını koruyup
+     katmanı ekran yerine bu satıra bağlardı. */
+  animation: acilirGiris 200ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
