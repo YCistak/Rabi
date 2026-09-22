@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Check, Pencil, Trash2 } from 'lucide-react'
+import { Check, ChevronRight, Info, Pencil, Trash2 } from 'lucide-react'
 import type { Hedef, PuanTuru } from '@/lib/types'
 import { siraYaz } from '@/lib/siralama'
 import {
@@ -15,7 +15,7 @@ import {
   type Bolum,
   type Universite,
 } from '@/lib/hedef-katalog'
-import { Alan, Buton, Etiket, Kart, Not, Onay } from '@/components/ui'
+import { Alan, Buton, Etiket, Kart, Onay } from '@/components/ui'
 import { AramaAlani, Liste, SecilenSatir, SecimSatiri } from '@/components/hedef-secici'
 import { cn } from '@/lib/utils'
 
@@ -183,9 +183,12 @@ export function HedefEkrani({
           />
           <div className="mb-3 flex items-center justify-between gap-3">
             <p className="text-xs font-extrabold tracking-wide text-muted-foreground">HEDEFİMDEKİ BÖLÜM</p>
-            <span className="rounded-lg bg-primary-soft px-2.5 py-1 text-xs font-bold text-primary">
-              {PUAN_TURU_ADI[hedef.puanTuru]}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="rounded-lg bg-primary-soft px-2.5 py-1 text-xs font-bold text-primary">
+                {PUAN_TURU_ADI[hedef.puanTuru]}
+              </span>
+              <ChevronRight size={18} className="text-muted-foreground" aria-hidden />
+            </div>
           </div>
           <div className="min-w-0">
             <p className="font-display text-xl font-extrabold leading-snug">{hedef.bolum}</p>
@@ -208,9 +211,6 @@ export function HedefEkrani({
               </p>
             )}
           </div>
-          <p className="mt-4 flex items-center gap-1.5 text-xs font-bold text-primary" aria-hidden>
-            <Pencil size={14} /> Düzenle
-          </p>
         </Kart>
       )}
 
@@ -428,18 +428,15 @@ export function HedefEkrani({
       </Kart>
       </>}
 
-      {/* Uzun açıklamalar kısaltıldı; ekranın altı bir paragraf duvarıydı.
-          İki cümle kalıyor ve ikisi de süs değil: taban puan gerçekten bir
-          tahmin, ÖSYM ile bağlantısızlık da adı kaynak olarak geçtiği için
-          söylenmesi gereken bir şey. */}
-      <Not className="mt-4">
-        Taban puan <strong>tahmindir</strong>.
-      </Not>
-
-      <Not className="mt-2">
-        Rabi ÖSYM ile bağlantılı değildir; sayılar ÖSYM'nin herkese açık
-        yayınlarından derlenmiştir.
-      </Not>
+      <div className="mt-5 rounded-2xl border border-border bg-card p-4 text-xs leading-relaxed text-muted-foreground">
+        <div className="flex gap-3">
+          <Info size={17} className="mt-0.5 shrink-0 text-primary" aria-hidden />
+          <div className="space-y-3">
+            <p><strong className="text-foreground">Taban puan ve başarı sırası tahmindir.</strong> Deneme sonuçlarına göre yaklaşık bir değer gösterilir.</p>
+            <p className="border-t border-border pt-3">Veriler ÖSYM’nin herkese açık yayınlarından derlenmiştir. Rabi, ÖSYM’ye bağlı değildir.</p>
+          </div>
+        </div>
+      </div>
 
       <Onay
         acik={silmeAcik}
