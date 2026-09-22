@@ -15,9 +15,9 @@ import {
   type Bolum,
   type Universite,
 } from '@/lib/hedef-katalog'
-import { Alan, BaslikSatiri, Buton, Cip, Etiket, Kart, Not, Onay } from '@/components/ui'
+import { Alan, Buton, Etiket, Kart, Not, Onay } from '@/components/ui'
 import { AramaAlani, Liste, SecilenSatir, SecimSatiri } from '@/components/hedef-secici'
-import { Rabi } from '@/components/maskot/rabi'
+import { cn } from '@/lib/utils'
 
 const PUAN_TURU_ADI: Record<PuanTuru, string> = {
   say: 'Sayısal',
@@ -154,36 +154,58 @@ export function HedefEkrani({
 
   return (
     <div>
-      <BaslikSatiri baslik="Hedefim" />
+      <h1 className="mb-4 font-display text-xl font-extrabold">Hedefim</h1>
 
       {hedef && (
-        <Kart className="mb-4 flex items-center gap-3">
-          <Rabi durum={fark !== null && fark <= 0 ? 'kutlama' : 'normal'} boyut={64} />
-          <div className="min-w-0 flex-1">
-            <p className="font-display text-lg font-semibold leading-tight">{hedef.bolum}</p>
+        <Kart className="mb-5 overflow-hidden rounded-[24px] p-5">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <p className="text-xs font-extrabold tracking-wide text-muted-foreground">HEDEFİMDEKİ BÖLÜM</p>
+            <span className="rounded-lg bg-primary-soft px-2.5 py-1 text-xs font-bold text-primary">
+              {PUAN_TURU_ADI[hedef.puanTuru]}
+            </span>
+          </div>
+          <div className="min-w-0">
+            <p className="font-display text-xl font-extrabold leading-snug">{hedef.bolum}</p>
             {hedef.universite && (
-              <p className="text-sm text-muted-foreground">{hedef.universite}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{hedef.universite}</p>
             )}
             {fark === null ? (
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-4 rounded-xl bg-muted/60 p-3 text-xs leading-relaxed text-muted-foreground">
                 {hedef.basariSirasi == null
                   ? 'Gereken başarı sırasını girersen ne kadar kaldığını takip ederim.'
                   : 'Deneme ekleyince buraya ne kadar kaldığını yazarım.'}
               </p>
             ) : fark <= 0 ? (
-              <p className="mt-1 text-sm font-medium text-success">
-                Hedefin içindesin — {siraYaz(Math.abs(fark))} sıra fazlan var.
+              <p className="mt-4 rounded-xl bg-success-soft p-3 text-sm font-bold text-success">
+                Tahmini sıralaman hedefin içinde — {siraYaz(Math.abs(fark))} sıra öndesin.
               </p>
             ) : (
-              <p className="mt-1 text-sm font-medium text-primary">
-                {siraYaz(fark)} sıra uzaktasın.
+              <p className="mt-4 rounded-xl bg-primary-soft p-3 text-sm font-bold text-primary">
+                Tahmini sıralamanla hedefin arasında {siraYaz(fark)} sıra var.
               </p>
             )}
           </div>
         </Kart>
       )}
 
-      <Kart className="space-y-4">
+      <div className="mb-3 flex rounded-[14px] bg-muted p-1" role="group" aria-label="Hedef giriş yöntemi">
+        {[{ elle: false, ad: 'Listeden seç' }, { elle: true, ad: 'Kendim yaz' }].map((kip) => (
+          <button
+            key={kip.ad}
+            type="button"
+            aria-pressed={elleMod === kip.elle}
+            onClick={() => { setElleMod(kip.elle); setDuzenleAcik(false) }}
+            className={cn(
+              'h-9 flex-1 rounded-[10px] text-[13px] font-extrabold transition focus-visible:outline-2 focus-visible:outline-ring',
+              elleMod === kip.elle ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground',
+            )}
+          >
+            {kip.ad}
+          </button>
+        ))}
+      </div>
+
+      <Kart className="space-y-5 rounded-[20px] p-4">
         {elleMod ? (
           <ElleGiris
             universite={universite}
@@ -296,11 +318,20 @@ export function HedefEkrani({
           <div className="space-y-3">
             <div>
               <Etiket>Puan türü</Etiket>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 {(Object.keys(PUAN_TURU_ADI) as PuanTuru[]).map((t) => (
-                  <Cip key={t} secili={puanTuru === t} onClick={() => setPuanTuru(t)}>
+                  <button
+                    key={t}
+                    type="button"
+                    aria-pressed={puanTuru === t}
+                    onClick={() => setPuanTuru(t)}
+                    className={cn(
+                      'h-11 rounded-xl border text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-ring',
+                      puanTuru === t ? 'border-primary-parlak bg-primary-soft text-primary' : 'border-border text-muted-foreground active:bg-muted',
+                    )}
+                  >
                     {PUAN_TURU_ADI[t]}
-                  </Cip>
+                  </button>
                 ))}
               </div>
             </div>
@@ -316,7 +347,7 @@ export function HedefEkrani({
                     setTabanPuan(e.target.value.replace(/[^0-9,.]/g, '').slice(0, 7))
                   }
                   placeholder="örn. 470"
-                  className="rakam"
+                  className="rakam h-12 text-center text-lg font-extrabold placeholder:text-sm placeholder:font-bold"
                 />
               </div>
               <div>
@@ -329,7 +360,7 @@ export function HedefEkrani({
                     setBasariSirasi(e.target.value.replace(/[^0-9]/g, '').slice(0, 8))
                   }
                   placeholder="örn. 25000"
-                  className="rakam"
+                  className="rakam h-12 text-center text-lg font-extrabold placeholder:text-sm placeholder:font-bold"
                 />
               </div>
             </div>
@@ -356,22 +387,12 @@ export function HedefEkrani({
               <Trash2 size={18} aria-hidden />
             </Buton>
           )}
-          <Buton className="flex-1" onClick={kaydet} disabled={!kaydedilebilir}>
+          <Buton className="h-12 flex-1 rounded-[14px]" onClick={kaydet} disabled={!kaydedilebilir}>
             <Check size={18} aria-hidden />
-            Kaydet
+            Hedefimi kaydet
           </Buton>
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            setElleMod((a) => !a)
-            setDuzenleAcik(false)
-          }}
-          className="w-full rounded-lg py-1 text-center text-[13px] font-bold text-ikincil transition active:opacity-70"
-        >
-          {elleMod ? 'Listeden seçeyim' : 'Bölümüm listede yok, kendim yazayım'}
-        </button>
       </Kart>
 
       {/* Uzun açıklamalar kısaltıldı; ekranın altı bir paragraf duvarıydı.
@@ -415,10 +436,10 @@ function TahminOzeti({
   const puan = sayiVeyaNull(tabanPuan)
   const sira = sayiVeyaNull(basariSirasi)
   return (
-    <div className="rounded-xl bg-muted/70 px-3.5 py-3">
+    <div className="rounded-2xl bg-muted/60 p-4">
       <div className="flex items-baseline justify-between gap-3">
         <span className="text-xs font-bold text-muted-foreground">
-          Tahmini taban · {PUAN_TURU_ADI[puanTuru]}
+          {PUAN_TURU_ADI[puanTuru]}
         </span>
         <button
           type="button"
@@ -429,13 +450,19 @@ function TahminOzeti({
           Elle düzelt
         </button>
       </div>
-      <div className="mt-1.5 flex items-baseline gap-4">
-        <span className="rakam font-display text-xl font-extrabold text-primary">
-          {puan === null ? '—' : puanYaz(puan)}
-        </span>
-        <span className="rakam text-sm font-bold text-muted-foreground">
-          {sira === null ? '—' : `${siraYaz(sira)}. sıra`}
-        </span>
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <div>
+          <p className="text-xs text-muted-foreground">Tahmini taban puan</p>
+          <p className="rakam mt-1 font-display text-2xl font-extrabold text-primary">
+            {puan === null ? '—' : puanYaz(puan)}
+          </p>
+        </div>
+        <div>
+          <p className="text-xs text-muted-foreground">Hedef başarı sırası</p>
+          <p className="rakam mt-1 font-display text-2xl font-extrabold">
+            {sira === null ? '—' : siraYaz(sira)}
+          </p>
+        </div>
       </div>
     </div>
   )
