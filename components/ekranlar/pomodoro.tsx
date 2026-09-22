@@ -952,10 +952,10 @@ function MiniPomodoro({
           className="golge-kart pointer-events-auto relative grid size-[82px] place-items-center rounded-full bg-card transition active:scale-95 active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           <span
-            className="pointer-events-none absolute -top-10 left-1/2 z-10 -translate-x-1/2 drop-shadow-[0_2px_3px_rgba(54,33,112,0.16)]"
+            className="pointer-events-none absolute -top-7 left-1/2 z-10 -translate-x-1/2 drop-shadow-[0_2px_3px_rgba(54,33,112,0.16)]"
             aria-hidden
           >
-            <Rabi durum="calisiyor" poz="yuz" boyut={56} />
+            <Rabi durum="calisiyor" poz="yuz" boyut={48} />
           </span>
           <svg
             width={boyut}
