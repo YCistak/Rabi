@@ -117,6 +117,8 @@ export function AppShell() {
 
   const [sekme, setSekme] = useState<Sekme>('ana')
   const [ekran, setEkran] = useState<Ekran | null>(null)
+  /** Mini sayaç açıkken son içeriğin kartın arkasında kalmaması için. */
+  const [pomodoroMiniAcik, setPomodoroMiniAcik] = useState(false)
   /** Deneme ekleme/düzenleme, sekmenin üstünde açılan bir alt ekran. */
   const [denemeFormu, setDenemeFormu] = useState<{ duzenlenen: Deneme | null } | null>(null)
 
@@ -774,7 +776,12 @@ export function AppShell() {
 
     Açılıştaki yumuşak geçişi artık `components/acilis.tsx` hallediyor.
   */
-    <div className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(6rem+var(--guvenli-alt))]">
+    <div
+      className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))]"
+      style={{
+        paddingBottom: `calc(${pomodoroMiniAcik ? 10 : 6}rem + var(--guvenli-alt))`,
+      }}
+    >
       {/*
         Ekran ve sekme değişimi tek bir karede oluyordu: içerik tak diye yerine
         oturuyordu. `anahtar` her değişimde kutuyu söküp yeniden kuruyor, böylece
@@ -785,10 +792,11 @@ export function AppShell() {
         Pomodoro ekranı öteki alt ekranlardan farklı olarak sürekli bağlı
         kalır. Sayaç, ses ve yerli servis bu bileşenin belleğindedir; ekran
         değişiminde sökülürse temizlik etkisi turu bitirip sayacı başa alır.
-        `hidden` görünümü kaldırır ama bileşeni yaşatır; uygulama gerçekten
-        kapanınca normal sökülme temizliği yine çalışır.
+        Bileşen kendi tam ekran içeriğini gizler ama sayacı ve mini kartı
+        yaşatır; uygulama gerçekten kapanınca normal sökülme temizliği yine
+        çalışır.
       */}
-      <div hidden={ekran !== 'pomodoro'}>
+      {ekran === 'pomodoro' && (
         <Buton
           bicim="hayalet"
           boy="kucuk"
@@ -797,12 +805,15 @@ export function AppShell() {
         >
           <ArrowLeft size={16} aria-hidden /> Geri
         </Buton>
-        <PomodoroEkrani
-          ayar={pomodoroAyar}
-          setAyar={setPomodoroAyar}
-          onSeansBitti={(seans) => setPomodoroGecmis((o) => [...o, seans])}
-        />
-      </div>
+      )}
+      <PomodoroEkrani
+        ayar={pomodoroAyar}
+        setAyar={setPomodoroAyar}
+        onSeansBitti={(seans) => setPomodoroGecmis((o) => [...o, seans])}
+        gorunur={ekran === 'pomodoro'}
+        onSayacaDon={() => setEkran('pomodoro')}
+        onMiniGorunurluguDegisti={setPomodoroMiniAcik}
+      />
 
       <SayfaGecisi key={ekran ?? `sekme:${sekme}`} gizli={ekran === 'pomodoro'}>
         {ekran !== null ? (

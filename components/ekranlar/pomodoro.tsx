@@ -5,6 +5,7 @@ import { KeepAwake } from '@capacitor-community/keep-awake'
 import { Capacitor } from '@capacitor/core'
 import {
   ChevronLeft,
+  ChevronRight,
   Clock,
   Music,
   Pause,
@@ -56,10 +57,17 @@ export function PomodoroEkrani({
   ayar,
   setAyar,
   onSeansBitti,
+  gorunur,
+  onSayacaDon,
+  onMiniGorunurluguDegisti,
 }: {
   ayar: PomodoroAyar
   setAyar: (guncelleyici: PomodoroAyar | ((onceki: PomodoroAyar) => PomodoroAyar)) => void
   onSeansBitti: (seans: PomodoroSeans) => void
+  /** Pomodoro alt ekranı şu an açık mı. Sayaç bileşeni kapalıyken de yaşar. */
+  gorunur: boolean
+  onSayacaDon: () => void
+  onMiniGorunurluguDegisti: (acik: boolean) => void
 }) {
   const [asama, setAsama] = useState<Asama>('calisma')
   const [tur, setTur] = useState(1)
@@ -88,8 +96,8 @@ export function PomodoroEkrani({
    *
    * `calisiyor`dan ayrı bir state: sahne duraklatınca kapanmıyor (duraklatılmış
    * tur hâlâ o turdur) ve aşama bitince de açık kalıyor — mola, sahnedeki
-   * Başlat ile başlıyor. Kapatan üç şey var: üst köşedeki geri (duraklatıp
-   * hazırlığa döner), turu bitir ve provadan çıkış.
+   * Başlat ile başlıyor. Üst köşedeki geri yalnızca sahneyi kapatır; turu
+   * duraklatmak ve bitirmek ayrı eylemlerdir.
    */
   const [sahne, setSahne] = useState(false)
   const [sesPaneli, setSesPaneli] = useState(false)
@@ -133,6 +141,15 @@ export function PomodoroEkrani({
    * kilitli: başlamış bir turun uzunluğu değişmemeli.
    */
   const turIcinde = !dokunulmadi
+  const miniGorunur = turIcinde && !gorunur
+
+  // Mini kart sabit durduğu için sayfanın son içeriğine AppShell yer açar.
+  // Yalnızca görünürlük değişimini yukarı taşımak, saniyelik sayacı bütün
+  // uygulamanın yeniden çizimine dönüştürmez.
+  useEffect(() => {
+    onMiniGorunurluguDegisti(miniGorunur)
+    return () => onMiniGorunurluguDegisti(false)
+  }, [miniGorunur, onMiniGorunurluguDegisti])
 
   const calarAl = useCallback(() => {
     if (!calarRef.current) calarRef.current = new SesCalar()
@@ -530,7 +547,7 @@ export function PomodoroEkrani({
 
   if (kurulumAcik) {
     return (
-      <div>
+      <div hidden={!gorunur}>
         <BaslikSatiri baslik="Pomodoro" aciklama="Odak kilidi" />
         <OdakKurulum ayar={ayar} setAyar={setAyar} onBitir={() => setKurulumAcik(false)} />
       </div>
@@ -538,8 +555,9 @@ export function PomodoroEkrani({
   }
 
   return (
-    <div>
-      <BaslikSatiri baslik="Pomodoro" aciklama={prova ? 'Kitapçık süresi' : durumEtiketi} />
+    <>
+      <div hidden={!gorunur}>
+        <BaslikSatiri baslik="Pomodoro" aciklama={prova ? 'Kitapçık süresi' : durumEtiketi} />
 
       {bitenProva && (
         <Not className="mb-4">
@@ -877,6 +895,80 @@ export function PomodoroEkrani({
           onAtla={atla}
         />
       )}
+      </div>
+      {miniGorunur && (
+        <MiniPomodoro
+          baslik={prova ? `${prova.ad} denemesi` : (ders ?? ASAMA_ADI[asama])}
+          durum={
+            calisiyor
+              ? prova
+                ? 'Deneme provası'
+                : `${tur}. tur · ${ASAMA_ADI[asama]}`
+              : 'Duraklatıldı'
+          }
+          kalan={kalan}
+          oran={oran}
+          mola={molaMi}
+          onDon={() => {
+            setSahne(true)
+            onSayacaDon()
+          }}
+        />
+      )}
+    </>
+  )
+}
+
+/** Alt menünün üstünde, başka sayfalardayken çalışan turu görünür tutar. */
+function MiniPomodoro({
+  baslik,
+  durum,
+  kalan,
+  oran,
+  mola,
+  onDon,
+}: {
+  baslik: string
+  durum: string
+  kalan: number
+  oran: number
+  mola: boolean
+  onDon: () => void
+}) {
+  const renk = mola ? 'var(--ikincil)' : 'var(--primary-parlak)'
+  const sure = sureYaz(kalan)
+
+  return (
+    <div className="fixed inset-x-3 bottom-[calc(4.75rem+var(--guvenli-alt))] z-30 mx-auto max-w-md">
+      <button
+        type="button"
+        onClick={onDon}
+        aria-label={`${baslik}, ${sure} kaldı. Pomodoro sayacına dön.`}
+        className="golge-kart relative flex h-[60px] w-full items-center gap-3 overflow-hidden rounded-[18px] border border-border bg-card px-3.5 text-left transition active:scale-[0.985] active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      >
+        <span
+          className="grid size-9 shrink-0 place-items-center rounded-full text-white"
+          style={{ background: renk }}
+        >
+          <Clock size={18} aria-hidden />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[13.5px] font-extrabold">{baslik}</span>
+          <span className="block truncate text-[11.5px] font-semibold text-muted-foreground">
+            {durum}
+          </span>
+        </span>
+        <span className="rakam shrink-0 font-display text-xl font-extrabold tabular-nums">
+          {sure}
+        </span>
+        <ChevronRight size={18} className="shrink-0 text-muted-foreground" aria-hidden />
+        <span className="absolute inset-x-0 bottom-0 h-1 bg-muted" aria-hidden>
+          <span
+            className="block h-full rounded-r-full transition-[width] duration-500 ease-linear"
+            style={{ width: `${oran * 100}%`, background: renk }}
+          />
+        </span>
+      </button>
     </div>
   )
 }
