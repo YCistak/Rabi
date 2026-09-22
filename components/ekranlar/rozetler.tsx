@@ -20,7 +20,7 @@ import {
 } from '@/lib/rozetler'
 import { netYaz } from '@/lib/hesap'
 import { cn } from '@/lib/utils'
-import { BaslikSatiri, Not } from '@/components/ui'
+import { Not } from '@/components/ui'
 import { KADEME_SINIFI } from '@/components/rozet-renk'
 
 /**
@@ -191,8 +191,6 @@ export function RozetlerEkrani({
 
   return (
     <div>
-      <BaslikSatiri baslik="Başarımlar" />
-
       {/* Sayaç ve çubuk tek satırda: "12/40" ne kadarını topladığını söylüyor,
           çubuk aynı şeyi bakmadan okunur hâle getiriyor. */}
       <div className="flex items-center gap-3">
@@ -208,7 +206,7 @@ export function RozetlerEkrani({
         </div>
       </div>
 
-      <div className="mt-4 flex gap-1.5 rounded-full bg-muted p-1">
+      <div className="mt-4 flex rounded-[14px] bg-muted p-1" role="group" aria-label="Başarım filtresi">
         <SuzgecDugmesi secili={suzgec === 'tumu'} onClick={() => setSuzgec('tumu')} sayi={toplam}>
           Tümü
         </SuzgecDugmesi>
@@ -284,10 +282,10 @@ function SuzgecDugmesi({
       type="button"
       aria-pressed={secili}
       className={cn(
-        'flex-1 rounded-full py-2 text-[13px] font-bold transition',
+        'h-9 flex-1 rounded-[10px] text-[13px] font-extrabold transition',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         secili
-          ? 'bg-card text-primary shadow-[0_1px_4px_rgba(90,60,35,0.12)]'
+          ? 'bg-card text-primary shadow-[0_1px_3px_rgba(90,60,35,0.12)]'
           : 'text-muted-foreground active:bg-card/50',
       )}
       {...props}
