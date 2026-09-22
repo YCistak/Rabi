@@ -5,7 +5,6 @@ import { KeepAwake } from '@capacitor-community/keep-awake'
 import { Capacitor } from '@capacitor/core'
 import {
   ChevronLeft,
-  ChevronRight,
   Clock,
   Music,
   Pause,
@@ -937,38 +936,52 @@ function MiniPomodoro({
 }) {
   const renk = mola ? 'var(--ikincil)' : 'var(--primary-parlak)'
   const sure = sureYaz(kalan)
+  const boyut = 82
+  const kalinlik = 6
+  const yaricap = (boyut - kalinlik) / 2
+  const cevre = 2 * Math.PI * yaricap
 
   return (
-    <div className="fixed inset-x-3 bottom-[calc(4.75rem+var(--guvenli-alt))] z-30 mx-auto max-w-md">
-      <button
-        type="button"
-        onClick={onDon}
-        aria-label={`${baslik}, ${sure} kaldı. Pomodoro sayacına dön.`}
-        className="golge-kart relative flex h-[60px] w-full items-center gap-3 overflow-hidden rounded-[18px] border border-border bg-card px-3.5 text-left transition active:scale-[0.985] active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-      >
-        <span
-          className="grid size-9 shrink-0 place-items-center rounded-full text-white"
-          style={{ background: renk }}
+    <div className="pointer-events-none fixed inset-x-0 bottom-[calc(4.75rem+var(--guvenli-alt))] z-30">
+      <div className="mx-auto flex max-w-md justify-end px-3">
+        <button
+          type="button"
+          onClick={onDon}
+          aria-label={`${baslik}, ${durum}, ${sure} kaldı. Pomodoro sayacına dön.`}
+          className="golge-kart pointer-events-auto relative grid size-[82px] place-items-center rounded-full bg-card transition active:scale-95 active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
-          <Clock size={18} aria-hidden />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-[13.5px] font-extrabold">{baslik}</span>
-          <span className="block truncate text-[11.5px] font-semibold text-muted-foreground">
-            {durum}
+          <svg
+            width={boyut}
+            height={boyut}
+            className="absolute inset-0 -rotate-90"
+            aria-hidden
+          >
+            <circle
+              cx={boyut / 2}
+              cy={boyut / 2}
+              r={yaricap}
+              fill="none"
+              stroke="var(--muted)"
+              strokeWidth={kalinlik}
+            />
+            <circle
+              cx={boyut / 2}
+              cy={boyut / 2}
+              r={yaricap}
+              fill="none"
+              stroke={renk}
+              strokeWidth={kalinlik}
+              strokeLinecap="round"
+              strokeDasharray={cevre}
+              strokeDashoffset={cevre * (1 - oran)}
+              className="transition-[stroke-dashoffset] duration-500 ease-linear"
+            />
+          </svg>
+          <span className="rakam relative font-display text-[15px] font-extrabold tracking-[-0.03em] tabular-nums">
+            {sure}
           </span>
-        </span>
-        <span className="rakam shrink-0 font-display text-xl font-extrabold tabular-nums">
-          {sure}
-        </span>
-        <ChevronRight size={18} className="shrink-0 text-muted-foreground" aria-hidden />
-        <span className="absolute inset-x-0 bottom-0 h-1 bg-muted" aria-hidden>
-          <span
-            className="block h-full rounded-r-full transition-[width] duration-500 ease-linear"
-            style={{ width: `${oran * 100}%`, background: renk }}
-          />
-        </span>
-      </button>
+        </button>
+      </div>
     </div>
   )
 }
