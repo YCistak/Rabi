@@ -70,6 +70,8 @@ export function HedefEkrani({
   const [tabanPuan, setTabanPuan] = useState(hedef?.tabanPuan?.toString() ?? '')
   const [basariSirasi, setBasariSirasi] = useState(hedef?.basariSirasi?.toString() ?? '')
   const [silmeAcik, setSilmeAcik] = useState(false)
+  const [hedefDuzenleniyor, setHedefDuzenleniyor] = useState(false)
+  const formAcik = hedef === null || hedefDuzenleniyor
 
   // Katalog dışı bir hedef kayıtlıysa ekran elle giriş kipinde açılıyor: eski
   // sürümde herkes iki adı serbest metin yazıyordu ve o kayıtlar duruyor.
@@ -136,6 +138,21 @@ export function HedefEkrani({
 
   const kaydedilebilir = bolum.trim() !== ''
 
+  const duzenlemeyiAc = () => {
+    if (!hedef) return
+    setUniversite(hedef.universite)
+    setBolum(hedef.bolum)
+    setPuanTuru(hedef.puanTuru)
+    setTabanPuan(hedef.tabanPuan?.toString().replace('.', ',') ?? '')
+    setBasariSirasi(hedef.basariSirasi?.toString() ?? '')
+    setElleMod(universiteBul(hedef.universite) === null)
+    setDuzenleAcik(false)
+    setUniArama('')
+    setBolumArama('')
+    setAlanDisiniGoster(false)
+    setHedefDuzenleniyor(true)
+  }
+
   const kaydet = () => {
     setHedef({
       universite: universite.trim(),
@@ -156,8 +173,14 @@ export function HedefEkrani({
     <div>
       <h1 className="mb-4 font-display text-xl font-extrabold">Hedefim</h1>
 
-      {hedef && (
-        <Kart className="mb-5 overflow-hidden rounded-[24px] p-5">
+      {hedef && !formAcik && (
+        <Kart className="relative mb-5 overflow-hidden rounded-[24px] p-5">
+          <button
+            type="button"
+            onClick={duzenlemeyiAc}
+            aria-label="Hedefimi düzenle"
+            className="absolute inset-0 z-10 rounded-[24px] active:bg-primary/5 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+          />
           <div className="mb-3 flex items-center justify-between gap-3">
             <p className="text-xs font-extrabold tracking-wide text-muted-foreground">HEDEFİMDEKİ BÖLÜM</p>
             <span className="rounded-lg bg-primary-soft px-2.5 py-1 text-xs font-bold text-primary">
@@ -185,11 +208,15 @@ export function HedefEkrani({
               </p>
             )}
           </div>
+          <p className="mt-4 flex items-center gap-1.5 text-xs font-bold text-primary" aria-hidden>
+            <Pencil size={14} /> Düzenle
+          </p>
         </Kart>
       )}
 
+      {formAcik && <>
       <div className="mb-3 flex rounded-[14px] bg-muted p-1" role="group" aria-label="Hedef giriş yöntemi">
-        {[{ elle: false, ad: 'Listeden seç' }, { elle: true, ad: 'Kendim yaz' }].map((kip) => (
+        {[{ elle: false, ad: 'Listeden seç' }, { elle: true, ad: 'Kendin yaz' }].map((kip) => (
           <button
             key={kip.ad}
             type="button"
@@ -389,11 +416,17 @@ export function HedefEkrani({
           )}
           <Buton className="h-12 flex-1 rounded-[14px]" onClick={kaydet} disabled={!kaydedilebilir}>
             <Check size={18} aria-hidden />
-            Hedefimi kaydet
+            {hedef ? 'Değişiklikleri kaydet' : 'Hedefimi kaydet'}
           </Buton>
         </div>
+        {hedef && (
+          <Buton bicim="hayalet" className="w-full" onClick={() => setHedefDuzenleniyor(false)}>
+            Vazgeç
+          </Buton>
+        )}
 
       </Kart>
+      </>}
 
       {/* Uzun açıklamalar kısaltıldı; ekranın altı bir paragraf duvarıydı.
           İki cümle kalıyor ve ikisi de süs değil: taban puan gerçekten bir
@@ -412,7 +445,18 @@ export function HedefEkrani({
         acik={silmeAcik}
         baslik="Hedef silinsin mi?"
         aciklama="Kaydettiğin bölüm ve sıralama bilgisi silinecek."
-        onOnayla={() => setHedef(null)}
+        onOnayla={() => {
+          setHedef(null)
+          setUniversite('')
+          setBolum('')
+          setTabanPuan('')
+          setBasariSirasi('')
+          setUniArama('')
+          setBolumArama('')
+          setDuzenleAcik(false)
+          setSilmeAcik(false)
+          setHedefDuzenleniyor(false)
+        }}
         onIptal={() => setSilmeAcik(false)}
       />
     </div>
