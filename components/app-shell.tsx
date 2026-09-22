@@ -781,7 +781,30 @@ export function AppShell() {
         giriş animasyonu her seferinde baştan oynuyor — sınıf tek başına verilse
         React aynı düğümü koruduğu için animasyon yalnızca ilk açılışta çalışırdı.
       */}
-      <SayfaGecisi key={ekran ?? `sekme:${sekme}`}>
+      {/*
+        Pomodoro ekranı öteki alt ekranlardan farklı olarak sürekli bağlı
+        kalır. Sayaç, ses ve yerli servis bu bileşenin belleğindedir; ekran
+        değişiminde sökülürse temizlik etkisi turu bitirip sayacı başa alır.
+        `hidden` görünümü kaldırır ama bileşeni yaşatır; uygulama gerçekten
+        kapanınca normal sökülme temizliği yine çalışır.
+      */}
+      <div hidden={ekran !== 'pomodoro'}>
+        <Buton
+          bicim="hayalet"
+          boy="kucuk"
+          onClick={() => setEkran(null)}
+          className="-ml-2 mb-3"
+        >
+          <ArrowLeft size={16} aria-hidden /> Geri
+        </Buton>
+        <PomodoroEkrani
+          ayar={pomodoroAyar}
+          setAyar={setPomodoroAyar}
+          onSeansBitti={(seans) => setPomodoroGecmis((o) => [...o, seans])}
+        />
+      </div>
+
+      <SayfaGecisi key={ekran ?? `sekme:${sekme}`} gizli={ekran === 'pomodoro'}>
         {ekran !== null ? (
           <>
             <Buton
@@ -844,13 +867,6 @@ export function AppShell() {
                   setEkran(null)
                   setSekme('oyunlar')
                 }}
-              />
-            )}
-            {ekran === 'pomodoro' && (
-              <PomodoroEkrani
-                ayar={pomodoroAyar}
-                setAyar={setPomodoroAyar}
-                onSeansBitti={(seans) => setPomodoroGecmis((o) => [...o, seans])}
               />
             )}
             {ekran === 'notlar' && <YapilacaklarEkrani notlar={notlar} setNotlar={setNotlar} />}
@@ -1060,7 +1076,7 @@ export function AppShell() {
  * duraklatılmış kalan ekran (opaklığı 0'da donmuş) hiç görünmezdi. Açılış
  * ekranındaki `acilis-bekliyor` ile aynı kural, aynı gerekçe.
  */
-function SayfaGecisi({ children }: { children: React.ReactNode }) {
+function SayfaGecisi({ children, gizli = false }: { children: React.ReactNode; gizli?: boolean }) {
   const [basladi, setBasladi] = useState(false)
 
   useEffect(() => {
@@ -1077,7 +1093,7 @@ function SayfaGecisi({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <div className={cn('sayfa-girisi', !basladi && 'sayfa-bekliyor')}>
+    <div hidden={gizli} className={cn('sayfa-girisi', !basladi && 'sayfa-bekliyor')}>
       {children}
     </div>
   )

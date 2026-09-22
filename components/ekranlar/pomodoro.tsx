@@ -298,12 +298,13 @@ export function PomodoroEkrani({
   }
 
   /**
-   * Sahnenin geri oku: tur bitmiyor, duraklıyor. Hazırlık ekranı kalan
-   * süreyi ve "Devam et" düğmesini gösteriyor; oradan basınca sahne aynı
-   * yerden açılıyor.
+   * Sahnenin geri oku yalnızca tam ekran görünümünü kapatır.
+   *
+   * Geri gitmek sayaç komutu değildir: kullanıcı başka bir kayda bakmak için
+   * sahneden çıktığında tur arka planda sürmeli. Duraklatma, hazırlık
+   * ekranındaki açık düğmeyle ayrıca yapılır.
    */
   const sahnedenCik = () => {
-    if (calisiyor) duraklat()
     setSahne(false)
   }
 
@@ -798,10 +799,37 @@ export function PomodoroEkrani({
         sonuna gitmesin. Alt menü hâlâ altta, çubuk onun hemen üstünde duruyor.
       */}
       <div className="sticky bottom-[calc(4.5rem+var(--guvenli-alt))] -mx-4 bg-background/95 px-4 pt-2 pb-3">
-        <Buton className="h-[52px] w-full rounded-2xl text-[17px] shadow-[0_8px_18px_rgba(217,98,47,0.26)]" onClick={baslat}>
-          <Play size={20} fill="currentColor" aria-hidden />
-          {turIcinde ? 'Devam et' : 'Başlat'}
-        </Buton>
+        {turIcinde ? (
+          <div className="flex items-center gap-2.5">
+            <SahneDugmesi etiket="Turu bitir" onClick={sifirla}>
+              <X size={20} aria-hidden />
+            </SahneDugmesi>
+            <Buton
+              className="h-[52px] flex-1 rounded-2xl text-[17px] shadow-[0_8px_18px_rgba(217,98,47,0.26)]"
+              onClick={calisiyor ? () => setSahne(true) : baslat}
+            >
+              <Play size={20} fill="currentColor" aria-hidden />
+              {calisiyor ? 'Sayaca dön' : 'Devam et'}
+            </Buton>
+            {calisiyor ? (
+              <SahneDugmesi etiket="Duraklat" onClick={duraklat}>
+                <Pause size={20} aria-hidden />
+              </SahneDugmesi>
+            ) : (
+              <SahneDugmesi etiket="Bu aşamayı atla" onClick={atla}>
+                <SkipForward size={20} aria-hidden />
+              </SahneDugmesi>
+            )}
+          </div>
+        ) : (
+          <Buton
+            className="h-[52px] w-full rounded-2xl text-[17px] shadow-[0_8px_18px_rgba(217,98,47,0.26)]"
+            onClick={baslat}
+          >
+            <Play size={20} fill="currentColor" aria-hidden />
+            Başlat
+          </Buton>
+        )}
       </div>
 
       <Cekmece acik={sureCekmecesi} baslik="Süreler" onKapat={() => setSureCekmecesi(false)}>
@@ -856,7 +884,7 @@ export function PomodoroEkrani({
 /**
  * Sayaç tam ekran: alt menü ve ayarlar arkada kalıyor, ekranda tek iş
  * sayaç. `tam-katman-girisi` ile alttan yükseliyor ve geri tuşu (donanım
- * dahil) turu bitirmiyor, sahneyi kapatıp turu duraklatıyor.
+ * dahil) turu etkilemeden yalnızca sahneyi kapatıyor.
  */
 function CalismaSahnesi({
   durum,
