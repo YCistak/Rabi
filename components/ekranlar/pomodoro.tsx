@@ -42,6 +42,7 @@ import {
 import { useGeriKatmani } from '@/lib/geri'
 import { OdakKurulum } from '@/components/ekranlar/odak-kurulum'
 import { OdakAyarlari } from '@/components/odak/odak-ayarlari'
+import { Rabi } from '@/components/maskot/rabi'
 import { cn, yeniId } from '@/lib/utils'
 import { Anahtar, BaslikSatiri, Buton, Cip, Kart, Not } from '@/components/ui'
 
@@ -950,6 +951,12 @@ function MiniPomodoro({
           aria-label={`${baslik}, ${durum}, ${sure} kaldı. Pomodoro sayacına dön.`}
           className="golge-kart pointer-events-auto relative grid size-[82px] place-items-center rounded-full bg-card transition active:scale-95 active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
+          <span
+            className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 drop-shadow-[0_2px_3px_rgba(54,33,112,0.16)]"
+            aria-hidden
+          >
+            <Rabi durum="calisiyor" poz="yuz" boyut={44} />
+          </span>
           <svg
             width={boyut}
             height={boyut}
