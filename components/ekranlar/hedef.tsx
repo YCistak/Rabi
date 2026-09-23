@@ -16,7 +16,7 @@ import {
   type Universite,
 } from '@/lib/hedef-katalog'
 import { Alan, Buton, Etiket, Kart, Onay } from '@/components/ui'
-import { AramaAlani, Liste, SecilenSatir, SecimSatiri } from '@/components/hedef-secici'
+import { AramaAlani, Liste, SecilenSatir, SecimSatiri, UniversiteAramaBaslangici } from '@/components/hedef-secici'
 import { cn } from '@/lib/utils'
 
 const PUAN_TURU_ADI: Record<PuanTuru, string> = {
@@ -91,7 +91,10 @@ export function HedefEkrani({
     [secilenUni, secilenBolum],
   )
 
-  const uniSonuclari = useMemo(() => universiteAra(uniArama), [uniArama])
+  const uniSonuclari = useMemo(
+    () => uniArama.trim() ? universiteAra(uniArama) : [],
+    [uniArama],
+  )
   /*
     Süzgeç `varsayilanTur`dan geliyor, `puanTuru` state'inden değil: biri
     öğrencinin **kendi** alanı, öteki seçilen **bölümün** türü. İkincisine
@@ -290,16 +293,20 @@ export function HedefEkrani({
                     onDegis={setUniArama}
                     ipucu="Üniversite ya da şehir ara"
                   />
-                  <Liste bos="Bu adla üniversite bulamadım." className="max-h-[min(50dvh,22rem)]">
-                    {uniSonuclari.map((u) => (
-                      <SecimSatiri
-                        key={u.id}
-                        baslik={u.ad}
-                        alt={`${u.sehir} · ${turAdi(u)}`}
-                        onSec={() => universiteSec(u)}
-                      />
-                    ))}
-                  </Liste>
+                  {uniArama.trim() ? (
+                    <Liste bos="Bu adla üniversite bulamadım." className="max-h-[min(50dvh,22rem)]">
+                      {uniSonuclari.map((u) => (
+                        <SecimSatiri
+                          key={u.id}
+                          baslik={u.ad}
+                          alt={`${u.sehir} · ${turAdi(u)}`}
+                          onSec={() => universiteSec(u)}
+                        />
+                      ))}
+                    </Liste>
+                  ) : (
+                    <UniversiteAramaBaslangici />
+                  )}
                 </>
               )}
             </section>
@@ -449,11 +456,11 @@ export function HedefEkrani({
               <Check size={18} aria-hidden />
               {hedef ? 'Değişiklikleri kaydet' : 'Hedefimi kaydet'}
             </Buton>
-          ) : (
+          ) : hedef ? (
             <p className="flex flex-1 items-center justify-center rounded-xl bg-muted/70 px-4 py-3 text-center text-xs font-semibold text-muted-foreground">
               {elleMod ? 'Kaydetmek için bölüm adını yaz.' : secilenUni ? 'Kaydetmek için bölümünü seç.' : 'Önce üniversiteni seç.'}
             </p>
-          )}
+          ) : null}
         </div>
         {hedef && (
           <Buton bicim="hayalet" className="w-full" onClick={() => setHedefDuzenleniyor(false)}>

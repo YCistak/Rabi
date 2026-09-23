@@ -7,7 +7,7 @@ import type { Ayarlar, Hedef, OkulYili, PuanTuru } from '@/lib/types'
 import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
 import { cn, yeniId } from '@/lib/utils'
 import { Alan, Buton, Etiket, Kart } from '@/components/ui'
-import { AramaAlani, Liste, SecilenSatir, SecimSatiri } from '@/components/hedef-secici'
+import { AramaAlani, Liste, SecilenSatir, SecimSatiri, UniversiteAramaBaslangici } from '@/components/hedef-secici'
 import {
   bolumAra,
   bolumBul,
@@ -243,7 +243,10 @@ export function Kurulum({
     () => bolumBul(secilenUni, hedefBolum),
     [secilenUni, hedefBolum],
   )
-  const uniSonuclari = useMemo(() => universiteAra(uniArama), [uniArama])
+  const uniSonuclari = useMemo(
+    () => uniArama.trim() ? universiteAra(uniArama) : [],
+    [uniArama],
+  )
   /** Kararsızken ve anahtar açıkken süzgeç yok; kalan durumda alan süzüyor. */
   const alanSuzgeci = alanDisiniGoster ? null : puanTuru
   const bolumSonuclari = useMemo(
@@ -700,16 +703,20 @@ export function Kurulum({
                       onDegis={setUniArama}
                       ipucu="Üniversite ya da şehir ara"
                     />
-                    <Liste bos="Bu adla üniversite bulamadım.">
-                      {uniSonuclari.map((u) => (
-                        <SecimSatiri
-                          key={u.id}
-                          baslik={u.ad}
-                          alt={`${u.sehir} · ${turAdi(u)}`}
-                          onSec={() => universiteSec(u)}
-                        />
-                      ))}
-                    </Liste>
+                    {uniArama.trim() ? (
+                      <Liste bos="Bu adla üniversite bulamadım.">
+                        {uniSonuclari.map((u) => (
+                          <SecimSatiri
+                            key={u.id}
+                            baslik={u.ad}
+                            alt={`${u.sehir} · ${turAdi(u)}`}
+                            onSec={() => universiteSec(u)}
+                          />
+                        ))}
+                      </Liste>
+                    ) : (
+                      <UniversiteAramaBaslangici />
+                    )}
                   </>
                 )}
               </div>
