@@ -41,6 +41,7 @@ import {
   resimleriIceAktar,
   tumResimleriSil,
 } from '@/lib/resim-depo'
+import { cizimAnahtari } from '@/lib/cizim'
 import type { BankaKaydi } from '@/lib/oyunlar/banka'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { izinIste } from '@/lib/bildirim'
@@ -205,7 +206,12 @@ export function AyarlarEkrani({
     if (izinli) setAyarlar((o) => ({ ...o, bildirimAcik: true }))
   }
 
-  const resimIdleri = yedeklenecek.yanlisSorular.map((s) => s.resimId)
+  // Soru çizimleri de fotoğraf deposunda; çizimi olmayan anahtar dışa
+  // aktarırken ve boyut ölçülürken sessizce atlanıyor.
+  const resimIdleri = yedeklenecek.yanlisSorular.flatMap((s) => [
+    s.resimId,
+    cizimAnahtari(s.resimId),
+  ])
 
   // Fotoğrafların toplam boyutu, kullanıcı "fotoğrafları da ekle" derken ne
   // kadar büyük bir dosya çıkacağını bilsin diye önceden ölçülüyor.

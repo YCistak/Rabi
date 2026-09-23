@@ -27,6 +27,13 @@ import {
   type DersSayisi,
 } from '@/lib/banka'
 import { oksuzResimleriSil, resimSil, useResimUrl } from '@/lib/resim-depo'
+import { cizimAnahtari } from '@/lib/cizim'
+import {
+  CizimAraclari,
+  CizimliFotograf,
+  KalemDugmesi,
+  useSoruCizimi,
+} from '@/components/soru-cizimi'
 import {
   EklemeFormu,
   FotografDugmeleri,
@@ -51,6 +58,9 @@ export function YanlisBankaEkrani({
   // Karışık tekrarın sırası: karıştırılmış kimlikler ve kaçıncısında olunduğu.
   // Kimlik tutuluyor, soru değil — tekrar sürerken "Çözdüm" kaydı değiştiriyor.
   const [tekrar, setTekrar] = useState<{ sira: string[]; konum: number } | null>(null)
+  // Çizim kaydedilince küçük karelerin çizimi yeniden okuması için sayaç:
+  // anahtar değişmediği için `useResimUrl` kendiliğinden haberdar olmuyor.
+  const [cizimSurumu, setCizimSurumu] = useState(0)
   const { bekleyen, hata, fotografAl, kaydet, vazgec, gizliGirdi } =
     useYanlisSoruEkleme(setSorular)
 
@@ -95,7 +105,8 @@ export function YanlisBankaEkrani({
   // Kayıt silinip blob'u kalmış fotoğrafları bir kez temizle. Silme işleminin
   // ortasında uygulama kapanırsa öksüz blob kalabiliyor.
   useEffect(() => {
-    void oksuzResimleriSil(sorular.map((s) => s.resimId))
+    // Çizimler de aynı depoda; listede olmasalardı öksüz sayılıp silinirlerdi.
+    void oksuzResimleriSil(sorular.flatMap((s) => [s.resimId, cizimAnahtari(s.resimId)]))
     // Yalnızca ekran ilk açıldığında: her değişimde çalışsa, kaydedilmeyi
     // bekleyen fotoğrafı da öksüz sayıp silerdi.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,6 +115,7 @@ export function YanlisBankaEkrani({
   const sil = (soru: YanlisSoru) => {
     setSorular((onceki) => onceki.filter((s) => s.id !== soru.id))
     void resimSil(soru.resimId)
+    void resimSil(cizimAnahtari(soru.resimId))
     if (tekrar) tekrarIlerle()
     else setAcikId(null)
   }
@@ -203,6 +215,7 @@ export function YanlisBankaEkrani({
                     <li key={soru.id}>
                       <Kucuk
                         soru={soru}
+                        cizimSurumu={cizimSurumu}
                         gun={bekledigiGun(soru.tarih, bugunIso)}
                         onAc={() => setAcikId(soru.id)}
                       />
@@ -240,6 +253,7 @@ export function YanlisBankaEkrani({
           onGec={tekrarIlerle}
           onCozuldu={() => cozulduDegistir(acik)}
           onSil={() => sil(acik)}
+          onCizimKaydedildi={() => setCizimSurumu((s) => s + 1)}
         />
       )}
     </div>
@@ -399,8 +413,19 @@ function DersCipleri({
  * Galeri karesi. Görüntü IndexedDB'den geldiği için bir an boş kalabilir;
  * o arada dersin renginde çizgili bir zemin duruyor.
  */
-function Kucuk({ soru, gun, onAc }: { soru: YanlisSoru; gun: number; onAc: () => void }) {
+function Kucuk({
+  soru,
+  gun,
+  cizimSurumu,
+  onAc,
+}: {
+  soru: YanlisSoru
+  gun: number
+  cizimSurumu: number
+  onAc: () => void
+}) {
   const url = useResimUrl(soru.resimId)
+  const cizim = useResimUrl(cizimAnahtari(soru.resimId), cizimSurumu)
   const r = renkler(soru.ders)
   const eski = gun >= ESKI_SORU_GUNU
 
@@ -423,6 +448,11 @@ function Kucuk({ soru, gun, onAc }: { soru: YanlisSoru; gun: number; onAc: () =>
         <span className="flex h-full items-center justify-center opacity-70" style={{ color: r.koyu }}>
           <Images size={20} aria-hidden />
         </span>
+      )}
+      {url && cizim && (
+        // Çizim fotoğrafla aynı en-boy oranında; `object-cover` ikisini aynı yerden kırpıyor.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={cizim} alt="" className="absolute inset-0 h-full w-full object-cover" />
       )}
       <span className="absolute inset-x-0 bottom-0 flex flex-col bg-gradient-to-t from-black/70 to-transparent px-[7px] pb-1.5 pt-[18px] text-white">
         <span className="truncate text-[11px] font-extrabold leading-tight">{soru.ders}</span>
@@ -461,8 +491,10 @@ function Goruntuleyici({
   onGec,
   onCozuldu,
   onSil,
+  onCizimKaydedildi,
 }: {
   soru: YanlisSoru
+  onCizimKaydedildi: () => void
   /** Karışık tekrar sürüyorsa kaçıncı soruda olunduğu. */
   tekrar?: { konum: number; toplam: number }
   onKapat: () => void
@@ -472,6 +504,10 @@ function Goruntuleyici({
 }) {
   const url = useResimUrl(soru.resimId)
   const [silmeAcik, setSilmeAcik] = useState(false)
+  const cizim = useSoruCizimi(soru.resimId, onCizimKaydedildi)
+  // Geri tuşu çizimi kaydedip çizimden çıkıyor, atmıyor: yanlışlıkla
+  // basılan geri, çizilen her şeyi sessizce silerdi. Atmak için "Vazgeç" var.
+  useGeriKatmani(cizim.ciziyor, () => void cizim.kaydet())
 
   return (
     // Tam ekran katman: uygulamanın geri kalanı `max-w-md` olduğu için iç sütun
@@ -490,73 +526,93 @@ function Goruntuleyici({
             {soru.konu ? ` · ${soru.konu}` : ''}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={onKapat}
-          aria-label="Kapat"
-          className="-mr-2 rounded-full p-2 text-white/80 active:bg-white/10"
-        >
-          <X size={22} aria-hidden />
-        </button>
+        {/* Çizerken kapatma yok: çıkışın iki yolu Vazgeç ve Kaydet. */}
+        {!cizim.ciziyor && (
+          <button
+            type="button"
+            onClick={onKapat}
+            aria-label="Kapat"
+            className="-mr-2 rounded-full p-2 text-white/80 active:bg-white/10"
+          >
+            <X size={22} aria-hidden />
+          </button>
+        )}
       </div>
 
-      <div className="flex min-h-0 w-full max-w-md flex-1 items-center justify-center px-3">
+      <div className="relative flex min-h-0 w-full max-w-md flex-1 items-center justify-center px-3">
         {url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={url}
-            alt={soru.konu ?? soru.ders}
-            className="max-h-full max-w-full object-contain"
-          />
+          <CizimliFotograf url={url} alt={soru.konu ?? soru.ders} cizim={cizim.yuzey} />
         ) : (
           <p className="text-sm text-white/60">Fotoğraf yüklenemedi.</p>
         )}
       </div>
 
-      {soru.not && (
+      {soru.not && !cizim.ciziyor && (
         <p className="w-full max-w-md px-4 pt-3 text-sm leading-relaxed text-white/80">
           {soru.not}
         </p>
       )}
 
-      <div className="flex w-full max-w-md gap-2 px-4 pb-6 pt-3">
-        <Buton
-          bicim="tehlike"
-          boy="simge"
-          onClick={() => setSilmeAcik(true)}
-          aria-label="Soruyu sil"
-        >
-          <Trash2 size={18} aria-hidden />
-        </Buton>
-        <Buton
-          className="flex-1"
-          bicim={soru.cozuldu ? 'ikincil' : 'birincil'}
-          onClick={() => {
-            onCozuldu()
-            // Tekrarda "Çözdüm" sıradakine geçiyor; her soruda pencereyi
-            // kapatıp yeniden açtırmak tekrarı bölerdi.
-            if (tekrar) onGec()
-            else onKapat()
-          }}
-        >
-          {soru.cozuldu ? (
-            <>
-              <RotateCcw size={18} aria-hidden />
-              Hâlâ takıldım
-            </>
-          ) : (
-            <>
+      {cizim.ciziyor ? (
+        <div className="flex w-full max-w-md flex-col gap-2 px-4 pb-6 pt-3">
+          <CizimAraclari cizim={cizim} />
+          <div className="flex gap-2">
+            <Buton bicim="ikincil" className="flex-1" onClick={cizim.vazgec}>
+              Vazgeç
+            </Buton>
+            <Buton className="flex-1" onClick={() => void cizim.kaydet()}>
               <Check size={18} aria-hidden />
-              Çözdüm
-            </>
+              Kaydet
+            </Buton>
+          </div>
+        </div>
+      ) : (
+        <>
+          {url && (
+            <div className="flex w-full max-w-md justify-end px-4 pt-3">
+              <KalemDugmesi onClick={cizim.basla} />
+            </div>
           )}
-        </Buton>
-        {tekrar && (
-          <Buton bicim="ikincil" boy="simge" onClick={onGec} aria-label="Sıradaki soru">
-            <SkipForward size={18} aria-hidden />
-          </Buton>
-        )}
-      </div>
+          <div className="flex w-full max-w-md gap-2 px-4 pb-6 pt-3">
+            <Buton
+              bicim="tehlike"
+              boy="simge"
+              onClick={() => setSilmeAcik(true)}
+              aria-label="Soruyu sil"
+            >
+              <Trash2 size={18} aria-hidden />
+            </Buton>
+            <Buton
+              className="flex-1"
+              bicim={soru.cozuldu ? 'ikincil' : 'birincil'}
+              onClick={() => {
+                onCozuldu()
+                // Tekrarda "Çözdüm" sıradakine geçiyor; her soruda pencereyi
+                // kapatıp yeniden açtırmak tekrarı bölerdi.
+                if (tekrar) onGec()
+                else onKapat()
+              }}
+            >
+              {soru.cozuldu ? (
+                <>
+                  <RotateCcw size={18} aria-hidden />
+                  Hâlâ takıldım
+                </>
+              ) : (
+                <>
+                  <Check size={18} aria-hidden />
+                  Çözdüm
+                </>
+              )}
+            </Buton>
+            {tekrar && (
+              <Buton bicim="ikincil" boy="simge" onClick={onGec} aria-label="Sıradaki soru">
+                <SkipForward size={18} aria-hidden />
+              </Buton>
+            )}
+          </div>
+        </>
+      )}
 
       <Onay
         acik={silmeAcik}

@@ -801,6 +801,30 @@ galeride görüntüsü olmayan bir kart kalırdı.
 Katman kayıttan sonra kapanıyor: asıl iş deneme formuna dönmek, art arda çekim
 isteyen kullanıcı düğmeye yeniden basıyor.
 
+## Yanlış sorunun fotoğrafına çiziliyor
+
+Görüntüleyicide alttaki düğmelerin üstünde bir **Çiz** düğmesi var; basınca
+düğmelerin yerine araç çubuğu geliyor (kalem, silgi, üç kalınlık, dört renk,
+geri al, temizle) ve Vazgeç/Kaydet (`components/soru-cizimi.tsx`, hesaplar
+`lib/cizim.ts`).
+
+- **Yalnızca fotoğrafın üstüne.** Tuval ekranı kaplamıyor, fotoğrafın
+  `object-contain` kutusu hesaplanıp (`fotografKutusu`) tam oraya oturuyor;
+  altındaki ve üstündeki siyah boşluk yüzeyin dışında. Dışarı taşan nokta
+  kenara **kısılmıyor** — kısılsaydı fotoğraftan çıkan parmak kenar boyunca
+  bir çizgi sürüklerdi; taşan parçayı tuval kendisi kesiyor.
+- **Fotoğrafa dokunulmuyor.** Çizim ayrı bir saydam PNG, aynı IndexedDB
+  deposunda `cizimAnahtari(resimId)` altında. Kayda alan eklenmedi: eski
+  yedekler ve kayıt doğrulaması olduğu gibi çalışıyor. Öksüz temizliği,
+  silme ve yedek bu anahtarı da biliyor — yeni bir yere fotoğraf kimliği
+  listesi yazarsan çizimi de ekle, yoksa öksüz sayılıp silinir.
+- **Çizgiler oran olarak tutuluyor**, kalınlık da genişliğin oranı; kayıt
+  fotoğrafın asıl çözünürlüğünde (uzun kenar en fazla 1600) yeniden
+  kuruluyor. Çizim fotoğrafla aynı en-boy oranında olduğu için küçük karede
+  `object-cover` ikisini aynı yerden kırpıyor.
+- **Geri tuşu kaydediyor**, atmıyor: yanlışlıkla basılan geri çizilen her
+  şeyi sessizce silerdi. Atmanın yolu Vazgeç. Çizerken kapatma düğmesi yok.
+
 ## Soru Takibi bir günlük telafi kabul ediyor
 
 Soru Takibi'nde bugün ve yalnızca bir önceki gün düzenlenebilir. Daha eski
