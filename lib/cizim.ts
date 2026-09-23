@@ -126,7 +126,26 @@ export function cizgiKalinligi(ekrandaki: number, olcek: number): number {
 export type Yakinlik = { olcek: number; x: number; y: number }
 
 export const YAKINLIK_YOK: Yakinlik = { olcek: 1, x: 0, y: 0 }
-export const YAKINLIK_ADIMLARI = [1, 1.5, 2, 3, 4] as const
+/**
+ * Yakınlık da kalınlık gibi dikey bir çubukla seçiliyor, +/− basamaklarıyla
+ * değil: iki araç aynı biçimde durunca ikincisi öğretilmeden anlaşılıyor.
+ * Çubuk logaritmik: %100→%200 ile %200→%400 aynı mesafe, göz de büyümeyi
+ * oranla algılıyor — doğrusal çubukta ilk iki kat çubuğun dibine sıkışırdı.
+ */
+export const YAKINLIK_EN_COK = 4
+
+/** Çubuğun dibine yakın bırakılan değer tam %100'e oturuyor. */
+const SIGDIRMA_PAYI = 0.03
+
+export function yakinlikDegeri(oran: number): number {
+  const t = Math.min(1, Math.max(0, oran))
+  const olcek = YAKINLIK_EN_COK ** t
+  return olcek < 1 + SIGDIRMA_PAYI ? 1 : olcek
+}
+
+export function yakinlikOrani(olcek: number): number {
+  return Math.min(1, Math.max(0, Math.log(olcek) / Math.log(YAKINLIK_EN_COK)))
+}
 
 /** Fotoğrafın kenarı kutunun içine girmesin — boşluk görünmesin. */
 export function yakinlikSinirla(y: Yakinlik): Yakinlik {
@@ -136,12 +155,11 @@ export function yakinlikSinirla(y: Yakinlik): Yakinlik {
 }
 
 /**
- * Bir basamak yaklaştırır ya da uzaklaştırır; kutunun ortasındaki nokta
- * yerinde kalıyor. Köşeye sabitlenseydi her basamakta bakılan yer kaçardı.
+ * Ölçeği değiştirir; kutunun ortasındaki nokta yerinde kalıyor. Köşeye
+ * sabitlenseydi çubuk kaydıkça bakılan yer kaçardı.
  */
-export function yakinlastir(y: Yakinlik, yon: 1 | -1): Yakinlik {
-  const sira = YAKINLIK_ADIMLARI.findIndex((a) => a >= y.olcek - 1e-9)
-  const hedef = YAKINLIK_ADIMLARI[Math.min(YAKINLIK_ADIMLARI.length - 1, Math.max(0, sira + yon))]
+export function yakinlikAyarla(y: Yakinlik, olcek: number): Yakinlik {
+  const hedef = Math.min(YAKINLIK_EN_COK, Math.max(1, olcek))
   const oran = hedef / y.olcek
   return yakinlikSinirla({
     olcek: hedef,

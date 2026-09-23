@@ -9,7 +9,9 @@ import {
   kalinlikOrani,
   kayitOlcusu,
   oranla,
-  yakinlastir,
+  yakinlikAyarla,
+  yakinlikDegeri,
+  yakinlikOrani,
   YAKINLIK_YOK,
   yakinlikKaydir,
 } from './cizim'
@@ -75,24 +77,35 @@ describe('kalınlık çubuğu', () => {
 
 describe('yakınlaştırma', () => {
   it('ortayı yerinde tutarak yaklaşıyor', () => {
-    const y = yakinlastir(YAKINLIK_YOK, 1)
-    expect(y.olcek).toBe(1.5)
-    expect(y.x).toBeCloseTo(-0.25)
-    expect(y.y).toBeCloseTo(-0.25)
+    const y = yakinlikAyarla(YAKINLIK_YOK, 2)
+    expect(y.olcek).toBe(2)
+    expect(y.x).toBeCloseTo(-0.5)
+    expect(y.y).toBeCloseTo(-0.5)
   })
-  it('sınırlarda duruyor', () => {
-    expect(yakinlastir(YAKINLIK_YOK, -1)).toEqual(YAKINLIK_YOK)
-    let y = YAKINLIK_YOK
-    for (let i = 0; i < 10; i++) y = yakinlastir(y, 1)
-    expect(y.olcek).toBe(4)
+  it('%100 ile %400 arasında kalıyor', () => {
+    expect(yakinlikAyarla(YAKINLIK_YOK, 0.5)).toEqual(YAKINLIK_YOK)
+    expect(yakinlikAyarla(YAKINLIK_YOK, 9).olcek).toBe(4)
   })
   it('uzaklaşınca kenar boşluğa açılmıyor', () => {
-    const y = yakinlastir({ olcek: 2, x: -1, y: 0 }, -1)
+    const y = yakinlikAyarla({ olcek: 2, x: -1, y: 0 }, 1.5)
     expect(y.olcek).toBe(1.5)
     expect(y.x).toBeGreaterThanOrEqual(-0.5)
     expect(y.y).toBeLessThanOrEqual(0)
   })
   it('kaydırma kutunun dışına taşmıyor', () => {
     expect(yakinlikKaydir({ olcek: 2, x: -0.5, y: -0.5 }, 5, -5)).toEqual({ olcek: 2, x: 0, y: -1 })
+  })
+})
+
+describe('yakınlık çubuğu', () => {
+  it('logaritmik: ortası iki kat', () => {
+    expect(yakinlikDegeri(0.5)).toBeCloseTo(2)
+    expect(yakinlikDegeri(1)).toBeCloseTo(4)
+  })
+  it('dibe yakın değer tam %100', () => {
+    expect(yakinlikDegeri(0.01)).toBe(1)
+  })
+  it('oran ile değer birbirinin tersi', () => {
+    for (const o of [1.5, 2, 3, 4]) expect(yakinlikDegeri(yakinlikOrani(o))).toBeCloseTo(o)
   })
 })

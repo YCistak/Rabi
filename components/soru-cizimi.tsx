@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Eraser, Hand, Minus, Pencil, Plus, Trash2, Undo2, ZoomIn } from 'lucide-react'
+import { Eraser, Hand, Pencil, Trash2, Undo2, ZoomIn } from 'lucide-react'
 import {
   cizgiKalinligi,
   cizimAnahtari,
@@ -10,10 +10,11 @@ import {
   kalinlikOrani,
   kayitOlcusu,
   oranla,
-  YAKINLIK_ADIMLARI,
   YAKINLIK_YOK,
-  yakinlastir,
+  yakinlikAyarla,
+  yakinlikDegeri,
   yakinlikKaydir,
+  yakinlikOrani,
   type Cizgi,
   type CizimAraci,
   type Kutu,
@@ -97,8 +98,8 @@ export function useSoruCizimi(resimId: string, onKaydedildi: () => void) {
     degistir(() => ({ taban: false, cizgiler: [] }))
   }
 
-  const yaklas = (yon: 1 | -1) => {
-    const yeni = yakinlastir(yakinlik, yon)
+  const setOlcek = (olcek: number) => {
+    const yeni = yakinlikAyarla(yakinlik, olcek)
     setYakinlik(yeni)
     // Sürüklenecek bir şey kalmadıysa el aracı da anlamsız; kaleme dönülüyor.
     if (yeni.olcek === 1 && arac === 'el') setArac('kalem')
@@ -179,7 +180,7 @@ export function useSoruCizimi(resimId: string, onKaydedildi: () => void) {
       kalinlik,
       setKalinlik,
       yakinlik,
-      yaklas,
+      setOlcek,
       gorunenGenislik,
     },
   }
@@ -498,7 +499,7 @@ type Acilir = 'kalinlik' | 'yakinlik' | null
 
 /** Çizim açıkken alttaki düğmelerin yerine geçen araç çubuğu. */
 export function CizimAraclari({ cizim }: { cizim: SoruCizimi }) {
-  const { arac, setArac, renk, setRenk, kalinlik, setKalinlik, yakinlik, yaklas, gorunenGenislik } =
+  const { arac, setArac, renk, setRenk, kalinlik, setKalinlik, yakinlik, setOlcek, gorunenGenislik } =
     cizim.araclar
   const [acik, setAcik] = useState<Acilir>(null)
   const yakin = yakinlik.olcek > 1
@@ -533,9 +534,6 @@ export function CizimAraclari({ cizim }: { cizim: SoruCizimi }) {
       <div className="flex items-center gap-1">
         {aracDugmesi('kalem', <Pencil size={18} aria-hidden />, 'Kalem')}
         {aracDugmesi('silgi', <Eraser size={18} aria-hidden />, 'Silgi')}
-        {/* Sürükleme yalnızca yakınlaştırılmışken anlamlı; tek parmak çizdiği
-            için fotoğrafı gezdirmenin ayrı bir aracı olmalı. */}
-        {aracDugmesi('el', <Hand size={18} aria-hidden />, 'Fotoğrafı kaydır', !yakin)}
         <span className="mx-1 h-6 w-px bg-white/15" aria-hidden />
 
         <div className="relative">
@@ -555,12 +553,20 @@ export function CizimAraclari({ cizim }: { cizim: SoruCizimi }) {
             />
           </button>
           {acik === 'kalinlik' && (
-            <KalinlikCubugu
-              deger={kalinlik}
-              onDegis={setKalinlik}
-              onizleme={nokta(44)}
-              renk={arac === 'silgi' ? '#fff' : renk}
-            />
+            <DikeyCubuk
+              etiket={arac === 'silgi' ? 'Silgi büyüklüğü' : 'Kalem kalınlığı'}
+              oran={kalinlikOrani(kalinlik)}
+              onOran={(o) => setKalinlik(kalinlikDegeri(o))}
+            >
+              <span
+                className="rounded-full border border-white/30"
+                style={{
+                  width: nokta(44),
+                  height: nokta(44),
+                  background: arac === 'silgi' ? '#fff' : renk,
+                }}
+              />
+            </DikeyCubuk>
           )}
         </div>
 
@@ -578,31 +584,21 @@ export function CizimAraclari({ cizim }: { cizim: SoruCizimi }) {
             <ZoomIn size={18} aria-hidden />
           </button>
           {acik === 'yakinlik' && (
-            <div className="acilir-giris absolute bottom-full left-1/2 z-20 mb-2 flex -translate-x-1/2 flex-col items-center gap-1 rounded-2xl bg-foreground ring-1 ring-white/15 p-1.5 shadow-lg">
-              <button
-                type="button"
-                onClick={() => yaklas(1)}
-                disabled={yakinlik.olcek >= YAKINLIK_ADIMLARI.at(-1)!}
-                aria-label="Yakınlaştır"
-                className="flex size-10 items-center justify-center rounded-xl text-white active:bg-white/10 disabled:opacity-30"
-              >
-                <Plus size={20} aria-hidden />
-              </button>
-              <span className="rakam text-xs font-bold text-white/70">
-                {Math.round(yakinlik.olcek * 100)}%
+            <DikeyCubuk
+              etiket="Yakınlık"
+              oran={yakinlikOrani(yakinlik.olcek)}
+              onOran={(o) => setOlcek(yakinlikDegeri(o))}
+            >
+              <span className="rakam text-xs font-extrabold text-white">
+                %{Math.round(yakinlik.olcek * 100)}
               </span>
-              <button
-                type="button"
-                onClick={() => yaklas(-1)}
-                disabled={!yakin}
-                aria-label="Uzaklaştır"
-                className="flex size-10 items-center justify-center rounded-xl text-white active:bg-white/10 disabled:opacity-30"
-              >
-                <Minus size={20} aria-hidden />
-              </button>
-            </div>
+            </DikeyCubuk>
           )}
         </div>
+        {/* El zoom'un hemen yanında: sürükleme yalnızca yakınlaştırılmışken
+            anlamlı ve ikisi aynı işin iki yarısı. Tek parmak çizdiği için
+            fotoğrafı gezdirmenin ayrı bir aracı olmalı. */}
+        {aracDugmesi('el', <Hand size={18} aria-hidden />, 'Fotoğrafı kaydır', !yakin)}
 
         <span className="flex-1" />
         <button
@@ -650,49 +646,48 @@ export function CizimAraclari({ cizim }: { cizim: SoruCizimi }) {
 }
 
 /**
- * Düğmenin üstünde yukarı uzanan kalınlık çubuğu. `<input type="range">`
- * değil: dikey sürgü WebView sürümüne göre ya hiç dikey durmuyor ya ters
- * çalışıyordu. Yukarı çekmek kalınlaştırıyor.
+ * Düğmenin üstünde yukarı uzanan çubuk — kalınlık da yakınlık da bununla
+ * seçiliyor; iki araç aynı biçimde durunca ikincisi öğretilmeden anlaşılıyor.
+ * `<input type="range">` değil: dikey sürgü WebView sürümüne göre ya hiç
+ * dikey durmuyor ya ters çalışıyordu. Yukarı çekmek büyütüyor. Değer 0–1
+ * oran; ölçeği (karesel kalınlık, logaritmik yakınlık) çağıran kuruyor.
  */
-function KalinlikCubugu({
-  deger,
-  onDegis,
-  onizleme,
-  renk,
+function DikeyCubuk({
+  etiket,
+  oran,
+  onOran,
+  children,
 }: {
-  deger: number
-  onDegis: (k: number) => void
-  onizleme: number
-  renk: string
+  etiket: string
+  oran: number
+  onOran: (oran: number) => void
+  /** Çubuğun tepesindeki önizleme. */
+  children: React.ReactNode
 }) {
   const ray = useRef<HTMLDivElement>(null)
-  const oran = kalinlikOrani(deger)
 
   const ayarla = (clientY: number) => {
     const r = ray.current?.getBoundingClientRect()
     if (!r) return
-    onDegis(kalinlikDegeri(1 - (clientY - r.top) / r.height))
+    onOran(Math.min(1, Math.max(0, 1 - (clientY - r.top) / r.height)))
   }
 
   return (
     <div className="acilir-giris absolute bottom-full left-1/2 z-20 mb-2 flex w-14 -translate-x-1/2 flex-col items-center gap-3 rounded-2xl bg-foreground ring-1 ring-white/15 px-2 pt-3 pb-4 shadow-lg">
       <span className="flex size-11 items-center justify-center" aria-hidden>
-        <span
-          className="rounded-full border border-white/30"
-          style={{ width: onizleme, height: onizleme, background: renk }}
-        />
+        {children}
       </span>
       <div
         ref={ray}
         role="slider"
-        aria-label="Kalınlık"
+        aria-label={etiket}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={Math.round(oran * 100)}
         tabIndex={0}
         onKeyDown={(e) => {
-          if (e.key === 'ArrowUp') onDegis(kalinlikDegeri(oran + 0.05))
-          if (e.key === 'ArrowDown') onDegis(kalinlikDegeri(oran - 0.05))
+          if (e.key === 'ArrowUp') onOran(Math.min(1, oran + 0.05))
+          if (e.key === 'ArrowDown') onOran(Math.max(0, oran - 0.05))
         }}
         onPointerDown={(e) => {
           e.currentTarget.setPointerCapture(e.pointerId)

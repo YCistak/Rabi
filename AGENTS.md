@@ -807,9 +807,9 @@ Görüntüleyicide alttaki düğmelerin üstünde yuvarlak bir **kalem** düğme
 (yazısız; adı ekran okuyucuya `aria-label` ile söyleniyor); basınca
 Çözdüm, çöp ve atla düğmeleri kalkıyor, yerlerine yalnızca araç çubuğu
 geliyor (kalem, silgi, el, kalınlık, yakınlaştırma, geri al, temizle, dört
-renk). Vazgeç/Kaydet üstte, kapatma düğmesinin yerinde — altta ikinci bir
-düğme sırası fotoğrafın yerini yiyordu (`components/soru-cizimi.tsx`,
-hesaplar `lib/cizim.ts`).
+renk). Vazgeç/Kaydet araç çubuğunun **hemen üstünde**, yan yana ve tam
+genişlikte iki dikdörtgen düğme; bir süre üst köşede küçük düğmelerdi ve
+başparmaktan uzaktı (`components/soru-cizimi.tsx`, hesaplar `lib/cizim.ts`).
 
 - **Yalnızca fotoğrafın üstüne.** Tuval ekranı kaplamıyor, fotoğrafın
   `object-contain` kutusu hesaplanıp (`fotografKutusu`) tam oraya oturuyor;
@@ -831,9 +831,13 @@ hesaplar `lib/cizim.ts`).
   dikey sürgü WebView sürümüne göre ya yatay kalıyor ya ters çalışıyordu.
   Kalem ve silginin kalınlığı ayrı tutuluyor.
 - **Yakınlaştırma kutuyu büyütmüyor**, fotoğrafı kutunun içinde büyütüyor
-  (+/−, %100–%400). Kutu `overflow: hidden`, siyah boşluk yine çizilemiyor.
+  (%100–%400). Seçimi kalınlıkla **aynı dikey çubuk** (`DikeyCubuk`): bir
+  süre +/− basamaklarıydı; iki araç aynı biçimde durunca ikincisi
+  öğretilmeden anlaşılıyor. Çubuk logaritmik (ortası iki kat) ve dibe yakın
+  bırakılan değer tam %100'e oturuyor. Kutu `overflow: hidden`, siyah boşluk yine çizilemiyor.
   Tek parmak çizdiği için fotoğrafı gezdirmenin ayrı bir aracı var (**el**,
-  yalnızca yakınlaştırılmışken açık). Kalınlık ekrandaki boy: yakınken
+  yalnızca yakınlaştırılmışken açık, zoom düğmesinin hemen yanında — ikisi
+  aynı işin iki yarısı). Kalınlık ekrandaki boy: yakınken
   çizilen çizgi fotoğrafa göre o oranda ince kaydediliyor
   (`cizgiKalinligi`) — yakınlaştırmanın sebebi ince iş. Çizimden çıkınca
   fotoğraf yeniden sığdırılıyor.
