@@ -47,9 +47,12 @@ export function AramaAlani({
 /** Aramadan önce uzun üniversite listesi yerine seçimin nasıl başlayacağını gösterir. */
 export function UniversiteAramaBaslangici() {
   return (
-    <p className="mt-3 border-l-2 border-primary/50 pl-3 text-xs leading-relaxed text-muted-foreground">
-      Üniversite veya şehir adı yazdığında sonuçlar burada görünür.
-    </p>
+    <div className="mt-3 rounded-xl border border-primary/20 border-l-[3px] border-l-primary bg-primary-soft px-4 py-3.5">
+      <p className="text-sm font-extrabold text-primary">Aramaya başla</p>
+      <p className="mt-1 text-xs leading-relaxed text-foreground/75">
+        Üniversite veya şehir adını yaz; eşleşen sonuçlar burada görünecek.
+      </p>
+    </div>
   )
 }
 
