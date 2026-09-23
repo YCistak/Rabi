@@ -161,7 +161,7 @@ function YilSatiri({
   return (
     <div className="flex items-center gap-2 py-4">
       <div className="min-w-0 flex-1">
-        <p className={cn('text-sm font-extrabold', kilitli && 'text-muted-foreground')}>{sinif}. sınıf</p>
+        <p className={cn('text-sm font-extrabold', kilitli && 'text-muted-foreground')}>{sinif}.sınıf</p>
         <p className={cn('mt-1 flex items-center gap-1 text-[11px]', !kilitli && yil ? 'text-success' : 'text-muted-foreground')}>
           {!kilitli && yil && <Check size={12} aria-hidden />}
           {kilitli ? 'Sınıfına geçince açılır' : yil ? 'Kaydedildi' : 'Not eklenmedi'}
@@ -179,7 +179,7 @@ function YilSatiri({
             onDegis(temiz)
           }}
           placeholder={kilitli ? '' : '0–100'}
-          aria-label={`${sinif}. sınıf yıl sonu notu${kilitli ? ' (kilitli)' : ''}`}
+          aria-label={`${sinif}.sınıf yıl sonu notu${kilitli ? ' (kilitli)' : ''}`}
           className={cn(
             'rakam h-12 w-full rounded-[12px] border-transparent bg-muted/60 text-center text-lg font-extrabold placeholder:text-lg placeholder:font-extrabold focus:placeholder:text-transparent',
             kilitli && 'text-muted-foreground disabled:cursor-not-allowed disabled:opacity-100',
@@ -199,7 +199,7 @@ function YilSatiri({
           <button
             type="button"
             onClick={() => setSilmeAcik(true)}
-            aria-label={`${sinif}. sınıf notunu sil`}
+            aria-label={`${sinif}.sınıf notunu sil`}
             className="flex h-11 w-9 items-center justify-center rounded-xl text-muted-foreground active:bg-muted focus-visible:outline-2 focus-visible:outline-ring"
           >
             <Trash2 size={16} aria-hidden />
@@ -208,7 +208,7 @@ function YilSatiri({
       </div>
       <Onay
         acik={silmeAcik}
-        baslik={`${sinif}. sınıf notu silinsin mi?`}
+        baslik={`${sinif}.sınıf notu silinsin mi?`}
         aciklama="Bu sınıf için girdiğin yıl sonu notu silinecek."
         onOnayla={() => {
           setMetin('')
