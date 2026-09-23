@@ -801,6 +801,23 @@ galeride görüntüsü olmayan bir kart kalırdı.
 Katman kayıttan sonra kapanıyor: asıl iş deneme formuna dönmek, art arda çekim
 isteyen kullanıcı düğmeye yeniden basıyor.
 
+### Ders seçiliyor, yazılmıyor
+
+Ekleme formundaki ders alanı serbest metindi (önerili); "matematik", "Mat",
+"mat." aynı dersin üç ayrı süzgeç çipi oluyordu. Artık on çipten biri
+seçiliyor (`YANLIS_SORU_DERSLERI`, `lib/dersler.ts`) ve Kaydet ancak bir
+ders seçilince açılıyor. Liste `CALISMA_DERSLERI`den **ayrı**: o liste soru
+takibi ve Pomodoro'nun ve seans türlerini ("Tekrar") de taşıyor. Türkçe ile
+Edebiyat tek ders (Türk Dili ve Edebiyatı), Geometri yok (Matematik'in
+içinde), diller tek "Yabancı Dil"; uymayan her şey "Diğer". Eski kayıtlardaki
+adlar yeniden adlandırılmıyor — süzgeç ve renk onları da tanıyor.
+
+Konu 30, not 60 harfle sınırlı (`YANLIS_SORU_KONU_SINIRI`,
+`YANLIS_SORU_NOT_SINIRI`): ikisi de küçük karede ve görüntüleyicinin
+başlığında tek satırda duruyor. Alanın altında sayaç var, sınır sessizce
+kesmesin; yapıştırılan metin `maxLength`i aşabildiği için kayıtta da
+kırpılıyor.
+
 ## Yanlış sorunun fotoğrafına çiziliyor
 
 Görüntüleyicide alttaki düğmelerin üstünde yuvarlak bir **kalem** düğmesi var

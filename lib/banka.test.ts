@@ -10,6 +10,7 @@ import {
   yasEtiketi,
 } from './banka'
 import type { YanlisSoru } from './types'
+import { YANLIS_SORU_DERSLERI } from './dersler'
 
 function soru(veri: Partial<YanlisSoru> & { id: string }): YanlisSoru {
   return {
@@ -153,5 +154,15 @@ describe('tarihGruplari', () => {
       ['Daha önce', ['c']],
     ])
     expect(tarihGruplari([liste[2]], '2026-08-20').map((x) => x.baslik)).toEqual(['Daha önce'])
+  })
+})
+
+describe('yanlış soru dersleri', () => {
+  it('Türk Dili ve Edebiyatı Türkçe renginde; Geometri listede yok', () => {
+    expect(dersRengi('Türk Dili ve Edebiyatı')).toBe('turkce')
+    expect(YANLIS_SORU_DERSLERI).not.toContain('Geometri')
+    expect(YANLIS_SORU_DERSLERI).toEqual(
+      expect.arrayContaining(['Felsefe', 'Yabancı Dil', 'Coğrafya', 'Diğer']),
+    )
   })
 })

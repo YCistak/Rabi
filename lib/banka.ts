@@ -94,6 +94,8 @@ const DERS_RENGI: Record<string, BankaRengi> = {
   geometri: 'matematik',
   'türkçe': 'turkce',
   edebiyat: 'turkce',
+  // `sadelestir` ı'yı i'ye çeviriyor; anahtar da öyle yazılmalı.
+  'türk dili ve edebiyati': 'turkce',
   fizik: 'fizik',
   kimya: 'kimya',
   biyoloji: 'biyoloji',
