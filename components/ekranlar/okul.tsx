@@ -170,14 +170,14 @@ function YilSatiri({
       <div className="order-last relative w-25 shrink-0">
         <Alan
           inputMode="decimal"
-          value={metin}
+          value={kilitli ? '' : metin}
           disabled={kilitli}
           onChange={(e) => {
             const temiz = e.target.value.replace(/[^0-9,.]/g, '').slice(0, 6)
             setMetin(temiz)
             onDegis(temiz)
           }}
-          placeholder={kilitli ? '—' : '0–100'}
+          placeholder={kilitli ? '' : '0–100'}
           aria-label={`${sinif}. sınıf yıl sonu notu${kilitli ? ' (kilitli)' : ''}`}
           className={cn(
             'rakam h-12 w-full rounded-[12px] border-transparent bg-muted/60 text-center text-lg font-extrabold placeholder:text-lg placeholder:font-extrabold focus:placeholder:text-transparent',
@@ -186,8 +186,8 @@ function YilSatiri({
         />
         {kilitli && (
           <LockKeyhole
-            size={15}
-            className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/70"
+            size={17}
+            className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground/70"
             aria-hidden
           />
         )}
