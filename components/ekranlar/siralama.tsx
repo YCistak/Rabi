@@ -59,7 +59,7 @@ export function SiralamaEkrani({
   if (tur === null) {
     return (
       <div>
-        <BaslikSatiri baslik="Sıralama Hesapla" />
+        <BaslikSatiri arac="siralama" baslik="Sıralama Hesapla" />
         <BosDurum
           simge={<Rabi durum="uykulu" poz="kahveli" boyut={96} />}
           baslik="Önce alanını seç"
@@ -72,7 +72,7 @@ export function SiralamaEkrani({
   if (denemeler.length === 0) {
     return (
       <div>
-        <BaslikSatiri baslik="Sıralama Hesapla" />
+        <BaslikSatiri arac="siralama" baslik="Sıralama Hesapla" />
         <BosDurum
           simge={<Rabi durum="uykulu" poz="kahveli" boyut={96} />}
           baslik="Önce bir deneme ekle"
@@ -84,7 +84,7 @@ export function SiralamaEkrani({
 
   return (
     <div>
-      <BaslikSatiri baslik="Sıralama Hesapla" />
+      <BaslikSatiri arac="siralama" baslik="Sıralama Hesapla" />
 
       <Kart className="mb-3 space-y-3">
         <DenemeSecici

@@ -87,7 +87,7 @@ export function YapilacaklarEkrani({
 
   return (
     <div>
-      <BaslikSatiri
+      <BaslikSatiri arac="notlar"
         baslik="Yapılacaklar"
         aciklama={
           notlar.length === 0

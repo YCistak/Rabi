@@ -97,7 +97,7 @@ export function YanlisBankaEkrani({
 
   return (
     <div>
-      <BaslikSatiri
+      <BaslikSatiri arac="yanlis-banka"
         baslik="Yanlış Soru Bankası"
         aciklama={
           ozet.toplam > 0 ? `${ozet.bekleyen} bekleyen · ${ozet.cozulen} çözüldü` : undefined

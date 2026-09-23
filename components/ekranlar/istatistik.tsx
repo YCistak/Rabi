@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowLeftRight, ChevronRight, Minus, TrendingDown, TrendingUp, X } from 'lucide-react'
-import { BosDurum } from '@/components/ui'
+import { AracSimgesi, BosDurum } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { denemeOzeti, netYaz } from '@/lib/hesap'
 import {
@@ -101,12 +101,7 @@ export function IstatistikEkrani({
   const baslik = (
     <div className="mb-2 flex items-start justify-between gap-3">
       <h1 className="font-display text-[27px] font-extrabold tracking-[-0.02em]">İstatistik</h1>
-      <span
-        aria-hidden
-        className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-primary-soft text-xl"
-      >
-        📈
-      </span>
+      <AracSimgesi arac="istatistik" />
     </div>
   )
 

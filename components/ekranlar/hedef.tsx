@@ -154,7 +154,7 @@ export function HedefEkrani({
 
   return (
     <div>
-      <BaslikSatiri baslik="Hedefim" />
+      <BaslikSatiri arac="hedef" baslik="Hedefim" />
 
       {hedef && (
         <Kart className="mb-4 flex items-center gap-3">
