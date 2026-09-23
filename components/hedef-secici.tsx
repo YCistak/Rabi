@@ -19,18 +19,20 @@ export function AramaAlani({
   deger,
   onDegis,
   ipucu,
+  vurgulu = false,
 }: {
   id: string
   deger: string
   onDegis: (deger: string) => void
   ipucu: string
+  vurgulu?: boolean
 }) {
   return (
     <div className="relative">
       <Search
         size={17}
         aria-hidden
-        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+        className={cn('pointer-events-none absolute left-3 top-1/2 -translate-y-1/2', vurgulu ? 'text-primary' : 'text-muted-foreground')}
       />
       <Alan
         id={id}
@@ -38,20 +40,8 @@ export function AramaAlani({
         onChange={(e) => onDegis(e.target.value)}
         placeholder={ipucu}
         autoComplete="off"
-        className="pl-9"
+        className={cn('pl-9', vurgulu && 'h-12 border-primary/45 bg-primary-soft/30')}
       />
-    </div>
-  )
-}
-
-/** Aramadan önce uzun üniversite listesi yerine seçimin nasıl başlayacağını gösterir. */
-export function UniversiteAramaBaslangici() {
-  return (
-    <div className="mt-3 rounded-xl border border-primary/20 border-l-[3px] border-l-primary bg-primary-soft px-4 py-3.5">
-      <p className="text-sm font-extrabold text-primary">Aramaya başla</p>
-      <p className="mt-1 text-xs leading-relaxed text-foreground/75">
-        Üniversite veya şehir adını yaz; eşleşen sonuçlar burada görünecek.
-      </p>
     </div>
   )
 }

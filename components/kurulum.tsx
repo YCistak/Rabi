@@ -7,7 +7,7 @@ import type { Ayarlar, Hedef, OkulYili, PuanTuru } from '@/lib/types'
 import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
 import { cn, yeniId } from '@/lib/utils'
 import { Alan, Buton, Etiket, Kart } from '@/components/ui'
-import { AramaAlani, Liste, SecilenSatir, SecimSatiri, UniversiteAramaBaslangici } from '@/components/hedef-secici'
+import { AramaAlani, Liste, SecilenSatir, SecimSatiri } from '@/components/hedef-secici'
 import {
   bolumAra,
   bolumBul,
@@ -702,6 +702,7 @@ export function Kurulum({
                       deger={uniArama}
                       onDegis={setUniArama}
                       ipucu="Üniversite ya da şehir ara"
+                      vurgulu={!uniArama.trim()}
                     />
                     {uniArama.trim() ? (
                       <Liste bos="Bu adla üniversite bulamadım.">
@@ -714,9 +715,7 @@ export function Kurulum({
                           />
                         ))}
                       </Liste>
-                    ) : (
-                      <UniversiteAramaBaslangici />
-                    )}
+                    ) : null}
                   </>
                 )}
               </div>

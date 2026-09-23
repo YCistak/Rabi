@@ -16,7 +16,7 @@ import {
   type Universite,
 } from '@/lib/hedef-katalog'
 import { Alan, Buton, Etiket, Kart, Onay } from '@/components/ui'
-import { AramaAlani, Liste, SecilenSatir, SecimSatiri, UniversiteAramaBaslangici } from '@/components/hedef-secici'
+import { AramaAlani, Liste, SecilenSatir, SecimSatiri } from '@/components/hedef-secici'
 import { cn } from '@/lib/utils'
 
 const PUAN_TURU_ADI: Record<PuanTuru, string> = {
@@ -292,6 +292,7 @@ export function HedefEkrani({
                     deger={uniArama}
                     onDegis={setUniArama}
                     ipucu="Üniversite ya da şehir ara"
+                    vurgulu={!uniArama.trim()}
                   />
                   {uniArama.trim() ? (
                     <Liste bos="Bu adla üniversite bulamadım." className="max-h-[min(50dvh,22rem)]">
@@ -304,9 +305,7 @@ export function HedefEkrani({
                         />
                       ))}
                     </Liste>
-                  ) : (
-                    <UniversiteAramaBaslangici />
-                  )}
+                  ) : null}
                 </>
               )}
             </section>
