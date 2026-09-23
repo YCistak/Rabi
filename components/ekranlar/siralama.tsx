@@ -2,11 +2,18 @@
 
 import { useMemo, useState } from 'react'
 import { ChevronDown, Info } from 'lucide-react'
-import type { Ayarlar, Deneme, OkulYili, Sablon } from '@/lib/types'
+import type { Ayarlar, Deneme, OkulYili, PuanTuru, Sablon } from '@/lib/types'
 import { netYaz, tarihYaz } from '@/lib/hesap'
 import { bantYaz, siraYaz } from '@/lib/siralama'
 import { aytAdaylari, enYeni, obpHesapla, tahminUret, tytAdaylari } from '@/lib/tahmin'
 import { Kart, Not } from '@/components/ui'
+
+const PUAN_TURU_ADI: Record<PuanTuru, string> = {
+  say: 'Sayısal',
+  ea: 'Eşit Ağırlık',
+  soz: 'Sözel',
+  dil: 'Dil',
+}
 
 export function SiralamaEkrani({
   denemeler,
@@ -86,15 +93,53 @@ export function SiralamaEkrani({
   }
 
   return (
-    <div className="space-y-4">
-      <h1 className="font-display text-xl font-extrabold">Sıralama</h1>
+    <div className="space-y-5">
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="font-display text-xl font-extrabold">Sıralama</h1>
+        <span className="rounded-lg bg-primary-soft px-2.5 py-1 text-xs font-extrabold text-primary">
+          {PUAN_TURU_ADI[tur]}
+        </span>
+      </div>
 
-      <Kart className="rounded-[24px] p-5">
-        <h2 className="font-display text-base font-extrabold">Denemelerim</h2>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Sıralamanı görmek istediğin denemeleri seç.
-        </p>
-        <div className="mt-4 space-y-4">
+      {tahmin ? (
+        <section aria-labelledby="tahmini-siralama" className="overflow-hidden rounded-[26px] border border-primary/15 bg-primary-soft">
+          <div className="px-5 pb-5 pt-5">
+            <h2 id="tahmini-siralama" className="text-xs font-extrabold tracking-wide text-primary">
+              TAHMİNİ BAŞARI SIRAN
+            </h2>
+            <p className="rakam mt-3 font-display text-[clamp(1.65rem,7vw,2.1rem)] font-black leading-tight tracking-tight text-foreground">
+              {bantYaz(tahmin.siralama.enIyi, tahmin.siralama.enKotu)}
+            </p>
+            <p className="mt-3 text-[13px] font-semibold leading-snug text-primary">
+              Tek bir sayı değil, yıllara göre yaklaşık bir aralık.
+            </p>
+          </div>
+          <div className="flex items-center justify-between gap-3 border-t border-primary/10 bg-card/70 px-5 py-3 text-xs">
+            <span className="font-semibold text-muted-foreground">Yerleştirme puanına göre</span>
+            <span className="rakam font-extrabold text-primary">{netYaz(tahmin.yerlestirmePuani)}</span>
+          </div>
+        </section>
+      ) : (
+        <Kart className="rounded-[24px] p-5">
+          <h2 className="font-display text-base font-extrabold">Henüz sıralama yok</h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Tahmini sıralamanı görmek için aşağıdan bir TYT denemesi seç.
+          </p>
+        </Kart>
+      )}
+
+      {tahmin && !tahmin.aytVar && (
+        <Not tur="uyari">
+          {tur === 'dil' ? 'YDT' : 'AYT'} denemesi seçmedin. O testlerin netleri boş
+          sayıldığı için puan gerçekte olacağından çok düşük çıkar — sonucu ciddiye alma.
+        </Not>
+      )}
+
+      <section aria-labelledby="siralama-denemeler" className="space-y-3">
+        <h2 id="siralama-denemeler" className="font-display text-base font-extrabold">
+          Hesaba katılan denemeler
+        </h2>
+        <div className="grid gap-2.5">
           <DenemeSecici
             id="siralama-tyt"
             etiket="TYT denemesi"
@@ -110,80 +155,53 @@ export function SiralamaEkrani({
             onSec={setAytId}
           />
         </div>
-
-        <div className="mt-5 flex items-center justify-between gap-3 border-t border-border pt-4 text-sm">
-          <span className="font-bold text-muted-foreground">OBP</span>
-          {obpSonucu ? (
-            <span className="rakam text-right font-extrabold">
-              {netYaz(obpSonucu.obp, 0)}
-              <span className="ml-1.5 text-xs font-medium text-muted-foreground">
-                Diploma notu {netYaz(obpSonucu.diplomaNotu)}
-              </span>
-            </span>
-          ) : (
-            <span className="text-xs font-medium text-muted-foreground">Okul notlarını gir</span>
-          )}
+        <div className="flex items-center justify-between gap-3 px-1 pt-1 text-xs">
+          <span className="font-semibold text-muted-foreground">Ortaöğretim başarı puanı</span>
+          <span className="rakam text-right font-extrabold">
+            {obpSonucu ? netYaz(obpSonucu.obp, 0) : 'Eklenmedi'}
+          </span>
         </div>
-      </Kart>
+      </section>
 
-      {tahmin === null ? (
-        <Not tur="uyari">Hesap için en az bir deneme seç.</Not>
-      ) : (
+      {tahmin && (
         <>
-          {!tahmin.aytVar && (
-            <Not tur="uyari">
-              {tur === 'dil' ? 'YDT' : 'AYT'} denemesi seçmedin. O testlerin netleri boş
-              sayıldığı için puan gerçekte olacağından çok düşük çıkar — sonucu ciddiye alma.
-            </Not>
-          )}
-
-          <Kart className="rounded-[24px] border border-border/70 p-5">
-            <h2 className="text-xs font-extrabold tracking-wide text-muted-foreground">
-              TAHMİNİ SIRALAMA ARALIĞI
-            </h2>
-            <p className="rakam mt-2 font-display text-[27px] font-extrabold leading-tight tracking-tight text-primary">
-              {bantYaz(tahmin.siralama.enIyi, tahmin.siralama.enKotu)}
-            </p>
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-              Farklı yılların yerleştirme verilerine göre yaklaşık aralık.
-            </p>
-
-            <h3 className="mt-5 border-t border-border pt-4 text-sm font-extrabold">
-              Yıllara göre tahmin
-            </h3>
-            <ul className="mt-2 divide-y divide-border">
-              {tahmin.siralama.yillar.map((yil) => (
-                <li key={yil.yil} className="flex items-center justify-between gap-3 py-2.5">
-                  <span className="text-sm font-semibold text-muted-foreground">{yil.yil} YKS</span>
-                  <span className="rakam font-display text-base font-extrabold">
-                    {yil.tabloDisi ? 'Tablo dışında' : `≈ ${siraYaz(yil.siralama)}`}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </Kart>
-
           <section aria-labelledby="siralama-puanlar" className="space-y-3">
             <h2 id="siralama-puanlar" className="font-display text-base font-extrabold">
-              Puan tahminim
+              Puanlarım
             </h2>
-            <div className="grid grid-cols-2 gap-3">
-              <Kart className="rounded-[20px] p-4">
-                <p className="text-xs font-semibold text-muted-foreground">Sınav puanı</p>
+            <div className="golge-kart grid grid-cols-2 divide-x divide-border rounded-[20px] bg-card p-4">
+              <div className="min-w-0 pr-3">
+                <p className="text-xs font-semibold text-muted-foreground">Sınav</p>
                 <p className="rakam mt-2 font-display text-[22px] font-extrabold leading-none">
                   {netYaz(tahmin.sinavPuani)}
                 </p>
-              </Kart>
-              <Kart className="rounded-[20px] p-4">
-                <p className="text-xs font-semibold text-muted-foreground">Yerleştirme puanı</p>
+              </div>
+              <div className="min-w-0 pl-3">
+                <p className="text-xs font-semibold text-muted-foreground">Yerleştirme</p>
                 <p className="rakam mt-2 font-display text-[22px] font-extrabold leading-none text-primary">
                   {netYaz(tahmin.yerlestirmePuani)}
                 </p>
                 <p className="mt-2 text-xs text-muted-foreground">
                   {obpSonucu ? 'OBP dahil' : 'OBP hariç'}
                 </p>
-              </Kart>
+              </div>
             </div>
+          </section>
+
+          <section aria-labelledby="siralama-yillar" className="space-y-3">
+            <h2 id="siralama-yillar" className="font-display text-base font-extrabold">
+              Yıllara göre
+            </h2>
+            <ul className="golge-kart divide-y divide-border overflow-hidden rounded-[20px] bg-card px-4">
+              {tahmin.siralama.yillar.map((yil) => (
+                <li key={yil.yil} className="flex items-center justify-between gap-3 py-3.5">
+                  <span className="rakam text-sm font-extrabold">{yil.yil} YKS</span>
+                  <span className="rakam font-display text-base font-extrabold text-primary">
+                    {yil.tabloDisi ? 'Tablo dışında' : `≈ ${siraYaz(yil.siralama)}`}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </section>
 
           <div className="rounded-2xl border border-border bg-card p-4 text-xs leading-relaxed text-muted-foreground">
@@ -223,25 +241,36 @@ function DenemeSecici({
   const secilen = denemeler.find((d) => d.id === secili)
 
   return (
-    <div>
-      <label htmlFor={id} className="mb-2 block text-sm font-extrabold">{etiket}</label>
-      <div className="relative">
-        <select
-          id={id}
-          value={secilen?.id ?? ''}
-          onChange={(olay) => onSec(olay.target.value)}
-          disabled={denemeler.length === 0}
-          className="h-12 w-full appearance-none rounded-[14px] border border-border bg-muted/40 px-3.5 pr-10 text-[13px] font-bold text-foreground focus-visible:border-ring focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring/40 disabled:text-muted-foreground"
-        >
-          <option value="" disabled>
-            {denemeler.length === 0 ? 'Bu türde kayıtlı deneme yok' : 'Deneme seç'}
-          </option>
-          {denemeler.map((deneme) => (
-            <option key={deneme.id} value={deneme.id}>{denemeYaz(deneme)}</option>
-          ))}
-        </select>
-        <ChevronDown size={17} className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden />
-      </div>
+    <div className="relative min-w-0 rounded-[18px] border border-border bg-card px-4 py-3.5 shadow-sm focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ring active:bg-muted/40">
+      <p className="text-xs font-semibold text-muted-foreground">{etiket}</p>
+      <p className="mt-1 truncate pr-7 text-sm font-extrabold">
+        {secilen?.ad ?? 'Deneme seçilmedi'}
+      </p>
+      <p className="mt-0.5 text-xs text-muted-foreground">
+        {secilen
+          ? tarihYaz(secilen.tarih)
+          : denemeler.length === 0
+            ? 'Bu türde kayıtlı deneme yok'
+            : 'Dokunarak seç'}
+      </p>
+      {denemeler.length > 0 && (
+        <ChevronDown size={18} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-primary" aria-hidden />
+      )}
+      <select
+        id={id}
+        aria-label={etiket}
+        value={secilen?.id ?? ''}
+        onChange={(olay) => onSec(olay.target.value)}
+        disabled={denemeler.length === 0}
+        className="absolute inset-0 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
+      >
+        <option value="" disabled>
+          {denemeler.length === 0 ? 'Bu türde kayıtlı deneme yok' : 'Deneme seç'}
+        </option>
+        {denemeler.map((deneme) => (
+          <option key={deneme.id} value={deneme.id}>{denemeYaz(deneme)}</option>
+        ))}
+      </select>
     </div>
   )
 }
