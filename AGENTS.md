@@ -803,7 +803,8 @@ isteyen kullanıcı düğmeye yeniden basıyor.
 
 ## Yanlış sorunun fotoğrafına çiziliyor
 
-Görüntüleyicide alttaki düğmelerin üstünde bir **Çiz** düğmesi var; basınca
+Görüntüleyicide alttaki düğmelerin üstünde yuvarlak bir **kalem** düğmesi var
+(yazısız; adı ekran okuyucuya `aria-label` ile söyleniyor); basınca
 Çözdüm, çöp ve atla düğmeleri kalkıyor, yerlerine yalnızca araç çubuğu
 geliyor (kalem, silgi, el, kalınlık, yakınlaştırma, geri al, temizle, dört
 renk). Vazgeç/Kaydet üstte, kapatma düğmesinin yerinde — altta ikinci bir

@@ -487,10 +487,9 @@ export function KalemDugmesi({ onClick }: { onClick: () => void }) {
       type="button"
       onClick={onClick}
       aria-label="Fotoğrafın üstüne çiz"
-      className="flex h-10 items-center gap-2 rounded-full bg-white/12 px-4 text-sm font-bold text-white active:bg-white/20"
+      className="flex size-11 items-center justify-center rounded-full bg-white/12 text-white active:bg-white/20"
     >
-      <Pencil size={17} aria-hidden />
-      Çiz
+      <Pencil size={19} aria-hidden />
     </button>
   )
 }
