@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Check, X } from 'lucide-react'
+import { Check, LockKeyhole, X } from 'lucide-react'
 import type { Ayarlar, OkulYili } from '@/lib/types'
 import {
   ILK_SINIF,
@@ -9,6 +9,7 @@ import {
   netYaz,
   obpSonucu,
   ORTAOGRETIM_YIL_SAYISI,
+  SINIFLAR,
 } from '@/lib/hesap'
 import { cn, yeniId } from '@/lib/utils'
 import { Alan, Kart, Not } from '@/components/ui'
@@ -41,15 +42,10 @@ export function OkulEkrani({
   )
   const elleGirildi = ayarlar.elleObp !== null
 
-  // 9'dan bu yılki sınıfa kadar; mezunda dördü birden görünüyor.
-  const siniflar = useMemo(() => {
-    const son = Math.max(ILK_SINIF, Math.min(12, ayarlar.buYilSinif))
-    return Array.from({ length: son - ILK_SINIF + 1 }, (_, i) => ILK_SINIF + i)
-  }, [ayarlar.buYilSinif])
-
   const yilBul = (sinif: number) => yillar.find((y) => y.sinif === sinif)
 
   const notuYaz = (sinif: number, metin: string) => {
+    if (sinif > ayarlar.buYilSinif) return
     const temiz = metin.replace(',', '.').trim()
 
     setYillar((onceki) => {
@@ -128,11 +124,12 @@ export function OkulEkrani({
       <h2 className="mb-3 font-display text-base font-extrabold">Yıl ortalamalarım</h2>
       <div className="golge-kart overflow-hidden rounded-[20px] bg-card px-4">
         <ul className="divide-y divide-border">
-          {siniflar.map((sinif) => (
+          {SINIFLAR.map((sinif) => (
             <li key={sinif}>
               <YilSatiri
                 sinif={sinif}
                 yil={yilBul(sinif)}
+                kilitli={sinif > ayarlar.buYilSinif}
                 onDegis={(metin) => notuYaz(sinif, metin)}
               />
             </li>
@@ -146,10 +143,12 @@ export function OkulEkrani({
 function YilSatiri({
   sinif,
   yil,
+  kilitli,
   onDegis,
 }: {
   sinif: number
   yil: OkulYili | undefined
+  kilitli: boolean
   onDegis: (metin: string) => void
 }) {
   // Yazarken serbest bırakmak için yerel metin; boş bırakılabilsin diye
@@ -161,28 +160,34 @@ function YilSatiri({
   return (
     <div className="flex items-center gap-2 py-4">
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-extrabold">{sinif}. sınıf</p>
-        <p className={cn('mt-1 flex items-center gap-1 text-[11px]', yil ? 'text-success' : 'text-muted-foreground')}>
-          {yil && <Check size={12} aria-hidden />}
-          {yil ? 'Kaydedildi' : 'Not eklenmedi'}
+        <p className={cn('text-sm font-extrabold', kilitli && 'text-muted-foreground')}>{sinif}. sınıf</p>
+        <p className={cn('mt-1 flex items-center gap-1 text-[11px]', !kilitli && yil ? 'text-success' : 'text-muted-foreground')}>
+          {!kilitli && yil && <Check size={12} aria-hidden />}
+          {kilitli ? 'Sınıfına geçince açılır' : yil ? 'Kaydedildi' : 'Not eklenmedi'}
         </p>
       </div>
 
       <Alan
         inputMode="decimal"
         value={metin}
+        disabled={kilitli}
         onChange={(e) => {
           const temiz = e.target.value.replace(/[^0-9,.]/g, '').slice(0, 6)
           setMetin(temiz)
           onDegis(temiz)
         }}
-        placeholder="0–100"
-        aria-label={`${sinif}. sınıf yıl sonu notu`}
-        className="rakam order-last h-12 w-25 shrink-0 rounded-[12px] border-transparent bg-muted/60 text-center text-lg font-extrabold placeholder:text-lg placeholder:font-extrabold focus:placeholder:text-transparent"
+        placeholder={kilitli ? '—' : '0–100'}
+        aria-label={`${sinif}. sınıf yıl sonu notu${kilitli ? ' (kilitli)' : ''}`}
+        className={cn(
+          'rakam order-last h-12 w-25 shrink-0 rounded-[12px] border-transparent bg-muted/60 text-center text-lg font-extrabold placeholder:text-lg placeholder:font-extrabold focus:placeholder:text-transparent',
+          kilitli && 'text-muted-foreground disabled:cursor-not-allowed disabled:opacity-100',
+        )}
       />
 
-      <div className="w-9 shrink-0">
-        {dolu && (
+      <div className="flex w-9 shrink-0 items-center justify-center">
+        {kilitli ? (
+          <LockKeyhole size={16} className="text-muted-foreground/70" aria-hidden />
+        ) : dolu && (
           <button
             type="button"
             onClick={() => {
