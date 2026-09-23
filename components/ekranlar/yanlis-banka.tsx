@@ -526,8 +526,28 @@ function Goruntuleyici({
             {soru.konu ? ` · ${soru.konu}` : ''}
           </p>
         </div>
-        {/* Çizerken kapatma yok: çıkışın iki yolu Vazgeç ve Kaydet. */}
-        {!cizim.ciziyor && (
+        {/* Çizerken kapatma yok: çıkışın iki yolu Vazgeç ve Kaydet ve ikisi
+            burada, üstte — altta yalnızca araç çubuğu kalsın, fotoğrafa yer
+            kalsın. */}
+        {cizim.ciziyor ? (
+          <div className="-mr-1 flex shrink-0 items-center gap-1">
+            <button
+              type="button"
+              onClick={cizim.vazgec}
+              className="rounded-full px-3 py-2 text-sm font-bold text-white/80 active:bg-white/10"
+            >
+              Vazgeç
+            </button>
+            <button
+              type="button"
+              onClick={() => void cizim.kaydet()}
+              className="flex items-center gap-1.5 rounded-full bg-primary-parlak px-4 py-2 text-sm font-bold text-white active:scale-95"
+            >
+              <Check size={16} aria-hidden />
+              Kaydet
+            </button>
+          </div>
+        ) : (
           <button
             type="button"
             onClick={onKapat}
@@ -556,15 +576,6 @@ function Goruntuleyici({
       {cizim.ciziyor ? (
         <div className="flex w-full max-w-md flex-col gap-2 px-4 pb-6 pt-3">
           <CizimAraclari cizim={cizim} />
-          <div className="flex gap-2">
-            <Buton bicim="ikincil" className="flex-1" onClick={cizim.vazgec}>
-              Vazgeç
-            </Buton>
-            <Buton className="flex-1" onClick={() => void cizim.kaydet()}>
-              <Check size={18} aria-hidden />
-              Kaydet
-            </Buton>
-          </div>
         </div>
       ) : (
         <>

@@ -804,9 +804,11 @@ isteyen kullanıcı düğmeye yeniden basıyor.
 ## Yanlış sorunun fotoğrafına çiziliyor
 
 Görüntüleyicide alttaki düğmelerin üstünde bir **Çiz** düğmesi var; basınca
-düğmelerin yerine araç çubuğu geliyor (kalem, silgi, üç kalınlık, dört renk,
-geri al, temizle) ve Vazgeç/Kaydet (`components/soru-cizimi.tsx`, hesaplar
-`lib/cizim.ts`).
+Çözdüm, çöp ve atla düğmeleri kalkıyor, yerlerine yalnızca araç çubuğu
+geliyor (kalem, silgi, el, kalınlık, yakınlaştırma, geri al, temizle, dört
+renk). Vazgeç/Kaydet üstte, kapatma düğmesinin yerinde — altta ikinci bir
+düğme sırası fotoğrafın yerini yiyordu (`components/soru-cizimi.tsx`,
+hesaplar `lib/cizim.ts`).
 
 - **Yalnızca fotoğrafın üstüne.** Tuval ekranı kaplamıyor, fotoğrafın
   `object-contain` kutusu hesaplanıp (`fotografKutusu`) tam oraya oturuyor;
@@ -822,6 +824,18 @@ geri al, temizle) ve Vazgeç/Kaydet (`components/soru-cizimi.tsx`, hesaplar
   fotoğrafın asıl çözünürlüğünde (uzun kenar en fazla 1600) yeniden
   kuruluyor. Çizim fotoğrafla aynı en-boy oranında olduğu için küçük karede
   `object-cover` ikisini aynı yerden kırpıyor.
+- **Kalınlık tek düğme + dikey çubuk**, üç sabit seçenek değil: ince bir
+  cevap yazısı ile kalın bir altı çizme arasında üç basamak yetmiyordu. Çubuk
+  karesel (ince uçta hassas). `<input type="range">` değil, elle yazılı:
+  dikey sürgü WebView sürümüne göre ya yatay kalıyor ya ters çalışıyordu.
+  Kalem ve silginin kalınlığı ayrı tutuluyor.
+- **Yakınlaştırma kutuyu büyütmüyor**, fotoğrafı kutunun içinde büyütüyor
+  (+/−, %100–%400). Kutu `overflow: hidden`, siyah boşluk yine çizilemiyor.
+  Tek parmak çizdiği için fotoğrafı gezdirmenin ayrı bir aracı var (**el**,
+  yalnızca yakınlaştırılmışken açık). Kalınlık ekrandaki boy: yakınken
+  çizilen çizgi fotoğrafa göre o oranda ince kaydediliyor
+  (`cizgiKalinligi`) — yakınlaştırmanın sebebi ince iş. Çizimden çıkınca
+  fotoğraf yeniden sığdırılıyor.
 - **Geri tuşu kaydediyor**, atmıyor: yanlışlıkla basılan geri çizilen her
   şeyi sessizce silerdi. Atmanın yolu Vazgeç. Çizerken kapatma düğmesi yok.
 

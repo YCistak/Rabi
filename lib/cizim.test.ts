@@ -1,5 +1,18 @@
 import { describe, expect, it } from 'vitest'
-import { cizimAnahtari, fotografKutusu, kayitOlcusu, oranla } from './cizim'
+import {
+  cizgiKalinligi,
+  cizimAnahtari,
+  fotografKutusu,
+  KALINLIK_EN_AZ,
+  KALINLIK_EN_COK,
+  kalinlikDegeri,
+  kalinlikOrani,
+  kayitOlcusu,
+  oranla,
+  yakinlastir,
+  YAKINLIK_YOK,
+  yakinlikKaydir,
+} from './cizim'
 
 describe('fotografKutusu', () => {
   it('dikey fotoğraf geniş kutuda ortalanıyor, yanlarda boşluk kalıyor', () => {
@@ -44,4 +57,42 @@ describe('kayitOlcusu', () => {
 
 it('çizim anahtarı fotoğrafınkinden türüyor', () => {
   expect(cizimAnahtari('abc')).toBe('abc-cizim')
+})
+
+describe('kalınlık çubuğu', () => {
+  it('uçlar sınırlara denk', () => {
+    expect(kalinlikDegeri(0)).toBeCloseTo(KALINLIK_EN_AZ)
+    expect(kalinlikDegeri(1)).toBeCloseTo(KALINLIK_EN_COK)
+    expect(kalinlikDegeri(2)).toBeCloseTo(KALINLIK_EN_COK)
+  })
+  it('oran ile değer birbirinin tersi', () => {
+    for (const t of [0, 0.2, 0.5, 0.9, 1]) expect(kalinlikOrani(kalinlikDegeri(t))).toBeCloseTo(t)
+  })
+  it('yakınlaştırınca kaydedilen çizgi inceliyor', () => {
+    expect(cizgiKalinligi(0.02, 2)).toBeCloseTo(0.01)
+  })
+})
+
+describe('yakınlaştırma', () => {
+  it('ortayı yerinde tutarak yaklaşıyor', () => {
+    const y = yakinlastir(YAKINLIK_YOK, 1)
+    expect(y.olcek).toBe(1.5)
+    expect(y.x).toBeCloseTo(-0.25)
+    expect(y.y).toBeCloseTo(-0.25)
+  })
+  it('sınırlarda duruyor', () => {
+    expect(yakinlastir(YAKINLIK_YOK, -1)).toEqual(YAKINLIK_YOK)
+    let y = YAKINLIK_YOK
+    for (let i = 0; i < 10; i++) y = yakinlastir(y, 1)
+    expect(y.olcek).toBe(4)
+  })
+  it('uzaklaşınca kenar boşluğa açılmıyor', () => {
+    const y = yakinlastir({ olcek: 2, x: -1, y: 0 }, -1)
+    expect(y.olcek).toBe(1.5)
+    expect(y.x).toBeGreaterThanOrEqual(-0.5)
+    expect(y.y).toBeLessThanOrEqual(0)
+  })
+  it('kaydırma kutunun dışına taşmıyor', () => {
+    expect(yakinlikKaydir({ olcek: 2, x: -0.5, y: -0.5 }, 5, -5)).toEqual({ olcek: 2, x: 0, y: -1 })
+  })
 })

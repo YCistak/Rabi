@@ -85,3 +85,72 @@ export function kayitOlcusu(
 export function cizimAnahtari(resimId: string): string {
   return `${resimId}-cizim`
 }
+
+/**
+ * Kalınlık tek bir çubukla seçiliyor, üç sabit seçenekle değil: ince bir
+ * cevap yazısıyla kalın bir altı çizme arasında üç basamak yetmiyordu.
+ * Çubuk doğrusal değil karesel: ince uçta küçük farklar önemli, kalın uçta
+ * değil — doğrusal çubukta ince kalemler çubuğun dibine sıkışıyordu.
+ *
+ * Değer fotoğrafın **yakınlaştırılmamış** genişliğine oran, yani ekrandaki
+ * kalınlık; yakınlaştırınca kalem ekranda aynı boyda kalıyor (bkz.
+ * `cizgiKalinligi`).
+ */
+export const KALINLIK_EN_AZ = 0.003
+export const KALINLIK_EN_COK = 0.06
+
+export function kalinlikDegeri(oran: number): number {
+  const t = Math.min(1, Math.max(0, oran))
+  return KALINLIK_EN_AZ + t * t * (KALINLIK_EN_COK - KALINLIK_EN_AZ)
+}
+
+export function kalinlikOrani(kalinlik: number): number {
+  const t = (kalinlik - KALINLIK_EN_AZ) / (KALINLIK_EN_COK - KALINLIK_EN_AZ)
+  return Math.sqrt(Math.min(1, Math.max(0, t)))
+}
+
+/**
+ * Kaydedilen çizginin kalınlığı. Yakınlaştırılmışken çizilen çizgi fotoğrafa
+ * göre inceliyor: yakınlaştırmanın sebebi ince iş, ekranda aynı boyda duran
+ * kalem fotoğrafta o kadar ince iz bırakmalı.
+ */
+export function cizgiKalinligi(ekrandaki: number, olcek: number): number {
+  return ekrandaki / olcek
+}
+
+/**
+ * Yakınlaştırma: fotoğraf kendi kutusunun **içinde** büyüyor, kutu
+ * büyümüyor. Kaydırma kutu boyuna oran (`x`, `y` ≤ 0): pencere boyu
+ * değişince yakınlaştırılan yer kaymasın.
+ */
+export type Yakinlik = { olcek: number; x: number; y: number }
+
+export const YAKINLIK_YOK: Yakinlik = { olcek: 1, x: 0, y: 0 }
+export const YAKINLIK_ADIMLARI = [1, 1.5, 2, 3, 4] as const
+
+/** Fotoğrafın kenarı kutunun içine girmesin — boşluk görünmesin. */
+export function yakinlikSinirla(y: Yakinlik): Yakinlik {
+  const alt = 1 - y.olcek
+  const sinirla = (d: number) => Math.min(0, Math.max(alt, d))
+  return { olcek: y.olcek, x: sinirla(y.x), y: sinirla(y.y) }
+}
+
+/**
+ * Bir basamak yaklaştırır ya da uzaklaştırır; kutunun ortasındaki nokta
+ * yerinde kalıyor. Köşeye sabitlenseydi her basamakta bakılan yer kaçardı.
+ */
+export function yakinlastir(y: Yakinlik, yon: 1 | -1): Yakinlik {
+  const sira = YAKINLIK_ADIMLARI.findIndex((a) => a >= y.olcek - 1e-9)
+  const hedef = YAKINLIK_ADIMLARI[Math.min(YAKINLIK_ADIMLARI.length - 1, Math.max(0, sira + yon))]
+  const oran = hedef / y.olcek
+  return yakinlikSinirla({
+    olcek: hedef,
+    x: 0.5 - (0.5 - y.x) * oran,
+    y: 0.5 - (0.5 - y.y) * oran,
+  })
+}
+
+/** Kaydırma; fark kutu boyuna oran. */
+export function yakinlikKaydir(y: Yakinlik, dx: number, dy: number): Yakinlik {
+  return yakinlikSinirla({ ...y, x: y.x + dx, y: y.y + dy })
+}
