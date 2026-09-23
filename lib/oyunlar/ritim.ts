@@ -130,6 +130,11 @@ export const SORU_SURESI: Record<OyunId, number> = {
   periyodik: 16,
   /** Formül'de süre **el** başına: oyun altılı eşleştirme dağıtıyor. */
   formul: 40,
+  /**
+   * Tepkime Türü'nde denklem okunuyor: dört terim, katsayılar ve hâller.
+   * Ses Olayları'nın tek sözcüğünden uzun, anlatım bozukluğunun cümlesi kadar.
+   */
+  tepkime: 16,
 }
 
 /**
