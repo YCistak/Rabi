@@ -2,6 +2,7 @@
 
 import { ChevronRight, School, Search } from 'lucide-react'
 import { Alan } from '@/components/ui'
+import { cn } from '@/lib/utils'
 
 /**
  * Üniversite/bölüm seçiminin ortak parçaları.
@@ -49,10 +50,10 @@ export function AramaAlani({
  * Yüksekliği sınırlı ve kendi içinde kayıyor: 200 üniversite sayfayı uzatsaydı
  * altındaki düğme ekrandan çıkardı.
  */
-export function Liste({ bos, children }: { bos: string; children: React.ReactNode }) {
+export function Liste({ bos, children, className }: { bos: string; children: React.ReactNode; className?: string }) {
   const doluMu = Array.isArray(children) ? children.length > 0 : Boolean(children)
   return (
-    <div className="mt-2 max-h-64 overflow-y-auto rounded-xl border border-border">
+    <div className={cn('mt-2 max-h-64 overflow-y-auto rounded-xl border border-border', className)}>
       {doluMu ? (
         <ul className="divide-y divide-border">{children}</ul>
       ) : (

@@ -170,11 +170,16 @@ export function HedefEkrani({
       : null
 
   return (
-    <div>
+    <div
+      className="flex flex-col"
+      style={!formAcik ? {
+        minHeight: 'calc(100dvh / var(--olcek) - 11rem - var(--guvenli-ust) - var(--guvenli-alt))',
+      } : undefined}
+    >
       <h1 className="mb-4 font-display text-xl font-extrabold">Hedefim</h1>
 
       {hedef && !formAcik && (
-        <Kart className="relative mb-5 overflow-hidden rounded-[24px] p-5">
+        <Kart className="relative mb-5 overflow-hidden rounded-[24px] border border-border/70 p-5 transition-colors active:bg-primary-soft/30">
           <button
             type="button"
             onClick={duzenlemeyiAc}
@@ -214,6 +219,28 @@ export function HedefEkrani({
         </Kart>
       )}
 
+      {hedef && !formAcik && (
+        <section className="mb-5" aria-label="Hedef sıralama karşılaştırması">
+          <h2 className="mb-3 font-display text-base font-extrabold">Sıralama karşılaştırması</h2>
+          <div className="grid grid-cols-2 gap-3">
+            <Kart className="rounded-[20px] p-4">
+              <p className="text-xs font-semibold text-muted-foreground">Hedef sırası</p>
+              <p className="rakam mt-2 font-display text-2xl font-extrabold leading-none text-primary">
+                {hedef.basariSirasi == null ? '—' : siraYaz(hedef.basariSirasi)}
+              </p>
+              <p className="mt-2 text-xs text-muted-foreground">{hedef.basariSirasi == null ? 'Henüz girilmedi' : 'Kaydedilen hedef sırası'}</p>
+            </Kart>
+            <Kart className="rounded-[20px] p-4">
+              <p className="text-xs font-semibold text-muted-foreground">Tahmini sıram</p>
+              <p className="rakam mt-2 font-display text-2xl font-extrabold leading-none">
+                {guncelSiralama == null ? '—' : siraYaz(guncelSiralama)}
+              </p>
+              <p className="mt-2 text-xs text-muted-foreground">{guncelSiralama == null ? 'Deneme sonuçlarınla oluşur' : 'Deneme sonuçlarına göre'}</p>
+            </Kart>
+          </div>
+        </section>
+      )}
+
       {formAcik && <>
       <div className="mb-3 flex rounded-[14px] bg-muted p-1" role="group" aria-label="Hedef giriş yöntemi">
         {[{ elle: false, ad: 'Listeden seç' }, { elle: true, ad: 'Kendin yaz' }].map((kip) => (
@@ -232,17 +259,19 @@ export function HedefEkrani({
         ))}
       </div>
 
-      <Kart className="space-y-5 rounded-[20px] p-4">
+      <div className="space-y-4">
         {elleMod ? (
-          <ElleGiris
-            universite={universite}
-            bolum={bolum}
-            onUniversite={setUniversite}
-            onBolum={setBolum}
-          />
+          <Kart className="rounded-[20px] p-4">
+            <ElleGiris
+              universite={universite}
+              bolum={bolum}
+              onUniversite={setUniversite}
+              onBolum={setBolum}
+            />
+          </Kart>
         ) : (
           <>
-            <div>
+            <section className="rounded-[20px] bg-card p-4 golge-kart">
               <Etiket htmlFor="hedef-universite-ara">Üniversite</Etiket>
               {secilenUni ? (
                 <SecilenSatir
@@ -261,7 +290,7 @@ export function HedefEkrani({
                     onDegis={setUniArama}
                     ipucu="Üniversite ya da şehir ara"
                   />
-                  <Liste bos="Bu adla üniversite bulamadım.">
+                  <Liste bos="Bu adla üniversite bulamadım." className="max-h-[min(50dvh,22rem)]">
                     {uniSonuclari.map((u) => (
                       <SecimSatiri
                         key={u.id}
@@ -273,10 +302,10 @@ export function HedefEkrani({
                   </Liste>
                 </>
               )}
-            </div>
+            </section>
 
             {secilenUni && (
-              <div>
+              <section className="rounded-[20px] bg-card p-4 golge-kart">
                 <Etiket htmlFor="hedef-bolum-ara">Bölüm</Etiket>
                 {secilenBolum ? (
                   <SecilenSatir
@@ -293,6 +322,7 @@ export function HedefEkrani({
                       ipucu="Bölüm ara"
                     />
                     <Liste
+                      className="max-h-[min(50dvh,22rem)]"
                       bos={
                         alanSuzgeci
                           ? 'Alanına uyan böyle bir bölüm bulamadım.'
@@ -334,7 +364,7 @@ export function HedefEkrani({
                     )}
                   </>
                 )}
-              </div>
+              </section>
             )}
           </>
         )}
@@ -342,7 +372,7 @@ export function HedefEkrani({
         {/* Sayı kutuları katalog kipinde kapalı duruyor: seçim zaten dolduruyor
             ve dört kutuyu birden göstermek ekranı eski hâline döndürürdü. */}
         {(elleMod || duzenleAcik) && (
-          <div className="space-y-3">
+          <Kart className="space-y-3 rounded-[20px] p-4">
             <div>
               <Etiket>Puan türü</Etiket>
               <div className="grid grid-cols-2 gap-2">
@@ -391,7 +421,7 @@ export function HedefEkrani({
                 />
               </div>
             </div>
-          </div>
+          </Kart>
         )}
 
         {tahmin && !elleMod && !duzenleAcik && (
@@ -414,10 +444,16 @@ export function HedefEkrani({
               <Trash2 size={18} aria-hidden />
             </Buton>
           )}
-          <Buton className="h-12 flex-1 rounded-[14px]" onClick={kaydet} disabled={!kaydedilebilir}>
-            <Check size={18} aria-hidden />
-            {hedef ? 'Değişiklikleri kaydet' : 'Hedefimi kaydet'}
-          </Buton>
+          {kaydedilebilir ? (
+            <Buton className="h-12 flex-1 rounded-[14px]" onClick={kaydet}>
+              <Check size={18} aria-hidden />
+              {hedef ? 'Değişiklikleri kaydet' : 'Hedefimi kaydet'}
+            </Buton>
+          ) : (
+            <p className="flex flex-1 items-center justify-center rounded-xl bg-muted/70 px-4 py-3 text-center text-xs font-semibold text-muted-foreground">
+              {elleMod ? 'Kaydetmek için bölüm adını yaz.' : secilenUni ? 'Kaydetmek için bölümünü seç.' : 'Önce üniversiteni seç.'}
+            </p>
+          )}
         </div>
         {hedef && (
           <Buton bicim="hayalet" className="w-full" onClick={() => setHedefDuzenleniyor(false)}>
@@ -425,14 +461,14 @@ export function HedefEkrani({
           </Buton>
         )}
 
-      </Kart>
+      </div>
       </>}
 
-      <div className="mt-5 rounded-2xl border border-border bg-card p-4 text-xs leading-relaxed text-muted-foreground">
+      <div className={cn('rounded-2xl border border-border bg-card p-4 text-xs leading-relaxed text-muted-foreground', formAcik ? 'mt-5' : 'mt-auto')}>
         <div className="flex gap-3">
           <Info size={17} className="mt-0.5 shrink-0 text-primary" aria-hidden />
           <div className="space-y-3">
-            <p><strong className="text-foreground">Taban puan ve başarı sırası tahmindir.</strong> Deneme sonuçlarına göre yaklaşık bir değer gösterilir.</p>
+            <p><strong className="text-foreground">Taban puan ve kişisel sıralama tahminidir.</strong> Hedef sırası katalogdan seçilir ya da elle girilir.</p>
             <p className="border-t border-border pt-3">Veriler ÖSYM’nin herkese açık yayınlarından derlenmiştir. Rabi, ÖSYM’ye bağlı değildir.</p>
           </div>
         </div>
