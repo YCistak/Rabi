@@ -513,21 +513,20 @@ function TahminOzeti({
   const puan = sayiVeyaNull(tabanPuan)
   const sira = sayiVeyaNull(basariSirasi)
   return (
-    <div className="rounded-2xl bg-muted/60 p-4">
-      <div className="flex items-baseline justify-between gap-3">
-        <span className="text-xs font-bold text-muted-foreground">
-          {PUAN_TURU_ADI[puanTuru]}
-        </span>
+    <Kart className="rounded-[20px] border border-border/70 p-4">
+      <div className="flex items-center justify-between gap-3 border-b border-border pb-3">
+        <span className="text-sm font-extrabold">Hedef ölçütleri</span>
         <button
           type="button"
           onClick={onDuzenle}
-          className="inline-flex shrink-0 items-center gap-1 text-[13px] font-extrabold text-ikincil transition active:opacity-70"
+          className="inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-[13px] font-extrabold text-primary transition active:bg-primary-soft focus-visible:outline-2 focus-visible:outline-ring"
         >
           <Pencil size={13} aria-hidden />
           Elle düzelt
         </button>
       </div>
-      <div className="mt-4 grid grid-cols-2 gap-3">
+      <p className="mt-3 text-xs font-semibold text-muted-foreground">{PUAN_TURU_ADI[puanTuru]}</p>
+      <div className="mt-2 grid grid-cols-2 gap-3">
         <div>
           <p className="text-xs text-muted-foreground">Tahmini taban puan</p>
           <p className="rakam mt-1 font-display text-2xl font-extrabold text-primary">
@@ -541,7 +540,7 @@ function TahminOzeti({
           </p>
         </div>
       </div>
-    </div>
+    </Kart>
   )
 }
 
