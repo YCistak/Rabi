@@ -47,17 +47,9 @@ export function AramaAlani({
 /** Aramadan önce uzun üniversite listesi yerine seçimin nasıl başlayacağını gösterir. */
 export function UniversiteAramaBaslangici() {
   return (
-    <div className="mt-3 flex items-center gap-3 rounded-2xl bg-muted/60 px-3.5 py-3.5">
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-card text-primary" aria-hidden>
-        <Search size={19} />
-      </span>
-      <div>
-        <p className="text-sm font-extrabold">Üniversiteni bul</p>
-        <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
-          Adını veya bulunduğu şehri yaz; sonuçlar burada görünsün.
-        </p>
-      </div>
-    </div>
+    <p className="mt-3 border-l-2 border-primary/50 pl-3 text-xs leading-relaxed text-muted-foreground">
+      Üniversite veya şehir adı yazdığında sonuçlar burada görünür.
+    </p>
   )
 }
 
