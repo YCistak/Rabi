@@ -275,7 +275,9 @@ export function HedefEkrani({
         ) : (
           <>
             <section className="rounded-[20px] bg-card p-4 golge-kart">
-              <Etiket htmlFor="hedef-universite-ara">Üniversite</Etiket>
+              <Etiket htmlFor="hedef-universite-ara" className="mb-3 text-[15px] font-extrabold text-foreground">
+                Üniversite seç
+              </Etiket>
               {secilenUni ? (
                 <SecilenSatir
                   baslik={secilenUni.ad}

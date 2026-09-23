@@ -685,7 +685,9 @@ export function Kurulum({
           {suanki === 'bolum' && (
             <div className="space-y-4">
               <div>
-                <Etiket htmlFor="kurulum-universite-ara">Üniversite</Etiket>
+                <Etiket htmlFor="kurulum-universite-ara" className="mb-3 text-[15px] font-extrabold text-foreground">
+                  Üniversite seç
+                </Etiket>
                 {secilenUni ? (
                   <SecilenSatir
                     baslik={secilenUni.ad}

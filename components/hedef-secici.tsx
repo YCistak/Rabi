@@ -30,9 +30,9 @@ export function AramaAlani({
   return (
     <div className="relative">
       <Search
-        size={17}
+        size={18}
         aria-hidden
-        className={cn('pointer-events-none absolute left-3 top-1/2 -translate-y-1/2', vurgulu ? 'text-primary' : 'text-muted-foreground')}
+        className={cn('pointer-events-none absolute left-4 top-1/2 -translate-y-1/2', vurgulu ? 'text-primary' : 'text-muted-foreground')}
       />
       <Alan
         id={id}
@@ -40,7 +40,10 @@ export function AramaAlani({
         onChange={(e) => onDegis(e.target.value)}
         placeholder={ipucu}
         autoComplete="off"
-        className={cn('pl-9', vurgulu && 'h-12 border-primary/45 bg-primary-soft/30')}
+        className={cn(
+          'pl-11',
+          vurgulu && 'h-13 rounded-[14px] border-[1.5px] border-primary/50 bg-primary-soft/20',
+        )}
       />
     </div>
   )
