@@ -274,6 +274,8 @@ export function CizimliFotograf({
   const [dogal, setDogalYerel] = useState({ genislik: 0, yukseklik: 0 })
   const suren = useRef<Cizgi | null>(null)
   const surukleme = useRef<{ x: number; y: number } | null>(null)
+  const kirpma = useRef<HTMLDivElement>(null)
+  const imlec = useRef<HTMLSpanElement>(null)
   const { setDogal, setGorunenGenislik, yakinlik } = cizim
 
   useLayoutEffect(() => {
@@ -357,10 +359,41 @@ export function CizimliFotograf({
   }
 
   const elAcik = cizim.ciziyor && cizim.arac === 'el'
+  const silgiAcik = cizim.ciziyor && cizim.arac === 'silgi'
+
+  /**
+   * Silginin sileceği alan, Paint'teki gibi beyaz bir halka. Silgi saydam
+   * iz bıraktığı için basmadan önce ne kadar yer kaplayacağı görünmüyordu;
+   * kalın silgi yazının yarısını götürüyordu. Halkanın çapı ekrandaki
+   * kalınlık — yakınlaştırılmışken de silginin gerçekte kapladığı yer.
+   *
+   * Konum state'e değil doğrudan öğeye yazılıyor: her parmak hareketinde
+   * bileşeni yeniden çizmek, tam da çizerken takılmak demekti.
+   */
+  const imleciGoster = (e: React.PointerEvent) => {
+    const el = imlec.current
+    const kutuEl = kirpma.current
+    if (!el || !kutuEl || !silgiAcik || !e.isPrimary) return
+    const r = kutuEl.getBoundingClientRect()
+    const cap = Math.max(6, cizim.kalinlik * kutu.genislik)
+    el.style.width = `${cap}px`
+    el.style.height = `${cap}px`
+    el.style.transform = `translate(${e.clientX - r.left - cap / 2}px, ${e.clientY - r.top - cap / 2}px)`
+    el.style.opacity = '1'
+  }
+  const imleciGizle = () => {
+    if (imlec.current) imlec.current.style.opacity = '0'
+  }
+
+  // Silgiden çıkınca halka son yerinde asılı kalmasın.
+  useEffect(() => {
+    if (!silgiAcik) imleciGizle()
+  }, [silgiAcik])
 
   return (
     <div ref={alan} className="absolute inset-y-0 inset-x-3">
       <div
+        ref={kirpma}
         className={cn('absolute overflow-hidden', elAcik && 'touch-none cursor-grab')}
         style={{ left: kutu.x, top: kutu.y, width: kutu.genislik, height: kutu.yukseklik }}
         onPointerDown={(e) => {
@@ -408,16 +441,40 @@ export function CizimliFotograf({
             ref={tuval}
             width={tuvalG}
             height={tuvalY}
-            onPointerDown={basla}
-            onPointerMove={surdur}
-            onPointerUp={bitir}
-            onPointerCancel={bitir}
+            onPointerDown={(e) => {
+              basla(e)
+              imleciGoster(e)
+            }}
+            onPointerMove={(e) => {
+              surdur(e)
+              imleciGoster(e)
+            }}
+            onPointerUp={(e) => {
+              bitir()
+              // Farede halka imlecin kendisi, kalıyor; dokunmatikte parmak
+              // kalkınca gösterecek bir yer yok.
+              if (e.pointerType !== 'mouse') imleciGizle()
+            }}
+            onPointerCancel={() => {
+              bitir()
+              imleciGizle()
+            }}
+            onPointerLeave={imleciGizle}
             className={cn(
               'absolute inset-0 h-full w-full',
               cizim.ciziyor && !elAcik ? 'touch-none' : 'pointer-events-none',
+              silgiAcik && 'cursor-none',
             )}
           />
         </div>
+        {/* Halka ölçeklenen katmanın dışında: yakınlaştırmada kalınlaşmasın.
+            Beyaz halkanın çevresindeki ince koyu gölge onu beyaz kâğıtta da
+            görünür tutuyor. */}
+        <span
+          ref={imlec}
+          aria-hidden
+          className="pointer-events-none absolute top-0 left-0 rounded-full border-[1.5px] border-white opacity-0 shadow-[0_0_0_1px_rgba(0,0,0,0.55),inset_0_0_0_1px_rgba(0,0,0,0.35)]"
+        />
       </div>
     </div>
   )

@@ -836,6 +836,12 @@ hesaplar `lib/cizim.ts`).
   çizilen çizgi fotoğrafa göre o oranda ince kaydediliyor
   (`cizgiKalinligi`) — yakınlaştırmanın sebebi ince iş. Çizimden çıkınca
   fotoğraf yeniden sığdırılıyor.
+- **Silginin halkası.** Silgi seçiliyken parmağın/imlecin altında Paint'teki
+  gibi beyaz bir halka duruyor, çapı silginin ekrandaki genişliği. Silgi
+  saydam iz bıraktığı için basmadan ne kadar yer götüreceği görünmüyordu.
+  Halka ölçeklenen katmanın dışında (yakınlaştırmada kalınlaşmasın) ve
+  konumu state'e değil öğenin stiline yazılıyor — her harekette yeniden
+  çizim, çizerken takılmak demekti.
 - **Geri tuşu kaydediyor**, atmıyor: yanlışlıkla basılan geri çizilen her
   şeyi sessizce silerdi. Atmanın yolu Vazgeç. Çizerken kapatma düğmesi yok.
 
