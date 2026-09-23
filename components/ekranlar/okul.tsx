@@ -12,7 +12,7 @@ import {
   SINIFLAR,
 } from '@/lib/hesap'
 import { cn, yeniId } from '@/lib/utils'
-import { Alan, Kart, Not } from '@/components/ui'
+import { Alan, Kart, Not, Onay } from '@/components/ui'
 
 /**
  * Okul notları.
@@ -154,6 +154,7 @@ function YilSatiri({
   // Yazarken serbest bırakmak için yerel metin; boş bırakılabilsin diye
   // doğrudan sayıya bağlanmıyor ("9" yazarken 9'a kırpılmasın).
   const [metin, setMetin] = useState(yil ? String(yil.ortalama) : '')
+  const [silmeAcik, setSilmeAcik] = useState(false)
 
   const dolu = metin.trim() !== ''
 
@@ -197,10 +198,7 @@ function YilSatiri({
         {!kilitli && dolu && (
           <button
             type="button"
-            onClick={() => {
-              setMetin('')
-              onDegis('')
-            }}
+            onClick={() => setSilmeAcik(true)}
             aria-label={`${sinif}. sınıf notunu sil`}
             className="flex h-11 w-9 items-center justify-center rounded-xl text-muted-foreground active:bg-muted focus-visible:outline-2 focus-visible:outline-ring"
           >
@@ -208,6 +206,16 @@ function YilSatiri({
           </button>
         )}
       </div>
+      <Onay
+        acik={silmeAcik}
+        baslik={`${sinif}. sınıf notu silinsin mi?`}
+        aciklama="Bu sınıf için girdiğin yıl sonu notu silinecek."
+        onOnayla={() => {
+          setMetin('')
+          onDegis('')
+        }}
+        onIptal={() => setSilmeAcik(false)}
+      />
     </div>
   )
 }
@@ -228,6 +236,7 @@ function ElleObpKarti({
   onDegis: (yeni: number | null) => void
 }) {
   const [metin, setMetin] = useState(deger === null ? '' : String(deger))
+  const [silmeAcik, setSilmeAcik] = useState(false)
 
   const yaz = (ham: string) => {
     const temiz = ham.replace(',', '.').replace(/[^0-9.]/g, '').slice(0, 6)
@@ -265,7 +274,7 @@ function ElleObpKarti({
         {metin !== '' && (
           <button
             type="button"
-            onClick={() => yaz('')}
+            onClick={() => setSilmeAcik(true)}
             aria-label="Girdiğin OBP'yi sil"
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-muted-foreground active:bg-muted focus-visible:outline-2 focus-visible:outline-ring"
           >
@@ -277,6 +286,13 @@ function ElleObpKarti({
       {aralikDisi && (
         <Not className="mt-3">OBP 250 ile 500 arasında olur; girdiğin sayı bu aralığa çekildi.</Not>
       )}
+      <Onay
+        acik={silmeAcik}
+        baslik="Elle girilen OBP silinsin mi?"
+        aciklama="Girdiğin OBP silinecek. Yıl ortalamaların varsa hesaplama onlara dönecek."
+        onOnayla={() => yaz('')}
+        onIptal={() => setSilmeAcik(false)}
+      />
     </Kart>
   )
 }
