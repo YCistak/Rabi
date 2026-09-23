@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Check, LockKeyhole, X } from 'lucide-react'
+import { Check, LockKeyhole, Trash2 } from 'lucide-react'
 import type { Ayarlar, OkulYili } from '@/lib/types'
 import {
   ILK_SINIF,
@@ -167,27 +167,34 @@ function YilSatiri({
         </p>
       </div>
 
-      <Alan
-        inputMode="decimal"
-        value={metin}
-        disabled={kilitli}
-        onChange={(e) => {
-          const temiz = e.target.value.replace(/[^0-9,.]/g, '').slice(0, 6)
-          setMetin(temiz)
-          onDegis(temiz)
-        }}
-        placeholder={kilitli ? '—' : '0–100'}
-        aria-label={`${sinif}. sınıf yıl sonu notu${kilitli ? ' (kilitli)' : ''}`}
-        className={cn(
-          'rakam order-last h-12 w-25 shrink-0 rounded-[12px] border-transparent bg-muted/60 text-center text-lg font-extrabold placeholder:text-lg placeholder:font-extrabold focus:placeholder:text-transparent',
-          kilitli && 'text-muted-foreground disabled:cursor-not-allowed disabled:opacity-100',
+      <div className="order-last relative w-25 shrink-0">
+        <Alan
+          inputMode="decimal"
+          value={metin}
+          disabled={kilitli}
+          onChange={(e) => {
+            const temiz = e.target.value.replace(/[^0-9,.]/g, '').slice(0, 6)
+            setMetin(temiz)
+            onDegis(temiz)
+          }}
+          placeholder={kilitli ? '—' : '0–100'}
+          aria-label={`${sinif}. sınıf yıl sonu notu${kilitli ? ' (kilitli)' : ''}`}
+          className={cn(
+            'rakam h-12 w-full rounded-[12px] border-transparent bg-muted/60 text-center text-lg font-extrabold placeholder:text-lg placeholder:font-extrabold focus:placeholder:text-transparent',
+            kilitli && 'text-muted-foreground disabled:cursor-not-allowed disabled:opacity-100',
+          )}
+        />
+        {kilitli && (
+          <LockKeyhole
+            size={15}
+            className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/70"
+            aria-hidden
+          />
         )}
-      />
+      </div>
 
       <div className="flex w-9 shrink-0 items-center justify-center">
-        {kilitli ? (
-          <LockKeyhole size={16} className="text-muted-foreground/70" aria-hidden />
-        ) : dolu && (
+        {!kilitli && dolu && (
           <button
             type="button"
             onClick={() => {
@@ -197,7 +204,7 @@ function YilSatiri({
             aria-label={`${sinif}. sınıf notunu sil`}
             className="flex h-11 w-9 items-center justify-center rounded-xl text-muted-foreground active:bg-muted focus-visible:outline-2 focus-visible:outline-ring"
           >
-            <X size={16} aria-hidden />
+            <Trash2 size={16} aria-hidden />
           </button>
         )}
       </div>
@@ -262,7 +269,7 @@ function ElleObpKarti({
             aria-label="Girdiğin OBP'yi sil"
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-muted-foreground active:bg-muted focus-visible:outline-2 focus-visible:outline-ring"
           >
-            <X size={16} aria-hidden />
+            <Trash2 size={16} aria-hidden />
           </button>
         )}
       </div>
