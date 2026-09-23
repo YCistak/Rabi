@@ -472,7 +472,7 @@ export function HedefEkrani({
       </div>
       </>}
 
-      <div className={cn('rounded-2xl border border-border bg-card p-4 text-xs leading-relaxed text-muted-foreground', formAcik ? 'mt-5' : 'mt-auto')}>
+      <div className="mt-5 rounded-2xl border border-border bg-card p-4 text-xs leading-relaxed text-muted-foreground">
         <div className="flex gap-3">
           <Info size={17} className="mt-0.5 shrink-0 text-primary" aria-hidden />
           <div className="space-y-3">
@@ -567,21 +567,21 @@ function ElleGiris({
   return (
     <div className="space-y-3">
       <div>
-        <Etiket htmlFor="hedef-bolum">Bölüm</Etiket>
-        <Alan
-          id="hedef-bolum"
-          value={bolum}
-          onChange={(e) => onBolum(e.target.value)}
-          placeholder="örn. Hukuk"
-        />
-      </div>
-      <div>
         <Etiket htmlFor="hedef-universite">Üniversite</Etiket>
         <Alan
           id="hedef-universite"
           value={universite}
           onChange={(e) => onUniversite(e.target.value)}
           placeholder="örn. Ankara Üniversitesi"
+        />
+      </div>
+      <div>
+        <Etiket htmlFor="hedef-bolum">Bölüm</Etiket>
+        <Alan
+          id="hedef-bolum"
+          value={bolum}
+          onChange={(e) => onBolum(e.target.value)}
+          placeholder="örn. Hukuk"
         />
       </div>
     </div>
