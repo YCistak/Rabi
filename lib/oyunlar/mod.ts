@@ -22,13 +22,11 @@
  *
  * ## Mod tur başlamadan seçiliyor
  *
- * Seçim `ModSecimi` ile tanıtım ekranının ilk adımında ve dördü de açık.
+ * Seçim `ModSecimi` ile tek oyun hazırlığı ekranında ve dördü de açık.
  * Bir süre kaldırılmıştı — turu başlatmak isteyen kullanıcının önüne, cevabını
  * ancak oynayarak öğreneceği iki soru birden (mod ve zorluk) çıkıyor ve ikisi
- * de "Başla"yı bir ekran öteye itiyordu. O sorun seçimin kendisinde değil
- * **zorunluluğunda**: seçim artık varsayılanıyla geliyor (`VARSAYILAN_MOD`),
- * hiçbir şeye dokunmayan kullanıcı Sıradan turu oynuyor ve adım tek dokunuşla
- * geçiliyor.
+ * de "Başla"yı bir ekran öteye itiyordu. Şimdi mod ve zorluk varsayılanıyla
+ * geliyor; hiçbir şeye dokunmayan kullanıcı tek dokunuşla Sıradan turu açıyor.
  *
  * Seçim bütün oyunlarda ortak ve saklanıyor (`ANAHTARLAR.oyunModu`): mod turun
  * nasıl işleyeceğini söylüyor, oyunun ne sorduğunu değil — "Turbo sevdim"
@@ -51,7 +49,7 @@ export type ModTanimi = {
   simge: string
   /** Seçim çipinin altındaki tek satır. */
   ozet: string
-  /** Kuralın tamamı — tanıtım penceresinde seçili modun altında yazıyor. */
+  /** Kuralın tamamı — hazırlık ekranında seçili modun altında yazıyor. */
   kural: string
   /**
    * Turun kendi saati, saniye. `null` ise saat tura ait değil: ya soru başına

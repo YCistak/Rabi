@@ -148,19 +148,6 @@ export const ANAHTARLAR = {
    */
   notlar: 'rabi-notlar',
   /**
-   * Tanıtımı kapatılmış oyunların kimlikleri.
-   *
-   * Tanıtım her turdan önce çıkıyor ve oyunu ezberleyen için bu bir engel:
-   * ayarları seçtikten sonra bir de kuralları geçmek gerekiyor. "Bir daha
-   * gösterme" oyunu bu listeye yazıyor, sonraki turlar ayarlardan doğrudan
-   * geri sayıma gidiyor. Oyun başına ayrı: birini ezberlemek hepsini
-   * ezberlemek değil.
-   *
-   * Kural yine ulaşılabilir — tur sırasındaki "?" düğmesi tanıtımı bu
-   * listeye bakmadan açıyor.
-   */
-  tanitimGizli: 'rabi-tanitim-gizli',
-  /**
    * Tur öncesi seçilen oyun modu — bütün oyunlarda **ortak**.
    *
    * Mod turun nasıl işleyeceğini söylüyor, oyunun ne sorduğunu değil:
@@ -174,8 +161,8 @@ export const ANAHTARLAR = {
    * Oyun başına, çünkü zorluk o oyunun sorduğu şeye ait: biri edebiyatta
    * kolayda kalırken sesi zorda oynayabiliyor. Eskiden her oyunun kendi
    * anahtarı vardı (`rabi-zorluk-ses` ve yirmi bir kardeşi) ve yeni bir oyun
-   * eklemek yeni bir anahtar açmak demekti; tablo `tanitimGizli` ile aynı
-   * kalıpta, oyun listesi büyüyünce anahtar sayısı artmıyor.
+   * eklemek yeni bir anahtar açmak demekti; tablo oyun listesi büyüyünce
+   * anahtar sayısını artırmıyor.
    *
    * Tuttuğu şey turun **başlangıcı**; seviye tur içinde kayıyor
    * (`lib/oyunlar/uyum.ts`) ve kaydığı yer buraya yazılmıyor — o, kullanıcının

@@ -131,16 +131,10 @@ export type OyunTanimi = {
   kisaAciklama: string
   ikon: string
   /**
-   * Tanıtım penceresindeki özet — bir ya da iki cümle.
-   *
-   * Önce sekiz maddelik bir "nasıl oynanır" listesiydi ve kimse okumuyordu:
-   * pencere turu başlatan yer, ders kitabı değil. Maddelerin çoğu zaten
-   * pencerenin kendisinde yazıyor — turun süresi kartın altındaki çipte,
-   * kuralın kendisi de her turda aynı (`lib/oyunlar/mod.ts`). Geriye kalan tek
-   * soru "ben ne yapacağım"; cevabı burada duruyor.
+   * Oyun içindeki yardım düğmesinde gösterilen kısa kural metni.
    *
    * Havuz boyu, çeldirici mantığı, kural listesi gibi ayrıntılar bilerek
-   * yok: hiçbiri ilk turu oynamak için gerekmiyor.
+   * yok: yardım yalnızca oyunun temel hareketini hatırlatıyor.
    */
   ozet: string
 }

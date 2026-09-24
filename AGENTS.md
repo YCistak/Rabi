@@ -1098,7 +1098,7 @@ götürmekle geçiyordu.
 
 Katman **iki ortak bileşenin içinde** duruyor (`oyun-tanitim.tsx` ve
 `TurSonu`); 18 oyun dosyasının hiçbiri geri sayımdan haberdar değil. Tur, sayım
-bitince başlıyor — yani `onBasla`/`onTekrar` çağrıldığı an. Tanıtım penceresi
+bitince başlıyor — yani `onBasla`/`onTekrar` çağrıldığı an. Hazırlık ekranı
 sayım sürerken gizleniyor ama sökülmüyor: sayımı ayrı bir katmana taşımak, onu
 her oyuna ayrı ayrı eklemek demekti.
 
@@ -1295,18 +1295,15 @@ tekrar çözmek hâlâ mümkün, ama o tur kaydı düşürmüyor. Havuzu süzen 
 
 Turun nasıl işleyeceğini **mod** belirliyor (`lib/oyunlar/mod.ts`).
 
-**Mod tur başlamadan seçiliyor** (`ModSecimi`, "Turu ayarla" penceresinde)
+**Mod tur başlamadan seçiliyor** (`ModSecimi`, oyun hazırlığı ekranında)
 ve dördü de açık. Seçim bütün oyunlarda ortak ve saklanıyor
 (`ANAHTARLAR.oyunModu`): mod turun nasıl işleyeceğini söylüyor, oyunun ne
 sorduğunu değil — "Turbo sevdim" diyen kullanıcı bunu her oyunda yeniden
 seçmemeli.
 
-Seçim bir süre kaldırılmıştı: oyunu ilk açan öğrenciye sorulan üç sorunun
-(mod, zorluk, soru türü) cevabı ancak oynayarak öğrenilebiliyor ve "Başla" o
-üç sorunun arkasında, bir ekran ötede duruyordu. Geri gelirken sorun seçimin
-kendisinde değil **zorunluluğunda** olduğu görüldü: iki soru da varsayılanıyla
-geliyor (Sıradan · Orta), hiçbir şeye dokunmayan kullanıcı tek dokunuşla
-adımı geçiyor. Soru türü seçimi geri gelmedi — havuzun tamamı soruluyor.
+Mod ve zorluk varsayılanıyla geliyor (Sıradan · Orta); hiçbir şeye dokunmayan
+kullanıcı tek dokunuşla geri sayıma geçiyor. Açılışta örnek veya ayrı bir
+tanıtım adımı yok. Soru türü seçimi de yok — havuzun tamamı soruluyor.
 
 | Mod | Saat | Yanlış | Kayıt |
 | --- | --- | --- | --- |
@@ -1325,29 +1322,14 @@ kez yanlış bilinmiş olanlar ve turun amacı hepsini bir kez daha görmek — 
 saatli bir mod o işi yarıda keser. Ayarlar adımı o turda hiç çıkmıyor
 (`secilebilir`): sunulup dinlenmeyen bir seçim, yalan söyleyen bir arayüzdür.
 
-**Seçim tam ekran bir adım değil, oyunun üstünde açılan bir pencere**
-(`AyarPenceresi`, `tasarim/oyun-modu-secimi.dc.html`): ayar turu değiştiriyor,
-oyunu değil, ve bulanık zeminin altında hangi oyuna girildiği görünüyor. Arkada
-soru **yok** — oyun ekranı tahtayı ancak `asama === 'oynaniyor'` olunca
-çiziyor, tanıtım aşamasında yalnızca kabuk duruyor. Pencere kendi içinde
-kayıyor: dört mod kutusu, zorluk şeridi ve Rahat'ın uyarı şeridi kısa
-telefonlarda taşıyor ve düğme ekranın dışında kalıyordu.
-
-Mod kutularındaki ikonlar çizgi ikon (lucide), `ModTanimi.simge`deki emoji
-değil: dört kutunun dördü de aynı ailede olmalı ve emoji telefondan telefona
-başka çiziliyor. Emoji duruyor, tur içindeki mod rozetinde
-(`oyun-kabuk.tsx`) hâlâ o çiziliyor — orası tek bir simge, hizalanacak
-kardeşi yok.
-
-Zorluk ızgara değil **şeritli seçici**: üç seviye tek bir eksende sıralı ve
-ızgara o sıralamayı anlatmıyordu. Kayan gösterge iki katman — dıştaki ray
-düğmelerin kapladığı alanın aynısı, içteki gösterge o rayın tam üçte biri.
-Ray olmadan (`calc((100% - 0.75rem) / 3)`) her adımda yarım piksellik bir
-kayma birikiyor ve üçüncü seviyede gösterge şeridin kenarına yapışıyordu.
+**Hazırlık tek tam ekran sayfa** (`components/oyun-tanitim.tsx`). Başlık,
+dört moddan oluşan düz seçim tablosu ve başlangıç zorluğu var. Düğme sabit
+altta; kısa telefonlarda içerik kayıyor. Alt satırdaki "Düzenle" zorluk
+seçimine kaydırıyor. Oyun içindeki yardım yalnızca kısa kural metnini açıyor.
 
 **Seçim prop'la değil bağlamla iniyor** (`components/tur-ayari-baglami.tsx`,
 `genel-test-baglami.tsx` ile aynı kalıp). Seçtiren yer tek (`oyun-tanitim.tsx`)
-ama tanıtım penceresini çizen ve ayarı kullanan yer yirmi iki oyun dosyasının
+ama hazırlık ekranını çizen ve ayarı kullanan yer oyun dosyalarının
 her biri; prop olsaydı aynı dört satır yirmi iki kez yazılacaktı ve yeni bir
 oyun eklendiğinde unutulan satır, seçimi sessizce yok sayan bir oyun demekti.
 Oyun dosyaları saf fonksiyonları değil `useEtkinMod` / `useUyarlananZorluk`

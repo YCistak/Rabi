@@ -398,9 +398,8 @@ export function OyunlarEkrani({
 
   return (
     /*
-      Genel testte oyunun tanıtım penceresi hiç açılmıyor, tur kendiliğinden
-      başlıyor. Bilgi bağlamla iniyor: pencereyi on sekiz oyun dosyasının her
-      biri kendi çiziyor ve prop olsaydı aynı satır on sekiz kez yazılacaktı.
+      Genel testte oyun hazırlığı açılmıyor, tur kendiliğinden başlıyor.
+      Bilgi bağlamla iniyor: hazırlık bileşenini her oyun dosyası kendi çiziyor.
     */
     <GenelTestSaglayici value={bankaTuru !== null}>
     <TurAyariSaglayici value={turAyari}>
