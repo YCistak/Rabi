@@ -207,6 +207,13 @@ const AILE: Record<
     kenar: 'border-l-edb-koyu',
     degisken: 'var(--edb-koyu)',
   },
+  'mol-kargo': {
+    zemin: 'bg-edb',
+    yazi: 'text-edb-koyu',
+    dolgu: 'bg-edb-koyu',
+    kenar: 'border-l-edb-koyu',
+    degisken: 'var(--edb-koyu)',
+  },
 }
 
 /** Tur sonunda listelenen en fazla yanlış. Gerisi Oyun Bankası'nda. */

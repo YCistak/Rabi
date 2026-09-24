@@ -240,6 +240,7 @@ export type OyunId =
   | 'tuzak'
   | 'periyodik'
   | 'formul'
+  | 'mol-kargo'
 
 /**
  * Bir mini oyunun kalıcı istatistiği.

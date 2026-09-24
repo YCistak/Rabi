@@ -51,6 +51,7 @@ import { TurAyariSaglayici } from '@/components/tur-ayari-baglami'
 import { YazimOyunuEkrani } from '@/components/ekranlar/oyun-yazim'
 import { SesOyunuEkrani } from '@/components/ekranlar/oyun-ses'
 import { OgeOyunuEkrani } from '@/components/ekranlar/oyun-oge'
+import { MolKargoOyunuEkrani } from '@/components/ekranlar/oyun-mol-kargo'
 import { SozOyunuEkrani } from '@/components/ekranlar/oyun-soz'
 import { IslemOyunuEkrani } from '@/components/ekranlar/oyun-islem'
 import { BolunmeOyunuEkrani } from '@/components/ekranlar/oyun-bolunme'
@@ -134,6 +135,7 @@ const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   tuzak: ['Kural', 'Tuzağı'],
   periyodik: ['Periyodik', 'Tablo Avı'],
   formul: ['Formül', 'Eşleştirme'],
+  'mol-kargo': ['Mol', 'Kargo'],
 }
 
 export function OyunlarEkrani({
@@ -788,6 +790,17 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('formul', ozet, cevaplar, saniye, yarim)}
+          bildir={bildir}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'mol-kargo' && (
+        <MolKargoOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'mol-kargo')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('mol-kargo', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi['mol-kargo'] ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
