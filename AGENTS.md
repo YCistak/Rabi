@@ -1953,18 +1953,26 @@ dilime yazmak isteyen o bölümün düğmesine basıyor.
 ### Görevin süresi soruluyor
 
 Ekleme sayfası "Ortalama kaç dakika sürer?" diye soruyor (`Gorev.sure`,
-çipler `SURE_SECENEKLERI`: 15–120). Dilim başlığı bitmemiş görevlerin toplamını
+çipler `SURE_SECENEKLERI` ve elle yazma kutusu). Dilim başlığı bitmemiş görevlerin toplamını
 yazıyor (`kalanSure`), satırda süre kategorinin yanında duruyor — iş adının
 satırı tek satırlık ve genişliği sayılı, oraya sığmazdı. Plan, işlerin ne kadar
 süreceği bilinince plan oluyor; "akşama beş iş" ile "akşama dört saat" ayrı
 şeyler.
 
-Çip, serbest sayı değil: sorulan bir tahmin ve "37 dakika" kimsenin vereceği
-bir cevap değil. Varsayılan seçili gelmiyor — seçili bir "30 dk", kullanıcının
-hiç vermediği bir tahmini onun adına kaydederdi. İki saatin üstü yok: o tek bir
-görev değil, bölünmesi gereken bir iş.
+Hazır süreler çip (15 · 30 · 45 · 60 · 120, 90 kullanıcı isteğiyle çıktı),
+en sonda elle dakika yazılan bir kutu (`elleSure`, üç haneye kadar). Bir süre
+yalnızca çip vardı ("37 dakika kimsenin vereceği bir cevap değil" diye) ve
+iki saatin üstü yoktu; kullanıcı kutuyu istedi — hazır sürelere uymayan işi
+yazmanın yolu olmayınca en yakın çip seçiliyor, tahmin yalan oluyordu. Çip ile
+kutu tek cevap: birine dokunmak ötekini temizliyor.
 
-Alan sonradan geldi: eski görevlerde `sure` `null` ve toplamda sayılmıyor.
+**Süre isteğe bağlı.** Bir süre zorunluydu (Kaydet süresiz basılınca alan
+kırmızıya dönüyordu); kullanıcı kaldırılmasını istedi — kısa bir iş için tahmin
+uydurmak eklemeyi uzatıyordu. Varsayılan seçili gelmiyor (seçili bir "30 dk",
+kullanıcının vermediği bir tahmini onun adına kaydederdi) ve seçili çipe
+yeniden dokunmak seçimi kaldırıyor.
+
+Süresiz görevin `sure`'u `null` ve toplamda sayılmıyor; eski görevler de öyle.
 Uydurma bir süre, dilimin toplamını kullanıcının söylemediği bir sayıyla
 şişirirdi.
 
