@@ -657,7 +657,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       ),
       kart(
         'Günlük kuvvetlerin kökeni',
-        'İtme, sürtünme, gerilme ve tepki kuvvetleri atomlar arası elektromanyetik etkileşimdir.\n"Temas kuvveti" diye ayrı bir temel kuvvet yoktur.',
+        'İtme, sürtünme, gerilme ve tepki kuvvetleri aslında elektromanyetiktir.\nHepsi atomlar arasındaki etkileşimden doğar.\n"Temas kuvveti" diye ayrı bir temel kuvvet yoktur.',
       ),
     ], [
       soru('Doğadaki dört temel kuvvetin en zayıfı kütle çekim kuvvetidir.', true, 'Bir mıknatıs, Dünya nın çekimine karşı toplu iğneyi kaldırabiliyor.'),
@@ -1096,7 +1096,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
     konu('fzk9-bernoulli', 'Bernoulli İlkesi', [
       kart(
         'Temel fikir',
-        'Akışkanın sürati arttığı yerde çeperlere yaptığı **basınç azalır**.',
+        'Akışkanın sürati arttığı yerde çeperlere yaptığı **basınç azalır**.\nHızlı akan hava, yanındaki yüzeye daha az basınç yapar.',
         undefined,
         { not: 'İki kâğıdı yan yana tutup arasına üfle: kâğıtlar birbirine yaklaşır. Hızlı hava = düşük basınç.' },
       ),
@@ -1372,7 +1372,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       ),
       kart(
         'Erime ve donma ısısı',
-        '1 gram maddeyi eritmek için gereken ısı, aynı maddenin donarken verdiği ısıya eşittir.',
+        'Aynı madde için iki değer birbirine eşittir:\n- 1 g maddeyi eritmek için gereken ısı\n- 1 g madde donarken verdiği ısı',
       ),
       kart(
         'Buharlaşma her sıcaklıkta',

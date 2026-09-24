@@ -336,7 +336,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       ),
       kart(
         'İlişki var mı?',
-        'Bir değişkenin dağılımı, ötekinin düzeylerine göre belirgin biçimde değişiyorsa ilişki vardır.',
+        'Bir değişkenin dağılımına, ötekinin her düzeyinde ayrı ayrı bak.\nDağılım belirgin biçimde değişiyorsa ilişki vardır.',
       ),
       kart(
         'İlişki nedensellik değil',
@@ -992,7 +992,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       ),
       kart(
         'Nasıl bulunur?',
-        'Üç adım her fonksiyonda aynıdır.',
+        'Üç adım her fonksiyonda aynıdır.\nSonunda yalnız kalan y, ters fonksiyondur: f⁻¹(x)',
         {
           tur: 'akis',
           dikey: true,

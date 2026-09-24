@@ -183,7 +183,7 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
     konu('byl10-kemosentez', 'Işık Kullanılmadan Besin Sentezi: Kemosentez', [
       kart(
         'Tanımı',
-        'Bazı bakterilerin, ışık yerine kimyasal tepkimelerden aldıkları enerjiyle besin üretmesidir.',
+        'Bazı bakterilerin besin üretme yoludur.\nEnerji ışıktan değil, kimyasal tepkimelerden gelir.',
       ),
       kart(
         'Kimler yapar?',

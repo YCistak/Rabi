@@ -80,7 +80,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Afet ve risk',
-        'Fay hattını, taşkın ovasını ve heyelan alanını bilmek doğrudan can güvenliğiyle ilgilidir.',
+        'Şu alanları bilmek doğrudan can güvenliğiyle ilgilidir:\n- Fay hattı\n- Taşkın ovası\n- Heyelan alanı',
       ),
       kart(
         'Kaynak yönetimi',
@@ -88,7 +88,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Küresel bakış',
-        'İklim değişikliği, göç ve kaynak paylaşımı gibi sorunlar coğrafi düşünmeden anlaşılmaz.',
+        'İklim değişikliği, göç ve kaynak paylaşımı küresel sorunlardır.\nCoğrafi düşünmeden anlaşılamazlar.',
       ),
       kart(
         'Coğrafi düşünmenin ölçütü',
@@ -572,7 +572,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Kuşaklar enleme bağlı',
-        'Dönenceler ve kutup daireleri iklim kuşaklarının sınırlarını çizer.',
+        'Dönenceler ve kutup daireleri kuşakların sınırını çizer:\n- **Dönenceler arası:** sıcak kuşak\n- **Dönence ile kutup dairesi arası:** ılıman kuşak\n- **Kutup dairesinin ötesi:** soğuk kuşak',
         {
           tur: 'katman',
           eksenAdi: 'KUZEYDEN GÜNEYE',
@@ -1004,7 +1004,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Kırılganlık',
-        'Aynı şiddetteki olay, yapı kalitesi ve gelir düzeyi düşük yerlerde daha büyük kayıp verir.',
+        'Aynı şiddetteki olay her yerde aynı kaybı vermez.\nYapı kalitesi ve gelir düzeyi düşük yerlerde kayıp büyür.',
       ),
     ], [
       soru('Bir doğa olayı, insana ve yapılara zarar verdiğinde afet hâline gelir.', true, 'Afeti tanımlayan şey olayın kendisi değil sonucu.'),
@@ -1047,11 +1047,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Meteorolojik afetler',
-        'Sel, kuraklık, fırtına, dolu, çığ ve aşırı sıcaklar.',
+        '- Sel ve kuraklık\n- Fırtına ve dolu\n- Çığ ve aşırı sıcaklar\nKaynağı atmosferdeki olaylardır.',
       ),
       kart(
         'Biyolojik afetler',
-        'Salgın hastalıklar, orman yangınları ve zararlı böcek istilaları.',
+        '- Salgın hastalıklar\n- Orman yangınları\n- Zararlı böcek istilaları',
       ),
       kart(
         'Beşerî afetler',

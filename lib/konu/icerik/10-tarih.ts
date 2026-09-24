@@ -208,7 +208,7 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     konu('trh10-turk-islam', 'Türk-İslam Medeniyetinde Bilim, Kültür ve Sanat', [
       kart(
         'Medreseler',
-        'Nizamülmülk’ün kurduğu **Nizamiye medreseleri**, dönemin en düzenli yükseköğretim kurumlarıydı.',
+        '**Nizamiye medreseleri** Nizamülmülk tarafından kuruldu.\nDönemin en düzenli yükseköğretim kurumlarıydı.',
       ),
       kart(
         'Bilim insanları',
@@ -234,7 +234,7 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       ),
       kart(
         'Tasavvuf',
-        'Mevlânâ, Yunus Emre ve Hacı Bektaş Veli’nin öğretisi Anadolu’nun kültürel dokusunu biçimlendirdi.',
+        'Anadolu’nun kültürel dokusunu biçimlendiren üç ad:\n- Mevlânâ\n- Yunus Emre\n- Hacı Bektaş Veli',
       ),
       kart(
         'Neden tasavvuf yayıldı?',
@@ -822,7 +822,7 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       ),
       kart(
         'Coğrafya ve denizcilik',
-        '**Piri Reis**’in haritası ve Kitab-ı Bahriye’si Osmanlı denizcilik bilgisinin düzeyini gösterir.',
+        '**Piri Reis**’in iki eseri Osmanlı denizcilik bilgisinin düzeyini gösterir:\n- Dünya haritası\n- Kitab-ı Bahriye',
       ),
       kart(
         'Rasathane',
@@ -834,7 +834,7 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       ),
       kart(
         'Mimar Sinan',
-        'Şehzade, Süleymaniye ve Selimiye camileriyle Osmanlı klasik mimarisinin doruğunu kurdu.',
+        'Osmanlı klasik mimarisinin doruğunu kurdu.\nÜç büyük eseri: Şehzade, Süleymaniye ve Selimiye camileri',
       ),
       kart(
         'Sinan’ın üç dönemi',

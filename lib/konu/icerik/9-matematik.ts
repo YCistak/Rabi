@@ -323,7 +323,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Genelleme yapmak',
-        'Birkaç sayıda gözlenen örüntü, harfle yazılınca bütün sayılar için bir iddiaya dönüşür.',
+        'Birkaç sayıda gözlenen örüntü harfle yazılır.\nBöylece bütün sayılar için geçerli bir iddiaya dönüşür.',
       ),
       kart(
         'Karşı örnek',
@@ -1409,7 +1409,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-algoritma', 'Algoritma Temelli Problemler', [
       kart(
         'Algoritma nedir?',
-        'Bir problemi çözmek için izlenen sonlu, sıralı ve kesin adımlar dizisidir.',
+        'Bir problemi çözmek için izlenen sonlu, sıralı ve kesin adımlar dizisidir.\nBir yemek tarifi de bir algoritmadır.',
       ),
       kart(
         'Üç özellik',
@@ -1417,7 +1417,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Girdi, işlem, çıktı',
-        'Her algoritmanın bir girdisi, üzerinde yapılan işlemleri ve bir çıktısı vardır.',
+        'Her algoritmanın üç parçası vardır:\n- **Girdi:** alınan veri\n- **İşlem:** yapılan hesap\n- **Çıktı:** yazılan sonuç',
         {
           tur: 'akis',
           adimlar: [
@@ -1739,11 +1739,11 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Ölçek oyunu',
-        'Aynı veri, eksen aralığı değiştirilerek hem "sert artış" hem "durgunluk" gibi çizilebilir.',
+        'Aynı veri, eksen aralığı değiştirilerek farklı çizilebilir:\n- **Dar aralıkta:** "sert artış" gibi görünür.\n- **Geniş aralıkta:** "durgunluk" gibi görünür.',
       ),
       kart(
         'Örneklem önemli',
-        'Az sayıda ya da taraflı seçilmiş örneklem, doğru hesaplansa bile yanlış sonuç verir.',
+        'Az sayıda ya da taraflı seçilmiş örneklem yanlış sonuç verir.\nHesap doğru yapılsa bile sonuç yanıltır.',
       ),
       kart(
         'Kim topladı?',
@@ -1783,7 +1783,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-deneysel', 'Deneysel Olasılık', [
       kart(
         'Tanımı',
-        'Deneyde istenen sonucun gözlenme sayısının, toplam deneme sayısına oranıdır.',
+        'Deneyde gözlenen sıklıktan hesaplanan olasılıktır:\n**istenen sonuç sayısı / toplam deneme sayısı**',
       ),
       kart(
         'Deney, sonuç, olay',

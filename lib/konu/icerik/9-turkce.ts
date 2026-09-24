@@ -116,7 +116,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'İmge',
-        'Şairin sözcükleri alışılmadık biçimde birleştirip zihinde yeni bir görüntü kurmasıdır.\nŞiiri düzyazıdan ayıran asıl şey budur.',
+        'Şair sözcükleri alışılmadık biçimde birleştirip zihinde yeni bir görüntü kurar.\nŞiiri düzyazıdan ayıran asıl şey budur.',
       ),
       kart(
         'Ahenk ögeleri',

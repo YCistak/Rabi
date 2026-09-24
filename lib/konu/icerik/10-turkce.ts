@@ -610,7 +610,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       ),
       kart(
         'Edebiyat ve toplum',
-        'Bu dönemde edebiyat, sanat kaygısının yanında toplumu biçimlendirme işini de üstlendi.',
+        'Bu dönemde edebiyat iki işi birlikte üstlendi:\n- Sanat kaygısı\n- Toplumu biçimlendirme',
       ),
       kart(
         'Cumhuriyet’e miras',

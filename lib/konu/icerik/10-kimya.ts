@@ -631,7 +631,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       ),
       kart(
         'Öteki yasaları içerir',
-        'İki değişken sabit tutulunca denklem sırayla Boyle, Charles ve Gay-Lussac yasalarına dönüşür.',
+        'İki değişken sabit tutulunca denklem öteki yasalara dönüşür:\n- **n ve T sabit:** Boyle\n- **n ve P sabit:** Charles\n- **n ve V sabit:** Gay-Lussac',
       ),
       kart(
         'Sıcaklık Kelvin',
@@ -729,7 +729,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
     konu('kim10-cozunme', 'Çözünme Süreci', [
       kart(
         'Çözelti nedir?',
-        'Bir maddenin başka bir madde içinde tanecik boyutunda ve homojen dağılmasıyla oluşan karışımdır.',
+        'Bir madde başka bir madde içinde tanecik boyutunda dağılır.\nOluşan karışım homojendir: her yerinde aynı özelliği taşır.',
       ),
       kart(
         'Çözen ve çözünen',
@@ -1018,7 +1018,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       ),
       kart(
         'Ortak iyon etkisi',
-        'Çözeltide zaten bulunan bir iyonu eklemek, o iyonu içeren tuzun çözünürlüğünü **düşürür**.',
+        'Çözeltide zaten bulunan bir iyonu tekrar eklemek:\no iyonu içeren tuzun çözünürlüğünü **düşürür**.',
       ),
     ], [
       soru('Katıların çözünürlüğü genellikle sıcaklık arttıkça artar.', true, 'Şekerin sıcak suda daha çok çözünmesi buna örnek.'),

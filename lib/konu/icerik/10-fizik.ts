@@ -407,7 +407,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
     konu('fzk10-mekanik', 'Mekanik Enerji', [
       kart(
         'Tanımı',
-        '**Mekanik enerji = kinetik + potansiyel**',
+        '**Mekanik enerji = kinetik + potansiyel**\nHareketten ve konumdan gelen enerjilerin toplamıdır.',
       ),
       kart(
         'Korunum',

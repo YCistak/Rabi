@@ -221,7 +221,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       ),
       kart(
         'Örneklem',
-        'Az sayıda ya da taraflı seçilmiş denek, doğru kurulmuş bir deneyi bile yanlış sonuca götürür.',
+        'Denek sayısı az ya da seçimi taraflıysa sonuç yanıltır.\nDeney doğru kurulmuş olsa bile.',
       ),
       kart(
         'Tekrarlanabilirlik',
@@ -259,7 +259,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       ),
       kart(
         'Aydınlatılmış onam',
-        'İnsan üzerinde çalışılacaksa kişi riskleri bilerek ve gönüllü olarak kabul etmelidir.',
+        'İnsan üzerinde çalışılacaksa katılımcı:\n- riskleri bilmeli,\n- gönüllü olarak kabul etmelidir.',
       ),
       kart(
         'Hayvan deneyleri',

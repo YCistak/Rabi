@@ -703,7 +703,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
       ),
       kart(
         'İstihdam ve gelir farkı',
-        'Bir sektörde çok kişi çalışması, o sektörün çok gelir ürettiği anlamına gelmez.',
+        'Bir sektörde çok kişi çalışması, çok gelir ürettiği anlamına gelmez.\nTarım buna örnektir: çalışanı çok, geliri azdır.',
         {
           tur: 'tablo',
           basliklar: ['Ülke', 'Tarım payı', 'Hizmet payı'],
