@@ -2095,6 +2095,32 @@ konu başına en fazla 8 kart) ve bu sayılar keyfî değil: kart telefonda
 kaydırmadan okunacak kadar olmalı. Sınırı aşan kart, ikiye bölünmesi gereken
 karttır — sınırı büyütmeden önce kartı böl.
 
+### Kart metni satırlara ve maddelere bölünüyor
+
+Kart metni bir süre düz bir paragraftı ve dört-beş bilgi aynı satırda,
+noktalarla ayrılarak akıyordu ("sin: 30° → 1/2, 45° → √2/2 … cos tersi
+sırayla. tan: …"). Kullanıcı bunu iki kez "karmakarışık" diye geri
+çevirdi; bütün desteler (9 ve 10, yedi ders, ~1.900 kart) yeniden yazıldı.
+
+Biçim dili üç kuraldan ibaret (`lib/konu/kart-metni.ts`, çizen
+`components/konu/kart-metni.tsx`) — Markdown değil, başka işaret yok:
+
+- Her satır (`\n`) ayrı bir blok; madde olmayan satır bir paragraf.
+- `- ` ile başlayan satır bir madde; art arda maddeler tek liste.
+- `**…**` vurgu: maddenin başındaki ad ("**Ekvator:** 0° enlemi"), bir
+  formül satırı ya da cümlenin anahtar kavramı.
+
+Yazım alışkanlığı: önce bir satırlık tanım ya da formül, ardından
+maddeler, en sonda gerekiyorsa tek satırlık bir sonuç. Sayılan şeyler
+(türler, adımlar, örnekler) maddeye; karşılaştırmalar adlı maddeye
+("**Katı:** … / **Gaz:** …"). Görselin zaten gösterdiği tabloyu metinde
+yeniden yazma.
+
+`icerik.test.ts` ("kart düzeni") bunu denetliyor: satır en çok 110
+karakter, satırda en çok iki cümle, liste en az iki madde, bir listede
+maddelerin ya hepsi adlı ya hiçbiri. Uzunluk sınırı (240) görünen metne
+bakıyor; madde imi ve `**` sayılmıyor.
+
 ### Kayıt kartın metnini de saklıyor
 
 Kart kimliği `${konuId}-${sıra}`; ortaya kart eklemek sonraki kartların
