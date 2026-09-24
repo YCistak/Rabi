@@ -507,6 +507,20 @@ body {
     inset: 0;
     animation: acilis-cikis 4200ms ease-in forwards;
   }
+  /*
+    Sahnenin içindekiler (yazılar, noktalar, artılar) zeminden **önce** ve
+    hızlı soluyor: tavşan yola çıktığı an (%64) başlıyor, ~300 ms'de bitiyor.
+    Bir süre zeminle birlikte %82'de sönüyorlardı ve tavşan uçarken "RABİ"
+    yerinde duruyordu; göz uçan tavşanla duran yazı arasında bölünüyordu.
+    Zemin kendi hızında kalıyor — o da hızlı sönseydi tavşan yolun başında
+    ana sayfanın üstüne çıkar, yuvaya varana kadar arkasında hareketsiz bir
+    sayfa olurdu.
+  */
+  .acilis-icerik {
+    position: absolute;
+    inset: 0;
+    animation: acilis-icerik-cikis 4200ms linear forwards;
+  }
   /* Girişin ortak hareketi; gecikme satır içinde veriliyor. */
   .acilis-belir {
     animation: acilis-belir 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
@@ -692,13 +706,30 @@ body {
   }
 }
 
-/* Sahnenin çıkışı: tavşan yola çıktıktan sonra hafifçe büyüyerek solar. */
+/* Zeminin çıkışı: tavşan yuvaya yaklaşırken (%70–90) hafifçe büyüyerek
+   solar; tavşan vardığında altından ana sayfa görünmüş oluyor. */
 @keyframes acilis-cikis {
   0%,
-  82% {
+  70% {
     opacity: 1;
     transform: scale(1);
   }
+  90%,
+  100% {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+
+/* İçeriğin çıkışı: tavşan kalkınca (%64) ~300 ms'de söner. */
+@keyframes acilis-icerik-cikis {
+  0%,
+  64% {
+    opacity: 1;
+    transform: scale(1);
+    animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
+  }
+  71%,
   100% {
     opacity: 0;
     transform: scale(1.04);

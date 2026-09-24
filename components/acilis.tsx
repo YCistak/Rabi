@@ -30,9 +30,10 @@ const ZEMIN = '#F8F8F7'
  * Ekranın ömrü (ms) — tasarımın kendi süresi.
  *
  * Çıkış tek bir 4,2 saniyelik zaman çizgisinin yüzdelerinde: %64–90 tavşan
- * yerine uçuyor, %82–100 sahne soluyor. Süreyi değiştirirsen `globals.css`'teki
- * `acilis-inis` ile `acilis-sahne` sürelerini birlikte değiştir; ikisi
- * ayrılırsa tavşan sahne sönmeden yola çıkmaz ya da sahne tavşandan önce biter.
+ * yerine uçuyor, %64–71 yazılar/noktalar/artılar hızla sönüyor, %70–90 zemin
+ * soluyor. Süreyi değiştirirsen `globals.css`'teki `acilis-inis`,
+ * `acilis-icerik` ve `acilis-sahne` sürelerini birlikte değiştir; ayrılırlarsa
+ * yazılar tavşandan önce ya da sonra gider.
  *
  * Veri okumasına bağlanmadı: localStorage neredeyse anında dönüyor,
  * bağlansaydı ekran bir kare görünüp kaybolur ve animasyon hiç izlenmezdi.
@@ -368,6 +369,9 @@ export function Acilis({ onBitti }: { onBitti: () => void }) {
     >
       {/* Tavşanın dışındaki her şey: zemin, yazılar, noktalar, artılar. */}
       <div className="acilis-sahne" style={{ backgroundColor: ZEMIN }}>
+        {/* Zeminden ayrı bir katman: içindekiler tavşan kalkınca hızlı,
+            zemin tavşan yuvaya yaklaşırken sönüyor (`acilis-icerik`). */}
+        <div className="acilis-icerik">
         <p
           className="acilis-belir font-acilis text-foreground absolute inset-x-0 top-1/2 text-center font-extrabold"
           style={{
@@ -429,6 +433,7 @@ export function Acilis({ onBitti }: { onBitti: () => void }) {
               }
             />
           ))}
+        </div>
         </div>
       </div>
 
