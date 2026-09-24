@@ -1852,8 +1852,7 @@ ayraca yakın duruyor (bir süre tam ortadaydı, kullanıcı sağa kaydırttı);
 yazıyla arasında soluk, kısa bir dikey ayraç var (`--border`, kartın
 kenarlarına değmiyor). Arkasına bir süre soluk bir leke kondu, kullanıcı geri
 aldı — tavşanı oturtan şey süs değil, yeri, gölgesi ve ayraç. Başlığın
-üstündeki küçük "BUGÜN" etiketi de kaldırıldı (kullanıcı istedi; cümle zaten
-bugünü anlatıyor).
+üstündeki küçük "BUGÜN" etiketi bir süre kaldırıldı, kullanıcı geri istedi.
 
 Sayının kendisi kartta **yazmıyor**: halka zaten sayıyı üç kez söylüyor ve
 kartın işi onu tekrar etmek değil, ona bir yüz vermek. Günlük hedef sıfırken
