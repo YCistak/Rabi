@@ -19,14 +19,17 @@ import { GeriSayim } from '@/components/oyun-geri-sayim'
 import { OYUN_ORNEKLERI, type OyunOrnegi } from '@/components/oyun-ornekleri'
 
 /**
- * Turdan önceki iki ekran: **ayarlar**, sonra **tanıtım**.
+ * Turdan önceki ekran: **ayarlar**. Oradaki "Başlat" doğrudan geri sayımı
+ * açıyor; arada nasıl oynandığını anlatan **tanıtım** yok.
  *
- * Sıra bilerek böyle. Tek ekranda toplandığında (maskot, kurallar, mod,
- * seviye, "Başla") hiçbir telefona sığmıyordu ve "Başla" kaydırmanın altında
- * kalıyordu. Bölününce ikisi de sığıyor; kaydırma hiçbir adımda yok.
+ * Bir süre ayarlardan sonra tanıtım geliyordu ("Devam" → kurallar → "Başla").
+ * Kullanıcı kaldırılmasını istedi: tura girmek her seferinde iki ekran ve iki
+ * dokunuş sürüyordu ve kuralı bilen için ikinci ekran yalnızca geçilecek bir
+ * engeldi. Kural kaybolmadı — tur sırasındaki "?" tanıtımı her hâlükârda
+ * açıyor ve sayaç o sırada duruyor.
  *
- * Ayarlar önde çünkü seçim turu ilgilendiriyor: kuralları okuyup "Başla"ya
- * bastıktan sonra "bir de mod seçeyim" diye geri dönmek istemezsin.
+ * Tanıtım tur başında yalnızca ayar adımı olmayan turda çıkıyor (Oyun
+ * Bankası turu, `secilebilir` false): orada ekranın boş kalmaması için.
  *
  * Adım bir süre kaldırılmıştı: oyunu ilk açan öğrenciye sorulan üç sorunun
  * (hangi mod, hangi seviye, hangi soru türü) cevabı ancak oynayarak
@@ -37,10 +40,9 @@ import { OYUN_ORNEKLERI, type OyunOrnegi } from '@/components/oyun-ornekleri'
  * geçiliyor. Zorluk da artık turu dondurmuyor, yalnızca başlangıcı seçiyor
  * (`lib/oyunlar/uyum.ts`).
  *
- * Tanıtımda "Bir daha gösterme" var: oyunu ezberleyen için her turda
- * geçilecek bir ekran değil (`ANAHTARLAR.tanitimGizli`). Gizlenmiş oyunda
- * ekran hiç çizilmiyor, doğrudan geri sayıma gidiliyor; kural yine kayıp
- * değil, tur sırasındaki "?" tanıtımı her hâlükârda açıyor.
+ * Tanıtımda "Bir daha gösterme" var (`ANAHTARLAR.tanitimGizli`); artık
+ * yalnızca o ayarsız turların başını ilgilendiriyor. Gizlenmiş oyunda ekran
+ * hiç çizilmiyor, doğrudan geri sayıma gidiliyor.
  *
  * "Başla" turu **hemen** başlatmıyor: ekranın yerini 3 · 2 · 1 geri sayımı
  * alıyor ve tur sayım bitince açılıyor (`onBasla`). Ekran o sırada
@@ -65,7 +67,6 @@ export function OyunTanitim({
   onKapat: () => void
 }) {
   const [sayiliyor, setSayiliyor] = useState(false)
-  const [adim, setAdim] = useState<'ayar' | 'tanitim'>('ayar')
   const [gizliler, setGizliler] = useYerelDepo<OyunId[]>(ANAHTARLAR.tanitimGizli, [])
   const genelTest = useGenelTest()
   /* Ayarlar prop olarak gelmiyor: pencereyi çizen yirmi iki oyun dosyasının
@@ -90,12 +91,9 @@ export function OyunTanitim({
   useEffect(() => {
     if (!acik) return
     setSayiliyor(!secimVar && gizli && baslatir)
-    setAdim(secimVar ? 'ayar' : 'tanitim')
   }, [acik, gizli, baslatir, secimVar])
 
-  // Tanıtımdayken geri hareketi ayarlara döner, oyundan çıkmaz.
-  const geri = adim === 'tanitim' && secimVar ? () => setAdim('ayar') : onKapat
-  useGeriKatmani(acik, geri)
+  useGeriKatmani(acik, onKapat)
 
   /*
     Tanıtımı gizlenmiş oyunda ve genel testte tur kendiliğinden başlıyor.
@@ -119,10 +117,7 @@ export function OyunTanitim({
 
   const ornekler = OYUN_ORNEKLERI[oyun.id]
 
-  /** Ayarlardan sonraki adım: tanıtım gizliyse doğrudan geri sayım. */
-  const ayarlardanSonra = () => (gizli ? setSayiliyor(true) : setAdim('tanitim'))
-
-  if (adim === 'ayar' && secimVar) {
+  if (secimVar) {
     return <AyarPenceresi
       oyun={oyun}
       rekor={rekor}
@@ -130,14 +125,14 @@ export function OyunTanitim({
       setMod={setMod}
       zorluk={zorluk}
       setZorluk={setZorluk}
-      dugmeMetni={gizli ? 'Başlat' : 'Devam'}
-      onDevam={ayarlardanSonra}
+      dugmeMetni="Başlat"
+      onDevam={() => setSayiliyor(true)}
       onKapat={onKapat}
     />
   }
 
   return (
-    <Sayfa onGeri={geri} geriEtiketi={secimVar ? 'Geri' : 'Vazgeç'}>
+    <Sayfa onGeri={onKapat} geriEtiketi="Vazgeç">
       <Orta>
         <div className="flex justify-center py-2">
           <Rabi durum="calisiyor" poz="isaretci" boyut={84} />
