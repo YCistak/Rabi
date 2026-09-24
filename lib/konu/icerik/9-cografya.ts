@@ -15,19 +15,19 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-konu-bolum', 'Coğrafya Biliminin Konusu ve Bölümleri', [
       kart(
         'Coğrafya neyi inceler?',
-        'İnsan ile doğal ortam arasındaki karşılıklı etkileşimi, dağılış ve yer göstererek inceler.',
+        'İnsan ile doğal ortam arasındaki karşılıklı etkileşimi inceler.\nBunu yaparken dağılış ve yer gösterir.',
       ),
       kart(
         'Fizikî coğrafya',
-        'Doğal ortamı inceler: yer şekilleri, iklim, su, toprak ve canlılar.',
+        'Doğal ortamı inceler:\nyer şekilleri, iklim, su, toprak ve canlılar',
       ),
       kart(
         'Beşerî coğrafya',
-        'İnsanın mekândaki izini inceler: nüfus, yerleşme, ekonomi, ulaşım ve kültür.',
+        'İnsanın mekândaki izini inceler:\nnüfus, yerleşme, ekonomi, ulaşım ve kültür',
       ),
       kart(
         'Alt dallar',
-        'İki ana bölümün her biri kendi içinde uzmanlaşmış dallara ayrılır.',
+        'İki ana bölümün her biri kendi içinde uzmanlaşmış dallara ayrılır.\nTabloda ikisinin dalları yan yana.',
         {
           tur: 'tablo',
           basliklar: ['Fizikî', 'Beşerî'],
@@ -41,13 +41,13 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Üç temel soru',
-        'Nerede, neden orada, sonucu ne? Coğrafyayı öteki bilimlerden ayıran şey ikinci ve üçüncü sorudur.',
+        '- Nerede?\n- Neden orada?\n- Sonucu ne?\nCoğrafyayı öteki bilimlerden ayıran, ikinci ve üçüncü sorudur.',
         undefined,
         { not: '\'Çay Rize\'de yetişir\' coğrafya değil; \'Rize\'de yetişir çünkü yağış 2000 mm ve don yok\' coğrafya.' },
       ),
       kart(
         'Dağılış ilkesi',
-        'Coğrafya bir olayı tek başına değil, yeryüzüne yayılışıyla inceler. Dağılış haritası coğrafyanın temel aracıdır.',
+        'Coğrafya bir olayı tek başına değil, yeryüzüne yayılışıyla inceler.\nDağılış haritası coğrafyanın temel aracıdır.',
       ),
     ], [
       soru('Coğrafya, insan ile doğal çevre arasındaki karşılıklı ilişkiyi inceler.', true, 'Yalnızca doğayı ya da yalnızca insanı değil, ikisinin etkileşimini ele alıyor.'),
@@ -72,11 +72,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-nicin', 'Niçin Coğrafya Öğrenmeliyiz?', [
       kart(
         'Mekânsal düşünme',
-        'Olayları yerle birlikte düşünmeyi öğretir: bir depremin sonucu, olduğu yere göre değişir.',
+        'Olayları yerle birlikte düşünmeyi öğretir.\nBir depremin sonucu, olduğu yere göre değişir.',
       ),
       kart(
         'Günlük kararlar',
-        'Nerede oturulacağı, hangi ürünün nerede yetişeceği, hangi yolun seçileceği coğrafi kararlardır.',
+        'Hepsi coğrafi kararlardır:\n- Nerede oturulacağı\n- Hangi ürünün nerede yetişeceği\n- Hangi yolun seçileceği',
       ),
       kart(
         'Afet ve risk',
@@ -84,7 +84,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Kaynak yönetimi',
-        'Su, toprak ve enerji sınırlıdır. Nerede ne kadar olduğunu bilmeden paylaşım da koruma da yapılamaz.',
+        'Su, toprak ve enerji sınırlıdır.\nNerede ne kadar olduğunu bilmeden ne paylaşım ne koruma yapılabilir.',
       ),
       kart(
         'Küresel bakış',
@@ -92,7 +92,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Coğrafi düşünmenin ölçütü',
-        'Bir olayı "nerede" diye sormakla kalmayıp "neden orada" ve "başka yerde nasıl olurdu" diye sormak; cevap yerle birlikte değişiyorsa coğrafi bir sorudur.',
+        '"Nerede?" ile yetinmeyip şunları da sormak:\n- Neden orada?\n- Başka yerde nasıl olurdu?\nCevap yerle birlikte değişiyorsa soru coğrafidir.',
         undefined,
         { not: 'Deprem Japonya\'da 10 kişi, Haiti\'de 200 bin kişi öldürdü: aynı olay, farklı yer, farklı sonuç.' },
       ),
@@ -119,29 +119,29 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-gelisim', 'Coğrafya Biliminin Gelişimi', [
       kart(
         'İlk Çağ',
-        'Eratosthenes dünyanın çevresini şaşırtıcı bir yaklaşıklıkla hesapladı; "coğrafya" sözcüğü de ona dayanır.',
+        '**Eratosthenes**, dünyanın çevresini şaşırtıcı bir yaklaşıklıkla hesapladı.\n"Coğrafya" sözcüğü de ona dayanır.',
       ),
       kart(
         'Batlamyus',
-        'Enlem ve boylam ağıyla harita çizdi. Eseri yüzyıllar boyunca hem İslam dünyasında hem Avrupa’da kullanıldı.',
+        'Enlem ve boylam ağıyla harita çizdi.\nEseri yüzyıllarca hem İslam dünyasında hem Avrupa’da kullanıldı.',
       ),
       kart(
         'İslam dünyasında',
-        'Birunî, İdrisî ve Piri Reis harita ve seyahat bilgisiyle coğrafyayı ilerletti.',
+        'Harita ve seyahat bilgisiyle coğrafyayı ilerletenler:\n- Birunî\n- İdrisî\n- Piri Reis',
       ),
       kart(
         'Piri Reis haritası',
-        '1513 tarihli dünya haritası Amerika kıyılarını gösteren en eski haritalardandır; Kitab-ı Bahriye Akdeniz limanlarını tek tek anlatır.',
+        '- **1513 dünya haritası:** Amerika kıyılarını gösteren en eski haritalardan\n- **Kitab-ı Bahriye:** Akdeniz limanlarını tek tek anlatır',
       ),
       kart(
         'Keşifler çağı',
-        'Uzun deniz yolculukları dünya haritasını tamamladı; coğrafya betimlemeden ölçmeye geçti.',
+        'Uzun deniz yolculukları dünya haritasını tamamladı.\nCoğrafya betimlemeden ölçmeye geçti.',
         undefined,
         { not: 'Piri Reis 1513\'te Amerika\'yı çizdi; Kolomb\'un 1492 seferinden 21 yıl sonra. Betimleme değil ölçüm çağı.' },
       ),
       kart(
         'Modern coğrafya',
-        'Bugün uydu görüntüsü ve coğrafi bilgi sistemleriyle çalışıyor; veri artık gerçek zamanlı.',
+        'Bugün uydu görüntüsü ve coğrafi bilgi sistemleriyle çalışıyor.\nVeri artık gerçek zamanlı.',
         {
           tur: 'akis',
           adimlar: [
@@ -177,11 +177,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-harita', 'Mekânın Aynası Haritalar', [
       kart(
         'Harita nedir?',
-        'Yeryüzünün tamamının ya da bir bölümünün, ölçek kullanılarak düzleme aktarılmış küçültülmüş çizimi.',
+        'Yeryüzünün tamamının ya da bir bölümünün düzleme aktarılmış küçültülmüş çizimidir.\nKüçültme ölçekle yapılır.',
       ),
       kart(
         'Ölçek',
-        'Haritadaki uzunluğun gerçekteki uzunluğa oranı. Payda büyüdükçe ölçek küçülür ve ayrıntı azalır.',
+        'Haritadaki uzunluğun gerçek uzunluğa oranıdır.\nPayda büyüdükçe ölçek küçülür, ayrıntı azalır.',
         {
           tur: 'tablo',
           basliklar: ['Ölçek', 'Alan', 'Ayrıntı'],
@@ -193,19 +193,19 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Ölçek hesabı',
-        '1/500.000 ölçekli haritada 1 cm gerçekte 5 km. Gerçek uzunluk = harita uzunluğu × ölçek paydası; cm\'yi km\'ye çevirmek için beş sıfır at.',
+        '**Gerçek uzunluk = harita uzunluğu × ölçek paydası**\n1/500.000 ölçekte 1 cm → 500.000 cm = 5 km\ncm’yi km’ye çevirmek için beş sıfır atılır.',
       ),
       kart(
         'Bileşenleri',
-        'Başlık, ölçek, lejant, yön oku ve koordinat. Biri eksikse harita okunamaz.',
+        '- Başlık\n- Ölçek\n- Lejant\n- Yön oku ve koordinat\nBiri eksikse harita okunamaz.',
       ),
       kart(
         'Bozulma kaçınılmaz',
-        'Küre düzleme aktarılırken alan, açı ya da uzunluktan biri mutlaka bozulur; hiçbir izdüşüm üçünü birden koruyamaz.',
+        'Küre düzleme aktarılırken alan, açı ya da uzunluktan biri mutlaka bozulur.\nHiçbir izdüşüm üçünü birden koruyamaz.',
       ),
       kart(
         'İzohips',
-        'Aynı yükseltideki noktaları birleştiren eğri. Sıklaştıkça eğim dikleşir.',
+        'Aynı yükseltideki noktaları birleştiren eğridir.\nİzohipsler sıklaştıkça eğim dikleşir.',
         {
           tur: 'koordinat',
           pencere: [0, 10, 0, 6],
@@ -247,15 +247,15 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Yükselti basamağı',
-        'Renkli haritada yeşil ovayı, sarı ve kahverengi yükselen araziyi gösterir; renk bir yükselti aralığıdır.',
+        'Renkli haritada her renk bir yükselti aralığıdır.\n- **Yeşil:** ova\n- **Sarı, kahverengi:** yükselen arazi',
       ),
       kart(
         'Profil çıkarma',
-        'İzohips haritasında bir hat boyunca yükseltiler işaretlenip birleştirilirse arazinin yandan görünüşü çıkar.',
+        'İzohips haritasında bir hat boyunca yükseltiler işaretlenir ve birleştirilir.\nArazinin yandan görünüşü çıkar.',
       ),
       kart(
         'Büyük mü küçük mü?',
-        '1/25.000 büyük ölçek: az yer, çok ayrıntı (şehir planı). 1/5.000.000 küçük ölçek: çok yer, az ayrıntı (dünya haritası).',
+        '- **1/25.000, büyük ölçek:** az yer, çok ayrıntı (şehir planı)\n- **1/5.000.000, küçük ölçek:** çok yer, az ayrıntı (dünya haritası)',
         undefined,
         { not: '1/25.000 büyük ölçek (ayrıntı çok, alan az); 1/5.000.000 küçük ölçek. Payda büyüdükçe ölçek küçülür.' },
       ),
@@ -285,37 +285,37 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-konum', 'Türkiye’nin Coğrafi Konumu', [
       kart(
         'Matematik konum',
-        'Yaklaşık 36°-42° kuzey enlemleri ile 26°-45° doğu boylamları arasında.',
+        'Türkiye yaklaşık şu aralıktadır:\n- **Enlem:** 36°–42° kuzey\n- **Boylam:** 26°–45° doğu',
       ),
       kart(
         'Enlemin sonuçları',
-        'Orta kuşakta olduğu için dört mevsim belirgin yaşanır; güneyden kuzeye sıcaklık azalır.',
+        'Orta kuşakta olduğu için dört mevsim belirgin yaşanır.\nGüneyden kuzeye gidildikçe sıcaklık azalır.',
       ),
       kart(
         'Boylamın sonuçları',
-        'Doğu ile batı arasında 19 boylam farkı vardır; her boylam 4 dakika ettiği için yerel saat farkı 76 dakikadır.',
+        'Doğu ile batı arasında 19 boylam fark vardır.\nHer boylam 4 dakika olduğundan yerel saat farkı **76 dakikadır**.',
       ),
       kart(
         'Yerel saat hesabı',
-        'Doğudaki yer önde: 45° ile 26° arasındaki fark 19 boylam × 4 dk = 76 dk. Iğdır\'da güneş Edirne\'den 76 dakika önce doğar.',
+        '**Yerel saat farkı = boylam farkı × 4 dakika**\nDoğudaki yerin saati öndedir; güneş orada önce doğar.',
         undefined,
         { not: 'Iğdır (44°) ile Edirne (26°): 18 boylam × 4 dk = 72 dk. Doğudaki Iğdır\'da saat 72 dk ileridir.' },
       ),
       kart(
         'Tek saat dilimi',
-        'Ülke doğu-batı boyunca 76 dakikalık fark taşısa da tek saat kullanır; bu, ortak bir çalışma düzeni sağlar.',
+        'Ülke doğu-batı boyunca 76 dakikalık fark taşır ama tek saat kullanır.\nBu, ortak bir çalışma düzeni sağlar.',
       ),
       kart(
         'Özel konum',
-        'Üç kıtanın kesiştiği yerde, boğazlara sahip; Asya ile Avrupa arasındaki geçiş konumu stratejik değer taşır.',
+        '- Üç kıtanın kesiştiği yerde\n- Boğazlara sahip\nAsya ile Avrupa arasındaki geçiş konumu stratejik değer taşır.',
       ),
       kart(
         'Yükselti etkisi',
-        'Ortalama yükseltisi fazladır ve doğuya doğru artar; bu, iklimi ve tarımı doğrudan etkiler.',
+        'Ortalama yükselti fazladır ve doğuya doğru artar.\nBu, iklimi ve tarımı doğrudan etkiler.',
       ),
       kart(
         'Konumun ekonomiye etkisi',
-        'Enerji hatlarının ve ticaret yollarının kesiştiği yerde olmak, transit geçiş ve turizm avantajı sağlar.',
+        'Enerji hatlarının ve ticaret yollarının kesiştiği yerdedir.\nBu, transit geçiş ve turizm avantajı sağlar.',
       ),
     ], [
       soru('Türkiye 36°–42° kuzey enlemleri arasında yer alır.', true, 'Bu enlemler ülkeyi orta kuşakta tutuyor.'),
@@ -342,23 +342,23 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-mbt', 'Mekânsal Bilgi Teknolojilerinin Bileşenleri', [
       kart(
         'CBS nedir?',
-        'Coğrafi Bilgi Sistemleri; konumlu veriyi toplayan, saklayan, çözümleyen ve haritaya döken sistem.',
+        '**Coğrafi Bilgi Sistemleri**, konumlu veriyi:\n- toplar ve saklar,\n- çözümler,\n- haritaya döker.',
       ),
       kart(
         'Bileşenler',
-        'Donanım, yazılım, veri, insan ve yöntem. En kritik ve en pahalı bileşen veridir.',
+        'Donanım, yazılım, veri, insan ve yöntem.\nEn kritik ve en pahalı bileşen **veridir**.',
       ),
       kart(
         'Uzaktan algılama',
-        'Uydu ve hava araçlarıyla temas etmeden veri toplama. Orman yangını ve kuraklık takibinde kullanılır.',
+        'Uydu ve hava araçlarıyla, temas etmeden veri toplamaktır.\nOrman yangını ve kuraklık takibinde kullanılır.',
       ),
       kart(
         'GPS',
-        'Uydularla konum belirleme. En az dört uydudan gelen sinyal, alıcının yerini üç boyutlu olarak verir.',
+        'Uydularla konum belirleme sistemidir.\nEn az dört uydudan gelen sinyal, yeri üç boyutlu olarak verir.',
       ),
       kart(
         'Katman mantığı',
-        'CBS veriyi katmanlar hâlinde üst üste bindirir; çözümleme bu bindirmeden çıkar.',
+        'CBS veriyi katmanlar hâlinde üst üste bindirir.\nÇözümleme bu bindirmeden çıkar.',
         {
           tur: 'katman',
           katmanlar: [
@@ -371,11 +371,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Nerede kullanılır?',
-        'Kent planlaması, afet yönetimi, tarım, lojistik ve sağlık; salgın haritaları da bu sistemlerle üretiliyor.',
+        '- Kent planlaması\n- Afet yönetimi\n- Tarım ve lojistik\n- Sağlık (salgın haritaları)',
       ),
       kart(
         'Veri doğruysa sonuç doğru',
-        'CBS eski ya da hatalı veriyle de düzgün görünen bir harita üretir. Çıktının güzelliği doğruluk kanıtı değildir.',
+        'CBS eski ya da hatalı veriyle de düzgün görünen bir harita üretir.\nÇıktının güzelliği doğruluğun kanıtı değildir.',
         undefined,
         { not: '2010 nüfus verisiyle çizilen 2026 haritası kusursuz görünür ve yanlıştır; tarihe bak.' },
       ),
@@ -405,13 +405,13 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-hava-olay', 'Hava Olayları ve Günlük Hayata Etkileri', [
       kart(
         'Hava durumu ve iklim',
-        'Hava durumu kısa süreli, iklim ise uzun yılların ortalaması. "Bugün yağmurlu" hava, "yazları kurak" iklimdir.',
+        '- **Hava durumu:** kısa süreli ("bugün yağmurlu")\n- **İklim:** uzun yılların ortalaması ("yazları kurak")',
         undefined,
         { not: '\'Bugün 35 °C\' hava durumu; \'Antalya yazları sıcak ve kurak\' iklim (30+ yıl ortalaması).' },
       ),
       kart(
         'Atmosferin katmanları',
-        'Hava olaylarının tamamı en alttaki troposferde gerçekleşir; yukarı çıkıldıkça hava seyrelir.',
+        'Hava olaylarının tamamı en alttaki **troposferde** gerçekleşir.\nYukarı çıkıldıkça hava seyrelir.',
         {
           tur: 'katman',
           eksenAdi: 'YÜKSEKLİK',
@@ -426,23 +426,23 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Sıcaklık ve basınç',
-        'Isınan hava yükselir ve alçak basınç oluşur; soğuyan hava alçalır ve yüksek basınç oluşur.',
+        '- **Isınan hava:** yükselir, alçak basınç oluşur.\n- **Soğuyan hava:** alçalır, yüksek basınç oluşur.',
       ),
       kart(
         'Rüzgâr',
-        'Yüksek basınçtan alçak basınca doğru esen hava. Basınç farkı büyüdükçe hızı artar.',
+        'Yüksek basınçtan alçak basınca doğru esen havadır.\nBasınç farkı büyüdükçe hızı artar.',
       ),
       kart(
         'Nem ve yağış',
-        'Havadaki su buharı yoğuşunca bulut, bulut damlaları büyüyünce yağış olur.',
+        'Havadaki su buharı yoğuşunca bulut oluşur.\nBulut damlaları büyüyünce yağış olur.',
       ),
       kart(
         'Yağış türleri',
-        'Yükselme sebebine göre üçe ayrılır: yamaç (orografik), cephe (frontal) ve yükselim (konveksiyonel).',
+        'Havanın yükselme sebebine göre üçe ayrılır:\n- **Yamaç (orografik)**\n- **Cephe (frontal)**\n- **Yükselim (konveksiyonel)**',
       ),
       kart(
         'Günlük etkiler',
-        'Tarım, ulaşım, enerji ve sağlık hava olaylarına bağlıdır; don ve dolu bir yılın ürününü götürebilir.',
+        'Tarım, ulaşım, enerji ve sağlık hava olaylarına bağlıdır.\nDon ve dolu bir yılın ürününü götürebilir.',
       ),
     ], [
       soru(
@@ -483,7 +483,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-iklim-sistem', 'İklim Sisteminin Bileşen ve Değişkenleri', [
       kart(
         'Beş bileşen',
-        'Atmosfer, su küre (hidrosfer), taş küre (litosfer), canlı küre (biyosfer) ve buz küre.',
+        '- Atmosfer\n- Su küre (hidrosfer)\n- Taş küre (litosfer)\n- Canlı küre (biyosfer)\n- Buz küre',
         {
           tur: 'akis',
           adimlar: [
@@ -496,15 +496,15 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Değişkenler',
-        'Sıcaklık, basınç, nem, yağış, rüzgâr ve güneşlenme süresi.',
+        '- Sıcaklık ve basınç\n- Nem ve yağış\n- Rüzgâr\n- Güneşlenme süresi',
       ),
       kart(
         'Enlem etkisi',
-        'Güneş ışınlarının geliş açısı enlemle değişir; ekvatordan kutuplara gidildikçe sıcaklık düşer.',
+        'Güneş ışınlarının geliş açısı enleme göre değişir.\nEkvatordan kutuplara gidildikçe sıcaklık düşer.',
       ),
       kart(
         'Yükselti etkisi',
-        'Her 100 metrede sıcaklık yaklaşık 0,5 °C düşer. Aynı enlemde bile dağ ile ova arasında büyük fark oluşur.',
+        'Her 100 metrede sıcaklık yaklaşık **0,5 °C** düşer.\nAynı enlemde bile dağ ile ova arasında büyük fark oluşur.',
         {
           tur: 'koordinat',
           pencere: [0, 6, 0, 6],
@@ -523,17 +523,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Karasallık',
-        'Denizden uzaklaştıkça gece-gündüz ve yaz-kış sıcaklık farkları büyür; kara çabuk ısınıp çabuk soğur.',
+        'Denizden uzaklaştıkça sıcaklık farkları büyür:\n- Gece ile gündüz arasında\n- Yaz ile kış arasında\nKara çabuk ısınır, çabuk soğur.',
         undefined,
         { not: 'Rize\'de yaz-kış farkı ~15 °C, Erzurum\'da ~30 °C: denizden uzaklaştıkça sıcaklık farkı büyür.' },
       ),
       kart(
         'Bakı',
-        'Kuzey yarım kürede güneye bakan yamaçlar daha çok ısınır; yerleşme ve tarım bu yamaçlarda yoğunlaşır.',
+        'Kuzey yarım kürede **güneye bakan** yamaçlar daha çok ısınır.\nYerleşme ve tarım bu yamaçlarda yoğunlaşır.',
       ),
       kart(
         'Okyanus akıntıları',
-        'Sıcak akıntılar kıyıyı ılıtır, soğuk akıntılar serinletir ve kuraklaştırır.',
+        '- **Sıcak akıntı:** kıyıyı ılıtır.\n- **Soğuk akıntı:** kıyıyı serinletir ve kuraklaştırır.',
       ),
     ], [
       soru('Ekvator dan kutuplara gidildikçe sıcaklık azalır.', true, 'Güneş ışınlarının geliş açısı küçülüyor.'),
@@ -560,19 +560,19 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-iklim-tur', 'İklim Türleri', [
       kart(
         'Sıcak kuşak iklimleri',
-        'Ekvatoral (yıl boyu sıcak ve yağışlı), savan (yazı yağışlı), çöl ve muson iklimleri.',
+        '- **Ekvatoral:** yıl boyu sıcak ve yağışlı\n- **Savan:** yazı yağışlı\n- **Çöl ve muson**',
       ),
       kart(
         'Ilıman kuşak iklimleri',
-        'Akdeniz, okyanusal, karasal ve step iklimleri. Türkiye bu kuşaktadır.',
+        'Akdeniz, okyanusal, karasal ve step iklimleri.\nTürkiye bu kuşaktadır.',
       ),
       kart(
         'Soğuk kuşak iklimleri',
-        'Tundra ve kutup iklimi. Bitki örtüsü cılızdır ya da hiç yoktur.',
+        'Tundra ve kutup iklimi.\nBitki örtüsü cılızdır ya da hiç yoktur.',
       ),
       kart(
         'Kuşaklar enleme bağlı',
-        'Dönenceler ve kutup daireleri, iklim kuşaklarının sınırlarını çizer.',
+        'Dönenceler ve kutup daireleri iklim kuşaklarının sınırlarını çizer.',
         {
           tur: 'katman',
           eksenAdi: 'KUZEYDEN GÜNEYE',
@@ -587,15 +587,15 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Türkiye’nin iklimleri',
-        'Kıyılarda Akdeniz ve Karadeniz iklimi, iç kesimlerde karasal iklim görülür.',
+        '- **Güney ve batı kıyıları:** Akdeniz iklimi\n- **Kuzey kıyıları:** Karadeniz iklimi\n- **İç kesimler:** karasal iklim',
       ),
       kart(
         'Bitki örtüsü izler',
-        'Akdeniz ikliminde maki, Karadeniz’de orman, iç kesimlerde bozkır. Bitki, iklimin görünen yüzüdür.',
+        '- **Akdeniz iklimi:** maki\n- **Karadeniz iklimi:** orman\n- **Karasal iklim:** bozkır\nBitki, iklimin görünen yüzüdür.',
       ),
       kart(
         'İklim grafiği okuma',
-        'Sütunlar yağışı, çizgi sıcaklığı gösterir. Yaz kuraklığı belirginse Akdeniz iklimi akla gelir.',
+        '- **Sütunlar:** yağış\n- **Çizgi:** sıcaklık\nYaz kuraklığı belirginse Akdeniz iklimi akla gelir.',
         undefined,
         { not: 'Yaz aylarında yağış çubuğu dipteyse Akdeniz; her ay yağışlı ve ılıksa Karadeniz; yaz kurak + kış soğuksa karasal.' },
       ),
@@ -624,27 +624,27 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-iklim-degisim', 'İklim Sisteminde Yaşanan Değişiklikler', [
       kart(
         'Doğal değişimler',
-        'Yörünge değişiklikleri, volkanik patlamalar ve güneş etkinliği iklimi jeolojik zaman ölçeğinde değiştirdi.',
+        'İklimi jeolojik zaman ölçeğinde değiştirenler:\n- Yörünge değişiklikleri\n- Volkanik patlamalar\n- Güneş etkinliği',
       ),
       kart(
         'İnsan kaynaklı değişim',
-        'Sanayi devriminden bu yana fosil yakıt kullanımı sera gazlarını hızla artırdı.',
+        'Sanayi devriminden bu yana fosil yakıt kullanımı arttı.\nSera gazları da hızla arttı.',
       ),
       kart(
         'Sera etkisi',
-        'Atmosferdeki gazlar yeryüzünden yansıyan ısıyı tutar. Doğal sera etkisi olmasaydı dünya yaşanmayacak kadar soğuk olurdu.',
+        'Atmosferdeki gazlar yeryüzünün yaydığı ısıyı tutar.\nDoğal sera etkisi olmasaydı dünya yaşanmayacak kadar soğuk olurdu.',
       ),
       kart(
         'Sonuçları',
-        'Ortalama sıcaklık artışı, buzul erimesi, deniz seviyesinin yükselmesi ve aşırı hava olaylarında artış.',
+        '- Ortalama sıcaklık artışı\n- Buzul erimesi ve deniz seviyesinin yükselmesi\n- Aşırı hava olaylarında artış',
       ),
       kart(
         'Türkiye’ye etkisi',
-        'Akdeniz havzası risk bölgesinde; kuraklık, orman yangını ve su sıkıntısı artıyor.',
+        'Akdeniz havzası risk bölgesindedir.\nKuraklık, orman yangını ve su sıkıntısı artıyor.',
       ),
       kart(
         'Azaltım ve uyum',
-        'Azaltım salımı düşürmek, uyum ise değişen koşullara göre yaşamı yeniden düzenlemektir.',
+        '- **Azaltım:** salımı düşürmek\n- **Uyum:** değişen koşullara göre yaşamı yeniden düzenlemek',
         {
           tur: 'tablo',
           basliklar: ['Azaltım', 'Uyum'],
@@ -658,7 +658,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Küresel anlaşmalar',
-        'Paris Anlaşması ülkeleri sıcaklık artışını sınırlamaya çağırıyor; salım azaltımı hedefleri ulusal olarak bildiriliyor.',
+        '**Paris Anlaşması** ülkeleri sıcaklık artışını sınırlamaya çağırıyor.\nSalım azaltma hedefleri ulusal olarak bildiriliyor.',
       ),
     ], [
       soru('Sera gazlarının artması yeryüzü sıcaklığının yükselmesine yol açar.', true, 'Atmosferden çıkan uzun dalgalı ışınım tutuluyor.'),
@@ -687,11 +687,11 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-nufus-degisim', 'Nüfusun Tarihsel Değişimi ve Geleceği', [
       kart(
         'Yavaş başlangıç',
-        'Tarım devrimine kadar dünya nüfusu çok azdı ve yavaş artıyordu; besin miktarı sınırdı.',
+        'Tarım devrimine kadar dünya nüfusu çok azdı ve yavaş artıyordu.\nBesin miktarı sınırdı.',
       ),
       kart(
         'Hızlanma',
-        'Sanayi devrimi ve tıptaki ilerlemeyle ölüm oranı düştü, nüfus hızla arttı.',
+        'Sanayi devrimi ve tıptaki ilerlemeyle ölüm oranı düştü.\nNüfus hızla arttı.',
         {
           tur: 'koordinat',
           pencere: [0, 6, 0, 6],
@@ -712,21 +712,21 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Neden ölüm oranı düştü?',
-        'Temiz su, kanalizasyon, aşı ve antibiyotik; nüfus artışının sebebi doğum patlaması değil ölümün azalmasıdır.',
+        'Temiz su, kanalizasyon, aşı ve antibiyotik sayesinde.\nNüfus artışının sebebi doğum patlaması değil, **ölümün azalmasıdır**.',
         undefined,
         { not: '1800\'de 1 milyar, 1930\'da 2, 2022\'de 8 milyar: hızlanma doğumdan değil, aşı ve temiz suyla düşen ölümden.' },
       ),
       kart(
         'Bugün',
-        'Artış hızı yavaşlıyor; bazı ülkelerde nüfus azalmaya başladı.',
+        'Artış hızı yavaşlıyor.\nBazı ülkelerde nüfus azalmaya başladı.',
       ),
       kart(
         'Kentleşme',
-        'Dünya nüfusunun yarısından fazlası artık şehirlerde yaşıyor; bu oran yükselmeye devam ediyor.',
+        'Dünya nüfusunun yarısından fazlası artık şehirlerde yaşıyor.\nBu oran yükselmeye devam ediyor.',
       ),
       kart(
         'Geleceğe bakış',
-        'Nüfusun yüzyılın sonuna doğru durağanlaşması bekleniyor; artış büyük ölçüde Afrika kaynaklı olacak.',
+        'Nüfusun yüzyılın sonuna doğru durağanlaşması bekleniyor.\nArtışın büyük kısmı Afrika’dan gelecek.',
       ),
     ], [
       soru('Dünya nüfusunun hızlı artışında ölüm oranlarının düşmesi etkili olmuştur.', true, 'Sağlık ve beslenme koşulları düzelince ortalama yaşam süresi uzadı.'),
@@ -751,27 +751,27 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-nufus-dagilis', 'Nüfusun Dağılışı ve Hareketleri', [
       kart(
         'Doğal faktörler',
-        'İklim, yer şekilleri, su kaynakları ve toprak verimliliği. Ilıman ve düz alanlar yoğun nüfusludur.',
+        '- İklim\n- Yer şekilleri\n- Su kaynakları\n- Toprak verimliliği\nIlıman ve düz alanlar yoğun nüfusludur.',
       ),
       kart(
         'Beşerî faktörler',
-        'Sanayi, ticaret, ulaşım ve turizm. İş imkânı olan yer nüfus çeker.',
+        'Sanayi, ticaret, ulaşım ve turizm.\nİş imkânı olan yer nüfus çeker.',
       ),
       kart(
         'Seyrek nüfuslu alanlar',
-        'Kutuplar, çöller, yüksek dağlar ve ekvatoral ormanlar.',
+        '- Kutuplar\n- Çöller\n- Yüksek dağlar\n- Ekvatoral ormanlar',
       ),
       kart(
         'Aritmetik nüfus yoğunluğu',
-        'Toplam nüfusun toplam alana bölümü. Kullanılamayan alanları da saydığı için tek başına yanıltıcıdır.',
+        '**Toplam nüfus / toplam alan**\nKullanılamayan alanları da saydığı için tek başına yanıltıcıdır.',
       ),
       kart(
         'Göç türleri',
-        'İç-dış, sürekli-mevsimlik, gönüllü-zorunlu göç. Çoğu göçün sebebi ekonomiktir.',
+        '- İç ya da dış göç\n- Sürekli ya da mevsimlik göç\n- Gönüllü ya da zorunlu göç\nÇoğu göçün sebebi ekonomiktir.',
       ),
       kart(
         'İtici ve çekici güçler',
-        'Göç iki uçtan birden beslenir: bir yerde tutunamamak ve başka yerde daha iyisini ummak.',
+        'Göç iki uçtan birden beslenir:\n- **İtici:** bir yerde tutunamamak\n- **Çekici:** başka yerde daha iyisini ummak',
         {
           tur: 'tablo',
           basliklar: ['İtici', 'Çekici'],
@@ -786,7 +786,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Göçün sonuçları',
-        'Veren yerde nüfus azalır ve yaşlanır; alan yerde konut, altyapı ve işsizlik baskısı artar.',
+        '- **Göç veren yer:** nüfus azalır ve yaşlanır.\n- **Göç alan yer:** konut, altyapı ve işsizlik baskısı artar.',
       ),
     ], [
       soru('Yüksek ve engebeli alanlar genellikle seyrek nüfusludur.', true, 'Tarım ve ulaşım koşulları elverişsiz.'),
@@ -812,7 +812,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-demografik', 'Demografik Dönüşüm ve Nüfus Piramitleri', [
       kart(
         'Demografik dönüşüm',
-        'Yüksek doğum-yüksek ölümden, düşük doğum-düşük ölüme geçiş süreci. Aradaki dönemde nüfus hızla artar.',
+        'Yüksek doğum-yüksek ölümden, düşük doğum-düşük ölüme geçiş sürecidir.\nAradaki dönemde nüfus hızla artar.',
         {
           tur: 'akis',
           adimlar: [
@@ -825,25 +825,25 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Piramit ne gösterir?',
-        'Yaş gruplarını ve cinsiyet dağılımını. Şekli ülkenin gelişmişliği hakkında doğrudan bilgi verir.',
+        'Yaş gruplarını ve cinsiyet dağılımını gösterir.\nŞekli, ülkenin gelişmişliği hakkında doğrudan bilgi verir.',
       ),
       kart(
         'Geniş tabanlı piramit',
-        'Doğum oranı yüksek, genç nüfus çok. Gelişmekte olan ülkelerde görülür.',
+        'Doğum oranı yüksek, genç nüfus çoktur.\nGelişmekte olan ülkelerde görülür.',
       ),
       kart(
         'Dar tabanlı piramit',
-        'Doğum oranı düşük, yaşlı nüfus fazla. Gelişmiş ülkelerde görülür.',
+        'Doğum oranı düşük, yaşlı nüfus fazladır.\nGelişmiş ülkelerde görülür.',
       ),
       kart(
         'Piramitteki çentikler',
-        'Bir yaş grubundaki ani daralma savaş, salgın ya da büyük göç gibi bir olayın izidir.',
+        'Bir yaş grubundaki ani daralma bir olayın izidir.\nÖrnek: savaş, salgın, büyük göç',
         undefined,
         { not: 'Almanya piramidinde 1945 doğumluların çentiği: savaş yılı az doğum. Çentik = o yıl bir olay.' },
       ),
       kart(
         'Türkiye’nin piramidi',
-        'Tabanı daralıyor, orta kısmı genişliyor: nüfus hâlâ genç ama hızla yaşlanıyor.',
+        'Tabanı daralıyor, orta kısmı genişliyor.\nNüfus hâlâ genç ama hızla yaşlanıyor.',
       ),
     ], [
       soru('Geniş tabanlı nüfus piramidi, doğum oranının yüksek olduğunu gösterir.', true, 'Genç nüfus payı büyük demek.'),
@@ -868,29 +868,29 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-nufus-politika', 'Nüfusla İlgili Fırsat, Sorun ve Politikalar', [
       kart(
         'Demografik fırsat penceresi',
-        'Çalışma çağındaki nüfusun oranı en yüksek olduğu dönem. Doğru kullanılırsa hızlı kalkınma sağlar.',
+        'Çalışma çağındaki nüfusun oranının en yüksek olduğu dönemdir.\nDoğru kullanılırsa hızlı kalkınma sağlar.',
         undefined,
         { not: 'Türkiye\'nin penceresi 2030\'lara kadar açık; genç nüfusa iş bulunamazsa fırsat işsizlik olarak kapanır.' },
       ),
       kart(
         'Bağımlılık oranı',
-        'Çalışma çağı dışındaki nüfusun çalışma çağındakine oranı. Hem çok genç hem çok yaşlı nüfus bu oranı yükseltir.',
+        'Çalışma çağı dışındaki nüfusun, çalışma çağındakine oranıdır.\nHem çok genç hem çok yaşlı nüfus bu oranı yükseltir.',
       ),
       kart(
         'Genç nüfusun sorunu',
-        'Eğitim ve istihdam yetişmezse fırsat, işsizlik sorununa dönüşür.',
+        'Eğitim ve istihdam yetişmezse fırsat işsizlik sorununa dönüşür.',
       ),
       kart(
         'Yaşlanmanın sorunu',
-        'Çalışan başına düşen bağımlı sayısı artar; emeklilik ve sağlık harcamaları yükselir.',
+        'Çalışan başına düşen bağımlı sayısı artar.\nEmeklilik ve sağlık harcamaları yükselir.',
       ),
       kart(
         'Nüfus politikaları',
-        'Artırıcı ve azaltıcı olmak üzere iki yönlü olabilir; Türkiye 1965-1983 arasında azaltıcı politika uyguladı.',
+        'İki yönlü olabilir: artırıcı ya da azaltıcı.\nTürkiye 1965–1983 arasında azaltıcı politika uyguladı.',
       ),
       kart(
         'Bugünkü yönelim',
-        'Doğurganlık yenilenme düzeyinin altına indiği için politikalar artırıcı yöne döndü.',
+        'Doğurganlık yenilenme düzeyinin altına indi.\nBu yüzden politikalar artırıcı yöne döndü.',
       ),
     ], [
       soru('Demografik fırsat penceresi, çalışma çağındaki nüfusun payının yüksek olduğu dönemdir.', true, 'Doğru politikalarla ekonomik büyümeye çevrilebiliyor.'),
@@ -917,23 +917,23 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-ekonomi-faktor', 'Ekonomik Faaliyetleri Etkileyen Coğrafi Faktörler', [
       kart(
         'Doğal faktörler',
-        'İklim, yer şekilleri, toprak, su ve yer altı kaynakları hangi faaliyetin nerede yapılacağını belirler.',
+        'Hangi faaliyetin nerede yapılacağını belirler:\niklim, yer şekilleri, toprak, su ve yer altı kaynakları',
       ),
       kart(
         'İklimin belirleyiciliği',
-        'Çay Doğu Karadeniz’de, pamuk Çukurova’da yetişir; sıcaklık ve yağış isteği bunu zorunlu kılar.',
+        '- **Çay:** Doğu Karadeniz’de yetişir.\n- **Pamuk:** Çukurova’da yetişir.\nSıcaklık ve yağış isteği bunu zorunlu kılar.',
       ),
       kart(
         'Yer şekillerinin etkisi',
-        'Engebeli arazi tarımı ve ulaşımı zorlaştırır, maliyeti artırır; düz ovalar sanayiyi çeker.',
+        '- **Engebeli arazi:** tarımı ve ulaşımı zorlaştırır, maliyeti artırır.\n- **Düz ovalar:** sanayiyi çeker.',
       ),
       kart(
         'Beşerî faktörler',
-        'Sermaye, iş gücü, teknoloji, pazar ve ulaşım. Doğal koşullar elverişli olsa da bunlar yoksa faaliyet gelişmez.',
+        'Sermaye, iş gücü, teknoloji, pazar ve ulaşım.\nDoğal koşullar elverişli olsa da bunlar yoksa faaliyet gelişmez.',
       ),
       kart(
         'Üç sektör',
-        'Ekonomik faaliyetler doğaya olan uzaklıklarına göre üç basamakta toplanır.',
+        '- **Birincil:** tarım, madencilik\n- **İkincil:** sanayi\n- **Üçüncül:** hizmet',
         {
           tur: 'akis',
           adimlar: [
@@ -945,7 +945,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Karşılıklı etki',
-        'Ekonomik faaliyet de doğayı değiştirir: baraj, madencilik ve aşırı sulama çevreyi dönüştürür.',
+        'Ekonomik faaliyet de doğayı değiştirir.\nBaraj, madencilik ve aşırı sulama çevreyi dönüştürür.',
         undefined,
         { not: 'Aral Gölü: pamuk sulaması için nehirler çevrildi, göl %90 küçüldü. Ekonomi doğayı değiştirdi.' },
       ),
@@ -974,19 +974,19 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-tehlike-risk', 'Tehlike, Risk ve Afet', [
       kart(
         'Tehlike',
-        'Zarar verme potansiyeli olan doğal ya da beşerî olay. Deprem başlı başına bir tehlikedir.',
+        'Zarar verme potansiyeli olan doğal ya da beşerî olaydır.\nDeprem başlı başına bir tehlikedir.',
       ),
       kart(
         'Risk',
-        'Tehlikenin gerçekleşmesi hâlinde beklenen kayıp. Aynı deprem, hazırlıklı bir şehirde daha düşük risk taşır.',
+        'Tehlike gerçekleşirse beklenen kayıptır.\nAynı deprem, hazırlıklı bir şehirde daha düşük risk taşır.',
       ),
       kart(
         'Afet',
-        'Toplumun kendi imkânlarıyla baş edemediği, can ve mal kaybına yol açan olay.',
+        'Toplumun kendi imkânlarıyla baş edemediği olaydır.\nCan ve mal kaybına yol açar.',
       ),
       kart(
         'Üçü arasındaki fark',
-        'Üç kavram aynı olayın farklı aşamalarını anlatır; karıştırıldığında korunma da yanlış yere yatırılır.',
+        '- **Tehlike:** olabilir\n- **Risk:** olursa beklenen kayıp\n- **Afet:** gerçekleşti ve baş edilemedi',
         {
           tur: 'akis',
           adimlar: [
@@ -998,7 +998,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Doğa olayı afet değildir',
-        'İnsan ve yapı yoksa deprem yalnızca bir doğa olayıdır. Afet, olayın toplumla karşılaşmasıyla oluşur.',
+        'İnsan ve yapı yoksa deprem yalnızca bir doğa olayıdır.\nAfet, olayın toplumla karşılaşmasıyla oluşur.',
         undefined,
         { not: 'Çölde 7 büyüklüğünde deprem doğa olayı; aynı deprem denetimsiz binaların altında afet.' },
       ),
@@ -1029,7 +1029,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-afet-tur', 'Afet Türleri', [
       kart(
         'Dört grup',
-        'Afetler kaynağına göre gruplanır; son grubun kaynağı doğrudan insandır.',
+        'Afetler kaynağına göre gruplanır.\nSon grubun kaynağı doğrudan insandır.',
         {
           tur: 'tablo',
           basliklar: ['Tür', 'Örnek'],
@@ -1043,7 +1043,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Jeolojik afetler',
-        'Deprem, volkanik patlama, heyelan ve tsunami. Kaynağı yer kabuğunun hareketidir.',
+        'Deprem, volkanik patlama, heyelan ve tsunami.\nKaynağı yer kabuğunun hareketidir.',
       ),
       kart(
         'Meteorolojik afetler',
@@ -1055,17 +1055,17 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Beşerî afetler',
-        'Endüstriyel kazalar, nükleer sızıntılar ve savaşlar; kaynağı insandır.',
+        'Endüstriyel kazalar, nükleer sızıntılar ve savaşlar.\nKaynağı insandır.',
       ),
       kart(
         'Zincirleme afet',
-        'Bir afet ötekini tetikler: deprem heyelanı, heyelan taşkını, taşkın salgını doğurabilir.',
+        'Bir afet ötekini tetikleyebilir:\ndeprem → heyelan → taşkın → salgın',
         undefined,
         { not: '2011 Japonya: deprem → tsunami → nükleer sızıntı. Üç afet tek olaydan, üçü ayrı gruptan.' },
       ),
       kart(
         'Türkiye’de en sık',
-        'Deprem, heyelan ve sel. Ülkenin büyük bölümü etkin fay kuşakları üzerindedir.',
+        '- Deprem\n- Heyelan\n- Sel\nÜlkenin büyük bölümü etkin fay kuşakları üzerindedir.',
       ),
     ], [
       soru('Deprem ve heyelan jeolojik afetler arasında yer alır.', true, 'Kaynağı yer kabuğundaki hareketler.'),
@@ -1091,7 +1091,7 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-afet-yonetim', 'Bütüncül Afet Yönetimi', [
       kart(
         'Dört aşama',
-        'Döngü hiç kapanmaz: iyileştirme, bir sonraki afet için zarar azaltmaya bağlanır.',
+        'Döngü hiç kapanmaz.\nİyileştirme, bir sonraki afet için zarar azaltmaya bağlanır.',
         {
           tur: 'akis',
           donguSel: true,
@@ -1105,23 +1105,23 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
       ),
       kart(
         'Zarar azaltma',
-        'En ucuz ve en etkili aşama: doğru yer seçimi, sağlam yapı, imar denetimi.',
+        '**En ucuz ve en etkili aşamadır.**\nDoğru yer seçimi, sağlam yapı ve imar denetimi.',
       ),
       kart(
         'Hazırlık',
-        'Tatbikat, afet çantası, toplanma alanı ve erken uyarı sistemleri.',
+        '- Tatbikat\n- Afet çantası\n- Toplanma alanı\n- Erken uyarı sistemleri',
       ),
       kart(
         'Müdahale',
-        'İlk 72 saat kritiktir. Arama-kurtarma, sağlık hizmeti ve acil barınma bu aşamada yürütülür.',
+        'İlk 72 saat kritiktir.\nArama-kurtarma, sağlık hizmeti ve acil barınma bu aşamadadır.',
       ),
       kart(
         'İyileştirme',
-        'Kalıcı konut, altyapı onarımı, ekonomik destek ve psikososyal destek. En uzun süren aşamadır.',
+        'Kalıcı konut, altyapı onarımı, ekonomik ve psikososyal destek.\nEn uzun süren aşamadır.',
       ),
       kart(
         'Neden bütüncül?',
-        'Yalnızca müdahaleye odaklanan yönetim, her afette baştan başlar. Asıl kazanç afet olmadan alınır.',
+        'Yalnızca müdahaleye odaklanan yönetim her afette baştan başlar.\nAsıl kazanç afet olmadan alınır.',
         undefined,
         { not: 'Deprem öncesi 1 lira güçlendirme, sonrası 7 lira enkaz ve yeniden yapım: zarar azaltma en ucuz aşama.' },
       ),
@@ -1164,29 +1164,29 @@ export const cografya9 = program('cografya', 9, 'Mekânı okumaya başlangıç',
     konu('cog9-bolge', 'Bölge ve Bölge Sınırı', [
       kart(
         'Bölge nedir?',
-        'Belirli bir ölçüte göre benzer özellik gösteren, çevresinden ayrılan alan.',
+        'Belirli bir ölçüte göre benzer özellik gösteren alandır.\nBu özellikleriyle çevresinden ayrılır.',
       ),
       kart(
         'Ölçüt bölgeyi değiştirir',
-        'Aynı yer, iklime göre başka bir bölgede, sanayiye göre başka bir bölgede yer alabilir.',
+        'Aynı yer, iklime göre bir bölgede, sanayiye göre başka bir bölgede olabilir.',
         undefined,
         { not: 'Antalya iklime göre Akdeniz bölgesi, ekonomiye göre turizm bölgesi; aynı şehir iki haritada iki bölgede.' },
       ),
       kart(
         'Sınırlar keskin değildir',
-        'Doğal bölgelerin sınırı bir çizgi değil geçiş kuşağıdır; idari sınırlar ise keskin ve yapaydır.',
+        '- **Doğal bölge sınırı:** bir çizgi değil, geçiş kuşağı\n- **İdari sınır:** keskin ve yapay',
       ),
       kart(
         'Bölge türleri',
-        'Doğal, beşerî ve ekonomik bölgeler; ayrıca büyüklüğüne göre kıta altı, ülke ve yerel ölçekler.',
+        '- **Özelliğine göre:** doğal, beşerî, ekonomik\n- **Büyüklüğüne göre:** kıta altı, ülke, yerel',
       ),
       kart(
         'Bölge sınırı değişir',
-        'Ölçüt değişmese bile koşullar değişirse sınır kayar: kuraklık, tarım bölgesinin sınırını geriye çeker.',
+        'Ölçüt aynı kalsa da koşullar değişirse sınır kayar.\nÖrnek: kuraklık, tarım bölgesinin sınırını geriye çeker.',
       ),
       kart(
         'Türkiye’nin coğrafi bölgeleri',
-        'Yedi bölge 1941’de belirlendi ve ölçütü büyük ölçüde doğal koşullardı; idari birim değildir.',
+        'Yedi bölge **1941**’de belirlendi; ölçüt büyük ölçüde doğal koşullardı.\nCoğrafi bölgeler idari birim değildir.',
       ),
     ], [
       soru('Bölge sınırları, seçilen ölçüte göre değişir.', true, 'İklime göre çizilen bölge ile tarıma göre çizilen bölge aynı olmuyor.'),
