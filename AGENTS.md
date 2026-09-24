@@ -1806,6 +1806,24 @@ vermişti. Dilimin adı sayfanın başlığında gün etiketinin yanında yazıy
 ("Bugün · Akşam"), görev nereye gideceği görünmeden kaydedilmiyor. Başka bir
 dilime yazmak isteyen o bölümün düğmesine basıyor.
 
+### Görevin süresi soruluyor
+
+Ekleme sayfası "Ortalama kaç dakika sürer?" diye soruyor (`Gorev.sure`,
+çipler `SURE_SECENEKLERI`: 15–120). Dilim başlığı bitmemiş görevlerin toplamını
+yazıyor (`kalanSure`), satırda süre kategorinin yanında duruyor — iş adının
+satırı tek satırlık ve genişliği sayılı, oraya sığmazdı. Plan, işlerin ne kadar
+süreceği bilinince plan oluyor; "akşama beş iş" ile "akşama dört saat" ayrı
+şeyler.
+
+Çip, serbest sayı değil: sorulan bir tahmin ve "37 dakika" kimsenin vereceği
+bir cevap değil. Varsayılan seçili gelmiyor — seçili bir "30 dk", kullanıcının
+hiç vermediği bir tahmini onun adına kaydederdi. İki saatin üstü yok: o tek bir
+görev değil, bölünmesi gereken bir iş.
+
+Alan sonradan geldi: eski görevlerde `sure` `null` ve toplamda sayılmıyor.
+Uydurma bir süre, dilimin toplamını kullanıcının söylemediği bir sayıyla
+şişirirdi.
+
 ### Renkler ayrı bir palette
 
 Görev rengi kullanıcının seçtiği on iki tondan biri (`--gorev-*`,

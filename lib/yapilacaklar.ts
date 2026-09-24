@@ -134,9 +134,47 @@ export type Gorev = {
   dilim: GorevDilimi
   kategori: GorevKategorisi
   renk: GorevRengi
+  /**
+   * Ortalama kaç dakika süreceği — kullanıcının tahmini.
+   *
+   * `null` yalnızca alan gelmeden önce yazılmış eski görevlerde: onlara bir
+   * süre uydurmak, dilimin toplamını kullanıcının hiç söylemediği bir sayıyla
+   * şişirirdi. Yeni görev süresiz kaydedilemiyor.
+   */
+  sure: number | null
   bitti: boolean
   /** Öncelikli — dilimin içinde yıldızlılar üstte duruyor. */
   yildiz: boolean
+}
+
+/**
+ * Ekleme sayfasındaki süre seçenekleri, dakika.
+ *
+ * Serbest sayı kutusu değil çip: sorulan şey bir tahmin ve "37 dakika"
+ * kimsenin vereceği bir cevap değil. Çip dokunuşla seçiliyor, sayı klavyesi
+ * açılmıyor. İki saatin üstü tek bir görev değil — bölünmesi gereken bir iş.
+ */
+export const SURE_SECENEKLERI: readonly number[] = [15, 30, 45, 60, 90, 120]
+
+/** Kayıtta kabul edilen en uzun süre; kurcalanmış kayıt günü aşamasın. */
+const EN_UZUN_SURE = 24 * 60
+
+/** "45 dk", "1 sa", "1 sa 30 dk". */
+export function sureYaz(dakika: number): string {
+  const saat = Math.floor(dakika / 60)
+  const kalan = dakika % 60
+  if (saat === 0) return `${kalan} dk`
+  return kalan === 0 ? `${saat} sa` : `${saat} sa ${kalan} dk`
+}
+
+/**
+ * Bitmemiş görevlerin toplam süresi — dilim başlığındaki sayı.
+ *
+ * Biten görev düşüyor: sayı "bu dilimde daha ne kadar işim var" diyor.
+ * Süresi olmayan eski görevler sayılmıyor, tahmin edilmiyor.
+ */
+export function kalanSure(gorevler: readonly Gorev[]): number {
+  return gorevler.reduce((t, g) => (g.bitti || g.sure === null ? t : t + g.sure), 0)
 }
 
 /**
@@ -227,6 +265,10 @@ export function gorevleriNormalize(ham: unknown): Gorev[] {
         ? (g.kategori as GorevKategorisi)
         : 'diger',
       renk: RENK_KIMLIKLERI.includes(g.renk as string) ? (g.renk as GorevRengi) : 'turuncu',
+      sure:
+        typeof g.sure === 'number' && Number.isFinite(g.sure) && g.sure > 0
+          ? Math.min(Math.round(g.sure), EN_UZUN_SURE)
+          : null,
       bitti: g.bitti === true,
       yildiz: g.yildiz === true,
     })

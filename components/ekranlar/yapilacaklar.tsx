@@ -14,6 +14,9 @@ import {
   dilimGorevleri,
   dilimeYerVarMi,
   gorevEkle,
+  kalanSure,
+  SURE_SECENEKLERI,
+  sureYaz,
   gorevErtele,
   gorevIsaretle,
   gorevRengi,
@@ -125,7 +128,13 @@ export function YapilacaklarEkrani({
     window.setTimeout(() => setMesaj((o) => (o === metin ? null : o)), MESAJ_SURESI)
   }
 
-  const kaydet = (yeni: { metin: string; dilim: GorevDilimi; kategori: GorevKategorisi; renk: GorevRengi }) => {
+  const kaydet = (yeni: {
+    metin: string
+    dilim: GorevDilimi
+    kategori: GorevKategorisi
+    renk: GorevRengi
+    sure: number
+  }) => {
     const sonuc = gorevEkle(gorevler, { id: yeniId(), gun: secili, ...yeni })
     if (!sonuc) {
       soyle(`${DILIM_ADI[yeni.dilim]} listesi dolu (${EN_COK_GOREV} görev).`)
@@ -245,6 +254,13 @@ export function YapilacaklarEkrani({
                 <span aria-hidden className="h-px flex-1 bg-border" />
                 {/* Sayaç kalan yeri söylüyor; geçmiş günde yazılacak bir şey
                     olmadığı için orada da anlamı yok. */}
+                {/* Kalan süre: dilimde daha ne kadar iş var. Biten görevler
+                    düşüyor, hepsi bitince sayı da kalkıyor. */}
+                {kalanSure(isler) > 0 && (
+                  <span className="rakam shrink-0 text-[11px] font-bold text-muted-foreground">
+                    {sureYaz(kalanSure(isler))}
+                  </span>
+                )}
                 {!gecmis && isler.length > 0 && (
                   <span className="rakam shrink-0 text-[11px] font-bold text-muted-foreground/70">
                     {isler.length}/{EN_COK_GOREV}
@@ -380,6 +396,9 @@ function GorevSatiri({
         >
           <span aria-hidden className="size-1.5 rounded-full" style={{ background: renk }} />
           {KATEGORI_ADI[gorev.kategori]}
+          {/* Süre kategorinin satırında: iş adının satırı tek satırlık ve
+              genişliği sayılı (`EN_UZUN_GOREV`), oraya sığmazdı. */}
+          {gorev.sure !== null && <span className="rakam">· {sureYaz(gorev.sure)}</span>}
         </span>
         {/* Tek satır: metin sınırı karakterle tutuluyor (`EN_UZUN_GOREV`), bu
             da taşmaya karşı son emniyet — büyük harfli görev sınıra uysa da
@@ -436,7 +455,9 @@ function GorevSatiri({
 /**
  * "Görev ekle" alt sayfası.
  *
- * Üç soru: ne, hangi tür, hangi renk. "Ne zaman?" sorulmuyor: dilim basılan
+ * Dört soru: ne, ortalama kaç dakika, hangi tür, hangi renk. Süre sonradan
+ * geldi: dilimin başlığı kalan işin toplamını gösteriyor ve plan ancak
+ * işlerin ne kadar süreceği bilinince plan oluyor. "Ne zaman?" sorulmuyor: dilim basılan
  * düğmenin bölümünden geliyor — kullanıcı "Akşam"ın düğmesine bastıysa cevabı
  * zaten verdi. Sayfada bir süre üç dilimlik bir seçici de duruyordu;
  * kullanıcı kaldırılmasını istedi, verilmiş bir cevabı ikinci kez soruyordu.
@@ -459,9 +480,11 @@ function EklemeSayfasi({
     dilim: GorevDilimi
     kategori: GorevKategorisi
     renk: GorevRengi
+    sure: number
   }) => void
 }) {
   const [metin, setMetin] = useState('')
+  const [sure, setSure] = useState<number | null>(null)
   const [kategori, setKategori] = useState<GorevKategorisi | null>(null)
   const [renk, setRenk] = useState<GorevRengi | null>(null)
   const [hata, setHata] = useState(false)
@@ -469,14 +492,14 @@ function EklemeSayfasi({
   useGeriKatmani(true, onKapat)
 
   const yazilan = metniKirp(metin)
-  const gecerli = yazilan !== '' && kategori !== null && renk !== null
+  const gecerli = yazilan !== '' && sure !== null && kategori !== null && renk !== null
 
   const gonder = () => {
     if (!gecerli) {
       setHata(true)
       return
     }
-    onKaydet({ metin: yazilan, dilim, kategori, renk })
+    onKaydet({ metin: yazilan, dilim, kategori, renk, sure })
   }
 
   return (
@@ -524,6 +547,31 @@ function EklemeSayfasi({
             hata && yazilan === '' ? 'border-danger' : 'border-input',
           )}
         />
+
+        {/* Varsayılan seçili gelmiyor: seçili bir "30 dk", kullanıcının hiç
+            vermediği bir tahmini onun adına kaydederdi. */}
+        <AlanBasligi
+          baslik="Ortalama kaç dakika sürer?"
+          hata={hata && sure === null ? 'Birini seç' : undefined}
+        />
+        <div
+          className={cn(
+            'grid grid-cols-6 gap-1 rounded-2xl',
+            hata && sure === null && 'outline-2 outline-offset-[3px] outline-danger/45',
+          )}
+        >
+          {SURE_SECENEKLERI.map((dk) => (
+            <SecimDugmesi
+              key={dk}
+              secili={sure === dk}
+              onClick={() => setSure(dk)}
+              etiket={`${dk} dakika`}
+              className="rakam px-0.5 text-[13px]"
+            >
+              {dk}
+            </SecimDugmesi>
+          ))}
+        </div>
 
         <AlanBasligi baslik="Kategori" hata={hata && kategori === null ? 'Birini seç' : undefined} />
         <div
@@ -628,11 +676,14 @@ function AlanBasligi({
 function SecimDugmesi({
   secili,
   onClick,
+  etiket,
   className,
   children,
 }: {
   secili: boolean
   onClick: () => void
+  /** Görünen yazı tek başına yetmediğinde ekran okuyucunun okuduğu ad ("45" → "45 dakika"). */
+  etiket?: string
   className?: string
   children: React.ReactNode
 }) {
@@ -641,6 +692,7 @@ function SecimDugmesi({
       type="button"
       onClick={onClick}
       aria-pressed={secili}
+      aria-label={etiket}
       className={cn(
         'h-[46px] whitespace-nowrap rounded-[12px] border-[1.5px] text-sm font-extrabold transition',
         secili

@@ -15,6 +15,8 @@ import {
   gorevYildizla,
   gorevleriNormalize,
   gununGorevleri,
+  kalanSure,
+  sureYaz,
   haftaninGorevleri,
   metniKirp,
   simdikiDilim,
@@ -33,6 +35,7 @@ function gorev(pay: Partial<Gorev> & { id: string }): Gorev {
     dilim: 'sabah',
     kategori: 'soru',
     renk: 'turuncu',
+    sure: 30,
     bitti: false,
     yildiz: false,
     ...pay,
@@ -50,6 +53,7 @@ function doldur(adet: number, dilim: GorevDilimi = 'sabah', gun = GUN): Gorev[] 
       dilim,
       kategori: 'soru',
       renk: 'turuncu',
+      sure: 30,
     }) ?? liste
   }
   return liste
@@ -92,6 +96,7 @@ describe('gorevEkle', () => {
       dilim: 'ogle',
       kategori: 'deneme',
       renk: 'mor',
+      sure: 45,
     })
     expect(liste).toEqual([
       {
@@ -101,6 +106,7 @@ describe('gorevEkle', () => {
         dilim: 'ogle',
         kategori: 'deneme',
         renk: 'mor',
+        sure: 45,
         bitti: false,
         yildiz: false,
       },
@@ -115,6 +121,7 @@ describe('gorevEkle', () => {
       dilim: 'sabah',
       kategori: 'soru',
       renk: 'turuncu',
+      sure: 30,
     })
     expect(sonuc).toBeNull()
   })
@@ -130,6 +137,7 @@ describe('gorevEkle', () => {
       dilim: 'sabah',
       kategori: 'soru',
       renk: 'turuncu',
+      sure: 30,
     })
     expect(sonuc).toBeNull()
   })
@@ -143,6 +151,7 @@ describe('gorevEkle', () => {
       dilim: 'aksam',
       kategori: 'tekrar',
       renk: 'yesil',
+      sure: 30,
     })
     expect(sonuc).toHaveLength(EN_COK_GOREV + 1)
     expect(dilimeYerVarMi(sonuc!, GUN, 'aksam')).toBe(true)
@@ -157,6 +166,7 @@ describe('gorevEkle', () => {
       dilim: 'sabah',
       kategori: 'deneme',
       renk: 'mavi',
+      sure: 30,
     })
     expect(sonuc).not.toBeNull()
   })
@@ -304,6 +314,7 @@ describe('gorevleriNormalize', () => {
       dilim: 'sabah',
       kategori: 'diger',
       renk: 'turuncu',
+      sure: null,
       bitti: false,
       yildiz: false,
     })
@@ -333,6 +344,7 @@ describe('gorevleriNormalize', () => {
       dilim: 'sabah',
       kategori: 'diger',
       renk: 'mavi',
+      sure: null,
       bitti: true,
       yildiz: false,
     })
@@ -382,5 +394,42 @@ describe('palet ve dilimler', () => {
 
   it('üç dilim, sıra sabit', () => {
     expect(DILIMLER).toEqual(['sabah', 'ogle', 'aksam'])
+  })
+})
+
+describe('süre', () => {
+  it('okunur yazılıyor', () => {
+    expect(sureYaz(15)).toBe('15 dk')
+    expect(sureYaz(60)).toBe('1 sa')
+    expect(sureYaz(90)).toBe('1 sa 30 dk')
+    expect(sureYaz(120)).toBe('2 sa')
+  })
+
+  it('kalan süre bitmemiş ve süresi bilinen görevleri topluyor', () => {
+    const liste = [
+      gorev({ id: 'a', sure: 30 }),
+      gorev({ id: 'b', sure: 45, bitti: true }),
+      gorev({ id: 'c', sure: null }),
+      gorev({ id: 'd', sure: 60 }),
+    ]
+    expect(kalanSure(liste)).toBe(90)
+  })
+
+  it('eski kayıtta süre uydurulmuyor, bozuk süre eleniyor', () => {
+    const [eski, bozuk, eksi, iyi] = gorevleriNormalize([
+      { id: 'a', gun: GUN, metin: 'eski' },
+      { id: 'b', gun: GUN, metin: 'b', sure: 'yarım saat' },
+      { id: 'c', gun: GUN, metin: 'c', sure: -5 },
+      { id: 'd', gun: GUN, metin: 'd', sure: 45 },
+    ])
+    expect(eski.sure).toBeNull()
+    expect(bozuk.sure).toBeNull()
+    expect(eksi.sure).toBeNull()
+    expect(iyi.sure).toBe(45)
+  })
+
+  it('ertelenen görev süresini koruyor', () => {
+    const sonuc = gorevErtele([gorev({ id: 'a', sure: 90 })], 'a')
+    expect(sonuc?.[0].sure).toBe(90)
   })
 })
