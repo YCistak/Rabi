@@ -3,7 +3,7 @@
 // sunucu, hesap, senkronizasyon yoktur.
 
 import type { BankaKaydi } from './oyunlar/banka'
-import type { NotKagidi } from './yapilacaklar'
+import type { Gorev } from './yapilacaklar'
 import type { BilinmeyenKart, KonuIlerlemeleri } from './konu/ilerleme'
 import type { AylikOzetArsivi } from './ozet'
 import type { OkumaSeansi } from './konu/okuma-suresi'
@@ -414,12 +414,17 @@ export type Yedek = {
   /** Oyun Bankası'ndan düşen toplam soru sayısı. */
   bankaDusen?: number
   /**
-   * Yapılacaklar tahtası. Eski yedeklerde yok — geri yüklemede yazılmıyor,
-   * kullanıcının mevcut kâğıtları olduğu gibi kalıyor.
+   * Yapılacaklar. Eski yedeklerde yok — geri yüklemede yazılmıyor, kullanıcının
+   * mevcut görevleri olduğu gibi kalıyor.
+   *
+   * Alan adı `notlar` kalıyor: ekran not tahtasından görev listesine döndü ama
+   * adı değiştirmek eski yedeklerin bu alanını okunmaz yapardı. Şemayı
+   * `gorevleriNormalize` çeviriyor, yani tahta dönemindeki yedekler de geri
+   * yükleniyor (kâğıtların konumu atılıyor, kendileri kalıyor).
    *
    * Oyun modu burada **yok**: o veri değil, bu cihazdaki tercih.
    */
-  notlar?: NotKagidi[]
+  notlar?: Gorev[]
   /**
    * Konu Anlatımı: hangi konuların destesi bitirildi ve "bilmiyorum" denen
    * kartlar. Eski yedeklerde yok — geri yüklemede yazılmıyor, kullanıcının

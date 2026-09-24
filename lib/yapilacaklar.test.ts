@@ -1,277 +1,435 @@
 import { describe, expect, it } from 'vitest'
 import {
-  EN_AZ_PAY_X,
-  EN_AZ_PAY_Y,
-  EN_COK_NOT,
-  EN_UZUN_NOT,
-  NOT_RENKLERI,
-  ayrikKonum,
-  gununNotlari,
-  kalanIs,
-  konumuSinirla,
-  notEkle,
-  notSil,
-  notTasi,
-  notYaz,
-  notlariNormalize,
-  notuIsaretle,
-  oneAl,
-  siradakiRenk,
-  yerVarMi,
-  yeniKonum,
-  type NotKagidi,
+  DILIMLER,
+  EN_COK_GOREV,
+  EN_UZUN_GOREV,
+  GOREV_RENKLERI,
+  bekleyenGorev,
+  dilimGorevleri,
+  dilimeYerVarMi,
+  gorevEkle,
+  gorevErtele,
+  gorevIsaretle,
+  gorevRengi,
+  gorevSil,
+  gorevYildizla,
+  gorevleriNormalize,
+  gununGorevleri,
+  kalanSure,
+  sureYaz,
+  haftaninGorevleri,
+  metniKirp,
+  simdikiDilim,
+  type Gorev,
+  type GorevDilimi,
 } from './yapilacaklar'
+import { haftaBasi } from './utils'
 
-const TARIH = '2026-08-21'
+/** 21 Ağustos 2026, cuma. */
+const GUN = '2026-08-21'
 
-/** `adet` kadar kâğıtlık dolu bir tahta. */
-function tahta(adet: number): NotKagidi[] {
-  let notlar: NotKagidi[] = []
-  for (let i = 0; i < adet; i++) notlar = notEkle(notlar, `n${i}`, TARIH) ?? notlar
-  return notlar
+function gorev(pay: Partial<Gorev> & { id: string }): Gorev {
+  return {
+    metin: 'iş',
+    gun: GUN,
+    dilim: 'sabah',
+    kategori: 'soru',
+    renk: 'turuncu',
+    sure: 30,
+    bitti: false,
+    yildiz: false,
+    ...pay,
+  }
 }
 
-describe('notEkle', () => {
-  it('boş kâğıt ekliyor', () => {
-    const notlar = notEkle([], 'a', TARIH)
-    expect(notlar).toHaveLength(1)
-    expect(notlar?.[0]).toMatchObject({ id: 'a', metin: '', bitti: false, gun: TARIH })
-  })
-
-  /* Hepsi aynı yere yapışsaydı ikinci kâğıt birincisini örterdi. */
-  it('art arda eklenen kâğıtlar aynı yere yapışmıyor', () => {
-    const notlar = tahta(3)
-    const konumlar = notlar.map((n) => `${n.x},${n.y}`)
-    expect(new Set(konumlar).size).toBe(3)
-  })
-
-  it('art arda eklenen kâğıtlar farklı renk alıyor', () => {
-    const renkler = tahta(NOT_RENKLERI.length).map((n) => n.renk)
-    expect(new Set(renkler).size).toBe(NOT_RENKLERI.length)
-  })
-
-  /* Tahta dolunca en eski kâğıt silinmiyor: silmek kullanıcının kararı. */
-  it('tahta dolunca eklemiyor', () => {
-    const dolu = tahta(EN_COK_NOT)
-    expect(dolu).toHaveLength(EN_COK_NOT)
-    expect(yerVarMi(dolu)).toBe(false)
-    expect(notEkle(dolu, 'fazla', TARIH)).toBeNull()
-  })
-})
-
-describe('yeniKonum', () => {
-  it('konumlar tahtanın içinde kalıyor', () => {
-    for (let i = 0; i < EN_COK_NOT; i++) {
-      const { x, y } = yeniKonum(i)
-      expect(x, `x ${i}`).toBeGreaterThanOrEqual(0)
-      expect(x, `x ${i}`).toBeLessThanOrEqual(1)
-      expect(y, `y ${i}`).toBeGreaterThanOrEqual(0)
-      expect(y, `y ${i}`).toBeLessThanOrEqual(1)
-    }
-  })
-
-  /*
-    Asıl şikâyet buydu: eski basamak beşte bir başa dönüyordu ve altıncı kâğıt
-    birincinin üstüne oturuyordu. Sınıra kadar her kâğıdın ayrı yeri olmalı.
-  */
-  it('tahta sınırına kadar hiçbir konum tekrarlanmıyor', () => {
-    const konumlar = Array.from({ length: EN_COK_NOT }, (_, i) => {
-      const { x, y } = yeniKonum(i)
-      return `${x},${y}`
-    })
-    expect(new Set(konumlar).size).toBe(EN_COK_NOT)
-  })
-
-  /* Kenarda pay var: 0 ya da 1 kâğıdı tahtanın yuvarlak köşesine dayardı. */
-  it('kâğıtlar tahtanın kenarına yapışmıyor', () => {
-    for (let i = 0; i < EN_COK_NOT; i++) {
-      const { x, y } = yeniKonum(i)
-      expect(x).toBeGreaterThan(0)
-      expect(x).toBeLessThan(1)
-      expect(y).toBeGreaterThan(0)
-      expect(y).toBeLessThan(1)
-    }
-  })
-})
-
-describe('gununNotlari', () => {
-  it('yalnızca bugünün kâğıtlarını bırakıyor', () => {
-    const notlar = [
-      ...(notEkle([], 'dun', '2026-08-20') ?? []),
-      ...(notEkle([], 'bugun', TARIH) ?? []),
-    ]
-    expect(gununNotlari(notlar, TARIH).map((n) => n.id)).toEqual(['bugun'])
-  })
-
-  it('gün dönmediyse tahtaya dokunmuyor', () => {
-    const notlar = tahta(3)
-    expect(gununNotlari(notlar, TARIH)).toHaveLength(3)
-  })
-
-  /* Eski sürümden kalan kayıtta gün yok; bugüne ait sayılmamalı. */
-  it('günü olmayan kayıt temizleniyor', () => {
-    const eski = notlariNormalize([{ id: 'a', metin: 'eski' }])
-    expect(eski).toHaveLength(1)
-    expect(gununNotlari(eski, TARIH)).toHaveLength(0)
-  })
-})
-
-describe('konumuSinirla', () => {
-  it('0–1 aralığına kırpıyor', () => {
-    expect(konumuSinirla(-3)).toBe(0)
-    expect(konumuSinirla(4.2)).toBe(1)
-    expect(konumuSinirla(0.35)).toBe(0.35)
-  })
-
-  it('sayı olmayanı sıfıra çekiyor', () => {
-    expect(konumuSinirla(Number.NaN)).toBe(0)
-    expect(konumuSinirla(Number.POSITIVE_INFINITY)).toBe(0)
-  })
-})
-
-describe('düzenleme', () => {
-  it('metni yazıyor ve sınırda kesiyor', () => {
-    const notlar = tahta(1)
-    expect(notYaz(notlar, 'n0', 'akşam etüt')[0].metin).toBe('akşam etüt')
-    expect(notYaz(notlar, 'n0', 'x'.repeat(EN_UZUN_NOT + 50))[0].metin).toHaveLength(EN_UZUN_NOT)
-  })
-
-  it('taşıma konumu kırpıyor', () => {
-    const tasinan = notTasi(tahta(1), 'n0', 5, -2)[0]
-    expect(tasinan).toMatchObject({ x: 1, y: 0 })
-  })
-
-  it('işaretleme iki yönlü', () => {
-    const notlar = tahta(1)
-    expect(notuIsaretle(notlar, 'n0')[0].bitti).toBe(true)
-    expect(notuIsaretle(notuIsaretle(notlar, 'n0'), 'n0')[0].bitti).toBe(false)
-  })
-
-  it('silinen kâğıt yer açıyor', () => {
-    const dolu = tahta(EN_COK_NOT)
-    const kalan = notSil(dolu, 'n3')
-    expect(kalan).toHaveLength(EN_COK_NOT - 1)
-    expect(notEkle(kalan, 'yeni', TARIH)).toHaveLength(EN_COK_NOT)
-  })
-
-  it('olmayan kimlik listeyi değiştirmiyor', () => {
-    const notlar = tahta(2)
-    expect(notYaz(notlar, 'yok', 'x')).toEqual(notlar)
-    expect(notSil(notlar, 'yok')).toEqual(notlar)
-  })
-
-  it('kalan iş bitmemişleri sayıyor', () => {
-    const notlar = tahta(3)
-    expect(kalanIs(notlar)).toBe(3)
-    expect(kalanIs(notuIsaretle(notlar, 'n1'))).toBe(2)
-  })
-})
-
-describe('ayrikKonum', () => {
-  /** İki kâğıt birbirini tümüyle kapatıyor mu. */
-  function kapaniyorMu(a: { x: number; y: number }, b: { x: number; y: number }): boolean {
-    return Math.abs(a.x - b.x) < EN_AZ_PAY_X && Math.abs(a.y - b.y) < EN_AZ_PAY_Y
+/** `adet` kadar görevi aynı gün ve dilime yazar. */
+function doldur(adet: number, dilim: GorevDilimi = 'sabah', gun = GUN): Gorev[] {
+  let liste: Gorev[] = []
+  for (let i = 0; i < adet; i++) {
+    liste = gorevEkle(liste, {
+      id: `g${i}`,
+      metin: `iş ${i}`,
+      gun,
+      dilim,
+      kategori: 'soru',
+      renk: 'turuncu',
+      sure: 30,
+    }) ?? liste
   }
+  return liste
+}
 
-  it('tam üst üste bırakılan kâğıdı kenara çekiyor', () => {
-    const notlar = tahta(2)
-    const hedef = notlar[0]
-    const yeni = ayrikKonum(notlar, 'n1', hedef.x, hedef.y)
-    expect(kapaniyorMu(yeni, hedef)).toBe(false)
+describe('metniKirp', () => {
+  it('boşlukları atar', () => {
+    expect(metniKirp('  40 soru  ')).toBe('40 soru')
   })
 
-  it('üst üste binmeye izin veriyor — yalnızca tam örtüşmeyi engelliyor', () => {
-    const notlar = tahta(2)
-    const hedef = notlar[0]
-    // Bir eksende payın üstünde kalan konum olduğu gibi kabul ediliyor.
-    const yakin = { x: hedef.x, y: hedef.y + EN_AZ_PAY_Y + 0.01 }
-    expect(ayrikKonum(notlar, 'n1', yakin.x, yakin.y)).toEqual(yakin)
+  it('sınırı aşan metni keser', () => {
+    const uzun = 'a'.repeat(EN_UZUN_GOREV + 20)
+    expect(metniKirp(uzun)).toHaveLength(EN_UZUN_GOREV)
   })
 
-  it('kendini engel saymıyor', () => {
-    const notlar = tahta(1)
-    const n = notlar[0]
-    expect(ayrikKonum(notlar, 'n0', n.x, n.y)).toEqual({ x: n.x, y: n.y })
-  })
-
-  it('taşıma sonrası hiçbir kâğıt bir başkasını kapatmıyor', () => {
-    // On kâğıdın hepsi aynı köşeye bırakılıyor; her biri boş bir yer buluyor.
-    let notlar = tahta(EN_COK_NOT)
-    for (const not of [...notlar]) notlar = notTasi(notlar, not.id, 0.5, 0.5)
-
-    for (const a of notlar) {
-      for (const b of notlar) {
-        if (a.id === b.id) continue
-        expect(kapaniyorMu(a, b), `${a.id} ↔ ${b.id}`).toBe(false)
-      }
-    }
-  })
-
-  it('yeni kâğıt dolu bir ızgara yerine oturmuyor', () => {
-    // İlk kâğıt ikinci ızgara yerine taşınırsa, ikinci kâğıt oraya düşmemeli.
-    const ikinciYer = yeniKonum(1)
-    const notlar = notTasi(tahta(1), 'n0', ikinciYer.x, ikinciYer.y)
-    const eklenen = notEkle(notlar, 'yeni', TARIH)?.[1]
-    expect(eklenen).toBeDefined()
-    expect(kapaniyorMu(eklenen!, notlar[0])).toBe(false)
+  it('sınır tek satıra sığacak kadar kısa', () => {
+    // Satırda metne kalan yer ~198 piksel (ölçüldü), Türkçe küçük harfli metin
+    // karakter başına ~7,4 piksel: yirmi altı karakter sığıyor, sınır altında.
+    expect(EN_UZUN_GOREV).toBeLessThanOrEqual(26)
   })
 })
 
-describe('oneAl', () => {
-  /* Sürüklenen kâğıt öne gelmezse üstüne binenin altında kalır. */
-  it('kâğıdı dizinin sonuna taşıyor', () => {
-    const notlar = tahta(3)
-    expect(oneAl(notlar, 'n0').map((n) => n.id)).toEqual(['n1', 'n2', 'n0'])
-  })
-
-  it('zaten öndeki kâğıdın sırasını bozmuyor', () => {
-    const notlar = tahta(3)
-    expect(oneAl(notlar, 'n2').map((n) => n.id)).toEqual(['n0', 'n1', 'n2'])
-  })
-
-  it('olmayan kimlikte liste aynı kalıyor', () => {
-    const notlar = tahta(2)
-    expect(oneAl(notlar, 'yok')).toEqual(notlar)
+describe('simdikiDilim', () => {
+  it('saati dilime çevirir', () => {
+    expect(simdikiDilim(0)).toBe('sabah')
+    expect(simdikiDilim(11)).toBe('sabah')
+    expect(simdikiDilim(12)).toBe('ogle')
+    expect(simdikiDilim(16)).toBe('ogle')
+    expect(simdikiDilim(17)).toBe('aksam')
+    expect(simdikiDilim(23)).toBe('aksam')
   })
 })
 
-describe('notlariNormalize', () => {
-  it('bozuk kaydı boş tahtaya indiriyor', () => {
-    expect(notlariNormalize(undefined)).toEqual([])
-    expect(notlariNormalize({ id: 'a' })).toEqual([])
-    expect(notlariNormalize(['metin'])).toEqual([])
+describe('gorevEkle', () => {
+  it('görevi bitmemiş ve yıldızsız ekler', () => {
+    const liste = gorevEkle([], {
+      id: 'a',
+      metin: '  40 soru  ',
+      gun: GUN,
+      dilim: 'ogle',
+      kategori: 'deneme',
+      renk: 'mor',
+      sure: 45,
+    })
+    expect(liste).toEqual([
+      {
+        id: 'a',
+        metin: '40 soru',
+        gun: GUN,
+        dilim: 'ogle',
+        kategori: 'deneme',
+        renk: 'mor',
+        sure: 45,
+        bitti: false,
+        yildiz: false,
+      },
+    ])
   })
 
-  /* Eski kayıtta olmayan alan `undefined` kalsaydı kâğıt çizilirken çökerdi. */
-  it('eksik alanları tamamlıyor', () => {
-    const [not] = notlariNormalize([{ id: 'a' }])
-    expect(not).toMatchObject({ id: 'a', metin: '', bitti: false, x: 0, y: 0 })
-    expect(NOT_RENKLERI).toContain(not.renk)
+  it('boş metni kabul etmez', () => {
+    const sonuc = gorevEkle([], {
+      id: 'a',
+      metin: '   ',
+      gun: GUN,
+      dilim: 'sabah',
+      kategori: 'soru',
+      renk: 'turuncu',
+      sure: 30,
+    })
+    expect(sonuc).toBeNull()
   })
 
-  it('tahtanın dışına taşan konumu içeri alıyor', () => {
-    const [not] = notlariNormalize([{ id: 'a', x: 9, y: -4 }])
-    expect(not).toMatchObject({ x: 1, y: 0 })
+  it('dilim dolduğunda null döner', () => {
+    const dolu = doldur(EN_COK_GOREV)
+    expect(dolu).toHaveLength(EN_COK_GOREV)
+    expect(dilimeYerVarMi(dolu, GUN, 'sabah')).toBe(false)
+    const sonuc = gorevEkle(dolu, {
+      id: 'fazla',
+      metin: 'sığmaz',
+      gun: GUN,
+      dilim: 'sabah',
+      kategori: 'soru',
+      renk: 'turuncu',
+      sure: 30,
+    })
+    expect(sonuc).toBeNull()
   })
 
-  it('tanınmayan rengi paletten birine düşürüyor', () => {
-    const [not] = notlariNormalize([{ id: 'a', renk: 'turuncu' }])
-    expect(NOT_RENKLERI).toContain(not.renk)
+  it('sınır dilim başına: sabah doluyken akşama yazılabiliyor', () => {
+    const dolu = doldur(EN_COK_GOREV)
+    const sonuc = gorevEkle(dolu, {
+      id: 'aksam-1',
+      metin: 'etüt',
+      gun: GUN,
+      dilim: 'aksam',
+      kategori: 'tekrar',
+      renk: 'yesil',
+      sure: 30,
+    })
+    expect(sonuc).toHaveLength(EN_COK_GOREV + 1)
+    expect(dilimeYerVarMi(sonuc!, GUN, 'aksam')).toBe(true)
   })
 
-  it('sınırı aşan kaydı kırpıyor', () => {
-    const cok = Array.from({ length: EN_COK_NOT + 8 }, (_, i) => ({ id: `n${i}` }))
-    expect(notlariNormalize(cok)).toHaveLength(EN_COK_NOT)
-  })
-
-  it('kimliksiz kaydı atıyor', () => {
-    expect(notlariNormalize([{ metin: 'x' }, { id: '' }, { id: 'a' }])).toHaveLength(1)
+  it('sınır gün başına da ayrı: dolu günün ertesine yazılabiliyor', () => {
+    const dolu = doldur(EN_COK_GOREV)
+    const sonuc = gorevEkle(dolu, {
+      id: 'yarin',
+      metin: 'deneme',
+      gun: '2026-08-22',
+      dilim: 'sabah',
+      kategori: 'deneme',
+      renk: 'mavi',
+      sure: 30,
+    })
+    expect(sonuc).not.toBeNull()
   })
 })
 
-describe('siradakiRenk', () => {
-  it('palette dönüyor', () => {
-    expect(siradakiRenk(0)).toBe(NOT_RENKLERI[0])
-    expect(siradakiRenk(NOT_RENKLERI.length)).toBe(NOT_RENKLERI[0])
+describe('dilimGorevleri', () => {
+  const liste = [
+    gorev({ id: 'a', dilim: 'sabah' }),
+    gorev({ id: 'b', dilim: 'aksam' }),
+    gorev({ id: 'c', dilim: 'sabah', yildiz: true }),
+    gorev({ id: 'd', dilim: 'sabah', bitti: true }),
+    gorev({ id: 'e', dilim: 'sabah', gun: '2026-08-22' }),
+  ]
+
+  it('yalnızca o günün o dilimini verir', () => {
+    expect(dilimGorevleri(liste, GUN, 'sabah').map((g) => g.id)).toEqual(['c', 'a', 'd'])
+    expect(dilimGorevleri(liste, GUN, 'aksam').map((g) => g.id)).toEqual(['b'])
+  })
+
+  it('yıldızlıyı üste alır, ötekilerin sırasını bozmaz', () => {
+    const sirali = dilimGorevleri(liste, GUN, 'sabah')
+    expect(sirali[0].id).toBe('c')
+    // 'a' ve 'd' eklenme sırasını koruyor: biten görev sona atılmıyor.
+    expect(sirali.map((g) => g.id).slice(1)).toEqual(['a', 'd'])
+  })
+
+  it('kaynak listeyi değiştirmez', () => {
+    const kopya = liste.map((g) => g.id)
+    dilimGorevleri(liste, GUN, 'sabah')
+    expect(liste.map((g) => g.id)).toEqual(kopya)
+  })
+})
+
+describe('haftaninGorevleri', () => {
+  it('bu haftadan eskisini atar, ileriyi tutar', () => {
+    // 21 Ağustos 2026 cuma; haftanın pazartesisi 17 Ağustos.
+    const hafta = haftaBasi(GUN)
+    expect(hafta).toBe('2026-08-17')
+    const liste = [
+      gorev({ id: 'gecen-hafta', gun: '2026-08-16' }),
+      gorev({ id: 'pazartesi', gun: '2026-08-17' }),
+      gorev({ id: 'bugun', gun: GUN }),
+      gorev({ id: 'gelecek-hafta', gun: '2026-08-25' }),
+      gorev({ id: 'gunsuz', gun: '' }),
+    ]
+    expect(haftaninGorevleri(liste, hafta).map((g) => g.id)).toEqual([
+      'pazartesi',
+      'bugun',
+      'gelecek-hafta',
+    ])
+  })
+})
+
+describe('gununGorevleri ve bekleyenGorev', () => {
+  const liste = [
+    gorev({ id: 'a' }),
+    gorev({ id: 'b', bitti: true }),
+    gorev({ id: 'c', gun: '2026-08-22' }),
+  ]
+
+  it('günü süzer', () => {
+    expect(gununGorevleri(liste, GUN).map((g) => g.id)).toEqual(['a', 'b'])
+  })
+
+  it('bitmemişleri sayar', () => {
+    expect(bekleyenGorev(gununGorevleri(liste, GUN))).toBe(1)
+  })
+})
+
+describe('gorevErtele', () => {
+  it('ertesi güne, aynı dilime taşır', () => {
+    const liste = [gorev({ id: 'a', dilim: 'aksam' })]
+    const sonuc = gorevErtele(liste, 'a')
+    expect(sonuc?.[0]).toMatchObject({ gun: '2026-08-22', dilim: 'aksam' })
+  })
+
+  it('ay sonunda da doğru güne gider', () => {
+    const liste = [gorev({ id: 'a', gun: '2026-08-31' })]
+    expect(gorevErtele(liste, 'a')?.[0].gun).toBe('2026-09-01')
+  })
+
+  it('hedef dilim doluysa null döner', () => {
+    const yarin = doldur(EN_COK_GOREV, 'sabah', '2026-08-22')
+    const liste = [...yarin, gorev({ id: 'bugunku' })]
+    expect(gorevErtele(liste, 'bugunku')).toBeNull()
+  })
+
+  it('bitmiş görevi ertelemez', () => {
+    expect(gorevErtele([gorev({ id: 'a', bitti: true })], 'a')).toBeNull()
+  })
+
+  it('bilinmeyen kimlikte null döner', () => {
+    expect(gorevErtele([gorev({ id: 'a' })], 'yok')).toBeNull()
+  })
+})
+
+describe('işaretleme, yıldız ve silme', () => {
+  const liste = [gorev({ id: 'a' }), gorev({ id: 'b' })]
+
+  it('tik durumunu çevirir', () => {
+    const bir = gorevIsaretle(liste, 'a')
+    expect(bir[0].bitti).toBe(true)
+    expect(bir[1].bitti).toBe(false)
+    expect(gorevIsaretle(bir, 'a')[0].bitti).toBe(false)
+  })
+
+  it('yıldızı çevirir', () => {
+    expect(gorevYildizla(liste, 'b')[1].yildiz).toBe(true)
+  })
+
+  it('siler', () => {
+    expect(gorevSil(liste, 'a').map((g) => g.id)).toEqual(['b'])
+  })
+
+  it('bilinmeyen kimlik listeyi bozmaz', () => {
+    expect(gorevIsaretle(liste, 'yok')).toEqual(liste)
+    expect(gorevSil(liste, 'yok')).toEqual(liste)
+  })
+})
+
+describe('gorevleriNormalize', () => {
+  it('dizi olmayanı boş liste sayar', () => {
+    expect(gorevleriNormalize(null)).toEqual([])
+    expect(gorevleriNormalize({ a: 1 })).toEqual([])
+  })
+
+  it('kimliksiz ve günsüz kayıtları eler', () => {
+    expect(
+      gorevleriNormalize([
+        { metin: 'kimliksiz', gun: GUN },
+        { id: '', gun: GUN },
+        { id: 'a' },
+        null,
+        'x',
+        { id: 'b', gun: GUN },
+      ]).map((g) => g.id),
+    ).toEqual(['b'])
+  })
+
+  it('eksik alanları güvenli varsayılana çeker', () => {
+    expect(gorevleriNormalize([{ id: 'a', gun: GUN }])[0]).toEqual({
+      id: 'a',
+      metin: '',
+      gun: GUN,
+      dilim: 'sabah',
+      kategori: 'diger',
+      renk: 'turuncu',
+      sure: null,
+      bitti: false,
+      yildiz: false,
+    })
+  })
+
+  it('tanınmayan dilim, kategori ve rengi varsayılana düşürür', () => {
+    expect(
+      gorevleriNormalize([
+        { id: 'a', gun: GUN, dilim: 'gece', kategori: 'spor', renk: 'neon' },
+      ])[0],
+    ).toMatchObject({ dilim: 'sabah', kategori: 'diger', renk: 'turuncu' })
+  })
+
+  it('uzun metni sınıra kırpar', () => {
+    const uzun = gorevleriNormalize([{ id: 'a', gun: GUN, metin: 'x'.repeat(200) }])[0]
+    expect(uzun.metin).toHaveLength(EN_UZUN_GOREV)
+  })
+
+  it('eski tahta kâğıdını görev olarak taşır', () => {
+    // Tahta döneminin kaydı: konum var, dilim ve kategori yok.
+    const eski = { id: 'k1', metin: 'kimya tekrarı', renk: 'mavi', x: 0.4, y: 0.7, bitti: true, gun: GUN }
+    const tasinan = gorevleriNormalize([eski])[0]
+    expect(tasinan).toEqual({
+      id: 'k1',
+      metin: 'kimya tekrarı',
+      gun: GUN,
+      dilim: 'sabah',
+      kategori: 'diger',
+      renk: 'mavi',
+      sure: null,
+      bitti: true,
+      yildiz: false,
+    })
+    expect(tasinan).not.toHaveProperty('x')
+  })
+
+  it('dilim sınırını aşan kayıtları eler, ilk yazılanları tutar', () => {
+    const ham = Array.from({ length: EN_COK_GOREV + 3 }, (_, i) => ({
+      id: `g${i}`,
+      gun: GUN,
+      dilim: 'aksam',
+      metin: `iş ${i}`,
+    }))
+    const temiz = gorevleriNormalize(ham)
+    expect(temiz).toHaveLength(EN_COK_GOREV)
+    expect(temiz.at(-1)!.id).toBe(`g${EN_COK_GOREV - 1}`)
+  })
+
+  it('sınır gün ve dilim başına sayılıyor', () => {
+    const ham = [
+      ...Array.from({ length: EN_COK_GOREV }, (_, i) => ({ id: `s${i}`, gun: GUN, dilim: 'sabah' })),
+      { id: 'aksam', gun: GUN, dilim: 'aksam' },
+      { id: 'yarin', gun: '2026-08-22', dilim: 'sabah' },
+    ]
+    const temiz = gorevleriNormalize(ham)
+    expect(temiz).toHaveLength(EN_COK_GOREV + 2)
+    expect(temiz.map((g) => g.id)).toContain('aksam')
+    expect(temiz.map((g) => g.id)).toContain('yarin')
+  })
+
+  it('eski paletin karşılığı olmayan rengini varsayılana çeker', () => {
+    // 'sari' ve 'pembe' yeni palette yok.
+    expect(gorevleriNormalize([{ id: 'a', gun: GUN, renk: 'sari' }])[0].renk).toBe('turuncu')
+  })
+})
+
+describe('palet ve dilimler', () => {
+  it('on iki renk, hepsi ayrı', () => {
+    expect(GOREV_RENKLERI).toHaveLength(12)
+    expect(new Set(GOREV_RENKLERI.map((r) => r.id)).size).toBe(12)
+    expect(new Set(GOREV_RENKLERI.map((r) => r.ad)).size).toBe(12)
+  })
+
+  it('renk kimliği CSS değişkenine çevriliyor', () => {
+    expect(gorevRengi('deniz')).toBe('var(--gorev-deniz)')
+  })
+
+  it('üç dilim, sıra sabit', () => {
+    expect(DILIMLER).toEqual(['sabah', 'ogle', 'aksam'])
+  })
+})
+
+describe('süre', () => {
+  it('okunur yazılıyor', () => {
+    expect(sureYaz(15)).toBe('15 dk')
+    expect(sureYaz(60)).toBe('1 sa')
+    expect(sureYaz(90)).toBe('1 sa 30 dk')
+    expect(sureYaz(120)).toBe('2 sa')
+  })
+
+  it('kalan süre bitmemiş ve süresi bilinen görevleri topluyor', () => {
+    const liste = [
+      gorev({ id: 'a', sure: 30 }),
+      gorev({ id: 'b', sure: 45, bitti: true }),
+      gorev({ id: 'c', sure: null }),
+      gorev({ id: 'd', sure: 60 }),
+    ]
+    expect(kalanSure(liste)).toBe(90)
+  })
+
+  it('eski kayıtta süre uydurulmuyor, bozuk süre eleniyor', () => {
+    const [eski, bozuk, eksi, iyi] = gorevleriNormalize([
+      { id: 'a', gun: GUN, metin: 'eski' },
+      { id: 'b', gun: GUN, metin: 'b', sure: 'yarım saat' },
+      { id: 'c', gun: GUN, metin: 'c', sure: -5 },
+      { id: 'd', gun: GUN, metin: 'd', sure: 45 },
+    ])
+    expect(eski.sure).toBeNull()
+    expect(bozuk.sure).toBeNull()
+    expect(eksi.sure).toBeNull()
+    expect(iyi.sure).toBe(45)
+  })
+
+  it('ertelenen görev süresini koruyor', () => {
+    const sonuc = gorevErtele([gorev({ id: 'a', sure: 90 })], 'a')
+    expect(sonuc?.[0].sure).toBe(90)
   })
 })

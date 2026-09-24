@@ -291,6 +291,32 @@ body {
   --patika-simge: rgba(94, 76, 50, 0.085);
 
 
+  /* Yapılacaklar'ın görev mürekkepleri — kullanıcının seçtiği on iki ton.
+
+     Ders aileleri kullanılamıyor: `--edb-koyu` "bu Kimya" demek ve bir görevi
+     mor yapmak onu Kimya görevi yapmazdı. Palet bu yüzden ayrı, ama uygulamanın
+     kendi sıcak-mat ailesinden; yedi tonu ders mürekkeplerinin **bir kademe
+     koyusu** (`--primary` ile `--primary-parlak` arasındaki aynı ilişki).
+
+     Hepsi beyaz kartın üstünde en az 4,6:1 veriyor ve bu şart: renk yalnızca
+     noktada değil, 10,5 piksellik kategori yazısında da kullanılıyor. Hardal
+     (`#946d20`) bu yüzden `--isl-koyu`dan koyu — orijinali 3,8:1 kalıyordu.
+     Yeni bir ton eklerken kontrastı ölç. */
+  /* Panonun noktalı kâğıdının mürekkebi (bkz. `.gorev-panosu`). */
+  --gorev-pano-nokta: rgba(107, 103, 100, 0.28);
+  --gorev-turuncu: #b3491f;
+  --gorev-kirmizi: #b23b2b;
+  --gorev-gul: #b03a5b;
+  --gorev-mor: #6b5ca5;
+  --gorev-lacivert: #4a5789;
+  --gorev-mavi: #2f6291;
+  --gorev-deniz: #3a7480;
+  --gorev-yesil: #4f7a4a;
+  --gorev-zeytin: #5c7c26;
+  --gorev-hardal: #946d20;
+  --gorev-kahve: #8a5a3f;
+  --gorev-gri: #5d6470;
+
   /* Maskot artık bir görsel (`public/tavsan-yuz.png`); boyanacak bir çizim
      kalmadığı için maskot renk değişkenleri kaldırıldı. */
 }
@@ -1594,6 +1620,21 @@ body {
   işlemenin rengi. Alfa'lı tonlar `color-mix` ile değil düz rgba ile: eski
   WebView `color-mix`i tanımıyor ve bildirim düşünce çerçeve tümüyle gidiyor.
 */
+/*
+  Yapılacaklar'ın pano yüzeyi: noktalı kâğıt.
+
+  Görev satırları beyaz kartlar hâlinde bunun üstünde duruyor. Noktalar süs
+  değil ayrım: üç dilim aynı beyaz zeminin üstünde olsaydı bölümler değil tek
+  bir liste görünürdü. Kâğıt tonu kartlardan bir tık sıcak, böylece beyaz
+  satırlar yüzeyden ayrılıyor. `.sahne`nin defter çizgisiyle aynı yöntem.
+*/
+.gorev-panosu {
+  background-color: #fcfbf8;
+  background-image: radial-gradient(var(--gorev-pano-nokta) 1.1px, transparent 1.4px);
+  background-size: 14px 14px;
+  background-position: 7px 7px;
+}
+
 .sahne {
   --sahne-zemin: #faf3e1;
   --sahne-cizgi: rgba(168, 124, 36, 0.14);

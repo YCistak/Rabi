@@ -1,298 +1,382 @@
 /**
- * Yapılacaklar tahtası — not kâğıtlarının saf mantığı.
+ * Yapılacaklar — günün görevleri, üç zaman dilimine bölünmüş.
  *
- * Ekranda duran şey bir liste değil, üstüne kâğıt yapıştırılan bir tahta:
- * kâğıtlar istenen yere sürükleniyor. Sıralı bir liste yerine bunu seçmenin
- * sebebi günün kendisinin sıralı olmaması — "akşam etüt" ile "kitap götür"
- * arasında bir sıra yok, ama kullanıcının kafasındaki yerleşim var. Konum
- * kullanıcının verdiği bilgi; onu bir listeye düzleştirmek bilgiyi atmak olurdu.
+ * ## Tahta neden listeye döndü
  *
- * ## Konum neden oran olarak duruyor
+ * Buradaki şey bir süre **tahtaydı**: not kâğıtları istenen yere sürükleniyor,
+ * konum da kullanıcının verdiği bilgi sayılıyordu ("bunlar okul, şunlar ev").
+ * Fikir kâğıt üstünde iyiydi, telefonda değil — 390 piksellik bir tahtada on
+ * kâğıt, okunmak için yerleştirilmesi gereken on kâğıt demek ve kullanıcı
+ * yapılacak işini yazmak yerine tahtayı düzenliyordu. Üstelik gruplama
+ * konumdan okunmuyordu: iki kâğıdın yan yana durması ancak onu koyan kişiye
+ * bir şey söylüyor, ertesi gün ona da söylemiyor.
  *
- * `x` ve `y` piksel değil, 0–1 arası **oran**. Telefon ekranları farklı
- * genişlikte; piksel yazılsaydı yedeğini başka telefona taşıyan kullanıcının
- * kâğıtları tahtanın dışına kaçardı. Oran, kâğıdın sığdığı boşluğa göre
- * ölçülüyor: 0 sola/üste yaslı, 1 sağa/alta yaslı. Kâğıdın kendi boyutu
- * hesaba girmiyor, o yüzden burada ekran ölçüsü bilinmek zorunda değil.
+ * Yeni tasarım gruplamayı konuma değil **zamana** bağlıyor: sabah, öğle,
+ * akşam. Bu, günün kendisinde gerçekten var olan tek sıra — "akşam etüt" ile
+ * "sabah 40 soru" arasındaki fark keyfî bir yerleşim değil. `x`/`y` alanları
+ * bu yüzden kalktı; eski kayıtlar taşınırken konumları atılıyor (`normalize`).
+ *
+ * ## Hafta neden duruyor, ay neden durmuyor
+ *
+ * Tahta **günlükti**: gün dönünce kâğıtlar siliniyordu, gerekçe de "dün
+ * yazdığını bugün de gören kullanıcı biriken ve hiç bitmeyen bir listeye
+ * bakıyor" idi. Gerekçe hâlâ geçerli, ama tasarım hafta şeridiyle geliyor:
+ * kullanıcı haftanın günlerine bakıyor ve ileriye plan yazabiliyor, yani
+ * "bugün" tek başına yetmiyor.
+ *
+ * Kayıt bu yüzden **haftalık**: içinde bulunulan haftanın pazartesisinden
+ * eskisi eleniyor (`haftaninGorevleri`). Hafta şeridi zaten o haftayı
+ * gösteriyor, daha eskisine ulaşan bir yol yok; tutulsaydı görünmeyen bir
+ * birikim olurdu. Her pazartesi liste sıfırlanıyor — bitmemiş işler de
+ * gidiyor, tıpkı eskiden her gece gittikleri gibi, yalnızca daha yavaş.
+ *
+ * Geçmiş günler **salt okunur** (ekran tarafında): dün yapılmamış işi bugün
+ * işaretlemek geçmişi düzeltmek olur, o iş yapılmadı. Erteleme varken buna
+ * gerek de yok.
  */
 
-export type NotRengi = 'sari' | 'pembe' | 'mavi' | 'yesil' | 'mor'
+import { gunKaydir } from './utils'
 
-export type NotKagidi = {
+/** Günün üç dilimi. Sıra anlamlı: ekran da bu sırayla çiziyor. */
+export type GorevDilimi = 'sabah' | 'ogle' | 'aksam'
+
+export const DILIMLER: readonly GorevDilimi[] = ['sabah', 'ogle', 'aksam']
+
+export const DILIM_ADI: Record<GorevDilimi, string> = {
+  sabah: 'Sabah',
+  ogle: 'Öğle',
+  aksam: 'Akşam',
+}
+
+/**
+ * Görevin türü.
+ *
+ * Beş tane ve uygulamanın kendi işlerine göre seçildi: dört tanesi bu
+ * uygulamada karşılığı olan çalışma biçimleri, beşincisi geri kalan her şey.
+ * Ders listesi (`lib/dersler.ts`) kullanılmadı — bir görev "Kimya" değil
+ * "Kimya tekrarı" oluyor ve on beş dersli bir seçim, tek satırlık bir işi
+ * yazmanın önüne on beş çipli bir ekran koyardı.
+ */
+export type GorevKategorisi = 'deneme' | 'soru' | 'tekrar' | 'odev' | 'diger'
+
+export const KATEGORILER: readonly GorevKategorisi[] = [
+  'deneme',
+  'soru',
+  'tekrar',
+  'odev',
+  'diger',
+]
+
+export const KATEGORI_ADI: Record<GorevKategorisi, string> = {
+  deneme: 'Deneme',
+  soru: 'Soru',
+  tekrar: 'Tekrar',
+  odev: 'Ödev',
+  diger: 'Diğer',
+}
+
+/**
+ * Görev mürekkebi.
+ *
+ * Kimlik, renk değil: değerler `--gorev-*` değişkenlerinde (`globals.css`),
+ * kayıtta yalnızca adı duruyor. Palet değişirse eski görevler de yeni tonu
+ * alıyor — kayda hex yazılsaydı uygulama iki paletle birden yaşardı.
+ */
+export type GorevRengi =
+  | 'turuncu'
+  | 'kirmizi'
+  | 'gul'
+  | 'mor'
+  | 'lacivert'
+  | 'mavi'
+  | 'deniz'
+  | 'yesil'
+  | 'zeytin'
+  | 'hardal'
+  | 'kahve'
+  | 'gri'
+
+/** Renk seçicideki sıra ve adlar. On iki ton, altılı iki satır. */
+export const GOREV_RENKLERI: readonly { id: GorevRengi; ad: string }[] = [
+  { id: 'turuncu', ad: 'Turuncu' },
+  { id: 'kirmizi', ad: 'Kırmızı' },
+  { id: 'gul', ad: 'Gül' },
+  { id: 'mor', ad: 'Mor' },
+  { id: 'lacivert', ad: 'Lacivert' },
+  { id: 'mavi', ad: 'Mavi' },
+  { id: 'deniz', ad: 'Deniz' },
+  { id: 'yesil', ad: 'Yeşil' },
+  { id: 'zeytin', ad: 'Zeytin' },
+  { id: 'hardal', ad: 'Hardal' },
+  { id: 'kahve', ad: 'Kahve' },
+  { id: 'gri', ad: 'Gri' },
+]
+
+const RENK_KIMLIKLERI: readonly string[] = GOREV_RENKLERI.map((r) => r.id)
+
+/** Rengin CSS karşılığı. Sınıf değil değişken: Tailwind dinamik ad üretemiyor. */
+export function gorevRengi(renk: GorevRengi): string {
+  return `var(--gorev-${renk})`
+}
+
+export type Gorev = {
   id: string
+  /** Tek satıra sığan iş adı; en çok `EN_UZUN_GOREV` karakter. */
   metin: string
-  renk: NotRengi
-  /** Yatay konum, 0 (sola yaslı) – 1 (sağa yaslı). */
-  x: number
-  /** Dikey konum, 0 (üste yaslı) – 1 (alta yaslı). */
-  y: number
-  /** Üstü çizili mi — kâğıdı silmeden "bitti" demenin yolu. */
-  bitti: boolean
   /**
-   * Kâğıdın ait olduğu gün ('YYYY-AA-GG', **yerel** saat).
+   * Görevin günü ('YYYY-AA-GG', **yerel** saat).
    *
-   * Tahta günlük: gün dönünce kâğıtlar temizleniyor (`gununNotlari`). Tarih
-   * ISO damgası değil yerel gün, çünkü "bugün" kullanıcının takvimindeki gün;
-   * `toISOString` UTC'ye kaydırdığı için gece yarısına yakın yazılan kâğıt
-   * daha yazıldığı anda dünün kâğıdı sayılırdı.
+   * ISO damgası değil yerel gün: "bugün" kullanıcının takvimindeki gün ve
+   * `toISOString` UTC'ye kaydırdığı için gece yarısına yakın yazılan görev
+   * daha yazıldığı anda dünün görevi sayılırdı.
    */
   gun: string
+  dilim: GorevDilimi
+  kategori: GorevKategorisi
+  renk: GorevRengi
+  /**
+   * Ortalama kaç dakika süreceği — kullanıcının tahmini.
+   *
+   * `null` yalnızca alan gelmeden önce yazılmış eski görevlerde: onlara bir
+   * süre uydurmak, dilimin toplamını kullanıcının hiç söylemediği bir sayıyla
+   * şişirirdi. Yeni görev süresiz kaydedilemiyor.
+   */
+  sure: number | null
+  bitti: boolean
+  /** Öncelikli — dilimin içinde yıldızlılar üstte duruyor. */
+  yildiz: boolean
 }
 
 /**
- * Tahtaya sığan en fazla kâğıt.
+ * Ekleme sayfasındaki süre seçenekleri, dakika.
  *
- * Sınır tahtanın kendisinden geliyor: kâğıtlar üst üste binmeye başladıktan
- * sonra tahta okunmaz oluyor ve "her şeyi buraya yaz" diyen bir araç,
- * yapılacaklar listesi olmaktan çıkıp ikinci bir kaygı kaynağına dönüşüyor.
+ * Serbest sayı kutusu değil çip: sorulan şey bir tahmin ve "37 dakika"
+ * kimsenin vereceği bir cevap değil. Çip dokunuşla seçiliyor, sayı klavyesi
+ * açılmıyor. İki saatin üstü tek bir görev değil — bölünmesi gereken bir iş.
  */
-export const EN_COK_NOT = 10
+export const SURE_SECENEKLERI: readonly number[] = [15, 30, 45, 60, 90, 120]
 
-/**
- * Bir kâğıda yazılabilecek en fazla karakter.
- *
- * Kâğıt sabit boyutta duruyor; uzun metin ya taşar ya da okunmayacak kadar
- * küçülür. Sınır, kâğıdın kendi boyutunun sözle söylenmiş hâli.
- */
-export const EN_UZUN_NOT = 280
+/** Kayıtta kabul edilen en uzun süre; kurcalanmış kayıt günü aşamasın. */
+const EN_UZUN_SURE = 24 * 60
 
-/** Renk sırası — yeni kâğıt sıradaki rengi alıyor, hepsi aynı olmasın diye. */
-export const NOT_RENKLERI: readonly NotRengi[] = ['sari', 'pembe', 'mavi', 'yesil', 'mor']
-
-/** Kâğıtların ilk yerleştiği ızgara — iki sütun, beş satır. */
-const SUTUN_SAYISI = 2
-const SATIR_SAYISI = EN_COK_NOT / SUTUN_SAYISI
-
-/**
- * Yeni kâğıdın konumu.
- *
- * Önce köşegen bir basamaktı ve beşte bir başa dönüyordu: altıncı kâğıt
- * birincinin üstüne oturuyor, tahta dolduğunda kâğıtlar okunmuyordu. Izgara
- * `EN_COK_NOT` kadar ayrı yer tanımlıyor, yani sınıra kadar hiçbir kâğıt
- * bir başkasının üstüne düşmüyor. Kullanıcı hepsini yine istediği yere
- * taşıyabiliyor; burası yalnızca **ilk** yer.
- */
-export function yeniKonum(sira: number): { x: number; y: number } {
-  const yer = ((sira % EN_COK_NOT) + EN_COK_NOT) % EN_COK_NOT
-  return {
-    // Kenar payı: 0 ile 1 tahtaya yapışık demek ve kâğıt yuvarlak köşeye
-    // dayanıyordu. Pay yatayda daha büyük, çünkü iki sütun yan yana sığıyor.
-    x: serit(yer % SUTUN_SAYISI, SUTUN_SAYISI, 0.06),
-    y: serit(Math.floor(yer / SUTUN_SAYISI), SATIR_SAYISI, 0.03),
-  }
-}
-
-/** `adet` yeri kenar payını koruyarak 0–1 aralığına eşit dağıtır. */
-function serit(indeks: number, adet: number, kenar: number): number {
-  if (adet <= 1) return 0.5
-  return kenar + (indeks * (1 - 2 * kenar)) / (adet - 1)
-}
-
-/** Sıradaki renk — art arda eklenen kâğıtlar farklı renk alıyor. */
-export function siradakiRenk(sira: number): NotRengi {
-  return NOT_RENKLERI[sira % NOT_RENKLERI.length]
-}
-
-/** Konumu tahtanın içinde tutar. */
-export function konumuSinirla(deger: number): number {
-  if (!Number.isFinite(deger)) return 0
-  return Math.min(1, Math.max(0, deger))
+/** "45 dk", "1 sa", "1 sa 30 dk". */
+export function sureYaz(dakika: number): string {
+  const saat = Math.floor(dakika / 60)
+  const kalan = dakika % 60
+  if (saat === 0) return `${kalan} dk`
+  return kalan === 0 ? `${saat} sa` : `${saat} sa ${kalan} dk`
 }
 
 /**
- * İki kâğıdın arasında kalması gereken en az pay (oran).
+ * Bitmemiş görevlerin toplam süresi — dilim başlığındaki sayı.
  *
- * Üst üste binmek serbest: tahtadaki yerleşim kullanıcının kurduğu gruplama ve
- * iki kâğıdın köşe köşe değmesi de o bilginin parçası. Yasak olan **tam
- * örtüşme** — altta kalan kâğıt hiç görünmüyorsa okunamıyor, tutulamıyor ve
- * kullanıcı onu kaybettiğini sanıyor.
- *
- * Ölçü tahtanın kendi oran uzayında: `EN_AZ_PAY_X` bir kâğıdın yanından,
- * `EN_AZ_PAY_Y` üstünden görünecek şeridin genişliği. Dikey pay tesadüfi değil,
- * kâğıdın **tutma şeridi** kadar (700 piksellik tahtada ~45 piksel): altta
- * kalan kâğıt yalnızca görünür değil, aynı zamanda tutulup çekilebilir kalıyor.
- * Yatay pay daha büyük, çünkü kâğıt yatayda tahtanın yarısı kadar yer kaplıyor.
+ * Biten görev düşüyor: sayı "bu dilimde daha ne kadar işim var" diyor.
+ * Süresi olmayan eski görevler sayılmıyor, tahmin edilmiyor.
  */
-export const EN_AZ_PAY_X = 0.12
-export const EN_AZ_PAY_Y = 0.08
-
-/**
- * Aday konumların tarandığı ızgaranın yarıçapı (adım sayısı).
- *
- * Adım payın kendisi kadar, yani `1 / EN_AZ_PAY_Y` ≈ 13 adım tahtanın bir
- * ucundan ötekine yetiyor. Kâğıt sayısı ondan fazla olamadığı için tarama her
- * zaman boş bir yer buluyor.
- */
-const ARAMA_YARICAPI = 13
-
-/** İki konum birbirini tümüyle kapatıyor mu — çakışma **iki eksende birden**. */
-function cakisirMi(ax: number, ay: number, bx: number, by: number): boolean {
-  return Math.abs(ax - bx) < EN_AZ_PAY_X && Math.abs(ay - by) < EN_AZ_PAY_Y
+export function kalanSure(gorevler: readonly Gorev[]): number {
+  return gorevler.reduce((t, g) => (g.bitti || g.sure === null ? t : t + g.sure), 0)
 }
 
 /**
- * Konumu, hiçbir kâğıdı tümüyle kapatmayacak **en yakın** yere çeker.
+ * Bir dilime bir günde girilebilecek en fazla görev.
  *
- * Bırakılan yer boşsa hiç dokunulmuyor: kullanıcı kâğıdı nereye koyduysa oraya
- * oturuyor ve tek eksende yaklaşmak serbest — kâğıdın öbür kenarı açıkta
- * kalıyor. Yalnızca iki eksende birden payın altına inen konum taşınıyor.
- *
- * Çakışan kâğıdın karşı yönüne itmek yerine ızgara taranıyor: itme, ikinci bir
- * kâğıda çarpıp geri dönebiliyor ve kalabalık bir tahtada hiç durulmuyordu.
- * Tarama bırakılan noktanın çevresinden dışa doğru gidiyor, yani bulunan yer
- * hep parmağın kalktığı yere en yakın boşluk oluyor.
+ * Sınır **dilim başına**, gün başına değil: on işi sabaha yığmak da bir plan
+ * değil, bir istek listesi. Üç dilim çarpı on, bir güne otuz iş demek ki o da
+ * kimsenin yapacağı bir gün değil — ama sınırı günde ona indirmek üç dilimi
+ * anlamsızlaştırırdı, çünkü sabahı dolduran akşama hiç yazamazdı.
  */
-export function ayrikKonum(
-  notlar: readonly NotKagidi[],
-  id: string,
-  x: number,
-  y: number,
-): { x: number; y: number } {
-  const hedefX = konumuSinirla(x)
-  const hedefY = konumuSinirla(y)
-  const otekiler = notlar.filter((n) => n.id !== id)
-  const bosMu = (px: number, py: number) =>
-    !otekiler.some((n) => cakisirMi(px, py, n.x, n.y))
+export const EN_COK_GOREV = 10
 
-  if (bosMu(hedefX, hedefY)) return { x: hedefX, y: hedefY }
+/**
+ * Bir görev adının en fazla karakteri.
+ *
+ * Görev satırı **tek satır**: solda tik yuvarlağı, sağda yıldız ve erteleme
+ * düğmeleri var, metne kalan yer 375 piksellik telefonda ~198 piksel (satırın
+ * kendisinden ölçüldü, göz kararı değil). Nunito 700/14,5'te Türkçe küçük
+ * harfli metin karakter başına ~7,4 piksel tutuyor; yirmi dört karakter o
+ * yere sığan son uzunluk.
+ *
+ * Satır ayrıca taşmaya karşı kırpılıyor (`truncate`): büyük harfle yazılan
+ * bir görev karakter başına ~9,6 piksel tutuyor ve sınır tek başına yetmezdi.
+ * Sınırı büyütmek isteyen önce satırdaki düğmelere yer bulmalı — ikisi
+ * birlikte değişen bir çift, ayrı ayrı değil.
+ */
+export const EN_UZUN_GOREV = 24
 
-  const adaylar: { x: number; y: number; uzaklik: number }[] = []
-  for (let i = -ARAMA_YARICAPI; i <= ARAMA_YARICAPI; i++) {
-    for (let j = -ARAMA_YARICAPI; j <= ARAMA_YARICAPI; j++) {
-      if (i === 0 && j === 0) continue
-      const ax = konumuSinirla(hedefX + i * EN_AZ_PAY_X)
-      const ay = konumuSinirla(hedefY + j * EN_AZ_PAY_Y)
-      adaylar.push({ x: ax, y: ay, uzaklik: (ax - hedefX) ** 2 + (ay - hedefY) ** 2 })
-    }
-  }
-  adaylar.sort((a, b) => a.uzaklik - b.uzaklik)
-
-  const uygun = adaylar.find((a) => bosMu(a.x, a.y))
-  // Boş yer yoksa kâğıt bırakıldığı yerde kalıyor: dokunuşu yok saymak,
-  // kâğıdı bir başkasının altına gizlemekten daha kötü.
-  return uygun ? { x: uygun.x, y: uygun.y } : { x: hedefX, y: hedefY }
+/** Görev adını sınıra indirir ve baştaki/sondaki boşluğu atar. */
+export function metniKirp(metin: string): string {
+  return metin.trim().slice(0, EN_UZUN_GOREV)
 }
 
 /**
- * Kayıttan okunan tahtayı güncel şemaya uydurur.
+ * Saate göre içinde bulunulan dilim.
  *
- * `localStorage` elle kurcalanabiliyor ve eski sürümde olmayan bir alan
- * (`bitti` gibi) eski kayıtlarda yok. Eksik alan `undefined` kalsaydı kâğıt
- * çizilirken çökerdi; taşan konum ise kâğıdı tahtanın dışına atardı. Sınırı
- * aşan kâğıtlar da burada eleniyor — kayıt şişse bile tahta okunur kalıyor.
+ * Saat dışarıdan alınıyor: `new Date()` okuyan bir mantık test edilemezdi.
+ * Eşikler kaba ama kullanıcının günü de kaba — 12'ye kadar sabah, 17'ye kadar
+ * öğle, sonrası akşam.
  */
-export function notlariNormalize(ham: unknown): NotKagidi[] {
+export function simdikiDilim(saat: number): GorevDilimi {
+  if (saat < 12) return 'sabah'
+  if (saat < 17) return 'ogle'
+  return 'aksam'
+}
+
+/**
+ * Kayıttan okunan listeyi güncel şemaya uydurur.
+ *
+ * Üç iş birden yapıyor: `localStorage` elle kurcalanabildiği için bozuk
+ * kayıtları eliyor, **eski tahta kayıtlarını** taşıyor ve dilim sınırını
+ * uyguluyor.
+ *
+ * Eski kâğıtta dilim ile kategori yok; konumdan dilim çıkarılamıyor (tahtanın
+ * üstü sabah demek değildi), o yüzden hepsi sabaha ve "Diğer"e düşüyor. Uzun
+ * metin de sınıra kırpılıyor: yeni satır tek satır ve kırpılmamış metnin
+ * görünmeyen kısmına ulaşmanın yolu olmazdı.
+ *
+ * Sınırı aşan görevler de burada eleniyor. `gorevEkle` zaten engelliyor ama
+ * kayıt elle kurcalanabiliyor ve eski bir yedek başka bir sınırla yazılmış
+ * olabiliyor; elenmeselerdi ekran "11/10" gibi kendi kuralını çiğneyen bir
+ * sayı gösterirdi. Fazlalık **sondan** düşüyor: ilk yazılanlar kalıyor.
+ */
+export function gorevleriNormalize(ham: unknown): Gorev[] {
   if (!Array.isArray(ham)) return []
-  const notlar: NotKagidi[] = []
+  const gorevler: Gorev[] = []
+  /** Gün + dilim başına kaç görev yazıldı — sınır burada tutuluyor. */
+  const sayac = new Map<string, number>()
   for (const kayit of ham) {
     if (typeof kayit !== 'object' || kayit === null) continue
-    const n = kayit as Partial<NotKagidi>
-    if (typeof n.id !== 'string' || n.id === '') continue
-    notlar.push({
-      id: n.id,
-      metin: typeof n.metin === 'string' ? n.metin.slice(0, EN_UZUN_NOT) : '',
-      renk: NOT_RENKLERI.includes(n.renk as NotRengi)
-        ? (n.renk as NotRengi)
-        : siradakiRenk(notlar.length),
-      x: konumuSinirla(typeof n.x === 'number' ? n.x : 0),
-      y: konumuSinirla(typeof n.y === 'number' ? n.y : 0),
-      bitti: n.bitti === true,
-      // Günü olmayan kayıt eski sürümden kalmış demek; `gununNotlari` onu
-      // bugüne ait saymayıp temizliyor. Tahta zaten günlük, doğru davranış bu.
-      gun: typeof n.gun === 'string' ? n.gun : '',
+    const g = kayit as Partial<Gorev>
+    if (typeof g.id !== 'string' || g.id === '') continue
+    // Günü olmayan kayıt hiçbir güne ait değil; haftalık eleme onu atıyor.
+    if (typeof g.gun !== 'string') continue
+
+    const dilim = DILIMLER.includes(g.dilim as GorevDilimi) ? (g.dilim as GorevDilimi) : 'sabah'
+    const anahtar = `${g.gun}|${dilim}`
+    const yazilan = sayac.get(anahtar) ?? 0
+    if (yazilan >= EN_COK_GOREV) continue
+    sayac.set(anahtar, yazilan + 1)
+
+    gorevler.push({
+      id: g.id,
+      metin: typeof g.metin === 'string' ? metniKirp(g.metin) : '',
+      gun: g.gun,
+      dilim,
+      kategori: KATEGORILER.includes(g.kategori as GorevKategorisi)
+        ? (g.kategori as GorevKategorisi)
+        : 'diger',
+      renk: RENK_KIMLIKLERI.includes(g.renk as string) ? (g.renk as GorevRengi) : 'turuncu',
+      sure:
+        typeof g.sure === 'number' && Number.isFinite(g.sure) && g.sure > 0
+          ? Math.min(Math.round(g.sure), EN_UZUN_SURE)
+          : null,
+      bitti: g.bitti === true,
+      yildiz: g.yildiz === true,
     })
-    if (notlar.length >= EN_COK_NOT) break
   }
-  return notlar
-}
-
-/** Tahtada yer var mı. */
-export function yerVarMi(notlar: readonly NotKagidi[]): boolean {
-  return notlar.length < EN_COK_NOT
+  return gorevler
 }
 
 /**
- * Yeni kâğıt.
+ * Listeyi içinde bulunulan haftaya indirger.
  *
- * Tahta doluysa `null`: çağıran taraf "olmadı" durumunu tek yerden okusun,
- * sessizce en eski kâğıt silinmesin. Kâğıdı silmek kullanıcının kararı.
+ * `haftaBasi` dışarıdan geliyor (bkz. `lib/utils.ts`): takvim saatine bakan
+ * bir mantık test edilemez ve gece yarısını beklemek gerekirdi. İleri günler
+ * elenmiyor — pazar günü ertelenen iş gelecek pazartesiye düşüyor ve o iş
+ * kullanıcının kendi kararı.
  */
-export function notEkle(
-  notlar: readonly NotKagidi[],
-  id: string,
+export function haftaninGorevleri(
+  gorevler: readonly Gorev[],
+  haftaBasiIso: string,
+): Gorev[] {
+  return gorevler.filter((g) => g.gun >= haftaBasiIso)
+}
+
+/** Bir günün görevleri. */
+export function gununGorevleri(gorevler: readonly Gorev[], gun: string): Gorev[] {
+  return gorevler.filter((g) => g.gun === gun)
+}
+
+/**
+ * Bir günün bir dilimindeki görevler — yıldızlılar üstte.
+ *
+ * Biten görev yerinde kalıyor, sona atılmıyor: liste kullanıcının yazdığı
+ * sırayı koruyor ve bir işi bitirmek ötekilerin yerini oynatmıyor. Sıralama
+ * kararlı (`sort` modern JS'te kararlı), yani yıldızsızlar arasında eklenme
+ * sırası bozulmuyor.
+ */
+export function dilimGorevleri(
+  gorevler: readonly Gorev[],
   gun: string,
-): NotKagidi[] | null {
-  if (!yerVarMi(notlar)) return null
-  // Izgara yeri kâğıtlar taşınmışsa dolu olabiliyor; yeni kâğıt hiçbirini
-  // kapatmayacak en yakın boşluğa oturuyor.
-  const ilk = yeniKonum(notlar.length)
-  const { x, y } = ayrikKonum(notlar, id, ilk.x, ilk.y)
-  return [
-    ...notlar,
-    { id, metin: '', renk: siradakiRenk(notlar.length), x, y, bitti: false, gun },
-  ]
+  dilim: GorevDilimi,
+): Gorev[] {
+  return gorevler
+    .filter((g) => g.gun === gun && g.dilim === dilim)
+    .sort((a, b) => Number(b.yildiz) - Number(a.yildiz))
+}
+
+/** O gün o dilimde yer kaldı mı. */
+export function dilimeYerVarMi(
+  gorevler: readonly Gorev[],
+  gun: string,
+  dilim: GorevDilimi,
+): boolean {
+  return gorevler.filter((g) => g.gun === gun && g.dilim === dilim).length < EN_COK_GOREV
 }
 
 /**
- * Tahtayı güne indirger — dünün kâğıtları kalmıyor.
+ * Yeni görev.
  *
- * Yapılacaklar günlük bir şey: dün yazdığı "kimya tekrarı"nı bugün de tahtada
- * gören kullanıcı, biriken ve hiç bitmeyen bir listeye bakıyor demektir. Kâğıt
- * silmek zaten kullanıcının kararı, ama **günün sonu** ayrı bir karar değil;
- * tahtanın kendisi o gün için kuruluyor.
- *
- * Saf tutuldu ve "bugün"ü dışarıdan alıyor: takvim saatine bakan bir mantık
- * test edilemezdi ve gece yarısını beklemek gerekirdi.
+ * Dilim doluysa ya da metin boşsa `null`: çağıran taraf "olmadı" durumunu tek
+ * yerden okusun, sessizce en eski görev silinmesin. Görev silmek kullanıcının
+ * kararı.
  */
-export function gununNotlari(notlar: readonly NotKagidi[], bugun: string): NotKagidi[] {
-  return notlar.filter((n) => n.gun === bugun)
+export function gorevEkle(
+  gorevler: readonly Gorev[],
+  yeni: Omit<Gorev, 'bitti' | 'yildiz'>,
+): Gorev[] | null {
+  const metin = metniKirp(yeni.metin)
+  if (metin === '') return null
+  if (!dilimeYerVarMi(gorevler, yeni.gun, yeni.dilim)) return null
+  return [...gorevler, { ...yeni, metin, bitti: false, yildiz: false }]
 }
 
-export function notSil(notlar: readonly NotKagidi[], id: string): NotKagidi[] {
-  return notlar.filter((n) => n.id !== id)
+export function gorevSil(gorevler: readonly Gorev[], id: string): Gorev[] {
+  return gorevler.filter((g) => g.id !== id)
 }
 
-/** Tek kâğıdı günceller; kimlik tutmuyorsa liste olduğu gibi dönüyor. */
-function notuDegistir(
-  notlar: readonly NotKagidi[],
+/** Tek görevi günceller; kimlik tutmuyorsa liste olduğu gibi dönüyor. */
+function gorevDegistir(
+  gorevler: readonly Gorev[],
   id: string,
-  degisiklik: (not: NotKagidi) => NotKagidi,
-): NotKagidi[] {
-  return notlar.map((n) => (n.id === id ? degisiklik(n) : n))
+  degisiklik: (gorev: Gorev) => Gorev,
+): Gorev[] {
+  return gorevler.map((g) => (g.id === id ? degisiklik(g) : g))
 }
 
-export function notYaz(notlar: readonly NotKagidi[], id: string, metin: string): NotKagidi[] {
-  return notuDegistir(notlar, id, (n) => ({ ...n, metin: metin.slice(0, EN_UZUN_NOT) }))
+export function gorevIsaretle(gorevler: readonly Gorev[], id: string): Gorev[] {
+  return gorevDegistir(gorevler, id, (g) => ({ ...g, bitti: !g.bitti }))
 }
 
-export function notTasi(
-  notlar: readonly NotKagidi[],
-  id: string,
-  x: number,
-  y: number,
-): NotKagidi[] {
-  const konum = ayrikKonum(notlar, id, x, y)
-  return notuDegistir(notlar, id, (n) => ({ ...n, ...konum }))
-}
-
-export function notuIsaretle(notlar: readonly NotKagidi[], id: string): NotKagidi[] {
-  return notuDegistir(notlar, id, (n) => ({ ...n, bitti: !n.bitti }))
+export function gorevYildizla(gorevler: readonly Gorev[], id: string): Gorev[] {
+  return gorevDegistir(gorevler, id, (g) => ({ ...g, yildiz: !g.yildiz }))
 }
 
 /**
- * Kâğıdı yığının en üstüne alır.
+ * Görevi ertesi güne, aynı dilime taşır.
  *
- * Sürüklenen kâğıt öne gelmeli, yoksa üstüne binen kâğıdın altında kalır ve
- * kullanıcı taşıdığı şeyi göremez. Ayrı bir `z` alanı yerine dizideki sıra
- * kullanılıyor: iki kaynak olsaydı biri ötekiyle çelişebilirdi.
+ * Hedef gün o dilimde doluysa `null`: erteleme sessizce yutulursa kullanıcı
+ * işi ertelediğini sanıp ekrandan kaybolmasını izler. Bitmiş görev de
+ * ertelenmiyor — yapılmış bir işi yarına taşımak anlamsız.
  */
-export function oneAl(notlar: readonly NotKagidi[], id: string): NotKagidi[] {
-  const not = notlar.find((n) => n.id === id)
-  if (!not || notlar[notlar.length - 1]?.id === id) return [...notlar]
-  return [...notlar.filter((n) => n.id !== id), not]
+export function gorevErtele(gorevler: readonly Gorev[], id: string): Gorev[] | null {
+  const gorev = gorevler.find((g) => g.id === id)
+  if (!gorev || gorev.bitti) return null
+  const yarin = gunKaydir(gorev.gun, 1)
+  if (!dilimeYerVarMi(gorevler, yarin, gorev.dilim)) return null
+  return gorevDegistir(gorevler, id, (g) => ({ ...g, gun: yarin }))
 }
 
-/** Bitmemiş kâğıt sayısı — başlıktaki sayı. */
-export function kalanIs(notlar: readonly NotKagidi[]): number {
-  return notlar.filter((n) => !n.bitti).length
+/** Bitmemiş görev sayısı — başlıktaki sayı. */
+export function bekleyenGorev(gorevler: readonly Gorev[]): number {
+  return gorevler.filter((g) => !g.bitti).length
 }

@@ -29,7 +29,7 @@ import { VARSAYILAN_SABLON_ID } from './sablonlar'
 import { egitimYili } from './hesap'
 import { dakikayiKirp, saatiKirp } from './hatirlatma'
 import { yeniId } from './utils'
-import { notlariNormalize, type NotKagidi } from './yapilacaklar'
+import { gorevleriNormalize, type Gorev } from './yapilacaklar'
 import type { BilinmeyenKart, KonuIlerlemeleri } from './konu/ilerleme'
 import type { AylikOzetArsivi } from './ozet'
 import { okumaGecmisiniCoz, type OkumaSeansi } from './konu/okuma-suresi'
@@ -526,7 +526,7 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       oyunGecmisi: oyunGecmisiniCoz(nesne.oyunGecmisi),
       oyunBankasi: bankayiCoz(nesne.oyunBankasi),
       bankaDusen: sayi(nesne.bankaDusen),
-      notlar: notlariNormalize(nesne.notlar),
+      notlar: gorevleriNormalize(nesne.notlar),
       // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
       // kullanıcının mevcut konu kaydına dokunulmuyor.
       konuIlerleme: nesne.konuIlerleme as KonuIlerlemeleri | undefined,
