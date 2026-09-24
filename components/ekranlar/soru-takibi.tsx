@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CalendarDays, ChevronDown, Plus, X } from 'lucide-react'
 import type { Ayarlar, GunlukKayit, SoruKaydi } from '@/lib/types'
-import { bosSayisi, gunOzeti } from '@/lib/hesap'
+import { bosSayisi, GUNLUK_SORU_SINIRI, gunlukSoruSigiyor, gunOzeti, soruSayilariGirildiMi } from '@/lib/hesap'
 import { CALISMA_DERSLERI, sadelestir } from '@/lib/dersler'
 import { useGeriKatmani } from '@/lib/geri'
 import { bugun, cn, gunKaydir, tariheCevir, tariheYaz } from '@/lib/utils'
@@ -65,6 +65,7 @@ export function SoruTakibiEkrani({
   const [ay, setAy] = useState(() => tariheCevir(bugunIso))
   const [takvimAcik, setTakvimAcik] = useState(false)
   const [sayfaAcik, setSayfaAcik] = useState(false)
+  const [sinirUyarisi, setSinirUyarisi] = useState(false)
 
   /**
    * "Bugün" ekran açılırken bir kez hesaplanıyordu; uygulama gece yarısını açık
@@ -115,6 +116,7 @@ export function SoruTakibiEkrani({
   const gunSec = (tarih: string) => {
     setSecili(tarih)
     setAy(tariheCevir(tarih))
+    setSinirUyarisi(false)
   }
 
   /** Seçili günün kayıt satırlarını değiştirir; gün boşalırsa kaydı tamamen siler. */
@@ -123,6 +125,9 @@ export function SoruTakibiEkrani({
     setKayitlar((onceki) => {
       const mevcut = onceki.find((k) => k.tarih === secili)
       const yeniSatirlar = degistir(mevcut?.kayitlar ?? [])
+      const eskiToplam = gunOzeti(mevcut).toplam
+      const yeniToplam = gunOzeti({ tarih: secili, kayitlar: yeniSatirlar }).toplam
+      if (!gunlukSoruSigiyor(eskiToplam, eskiToplam, yeniToplam)) return onceki
       const digerleri = onceki.filter((k) => k.tarih !== secili)
       if (yeniSatirlar.length === 0) return digerleri
       return [...digerleri, { tarih: secili, kayitlar: yeniSatirlar }].sort((a, b) =>
@@ -138,6 +143,10 @@ export function SoruTakibiEkrani({
    * görünen sayı zaten günün toplamı.
    */
   const girisKaydet = (ders: string, toplam: number, dogru: number, yanlis: number) => {
+    if (!gunlukSoruSigiyor(ozet.toplam, 0, toplam)) {
+      setSinirUyarisi(true)
+      return
+    }
     gunuGuncelle((satirlar) => {
       const i = satirlar.findIndex((s) => sadelestir(s.ders) === sadelestir(ders))
       if (i === -1) return [...satirlar, { ders, toplam, dogru, yanlis }]
@@ -152,15 +161,21 @@ export function SoruTakibiEkrani({
           : s,
       )
     })
+    setSinirUyarisi(false)
     setSayfaAcik(false)
   }
 
+  const satirlar = seciliKayit?.kayitlar ?? []
   const satirGuncelle = (indeks: number, alan: keyof Omit<SoruKaydi, 'ders'>, ham: string) => {
     const sayi = Number(sayiya(ham)) || 0
+    if (alan === 'toplam' && !gunlukSoruSigiyor(ozet.toplam, satirlar[indeks].toplam, sayi)) {
+      setSinirUyarisi(true)
+      return
+    }
+    setSinirUyarisi(false)
     gunuGuncelle((satirlar) => satirlar.map((s, i) => (i === indeks ? { ...s, [alan]: sayi } : s)))
   }
 
-  const satirlar = seciliKayit?.kayitlar ?? []
   const hedefTuttu = ozet.toplam >= hedef && hedef > 0
   const oran = hedef > 0 ? Math.min(1, ozet.toplam / hedef) : 0
   const halkaRengi = hedefTuttu ? 'var(--success)' : 'var(--primary-parlak)'
@@ -339,6 +354,11 @@ export function SoruTakibiEkrani({
             Sadece bugüne ve düne soru girebilirsin
           </Not>
         )}
+        {sinirUyarisi && (
+          <Not tur="uyari" className="rounded-2xl text-center text-[13px] font-bold">
+            Bir günde en fazla {GUNLUK_SORU_SINIRI.toLocaleString('tr-TR')} soru kaydedebilirsin.
+          </Not>
+        )}
 
         <div className="flex items-center justify-between gap-2 px-1 pt-0.5">
           <p className="text-[13px] font-extrabold uppercase tracking-wide text-muted-foreground">
@@ -384,6 +404,7 @@ export function SoruTakibiEkrani({
       {sayfaAcik && (
         <SoruEkleSayfasi
           kullanilan={satirlar.map((s) => s.ders)}
+          gunlukToplam={ozet.toplam}
           onKapat={() => setSayfaAcik(false)}
           onKaydet={girisKaydet}
         />
@@ -480,7 +501,7 @@ function DersSatiri({
         <SayiKutusu
           etiket="Doğru"
           ton="dogru"
-          deger={satir.dogru === 0 ? '' : String(satir.dogru)}
+          deger={String(satir.dogru)}
           okunur={okunur}
           onDegis={(ham) => onDegis('dogru', ham)}
           ariaEtiket={`${satir.ders} doğru`}
@@ -488,7 +509,7 @@ function DersSatiri({
         <SayiKutusu
           etiket="Yanlış"
           ton="yanlis"
-          deger={satir.yanlis === 0 ? '' : String(satir.yanlis)}
+          deger={String(satir.yanlis)}
           okunur={okunur}
           onDegis={(ham) => onDegis('yanlis', ham)}
           ariaEtiket={`${satir.ders} yanlış`}
@@ -546,6 +567,7 @@ function SayiKutusu({
         inputMode="numeric"
         placeholder="0"
         readOnly={okunur}
+        aria-required={buyuk || undefined}
         aria-label={ariaEtiket}
         // 0 yerine boş gösteriliyor: kutuya dokunup yazmaya başlayınca
         // önce sıfırı silmek gerekmesin. Placeholder'daki 0 da odakta
@@ -606,10 +628,12 @@ function HataNotu() {
  */
 function SoruEkleSayfasi({
   kullanilan,
+  gunlukToplam,
   onKapat,
   onKaydet,
 }: {
   kullanilan: string[]
+  gunlukToplam: number
   onKapat: () => void
   onKaydet: (ders: string, toplam: number, dogru: number, yanlis: number) => void
 }) {
@@ -624,7 +648,9 @@ function SoruEkleSayfasi({
   const d = Number(dogru || 0)
   const y = Number(yanlis || 0)
   const hata = d + y > t
-  const gecerli = ders !== null && t > 0 && !hata
+  const sinirAsildi = toplam !== '' && !gunlukSoruSigiyor(gunlukToplam, 0, t)
+  const sayilarGirildi = soruSayilariGirildiMi(toplam, dogru, yanlis)
+  const gecerli = ders !== null && sayilarGirildi && t > 0 && !hata && !sinirAsildi
 
   // Bugün girilmiş dersler listenin başında: ikinci girişin en sık hedefi onlar.
   const secenekler = useMemo(() => {
@@ -735,6 +761,16 @@ function SoruEkleSayfasi({
           <BosKutusu buyuk deger={Math.max(0, t - d - y)} hata={hata} />
         </div>
         {hata && <HataNotu />}
+        {sinirAsildi && (
+          <p className="mt-2 text-xs font-bold leading-snug text-danger">
+            Bir günde en fazla {GUNLUK_SORU_SINIRI.toLocaleString('tr-TR')} soru kaydedebilirsin.
+          </p>
+        )}
+        {!sayilarGirildi && !sinirAsildi && (
+          <p className="mt-2 text-xs font-medium text-muted-foreground">
+            Doğru ve yanlış sayılarını da gir; yoksa 0 yaz.
+          </p>
+        )}
 
         <Buton
           onClick={() => {

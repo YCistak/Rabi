@@ -3,8 +3,8 @@
 /**
  * Öneri ve hata bildir — Ayarlar'dan açılan ekran.
  *
- * Tek kart: tür çipleri, metin alanı, ne gönderileceğinin listesi ve
- * "Gönder". İzin kartı yok; hatalı soruda kart var çünkü orada bayrak turun
+ * Tür seçimi ve mesaj alanı bir kartta, gönderim bilgileri hemen altındaki
+ * kartta. İzin kartı yok; hatalı soruda kart var çünkü orada bayrak turun
  * içinde tek dokunuşla basılıyor ve kullanıcı ne gönderdiğini düşünmemiş
  * olabiliyor. Burada kullanıcı bir metin yazıp gönder düğmesine basıyor —
  * ne gönderdiğini biliyor, listesi de düğmenin hemen üstünde.
@@ -16,7 +16,7 @@
 
 import { useState } from 'react'
 import { Send } from 'lucide-react'
-import { BaslikSatiri, Buton, Cip, Kart, Not } from '@/components/ui'
+import { Buton, Kart, Not } from '@/components/ui'
 import {
   METIN_EN_COK,
   TURLER,
@@ -72,79 +72,95 @@ export function GeriBildirimEkrani({ kol }: { kol: GeriBildirimKolu }) {
   }
 
   return (
-    <div>
-      <BaslikSatiri
-        baslik="Öneri ve hata bildir"
-        aciklama="Bir şey bozuksa ya da eksikse buradan yaz"
-      />
+    <div className="space-y-4">
+      <h1 className="font-display text-xl font-extrabold">Öneri ve hata bildir</h1>
 
-      <Kart className="space-y-3">
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Bildirim türü">
-          {TURLER.map((t) => (
-            <Cip key={t} secili={tur === t} onClick={() => setTur(t)}>
-              {TUR_ADI[t]}
-            </Cip>
+      <Kart className="rounded-[24px] p-5">
+        <p className="text-sm font-extrabold">Ne paylaşmak istersin?</p>
+        <div className="mt-3 flex rounded-[14px] bg-muted p-1" role="group" aria-label="Bildirim türü">
+          {TURLER.map((secenek) => (
+            <button
+              key={secenek}
+              type="button"
+              aria-pressed={tur === secenek}
+              onClick={() => setTur(secenek)}
+              className={cn(
+                'h-10 flex-1 rounded-[10px] text-[13px] font-extrabold transition focus-visible:outline-2 focus-visible:outline-ring',
+                tur === secenek ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground',
+              )}
+            >
+              {TUR_ADI[secenek]}
+            </button>
           ))}
         </div>
 
-        <div>
+        <div className="mt-5">
+          <label htmlFor="geri-bildirim-mesaji" className="mb-2 block text-sm font-extrabold">
+            Mesajın
+          </label>
           <textarea
+            id="geri-bildirim-mesaji"
             value={metin}
             onChange={(olay) => setMetin(olay.target.value)}
             maxLength={METIN_EN_COK}
             rows={6}
             placeholder={YER_TUTUCU[tur]}
-            aria-label="Mesajın"
+            aria-describedby="geri-bildirim-uyarisi"
             className={cn(
-              'block w-full resize-none rounded-xl border border-input bg-background px-3 py-2.5 text-[15px] leading-snug',
+              'block min-h-40 w-full resize-none rounded-[14px] border border-border bg-muted/30 px-4 py-3 text-[15px] leading-relaxed',
               'placeholder:text-muted-foreground/70',
               'focus-visible:border-ring focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring/40',
             )}
           />
-          <div className="mt-1 flex items-center justify-between text-[11.5px] font-medium text-muted-foreground">
-            <span>{uyari ?? ''}</span>
-            <span className="rakam">
+          <div className="mt-2 flex items-start justify-between gap-3 text-xs font-medium text-muted-foreground">
+            <span id="geri-bildirim-uyarisi">{uyari ?? 'Kişisel bilgilerini mesajına ekleme.'}</span>
+            <span className="rakam shrink-0">
               {metin.length}/{METIN_EN_COK}
             </span>
           </div>
         </div>
+      </Kart>
 
-        <div className="rounded-xl bg-foreground/[0.05] p-3">
-          <p className="text-[11.5px] font-medium leading-snug text-muted-foreground">
-            &ldquo;Gönder&rdquo; dediğinde telefonundan çıkanlar:
-          </p>
-          <ul className="mt-1 list-disc pl-4 text-[11.5px] font-medium leading-snug text-muted-foreground">
-            {GONDERILENLER.map((alan) => (
-              <li key={alan}>{alan}</li>
-            ))}
-          </ul>
-          <p className="mt-1.5 text-[11.5px] font-medium leading-snug text-muted-foreground">
-            Adın, netlerin, notların ve fotoğrafların <b>gönderilmez</b>. Yazdığın metin
-            olduğu gibi gider; içine adını, telefonunu ya da başka kişisel bilgi yazma —
-            sana geri dönemeyiz, buradan tek yönlü bir kutu bu.
-          </p>
-        </div>
+      <Kart className="rounded-[20px] border border-border/70 p-4">
+        <h2 className="text-sm font-extrabold">Gönderilen bilgiler</h2>
+        <ul className="mt-3 space-y-2 text-[13px] leading-snug text-muted-foreground">
+          {GONDERILENLER.map((alan) => (
+            <li key={alan} className="flex gap-2.5">
+              <span className="mt-[7px] size-1.5 shrink-0 rounded-full bg-primary-parlak" aria-hidden />
+              <span>{alan}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-3 border-t border-border pt-3 text-xs leading-relaxed text-muted-foreground">
+          Adın, netlerin, notların ve fotoğrafların <b>gönderilmez</b>. Yazdığın metin
+          olduğu gibi gider; içine adını, telefonunu ya da başka kişisel bilgi yazma.
+          Bu kutudan sana yanıt veremeyiz.
+        </p>
+      </Kart>
 
+      <div className="space-y-3">
         {kol.sinirda ? (
           <Not tur="uyari">Bugünlük sınıra ulaştın; yarın yeniden yazabilirsin.</Not>
         ) : (
           <Buton
             onClick={gonder}
             disabled={sorun !== null || gonderiliyor}
-            className="w-full"
+            className="h-12 w-full rounded-[14px]"
           >
             <Send size={16} aria-hidden />
             {gonderiliyor ? 'Gönderiliyor…' : 'Gönder'}
           </Buton>
         )}
 
-        {sonDurum && <Not>{DURUM_METNI[sonDurum]}</Not>}
-        {kol.bekleyen > 0 && sonDurum !== 'bekliyor' && (
-          <Not>
-            {kol.bekleyen} bildirim gönderilmeyi bekliyor; internet gelince gidecek.
-          </Not>
-        )}
-      </Kart>
+        <div aria-live="polite" className="space-y-3">
+          {sonDurum && <Not>{DURUM_METNI[sonDurum]}</Not>}
+          {kol.bekleyen > 0 && sonDurum !== 'bekliyor' && (
+            <Not>
+              {kol.bekleyen} bildirim gönderilmeyi bekliyor; internet gelince gidecek.
+            </Not>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

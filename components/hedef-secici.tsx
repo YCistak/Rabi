@@ -2,6 +2,7 @@
 
 import { ChevronRight, School, Search } from 'lucide-react'
 import { Alan } from '@/components/ui'
+import { cn } from '@/lib/utils'
 
 /**
  * Üniversite/bölüm seçiminin ortak parçaları.
@@ -18,18 +19,20 @@ export function AramaAlani({
   deger,
   onDegis,
   ipucu,
+  vurgulu = false,
 }: {
   id: string
   deger: string
   onDegis: (deger: string) => void
   ipucu: string
+  vurgulu?: boolean
 }) {
   return (
     <div className="relative">
       <Search
-        size={17}
+        size={18}
         aria-hidden
-        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+        className={cn('pointer-events-none absolute left-4 top-1/2 -translate-y-1/2', vurgulu ? 'text-primary' : 'text-muted-foreground')}
       />
       <Alan
         id={id}
@@ -37,7 +40,10 @@ export function AramaAlani({
         onChange={(e) => onDegis(e.target.value)}
         placeholder={ipucu}
         autoComplete="off"
-        className="pl-9"
+        className={cn(
+          'pl-11',
+          vurgulu && 'h-13 rounded-[14px] border-[1.5px] border-primary/50 bg-primary-soft/20',
+        )}
       />
     </div>
   )
@@ -49,10 +55,10 @@ export function AramaAlani({
  * Yüksekliği sınırlı ve kendi içinde kayıyor: 200 üniversite sayfayı uzatsaydı
  * altındaki düğme ekrandan çıkardı.
  */
-export function Liste({ bos, children }: { bos: string; children: React.ReactNode }) {
+export function Liste({ bos, children, className }: { bos: string; children: React.ReactNode; className?: string }) {
   const doluMu = Array.isArray(children) ? children.length > 0 : Boolean(children)
   return (
-    <div className="mt-2 max-h-64 overflow-y-auto rounded-xl border border-border">
+    <div className={cn('mt-2 max-h-64 overflow-y-auto rounded-xl border border-border', className)}>
       {doluMu ? (
         <ul className="divide-y divide-border">{children}</ul>
       ) : (

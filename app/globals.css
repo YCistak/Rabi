@@ -298,6 +298,13 @@ body {
 @layer base {
   * {
     border-color: var(--border);
+    /* Kaydırma işlevi kalır; dar mobil ekranda içerikten yer çalan sistem
+       çubuğu ise ana sayfa, pencere ve iç listelerde çizilmez. */
+    scrollbar-width: none;
+  }
+
+  *::-webkit-scrollbar {
+    display: none;
   }
 
   body {

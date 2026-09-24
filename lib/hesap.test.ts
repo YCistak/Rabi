@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   devamsizlikOzeti,
   denemeOzeti,
+  gunlukSoruSigiyor,
   gunOzeti,
   hedefSerisi,
   ilerlemisSinif,
@@ -13,11 +14,31 @@ import {
   obpTahmini,
   osymNetleri,
   sinifAdi,
+  soruSayilariGirildiMi,
 } from './hesap'
 import { HAZIR_SABLONLAR } from './sablonlar'
 import type { Deneme, Devamsizlik, GunlukKayit } from './types'
 
 const tyt = HAZIR_SABLONLAR.find((s) => s.id === 'tyt')!
+
+describe('soru takibi giriş kuralları', () => {
+  it('doğru ve yanlış boş bırakılamaz, açıkça yazılmış sıfır kabul edilir', () => {
+    expect(soruSayilariGirildiMi('10', '', '0')).toBe(false)
+    expect(soruSayilariGirildiMi('10', '0', '')).toBe(false)
+    expect(soruSayilariGirildiMi('', '0', '0')).toBe(false)
+    expect(soruSayilariGirildiMi('10', '0', '0')).toBe(true)
+  })
+
+  it('günlük toplamı 9.999 ile sınırlar; aynı günün dersleri ve düzenlemeleri de sayılır', () => {
+    expect(gunlukSoruSigiyor(9000, 0, 999)).toBe(true)
+    expect(gunlukSoruSigiyor(9000, 0, 1000)).toBe(false)
+    expect(gunlukSoruSigiyor(9999, 100, 100)).toBe(true)
+    expect(gunlukSoruSigiyor(9999, 100, 101)).toBe(false)
+    expect(gunlukSoruSigiyor(11000, 100, 100)).toBe(true)
+    expect(gunlukSoruSigiyor(11000, 100, 99)).toBe(true)
+    expect(gunlukSoruSigiyor(11000, 100, 101)).toBe(false)
+  })
+})
 
 describe('net', () => {
   it('dört yanlış bir doğruyu götürür', () => {

@@ -316,6 +316,20 @@ export function obpSonucu(yillar: OkulYili[], elleGirilen: number | null): ObpSo
 // Soru takibi
 // ---------------------------------------------------------------------------
 
+export const GUNLUK_SORU_SINIRI = 9999
+
+/** Sıfır açıkça girilebilir; boş kutu sıfır yazılmış sayılmaz. */
+export function soruSayilariGirildiMi(toplam: string, dogru: string, yanlis: string): boolean {
+  return toplam !== '' && dogru !== '' && yanlis !== ''
+}
+
+/** Yeni toplam günlük sınırı aşmamalı; eski yedekte sınır aşılmışsa azaltmaya izin ver. */
+export function gunlukSoruSigiyor(mevcut: number, onceki: number, yeni: number): boolean {
+  const yeniGunToplami = mevcut - onceki + yeni
+  return Number.isInteger(yeniGunToplami) && yeniGunToplami >= 0 &&
+    (yeniGunToplami <= GUNLUK_SORU_SINIRI || yeniGunToplami <= mevcut)
+}
+
 export type GunOzeti = {
   toplam: number
   dogru: number

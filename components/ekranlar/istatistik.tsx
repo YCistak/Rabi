@@ -77,6 +77,19 @@ export function IstatistikEkrani({
     }
   }, [sablon, sablonDenemeleri])
 
+  if (denemeler.length < 2) {
+    return (
+      <div>
+        <BaslikSatiri baslik="İstatistik" />
+        <BosDurum
+          simge={<Rabi durum="uykulu" poz="kahveli" boyut={96} />}
+          baslik="İstatistikler için en az 2 deneme gerekli"
+          aciklama={`İstatistiklerini görmek için ${2 - denemeler.length} deneme daha ekle.`}
+        />
+      </div>
+    )
+  }
+
   if (!sablon || !veri) {
     return (
       <div>

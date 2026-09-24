@@ -243,7 +243,10 @@ export function Kurulum({
     () => bolumBul(secilenUni, hedefBolum),
     [secilenUni, hedefBolum],
   )
-  const uniSonuclari = useMemo(() => universiteAra(uniArama), [uniArama])
+  const uniSonuclari = useMemo(
+    () => uniArama.trim() ? universiteAra(uniArama) : [],
+    [uniArama],
+  )
   /** Kararsızken ve anahtar açıkken süzgeç yok; kalan durumda alan süzüyor. */
   const alanSuzgeci = alanDisiniGoster ? null : puanTuru
   const bolumSonuclari = useMemo(
@@ -682,7 +685,9 @@ export function Kurulum({
           {suanki === 'bolum' && (
             <div className="space-y-4">
               <div>
-                <Etiket htmlFor="kurulum-universite-ara">Üniversite</Etiket>
+                <Etiket htmlFor="kurulum-universite-ara" className="mb-3 text-[15px] font-extrabold text-foreground">
+                  Üniversite seç
+                </Etiket>
                 {secilenUni ? (
                   <SecilenSatir
                     baslik={secilenUni.ad}
@@ -699,17 +704,20 @@ export function Kurulum({
                       deger={uniArama}
                       onDegis={setUniArama}
                       ipucu="Üniversite ya da şehir ara"
+                      vurgulu={!uniArama.trim()}
                     />
-                    <Liste bos="Bu adla üniversite bulamadım.">
-                      {uniSonuclari.map((u) => (
-                        <SecimSatiri
-                          key={u.id}
-                          baslik={u.ad}
-                          alt={`${u.sehir} · ${turAdi(u)}`}
-                          onSec={() => universiteSec(u)}
-                        />
-                      ))}
-                    </Liste>
+                    {uniArama.trim() ? (
+                      <Liste bos="Bu adla üniversite bulamadım.">
+                        {uniSonuclari.map((u) => (
+                          <SecimSatiri
+                            key={u.id}
+                            baslik={u.ad}
+                            alt={`${u.sehir} · ${turAdi(u)}`}
+                            onSec={() => universiteSec(u)}
+                          />
+                        ))}
+                      </Liste>
+                    ) : null}
                   </>
                 )}
               </div>

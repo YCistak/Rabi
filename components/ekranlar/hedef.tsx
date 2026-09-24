@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Check, Pencil, Trash2 } from 'lucide-react'
+import { Check, ChevronRight, Info, Pencil, Trash2 } from 'lucide-react'
 import type { Hedef, PuanTuru } from '@/lib/types'
 import { siraYaz } from '@/lib/siralama'
 import {
@@ -15,9 +15,9 @@ import {
   type Bolum,
   type Universite,
 } from '@/lib/hedef-katalog'
-import { Alan, BaslikSatiri, Buton, Cip, Etiket, Kart, Not, Onay } from '@/components/ui'
+import { Alan, Buton, Etiket, Kart, Onay } from '@/components/ui'
 import { AramaAlani, Liste, SecilenSatir, SecimSatiri } from '@/components/hedef-secici'
-import { Rabi } from '@/components/maskot/rabi'
+import { cn } from '@/lib/utils'
 
 const PUAN_TURU_ADI: Record<PuanTuru, string> = {
   say: 'Sayısal',
@@ -70,6 +70,8 @@ export function HedefEkrani({
   const [tabanPuan, setTabanPuan] = useState(hedef?.tabanPuan?.toString() ?? '')
   const [basariSirasi, setBasariSirasi] = useState(hedef?.basariSirasi?.toString() ?? '')
   const [silmeAcik, setSilmeAcik] = useState(false)
+  const [hedefDuzenleniyor, setHedefDuzenleniyor] = useState(false)
+  const formAcik = hedef === null || hedefDuzenleniyor
 
   // Katalog dışı bir hedef kayıtlıysa ekran elle giriş kipinde açılıyor: eski
   // sürümde herkes iki adı serbest metin yazıyordu ve o kayıtlar duruyor.
@@ -89,7 +91,10 @@ export function HedefEkrani({
     [secilenUni, secilenBolum],
   )
 
-  const uniSonuclari = useMemo(() => universiteAra(uniArama), [uniArama])
+  const uniSonuclari = useMemo(
+    () => uniArama.trim() ? universiteAra(uniArama) : [],
+    [uniArama],
+  )
   /*
     Süzgeç `varsayilanTur`dan geliyor, `puanTuru` state'inden değil: biri
     öğrencinin **kendi** alanı, öteki seçilen **bölümün** türü. İkincisine
@@ -136,6 +141,21 @@ export function HedefEkrani({
 
   const kaydedilebilir = bolum.trim() !== ''
 
+  const duzenlemeyiAc = () => {
+    if (!hedef) return
+    setUniversite(hedef.universite)
+    setBolum(hedef.bolum)
+    setPuanTuru(hedef.puanTuru)
+    setTabanPuan(hedef.tabanPuan?.toString().replace('.', ',') ?? '')
+    setBasariSirasi(hedef.basariSirasi?.toString() ?? '')
+    setElleMod(universiteBul(hedef.universite) === null)
+    setDuzenleAcik(false)
+    setUniArama('')
+    setBolumArama('')
+    setAlanDisiniGoster(false)
+    setHedefDuzenleniyor(true)
+  }
+
   const kaydet = () => {
     setHedef({
       universite: universite.trim(),
@@ -153,48 +173,111 @@ export function HedefEkrani({
       : null
 
   return (
-    <div>
-      <BaslikSatiri baslik="Hedefim" />
+    <div
+      className="flex flex-col"
+      style={!formAcik ? {
+        minHeight: 'calc(100dvh / var(--olcek) - 11rem - var(--guvenli-ust) - var(--guvenli-alt))',
+      } : undefined}
+    >
+      <h1 className="mb-4 font-display text-xl font-extrabold">Hedefim</h1>
 
-      {hedef && (
-        <Kart className="mb-4 flex items-center gap-3">
-          <Rabi durum={fark !== null && fark <= 0 ? 'kutlama' : 'normal'} boyut={64} />
-          <div className="min-w-0 flex-1">
-            <p className="font-display text-lg font-semibold leading-tight">{hedef.bolum}</p>
+      {hedef && !formAcik && (
+        <Kart className="relative mb-5 overflow-hidden rounded-[24px] border border-border/70 p-5 transition-colors active:bg-primary-soft/30">
+          <button
+            type="button"
+            onClick={duzenlemeyiAc}
+            aria-label="Hedefimi düzenle"
+            className="absolute inset-0 z-10 rounded-[24px] active:bg-primary/5 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+          />
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <p className="text-xs font-extrabold tracking-wide text-muted-foreground">HEDEFİMDEKİ BÖLÜM</p>
+            <div className="flex items-center gap-2">
+              <span className="rounded-lg bg-primary-soft px-2.5 py-1 text-xs font-bold text-primary">
+                {PUAN_TURU_ADI[hedef.puanTuru]}
+              </span>
+              <ChevronRight size={18} className="text-muted-foreground" aria-hidden />
+            </div>
+          </div>
+          <div className="min-w-0">
+            <p className="font-display text-xl font-extrabold leading-snug">{hedef.bolum}</p>
             {hedef.universite && (
-              <p className="text-sm text-muted-foreground">{hedef.universite}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{hedef.universite}</p>
             )}
             {fark === null ? (
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-4 rounded-xl bg-muted/60 p-3 text-xs leading-relaxed text-muted-foreground">
                 {hedef.basariSirasi == null
                   ? 'Gereken başarı sırasını girersen ne kadar kaldığını takip ederim.'
                   : 'Deneme ekleyince buraya ne kadar kaldığını yazarım.'}
               </p>
             ) : fark <= 0 ? (
-              <p className="mt-1 text-sm font-medium text-success">
-                Hedefin içindesin — {siraYaz(Math.abs(fark))} sıra fazlan var.
+              <p className="mt-4 rounded-xl bg-success-soft p-3 text-sm font-bold text-success">
+                Tahmini sıralaman hedefin içinde — {siraYaz(Math.abs(fark))} sıra öndesin.
               </p>
             ) : (
-              <p className="mt-1 text-sm font-medium text-primary">
-                {siraYaz(fark)} sıra uzaktasın.
+              <p className="mt-4 rounded-xl bg-primary-soft p-3 text-sm font-bold text-primary">
+                Tahmini sıralamanla hedefin arasında {siraYaz(fark)} sıra var.
               </p>
             )}
           </div>
         </Kart>
       )}
 
-      <Kart className="space-y-4">
+      {hedef && !formAcik && (
+        <section className="mb-5" aria-label="Hedef sıralama karşılaştırması">
+          <h2 className="mb-3 font-display text-base font-extrabold">Sıralama karşılaştırması</h2>
+          <div className="grid grid-cols-2 gap-3">
+            <Kart className="rounded-[20px] p-4">
+              <p className="text-xs font-semibold text-muted-foreground">Hedef sırası</p>
+              <p className="rakam mt-2 font-display text-2xl font-extrabold leading-none text-primary">
+                {hedef.basariSirasi == null ? '—' : siraYaz(hedef.basariSirasi)}
+              </p>
+              <p className="mt-2 text-xs text-muted-foreground">{hedef.basariSirasi == null ? 'Henüz girilmedi' : 'Kaydedilen hedef sırası'}</p>
+            </Kart>
+            <Kart className="rounded-[20px] p-4">
+              <p className="text-xs font-semibold text-muted-foreground">Tahmini sıram</p>
+              <p className="rakam mt-2 font-display text-2xl font-extrabold leading-none">
+                {guncelSiralama == null ? '—' : siraYaz(guncelSiralama)}
+              </p>
+              <p className="mt-2 text-xs text-muted-foreground">{guncelSiralama == null ? 'Deneme sonuçlarınla oluşur' : 'Deneme sonuçlarına göre'}</p>
+            </Kart>
+          </div>
+        </section>
+      )}
+
+      {formAcik && <>
+      <div className="mb-3 flex rounded-[14px] bg-muted p-1" role="group" aria-label="Hedef giriş yöntemi">
+        {[{ elle: false, ad: 'Listeden seç' }, { elle: true, ad: 'Kendin yaz' }].map((kip) => (
+          <button
+            key={kip.ad}
+            type="button"
+            aria-pressed={elleMod === kip.elle}
+            onClick={() => { setElleMod(kip.elle); setDuzenleAcik(false) }}
+            className={cn(
+              'h-9 flex-1 rounded-[10px] text-[13px] font-extrabold transition focus-visible:outline-2 focus-visible:outline-ring',
+              elleMod === kip.elle ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground',
+            )}
+          >
+            {kip.ad}
+          </button>
+        ))}
+      </div>
+
+      <div className="space-y-4">
         {elleMod ? (
-          <ElleGiris
-            universite={universite}
-            bolum={bolum}
-            onUniversite={setUniversite}
-            onBolum={setBolum}
-          />
+          <Kart className="rounded-[20px] p-4">
+            <ElleGiris
+              universite={universite}
+              bolum={bolum}
+              onUniversite={setUniversite}
+              onBolum={setBolum}
+            />
+          </Kart>
         ) : (
           <>
-            <div>
-              <Etiket htmlFor="hedef-universite-ara">Üniversite</Etiket>
+            <section className="rounded-[20px] bg-card p-4 golge-kart">
+              <Etiket htmlFor="hedef-universite-ara" className="mb-3 text-[15px] font-extrabold text-foreground">
+                Üniversite seç
+              </Etiket>
               {secilenUni ? (
                 <SecilenSatir
                   baslik={secilenUni.ad}
@@ -211,23 +294,26 @@ export function HedefEkrani({
                     deger={uniArama}
                     onDegis={setUniArama}
                     ipucu="Üniversite ya da şehir ara"
+                    vurgulu={!uniArama.trim()}
                   />
-                  <Liste bos="Bu adla üniversite bulamadım.">
-                    {uniSonuclari.map((u) => (
-                      <SecimSatiri
-                        key={u.id}
-                        baslik={u.ad}
-                        alt={`${u.sehir} · ${turAdi(u)}`}
-                        onSec={() => universiteSec(u)}
-                      />
-                    ))}
-                  </Liste>
+                  {uniArama.trim() ? (
+                    <Liste bos="Bu adla üniversite bulamadım." className="max-h-[min(50dvh,22rem)]">
+                      {uniSonuclari.map((u) => (
+                        <SecimSatiri
+                          key={u.id}
+                          baslik={u.ad}
+                          alt={`${u.sehir} · ${turAdi(u)}`}
+                          onSec={() => universiteSec(u)}
+                        />
+                      ))}
+                    </Liste>
+                  ) : null}
                 </>
               )}
-            </div>
+            </section>
 
             {secilenUni && (
-              <div>
+              <section className="rounded-[20px] bg-card p-4 golge-kart">
                 <Etiket htmlFor="hedef-bolum-ara">Bölüm</Etiket>
                 {secilenBolum ? (
                   <SecilenSatir
@@ -244,6 +330,7 @@ export function HedefEkrani({
                       ipucu="Bölüm ara"
                     />
                     <Liste
+                      className="max-h-[min(50dvh,22rem)]"
                       bos={
                         alanSuzgeci
                           ? 'Alanına uyan böyle bir bölüm bulamadım.'
@@ -285,7 +372,7 @@ export function HedefEkrani({
                     )}
                   </>
                 )}
-              </div>
+              </section>
             )}
           </>
         )}
@@ -293,14 +380,23 @@ export function HedefEkrani({
         {/* Sayı kutuları katalog kipinde kapalı duruyor: seçim zaten dolduruyor
             ve dört kutuyu birden göstermek ekranı eski hâline döndürürdü. */}
         {(elleMod || duzenleAcik) && (
-          <div className="space-y-3">
+          <Kart className="space-y-3 rounded-[20px] p-4">
             <div>
               <Etiket>Puan türü</Etiket>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 {(Object.keys(PUAN_TURU_ADI) as PuanTuru[]).map((t) => (
-                  <Cip key={t} secili={puanTuru === t} onClick={() => setPuanTuru(t)}>
+                  <button
+                    key={t}
+                    type="button"
+                    aria-pressed={puanTuru === t}
+                    onClick={() => setPuanTuru(t)}
+                    className={cn(
+                      'h-11 rounded-xl border text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-ring',
+                      puanTuru === t ? 'border-primary-parlak bg-primary-soft text-primary' : 'border-border text-muted-foreground active:bg-muted',
+                    )}
+                  >
                     {PUAN_TURU_ADI[t]}
-                  </Cip>
+                  </button>
                 ))}
               </div>
             </div>
@@ -316,7 +412,7 @@ export function HedefEkrani({
                     setTabanPuan(e.target.value.replace(/[^0-9,.]/g, '').slice(0, 7))
                   }
                   placeholder="örn. 470"
-                  className="rakam"
+                  className="rakam h-12 text-center text-lg font-extrabold placeholder:text-sm placeholder:font-bold"
                 />
               </div>
               <div>
@@ -329,11 +425,11 @@ export function HedefEkrani({
                     setBasariSirasi(e.target.value.replace(/[^0-9]/g, '').slice(0, 8))
                   }
                   placeholder="örn. 25000"
-                  className="rakam"
+                  className="rakam h-12 text-center text-lg font-extrabold placeholder:text-sm placeholder:font-bold"
                 />
               </div>
             </div>
-          </div>
+          </Kart>
         )}
 
         {tahmin && !elleMod && !duzenleAcik && (
@@ -356,42 +452,52 @@ export function HedefEkrani({
               <Trash2 size={18} aria-hidden />
             </Buton>
           )}
-          <Buton className="flex-1" onClick={kaydet} disabled={!kaydedilebilir}>
-            <Check size={18} aria-hidden />
-            Kaydet
-          </Buton>
+          {kaydedilebilir ? (
+            <Buton className="h-12 flex-1 rounded-[14px]" onClick={kaydet}>
+              <Check size={18} aria-hidden />
+              {hedef ? 'Değişiklikleri kaydet' : 'Hedefimi kaydet'}
+            </Buton>
+          ) : hedef ? (
+            <p className="flex flex-1 items-center justify-center rounded-xl bg-muted/70 px-4 py-3 text-center text-xs font-semibold text-muted-foreground">
+              {elleMod ? 'Kaydetmek için bölüm adını yaz.' : secilenUni ? 'Kaydetmek için bölümünü seç.' : 'Önce üniversiteni seç.'}
+            </p>
+          ) : null}
         </div>
+        {hedef && (
+          <Buton bicim="hayalet" className="w-full" onClick={() => setHedefDuzenleniyor(false)}>
+            Vazgeç
+          </Buton>
+        )}
 
-        <button
-          type="button"
-          onClick={() => {
-            setElleMod((a) => !a)
-            setDuzenleAcik(false)
-          }}
-          className="w-full rounded-lg py-1 text-center text-[13px] font-bold text-ikincil transition active:opacity-70"
-        >
-          {elleMod ? 'Listeden seçeyim' : 'Bölümüm listede yok, kendim yazayım'}
-        </button>
-      </Kart>
+      </div>
+      </>}
 
-      {/* Uzun açıklamalar kısaltıldı; ekranın altı bir paragraf duvarıydı.
-          İki cümle kalıyor ve ikisi de süs değil: taban puan gerçekten bir
-          tahmin, ÖSYM ile bağlantısızlık da adı kaynak olarak geçtiği için
-          söylenmesi gereken bir şey. */}
-      <Not className="mt-4">
-        Taban puan <strong>tahmindir</strong>.
-      </Not>
-
-      <Not className="mt-2">
-        Rabi ÖSYM ile bağlantılı değildir; sayılar ÖSYM'nin herkese açık
-        yayınlarından derlenmiştir.
-      </Not>
+      <div className="mt-5 rounded-2xl border border-border bg-card p-4 text-xs leading-relaxed text-muted-foreground">
+        <div className="flex gap-3">
+          <Info size={17} className="mt-0.5 shrink-0 text-primary" aria-hidden />
+          <div className="space-y-3">
+            <p><strong className="text-foreground">Taban puan ve kişisel sıralama tahminidir.</strong> Hedef sırası katalogdan seçilir ya da elle girilir.</p>
+            <p className="border-t border-border pt-3">Veriler ÖSYM’nin herkese açık yayınlarından derlenmiştir. Rabi, ÖSYM’ye bağlı değildir.</p>
+          </div>
+        </div>
+      </div>
 
       <Onay
         acik={silmeAcik}
         baslik="Hedef silinsin mi?"
         aciklama="Kaydettiğin bölüm ve sıralama bilgisi silinecek."
-        onOnayla={() => setHedef(null)}
+        onOnayla={() => {
+          setHedef(null)
+          setUniversite('')
+          setBolum('')
+          setTabanPuan('')
+          setBasariSirasi('')
+          setUniArama('')
+          setBolumArama('')
+          setDuzenleAcik(false)
+          setSilmeAcik(false)
+          setHedefDuzenleniyor(false)
+        }}
         onIptal={() => setSilmeAcik(false)}
       />
     </div>
@@ -415,29 +521,34 @@ function TahminOzeti({
   const puan = sayiVeyaNull(tabanPuan)
   const sira = sayiVeyaNull(basariSirasi)
   return (
-    <div className="rounded-xl bg-muted/70 px-3.5 py-3">
-      <div className="flex items-baseline justify-between gap-3">
-        <span className="text-xs font-bold text-muted-foreground">
-          Tahmini taban · {PUAN_TURU_ADI[puanTuru]}
-        </span>
+    <Kart className="rounded-[20px] border border-border/70 p-4">
+      <div className="flex items-center justify-between gap-3 border-b border-border pb-3">
+        <span className="text-sm font-extrabold">Hedef ölçütleri</span>
         <button
           type="button"
           onClick={onDuzenle}
-          className="inline-flex shrink-0 items-center gap-1 text-[13px] font-extrabold text-ikincil transition active:opacity-70"
+          className="inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-[13px] font-extrabold text-primary transition active:bg-primary-soft focus-visible:outline-2 focus-visible:outline-ring"
         >
           <Pencil size={13} aria-hidden />
           Elle düzelt
         </button>
       </div>
-      <div className="mt-1.5 flex items-baseline gap-4">
-        <span className="rakam font-display text-xl font-extrabold text-primary">
-          {puan === null ? '—' : puanYaz(puan)}
-        </span>
-        <span className="rakam text-sm font-bold text-muted-foreground">
-          {sira === null ? '—' : `${siraYaz(sira)}. sıra`}
-        </span>
+      <p className="mt-3 text-xs font-semibold text-muted-foreground">{PUAN_TURU_ADI[puanTuru]}</p>
+      <div className="mt-2 grid grid-cols-2 gap-3">
+        <div>
+          <p className="text-xs text-muted-foreground">Tahmini taban puan</p>
+          <p className="rakam mt-1 font-display text-2xl font-extrabold text-primary">
+            {puan === null ? '—' : puanYaz(puan)}
+          </p>
+        </div>
+        <div>
+          <p className="text-xs text-muted-foreground">Hedef başarı sırası</p>
+          <p className="rakam mt-1 font-display text-2xl font-extrabold">
+            {sira === null ? '—' : siraYaz(sira)}
+          </p>
+        </div>
       </div>
-    </div>
+    </Kart>
   )
 }
 
@@ -456,21 +567,21 @@ function ElleGiris({
   return (
     <div className="space-y-3">
       <div>
-        <Etiket htmlFor="hedef-bolum">Bölüm</Etiket>
-        <Alan
-          id="hedef-bolum"
-          value={bolum}
-          onChange={(e) => onBolum(e.target.value)}
-          placeholder="örn. Hukuk"
-        />
-      </div>
-      <div>
         <Etiket htmlFor="hedef-universite">Üniversite</Etiket>
         <Alan
           id="hedef-universite"
           value={universite}
           onChange={(e) => onUniversite(e.target.value)}
           placeholder="örn. Ankara Üniversitesi"
+        />
+      </div>
+      <div>
+        <Etiket htmlFor="hedef-bolum">Bölüm</Etiket>
+        <Alan
+          id="hedef-bolum"
+          value={bolum}
+          onChange={(e) => onBolum(e.target.value)}
+          placeholder="örn. Hukuk"
         />
       </div>
     </div>

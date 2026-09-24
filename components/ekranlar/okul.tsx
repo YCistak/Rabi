@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { X } from 'lucide-react'
+import { Check, LockKeyhole, Trash2 } from 'lucide-react'
 import type { Ayarlar, OkulYili } from '@/lib/types'
 import {
   ILK_SINIF,
@@ -9,11 +9,10 @@ import {
   netYaz,
   obpSonucu,
   ORTAOGRETIM_YIL_SAYISI,
-  yilSayisiYaz,
-  type ObpSonucu,
+  SINIFLAR,
 } from '@/lib/hesap'
 import { cn, yeniId } from '@/lib/utils'
-import { Alan, BaslikSatiri, Deger, Kart, Not } from '@/components/ui'
+import { Alan, Kart, Not, Onay } from '@/components/ui'
 
 /**
  * Okul notları.
@@ -43,16 +42,10 @@ export function OkulEkrani({
   )
   const elleGirildi = ayarlar.elleObp !== null
 
-  // 9'dan bu yılki sınıfa kadar. Henüz okunmamış sınıflar gösterilmiyor.
-  // 9'dan bu yılki sınıfa kadar; mezunda dördü birden görünüyor.
-  const siniflar = useMemo(() => {
-    const son = Math.max(ILK_SINIF, Math.min(12, ayarlar.buYilSinif))
-    return Array.from({ length: son - ILK_SINIF + 1 }, (_, i) => ILK_SINIF + i)
-  }, [ayarlar.buYilSinif])
-
   const yilBul = (sinif: number) => yillar.find((y) => y.sinif === sinif)
 
   const notuYaz = (sinif: number, metin: string) => {
+    if (sinif > ayarlar.buYilSinif) return
     const temiz = metin.replace(',', '.').trim()
 
     setYillar((onceki) => {
@@ -78,33 +71,43 @@ export function OkulEkrani({
 
   return (
     <div>
-      <BaslikSatiri baslik="Okul Notları" />
+      <h1 className="mb-4 font-display text-xl font-extrabold">Okul Notları</h1>
 
-      <Kart className="mb-3 border-primary/30 bg-primary-soft/50">
-        {/* Elle girilen puan tahmin değil; başlık da öyle demiyor. */}
-        <p className="text-sm font-medium text-muted-foreground">
-          {elleGirildi ? 'OBP’n' : 'OBP tahmini'}
-        </p>
-        <p className="font-display text-5xl font-semibold text-primary">
-          {obp ? netYaz(obp.obp, obp.obp % 1 === 0 ? 0 : 2) : '—'}
-        </p>
-        {obp ? (
-          <p className="mt-1 text-xs text-muted-foreground">
-            {elleGirildi
-              ? `Kendin girdin; diploma notu ${netYaz(obp.diplomaNotu)} olarak geri hesaplandı.`
-              : `Diploma notu ${netYaz(obp.diplomaNotu)} × 5. ${
-                  obp.tamMi
-                    ? 'Dört yılın hepsi yıl sonu notuyla girili — tahmin değil, gerçek OBP.'
-                    : aciklama(obp.girilenYil)
-                }`}
+      <Kart className="mb-5 overflow-hidden rounded-[24px] p-5">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-xs font-extrabold tracking-wide text-muted-foreground">
+            ORTAÖĞRETİM BAŞARI PUANI
           </p>
-        ) : (
-          <p className="mt-1 text-xs text-muted-foreground">
-            {mezun
-              ? 'OBP’ni biliyorsan doğrudan yaz, bilmiyorsan yıl ortalamalarını gir.'
-              : 'Aşağıya yıl ortalamalarını yazdığında burada hesaplanır.'}
+          <span className="shrink-0 rounded-lg bg-primary-soft px-2.5 py-1 text-xs font-bold text-primary">
+            {elleGirildi ? 'Elle girildi' : obp?.tamMi ? 'Tamamlandı' : 'Tahmini'}
+          </span>
+        </div>
+        <div className="mt-3 flex items-baseline gap-2">
+          <p className="rakam font-display text-5xl font-extrabold tracking-tight text-primary">
+            {obp ? netYaz(obp.obp, obp.obp % 1 === 0 ? 0 : 2) : '—'}
           </p>
-        )}
+          <span className="text-sm font-bold text-muted-foreground">/ 500</span>
+        </div>
+        <div className="mt-5 grid grid-cols-2 gap-4 border-t border-border pt-4">
+          <div>
+            <p className="text-xs text-muted-foreground">Diploma notu</p>
+            <p className="rakam mt-1 text-lg font-extrabold">
+              {obp ? netYaz(obp.diplomaNotu) : '—'}
+              <span className="ml-1 text-xs font-medium text-muted-foreground">/ 100</span>
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Kaydedilen yıl</p>
+            <div className="mt-1 flex items-center gap-2">
+              <p className="rakam text-lg font-extrabold">{yillar.length}/{ORTAOGRETIM_YIL_SAYISI}</p>
+              <div className="flex flex-1 gap-1" aria-hidden>
+                {Array.from({ length: ORTAOGRETIM_YIL_SAYISI }, (_, i) => (
+                  <span key={i} className={cn('h-1.5 flex-1 rounded-full', yilBul(ILK_SINIF + i) ? 'bg-primary-parlak' : 'bg-muted')} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </Kart>
 
       {/* Doğrudan OBP yalnızca mezuna soruluyor: okuyan öğrencinin OBP'si zaten
@@ -118,103 +121,101 @@ export function OkulEkrani({
         />
       )}
 
-      <div className="mb-4 grid grid-cols-2 gap-3">
-        <Deger
-          etiket="Diploma notu"
-          deger={obp ? netYaz(obp.diplomaNotu) : '—'}
-          altNot="100 üzerinden"
-        />
-        <Deger
-          etiket="Girilen yıl"
-          deger={`${obp ? obp.girilenYil : 0} / ${ORTAOGRETIM_YIL_SAYISI}`}
-          altNot={yilAltNotu(obp)}
-        />
+      <h2 className="mb-3 font-display text-base font-extrabold">Yıl ortalamalarım</h2>
+      <div className="golge-kart overflow-hidden rounded-[20px] bg-card px-4">
+        <ul className="divide-y divide-border">
+          {SINIFLAR.map((sinif) => (
+            <li key={sinif}>
+              <YilSatiri
+                sinif={sinif}
+                yil={yilBul(sinif)}
+                kilitli={sinif > ayarlar.buYilSinif}
+                onDegis={(metin) => notuYaz(sinif, metin)}
+              />
+            </li>
+          ))}
+        </ul>
       </div>
-
-      <p className="mb-2 font-display text-lg font-semibold">
-        {mezun ? 'Yıl sonu notların' : 'Yıl ortalamaların'}
-      </p>
-
-      <ul className="space-y-2">
-        {siniflar.map((sinif) => (
-          <li key={sinif}>
-            <YilSatiri
-              sinif={sinif}
-              yil={yilBul(sinif)}
-              onDegis={(metin) => notuYaz(sinif, metin)}
-            />
-          </li>
-        ))}
-      </ul>
-
     </div>
   )
-}
-
-/** OBP'nin neden tahmin olduğunu anlatan cümle: tek sebep kaldı, eksik yıl. */
-function aciklama(girilen: number): string {
-  return `Dört yılın ${yilSayisiYaz(girilen)} girili; bu yüzden sonuç bir tahmin.`
-}
-
-/** "Girilen yıl" kutusunun alt notu. */
-function yilAltNotu(obp: ObpSonucu | null): string {
-  if (!obp || obp.tamMi) return 'dört yıl tamam'
-  return 'eksik yıllar tahmin edilir'
 }
 
 function YilSatiri({
   sinif,
   yil,
+  kilitli,
   onDegis,
 }: {
   sinif: number
   yil: OkulYili | undefined
+  kilitli: boolean
   onDegis: (metin: string) => void
 }) {
   // Yazarken serbest bırakmak için yerel metin; boş bırakılabilsin diye
   // doğrudan sayıya bağlanmıyor ("9" yazarken 9'a kırpılmasın).
   const [metin, setMetin] = useState(yil ? String(yil.ortalama) : '')
+  const [silmeAcik, setSilmeAcik] = useState(false)
 
   const dolu = metin.trim() !== ''
 
   return (
-    <div
-      className={cn(
-        'flex items-center gap-3 rounded-2xl border p-3',
-        dolu ? 'border-primary/40 bg-primary/8' : 'border-border bg-card',
-      )}
-    >
+    <div className="flex items-center gap-2 py-4">
       <div className="min-w-0 flex-1">
-        <p className="font-medium">{sinif}. sınıf</p>
-        <p className="text-xs text-muted-foreground">yıl sonu notun</p>
+        <p className={cn('text-sm font-extrabold', kilitli && 'text-muted-foreground')}>{sinif}.Sınıf</p>
+        <p className={cn('mt-1 flex items-center gap-1 text-[11px]', !kilitli && yil ? 'text-success' : 'text-muted-foreground')}>
+          {!kilitli && yil && <Check size={12} aria-hidden />}
+          {kilitli ? 'Sınıfına geçince açılır' : yil ? 'Kaydedildi' : 'Not eklenmedi'}
+        </p>
       </div>
 
-      <Alan
-        inputMode="decimal"
-        value={metin}
-        onChange={(e) => {
-          const temiz = e.target.value.replace(/[^0-9,.]/g, '').slice(0, 6)
-          setMetin(temiz)
-          onDegis(temiz)
-        }}
-        placeholder="—"
-        aria-label={`${sinif}. sınıf yıl sonu notu`}
-        className="rakam h-11 w-24 shrink-0 text-center text-lg font-semibold focus:placeholder:text-transparent"
-      />
-
-      {dolu && (
-        <button
-          type="button"
-          onClick={() => {
-            setMetin('')
-            onDegis('')
+      <div className="order-last relative w-25 shrink-0">
+        <Alan
+          inputMode="decimal"
+          value={kilitli ? '' : metin}
+          disabled={kilitli}
+          onChange={(e) => {
+            const temiz = e.target.value.replace(/[^0-9,.]/g, '').slice(0, 6)
+            setMetin(temiz)
+            onDegis(temiz)
           }}
-          aria-label={`${sinif}. sınıf notunu sil`}
-          className="-ml-1 shrink-0 rounded-full p-1.5 text-muted-foreground active:bg-muted"
-        >
-          <X size={16} aria-hidden />
-        </button>
-      )}
+          placeholder={kilitli ? '' : '0–100'}
+          aria-label={`${sinif}.Sınıf yıl sonu notu${kilitli ? ' (kilitli)' : ''}`}
+          className={cn(
+            'rakam h-12 w-full rounded-[12px] border-transparent bg-muted/60 text-center text-lg font-extrabold placeholder:text-lg placeholder:font-extrabold focus:placeholder:text-transparent',
+            kilitli && 'text-muted-foreground disabled:cursor-not-allowed disabled:opacity-100',
+          )}
+        />
+        {kilitli && (
+          <LockKeyhole
+            size={17}
+            className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground/70"
+            aria-hidden
+          />
+        )}
+      </div>
+
+      <div className="flex w-9 shrink-0 items-center justify-center">
+        {!kilitli && dolu && (
+          <button
+            type="button"
+            onClick={() => setSilmeAcik(true)}
+            aria-label={`${sinif}.Sınıf notunu sil`}
+            className="flex h-11 w-9 items-center justify-center rounded-xl text-muted-foreground active:bg-muted focus-visible:outline-2 focus-visible:outline-ring"
+          >
+            <Trash2 size={16} aria-hidden />
+          </button>
+        )}
+      </div>
+      <Onay
+        acik={silmeAcik}
+        baslik={`${sinif}.Sınıf notu silinsin mi?`}
+        aciklama="Bu sınıf için girdiğin yıl sonu notu silinecek."
+        onOnayla={() => {
+          setMetin('')
+          onDegis('')
+        }}
+        onIptal={() => setSilmeAcik(false)}
+      />
     </div>
   )
 }
@@ -235,6 +236,7 @@ function ElleObpKarti({
   onDegis: (yeni: number | null) => void
 }) {
   const [metin, setMetin] = useState(deger === null ? '' : String(deger))
+  const [silmeAcik, setSilmeAcik] = useState(false)
 
   const yaz = (ham: string) => {
     const temiz = ham.replace(',', '.').replace(/[^0-9.]/g, '').slice(0, 6)
@@ -251,32 +253,32 @@ function ElleObpKarti({
   const aralikDisi = metin !== '' && Number.isFinite(sayi) && (sayi < 250 || sayi > 500)
 
   return (
-    <Kart className="mb-4">
-      <div className="flex items-center gap-3">
-        <div className="min-w-0 flex-1">
-          <p className="font-medium">OBP’ni biliyorsan</p>
-          <p className="text-xs text-muted-foreground">
-            Doğrudan yaz; yıl notlarından hesaplamam gerekmez.
-          </p>
-        </div>
-
+    <Kart className="mb-5 rounded-[20px]">
+      <div>
+        <label htmlFor="okul-elle-obp" className="text-sm font-extrabold">OBP’ni biliyor musun?</label>
+        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+          Mezunsan puanını doğrudan girebilirsin.
+        </p>
+      </div>
+      <div className="mt-3 flex items-center gap-2">
         <Alan
+          id="okul-elle-obp"
           inputMode="decimal"
           value={metin}
           onChange={(e) => yaz(e.target.value)}
-          placeholder="—"
+          placeholder="250–500 arası OBP"
           aria-label="Elle girilen OBP"
-          className="rakam h-11 w-24 shrink-0 text-center text-lg font-semibold focus:placeholder:text-transparent"
+          className="rakam h-12 flex-1 border-transparent bg-muted/60 text-lg font-extrabold placeholder:text-sm placeholder:font-medium focus:placeholder:text-transparent"
         />
 
         {metin !== '' && (
           <button
             type="button"
-            onClick={() => yaz('')}
+            onClick={() => setSilmeAcik(true)}
             aria-label="Girdiğin OBP'yi sil"
-            className="-ml-1 shrink-0 rounded-full p-1.5 text-muted-foreground active:bg-muted"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-muted-foreground active:bg-muted focus-visible:outline-2 focus-visible:outline-ring"
           >
-            <X size={16} aria-hidden />
+            <Trash2 size={16} aria-hidden />
           </button>
         )}
       </div>
@@ -284,6 +286,13 @@ function ElleObpKarti({
       {aralikDisi && (
         <Not className="mt-3">OBP 250 ile 500 arasında olur; girdiğin sayı bu aralığa çekildi.</Not>
       )}
+      <Onay
+        acik={silmeAcik}
+        baslik="Elle girilen OBP silinsin mi?"
+        aciklama="Girdiğin OBP silinecek. Yıl ortalamaların varsa hesaplama onlara dönecek."
+        onOnayla={() => yaz('')}
+        onIptal={() => setSilmeAcik(false)}
+      />
     </Kart>
   )
 }
