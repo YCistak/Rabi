@@ -436,9 +436,12 @@ function GorevSatiri({
 /**
  * "Görev ekle" alt sayfası.
  *
- * Dört soru: ne, ne zaman, hangi tür, hangi renk. Dilim çağıran bölümden
- * geliyor ve seçili başlıyor — kullanıcı "Akşam"ın düğmesine bastıysa cevabı
- * zaten verdi. Kaydet, eksik alan varken **pasif** ve eksikler kırmızı
+ * Üç soru: ne, hangi tür, hangi renk. "Ne zaman?" sorulmuyor: dilim basılan
+ * düğmenin bölümünden geliyor — kullanıcı "Akşam"ın düğmesine bastıysa cevabı
+ * zaten verdi. Sayfada bir süre üç dilimlik bir seçici de duruyordu;
+ * kullanıcı kaldırılmasını istedi, verilmiş bir cevabı ikinci kez soruyordu.
+ * Dilim başlıktaki gün etiketinin yanında yazıyor: görevin nereye gideceği
+ * görünmeden kaydetmek, onu ekranda aratırdı. Kaydet, eksik alan varken **pasif** ve eksikler kırmızı
  * çerçeveyle işaretleniyor: pasif bir düğmenin yanında sebebi yazmayan ekran
  * kullanıcıyı formda kilitler (AGENTS.md, "Boş kutuyla ilerlenmiyor").
  */
@@ -459,7 +462,6 @@ function EklemeSayfasi({
   }) => void
 }) {
   const [metin, setMetin] = useState('')
-  const [seciliDilim, setSeciliDilim] = useState<GorevDilimi>(dilim)
   const [kategori, setKategori] = useState<GorevKategorisi | null>(null)
   const [renk, setRenk] = useState<GorevRengi | null>(null)
   const [hata, setHata] = useState(false)
@@ -474,7 +476,7 @@ function EklemeSayfasi({
       setHata(true)
       return
     }
-    onKaydet({ metin: yazilan, dilim: seciliDilim, kategori, renk })
+    onKaydet({ metin: yazilan, dilim, kategori, renk })
   }
 
   return (
@@ -492,7 +494,9 @@ function EklemeSayfasi({
 
         <div className="mb-3.5 flex items-center gap-2.5">
           <p className="font-display text-lg font-extrabold tracking-tight">Görev ekle</p>
-          <p className="ml-auto text-[12.5px] font-bold text-muted-foreground">{gunEtiketi}</p>
+          <p className="ml-auto text-[12.5px] font-bold text-muted-foreground">
+            {gunEtiketi} · {DILIM_ADI[dilim]}
+          </p>
           <button
             type="button"
             onClick={onKapat}
@@ -520,15 +524,6 @@ function EklemeSayfasi({
             hata && yazilan === '' ? 'border-danger' : 'border-input',
           )}
         />
-
-        <AlanBasligi baslik="Ne zaman?" />
-        <div className="grid grid-cols-3 gap-1.5">
-          {DILIMLER.map((d) => (
-            <SecimDugmesi key={d} secili={seciliDilim === d} onClick={() => setSeciliDilim(d)}>
-              {DILIM_ADI[d]}
-            </SecimDugmesi>
-          ))}
-        </div>
 
         <AlanBasligi baslik="Kategori" hata={hata && kategori === null ? 'Birini seç' : undefined} />
         <div
@@ -629,7 +624,7 @@ function AlanBasligi({
   )
 }
 
-/** Alt sayfadaki seçim düğmesi — dilim ve kategori aynı biçimi paylaşıyor. */
+/** Alt sayfadaki seçim düğmesi. */
 function SecimDugmesi({
   secili,
   onClick,

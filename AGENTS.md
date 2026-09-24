@@ -1799,6 +1799,13 @@ Erteleme görevi **ertesi güne, aynı dilime** taşıyor ve hedef dilim doluysa
 ekrandan kaybolduğunu gösterirdi. Ekran bu yüzden bir toast taşıyor — ertelenen
 görev bulunduğu günden çıkıyor ve nereye gittiğini söyleyen tek yer o cümle.
 
+Ekleme sayfası **"Ne zaman?" diye sormuyor**: dilim, basılan `+` düğmesinin
+bölümünden geliyor. Sayfada bir süre üç dilimlik bir seçici de vardı; kullanıcı
+kaldırılmasını istedi — "Akşam"ın düğmesine basan kullanıcı cevabı zaten
+vermişti. Dilimin adı sayfanın başlığında gün etiketinin yanında yazıyor
+("Bugün · Akşam"), görev nereye gideceği görünmeden kaydedilmiyor. Başka bir
+dilime yazmak isteyen o bölümün düğmesine basıyor.
+
 ### Renkler ayrı bir palette
 
 Görev rengi kullanıcının seçtiği on iki tondan biri (`--gorev-*`,
