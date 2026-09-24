@@ -57,6 +57,7 @@ import { BolunmeOyunuEkrani } from '@/components/ekranlar/oyun-bolunme'
 import { EdebiyatOyunuEkrani } from '@/components/ekranlar/oyun-edebiyat'
 import { PeriyodikOyunuEkrani } from '@/components/ekranlar/oyun-periyodik'
 import { FormulOyunuEkrani } from '@/components/ekranlar/oyun-formul'
+import { TepkimeOyunuEkrani } from '@/components/ekranlar/oyun-tepkime'
 import { HaritaOyunuEkrani } from '@/components/ekranlar/oyun-harita'
 import { IklimOyunuEkrani } from '@/components/ekranlar/oyun-iklim'
 import { IzohipsOyunuEkrani } from '@/components/ekranlar/oyun-izohips'
@@ -135,6 +136,7 @@ const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   tuzak: ['Kural', 'Tuzağı'],
   periyodik: ['Periyodik', 'Tablo Avı'],
   formul: ['Formül', 'Eşleştirme'],
+  tepkime: ['Tepkime', 'Türü'],
   trigonometri: ['Trigonometrik', 'Oranlar'],
 }
 
@@ -800,6 +802,17 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('formul', ozet, cevaplar, saniye, yarim)}
+          bildir={bildir}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'tepkime' && (
+        <TepkimeOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'tepkime')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('tepkime', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.tepkime ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />

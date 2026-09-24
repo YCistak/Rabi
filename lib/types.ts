@@ -240,6 +240,7 @@ export type OyunId =
   | 'tuzak'
   | 'periyodik'
   | 'formul'
+  | 'tepkime'
   | 'trigonometri'
 
 /**

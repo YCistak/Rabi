@@ -131,6 +131,11 @@ export const SORU_SURESI: Record<OyunId, number> = {
   /** Formül'de süre **el** başına: oyun altılı eşleştirme dağıtıyor. */
   formul: 40,
   /**
+   * Tepkime Türü'nde denklem okunuyor: dört terim, katsayılar ve hâller.
+   * Ses Olayları'nın tek sözcüğünden uzun, anlatım bozukluğunun cümlesi kadar.
+   */
+  tepkime: 16,
+  /**
    * Trigonometride süre üçgene bakmaya ve bir bölme yapmaya gidiyor; zor
    * seviyede önce üçgeni kafada kurmak (5/13 → 5-12-13) gerekiyor. Özel
    * Üçgenler'in 22 saniyesinden kısa: şıklar hesap değil tanıma istiyor.

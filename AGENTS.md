@@ -1651,10 +1651,11 @@ derse aittir" kuralının bilinçli istisnası: buradaki renk bir ders kimliği
 değil harita göstergesi, coğrafyanın yeşiline boyanmış bir deniz karadan ayırt
 edilemiyordu. Aynı sebeple dünya haritasının okyanusu da o aileden.
 
-## Kimyanın iki oyunu
+## Kimyanın oyunları
 
 Kimya dersi iki oyunla açıldı: **Periyodik Tablo Avı** (element, yer, aile) ve
-**Formül Eşleştirme** (formül–ad). Ders renk ailesi olarak lavantayı (`edb`)
+**Formül Eşleştirme** (formül–ad); üçüncüsü **Tepkime Türü** (aşağıda) ve
+dersin ilk 10. sınıf oyunu. Ders renk ailesi olarak lavantayı (`edb`)
 alıyor; o aile Türkçe ile Edebiyat birleştiğinde boşta kalmıştı ve renk
 değişkenleri (`--edb-*`) rozetlerde kullanıldığı için adı değişmedi. Yani
 `edb` artık "edebiyat" değil "Kimya'nın rengi" demek.
@@ -1730,6 +1731,43 @@ bütün havuzdan seçiliyor, seçilen zorluk o türün içinde öne alınıyor: 
 seviyeden yeterince bileşik varsa el tümüyle oradan çıkıyor, yoksa aynı türün
 öteki seviyeleri tamamlıyor. `formul.test.ts` üç zorlukta da elin tek türden
 kurulduğunu denetliyor.
+
+### Tepkime Türü: bir denklem birden çok türe girer
+
+10. sınıf Maarif programının "Kimyasal Tepkime Türleri" konusu
+(KİM.10.1.3): denklem gösteriliyor, türü dört şıktan seçiliyor. Yedi tür
+var — yanma, sentez, analiz, asit-baz, çökelme, yer değiştirme, redoks — ve
+havuz (`tepkime-havuzu.ts`) her türden en az on, toplamda en az yüz denklem
+taşıyor (şu an 139).
+
+Oyunun asıl sorunu cevabın tekliği: metan yanması aynı zamanda redoks, Zn +
+HCl hem yer değiştirme hem redoks. Her kaydın bir asıl türü (`tur`) ve
+girdiği öteki türlerin listesi (`ayrica`) var; `ayrica`daki türler
+**çeldirici olamıyor**. Kuşkulu durumda tür `ayrica`ya yazılıyor — bu yalnızca
+bir çeldiriciyi eliyor, yanlış bir şey öğretmiyor. Tek bilinçli istisna azot:
+`N2 + O2 → 2NO` tepkimesinin şıklarında yanma duruyor, çünkü azot yanmaz ve
+sınavın bilinen tuzağı bu. Cevaptan sonra `ayrica` da söyleniyor ("Ayrıca
+redoks."): şıklardan elenen tür, öğrenciye hiç görünmeyen bir tür oluyordu.
+
+`ayrica` elle yazılıyor ama `tepkime.test.ts` denklemin **yapısından**
+çıkarılabilen kısmını denetliyor: serbest element giren ya da çıkan her
+tepkime redoks, tek ürünlü her tepkime sentez kalıbında, oksijenle giren her
+tepkime (azot dışında) yanma, çözeltiden katı çıkaran her tepkime çökelme.
+Atom ve yük dengesi ile katsayıların sadeliği de testte; denklem eklerken
+testi çalıştır, dengesiz bir denklem sessizce öğretilmiş olur.
+
+Hâl (k, s, g, suda) **her** denklemde yazılı. Yalnızca çökelmede yazılsaydı
+"(k)" türün kalıbı değil cevabın işareti olurdu.
+
+Denklem düz yazıyla duruyor (`2Fe^3+(suda)`: baştaki sayı katsayı, formüldeki
+sayılar alt indis, `^` yük) ve `components/denklem-yazisi.tsx` çiziyor.
+Terimler satır sonunda bölünmüyor, satır terimlerin arasından kırılıyor:
+formülün ortasından kırılan satır, alt indisi bir sonraki satıra atıyordu.
+
+Yanlıştan sonraki bekleme doğrudakinden uzun (`CEVAP_BEKLEMESI`): geri bildirim
+bir cümle ve bir saniyede okunmuyor. Sayaç o sırada durduğu için süre
+yemiyor. Banka kaydı yalnızca denklemi saklıyor, tür havuzdan okunuyor —
+periyodik tablodaki sembol kaydının gerekçesi.
 
 ## Geri sayım öğrencinin kendi sınavına
 

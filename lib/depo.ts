@@ -655,6 +655,7 @@ function bankayiCoz(ham: unknown): BankaKaydi[] {
           typeof s.aci?.a === 'number' &&
           typeof s.aci?.cevap === 'number'
         )
+      if (s.oyun === 'tepkime') return typeof s.denklem === 'string'
       if (s.oyun === 'antlasma')
         return typeof s.madde === 'string' && typeof s.antlasma === 'string'
       if (s.oyun === 'kavram')

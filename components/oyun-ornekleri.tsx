@@ -19,6 +19,7 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import type { OyunId } from '@/lib/types'
+import { DenklemYazisi } from '@/components/denklem-yazisi'
 
 export type OyunOrnegi = {
   /** Kutunun üstündeki küçük turuncu etiket. */
@@ -732,6 +733,31 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
           altBaslik="Adlar"
           ust={['H₂SO₄', 'HNO₃']}
           alt={['Nitrik asit', 'Sülfürik asit']}
+        />
+      ),
+    },
+  ],
+
+  tepkime: [
+    {
+      baslik: 'Tepkime türü',
+      kural: (
+        <>
+          Denklemi okur, türünü dört şıktan seçersin. Bir denklem iki türe girebilir; şıklarda
+          yalnızca biri durur.
+        </>
+      ),
+      gorunum: (
+        <DortSik
+          soru={
+            <DenklemYazisi
+              denklem="CaCO3(k) → CaO(k) + CO2(g)"
+              className="font-display text-lg font-extrabold"
+            />
+          }
+          yonerge="Hangi tepkime türü?"
+          dogru="Analiz (ayrışma)"
+          yanlis="Sentez (oluşum)"
         />
       ),
     },

@@ -35,6 +35,8 @@ import type { TuzakKurali } from './tuzak-havuzu'
 import type { TuzakSorusu } from './tuzak'
 import { elementBul, type PeriyodikTipi } from './periyodik'
 import { SINIF_ADI } from './periyodik-havuzu'
+import { denklemDuzYazi, tepkimeBul } from './tepkime'
+import { TUR_ADI as TEPKIME_TURU_ADI } from './tepkime-havuzu'
 
 /**
  * Bankanın en fazla tutacağı kayıt.
@@ -148,6 +150,14 @@ export type BankaSorusu =
   */
   | { oyun: 'periyodik'; sembol: string; periyodikTipi: PeriyodikTipi }
   | { oyun: 'formul'; formul: string; ad: string }
+  /*
+    Yalnızca denklem saklanıyor, türü değil.
+
+    Tür ve `ayrica` havuzda duruyor (`tepkime-havuzu.ts`); kayda yazılmış bir
+    tür, havuz düzeltildikten sonra da yanlış cevabı doğru diye öğretmeye
+    devam ederdi — periyodik tablodaki sembol kaydının gerekçesi.
+  */
+  | { oyun: 'tepkime'; denklem: string }
   /*
     Sorunun kendisi saklanıyor, Özel Üçgenler'deki gibi: sorular üretiliyor,
     bir havuzda aranacak kayıtları yok. Cevap kayda yazılmıyor, kenarlardan
@@ -340,6 +350,10 @@ export function formuldenBanka(es: { formul: string; ad: string }): BankaSorusu 
   return { oyun: 'formul', formul: es.formul, ad: es.ad }
 }
 
+export function tepkimedenBanka(soru: { denklem: string }): BankaSorusu {
+  return { oyun: 'tepkime', denklem: soru.denklem }
+}
+
 export function trigdenBanka(soru: TrigSorusu): BankaSorusu {
   return { oyun: 'trigonometri', trig: soru }
 }
@@ -415,6 +429,8 @@ export function bankaKimligi(soru: BankaSorusu): string {
       return `periyodik:${soru.periyodikTipi}:${soru.sembol}`
     case 'formul':
       return `formul:${soru.formul}`
+    case 'tepkime':
+      return `tepkime:${soru.denklem}`
     case 'trigonometri':
       return `trigonometri:${trigKimligi(soru.trig)}`
   }
@@ -490,6 +506,8 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
     // satırlık metin isteniyor (`formul.ts`).
     case 'formul':
       return soru.formul
+    case 'tepkime':
+      return denklemDuzYazi(soru.denklem)
     case 'trigonometri':
       return trigMetni(soru.trig)
   }
@@ -559,6 +577,11 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
     }
     case 'formul':
       return soru.ad
+    // Havuzdan düşmüş denklemin kaydı cevapsız kalıyor; periyodik ile aynı.
+    case 'tepkime': {
+      const tepkime = tepkimeBul(soru.denklem)
+      return tepkime ? TEPKIME_TURU_ADI[tepkime.tur] : '—'
+    }
     case 'trigonometri':
       return trigCevabi(soru.trig)
   }
@@ -684,6 +707,7 @@ const BOS_DAGILIM: Record<OyunId, number> = {
   tuzak: 0,
   periyodik: 0,
   formul: 0,
+  tepkime: 0,
   trigonometri: 0,
 }
 

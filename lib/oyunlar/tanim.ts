@@ -84,7 +84,7 @@ export const DERSLER: DersTanimi[] = [
   {
     id: 'kimya',
     ad: 'Kimya',
-    aciklama: 'Periyodik tablo, formüller',
+    aciklama: 'Periyodik tablo, formül, tepkime',
     ikon: '🧪',
     aile: 'edb',
   },
@@ -340,6 +340,14 @@ export const OYUNLAR: OyunTanimi[] = [
     kisaAciklama: 'Formülü adıyla eşleştir',
     ikon: '⚗️',
     ozet: `Üstteki formüle, sonra alttaki adına dokunursun — sıra fark etmez. El mümkün oldukça tek türden kuruluyor: altı asit, altı tuz.`,
+  },
+  {
+    id: 'tepkime',
+    ders: 'kimya',
+    ad: 'Tepkime Türü',
+    kisaAciklama: 'Denklemin türünü bul',
+    ikon: '🔥',
+    ozet: `Denklemi okur, türünü dört şıktan seçersin: yanma, sentez, analiz, asit-baz, çökelme, yer değiştirme ya da redoks. Bir denklem birden çok türe girebilir; şıklarda yalnızca biri durur.`,
   },
 ]
 

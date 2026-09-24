@@ -199,7 +199,7 @@ const AILE: Record<
     kenar: 'border-l-isl-koyu',
     degisken: 'var(--isl-koyu)',
   },
-  // Kimyanın iki oyunu lavanta aileyi paylaşıyor.
+  // Kimyanın oyunları lavanta aileyi paylaşıyor.
   periyodik: {
     zemin: 'bg-edb',
     yazi: 'text-edb-koyu',
@@ -208,6 +208,13 @@ const AILE: Record<
     degisken: 'var(--edb-koyu)',
   },
   formul: {
+    zemin: 'bg-edb',
+    yazi: 'text-edb-koyu',
+    dolgu: 'bg-edb-koyu',
+    kenar: 'border-l-edb-koyu',
+    degisken: 'var(--edb-koyu)',
+  },
+  tepkime: {
     zemin: 'bg-edb',
     yazi: 'text-edb-koyu',
     dolgu: 'bg-edb-koyu',
