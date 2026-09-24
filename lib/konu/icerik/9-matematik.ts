@@ -21,15 +21,15 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-uslu-koklu', 'Üslü ve Köklü Gösterimlerle İşlemler', [
       kart(
         'Üslü ifade',
-        'aⁿ, a sayısının n kez çarpımıdır. a tabandır, n üstür: 2⁵ = 2·2·2·2·2 = 32.',
+        '**aⁿ**, a sayısının n kez kendisiyle çarpımıdır.\n- **a:** taban\n- **n:** üs\nÖrnek: 2⁵ = 2·2·2·2·2 = 32',
       ),
       kart(
         'Sıfırıncı ve negatif üs',
-        'a⁰ = 1 (a ≠ 0), a⁻ⁿ = 1/aⁿ. Negatif üs sayıyı negatif yapmaz, ters çevirir: 2⁻³ = 1/8.',
+        '- **a⁰ = 1** (a ≠ 0)\n- **a⁻ⁿ = 1 / aⁿ**\nNegatif üs sayıyı negatif yapmaz, ters çevirir: 2⁻³ = 1/8',
       ),
       kart(
         'Aynı tabanda işlem',
-        'Çarpmada üsler toplanır, bölmede çıkarılır: aᵐ·aⁿ = aᵐ⁺ⁿ, aᵐ/aⁿ = aᵐ⁻ⁿ.',
+        '- **Çarpmada** üsler toplanır: aᵐ · aⁿ = aᵐ⁺ⁿ\n- **Bölmede** üsler çıkarılır: aᵐ / aⁿ = aᵐ⁻ⁿ',
         {
           tur: 'tablo',
           basliklar: ['Kural', 'Sonuç'],
@@ -44,37 +44,37 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Üssün üssü',
-        '(aᵐ)ⁿ = aᵐⁿ — üsler çarpılır. (2³)² = 2⁶ = 64; 2³·2² = 2⁵ = 32 ile karıştırılıyor.',
+        '**(aᵐ)ⁿ = aᵐ·ⁿ**, üsler çarpılır.\n- (2³)² = 2⁶ = 64\n- 2³ · 2² = 2⁵ = 32\nİkisi sık karıştırılır.',
         undefined,
         { not: '2³·2² = 2⁵ = 32 (üsler toplanır), (2³)² = 2⁶ = 64 (üsler çarpılır). İkisini yan yana ezberle.' },
       ),
       kart(
         'Farklı taban, aynı üs',
-        'aⁿ·bⁿ = (ab)ⁿ. 2⁵·5⁵ = 10⁵. Tabanlar farklı, üsler farklıysa hiçbir kural yok; önce sayıya çevir.',
+        '**aⁿ · bⁿ = (a·b)ⁿ**\nÖrnek: 2⁵ · 5⁵ = 10⁵\nTaban da üs de farklıysa kural yok; önce sayıya çevir.',
       ),
       kart(
         'Bilimsel gösterim',
-        'Sayı a · 10ⁿ biçiminde yazılır ve 1 ≤ a < 10 olmalıdır: 45.000 = 4,5 · 10⁴, 0,0032 = 3,2 · 10⁻³.',
+        'Sayı **a · 10ⁿ** biçiminde yazılır, 1 ≤ a < 10 olmalı.\n- 45.000 = 4,5 · 10⁴\n- 0,0032 = 3,2 · 10⁻³',
       ),
       kart(
         'Köklü ifade',
-        'ⁿ√a, n. kuvveti a olan sayıdır. Karekökte n yazılmaz: √25 = 5.',
+        '**ⁿ√a**, n. kuvveti a olan sayıdır.\nKarekökte n yazılmaz: √25 = 5',
       ),
       kart(
         'Kök ile üs aynı şey',
-        'Köklü ifade kesirli üsle yazılır: √a = a^(1/2), ³√a² = a^(2/3). Bütün üs kuralları köke de geçer.',
+        'Köklü ifade kesirli üsle yazılır:\n- √a = a^(1/2)\n- ³√a² = a^(2/3)\nBütün üs kuralları köke de geçer.',
       ),
       kart(
         'Köklülerde işlem',
-        '√a·√b = √(ab) ve √a/√b = √(a/b). Toplama böyle değil: √2 + √3, √5 etmez.',
+        '- **Çarpma:** √a · √b = √(ab)\n- **Bölme:** √a / √b = √(a/b)\nToplama böyle değil: √2 + √3 ≠ √5',
       ),
       kart(
         'Paydayı rasyonel yapma',
-        'Paydadaki kök genişletmeyle yok edilir. Payda iki terimliyse eşleniğiyle çarpılır: 1/(√3−1) → (√3+1)/2.',
+        'Paydadaki kök genişletmeyle yok edilir.\nPayda iki terimliyse **eşleniğiyle** çarpılır:\n1 / (√3 − 1) = (√3 + 1) / 2',
       ),
       kart(
         'Dikkat: √(a²) = |a|',
-        'Karekökün sonucu negatif olamaz. Bu yüzden değişkenli ifadelerde mutlak değer gerekir.',
+        'Karekökün sonucu negatif olamaz.\nBu yüzden değişkenli ifadelerde mutlak değer gerekir.',
       ),
     ], [
       soru('2⁻³ ifadesinin değeri −8 tir.', false, 'Negatif üs sayıyı negatif yapmaz, ters çevirir: 2⁻³ = 1/2³ = 1/8.'),
@@ -114,15 +114,15 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-araliklar', 'Gerçek Sayı Aralıkları ve Küme Sembolleri', [
       kart(
         'Küme ve eleman',
-        'Küme, iyi tanımlanmış nesneler topluluğu. Bir nesne kümedeyse ∈, değilse ∉ ile yazılır: 3 ∈ ℕ, −2 ∉ ℕ.',
+        'Küme, iyi tanımlanmış nesneler topluluğudur.\n- **∈:** elemanıdır, 3 ∈ ℕ\n- **∉:** elemanı değildir, −2 ∉ ℕ',
       ),
       kart(
         'Alt küme ve boş küme',
-        'A’nın her elemanı B’de varsa A ⊆ B. Hiç elemanı olmayan küme boş kümedir (∅) ve her kümenin alt kümesidir.',
+        '- **A ⊆ B:** A’nın her elemanı B’de var.\n- **Boş küme (∅):** hiç elemanı yok.\nBoş küme her kümenin alt kümesidir.',
       ),
       kart(
         'Evrensel küme ve tümleyen',
-        'Konuşulan bütün elemanların kümesi evrensel kümedir (E). A’ nın tümleyeni A′, E’de olup A’da olmayanlardır.',
+        '- **Evrensel küme (E):** konuşulan bütün elemanlar\n- **Tümleyen (A′):** E’de olup A’da olmayanlar',
         {
           tur: 'venn',
           sol: 'A',
@@ -133,7 +133,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Aralık gösterimi',
-        'Köşeli parantez uç noktayı içerir, normal parantez içermez: [2, 5) → 2 dâhil, 5 hariç.',
+        '- **Köşeli parantez [ ]:** uç nokta dâhil\n- **Normal parantez ( ):** uç nokta hariç\nÖrnek: [2, 5) → 2 dâhil, 5 hariç',
         {
           tur: 'sayiDogrusu',
           aralik: [0, 7],
@@ -143,11 +143,11 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Sayı doğrusunda',
-        'Dolu nokta uç noktanın dâhil olduğunu, boş nokta dâhil olmadığını gösterir. Yukarıdaki çizimde 2 dolu, 5 boştur.',
+        '- **Dolu nokta:** uç nokta dâhil\n- **Boş nokta:** uç nokta hariç\nÇizimde 2 dolu, 5 boştur.',
       ),
       kart(
         'Sonsuz uç',
-        'Sonsuz bir sayı değildir, ulaşılan bir yer de değildir; bu yüzden yanına daima normal parantez konur.',
+        'Sonsuz bir sayı değildir, ulaşılan bir yer de değildir.\nBu yüzden yanına **her zaman normal parantez** konur.',
         {
           tur: 'sayiDogrusu',
           aralik: [-6, 6],
@@ -158,7 +158,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Birleşim ve kesişim',
-        'Birleşim (∪) iki aralığın tamamı, kesişim (∩) ortak kısmıdır. Kesişim boş küme olabilir.',
+        '- **Birleşim (∪):** iki aralığın tamamı\n- **Kesişim (∩):** ortak kısım\nKesişim boş küme olabilir.',
         {
           tur: 'sayiDogrusu',
           aralik: [0, 10],
@@ -171,7 +171,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Aralık mı küme mi?',
-        'Aralık yalnızca gerçek sayılarda kullanılır ve arada sonsuz eleman vardır. Tam sayılarda liste yazılır: {2, 3, 4}.',
+        '- **Aralık:** yalnızca gerçek sayılarda, arada sonsuz eleman var.\n- **Liste:** tam sayılarda elemanlar yazılır, {2, 3, 4}',
       ),
     ], [
       soru(
@@ -208,7 +208,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-sayi-kumeleri', 'Sayı Kümeleri ve İşlem Özellikleri', [
       kart(
         'Kümeler iç içedir',
-        'Doğal ⊂ tam ⊂ rasyonel ⊂ gerçek. İrrasyonel sayılar rasyonellerin dışında kalır ama gerçek sayılara dâhildir.',
+        '**ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ**\nİrrasyonel sayılar ℚ’nun dışında kalır ama ℝ’ye dâhildir.',
         {
           tur: 'katman',
           daralan: true,
@@ -222,19 +222,19 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Doğal ve tam sayılar',
-        'ℕ = {0, 1, 2, …}; ℤ bunlara negatifleri ekler. Sayma sayıları sıfırı içermez, doğal sayılar içerir.',
+        '- **ℕ:** {0, 1, 2, …}\n- **ℤ:** doğal sayılar ve negatifleri\nSayma sayıları sıfırı içermez, doğal sayılar içerir.',
       ),
       kart(
         'Rasyonel sayı',
-        'a/b biçiminde yazılabilen sayı (a, b tam ve b ≠ 0). Her tam sayı da rasyoneldir: 5 = 5/1.',
+        '**a / b** biçiminde yazılabilen sayıdır (a, b tam sayı, b ≠ 0).\nHer tam sayı rasyoneldir: 5 = 5/1',
       ),
       kart(
         'İrrasyonel sayı',
-        'Kesir olarak yazılamayan sayı: √2, π, e. Ondalık açılımı sonsuz ve devirsizdir.',
+        'Kesir olarak yazılamayan sayıdır: √2, π, e\nOndalık açılımı sonsuz ve devirsizdir.',
       ),
       kart(
         'Ondalık açılım ayırt eder',
-        'Bir sayının rasyonel mi irrasyonel mi olduğu ondalık açılımından anlaşılır.',
+        'Sayının rasyonel mi irrasyonel mi olduğu ondalık açılımından anlaşılır.\nSonlu ya da devirliyse rasyoneldir.',
         {
           tur: 'tablo',
           basliklar: ['Açılım', 'Tür'],
@@ -247,19 +247,19 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'İşlem özellikleri',
-        'Değişme, birleşme ve dağılma. Dağılma iki işlemi birbirine bağlayan tek özelliktir: a(b + c) = ab + ac.',
+        'Değişme, birleşme ve dağılma.\nDağılma, iki işlemi birbirine bağlayan tek özelliktir:\n**a(b + c) = ab + ac**',
       ),
       kart(
         'Etkisiz ve ters eleman',
-        'Etkisiz eleman toplamada 0, çarpmada 1’dir. Ters eleman toplamada −a, çarpmada 1/a (a ≠ 0).',
+        '- **Etkisiz:** toplamada 0, çarpmada 1\n- **Ters:** toplamada −a, çarpmada 1/a (a ≠ 0)',
       ),
       kart(
         'Çıkarma ve bölme',
-        'Değişme özelliği yoktur: 5 − 3 ile 3 − 5 aynı değildir. Bu yüzden ayrı işlem sayılırlar.',
+        'Değişme özellikleri yoktur: 5 − 3 ≠ 3 − 5\nBu yüzden ayrı işlem sayılırlar.',
       ),
       kart(
         'Kapalılık',
-        'İki doğal sayının farkı doğal olmayabilir (3 − 5), iki tam sayının bölümü tam olmayabilir. Küme genişledikçe kapalılık artar.',
+        '- **ℕ çıkarmaya kapalı değil:** 3 − 5 = −2\n- **ℤ bölmeye kapalı değil:** 1 / 2 tam değil\nKüme genişledikçe kapalılık artar.',
         undefined,
         { not: 'Doğal sayılar çıkarmaya kapalı değil: 3 − 5 = −2 doğal değil. Tam sayılar bölmeye kapalı değil: 1/2.' },
       ),
@@ -303,31 +303,31 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-cebirsel-ifade', 'İşlem Özelliklerini Cebirsel Olarak İfade Etme', [
       kart(
         'Neden harf?',
-        'Harf, "her sayı için" demenin kısa yolu. a + b = b + a bir kural değil, sonsuz eşitliğin özetidir.',
+        'Harf, "her sayı için" demenin kısa yoludur.\na + b = b + a bir kural değil, sonsuz eşitliğin özetidir.',
       ),
       kart(
         'Terim, katsayı, değişken',
-        '3x² + 5x − 2 ifadesinde üç terim var; 3 ve 5 katsayı, x değişken, −2 sabit terimdir.',
+        '3x² + 5x − 2 ifadesinde:\n- **Terim:** 3x², 5x, −2\n- **Katsayı:** 3 ve 5\n- **Değişken:** x\n- **Sabit terim:** −2',
       ),
       kart(
         'Benzer terim',
-        'Değişkeni ve derecesi aynı olan terimler toplanabilir: 3x + 5x = 8x. 3x + 5x² sadeleşmez.',
+        'Değişkeni ve derecesi aynı olan terimler toplanır.\n- 3x + 5x = 8x\n- 3x + 5x² sadeleşmez.',
       ),
       kart(
         'Dağılma özelliği',
-        'a(b + c) = ab + ac. Parantezin önünde eksi varsa içerideki her terimin işareti değişir.',
+        '**a(b + c) = ab + ac**\nParantezin önünde eksi varsa içerideki her terimin işareti değişir.',
       ),
       kart(
         'Ters yönde okumak',
-        'Aynı eşitlik sağdan sola okunduğunda ortak çarpan parantezine alma olur: 6x + 9 = 3(2x + 3).',
+        'Aynı eşitlik sağdan sola okununca ortak çarpan parantezine alma olur:\n6x + 9 = 3(2x + 3)',
       ),
       kart(
         'Genelleme yapmak',
-        'Birkaç sayıda gözlenen örüntü, harfle yazıldığında bütün sayılar için iddiaya dönüşür.',
+        'Birkaç sayıda gözlenen örüntü, harfle yazılınca bütün sayılar için bir iddiaya dönüşür.',
       ),
       kart(
         'Karşı örnek',
-        'Bir genellemeyi çürütmek için tek bir karşı örnek yeter; doğrulamak için ise ispat gerekir.',
+        '- **Çürütmek için:** tek bir karşı örnek yeter.\n- **Doğrulamak için:** ispat gerekir.',
         undefined,
         { not: '\'Her asal tektir\' iddiasını 2 tek başına çürütür. Çürütmek için bir sayı yeter, yüz örnek ispat etmez.' },
       ),
@@ -357,11 +357,11 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-dogrusal', 'Doğrusal Fonksiyonlar ve Nitel Özellikleri', [
       kart(
         'Fonksiyon nedir?',
-        'Her girdiye tam olarak bir çıktı eşleyen kural. Bir girdiye iki çıktı verilirse fonksiyon olmaz.',
+        'Her girdiye **tam olarak bir** çıktı eşleyen kuraldır.\nBir girdiye iki çıktı verilirse fonksiyon olmaz.',
       ),
       kart(
         'Dikey doğru testi',
-        'Grafiğe çizilen her dikey doğru eğriyi en çok bir noktada kesiyorsa grafik bir fonksiyona aittir.',
+        'Her dikey doğru grafiği **en çok bir** noktada kesiyorsa grafik bir fonksiyondur.',
         {
           tur: 'koordinat',
           pencere: [-3, 3, -3, 3],
@@ -389,11 +389,11 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Tanım ve görüntü kümesi',
-        'Girdilerin kümesi tanım kümesi, çıkan değerlerin kümesi görüntü kümesidir. f(x) = 1/x için 0 tanımlı değildir.',
+        '- **Tanım kümesi:** girdilerin kümesi\n- **Görüntü kümesi:** çıkan değerlerin kümesi\nÖrnek: f(x) = 1/x, x = 0’da tanımlı değil.',
       ),
       kart(
         'Doğrusal fonksiyon',
-        'f(x) = ax + b biçimindedir ve grafiği bir doğrudur. a eğim, b ise y eksenini kestiği değerdir.',
+        '**f(x) = ax + b**, grafiği bir doğrudur.\n- **a:** eğim\n- **b:** y eksenini kestiği değer',
         {
           tur: 'koordinat',
           pencere: [-3, 3, -5, 5],
@@ -417,7 +417,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Eğim ne söyler?',
-        'Eğim, x bir birim arttığında y’nin ne kadar değiştiğidir. a = 2 ise sağa bir adımda yukarı iki adım.',
+        'x bir birim artınca y’nin ne kadar değiştiğidir.\na = 2 ise: sağa bir adımda yukarı iki adım.',
         {
           tur: 'koordinat',
           pencere: [0, 4, 0, 5],
@@ -449,7 +449,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Artan mı azalan mı?',
-        'a > 0 ise fonksiyon artandır, a < 0 ise azalandır, a = 0 ise sabittir ve grafiği yatay bir doğrudur.',
+        '- **a > 0:** artan\n- **a < 0:** azalan\n- **a = 0:** sabit, grafik yatay',
         {
           tur: 'koordinat',
           pencere: [-3, 3, -4, 4],
@@ -476,23 +476,23 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Kesim noktaları',
-        'b değeri y eksenini kestiği noktadır; x eksenini kestiği yer f(x) = 0 çözülerek bulunur.',
+        '- **y eksenini:** b noktasında keser.\n- **x eksenini:** f(x) = 0 çözülerek bulunur.',
       ),
       kart(
         'İki noktadan eğim',
-        'Eğim = (y₂ − y₁) / (x₂ − x₁). (1, 3) ve (3, 7) noktalarından geçen doğrunun eğimi 4/2 = 2.',
+        '**Eğim = (y₂ − y₁) / (x₂ − x₁)**\n(1, 3) ve (3, 7) için: 4 / 2 = 2',
       ),
       kart(
         'Sabit fonksiyon',
-        'f(x) = 3 her girdiye 3 verir. Grafiği yataydır, eğimi sıfırdır ve x eksenini hiç kesmez.',
+        'f(x) = 3 her girdiye 3 verir.\n- Grafiği yatay, eğimi sıfır\n- x eksenini hiç kesmez',
       ),
       kart(
         'Gerçek hayatta',
-        'Sabit ücretli taksi: f(x) = 8x + 25. Burada 25 açılış ücreti (b), 8 kilometre başına artış (a).',
+        'Taksi ücreti: **f(x) = 8x + 25**\n- **25 (b):** açılış ücreti\n- **8 (a):** kilometre başına artış',
       ),
       kart(
         'Grafikten okumak',
-        'Doğrunun dikliği eğimi, yükseldiği yön artan mı azalan mı olduğunu, y ekseniyle kesişimi başlangıç değerini verir.',
+        '- **Dikliği:** eğimin büyüklüğü\n- **Yönü:** artan mı azalan mı\n- **y ekseniyle kesişimi:** başlangıç değeri',
       ),
     ], [
       soru(
@@ -577,15 +577,15 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-mutlak-deger', 'Mutlak Değer Fonksiyonu ve Nitel Özellikleri', [
       kart(
         'Mutlak değer',
-        'Bir sayının sıfıra olan uzaklığı. Uzaklık negatif olamayacağı için sonuç asla negatif değildir.',
+        'Bir sayının sıfıra olan uzaklığıdır.\nUzaklık negatif olamayacağı için sonuç asla negatif değildir.',
       ),
       kart(
         'Tanımı',
-        '|x| = x (x ≥ 0 ise), |x| = −x (x < 0 ise). Parçalı bir tanımdır: kural, x’in işaretine göre değişir.',
+        'Parçalı bir tanımdır, kural x’in işaretine göre değişir:\n- **x ≥ 0 ise:** |x| = x\n- **x < 0 ise:** |x| = −x',
       ),
       kart(
         'Grafiği V şeklinde',
-        'x ≥ 0 için doğru yukarı, x < 0 için aşağıdan gelir; ikisi orijinde birleşir ve orası kırılma noktasıdır.',
+        '- **Sağ kol:** x ≥ 0 için y = x\n- **Sol kol:** x < 0 için y = −x\nİki kol orijinde birleşir; orası kırılma noktasıdır.',
         {
           tur: 'koordinat',
           pencere: [-4, 4, -1, 4],
@@ -605,7 +605,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Grafiği kaydırmak',
-        '|x − 2| grafiği sağa 2 birim kayar, |x| + 3 yukarı 3 birim kayar. İçerideki değişim yatay, dışarıdaki dikey etkiler.',
+        '- **|x − 2|:** sağa 2 birim\n- **|x| + 3:** yukarı 3 birim\nİçerideki değişiklik yatay, dışarıdaki dikey kaydırır.',
         {
           tur: 'koordinat',
           pencere: [-2, 6, -1, 4],
@@ -634,11 +634,11 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Denklem çözerken',
-        '|x| = a denkleminin a > 0 için iki çözümü vardır: x = a ve x = −a. a < 0 ise çözüm yoktur.',
+        '**|x| = a** denkleminde:\n- **a > 0:** iki çözüm, x = a ve x = −a\n- **a = 0:** tek çözüm, x = 0\n- **a < 0:** çözüm yok',
       ),
       kart(
         'Eşitsizlikte: küçüktür',
-        '|x| < a ise −a < x < a. Çözüm sıfırın çevresinde tek bir aralıktır.',
+        '**|x| < a** ise **−a < x < a**\nÇözüm sıfırın çevresinde tek bir aralıktır.',
         {
           tur: 'sayiDogrusu',
           aralik: [-5, 5],
@@ -648,7 +648,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Eşitsizlikte: büyüktür',
-        '|x| > a ise x < −a ya da x > a. Çözüm birbirinden ayrı iki parçadır; en sık karıştırılan yer burasıdır.',
+        '**|x| > a** ise **x < −a ya da x > a**\nÇözüm birbirinden ayrı iki parçadır; en sık karıştırılan yer burası.',
         {
           tur: 'sayiDogrusu',
           aralik: [-5, 5],
@@ -661,7 +661,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Uzaklık olarak okumak',
-        '|x − 5| ifadesi "x ile 5 arasındaki uzaklık" demektir. |x − 5| < 2 → x, 5’e 2 birimden yakın.',
+        '|x − 5|, "x ile 5 arasındaki uzaklık" demektir.\n|x − 5| < 2 → x, 5’e 2 birimden yakın.',
         undefined,
         { not: '|x − 5| < 2 → 5\'e uzaklığı 2\'den az → 3 < x < 7. Tek satırda, denklem çözmeden.' },
       ),
@@ -721,19 +721,19 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-denklem-esitsizlik', 'Doğrusal Denklem ve Eşitsizlikler İçeren Problemler', [
       kart(
         'Denklem kurmak',
-        'Bilinmeyeni seç, cümleyi eşitliğe çevir, çöz, sonucu problemin bağlamında kontrol et.',
+        '- Bilinmeyeni seç.\n- Cümleyi eşitliğe çevir.\n- Çöz.\n- Sonucu problemin bağlamında kontrol et.',
       ),
       kart(
         'Çözmenin mantığı',
-        'Denklem bir terazidir: iki tarafa aynı şey yapıldıkça denge bozulmaz. Çözmek, bilinmeyeni yalnız bırakmaktır.',
+        'Denklem bir terazidir: iki tarafa aynı işlem yapıldıkça denge bozulmaz.\nÇözmek, bilinmeyeni yalnız bırakmaktır.',
       ),
       kart(
         'Eşitsizlikte işaret',
-        'İki tarafı negatif sayıyla çarparken ya da bölerken eşitsizlik yön değiştirir: −2x < 6 → x > −3.',
+        'Negatif sayıyla çarparken ya da bölerken eşitsizlik **yön değiştirir**.\nÖrnek: −2x < 6 → x > −3',
       ),
       kart(
         'Çözüm kümesi',
-        'Denklemin çözümü genellikle tek noktadır; eşitsizliğin çözümü bir aralıktır ve sayı doğrusunda gösterilir.',
+        '- **Denklem:** çözüm genellikle tek bir nokta\n- **Eşitsizlik:** çözüm bir aralık, sayı doğrusunda gösterilir',
         {
           tur: 'sayiDogrusu',
           aralik: [-6, 6],
@@ -743,21 +743,21 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Çözümsüz ve sonsuz çözüm',
-        'Bilinmeyen sadeleşip 0 = 5 kalırsa çözüm yoktur; 0 = 0 kalırsa her sayı çözümdür.',
+        'Bilinmeyen sadeleşince kalan eşitliğe bak:\n- **0 = 5 kalırsa:** çözüm yok\n- **0 = 0 kalırsa:** her sayı çözüm',
       ),
       kart(
         'Anlam kontrolü',
-        'Kişi sayısı negatif, yaş kesirli çıkmaz. Matematiksel doğru çözüm bağlamda geçersiz olabilir.',
+        'Kişi sayısı negatif, yaş kesirli çıkmaz.\nMatematiksel olarak doğru çözüm bağlamda geçersiz olabilir.',
         undefined,
         { not: '%20 artıp %20 azalan fiyat başa dönmez: 100 → 120 → 96. Art arda yüzdelerde çarpanları çarp: 1,2 × 0,8.' },
       ),
       kart(
         'Oran ve orantı',
-        'Doğru orantıda biri artarken öteki aynı oranda artar; ters orantıda çarpımları sabit kalır.',
+        '- **Doğru orantı:** biri artarken öteki aynı oranda artar.\n- **Ters orantı:** çarpımları sabit kalır.',
       ),
       kart(
         'Yüzde problemleri',
-        'Yüzde bir orandır: %20 artış 1,2 ile çarpmaktır. Art arda %20 artıp %20 azalan sayı başlangıca dönmez.',
+        'Yüzde bir orandır: %20 artış, 1,2 ile çarpmaktır.\nArt arda %20 artıp %20 azalan sayı başa dönmez: 1,2 · 0,8 = 0,96',
       ),
     ], [
       soru('Bir eşitsizliğin iki tarafı negatif bir sayıyla çarpılırsa eşitsizliğin yönü değişir.', true, 'Negatifle çarpmak sıralamayı ters çeviriyor: 2 < 3 iken −2 > −3.'),
@@ -786,7 +786,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-ucgen-ozellik', 'Üçgende Açı ve Kenarla İlgili Özellikler', [
       kart(
         'İç açılar toplamı',
-        'Bir üçgenin iç açıları toplamı 180°, dış açıları toplamı 360°’dir. Bu, üçgenin tanımından gelen değişmez bir kuraldır.',
+        '- **İç açılar toplamı:** 180°\n- **Dış açılar toplamı:** 360°\nBu, her üçgende geçerli değişmez bir kuraldır.',
         {
           tur: 'koordinat',
           pencere: [0, 10, 0, 6],
@@ -812,15 +812,15 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Dış açı özelliği',
-        'Bir dış açı, kendisine komşu olmayan iki iç açının toplamına eşittir. İspatı doğrudan 180° kuralından çıkar.',
+        'Bir dış açı, kendisine komşu olmayan iki iç açının toplamına eşittir.\nİspatı doğrudan 180° kuralından çıkar.',
       ),
       kart(
         'Kenar-açı ilişkisi',
-        'Büyük açının karşısında büyük kenar bulunur. İkisi aynı yönde değişir; en küçük açının karşısı en kısa kenardır.',
+        'Büyük açının karşısında büyük kenar bulunur.\nEn küçük açının karşısı en kısa kenardır.',
       ),
       kart(
         'Üçgen eşitsizliği',
-        'İki kenarın toplamı üçüncü kenardan büyük olmalıdır. Aksi hâlde kenarlar birleşip üçgen kapanmaz.',
+        'İki kenarın toplamı üçüncü kenardan **büyük** olmalıdır.\nAksi hâlde kenarlar birleşip üçgen kapanmaz.',
         {
           tur: 'tablo',
           basliklar: ['Kenarlar', 'Üçgen olur mu?'],
@@ -833,33 +833,33 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Üçüncü kenarın aralığı',
-        'İki kenar a ve b ise üçüncü kenar |a − b| ile a + b arasındadır. Uçlar dâhil değildir.',
+        'İki kenar a ve b ise üçüncü kenar c:\n**|a − b| < c < a + b**\nUçlar dâhil değildir.',
         undefined,
         { not: 'Kenarlar 4 ve 9: 5 < c < 13. Tam sayı ise 6\'dan 12\'ye 7 değer; 5 ve 13 dâhil değil, sayarken atla.' },
       ),
       kart(
         'Kenar sorusu kalıbı',
-        'Kenarları 4 ve 9 olan üçgende üçüncü kenar 5 < c < 13; tam sayı ise 6\'dan 12\'ye 7 değer. Uçlar alınmaz.',
+        'Kenarlar 4 ve 9 ise: **5 < c < 13**\nTam sayı değerleri 6, 7, …, 12 → **7 değer**\n5 ve 13 sayılmaz.',
       ),
       kart(
         'Üçgen türleri',
-        'Kenarlarına göre eşkenar, ikizkenar, çeşitkenar; açılarına göre dar, dik ve geniş açılı.',
+        '- **Kenarlarına göre:** eşkenar, ikizkenar, çeşitkenar\n- **Açılarına göre:** dar, dik, geniş açılı',
       ),
       kart(
         'İkizkenar üçgen',
-        'Eşit kenarların karşısındaki açılar da eşittir. Tepe açısından inen yükseklik aynı zamanda açıortay ve kenarortaydır.',
+        'Eşit kenarların karşısındaki açılar da eşittir.\nTepeden inen yükseklik aynı zamanda açıortay ve kenarortaydır.',
       ),
       kart(
         'Üç temel doğru',
-        'Açıortay açıyı ikiye böler, kenarortay kenarı ortalar, yükseklik kenara diktir. Üçü genelde farklı doğrulardır.',
+        '- **Açıortay:** açıyı ikiye böler.\n- **Kenarortay:** kenarı ortalar.\n- **Yükseklik:** kenara diktir.\nÜçü genelde farklı doğrulardır.',
       ),
       kart(
         'Ağırlık merkezi',
-        'Üç kenarortay tek noktada kesişir ve bu nokta her kenarortayı köşeden başlayarak 2/1 oranında böler.',
+        'Üç kenarortay tek noktada kesişir.\nBu nokta her kenarortayı köşeden başlayarak **2 : 1** oranında böler.',
       ),
       kart(
         'Alan',
-        'Alan = taban · yükseklik / 2. Yükseklik, tabana **dik** olan uzaklıktır; yan kenar yükseklik değildir.',
+        '**Alan = taban · yükseklik / 2**\nYükseklik, tabana **dik** olan uzaklıktır; yan kenar yükseklik değildir.',
       ),
     ], [
       soru('Kenar uzunlukları 3, 4 ve 8 olan bir üçgen çizilebilir.', false, 'Üçgen eşitsizliği tutmuyor: 3 + 4 = 7 < 8, iki kenar üçüncüyü kapatamıyor.'),
@@ -926,7 +926,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-donusum', 'Geometrik Dönüşümler', [
       kart(
         'Öteleme',
-        'Şekil belirli bir yönde ve miktarda kaydırılır. Boyut, şekil ve yön korunur; yalnızca konum değişir.',
+        'Şekil belirli bir yönde ve miktarda kaydırılır.\nBoyut, biçim ve yön korunur; yalnızca konum değişir.',
         {
           tur: 'koordinat',
           pencere: [-1, 9, -1, 5],
@@ -956,15 +956,15 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Yansıma',
-        'Bir doğruya göre simetrik görüntü alınır. Şekil ters döner ama bütün ölçüleri korunur.',
+        'Bir doğruya göre simetrik görüntü alınır.\nŞekil ters döner ama bütün ölçüleri korunur.',
       ),
       kart(
         'Döndürme',
-        'Bir nokta çevresinde belirli açıyla çevrilir. Merkez, açı ve yön (saat yönü / tersi) birlikte belirtilmelidir.',
+        'Şekil bir nokta çevresinde belirli bir açıyla çevrilir.\nÜçü birlikte belirtilir: merkez, açı ve yön.',
       ),
       kart(
         'Koordinatta kural',
-        'Dönüşümler nokta koordinatlarına basit kurallarla yansır.',
+        'Her dönüşüm, noktanın koordinatlarına basit bir kuralla yansır.\nTabloda en sık kullanılan dördü var.',
         {
           tur: 'tablo',
           basliklar: ['Dönüşüm', '(x, y) → '],
@@ -978,21 +978,21 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Eşlik dönüşümleri',
-        'Öteleme, yansıma ve döndürme uzunlukları korur; ürettikleri şekil orijinaline eştir.',
+        'Öteleme, yansıma ve döndürme uzunlukları korur.\nÜrettikleri şekil orijinaline **eştir**.',
       ),
       kart(
         'Benzerlik dönüşümü',
-        'Ölçekleme (homoteti) boyutu değiştirir ama açıları korur; sonuç benzer bir şekildir.',
+        'Ölçekleme (homoteti) boyutu değiştirir, açıları korur.\nSonuç **benzer** bir şekildir.',
       ),
       kart(
         'Bileşke dönüşüm',
-        'İki dönüşüm art arda uygulanabilir ve sıraları önemlidir: önce döndürüp ötelemek ile tersi farklı sonuç verir.',
+        'İki dönüşüm art arda uygulanabilir ve **sıra önemlidir**.\nÖnce döndürüp ötelemek ile tersi farklı sonuç verir.',
         undefined,
         { not: '(1, 0) noktası: önce 90° döndürüp 2 sağa ötele → (2, 1); önce ötele sonra döndür → (0, 3). Sıra sonucu değiştirir.' },
       ),
       kart(
         'Simetri ekseni',
-        'Bir şekil bir doğruya göre kendisiyle çakışıyorsa o doğru simetri eksenidir. Eşkenar üçgenin üç tanesi vardır.',
+        'Şekil bir doğruya göre kendisiyle çakışıyorsa o doğru simetri eksenidir.\nEşkenar üçgenin üç simetri ekseni vardır.',
       ),
     ], [
       soru('Öteleme şeklin boyutunu ve açılarını değiştirmez.', true, 'Şekil yalnızca yer değiştiriyor; öteleme bir eşlik dönüşümü.'),
@@ -1019,11 +1019,11 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-eslik-kosul', 'Eşlik ve Benzerlik Koşulları', [
       kart(
         'Eşlik nedir?',
-        'İki şeklin bütün karşılıklı kenar ve açılarının eşit olması. Üst üste tam olarak çakışırlar.',
+        'İki şeklin karşılıklı bütün kenar ve açıları eşittir.\nÜst üste konunca tam olarak çakışırlar.',
       ),
       kart(
         'Eşlik koşulları',
-        'Üç uygun eleman eşliği garanti eder; altı elemanın hepsini ölçmek gerekmez.',
+        'Üç uygun eleman eşliği garanti eder.\nAltı elemanın hepsini ölçmek gerekmez.',
         {
           tur: 'tablo',
           basliklar: ['Koşul', 'Anlamı'],
@@ -1037,29 +1037,29 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'AAA neden yetmez?',
-        'Üç açısı eşit iki üçgen aynı biçimdedir ama aynı boyda olmak zorunda değildir; bu eşlik değil benzerliktir.',
+        'Üç açısı eşit iki üçgen aynı biçimdedir ama aynı boyda olmak zorunda değildir.\nBu eşlik değil **benzerliktir**.',
         undefined,
         { not: 'Açıları 30-60-90 olan iki üçgen: biri kibrit kutusu, biri bina; benzer ama eş değil. AAA benzerlik verir.' },
       ),
       kart(
         'Benzerlik nedir?',
-        'Açılar eşit, karşılıklı kenarlar orantılıdır. Şekil aynı, ölçek farklıdır.',
+        '- Karşılıklı açılar eşit\n- Karşılıklı kenarlar orantılı\nBiçim aynı, ölçek farklıdır.',
       ),
       kart(
         'Benzerlik koşulları',
-        'AA, KKK (oran) ve KAK (oran). Üçgende iki açının eşitliği benzerlik için yeter — üçüncüsü kendiliğinden eşit olur.',
+        '- **AA:** iki açı eşit\n- **KKK:** üç kenar orantılı\n- **KAK:** iki kenar orantılı, aradaki açı eşit',
       ),
       kart(
         'Eşlik özel bir benzerliktir',
-        'Benzerlik oranı 1 olan benzerlik, eşliktir. Her eş şekil benzerdir, tersi doğru değildir.',
+        'Benzerlik oranı 1 olan benzerlik eşliktir.\nHer eş şekil benzerdir; tersi doğru değildir.',
       ),
       kart(
         'Yazım sırası önemli',
-        'ABC ≅ DEF yazıldığında A ile D, B ile E, C ile F eşleşir. Sıra bozulursa kurulan bütün eşitlikler yanlış olur.',
+        '**ABC ≅ DEF** yazılınca: A↔D, B↔E, C↔F\nSıra bozulursa kurulan bütün eşitlikler yanlış olur.',
       ),
       kart(
         'Nerede kullanılır?',
-        'Ölçülemeyen uzunlukları hesaplamak için: nehrin genişliği, binanın yüksekliği, haritadaki mesafe.',
+        'Ölçülemeyen uzunlukları hesaplamakta:\n- Bir nehrin genişliği\n- Bir binanın yüksekliği\n- Haritadaki mesafe',
       ),
     ], [
       soru('İki üçgenin üç açısı da eşitse bu üçgenler eştir.', false, 'AAA eşlik değil benzerlik verir; aynı biçimde ama farklı büyüklükte olabilirler.'),
@@ -1086,7 +1086,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-benzer-ucgen', 'Benzer Üçgenler Oluşturma', [
       kart(
         'Paralel kesen',
-        'Bir üçgende bir kenara paralel çizilen doğru, orijinaline benzer küçük bir üçgen üretir.',
+        'Üçgende bir kenara paralel çizilen doğru, orijinaline benzer küçük bir üçgen üretir.',
         {
           tur: 'koordinat',
           pencere: [0, 10, 0, 6],
@@ -1116,29 +1116,29 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Temel benzerlik teoremi',
-        'Paralel kesen, kestiği iki kenarı aynı oranda böler. Bu, Tales teoreminin üçgendeki hâlidir.',
+        'Paralel kesen, kestiği iki kenarı **aynı oranda** böler.\nBu, Tales teoreminin üçgendeki hâlidir.',
       ),
       kart(
         'Benzerlik oranı',
-        'Karşılıklı kenarların oranı. Bu oran üçgenin bütün uzunluklarında (kenar, yükseklik, çevre) aynıdır.',
+        'Karşılıklı kenarların oranıdır.\nKenar, yükseklik ve çevre gibi bütün uzunluklarda aynıdır.',
       ),
       kart(
         'Alan oranı karesidir',
-        'Benzerlik oranı k ise çevreler oranı k, alanlar oranı k²’dir. Uzunluk oranıyla alan oranı sık karıştırılır.',
+        'Benzerlik oranı **k** ise:\n- **Çevreler oranı:** k\n- **Alanlar oranı:** k²',
         undefined,
         { not: 'Benzerlik oranı 2/3 ise alanlar 4/9. Soru \'alanı 18 ise\' diyorsa küçüğün alanı 8, 12 değil.' },
       ),
       kart(
         'Karşılıklı elemanlar',
-        'Benzerlik yazılırken köşeler doğru sırayla eşleştirilmelidir; sıra bozulursa oranlar yanlış kurulur.',
+        'Benzerlik yazılırken köşeler doğru sırayla eşleştirilmelidir.\nSıra bozulursa oranlar yanlış kurulur.',
       ),
       kart(
         'Kelebek benzerliği',
-        'İki doğru kesiştiğinde ters açılar eşit olur; paralel kenarlar varsa iki üçgen "kelebek" biçiminde benzerdir.',
+        'Kesişen iki doğruda ters açılar eşittir.\nKarşılıklı kenarlar paralelse iki üçgen "kelebek" biçiminde benzerdir.',
       ),
       kart(
         'Günlük kullanım',
-        'Gölge boyu ile ağaç boyunu hesaplamak benzer üçgen kurmaktır: aynı anda ölçülen iki gölge aynı oranı verir.',
+        'Gölge boyundan ağaç boyunu hesaplamak benzer üçgen kurmaktır.\nAynı anda ölçülen iki gölge aynı oranı verir.',
       ),
     ], [
       soru(
@@ -1199,7 +1199,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-teoremler', 'Tales, Öklid ve Pisagor Teoremleri', [
       kart(
         'Tales teoremi',
-        'Paralel doğrular, kestikleri doğrular üzerinde orantılı parçalar ayırır.',
+        'Paralel doğrular, kestikleri doğrular üzerinde **orantılı** parçalar ayırır.',
         {
           tur: 'koordinat',
           pencere: [0, 10, 0, 6],
@@ -1242,11 +1242,11 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Tales nerede işe yarar?',
-        'Bir kenarı ölçülemeyen şekillerde eksik uzunluğu bulmak için: orantı kurulur, bilinmeyen çekilir.',
+        'Bir kenarı ölçülemeyen şekilde eksik uzunluğu bulmakta:\norantı kurulur, bilinmeyen çekilir.',
       ),
       kart(
         'Pisagor teoremi',
-        'Dik üçgende hipotenüsün karesi, dik kenarların karelerinin toplamına eşittir: a² + b² = c².',
+        'Dik üçgende hipotenüs c ise:\n**a² + b² = c²**',
         {
           tur: 'koordinat',
           pencere: [0, 7, 0, 5],
@@ -1280,27 +1280,27 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Pisagor üçlüleri',
-        '(3,4,5), (5,12,13), (8,15,17) ve katları. Tanımak soruda zaman kazandırır: 6-8-10 de bir üçlüdür.',
+        '- 3, 4, 5\n- 5, 12, 13\n- 8, 15, 17\nBunların katları da üçlüdür: 6, 8, 10',
       ),
       kart(
         'Teoremin tersi',
-        'a² + b² = c² sağlanıyorsa üçgen diktir. Bu yönü, bir üçgenin dik olup olmadığını sınamak için kullanılır.',
+        'a² + b² = c² sağlanıyorsa üçgen diktir.\nBir üçgenin dik olup olmadığı bu yönle sınanır.',
       ),
       kart(
         'Öklid: yükseklik bağıntısı',
-        'Dik üçgende hipotenüse indirilen yükseklik h ise h² = p·q — p ve q, yüksekliğin hipotenüste ayırdığı parçalardır.',
+        'Hipotenüse inen yükseklik h, hipotenüsü p ve q parçalarına ayırsın:\n**h² = p · q**',
       ),
       kart(
         'Öklid: dik kenar bağıntısı',
-        'Her dik kenarın karesi, kendi izdüşümü ile hipotenüsün çarpımına eşittir: a² = p·c.',
+        'Her dik kenarın karesi, kendi izdüşümü ile hipotenüsün çarpımıdır:\n**a² = p · c**',
       ),
       kart(
         'Özel dik üçgenler',
-        '30-60-90 üçgeninde kenarlar 1, √3, 2 oranında; 45-45-90 üçgeninde 1, 1, √2 oranındadır.',
+        '- **30-60-90:** kenarlar 1 : √3 : 2\n- **45-45-90:** kenarlar 1 : 1 : √2',
       ),
       kart(
         'Neden aynı temada?',
-        'Üçünün de ispatı benzerliğe dayanır; ayrı formüller gibi görünen şeyler tek fikrin sonuçlarıdır.',
+        'Üçünün de ispatı benzerliğe dayanır.\nAyrı formüller gibi görünenler tek bir fikrin sonuçlarıdır.',
         undefined,
         { not: 'Öklid h² = p·q yalnızca hipotenüse inen yükseklikte; dik kenara inen yükseklikte kullanırsan yanlış.' },
       ),
@@ -1355,33 +1355,33 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-benzerlik-problem', 'Eşlik ve Benzerlik Problemleri', [
       kart(
         'Çözüm yolu',
-        'Önce benzer üçgenleri ayır, sonra karşılıklı köşeleri eşleştir, en sonda oranı kur.',
+        '- Benzer üçgenleri ayır.\n- Karşılıklı köşeleri eşleştir.\n- Oranı kur.',
       ),
       kart(
         'Şekli ayırmak',
-        'İç içe geçmiş benzer üçgenleri iki ayrı şekil olarak yeniden çizmek, eşleştirme hatasını büyük ölçüde bitirir.',
+        'İç içe geçmiş benzer üçgenleri iki ayrı şekil olarak yeniden çiz.\nEşleştirme hatası büyük ölçüde biter.',
         undefined,
         { not: 'Ağaç–gölge sorusu: aynı anda ölçülen 1 m\'lik çubuk 1,5 m gölge veriyorsa 6 m gölgeli ağaç 4 m.' },
       ),
       kart(
         'En sık hata',
-        'Karşılıklı olmayan kenarları oranlamak. Eşleştirme yanlışsa oran da yanlış olur.',
+        'Karşılıklı olmayan kenarları oranlamak.\nEşleştirme yanlışsa oran da yanlış olur.',
       ),
       kart(
         'Alan oranı',
-        'Benzerlik oranı k ise alan oranı k²’dir. Uzunluk oranıyla alan oranı karıştırılıyor.',
+        'Benzerlik oranı **k** ise alan oranı **k²** olur.\nUzunluk oranı ile alan oranı sık karıştırılır.',
       ),
       kart(
         'Hacim oranı',
-        'Benzer katı cisimlerde hacimler oranı k³’tür. Ölçeği iki katına çıkan bir maket sekiz kat hacim kaplar.',
+        'Benzer cisimlerde hacimler oranı **k³** olur.\nÖlçeği iki katına çıkan maket, sekiz kat hacim kaplar.',
       ),
       kart(
         'Ölçek',
-        'Harita ölçeği bir benzerlik oranıdır: 1/25.000 ölçekte haritadaki 1 cm, arazide 250 metredir.',
+        'Harita ölçeği bir benzerlik oranıdır.\n1/25.000 ölçekte haritadaki 1 cm, arazide 250 m’dir.',
       ),
       kart(
         'Uygulama',
-        'Maket, gölge boyu, fotoğraf büyütme ve harita hesapları hep benzerlik problemidir.',
+        'Hepsi benzerlik problemidir:\n- Maket ve harita hesapları\n- Gölge boyu\n- Fotoğraf büyütme',
       ),
     ], [
       soru('Benzer iki cismin hacimleri oranı benzerlik oranının küpüdür.', true, 'Üç boyut da aynı oranda büyüyor.'),
@@ -1409,15 +1409,15 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-algoritma', 'Algoritma Temelli Problemler', [
       kart(
         'Algoritma nedir?',
-        'Bir problemi çözmek için izlenen sonlu, sıralı ve kesin adımlar dizisi.',
+        'Bir problemi çözmek için izlenen sonlu, sıralı ve kesin adımlar dizisidir.',
       ),
       kart(
         'Üç özellik',
-        'Sonlu olmalı, her adım açık olmalı ve aynı girdide her zaman aynı sonucu vermelidir.',
+        '- Sonlu olmalı.\n- Her adımı açık olmalı.\n- Aynı girdide hep aynı sonucu vermeli.',
       ),
       kart(
         'Girdi, işlem, çıktı',
-        'Her algoritmanın bir girdisi, üzerinde yapılan işlemler ve bir çıktısı vardır.',
+        'Her algoritmanın bir girdisi, üzerinde yapılan işlemleri ve bir çıktısı vardır.',
         {
           tur: 'akis',
           adimlar: [
@@ -1429,7 +1429,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Akış şeması',
-        'Oval başlangıç-bitiş, dikdörtgen işlem, eşkenar dörtgen karar, paralelkenar giriş-çıkış.',
+        '- **Oval:** başlangıç ve bitiş\n- **Dikdörtgen:** işlem\n- **Eşkenar dörtgen:** karar\n- **Paralelkenar:** giriş ve çıkış',
         {
           tur: 'akis',
           dikey: true,
@@ -1444,21 +1444,21 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Üç temel yapı',
-        'Sıralı, koşullu (eğer) ve tekrarlı (döngü) yapılar. Her algoritma bu üçünün bileşimidir.',
+        '- **Sıralı:** adımlar art arda\n- **Koşullu:** "eğer" ile dallanma\n- **Tekrarlı:** döngü\nHer algoritma bu üçünün bileşimidir.',
       ),
       kart(
         'Değişken',
-        'Değer tutan adlandırılmış kutu. İçindeki değer değişebilir; algoritma boyunca güncellenir.',
+        'Değer tutan, adı konmuş bir kutudur.\nİçindeki değer algoritma boyunca güncellenebilir.',
       ),
       kart(
         'Sonsuz döngü',
-        'Döngüyü bitiren koşul hiçbir zaman sağlanmazsa algoritma durmaz — "sonlu olma" özelliği bu yüzden şart.',
+        'Döngüyü bitiren koşul hiç sağlanmazsa algoritma durmaz.\n"Sonlu olma" özelliği bu yüzden şarttır.',
         undefined,
         { not: '\'Sayı 10\'dan küçükken 2 ekle\' döngüsü 3\'ten başlarsa durur; 11\'den başlarsa hiç girmez. Başlangıcı kontrol et.' },
       ),
       kart(
         'Neden matematikte?',
-        'Matematiksel çözüm de bir algoritmadır: bölme işlemi ve denklem çözme adım adım tanımlıdır.',
+        'Matematiksel çözüm de bir algoritmadır.\nBölme işlemi ve denklem çözme adım adım tanımlıdır.',
       ),
     ], [
       soru('Akış şemasında karar noktası dikdörtgenle gösterilir.', false, 'Karar noktası eşkenar dörtgenle çizilir; dikdörtgen işlem adımı.'),
@@ -1493,15 +1493,15 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-mantik', 'Mantık Bağlaçları ve Niceleyiciler', [
       kart(
         'Önerme',
-        'Doğru ya da yanlış olduğu kesin olarak söylenebilen ifade. Soru ve emir cümlesi önerme değildir.',
+        'Doğru ya da yanlış olduğu kesin olarak söylenebilen ifadedir.\nSoru ve emir cümleleri önerme değildir.',
       ),
       kart(
         'Doğruluk değeri',
-        'Her önermenin bir doğruluk değeri vardır: doğru (D) ya da yanlış (Y). İkisi arasında bir değer yoktur.',
+        'Her önerme ya **doğru (D)** ya **yanlış (Y)** olur.\nİkisi arasında bir değer yoktur.',
       ),
       kart(
         've bağlacı (∧)',
-        'İki önermenin ikisi birden doğruysa bileşik önerme doğrudur; biri bile yanlışsa sonuç yanlıştır.',
+        '- İkisi de doğruysa: **doğru**\n- Biri bile yanlışsa: **yanlış**',
         {
           tur: 'tablo',
           basliklar: ['p', 'q', 'p ∧ q'],
@@ -1515,7 +1515,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'veya bağlacı (∨)',
-        'En az biri doğruysa sonuç doğrudur. Günlük dildeki "ya o ya bu" anlamı değil, "ikisi de olabilir" anlamıdır.',
+        'En az biri doğruysa sonuç doğrudur.\n"Ya o ya bu" değil, "ikisi de olabilir" anlamındadır.',
         {
           tur: 'tablo',
           basliklar: ['p', 'q', 'p ∨ q'],
@@ -1529,25 +1529,25 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'değil (¬)',
-        'Önermenin doğruluk değerini tersine çevirir. İki kez uygulanırsa başa dönülür: ¬(¬p) = p.',
+        'Önermenin doğruluk değerini tersine çevirir.\nİki kez uygulanınca başa dönülür: **¬(¬p) = p**',
       ),
       kart(
         'Koşullu önerme',
-        'p ⇒ q yalnızca p doğru ve q yanlışken yanlıştır. Diğer üç durumda doğrudur.',
+        '**p ⇒ q** yalnızca bir durumda yanlıştır:\np doğru, q yanlışken.\nDiğer üç durumda doğrudur.',
         undefined,
         { not: '\'Yağmur yağarsa yer ıslanır\': yağmur yok, yer ıslak → önerme yine doğru. Yalnız D⇒Y yanlış.' },
       ),
       kart(
         'Karşıt tersi',
-        'p ⇒ q ile ¬q ⇒ ¬p her zaman aynı doğruluk değerini taşır. İspatlarda bu eşdeğerlik kullanılır.',
+        '**p ⇒ q ≡ ¬q ⇒ ¬p**\nİkisi her zaman aynı doğruluk değerini taşır; ispatlarda kullanılır.',
       ),
       kart(
         'Niceleyiciler',
-        '∀ "her" demektir, ∃ "en az bir" demektir. İkisinin yeri değişince anlam tümüyle değişir.',
+        '- **∀:** "her"\n- **∃:** "en az bir"\nİkisinin yeri değişince anlam tümüyle değişir.',
       ),
       kart(
         'Olumsuzlama',
-        '"Her" olumsuzlanınca "en az bir", "en az bir" olumsuzlanınca "hiçbir" olur.',
+        '- **"Her"in olumsuzu:** "en az biri değil"\n- **"En az bir"in olumsuzu:** "hiçbiri"',
       ),
     ], [
       soru('"Bu çiçek çok güzel." cümlesi bir önermedir.', false, 'Önerme doğru ya da yanlış olduğu kesin söylenebilen cümledir; bu bir görüş.'),
@@ -1589,15 +1589,15 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-mantik-algoritma', 'Mantık Bağlaçlarının Algoritmik Kullanımı', [
       kart(
         'Koşullu ifadeler',
-        'Programdaki "eğer" ifadeleri mantık önermeleridir; koşul doğruysa blok çalışır, yanlışsa atlanır.',
+        'Programdaki "eğer" ifadeleri mantık önermeleridir.\n- **Koşul doğruysa:** blok çalışır.\n- **Yanlışsa:** blok atlanır.',
       ),
       kart(
         'Bileşik koşullar',
-        '"Yaş > 18 ve ehliyet var" gibi koşullar mantık bağlaçlarıyla kurulur; doğruluk tablosu davranışı önceden söyler.',
+        '"Yaş > 18 ve ehliyet var" gibi koşullar bağlaçlarla kurulur.\nDoğruluk tablosu davranışı önceden söyler.',
       ),
       kart(
         'Eğer-değilse',
-        'Karar noktasının iki çıkışı vardır ve yalnızca biri çalışır. İkisinin de çalıştığı bir yol yoktur.',
+        'Karar noktasının iki çıkışı vardır ve **yalnızca biri** çalışır.\nİkisinin birden çalıştığı bir yol yoktur.',
         {
           tur: 'akis',
           adimlar: [
@@ -1609,21 +1609,21 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Döngü koşulu',
-        'Döngü, koşul önermesi doğru kaldığı sürece tekrarlanır. Koşul hiç yanlış olmazsa döngü bitmez.',
+        'Döngü, koşul doğru kaldığı sürece tekrarlanır.\nKoşul hiç yanlış olmazsa döngü bitmez.',
       ),
       kart(
         'Karar noktaları',
-        'Akış şemasındaki her eşkenar dörtgen bir önermedir ve çıkışları doğru/yanlış diye ayrılır.',
+        'Akış şemasındaki her eşkenar dörtgen bir önermedir.\nÇıkışları doğru / yanlış diye ayrılır.',
       ),
       kart(
         'Koşulun olumsuzu',
-        'Bir koşulu tersine çevirmek, akış şemasındaki iki dalın yer değiştirmesi demektir; algoritma aynı işi yapar.',
+        'Koşulu tersine çevirmek, iki dalın yer değiştirmesi demektir.\nAlgoritma yine aynı işi yapar.',
         undefined,
         { not: '\'Yaş > 18 ve ehliyet var\' olumsuzu: \'Yaş ≤ 18 veya ehliyet yok\'. ve→veya, büyük→küçük eşit.' },
       ),
       kart(
         'İç içe koşul',
-        'Bir kararın dalı içinde ikinci bir karar olabilir. Bu, ve bağlacıyla yazılan tek koşula denk gelir.',
+        'Bir kararın dalı içinde ikinci bir karar olabilir.\nBu, "ve" bağlacıyla yazılan tek bir koşula denktir.',
       ),
     ], [
       soru('"not ≥ 50 ise geçti" koşulunun olumsuzu "not < 50" dir.', true, '≥ nin olumsuzu <; sınır değeri karşı tarafa geçiyor.'),
@@ -1651,7 +1651,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-veri-dagilim', 'Tek Nicel Değişkenli Veri Dağılımları', [
       kart(
         'Araştırma süreci',
-        'Soru sorulur, veri toplanır, düzenlenir, çözümlenir ve yorumlanır. Sonuç, sorulan soruya dönmelidir.',
+        'Soru → veri → çözümleme → yorum\nSonuç, baştaki soruya dönmelidir.',
         {
           tur: 'akis',
           adimlar: [
@@ -1664,19 +1664,19 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Nicel ve nitel veri',
-        'Nicel veri sayıyla ölçülür (boy, süre); nitel veri kategoriyle belirtilir (renk, cinsiyet).',
+        '- **Nicel:** sayıyla ölçülür (boy, süre)\n- **Nitel:** kategoriyle belirtilir (renk, cinsiyet)',
       ),
       kart(
         'Kesikli ve sürekli',
-        'Kesikli veri sayılabilir (kardeş sayısı), sürekli veri ölçülür ve arada her değeri alabilir (boy).',
+        '- **Kesikli:** sayılır (kardeş sayısı)\n- **Sürekli:** ölçülür, arada her değeri alabilir (boy)',
       ),
       kart(
         'Merkezî eğilim ölçüleri',
-        'Aritmetik ortalama, ortanca (medyan) ve tepe değer (mod). Üçü de "veri nereye yığılmış" sorusuna cevap verir.',
+        '- **Aritmetik ortalama**\n- **Ortanca (medyan)**\n- **Tepe değer (mod)**\nÜçü de "veri nereye yığılmış" sorusuna cevap verir.',
       ),
       kart(
         'Ortalama mı ortanca mı?',
-        'Aşırı uç değerler varsa ortalama yanıltır; ortanca uçlardan etkilenmez.',
+        'Aşırı uç değer varsa ortalama yanıltır.\nOrtanca uç değerlerden etkilenmez.',
         {
           tur: 'tablo',
           basliklar: ['Veri', 'Ortalama', 'Ortanca'],
@@ -1689,19 +1689,19 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Yayılım ölçüleri',
-        'Açıklık, çeyrekler açıklığı ve standart sapma. Verinin ne kadar dağıldığını söyler.',
+        'Verinin ne kadar dağıldığını söylerler:\n- Açıklık\n- Çeyrekler açıklığı\n- Standart sapma',
       ),
       kart(
         'Standart sapma',
-        'Değerlerin ortalamadan ortalama uzaklığı. Küçükse veri ortalamaya yakın toplanmış, büyükse dağılmış demektir.',
+        'Değerlerin ortalamadan ortalama uzaklığıdır.\n- **Küçükse:** veri ortalamaya yakın toplanmış.\n- **Büyükse:** veri dağılmış.',
       ),
       kart(
         'Grafikler',
-        'Histogram dağılımın şeklini, kutu grafiği ortanca ile uç değerleri, nokta grafiği tek tek veriyi gösterir.',
+        '- **Histogram:** dağılımın şekli\n- **Kutu grafiği:** ortanca ve uç değerler\n- **Nokta grafiği:** tek tek veriler',
       ),
       kart(
         'Dağılımın şekli',
-        'Simetrik dağılımda ortalama ile ortanca yakındır; sağa çarpık dağılımda ortalama ortancadan büyük olur.',
+        '- **Simetrik:** ortalama ile ortanca yakın\n- **Sağa çarpık:** ortalama, ortancadan büyük',
       ),
     ], [
       soru('Bir sınıftaki öğrencilerin göz rengi nicel bir veridir.', false, 'Göz rengi ölçülüp sayılamaz; nitel veri.'),
@@ -1729,11 +1729,11 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-dagilim-inceleme', 'Başkalarının Oluşturduğu Veri Dağılımlarını İnceleme', [
       kart(
         'Neye bakılır?',
-        'Eksen aralıkları, örneklem büyüklüğü, veri kaynağı ve grafiğin türü. Başlık okunmadan grafik yorumlanmaz.',
+        '- Eksen aralıkları\n- Örneklem büyüklüğü\n- Veri kaynağı ve grafiğin türü\nBaşlık okunmadan grafik yorumlanmaz.',
       ),
       kart(
         'Kesik eksen',
-        'Y ekseni sıfırdan başlamıyorsa küçük farklar büyük görünür. En sık kullanılan yanıltma budur.',
+        'Y ekseni sıfırdan başlamıyorsa küçük farklar büyük görünür.\nEn sık kullanılan yanıltma budur.',
         undefined,
         { not: 'Y ekseni 98\'den başlarsa 99 ile 100 arasındaki fark iki kat görünür; gerçek fark %1.' },
       ),
@@ -1747,15 +1747,15 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Kim topladı?',
-        'Veriyi toplayanın sonuçtan çıkarı varsa soru soruluş biçiminden örneklem seçimine kadar her adım eğilebilir.',
+        'Veriyi toplayanın sonuçtan çıkarı varsa her adım eğilebilir:\nsorunun soruluşundan örneklemin seçimine kadar.',
       ),
       kart(
         'Korelasyon nedensellik değildir',
-        'İki değişkenin birlikte artması, birinin ötekine sebep olduğunu göstermez; üçüncü bir sebep ikisini birden etkiliyor olabilir.',
+        'İki değişkenin birlikte artması, birinin ötekine sebep olduğunu göstermez.\nÜçüncü bir sebep ikisini birden etkiliyor olabilir.',
       ),
       kart(
         'Eksik bilgi',
-        'Yüzde verilip toplam sayı yazılmıyorsa "%50 arttı" cümlesi iki kişiden üç kişiye çıkmayı da anlatıyor olabilir.',
+        'Yüzde verilip toplam yazılmıyorsa dikkat:\n"%50 arttı", iki kişiden üç kişiye çıkmak da olabilir.',
       ),
     ], [
       soru('Düşey ekseni sıfırdan başlamayan bir sütun grafiği farkları olduğundan büyük gösterir.', true, 'Kesik eksen sütunların oranını bozuyor; iki katı gibi görünen fark aslında küçük olabilir.'),
@@ -1783,31 +1783,31 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-deneysel', 'Deneysel Olasılık', [
       kart(
         'Tanımı',
-        'Gerçekleştirilen deneyde, istenen sonucun gözlenme sayısının toplam deneme sayısına oranı.',
+        'Deneyde istenen sonucun gözlenme sayısının, toplam deneme sayısına oranıdır.',
       ),
       kart(
         'Deney, sonuç, olay',
-        'Deney tekrarlanabilen işlemdir, sonuç tek bir çıktıdır, olay ise sonuçlardan oluşan bir kümedir.',
+        '- **Deney:** tekrarlanabilen işlem\n- **Sonuç:** tek bir çıktı\n- **Olay:** sonuçlardan oluşan küme',
       ),
       kart(
         'Deneme sayısı önemli',
-        'Deneme arttıkça deneysel olasılık teorik olasılığa yaklaşır. Az denemede sapma büyük olur.',
+        'Deneme arttıkça deneysel olasılık teorik olasılığa yaklaşır.\nAz denemede sapma büyük olur.',
       ),
       kart(
         'Büyük sayılar',
-        'Bir parayı 10 kez atınca 7 tura gelebilir; 10.000 kez atınca oran 1/2’ye yaklaşır.',
+        '- **10 atış:** 7 tura gelebilir.\n- **10.000 atış:** oran 1/2’ye yaklaşır.',
       ),
       kart(
         'Neden gerekli?',
-        'Teorik olasılığı hesaplanamayan durumlarda (bozuk zar, hava durumu, raptiye) tek yol gözlemdir.',
+        'Teorik olasılık hesaplanamıyorsa tek yol gözlemdir.\nÖrnek: bozuk zar, hava durumu, raptiye',
       ),
       kart(
         'Sıklık tablosu',
-        'Deneme sonuçları sıklık tablosuna işlenir; oranlar buradan hesaplanır ve göreli sıklık olasılığı verir.',
+        'Deneme sonuçları sıklık tablosuna işlenir.\nGöreli sıklık, deneysel olasılığı verir.',
       ),
       kart(
         'İkisi arasındaki fark',
-        'Teorik olasılık hesaplanır, deneysel olasılık ölçülür. Aynı deneyde ikisi genelde birbirine yakın ama eşit değildir.',
+        '- **Teorik olasılık:** hesaplanır.\n- **Deneysel olasılık:** ölçülür.\nAynı deneyde ikisi genelde yakındır ama eşit değildir.',
         undefined,
         { not: 'Zar 60 kez atıldı, 14 kez 6 geldi: deneysel 14/60, teorik 1/6 = 10/60. Deneme artınca ikisi yaklaşır.' },
       ),
@@ -1835,15 +1835,15 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
     konu('mat9-teorik', 'Teorik Olasılık', [
       kart(
         'Tanımı',
-        'İstenen durum sayısının, tüm olası durum sayısına oranı. Sonuçların eşit olasılıklı olması gerekir.',
+        '**P = istenen durum sayısı / tüm durum sayısı**\nSonuçların eşit olasılıklı olması gerekir.',
       ),
       kart(
         'Örnek uzay',
-        'Tüm olası sonuçların kümesi. Bir zarda örnek uzay {1,2,3,4,5,6}, eleman sayısı 6’dır.',
+        'Tüm olası sonuçların kümesidir.\nBir zarda: {1, 2, 3, 4, 5, 6}, eleman sayısı 6',
       ),
       kart(
         'Değer aralığı',
-        'Olasılık 0 ile 1 arasındadır. 0 imkânsız, 1 kesin olayı gösterir; 1’den büyük bir olasılık hesap hatasıdır.',
+        'Olasılık **0 ile 1** arasındadır.\n- **0:** imkânsız olay\n- **1:** kesin olay\n1’den büyük bir sonuç hesap hatasıdır.',
         {
           tur: 'sayiDogrusu',
           aralik: [0, 1],
@@ -1854,7 +1854,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Zar örneği',
-        'Bir zarda istenen sonuçların sayısı, olasılığı doğrudan belirler.',
+        'Bir zarda istenen sonuçların sayısı olasılığı doğrudan belirler.\nTabloda üç olay var.',
         {
           tur: 'tablo',
           basliklar: ['Olay', 'Durum', 'Olasılık'],
@@ -1867,19 +1867,19 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       ),
       kart(
         'Tümleyen olay',
-        'Bir olayın olmama olasılığı, 1’den olma olasılığının çıkarılmasıdır. "En az bir" sorularında bu yol kısaltır.',
+        '**P(olmaması) = 1 − P(olması)**\n"En az bir" sorularında bu yol kısaltır.',
       ),
       kart(
         'Ayrık olaylar',
-        'Aynı anda gerçekleşemeyen iki olay ayrıktır ve birinin ya da ötekinin olma olasılığı, olasılıklarının toplamıdır.',
+        'Aynı anda gerçekleşemeyen iki olay ayrıktır.\nBirinin ya da ötekinin olma olasılığı: **P(A) + P(B)**',
       ),
       kart(
         'Bağımsız olaylar',
-        'Biri ötekini etkilemiyorsa ikisinin birlikte olma olasılığı, olasılıkların çarpımıdır: iki kez tura 1/2 · 1/2 = 1/4.',
+        'Biri ötekini etkilemiyorsa birlikte olma olasılığı: **P(A) · P(B)**\nÖrnek: iki kez tura, 1/2 · 1/2 = 1/4',
       ),
       kart(
         'Yaygın yanılgı',
-        'Yazı gelen bir paranın sonraki atışta tura gelme olasılığı yine 1/2’dir; para geçmişi hatırlamaz.',
+        'Yazı gelen paranın sonraki atışta tura gelme olasılığı yine **1/2**’dir.\nPara geçmişi hatırlamaz.',
         undefined,
         { not: '5 kez üst üste yazı gelen paranın 6.\'da tura gelme olasılığı yine 1/2; \'artık tura gelmeli\' matematik değil.' },
       ),
