@@ -117,6 +117,8 @@ export function AppShell() {
 
   const [sekme, setSekme] = useState<Sekme>('ana')
   const [ekran, setEkran] = useState<Ekran | null>(null)
+  /** Mini sayaç açıkken son içeriğin kartın arkasında kalmaması için. */
+  const [pomodoroMiniAcik, setPomodoroMiniAcik] = useState(false)
   /** Deneme ekleme/düzenleme, sekmenin üstünde açılan bir alt ekran. */
   const [denemeFormu, setDenemeFormu] = useState<{ duzenlenen: Deneme | null } | null>(null)
 
@@ -774,14 +776,46 @@ export function AppShell() {
 
     Açılıştaki yumuşak geçişi artık `components/acilis.tsx` hallediyor.
   */
-    <div className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(6rem+var(--guvenli-alt))]">
+    <div
+      className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))]"
+      style={{
+        paddingBottom: `calc(${pomodoroMiniAcik ? 10 : 6}rem + var(--guvenli-alt))`,
+      }}
+    >
       {/*
         Ekran ve sekme değişimi tek bir karede oluyordu: içerik tak diye yerine
         oturuyordu. `anahtar` her değişimde kutuyu söküp yeniden kuruyor, böylece
         giriş animasyonu her seferinde baştan oynuyor — sınıf tek başına verilse
         React aynı düğümü koruduğu için animasyon yalnızca ilk açılışta çalışırdı.
       */}
-      <SayfaGecisi key={ekran ?? `sekme:${sekme}`}>
+      {/*
+        Pomodoro ekranı öteki alt ekranlardan farklı olarak sürekli bağlı
+        kalır. Sayaç, ses ve yerli servis bu bileşenin belleğindedir; ekran
+        değişiminde sökülürse temizlik etkisi turu bitirip sayacı başa alır.
+        Bileşen kendi tam ekran içeriğini gizler ama sayacı ve mini kartı
+        yaşatır; uygulama gerçekten kapanınca normal sökülme temizliği yine
+        çalışır.
+      */}
+      {ekran === 'pomodoro' && (
+        <Buton
+          bicim="hayalet"
+          boy="kucuk"
+          onClick={() => setEkran(null)}
+          className="-ml-2 mb-3"
+        >
+          <ArrowLeft size={16} aria-hidden /> Geri
+        </Buton>
+      )}
+      <PomodoroEkrani
+        ayar={pomodoroAyar}
+        setAyar={setPomodoroAyar}
+        onSeansBitti={(seans) => setPomodoroGecmis((o) => [...o, seans])}
+        gorunur={ekran === 'pomodoro'}
+        onSayacaDon={() => setEkran('pomodoro')}
+        onMiniGorunurluguDegisti={setPomodoroMiniAcik}
+      />
+
+      <SayfaGecisi key={ekran ?? `sekme:${sekme}`} gizli={ekran === 'pomodoro'}>
         {ekran !== null ? (
           <>
             <Buton
@@ -844,13 +878,6 @@ export function AppShell() {
                   setEkran(null)
                   setSekme('oyunlar')
                 }}
-              />
-            )}
-            {ekran === 'pomodoro' && (
-              <PomodoroEkrani
-                ayar={pomodoroAyar}
-                setAyar={setPomodoroAyar}
-                onSeansBitti={(seans) => setPomodoroGecmis((o) => [...o, seans])}
               />
             )}
             {ekran === 'notlar' && <YapilacaklarEkrani notlar={notlar} setNotlar={setNotlar} />}
@@ -1060,7 +1087,7 @@ export function AppShell() {
  * duraklatılmış kalan ekran (opaklığı 0'da donmuş) hiç görünmezdi. Açılış
  * ekranındaki `acilis-bekliyor` ile aynı kural, aynı gerekçe.
  */
-function SayfaGecisi({ children }: { children: React.ReactNode }) {
+function SayfaGecisi({ children, gizli = false }: { children: React.ReactNode; gizli?: boolean }) {
   const [basladi, setBasladi] = useState(false)
 
   useEffect(() => {
@@ -1077,7 +1104,7 @@ function SayfaGecisi({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <div className={cn('sayfa-girisi', !basladi && 'sayfa-bekliyor')}>
+    <div hidden={gizli} className={cn('sayfa-girisi', !basladi && 'sayfa-bekliyor')}>
       {children}
     </div>
   )

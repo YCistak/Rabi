@@ -42,6 +42,7 @@ import {
 import { useGeriKatmani } from '@/lib/geri'
 import { OdakKurulum } from '@/components/ekranlar/odak-kurulum'
 import { OdakAyarlari } from '@/components/odak/odak-ayarlari'
+import { Rabi } from '@/components/maskot/rabi'
 import { cn, yeniId } from '@/lib/utils'
 import { Anahtar, BaslikSatiri, Buton, Cip, Kart, Not } from '@/components/ui'
 
@@ -56,10 +57,17 @@ export function PomodoroEkrani({
   ayar,
   setAyar,
   onSeansBitti,
+  gorunur,
+  onSayacaDon,
+  onMiniGorunurluguDegisti,
 }: {
   ayar: PomodoroAyar
   setAyar: (guncelleyici: PomodoroAyar | ((onceki: PomodoroAyar) => PomodoroAyar)) => void
   onSeansBitti: (seans: PomodoroSeans) => void
+  /** Pomodoro alt ekranı şu an açık mı. Sayaç bileşeni kapalıyken de yaşar. */
+  gorunur: boolean
+  onSayacaDon: () => void
+  onMiniGorunurluguDegisti: (acik: boolean) => void
 }) {
   const [asama, setAsama] = useState<Asama>('calisma')
   const [tur, setTur] = useState(1)
@@ -88,8 +96,8 @@ export function PomodoroEkrani({
    *
    * `calisiyor`dan ayrı bir state: sahne duraklatınca kapanmıyor (duraklatılmış
    * tur hâlâ o turdur) ve aşama bitince de açık kalıyor — mola, sahnedeki
-   * Başlat ile başlıyor. Kapatan üç şey var: üst köşedeki geri (duraklatıp
-   * hazırlığa döner), turu bitir ve provadan çıkış.
+   * Başlat ile başlıyor. Üst köşedeki geri yalnızca sahneyi kapatır; turu
+   * duraklatmak ve bitirmek ayrı eylemlerdir.
    */
   const [sahne, setSahne] = useState(false)
   const [sesPaneli, setSesPaneli] = useState(false)
@@ -133,6 +141,15 @@ export function PomodoroEkrani({
    * kilitli: başlamış bir turun uzunluğu değişmemeli.
    */
   const turIcinde = !dokunulmadi
+  const miniGorunur = turIcinde && !gorunur
+
+  // Mini kart sabit durduğu için sayfanın son içeriğine AppShell yer açar.
+  // Yalnızca görünürlük değişimini yukarı taşımak, saniyelik sayacı bütün
+  // uygulamanın yeniden çizimine dönüştürmez.
+  useEffect(() => {
+    onMiniGorunurluguDegisti(miniGorunur)
+    return () => onMiniGorunurluguDegisti(false)
+  }, [miniGorunur, onMiniGorunurluguDegisti])
 
   const calarAl = useCallback(() => {
     if (!calarRef.current) calarRef.current = new SesCalar()
@@ -298,12 +315,13 @@ export function PomodoroEkrani({
   }
 
   /**
-   * Sahnenin geri oku: tur bitmiyor, duraklıyor. Hazırlık ekranı kalan
-   * süreyi ve "Devam et" düğmesini gösteriyor; oradan basınca sahne aynı
-   * yerden açılıyor.
+   * Sahnenin geri oku yalnızca tam ekran görünümünü kapatır.
+   *
+   * Geri gitmek sayaç komutu değildir: kullanıcı başka bir kayda bakmak için
+   * sahneden çıktığında tur arka planda sürmeli. Duraklatma, hazırlık
+   * ekranındaki açık düğmeyle ayrıca yapılır.
    */
   const sahnedenCik = () => {
-    if (calisiyor) duraklat()
     setSahne(false)
   }
 
@@ -529,7 +547,7 @@ export function PomodoroEkrani({
 
   if (kurulumAcik) {
     return (
-      <div>
+      <div hidden={!gorunur}>
         <BaslikSatiri baslik="Pomodoro" aciklama="Odak kilidi" />
         <OdakKurulum ayar={ayar} setAyar={setAyar} onBitir={() => setKurulumAcik(false)} />
       </div>
@@ -537,8 +555,9 @@ export function PomodoroEkrani({
   }
 
   return (
-    <div>
-      <BaslikSatiri baslik="Pomodoro" aciklama={prova ? 'Kitapçık süresi' : durumEtiketi} />
+    <>
+      <div hidden={!gorunur}>
+        <BaslikSatiri baslik="Pomodoro" aciklama={prova ? 'Kitapçık süresi' : durumEtiketi} />
 
       {bitenProva && (
         <Not className="mb-4">
@@ -798,10 +817,37 @@ export function PomodoroEkrani({
         sonuna gitmesin. Alt menü hâlâ altta, çubuk onun hemen üstünde duruyor.
       */}
       <div className="sticky bottom-[calc(4.5rem+var(--guvenli-alt))] -mx-4 bg-background/95 px-4 pt-2 pb-3">
-        <Buton className="h-[52px] w-full rounded-2xl text-[17px] shadow-[0_8px_18px_rgba(217,98,47,0.26)]" onClick={baslat}>
-          <Play size={20} fill="currentColor" aria-hidden />
-          {turIcinde ? 'Devam et' : 'Başlat'}
-        </Buton>
+        {turIcinde ? (
+          <div className="flex items-center gap-2.5">
+            <SahneDugmesi etiket="Turu bitir" onClick={sifirla}>
+              <X size={20} aria-hidden />
+            </SahneDugmesi>
+            <Buton
+              className="h-[52px] flex-1 rounded-2xl text-[17px] shadow-[0_8px_18px_rgba(217,98,47,0.26)]"
+              onClick={calisiyor ? () => setSahne(true) : baslat}
+            >
+              <Play size={20} fill="currentColor" aria-hidden />
+              {calisiyor ? 'Sayaca dön' : 'Devam et'}
+            </Buton>
+            {calisiyor ? (
+              <SahneDugmesi etiket="Duraklat" onClick={duraklat}>
+                <Pause size={20} aria-hidden />
+              </SahneDugmesi>
+            ) : (
+              <SahneDugmesi etiket="Bu aşamayı atla" onClick={atla}>
+                <SkipForward size={20} aria-hidden />
+              </SahneDugmesi>
+            )}
+          </div>
+        ) : (
+          <Buton
+            className="h-[52px] w-full rounded-2xl text-[17px] shadow-[0_8px_18px_rgba(217,98,47,0.26)]"
+            onClick={baslat}
+          >
+            <Play size={20} fill="currentColor" aria-hidden />
+            Başlat
+          </Buton>
+        )}
       </div>
 
       <Cekmece acik={sureCekmecesi} baslik="Süreler" onKapat={() => setSureCekmecesi(false)}>
@@ -849,6 +895,100 @@ export function PomodoroEkrani({
           onAtla={atla}
         />
       )}
+      </div>
+      {miniGorunur && (
+        <MiniPomodoro
+          baslik={prova ? `${prova.ad} denemesi` : (ders ?? ASAMA_ADI[asama])}
+          durum={
+            calisiyor
+              ? prova
+                ? 'Deneme provası'
+                : `${tur}. tur · ${ASAMA_ADI[asama]}`
+              : 'Duraklatıldı'
+          }
+          kalan={kalan}
+          oran={oran}
+          mola={molaMi}
+          onDon={() => {
+            setSahne(true)
+            onSayacaDon()
+          }}
+        />
+      )}
+    </>
+  )
+}
+
+/** Alt menünün üstünde, başka sayfalardayken çalışan turu görünür tutar. */
+function MiniPomodoro({
+  baslik,
+  durum,
+  kalan,
+  oran,
+  mola,
+  onDon,
+}: {
+  baslik: string
+  durum: string
+  kalan: number
+  oran: number
+  mola: boolean
+  onDon: () => void
+}) {
+  const renk = mola ? 'var(--ikincil)' : 'var(--primary-parlak)'
+  const sure = sureYaz(kalan)
+  const boyut = 82
+  const kalinlik = 6
+  const yaricap = (boyut - kalinlik) / 2
+  const cevre = 2 * Math.PI * yaricap
+
+  return (
+    <div className="pointer-events-none fixed inset-x-0 bottom-[calc(4.75rem+var(--guvenli-alt))] z-30">
+      <div className="mx-auto flex max-w-md justify-end px-3">
+        <button
+          type="button"
+          onClick={onDon}
+          aria-label={`${baslik}, ${durum}, ${sure} kaldı. Pomodoro sayacına dön.`}
+          className="golge-kart pointer-events-auto relative grid size-[82px] place-items-center rounded-full bg-card transition active:scale-95 active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        >
+          <span
+            className="pointer-events-none absolute -top-7 left-1/2 z-10 -translate-x-1/2 drop-shadow-[0_2px_3px_rgba(54,33,112,0.16)]"
+            aria-hidden
+          >
+            <Rabi durum="calisiyor" poz="yuz" boyut={48} />
+          </span>
+          <svg
+            width={boyut}
+            height={boyut}
+            className="absolute inset-0 -rotate-90"
+            aria-hidden
+          >
+            <circle
+              cx={boyut / 2}
+              cy={boyut / 2}
+              r={yaricap}
+              fill="none"
+              stroke="var(--muted)"
+              strokeWidth={kalinlik}
+            />
+            <circle
+              cx={boyut / 2}
+              cy={boyut / 2}
+              r={yaricap}
+              fill="none"
+              stroke={renk}
+              strokeWidth={kalinlik}
+              strokeLinecap="round"
+              strokeDasharray={cevre}
+              strokeDashoffset={cevre * (1 - oran)}
+              className="transition-[stroke-dashoffset] duration-500 ease-linear"
+            />
+          </svg>
+          <span className="rakam relative font-display text-[15px] font-extrabold tracking-[-0.03em] tabular-nums">
+            {sure}
+          </span>
+        </button>
+      </div>
     </div>
   )
 }
@@ -856,7 +996,7 @@ export function PomodoroEkrani({
 /**
  * Sayaç tam ekran: alt menü ve ayarlar arkada kalıyor, ekranda tek iş
  * sayaç. `tam-katman-girisi` ile alttan yükseliyor ve geri tuşu (donanım
- * dahil) turu bitirmiyor, sahneyi kapatıp turu duraklatıyor.
+ * dahil) turu etkilemeden yalnızca sahneyi kapatıyor.
  */
 function CalismaSahnesi({
   durum,
