@@ -10,6 +10,7 @@ import {
 } from './sekil'
 import { TUM_ACI_SORULARI, aciSekli } from './aci'
 import { ucgenSekli, ucgenTuruHazirla } from './ucgen'
+import { sekliVarMi, trigSekli, trigTuruHazirla } from './trigonometri'
 
 /** Sabit üreteç: üçgen soruları rastgele üretiliyor, tarama tekrarlanabilir olsun. */
 function uretec(tohum: number): () => number {
@@ -100,6 +101,17 @@ describe('etiketler çizgilerin üstüne binmiyor', () => {
     for (let tohum = 1; tohum <= 40; tohum++) {
       for (const soru of ucgenTuruHazirla(200, uretec(tohum))) {
         expect(enYakinEtiket(ucgenSekli(soru)), JSON.stringify(soru)).toBeGreaterThan(ESIK)
+      }
+    }
+  })
+
+  it('trigonometri üçgenlerinde', () => {
+    for (let tohum = 1; tohum <= 20; tohum++) {
+      for (const zorluk of ['kolay', 'orta', 'zor'] as const) {
+        for (const { soru } of trigTuruHazirla(100, zorluk, uretec(tohum))) {
+          if (!sekliVarMi(soru)) continue
+          expect(enYakinEtiket(trigSekli(soru)), JSON.stringify(soru)).toBeGreaterThan(ESIK)
+        }
       }
     }
   })

@@ -688,6 +688,8 @@ function bankayiCoz(ham: unknown): BankaKaydi[] {
           Array.isArray(s.hucre?.ipuclari) &&
           s.hucre.ipuclari.length === 3
         )
+      if (s.oyun === 'trigonometri')
+        return typeof s.trig?.tur === 'string' && typeof s.trig?.oran === 'string'
       if (s.oyun === 'ucgen')
         return (
           typeof s.ucgen?.tur === 'string' &&

@@ -95,6 +95,13 @@ const AILE: Record<
     kenar: 'border-l-isl-koyu',
     degisken: 'var(--isl-koyu)',
   },
+  trigonometri: {
+    zemin: 'bg-isl',
+    yazi: 'text-isl-koyu',
+    dolgu: 'bg-isl-koyu',
+    kenar: 'border-l-isl-koyu',
+    degisken: 'var(--isl-koyu)',
+  },
   // Edebiyat Eşleştirme, Türkçe ile birleşen dersin içinde: rengi de artık
   // lavanta değil o dersin pembesi. Renk **derse** ait, oyuna değil.
   edebiyat: {

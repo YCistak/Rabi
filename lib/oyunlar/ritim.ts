@@ -130,6 +130,12 @@ export const SORU_SURESI: Record<OyunId, number> = {
   periyodik: 16,
   /** Formül'de süre **el** başına: oyun altılı eşleştirme dağıtıyor. */
   formul: 40,
+  /**
+   * Trigonometride süre üçgene bakmaya ve bir bölme yapmaya gidiyor; zor
+   * seviyede önce üçgeni kafada kurmak (5/13 → 5-12-13) gerekiyor. Özel
+   * Üçgenler'in 22 saniyesinden kısa: şıklar hesap değil tanıma istiyor.
+   */
+  trigonometri: 18,
 }
 
 /**

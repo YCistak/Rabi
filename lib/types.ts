@@ -240,6 +240,7 @@ export type OyunId =
   | 'tuzak'
   | 'periyodik'
   | 'formul'
+  | 'trigonometri'
 
 /**
  * Bir mini oyunun kalıcı istatistiği.
