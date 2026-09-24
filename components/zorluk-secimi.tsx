@@ -44,7 +44,7 @@ export function ZorlukSecimi({
 
   return (
     <div>
-      <BolumBasligi>Zorluk</BolumBasligi>
+      <BolumBasligi>Başlangıç zorluğu</BolumBasligi>
 
       <div className="relative mt-2.5 flex rounded-[18px] border-2 border-border bg-muted/40 p-1.5">
         {/*

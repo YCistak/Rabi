@@ -79,7 +79,7 @@ export function OyunTanitim({
   />
 }
 
-/** Önceki mod ve zorluk seçim düzeni; Başlat doğrudan geri sayıma geçer. */
+/** Mod ve başlangıç zorluğu aynı pencerede; Başlat doğrudan geri sayıma geçer. */
 function AyarPenceresi({
   oyun,
   rekor,
@@ -105,19 +105,15 @@ function AyarPenceresi({
       onClick={onKapat}
     >
       <div
-        className="pencere-girisi max-h-[86%] w-full max-w-[400px] overflow-y-auto rounded-[28px] bg-card px-4.5 pb-5 pt-5.5"
+        className="pencere-girisi flex max-h-[92dvh] w-full max-w-[400px] flex-col overflow-hidden rounded-[26px] bg-card"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex shrink-0 items-start justify-between gap-3 px-5 pb-3 pt-4">
           <div className="min-w-0">
-            <p className="truncate text-[10.5px] font-black uppercase leading-none tracking-[0.18em] text-primary">
-              {oyun.ad}
-            </p>
-            <h1 className="mt-1.5 font-display text-[21px] font-black leading-tight">Turu ayarla</h1>
+            <p className="text-[10.5px] font-black uppercase leading-none tracking-[0.16em] text-primary">OYUN HAZIRLIĞI</p>
+            <h1 className="mt-2 font-display text-[23px] font-black leading-tight">{oyun.ad}</h1>
             {rekor > 0 && (
-              <p className="mt-2.5 inline-flex items-center rounded-full bg-primary-dolu px-3.5 py-1.5 text-[12.5px] font-black leading-none text-white shadow-[0_8px_18px_-10px_rgba(180,71,31,0.9)]">
-                <span className="rakam">Rekor — {rekor}</span>
-              </p>
+              <p className="rakam mt-1 text-xs font-bold text-muted-foreground">En iyi sonuç: {rekor}</p>
             )}
           </div>
           <button
@@ -129,17 +125,21 @@ function AyarPenceresi({
             <X size={15} strokeWidth={2.8} aria-hidden />
           </button>
         </div>
-        <div className="mt-4.5 flex flex-col gap-4.5">
-          <ModSecimi secili={mod} onSec={setMod} />
-          <ZorlukSecimi secili={zorluk} onSec={setZorluk} />
+        <div className="min-h-0 overflow-y-auto border-t border-border px-5 pb-5 pt-4">
+          <div className="flex flex-col gap-4">
+            <ModSecimi secili={mod} onSec={setMod} />
+            <ZorlukSecimi secili={zorluk} onSec={setZorluk} />
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={onDevam}
-          className="mt-4.5 w-full rounded-[18px] bg-primary-dolu py-[19px] font-display text-[17px] font-black leading-none text-white transition active:brightness-95"
-        >
-          Başlat
-        </button>
+        <div className="shrink-0 border-t border-border px-5 py-3">
+          <button
+            type="button"
+            onClick={onDevam}
+            className="min-h-[52px] w-full rounded-[16px] bg-primary-dolu px-5 font-display text-[17px] font-black text-white transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            Başlat
+          </button>
+        </div>
       </div>
     </div>
   )

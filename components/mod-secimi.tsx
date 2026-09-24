@@ -45,7 +45,7 @@ export function ModSecimi({
     <div>
       <BolumBasligi>Oyun modu</BolumBasligi>
 
-      <div className="mt-2.5 grid grid-cols-2 gap-2.5">
+      <div className="mt-2.5 grid grid-cols-2 gap-2">
         {MOD_SIRASI.map((mod) => {
           const tanim = MODLAR[mod]
           const Simge = SIMGELER[mod]
@@ -57,14 +57,14 @@ export function ModSecimi({
               onClick={() => onSec(mod)}
               aria-pressed={acik}
               className={cn(
-                'flex min-h-[104px] flex-col gap-1.5 rounded-[18px] border-2 p-3.5 text-left transition active:brightness-95',
+                'flex min-h-[80px] flex-col gap-1 rounded-[16px] border-2 p-2.5 text-left transition active:brightness-95',
                 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                 acik
-                  ? 'border-primary-dolu bg-primary-soft shadow-[0_10px_24px_-14px_rgba(180,71,31,0.9)]'
+                  ? 'border-primary-dolu bg-primary-soft'
                   : 'border-border bg-muted/40',
               )}
             >
-              <Simge size={19} strokeWidth={2.3} className="text-primary" aria-hidden />
+              <Simge size={18} strokeWidth={2.3} className="text-primary" aria-hidden />
               <span className="text-[15px] font-black leading-tight">{tanim.ad}</span>
               <span className="text-[11.5px] font-bold leading-snug text-muted-foreground">
                 {tanim.ozet}
@@ -94,16 +94,10 @@ export function ModSecimi({
   )
 }
 
-/**
- * Pencerenin bölüm başlığı — küçük, aralıklı, büyük harf.
- *
- * Büyütme `uppercase` ile değil metnin kendisiyle de yapılabilirdi; sınıfla
- * yapılıyor çünkü Türkçe yerelde CSS doğru harfi veriyor (`lang="tr"`,
- * `app/layout.tsx`) ve "ı" noktasız "I" oluyor.
- */
+/** Mod ve zorluk, pencerenin asıl kararları olduğu için başlıkları belirgin. */
 function BolumBasligi({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-[11.5px] font-black uppercase leading-none tracking-[0.14em] text-muted-foreground">
+    <h2 className="font-display text-[14px] font-black leading-tight text-foreground">
       {children}
     </h2>
   )
