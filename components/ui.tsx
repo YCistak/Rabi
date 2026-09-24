@@ -198,7 +198,10 @@ export function BaslikSatiri({
 }: {
   baslik: string
   aciklama?: string
-  /** Araç ekranıysa sağ üste o aracın emojisi konur (`sag` verilmemişse). */
+  /**
+   * Araç ekranıysa sağa o aracın emojisi konur (`sag` verilmemişse). Araç
+   * başlığında `aciklama` ve `ortala` yok sayılıyor — bkz. aşağıdaki not.
+   */
   arac?: Ekran
   sag?: React.ReactNode
   /**
@@ -207,7 +210,28 @@ export function BaslikSatiri({
    */
   ortala?: boolean
 }) {
-  if (!sag && arac) sag = <AracSimgesi arac={arac} />
+  /*
+    Araç ekranlarının başlığı tek düzende: solda başlık, sağda emoji kutusu,
+    ikisi dikeyde aynı eksende. Başlığın altında açıklama satırı yok — bir
+    süre her araç kendi alt yazısını taşıyordu ("2026-2027 ders yılı",
+    "3 görev bekliyor"…) ve kullanıcı kaldırılmasını istedi: yazının boyu
+    ekrandan ekrana değiştiği için başlıklar emojinin karşısında her araçta
+    başka yükseklikte duruyordu. Denemeler bir süre ortalıydı; o da sola
+    geçti, sekmeler arasında gidip gelirken başlık yerinden oynamasın.
+
+    Başlığın boyu emoji kutusuna göre (44 piksel kutu, 26 piksel yazı): satır
+    yüksekliği kutunun kendisi, yani başlık kutunun tam karşısında duruyor.
+  */
+  if (arac) {
+    return (
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h1 className="flex min-h-11 items-center font-display text-[26px] font-extrabold leading-tight tracking-tight">
+          {baslik}
+        </h1>
+        {sag ?? <AracSimgesi arac={arac} />}
+      </div>
+    )
+  }
 
   if (ortala) {
     return (
@@ -220,13 +244,7 @@ export function BaslikSatiri({
   }
 
   return (
-    <div
-      className={cn(
-        'mb-4 flex justify-between gap-3',
-        // Emoji kutusu başlıkla aynı hizada başlar; açıklama altına uzasa da aşağı kaymaz
-        arac ? 'items-start' : 'items-end',
-      )}
-    >
+    <div className="mb-4 flex items-end justify-between gap-3">
       <div>
         <h1 className="font-display text-2xl font-extrabold tracking-tight">{baslik}</h1>
         {aciklama && <p className="mt-0.5 text-sm text-muted-foreground">{aciklama}</p>}

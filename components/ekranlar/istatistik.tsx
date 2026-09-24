@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowLeftRight, ChevronRight, Minus, TrendingDown, TrendingUp, X } from 'lucide-react'
-import { AracSimgesi, BosDurum } from '@/components/ui'
+import { BaslikSatiri, BosDurum } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { denemeOzeti, netYaz } from '@/lib/hesap'
 import {
@@ -98,12 +98,8 @@ export function IstatistikEkrani({
     return x && y ? denemeKarsilastir(x, y, sablon) : null
   }, [sablon, sablonDenemeleri, secili])
 
-  const baslik = (
-    <div className="mb-2 flex items-start justify-between gap-3">
-      <h1 className="font-display text-[27px] font-extrabold tracking-[-0.02em]">İstatistik</h1>
-      <AracSimgesi arac="istatistik" />
-    </div>
-  )
+  // Öteki araçlarla aynı başlık; kendi 27 piksellik başlığı hizadan kaçıyordu.
+  const baslik = <BaslikSatiri arac="istatistik" baslik="İstatistik" />
 
   if (!sablon || !ozet) {
     return (

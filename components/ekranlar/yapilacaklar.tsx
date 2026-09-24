@@ -10,7 +10,6 @@ import {
   GOREV_RENKLERI,
   KATEGORILER,
   KATEGORI_ADI,
-  bekleyenGorev,
   dilimGorevleri,
   dilimeYerVarMi,
   gorevEkle,
@@ -22,7 +21,6 @@ import {
   gorevRengi,
   gorevSil,
   gorevYildizla,
-  gununGorevleri,
   metniKirp,
   simdikiDilim,
   type Gorev,
@@ -87,8 +85,6 @@ export function YapilacaklarEkrani({
     düzeltmek olur. Erteleme varken buna gerek de yok.
   */
   const gecmis = secili < bugunIso
-  const gununkiler = useMemo(() => gununGorevleri(gorevler, secili), [gorevler, secili])
-  const bekleyen = bekleyenGorev(gununkiler)
 
   // Seçili günün haftası, pazartesiden başlayarak.
   const hafta = useMemo(() => {
@@ -157,18 +153,7 @@ export function YapilacaklarEkrani({
 
   return (
     <div>
-      <BaslikSatiri arac="notlar"
-        baslik="Yapılacaklar"
-        aciklama={
-          gununkiler.length === 0
-            ? gecmis
-              ? 'O gün için plan yazılmamış'
-              : 'Bu günün planı boş'
-            : bekleyen === 0
-              ? `${gununkiler.length} görev · hepsi bitti`
-              : `${bekleyen} görev bekliyor`
-        }
-      />
+      <BaslikSatiri arac="notlar" baslik="Yapılacaklar" />
 
       {/* Hafta şeridi — gün seçimi. Ay takvimi yok: kayıt yalnızca bu haftayı
           tutuyor (bkz. `haftaninGorevleri`), açılan takvim boş günler
