@@ -50,7 +50,7 @@ import { useCokmeRaporu } from '@/lib/cokme-izni'
 import { CokmeSorusu } from '@/components/cokme-sorusu'
 import { useGuncelleme } from '@/lib/guncelleme-kolu'
 import { GuncellemeSeridi } from '@/components/guncelleme-seridi'
-import { bugun, cn } from '@/lib/utils'
+import { bugun, cn, haftaBasi } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import type { KonuDersId, KonuSinifi } from '@/lib/konu'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
@@ -76,7 +76,7 @@ import { SiralamaEkrani } from '@/components/ekranlar/siralama'
 import { HedefEkrani } from '@/components/ekranlar/hedef'
 import { YanlisBankaEkrani } from '@/components/ekranlar/yanlis-banka'
 import { RozetlerEkrani } from '@/components/ekranlar/rozetler'
-import { gununNotlari, notlariNormalize, type NotKagidi } from '@/lib/yapilacaklar'
+import { gorevleriNormalize, haftaninGorevleri, type Gorev } from '@/lib/yapilacaklar'
 import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
 import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
 import { KonuHaritasiEkrani } from '@/components/ekranlar/konu-haritasi'
@@ -227,26 +227,33 @@ export function AppShell() {
     ANAHTARLAR.konuSecimi,
     { ders: 'matematik', sinif: 9 },
   )
-  const [notlarHam, setNotlar, notlarHazir] = useYerelDepo<NotKagidi[]>(ANAHTARLAR.notlar, [])
   /*
-    Tahta günlük ve gün her çizimde yeniden okunuyor.
-
-    Zamanlayıcı kurmak yerine türetmek: gece yarısını bekleyen bir `setTimeout`
-    uygulama kapalıyken çalışmaz, uyanan telefonda da geç çalışır. Gün dönmüşse
-    kâğıtlar zaten ilk çizimde eleniyor; aşağıdaki etki de kaydı buna eşitliyor.
+    Depo anahtarı `rabi-notlar` kalıyor: ekran not tahtasından görev listesine
+    döndü ama kayıtlı görevler o anahtarda duruyor ve kimliği değiştirmek
+    kullanıcının bugün yazdıklarını öksüz bırakırdı. Şema dönüşümünü
+    `gorevleriNormalize` yapıyor.
   */
-  const notlar = gununNotlari(notlariNormalize(notlarHam), bugun())
+  const [gorevlerHam, setGorevler, gorevlerHazir] = useYerelDepo<Gorev[]>(ANAHTARLAR.notlar, [])
   /*
-    Elenen kâğıtlar kayıttan da siliniyor.
+    Liste haftalık ve hafta her çizimde yeniden okunuyor.
 
-    Yalnızca çizimden düşselerdi dünün kâğıtları `localStorage`'da birikir,
-    yedeğe girer ve saati geri alan bir cihazda geri gelirdi. `notlarHazir`
-    şart: ilk okuma bitmeden yazmak, kayıtta duran kâğıtları boş varsayılanla
-    ezerdi.
+    Zamanlayıcı kurmak yerine türetmek: pazartesi gece yarısını bekleyen bir
+    `setTimeout` uygulama kapalıyken çalışmaz, uyanan telefonda da geç çalışır.
+    Hafta dönmüşse eski görevler zaten ilk çizimde eleniyor; aşağıdaki etki de
+    kaydı buna eşitliyor.
+  */
+  const gorevler = haftaninGorevleri(gorevleriNormalize(gorevlerHam), haftaBasi(bugun()))
+  /*
+    Elenen görevler kayıttan da siliniyor.
+
+    Yalnızca çizimden düşselerdi geçen haftanın işleri `localStorage`'da
+    birikir, yedeğe girer ve saati geri alan bir cihazda geri gelirdi.
+    `gorevlerHazir` şart: ilk okuma bitmeden yazmak, kayıtta duran görevleri
+    boş varsayılanla ezerdi.
   */
   useEffect(() => {
-    if (!notlarHazir || notlar.length === notlarHam.length) return
-    setNotlar(notlar)
+    if (!gorevlerHazir || gorevler.length === gorevlerHam.length) return
+    setGorevler(gorevler)
   })
   /**
    * Bankadan açılan tur. Oyun kimliği burada duruyor çünkü turu Oyunlar sekmesi
@@ -853,7 +860,9 @@ export function AppShell() {
                 onSeansBitti={(seans) => setPomodoroGecmis((o) => [...o, seans])}
               />
             )}
-            {ekran === 'notlar' && <YapilacaklarEkrani notlar={notlar} setNotlar={setNotlar} />}
+            {ekran === 'notlar' && (
+              <YapilacaklarEkrani gorevler={gorevler} setGorevler={setGorevler} />
+            )}
             {ekran === 'soru' && (
               <SoruTakibiEkrani
                 kayitlar={gunlukKayitlar}
@@ -989,7 +998,7 @@ export function AppShell() {
                   oyunGecmisi,
                   oyunBankasi,
                   bankaDusen,
-                  notlar,
+                  notlar: gorevler,
                   konuIlerleme,
                   bilinmeyenKartlar,
                   aylikOzetler,
