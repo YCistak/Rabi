@@ -1531,6 +1531,12 @@ uygulamak olurdu.
 
 ## Trigonometrik Oranlar
 
+> **Kaldırıldı, silinmedi.** Oyun `OyunTanimi.kapali` ile listelerden
+> gizlendi (`dersinOyunlari`, `bolumunOyunlari`, `bolumsuzOyunlar` süzüyor);
+> tanımı, ekranı ve soru üreteci yerinde duruyor — soruları ileride başka bir
+> yerde kullanılabilir. Bankada bu oyundan kalmış kayıtlar okunmaya devam
+> ediyor. Geri açmak için `tanim.ts`teki `kapali: true` satırını sil.
+
 Matematiğin ilk 10. sınıf oyunu (`lib/oyunlar/trigonometri.ts`, ekran
 `components/ekranlar/oyun-trigonometri.tsx`) ve Geometri Ustası bölümünün
 üçüncü oyunu — Özel Üçgenler'in dik üçgeninin üstüne kuruluyor. Konu Maarif
