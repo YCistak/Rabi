@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft, X } from 'lucide-react'
 import type { OyunTanimi } from '@/lib/oyunlar/tanim'
 import { dersBul } from '@/lib/oyunlar/tanim'
-import { MODLAR, type OyunModu } from '@/lib/oyunlar/mod'
-import { ZORLUK_ADI, type Zorluk } from '@/lib/oyunlar/ritim'
+import type { OyunModu } from '@/lib/oyunlar/mod'
+import type { Zorluk } from '@/lib/oyunlar/ritim'
 import { vurgulariAyir } from '@/lib/metin'
 import { useGeriKatmani } from '@/lib/geri'
 import { useGenelTest } from '@/components/genel-test-baglami'
@@ -67,37 +67,81 @@ export function OyunTanitim({
     )
   }
 
-  return (
-    <Sayfa onGeri={onKapat} geriEtiketi="Oyundan çık" ustYazi="TUR HAZIRLIĞI">
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        <header className="border-b border-border pb-6 pt-7">
-          <p className="text-xs font-extrabold text-primary">{dersBul(oyun.ders).ad}</p>
-          <h1 className="mt-2 font-display text-[34px] font-black leading-[1.08] tracking-tight">{oyun.ad}</h1>
-          <p className="mt-2 text-sm leading-snug text-muted-foreground">{oyun.kisaAciklama}</p>
-        </header>
+  return <AyarPenceresi
+    oyun={oyun}
+    rekor={rekor}
+    mod={mod}
+    setMod={setMod}
+    zorluk={zorluk}
+    setZorluk={setZorluk}
+    onDevam={() => setSayiliyor(true)}
+    onKapat={onKapat}
+  />
+}
 
-        <div className="space-y-7 py-6">
+/** Önceki mod ve zorluk seçim düzeni; Başlat doğrudan geri sayıma geçer. */
+function AyarPenceresi({
+  oyun,
+  rekor,
+  mod,
+  setMod,
+  zorluk,
+  setZorluk,
+  onDevam,
+  onKapat,
+}: {
+  oyun: OyunTanimi
+  rekor: number
+  mod: OyunModu
+  setMod: (mod: OyunModu) => void
+  zorluk: Zorluk
+  setZorluk: (zorluk: Zorluk) => void
+  onDevam: () => void
+  onKapat: () => void
+}) {
+  return (
+    <div
+      className="katman-zemin fixed inset-0 z-50 flex items-center justify-center bg-black/55 px-4 backdrop-blur-[2px]"
+      onClick={onKapat}
+    >
+      <div
+        className="pencere-girisi max-h-[86%] w-full max-w-[400px] overflow-y-auto rounded-[28px] bg-card px-4.5 pb-5 pt-5.5"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="truncate text-[10.5px] font-black uppercase leading-none tracking-[0.18em] text-primary">
+              {oyun.ad}
+            </p>
+            <h1 className="mt-1.5 font-display text-[21px] font-black leading-tight">Turu ayarla</h1>
+            {rekor > 0 && (
+              <p className="mt-2.5 inline-flex items-center rounded-full bg-primary-dolu px-3.5 py-1.5 text-[12.5px] font-black leading-none text-white shadow-[0_8px_18px_-10px_rgba(180,71,31,0.9)]">
+                <span className="rakam">Rekor — {rekor}</span>
+              </p>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={onKapat}
+            aria-label="Kapat"
+            className="inline-flex size-11 flex-none items-center justify-center rounded-[14px] bg-muted/70 text-muted-foreground transition active:bg-muted"
+          >
+            <X size={15} strokeWidth={2.8} aria-hidden />
+          </button>
+        </div>
+        <div className="mt-4.5 flex flex-col gap-4.5">
           <ModSecimi secili={mod} onSec={setMod} />
           <ZorlukSecimi secili={zorluk} onSec={setZorluk} />
         </div>
+        <button
+          type="button"
+          onClick={onDevam}
+          className="mt-4.5 w-full rounded-[18px] bg-primary-dolu py-[19px] font-display text-[17px] font-black leading-none text-white transition active:brightness-95"
+        >
+          Başlat
+        </button>
       </div>
-
-      <div className="shrink-0 border-t border-border bg-background pt-3">
-        <div className="mb-3 flex items-center justify-between gap-3 text-xs font-bold text-muted-foreground">
-          <button
-            type="button"
-            onClick={() => document.getElementById('zorluk-basligi')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-            className="min-h-7 text-left underline decoration-border underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-          >
-            {MODLAR[mod].ad} · Zorluk: {ZORLUK_ADI[zorluk]} · Düzenle
-          </button>
-          {rekor > 0 && <span className="rakam shrink-0">En iyi: {rekor}</span>}
-        </div>
-        <AltDugme onClick={() => setSayiliyor(true)}>
-          Oyuna başla <ArrowRight size={20} aria-hidden />
-        </AltDugme>
-      </div>
-    </Sayfa>
+    </div>
   )
 }
 

@@ -1322,10 +1322,11 @@ kez yanlış bilinmiş olanlar ve turun amacı hepsini bir kez daha görmek — 
 saatli bir mod o işi yarıda keser. Ayarlar adımı o turda hiç çıkmıyor
 (`secilebilir`): sunulup dinlenmeyen bir seçim, yalan söyleyen bir arayüzdür.
 
-**Hazırlık tek tam ekran sayfa** (`components/oyun-tanitim.tsx`). Başlık,
-dört moddan oluşan düz seçim tablosu ve başlangıç zorluğu var. Düğme sabit
-altta; kısa telefonlarda içerik kayıyor. Alt satırdaki "Düzenle" zorluk
-seçimine kaydırıyor. Oyun içindeki yardım yalnızca kısa kural metnini açıyor.
+**Hazırlık önceki "Turu ayarla" penceresi** (`components/oyun-tanitim.tsx`,
+`tasarim/oyun-modu-secimi.dc.html`). Dört mod 2×2 kartta, başlangıç zorluğu
+şeritli seçicide duruyor. Kısa telefonlarda pencere kayıyor. "Başlat" doğrudan
+geri sayıma geçiyor; ayrı oyun örneği ve tanıtım adımı yok. Oyun içindeki
+yardım yalnızca kısa kural metnini açıyor.
 
 **Seçim prop'la değil bağlamla iniyor** (`components/tur-ayari-baglami.tsx`,
 `genel-test-baglami.tsx` ile aynı kalıp). Seçtiren yer tek (`oyun-tanitim.tsx`)

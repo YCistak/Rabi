@@ -9,7 +9,7 @@ import { geriSayimSesi } from '@/lib/oyunlar/oyun-sesi'
  * Bu katman **hazırlanma anı**nı veriyor. Düğmeye basar basmaz ilk soru geliyordu
  * ve süreli modlarda ilk saniye parmağını ekrana götürmekle geçiyordu.
  *
- * Katman iki yerde çıkıyor ve ikisi de ortak bileşen: ayarlardaki "Oyuna başla" ve
+ * Katman iki yerde çıkıyor ve ikisi de ortak bileşen: ayarlardaki "Başlat" ve
  * tur sonundaki "Tekrar" (`oyun-tanitim.tsx`, `oyun-kabuk.tsx`). 18 oyun
  * dosyasının hiçbiri geri sayımdan haberdar değil — tur, sayım bitince
  * başlıyor, yani `onBitti` çağrıldığı an.
