@@ -530,7 +530,7 @@ export function PomodoroEkrani({
   if (kurulumAcik) {
     return (
       <div>
-        <BaslikSatiri arac="pomodoro" baslik="Pomodoro" aciklama="Odak kilidi" />
+        <BaslikSatiri arac="pomodoro" baslik="Pomodoro" />
         <OdakKurulum ayar={ayar} setAyar={setAyar} onBitir={() => setKurulumAcik(false)} />
       </div>
     )
@@ -538,7 +538,7 @@ export function PomodoroEkrani({
 
   return (
     <div>
-      <BaslikSatiri arac="pomodoro" baslik="Pomodoro" aciklama={prova ? 'Kitapçık süresi' : durumEtiketi} />
+      <BaslikSatiri arac="pomodoro" baslik="Pomodoro" />
 
       {bitenProva && (
         <Not className="mb-4">

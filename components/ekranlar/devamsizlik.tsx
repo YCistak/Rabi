@@ -156,7 +156,7 @@ export function DevamsizlikEkrani({
 
   return (
     <div>
-      <BaslikSatiri arac="devamsizlik" baslik="Devamsızlık" aciklama={`${dersYili}-${dersYili + 1} ders yılı`} />
+      <BaslikSatiri arac="devamsizlik" baslik="Devamsızlık" />
 
       <div className="flex flex-col gap-3.5">
         {(ozet.asildi || ozet.uyari) && (
