@@ -481,20 +481,6 @@ export function CizimliFotograf({
   )
 }
 
-/** Kalem düğmesi — çizim kapalıyken alttaki düğmelerin üstünde duruyor. */
-export function KalemDugmesi({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label="Fotoğrafın üstüne çiz"
-      className="flex size-11 items-center justify-center rounded-full bg-white/12 text-white active:bg-white/20"
-    >
-      <Pencil size={19} aria-hidden />
-    </button>
-  )
-}
-
 type Acilir = 'kalinlik' | 'yakinlik' | null
 
 /** Çizim açıkken alttaki düğmelerin yerine geçen araç çubuğu. */

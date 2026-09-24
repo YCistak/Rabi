@@ -6,6 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Images,
+  Pencil,
   RotateCcw,
   Shuffle,
   SkipForward,
@@ -31,7 +32,6 @@ import { cizimAnahtari } from '@/lib/cizim'
 import {
   CizimAraclari,
   CizimliFotograf,
-  KalemDugmesi,
   useSoruCizimi,
 } from '@/components/soru-cizimi'
 import {
@@ -572,11 +572,6 @@ function Goruntuleyici({
         </div>
       ) : (
         <>
-          {url && (
-            <div className="flex w-full max-w-md justify-end px-4 pt-3">
-              <KalemDugmesi onClick={cizim.basla} />
-            </div>
-          )}
           <div className="flex w-full max-w-md gap-2 px-4 pb-6 pt-3">
             <Buton
               bicim="tehlike"
@@ -609,6 +604,15 @@ function Goruntuleyici({
                 </>
               )}
             </Buton>
+            {/* Kalem Çözdüm ile Geç'in arasında, aynı satırda. Bir süre
+                fotoğrafın altında kendi satırında duruyordu; o satır düğmeleri
+                aşağı itiyor ve başparmaktan uzak, sağ köşede kalıyordu.
+                Çözdüm esnek genişlikte, yer açmak için kendiliğinden kısalıyor. */}
+            {url && (
+              <Buton bicim="ikincil" boy="simge" onClick={cizim.basla} aria-label="Fotoğrafın üstüne çiz">
+                <Pencil size={18} aria-hidden />
+              </Buton>
+            )}
             {tekrar && (
               <Buton bicim="ikincil" boy="simge" onClick={onGec} aria-label="Sıradaki soru">
                 <SkipForward size={18} aria-hidden />
