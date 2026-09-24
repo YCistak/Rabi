@@ -616,10 +616,9 @@ function kapakKarti(ozet: AylikOzet): Kart {
           <p style={{ ...yz(800, 11, 1), letterSpacing: '0.26em', color: AMBER_SOLUK }}>RABİ · AYLIK ÖZET</p>
         </Giris>
         <Giris gecikme={60}>
-          {/* Manrope (`font-marka`): açılıştaki "RABİ" ile aynı gerekçe —
-              tasarım bu başlığı 66 pikselde Manrope ile çizdi ve iki aile o
-              boyda belirgin biçimde ayrışıyor. Üçüncü bir yerde kullanmadan
-              önce AGENTS.md'deki istisnaya bak. */}
+          {/* Manrope (`font-marka`): tasarım bu başlığı 66 pikselde Manrope
+              ile çizdi ve Nunito o boyda belirgin biçimde ayrışıyor. Başka bir
+              yerde kullanmadan önce AGENTS.md'deki istisnaya bak. */}
           <h1
             className="font-marka mt-1.5"
             style={{ ...yz(800, 66, 0.94), letterSpacing: '-0.045em', color: VURGU }}

@@ -93,11 +93,13 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   `--background` (globals.css), `acilis.tsx`'teki `ZEMIN` ve Android'in
   `acilis_zemin` / `uygulama_zemin` renkleri. Ayrılırlarsa açılışta renk
   sıçraması olur.
-- Yazı tipi tek: **Nunito**. Tek istisna açılış ekranı: orası Manrope
-  (`font-marka`), çünkü tasarım o ekranı Manrope ile çizdi ve "RABİ" 50
-  pikselde iki ailede belirgin biçimde farklı duruyor. `font-marka` başka
-  hiçbir yerde kullanılmıyor; yeni bir yerde kullanmadan önce bu istisnanın
-  neden açıldığına bak. Başlık ayrı aile değil ayrı kalınlık — `font-display`
+- Yazı tipi tek: **Nunito**. İki istisna var, ikisi de tek bir başlık:
+  açılış ekranındaki "RABİ" **Outfit** (`font-acilis`, tasarım 2a o
+  wordmark'ı Outfit 800 ile çizdi ve 52 pikselde Nunito'nun yuvarlak uçları
+  başka bir marka gibi duruyor) ve aylık özetin kapağındaki ay adı
+  **Manrope** (`font-marka`). Açılış bir süre Manrope'tu; 2a ile Outfit'e
+  geçti. İkisi de başka hiçbir yerde kullanılmıyor; yeni bir yerde
+  kullanmadan önce istisnanın neden açıldığına bak. Başlık ayrı aile değil ayrı kalınlık — `font-display`
 - Tasarım kaynağı `tasarim/` altındaki HTML mockup'lar. Derlemeye girmiyorlar,
   uygulama onlardan hiçbir şey import etmiyor — ekran değiştirirken oraya bak.
 - Sütun hâlindeki sayılara `rakam` sınıfı (tabular-nums), başlıklara `font-display`.
@@ -181,10 +183,18 @@ kullanıcıya kızmıyor, efekt zaten sarsıntıyla "yanlış" diyor.
 
 ### Açılışın son hareketi ana sayfaya bağlanıyor
 
-Ekran 4,2 saniye sürüyor (`ACILIS_SURESI`) ve bütün parçalar **tek** bir zaman
-çizgisini paylaşıyor: %0–30 iniş, %30–68 duruş, %68–100 çıkış. Süreler bu
-yüzden hepsinde aynı ve ayrı ayrı değiştirilemez — biri kayarsa yazılar
-tavşandan önce ya da sonra gider.
+Ekran 4,2 saniye sürüyor (`ACILIS_SURESI`) ve tasarımı 2a
+(`tasarim/acilis-ekrani.dc.html`): tavşan, Outfit ile "RABİ" ve slogan
+sırayla aşağıdan yükseliyor (`acilis-belir`, 100/280/420/560 ms), altta üç
+nokta nabız atıyor, arkada on iki küçük artı süzülüyor. Önceki ekranın düşen
+tavşanı, dönen çarkı, tarayan şeridi, "HAZIRLANIYOR" ve "çevrimdışı çalışır"
+yazıları 2a ile kalktı.
+
+Çıkış tek bir zaman çizgisinin yüzdelerinde: %64–90 tavşan yerine uçuyor
+(`acilis-inis`), %82–100 tavşanın dışındaki her şey (`acilis-sahne`: zemin,
+yazılar, noktalar, artılar) hafifçe büyüyerek soluyor. İki süre birlikte
+değişmeli — ayrılırlarsa tavşan sahne sönmeden yola çıkmaz ya da sahne
+tavşandan önce biter.
 
 Çıkışta tavşan varış noktasındaki maskotun **tam üstüne** süzülüyor; katman
 kalktığında ekranda zaten yalnızca o maskot duruyor ve altındaki sayfa görünür
@@ -198,8 +208,9 @@ durumda, yani geçiş tek bir hareket gibi okunuyor. Dört şey buna bağlı:
   varış noktası bu öğe ölçülerek bulunuyor ve düzenden çıkmış bir öğenin
   ölçüsü sıfırdır.
 - **Varış noktası ölçülüyor, yazılmıyor — yedeği de yok.** Tasarım
-  `translate(-147px, -224px) scale(0.33)` diyor ama o sayılar 360×720lik
-  prototip çerçevesine ait. Bir süre uygulamada da yazılıydı (`VARIS` tablosu,
+  `translate(-134px, -229px) scale(0.49)` diyor (önceki tasarım
+  `-147px, -224px, 0.33`) ama o sayılar 360×780lik prototip çerçevesine
+  ait; 375 piksellik telefonda ölçülen hedef −140,5 / −229,3 çıkıyor. Bir süre uygulamada da yazılıydı (`VARIS` tablosu,
   `calc()` ile) ve tam da beklendiği gibi bozuldu: düzen değişti, sayılar
   kaldı, tavşan yuvanın 93 piksel altına indi. Tablo yalnızca ölçüm
   yetişmediğinde devreye girdiği için hata da **arada bir** görünüyordu —
@@ -207,7 +218,7 @@ durumda, yani geçiş tek bir hareket gibi okunuyor. Dört şey buna bağlı:
   tutmazsa tavşan hiç uçmuyor, olduğu yerde sönüyor. Yuva yoksa konacak maskot
   da yok; tahmin edilen bir köşeye inmek hareketi kurtarmıyor, yanlış yere
   inen bir tavşan gösteriyor.
-- **Ölçüm tek seferlik değil.** Uçuş %68'de başlıyor ve ölçüm o ana kadar
+- **Ölçüm tek seferlik değil.** Uçuş %64'te başlıyor ve ölçüm o ana kadar
   yenilenip orada donuyor. İki sebebi var: yuva geç doğabiliyor (eskiden 60
   deneme ≈ 1 saniyelik bir hak vardı ve yavaş telefonda ana sayfa ona
   yetişmiyordu) ve düzen bir kez daha oynayabiliyor — güvenli alan
@@ -225,9 +236,15 @@ durumda, yani geçiş tek bir hareket gibi okunuyor. Dört şey buna bağlı:
 - **Ölçüm zamanlayıcıyla yineleniyor, `requestAnimationFrame` ile değil.**
   Sayfa görünür değilken rAF hiç çağrılmıyor ve ölçüm sonsuza kadar bekliyor.
 
-Ayrı bir solma adımı yok: ekran kendi çıkışını kendi yapıyor (`acilis-son`,
-`acilis-zemin-son`), üstüne bir de opaklık geçişi koymak biten bir geçişin
-üstüne ikincisini koymak olurdu.
+Ayrı bir solma adımı yok: ekran kendi çıkışını kendi yapıyor (`acilis-sahne`,
+ölçüm tutmazsa tavşan için `acilis-son`), üstüne bir de opaklık geçişi koymak
+biten bir geçişin üstüne ikincisini koymak olurdu.
+
+Tavşanın girişi ile uçuşu **ayrı kaplarda** (`acilis-belir` içte,
+`acilis-inis` dışta): ikisi de `transform` oynatıyor ve aynı öğede olsalardı
+sonuncusu öncekini ezerdi. Katmanı kaldıran `animationend` bu yüzden adla
+süzülüyor — içteki girişin bitişi de kabarcıklanıyor ve süzülmeseydi katman
+800 ms'de kalkardı.
 
 ### Android'de uçtan uca ekran bütün sürümlerde açık
 
@@ -975,9 +992,10 @@ tuval `var(--primary)` metnini çözemiyor. Aynı renkler `ozet-gorsel.ts`
 içinde de duruyor; ikisi **birlikte** değişmeli. Tek koyu sayfa ayın dersi
 (kızıl zemin, altın vurgu): geri sayımın sonu, ötekilerden ayrılmalı.
 
-Kapaktaki ay adı **Manrope** (`font-marka`): açılış ekranındaki "RABİ" ile
-aynı gerekçe — tasarım o başlığı 66 pikselde Manrope ile çizdi. Üçüncü bir
-yerde kullanmadan önce yukarıdaki yazı tipi istisnasına bak.
+Kapaktaki ay adı **Manrope** (`font-marka`): tasarım o başlığı 66 pikselde
+Manrope ile çizdi. Açılış bir süre aynı aileyi paylaşıyordu, 2a ile Outfit'e
+geçti; Manrope artık yalnızca burada. Başka bir yerde kullanmadan önce
+yukarıdaki yazı tipi istisnasına bak.
 
 Punto ve kalınlıklar Tailwind sınıfı değil `yz()` yardımcısıyla satır içi.
 CSS'in `font` kısayolu kullanılamıyor: aile adı zorunlu ve oraya `inherit`
