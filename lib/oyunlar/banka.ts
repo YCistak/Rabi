@@ -24,6 +24,7 @@ import { IKLIM_ADI } from './iklim-havuzu'
 import { SEKIL_ADI, type IzohipsSorusu } from './izohips'
 import type { SozKonusu, SozTuru } from './soz-havuzu'
 import { ucgenCevabi, ucgenKimligi, ucgenOzeti, kenarMetni, type UcgenSorusu } from './ucgen'
+import { trigCevabi, trigKimligi, trigMetni, type TrigSorusu } from './trigonometri'
 import { BOZUKLUK_ADI, type BozuklukTuru } from './anlatim-havuzu'
 import { altSinir, ustSinir, type KokluSorusu } from './koklu'
 import type { BiyolojiSorusu } from './biyoloji'
@@ -157,6 +158,12 @@ export type BankaSorusu =
     devam ederdi — periyodik tablodaki sembol kaydının gerekçesi.
   */
   | { oyun: 'tepkime'; denklem: string }
+  /*
+    Sorunun kendisi saklanıyor, Özel Üçgenler'deki gibi: sorular üretiliyor,
+    bir havuzda aranacak kayıtları yok. Cevap kayda yazılmıyor, kenarlardan
+    her açılışta yeniden hesaplanıyor (`trigCevabi`).
+  */
+  | { oyun: 'trigonometri'; trig: TrigSorusu }
 
 /**
  * Genel testin o anki turu: o oyunun bankadaki bütün sorularıyla.
@@ -347,6 +354,10 @@ export function tepkimedenBanka(soru: { denklem: string }): BankaSorusu {
   return { oyun: 'tepkime', denklem: soru.denklem }
 }
 
+export function trigdenBanka(soru: TrigSorusu): BankaSorusu {
+  return { oyun: 'trigonometri', trig: soru }
+}
+
 /**
  * Kayıt kimliği.
  *
@@ -420,6 +431,8 @@ export function bankaKimligi(soru: BankaSorusu): string {
       return `formul:${soru.formul}`
     case 'tepkime':
       return `tepkime:${soru.denklem}`
+    case 'trigonometri':
+      return `trigonometri:${trigKimligi(soru.trig)}`
   }
 }
 
@@ -495,6 +508,8 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
       return soru.formul
     case 'tepkime':
       return denklemDuzYazi(soru.denklem)
+    case 'trigonometri':
+      return trigMetni(soru.trig)
   }
 }
 
@@ -567,6 +582,8 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
       const tepkime = tepkimeBul(soru.denklem)
       return tepkime ? TEPKIME_TURU_ADI[tepkime.tur] : '—'
     }
+    case 'trigonometri':
+      return trigCevabi(soru.trig)
   }
 }
 
@@ -691,6 +708,7 @@ const BOS_DAGILIM: Record<OyunId, number> = {
   periyodik: 0,
   formul: 0,
   tepkime: 0,
+  trigonometri: 0,
 }
 
 export const OYUN_KIMLIKLERI = Object.keys(BOS_DAGILIM) as OyunId[]

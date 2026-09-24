@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"><style>body{margin:0;background:#f0eee9;font-family:Nunito,ui-sans-serif,system-ui,sans-serif;color:#1b1a19;-webkit-font-smoothing:antialiased}a{color:#b3491f}a:hover{color:#d9622f}button,input{font-family:inherit}input::placeholder{color:#6b6764;opacity:.7}</style></helmet>
+<div style="min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:32px 16px;box-sizing:border-box">
+<div data-screen-label="Yapılacaklar" style="width:390px;height:844px;max-width:100%;position:relative;overflow:hidden;border-radius:36px;background:#f8f8f7;border:1px solid rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06),0 20px 50px rgba(60,40,20,.10)">
+<div style="height:100%;overflow:auto;padding:20px 16px 60px;box-sizing:border-box;scrollbar-width:none">
+<button style="margin-left:-8px;margin-bottom:12px;height:36px;padding:0 12px;display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;border-radius:14px;color:#1b1a19;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#efeeeb"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>Geri</button>
+<div style="margin-bottom:18px;display:flex;align-items:flex-end;gap:12px">
+<div style="flex:1;min-width:0"><h1 style="margin:0;font-size:26px;line-height:34px;font-weight:800;letter-spacing:-0.025em">Yapılacaklar</h1></div>
+</div>
+
+<div style="border-radius:20px;background:#fff;border:1px solid #ece8e2;box-shadow:0 4px 14px rgba(90,60,35,.05);padding:10px 8px 8px">
+<div style="display:flex;align-items:center;gap:8px;padding:0 6px 8px;margin-bottom:6px;border-bottom:1px dashed rgba(224,100,46,.25)"><span style="font-size:15px;font-weight:800;letter-spacing:-0.02em;color:#1b1a19">{{ ayYil }}</span></div>
+<div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px">
+<sc-for list="{{ hafta }}" as="g" hint-placeholder-count="7">
+<button onClick="{{ g.onSec }}" aria-pressed="{{ g.secili }}" aria-label="{{ g.etiket }}" style="height:74px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:0;border-radius:14px;background:{{ g.bg }};box-shadow:{{ g.golge }};cursor:pointer;font-family:inherit;transition:background .15s, box-shadow .15s" style-hover="background:{{ g.hoverBg }}"><span style="font-size:12px;font-weight:600;color:{{ g.adRenk }}">{{ g.ad }}</span><span style="font-size:18px;line-height:1;font-weight:800;color:{{ g.sayiRenk }};font-variant-numeric:tabular-nums">{{ g.sayi }}</span><span style="width:5px;height:5px;border-radius:50%;background:{{ g.nokta }}"></span></button>
+</sc-for>
+</div>
+</div>
+
+
+<div style="margin-top:14px;padding:16px 12px 14px;border-radius:22px;background-color:#fcfbf8;background-image:radial-gradient(rgba(107,103,100,.28) 1.1px,transparent 1.4px);background-size:14px 14px;background-position:7px 7px;border:1px solid #efece7;box-shadow:0 4px 14px rgba(90,60,35,.04);margin-left:6px;margin-right:6px;display:flex;flex-direction:column;gap:16px;pointer-events:{{ satirPe }}">
+<sc-for list="{{ gruplar }}" as="g" hint-placeholder-count="3">
+<div>
+<div style="display:flex;align-items:center;gap:8px;padding:0 2px 8px">
+<span style="flex:none;white-space:nowrap;font-size:15px;font-weight:800;letter-spacing:-0.01em;color:#1b1a19">{{ g.ad }}</span>
+<span style="flex:1;height:1px;background:#e7e3dc"></span>
+<sc-if value="{{ g.simdi }}"><button onClick="{{ onAc }}" aria-label="Görev ekle" title="Görev ekle" style="width:36px;height:36px;flex:none;border:0;border-radius:50%;background:#e0642e;color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 14px rgba(224,100,46,.35);transition:transform .15s" style-active="transform:scale(.92)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></button></sc-if>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ g.isler }}" as="t" hint-placeholder-count="2">
+<div style="display:flex;align-items:center;gap:10px;padding:11px 8px 11px 12px;background:#fff;border:1px solid #efece7;border-radius:16px;box-shadow:{{ t.golge }};opacity:{{ t.op }};transition:opacity .2s">
+<button onClick="{{ t.onToggle }}" aria-label="{{ t.tikAria }}" aria-pressed="{{ t.bitti }}" style="width:26px;height:26px;flex:none;border-radius:50%;border:2px solid {{ t.cember }};background:{{ t.cemberBg }};color:#fff;cursor:pointer;display:grid;place-items:center;padding:0;transition:all .15s"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" style="opacity:{{ t.tikOp }}"><path d="M20 6 9 17l-5-5"></path></svg></button>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px">
+<span style="display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:{{ t.katRenk }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ t.katRenk }}"></span>{{ t.kat }}</span>
+<span style="font-size:14.5px;font-weight:700;line-height:1.3;text-wrap:pretty;color:{{ t.metinRenk }};text-decoration:{{ t.deco }}">{{ t.metin }}</span>
+</div>
+<sc-if value="{{ t.bekliyor }}">
+<button onClick="{{ t.onStar }}" aria-label="Öncelikli" aria-pressed="{{ t.yildizli }}" style="width:32px;height:32px;flex:none;border:0;border-radius:10px;background:transparent;color:{{ t.starColor }};cursor:pointer;display:grid;place-items:center" style-hover="background:#f8f8f7"><svg width="17" height="17" viewBox="0 0 24 24" fill="{{ t.starFill }}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
+<button onClick="{{ t.onErtele }}" aria-label="Ertesi güne ertele" title="Ertesi güne ertele" style="width:32px;height:32px;flex:none;border:0;border-radius:10px;background:#f3f2ef;color:#4a4744;cursor:pointer;display:grid;place-items:center" style-hover="background:#ebe9e5"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></button>
+</sc-if>
+<sc-if value="{{ t.bitti }}"><button onClick="{{ t.onSil }}" aria-label="Sil" style="width:32px;height:32px;flex:none;border:0;border-radius:10px;background:transparent;color:#6b6764;cursor:pointer;display:grid;place-items:center" style-hover="background:#f7e5e2;color:#b23b2b"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg></button></sc-if>
+</div>
+</sc-for>
+<sc-if value="{{ g.bos }}"><button onClick="{{ g.onEkle }}" style="width:100%;padding:12px 14px;border-radius:14px;border:1.5px dashed #dcd7cf;background:rgba(255,255,255,.7);font-size:12.5px;font-weight:700;color:#6b6764;text-align:center;cursor:pointer;font-family:inherit" style-hover="border-color:#e0642e;color:#b3491f">{{ g.bosMetin }}</button></sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+
+<sc-if value="{{ toastVar }}"><div style="position:absolute;left:16px;right:16px;bottom:24px;z-index:20;padding:12px 16px;border-radius:16px;background:#1b1a19;color:#fff;font-size:13.5px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.2)">{{ toast }}</div></sc-if>
+
+<div onClick="{{ onKapat }}" style="position:absolute;inset:0;z-index:30;background:rgba(0,0,0,.4);opacity:{{ zeminOp }};pointer-events:{{ zeminPe }};transition:opacity .25s"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;z-index:31;max-height:82%;overflow-y:auto;box-sizing:border-box;border-radius:26px 26px 0 0;background:#fff;padding:12px 16px 24px;transform:{{ sheetTf }};transition:transform .34s cubic-bezier(.2,.8,.2,1);box-shadow:0 -10px 30px rgba(0,0,0,.12)">
+<div style="margin:0 auto 12px;width:42px;height:4px;border-radius:999px;background:#eae9e6"></div>
+<div style="margin-bottom:14px;display:flex;align-items:center;gap:10px">
+<p style="margin:0;font-size:18px;font-weight:800;letter-spacing:-0.025em">Görev ekle</p>
+<p style="margin:0 0 0 auto;font-size:12.5px;font-weight:700;color:#6b6764">{{ gunEtiket }}</p>
+<button onClick="{{ onKapat }}" aria-label="Kapat" style="width:34px;height:34px;flex:none;display:grid;place-items:center;border:0;border-radius:12px;background:rgba(239,238,235,.7);color:#6b6764;cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+</div>
+<span style="margin-bottom:6px;display:block;font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#6b6764">Ne yapacaksın? <span style="color:#b23b2b">*</span></span>
+<input value="{{ text }}" onChange="{{ onText }}" style="width:100%;box-sizing:border-box;height:52px;border:1px solid {{ metinCerceve }};border-radius:16px;padding:0 14px;font-size:15px;font-weight:700;background:#f8f8f7;color:#1b1a19;outline:none" style-focus="border-color:#d9622f;background:#fff"></input>
+<div style="margin-top:16px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between"><span style="font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#6b6764">Ne zaman? <span style="color:#b23b2b">*</span></span><sc-if value="{{ hataSlot }}"><span style="font-size:12px;font-weight:800;color:#b23b2b">Bir zaman seç</span></sc-if></div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;border-radius:16px;outline:{{ slotZemin }};outline-offset:3px">
+<sc-for list="{{ slotlar }}" as="z" hint-placeholder-count="3"><button onClick="{{ z.onPick }}" aria-pressed="{{ z.secili }}" style="height:46px;border:1.5px solid {{ z.cerceve }};border-radius:12px;background:{{ z.bg }};color:{{ z.renk }};font-size:14px;font-weight:800;cursor:pointer">{{ z.ad }}</button></sc-for>
+</div>
+<div style="margin-top:16px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between"><span style="font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#6b6764">Kategori <span style="color:#b23b2b">*</span></span><sc-if value="{{ hataKat }}"><span style="font-size:12px;font-weight:800;color:#b23b2b">Birini seç</span></sc-if></div>
+<div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;border-radius:16px;outline:{{ katZemin }};outline-offset:3px">
+<sc-for list="{{ kategoriler }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.onPick }}" aria-pressed="{{ c.secili }}" style="height:46px;border:1.5px solid {{ c.cerceve }};border-radius:12px;background:{{ c.bg }};color:{{ c.renk }};padding:0 2px;white-space:nowrap;font-size:12.5px;font-weight:800;cursor:pointer">{{ c.ad }}</button></sc-for>
+</div>
+<div style="margin-top:16px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between"><span style="font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#6b6764">Renk <span style="color:#b23b2b">*</span></span><sc-if value="{{ hataRenk }}"><span style="font-size:12px;font-weight:800;color:#b23b2b">Bir renk seç</span></sc-if></div>
+<div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));justify-items:center;gap:10px 4px;padding:4px;border-radius:16px;outline:{{ renkZemin }};outline-offset:3px">
+<sc-for list="{{ renkler }}" as="r" hint-placeholder-count="12"><button onClick="{{ r.onPick }}" aria-pressed="{{ r.secili }}" aria-label="{{ r.ad }}" title="{{ r.ad }}" style="width:44px;height:44px;flex:none;border:0;border-radius:50%;background:{{ r.renk }};box-shadow:{{ r.halka }};color:#fff;display:grid;place-items:center;cursor:pointer;transition:box-shadow .15s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="opacity:{{ r.tikOp }}"><path d="M20 6 9 17l-5-5"></path></svg></button></sc-for>
+</div>
+<button onClick="{{ onKaydet }}" style="margin-top:18px;width:100%;height:54px;border:0;border-radius:17px;background:#e0642e;color:#fff;font-size:16px;font-weight:700;cursor:pointer;opacity:{{ kaydetOp }}">Kaydet</button>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  n = 100;
+  static iso(d) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
+  static tarih(s) { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); }
+  static kaydir(s, n) { const d = Component.tarih(s); return Component.iso(new Date(d.getFullYear(), d.getMonth(), d.getDate() + n)); }
+  static AY = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+  static GUN = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+  static Z = {
+    sabah: { ad: 'Sabah', bg: '#f8f4ea', cerceve: '#e6dcc4', renk: '#7d6a45' },
+    ogle: { ad: 'Öğle', bg: '#f8f0ec', cerceve: '#e8d3c9', renk: '#8f5c46' },
+    aksam: { ad: 'Akşam', bg: '#f1f0f6', cerceve: '#d9d5e6', renk: '#625c7e' },
+  };
+  static KAT = { Deneme: {}, Soru: {}, Tekrar: {}, 'Ödev': {}, 'Diğer': {} };
+  static RENK = [
+    ['Turuncu', '#d9622f'], ['Kırmızı', '#c0392b'], ['Pembe', '#c23e68'], ['Mor', '#6b5ca5'], ['Lacivert', '#2f4a8a'], ['Mavi', '#3a6bb5'],
+    ['Turkuaz', '#1f8a8a'], ['Yeşil', '#2f7d45'], ['Zeytin', '#6b7a2c'], ['Hardal', '#a87c24'], ['Kahve', '#8a5a3f'], ['Gri', '#5d6470'],
+  ];
+  state = (() => {
+    const b = Component.iso(new Date()), k = Component.kaydir;
+    return {
+      sec: b, ay: new Date(), takvim: false, sheet: false, text: '', slot: null, kat: null, hata: false, toast: null,
+      liste: [
+        { id: 'a1', gun: b, slot: 'sabah', kat: 'Soru', renk: '#3a6bb5', metin: 'Limit–türev: 40 soru', bitti: false, yildiz: true },
+        { id: 'a2', gun: b, slot: 'sabah', kat: 'Tekrar', renk: '#2f7d45', metin: 'Hücre bölünmesi tekrarı', bitti: true, yildiz: false },
+        { id: 'a3', gun: b, slot: 'ogle', kat: 'Deneme', renk: '#c23e68', metin: 'Paragraf denemesi çöz', bitti: false, yildiz: false },
+        { id: 'a4', gun: b, slot: 'ogle', kat: 'Tekrar', renk: '#a87c24', metin: 'İklim tiplerini özetle', bitti: false, yildiz: false },
+        { id: 'a5', gun: b, slot: 'aksam', kat: 'Tekrar', renk: '#6b5ca5', metin: 'Kimya notlarını gözden geçir', bitti: false, yildiz: false },
+        { id: 'a6', gun: b, slot: 'aksam', kat: 'Soru', renk: '#d9622f', metin: '20 problem sorusu çöz', bitti: false, yildiz: false },
+        { id: 'a7', gun: k(b, 1), slot: 'sabah', kat: 'Deneme', renk: '#3a6bb5', metin: 'TYT deneme sınavı', bitti: false, yildiz: true },
+      ],
+    };
+  })();
+  componentWillUnmount() { clearTimeout(this.tt); }
+  say(text) { clearTimeout(this.tt); this.setState({ toast: text }); this.tt = setTimeout(() => this.setState({ toast: null }), 2400); }
+  upd(id, f) { this.setState(s => ({ liste: s.liste.map(t => (t.id === id ? f(t) : t)) })); }
+  renderVals() {
+    const C = Component, s = this.state, bugun = C.iso(new Date()), sec = s.sec, sd = C.tarih(sec), gecmis = sec < bugun;
+    const gunEtiket = sec === bugun ? 'Bugün' : sec === C.kaydir(bugun, 1) ? 'Yarın' : sec === C.kaydir(bugun, -1) ? 'Dün' : `${sd.getDate()} ${C.AY[sd.getMonth()]}`;
+    const sayOf = iso => s.liste.filter(t => t.gun === iso);
+    const gunSec = iso => this.setState({ sec: iso, ay: C.tarih(iso) });
+    const pzt = new Date(sd.getFullYear(), sd.getMonth(), sd.getDate() - ((sd.getDay() + 6) % 7));
+    const hafta = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map((ad, i) => {
+      const d = new Date(pzt.getFullYear(), pzt.getMonth(), pzt.getDate() + i), iso = C.iso(d), l = sayOf(iso), on = iso === sec, eski = iso < bugun;
+      const bg = on ? '#f47b2a' : 'transparent';
+      return { ad, sayi: d.getDate(), secili: on, n: l.length, etiket: `${d.getDate()} ${C.AY[d.getMonth()]}`,
+        bg, hoverBg: on ? '#f47b2a' : '#f8f7f5', golge: 'none',
+        adRenk: on ? '#fff' : eski ? '#a19d99' : '#1b1a19', sayiRenk: on ? '#fff' : eski ? '#a19d99' : '#1b1a19',
+        nokta: on ? '#fff' : l.length ? '#c9c5c0' : 'transparent', onSec: () => gunSec(iso) };
+    });
+    const ay = s.ay, ilk = new Date(ay.getFullYear(), ay.getMonth(), 1), gs = new Date(ay.getFullYear(), ay.getMonth() + 1, 0).getDate();
+    const ayGunleri = [
+      ...Array.from({ length: (ilk.getDay() + 6) % 7 }, () => ({ bos: true, dolu: false })),
+      ...Array.from({ length: gs }, (_, i) => {
+        const iso = C.iso(new Date(ay.getFullYear(), ay.getMonth(), i + 1)), l = sayOf(iso), on = iso === sec, eski = iso < bugun;
+        return { bos: false, dolu: true, sayi: i + 1, secili: on, etiket: `${i + 1} ${C.AY[ay.getMonth()]}`,
+          bg: on ? '#fce6dc' : 'transparent', sayiRenk: on ? '#d9622f' : eski ? '#8a8682' : '#1b1a19', agirlik: on || iso === bugun ? 800 : 600,
+          nokta: l.length ? (eski ? '#c9c5c0' : '#d9622f') : 'transparent', onSec: () => gunSec(iso) };
+      }),
+    ];
+    const L = sayOf(sec), h = new Date().getHours(), simdi = sec === bugun ? (h < 12 ? 'sabah' : h < 17 ? 'ogle' : 'aksam') : null;
+    const gruplar = Object.keys(C.Z).map(k => {
+      const Z = C.Z[k], isler = L.filter(t => t.slot === k).sort((a, b) => b.yildiz - a.yildiz), bek = isler.filter(t => !t.bitti).length;
+      return {
+        ad: Z.ad, rozetBg: Z.bg, rozetCerceve: Z.cerceve, rozetRenk: Z.renk,
+        simdi: !gecmis && k === (simdi || 'sabah'), bekleyenGoster: k !== simdi && bek > 0, bekleyen: `${bek} bekleyen`,
+        bos: !isler.length, bosMetin: gecmis ? `${Z.ad} için plan yoktu.` : `+ ${Z.ad} için görev ekle`,
+        onEkle: () => { if (!gecmis) this.setState({ sheet: true, text: '', slot: k, kat: null, renk: null, hata: false }); },
+        isler: isler.map(t => {
+          return {
+            kat: t.kat, metin: t.metin, bitti: t.bitti, bekliyor: !t.bitti, yildizli: t.yildiz,
+            katRenk: t.renk || '#6b6764', metinRenk: '#1b1a19', deco: t.bitti ? 'line-through' : 'none',
+            op: t.bitti ? 0.5 : 1, golge: t.bitti ? 'none' : '0 4px 14px rgba(90,60,35,.06)',
+            cember: t.bitti ? '#4f7a4a' : '#d6d3ce', cemberBg: t.bitti ? '#4f7a4a' : '#fff', tikOp: t.bitti ? 1 : 0,
+            tikAria: t.bitti ? 'Bitmedi olarak işaretle' : 'Bitti olarak işaretle',
+            starColor: t.yildiz ? '#c98a12' : '#6b6764', starFill: t.yildiz ? '#d09b34' : 'none',
+            onToggle: () => this.upd(t.id, x => ({ ...x, bitti: !x.bitti })),
+            onStar: () => this.upd(t.id, x => ({ ...x, yildiz: !x.yildiz })),
+            onErtele: () => { this.upd(t.id, x => ({ ...x, gun: C.kaydir(x.gun, 1) })); this.say('Görev ertesi güne ertelendi.'); },
+            onSil: () => this.setState(st => ({ liste: st.liste.filter(x => x.id !== t.id) })),
+          };
+        }),
+      };
+    });
+    const sifirla = { sheet: false, text: '', slot: null, kat: null, renk: null, hata: false };
+    const m = s.text.trim(), gecerli = !!m && !!s.slot && !!s.kat && !!s.renk;
+    return {
+      tarihBaslik: `${sd.getDate()} ${C.AY[sd.getMonth()]}, ${C.GUN[sd.getDay()]}`, gunEtiket,
+      ayYil: `${C.AY[sd.getMonth()]} ${sd.getFullYear()}`,
+      haftaToplam: `${hafta.reduce((a, g) => a + g.n, 0)} iş`, hafta,
+      ...(() => {
+        const t = L.length, d = L.filter(x => x.bitti).length, o = t ? d / t : 0;
+        return { ilerlemeVar: t > 0, ilerleme: `${d}/${t}`, halkaOfset: 75.4 * (1 - o), halkaRenk: o >= 1 ? '#4f7a4a' : '#e0642e',
+          bekleyenToplam: t - d ? `${t - d} bekleyen` : t ? 'Hepsi tamam' : 'Boş' };
+      })(),
+      takvimAcik: s.takvim, takvimAria: s.takvim ? 'Takvimi kapat' : 'Takvimi aç',
+      takvimTusBg: s.takvim ? '#fce6dc' : '#f3f2ef', takvimTusRenk: s.takvim ? '#d9622f' : '#4a4744',
+      onTakvim: () => this.setState(st => ({ takvim: !st.takvim, ay: C.tarih(st.sec) })),
+      ayBaslik: `${C.AY[ay.getMonth()]} ${ay.getFullYear()}`, ayGunleri,
+      onOncekiAy: () => this.setState(st => ({ ay: new Date(st.ay.getFullYear(), st.ay.getMonth() - 1, 1) })),
+      onSonrakiAy: () => this.setState(st => ({ ay: new Date(st.ay.getFullYear(), st.ay.getMonth() + 1, 1) })),
+      gecmis, satirPe: gecmis ? 'none' : 'auto',
+      ekleOp: gecmis ? 0.45 : 1, ekleImlec: gecmis ? 'not-allowed' : 'pointer', ekleGolge: gecmis ? 'none' : '0 8px 18px rgba(224,100,46,.25)',
+      gruplar,
+      onAc: () => { if (!gecmis) this.setState({ ...sifirla, sheet: true }); }, onKapat: () => this.setState(sifirla),
+      zeminOp: s.sheet ? 1 : 0, zeminPe: s.sheet ? 'auto' : 'none', sheetTf: s.sheet ? 'translateY(0)' : 'translateY(105%)',
+      text: s.text, onText: e => this.setState({ text: e.target.value }), metinCerceve: s.hata && !m ? '#b23b2b' : '#eae9e6',
+      hataSlot: s.hata && !s.slot, slotZemin: s.hata && !s.slot ? '2px solid #f0c9c2' : '0 solid transparent',
+      slotlar: Object.keys(C.Z).map(k => { const on = s.slot === k; return { ad: C.Z[k].ad, secili: on, bg: on ? '#e0642e' : '#fff', renk: on ? '#fff' : '#1b1a19', cerceve: on ? '#e0642e' : '#e3e1dd', onPick: () => this.setState({ slot: k }) }; }),
+      hataKat: s.hata && !s.kat, katZemin: s.hata && !s.kat ? '2px solid #f0c9c2' : '0 solid transparent',
+      kategoriler: Object.keys(C.KAT).map(ad => { const on = s.kat === ad; return { ad, secili: on, bg: on ? '#e0642e' : '#fff', renk: on ? '#fff' : '#1b1a19', cerceve: on ? '#e0642e' : '#e3e1dd', onPick: () => this.setState({ kat: ad }) }; }),
+      hataRenk: s.hata && !s.renk, renkZemin: s.hata && !s.renk ? '2px solid #f0c9c2' : '0 solid transparent',
+      renkler: C.RENK.map(([ad, renk]) => { const on = s.renk === renk; return { ad, renk, secili: on, tikOp: on ? 1 : 0, halka: on ? `0 0 0 3px #fff, 0 0 0 5px ${renk}` : 'none', onPick: () => this.setState({ renk }) }; }),
+      kaydetOp: gecerli ? 1 : 0.45,
+      onKaydet: () => {
+        if (!gecerli) { this.setState({ hata: true }); return; }
+        const slot = s.slot;
+        this.setState(st => ({ liste: [...st.liste, { id: 'n' + (this.n++), gun: st.sec, slot, kat: st.kat, renk: st.renk, metin: m, bitti: false, yildiz: false }], ...sifirla }));
+        this.say(`${C.Z[slot].ad} listesine eklendi.`);
+      },
+      toastVar: !!s.toast, toast: s.toast || '',
+    };
+  }
+}
+</script>
+</body>
+</html>

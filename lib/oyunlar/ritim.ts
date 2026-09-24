@@ -135,6 +135,12 @@ export const SORU_SURESI: Record<OyunId, number> = {
    * Ses Olayları'nın tek sözcüğünden uzun, anlatım bozukluğunun cümlesi kadar.
    */
   tepkime: 16,
+  /**
+   * Trigonometride süre üçgene bakmaya ve bir bölme yapmaya gidiyor; zor
+   * seviyede önce üçgeni kafada kurmak (5/13 → 5-12-13) gerekiyor. Özel
+   * Üçgenler'in 22 saniyesinden kısa: şıklar hesap değil tanıma istiyor.
+   */
+  trigonometri: 18,
 }
 
 /**

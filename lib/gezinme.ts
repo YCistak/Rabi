@@ -93,7 +93,7 @@ export const KARTLAR: KartTanimi[] = [
   {
     id: 'notlar',
     ad: 'Yapılacaklar',
-    aciklama: 'Bugününü kâğıtlara yaz',
+    aciklama: 'Günü sabah, öğle, akşam planla',
     ikon: '🗒️',
     renk: 'deniz',
   },

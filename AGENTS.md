@@ -1333,6 +1333,13 @@ soru **yok** — oyun ekranı tahtayı ancak `asama === 'oynaniyor'` olunca
 kayıyor: dört mod kutusu, zorluk şeridi ve Rahat'ın uyarı şeridi kısa
 telefonlarda taşıyor ve düğme ekranın dışında kalıyordu.
 
+**Pencereden sonra tanıtım yok.** "Başlat" doğrudan 3 · 2 · 1 sayımını
+açıyor. Bir süre arada nasıl oynandığını anlatan tam ekran tanıtım vardı
+("Devam" → kurallar → "Başla"); kullanıcı kaldırılmasını istedi — tura girmek
+iki ekran ve iki dokunuş sürüyordu. Kural kaybolmadı: tur sırasındaki "?"
+tanıtımı açıyor. Tur başında tanıtım yalnızca ayar penceresi çıkmayan turda
+(Oyun Bankası turu) görünüyor.
+
 Mod kutularındaki ikonlar çizgi ikon (lucide), `ModTanimi.simge`deki emoji
 değil: dört kutunun dördü de aynı ailede olmalı ve emoji telefondan telefona
 başka çiziliyor. Emoji duruyor, tur içindeki mod rozetinde
@@ -1430,6 +1437,39 @@ kabuktaki kırmızı zemin/rozet/parlama, `bossSesi` ve `boss-*` CSS sınıflar�
 `soruSuresi` artık tek argüman alıyor: zorluk **süreyi değiştirmiyor**, seviye
 sorunun kendisini seçiyor — üstüne bir de saati kısaltmak aynı kararı iki kez
 uygulamak olurdu.
+
+## Trigonometrik Oranlar
+
+Matematiğin ilk 10. sınıf oyunu (`lib/oyunlar/trigonometri.ts`, ekran
+`components/ekranlar/oyun-trigonometri.tsx`) ve Geometri Ustası bölümünün
+üçüncü oyunu — Özel Üçgenler'in dik üçgeninin üstüne kuruluyor. Konu Maarif
+programının "Dik Üçgende Trigonometrik Oranlar ve Özdeşlikler"i: program bu
+sınıfta birim çembere geçmiyor, oyun da dar açıyla dik üçgenin içinde kalıyor.
+
+Sorular havuzdan değil **üretilerek** geliyor ve zorluk soru biçimini seçiyor:
+kolayda tanım (üç kenarı yazılı üçgende sin/cos/tan, özel açılarda sin/cos),
+ortada cot, eksik kenar ve dört oranlı özel açılar, zorda şekil kalkıyor —
+bir oran verilip öteki (`donusum`) ya da tümler açınınki (`tumler`) soruluyor.
+Eksik kenarlı soruda yazılmayan kenar sorulan oranın içinde olmak zorunda;
+olmasaydı Pisagor'a hiç gerek kalmazdı.
+
+**Çeldiriciler aynı üçgenin öteki oranları**, rastgele kesir değil: sin
+sorulduğunda cos, tan, cot ve 1/sin şıkta duruyor. Oyunun ölçtüğü hata tam bu
+— karşıyla komşuyu, payla paydayı karıştırmak. Tümler soruda aynı adlı oran
+(tan α = 3/4 verilip tan β sorulunca 3/4) bu yüzden kendiliğinden tuzak
+oluyor. Değeri doğruya eşit hiçbir şık olamıyor (`degerSayisi` ile
+karşılaştırılıyor) ve şıklar hep sade: 6-8-10 üçgeninde sin α yine 3/5 — oran
+açıya bağlı, boya değil.
+
+Özel açılarda tan 30° "√3/3" yazılıyor, "1/√3" değil: iki yazılış yan yana şık
+olsaydı aynı değer iki kez sorulurdu. Kesirler ekranda üst üste çiziliyor
+(`components/kesir-yazisi.tsx`); eğik çizgiyle "√3/2" ile "√(3/2)"
+ayırt edilmiyordu.
+
+7-24-25 çizilmiyor, yalnızca metin sorularında var: dar açısı 16° ve α o
+köşeye düşünce etiket kenarların arasına sığmıyordu (`sekil.test.ts`).
+Banka kaydı sorunun kendisini taşıyor, cevabı değil — cevap kenarlardan her
+açılışta yeniden hesaplanıyor.
 
 ## Coğrafyanın iki harita oyunu
 
@@ -1758,57 +1798,129 @@ Ders kutucuklarının geçmişi ayrı tutulmuyor, oynanan oyunlardan türetiliyo
 (`oyunlarinDersleri`): ikinci bir "son açılan ders" listesi aynı bilgiyi ikinci
 kez saklamak olurdu ve iki liste zamanla birbirinden ayrılırdı.
 
-## Yapılacaklar tahtası
+## Yapılacaklar: günün üç dilimi
 
-Araçlardaki not kâğıtları (`lib/yapilacaklar.ts`). Liste değil tahta: kâğıtlar
-istenen yere sürükleniyor ve konum kullanıcının verdiği bilgi — bir listeye
-düzleştirmek onu atmak olurdu. En fazla on kâğıt; sınır tahtanın kendisinden
-geliyor.
+Araçlardaki görev listesi (`lib/yapilacaklar.ts`, ekran
+`components/ekranlar/yapilacaklar.tsx`, tasarım
+`tasarim/yapilacaklar-v3.dc.html`). Üstte haftanın yedi günü, altında noktalı
+kâğıt üstünde **Sabah / Öğle / Akşam** bölümleri, görev eklemek alttan açılan
+bir sayfada.
 
-### Kâğıtlar binebiliyor, birbirini kapatamıyor
+Burası bir süre **tahtaydı**: not kâğıtları sürükleniyor, konum da kullanıcının
+verdiği bilgi sayılıyordu ("bunlar okul, şunlar ev"). 390 piksellik bir tahtada
+on kâğıt, okunmak için yerleştirilmesi gereken on kâğıt demekti — kullanıcı işini
+yazmak yerine tahtayı düzenliyordu. Gruplama da konumdan okunmuyordu: iki kâğıdın
+yan yana durması ancak onu koyan kişiye bir şey söylüyor, ertesi gün ona da
+söylemiyor. Yeni düzen gruplamayı konuma değil **zamana** bağlıyor; günün
+kendisinde gerçekten var olan tek sıra bu. Konum alanları (`x`, `y`) kalktı,
+eski kayıtlar `gorevleriNormalize` ile taşınıyor (kâğıtlar kalıyor, konumları
+atılıyor).
 
-Üst üste binmek serbest — iki kâğıdın köşe köşe değmesi kullanıcının kurduğu
-gruplamanın parçası. Yasak olan **tam örtüşme**: altta kalan kâğıt hiç
-görünmüyorsa okunamıyor, tutulamıyor ve kullanıcı onu kaybettiğini sanıyor.
+### Sınır dilim başına on
 
-Kural `ayrikKonum` içinde ve hem taşımaya hem yeni kâğıda uygulanıyor
-(`notTasi`, `notEkle`). Çakışma **iki eksende birden** payın altında kalmak
-demek; tek eksende yaklaşmak kâğıdın öbür kenarını açıkta bırakıyor.
-`EN_AZ_PAY_Y` tesadüfi değil, kâğıdın **tutma şeridi** kadar: altta kalan kâğıt
-yalnızca görünmüyor, tutulup çekilebiliyor da.
+`EN_COK_GOREV` **bir günün bir dilimi** için geçerli, gün için değil: on işi
+sabaha yığmak bir plan değil istek listesi, ama sınırı günde ona indirmek üç
+dilimi anlamsızlaştırırdı — sabahı dolduran akşama hiç yazamazdı. Sınır iki
+yerde birden duruyor: `gorevEkle` eklemeyi engelliyor (ve dolu dilimin `+`
+düğmesi pasif), `gorevleriNormalize` de kayıttan okurken fazlasını eliyor —
+kurcalanmış bir kayıt yüzünden ekranda "11/10" yazmasın diye.
 
-Çakışan kâğıdın karşı yönüne **itmek** ilk denenen yoldu ve kalabalık tahtada
-hiç durmuyordu: itilen kâğıt ikinci bir kâğıda çarpıp geri dönüyor, döngü
-salınıyordu. Şimdi bırakılan noktanın çevresi dışa doğru taranıyor ve bulunan
-yer hep parmağın kalktığı yere **en yakın** boşluk oluyor. Bırakılan yer zaten
-boşsa hiç dokunulmuyor — kullanıcının koyduğu yeri düzeltmek, ancak
-düzeltilecek bir şey varsa yapılır.
+### Metin tek satır, sınır ölçüyle konuyor
 
-Tahta **günlük**: her kâğıt yerel günüyle (`gun`) duruyor ve gün dönünce
-`gununNotlari` onu eliyor. Dün yazdığını bugün de tahtada gören kullanıcı,
-biriken ve hiç bitmeyen bir listeye bakıyor demektir. Gün dönümü zamanlayıcıyla
-değil türetmeyle yakalanıyor — uygulama kapalıyken çalışmayan bir `setTimeout`'a
-güvenilmez; elenen kâğıtlar bir etkiyle kayıttan da siliniyor, yoksa yedeğe
-girerlerdi.
+`EN_UZUN_GOREV` = 24 karakter ve bu sayı tasarımdan değil **satırın
+kendisinden** geliyor: solda tik yuvarlağı, sağda yıldız ve erteleme düğmeleri
+varken metne kalan yer 375 piksellik telefonda ~198 piksel, Nunito 700/14,5'te
+Türkçe küçük harfli metin de karakter başına ~7,4 piksel. Satır ayrıca
+`truncate` ile kırpılıyor: büyük harfli metin karakter başına ~9,6 piksel
+tutuyor ve karakter sınırı tek başına yetmiyor.
 
-`yeniKonum` iki sütun × beş satırlık bir ızgara: on kâğıdın **hepsine** ayrı
-yer. Önceki köşegen basamak beşte bir başa dönüyordu ve altıncı kâğıt birincinin
-üstüne oturuyordu. Tahtanın yüksekliği de buna bağlı — satır aralığı kâğıdın
-boyundan kısalırsa kâğıtlar daha ilk eklendikleri anda biner.
+İkisi **birlikte** değişir: sınırı büyütmek isteyen önce satırdaki düğmelere yer
+bulmalı. Yeni bir düğme eklemek de metni daraltır, yani sınırı düşürür.
 
-Konum piksel değil **oran** (0–1) ve kâğıdın sığdığı boşluğa göre ölçülüyor;
-`left: X%` ile `translate(-X%)` eşleşmesi sayesinde çizim tarafı ekran ölçüsü
-bilmek zorunda değil ve kâğıt hiçbir zaman tahtadan taşmıyor. Yedeğe giriyor:
-başka telefona taşınan tahta aynı yerleşimi koruyor.
+Görev metni **düzenlenemiyor**, silinip yeniden yazılıyor: satır tek satırlık bir
+iş adı taşıyor ve yirmi dört karakteri düzeltmek, her satıra ikinci bir kalem
+düğmesi koymaktan hızlı.
 
-Kâğıtlar yalnızca o sekmede; uygulamanın üstünde yüzen bir katman değiller. Her
-ekranda görünen bir yapılacak listesi kaygıyı hiç bırakmayan bir arayüz olurdu.
+### Kayıt haftalık, geçmiş salt okunur
 
-Tahtanın yüksekliği ve kâğıdın genişliği Tailwind sınıfı değil, satır içi ölçü.
-Bu ikisi olmadan özellik ekranda **yok**: tahta sıfır yükseklikte, kâğıt sıfır
-genişlikte kalıyor ve "yeni kâğıt" tuşu çalışıyormuş gibi görünüp hiçbir şey
-göstermiyor. Görünüşe ait bir sınıfın taramadan düşmesi eksik bir gölge demek;
-ölçüye ait olanınki boş bir ekran.
+Tahta **günlükti**, gün dönünce kâğıtlar siliniyordu; gerekçe "dün yazdığını
+bugün de gören kullanıcı biriken ve hiç bitmeyen bir listeye bakıyor" idi.
+Gerekçe duruyor ama hafta şeridi ileriye plan yazdırıyor, yani "bugün" tek başına
+yetmiyor. Kayıt bu yüzden **haftalık**: `haftaninGorevleri` içinde bulunulan
+haftanın pazartesisinden eskisini eliyor. Şerit zaten o haftayı gösteriyor, daha
+eskisine ulaşan bir yol yok — tutulsaydı görünmeyen bir birikim olurdu. Her
+pazartesi liste sıfırlanıyor, bitmemiş işler de gidiyor.
+
+Hafta dönümü zamanlayıcıyla değil **türetmeyle** yakalanıyor (`AppShell`):
+uygulama kapalıyken çalışmayan bir `setTimeout`'a güvenilmez. Elenen görevler bir
+etkiyle kayıttan da siliniyor, yoksa yedeğe girerlerdi.
+
+Geçmiş günler salt okunur: ekleme, işaretleme, yıldız ve erteleme düğmeleri
+orada hiç çizilmiyor. Dün yapılmamış işi bugün işaretlemek geçmişi düzeltmek
+olur — o iş yapılmadı, ve erteleme varken buna gerek de yok.
+
+Ay takvimi **yok**. Soru Takibi'nde var çünkü orada eski günlere bakmanın bir
+karşılığı var; burada kayıt bir haftadan eskisini tutmuyor, açılan takvim boş
+günler gösterirdi.
+
+### Ekleme düğmesi her bölümde
+
+Tasarım `+` düğmesini yalnızca içinde bulunulan dilime koyuyor; o zaman dolu ama
+sırası geçmiş bir bölüme ikinci bir görev yazmanın yolu kalmıyor (boş bölümün
+kesikli düğmesi de yalnızca boşken çıkıyor). Düğme bu yüzden her bölümde;
+tasarımın vurgusu duruyor — şimdiki dilimin düğmesi dolu turuncu, ötekiler
+sessiz. Hangi dilimde olunduğu `simdikiDilim` ile saatten çıkıyor ve saat
+dışarıdan veriliyor, yoksa saf kalmazdı.
+
+Erteleme görevi **ertesi güne, aynı dilime** taşıyor ve hedef dilim doluysa
+`gorevErtele` `null` dönüyor: sessizce yutulan bir erteleme, kullanıcıya işin
+ekrandan kaybolduğunu gösterirdi. Ekran bu yüzden bir toast taşıyor — ertelenen
+görev bulunduğu günden çıkıyor ve nereye gittiğini söyleyen tek yer o cümle.
+
+Ekleme sayfası **"Ne zaman?" diye sormuyor**: dilim, basılan `+` düğmesinin
+bölümünden geliyor. Sayfada bir süre üç dilimlik bir seçici de vardı; kullanıcı
+kaldırılmasını istedi — "Akşam"ın düğmesine basan kullanıcı cevabı zaten
+vermişti. Dilimin adı sayfanın başlığında gün etiketinin yanında yazıyor
+("Bugün · Akşam"), görev nereye gideceği görünmeden kaydedilmiyor. Başka bir
+dilime yazmak isteyen o bölümün düğmesine basıyor.
+
+### Görevin süresi soruluyor
+
+Ekleme sayfası "Ortalama kaç dakika sürer?" diye soruyor (`Gorev.sure`,
+çipler `SURE_SECENEKLERI`: 15–120). Dilim başlığı bitmemiş görevlerin toplamını
+yazıyor (`kalanSure`), satırda süre kategorinin yanında duruyor — iş adının
+satırı tek satırlık ve genişliği sayılı, oraya sığmazdı. Plan, işlerin ne kadar
+süreceği bilinince plan oluyor; "akşama beş iş" ile "akşama dört saat" ayrı
+şeyler.
+
+Çip, serbest sayı değil: sorulan bir tahmin ve "37 dakika" kimsenin vereceği
+bir cevap değil. Varsayılan seçili gelmiyor — seçili bir "30 dk", kullanıcının
+hiç vermediği bir tahmini onun adına kaydederdi. İki saatin üstü yok: o tek bir
+görev değil, bölünmesi gereken bir iş.
+
+Alan sonradan geldi: eski görevlerde `sure` `null` ve toplamda sayılmıyor.
+Uydurma bir süre, dilimin toplamını kullanıcının söylemediği bir sayıyla
+şişirirdi.
+
+### Renkler ayrı bir palette
+
+Görev rengi kullanıcının seçtiği on iki tondan biri (`--gorev-*`,
+`globals.css`). Ders aileleri kullanılamıyor: `--edb-koyu` "bu Kimya" demek ve
+bir görevi mor yapmak onu Kimya görevi yapmaz. Tonlar uygulamanın kendi
+sıcak-mat ailesinden ama hepsi beyaz kartın üstünde **en az 4,6:1** veriyor;
+şart, çünkü renk yalnızca noktada değil 10,5 piksellik kategori yazısında da
+kullanılıyor. Yeni ton eklerken kontrastı ölç.
+
+Kayıtta rengin **adı** duruyor, hex değil: palet değişirse eski görevler de yeni
+tonu alıyor, yoksa uygulama iki paletle birden yaşardı.
+
+### Depo anahtarı ve yedek alanı `notlar` kalıyor
+
+`rabi-notlar` ve `Yedek.notlar` adları tahta döneminden kalma ve öyle kalıyor —
+kimliği değiştirmek kullanıcının kayıtlı görevlerini öksüz bırakır, eski
+yedeklerin o alanını da okunmaz yapardı (rozet/başarım ile aynı kural). Şemayı
+`gorevleriNormalize` çeviriyor, yani tahta dönemindeki yedekler de geri
+yükleniyor.
 
 > Dosya adı `notlar.ts` **olamaz**: `.gitignore` kişisel notlar için `notlar.*`
 > deseni taşıyor ve desen tüm ağaçta geçerli. Öyle adlandırılan bir kaynak dosya

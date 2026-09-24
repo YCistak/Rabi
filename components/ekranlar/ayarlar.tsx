@@ -22,7 +22,7 @@ import {
 import { Alan, Anahtar, Buton, Cip, Etiket, Not, Onay } from '@/components/ui'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { SINIF_SECENEKLERI, egitimYili, mezunMu, sinifAdi } from '@/lib/hesap'
-import type { NotKagidi } from '@/lib/yapilacaklar'
+import type { Gorev } from '@/lib/yapilacaklar'
 import type { AylikOzetArsivi } from '@/lib/ozet'
 import type { OkumaSeansi } from '@/lib/konu/okuma-suresi'
 import {
@@ -143,8 +143,8 @@ export function AyarlarEkrani({
     /** Aylık özet arşivi — yıllık özetin dayanağı. */
     aylikOzetler?: AylikOzetArsivi
     okumaGecmisi?: OkumaSeansi[]
-    /** Yapılacaklar tahtası — kâğıdın konumu da veri. */
-    notlar?: NotKagidi[]
+    /** Yapılacaklar — günün görevleri. */
+    notlar?: Gorev[]
     pomodoroGecmis: PomodoroSeans[]
     /** Kilitli uygulama listesi burada; yedekten dönen kullanıcı yeniden seçmesin. */
     pomodoroAyar: PomodoroAyar
