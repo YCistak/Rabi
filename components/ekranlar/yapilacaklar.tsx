@@ -16,6 +16,7 @@ import {
   kalanSure,
   SURE_SECENEKLERI,
   sureYaz,
+  elleSure,
   gorevErtele,
   gorevIsaretle,
   gorevRengi,
@@ -129,7 +130,7 @@ export function YapilacaklarEkrani({
     dilim: GorevDilimi
     kategori: GorevKategorisi
     renk: GorevRengi
-    sure: number
+    sure: number | null
   }) => {
     const sonuc = gorevEkle(gorevler, { id: yeniId(), gun: secili, ...yeni })
     if (!sonuc) {
@@ -442,7 +443,9 @@ function GorevSatiri({
  *
  * Dört soru: ne, ortalama kaç dakika, hangi tür, hangi renk. Süre sonradan
  * geldi: dilimin başlığı kalan işin toplamını gösteriyor ve plan ancak
- * işlerin ne kadar süreceği bilinince plan oluyor. "Ne zaman?" sorulmuyor: dilim basılan
+ * işlerin ne kadar süreceği bilinince plan oluyor. Süre **isteğe bağlı** —
+ * bir süre zorunluydu, kullanıcı kaldırılmasını istedi: kısa bir iş için
+ * tahmin uydurmak, eklemeyi uzatıyordu. "Ne zaman?" sorulmuyor: dilim basılan
  * düğmenin bölümünden geliyor — kullanıcı "Akşam"ın düğmesine bastıysa cevabı
  * zaten verdi. Sayfada bir süre üç dilimlik bir seçici de duruyordu;
  * kullanıcı kaldırılmasını istedi, verilmiş bir cevabı ikinci kez soruyordu.
@@ -465,11 +468,18 @@ function EklemeSayfasi({
     dilim: GorevDilimi
     kategori: GorevKategorisi
     renk: GorevRengi
-    sure: number
+    sure: number | null
   }) => void
 }) {
   const [metin, setMetin] = useState('')
-  const [sure, setSure] = useState<number | null>(null)
+  /*
+    İki kaynak, tek cevap: çip ya da kutu. Birine dokunmak ötekini
+    temizliyor; ikisi birden dolu kalsaydı hangisinin kaydedileceği ekranda
+    okunmazdı.
+  */
+  const [hazirSure, setHazirSure] = useState<number | null>(null)
+  const [elle, setElle] = useState('')
+  const sure = elle !== '' ? elleSure(elle) : hazirSure
   const [kategori, setKategori] = useState<GorevKategorisi | null>(null)
   const [renk, setRenk] = useState<GorevRengi | null>(null)
   const [hata, setHata] = useState(false)
@@ -477,7 +487,7 @@ function EklemeSayfasi({
   useGeriKatmani(true, onKapat)
 
   const yazilan = metniKirp(metin)
-  const gecerli = yazilan !== '' && sure !== null && kategori !== null && renk !== null
+  const gecerli = yazilan !== '' && kategori !== null && renk !== null
 
   const gonder = () => {
     if (!gecerli) {
@@ -534,28 +544,42 @@ function EklemeSayfasi({
         />
 
         {/* Varsayılan seçili gelmiyor: seçili bir "30 dk", kullanıcının hiç
-            vermediği bir tahmini onun adına kaydederdi. */}
-        <AlanBasligi
-          baslik="Ortalama kaç dakika sürer?"
-          hata={hata && sure === null ? 'Birini seç' : undefined}
-        />
-        <div
-          className={cn(
-            'grid grid-cols-6 gap-1 rounded-2xl',
-            hata && sure === null && 'outline-2 outline-offset-[3px] outline-danger/45',
-          )}
-        >
+            vermediği bir tahmini onun adına kaydederdi. Seçili çipe yeniden
+            dokunmak seçimi kaldırıyor — alan isteğe bağlı ve boş bırakmanın
+            bir yolu olmalı. */}
+        <AlanBasligi baslik="Ortalama kaç dakika sürer?" sayac="isteğe bağlı" />
+        <div className="grid grid-cols-6 gap-1">
           {SURE_SECENEKLERI.map((dk) => (
             <SecimDugmesi
               key={dk}
-              secili={sure === dk}
-              onClick={() => setSure(dk)}
+              secili={elle === '' && hazirSure === dk}
+              onClick={() => {
+                setElle('')
+                setHazirSure((onceki) => (onceki === dk ? null : dk))
+              }}
               etiket={`${dk} dakika`}
               className="rakam px-0.5 text-[13px]"
             >
               {dk}
             </SecimDugmesi>
           ))}
+          <input
+            value={elle}
+            onChange={(olay) => {
+              setHazirSure(null)
+              setElle(olay.target.value.replace(/\D/g, '').slice(0, 3))
+            }}
+            inputMode="numeric"
+            maxLength={3}
+            placeholder="dk"
+            aria-label="Süreyi dakika olarak yaz"
+            className={cn(
+              'rakam h-[46px] w-full min-w-0 rounded-[12px] border-[1.5px] bg-card px-1 text-center text-sm font-extrabold outline-none transition placeholder:font-bold placeholder:text-muted-foreground/60',
+              elle !== ''
+                ? 'border-primary-parlak text-primary'
+                : 'border-border focus-visible:border-primary-parlak',
+            )}
+          />
         </div>
 
         <AlanBasligi baslik="Kategori" hata={hata && kategori === null ? 'Birini seç' : undefined} />

@@ -17,6 +17,9 @@ import {
   gununGorevleri,
   kalanSure,
   sureYaz,
+  elleSure,
+  EN_UZUN_SURE,
+  SURE_SECENEKLERI,
   haftaninGorevleri,
   metniKirp,
   simdikiDilim,
@@ -431,5 +434,24 @@ describe('süre', () => {
   it('ertelenen görev süresini koruyor', () => {
     const sonuc = gorevErtele([gorev({ id: 'a', sure: 90 })], 'a')
     expect(sonuc?.[0].sure).toBe(90)
+  })
+})
+
+describe('elle süre', () => {
+  it('rakamları okuyor, sıfırı ve boşu süre saymıyor', () => {
+    expect(elleSure('37')).toBe(37)
+    expect(elleSure('45 dk')).toBe(45)
+    expect(elleSure('')).toBeNull()
+    expect(elleSure('0')).toBeNull()
+    expect(elleSure('abc')).toBeNull()
+  })
+
+  it('üst sınırı aşmıyor', () => {
+    expect(elleSure('99999')).toBe(EN_UZUN_SURE)
+  })
+
+  it('hazır sürelerde 90 yok, 120 son hazır süre', () => {
+    expect(SURE_SECENEKLERI).not.toContain(90)
+    expect(SURE_SECENEKLERI.at(-1)).toBe(120)
   })
 })

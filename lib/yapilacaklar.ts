@@ -137,9 +137,10 @@ export type Gorev = {
   /**
    * Ortalama kaç dakika süreceği — kullanıcının tahmini.
    *
-   * `null` yalnızca alan gelmeden önce yazılmış eski görevlerde: onlara bir
-   * süre uydurmak, dilimin toplamını kullanıcının hiç söylemediği bir sayıyla
-   * şişirirdi. Yeni görev süresiz kaydedilemiyor.
+   * `null` "süre verilmedi" demek: ekleme sayfasında süre isteğe bağlı ve
+   * alan gelmeden önce yazılmış eski görevler de süresiz. İkisine de bir süre
+   * uydurmak, dilimin toplamını kullanıcının hiç söylemediği bir sayıyla
+   * şişirirdi.
    */
   sure: number | null
   bitti: boolean
@@ -148,16 +149,31 @@ export type Gorev = {
 }
 
 /**
- * Ekleme sayfasındaki süre seçenekleri, dakika.
+ * Ekleme sayfasındaki hazır süreler, dakika.
  *
- * Serbest sayı kutusu değil çip: sorulan şey bir tahmin ve "37 dakika"
- * kimsenin vereceği bir cevap değil. Çip dokunuşla seçiliyor, sayı klavyesi
- * açılmıyor. İki saatin üstü tek bir görev değil — bölünmesi gereken bir iş.
+ * Çoğu tahmin bunlardan biri ve çip dokunuşla seçiliyor, sayı klavyesi
+ * açılmıyor. 90 bir süre listede duruyordu; kullanıcı çıkarılmasını istedi.
+ * Hazır sürelerin dışındaki her değer yanlarındaki kutuya elle yazılıyor
+ * (`elleSure`) — "37 dakika" diyen de, üç saatlik bir iş yazan da orada.
  */
-export const SURE_SECENEKLERI: readonly number[] = [15, 30, 45, 60, 90, 120]
+export const SURE_SECENEKLERI: readonly number[] = [15, 30, 45, 60, 120]
 
 /** Kayıtta kabul edilen en uzun süre; kurcalanmış kayıt günü aşamasın. */
-const EN_UZUN_SURE = 24 * 60
+export const EN_UZUN_SURE = 24 * 60
+
+/**
+ * Elle yazılan dakika: rakam olmayan her şey atılıyor, sıfır ve boş "süre
+ * yok" sayılıyor, üst sınır `EN_UZUN_SURE`.
+ *
+ * Kutu `inputMode="numeric"` ama klavye yapıştırmayı engellemiyor; "45 dk"
+ * yapıştıran kullanıcıdan 45 alınıyor.
+ */
+export function elleSure(metin: string): number | null {
+  const rakamlar = metin.replace(/\D/g, '')
+  if (rakamlar === '') return null
+  const dakika = Number(rakamlar)
+  return dakika > 0 ? Math.min(dakika, EN_UZUN_SURE) : null
+}
 
 /** "45 dk", "1 sa", "1 sa 30 dk". */
 export function sureYaz(dakika: number): string {
