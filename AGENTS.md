@@ -1333,6 +1333,13 @@ soru **yok** — oyun ekranı tahtayı ancak `asama === 'oynaniyor'` olunca
 kayıyor: dört mod kutusu, zorluk şeridi ve Rahat'ın uyarı şeridi kısa
 telefonlarda taşıyor ve düğme ekranın dışında kalıyordu.
 
+**Pencereden sonra tanıtım yok.** "Başlat" doğrudan 3 · 2 · 1 sayımını
+açıyor. Bir süre arada nasıl oynandığını anlatan tam ekran tanıtım vardı
+("Devam" → kurallar → "Başla"); kullanıcı kaldırılmasını istedi — tura girmek
+iki ekran ve iki dokunuş sürüyordu. Kural kaybolmadı: tur sırasındaki "?"
+tanıtımı açıyor. Tur başında tanıtım yalnızca ayar penceresi çıkmayan turda
+(Oyun Bankası turu) görünüyor.
+
 Mod kutularındaki ikonlar çizgi ikon (lucide), `ModTanimi.simge`deki emoji
 değil: dört kutunun dördü de aynı ailede olmalı ve emoji telefondan telefona
 başka çiziliyor. Emoji duruyor, tur içindeki mod rozetinde
