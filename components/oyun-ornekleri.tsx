@@ -695,6 +695,18 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
     },
   ],
 
+  'mol-kargo': [
+    {
+      baslik: 'Tepkenleri yükle',
+      kural: <>Hedef ürüne yetecek <b>mol miktarını</b> iki tepken için ayarlarsın.</>,
+      gorunum: <div className="flex flex-col gap-2">
+        <Metin className="text-center font-bold">2H₂ + O₂ → 2H₂O</Metin>
+        <Yonerge>4 mol H₂O üret, tepken artmasın</Yonerge>
+        <Yan sol={<Sik vurgulu>4 mol H₂</Sik>} sag={<Sik vurgulu>2 mol O₂</Sik>} />
+      </div>,
+    },
+  ],
+
   tuzak: [
     {
       baslik: 'Doğru mu, yanlış mı?',

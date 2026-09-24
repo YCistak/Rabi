@@ -55,6 +55,8 @@ export const SORU_SURESI: Record<OyunId, number> = {
   edebiyat: 40,
   // Öge sorularında önce cümleyi okumak gerekiyor, iki saniye fazla.
   oge: 14,
+  // Mol bulmacasında miktarları ayarlamak tek şık seçmekten uzun sürüyor.
+  'mol-kargo': 30,
   islem: 20,
   bolunme: 20,
   aci: 20,

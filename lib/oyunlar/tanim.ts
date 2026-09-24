@@ -332,6 +332,14 @@ export const OYUNLAR: OyunTanimi[] = [
     ikon: '⚗️',
     ozet: `Üstteki formüle, sonra alttaki adına dokunursun — sıra fark etmez. El mümkün oldukça tek türden kuruluyor: altı asit, altı tuz.`,
   },
+  {
+    id: 'mol-kargo',
+    ders: 'kimya',
+    ad: 'Mol Kargo',
+    kisaAciklama: 'Tepkenleri yükle, hedef ürünü üret',
+    ikon: '📦',
+    ozet: `Denkleştirilmiş tepkimedeki **mol oranını** kullanarak iki tepkeni yüklersin. Hedef ürünü üretip hiç tepken artırmadığında kargo tamamlanır. Konu 10. sınıf kimyasal hesaplamalar.`,
+  },
 ]
 
 export function dersBul(id: DersId): DersTanimi {

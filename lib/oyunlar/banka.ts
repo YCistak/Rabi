@@ -34,6 +34,7 @@ import type { TuzakKurali } from './tuzak-havuzu'
 import type { TuzakSorusu } from './tuzak'
 import { elementBul, type PeriyodikTipi } from './periyodik'
 import { SINIF_ADI } from './periyodik-havuzu'
+import { kargoAciklamasi, kargoSorusuMetni, type MolSorusu } from './mol-kargo'
 
 /**
  * Bankanın en fazla tutacağı kayıt.
@@ -147,6 +148,7 @@ export type BankaSorusu =
   */
   | { oyun: 'periyodik'; sembol: string; periyodikTipi: PeriyodikTipi }
   | { oyun: 'formul'; formul: string; ad: string }
+  | { oyun: 'mol-kargo'; mol: MolSorusu }
 
 /**
  * Genel testin o anki turu: o oyunun bankadaki bütün sorularıyla.
@@ -333,6 +335,10 @@ export function formuldenBanka(es: { formul: string; ad: string }): BankaSorusu 
   return { oyun: 'formul', formul: es.formul, ad: es.ad }
 }
 
+export function molKargodanBanka(mol: MolSorusu): BankaSorusu {
+  return { oyun: 'mol-kargo', mol }
+}
+
 /**
  * Kayıt kimliği.
  *
@@ -404,6 +410,8 @@ export function bankaKimligi(soru: BankaSorusu): string {
       return `periyodik:${soru.periyodikTipi}:${soru.sembol}`
     case 'formul':
       return `formul:${soru.formul}`
+    case 'mol-kargo':
+      return `mol-kargo:${soru.mol.id}`
   }
 }
 
@@ -477,6 +485,8 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
     // satırlık metin isteniyor (`formul.ts`).
     case 'formul':
       return soru.formul
+    case 'mol-kargo':
+      return kargoSorusuMetni(soru.mol)
   }
 }
 
@@ -544,6 +554,8 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
     }
     case 'formul':
       return soru.ad
+    case 'mol-kargo':
+      return kargoAciklamasi(soru.mol)
   }
 }
 
@@ -667,6 +679,7 @@ const BOS_DAGILIM: Record<OyunId, number> = {
   tuzak: 0,
   periyodik: 0,
   formul: 0,
+  'mol-kargo': 0,
 }
 
 export const OYUN_KIMLIKLERI = Object.keys(BOS_DAGILIM) as OyunId[]
@@ -682,4 +695,3 @@ export function bankaSuz(banka: readonly BankaKaydi[], oyun: OyunId | 'tumu'): B
   const secilen = oyun === 'tumu' ? [...banka] : banka.filter((k) => k.soru.oyun === oyun)
   return secilen.sort((a, b) => b.sonYanlis.localeCompare(a.sonYanlis) || b.kacKez - a.kacKez)
 }
-
