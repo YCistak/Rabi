@@ -117,16 +117,33 @@ export function DenemelerEkrani({
                     onClick={() => setAcikId(acik ? null : deneme.id)}
                     className="flex w-full items-center gap-3 p-4 text-left"
                   >
+                    {/* Tür ile tarih ayrı iki vurgu (`tasarim/denemeler-etiket.dc.html`,
+                        3a). Bir süre ikisi tek gri satırda "7 Eylül 2026 · TYT"
+                        diye duruyordu; listede bir denemeyi ararken bakılan iki
+                        şey tam bunlar ve soluk bir satırın içinde kayboluyorlardı.
+                        Tür önde ve büyük harfle: sıralama tarihe göre olsa da
+                        göz önce hangi sınav olduğunu arıyor. */}
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-medium">{deneme.ad}</p>
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        {tarihYaz(deneme.tarih)}
-                        {sablon ? ` · ${sablon.ad}` : ' · şablon silinmiş'}
+                      <p className="truncate text-[17px] font-extrabold leading-6 tracking-[-0.01em]">
+                        {deneme.ad}
+                      </p>
+                      <p className="mt-[3px] flex items-baseline gap-2 text-[13px] leading-[18px]">
+                        <span
+                          className={cn(
+                            'truncate text-xs font-black tracking-[0.08em]',
+                            sablon ? 'text-primary' : 'text-muted-foreground',
+                          )}
+                        >
+                          {(sablon ? sablon.ad : 'Şablon silinmiş').toLocaleUpperCase('tr-TR')}
+                        </span>
+                        <span className="shrink-0 font-bold text-foreground">
+                          {tarihYaz(deneme.tarih)}
+                        </span>
                       </p>
                     </div>
 
                     <div className="text-right">
-                      <p className="font-display text-xl font-semibold">
+                      <p className="rakam text-xl font-semibold">
                         {ozet ? netYaz(ozet.toplamNet) : '—'}
                         <span className="ml-1 text-xs font-normal text-muted-foreground">
                           net
@@ -160,67 +177,102 @@ export function DenemelerEkrani({
                   </button>
 
                   {acik && ozet && sablon && (
-                    <div className="border-t border-border px-4 py-3">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="text-xs text-muted-foreground">
-                            <th className="pb-1.5 text-left font-medium">Ders</th>
-                            <th className="pb-1.5 text-right font-medium">D</th>
-                            <th className="pb-1.5 text-right font-medium">Y</th>
-                            <th className="pb-1.5 text-right font-medium">Boş</th>
-                            <th className="pb-1.5 text-right font-medium">Net</th>
-                          </tr>
-                        </thead>
-                        <tbody className="rakam">
+                    <>
+                      <div className="mx-4 border-t-[1.5px] border-dashed border-border" />
+                      <div className="px-4 pb-4 pt-3.5">
+                        {/* Tablo değil ızgara: başlık ve Toplam satırları
+                            köşeleri yuvarlatılmış birer şerit ve `<tr>`ye köşe
+                            yuvarlatması verilemiyor. D yeşil, Y kırmızı — sütun
+                            başlığı tek harf olduğu için renk okumayı hızlandırıyor. */}
+                        <div
+                          role="table"
+                          className="rakam grid grid-cols-[minmax(0,1fr)_40px_40px_44px_60px] text-sm leading-5"
+                        >
+                          <div role="row" className="contents">
+                            {['Ders', 'D', 'Y', 'Boş', 'Net'].map((ad, i, hepsi) => (
+                              <div
+                                key={ad}
+                                role="columnheader"
+                                className={cn(
+                                  'bg-background py-[7px] text-[11px] font-extrabold uppercase tracking-[0.08em] text-muted-foreground',
+                                  i === 0 ? 'rounded-l-[10px] pl-2.5 text-left' : 'text-right',
+                                  i === hepsi.length - 1 && 'rounded-r-[10px] pr-2.5',
+                                )}
+                              >
+                                {ad}
+                              </div>
+                            ))}
+                          </div>
                           {sablon.dersler.map((ders) => {
                             const sonuc = deneme.sonuclar.find((s) => s.dersId === ders.id)
                             const dogru = sonuc?.dogru ?? 0
                             const yanlis = sonuc?.yanlis ?? 0
+                            const hucre = 'border-t border-border/70 py-[9px]'
                             return (
-                              <tr key={ders.id} className="border-t border-border/60">
-                                <td className="py-1.5 pr-2 text-left">{ders.ad}</td>
-                                <td className="py-1.5 text-right">{dogru}</td>
-                                <td className="py-1.5 text-right">{yanlis}</td>
-                                <td className="py-1.5 text-right text-muted-foreground">
+                              <div key={ders.id} role="row" className="contents">
+                                <div role="cell" className={cn(hucre, 'truncate pl-2.5 font-bold')}>
+                                  {ders.ad}
+                                </div>
+                                <div role="cell" className={cn(hucre, 'text-right font-extrabold text-success')}>
+                                  {dogru}
+                                </div>
+                                <div role="cell" className={cn(hucre, 'text-right font-extrabold text-danger')}>
+                                  {yanlis}
+                                </div>
+                                <div role="cell" className={cn(hucre, 'text-right font-semibold text-muted-foreground')}>
                                   {ders.soruSayisi - dogru - yanlis}
-                                </td>
-                                <td className="py-1.5 text-right font-medium">
+                                </div>
+                                <div role="cell" className={cn(hucre, 'pr-2.5 text-right font-extrabold')}>
                                   {netYaz(ozet.dersNetleri[ders.id] ?? 0)}
-                                </td>
-                              </tr>
+                                </div>
+                              </div>
                             )
                           })}
-                          <tr className="border-t border-border font-semibold">
-                            <td className="py-1.5 text-left">Toplam</td>
-                            <td className="py-1.5 text-right">{ozet.toplamDogru}</td>
-                            <td className="py-1.5 text-right">{ozet.toplamYanlis}</td>
-                            <td className="py-1.5 text-right">{ozet.toplamBos}</td>
-                            <td className="py-1.5 text-right">{netYaz(ozet.toplamNet)}</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                          <div role="row" className="contents">
+                            {[
+                              'Toplam',
+                              String(ozet.toplamDogru),
+                              String(ozet.toplamYanlis),
+                              String(ozet.toplamBos),
+                              netYaz(ozet.toplamNet),
+                            ].map((deger, i, hepsi) => (
+                              <div
+                                key={i}
+                                role="cell"
+                                className={cn(
+                                  'mt-1 bg-primary-soft py-[9px] font-black text-primary',
+                                  i === 0 ? 'rounded-l-[10px] pl-2.5' : 'text-right',
+                                  i === hepsi.length - 1 && 'rounded-r-[10px] pr-2.5',
+                                )}
+                              >
+                                {deger}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
 
-                      <div className="mt-3 flex gap-2">
-                        <Buton
-                          bicim="ikincil"
-                          boy="kucuk"
-                          className="flex-1"
-                          onClick={() => onDuzenle(deneme)}
-                        >
-                          <Pencil size={15} />
-                          Düzenle
-                        </Buton>
-                        <Buton
-                          bicim="tehlike"
-                          boy="kucuk"
-                          className="flex-1"
-                          onClick={() => setSilinecek(deneme)}
-                        >
-                          <Trash2 size={15} />
-                          Sil
-                        </Buton>
+                        {/* Düzenle dolu, Sil açık kırmızı zeminli: ikisi yan yana
+                            ama ağırlıkları ayrı — hangisinin sık kullanıldığı ve
+                            hangisinin geri alınamadığı düğmenin kendisinde okunuyor. */}
+                        <div className="mt-3.5 flex gap-2.5">
+                          <Buton
+                            className="h-[42px] flex-1 rounded-xl text-sm font-extrabold"
+                            onClick={() => onDuzenle(deneme)}
+                          >
+                            <Pencil size={15} />
+                            Düzenle
+                          </Buton>
+                          <Buton
+                            bicim="tehlike"
+                            className="h-[42px] flex-1 rounded-xl bg-danger-soft text-sm font-extrabold active:brightness-95"
+                            onClick={() => setSilinecek(deneme)}
+                          >
+                            <Trash2 size={15} />
+                            Sil
+                          </Buton>
+                        </div>
                       </div>
-                    </div>
+                    </>
                   )}
                 </Kart>
               </li>
