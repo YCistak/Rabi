@@ -191,10 +191,12 @@ tavşanı, dönen çarkı, tarayan şeridi, "HAZIRLANIYOR" ve "çevrimdışı ç
 yazıları 2a ile kalktı.
 
 Çıkış tek bir zaman çizgisinin yüzdelerinde: %64–90 tavşan yerine uçuyor
-(`acilis-inis`), %82–100 tavşanın dışındaki her şey (`acilis-sahne`: zemin,
-yazılar, noktalar, artılar) hafifçe büyüyerek soluyor. İki süre birlikte
-değişmeli — ayrılırlarsa tavşan sahne sönmeden yola çıkmaz ya da sahne
-tavşandan önce biter.
+(`acilis-inis`); yazılar, noktalar ve artılar tavşan kalktığı an hızla,
+%64–71'de sönüyor (`acilis-icerik`); zemin %70–90'da hafifçe büyüyerek
+soluyor (`acilis-sahne`). İçerik bir süre zeminle birlikte %82'de sönüyordu
+ve tavşan uçarken "RABİ" yerinde duruyordu; kullanıcı hızlı solmasını
+istedi. Zemin ayrı kalıyor: o da hızlı sönseydi tavşan yolun başında ana
+sayfanın üstüne çıkardı. Üç süre birlikte değişmeli.
 
 Çıkışta tavşan varış noktasındaki maskotun **tam üstüne** süzülüyor; katman
 kalktığında ekranda zaten yalnızca o maskot duruyor ve altındaki sayfa görünür
