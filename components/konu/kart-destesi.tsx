@@ -10,6 +10,7 @@ import { useUygulamaGorunur } from '@/lib/gorunurluk'
 import { Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartGorseli } from './kart-gorseli'
+import { KartMetni } from './kart-metni'
 import { DesteBasligi, DesteCubugu } from './deste-basligi'
 import { KisaMola } from './kisa-mola'
 import { HizliKontrolEkrani } from './hizli-kontrol'
@@ -359,9 +360,7 @@ function KartEkrani({
                   <h3 className="mt-4 font-display text-[26px] leading-tight font-extrabold tracking-tight text-balance">
                     {kart.baslik}
                   </h3>
-                  <p className="mt-4 text-[16.5px] leading-relaxed font-semibold text-foreground/80 text-pretty">
-                    {kart.metin}
-                  </p>
+                  <KartMetni metin={kart.metin} murekkep={bicim.murekkep} />
                   {kart.gorsel && <KartGorseli gorsel={kart.gorsel} etiket={kart.baslik} />}
                 </div>
               </article>

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { KONU_DERSLERI, KONU_SINIFLARI, programBul, tumKonular } from './index'
 import type { DersProgrami } from './tip'
+import { gorunenMetin, gorunenSatirlar, metniAyristir } from './kart-metni'
 
 /**
  * İçerik testleri metni değil **kuralı** denetliyor: kimlikler çakışmasın,
@@ -59,10 +60,65 @@ describe('programlar', () => {
     for (const konu of tumKonular(program!)) {
       for (const kart of konu.kartlar) {
         expect(kart.baslik.length, `başlık uzun: ${kart.baslik}`).toBeLessThanOrEqual(BASLIK_SINIRI)
-        expect(kart.metin.length, `metin uzun: ${kart.baslik}`).toBeLessThanOrEqual(METIN_SINIRI)
+        expect(gorunenMetin(kart.metin).length, `metin uzun: ${kart.baslik}`).toBeLessThanOrEqual(METIN_SINIRI)
         expect(kart.metin.trim().length).toBeGreaterThan(0)
       }
     }
+  })
+})
+
+/**
+ * Kartın **düzeni** — uzunluğu değil, nasıl bölündüğü.
+ *
+ * Uzunluk sınırı tek başına yetmedi: 240 karakterlik tek bir paragrafa dört
+ * ayrı bilgi noktalarla dizilebiliyordu ve telefonda bu, okunmayan bir yazı
+ * bloğuydu ("sin: 30° → 1/2, 45° → √2/2 … cos tersi sırayla. tan: …").
+ * Kullanıcı iki kez "karmakarışık" dedi. Kurallar bu yüzden satıra iniyor:
+ *
+ * - **Satır kısa.** Bir satır (paragraf ya da madde) telefonda en çok üç
+ *   satıra kırılacak kadar; daha uzunu bölünmeli ya da maddelenmeli.
+ * - **Satırda en çok iki cümle.** Üçüncü cümle yeni bir bilgi ve yeni bir
+ *   satırı hak ediyor.
+ * - **Liste en az iki madde.** Tek maddelik liste, madde imi takılmış bir
+ *   paragraf.
+ * - **Listede ya hepsi adlı ya hiçbiri.** "**Ekvator:** …" diye başlayan bir
+ *   maddenin yanında adsız bir madde, hizası kaymış bir tablo gibi okunuyor.
+ * - İşaretler temiz: kapanmayan `**`, `•` ya da boşluksuz `-` yok.
+ */
+const SATIR_SINIRI = 110
+const CUMLE_SINIRI = 2
+
+/** Cümle sayısı: nokta/ünlem/soru işaretinden sonra büyük harf ya da rakam. */
+function cumleSayisi(satir: string): number {
+  return satir.split(/(?<=[.!?])\s+(?=[A-ZÇĞİÖŞÜ0-9])/u).filter((c) => c.trim()).length
+}
+
+describe('kart düzeni', () => {
+  it.each(programlar)('%s: kartlar düzenli', (_ad, program) => {
+    const hatalar: string[] = []
+    for (const konu of tumKonular(program!)) {
+      for (const kart of konu.kartlar) {
+        const ad = `${konu.id} › ${kart.baslik}`
+        for (const hamSatir of kart.metin.split('\n')) {
+          const satir = hamSatir.trim()
+          if (!satir) continue
+          if ((satir.match(/\*\*/g) ?? []).length % 2 !== 0) hatalar.push(`${ad}: kapanmayan ** — ${satir}`)
+          if (/^[-•]\S/.test(satir) || satir.startsWith('•')) hatalar.push(`${ad}: madde imi "- " olmalı — ${satir}`)
+          if (satir === '-') hatalar.push(`${ad}: boş madde`)
+        }
+        for (const satir of gorunenSatirlar(kart.metin)) {
+          if (satir.length > SATIR_SINIRI) hatalar.push(`${ad}: satır uzun (${satir.length}) — ${satir}`)
+          if (cumleSayisi(satir) > CUMLE_SINIRI) hatalar.push(`${ad}: satırda ${cumleSayisi(satir)} cümle — ${satir}`)
+        }
+        for (const blok of metniAyristir(kart.metin)) {
+          if (blok.tur !== 'liste') continue
+          if (blok.maddeler.length < 2) hatalar.push(`${ad}: tek maddelik liste`)
+          const adli = blok.maddeler.map((m) => m[0]?.vurgu === true)
+          if (adli.some(Boolean) && !adli.every(Boolean)) hatalar.push(`${ad}: listede adlı ve adsız madde karışık`)
+        }
+      }
+    }
+    expect(hatalar, hatalar.join('\n')).toEqual([])
   })
 })
 
