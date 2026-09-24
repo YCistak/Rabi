@@ -1847,10 +1847,11 @@ Ders adına **ek getirilmiyor** ("Kimya 9 gündür bekliyor", "Kimya'ya … " de
 ünlü uyumu ders adına göre değişiyor ve yanlış ek, yanlış bilgiden daha çok
 göze batıyor.
 
-Maskot 72 piksel ve kartın sol kenarıyla yazının arasında **ortada**;
+Maskot 72 piksel, ayağının altında yumuşak bir zemin gölgesi var ve
+ayraca yakın duruyor (bir süre tam ortadaydı, kullanıcı sağa kaydırttı);
 yazıyla arasında soluk, kısa bir dikey ayraç var (`--border`, kartın
 kenarlarına değmiyor). Arkasına bir süre soluk bir leke kondu, kullanıcı geri
-aldı — tavşanı oturtan şey süs değil, ortalanmış yeri ve ayraç.
+aldı — tavşanı oturtan şey süs değil, yeri, gölgesi ve ayraç.
 
 Sayının kendisi kartta **yazmıyor**: halka zaten sayıyı üç kez söylüyor ve
 kartın işi onu tekrar etmek değil, ona bir yüz vermek. Günlük hedef sıfırken

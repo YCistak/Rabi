@@ -405,7 +405,7 @@ function GununHali({
     <button
       type="button"
       onClick={() => onAc(hal.ekran)}
-      className="golge-kart flex w-full items-center rounded-2xl bg-card py-3 pr-4 pl-2 text-left transition active:brightness-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      className="golge-kart flex w-full items-center rounded-2xl bg-card py-3 pr-4 pl-4 text-left transition active:brightness-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       {/* Maskotun arkasında bir süre hâle göre renklenen bir kutu vardı (gri,
           amber, yeşil); kaldırıldı. Düz renkli kare, kartın beyaz zemininde
@@ -413,19 +413,30 @@ function GununHali({
           zemininde duruyor. Arkasına bir süre soluk bir leke de kondu,
           kullanıcı onu da geri aldı.
 
-          Maskot 72'de ve kartın sol kenarı ile ayraç arasında **ortada**: iki
-          yanda 8'er piksel (kartın sol dolgusu `pl-2`, ayracın `ml-2`si).
-          Boşluk dar görünse de değil — görselin kendi saydam payı var ve
-          tavşan kutusunun ortasında daha dar duruyor. Daha geniş tutulunca
-          yazının alanı daralıp "Bugün hiç soru çözmedin" iki satıra
-          kırılıyordu. Ayraç `--border` tonunda, beyazda soluk kalıyor ve
+          Maskot 72'de ve ayraca yakın: kartın sol dolgusu 16, ayraçla arası
+          0 — görselin kendi saydam payı var, tavşan kutusunun ortasında daha
+          dar duruyor ve ayraca yine de değmiyor. Bir süre iki yana 8'er
+          piksel verilip tam ortalanmıştı; kullanıcı sağa kaydırılmasını
+          istedi. Kutu daha geniş tutulursa yazının alanı daralıp "Bugün hiç
+          soru çözmedin" iki satıra kırılıyor.
+
+          Ayağının altında yumuşak bir zemin gölgesi var (bulanık elips,
+          `foreground`un %12'si): tavşan kartın üstünde bir yere basıyor.
+          `drop-shadow` değil — görselin çevresine sarılan gölge onu kâğıttan
+          kesilmiş bir çıkartma gibi gösterirdi. Ayraç `--border` tonunda, beyazda soluk kalıyor ve
           kartın kenarlarına değmeden bitiyor (`self-stretch` içeriğin boyunu
           alıyor, `my-2` iki ucundan kısaltıyor). Birini değiştirirsen iki
           yandaki boşluğu yeniden eşitle. */}
-      <span className="grid w-[72px] shrink-0 place-items-center">
-        <Rabi durum={hal.durum} poz={hal.poz} boyut={72} />
+      <span className="relative grid w-[72px] shrink-0 place-items-center">
+        <span
+          aria-hidden
+          className="absolute bottom-0 left-[calc(50%-2px)] h-[7px] w-[36px] -translate-x-1/2 rounded-[50%] bg-foreground/12 blur-[2px]"
+        />
+        <span className="relative grid">
+          <Rabi durum={hal.durum} poz={hal.poz} boyut={72} />
+        </span>
       </span>
-      <span aria-hidden className="my-2 mr-3 ml-2 w-px shrink-0 self-stretch bg-border" />
+      <span aria-hidden className="my-2 mr-3 w-px shrink-0 self-stretch bg-border" />
       <span className="min-w-0 flex-1">
         <span className="block text-[10px] font-extrabold tracking-[0.16em] text-muted-foreground">
           BUGÜN
