@@ -398,6 +398,48 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
     },
   ],
 
+  trigonometri: [
+    {
+      baslik: 'Dik üçgende oran',
+      kural: (
+        <>
+          <b>α</b> işaretli üçgende istenen oranı dört şıktan seçersin: sin = karşı / hipotenüs,
+          cos = komşu / hipotenüs, tan = karşı / komşu.
+        </>
+      ),
+      gorunum: (
+        <div className="flex flex-col gap-2">
+          <Yonerge>sin α kaçtır?</Yonerge>
+          <svg viewBox="0 0 96 58" className="mx-auto h-14" aria-hidden>
+            <polygon points="14,48 80,48 14,8" fill="none" stroke="currentColor" strokeWidth="3" />
+            <text x="2" y="32" fontSize="12" fontWeight="700" fill="currentColor">
+              3
+            </text>
+            <text x="43" y="58" fontSize="12" fontWeight="700" fill="currentColor">
+              4
+            </text>
+            <text x="50" y="24" fontSize="12" fontWeight="700" fill="currentColor">
+              5
+            </text>
+            <text x="60" y="45" fontSize="12" fontWeight="800" fill="var(--primary-dolu)">
+              α
+            </text>
+          </svg>
+          <Yan sol={<Sik>4/5</Sik>} sag={<Sik vurgulu>3/5</Sik>} />
+        </div>
+      ),
+    },
+    {
+      baslik: 'Tümler açı',
+      kural: (
+        <>
+          Seviye yükselince şekil kalkar. α + β = 90° ise sin α = cos β ve tan α = cot β.
+        </>
+      ),
+      gorunum: <DortSik soru="α + β = 90° · tan α = 3/4" yonerge="cot β kaçtır?" dogru="3/4" yanlis="4/3" />,
+    },
+  ],
+
   edebiyat: [
     {
       baslik: 'Eşleştirme',

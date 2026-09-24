@@ -116,7 +116,7 @@ export const BOLUMLER: BolumTanimi[] = [
     id: 'geometri',
     ders: 'matematik',
     ad: 'Geometri Ustası',
-    aciklama: 'Açı ve dik üçgen',
+    aciklama: 'Açı, dik üçgen, trigonometri',
     ikon: '📐',
   },
 ]
@@ -211,6 +211,15 @@ export const OYUNLAR: OyunTanimi[] = [
     kisaAciklama: 'İki kenar verili, üçüncüsü kaç?',
     ikon: '📏',
     ozet: `Dik üçgende **x** ile gösterilen kenarı iki şıktan seçersin. Pisagor üçlüleri, 30-60-90 ve 45-45-90 dönüşümlü gelir; kenarlar ölçekli çizilir.`,
+  },
+  {
+    id: 'trigonometri',
+    ders: 'matematik',
+    bolum: 'geometri',
+    ad: 'Trigonometrik Oranlar',
+    kisaAciklama: 'sin, cos, tan, cot kaç?',
+    ikon: '🔺',
+    ozet: `Dik üçgende **α** açısının istenen oranını dört şıktan seçersin: sin = karşı/hipotenüs, cos = komşu/hipotenüs, tan = karşı/komşu. Seviye yükseldikçe özel açılar, eksik kenar ve tümler açı gelir. 10. sınıf konusu.`,
   },
   {
     id: 'edebiyat',

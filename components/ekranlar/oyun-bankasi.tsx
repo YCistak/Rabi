@@ -71,6 +71,7 @@ const AILE: Record<OyunId, { zemin: string; yazi: string }> = {
   tuzak: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
   periyodik: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu' },
   formul: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu' },
+  trigonometri: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
 }
 
 const KISA_AD: Record<OyunId, string> = {
@@ -97,6 +98,7 @@ const KISA_AD: Record<OyunId, string> = {
   tuzak: 'Kural Tuzağı',
   periyodik: 'Element',
   formul: 'Formül',
+  trigonometri: 'Trigonometri',
 }
 
 type Suzgec = OyunId | 'tumu'

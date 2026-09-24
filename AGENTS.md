@@ -1431,6 +1431,39 @@ kabuktaki kırmızı zemin/rozet/parlama, `bossSesi` ve `boss-*` CSS sınıflar�
 sorunun kendisini seçiyor — üstüne bir de saati kısaltmak aynı kararı iki kez
 uygulamak olurdu.
 
+## Trigonometrik Oranlar
+
+Matematiğin ilk 10. sınıf oyunu (`lib/oyunlar/trigonometri.ts`, ekran
+`components/ekranlar/oyun-trigonometri.tsx`) ve Geometri Ustası bölümünün
+üçüncü oyunu — Özel Üçgenler'in dik üçgeninin üstüne kuruluyor. Konu Maarif
+programının "Dik Üçgende Trigonometrik Oranlar ve Özdeşlikler"i: program bu
+sınıfta birim çembere geçmiyor, oyun da dar açıyla dik üçgenin içinde kalıyor.
+
+Sorular havuzdan değil **üretilerek** geliyor ve zorluk soru biçimini seçiyor:
+kolayda tanım (üç kenarı yazılı üçgende sin/cos/tan, özel açılarda sin/cos),
+ortada cot, eksik kenar ve dört oranlı özel açılar, zorda şekil kalkıyor —
+bir oran verilip öteki (`donusum`) ya da tümler açınınki (`tumler`) soruluyor.
+Eksik kenarlı soruda yazılmayan kenar sorulan oranın içinde olmak zorunda;
+olmasaydı Pisagor'a hiç gerek kalmazdı.
+
+**Çeldiriciler aynı üçgenin öteki oranları**, rastgele kesir değil: sin
+sorulduğunda cos, tan, cot ve 1/sin şıkta duruyor. Oyunun ölçtüğü hata tam bu
+— karşıyla komşuyu, payla paydayı karıştırmak. Tümler soruda aynı adlı oran
+(tan α = 3/4 verilip tan β sorulunca 3/4) bu yüzden kendiliğinden tuzak
+oluyor. Değeri doğruya eşit hiçbir şık olamıyor (`degerSayisi` ile
+karşılaştırılıyor) ve şıklar hep sade: 6-8-10 üçgeninde sin α yine 3/5 — oran
+açıya bağlı, boya değil.
+
+Özel açılarda tan 30° "√3/3" yazılıyor, "1/√3" değil: iki yazılış yan yana şık
+olsaydı aynı değer iki kez sorulurdu. Kesirler ekranda üst üste çiziliyor
+(`components/kesir-yazisi.tsx`); eğik çizgiyle "√3/2" ile "√(3/2)"
+ayırt edilmiyordu.
+
+7-24-25 çizilmiyor, yalnızca metin sorularında var: dar açısı 16° ve α o
+köşeye düşünce etiket kenarların arasına sığmıyordu (`sekil.test.ts`).
+Banka kaydı sorunun kendisini taşıyor, cevabı değil — cevap kenarlardan her
+açılışta yeniden hesaplanıyor.
+
 ## Coğrafyanın iki harita oyunu
 
 Harita Avı'nın yanına iki oyun daha geldi ve ikisi de 9. sınıf konularına

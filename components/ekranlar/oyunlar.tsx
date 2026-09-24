@@ -62,6 +62,7 @@ import { IklimOyunuEkrani } from '@/components/ekranlar/oyun-iklim'
 import { IzohipsOyunuEkrani } from '@/components/ekranlar/oyun-izohips'
 import { AciOyunuEkrani } from '@/components/ekranlar/oyun-aci'
 import { UcgenOyunuEkrani } from '@/components/ekranlar/oyun-ucgen'
+import { TrigonometriOyunuEkrani } from '@/components/ekranlar/oyun-trigonometri'
 import { AntlasmaOyunuEkrani } from '@/components/ekranlar/oyun-antlasma'
 import { KavramOyunuEkrani } from '@/components/ekranlar/oyun-kavram'
 import { AnlatimOyunuEkrani } from '@/components/ekranlar/oyun-anlatim'
@@ -134,6 +135,7 @@ const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   tuzak: ['Kural', 'Tuzağı'],
   periyodik: ['Periyodik', 'Tablo Avı'],
   formul: ['Formül', 'Eşleştirme'],
+  trigonometri: ['Trigonometrik', 'Oranlar'],
 }
 
 export function OyunlarEkrani({
@@ -639,6 +641,16 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('ucgen', ozet, cevaplar, saniye, yarim)}
+          bildir={bildir}
+          onCik={oyunuKapat}
+        />
+      )}
+      {acikOyun === 'trigonometri' && (
+        <TrigonometriOyunuEkrani
+          istatistik={istatistikAl(kayitlar, 'trigonometri')}
+          sesAcik={sesAcik}
+          bankaSorulari={bankaSorulari}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('trigonometri', ozet, cevaplar, saniye, yarim)}
           bildir={bildir}
           onCik={oyunuKapat}
         />
