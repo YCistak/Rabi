@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;800&family=Montserrat:wght@800&family=Outfit:wght@800&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#efeeeb;font-family:Nunito,system-ui,sans-serif;color:#1b1a19}
+a{color:#b3491f}a:hover{color:#a8432b}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08)}
+.dv-thd{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin:0 0 14px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{flex:1;min-width:0;font:600 13px/1.4 system-ui,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 12px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.6)}
+.dv-opt:target .dv-oid{background:#b3491f;color:#fff}
+.dv-next{margin:26px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.55)}
+@keyframes m-inis{0%{opacity:0;transform:translateY(-320px) scale(1);animation-timing-function:cubic-bezier(.4,0,.35,1)}8%{opacity:1;animation-timing-function:cubic-bezier(.4,0,.35,1)}30%{opacity:1;transform:translateY(0) scale(1)}68%{opacity:1;transform:translateY(0) scale(1);animation-timing-function:cubic-bezier(.5,0,.2,1)}100%{opacity:1;transform:translate(-134px,-235px) scale(.47)}}
+@keyframes m-yazi{0%,18%{opacity:0;transform:translateY(18px)}36%{opacity:1;transform:translateY(0)}68%{opacity:1;transform:translateY(0)}86%,100%{opacity:0;transform:translateY(-26px)}}
+@keyframes m-slogan{0%,30%{opacity:0;transform:translateY(10px)}46%{opacity:1;transform:translateY(0)}66%{opacity:1;transform:translateY(0)}82%,100%{opacity:0;transform:translateY(-16px)}}
+@keyframes m-yukleme{0%,38%{opacity:0;transform:translateY(8px)}52%{opacity:1;transform:translateY(0)}66%{opacity:1;transform:translateY(0)}80%,100%{opacity:0;transform:translateY(-12px)}}
+@keyframes m-son{0%,68%{opacity:1}86%,100%{opacity:0}}
+@keyframes m-zemin{0%,78%{opacity:1}92%,100%{opacity:0}}
+@keyframes m-cark{to{transform:rotate(360deg)}}
+@keyframes m-yol{from{transform:translateX(-100%)}to{transform:translateX(340%)}}
+@keyframes m-hale{0%,17%{opacity:0;transform:scale(.85)}30%{opacity:.85;transform:scale(1.06)}50%{opacity:.55;transform:scale(1)}68%{opacity:.8;transform:scale(1.05)}86%,100%{opacity:0;transform:scale(.9)}}
+@keyframes m-golge{0%,17%{opacity:0;transform:scale(.5)}26%{opacity:.72;transform:scale(.92)}30%{opacity:.9;transform:scale(1.06)}42%{opacity:.62;transform:scale(1)}68%{opacity:.72;transform:scale(1.02)}82%,100%{opacity:0;transform:scale(.7)}}
+@keyframes m-parilti{0%,100%{transform:translate3d(0,0,0) scale(1);opacity:.55}33%{transform:translate3d(26px,-22px,0) scale(1.12);opacity:.85}66%{transform:translate3d(-18px,16px,0) scale(.95);opacity:.65}}
+@keyframes s-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes s-fill{0%,15%{transform:scaleX(0)}80%,100%{transform:scaleX(1)}}
+@keyframes s-ring{0%,12%{stroke-dashoffset:1}80%,100%{stroke-dashoffset:0}}
+@keyframes s-dot{0%,100%{opacity:.25;transform:scale(.85)}50%{opacity:1;transform:scale(1)}}
+@keyframes s-rise{from{opacity:0;transform:translateY(90px)}to{opacity:1;transform:translateY(0)}}
+@keyframes s-bg{from{opacity:0}to{opacity:1}}
+@keyframes d-float{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,-24px)}}
+@keyframes d-rise{from{transform:translateY(0);opacity:0}10%{opacity:1}85%{opacity:.8}to{transform:translateY(-840px);opacity:0}}
+@keyframes d-ripple{0%{transform:scale(.8);opacity:0}15%{opacity:1}100%{transform:scale(2.6);opacity:0}}
+@keyframes d-drift{from{background-position:0 0}to{background-position:22px 44px}}
+@keyframes d-wave{from{transform:translateX(0)}to{transform:translateX(-360px)}}
+@keyframes d-wander{0%,100%{transform:translate(0,0)}25%{transform:translate(10px,-14px)}50%{transform:translate(-6px,-24px)}75%{transform:translate(-12px,-8px)}}
+@keyframes s-fly{0%,64%{transform:translate(0,0) scale(1);animation-timing-function:cubic-bezier(.5,0,.2,1)}90%,100%{transform:translate(-134px,-229px) scale(.49)}}
+@keyframes s-plus{0%{opacity:0;transform:translate(0,0) scale(.4) rotate(0);animation-timing-function:cubic-bezier(.1,.8,.3,1)}22%{opacity:.5;transform:translate(calc(var(--dx)*.4),calc(var(--dy)*.4)) scale(1) rotate(35deg);animation-timing-function:cubic-bezier(.3,.2,.6,1)}85%{opacity:.35}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.9) rotate(90deg)}}
+@keyframes x-cikis{0%,82%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.04)}}
+@keyframes a-daire{0%,4%{clip-path:circle(0px at 50% 104%)}30%,100%{clip-path:circle(920px at 50% 104%)}}
+@keyframes a-halka{0%,18%{opacity:0;transform:scale(.6)}40%,100%{opacity:1;transform:scale(1)}}
+@keyframes a-tavsan{0%,22%{opacity:0;transform:translateY(60px) scale(.7)}36%{opacity:1;transform:translateY(-8px) scale(1.03)}42%,100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes a-el{0%,100%{transform:rotate(0)}50%{transform:rotate(11deg)}}
+@keyframes a-yama{0%,99.9%{opacity:1}100%{opacity:0}}
+@keyframes a-kelime{0%,34%{transform:translateY(105%)}48%,100%{transform:translateY(0)}}
+@keyframes a-sol{0%,44%{opacity:0;transform:translateY(8px)}56%,100%{opacity:1;transform:translateY(0)}}
+@keyframes a-dol{0%,40%{transform:scaleX(0)}80%,100%{transform:scaleX(1)}}
+@keyframes b-harf{from{opacity:0;transform:translateX(-60px)}to{opacity:1;transform:translateX(0)}}
+@keyframes b-nokta{0%{transform:translateY(-420px) scale(1,1);animation-timing-function:cubic-bezier(.55,0,1,.45)}14%{transform:translateY(0) scale(1.25,.72);animation-timing-function:cubic-bezier(0,.55,.45,1)}20%{transform:translateY(-70px) scale(.94,1.08);animation-timing-function:cubic-bezier(.55,0,1,.45)}26%{transform:translateY(0) scale(1.12,.86);animation-timing-function:cubic-bezier(0,.55,.45,1)}30%{transform:translateY(-18px) scale(1,1)}34%,100%{transform:translateY(0) scale(1,1)}}
+@keyframes b-dikey{0%,30%{opacity:0;transform:translateY(20px)}46%,100%{opacity:1;transform:translateY(0)}}
+@keyframes b-dol{0%,30%{transform:scaleX(0)}82%,100%{transform:scaleX(1)}}
+@keyframes c-kelime{0%,6%{opacity:0;transform:translateY(16px)}22%,100%{opacity:1;transform:translateY(0)}}
+@keyframes c-yol{0%,14%{offset-distance:0%}76%,100%{offset-distance:100%}}
+@keyframes c-iz{0%,14%{stroke-dashoffset:1}76%,100%{stroke-dashoffset:0}}
+@keyframes c-zipla{0%,100%{transform:translateY(0) scale(1,1)}10%{transform:translateY(0) scale(1.08,.9)}50%{transform:translateY(-22px) scale(.96,1.04)}}
+@keyframes c-giris{0%,4%{opacity:0;transform:scale(.6)}14%,100%{opacity:1;transform:scale(1)}}
+@keyframes c-durak{from{background:#f8f8f7;transform:scale(1)}50%{transform:scale(1.5)}to{background:#d9622f;transform:scale(1)}}
+@keyframes c-hedef{0%,74%{transform:scale(1);box-shadow:0 0 0 0 rgba(217,98,47,.35)}82%{transform:scale(1.3);box-shadow:0 0 0 14px rgba(217,98,47,0)}100%{transform:scale(1);box-shadow:0 0 0 0 rgba(217,98,47,0)}}
+</style>
+</helmet>
+<section class="dv-turn" id="t3">
+<div class="dv-thd"><a class="dv-tid" href="#t3">3</a><span class="dv-tname"><a class="dv-oid" href="#2a">2a</a> üzerine — 5 arka plan dokunuşu</span></div>
+<p style="margin:0 0 28px;max-width:760px;font:13px/1.55 system-ui,sans-serif;color:rgba(0,0,0,.62);text-wrap:pretty">Ön plan <a class="dv-oid" href="#2a">2a</a> ile birebir aynı; zemin beyaz. Yalnızca arkaya sakin, yavaş hareket eden süslemeler eklendi — marka şeftalisi (#FBEEE7) ve tonları.</p>
+<div class="dv-opts">
+<div class="dv-opt" id="3a">
+<div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>Süzülen daireler — yumuşak şeftali daireler yavaşça kayar</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#ffffff;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.k3a }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#ffffff;overflow:hidden;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;inset:0;animation:s-bg 1200ms ease-out both">
+<span style="position:absolute;left:-60px;top:110px;width:220px;height:220px;border-radius:999px;background:#fbeee7;animation:d-float 9s ease-in-out infinite"></span>
+<span style="position:absolute;right:-70px;top:420px;width:260px;height:260px;border-radius:999px;background:#fbeee7;opacity:.7;animation:d-float 11s ease-in-out -3s infinite reverse"></span>
+<span style="position:absolute;left:60px;bottom:70px;width:70px;height:70px;border-radius:999px;background:#f8e7e0;animation:d-float 8s ease-in-out -5s infinite"></span>
+<span style="position:absolute;right:70px;top:80px;width:28px;height:28px;border-radius:999px;background:#f3d9cc;animation:d-float 7s ease-in-out -2s infinite"></span>
+</div>
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><img src="public/tavsan-kafa.png" alt="Rabi" style="display:block;width:118px;height:118px;object-fit:contain;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 100ms both"/><p style="margin:14px 0 0;font:800 50px/1.32 Manrope,sans-serif;letter-spacing:-0.05em;color:#1b1a19;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 280ms both">RABİ</p><p style="margin:6px 0 0;font:700 11px/1 Nunito,sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#6b6764;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 420ms both">Sınav yolu arkadaşın</p><span style="position:relative;display:block;width:132px;height:3px;margin-top:40px;overflow:hidden;border-radius:999px;background:#eae9e6;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 560ms both"><span style="position:absolute;top:0;bottom:0;left:0;width:38px;border-radius:999px;background:linear-gradient(90deg,transparent,#b3491f,transparent);animation:m-yol 1700ms ease-in-out infinite"></span></span></div>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ rp.k3a }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+<div class="dv-opt" id="3b">
+<div class="dv-olabel"><a class="dv-oid" href="#3b">3b</a>Yükselen kabarcıklar — küçük daireler alttan yukarı süzülür</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#ffffff;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.k3b }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#ffffff;overflow:hidden;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;inset:0;animation:s-bg 1200ms ease-out both">
+<span style="position:absolute;left:40px;bottom:-30px;width:14px;height:14px;border-radius:999px;background:#f3d9cc;animation:d-rise 9s linear -0s infinite"></span>
+<span style="position:absolute;left:96px;bottom:-30px;width:8px;height:8px;border-radius:999px;background:#f3d9cc;animation:d-rise 11s linear -2.2s infinite"></span>
+<span style="position:absolute;left:150px;bottom:-30px;width:20px;height:20px;border-radius:999px;background:#f3d9cc;animation:d-rise 10s linear -4.5s infinite"></span>
+<span style="position:absolute;left:214px;bottom:-30px;width:10px;height:10px;border-radius:999px;background:#f3d9cc;animation:d-rise 12s linear -1.2s infinite"></span>
+<span style="position:absolute;left:270px;bottom:-30px;width:16px;height:16px;border-radius:999px;background:#f3d9cc;animation:d-rise 9.5s linear -3.4s infinite"></span>
+<span style="position:absolute;left:318px;bottom:-30px;width:9px;height:9px;border-radius:999px;background:#f3d9cc;animation:d-rise 11s linear -6s infinite"></span>
+<span style="position:absolute;left:70px;bottom:-30px;width:22px;height:22px;border-radius:999px;background:#f3d9cc;animation:d-rise 13s linear -5.2s infinite"></span>
+<span style="position:absolute;left:240px;bottom:-30px;width:12px;height:12px;border-radius:999px;background:#f3d9cc;animation:d-rise 10s linear -7s infinite"></span>
+</div>
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><img src="public/tavsan-kafa.png" alt="Rabi" style="display:block;width:118px;height:118px;object-fit:contain;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 100ms both"/><p style="margin:14px 0 0;font:800 50px/1.32 Manrope,sans-serif;letter-spacing:-0.05em;color:#1b1a19;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 280ms both">RABİ</p><p style="margin:6px 0 0;font:700 11px/1 Nunito,sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#6b6764;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 420ms both">Sınav yolu arkadaşın</p><span style="position:relative;display:block;width:132px;height:3px;margin-top:40px;overflow:hidden;border-radius:999px;background:#eae9e6;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 560ms both"><span style="position:absolute;top:0;bottom:0;left:0;width:38px;border-radius:999px;background:linear-gradient(90deg,transparent,#b3491f,transparent);animation:m-yol 1700ms ease-in-out infinite"></span></span></div>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ rp.k3b }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+<div class="dv-opt" id="3c">
+<div class="dv-olabel"><a class="dv-oid" href="#3c">3c</a>Eşmerkezli halkalar — tavşandan dışa yavaşça yayılan ince halkalar</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#ffffff;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.k3c }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#ffffff;overflow:hidden;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;inset:0;animation:s-bg 1200ms ease-out both">
+<span style="position:absolute;left:50%;top:50%;width:160px;height:160px;margin:-181px 0 0 -80px;border-radius:999px;border:1.5px solid #f0c9b6;animation:d-ripple 4.8s ease-out 0s infinite both"></span>
+<span style="position:absolute;left:50%;top:50%;width:160px;height:160px;margin:-181px 0 0 -80px;border-radius:999px;border:1.5px solid #f0c9b6;animation:d-ripple 4.8s ease-out 1.6s infinite both"></span>
+<span style="position:absolute;left:50%;top:50%;width:160px;height:160px;margin:-181px 0 0 -80px;border-radius:999px;border:1.5px solid #f0c9b6;animation:d-ripple 4.8s ease-out 3.2s infinite both"></span>
+</div>
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><img src="public/tavsan-kafa.png" alt="Rabi" style="display:block;width:118px;height:118px;object-fit:contain;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 100ms both"/><p style="margin:14px 0 0;font:800 50px/1.32 Manrope,sans-serif;letter-spacing:-0.05em;color:#1b1a19;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 280ms both">RABİ</p><p style="margin:6px 0 0;font:700 11px/1 Nunito,sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#6b6764;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 420ms both">Sınav yolu arkadaşın</p><span style="position:relative;display:block;width:132px;height:3px;margin-top:40px;overflow:hidden;border-radius:999px;background:#eae9e6;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 560ms both"><span style="position:absolute;top:0;bottom:0;left:0;width:38px;border-radius:999px;background:linear-gradient(90deg,transparent,#b3491f,transparent);animation:m-yol 1700ms ease-in-out infinite"></span></span></div>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ rp.k3c }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+<div class="dv-opt" id="3d">
+<div class="dv-olabel"><a class="dv-oid" href="#3d">3d</a>Noktalı doku — hafif nokta ızgarası, kenarlara doğru sönen</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#ffffff;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.k3d }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#ffffff;overflow:hidden;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;inset:0;animation:s-bg 1200ms ease-out both">
+<span style="position:absolute;inset:0;background-image:radial-gradient(#ead8cf 1.3px,transparent 1.4px);background-size:22px 22px;-webkit-mask-image:radial-gradient(ellipse 70% 55% at 50% 45%,#000 20%,transparent 80%);mask-image:radial-gradient(ellipse 70% 55% at 50% 45%,#000 20%,transparent 80%);animation:d-drift 14s linear infinite"></span>
+<span style="position:absolute;left:50%;top:50%;width:220px;height:220px;margin:-211px 0 0 -110px;border-radius:999px;background:#ffffff"></span>
+</div>
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><img src="public/tavsan-kafa.png" alt="Rabi" style="display:block;width:118px;height:118px;object-fit:contain;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 100ms both"/><p style="margin:14px 0 0;font:800 50px/1.32 Manrope,sans-serif;letter-spacing:-0.05em;color:#1b1a19;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 280ms both">RABİ</p><p style="margin:6px 0 0;font:700 11px/1 Nunito,sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#6b6764;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 420ms both">Sınav yolu arkadaşın</p><span style="position:relative;display:block;width:132px;height:3px;margin-top:40px;overflow:hidden;border-radius:999px;background:#eae9e6;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 560ms both"><span style="position:absolute;top:0;bottom:0;left:0;width:38px;border-radius:999px;background:linear-gradient(90deg,transparent,#b3491f,transparent);animation:m-yol 1700ms ease-in-out infinite"></span></span></div>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ rp.k3d }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+<div class="dv-opt" id="3e">
+<div class="dv-olabel"><a class="dv-oid" href="#3e">3e</a>Ufuk dalgası — altta yavaş akan yumuşak şeftali dalgalar</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#ffffff;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.k3e }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#ffffff;overflow:hidden;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;inset:0;animation:s-bg 1200ms ease-out both">
+<svg width="720" height="200" viewBox="0 0 720 200" style="position:absolute;left:0;bottom:0;animation:d-wave 12s linear infinite"><path d="M0 90 C 90 50, 180 50, 270 90 S 450 130, 540 90 S 720 50, 720 90 L 720 200 L 0 200 Z" fill="#fbeee7"></path></svg>
+<svg width="720" height="150" viewBox="0 0 720 150" style="position:absolute;left:-360px;bottom:0;animation:d-wave 8s linear infinite reverse"><path d="M0 70 C 90 40, 180 40, 270 70 S 450 100, 540 70 S 720 40, 720 70 L 720 150 L 0 150 Z" fill="#f8e2d6"></path></svg>
+</div>
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><img src="public/tavsan-kafa.png" alt="Rabi" style="display:block;width:118px;height:118px;object-fit:contain;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 100ms both"/><p style="margin:14px 0 0;font:800 50px/1.32 Manrope,sans-serif;letter-spacing:-0.05em;color:#1b1a19;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 280ms both">RABİ</p><p style="margin:6px 0 0;font:700 11px/1 Nunito,sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#6b6764;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 420ms both">Sınav yolu arkadaşın</p><span style="position:relative;display:block;width:132px;height:3px;margin-top:40px;overflow:hidden;border-radius:999px;background:#eae9e6;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 560ms both"><span style="position:absolute;top:0;bottom:0;left:0;width:38px;border-radius:999px;background:linear-gradient(90deg,transparent,#b3491f,transparent);animation:m-yol 1700ms ease-in-out infinite"></span></span></div>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ rp.k3e }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+</div>
+<p class="dv-next">Dene: "<a class="dv-oid" href="#3a">3a</a>'daki daireleri biraz daha belirgin yap" · "<a class="dv-oid" href="#3c">3c</a> ile <a class="dv-oid" href="#3a">3a</a>'yı birleştir" · "<a class="dv-oid" href="#3e">3e</a>'yi uygulamaya hazırla"</p>
+</section>
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Mevcut ekranın 10 sade muadili</span></div>
+<p style="margin:0 0 28px;max-width:760px;font:13px/1.55 system-ui,sans-serif;color:rgba(0,0,0,.62);text-wrap:pretty">Temel aynı: kafa pozunda Rabi, Manrope "RABİ", "Sınav yolu arkadaşın", aynı palet. Hareket tek tip ve sakin — parçalar sırayla hafifçe yükselerek beliriyor, sonunda ekran yumuşakça sönüyor. "Çevrimdışı çalışır" hiçbirinde yok.</p>
+<div class="dv-opts">
+<div class="dv-opt" id="2a">
+<div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Sadeleştirilmiş — çark ve yazı yok, tek ince şerit</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#f8f8f7;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.k2a }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#f8f8f7;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:115px"><div style="animation:s-fly 4200ms both"><img src="public/tavsan-kafa.png" alt="Rabi" style="display:block;width:118px;height:118px;object-fit:contain;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 100ms both"/></div><p style="margin:14px 0 0;font:800 52px/1.32 Outfit,sans-serif;letter-spacing:.02em;padding-left:.02em;color:#1b1a19;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 280ms both">RABİ</p><p style="margin:6px 0 0;font:700 11px/1 Nunito,sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#6b6764;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 420ms both">Sınav yolu arkadaşın</p></div>
+<div style="position:absolute;left:0;right:0;bottom:72px;display:flex;justify-content:center;gap:8px;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 560ms both"><span style="width:7px;height:7px;border-radius:999px;background:#b3491f;animation:s-dot 1200ms ease-in-out 0ms infinite"></span><span style="width:7px;height:7px;border-radius:999px;background:#b3491f;animation:s-dot 1200ms ease-in-out 160ms infinite"></span><span style="width:7px;height:7px;border-radius:999px;background:#b3491f;animation:s-dot 1200ms ease-in-out 320ms infinite"></span></div>
+<div style="position:absolute;inset:0;pointer-events:none"><span style="position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;--dx:220px;--dy:-185px;opacity:0;animation:s-plus 2000ms linear 1690ms both"><span style="position:absolute;left:0;right:0;top:50%;height:1.5px;margin-top:-.75px;border-radius:2px;background:#d9622f"></span><span style="position:absolute;top:0;bottom:0;left:50%;width:1.5px;margin-left:-.75px;border-radius:2px;background:#d9622f"></span></span><span style="position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;--dx:-220px;--dy:-80px;opacity:0;animation:s-plus 2000ms linear 2140ms both"><span style="position:absolute;left:0;right:0;top:50%;height:1.5px;margin-top:-.75px;border-radius:2px;background:#d9622f"></span><span style="position:absolute;top:0;bottom:0;left:50%;width:1.5px;margin-left:-.75px;border-radius:2px;background:#d9622f"></span></span><span style="position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;--dx:157px;--dy:430px;opacity:0;animation:s-plus 2000ms linear 2620ms both"><span style="position:absolute;left:0;right:0;top:50%;height:1.5px;margin-top:-.75px;border-radius:2px;background:#d9622f"></span><span style="position:absolute;top:0;bottom:0;left:50%;width:1.5px;margin-left:-.75px;border-radius:2px;background:#d9622f"></span></span><span style="position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;--dx:-220px;--dy:-127px;opacity:0;animation:s-plus 2000ms linear 3050ms both"><span style="position:absolute;left:0;right:0;top:50%;height:1.5px;margin-top:-.75px;border-radius:2px;background:#d9622f"></span><span style="position:absolute;top:0;bottom:0;left:50%;width:1.5px;margin-left:-.75px;border-radius:2px;background:#d9622f"></span></span><span style="position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;--dx:220px;--dy:80px;opacity:0;animation:s-plus 2000ms linear 3480ms both"><span style="position:absolute;left:0;right:0;top:50%;height:1.5px;margin-top:-.75px;border-radius:2px;background:#d9622f"></span><span style="position:absolute;top:0;bottom:0;left:50%;width:1.5px;margin-left:-.75px;border-radius:2px;background:#d9622f"></span></span><span style="position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;--dx:-157px;--dy:-430px;opacity:0;animation:s-plus 2000ms linear 3900ms both"><span style="position:absolute;left:0;right:0;top:50%;height:1.5px;margin-top:-.75px;border-radius:2px;background:#d9622f"></span><span style="position:absolute;top:0;bottom:0;left:50%;width:1.5px;margin-left:-.75px;border-radius:2px;background:#d9622f"></span></span><span style="position:absolute;left:70px;top:-6px;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;--dx:40px;--dy:160px;opacity:0;animation:s-plus 2000ms linear 1900ms both"><span style="position:absolute;left:0;right:0;top:50%;height:1.5px;margin-top:-.75px;border-radius:2px;background:#d9622f"></span><span style="position:absolute;top:0;bottom:0;left:50%;width:1.5px;margin-left:-.75px;border-radius:2px;background:#d9622f"></span></span><span style="position:absolute;left:300px;top:786px;width:6px;height:6px;margin:-3px 0 0 -3px;--dx:-60px;--dy:-170px;opacity:0;animation:s-plus 2000ms linear 2350ms both"><span style="position:absolute;left:0;right:0;top:50%;height:1.5px;margin-top:-.75px;border-radius:2px;background:#d9622f"></span><span style="position:absolute;top:0;bottom:0;left:50%;width:1.5px;margin-left:-.75px;border-radius:2px;background:#d9622f"></span></span><span style="position:absolute;left:120px;top:-6px;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;--dx:40px;--dy:170px;opacity:0;animation:s-plus 2000ms linear 2800ms both"><span style="position:absolute;left:0;right:0;top:50%;height:1.5px;margin-top:-.75px;border-radius:2px;background:#d9622f"></span><span style="position:absolute;top:0;bottom:0;left:50%;width:1.5px;margin-left:-.75px;border-radius:2px;background:#d9622f"></span></span><span style="position:absolute;left:250px;top:786px;width:6px;height:6px;margin:-3px 0 0 -3px;--dx:-50px;--dy:-180px;opacity:0;animation:s-plus 2000ms linear 1450ms both"><span style="position:absolute;left:0;right:0;top:50%;height:1.5px;margin-top:-.75px;border-radius:2px;background:#d9622f"></span><span style="position:absolute;top:0;bottom:0;left:50%;width:1.5px;margin-left:-.75px;border-radius:2px;background:#d9622f"></span></span><span style="position:absolute;left:40px;top:786px;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;--dx:50px;--dy:-150px;opacity:0;animation:s-plus 2000ms linear 3250ms both"><span style="position:absolute;left:0;right:0;top:50%;height:1.5px;margin-top:-.75px;border-radius:2px;background:#d9622f"></span><span style="position:absolute;top:0;bottom:0;left:50%;width:1.5px;margin-left:-.75px;border-radius:2px;background:#d9622f"></span></span><span style="position:absolute;left:320px;top:-6px;width:6px;height:6px;margin:-3px 0 0 -3px;--dx:-40px;--dy:180px;opacity:0;animation:s-plus 2000ms linear 2050ms both"><span style="position:absolute;left:0;right:0;top:50%;height:1.5px;margin-top:-.75px;border-radius:2px;background:#d9622f"></span><span style="position:absolute;top:0;bottom:0;left:50%;width:1.5px;margin-left:-.75px;border-radius:2px;background:#d9622f"></span></span></div>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ rp.k2a }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+<div class="dv-opt" id="2b">
+<div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Yumuşak disk — tavşan şeftali dairede, dolan şerit</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#f8f8f7;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.k2b }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#f8f8f7;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="width:176px;height:176px;border-radius:999px;background:#fbeee7;display:flex;align-items:center;justify-content:center;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 60ms both"><img src="public/tavsan-kafa.png" alt="Rabi" style="display:block;width:118px;height:118px;object-fit:contain;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 160ms both"/></div><p style="margin:22px 0 0;font:800 48px/1.32 Manrope,sans-serif;letter-spacing:-0.05em;color:#1b1a19;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 280ms both">RABİ</p><p style="margin:6px 0 0;font:700 11px/1 Nunito,sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#6b6764;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 420ms both">Sınav yolu arkadaşın</p><span style="position:relative;display:block;width:120px;height:3px;margin-top:36px;overflow:hidden;border-radius:999px;background:#eae9e6;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 560ms both"><span style="position:absolute;inset:0;border-radius:999px;background:#b3491f;transform-origin:0 50%;animation:s-fill 4200ms cubic-bezier(.45,0,.2,1) both"></span></span></div>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ rp.k2b }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+<div class="dv-opt" id="2c">
+<div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>Turuncu nokta — İ'nin noktası marka rengi</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#f8f8f7;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.k2c }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#f8f8f7;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><img src="public/tavsan-kafa.png" alt="Rabi" style="display:block;width:96px;height:96px;object-fit:contain;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 100ms both"/><p style="margin:14px 0 0;font:800 56px/1.32 Manrope,sans-serif;letter-spacing:-0.05em;color:#1b1a19;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 280ms both">RAB<span style="position:relative;display:inline-block">I<span style="position:absolute;left:50%;top:5px;width:10px;height:10px;margin-left:-6px;border-radius:999px;background:#d9622f"></span></span></p><p style="margin:6px 0 0;font:700 11px/1 Nunito,sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#6b6764;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 420ms both">Sınav yolu arkadaşın</p><span style="display:flex;gap:7px;margin-top:40px;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 560ms both"><span style="width:6px;height:6px;border-radius:999px;background:#b3491f;animation:s-dot 1200ms ease-in-out 0ms infinite"></span><span style="width:6px;height:6px;border-radius:999px;background:#b3491f;animation:s-dot 1200ms ease-in-out 160ms infinite"></span><span style="width:6px;height:6px;border-radius:999px;background:#b3491f;animation:s-dot 1200ms ease-in-out 320ms infinite"></span></span></div>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ rp.k2c }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+<div class="dv-opt" id="2d">
+<div class="dv-olabel"><a class="dv-oid" href="#2d">2d</a>Sola hizalı — editoryal düzen, şerit altta</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#f8f8f7;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.k2d }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#f8f8f7;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:0 32px"><img src="public/tavsan-kafa.png" alt="Rabi" style="display:block;width:100px;height:100px;object-fit:contain;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 100ms both"/><p style="margin:12px 0 0;font:800 76px/1.15 Manrope,sans-serif;letter-spacing:-0.055em;color:#1b1a19;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 280ms both">RABİ</p><p style="margin:4px 0 0;font:700 16px/1.3 Nunito,sans-serif;color:#6b6764;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 420ms both">Sınav yolu arkadaşın</p></div>
+<div style="position:absolute;left:32px;right:32px;bottom:48px;display:flex;flex-direction:column;gap:12px;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 560ms both"><span style="font:700 11px/1 Nunito,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#6b6764">Hazırlanıyor</span><span style="position:relative;display:block;height:2px;background:#eae9e6;overflow:hidden"><span style="position:absolute;inset:0;background:#b3491f;transform-origin:0 50%;animation:s-fill 4200ms cubic-bezier(.45,0,.2,1) both"></span></span></div>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ rp.k2d }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+<div class="dv-opt" id="2e">
+<div class="dv-olabel"><a class="dv-oid" href="#2e">2e</a>Yatay kilit — tavşan ve yazı yan yana</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#f8f8f7;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.k2e }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#f8f8f7;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="display:flex;align-items:center;gap:16px"><img src="public/tavsan-kafa.png" alt="Rabi" style="display:block;width:78px;height:78px;object-fit:contain;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 100ms both"/><span style="width:1px;height:48px;background:#eae9e6;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 200ms both"></span><p style="margin:0;font:800 48px/1.32 Manrope,sans-serif;letter-spacing:-0.05em;color:#1b1a19;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 280ms both">RABİ</p></div><p style="margin:16px 0 0;font:700 11px/1 Nunito,sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#6b6764;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 420ms both">Sınav yolu arkadaşın</p><span style="position:relative;display:block;width:160px;height:3px;margin-top:40px;overflow:hidden;border-radius:999px;background:#eae9e6;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 560ms both"><span style="position:absolute;inset:0;border-radius:999px;background:#b3491f;transform-origin:0 50%;animation:s-fill 4200ms cubic-bezier(.45,0,.2,1) both"></span></span></div>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ rp.k2e }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+<div class="dv-opt" id="2f">
+<div class="dv-olabel"><a class="dv-oid" href="#2f">2f</a>Kart — marka beyaz bir kartın içinde</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#f8f8f7;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.k2f }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#f8f8f7;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="width:250px;padding:30px 0 28px;border-radius:28px;background:#ffffff;border:1px solid #eae9e6;box-shadow:0 18px 40px -24px rgba(27,26,25,.28);display:flex;flex-direction:column;align-items:center;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 40ms both"><img src="public/tavsan-kafa.png" alt="Rabi" style="display:block;width:104px;height:104px;object-fit:contain;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 180ms both"/><p style="margin:10px 0 0;font:800 44px/1.32 Manrope,sans-serif;letter-spacing:-0.05em;color:#1b1a19;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 320ms both">RABİ</p><p style="margin:4px 0 0;font:700 11px/1 Nunito,sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#6b6764;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 460ms both">Sınav yolu arkadaşın</p></div><span style="position:relative;display:block;width:96px;height:3px;margin-top:34px;overflow:hidden;border-radius:999px;background:#eae9e6;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 560ms both"><span style="position:absolute;top:0;bottom:0;left:0;width:38px;border-radius:999px;background:linear-gradient(90deg,transparent,#b3491f,transparent);animation:m-yol 1700ms ease-in-out infinite"></span></span></div>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ rp.k2f }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+<div class="dv-opt" id="2g">
+<div class="dv-olabel"><a class="dv-oid" href="#2g">2g</a>Sıcak zemin — şeftali arka plan, turuncu yazı</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#fbeee7;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.k2g }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#fbeee7;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><img src="public/tavsan-kafa.png" alt="Rabi" style="display:block;width:118px;height:118px;object-fit:contain;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 100ms both"/><span style="width:92px;height:12px;margin-top:-6px;border-radius:999px;background:radial-gradient(ellipse,rgba(168,67,43,.18),transparent 72%);animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 160ms both"></span><p style="margin:12px 0 0;font:800 50px/1.32 Manrope,sans-serif;letter-spacing:-0.05em;color:#b3491f;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 280ms both">RABİ</p><p style="margin:6px 0 0;font:700 11px/1 Nunito,sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#a8432b;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 420ms both">Sınav yolu arkadaşın</p><span style="position:relative;display:block;width:120px;height:3px;margin-top:36px;overflow:hidden;border-radius:999px;background:#f3d9cc;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 560ms both"><span style="position:absolute;inset:0;border-radius:999px;background:#b3491f;transform-origin:0 50%;animation:s-fill 4200ms cubic-bezier(.45,0,.2,1) both"></span></span></div>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ rp.k2g }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+<div class="dv-opt" id="2h">
+<div class="dv-olabel"><a class="dv-oid" href="#2h">2h</a>Alttan bakan tavşan — büyük kafa ekranın altından çıkar</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#f8f8f7;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.k2h }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#f8f8f7;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;left:0;right:0;top:250px;display:flex;flex-direction:column;align-items:center"><p style="margin:0px 0 0;font:800 56px/1.32 Manrope,sans-serif;letter-spacing:-0.05em;color:#1b1a19;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 200ms both">RABİ</p><p style="margin:6px 0 0;font:700 11px/1 Nunito,sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#6b6764;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 340ms both">Sınav yolu arkadaşın</p><span style="position:relative;display:block;width:110px;height:3px;margin-top:32px;overflow:hidden;border-radius:999px;background:#eae9e6;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 480ms both"><span style="position:absolute;top:0;bottom:0;left:0;width:38px;border-radius:999px;background:linear-gradient(90deg,transparent,#b3491f,transparent);animation:m-yol 1700ms ease-in-out infinite"></span></span></div>
+<img src="public/tavsan-kafa.png" alt="Rabi" style="position:absolute;left:50%;bottom:-86px;width:260px;height:260px;margin-left:-130px;object-fit:contain;animation:s-rise 900ms cubic-bezier(.2,.8,.2,1) 150ms both"/>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ rp.k2h }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+<div class="dv-opt" id="2i">
+<div class="dv-olabel"><a class="dv-oid" href="#2i">2i</a>Rozet slogan — slogan şeftali bir çipin içinde</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#f8f8f7;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.k2i }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#f8f8f7;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><img src="public/tavsan-kafa.png" alt="Rabi" style="display:block;width:118px;height:118px;object-fit:contain;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 100ms both"/><p style="margin:14px 0 0;font:800 50px/1.32 Manrope,sans-serif;letter-spacing:-0.05em;color:#1b1a19;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 280ms both">RABİ</p><span style="margin-top:8px;padding:8px 14px;border-radius:999px;background:#fbeee7;font:700 12.5px/1 Nunito,sans-serif;color:#b3491f;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 420ms both">Sınav yolu arkadaşın</span><span style="display:flex;gap:7px;margin-top:44px;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 560ms both"><span style="width:6px;height:6px;border-radius:999px;background:#b3491f;animation:s-dot 1200ms ease-in-out 0ms infinite"></span><span style="width:6px;height:6px;border-radius:999px;background:#b3491f;animation:s-dot 1200ms ease-in-out 160ms infinite"></span><span style="width:6px;height:6px;border-radius:999px;background:#b3491f;animation:s-dot 1200ms ease-in-out 320ms infinite"></span></span></div>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ rp.k2i }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+<div class="dv-opt" id="2j">
+<div class="dv-olabel"><a class="dv-oid" href="#2j">2j</a>Halka — yükleme tavşanın etrafında dolar</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#f8f8f7;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.k2j }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#f8f8f7;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="position:relative;width:176px;height:176px;display:flex;align-items:center;justify-content:center;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 60ms both"><svg width="176" height="176" viewBox="0 0 176 176" style="position:absolute;inset:0;transform:rotate(-90deg)"><circle cx="88" cy="88" r="84" fill="none" stroke="#eae9e6" stroke-width="3"></circle><circle cx="88" cy="88" r="84" fill="none" stroke="#b3491f" stroke-width="3" stroke-linecap="round" pathLength="1" stroke-dasharray="1 1" style="animation:s-ring 4200ms cubic-bezier(.45,0,.2,1) both"></circle></svg><img src="public/tavsan-kafa.png" alt="Rabi" style="display:block;width:112px;height:112px;object-fit:contain;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 160ms both"/></div><p style="margin:22px 0 0;font:800 48px/1.32 Manrope,sans-serif;letter-spacing:-0.05em;color:#1b1a19;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 280ms both">RABİ</p><p style="margin:6px 0 0;font:700 11px/1 Nunito,sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#6b6764;animation:s-in 700ms cubic-bezier(.2,.8,.2,1) 420ms both">Sınav yolu arkadaşın</p></div>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ rp.k2j }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+</div>
+<p class="dv-next">Dene: "<a class="dv-oid" href="#2b">2b</a>'nin diskini <a class="dv-oid" href="#2j">2j</a>'nin halkasıyla birleştir" · "<a class="dv-oid" href="#2c">2c</a>'deki turuncu noktayı <a class="dv-oid" href="#2a">2a</a>'ya ekle" · "<a class="dv-oid" href="#2h">2h</a>'yi uygulamaya hazırla"</p>
+</section>
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Açılış ekranı — 3 farklı yön</span></div>
+<p style="margin:0 0 28px;max-width:760px;font:13px/1.55 system-ui,sans-serif;color:rgba(0,0,0,.62);text-wrap:pretty">Palet aynı: zemin #F8F8F7, mürekkep #1B1A19, turuncu #B3491F / #D9622F, yazı tipi Manrope (marka) + Nunito. Hepsi 4,2 sn — sonunda arkadaki ana sayfa beliriyor. "Çevrimdışı çalışır" hiçbirinde yok. Kartın altındaki düğmeyle yeniden oynat.</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="0">
+<div class="dv-olabel"><a class="dv-oid" href="#0">Mevcut</a>Referans — bugünkü ekran</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#f8f8f7;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25);font-family:Manrope,sans-serif">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.m }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;overflow:hidden">
+<div style="position:absolute;inset:0;background:#f8f8f7;animation:m-zemin 4200ms ease-out both">
+<span style="position:absolute;left:-50px;top:170px;width:230px;height:230px;border-radius:999px;filter:blur(10px);background:radial-gradient(circle,rgba(179,73,31,.07),transparent 70%);animation:m-parilti 21s ease-in-out infinite"></span>
+<span style="position:absolute;right:-60px;bottom:150px;width:240px;height:240px;border-radius:999px;filter:blur(10px);background:radial-gradient(circle,rgba(120,110,100,.07),transparent 70%);animation:m-parilti 26s ease-in-out 4s infinite"></span>
+</div>
+<span style="position:absolute;left:50%;top:50%;width:170px;height:170px;margin:-186px 0 0 -85px;border-radius:999px;background:radial-gradient(circle,rgba(179,73,31,.08),transparent 68%);filter:blur(5px);opacity:0;animation:m-hale 4200ms ease-out both"></span>
+<span style="position:absolute;left:50%;top:50%;width:104px;height:16px;margin:-45px 0 0 -52px;border-radius:999px;background:radial-gradient(ellipse,rgba(24,23,22,.2),transparent 72%);filter:blur(3px);opacity:0;animation:m-golge 4200ms ease-out both"></span>
+<div style="position:absolute;top:50%;left:50%;margin-top:-164.9px;margin-left:-59px;animation:m-inis 4200ms linear both">
+<img src="public/tavsan-kafa.png" alt="Rabi" style="display:block;width:118px;height:127.8px;object-fit:contain"/>
+</div>
+<p style="position:absolute;left:0;right:0;top:50%;margin:48px 0 0;text-align:center;font-size:50px;line-height:1.32;font-weight:800;letter-spacing:-0.05em;color:#1b1a19;animation:m-yazi 4200ms cubic-bezier(.2,.85,.25,1) both">RABİ</p>
+<p style="position:absolute;left:0;right:0;top:50%;margin:128px 0 0;text-align:center;font-size:9.5px;line-height:1;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:#6b6764;animation:m-slogan 4200ms ease-out both">Sınav yolu arkadaşın</p>
+<div style="position:absolute;left:0;right:0;top:50%;margin-top:176px;display:flex;flex-direction:column;align-items:center;gap:12px;animation:m-yukleme 4200ms ease-out both">
+<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#b3491f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:m-cark 3600ms linear infinite"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+<span style="position:relative;display:block;width:132px;height:3px;overflow:hidden;border-radius:999px;background:#eae9e6"><span style="position:absolute;top:0;bottom:0;left:0;width:38px;border-radius:999px;background:linear-gradient(90deg,transparent,#b3491f,transparent);animation:m-yol 1700ms ease-in-out infinite"></span></span>
+<span style="font-size:9.5px;line-height:1;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#6b6764">Hazırlanıyor</span>
+</div>
+<p style="position:absolute;left:0;right:0;bottom:22px;margin:0;text-align:center;font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#6b6764;animation:m-son 4200ms ease-out both">çevrimdışı çalışır</p>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ replayM }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Turuncu sahne — daire açılır, Rabi el sallar</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#f8f8f7;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.a }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#f8f8f7;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;inset:0;background:#ffffff;animation:a-daire 4200ms cubic-bezier(.7,0,.2,1) both">
+<div style="position:absolute;left:50%;top:160px;margin-left:-120px;width:240px;animation:a-tavsan 4200ms cubic-bezier(.2,.85,.25,1) both">
+<div style="position:relative;width:240px;height:260px">
+<img src="public/tavsan-el-sallayan.png" alt="Rabi" style="position:absolute;left:0;top:10px;display:block;width:240px;height:240px"/>
+<div style="position:absolute;left:0;top:10px;width:240px;height:240px;background:#ffffff;clip-path:polygon(34px 86px,71px 86px,72px 108px,69px 126px,64px 137px,50px 139px,34px 122px);opacity:0;animation:a-yama 2100ms linear 1.5s forwards"></div>
+<img src="public/tavsan-el-sallayan.png" alt="" style="position:absolute;left:0;top:10px;display:block;width:240px;height:240px;clip-path:polygon(34px 86px,71px 86px,72px 108px,69px 126px,64px 137px,50px 139px,34px 122px);transform-origin:59px 137px;animation:a-el 700ms ease-in-out 1.5s 3"/>
+</div>
+</div>
+<div style="position:absolute;left:0;right:0;top:452px;overflow:hidden;text-align:center">
+<p style="margin:0;font:800 104px/1.1 Manrope,sans-serif;letter-spacing:-0.055em;color:#b3491f;animation:a-kelime 4200ms cubic-bezier(.2,.85,.25,1) both">RABİ</p>
+</div>
+<p style="position:absolute;left:0;right:0;top:582px;margin:0;text-align:center;font:700 17px/1.3 Nunito,sans-serif;color:#1b1a19;animation:a-sol 4200ms ease-out both">Sınav yolu arkadaşın</p>
+<div style="position:absolute;left:50%;bottom:64px;width:140px;margin-left:-70px;height:4px;border-radius:999px;background:#eae9e6;overflow:hidden;animation:a-sol 4200ms ease-out both">
+<div style="position:absolute;inset:0;background:#b3491f;border-radius:999px;transform-origin:0 50%;animation:a-dol 4200ms cubic-bezier(.45,0,.2,1) both"></div>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ replayA }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Tipografik — tavşan yok, İ'nin noktası zıplar</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#f8f8f7;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.b }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#f8f8f7;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;left:22px;top:64px;display:flex;flex-direction:column;font:800 184px/0.78 Manrope,sans-serif;letter-spacing:-0.06em;color:#1b1a19">
+<span style="display:block;animation:b-harf 700ms cubic-bezier(.2,.85,.25,1) 200ms both">R</span>
+<span style="display:block;animation:b-harf 700ms cubic-bezier(.2,.85,.25,1) 320ms both">A</span>
+<span style="display:block;animation:b-harf 700ms cubic-bezier(.2,.85,.25,1) 440ms both">B</span>
+<span style="display:block;position:relative;margin-top:56px;animation:b-harf 700ms cubic-bezier(.2,.85,.25,1) 560ms both">I<span style="position:absolute;left:6px;top:-40px;width:42px;height:42px;border-radius:999px;background:#d9622f;transform-origin:50% 100%;animation:b-nokta 4200ms linear 400ms both"></span></span>
+</div>
+<p style="position:absolute;right:26px;top:66px;margin:0;writing-mode:vertical-rl;font:700 13px/1 Nunito,sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#6b6764;animation:b-dikey 4200ms ease-out both">Sınav yolu arkadaşın</p>
+<div style="position:absolute;left:26px;right:26px;bottom:44px;display:flex;flex-direction:column;gap:12px;animation:b-dikey 4200ms ease-out both">
+<div style="display:flex;justify-content:space-between;align-items:baseline;font:700 12px/1 Nunito,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#6b6764"><span>Hazırlanıyor</span><span style="color:#b3491f">YKS</span></div>
+<div style="position:relative;height:2px;background:#eae9e6;overflow:hidden"><div style="position:absolute;inset:0;background:#1b1a19;transform-origin:0 50%;animation:b-dol 4200ms cubic-bezier(.45,0,.2,1) both"></div></div>
+</div>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ replayB }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Sınav yolu — Rabi yolda zıplar, yükleme = yol</div>
+<div style="width:360px;height:780px;position:relative;overflow:hidden;border-radius:34px;background:#f8f8f7;box-shadow:0 1px 3px rgba(0,0,0,.08),0 20px 50px -20px rgba(0,0,0,.25)">
+<img src="docs/ekran/ana.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>
+<sc-if value="{{ on.c }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;background:#f8f8f7;animation:x-cikis 4200ms ease-in both">
+<div style="position:absolute;left:30px;top:62px;animation:c-kelime 4200ms cubic-bezier(.2,.85,.25,1) both">
+<p style="margin:0;font:800 64px/1.2 Manrope,sans-serif;letter-spacing:-0.055em;color:#1b1a19">RABİ</p>
+<p style="margin:2px 0 0;font:700 15px/1.3 Nunito,sans-serif;color:#6b6764">Sınav yolu arkadaşın</p>
+</div>
+<svg width="360" height="780" viewBox="0 0 360 780" style="position:absolute;inset:0;animation:c-giris 4200ms ease-out both">
+<path d="M 60 680 C 200 680, 310 620, 270 540 S 50 470, 90 390 S 300 330, 290 250" fill="none" stroke="#e4e2de" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 12"></path>
+<path d="M 60 680 C 200 680, 310 620, 270 540 S 50 470, 90 390 S 300 330, 290 250" pathLength="1" fill="none" stroke="#d9622f" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 1" style="animation:c-iz 4200ms cubic-bezier(.45,.05,.55,.95) both"></path>
+</svg>
+<span style="position:absolute;left:53px;top:673px;width:14px;height:14px;border-radius:999px;border:3px solid #d9622f;box-sizing:border-box;background:#d9622f;animation:c-giris 4200ms ease-out both"></span>
+<span style="position:absolute;left:263px;top:533px;width:14px;height:14px;border-radius:999px;border:3px solid #d9622f;box-sizing:border-box;background:#f8f8f7;animation:c-durak 300ms ease-out 1540ms both"></span>
+<span style="position:absolute;left:83px;top:383px;width:14px;height:14px;border-radius:999px;border:3px solid #d9622f;box-sizing:border-box;background:#f8f8f7;animation:c-durak 300ms ease-out 2360ms both"></span>
+<span style="position:absolute;left:280px;top:240px;width:20px;height:20px;border-radius:999px;background:#b3491f;border:4px solid #fbeee7;box-sizing:content-box;margin:-4px 0 0 -4px;animation:c-hedef 4200ms ease-out both"></span>
+<div style="position:absolute;left:0;top:0;width:84px;offset-path:path('M 60 680 C 200 680, 310 620, 270 540 S 50 470, 90 390 S 300 330, 290 250');offset-rotate:0deg;offset-anchor:50% 96%;animation:c-yol 4200ms cubic-bezier(.45,.05,.55,.95) both">
+<div style="transform-origin:50% 100%;animation:c-zipla 440ms ease-in-out 600ms 6 both">
+<img src="public/tavsan-ziplayan.png" alt="Rabi" style="display:block;width:84px;height:84px;object-fit:contain"/>
+</div>
+</div>
+<p style="position:absolute;left:0;right:0;bottom:34px;margin:0;text-align:center;font:700 11px/1 Nunito,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#6b6764;animation:c-giris 4200ms ease-out both">Hazırlanıyor</p>
+</div>
+</sc-if>
+</div>
+<button onClick="{{ replayC }}" style="align-self:flex-start;display:flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid #eae9e6;background:#fff;border-radius:999px;font:700 12px Nunito,sans-serif;color:#1b1a19;cursor:pointer" style-hover="border-color:#b3491f;color:#b3491f">↻ Tekrar oynat</button>
+</div>
+
+</div>
+<p class="dv-next">Dene: "<a class="dv-oid" href="#1a">1a</a>'nın dairesiyle <a class="dv-oid" href="#1c">1c</a>'nin yolunu birleştir" · "<a class="dv-oid" href="#1b">1b</a>'de nokta yerine küçük tavşan kafası olsun" · "<a class="dv-oid" href="#1c">1c</a>'de sonunda tavşan başlıktaki yerine uçsun"</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;autoLoop&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  keys = ['m','a','b','c', ...'abcdefghij'.split('').map(l => 'k2' + l), ...'abcde'.split('').map(l => 'k3' + l)];
+  state = { on: Object.fromEntries(this.keys.map(k => [k, true])) };
+  rp = Object.fromEntries(this.keys.map(k => [k, () => this.replay(k)]));
+  componentDidMount() {
+    if (this.props.autoLoop ?? true) this.iv = setInterval(() => this.keys.forEach(k => this.replay(k)), 5600);
+  }
+  componentWillUnmount() { clearInterval(this.iv); }
+  replay(k) {
+    this.setState(s => ({ on: { ...s.on, [k]: false } }));
+    setTimeout(() => this.setState(s => ({ on: { ...s.on, [k]: true } })), 40);
+  }
+  renderVals() {
+    return {
+      on: this.state.on, rp: this.rp,
+      replayM: () => this.replay('m'), replayA: () => this.replay('a'),
+      replayB: () => this.replay('b'), replayC: () => this.replay('c'),
+    };
+  }
+}
+</script>
+</body>
+</html>

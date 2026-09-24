@@ -9,8 +9,14 @@ import { MASKOT_YUVASI, Rabi } from '@/components/maskot/rabi'
  *
  * Android'in kendi açılış ekranı (Android 12+) **tek bir simge** gösterebiliyor:
  * altına yazı, yanına çark koyulamıyor ve animasyonu ~1 saniyeyle sınırlı — hızlı
- * açılan bir uygulamada çoğu zaman hiç görünmüyor. İstenen ekran (inen tavşan +
- * "RABİ" yazısı + yükleme şeridi) bu yüzden uygulamanın içinde kuruldu.
+ * açılan bir uygulamada çoğu zaman hiç görünmüyor. İstenen ekran (tavşan +
+ * "RABİ" yazısı + yükleme noktaları) bu yüzden uygulamanın içinde kuruldu.
+ *
+ * Tasarım 2a (`tasarim/acilis-ekrani.dc.html`): sadeleştirilmiş hâl. Önceki
+ * ekranda tavşan yukarıdan düşüyor, altında dönen bir çark, tarayan bir şerit,
+ * "HAZIRLANIYOR" ve "çevrimdışı çalışır" yazıları duruyordu; 2a hepsini tek
+ * sakin bir girişe indirdi — tavşan, yazı ve slogan sırayla aşağıdan
+ * yükseliyor, altta üç nokta nabız atıyor, arkada birkaç küçük artı süzülüyor.
  *
  * Zemin rengi sistemin açılış ekranıyla **birebir aynı** (`#F8F8F7`,
  * `android/app/src/main/res/values/colors.xml` içindeki `acilis_zemin`). İkisi
@@ -23,11 +29,10 @@ const ZEMIN = '#F8F8F7'
 /**
  * Ekranın ömrü (ms) — tasarımın kendi süresi.
  *
- * Bütün parçalar tek bir 4,2 saniyelik zaman çizgisini paylaşıyor ve sıralarını
- * yüzdelerle alıyor: %0–30 iniş, %30–68 duruş, %68–100 çıkış. Süreyi
- * değiştirirsen `globals.css`'teki bütün `acilis-*` sürelerini birlikte
- * değiştir; yüzdeler kendiliğinden ölçeklenir ama süreler birbirinden ayrılırsa
- * parçalar dağılır.
+ * Çıkış tek bir 4,2 saniyelik zaman çizgisinin yüzdelerinde: %64–90 tavşan
+ * yerine uçuyor, %82–100 sahne soluyor. Süreyi değiştirirsen `globals.css`'teki
+ * `acilis-inis` ile `acilis-sahne` sürelerini birlikte değiştir; ikisi
+ * ayrılırsa tavşan sahne sönmeden yola çıkmaz ya da sahne tavşandan önce biter.
  *
  * Veri okumasına bağlanmadı: localStorage neredeyse anında dönüyor,
  * bağlansaydı ekran bir kare görünüp kaybolur ve animasyon hiç izlenmezdi.
@@ -35,29 +40,79 @@ const ZEMIN = '#F8F8F7'
 export const ACILIS_SURESI = 4200
 
 /**
- * Maskotun açılıştaki ölçüleri.
+ * Açılışın yerleşimi — tasarımın sayıları.
  *
- * Tasarım 118 piksellik kare bir görsel çiziyor. `Rabi`nin kutusu ise 130/120
- * oranında — eski SVG'nin kutusu bu ölçüdeydi ve on beş ekranın yerleşimi ona
- * göre kuruldu. Kare görsel `object-contain` ile o kutunun **ortasına**
- * oturuyor, yani kutu görselden 8 piksel uzun. Üst boşluk bu yüzden kutunun
- * değil görselin merkezinden ölçülüyor: doğrudan tasarımın -160'ı yazılsaydı
- * tavşan 5 piksel aşağı kayardı.
+ * Tasarım tavşanı, "RABİ"yi ve sloganı alt alta tek bir sütunda çiziyor ve
+ * sütunu ekranın altından 115 piksel yukarıda ortalıyor. Burada parçalar
+ * sütunda değil ekranın ortasından ölçülen sabit boşluklarda duruyor: tavşan
+ * uçarken öteki parçalar yerinde kalmalı ve akışta olsalardı tavşanın dönüşümü
+ * olmasa da girişleri birbirini itebilirdi. Sayılar sütunun kendisinden
+ * türetiliyor, elle yazılmıyor: biri değişirse ötekiler kendiliğinden kayıyor.
+ *
+ * `Rabi`nin kutusu 130/120 oranında — eski SVG'nin kutusu bu ölçüdeydi ve on
+ * beş ekranın yerleşimi ona göre kuruldu. Kare görsel `object-contain` ile o
+ * kutunun **ortasına** oturuyor, yani kutu görselden 10 piksel uzun. Üst
+ * boşluk bu yüzden kutunun değil görselin merkezinden ölçülüyor.
  */
 const MASKOT_BOYU = 118
 const MASKOT_KUTUSU = (MASKOT_BOYU * 130) / 120
-/** Görselin merkezi, ekranın ortasına göre (tasarımda kutunun üstü -160). */
-const MASKOT_MERKEZI = -160 + MASKOT_BOYU / 2
+const YAZI_BOYU = 52
+/** "İ"nin noktası kırpılmasın diye satır yüksekliği 1.32. */
+const YAZI_SATIRI = YAZI_BOYU * 1.32
+const SLOGAN_BOYU = 11
+/** Sütunun ekranın altından kaldırıldığı pay (tasarımda `padding-bottom`). */
+const ALT_PAY = 115
+const SUTUN_BOYU = MASKOT_BOYU + 14 + YAZI_SATIRI + 6 + SLOGAN_BOYU
+/** Sütunun üstü, ekranın ortasına göre. */
+const SUTUN_USTU = -(ALT_PAY + SUTUN_BOYU) / 2
+/** Görselin merkezi, ekranın ortasına göre — varış ölçümü buna göre. */
+const MASKOT_MERKEZI = SUTUN_USTU + MASKOT_BOYU / 2
+const YAZI_USTU = SUTUN_USTU + MASKOT_BOYU + 14
+const SLOGAN_USTU = YAZI_USTU + YAZI_SATIRI + 6
+
+/**
+ * Süzülen artılar — tasarımın on iki tanesi, sırası ve yönüyle.
+ *
+ * Altısı ekranın ortasından dışa, altısı üst ve alt kenardan içe süzülüyor.
+ * Kenardakilerin yatay yeri tasarımda 360 piksellik çerçevede piksel;
+ * burada yüzde, yoksa geniş telefonda hepsi sol yarıda toplanırdı. Yönler
+ * (`dx/dy`) piksel kalıyor: yol uzunluğu ekranla ölçeklenmese de olur,
+ * bir süs.
+ */
+type Arti = {
+  /** `orta` ekranın ortası; ötekiler kenarda, yatay yeri yüzde. */
+  yer: 'orta' | { kenar: 'ust' | 'alt'; sol: string }
+  boy: number
+  dx: number
+  dy: number
+  /** ms */
+  gecikme: number
+}
+
+const ARTILAR: Arti[] = [
+  { yer: 'orta', boy: 7, dx: 220, dy: -185, gecikme: 1690 },
+  { yer: 'orta', boy: 6, dx: -220, dy: -80, gecikme: 2140 },
+  { yer: 'orta', boy: 7, dx: 157, dy: 430, gecikme: 2620 },
+  { yer: 'orta', boy: 6, dx: -220, dy: -127, gecikme: 3050 },
+  { yer: 'orta', boy: 7, dx: 220, dy: 80, gecikme: 3480 },
+  { yer: 'orta', boy: 6, dx: -157, dy: -430, gecikme: 3900 },
+  { yer: { kenar: 'ust', sol: '19.4%' }, boy: 7, dx: 40, dy: 160, gecikme: 1900 },
+  { yer: { kenar: 'alt', sol: '83.3%' }, boy: 6, dx: -60, dy: -170, gecikme: 2350 },
+  { yer: { kenar: 'ust', sol: '33.3%' }, boy: 7, dx: 40, dy: 170, gecikme: 2800 },
+  { yer: { kenar: 'alt', sol: '69.4%' }, boy: 6, dx: -50, dy: -180, gecikme: 1450 },
+  { yer: { kenar: 'alt', sol: '11.1%' }, boy: 7, dx: 50, dy: -150, gecikme: 3250 },
+  { yer: { kenar: 'ust', sol: '88.9%' }, boy: 6, dx: -40, dy: 180, gecikme: 2050 },
+]
 
 /**
  * Uçuşun zaman çizgisindeki yeri.
  *
- * Tavşan %68'e kadar yerinde duruyor, oradan sonra varış noktasına süzülüyor
+ * Tavşan %64'e kadar yerinde duruyor, oradan sonra varış noktasına süzülüyor
  * (`acilis-inis`). Ölçüm bu ana kadar yenileniyor, bu andan sonra donuyor:
  * uçuş başladıktan sonra varış noktasını değiştirmek tavşanı yolun ortasında
  * ışınlardı.
  */
-const UCUS_BASLANGICI = Math.round(ACILIS_SURESI * 0.68)
+const UCUS_BASLANGICI = Math.round(ACILIS_SURESI * 0.64)
 
 /**
  * Emniyet zamanlayıcısının animasyona verdiği pay (ms).
@@ -149,7 +204,7 @@ function useVaris(katmanRef: React.RefObject<HTMLDivElement | null>, basladi: bo
     olc()
 
     // Donma sayacı animasyon **başlayınca** işliyor: ekran duraklatılmış
-    // başlıyor (bkz. `useBaslangic`) ve uçuş o zaman çizgisinin %68'inde.
+    // başlıyor (bkz. `useBaslangic`) ve uçuş o zaman çizgisinin %64'ünde.
     // Bağlanmadan işletilseydi yavaş açılan bir telefonda ölçüm tavşan daha
     // yola çıkmadan donardı.
     const donma = basladi ? window.setTimeout(() => (dondu = true), UCUS_BASLANGICI) : 0
@@ -293,42 +348,89 @@ export function Acilis({ onBitti }: { onBitti: () => void }) {
 
   return (
     <div
-      // Zemin bu katmanda değil altındaki `acilis-zemin`de: gösteri biterken
-      // zemin soluyor ve tavşan **uygulamanın üstünde** uçarak yerine gidiyor.
-      // Zemin burada dursaydı tavşan yol boyunca bomboş beyaz bir ekranda
-      // süzülürdü.
+      // Zemin bu katmanda değil altındaki `acilis-sahne`de: gösteri biterken
+      // sahne soluyor ve tavşan **uygulamanın üstünde** uçarak yerine gidiyor.
       //
       // Katman dokunuşları **yutuyor** (`pointer-events-none` yok). Bir süre
-      // saydamdı: son saniyede zemin çoktan solmuş oluyor ve altındaki
+      // saydamdı: son saniyede sahne çoktan solmuş oluyor ve altındaki
       // düğmeler görünüyordu, ama görünen her şey aynı zamanda basılabilir
       // oluyordu — kullanıcı daha uygulamayı görmeden sekme değiştiriyor,
       // açılış kalkınca kendini başka bir ekranda buluyordu. Görünürlük
       // dokunulabilirlik demek değil: gösteri bitene kadar ekran kilitli.
       // `touch-none`, aynı şeyi kaydırma/yakınlaştırma için yapıyor.
       className={cn(
-        'font-marka fixed inset-0 z-[60] touch-none overflow-hidden select-none',
+        'fixed inset-0 z-[60] touch-none overflow-hidden select-none',
         !basladi && 'acilis-bekliyor',
       )}
       role="status"
       aria-label="Rabi açılıyor"
       ref={katmanRef}
     >
-      {/* Zemin ve üstündeki iki yumuşak parıltı. Zemin düz beyaza yakın;
-          parıltılar olmadan ekran boş bir kâğıt gibi duruyor. */}
-      <div className="acilis-zemin" style={{ backgroundColor: ZEMIN }}>
-        <span className="acilis-parilti acilis-parilti-sol" />
-        <span className="acilis-parilti acilis-parilti-sag" />
+      {/* Tavşanın dışındaki her şey: zemin, yazılar, noktalar, artılar. */}
+      <div className="acilis-sahne" style={{ backgroundColor: ZEMIN }}>
+        <p
+          className="acilis-belir font-acilis text-foreground absolute inset-x-0 top-1/2 text-center font-extrabold"
+          style={{
+            marginTop: YAZI_USTU,
+            fontSize: YAZI_BOYU,
+            lineHeight: 1.32,
+            // Harf aralığı sağa da pay bırakıyor; sol dolgu olmadan kelime
+            // yarım aralık sola kayık dururdu.
+            letterSpacing: '0.02em',
+            paddingLeft: '0.02em',
+            animationDelay: '280ms',
+          }}
+        >
+          RABİ
+        </p>
+
+        <p
+          className="acilis-belir text-muted-foreground absolute inset-x-0 top-1/2 text-center leading-none font-bold tracking-[0.28em] uppercase"
+          style={{ marginTop: SLOGAN_USTU, fontSize: SLOGAN_BOYU, animationDelay: '420ms' }}
+        >
+          Sınav yolu arkadaşın
+        </p>
+
+        {/* Yükleme: çark ve şerit yerine üç nokta. Bir yükleme ölçmüyor —
+            ekran zaten sabit sürede kalkıyor — yalnızca ekranın donmadığını
+            söylüyor, bunun için üç nokta yetiyor. */}
+        <div
+          className="acilis-belir absolute inset-x-0 flex justify-center gap-2"
+          style={{ bottom: 'calc(72px + var(--guvenli-alt))', animationDelay: '560ms' }}
+          aria-hidden
+        >
+          {[0, 160, 320].map((gecikme) => (
+            <span key={gecikme} className="acilis-nokta" style={{ animationDelay: `${gecikme}ms` }} />
+          ))}
+        </div>
+
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          {ARTILAR.map((arti, i) => (
+            <span
+              key={i}
+              className="acilis-arti"
+              style={
+                {
+                  width: arti.boy,
+                  height: arti.boy,
+                  marginLeft: -arti.boy / 2,
+                  marginTop: -arti.boy / 2,
+                  left: arti.yer === 'orta' ? '50%' : arti.yer.sol,
+                  top:
+                    arti.yer === 'orta'
+                      ? '50%'
+                      : arti.yer.kenar === 'ust'
+                        ? -6
+                        : 'calc(100% + 6px)',
+                  '--dx': `${arti.dx}px`,
+                  '--dy': `${arti.dy}px`,
+                  animationDelay: `${arti.gecikme}ms`,
+                } as React.CSSProperties
+              }
+            />
+          ))}
+        </div>
       </div>
-
-      {/*
-        Parçalar akışta değil, ekranın ortasından ölçülen sabit boşluklarda
-        duruyor: hepsi ayrı zamanlarda belirip sönüyor ve akışta olsalardı biri
-        giderken ötekiler kayardı. Boşluklar tasarımın kendi sayıları.
-      */}
-
-      {/* Maskotun arkasındaki hale ve altındaki zemin gölgesi. */}
-      <span className="acilis-hale" />
-      <span className="acilis-golge" />
 
       <div
         className="acilis-inis absolute top-1/2 left-1/2"
@@ -339,9 +441,9 @@ export function Acilis({ onBitti }: { onBitti: () => void }) {
         }}
         /*
           Ekranın ömrünü bitiren olay bu. Ad denetimi şart: bu düğümün altında
-          süslemelerin kendi animasyonları da bitiyor ve `animationend`
-          kabarcıklanıyor — denetimsiz bırakılsaydı katman, tavşanın
-          süslemelerinden biri sustuğu anda kalkardı.
+          tavşanın kendi giriş animasyonu da bitiyor ve `animationend`
+          kabarcıklanıyor — denetimsiz bırakılsaydı katman, giriş biter bitmez
+          kalkardı.
         */
         onAnimationEnd={(olay) => {
           if (olay.animationName === 'acilis-inis') setInisBitti(true)
@@ -352,68 +454,19 @@ export function Acilis({ onBitti }: { onBitti: () => void }) {
           animasyon tavşanı varış noktasına süzülerek bitiriyor ve orada ana
           sayfanın (ya da kurulumun) maskotunun üstüne oturuyor. İki farklı
           çizim olsaydı geçişte tavşan değişiyormuş gibi görünürdü.
+
+          Giriş (`acilis-belir`) ile uçuş (`acilis-inis`) ayrı kaplarda: ikisi
+          de `transform` oynatıyor ve aynı öğede olsalardı sonuncusu
+          öncekini ezerdi. Uçuş yoksa tavşan sahneyle birlikte sönüyor; o da
+          üçüncü bir kapta, aynı gerekçeyle.
         */}
-        {/* Uçuş yoksa tavşan öteki süslemelerle birlikte sönüyor. Solma
-            `acilis-inis`in üstünde değil ayrı bir kapta: ikisi de aynı öğede
-            olsaydı opaklığı sonuncusu ele geçirir ve iniş görünmez olurdu. */}
         <span className={cn('block', !olcum && 'acilis-son')}>
-          <Rabi durum="mutlu" poz="kafa" boyut={MASKOT_BOYU} />
+          <span className="acilis-belir block" style={{ animationDelay: '100ms' }}>
+            <Rabi durum="mutlu" poz="kafa" boyut={MASKOT_BOYU} />
+          </span>
         </span>
       </div>
-
-      {/*
-        "RABİ" — 50px yazının satır yüksekliği 1.32 (66px): "İ" harfinin
-        noktası kırpılmasın diye.
-      */}
-      <p className="acilis-yazi text-foreground absolute inset-x-0 top-1/2 mt-[48px] text-center text-[50px] leading-[1.32] font-extrabold tracking-[-0.05em]">
-        RABİ
-      </p>
-
-      <p className="acilis-slogan text-muted-foreground absolute inset-x-0 top-1/2 mt-[128px] text-center text-[9.5px] leading-none font-semibold tracking-[0.3em] uppercase">
-        Sınav yolu arkadaşın
-      </p>
-
-      {/* Yükleme bloğu: çark + tarayan şerit + durum metni. */}
-      <div className="acilis-yukleme absolute inset-x-0 top-1/2 mt-[176px] flex flex-col items-center gap-3">
-        <DonenCark />
-        <span className="acilis-ray" aria-hidden />
-        <span className="text-muted-foreground text-[9.5px] leading-none font-semibold tracking-[0.2em] uppercase">
-          Hazırlanıyor
-        </span>
-      </div>
-
-      {/* Uygulamanın tek vaadi. Açılışta söylenmesinin sebebi var: sunucusu
-          olmayan bir uygulamada bu, kullanıcının ilk merak ettiği şey. */}
-      <p className="acilis-alt text-muted-foreground absolute inset-x-0 bottom-[22px] text-center text-[10.5px] font-semibold tracking-[0.16em] uppercase">
-        çevrimdışı çalışır
-      </p>
     </div>
-  )
-}
-
-/**
- * Dönen çark. `lucide-react`'in `Loader`ı yerine dişli kullanılıyor: dönen bir
- * daire her uygulamada aynı, dişli Rabi'nin "hazırlanıyor" hâline daha çok
- * benziyor. Çizim Feather'ın `settings` dişlisi; 26px'te dişleri seçilsin diye
- * çizgi kalınlığı 2.
- */
-function DonenCark() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width={26}
-      height={26}
-      className="acilis-cark"
-      fill="none"
-      stroke="var(--primary)"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-    </svg>
   )
 }
 

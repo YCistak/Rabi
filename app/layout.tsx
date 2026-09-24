@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Manrope, Nunito } from 'next/font/google'
+import { Manrope, Nunito, Outfit } from 'next/font/google'
 import './globals.css'
 
 // Tasarımın tek yazı tipi. 400-900 arası kalınlıkların hepsi isteniyor:
@@ -11,20 +11,30 @@ const nunito = Nunito({
   display: 'swap',
 })
 
-// Yalnızca açılış ekranının yazı tipi (`font-marka`). Tasarım o ekranı Manrope
-// ile çizdi ve "RABİ" 50 pikselde iki ailede belirgin biçimde farklı duruyor;
-// uygulamanın geri kalanı Nunito'da kalıyor.
+// Yalnızca aylık özetin kapağındaki ay adı (`font-marka`). Tasarım o başlığı
+// 66 pikselde Manrope ile çizdi. Açılış ekranı da bir süre Manrope'tu; 2a
+// tasarımıyla Outfit'e geçti (aşağıda).
+const manrope = Manrope({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['800'],
+  variable: '--font-manrope',
+  display: 'block',
+})
+
+// Yalnızca açılış ekranındaki "RABİ" (`font-acilis`). Tasarım (2a,
+// `tasarim/acilis-ekrani.dc.html`) wordmark'ı Outfit 800 ile çizdi; 52
+// pikselde Nunito'nun yuvarlak uçları başka bir marka gibi duruyor.
 //
 // `display: 'block'` bilerek: açılış ekranı 4,2 saniye sürüyor ve wordmark o
 // ekranın tamamı. `swap` ile yazı önce yedek aileyle çizilip sonra yerine
 // oturuyordu — marka adının ilk yarım saniyede başka bir yazı tipinde
-// görünmesi, en çok bakılan anda gözden kaçmıyor. Yazı tipi zaten uygulamayla
+// görünmesi, en çok bakılan anda gözden kaçmıyor. Yazı tipi uygulamayla
 // birlikte geliyor (next/font derleme anında indirip gömüyor), yani beklenen
 // süre ağ değil yalnızca çözümleme.
-const manrope = Manrope({
+const outfit = Outfit({
   subsets: ['latin', 'latin-ext'],
-  weight: ['600', '800'],
-  variable: '--font-manrope',
+  weight: ['800'],
+  variable: '--font-outfit',
   display: 'block',
 })
 
@@ -72,7 +82,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html
       lang="tr"
-      className={`${nunito.variable} ${manrope.variable}`}
+      className={`${nunito.variable} ${manrope.variable} ${outfit.variable}`}
       // Tablet betiği hidrasyondan önce `style="--olcek: …"` yazıyor; React
       // bunu sunucu çıktısıyla karşılaştırıp uyarıyordu. Uyarı dev'de kalıyor
       // ama gürültü; öznitelik bilerek farklı.
