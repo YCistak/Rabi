@@ -220,14 +220,19 @@ durumda, yani geçiş tek bir hareket gibi okunuyor. Dört şey buna bağlı:
   tutmazsa tavşan hiç uçmuyor, olduğu yerde sönüyor. Yuva yoksa konacak maskot
   da yok; tahmin edilen bir köşeye inmek hareketi kurtarmıyor, yanlış yere
   inen bir tavşan gösteriyor.
-- **Ölçüm tek seferlik değil.** Uçuş %64'te başlıyor ve ölçüm o ana kadar
-  yenilenip orada donuyor. İki sebebi var: yuva geç doğabiliyor (eskiden 60
-  deneme ≈ 1 saniyelik bir hak vardı ve yavaş telefonda ana sayfa ona
-  yetişmiyordu) ve düzen bir kez daha oynayabiliyor — güvenli alan
-  (`--guvenli-ust`) yerli köprüden gecikmeli geliyor, yazı tipi sonradan takas
-  oluyor. Donma şart: uçuş başladıktan sonra varış noktasını değiştirmek
-  tavşanı yolun ortasında ışınlar. Ölçü `window.innerHeight`ten değil ekranın
-  kendi kutusundan alınıyor; WebView açılırken ikisi bir süre ayrı düşüyor.
+- **Ölçüm tavşan inene kadar sürüyor, donmuyor.** Bir süre uçuşun başında
+  (%64) donuyordu — "uçuş başladıktan sonra hedefi değiştirmek tavşanı
+  ışınlar" diye — ve telefonda tavşan yuvanın yanına iniyordu: ana sayfanın
+  düzeni donmadan **sonra** da kayabiliyor (güvenli alan `--guvenli-ust`
+  yerli köprüden gecikmeli geliyor, yazı tipi sonradan takas olup
+  selamlamayı kırabiliyor, özet daveti veri okununca beliriyor). Tarayıcıda
+  bunların hiçbiri olmadığı için orada tam oturuyordu. Işınlanma da olmuyor:
+  keyframe konumu `ilerleme × hedef` diye hesaplıyor, tarayıcı `var()`ı
+  animasyon sürerken yeniden okuyor ve hedef değişince tavşan ancak
+  ilerlemesi oranında kayıyor. Uçan tavşanın başlangıcı da sabit sayıdan
+  değil kendi yerleşiminden (`offsetLeft/Top`) ölçülüyor. Ölçü
+  `window.innerHeight`ten değil ekranın kendi kutusundan alınıyor; WebView
+  açılırken ikisi bir süre ayrı düşüyor.
 - **Yuva tek.** Ekranda ya ana sayfanın başlığı vardır ya kurulum sihirbazı,
   o yüzden ikisinde de aynı kimlik duruyor ve ölçüm hangisi varsa onu buluyor.
   Kurulumun ilk ekranı (karşılama) kendi düzenini çizdiği için yuva orada

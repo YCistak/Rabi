@@ -66,7 +66,7 @@ const ALT_PAY = 115
 const SUTUN_BOYU = MASKOT_BOYU + 14 + YAZI_SATIRI + 6 + SLOGAN_BOYU
 /** Sütunun üstü, ekranın ortasına göre. */
 const SUTUN_USTU = -(ALT_PAY + SUTUN_BOYU) / 2
-/** Görselin merkezi, ekranın ortasına göre — varış ölçümü buna göre. */
+/** Görselin merkezi, ekranın ortasına göre. */
 const MASKOT_MERKEZI = SUTUN_USTU + MASKOT_BOYU / 2
 const YAZI_USTU = SUTUN_USTU + MASKOT_BOYU + 14
 const SLOGAN_USTU = YAZI_USTU + YAZI_SATIRI + 6
@@ -106,16 +106,6 @@ const ARTILAR: Arti[] = [
 ]
 
 /**
- * Uçuşun zaman çizgisindeki yeri.
- *
- * Tavşan %64'e kadar yerinde duruyor, oradan sonra varış noktasına süzülüyor
- * (`acilis-inis`). Ölçüm bu ana kadar yenileniyor, bu andan sonra donuyor:
- * uçuş başladıktan sonra varış noktasını değiştirmek tavşanı yolun ortasında
- * ışınlardı.
- */
-const UCUS_BASLANGICI = Math.round(ACILIS_SURESI * 0.64)
-
-/**
  * Emniyet zamanlayıcısının animasyona verdiği pay (ms).
  *
  * Ekranı normalde `animationend` kaldırıyor; zamanlayıcı yalnızca olay hiç
@@ -139,53 +129,62 @@ const ONEMSIZ_OYNAMA = 0.5
  * vardı) — ama o hesap başlığın kaç piksel yukarıda durduğunu, güvenli alanı ve
  * kabın genişliğini bilmek zorunda. Tablo tam da bu yüzden bozuldu: düzen
  * değişti, sayılar kaldı ve tavşan yuvanın **93 piksel altına** iniyordu.
- * Üstelik yalnızca bazen — tablo sadece ölçüm yetişmediğinde devreye giriyordu,
- * yani hata telefonun o açılışta ne kadar hızlı olduğuna bağlıydı.
  *
- * Bu yüzden iki kural var:
+ * Üç kural var:
  *
- * 1. **Ölçüm uçuş başlayana kadar bırakılmıyor.** Eskiden 60 deneme (~1 sn)
- *    hakkı vardı ve hakkı bitince yedeğe düşülüyordu; yavaş açılan bir
- *    telefonda ana sayfa o saniyeye yetişmiyor. Artık tek sınır uçuşun kendisi:
- *    yuva ne zaman doğarsa ölçüm onu yakalıyor.
- * 2. **İlk başarılı ölçüm son söz değil.** Düzen açılıştan sonra bir kez daha
- *    oynayabiliyor — güvenli alan (`--guvenli-ust`) yerli köprüden gecikmeli
- *    geliyor, yazı tipi sonradan takas oluyor. Ölçüm uçuşa kadar yenilendiği
- *    için tavşan hangi düzen son hâlse ona iniyor.
- *
- * Ölçü ekranın kendi kutusundan alınıyor, `window.innerHeight`ten değil:
- * uçan tavşan `fixed inset-0` bir katmanın ortasına göre duruyor ve WebView
- * açılırken pencere ölçüsüyle o katmanın kutusu bir süre ayrı düşebiliyor.
+ * 1. **Ölçüm tavşan yere inene kadar sürüyor**, uçuş başında donmuyor. Bir
+ *    süre %64'te donuyordu ("uçuş başladıktan sonra hedefi değiştirmek tavşanı
+ *    ışınlar" diye) ve telefonda tavşan yuvanın yanına iniyordu: ana sayfanın
+ *    düzeni donmadan **sonra** da kayabiliyor — güvenli alan
+ *    (`--guvenli-ust`) yerli köprüden gecikmeli geliyor, yazı tipi sonradan
+ *    takas olup "Merhaba …" satırını kırabiliyor, üstteki özet daveti veri
+ *    okununca beliriyor. Tarayıcıda bunların hiçbiri olmadığı için orada
+ *    tam oturuyordu. Işınlanma korkusu da yersizdi: keyframe konumu
+ *    `ilerleme × hedef` diye hesaplıyor, tarayıcı `var()`ı animasyon
+ *    sürerken yeniden okuyor ve hedef değişince tavşan ancak ilerlemesi
+ *    oranında kayıyor — yolun başında hiç, sonunda tamamen. Küçük bir düzen
+ *    kayması uçuş boyunca yumuşak bir yön düzeltmesi oluyor.
+ * 2. **İki uç da ölçülüyor.** Yuva `getBoundingClientRect` ile; uçan
+ *    tavşanın başlangıcı sabit bir sayıyla değil kendi yerleşiminden
+ *    (`offsetLeft/Top`) — dönüşümden etkilenmeyen tek ölçü o, uçarken de
+ *    değişmiyor. Sabit sayı `Rabi`nin kutusu değişirse sessizce kayardı.
+ * 3. **Ölçü ekranın kendi kutusundan**, `window.innerHeight`ten değil: uçan
+ *    tavşan `fixed inset-0` bir katmanın içinde duruyor ve WebView açılırken
+ *    pencere ölçüsüyle o katmanın kutusu bir süre ayrı düşebiliyor.
  *
  * Yineleme `requestAnimationFrame` ile değil zamanlayıcıyla: sayfa görünür
  * değilken (uygulama arka planda açıldıysa) rAF hiç çağrılmıyor ve ölçüm
  * sonsuza kadar beklerdi. Hesap zaten çizime değil düzene bakıyor.
  */
-function useVaris(katmanRef: React.RefObject<HTMLDivElement | null>, basladi: boolean): Olcum | null {
+function useVaris(
+  katmanRef: React.RefObject<HTMLDivElement | null>,
+  ucanRef: React.RefObject<HTMLDivElement | null>,
+): Olcum | null {
   const [olcum, setOlcum] = useState<Olcum | null>(null)
 
   useEffect(() => {
     let zamanlayici = 0
-    let dondu = false
+    let bitti = false
 
     const olc = () => {
-      if (dondu) return
+      if (bitti) return
 
       const yuva = document.getElementById(MASKOT_YUVASI)
       const yuvaKutusu = yuva?.getBoundingClientRect()
       const katmanKutusu = katmanRef.current?.getBoundingClientRect()
+      const ucan = ucanRef.current
 
       // Yuva henüz yok (veri okunuyor) ya da ölçüsü sıfır: birazdan yeniden bak.
-      if (yuvaKutusu && katmanKutusu && yuvaKutusu.width > 0) {
+      if (yuvaKutusu && katmanKutusu && ucan && yuvaKutusu.width > 0 && ucan.offsetWidth > 0) {
         // İki kutu da kare görseli ortalayan `object-contain` kutusu; kutunun
-        // merkezi görselin merkeziyle aynı yerde.
+        // merkezi görselin merkeziyle aynı yerde. Uçan kutunun `offsetParent`i
+        // katmanın kendisi (katman `fixed`, kutu `absolute`).
+        const ucanX = katmanKutusu.left + ucan.offsetLeft + ucan.offsetWidth / 2
+        const ucanY = katmanKutusu.top + ucan.offsetTop + ucan.offsetHeight / 2
         const yeni: Olcum = {
-          dx: yuvaKutusu.left + yuvaKutusu.width / 2 - (katmanKutusu.left + katmanKutusu.width / 2),
-          dy:
-            yuvaKutusu.top +
-            yuvaKutusu.height / 2 -
-            (katmanKutusu.top + katmanKutusu.height / 2 + MASKOT_MERKEZI),
-          olcek: yuvaKutusu.width / MASKOT_BOYU,
+          dx: yuvaKutusu.left + yuvaKutusu.width / 2 - ucanX,
+          dy: yuvaKutusu.top + yuvaKutusu.height / 2 - ucanY,
+          olcek: yuvaKutusu.width / ucan.offsetWidth,
         }
         // Ölçüm 16 ms'de bir yineleniyor; her seferinde yeni bir nesne vermek
         // ekranı boşuna baştan çizerdi.
@@ -204,18 +203,11 @@ function useVaris(katmanRef: React.RefObject<HTMLDivElement | null>, basladi: bo
 
     olc()
 
-    // Donma sayacı animasyon **başlayınca** işliyor: ekran duraklatılmış
-    // başlıyor (bkz. `useBaslangic`) ve uçuş o zaman çizgisinin %64'ünde.
-    // Bağlanmadan işletilseydi yavaş açılan bir telefonda ölçüm tavşan daha
-    // yola çıkmadan donardı.
-    const donma = basladi ? window.setTimeout(() => (dondu = true), UCUS_BASLANGICI) : 0
-
     return () => {
-      dondu = true
+      bitti = true
       clearTimeout(zamanlayici)
-      clearTimeout(donma)
     }
-  }, [katmanRef, basladi])
+  }, [katmanRef, ucanRef])
 
   return olcum
 }
@@ -289,8 +281,9 @@ function useBaslangic(): boolean {
  */
 export function Acilis({ onBitti }: { onBitti: () => void }) {
   const katmanRef = useRef<HTMLDivElement>(null)
+  const ucanRef = useRef<HTMLDivElement>(null)
   const basladi = useBaslangic()
-  const olcum = useVaris(katmanRef, basladi)
+  const olcum = useVaris(katmanRef, ucanRef)
 
   // Geri çağrı her çizimde yeniden üretilebiliyor; sayacın ona bakması
   // zamanlayıcıyı sıfırlardı.
@@ -438,6 +431,7 @@ export function Acilis({ onBitti }: { onBitti: () => void }) {
       </div>
 
       <div
+        ref={ucanRef}
         className="acilis-inis absolute top-1/2 left-1/2"
         style={{
           marginTop: MASKOT_MERKEZI - MASKOT_KUTUSU / 2,

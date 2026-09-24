@@ -462,7 +462,8 @@ body {
   */
   /*
     Varış noktası (`--acilis-x/y/olcek`) `components/acilis.tsx`'ten `style` ile
-    geliyor ve orada **ölçülerek** bulunuyor. Tasarım uçuşu sabit sayılarla
+    geliyor ve orada **ölçülerek** bulunuyor — tavşan inene kadar yenileniyor;
+    tarayıcı `var()`ı animasyon sürerken yeniden okuyor. Tasarım uçuşu sabit sayılarla
     çiziyor (`translate(-134px, -229px) scale(.49)`); o sayılar 360×780'lik
     prototip çerçevesine ait ve telefonda tavşanı yuvanın yanına indirirdi.
     Burada yedeği de yok: değer her çizimde satır içinde veriliyor.
