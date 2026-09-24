@@ -405,46 +405,50 @@ function GununHali({
     <button
       type="button"
       onClick={() => onAc(hal.ekran)}
-      className="golge-kart flex w-full items-center gap-3 rounded-2xl bg-card px-4 py-3 text-left transition active:brightness-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      className="golge-kart flex w-full items-center rounded-2xl bg-card py-3 pr-4 pl-4 text-left transition active:brightness-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       {/* Maskotun arkasında bir süre hâle göre renklenen bir kutu vardı (gri,
           amber, yeşil); kaldırıldı. Düz renkli kare, kartın beyaz zemininde
           yapıştırılmış bir etiket gibi duruyordu — maskot kartın kendi
-          zemininde duruyor. Kutu gidince 46'lık maskot yanındaki üç satırın
-          yanında küçük kaldı; 64'e çıktı ve kutuyu tümüyle dolduruyor.
+          zemininde duruyor. Arkasına bir süre soluk bir leke de kondu,
+          kullanıcı onu da geri aldı.
 
-          Arkasındaki soluk leke o kutunun dönüşü değil: kenarı yok, köşesi
-          yok, rengi hâle göre değişmiyor ve maskottan küçük — tavşanın
-          gövdesinin arkasında kalıyor, kulakları dışarı taşıyor. Tavşan
-          boşlukta asılı durmasın, bir yere otursun diye var. Renk
-          `--primary-soft`: kartın zaten taşıdığı amberin en açık tonu. */}
-      <span className="relative grid size-[64px] shrink-0 place-items-center">
-        <svg
-          viewBox="0 0 100 100"
-          className="absolute top-[14px] left-1/2 size-[50px] -translate-x-1/2 text-primary-soft"
+          Maskot 72'de ve ayraca yakın: kartın sol dolgusu 16, ayraçla arası
+          0 — görselin kendi saydam payı var, tavşan kutusunun ortasında daha
+          dar duruyor ve ayraca yine de değmiyor. Bir süre iki yana 8'er
+          piksel verilip tam ortalanmıştı; kullanıcı sağa kaydırılmasını
+          istedi. Kutu daha geniş tutulursa yazının alanı daralıp "Bugün hiç
+          soru çözmedin" iki satıra kırılıyor.
+
+          Ayağının altında yumuşak bir zemin gölgesi var (bulanık elips,
+          `foreground`un %12'si): tavşan kartın üstünde bir yere basıyor.
+          `drop-shadow` değil — görselin çevresine sarılan gölge onu kâğıttan
+          kesilmiş bir çıkartma gibi gösterirdi. Ayraç `--border` tonunda, beyazda soluk kalıyor ve
+          kartın kenarlarına değmeden bitiyor (`self-stretch` içeriğin boyunu
+          alıyor, `my-2` iki ucundan kısaltıyor). Birini değiştirirsen iki
+          yandaki boşluğu yeniden eşitle. */}
+      <span className="relative grid w-[72px] shrink-0 place-items-center">
+        <span
           aria-hidden
-        >
-          <path
-            fill="currentColor"
-            d="M51 6c14 0 27 6 35 17s10 26 5 39-15 25-29 30-30 4-42-4S2 67 3 52 11 22 22 14 38 6 51 6Z"
-          />
-        </svg>
+          className="absolute bottom-0 left-[calc(50%-2px)] h-[7px] w-[36px] -translate-x-1/2 rounded-[50%] bg-foreground/12 blur-[2px]"
+        />
         <span className="relative grid">
-          <Rabi durum={hal.durum} poz={hal.poz} boyut={64} />
+          <Rabi durum={hal.durum} poz={hal.poz} boyut={72} />
         </span>
       </span>
+      <span aria-hidden className="my-2 mr-3 w-px shrink-0 self-stretch bg-border" />
+      {/* Başlığın üstünde bir süre küçük bir "BUGÜN" etiketi vardı; kullanıcı
+          kaldırdı. Kart soru hedefinin hemen altında ve cümlenin kendisi
+          zaten bugünü anlatıyor. */}
       <span className="min-w-0 flex-1">
-        <span className="block text-[10px] font-extrabold tracking-[0.16em] text-muted-foreground">
-          BUGÜN
-        </span>
-        <span className="mt-0.5 block font-display text-[15.5px] leading-tight font-extrabold tracking-tight">
+        <span className="block font-display text-[15.5px] leading-tight font-extrabold tracking-tight">
           {hal.baslik}
         </span>
         <span className="mt-0.5 block text-[12.5px] font-semibold text-muted-foreground">
           {hal.alt}
         </span>
       </span>
-      <ChevronRight size={19} className="shrink-0 text-muted-foreground" aria-hidden />
+      <ChevronRight size={19} className="ml-2 shrink-0 text-muted-foreground" aria-hidden />
     </button>
   )
 }
