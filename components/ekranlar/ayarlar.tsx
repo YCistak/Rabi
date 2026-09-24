@@ -291,7 +291,7 @@ export function AyarlarEkrani({
       {/* Ayarlar artık alt menüde kendi sekmesi; diğer sekmelerle aynı başlık deseni. */}
       <header className="flex items-start gap-3 px-0.5 pt-1">
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-extrabold tracking-[0.2em] text-muted-foreground">RABİ</p>
+          <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
           <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Ayarlar</h1>
         </div>
 
