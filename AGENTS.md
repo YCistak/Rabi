@@ -1847,6 +1847,11 @@ Ders adına **ek getirilmiyor** ("Kimya 9 gündür bekliyor", "Kimya'ya … " de
 ünlü uyumu ders adına göre değişiyor ve yanlış ek, yanlış bilgiden daha çok
 göze batıyor.
 
+Maskotun arkasında soluk, organik bir leke var (`--primary-soft`, maskottan
+küçük, gövdenin arkasında). Hâle göre renklenen eski kutunun dönüşü değil:
+kenarı ve köşesi yok, rengi sabit; tavşan kartın boşluğunda asılı durmasın
+diye var. Büyütme ya da renklendirme — maskotun önüne geçer.
+
 Sayının kendisi kartta **yazmıyor**: halka zaten sayıyı üç kez söylüyor ve
 kartın işi onu tekrar etmek değil, ona bir yüz vermek. Günlük hedef sıfırken
 kart çizilmiyor: ölçülecek bir eşik yokken "ulaştın" da "ulaşmadın" da
