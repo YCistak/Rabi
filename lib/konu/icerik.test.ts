@@ -88,9 +88,16 @@ describe('programlar', () => {
 const SATIR_SINIRI = 110
 const CUMLE_SINIRI = 2
 
-/** Cümle sayısı: nokta/ünlem/soru işaretinden sonra büyük harf ya da rakam. */
+/**
+ * Cümle sayısı: nokta/ünlem/soru işaretinden sonra büyük harf ya da rakam.
+ *
+ * Roma rakamından sonraki nokta sayılmıyor: "II. Osman ve IV. Murat" tek
+ * cümle, ama sade kural onu üç cümle sayıyordu.
+ */
 function cumleSayisi(satir: string): number {
-  return satir.split(/(?<=[.!?])\s+(?=[A-ZÇĞİÖŞÜ0-9])/u).filter((c) => c.trim()).length
+  return satir
+    .split(/(?<![\s(][IVXLC]+\.)(?<=[.!?])\s+(?=[A-ZÇĞİÖŞÜ0-9])/u)
+    .filter((c) => c.trim()).length
 }
 
 describe('kart düzeni', () => {
