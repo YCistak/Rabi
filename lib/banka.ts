@@ -1,5 +1,6 @@
 import type { YanlisSoru } from './types'
 import { sadelestir } from './dersler'
+import { tariheCevir } from './utils'
 
 /**
  * Yanlış soru bankasının saf mantığı — süzme, gruplama, sayım.
@@ -70,4 +71,72 @@ export function gecerliDers(secili: string, dersler: DersSayisi[]): string {
   if (secili === '') return ''
   const aranan = sadelestir(secili)
   return dersler.some((d) => sadelestir(d.ders) === aranan) ? secili : ''
+}
+
+/**
+ * Bankadaki derslerin renk ailesi — `globals.css`teki `--konu-<ad>-*`
+ * değişkenleri. Ders adı serbest metin olduğu için sadeleştirilip eşleniyor;
+ * ailesi olmayan ders (Felsefe, İngilizce…) `null` alır ve nötr çizilir.
+ * Geometri Matematik'in, Edebiyat Türkçe'nin rengini taşıyor: ikisi de
+ * sınavda o testin içinde.
+ */
+export type BankaRengi =
+  | 'matematik'
+  | 'turkce'
+  | 'fizik'
+  | 'kimya'
+  | 'biyoloji'
+  | 'tarih'
+  | 'cografya'
+
+const DERS_RENGI: Record<string, BankaRengi> = {
+  matematik: 'matematik',
+  geometri: 'matematik',
+  'türkçe': 'turkce',
+  edebiyat: 'turkce',
+  // `sadelestir` ı'yı i'ye çeviriyor; anahtar da öyle yazılmalı.
+  'türk dili ve edebiyati': 'turkce',
+  fizik: 'fizik',
+  kimya: 'kimya',
+  biyoloji: 'biyoloji',
+  tarih: 'tarih',
+  'coğrafya': 'cografya',
+}
+
+export function dersRengi(ders: string): BankaRengi | null {
+  return DERS_RENGI[sadelestir(ders)] ?? null
+}
+
+/** Bir haftadan uzun bekleyen soru kartta kırmızı rozetle çiziliyor. */
+export const ESKI_SORU_GUNU = 7
+
+/** Sorunun eklendiği günden bugüne kaç gün geçti; gelecek tarih 0 sayılır. */
+export function bekledigiGun(tarih: string, bugunIso: string): number {
+  const fark = Math.round((tariheCevir(bugunIso).getTime() - tariheCevir(tarih).getTime()) / 86_400_000)
+  return Math.max(0, fark)
+}
+
+export function yasEtiketi(gun: number): string {
+  if (gun <= 0) return 'bugün'
+  if (gun === 1) return 'dün'
+  return `${gun} gün`
+}
+
+export type TarihGrubu = { baslik: string; sorular: YanlisSoru[] }
+
+/**
+ * "Bu hafta / Daha önce" başlıkları. Sınır kırmızı rozetin sınırıyla aynı
+ * (`ESKI_SORU_GUNU`): "Bu hafta" başlığının altında "eski" diye kırmızıya
+ * boyanmış bir kart çelişki olurdu. Boş grup başlığı çizilmiyor.
+ */
+export function tarihGruplari(sorular: YanlisSoru[], bugunIso: string): TarihGrubu[] {
+  const hafta: YanlisSoru[] = []
+  const once: YanlisSoru[] = []
+  for (const soru of sorular) {
+    ;(bekledigiGun(soru.tarih, bugunIso) < ESKI_SORU_GUNU ? hafta : once).push(soru)
+  }
+  const gruplar: TarihGrubu[] = []
+  if (hafta.length > 0) gruplar.push({ baslik: 'Bu hafta', sorular: hafta })
+  if (once.length > 0) gruplar.push({ baslik: 'Daha önce', sorular: once })
+  return gruplar
 }

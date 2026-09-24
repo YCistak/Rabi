@@ -62,7 +62,7 @@ export function DenemelerEkrani({
 
   return (
     <div>
-      <BaslikSatiri ortala baslik="Denemeler" />
+      <BaslikSatiri arac="deneme" ortala baslik="Denemeler" />
 
       {/* İlk kayıtta düğme boş durumun içinde, ekranın ortasında duruyor; liste
           doluyken oraya ulaşmak kaydırmak demek, o yüzden başlığın altına geçiyor. */}

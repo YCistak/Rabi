@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>body{margin:0;background:#f0eee9;font-family:Nunito,ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#b3491f}a:hover{color:#d9622f}.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}.dv-opts{display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)}.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}.dv-next{margin:22px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.5)}.nos::-webkit-scrollbar{display:none}</style></helmet>
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Yanlış Soru Bankası — sekmeler tam genişlik + zenginleştirme</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Mevcut hâli (repo'dan birebir)</div>
+<div style="position:relative;width:390px;height:844px;border-radius:36px;overflow:hidden;background:#f8f8f7;box-shadow:0 20px 50px rgba(54,33,112,.14);border:1px solid #eae9e6;color:#1b1a19">
+<div class="nos" style="height:100%;overflow-y:auto;padding:20px 16px 110px;box-sizing:border-box">
+<div style="margin-bottom:16px"><h1 style="margin:0;font-size:24px;line-height:32px;font-weight:800;letter-spacing:-0.025em">Yanlış Soru Bankası</h1><p style="margin:2px 0 0;font-size:14px;line-height:20px;color:#6b6764">{{ a.ozet }}</p></div>
+<div style="display:flex;gap:8px;margin-bottom:16px">
+<button style="flex:1;height:44px;border:0;border-radius:12px;background:#d9622f;color:#fff;font:700 15px Nunito,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Fotoğraf çek</button>
+<button style="flex:1;height:44px;border:0;border-radius:12px;background:#efeeeb;color:#1b1a19;font:700 15px Nunito,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 5h6"></path><path d="M19 2v6"></path><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"></path><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path><circle cx="9" cy="9" r="2"></circle></svg>Galeriden</button>
+</div>
+<div style="display:flex;gap:8px;margin-bottom:12px">
+<button onClick="{{ a.toBek }}" style="height:36px;flex-shrink:0;padding:0 12px;border-radius:11px;font-family:Nunito,sans-serif;font-size:13px;border:{{ a.bek.bd }};background:{{ a.bek.bg }};color:{{ a.bek.c }};font-weight:{{ a.bek.fw }}">Bekleyen ({{ a.nBek }})</button>
+<button onClick="{{ a.toCoz }}" style="height:36px;flex-shrink:0;padding:0 12px;border-radius:11px;font-family:Nunito,sans-serif;font-size:13px;border:{{ a.coz.bd }};background:{{ a.coz.bg }};color:{{ a.coz.c }};font-weight:{{ a.coz.fw }}">Çözdüklerim ({{ a.nCoz }})</button>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+<sc-for list="{{ a.chips }}" as="ch" hint-placeholder-count="4"><button onClick="{{ ch.on }}" style="height:36px;flex-shrink:0;padding:0 12px;border-radius:11px;font-family:Nunito,sans-serif;font-size:13px;border:{{ ch.s.bd }};background:{{ ch.s.bg }};color:{{ ch.s.c }};font-weight:{{ ch.s.fw }}">{{ ch.label }}</button></sc-for>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+<sc-for list="{{ a.list }}" as="q" hint-placeholder-count="6"><button onClick="{{ q.toggle }}" style="position:relative;display:block;aspect-ratio:1;width:100%;padding:0;overflow:hidden;border-radius:12px;border:1px solid #eae9e6;background:repeating-linear-gradient(135deg,{{ q.bg }} 0 7px,{{ q.kenar }} 7px 8px);cursor:pointer">
+<span style="position:absolute;top:34%;left:0;right:0;text-align:center;font:500 9px ui-monospace,Menlo,monospace;color:{{ q.koyu }};opacity:.7">soru foto</span>
+<span style="position:absolute;left:0;right:0;bottom:0;padding:16px 6px 4px;background:linear-gradient(to top,rgba(0,0,0,.7),transparent);text-align:left;font:500 11px Nunito,sans-serif;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ q.ders }}</span>
+<sc-if value="{{ q.coz }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;right:4px;top:4px;border-radius:999px;background:#4f7a4a;padding:4px;display:flex;color:#fff"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span></sc-if>
+</button></sc-for>
+</div>
+</div>
+<nav style="position:absolute;left:0;right:0;bottom:0;border-radius:26px 26px 0 0;border-top:1px solid #eae9e6;background:#fff;box-shadow:0 -6px 22px rgba(54,33,112,.12);padding:10px 8px 14px;display:flex">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#6b6764"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19v-8.5Z"></path><path d="M9.5 20.5V14h5v6.5"></path></svg>Ana Sayfa</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#b3491f"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="3.5" y="13.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="13.5" width="7" height="7" rx="2"></rect></svg>Araçlar</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#6b6764"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6.5 9 4l6 2.5L20.5 4v13.5L15 20l-6-2.5-5.5 2.5Z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Harita</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#6b6764"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.3 4.6h5.4a5.7 5.7 0 0 1 5.7 5.7v2a2.4 2.4 0 0 1-.1.8l-1.7 5a3.2 3.2 0 0 1-6-.3l-.5-1.7h-1.6l-.5 1.7a3.2 3.2 0 0 1-6 .3l-1.7-5a2.4 2.4 0 0 1-.1-.8v-2a5.7 5.7 0 0 1 5.7-5.7Z"></path><path d="M8.4 9.4v3.2M6.8 11h3.2"></path><path d="M15.4 9.9h.01M17.2 12.1h.01"></path></svg>Oyunlar</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#6b6764"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M19.4 14.5a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-2.8-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7h-.3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.1-2.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1v-.3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 2.8 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7h.3a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.4.9Z"></path></svg>Ayarlar</div>
+</nav>
+</div>
+</div>
+
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>İstenen düzeltme: sekmeler yatayda tam genişlik</div>
+<div style="position:relative;width:390px;height:844px;border-radius:36px;overflow:hidden;background:#f8f8f7;box-shadow:0 20px 50px rgba(54,33,112,.14);border:1px solid #eae9e6;color:#1b1a19">
+<div class="nos" style="height:100%;overflow-y:auto;padding:20px 16px 110px;box-sizing:border-box">
+<div style="margin-bottom:16px"><h1 style="margin:0;font-size:24px;line-height:32px;font-weight:800;letter-spacing:-0.025em">Yanlış Soru Bankası</h1><p style="margin:2px 0 0;font-size:14px;line-height:20px;color:#6b6764">{{ b.ozet }}</p></div>
+<div style="display:flex;gap:8px;margin-bottom:16px">
+<button style="flex:1;height:44px;border:0;border-radius:12px;background:#d9622f;color:#fff;font:700 15px Nunito,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Fotoğraf çek</button>
+<button style="flex:1;height:44px;border:0;border-radius:12px;background:#efeeeb;color:#1b1a19;font:700 15px Nunito,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 5h6"></path><path d="M19 2v6"></path><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"></path><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path><circle cx="9" cy="9" r="2"></circle></svg>Galeriden</button>
+</div>
+<div style="display:flex;gap:8px;margin-bottom:12px">
+<button onClick="{{ b.toBek }}" style="flex:1;min-width:0;height:40px;padding:0 12px;border-radius:11px;font-family:Nunito,sans-serif;font-size:14px;border:{{ b.bek.bd }};background:{{ b.bek.bg }};color:{{ b.bek.c }};font-weight:{{ b.bek.fw }}">Bekleyen ({{ b.nBek }})</button>
+<button onClick="{{ b.toCoz }}" style="flex:1;min-width:0;height:40px;padding:0 12px;border-radius:11px;font-family:Nunito,sans-serif;font-size:14px;border:{{ b.coz.bd }};background:{{ b.coz.bg }};color:{{ b.coz.c }};font-weight:{{ b.coz.fw }}">Çözdüklerim ({{ b.nCoz }})</button>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+<sc-for list="{{ b.chips }}" as="ch" hint-placeholder-count="4"><button onClick="{{ ch.on }}" style="height:36px;flex-shrink:0;padding:0 12px;border-radius:11px;font-family:Nunito,sans-serif;font-size:13px;border:{{ ch.s.bd }};background:{{ ch.s.bg }};color:{{ ch.s.c }};font-weight:{{ ch.s.fw }}">{{ ch.label }}</button></sc-for>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+<sc-for list="{{ b.list }}" as="q" hint-placeholder-count="6"><button onClick="{{ q.toggle }}" style="position:relative;display:block;aspect-ratio:1;width:100%;padding:0;overflow:hidden;border-radius:12px;border:1px solid #eae9e6;background:repeating-linear-gradient(135deg,{{ q.bg }} 0 7px,{{ q.kenar }} 7px 8px);cursor:pointer">
+<span style="position:absolute;top:34%;left:0;right:0;text-align:center;font:500 9px ui-monospace,Menlo,monospace;color:{{ q.koyu }};opacity:.7">soru foto</span>
+<span style="position:absolute;left:0;right:0;bottom:0;padding:16px 6px 4px;background:linear-gradient(to top,rgba(0,0,0,.7),transparent);text-align:left;font:500 11px Nunito,sans-serif;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ q.ders }}</span>
+<sc-if value="{{ q.coz }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;right:4px;top:4px;border-radius:999px;background:#4f7a4a;padding:4px;display:flex;color:#fff"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span></sc-if>
+</button></sc-for>
+</div>
+</div>
+<nav style="position:absolute;left:0;right:0;bottom:0;border-radius:26px 26px 0 0;border-top:1px solid #eae9e6;background:#fff;box-shadow:0 -6px 22px rgba(54,33,112,.12);padding:10px 8px 14px;display:flex">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#6b6764"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19v-8.5Z"></path><path d="M9.5 20.5V14h5v6.5"></path></svg>Ana Sayfa</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#b3491f"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="3.5" y="13.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="13.5" width="7" height="7" rx="2"></rect></svg>Araçlar</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#6b6764"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6.5 9 4l6 2.5L20.5 4v13.5L15 20l-6-2.5-5.5 2.5Z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Harita</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#6b6764"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.3 4.6h5.4a5.7 5.7 0 0 1 5.7 5.7v2a2.4 2.4 0 0 1-.1.8l-1.7 5a3.2 3.2 0 0 1-6-.3l-.5-1.7h-1.6l-.5 1.7a3.2 3.2 0 0 1-6 .3l-1.7-5a2.4 2.4 0 0 1-.1-.8v-2a5.7 5.7 0 0 1 5.7-5.7Z"></path><path d="M8.4 9.4v3.2M6.8 11h3.2"></path><path d="M15.4 9.9h.01M17.2 12.1h.01"></path></svg>Oyunlar</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#6b6764"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M19.4 14.5a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-2.8-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7h-.3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.1-2.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1v-.3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 2.8 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7h.3a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.4.9Z"></path></svg>Ayarlar</div>
+</nav>
+</div>
+<div style="width:390px;font:12px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.6)">Kod değişikliği tek satır: <code style="font:11px ui-monospace,Menlo,monospace;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:4px">&lt;SuzgecKutusu className="flex-1 h-10 text-sm"&gt;</code> — iki sekme de kalan alanı eşit paylaşır.</div>
+</div>
+
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Önerilen: segment sekme + ilerleme + renkli dersler + tekrar</div>
+<div style="position:relative;width:390px;height:844px;border-radius:36px;overflow:hidden;background:#f8f8f7;box-shadow:0 20px 50px rgba(54,33,112,.14);border:1px solid #eae9e6;color:#1b1a19">
+<div class="nos" style="height:100%;overflow-y:auto;padding:20px 16px 170px;box-sizing:border-box">
+<div style="margin-bottom:14px"><h1 style="margin:0;font-size:24px;line-height:32px;font-weight:800;letter-spacing:-0.025em">Yanlış Soru Bankası</h1></div>
+<div style="display:flex;gap:8px;margin-bottom:16px">
+<button style="flex:1;height:44px;border:0;border-radius:12px;background:#d9622f;color:#fff;font:700 15px Nunito,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Fotoğraf çek</button>
+<button style="flex:1;height:44px;border:0;border-radius:12px;background:#efeeeb;color:#1b1a19;font:700 15px Nunito,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 5h6"></path><path d="M19 2v6"></path><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"></path><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path><circle cx="9" cy="9" r="2"></circle></svg>Galeriden</button>
+</div>
+<div style="display:flex;padding:4px;gap:4px;border-radius:14px;background:#efeeeb;margin-bottom:12px">
+<button onClick="{{ c.toBek }}" style="flex:1;min-width:0;height:40px;border:0;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:8px;font:800 14px Nunito,sans-serif;cursor:pointer;transition:background .2s,box-shadow .2s;background:{{ c.bek.bg }};color:{{ c.bek.c }};box-shadow:{{ c.bek.sh }}">Bekleyen<span style="min-width:22px;height:22px;padding:0 6px;box-sizing:border-box;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-variant-numeric:tabular-nums;background:{{ c.bek.bb }};color:{{ c.bek.bc }}">{{ c.nBek }}</span></button>
+<button onClick="{{ c.toCoz }}" style="flex:1;min-width:0;height:40px;border:0;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:8px;font:800 14px Nunito,sans-serif;cursor:pointer;transition:background .2s,box-shadow .2s;background:{{ c.coz.bg }};color:{{ c.coz.c }};box-shadow:{{ c.coz.sh }}">Çözdüklerim<span style="min-width:22px;height:22px;padding:0 6px;box-sizing:border-box;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-variant-numeric:tabular-nums;background:{{ c.coz.bb }};color:{{ c.coz.bc }}">{{ c.nCoz }}</span></button>
+</div>
+<div style="position:relative;margin:0 -16px 14px">
+<div class="nos" ref="{{ c.ciplerRef }}" onScroll="{{ c.cipKaydi }}" style="display:flex;gap:6px;overflow-x:auto;padding:0 52px 0 16px;scroll-behavior:smooth">
+<sc-for list="{{ c.chips }}" as="ch" hint-placeholder-count="4"><button onClick="{{ ch.on }}" style="height:34px;flex-shrink:0;padding:0 12px;border-radius:11px;display:flex;align-items:center;gap:6px;font:700 13px Nunito,sans-serif;white-space:nowrap;cursor:pointer;border:1.5px solid {{ ch.s.bd }};background:{{ ch.s.bg }};color:{{ ch.s.c }}"><span style="width:8px;height:8px;border-radius:99px;background:{{ ch.s.dot }}"></span>{{ ch.label }}</button></sc-for>
+</div>
+<sc-if value="{{ c.solVar }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:0;bottom:0;width:64px;display:flex;align-items:center;justify-content:flex-start;padding-left:12px;box-sizing:border-box;background:linear-gradient(to left,rgba(248,248,247,0),#f8f8f7 55%);pointer-events:none">
+<button onClick="{{ c.geriKaydir }}" aria-label="Önceki dersleri göster" style="pointer-events:auto;width:30px;height:30px;border-radius:9px;border:1px solid #eae9e6;background:#fff;color:#6b6764;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;box-shadow:0 2px 6px rgba(27,26,25,.08)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button>
+</div></sc-if>
+<sc-if value="{{ c.sagVar }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;top:0;right:0;bottom:0;width:64px;display:flex;align-items:center;justify-content:flex-end;padding-right:12px;box-sizing:border-box;background:linear-gradient(to right,rgba(248,248,247,0),#f8f8f7 55%);pointer-events:none">
+<button onClick="{{ c.ileriKaydir }}" aria-label="Diğer dersleri göster" style="pointer-events:auto;width:30px;height:30px;border-radius:9px;border:1px solid #eae9e6;background:#fff;color:#6b6764;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;box-shadow:0 2px 6px rgba(27,26,25,.08)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></button>
+</div></sc-if>
+</div>
+<sc-if value="{{ c.bos }}" hint-placeholder-val="{{ false }}"><div style="border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.6;background:rgba(239,238,235,.7);color:#6b6764">{{ c.bosMetin }}</div></sc-if>
+<sc-for list="{{ c.groups }}" as="g" hint-placeholder-count="2"><div style="margin-bottom:16px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 8px"><p style="margin:0;font-size:13px;font-weight:800;color:#1b1a19">{{ g.title }}</p><p style="margin:0;font-size:12px;font-weight:700;color:#6b6764">{{ g.n }} soru</p></div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+<sc-for list="{{ g.items }}" as="q" hint-placeholder-count="3"><button onClick="{{ q.toggle }}" style="position:relative;display:block;aspect-ratio:1;width:100%;padding:0;overflow:hidden;border-radius:14px;border:1px solid {{ q.kenar }};background:repeating-linear-gradient(135deg,{{ q.bg }} 0 7px,{{ q.kenar }} 7px 8px);cursor:pointer;text-align:left">
+<span style="position:absolute;top:34%;left:0;right:0;text-align:center;font:500 9px ui-monospace,Menlo,monospace;color:{{ q.koyu }};opacity:.7">soru foto</span>
+<span style="position:absolute;left:0;right:0;bottom:0;padding:18px 7px 6px;background:linear-gradient(to top,rgba(0,0,0,.72),transparent);color:#fff;display:flex;flex-direction:column"><span style="font:800 11px/1.2 Nunito,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ q.ders }}</span><span style="font:500 10px/1.2 Nunito,sans-serif;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ q.konu }}</span></span>
+<span style="position:absolute;left:0;top:0;bottom:0;width:4px;background:{{ q.koyu }}"></span>
+<sc-if value="{{ q.coz }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;right:5px;top:5px;border-radius:999px;background:#4f7a4a;padding:4px;display:flex;color:#fff"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span></sc-if>
+<sc-if value="{{ q.bek }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;right:5px;top:5px;border-radius:99px;padding:2px 6px;font:800 10px Nunito,sans-serif;background:{{ q.yasBg }};color:{{ q.yasC }}">{{ q.yas }}</span></sc-if>
+</button></sc-for>
+</div>
+</div></sc-for>
+</div>
+<sc-if value="{{ c.tekrarVar }}" hint-placeholder-val="{{ true }}"><button style="position:absolute;left:16px;right:16px;bottom:96px;height:50px;border:0;border-radius:16px;background:#1b1a19;color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;font:800 15px Nunito,sans-serif;box-shadow:0 10px 24px rgba(27,26,25,.25);cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 14 4 4-4 4"></path><path d="m18 2 4 4-4 4"></path><path d="M2 18h1.973a4 4 0 0 0 3.3-1.7l5.454-7.6a4 4 0 0 1 3.3-1.7H22"></path><path d="M2 6h1.973a4 4 0 0 1 3.3 1.7l1.338 1.9"></path><path d="M22 18h-6.041a4 4 0 0 1-3.3-1.8l-.359-.45"></path></svg>Karışık tekrar<span style="font-weight:700;opacity:.7">· {{ c.tekrarN }} soru</span></button></sc-if>
+<nav style="position:absolute;left:0;right:0;bottom:0;border-radius:26px 26px 0 0;border-top:1px solid #eae9e6;background:#fff;box-shadow:0 -6px 22px rgba(54,33,112,.12);padding:10px 8px 14px;display:flex">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#6b6764"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19v-8.5Z"></path><path d="M9.5 20.5V14h5v6.5"></path></svg>Ana Sayfa</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#b3491f"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="3.5" y="13.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="13.5" width="7" height="7" rx="2"></rect></svg>Araçlar</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#6b6764"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6.5 9 4l6 2.5L20.5 4v13.5L15 20l-6-2.5-5.5 2.5Z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Harita</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#6b6764"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.3 4.6h5.4a5.7 5.7 0 0 1 5.7 5.7v2a2.4 2.4 0 0 1-.1.8l-1.7 5a3.2 3.2 0 0 1-6-.3l-.5-1.7h-1.6l-.5 1.7a3.2 3.2 0 0 1-6 .3l-1.7-5a2.4 2.4 0 0 1-.1-.8v-2a5.7 5.7 0 0 1 5.7-5.7Z"></path><path d="M8.4 9.4v3.2M6.8 11h3.2"></path><path d="M15.4 9.9h.01M17.2 12.1h.01"></path></svg>Oyunlar</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#6b6764"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M19.4 14.5a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-2.8-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7h-.3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.1-2.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1v-.3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 2.8 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7h.3a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.4.9Z"></path></svg>Ayarlar</div>
+</nav>
+</div>
+<ol style="width:390px;box-sizing:border-box;margin:4px 0 0;padding:0 0 0 18px;font:12px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.65);display:flex;flex-direction:column;gap:4px">
+<li><b>Segment sekme</b> — tam genişlik, sayılar rozet içinde; süzgeçlerden ayrışır.</li>
+<li><b>Renkli ders çipleri</b> — mevcut <code>--konu-*</code> renkleri; tek satır, yatay kaydırma.</li>
+<li><b>Kart bilgisi</b> — konu adı + "kaç gündür bekliyor" rozeti (7+ gün kırmızımsı).</li>
+<li><b>Tarih grupları</b> — "Bu hafta / Daha önce" başlıkları.</li>
+<li><b>Karışık tekrar</b> — bekleyen sorulardan rastgele tekrar oturumu başlatır.</li>
+</ol>
+</div>
+
+</div>
+<p class="dv-next">Karelere tıklayınca soru çözüldü/bekliyor arasında geçer (tüm seçeneklerde ortak veri). Sonraki: "<a class="dv-oid" href="#1c">1c</a>'yi al ama ilerleme kartı olmasın" · "<a class="dv-oid" href="#1b">1b</a> + sadece renkli ders çipleri" · "kartları liste görünümüne çevir"</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const RENK = {
+  'Matematik': ['#f9ebee', '#f3dfe1', '#b4523c'],
+  'Türkçe': ['#f7f0dc', '#ecdfb8', '#8d691a'],
+  'Fizik': ['#e8eaf6', '#d6dbee', '#4a5789'],
+  'Kimya': ['#eee9f7', '#dfd7ee', '#6b5ca5'],
+  'Biyoloji': ['#e9f1e4', '#d6e5cc', '#4f7a3a'],
+};
+const VERI = [
+  ['Matematik', 'Türev', 1, false], ['Fizik', 'Kuvvet', 2, false], ['Matematik', 'İntegral', 3, false],
+  ['Kimya', 'Mol kavramı', 5, false], ['Türkçe', 'Paragraf', 4, true], ['Biyoloji', 'Hücre', 8, false],
+  ['Fizik', 'Elektrik', 9, true], ['Matematik', 'Limit', 12, true], ['Türkçe', 'Sözcükte anlam', 13, false],
+  ['Kimya', 'Asit-baz', 15, false],
+].map(([ders, konu, gun, coz], i) => ({ id: i, ders, konu, gun, coz }));
+
+const kutu = (on) => on
+  ? { bd: '1.5px solid #d9622f', bg: '#fbeee7', c: '#b3491f', fw: 800 }
+  : { bd: '1px solid #eae9e6', bg: '#ffffff', c: '#6b6764', fw: 700 };
+
+class Component extends DCLogic {
+  state = { qs: VERI, a: 'b', b: 'b', c: 'b', fa: '', fb: '', fc: '' };
+
+  toggle(id) {
+    this.setState((s) => ({ qs: s.qs.map((q) => (q.id === id ? { ...q, coz: !q.coz } : q)) }));
+  }
+
+  gorunum(k, fk) {
+    const qs = this.state.qs;
+    const tab = this.state[k];
+    const inTab = qs.filter((q) => (tab === 'c' ? q.coz : !q.coz));
+    const sayac = {};
+    inTab.forEach((q) => { sayac[q.ders] = (sayac[q.ders] || 0) + 1; });
+    const dersler = Object.keys(sayac);
+    let f = this.state[fk];
+    if (!dersler.includes(f)) f = '';
+    const list = inTab.filter((q) => !f || q.ders === f).map((q) => {
+      const [bg, kenar, koyu] = RENK[q.ders];
+      const eski = q.gun >= 7;
+      return {
+        ...q, bg, kenar, koyu, bek: !q.coz,
+        yas: q.gun === 1 ? 'dün' : q.gun + ' gün',
+        yasBg: eski ? '#b23b2b' : 'rgba(255,255,255,.9)', yasC: eski ? '#ffffff' : '#1b1a19',
+        toggle: () => this.toggle(q.id),
+      };
+    });
+    const nBek = qs.filter((q) => !q.coz).length;
+    const nCoz = qs.length - nBek;
+    const setF = (v) => () => this.setState({ [fk]: v });
+    return { tab, f, dersler, sayac, list, nBek, nCoz, setF, toplam: qs.length,
+      toBek: () => this.setState({ [k]: 'b' }), toCoz: () => this.setState({ [k]: 'c' }) };
+  }
+
+  klasik(k, fk) {
+    const g = this.gorunum(k, fk);
+    const chips = g.dersler.length > 1
+      ? [{ label: 'Tümü', s: kutu(g.f === ''), on: g.setF('') },
+         ...g.dersler.map((d) => ({ label: `${d} (${g.sayac[d]})`, s: kutu(g.f === d), on: g.setF(d) }))]
+      : [];
+    return { ...g, chips, ozet: `${g.nBek} bekleyen · ${g.nCoz} çözüldü`,
+      bek: kutu(g.tab === 'b'), coz: kutu(g.tab === 'c') };
+  }
+
+  yeni() {
+    const g = this.gorunum('c', 'fc');
+    const seg = (on) => on
+      ? { bg: '#ffffff', c: '#b3491f', sh: '0 1px 3px rgba(27,26,25,.12), 0 1px 1px rgba(27,26,25,.04)', bb: '#fbeee7', bc: '#b3491f' }
+      : { bg: 'transparent', c: '#6b6764', sh: 'none', bb: 'rgba(27,26,25,.07)', bc: '#6b6764' };
+    const chip = (on, d) => {
+      if (!d) return on ? { bd: '#1b1a19', bg: '#1b1a19', c: '#fff', dot: '#fff' } : { bd: '#eae9e6', bg: '#fff', c: '#6b6764', dot: '#c9c6c1' };
+      const [bg, kenar, koyu] = RENK[d];
+      return on ? { bd: koyu, bg: koyu, c: '#fff', dot: '#fff' } : { bd: kenar, bg, c: koyu, dot: koyu };
+    };
+    const chips = g.dersler.length > 1
+      ? [{ label: `Tümü ${g.list.length && !g.f ? g.list.length : ''}`.trim(), s: chip(g.f === ''), on: g.setF('') },
+         ...g.dersler.map((d) => ({ label: `${d} ${g.sayac[d]}`, s: chip(g.f === d, d), on: g.setF(d) }))]
+      : [];
+    const hafta = g.list.filter((q) => q.gun <= 7);
+    const once = g.list.filter((q) => q.gun > 7);
+    const groups = [];
+    if (hafta.length) groups.push({ title: 'Bu hafta', n: hafta.length, items: hafta });
+    if (once.length) groups.push({ title: 'Daha önce', n: once.length, items: once });
+    const haftaCoz = this.state.qs.filter((q) => q.coz && q.gun <= 7).length;
+    if (!this.ciplerRef) this.ciplerRef = React.createRef();
+    const ileriKaydir = () => { const el = this.ciplerRef.current; if (el) el.scrollLeft = Math.min(el.scrollWidth, el.scrollLeft + 140); };
+    const geriKaydir = () => { const el = this.ciplerRef.current; if (el) el.scrollLeft = Math.max(0, el.scrollLeft - 140); };
+    const cipKaydi = (e) => {
+      const el = e.currentTarget;
+      const sol = el.scrollLeft > 4, sag = el.scrollLeft < el.scrollWidth - el.clientWidth - 4;
+      if (sol !== !!this.state.cipSol || sag !== (this.state.cipSag ?? true)) this.setState({ cipSol: sol, cipSag: sag });
+    };
+    return { ...g, chips, groups, haftaCoz, ciplerRef: this.ciplerRef, ileriKaydir, geriKaydir, cipKaydi,
+      solVar: !!this.state.cipSol, sagVar: this.state.cipSag ?? true,
+      pct: Math.round((g.nCoz / Math.max(1, g.toplam)) * 100),
+      bek: seg(g.tab === 'b'), coz: seg(g.tab === 'c'),
+      bos: g.list.length === 0,
+      bosMetin: g.tab === 'c' ? 'Henüz çözdüğün soru yok. Bir soruyu açıp “Çözdüm” dersen buraya taşınır.' : 'Bu sekmede soru kalmadı — hepsini çözmüşsün.',
+      tekrarVar: g.tab === 'b' && g.list.length > 0, tekrarN: g.list.length };
+  }
+
+  renderVals() {
+    return { a: this.klasik('a', 'fa'), b: this.klasik('b', 'fb'), c: this.yeni() };
+  }
+}
+</script>
+</body>
+</html>

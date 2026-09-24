@@ -193,7 +193,7 @@ export function SoruTakibiEkrani({
 
   return (
     <div>
-      <BaslikSatiri baslik="Soru Takibi" />
+      <BaslikSatiri arac="soru" baslik="Soru Takibi" />
       <div className="flex flex-col gap-3.5">
         {/* Günün hâli: halka, mesaj, çubuk ve dört sayı. */}
         <Kart className="rounded-3xl">

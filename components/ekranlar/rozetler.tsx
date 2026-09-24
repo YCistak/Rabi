@@ -191,7 +191,7 @@ export function RozetlerEkrani({
 
   return (
     <div>
-      <BaslikSatiri baslik="Başarımlar" />
+      <BaslikSatiri arac="rozetler" baslik="Başarımlar" />
 
       {/* Sayaç ve çubuk tek satırda: "12/40" ne kadarını topladığını söylüyor,
           çubuk aynı şeyi bakmadan okunur hâle getiriyor. */}

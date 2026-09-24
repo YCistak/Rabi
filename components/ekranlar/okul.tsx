@@ -78,7 +78,7 @@ export function OkulEkrani({
 
   return (
     <div>
-      <BaslikSatiri baslik="Okul Notları" />
+      <BaslikSatiri arac="okul" baslik="Okul Notları" />
 
       <Kart className="mb-3 border-primary/30 bg-primary-soft/50">
         {/* Elle girilen puan tahmin değil; başlık da öyle demiyor. */}

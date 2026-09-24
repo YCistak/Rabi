@@ -28,6 +28,40 @@ export const CALISMA_DERSLERI: string[] = [
   'Tekrar',
 ]
 
+/**
+ * Yanlış soru eklerken seçilebilen dersler — `CALISMA_DERSLERI`den ayrı.
+ *
+ * Çalışma listesi soru takibi ve Pomodoro'ya ait ve seans türlerini
+ * ("Tekrar", "Deneme Çözümü") da taşıyor; bir soru fotoğrafı ise tek bir
+ * derse aittir. Türkçe ile Edebiyat tek ders (kâğıttaki soru hangisi olduğunu
+ * ayırmıyor), Geometri Matematik'in içinde, diller tek "Yabancı Dil" altında:
+ * liste kısa kalsın ki seçim yazmadan yapılabilsin. Serbest metin kapalı —
+ * "matematik", "Mat", "mat." aynı dersin üç ayrı süzgeç çipi oluyordu.
+ * Uymayan her şey "Diğer".
+ *
+ * Eski kayıtlarda bu listede olmayan adlar (Geometri, İngilizce…) duruyor;
+ * süzgeç ve renk onları da tanıyor, yeniden adlandırılmıyorlar.
+ */
+export const YANLIS_SORU_DERSLERI: string[] = [
+  'Türk Dili ve Edebiyatı',
+  'Matematik',
+  'Fizik',
+  'Kimya',
+  'Biyoloji',
+  'Tarih',
+  'Coğrafya',
+  'Felsefe',
+  'Yabancı Dil',
+  'Diğer',
+]
+
+/**
+ * Konu ve not kısa tutuluyor: ikisi de küçük karede ve görüntüleyicinin
+ * başlığında tek satırda duruyor; uzun not fotoğrafın yerini yiyordu.
+ */
+export const YANLIS_SORU_KONU_SINIRI = 30
+export const YANLIS_SORU_NOT_SINIRI = 60
+
 /** Türkçe harfleri de doğru karşılaştırmak için sadeleştirir: "İNGİLİZCE" → "ingilizce". */
 export function sadelestir(metin: string): string {
   return metin
@@ -36,24 +70,4 @@ export function sadelestir(metin: string): string {
     .replaceAll('â', 'a')
     .replaceAll('’', "'")
     .trim()
-}
-
-/** Yazılan metne göre önerileri süzer; baştan eşleşenler üste çıkar. */
-export function dersOnerileriniSuz(
-  yazilan: string,
-  hariç: string[] = [],
-  havuz: string[] = CALISMA_DERSLERI,
-): string[] {
-  const aranan = sadelestir(yazilan)
-  const kullanilan = new Set(hariç.map(sadelestir))
-  const uygun = havuz.filter((ders) => !kullanilan.has(sadelestir(ders)))
-
-  if (aranan === '') return uygun
-
-  const eslesen = uygun.filter((ders) => sadelestir(ders).includes(aranan))
-  return eslesen.sort((a, b) => {
-    const aBas = sadelestir(a).startsWith(aranan) ? 0 : 1
-    const bBas = sadelestir(b).startsWith(aranan) ? 0 : 1
-    return aBas - bBas
-  })
 }

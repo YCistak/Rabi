@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"><style>body{margin:0;background:#f0eee9;font-family:Nunito,ui-sans-serif,system-ui,sans-serif}a{color:#b3491f}a:hover{color:#d9622f}.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1b1a19;color:#fff;border-radius:4px;text-decoration:none}.dv-tname{font:800 13px/1.2 Nunito,sans-serif;color:#1b1a19}.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1b1a19;border-radius:5px;text-decoration:none}.dv-olabel{display:flex;align-items:baseline;gap:8px;font:500 11.5px/1.3 Nunito,sans-serif;color:rgba(0,0,0,.55);max-width:390px}.dv-opt:target .dv-oid{background:#d9622f;color:#fff}.dv-next{margin:22px 0 0;font:500 12px/1.5 Nunito,sans-serif;color:rgba(0,0,0,.5)}.tel{width:390px;height:800px;position:relative;overflow:hidden;border-radius:30px;background:#f8f8f7;box-shadow:0 10px 34px rgba(60,40,25,.14);color:#1b1a19}.ic{position:absolute;inset:0;overflow:hidden;padding:20px 16px 104px}.nav{position:absolute;inset:auto 0 0 0;border-top:1px solid #eae9e6;background:#fff;border-radius:26px 26px 0 0;box-shadow:0 -6px 22px rgba(54,33,112,.12);display:flex;padding:10px 8px 4px}.nvb{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font:700 11px Nunito,sans-serif;color:#6b6764;padding:6px 0}.gizli-kaydir::-webkit-scrollbar{display:none;width:0;height:0}.krt{border-radius:16px;background:#fff;color:#1b1a19;padding:16px;box-shadow:0 6px 20px rgba(90,60,35,.07)}</style></helmet>
+
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Yeni tasarım — soru: “hangi derste net kaybediyorum?”</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="2a">
+<div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Kayıp önce. Tek sayı + sütunlar, oynak dersler, 2×2 özet. “Deneme karşılaştır” çalışır: TYT/AYT seç → iki deneme işaretle → karşılaştırma ekranı.</div>
+<div class="tel">
+<div class="ic">
+
+<div style="display:flex;align-items:center;gap:6px;margin-bottom:14px;color:#6b6764;font-weight:700;font-size:14px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg>Geri</div>
+
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px">
+<div>
+<h1 style="margin:0;font-size:27px;font-weight:800;letter-spacing:-.02em">İstatistik</h1>
+</div>
+<span style="display:grid;place-items:center;width:44px;height:44px;flex:none;border-radius:15px;background:#fbeee7;font-size:20px">📈</span>
+</div>
+
+<div style="display:flex;gap:8px;margin-bottom:12px">
+<button onClick="{{ tytAnaSec }}" style="{{ tytAnaStil }}">TYT</button>
+<button onClick="{{ aytAnaSec }}" style="{{ aytAnaStil }}">AYT</button>
+<button onClick="{{ stsAnaSec }}" style="{{ stsAnaStil }}">STS</button>
+</div>
+
+<div class="krt" style="margin-bottom:12px;padding:16px 16px 14px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+<div>
+<div style="font-size:12px;font-weight:700;color:#6b6764">Son deneme neti</div>
+<div style="display:flex;align-items:center;gap:8px;margin-top:2px">
+<span style="font-size:38px;font-weight:900;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums">{{ sonNetYaz }}</span>
+<span style="{{ sonFarkStil }}">{{ sonFarkYaz }}</span>
+</div>
+<div style="display:flex;align-items:stretch;gap:0;margin-top:10px">
+<div style="padding-right:14px"><div style="font-size:11px;font-weight:800;letter-spacing:.06em;color:#6b6764">ÖNCEKİ</div><div style="font-size:19px;font-weight:900;color:#1b1a19;font-variant-numeric:tabular-nums;line-height:1.15">{{ oncekiNetYaz }}</div></div>
+<div style="width:1px;background:#eae9e6"></div>
+<div style="padding-left:14px"><div style="font-size:11px;font-weight:800;letter-spacing:.06em;color:#6b6764">ORTALAMA</div><div style="font-size:19px;font-weight:900;color:#1b1a19;font-variant-numeric:tabular-nums;line-height:1.15">{{ ortalamaNetYaz }}</div></div>
+</div>
+</div>
+<div style="display:flex;align-items:flex-end;gap:5px;height:86px;margin:0 4px 0 0">
+<sc-for list="{{ miniSutunlar }}" as="s" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;height:100%">
+<span style="{{ s.yaziStil }}">{{ s.netYazi }}</span>
+<div style="{{ s.barStil }}"></div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+
+<div class="krt" style="padding:6px 0 4px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px 8px">
+<p style="margin:0;font-size:16px;font-weight:800;letter-spacing:-.01em;white-space:nowrap">En çok ilerleyen dersler</p>
+<button onClick="{{ dersAc }}" style="display:flex;align-items:center;gap:3px;flex:none;border:0;background:none;padding:0;color:#b3491f;font:800 13px Nunito,sans-serif;cursor:pointer;white-space:nowrap">Daha fazla<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></button>
+</div>
+<sc-for list="{{ kazancDersler }}" as="d" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:12px;padding:8px 16px;border-top:1px solid #eae9e6">
+<span style="display:grid;place-items:center;width:26px;height:26px;flex:none;border-radius:9px;background:#f7e5e2;color:#b23b2b;font-size:12.5px;font-weight:900">{{ d.sira }}</span>
+<span style="flex:1;min-width:0">
+<span style="display:block;font-size:15px;font-weight:800;letter-spacing:-.01em">{{ d.ad }}</span>
+<span style="display:block;height:6px;margin-top:6px;border-radius:3px;background:#efeeeb;overflow:hidden"><span style="display:block;height:6px;border-radius:3px;background:{{ d.vurgu }};width:{{ d.kazancOran }}"></span></span>
+</span>
+<span style="flex:none;text-align:right">
+<span style="display:block;font-size:16px;font-weight:900;font-variant-numeric:tabular-nums;color:#4f7a4a">{{ d.kazanc }}</span>
+<span style="display:block;font-size:11.5px;font-weight:700;color:#6b6764;font-variant-numeric:tabular-nums;white-space:nowrap">{{ d.durumYaz }}</span>
+</span>
+</div>
+</sc-for>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+<div style="border-radius:14px;background:#e9f0e4;padding:10px 12px"><div style="font-size:11.5px;font-weight:700;color:#4f7a4a">En güçlü ders</div><div style="font-size:19px;font-weight:900;color:#4f7a4a">{{ enIyiDersAd }}</div></div>
+<div style="border-radius:14px;background:#f7e5e2;padding:10px 12px"><div style="font-size:11.5px;font-weight:700;color:#b23b2b">En kötü ders</div><div style="font-size:19px;font-weight:900;color:#b23b2b">{{ enKotuDersAd }}</div></div>
+<div style="border-radius:14px;background:#efeeeb;padding:10px 12px"><div style="font-size:11.5px;font-weight:700;color:#6b6764">En yüksek net</div><div style="font-size:19px;font-weight:900;font-variant-numeric:tabular-nums">{{ enYuksekNet }}</div></div>
+<div style="border-radius:14px;background:#efeeeb;padding:10px 12px"><div style="font-size:11.5px;font-weight:700;color:#6b6764">En düşük net</div><div style="font-size:19px;font-weight:900;font-variant-numeric:tabular-nums">{{ enDusukNet }}</div></div>
+</div>
+
+<button onClick="{{ ac }}" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:44px;margin-top:12px;border:0;border-radius:17.9px;background:#d9622f;color:#fff;font:700 15px Nunito,sans-serif;cursor:pointer">
+<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11"></path><path d="m12 4 3 3-3 3"></path><path d="M20 17H9"></path><path d="m12 14-3 3 3 3"></path></svg>
+Deneme karşılaştır
+</button>
+
+</div>
+<nav class="nav">
+<div class="nvb"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19v-8.5Z"></path><path d="M9.5 20.5V14h5v6.5"></path></svg>Ana Sayfa</div>
+<div class="nvb" style="color:#b3491f"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="3.5" y="13.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="13.5" width="7" height="7" rx="2"></rect></svg>Araçlar</div>
+<div class="nvb"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6.5 9 4l6 2.5L20.5 4v13.5L15 20l-6-2.5-5.5 2.5Z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Harita</div>
+<div class="nvb"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.3 4.6h5.4a5.7 5.7 0 0 1 5.7 5.7v2a2.4 2.4 0 0 1-.1.8l-1.7 5a3.2 3.2 0 0 1-6-.3l-.5-1.7h-1.6l-.5 1.7a3.2 3.2 0 0 1-6 .3l-1.7-5a2.4 2.4 0 0 1-.1-.8v-2a5.7 5.7 0 0 1 5.7-5.7Z"></path><path d="M8.4 9.4v3.2M6.8 11h3.2"></path><path d="M15.4 9.9h.01M17.2 12.1h.01"></path></svg>Oyunlar</div>
+<div class="nvb"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M19.4 14.5a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-2.8-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7h-.3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.1-2.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1v-.3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 2.8 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7h.3a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.4.9Z"></path></svg>Ayarlar</div>
+</nav>
+
+<sc-if value="{{ tumDersAcik }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;background:rgba(27,26,25,.35)"></div>
+<div style="position:absolute;inset:auto 0 0 0;max-height:82%;display:flex;flex-direction:column;background:#f8f8f7;border-radius:26px 26px 0 0;box-shadow:0 -12px 34px rgba(54,33,112,.2)">
+<div style="flex:none;padding:14px 18px 10px">
+<div style="width:40px;height:4px;border-radius:2px;background:#e4e2de;margin:0 auto 14px"></div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<h2 style="margin:0;font-size:20px;font-weight:800;letter-spacing:-.02em">Ders bazında ilerleyiş</h2>
+<button onClick="{{ dersKapat }}" aria-label="Kapat" style="display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:11px;background:#efeeeb;color:#6b6764;cursor:pointer"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<p style="margin:6px 0 0;font-size:12.5px;font-weight:700;color:#6b6764">{{ dersOrtSayi }} · {{ denemeSayisiYaz }}</p>
+</div>
+<div style="flex:1;min-height:0;overflow:auto;padding:4px 18px 20px">
+<div style="border-radius:18px;background:#fff;box-shadow:0 6px 20px rgba(90,60,35,.07);overflow:hidden">
+<sc-for list="{{ dersOrtTum }}" as="d" hint-placeholder-count="9">
+<div style="display:flex;align-items:center;gap:12px;padding:11px 14px;border-top:1px solid #f2f1ee">
+<span style="flex:1;min-width:0">
+<span style="display:block;font-size:14.5px;font-weight:800;letter-spacing:-.01em;color:#1b1a19">{{ d.ad }}</span>
+<span style="display:block;height:6px;margin-top:6px;border-radius:3px;background:#efeeeb;overflow:hidden"><span style="{{ d.barStil }}"></span></span>
+</span>
+<span style="flex:none;font-size:12.5px;font-weight:800;color:#9b9792;font-variant-numeric:tabular-nums;white-space:nowrap">{{ d.gecisYaz }}</span>
+<span style="{{ d.rozetStil }}">{{ d.farkYaz }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ secimAcik }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;background:rgba(27,26,25,.35)"></div>
+<div style="position:absolute;inset:auto 0 0 0;max-height:78%;display:flex;flex-direction:column;background:#f8f8f7;border-radius:26px 26px 0 0;box-shadow:0 -12px 34px rgba(54,33,112,.2)">
+<div style="padding:14px 18px 0;flex:none">
+<div style="width:40px;height:4px;border-radius:2px;background:#e4e2de;margin:0 auto 14px"></div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<h2 style="margin:0;font-size:20px;font-weight:800;letter-spacing:-.02em">Deneme karşılaştır</h2>
+<button onClick="{{ kapat }}" style="display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:11px;background:#efeeeb;color:#6b6764;cursor:pointer"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:14px">
+<p style="margin:0;font-size:12px;font-weight:800;letter-spacing:.08em;color:#6b6764">{{ turAdi }} DENEMELERİN</p>
+<span style="font-size:12.5px;font-weight:800;color:#b3491f">{{ secimYaz }}</span>
+</div>
+</div>
+<div style="flex:1;min-height:0;overflow:auto;padding:10px 18px 4px;display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ denemeler }}" as="d" hint-placeholder-count="4">
+<button onClick="{{ d.sec }}" style="{{ d.satirStil }}">
+<span style="{{ d.rozetStil }}">{{ d.rozet }}</span>
+<span style="flex:1;min-width:0">
+<span style="display:block;font-size:15px;font-weight:800;letter-spacing:-.01em;color:#1b1a19">{{ d.ad }}</span>
+<span style="display:block;font-size:12.5px;font-weight:600;color:#6b6764">{{ d.tarih }}</span>
+</span>
+<span style="flex:none;font-size:16px;font-weight:900;color:#1b1a19;font-variant-numeric:tabular-nums">{{ d.netYazi }}</span>
+</button>
+</sc-for>
+</div>
+<div style="flex:none;padding:12px 18px 20px;background:#f8f8f7;border-top:1px solid #eae9e6">
+<button onClick="{{ karsilastir }}" style="{{ karsilastirBtnStil }};cursor:pointer">Karşılaştır</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sonucAcik }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;background:#f8f8f7;display:flex;flex-direction:column">
+<div style="flex:none;padding:16px 16px 12px;background:#fff;border-bottom:1px solid #eae9e6">
+<div style="display:flex;align-items:center;justify-content:flex-start;gap:12px">
+<button onClick="{{ kapat }}" aria-label="Karşılaştırmayı kapat" style="display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:11px;background:#efeeeb;color:#6b6764;cursor:pointer"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<h2 style="margin:10px 0 0;font-size:19px;font-weight:800;letter-spacing:-.02em">Karşılaştırma</h2>
+<div style="display:flex;align-items:flex-start;gap:12px;margin-top:10px">
+<div style="flex:1;min-width:0">
+<div style="font-size:11px;font-weight:800;letter-spacing:.06em;color:#6b6764">A · {{ kSolTarih }}</div>
+<div style="font-size:14px;font-weight:800;color:#1b1a19;margin-top:1px">{{ kSolAd }}</div>
+<div style="font-size:26px;font-weight:900;letter-spacing:-.03em;color:#9b9792;font-variant-numeric:tabular-nums;line-height:1.1">{{ kSolNet }}</div>
+</div>
+<div style="width:1px;align-self:stretch;background:#eae9e6"></div>
+<div style="flex:1;min-width:0">
+<div style="font-size:11px;font-weight:800;letter-spacing:.06em;color:#b3491f">B · {{ kSagTarih }}</div>
+<div style="font-size:14px;font-weight:800;color:#1b1a19;margin-top:1px">{{ kSagAd }}</div>
+<div style="font-size:26px;font-weight:900;letter-spacing:-.03em;color:#b3491f;font-variant-numeric:tabular-nums;line-height:1.1">{{ kSagNet }}</div>
+</div>
+</div>
+<div style="margin-top:10px"><span style="{{ kFarkStil }}">{{ kFarkYaz }}</span></div>
+</div>
+
+<div class="gizli-kaydir" style="flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;padding:10px 14px 24px">
+<sc-if value="{{ kArtanVar }}" hint-placeholder-val="{{ true }}">
+<div style="border-radius:16px;background:#fff;box-shadow:0 6px 20px rgba(90,60,35,.07);overflow:hidden;margin-bottom:9px">
+<div style="display:flex;align-items:center;gap:7px;padding:8px 14px;background:#e9f0e4">
+<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#3f6b3a" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg>
+<span style="font-size:13px;font-weight:800;color:#3f6b3a;letter-spacing:-.01em">{{ kArtanBaslik }}</span>
+</div>
+<sc-if value="{{ kArtanBos }}" hint-placeholder-val="{{ false }}">
+<p style="margin:0;padding:13px 16px;border-top:1px solid #f0efec;font-size:13.5px;font-weight:700;color:#9b9792">Bu iki deneme arasında net kazandığın ders yok.</p>
+</sc-if>
+<sc-for list="{{ kArtanlar }}" as="s" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:10px;padding:7px 14px;border-top:1px solid #f2f1ee">
+<span style="flex:1;min-width:0;font-size:13.5px;font-weight:800;letter-spacing:-.01em;color:#1b1a19">{{ s.ad }}</span>
+<span style="flex:none;display:flex;align-items:baseline;gap:5px;font-size:12px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap"><span style="color:#9b9792">{{ s.solYaz }}</span><span style="color:#c9c5c0">→</span><span style="color:#b3491f">{{ s.sagYaz }}</span></span>
+<span style="flex:none;display:flex;justify-content:flex-end;min-width:58px"><span style="{{ s.yuzdeStil }}">{{ s.farkYaz }}</span></span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ kAzalanVar }}" hint-placeholder-val="{{ true }}">
+<div style="border-radius:16px;background:#fff;box-shadow:0 6px 20px rgba(90,60,35,.07);overflow:hidden;margin-bottom:9px">
+<div style="display:flex;align-items:center;gap:7px;padding:8px 14px;background:#f7e5e2">
+<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#9c3325" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l6 6 4-4 8 8"></path><path d="M15 17h6v-6"></path></svg>
+<span style="font-size:13px;font-weight:800;color:#9c3325;letter-spacing:-.01em">{{ kAzalanBaslik }}</span>
+</div>
+<sc-if value="{{ kAzalanBos }}" hint-placeholder-val="{{ false }}">
+<p style="margin:0;padding:13px 16px;border-top:1px solid #f0efec;font-size:13.5px;font-weight:700;color:#9b9792">Hiçbir derste net kaybetmemişsin.</p>
+</sc-if>
+<sc-for list="{{ kAzalanlar }}" as="s" hint-placeholder-count="2">
+<div style="display:flex;align-items:center;gap:10px;padding:7px 14px;border-top:1px solid #f2f1ee">
+<span style="flex:1;min-width:0;font-size:13.5px;font-weight:800;letter-spacing:-.01em;color:#1b1a19">{{ s.ad }}</span>
+<span style="flex:none;display:flex;align-items:baseline;gap:5px;font-size:12px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap"><span style="color:#9b9792">{{ s.solYaz }}</span><span style="color:#c9c5c0">→</span><span style="color:#b3491f">{{ s.sagYaz }}</span></span>
+<span style="flex:none;display:flex;justify-content:flex-end;min-width:58px"><span style="{{ s.yuzdeStil }}">{{ s.farkYaz }}</span></span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ kSabitKutuVar }}" hint-placeholder-val="{{ false }}">
+<div style="border-radius:16px;background:#fff;box-shadow:0 6px 20px rgba(90,60,35,.07);overflow:hidden;margin-bottom:9px">
+<div style="display:flex;align-items:center;gap:7px;padding:8px 14px;background:#efeeeb">
+<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#6b6764" stroke-width="2.8" stroke-linecap="round"><path d="M5 12h14"></path></svg>
+<span style="font-size:13px;font-weight:800;color:#5a5653;letter-spacing:-.01em">{{ kSabitBaslik }}</span>
+</div>
+<sc-for list="{{ kSabitListe }}" as="s" hint-placeholder-count="1">
+<div style="display:flex;align-items:center;gap:10px;padding:7px 14px;border-top:1px solid #f2f1ee">
+<span style="flex:1;min-width:0;font-size:13.5px;font-weight:800;letter-spacing:-.01em;color:#1b1a19">{{ s.ad }}</span>
+<span style="flex:none;font-size:12px;font-weight:800;color:#9b9792;font-variant-numeric:tabular-nums;white-space:nowrap">{{ s.netYazi }} net</span>
+<span style="flex:none;display:grid;place-items:center;min-width:42px;padding:3px 8px;border-radius:999px;background:#efeeeb;color:#6b6764;font-size:12.5px;font-weight:900;font-variant-numeric:tabular-nums">%0</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ kSabitVar }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:0;display:grid;grid-template-columns:1fr 1fr;gap:9px">
+<div style="min-width:0;border-radius:16px;background:#fff;border:1.5px solid #ecc9c3;box-shadow:0 6px 20px rgba(90,60,35,.07);padding:10px 13px">
+<span style="display:block;font-size:11.5px;font-weight:800;letter-spacing:.06em;color:#9c3325">EN BÜYÜK DÜŞÜŞ</span>
+<span style="display:block;font-size:17px;font-weight:900;letter-spacing:-.02em;color:#9c3325">{{ kOdakAd }}</span>
+<span style="display:block;font-size:12px;font-weight:700;color:#6b6764;font-variant-numeric:tabular-nums">{{ kOdakYaz }}</span>
+</div>
+<div style="min-width:0;border-radius:16px;background:#fff;border:1.5px solid #c9dcc2;box-shadow:0 6px 20px rgba(90,60,35,.07);padding:10px 13px">
+<span style="display:block;font-size:11.5px;font-weight:800;letter-spacing:.06em;color:#3f6b3a">EN BÜYÜK SIÇRAMA</span>
+<span style="display:block;font-size:17px;font-weight:900;letter-spacing:-.02em;color:#3f6b3a">{{ kKoruAd }}</span>
+<span style="display:block;font-size:12px;font-weight:700;color:#6b6764;font-variant-numeric:tabular-nums">{{ kKoruYaz }}</span>
+</div>
+
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+</div>
+</div>
+
+<div class="dv-opt" id="2b">
+<div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Cesur: cevap tek cümlelik başlık olarak turuncu blokta, sütunlar zeminde, dersler tek kart içinde kayıp sıralı tablo.</div>
+<div class="tel">
+<div class="ic" style="padding:0 0 104px">
+
+<div style="background:#b3491f;color:#fff;padding:20px 18px 18px;border-radius:0 0 26px 26px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<div style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:#fff"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg>Geri</div>
+<div style="display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.16);font-size:12.5px;font-weight:800">TYT<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></div>
+</div>
+
+<p style="margin:16px 0 0;font-size:12px;font-weight:800;letter-spacing:.18em;color:#fff">EN ÇOK KAYIP</p>
+<h1 style="margin:4px 0 0;font-size:31px;font-weight:900;letter-spacing:-.03em;line-height:1.1">{{ enKayipAd }}</h1>
+<p style="margin:4px 0 0;font-size:14.5px;font-weight:500;color:#fff;font-variant-numeric:tabular-nums">{{ enKayipYaz }}</p>
+
+<div style="display:flex;align-items:flex-end;gap:10px;margin-top:18px;height:74px">
+<sc-for list="{{ sutunlar }}" as="s" hint-placeholder-count="4">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="{{ s.yukseklikStil }}"></div><span style="{{ s.yaziStil }}">{{ s.netYazi }}</span></div>
+</sc-for>
+</div>
+</div>
+
+<div style="padding:16px">
+<div style="display:flex;gap:8px;margin-bottom:14px">
+<div style="flex:1;border-radius:15px;background:#fff;box-shadow:0 6px 20px rgba(90,60,35,.07);padding:11px 13px"><div style="font-size:11.5px;font-weight:700;color:#6b6764">Son / önceki</div><div style="display:flex;align-items:baseline;gap:5px"><span style="font-size:19px;font-weight:900;font-variant-numeric:tabular-nums">{{ sonNetYaz }}</span><span style="font-size:13px;font-weight:800;color:#4f7a4a;font-variant-numeric:tabular-nums">{{ sonFarkYaz }}</span></div></div>
+<div style="flex:1;border-radius:15px;background:#fff;box-shadow:0 6px 20px rgba(90,60,35,.07);padding:11px 13px"><div style="font-size:11.5px;font-weight:700;color:#6b6764">Ortalama</div><div style="font-size:19px;font-weight:900;font-variant-numeric:tabular-nums">{{ ortalamaNetYaz }}</div></div>
+</div>
+
+<div style="border-radius:20px;background:#fff;box-shadow:0 6px 20px rgba(90,60,35,.07);overflow:hidden">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:13px 15px 10px">
+<p style="margin:0;font-size:15.5px;font-weight:800;letter-spacing:-.01em;white-space:nowrap">Kayıp sıralaması</p>
+<span style="font-size:11px;font-weight:800;color:#6b6764;letter-spacing:.08em">SON 2 DENEME</span>
+</div>
+<sc-for list="{{ odakDersler }}" as="d" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:10px;padding:12px 15px;border-top:1px solid #eae9e6">
+<span style="flex:1;min-width:0;font-size:15px;font-weight:800;letter-spacing:-.01em">{{ d.ad }}</span>
+<span style="flex:none;display:flex;align-items:center;gap:8px">
+<span style="width:56px;height:8px;border-radius:4px;background:#efeeeb;overflow:hidden"><span style="display:block;height:8px;border-radius:4px;background:{{ d.vurgu }};width:{{ d.kayipOran }}"></span></span>
+<span style="width:52px;text-align:right;font-size:15.5px;font-weight:900;font-variant-numeric:tabular-nums">{{ d.kayip }}</span>
+<span style="width:50px;text-align:right;font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums;color:{{ d.farkRenk }}">{{ d.farkYaz }}</span>
+</span>
+</div>
+</sc-for>
+<div style="display:flex;align-items:center;gap:8px;padding:12px 15px;border-top:1px solid #eae9e6;background:#e9f0e4">
+<span style="flex:1;font-size:13.5px;font-weight:800;color:#4f7a4a">{{ enGucluYaz }}</span>
+<span style="font-size:13.5px;font-weight:900;color:#4f7a4a;font-variant-numeric:tabular-nums">{{ enGucluYuzde }}</span>
+</div>
+</div>
+</div>
+
+</div>
+<nav class="nav">
+<div class="nvb"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19v-8.5Z"></path><path d="M9.5 20.5V14h5v6.5"></path></svg>Ana Sayfa</div>
+<div class="nvb" style="color:#b3491f"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="3.5" y="13.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="13.5" width="7" height="7" rx="2"></rect></svg>Araçlar</div>
+<div class="nvb"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6.5 9 4l6 2.5L20.5 4v13.5L15 20l-6-2.5-5.5 2.5Z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Harita</div>
+<div class="nvb"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.3 4.6h5.4a5.7 5.7 0 0 1 5.7 5.7v2a2.4 2.4 0 0 1-.1.8l-1.7 5a3.2 3.2 0 0 1-6-.3l-.5-1.7h-1.6l-.5 1.7a3.2 3.2 0 0 1-6 .3l-1.7-5a2.4 2.4 0 0 1-.1-.8v-2a5.7 5.7 0 0 1 5.7-5.7Z"></path><path d="M8.4 9.4v3.2M6.8 11h3.2"></path><path d="M15.4 9.9h.01M17.2 12.1h.01"></path></svg>Oyunlar</div>
+<div class="nvb"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M19.4 14.5a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-2.8-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7h-.3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.1-2.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1v-.3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 2.8 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7h.3a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.4.9Z"></path></svg>Ayarlar</div>
+</nav>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Şunları yazabilirsin: “<a class="dv-oid" href="#2a">2a</a>’yı al ama başlığı <a class="dv-oid" href="#2b">2b</a> gibi turuncu blok yap” · “kayıp listesi 5 ders olsun” · “sütunların yerine tek büyük sayı”</p>
+</section>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Mevcut ekran — koddan birebir (components/ekranlar/istatistik.tsx)</span></div>
+<div class="dv-opts">
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Bugünkü hâli: 3 değer kutusu, çizgi grafik + eksen, tüm derslerin bar listesi, iki açıklama paragrafı, güçlü/güçsüz kartları.</div>
+<div class="tel" style="height:1470px">
+<div class="ic" style="padding:20px 16px 104px;overflow:visible">
+
+<div style="display:flex;align-items:center;gap:6px;margin-bottom:14px;color:#6b6764;font-weight:700;font-size:14px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg>Geri</div>
+
+<div style="margin-bottom:16px">
+<h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.02em">İstatistik</h1>
+<p style="margin:2px 0 0;font-size:14px;color:#6b6764;font-weight:500">TYT · 4 deneme</p>
+</div>
+
+<div style="margin-bottom:16px">
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<button style="border:1px solid #d9622f;background:#d9622f;color:#fff;border-radius:999px;padding:6px 12px;font:700 14px Nunito,sans-serif">TYT <span style="opacity:.7;font-variant-numeric:tabular-nums">4</span></button>
+<button style="border:1px solid #eae9e6;background:#fff;color:#6b6764;border-radius:999px;padding:6px 12px;font:700 14px Nunito,sans-serif">AYT Eşit Ağırlık <span style="opacity:.7;font-variant-numeric:tabular-nums">4</span></button>
+</div>
+<p style="margin:8px 0 0;font-size:12px;color:#6b6764;line-height:1.45">Her deneme türünün istatistiği ayrı tutulur; TYT netleriyle seviye tespit sınavı netleri birbirine karışmaz.</p>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px">
+<div style="border-radius:17.9px;background:#f5f4f1;padding:10px 12px"><p style="margin:0;font-size:12px;color:#6b6764">Ortalama</p><p style="margin:0;font-size:20px;font-weight:800;color:#b3491f;font-variant-numeric:tabular-nums">69,25</p></div>
+<div style="border-radius:17.9px;background:#f5f4f1;padding:10px 12px"><p style="margin:0;font-size:12px;color:#6b6764">En yüksek</p><p style="margin:0;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums">80,00</p></div>
+<div style="border-radius:17.9px;background:#f5f4f1;padding:10px 12px"><p style="margin:0;font-size:12px;color:#6b6764">Son deneme</p><p style="margin:0;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums">80,00</p><p style="margin:2px 0 0;font-size:12px;color:#6b6764;line-height:1.35">ortalamanın 10,75 üstü</p></div>
+</div>
+
+<div class="krt" style="margin-bottom:12px">
+<p style="margin:0 0 4px;font-size:16px;font-weight:500">Toplam net gidişatı</p>
+<p style="margin:0 0 8px;font-size:12px;color:#6b6764;line-height:1.45">120 soruluk TYT denemeleri. Bir noktaya dokunursan o denemenin tarihini ve netini gösterir.</p>
+<svg viewBox="0 0 320 180" style="width:100%;display:block">
+<line x1="44" x2="304" y1="16" y2="16" stroke="#e4e2de" stroke-width="1"></line><text x="36" y="20" text-anchor="end" fill="#6b6764" font-size="11" style="font-variant-numeric:tabular-nums">100</text>
+<line x1="44" x2="304" y1="85" y2="85" stroke="#e4e2de" stroke-width="1"></line><text x="36" y="89" text-anchor="end" fill="#6b6764" font-size="11" style="font-variant-numeric:tabular-nums">50</text>
+<line x1="44" x2="304" y1="154" y2="154" stroke="#e4e2de" stroke-width="1"></line><text x="36" y="158" text-anchor="end" fill="#6b6764" font-size="11" style="font-variant-numeric:tabular-nums">0</text>
+<path d="M44,74 L130.7,67.75 L217.3,48.4 L304,43.6 L304,154 L44,154 Z" fill="#b3491f" opacity="0.1"></path>
+<path d="M44,74 L130.7,67.75 L217.3,48.4 L304,43.6" fill="none" stroke="#b3491f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+<circle cx="304" cy="43.6" r="5" fill="#b3491f" stroke="#fff" stroke-width="2"></circle>
+<text x="44" y="172" fill="#6b6764" font-size="11" text-anchor="start">13.07</text>
+<text x="304" y="172" fill="#6b6764" font-size="11" text-anchor="end">24.08</text>
+</svg>
+<p style="margin:4px 0 0;text-align:center;font-size:14px"><span style="font-weight:500">TYT Deneme 4</span><span style="color:#6b6764"> · 24 Ağustos 2026 · </span><span style="font-weight:600;color:#b3491f">80,00 net</span></p>
+</div>
+
+<div class="krt" style="margin-bottom:12px">
+<p style="margin:0 0 12px;font-size:16px;font-weight:500">Ders bazlı ortalama</p>
+<sc-for list="{{ tumDersler }}" as="d" hint-placeholder-count="9">
+<div style="margin-bottom:12px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:14px;margin-bottom:4px">
+<span style="font-weight:500">{{ d.ad }}</span>
+<span style="flex:none;color:#6b6764;font-variant-numeric:tabular-nums"><span style="font-weight:600;color:#1b1a19">{{ d.ortalamaYaz }}</span> / {{ d.soru }}</span>
+</div>
+<div style="display:flex;align-items:center;gap:8px">
+<span style="flex:1;height:8px;border-radius:4px;background:#efeeeb;overflow:hidden"><span style="display:block;height:8px;border-radius:0 4px 4px 0;background:#b3491f;width:{{ d.oran }}"></span></span>
+<span style="display:flex;width:56px;flex:none;align-items:center;justify-content:flex-end;gap:2px;font-size:12px;font-weight:500;font-variant-numeric:tabular-nums;color:{{ d.farkRenk }}">{{ d.farkYaz }}</span>
+</div>
+</div>
+</sc-for>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+<div class="krt">
+<p style="margin:0 0 8px;font-size:14px;font-weight:500;color:#4f7a4a">En güçlü dersler</p>
+<div style="display:flex;justify-content:space-between;gap:8px;font-size:14px;margin-bottom:6px"><span>Felsefe</span><span style="color:#6b6764;font-variant-numeric:tabular-nums">%75</span></div>
+<div style="display:flex;justify-content:space-between;gap:8px;font-size:14px;margin-bottom:6px"><span>Tarih</span><span style="color:#6b6764;font-variant-numeric:tabular-nums">%70</span></div>
+<div style="display:flex;justify-content:space-between;gap:8px;font-size:14px"><span>Din Kültürü</span><span style="color:#6b6764;font-variant-numeric:tabular-nums">%70</span></div>
+</div>
+<div class="krt">
+<p style="margin:0 0 8px;font-size:14px;font-weight:500;color:#b23b2b">En güçsüz dersler</p>
+<div style="display:flex;justify-content:space-between;gap:8px;font-size:14px;margin-bottom:6px"><span>Fizik</span><span style="color:#6b6764;font-variant-numeric:tabular-nums">%46,4</span></div>
+<div style="display:flex;justify-content:space-between;gap:8px;font-size:14px;margin-bottom:6px"><span>Matematik</span><span style="color:#6b6764;font-variant-numeric:tabular-nums">%52,5</span></div>
+<div style="display:flex;justify-content:space-between;gap:8px;font-size:14px"><span>Kimya</span><span style="color:#6b6764;font-variant-numeric:tabular-nums">%57,1</span></div>
+</div>
+</div>
+
+</div>
+<nav class="nav">
+<div class="nvb"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19v-8.5Z"></path><path d="M9.5 20.5V14h5v6.5"></path></svg>Ana Sayfa</div>
+<div class="nvb" style="color:#b3491f"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="3.5" y="13.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="13.5" width="7" height="7" rx="2"></rect></svg>Araçlar</div>
+<div class="nvb"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6.5 9 4l6 2.5L20.5 4v13.5L15 20l-6-2.5-5.5 2.5Z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Harita</div>
+<div class="nvb"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.3 4.6h5.4a5.7 5.7 0 0 1 5.7 5.7v2a2.4 2.4 0 0 1-.1.8l-1.7 5a3.2 3.2 0 0 1-6-.3l-.5-1.7h-1.6l-.5 1.7a3.2 3.2 0 0 1-6 .3l-1.7-5a2.4 2.4 0 0 1-.1-.8v-2a5.7 5.7 0 0 1 5.7-5.7Z"></path><path d="M8.4 9.4v3.2M6.8 11h3.2"></path><path d="M15.4 9.9h.01M17.2 12.1h.01"></path></svg>Oyunlar</div>
+<div class="nvb"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M19.4 14.5a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-2.8-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7h-.3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.1-2.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1v-.3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 2.8 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7h.3a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.4.9Z"></path></svg>Ayarlar</div>
+</nav>
+</div>
+</div>
+</div>
+<p class="dv-next">Bu bölüm referans: kod bugün bunu çiziyor. Yeni yönler yukarıda — <a class="dv-oid" href="#2a">2a</a> ve <a class="dv-oid" href="#2b">2b</a>.</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;kayipSayisi&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:2,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Yeni tasarım&quot;},&quot;kayipRengi&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#b23b2b&quot;,&quot;options&quot;:[&quot;#b23b2b&quot;,&quot;#b3491f&quot;,&quot;#a87c24&quot;,&quot;#6b6764&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Yeni tasarım&quot;}}">
+const netYaz = (v, b = 2) => v.toLocaleString('tr-TR', { minimumFractionDigits: b, maximumFractionDigits: b })
+
+// lib/hesap.ts biçimiyle aynı: ortalama, yüzde, son 3 denemenin farkı
+const DERSLER = [
+  { ad: 'Türkçe', soru: 40, ortalama: 23.5, fark: 1.5, salinim: 3.5, onceki: 25.5, son: 26 },
+  { ad: 'Tarih', soru: 5, ortalama: 3.5, fark: 0.5, salinim: 1, onceki: 3.75, son: 4.25 },
+  { ad: 'Coğrafya', soru: 5, ortalama: 3.25, fark: -0.3, salinim: 0.75, onceki: 3.5, son: 3.25 },
+  { ad: 'Felsefe', soru: 5, ortalama: 3.75, fark: 0.2, salinim: 0.5, onceki: 4, son: 4 },
+  { ad: 'Din Kültürü', soru: 5, ortalama: 3.5, fark: 0, salinim: 0.5, onceki: 4, son: 4.5 },
+  { ad: 'Matematik', soru: 40, ortalama: 21, fark: 2.1, salinim: 6.5, onceki: 24.25, son: 25.5 },
+  { ad: 'Fizik', soru: 7, ortalama: 3.25, fark: -0.8, salinim: 2.25, onceki: 4, son: 3.5 },
+  { ad: 'Kimya', soru: 7, ortalama: 4, fark: 0.3, salinim: 1.5, onceki: 4.25, son: 5 },
+  { ad: 'Biyoloji', soru: 6, ortalama: 3.5, fark: 0, salinim: 1, onceki: 3.25, son: 4 },
+]
+
+const SORU = {
+  TYT: { 'Türkçe': 40, 'Matematik': 40, 'Tarih': 5, 'Coğrafya': 5, 'Felsefe': 5, 'Din Kültürü': 5, 'Fizik': 7, 'Kimya': 7, 'Biyoloji': 6 },
+  AYT: { 'Matematik': 40, 'Edebiyat': 24, 'Tarih': 10, 'Coğrafya': 6 },
+  STS: { 'Türkçe': 20, 'Matematik': 20, 'Sosyal': 10, 'Fen': 10 },
+}
+const toplamNet = (o) => Object.values(o).reduce((t, v) => t + v, 0)
+const DENEMELER = {
+  TYT: [
+    { id: 'e1', ad: 'TYT Deneme A', tarih: '4 Mayıs', dersler: { 'Türkçe': 17.5, 'Matematik': 11.5, 'Tarih': 2.5, 'Coğrafya': 2, 'Felsefe': 2.75, 'Din Kültürü': 3, 'Fizik': 1.75, 'Kimya': 2.25, 'Biyoloji': 2 } },
+    { id: 'e2', ad: 'TYT Deneme B', tarih: '18 Mayıs', dersler: { 'Türkçe': 18.25, 'Matematik': 12.75, 'Tarih': 2.75, 'Coğrafya': 2.25, 'Felsefe': 3, 'Din Kültürü': 3.25, 'Fizik': 2, 'Kimya': 2.5, 'Biyoloji': 2 } },
+    { id: 'e3', ad: 'TYT Deneme C', tarih: '1 Haziran', dersler: { 'Türkçe': 19, 'Matematik': 13.5, 'Tarih': 3, 'Coğrafya': 2.5, 'Felsefe': 2.75, 'Din Kültürü': 3.25, 'Fizik': 2, 'Kimya': 2.5, 'Biyoloji': 2.25 } },
+    { id: 'e4', ad: 'TYT Deneme D', tarih: '15 Haziran', dersler: { 'Türkçe': 18.75, 'Matematik': 14.75, 'Tarih': 3, 'Coğrafya': 2.5, 'Felsefe': 3.25, 'Din Kültürü': 3.5, 'Fizik': 2.25, 'Kimya': 2.75, 'Biyoloji': 2.25 } },
+    { id: 'e5', ad: 'TYT Deneme E', tarih: '29 Haziran', dersler: { 'Türkçe': 19.75, 'Matematik': 15.5, 'Tarih': 3.25, 'Coğrafya': 2.5, 'Felsefe': 3.25, 'Din Kültürü': 3.5, 'Fizik': 2.25, 'Kimya': 2.75, 'Biyoloji': 2.5 } },
+    { id: 'e6', ad: 'TYT Deneme F', tarih: '6 Temmuz', dersler: { 'Türkçe': 20, 'Matematik': 15.75, 'Tarih': 3, 'Coğrafya': 2.75, 'Felsefe': 3.5, 'Din Kültürü': 3.5, 'Fizik': 2.25, 'Kimya': 3, 'Biyoloji': 2.25 } },
+    { id: 't1', ad: 'TYT Deneme 1', tarih: '13 Temmuz', net: 58, dersler: { 'Türkçe': 20.5, 'Matematik': 16.25, 'Tarih': 3.25, 'Coğrafya': 2.75, 'Felsefe': 3.5, 'Din Kültürü': 3.75, 'Fizik': 2.5, 'Kimya': 3, 'Biyoloji': 2.5 } },
+    { id: 't2', ad: 'TYT Deneme 2', tarih: '27 Temmuz', net: 62.5, dersler: { 'Türkçe': 22, 'Matematik': 18, 'Tarih': 3.5, 'Coğrafya': 3.25, 'Felsefe': 3.5, 'Din Kültürü': 3.5, 'Fizik': 3, 'Kimya': 3.25, 'Biyoloji': 2.5 } },
+    { id: 't3', ad: 'TYT Deneme 3', tarih: '10 Ağustos', net: 76.5, dersler: { 'Türkçe': 26.5, 'Matematik': 24.25, 'Tarih': 3.75, 'Coğrafya': 3.5, 'Felsefe': 3.25, 'Din Kültürü': 3.75, 'Fizik': 4, 'Kimya': 4.25, 'Biyoloji': 3.25 } },
+    { id: 't4', ad: 'TYT Deneme 4', tarih: '24 Ağustos', net: 80, dersler: { 'Türkçe': 28.5, 'Matematik': 22.5, 'Tarih': 4.75, 'Coğrafya': 4.25, 'Felsefe': 3.75, 'Din Kültürü': 4.5, 'Fizik': 3.5, 'Kimya': 4, 'Biyoloji': 4.25 } },
+  ],
+  STS: [
+    { id: 's1', ad: 'Seviye Tespit 1', tarih: '11 Mayıs', dersler: { 'Türkçe': 11.5, 'Matematik': 8.25, 'Sosyal': 5.5, 'Fen': 4.25 } },
+    { id: 's2', ad: 'Seviye Tespit 2', tarih: '22 Haziran', dersler: { 'Türkçe': 12.75, 'Matematik': 9.5, 'Sosyal': 6, 'Fen': 4.75 } },
+    { id: 's3', ad: 'Seviye Tespit 3', tarih: '3 Ağustos', dersler: { 'Türkçe': 13.25, 'Matematik': 11.75, 'Sosyal': 6.25, 'Fen': 5.5 } },
+    { id: 's4', ad: 'Seviye Tespit 4', tarih: '14 Eylül', dersler: { 'Türkçe': 14.5, 'Matematik': 13, 'Sosyal': 7, 'Fen': 6.25 } },
+  ],
+  AYT: [
+    { id: 'a1', ad: 'AYT Deneme 1', tarih: '20 Temmuz', net: 41.5, dersler: { 'Matematik': 18, 'Edebiyat': 12.5, 'Tarih': 7, 'Coğrafya': 4 } },
+    { id: 'a2', ad: 'AYT Deneme 2', tarih: '3 Ağustos', net: 46, dersler: { 'Matematik': 20.25, 'Edebiyat': 13, 'Tarih': 8, 'Coğrafya': 4.75 } },
+    { id: 'a3', ad: 'AYT Deneme 3', tarih: '17 Ağustos', net: 44.75, dersler: { 'Matematik': 19, 'Edebiyat': 13.5, 'Tarih': 7.5, 'Coğrafya': 4.75 } },
+    { id: 'a4', ad: 'AYT Deneme 4', tarih: '31 Ağustos', net: 52.25, dersler: { 'Matematik': 23.5, 'Edebiyat': 14, 'Tarih': 9, 'Coğrafya': 5.75 } },
+  ],
+}
+
+class Component extends DCLogic {
+  state = { asama: null, tur: 'TYT', secili: [], tumDersAcik: false, anaTur: 'TYT' }
+
+  anaTurSec = (anaTur) => this.setState({ anaTur })
+  dersAc = () => this.setState({ tumDersAcik: true })
+  dersKapat = () => this.setState({ tumDersAcik: false })
+
+  ac = () => this.setState((s) => ({ asama: 'sec', tur: s.anaTur, secili: [] }))
+  kapat = () => this.setState({ asama: null, secili: [] })
+  turSec = (tur) => this.setState({ tur, secili: [] })
+  denemeSec = (id) =>
+    this.setState((s) => {
+      if (s.secili.includes(id)) return { secili: s.secili.filter((x) => x !== id) }
+      if (s.secili.length >= 2) return { secili: [s.secili[1], id] }
+      return { secili: [...s.secili, id] }
+    })
+
+  karsilastirmaVerisi() {
+    const liste = DENEMELER[this.state.tur]
+    const secili = this.state.secili
+      .map((id) => liste.find((d) => d.id === id))
+      .filter(Boolean)
+      .sort((a, b) => liste.indexOf(a) - liste.indexOf(b))
+    if (secili.length < 2) return null
+    const [solHam, sagHam] = secili
+    const sol = { ...solHam, net: toplamNet(solHam.dersler) }
+    const sag = { ...sagHam, net: toplamNet(sagHam.dersler) }
+    const adlar = Object.keys(sol.dersler)
+    const enBuyukFark = Math.max(...adlar.map((a) => Math.abs(sag.dersler[a] - sol.dersler[a])), 0.5)
+    const satirlar = adlar
+      .map((ad) => {
+        const f = sag.dersler[ad] - sol.dersler[ad]
+        const arti = f > 0.001
+        const eksi = f < -0.001
+        return {
+          ad,
+          fark: f,
+          gecisYaz: `${netYaz(sol.dersler[ad])} → ${netYaz(sag.dersler[ad])}`,
+          solYaz: netYaz(sol.dersler[ad]),
+          sagYaz: netYaz(sag.dersler[ad]),
+          farkYaz: `${arti ? '+' : eksi ? '−' : '±'}${netYaz(Math.abs(f))}`,
+          renk: arti ? '#3f6b3a' : eksi ? '#9c3325' : '#9b9792',
+          yuzdeStil: `display:grid;place-items:center;min-width:58px;padding:3px 9px;text-align:center;border-radius:999px;font-size:13px;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap;background:${arti ? '#e9f0e4' : eksi ? '#f7e5e2' : '#efeeeb'};color:${arti ? '#3f6b3a' : eksi ? '#9c3325' : '#6b6764'}`,
+          oran: sol.dersler[ad] > 0 ? Math.abs(f / sol.dersler[ad]) : Math.abs(f),
+          yuzdeYaz:
+            sol.dersler[ad] > 0
+              ? `%${Math.round(Math.abs(f / sol.dersler[ad]) * 100)}`
+              : arti
+                ? 'yeni'
+                : '%0',
+          barStil: `display:block;height:5px;border-radius:3px;width:${Math.max(8, (Math.abs(f) / enBuyukFark) * 100)}%;background:${arti ? '#4f7a4a' : eksi ? '#b23b2b' : '#c9c5c0'}`,
+        }
+      })
+      .sort((a, b) => Math.abs(b.fark) - Math.abs(a.fark))
+    return {
+      sol,
+      sag,
+      toplamFark: sag.net - sol.net,
+      satirlar,
+      artanlar: satirlar.filter((s) => s.fark > 0.001),
+      azalanlar: satirlar.filter((s) => s.fark < -0.001),
+      sabitler: satirlar.filter((s) => Math.abs(s.fark) <= 0.001).map((s) => s.ad),
+    }
+  }
+
+  renderVals() {
+    const adet = this.props.kayipSayisi ?? 3
+    const vurgu = this.props.kayipRengi ?? '#b23b2b'
+
+    const bicim = (d) => ({
+      ad: d.ad,
+      soru: d.soru,
+      ortalamaYaz: netYaz(d.ortalama),
+      oran: `${Math.round((d.ortalama / d.soru) * 100)}%`,
+      farkYaz: `${d.fark > 0.05 ? '↑ +' : d.fark < -0.05 ? '↓ −' : '– '}${netYaz(Math.abs(d.fark), 1)}`,
+      farkRenk: d.fark > 0.05 ? '#4f7a4a' : d.fark < -0.05 ? '#b23b2b' : '#6b6764',
+    })
+
+    const kayiplar = [...DERSLER]
+      .map((d) => ({ ...d, kayipNet: d.soru - d.ortalama }))
+      .sort((a, b) => b.kayipNet - a.kayipNet)
+    const enBuyukKayip = kayiplar[0].kayipNet
+
+    // Gelişim: TYT listesinin son iki denemesinin ders bazlı farkı (tek kaynak)
+    const anaTur = this.state.anaTur
+    const anaBtn = (aktif, genis) =>
+      `flex:1;height:46px;padding:0 6px;border:${aktif ? '0' : '1px solid #eae9e6'};border-radius:13px;background:${aktif ? '#d9622f' : '#fff'};color:${aktif ? '#fff' : '#6b6764'};font:800 15px Nunito,sans-serif;line-height:1.15;cursor:pointer`
+    const tytListe = DENEMELER[anaTur]
+    const sonD = tytListe[tytListe.length - 1].dersler
+    const oncekiD = tytListe[tytListe.length - 2].dersler
+    const gelisim = Object.keys(sonD)
+      .map((ad) => ({
+        ad,
+        soru: SORU[anaTur][ad] || 1,
+        fark: sonD[ad] - oncekiD[ad],
+        ortalama: tytListe.reduce((t, x) => t + x.dersler[ad], 0) / tytListe.length,
+        oncekiNet: oncekiD[ad],
+        sonNet: sonD[ad],
+        artis: sonD[ad] - oncekiD[ad],
+      }))
+      .filter((d) => d.artis > 0.001)
+      .sort((a, b) => b.artis - a.artis)
+    const enBuyukArtis = gelisim.length > 0 ? gelisim[0].artis : 1
+
+    // Oynaklık: derste en iyi ve en kötü deneme neti arasındaki fark
+    const oynaklik = DERSLER.map((d) => {
+      const enYuksek = Math.min(d.soru, d.ortalama + d.salinim)
+      const enDusuk = Math.max(0, d.ortalama - d.salinim)
+      return { ...d, enYuksek, enDusuk, aralik: enYuksek - enDusuk }
+    }).sort((a, b) => b.aralik - a.aralik)
+    const enOynak = oynaklik[0].aralik
+
+    // Düşüşe geçenler: son 3 denemenin ortalamadan farkı negatif olan dersler
+    const dusenler = DERSLER.filter((d) => d.fark < -0.05).sort((a, b) => a.fark - b.fark)
+    const enSertDusus = dusenler.length > 0 ? Math.abs(dusenler[0].fark) : 1
+
+    const { asama, tur, secili } = this.state
+    const k = this.karsilastirmaVerisi()
+    const oranlar = Object.keys(sonD).map((ad) => ({
+      ad,
+      oran: tytListe.reduce((t, x) => t + x.dersler[ad], 0) / tytListe.length / (SORU[anaTur][ad] || 1),
+    }))
+    const enIyiDers = [...oranlar].sort((a, b) => b.oran - a.oran)[0]
+    const enKotuDers = [...oranlar].sort((a, b) => a.oran - b.oran)[0]
+    const tumNetler = tytListe.map((x) => toplamNet(x.dersler))
+
+    const dersOrt = Object.keys(sonD)
+      .map((ad) => {
+        const soru = SORU[anaTur][ad] || 1
+        const ort = tytListe.reduce((t, x) => t + x.dersler[ad], 0) / tytListe.length
+        const y = Math.min(100, Math.round((ort / soru) * 100))
+        return { ad, ortYaz: netYaz(ort), soruYaz: `${soru} soru`, oran: `${y}%`, yuzdeYaz: `%${y}`, y }
+      })
+      .sort((a, b) => b.y - a.y)
+
+    const canli = Object.keys(sonD).map((ad) => {
+      const soru = SORU[anaTur][ad] ?? 0
+      const ort = tytListe.reduce((t, x) => t + x.dersler[ad], 0) / tytListe.length
+      return { ad, soru, ortalama: ort, kayipNet: soru - ort, fark: sonD[ad] - oncekiD[ad] }
+    })
+    const canliKayip = [...canli].sort((a, b) => b.kayipNet - a.kayipNet)
+    const enBuyukCanliKayip = canliKayip[0].kayipNet
+    const enKayip = canliKayip[0]
+
+    const son4 = tytListe.slice(-4).map((x) => toplamNet(x.dersler))
+    const son4Max = Math.max(...son4)
+    const sutunlar = son4.map((n, i) => ({
+      netYazi: netYaz(n),
+      yukseklikStil: `width:100%;height:${Math.round((n / son4Max) * 68)}px;border-radius:7px;background:${i === son4.length - 1 ? '#fff' : i === son4.length - 2 ? 'rgba(255,255,255,.45)' : 'rgba(255,255,255,.3)'}`,
+      yaziStil: `font-size:11px;font-weight:${i === son4.length - 1 ? 900 : 700};color:#fff;font-variant-numeric:tabular-nums`,
+    }))
+
+    const sonFark = tumNetler[tumNetler.length - 1] - tumNetler[tumNetler.length - 2]
+
+    const enCokDusen = k ? [...k.azalanlar].sort((a, b) => a.fark - b.fark)[0] : null
+    const enCokArtan = k ? [...k.artanlar].sort((a, b) => b.fark - a.fark)[0] : null
+    const stil = (aktif) =>
+      aktif
+        ? 'flex:1;height:40px;border:0;border-radius:14px;background:#d9622f;color:#fff;font:800 15px Nunito,sans-serif'
+        : 'flex:1;height:40px;border:1px solid #eae9e6;border-radius:14px;background:#fff;color:#6b6764;font:700 15px Nunito,sans-serif'
+
+    return {
+      enGucluYaz: `En güçlü: ${dersOrt.slice(0, 3).map((d) => d.ad).join(' · ')}`,
+      enGucluYuzde: dersOrt[0].yuzdeYaz,
+      enKayipAd: enKayip.ad,
+      enKayipYaz: `${enKayip.soru} soruda ortalama ${netYaz(enKayip.ortalama)} net · ${netYaz(enKayip.kayipNet)} kayıp`,
+      sutunlar,
+      miniSutunlar: son4.map((n, i) => ({
+        netYazi: netYaz(n, 1),
+        barStil: `width:30px;height:${Math.round((n / son4Max) * 60)}px;border-radius:7px 7px 3px 3px;background:${i === son4.length - 1 ? '#d9622f' : i === son4.length - 2 ? '#eccdb9' : '#f1e2d8'}`,
+        yaziStil: `font-size:10.5px;font-weight:${i === son4.length - 1 ? 900 : 700};color:${i === son4.length - 1 ? '#b3491f' : '#6b6764'};font-variant-numeric:tabular-nums;white-space:nowrap`,
+      })),
+      dersOrtIlk: dersOrt.slice(0, 3),
+      dersOrtTum: canli
+        .map((d) => ({
+          ad: d.ad,
+          gecisYaz: `${netYaz(sonD[d.ad] - d.fark)} → ${netYaz(sonD[d.ad])}`,
+          farkYaz: `${d.fark > 0.001 ? '+' : d.fark < -0.001 ? '−' : '±'}${netYaz(Math.abs(d.fark))}`,
+          rozetStil: `flex:none;display:grid;place-items:center;min-width:58px;padding:3px 9px;border-radius:999px;font-size:12.5px;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap;background:${d.fark > 0.001 ? '#e9f0e4' : d.fark < -0.001 ? '#f7e5e2' : '#efeeeb'};color:${d.fark > 0.001 ? '#3f6b3a' : d.fark < -0.001 ? '#9c3325' : '#6b6764'}`,
+          barStil: `display:block;height:6px;border-radius:3px;background:${d.fark > 0.001 ? '#4f7a4a' : d.fark < -0.001 ? '#b23b2b' : '#c9c5c0'};width:${Math.max(6, Math.round((Math.abs(d.fark) / Math.max(...canli.map((x) => Math.abs(x.fark)), 0.5)) * 100))}%`,
+        }))
+        .sort((a, b) => parseFloat(b.farkYaz.replace('−', '-').replace('±', '').replace(',', '.')) - parseFloat(a.farkYaz.replace('−', '-').replace('±', '').replace(',', '.'))),
+      dersOrtSayi: `${canli.length} ders`,
+      tumDersAcik: this.state.tumDersAcik,
+      dersAc: this.dersAc,
+      dersKapat: this.dersKapat,
+      denemeSayisiYaz: `${anaTur} · ${tytListe.length} deneme`,
+      tytAnaSec: () => this.anaTurSec('TYT'),
+      aytAnaSec: () => this.anaTurSec('AYT'),
+      stsAnaSec: () => this.anaTurSec('STS'),
+      tytAnaStil: anaBtn(anaTur === 'TYT'),
+      aytAnaStil: anaBtn(anaTur === 'AYT'),
+      stsAnaStil: anaBtn(anaTur === 'STS', true),
+      sonNetYaz: netYaz(tumNetler[tumNetler.length - 1]),
+      oncekiNetYaz: netYaz(tumNetler[tumNetler.length - 2]),
+      ortalamaNetYaz: netYaz(tumNetler.reduce((t, v) => t + v, 0) / tumNetler.length),
+      sonFarkYaz: `${sonFark >= 0 ? '+' : '−'}${netYaz(Math.abs(sonFark))}`,
+      sonFarkStil: `display:inline-flex;align-items:center;gap:2px;padding:3px 9px;border-radius:999px;font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;background:${sonFark >= 0 ? '#e9f0e4' : '#f7e5e2'};color:${sonFark >= 0 ? '#3f6b3a' : '#9c3325'}`,
+      enIyiDersAd: enIyiDers.ad,
+      enKotuDersAd: enKotuDers.ad,
+      enYuksekNet: netYaz(Math.max(...tumNetler)),
+      enDusukNet: netYaz(Math.min(...tumNetler)),
+      secimAcik: asama === 'sec',
+      sonucAcik: asama === 'sonuc' && !!k,
+      ac: this.ac,
+      kapat: this.kapat,
+      geriSecime: () => this.setState({ asama: 'sec' }),
+      tytSec: () => this.turSec('TYT'),
+      aytSec: () => this.turSec('AYT'),
+      tytStil: stil(tur === 'TYT'),
+      aytStil: stil(tur === 'AYT'),
+      turAdi: tur,
+      hazir: secili.length === 2,
+      karsilastirBtnStil:
+        secili.length === 2
+          ? 'width:100%;height:48px;border:0;border-radius:17.9px;background:#d9622f;color:#fff;font:800 16px Nunito,sans-serif'
+          : 'width:100%;height:48px;border:0;border-radius:17.9px;background:#e4e2de;color:#9b9792;font:800 16px Nunito,sans-serif',
+      karsilastir: () => secili.length === 2 && this.setState({ asama: 'sonuc' }),
+      secimYaz: secili.length === 0 ? 'İki deneme seç' : secili.length === 1 ? 'Bir deneme daha seç' : 'Karşılaştırmaya hazır',
+      denemeler: DENEMELER[tur].map((ham) => {
+        const d = { ...ham, net: toplamNet(ham.dersler) }
+        const i = secili.indexOf(d.id)
+        const aktif = i >= 0
+        return {
+          ad: d.ad,
+          tarih: d.tarih,
+          netYazi: netYaz(d.net),
+          rozet: aktif ? (i === 0 ? 'A' : 'B') : '',
+          rozetStil: aktif
+            ? 'display:grid;place-items:center;width:26px;height:26px;flex:none;border-radius:9px;background:#d9622f;color:#fff;font:900 13px Nunito,sans-serif'
+            : 'display:grid;place-items:center;width:26px;height:26px;flex:none;border-radius:9px;border:2px solid #e4e2de;background:#fff',
+          satirStil: aktif
+            ? 'display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;border:2px solid #d9622f;border-radius:16px;background:#fdf4ef;cursor:pointer'
+            : 'display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;border:2px solid #eae9e6;border-radius:16px;background:#fff;cursor:pointer',
+          sec: () => this.denemeSec(d.id),
+        }
+      }),
+      kSolAd: k ? k.sol.ad : '',
+      kSolTarih: k ? k.sol.tarih : '',
+      kSolNet: k ? netYaz(k.sol.net) : '',
+      kSagAd: k ? k.sag.ad : '',
+      kSagTarih: k ? k.sag.tarih : '',
+      kSagNet: k ? netYaz(k.sag.net) : '',
+      kFarkYaz: k ? `${k.toplamFark > 0 ? '+' : k.toplamFark < 0 ? '−' : '±'}${netYaz(Math.abs(k.toplamFark))} net` : '',
+      kFarkStil: k
+        ? `display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;font:900 15px Nunito,sans-serif;white-space:nowrap;background:${k.toplamFark >= 0 ? '#e9f0e4' : '#f7e5e2'};color:${k.toplamFark >= 0 ? '#4f7a4a' : '#b23b2b'}`
+        : '',
+      kSatirlar: k ? k.satirlar : [],
+      kArtanlar: k ? k.artanlar : [],
+      kAzalanlar: k ? k.azalanlar : [],
+      kArtanVar: !!k,
+      kAzalanVar: !!k,
+      kArtanBos: !!k && k.artanlar.length === 0,
+      kAzalanBos: !!k && k.azalanlar.length === 0,
+      kKazancToplam: k ? `+${netYaz(k.artanlar.reduce((t, s) => t + Math.abs(s.fark), 0))}` : '',
+      kKayipToplam: k ? `−${netYaz(k.azalanlar.reduce((t, s) => t + Math.abs(s.fark), 0))}` : '',
+      kKazancDers: k ? `${k.artanlar.length} derste` : '',
+      kKayipDers: k ? `${k.azalanlar.length} derste` : '',
+      kOdakAd: enCokDusen ? enCokDusen.ad : 'Yok',
+      kOdakYaz: enCokDusen ? `${netYaz(Math.abs(enCokDusen.fark))} net kaybettirdi` : 'Düşen ders yok',
+      kKoruAd: enCokArtan ? enCokArtan.ad : 'Yok',
+      kKoruYaz: enCokArtan ? `${netYaz(Math.abs(enCokArtan.fark))} net kazandırdı` : 'Yükselen ders yok',
+      kSabitVar: !!k,
+      kSabitKutuVar: !!k && k.sabitler.length > 0,
+      kSabitBaslik: k ? `Değişmeyen netler · ${k.sabitler.length} ders` : '',
+      kSabitListe: k ? k.sabitler.map((ad) => ({ ad, netYazi: netYaz(k.sag.dersler[ad]) })) : [],
+      kEnCokArtan: k && k.artanlar.length > 0 ? k.artanlar[0].ad : '—',
+      kEnCokArtanYaz: k && k.artanlar.length > 0 ? `${k.artanlar[0].solYaz} → ${k.artanlar[0].sagYaz} net` : 'kazanç yok',
+      kEnCokAzalan: k && k.azalanlar.length > 0 ? k.azalanlar[0].ad : '—',
+      kEnCokAzalanYaz: k && k.azalanlar.length > 0 ? `${k.azalanlar[0].solYaz} → ${k.azalanlar[0].sagYaz} net` : 'kayıp yok',
+      kSabitSayi: k ? `${k.sabitler.length}` : '0',
+      kSabitAltYaz: k && k.sabitler.length > 0 ? k.sabitler.join(' · ') : 'her derste değişim var',
+      kArtanBaslik: k ? `Kazandığın netler · ${k.artanlar.length} ders` : '',
+      kAzalanBaslik: k ? `Kaybettiğin netler · ${k.azalanlar.length} ders` : '',
+      kSonDeneme: k ? k.sag.ad : '',
+      tumDersler: DERSLER.map(bicim),
+      kazancDersler: gelisim.slice(0, adet).map((d, i) => ({
+        ...bicim(d),
+        sira: i + 1,
+        kazanc: `+${netYaz(d.artis)}`,
+        kazancOran: `${Math.round((d.artis / enBuyukArtis) * 100)}%`,
+        durumYaz: `${netYaz(d.oncekiNet)} → ${netYaz(d.sonNet)}`,
+        vurgu,
+      })),
+      dususDersler: dusenler.slice(0, adet).map((d, i) => ({
+        ...bicim(d),
+        sira: i + 1,
+        kayip: netYaz(Math.abs(d.fark), 1),
+        ortYaz: `ort. ${netYaz(d.ortalama)} / ${d.soru}`,
+        kayipOran: `${Math.round((Math.abs(d.fark) / enSertDusus) * 100)}%`,
+        vurgu,
+      })),
+      odakDersler: canliKayip.slice(0, adet).map((d, i) => ({
+        ...bicim(d),
+        sira: i + 1,
+        kayip: netYaz(d.kayipNet),
+        kayipOran: `${Math.round((d.kayipNet / enBuyukCanliKayip) * 100)}%`,
+        ortalamaYaz: netYaz(d.ortalama),
+        vurgu,
+      })),
+    }
+  }
+}
+</script>
+</body>
+</html>

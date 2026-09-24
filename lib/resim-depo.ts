@@ -65,7 +65,11 @@ export async function oksuzResimleriSil(kullanilanIdler: string[]): Promise<numb
  * gezindikçe blob'lar bellekte birikir. `iptal` bayrağı, okuma bitmeden bileşen
  * kaldırılırsa oluşan adresin de sızmasını engelliyor.
  */
-export function useResimUrl(resimId: string | null | undefined): string | null {
+export function useResimUrl(
+  resimId: string | null | undefined,
+  /** Aynı anahtarın içeriği değiştiyse artırılır (soru çizimi kaydedilince). */
+  yenile: unknown = 0,
+): string | null {
   const [url, setUrl] = useState<string | null>(null)
 
   useEffect(() => {
@@ -92,7 +96,7 @@ export function useResimUrl(resimId: string | null | undefined): string | null {
       if (olusan) URL.revokeObjectURL(olusan)
       setUrl(null)
     }
-  }, [resimId])
+  }, [resimId, yenile])
 
   return url
 }

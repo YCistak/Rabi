@@ -801,6 +801,72 @@ galeride görüntüsü olmayan bir kart kalırdı.
 Katman kayıttan sonra kapanıyor: asıl iş deneme formuna dönmek, art arda çekim
 isteyen kullanıcı düğmeye yeniden basıyor.
 
+### Ders seçiliyor, yazılmıyor
+
+Ekleme formundaki ders alanı serbest metindi (önerili); "matematik", "Mat",
+"mat." aynı dersin üç ayrı süzgeç çipi oluyordu. Artık on çipten biri
+seçiliyor (`YANLIS_SORU_DERSLERI`, `lib/dersler.ts`) ve Kaydet ancak bir
+ders seçilince açılıyor. Liste `CALISMA_DERSLERI`den **ayrı**: o liste soru
+takibi ve Pomodoro'nun ve seans türlerini ("Tekrar") de taşıyor. Türkçe ile
+Edebiyat tek ders (Türk Dili ve Edebiyatı), Geometri yok (Matematik'in
+içinde), diller tek "Yabancı Dil"; uymayan her şey "Diğer". Eski kayıtlardaki
+adlar yeniden adlandırılmıyor — süzgeç ve renk onları da tanıyor.
+
+Konu 30, not 60 harfle sınırlı (`YANLIS_SORU_KONU_SINIRI`,
+`YANLIS_SORU_NOT_SINIRI`): ikisi de küçük karede ve görüntüleyicinin
+başlığında tek satırda duruyor. Alanın altında sayaç var, sınır sessizce
+kesmesin; yapıştırılan metin `maxLength`i aşabildiği için kayıtta da
+kırpılıyor.
+
+## Yanlış sorunun fotoğrafına çiziliyor
+
+Görüntüleyicide alttaki düğmelerin üstünde yuvarlak bir **kalem** düğmesi var
+(yazısız; adı ekran okuyucuya `aria-label` ile söyleniyor); basınca
+Çözdüm, çöp ve atla düğmeleri kalkıyor, yerlerine yalnızca araç çubuğu
+geliyor (kalem, silgi, el, kalınlık, yakınlaştırma, geri al, temizle, dört
+renk). Vazgeç/Kaydet araç çubuğunun **hemen üstünde**, yan yana ve tam
+genişlikte iki dikdörtgen düğme; bir süre üst köşede küçük düğmelerdi ve
+başparmaktan uzaktı (`components/soru-cizimi.tsx`, hesaplar `lib/cizim.ts`).
+
+- **Yalnızca fotoğrafın üstüne.** Tuval ekranı kaplamıyor, fotoğrafın
+  `object-contain` kutusu hesaplanıp (`fotografKutusu`) tam oraya oturuyor;
+  altındaki ve üstündeki siyah boşluk yüzeyin dışında. Dışarı taşan nokta
+  kenara **kısılmıyor** — kısılsaydı fotoğraftan çıkan parmak kenar boyunca
+  bir çizgi sürüklerdi; taşan parçayı tuval kendisi kesiyor.
+- **Fotoğrafa dokunulmuyor.** Çizim ayrı bir saydam PNG, aynı IndexedDB
+  deposunda `cizimAnahtari(resimId)` altında. Kayda alan eklenmedi: eski
+  yedekler ve kayıt doğrulaması olduğu gibi çalışıyor. Öksüz temizliği,
+  silme ve yedek bu anahtarı da biliyor — yeni bir yere fotoğraf kimliği
+  listesi yazarsan çizimi de ekle, yoksa öksüz sayılıp silinir.
+- **Çizgiler oran olarak tutuluyor**, kalınlık da genişliğin oranı; kayıt
+  fotoğrafın asıl çözünürlüğünde (uzun kenar en fazla 1600) yeniden
+  kuruluyor. Çizim fotoğrafla aynı en-boy oranında olduğu için küçük karede
+  `object-cover` ikisini aynı yerden kırpıyor.
+- **Kalınlık tek düğme + dikey çubuk**, üç sabit seçenek değil: ince bir
+  cevap yazısı ile kalın bir altı çizme arasında üç basamak yetmiyordu. Çubuk
+  karesel (ince uçta hassas). `<input type="range">` değil, elle yazılı:
+  dikey sürgü WebView sürümüne göre ya yatay kalıyor ya ters çalışıyordu.
+  Kalem ve silginin kalınlığı ayrı tutuluyor.
+- **Yakınlaştırma kutuyu büyütmüyor**, fotoğrafı kutunun içinde büyütüyor
+  (%100–%400). Seçimi kalınlıkla **aynı dikey çubuk** (`DikeyCubuk`): bir
+  süre +/− basamaklarıydı; iki araç aynı biçimde durunca ikincisi
+  öğretilmeden anlaşılıyor. Çubuk logaritmik (ortası iki kat) ve dibe yakın
+  bırakılan değer tam %100'e oturuyor. Kutu `overflow: hidden`, siyah boşluk yine çizilemiyor.
+  Tek parmak çizdiği için fotoğrafı gezdirmenin ayrı bir aracı var (**el**,
+  yalnızca yakınlaştırılmışken açık, zoom düğmesinin hemen yanında — ikisi
+  aynı işin iki yarısı). Kalınlık ekrandaki boy: yakınken
+  çizilen çizgi fotoğrafa göre o oranda ince kaydediliyor
+  (`cizgiKalinligi`) — yakınlaştırmanın sebebi ince iş. Çizimden çıkınca
+  fotoğraf yeniden sığdırılıyor.
+- **Silginin halkası.** Silgi seçiliyken parmağın/imlecin altında Paint'teki
+  gibi beyaz bir halka duruyor, çapı silginin ekrandaki genişliği. Silgi
+  saydam iz bıraktığı için basmadan ne kadar yer götüreceği görünmüyordu.
+  Halka ölçeklenen katmanın dışında (yakınlaştırmada kalınlaşmasın) ve
+  konumu state'e değil öğenin stiline yazılıyor — her harekette yeniden
+  çizim, çizerken takılmak demekti.
+- **Geri tuşu kaydediyor**, atmıyor: yanlışlıkla basılan geri çizilen her
+  şeyi sessizce silerdi. Atmanın yolu Vazgeç. Çizerken kapatma düğmesi yok.
+
 ## Soru Takibi bir günlük telafi kabul ediyor
 
 Soru Takibi'nde bugün ve yalnızca bir önceki gün düzenlenebilir. Daha eski

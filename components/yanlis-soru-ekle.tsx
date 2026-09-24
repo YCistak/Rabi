@@ -3,11 +3,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { Camera, Check, ImagePlus } from 'lucide-react'
 import type { YanlisSoru } from '@/lib/types'
-import { CALISMA_DERSLERI, dersOnerileriniSuz } from '@/lib/dersler'
+import {
+  YANLIS_SORU_DERSLERI,
+  YANLIS_SORU_KONU_SINIRI,
+  YANLIS_SORU_NOT_SINIRI,
+} from '@/lib/dersler'
 import { cihazdaMi, cihazdanFotograf, dosyadanFotograf, type Kaynak } from '@/lib/kamera'
 import { resimYaz } from '@/lib/resim-depo'
-import { bugun, yeniId } from '@/lib/utils'
-import { Alan, BaslikSatiri, Buton, Etiket, Kart, Not, SecmeliAlan } from '@/components/ui'
+import { bugun, cn, yeniId } from '@/lib/utils'
+import { Alan, BaslikSatiri, Buton, Cip, Etiket, Kart, Not } from '@/components/ui'
 
 /**
  * Yanlış soru ekleme — fotoğrafı alan ve kaydeden ortak parça.
@@ -132,16 +136,13 @@ export function EklemeFormu({
   onKaydet,
   onVazgec,
   hata,
-  varsayilanDers = '',
 }: {
   onizleme: string
   onKaydet: (bilgi: SoruBilgisi) => Promise<void>
   onVazgec: () => void
   hata: string | null
-  /** Deneme formundan gelirken ders zaten biliniyor; boşsa kullanıcı yazıyor. */
-  varsayilanDers?: string
 }) {
-  const [ders, setDers] = useState(varsayilanDers)
+  const [ders, setDers] = useState('')
   const [konu, setKonu] = useState('')
   const [not, setNot] = useState('')
   const [kaydediliyor, setKaydediliyor] = useState(false)
@@ -150,7 +151,7 @@ export function EklemeFormu({
 
   return (
     <div>
-      <BaslikSatiri baslik="Soruyu ekle" aciklama="Hangi dersten olduğunu yaz, sonra kaydet" />
+      <BaslikSatiri baslik="Soruyu ekle" aciklama="Hangi dersten olduğunu seç, sonra kaydet" />
 
       <div className="mb-4 overflow-hidden rounded-2xl border border-border bg-muted">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -165,14 +166,15 @@ export function EklemeFormu({
 
       <Kart className="space-y-3">
         <div>
-          <Etiket htmlFor="banka-ders">Ders</Etiket>
-          <SecmeliAlan
-            id="banka-ders"
-            deger={ders}
-            onDegis={setDers}
-            oneriler={dersOnerileriniSuz(ders, [], CALISMA_DERSLERI)}
-            placeholder="örn. Matematik"
-          />
+          <Etiket id="banka-ders">Ders</Etiket>
+          {/* Yazılmıyor, seçiliyor: Kaydet bir ders seçilene kadar pasif. */}
+          <div className="flex flex-wrap gap-2" role="group" aria-labelledby="banka-ders">
+            {YANLIS_SORU_DERSLERI.map((d) => (
+              <Cip key={d} secili={ders === d} onClick={() => setDers(d)}>
+                {d}
+              </Cip>
+            ))}
+          </div>
         </div>
 
         <div>
@@ -181,8 +183,10 @@ export function EklemeFormu({
             id="banka-konu"
             value={konu}
             onChange={(e) => setKonu(e.target.value)}
+            maxLength={YANLIS_SORU_KONU_SINIRI}
             placeholder="örn. Türev"
           />
+          <Sayac uzunluk={konu.length} sinir={YANLIS_SORU_KONU_SINIRI} />
         </div>
 
         <div>
@@ -191,8 +195,10 @@ export function EklemeFormu({
             id="banka-not"
             value={not}
             onChange={(e) => setNot(e.target.value)}
+            maxLength={YANLIS_SORU_NOT_SINIRI}
             placeholder="örn. İkinci adımda takıldım"
           />
+          <Sayac uzunluk={not.length} sinir={YANLIS_SORU_NOT_SINIRI} />
         </div>
 
         <div className="flex gap-2 pt-1">
@@ -204,7 +210,12 @@ export function EklemeFormu({
             disabled={!kaydedilebilir}
             onClick={async () => {
               setKaydediliyor(true)
-              await onKaydet({ ders, konu, not })
+              // Yapıştırılan metin `maxLength`i aşabiliyor; sınır kayıtta da tutuluyor.
+              await onKaydet({
+                ders,
+                konu: konu.slice(0, YANLIS_SORU_KONU_SINIRI),
+                not: not.slice(0, YANLIS_SORU_NOT_SINIRI),
+              })
               setKaydediliyor(false)
             }}
           >
@@ -214,5 +225,19 @@ export function EklemeFormu({
         </div>
       </Kart>
     </div>
+  )
+}
+
+/** Kalan harf; sınır sessizce kesmesin diye alanın altında duruyor. */
+function Sayac({ uzunluk, sinir }: { uzunluk: number; sinir: number }) {
+  return (
+    <p
+      className={cn(
+        'rakam mt-1 text-right text-xs',
+        uzunluk >= sinir ? 'text-danger' : 'text-muted-foreground',
+      )}
+    >
+      {uzunluk}/{sinir}
+    </p>
   )
 }

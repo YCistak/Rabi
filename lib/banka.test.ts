@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest'
-import { bankaOzeti, bankaSuz, derslereGore, gecerliDers } from './banka'
+import {
+  bankaOzeti,
+  bankaSuz,
+  bekledigiGun,
+  derslereGore,
+  dersRengi,
+  gecerliDers,
+  tarihGruplari,
+  yasEtiketi,
+} from './banka'
 import type { YanlisSoru } from './types'
+import { YANLIS_SORU_DERSLERI } from './dersler'
 
 function soru(veri: Partial<YanlisSoru> & { id: string }): YanlisSoru {
   return {
@@ -104,5 +114,55 @@ describe('gecerliDers', () => {
 
   it('Tümü zaten geçerli', () => {
     expect(gecerliDers('', dersler)).toBe('')
+  })
+})
+
+describe('dersRengi', () => {
+  it('yazım farkını yok sayıyor, yakın dersi aileye bağlıyor', () => {
+    expect(dersRengi('MATEMATİK')).toBe('matematik')
+    expect(dersRengi('Geometri')).toBe('matematik')
+    expect(dersRengi('edebiyat')).toBe('turkce')
+    expect(dersRengi('Coğrafya')).toBe('cografya')
+  })
+  it('ailesi olmayan derste null', () => {
+    expect(dersRengi('Felsefe')).toBeNull()
+  })
+})
+
+describe('bekleme', () => {
+  it('ay sınırında gün sayıyor', () => {
+    expect(bekledigiGun('2026-08-30', '2026-09-02')).toBe(3)
+    expect(bekledigiGun('2026-09-05', '2026-09-02')).toBe(0)
+  })
+  it('etiket', () => {
+    expect(yasEtiketi(0)).toBe('bugün')
+    expect(yasEtiketi(1)).toBe('dün')
+    expect(yasEtiketi(12)).toBe('12 gün')
+  })
+})
+
+describe('tarihGruplari', () => {
+  it('yedinci gün "Daha önce"ye düşüyor, boş grup yok', () => {
+    const liste = [
+      soru({ id: 'a', tarih: '2026-08-20' }),
+      soru({ id: 'b', tarih: '2026-08-14' }),
+      soru({ id: 'c', tarih: '2026-08-13' }),
+    ]
+    const g = tarihGruplari(liste, '2026-08-20')
+    expect(g.map((x) => [x.baslik, x.sorular.map((s) => s.id)])).toEqual([
+      ['Bu hafta', ['a', 'b']],
+      ['Daha önce', ['c']],
+    ])
+    expect(tarihGruplari([liste[2]], '2026-08-20').map((x) => x.baslik)).toEqual(['Daha önce'])
+  })
+})
+
+describe('yanlış soru dersleri', () => {
+  it('Türk Dili ve Edebiyatı Türkçe renginde; Geometri listede yok', () => {
+    expect(dersRengi('Türk Dili ve Edebiyatı')).toBe('turkce')
+    expect(YANLIS_SORU_DERSLERI).not.toContain('Geometri')
+    expect(YANLIS_SORU_DERSLERI).toEqual(
+      expect.arrayContaining(['Felsefe', 'Yabancı Dil', 'Coğrafya', 'Diğer']),
+    )
   })
 })

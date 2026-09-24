@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useGeriKatmani } from '@/lib/geri'
+import { KARTLAR, type Ekran } from '@/lib/gezinme'
 
 /**
  * Izgaradaki bir kartın giriş animasyonu: sınıf + sıraya göre gecikme.
@@ -168,14 +169,37 @@ export function Etiket({ className, ...props }: React.ComponentProps<'label'>) {
   )
 }
 
+/**
+ * Araç ekranının sağ üstündeki emoji kutusu.
+ *
+ * İlk kez İstatistik'in yeni tasarımında geldi; bütün araçlara yayıldı ki
+ * ekran, açıldığı kutucukla aynı yüzü taşısın. Emoji `KARTLAR`dan okunuyor —
+ * elle yazılsaydı kutucuk değişince başlık eski simgede kalırdı.
+ */
+export function AracSimgesi({ arac }: { arac: Ekran }) {
+  const ikon = KARTLAR.find((k) => k.id === arac)?.ikon
+  if (!ikon) return null
+  return (
+    <span
+      aria-hidden
+      className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-primary-soft text-xl"
+    >
+      {ikon}
+    </span>
+  )
+}
+
 export function BaslikSatiri({
   baslik,
   aciklama,
   sag,
   ortala,
+  arac,
 }: {
   baslik: string
   aciklama?: string
+  /** Araç ekranıysa sağ üste o aracın emojisi konur (`sag` verilmemişse). */
+  arac?: Ekran
   sag?: React.ReactNode
   /**
    * Başlık ve açıklamayı sayfanın ortasına alır; `sag` sağ üst köşeye konumlanır.
@@ -183,6 +207,8 @@ export function BaslikSatiri({
    */
   ortala?: boolean
 }) {
+  if (!sag && arac) sag = <AracSimgesi arac={arac} />
+
   if (ortala) {
     return (
       <div className="relative mb-4 px-12 text-center">
@@ -194,7 +220,13 @@ export function BaslikSatiri({
   }
 
   return (
-    <div className="mb-4 flex items-end justify-between gap-3">
+    <div
+      className={cn(
+        'mb-4 flex justify-between gap-3',
+        // Emoji kutusu başlıkla aynı hizada başlar; açıklama altına uzasa da aşağı kaymaz
+        arac ? 'items-start' : 'items-end',
+      )}
+    >
       <div>
         <h1 className="font-display text-2xl font-extrabold tracking-tight">{baslik}</h1>
         {aciklama && <p className="mt-0.5 text-sm text-muted-foreground">{aciklama}</p>}
