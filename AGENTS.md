@@ -1847,10 +1847,10 @@ Ders adına **ek getirilmiyor** ("Kimya 9 gündür bekliyor", "Kimya'ya … " de
 ünlü uyumu ders adına göre değişiyor ve yanlış ek, yanlış bilgiden daha çok
 göze batıyor.
 
-Maskotun arkasında soluk, organik bir leke var (`--primary-soft`, maskottan
-küçük, gövdenin arkasında). Hâle göre renklenen eski kutunun dönüşü değil:
-kenarı ve köşesi yok, rengi sabit; tavşan kartın boşluğunda asılı durmasın
-diye var. Büyütme ya da renklendirme — maskotun önüne geçer.
+Maskot 72 piksel ve kartın sol kenarıyla yazının arasında **ortada**;
+yazıyla arasında soluk, kısa bir dikey ayraç var (`--border`, kartın
+kenarlarına değmiyor). Arkasına bir süre soluk bir leke kondu, kullanıcı geri
+aldı — tavşanı oturtan şey süs değil, ortalanmış yeri ve ayraç.
 
 Sayının kendisi kartta **yazmıyor**: halka zaten sayıyı üç kez söylüyor ve
 kartın işi onu tekrar etmek değil, ona bir yüz vermek. Günlük hedef sıfırken

@@ -405,34 +405,27 @@ function GununHali({
     <button
       type="button"
       onClick={() => onAc(hal.ekran)}
-      className="golge-kart flex w-full items-center gap-3 rounded-2xl bg-card px-4 py-3 text-left transition active:brightness-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      className="golge-kart flex w-full items-center rounded-2xl bg-card py-3 pr-4 pl-2 text-left transition active:brightness-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       {/* Maskotun arkasında bir süre hâle göre renklenen bir kutu vardı (gri,
           amber, yeşil); kaldırıldı. Düz renkli kare, kartın beyaz zemininde
           yapıştırılmış bir etiket gibi duruyordu — maskot kartın kendi
-          zemininde duruyor. Kutu gidince 46'lık maskot yanındaki üç satırın
-          yanında küçük kaldı; 64'e çıktı ve kutuyu tümüyle dolduruyor.
+          zemininde duruyor. Arkasına bir süre soluk bir leke de kondu,
+          kullanıcı onu da geri aldı.
 
-          Arkasındaki soluk leke o kutunun dönüşü değil: kenarı yok, köşesi
-          yok, rengi hâle göre değişmiyor ve maskottan küçük — tavşanın
-          gövdesinin arkasında kalıyor, kulakları dışarı taşıyor. Tavşan
-          boşlukta asılı durmasın, bir yere otursun diye var. Renk
-          `--primary-soft`: kartın zaten taşıdığı amberin en açık tonu. */}
-      <span className="relative grid size-[64px] shrink-0 place-items-center">
-        <svg
-          viewBox="0 0 100 100"
-          className="absolute top-[14px] left-1/2 size-[50px] -translate-x-1/2 text-primary-soft"
-          aria-hidden
-        >
-          <path
-            fill="currentColor"
-            d="M51 6c14 0 27 6 35 17s10 26 5 39-15 25-29 30-30 4-42-4S2 67 3 52 11 22 22 14 38 6 51 6Z"
-          />
-        </svg>
-        <span className="relative grid">
-          <Rabi durum={hal.durum} poz={hal.poz} boyut={64} />
-        </span>
+          Maskot 72'de ve kartın sol kenarı ile ayraç arasında **ortada**: iki
+          yanda 8'er piksel (kartın sol dolgusu `pl-2`, ayracın `ml-2`si).
+          Boşluk dar görünse de değil — görselin kendi saydam payı var ve
+          tavşan kutusunun ortasında daha dar duruyor. Daha geniş tutulunca
+          yazının alanı daralıp "Bugün hiç soru çözmedin" iki satıra
+          kırılıyordu. Ayraç `--border` tonunda, beyazda soluk kalıyor ve
+          kartın kenarlarına değmeden bitiyor (`self-stretch` içeriğin boyunu
+          alıyor, `my-2` iki ucundan kısaltıyor). Birini değiştirirsen iki
+          yandaki boşluğu yeniden eşitle. */}
+      <span className="grid w-[72px] shrink-0 place-items-center">
+        <Rabi durum={hal.durum} poz={hal.poz} boyut={72} />
       </span>
+      <span aria-hidden className="my-2 mr-3 ml-2 w-px shrink-0 self-stretch bg-border" />
       <span className="min-w-0 flex-1">
         <span className="block text-[10px] font-extrabold tracking-[0.16em] text-muted-foreground">
           BUGÜN
@@ -444,7 +437,7 @@ function GununHali({
           {hal.alt}
         </span>
       </span>
-      <ChevronRight size={19} className="shrink-0 text-muted-foreground" aria-hidden />
+      <ChevronRight size={19} className="ml-2 shrink-0 text-muted-foreground" aria-hidden />
     </button>
   )
 }
