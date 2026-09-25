@@ -10,9 +10,9 @@ import { cn } from '@/lib/utils'
  * yarısını kaplıyor, hem soruyu hem tuşları örtüyordu. Rakamlar ekrandaki tuş
  * takımından geliyor.
  *
- * Zihinden İşlem ile Açı Tamamlama aynı takımı paylaşıyor. Renkler matematik
- * ailesinden (`isl`) çünkü ikisi de matematik dersinin oyunu; başka bir dersin
- * oyunu sayı isterse renk o zaman dışarıdan verilir.
+ * Zihinden İşlem ile Açı Tamamlama aynı takımı paylaşıyor. Renkler
+ * Matematik'in (`konu-matematik`) çünkü ikisi de matematik dersinin oyunu;
+ * başka bir dersin oyunu sayı isterse renk o zaman dışarıdan verilir.
  */
 
 /** Cevap alanına yazılabilecek en fazla rakam. */
@@ -45,7 +45,7 @@ export function CevapAlani({
         <>
           {girilen}
           {durum === 'yaziliyor' && (
-            <span className="ml-0.5 h-6 w-[2px] animate-pulse bg-isl-koyu" />
+            <span className="ml-0.5 h-6 w-[2px] animate-pulse bg-konu-matematik-koyu" />
           )}
         </>
       )}
@@ -127,7 +127,7 @@ function Tus({
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         bicim === 'rakam' && 'golge-kart rakam bg-card text-[21px] font-extrabold',
         bicim === 'sil' && 'bg-ikincil/12 text-ikincil',
-        bicim === 'onay' && 'bg-isl-koyu text-sm font-extrabold text-white active:brightness-95',
+        bicim === 'onay' && 'bg-konu-matematik-koyu text-sm font-extrabold text-white active:brightness-95',
       )}
     >
       {children}

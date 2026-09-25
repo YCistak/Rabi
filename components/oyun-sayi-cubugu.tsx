@@ -89,7 +89,7 @@ export function SayiCubugu({
   }
 
   const doluRenk =
-    durum === 'dogru' ? 'bg-success' : durum === 'yanlis' ? 'bg-ikincil' : 'bg-isl-ok'
+    durum === 'dogru' ? 'bg-success' : durum === 'yanlis' ? 'bg-ikincil' : 'bg-konu-matematik-ok'
 
   return (
     <div className="select-none">
@@ -181,7 +181,7 @@ function Tutamak({
       aria-hidden
       className={cn(
         'golge-kart absolute top-1/2 grid h-7 w-7 -translate-x-1/2 -translate-y-1/2 place-items-center',
-        'rakam rounded-full border-2 border-isl-koyu bg-card text-[11px] font-extrabold text-isl-koyu',
+        'rakam rounded-full border-2 border-konu-matematik-koyu bg-card text-[11px] font-extrabold text-konu-matematik-koyu',
         kilitli && 'opacity-70',
       )}
       style={{ left: `${sol}%` }}

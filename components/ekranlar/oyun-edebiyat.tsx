@@ -59,11 +59,11 @@ import { OyunTanitim } from '@/components/oyun-tanitim'
  */
 const CEVAP_BEKLEMESI = 800
 
-/** Seçili kutunun rengi — Edebiyat dersinin ailesi. */
+/** Seçili kutunun rengi — Türkçe'nin (konu haritasındaki) rengi. */
 const RENK: EslestirmeRengi = {
-  kenar: 'border-edb-koyu',
-  zemin: 'bg-edb-kart',
-  yazi: 'text-edb-koyu',
+  kenar: 'border-konu-turkce-koyu',
+  zemin: 'bg-konu-turkce',
+  yazi: 'text-konu-turkce-koyu',
 }
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
@@ -522,7 +522,7 @@ export function EdebiyatOyunuEkrani({
               {/* Elin dönemi. El mümkün olduğunca tek dönemden kuruluyor;
                   bunu söylemek öğrenciye bağlam veriyor ve oyunun neden zor
                   olduğunu açıklıyor: aynı dönemden altı isim. */}
-              <p className="mt-3 flex flex-none items-center justify-center gap-1.5 text-[11.5px] font-extrabold uppercase tracking-wide text-edb-koyu">
+              <p className="mt-3 flex flex-none items-center justify-center gap-1.5 text-[11.5px] font-extrabold uppercase tracking-wide text-konu-turkce-koyu">
                 <BookOpen size={13} aria-hidden />
                 {el.donem ? DONEM_ADI[el.donem] : 'Karışık dönem'}
               </p>

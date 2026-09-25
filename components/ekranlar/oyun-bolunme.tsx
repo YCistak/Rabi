@@ -444,7 +444,7 @@ export function BolunmeOyunuEkrani({
                   <p className="rakam mt-2 text-center font-display text-[40px] font-extrabold leading-tight tracking-[2px]">
                     {soru.sayi}
                   </p>
-                  <p className="mt-1 text-center font-display text-[14.5px] font-extrabold text-isl-koyu">
+                  <p className="mt-1 text-center font-display text-[14.5px] font-extrabold text-konu-matematik-koyu">
                     {soruMetni(soru)}
                   </p>
                 </div>
@@ -604,7 +604,7 @@ function Tus({
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         bicim === 'rakam' && 'golge-kart rakam bg-card text-[21px] font-extrabold',
         bicim === 'sil' && 'bg-ikincil/12 text-ikincil',
-        bicim === 'onay' && 'bg-isl-koyu text-sm font-extrabold text-white active:brightness-95',
+        bicim === 'onay' && 'bg-konu-matematik-koyu text-sm font-extrabold text-white active:brightness-95',
       )}
     >
       {children}

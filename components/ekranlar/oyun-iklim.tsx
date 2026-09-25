@@ -437,10 +437,10 @@ function DunyaHaritasi({ soru }: { soru: IklimSorusu }) {
         role="img"
         aria-label={`Dünya haritası, ${soru.ad} işaretli`}
       >
-        {/* Okyanus. Mavisi tarih dersinin renk ailesinden (`trh`): kural
-            "renk derse ait" ama burada renk kimlik değil harita göstergesi ve
-            coğrafyanın yeşiline boyanmış bir okyanus karadan ayırt
-            edilemiyordu. */}
+        {/* Okyanus mavisi ve kara yeşili genel pastel ailelerden (`trh`,
+            `cog`), dersin renginden değil: burada renk kimlik değil harita
+            göstergesi — Coğrafya'nın gök mavisine boyanmış bir kara denizden
+            ayırt edilemezdi. */}
         <rect width={DUNYA_GENISLIK} height={DUNYA_YUKSEKLIK} className="fill-trh-ok/25" />
 
         {DUNYA.map((u) => (

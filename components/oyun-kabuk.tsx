@@ -5,6 +5,7 @@ import { Check, HelpCircle, Trophy, X } from 'lucide-react'
 import { sureUyarisi } from '@/lib/oyunlar/oyun-sesi'
 import { GeriSayim } from '@/components/oyun-geri-sayim'
 import type { OyunId } from '@/lib/types'
+import { oyunBul, type DersId } from '@/lib/oyunlar/tanim'
 import { sureOrani } from '@/lib/oyunlar/tur'
 import { MODLAR, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { cn } from '@/lib/utils'
@@ -32,202 +33,56 @@ import type { BankaSorusu } from '@/lib/oyunlar/banka'
  * Kullanıcı hangi oyunda olduğunu başlığı okumadan renkten biliyor — Oyunlar
  * sekmesindeki kart, tur sonu ekranı ve Oyun Bankası aynı üçlüyü kullanıyor.
  */
-const AILE: Record<
-  OyunId,
+const DERS_AILESI: Record<
+  DersId,
   { zemin: string; yazi: string; dolgu: string; kenar: string; degisken: string }
 > = {
-  yazim: {
-    zemin: 'bg-yzm',
-    yazi: 'text-yzm-koyu',
-    dolgu: 'bg-yzm-koyu',
-    kenar: 'border-l-yzm-koyu',
-    degisken: 'var(--yzm-koyu)',
+  turkce: {
+    zemin: 'bg-konu-turkce',
+    yazi: 'text-konu-turkce-koyu',
+    dolgu: 'bg-konu-turkce-koyu',
+    kenar: 'border-l-konu-turkce-koyu',
+    degisken: 'var(--konu-turkce-koyu)',
   },
-  noktalama: {
-    zemin: 'bg-yzm',
-    yazi: 'text-yzm-koyu',
-    dolgu: 'bg-yzm-koyu',
-    kenar: 'border-l-yzm-koyu',
-    degisken: 'var(--yzm-koyu)',
+  matematik: {
+    zemin: 'bg-konu-matematik',
+    yazi: 'text-konu-matematik-koyu',
+    dolgu: 'bg-konu-matematik-koyu',
+    kenar: 'border-l-konu-matematik-koyu',
+    degisken: 'var(--konu-matematik-koyu)',
   },
-  // Türkçe dersinin oyunları Yazım'la aynı aileyi paylaşıyor.
-  ses: {
-    zemin: 'bg-yzm',
-    yazi: 'text-yzm-koyu',
-    dolgu: 'bg-yzm-koyu',
-    kenar: 'border-l-yzm-koyu',
-    degisken: 'var(--yzm-koyu)',
+  cografya: {
+    zemin: 'bg-konu-cografya',
+    yazi: 'text-konu-cografya-koyu',
+    dolgu: 'bg-konu-cografya-koyu',
+    kenar: 'border-l-konu-cografya-koyu',
+    degisken: 'var(--konu-cografya-koyu)',
   },
-  oge: {
-    zemin: 'bg-yzm',
-    yazi: 'text-yzm-koyu',
-    dolgu: 'bg-yzm-koyu',
-    kenar: 'border-l-yzm-koyu',
-    degisken: 'var(--yzm-koyu)',
+  tarih: {
+    zemin: 'bg-konu-tarih',
+    yazi: 'text-konu-tarih-koyu',
+    dolgu: 'bg-konu-tarih-koyu',
+    kenar: 'border-l-konu-tarih-koyu',
+    degisken: 'var(--konu-tarih-koyu)',
   },
-  soz: {
-    zemin: 'bg-yzm',
-    yazi: 'text-yzm-koyu',
-    dolgu: 'bg-yzm-koyu',
-    kenar: 'border-l-yzm-koyu',
-    degisken: 'var(--yzm-koyu)',
+  biyoloji: {
+    zemin: 'bg-konu-biyoloji',
+    yazi: 'text-konu-biyoloji-koyu',
+    dolgu: 'bg-konu-biyoloji-koyu',
+    kenar: 'border-l-konu-biyoloji-koyu',
+    degisken: 'var(--konu-biyoloji-koyu)',
   },
-  // Matematik dersinin oyunları İşlem'le aynı aileyi paylaşıyor.
-  bolunme: {
-    zemin: 'bg-isl',
-    yazi: 'text-isl-koyu',
-    dolgu: 'bg-isl-koyu',
-    kenar: 'border-l-isl-koyu',
-    degisken: 'var(--isl-koyu)',
+  kimya: {
+    zemin: 'bg-konu-kimya',
+    yazi: 'text-konu-kimya-koyu',
+    dolgu: 'bg-konu-kimya-koyu',
+    kenar: 'border-l-konu-kimya-koyu',
+    degisken: 'var(--konu-kimya-koyu)',
   },
-  islem: {
-    zemin: 'bg-isl',
-    yazi: 'text-isl-koyu',
-    dolgu: 'bg-isl-koyu',
-    kenar: 'border-l-isl-koyu',
-    degisken: 'var(--isl-koyu)',
-  },
-  // Geometri oyunları da matematik dersinin altında; renk derse ait.
-  aci: {
-    zemin: 'bg-isl',
-    yazi: 'text-isl-koyu',
-    dolgu: 'bg-isl-koyu',
-    kenar: 'border-l-isl-koyu',
-    degisken: 'var(--isl-koyu)',
-  },
-  ucgen: {
-    zemin: 'bg-isl',
-    yazi: 'text-isl-koyu',
-    dolgu: 'bg-isl-koyu',
-    kenar: 'border-l-isl-koyu',
-    degisken: 'var(--isl-koyu)',
-  },
-  trigonometri: {
-    zemin: 'bg-isl',
-    yazi: 'text-isl-koyu',
-    dolgu: 'bg-isl-koyu',
-    kenar: 'border-l-isl-koyu',
-    degisken: 'var(--isl-koyu)',
-  },
-  // Edebiyat Eşleştirme, Türkçe ile birleşen dersin içinde: rengi de artık
-  // lavanta değil o dersin pembesi. Renk **derse** ait, oyuna değil.
-  edebiyat: {
-    zemin: 'bg-yzm',
-    yazi: 'text-yzm-koyu',
-    dolgu: 'bg-yzm-koyu',
-    kenar: 'border-l-yzm-koyu',
-    degisken: 'var(--yzm-koyu)',
-  },
-  // Coğrafyanın üç oyunu aynı aileyi paylaşıyor.
-  harita: {
-    zemin: 'bg-cog',
-    yazi: 'text-cog-koyu',
-    dolgu: 'bg-cog-koyu',
-    kenar: 'border-l-cog-koyu',
-    degisken: 'var(--cog-koyu)',
-  },
-  iklim: {
-    zemin: 'bg-cog',
-    yazi: 'text-cog-koyu',
-    dolgu: 'bg-cog-koyu',
-    kenar: 'border-l-cog-koyu',
-    degisken: 'var(--cog-koyu)',
-  },
-  izohips: {
-    zemin: 'bg-cog',
-    yazi: 'text-cog-koyu',
-    dolgu: 'bg-cog-koyu',
-    kenar: 'border-l-cog-koyu',
-    degisken: 'var(--cog-koyu)',
-  },
-  // Tarih dersinin iki eşleştirme oyunu aynı aileyi paylaşıyor.
-  antlasma: {
-    zemin: 'bg-trh',
-    yazi: 'text-trh-koyu',
-    dolgu: 'bg-trh-koyu',
-    kenar: 'border-l-trh-koyu',
-    degisken: 'var(--trh-koyu)',
-  },
-  kavram: {
-    zemin: 'bg-trh',
-    yazi: 'text-trh-koyu',
-    dolgu: 'bg-trh-koyu',
-    kenar: 'border-l-trh-koyu',
-    degisken: 'var(--trh-koyu)',
-  },
-  anlatim: {
-    zemin: 'bg-yzm',
-    yazi: 'text-yzm-koyu',
-    dolgu: 'bg-yzm-koyu',
-    kenar: 'border-l-yzm-koyu',
-    degisken: 'var(--yzm-koyu)',
-  },
-  koklu: {
-    zemin: 'bg-isl',
-    yazi: 'text-isl-koyu',
-    dolgu: 'bg-isl-koyu',
-    kenar: 'border-l-isl-koyu',
-    degisken: 'var(--isl-koyu)',
-  },
-  // Biyoloji dersinin üç oyunu aynı aileyi paylaşıyor.
-  ortak: {
-    zemin: 'bg-byl',
-    yazi: 'text-byl-koyu',
-    dolgu: 'bg-byl-koyu',
-    kenar: 'border-l-byl-koyu',
-    degisken: 'var(--byl-koyu)',
-  },
-  siniflandirma: {
-    zemin: 'bg-byl',
-    yazi: 'text-byl-koyu',
-    dolgu: 'bg-byl-koyu',
-    kenar: 'border-l-byl-koyu',
-    degisken: 'var(--byl-koyu)',
-  },
-  hucre: {
-    zemin: 'bg-byl',
-    yazi: 'text-byl-koyu',
-    dolgu: 'bg-byl-koyu',
-    kenar: 'border-l-byl-koyu',
-    degisken: 'var(--byl-koyu)',
-  },
-  // Zaman Şeridi tarih dersinin üçüncü oyunu.
-  sirala: {
-    zemin: 'bg-trh',
-    yazi: 'text-trh-koyu',
-    dolgu: 'bg-trh-koyu',
-    kenar: 'border-l-trh-koyu',
-    degisken: 'var(--trh-koyu)',
-  },
-  tuzak: {
-    zemin: 'bg-isl',
-    yazi: 'text-isl-koyu',
-    dolgu: 'bg-isl-koyu',
-    kenar: 'border-l-isl-koyu',
-    degisken: 'var(--isl-koyu)',
-  },
-  // Kimyanın oyunları lavanta aileyi paylaşıyor.
-  periyodik: {
-    zemin: 'bg-edb',
-    yazi: 'text-edb-koyu',
-    dolgu: 'bg-edb-koyu',
-    kenar: 'border-l-edb-koyu',
-    degisken: 'var(--edb-koyu)',
-  },
-  formul: {
-    zemin: 'bg-edb',
-    yazi: 'text-edb-koyu',
-    dolgu: 'bg-edb-koyu',
-    kenar: 'border-l-edb-koyu',
-    degisken: 'var(--edb-koyu)',
-  },
-  tepkime: {
-    zemin: 'bg-edb',
-    yazi: 'text-edb-koyu',
-    dolgu: 'bg-edb-koyu',
-    kenar: 'border-l-edb-koyu',
-    degisken: 'var(--edb-koyu)',
-  },
+}
+
+function oyunAilesi(oyunId: OyunId) {
+  return DERS_AILESI[oyunBul(oyunId).ders]
 }
 
 /** Tur sonunda listelenen en fazla yanlış. Gerisi Oyun Bankası'nda. */
@@ -362,7 +217,7 @@ export function OyunKabugu({
   onYardim: () => void
   children: React.ReactNode
 }) {
-  const aile = AILE[oyunId]
+  const aile = oyunAilesi(oyunId)
   const { sarsiliyor, baski } = useTurEfektleri(sayac)
 
   return (
@@ -784,7 +639,7 @@ export function TurSonu({
   onCik: () => void
   children?: React.ReactNode
 }) {
-  const aile = AILE[oyunId]
+  const aile = oyunAilesi(oyunId)
   const { dolu, cizgi } = olcekOranlari(dogru, rekor)
   /*
     "Tekrar" turu hemen açmıyor: tanıtımdaki "Başla" gibi önce 3 · 2 · 1
@@ -1015,7 +870,7 @@ export function YanlisKarti({
     <div
       className={cn(
         'golge-kart rounded-2xl border-l-4 bg-card px-3.5 py-3',
-        AILE[oyunId].kenar,
+        oyunAilesi(oyunId).kenar,
       )}
     >
       {children}

@@ -25,7 +25,37 @@
   --color-warning-soft: var(--warning-soft);
   --color-grid: var(--grid);
 
-  /* Mini oyun aileleri */
+  /* Ders renkleri — konu haritası ve mini oyunlar aynı paleti okuyor. */
+  --color-konu-matematik: var(--konu-matematik);
+  --color-konu-matematik-kenar: var(--konu-matematik-kenar);
+  --color-konu-matematik-koyu: var(--konu-matematik-koyu);
+  --color-konu-matematik-ok: var(--konu-matematik-ok);
+  --color-konu-turkce: var(--konu-turkce);
+  --color-konu-turkce-kenar: var(--konu-turkce-kenar);
+  --color-konu-turkce-koyu: var(--konu-turkce-koyu);
+  --color-konu-turkce-ok: var(--konu-turkce-ok);
+  --color-konu-fizik: var(--konu-fizik);
+  --color-konu-fizik-kenar: var(--konu-fizik-kenar);
+  --color-konu-fizik-koyu: var(--konu-fizik-koyu);
+  --color-konu-fizik-ok: var(--konu-fizik-ok);
+  --color-konu-kimya: var(--konu-kimya);
+  --color-konu-kimya-kenar: var(--konu-kimya-kenar);
+  --color-konu-kimya-koyu: var(--konu-kimya-koyu);
+  --color-konu-kimya-ok: var(--konu-kimya-ok);
+  --color-konu-biyoloji: var(--konu-biyoloji);
+  --color-konu-biyoloji-kenar: var(--konu-biyoloji-kenar);
+  --color-konu-biyoloji-koyu: var(--konu-biyoloji-koyu);
+  --color-konu-biyoloji-ok: var(--konu-biyoloji-ok);
+  --color-konu-tarih: var(--konu-tarih);
+  --color-konu-tarih-kenar: var(--konu-tarih-kenar);
+  --color-konu-tarih-koyu: var(--konu-tarih-koyu);
+  --color-konu-tarih-ok: var(--konu-tarih-ok);
+  --color-konu-cografya: var(--konu-cografya);
+  --color-konu-cografya-kenar: var(--konu-cografya-kenar);
+  --color-konu-cografya-koyu: var(--konu-cografya-koyu);
+  --color-konu-cografya-ok: var(--konu-cografya-ok);
+
+  /* Genel pastel aileler (araç kutucukları, rozetler, harita göstergesi) */
   --color-yzm: var(--yzm);
   --color-yzm-kart: var(--yzm-kart);
   --color-yzm-koyu: var(--yzm-koyu);
@@ -230,39 +260,53 @@ body {
 
      Harita kâğıt zeminli bir oyun dünyası gibi çiziliyor ve her dersin bandı
      kendi tonunda: Matematik pembe, Türkçe hardal, Fizik çivit, Kimya
-     lavanta, Biyoloji yeşil, Tarih kahverengi, Coğrafya gök mavisi. Oyun
-     aileleriyle (`--isl`, `--trh`…) aynı **değil** — o aileler rozetlerde ve
-     oyun kartlarında; harita kendi paletini `lib/konu/harita-temasi.ts`
-     üstünden okuyor. Dört ton: zemin, kenar, koyu (yazı) ve çubuk
-     (ilerleme çubuğunun boş kısmı). */
+     lavanta, Biyoloji yeşil, Tarih kahverengi, Coğrafya gök mavisi.
+
+     Mini oyunlar da **bu** paleti okuyor (`bg-konu-<ders>`…): bir süre
+     kendi ailelerindeydiler (`--yzm`, `--isl`…) ve aynı ders iki ekranda iki
+     renkteydi — haritada hardal olan Türkçe oyunlarda pembeydi. Renk derse
+     aitse ders her yerde aynı renkte olmalı. Eski aileler duruyor ama artık
+     ders kimliği değil: araç kutucukları, rozet kademeleri ve harita
+     göstergeleri (deniz, kara) onları kullanıyor.
+
+     Beş ton: zemin, kenar, koyu (yazı), çubuk (ilerleme çubuğunun boş
+     kısmı) ve ok — oyunlarda dolgu isteyen küçük yüzeyler (kartın ok
+     düğmesi, sıra rozeti). */
   --konu-matematik: #f9ebee;
   --konu-matematik-kenar: #f3dfe1;
   --konu-matematik-koyu: #b4523c;
   --konu-matematik-cubuk: #f0d8d9;
+  --konu-matematik-ok: #d4738a;
   --konu-turkce: #f7f0dc;
   --konu-turkce-kenar: #ecdfb8;
   --konu-turkce-koyu: #8d691a;
   --konu-turkce-cubuk: #ecdfb8;
+  --konu-turkce-ok: #c29a32;
   --konu-fizik: #e8eaf6;
   --konu-fizik-kenar: #d6dbee;
   --konu-fizik-koyu: #4a5789;
   --konu-fizik-cubuk: #d6dbee;
+  --konu-fizik-ok: #6c7cb0;
   --konu-kimya: #eee9f7;
   --konu-kimya-kenar: #dfd7ee;
   --konu-kimya-koyu: #6b5ca5;
   --konu-kimya-cubuk: #dfd7ee;
+  --konu-kimya-ok: #8a7cc4;
   --konu-biyoloji: #e9f1e4;
   --konu-biyoloji-kenar: #d6e5cc;
   --konu-biyoloji-koyu: #4f7a3a;
   --konu-biyoloji-cubuk: #d6e5cc;
+  --konu-biyoloji-ok: #78a35c;
   --konu-tarih: #f1e8de;
   --konu-tarih-kenar: #e3d5c5;
   --konu-tarih-koyu: #7a4f2a;
   --konu-tarih-cubuk: #e3d5c5;
+  --konu-tarih-ok: #b3825a;
   --konu-cografya: #e4eef7;
   --konu-cografya-kenar: #cfdfee;
   --konu-cografya-koyu: #2f5f8a;
   --konu-cografya-cubuk: #cfdfee;
+  --konu-cografya-ok: #5e92c2;
 
   /* Patikanın kendi renkleri: yol, geçilmiş yol ve kilitli kitap.
 

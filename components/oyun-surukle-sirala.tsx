@@ -131,7 +131,7 @@ export function SurukleSirala({
                   ? yerinde
                     ? 'bg-success text-white'
                     : 'bg-ikincil text-white'
-                  : 'bg-trh-kart text-trh-koyu',
+                  : 'bg-konu-tarih text-konu-tarih-koyu',
               )}
             >
               {sira + 1}
@@ -211,7 +211,7 @@ function OkDugmesi({
       onClick={onBas}
       className={cn(
         'grid h-[22px] w-7 place-items-center rounded-[7px] transition',
-        etkin ? 'text-trh-koyu active:bg-trh-kart' : 'text-muted-foreground/25',
+        etkin ? 'text-konu-tarih-koyu active:bg-konu-tarih' : 'text-muted-foreground/25',
       )}
     >
       <Simge size={15} aria-hidden />

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { OyunId } from '@/lib/types'
+import { oyunBul, type DersId } from '@/lib/oyunlar/tanim'
 import {
   bankaCevabiMetni,
   bankaDagilimi,
@@ -47,33 +48,14 @@ import { Rabi } from '@/components/maskot/rabi'
  * için ikisi aynı işi yapar oldu ve hangisinin kaydı düşürdüğü belirsizleşti.
  */
 
-const AILE: Record<OyunId, { zemin: string; yazi: string }> = {
-  yazim: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu' },
-  noktalama: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu' },
-  ses: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu' },
-  oge: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu' },
-  soz: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu' },
-  islem: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
-  bolunme: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
-  aci: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
-  ucgen: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
-  edebiyat: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu' },
-  harita: { zemin: 'bg-cog-kart', yazi: 'text-cog-koyu' },
-  iklim: { zemin: 'bg-cog-kart', yazi: 'text-cog-koyu' },
-  izohips: { zemin: 'bg-cog-kart', yazi: 'text-cog-koyu' },
-  antlasma: { zemin: 'bg-trh-kart', yazi: 'text-trh-koyu' },
-  kavram: { zemin: 'bg-trh-kart', yazi: 'text-trh-koyu' },
-  anlatim: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu' },
-  koklu: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
-  ortak: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu' },
-  siniflandirma: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu' },
-  hucre: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu' },
-  sirala: { zemin: 'bg-trh-kart', yazi: 'text-trh-koyu' },
-  tuzak: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
-  periyodik: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu' },
-  formul: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu' },
-  tepkime: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu' },
-  trigonometri: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
+/** Ders renkleri — konu haritası ve oyun ekranlarıyla aynı palet. */
+const DERS_AILESI: Record<DersId, { zemin: string; yazi: string }> = {
+  turkce: { zemin: 'bg-konu-turkce', yazi: 'text-konu-turkce-koyu' },
+  matematik: { zemin: 'bg-konu-matematik', yazi: 'text-konu-matematik-koyu' },
+  cografya: { zemin: 'bg-konu-cografya', yazi: 'text-konu-cografya-koyu' },
+  tarih: { zemin: 'bg-konu-tarih', yazi: 'text-konu-tarih-koyu' },
+  biyoloji: { zemin: 'bg-konu-biyoloji', yazi: 'text-konu-biyoloji-koyu' },
+  kimya: { zemin: 'bg-konu-kimya', yazi: 'text-konu-kimya-koyu' },
 }
 
 const KISA_AD: Record<OyunId, string> = {
@@ -249,7 +231,7 @@ function KayitKarti({
   onKaldir: () => void
   bildir: BildirimKolu
 }) {
-  const aile = AILE[kayit.soru.oyun]
+  const aile = DERS_AILESI[oyunBul(kayit.soru.oyun).ders]
   /**
    * Kaldırma iki adımda.
    *

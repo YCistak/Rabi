@@ -416,10 +416,8 @@ function IzohipsHaritasi({ cizim }: { cizim: IzohipsCizimi }) {
       >
         <rect width={cizim.en} height={cizim.boy} className="fill-card" />
 
-        {/* Deniz mavisi tarih dersinin renk ailesinden (`trh`) alınıyor.
-            Kural "renk derse ait" ama burada renk bir ders kimliği değil, bir
-            harita göstergesi: coğrafyanın yeşili suya boyandığında deniz
-            karadan ayırt edilemiyordu. */}
+        {/* Deniz mavisi genel pastel aileden (`trh`), dersin renginden değil:
+            burada renk bir ders kimliği değil, bir harita göstergesi. */}
         {cizim.deniz && <path d={cizim.deniz} className="fill-trh-ok/35" />}
         {/* Adalar denizin üstüne kara renginde: altta kalsalardı mavinin içinde
             kaybolurlardı. */}

@@ -57,11 +57,11 @@ import { OyunTanitim } from '@/components/oyun-tanitim'
  */
 const CEVAP_BEKLEMESI = 800
 
-/** Seçili kutunun rengi — Tarih dersinin ailesi. */
+/** Seçili kutunun rengi — Tarih'in (konu haritasındaki) rengi. */
 const RENK: EslestirmeRengi = {
-  kenar: 'border-trh-koyu',
-  zemin: 'bg-trh-kart',
-  yazi: 'text-trh-koyu',
+  kenar: 'border-konu-tarih-koyu',
+  zemin: 'bg-konu-tarih',
+  yazi: 'text-konu-tarih-koyu',
 }
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
@@ -506,7 +506,7 @@ export function AntlasmaOyunuEkrani({
               {/* Elin dönemi. El mümkün olduğunca tek dönemden kuruluyor;
                   bunu söylemek bağlam veriyor ve oyunun neden zor olduğunu
                   açıklıyor: aynı dönemden dört antlaşma. */}
-              <p className="mt-2.5 flex flex-none items-center justify-center gap-1.5 text-[11.5px] font-extrabold uppercase tracking-wide text-trh-koyu">
+              <p className="mt-2.5 flex flex-none items-center justify-center gap-1.5 text-[11.5px] font-extrabold uppercase tracking-wide text-konu-tarih-koyu">
                 <ScrollText size={13} aria-hidden />
                 {el.donem ? TARIH_DONEM_ADI[el.donem] : 'Karışık dönem'}
               </p>

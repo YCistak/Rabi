@@ -84,10 +84,15 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   Vurgu kavrulmuş amber: `--primary` #B3491F **yazı ve ikon** için,
   `--primary-parlak` #D9622F **dolgu** için (halka, çubuk, düğme, büyük sayı).
   İkinci kimlik rengi tuğla (`--ikincil` #A8432B), zemin kırık beyaz
-  (`--background` #F8F8F7). Renk **derse** ait, oyuna değil:
-  `yzm` (Türkçe, pembe) · `isl` (Matematik, krem) · `edb` (Edebiyat, lavanta) ·
-  `trh` (Tarih, deniz mavisi) · `byl` (Biyoloji, yeşil), her biri `-koyu` ve
-  `-ok` tonuyla.
+  (`--background` #F8F8F7). Renk **derse** ait, oyuna değil, ve bir ders
+  **her yerde aynı renkte**: konu haritası ile mini oyunlar aynı paleti
+  okuyor, `--konu-<ders>` (Tailwind `bg-konu-turkce`, `text-konu-tarih-koyu`,
+  `bg-konu-kimya-ok`…). Matematik pembe, Türkçe hardal, Fizik çivit, Kimya
+  lavanta, Biyoloji yeşil, Tarih kahverengi, Coğrafya gök mavisi. Oyunlar bir
+  süre kendi ailelerindeydi ve Türkçe haritada hardal, oyunlarda pembeydi.
+  Eski aileler (`yzm`, `isl`, `edb`, `cog`, `trh`, `byl`, `fzk`) duruyor ama
+  artık ders kimliği değil, genel pastel: araç kutucukları, rozet kademeleri
+  ve harita göstergeleri (deniz, kara).
   Kart yüzeyi `golge-kart` sınıfıyla: beyaz kart, sıcak gölge.
 - Zemin rengi üç yerde birden yazılı ve **birlikte** değişmeli:
   `--background` (globals.css), `acilis.tsx`'teki `ZEMIN` ve Android'in
@@ -1677,19 +1682,18 @@ ucundan başlayıp halkaları saymak zorunda kalıyor. Artık her seviyenin say�
 işarete **en yakın** eğrisine konuyor; yazılar yalnızca birbirinden uzak
 duruyor.
 
-Denizin mavisi tarih dersinin renk ailesinden (`trh`) geliyor ve bu, "renk
-derse aittir" kuralının bilinçli istisnası: buradaki renk bir ders kimliği
-değil harita göstergesi, coğrafyanın yeşiline boyanmış bir deniz karadan ayırt
-edilemiyordu. Aynı sebeple dünya haritasının okyanusu da o aileden.
+Denizin mavisi (`trh`) ve karanın yeşili (`cog`) genel pastel ailelerden
+geliyor, Coğrafya'nın gök mavisinden değil. Bu, "renk derse aittir"
+kuralının bilinçli istisnası: buradaki renk bir ders kimliği değil harita
+göstergesi, dersin rengine boyanmış bir kara denizden ayırt edilemezdi. Aynı
+sebeple dünya haritasının okyanusu ve Harita Avı'nın illeri de bu ailelerden.
 
 ## Kimyanın oyunları
 
 Kimya dersi iki oyunla açıldı: **Periyodik Tablo Avı** (element, yer, aile) ve
 **Formül Eşleştirme** (formül–ad); üçüncüsü **Tepkime Türü** (aşağıda) ve
-dersin ilk 10. sınıf oyunu. Ders renk ailesi olarak lavantayı (`edb`)
-alıyor; o aile Türkçe ile Edebiyat birleştiğinde boşta kalmıştı ve renk
-değişkenleri (`--edb-*`) rozetlerde kullanıldığı için adı değişmedi. Yani
-`edb` artık "edebiyat" değil "Kimya'nın rengi" demek.
+dersin ilk 10. sınıf oyunu. Rengi konu haritasındaki Kimya lavantası
+(`--konu-kimya`).
 
 ### Tablo eksik yazılı, iskeleti tam
 
@@ -1892,8 +1896,8 @@ Kutucuklar bir süre oyunların adını yazıyordu ve iki sorun birden vardı:
 dokunuş zaten oyunu açmıyor Oyunlar sekmesini açıyordu — yani kutucuk gidilecek
 yerin değil, orada bulunabilecek bir şeyin adını taşıyordu.
 
-Artık kutucuk dersin kendisi: adı kısa, rengi `DersTanimi.aile`den ("renk derse
-aittir" kuralının doğrudan karşılığı) ve dokunuşun karşılığı tam olarak o
+Artık kutucuk dersin kendisi: adı kısa, rengi konu haritasındaki dersin rengi
+(`--konu-<ders>`, "renk derse aittir" kuralının doğrudan karşılığı) ve dokunuşun karşılığı tam olarak o
 dersin ızgarası — `onOyunlaraGit(ders)` sekmeyi açarken `acilacakDers`i de
 geçiyor. İstek `oyunlar.tsx` içinde bir kez tüketiliyor; prop doğrudan
 okunsaydı geri tuşu dersi kapatır, bir sonraki çizim aynı dersi yeniden açardı.
@@ -2409,10 +2413,9 @@ ayrı bir kitap paleti yok.
 **Derse ait olan iki şey var**: tema bandının rengi ve zemine serpilen
 simgeler (`lib/konu/harita-temasi.ts`). Matematik pembe ve kareköklü, Tarih
 kahverengi ve tüylü, Coğrafya gök mavisi ve pusulalı. Renkler
-`globals.css`teki `--konu-<ders>-*` değişkenlerinde; oyunların ders
-aileleriyle (`--isl`, `--trh`…) **aynı değil** — o aileler rozetlerde ve oyun
-kartlarında, yediye ancak yetiyor ve Tarih'in deniz mavisi kâğıt zeminli bir
-haritada tarih gibi durmuyordu. Kart destesinin zemini de bu renkten
+`globals.css`teki `--konu-<ders>-*` değişkenlerinde ve mini oyunlar da aynı
+değişkenleri okuyor: bir süre oyunların kendi aileleri vardı (`--isl`,
+`--trh`…) ve aynı ders iki ekranda iki renkteydi. Kart destesinin zemini de bu renkten
 (`zeminRengi`): haritadan desteye geçerken renk değişmemeli.
 
 Simgeler ya serif italik yazı (`√x`, `MÖ`) ya lucide'den çizgi ikon (tüy,
