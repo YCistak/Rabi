@@ -58,7 +58,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Edebiyat güzel sanatların içinde yer almaz.', false, 'Dille yapılan bir güzel sanat dalıdır.'),
       sikli('Edebiyat malzemesine göre hangi sanat grubundadır?', ['Fonetik', 'Plastik'], 0, 'Dille yapılan sanat.'),
       sikli('Deneme ve makale hangi metin grubudur?', ['Düşünce ağırlıklı', 'Olay çevresinde gelişen'], 0, 'Hikâye ve roman olay çevresinde.'),
-      soru('Öğretici metin çok anlamlı olmayı hedefler.', false, 'Tek anlamlı olmayı hedefler; edebî metin çağrıştırır.'),
+      soru('Edebî metinler tarih ve sosyoloji gibi bilimlere kaynak olabilir.', true, 'Bir dönemin olaylarını ve toplumunu anlamak için edebî metne başvurulur.'),
     ], [
       {
         soru: 'Yaşanmış bir olayı anlatan romandaki olaylar ne sayılır?',
@@ -139,7 +139,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       sikli('"Gözlerim / sözlerim" dizelerinde uyak türü?', ['Tam uyak', 'Zengin uyak'], 0, '-lerim redif, "öz" iki ses.'),
       sikli('Hece ölçüsünde sözcüğü ortadan bölen bölüm?', ['Durak sayılır', 'Durak sayılmaz'], 1, 'Hece tutsa bile.'),
       soru('Serbest şiirde ölçü aranmaz.', true, 'Ahenk başka araçlarla kurulur.'),
-      soru('İmge, şiiri düzyazıdan ayıran asıl şeydir.', true, 'Sözcüklerin alışılmadık birleşimi.'),
+      soru('Aruz ölçüsünde hecelerin sayısı değil uzunluğu ve kısalığı esastır.', true, 'Hece ölçüsü heceleri sayar; aruz açık ve kapalı heceleri dizer.'),
     ], [
       {
         soru: '"Dağlara / bağlara" dizelerinde "-lara" nedir?',
@@ -207,11 +207,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Kişileştirme yapılan her dizede konuşturma da vardır.', false, 'Konuşturma kişileştirmenin ileri adımı; her kişileştirmede bulunmaz.'),
       soru('Mecaz-ı mürselde benzetme amacı vardır.', false, 'Benzetme yoktur; parça-bütün, iç-dış gibi bir ilgi kurulur.'),
       sikli('"Rüzgâr fısıldıyordu" cümlesindeki sanat?', ['Abartma', 'Kişileştirme'], 1, 'Kapalı istiare de var.'),
-      sikli('Benzetmenin iki temel ögesi?', ['Yön ve edat', 'Benzeyen ve kendisine benzetilen'], 1, 'Ötekiler düşebilir.'),
+      sikli('"Rüzgâr gibi koştu" cümlesinde benzetme yönü hangisidir?', ['Hız (koşmak)', 'Rüzgâr'], 0, 'Rüzgâr kendisine benzetilen; ortak nitelik hız.'),
       sikli('"Aslanım geldi" ifadesinde ne var?', ['Benzetme', 'Açık istiare'], 1, 'Yalnız benzetilen söylenmiş.'),
       sikli('İki anlamlı sözü uzak anlamıyla kastetmek?', ['Tezat', 'Tevriye'], 1, 'Tezat karşıt kavramlar.'),
       sikli('İnsan dışı varlıkları konuşturmak?', ['İntak', 'Mübalağa'], 0, 'Mübalağa abartma.'),
-      soru('"Ankara açıklama yaptı" cümlesinde benzetme amacı vardır.', false, 'Mecaz-ı mürsel: benzetme amacı yok.'),
+      soru('"Ağlarım hatıra geldikçe güldüğüm günler" dizesinde tezat vardır.', true, 'Ağlamak ile gülmek karşıt kavramlar bir arada.'),
     ], [
       {
         soru: '"Bütün sınıf ayağa kalktı" cümlesindeki sanat?',
@@ -258,7 +258,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'Türk edebiyatında',
-        'Deneme ve fıkra, Tanzimat’ta gazeteyle birlikte gelişti.\nDenemenin öne çıkan adları: Nurullah Ataç, Suut Kemal Yetkin',
+        'Fıkra Tanzimat’ta gazeteyle gelişti; deneme Cumhuriyet’te olgunlaştı.\nDenemenin öne çıkan adları: Nurullah Ataç, Suut Kemal Yetkin',
       ),
     ], [
       soru('Denemede yazar düşüncesini kanıtlama kaygısı gütmez.', true, 'Kendi kendine konuşur gibi yazar; okuru ikna etme zorunluluğu yok.'),
@@ -266,7 +266,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Fıkra, uzun uzun kanıt sunan bilimsel bir yazı türüdür.', false, 'Kısa, günlük dille yazılır ve kanıtlama kaygısı taşımaz.'),
       soru('Deneme ile makale arasında bir fark yoktur.', false, 'Makale kanıtlar, deneme düşündürür; üslupları da ayrı.'),
       sikli('Denemenin kurucusu kimdir?', ['Ataç', 'Montaigne'], 1, 'Nurullah Ataç Türk edebiyatında.'),
-      sikli('Güncel bir konuyu kısa ve kişisel üslupla ele alan?', ['Makale', 'Fıkra'], 1, 'Köşe yazısı.'),
+      sikli('Karşısında biri varmış gibi yazılan düşünce yazısı?', ['Makale', 'Söyleşi'], 1, 'Söyleşide yazar okurla sohbet eder gibi yazar.'),
       soru('Eleştiri bir eseri ölçütlerle değerlendirir.', true, 'Söyleşi karşısında biri varmış gibi.'),
     ], [
       {
@@ -338,13 +338,13 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('"Ağır bir soru" ifadesinde "ağır" gerçek anlamıyla kullanılmıştır.', false, 'Burada "zor" anlamında; mecaz anlam.'),
       soru('Terim anlam, bir bilim ya da sanat dalına özgü anlamdır.', true, '"Kök" sözcüğünün matematikteki karşılığı buna örnek.'),
       soru('Somut anlamlı sözcükler duyu organlarıyla algılanamayan kavramları karşılar.', false, 'Tersi: somut olan algılanabilir, algılanamayan soyuttur.'),
-      sikli('"Soğuk davranış" ifadesinde "soğuk" hangi anlamda?', ['Mecaz', 'Gerçek'], 0, 'Gerçek anlamdan tümüyle uzak.'),
-      sikli('"Kök" sözcüğü matematik ve biyolojide farklı anlamdaysa?', ['Terim anlam', 'Yan anlam'], 0, 'Alana özgü.'),
+      sikli('"Kitabın sırtı yırtıldı" cümlesinde "sırt" hangi anlamda?', ['Mecaz', 'Yan anlam'], 1, 'Gövdenin arka yüzüyle benzerlik bağı sürüyor.'),
+      sikli('Hangisinde terim anlamlı bir sözcük var?', ['Futbolda "ofsayt"', '"Soğuk bakış"'], 0, 'Ofsayt yalnızca futbol alanına özgü bir kavram.'),
       sikli('"Ağır söz" hangi kullanımdır?', ['Soyut', 'Somut'], 0, 'Ağır çanta somut.'),
       sikli('varlık → bitki → ağaç → çam sırası?', ['Genelden özele', 'Özelden genele'], 0, 'Kapsam daralıyor.'),
       sikli('"Beyaz altın" (pamuk) ne örneğidir?', ['Yansıma', 'Dolaylama'], 1, 'Yansıma ses taklidi.'),
       sikli('"Üç metre" hangi anlamdır?', ['Nitel', 'Nicel'], 1, 'Ölçülebilir.'),
-      soru('Yan anlamda gerçek anlamla benzerlik bağı sürer.', true, 'Masanın ayağı.'),
+      soru('"İşin ayağı" ifadesinde "ayak" yan anlamda kullanılmıştır.', false, 'Gerçek anlamla bağ kopmuş; mecaz anlam.'),
     ], [
       {
         soru: '"Masanın ayağı kırıldı" cümlesinde "ayak" hangi anlamda?',
@@ -398,9 +398,9 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Deyimler öğüt verir, atasözleri vermez.', false, 'Öğüt veren atasözüdür; deyim bir durumu anlatır.'),
       soru('İkilemeler anlatımı pekiştirmek için kullanılır.', true, '"Yavaş yavaş", "irili ufaklı" gibi kalıplar anlamı güçlendiriyor.'),
       soru('"Güle güle", "geçmiş olsun" gibi sözler deyim sayılır.', false, 'Bunlar kalıp söz: belirli durumlarda söylenen hazır ifadeler.'),
-      sikli('"Yavaş yavaş" nedir?', ['İkileme', 'Deyim'], 0, 'Arasına noktalama girmez.'),
-      sikli('"Kolay gelsin" nedir?', ['Kalıp söz', 'Atasözü'], 0, 'Toplumsal duruma bağlı.'),
-      soru('Deyimin sözcükleri değiştirilebilir.', false, 'Kalıplaşma bozulmaz.'),
+      sikli('İkilemelerin arasına ne konmaz?', ['Noktalama işareti', 'Boşluk'], 0, '"Yavaş yavaş" ayrı yazılır ama virgülle ayrılmaz.'),
+      sikli('"Göze girmek" deyimi ne anlama gelir?', ['Beğenilmek, sevilmek', 'Gözüne bir şey kaçmak'], 0, 'Deyimde sözcükler gerçek anlamlarından uzaklaşır.'),
+      soru('"Göz kapağı" bir deyimdir.', false, 'Sözcükler gerçek anlamında; bir organın adı, deyim değil.'),
     ], [
       {
         soru: '"Damlaya damlaya göl olur" hangisidir?',
@@ -458,11 +458,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('"Sınavı kazanmak için çok çalıştı." cümlesinde amaç-sonuç ilişkisi vardır.', true, '"için" burada amacı bildiriyor.'),
       soru('Karşılaştırma cümlelerinde her zaman biri üstün gösterilir.', false, 'Karşılaştırma benzerlik ya da eşitlik için de yapılabilir.'),
       sikli('"Erken gelirsen görüşürüz" hangi anlam ilişkisi?', ['Koşul', 'Amaç'], 0, 'Koşul gerçekleşmezse öteki de gerçekleşmez.'),
-      sikli('"Sınavı kazanmak için çalıştı" hangi ilişki?', ['Amaç-sonuç', 'Neden-sonuç'], 0, 'Sonuç henüz gerçekleşmemiş.'),
+      sikli('"Dünya, Güneş\'in çevresinde dönen bir gezegendir." nasıl bir cümle?', ['Tanım', 'Karşılaştırma'], 0, '"Dünya nedir?" sorusunun cevabı.'),
       sikli('"Bu yıl da kazanamadı" cümlesindeki örtülü anlam?', ['Önceki yıllarda da kazanamadı', 'Gelecek yıl kazanacak'], 0, 'Söylenmeden çıkarılan yargı.'),
       sikli('"Roman sıkıcı" nasıl bir yargı?', ['Öznel', 'Nesnel'], 0, 'Kişiye göre değişir.'),
       sikli('Kısa cümle ve sade dil neyi anlatır?', ['İçeriği', 'Üslubu'], 1, 'Nasıl anlatıldığı.'),
-      soru('Karşılaştırmada mutlaka üstünlük olmalıdır.', false, 'Olmak zorunda değil.'),
+      soru('"Ali de kardeşi kadar çalışkan." cümlesinde karşılaştırma vardır.', true, 'İki kişi bir yönüyle kıyaslanıyor; üstünlük değil eşitlik.'),
     ], [
       {
         soru: '"Bu roman 320 sayfa" cümlesi nasıl bir yargıdır?',
@@ -543,9 +543,9 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Bir paragrafta yalnızca tek bir anlatım biçimi kullanılabilir.', false, 'Açıklama, tartışma, öyküleme ve betimleme bir arada bulunabilir.'),
       sikli('"Paragrafta değinilmemiştir" sorusu nerede aranır?', ['Başlıkta', 'Yardımcı düşüncelerde'], 1, 'Ara yargılar.'),
       sikli('Tanık göstermeyi örnekten ayıran nedir?', ['Sayı verilir', 'Söyleyenin adı geçer'], 1, 'Sayısal veri ayrı yol.'),
-      sikli('Konu nasıl ifade edilir?', ['Bir yargıyla', 'Bir sözcük ya da öbekle'], 1, 'Ana düşünce yargı.'),
+      sikli('Ana düşünceyi bulmada ilk bakılacak yerlerden biri?', ['Son cümle ve tekrar eden fikir', 'İlk sözcük'], 0, 'Ana düşünce çoğu zaman sonda toparlanır ya da paragraf boyunca yinelenir.'),
       sikli('Paragrafın hangi bölümü bağımsız cümleyle başlar?', ['Sonuç', 'Giriş'], 1, 'Gelişme açar, sonuç toparlar.'),
-      soru('Akışı bozan cümle çıkarılınca anlam bütünlüğü bozulur.', false, 'Bozulmaz; zaten konudan sapıyor.'),
+      soru('Tartışmacı anlatımda yazar karşı görüşü çürütmeye çalışır.', true, 'Açıklayıcı anlatım bilgi verir; tartışmacı anlatım ikna etmeye çalışır.'),
     ], [
       {
         soru: '"Yazar bu parçada neden söz ediyor?" sorusu neyi sorar?',
@@ -602,8 +602,8 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Çatışma yalnızca iki kişi arasında yaşanır.', false, 'Kişinin kendi içinde ya da doğayla, toplumla da çatışması olabilir.'),
       soru('Mekân, kişiler hakkında da ipucu verebilir.', true, 'Yaşanılan yerin anlatımı çoğu zaman kişinin durumunu da anlatıyor.'),
       sikli('Anlatıyı ilerleten şey nedir?', ['Mekân', 'Çatışma'], 1, 'Kişinin başkasıyla, toplumla, doğayla ya da kendisiyle.'),
-      sikli('Olay örgüsü neyi gösterir?', ['Gerçek zaman sırasını', 'Yazarın kurduğu sırayı'], 1, 'Geri dönüşle geçmişe gidilebilir.'),
-      soru('Mekân yalnızca dekordur.', false, 'Ruh hâlini ve toplumsal konumu da anlatır.'),
+      sikli('Karakteri tipten ayıran nedir?', ['Değişip gelişmesi', 'Adının olması'], 0, 'Tip tek bir özelliği temsil eder ve değişmez.'),
+      soru('Anlatıda olayın yaşandığı süre ile anlatılma süresi aynı olmak zorundadır.', false, 'Yıllar bir cümlede geçebilir, bir an sayfalarca anlatılabilir.'),
     ], [
       {
         soru: 'Tek bir özelliğin temsilcisi olan kişiye ne denir?',
@@ -657,9 +657,9 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Kahraman bakış açısında anlatıcı "ben" diliyle konuşur.', true, 'Anlatan, olayın içindeki kişilerden biri.'),
       soru('Anlatıcı ile yazar aynı kişidir.', false, 'Anlatıcı kurmacanın içindeki ses; yazar onu kuran kişi.'),
       soru('Gözlemci bakış açısındaki anlatıcı kişilerin aklından geçenleri aktarır.', false, 'Yalnızca dışarıdan görüp duyduklarını aktarabilir.'),
-      sikli('"Ben" ağzıyla yalnız kendi bildiğini anlatan?', ['İlahi bakış açısı', 'Kahraman bakış açısı'], 1, 'Olayın içindeki kişi.'),
+      sikli('Bakış açılarını ayırmadaki temel ölçü?', ['Anlatıcının ne kadarını bildiği', 'Metnin uzunluğu'], 0, 'İlahi her şeyi, kahraman kendi bildiğini, gözlemci görüneni bilir.'),
       sikli('Anlatıcının yanılıyor ya da gizliyor olması?', ['Gözlemci anlatıcı', 'Güvenilmez anlatıcı'], 1, 'Okur farkı kendi kurar.'),
-      soru('"Ben" diyen anlatıcı yazarın kendisidir.', false, 'Anlatıcı da kurmacanın parçası.'),
+      soru('İlahi bakış açısıyla yazılan metin çoğunlukla üçüncü kişi ağzından anlatılır.', true, 'Anlatıcı olayın dışında; "o" diye anlatır.'),
     ], [
       {
         soru: 'Kişilerin aklından geçeni de anlatan anlatıcı?',
@@ -713,8 +713,8 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Durum hikâyesinin öncüsü Maupassant tır.', false, 'Maupassant olay hikâyesinin, Çehov durum hikâyesinin öncüsü.'),
       soru('Türk edebiyatının ilk romanı Taaşşuk-ı Talat ve Fitnat kabul edilir.', true, 'Şemsettin Sami nin bu eseri ilk yerli roman sayılıyor.'),
       soru('Roman ile hikâye arasındaki tek fark uzunluktur.', false, 'Roman daha çok kişiyi, mekânı ve olayı daha geniş bir zamanda işler.'),
-      sikli('İlk yerli roman hangisidir?', ['İntibah', 'Taaşşuk-ı Talat ve Fitnat'], 1, 'İntibah ilk edebî roman.'),
-      sikli('Serim-düğüm-çözüm olan, sonu bağlanan hikâye?', ['Durum hikâyesi', 'Olay hikâyesi'], 1, 'Maupassant tarzı.'),
+      sikli('İlk edebî roman sayılan İntibah kimindir?', ['Şemsettin Sami', 'Namık Kemal'], 1, 'Şemsettin Sami ilk yerli roman Taaşşuk-ı Talat ve Fitnat\'ın yazarı.'),
+      sikli('Türk edebiyatında olay hikâyesinin temsilcisi?', ['Sait Faik', 'Ömer Seyfettin'], 1, 'Sait Faik durum hikâyesinin temsilcisi.'),
       soru('Modern anlatıda olay örgüsü gevşedi, bilinç akışı öne çıktı.', true, '20. yüzyıl.'),
     ], [
       {
@@ -774,9 +774,9 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Karagöz ve orta oyunu geleneksel Türk tiyatrosu içinde yer alır.', true, 'Meddah da bu geleneğin parçası.'),
       soru('Üç birlik kuralı yer, zaman ve olay birliğinin bozulmasını ister.', false, 'Tersine, üçünün de korunmasını ister.'),
       sikli('Oyuncunun söylediği söze ne denir?', ['Perde', 'Replik'], 1, 'Perde büyük bölüm.'),
-      sikli('Tek olay, tek mekân, bir gün: hangi kural?', ['Dram', 'Üç birlik'], 1, 'Klasik trajedi.'),
+      sikli('Kişilerin değişmesiyle oluşan alt bölüme ne denir?', ['Perde', 'Sahne'], 1, 'Perde büyük bölüm; sahne onun içindeki alt bölüm.'),
       sikli('Karagöz ve meddah neye dayanır?', ['Yazılı metin', 'Doğaçlama'], 1, 'Geleneksel Türk tiyatrosu.'),
-      sikli('Soylu kişiler, acı son, yüksek üslup?', ['Komedi', 'Trajedi'], 1, 'Komedi halktan kişiler.'),
+      sikli('Hayatı acı ve gülünç yanlarıyla birlikte veren tür?', ['Komedi', 'Dram'], 1, 'Dram trajedi ile komediyi birleştirir; modern tiyatronun temeli.'),
       soru('Tiyatro metninde anlatıcı vardır.', false, 'Her şey diyalogla verilir.'),
     ], [
       {
@@ -850,8 +850,8 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       sikli('"His → hissi" hangi olay?', ['Ünsüz yumuşaması', 'Ünsüz türemesi'], 1, 'Alıntı sözcükte ikizleşme.'),
       sikli('"Araba-y-ı" sözcüğündeki y nedir?', ['Ek', 'Kaynaştırma harfi'], 1, 'İki ünlü yan yana gelmesin.'),
       sikli('"Bekliyor" sözcüğünde ne oldu?', ['Ünlü düşmesi', 'Ünlü daralması'], 1, '-yor eki e\'yi daralttı.'),
-      sikli('"Kitapçı" sözcüğündeki ç neyin sonucu?', ['Ünsüz benzeşmesi', 'Ünsüz yumuşaması'], 0, 'Sert ünsüzden sonra ek sertleşti.'),
-      soru('"Kardeş" sözcüğü büyük ünlü uyumuna uyar.', false, 'a kalın, e ince.'),
+      sikli('"Okullar" sözcüğü küçük ünlü uyumuna uyar mı?', ['Uyar', 'Uymaz'], 0, 'o\'dan sonra dar yuvarlak u, u\'dan sonra düz geniş a gelmiş.'),
+      soru('"Sapasağlam" sözcüğünde pekiştirme sırasında ünlü türemesi vardır.', true, 'sap + a + sağlam: araya bir ünlü eklenmiş.'),
     ], [
       {
         soru: '"Kitap → kitabı" değişimi hangi ses olayıdır?',
@@ -907,12 +907,12 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     ], [
       soru('Bağlaç olan "de" ayrı yazılır.', true, 'Cümleden çıkarıldığında anlam bozulmuyorsa bağlaçtır.'),
       soru('Soru eki olan "mi" her zaman ayrı yazılır.', true, 'Kendinden sonra gelen ekler ona bitişik yazılır.'),
-      soru('Bulunma durumu eki olan "-de" ayrı yazılır.', false, 'Ek olan "-de" bitişik yazılır; ayrı yazılan bağlaç olandır.'),
+      soru('"Bilmem ki ne yapsam" cümlesinde "ki" bitişik yazılır.', false, 'Bağlaç olan "ki" ayrı yazılır; bitişik olan yalnızca kalıplaşmış sözcükler.'),
       soru('Sayılar metin içinde her zaman rakamla yazılır.', false, 'Metin içinde çoğunlukla yazıyla yazılır; ölçü ve tarihlerde rakam kullanılır.'),
       sikli('"Sanki" nasıl yazılır?', ['Ayrı', 'Bitişik'], 1, 'Kalıplaşmış: hâlbuki, mademki, oysaki, çünkü.'),
       sikli('Özel ada gelen yapım eki nasıl yazılır?', ['Kesme ile', 'Kesme olmadan (Türkçe)'], 1, 'Çekim eki ayrılır: Ankara\'ya.'),
       sikli('"Hanımeli" neden bitişik?', ['Kısa olduğu için', 'Anlamca kaynaşmış'], 1, 'Deniz kabuğu ayrı.'),
-      sikli('"Güzel mi güzel" ifadesinde mi nasıl yazılır?', ['Bitişik', 'Ayrı'], 1, 'Soru eki her zaman ayrı.'),
+      sikli('"Evdeki" sözcüğündeki -ki nasıl yazılır?', ['Ayrı', 'Bitişik'], 1, 'Sıfat yapan -ki ektir, bitişik yazılır.'),
       soru('"Kaynana" ses düşmesi olduğu için bitişik yazılır.', true, 'Kayın ana.'),
     ], [
       {
@@ -961,16 +961,21 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
         'Tırnak ve kısa çizgi',
         '- **Tırnak:** alıntıyı ve özel vurguyu gösterir.\n- **Kısa çizgi:** satır sonunda hece böler, dil bilgisinde ekleri ayırır.',
       ),
+      kart(
+        'Soru ve ünlem işareti',
+        '- **Soru işareti:** soru bildiren cümlenin sonuna konur.\n- **Ünlem:** coşku, korku ve seslenmeden sonra konur.\nAyraç içinde (?) bilinmezlik, (!) alay bildirir.',
+      ),
     ], [
       soru('Virgülün yeri cümlenin anlamını değiştirebilir.', true, '"Genç, adama baktı." ile "Genç adama baktı." aynı cümle değil.'),
       soru('İki nokta, açıklama ya da örnek verileceğinde kullanılır.', true, 'Ayrıca alıntıdan önce de konur.'),
       soru('Kesme işareti özel adlara gelen yapım eklerini de ayırır.', false, 'Yapım ekleri ayrılmaz; kesme yalnızca çekim eklerini ayırıyor.'),
       soru('Noktalı virgül, birbirine bağlı cümleleri ayırmak için kullanılmaz.', false, 'Aralarında ilişki olan bağımsız cümleleri ayırmak onun işlerinden biri.'),
       sikli('"ve" bağlacından önce virgül?', ['Konmaz', 'Konur'], 0, 'Eş görevlileri virgül ayırır ama ve\'den önce değil.'),
-      sikli('İçinde virgül olan sıralı cümleleri ayıran?', ['Noktalı virgül', 'İki nokta'], 0, 'Gruplar.'),
+      sikli('Sözün yarım bırakıldığını gösteren işaret?', ['Üç nokta', 'İki nokta'], 0, 'İki nokta açıklama ve örnekten önce konur.'),
       sikli('İki noktadan sonra gelen cümle nasıl başlar?', ['Büyük harfle', 'Küçük harfle'], 0, 'Öbekse küçük.'),
       sikli('Sıra sayısında ne kullanılır?', ['Nokta (3.)', 'Kesme'], 0, 'Tarihte de.'),
       soru('Üç nokta alıntıda atlama yapıldığını gösterebilir.', true, 'Kaba sözlerin gizlenmesi de.'),
+      sikli('Bilinmeyen ya da şüpheli bir bilgiden sonra ayraç içinde hangisi konur?', ['(?)', '(!)'], 0, '(!) alay ya da küçümseme bildirir.'),
     ], [
       {
         soru: '"Türk Dil Kurumu" adına gelen "-na" eki nasıl yazılır?',
@@ -1022,9 +1027,9 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Lehçe, bir dilin çok eski dönemlerde ayrılmış koludur.', true, 'Yakutça ve Çuvaşça Türkçenin lehçelerinden.'),
       soru('Ağız, ayrı bir dil sayılır.', false, 'Ağız aynı dilin bir bölgedeki söyleyiş farkı; yazı dili ortak.'),
       soru('Türkçeye başka dillerden hiç sözcük girmemiştir.', false, 'Arapça, Farsça ve Fransızcadan geçen çok sayıda sözcük var.'),
-      sikli('"Göz, gözlük, gözlemci" neyi gösterir?', ['Türetme gücünü', 'Alıntıyı'], 0, 'Eklemeli dil.'),
+      sikli('Azerice, Türkiye Türkçesine göre ne sayılır?', ['Şive', 'Lehçe'], 0, 'Yakın zamanda ayrılmış, büyük ölçüde anlaşılan bir kol.'),
       sikli('"Kara-siyah" hangi ilişki?', ['Eş anlamlı', 'Eş sesli'], 0, 'Yüz eş sesli.'),
-      soru('Alıntı sözcüğün kendisi sorundur.', false, 'Sorun karşılığı varken kullanılan gereksiz alıntı.'),
+      soru('"Yüz" sözcüğünün sayı, surat ve eylem anlamları eş sesliliğe örnektir.', true, 'Yazılışları aynı, anlamları ayrı sözcükler.'),
     ], [
       {
         soru: 'Yakutça ve Çuvaşça Türkçenin nesi sayılır?',
