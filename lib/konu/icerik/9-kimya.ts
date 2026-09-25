@@ -48,6 +48,29 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Kimya olmadan olmazdı',
         '- **Gübre olmasa:** tarım bugünkü nüfusu besleyemezdi.\n- **Antibiyotik olmasa:** basit bir enfeksiyon öldürücü kalırdı.',
       ),
+      kart(
+        'Örneklerle değişim',
+        'Kimliği değişen kimyasal, yalnız görünüşü değişen fizikseldir.',
+        {
+          tur: 'tablo',
+          basliklar: ['Olay', 'Değişim'],
+          satirlar: [
+            ['Demirin paslanması', 'Kimyasal'],
+            ['Buzun erimesi', 'Fiziksel'],
+            ['Kâğıdın yanması', 'Kimyasal'],
+            ['Şekerin suda çözünmesi', 'Fiziksel'],
+            ['Sütün ekşimesi', 'Kimyasal'],
+          ],
+        },
+      ),
+      kart(
+        'Hâl değişimi fizikseldir',
+        'Su buz da olsa buhar da olsa H₂O’dur; molekül değişmez.\nErime, donma, buharlaşma ve yoğuşma bu yüzden fiziksel değişimdir.',
+      ),
+      kart(
+        'İlaç ve kozmetik',
+        'Ağrı kesici, diş macunu, güneş kremi kimyasal bileşiklerin karışımıdır.\nEtken madde, doz ve son kullanma tarihi bu yüzden önemlidir.',
+      ),
     ], [
       soru('Kâğıdın yanması kimyasal, yırtılması fiziksel bir değişimdir.', true, 'Yanmada yeni maddeler oluşuyor, yırtılmada kâğıt kâğıt olarak kalıyor.'),
       soru('Doğal olan her madde insan için zararsızdır.', false, 'Yılan zehri de doğal; zararı doğallığı değil yapısı ve miktarı belirliyor.'),
@@ -58,6 +81,10 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('Kireç çözücüler hangi sınıftandır?', ['Baz', 'Asit'], 1, 'Yağ çözücüler bazdır.'),
       sikli('Sabunun yağı çözmesinin sebebi?', ['Yağı buharlaştırır', 'Bir ucu suyu, bir ucu yağı sever'], 1, 'Yağı kavrayıp suya taşır.'),
       soru('Ekmeğin kızarması kimyasal bir değişimdir.', true, 'Şeker ile protein tepkimeye girip yeni maddeler oluşturuyor.'),
+      soru('Sütün ekşimesi kimyasal bir değişimdir.', true, 'Laktoz laktik aside dönüşür; yeni madde oluşur.'),
+      soru('Buzun erimesi kimyasal bir değişimdir.', false, 'Molekül değişmez; fiziksel değişim.'),
+      soru('Şekerin suda çözünmesi fiziksel bir değişimdir.', true, 'Su buharlaşınca şeker geri kalır.'),
+      sikli('Hangisi kimyasal değişimdir?', ['Camın kırılması', 'Odunun yanması'], 1, 'Yanmada yeni maddeler oluşur.'),
     ], [
       {
         soru: 'Şekerin suda çözünmesi hangi tür değişimdir?',
@@ -68,6 +95,16 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
           yanlis: 'Yeni madde oluşmadı, şeker su içinde dağıldı; buharlaştırınca geri alınır. Bu fiziksel bir değişim.',
         },
         kart: 2,
+      },
+      {
+        soru: 'Suyun kaynayıp buhar olması hangi değişimdir?',
+        siklar: ['Kimyasal', 'Fiziksel'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Buhar da H₂O; yalnızca hâl değişti.',
+          yanlis: 'Yeni madde oluşmadı; buhar yine su. Hâl değişimi fizikseldir.',
+        },
+        kart: 10,
       },
     ]),
     konu('kim9-guvenlik', 'Kimyasal Maddelerin Kullanımı ve Güvenlik', [
@@ -116,6 +153,18 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Yangında ne yapılır?',
         'Yağ ve elektrik yangınına su dökülmez:\n- **Yağ:** su ile sıçrar.\n- **Elektrik:** su akımı iletir.\nKapak ya da yangın battaniyesiyle hava kesilir.',
       ),
+      kart(
+        'Güvenlik bilgi formu',
+        'Her kimyasalın üreticisi bir güvenlik bilgi formu verir.\nFormda tehlikeler, ilk yardım, saklama ve atma bilgisi bulunur.\nKullanmadan önce okunur.',
+      ),
+      kart(
+        'Kazada ilk müdahale',
+        '- **Göze ya da cilde sıçrarsa:** en az 15 dakika bol suyla yıka.\n- **Solunursa:** temiz havaya çık.\n- **Yutulursa:** kusturma, hemen 114’ü (Ulusal Zehir Danışma) ara.',
+      ),
+      kart(
+        'Saklama kuralları',
+        '- Orijinal ve etiketli kabında sakla.\n- Gıda kaplarına kimyasal koyma.\n- Çocukların ulaşamayacağı, serin ve kuru yerde tut.',
+      ),
     ], [
       soru('Asit sulandırılırken su, asidin üzerine yavaşça dökülür.', false, 'Tersi yapılır: asit suya eklenir; su üstüne dökülen asit sıçrayabilir.'),
       soru('Çamaşır suyu ile tuz ruhu birlikte kullanılmamalıdır.', true, 'Karışımdan zehirli klor gazı açığa çıkıyor.'),
@@ -126,6 +175,10 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('Yağ yangınına ne yapılmaz?', ['Kapak kapatılmaz', 'Su dökülmez'], 1, 'Su yağı sıçratır; hava kesilir.'),
       soru('Laboratuvarda koruyucu gözlük takmak isteğe bağlıdır.', false, 'Gözlük, eldiven ve önlük kuraldır; göz tek damlayı bile tolere etmez.'),
       soru('Elektrik yangınına su dökülmez.', true, 'Su akımı iletir; önce elektrik kesilir, sonra uygun söndürücü kullanılır.'),
+      soru('Göze kimyasal sıçrarsa en az 15 dakika bol suyla yıkanır.', true, 'Maddeyi seyreltmek ve uzaklaştırmak için.'),
+      soru('Kimyasal yutulursa hemen kusturulmalıdır.', false, 'Kusturmak yakıcı maddeyle ikinci hasar verebilir; 114 aranır.'),
+      soru('Kimyasallar boş su şişelerinde saklanabilir.', false, 'Karıştırılıp içilebilir; orijinal kabında saklanır.'),
+      sikli('Ulusal Zehir Danışma Merkezi\'nin numarası?', ['114', '112'], 0, '112 genel acil çağrı numarası.'),
     ], [
       {
         soru: 'Derişik asit seyreltilirken doğru yol hangisidir?',
@@ -136,6 +189,16 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
           yanlis: 'Su aside dökülürse ısı küçük su damlasında toplanır, kaynayıp asit sıçratır. Asit suya, yavaşça.',
         },
         kart: 3,
+      },
+      {
+        soru: 'Bir kimyasalın tehlikesini ve ilk yardımını nereden öğrenirsin?',
+        siklar: ['Güvenlik bilgi formu', 'Fatura'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'Güvenlik bilgi formu tehlike, ilk yardım, saklama ve atma bilgisini verir.',
+          yanlis: 'Fatura bilgi vermez. Tehlike ve ilk yardım güvenlik bilgi formunda yazar.',
+        },
+        kart: 9,
       },
     ]),
     konu('kim9-altdal', 'Kimyanın Alt Disiplinleri', [
@@ -173,6 +236,18 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Çevre kimyası',
         'Su, hava ve topraktaki kirleticileri ve dönüşümlerini inceler.\nAsit yağmuru, ağır metal kirliliği ve mikroplastik bu dalın konusudur.',
       ),
+      kart(
+        'Nükleer kimya',
+        'Çekirdek tepkimelerini ve radyoaktifliği inceler.\nEnerji üretimi, tıbbi görüntüleme ve radyoterapide kullanılır.',
+      ),
+      kart(
+        'Elektrokimya',
+        'Kimyasal tepkimeyle elektrik arasındaki bağı inceler.\nPil, akü, kaplama ve korozyon bu dalın konusudur.',
+      ),
+      kart(
+        'Endüstriyel kimya',
+        'Laboratuvardaki tepkimeyi fabrikada büyük ölçekte, güvenli ve ucuz yapmanın yolunu arar.\nGübre, plastik ve deterjan üretimi örnektir.',
+      ),
     ], [
       soru('Organik kimya, karbon bileşiklerini inceleyen alt disiplindir.', true, 'Yakıtlar, plastikler ve ilaçların çoğu bu alanın konusu.'),
       soru('Analitik kimya, bir örnekte hangi maddenin ne kadar bulunduğunu belirler.', true, 'Nitel ve nicel analiz bu alanın işi.'),
@@ -183,6 +258,10 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       soru('Polimer kimyası küçük birimlerin uzun zincir kurmasını inceler.', true, 'Lastikten naylona her şey polimer.'),
       soru('Asit yağmurunu inceleyen alt disiplin çevre kimyasıdır.', true, 'Çevre kimyası su, hava ve topraktaki kirleticileri inceler.'),
       sikli('Toprak ve sudaki kirleticileri inceleyen dal hangisidir?', ['Biyokimya', 'Çevre kimyası'], 1, 'Biyokimya canlıdaki tepkimeleri inceler.'),
+      soru('Pil ve akü elektrokimyanın konusudur.', true, 'Kimyasal enerji elektriğe dönüşür.'),
+      soru('Radyoaktiflik organik kimyanın konusudur.', false, 'Nükleer kimyanın konusudur.'),
+      soru('Gübrenin fabrikada üretilmesi endüstriyel kimyanın işidir.', true, 'Büyük ölçekli üretim.'),
+      sikli('Korozyonu inceleyen dal?', ['Biyokimya', 'Elektrokimya'], 1, 'Paslanma bir elektrokimyasal süreçtir.'),
     ], [
       {
         soru: 'İçme suyunda kurşun olup olmadığını hangi dal araştırır?',
@@ -193,6 +272,16 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
           yanlis: 'Polimer kimyası uzun zincirli molekülleri inceler. Bir örnekte ne olduğunu ve miktarını analitik kimya bulur.',
         },
         kart: 3,
+      },
+      {
+        soru: 'Radyoterapi hangi dalın uygulamasıdır?',
+        siklar: ['Polimer kimyası', 'Nükleer kimya'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Radyoaktif ışınımın tıpta kullanılması nükleer kimyanın konusudur.',
+          yanlis: 'Polimer kimyası plastik gibi büyük molekülleri inceler. Radyoterapi nükleer kimya.',
+        },
+        kart: 9,
       },
     ]),
     konu('kim9-kariyer', 'Kimya Alanında Kariyer Olanakları', [
@@ -226,6 +315,22 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Çevre ve arıtma',
         'Atık su arıtma ve hava kalitesi ölçümü kimyagerin işidir.\nBelediyeler ve çevre laboratuvarları bu alanda istihdam eder.',
       ),
+      kart(
+        'Gıda mühendisliği',
+        'Gıdanın üretimi, saklanması ve güvenliği kimya bilgisi ister.\nKatkı maddeleri, raf ömrü ve etiket denetimi bu alanın işidir.',
+      ),
+      kart(
+        'Petrokimya',
+        'Ham petrolden yakıt, plastik hammaddesi ve çözücü üretilir.\nRafineride ayrımsal damıtma kullanılır.',
+      ),
+      kart(
+        'Kozmetik ve deterjan',
+        'Şampuan, krem ve temizlik ürünlerinin formülü kimyacılar tarafından geliştirilir.\nCildi tahriş etmemesi ve etkili olması birlikte denenir.',
+      ),
+      kart(
+        'Kimya öğretmenliği',
+        'Kimya bilgisini sonraki kuşaklara aktarır.\nLaboratuvar güvenliğini öğretmek de işin parçasıdır.',
+      ),
     ], [
       soru('Adli kimya, suç kanıtlarının çözümlenmesinde kimya bilgisini kullanır.', true, 'Kan, boya ve toz örneklerinin analizi bu alanın işi.'),
       soru('Kimyager ile kimya mühendisinin işi tümüyle aynıdır.', false, 'Kimyager maddeyi ve tepkimeyi, mühendis üretimin büyük ölçekte kurulmasını ele alır.'),
@@ -235,6 +340,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('Gıda ve ilaçta yasal olarak zorunlu iş hangisidir?', ['Kalite kontrol', 'Polimer üretimi'], 0, 'Her partinin standarda uyduğunu ölçer.'),
       soru('Eczacılık ve gıda mühendisliği kimya bilgisinin üstüne kurulu bölümlerdir.', true, 'Malzeme bilimi de öyle.'),
       soru('Hava kalitesi ölçümü kimyagerin işi değildir.', false, 'Çevre laboratuvarları ve belediyeler kimyager çalıştırır.'),
+      soru('Ham petrolden plastik hammaddesi üretilir.', true, 'Petrokimya sektörü.'),
+      soru('Gıda mühendisliğinin kimya ile ilgisi yoktur.', false, 'Katkı, saklama ve güvenlik kimya bilgisi ister.'),
+      soru('Rafineride ayrımsal damıtma kullanılır.', true, 'Kaynama noktası farkına dayanır.'),
+      sikli('Şampuan formülünü kim geliştirir?', ['Kimyager', 'İnşaat mühendisi'], 0, 'Kozmetik kimyası.'),
+      sikli('Gıdanın raf ömrünü inceleyen meslek?', ['Jeolog', 'Gıda mühendisi'], 1, 'Jeolog yer bilimleriyle ilgilenir.'),
     ], [
       {
         soru: 'Tepkimeyi fabrika ölçeğinde ekonomik üretmek kimin işidir?',
@@ -245,6 +355,16 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
           yanlis: 'Kimyager laboratuvar ölçeğinde çalışır. Fabrika ölçeği, verim ve maliyet kimya mühendisinin alanı.',
         },
         kart: 6,
+      },
+      {
+        soru: 'Rafineride ham petrolü bileşenlerine ayıran yöntem?',
+        siklar: ['Ayrımsal damıtma', 'Süzme'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'Bileşenler farklı kaynama noktalarına göre ayrılır.',
+          yanlis: 'Süzme katıyı sıvıdan ayırır. Petrol bileşenleri kaynama noktasıyla ayrılır.',
+        },
+        kart: 9,
       },
     ]),
     konu('kim9-atom-teori', 'Atom Teorileri ve Atomun Yapısı', [
@@ -317,6 +437,14 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'İyonda sayılar',
         '- **Katyon:** elektron, protondan yük kadar az (Na⁺: 11 p, 10 e)\n- **Anyon:** elektron, protondan yük kadar fazla (Cl⁻: 17 p, 18 e)',
       ),
+      kart(
+        'İzoton ve izobar',
+        '- **İzotop:** proton sayısı aynı\n- **İzoton:** nötron sayısı aynı\n- **İzobar:** kütle numarası aynı\nKimyasal özellikleri yalnız izotoplar paylaşır.',
+      ),
+      kart(
+        'Sayı bulma örneği',
+        '⁵⁶₂₆Fe³⁺ için:\n- Proton 26, nötron 56 − 26 = 30\n- Elektron 26 − 3 = 23',
+      ),
     ], [
       soru('Rutherford un deneyi, atom kütlesinin büyük kısmının küçük bir çekirdekte toplandığını gösterdi.', true, 'Işınların çok azının geri sekmesi bunun kanıtıydı.'),
       soru('İzotop atomların proton sayıları farklıdır.', false, 'Proton sayıları aynı, nötron sayıları farklıdır; proton değişseydi element değişirdi.'),
@@ -331,6 +459,9 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('Kütlenin neredeyse tamamı nerededir?', ['Çekirdekte', 'Elektron bulutunda'], 0, 'Hacmi elektronlar belirler.'),
       soru('Elektronun kütlesi kütle numarasına katılır.', false, 'Çok küçük; kütle numarası proton + nötron.'),
       soru('Her elementin emisyon çizgileri kendine özgüdür.', true, 'Parmak izi gibi.'),
+      soru('Kütle numaraları aynı atomlara izobar denir.', true, 'Proton sayıları farklı olabilir.'),
+      soru('İzotonların proton sayıları aynıdır.', false, 'İzotonların nötron sayısı aynıdır.'),
+      sikli('³⁵₁₇Cl⁻ iyonunun elektron sayısı?', ['18', '16'], 0, '17 + 1.'),
     ], [
       {
         soru: 'Rutherford\'un altın levha deneyi neyi gösterdi?',
@@ -410,6 +541,10 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Kısaltılmış gösterim',
         'Bir önceki soy gaz köşeli ayraçla yazılır:\n- **Na:** [Ne] 3s¹\n- **Ca:** [Ar] 4s²',
       ),
+      kart(
+        'İyonların dizilimi',
+        'Katyon oluşurken elektron **en dış katmandan** verilir.\nGeçiş metallerinde 4s, 3d’den önce boşalır:\nFe: [Ar] 4s² 3d⁶ → Fe²⁺: [Ar] 3d⁶',
+      ),
     ], [
       soru('Aufbau ilkesine göre elektronlar önce en düşük enerjili orbitali doldurur.', true, 'Sistem en kararlı, yani en düşük enerjili düzeni seçiyor.'),
       soru('Aynı orbitaldeki iki elektronun spinleri aynı yöndedir.', false, 'Pauli dışlama ilkesi zıt spin şartı koyuyor.'),
@@ -423,6 +558,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('Cr ve Cu\'nun diziliminin şaşırtmasının sebebi?', ['Pauli ilkesi', 'Küresel simetri'], 1, 'Yarı ya da tam dolu alt katman ek kararlılık verir.'),
       soru('Cl (17) atomunun son katmanında 7 elektron vardır.', true, '3s² 3p⁵.'),
       soru('p orbitali küresel şekillidir.', false, 's orbitali küresel, p orbitali sekiz şeklinde.'),
+      soru('Fe²⁺ iyonu oluşurken elektronlar önce 3d orbitalinden verilir.', false, 'Önce en dıştaki 4s boşalır.'),
+      sikli('₁₁Na⁺ iyonunun dizilimi?', ['1s² 2s² 2p⁶ 3s¹', '1s² 2s² 2p⁶'], 1, 'Tek 3s elektronu verilir.'),
     ], [
       {
         soru: '3d orbitalinden önce hangi orbital dolar?',
@@ -492,6 +629,10 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Geçiş metalleri',
         '3–12. gruplar, yani d bloğudur.\nBirden çok yük alabilirler (Fe²⁺, Fe³⁺); adlarında Roma rakamı bu yüzden gerekir.',
       ),
+      kart(
+        'Lantanitler ve aktinitler',
+        'f bloku elementleridir; tablonun altında ayrı iki satırda gösterilir.\nUranyum ve plütonyum aktinitlerdendir.',
+      ),
     ], [
       soru('Periyot numarası, atomun elektron bulunan en yüksek enerji seviyesini verir.', true, 'Yatay sıralar bu seviyeye göre kuruluyor.'),
       soru('Aynı gruptaki elementlerin değerlik elektron sayıları aynıdır.', true, 'Benzer kimyasal davranışlarının sebebi bu.'),
@@ -506,6 +647,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('d bloğu hangi grupları kapsar?', ['1–2', '3–12'], 1, 'Geçiş metalleri.'),
       soru('İyon oluşurken proton sayısı değişir.', false, 'Yalnızca elektron sayısı değişir.'),
       soru('Ametaller elektron alarak en yakın soy gaza benzer.', true, 'Metaller vererek benzer.'),
+      sikli('Uranyum hangi bloktadır?', ['f', 'p'], 0, 'Aktinitler f blokundadır.'),
     ], [
       {
         soru: 'Elektron dizilimi 2s² 2p⁴ ile biten element hangi periyottadır?',
@@ -577,6 +719,18 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Elektron ilgisi',
         'Gaz atomunun bir elektron alırken saldığı enerjidir.\n- **Halojenlerde:** en yüksek\n- **Soy gazlarda:** anlamlı değil, elektron almazlar',
       ),
+      kart(
+        'İyonlaşmada istisnalar',
+        '2. periyotta beklenen sıra iki yerde bozulur:\n- **Be > B:** B’nin elektronu yeni p alt katmanında\n- **N > O:** N’nin p orbitalleri yarı dolu, kararlı',
+      ),
+      kart(
+        'Soy gazlar',
+        'Periyodun en yüksek iyonlaşma enerjisi soy gazdadır.\nDış katmanları dolu olduğu için elektron vermez, almaz; tepkimeye girmez.',
+      ),
+      kart(
+        'Sıralama örneği',
+        '3. periyotta Na → Cl giderken:\n- Yarıçap küçülür.\n- İyonlaşma enerjisi ve elektronegatiflik artar.\n- Metalik karakter azalır.',
+      ),
     ], [
       soru(
         'Bir periyotta soldan sağa gidildikçe atom yarıçapı artar.',
@@ -602,6 +756,10 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('Halojenlerde en yüksek olan özellik?', ['Elektron ilgisi', 'Metalik karakter'], 0, 'Elektron almaya en istekli grup.'),
       soru('Periyotta soldan sağa gidildikçe metalik özellik artar.', false, 'Sağa gidildikçe metalik özellik azalır, ametalik özellik artar.'),
       soru('Soy gazlara elektronegatiflik değeri genelde verilmez.', true, 'Bağ kurmazlar.'),
+      soru('Azotun iyonlaşma enerjisi oksijeninkinden büyüktür.', true, 'Yarı dolu p orbitalleri kararlıdır.'),
+      soru('Periyotta soldan sağa atom yarıçapı büyür.', false, 'Çekirdek yükü artar, yarıçap küçülür.'),
+      soru('Soy gazların iyonlaşma enerjisi kendi periyotlarında en yüksektir.', true, 'Dış katman doludur.'),
+      sikli('3. periyotta en büyük atom yarıçapı?', ['Cl', 'Na'], 1, 'Periyodun başında.'),
     ], [
       {
         soru: 'Aynı periyotta soldan sağa gidildikçe atom yarıçapı?',
@@ -612,6 +770,16 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
           yanlis: 'Büyüme aşağı doğru olur (katman eklenir). Soldan sağa katman aynı, çekirdek yükü artar; yarıçap küçülür.',
         },
         kart: 2,
+      },
+      {
+        soru: 'Be ve B atomlarından hangisinin 1. iyonlaşma enerjisi büyüktür?',
+        siklar: ['B', 'Be'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'B\'nin son elektronu yeni başlayan 2p\'de, kolay kopar; Be daha büyük.',
+          yanlis: 'Genel eğilim B der ama istisna var: B\'nin 2p elektronu kolay kopar, Be büyük.',
+        },
+        kart: 10,
       },
     ]),
   ]),
@@ -643,6 +811,22 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Alaşımlar',
         'Metaller elektron denizini paylaştığı için birbiriyle kolay karışır.\nÖrnek: çelik, pirinç\nAlaşım çoğu zaman saf metalden serttir.',
       ),
+      kart(
+        'Uç örnekler',
+        '- **Cıva:** oda sıcaklığında sıvı tek metal\n- **Tungsten:** en yüksek erime noktalı metal (≈ 3400 °C), ampul teli\n- **Sezyum:** avuçta eriyecek kadar düşük',
+      ),
+      kart(
+        'Değerlik elektronu ve bağ gücü',
+        'Metal atomu denize ne kadar çok elektron verirse bağ o kadar güçlüdür.\nNa < Mg < Al: erime noktası bu sırayla yükselir.',
+      ),
+      kart(
+        'Isı iletkenliği',
+        'Serbest elektronlar ısıyı da hızla taşır.\nTencere tabanının metal, sapının plastik olması bundandır.',
+      ),
+      kart(
+        'Nerede hangi metal?',
+        '- **Bakır:** elektrik kablosu\n- **Alüminyum:** uçak gövdesi, hafif ambalaj\n- **Demir (çelik):** inşaat\n- **Altın:** elektronik bağlantılar, paslanmaz',
+      ),
     ], [
       soru('Metallerin elektriği iletmesi, serbestçe hareket eden değerlik elektronlarındandır.', true, 'Elektron denizi modeli bunu anlatıyor.'),
       soru('Metaller darbe aldığında iyonik katılar gibi kırılır.', false, 'Elektron denizi katmanların kaymasına izin verdiği için metal şekil değiştirir.'),
@@ -651,6 +835,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('Alaşımlar saf metale göre çoğu zaman nasıldır?', ['Daha sert', 'Daha yumuşak'], 0, 'Çelik demirden, pirinç bakırdan serttir.'),
       sikli('Metalik bağda pozitif iyonlar neyin içinde durur?', ['Elektron denizinin', 'Proton bulutunun'], 0, 'Valans elektronları ortak bir havuza bırakılır.'),
       soru('Valans elektron sayısı arttıkça metalik bağ güçlenir.', true, 'Erime noktası da yükselir.'),
+      soru('Oda sıcaklığında sıvı olan tek metal cıvadır.', true, 'Erime noktası −39 °C.'),
+      soru('Magnezyumun metalik bağı sodyumunkinden zayıftır.', false, 'Mg iki elektron verir; bağ daha güçlü.'),
+      soru('Metaller ısıyı serbest elektronlar sayesinde iyi iletir.', true, 'Elektron denizi ısıyı da taşır.'),
+      sikli('Ampul telinde neden tungsten kullanılır?', ['Erime noktası çok yüksek', 'Çok ucuz'], 0, 'Yüksek sıcaklıkta erimeden ışır.'),
+      sikli('Elektrik kablosunda en çok kullanılan metal?', ['Kurşun', 'Bakır'], 1, 'İyi iletken ve tel çekilebilir.'),
     ], [
       {
         soru: 'Metallerin elektriği iletmesinin sebebi nedir?',
@@ -694,6 +883,22 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Suda çözünme',
         'Su polar bir moleküldür; iyonları zıt uçlarından sarıp örgüden koparır.\nÇözelti iyon içerdiği için elektriği iletir.',
       ),
+      kart(
+        'Formül örnekleri',
+        'Yükler çaprazlanır, sadeleştirilir:\n- Al³⁺ + O²⁻ → Al₂O₃\n- Ca²⁺ + Cl⁻ → CaCl₂\n- Mg²⁺ + O²⁻ → MgO',
+      ),
+      kart(
+        'Çok atomlu iyonlar',
+        '- **OH⁻:** hidroksit\n- **NO₃⁻:** nitrat\n- **SO₄²⁻:** sülfat\n- **CO₃²⁻:** karbonat\n- **PO₄³⁻:** fosfat\n- **NH₄⁺:** amonyum',
+      ),
+      kart(
+        'Bağ gücü neye bağlı?',
+        'İyon yükleri büyüdükçe ve iyonlar küçüldükçe çekim artar.\nMgO’nun erime noktası (≈ 2850 °C) NaCl’ninkinden (≈ 800 °C) çok yüksektir.',
+      ),
+      kart(
+        'Molekül değil formül birimi',
+        'İyonik bileşikte ayrı moleküller yoktur; iyonlar örgü boyunca dizilir.\nNaCl formülü yalnızca iyonların oranını (1:1) gösterir.',
+      ),
     ], [
       soru('İyonik bağ, metal ile ametal arasında elektron aktarımıyla oluşur.', true, 'Metal verir, ametal alır; zıt yüklü iyonlar birbirini çeker.'),
       soru('İyonik katılar katı hâlde elektriği iyi iletir.', false, 'İyonlar örgüde sabit; iletim ancak erimiş hâlde ya da sulu çözeltide olur.'),
@@ -704,6 +909,10 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('K⁺ ile O²⁻ hangi formülü verir?', ['K₂O', 'KO₂'], 0, 'İki K⁺ bir O²⁻\'yi dengeler: 2·(+1) + (−2) = 0.'),
       soru('Su, iyonları zıt uçlarıyla sarıp örgüden koparır.', true, 'Su polar; kısmi yükleri iyonları çeker.'),
       soru('Mg²⁺ ile O²⁻ birleşince Mg₂O₂ oluşur.', false, 'Oran sadeleşir: MgO.'),
+      soru('Alüminyum oksidin formülü Al₂O₃\'tür.', true, 'Al³⁺ ve O²⁻ çaprazlanır.'),
+      soru('NaCl kristalinde ayrı NaCl molekülleri bulunur.', false, 'Örgü vardır; formül yalnız oranı gösterir.'),
+      soru('MgO\'nun erime noktası NaCl\'ninkinden yüksektir.', true, 'İyon yükleri daha büyük.'),
+      sikli('Kalsiyum nitratın formülü?', ['Ca(NO₃)₂', 'CaNO₃'], 0, 'Ca²⁺ iki NO₃⁻ ile dengelenir.'),
     ], [
       {
         soru: 'Katı sofra tuzu elektriği iletir mi?',
@@ -714,6 +923,16 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
           yanlis: 'İyon içermek yetmez, iyonların hareket etmesi gerekir. Katıda örgü sabittir; iletim ancak eriyik ya da çözeltide.',
         },
         kart: 6,
+      },
+      {
+        soru: 'SO₄²⁻ iyonunun adı?',
+        siklar: ['Sülfat', 'Sülfür'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'SO₄²⁻ sülfat; S²⁻ sülfür.',
+          yanlis: 'Sülfür yalnız S²⁻ iyonudur. Oksijenli SO₄²⁻ sülfat.',
+        },
+        kart: 9,
       },
     ]),
     konu('kim9-kovalent', 'Kovalent Bağ', [
@@ -755,6 +974,22 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Bağ enerjisi',
         'Bağı koparmak için gereken enerjidir.\nBağ kısa ve katlıysa enerji büyüktür: C≡C > C=C > C−C',
       ),
+      kart(
+        'Tekli, ikili, üçlü bağ',
+        '- **Tekli:** bir çift ortak (H–H)\n- **İkili:** iki çift (O=O)\n- **Üçlü:** üç çift (N≡N)\nBağ sayısı arttıkça bağ kısalır ve güçlenir.',
+      ),
+      kart(
+        'Koordine kovalent bağ',
+        'Ortak elektron çiftinin ikisini de aynı atom verir.\nNH₃ azotunun ortaklanmamış çifti H⁺’ya verilince NH₄⁺ oluşur.',
+      ),
+      kart(
+        'Moleküler ve ağ yapılar',
+        '- **Moleküler:** ayrı moleküller (H₂O, CO₂); erime noktası düşük\n- **Ağ yapı:** atomlar dev bir örgüde (elmas, SiO₂); erime noktası çok yüksek',
+      ),
+      kart(
+        'Ametal ile ametal',
+        'Kovalent bağ genellikle iki ametal atomu arasında kurulur.\nÖrnekler: H₂O, CO₂, CH₄, NH₃, HCl\nMetal ile ametal arasında ise çoğunlukla iyonik bağ oluşur.',
+      ),
     ], [
       soru('Kovalent bağda elektronlar ortaklaşa kullanılır.', true, 'Ametaller elektron almak istediği için aktarım yerine ortaklık kuruluyor.'),
       soru('İki farklı ametal arasında oluşan bağ polar kovalenttir.', true, 'Elektronegatiflik farkı elektronları bir tarafa yaklaştırıyor.'),
@@ -765,6 +1000,10 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('En güçlü bağ hangisidir?', ['C−C', 'C≡C'], 1, 'Katlı bağ kısa ve güçlü.'),
       soru('N₂ molekülünün üçlü bağı kolay kopar.', false, 'Çok zor kopar; azot gazı bu yüzden tepkimeye isteksiz.'),
       soru('Su molekülünde oksijen iki bağ kurar.', true, 'O\'nun oktetine 2 elektron eksik.'),
+      soru('N₂ molekülünde üçlü bağ vardır.', true, 'N≡N.'),
+      soru('İkili bağ tekli bağdan uzundur.', false, 'Bağ sayısı arttıkça bağ kısalır.'),
+      soru('NH₄⁺ iyonunda koordine kovalent bağ vardır.', true, 'Çifti azot verir.'),
+      sikli('Elmasın erime noktası neden çok yüksek?', ['Moleküller arası zayıf etkileşim', 'Kovalent ağ yapı'], 1, 'Kopması gereken güçlü kovalent bağlar.'),
     ], [
       {
         soru: 'HCl molekülündeki bağ hangi türdür?',
@@ -775,6 +1014,16 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
           yanlis: 'İyonik bağ metal ile ametal arasında olur. H ve Cl ikisi de ametal, elektron paylaşırlar; farklı elektronegatiflik bağı polar yapar.',
         },
         kart: 3,
+      },
+      {
+        soru: 'O₂ molekülündeki bağ?',
+        siklar: ['İyonik', 'İkili kovalent'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'İki oksijen iki elektron çifti paylaşır: O=O.',
+          yanlis: 'İyonik bağ metal ile ametal arasında olur. Aynı ametal atomları kovalent bağlanır.',
+        },
+        kart: 8,
       },
     ]),
     konu('kim9-lewis', 'Lewis Nokta Yapısı', [
@@ -815,6 +1064,22 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Örnekler',
         '- **H₂O:** O’da iki bağ, iki ortaklanmamış çift\n- **NH₃:** N’de üç bağ, bir çift\n- **CO₂:** iki ikili bağ, her O’da iki çift',
       ),
+      kart(
+        'Örnek: CO₂',
+        'Karbon iki oksijenle ikişer çift paylaşır: O=C=O\nHer oksijende iki ortaklanmamış çift kalır.\nBütün atomlar okteti tamamlar.',
+      ),
+      kart(
+        'Örnek: NH₃',
+        'Azot üç hidrojenle birer çift paylaşır.\nAzotun üstünde bir ortaklanmamış çift kalır; molekülü piramit yapar.',
+      ),
+      kart(
+        'İyonik bileşikte Lewis',
+        'Elektron aktarılır, ortaklanmaz; iyonlar köşeli parantezle yazılır.\nNaCl: [Na]⁺ [:Cl:]⁻ (klorun etrafında sekiz nokta)',
+      ),
+      kart(
+        'Lewis yapısı şekli söyler',
+        'Merkez atomdaki ortaklanmamış çiftler bağları iter ve molekülü büker.\nH₂O’da iki çift molekülü açısal, NH₃’te bir çift piramit yapar; CO₂’de çift olmadığı için doğrusal kalır.',
+      ),
     ], [
       soru('Lewis yapısı atomun değerlik elektronlarını noktalarla gösterir.', true, 'İç katmanlar çizilmiyor; bağı kuran elektronlar değerlik elektronları.'),
       soru('Oktet kuralına göre atomlar son katmanlarında sekiz elektrona ulaşmaya çalışır.', true, 'Soy gaz düzenine benzemek kararlılık sağlıyor.'),
@@ -825,6 +1090,10 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('Hangisi oktetin üstünde kalır?', ['BF₃', 'SF₆'], 1, 'SF₆\'da kükürdün çevresinde 12 elektron var; BF₃ oktetin altında.'),
       soru('Ortaklanmamış çiftler molekülün şeklini etkilemez.', false, 'Şekli ve polarlığı belirler.'),
       soru('Lewis yapısı çizilirken önce toplam valans elektron sayılır.', true, 'Sonra bağlar, sonra kalan çiftler.'),
+      soru('CO₂ molekülünde karbon iki ikili bağ yapar.', true, 'O=C=O.'),
+      soru('NH₃ molekülünde azotun ortaklanmamış elektron çifti yoktur.', false, 'Bir ortaklanmamış çifti vardır.'),
+      soru('İyonik bileşiklerin Lewis yapısında iyonlar köşeli parantezle gösterilir.', true, 'Yük parantezin dışına yazılır.'),
+      sikli('H₂O\'da oksijenin kaç ortaklanmamış çifti var?', ['2', '1'], 0, '6 valans: 2 bağ, 2 çift.'),
     ], [
       {
         soru: 'Oktet kuralına göre hidrojen son katmanını kaça tamamlar?',
@@ -835,6 +1104,16 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
           yanlis: 'Sekiz, ikinci ve sonraki katmanlar için. Hidrojenin tek katmanı en çok iki elektron alır; tek bir bağla dolar.',
         },
         kart: 3,
+      },
+      {
+        soru: 'NH₃\'te azotun ortaklanmamış çift sayısı?',
+        siklar: ['1', '0'],
+        dogru: 0,
+        aciklama: {
+          dogru: '5 valans elektrondan 3\'ü bağda, 2\'si tek bir çift olarak kalır.',
+          yanlis: 'Azotun 5 valans elektronu var; üç bağdan sonra bir çift artar.',
+        },
+        kart: 9,
       },
     ]),
     konu('kim9-polarlik', 'Molekül Polarlığı ve Apolarlığı', [
@@ -930,6 +1209,32 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Benzer benzeri çözer',
         '- **Polar madde:** polar çözücüde çözünür.\n- **Apolar madde:** apolar çözücüde çözünür.\nYağın suda çözünmemesi bu yüzdendir.',
       ),
+      kart(
+        'Molekül şekilleri',
+        '- **Doğrusal:** CO₂, BeH₂\n- **Açısal (kırık):** H₂O\n- **Üçgen düzlem:** BF₃\n- **Üçgen piramit:** NH₃\n- **Düzgün dörtyüzlü:** CH₄',
+      ),
+      kart(
+        'Örnek moleküller',
+        'Simetrik olan apolar, simetrisi bozuk olan polar çıkar.',
+        {
+          tur: 'tablo',
+          basliklar: ['Molekül', 'Şekil', 'Sonuç'],
+          satirlar: [
+            ['CO₂', 'Doğrusal', 'Apolar'],
+            ['H₂O', 'Açısal', 'Polar'],
+            ['CH₄', 'Dörtyüzlü', 'Apolar'],
+            ['NH₃', 'Piramit', 'Polar'],
+          ],
+        },
+      ),
+      kart(
+        'Elektronegatiflik farkı',
+        '- **Fark 0:** apolar kovalent bağ (H₂, Cl₂)\n- **Fark küçük-orta:** polar kovalent bağ (HCl)\n- **Fark çok büyük:** iyonik bağ (NaCl)',
+      ),
+      kart(
+        'Elektrik alanda',
+        'Polar moleküller elektrik alanda kutuplarını çevirerek yönlenir.\nSu akışının yanına yüklü bir tarak tutulunca akış tarağa doğru eğilir.',
+      ),
     ], [
       soru(
         'Şekildeki su molekülü doğrusal olduğu için apolardır.',
@@ -963,6 +1268,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('CCl₄ molekülü nasıldır?', ['Polar', 'Apolar'], 1, 'Dört polar bağ simetrik dizilir; dipoller birbirini götürür.'),
       sikli('NH₃ molekülü nasıldır?', ['Apolar', 'Polar'], 1, 'Merkezdeki azotta ortaklanmamış bir çift var; şekil simetrik değil.'),
       soru('Yağın suda çözünmemesi "benzer benzeri çözer" kuralının sonucudur.', true, 'Apolar yağ, polar su.'),
+      soru('CH₄ molekülü apolardır.', true, 'Dörtyüzlü ve simetrik; dipoller birbirini götürür.'),
+      soru('NH₃ molekülü doğrusaldır.', false, 'Üçgen piramit; ortaklanmamış çift şekli bozar.'),
+      soru('Yüklü tarak ince su akışını kendine doğru eğer.', true, 'Su molekülleri polar.'),
+      sikli('BF₃ molekülünün şekli?', ['Üçgen piramit', 'Üçgen düzlem'], 1, 'Borun ortaklanmamış çifti yok.'),
+      sikli('Elektronegatiflik farkı sıfır olan bağ?', ['Apolar kovalent', 'İyonik'], 0, 'H₂, Cl₂ gibi aynı atomlar.'),
     ], [
       {
         soru: 'CO₂ molekülü neden apolardır?',
@@ -1017,6 +1327,22 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Sık çıkan örnekler',
         '- **Fe₂O₃:** demir(III) oksit\n- **FeO:** demir(II) oksit\n- **SO₂:** kükürt dioksit\n- **PCl₅:** fosfor pentaklorür\n- **Na₂SO₄:** sodyum sülfat',
       ),
+      kart(
+        'Asitlerin adları',
+        '- **HCl:** hidroklorik asit\n- **H₂SO₄:** sülfürik asit\n- **HNO₃:** nitrik asit\n- **H₃PO₄:** fosforik asit\n- **CH₃COOH:** asetik asit (sirke)',
+      ),
+      kart(
+        'Bazların adları',
+        'Metal adı + hidroksit:\n- NaOH: sodyum hidroksit (sud kostik)\n- Ca(OH)₂: kalsiyum hidroksit (sönmüş kireç)\n- NH₃: amonyak',
+      ),
+      kart(
+        'Formülden ada',
+        '- **FeCl₃:** demir(III) klorür\n- **CuSO₄:** bakır(II) sülfat\n- **N₂O₅:** diazot pentaoksit\n- **CaCO₃:** kalsiyum karbonat (kireç taşı)',
+      ),
+      kart(
+        'Addan formüle',
+        'Yükleri yaz, çaprazla, sadeleştir:\nalüminyum sülfat → Al³⁺ ve SO₄²⁻ → **Al₂(SO₄)₃**\nÇok atomlu iyon birden fazlaysa paranteze alınır.',
+      ),
     ], [
       soru('CO₂ bileşiğinin adı karbon dioksittir.', true, 'İki ametal; ikinci elemente atom sayısını gösteren ön ek geliyor.'),
       soru('İyonik bileşikler adlandırılırken önce ametal yazılır.', false, 'Önce metal (katyon), sonra ametal yazılır.'),
@@ -1027,6 +1353,10 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('"tetra" ön eki kaç demektir?', ['6', '4'], 1, 'mono 1, di 2, tri 3, tetra 4, penta 5, heksa 6.'),
       soru('CaCO₃\'ün yaygın adı kireç taşıdır.', true, 'Sistematik adı kalsiyum karbonat.'),
       soru('Na₂SO₄\'ün adı disodyum sülfattır.', false, 'İyonik bileşikte ön ek kullanılmaz: sodyum sülfat.'),
+      soru('H₂SO₄ sülfürik asittir.', true, 'Akülerde kullanılır.'),
+      soru('NaOH\'nin adı sodyum oksittir.', false, 'Sodyum hidroksit; sodyum oksit Na₂O.'),
+      soru('CaCO₃ kireç taşının formülüdür.', true, 'Kalsiyum karbonat.'),
+      sikli('CuSO₄ nasıl adlandırılır?', ['Bakır sülfür', 'Bakır(II) sülfat'], 1, 'Bakırın değerliği yazılır; SO₄²⁻ sülfat.'),
     ], [
       {
         soru: 'N₂O₄ bileşiğinin adı nedir?',
@@ -1037,6 +1367,16 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
           yanlis: 'Roma rakamı metallerin değerliği için kullanılır. İki ametalin bileşiğinde atom sayıları ön ekle söylenir: diazot tetraoksit.',
         },
         kart: 3,
+      },
+      {
+        soru: 'Magnezyum nitratın formülü?',
+        siklar: ['MgNO₃', 'Mg(NO₃)₂'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Mg²⁺ iki NO₃⁻ ile dengelenir; iyon paranteze alınır.',
+          yanlis: 'MgNO₃\'te yük dengelenmez (+2, −1). Doğrusu Mg(NO₃)₂.',
+        },
+        kart: 11,
       },
     ]),
     konu('kim9-molekuller-arasi', 'Moleküller Arası Etkileşimler', [
@@ -1082,6 +1422,18 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         undefined,
         { not: 'H₂O > HF > NH₃ (hidrojen bağı); HCl > F₂ (polar > apolar); I₂ > Br₂ > Cl₂ (kütle). Sıralama bu üç adım.' },
       ),
+      kart(
+        'Hidrojen bağının şartı',
+        'H atomu doğrudan **F, O ya da N**’ye bağlı olmalıdır.\nH₂O, NH₃, HF hidrojen bağı yapar; CH₄ ve H₂S yapmaz.',
+      ),
+      kart(
+        'Kaynama noktası örnekleri',
+        '- **H₂O (100 °C) > H₂S (−60 °C):** suda hidrojen bağı var.\n- **F₂ < Cl₂ < Br₂ < I₂:** molekül büyüdükçe London kuvveti artar.',
+      ),
+      kart(
+        'Buz neden yüzer?',
+        'Donarken su molekülleri hidrojen bağlarıyla açık, boşluklu bir örgü kurar.\nBuz bu yüzden sıvı sudan daha az yoğundur.',
+      ),
     ], [
       soru('Moleküller arası etkileşimler kimyasal bağlardan zayıftır.', true, 'Suyu kaynatmak molekülleri ayırıyor, bağlarını koparmıyor.'),
       soru('Suyun kaynama sıcaklığının beklenenden yüksek olması hidrojen bağlarındandır.', true, 'Hidrojen bağı moleküller arası etkileşimlerin en güçlüsü.'),
@@ -1093,6 +1445,10 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('HCl ile F₂\'den hangisinin kaynama noktası yüksektir?', ['F₂', 'HCl'], 1, 'HCl polar: dipol-dipol var. F₂ apolar, yalnızca London.'),
       soru('Kalıcı dipolü olan polar moleküller birbirini zıt uçlarından çeker.', true, 'Bu dipol-dipol etkileşimidir; London kuvvetlerinden güçlü.'),
       soru('Van der Waals, London ve dipol-dipol etkileşimlerinin ortak adıdır.', true, 'Maddenin hâlini belirler.'),
+      soru('CH₄ molekülleri arasında hidrojen bağı vardır.', false, 'H karbona bağlı; F, O, N yok.'),
+      soru('I₂\'nin kaynama noktası F₂\'ninkinden yüksektir.', true, 'Büyük molekülde London kuvvetleri güçlü.'),
+      soru('Suyun kaynama noktası H₂S\'ninkinden yüksektir.', true, 'Hidrojen bağı.'),
+      sikli('Hangisi hidrojen bağı yapar?', ['NH₃', 'HCl'], 0, 'H azota bağlı; Cl bu listede yok.'),
     ], [
       {
         soru: 'Suyun kaynama noktasının benzer moleküllerden çok yüksek olmasının sebebi?',
@@ -1103,6 +1459,16 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
           yanlis: 'London kuvvetleri her molekülde var ve zayıf. Suyu ayıran şey H–O bağının yarattığı güçlü hidrojen bağı.',
         },
         kart: 5,
+      },
+      {
+        soru: 'Buzun suda yüzmesinin sebebi?',
+        siklar: ['Hidrojen bağlarının açık örgüsü', 'London kuvvetleri'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'Hidrojen bağları buzda boşluklu bir örgü kurar; yoğunluk düşer.',
+          yanlis: 'London kuvvetleri her molekülde var; buzu özel yapan hidrojen bağlarının açık örgüsü.',
+        },
+        kart: 11,
       },
     ]),
     konu('kim9-katilar', 'Katılar ve Özellikleri', [
@@ -1145,6 +1511,28 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Aynı element, farklı katı',
         'Elmas ve grafit ikisi de karbondur.\nBiri en sert maddelerden, öteki kalem ucu; farkı yalnızca dizilim yaratır.',
       ),
+      kart(
+        'Dört katı yan yana',
+        'Taneciği ve aradaki etkileşimi katının özelliğini belirler.',
+        {
+          tur: 'tablo',
+          basliklar: ['Tür', 'Örnek', 'Belirgin özellik'],
+          satirlar: [
+            ['İyonik', 'NaCl', 'Sert, kırılgan'],
+            ['Kovalent ağ', 'Elmas', 'Çok sert'],
+            ['Moleküler', 'Buz', 'Düşük erime'],
+            ['Metalik', 'Demir', 'İletken'],
+          ],
+        },
+      ),
+      kart(
+        'Amorf katı örnekleri',
+        'Cam, plastik, tereyağı ve mum amorftur.\nBelirli bir erime noktaları yoktur, ısıtılınca yavaş yavaş yumuşarlar.',
+      ),
+      kart(
+        'Erime noktası sırası',
+        'Genellikle: kovalent ağ > iyonik > metalik > moleküler\nMetallerde aralık geniştir: cıva sıvı, tungsten çok yüksek.',
+      ),
     ], [
       soru('Elmas ile grafit aynı elementten oluşur.', true, 'İkisi de karbon; farkı atomların dizilişinde.'),
       soru('Cam kristal bir katıdır.', false, 'Camın düzenli örgüsü yok; amorf katı.'),
@@ -1155,6 +1543,10 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('Kuvars hangi tür katıdır?', ['Moleküler', 'Kovalent ağ'], 1, 'Bütün kristal tek bir Si–O bağ ağı.'),
       soru('Bakır metalik katıya örnektir.', true, 'Elektron denizi ile tutunur; iletken ve dövülebilir.'),
       soru('İyonik katılar katı hâlde elektriği iletir.', false, 'Ancak eriyik ya da çözeltide.'),
+      soru('Cam amorf bir katıdır.', true, 'Düzenli örgüsü yoktur.'),
+      soru('Moleküler katıların erime noktası genellikle yüksektir.', false, 'Moleküller arası etkileşim zayıf; erime noktası düşük.'),
+      soru('Amorf katılar belirli bir sıcaklıkta aniden erir.', false, 'Yavaş yavaş yumuşarlar.'),
+      sikli('Elmas hangi tür katıdır?', ['Moleküler', 'Kovalent ağ'], 1, 'Her karbon dört komşusuna kovalent bağlı.'),
     ], [
       {
         soru: 'Elmasın aşırı sert olmasının sebebi nedir?',
@@ -1215,6 +1607,22 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Suyun tuhaflığı',
         'Su donarken genleşir ve buz suda yüzer.\nHidrojen bağları katıda molekülleri daha boşluklu bir düzene sokar.',
       ),
+      kart(
+        'Buhar basıncını ne değiştirir?',
+        '- **Sıcaklık artarsa:** buhar basıncı artar.\n- **Kabın hacmi ya da sıvı miktarı:** değiştirmez.\n- **Moleküller arası çekim güçlüyse:** buhar basıncı düşüktür.',
+      ),
+      kart(
+        'Viskoziteyi ne değiştirir?',
+        '- **Sıcaklık artarsa:** viskozite azalır (bal ısınınca akar).\n- **Moleküller büyük ve çekim güçlüyse:** viskozite artar (gliserin).',
+      ),
+      kart(
+        'Menisküs',
+        'Sıvının kap içindeki yüzey eğrisidir.\n- **Su:** içbükey; adezyon kohezyondan büyük\n- **Cıva:** dışbükey; kohezyon adezyondan büyük',
+      ),
+      kart(
+        'Yüzey gerilimi örnekleri',
+        'Su böceği suyun üstünde yürür, iğne dikkatle konursa yüzer.\nDeterjan yüzey gerilimini düşürür; bu yüzden kiri ıslatıp söker.',
+      ),
     ], [
       soru('Bir sıvının buhar basıncı arttıkça kaynama sıcaklığı düşer.', true, 'Sıvı, dış basıncı daha erken karşılıyor.'),
       soru('Viskozitesi yüksek sıvılar daha zor akar.', true, 'Bal ile suyun farkı bu.'),
@@ -1225,6 +1633,10 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('Sıcaklık artınca viskozite?', ['Artar', 'Azalır'], 1, 'Bal ısınınca akıcılaşır.'),
       soru('Buhar basıncı sıcaklık arttıkça büyür.', true, 'Moleküller arası çekim zayıfladıkça da.'),
       soru('Buz suda batar.', false, 'Su donarken genleşir; buz yüzer.'),
+      soru('Sıcaklık artınca sıvının buhar basıncı artar.', true, 'Daha çok molekül yüzeyden kaçar.'),
+      soru('Kaptaki sıvı miktarı artınca buhar basıncı artar.', false, 'Buhar basıncı miktara bağlı değil.'),
+      soru('Deterjan suyun yüzey gerilimini düşürür.', true, 'Kiri ıslatıp sökmesi bu sayede.'),
+      sikli('Cıvanın menisküsü nasıldır?', ['Dışbükey', 'İçbükey'], 0, 'Kohezyonu adezyondan büyük.'),
     ], [
       {
         soru: 'Sıvı ne zaman kaynar?',
@@ -1235,6 +1647,16 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
           yanlis: '100 °C suyun 1 atm\'deki kaynama noktası. Genel kural: buhar basıncı dış basınca eşitlenince kaynar; dağda daha erken.',
         },
         kart: 2,
+      },
+      {
+        soru: 'Bal ısıtılınca viskozitesi?',
+        siklar: ['Artar', 'Azalır'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Isınan moleküller birbirinden kolay kayar; bal daha akışkan olur.',
+          yanlis: 'Sıcaklık moleküller arası çekimi yenmeyi kolaylaştırır; viskozite azalır.',
+        },
+        kart: 9,
       },
     ]),
   ]),
@@ -1266,6 +1688,22 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Riski de var',
         'Küçük olmak, hücre zarını geçebilmek demektir.\nSağlık ve çevre etkileri hâlâ araştırılıyor.',
       ),
+      kart(
+        'Renk değişir',
+        'Altın bulk hâlde sarıdır; nanoparçacık olunca kırmızı ya da mor görünür.\nOrta çağ vitraylarındaki kırmızı renk altın nanoparçacıklardan gelir.',
+      ),
+      kart(
+        'Gümüş nanoparçacık',
+        'Bakteri öldürücü özelliği vardır.\nYara örtüleri, çorap ve buzdolabı kaplamalarında kullanılır.',
+      ),
+      kart(
+        'İki üretim yolu',
+        '- **Yukarıdan aşağı:** büyük parça öğütülerek küçültülür.\n- **Aşağıdan yukarı:** atom ve moleküllerden parçacık kurulur (kimyasal indirgeme).',
+      ),
+      kart(
+        'Güneş kremi',
+        'Çinko oksit ve titanyum dioksit nanoparçacıkları morötesi ışığı engeller.\nNano boyutta oldukları için ciltte beyaz iz bırakmazlar.',
+      ),
     ], [
       soru('1 nanometre, metrenin milyarda biridir.', true, 'Bir insan saçı yaklaşık 80 bin nanometre kalınlığında.'),
       soru('Nanoparçacıklar, aynı maddenin iri hâliyle aynı özellikleri gösterir.', false, 'Yüzey/hacim oranı büyüdüğü için renk, erime noktası ve etkinlik değişebiliyor.'),
@@ -1274,6 +1712,11 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('1 cm\'lik küp 1 mm\'lik küplere bölünürse toplam yüzey kaç katına çıkar?', ['10', '1000'], 0, '6 cm²\'den 1000 · 0,06 = 60 cm²\'ye; hacim aynı kalır.'),
       sikli('Gümüş nanoparçacık tekstilde ne için kullanılır?', ['Renk verici', 'Mikrop öldürücü'], 1, 'Altın nanoparçacık tanı testlerinde kullanılır.'),
       soru('Bitki özütleri metal iyonlarını nanoparçacığa çevirmekte kullanılabilir.', true, 'Özütteki maddeler metal iyonlarını indirger.'),
+      soru('Altın nanoparçacıklar kırmızı renkte görünebilir.', true, 'Boyut rengi değiştirir.'),
+      soru('Gümüş nanoparçacıklar bakterilerin çoğalmasını hızlandırır.', false, 'Bakteri öldürücüdür.'),
+      soru('Öğüterek küçültme "yukarıdan aşağı" üretimdir.', true, 'Büyükten küçüğe.'),
+      sikli('Güneş kreminde morötesini engelleyen nanoparçacık?', ['Sodyum klorür', 'Titanyum dioksit'], 1, 'Çinko oksit de kullanılır.'),
+      sikli('Atomlardan parçacık kurmak hangi yol?', ['Aşağıdan yukarı', 'Yukarıdan aşağı'], 0, 'Küçükten büyüğe.'),
     ], [
       {
         soru: 'Madde nano boyuta inince neden daha etkin olur?',
@@ -1321,6 +1764,26 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Ekolojik ayak izi',
         'Bir üretimin doğaya bindirdiği yükün ölçüsüdür.\nMetal geri kazanımı, cevherden üretime göre bu yükü belirgin azaltır.',
       ),
+      kart(
+        'Cıva ve Minamata',
+        '1950’lerde Japonya’da bir fabrikanın cıvalı atığı denize döküldü.\nBalıklarda biriken cıva yüzlerce kişiyi zehirledi; hastalığa Minamata adı verildi.',
+      ),
+      kart(
+        'Kurşun',
+        'Eskiden benzin, boya ve su borularında kullanılırdı.\nÇocuklarda sinir sistemine zarar verir; kurşunsuz benzine bu yüzden geçildi.',
+      ),
+      kart(
+        'Pil ve elektronik atık',
+        'Piller cıva, kadmiyum, kurşun gibi metaller içerir.\nÇöpe değil atık pil kutusuna atılmalıdır.',
+      ),
+      kart(
+        'Metal geri dönüşümü',
+        'Alüminyumu geri dönüştürmek, cevherden üretmenin enerjisinin yaklaşık %95’ini tasarruf ettirir.\nMetal kalitesini kaybetmeden defalarca geri dönüştürülebilir.',
+      ),
+      kart(
+        'Madencilik etkisi',
+        'Metal çıkarmak toprağı kazar, suyu kirletir, çok enerji harcar.\nSiyanürle altın ayrıştırma yanlış yapılırsa suyu zehirler.',
+      ),
     ], [
       soru('Ağır metaller besin zincirinde birikerek üst basamaklarda yoğunlaşır.', true, 'Vücuttan atılmadıkları için her basamakta daha çok toplanıyorlar.'),
       soru('Alaşım, iki metalin kimyasal tepkimesiyle oluşan yeni bir bileşiktir.', false, 'Alaşım bir karışım; bileşenler kendi kimliğini koruyor.'),
@@ -1329,6 +1792,12 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('Çelik neyin alaşımıdır?', ['Bakır ve çinko', 'Demir ve karbon'], 1, 'Bakır-çinko pirinç.'),
       sikli('Pirinç hangi metallerin alaşımıdır?', ['Bakır ve çinko', 'Demir ve karbon'], 0, 'Demir ve karbon çeliği oluşturur.'),
       soru('Metal geri kazanımı ekolojik ayak izini azaltır.', true, 'Cevherden üretime göre çok daha az yük.'),
+      soru('Minamata hastalığı cıva zehirlenmesidir.', true, 'Balıkta biriken cıva insana geçti.'),
+      soru('Kurşun çocuklarda sinir sistemine zararsızdır.', false, 'Kurşun özellikle çocuklarda sinir sistemine zarar verir.'),
+      soru('Atık piller çöpe atılabilir.', false, 'Ağır metal içerir; atık pil kutusuna atılır.'),
+      sikli('Geri dönüşümde en büyük enerji tasarrufu sağlanan metal?', ['Altın', 'Alüminyum'], 1, 'Yaklaşık %95.'),
+      sikli('Kurşunsuz benzine geçişin sebebi?', ['Kurşunun zehirliliği', 'Kurşunun pahalılığı'], 0, 'Egzozdan havaya karışıyordu.'),
+      soru('Metaller kalitelerini kaybetmeden defalarca geri dönüştürülebilir.', true, 'Kâğıttan farkı bu.'),
     ], [
       {
         soru: 'Ağır metal besin zincirinde nerede en yoğun bulunur?',
@@ -1339,6 +1808,16 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
           yanlis: 'Su ve bitkide derişim en düşük. Her basamak bir öncekini yediği için metal tepede birikir: büyük balık, yırtıcı kuş, insan.',
         },
         kart: 2,
+      },
+      {
+        soru: 'Alüminyum geri dönüşümü cevherden üretime göre yaklaşık ne kadar enerji tasarrufu sağlar?',
+        siklar: ['%95', '%10'],
+        dogru: 0,
+        aciklama: {
+          dogru: 'Cevherden alüminyum elde etmek çok elektrik ister; geri dönüşüm bunun çoğunu kurtarır.',
+          yanlis: 'Tasarruf çok büyüktür: yaklaşık %95.',
+        },
+        kart: 10,
       },
     ]),
     konu('kim9-yesil', 'Yeşil Kimyanın Atık Önleme İlkesi', [
@@ -1378,6 +1857,26 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         'Okulda karşılığı',
         'Mikro ölçekli deney aynı sonucu daha az maddeyle verir.\nHem atık hem risk azalır.',
       ),
+      kart(
+        'Yeşil kimyanın ilkelerinden',
+        '- Atık oluşturmayı önle.\n- Daha az zehirli madde kullan ve üret.\n- Güvenli çözücü seç.\n- Enerjiyi verimli kullan.\n- Yenilenebilir hammaddeye yönel.',
+      ),
+      kart(
+        'Katalizör',
+        'Katalizör tepkimeyi hızlandırır ama harcanmaz.\nAz enerjiyle ve az yan ürünle üretim sağlar; tekrar tekrar kullanılabilir.',
+      ),
+      kart(
+        'Güvenli çözücü',
+        'Zehirli organik çözücülerin yerine su ya da süperkritik karbon dioksit kullanılır.\nKahvenin kafeini süperkritik CO₂ ile ayrılır.',
+      ),
+      kart(
+        'Yenilenebilir hammadde',
+        'Petrol yerine bitkisel kaynak: mısır nişastasından biyoplastik (PLA) yapılır.\nKaynak tükenmez, atık daha kolay parçalanır.',
+      ),
+      kart(
+        'Atom ekonomisi örneği',
+        'Atom ekonomisi = istenen ürünün kütlesi / girenlerin kütlesi × 100\nBütün atomlar ürüne geçerse %100’dür; yan ürün arttıkça düşer.',
+      ),
     ], [
       soru(
         'Şemaya göre atığı geri kazanmak, hiç oluşturmamaktan daha önceliklidir.',
@@ -1400,6 +1899,12 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('Atık hiyerarşisinde geri dönüştürme kaçıncı sıradadır?', ['Birinci', 'Dördüncü'], 1, 'Önle, azalt, yeniden kullan; ancak sonra geri dönüştür.'),
       sikli('Atık hiyerarşisinde en kötü seçenek?', ['Depolamak', 'Yeniden kullanmak'], 0, 'En iyisi hiç üretmemek.'),
       soru('Oluşmuş atığı arıtmak enerji ve su harcar.', true, 'Oluşmayan atığın arıtma maliyeti ise sıfırdır.'),
+      soru('Katalizör tepkimede harcanır.', false, 'Hızlandırır ama harcanmaz.'),
+      soru('Süperkritik CO₂ yeşil bir çözücüdür.', true, 'Zehirli organik çözücünün yerine kullanılır.'),
+      soru('Yan ürün arttıkça atom ekonomisi düşer.', true, 'Atomların bir kısmı istenmeyen ürüne gider.'),
+      sikli('Mısır nişastasından yapılan plastik?', ['PVC', 'Biyoplastik'], 1, 'PVC petrol kökenlidir.'),
+      sikli('Yeşil kimyada ilk öncelik?', ['Atığı önlemek', 'Atığı yakmak'], 0, 'Oluşmayan atık yönetilmek zorunda değil.'),
+      soru('Bütün atomlar ürüne geçen tepkimenin atom ekonomisi %100\'dür.', true, 'Hiç yan ürün yok.'),
     ], [
       {
         soru: 'Yeşil kimyanın ilk ilkesi nedir?',
@@ -1410,6 +1915,16 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
           yanlis: 'Arıtma sonradan gelen ve pahalı bir çözüm. İlk ilke atığı arıtmak değil hiç oluşturmamak.',
         },
         kart: 1,
+      },
+      {
+        soru: 'Tepkimeyi hızlandırıp harcanmayan madde?',
+        siklar: ['Çözücü', 'Katalizör'],
+        dogru: 1,
+        aciklama: {
+          dogru: 'Katalizör az enerjiyle üretim sağlar ve yeniden kullanılır.',
+          yanlis: 'Çözücü maddeleri çözer, tepkimeyi hızlandırmak onun işi değil. Katalizör.',
+        },
+        kart: 8,
       },
     ]),
   ]),
