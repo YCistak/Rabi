@@ -16,15 +16,15 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     konu('trh10-mucadele', 'Türkistan’dan Türkiye’ye Askerî Mücadeleler', [
       kart(
         'Dandanakan (1040)',
-        'Selçuklular Gaznelileri yendi ve Büyük Selçuklu Devleti kuruldu. Türklerin batıya yönelişi hızlandı.',
+        'Selçuklular Gaznelileri yendi.\n- Büyük Selçuklu Devleti kuruldu.\n- Türklerin batıya yönelişi hızlandı.',
       ),
       kart(
         'Malazgirt (1071)',
-        'Alparslan Bizans ordusunu yendi. Anadolu Türk yerleşimine açıldı; kapı bir daha kapanmadı.',
+        'Alparslan Bizans ordusunu yendi.\nAnadolu Türk yerleşimine açıldı; kapı bir daha kapanmadı.',
       ),
       kart(
         'Dönemin çizgisi',
-        'Anadolu’nun Türkleşmesi tek bir savaşla değil, iki yüzyıla yayılan bir dizi dönüm noktasıyla oldu.',
+        'Anadolu’nun Türkleşmesi tek bir savaşla olmadı.\nİki yüzyıla yayılan bir dizi dönüm noktasıyla oldu.',
         {
           tur: 'akis',
           dikey: true,
@@ -39,23 +39,23 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       ),
       kart(
         'Miryokefalon (1176)',
-        'Bizans’ın Anadolu’yu geri alma umudu bitti. Artık Anadolu’nun Türk yurdu olduğu kabul edildi.',
+        'Bizans’ın Anadolu’yu geri alma umudu bitti.\nAnadolu’nun Türk yurdu olduğu kabul edildi.',
       ),
       kart(
         'Haçlı Seferleri',
-        'Anadolu ve Suriye üzerinden gelen seferler Türk beyliklerini zorladı; sonuçta doğu-batı teması arttı.',
+        'Anadolu ve Suriye üzerinden gelen seferler Türk devletlerini zorladı.\nSonuçta doğu ile batı arasındaki temas arttı.',
       ),
       kart(
         'Haçlıların sonuçları',
-        'Avrupa kâğıt, pusula ve barutla tanıştı; Doğu Akdeniz ticareti canlandı ve İtalyan şehirleri zenginleşti.',
+        '- Avrupa kâğıt, pusula ve barutla tanıştı.\n- Doğu Akdeniz ticareti canlandı.\n- İtalyan şehirleri zenginleşti.',
       ),
       kart(
         'Kösedağ (1243)',
-        'Moğollar Türkiye Selçuklularını yendi. Merkezî otorite çöktü ve beylikler dönemi başladı.',
+        'Moğollar Türkiye Selçuklularını yendi.\nMerkezî otorite çöktü, beylikler dönemi başladı.',
       ),
       kart(
         'Neden Anadolu?',
-        'Otlakları bol, iklimi elverişli ve Bizans sınırı gevşekti. Göç eden boylar için hem geçim hem güvenlik alanıydı.',
+        '- Otlakları bol, iklimi elverişliydi.\n- Bizans sınırı gevşekti.\nGöç eden boylar için hem geçim hem güvenlik alanıydı.',
       ),
     ], [
       soru(
@@ -95,15 +95,15 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     konu('trh10-teskilat', 'Türk Devlet ve Ordu Teşkilatındaki Değişim', [
       kart(
         'Bozkırdan devlete',
-        'Boy birliğine dayalı yapı, İslam ve İran devlet geleneğiyle birleşerek merkezî bir bürokrasiye dönüştü.',
+        'Boy birliğine dayalı yapı, İslam ve İran devlet geleneğiyle birleşti.\nSonuç merkezî bir bürokrasi oldu.',
       ),
       kart(
         'Divan teşkilatı',
-        'Büyük Divan yönetimin merkezi oldu; maliye, yazışma ve ordu işleri ayrı divanlara bölündü.',
+        '**Büyük Divan** yönetimin merkeziydi.\nMaliye, yazışma ve ordu işleri ayrı divanlara bölündü.',
       ),
       kart(
         'İkta sistemi',
-        'Toprağın geliri hizmet karşılığı komutan ve askerlere verildi. Hazineden para çıkmadan ordu beslendi.',
+        'Toprağın geliri, hizmet karşılığı komutan ve askerlere verildi.\nHazineden para çıkmadan ordu beslendi.',
         {
           tur: 'akis',
           donguSel: true,
@@ -116,21 +116,21 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       ),
       kart(
         'İktanın üç kazancı',
-        'Ordu beslendi, toprak boş kalmadı ve taşrada düzen sağlandı. Tek bir düzenleme üç işi birden gördü.',
+        '- Ordu beslendi.\n- Toprak boş kalmadı.\n- Taşrada düzen sağlandı.',
         undefined,
         { not: 'İkta: hazineden maaş çıkmadan ordu, toprağın işlenmesi, taşrada güvenlik. Osmanlı\'daki adı tımar.' },
       ),
       kart(
         'Ordu unsurları',
-        'Gulam askerleri, ikta askerleri ve boy kuvvetleri. Farklı kaynaklar orduyu hem büyütüyor hem çeşitlendiriyordu.',
+        '- Gulam askerleri\n- İkta askerleri\n- Boy kuvvetleri\nFarklı kaynaklar orduyu hem büyütüyor hem çeşitlendiriyordu.',
       ),
       kart(
         'Ülke hanedanın malı',
-        'Eski Türk anlayışında ülke hanedanın ortak malıydı; bu anlayış taht kavgalarının ve bölünmenin kaynağıydı.',
+        'Eski Türk anlayışında ülke hanedanın ortak malıydı.\nBu anlayış taht kavgalarının ve bölünmenin kaynağıydı.',
       ),
       kart(
         'Atabeylik',
-        'Şehzadelerin yanına deneyimli devlet adamı verilirdi. Merkez zayıflayınca bu atabeyler kendi devletlerini kurdu.',
+        'Şehzadelerin yanına deneyimli bir devlet adamı verilirdi.\nMerkez zayıflayınca bu atabeyler kendi devletlerini kurdu.',
       ),
     ], [
       soru('İkta sisteminde toprağın mülkiyeti devlette kalır.', true, 'Verilen şey mülk değil, toprağın geliri.'),
@@ -156,33 +156,33 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     konu('trh10-sosyal', 'Türklerin Sosyal Yaşamları ve Ekonomik Faaliyetleri', [
       kart(
         'Yerleşiklik arttı',
-        'Anadolu’ya gelen Türkler zamanla köy ve şehirlere yerleşti; konargöçerlik azaldı ama tümüyle bitmedi.',
+        'Anadolu’ya gelen Türkler zamanla köy ve şehirlere yerleşti.\nKonargöçerlik azaldı ama tümüyle bitmedi.',
       ),
       kart(
         'Ahilik',
-        'Esnaf ve zanaatkâr birliği. Kalite denetimi, fiyat düzeni ve mesleki eğitimi birlikte yürütüyordu.',
+        'Esnaf ve zanaatkârların birliğidir.\nBirlikte yürüttüğü işler: kalite denetimi, fiyat düzeni, mesleki eğitim',
       ),
       kart(
         'Ahiliğin işleyişi',
-        'Çırak, kalfa ve usta basamakları hem mesleği hem ahlaki eğitimi kapsıyordu; kötü mal üreten esnaf birlikten atılırdı.',
+        'Çırak → kalfa → usta basamakları hem mesleği hem ahlakı kapsardı.\nKötü mal üreten esnaf birlikten atılırdı.',
       ),
       kart(
         'Vakıf sistemi',
-        'Hayır kurumlarını finanse eden yapı: cami, medrese, imaret, hastane ve köprüler vakıflarla yaşadı.',
+        'Hayır kurumlarını finanse eden yapıdır.\nCami, medrese, imaret, hastane ve köprüler vakıflarla yaşadı.',
       ),
       kart(
         'Vakıf neden kalıcı?',
-        'Gelir getiren bir mülk süresiz olarak bir hizmete bağlanır; kurucusu ölse de kurum kendi geliriyle yaşamaya devam eder.',
+        'Gelir getiren bir mülk, süresiz olarak bir hizmete bağlanır.\nKurucusu ölse de kurum kendi geliriyle yaşamaya devam eder.',
         undefined,
         { not: 'Bir han vakfedilir, kirası medreseyi besler; kurucu ölse de kira gelir, medrese açık kalır.' },
       ),
       kart(
         'Ticaret ve kervansaray',
-        'Selçuklular yol boyunca kervansaray kurdu; yolcular üç gün ücretsiz konaklardı.',
+        'Selçuklular yol boyunca kervansaraylar kurdu.\nYolcular üç gün ücretsiz konaklardı.',
       ),
       kart(
         'Tarım ve hayvancılık',
-        'Ekonominin temeliydi. İkta sistemi toprağın boş kalmamasını da güvence altına alıyordu.',
+        'Ekonominin temeliydi.\nİkta sistemi toprağın boş kalmamasını da güvenceye alıyordu.',
       ),
     ], [
       soru('Ahilik, esnaf ve zanaatkârları bir araya getiren bir teşkilattır.', true, 'Hem meslek eğitimi hem ahlak eğitimi veriyordu.'),
@@ -208,11 +208,11 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     konu('trh10-turk-islam', 'Türk-İslam Medeniyetinde Bilim, Kültür ve Sanat', [
       kart(
         'Medreseler',
-        'Nizamülmülk’ün kurduğu Nizamiye medreseleri dönemin en düzenli yükseköğretim kurumlarıydı.',
+        '**Nizamiye medreseleri** Nizamülmülk tarafından kuruldu.\nDönemin en düzenli yükseköğretim kurumlarıydı.',
       ),
       kart(
         'Bilim insanları',
-        'Bu adların çalışmaları yalnızca İslam dünyasında değil, çeviriler yoluyla Avrupa’da da okundu.',
+        'Bu bilginlerin çalışmaları çevirilerle Avrupa’da da okundu.\nTabloda kimin hangi alanda öne çıktığı yazıyor.',
         {
           tur: 'tablo',
           basliklar: ['Ad', 'Alan'],
@@ -226,25 +226,25 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       ),
       kart(
         'Türkçenin yazı dili olması',
-        'Kutadgu Bilig ve Divânu Lugâti’t-Türk, Türkçenin bir kültür dili olarak yazıya geçişini gösterir.',
+        'İki eser, Türkçenin bir kültür dili olarak yazıya geçişini gösterir:\n- Kutadgu Bilig\n- Divânu Lugâti’t-Türk',
       ),
       kart(
         'Kutadgu Bilig',
-        'Yusuf Has Hacib’in eseri; yöneticiye nasıl davranması gerektiğini anlatan bir siyasetname niteliğindedir.',
+        '**Yusuf Has Hacib**’in eseridir.\nYöneticiye nasıl davranması gerektiğini anlatan bir siyasetnamedir.',
       ),
       kart(
         'Tasavvuf',
-        'Mevlânâ, Yunus Emre ve Hacı Bektaş Veli’nin öğretisi Anadolu’nun kültürel dokusunu biçimlendirdi.',
+        'Anadolu’nun kültürel dokusunu biçimlendiren üç ad:\n- Mevlânâ\n- Yunus Emre\n- Hacı Bektaş Veli',
       ),
       kart(
         'Neden tasavvuf yayıldı?',
-        'Sade dille anlatması ve farklı inançlara açık durması, göç ve savaş görmüş bir toplumda geniş karşılık buldu.',
+        '- Sade bir dille anlatıyordu.\n- Farklı inançlara açık duruyordu.\nGöç ve savaş görmüş bir toplumda geniş karşılık buldu.',
         undefined,
         { not: 'Yunus Emre Türkçe ve sade söyledi; Moğol istilasından bunalan halk derviş tekkesinde sığınak buldu.' },
       ),
       kart(
         'Mimari',
-        'Kümbet, medrese, kervansaray ve çini süsleme; taş işçiliğinde Anadolu Selçuklu üslubu belirginleşti.',
+        '- Kümbet, medrese, kervansaray\n- Çini süsleme ve taş işçiliği\nAnadolu Selçuklu üslubu bu yapılarda belirginleşti.',
       ),
     ], [
       soru('Kutadgu Bilig, Yusuf Has Hacip tarafından yazılmıştır.', true, 'Türkçe yazılmış ilk siyasetname sayılıyor.'),
@@ -272,11 +272,11 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     konu('trh10-kurulus', 'Osmanlı Devleti’nin Kuruluşuna Dair Görüşler', [
       kart(
         'Gaza ve cihat görüşü',
-        'Osmanlı’yı uç bölgesindeki gaza ruhunun büyüttüğünü savunur. Sınır boyu savaşçıları devlete katıldı.',
+        'Osmanlı’yı uç bölgesindeki gaza ruhunun büyüttüğünü savunur.\nSınır boyundaki savaşçılar devlete katıldı.',
       ),
       kart(
         'Aşiret görüşü',
-        'Kayı boyuna dayanan aşiret yapısının çekirdek olduğunu ileri sürer.',
+        'Kayı boyuna dayanan aşiret yapısının devletin çekirdeği olduğunu ileri sürer.',
       ),
       kart(
         'Ahilik ve tasavvuf etkisi',
@@ -284,7 +284,7 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       ),
       kart(
         'Dört görüş yan yana',
-        'Görüşler birbirini dışlamıyor; her biri sürecin farklı bir yanını öne çıkarıyor.',
+        'Görüşler birbirini dışlamaz.\nHer biri sürecin farklı bir yanını öne çıkarır.',
         {
           tur: 'tablo',
           basliklar: ['Görüş', 'Vurgu'],
@@ -299,15 +299,15 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       ),
       kart(
         'Coğrafi konum',
-        'Bizans sınırında, Balkanlara açılan bir uçta olması Osmanlı’ya büyüme alanı verdi.',
+        'Bizans sınırında, Balkanlara açılan bir uçta kuruldu.\nBu konum Osmanlı’ya büyüme alanı verdi.',
       ),
       kart(
         'Neden farklı görüşler?',
-        'Kuruluş dönemine ait yazılı kaynak çok az; ilk kronikler olaylardan yaklaşık yüz yıl sonra yazıldı.',
+        'Kuruluş dönemine ait yazılı kaynak çok azdır.\nİlk kronikler olaylardan yaklaşık yüz yıl sonra yazıldı.',
       ),
       kart(
         'Öteki beylikler neden büyümedi?',
-        'Çoğu Anadolu’nun içinde ve komşuları da Türk beylikleriydi; Osmanlı ise genişleyebileceği bir sınırda duruyordu.',
+        '- **Çoğu beylik:** Anadolu’nun içinde, komşuları da Türk beylikleri\n- **Osmanlı:** genişleyebileceği bir sınırda',
       ),
     ], [
       soru('Osmanlı nın kuruluşuyla ilgili tek bir görüş üzerinde uzlaşılmıştır.', false, 'Gaza, aşiret ve tasavvuf temelli birden çok görüş yan yana duruyor.'),
@@ -333,37 +333,37 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     konu('trh10-anadolu-rumeli', 'Anadolu ve Rumeli’deki Siyasi ve Askerî Mücadeleler', [
       kart(
         'Rumeli’ye geçiş',
-        'Çimpe Kalesi’nin alınmasıyla (1353) Osmanlı Balkanlara ayak bastı; genişleme buradan hızlandı.',
+        '**Çimpe Kalesi**’nin alınmasıyla (1353) Osmanlı Balkanlara ayak bastı.\nGenişleme buradan hızlandı.',
       ),
       kart(
         'Balkan zaferleri',
-        'Sırpsındığı, I. Kosova ve Niğbolu ile Balkanlardaki Osmanlı varlığı kalıcılaştı.',
+        'Balkanlardaki Osmanlı varlığını kalıcılaştıran savaşlar:\n- Sırpsındığı\n- I. Kosova\n- Niğbolu',
       ),
       kart(
         'Anadolu Türk birliği',
-        'Beylikler savaş, satın alma ve evlilik yoluyla Osmanlı’ya katıldı; amaç Anadolu’da tek otoriteydi.',
+        'Beylikler savaş, satın alma ve evlilik yoluyla Osmanlı’ya katıldı.\nAmaç Anadolu’da tek otoriteydi.',
       ),
       kart(
         'Ankara Savaşı (1402)',
-        'Timur karşısında alınan yenilgi devleti dağıttı; Anadolu birliği bozuldu.',
+        'Timur karşısında alınan yenilgi devleti dağıttı.\nAnadolu Türk birliği bozuldu.',
       ),
       kart(
         'Fetret Devri',
-        'Şehzadeler arasındaki on bir yıllık taht mücadelesi. Devlet Balkanlardaki düzen sayesinde ayakta kaldı.',
+        'Şehzadeler arasında on bir yıl süren taht mücadelesidir.\nDevlet, Balkanlardaki düzen sayesinde ayakta kaldı.',
       ),
       kart(
         'Neden Balkanlar tutundu?',
-        'İskân ve istimalet politikası yerel halkı yabancılaştırmamıştı; merkez dağılırken bile bölge elden çıkmadı.',
+        'İskân ve istimalet politikası yerel halkı yabancılaştırmamıştı.\nMerkez dağılırken bile bölge elden çıkmadı.',
         undefined,
         { not: 'Ankara yenilgisinden sonra Anadolu beylikleri ayrıldı, Balkan halkı ayrılmadı: istimalet vergiyi hafifletmişti.' },
       ),
       kart(
         'İstanbul’un Fethi (1453)',
-        'Orta Çağ kapandı. Osmanlı toprak bütünlüğünü sağladı ve imparatorluğa dönüştü.',
+        '- Orta Çağ kapandı.\n- Osmanlı toprak bütünlüğünü sağladı.\n- Devlet imparatorluğa dönüştü.',
       ),
       kart(
         'Fethin sonuçları',
-        'Boğazlar tek elde toplandı, Bizans sona erdi, Avrupa’ya giden bilginler Rönesans’a katkı sundu.',
+        '- Boğazlar tek elde toplandı.\n- Bizans sona erdi.\n- Avrupa’ya giden bilginler Rönesans’a katkı sundu.',
       ),
     ], [
       soru('Ankara Savaşı ndan sonra Osmanlı Devleti Fetret Devri ne girmiştir.', true, 'Şehzadeler arasındaki mücadele yaklaşık on bir yıl sürdü.'),
@@ -390,19 +390,19 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     konu('trh10-devletlesme', 'Devletleşme Süreci: Ordu, Hukuk ve Toprak', [
       kart(
         'Tımar sistemi',
-        'Toprağın vergi geliri sipahiye bırakıldı; sipahi hem üretimi denetledi hem asker yetiştirdi.',
+        'Toprağın vergi geliri sipahiye bırakıldı.\nSipahi hem üretimi denetledi hem asker yetiştirdi.',
       ),
       kart(
         'Toprak kimin?',
-        'Miri arazide mülkiyet devletindir; köylüye yalnızca işleme hakkı verilir. Boş bırakılan toprak geri alınır.',
+        '**Miri arazide** mülkiyet devletindir.\nKöylüye yalnızca işleme hakkı verilir; boş bırakılan toprak geri alınır.',
       ),
       kart(
         'Devşirme ve yeniçeri',
-        'Devşirilen çocuklar eğitilerek kapıkulu ordusuna alındı; merkeze bağlı sürekli bir ordu doğdu.',
+        'Devşirilen çocuklar eğitilerek kapıkulu ordusuna alındı.\nMerkeze bağlı, sürekli bir ordu doğdu.',
       ),
       kart(
         'İki ordu, iki kaynak',
-        'Kapıkulu maaşlı ve merkeze bağlıydı; eyalet askeri toprak gelirinden geçinir ve taşrada dururdu.',
+        '- **Kapıkulu:** maaşlı, merkeze bağlı\n- **Eyalet askeri:** toprak gelirinden geçinir, taşrada durur',
         {
           tur: 'tablo',
           basliklar: ['', 'Kapıkulu', 'Eyalet'],
@@ -415,15 +415,15 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       ),
       kart(
         'Örfi hukuk',
-        'Şer’i hukukun yanında padişahın koyduğu kanunlar. Kanunnameler devlet düzenini yazılı hâle getirdi.',
+        'Şer’i hukukun yanında padişahın koyduğu kanunlardır.\nKanunnameler devlet düzenini yazılı hâle getirdi.',
       ),
       kart(
         'Divan-ı Hümayun',
-        'Devletin en yüksek karar organı. Her tebaanın şikâyetini götürebildiği bir merci sayılırdı.',
+        'Devletin en yüksek karar organıdır.\nHer tebaanın şikâyetini götürebildiği bir merci sayılırdı.',
       ),
       kart(
         'Üçü birbirini besledi',
-        'Toprak düzeni orduyu, ordu güvenliği, güvenlik de üretimi ayakta tuttu. Biri bozulunca hepsi sarsıldı.',
+        '- Toprak düzeni orduyu besledi.\n- Ordu güvenliği sağladı.\n- Güvenlik üretimi ayakta tuttu.\nBiri bozulunca hepsi sarsıldı.',
         undefined,
         { not: 'Tımar sipahiyi besler, sipahi güvenliği sağlar, güvenlik üretimi artırır, üretim tımarı besler. Halka.' },
       ),
@@ -451,31 +451,31 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     konu('trh10-kalicilik', 'Fethettiği Topraklarda Kalıcı Olma Politikaları', [
       kart(
         'İskân politikası',
-        'Fethedilen bölgelere Anadolu’dan nüfus yerleştirildi; bölge hem şenlendirildi hem güvenceye alındı.',
+        'Fethedilen bölgelere Anadolu’dan nüfus yerleştirildi.\nBölge hem şenlendirildi hem güvenceye alındı.',
       ),
       kart(
         'Kimler yerleştirildi?',
-        'Konargöçerler, kalabalık aileler ve huzursuzluk çıkaran gruplar tercih edilirdi; böylece iki sorun birden çözülürdü.',
+        '- Konargöçerler\n- Kalabalık aileler\n- Huzursuzluk çıkaran gruplar\nBöylece iki sorun birden çözülürdü.',
       ),
       kart(
         'İstimalet',
-        'Yerli halka hoşgörülü davranma siyaseti: can, mal ve inanç güvenliği verildi, vergi yükü hafifletildi.',
+        'Yerli halka hoşgörülü davranma siyasetidir.\n- Can, mal ve inanç güvenliği verildi.\n- Vergi yükü hafifletildi.',
       ),
       kart(
         'Mevcut düzeni koruma',
-        'Yerel vergi ve toprak düzeni çoğu zaman korundu; ani değişiklik direnç üretiyordu.',
+        'Yerel vergi ve toprak düzeni çoğu zaman korundu.\nAni değişiklik direnç üretiyordu.',
       ),
       kart(
         'İmar faaliyetleri',
-        'Cami, han, hamam ve köprü ile şehirler yeniden canlandırıldı; bunlar aynı zamanda kalıcılığın işaretiydi.',
+        'Cami, han, hamam ve köprüyle şehirler yeniden canlandırıldı.\nBunlar aynı zamanda kalıcılığın işaretiydi.',
       ),
       kart(
         'Millet sistemi',
-        'Gayrimüslim topluluklar kendi dinî liderleri altında iç işlerinde serbestti; bu, uzun süreli bir arada yaşamayı kolaylaştırdı.',
+        'Gayrimüslim topluluklar kendi dinî liderleri altında iç işlerinde serbestti.\nBu, uzun süre bir arada yaşamayı kolaylaştırdı.',
       ),
       kart(
         'Neden işe yaradı?',
-        'Bizans yönetiminde ağır vergi altındaki köylü için Osmanlı düzeni çoğu zaman daha katlanılırdı.',
+        'Bizans yönetiminde köylü ağır vergi altındaydı.\nOsmanlı düzeni çoğu zaman daha katlanılırdı.',
         undefined,
         { not: 'Bizans köylüsü ağır vergi + angarya öderdi; Osmanlı düzeninde vergi hafifledi, kilise kaldı. Direniş azaldı.' },
       ),
@@ -503,29 +503,29 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     konu('trh10-ilim-irfan', 'İlim ve İrfan Geleneğinin Oluşması', [
       kart(
         'İlk medrese',
-        'İznik’te açıldı (1331). Devletin ihtiyaç duyduğu kadı ve müderrisler burada yetişti.',
+        'İlk Osmanlı medresesi **İznik**’te açıldı (1331).\nDevletin ihtiyaç duyduğu kadı ve müderrisler burada yetişti.',
       ),
       kart(
         'Külliye',
-        'Cami çevresinde medrese, imaret, hamam ve şifahaneden oluşan yapı topluluğu; şehrin çekirdeğiydi.',
+        'Cami çevresindeki yapı topluluğudur:\nmedrese, imaret, hamam, şifahane\nKülliye şehrin çekirdeğiydi.',
       ),
       kart(
         'Külliye ne işe yarardı?',
-        'Eğitim, sağlık, ibadet ve yemek tek bir vakfın geliriyle yürürdü. Yeni fethedilen şehir böyle canlandırılırdı.',
+        'Eğitim, sağlık, ibadet ve yemek tek bir vakfın geliriyle yürürdü.\nYeni fethedilen şehir böyle canlandırılırdı.',
         undefined,
         { not: 'Süleymaniye Külliyesi: cami + 4 medrese + hastane + imaret + hamam; hepsi tek vakfın gelirinden.' },
       ),
       kart(
         'Öne çıkan adlar',
-        'Molla Fenari ilk şeyhülislam, Davud-i Kayseri ilk medresenin başmüderrisi olarak anılır.',
+        '- **Molla Fenari:** ilk şeyhülislam\n- **Davud-i Kayseri:** ilk medresenin başmüderrisi',
       ),
       kart(
         'Tekke ve zaviyeler',
-        'Dervişler uç bölgelerde hem yol güvenliği hem yerleşim sağladı; kültürel kaynaşmanın merkezleriydi.',
+        'Dervişler uç bölgelerde yol güvenliği ve yerleşim sağladı.\nTekkeler kültürel kaynaşmanın merkezleriydi.',
       ),
       kart(
         'Mekân ve kişi',
-        'Gelenek yalnızca kitapla değil, o kitabın okutulduğu mekân ve onu okutan kişiyle sürüyordu.',
+        'Gelenek yalnızca kitapla sürmüyordu.\nKitabın okutulduğu mekân ve onu okutan kişi de geleneğin parçasıydı.',
       ),
     ], [
       soru('Külliye, cami çevresinde toplanan yapıların oluşturduğu bir yapı topluluğudur.', true, 'Medrese, imaret ve hamam da bu topluluğun parçası.'),
@@ -552,15 +552,15 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     konu('trh10-siyasi', '1453-1683 Arasındaki Siyasi ve Askerî Mücadeleler', [
       kart(
         'Doğuda',
-        'Çaldıran (1514) ile Safeviler durduruldu; Ridaniye (1517) ile Memlük toprakları alındı ve halifelik geçti.',
+        '- **Çaldıran (1514):** Safeviler durduruldu.\n- **Ridaniye (1517):** Memlük toprakları alındı, halifelik geçti.',
       ),
       kart(
         'Batıda',
-        'Mohaç (1526) ile Macaristan, Preveze (1538) ile Akdeniz’de üstünlük kazanıldı.',
+        '- **Mohaç (1526):** Macaristan alındı.\n- **Preveze (1538):** Akdeniz’de üstünlük kazanıldı.',
       ),
       kart(
         'İki yüzyılın çizgisi',
-        'Zirveye çıkış ve duraklama arasındaki dönüm noktaları birkaç tarihte toplanır.',
+        'Yükseliş ile duraklama arasındaki dönüm noktaları birkaç tarihte toplanır.',
         {
           tur: 'akis',
           dikey: true,
@@ -576,23 +576,23 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       ),
       kart(
         'En geniş sınırlar',
-        'Kanuni döneminde devlet üç kıtaya yayıldı; Akdeniz bir Osmanlı denizi hâline geldi.',
+        'Kanuni döneminde devlet üç kıtaya yayıldı.\nAkdeniz bir Osmanlı denizi hâline geldi.',
       ),
       kart(
         'Cihanşümul iddia',
-        'Fatih ve Kanuni dönemlerinde padişah kendini yalnızca bir bölgenin değil, dünyanın hükümdarı olarak konumlandırdı.',
+        'Fatih ve Kanuni dönemlerinde padişah kendini dünyanın hükümdarı olarak konumlandırdı.\nYalnızca bir bölgenin değil.',
       ),
       kart(
         'Dönüm noktaları',
-        'İnebahtı (1571) donanmanın yenildiği ilk büyük çarpışma; II. Viyana Kuşatması (1683) batıya ilerleyişin sonu.',
+        '- **İnebahtı (1571):** donanmanın yenildiği ilk büyük çarpışma\n- **II. Viyana (1683):** batıya ilerleyişin sonu',
       ),
       kart(
         'Uzun savaşlar',
-        'İran ve Avusturya ile yıllarca süren savaşlar hazineyi ve tımar düzenini yıprattı.',
+        'İran ve Avusturya ile yıllarca süren savaşlar yaşandı.\nHazine ve tımar düzeni yıprandı.',
       ),
       kart(
         'Koloni yarışının dışında',
-        'Avrupa okyanus ötesinde koloniler kurarken Osmanlı kara imparatorluğu olarak kaldı; gelir kaynakları çeşitlenmedi.',
+        'Avrupa okyanus ötesinde koloniler kurarken Osmanlı kara imparatorluğu olarak kaldı.\nGelir kaynakları çeşitlenmedi.',
       ),
     ], [
       soru('Osmanlı Devleti en geniş sınırlarına 17. yüzyılda ulaşmıştır.', true, 'Bu yüzyıldan sonra topraklar genişlemek yerine korunmaya çalışıldı.'),
@@ -619,19 +619,19 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     konu('trh10-yonetim-degisim', 'Yönetim ve Ordu Yapısındaki Değişim', [
       kart(
         'Sancağa çıkma kalktı',
-        'Şehzadelerin taşrada yönetim öğrenmesi son buldu; yerine kafes usulü geldi ve deneyimsiz padişahlar arttı.',
+        'Şehzadelerin taşrada yönetim öğrenmesi son buldu, yerine kafes usulü geldi.\nDeneyimsiz padişahların sayısı arttı.',
       ),
       kart(
         'Ekber ve erşed',
-        'Tahta hanedanın en yaşlı ve olgun üyesinin geçmesi kuralı; kardeş katlinin yerini aldı.',
+        'Tahta hanedanın **en yaşlı ve olgun** üyesi geçer.\nBu kural kardeş katlinin yerini aldı.',
       ),
       kart(
         'Tımarın çözülmesi',
-        'Ateşli silahlar öne çıkınca sipahi önemini yitirdi; tımarlar iltizama döndü ve köylünün yükü arttı.',
+        'Ateşli silahlar öne çıkınca sipahi önemini yitirdi.\nTımarlar iltizama döndü, köylünün yükü arttı.',
       ),
       kart(
         'İltizam nedir?',
-        'Verginin toplanma hakkı peşin parayla satılırdı. Mültezim ödediğinden fazlasını almak istediği için köylü ezildi.',
+        'Verginin toplanma hakkı peşin parayla satılırdı.\nMültezim ödediğinden fazlasını toplamak istediği için köylü ezildi.',
         {
           tur: 'akis',
           adimlar: [
@@ -643,19 +643,19 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       ),
       kart(
         'Yeniçerinin bozulması',
-        'Devşirme kuralı gevşedi, sayı arttı, disiplin düştü. Yeniçeriler siyasete karışan bir güce dönüştü.',
+        '- Devşirme kuralı gevşedi.\n- Sayı arttı, disiplin düştü.\nYeniçeriler siyasete karışan bir güce dönüştü.',
       ),
       kart(
         'Sadrazamların ağırlığı',
-        'Padişahlar geri çekilince yönetim sadrazamlara kaydı; Köprülüler dönemi bunun en belirgin örneğidir.',
+        'Padişahlar geri çekilince yönetim sadrazamlara kaydı.\nEn belirgin örneği **Köprülüler** dönemidir.',
       ),
       kart(
         'Islahat girişimleri',
-        'Kuyucu Murat Paşa, II. Osman ve IV. Murat düzeni zorla toparlamaya çalıştı; çabalar kalıcı bir kurum bırakmadı.',
+        'Kuyucu Murat Paşa, II. Osman ve IV. Murat düzeni zorla toparlamaya çalıştı.\nÇabalar kalıcı bir kurum bırakmadı.',
       ),
       kart(
         'Neden ıslahatlar tutmadı?',
-        'Girişimler eski düzeni onarmayı hedefliyordu; sorunun kaynağı olan yapının kendisi tartışılmıyordu.',
+        'Girişimler eski düzeni onarmayı hedefliyordu.\nSorunun kaynağı olan yapının kendisi tartışılmıyordu.',
         undefined,
         { not: 'IV. Murat düzeni zorla kurdu, ölünce bozuldu: sebebe (tımarın çöküşü, para) değil sonuca müdahale edilmişti.' },
       ),
@@ -684,19 +684,19 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     konu('trh10-somurge', 'Avrupa’nın Sömürgeci Politikalarının Etkileri', [
       kart(
         'Coğrafi keşifler',
-        'Yeni deniz yolları bulununca ticaret okyanuslara kaydı; İpek ve Baharat yolları önemini yitirdi.',
+        'Yeni deniz yolları bulununca ticaret okyanuslara kaydı.\nİpek ve Baharat yolları önemini yitirdi.',
       ),
       kart(
         'Sömürgecilik nedir?',
-        'Bir devletin uzak toprakları ele geçirip kaynaklarını kendi ekonomisine aktarması. Avrupa zenginliğinin bir kaynağı budur.',
+        'Bir devletin uzak toprakları ele geçirip kaynaklarını kendi ekonomisine aktarmasıdır.\nAvrupa zenginliğinin bir kaynağı budur.',
       ),
       kart(
         'Gümrük geliri düştü',
-        'Osmanlı’nın transit ticaretten aldığı pay azaldı. Hazinenin en güvenilir gelirlerinden biri zayıfladı.',
+        'Osmanlı’nın transit ticaretten aldığı pay azaldı.\nHazinenin en güvenilir gelirlerinden biri zayıfladı.',
       ),
       kart(
         'Fiyat devrimi',
-        'Amerika’dan gelen gümüş Avrupa’ya, oradan Osmanlı’ya aktı; para değer kaybetti ve enflasyon yükseldi.',
+        'Amerika’dan gelen gümüş Avrupa’ya, oradan Osmanlı’ya aktı.\nAkçe değer kaybetti, enflasyon yükseldi.',
         {
           tur: 'akis',
           dikey: true,
@@ -711,15 +711,15 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       ),
       kart(
         'Kapitülasyonlar',
-        'Başlangıçta ticareti canlandırmak için verilen ayrıcalıklar, zamanla yerli üreticiyi zorlayan bir yüke dönüştü.',
+        'Başlangıçta ticareti canlandırmak için verilen ayrıcalıklardı.\nZamanla yerli üreticiyi zorlayan bir yüke dönüştü.',
       ),
       kart(
         'Sanayi dengesi',
-        'Avrupa ucuz ve bol mal üretmeye başlayınca Osmanlı loncaları rekabette geriledi.',
+        'Avrupa ucuz ve bol mal üretmeye başladı.\nOsmanlı loncaları bu rekabette geriledi.',
       ),
       kart(
         'Neden lonca yetişemedi?',
-        'Lonca kaliteyi ve fiyatı denetleyip üretimi sınırlıyordu; bu düzen az ve iyi üretmek için kurulmuştu, çok üretmek için değil.',
+        'Lonca kaliteyi ve fiyatı denetleyip üretimi sınırlıyordu.\nBu düzen az ve iyi üretmek için kurulmuştu, çok üretmek için değil.',
       ),
     ], [
       soru(
@@ -758,23 +758,23 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     konu('trh10-isyan', 'Önemli İsyanların Neden ve Sonuçları', [
       kart(
         'Celali isyanları',
-        'Anadolu’da ağır vergi, iltizam baskısı ve işsiz sekbanlar yüzünden çıktı. Köyler boşaldı, üretim düştü.',
+        'Anadolu’da çıktı. Sebepleri: ağır vergi, iltizam baskısı, işsiz sekbanlar\nKöyler boşaldı, üretim düştü.',
       ),
       kart(
         'Büyük kaçgun',
-        'Celali baskısından kaçan köylülerin toprağı bırakıp şehirlere göç etmesi; tarımsal üretim uzun süre toparlanamadı.',
+        'Celali baskısından kaçan köylüler toprağı bırakıp şehirlere göç etti.\nTarımsal üretim uzun süre toparlanamadı.',
       ),
       kart(
         'İstanbul isyanları',
-        'Yeniçeri ve kapıkulu ayaklanmaları; ulufe ve cülus talepleriyle çıkıp padişah değiştirecek güce ulaştı.',
+        'Yeniçeri ve kapıkulu ayaklanmalarıdır; ulufe ve cülus talepleriyle çıktı.\nZamanla padişah değiştirecek güce ulaştı.',
       ),
       kart(
         'Eyalet isyanları',
-        'Merkezden uzak valilerin ayaklanması. Otoritenin zayıfladığı yerlerde yerel güçler öne çıktı.',
+        'Merkezden uzak valilerin ayaklanmasıdır.\nOtoritenin zayıfladığı yerlerde yerel güçler öne çıktı.',
       ),
       kart(
         'Üç isyan, üç kaynak',
-        'Üçünün de çıktığı yer farklı ama arkalarındaki mali bozulma aynı.',
+        'Üçünün de çıktığı yer ve kişiler farklıdır.\nArkalarındaki mali bozulma ise aynıdır.',
         {
           tur: 'tablo',
           basliklar: ['İsyan', 'Kim?'],
@@ -788,11 +788,11 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       ),
       kart(
         'Ortak sebep',
-        'Uzun savaşlar, bozulan para, artan vergi ve tımar düzeninin çöküşü. İsyanlar sebep değil sonuçtu.',
+        '- Uzun savaşlar\n- Bozulan para ve artan vergi\n- Tımar düzeninin çöküşü\nİsyanlar sebep değil sonuçtu.',
       ),
       kart(
         'Sonuçları',
-        'Can ve mal kaybı, göç, tarımsal üretimde düşüş ve merkezî otoritenin daha da zayıflaması.',
+        '- Can ve mal kaybı\n- Göç ve tarımsal üretimde düşüş\n- Merkezî otoritenin daha da zayıflaması',
       ),
     ], [
       soru('Celali isyanları Anadolu da tarımsal üretimin azalmasına yol açmıştır.', true, 'Köylü toprağını bırakıp göç etti.'),
@@ -818,27 +818,27 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     konu('trh10-bilim-kultur', '1453-1683 Arasında Bilim, Kültür ve Sanat', [
       kart(
         'Sahn-ı Seman',
-        'Fatih’in kurduğu sekiz medrese, dönemin en üst düzey eğitim kurumuydu.',
+        'Fatih’in kurduğu sekiz medresedir.\nDönemin en üst düzey eğitim kurumuydu.',
       ),
       kart(
         'Coğrafya ve denizcilik',
-        'Piri Reis’in haritası ve Kitab-ı Bahriye’si, Osmanlı denizcilik bilgisinin düzeyini gösterir.',
+        '**Piri Reis**’in iki eseri Osmanlı denizcilik bilgisinin düzeyini gösterir:\n- Dünya haritası\n- Kitab-ı Bahriye',
       ),
       kart(
         'Rasathane',
-        'Takiyüddin’in İstanbul’da kurduğu rasathane dönemin ileri gözlem merkezlerindendi; kısa süre sonra kapatıldı.',
+        '**Takiyüddin**, İstanbul’da dönemin ileri gözlem merkezlerinden birini kurdu.\nRasathane kısa süre sonra kapatıldı.',
       ),
       kart(
         'Tarih ve düşünce',
-        'Kâtip Çelebi hem coğrafya hem bibliyografya alanında yazdı; devletin sorunlarını da eleştirel biçimde ele aldı.',
+        '**Kâtip Çelebi** coğrafya ve bibliyografya alanında yazdı.\nDevletin sorunlarını da eleştirel biçimde ele aldı.',
       ),
       kart(
         'Mimar Sinan',
-        'Şehzade, Süleymaniye ve Selimiye ile Osmanlı klasik mimarisinin doruğunu kurdu.',
+        'Osmanlı klasik mimarisinin doruğunu kurdu.\nÜç büyük eseri: Şehzade, Süleymaniye ve Selimiye camileri',
       ),
       kart(
         'Sinan’ın üç dönemi',
-        'Kendisi Şehzade’yi çıraklık, Süleymaniye’yi kalfalık, Selimiye’yi ustalık eseri saymıştır.',
+        '- **Şehzade:** çıraklık eseri\n- **Süleymaniye:** kalfalık eseri\n- **Selimiye:** ustalık eseri',
         {
           tur: 'akis',
           adimlar: [
@@ -850,11 +850,11 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       ),
       kart(
         'Edebiyat ve sanat',
-        'Divan edebiyatında Fuzuli ve Baki; minyatür, hat ve çini kendi ekollerini oluşturdu.',
+        '- **Divan edebiyatı:** Fuzuli, Baki\n- **Süsleme sanatları:** minyatür, hat, çini',
       ),
       kart(
         'Matbaanın gecikmesi',
-        'Basılı kitaba geçiş Osmanlı’da geç oldu; bilgi çoğaltma hızındaki bu fark, Avrupa ile arayı açan etkenlerden biri sayılır.',
+        'Basılı kitaba geçiş Osmanlı’da geç oldu.\nBilgi çoğaltma hızındaki bu fark, Avrupa ile arayı açan etkenlerden biri sayılır.',
         undefined,
         { not: 'Gutenberg 1450, İbrahim Müteferrika 1727: yaklaşık 280 yıl. Avrupa\'da kitap ucuzlarken Osmanlı\'da el yazması kaldı.' },
       ),

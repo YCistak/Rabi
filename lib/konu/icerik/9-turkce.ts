@@ -17,17 +17,17 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-edebiyat', 'Edebiyat ve Güzel Sanatlar', [
       kart(
         'Edebiyatın malzemesi dildir',
-        'Ressamın boyası, bestecinin sesi neyse yazarın da dili odur. Edebiyat, güzel sanatların "dille yapılan" koludur.',
+        '- **Ressam:** boyayla çalışır.\n- **Besteci:** sesle çalışır.\n- **Yazar:** dille çalışır.\nEdebiyat, güzel sanatların dille yapılan koludur.',
       ),
       kart(
         'Kurmaca nedir?',
-        'Edebî metin gerçeği aktarmaz, yeniden kurar. Anlatılan yaşanmış olsa bile metindeki hâli kurmacadır.',
+        'Edebî metin gerçeği aktarmaz, yeniden kurar.\nAnlatılan yaşanmış olsa bile metindeki hâli kurmacadır.',
         undefined,
         { not: 'Çalıkuşu\'ndaki Feride yaşamadı ama Anadolu öğretmeninin gerçeği orada. Kurmaca yalan değil, yeniden kurma.' },
       ),
       kart(
         'Edebî ve öğretici metin',
-        'Edebî metin çağrıştırır ve çok anlamlıdır; öğretici metin bilgi verir ve tek anlamlı olmayı hedefler.',
+        '- **Edebî metin:** çağrıştırır, çok anlamlıdır.\n- **Öğretici metin:** bilgi verir, tek anlamlı olmayı hedefler.',
         {
           tur: 'tablo',
           basliklar: ['Edebî metin', 'Öğretici metin'],
@@ -41,15 +41,15 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'Edebiyatın öteki bilimlerle ilişkisi',
-        'Tarih dönemin olaylarını, sosyoloji toplumu, psikoloji insanı anlamak için edebî metne başvurur.',
+        'Edebî metne başvuran bilimler:\n- **Tarih:** dönemin olaylarını anlamak için\n- **Sosyoloji:** toplumu anlamak için\n- **Psikoloji:** insanı anlamak için',
       ),
       kart(
         'Metin türleri',
-        'Olay çevresinde gelişen (hikâye, roman, tiyatro), duygu ağırlıklı (şiir) ve düşünce ağırlıklı (deneme, makale, fıkra) metinler.',
+        '- **Olay çevresinde:** hikâye, roman, tiyatro\n- **Duygu ağırlıklı:** şiir\n- **Düşünce ağırlıklı:** deneme, makale, fıkra',
       ),
       kart(
         'Güzel sanatlarda edebiyatın yeri',
-        'Sanatlar malzemesine göre ayrılır: fonetik (ses), plastik (madde), dramatik (hareket). Edebiyat fonetik sanatlardandır.',
+        'Sanatlar malzemesine göre ayrılır:\n- **Fonetik (ses):** edebiyat, müzik\n- **Plastik (madde):** resim, heykel\n- **Dramatik (hareket):** tiyatro, dans',
       ),
     ], [
       soru('Edebiyatın malzemesi dildir.', true, 'Ressamın boyası neyse yazarın dili odur.'),
@@ -74,19 +74,19 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-siir', 'Şiir Bilgisi', [
       kart(
         'Nazım birimi',
-        'Şiirin yapı taşı: dize (mısra), beyit (iki dize), dörtlük. Halk şiirinde dörtlük, divan şiirinde beyit kullanılır.',
+        'Şiirin yapı taşıdır: dize (mısra), beyit, dörtlük\n- **Halk şiiri:** dörtlük\n- **Divan şiiri:** beyit',
       ),
       kart(
         'Ölçü',
-        'Hece ölçüsünde dizelerin hece sayısı eşittir. Aruzda hecelerin uzunluk-kısalığı esastır. Serbest şiirde ölçü aranmaz.',
+        '- **Hece ölçüsü:** dizelerin hece sayısı eşit\n- **Aruz ölçüsü:** hecelerin uzunluk-kısalığı esas\n- **Serbest şiir:** ölçü aranmaz',
       ),
       kart(
         'Durak',
-        'Hece ölçüsünde dizenin bölündüğü yer. Durak sözcüğü ortadan bölmez; hece sayısı tutsa bile sözcüğü kesen bölüm durak sayılmaz.',
+        'Hece ölçüsünde dizenin bölündüğü yerdir.\nDurak sözcüğü ortadan bölmez; sözcüğü kesen bölüm durak sayılmaz.',
       ),
       kart(
         'Uyak ve redif',
-        'Redif dize sonundaki aynı görevdeki ek ya da sözcüktür. Redifin önündeki ses benzerliği uyaktır.',
+        '- **Redif:** dize sonundaki aynı görevli ek ya da sözcük\n- **Uyak:** redifin önündeki ses benzerliği',
         {
           tur: 'akis',
           dikey: true,
@@ -99,7 +99,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'Uyak çeşitleri',
-        'Yarım uyak tek ses, tam uyak iki ses, zengin uyak ikiden çok ses benzerliğidir.',
+        'Redif atıldıktan sonra kalan ses benzerliği sayılır.\nTabloda üç tür var.',
         {
           tur: 'tablo',
           basliklar: ['Uyak', 'Benzerlik'],
@@ -112,21 +112,21 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'Uyak düzeni',
-        'Düz (aaab), çapraz (abab), sarma (abba) ve mesnevi (aabb) düzenleri vardır. Düzen, nazım biçimini tanımaya yarar.',
+        '- **Düz:** aaab\n- **Çapraz:** abab\n- **Sarma:** abba\n- **Mesnevi:** aa, bb, cc',
       ),
       kart(
         'İmge',
-        'Şairin sözcükleri alışılmadık biçimde birleştirip zihinde yeni bir görüntü kurmasıdır. Şiiri düzyazıdan ayıran asıl şey.',
+        'Şair sözcükleri alışılmadık biçimde birleştirip zihinde yeni bir görüntü kurar.\nŞiiri düzyazıdan ayıran asıl şey budur.',
       ),
       kart(
         'Ahenk ögeleri',
-        'Ölçü, uyak, redif, aliterasyon (ünsüz yinelemesi) ve asonans (ünlü yinelemesi) şiirin sesini kurar.',
+        'Ölçü, uyak ve redif şiirin sesini kurar. Bunlara iki öge daha eklenir:\n- **Aliterasyon:** ünsüz yinelemesi\n- **Asonans:** ünlü yinelemesi',
       ),
       kart(
         'Uyak sorusunda yol',
-        'Önce dize sonlarındaki ortak eki/sözcüğü (redif) at, kalan ses benzerliğini say: 1 ses yarım, 2 ses tam, 3+ zengin. "Gözlerim / sözlerim": -lerim redif, öz tam uyak.',
+        '- Önce dize sonundaki redifi at.\n- Kalan ses benzerliğini say: 1 ses yarım, 2 ses tam, 3+ zengin.\nÖrnek: gözlerim / sözlerim → -lerim redif, "öz" tam uyak',
         undefined,
-        { not: '\'gözlerim / sözlerim\': -lerim redif, \'göz/söz\'de z tek ses → yarım uyak. Önce redifi at, sonra say.' },
+        { not: '\'gözlerim / sözlerim\': -lerim redif, kalan \'öz\' iki ses → tam uyak. Önce redifi at, sonra say.' },
       ),
     ], [
       soru('Redif, dize sonlarında görevi ve anlamı aynı olan ek ya da sözcüklerin tekrarıdır.', true, 'Uyaktan sonra gelir ve uyakla karıştırılmamalı.'),
@@ -155,11 +155,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-sanat', 'Söz Sanatları', [
       kart(
         'Benzetme (teşbih)',
-        'Bir şeyi ortak yönü olan başka bir şeye benzetme. Dört ögesi vardır: benzeyen, kendisine benzetilen, benzetme yönü, benzetme edatı.',
+        'Bir şeyi ortak yönü olan başka bir şeye benzetmektir.\nDört ögesi vardır.',
       ),
       kart(
         'Benzetmenin ögeleri',
-        'İki temel öge benzeyen ile kendisine benzetilendir; ötekiler düşebilir. "Aslan gibi güçlü çocuk" dördünü de taşır.',
+        'İki temel öge **benzeyen** ile **kendisine benzetilendir**; ötekiler düşebilir.\n"Aslan gibi güçlü çocuk" dört ögeyi de taşır.',
         {
           tur: 'tablo',
           basliklar: ['Öge', 'Örnek'],
@@ -173,31 +173,31 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'İstiare',
-        'Benzetmenin iki temel ögesinden yalnız biri söylenirse istiare olur. "Aslanım geldi" derken benzeyen (kişi) söylenmemiştir.',
+        'Benzetmenin iki temel ögesinden **yalnız biri** söylenirse istiare olur.\n"Aslanım geldi" derken benzeyen (kişi) söylenmemiştir.',
       ),
       kart(
         'Açık ve kapalı istiare',
-        'Yalnız benzetilen söylenirse açık, yalnız benzeyen söylenip benzetilene ait bir özellik verilirse kapalı istiare olur.',
+        '- **Açık istiare:** yalnız benzetilen söylenir.\n- **Kapalı istiare:** yalnız benzeyen söylenir, benzetilene ait bir özellik verilir.',
       ),
       kart(
         'Kişileştirme',
-        'İnsana özgü nitelikleri başka varlıklara vermek: "Rüzgâr fısıldıyordu." Kişileştirme varsa kapalı istiare de vardır.',
+        'İnsana özgü nitelikleri başka varlıklara vermektir: "Rüzgâr fısıldıyordu."\nKişileştirme varsa kapalı istiare de vardır.',
       ),
       kart(
         'Mecaz-ı mürsel',
-        'Benzetme amacı olmadan bir sözü başka bir sözün yerine kullanma: "Ankara açıklama yaptı" (hükûmet yerine şehir).',
+        'Benzetme amacı olmadan bir sözü başka bir söz yerine kullanmaktır.\n"Ankara açıklama yaptı" (hükûmet yerine şehir)',
       ),
       kart(
         'Tezat ve tevriye',
-        'Tezat karşıt kavramları bir arada kullanmak; tevriye ise iki anlamlı bir sözü uzak anlamını kastederek söylemektir.',
+        '- **Tezat:** karşıt kavramları bir arada kullanmak\n- **Tevriye:** iki anlamlı sözü, uzak anlamını kastederek söylemek',
       ),
       kart(
         'Abartma ve konuşturma',
-        'Abartma (mübalağa) bir niteliği olduğundan çok göstermek; intak ise insan dışı varlıkları konuşturmaktır.',
+        '- **Abartma (mübalağa):** bir niteliği olduğundan çok göstermek\n- **Konuşturma (intak):** insan dışı varlıkları konuşturmak',
       ),
       kart(
         'Sanatı tanımada kısayol',
-        '"Gibi, kadar" varsa benzetme; benzeyen ya da benzetilenden yalnız biri varsa istiare; insan dışı varlık insan gibi davranıyorsa kişileştirme; parça-bütün, yer-insan ilişkisi varsa mecaz-ı mürsel.',
+        '- **"Gibi, kadar" varsa:** benzetme\n- **Temel ögelerden biri yoksa:** istiare\n- **Varlık insan gibi davranıyorsa:** kişileştirme\n- **Parça-bütün, yer-insan ilişkisi:** mecaz-ı mürsel',
         undefined,
         { not: '\'Aslan gibi adam\' benzetme; \'Aslanım geldi\' açık istiare (benzeyen yok); \'Rüzgâr ağlıyor\' kişileştirme.' },
       ),
@@ -227,23 +227,23 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-deneme', 'Deneme ve Düşünce Yazıları', [
       kart(
         'Deneme',
-        'Yazarın bir konuda kendi düşüncelerini, kanıtlama kaygısı gütmeden, samimi bir dille anlattığı yazı. Kurucusu Montaigne.',
+        'Yazar bir konudaki kendi düşüncelerini samimi bir dille anlatır.\nKanıtlama kaygısı gütmez. Türün kurucusu **Montaigne**’dir.',
       ),
       kart(
         'Makale',
-        'Bir düşünceyi kanıtlarla savunur. Nesnel dil kullanılır, kaynak gösterilir.',
+        'Bir düşünceyi kanıtlarla savunur.\nNesnel dil kullanılır, kaynak gösterilir.',
       ),
       kart(
         'Fıkra (köşe yazısı)',
-        'Güncel bir konuyu kısa ve kişisel bir üslupla ele alır; kanıtlama zorunluluğu yoktur.',
+        'Güncel bir konuyu kısa ve kişisel bir üslupla ele alır.\nKanıtlama zorunluluğu yoktur.',
       ),
       kart(
         'Söyleşi ve eleştiri',
-        'Söyleşi karşısında biri varmış gibi yazılır. Eleştiri bir eserin değerini ölçütlerle değerlendirir.',
+        '- **Söyleşi:** karşısında biri varmış gibi yazılır.\n- **Eleştiri:** bir eserin değerini ölçütlerle değerlendirir.',
       ),
       kart(
         'Nerede ayrışırlar?',
-        'Dört türü ayıran şey konusu değil, kanıt ve dil tercihi.',
+        'Dört türü ayıran şey konu değildir.\nAyıran şey kanıt ve dil tercihidir.',
         {
           tur: 'tablo',
           basliklar: ['Tür', 'Kanıt', 'Dil'],
@@ -258,7 +258,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'Türk edebiyatında',
-        'Deneme ve fıkra Tanzimat’la gazeteyle birlikte gelişti; Nurullah Ataç ve Suut Kemal Yetkin deneme türünün öne çıkan adlarıdır.',
+        'Deneme ve fıkra, Tanzimat’ta gazeteyle birlikte gelişti.\nDenemenin öne çıkan adları: Nurullah Ataç, Suut Kemal Yetkin',
       ),
     ], [
       soru('Denemede yazar düşüncesini kanıtlama kaygısı gütmez.', true, 'Kendi kendine konuşur gibi yazar; okuru ikna etme zorunluluğu yok.'),
@@ -285,19 +285,19 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-sozcuk', 'Sözcükte Anlam', [
       kart(
         'Gerçek anlam',
-        'Sözcüğün akla ilk gelen, sözlükteki temel anlamı. "Soğuk su" gerçek anlamdır.',
+        'Sözcüğün akla ilk gelen, sözlükteki temel anlamıdır.\nÖrnek: soğuk su',
       ),
       kart(
         'Mecaz anlam',
-        'Sözcüğün gerçek anlamından tamamen uzaklaşarak kazandığı anlam: "soğuk davranış".',
+        'Sözcüğün gerçek anlamından tümüyle uzaklaşarak kazandığı anlamdır.\nÖrnek: soğuk davranış',
       ),
       kart(
         'Yan anlam',
-        'Gerçek anlamla bağı sürerken kazanılan yeni anlam: "masanın ayağı". Mecazla karıştırılır; yan anlamda benzerlik bağı durur.',
+        'Gerçek anlamla bağı sürerken kazanılan yeni anlamdır.\nÖrnek: masanın ayağı\nMecazla karıştırılır; yan anlamda benzerlik bağı durur.',
       ),
       kart(
         'Üçünü ayırmak',
-        'Sorulacak soru şu: gerçek anlamla bağ tümüyle koptu mu, yoksa bir benzerlik hâlâ duruyor mu?',
+        'Sorulacak soru: gerçek anlamla bağ tümüyle koptu mu?\nBir benzerlik hâlâ duruyorsa yan anlamdır.',
         {
           tur: 'tablo',
           basliklar: ['Anlam', 'Örnek'],
@@ -311,27 +311,27 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'Terim anlam',
-        'Bir bilim, sanat ya da meslek alanına özgü anlam: "kök" matematikte, dil bilgisinde ve biyolojide ayrı şey demektir.',
+        'Bir bilim, sanat ya da meslek alanına özgü anlamdır.\n"Kök" matematikte, dil bilgisinde ve biyolojide ayrı şeydir.',
       ),
       kart(
         'Somut ve soyut',
-        'Duyularla algılanabilen somut, algılanamayan soyuttur. "Ağır çanta" somut, "ağır söz" soyut kullanımdır.',
+        '- **Somut:** duyularla algılanır (ağır çanta).\n- **Soyut:** duyularla algılanamaz (ağır söz).',
       ),
       kart(
         'Genel ve özel anlam',
-        'Kapsamı geniş olan genel, dar olan özeldir: varlık → bitki → ağaç → çam. Sıra daraldıkça anlam özelleşir.',
+        'Kapsamı geniş olan genel, dar olan özeldir.\nvarlık → bitki → ağaç → çam\nSıra daraldıkça anlam özelleşir.',
       ),
       kart(
         'Nitel ve nicel',
-        'Ölçülebilen anlam niceldir (üç metre), niteleme bildiren anlam niteldir (güzel manzara).',
+        '- **Nicel:** ölçülebilir (üç metre)\n- **Nitel:** niteleme bildirir (güzel manzara)',
       ),
       kart(
         'Soru kalıbı',
-        '"Altı çizili sözcük hangisinde mecaz anlamda?" → sözcüğü somut karşılığıyla düşün; somut karşılık tümüyle kaybolmuşsa mecaz, benzerlik bağı duruyorsa yan anlam.',
+        '"Hangisinde mecaz anlamda?" sorusunda sözcüğü somut karşılığıyla düşün.\n- **Somut karşılık tümüyle kaybolmuşsa:** mecaz\n- **Benzerlik bağı duruyorsa:** yan anlam',
       ),
       kart(
         'Dolaylama ve yansıma',
-        'Dolaylama bir kavramı birden çok sözcükle anlatma ("beyaz altın" = pamuk); yansıma doğadaki sesi taklit eden sözcük ("şırıl şırıl").',
+        '- **Dolaylama:** kavramı birden çok sözcükle anlatmak ("beyaz altın" = pamuk)\n- **Yansıma:** doğadaki sesi taklit eden sözcük ("şırıl şırıl")',
       ),
     ], [
       soru('Bir sözcüğün akla ilk gelen anlamına gerçek anlam denir.', true, 'Temel anlam da denir.'),
@@ -360,11 +360,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-soz', 'Deyim, Atasözü ve Söz Öbekleri', [
       kart(
         'Deyim',
-        'En az iki sözcükten oluşan, kalıplaşmış, çoğunlukla mecazlı anlatım. Öğüt vermez, bir durumu anlatır.',
+        'En az iki sözcükten oluşan, kalıplaşmış, çoğunlukla mecazlı anlatımdır.\nÖğüt vermez, bir durumu anlatır.',
       ),
       kart(
         'Atasözü',
-        'Uzun deneyimden çıkmış, öğüt veren ya da genel kural bildiren kalıplaşmış söz. Deyimden ayıran şey budur.',
+        'Uzun deneyimden çıkmış, kalıplaşmış sözdür.\nÖğüt verir ya da genel bir kural bildirir; deyimden ayıran budur.',
         {
           tur: 'tablo',
           basliklar: ['Deyim', 'Atasözü'],
@@ -377,21 +377,21 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'İkileme',
-        'Anlamı güçlendirmek için sözcüklerin yinelenmesi: "yavaş yavaş", "eğri büğrü". Arasına noktalama girmez.',
+        'Anlamı güçlendirmek için sözcüklerin yinelenmesidir.\nÖrnek: yavaş yavaş, eğri büğrü\nArasına noktalama girmez.',
       ),
       kart(
         'Kalıp sözler',
-        'Belirli durumlarda söylenen hazır ifadeler: "geçmiş olsun", "kolay gelsin". Deyimden farkı, bir toplumsal duruma bağlı olmalarıdır.',
+        'Belirli durumlarda söylenen hazır ifadelerdir.\nÖrnek: "geçmiş olsun", "kolay gelsin"\nDeyimden farkı, bir toplumsal duruma bağlı olmalarıdır.',
       ),
       kart(
         'Terim mi deyim mi?',
-        'Deyimde sözcükler kendi anlamlarından uzaklaşır. "Göze girmek" deyim, "göz kapağı" değildir.',
+        'Deyimde sözcükler kendi anlamlarından uzaklaşır.\n- **"Göze girmek":** deyim\n- **"Göz kapağı":** deyim değil',
         undefined,
         { not: '\'Göz kapağı\' terim (sözcükler gerçek), \'göze girmek\' deyim (mecaz). Deyimde sözcük kendi anlamını bırakır.' },
       ),
       kart(
         'Kalıplaşma bozulmaz',
-        'Deyim ve atasözlerinin sözcükleri değiştirilemez, sırası bozulamaz: "ağaç yaşken eğilir" başka türlü söylenemez.',
+        'Deyim ve atasözlerinin sözcükleri değiştirilemez, sırası bozulamaz.\n"Ağaç yaşken eğilir" başka türlü söylenemez.',
       ),
     ], [
       soru('Atasözleri kalıplaşmıştır; sözcükleri değiştirilemez.', true, 'Eş anlamlısıyla değiştirilen bir atasözü artık atasözü sayılmaz.'),
@@ -416,39 +416,39 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-cumle', 'Cümlede Anlam', [
       kart(
         'Neden-sonuç',
-        'Bir yargı ötekinin gerekçesidir: "Yağmur yağdığı için maç ertelendi." "İçin, -dığından, ile" bağlar.',
+        'Bir yargı ötekinin gerekçesidir.\nÖrnek: "Yağmur yağdığı için maç ertelendi."\nBağlayan sözler: için, -dığından, ile',
       ),
       kart(
         'Amaç-sonuç',
-        'Eylemin niyetini bildirir: "Sınavı kazanmak için çalıştı." Neden-sonuçtan ayıran şey, sonucun henüz gerçekleşmemiş olmasıdır.',
+        'Eylemin niyetini bildirir.\nÖrnek: "Sınavı kazanmak için çalıştı."\nNeden-sonuçtan farkı: sonuç henüz gerçekleşmemiştir.',
       ),
       kart(
         'Koşul',
-        'Bir yargı ötekine bağlıdır: "Erken gelirsen görüşürüz." Koşul gerçekleşmezse öteki yargı da gerçekleşmez.',
+        'Bir yargı ötekine bağlıdır.\nÖrnek: "Erken gelirsen görüşürüz."\nKoşul gerçekleşmezse öteki yargı da gerçekleşmez.',
       ),
       kart(
         'Öznellik ve nesnellik',
-        'Doğruluğu kanıtlanabiliyorsa nesnel, kişiden kişiye değişiyorsa özneldir. "Roman 300 sayfa" nesnel, "roman sıkıcı" özneldir.',
+        '- **Nesnel:** doğruluğu kanıtlanabilir ("Roman 300 sayfa").\n- **Öznel:** kişiden kişiye değişir ("Roman sıkıcı").',
       ),
       kart(
         'Örtülü anlam',
-        'Söylenmediği hâlde cümleden çıkarılan yargı: "Bu yıl da kazanamadı" cümlesi önceki yılları da anlatır.',
+        'Söylenmediği hâlde cümleden çıkarılan yargıdır.\n"Bu yıl da kazanamadı" cümlesi önceki yılları da anlatır.',
       ),
       kart(
         'Karşılaştırma',
-        'İki varlık ya da durum bir yönüyle kıyaslanır. Karşılaştırmada üstünlük olmak zorunda değildir.',
+        'İki varlık ya da durum bir yönüyle kıyaslanır.\nKarşılaştırmada üstünlük olmak zorunda değildir.',
       ),
       kart(
         'Tanım cümlesi',
-        '"Nedir?" sorusuna cevap veren cümledir. Yargı bildirmeyen bir betimleme tanım sayılmaz.',
+        '"Nedir?" sorusuna cevap veren cümledir.\nYargı bildirmeyen bir betimleme tanım sayılmaz.',
       ),
       kart(
         'Üslup ve içerik',
-        'Üslup nasıl anlatıldığıdır (kısa cümleler, sade dil); içerik ise ne anlatıldığı. Sorularda ikisi sık karıştırılır.',
+        '- **Üslup:** nasıl anlatıldığı (kısa cümleler, sade dil)\n- **İçerik:** ne anlatıldığı\nSorularda ikisi sık karıştırılır.',
       ),
       kart(
         'Neden mi amaç mı?',
-        '"Hasta olduğu için gelmedi" neden (gerçekleşmiş sebep). "Görüşmek için geldi" amaç (henüz olmamış niyet). "İçin" ikisinde de var; bakılacak şey sebebin olup olmadığı.',
+        '- **"Hasta olduğu için gelmedi":** neden, gerçekleşmiş sebep\n- **"Görüşmek için geldi":** amaç, henüz olmamış niyet\n"İçin" ikisinde de var; bakılacak şey sebebin gerçekleşip gerçekleşmediği.',
         undefined,
         { not: '\'Hasta olduğu için gelmedi\' → neden (olmuş). \'Görüşmek için geldi\' → amaç (niyet). \'için\' ikisinde de var.' },
       ),
@@ -478,19 +478,19 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-paragraf', 'Paragrafta Anlam', [
       kart(
         'Ana düşünce',
-        'Paragrafın yazılma amacı, verilmek istenen asıl mesaj. Tek cümleyle özetlenebilir ve paragrafın tamamını kapsar.',
+        'Paragrafın yazılma amacı, verilmek istenen asıl mesajdır.\nTek cümleyle özetlenebilir ve paragrafın tamamını kapsar.',
       ),
       kart(
         'Yardımcı düşünce',
-        'Ana düşünceyi destekleyen ara yargılar. "Paragrafta değinilmemiştir" sorularının aradığı yer burasıdır.',
+        'Ana düşünceyi destekleyen ara yargılardır.\n"Değinilmemiştir" soruları bu yargıları arar.',
       ),
       kart(
         'Konu ile ana düşünce farkı',
-        'Konu "neden söz ediyor" sorusunun cevabı, ana düşünce "ne demek istiyor" sorusunun. Konu bir sözcük, ana düşünce bir yargıdır.',
+        '- **Konu:** "Neden söz ediyor?" sorusunun cevabı, bir sözcük\n- **Ana düşünce:** "Ne demek istiyor?" sorusunun cevabı, bir yargı',
       ),
       kart(
         'Anlatım biçimleri',
-        'Dört biçim, yazarın metne aldığı tavrı gösterir.',
+        'Dört biçim, yazarın metne aldığı tavrı gösterir.\nTabloda her birinin ne yaptığı yazıyor.',
         {
           tur: 'tablo',
           basliklar: ['Biçim', 'Ne yapar?'],
@@ -504,11 +504,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'Düşünceyi geliştirme yolları',
-        'Tanımlama, örneklendirme, karşılaştırma, tanık gösterme, sayısal veri. Tanık göstermede söyleyenin adı geçer, örnekte geçmez.',
+        'Tanımlama, örneklendirme, karşılaştırma, tanık gösterme, sayısal veri.\n- **Tanık göstermede:** söyleyenin adı geçer.\n- **Örneklendirmede:** geçmez.',
       ),
       kart(
         'Paragrafın yapısı',
-        'Giriş bağımsız cümleyle başlar, gelişme açar, sonuç toparlar.',
+        '- **Giriş:** bağımsız bir cümleyle başlar.\n- **Gelişme:** konuyu açar.\n- **Sonuç:** toparlar.',
         {
           tur: 'akis',
           adimlar: [
@@ -520,11 +520,11 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'Akışı bozan cümle',
-        'Paragrafın konusundan sapan ya da bağlantı kurulamayan cümledir. Çıkarıldığında anlam bütünlüğü bozulmaz.',
+        'Paragrafın konusundan sapan ya da bağlantı kurulamayan cümledir.\nÇıkarıldığında anlam bütünlüğü bozulmaz.',
       ),
       kart(
         'Soruya göre strateji',
-        'Ana düşünce için son cümleye ve tekrar eden fikre bak; konu için "neden söz ediyor" de; "değinilmemiştir" için şıkları tek tek metinle eşleştir; akışı bozan cümle için önceki-sonraki cümleyle bağ ara.',
+        '- **Ana düşünce:** son cümleye ve tekrar eden fikre bak.\n- **Konu:** "Neden söz ediyor?" diye sor.\n- **Değinilmemiştir:** şıkları tek tek metinle eşleştir.\n- **Akışı bozan:** önceki ve sonraki cümleyle bağ ara.',
         undefined,
         { not: 'Ana düşünce: son cümle + tekrar eden fikir. \'Değinilmemiştir\': şıkları paragrafta tek tek ara, bulamadığın cevap.' },
       ),
@@ -563,7 +563,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-yapi', 'Anlatmaya Bağlı Metinlerin Yapısı', [
       kart(
         'Dört yapı ögesi',
-        'Anlatmaya bağlı her metin bu dördünden kurulur; biri eksikse metin anlatı olmaz.',
+        'Anlatmaya bağlı her metin dört ögeden kurulur.\nBiri eksikse metin anlatı olmaz.',
         {
           tur: 'akis',
           adimlar: [
@@ -576,23 +576,23 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'Olay örgüsü',
-        'Olayların metindeki diziliş biçimi. Gerçek zaman sırası değil, yazarın kurduğu sıradır.',
+        'Olayların metindeki diziliş biçimidir.\nGerçek zaman sırası değil, yazarın kurduğu sıradır.',
       ),
       kart(
         'Kişiler',
-        'Metni ilerleten kişiler. Karakter değişip gelişir, tip ise tek bir özelliğin temsilcisidir (cimri tipi).',
+        'Metni ilerleten kişilerdir.\n- **Karakter:** değişir ve gelişir.\n- **Tip:** tek bir özelliğin temsilcisidir (cimri tipi).',
       ),
       kart(
         'Mekân',
-        'Yalnızca dekor değildir; kişinin ruh hâlini ve toplumsal konumunu da anlatır.',
+        'Mekân yalnızca dekor değildir.\nKişinin ruh hâlini ve toplumsal konumunu da anlatır.',
       ),
       kart(
         'Zaman',
-        'Olayın geçtiği süre ile anlatılma süresi farklı olabilir. Geri dönüşle geçmişe gidilebilir.',
+        'Olayın geçtiği süre ile anlatılma süresi farklı olabilir.\nGeri dönüşle geçmişe gidilebilir.',
       ),
       kart(
         'Çatışma',
-        'Anlatıyı ilerleten şey çatışmadır: kişinin başka biriyle, toplumla, doğayla ya da kendisiyle çatışması.',
+        'Anlatıyı ilerleten çatışmadır. Kişi şunlarla çatışabilir:\n- Başka biriyle ya da toplumla\n- Doğayla\n- Kendisiyle',
         undefined,
         { not: 'Kişi–toplum (Yaban\'daki aydın), kişi–kendisi (Suç ve Ceza), kişi–doğa (Yaşlı Adam ve Deniz). Çatışma yoksa anlatı yok.' },
       ),
@@ -619,19 +619,19 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-anlatici', 'Anlatıcı ve Bakış Açısı', [
       kart(
         'İlahi (hâkim) bakış açısı',
-        'Anlatıcı her şeyi bilir; kişilerin aklından geçeni bile aktarır. Üçüncü kişi ağzından anlatılır.',
+        'Anlatıcı her şeyi bilir; kişilerin aklından geçeni bile aktarır.\nÜçüncü kişi ağzından anlatılır.',
       ),
       kart(
         'Kahraman bakış açısı',
-        'Anlatıcı olayın içindeki kişidir, yalnız kendi bildiğini anlatır. "Ben" ağzıyla yazılır.',
+        'Anlatıcı olayın içindeki kişidir, yalnız kendi bildiğini anlatır.\n"Ben" ağzıyla yazılır.',
       ),
       kart(
         'Gözlemci bakış açısı',
-        'Anlatıcı yalnızca dışarıdan görüleni aktarır, iç dünyaya giremez. Kamera gibi davranır.',
+        'Anlatıcı yalnızca dışarıdan görüleni aktarır, iç dünyaya giremez.\nBir kamera gibi davranır.',
       ),
       kart(
         'Üçünü ayırmak',
-        'Ölçü tek: anlatıcı ne kadarını biliyor ve hangi kişi ağzından konuşuyor?',
+        'Tek ölçü var:\n- Anlatıcı ne kadarını biliyor?\n- Hangi kişi ağzından konuşuyor?',
         {
           tur: 'tablo',
           basliklar: ['Bakış açısı', 'Bilgisi'],
@@ -644,13 +644,13 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'Anlatıcı yazar değildir',
-        'Anlatıcı da kurmacanın bir parçasıdır. "Ben" diyen anlatıcıyı yazarla karıştırmamak gerekir.',
+        'Anlatıcı da kurmacanın bir parçasıdır.\n"Ben" diyen anlatıcıyı yazarla karıştırmamak gerekir.',
         undefined,
         { not: 'Sait Faik \'ben\' diyen hikâye yazar ama anlatıcı Sait Faik değildir; sınav \'yazar anlatıcıdır\' derse yanlış.' },
       ),
       kart(
         'Güvenilmez anlatıcı',
-        'Anlatıcı yanılıyor ya da gizliyor olabilir. Okur, anlatılanla ima edilen arasındaki farkı kendi kurar.',
+        'Anlatıcı yanılıyor ya da bir şey gizliyor olabilir.\nOkur, anlatılanla ima edilen arasındaki farkı kendisi kurar.',
       ),
     ], [
       soru('İlahi bakış açısındaki anlatıcı kişilerin iç dünyasını bilir.', true, 'Her şeyi bilen anlatıcı geçmişi ve geleceği de aktarabilir.'),
@@ -675,7 +675,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-hikaye', 'Hikâye ve Roman', [
       kart(
         'Hikâye',
-        'Tek bir olay çevresinde, az kişiyle, kısa sürede geçen anlatı. Roman ise çok olaylı ve geniş zamanlıdır.',
+        '- **Hikâye:** tek olay, az kişi, kısa zaman\n- **Roman:** çok olay, çok kişi, geniş zaman',
         {
           tur: 'tablo',
           basliklar: ['Hikâye', 'Roman'],
@@ -688,25 +688,25 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'Olay hikâyesi',
-        'Maupassant tarzı: serim-düğüm-çözüm vardır, sonu bağlanır. Türk edebiyatında Ömer Seyfettin.',
+        '**Maupassant tarzı:** serim, düğüm ve çözüm vardır; sonu bağlanır.\nTürk edebiyatında temsilcisi **Ömer Seyfettin**.',
       ),
       kart(
         'Durum hikâyesi',
-        'Çehov tarzı: belirgin bir olay ve çözüm yoktur, bir an ve izlenim anlatılır. Türk edebiyatında Sait Faik.',
+        '**Çehov tarzı:** belirgin bir olay ve çözüm yoktur; bir an ve izlenim anlatılır.\nTürk edebiyatında temsilcisi **Sait Faik**.',
         undefined,
         { not: 'Ömer Seyfettin olay (Kaşağı: sonu var), Sait Faik durum (Hişt Hişt: olay yok, an var). İkisini örnekle tut.' },
       ),
       kart(
         'Roman türleri',
-        'Tarihî, sosyal, psikolojik, macera, polisiye. Ayrım, romanın ağırlık verdiği konuya göre yapılır.',
+        'Tarihî, sosyal, psikolojik, macera, polisiye.\nAyrım, romanın ağırlık verdiği konuya göre yapılır.',
       ),
       kart(
         'Türk romanının başlangıcı',
-        'İlk yerli roman Şemsettin Sami’nin Taaşşuk-ı Talat ve Fitnat’ı; ilk edebî roman ise Namık Kemal’in İntibah’ı sayılır.',
+        '- **İlk yerli roman:** Taaşşuk-ı Talat ve Fitnat (Şemsettin Sami)\n- **İlk edebî roman:** İntibah (Namık Kemal)',
       ),
       kart(
         'Modern anlatı',
-        '20. yüzyılda olay örgüsü gevşedi, iç konuşma ve bilinç akışı öne çıktı; anlatı olayı değil bilinci izlemeye başladı.',
+        '20. yüzyılda olay örgüsü gevşedi; iç konuşma ve bilinç akışı öne çıktı.\nAnlatı olayı değil, bilinci izlemeye başladı.',
       ),
     ], [
       soru('Durum hikâyesinde serim-düğüm-çözüm sıralaması belirgin değildir.', true, 'Bir anı ve durumu aktarır; olay örgüsü zayıftır.'),
@@ -731,17 +731,17 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-tiyatro', 'Tiyatro', [
       kart(
         'Sahnelenmek için yazılır',
-        'Tiyatro metni okunmak için değil oynanmak için yazılır. Bu yüzden anlatıcı yoktur, her şey diyalogla verilir.',
+        'Tiyatro metni okunmak için değil, oynanmak için yazılır.\nAnlatıcı yoktur; her şey diyalogla verilir.',
         undefined,
         { not: 'Tiyatroda anlatıcı yok, her şey konuşma (replik) ve sahne notu; \'anlatıcı bakış açısı\' sorusu tiyatroya sorulmaz.' },
       ),
       kart(
         'Perde, sahne, replik',
-        'Perde büyük bölüm, sahne kişilerin değişmesiyle oluşan alt bölüm, replik oyuncunun söylediği sözdür.',
+        '- **Perde:** büyük bölüm\n- **Sahne:** kişilerin değişmesiyle oluşan alt bölüm\n- **Replik:** oyuncunun söylediği söz',
       ),
       kart(
         'Trajedi ve komedi',
-        'Trajedide soylu kişiler ve acı son, yüksek üslup vardır. Komedi güldürerek düşündürür, halktan kişileri konu alır.',
+        '- **Trajedi:** soylu kişiler, acı son, yüksek üslup\n- **Komedi:** güldürerek düşündürür, halktan kişileri konu alır',
         {
           tur: 'tablo',
           basliklar: ['Trajedi', 'Komedi'],
@@ -754,19 +754,19 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'Üç birlik kuralı',
-        'Klasik trajedide olay, yer ve zaman birliği aranırdı: tek olay, tek mekân ve bir gün içinde geçen bir eylem.',
+        'Klasik trajedide üç birlik aranırdı:\n- **Olay birliği:** tek olay\n- **Yer birliği:** tek mekân\n- **Zaman birliği:** bir gün',
       ),
       kart(
         'Dram',
-        'Hayatı acı ve gülünç yanlarıyla birlikte verir, üslup sınırı yoktur. Modern tiyatronun temeli.',
+        'Hayatı acı ve gülünç yanlarıyla birlikte verir; üslup sınırı yoktur.\nModern tiyatronun temelidir.',
       ),
       kart(
         'Geleneksel Türk tiyatrosu',
-        'Karagöz, orta oyunu, meddah ve köy seyirlik oyunları. Yazılı metne değil doğaçlamaya dayanır.',
+        'Karagöz, orta oyunu, meddah ve köy seyirlik oyunları.\nYazılı metne değil doğaçlamaya dayanır.',
       ),
       kart(
         'Türk tiyatrosunda ilkler',
-        'Batılı anlamda ilk tiyatro eseri Şinasi’nin Şair Evlenmesi’dir; Tanzimat’la birlikte sahnelenmeye başlandı.',
+        'Batılı anlamda ilk tiyatro eseri **Şinasi**’nin **Şair Evlenmesi**’dir.\nTanzimat’la birlikte sahnelenmeye başlandı.',
       ),
     ], [
       soru('Tiyatro metinleri sahnelenmek üzere yazılır.', true, 'Bu yüzden metinde sahne yönergeleri de bulunur.'),
@@ -795,21 +795,21 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-ses', 'Ses Bilgisi', [
       kart(
         'Büyük ünlü uyumu',
-        'Bir sözcüğün ünlüleri ya hep kalın (a, ı, o, u) ya hep incedir (e, i, ö, ü). "Kardeş, anne, kitap" gibi sözcükler kurala uymaz.',
+        'Sözcüğün ünlüleri ya hep kalın ya hep incedir:\n- **Kalın:** a, ı, o, u\n- **İnce:** e, i, ö, ü\nUymayanlar: kardeş, anne, kitap',
       ),
       kart(
         'Küçük ünlü uyumu',
-        'Düz ünlüden sonra düz; yuvarlak ünlüden sonra ya dar yuvarlak ya düz-geniş ünlü gelir.',
+        '- **Düz ünlüden sonra:** düz ünlü\n- **Yuvarlak ünlüden sonra:** dar yuvarlak ya da düz geniş ünlü',
       ),
       kart(
         'Ünsüz benzeşmesi',
-        'Sert ünsüzle biten sözcüğe "c, d, g" ile başlayan ek gelirse ek sertleşir: "kitap-cı" değil kitapçı.',
+        'Sert ünsüzle biten sözcüğe c, d, g ile başlayan ek gelirse ek sertleşir.\nÖrnek: kitap + cı → kitapçı',
         undefined,
         { not: 'kitap-cı → kitapçı (ek sertleşti, sözcük aynı); kitap-ı → kitabı (sözcük yumuşadı). Ek mi sözcük mü değişiyor, bak.' },
       ),
       kart(
         'Ünsüz yumuşaması',
-        'p, ç, t, k ile biten sözcüğe ünlüyle başlayan ek gelince b, c, d, ğ olur: kitap → kitabı. Tek heceli sözcüklerin çoğu yumuşamaz.',
+        'p, ç, t, k ile biten sözcüğe ünlüyle başlayan ek gelince b, c, d, ğ olur.\nÖrnek: kitap → kitabı\nTek heceli sözcüklerin çoğu yumuşamaz.',
         {
           tur: 'tablo',
           basliklar: ['Sert', 'Yumuşak'],
@@ -823,23 +823,23 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'Ünlü düşmesi',
-        'İki heceli bazı sözcükler ünlüyle başlayan ek alınca bir hecesini kaybeder: burun → burnu, oğul → oğlu.',
+        'İki heceli bazı sözcükler ünlüyle başlayan ek alınca bir ünlüsünü kaybeder.\nÖrnek: burun → burnu, oğul → oğlu',
       ),
       kart(
         'Ünlü türemesi',
-        'Araya bir ses girer: "bir" sözcüğü sıra sayısı yapılırken "birinci" olur; pekiştirmede de görülür (sapasağlam).',
+        'Sözcüğe bir ünlü eklenir.\nPekiştirmede görülür: sapasağlam, güpegündüz',
       ),
       kart(
         'Ünsüz türemesi',
-        'Bazı alıntı sözcükler ek alınca ünsüz ikizleşir: his → hissi, af → affı.',
+        'Bazı alıntı sözcükler ek alınca ünsüz ikizleşir.\nÖrnek: his → hissi, af → affı',
       ),
       kart(
         'Kaynaştırma harfleri',
-        'İki ünlü yan yana gelmesin diye araya y, ş, s, n girer: "araba-y-ı", "iki-ş-er", "kapı-s-ı".',
+        'İki ünlü yan yana gelmesin diye araya **y, ş, s, n** girer.\nÖrnek: araba-y-ı, iki-ş-er, kapı-s-ı, kapı-n-ın',
       ),
       kart(
         'Ünlü daralması',
-        '"-yor" eki a, e ünlüsünü daraltır: bekle-yor → bekliyor, anla-yor → anlıyor. "De, ye" fiilleri de "diyor, yiyor" olur.',
+        '"-yor" eki önündeki a, e ünlüsünü daraltır.\n- bekle-yor → bekliyor\n- anla-yor → anlıyor\n"De-, ye-" fiilleri de daralır: diyor, yiyor',
       ),
     ], [
       soru('"Kitabı" sözcüğünde ünsüz yumuşaması vardır.', true, 'Sözcük sonundaki "p" ünlüyle başlayan ek alınca "b" ye dönmüş.'),
@@ -867,19 +867,19 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-yazim', 'Yazım Kuralları', [
       kart(
         '"de" ayrı mı bitişik mi?',
-        'Bulunma eki "-de" bitişik, bağlaç "de" ayrı yazılır. Cümleden çıkarıldığında anlam bozulmuyorsa bağlaçtır, ayrı yazılır.',
+        '- **Bulunma eki -de:** bitişik yazılır.\n- **Bağlaç de:** ayrı yazılır.\nCümleden çıkarınca anlam bozulmuyorsa bağlaçtır.',
       ),
       kart(
         '"ki" kuralı',
-        'Bağlaç olan "ki" ayrı yazılır. Yalnız "hâlbuki, mademki, sanki, oysaki, çünkü" kalıplaşmıştır, bitişiktir.',
+        'Bağlaç olan "ki" ayrı yazılır.\nKalıplaşmış olanlar bitişik: hâlbuki, mademki, sanki, oysaki, çünkü',
       ),
       kart(
         'Soru eki mi',
-        'Her zaman ayrı yazılır, kendinden önceki sözcüğe uyar: "geldi mi", "güzel mi güzel".',
+        'Her zaman ayrı yazılır, önündeki sözcüğe uyar.\nÖrnek: "geldi mi", "güzel mi güzel"',
       ),
       kart(
         'Üç ek, tek sınama',
-        'Üçünde de aynı soru sorulur: sözcükten çıkarılınca cümle bozuluyor mu?',
+        'Üçünde de aynı soru sorulur:\nsözcükten çıkarılınca cümle bozuluyor mu?\nBozuluyorsa ektir, bitişik yazılır.',
         {
           tur: 'tablo',
           basliklar: ['Yapı', 'Yazım'],
@@ -894,15 +894,15 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'Büyük harf',
-        'Özel adlar büyük harfle başlar. Özel ada gelen çekim ekleri kesme ile ayrılır: "Ankara’ya". Yapım eki ayrılmaz: "Türkçe".',
+        'Özel adlar büyük harfle başlar.\n- **Çekim eki:** kesmeyle ayrılır (Ankara’ya).\n- **Yapım eki:** ayrılmaz (Türkçe).',
       ),
       kart(
         'Birleşik sözcükler',
-        'Anlamca kaynaşmışsa bitişik yazılır (hanımeli), kaynaşmamışsa ayrı (deniz kabuğu). Ses düşmesi varsa bitişiktir (kaynana).',
+        '- **Anlamca kaynaşmışsa:** bitişik (hanımeli)\n- **Kaynaşmamışsa:** ayrı (deniz kabuğu)\n- **Ses düşmesi varsa:** bitişik (kaynana)',
       ),
       kart(
         'Sayıların yazımı',
-        'Metinde geçen küçük sayılar yazıyla yazılır. Büyük harfle başlayan yerlerde ve resmî belgelerde rakam kullanılır.',
+        'Metinde geçen sayılar genellikle yazıyla yazılır.\nSaat, tarih, ölçü ve istatistik bilgilerinde rakam kullanılır.',
       ),
     ], [
       soru('Bağlaç olan "de" ayrı yazılır.', true, 'Cümleden çıkarıldığında anlam bozulmuyorsa bağlaçtır.'),
@@ -929,37 +929,37 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-noktalama', 'Noktalama İşaretleri', [
       kart(
         'Nokta',
-        'Cümleyi bitirir; ayrıca kısaltmalarda, tarihlerde ve sıra sayılarında kullanılır: "3. sınıf", "12.09.2025".',
+        'Cümleyi bitirir. Ayrıca kullanıldığı yerler:\n- Kısaltmalar\n- Tarihler (12.09.2025)\n- Sıra sayıları (3. sınıf)',
       ),
       kart(
         'Virgül',
-        'Eş görevli sözcükleri, sıralı cümleleri ve uzun özneyi ayırır. Ancak "ve" bağlacından önce virgül konmaz.',
+        'Eş görevli sözcükleri, sıralı cümleleri ve uzun özneyi ayırır.\n"Ve" bağlacından önce virgül konmaz.',
       ),
       kart(
         'Virgül anlamı değiştirir',
-        'Yer değiştiren tek bir virgül cümlenin öznesini değiştirebilir; bu yüzden virgül süs değil, anlam işaretidir.',
+        'Yer değiştiren tek bir virgül cümlenin öznesini değiştirebilir.\nVirgül süs değil, anlam işaretidir.',
         undefined,
         { not: '\'Yaşlı, adamı gördü\' (yaşlı olan gören) / \'Yaşlı adamı gördü\' (yaşlı olan görülen). Tek virgül özneyi değiştirir.' },
       ),
       kart(
         'Noktalı virgül',
-        'İçinde virgül bulunan sıralı cümleleri ayırır; ayrıca aynı türden öbekleri gruplar.',
+        '- İçinde virgül bulunan sıralı cümleleri ayırır.\n- Aynı türden öbekleri gruplar.',
       ),
       kart(
         'İki nokta',
-        'Açıklama, örnek ya da alıntı gelecekse kullanılır. Sonrası cümleyse büyük, öbekse küçük harfle başlar.',
+        'Açıklama, örnek ya da alıntıdan önce konur.\n- **Sonrası cümleyse:** büyük harfle başlar.\n- **Sonrası öbekse:** küçük harfle başlar.',
       ),
       kart(
         'Kesme işareti',
-        'Özel adlara gelen çekim eklerini ayırır. Kurum adlarına gelen ekler ayrılmaz: "Türk Dil Kurumuna".',
+        'Özel adlara gelen çekim eklerini ayırır.\nKurum adlarına gelen ekler ayrılmaz: "Türk Dil Kurumuna"',
       ),
       kart(
         'Üç nokta',
-        'Sözün bittirilmediğini, alıntıda atlama yapıldığını ya da kaba sayılan sözlerin gizlendiğini gösterir.',
+        '- Sözün bitirilmediğini gösterir.\n- Alıntıda atlanan yeri gösterir.\n- Kaba sayılan sözleri gizler.',
       ),
       kart(
         'Tırnak ve kısa çizgi',
-        'Tırnak alıntıyı ve özel vurguyu gösterir; kısa çizgi satır sonunda hece böler ve dil bilgisinde ekleri ayırır.',
+        '- **Tırnak:** alıntıyı ve özel vurguyu gösterir.\n- **Kısa çizgi:** satır sonunda hece böler, dil bilgisinde ekleri ayırır.',
       ),
     ], [
       soru('Virgülün yeri cümlenin anlamını değiştirebilir.', true, '"Genç, adama baktı." ile "Genç adama baktı." aynı cümle değil.'),
@@ -986,23 +986,23 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
     konu('trk9-varlik', 'Türkçenin Söz Varlığı', [
       kart(
         'Söz varlığı nedir?',
-        'Bir dilin bütün sözcükleri, deyimleri, atasözleri ve kalıp sözleri. Dilin zenginliği sözcük sayısıyla değil, anlatım gücüyle ölçülür.',
+        'Bir dilin bütün sözcükleri, deyimleri, atasözleri ve kalıp sözleridir.\nDilin zenginliği sözcük sayısıyla değil, anlatım gücüyle ölçülür.',
       ),
       kart(
         'Türetme gücü',
-        'Türkçe eklemeli bir dildir: tek kökten "göz, gözlük, gözlemci, gözetmek" gibi bir aile üretilebilir.',
+        'Türkçe eklemeli bir dildir.\nTek kökten bir aile üretilebilir: göz, gözlük, gözlemci, gözetmek',
       ),
       kart(
         'Alıntı sözcükler',
-        'Her dil başka dillerden sözcük alır. Sorun alıntı değil, karşılığı varken kullanılan gereksiz alıntıdır.',
+        'Her dil başka dillerden sözcük alır.\nSorun alıntı değil, karşılığı varken kullanılan gereksiz alıntıdır.',
       ),
       kart(
         'Anlam ilişkileri',
-        'Eş anlamlı (kara-siyah), zıt anlamlı (uzun-kısa), eş sesli (yüz: sayı / surat / eylem) sözcükler.',
+        '- **Eş anlamlı:** kara – siyah\n- **Zıt anlamlı:** uzun – kısa\n- **Eş sesli:** yüz (sayı / surat / eylem)',
       ),
       kart(
         'Ağız, şive, lehçe',
-        'Ayrım ayrılma derinliğine göredir: ağız aynı dilin bölgesel söyleyişi, lehçe ise çok eski bir ayrılmadır.',
+        'Ayrım, ayrılmanın derinliğine göre yapılır:\n- **Ağız:** aynı dilin bölgesel söyleyişi\n- **Şive:** yakın zamanda ayrılmış kol\n- **Lehçe:** çok eski bir ayrılma',
         {
           tur: 'akis',
           adimlar: [
@@ -1015,7 +1015,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
       kart(
         'Türk dilinin lehçeleri',
-        'Yakutça ve Çuvaşça en erken ayrılan lehçelerdir; Azerice, Kazakça ve Özbekçe ise şive sayılan yakın kollardır.',
+        '- **Lehçe (en erken ayrılan):** Yakutça, Çuvaşça\n- **Şive (yakın kollar):** Azerice, Kazakça, Özbekçe',
       ),
     ], [
       soru('Türkçe yeni sözcükleri çoğunlukla türetme yoluyla kazanır.', true, 'Yapım ekleri sayesinde tek kökten çok sözcük üretilebiliyor.'),
