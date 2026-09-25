@@ -56,8 +56,8 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('Masal kişileri tip özelliği gösterir.', true, 'İyi ya da kötü olarak tek yönlü çizilirler; iç dünyaları anlatılmaz.'),
       soru('Masallar gerçekte yaşanmış olayları anlatır.', false, 'Tümüyle hayal ürünüdür; olağanüstü ögeler taşır.'),
       soru('Fabl ile masal aynı türdür.', false, 'Fablın kahramanları hayvanlardır ve sonunda açık bir ders verilir.'),
-      sikli('"Bir varmış bir yokmuş" kalıbı ne yapar?', ['Yer ve zamanı belirsizleştirir', 'Olayı özetler'], 0, 'Gerçek dünyadan koparır.'),
-      sikli('Fablı masaldan ayıran nedir?', ['Kahramanları hayvan, ders açıkça söylenir', 'Sonu kötü biter'], 0, 'İkisi de ders verir.'),
+      sikli('Masalın başındaki tekerleme bölümüne ne denir?', ['Döşeme', 'Dilek'], 0, 'Döşeme masalı gerçek dünyadan koparır; dilek kapanış bölümü.'),
+      sikli('Masalın amacı nedir?', ['Eğlendirirken ders vermek', 'Tarihî olayı belgelemek'], 0, 'Sonunda iyiler kazanır; masal adalet duygusu kurar.'),
       soru('Masalda olağanüstü ögeler sorgulanır.', false, 'Okuyan sorgulamaz.'),
     ], [
       {
@@ -119,8 +119,8 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('Varyant, bir ürünün tek ve değişmez biçimidir.', false, 'Varyant, aynı ürünün yörelere göre değişen biçimleri.'),
       soru('Türküler yalnızca yazılı olarak aktarılmıştır.', false, 'Sözlü olarak aktarıldılar; derleme çalışmalarıyla yazıya geçirildiler.'),
       sikli('Türkünün nakarat bölümüne ne denir?', ['Bent', 'Kavuştak'], 1, 'Bent ve kavuştak.'),
-      sikli('Aynı ürünün yöreden yöreye değişmiş hâli?', ['Derleme', 'Varyant'], 1, 'Tek doğru metin yok.'),
-      sikli('Anonim ürünler ne zaman yazıya geçirildi?', ['13. yüzyılda', '20. yüzyılda'], 1, 'Derleme.'),
+      sikli('Hangisi anonim halk edebiyatı ürünüdür?', ['Gazel', 'Bilmece'], 1, 'Bilmece sözlü gelenekten gelir; gazel divan şiirinin nazım biçimi.'),
+      sikli('Söyleyeni unutulan bir ürünü halk nasıl sahiplenir?', ['Tekrarlarken değiştirerek', 'Hiç değiştirmeden'], 0, 'Her anlatımda biraz değişir; ürün böylece halkın ortak malı olur.'),
       soru('Manide asıl anlam ilk iki dizededir.', false, 'Son ikisinde; ilk ikisi doldurma.'),
     ], [
       {
@@ -177,9 +177,9 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('Serbest şiirde de ahenk sağlanabilir.', true, 'Ölçü ve uyak olmadan ses tekrarları ve söyleyişle kuruluyor.'),
       soru('Ahengi sağlayan tek araç ölçüdür.', false, 'Uyak, redif, ses tekrarları ve vurgu da ahenge katkı sağlıyor.'),
       soru('Ses tekrarlarının şiirin anlamıyla bir ilgisi yoktur.', false, 'Tekrarlanan ses çoğu zaman anlatılan duyguyu destekliyor.'),
-      sikli('Serbest şiirde ritmi ne sağlar?', ['Aruz ölçüsü', 'Söyleyiş, tekrar, dize uzunluğu'], 1, 'Ölçü olmasa da ahenk var.'),
+      sikli('Dize sonunda tekrar eden aynı ek ya da sözcüğe ne denir?', ['Uyak', 'Redif'], 1, 'Redif aynı görevdeki ek ya da sözcük; uyak redifin önündeki ses benzerliği.'),
       sikli('Ağır sesler ne duygusu üretir?', ['Kıvraklık', 'Ağırlık'], 1, 'Ses ve anlam birlikte.'),
-      soru('Ahenk şiirde yalnızca süstür.', false, 'Anlamla birlikte çalışır.'),
+      soru('Ölçülü şiirde ritmi ölçü kurar.', true, 'Serbest şiirde ise ritmi söyleyiş, tekrar ve dize uzunluğu sağlar.'),
     ], [
       {
         soru: '"Sessiz sedasız süzüldü" dizesinde hangi ahenk ögesi var?',
@@ -237,7 +237,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('Şiirdeki gerçeklik günlük hayattaki gerçeklikle aynıdır.', false, 'Şiir gerçeği dönüştürerek yeni bir gerçeklik kuruyor.'),
       sikli('Sözcüğün başka anlamları da uyandırması?', ['Üslup', 'Çağrışım'], 1, 'Çok anlamlılık.'),
       sikli('Şairin kendine özgü söyleyişi?', ['İleti', 'Üslup'], 1, 'Sözcük seçimi, dize uzunluğu.'),
-      soru('Şiirde her yorum geçerlidir.', false, 'Metinden delil gösterebilen yorum.'),
+      soru('İmge, şiiri düzyazıdan ayıran temel araçlardandır.', true, 'Sözcüklerin alışılmadık birleşimi zihinde yeni bir görüntü kuruyor.'),
     ], [
       {
         soru: 'Şiirde ileti çoğunlukla nasıl verilir?',
@@ -307,9 +307,9 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       sikli('İsmin yerini tutan sözcük?', ['Zarf', 'Zamir'], 1, 'Kişi, işaret, belgisiz, soru, ilgi.'),
       sikli('Fiili etkileyen sözcük?', ['Sıfat', 'Zarf'], 1, 'Sıfat isme bağlanır.'),
       sikli('Tek başına anlamsız, sözcükler arası ilgi kuran?', ['Bağlaç', 'Edat'], 1, 'Bağlaç çıkarılınca anlam bozulmaz.'),
-      sikli('"Hızlı koştu" cümlesinde "hızlı"?', ['Zarf', 'Sıfat'], 0, 'Nasıl koştu?'),
-      sikli('Bir sözcüğün türü neye göre belirlenir?', ['Cümledeki görevine', 'Sözlükteki yerine'], 0, 'Göreve göre değişir.'),
-      soru('Ünlem duygu bildirir.', true, 'Sekiz türden biri.'),
+      sikli('"Sürü" sözcüğü hangi tür isimdir?', ['Topluluk ismi', 'Soyut isim'], 0, 'Tekil biçimde bir topluluğu karşılıyor; somut bir varlık.'),
+      sikli('"ve, ile, ama" sözcükleri hangi türdendir?', ['Bağlaç', 'Edat'], 0, 'Sözcükleri ya da cümleleri bağlarlar; çıkarılınca anlam bozulmaz.'),
+      soru('"Kitabınki daha yeni" cümlesindeki -ki, ilgi zamiridir.', true, '"Kitabınki" = kitabının kitabı; -ki bir ismin yerini tutuyor.'),
     ], [
       {
         soru: '"Bu kalem benim" cümlesinde "bu" hangi türdendir?',
@@ -377,8 +377,8 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('Edilgen çatılı cümlelerde işi yapan gerçek özne bellidir.', false, 'Gerçek özne söylenmez; cümlede sözde özne bulunur.'),
       soru('Dilek kipleri zaman bildirir.', false, 'Zaman bildirenler haber kipleri; dilek kipleri istek, şart ve gereklilik anlatır.'),
       sikli('Mastar eki alabilen sözcük?', ['Fiil', 'İsim'], 0, '-mak/-mek.'),
-      sikli('"Gelmeli" hangi kip grubundadır?', ['Dilek kipi', 'Haber kipi'], 0, 'Zaman değil gereklilik.'),
-      sikli('İsim soylu sözcüğü yüklem yapan?', ['Ek fiil', 'Fiilimsi'], 0, 'Birleşik zaman da kurar.'),
+      sikli('"Okuyacaksın" fiilinde hangi kip var?', ['Gelecek zaman', 'Gereklilik'], 0, '-acak gelecek zaman eki; bir haber kipi.'),
+      sikli('"Geliyordu" fiili hangi zamanlıdır?', ['Birleşik zamanlı', 'Basit zamanlı'], 0, 'Şimdiki zaman + ek fiilin hikâyesi; ek fiilin ikinci işi birleşik zaman kurmak.'),
       sikli('"-arak, -ken, -ince" ekleri hangi fiilimsiyi kurar?', ['Zarf-fiil', 'İsim-fiil'], 0, 'İsim-fiil -ma, -ış, -mak.'),
       sikli('Fiilimsi bulunan cümle nasıl cümledir?', ['Basit', 'Birleşik'], 1, 'Yan cümle.'),
       sikli('Çatı hangi cümlelerde aranır?', ['Bütün cümlelerde', 'Yüklemi fiil olanlarda'], 1, 'İsim cümlesinde çatı yok.'),
@@ -432,14 +432,19 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         undefined,
         { not: 'Ergenekon\'da demir dağ eritilir (olağanüstü) ama Göktürklerin çıkışı tarihsel çekirdek. Belge değil, iz.' },
       ),
+      kart(
+        'Dede Korkut Hikâyeleri',
+        'Destandan halk hikâyesine geçişin eseridir.\n12 hikâyede Oğuzların yaşayışı anlatılır.\nNazım ile nesir iç içedir.',
+      ),
     ], [
       soru('Doğal destanlar toplumun ortak belleğinde oluşup sonradan yazıya geçirilir.', true, 'Söyleyeni belli değildir.'),
-      soru('Yapma destanların yazarı bellidir.', true, 'Bir şairin doğal destanlara öykünerek yazdığı eserler.'),
+      soru('Ergenekon Destanı Göktürklere aittir.', true, 'Göktürklerin demir dağı eritip çıkışını anlatır.'),
       soru('Destanlar tarihî olayları olduğu gibi aktarır.', false, 'Tarihî bir çekirdek taşır ama olağanüstü ögelerle işlenir.'),
       soru('Oğuz Kağan Destanı bir yapma destandır.', false, 'Doğal destandır; halkın belleğinde oluşup sonradan yazıya geçmiş.'),
       sikli('İslamiyet sonrası Türk destanı hangisidir?', ['Battalname', 'Ergenekon'], 0, 'Ergenekon öncesi.'),
       sikli('Destan kahramanının amacı?', ['Toplumsal', 'Kişisel'], 0, 'Milletin ortak değerleri.'),
-      soru('Destan olayı halkın gözünden ve abartarak anlatır.', true, 'Tarihsel çekirdek durur ama tarih değil.'),
+      soru('Destan kahramanının doğuşu, atı ve silahı çoğu zaman olağanüstüdür.', true, 'Bu ögeler destanı efsaneye yaklaştırır; tarihsel çekirdek yine durur.'),
+      sikli('Destandan halk hikâyesine geçişi gösteren eser?', ['Dede Korkut Hikâyeleri', 'Leyla ile Mecnun'], 0, 'Leyla ile Mecnun divan edebiyatında bir mesnevi.'),
     ], [
       {
         soru: 'Belli bir şair tarafından yazılan destana ne denir?',
@@ -463,7 +468,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       ),
       kart(
         'Öne çıkan mesneviler',
-        '- **Leyla ile Mecnun:** Fuzuli\n- **Hüsn ü Aşk:** Şeyh Galib\n- **Mesnevi:** Mevlânâ',
+        '- **Leyla ile Mecnun:** Fuzuli\n- **Hüsn ü Aşk:** Şeyh Galib\n- **Mesnevi:** Mevlânâ (Farsça)',
       ),
       kart(
         'Halk hikâyesi',
@@ -497,8 +502,8 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('Halk hikâyeleri yalnızca nazımla anlatılır.', false, 'Nazım ile nesir bir arada kullanılır; türküler araya girer.'),
       soru('Fablın kahramanları insanlardır.', false, 'Kahramanları çoğunlukla hayvanlardır ve insan gibi konuşurlar.'),
       sikli('Leyla ile Mecnun kimin eseridir?', ['Şeyh Galib', 'Fuzuli'], 1, 'Şeyh Galib Hüsn ü Aşk.'),
-      sikli('Nazım ve nesir karışık, âşığın sazla anlattığı tür?', ['Mesnevi', 'Halk hikâyesi'], 1, 'Destanla roman arası.'),
-      sikli('Fablın temel aracı?', ['Benzetme', 'Kişileştirme'], 1, 'Hayvanlar konuşur.'),
+      sikli('Mesnevi hangi çevrede gelişti?', ['Âşık geleneği', 'Divan, saray'], 1, 'Aruzla yazılan divan nazım biçimi; âşık geleneği halk hikâyesini üretti.'),
+      sikli('Mevlânâ\'nın Mesnevi\'si hangi dille yazıldı?', ['Farsça', 'Türkçe'], 0, 'Dönemin Anadolu Selçuklu çevresinde edebiyat dili Farsçaydı.'),
       soru('Sözlü ürün yazıya geçince varyantları durur.', true, 'Tek metne dönüşür.'),
     ], [
       {
@@ -568,11 +573,11 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       ),
       soru('Millî Edebiyat döneminde hece ölçüsü benimsenmiştir.', true, 'Halk şiirinin ölçüsü olarak görüldüğü için tercih edildi.'),
       soru('Millî Edebiyat ta konular Anadolu ve halk hayatından seçilmiştir.', true, 'Edebiyatın kapısı İstanbul dışına açıldı.'),
-      soru('Millî Edebiyat, Servetifünun un dil anlayışını sürdürmüştür.', false, 'Tam karşısında durdu: sadeleşmeyi savundu.'),
-      sikli('Millî Edebiyat hangi ölçüyü benimsedi?', ['Hece', 'Aruz'], 0, 'Konular Anadolu\'ya döndü.'),
+      soru('Ömer Seyfettin, Millî Edebiyat\'ın şiir alanındaki temsilcisidir.', false, 'Hikâyenin temsilcisidir; şiirde Ziya Gökalp ve Mehmet Emin Yurdakul öne çıkar.'),
+      sikli('Genç Kalemler dergisi hangi şehirde çıktı?', ['Selanik', 'İstanbul'], 0, 'Akım 1911\'de Selanik\'te başladı.'),
       sikli('Yeni Lisan makalesi neyi amaçladı?', ['Konuşma dilini yazı dili yapmak', 'Arapça öğretmek'], 0, 'Sadeleşme.'),
       sikli('Ziya Gökalp hangi akımın temsilcisidir?', ['Millî Edebiyat', 'Servetifünun'], 0, 'Ömer Seyfettin de.'),
-      soru('Servetifünun sade dil ve toplumsal konuları seçti.', false, 'Ağır dil ve bireysel konular.'),
+      soru('Millî Edebiyat, savaşlar ve toprak kayıplarının doğurduğu kimlik arayışıyla güçlendi.', true, 'Edebiyat bu dönemde halka ve kendi diline döndü.'),
     ], [
       {
         soru: 'Millî Edebiyat hangi dergi ve makaleyle başlar?',
@@ -616,6 +621,10 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         'Cumhuriyet’e miras',
         'Sade dil ve Anadolu konusu, Cumhuriyet dönemi edebiyatının çıkış noktası oldu.\nKopuş değil, süreklilik var.',
       ),
+      kart(
+        'Ömer Seyfettin’den örnekler',
+        '- **Kaşağı:** vicdan ve pişmanlık\n- **Pembe İncili Kaftan:** onur, tarihî olay\n- **Forsa:** kahramanlık\nHikâyeleri kısa, olay merkezli ve sade dillidir.',
+      ),
     ], [
       soru('Millî Edebiyat döneminde roman ve hikâyede Anadolu insanı işlenmiştir.', true, 'Mekân İstanbul dan Anadolu ya taşındı.'),
       soru('Ömer Seyfettin dönemin hikâye türündeki önemli adlarındandır.', true, 'Sade dille yazdığı hikâyeler dönemin dil anlayışını yansıtıyor.'),
@@ -623,8 +632,9 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('Bu dönemin birikimi Cumhuriyet Dönemi edebiyatını etkilememiştir.', false, 'Dil ve konu anlayışı Cumhuriyet edebiyatına doğrudan miras kaldı.'),
       sikli('Hece ölçüsünü sürdüren şair topluluğu?', ['Beş Hececiler', 'Yedi Meşaleciler'], 0, 'Sade dil.'),
       sikli('Çalıkuşu ne anlatır?', ['Anadolu\'ya gitmeyi görev olarak', 'Aydının halka uzaklığını'], 0, 'Yaban uzaklığı anlatır.'),
-      sikli('Cumhuriyet dönemi edebiyatı Millî Edebiyat\'la nasıl ilişkidedir?', ['Süreklilik', 'Kopuş'], 0, 'Sade dil ve Anadolu konusu miras.'),
-      soru('Bu dönemde edebiyat toplumu biçimlendirme işini de üstlendi.', true, 'Sanat kaygısının yanında.'),
+      sikli('"Pembe İncili Kaftan" kimin hikâyesidir?', ['Ömer Seyfettin', 'Reşat Nuri'], 0, 'Ömer Seyfettin tarihî olayları kısa, olay merkezli hikâyelere dönüştürdü.'),
+      soru('Gazete yazıları ve denemeler, sadeleşmeyi geniş kitleye yaydı.', true, 'Sade dil yalnızca şiir ve romanda değil gündelik yazıda da yerleşti.'),
+      sikli('"Kaşağı" hikâyesi hangi duyguyu işler?', ['Kahramanlık', 'Vicdan ve pişmanlık'], 1, 'Anlatıcı, kardeşine attığı iftiranın pişmanlığını taşır.'),
     ], [
       {
         soru: 'Aydının halka uzaklığını anlatan roman hangisidir?',
