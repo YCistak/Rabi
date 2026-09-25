@@ -96,6 +96,24 @@ describe('rozetDurumu', () => {
     expect(durum.pomodoroEnIyiGun).toBe(3)
   })
 
+  /**
+   * Gerileme testi: gün UTC damgasının ilk on karakterinden okunuyordu.
+   * Türkiye'de gece 01.00'de başlayan seans bir önceki güne yazılıyordu.
+   */
+  it('pomodoro seanslarını yerel güne göre gruplar', () => {
+    const yerel = (gun: number, saat: number) => new Date(2026, 7, gun, saat, 0).toISOString()
+    const durum = rozetDurumu({
+      ...BOS,
+      pomodoroGecmis: [
+        seans(yerel(9, 22)),
+        seans(yerel(10, 0)),
+        seans(yerel(10, 1)),
+        seans(yerel(10, 2)),
+      ],
+    })
+    expect(durum.pomodoroEnIyiGun).toBe(3)
+  })
+
   it('yanlış bankasında eklenen ile çözüleni ayırır', () => {
     const durum = rozetDurumu({
       ...BOS,

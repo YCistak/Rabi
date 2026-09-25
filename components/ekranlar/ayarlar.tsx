@@ -47,7 +47,7 @@ import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { izinIste } from '@/lib/bildirim'
 import { saatYaz } from '@/lib/hatirlatma'
 import { AD_EN_AZ, adBiciminde, adGecerliMi } from '@/lib/ad'
-import { cn, yeniId } from '@/lib/utils'
+import { bugun, cn, yeniId } from '@/lib/utils'
 import { dosyayiPaylas } from '@/lib/paylas'
 import { useGeriKatmani } from '@/lib/geri'
 import type {
@@ -243,7 +243,8 @@ export function AyarlarEkrani({
   const dosyayaIndir = async (fotograflarla: boolean) => {
     setDurum('Yedek hazırlanıyor…')
     const json = await yedekJson(fotograflarla)
-    const ad = `rabi-yedek-${new Date().toISOString().slice(0, 10)}${
+    // Dosya adındaki gün yerel: UTC günü gece yarısından sonra dünü yazıyordu.
+    const ad = `rabi-yedek-${bugun()}${
       fotograflarla ? '-fotografli' : ''
     }.json`
     // Cihazda paylaş penceresi açılıyor (WebView blob indiremiyor, bkz.
