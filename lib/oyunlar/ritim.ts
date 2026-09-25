@@ -45,6 +45,8 @@ export const ZORLUK_ADI: Record<Zorluk, string> = {
  */
 export const SORU_SURESI: Record<OyunId, number> = {
   yazim: 12,
+  // Noktalamada önce cümleyi okumak gerekiyor — öge sorularıyla aynı pay.
+  noktalama: 14,
   ses: 12,
   soz: 12,
   /**

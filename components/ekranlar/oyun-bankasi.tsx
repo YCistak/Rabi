@@ -60,6 +60,7 @@ const DERS_AILESI: Record<DersId, { zemin: string; yazi: string }> = {
 
 const KISA_AD: Record<OyunId, string> = {
   yazim: 'Yazım',
+  noktalama: 'Noktalama',
   ses: 'Ses Olayı',
   oge: 'Cümle Ögesi',
   soz: 'Deyim',
@@ -286,13 +287,14 @@ function KayitKarti({
           <span className="mt-1 block text-[13px] font-semibold text-success">
             {bankaCevabiMetni(kayit.soru)}
           </span>
-          {/* Kural metni iki havuzdan gelebiliyor: noktalama kayıtları da
-              bankada 'yazim' kimliğiyle duruyor, ayıran alan `isaretler`. */}
           {kayit.soru.oyun === 'yazim' && (
             <span className="mt-1.5 block text-xs leading-relaxed text-muted-foreground">
-              {(kayit.soru.isaretler
-                ? NOKTALAMA_ACIKLAMASI[kayit.soru.kural as NoktalamaKurali]
-                : KURAL_ACIKLAMASI[kayit.soru.kural as YazimKurali]) ?? ''}
+              {KURAL_ACIKLAMASI[kayit.soru.kural as YazimKurali] ?? ''}
+            </span>
+          )}
+          {kayit.soru.oyun === 'noktalama' && (
+            <span className="mt-1.5 block text-xs leading-relaxed text-muted-foreground">
+              {NOKTALAMA_ACIKLAMASI[kayit.soru.kural as NoktalamaKurali] ?? ''}
             </span>
           )}
         </span>

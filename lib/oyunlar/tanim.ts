@@ -146,9 +146,25 @@ export const OYUNLAR: OyunTanimi[] = [
     id: 'yazim',
     ders: 'turkce',
     ad: 'Yazım Ustası',
-    kisaAciklama: 'Yazım ve noktalama hatalarını yakala',
+    kisaAciklama: 'Doğru yazılışı yakala',
     ikon: '✍️',
-    ozet: `Yazımda **doğru** yazılışa dokunursun, noktalamada cümledeki **yanlış** işarete. Hangi hatalarla çalışacağını aşağıdan seçebilirsin.`,
+    ozet: `İki yazılıştan **doğru** olana dokunursun. Tur bitince karıştırdıkların kuralıyla birlikte listelenir.`,
+  },
+  /*
+    Noktalama bir süre Yazım Ustası'nın içinde ikinci bir soru türüydü ve
+    sorular sırayla harmanlanıyordu. Ayrıldı: biri kelimeye, öteki cümleye
+    bakıyor ve biri doğruya, öteki yanlışa dokunduruyor — aynı turda art arda
+    gelince oyuncu her soruda yönergeyi yeniden okumak zorunda kalıyordu.
+    Yazım Ustası kimliğini (ve rekorunu) korudu; noktalama yeni bir kimlikle
+    sıfırdan başlıyor.
+  */
+  {
+    id: 'noktalama',
+    ders: 'turkce',
+    ad: 'Noktalama İşaretleri',
+    kisaAciklama: 'Yanlış işareti bul',
+    ikon: '❗',
+    ozet: `Cümlede **yanlış** kullanılmış noktalama işaretine dokunursun. Tur bitince cümlenin doğrusu kuralıyla birlikte listelenir.`,
   },
   {
     id: 'ses',

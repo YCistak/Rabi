@@ -107,6 +107,7 @@ type Aile = { zemin: string; yazi: string; ok: string }
 /** Kart başlığındaki satır kırma — iki kelimelik adlar iki satıra iniyor. */
 const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   yazim: ['Yazım', 'Ustası'],
+  noktalama: ['Noktalama', 'İşaretleri'],
   ses: ['Ses', 'Olayları'],
   oge: ['Cümlenin', 'Ögeleri'],
   soz: ['Deyim ve', 'Atasözü'],
@@ -549,13 +550,17 @@ export function OyunlarEkrani({
         </>
       )}
 
-      {acikOyun === 'yazim' && (
+      {(acikOyun === 'yazim' || acikOyun === 'noktalama') && (
         <YazimOyunuEkrani
-          istatistik={istatistikAl(kayitlar, 'yazim')}
+          // İki oyun aynı ekranı paylaşıyor; `key` olmasa biri kapanıp öteki
+          // açılınca React turun state'ini yeniden kullanırdı.
+          key={acikOyun}
+          oyunId={acikOyun}
+          istatistik={istatistikAl(kayitlar, acikOyun)}
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
-          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('yazim', ozet, cevaplar, saniye, yarim)}
-          gorulenler={soruGecmisi.yazim ?? []}
+          onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti(acikOyun, ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi[acikOyun] ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />

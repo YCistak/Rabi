@@ -14,7 +14,6 @@ import {
   type NoktalamaKurali,
 } from '@/lib/oyunlar/noktalama-havuzu'
 import {
-  TUM_SORU_TURLERI,
   havuzlariSec,
   turHazirla,
   type Havuzlar,
@@ -82,32 +81,32 @@ type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 /** `secilenMetin` süre dolduğunda `null`: oyuncu bir şık işaretlemedi. */
 type GeriBildirim = { secilenMetin: string | null; dogruMu: boolean; icerik: SoruIcerigi }
 
+/** Bu ekranı paylaşan iki oyun; kimlik aynı zamanda sorulan soru türü. */
+type YaziOyunu = 'yazim' | 'noktalama'
+
 /**
  * Banka kayıtlarından tur havuzları.
  *
  * Kayıt ekranda göstermek için gereken her şeyi taşıyor, tek eksik oyunun
- * beklediği biçim. Yazım dışındaki kayıtlar eleniyor. Noktalama kayıtları
- * `isaretler` alanından tanınıyor: ikisi de bankada `yazim` kimliğiyle duruyor,
- * çünkü ikisi de bu turda sorulacak.
+ * beklediği biçim. Açık oyunun dışındaki kayıtlar eleniyor.
  */
-function bankaHavuzlari(kayitlar: readonly BankaKaydi[]): Havuzlar {
+function bankaHavuzlari(kayitlar: readonly BankaKaydi[], oyunId: YaziOyunu): Havuzlar {
   const yazim: YazimSorusu[] = []
   const noktalama: NoktalamaSorusu[] = []
 
   for (const kayit of kayitlar) {
-    if (kayit.soru.oyun !== 'yazim') continue
-    const isaretler = kayit.soru.isaretler
-    if (isaretler) {
+    if (kayit.soru.oyun !== oyunId) continue
+    if (kayit.soru.oyun === 'noktalama') {
       noktalama.push({
         cumle: kayit.soru.yanlis,
         duzeltme: kayit.soru.dogru,
-        yanlisIsaret: isaretler.yanlis,
-        dogruIsaret: isaretler.dogru,
+        yanlisIsaret: kayit.soru.isaretler.yanlis,
+        dogruIsaret: kayit.soru.isaretler.dogru,
         kural: kayit.soru.kural as NoktalamaKurali,
         // Banka turunda zorluk yok.
         zorluk: 'orta',
       })
-    } else {
+    } else if (kayit.soru.oyun === 'yazim') {
       yazim.push({
         dogru: kayit.soru.dogru,
         yanlis: kayit.soru.yanlis,
@@ -121,16 +120,9 @@ function bankaHavuzlari(kayitlar: readonly BankaKaydi[]): Havuzlar {
   return { yazim, noktalama }
 }
 
-/**
- * Bütün havuzu tek bir zorluğa indirir.
- *
- * Soru türü artık seçilmiyor (`TurSecimi` silindi): iki tür de her turda
- * geliyor. Seçim tanıtım ekranındaki öteki seçimlerle birlikte kaldırıldı —
- * "hangi tür gelsin" sorusu, oyunun ne olduğunu henüz görmemiş kullanıcıya
- * soruluyordu.
- */
-function zorluktaHavuz(zorluk: ZorlukSeviyesi): Havuzlar {
-  const tumu = havuzlariSec(TUM_SORU_TURLERI)
+/** Açık oyunun havuzunu tek bir zorluğa indirir; öteki türün havuzu boş. */
+function zorluktaHavuz(oyunId: YaziOyunu, zorluk: ZorlukSeviyesi): Havuzlar {
+  const tumu = havuzlariSec([oyunId])
   return {
     yazim: zorluktaSuz(tumu.yazim, zorluk),
     noktalama: zorluktaSuz(tumu.noktalama, zorluk),
@@ -143,11 +135,13 @@ function bankayaCevir(icerik: SoruIcerigi) {
 }
 
 /**
- * Yazım Ustası — mini oyun.
+ * Yazım Ustası ve Noktalama İşaretleri — iki mini oyun, tek ekran.
  *
- * İki soru türü var: iki yazılıştan doğrusunu seçmek ve bir cümlede yanlış
- * kullanılmış noktalama işaretini bulmak. Hangisinin geleceğini oyuncu tanıtım
- * ekranından seçiyor; ikisi de seçiliyse sorular sırayla harmanlanıyor.
+ * Yazım Ustası'nda iki yazılıştan doğrusu seçiliyor, Noktalama'da cümlede
+ * yanlış kullanılmış işaret bulunuyor. Bir süre tek oyundular ve sorular
+ * harmanlanıyordu; ayrıldılar ama ekran ortak kaldı — kabuk, sayaç, şık ve tur
+ * sonu ikisinde birebir aynı, farkı `soru.tur` zaten çiziyor. Kopyalansaydı
+ * iki ekran zamanla birbirinden ayrışırdı.
  *
  * Oynarken kelimenin **kuralı yazılmıyor**. Yazılıyordu ve cevabı ele veriyordu:
  * "Bitişik yazılır" notunun altında biri ayrı biri bitişik iki şık varsa okumaya
@@ -155,6 +149,7 @@ function bankayaCevir(icerik: SoruIcerigi) {
  * öğretmesi gereken yer orası.
  */
 export function YazimOyunuEkrani({
+  oyunId,
   istatistik,
   sesAcik,
   bankaSorulari,
@@ -163,6 +158,7 @@ export function YazimOyunuEkrani({
   bildir,
   gorulenler,
 }: {
+  oyunId: YaziOyunu
   istatistik: OyunIstatistigi
   /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
   sesAcik: boolean
@@ -181,7 +177,7 @@ export function YazimOyunuEkrani({
   /** Yakın turlarda sorulan soru kimlikleri — yenisi öne alınıyor (`lib/oyunlar/gecmis.ts`). */
   gorulenler: readonly string[]
 }) {
-  const oyun = oyunBul('yazim')
+  const oyun = oyunBul(oyunId)
 
   const [asama, setAsama] = useState<Asama>('tanitim')
   const [yardimAcik, setYardimAcik] = useState(false)
@@ -215,7 +211,10 @@ export function YazimOyunuEkrani({
   )
 
   /** Banka turunda havuz bankadaki kayıtlar; normal turda oyunun kendi havuzu. */
-  const bankaHavuzu = useMemo(() => bankaHavuzlari(bankaSorulari), [bankaSorulari])
+  const bankaHavuzu = useMemo(
+    () => bankaHavuzlari(bankaSorulari, oyunId),
+    [bankaSorulari, oyunId],
+  )
   const bankaTuru = bankaHavuzu.yazim.length + bankaHavuzu.noktalama.length > 0
   // Seçilen mod (tanıtımın ayar adımı); banka turu seçimi dinlemiyor.
   const gecerliMod = useEtkinMod(bankaTuru)
@@ -255,7 +254,7 @@ export function YazimOyunuEkrani({
       bankaTuru
         ? tekAkis(turHazirla(bankaHavuzu))
         : akisUret((seviye) =>
-            turHazirla(zorluktaHavuz(seviye), Math.random, {
+            turHazirla(zorluktaHavuz(oyunId, seviye), Math.random, {
               gorulenler,
               yazim: (s) => bankaKimligi(yazimdanBanka(s)),
               noktalama: (s) => bankaKimligi(noktalamadanBanka(s)),
@@ -270,7 +269,7 @@ export function YazimOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaHavuzu, bankaTuru, gorulenler, istatistik.enIyiDogru, zorluguSifirla])
+  }, [bankaHavuzu, bankaTuru, gorulenler, istatistik.enIyiDogru, oyunId, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<SoruIcerigi>[], yarim = false) => {
@@ -412,7 +411,7 @@ export function YazimOyunuEkrani({
     yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
-    sure: soruSuresi('yazim'),
+    sure: soruSuresi(oyunId),
     anahtar: sira,
     onBitti: sureDoldu,
   })
@@ -438,7 +437,7 @@ export function YazimOyunuEkrani({
   return (
     <>
       <OyunKabugu
-        oyunId="yazim"
+        oyunId={oyunId}
         baslik={oyun.ad}
         sayac={
           asama === 'bitti'
@@ -460,6 +459,7 @@ export function YazimOyunuEkrani({
       >
         {asama === 'bitti' && sonuc ? (
           <SonucGorunumu
+            oyunId={oyunId}
             sonuc={sonuc}
             rekor={turBasiRekor.current}
             bankaTuru={bankaTuru}
@@ -605,6 +605,7 @@ function SikDugmesi({
 }
 
 function SonucGorunumu({
+  oyunId,
   sonuc,
   rekor,
   bankaTuru,
@@ -614,6 +615,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
+  oyunId: YaziOyunu
   sonuc: { ozet: TurOzeti<SoruIcerigi>; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
@@ -629,7 +631,7 @@ function SonucGorunumu({
 
   return (
     <TurSonu
-      oyunId="yazim"
+      oyunId={oyunId}
       dogru={ozet.dogru}
       yanlis={ozet.yanlis}
       enIyiSeri={ozet.enIyiSeri}
@@ -653,7 +655,7 @@ function SonucGorunumu({
           {gorunen.map((yanlis, sira) => (
             <YanlisKarti
               key={`${yanlis.tur === 'yazim' ? yanlis.soru.dogru : yanlis.soru.cumle}-${sira}`}
-              oyunId="yazim"
+              oyunId={oyunId}
               soru={bankayaCevir(yanlis)}
               bildir={bildir}
             >
