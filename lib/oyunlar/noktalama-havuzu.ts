@@ -1,5 +1,5 @@
 /**
- * Noktalama sorularının havuzu — Yazım Ustası'nın ikinci soru türü.
+ * Noktalama İşaretleri oyununun havuzu (bir süre Yazım Ustası'nın ikinci soru türüydü).
  *
  * Yapı yazım havuzundan farklı: orada iki yazılıştan **doğrusu** seçiliyor,
  * burada bir cümledeki **yanlış** işaret bulunuyor. Sebebi, noktalama hatasının

@@ -6,31 +6,19 @@ import { karistir } from './tur'
 import { yakinlariSonaAt, type Anahtar } from './gecmis'
 
 /**
- * Yazım Ustası'na özgü mantık. Süre, ceza, rekor gibi bütün oyunlarda ortak
- * olan her şey `tur.ts` içinde.
+ * Yazım Ustası ile Noktalama İşaretleri'ne özgü mantık. Süre, ceza, rekor gibi
+ * bütün oyunlarda ortak olan her şey `tur.ts` içinde.
  */
 
 /**
- * Turda hangi soruların çıkacağı.
+ * Sorunun türü — aynı zamanda oyunun kimliği.
  *
- * İkisi de tek oyunun içinde: ikisi de aynı şeyi ölçüyor (cümleyi doğru yazmak)
- * ve ikisi de iki şıklı. Ayrı oyun olsalardı rekorlar bölünür, "Yazım Ustası"
- * yarım kalırdı.
+ * İkisi bir süre tek oyundu ("Yazım Ustası") ve sorular sırayla
+ * harmanlanıyordu. Ayrıldılar: biri kelimeye bakıp doğruya, öteki cümleye
+ * bakıp yanlışa dokunduruyor ve art arda gelince oyuncu her soruda yönergeyi
+ * yeniden okuyordu. Mantık ortak kaldı çünkü iki soru da iki şıklı.
  */
 export type SoruTuru = 'yazim' | 'noktalama'
-
-export const TUM_SORU_TURLERI: SoruTuru[] = ['yazim', 'noktalama']
-
-export const SORU_TURU_ADI: Record<SoruTuru, string> = {
-  yazim: 'Yazım hatası',
-  noktalama: 'Noktalama hatası',
-}
-
-/** Seçim çiplerinin altında görünen örnek. */
-export const SORU_TURU_ORNEGI: Record<SoruTuru, string> = {
-  yazim: 'yalnız / yanlız',
-  noktalama: 'Ali, ve Ayşe geldi.',
-}
 
 export type Sik = {
   metin: string
@@ -72,26 +60,6 @@ export function havuzlariSec(
     yazim: secili.includes('yazim') ? tumu.yazim : [],
     noktalama: secili.includes('noktalama') ? tumu.noktalama : [],
   }
-}
-
-/**
- * İki havuzu sırayla harmanlar.
- *
- * Düz birleştirip karıştırmak olmazdı: yazım havuzu noktalamanınkinin birkaç
- * katı, rastgele karışımda 60 saniyelik tura bir iki noktalama sorusu düşerdi.
- * Sırayla alınca iki tür de eşit görünüyor. Hangisinin başlayacağı her turda
- * ayrıca atılıyor — sabit olsaydı oyuncu ilk soruyu görmeden ne geleceğini
- * bilirdi.
- */
-function harmanla<T>(bir: readonly T[], iki: readonly T[], rastgele: () => number): T[] {
-  const [ilk, ikinci] = rastgele() < 0.5 ? [bir, iki] : [iki, bir]
-  const sonuc: T[] = []
-  const uzunluk = Math.max(ilk.length, ikinci.length)
-  for (let i = 0; i < uzunluk; i++) {
-    if (i < ilk.length) sonuc.push(ilk[i])
-    if (i < ikinci.length) sonuc.push(ikinci[i])
-  }
-  return sonuc
 }
 
 /** Yazım sorusu: iki yazılıştan doğrusuna dokunuluyor. */
@@ -161,5 +129,7 @@ export function turHazirla(
       ? yakinlariSonaAt(noktalamaSirasi, gecmis.gorulenler, gecmis.noktalama)
       : noktalamaSirasi
   ).map((soru) => noktalamadanSoru(soru, rastgele))
-  return harmanla(yazim, noktalama, rastgele)
+  // Oyunlar ayrı olduğu için havuzlardan biri hep boş; ikisi de doluysa
+  // (yalnızca testlerde) sırayla ekleniyorlar.
+  return [...yazim, ...noktalama]
 }

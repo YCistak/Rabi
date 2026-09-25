@@ -43,6 +43,13 @@ const AILE: Record<
     kenar: 'border-l-yzm-koyu',
     degisken: 'var(--yzm-koyu)',
   },
+  noktalama: {
+    zemin: 'bg-yzm',
+    yazi: 'text-yzm-koyu',
+    dolgu: 'bg-yzm-koyu',
+    kenar: 'border-l-yzm-koyu',
+    degisken: 'var(--yzm-koyu)',
+  },
   // Türkçe dersinin oyunları Yazım'la aynı aileyi paylaşıyor.
   ses: {
     zemin: 'bg-yzm',

@@ -200,7 +200,7 @@ function Tahta({
 export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
   yazim: [
     {
-      baslik: 'Yazım turu',
+      baslik: 'Doğru yazılış',
       kural: (
         <>
           <b>Doğru</b> yazılışı şıklardan seçersin.
@@ -213,8 +213,11 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
         </div>
       ),
     },
+  ],
+
+  noktalama: [
     {
-      baslik: 'Noktalama turu',
+      baslik: 'Yanlış işaret',
       kural: (
         <>
           Cümledeki <b>yanlış</b> işareti şıklardan seçersin.

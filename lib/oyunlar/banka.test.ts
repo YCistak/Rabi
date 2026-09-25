@@ -12,6 +12,7 @@ import {
   sestenBanka,
   bolunmedenBanka,
   dusenSayisi,
+  eskiNoktalamayiTasi,
   type BankaKaydi,
   type BankaSorusu,
 } from './banka'
@@ -272,5 +273,42 @@ describe('bölünebilme kolu', () => {
       '2026-08-19',
     )
     expect(banka).toHaveLength(2)
+  })
+})
+
+describe('eskiNoktalamayiTasi', () => {
+  // Ayrılmadan önceki biçim: noktalama kaydı `yazim` kimliğinde, `isaretler` ile.
+  const eski = {
+    id: 'yazim:Ali ve Ayşe geldi.',
+    soru: {
+      oyun: 'yazim',
+      dogru: 'Ali ve Ayşe geldi.',
+      yanlis: 'Ali, ve Ayşe geldi.',
+      kural: 'virgul',
+      isaretler: { yanlis: 'virgul', dogru: 'nokta' },
+    },
+    kacKez: 2,
+    eklenme: '2026-08-01',
+    sonYanlis: '2026-08-10',
+  } as unknown as BankaKaydi
+
+  it('eski noktalama kaydını noktalama oyununa taşıyor, kimliği yeniliyor', () => {
+    const [tasinan] = eskiNoktalamayiTasi([eski])
+    expect(tasinan.soru.oyun).toBe('noktalama')
+    expect(tasinan.id).toBe(bankaKimligi(tasinan.soru))
+    expect(tasinan.kacKez).toBe(2)
+  })
+
+  it('taşınacak kayıt yoksa aynı diziyi döndürüyor, yazım kayıtlarına dokunmuyor', () => {
+    const banka = bankayiGuncelle([], [{ soru: yazim('herkes'), dogruMu: false }], '2026-08-18')
+    expect(eskiNoktalamayiTasi(banka)).toBe(banka)
+  })
+
+  it('aynı cümlenin yeni kaydıyla birleşiyor', () => {
+    const [yeni] = eskiNoktalamayiTasi([eski])
+    const sonuc = eskiNoktalamayiTasi([{ ...yeni, kacKez: 1, sonYanlis: '2026-09-01' }, eski])
+    expect(sonuc).toHaveLength(1)
+    expect(sonuc[0].kacKez).toBe(3)
+    expect(sonuc[0].sonYanlis).toBe('2026-09-01')
   })
 })
