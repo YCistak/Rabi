@@ -6,7 +6,6 @@ import {
   type NoktalamaSorusu,
 } from './noktalama-havuzu'
 import { havuzlariSec, turHazirla, type Havuzlar } from './yazim-oyunu'
-import type { YazimSorusu } from './yazim-havuzu'
 
 /** Metinde bir karakterin kaç kez geçtiği. */
 function sayim(metin: string, karakter: string): number {
@@ -90,26 +89,10 @@ describe('turHazirla — noktalama', () => {
     }
   })
 
-  it('tek tür seçiliyse yalnızca o tür geliyor', () => {
+  it('noktalama oyununda yazım sorusu gelmiyor', () => {
     const tur = turHazirla({ yazim: [], noktalama })
     expect(tur).toHaveLength(noktalama.length)
     expect(tur.every((s) => s.tur === 'noktalama')).toBe(true)
   })
 
-  it('iki tür de seçiliyse sorular dönüşümlü geliyor', () => {
-    const yazim: YazimSorusu[] = Array.from({ length: 20 }, (_, i) => ({
-      dogru: `d${i}`,
-      yanlis: `y${i}`,
-      zorluk: 'orta' as const,
-      kural: 'ses' as const,
-    }))
-    const tur = turHazirla({ yazim, noktalama })
-    expect(tur).toHaveLength(yazim.length + noktalama.length)
-
-    // Küçük havuz tükenene kadar iki tür eşit sayıda: düz karıştırma olsaydı
-    // noktalama sorusu turun başında hiç görünmeyebilirdi.
-    const bas = tur.slice(0, noktalama.length * 2)
-    expect(bas.filter((s) => s.tur === 'noktalama')).toHaveLength(noktalama.length)
-    expect(bas.filter((s) => s.tur === 'yazim')).toHaveLength(noktalama.length)
-  })
 })

@@ -53,14 +53,20 @@ export type BankaSorusu =
       dogru: string
       yanlis: string
       kural: string
-      /**
-       * Noktalama sorusuysa cümledeki iki işaret; yazım sorusunda yok.
-       *
-       * Aynı `oyun` kimliği altındalar çünkü ikisi de Yazım Ustası turunda
-       * çıkıyor: banka turu oyuna göre açılıyor, ayrı kimlik verilseydi bu
-       * kayıtlar bankada durur ama hiçbir turda tekrar sorulamazdı.
-       */
-      isaretler?: { yanlis: NoktalamaIsareti; dogru: NoktalamaIsareti }
+    }
+  /*
+    Noktalama kayıtları bir süre `yazim` kimliğiyle duruyordu (ikisi tek
+    oyundu) ve `isaretler` alanıyla ayırt ediliyordu. Oyunlar ayrılınca eski
+    kayıtlar `eskiNoktalamayiTasi` ile buraya taşınıyor.
+  */
+  | {
+      oyun: 'noktalama'
+      /** Cümlenin doğru hâli. */
+      dogru: string
+      /** Hatalı cümle — sorunun kendisi. */
+      yanlis: string
+      kural: string
+      isaretler: { yanlis: NoktalamaIsareti; dogru: NoktalamaIsareti }
     }
   | { oyun: 'islem'; islemTuru: IslemTuru; metin: string; sonuc: number }
   | { oyun: 'edebiyat'; eser: string; yazar: string }
@@ -211,7 +217,7 @@ export function yazimdanBanka(soru: {
 
 export function noktalamadanBanka(soru: NoktalamaSorusu): BankaSorusu {
   return {
-    oyun: 'yazim',
+    oyun: 'noktalama',
     // Cümlenin doğru hâli "doğru cevap", hatalı hâli sorunun kendisi.
     dogru: soru.duzeltme,
     yanlis: soru.cumle,
@@ -368,6 +374,8 @@ export function bankaKimligi(soru: BankaSorusu): string {
   switch (soru.oyun) {
     case 'yazim':
       return `yazim:${soru.dogru}`
+    case 'noktalama':
+      return `noktalama:${soru.dogru}`
     case 'islem':
       return `islem:${soru.metin}`
     case 'edebiyat':
@@ -440,6 +448,7 @@ export function bankaKimligi(soru: BankaSorusu): string {
 export function bankaSorusuMetni(soru: BankaSorusu): string {
   switch (soru.oyun) {
     case 'yazim':
+    case 'noktalama':
       return soru.yanlis
     case 'islem':
       return soru.metin
@@ -517,6 +526,7 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
 export function bankaCevabiMetni(soru: BankaSorusu): string {
   switch (soru.oyun) {
     case 'yazim':
+    case 'noktalama':
       return soru.dogru
     case 'islem':
       return String(soru.sonuc)
@@ -638,6 +648,57 @@ export function bankayiGuncelle(
   return [...hepsi].sort((a, b) => a.eklenme.localeCompare(b.eklenme)).slice(-BANKA_SINIRI)
 }
 
+/** Eski bir noktalama kaydı mı: `yazim` kimliğinde ama işaretleri var. */
+function eskiNoktalamaMi(soru: BankaSorusu): boolean {
+  return soru.oyun === 'yazim' && 'isaretler' in soru && soru.isaretler != null
+}
+
+/**
+ * Yazım Ustası'ndan ayrılmadan önce yazılmış noktalama kayıtlarını
+ * `noktalama` oyununa taşır.
+ *
+ * O kayıtlar `yazim` kimliğiyle duruyordu; taşınmasalar Yazım Ustası'nın banka
+ * turu onları artık sormuyor, Noktalama'nınki de hiç görmüyor — bankada durup
+ * hiçbir turda çıkmayan kayıtlar olurlardı. Kimlik de yeniden üretiliyor;
+ * aynı cümle taşındıktan sonra yeniden yanlış bilinirse ikinci bir kayıt
+ * açılmasın. Taşınacak bir şey yoksa aynı dizi dönüyor (çağıran bunu "yazmaya
+ * gerek yok" diye okuyabilsin).
+ */
+export function eskiNoktalamayiTasi(banka: BankaKaydi[]): BankaKaydi[] {
+  if (!banka.some((k) => eskiNoktalamaMi(k.soru))) return banka
+
+  const harita = new Map<string, BankaKaydi>()
+  for (const kayit of banka) {
+    let yeni = kayit
+    if (eskiNoktalamaMi(kayit.soru)) {
+      const eski = kayit.soru as Extract<BankaSorusu, { oyun: 'yazim' }> & {
+        isaretler: { yanlis: NoktalamaIsareti; dogru: NoktalamaIsareti }
+      }
+      const soru: BankaSorusu = {
+        oyun: 'noktalama',
+        dogru: eski.dogru,
+        yanlis: eski.yanlis,
+        kural: eski.kural,
+        isaretler: eski.isaretler,
+      }
+      yeni = { ...kayit, id: bankaKimligi(soru), soru }
+    }
+    // Aynı kimliğe iki kayıt düşerse sayaçları birleşiyor, ilki yerinde kalıyor.
+    const mevcut = harita.get(yeni.id)
+    harita.set(
+      yeni.id,
+      mevcut
+        ? {
+            ...mevcut,
+            kacKez: mevcut.kacKez + yeni.kacKez,
+            sonYanlis: mevcut.sonYanlis > yeni.sonYanlis ? mevcut.sonYanlis : yeni.sonYanlis,
+          }
+        : yeni,
+    )
+  }
+  return [...harita.values()]
+}
+
 /**
  * Genel testin sonucunu işler: doğru bilinenler düşer.
  *
@@ -685,6 +746,7 @@ export function dusenSayisi(
  */
 const BOS_DAGILIM: Record<OyunId, number> = {
   yazim: 0,
+  noktalama: 0,
   ses: 0,
   oge: 0,
   soz: 0,

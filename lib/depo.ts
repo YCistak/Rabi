@@ -22,6 +22,7 @@ import type {
 import {
   BANKA_SINIRI,
   OYUN_KIMLIKLERI,
+  eskiNoktalamayiTasi,
   type BankaKaydi,
   type BankaSorusu,
 } from './oyunlar/banka'
@@ -611,12 +612,21 @@ function oyunGecmisiniCoz(ham: unknown): OyunTurKaydi[] {
 function bankayiCoz(ham: unknown): BankaKaydi[] {
   if (!Array.isArray(ham)) return []
 
-  return (ham as Partial<BankaKaydi>[])
+  // Noktalama Yazım Ustası'ndan ayrılmadan alınmış yedeklerde o kayıtlar
+  // `yazim` kimliğiyle duruyor.
+  const suzulen = (ham as Partial<BankaKaydi>[])
     .filter((k): k is BankaKaydi => {
       if (typeof k?.id !== 'string') return false
       const s = k.soru as BankaSorusu | undefined
       if (!s) return false
       if (s.oyun === 'yazim') return typeof s.dogru === 'string' && typeof s.yanlis === 'string'
+      if (s.oyun === 'noktalama')
+        return (
+          typeof s.dogru === 'string' &&
+          typeof s.yanlis === 'string' &&
+          typeof s.isaretler?.yanlis === 'string' &&
+          typeof s.isaretler?.dogru === 'string'
+        )
       if (s.oyun === 'islem') return typeof s.metin === 'string' && typeof s.sonuc === 'number'
       if (s.oyun === 'edebiyat') return typeof s.eser === 'string' && typeof s.yazar === 'string'
       if (s.oyun === 'ses')
@@ -706,7 +716,7 @@ function bankayiCoz(ham: unknown): BankaKaydi[] {
       eklenme: typeof k.eklenme === 'string' ? k.eklenme : '',
       sonYanlis: typeof k.sonYanlis === 'string' ? k.sonYanlis : '',
     }))
-    .slice(-BANKA_SINIRI)
+  return eskiNoktalamayiTasi(suzulen).slice(-BANKA_SINIRI)
 }
 
 function sayi(deger: unknown): number {

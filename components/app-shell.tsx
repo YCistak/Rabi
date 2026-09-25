@@ -27,7 +27,7 @@ import {
   pomodoroAyariniNormalize,
   useYerelDepo,
 } from '@/lib/depo'
-import { testiIsle, type BankaKaydi, type BankaTuru } from '@/lib/oyunlar/banka'
+import { eskiNoktalamayiTasi, testiIsle, type BankaKaydi, type BankaTuru } from '@/lib/oyunlar/banka'
 import {
   genelTestBittiMi,
   genelTestIlerlet,
@@ -199,7 +199,20 @@ export function AppShell() {
   )
   /** Katmanda açık olan ay; kapalıyken null. */
   const [ozetAcik, setOzetAcik] = useState<string | null>(null)
-  const [oyunBankasi, setOyunBankasi] = useYerelDepo<BankaKaydi[]>(ANAHTARLAR.oyunBankasi, [])
+  const [oyunBankasi, setOyunBankasi, oyunBankasiHazir] = useYerelDepo<BankaKaydi[]>(
+    ANAHTARLAR.oyunBankasi,
+    [],
+  )
+  /*
+    Noktalama Yazım Ustası'ndan ayrıldı; eski kayıtlar bir kez taşınıp
+    yazılıyor. Hazır bayrağı şart: ilk okuma bitmeden yazmak kaydı boş
+    varsayılanla ezerdi.
+  */
+  useEffect(() => {
+    if (!oyunBankasiHazir) return
+    const tasinan = eskiNoktalamayiTasi(oyunBankasi)
+    if (tasinan !== oyunBankasi) setOyunBankasi(tasinan)
+  }, [oyunBankasi, oyunBankasiHazir, setOyunBankasi])
   /**
    * Bankadan düşen toplam soru. Düşen kayıt silindiği için sonradan
    * sayılamıyor; rozet buna baktığından ayrı bir sayaç olarak birikiyor.
