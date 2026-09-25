@@ -716,22 +716,6 @@ export function testiIsle(
   return banka.filter((k) => !dusenler.has(k.id))
 }
 
-/** Bankadaki kayıtları oyun kimliğine göre sayar. */
-/**
- * Güncelleme sırasında bankadan kaç kaydın düştüğü.
- *
- * `bankayiGuncelle` düşenleri siliyor, yani sonuca bakarak sayılamıyorlar; iki
- * listeyi karşılaştırmak gerekiyor. Boyut farkı yetmez, aynı turda hem ekleme
- * hem düşme olabilir.
- */
-export function dusenSayisi(
-  onceki: readonly BankaKaydi[],
-  sonraki: readonly BankaKaydi[],
-): number {
-  const kalan = new Set(sonraki.map((k) => k.id))
-  return onceki.filter((k) => !kalan.has(k.id)).length
-}
-
 /**
  * Bütün oyunların kimlikleri — **tek kaynak**.
  *

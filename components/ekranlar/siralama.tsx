@@ -25,7 +25,7 @@ export function SiralamaEkrani({
   // TYT ve AYT ayrı denemelerden geliyor; seviye tespit sınavı ikisini de kapsadığı
   // için her iki listede de görünür.
   const tytListesi = useMemo(() => tytAdaylari(denemeler, sablonlar), [denemeler, sablonlar])
-  const aytListesi = useMemo(() => aytAdaylari(denemeler, sablonlar), [denemeler, sablonlar])
+  const aytListesi = useMemo(() => aytAdaylari(denemeler, sablonlar, tur), [denemeler, sablonlar, tur])
 
   const [tytId, setTytId] = useState<string>(() => enYeni(tytListesi)?.id ?? '')
   const [aytId, setAytId] = useState<string>(() => enYeni(aytListesi)?.id ?? '')

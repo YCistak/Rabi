@@ -207,10 +207,22 @@ export function PomodoroEkrani({
   useEffect(() => {
     if (bitisZamani === null) return
 
+    /*
+      Aşama bu kapanışta yalnızca **bir kez** bitiyor. Uygulama arka plandan
+      döndüğünde görünürlük olayı ile kısılmış zamanlayıcının gecikmiş tiki
+      arka arkaya geliyor ve ikisi de React yeniden çizmeden önce koşabiliyor:
+      ikisi de sıfırı görüp `asamayiBitir`i çağırıyor, aynı seans iki kez
+      yazılıyor, molada tur sayacı iki artıyordu.
+    */
+    let bitti = false
     const guncelle = () => {
+      if (bitti) return
       const yeni = kalanSaniye(bitisZamani)
       setKalan(yeni)
-      if (yeni <= 0) asamayiBitir()
+      if (yeni <= 0) {
+        bitti = true
+        asamayiBitir()
+      }
     }
 
     guncelle()
@@ -233,7 +245,9 @@ export function PomodoroEkrani({
     const bitis = Date.now() + kalan * 1000
     setBitisZamani(bitis)
     setDokunulmadi(false)
-    baslangicRef.current = new Date().toISOString()
+    // Duraklatılmış turu sürdürmek de buradan geçiyor; seansın başlangıcı
+    // turun ilk başlatıldığı an kalmalı, "Devam et"e basılan an değil.
+    if (baslangicRef.current === null) baslangicRef.current = new Date().toISOString()
 
     const calar = calarAl()
     calar.sesSeviyesi(ayar.sesSeviyesi)
@@ -323,6 +337,7 @@ export function PomodoroEkrani({
 
   const atla = () => {
     turuBirak()
+    baslangicRef.current = null
     /*
       Provada atlamak provadan çıkmak demek: yarıda bırakılan kitapçık seans
       olarak sayılmıyor (sayaç dolmadı) ve sayaç sıradan çalışma turuna döner.

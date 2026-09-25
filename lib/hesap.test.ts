@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  dersYilininKayitlari,
   devamsizlikOzeti,
   denemeOzeti,
   gunOzeti,
@@ -191,7 +192,38 @@ describe('devamsizlikOzeti', () => {
   it('kayıt yoksa uyarı vermez', () => {
     const ozet = devamsizlikOzeti([])
     expect(ozet.uyari).toBe(false)
-    expect(ozet.ozurluKalan).toBe(20)
+    expect(ozet.toplamKalan).toBe(30)
+  })
+
+  /**
+   * Gerileme testi: özürlü devamsızlık ayrı bir 20 günlük sınırla ölçülüyordu.
+   * Yönetmelik (MADDE 36) yalnızca özürsüzü (10) ve toplamı (30) sınırlıyor.
+   */
+  it('özürlü devamsızlık toplam sınırla ölçülür', () => {
+    const icinde = devamsizlikOzeti([
+      ...Array.from({ length: 3 }, () => kayit('ozursuz')),
+      ...Array.from({ length: 25 }, () => kayit('ozurlu')),
+    ])
+    expect(icinde.asildi).toBe(false)
+    expect(icinde.toplamKalan).toBe(2)
+
+    const disinda = devamsizlikOzeti([
+      ...Array.from({ length: 5 }, () => kayit('ozursuz')),
+      ...Array.from({ length: 26 }, () => kayit('ozurlu')),
+    ])
+    expect(disinda.asildi).toBe(true)
+  })
+})
+
+describe('dersYilininKayitlari', () => {
+  it('yalnızca verilen ders yılının kayıtlarını bırakır', () => {
+    const k = (tarih: string): Devamsizlik => ({ id: tarih, tarih, tur: 'ozursuz', yarimGun: false })
+    // 2025-2026 ders yılı eylülde başlıyor, ağustosta bitiyor.
+    const kayitlar = [k('2025-05-10'), k('2025-09-15'), k('2026-03-01'), k('2026-09-02')]
+    expect(dersYilininKayitlari(kayitlar, 2025).map((x) => x.tarih)).toEqual([
+      '2025-09-15',
+      '2026-03-01',
+    ])
   })
 })
 

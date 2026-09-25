@@ -123,6 +123,12 @@ export function YeniDenemeEkrani({
   const toplamNet = yuvarla(satirlar.reduce((acc, s) => acc + (s.asim ? 0 : s.net), 0))
   const hataliDers = satirlar.find((s) => s.asim)
   const bosMu = satirlar.every((s) => s.dogru === 0 && s.yanlis === 0)
+  /*
+    Tarih kutusu temizlenebiliyor (tarayıcının "temizle" düğmesi, Android'de
+    silme tuşu) ve boş tarihle kaydedilen deneme listede tarihsiz duruyor,
+    tarihe göre sıralamada da en başa düşüp "en yeni" hesabını bozuyordu.
+  */
+  const tarihGecerli = /^\d{4}-\d{2}-\d{2}$/.test(tarih)
 
   const girisDegistir = (dersId: string, alan: keyof Giris, deger: string) => {
     const temiz = deger.replace(/[^0-9]/g, '').slice(0, 3)
@@ -133,7 +139,7 @@ export function YeniDenemeEkrani({
   }
 
   const kaydet = () => {
-    if (hataliDers || bosMu) return
+    if (hataliDers || bosMu || !tarihGecerli) return
     onKaydet({
       id: duzenlenen?.id ?? yeniId(),
       sablonId: sablon.id,
@@ -307,7 +313,7 @@ export function YeniDenemeEkrani({
         <Buton bicim="ikincil" className="flex-1" onClick={onVazgec}>
           Vazgeç
         </Buton>
-        <Buton className="flex-1" onClick={kaydet} disabled={!!hataliDers || bosMu}>
+        <Buton className="flex-1" onClick={kaydet} disabled={!!hataliDers || bosMu || !tarihGecerli}>
           <Check size={18} />
           Kaydet
         </Buton>
@@ -315,6 +321,11 @@ export function YeniDenemeEkrani({
       {bosMu && !hataliDers && (
         <p className="mt-2 text-center text-xs text-muted-foreground">
           Kaydetmek için en az bir derse sonuç gir.
+        </p>
+      )}
+      {!bosMu && !hataliDers && !tarihGecerli && (
+        <p className="mt-2 text-center text-xs text-muted-foreground">
+          Kaydetmek için denemenin tarihini seç.
         </p>
       )}
 

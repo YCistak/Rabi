@@ -9,6 +9,7 @@ import type {
 } from './types'
 import { enUzunSeri, enUzunYukselis, gunOzeti, haftalikToplamlar } from './hesap'
 import { oyunToplami } from './oyunlar/tanim'
+import { tariheYaz } from './utils'
 
 /**
  * Rozetler — saf mantık.
@@ -242,9 +243,14 @@ export function rozetDurumu({
   const oyun = oyunToplami(oyunlar)
 
   // Bir günde biten tur sayısı: seanslar gün gün toplanıp en yükseği alınıyor.
+  // `baslangic` UTC damgası; gün yerel saate çevrilerek bulunuyor. İlk on
+  // karakteri okumak Türkiye'de gece 03.00'e kadar başlayan seansları bir
+  // önceki güne yazıyordu ve gece yarısını geçen bir çalışma iki güne
+  // bölünüp "sekiz turluk gün"e hiç ulaşmıyordu (aylık özet aynı çeviriyi
+  // yapıyor, `lib/ozet.ts`).
   const gunlukSeans = new Map<string, number>()
   for (const seans of pomodoroGecmis) {
-    const gun = seans.baslangic.slice(0, 10)
+    const gun = tariheYaz(new Date(seans.baslangic))
     gunlukSeans.set(gun, (gunlukSeans.get(gun) ?? 0) + 1)
   }
 

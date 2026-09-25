@@ -3,10 +3,10 @@ import { tariheYaz } from './utils'
 /**
  * Günlük hatırlatmanın saf mantığı — ne zaman ve ne yazacağı.
  *
- * Kural: **günde en fazla bir bildirim.** Bu, tekrarlayan bir bildirim kurup
- * sonra tek tek iptal etmeye çalışarak değil, her zaman **yalnızca bir sonraki**
- * bildirimi planlayarak sağlanıyor. Uygulama her açıldığında plan yeniden
- * hesaplanıyor: bugün soru girildiyse sıradaki bildirim yarına kayıyor.
+ * Kural: **günde en fazla bir bildirim.** Tekrarlayan bir bildirim kurulmuyor;
+ * önümüzdeki günlerin her birine **ayrı** bir bildirim planlanıyor ve uygulama
+ * her açıldığında hepsi silinip yeniden kuruluyor: bugün soru girildiyse
+ * bugünkü düşüyor, sıradakiler yerinde kalıyor.
  */
 
 /** Mesaj havuzu — Rabi'nin ağzından. Her gün aynısını okumak sıkıcı olurdu. */
@@ -109,4 +109,40 @@ export function hatirlatmaPlani(
 ): { zaman: Date; baslik: string; metin: string } {
   const zaman = sonrakiHatirlatma(simdi, saat, dakika, bugunGirdiVar)
   return { zaman, ...hatirlatmaMesaji(tariheYaz(zaman)) }
+}
+
+/**
+ * Önceden planlanan gün sayısı.
+ *
+ * Plan bir süre **yalnızca bir sonraki** bildirimden ibaretti ve uygulama
+ * açılınca yenileniyordu. Hatırlatmanın asıl muhatabı uygulamayı açmayan
+ * kullanıcı; o kişi tek bir bildirim alıyor, ertesi günden itibaren hiçbir
+ * şey almıyordu — "günlük" hatırlatma ilk günden sonra susuyordu. Yedi gün,
+ * bir haftalık aradan sonra da susmak için yeterince uzun; daha uzunu,
+ * uygulamayı bırakmış birine haftalarca bildirim göndermek olurdu.
+ */
+export const PLANLANAN_GUN = 7
+
+/**
+ * Önümüzdeki `PLANLANAN_GUN` günün bildirimleri, her güne en fazla bir tane.
+ *
+ * İlki `hatirlatmaPlani` ile aynı: bugün soru girildiyse ya da saat geçtiyse
+ * yarından başlıyor. Sonrakiler birer gün arayla aynı saatte; metin her
+ * bildirimin düştüğü güne göre seçiliyor.
+ */
+export function hatirlatmaPlanlari(
+  simdi: Date,
+  saat: number,
+  dakika: number,
+  bugunGirdiVar: boolean,
+  gunSayisi = PLANLANAN_GUN,
+): { zaman: Date; baslik: string; metin: string }[] {
+  const ilk = sonrakiHatirlatma(simdi, saat, dakika, bugunGirdiVar)
+  return Array.from({ length: gunSayisi }, (_, i) => {
+    // Gün `setDate` ile kaydırılıyor, milisaniye eklenerek değil: yaz saati
+    // olan bir saat diliminde 24 saat eklemek bildirimi bir saat kaydırırdı.
+    const zaman = new Date(ilk)
+    zaman.setDate(ilk.getDate() + i)
+    return { zaman, ...hatirlatmaMesaji(tariheYaz(zaman)) }
+  })
 }

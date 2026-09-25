@@ -243,9 +243,9 @@ export function Kurulum({
     () => bolumBul(secilenUni, hedefBolum),
     [secilenUni, hedefBolum],
   )
-  const uniSonuclari = useMemo(() => universiteAra(uniArama), [uniArama])
   /** Kararsızken ve anahtar açıkken süzgeç yok; kalan durumda alan süzüyor. */
   const alanSuzgeci = alanDisiniGoster ? null : puanTuru
+  const uniSonuclari = useMemo(() => universiteAra(uniArama, alanSuzgeci), [uniArama, alanSuzgeci])
   const bolumSonuclari = useMemo(
     () => (secilenUni ? bolumAra(secilenUni, bolumArama, alanSuzgeci) : []),
     [secilenUni, bolumArama, alanSuzgeci],
@@ -710,6 +710,20 @@ export function Kurulum({
                         />
                       ))}
                     </Liste>
+                    {/* Üniversite listesi de alana göre süzülü; anahtar burada da
+                        duruyor, yoksa yalnızca alan dışı programı olan üniversiteye
+                        hiç ulaşılamazdı. */}
+                    {puanTuru !== null && (
+                      <button
+                        type="button"
+                        onClick={() => setAlanDisiniGoster((a) => !a)}
+                        className="mt-2 w-full rounded-lg py-1 text-center text-[13px] font-bold text-ikincil transition active:opacity-70"
+                      >
+                        {alanDisiniGoster
+                          ? 'Yalnızca alanımdaki üniversiteler'
+                          : 'Alanım dışındaki üniversiteleri de göster'}
+                      </button>
+                    )}
                   </>
                 )}
               </div>

@@ -120,8 +120,16 @@ function sirala<T>(kayitlar: readonly T[], sorgu: string, metni: (k: T) => strin
  * KKTC üniversiteleri şehirleriyle (Lefkoşa, Girne…) duruyor ama arayan
  * öğrenci "kıbrıs" yazıyor; o yüzden aranan metne ülke adı da ekleniyor.
  */
-export function universiteAra(sorgu: string): Universite[] {
-  return sirala(UNIVERSITELER, sorgu, (u) =>
+export function universiteAra(sorgu: string, alan: PuanTuru | null = null): Universite[] {
+  /*
+    Alan verilmişse o alanda hiç programı olmayan üniversite listeye girmiyor.
+    Bölüm listesi alana göre süzülürken üniversite listesi süzülmüyordu: Dil
+    öğrencisi çoğu üniversiteyi seçip "alanına uyan bölüm bulamadım"
+    çıkmazına düşüyordu. Süzgecin kapısı bölümünkiyle aynı anahtar.
+  */
+  const adaylar =
+    alan === null ? UNIVERSITELER : UNIVERSITELER.filter((u) => bolumleriGetir(u, alan).length > 0)
+  return sirala(adaylar, sorgu, (u) =>
     u.tur === 'kktc' ? `${u.ad} ${u.sehir} KKTC Kıbrıs` : `${u.ad} ${u.sehir}`,
   ).slice(0, EN_COK_SONUC)
 }

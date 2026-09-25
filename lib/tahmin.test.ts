@@ -149,6 +149,25 @@ describe('aday listeleri', () => {
     expect(liste).not.toContain('tyt1')
   })
 
+  /**
+   * Gerileme testi: tür verilmeden YDT ile AYT tek listedeydi. Sayısalcının
+   * en yeni denemesi YDT olunca ana sayfa onu "AYT" diye seçiyor, bütün AYT
+   * netleri sıfır sayılıyordu.
+   */
+  it('ikinci oturum listesi alana göre ayrılır', () => {
+    const ydtDenemesi: Deneme = {
+      id: 'ydt1',
+      sablonId: 'ydt',
+      ad: 'YDT',
+      tarih: '2030-01-01',
+      sonuclar: [{ dersId: 'ydt', dogru: 60, yanlis: 10 }],
+    }
+    const hepsi = [...denemeler, ydtDenemesi]
+    expect(aytAdaylari(hepsi, sablonlar, 'say').map((d) => d.id)).not.toContain('ydt1')
+    expect(aytAdaylari(hepsi, sablonlar, 'dil').map((d) => d.id)).toEqual(['ydt1'])
+    expect(aytAdaylari(hepsi, sablonlar, null).map((d) => d.id)).toContain('ydt1')
+  })
+
   it('en yeni deneme tarihe göre seçilir', () => {
     expect(enYeni(denemeler)?.id).toBe('okul1')
     expect(enYeni([])).toBeUndefined()

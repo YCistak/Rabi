@@ -4,8 +4,9 @@ import { useMemo, useState } from 'react'
 import { AlertTriangle, CalendarDays, Plus, X } from 'lucide-react'
 import type { Devamsizlik, DevamsizlikTuru } from '@/lib/types'
 import {
-  OZURLU_SINIR,
   OZURSUZ_SINIR,
+  TOPLAM_SINIR,
+  dersYilininKayitlari,
   devamsizlikOzeti,
   egitimYili,
   netYaz,
@@ -78,7 +79,7 @@ export function DevamsizlikEkrani({
   // listede durur ama sayaca girmez.
   const dersYili = egitimYili()
   const buYilinKayitlari = useMemo(
-    () => kayitlar.filter((k) => egitimYili(tariheCevir(k.tarih)) === dersYili),
+    () => dersYilininKayitlari(kayitlar, dersYili),
     [kayitlar, dersYili],
   )
   const ozet = useMemo(() => devamsizlikOzeti(buYilinKayitlari), [buYilinKayitlari])
@@ -177,7 +178,7 @@ export function DevamsizlikEkrani({
           <div className="mb-3 flex items-baseline gap-2">
             <p className="font-display text-[17px] font-extrabold tracking-tight">Kalan hakkın</p>
             <p className="rakam ml-auto text-[12.5px] font-bold text-muted-foreground">
-              {gunYaz(ozet.ozursuz + ozet.ozurlu)} / {OZURSUZ_SINIR + OZURLU_SINIR} gün kullanıldı
+              {gunYaz(ozet.ozursuz + ozet.ozurlu)} / {TOPLAM_SINIR} gün kullanıldı
             </p>
           </div>
 
@@ -188,11 +189,13 @@ export function DevamsizlikEkrani({
             asildi={ozet.ozursuzKalan < 0}
           />
           <div className="mt-3">
+            {/* Özürlünün kendi sınırı yok; yönetmelik toplamı sınırlıyor
+                (MADDE 36). Çubuk bu yüzden özürlüyü değil toplamı ölçüyor. */}
             <HakCubugu
-              baslik="Özürlü"
-              kullanilan={ozet.ozurlu}
-              sinir={OZURLU_SINIR}
-              asildi={ozet.ozurluKalan < 0}
+              baslik="Toplam (özürlü dahil)"
+              kullanilan={ozet.ozursuz + ozet.ozurlu}
+              sinir={TOPLAM_SINIR}
+              asildi={ozet.toplamKalan < 0}
             />
           </div>
         </Kart>
@@ -508,7 +511,7 @@ function DevamsizlikEkleSayfasi({
           />
           <SecimSatiri
             ad="Özürlü (raporlu)"
-            ornek={`Kalan ${OZURLU_SINIR} günden düşer`}
+            ornek={`Toplam ${TOPLAM_SINIR} günden düşer`}
             secili={tur === 'ozurlu'}
             onClick={() => setTur('ozurlu')}
           />

@@ -2,7 +2,7 @@
 
 import { LocalNotifications } from '@capacitor/local-notifications'
 import { Capacitor } from '@capacitor/core'
-import { hatirlatmaPlani } from './hatirlatma'
+import { PLANLANAN_GUN, hatirlatmaPlanlari } from './hatirlatma'
 
 /**
  * Yerel bildirimler. Tarayıcıda (npm run dev) eklenti yok; bütün çağrılar
@@ -13,10 +13,16 @@ import { hatirlatmaPlani } from './hatirlatma'
 const POMODORO_ID = 1
 
 /**
- * Günlük hatırlatma. Aynı kimlik yeniden kullanılıyor: her planlama öncekini
- * eziyor, böylece ortada asla birden fazla bekleyen hatırlatma olmuyor.
+ * Günlük hatırlatmaların kimlikleri: 2'den başlayıp her güne bir tane.
+ *
+ * Kimlikler sabit bir aralıkta: her planlama bütün aralığı silip yeniden
+ * kuruyor, böylece aynı güne iki hatırlatma düşmüyor. İlk kimlik 2 kalıyor —
+ * eski sürümün tek hatırlatması o kimlikteydi ve ilk planlamada o da siliniyor.
  */
-const HATIRLATMA_ID = 2
+const HATIRLATMA_ILK_ID = 2
+const HATIRLATMA_IDLERI = Array.from({ length: PLANLANAN_GUN }, (_, i) => ({
+  id: HATIRLATMA_ILK_ID + i,
+}))
 
 function eklentiVar(): boolean {
   return Capacitor.isNativePlatform() && Capacitor.isPluginAvailable('LocalNotifications')
@@ -107,16 +113,17 @@ export async function pomodoroIptal() {
 }
 
 /**
- * Günlük hatırlatmayı kurar.
+ * Günlük hatırlatmaları kurar.
  *
  * **Günde en fazla bir bildirim** kuralı buradan geliyor: tekrarlayan bildirim
- * kurulmuyor, her seferinde yalnızca **bir sonraki** hatırlatma planlanıyor ve
- * eskisi iptal ediliyor. Uygulama her açıldığında yeniden çağrıldığı için,
- * kullanıcı o gün soru girdiyse bekleyen bildirim silinip yarına kayıyor.
+ * kurulmuyor, önümüzdeki her güne ayrı bir bildirim planlanıyor ve eskileri
+ * iptal ediliyor. Uygulama her açıldığında yeniden çağrıldığı için, kullanıcı
+ * o gün soru girdiyse bugünkü bildirim düşüyor.
  *
  * `Local Notifications` eklentisinin `repeats: true` seçeneği kullanılmadı:
  * tekrarlayan bir bildirimin yalnızca **bugünkü** örneğini iptal etmenin yolu
  * yok, dolayısıyla "bugün girdiysen sesini çıkarma" davranışı kurulamazdı.
+ * Günleri ayrı ayrı planlamak aynı işi görüyor ve bugünkünü silebiliyor.
  */
 export async function hatirlatmaPlanla({
   saat,
@@ -131,25 +138,23 @@ export async function hatirlatmaPlanla({
 }) {
   if (!(await izinVarMi())) return
 
-  const { zaman, baslik, metin } = hatirlatmaPlani(simdi, saat, dakika, bugunGirdiVar)
+  const planlar = hatirlatmaPlanlari(simdi, saat, dakika, bugunGirdiVar)
 
   try {
-    await LocalNotifications.cancel({ notifications: [{ id: HATIRLATMA_ID }] })
+    await LocalNotifications.cancel({ notifications: HATIRLATMA_IDLERI })
     await LocalNotifications.schedule({
-      notifications: [
-        {
-          id: HATIRLATMA_ID,
-          title: baslik,
-          body: metin,
-          ...GORUNUS,
-          schedule: {
-            at: zaman,
-            // Tam saatli alarm istenmiyor: günlük hatırlatmada dakika hassasiyeti
-            // gereksiz, karşılığında SCHEDULE_EXACT_ALARM gerekçesi gerekiyor.
-            allowWhileIdle: false,
-          },
+      notifications: planlar.map(({ zaman, baslik, metin }, i) => ({
+        id: HATIRLATMA_ILK_ID + i,
+        title: baslik,
+        body: metin,
+        ...GORUNUS,
+        schedule: {
+          at: zaman,
+          // Tam saatli alarm istenmiyor: günlük hatırlatmada dakika hassasiyeti
+          // gereksiz, karşılığında SCHEDULE_EXACT_ALARM gerekçesi gerekiyor.
+          allowWhileIdle: false,
         },
-      ],
+      })),
     })
   } catch {
     // Bildirim kurulamasa da uygulama çalışmaya devam etsin.
@@ -159,7 +164,7 @@ export async function hatirlatmaPlanla({
 export async function hatirlatmaIptal() {
   if (!eklentiVar()) return
   try {
-    await LocalNotifications.cancel({ notifications: [{ id: HATIRLATMA_ID }] })
+    await LocalNotifications.cancel({ notifications: HATIRLATMA_IDLERI })
   } catch {
     // yoksay
   }

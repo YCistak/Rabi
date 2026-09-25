@@ -27,7 +27,6 @@ import {
 import {
   bankaKimligi,
   bankayiGuncelle,
-  dusenSayisi,
   type BankaCevabi,
   type BankaKaydi,
   type BankaTuru,
@@ -144,7 +143,6 @@ export function OyunlarEkrani({
   setBanka,
   sesAcik,
   onBankayaGit,
-  onBankadanDustu,
   /** Genel testin o anki oyunu; test yoksa null. */
   bankaTuru,
   onBankaTuruBitti,
@@ -164,8 +162,6 @@ export function OyunlarEkrani({
   setBanka: (guncelleyici: (onceki: BankaKaydi[]) => BankaKaydi[]) => void
   sesAcik: boolean
   onBankayaGit: () => void
-  /** Turda bankadan düşen soru sayısı — rozet sayacını besliyor. */
-  onBankadanDustu: (adet: number) => void
   bankaTuru: BankaTuru | null
   /** Test yarıda kapatıldı ya da hiç soru cevaplanmadan çıkıldı. */
   onBankaTuruBitti: () => void
@@ -267,10 +263,16 @@ export function OyunlarEkrani({
       return
     }
 
-    const yeniBanka = bankayiGuncelle(banka, cevaplar, bugun())
-    const dusen = dusenSayisi(banka, yeniBanka)
-    setBanka(() => yeniBanka)
-    if (dusen > 0) onBankadanDustu(dusen)
+    /*
+      Oyun turu bankaya yalnızca yanlış **ekliyor**; kayıt düşürmenin tek
+      kazanılan yolu genel test. Burada bir ara "düşen" sayılıp rozet sayacına
+      yazılıyordu, ama tur kayıt silmediği için listeden eksilen tek şey
+      `BANKA_SINIRI` taşınca atılan en eski kayıtlardı — dolu bankada her
+      yanlış, öğrenilmemiş bir soruyu "bankadan düşen" diye sayıyordu.
+      Güncelleme fonksiyonel: prop'taki banka aynı karedeki başka bir
+      yazmadan geride kalabilir.
+    */
+    setBanka((onceki) => bankayiGuncelle(onceki, cevaplar, bugun()))
 
     /*
       Rahat tur ile **yarıda bırakılan** tur aynı yerde eleniyor: yanlışlar

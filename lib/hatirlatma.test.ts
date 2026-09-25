@@ -4,6 +4,8 @@ import {
   hatirlatmaMesaji,
   dakikayiKirp,
   hatirlatmaPlani,
+  hatirlatmaPlanlari,
+  PLANLANAN_GUN,
   saatDegeri,
   saatYaz,
   saatiCoz,
@@ -133,5 +135,32 @@ describe('özel saat', () => {
     expect(saatiCoz('12:60')).toBeNull()
     expect(saatiCoz('')).toBeNull()
     expect(saatiCoz('12.30')).toBeNull()
+  })
+})
+
+describe('hatirlatmaPlanlari', () => {
+  /**
+   * Gerileme testi: yalnızca bir sonraki bildirim kuruluyordu ve uygulamayı
+   * açmayan kullanıcı ilk bildirimden sonra hiçbir şey almıyordu.
+   */
+  it('önümüzdeki her güne bir bildirim kurar', () => {
+    const planlar = hatirlatmaPlanlari(an(16, 14), 20, 0, false)
+    expect(planlar).toHaveLength(PLANLANAN_GUN)
+    const gunler = planlar.map((p) => p.zaman.getDate())
+    expect(new Set(gunler).size).toBe(PLANLANAN_GUN)
+    for (const p of planlar) {
+      expect(p.zaman.getHours()).toBe(20)
+      expect(p.zaman.getMinutes()).toBe(0)
+    }
+  })
+
+  it('ilki tek bildirimlik planla aynı', () => {
+    const tek = hatirlatmaPlani(an(16, 21), 20, 0, false)
+    expect(hatirlatmaPlanlari(an(16, 21), 20, 0, false)[0].zaman.getTime()).toBe(tek.zaman.getTime())
+  })
+
+  it('bugün soru girildiyse bugüne bildirim düşmez', () => {
+    const planlar = hatirlatmaPlanlari(an(16, 14), 20, 0, true)
+    expect(planlar.every((p) => p.zaman.getDate() !== 16)).toBe(true)
   })
 })
