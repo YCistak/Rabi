@@ -437,11 +437,11 @@ function GununHali({
         </span>
       </span>
       <span aria-hidden className="my-2 mr-3 w-px shrink-0 self-stretch bg-border" />
-      {/* Başlığın üstünde bir süre küçük bir "BUGÜN" etiketi vardı; kullanıcı
-          kaldırdı. Kart soru hedefinin hemen altında ve cümlenin kendisi
-          zaten bugünü anlatıyor. */}
       <span className="min-w-0 flex-1">
-        <span className="block font-display text-[15.5px] leading-tight font-extrabold tracking-tight">
+        <span className="block text-[10px] font-extrabold tracking-[0.16em] text-muted-foreground">
+          BUGÜN
+        </span>
+        <span className="mt-0.5 block font-display text-[15.5px] leading-tight font-extrabold tracking-tight">
           {hal.baslik}
         </span>
         <span className="mt-0.5 block text-[12.5px] font-semibold text-muted-foreground">
