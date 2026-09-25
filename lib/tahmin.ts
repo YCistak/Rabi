@@ -36,21 +36,44 @@ export type Tahmin = {
  * TYT tarafında da seçilebilir ve seçildiğinde bütün TYT netleri sıfır sayılıp
  * puan gerçeğin çok altına düşerdi.
  */
-function testleriniKapsiyorMu(deneme: Deneme, sablonlar: Sablon[], onek: 'tyt-' | 'ayt'): boolean {
+function testleriniKapsiyorMu(
+  deneme: Deneme,
+  sablonlar: Sablon[],
+  kapsam: 'tyt' | 'ayt' | 'ydt',
+): boolean {
   return sablonBul(sablonlar, deneme.sablonId).dersler.some((ders) => {
     if (!ders.osymTesti) return false
-    return onek === 'tyt-'
-      ? ders.osymTesti.startsWith('tyt-')
-      : ders.osymTesti.startsWith('ayt-') || ders.osymTesti === 'ydt'
+    if (kapsam === 'tyt') return ders.osymTesti.startsWith('tyt-')
+    if (kapsam === 'ydt') return ders.osymTesti === 'ydt'
+    return ders.osymTesti.startsWith('ayt-')
   })
 }
 
 export function tytAdaylari(denemeler: Deneme[], sablonlar: Sablon[]): Deneme[] {
-  return denemeler.filter((d) => testleriniKapsiyorMu(d, sablonlar, 'tyt-'))
+  return denemeler.filter((d) => testleriniKapsiyorMu(d, sablonlar, 'tyt'))
 }
 
-export function aytAdaylari(denemeler: Deneme[], sablonlar: Sablon[]): Deneme[] {
-  return denemeler.filter((d) => testleriniKapsiyorMu(d, sablonlar, 'ayt'))
+/**
+ * İkinci oturumun adayları: Dil öğrencisinde YDT, ötekilerde AYT denemeleri.
+ *
+ * Tür verilmeden ikisi tek listedeydi ve ana sayfadaki tahmin en yeniyi
+ * alıyordu: sayısalcının son girdiği YDT denemesi "AYT" diye seçilip bütün
+ * AYT netleri sıfır sayılıyor, puan gerçeğin çok altına iniyordu — üstelik
+ * "AYT seçmedin" uyarısı da çıkmıyordu, çünkü bir deneme seçiliydi. Tür
+ * bilinmiyorsa (alan seçilmemiş) ikisi birden listeleniyor.
+ */
+export function aytAdaylari(
+  denemeler: Deneme[],
+  sablonlar: Sablon[],
+  tur: PuanTuru | null = null,
+): Deneme[] {
+  return denemeler.filter((d) =>
+    tur === 'dil'
+      ? testleriniKapsiyorMu(d, sablonlar, 'ydt')
+      : tur !== null
+        ? testleriniKapsiyorMu(d, sablonlar, 'ayt')
+        : testleriniKapsiyorMu(d, sablonlar, 'ayt') || testleriniKapsiyorMu(d, sablonlar, 'ydt'),
+  )
 }
 
 /** Listedeki en yeni deneme. */
@@ -146,7 +169,7 @@ export function guncelTahmin(
   if (tur === null) return null
   return tahminUret({
     tytDenemesi: enYeni(tytAdaylari(denemeler, sablonlar)),
-    aytDenemesi: enYeni(aytAdaylari(denemeler, sablonlar)),
+    aytDenemesi: enYeni(aytAdaylari(denemeler, sablonlar, tur)),
     sablonlar,
     tur,
     obp: obpHesapla(okulYillari, elleObp)?.obp ?? null,
