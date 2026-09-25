@@ -84,7 +84,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       soru('Sütün ekşimesi kimyasal bir değişimdir.', true, 'Laktoz laktik aside dönüşür; yeni madde oluşur.'),
       soru('Buzun erimesi kimyasal bir değişimdir.', false, 'Molekül değişmez; fiziksel değişim.'),
       soru('Şekerin suda çözünmesi fiziksel bir değişimdir.', true, 'Su buharlaşınca şeker geri kalır.'),
-      sikli('Hangisi kimyasal değişimdir?', ['Odunun yanması', 'Camın kırılması'], 0, 'Yanmada yeni maddeler oluşur.'),
+      sikli('Hangisi kimyasal değişimdir?', ['Camın kırılması', 'Odunun yanması'], 1, 'Yanmada yeni maddeler oluşur.'),
     ], [
       {
         soru: 'Şekerin suda çözünmesi hangi tür değişimdir?',
@@ -98,8 +98,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       },
       {
         soru: 'Suyun kaynayıp buhar olması hangi değişimdir?',
-        siklar: ['Fiziksel', 'Kimyasal'],
-        dogru: 0,
+        siklar: ['Kimyasal', 'Fiziksel'],
+        dogru: 1,
         aciklama: {
           dogru: 'Buhar da H₂O; yalnızca hâl değişti.',
           yanlis: 'Yeni madde oluşmadı; buhar yine su. Hâl değişimi fizikseldir.',
@@ -261,7 +261,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       soru('Pil ve akü elektrokimyanın konusudur.', true, 'Kimyasal enerji elektriğe dönüşür.'),
       soru('Radyoaktiflik organik kimyanın konusudur.', false, 'Nükleer kimyanın konusudur.'),
       soru('Gübrenin fabrikada üretilmesi endüstriyel kimyanın işidir.', true, 'Büyük ölçekli üretim.'),
-      sikli('Korozyonu inceleyen dal?', ['Elektrokimya', 'Biyokimya'], 0, 'Paslanma bir elektrokimyasal süreçtir.'),
+      sikli('Korozyonu inceleyen dal?', ['Biyokimya', 'Elektrokimya'], 1, 'Paslanma bir elektrokimyasal süreçtir.'),
     ], [
       {
         soru: 'İçme suyunda kurşun olup olmadığını hangi dal araştırır?',
@@ -275,8 +275,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       },
       {
         soru: 'Radyoterapi hangi dalın uygulamasıdır?',
-        siklar: ['Nükleer kimya', 'Polimer kimyası'],
-        dogru: 0,
+        siklar: ['Polimer kimyası', 'Nükleer kimya'],
+        dogru: 1,
         aciklama: {
           dogru: 'Radyoaktif ışınımın tıpta kullanılması nükleer kimyanın konusudur.',
           yanlis: 'Polimer kimyası plastik gibi büyük molekülleri inceler. Radyoterapi nükleer kimya.',
@@ -344,7 +344,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       soru('Gıda mühendisliğinin kimya ile ilgisi yoktur.', false, 'Katkı, saklama ve güvenlik kimya bilgisi ister.'),
       soru('Rafineride ayrımsal damıtma kullanılır.', true, 'Kaynama noktası farkına dayanır.'),
       sikli('Şampuan formülünü kim geliştirir?', ['Kimyager', 'İnşaat mühendisi'], 0, 'Kozmetik kimyası.'),
-      sikli('Gıdanın raf ömrünü inceleyen meslek?', ['Gıda mühendisi', 'Jeolog'], 0, 'Jeolog yer bilimleriyle ilgilenir.'),
+      sikli('Gıdanın raf ömrünü inceleyen meslek?', ['Jeolog', 'Gıda mühendisi'], 1, 'Jeolog yer bilimleriyle ilgilenir.'),
     ], [
       {
         soru: 'Tepkimeyi fabrika ölçeğinde ekonomik üretmek kimin işidir?',
@@ -559,7 +559,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       soru('Cl (17) atomunun son katmanında 7 elektron vardır.', true, '3s² 3p⁵.'),
       soru('p orbitali küresel şekillidir.', false, 's orbitali küresel, p orbitali sekiz şeklinde.'),
       soru('Fe²⁺ iyonu oluşurken elektronlar önce 3d orbitalinden verilir.', false, 'Önce en dıştaki 4s boşalır.'),
-      sikli('₁₁Na⁺ iyonunun dizilimi?', ['1s² 2s² 2p⁶', '1s² 2s² 2p⁶ 3s¹'], 0, 'Tek 3s elektronu verilir.'),
+      sikli('₁₁Na⁺ iyonunun dizilimi?', ['1s² 2s² 2p⁶ 3s¹', '1s² 2s² 2p⁶'], 1, 'Tek 3s elektronu verilir.'),
     ], [
       {
         soru: '3d orbitalinden önce hangi orbital dolar?',
@@ -759,7 +759,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       soru('Azotun iyonlaşma enerjisi oksijeninkinden büyüktür.', true, 'Yarı dolu p orbitalleri kararlıdır.'),
       soru('Periyotta soldan sağa atom yarıçapı büyür.', false, 'Çekirdek yükü artar, yarıçap küçülür.'),
       soru('Soy gazların iyonlaşma enerjisi kendi periyotlarında en yüksektir.', true, 'Dış katman doludur.'),
-      sikli('3. periyotta en büyük atom yarıçapı?', ['Na', 'Cl'], 0, 'Periyodun başında.'),
+      sikli('3. periyotta en büyük atom yarıçapı?', ['Cl', 'Na'], 1, 'Periyodun başında.'),
     ], [
       {
         soru: 'Aynı periyotta soldan sağa gidildikçe atom yarıçapı?',
@@ -773,8 +773,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       },
       {
         soru: 'Be ve B atomlarından hangisinin 1. iyonlaşma enerjisi büyüktür?',
-        siklar: ['Be', 'B'],
-        dogru: 0,
+        siklar: ['B', 'Be'],
+        dogru: 1,
         aciklama: {
           dogru: 'B\'nin son elektronu yeni başlayan 2p\'de, kolay kopar; Be daha büyük.',
           yanlis: 'Genel eğilim B der ama istisna var: B\'nin 2p elektronu kolay kopar, Be büyük.',
@@ -839,7 +839,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       soru('Magnezyumun metalik bağı sodyumunkinden zayıftır.', false, 'Mg iki elektron verir; bağ daha güçlü.'),
       soru('Metaller ısıyı serbest elektronlar sayesinde iyi iletir.', true, 'Elektron denizi ısıyı da taşır.'),
       sikli('Ampul telinde neden tungsten kullanılır?', ['Erime noktası çok yüksek', 'Çok ucuz'], 0, 'Yüksek sıcaklıkta erimeden ışır.'),
-      sikli('Elektrik kablosunda en çok kullanılan metal?', ['Bakır', 'Kurşun'], 0, 'İyi iletken ve tel çekilebilir.'),
+      sikli('Elektrik kablosunda en çok kullanılan metal?', ['Kurşun', 'Bakır'], 1, 'İyi iletken ve tel çekilebilir.'),
     ], [
       {
         soru: 'Metallerin elektriği iletmesinin sebebi nedir?',
@@ -1003,7 +1003,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       soru('N₂ molekülünde üçlü bağ vardır.', true, 'N≡N.'),
       soru('İkili bağ tekli bağdan uzundur.', false, 'Bağ sayısı arttıkça bağ kısalır.'),
       soru('NH₄⁺ iyonunda koordine kovalent bağ vardır.', true, 'Çifti azot verir.'),
-      sikli('Elmasın erime noktası neden çok yüksek?', ['Kovalent ağ yapı', 'Moleküller arası zayıf etkileşim'], 0, 'Kopması gereken güçlü kovalent bağlar.'),
+      sikli('Elmasın erime noktası neden çok yüksek?', ['Moleküller arası zayıf etkileşim', 'Kovalent ağ yapı'], 1, 'Kopması gereken güçlü kovalent bağlar.'),
     ], [
       {
         soru: 'HCl molekülündeki bağ hangi türdür?',
@@ -1017,8 +1017,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       },
       {
         soru: 'O₂ molekülündeki bağ?',
-        siklar: ['İkili kovalent', 'İyonik'],
-        dogru: 0,
+        siklar: ['İyonik', 'İkili kovalent'],
+        dogru: 1,
         aciklama: {
           dogru: 'İki oksijen iki elektron çifti paylaşır: O=O.',
           yanlis: 'İyonik bağ metal ile ametal arasında olur. Aynı ametal atomları kovalent bağlanır.',
@@ -1271,7 +1271,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       soru('CH₄ molekülü apolardır.', true, 'Dörtyüzlü ve simetrik; dipoller birbirini götürür.'),
       soru('NH₃ molekülü doğrusaldır.', false, 'Üçgen piramit; ortaklanmamış çift şekli bozar.'),
       soru('Yüklü tarak ince su akışını kendine doğru eğer.', true, 'Su molekülleri polar.'),
-      sikli('BF₃ molekülünün şekli?', ['Üçgen düzlem', 'Üçgen piramit'], 0, 'Borun ortaklanmamış çifti yok.'),
+      sikli('BF₃ molekülünün şekli?', ['Üçgen piramit', 'Üçgen düzlem'], 1, 'Borun ortaklanmamış çifti yok.'),
       sikli('Elektronegatiflik farkı sıfır olan bağ?', ['Apolar kovalent', 'İyonik'], 0, 'H₂, Cl₂ gibi aynı atomlar.'),
     ], [
       {
@@ -1356,7 +1356,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       soru('H₂SO₄ sülfürik asittir.', true, 'Akülerde kullanılır.'),
       soru('NaOH\'nin adı sodyum oksittir.', false, 'Sodyum hidroksit; sodyum oksit Na₂O.'),
       soru('CaCO₃ kireç taşının formülüdür.', true, 'Kalsiyum karbonat.'),
-      sikli('CuSO₄ nasıl adlandırılır?', ['Bakır(II) sülfat', 'Bakır sülfür'], 0, 'Bakırın değerliği yazılır; SO₄²⁻ sülfat.'),
+      sikli('CuSO₄ nasıl adlandırılır?', ['Bakır sülfür', 'Bakır(II) sülfat'], 1, 'Bakırın değerliği yazılır; SO₄²⁻ sülfat.'),
     ], [
       {
         soru: 'N₂O₄ bileşiğinin adı nedir?',
@@ -1370,8 +1370,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       },
       {
         soru: 'Magnezyum nitratın formülü?',
-        siklar: ['Mg(NO₃)₂', 'MgNO₃'],
-        dogru: 0,
+        siklar: ['MgNO₃', 'Mg(NO₃)₂'],
+        dogru: 1,
         aciklama: {
           dogru: 'Mg²⁺ iki NO₃⁻ ile dengelenir; iyon paranteze alınır.',
           yanlis: 'MgNO₃\'te yük dengelenmez (+2, −1). Doğrusu Mg(NO₃)₂.',
@@ -1546,7 +1546,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       soru('Cam amorf bir katıdır.', true, 'Düzenli örgüsü yoktur.'),
       soru('Moleküler katıların erime noktası genellikle yüksektir.', false, 'Moleküller arası etkileşim zayıf; erime noktası düşük.'),
       soru('Amorf katılar belirli bir sıcaklıkta aniden erir.', false, 'Yavaş yavaş yumuşarlar.'),
-      sikli('Elmas hangi tür katıdır?', ['Kovalent ağ', 'Moleküler'], 0, 'Her karbon dört komşusuna kovalent bağlı.'),
+      sikli('Elmas hangi tür katıdır?', ['Moleküler', 'Kovalent ağ'], 1, 'Her karbon dört komşusuna kovalent bağlı.'),
     ], [
       {
         soru: 'Elmasın aşırı sert olmasının sebebi nedir?',
@@ -1650,8 +1650,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       },
       {
         soru: 'Bal ısıtılınca viskozitesi?',
-        siklar: ['Azalır', 'Artar'],
-        dogru: 0,
+        siklar: ['Artar', 'Azalır'],
+        dogru: 1,
         aciklama: {
           dogru: 'Isınan moleküller birbirinden kolay kayar; bal daha akışkan olur.',
           yanlis: 'Sıcaklık moleküller arası çekimi yenmeyi kolaylaştırır; viskozite azalır.',
@@ -1715,7 +1715,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       soru('Altın nanoparçacıklar kırmızı renkte görünebilir.', true, 'Boyut rengi değiştirir.'),
       soru('Gümüş nanoparçacıklar bakterilerin çoğalmasını hızlandırır.', false, 'Bakteri öldürücüdür.'),
       soru('Öğüterek küçültme "yukarıdan aşağı" üretimdir.', true, 'Büyükten küçüğe.'),
-      sikli('Güneş kreminde morötesini engelleyen nanoparçacık?', ['Titanyum dioksit', 'Sodyum klorür'], 0, 'Çinko oksit de kullanılır.'),
+      sikli('Güneş kreminde morötesini engelleyen nanoparçacık?', ['Sodyum klorür', 'Titanyum dioksit'], 1, 'Çinko oksit de kullanılır.'),
       sikli('Atomlardan parçacık kurmak hangi yol?', ['Aşağıdan yukarı', 'Yukarıdan aşağı'], 0, 'Küçükten büyüğe.'),
     ], [
       {
@@ -1795,7 +1795,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       soru('Minamata hastalığı cıva zehirlenmesidir.', true, 'Balıkta biriken cıva insana geçti.'),
       soru('Kurşun çocuklarda sinir sistemine zararsızdır.', false, 'Kurşun özellikle çocuklarda sinir sistemine zarar verir.'),
       soru('Atık piller çöpe atılabilir.', false, 'Ağır metal içerir; atık pil kutusuna atılır.'),
-      sikli('Geri dönüşümde en büyük enerji tasarrufu sağlanan metal?', ['Alüminyum', 'Altın'], 0, 'Yaklaşık %95.'),
+      sikli('Geri dönüşümde en büyük enerji tasarrufu sağlanan metal?', ['Altın', 'Alüminyum'], 1, 'Yaklaşık %95.'),
       sikli('Kurşunsuz benzine geçişin sebebi?', ['Kurşunun zehirliliği', 'Kurşunun pahalılığı'], 0, 'Egzozdan havaya karışıyordu.'),
       soru('Metaller kalitelerini kaybetmeden defalarca geri dönüştürülebilir.', true, 'Kâğıttan farkı bu.'),
     ], [
@@ -1902,7 +1902,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       soru('Katalizör tepkimede harcanır.', false, 'Hızlandırır ama harcanmaz.'),
       soru('Süperkritik CO₂ yeşil bir çözücüdür.', true, 'Zehirli organik çözücünün yerine kullanılır.'),
       soru('Yan ürün arttıkça atom ekonomisi düşer.', true, 'Atomların bir kısmı istenmeyen ürüne gider.'),
-      sikli('Mısır nişastasından yapılan plastik?', ['Biyoplastik', 'PVC'], 0, 'PVC petrol kökenlidir.'),
+      sikli('Mısır nişastasından yapılan plastik?', ['PVC', 'Biyoplastik'], 1, 'PVC petrol kökenlidir.'),
       sikli('Yeşil kimyada ilk öncelik?', ['Atığı önlemek', 'Atığı yakmak'], 0, 'Oluşmayan atık yönetilmek zorunda değil.'),
       soru('Bütün atomlar ürüne geçen tepkimenin atom ekonomisi %100\'dür.', true, 'Hiç yan ürün yok.'),
     ], [
@@ -1918,8 +1918,8 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       },
       {
         soru: 'Tepkimeyi hızlandırıp harcanmayan madde?',
-        siklar: ['Katalizör', 'Çözücü'],
-        dogru: 0,
+        siklar: ['Çözücü', 'Katalizör'],
+        dogru: 1,
         aciklama: {
           dogru: 'Katalizör az enerjiyle üretim sağlar ve yeniden kullanılır.',
           yanlis: 'Çözücü maddeleri çözer, tepkimeyi hızlandırmak onun işi değil. Katalizör.',

@@ -87,7 +87,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('Masallarda 3, 7, 40 gibi kalıp sayılar sık kullanılır.', true, 'Üç kardeş, yedi kat yer, kırk gün.'),
       soru('Masallar çoğunlukla gözlemci bakış açısıyla anlatılır.', false, 'Anlatıcı her şeyi bilir: ilahi bakış açısı.'),
       soru('Pertev Naili Boratav, Alman masallarını derlemiştir.', false, 'Alman masallarını Grimm Kardeşler derledi; Boratav Türk masallarını.'),
-      sikli('"Az gittik uz gittik" hangi işlevi görür?', ['Geçiş kalıbı', 'Dilek'], 0, 'Dilek masalın kapanışındaki "Onlar ermiş muradına…"'),
+      sikli('"Az gittik uz gittik" hangi işlevi görür?', ['Dilek', 'Geçiş kalıbı'], 1, 'Dilek masalın kapanışındaki "Onlar ermiş muradına…"'),
       sikli('Olayların birbirine eklenerek ilerlediği masal türü?', ['Hayvan masalı', 'Zincirleme masal'], 1, 'Hayvan masalında kahramanlar konuşan hayvanlardır.'),
       sikli('Kız Kulesi\'ne bağlı anlatı hangi türdür?', ['Masal', 'Efsane'], 1, 'Belli bir yere bağlı ve inanılan anlatı efsanedir.'),
     ], [
@@ -103,8 +103,8 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       },
       {
         soru: 'Bir yere bağlı olan ve halkın inandığı anlatı?',
-        siklar: ['Efsane', 'Masal'],
-        dogru: 0,
+        siklar: ['Masal', 'Efsane'],
+        dogru: 1,
         aciklama: {
           dogru: 'Efsane inanılır ve bir yere ya da kişiye bağlıdır.',
           yanlis: 'Masalın inanılması beklenmez, yeri belirsizdir. İnanılan ve yere bağlı anlatı efsane.',
@@ -285,7 +285,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('Seci, düzyazıda cümle sonlarının uyaklı olmasıdır.', true, 'Düzyazıya şiirin sesini katar.'),
       soru('Nakarat, şiirde yalnızca bir kez geçen dizedir.', false, 'Nakarat her bölümün sonunda aynen döner.'),
       soru('Divan şiirinde ahengi hece ölçüsü kurar.', false, 'Divan şiirinin ölçüsü aruz; hece halk şiirinin.'),
-      sikli('Uyağın dize içinde kurulmasına ne denir?', ['İç uyak', 'Redif'], 0, 'Redif dize sonundaki aynı ek ya da sözcük.'),
+      sikli('Uyağın dize içinde kurulmasına ne denir?', ['Redif', 'İç uyak'], 1, 'Redif dize sonundaki aynı ek ya da sözcük.'),
       sikli('Türküdeki kavuştak neye örnektir?', ['Seci', 'Nakarat'], 1, 'Seci düzyazıdaki uyaktır.'),
       sikli('Modern şiirde ahengi çoğunlukla ne kurar?', ['Aruz ölçüsü', 'İç ses ve tekrar'], 1, 'Serbest şiirde ölçü zorunluluğu yok.'),
     ], [
@@ -381,7 +381,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('Bağlamı bilmek şiirin yorumunu güçlendirebilir.', true, 'Ama yorum yine metnin verilerine dayanmalı.'),
       sikli('"Buz gibi eller" hangi duyuya seslenir?', ['Görme', 'Dokunma'], 1, 'Soğukluk dokunmayla algılanır.'),
       sikli('Bir şiirin başka bir metne gönderme yapması?', ['Metinlerarasılık', 'Çağrışım'], 0, 'Eski edebiyattaki adı telmih.'),
-      sikli('Şiirde "yol" çoğunlukla neyin sembolüdür?', ['Hayat, arayış', 'Barış'], 0, 'Barışın sembolü güvercin.'),
+      sikli('Şiirde "yol" çoğunlukla neyin sembolüdür?', ['Barış', 'Hayat, arayış'], 1, 'Barışın sembolü güvercin.'),
     ], [
       {
         soru: 'Şiirde ileti çoğunlukla nasıl verilir?',
@@ -595,7 +595,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('"Uyumak" bir iş fiilidir.', false, 'Nesne almaz ve özne kendi yapar: durum fiili.'),
       soru('"Geldim" fiilindeki kişi eki iyelik kökenlidir.', true, '-dı ve -sa eklerinden sonra iyelik kökenli ekler gelir.'),
       soru('"Selamlaştılar" fiili ettirgen çatılıdır.', false, 'İş karşılıklı yapılıyor: işteş çatı (-ş).'),
-      sikli('"Geliyormuş" hangi birleşik zamandır?', ['Rivayet', 'Hikâye'], 0, 'Hikâye -dı ile kurulur: geliyordu.'),
+      sikli('"Geliyormuş" hangi birleşik zamandır?', ['Hikâye', 'Rivayet'], 1, 'Hikâye -dı ile kurulur: geliyordu.'),
       sikli('"Yazdırdı" fiilinin çatısı?', ['Dönüşlü', 'Ettirgen'], 1, 'İş başkasına yaptırılıyor.'),
     ], [
       {
@@ -788,7 +788,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('Naat, Allah\'ın birliğini anlatan bölümdür.', false, 'Naat Peygamber övgüsü; Allah\'ın birliğini anlatan tevhit.'),
       soru('Türk edebiyatında ilk hamseyi Ali Şir Nevai yazmıştır.', true, 'Beş mesneviden oluşan hamse şairlik gücünün kanıtı sayılırdı.'),
       soru('Köroğlu bir aşk hikâyesidir.', false, 'Köroğlu kahramanlık hikâyesi; Kerem ile Aslı aşk hikâyesi.'),
-      sikli('Mevlid\'in yazarı kimdir?', ['Süleyman Çelebi', 'Şeyhi'], 0, 'Şeyhi\'nin mizahi mesnevisi Harname.'),
+      sikli('Mevlid\'in yazarı kimdir?', ['Şeyhi', 'Süleyman Çelebi'], 1, 'Şeyhi\'nin mizahi mesnevisi Harname.'),
       sikli('Eserin yazılış sebebinin anlatıldığı bölüm?', ['Hatime', 'Sebeb-i telif'], 1, 'Hatime sonuç ve dua bölümü.'),
       sikli('Halk hikâyesi nasıl biter?', ['Dua ile', 'Soru ile'], 0, 'Âşık dinleyene iyi dileklerde bulunur.'),
     ], [
@@ -893,7 +893,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('Mehmet Âkif Ersoy şiirlerinde hece ölçüsünü kullanmıştır.', false, 'Âkif aruzu kullandı ama dili sade tuttu.'),
       soru('Türkçülüğün Esasları Ziya Gökalp\'in eseridir.', true, 'Gökalp Türkçülük akımının kuramcısı.'),
       soru('Yahya Kemal Millî Edebiyat akımına katılmış bir hececidir.', false, 'Akıma katılmadı ve aruzu sürdürdü.'),
-      sikli('"Millî şair" diye anılan kimdir?', ['Mehmet Emin Yurdakul', 'Ali Canip Yöntem'], 0, 'Hece ölçüsüyle ilk şiir sayılan "Cenge Giderken"in şairi.'),
+      sikli('"Millî şair" diye anılan kimdir?', ['Ali Canip Yöntem', 'Mehmet Emin Yurdakul'], 1, 'Hece ölçüsüyle ilk şiir sayılan "Cenge Giderken"in şairi.'),
       sikli('Batı\'yı örnek almayı savunan akım?', ['İslamcılık', 'Batıcılık'], 1, 'İslamcılık Müslümanları birleştirmeyi amaçlar.'),
       sikli('Safahat kimin eseridir?', ['Yahya Kemal', 'Mehmet Âkif'], 1, 'İstiklal Marşı\'nın da şairi.'),
     ], [
@@ -992,8 +992,8 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       },
       {
         soru: '"Han Duvarları" şiiri kimindir?',
-        siklar: ['Faruk Nafiz Çamlıbel', 'Mehmet Emin Yurdakul'],
-        dogru: 0,
+        siklar: ['Mehmet Emin Yurdakul', 'Faruk Nafiz Çamlıbel'],
+        dogru: 1,
         aciklama: {
           dogru: 'Beş Hececilerden Faruk Nafiz; memleketçi şiirin simgesi.',
           yanlis: 'Mehmet Emin "Cenge Giderken"in şairi. Han Duvarları Faruk Nafiz Çamlıbel\'in.',

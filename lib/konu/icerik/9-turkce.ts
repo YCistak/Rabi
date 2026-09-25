@@ -101,7 +101,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Anı, yaşananların o gün tarih atılarak yazılmasıdır.', false, 'O günlük. Anı, yaşanandan yıllar sonra geriye bakarak yazılır.'),
       soru('Haber metninde yazar olaya kendi yorumunu katar.', false, 'Haber 5N1K sorularına nesnel cevap verir; yorum köşe yazısının işi.'),
       sikli('Kişinin kendi hayatını anlattığı tür?', ['Biyografi', 'Otobiyografi'], 1, 'Biyografi başkasının hayatını anlatır.'),
-      sikli('Doğayı ve kır hayatını işleyen şiir türü?', ['Pastoral', 'Epik'], 0, 'Epik kahramanlık şiiri.'),
+      sikli('Doğayı ve kır hayatını işleyen şiir türü?', ['Epik', 'Pastoral'], 1, 'Epik kahramanlık şiiri.'),
       sikli('Servetifünun hangi anlayışı benimser?', ['Toplum için sanat', 'Sanat için sanat'], 1, 'Tanzimat\'ın ilk kuşağı ve Millî Edebiyat toplum için sanatı savunur.'),
       sikli('Öğretici metinde dilin öne çıkan işlevi?', ['Göndergesel', 'Şiirsel'], 0, 'Şiirsel işlevde dilin kendisi öne çıkar; o edebî metnin işi.'),
       sikli('Karagöz ve orta oyunu hangi kümededir?', ['Anlatmaya bağlı', 'Göstermeye bağlı'], 1, 'Geleneksel Türk tiyatrosu; olay oynanarak gösterilir.'),
@@ -230,7 +230,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Gazel, dörtlüklerle yazılan bir halk şiiri biçimidir.', false, 'Gazel beyitlerle yazılan divan şiiri biçimidir.'),
       soru('Mani tek dörtlükten oluşur.', true, '7’li hece ölçüsüyle ve çoğunlukla aaxa uyaklı.'),
       sikli('Yiğitlik ve savaşı işleyen koşma türü?', ['Güzelleme', 'Koçaklama'], 1, 'Güzelleme sevgiliyi ve doğayı işler.'),
-      sikli('Şiire egemen olan duyguya ne denir?', ['Tema', 'Nazım şekli'], 0, 'Nazım şekli şiirin dış yapısı.'),
+      sikli('Şiire egemen olan duyguya ne denir?', ['Nazım şekli', 'Tema'], 1, 'Nazım şekli şiirin dış yapısı.'),
       sikli('Dört dizelik, aaxa uyaklı divan şiiri biçimi?', ['Rubai', 'Kaside'], 0, 'Kaside 33-99 beyitlik övgü şiiri.'),
     ], [
       {
@@ -343,7 +343,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Telmih, bilinen bir olaya ya da kişiye gönderme yapmaktır.', true, 'Okur o olayı bildiği için söz kısa kalır ama çok şey anlatır.'),
       soru('Cinasta eş sesli sözcüklerden yalnızca biri kullanılır.', false, 'Cinasta eş sesliler birlikte kullanılır; tek sözcükle uzak anlamı kastetmek tevriyedir.'),
       sikli('Bilip de bilmezlikten gelmeye ne denir?', ['Hüsn-i talil', 'Tecahül-i arif'], 1, 'Hüsn-i talil güzel bir neden bulmaktır.'),
-      sikli('"Ey vatan!" seslenmesindeki sanat?', ['Nida', 'İstifham'], 0, 'İstifham cevap beklemeden soru sormak.'),
+      sikli('"Ey vatan!" seslenmesindeki sanat?', ['İstifham', 'Nida'], 1, 'İstifham cevap beklemeden soru sormak.'),
       sikli('Sözü bir atasözüyle desteklemek?', ['Telmih', 'İrsal-i mesel'], 1, 'Telmih bilinen bir olaya gönderme.'),
     ], [
       {
@@ -358,8 +358,8 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       },
       {
         soru: 'Yağmurun yağışını sevgilinin gidişine bağlamak hangi sanat?',
-        siklar: ['Hüsn-i talil', 'Tariz'],
-        dogru: 0,
+        siklar: ['Tariz', 'Hüsn-i talil'],
+        dogru: 1,
         aciklama: {
           dogru: 'Gerçek bir olaya (yağmur) hayalî, güzel bir neden bulunmuş.',
           yanlis: 'Tariz söylenenin tersini kastedip iğneler. Doğa olayına güzel bir neden bulmak hüsn-i talil.',
@@ -541,7 +541,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('"Vefat etmek" ifadesi "ölmek" sözünün örtmecesidir.', true, 'Kaba ya da ağır sayılan söz yumuşatılmış.'),
       soru('Eş anlamlı sözcüklerin yazılışları aynıdır.', false, 'Yazılışı aynı olan eş sesli; eş anlamlılar farklı yazılır.'),
       soru('"Güneş gülümsüyor" cümlesinde ad aktarması vardır.', false, 'Gülümsemek insana özgü: deyim aktarması, yani kişileştirme.'),
-      sikli('"Aslanağzı" çiçeğinin adı nasıl oluşmuştur?', ['Güzel adlandırma', 'Yansıma'], 0, 'Benzerlikten yola çıkılarak ad verilmiş.'),
+      sikli('"Aslanağzı" çiçeğinin adı nasıl oluşmuştur?', ['Yansıma', 'Güzel adlandırma'], 1, 'Benzerlikten yola çıkılarak ad verilmiş.'),
     ], [
       {
         soru: '"Masanın ayağı kırıldı" cümlesinde "ayak" hangi anlamda?',
@@ -711,7 +711,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('"Keşke erken yatsaydım." cümlesinde özlem vardır.', false, 'Yapılmamış bir işe hayıflanma: pişmanlık.'),
       soru('"Okumadım ama sıkıcıdır." cümlesinde ön yargı vardır.', true, 'Tanımadan, denemeden yargı verilmiş.'),
       sikli('"Gelebilir" hangi anlamı taşır?', ['Kesinlik', 'Olasılık'], 1, '-ebil- eki olasılık bildirir.'),
-      sikli('"Diyelim ki kazandın" cümlesi?', ['Varsayım', 'Tahmin'], 0, 'Gerçekleşmemiş bir durum varmış gibi düşünülüyor.'),
+      sikli('"Diyelim ki kazandın" cümlesi?', ['Tahmin', 'Varsayım'], 1, 'Gerçekleşmemiş bir durum varmış gibi düşünülüyor.'),
     ], [
       {
         soru: '"Bu roman 320 sayfa" cümlesi nasıl bir yargıdır?',
@@ -927,7 +927,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Karşıt kişi, başkişiye yardım eden kişidir.', false, 'Karşıt kişi başkişinin önüne engel çıkarır.'),
       soru('"Evvel zaman içinde" ifadesi belirsiz zamana örnektir.', true, 'Masal ve destanlar zamanı belirsiz bırakır.'),
       soru('Bilinç akışında düşünceler düzenli ve sıralı verilir.', false, 'Düzenli olan iç konuşma; bilinç akışında düşünceler çağrışımla, sırasız akar.'),
-      sikli('Metne mektup ya da haber eklemeye ne denir?', ['Montaj', 'Özetleme'], 0, 'Özetleme uzun süreyi kısa geçmektir.'),
+      sikli('Metne mektup ya da haber eklemeye ne denir?', ['Özetleme', 'Montaj'], 1, 'Özetleme uzun süreyi kısa geçmektir.'),
       sikli('Kişilerin, yerin ve durumun tanıtıldığı bölüm?', ['Düğüm', 'Serim'], 1, 'Düğümde çatışma büyür.'),
       sikli('Zindan hangi mekân türüdür?', ['Açık mekân', 'Kapalı mekân'], 1, 'Kapalı mekân çoğu zaman sıkışmışlığı sezdirir.'),
     ], [
@@ -1097,7 +1097,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Karabibik ilk tarihî roman kabul edilir.', false, 'Karabibik ilk köy romanı; ilk tarihî roman Namık Kemal\'in Cezmi\'si.'),
       soru('Romantizmde tesadüfler ve idealize kişiler öne çıkar.', true, 'Realizm ise gözleme dayanır, kişileri olduğu gibi çizer.'),
       soru('Servetifünun hikâyecileri Batılı teknikten uzak durmuştur.', false, 'Halit Ziya Batılı hikâye tekniğini yerleştiren addır.'),
-      sikli('Huzur romanının yazarı?', ['Tanpınar', 'Yakup Kadri'], 0, 'Yakup Kadri\'nin romanı Yaban.'),
+      sikli('Huzur romanının yazarı?', ['Yakup Kadri', 'Tanpınar'], 1, 'Yakup Kadri\'nin romanı Yaban.'),
       sikli('Kalıtım ve çevrenin etkisini öne çıkaran akım?', ['Romantizm', 'Natüralizm'], 1, 'Romantizm duyguyu öne çıkarır.'),
     ], [
       {
@@ -1316,7 +1316,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('"Sabahleyin" sözcüğü büyük ünlü uyumuna uyar.', false, '-leyin eki büyük ünlü uyumuna girmez.'),
       soru('"Küçücük" sözcüğünde ünsüz düşmesi vardır.', true, 'küçük → küçücük: sondaki k düşmüş.'),
       soru('"o, ö, u, ü" düz ünlülerdir.', false, 'Bunlar yuvarlak ünlüler; düz ünlüler a, e, ı, i.'),
-      sikli('Hangisi sert ünsüzdür?', ['ş', 'd'], 0, '"FıSTıKÇı ŞaHaP" sert ünsüzleri sayar; d yumuşak.'),
+      sikli('Hangisi sert ünsüzdür?', ['d', 'ş'], 1, '"FıSTıKÇı ŞaHaP" sert ünsüzleri sayar; d yumuşak.'),
       sikli('"Okurken" neden büyük ünlü uyumuna uymaz?', ['-ken eki uyuma girmez', 'Alıntı sözcüktür'], 0, '"Okumak" Türkçe; uyumu bozan ek.'),
       sikli('"Kalemlik" sözcüğü kaç hecelidir?', ['4', '3'], 1, 'ka-lem-lik: üç ünlü, üç hece.'),
     ], [
@@ -1414,7 +1414,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Büyük harfli kısaltmalara gelen ek, kısaltmanın okunuşuna uyar.', true, 'TDK\'ye: son harf "ke" diye okunuyor.'),
       soru('"Hissetmek" ayrı yazılır.', false, 'His + etmek birleşirken ünsüz türemiş; ses olayı olduğu için bitişik.'),
       soru('Belirli bir tarih bildiren gün ve ay adları küçük harfle başlar.', false, 'Belirli tarihte büyük harfle başlar: 29 Ekim 1923 Pazartesi.'),
-      sikli('"Masmavi" nasıl yazılır?', ['Bitişik', 'Ayrı'], 0, 'Pekiştirmeler bitişik; ikilemeler ayrı yazılır.'),
+      sikli('"Masmavi" nasıl yazılır?', ['Ayrı', 'Bitişik'], 1, 'Pekiştirmeler bitişik; ikilemeler ayrı yazılır.'),
       sikli('"Anadolu’nun doğusu" ifadesinde "doğu" nasıl yazılır?', ['Büyük harfle', 'Küçük harfle'], 1, 'Özel adın parçası değil, yön bildiriyor.'),
     ], [
       {
@@ -1429,8 +1429,8 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       },
       {
         soru: '"Affetmek" neden bitişik yazılır?',
-        siklar: ['Ses olayı olduğu için', 'Kısa olduğu için'],
-        dogru: 0,
+        siklar: ['Kısa olduğu için', 'Ses olayı olduğu için'],
+        dogru: 1,
         aciklama: {
           dogru: 'Af + etmek birleşirken ünsüz türemiş (ff); ses olayı bitişik yazdırır.',
           yanlis: 'Uzunluk ölçü değil. Af + etmek birleşirken ünsüz türemiş; ses olayı olduğu için bitişik.',
@@ -1598,7 +1598,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Divanü Lügati\'t-Türk, Kaşgarlı Mahmut\'un eseridir.', true, 'Türkçenin ilk sözlüğü sayılır, 11. yüzyıl.'),
       soru('Arapça eklemeli diller arasındadır.', false, 'Arapça çekimli (bükümlü) dil; kök içindeki ünlüler değişir.'),
       sikli('Osmanlı Türkçesi hangi dönemin içindedir?', ['Orta Türkçe', 'Batı Türkçesi'], 1, 'Orta Türkçe Karahanlı ve Harezm dönemleri.'),
-      sikli('"Hanımeli" hangi yolla oluşmuştur?', ['Birleştirme', 'Türetme'], 0, 'Türetmede köke yapım eki gelir: göz → gözlük.'),
+      sikli('"Hanımeli" hangi yolla oluşmuştur?', ['Türetme', 'Birleştirme'], 1, 'Türetmede köke yapım eki gelir: göz → gözlük.'),
     ], [
       {
         soru: 'Yakutça ve Çuvaşça Türkçenin nesi sayılır?',

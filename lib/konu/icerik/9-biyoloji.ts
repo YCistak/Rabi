@@ -75,7 +75,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Ekoloji canlılarla çevreleri arasındaki ilişkiyi inceler.', true, 'Canlı-çevre ilişkisi.'),
       soru('Organizasyonda doku, organdan daha üst bir düzeydir.', false, 'Dokular bir araya gelip organı oluşturur.'),
       soru('Aşılar bağışıklık sistemini hastalığa hazırlar.', true, 'Zararsız bir tanıtım yapar.'),
-      sikli('Kalıtımı inceleyen dal?', ['Genetik', 'Botanik'], 0, 'Botanik bitkileri inceler.'),
+      sikli('Kalıtımı inceleyen dal?', ['Botanik', 'Genetik'], 1, 'Botanik bitkileri inceler.'),
       sikli('Aynı türden bireylerin oluşturduğu topluluk?', ['Popülasyon', 'Komünite'], 0, 'Komünite farklı popülasyonlar.'),
     ], [
       {
@@ -159,7 +159,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Hücre terimini ilk kullanan Robert Hooke\'tur.', true, 'Mantar dokusunda gördüğü odacıklar.'),
       soru('Pasteur canlıların cansızdan kendiliğinden oluştuğunu kanıtladı.', false, 'Tersini, oluşmadığını gösterdi.'),
       soru('Çiçek hastalığı aşı sayesinde dünyadan silindi.', true, '1980\'de.'),
-      sikli('Canlı mikroorganizmaları ilk gözleyen?', ['Leeuwenhoek', 'Mendel'], 0, 'Mendel kalıtım yasalarını buldu.'),
+      sikli('Canlı mikroorganizmaları ilk gözleyen?', ['Mendel', 'Leeuwenhoek'], 1, 'Mendel kalıtım yasalarını buldu.'),
       sikli('DNA\'yı belli noktadan kesip düzenleyen yöntem?', ['CRISPR', 'Pastörizasyon'], 0, 'Pastörizasyon ısıyla mikrop azaltma.'),
     ], [
       {
@@ -174,8 +174,8 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       },
       {
         soru: 'Kuğu boyunlu şişe deneyi neyi gösterdi?',
-        siklar: ['Canlılar kendiliğinden oluşmaz', 'DNA çift sarmaldır'],
-        dogru: 0,
+        siklar: ['DNA çift sarmaldır', 'Canlılar kendiliğinden oluşmaz'],
+        dogru: 1,
         aciklama: {
           dogru: 'Pasteur: mikrop dışarıdan gelmezse et suyu bozulmaz.',
           yanlis: 'DNA\'nın yapısı 1953\'te bulundu. Pasteur kendiliğinden oluşu çürüttü.',
@@ -245,7 +245,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('"Bitkinin boyu 12 cm" nicel bir gözlemdir.', true, 'Sayıyla ifade edilir.'),
       soru('Çıkarım doğrudan duyularla elde edilen bilgidir.', false, 'O gözlem; çıkarım gözleme dayanan yorumdur.'),
       soru('Yanlışlanamayan iddialar bilimsel sayılmaz.', true, 'Sınanamazlar.'),
-      sikli('"Yaprakların rengi sarı" hangi gözlem?', ['Nitel', 'Nicel'], 0, 'Sayı içermiyor.'),
+      sikli('"Yaprakların rengi sarı" hangi gözlem?', ['Nicel', 'Nitel'], 1, 'Sayı içermiyor.'),
       sikli('Bilimsel bilgi yeni kanıtla?', ['Değişebilir', 'Asla değişmez'], 0, 'Bilim kendini düzelterek ilerler.'),
     ], [
       {
@@ -328,7 +328,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Çift kör deneyde araştırmacı da hangi grubun ilaç aldığını bilmez.', true, 'Beklenti etkisi önlenir.'),
       soru('Bağımlı değişken grafiğin yatay eksenine yazılır.', false, 'Bağımsız yatay, bağımlı dikey eksende.'),
       soru('Farelerde elde edilen sonuç insana doğrudan genellenemez.', true, 'Koşullar farklı.'),
-      sikli('Hipotez nasıl bir cümledir?', ['Sınanabilir tahmin', 'Kesinleşmiş yasa'], 0, 'Deneyle sınanır.'),
+      sikli('Hipotez nasıl bir cümledir?', ['Kesinleşmiş yasa', 'Sınanabilir tahmin'], 1, 'Deneyle sınanır.'),
       sikli('Kategorik veri hangi grafikle gösterilir?', ['Sütun', 'Çizgi'], 0, 'Çizgi sürekli veri için.'),
     ], [
       {
@@ -406,7 +406,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('İnsan üzerinde yapılacak araştırma etik kurul onayı gerektirir.', true, 'Katılımcı hakları korunur.'),
       soru('3R ilkesine göre deneylerde olabildiğince çok hayvan kullanılmalıdır.', false, 'Azaltma ilkesi: en az sayıda.'),
       soru('Hipotezi desteklemeyen sonuçlar gizlenebilir.', false, 'Dürüstçe yayımlanmalıdır.'),
-      sikli('Hayvan yerine hücre kültürü kullanmak 3R\'nin hangisi?', ['Yerine koyma', 'İyileştirme'], 0, 'İyileştirme acıyı azaltmaktır.'),
+      sikli('Hayvan yerine hücre kültürü kullanmak 3R\'nin hangisi?', ['İyileştirme', 'Yerine koyma'], 1, 'İyileştirme acıyı azaltmaktır.'),
       sikli('Araştırma önerisini risk açısından değerlendiren?', ['Etik kurul', 'Yayınevi'], 0, 'Onay çalışmadan önce alınır.'),
     ], [
       {
@@ -485,7 +485,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Mantarlar heterotroftur.', true, 'Besinlerini hazır alırlar.'),
       soru('Amip çok hücreli bir canlıdır.', false, 'Tek hücreli; bütün işlevler bir hücrede.'),
       soru('Kaktüsün dikenleri su kaybını azaltan bir adaptasyondur.', true, 'Yaprak yüzeyi küçülmüş.'),
-      sikli('Besinini kendi üreten canlı?', ['Ototrof', 'Heterotrof'], 0, 'Bitkiler gibi.'),
+      sikli('Besinini kendi üreten canlı?', ['Heterotrof', 'Ototrof'], 1, 'Bitkiler gibi.'),
     ], [
       {
         soru: 'Vücut sıcaklığının sabit tutulması hangi ortak özelliktir?',
@@ -499,8 +499,8 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       },
       {
         soru: 'Hazır besin alan canlılara ne denir?',
-        siklar: ['Heterotrof', 'Ototrof'],
-        dogru: 0,
+        siklar: ['Ototrof', 'Heterotrof'],
+        dogru: 1,
         aciklama: {
           dogru: 'Hayvanlar ve mantarlar heterotroftur.',
           yanlis: 'Ototroflar besinini kendi üretir. Hazır besin alan heterotrof.',
@@ -735,7 +735,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Zeytinyağı doymamış bir yağdır.', true, 'Oda sıcaklığında sıvı.'),
       soru('C vitamini vücutta uzun süre depolanır.', false, 'Suda çözünür, depolanmaz.'),
       soru('Yumurtanın pişince katılaşması proteinlerin denatürasyonudur.', true, 'Isı şekli bozar.'),
-      sikli('Proteinlerin yapı taşı?', ['Amino asit', 'Glikoz'], 0, 'Glikoz karbonhidratların yapı taşı.'),
+      sikli('Proteinlerin yapı taşı?', ['Glikoz', 'Amino asit'], 1, 'Glikoz karbonhidratların yapı taşı.'),
     ], [
       {
         soru: 'Enzim tepkimeden sonra ne olur?',
@@ -848,7 +848,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Bakterilerde plazmit adı verilen küçük DNA halkaları bulunabilir.', true, 'Ek genler taşır.'),
       soru('Hayvan hücresinde sentrozom bulunur, bitki hücresinde bulunmaz.', true, 'Çoğu bitki hücresinde yok.'),
       sikli('Her hücrenin var olan bir hücreden oluştuğunu söyleyen?', ['Hücre teorisi', 'Evrim kuramı'], 0, 'Hücre teorisinin üçüncü maddesi.'),
-      sikli('Bitki hücre duvarının yapısı?', ['Selüloz', 'Kitin'], 0, 'Kitin mantarlarda.'),
+      sikli('Bitki hücre duvarının yapısı?', ['Kitin', 'Selüloz'], 1, 'Kitin mantarlarda.'),
     ], [
       {
         soru: 'Prokaryot hücrede aşağıdakilerden hangisi bulunmaz?',
@@ -916,7 +916,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('İyonlar zarın lipit katmanından kolayca geçer.', false, 'Yüklü oldukları için kanal proteinlerini kullanır.'),
       soru('Mantarların hücre duvarı kitindendir.', true, 'Bitkilerde selüloz.'),
       sikli('Hayvan hücre zarında akışkanlığı dengeleyen?', ['Kolesterol', 'Selüloz'], 0, 'Selüloz bitki hücre duvarında.'),
-      sikli('Oksijen zardan nasıl geçer?', ['Doğrudan lipit katmanından', 'Yalnız kanal proteinleriyle'], 0, 'Küçük ve apolar.'),
+      sikli('Oksijen zardan nasıl geçer?', ['Yalnız kanal proteinleriyle', 'Doğrudan lipit katmanından'], 1, 'Küçük ve apolar.'),
     ], [
       {
         soru: 'Hücre zarının seçici geçirgen olması ne demektir?',
@@ -984,7 +984,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Sitozol organelleri de kapsayan bölümün adıdır.', false, 'Sitozol organeller dışındaki sıvı kısımdır.'),
       soru('Amip yalancı ayağını sitoplazmanın jel-sol geçişiyle oluşturur.', true, 'Sitoplazma akar.'),
       sikli('Organelleri hücre içinde taşıyan rayı ne kurar?', ['Sitoiskelet', 'Hücre duvarı'], 0, 'Motor proteinler bu rayda yürür.'),
-      sikli('Oksijensiz başlayan solunum basamağı?', ['Glikoliz', 'Fotosentez'], 0, 'Glikoliz.'),
+      sikli('Oksijensiz başlayan solunum basamağı?', ['Fotosentez', 'Glikoliz'], 1, 'Glikoliz.'),
     ], [
       {
         soru: 'Sitoplazmanın büyük kısmı nedir?',
@@ -1052,7 +1052,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Mikrofilamentler sitoiskeletin en kalın elemanıdır.', false, 'En kalın mikrotübül, en ince mikrofilament.'),
       soru('Soluk borusundaki siller tozu yukarı iter.', true, 'Solunum yolunu temizler.'),
       sikli('Sperm hangi yapıyla hareket eder?', ['Kamçı', 'Sil'], 0, 'Tek uzun kamçı.'),
-      sikli('Bölünmede iğ ipliklerini oluşturan?', ['Sentrozom', 'Ribozom'], 0, 'Ribozom protein sentezler.'),
+      sikli('Bölünmede iğ ipliklerini oluşturan?', ['Ribozom', 'Sentrozom'], 1, 'Ribozom protein sentezler.'),
     ], [
       {
         soru: 'Hem prokaryot hem ökaryot hücrede bulunan yapı hangisidir?',
@@ -1152,8 +1152,8 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       },
       {
         soru: 'Mitokondri ile kloroplastın ortak özelliği?',
-        siklar: ['Kendi DNA\'larının olması', 'Tek zarlı olmaları'],
-        dogru: 0,
+        siklar: ['Tek zarlı olmaları', 'Kendi DNA\'larının olması'],
+        dogru: 1,
         aciklama: {
           dogru: 'İkisi de çift zarlı, kendi DNA\'sı ve ribozomu olan organellerdir.',
           yanlis: 'İkisi de çift zarlıdır. Ortakları kendi DNA ve ribozomlarının olması.',
@@ -1234,7 +1234,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Saf suya konan alyuvar şişip patlayabilir.', true, 'Ozmozla su alır; hücre duvarı yok.'),
       soru('Sodyum-potasyum pompası ATP harcamaz.', false, 'Aktif taşımadır; ATP harcar.'),
       soru('Akyuvarın bakteriyi yutması fagositozdur.', true, 'Katı parçanın alınması.'),
-      sikli('Yoğun tuzlu ortamdaki bitki hücresinde görülen?', ['Plazmoliz', 'Deplazmoliz'], 0, 'Su kaybeder.'),
+      sikli('Yoğun tuzlu ortamdaki bitki hücresinde görülen?', ['Deplazmoliz', 'Plazmoliz'], 1, 'Su kaybeder.'),
       sikli('Tuzlanan salatalığın su bırakması hangi olay?', ['Ozmoz', 'Aktif taşıma'], 0, 'Su yoğun ortama doğru geçer.'),
     ], [
       {
@@ -1339,7 +1339,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Bilimsel adda cins adı büyük harfle başlar.', true, 'Homo sapiens.'),
       soru('Âlemden türe inildikçe canlılar arasındaki benzerlik azalır.', false, 'Türe inildikçe benzerlik artar.'),
       soru('At ile eşek ayrı türlerdir.', true, 'Döl verimli değil.'),
-      sikli('İkili adlandırmayı yerleştiren bilim insanı?', ['Linnaeus', 'Darwin'], 0, 'Darwin evrim kuramını geliştirdi.'),
+      sikli('İkili adlandırmayı yerleştiren bilim insanı?', ['Darwin', 'Linnaeus'], 1, 'Darwin evrim kuramını geliştirdi.'),
       sikli('"Felis catus" adında "Felis" nedir?', ['Cins adı', 'Tür adı'], 0, 'İlk sözcük cins.'),
     ], [
       {
@@ -1416,9 +1416,9 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Virüsler bakteriler âlemindedir.', false, 'Hücresel değiller; hiçbir âleme konmaz.'),
       soru('Baklagil köklerindeki bakteriler azot bağlar.', true, 'Toprağı zenginleştirir.'),
       soru('Çam açık tohumlu bir bitkidir.', true, 'Tohum kozalakta açıktadır.'),
-      sikli('Çok tuzlu göllerde yaşayabilen canlı grubu?', ['Arkeler', 'Kara yosunları'], 0, 'Zor ortamlara uyumlu.'),
+      sikli('Çok tuzlu göllerde yaşayabilen canlı grubu?', ['Kara yosunları', 'Arkeler'], 1, 'Zor ortamlara uyumlu.'),
       sikli('Eğrelti otu nasıl ürer?', ['Sporla', 'Tohumla'], 0, 'Tohumsuz bitki.'),
-      sikli('Kurbağa hangi omurgalı grubundadır?', ['İki yaşamlı', 'Sürüngen'], 0, 'Larva suda, ergin karada.'),
+      sikli('Kurbağa hangi omurgalı grubundadır?', ['Sürüngen', 'İki yaşamlı'], 1, 'Larva suda, ergin karada.'),
     ], [
       {
         soru: 'Kaynar su ve tuz gölü gibi aşırı ortamlarda yaşayan prokaryotlar?',
@@ -1432,8 +1432,8 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       },
       {
         soru: 'Tohumu meyve içinde gelişen bitki grubu?',
-        siklar: ['Kapalı tohumlu', 'Açık tohumlu'],
-        dogru: 0,
+        siklar: ['Açık tohumlu', 'Kapalı tohumlu'],
+        dogru: 1,
         aciklama: {
           dogru: 'Çiçekli bitkilerde tohum meyvenin içindedir.',
           yanlis: 'Açık tohumlularda (çam) tohum kozalakta açıktadır. Meyve içinde olan kapalı tohumlu.',
@@ -1505,7 +1505,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('İstilacı türler yerli türlerin sayısını artırır.', false, 'Yerli türlerin yerini alır.'),
       soru('Türkiye\'nin ilk millî parkı Yozgat Çamlığı\'dır.', true, '1958.'),
       sikli('İnci kefali hangi gölde yaşar?', ['Van Gölü', 'Tuz Gölü'], 0, 'Sodalı suya uyumlu endemik balık.'),
-      sikli('Tohumları uzun yıllar saklayan kurum?', ['Gen bankası', 'Hayvanat bahçesi'], 0, 'Düşük sıcaklıkta saklama.'),
+      sikli('Tohumları uzun yıllar saklayan kurum?', ['Hayvanat bahçesi', 'Gen bankası'], 1, 'Düşük sıcaklıkta saklama.'),
       sikli('Aslan balığı Akdeniz\'e nereden geldi?', ['Süveyş Kanalı', 'Boğaziçi'], 0, 'Kızıldeniz\'den.'),
     ], [
       {

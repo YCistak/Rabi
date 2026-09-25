@@ -152,7 +152,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       soru('Dar açılarda açı büyüdükçe kosinüs değeri de büyür.', false, 'Açı büyüdükçe komşu kenar kısalır: cos azalır, sin ve tan artar.'),
       soru('cos 60° = 1/2\'dir.', true, 'sin 30° ile aynı değer; tümler açılar.'),
       soru('tan α = 3/4 ise sin α = 3/4\'tür.', false, 'Üçgen 3-4-5: sin α = 3/5.'),
-      sikli('Hipotenüs 8, α = 30° ise α\'nın karşısındaki kenar?', ['4', '4√3'], 0, '8 · sin 30° = 4.'),
+      sikli('Hipotenüs 8, α = 30° ise α\'nın karşısındaki kenar?', ['4√3', '4'], 1, '8 · sin 30° = 4.'),
       sikli('sin α = 5/13 ise cos α?', ['12/13', '5/12'], 0, '5-12-13 üçgeni; komşu 12.'),
     ], [
       {
@@ -167,8 +167,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       },
       {
         soru: 'cos α = 4/5 ise tan α kaçtır?',
-        siklar: ['3/4', '4/3'],
-        dogru: 0,
+        siklar: ['4/3', '3/4'],
+        dogru: 1,
         aciklama: {
           dogru: '3-4-5 üçgeni: komşu 4, karşı 3; tan = karşı/komşu = 3/4.',
           yanlis: '4/3 cot α olur. tan karşı bölü komşu: 3/4.',
@@ -249,7 +249,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       sikli('Dik üçgende çevrel çemberin merkezi nerededir?', ['Hipotenüsün orta noktasında', 'Dik açının köşesinde'], 0, 'Dik açının köşesinde olan diklik merkezi; çevrel merkez hipotenüsün ortası.'),
       soru('İç teğet çemberin merkezi açıortayların kesişimidir.', true, 'Bu nokta üç kenara eşit uzaklıktadır.'),
       soru('Çevrel çemberin merkezi kenarortayların kesişimidir.', false, 'Kenar orta dikmelerin kesişimi; kenarortayların kesişimi ağırlık merkezi.'),
-      sikli('Alanı 24, yarı çevresi 12 olan üçgende iç teğet çemberin yarıçapı?', ['2', '4'], 0, 'r = 24 / 12.'),
+      sikli('Alanı 24, yarı çevresi 12 olan üçgende iç teğet çemberin yarıçapı?', ['4', '2'], 1, 'r = 24 / 12.'),
       sikli('Dik üçgende çevrel çemberin merkezi nerededir?', ['Dik köşede', 'Hipotenüsün ortasında'], 1, 'Hipotenüs çevrel çemberin çapıdır.'),
     ], [
       {
@@ -333,7 +333,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       soru('Kenarı 4 olan eşkenar üçgenin alanı 4√3\'tür.', true, '16√3 / 4 = 4√3.'),
       sikli('Kenarları 3, 4, 5 olan üçgenin alanı (Heron)?', ['6', '12'], 0, 'u = 6; √(6·3·2·1) = 6.'),
       sikli('Üç kenarortay üçgeni kaç eşit alanlı parçaya böler?', ['3', '6'], 1, 'Altı küçük üçgen oluşur.'),
-      sikli('r = 2, yarı çevre 9 ise alan?', ['18', '11'], 0, 'A = r · u.'),
+      sikli('r = 2, yarı çevre 9 ise alan?', ['11', '18'], 1, 'A = r · u.'),
     ], [
       {
         soru: 'Kenarortay üçgeni nasıl iki parçaya böler?',
@@ -347,8 +347,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       },
       {
         soru: 'Kenarları 5, 5, 8 olan üçgenin alanı?',
-        siklar: ['12', '20'],
-        dogru: 0,
+        siklar: ['20', '12'],
+        dogru: 1,
         aciklama: {
           dogru: 'u = 9; √(9·4·4·1) = 12. Ya da tabana yükseklik 3: 8·3/2.',
           yanlis: '20 kenarların yarısını çarpmaktan gelir. Heron: u = 9, alan √144 = 12.',
@@ -419,7 +419,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       soru('sin 150° = sin 30°\'dur.', true, 'sin(180° − α) = sin α.'),
       soru('Kosinüs teoreminde açı 90° olursa Pisagor bağıntısı elde edilir.', true, 'cos 90° = 0, son terim düşer.'),
       sikli('b = 2, c = 3, A = 60° ise a²?', ['7', '13'], 0, '4 + 9 − 2·2·3·½ = 7.'),
-      sikli('Kenarları 6 ve 8, aradaki açı 30° olan üçgenin alanı?', ['12', '24'], 0, '½ · 6 · 8 · ½ = 12.'),
+      sikli('Kenarları 6 ve 8, aradaki açı 30° olan üçgenin alanı?', ['24', '12'], 1, '½ · 6 · 8 · ½ = 12.'),
     ], [
       {
         soru: 'İki kenar ve aradaki açı biliniyorsa hangi teorem kullanılır?',
@@ -504,7 +504,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       soru('İki grubu karşılaştırırken satır yüzdeleri kullanılır.', true, 'Grup büyüklüğü farkını ortadan kaldırır.'),
       soru('Sayıca fazla olan grup her zaman oranca da fazladır.', false, 'Grup büyüklüğü farklıysa oran başka sonuç verebilir.'),
       sikli('Örnek tabloda erkeklerin spor yapma oranı?', ['%70', '%35'], 0, '35 / 50.'),
-      sikli('Farklı büyüklükteki grupları karşılaştıran grafik?', ['%100 yığılmış sütun', 'Tek renk sütun'], 0, 'Her sütun 100\'e tamamlanır.'),
+      sikli('Farklı büyüklükteki grupları karşılaştıran grafik?', ['Tek renk sütun', '%100 yığılmış sütun'], 1, 'Her sütun 100\'e tamamlanır.'),
       soru('Örnek tabloda spor yapmayanların sayısı 35\'tir.', true, '20 + 15 = 35.'),
     ], [
       {
@@ -751,7 +751,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       soru('EBOB bulunurken ortak asalların en büyük üslüleri alınır.', false, 'EBOB küçük üslüleri, EKOK büyük üslüleri alır.'),
       soru('"En az kaç gün sonra yine birlikte" soruları EKOK ister.', true, 'Ortak kat aranıyor.'),
       soru('3\'e ve 5\'e bölünce 2 kalan en küçük sayı 17\'dir.', true, 'EKOK 15 + 2 = 17.'),
-      sikli('20 × 30 duvara en büyük kare fayansın kenarı?', ['10', '60'], 0, 'EBOB(20, 30) = 10.'),
+      sikli('20 × 30 duvara en büyük kare fayansın kenarı?', ['60', '10'], 1, 'EBOB(20, 30) = 10.'),
     ], [
       {
         soru: '"İki otobüs kaç dakika sonra yine birlikte kalkar?" sorusunda ne kullanılır?',
@@ -765,8 +765,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       },
       {
         soru: '6 ve 10 günde bir gelen iki gemi en az kaç gün sonra yine birlikte gelir?',
-        siklar: ['30', '2'],
-        dogru: 0,
+        siklar: ['2', '30'],
+        dogru: 1,
         aciklama: {
           dogru: 'Ortak kat aranıyor: EKOK(6, 10) = 30.',
           yanlis: '2 EBOB. "Yeniden birlikte" ortak kat ister: EKOK 30.',
@@ -844,7 +844,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       soru('2a4 sayısı 3\'e bölünüyorsa a = 0, 3, 6 ya da 9 olabilir.', true, '2 + a + 4 = 6 + a; 3\'ün katı olmalı.'),
       soru('Bir sayı 2\'ye ve 4\'e bölünüyorsa 8\'e de bölünür.', false, '12 ikisine de bölünür, 8\'e bölünmez; aralarında asal olmayan böleni çarpamazsın.'),
       sikli('17 · 23 çarpımının 5 ile bölümünden kalan?', ['1', '3'], 0, 'Kalanlar 2 ve 3; 2·3 = 6 ≡ 1.'),
-      sikli('161 sayısı hangisine bölünür?', ['7', '9'], 0, '7 kuralında toplam 21; rakamlar toplamı 8 olduğu için 9\'a bölünmez.'),
+      sikli('161 sayısı hangisine bölünür?', ['9', '7'], 1, '7 kuralında toplam 21; rakamlar toplamı 8 olduğu için 9\'a bölünmez.'),
     ], [
       {
         soru: 'Bir sayının 12\'ye bölünüp bölünmediği nasıl anlaşılır?',
@@ -963,8 +963,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       },
       {
         soru: 'f(x) = x³ hangi tür fonksiyondur?',
-        siklar: ['Tek', 'Çift'],
-        dogru: 0,
+        siklar: ['Çift', 'Tek'],
+        dogru: 1,
         aciklama: {
           dogru: '(−x)³ = −x³: f(−x) = −f(x), orijine simetrik.',
           yanlis: 'Çift fonksiyonda f(−x) = f(x) olur. x³\'te işaret değişiyor: tek.',
@@ -1106,7 +1106,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       soru('f(x) = x² − 6x + 5 fonksiyonunun tepe noktasının apsisi 3\'tür.', true, 'r = −(−6) / 2 = 3.'),
       soru('f(x) = −x² + 4 fonksiyonunun en küçük değeri 4\'tür.', false, 'a < 0; 4 en büyük değer.'),
       soru('f(x) = 3(x − 2)² + 1 grafiğinin tepe noktası (2, 1)\'dir.', true, 'Tepe biçiminden okunur.'),
-      sikli('f(x) = x² + 2x − 8 grafiği y eksenini nerede keser?', ['(0, −8)', '(0, 2)'], 0, 'x = 0 → c = −8.'),
+      sikli('f(x) = x² + 2x − 8 grafiği y eksenini nerede keser?', ['(0, 2)', '(0, −8)'], 1, 'x = 0 → c = −8.'),
       sikli('x² − 5x + 6 = 0 denkleminin kökleri?', ['2 ve 3', '−2 ve −3'], 0, '(x − 2)(x − 3) = 0.'),
     ], [
       {
@@ -1201,7 +1201,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       soru('f(x) = √(3 − x) fonksiyonunun tanım kümesi x ≤ 3\'tür.', true, '3 − x ≥ 0.'),
       soru('f(x) = √x + 2 fonksiyonu 1 değerini alabilir.', false, 'Görüntü kümesi [2, ∞).'),
       soru('Karekök denkleminde bulunan kök mutlaka denenmelidir.', true, 'Kare alma sahte kök üretebilir.'),
-      sikli('√(x − 1) = 4 ise x?', ['17', '5'], 0, 'x − 1 = 16.'),
+      sikli('√(x − 1) = 4 ise x?', ['5', '17'], 1, 'x − 1 = 16.'),
       sikli('f(x) = √(x + 2) − 1 fonksiyonunun görüntü kümesi?', ['[−1, ∞)', '[2, ∞)'], 0, 'Kök ≥ 0, sonra 1 çıkarılır.'),
     ], [
       {
@@ -1330,7 +1330,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       sikli('f(x) = (3x − 1)/(x + 4) fonksiyonunun yatay asimptotu?', ['y = −4', 'y = 3'], 1, 'Dereceler eşit: baş katsayılar oranı 3/1. x = −4 ise düşey asimptot.'),
       soru('(x² − 9)/(x − 3) fonksiyonunun x = 3\'te düşey asimptotu vardır.', false, 'Çarpan sadeleşiyor; x = 3\'te delik var.'),
       soru('f(x) = 1/(x + 4) − 2 grafiğinin yatay asimptotu y = −2\'dir.', true, '1/x grafiği 2 aşağı kaymış.'),
-      sikli('(x² − 1)/(x + 1) = 0 denkleminin çözümü?', ['x = 1', 'x = ±1'], 0, 'x = −1 paydayı sıfır yapar, atılır.'),
+      sikli('(x² − 1)/(x + 1) = 0 denkleminin çözümü?', ['x = ±1', 'x = 1'], 1, 'x = −1 paydayı sıfır yapar, atılır.'),
       sikli('f(x) = 3/(x − 5) fonksiyonunun düşey asimptotu?', ['x = 5', 'x = 3'], 0, 'Payda sıfır olduğu yer.'),
     ], [
       {
@@ -1454,7 +1454,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       soru('f(x) = 2x − 4 ise f⁻¹(x) = (x + 4)/2\'dir.', true, 'y = 2x − 4 → x = (y + 4)/2.'),
       soru('f(x) = x² fonksiyonunun bütün gerçek sayılarda tersi vardır.', false, 'Bire bir değil; x ≥ 0 gibi bir kısıtlama gerekir.'),
       soru('f⁻¹(5) = 2 ise f(2) = 5\'tir.', true, 'Ters fonksiyon eşlemeyi çevirir.'),
-      sikli('f(x) = 5x + 1 ise f⁻¹(11)?', ['2', '56'], 0, '5b + 1 = 11 → b = 2.'),
+      sikli('f(x) = 5x + 1 ise f⁻¹(11)?', ['56', '2'], 1, '5b + 1 = 11 → b = 2.'),
       sikli('f(x) = (2x + 1)/(x − 3) ise f⁻¹(x)?', ['(3x + 1)/(x − 2)', '(x − 3)/(2x + 1)'], 0, 'a = 2, d = −3: (3x + 1)/(x − 2).'),
     ], [
       {
@@ -1469,8 +1469,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       },
       {
         soru: 'f(x) = 4x − 2 ise f⁻¹(10) kaçtır?',
-        siklar: ['3', '38'],
-        dogru: 0,
+        siklar: ['38', '3'],
+        dogru: 1,
         aciklama: {
           dogru: '4b − 2 = 10 → b = 3.',
           yanlis: '38 f(10) olurdu. f⁻¹(10) için f(b) = 10 çözülür: b = 3.',
@@ -1546,7 +1546,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       soru('Başabaş noktasında kâr sıfırdır.', true, 'Gelir maliyete eşit.'),
       soru('x² − 4 < 0 eşitsizliğinin çözümü x > 2\'dir.', false, 'Kökler arası negatif: −2 < x < 2.'),
       soru('Çevresi sabit dikdörtgenler içinde alanı en büyük olan karedir.', true, 'A(x) = x(k − x) tepe noktası ortada.'),
-      sikli('f ile g kesişiyorsa kesişim noktaları neyin çözümüdür?', ['f(x) = g(x)', 'f(x) > g(x)'], 0, 'İki fonksiyonun eşit olduğu yer.'),
+      sikli('f ile g kesişiyorsa kesişim noktaları neyin çözümüdür?', ['f(x) > g(x)', 'f(x) = g(x)'], 1, 'İki fonksiyonun eşit olduğu yer.'),
       sikli('x² − 7x + 10 > 0 çözümü?', ['2 < x < 5', 'x < 2 ya da x > 5'], 1, 'a > 0; kökler dışında pozitif.'),
       sikli('|x − 1| ≤ 4 çözüm kümesi?', ['[−3, 5]', '[−4, 4]'], 0, '1 − 4 ≤ x ≤ 1 + 4.'),
     ], [
@@ -1651,7 +1651,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       soru('6 kişi yuvarlak masaya 720 farklı biçimde oturur.', false, 'Dairesel: (6 − 1)! = 120.'),
       soru('ELMA sözcüğünün harfleriyle 24 farklı sıralama yazılır.', true, 'Harfler farklı: 4! = 24.'),
       soru('Pascal üçgeninde her sayı üstündeki iki sayının toplamıdır.', true, 'C(n, r) = C(n − 1, r − 1) + C(n − 1, r).'),
-      sikli('ANNE sözcüğünün harfleri kaç farklı sıralanır?', ['12', '24'], 0, '4! / 2! (iki N).'),
+      sikli('ANNE sözcüğünün harfleri kaç farklı sıralanır?', ['24', '12'], 1, '4! / 2! (iki N).'),
       sikli('4 kişi sıraya giriyor, A ile B yan yana olacak. Kaç sıralama?', ['12', '6'], 0, '3! · 2! = 12.'),
     ], [
       {
@@ -1742,7 +1742,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       soru('Öklid algoritmasında kalan sıfır olunca son bölen EBOB\'dur.', true, 'Algoritmanın durma koşulu budur.'),
       soru('Fibonacci dizisinde her terim öncekinin iki katıdır.', false, 'Her terim önceki iki terimin toplamıdır.'),
       soru('Horner yöntemi polinom değerini kuvvet almadan hesaplar.', true, 'İç içe çarpma ve toplama yeter.'),
-      sikli('EBOB(48, 18) kaçtır?', ['6', '3'], 0, '48 = 2·18 + 12; 18 = 1·12 + 6; 12 = 2·6.'),
+      sikli('EBOB(48, 18) kaçtır?', ['3', '6'], 1, '48 = 2·18 + 12; 18 = 1·12 + 6; 12 = 2·6.'),
       sikli('1, 1, 2, 3, 5, 8, … dizisinin sonraki terimi?', ['13', '11'], 0, '5 + 8 = 13.'),
       soru('x¹⁶ ardışık kare alarak dört çarpmayla hesaplanabilir.', true, 'x² → x⁴ → x⁸ → x¹⁶.'),
     ], [
@@ -1758,8 +1758,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       },
       {
         soru: 'Öklid algoritmasıyla EBOB(56, 21)?',
-        siklar: ['7', '21'],
-        dogru: 0,
+        siklar: ['21', '7'],
+        dogru: 1,
         aciklama: {
           dogru: '56 = 2·21 + 14; 21 = 1·14 + 7; 14 = 2·7 → 7.',
           yanlis: '21, 56\'yı bölmüyor. Öklid adımları kalan 7\'de durur.',
@@ -1855,9 +1855,9 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       soru('A(−2, 5) noktasının x eksenine uzaklığı 5\'tir.', true, 'x eksenine uzaklık |y|.'),
       soru('A(0, 0) ile B(3, 4) arası uzaklık 7\'dir.', false, '√(9 + 16) = 5.'),
       soru('Paralelkenarda karşılıklı köşelerin koordinat toplamları eşittir.', true, 'Köşegenler aynı orta noktayı paylaşır.'),
-      sikli('A(1, 3), orta nokta M(4, 5) ise B?', ['(7, 7)', '(2,5; 4)'], 0, 'B = 2M − A = (8 − 1, 10 − 3).'),
+      sikli('A(1, 3), orta nokta M(4, 5) ise B?', ['(2,5; 4)', '(7, 7)'], 1, 'B = 2M − A = (8 − 1, 10 − 3).'),
       sikli('A(−6, 8) noktasının orijine uzaklığı?', ['10', '14'], 0, '√(36 + 64) = 10.'),
-      sikli('A(0,0), B(6,0), C(0,4) üçgeninin alanı?', ['12', '24'], 0, 'Dik kenarlar 6 ve 4: 6·4/2.'),
+      sikli('A(0,0), B(6,0), C(0,4) üçgeninin alanı?', ['24', '12'], 1, 'Dik kenarlar 6 ve 4: 6·4/2.'),
     ], [
       {
         soru: '(1, 2) ile (4, 6) noktaları arasındaki uzaklık?',
@@ -1976,8 +1976,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       },
       {
         soru: 'x eksenini 4\'te, y eksenini 2\'de kesen doğru?',
-        siklar: ['x + 2y = 4', '2x + y = 4'],
-        dogru: 0,
+        siklar: ['2x + y = 4', 'x + 2y = 4'],
+        dogru: 1,
         aciklama: {
           dogru: 'x/4 + y/2 = 1 → x + 2y = 4.',
           yanlis: '2x + y = 4, x eksenini 2\'de keser. x/4 + y/2 = 1 düzenlenince x + 2y = 4.',
@@ -2054,7 +2054,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       soru('P(A ∩ B) = P(A) · P(B | A)\'dır.', true, 'Koşullu olasılık formülünün ters çevrilmiş hâli.'),
       soru('Ağaç diyagramında bir yol boyunca olasılıklar toplanır.', false, 'Yol boyunca çarpılır; farklı yollar toplanır.'),
       soru('İadesiz çekilişte ikinci çekilişin olasılığı birinciye bağlıdır.', true, 'Torbadaki top sayısı değişir.'),
-      sikli('4 kırmızı, 1 mavi topdan iadesiz iki kırmızı?', ['3/5', '12/25'], 0, '4/5 · 3/4 = 3/5.'),
+      sikli('4 kırmızı, 1 mavi topdan iadesiz iki kırmızı?', ['12/25', '3/5'], 1, '4/5 · 3/4 = 3/5.'),
       sikli('P(A) = 0,5, P(B | A) = 0,4 ise P(A ∩ B)?', ['0,2', '0,9'], 0, '0,5 · 0,4.'),
     ], [
       {
@@ -2145,7 +2145,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       soru('Bayes teoreminin paydası toplam olasılıktır.', true, 'Sonuca giden bütün yolların toplamı.'),
       soru('Nadir bir hastalıkta pozitif test sonucu kişinin kesin hasta olduğunu gösterir.', false, 'Yanlış pozitiflerin payı yüksek olabilir.'),
       soru('Ağaç diyagramında Bayes, istenen yol bölü toplam yollarla hesaplanır.', true, 'Koşul örnek uzayı o sonuca daraltır.'),
-      sikli('Örnekte P(kusurlu) kaçtır?', ['0,032', '0,07'], 0, '0,012 + 0,020.'),
+      sikli('Örnekte P(kusurlu) kaçtır?', ['0,07', '0,032'], 1, '0,012 + 0,020.'),
       sikli('Kusurlu ürünün B\'den gelme olasılığı?', ['5/8', '2/5'], 0, '0,020 / 0,032 = 5/8.'),
       sikli('Test sonucundan sonra güncellenen olasılık?', ['Ön olasılık', 'Son olasılık'], 1, 'Bilgi geldikten sonraki P(A | B).'),
     ], [
@@ -2161,8 +2161,8 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       },
       {
         soru: 'Toplam olasılık Bayes formülünün neresinde durur?',
-        siklar: ['Paydasında', 'Payında'],
-        dogru: 0,
+        siklar: ['Payında', 'Paydasında'],
+        dogru: 1,
         aciklama: {
           dogru: 'Pay istenen yol, payda o sonuca giden bütün yolların toplamı.',
           yanlis: 'Payda istenen tek yol var. Toplam olasılık paydadır.',

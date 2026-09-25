@@ -133,7 +133,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Konum-zaman grafiğinde yatay doğru sabit hızla giden cismi gösterir.', false, 'Yatay doğru duran cisim; sabit hız eğik doğru.'),
       soru('Birbirine doğru gelen araçların karşılaşma süresi hızların toplamıyla bulunur.', true, 'Aradaki mesafe her saat v₁ + v₂ kadar kapanır.'),
       soru('Konum-zaman grafiğinde doğruların kesişmesi hızların eşit olduğunu gösterir.', false, 'Kesişme konumların eşit olduğu, yani buluşma anıdır.'),
-      sikli('Aralarında 30 km olan 70 ve 40 km/h araçlarda arkadaki kaç saatte yetişir?', ['1', '3/11'], 0, '30 / (70 − 40).'),
+      sikli('Aralarında 30 km olan 70 ve 40 km/h araçlarda arkadaki kaç saatte yetişir?', ['3/11', '1'], 1, '30 / (70 − 40).'),
       sikli('240 km uzaktaki iki araç 50 ve 70 km/h ile karşılıklı gelirse?', ['2 saatte', '12 saatte'], 0, '240 / 120.'),
     ], [
       {
@@ -148,8 +148,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       },
       {
         soru: 'Aynı yöne giden araçlarda yetişme süresi hangi hızla bulunur?',
-        siklar: ['Hızların farkı', 'Hızların toplamı'],
-        dogru: 0,
+        siklar: ['Hızların toplamı', 'Hızların farkı'],
+        dogru: 1,
         aciklama: {
           dogru: 'Arkadaki her saat öndekinden v₁ − v₂ kadar fazla yol alır.',
           yanlis: 'Toplam karşılıklı hareket için. Aynı yönde aradaki fark hız farkıyla kapanır.',
@@ -280,7 +280,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Tepe noktasına çıkış süresi v₀ / g\'dir.', true, 'Hız sıfırlanana kadar geçen süre.'),
       soru('Limit hıza ulaşan cismin ivmesi sıfırdır.', true, 'Hava direnci ağırlığı dengeler.'),
       soru('Hız-zaman grafiğinin altındaki alan ivmeyi verir.', false, 'Alan yer değiştirmeyi, eğim ivmeyi verir.'),
-      sikli('Durgun başlayıp 5 s\'de 20 m/s\'ye çıkan cisim kaç m gider?', ['50', '100'], 0, '½ · 5 · 20.'),
+      sikli('Durgun başlayıp 5 s\'de 20 m/s\'ye çıkan cisim kaç m gider?', ['100', '50'], 1, '½ · 5 · 20.'),
     ], [
       {
         soru: 'İvme ile hız zıt yöndeyse cisim ne yapar?',
@@ -378,7 +378,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('1 kWh 3,6 · 10⁶ J\'dür.', true, '1000 W · 3600 s.'),
       soru('Eğik düzlem sürtünmesizse yapılan işi azaltır.', false, 'Kuvvet azalır, yol uzar; iş aynı kalır.'),
       sikli('1500 W\'lık fırın 2 saatte kaç kWh harcar?', ['3', '750'], 0, '1,5 kW · 2 h.'),
-      sikli('50 kg\'lık kişi 4 m\'ye 8 s\'de çıkarsa gücü?', ['250 W', '2000 W'], 0, '50·10·4 / 8.'),
+      sikli('50 kg\'lık kişi 4 m\'ye 8 s\'de çıkarsa gücü?', ['2000 W', '250 W'], 1, '50·10·4 / 8.'),
     ], [
       {
         soru: 'Çantayı sabit hızla yatay yolda taşıyan kişi çantaya iş yapar mı?',
@@ -571,7 +571,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Sürtünmesiz düşüşte yolun yarısında Ep ile Ek eşittir.', true, 'Toplam enerji ikiye bölünür.'),
       soru('Kütlesi büyük cisim aynı yükseklikten düşünce yere daha hızlı çarpar.', false, 'v = √(2gh); kütleye bağlı değil.'),
       soru('Sıkıştırılmış yay enerjiyi esneklik potansiyel enerjisi olarak saklar.', true, '½·k·x².'),
-      sikli('20 m\'den sürtünmesiz düşen cismin yere çarpma hızı?', ['20 m/s', '400 m/s'], 0, '√(2·10·20) = 20.'),
+      sikli('20 m\'den sürtünmesiz düşen cismin yere çarpma hızı?', ['400 m/s', '20 m/s'], 1, '√(2·10·20) = 20.'),
     ], [
       {
         soru: 'Aynı yükseklikteki dik ve yatık sürtünmesiz kaydıraklardan kayanların son hızı?',
@@ -585,8 +585,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       },
       {
         soru: '45 m yükseklikten düşen cisim yere hangi hızla çarpar (g = 10)?',
-        siklar: ['30 m/s', '45 m/s'],
-        dogru: 0,
+        siklar: ['45 m/s', '30 m/s'],
+        dogru: 1,
         aciklama: {
           dogru: 'v = √(2 · 10 · 45) = √900 = 30.',
           yanlis: 'Hız yüksekliğe eşit değil. v = √(2gh) = 30 m/s.',
@@ -672,7 +672,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Jeotermal enerji rüzgârdan elde edilir.', false, 'Yer altındaki sıcak su ve buhardan elde edilir.'),
       soru('Biyogaz hayvan atıklarından üretilebilir.', true, 'Çürüme sırasında metan açığa çıkar.'),
       sikli('Türkiye\'de jeotermal enerjide öne çıkan yöre?', ['Denizli-Aydın', 'Rize-Artvin'], 0, 'Batı Anadolu fay hatları üzerinde.'),
-      sikli('Güneş enerjisinin en büyük sorunu?', ['Sürekli olmaması', 'Tükenmesi'], 0, 'Gece ve bulutlu havada üretim düşer.'),
+      sikli('Güneş enerjisinin en büyük sorunu?', ['Tükenmesi', 'Sürekli olmaması'], 1, 'Gece ve bulutlu havada üretim düşer.'),
     ], [
       {
         soru: 'Aşağıdakilerden hangisi yenilenebilir enerji kaynağıdır?',
@@ -779,8 +779,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       },
       {
         soru: '1000 W\'lık ütü 3 saatte kaç kWh harcar?',
-        siklar: ['3', '3000'],
-        dogru: 0,
+        siklar: ['3000', '3'],
+        dogru: 1,
         aciklama: {
           dogru: '1 kW · 3 h = 3 kWh.',
           yanlis: '3000 Wh = 3 kWh; birim kilovatsaat.',
@@ -847,7 +847,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Potansiyel farkı ortadan kalkarsa akım durur.', true, 'Elektronları iten şey fark.'),
       soru('Tuzlu suda akımı iyonlar taşır.', true, 'Pozitif ve negatif iyonlar zıt yönlere hareket eder.'),
       soru('Silisyum iyi bir yalıtkandır.', false, 'Yarı iletkendir; elektronik devrelerin temel malzemesi.'),
-      sikli('10 s\'de 5 C yük geçen iletkendeki akım?', ['0,5 A', '50 A'], 0, 'I = q / t.'),
+      sikli('10 s\'de 5 C yük geçen iletkendeki akım?', ['50 A', '0,5 A'], 1, 'I = q / t.'),
       sikli('250 mA kaç amperdir?', ['0,25 A', '2,5 A'], 0, '1 mA = 0,001 A.'),
     ], [
       {
@@ -956,7 +956,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Telin kesit alanı artınca direnci azalır.', true, 'R = ρL/A.'),
       soru('Tel çekilip boyu iki katına çıkarılırsa direnci iki katına çıkar.', false, 'Kesit de yarıya iner: 4 kat.'),
       soru('Süper iletkenin direnci belli bir sıcaklığın altında sıfırdır.', true, 'Çok düşük sıcaklıklarda.'),
-      sikli('Aynı maddeden, boyu yarı kesiti yarı tel?', ['Direnç aynı', 'Direnç 4 katı'], 0, 'L/2 ÷ A/2 = L/A.'),
+      sikli('Aynı maddeden, boyu yarı kesiti yarı tel?', ['Direnç 4 katı', 'Direnç aynı'], 1, 'L/2 ÷ A/2 = L/A.'),
     ], [
       {
         soru: 'Telin uzunluğu iki katına çıkarsa direnci ne olur?',
@@ -970,8 +970,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       },
       {
         soru: 'Boyu 3 katına çıkan telin (kesit aynı) direnci?',
-        siklar: ['3 katına çıkar', '9 katına çıkar'],
-        dogru: 0,
+        siklar: ['9 katına çıkar', '3 katına çıkar'],
+        dogru: 1,
         aciklama: {
           dogru: 'Kesit aynıysa direnç uzunlukla doğru orantılı: 3 kat.',
           yanlis: '9 kat, çekilip uzatılınca olur (kesit de küçülür). Kesit sabitse 3 kat.',
@@ -1147,7 +1147,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Paralel bağlı özdeş piller devreye daha uzun süre akım verir.', true, 'Yük piller arasında paylaşılır.'),
       soru('Seri bağlı üç özdeş pilin ömrü tek pilin üç katıdır.', false, 'Seride gerilim artar, ömür aynı kalır.'),
       soru('Akım çekilmeyen pilin uç gerilimi emk\'ya eşittir.', true, 'I = 0 iken V = ε.'),
-      sikli('emk 12 V, iç direnç 1 Ω, akım 2 A ise uç gerilimi?', ['10 V', '14 V'], 0, 'V = 12 − 2 · 1.'),
+      sikli('emk 12 V, iç direnç 1 Ω, akım 2 A ise uç gerilimi?', ['14 V', '10 V'], 1, 'V = 12 − 2 · 1.'),
     ], [
       {
         soru: '1,5 V\'luk iki pil seri bağlanırsa toplam gerilim?',
@@ -1161,8 +1161,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       },
       {
         soru: 'İki 1,5 V\'luk pil seri bağlanır ama biri ters takılırsa toplam gerilim?',
-        siklar: ['0 V', '3 V'],
-        dogru: 0,
+        siklar: ['3 V', '0 V'],
+        dogru: 1,
         aciklama: {
           dogru: 'Ters bağlı pillerin gerilimleri birbirini götürür.',
           yanlis: '3 V ikisi de doğru yönde olsaydı. Ters takılınca 1,5 − 1,5 = 0.',
@@ -1307,7 +1307,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Akaryakıt tankerinin zinciri statik yükü toprağa aktarır.', true, 'Kıvılcım ve yangın önlenir.'),
       soru('Yıldırımda tek ağacın altı güvenli sığınaktır.', false, 'Yüksek nokta yıldırımı çeker.'),
       soru('Araç içi yıldırımda görece güvenlidir.', true, 'Metal gövde yükü dışından geçirir.'),
-      sikli('Topraklama levhası genellikle hangi metaldendir?', ['Bakır', 'Kurşun'], 0, 'İyi iletken ve paslanmaya dayanıklı.'),
+      sikli('Topraklama levhası genellikle hangi metaldendir?', ['Kurşun', 'Bakır'], 1, 'İyi iletken ve paslanmaya dayanıklı.'),
       sikli('Gövdeye kaçan akımı algılayıp devreyi kesen?', ['Kaçak akım rölesi', 'Voltmetre'], 0, 'Voltmetre gerilim ölçer.'),
     ], [
       {
@@ -1402,7 +1402,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Basit sarkacın periyodu ipin boyuna bağlıdır.', true, 'T = 2π√(L/g).'),
       soru('Yay sarkacının periyodu çekim ivmesine bağlıdır.', false, 'T = 2π√(m/k); g yok.'),
       soru('Ay\'da basit sarkaç Dünya\'dakinden yavaş salınır.', true, 'g küçük, periyot büyük.'),
-      sikli('İp boyu 9 katına çıkarsa periyot?', ['3 katına', '9 katına'], 0, 'Karekökle orantılı.'),
+      sikli('İp boyu 9 katına çıkarsa periyot?', ['9 katına', '3 katına'], 1, 'Karekökle orantılı.'),
     ], [
       {
         soru: 'Basit sarkacın periyodu hangisine bağlıdır?',
@@ -1416,8 +1416,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       },
       {
         soru: 'Yay sarkacında kütle 4 katına çıkarsa periyot?',
-        siklar: ['2 katına çıkar', '4 katına çıkar'],
-        dogru: 0,
+        siklar: ['4 katına çıkar', '2 katına çıkar'],
+        dogru: 1,
         aciklama: {
           dogru: 'T ∝ √m: √4 = 2 kat.',
           yanlis: 'Periyot kütleyle değil karekökle orantılı: 2 kat.',
@@ -1646,7 +1646,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Röntgende X ışını kullanılır.', true, 'Yumuşak dokudan geçer, kemikte tutulur.'),
       soru('Sesin şiddetini frekansı belirler.', false, 'Şiddeti genlik, perdeyi frekans belirler.'),
       soru('Yarasalar ultrases kullanır.', true, '20.000 Hz üstü.'),
-      sikli('Kumanda hangi dalgayla çalışır?', ['Kızılötesi', 'Gama'], 0, 'Gama kanser tedavisinde.'),
+      sikli('Kumanda hangi dalgayla çalışır?', ['Gama', 'Kızılötesi'], 1, 'Gama kanser tedavisinde.'),
     ], [
       {
         soru: 'Ses dalgası hangi türdendir?',
@@ -1660,8 +1660,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       },
       {
         soru: 'İnsan kulağının duyamadığı 30.000 Hz\'lik ses?',
-        siklar: ['Ses üstü', 'Ses altı'],
-        dogru: 0,
+        siklar: ['Ses altı', 'Ses üstü'],
+        dogru: 1,
         aciklama: {
           dogru: '20.000 Hz üstü ultrasestir.',
           yanlis: 'Ses altı 20 Hz\'in altıdır. 30.000 Hz ses üstü.',
@@ -1745,7 +1745,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Işık camda boşluktakinden hızlı gider.', false, 'Boşlukta en hızlıdır.'),
       soru('Kaynağın frekansını artırmak dalganın hızını artırır.', false, 'Hızı ortam belirler.'),
       sikli('Şimşekten 6 s sonra gök gürlerse uzaklık?', ['≈ 2 km', '≈ 6 km'], 0, '340 · 6 ≈ 2040 m.'),
-      sikli('İpteki dalga hangisinde daha hızlıdır?', ['Daha gergin ipte', 'Daha gevşek ipte'], 0, 'Gerginlik hızı artırır.'),
+      sikli('İpteki dalga hangisinde daha hızlıdır?', ['Daha gevşek ipte', 'Daha gergin ipte'], 1, 'Gerginlik hızı artırır.'),
       soru('Ses boşlukta yayılamaz.', true, 'Mekanik dalga, ortam ister.'),
     ], [
       {
@@ -1869,7 +1869,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('İçbükey engel doğrusal dalgayı dağıtır.', false, 'İçbükey toplar; dışbükey dağıtır.'),
       soru('Kırınım dar aralıklarda belirgindir.', true, 'Aralık dalga boyuna yakınsa.'),
       sikli('Tepe ile çukur üst üste gelirse?', ['Söner', 'Güçlenir'], 0, 'Yıkıcı girişim.'),
-      sikli('Dalga leğeninde tepeler nasıl görünür?', ['Aydınlık', 'Karanlık'], 0, 'Mercek gibi ışığı toplar.'),
+      sikli('Dalga leğeninde tepeler nasıl görünür?', ['Karanlık', 'Aydınlık'], 1, 'Mercek gibi ışığı toplar.'),
       soru('Düz engelde gelme açısı yansıma açısına eşittir.', true, 'Yansıma yasası.'),
     ], [
       {
@@ -1884,8 +1884,8 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       },
       {
         soru: 'Sığ bölgeye giren dalganın frekansı?',
-        siklar: ['Değişmez', 'Artar'],
-        dogru: 0,
+        siklar: ['Artar', 'Değişmez'],
+        dogru: 1,
         aciklama: {
           dogru: 'Frekansı kaynak belirler; hız ve dalga boyu değişir.',
           yanlis: 'Frekans kaynakta belirlenir ve kırılmada değişmez; değişen hız ve dalga boyu.',
@@ -1966,7 +1966,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('S dalgası sıvılardan geçebilir.', false, 'Enine dalga sıvıdan geçmez.'),
       soru('Depremin merkez üssü en az üç istasyonun verisiyle bulunur.', true, 'Üç uzaklık çemberi kesişir.'),
       sikli('Kuzey Anadolu Fayı hangi bölgeden başlar?', ['Marmara', 'Ege'], 0, 'Marmara\'dan doğuya uzanır.'),
-      sikli('Sarsıntı anında önerilen hareket?', ['Çök, kapan, tutun', 'Merdivene koş'], 0, 'Merdiven ve asansör tehlikelidir.'),
+      sikli('Sarsıntı anında önerilen hareket?', ['Merdivene koş', 'Çök, kapan, tutun'], 1, 'Merdiven ve asansör tehlikelidir.'),
     ], [
       {
         soru: 'Rezonans ne zaman olur?',

@@ -77,7 +77,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Sirke ile karbonat karışınca çıkan gaz karbon dioksittir.', true, 'Asit karbonatla tepkimeye girer.'),
       soru('Ampulün ışık vermesi kimyasal değişimdir.', false, 'Tel değişmeden ışır; fiziksel.'),
       soru('İki berrak çözeltinin karışınca bulanıklaşması çökelek oluştuğunu gösterebilir.', true, 'Çözünmeyen katı oluşmuş.'),
-      sikli('AgNO₃ ile NaCl karışınca oluşan beyaz katı?', ['AgCl', 'NaNO₃'], 0, 'NaNO₃ suda çözünür.'),
+      sikli('AgNO₃ ile NaCl karışınca oluşan beyaz katı?', ['NaNO₃', 'AgCl'], 1, 'NaNO₃ suda çözünür.'),
       sikli('Hangisi kimyasal değişim belirtisi olabilir?', ['Renk değişimi', 'Şekil değişimi'], 0, 'Şekil değişimi fizikseldir.'),
     ], [
       {
@@ -192,7 +192,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Fotosentez endotermik bir tepkimedir.', true, 'Güneş enerjisi alınır.'),
       soru('Her çarpışma tepkimeyle sonuçlanır.', false, 'Yeterli enerji ve uygun yönelim gerekir.'),
       soru('Ekzotermik tepkimede ürünlerin enerjisi girenlerinkinden düşüktür.', true, 'Fark ısı olarak açığa çıkar.'),
-      sikli('Hangisi ekzotermiktir?', ['Solunum', 'Suyun elektrolizi'], 0, 'Elektroliz enerji ister.'),
+      sikli('Hangisi ekzotermiktir?', ['Suyun elektrolizi', 'Solunum'], 1, 'Elektroliz enerji ister.'),
     ], [
       {
         soru: 'Tepkime sırasında ortam soğuyorsa tepkime nasıldır?',
@@ -206,8 +206,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       },
       {
         soru: 'Etkin çarpışma için yeterli enerjinin yanında ne gerekir?',
-        siklar: ['Uygun yönelim', 'Yüksek basınç'],
-        dogru: 0,
+        siklar: ['Yüksek basınç', 'Uygun yönelim'],
+        dogru: 1,
         aciklama: {
           dogru: 'Tanecikler doğru yüzleriyle çarpışmalıdır.',
           yanlis: 'Basınç çarpışma sayısını artırır ama şart değildir. Etkin çarpışma uygun yönelim ister.',
@@ -384,7 +384,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       sikli('Mol kavramına neden ihtiyaç duyulur?', ['Atomlar görünmediği için', 'Atomlar tek tek tartılamadığı için'], 1, 'Mol, tartılan gramı tanecik sayısına çeviren köprü.'),
       soru('1 mol demir ile 1 mol su aynı sayıda tanecik içerir.', true, 'Mol bir sayıdır.'),
       soru('1 mol CH₄ molekülünde 5 mol atom vardır.', true, '1 C + 4 H.'),
-      sikli('2 mol NH₃ kaç mol H atomu içerir?', ['6', '3'], 0, 'Her molekülde 3 H.'),
+      sikli('2 mol NH₃ kaç mol H atomu içerir?', ['3', '6'], 1, 'Her molekülde 3 H.'),
     ], [
       {
         soru: 'Normal şartlarda 1 mol ideal gaz kaç litre yer kaplar?',
@@ -478,7 +478,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('İyonlu denklemde yük toplamları iki tarafta eşit olmalıdır.', true, 'Yük de korunur.'),
       soru('C₃H₈\'in tam yanmasında O₂\'nin katsayısı 5\'tir.', true, '6 + 4 = 10 O atomu.'),
       sikli('4Fe + 3O₂ → 2Fe₂O₃ denkleminde katsayılar toplamı?', ['9', '7'], 0, '4 + 3 + 2.'),
-      sikli('Yanma denkleminde hangi element en son denkleştirilir?', ['O', 'C'], 0, 'O hem CO₂\'de hem H₂O\'da.'),
+      sikli('Yanma denkleminde hangi element en son denkleştirilir?', ['C', 'O'], 1, 'O hem CO₂\'de hem H₂O\'da.'),
     ], [
       {
         soru: 'Denklem denkleştirilirken hangisine dokunulmaz?',
@@ -492,8 +492,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       },
       {
         soru: 'CH₄ + O₂ → CO₂ + H₂O denkleminde O₂\'nin katsayısı?',
-        siklar: ['2', '1'],
-        dogru: 0,
+        siklar: ['1', '2'],
+        dogru: 1,
         aciklama: {
           dogru: 'CH₄ + 2O₂ → CO₂ + 2H₂O: sağda 2 + 2 = 4 O.',
           yanlis: '1 ile sağdaki 4 O atomu dengelenmez. Katsayı 2.',
@@ -570,7 +570,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Ürün miktarı sınırlayıcı bileşene göre hesaplanır.', true, 'Önce biten madde tepkimeyi durdurur.'),
       soru('%50 saflıktaki 20 g numunede 20 g madde tepkimeye girer.', false, 'Yalnız saf kısım: 10 g.'),
       sikli('2H₂ + O₂ → 2H₂O. 8 g H₂ ile kaç mol su oluşur?', ['4', '8'], 0, '8 g H₂ = 4 mol; oran 1:1.'),
-      sikli('N₂ + 3H₂ → 2NH₃. 2 mol N₂ ve 3 mol H₂ varsa sınırlayıcı?', ['H₂', 'N₂'], 0, '2 mol N₂ için 6 mol H₂ gerekir.'),
+      sikli('N₂ + 3H₂ → 2NH₃. 2 mol N₂ ve 3 mol H₂ varsa sınırlayıcı?', ['N₂', 'H₂'], 1, '2 mol N₂ için 6 mol H₂ gerekir.'),
     ], [
       {
         soru: 'Sınırlayıcı bileşen nedir?',
@@ -648,7 +648,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('1 atm 76 mmHg\'dir.', false, '76 cmHg = 760 mmHg.'),
       soru('Gazlar her oranda homojen karışır.', true, 'Tanecikler arası boşluk büyük.'),
       sikli('Havanın yüzde kaçı azottur?', ['%78', '%21'], 0, '%21 oksijen.'),
-      sikli('Gaz büyük bir kaba aktarılırsa basıncı?', ['Düşer', 'Artar'], 0, 'Çarpışma sıklığı azalır.'),
+      sikli('Gaz büyük bir kaba aktarılırsa basıncı?', ['Artar', 'Düşer'], 1, 'Çarpışma sıklığı azalır.'),
     ], [
       {
         soru: 'Gazın basıncı nereden gelir?',
@@ -785,7 +785,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Charles hesabında sıcaklık °C olarak kullanılabilir.', false, 'Kelvin kullanılır.'),
       soru('Yazın araç lastiğinin basıncının artması Gay-Lussac yasasıyla açıklanır.', true, 'Hacim sabit, sıcaklık artıyor.'),
       sikli('2 atm\'de 6 L gaz, sabit sıcaklıkta 3 atm\'ye çıkarsa hacmi?', ['4 L', '9 L'], 0, '2 · 6 = 3 · V.'),
-      sikli('Buzdolabındaki balonun büzülmesi hangi yasa?', ['Charles', 'Boyle'], 0, 'Sabit basınçta sıcaklık düşünce hacim azalır.'),
+      sikli('Buzdolabındaki balonun büzülmesi hangi yasa?', ['Boyle', 'Charles'], 1, 'Sabit basınçta sıcaklık düşünce hacim azalır.'),
     ], [
       {
         soru: 'Sabit sıcaklıkta gazın hacmi yarıya inerse basıncı?',
@@ -799,8 +799,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       },
       {
         soru: 'Sabit basınçta 200 K\'de 3 L gaz 400 K\'e ısıtılırsa hacmi?',
-        siklar: ['6 L', '1,5 L'],
-        dogru: 0,
+        siklar: ['1,5 L', '6 L'],
+        dogru: 1,
         aciklama: {
           dogru: 'V/T sabit: sıcaklık iki katı, hacim iki katı.',
           yanlis: 'Isınan gaz genleşir; hacim küçülmez. V₂ = 6 L.',
@@ -934,7 +934,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Aynı sıcaklıkta H₂ ve O₂\'nin ortalama kinetik enerjisi eşittir.', true, 'Kinetik enerji yalnız sıcaklığa bağlı.'),
       soru('NH₃-HCl deneyinde beyaz halka NH₃ ucuna yakın oluşur.', false, 'NH₃ hızlıdır, halka HCl\'ye yakın.'),
       soru('Sıcaklık artınca difüzyon hızlanır.', true, 'Moleküller hızlanır.'),
-      sikli('He (4) ile CH₄ (16) karşılaştırılırsa He kaç kat hızlıdır?', ['2', '4'], 0, '√(16/4).'),
+      sikli('He (4) ile CH₄ (16) karşılaştırılırsa He kaç kat hızlıdır?', ['4', '2'], 1, '√(16/4).'),
       sikli('O₂\'den 2 kat yavaş gazın molar kütlesi?', ['128', '64'], 0, 'Hız oranı karekök: M = 32 · 4.'),
       soru('Helyum balonu hava balonundan daha geç söner.', false, 'He hafif, gözeneklerden hızlı kaçar.'),
     ], [
@@ -1023,7 +1023,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('NH₄NO₃ suda çözününce çözelti soğur.', true, 'Endotermik çözünme.'),
       soru('Karıştırmak maddenin çözünürlüğünü artırır.', false, 'Çözünme hızını artırır, çözünürlüğü değiştirmez.'),
       soru('Pirinç bir katı-katı çözeltidir.', true, 'Bakır ve çinko alaşımı.'),
-      sikli('Suyun çözünen tanecikleri sarması?', ['Hidratasyon', 'Kristallenme'], 0, 'Kristallenme çözeltiden katı ayrılması.'),
+      sikli('Suyun çözünen tanecikleri sarması?', ['Kristallenme', 'Hidratasyon'], 1, 'Kristallenme çözeltiden katı ayrılması.'),
       sikli('Anlık soğuk kompreste hangi tür çözünme var?', ['Endotermik', 'Ekzotermik'], 0, 'Isı alan çözünme.'),
     ], [
       {
@@ -1101,7 +1101,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Etanol suda her oranda çözünür.', true, 'Hidrojen bağı kurar.'),
       soru('İyot suda çok iyi çözünür.', false, 'İyot apolar; CCl₄ gibi apolar çözücüde çözünür.'),
       soru('Mayonez bir emülsiyondur.', true, 'Yağ damlacıkları suda dağılmış.'),
-      sikli('Yağ lekesi hangi çözücüyle çıkar?', ['Apolar çözücü', 'Su'], 0, 'Benzer benzeri çözer.'),
+      sikli('Yağ lekesi hangi çözücüyle çıkar?', ['Su', 'Apolar çözücü'], 1, 'Benzer benzeri çözer.'),
       sikli('Su ile benzin karıştırılınca?', ['İki katman oluşur', 'Homojen olur'], 0, 'Polar ile apolar karışmaz.'),
     ], [
       {
@@ -1178,7 +1178,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Şeker suda iyonlarına ayrılır.', false, 'Molekül olarak dağılır.'),
       soru('HCl suda iyonlaştığı için çözeltisi elektriği iletir.', true, 'H⁺ ve Cl⁻ oluşur.'),
       soru('Sinir iletimi vücuttaki iyonlara bağlıdır.', true, 'Na⁺ ve K⁺ özellikle.'),
-      sikli('Şekerli suya bağlı ampul?', ['Yanmaz', 'Parlak yanar'], 0, 'İyon yok.'),
+      sikli('Şekerli suya bağlı ampul?', ['Parlak yanar', 'Yanmaz'], 1, 'İyon yok.'),
       sikli('Asetik asit çözeltisinde ampul?', ['Sönük yanar', 'Parlak yanar'], 0, 'Zayıf elektrolit.'),
     ], [
       {
@@ -1299,7 +1299,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Çözünürlük verilirken sıcaklık belirtilir.', true, 'Sıcaklık değişince çözünürlük değişir.'),
       soru('Toz şekerin çözünürlüğü küp şekerinkinden büyüktür.', false, 'Hız farklı, çözünürlük aynı.'),
       soru('Çözücüyü buharlaştırmak doymamış çözeltiyi doymuş yapabilir.', true, 'Çözücü azalır.'),
-      sikli('Çözünürlük 40 g/100 g su ise 25 g suda en çok?', ['10 g', '40 g'], 0, '40 · 25/100.'),
+      sikli('Çözünürlük 40 g/100 g su ise 25 g suda en çok?', ['40 g', '10 g'], 1, '40 · 25/100.'),
       sikli('Toz hâline getirmek neyi artırır?', ['Çözünme hızını', 'Çözünürlüğü'], 0, 'Yüzey alanı artar.'),
     ], [
       {
@@ -1314,8 +1314,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       },
       {
         soru: 'Çözünürlük 30 g/100 g su. 200 g suya 70 g katı eklenirse dipte kalan?',
-        siklar: ['10 g', '40 g'],
-        dogru: 0,
+        siklar: ['40 g', '10 g'],
+        dogru: 1,
         aciklama: {
           dogru: '200 g suda en çok 60 g çözünür; 70 − 60 = 10 g kalır.',
           yanlis: '100 g su için değil 200 g su için hesapla: 60 g çözünür, 10 g kalır.',
@@ -1386,7 +1386,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Gazozun kapağı açılınca CO₂ kabarcıklanır çünkü basınç düşer.', true, 'Henry yasası.'),
       soru('Sıcak suda oksijen daha çok çözünür.', false, 'Gazların çözünürlüğü sıcaklıkla azalır.'),
       soru('Vurgun, kanda çözünen azotun kabarcık oluşturmasıdır.', true, 'Hızlı yükselişte basınç düşer.'),
-      sikli('Termal kirlilik balıkları nasıl etkiler?', ['Oksijen azalır', 'Tuz artar'], 0, 'Sıcak suda O₂ az çözünür.'),
+      sikli('Termal kirlilik balıkları nasıl etkiler?', ['Tuz artar', 'Oksijen azalır'], 1, 'Sıcak suda O₂ az çözünür.'),
       sikli('Gazın sıvıdaki çözünürlüğü basınçla?', ['Artar', 'Azalır'], 0, 'Kısmi basınçla doğru orantılı.'),
     ], [
       {
@@ -1463,7 +1463,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Ayran bir süspansiyondur.', true, 'Katı tanecikler zamanla dibe çöker.'),
       soru('Doymuş çözelti her zaman derişiktir.', false, 'Çözünürlüğü düşük maddenin doymuş çözeltisi seyreltik olabilir.'),
       soru('Sisli havada far ışığının görünmesi Tyndall etkisidir.', true, 'Kolloit tanecikleri ışığı saçar.'),
-      sikli('Süt hangi karışımdır?', ['Emülsiyon', 'Çözelti'], 0, 'Yağ damlacıkları suda dağılmış.'),
+      sikli('Süt hangi karışımdır?', ['Çözelti', 'Emülsiyon'], 1, 'Yağ damlacıkları suda dağılmış.'),
       sikli('Sıcak pedin ısınmasının sebebi?', ['Aşırı doymuş çözeltinin kristallenmesi', 'Yanma'], 0, 'Kristallenme ısı verir.'),
     ], [
       {
@@ -1544,7 +1544,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('İki çözelti karışınca toplam mol ve toplam hacim toplanır.', true, 'Yeni derişim bölüm.'),
       soru('0,2 M Na₂SO₄ çözeltisinde [Na⁺] 0,4 M\'dir.', true, 'Her formülde iki Na⁺.'),
       soru('%70\'lik kolonyanın 100 mL\'sinde 30 mL etanol vardır.', false, '70 mL etanol, 30 mL su.'),
-      sikli('1 L suda 5 mg kurşun kaç ppm\'dir?', ['5', '0,005'], 0, '1 mg/L ≈ 1 ppm.'),
+      sikli('1 L suda 5 mg kurşun kaç ppm\'dir?', ['0,005', '5'], 1, '1 mg/L ≈ 1 ppm.'),
       sikli('0,3 M AlCl₃ çözeltisinde [Cl⁻]?', ['0,9 M', '0,3 M'], 0, 'Formülde üç Cl.'),
     ], [
       {
@@ -1634,7 +1634,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Koligatif özellikler çözünen taneciklerin sayısına bağlıdır.', true, 'Cinsine değil.'),
       soru('Eşit derişimde şeker ve NaCl donma noktasını eşit düşürür.', false, 'NaCl iki tanecik verir; iki kat etki.'),
       soru('Antifriz hem donma hem kaynama noktasını değiştirir.', true, 'Donmayı düşürür, kaynamayı yükseltir.'),
-      sikli('Deniz suyundan içme suyu elde eden yöntem?', ['Ters osmoz', 'Süzme'], 0, 'Tuz süzgeçten geçer.'),
+      sikli('Deniz suyundan içme suyu elde eden yöntem?', ['Süzme', 'Ters osmoz'], 1, 'Tuz süzgeçten geçer.'),
       sikli('Eşit derişimde hangisi donma noktasını daha çok düşürür?', ['CaCl₂', 'NaCl'], 0, '3 tanecik.'),
       soru('Deniz suyu arı sudan daha düşük sıcaklıkta kaynar.', false, 'Çözünen tanecikler kaynama noktasını yükseltir.'),
     ], [
@@ -1650,8 +1650,8 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       },
       {
         soru: 'Buzlu yollara tuz dökülmesinin sebebi?',
-        siklar: ['Donma noktasını düşürmek', 'Buzu ısıtmak'],
-        dogru: 0,
+        siklar: ['Buzu ısıtmak', 'Donma noktasını düşürmek'],
+        dogru: 1,
         aciklama: {
           dogru: 'Tuzlu su daha düşük sıcaklıkta donar; buz erir.',
           yanlis: 'Tuz ısı vermez. Suyun donma noktasını düşürdüğü için buz erir.',
@@ -1715,7 +1715,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Mikro ölçekli deneyler atığı azaltır.', true, 'Kullanılan madde azdır.'),
       soru('Mikro ölçekte ölçüm hatası önemsizleşir.', false, 'Küçük miktarda hata oransal olarak büyür.'),
       soru('Kuyucuklu plakada birçok deneme yan yana yapılabilir.', true, 'Karşılaştırma kolaylaşır.'),
-      sikli('Mikro deneyde çözeltiler nasıl verilir?', ['Damla ile', 'Litre ile'], 0, 'Damlatma şişeleriyle.'),
+      sikli('Mikro deneyde çözeltiler nasıl verilir?', ['Litre ile', 'Damla ile'], 1, 'Damlatma şişeleriyle.'),
       sikli('Mikro ölçek yeşil kimyanın hangi ilkesine hizmet eder?', ['Atığı önleme', 'Yakma'], 0, 'Atık kaynağında azalır.'),
     ], [
       {
@@ -1809,7 +1809,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       soru('Metan bir sera gazıdır.', true, 'CO₂\'den daha güçlü ısı tutar.'),
       soru('Montreal Protokolü karbon dioksit salımını sınırlamak için imzalandı.', false, 'CFC\'leri sınırlamak için; ozon tabakasını korumak.'),
       soru('Asit yağmurları mermer yapıtları aşındırır.', true, 'Asit karbonatla tepkimeye girer.'),
-      sikli('Asit yağmurunda kükürtün kaynağı?', ['Kömür yakılması', 'Pirinç tarlası'], 0, 'Kömürdeki kükürt SO₂ olur.'),
+      sikli('Asit yağmurunda kükürtün kaynağı?', ['Pirinç tarlası', 'Kömür yakılması'], 1, 'Kömürdeki kükürt SO₂ olur.'),
       sikli('Paris Anlaşması\'nın hedefi?', ['Isınmayı 2 °C altında tutmak', 'CFC üretimini durdurmak'], 0, 'CFC Montreal\'in konusu.'),
       soru('Fotokimyasal sis güneşsiz, soğuk havada oluşur.', false, 'Güneş ışığı tepkimeyi başlatır.'),
     ], [

@@ -67,7 +67,7 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Bir olayın genellikle birden çok sebebi vardır.', true, 'Uzun ve kısa vadeli sebepler birlikte çalışır.'),
       soru('Tarih bilgisi kültürel mirasın korunmasıyla ilgisizdir.', false, 'Mirasın değerini tarih bilgisi anlatır.'),
       soru('Olayı tetikleyen kıvılcım kısa vadeli sebeptir.', true, 'Uzun vadeli sebepler zemini hazırlar.'),
-      sikli('Olayın geçtiği yerin etkisini hangi bilim açıklar?', ['Coğrafya', 'Kimya'], 0, 'Tarih coğrafyayla iç içedir.'),
+      sikli('Olayın geçtiği yerin etkisini hangi bilim açıklar?', ['Kimya', 'Coğrafya'], 1, 'Tarih coğrafyayla iç içedir.'),
       sikli('"Hep böyleydi" iddiasını sınamak için?', ['Geçmişe bakmak', 'Yalnız bugüne bakmak'], 0, 'Tarih bilgisi iddiayı sınar.'),
     ], [
       {
@@ -154,7 +154,7 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('1453 yılı 15. yüzyıldadır.', true, 'İlk iki basamak 14, bir eklenir.'),
       soru('Orta Çağ Fransız İhtilali ile başlar.', false, '375 Kavimler Göçü ile başlar; İhtilal Yakın Çağ\'ı başlatır.'),
       soru('Tarım ve yerleşik hayat Cilalı Taş Çağı\'nda başladı.', true, 'Neolitik dönem.'),
-      sikli('Celali Takvimi hangi devlette hazırlandı?', ['Büyük Selçuklu', 'Osmanlı'], 0, 'Melikşah döneminde.'),
+      sikli('Celali Takvimi hangi devlette hazırlandı?', ['Osmanlı', 'Büyük Selçuklu'], 1, 'Melikşah döneminde.'),
       sikli('1800 yılı hangi yüzyıldadır?', ['18.', '19.'], 0, 'Tam yüzlük bir önceki yüzyıla girer.'),
     ], [
       {
@@ -169,8 +169,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       },
       {
         soru: 'Yeni Çağ\'ı başlatan olay?',
-        siklar: ['İstanbul\'un fethi', 'Kavimler Göçü'],
-        dogru: 0,
+        siklar: ['Kavimler Göçü', 'İstanbul\'un fethi'],
+        dogru: 1,
         aciklama: {
           dogru: '1453; Kavimler Göçü Orta Çağ\'ı başlatır.',
           yanlis: 'Kavimler Göçü (375) Orta Çağ\'ın başlangıcı. Yeni Çağ 1453 ile başlar.',
@@ -259,7 +259,7 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Sözlü tarih olayı yaşamış kişilerin tanıklığına dayanır.', true, 'Yakın geçmiş için değerlidir.'),
       soru('Anakronizm, olayı kendi çağının koşullarıyla değerlendirmektir.', false, 'Tersi: başka çağın ölçüleriyle anlatmak.'),
       soru('Osmanlı belgelerinin çoğu Devlet Arşivleri\'nde saklanır.', true, 'Cumhurbaşkanlığı Devlet Arşivleri.'),
-      sikli('Arma ve sancakları inceleyen bilim?', ['Heraldik', 'Filoloji'], 0, 'Filoloji dili ve metinleri inceler.'),
+      sikli('Arma ve sancakları inceleyen bilim?', ['Filoloji', 'Heraldik'], 1, 'Filoloji dili ve metinleri inceler.'),
       sikli('Resmî belgelerin biçimini inceleyen bilim?', ['Diplomatik', 'Etnografya'], 0, 'Etnografya halkların kültürünü inceler.'),
     ], [
       {
@@ -337,7 +337,7 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('İnternette bulunan her tarihî görsel doğrudur.', false, 'Tarih ve yer doğrulanmalı.'),
       soru('Sayısallaştırma belgenin aslını yıpranmaktan korur.', true, 'Araştırmacı görüntüyle çalışır.'),
       soru('Dijital kaynak başka bağımsız kaynaklarla karşılaştırılmalıdır.', true, 'Doğrulamanın yolu.'),
-      sikli('Dijital kaynakta ilk sorulacak soru?', ['Kim yayımlamış?', 'Kaç kişi beğenmiş?'], 0, 'Beğeni doğruluk ölçütü değil.'),
+      sikli('Dijital kaynakta ilk sorulacak soru?', ['Kaç kişi beğenmiş?', 'Kim yayımlamış?'], 1, 'Beğeni doğruluk ölçütü değil.'),
       sikli('Binlerce belgede ad aramayı mümkün kılan?', ['Veri tabanı', 'Kâğıt fihrist'], 0, 'Sayısal arama.'),
     ], [
       {
@@ -439,7 +439,7 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Göbeklitepe tarımdan önce yapılmış bir inanç merkezidir.', true, 'Yaklaşık MÖ 9600.'),
       soru('Çatalhöyük evlerine sokaktan kapıyla girilirdi.', false, 'Damdan merdivenle girilirdi.'),
       soru('Tunç, bakır ile kalayın karışımıdır.', true, 'Bakırdan daha serttir.'),
-      sikli('Çanak çömlek hangi çağda yaygınlaştı?', ['Cilalı Taş', 'Yontma Taş'], 0, 'Yerleşik hayatla birlikte.'),
+      sikli('Çanak çömlek hangi çağda yaygınlaştı?', ['Yontma Taş', 'Cilalı Taş'], 1, 'Yerleşik hayatla birlikte.'),
       sikli('Anadolu\'da demiri yaygınlaştıran?', ['Hititler', 'Sümerler'], 0, 'Sümerler Mezopotamya\'da.'),
     ], [
       {
@@ -454,8 +454,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       },
       {
         soru: 'Göbeklitepe hangi bilgiyi sorgulattı?',
-        siklar: ['Önce tarım sonra tapınak sırasını', 'Yazının icadını'],
-        dogru: 0,
+        siklar: ['Yazının icadını', 'Önce tarım sonra tapınak sırasını'],
+        dogru: 1,
         aciklama: {
           dogru: 'Tapınak tarımdan önce kurulmuş; yerleşmenin inançla başlamış olabileceğini düşündürdü.',
           yanlis: 'Göbeklitepe yazıdan binlerce yıl eskidir. Sorgulattığı, tarım-tapınak sırasıdır.',
@@ -522,7 +522,7 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Hititlerde panku meclisi kralın yetkisini sınırlayabilirdi.', true, 'Soylulardan oluşurdu.'),
       soru('İlk büyük imparatorluğu Sümerler kurdu.', false, 'Akad kralı Sargon kurdu.'),
       soru('Persler ülkeyi satraplıklara ayırarak yönetti.', true, 'Her satraplığa vali atandı.'),
-      sikli('Pers haberleşmesini hızlandıran?', ['Kral Yolu', 'İpek Yolu'], 0, 'Posta teşkilatıyla birlikte.'),
+      sikli('Pers haberleşmesini hızlandıran?', ['İpek Yolu', 'Kral Yolu'], 1, 'Posta teşkilatıyla birlikte.'),
       sikli('Hitit kraliçesinin unvanı?', ['Tavananna', 'Firavun'], 0, 'Firavun Mısır hükümdarı.'),
     ], [
       {
@@ -608,7 +608,7 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Kadeş Antlaşması Hititler ile Mısır arasında yapıldı.', true, 'Bilinen en eski yazılı barış antlaşmalarından.'),
       soru('Hitit hukukunda kısas esastı.', false, 'Hititlerde tazmin ağırlıklıydı; kısas Hammurabi\'de.'),
       soru('Hammurabi yasaları bir dikili taşa kazındı.', true, 'Herkesin görebileceği yere kondu.'),
-      sikli('"Göze göz" anlayışı?', ['Kısas', 'Tazmin'], 0, 'Aynı zararla karşılık.'),
+      sikli('"Göze göz" anlayışı?', ['Tazmin', 'Kısas'], 1, 'Aynı zararla karşılık.'),
       sikli('Mülkiyet ve sözleşme kavramlarını sistemleştiren hukuk?', ['Roma hukuku', 'Sümer hukuku'], 0, 'Modern medeni hukukun temeli.'),
     ], [
       {
@@ -681,7 +681,7 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('İlk madenî parayı Lidyalılar bastı.', true, 'MÖ 7. yüzyıl.'),
       soru('Alfabeyi Sümerler geliştirdi.', false, 'Sümerler çivi yazısını; alfabeyi Fenikeliler.'),
       soru('Dakikanın 60 saniye olması Babil mirasıdır.', true, '60 tabanlı sistem.'),
-      sikli('Yazılıkaya kabartmaları kimindir?', ['Hititler', 'Urartular'], 0, 'Hattuşa yakınında.'),
+      sikli('Yazılıkaya kabartmaları kimindir?', ['Urartular', 'Hititler'], 1, 'Hattuşa yakınında.'),
       sikli('Mısır yazısı?', ['Hiyeroglif', 'Çivi yazısı'], 0, 'Çivi yazısı Sümerlerin.'),
     ], [
       {
@@ -696,8 +696,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       },
       {
         soru: 'İlk madenî parayı basan Anadolu uygarlığı?',
-        siklar: ['Lidya', 'Frigya'],
-        dogru: 0,
+        siklar: ['Frigya', 'Lidya'],
+        dogru: 1,
         aciklama: {
           dogru: 'Lidyalılar MÖ 7. yüzyılda ilk madenî parayı bastı.',
           yanlis: 'Frigler dokumacılıkla tanınır. Para Lidyalıların buluşu.',
@@ -775,7 +775,7 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Onlu sistemi Mete Han kurdu.', true, 'Asya Hun ordusunda.'),
       soru('Kurultayda son söz boy beylerinindir.', false, 'Son söz hükümdarındır.'),
       soru('Türk devletlerinde hatun devlet işlerinde söz sahibiydi.', true, 'Kurultaya katılırdı.'),
-      sikli('Yerleşik hayata geçen ilk Türk devleti?', ['Uygurlar', 'Asya Hunları'], 0, 'Tarım ve şehir hayatına geçtiler.'),
+      sikli('Yerleşik hayata geçen ilk Türk devleti?', ['Asya Hunları', 'Uygurlar'], 1, 'Tarım ve şehir hayatına geçtiler.'),
       sikli('Batıyı yöneten hanedan üyesinin unvanı?', ['Yabgu', 'Kağan'], 0, 'Doğuda büyük kağan.'),
     ], [
       {
@@ -869,7 +869,7 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Attila döneminde Bizans Hunlara vergi ödedi.', true, 'Hunlar Avrupa\'da güçlüydü.'),
       soru('Moğol istilası Anadolu\'ya Türkmen göçünü azalttı.', false, 'Artırdı; boylar Anadolu\'ya kaçtı.'),
       soru('Vikingler deniz yoluyla yayıldı.', true, 'İskandinavya\'dan.'),
-      sikli('İslam ordularının hızlı yayılışı hangi yüzyıllarda?', ['7-8.', '13-14.'], 0, '13. yüzyıl Moğol istilası.'),
+      sikli('İslam ordularının hızlı yayılışı hangi yüzyıllarda?', ['13-14.', '7-8.'], 1, '13. yüzyıl Moğol istilası.'),
       sikli('Avrupa Hun Devleti\'nin en güçlü hükümdarı?', ['Attila', 'Mete'], 0, 'Mete Asya Hunlarının.'),
       soru('Türk göçleri tek seferde tamamlandı.', false, 'Yüzyıllar boyunca dalgalar hâlinde.'),
     ], [
@@ -885,8 +885,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       },
       {
         soru: 'Anadolu\'ya Türkmen göçünü 13. yüzyılda hızlandıran olay?',
-        siklar: ['Moğol istilası', 'Haçlı Seferleri'],
-        dogru: 0,
+        siklar: ['Haçlı Seferleri', 'Moğol istilası'],
+        dogru: 1,
         aciklama: {
           dogru: 'Moğollardan kaçan boylar Anadolu\'ya yerleşti.',
           yanlis: 'Haçlı Seferleri batıdan gelen seferlerdir. Türkmen akınını Moğol istilası artırdı.',
@@ -976,7 +976,7 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Abbasiler Türklere orduda görev verdi.', true, 'Türk komutanlar yükseldi.'),
       soru('Magna Carta kralın yetkilerini artırdı.', false, 'Sınırladı.'),
       soru('Haçlı Seferleri feodaliteyi zayıflattı.', true, 'Senyörler seferlerde güç kaybetti.'),
-      sikli('Selçuklularda meliki eğiten devlet adamı?', ['Atabey', 'Vezir'], 0, 'Şehzadenin eğitmeni.'),
+      sikli('Selçuklularda meliki eğiten devlet adamı?', ['Vezir', 'Atabey'], 1, 'Şehzadenin eğitmeni.'),
       sikli('Magna Carta hangi ülkede imzalandı?', ['İngiltere', 'Fransa'], 0, '1215.'),
     ], [
       {
@@ -1068,7 +1068,7 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('Ahilik esnaf ve zanaatkârların dayanışma teşkilatıdır.', true, 'Ahi Evran ile anılır.'),
       soru('Coğrafi Keşifler İpek Yolu\'nun önemini artırdı.', false, 'Deniz yolu açılınca önemini yitirdi.'),
       soru('Venedik ve Cenova Akdeniz ticaretinden zenginleşti.', true, 'Rönesans\'ı besleyen servet.'),
-      sikli('Selçukluların uluslararası fuarı nerede kurulurdu?', ['Kayseri', 'Konya'], 0, 'Yabanlu Pazarı.'),
+      sikli('Selçukluların uluslararası fuarı nerede kurulurdu?', ['Konya', 'Kayseri'], 1, 'Yabanlu Pazarı.'),
       sikli('Selçukluların Kırım\'da aldığı liman?', ['Suğdak', 'Sinop'], 0, 'Sinop Karadeniz\'in güneyinde.'),
     ], [
       {
@@ -1083,8 +1083,8 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       },
       {
         soru: 'İpek Yolu\'nun önemini yitirmesinin başlıca sebebi?',
-        siklar: ['Coğrafi Keşifler', 'Kavimler Göçü'],
-        dogru: 0,
+        siklar: ['Kavimler Göçü', 'Coğrafi Keşifler'],
+        dogru: 1,
         aciklama: {
           dogru: 'Deniz yolu Hindistan\'a doğrudan ulaşınca kara yolu geriledi.',
           yanlis: 'Kavimler Göçü çok daha önce oldu. Yolları gerileten Coğrafi Keşifler.',
@@ -1161,7 +1161,7 @@ export const tarih9 = program('tarih', 9, 'Tarihin doğasından Orta Çağ’a',
       soru('"Algoritma" sözcüğü Harezmî\'nin adından gelir.', true, 'Cebirle de anılır.'),
       soru('Kutadgu Bilig bir sözlüktür.', false, 'Devlet yönetimini anlatan didaktik eser; sözlük Divanü Lügati\'t-Türk.'),
       soru('Semerkant Rasathanesi Uluğ Bey döneminde kuruldu.', true, '15. yüzyıl.'),
-      sikli('El-Kanun adlı tıp eserinin yazarı?', ['İbn Sina', 'Farabi'], 0, 'Farabi felsefe ve müzikle tanınır.'),
+      sikli('El-Kanun adlı tıp eserinin yazarı?', ['Farabi', 'İbn Sina'], 1, 'Farabi felsefe ve müzikle tanınır.'),
       sikli('Dünya\'nın çevresini hesaplayan bilgin?', ['Biruni', 'Edip Ahmet'], 0, 'Edip Ahmet Atabetü\'l-Hakayık\'ın yazarı.'),
     ], [
       {
