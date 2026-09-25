@@ -556,9 +556,11 @@ export function AppShell() {
   /** Bankadan soru düştü: rozetin baktığı toplam sayaç ilerliyor. */
   const bankadanDustu = useCallback(
     (adet: number) => {
-      setBankaDusen(bankaDusen + adet)
+      // Fonksiyonel: kapanışta yakalanan sayı, aynı karedeki ikinci bir
+      // düşüşte eskimiş olurdu.
+      setBankaDusen((onceki) => onceki + adet)
     },
-    [bankaDusen, setBankaDusen],
+    [setBankaDusen],
   )
 
   /*
@@ -958,7 +960,6 @@ export function AppShell() {
                 soruGecmisi={soruGecmisi}
                 setSoruGecmisi={setSoruGecmisi}
                 banka={oyunBankasi}
-                onBankadanDustu={bankadanDustu}
                 setBanka={setOyunBankasi}
                 sesAcik={ayarlar.oyunSesi}
                 onBankayaGit={() => setEkran('oyun-bankasi')}
