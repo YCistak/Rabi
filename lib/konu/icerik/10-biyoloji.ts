@@ -266,7 +266,7 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       soru('Sindirim, büyük moleküllerin hücre zarından geçebilecek küçüklüğe getirilmesidir.', true, 'Bu olmadan besin hücreye giremiyor.'),
       soru('Kimyasal sindirim hidroliz tepkimeleriyle gerçekleşir.', true, 'Bağların koparılmasında su kullanılıyor.'),
       soru('Mekanik sindirimde besinin kimyasal yapısı değişir.', false, 'Yalnızca parçalara ayrılır; yapı aynı kalır.'),
-      soru('Hücre içi sindirim yalnızca çok hücreli canlılarda görülür.', false, 'Tek hücrelilerin temel sindirim yolu bu.'),
+      soru('Çok hücreli hayvanlarda sindirim enzimleri sindirim boşluğuna salgılanır.', true, 'Besin dışarıda parçalanır, sonra emilir: hücre dışı sindirim.'),
       sikli('Amip nasıl sindirim yapar?', ['Hücre dışı', 'Hücre içi'], 1, 'Lizozom enzimleriyle.'),
       sikli('Sindirim enzimleri besinin neresinde çalışır?', ['Yüzeyinde', 'İçinde'], 0, 'Mekanik sindirim bu yüzden yüzeyi büyüterek işi hızlandırır.'),
       soru('Mantarlar hücre dışı sindirim yapar.', true, 'Enzimlerini dışarı salar, çözdüğünü emer.'),

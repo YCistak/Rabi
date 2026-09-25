@@ -1342,7 +1342,7 @@ export const matematik9 = program('matematik', 9, 'Sayılardan olasılığa', [
       sikli('Hipotenüse indirilen yükseklik h ise h² neye eşittir?', ['p·q', 'p·c'], 0, 'p ve q hipotenüsteki parçalar.'),
       sikli('(5, 12, 13) üçlüsünün iki katı?', ['(7, 14, 15)', '(10, 24, 26)'], 1, 'Pisagor üçlüsünün katları da üçlüdür: 100 + 576 = 676.'),
       sikli('30-60-90 üçgeninde kenar oranı?', ['1, √3, 2', '1, 1, √2'], 0, '45-45-90\'da 1, 1, √2.'),
-      sikli('Kenarları 7, 24 ve 25 olan üçgen için ne söylenir?', ['Dik üçgendir', 'Dik değildir'], 0, '49 + 576 = 625 = 25²; teoremin tersi üçgeni dik yapar.'),
+      sikli('45-45-90 üçgeninde dik kenarlar 1 ise hipotenüs kaçtır?', ['√2', '2'], 0, 'Kenarlar 1 : 1 : √2; 30-60-90\'da 1 : √3 : 2.'),
       sikli('Paralel doğruların kestikleri doğrularda orantılı parça ayırması?', ['Öklid teoremi', 'Tales teoremi'], 1, 'Orantı.'),
       soru('Tales, Öklid ve Pisagor teoremlerinin ispatı benzerliğe dayanır.', true, 'Tek fikrin sonuçları.'),
     ], [

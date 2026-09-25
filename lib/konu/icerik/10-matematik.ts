@@ -239,7 +239,7 @@ export const matematik10 = program('matematik', 10, 'Üçgenlerden olasılığa'
       soru('Üçgenin alanı, taban ile ona ait yüksekliğin çarpımının yarısıdır.', true, 'Hangi kenar taban seçilirse seçilsin sonuç aynı.'),
       soru('Tabanları ve yükseklikleri eşit olan üçgenlerin alanları eşittir.', true, 'Şekilleri farklı olsa da alan aynı kalıyor.'),
       soru('Benzerlik oranı k olan iki üçgenin alanları oranı da k dır.', false, 'Alan oranı k² olur.'),
-      soru('İki kenarı ve aradaki açısı bilinen bir üçgenin alanı hesaplanamaz.', false, 'Alan = (1/2)·a·b·sinC ile hesaplanıyor.'),
+      soru('Kenarortay, üçgeni alanları eşit iki üçgene ayırır.', true, 'Tabanlar eşit, yükseklik ortak: alanlar eşit.'),
       sikli('Kenarları 4 ve 10, aradaki açısı 30° olan üçgenin alanı kaçtır?', ['20', '10'], 1, '½ · 4 · 10 · sin 30° = ½ · 40 · ½ = 10.'),
       sikli('Bir açısı ortak iki üçgende alan oranı?', ['Tabanlar oranı', 'Açıyı oluşturan kenarların çarpımları oranı'], 1, 'Ortak açılı üçgenler.'),
       soru('Bir kenar 3 katına çıkarılıp ona ait yükseklik aynı bırakılırsa alan da 3 katına çıkar.', true, 'Alan taban ile yüksekliğin çarpımının yarısı; taban 3 kat, alan 3 kat.'),

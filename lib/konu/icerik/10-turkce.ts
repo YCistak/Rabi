@@ -306,7 +306,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       sikli('"Hangi kitap?" sorusuna cevap veren?', ['Niteleme sıfatı', 'Belirtme sıfatı'], 1, 'Niteleme "nasıl".'),
       sikli('İsmin yerini tutan sözcük?', ['Zarf', 'Zamir'], 1, 'Kişi, işaret, belgisiz, soru, ilgi.'),
       sikli('Fiili etkileyen sözcük?', ['Sıfat', 'Zarf'], 1, 'Sıfat isme bağlanır.'),
-      sikli('Tek başına anlamsız, sözcükler arası ilgi kuran?', ['Bağlaç', 'Edat'], 1, 'Bağlaç çıkarılınca anlam bozulmaz.'),
+      sikli('"gibi, kadar, için" hangi türdendir?', ['Zamir', 'Edat'], 1, 'Tek başına anlamları yok; sözcükler arasında ilgi kurarlar.'),
       sikli('"Sürü" sözcüğü hangi tür isimdir?', ['Topluluk ismi', 'Soyut isim'], 0, 'Tekil biçimde bir topluluğu karşılıyor; somut bir varlık.'),
       sikli('"ve, ile, ama" sözcükleri hangi türdendir?', ['Bağlaç', 'Edat'], 0, 'Sözcükleri ya da cümleleri bağlarlar; çıkarılınca anlam bozulmaz.'),
       soru('"Kitabınki daha yeni" cümlesindeki -ki, ilgi zamiridir.', true, '"Kitabınki" = kitabının kitabı; -ki bir ismin yerini tutuyor.'),

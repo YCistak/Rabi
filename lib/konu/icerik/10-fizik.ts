@@ -524,7 +524,7 @@ export const fizik10 = program('fizik', 10, 'Hareketten dalgalara', [
       soru('Enerji tasarrufu bir enerji kaynağı sayılmaz.', false, 'Tasarruf edilen enerji, üretilmesi gerekmeyen enerjidir.'),
       sikli('Hidroelektrikte enerji dönüşüm zinciri nedir?', ['Kimyasal → ısı → elektrik', 'Potansiyel → kinetik → elektrik'], 1, 'Düşen su türbini döndürür.'),
       sikli('Nükleer enerjinin başlıca sorunu?', ['Yüksek karbon salımı', 'Uzun süre saklanması gereken atık'], 1, 'Salım açısından temiz ama atık sorunu var.'),
-      sikli('Fosil yakıtlar yenilenebilir kaynaklara göre hangi açıdan üstündür?', ['Süreklilik', 'Düşük salım'], 0, 'Kömür santrali gece de gündüz de üretir; ama salımı yüksektir.'),
+      sikli('Türkiye\'de kurulu gücü hızla artan kaynaklar?', ['Rüzgâr ve güneş', 'Kömür ve petrol'], 0, 'Jeotermal ve hidroelektrik potansiyeli de güçlü.'),
       sikli('Yenilenebilire geçişin asıl gerekçesi?', ['Kaynakların hemen tükenmesi', 'Karbon salımı'], 1, 'Fosil yakıt CO₂ salar; küresel ısınmanın ana kaynağı.'),
       soru('Biyokütle yenilenebilir bir enerji kaynağıdır.', true, 'Bitki ve hayvan atıkları yeniden üretilebiliyor.'),
       soru('Türkiye jeotermal enerji potansiyeli bakımından güçlü bir ülkedir.', true, 'Ege\'deki fay hatları boyunca sıcak su kaynakları yoğun.'),
