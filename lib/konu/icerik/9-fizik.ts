@@ -138,6 +138,10 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         undefined,
         { not: 'Ses dalgası ve deprem dalgası aynı dala girer: akustik/dalgalar. Ses için \'optik\' işaretleme.' },
       ),
+      kart(
+        'Nükleer fizik ve astrofizik',
+        '- **Nükleer fizik:** atom çekirdeğini ve radyoaktiviteyi inceler.\n- **Astrofizik:** yıldızları ve evreni fizik yasalarıyla inceler.',
+      ),
     ], [
       soru('Termodinamik, ısı ve sıcaklıkla ilgili olayları inceler.', true, 'Isı alışverişi, hâl değişimi ve enerji dönüşümleri bu alanın konusu.'),
       soru('Atom altı parçacıkların davranışı klasik fiziğin konusudur.', false, 'Modern fiziğin: kuantum kuramı ve görelilik burada devreye giriyor.'),
@@ -147,8 +151,9 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       sikli('Elektrik motoru ve radyo dalgası hangi dalın çatısı altındadır?', ['Termodinamik', 'Elektromanyetizma'], 1, 'Elektrik ve manyetizma tek çatıda toplanır.'),
       sikli('Ses ve deprem dalgası hangi alanda incelenir?', ['Katıhâl fiziği', 'Dalga mekaniği (akustik)'], 1, 'Ses, su ve deprem dalgası aynı matematikle incelenir.'),
       soru('Klasik fizik günlük hız ve boyutlarda yanlış sonuç verir.', false, 'Klasik fizik günlük ölçekte doğru sonuç verir; sınırı atom altı ve ışık hızına yakın olaylardır.'),
-      soru('Bütün elektronik cihazlar katıhâl fiziğinin ürünü olan yarı iletkenlere dayanır.', true, 'Yarı iletken katıhâl fiziğinden çıktı; işlemciler onunla yapılıyor.'),
-      soru('Kuantum fiziği ve görelilik modern fiziğin konusudur.', true, 'Klasik fiziğin yetmediği yerde modern fizik başlar.'),
+      soru('Yıldızların yapısını fizik yasalarıyla inceleyen dal astrofiziktir.', true, 'Astrofizik, fiziğin yasalarını gökteki cisimlere uygular.'),
+      soru('Radyoaktivite optiğin konusudur.', false, 'Çekirdekle ilgili; nükleer fiziğin konusu.'),
+      sikli('Güneş\'in enerjisini nasıl ürettiği hangi dalların sorusudur?', ['Akustik', 'Astrofizik ve nükleer fizik'], 1, 'Güneş çekirdeğinde füzyon olur; yıldızın kendisi astrofiziğin konusu.'),
     ], [
       {
         soru: 'Buzdolabının çalışma ilkesi hangi alt dalın konusudur?',
@@ -210,7 +215,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       sikli('Alternatif akım sistemini geliştiren kimdir?', ['Newton', 'Tesla'], 1, 'Bugünkü şebekenin temeli Tesla\'nın motor ve transformatör tasarımları.'),
       sikli('Enerji ile kütlenin bağını kuran kimdir?', ['Marie Curie', 'Einstein'], 1, 'E = mc² göreliliğin sonucu.'),
       soru('Feza Gürsey parçacık fiziğinde simetri kuramlarıyla tanınır.', true, 'Adı uluslararası bir araştırma ödülünde yaşıyor.'),
-      soru('Maxwell elektromanyetizmayı dört denklemle yazmıştır.', true, 'Faraday\'ın deneyle gösterdiği bağı Maxwell matematikle kurdu.'),
+      soru('Einstein\'ın görelilik kuramına göre zaman ve uzay mutlaktır.', false, 'Tersini gösterdi: zaman ve uzay gözlemciye göre değişir.'),
     ], [
       {
         soru: 'Gökteki ve yerdeki hareketin aynı yasaya uyduğunu gösteren kimdir?',
@@ -267,7 +272,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       sikli('Türkiye hangi araştırma merkezine ortak üyedir?', ['NASA', 'CERN'], 1, 'Türkiye CERN\'e ortak üye; üniversite ve TÜBİTAK laboratuvarları da var.'),
       sikli('Elektromanyetizma bilgisi en çok hangi mühendisliğe açılır?', ['İnşaat', 'Elektrik-elektronik'], 1, 'Mekanik makine ve inşaata, elektromanyetizma elektrik-elektroniğe.'),
       soru('Finans ve yazılım sektörü fizikçi istihdam etmez.', false, 'Fizik eğitimi veri analizi ve modelleme öğrettiği için bu sektörler de fizikçi alır.'),
-      soru('Deprem araştırmaları jeofizik alanında fiziksel modellerle yapılır.', true, 'Yer kabuğunun davranışı fizik yasalarıyla modellenir.'),
+      soru('Fizik mühendisliği üniversitede fizikten ayrı bir bölümdür.', true, 'Lazer, optik sistem ve sensör tasarımına yönelik ayrı bir lisans programı.'),
     ], [
       {
         soru: 'Radyoterapi cihazının doğru dozla çalışmasını kim sağlar?',
@@ -600,9 +605,9 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       soru('Büyüklükleri 5 ve 3 olan iki vektörün bileşkesi 9 birim olabilir.', false, 'Bileşke en çok 8 (aynı yönde), en az 2 (zıt yönde) olur.'),
       soru('Bir cisme etki eden kuvvetlerin bileşkesi sıfırsa cisim dengededir.', true, 'Net kuvvet yoksa hareket durumu değişmiyor.'),
       soru('Vektörler uç uca eklenirken ekleme sırası bileşkeyi değiştirir.', false, 'Vektör toplaması değişmeli; sıra sonucu değiştirmez.'),
-      sikli('Büyüklükleri 5 ve 3 olan vektörlerin bileşkesi en az kaçtır?', ['8', '2'], 1, 'Zıt yönde çıkarılır: 5 − 3 = 2. En çok 8.'),
+      sikli('İlk vektörün ucuna ikincinin başı konarak bileşke bulunan yöntem?', ['Uç uca ekleme', 'Bileşenlere ayırma'], 0, 'İlkin başından sonuncunun ucuna çizilen ok bileşkedir.'),
       sikli('−A vektörü A ile nasıl bir ilişkidedir?', ['Yarı boy, aynı yön', 'Aynı boy, ters yön'], 1, 'Eksi işaret yalnızca yönü çevirir.'),
-      sikli('Dik iki vektörün bileşkesi nasıl bulunur?', ['Toplayarak', 'Pisagor ile'], 1, '3 ve 4 birimlik dik vektörlerin bileşkesi 5.'),
+      sikli('Paralelkenar yönteminde bileşkeyi ne verir?', ['Köşegen', 'Kenarlardan biri'], 0, 'İki vektör aynı noktadan çizilir; tamamlanan paralelkenarın köşegeni bileşkedir.'),
       sikli('Eğik düzlem problemleri hangi yöntemle çözülür?', ['Paralelkenar yöntemi', 'Bileşenlerine ayırma'], 1, 'Vektör birbirine dik iki parçaya bölünür.'),
       soru('Başlangıç noktaları farklı iki vektör hiçbir zaman eşit olamaz.', false, 'Eşitlik için büyüklük ve yön yeter; başlangıç noktası fark etmez.'),
       soru('2A vektörü A ile aynı yönde ve iki kat uzundur.', true, 'Pozitif sayıyla çarpmak yönü değiştirmez, boyu ölçekler.'),
@@ -660,14 +665,14 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         'İtme, sürtünme, gerilme ve tepki kuvvetleri aslında elektromanyetiktir.\nHepsi atomlar arasındaki etkileşimden doğar.\n"Temas kuvveti" diye ayrı bir temel kuvvet yoktur.',
       ),
     ], [
-      soru('Doğadaki dört temel kuvvetin en zayıfı kütle çekim kuvvetidir.', true, 'Bir mıknatıs, Dünya nın çekimine karşı toplu iğneyi kaldırabiliyor.'),
+      soru('Zayıf nükleer kuvvetin menzili çekirdek boyundan da kısadır.', true, 'Güçlü nükleer çekirdek boyunda, zayıf nükleer ondan da kısa mesafede etkir.'),
       soru('Çekirdekteki protonları bir arada tutan güçlü nükleer kuvvettir.', true, 'Aynı yüklü protonların itmesini yenen kuvvet o.'),
       soru('Zayıf nükleer kuvvet, sürtünmenin bir çeşididir.', false, 'Sürtünme elektromanyetik kökenli; zayıf kuvvet çekirdek bozunmalarında etkili.'),
       soru('Kütle çekim en zayıf kuvvet olduğu için evrenin büyük yapılarında etkisizdir.', false, 'Menzili sonsuz ve her zaman çekici; büyük kütlelerde baskın olan o.'),
       sikli('Radyoaktif bozunmadan sorumlu temel kuvvet hangisidir?', ['Güçlü nükleer', 'Zayıf nükleer'], 1, 'Güneş\'teki füzyon zincirinin başlaması da zayıf kuvvete bağlı.'),
-      sikli('Menzili en kısa ama şiddeti en büyük olan kuvvet?', ['Kütle çekim', 'Güçlü nükleer'], 1, 'Çekirdek boyunda etkir, protonları bir arada tutar.'),
+      sikli('Küçük bir mıknatısın çiviyi Dünya\'nın çekimine rağmen kaldırması neyi gösterir?', ['Kütle çekimin çok zayıf olduğunu', 'Çivinin kütlesiz olduğunu'], 0, 'Koca Dünya\'nın çekimini avuç içi kadar mıknatıs yeniyor.'),
       sikli('Sürtünme kuvvetinin kökeni hangi temel kuvvettir?', ['Kütle çekim', 'Elektromanyetik'], 1, 'Temas kuvvetlerinin hepsi atomlar arası elektromanyetik etkileşim.'),
-      soru('Elektrik kuvvetleri zıt yüklerle birbirini götürdüğü için büyük ölçekte kütle çekim baskındır.', true, 'Kütle çekim yalnızca çeker ve birikir.'),
+      soru('Elektromanyetik kuvvet hem çekici hem itici olabilir.', true, 'Zıt yükler çeker, aynı yükler iter; kütle çekim ise hep çeker.'),
     ], [
       {
         soru: 'Menzili sonsuz olup yalnızca çeken temel kuvvet hangisidir?',
@@ -787,11 +792,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       sikli('Hız-zaman grafiğinin altındaki alan neyi verir?', ['İvmeyi', 'Yer değiştirmeyi'], 1, 'Eğim ivmeyi, alan yer değiştirmeyi verir.'),
       sikli('Konum-zaman grafiği parabolse hareket nasıldır?', ['Sabit hızlı', 'Sabit ivmeli'], 1, 'Sabit hızda doğru, sabit ivmede parabol.'),
       sikli('Denge noktası çevresinde gidip gelen sarkacın hareketi?', ['Öteleme', 'Titreşim'], 1, 'Titreşim hareketi; yay ucundaki kütle de böyle.'),
-      sikli('Serbest düşmede hava direnci yokken hangi cisim önce yere düşer?', ['Ağır olan', 'İkisi aynı anda'], 1, 'Bütün cisimler aynı g ivmesiyle düşer.'),
+      sikli('Serbest düşen cismin ivmesi yaklaşık kaçtır?', ['9,8 m/s²', '9,8 m/s'], 0, 'İvmenin birimi m/s²; m/s hızın birimi.'),
       sikli('Yolun yarısını 40, yarısını 60 km/h ile giden aracın ortalama sürati?', ['48 km/h', '50 km/h'], 0, 'Ortalama sürat toplam yol / toplam zaman; ara hızların ortalaması değil.'),
       soru('Sabit süratle yön değiştiren cisim ivmeli hareket yapar.', true, 'Yön değişimi hız değişimidir; ivme sıfır değildir.'),
       soru('Konum-zaman grafiğinde aşağı inen doğru cismin geri döndüğünü gösterir.', true, 'Konum azalıyor: hareket ters yönde.'),
-      soru('Referans noktası değişse de bir cismin hareketli olup olmadığı değişmez.', false, 'Hareket görecelidir: yolcu yere göre hareketli, koltuğa göre durgun.'),
+      soru('Dönen tekerlekte eksene uzak noktalar aynı sürede daha çok yol alır.', true, 'Dönmede noktalar eksene uzaklıklarına göre farklı yol alır.'),
     ], [
       {
         soru: 'Sabit süratle dönen pervanenin hareketi nedir?',
@@ -872,8 +877,8 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       soru('Bıçağın keskin olması uyguladığı kuvveti artırır.', false, 'Kuvvet aynı; alan küçüldüğü için basınç artıyor.'),
       sikli('Aynı kutu geniş yüzeyi üstüne yatırılınca basıncı ne olur?', ['Azalır', 'Artar'], 0, 'Ağırlık aynı, alan büyüdü; basınç küçüldü.'),
       sikli('Katılar basıncı hangi yönde iletir?', ['Yalnızca aşağı, temas yüzeyine', 'Her yöne eşit'], 0, 'Her yöne ileten sıvı ve gazlar.'),
-      sikli('1 Pa neye eşittir?', ['1 N/m²', '1 kg/m²'], 0, 'Basınç kuvvet / alan; birimi newton bölü metrekare.'),
-      soru('Çivinin sivri ucu uygulanan kuvveti artırır.', false, 'Kuvvet aynı; alan küçüldüğü için basınç artar.'),
+      sikli('Ağırlığı 60 N olan kutu 0,5 m²\'lik yüzeyi üstünde durursa basınç?', ['120 Pa', '30 Pa'], 0, 'P = F / A = 60 / 0,5 = 120 Pa.'),
+      soru('Kutu devrilip dar yüzeyi üstüne konursa ağırlığı artar.', false, 'Ağırlık aynı kalır; alan küçüldüğü için basınç artar.'),
       soru('Kuvvet sabitken basınç-alan grafiği hiperboldür.', true, 'Ters orantı hiperbol çizer.'),
     ], [
       {
@@ -945,7 +950,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       sikli('Barajın alt duvarı neden daha kalın yapılır?', ['Derinlikle basınç artar', 'Su aşağıda daha yoğundur'], 0, 'P = h·d·g; en derin nokta en büyük basınç.'),
       sikli('Bileşik kapta karışmayan iki sıvıdan hangisi daha yüksekte durur?', ['Yoğunluğu küçük olan', 'Yoğunluğu büyük olan'], 0, 'Aynı basıncı daha uzun sütunla dengeler.'),
       sikli('Hidrolik krikoda kuvvet kazanılırken ne kaybedilir?', ['Yol', 'Basınç'], 0, 'Kazanılan kuvvet kadar yol kaybedilir; iş korunur.'),
-      sikli('Tabanı aynı, şekli farklı üç kapta aynı yükseklikte su varsa taban basınçları?', ['Eşit', 'Geniş kapta büyük'], 0, 'Basınç derinliğe bağlı, kabın şekline değil.'),
+      sikli('10 m derinlikte suyun basıncı kaç Pa\'dır? (d = 1000 kg/m³, g = 10)', ['100.000', '10.000'], 0, 'P = h · d · g = 10 · 1000 · 10 = 100.000 Pa.'),
       soru('Sıvı basıncı yer çekimi ivmesine bağlıdır.', true, 'P = h·d·g; Ay\'da aynı derinlikte basınç daha küçük.'),
       soru('Durgun sıvı basıncı yalnızca aşağı yönde iletir.', false, 'Her yöne aynı şiddette iletir.'),
     ], [
@@ -1006,10 +1011,10 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       soru('Yüksek dağlarda su 100 °C nin altında kaynar.', true, 'Açık hava basıncı düştüğü için sıvı daha düşük sıcaklıkta kaynıyor.'),
       soru('Torricelli deneyinde cıva sütununun yüksekliği borunun kesit alanına bağlıdır.', false, 'Kesit değişse de yükseklik değişmez; belirleyen açık hava basıncı.'),
       sikli('Torricelli deneyi su ile yapılsaydı sütun yaklaşık kaç metre olurdu?', ['10 m', '1 m'], 0, 'Su cıvadan 13,6 kat az yoğun; sütun o kadar uzar.'),
-      sikli('Uçakta kulak tıkanmasının sebebi?', ['Yükseklikle basıncın düşmesi', 'Sıcaklığın düşmesi'], 0, 'Üstteki hava sütunu kısalır, basınç azalır.'),
+      sikli('Açık hava basıncının kaynağı nedir?', ['Havanın ağırlığı', 'Güneş ışığı'], 0, 'Atmosferdeki hava sütunu yeryüzüne ağırlığıyla bastırır.'),
       sikli('Kapalı kaptaki gazın sıcaklığı artınca basıncı?', ['Artar', 'Değişmez'], 0, 'Tanecikler çepere daha sık ve hızlı çarpar.'),
       soru('Pipetle içmek açık hava basıncıyla çalışır.', true, 'Pipette basınç düşürülür, dışarıdaki hava sıvıyı iter.'),
-      soru('Deniz seviyesinde açık hava basıncı yaklaşık 101.325 Pa\'dır.', true, '1 atm.'),
+      soru('Kapalı kaptaki gazın hacmi küçülürse basıncı artar.', true, 'Tanecikler çepere daha sık çarpar.'),
     ], [
       {
         soru: 'Torricelli deneyinde cıva sütunu deniz seviyesinde kaç cm\'de durur?',
@@ -1175,7 +1180,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       soru('Bernoulli ilkesi enerjinin korunumu yasasıyla çelişir.', false, 'İlke tam da enerjinin korunumundan türetiliyor.'),
       sikli('Duş perdesinin içeri çekilmesinin sebebi?', ['Su perdeyi iter', 'Hızlı hava basıncı düşürür'], 1, 'Hızlanan hava akımı basıncı düşürür, dışarıdaki hava perdeyi iter.'),
       sikli('Bacada rüzgâr dumanı neden yukarı çeker?', ['Rüzgâr dumanı iter', 'Baca ağzında basınç düşer'], 1, 'Bernoulli: hızlı akışkan düşük basınç.'),
-      soru('Uçak kanadının altında hava üstünden daha hızlı akar.', false, 'Üstte hızlı akar, basınç düşer; alttaki yüksek basınç kanadı yukarı iter.'),
+      soru('Yan yana tutulan iki kâğıdın arasına üflenirse kâğıtlar birbirinden uzaklaşır.', false, 'Aradaki hava hızlanır, basınç düşer; dıştaki hava kâğıtları birbirine iter.'),
     ], [
       {
         soru: 'Boru daralınca içinden geçen suyun hızı ve basıncı ne olur?',
@@ -1240,9 +1245,9 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       soru('Sıcaklık, cismin sahip olduğu toplam enerjidir.', false, 'Sıcaklık taneciklerin ortalama kinetik enerjisinin ölçüsü; toplam olan iç enerji.'),
       sikli('Isının SI birimi nedir?', ['Kelvin', 'Joule'], 1, 'Isı enerjidir; kelvin sıcaklık birimi.'),
       sikli('0 K kaç °C\'dir?', ['0', '−273,15'], 1, 'Kelvin mutlak sıfırdan başlar.'),
-      sikli('Isı hangi yönde akar?', ['İç enerjisi büyükten küçüğe', 'Sıcaktan soğuğa'], 1, 'Yönü sıcaklık farkı belirler.'),
-      soru('Madde ısı içerir; ısıtılan cisimde ısı depolanır.', false, 'Depolanan iç enerjidir; ısı yalnızca aktarım sırasında vardır.'),
-      soru('1 kalori yaklaşık 4,18 joule\'dür.', true, 'İki birim aynı şeyi, enerjiyi ölçer.'),
+      sikli('İç enerji neye bağlıdır?', ['Madde miktarına da', 'Yalnızca sıcaklığa'], 0, 'Tanecik sayısı arttıkça toplam enerji artar.'),
+      soru('Sıcaklık, madde miktarına bağlı değildir.', true, 'Ortalama bir değer; bir damla ile bir kazan aynı sıcaklıkta olabilir.'),
+      soru('Celsius ölçeği suyun donma ve kaynama noktalarına dayanır.', true, 'Kelvin ise mutlak sıfıra dayanır.'),
     ], [
       {
         soru: 'Kaynayan bir çay bardağı ile kaynayan bir kazanı karşılaştırırsak?',
@@ -1315,12 +1320,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       soru('Suyun öz ısısının yüksek olması, geç ısınıp geç soğumasının sebebidir.', true, 'Aynı sıcaklık artışı için daha çok ısı gerekiyor.'),
       soru('Isı sığası kütleye bağlıdır, öz ısı ise maddenin ayırt edici bir özelliğidir.', true, 'Isı sığası = kütle × öz ısı.'),
       soru('Q = m · c · ΔT bağıntısında c kütleyi gösterir.', false, 'c öz ısı, m kütle.'),
-      soru('Aynı maddeden yapılmış iki cismin öz ısıları kütleleriyle orantılıdır.', false, 'Öz ısı maddeye ait; kütle değişse de aynı kalır.'),
+      soru('Sıcaklık-ısı grafiğinde dik doğru öz ısının büyük olduğunu gösterir.', false, 'Dik doğru az ısıyla çok ısınma demek: öz ısı küçük.'),
       sikli('Aynı ısı verilen eşit kütleli demir ve suyun hangisi daha çok ısınır?', ['Demir', 'Su'], 0, 'Öz ısısı küçük olan aynı ısıyla daha çok ısınır.'),
-      sikli('Sıcaklık-ısı grafiğinde yatık doğru neyi gösterir?', ['Büyük öz ısı', 'Küçük öz ısı'], 0, 'Aynı ısıyla sıcaklık az artıyor.'),
-      sikli('Q = m·c·ΔT bağıntısında ΔT nedir?', ['Sıcaklık farkı', 'Zaman farkı'], 0, 'Alınan ısı kütle, öz ısı ve sıcaklık farkının çarpımı.'),
-      soru('Denizin kıyı havasını yumuşatması suyun öz ısısının yüksekliğindendir.', true, 'Su geç ısınır geç soğur.'),
-      soru('Isı sığası maddeye ait ayırt edici bir özelliktir.', false, 'Ayırt edici olan öz ısı; ısı sığası o cisme ait, kütleyle büyür.'),
+      sikli('Isı sığası nasıl hesaplanır?', ['c / m', 'm · c'], 1, 'Kütle × öz ısı; kütle büyüdükçe sığa büyür.'),
+      sikli('200 g suyu 5 °C ısıtmak için kaç kalori gerekir? (c = 1 cal/g°C)', ['40', '1000'], 1, 'Q = m · c · ΔT = 200 · 1 · 5 = 1000 cal.'),
+      soru('1 gram maddenin sıcaklığını 1 °C artırmak için gereken ısıya öz ısı denir.', true, 'Bütün cisim için olanı ısı sığası.'),
     ], [
       {
         soru: 'Kütlesi iki katına çıkan bir cismin öz ısısı ne olur?',
@@ -1418,12 +1422,12 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
         },
       ),
       soru('Buharlaşma yalnızca kaynama sıcaklığında görülür.', false, 'Buharlaşma her sıcaklıkta yüzeyden olur; kaynama sıvının her yerinde olan hâl değişimi.'),
-      soru('Hâl değişimi sırasında maddeye verilen ısı sıcaklığı artırmaz.', true, 'Isı taneciklerin arasındaki bağları koparmak için harcanıyor.'),
+      soru('Göl kışın yüzeyden donar, dibi sıvı kalır.', true, 'Buz sudan hafif olduğu için yüzeyde kalır ve alttaki suyu yalıtır.'),
       soru('Su donarken hacmi küçülür.', false, 'Su donarken genleşir; buzun suda yüzmesinin sebebi bu.'),
       sikli('Katıdan doğrudan gaza geçişe ne denir?', ['Süblimleşme', 'Yoğuşma'], 0, 'Naftalin ve kuru buz süblimleşir.'),
       sikli('Düdüklü tencerede yemek neden çabuk pişer?', ['Basınç artınca kaynama noktası yükselir', 'Su daha çabuk kaynar'], 0, 'Su 100 °C\'nin üstünde kaynar.'),
-      sikli('Terin buharlaşması vücudu neden serinletir?', ['Buharlaşma ısısı deriden çekilir', 'Ter soğuktur'], 0, 'Buharlaşmak için gereken ısı deriden alınır.'),
-      sikli('Hangisi buharlaşmayı yavaşlatır?', ['Nemli hava', 'Hava akımı'], 0, 'Sıcaklık, yüzey ve rüzgâr hızlandırır; nem yavaşlatır.'),
+      sikli('Terin buharlaşması vücudu neden serinletir?', ['Ter soğuktur', 'Buharlaşma ısısı deriden çekilir'], 1, 'Buharlaşmak için gereken ısı deriden alınır.'),
+      sikli('Hangisi buharlaşmayı yavaşlatır?', ['Hava akımı', 'Nemli hava'], 1, 'Sıcaklık, yüzey ve rüzgâr hızlandırır; nem yavaşlatır.'),
       soru('1 gram maddeyi eritmek için gereken ısı, donarken verdiği ısıya eşittir.', true, 'Erime ısısı ile donma ısısı eşit.'),
     ], [
       {
@@ -1469,7 +1473,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       soru('Denge sıcaklığı her zaman iki cismin sıcaklıklarının ortalamasıdır.', false, 'Kütleler ve öz ısılar eşit değilse denge sıcaklığı ortalamaya düşmez.'),
       soru('Termometre, ölçtüğü cisimle ısıl dengeye gelerek çalışır.', true, 'Okunan değer termometrenin kendi sıcaklığı, o da cismin sıcaklığına eşitlenmiş oluyor.'),
       soru('Isıl dengedeki cisimlerde taneciklerin hareketi durur.', false, 'Tanecikler hareketine devam eder; duran şey yalnızca net ısı akışı.'),
-      sikli('Isıl dengede ne durur?', ['Taneciklerin hareketi', 'Net ısı akışı'], 1, 'Alışveriş iki yöne eşitlenir; tanecikler durmaz.'),
+      sikli('Denge sıcaklığı başlangıç sıcaklıklarına göre nerededir?', ['İkisinin arasında', 'Sıcak olanın üstünde'], 0, 'Sıcak cisim soğur, soğuk ısınır; ikisi aradaki bir değerde buluşur.'),
       sikli('Kütlesi büyük olan cisim denge sıcaklığını nasıl etkiler?', ['Etkilemez', 'Dengeyi kendine yaklaştırır'], 1, 'Kütlesi ve öz ısısı büyük olana yakın çıkar.'),
       soru('Yalıtılmış kapta sıcak cismin verdiği ısı soğuk cismin aldığına eşittir.', true, 'Enerji dışarı kaçmıyorsa alınan = verilen.'),
     ], [
@@ -1545,8 +1549,8 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       sikli('Metal kaşığın sıcak çayda ısınması hangi yolla olur?', ['İletim', 'Işıma'], 0, 'Tanecikler titreşerek enerjiyi komşusuna aktarır.'),
       sikli('Termosun aynalı iç yüzeyi hangi aktarımı keser?', ['Işıma', 'Konveksiyon'], 0, 'Parlak yüzey ışımayı yansıtır; boşluk iletim ve konveksiyonu keser.'),
       sikli('Klima neden yukarıya konur?', ['Soğuk hava aşağı iner', 'Soğuk hava yükselir'], 0, 'Sıcak hava yükselir, soğuk iner; klima yukarıdan, kalorifer aşağıdan çalışır.'),
-      soru('Parlak ve açık renkli yüzeyler ışımayı iyi soğurur.', false, 'Koyu ve mat yüzeyler soğurur; parlak yüzey yansıtır.'),
-      soru('Işıma için madde ortamı gerekmez.', true, 'Enerji elektromanyetik dalgayla taşınır; uzay boşluğunu geçer.'),
+      soru('Metaller ısıyı iletimle tahtadan daha hızlı aktarır.', true, 'Metallerde serbest elektronlar enerjiyi hızla taşır.'),
+      soru('Termosun çift cidarı arasındaki boşluk iletim ve konveksiyonu keser.', true, 'Boşlukta taşıyacak tanecik yok; aynalı yüzey de ışımayı keser.'),
     ], [
       {
         soru: 'Kaloriferin odayı ısıtması hangi yolla olur?',
@@ -1595,11 +1599,11 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       soru('Kesit alanı büyüdükçe iletilen ısı miktarı azalır.', false, 'Doğru orantılı: geniş kesit daha çok ısı geçirir.'),
       soru('Aynı odadaki metal, tahtadan daha soğuk hissedilir çünkü sıcaklığı daha düşüktür.', false, 'İkisinin sıcaklığı aynı; metal ısıyı elden hızlı çektiği için soğuk hissediliyor.'),
       soru('Çift camın arasındaki hava tabakası ısı iletimini yavaşlattığı için yalıtım sağlar.', true, 'Hava kötü bir iletken.'),
-      sikli('Duvarın kalınlaştırılması ısı kaybını neden azaltır?', ['Yol uzayınca iletim yavaşlar', 'Duvar daha soğuk olur'], 0, 'İletim hızı uzunlukla ters orantılı.'),
-      sikli('Çift camda yalıtımı sağlayan nedir?', ['Aradaki durgun hava', 'Camın kalınlığı'], 0, 'Hava kötü iletken; boşluk yalıtır, cam değil.'),
-      sikli('Kesit alanı iki katına çıkan çubukta iletim hızı?', ['İki katına çıkar', 'Yarıya iner'], 0, 'Kesit alanıyla doğru orantılı.'),
+      sikli('Çubuğun iki ucu arasındaki sıcaklık farkı artarsa iletim?', ['Hızlanır', 'Yavaşlar'], 0, 'İletim hızı sıcaklık farkıyla doğru orantılı.'),
+      sikli('Hangisi ısıyı en yavaş iletir?', ['Bakır', 'Köpük'], 1, 'Köpüğün içindeki hava kabarcıkları iletimi yavaşlatır.'),
+      sikli('Kışlık giysinin asıl yalıtımını ne sağlar?', ['Arasında tuttuğu hava', 'Kumaşın rengi'], 0, 'Hava kötü iletken; lifler onu hareketsiz tutar.'),
       soru('İki uç arasındaki sıcaklık farkı sıfırsa ısı akışı durur.', true, 'Akışı süren şey sıcaklık farkı.'),
-      soru('Yün kumaş ısıyı iyi ilettiği için ısıtır.', false, 'Yün arasında tuttuğu havayla yalıtır; ısı kaybını yavaşlatır.'),
+      soru('Isı iletim hızı malzemenin cinsine bağlıdır.', true, 'Aynı boyutta bakır çubuk ahşaptan kat kat hızlı iletir.'),
     ], [
       {
         soru: 'Aynı sıcaklıktaki metal ve tahta elde neden farklı hissedilir?',
