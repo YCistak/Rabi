@@ -396,8 +396,9 @@ export function hedefSerisi(kayitlar: GunlukKayit[], hedef: number, bugunIso: st
 
 // ---------------------------------------------------------------------------
 // Devamsızlık
-// MEB Ortaöğretim Kurumları Yönetmeliği MADDE 36: özürsüz 10, özürlü dahil
-// toplam 20 gün devamsızlık hakkı. Aşılırsa öğrenci başarısız sayılır.
+// MEB Ortaöğretim Kurumları Yönetmeliği MADDE 36: özürsüz devamsızlığı 10
+// günü **ya da** toplam (özürlü + özürsüz) devamsızlığı 30 günü geçen öğrenci
+// başarısız sayılır. Özürlü devamsızlığın kendi başına bir sınırı yok.
 // ---------------------------------------------------------------------------
 
 /**
@@ -466,7 +467,15 @@ export function enUzunYukselis(denemeler: Deneme[], sablonlar: Sablon[]): number
 }
 
 export const OZURSUZ_SINIR = 10
-export const OZURLU_SINIR = 20
+/**
+ * Özürlü ve özürsüz birlikte en fazla 30 gün (MADDE 36).
+ *
+ * Bir süre özürlü devamsızlık ayrı bir 20 günlük sınırla ölçülüyordu
+ * ("özürsüz 10 + özürlü 20"). Yönetmelik öyle demiyor: 3 gün özürsüz, 25 gün
+ * raporlu devamsızlığı olan öğrenci 28 günde ve sınırın içinde, ama ekran ona
+ * "hakkını aştın" diyordu.
+ */
+export const TOPLAM_SINIR = 30
 
 /** Uyarının sarıya döndüğü oran — sınırın %70'i. */
 export const DEVAMSIZLIK_UYARI_ORANI = 0.7
@@ -474,8 +483,10 @@ export const DEVAMSIZLIK_UYARI_ORANI = 0.7
 export type DevamsizlikOzeti = {
   ozurlu: number
   ozursuz: number
-  ozurluKalan: number
+  /** Özürsüz devamsızlıktan kalan gün. */
   ozursuzKalan: number
+  /** Toplam devamsızlıktan (özürlü + özürsüz) kalan gün. */
+  toplamKalan: number
   /** Herhangi bir sınır aşıldı mı. */
   asildi: boolean
   /** Sınıra yaklaşıldı mı (henüz aşılmadı). */
@@ -492,19 +503,20 @@ export function devamsizlikOzeti(kayitlar: Devamsizlik[]): DevamsizlikOzeti {
     else ozursuz += gun
   }
 
-  const ozurluKalan = yuvarla(OZURLU_SINIR - ozurlu, 1)
+  const toplam = ozurlu + ozursuz
   const ozursuzKalan = yuvarla(OZURSUZ_SINIR - ozursuz, 1)
-  const asildi = ozurluKalan < 0 || ozursuzKalan < 0
+  const toplamKalan = yuvarla(TOPLAM_SINIR - toplam, 1)
+  const asildi = ozursuzKalan < 0 || toplamKalan < 0
 
   return {
     ozurlu: yuvarla(ozurlu, 1),
     ozursuz: yuvarla(ozursuz, 1),
-    ozurluKalan,
     ozursuzKalan,
+    toplamKalan,
     asildi,
     uyari:
       !asildi &&
-      (ozurlu >= OZURLU_SINIR * DEVAMSIZLIK_UYARI_ORANI ||
+      (toplam >= TOPLAM_SINIR * DEVAMSIZLIK_UYARI_ORANI ||
         ozursuz >= OZURSUZ_SINIR * DEVAMSIZLIK_UYARI_ORANI),
   }
 }
