@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ArrowRight, Check, X } from 'lucide-react'
+import { ArrowRight, Check } from 'lucide-react'
 import type { Konu } from '@/lib/konu'
 import { yoklamaDakikasi } from '@/lib/konu'
 import { useGeriKatmani } from '@/lib/geri'
@@ -54,6 +54,12 @@ import { Rabi } from '@/components/maskot/rabi'
  * yana dursaydı hangisinin ileri götürdüğü okunmazdı — kurulumdaki "Şimdilik
  * atla" kuralı. Yazı bir süre "Şimdi değil"di; nereye gidildiğini
  * söylemiyordu ve kullanıcı haritaya değil ana sayfaya atılacağını sanıyordu.
+ *
+ * **Üstte çarpı yok.** Bir süre çubuğun solunda bir kapatma düğmesi vardı
+ * ve "Haritaya dön" ile aynı işi yapıyordu; destenin çarpısıyla aynı yerde
+ * durduğu için alışkanlıkla basılıyor, kullanıcı yoklamayı seçmeden
+ * haritaya atılıyordu. Kullanıcı kaldırılmasını istedi: çıkışın tek yolu
+ * altta, adı yazılı.
  *
  * **Çıkış perdeyle.** "Haritaya dön" denince bilet tek karede sökülmüyor;
  * kapanış ekranındaki perdenin aynısı (`kapanis-cikar`, yukarıdan aşağı
@@ -127,15 +133,9 @@ export function YoklamaBileti({
       />
 
       <div className="relative mx-auto flex w-full max-w-md min-h-0 flex-1 flex-col items-center overflow-y-auto overscroll-contain px-5 pt-[calc(1rem+var(--guvenli-ust))] pb-[calc(1.25rem+var(--guvenli-alt))]">
-        <div className="flex w-full items-center gap-3">
-          <button
-            type="button"
-            onClick={onVazgec}
-            aria-label="Kapat"
-            className="grid size-10 shrink-0 place-items-center rounded-xl bg-muted text-primary transition active:brightness-95"
-          >
-            <X size={18} strokeWidth={3} aria-hidden />
-          </button>
+        {/* Satır çarpı düğmesinin boyunda kalıyor (h-10): bilet ve ışıma bu
+            yüksekliğe göre yerleşti. */}
+        <div className="flex h-10 w-full items-center gap-3">
           {/* Bölmeli çubuk, destenin çubuğu gibi ama dolu: bütün kartlar
               okundu. `DesteCubugu` değil, çünkü o dersin mürekkebiyle boyanıyor
               ve bilet derse göre renk almıyor. */}
