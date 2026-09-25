@@ -12,10 +12,8 @@ import type { KonuDersId } from './tip'
  * tüylü.
  *
  * Renkler burada değil `globals.css`te (`--konu-<ders>-*`); tablo yalnızca
- * hangi değişkenin okunacağını söylüyor. Oyunlardaki ders aileleriyle
- * (`KonuAilesi`) aynı renkler **değil**: o aileler rozetlerde ve oyun
- * kartlarında kullanılıyor ve yediye ancak yetiyor; haritanın kendi paleti
- * kâğıt zeminine göre seçildi.
+ * hangi değişkenin okunacağını söylüyor. Mini oyunlar da aynı değişkenleri
+ * okuyor: bir ders haritada ve oyunlarda aynı renkte.
  */
 
 /** Zemine serpilen simge: ya serif italik bir yazı ya da çizgi bir ikon. */

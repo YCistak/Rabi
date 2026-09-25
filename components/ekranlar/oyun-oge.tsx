@@ -408,7 +408,7 @@ export function OgeOyunuEkrani({
                 <div className="golge-kart rounded-[20px] bg-card px-4 py-4">
                   <p className="text-center font-display text-[19px] font-bold leading-snug">
                     {soru.soru.once}
-                    <mark className="rounded-md bg-yzm-kart px-1.5 py-0.5 font-extrabold text-yzm-koyu">
+                    <mark className="rounded-md bg-konu-turkce px-1.5 py-0.5 font-extrabold text-konu-turkce-koyu">
                       {soru.soru.oge}
                     </mark>
                     {soru.soru.sonra}
@@ -558,12 +558,12 @@ function SonucGorunumu({
             >
               <b className="block font-display text-[13px] font-bold leading-snug">
                 {yanlis.once}
-                <mark className="rounded bg-yzm-kart px-1 font-extrabold text-yzm-koyu">
+                <mark className="rounded bg-konu-turkce px-1 font-extrabold text-konu-turkce-koyu">
                   {yanlis.oge}
                 </mark>
                 {yanlis.sonra}
               </b>
-              <span className="mt-1 block text-[11.5px] font-extrabold text-yzm-koyu">
+              <span className="mt-1 block text-[11.5px] font-extrabold text-konu-turkce-koyu">
                 {OGE_ADI[yanlis.tur]}
               </span>
               <span className="mt-1.5 block border-t border-border pt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">

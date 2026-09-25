@@ -402,7 +402,7 @@ export function SozOyunuEkrani({
                 </div>
 
                 <div className="golge-kart rounded-[20px] bg-card px-4 py-4">
-                  <p className="mb-1.5 text-center text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-yzm-koyu">
+                  <p className="mb-1.5 text-center text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-konu-turkce-koyu">
                     {TUR_ADI[soru.soru.tur]}
                   </p>
                   <p className="text-center font-display text-[20px] font-extrabold leading-snug tracking-tight">
@@ -560,7 +560,7 @@ function SonucGorunumu({
               {/* Deyim–atasözü ayrımı ÖSYM'nin ayrıca sorduğu bir konu; sözü
                   öğrenirken hangisi olduğunun kuralı da görünsün. */}
               <span className="mt-1.5 block border-t border-border pt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
-                <b className="font-extrabold text-yzm-koyu">{TUR_ADI[yanlis.tur]}</b> ·{' '}
+                <b className="font-extrabold text-konu-turkce-koyu">{TUR_ADI[yanlis.tur]}</b> ·{' '}
                 {TUR_ACIKLAMASI[yanlis.tur]}
               </span>
             </YanlisKarti>

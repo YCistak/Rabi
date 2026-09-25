@@ -19,24 +19,18 @@ import { istatistigiTamamla } from './tur'
  * kaybolacaktı. Sınıflandırma sonradan değil, şimdi kuruluyor.
  */
 export type DersId = 'turkce' | 'matematik' | 'cografya' | 'tarih' | 'biyoloji' | 'kimya'
+/*
+  Renk ayrı bir alanda tutulmuyor: ders kimliği konu haritasının ders
+  kimliğiyle aynı ve renk oradan okunuyor (`--konu-<ders>-*`, `globals.css`).
+  Bir süre her dersin bir "ailesi" vardı (`yzm`, `isl`…) ve harita kendi
+  paletini kullanıyordu; aynı ders iki ekranda iki renkte duruyordu.
+*/
 
 export type DersTanimi = {
   id: DersId
   ad: string
   aciklama: string
   ikon: string
-  /**
-   * Tema renk ailesi.
-   *
-   * Renk artık oyuna değil **derse** bağlı: aynı derse çalışan bütün oyunlar
-   * aynı rengi paylaşıyor, böylece renk bir kimlik taşıyor. (Ailelerin adları
-   * ilk oyunlardan geliyor: yzm=yazım, isl=işlem, edb=edebiyat, trh=tarih,
-   * byl=biyoloji.) `edb` adını ilk sahibinden alıyor ama artık **Kimya'nın**:
-   * Türkçe ile Edebiyat tek derse inince lavanta boşta kaldı ve yeni bir aile
-   * uydurmak yerine o kullanıldı. Kimlik değişmedi çünkü renk değişkenleri
-   * (`--edb-*`) ve rozet renkleri aynı ada bağlı.
-   */
-  aile: 'yzm' | 'isl' | 'edb' | 'cog' | 'trh' | 'byl'
 }
 
 export const DERSLER: DersTanimi[] = [
@@ -51,42 +45,36 @@ export const DERSLER: DersTanimi[] = [
     ad: 'Türk Dili ve Edebiyatı',
     aciklama: 'Yazım, dil bilgisi, edebiyat',
     ikon: '✍️',
-    aile: 'yzm',
   },
   {
     id: 'matematik',
     ad: 'Matematik',
     aciklama: 'İşlem hızı, denklem',
     ikon: '🧮',
-    aile: 'isl',
   },
   {
     id: 'cografya',
     ad: 'Coğrafya',
     aciklama: 'Harita, yer şekilleri',
     ikon: '🗺️',
-    aile: 'cog',
   },
   {
     id: 'tarih',
     ad: 'Tarih',
     aciklama: 'Antlaşma, madde, kavram',
     ikon: '🏛️',
-    aile: 'trh',
   },
   {
     id: 'biyoloji',
     ad: 'Biyoloji',
     aciklama: 'Canlılar, sınıflandırma, hücre',
     ikon: '🧬',
-    aile: 'byl',
   },
   {
     id: 'kimya',
     ad: 'Kimya',
     aciklama: 'Periyodik tablo, formül, tepkime',
     ikon: '🧪',
-    aile: 'edb',
   },
 ]
 

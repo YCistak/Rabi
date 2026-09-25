@@ -64,7 +64,7 @@ function Parca({ parca }: { parca: SekilParcasi }) {
           stroke="currentColor"
           strokeWidth={2}
           strokeLinecap="round"
-          className={parca.vurgu ? 'text-ikincil' : 'text-isl-koyu'}
+          className={parca.vurgu ? 'text-ikincil' : 'text-konu-matematik-koyu'}
         />
       )
 

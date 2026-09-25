@@ -464,7 +464,7 @@ function Tablo({
           <span
             key={anahtar}
             aria-hidden
-            className="aspect-square rounded-[3px] bg-edb-ok/12"
+            className="aspect-square rounded-[3px] bg-konu-kimya-ok/12"
           />,
         )
         continue
@@ -520,11 +520,11 @@ function ElementHucresi({
       ? 'bg-success text-white'
       : geriBildirim.secilen === element.ad
         ? 'bg-ikincil text-white'
-        : 'bg-edb-kart text-edb-koyu'
+        : 'bg-konu-kimya text-konu-kimya-koyu'
     : // "Adını seç" ve "ailesi hangisi" sorularında hedef hücre işaretli.
       soru.tip !== 'bul' && hedef
-      ? 'bg-edb-koyu text-white isaretli-il'
-      : 'bg-edb-kart text-edb-koyu'
+      ? 'bg-konu-kimya-koyu text-white isaretli-il'
+      : 'bg-konu-kimya text-konu-kimya-koyu'
 
   const ortak = cn(
     'flex aspect-square items-center justify-center rounded-[3px] text-[8px] font-extrabold leading-none transition-colors',
@@ -676,7 +676,7 @@ function SonucGorunumu({
               <div className="flex items-center gap-3">
                 {/* Sembol kutusu: bilemediğin element, tabloda göründüğü
                     biçimiyle akılda kalıyor. */}
-                <span className="grid size-10 flex-none place-items-center rounded-[10px] bg-edb-kart text-[15px] font-extrabold text-edb-koyu">
+                <span className="grid size-10 flex-none place-items-center rounded-[10px] bg-konu-kimya text-[15px] font-extrabold text-konu-kimya-koyu">
                   {yanlis.element.sembol}
                 </span>
                 <div className="min-w-0">

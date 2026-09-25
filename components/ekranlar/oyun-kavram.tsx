@@ -56,11 +56,11 @@ import { OyunTanitim } from '@/components/oyun-tanitim'
 /** Bir cevaptan sonra ekranın beklediği süre (ms). */
 const CEVAP_BEKLEMESI = 800
 
-/** Seçili kutunun rengi — Tarih dersinin ailesi. */
+/** Seçili kutunun rengi — Tarih'in (konu haritasındaki) rengi. */
 const RENK: EslestirmeRengi = {
-  kenar: 'border-trh-koyu',
-  zemin: 'bg-trh-kart',
-  yazi: 'text-trh-koyu',
+  kenar: 'border-konu-tarih-koyu',
+  zemin: 'bg-konu-tarih',
+  yazi: 'text-konu-tarih-koyu',
 }
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
@@ -508,7 +508,7 @@ export function KavramOyunuEkrani({
             <div className="flex flex-1 flex-col gap-2 pb-1">
               {/* Tahtanın konusu: çeldiriciler de aynı konudan geldiği için
                   bunu söylemek oyuncuya haksız bir sürpriz yaşatmıyor. */}
-              <p className="mt-2.5 flex flex-none items-center justify-center gap-1.5 text-[11.5px] font-extrabold uppercase tracking-wide text-trh-koyu">
+              <p className="mt-2.5 flex flex-none items-center justify-center gap-1.5 text-[11.5px] font-extrabold uppercase tracking-wide text-konu-tarih-koyu">
                 <Compass size={13} aria-hidden />
                 {tahta.konu ? KAVRAM_KONU_ADI[tahta.konu] : 'Karışık konu'}
               </p>

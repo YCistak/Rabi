@@ -9,7 +9,7 @@ import { siraYaz } from '@/lib/siralama'
 import { AYLIK_OZET_EN_AZ_ETKIN_GUN, gunDe } from '@/lib/ozet'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
 import { kisayollar } from '@/lib/son-kullanilan'
-import { doluDersler, oyunlarinDersleri, type DersId, type DersTanimi } from '@/lib/oyunlar/tanim'
+import { doluDersler, oyunlarinDersleri, type DersId } from '@/lib/oyunlar/tanim'
 import { Halka, Kart, kartGirisi, Not } from '@/components/ui'
 import { GeriSayim } from '@/components/geri-sayim'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
@@ -47,16 +47,16 @@ const KUTUCUK_RENGI: Record<KartRengi, string> = {
  * dersin kendisi: adı kısa, dokunuşun karşılığı da tam olarak o dersin
  * ızgarası.
  *
- * Renk `DersTanimi.aile`den geliyor — "renk derse aittir" kuralının doğrudan
- * karşılığı. Sınıflar Tailwind'in taramasına takılsın diye tam yazılı.
+ * Renk konu haritasındaki dersin rengi (`--konu-<ders>`) — "renk derse
+ * aittir" kuralının doğrudan karşılığı. Sınıflar Tailwind'in taramasına takılsın diye tam yazılı.
  */
-const DERS_RENGI: Record<DersTanimi['aile'], string> = {
-  yzm: 'bg-yzm-kart',
-  isl: 'bg-isl-kart',
-  edb: 'bg-edb-kart',
-  cog: 'bg-cog-kart',
-  trh: 'bg-trh-kart',
-  byl: 'bg-byl-kart',
+const DERS_RENGI: Record<DersId, string> = {
+  turkce: 'bg-konu-turkce',
+  matematik: 'bg-konu-matematik',
+  cografya: 'bg-konu-cografya',
+  tarih: 'bg-konu-tarih',
+  biyoloji: 'bg-konu-biyoloji',
+  kimya: 'bg-konu-kimya',
 }
 
 export function AnaSayfa({
@@ -364,7 +364,7 @@ export function AnaSayfa({
             key={ders.id}
             ad={ders.ad}
             ikon={ders.ikon}
-            renk={DERS_RENGI[ders.aile]}
+            renk={DERS_RENGI[ders.id]}
             sira={sira}
             onSec={() => onOyunlaraGit(ders.id)}
           />

@@ -18,7 +18,6 @@ import {
   type BolumId,
   type BolumTanimi,
   type DersId,
-  type DersTanimi,
   type OyunTanimi,
 } from '@/lib/oyunlar/tanim'
 import {
@@ -84,25 +83,20 @@ import { TuzakOyunuEkrani } from '@/components/ekranlar/oyun-tuzak'
  */
 
 /**
- * Kart renkleri — artık oyuna değil **derse** bağlı.
+ * Kart renkleri — oyuna değil **derse** bağlı.
  *
- * Aynı derse çalışan bütün oyunlar aynı rengi paylaşıyor; renk böylece süs
- * değil, "bu ne dersi" bilgisini taşıyor. Aile adlarını `DERSLER` veriyor.
+ * Aynı derse çalışan bütün oyunlar aynı rengi paylaşıyor ve bu renk konu
+ * haritasındaki dersin rengiyle aynı (`--konu-<ders>-*`): haritada hardal
+ * olan Türkçe burada da hardal. Sınıflar Tailwind'in taramasına takılsın
+ * diye tam yazılı.
  */
-/**
- * Burada `-kart` yüzeyi kullanılıyor, oyun ekranının zemini değil: bunlar
- * sayfanın üstünde duran kartlar ve koyu temada zeminden **açık** olmaları
- * gerekiyor (bkz. `globals.css`, aile renkleri).
- */
-const AILE: Record<DersTanimi['aile'], { zemin: string; yazi: string; ok: string }> = {
-  yzm: { zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu', ok: 'bg-yzm-ok' },
-  isl: { zemin: 'bg-isl-kart', yazi: 'text-isl-koyu', ok: 'bg-isl-ok' },
-  // `edb` artık hiçbir derste yok (Türkçe ile Edebiyat birleşti); tablo tam
-  // kalıyor çünkü anahtarları renk ailesi listesinden geliyor.
-  edb: { zemin: 'bg-edb-kart', yazi: 'text-edb-koyu', ok: 'bg-edb-ok' },
-  cog: { zemin: 'bg-cog-kart', yazi: 'text-cog-koyu', ok: 'bg-cog-ok' },
-  trh: { zemin: 'bg-trh-kart', yazi: 'text-trh-koyu', ok: 'bg-trh-ok' },
-  byl: { zemin: 'bg-byl-kart', yazi: 'text-byl-koyu', ok: 'bg-byl-ok' },
+const AILE: Record<DersId, Aile> = {
+  turkce: { zemin: 'bg-konu-turkce', yazi: 'text-konu-turkce-koyu', ok: 'bg-konu-turkce-ok' },
+  matematik: { zemin: 'bg-konu-matematik', yazi: 'text-konu-matematik-koyu', ok: 'bg-konu-matematik-ok' },
+  cografya: { zemin: 'bg-konu-cografya', yazi: 'text-konu-cografya-koyu', ok: 'bg-konu-cografya-ok' },
+  tarih: { zemin: 'bg-konu-tarih', yazi: 'text-konu-tarih-koyu', ok: 'bg-konu-tarih-ok' },
+  biyoloji: { zemin: 'bg-konu-biyoloji', yazi: 'text-konu-biyoloji-koyu', ok: 'bg-konu-biyoloji-ok' },
+  kimya: { zemin: 'bg-konu-kimya', yazi: 'text-konu-kimya-koyu', ok: 'bg-konu-kimya-ok' },
 }
 
 /** Ders ızgarasındaki tek hücre: ya bir oyun ya da bir bölüm kapağı. */
@@ -393,7 +387,7 @@ export function OyunlarEkrani({
     bankaTuru === null ? [] : banka.filter((k) => k.soru.oyun === bankaTuru.oyun)
 
   /** Açık dersin ailesi — başlıktaki geri tuşu bu renkte duruyor. */
-  const acikAile = secilenDers === null ? AILE.yzm : AILE[dersBul(secilenDers).aile]
+  const acikAile = secilenDers === null ? AILE.turkce : AILE[secilenDers]
 
   return (
     /*
@@ -434,7 +428,7 @@ export function OyunlarEkrani({
 
           <div className="grid grid-cols-2 gap-3">
             {doluDersler().map((ders, sira, liste) => {
-              const aile = AILE[ders.aile]
+              const aile = AILE[ders.id]
               const oyunlar = dersinOyunlari(ders.id)
               // Tek sayıda ders varsa sonuncusu iki sütunu kaplıyor; yoksa
               // ızgarada yanı boş bir kart kalıyordu.
@@ -521,7 +515,7 @@ export function OyunlarEkrani({
                     key={kart.bolum.id}
                     bolum={kart.bolum}
                     sira={sira}
-                    aile={AILE[dersBul(kart.bolum.ders).aile]}
+                    aile={AILE[kart.bolum.ders]}
                     oyunSayisi={bolumOyunlari.length}
                     oynananTur={bolumOyunlari.reduce(
                       (toplam, o) => toplam + istatistikAl(kayitlar, o.id).oynananTur,
@@ -538,7 +532,7 @@ export function OyunlarEkrani({
                   key={kart.oyun.id}
                   oyun={kart.oyun}
                   sira={sira}
-                  aile={AILE[dersBul(kart.oyun.ders).aile]}
+                  aile={AILE[kart.oyun.ders]}
                   rekor={istatistikAl(kayitlar, kart.oyun.id).enIyiDogru}
                   genis={genis}
                   onAc={() => {

@@ -53,11 +53,11 @@ import { OyunTanitim } from '@/components/oyun-tanitim'
 /** Bir cevaptan sonra ekranın beklediği süre (ms) — Edebiyat'takiyle aynı ritim. */
 const CEVAP_BEKLEMESI = 800
 
-/** Seçili kutunun rengi — Kimya dersinin ailesi. */
+/** Seçili kutunun rengi — Kimya'nın (konu haritasındaki) rengi. */
 const RENK: EslestirmeRengi = {
-  kenar: 'border-edb-koyu',
-  zemin: 'bg-edb-kart',
-  yazi: 'text-edb-koyu',
+  kenar: 'border-konu-kimya-koyu',
+  zemin: 'bg-konu-kimya',
+  yazi: 'text-konu-kimya-koyu',
 }
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
@@ -489,7 +489,7 @@ export function FormulOyunuEkrani({
               {/* Elin türü. El mümkün olduğunca tek türden kuruluyor; bunu
                   söylemek öğrenciye bağlam veriyor ve oyunun neden zor
                   olduğunu açıklıyor: aynı türden altı bileşik. */}
-              <p className="mt-3 flex flex-none items-center justify-center gap-1.5 text-[11.5px] font-extrabold uppercase tracking-wide text-edb-koyu">
+              <p className="mt-3 flex flex-none items-center justify-center gap-1.5 text-[11.5px] font-extrabold uppercase tracking-wide text-konu-kimya-koyu">
                 <Beaker size={13} aria-hidden />
                 {el.tur ? TUR_ADI[el.tur] : 'Karışık'}
               </p>

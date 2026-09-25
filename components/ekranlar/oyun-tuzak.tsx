@@ -385,7 +385,7 @@ export function TuzakOyunuEkrani({
                   <Rabi durum={maskotDurumu} boyut={34} />
                   {/* Konu adı ipucu değil çerçeve: kuralın hangi ailede
                       olduğunu bilmek doğru/yanlış kararını vermiyor. */}
-                  <span className="rounded-full bg-isl-kart px-2.5 py-1 text-[11px] font-extrabold text-isl-koyu">
+                  <span className="rounded-full bg-konu-matematik px-2.5 py-1 text-[11px] font-extrabold text-konu-matematik-koyu">
                     {TUZAK_KONU_ADI[soru.kural.konu]}
                   </span>
                 </div>
