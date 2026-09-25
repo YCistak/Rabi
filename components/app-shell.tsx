@@ -55,6 +55,7 @@ import type { Ekran, Sekme } from '@/lib/gezinme'
 import type { KonuDersId, KonuSinifi } from '@/lib/konu'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { kullanildi } from '@/lib/son-kullanilan'
+import { useBugun } from '@/lib/gorunurluk'
 import { ustKatmaniKapat } from '@/lib/geri'
 import { Acilis, GECIS_SURESI, MaskotGecisi } from '@/components/acilis'
 import { Buton } from '@/components/ui'
@@ -114,6 +115,14 @@ export function AppShell() {
   useEffect(() => {
     document.documentElement.dataset.rabiAcildi = '1'
   }, [])
+
+  /*
+    Günün kendisi state: gün dönünce yeniden çizim geliyor. Güne bağlı
+    türetmeler (bekleyen özet ayı, haftanın görevleri, hatırlatma planı)
+    buna bakıyor; `bugun()`i doğrudan çağırsalardı arka planda gece yarısını
+    geçiren uygulamada dünkü değerde kalırlardı (bkz. `useBugun`).
+  */
+  const bugunIso = useBugun()
 
   const [sekme, setSekme] = useState<Sekme>('ana')
   const [ekran, setEkran] = useState<Ekran | null>(null)
@@ -255,7 +264,7 @@ export function AppShell() {
     Hafta dönmüşse eski görevler zaten ilk çizimde eleniyor; aşağıdaki etki de
     kaydı buna eşitliyor.
   */
-  const gorevler = haftaninGorevleri(gorevleriNormalize(gorevlerHam), haftaBasi(bugun()))
+  const gorevler = haftaninGorevleri(gorevleriNormalize(gorevlerHam), haftaBasi(bugunIso))
   /*
     Elenen görevler kayıttan da siliniyor.
 
@@ -402,7 +411,7 @@ export function AppShell() {
   useEffect(() => {
     if (!aylikOzetlerHazir || !kurulumTarihiHazir || !kurulumTarihi) return
     if (!gunlukHazir || !denemelerHazir || !oyunlarHazir) return
-    const eksikler = arsivdeEksikAylar(aylikOzetler, kurulumTarihi, bugun())
+    const eksikler = arsivdeEksikAylar(aylikOzetler, kurulumTarihi, bugunIso)
     if (eksikler.length === 0) return
     setAylikOzetler((onceki) => {
       const yeni = { ...onceki }
@@ -419,14 +428,15 @@ export function AppShell() {
     aylikOzetler,
     setAylikOzetler,
     ayiHesapla,
+    bugunIso,
   ])
 
   /** Bugün izlenmeyi bekleyen ay; bugün ayın 1'i değilse ya da izlendiyse null. */
   const bekleyenAy = useMemo(() => {
-    const ay = bekleyenOzetAyi(bugun())
+    const ay = bekleyenOzetAyi(bugunIso)
     if (!ay || ozetGorulen.includes(ay)) return null
     return ay
-  }, [ozetGorulen])
+  }, [ozetGorulen, bugunIso])
 
   /*
     Hesabın dayandığı ay: katman açıksa onunki, değilse bekleyen.
@@ -453,7 +463,7 @@ export function AppShell() {
   const gosterilebilirOzet = ozet !== null && ozetGosterilebilirMi(ozet)
   const ozetHazir = bekleyenAy !== null && gosterilebilirOzet
   const ozetYetersiz = bekleyenAy !== null && ozet !== null && !gosterilebilirOzet
-  const sonrakiOzet = sonrakiOzetGunu(bugun())
+  const sonrakiOzet = sonrakiOzetGunu(bugunIso)
 
   // Ay "izlendi" sayılıyor — kapatıldığında değil, **açıldığında**: özet
   // açıkken uygulamayı kapatan kullanıcı aynı hikâyeyi yeniden bulmasın.
@@ -625,7 +635,7 @@ export function AppShell() {
     void hatirlatmaPlanla({
       saat: ayarlar.hatirlatmaSaati,
       dakika: ayarlar.hatirlatmaDakikasi,
-      bugunGirdiVar: gunlukToplam(gunlukKayitlar, bugun()) > 0,
+      bugunGirdiVar: gunlukToplam(gunlukKayitlar, bugunIso) > 0,
     })
   }, [
     ayarlarHazir,
@@ -635,6 +645,9 @@ export function AppShell() {
     ayarlar.hatirlatmaSaati,
     ayarlar.hatirlatmaDakikasi,
     gunlukKayitlar,
+    // Gün dönünce plan yeniden kuruluyor: "bugün girdi var" dünkü günü
+    // gösteriyor olabilir.
+    bugunIso,
   ])
 
   /*
