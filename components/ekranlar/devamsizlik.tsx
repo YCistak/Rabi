@@ -6,6 +6,7 @@ import type { Devamsizlik, DevamsizlikTuru } from '@/lib/types'
 import {
   OZURSUZ_SINIR,
   TOPLAM_SINIR,
+  dersYilininKayitlari,
   devamsizlikOzeti,
   egitimYili,
   netYaz,
@@ -78,7 +79,7 @@ export function DevamsizlikEkrani({
   // listede durur ama sayaca girmez.
   const dersYili = egitimYili()
   const buYilinKayitlari = useMemo(
-    () => kayitlar.filter((k) => egitimYili(tariheCevir(k.tarih)) === dersYili),
+    () => dersYilininKayitlari(kayitlar, dersYili),
     [kayitlar, dersYili],
   )
   const ozet = useMemo(() => devamsizlikOzeti(buYilinKayitlari), [buYilinKayitlari])

@@ -493,6 +493,21 @@ export type DevamsizlikOzeti = {
   uyari: boolean
 }
 
+/**
+ * Bir ders yılına düşen devamsızlık kayıtları.
+ *
+ * Hak her ders yılında sıfırlanıyor; geçmiş yılların kaydı listede durur ama
+ * sayaca girmez. Süzgeç tek yerde: ana sayfa bir süre bütün yılları sayıyordu
+ * ve eylülde, geçen yılın devamsızlığı yüzünden yeni yıla "hakkını aştın"
+ * uyarısıyla başlanıyordu — devamsızlık ekranı ise doğru sayıyı gösteriyordu.
+ */
+export function dersYilininKayitlari(
+  kayitlar: Devamsizlik[],
+  dersYili: number = egitimYili(),
+): Devamsizlik[] {
+  return kayitlar.filter((k) => egitimYili(tariheCevir(k.tarih)) === dersYili)
+}
+
 export function devamsizlikOzeti(kayitlar: Devamsizlik[]): DevamsizlikOzeti {
   let ozurlu = 0
   let ozursuz = 0

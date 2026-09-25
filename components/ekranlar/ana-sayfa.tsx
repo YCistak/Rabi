@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import { AlertTriangle, ChevronRight, Target } from 'lucide-react'
 import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef } from '@/lib/types'
-import { devamsizlikOzeti, gunOzeti, kayitHaritasi } from '@/lib/hesap'
+import { dersYilininKayitlari, devamsizlikOzeti, gunOzeti, kayitHaritasi } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
 import { siraYaz } from '@/lib/siralama'
 import { AYLIK_OZET_EN_AZ_ETKIN_GUN, gunDe } from '@/lib/ozet'
@@ -180,7 +180,11 @@ export function AnaSayfa({
   }, [gunlukKayitlar, ayarlar.gunlukHedef, tarih])
 
   const tamamlanan = gunler.filter((g) => g.tuttu).length
-  const devamsizlikDurumu = useMemo(() => devamsizlikOzeti(devamsizlik), [devamsizlik])
+  // Yalnızca bu ders yılı: hak her eylülde sıfırlanıyor (devamsızlık ekranıyla aynı süzgeç).
+  const devamsizlikDurumu = useMemo(
+    () => devamsizlikOzeti(dersYilininKayitlari(devamsizlik)),
+    [devamsizlik],
+  )
 
   const hedefTuttu = bugunku.toplam >= ayarlar.gunlukHedef && ayarlar.gunlukHedef > 0
   const maskotDurumu: MaskotDurumu = devamsizlikDurumu.asildi
