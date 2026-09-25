@@ -89,7 +89,6 @@ export function HedefEkrani({
     [secilenUni, secilenBolum],
   )
 
-  const uniSonuclari = useMemo(() => universiteAra(uniArama), [uniArama])
   /*
     Süzgeç `varsayilanTur`dan geliyor, `puanTuru` state'inden değil: biri
     öğrencinin **kendi** alanı, öteki seçilen **bölümün** türü. İkincisine
@@ -97,6 +96,7 @@ export function HedefEkrani({
     değiştirir, süzgeç de listeyi.
   */
   const alanSuzgeci = alanDisiniGoster ? null : varsayilanTur
+  const uniSonuclari = useMemo(() => universiteAra(uniArama, alanSuzgeci), [uniArama, alanSuzgeci])
   const bolumSonuclari = useMemo(
     () => (secilenUni ? bolumAra(secilenUni, bolumArama, alanSuzgeci) : []),
     [secilenUni, bolumArama, alanSuzgeci],
@@ -222,6 +222,20 @@ export function HedefEkrani({
                       />
                     ))}
                   </Liste>
+                  {/* Üniversite listesi de alana göre süzülü; anahtar burada da
+                      duruyor, yoksa yalnızca alan dışı programı olan üniversiteye
+                      hiç ulaşılamazdı. */}
+                  {varsayilanTur !== null && (
+                    <button
+                      type="button"
+                      onClick={() => setAlanDisiniGoster((a) => !a)}
+                      className="mt-2 w-full rounded-lg py-1 text-center text-[13px] font-bold text-ikincil transition active:opacity-70"
+                    >
+                      {alanDisiniGoster
+                        ? 'Yalnızca alanımdaki üniversiteler'
+                        : 'Alanım dışındaki üniversiteleri de göster'}
+                    </button>
+                  )}
                 </>
               )}
             </div>

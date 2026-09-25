@@ -158,6 +158,19 @@ describe('arama', () => {
     expect(universiteAra('YILDIZ')[0].ad).toBe('Yıldız Teknik Üniversitesi')
   })
 
+  /**
+   * Gerileme testi: üniversite listesi alana göre süzülmüyordu ve Dil
+   * öğrencisi dil programı olmayan üniversiteyi seçip boş bölüm listesine
+   * düşüyordu.
+   */
+  it('alan verilince yalnızca o alanda programı olan üniversiteler geliyor', () => {
+    const dil = universiteAra('abdullah gul', 'dil')
+    const hepsi = universiteAra('abdullah gul')
+    expect(hepsi.length).toBeGreaterThan(0)
+    for (const u of dil) expect(bolumleriGetir(u, 'dil').length).toBeGreaterThan(0)
+    expect(dil.length).toBeLessThan(hepsi.length)
+  })
+
   it('şehirle de bulunuyor', () => {
     expect(universiteAra('Diyarbakır').map((u) => u.ad)).toContain('Dicle Üniversitesi')
   })
