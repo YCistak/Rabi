@@ -222,7 +222,7 @@ function SuzgecCipi({
       aria-pressed={etkin}
       onClick={onClick}
       className={cn(
-        'flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3 text-[12.5px] font-extrabold transition',
+        'flex h-9 shrink-0 items-center gap-1.5 rounded-lg border px-3 text-[12.5px] font-extrabold transition',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         etkin
           ? 'border-foreground bg-foreground text-background'
@@ -319,8 +319,8 @@ function KayitKarti({
         </span>
       </div>
 
-      {/* Sağ pay tikin yeri: bildirim satırının yazısı tuşun altına girmesin. */}
-      <div className="pr-11">
+      {/* Sağ pay "Çözdüm" tuşunun yeri: bildirim satırının yazısı tuşun altına girmesin. */}
+      <div className="pr-28">
         <BildirimDugmesi soru={kayit.soru} kol={bildir} />
       </div>
 
@@ -335,16 +335,22 @@ function KayitKarti({
         type="button"
         onClick={() => setKalkiyor(true)}
         disabled={kalkiyor}
-        aria-label="Bu soruyu bankadan kaldır"
+        aria-label="Çözdüm, bu soruyu bankadan kaldır"
         title="Öğrendim, bankadan kaldır"
+        /*
+          Bir süre yazısız, yuvarlak bir tikti; ne yaptığı basmadan
+          anlaşılmıyordu. Yazı "Çözdüm": tik bir onay işareti ama kullanıcının
+          verdiği karar soruyu çözmüş olmak.
+        */
         className={cn(
-          'absolute bottom-2.5 right-2.5 grid size-9 place-items-center rounded-full transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+          'absolute bottom-2.5 right-2.5 flex h-9 items-center gap-1.5 rounded-lg px-3 text-[13px] font-extrabold transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
           // Basılınca dolu yeşile dönüyor: kart gitmeden önce kararın alındığı
           // görünüyor ve gidişin sebebi tikte kalıyor.
           kalkiyor ? 'tik-dolu bg-success text-white' : 'bg-success-soft text-success',
         )}
       >
-        <Check size={18} strokeWidth={3} aria-hidden />
+        <Check size={16} strokeWidth={3} aria-hidden />
+        Çözdüm
       </button>
     </div>
   )

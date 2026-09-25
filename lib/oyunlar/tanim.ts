@@ -116,7 +116,7 @@ export const BOLUMLER: BolumTanimi[] = [
     id: 'geometri',
     ders: 'matematik',
     ad: 'Geometri Ustası',
-    aciklama: 'Açı, dik üçgen, trigonometri',
+    aciklama: 'Açı, dik üçgen',
     ikon: '📐',
   },
 ]
@@ -143,6 +143,14 @@ export type OyunTanimi = {
    * yok: hiçbiri ilk turu oynamak için gerekmiyor.
    */
   ozet: string
+  /**
+   * Kaldırılmış ama silinmemiş oyun: hiçbir listede görünmüyor.
+   *
+   * Tanımı, ekranı ve soru üreteci yerinde duruyor — soruları ileride başka
+   * bir yerde kullanılabilir ve bankada bu oyundan kalmış kayıtlar hâlâ
+   * okunabilmeli. Tanım listeden silinseydi `oyunBul` o kayıtlarda patlardı.
+   */
+  kapali?: true
 }
 
 export const OYUNLAR: OyunTanimi[] = [
@@ -217,6 +225,8 @@ export const OYUNLAR: OyunTanimi[] = [
     ders: 'matematik',
     bolum: 'geometri',
     ad: 'Trigonometrik Oranlar',
+    // Kaldırıldı (kullanıcı istedi), soruları ileride kullanılabilir diye silinmedi.
+    kapali: true,
     kisaAciklama: 'sin, cos, tan, cot kaç?',
     ikon: '🔺',
     ozet: `Dik üçgende **α** açısının istenen oranını dört şıktan seçersin: sin = karşı/hipotenüs, cos = komşu/hipotenüs, tan = karşı/komşu. Seviye yükseldikçe özel açılar, eksik kenar ve tümler açı gelir. 10. sınıf konusu.`,
@@ -359,7 +369,7 @@ export function dersBul(id: DersId): DersTanimi {
 
 /** Bir dersin bütün oyunları (bölüm içindekiler dahil), listedeki sırayla. */
 export function dersinOyunlari(id: DersId): OyunTanimi[] {
-  return OYUNLAR.filter((o) => o.ders === id)
+  return OYUNLAR.filter((o) => o.ders === id && !o.kapali)
 }
 
 export function bolumBul(id: BolumId): BolumTanimi {
@@ -374,12 +384,12 @@ export function dersinBolumleri(id: DersId): BolumTanimi[] {
 }
 
 export function bolumunOyunlari(id: BolumId): OyunTanimi[] {
-  return OYUNLAR.filter((o) => o.bolum === id)
+  return OYUNLAR.filter((o) => o.bolum === id && !o.kapali)
 }
 
 /** Dersin doğrudan altındaki oyunlar — bölüme girenler burada görünmüyor. */
 export function bolumsuzOyunlar(id: DersId): OyunTanimi[] {
-  return OYUNLAR.filter((o) => o.ders === id && o.bolum === undefined)
+  return OYUNLAR.filter((o) => o.ders === id && o.bolum === undefined && !o.kapali)
 }
 
 /**

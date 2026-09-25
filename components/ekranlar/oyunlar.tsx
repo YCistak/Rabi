@@ -26,7 +26,6 @@ import {
   type TurSayilari,
 } from '@/lib/oyunlar/tur'
 import {
-  bankaDagilimi,
   bankaKimligi,
   bankayiGuncelle,
   dusenSayisi,
@@ -227,8 +226,6 @@ export function OyunlarEkrani({
     if (acikOyun) onOyunAcildi(acikOyun)
   }, [acikOyun, onOyunAcildi])
 
-  const dagilim = useMemo(() => bankaDagilimi(banka), [banka])
-
   // Arka plan müziği yok. Bir süre her tur modunun kendi sentezlenmiş parçası
   // çalıyordu (`mod-muzigi.ts`); kaldırıldı — soru okurken arkada müzik dikkati
   // dağıtıyordu ve kullanıcılar zaten kapatıyordu. Efektler (`oyun-sesi.ts`)
@@ -425,7 +422,6 @@ export function OyunlarEkrani({
 
       <BankaSatiri
         toplam={banka.length}
-        dagilim={dagilim}
         onAc={onBankayaGit}
         className="mt-4"
       />
@@ -440,10 +436,6 @@ export function OyunlarEkrani({
             {doluDersler().map((ders, sira, liste) => {
               const aile = AILE[ders.aile]
               const oyunlar = dersinOyunlari(ders.id)
-              const oynanan = oyunlar.reduce(
-                (t, o) => t + istatistikAl(kayitlar, o.id).oynananTur,
-                0,
-              )
               // Tek sayıda ders varsa sonuncusu iki sütunu kaplıyor; yoksa
               // ızgarada yanı boş bir kart kalıyordu.
               const genis = liste.length % 2 === 1 && sira === liste.length - 1
@@ -459,7 +451,8 @@ export function OyunlarEkrani({
                     Kart bilerek basık: altı ders yan yana dizildiğinde uzun
                     kartlar listeyi üç ekran boyuna çıkarıyordu. Açıklama satırı
                     ve sağ alttaki ok daire de bu yüzden yok — ders adı ile
-                    "kaç oyun · kaç tur" sayacı zaten kartın söylediği her şey.
+                    oyun sayısı zaten kartın söylediği her şey. Oynanan tur
+                    sayısı da bir süre yanında duruyordu; kullanıcı kaldırttı.
                   */
                   className={cn(
                     'rounded-2xl p-3.5 text-left transition active:brightness-[0.97]',
@@ -482,7 +475,6 @@ export function OyunlarEkrani({
                     </span>
                     <span className={cn('mt-1.5 block text-[11.5px] font-bold', aile.yazi)}>
                       {oyunlar.length} oyun
-                      {oynanan > 0 && <> · {oynanan} tur</>}
                     </span>
                   </span>
                 </button>
@@ -834,24 +826,20 @@ export function OyunlarEkrani({
  *
  * Dokunma hedefi "Oyna" düğmesi değil kartın tamamı; düğme onun içinde bir
  * yüzey, çünkü iç içe iki düğme olmaz.
+ *
+ * Altında bir süre oyun başına yanlış sayısını gösteren çipler vardı
+ * (yazım, işlem, edebiyat); kullanıcı kaldırttı — dağılım bankanın içinde
+ * zaten görünüyor, girişte yalnızca toplam kalıyor.
  */
 function BankaSatiri({
   toplam,
-  dagilim,
   onAc,
   className,
 }: {
   toplam: number
-  dagilim: Record<OyunId, number>
   onAc: () => void
   className?: string
 }) {
-  const cipler = [
-    { id: 'yazim' as const, ikon: '✍️', ad: 'yazım', zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu' },
-    { id: 'islem' as const, ikon: '🧮', ad: 'işlem', zemin: 'bg-isl-kart', yazi: 'text-isl-koyu' },
-    { id: 'edebiyat' as const, ikon: '📚', ad: 'edebiyat', zemin: 'bg-yzm-kart', yazi: 'text-yzm-koyu' },
-  ].filter((c) => dagilim[c.id] > 0)
-
   return (
     <button
       type="button"
@@ -891,23 +879,6 @@ function BankaSatiri({
         </span>
       </span>
 
-      {cipler.length > 0 && (
-        <span className="mt-3 flex gap-1.5">
-          {cipler.map((cip) => (
-            <span
-              key={cip.id}
-              className={cn(
-                'rakam flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-extrabold',
-                cip.zemin,
-                cip.yazi,
-              )}
-            >
-              <span aria-hidden>{cip.ikon}</span>
-              {dagilim[cip.id]} <em className="not-italic font-semibold">{cip.ad}</em>
-            </span>
-          ))}
-        </span>
-      )}
     </button>
   )
 }
