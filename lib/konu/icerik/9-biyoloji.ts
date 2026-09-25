@@ -116,7 +116,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Mikroskobun icadı hücrenin görülmesini ve incelenmesini sağladı.', true, 'Hücre kavramı ancak mikroskopla ortaya çıkabildi.'),
       soru('Antibiyotikler virüslere karşı geliştirilmiş ilaçlardır.', false, 'Antibiyotikler bakterilere etki eder; virüslere karşı etkisizdir.'),
       sikli('Mantar kesitinde odacıklar görüp "hücre" diyen kimdir?', ['Leeuwenhoek', 'Hooke'], 1, 'Leeuwenhoek ilk mikroorganizmaları gözledi.'),
-      sikli('Bezelyelerle kalıtımın oranlarını gösteren kimdir?', ['Darwin', 'Mendel'], 1, 'Genetik böyle doğdu.'),
+      sikli('Bezelyelerle kalıtımın oranlarını gösteren kimdir?', ['Mendel', 'Darwin'], 0, 'Darwin doğal seçilimle evrimi açıkladı.'),
       sikli('DNA çift sarmalı hangi yılda çözüldü?', ['1859', '1953'], 1, 'Watson, Crick ve Franklin.'),
       soru('Antibiyotik planlı bir araştırmayla bulunmuştur.', false, 'Fleming\'in küf mantarında gözlediği bir kaza.'),
     ], [
@@ -171,9 +171,9 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Bilimsel bir hipotezin yanlışlanabilir olması gerekir.', true, 'Hiçbir gözlemin çürütemeyeceği bir iddia bilimsel olarak sınanamaz.'),
       soru('Bir teori, yeterince kanıt toplayınca yasaya dönüşür.', false, 'Yasa neyin olduğunu tanımlar, teori niçin olduğunu açıklar; ikisi ayrı işler.'),
       soru('Hakem değerlendirmesinden geçmemiş bir iddia da bilimsel bilgi sayılır.', false, 'Yayımlanmadan önce alanın uzmanlarınca denetlenmesi sürecin parçası.'),
-      sikli('Hiçbir gözlemle çürütülemeyen iddia için ne söylenir?', ['Kesin doğrudur', 'Bilim dışıdır'], 1, 'Yanlışlanabilirlik şart.'),
-      sikli('Yasa ne yapar?', ['Nedenini açıklar', 'Neyin olduğunu tarif eder'], 1, 'Nedeni teori açıklar.'),
-      soru('Hakem değerlendirmesi çalışma yayımlandıktan sonra yapılır.', false, 'Yayımlanmadan önce; hatanın ilk süzgeci.'),
+      sikli('Evrim teorisi için hangisi doğrudur?', ['Defalarca sınanmış açıklamadır', 'Kanıtsız bir tahmindir'], 0, 'Bilimde teori "kanıtlanmamış" demek değildir.'),
+      sikli('Sınanmayı bekleyen açıklamaya ne denir?', ['Hipotez', 'Teori'], 0, 'Teori defalarca sınanmış geniş bir açıklama sistemi.'),
+      soru('Otoriteye dayanan bir açıklama bilimsel sayılır.', false, 'Bilimsel iddia gözlem ve deneyle desteklenmelidir; söyleyenin kim olduğu kanıt değildir.'),
     ], [
       {
         soru: 'Bilimde "teori" ne demektir?',
@@ -232,8 +232,8 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Bir deneyde birden çok bağımsız değişken aynı anda değiştirilirse sonucun sebebi anlaşılmaz.', true, 'Hangi değişikliğin sonuca yol açtığı ayırt edilemez.'),
       soru('Plasebo, deneklere verilen etkin maddedir.', false, 'Plasebo etkisiz bir madde; beklentinin etkisini ayırmak için veriliyor.'),
       soru('Örneklem küçüldükçe sonuçların güvenilirliği artar.', false, 'Küçük örneklem rastlantıya daha açık; güvenilirlik örneklem büyüdükçe artar.'),
-      sikli('Denenen etkiyi almayan gruba ne denir?', ['Deney grubu', 'Kontrol grubu'], 1, 'Onsuz değişimin sebebi bilinemez.'),
-      sikli('Etkisiz uygulama alan grup neden gerekir?', ['Maliyeti düşürür', 'Beklenti sonucu değiştirir'], 1, 'Plasebo.'),
+      sikli('Bilimsel araştırmada hipotezden hemen sonra hangi adım gelir?', ['Deney', 'Sonuç'], 0, 'Hipotez deneyle sınanır, sonuç veriden çıkar.'),
+      sikli('Işık-bitki deneyinde su miktarı hangi değişkendir?', ['Sabit tutulan', 'Bağımlı'], 0, 'Bağımlı değişken ölçülen bitki boyu; su sabit tutulur.'),
       sikli('"Işık bitki boyunu etkiler mi?" deneyinde bağımlı değişken?', ['Işık miktarı', 'Bitki boyu'], 1, 'Ölçülen sonuç.'),
       soru('Tekrarlanamayan sonuç bilimsel olarak kabul edilir.', false, 'Aynı koşullarda başkaları da alabilmeli.'),
     ], [
@@ -280,8 +280,8 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Başkasının çalışmasını kaynak göstermeden kullanmak aşırmadır.', true, 'Fikir de bir emek; sahibi belirtilmek zorunda.'),
       soru('İnsan üzerinde yapılan araştırmalarda kişinin onayı alınmayabilir.', false, 'Aydınlatılmış onam şart: kişi neye katıldığını bilerek kabul etmeli.'),
       soru('Araştırmayı destekleyen kuruluşun belirtilmesine gerek yoktur.', false, 'Çıkar çatışması açıklanmalı; sonucu okuyanın bunu bilmeye hakkı var.'),
-      sikli('İnsan üzerinde çalışma için ne gerekir?', ['Aydınlatılmış onam', 'Yalnızca etik kurul'], 0, 'Kişi riskleri bilerek gönüllü kabul etmeli.'),
-      sikli('Araştırmayı finanse edenin sonuçtan çıkarı varsa ne yapılmalı?', ['Açıkça bildirilmeli', 'Gizlenmeli'], 0, 'Çıkar çatışması.'),
+      sikli('Hayvan deneylerinde hangisi ilkedir?', ['Hayvan sayısını en aza indirmek', 'Sayıyı artırmak'], 0, 'Etik kurul onayı, en az hayvan, en az acı, mümkünse alternatif yöntem.'),
+      sikli('Veri uydurduğu anlaşılan bir yayına ne olur?', ['Ödül alır', 'Geri çekilir'], 1, 'Veri uydurmak bilim etiğinin en ağır ihlali.'),
       soru('Genetik veri kimliği açık edecek biçimde paylaşılabilir.', false, 'Kişiye ve ailesine aittir.'),
     ], [
       {
@@ -340,9 +340,9 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Homeostazi, canlının değişen koşullara rağmen iç dengesini korumasıdır.', true, 'Vücut sıcaklığının sabit tutulması buna örnek.'),
       soru('Metabolizma yalnızca yapım tepkimelerini kapsar.', false, 'Yapım (anabolizma) ve yıkım (katabolizma) tepkimelerinin tamamı.'),
       sikli('Besinini kendi üreten canlıya ne denir?', ['Heterotrof', 'Ototrof'], 1, 'Heterotrof dışarıdan alır.'),
-      sikli('Yapım tepkimelerine ne denir?', ['Katabolizma', 'Anabolizma'], 1, 'Katabolizma yıkım.'),
+      sikli('Türlerin değişen koşullara uyum sağlamasını ne kolaylaştırır?', ['Varyasyon ve adaptasyon', 'Homeostazi'], 0, 'Homeostazi bireyin iç dengesini korur; türün uyumu varyasyonla olur.'),
       sikli('Bitkinin ışığa yönelmesi hangi özelliktir?', ['Boşaltım', 'Uyarılara tepki'], 1, 'Çevredeki değişimi algılayıp karşılık verme.'),
-      sikli('Virüsün canlılığı neden tartışmalıdır?', ['Kalıtım maddesi yok', 'Hücresi yok'], 1, 'Konak dışında yaşam belirtisi göstermez.'),
+      sikli('Antibiyotik virüse neden işlemez?', ['Metabolizması ve ribozomu yok', 'Çok büyüktür'], 0, 'Antibiyotik bakterinin yapısını hedefler; virüste o yapılar yok.'),
       soru('Çok hücrelide sıra hücre → doku → organ → sistem → organizmadır.', true, 'Organizasyon.'),
       soru('Solunum besindeki enerjiyi kullanılabilir hâle getirir.', true, 'ATP üretimi.'),
     ], [
@@ -409,7 +409,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       ),
       kart(
         'İnorganik mi organik mi?',
-        'İnorganik moleküller canlıda sentezlenmez, dışarıdan hazır alınır.\nÖrnek: su, mineral, asit, baz, tuz\nEnerji vermezler ve sindirilmezler.',
+        'İnorganik moleküller dışarıdan hazır alınır; su bir istisna, solunumda hücrede de oluşur.\nÖrnek: su, mineral, asit, baz, tuz\nEnerji vermezler ve sindirilmezler.',
       ),
     ], [
       soru(
@@ -429,11 +429,11 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Suyun öz ısısının yüksek olması, canlıdaki sıcaklık dalgalanmalarını azaltır.', true, 'Su geç ısınıp geç soğuduğu için vücut sıcaklığı ani değişmiyor.'),
       soru('Mineraller vücutta enerji vermek için kullanılır.', false, 'Mineraller enerji vermez; yapıya katılır ve düzenleyici görev yapar.'),
       soru('Tampon sistemler kanın pH ını dar bir aralıkta tutar.', true, 'Küçük bir pH değişimi bile enzimleri işlevsiz bırakabilirdi.'),
-      sikli('pH 7\'nin altı nedir?', ['Asidik', 'Bazik'], 0, 'Üstü bazik.'),
+      sikli('Hemoglobinin yapısına katılan mineral?', ['Kalsiyum', 'Demir'], 1, 'Kalsiyum kemik ve kasta görev alır.'),
       sikli('Bitkilerde suyun yükselmesini sağlayan?', ['Adezyon ve kohezyon', 'Tampon sistem'], 0, 'Kohezyon suyu suya, adezyon yüzeye bağlar.'),
-      sikli('İnorganik moleküller için ne söylenir?', ['Canlı tarafından üretilmez', 'Enerji verir'], 0, 'Dışarıdan alınır, sindirilmez.'),
+      sikli('İnorganik moleküllerden hangisi hücrede de oluşabilir?', ['Su', 'Kalsiyum'], 0, 'Solunumun sonunda su oluşur; mineraller dışarıdan alınmak zorunda.'),
       sikli('Mide ortamı nasıldır?', ['Asidik', 'Bazik'], 0, 'Safra bazik.'),
-      soru('Suyun öz ısısı düşüktür, bu yüzden hızla ısınır.', false, 'Yüksektir; geç ısınır geç soğur.'),
+      soru('Su, polar yapısı sayesinde iyi bir çözücüdür.', true, 'Tepkimeler suda gerçekleşir, maddeler suyla taşınır.'),
     ], [
       {
         soru: 'Kan pH\'ının dar aralıkta tutulmasını ne sağlar?',
@@ -526,8 +526,8 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Proteinlerin yapı birimi yağ asitleridir.', false, 'Proteinlerin yapı birimi amino asit; yağ asidi lipitlerin.'),
       sikli('Bitkinin karbonhidrat deposu nedir?', ['Nişasta', 'Glikojen'], 0, 'Hayvan glikojen.'),
       sikli('İnsan hangi polisakkariti sindiremez?', ['Selüloz', 'Nişasta'], 0, 'Bitki duvarı.'),
-      sikli('Proteinlerin yapı birimi?', ['Amino asit', 'Yağ asidi'], 0, 'Sırası işlevi belirler.'),
-      sikli('Enzim-substrat seçiciliğini anlatan benzetme?', ['Anahtar-kilit', 'Merdiven'], 0, 'Enzim yalnızca kendi substratına uyar.'),
+      sikli('Nişasta, glikojen ve selülozun ortak yapı birimi?', ['Glikoz', 'Amino asit'], 0, 'Üçü de glikoz zinciri; amino asit proteinlerin birimi.'),
+      sikli('DNA\'nın görevi nedir?', ['Kalıtım bilgisini taşımak', 'Enerji depolamak'], 0, 'RNA bu bilgiyi kullanır; enerji deposu yağ ve karbonhidrat.'),
       sikli('Gram başına en çok enerji veren?', ['Karbonhidrat', 'Yağ'], 1, 'Ama en yavaş yıkılır.'),
       sikli('Büyük moleküllerin su çıkararak birleşmesi?', ['Hidroliz', 'Dehidrasyon'], 1, 'Hidroliz su ekleyerek parçalar.'),
       sikli('Vitaminler ne yapar?', ['Enerji verir', 'Tepkimeleri düzenler'], 1, 'Enerji vermez.'),
@@ -611,8 +611,8 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Bitki hücresinde hücre duvarı ve kloroplast bulunur.', true, 'İkisi de hayvan hücresinde yok.'),
       soru('Bakteriler ökaryot hücre yapısına sahiptir.', false, 'Bakteriler prokaryot; çekirdek zarları ve zarlı organelleri yok.'),
       soru('Ribozom hem prokaryot hem ökaryot hücrede bulunur.', true, 'Protein sentezi bütün canlılarda ortak.'),
-      sikli('Bakteri ve arkeler hangi hücre tipindedir?', ['Prokaryot', 'Ökaryot'], 0, 'DNA sitoplazmada serbest.'),
-      sikli('Hücre duvarı ve kloroplast hangi hücrede vardır?', ['Bitki', 'Hayvan'], 0, 'Hayvanda sentrozom.'),
+      sikli('Mantarlar, bitkiler ve hayvanlar hangi hücre tipindedir?', ['Ökaryot', 'Prokaryot'], 0, 'Zarla çevrili çekirdekleri ve organelleri var.'),
+      sikli('Sentrozom hangi hücrede bulunur?', ['Bitki', 'Hayvan'], 1, 'Hayvan hücresinde bölünmede iğ ipliklerini kurar.'),
       soru('Zarla bölmelenme farklı tepkimelerin karışmadan yürümesini sağlar.', true, 'Ökaryotun avantajı.'),
     ], [
       {
@@ -659,7 +659,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Hücre zarı çift katlı fosfolipit tabakasından oluşur.', true, 'Su sevmeyen kuyruklar içe, su seven başlar dışa bakıyor.'),
       soru('Hücre duvarı bütün canlı hücrelerde bulunur.', false, 'Hayvan hücresinde yok; bitki, mantar ve bakterilerde var.'),
       sikli('Fosfolipitin suda çift kat kurmasının sebebi?', ['Proteinler zorlar', 'Bir ucu suyu sever bir ucu sevmez'], 1, 'Su sevmez uçlar içeride kalır.'),
-      sikli('Zarın esnek ve onarılabilir olduğunu anlatan model?', ['Anahtar-kilit', 'Akıcı mozaik'], 1, 'Proteinler lipit denizinde yüzer.'),
+      sikli('Zardan hangisi kolay geçer?', ['Küçük ve yağda çözünen O₂', 'Büyük ve yüklü iyonlar'], 0, 'Yüklü ve büyük maddeler taşıyıcı ya da kanal ister.'),
       soru('Hücre duvarı seçici geçirgendir.', false, 'Cansızdır ve tam geçirgendir.'),
     ], [
       {
@@ -706,7 +706,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Sitoplazma, organelleri taşıyan cansız bir sıvıdır.', false, 'Canlı bir ortam: tepkimeler orada yürüyor ve kendisi de hareket ediyor.'),
       soru('Sitoplazma hareketi yalnızca hayvan hücrelerinde görülür.', false, 'Bitki hücrelerinde de görülür; madde dağılımını kolaylaştırıyor.'),
       sikli('Solunumun ilk basamağı olan glikoliz nerede olur?', ['Çekirdekte', 'Sitoplazmada'], 1, 'Sitoplazmada yürür.'),
-      sikli('Sitoplazmanın dolaşması ne sağlar?', ['Hücreyi böler', 'Maddelerin dağılmasını hızlandırır'], 1, 'Bitki hücrelerinde.'),
+      sikli('Hücredeki tepkimeler neden su içinde yürür?', ['Moleküller çözeltide birbirini bulur', 'Su enerji verir'], 0, 'Susuz ortamda moleküller karşılaşamaz.'),
       soru('Sitozol, zar ile çekirdek arasını dolduran sıvıdır.', true, 'Organeller içinde durur.'),
     ], [
       {
@@ -753,7 +753,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Sitoiskelet hücreye şekil verir ve organelleri yerinde tutar.', true, 'Ayrıca hücre içi taşımaya da yol oluyor.'),
       soru('Sil ve kamçının hücrenin hareketiyle ilgisi yoktur.', false, 'İkisi de hücrenin ya da çevresindeki sıvının hareketini sağlıyor.'),
       sikli('Bölünmede iğ ipliklerini oluşturan yapı?', ['Ribozom', 'Sentrozom'], 1, 'Yalnızca hayvan hücresinde.'),
-      sikli('Solunum yolundaki tozu dışarı süpüren?', ['Kamçı', 'Siller'], 1, 'Hareket uzantıları.'),
+      sikli('Antibiyotiklerin bir kısmı bakterinin hangi yapısını hedefler?', ['Ribozomunu', 'Çekirdeğini'], 0, 'Bakteride zarla çevrili çekirdek yok; ribozomu ise bizimkinden farklı.'),
       soru('Granüllü ER\'ye bağlı ribozomlar salgı proteinlerini üretir.', true, 'Serbest olanlar hücre içi proteinleri.'),
     ], [
       {
@@ -822,7 +822,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       sikli('Ribozom parçaları nerede üretilir?', ['Golgi\'de', 'Çekirdekçikte'], 1, 'Çekirdek içinde.'),
       sikli('Fotosentez hangi organelde olur?', ['Mitokondri', 'Kloroplast'], 1, 'Klorofil ışığı yakalar.'),
       sikli('Lipit üreten organel?', ['Golgi', 'Granülsüz ER'], 1, 'Granüllü ER protein.'),
-      sikli('Sindirim enzimleriyle maddeleri parçalayan?', ['Koful', 'Lizozom'], 1, 'Golgi paketler, lizozom parçalar.'),
+      sikli('Salgı yolunda ER\'den sonra hangi organel gelir?', ['Golgi', 'Lizozom'], 0, 'Ribozom → ER → Golgi → zar.'),
       sikli('Bitki hücresine diklik veren?', ['Büyük koful', 'Sentrozom'], 0, 'Tek ve büyük.'),
       soru('Mitokondrinin kendi DNA\'sı vardır.', true, 'Çoğalabilir.'),
     ], [
@@ -846,7 +846,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
           basliklar: ['Geçiş', 'Enerji', 'Yön'],
           satirlar: [
             ['Difüzyon', 'Yok', 'Çoktan aza'],
-            ['Ozmoz', 'Yok', 'Çoktan aza'],
+            ['Ozmoz', 'Yok', 'Su seyreltikten derişiğe'],
             ['Aktif taşıma', 'Var', 'Azdan çoğa'],
           ],
         },
@@ -887,9 +887,9 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Ozmoz, suyun az yoğun ortamdan çok yoğun ortama geçmesidir.', true, 'Geçen şey çözünen değil, çözücü olan su.'),
       soru('Büyük moleküller hücre zarından basit difüzyonla geçer.', false, 'Basit difüzyon küçük moleküller için; büyükler endositozla alınıyor.'),
       sikli('O₂ ve CO₂ zardan nasıl geçer?', ['Aktif taşıma', 'Basit difüzyon'], 1, 'Küçük ve yüksüz.'),
-      sikli('Glikoz taşıyıcı proteinle, enerji harcamadan geçerse?', ['Endositoz', 'Kolaylaştırılmış difüzyon'], 1, 'Pasif taşıma.'),
+      sikli('Glikoz taşıyıcı proteinle, enerji harcamadan geçerse?', ['Kolaylaştırılmış difüzyon', 'Endositoz'], 0, 'Taşıyıcı var ama ATP yok: pasif taşıma.'),
       sikli('Sodyum-potasyum pompası hangi taşımadır?', ['Ozmoz', 'Aktif taşıma'], 1, 'ATP harcanır.'),
-      sikli('Derişik ortamda hücre ne olur?', ['Su alıp şişer', 'Su kaybedip büzülür'], 1, 'Plazmoliz.'),
+      sikli('Derişik ortamda hücre ne olur?', ['Su kaybedip büzülür', 'Su alıp şişer'], 0, 'Su seyreltikten derişiğe geçer; hücre su kaybeder (plazmoliz).'),
       soru('Ekzositozla büyük maddeler dışarı verilir.', true, 'Zarla kese hâlinde.'),
     ], [
       {
@@ -963,7 +963,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Analog organlar, canlıların ortak atadan geldiğini gösterir.', false, 'Akrabalığı homolog organlar gösterir; analog organlar yalnızca aynı işi yapar.'),
       soru('Tür, doğal koşullarda çiftleşip verimli döl verebilen bireyler topluluğudur.', true, 'Katır verimli olmadığı için at ve eşek ayrı türler.'),
       sikli('Yarasa kanadı ile insan kolu nasıl organlardır?', ['Homolog', 'Analog'], 0, 'Ortak köken.'),
-      sikli('Katır neden ayrı tür değildir?', ['Kısırdır', 'Küçüktür'], 0, 'Verimli döl veremez.'),
+      sikli('Sınıflandırma türler hakkında neyi de gösterir?', ['Akrabalık ilişkisini', 'Yaşam sürelerini'], 0, 'Doğal sınıflandırma köken ve akrabalığı esas alır.'),
       soru('Doğal sınıflandırma dış görünüşe dayanır.', false, 'Köken ve akrabalığa; yapay olan görünüşe.'),
     ], [
       {
@@ -1042,7 +1042,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
         'Gen çeşitliliği',
         'Aynı türün bireyleri arasındaki farklılıktır.\nBir hastalığa direnç çoğu zaman bu farklılıkta saklıdır.',
         undefined,
-        { not: '1840\'ta İrlanda\'da tek çeşit patates: bir mantar hepsini vurdu, kıtlık. Gen çeşitliliği sigortadır.' },
+        { not: '1845\'te İrlanda\'da tek çeşit patates: bir mantar hepsini vurdu, kıtlık. Gen çeşitliliği sigortadır.' },
       ),
       kart(
         'Endemik tür',
@@ -1050,7 +1050,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       ),
       kart(
         'Türkiye’nin durumu',
-        'Türkiye üç bitki coğrafyası bölgesinin kesiştiği yerdedir.\nBu yüzden tür sayısı bütün Avrupa’nınkine yakındır.',
+        'Türkiye üç bitki coğrafyası bölgesinin kesiştiği yerdedir.\nBu yüzden tür sayısı bütün Avrupa’nınkine yakındır.\nBitki türlerinin yaklaşık üçte biri endemiktir.',
       ),
       kart(
         'Tehditler',
@@ -1066,7 +1066,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       soru('Türkiye biyoçeşitlilik bakımından Avrupa nın en fakir ülkelerindendir.', false, 'Farklı iklim ve bitki bölgeleri sayesinde en zengin ülkelerinden biri.'),
       soru('Bir türün yok olması ekosistemin işleyişini etkilemez.', false, 'Besin ağındaki her tür başka türlere bağlı; kopan halka zinciri etkiliyor.'),
       sikli('Aynı türün bireyleri arasındaki farklılık?', ['Ekosistem çeşitliliği', 'Gen çeşitliliği'], 1, 'Hastalığa direnç burada saklı.'),
-      sikli('Türkiye\'nin tür zenginliğinin sebebi?', ['Geniş çöl alanları', 'Üç bitki coğrafyasının kesişimi'], 1, 'Avrupa\'nın tamamına yakın tür.'),
+      sikli('Türkiye\'de bitki türlerinin yaklaşık ne kadarı endemiktir?', ['Üçte biri', 'Yüzde biri'], 0, 'Üç bitki bölgesinin kesişimi, çok sayıda yerel tür doğurmuş.'),
       sikli('Tohum bankası neyi korur?', ['Habitatı', 'Gen çeşitliliğini'], 1, 'Millî park habitatı korur.'),
       soru('Tek çeşit üretim bir hastalıkla tümüyle yok olabilir.', true, 'Çeşitlilik dayanıklılık.'),
     ], [
