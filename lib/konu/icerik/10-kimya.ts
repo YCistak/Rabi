@@ -1790,7 +1790,7 @@ export const kimya10 = program('kimya', 10, 'Tepkimelerden çözeltilere', [
       ),
       kart(
         'Paris Anlaşması',
-        '2015’te imzalandı; küresel ısınmayı sanayi öncesine göre 2 °C’nin, mümkünse 1,5 °C’nin altında tutmayı hedefler.\nÜlkeler sera gazı salımlarını azaltmayı taahhüt eder.',
+        '2015’te imzalandı.\nHedef: küresel ısınmayı sanayi öncesine göre 2 °C’nin, mümkünse 1,5 °C’nin altında tutmak.\nÜlkeler sera gazı salımlarını azaltmayı taahhüt eder.',
       ),
       kart(
         'Fotokimyasal sis',
