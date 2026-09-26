@@ -13,6 +13,10 @@ import { kimya10 } from './icerik/10-kimya'
 import { matematik10 } from './icerik/10-matematik'
 import { tarih10 } from './icerik/10-tarih'
 import { turkce10 } from './icerik/10-turkce'
+import { biyoloji11 } from './icerik/11-biyoloji'
+import { fizik11 } from './icerik/11-fizik'
+import { kimya11 } from './icerik/11-kimya'
+import { matematik11 } from './icerik/11-matematik'
 
 export type {
   AkisGorseli,
@@ -67,7 +71,7 @@ export const KONU_DERSLERI: KonuDersTanimi[] = [
 ]
 
 /** Programın kapsadığı sınıflar. */
-export const KONU_SINIFLARI: KonuSinifi[] = [9, 10]
+export const KONU_SINIFLARI: KonuSinifi[] = [9, 10, 11]
 
 /**
  * Bütün programlar.
@@ -90,6 +94,10 @@ const PROGRAMLAR: Record<string, DersProgrami> = {
   'biyoloji-10': biyoloji10,
   'tarih-10': tarih10,
   'cografya-10': cografya10,
+  'matematik-11': matematik11,
+  'fizik-11': fizik11,
+  'kimya-11': kimya11,
+  'biyoloji-11': biyoloji11,
 }
 
 /** İçeriği henüz yazılmamış ders/sınıf için `null` döner; ekran bunu yazıyla karşılar. */

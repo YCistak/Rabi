@@ -31,7 +31,7 @@ const DERSLER = {
   cografya: 'cografya-dersi',
 }
 
-const SINIFLAR = [9, 10]
+const SINIFLAR = [9, 10, 11]
 
 /**
  * Virgülün ayraç mı başlığın parçası mı olduğu bir yerde ayırt edilemiyor.

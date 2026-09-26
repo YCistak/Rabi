@@ -2053,9 +2053,20 @@ yazıyor (Kimya 9'da mol yok, Biyoloji 10'da kalıtım yok, Matematik 10'da
 polinom yok). Yeni bir konu eklemeden önce o yorumu oku: eski müfredattan
 hatırladığın bir başlık, bu programda başka sınıfta olabilir.
 
-İçerik `lib/konu/icerik/<sınıf>-<ders>.ts`. Yedi ders × iki sınıf; sekizinci
-bir ders eklemek `KonuDersId` ile birlikte yeni bir renk ailesi de gerektirir
-(Fizik'in `fzk` ailesi bu yüzden açıldı — oyunlarda Fizik yok).
+İçerik `lib/konu/icerik/<sınıf>-<ders>.ts`. 9 ve 10. sınıfta yedi dersin
+yedisi, 11. sınıfta dördü (Matematik, Fizik, Kimya, Biyoloji) var; öteki üçü
+`programBul`dan `null` dönüyor ve harita "hazırlanıyor" diyor. Hangi
+programların beklendiği `icerik.test.ts`teki `YAZILAN_11` listesinde — yeni
+bir 11. sınıf dersi eklerken oraya da yaz, yoksa test "beklenmeyen program"
+der. Sekizinci bir ders eklemek `KonuDersId` ile birlikte yeni bir renk
+ailesi de gerektirir (Fizik'in `fzk` ailesi bu yüzden açıldı — oyunlarda
+Fizik yok).
+
+**11. sınıfın soru basamakları (turuncu kitaplar) henüz boş.** Kullanıcı önce
+anlatımın yazılmasını istedi; `sorular` dizisi `[]` ve soru testleri
+`SORUSUZ_SINIFLAR` ile o sınıfı atlıyor. Destenin ortasındaki hızlı kontroller
+ise yazılı. Sorular gelince 11'i o listeden çıkar; testler 9–10'daki denge ve
+sayı kurallarını 11'e de uygulamaya başlar.
 
 ### Konu listesi yazılmıyor, çekiliyor
 
