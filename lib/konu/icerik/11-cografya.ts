@@ -1,5 +1,6 @@
 import { program, tema } from '../tip'
 import { onBirinciSinifKonusu, type OnBirinciSinifKonusu } from './11-yardimci'
+import { cografyaDerinligi } from './11-cografya-derinlik'
 
 /** 11. sınıf Coğrafya; yedi ünite ve konu sırası MEB Maarif içerik çerçevesine dayanır. */
 const taslaklar: OnBirinciSinifKonusu[][] = [
@@ -471,13 +472,12 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
   ],
 ]
 
-let sira = 0
 export const cografya11 = program('cografya', 11, 'Mekândan kaynaklara ve dünyaya', [
-  tema('cog11-t1', 'Coğrafyanın Doğası', taslaklar[0].map((t) => onBirinciSinifKonusu(t, sira++))),
-  tema('cog11-t2', 'Mekânsal Bilgi Teknolojileri', taslaklar[1].map((t) => onBirinciSinifKonusu(t, sira++))),
-  tema('cog11-t3', 'Doğal Sistemler Ve Süreçler', taslaklar[2].map((t) => onBirinciSinifKonusu(t, sira++))),
-  tema('cog11-t4', 'Beşerî Sistemler Ve Süreçler', taslaklar[3].map((t) => onBirinciSinifKonusu(t, sira++))),
-  tema('cog11-t5', 'Ekonomik Faaliyetler Ve Etkileri', taslaklar[4].map((t) => onBirinciSinifKonusu(t, sira++))),
-  tema('cog11-t6', 'Afetler Ve Sürdürülebilir Çevre', taslaklar[5].map((t) => onBirinciSinifKonusu(t, sira++))),
-  tema('cog11-t7', 'Bölgeler, Ülkeler Ve Küresel Bağlantılar', taslaklar[6].map((t) => onBirinciSinifKonusu(t, sira++))),
+  tema('cog11-t1', 'Coğrafyanın Doğası', taslaklar[0].map((t) => onBirinciSinifKonusu(t, cografyaDerinligi[t.id]))),
+  tema('cog11-t2', 'Mekânsal Bilgi Teknolojileri', taslaklar[1].map((t) => onBirinciSinifKonusu(t, cografyaDerinligi[t.id]))),
+  tema('cog11-t3', 'Doğal Sistemler Ve Süreçler', taslaklar[2].map((t) => onBirinciSinifKonusu(t, cografyaDerinligi[t.id]))),
+  tema('cog11-t4', 'Beşerî Sistemler Ve Süreçler', taslaklar[3].map((t) => onBirinciSinifKonusu(t, cografyaDerinligi[t.id]))),
+  tema('cog11-t5', 'Ekonomik Faaliyetler Ve Etkileri', taslaklar[4].map((t) => onBirinciSinifKonusu(t, cografyaDerinligi[t.id]))),
+  tema('cog11-t6', 'Afetler Ve Sürdürülebilir Çevre', taslaklar[5].map((t) => onBirinciSinifKonusu(t, cografyaDerinligi[t.id]))),
+  tema('cog11-t7', 'Bölgeler, Ülkeler Ve Küresel Bağlantılar', taslaklar[6].map((t) => onBirinciSinifKonusu(t, cografyaDerinligi[t.id]))),
 ])

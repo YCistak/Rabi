@@ -1,5 +1,6 @@
 import { program, tema } from '../tip'
 import { onBirinciSinifKonusu, type OnBirinciSinifKonusu } from './11-yardimci'
+import { turkceDerinligi } from './11-turkce-derinlik'
 
 /**
  * 11. sınıf Türk Dili ve Edebiyatı. MEB bu derste içerik çerçevesini konu
@@ -376,10 +377,9 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
   ],
 ]
 
-let sira = 0
 export const turkce11 = program('turkce', 11, 'Sözden kültüre, yaşamdan sahneye', [
-  tema('trk11-t1', 'Bir Diyeceğim Var!', taslaklar[0].map((t) => onBirinciSinifKonusu(t, sira++))),
-  tema('trk11-t2', 'Kültür Yolculuğu', taslaklar[1].map((t) => onBirinciSinifKonusu(t, sira++))),
-  tema('trk11-t3', 'Yaşamın İzinde', taslaklar[2].map((t) => onBirinciSinifKonusu(t, sira++))),
-  tema('trk11-t4', 'Hayatın Aynası', taslaklar[3].map((t) => onBirinciSinifKonusu(t, sira++))),
+  tema('trk11-t1', 'Bir Diyeceğim Var!', taslaklar[0].map((t) => onBirinciSinifKonusu(t, turkceDerinligi[t.id]))),
+  tema('trk11-t2', 'Kültür Yolculuğu', taslaklar[1].map((t) => onBirinciSinifKonusu(t, turkceDerinligi[t.id]))),
+  tema('trk11-t3', 'Yaşamın İzinde', taslaklar[2].map((t) => onBirinciSinifKonusu(t, turkceDerinligi[t.id]))),
+  tema('trk11-t4', 'Hayatın Aynası', taslaklar[3].map((t) => onBirinciSinifKonusu(t, turkceDerinligi[t.id]))),
 ])

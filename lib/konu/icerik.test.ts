@@ -37,8 +37,19 @@ describe('programlar', () => {
       expect(sinifDersleri(sinif).length).toBe(KONU_DERSLERI.length)
     }
     const onBirinciSinifDersleri = sinifDersleri(11).map((ders) => ders.id)
-    for (const ders of ['turkce', 'tarih', 'cografya']) {
+    for (const ders of ['turkce', 'tarih', 'cografya'] as const) {
       expect(onBirinciSinifDersleri).toContain(ders)
+    }
+  })
+
+  it('11. sınıf eşit ağırlık konularının anlatımı ve soruları yeterli sayıda', () => {
+    for (const ders of ['turkce', 'tarih', 'cografya'] as const) {
+      const program = programBul(ders, 11)
+      expect(program).not.toBeNull()
+      for (const konu of tumKonular(program!)) {
+        expect(konu.kartlar.length, `${konu.id}: kart`).toBeGreaterThanOrEqual(10)
+        expect(konu.sorular.length, `${konu.id}: soru`).toBeGreaterThanOrEqual(11)
+      }
     }
   })
 

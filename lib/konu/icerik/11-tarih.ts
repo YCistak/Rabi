@@ -1,5 +1,6 @@
 import { program, tema } from '../tip'
 import { onBirinciSinifKonusu, type OnBirinciSinifKonusu } from './11-yardimci'
+import { tarihDerinligi } from './11-tarih-derinlik'
 
 /** 11. sınıf Tarih; konu sırası MEB'in 2026–2027 Maarif içerik çerçevesinden alınmıştır. */
 const taslaklar: OnBirinciSinifKonusu[][] = [
@@ -275,9 +276,8 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
   ],
 ]
 
-let sira = 0
 export const tarih11 = program('tarih', 11, 'Değişen dünyada Osmanlı’nın son yüzyılları', [
-  tema('trh11-t1', 'Değişen Dünyada Osmanlı Devleti (1683-1789)', taslaklar[0].map((t) => onBirinciSinifKonusu(t, sira++))),
-  tema('trh11-t2', 'Dönüşüm Sürecinde Osmanlı (1789-1908)', taslaklar[1].map((t) => onBirinciSinifKonusu(t, sira++))),
-  tema('trh11-t3', 'Savaşlar Sarmalında Osmanlı (1908- 1918)', taslaklar[2].map((t) => onBirinciSinifKonusu(t, sira++))),
+  tema('trh11-t1', 'Değişen Dünyada Osmanlı Devleti (1683-1789)', taslaklar[0].map((t) => onBirinciSinifKonusu(t, tarihDerinligi[t.id]))),
+  tema('trh11-t2', 'Dönüşüm Sürecinde Osmanlı (1789-1908)', taslaklar[1].map((t) => onBirinciSinifKonusu(t, tarihDerinligi[t.id]))),
+  tema('trh11-t3', 'Savaşlar Sarmalında Osmanlı (1908- 1918)', taslaklar[2].map((t) => onBirinciSinifKonusu(t, tarihDerinligi[t.id]))),
 ])
