@@ -25,16 +25,38 @@ const METIN_SINIRI = 240
 const KART_TABANI = 6
 const KART_SINIRI = 16
 
+/**
+ * 11. sınıf dört derste yazıldı; öteki üçü henüz yok ve harita onlar için
+ * "hazırlanıyor" diyor. Beklenen programlar ayrı sayılıyor ki 9–10'da bir
+ * program kaybolursa test bunu "yazılmamış" diye sessizce geçmesin.
+ */
+const YAZILAN_11 = ['matematik', 'fizik', 'kimya', 'biyoloji']
+const beklenenMi = (sinif: number, ders: string) => sinif < 11 || YAZILAN_11.includes(ders)
+
+/**
+ * 11. sınıfın soru basamakları (turuncu kitaplar) henüz boş: önce anlatım
+ * yazıldı, sorular sonra gelecek. Soru testleri o programları atlıyor;
+ * harita soru basamağını "yazılmadı" diye çiziyor (`konu-haritasi.tsx`).
+ */
+const SORUSUZ_SINIFLAR = [11]
+
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
-  KONU_DERSLERI.map(
+  KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map(
     (ders) => [`${sinif}. sınıf ${ders.ad}`, programBul(ders.id, sinif)] as const,
   ),
 )
+const sorulu = programlar.filter(([, p]) => !SORUSUZ_SINIFLAR.includes(p?.sinif ?? 0))
 
 describe('programlar', () => {
   it.each(programlar)('%s programı var', (_ad, program) => {
     expect(program).not.toBeNull()
     expect(program!.temalar.length).toBeGreaterThan(0)
+  })
+
+  it('beklenmeyen program yok', () => {
+    for (const sinif of KONU_SINIFLARI)
+      for (const ders of KONU_DERSLERI)
+        if (!beklenenMi(sinif, ders.id)) expect(programBul(ders.id, sinif)).toBeNull()
   })
 
   it.each(programlar)('%s: her temada konu, her konuda kart var', (_ad, program) => {
@@ -176,7 +198,8 @@ describe('kimlikler', () => {
   it('program kendi ders ve sınıfını bildiriyor', () => {
     for (const sinif of KONU_SINIFLARI) {
       for (const ders of KONU_DERSLERI) {
-        const program = programBul(ders.id, sinif)!
+        const program = programBul(ders.id, sinif)
+        if (program === null) continue
         expect(program.ders).toBe(ders.id)
         expect(program.sinif).toBe(sinif)
       }
@@ -214,7 +237,7 @@ describe('sorular', () => {
   const iddialar = tumSorular.filter((s) => s.tur !== 'sikli')
   const sikliler = tumSorular.filter((s) => s.tur === 'sikli')
 
-  it.each(programlar)('%s: soru sayısı kart sayısıyla orantılı', (_ad, program) => {
+  it.each(sorulu)('%s: soru sayısı kart sayısıyla orantılı', (_ad, program) => {
     for (const konu of tumKonular(program!)) {
       const [enAz, enCok] = soruAraligi(konu.kartlar.length)
       expect(konu.sorular.length, `${konu.ad}: ${konu.kartlar.length} karta ${konu.sorular.length} soru az`).toBeGreaterThanOrEqual(enAz)
@@ -227,7 +250,7 @@ describe('sorular', () => {
     soramıyor, yalnızca şık soran yoklama ise iddiayı tartma alışkanlığını
     kaybettiriyor. En az ikişer — tek bir örnekle denge kurulamaz.
   */
-  it.each(programlar)('%s: her konuda iki soru biçimi de var', (_ad, program) => {
+  it.each(sorulu)('%s: her konuda iki soru biçimi de var', (_ad, program) => {
     for (const konu of tumKonular(program!)) {
       const sikli = konu.sorular.filter((s) => s.tur === 'sikli').length
       expect(sikli, `${konu.ad}: iki şıklı soru az`).toBeGreaterThanOrEqual(2)
@@ -274,7 +297,7 @@ describe('sorular', () => {
     Tek yönlü deste, cevabı içeriğe bakmadan verdiriyor: ilk iki soruda hep
     "doğru" çıktığını gören kullanıcı geri kalanını okumuyor.
   */
-  it.each(programlar)('%s: her destede iki cevap da var', (_ad, program) => {
+  it.each(sorulu)('%s: her destede iki cevap da var', (_ad, program) => {
     for (const konu of tumKonular(program!)) {
       const iddia = konu.sorular.filter((s) => s.tur !== 'sikli')
       const dogru = iddia.filter((s) => s.dogru === true).length
