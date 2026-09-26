@@ -74,7 +74,8 @@ const resmiTemalar = (ders: KonuDersId, sinif: number) =>
   >)[String(sinif)]
 
 const durumlar = KONU_SINIFLARI.flatMap((sinif) =>
-  KONU_DERSLERI.map((ders) => [`${sinif}. sınıf ${ders.ad}`, ders.id, sinif] as const),
+  KONU_DERSLERI.filter((ders) => programBul(ders.id, sinif) !== null)
+    .map((ders) => [`${sinif}. sınıf ${ders.ad}`, ders.id, sinif] as const),
 )
 
 describe('Maarif programına uyum', () => {

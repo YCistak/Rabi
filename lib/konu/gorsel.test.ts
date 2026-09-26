@@ -26,8 +26,10 @@ const HUCRE_SINIRI = 30
   bakmıyor. Ayrı iki liste, kuralların yalnızca birine uygulanması demekti.
 */
 const gorselliKartlar: [string, { gorsel: Gorsel }][] = KONU_SINIFLARI.flatMap((sinif) =>
-  KONU_DERSLERI.flatMap((ders) =>
-    tumKonular(programBul(ders.id, sinif)!).flatMap((konu) => {
+  KONU_DERSLERI.flatMap((ders) => {
+    const program = programBul(ders.id, sinif)
+    if (!program) return []
+    return tumKonular(program).flatMap((konu) => {
       const kartlar = konu.kartlar
         .filter((k): k is BilgiKarti & { gorsel: Gorsel } => k.gorsel !== undefined)
         .map((k) => [`${sinif}-${ders.id} · ${konu.ad} · ${k.baslik}`, k] as const)
@@ -37,8 +39,8 @@ const gorselliKartlar: [string, { gorsel: Gorsel }][] = KONU_SINIFLARI.flatMap((
       return [...kartlar, ...sorular].map(
         ([ad, x]) => [ad, x] as [string, { gorsel: Gorsel }],
       )
-    }),
-  ),
+    })
+  }),
 )
 
 describe('kart görselleri', () => {

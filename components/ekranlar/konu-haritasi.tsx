@@ -46,11 +46,11 @@ import {
   Zap,
 } from 'lucide-react'
 import {
-  KONU_DERSLERI,
   KONU_SINIFLARI,
   dersBul,
   okumaDakikasi,
   programBul,
+  sinifDersleri,
   tumKonular,
   type Konu,
   type KonuDersId,
@@ -330,6 +330,7 @@ export function KonuHaritasiEkrani({
   const [secimAcik, setSecimAcik] = useState(false)
 
   const ders = dersBul(secim.ders)
+  const dersAdi = secim.sinif === 11 && secim.ders === 'turkce' ? 'Edebiyat' : ders.ad
   const bicim = haritaTemasi(secim.ders)
   const program = useMemo(() => programBul(secim.ders, secim.sinif), [secim])
   /** Program boyunca tek sıra: kilit tema sınırına değil, bir önceki konuya bakıyor. */
@@ -428,7 +429,7 @@ export function KonuHaritasiEkrani({
     <SoruSahnesi
       konu={sahne.konu}
       temaAdi={sahne.temaAdi}
-      dersAdi={ders.ad}
+      dersAdi={dersAdi}
       biletli={sahne.biletli}
       cikiyor={acikSorular === null}
       onKapat={(sonuc) => {
@@ -443,7 +444,7 @@ export function KonuHaritasiEkrani({
       <KartDestesi
         konu={acikKonu.konu}
         temaAdi={acikKonu.temaAdi}
-        dersAdi={ders.ad}
+        dersAdi={dersAdi}
         dersIkonu={ders.ikon}
         bicim={bicim}
         onKapat={(sonuc) => desteBitti(acikKonu, sonuc)}
@@ -502,7 +503,7 @@ export function KonuHaritasiEkrani({
               Çalıştığın program
             </span>
             <span className="block truncate font-display text-[15px] font-extrabold tracking-tight">
-              {secim.sinif}. sınıf · {ders.ad}
+              {secim.sinif}. sınıf · {dersAdi}
             </span>
           </span>
           <span className="inline-flex h-9 shrink-0 items-center gap-1 rounded-full bg-muted pr-2.5 pl-3 text-[13px] font-extrabold text-muted-foreground">
@@ -523,7 +524,10 @@ export function KonuHaritasiEkrani({
                 <button
                   key={sinif}
                   type="button"
-                  onClick={() => setSecim({ ...secim, sinif })}
+                  onClick={() => setSecim({
+                    sinif,
+                    ders: programBul(secim.ders, sinif) ? secim.ders : sinifDersleri(sinif)[0].id,
+                  })}
                   aria-pressed={secim.sinif === sinif}
                   className={cn(
                     'flex-1 rounded-xl py-2 text-[13.5px] font-extrabold transition',
@@ -541,7 +545,7 @@ export function KonuHaritasiEkrani({
                 tondaysa çip de o tonda; ders değişince ekranın ne renge
                 döneceği çipten okunuyor. */}
             <div className="-mx-3.5 flex gap-2 overflow-x-auto px-3.5 pb-1">
-              {KONU_DERSLERI.map((d) => {
+              {sinifDersleri(secim.sinif).map((d) => {
                 const secili = secim.ders === d.id
                 const db = haritaTemasi(d.id)
                 return (
@@ -565,7 +569,7 @@ export function KonuHaritasiEkrani({
                     }
                   >
                     <span aria-hidden>{d.ikon}</span>
-                    {d.ad}
+                    {secim.sinif === 11 && d.id === 'turkce' ? 'Edebiyat' : d.ad}
                   </button>
                 )
               })}
@@ -578,7 +582,7 @@ export function KonuHaritasiEkrani({
         <Kart className="flex flex-col items-center px-6 py-10 text-center">
           <Rabi durum="calisiyor" poz="okuyan" boyut={92} />
           <p className="mt-3 font-display text-[17px] font-extrabold tracking-tight">
-            {secim.sinif}. sınıf {ders.ad} hazırlanıyor
+            {secim.sinif}. sınıf {dersAdi} hazırlanıyor
           </p>
           <p className="mt-1 text-[13.5px] font-semibold text-pretty text-muted-foreground">
             Bu dersin kartları henüz yazılmadı. Şimdilik başka bir sınıf ya da ders seçebilirsin.

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { KONU_DERSLERI, KONU_SINIFLARI, programBul, tumKonular } from './index'
+import { KONU_DERSLERI, KONU_SINIFLARI, programBul, sinifDersleri, tumKonular } from './index'
 import type { DersProgrami } from './tip'
 import { gorunenMetin, gorunenSatirlar, metniAyristir } from './kart-metni'
 
@@ -28,10 +28,31 @@ const KART_SINIRI = 16
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.map(
     (ders) => [`${sinif}. sınıf ${ders.ad}`, programBul(ders.id, sinif)] as const,
-  ),
+  ).filter(([, program]) => program !== null),
 )
 
 describe('programlar', () => {
+  it('9 ve 10. sınıfta yedi ders, 11. sınıfta eşit ağırlık dersleri erişilebilir', () => {
+    for (const sinif of [9, 10] as const) {
+      expect(sinifDersleri(sinif).length).toBe(KONU_DERSLERI.length)
+    }
+    const onBirinciSinifDersleri = sinifDersleri(11).map((ders) => ders.id)
+    for (const ders of ['turkce', 'tarih', 'cografya'] as const) {
+      expect(onBirinciSinifDersleri).toContain(ders)
+    }
+  })
+
+  it('11. sınıf eşit ağırlık konularının anlatımı ve soruları yeterli sayıda', () => {
+    for (const ders of ['turkce', 'tarih', 'cografya'] as const) {
+      const program = programBul(ders, 11)
+      expect(program).not.toBeNull()
+      for (const konu of tumKonular(program!)) {
+        expect(konu.kartlar.length, `${konu.id}: kart`).toBeGreaterThanOrEqual(10)
+        expect(konu.sorular.length, `${konu.id}: soru`).toBeGreaterThanOrEqual(11)
+      }
+    }
+  })
+
   it.each(programlar)('%s programı var', (_ad, program) => {
     expect(program).not.toBeNull()
     expect(program!.temalar.length).toBeGreaterThan(0)
@@ -176,7 +197,8 @@ describe('kimlikler', () => {
   it('program kendi ders ve sınıfını bildiriyor', () => {
     for (const sinif of KONU_SINIFLARI) {
       for (const ders of KONU_DERSLERI) {
-        const program = programBul(ders.id, sinif)!
+        const program = programBul(ders.id, sinif)
+        if (!program) continue
         expect(program.ders).toBe(ders.id)
         expect(program.sinif).toBe(sinif)
       }
