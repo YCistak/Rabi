@@ -27,7 +27,7 @@ export type KonuDersId =
   | 'cografya'
 
 /** Programın kapsadığı sınıflar. */
-export type KonuSinifi = 9 | 10
+export type KonuSinifi = 9 | 10 | 11
 
 /**
  * Kart görsellerinde kullanılabilecek renkler.
