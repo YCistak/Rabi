@@ -4,7 +4,7 @@ import { kart, konu, tema, type Tema } from '../tip'
 export const ingilizce11Temalar3: Tema[] = [
   tema('ing11-t5', 'Life In The Neighbourhood, City & Social Life', [
     konu('ing11-city-types', 'Types Of Cities', [
-      kart('Yaşanabilir kent', 'Liveable, günlük yaşamı kolaylaştıran kent demektir.\nA liveable city has safe streets and public spaces.'),
+      kart('Yaşanabilir kent', 'Liveable, günlük yaşamı kolaylaştıran kent demektir.\nA historic city can also be liveable if its streets are safe and walkable.'),
       kart('Yavaş kent', 'Slow city, yerel yaşamı ve sakin ritmi korumaya çalışır.\nThis slow city protects its local markets and traditions.'),
       kart('Sürdürülebilir kent', 'Sustainable city, kaynakları gelecek için dikkatli kullanır.\nA sustainable city saves water and supports public transport.'),
       kart('Çevre dostu kent', 'Eco-friendly city, çevreye verilen zararı azaltır.\nThe city has built more cycle lanes to reduce traffic.', undefined, {
@@ -26,12 +26,12 @@ export const ingilizce11Temalar3: Tema[] = [
       {
         soru: '“The municipality ___ two parks this year.” En uygun tamamlama?',
         siklar: ['has been open', 'has opened'], dogru: 1, kart: 8,
-        aciklama: { dogru: 'Has opened tamamlanan ve sonucu görülen eylemi anlatır.', yanlis: 'Has been open parkların açık olma durumunu söyler; belediyenin açma eylemini anlatmaz.' },
+        aciklama: { dogru: 'Has opened tamamlanan ve sonucu görülen eylemi anlatır.', yanlis: 'Has been open, iki parkı nesne olarak alamaz; belediyenin açma işi için has opened gerekir.' },
       },
     ]),
     konu('ing11-rural-urban-life', 'Social Life In The Rural Areas And Cities', [
       kart('Kırsal ve kentsel yaşam', 'Rural kırsal, urban kentsel demektir; iki yerdeki fırsatlar farklı olabilir.\nUrban areas offer many concerts; rural areas can be quieter.'),
-      kart('Residents ve bonds', 'Residents bir yerde yaşayanlar; bonds insanlar arasındaki bağlardır.\nThe residents have built strong bonds through shared work.'),
+      kart('Residents ve bonds', 'Residents bir yerde yaşayanlar; bonds insanlar arasındaki bağlardır.\nLike-minded residents have built strong bonds through shared work.'),
       kart('Bir araya gelmek', 'Meet up planlı buluşma; come across rastlantıyla karşılaşmadır.\nWe meet up on Fridays, but I came across Ali yesterday.'),
       kart('Sosyalleşmek', 'Socialise, başkalarıyla vakit geçirip ilişki kurmaktır.\nThe new community centre helps neighbours socialise.'),
       kart('Etkinlik seçenekleri', 'Exhibition sergi; recreational activity dinlenme veya eğlenme etkinliğidir.\nThe town has organised an art exhibition and a walking club.', undefined, {
@@ -60,9 +60,9 @@ export const ingilizce11Temalar3: Tema[] = [
     konu('ing11-cultural-celebrations', 'Cultural (Music And Art) Celebrations In The World', [
       kart('Canlı ve solo gösteri', 'Live performance seyirci önünde yapılır; solo performance tek sanatçılıdır.\nThe singer gave a solo performance at the festival.'),
       kart('Orkestra ve senfoni', 'Orchestra birlikte çalan müzisyenlerdir; symphony uzun bir orkestra eseridir.\nThe orchestra performed a new symphony.'),
-      kart('Halk müziği ve miras', 'Folk music bir topluluğun gelenekleriyle ilişkilidir; pass down kuşaklara aktarmaktır.\nThese songs have been passed down for generations.'),
-      kart('Sergi ve stüdyo', 'Art exhibition eserlerin gösterildiği etkinlik; studio üretim alanıdır.\nThe artist made the sculpture in her studio.'),
-      kart('Mural ve pottery', 'Mural duvara yapılan büyük resimdir; pottery kilden yapılan eşyalardır.\nThe mural is outside, while the handmade pottery is inside.'),
+      kart('Halk müziği ve miras', 'Folk music bir topluluğun gelenekleriyle ilişkilidir; pass down kuşaklara aktarmaktır.\nA folk festival in Türkiye may feature songs passed down for generations.'),
+      kart('Kutlamaları karşılaştır', 'A folk festival may feature local songs; a jazz festival may bring international musicians together.\nİkisini karşılaştırırken tür, katılım ve kültürel aktarımı belirt.'),
+      kart('Mural ve pottery', 'Mural duvar resmi, pottery kilden yapılan eşyalardır.\nPottery from her studio is shown at the art exhibition.\nStudio üretim alanı; art exhibition sanat sergisidir.'),
       kart('Sanatçının hazırlığı', 'Rehearse prova yapmak, compose müzik eseri yazmaktır.\nThe performers rehearsed the song that Mina composed.', undefined, {
         not: 'Who kişiye, which nesneye bağlanır; virgül ise yan bilginin çıkarılabildiğini gösterir.',
       }),
@@ -84,9 +84,9 @@ export const ingilizce11Temalar3: Tema[] = [
       },
     ]),
     konu('ing11-sports-culture', 'Sports And Sports Cultures And Competitions', [
-      kart('League ve tournament', 'League sezonluk yarışma düzenidir; tournament kısa eleme veya karşılaşma dizisidir.\nOur team joined a weekend tournament after the league ended.'),
+      kart('League ve tournament', 'League genellikle düzenli fikstür ve puan sıralamasıyla anılır.\nTournament belirli bir yarışma organizasyonudur; eleme veya lig usulü olabilir.'),
       kart('Championship ve medal', 'Championship şampiyonluk yarışmasıdır; medal derece ödülüdür.\nThe swimmer won a medal at the championship.'),
-      kart('Sahadaki kişiler', 'Referee kuralları uygular; spectator izler; supporter takımı destekler.\nThe referee stopped the match while supporters watched.'),
+      kart('Sahadaki kişiler', 'Referee kuralları uygular; spectator izler; supporter takımı destekler.\nSupporters may chant in different rhythms; spectators may simply watch.'),
       kart('Mekân ve donanım', 'Court saha, net ağ, stadium büyük stadyumdur.\nThe players crossed the court and hit the ball over the net.'),
       kart('Güvenlik ve hazırlık', 'Helmet başı, gloves elleri korur; warm up ısınmaktır.\nThe cyclist who wore a helmet warmed up before the race.', undefined, {
         not: 'Spectator izler; supporter ayrıca bir takımı tutar. Her seyirci aynı takımın destekçisi değildir.',
@@ -105,7 +105,7 @@ export const ingilizce11Temalar3: Tema[] = [
       },
       {
         soru: '“The athlete ___ coach won a medal” boşluğuna hangisi gelir?',
-        siklar: ['where', 'whose'], dogru: 1, kart: 11,
+        siklar: ['where', 'whose'], dogru: 1, kart: 8,
         aciklama: { dogru: 'Whose sporcuyla antrenörü arasında sahiplik bağı kurar.', yanlis: 'Where yer için kullanılır; coach kişiyle ilişkili bir addır.' },
       },
     ]),

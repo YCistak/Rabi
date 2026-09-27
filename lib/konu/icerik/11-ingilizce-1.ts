@@ -7,14 +7,14 @@ export const ingilizce11Temalar1: Tema[] = [
       kart('Karşılaştırmanın amacı', 'Okul türlerini tek sözcükle iyi-kötü diye ayırma; kaynak, ders ve öğrenci gereksinimini karşılaştır.\n"The schools differ in their facilities." → Olanakları bakımından farklılar.'),
       kart('Public ve private', '"A public school is funded by the state." → Devlet okulunun finansmanı kamudan gelir.\n"A private school may charge a fee." → Özel okul ücret isteyebilir; bütün okullar için genelleme yapma.'),
       kart('Vocational ve academic', '"Vocational schools offer practical training." → Mesleki okul uygulamalı eğitim sunar.\n"Academic courses focus on theory." → Akademik dersler kuramsal çalışmaya ağırlık verir.'),
-      kart('Kaynak ve olanak', 'Resource kaynak, facility fiziksel olanaktır.\n"The library is a useful resource, but the science lab is a facility." → İki gereksinimi ayırır.'),
+      kart('Kaynak ve olanak', 'Resource öğrenmeye yardımcı kaynaktır; facility okulun sunduğu tesis veya olanaktır.\n"A library can be both a resource and a facility." → Kütüphane ikisi de olabilir.'),
       kart('Ücret sonuç değildir', '"Higher fees do not always mean better outcomes." → Yüksek ücret tek başına daha iyi öğrenme sonucu göstermez.\nOkulu değerlendirirken ders, erişim ve katılım verilerine de bak.'),
-      kart('Müfredat ve seçmeli ders', 'Curriculum müfredat; compulsory zorunlu; optional seçmelidir.\n"Optional subjects are chosen by students." → Odağı öğrencinin seçimine taşıyan edilgen cümle.'),
+      kart('Müfredat ve seçmeli ders', 'Curriculum müfredat; compulsory zorunlu; optional seçmelidir.\n"Optional subjects are chosen by students." → Edilgen yapı seçilen dersleri öne çıkarır.'),
       kart('Karşılaştırma dili', '"School A is more flexible than School B." → A, B’ye göre daha esnek.\n"Both schools offer art, whereas only B has a workshop." → Ortaklık ve farkı birlikte verir.'),
       kart('Student-centred ne demek?', 'Student-centred derste öğrencinin soru sorması ve karar alması önemlidir.\n"Students take part in choosing projects." → Proje seçimine katılırlar.', undefined, { not: 'Bir okulu tek özellikten yargılama; karşılaştırma için ortak ölçüt ve somut kanıt seç.' }),
       kart('Şimdiki zamanın edilgeni', 'Süreç şu anda sürüyorsa "am/is/are being + V3" kullanılır.\n"New computers are being installed now." → Yeni bilgisayarlar şu anda kuruluyor.'),
       kart('Zaman ve sıklık', '"Students use the lab twice a week." → Haftada iki kez; sıklık öbeği sonda.\n"The meeting is held in the library on Fridays." → Yer ve zaman bilgisi sonucu netleştirir.'),
-      kart('Kısa okul profili', '"Our school offers free clubs. Lessons are held in small groups twice a week."\nBir okul profilinde olanak, ücret ve öğrenme biçimini ayrı cümlelerle anlat.'),
+      kart('Kısa okul profili', '"Our school offers free clubs. Lessons are held in small groups twice a week."\nBir okul profilinde sunulan olanağı ve öğrenme biçimini somut örnekle anlat.'),
     ], [], [
       { soru: '"Optional subjects are chosen by students." Cümlenin odağı nedir?', siklar: ['Seçilen dersler', 'Öğrencilerin kimliği'], dogru: 0, aciklama: { dogru: 'Edilgende özne optional subjects olur; yapılan iş öne çıkar.', yanlis: 'Cümlenin başındaki optional subjects, seçilen derslere odaklanır.' }, kart: 6 },
       { soru: '"New computers are being installed now." Hangi zaman anlamı var?', siklar: ['Her yıl tekrarlanan iş', 'Şu anda süren iş'], dogru: 1, aciklama: { dogru: 'Are being installed, şimdi süren edilgen eylemdir.', yanlis: 'Now ve are being, kurulumun şu anda sürdüğünü anlatır.' }, kart: 9 },
@@ -32,7 +32,7 @@ export const ingilizce11Temalar1: Tema[] = [
       kart('Şimdi değişen sistem', '"The curriculum is being revised this term." → Müfredat bu dönem yenileniyor.\n"Is revised every year" ise alışılmış, tekrarlanan bir işlemdir.'),
       kart('Dengeli sonuç yaz', '"System A has more facilities, whereas System B offers more flexible courses."\nİyi karşılaştırma farkı belirtir; kanıtsız bir üstünlük yargısı kurmaz.'),
     ], [], [
-      { soru: '"The curriculum is being revised this term." İş nasıl sunuluyor?', siklar: ['Her yıl yinelenen', 'Şu anda süren'], dogru: 1, aciklama: { dogru: 'Is being revised, sürmekte olan edilgen işi gösterir.', yanlis: 'This term ve is being revised, devam eden değişimi anlatır.' }, kart: 10 },
+      { soru: '"Applications are submitted each spring." İş nasıl sunuluyor?', siklar: ['Her yıl yinelenen', 'Şu anda süren'], dogru: 0, aciklama: { dogru: 'Each spring ve are submitted, yinelenen edilgen işi gösterir.', yanlis: 'Each spring, yalnız bugün değil her bahar yinelenen işi anlatır.' }, kart: 9 },
       { soru: 'Ortalama yükselip katılım düştüyse hangi yorum daha dikkatli?', siklar: ['Her öğrenci ilerledi', 'İki gösterge ayrıştı'], dogru: 1, aciklama: { dogru: 'Ortalama ve katılım farklı yönlerde hareket etmiştir.', yanlis: 'Ortalama tek başına her öğrencinin ilerlediğini göstermez.' }, kart: 8 },
     ]),
     konu('ing11-milli-gunler', 'National Days and Celebrations', [
@@ -49,7 +49,7 @@ export const ingilizce11Temalar1: Tema[] = [
       kart('Nazik duyuru', '"Keep me in the loop about the ceremony, please." → Törendeki gelişmelerden beni haberdar et.\nDuyuruda gün, yer ve katılım bilgisi bulunmalı.'),
     ], [], [
       { soru: '"The programme is being prepared today." Ne anlatılıyor?', siklar: ['Süren hazırlık', 'Yıllık gelenek'], dogru: 0, aciklama: { dogru: 'Is being prepared, bugün sürmekte olan edilgen eylem.', yanlis: 'Today ve is being hazırlığın şu an sürdüğünü anlatır.' }, kart: 9 },
-      { soru: '"On 23 April" öbeği hangi bilgiyi verir?', siklar: ['Yer', 'Tarih'], dogru: 1, aciklama: { dogru: 'On belirli bir takvim gününden önce kullanılır.', yanlis: '23 April bir tarihtir; yer değil.' }, kart: 10 },
+      { soru: '"Every year" öbeği hangi bilgiyi verir?', siklar: ['Yer', 'Sıklık'], dogru: 1, aciklama: { dogru: 'Every year olayın her yıl tekrarlandığını bildirir.', yanlis: 'Every year yer değil, tekrar sıklığı bildirir.' }, kart: 8 },
     ]),
   ]),
   tema('ing11-t2', 'Classroom Life & Learning', [
@@ -57,7 +57,7 @@ export const ingilizce11Temalar1: Tema[] = [
       kart('Etkinliği amaçla eşleştir', 'Drill kısa tekrarlı alıştırma, workshop uygulamalı atölyedir.\n"A drill helps me practise forms; a workshop lets me build a model."'),
       kart('Tek doğru tarz yok', 'Bir öğrenci şemadan, bir başkası tartışmadan yararlanabilir; bu kalıcı bir etiket değildir.\n"I prefer diagrams for this topic, but discussion helps me explain it."'),
       kart('Collaborative çalışma', 'Collaborative birlikte üretmek demektir.\n"The group compares ideas before writing." → Grup yazmadan önce fikirleri karşılaştırır.'),
-      kart('Practice ve feedback', 'Practical etkinlikte bilgi kullanılır; feedback neyin geliştirileceğini gösterir.\n"The teacher gives feedback after our workshop."'),
+      kart('Practical ve feedback', 'Practical uygulamalı demektir; feedback neyin geliştirileceğini gösteren dönüttür.\n"The teacher gives feedback after our workshop."'),
       kart('Monotonous ne zaman?', 'Tek biçimli etkinlik uzun sürerse monotonous olabilir; her tekrar gereksiz değildir.\n"A short drill is useful, but an hour of copying is monotonous."'),
       kart('Etkiyi ölç', 'Promote desteklemek, restrict sınırlamak, impact etkilemektir.\n"Group work can promote interaction, but noise may restrict concentration."'),
       kart('Sabit gelecek programı', 'Takvimde kesinleşmiş ders için geniş zaman kullanılır.\n"The workshop starts at nine tomorrow." → Atölye yarın dokuzda başlar.'),
@@ -70,11 +70,11 @@ export const ingilizce11Temalar1: Tema[] = [
       { soru: '"I am going to join the debate." Konuşan neyi anlatıyor?', siklar: ['Anlık kararı', 'Önceden planı'], dogru: 1, aciklama: { dogru: 'Be going to daha önce kurulmuş planı anlatır.', yanlis: 'Anlık karar için burada will uygun olurdu.' }, kart: 9 },
     ]),
     konu('ing11-geleneksel-dijital', 'Traditional and Tech-Enhanced Education', [
-      kart('İki araç, iki olanak', 'Handout basılı dağıtım, digital resource çevrim içi kaynaktır.\n"The handout works offline; the video can be replayed." → Kullanım koşulları farklıdır.'),
+      kart('İki araç, iki olanak', 'Printed handout basılı ders notu; online video çevrim içi kaynaktır.\n"The printed handout works offline; the video can be replayed."'),
       kart('Yüz yüze ve uzaktan', 'Face-to-face aynı ortamda etkileşim, distance learning uzaktan öğrenmedir.\n"A live online lesson can still be interactive." → Uzaktan ders de etkileşimli olabilir.'),
       kart('Erişim eşit değildir', 'Teknoloji her öğrencide aynı cihaz ve bağlantı bulunduğu varsayımıyla seçilmemeli.\n"Some students cannot access the platform at home." → Erişim farkını belirtir.'),
       kart('Dikkat ve seçim', 'Distract dikkat dağıtmak, enable mümkün kılmaktır.\n"A tablet enables quick research, but messages can distract us." → İki etki bir arada.'),
-      kart('Phrasal verbs', '"Go over the notes" = notları gözden geçir.\n"Hand in the task" = görevi teslim et. "Keep up with the class" = sınıfı takip et.'),
+      kart('Phrasal verbs', '"Go over the notes" = notları gözden geçir.\n"Hand in the task" = görevi teslim et.\n"Keep up with the class" = sınıfın temposuna yetiş.'),
       kart('Kurulum ve güncelleme', 'Install yüklemek, update güncellemek, subscribe abone olmaktır.\n"We are installing antivirus software tomorrow." → Önceden ayarlanmış iş.'),
       kart('Gelecek edilgeni', 'Eylemden etkilenen şey öndeyse "will be + V3" kullan.\n"The smart board will be updated next week." → Akıllı tahta gelecek hafta güncellenecek.'),
       kart('Önceden yapılan plan', '"We are going to use digital resources for the project." → Plan hazır.\n"The online session starts at ten tomorrow." → Çizelgede sabit saat.', undefined, { not: 'Gelecek anlatımını takvim, düzenleme ve karar anına göre seç; tek bir zaman her duruma uymaz.' }),

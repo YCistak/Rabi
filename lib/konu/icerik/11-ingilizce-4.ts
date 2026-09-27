@@ -36,7 +36,7 @@ export const ingilizce11Temalar4: Tema[] = [
       kart('Öneriyi kanıtla', '“This plan is sustainable” iddiası tek başına yeterli değildir.\n“Because it cuts energy use by 20%” gibi bir veri ya da gerekçe, öneriyi daha ikna edici kılar.'),
     ], [], [
       { soru: '“Cut down on plastic” ifadesinin amacı nedir?', siklar: ['Tüketimi artırmak', 'Tüketimi azaltmak'], dogru: 1, aciklama: { dogru: 'Cut down on, kullanım miktarını azaltmak demektir.', yanlis: 'İfade artırmayı değil azaltmayı anlatır.' }, kart: 7 },
-      { soru: '“The beach will be being cleaned” cümlesinde plaj ne konumdadır?', siklar: ['Eylemden etkilenen', 'Eylemi yapan'], dogru: 0, aciklama: { dogru: 'Edilgen yapıda plaj temizlenen şeydir.', yanlis: 'Plaj temizleme işini yapmaz; temizlenir.' }, kart: 11 },
+      { soru: '“Cities will be reducing emissions.” Eylem nasıl sunulur?', siklar: ['Gelecekte sürmekte olan', 'Geçmişte tamamlanan'], dogru: 0, aciklama: { dogru: 'Will be reducing, gelecekte belirli anda süren işi anlatır.', yanlis: 'Will be + -ing geçmişte tamamlanan değil, gelecekte süren iştir.' }, kart: 10 },
     ]),
   ]),
   tema('ing11-t8', 'Life In The Universe & Future', [
@@ -72,7 +72,7 @@ export const ingilizce11Temalar4: Tema[] = [
       kart('İddianın sınırını yaz', '“AI may improve access, but it also raises privacy questions.”\n“May” olasılığı bildirir; “but” karşı görüşe geçer. Teknoloji paragrafı ikisini birlikte tartabilir.'),
     ], [], [
       { soru: '“Generate electricity” neyi anlatır?', siklar: ['Elektrik üretmeyi', 'Elektrik depolamayı'], dogru: 0, aciklama: { dogru: 'Generate üretmektir; depolamak için store kullanılır.', yanlis: 'Generate depolama değil üretme eylemidir.' }, kart: 7 },
-      { soru: '“I wish batteries lasted longer” neyi sezdirir?', siklar: ['Piller eskiden uzun dayanıyordu', 'Pil ömrü şimdi yeterli değil'], dogru: 1, aciklama: { dogru: 'Wish + geçmiş biçim, mevcut durumdan farklı bir isteği anlatır.', yanlis: 'Lasted geçmiş biçim olsa da wish ile bugünkü karşılanmamış dileği anlatır.' }, kart: 11 },
+      { soru: '“If I designed a robot, it would…” ne anlatır?', siklar: ['Kesinleşmiş üretimi', 'Varsayımsal sonucu'], dogru: 1, aciklama: { dogru: 'İkinci koşul bugün için hayalî bir tasarım sonucunu anlatır.', yanlis: 'Designed + would yapısı kesin üretim kararı değil, varsayımdır.' }, kart: 10 },
     ]),
   ]),
 ]

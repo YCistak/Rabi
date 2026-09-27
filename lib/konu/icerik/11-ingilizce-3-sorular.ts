@@ -66,13 +66,13 @@ export const ingilizce11Sorulari3: Record<string, Omit<SoruKarti, 'id'>[]> = {
     ['“The athlete whose coach won a medal” ifadesinde whose sahiplik ilişkisi kurar.', true, 'Whose antrenörün hangi sporcuya ait olduğunu bağlar.'],
     ['“The court was wet; therefore, the match was cancelled” sonuç bildirir.', true, 'Therefore ikinci bölümün birinci bölümden çıkan sonuç olduğunu gösterir.'],
     ['“Warm up” yarışma sonrasında madalya almak demektir.', false, 'Warm up yarışma veya antrenmandan önce ısınmaktır.'],
-    ['“League” yalnız tek günlük eleme yarışması anlamına gelir.', false, 'League genellikle sezonluk yarışma düzenidir; tek günlük yapı tournament olabilir.'],
+    ['“League” yalnız tek günlük eleme yarışması anlamına gelir.', false, 'League genellikle düzenli fikstürlü yarışmadır; tek günlük eleme bunun tek anlamı değildir.'],
   ], [
     ['Kuralları uygulayıp maçı yöneten kişi kimdir?', 'Referee', 'Spectator', 'Referee hakemdir; spectator izleyicidir.'],
     ['“The player ___ trained daily won.” Boşluğa hangi sözcük gelir?', 'who', 'where', 'Player kişi olduğu için who kullanılır.'],
     ['Yağmur yüzünden maç iptal edilirse hangi fiil uygundur?', 'call off', 'warm up', 'Call off planlanan etkinliği iptal etmektir.'],
     ['“The athlete ___ coach won” ifadesini hangi sözcük tamamlar?', 'whose', 'which', 'Whose sporcu ve antrenörü arasında sahiplik ilişkisi kurar.'],
     ['“The court was wet; ___, we moved inside.” Sonuç sözcüğü?', 'therefore', 'because', 'Therefore ıslak sahanın sonucunu belirtir.'],
-    ['Kısa eleme karşılaşmaları dizisi için hangi sözcük uygun?', 'Tournament', 'League', 'Tournament kısa yarışma dizisi; league sezonluk düzen olabilir.'],
+    ['Takımlar sezon boyunca puan toplayıp sıralanıyor. Hangi sözcük daha doğal?', 'League', 'Tournament', 'Düzenli fikstür ve puan sıralaması genellikle league diye anılır; tournament farklı usullerle yapılabilir.'],
   ]),
 }

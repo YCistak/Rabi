@@ -22,7 +22,7 @@ export const ingilizce11Sorulari2: Record<string, Omit<SoruKarti, 'id'>[]> = {
     ['“He was sleeping when the alarm rang.” cümlesinde alarm uykudan önce çaldı.', false, 'Was sleeping sürmekteydi; alarm o sırada çaldı.'],
     ['“Mindfulness” sözcüğü yalnızca fiziksel bir masaj uygulamasının adıdır.', false, 'Mindfulness anda olup biteni fark etmeye yönelik bir uygulamadır; massage ayrı bir sözcüktür.'],
   ], [
-    ['“While I ___, the phone rang.” boşluğa hangisi gelir?', ['was stretching', 'stretched'], 0, 'While süren eylemi, rang kısa olayı bağlar.'],
+    ['“While I ___, the phone rang.” Geçmişte süren eylem için hangisi gelir?', ['was stretching', 'am stretching'], 0, 'Geçmişte süren iş was stretching; am stretching şimdiki zamandır.'],
     ['“He did exercise last week.” hangi zaman bakışını verir?', ['O anda süren', 'Geçmişte tamamlanan'], 1, 'Did geçmişte tamamlanan eylemi bildirir.'],
     ['“The meal has enough protein.” cümlesinde enough neyi anlatır?', ['Yeterli miktarı', 'Aşırı miktarı'], 0, 'Enough ihtiyaç için yeterli miktardır.'],
     ['Bir hastalık sonrası iyileşme desteği için hangi sözcük uygundur?', ['posture', 'rehabilitation'], 1, 'Rehabilitation iyileşme ve işlev kazanma sürecidir.'],
@@ -66,14 +66,14 @@ export const ingilizce11Sorulari2: Record<string, Omit<SoruKarti, 'id'>[]> = {
   ]),
   'ing11-ev-paylasimi': sorular([
     ['“They had set the rules before we moved in.” kurallar taşınmadan önce kondu.', true, 'Had set önce, moved in sonra gerçekleşti.'],
-    ['“She had not cleaned the room.” geçmişteki temizlik işinin tamamlandığını söyler.', false, 'Had not cleaned o zamandan önce temizlik yapılmadığını söyler.'],
+    ['“She had not cleaned the room.” geçmişteki temizlik işinin tamamlandığını söyler.', false, 'Had not cleaned, söz edilen geçmiş ana dek temizliğin tamamlanmadığını söyler.'],
     ['“Sort out a disagreement” görüş ayrılığını çözmek anlamına gelir.', true, 'Sort out sorunu düzene koyup çözmektir.'],
     ['“Privacy” ortak evde herkesin odasına izinsiz girmeyi gerektirir.', false, 'Privacy kişisel alana ve mahremiyete saygı gerektirir.'],
     ['“They had agreed, hadn’t they” sözündeki kısa ek bir bilgiyi teyit eder.', true, 'Olumlu past perfect cümlesine olumsuz question tag gelir.'],
     ['“Figure out the cause” nedeni anlamaya çalışmak değil, onu gizlemek demektir.', false, 'Figure out çözümü ya da nedeni bulup anlamaktır.'],
     ['“She looked after her brother.” kardeşinin bakımını üstlendiğini anlatır.', true, 'Look after birinin bakımıyla ilgilenmek demektir.'],
   ], [
-    ['“He hadn’t done the dishes before guests arrived.” Hangisi doğru?', ['Bulaşıklar önce yapılmadı', 'Bulaşıklar önce bitti'], 0, 'Hadn’t done, misafirlerden önce işin tamamlanmadığını gösterir.'],
+    ['“He hadn’t done the dishes before guests arrived.” Hangisi doğru?', ['Bulaşıklar önce bitmemişti', 'Bulaşıklar önce bitti'], 0, 'Hadn’t done, misafirlerden önce işin tamamlanmadığını gösterir.'],
     ['“You had agreed on the budget, ___?” hangi tag doğrudur?', ['had you', 'hadn’t you'], 1, 'Olumlu ana cümle olumsuz kısa soru alır.'],
     ['Ortak masraf anlaşmazlığında hangi söz uygundur?', ['Let’s set a budget.', 'Let’s ignore the complaint.'], 0, 'Bütçeyi birlikte belirlemek paylaşılan giderleri görünür kılar.'],
     ['“Take responsibility” hangi eyleme yakındır?', ['Görevi başkasına yüklemek', 'Görevi üstlenmek'], 1, 'Take responsibility sorumluluk almayı anlatır.'],

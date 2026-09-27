@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { KONU_DERSLERI, KONU_SINIFLARI, programBul, tumKonular } from './index'
 import type { DersProgrami } from './tip'
 import { gorunenMetin, gorunenSatirlar, metniAyristir } from './kart-metni'
+import { desteAkisi } from './deste-akisi'
 
 /**
  * İçerik testleri metni değil **kuralı** denetliyor: kimlikler çakışmasın,
@@ -105,6 +106,25 @@ describe('11. sınıf İngilizce kapsamı', () => {
       expect(konu.sorular.length, `${konu.ad}: soru sayısı`).toBeGreaterThan(konu.kartlar.length)
       expect(konu.kartlar.filter((kart) => kart.not !== undefined), `${konu.ad}: Rabi notu`).toHaveLength(1)
     }
+  })
+
+  it('her hızlı kontrol okunmuş karttan sonra gerçekten gösterilir', () => {
+    const hatalar: string[] = []
+    for (const konu of tumKonular(ingilizce)) {
+      for (const rastgeleDeger of [0, 0.5, 0.999]) {
+        const akis = desteAkisi(konu.kartlar.length, konu.kontroller, () => rastgeleDeger)
+        const gorunenler = akis.filter((adim) => adim.tur === 'kontrol')
+        if (gorunenler.length !== konu.kontroller.length)
+          hatalar.push(`${konu.ad}: ${rastgeleDeger} seçiminde ${gorunenler.length}/${konu.kontroller.length} kontrol`)
+        for (const adim of gorunenler) {
+          const yeri = akis.indexOf(adim)
+          const dayanak = konu.kontroller[adim.sira].kart
+          const okunan = akis.slice(0, yeri).filter((onceki) => onceki.tur === 'kart').length
+          expect(okunan, `${konu.ad}: kontrol dayanak kartından önce`).toBeGreaterThanOrEqual(dayanak)
+        }
+      }
+    }
+    expect(hatalar, hatalar.join('\n')).toEqual([])
   })
 })
 
