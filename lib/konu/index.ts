@@ -1,4 +1,4 @@
-import type { DersProgrami, Konu, KonuDersId, KonuSinifi, Tema } from './tip'
+import type { DersProgrami, Konu, KonuDersId, KonuSinifi, SoruKarti, Tema } from './tip'
 import { biyoloji9 } from './icerik/9-biyoloji'
 import { cografya9 } from './icerik/9-cografya'
 import { fizik9 } from './icerik/9-fizik'
@@ -17,6 +17,15 @@ import { biyoloji11 } from './icerik/11-biyoloji'
 import { fizik11 } from './icerik/11-fizik'
 import { kimya11 } from './icerik/11-kimya'
 import { matematik11 } from './icerik/11-matematik'
+import { ingilizce11Temalar1 } from './icerik/11-ingilizce-1'
+import { ingilizce11Temalar2 } from './icerik/11-ingilizce-2'
+import { ingilizce11Temalar3 } from './icerik/11-ingilizce-3'
+import { ingilizce11Temalar4 } from './icerik/11-ingilizce-4'
+import { ingilizce11Sorulari1 } from './icerik/11-ingilizce-1-sorular'
+import { ingilizce11Sorulari2 } from './icerik/11-ingilizce-2-sorular'
+import { ingilizce11Sorulari3 } from './icerik/11-ingilizce-3-sorular'
+import { ingilizce11Sorulari4 } from './icerik/11-ingilizce-4-sorular'
+import { program } from './tip'
 
 export type {
   AkisGorseli,
@@ -45,7 +54,7 @@ export type {
  * "Renk derse aittir" kuralının karşılığı (bkz. `AGENTS.md`). Fizik oyunlarda
  * yok, o yüzden kendi ailesi (`fzk`) Konu Anlatımı ile birlikte açıldı.
  */
-export type KonuAilesi = 'yzm' | 'isl' | 'edb' | 'cog' | 'trh' | 'byl' | 'fzk'
+export type KonuAilesi = 'yzm' | 'isl' | 'edb' | 'cog' | 'trh' | 'byl' | 'fzk' | 'dil'
 
 export type KonuDersTanimi = {
   id: KonuDersId
@@ -55,7 +64,7 @@ export type KonuDersTanimi = {
 }
 
 /**
- * Konu anlatımı olan yedi ders.
+ * Konu anlatımında seçilebilen dersler.
  *
  * Sıra ekrandaki çip şeridinin sırası: TYT’de ağırlığı en yüksek olan
  * dersler başta.
@@ -68,10 +77,31 @@ export const KONU_DERSLERI: KonuDersTanimi[] = [
   { id: 'biyoloji', ad: 'Biyoloji', ikon: '🧬', aile: 'byl' },
   { id: 'tarih', ad: 'Tarih', ikon: '🏛️', aile: 'trh' },
   { id: 'cografya', ad: 'Coğrafya', ikon: '🗺️', aile: 'cog' },
+  { id: 'ingilizce', ad: 'İngilizce', ikon: '🌐', aile: 'dil' },
 ]
 
 /** Programın kapsadığı sınıflar. */
 export const KONU_SINIFLARI: KonuSinifi[] = [9, 10, 11]
+
+function sorulariBagla(programVerisi: DersProgrami, havuz: Record<string, Omit<SoruKarti, 'id'>[]>): DersProgrami {
+  const konuKimlikleri = new Set(programVerisi.temalar.flatMap((t) => t.konular.map((k) => k.id)))
+  for (const kimlik of Object.keys(havuz))
+    if (!konuKimlikleri.has(kimlik)) throw new Error(`Bilinmeyen İngilizce konu kimliği: ${kimlik}`)
+  return {
+    ...programVerisi,
+    temalar: programVerisi.temalar.map((t) => ({
+      ...t,
+      konular: t.konular.map((k) => {
+        const sorular = havuz[k.id]
+        if (!sorular?.length) throw new Error(`İngilizce soruları eksik: ${k.id}`)
+        return {
+          ...k,
+          sorular: sorular.map((s, i) => ({ ...s, id: `${k.id}-s${i + 1}` }) as SoruKarti),
+        }
+      }),
+    })),
+  }
+}
 
 /**
  * Bütün programlar.
@@ -98,6 +128,14 @@ const PROGRAMLAR: Record<string, DersProgrami> = {
   'fizik-11': fizik11,
   'kimya-11': kimya11,
   'biyoloji-11': biyoloji11,
+  'ingilizce-11': sorulariBagla(
+    program('ingilizce', 11, 'Okuldan dünyaya, doğadan geleceğe', [
+      ...ingilizce11Temalar1, ...ingilizce11Temalar2,
+      ...ingilizce11Temalar3, ...ingilizce11Temalar4,
+    ]),
+    { ...ingilizce11Sorulari1, ...ingilizce11Sorulari2,
+      ...ingilizce11Sorulari3, ...ingilizce11Sorulari4 },
+  ),
 }
 
 /** İçeriği henüz yazılmamış ders/sınıf için `null` döner; ekran bunu yazıyla karşılar. */

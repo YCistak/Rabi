@@ -25,12 +25,13 @@ export type KonuDersId =
   | 'biyoloji'
   | 'tarih'
   | 'cografya'
+  | 'ingilizce'
 
 /**
  * Programın kapsadığı sınıflar.
  *
- * 11. sınıfta bütün dersler yok: Matematik, Fizik, Kimya ve Biyoloji yazıldı,
- * öteki üçü `programBul`dan `null` dönüyor ve harita "hazırlanıyor" diyor.
+ * 11. sınıfta tüm dersler yok: yazılmayanlar `programBul`dan `null` döner
+ * ve harita "hazırlanıyor" der. İngilizce içerik yalnızca 11. sınıfta var.
  */
 export type KonuSinifi = 9 | 10 | 11
 

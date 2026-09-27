@@ -1,6 +1,6 @@
 {
   "kaynak": "https://tymm.meb.gov.tr",
-  "cekilme": "2026-09-26",
+  "cekilme": "2026-09-27",
   "dersler": {
     "matematik": {
       "9": [
@@ -6401,6 +6401,1085 @@
               "metin": "Örnek ülkelerin enerji kaynaklarını coğrafi açıdan karşılaştırabilmea) Örnek ülkelerin enerji kaynaklarıyla ilgili özellikleri coğrafi açıdan tanımlar.b) Örnek ülkelerin enerji kaynaklarındaki benzerlikleri coğrafi açıdan listeler.c) Örnek ülkelerin enerji kaynaklarındaki farklılıkları coğrafi açıdan listeler."
             }
           ]
+        }
+      ]
+    },
+    "ingilizce": {
+      "9": [
+        {
+          "id": "533",
+          "sira": 1,
+          "ad": "School Life",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Students Of Different Countries, Nationalities, And Languages",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Capitals Of Their Countries, And Tourist Attractions",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Activities In Their Capitals And Countries",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "National Days And Celebrations",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The concept of ''students of different countries",
+            "nationalities",
+            "and languages; capitals of their countries",
+            "and tourist attractions; activities in their capitals and countries; national days and celebrations'' is present in all languages because it is one of the well-known facts that almost all people",
+            "with some exceptions",
+            "go to school and meet different people from different backgrounds there. There are some situations where some people live in other countries than their home countries for various reasons such as their jobs in different parts of the world and their children go to schools in those countries where they might meet other students from different backgrounds. In such situations",
+            "students exchange information about themselves and their lives as happens in this theme. Key Concepts School life",
+            "students of different backgrounds",
+            "countries",
+            "nationalities from different parts of the world",
+            "students who speak different languages",
+            "home countries",
+            "capitals",
+            "historical places",
+            "tourist attractions and tourist activities",
+            "national days",
+            "celebrations."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "534",
+          "sira": 2,
+          "ad": "Classroom Life",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Classmates, Friendships, Daily And Study Routines, Habits, And Activities",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The concept of ''classroom life where classmates build up friendships and exchange information about their daily and study routines",
+            "habits and activities in class and at home'' is present in all languages because it is one of the well-known facts that almost all people",
+            "with some exceptions",
+            "go to school and meet different people from different daily and study routines",
+            "habits",
+            "and activities. Majority of children and young people attend school classes where they build up friendships with their classmates by exchanging information about themselves in terms of their daily and study routines",
+            "habits and activities in class and at home. Engaging in such conversations allows them to learn about each other and build up stronger relationships. Key Concepts Classroom life; daily routines",
+            "habits",
+            "and activities; study routines",
+            "habits",
+            "and activities; students with different daily routines/habits/activities",
+            "students with different study routines/habits/activities."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "535",
+          "sira": 3,
+          "ad": "Personal Life: Physical Appearance & Personality",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Physical Appearance In Terms Of Physical Features And Personality In Terms Of Personal Traits And Character",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The concept of ''physical appearance in terms of physical features and personality in terms of personal traits and characters'' is present in all languages because it is a fact that all people have physical appearance and a personality. Majority of people talk about their or others’ physical appearances and personalities to describe themselves and/or others in class",
+            "at home",
+            "or other places. Engaging in such conversations allows them to describe themselves or others to learn about each other better and build up stronger relationships. Key Concepts Physical appearance",
+            "physical features",
+            "personal feature",
+            "personality",
+            "character",
+            "personal traits",
+            "personal characteristics."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "536",
+          "sira": 4,
+          "ad": "Family Life",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Family Members’ Jobs, Work Routines, Work Activities, And Workplaces",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The concept of ''family members’ jobs",
+            "work routines",
+            "work activities and workplaces'' is present in all languages because it is a fact that all people have family members who have different jobs",
+            "work routines",
+            "work activities and workplaces. Majority of people talk about ''their or others’ family members’ jobs",
+            "work routines",
+            "work activities and workplaces'' to share information about themselves and/or others in class",
+            "at home",
+            "or other places. Engaging in such conversations allows them to describe themselves",
+            "their family members or others’ family members to learn about each other better and build up stronger relationships. Key Concepts Family members",
+            "jobs",
+            "work routines",
+            "work activities",
+            "workplaces."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "537",
+          "sira": 5,
+          "ad": "Life In The House & Neighbourhood",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Types Of Houses, Rooms, Furniture And Activities In The House",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The concept of ''types of houses",
+            "rooms",
+            "furniture",
+            "and activities in the house'' is present in all languages because it is a fact that almost all people",
+            "with some exceptions",
+            "have some types of houses",
+            "rooms",
+            "furniture",
+            "and activities in their houses. The majority of people talk about their or others’ houses",
+            "rooms",
+            "furniture and activities that take place in their house to share information about themselves and/or others in class",
+            "at home",
+            "or in other places. Engaging in such conversations allows them to describe themselves",
+            "the types of their houses and rooms",
+            "furniture",
+            "and activities in their houses. Key Concepts Types of houses",
+            "types of rooms",
+            "types of furniture for different parts of the house",
+            "activities that can be done in the house."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "538",
+          "sira": 6,
+          "ad": "Life In The City & Country",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Local And International Food Culture And Food Festivals In The City",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The concept of ''food'' in terms of local and international festivals which are held in the city",
+            "different types of food produced for such festivals",
+            "and local and international food culture is present in almost all languages. People who start to learn a new language bring their pre-existing knowledge with them and transfer it to their new language learning context. For instance",
+            "a Year 9 in an upper-secondary school will know what festival food is and what type of food can be eaten in local and international festivals in the city but will not know how to say these things in a foreign language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn them more easily in a foreign language",
+            "in this case English. Key Concepts Different types of food",
+            "local food",
+            "international food",
+            "festival food",
+            "international dishes",
+            "local dishes",
+            "international cuisines",
+            "local cuisines."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "539",
+          "sira": 7,
+          "ad": "Life In The World & Nature",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Nature, Endangered Animals And Their Natural Living Conditions And Habitats, Protection Of Them",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The concept of ''endangered animals and their habitats and living conditions including where and how they live today and in the past",
+            "and ways to protect them from extinction'' is present in almost all languages. People who start learning a new language bring their pre-existing knowledge with them and transfer it to their new language learning context. For instance",
+            "a student of an upper-secondary school in year 9",
+            "will know which animals are endangered",
+            "what their habitats are",
+            "and where endangered animals live but will not know how to say these things in another language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn them more easily in a foreign language",
+            "in this case English. Key Concepts Different types of animals",
+            "different kinds of endangered animals",
+            "habitats of endangered animals."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "540",
+          "sira": 8,
+          "ad": "Life In The Universe & Future",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Films, Film Genres, Futuristic Films With Futuristic Ideas, And Technology",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The concept of ''films",
+            "film genres",
+            "futuristic films with futuristic ideas",
+            "and technology'' is present in almost all languages. People who start to learn a new language bring their pre-existing knowledge with them and transfer it to their new language learning context. For instance",
+            "a student of an upper-secondary school in year 9",
+            "may know what a film is",
+            "what film genres are",
+            "what kind of films the futuristic films could be but will not know how to say these things in a foreign language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn them more easily in a foreign language",
+            "in this case English. Key Concepts Films",
+            "different kinds of films",
+            "film genres",
+            "futuristic films",
+            "life in futuristic films."
+          ],
+          "ogrenmeCiktilari": []
+        }
+      ],
+      "10": [
+        {
+          "id": "541",
+          "sira": 1,
+          "ad": "School Life & Education",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Different Types Of Schools In The World",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Regular And Extracurricular Activities At Different Types Of Schools",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "School Anxiety And Stress",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "National Days And Celebrations",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The target concept of this theme ''school life and education with different types of schools in the world; regular and extracurricular activities at different types of schools; school anxiety and stress; national days and celebrations'' is present in almost all languages. Students who start to learn a new language inevitably bring with them their pre-existing knowledge and transfer it to their new language learning context. For example",
+            "a student in an upper secondary school may know what ''school life and education with its components such as different types of schools in the world; regular and extracurricular activities at different types of schools; school anxiety and stress; national days and celebrations'' mean but may not know how to say these things in another language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn the new information more easily in a foreign language",
+            "in this case English. Key Concepts School life",
+            "education",
+            "different types of schools in the world; regular and extracurricular activities at different types of schools; school anxiety and stress; national days and celebrations."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "542",
+          "sira": 2,
+          "ad": "Classroom Life & Learning",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Learning Activities In The Classroom",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Personal Learning Styles",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Learning With Technology In The Classroom",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The target concept of this theme ''classroom life and learning with its components such as learning activities in the classroom; personal learning styles; learning with technology in the classroom'' is present in almost all languages. Students who start to learn a new language inevitably bring with them their pre-existing knowledge and transfer it to their new language learning context. For example",
+            "a student in an upper secondary school may know what ''classroom life and learning with its components such as learning activities in the classroom; personal learning styles; learning with technology in the classroom'' mean but may not know how to say these things in another language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn the new information more easily in a foreign language",
+            "in this case English. Key Concepts Classroom life",
+            "learning",
+            "learning activities in the classroom",
+            "personal learning styles; learning with technology in the classroom."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "543",
+          "sira": 3,
+          "ad": "Personal Life & Well-Being",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Body Parts, Human Illnesses And Diseases",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Human Nature And Human Well-Being Today And In The Future",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Fashion And Personal Fashion Preferences",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The target concept of this theme ''personal life and well-being with its components such as body parts",
+            "human illnesses and diseases; human nature and human well-being today and in the future; fashion and personal fashion preferences'' is present in almost all languages. Students who start to learn a new language inevitably bring with them their pre-existing knowledge and transfer it to their new language learning context. Most example",
+            "a student in an upper secondary school may know what ''personal life and well-being with its components such as body parts",
+            "human illnesses and diseases; human nature and human well-being today and in the future; fashion and personal fashion preferences'' mean",
+            "but may not know how to say these things in their own language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn the new information more easily in a foreign language",
+            "in this case English. Key Concepts Personal life",
+            "well-being",
+            "body parts",
+            "human illnesses",
+            "diseases",
+            "human nature",
+            "human well-being today",
+            "human well-being in the future; fashion",
+            "personal fashion preferences."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "544",
+          "sira": 4,
+          "ad": "Family Life & Home",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Family Members And Their Daily Routines Today And In The Past",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Hobbies And Interests Of Family Members (Sports & Films)",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Different Types Of Houses And Families From The World",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The target concept of this theme ''family life and home with its components such as family members and their daily routines today and in the past; hobbies and interests of family members (sports & films); different types of houses and families from the world'' is present in almost all languages. Students who start to learn a new language inevitably bring with them their pre-existing knowledge and transfer it to their new language learning context. Most example",
+            "a student in an upper secondary school may know what ''family life and home with its components such as family members and their daily routines today and in the past; hobbies and interests of family members (sports & films); different types of houses and families from the world'' means",
+            "but may not know how to say these things in a foreign language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn the new information more easily in a foreign language",
+            "in this case English. Key Concepts Family life and home with its components such as family members and their daily routines today and in the past; hobbies and interests of family members (sports & films); different types of houses and families from the world."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "545",
+          "sira": 5,
+          "ad": "Life In The Neighbourhood, City & Social Life",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Activities To Do In Attractions (Cafes, Cinemas",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Gyms, Sports Clubs)",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Getting Help From Services (Pharmacies, Hospitals, Etc.)",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Pros And Cons Of Different Types Of Transportation In The Neighbourhood And City",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations/Key Concepts Generalisations The target concept of this theme ''life in the neighbourhood",
+            "city & social life with its components such as activities to do in attractions and recreational places (cafes",
+            "cinemas; gyms",
+            "sports clubs); getting help from services (pharmacies",
+            "hospitals",
+            "etc.); pros and cons of different types of transportation in the neighbourhood and city'' is present in almost all languages. Students who start to learn a new language inevitably bring with them their pre-existing knowledge and transfer it to their new language learning context. For example",
+            "a student in an upper secondary school may know what ''life in the neighbourhood",
+            "city & social life with its components such as activities to do in attractions and recreational places (cafes",
+            "cinemas; gyms",
+            "sports clubs); getting help from services (pharmacies",
+            "hospitals",
+            "etc.); pros and cons of different types of transportation in the neighbourhood and city'' means",
+            "but may not know how to say these things in another language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn the new information more easily in a foreign language",
+            "in this case English. Key Concepts Life in the neighbourhood",
+            "life in the city",
+            "social life",
+            "attractions and recreational places (cafes",
+            "cinemas; gyms",
+            "sports clubs)",
+            "services in the neighbourhood and city (pharmacies",
+            "hospitals",
+            "etc.)",
+            "pros and cons of different types of transportation in the neighbourhood and city."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "546",
+          "sira": 6,
+          "ad": "Life In The World & Culture",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Continents, Countries, And Nationalities",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Shopping For Food And Personal Food Preferences",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Food And Food Culture From Different Parts Of The World",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The target concept of this theme ''continents",
+            "countries",
+            "and nationalities; shopping for food and personal food preferences; food and food culture from different parts of the world'' is present in almost all languages. Students who start to learn a new language inevitably bring with them their pre-existing knowledge and transfer it to their new language learning context. For example",
+            "a student in an upper secondary school may know what ''continents",
+            "countries",
+            "and nationalities; shopping for food and personal food preferences; food and food culture from different parts of the world'' mean but may not know how to say these things in another language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn the new information more easily in a foreign language",
+            "in this case English. Key Concepts Continents",
+            "countries",
+            "nationalities",
+            "shopping for food",
+            "personal food preferences",
+            "food and food culture from different parts of the world."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "547",
+          "sira": 7,
+          "ad": "Life In Nature & Global Problems",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Natural Resources",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Global Problems Related To Natural Resources",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Protecting Natural Resources",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The target concept of this theme ''natural resources; global problems related to natural resources; protecting natural resources'' is present in almost all languages. Students who start to learn a new language inevitably bring with them their pre-existing knowledge and transfer it to their new language learning context. For example",
+            "a student in an upper secondary school may know what ''natural resources; global problems related to natural resources; protecting natural resources'' means but may not know how to say these things in another language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn the new information more easily in a foreign language",
+            "in this case English. Key Concepts Natural resources; global problems",
+            "global problems related to natural resources; protecting natural resources"
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "548",
+          "sira": 8,
+          "ad": "Life In The Universe & The Future",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Planets And Space",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Life In The Universe",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Space Explorations",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The target concept of this theme ''life in the universe & the future with its components such as planets and space; life in the universe; space explorations'' is present in almost all languages. Students who start to learn a new language inevitably bring with them their pre-existing knowledge and transfer it to their new language learning context. Most example",
+            "a student in an upper secondary school may know what ''life in the universe & the future with its components such as planets and space; life in the universe; space explorations'' means but may not know how to say these things in another language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn the new information more easily in a foreign language",
+            "in this case English. Key Concepts Life in the universe",
+            "life in the future",
+            "planets",
+            "space",
+            "space explorations."
+          ],
+          "ogrenmeCiktilari": []
+        }
+      ],
+      "11": [
+        {
+          "id": "549",
+          "sira": 1,
+          "ad": "School Life & Education",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Comparing Different Types Of Schools",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Comparing Different Education Systems",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "National Days And Celebrations",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The target concept of this theme ''school life and education with its components such as comparing different types of schools; comparing different education systems; national days and celebrations'' is present in almost all languages. Students who start to learn a new language inevitably bring with them their pre- existing knowledge and transfer it to their new language learning context. For example",
+            "a student in an upper secondary school may know what ''school life and education with its components such as comparing different types of schools; comparing different education systems; national days and celebrations'' means",
+            "but may not know how to say these things in another language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn the new information more easily in a foreign language",
+            "in this case English. Key Concepts School life",
+            "education",
+            "comparing different types of schools",
+            "comparing different education systems",
+            "national days",
+            "celebrations."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "550",
+          "sira": 2,
+          "ad": "Classroom Life & Learning",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Comparing Different Learning Activities And Styles",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Comparing Traditional Education And Modern Education With Technology",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The target concept of this theme ''classroom life and learning with its components such as comparing different learning activities and styles; comparing traditional education and modern education with technology'' is present in almost all languages. Students who start to learn a new language inevitably bring with them their pre-existing knowledge and transfer it to their new language learning context. For example",
+            "a student in an upper secondary school may know what ''classroom life and learning with its components such as comparing different learning activities and styles; comparing traditional education and modern education with technology'' means but may not know how to say these things in another language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn the new information more easily in a foreign language",
+            "in this case English. Key Concepts Classroom life",
+            "learning",
+            "comparing different learning activities and styles",
+            "traditional education",
+            "modern education",
+            "comparing traditional education and modern education with technology",
+            "technology."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "551",
+          "sira": 3,
+          "ad": "Personal Life & Well-Being",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Providing Well-Being With Physical Health (Body And Illnesses)",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Providing Well-Being With Mental And Emotional Health",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The target concept of this theme ''personal life and well-being with its components such as providing well- being with physical health (body and illnesses); providing well-being with mental and emotional health'' is present in almost all languages. Students who start to learn a new language inevitably bring with them their pre-existing knowledge and transfer it to their new language learning context. For example",
+            "a student in an upper secondary school may know what ''personal life and well-being with its components such as providing well-being with physical health (body and illnesses); providing well-being with mental and emotional health'' mean",
+            "but may not know how to say these things in another language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn the new information more easily in a foreign language",
+            "in this case English. Key Concepts Personal life",
+            "well-being",
+            "well-being with physical health",
+            "body and illnesses",
+            "providing well-being with mental and emotional health."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "552",
+          "sira": 4,
+          "ad": "Family Life & Home",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Family Traditions, Values, And Customs",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Family Problems Related To Sharing A House And Solutions",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The target concept of this theme ''family traditions",
+            "values",
+            "and customs (watching films together",
+            "preferences for films",
+            "music",
+            "and sports); family problems related to sharing a house and solutions'' is present in almost all languages. Students who start to learn a new language inevitably bring with them their pre-existing knowledge and transfer it to their new language learning context. For example",
+            "a student in an upper secondary school may know what ''family traditions",
+            "values",
+            "and customs (watching films together",
+            "preferences for films",
+            "music",
+            "and sports); family problems related to sharing a house and solutions'' means but may not know how to say these things in another language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn the new information more easily in a foreign language",
+            "in this case English. Key Concepts Family traditions",
+            "values",
+            "customs",
+            "habits (watching films together",
+            "preferences for films",
+            "music",
+            "and sports); family problems",
+            "family problems related to sharing a house",
+            "solutions to family problems."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "553",
+          "sira": 5,
+          "ad": "Life In The Neighbourhood, City & Social Life",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Types Of Cities",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Social Life In The Rural Areas And Cities",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The target concept of this theme ''life in the neighbourhood",
+            "city & social life with its components such as types of cities (slow cities",
+            "sustainable cities…); social life in the rural areas and cities'' is present in almost all languages. Students who start to learn a new language inevitably bring with them their pre-existing knowledge and transfer it to their new language learning context. For example",
+            "a student in an upper secondary school may know what ''life in the neighbourhood",
+            "city & social life with its components such as types of cities (slow cities",
+            "sustainable cities…); social life in the rural areas and cities'' means but may not know how to say these things in another language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn the new information more easily in a foreign language",
+            "in this case English. Key Concepts Life in the neighbourhood",
+            "city and social life with its components such as types of cities (slow cities",
+            "sustainable cities…); social life in the rural areas and cities."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "554",
+          "sira": 6,
+          "ad": "Life In The World & Culture",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Cultural (Music And Art) Celebrations In The World",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Sports And Sports Cultures And Competitions",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The target concept of this theme ''cultural (music and art) celebrations in the world; sports and sports cultures and competitions'' is present in almost all languages. Students who start to learn a new language inevitably bring with them their pre-existing knowledge and transfer it to their new language learning context. For example",
+            "a student in an upper secondary school may know what ''cultural (music and art) celebrations in the world; sports and sports cultures and competitions'' means but may not know how to say these things in another language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn the new information more easily in a foreign language",
+            "in this case English. Key Concepts Culture",
+            "music",
+            "art",
+            "cultural (music and art) celebrations",
+            "celebrations in the world",
+            "sports",
+            "sports cultures",
+            "competitions."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "555",
+          "sira": 7,
+          "ad": "Life In Nature & Global Problems",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Globalisation, Problems And Solutions",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Environmental Issues And Solutions",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The target concept of this theme ''globalisation",
+            "problems and solutions; environmental issues and solutions'' is present in almost all languages. Students who start to learn a new language inevitably bring with them their pre-existing knowledge and transfer it to their new language learning context. For example",
+            "a student in an upper secondary school may know what ''globalisation",
+            "problems and solutions; environmental issues and solutions'' means",
+            "but may not know how to say these things in another language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn the new information more easily in a foreign language",
+            "in this case English. Key Concepts Globalisation",
+            "global problems",
+            "solutions; environmental issues."
+          ],
+          "ogrenmeCiktilari": []
+        },
+        {
+          "id": "556",
+          "sira": 8,
+          "ad": "Life In The Universe & Future",
+          "dersSaati": 14,
+          "bolumler": [
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Future Lifestyles",
+                  "ayrinti": null
+                }
+              ]
+            },
+            {
+              "ad": null,
+              "altKonular": [
+                {
+                  "ad": "Future Technologies And Inventions",
+                  "ayrinti": null
+                }
+              ]
+            }
+          ],
+          "anahtarKavramlar": [
+            "Generalisations The target concept of this theme ''life in the universe and the future with its components such as future lifestyles",
+            "future technologies and inventions'' is present in almost all languages. Students who start to learn a new language inevitably bring with them their pre-existing knowledge and transfer it to their new language learning context. For example",
+            "a student in an upper secondary school may know what ''life in the universe and the future with its components such as future lifestyles",
+            "future technologies and inventions'' means",
+            "but may not know how to say these things in a foreign language if this has not yet been covered in their existing curriculum. However",
+            "this existing knowledge in their own language will help them recognise",
+            "understand",
+            "and learn the new information more easily in a foreign language",
+            "in this case English. Key Concepts Life in the universe",
+            "life in the future",
+            "future lifestyles",
+            "future technologies",
+            "inventions."
+          ],
+          "ogrenmeCiktilari": []
         }
       ]
     }

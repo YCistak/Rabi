@@ -26,26 +26,31 @@ const KART_TABANI = 6
 const KART_SINIRI = 16
 
 /**
- * 11. sınıf dört derste yazıldı; öteki üçü henüz yok ve harita onlar için
- * "hazırlanıyor" diyor. Beklenen programlar ayrı sayılıyor ki 9–10'da bir
+ * 11. sınıfın yazılmış programları ayrı sayılıyor; İngilizce yalnızca 11'de var.
+ * Beklenen programlar ayrı sayılıyor ki 9–10'da bir
  * program kaybolursa test bunu "yazılmamış" diye sessizce geçmesin.
  */
-const YAZILAN_11 = ['matematik', 'fizik', 'kimya', 'biyoloji']
-const beklenenMi = (sinif: number, ders: string) => sinif < 11 || YAZILAN_11.includes(ders)
+const YAZILAN_11 = ['matematik', 'fizik', 'kimya', 'biyoloji', 'ingilizce']
+const beklenenMi = (sinif: number, ders: string) =>
+  sinif < 11 ? ders !== 'ingilizce' : YAZILAN_11.includes(ders)
 
 /**
- * 11. sınıfın soru basamakları (turuncu kitaplar) henüz boş: önce anlatım
- * yazıldı, sorular sonra gelecek. Soru testleri o programları atlıyor;
- * harita soru basamağını "yazılmadı" diye çiziyor (`konu-haritasi.tsx`).
+ * Sayısal derslerin soru basamakları ana dalda henüz boş. İngilizce soruları
+ * burada denetlenir; sayısal sorular ayrı bir dalda tamamlandığında aynı
+ * denetimlere katılır.
  */
-const SORUSUZ_SINIFLAR = [11]
 
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map(
     (ders) => [`${sinif}. sınıf ${ders.ad}`, programBul(ders.id, sinif)] as const,
   ),
 )
-const sorulu = programlar.filter(([, p]) => !SORUSUZ_SINIFLAR.includes(p?.sinif ?? 0))
+const sorulu = programlar.filter(([, p]) =>
+  p !== null && (
+    p.sinif < 11 || p.ders === 'ingilizce' ||
+    p.temalar.every((t) => t.konular.every((k) => k.sorular.length > 0))
+  ),
+)
 
 describe('programlar', () => {
   it.each(programlar)('%s programı var', (_ad, program) => {
@@ -85,6 +90,20 @@ describe('programlar', () => {
         expect(gorunenMetin(kart.metin).length, `metin uzun: ${kart.baslik}`).toBeLessThanOrEqual(METIN_SINIRI)
         expect(kart.metin.trim().length).toBeGreaterThan(0)
       }
+    }
+  })
+})
+
+describe('11. sınıf İngilizce kapsamı', () => {
+  const ingilizce = programBul('ingilizce', 11)!
+
+  it('sekiz temanın tüm alt konuları dolu', () => {
+    expect(ingilizce.temalar).toHaveLength(8)
+    expect(tumKonular(ingilizce)).toHaveLength(17)
+    for (const konu of tumKonular(ingilizce)) {
+      expect(konu.kartlar.length, `${konu.ad}: kart sayısı`).toBeGreaterThanOrEqual(11)
+      expect(konu.sorular.length, `${konu.ad}: soru sayısı`).toBeGreaterThan(konu.kartlar.length)
+      expect(konu.kartlar.filter((kart) => kart.not !== undefined), `${konu.ad}: Rabi notu`).toHaveLength(1)
     }
   })
 })
