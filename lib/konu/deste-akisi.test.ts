@@ -89,14 +89,23 @@ describe('desteAkisi', () => {
     }
   })
 
-  it('rastgelelik dışarıdan geliyor: aynı sayı aynı yerleşim', () => {
+  it('eski rastgele parametresi aynı akışı korur', () => {
     const a = desteAkisi(8, [kontrol], sabit(0.3, 0.9))
     const b = desteAkisi(8, [kontrol], sabit(0.3, 0.9))
     expect(a).toEqual(b)
   })
 
-  it('kontrolden hemen sonra mola gelirse önce kontrol sorulur', () => {
-    // İki ekran aynı yere giremiyor; art arda gelen ekranlarda kontrol önce.
+  it('rastgele sayı değişse de ara ekranların sırası karışmıyor', () => {
+    const kontroller = [kontrol, { ...kontrol, kart: 6 }]
+    const a = desteAkisi(12, kontroller, sabit(0, 1))
+    const b = desteAkisi(12, kontroller, sabit(1, 0))
+    expect(a).toEqual(b)
+    expect(a.filter((adim) => adim.tur !== 'kart').map((adim) => adim.tur)).toEqual([
+      'kontrol', 'mola', 'kontrol',
+    ])
+  })
+
+  it('kontrol ve mola sırası sabittir', () => {
     const adimlar = desteAkisi(8, [kontrol], sabit(0, 0))
     const kontrolIdx = adimlar.findIndex((a) => a.tur === 'kontrol')
     const molaIdx = adimlar.findIndex((a) => a.tur === 'mola')

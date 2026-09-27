@@ -16,19 +16,17 @@
  * "sabah 40 soru" arasındaki fark keyfî bir yerleşim değil. `x`/`y` alanları
  * bu yüzden kalktı; eski kayıtlar taşınırken konumları atılıyor (`normalize`).
  *
- * ## Hafta neden duruyor, ay neden durmuyor
+ * ## Yedi günlük şerit neden duruyor, ay neden durmuyor
  *
  * Tahta **günlükti**: gün dönünce kâğıtlar siliniyordu, gerekçe de "dün
  * yazdığını bugün de gören kullanıcı biriken ve hiç bitmeyen bir listeye
- * bakıyor" idi. Gerekçe hâlâ geçerli, ama tasarım hafta şeridiyle geliyor:
- * kullanıcı haftanın günlerine bakıyor ve ileriye plan yazabiliyor, yani
+ * bakıyor" idi. Gerekçe hâlâ geçerli, ama yedi günlük şerit geliyor:
+ * kullanıcı yakın günlere bakıyor ve ileriye plan yazabiliyor, yani
  * "bugün" tek başına yetmiyor.
  *
- * Kayıt bu yüzden **haftalık**: içinde bulunulan haftanın pazartesisinden
- * eskisi eleniyor (`haftaninGorevleri`). Hafta şeridi zaten o haftayı
- * gösteriyor, daha eskisine ulaşan bir yol yok; tutulsaydı görünmeyen bir
- * birikim olurdu. Her pazartesi liste sıfırlanıyor — bitmemiş işler de
- * gidiyor, tıpkı eskiden her gece gittikleri gibi, yalnızca daha yavaş.
+ * Kayıt bugün çevresindeki şeritle kayar: bugünden üç günden eski görevler
+ * elenir. Gelecek günlere yazılanlar korunur; pazar günü sonraki haftanın
+ * planı yapılabilir.
  *
  * Geçmiş günler **salt okunur** (ekran tarafında): dün yapılmamış işi bugün
  * işaretlemek geçmişi düzeltmek olur, o iş yapılmadı. Erteleme varken buna
@@ -293,18 +291,18 @@ export function gorevleriNormalize(ham: unknown): Gorev[] {
 }
 
 /**
- * Listeyi içinde bulunulan haftaya indirger.
+ * Listeyi görünen en eski günden itibaren tutar.
  *
- * `haftaBasi` dışarıdan geliyor (bkz. `lib/utils.ts`): takvim saatine bakan
+ * Alt sınır dışarıdan geliyor: takvim saatine bakan
  * bir mantık test edilemez ve gece yarısını beklemek gerekirdi. İleri günler
  * elenmiyor — pazar günü ertelenen iş gelecek pazartesiye düşüyor ve o iş
  * kullanıcının kendi kararı.
  */
-export function haftaninGorevleri(
+export function gorevleriTarihtenItibaren(
   gorevler: readonly Gorev[],
-  haftaBasiIso: string,
+  enEskiGunIso: string,
 ): Gorev[] {
-  return gorevler.filter((g) => g.gun >= haftaBasiIso)
+  return gorevler.filter((g) => g.gun >= enEskiGunIso)
 }
 
 /** Bir günün görevleri. */

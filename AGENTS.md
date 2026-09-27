@@ -1949,17 +1949,16 @@ Görev metni **düzenlenemiyor**, silinip yeniden yazılıyor: satır tek satır
 iş adı taşıyor ve yirmi dört karakteri düzeltmek, her satıra ikinci bir kalem
 düğmesi koymaktan hızlı.
 
-### Kayıt haftalık, geçmiş salt okunur
+### Kayıt yedi günlük şeritle kayar, geçmiş salt okunur
 
 Tahta **günlükti**, gün dönünce kâğıtlar siliniyordu; gerekçe "dün yazdığını
 bugün de gören kullanıcı biriken ve hiç bitmeyen bir listeye bakıyor" idi.
-Gerekçe duruyor ama hafta şeridi ileriye plan yazdırıyor, yani "bugün" tek başına
-yetmiyor. Kayıt bu yüzden **haftalık**: `haftaninGorevleri` içinde bulunulan
-haftanın pazartesisinden eskisini eliyor. Şerit zaten o haftayı gösteriyor, daha
-eskisine ulaşan bir yol yok — tutulsaydı görünmeyen bir birikim olurdu. Her
-pazartesi liste sıfırlanıyor, bitmemiş işler de gidiyor.
+Gerekçe duruyor ama yedi günlük şerit ileriye plan yazdırıyor, yani "bugün" tek
+başına yetmiyor. Bugün şeridin dördüncü günü; üç geçmiş ve üç gelecek gün
+görünüyor. `gorevleriTarihtenItibaren` bugünden üç günden eski kayıtları eliyor.
+Gelecek günlere yazılanlar hafta sınırında da korunuyor.
 
-Hafta dönümü zamanlayıcıyla değil **türetmeyle** yakalanıyor (`AppShell`):
+Gün dönümü zamanlayıcıyla değil **türetmeyle** yakalanıyor (`AppShell`):
 uygulama kapalıyken çalışmayan bir `setTimeout`'a güvenilmez. Elenen görevler bir
 etkiyle kayıttan da siliniyor, yoksa yedeğe girerlerdi.
 
@@ -1968,17 +1967,15 @@ orada hiç çizilmiyor. Dün yapılmamış işi bugün işaretlemek geçmişi d�
 olur — o iş yapılmadı, ve erteleme varken buna gerek de yok.
 
 Ay takvimi **yok**. Soru Takibi'nde var çünkü orada eski günlere bakmanın bir
-karşılığı var; burada kayıt bir haftadan eskisini tutmuyor, açılan takvim boş
+karşılığı var; burada eski kayıtlar üç gün sonra eleniyor, açılan takvim boş
 günler gösterirdi.
 
 ### Ekleme düğmesi her bölümde
 
 Tasarım `+` düğmesini yalnızca içinde bulunulan dilime koyuyor; o zaman dolu ama
 sırası geçmiş bir bölüme ikinci bir görev yazmanın yolu kalmıyor (boş bölümün
-kesikli düğmesi de yalnızca boşken çıkıyor). Düğme bu yüzden her bölümde;
-tasarımın vurgusu duruyor — şimdiki dilimin düğmesi dolu turuncu, ötekiler
-sessiz. Hangi dilimde olunduğu `simdikiDilim` ile saatten çıkıyor ve saat
-dışarıdan veriliyor, yoksa saf kalmazdı.
+kesikli düğmesi de yalnızca boşken çıkıyor). Düğme bu yüzden her bölümde ve
+üçünün rengi aynı.
 
 Erteleme görevi **ertesi güne, aynı dilime** taşıyor ve hedef dilim doluysa
 `gorevErtele` `null` dönüyor: sessizce yutulan bir erteleme, kullanıcıya işin
@@ -2190,12 +2187,9 @@ zıplıyor, okunan kartların adları listeleniyor) ve bir–iki **hızlı kontr
 (`bicim.murekkep`) — mockup Fizik'in mavisiyle çizildi, o mavi burada derse
 göre değişiyor.
 
-- **Yer rastgele, kenarlar yasak.** Ara ekran ilk iki ve son iki kartın
-  arasına girmiyor: ikinci karttan sonraki mola okuma başlamadan verilen bir
-  mola, son karttan önceki kontrol soru sahnesiyle üst üste biniyor. Yer
-  yoksa (üç kartlık deste) ara ekran hiç yok. Rastgelelik deste açılırken
-  bir kez atılıyor ve `Math.random` `desteAkisi`nin **dışından** geliyor —
-  test aynı yerleşimi görebilmeli.
+- **Sıra sabit.** Kısa destede kontrol → mola, uzun destede kontrol → mola →
+  kontrol gelir. İlk kontrol ve mola kenarlardan uzak durur. Son kontrolün
+  sorusu son karta dayanıyorsa kontrol o kart okunduktan sonra gelir.
 - **Ara ekranlar kart sayılmıyor.** `okunan` ve bölmeli çubuk yalnızca
   kartları sayıyor; Geri ara ekranı atlayıp bir önceki karta dönüyor.
 - **Kontrol sayısı kartla orantılı**: on karttan uzun destede iki, kısasında

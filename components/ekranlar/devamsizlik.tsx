@@ -12,7 +12,7 @@ import {
   netYaz,
   tarihYaz,
 } from '@/lib/hesap'
-import { bugun, cn, tariheCevir, tariheYaz, yeniId } from '@/lib/utils'
+import { bugun, cn, tariheCevir, tariheYaz, yediGunlukSerit, yeniId } from '@/lib/utils'
 import { Alan, BaslikSatiri, Buton, Kart, Not, Onay, SecimSatiri } from '@/components/ui'
 import { Takvim, type GunIsareti } from '@/components/takvim'
 import { useGeriKatmani } from '@/lib/geri'
@@ -92,26 +92,19 @@ export function DevamsizlikEkrani({
     return harita
   }, [kayitlar])
 
-  // Seçili günün haftası, pazartesiden başlayarak.
+  // Bugün ortada kalır; ay takvimi eski kayıtları ayrıca açar.
   const hafta = useMemo(() => {
-    const gun = tariheCevir(secili)
-    const pazartesi = new Date(
-      gun.getFullYear(),
-      gun.getMonth(),
-      gun.getDate() - ((gun.getDay() + 6) % 7),
-    )
-    return Array.from({ length: 7 }, (_, i) => {
-      const tarih = new Date(pazartesi.getFullYear(), pazartesi.getMonth(), pazartesi.getDate() + i)
-      const iso = tariheYaz(tarih)
+    return yediGunlukSerit(bugunIso).map((iso) => {
+      const tarih = tariheCevir(iso)
       return {
         iso,
-        ad: GUN_ADLARI[i],
+        ad: GUN_ADLARI[(tarih.getDay() + 6) % 7],
         sayi: tarih.getDate(),
         etiket: `${tarih.getDate()} ${AY_ADLARI[tarih.getMonth()]}`,
         kayit: kayitlar.find((k) => k.tarih === iso),
       }
     })
-  }, [secili, kayitlar])
+  }, [bugunIso, kayitlar])
 
   const haftaToplami = useMemo(() => {
     const haftaninGunleri = new Set(hafta.map((g) => g.iso))
@@ -203,7 +196,7 @@ export function DevamsizlikEkrani({
         {/* Hafta şeridi; takvim altında katlanıyor. */}
         <Kart className="rounded-3xl px-3 pb-3 pt-3.5">
           <div className="flex items-baseline gap-2 px-1 pb-2.5">
-            <p className="font-display text-[15px] font-extrabold tracking-tight">Bu hafta</p>
+            <p className="font-display text-[15px] font-extrabold tracking-tight">7 günlük görünüm</p>
             <p className="rakam text-[12.5px] font-bold text-muted-foreground/70">
               {haftaToplami === 0 ? 'devamsızlık yok' : `${gunYaz(haftaToplami)} gün`}
             </p>

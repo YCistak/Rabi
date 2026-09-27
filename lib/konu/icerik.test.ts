@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { KONU_DERSLERI, KONU_SINIFLARI, programBul, tumKonular } from './index'
 import type { DersProgrami } from './tip'
 import { gorunenMetin, gorunenSatirlar, metniAyristir } from './kart-metni'
+import { desteAkisi } from './deste-akisi'
 
 /**
  * İçerik testleri metni değil **kuralı** denetliyor: kimlikler çakışmasın,
@@ -335,6 +336,13 @@ const SIK_SINIRI = 44
 const KONTROL_ACIKLAMA_SINIRI = 170
 
 describe('kart notu ve hızlı kontrol', () => {
+  it.each(programlar)('%s: yazılan kontroller destede görünür', (_ad, program) => {
+    for (const konu of tumKonular(program!)) {
+      const kontrolSayisi = desteAkisi(konu.kartlar.length, konu.kontroller)
+        .filter((adim) => adim.tur === 'kontrol').length
+      expect(kontrolSayisi, `${konu.ad}: ${konu.kartlar.length} kart, kontrol kartları ${konu.kontroller.map((k) => k.kart)}`).toBe(konu.kontroller.length)
+    }
+  })
   it.each(programlar)('%s: etiket ve not kısa', (_ad, program) => {
     for (const konu of tumKonular(program!)) {
       for (const kart of konu.kartlar) {
