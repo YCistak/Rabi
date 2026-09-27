@@ -1,4 +1,4 @@
-import type { DersProgrami, Konu, KonuDersId, KonuSinifi, Tema } from './tip'
+import type { DersProgrami, Konu, KonuDersId, KonuSinifi, SoruKarti, Tema } from './tip'
 import { biyoloji9 } from './icerik/9-biyoloji'
 import { cografya9 } from './icerik/9-cografya'
 import { fizik9 } from './icerik/9-fizik'
@@ -17,6 +17,10 @@ import { biyoloji11 } from './icerik/11-biyoloji'
 import { fizik11 } from './icerik/11-fizik'
 import { kimya11 } from './icerik/11-kimya'
 import { matematik11 } from './icerik/11-matematik'
+import { biyoloji11Sorulari } from './icerik/11-biyoloji-sorular'
+import { fizik11Sorulari } from './icerik/11-fizik-sorular'
+import { kimya11Sorulari } from './icerik/11-kimya-sorular'
+import { matematik11Sorulari } from './icerik/11-matematik-sorular'
 
 export type {
   AkisGorseli,
@@ -73,6 +77,30 @@ export const KONU_DERSLERI: KonuDersTanimi[] = [
 /** Programın kapsadığı sınıflar. */
 export const KONU_SINIFLARI: KonuSinifi[] = [9, 10, 11]
 
+function sorulariBagla(program: DersProgrami, havuz: Record<string, Omit<SoruKarti, 'id'>[]>): DersProgrami {
+  const konuKimlikleri = new Set(program.temalar.flatMap((tema) => tema.konular.map((konu) => konu.id)))
+  for (const kimlik of Object.keys(havuz)) {
+    if (!konuKimlikleri.has(kimlik)) throw new Error(`Bilinmeyen 11. sınıf konu kimliği: ${kimlik}`)
+  }
+  return {
+    ...program,
+    temalar: program.temalar.map((tema) => ({
+      ...tema,
+      konular: tema.konular.map((konu) => {
+        const sorular = havuz[konu.id]
+        if (!sorular?.length) throw new Error(`11. sınıf soruları eksik: ${konu.id}`)
+        const baslangic = [...konu.id].reduce((toplam, harf) => toplam + harf.charCodeAt(0), 0) % sorular.length
+        // Her konunun ilk sorusunun aynı biçimde ve aynı cevapta başlamasını önler.
+        const sirali = [...sorular.slice(baslangic), ...sorular.slice(0, baslangic)]
+        return {
+          ...konu,
+          sorular: sirali.map((soru, dizin) => ({ ...soru, id: `${konu.id}-s${dizin + 1}` }) as SoruKarti),
+        }
+      }),
+    })),
+  }
+}
+
 /**
  * Bütün programlar.
  *
@@ -94,10 +122,10 @@ const PROGRAMLAR: Record<string, DersProgrami> = {
   'biyoloji-10': biyoloji10,
   'tarih-10': tarih10,
   'cografya-10': cografya10,
-  'matematik-11': matematik11,
-  'fizik-11': fizik11,
-  'kimya-11': kimya11,
-  'biyoloji-11': biyoloji11,
+  'matematik-11': sorulariBagla(matematik11, matematik11Sorulari),
+  'fizik-11': sorulariBagla(fizik11, fizik11Sorulari),
+  'kimya-11': sorulariBagla(kimya11, kimya11Sorulari),
+  'biyoloji-11': sorulariBagla(biyoloji11, biyoloji11Sorulari),
 }
 
 /** İçeriği henüz yazılmamış ders/sınıf için `null` döner; ekran bunu yazıyla karşılar. */

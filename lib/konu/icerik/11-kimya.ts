@@ -13,8 +13,7 @@ import { kart, konu, program, tema } from '../tip'
  * elektrokimya. Asit-baz bu programda pH hesabı, titrasyon ve ürün seçimiyle
  * denge başlığının altında işleniyor.
  *
- * Sorular (turuncu kitaplar) henüz yazılmadı; destelerin ortasındaki hızlı
- * kontroller var.
+ * Konu sonu soruları ayrı dosyada tutulur; hızlı kontroller destelerin içindedir.
  */
 export const kimya11 = program('kimya', 11, 'Enerjiden dengeye, atıktan yakıta', [
   tema('kim11-t1', 'Etkileşim', [

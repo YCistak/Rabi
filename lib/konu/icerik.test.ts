@@ -33,19 +33,12 @@ const KART_SINIRI = 16
 const YAZILAN_11 = ['matematik', 'fizik', 'kimya', 'biyoloji']
 const beklenenMi = (sinif: number, ders: string) => sinif < 11 || YAZILAN_11.includes(ders)
 
-/**
- * 11. sınıfın soru basamakları (turuncu kitaplar) henüz boş: önce anlatım
- * yazıldı, sorular sonra gelecek. Soru testleri o programları atlıyor;
- * harita soru basamağını "yazılmadı" diye çiziyor (`konu-haritasi.tsx`).
- */
-const SORUSUZ_SINIFLAR = [11]
-
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map(
     (ders) => [`${sinif}. sınıf ${ders.ad}`, programBul(ders.id, sinif)] as const,
   ),
 )
-const sorulu = programlar.filter(([, p]) => !SORUSUZ_SINIFLAR.includes(p?.sinif ?? 0))
+const sorulu = programlar
 
 describe('programlar', () => {
   it.each(programlar)('%s programı var', (_ad, program) => {
@@ -317,6 +310,18 @@ describe('sorular', () => {
     const b = sikliler.filter((s) => s.dogru === 1).length / sikliler.length
     expect(b).toBeGreaterThan(0.4)
     expect(b).toBeLessThan(0.6)
+  })
+
+  it.each(sorulu.filter(([, program]) => program?.sinif === 11))('%s: cevaplar ders içinde dengeli', (_ad, program) => {
+    const sorular = tumKonular(program!).flatMap((konu) => konu.sorular)
+    const iddialar = sorular.filter((s) => s.tur !== 'sikli')
+    const sikliler = sorular.filter((s) => s.tur === 'sikli')
+    const dogruOrani = iddialar.filter((s) => s.dogru === true).length / iddialar.length
+    const bOrani = sikliler.filter((s) => s.dogru === 1).length / sikliler.length
+    expect(dogruOrani).toBeGreaterThan(0.4)
+    expect(dogruOrani).toBeLessThan(0.6)
+    expect(bOrani).toBeGreaterThan(0.4)
+    expect(bOrani).toBeLessThan(0.6)
   })
 })
 

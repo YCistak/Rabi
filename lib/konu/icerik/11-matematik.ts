@@ -15,8 +15,7 @@ import { kart, konu, program, tema } from '../tip'
  * programda 11. sınıfın trigonometrisi fonksiyon olarak işleniyor: birim
  * çember, grafik, periyot, dönüşüm ve denklem.
  *
- * Sorular (turuncu kitaplar) henüz yazılmadı; destelerin ortasındaki hızlı
- * kontroller var.
+ * Konu sonu soruları ayrı dosyada tutulur; hızlı kontroller destelerin içindedir.
  */
 export const matematik11 = program('matematik', 11, 'Veriden çokgenlere, sinüsten logaritmaya', [
   tema('mat11-t1', 'İstatistiksel Araştırma Süreci', [
