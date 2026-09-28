@@ -182,14 +182,12 @@ export function DevamsizlikEkrani({
             asildi={ozet.ozursuzKalan < 0}
           />
           <div className="mt-3">
-            {/* Özürlünün kendi sınırı yok; yönetmelik toplamı sınırlıyor
-                (MADDE 36). Çubuk bu yüzden özürlüyü değil toplamı ölçüyor. */}
-            <HakCubugu
-              baslik="Toplam (özürlü dahil)"
-              kullanilan={ozet.ozursuz + ozet.ozurlu}
-              sinir={TOPLAM_SINIR}
-              asildi={ozet.toplamKalan < 0}
-            />
+            {/* Özürlü günler ayrı sayılır; toplam sınır üst satırda kalır. */}
+            <div className="flex items-center gap-2.5">
+              <p className="w-16 shrink-0 text-[12.5px] font-bold text-muted-foreground">Özürlü</p>
+              <span aria-hidden className="h-px flex-1 bg-border" />
+              <p className="rakam shrink-0 text-[12.5px] font-bold">{gunYaz(ozet.ozurlu)} gün</p>
+            </div>
           </div>
         </Kart>
 

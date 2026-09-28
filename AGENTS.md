@@ -1391,7 +1391,7 @@ tekrar çözmek hâlâ mümkün, ama o tur kaydı düşürmüyor. Havuzu süzen 
 
 Turun nasıl işleyeceğini **mod** belirliyor (`lib/oyunlar/mod.ts`).
 
-**Mod tur başlamadan seçiliyor** (`ModSecimi`, "Turu ayarla" penceresinde)
+**Mod tur başlamadan seçiliyor** (`ModSecimi`, tur ayarları ekranında)
 ve dördü de açık. Seçim bütün oyunlarda ortak ve saklanıyor
 (`ANAHTARLAR.oyunModu`): mod turun nasıl işleyeceğini söylüyor, oyunun ne
 sorduğunu değil — "Turbo sevdim" diyen kullanıcı bunu her oyunda yeniden
@@ -1421,15 +1421,12 @@ kez yanlış bilinmiş olanlar ve turun amacı hepsini bir kez daha görmek — 
 saatli bir mod o işi yarıda keser. Ayarlar adımı o turda hiç çıkmıyor
 (`secilebilir`): sunulup dinlenmeyen bir seçim, yalan söyleyen bir arayüzdür.
 
-**Seçim tam ekran bir adım değil, oyunun üstünde açılan bir pencere**
-(`AyarPenceresi`, `tasarim/oyun-modu-secimi.dc.html`): ayar turu değiştiriyor,
-oyunu değil, ve bulanık zeminin altında hangi oyuna girildiği görünüyor. Arkada
-soru **yok** — oyun ekranı tahtayı ancak `asama === 'oynaniyor'` olunca
-çiziyor, tanıtım aşamasında yalnızca kabuk duruyor. Pencere kendi içinde
-kayıyor: dört mod kutusu, zorluk şeridi ve Rahat'ın uyarı şeridi kısa
-telefonlarda taşıyor ve düğme ekranın dışında kalıyordu.
+**Seçim tam ekran açılıyor** (`TurAyariEkrani`): dört mod kısa satırlar,
+başlangıç zorluğu üç düğme olarak gösteriliyor. Geri ve Başlat sabit;
+aralarındaki seçim alanı kısa telefonlarda kayıyor. Oyun adı başlıkta,
+rekor varsa altında sade bir satırda duruyor.
 
-**Pencereden sonra tanıtım yok.** "Başlat" doğrudan 3 · 2 · 1 sayımını
+**Ayarlardan sonra tanıtım yok.** "Başlat" doğrudan 3 · 2 · 1 sayımını
 açıyor. Bir süre arada nasıl oynandığını anlatan tam ekran tanıtım vardı
 ("Devam" → kurallar → "Başla"); kullanıcı kaldırılmasını istedi — tura girmek
 iki ekran ve iki dokunuş sürüyordu. Kural kaybolmadı: tur sırasındaki "?"
