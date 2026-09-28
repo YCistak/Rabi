@@ -14,8 +14,7 @@ import { kart, konu, program, tema } from '../tip'
  * sınıfta ayrı konu değil. Dolaşım, solunum ve boşaltım yalnızca
  * homeostazideki payıyla anlatılıyor.
  *
- * Sorular (turuncu kitaplar) henüz yazılmadı; destelerin ortasındaki hızlı
- * kontroller var.
+ * Konu sonu soruları ayrı dosyada tutulur; hızlı kontroller destelerin içindedir.
  */
 export const biyoloji11 = program('biyoloji', 11, 'Uyarandan tepkiye, dengeye', [
   tema('byl11-t1', 'Tepki', [
