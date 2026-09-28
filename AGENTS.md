@@ -87,8 +87,8 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   (`--background` #F8F8F7). Renk **derse** ait, oyuna değil, ve bir ders
   **her yerde aynı renkte**: konu haritası ile mini oyunlar aynı paleti
   okuyor, `--konu-<ders>` (Tailwind `bg-konu-turkce`, `text-konu-tarih-koyu`,
-  `bg-konu-kimya-ok`…). Matematik pembe, Türkçe hardal, Fizik çivit, Kimya
-  lavanta, Biyoloji yeşil, Tarih kahverengi, Coğrafya gök mavisi. Oyunlar bir
+  `bg-konu-kimya-ok`…). Matematik mavi, Türkçe/Edebiyat sarı, Fizik mor, Kimya
+  turuncu, Biyoloji yeşil, Tarih kahverengi, Coğrafya turkuaz. Oyunlar bir
   süre kendi ailelerindeydi ve Türkçe haritada hardal, oyunlarda pembeydi.
   Eski aileler (`yzm`, `isl`, `edb`, `cog`, `trh`, `byl`, `fzk`) duruyor ama
   artık ders kimliği değil, genel pastel: araç kutucukları, rozet kademeleri
@@ -2413,8 +2413,8 @@ derste yeniden öğretmek olurdu. Yeşil `--success`, turuncu `--primary-parlak`
 ayrı bir kitap paleti yok.
 
 **Derse ait olan iki şey var**: tema bandının rengi ve zemine serpilen
-simgeler (`lib/konu/harita-temasi.ts`). Matematik pembe ve kareköklü, Tarih
-kahverengi ve tüylü, Coğrafya gök mavisi ve pusulalı. Renkler
+simgeler (`lib/konu/harita-temasi.ts`). Matematik mavi ve kareköklü, Tarih
+kahverengi ve tüylü, Coğrafya turkuaz ve pusulalı. Renkler
 `globals.css`teki `--konu-<ders>-*` değişkenlerinde ve mini oyunlar da aynı
 değişkenleri okuyor: bir süre oyunların kendi aileleri vardı (`--isl`,
 `--trh`…) ve aynı ders iki ekranda iki renkteydi. Kart destesinin zemini de bu renkten

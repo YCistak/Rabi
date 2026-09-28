@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils'
 import { Rabi } from '@/components/maskot/rabi'
 import { ModSecimi } from '@/components/mod-secimi'
 import { ZorlukSecimi } from '@/components/zorluk-secimi'
+import { dersVurgusu } from '@/components/ders-renkleri'
 import { GeriSayim } from '@/components/oyun-geri-sayim'
 import { OYUN_ORNEKLERI, type OyunOrnegi } from '@/components/oyun-ornekleri'
 
@@ -224,6 +225,7 @@ function TurAyariEkrani({
       role="dialog"
       aria-modal="true"
       aria-labelledby="tur-ayari-basligi"
+      style={dersVurgusu(oyun.ders)}
     >
       <div className="flex min-h-0 w-full max-w-md flex-col">
         <header className="shrink-0 border-b border-border px-5 pb-4" style={{ paddingTop: 'calc(1rem + var(--guvenli-ust))' }}>
