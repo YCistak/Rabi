@@ -23,13 +23,12 @@ import {
   gorevSil,
   gorevYildizla,
   metniKirp,
-  simdikiDilim,
   type Gorev,
   type GorevDilimi,
   type GorevKategorisi,
   type GorevRengi,
 } from '@/lib/yapilacaklar'
-import { bugun, cn, gunKaydir, tariheCevir, tariheYaz, yeniId } from '@/lib/utils'
+import { bugun, cn, gunKaydir, tariheCevir, yediGunlukSerit, yeniId } from '@/lib/utils'
 import { useGeriKatmani } from '@/lib/geri'
 import { BaslikSatiri, Buton, Kart } from '@/components/ui'
 
@@ -47,7 +46,6 @@ import { BaslikSatiri, Buton, Kart } from '@/components/ui'
  * ikinci bir kalem düğmesi koymaktan hızlı.
  */
 
-/** `getDay()` sırasına göre değil, pazartesiden başlayan hafta sırası. */
 const GUN_ADLARI = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz']
 
 const AY_ADLARI = [
@@ -87,27 +85,20 @@ export function YapilacaklarEkrani({
   */
   const gecmis = secili < bugunIso
 
-  // Seçili günün haftası, pazartesiden başlayarak.
+  // Her gün bir gün kayan şerit; bugün daima ortada kalır.
   const hafta = useMemo(() => {
-    const gun = tariheCevir(secili)
-    const pazartesi = new Date(
-      gun.getFullYear(),
-      gun.getMonth(),
-      gun.getDate() - ((gun.getDay() + 6) % 7),
-    )
-    return Array.from({ length: 7 }, (_, i) => {
-      const tarih = new Date(pazartesi.getFullYear(), pazartesi.getMonth(), pazartesi.getDate() + i)
-      const iso = tariheYaz(tarih)
+    return yediGunlukSerit(bugunIso).map((iso) => {
+      const tarih = tariheCevir(iso)
       return {
         iso,
-        ad: GUN_ADLARI[i],
+        ad: GUN_ADLARI[(tarih.getDay() + 6) % 7],
         sayi: tarih.getDate(),
         etiket: `${tarih.getDate()} ${AY_ADLARI[tarih.getMonth()]}`,
         doluMu: gorevler.some((g) => g.gun === iso),
         gecmisMi: iso < bugunIso,
       }
     })
-  }, [secili, gorevler, bugunIso])
+  }, [gorevler, bugunIso])
 
   const seciliTarih = tariheCevir(secili)
   const gunEtiketi =
@@ -156,9 +147,7 @@ export function YapilacaklarEkrani({
     <div>
       <BaslikSatiri arac="notlar" baslik="Yapılacaklar" />
 
-      {/* Hafta şeridi — gün seçimi. Ay takvimi yok: kayıt yalnızca bu haftayı
-          tutuyor (bkz. `haftaninGorevleri`), açılan takvim boş günler
-          gösterirdi. */}
+      {/* Yedi günlük şerit her zaman bugünü ortalar. */}
       <Kart className="rounded-[20px] px-2 pb-2 pt-2.5">
         <p className="mb-1.5 border-b border-dashed border-primary/25 px-1.5 pb-2 font-display text-[15px] font-extrabold tracking-tight">
           {AY_ADLARI[seciliTarih.getMonth()]} {seciliTarih.getFullYear()}
@@ -223,14 +212,11 @@ export function YapilacaklarEkrani({
         </div>
       </Kart>
 
-      {/* Pano: üç dilim, noktalı kâğıt üstünde. */}
-      <div className="gorev-panosu golge-kart mx-1 mt-3.5 flex flex-col gap-4 rounded-[22px] px-2.5 pb-3.5 pt-4">
+      {/* Üç dilim için sade bir yüzey; görev kartları öne çıkar. */}
+      <div className="mx-1 mt-3.5 flex flex-col gap-4 rounded-[20px] border border-border bg-card/60 px-2.5 pb-3.5 pt-4">
         {DILIMLER.map((dilim) => {
           const isler = dilimGorevleri(gorevler, secili, dilim)
           const yerVar = dilimeYerVarMi(gorevler, secili, dilim)
-          // Şimdiki dilim vurgulu: günün hangi yerinde olunduğu ekranda yazmıyor.
-          const simdiki = !gecmis && dilim === (secili === bugunIso ? simdikiDilim(new Date().getHours()) : 'sabah')
-
           return (
             <section key={dilim}>
               <div className="flex items-center gap-2 px-0.5 pb-2">
@@ -252,15 +238,7 @@ export function YapilacaklarEkrani({
                     {isler.length}/{EN_COK_GOREV}
                   </span>
                 )}
-                {/*
-                  Ekleme düğmesi **her** dilimde duruyor.
-
-                  Tasarım onu yalnızca içinde bulunulan dilime koyuyordu; o
-                  zaman dolu ama sırası geçmiş bir bölüme ikinci bir görev
-                  yazmanın yolu kalmıyor (boş bölümün kesikli düğmesi de
-                  yalnızca boşken çıkıyor). Vurgu duruyor: şimdiki dilimin
-                  düğmesi dolu turuncu, ötekiler sessiz.
-                */}
+                {/* Ekleme düğmesi her dilimde aynı ağırlıkta durur. */}
                 {!gecmis && (
                   <button
                     type="button"
@@ -268,10 +246,7 @@ export function YapilacaklarEkrani({
                     disabled={!yerVar}
                     aria-label={`${DILIM_ADI[dilim]} için görev ekle`}
                     className={cn(
-                      'grid size-9 shrink-0 place-items-center rounded-full transition active:scale-95 disabled:opacity-40 disabled:active:scale-100',
-                      simdiki
-                        ? 'bg-primary-parlak text-white shadow-[0_6px_14px_rgba(217,98,47,0.35)]'
-                        : 'bg-primary-soft text-primary',
+                      'grid size-9 shrink-0 place-items-center rounded-full bg-primary-soft text-primary transition active:scale-95 disabled:opacity-40 disabled:active:scale-100',
                     )}
                   >
                     <Plus size={18} strokeWidth={2.8} aria-hidden />

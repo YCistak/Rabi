@@ -526,7 +526,7 @@ export function KonuHaritasiEkrani({
                   onClick={() => setSecim({ ...secim, sinif })}
                   aria-pressed={secim.sinif === sinif}
                   className={cn(
-                    'flex-1 rounded-xl py-2 text-[13.5px] font-extrabold transition',
+                    'flex-1 rounded-md py-2 text-[13.5px] font-extrabold transition',
                     secim.sinif === sinif
                       ? 'bg-primary-dolu text-white'
                       : 'bg-muted text-muted-foreground active:brightness-95',
@@ -551,7 +551,7 @@ export function KonuHaritasiEkrani({
                     onClick={() => setSecim({ ...secim, ders: d.id })}
                     aria-pressed={secili}
                     className={cn(
-                      'flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-extrabold transition active:brightness-95',
+                      'flex shrink-0 items-center gap-1.5 rounded-md px-3.5 py-2 text-[13px] font-extrabold transition active:brightness-95',
                       !secili && 'bg-muted text-muted-foreground',
                     )}
                     style={

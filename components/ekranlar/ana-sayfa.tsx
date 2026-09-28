@@ -4,7 +4,8 @@ import { useMemo } from 'react'
 import { AlertTriangle, ChevronRight, Target } from 'lucide-react'
 import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef } from '@/lib/types'
 import { dersYilininKayitlari, devamsizlikOzeti, gunOzeti, kayitHaritasi } from '@/lib/hesap'
-import { bugun, cn, tariheCevir, tariheYaz } from '@/lib/utils'
+import { bugun, cn, tariheCevir, yediGunlukSerit } from '@/lib/utils'
+import { gunlukHedefMesaji } from '@/lib/gunluk-hedef-mesaji'
 import { siraYaz } from '@/lib/siralama'
 import { AYLIK_OZET_EN_AZ_ETKIN_GUN, gunDe } from '@/lib/ozet'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
@@ -15,9 +16,6 @@ import { GeriSayim } from '@/components/geri-sayim'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
 import { gununHali } from '@/lib/gunun-hali'
 import { geriSayim } from '@/lib/sinav-tarihi'
-
-/** Seride gösterilen gün sayısı. Tasarımda hedef kartının altındaki yedi kutucuk. */
-const SERI_GUNU = 7
 
 /**
  * `getDay()` sırasına göre kısa gün adları. `toLocaleDateString` yerine sabit
@@ -68,6 +66,7 @@ export function AnaSayfa({
   guncelSiralama,
   bekleyenYanlis,
   sonDenemeTarihi,
+  istatistikHazir,
   ozetHazir,
   ozetYetersiz,
   sonrakiOzet,
@@ -91,6 +90,8 @@ export function AnaSayfa({
   bekleyenYanlis: number
   /** En yeni denemenin tarihi; yoksa null. Günün hâli kartı için. */
   sonDenemeTarihi: string | null
+  /** Aynı türde karşılaştırılabilir iki deneme olduğunda istatistik açılır. */
+  istatistikHazir: boolean
   /** Konu Anlatımı'nda "bilmiyorum" denen kart sayısı — bölümün alt satırı. */
   /**
    * Biten ayın özeti izlenmeyi bekliyor mu.
@@ -130,7 +131,10 @@ export function AnaSayfa({
 }) {
   const tarih = bugun()
 
-  const gosterilenAraclar = useMemo(() => kisayollar(KARTLAR, sonAraclar), [sonAraclar])
+  const gosterilenAraclar = useMemo(
+    () => kisayollar(KARTLAR.filter((kart) => kart.id !== 'istatistik' || istatistikHazir), sonAraclar),
+    [sonAraclar, istatistikHazir],
+  )
 
   const dersler = useMemo(() => doluDersler(), [])
   /*
@@ -148,25 +152,11 @@ export function AnaSayfa({
     [gunlukKayitlar, tarih],
   )
 
-  /*
-    Seri şeridi **içinde bulunulan takvim haftası**: pazartesiden pazara.
-
-    Önce "bugünle biten son yedi gün"dü ve şerit her gün başka bir güne
-    kayıyordu — çarşamba günü perşembeyle başlıyordu. Hafta hep aynı yerden
-    başlayınca kullanıcı kendi haftasını tanıyor. Türkiye'de hafta pazartesi
-    başlar; `getDay()` pazarı 0 saydığı için pazar 6'ya çekiliyor.
-  */
+  // Yedi günlük şerit diğer takvimlerle aynı şekilde bugünü ortalar.
   const gunler = useMemo(() => {
     const harita = kayitHaritasi(gunlukKayitlar)
-    const bugunkuTarih = tariheCevir(tarih)
-    const haftaninGunu = (bugunkuTarih.getDay() + 6) % 7
-    const pazartesi = new Date(bugunkuTarih)
-    pazartesi.setDate(pazartesi.getDate() - haftaninGunu)
-
-    return Array.from({ length: SERI_GUNU }, (_, sira) => {
-      const gun = new Date(pazartesi)
-      gun.setDate(gun.getDate() + sira)
-      const iso = tariheYaz(gun)
+    return yediGunlukSerit(tarih).map((iso) => {
+      const gun = tariheCevir(iso)
       return {
         iso,
         ad: GUN_ADLARI[gun.getDay()],
@@ -275,6 +265,9 @@ export function AnaSayfa({
                   /{ayarlar.gunlukHedef}
                 </span>
               )}
+            </span>
+            <span className="block text-[11.5px] leading-snug font-semibold text-muted-foreground">
+              {gunlukHedefMesaji(bugunku.toplam, ayarlar.gunlukHedef, tarih)}
             </span>
           </span>
         </button>

@@ -20,7 +20,7 @@ import {
   elleSure,
   EN_UZUN_SURE,
   SURE_SECENEKLERI,
-  haftaninGorevleri,
+  gorevleriTarihtenItibaren,
   metniKirp,
   simdikiDilim,
   type Gorev,
@@ -203,7 +203,7 @@ describe('dilimGorevleri', () => {
   })
 })
 
-describe('haftaninGorevleri', () => {
+describe('gorevleriTarihtenItibaren', () => {
   it('bu haftadan eskisini atar, ileriyi tutar', () => {
     // 21 Ağustos 2026 cuma; haftanın pazartesisi 17 Ağustos.
     const hafta = haftaBasi(GUN)
@@ -215,7 +215,7 @@ describe('haftaninGorevleri', () => {
       gorev({ id: 'gelecek-hafta', gun: '2026-08-25' }),
       gorev({ id: 'gunsuz', gun: '' }),
     ]
-    expect(haftaninGorevleri(liste, hafta).map((g) => g.id)).toEqual([
+    expect(gorevleriTarihtenItibaren(liste, hafta).map((g) => g.id)).toEqual([
       'pazartesi',
       'bugun',
       'gelecek-hafta',

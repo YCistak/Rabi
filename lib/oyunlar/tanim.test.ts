@@ -93,7 +93,7 @@ describe('bölümler', () => {
   })
 
   it('kimlikten bölümü bulur', () => {
-    expect(bolumBul('geometri').ad).toBe('Geometri Ustası')
+    expect(bolumBul('geometri').ad).toBe('Geometri')
   })
 })
 

@@ -79,8 +79,8 @@ const KISA_AD: Record<OyunId, string> = {
   ortak: 'Ortak Özellik',
   siniflandirma: 'Sınıflandırma',
   hucre: 'Organel',
-  sirala: 'Zaman Şeridi',
-  tuzak: 'Kural Tuzağı',
+  sirala: 'Olayları Sırala',
+  tuzak: 'Eşitlik',
   periyodik: 'Element',
   formul: 'Formül',
   tepkime: 'Tepkime',
@@ -109,7 +109,7 @@ export function OyunBankasiEkrani({
   if (banka.length === 0) {
     return (
       <div>
-        <Baslik toplam={0} />
+        <Baslik />
         <BosDurum
           simge={<Rabi durum="mutlu" poz="sevinen" boyut={72} />}
           baslik="Banka boş — iyi haber"
@@ -121,7 +121,7 @@ export function OyunBankasiEkrani({
 
   return (
     <div>
-      <Baslik toplam={banka.length} />
+      <Baslik />
 
       {/*
         Düğme kartsız duruyor: bir zamanlar özet cümlesi, oyun turu düğmesi ve
@@ -173,18 +173,13 @@ export function OyunBankasiEkrani({
   )
 }
 
-function Baslik({ toplam }: { toplam: number }) {
+function Baslik() {
   return (
     <header className="mb-4 px-0.5">
       <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
       <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">
         Oyun Bankası 🗂️
       </h1>
-      <p className="mt-1 text-[13.5px] font-medium text-muted-foreground">
-        {toplam > 0
-          ? 'Oyunlarda karıştırdıkların. Genel testte doğru bilince düşer, tikle sen de kaldırabilirsin.'
-          : 'Oyunlarda karıştırdığın sorular burada birikir.'}
-      </p>
     </header>
   )
 }
