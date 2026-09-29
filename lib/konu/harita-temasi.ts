@@ -92,6 +92,14 @@ function renkler(ders: KonuDersId): Omit<HaritaTemasi, 'simgeler'> {
 }
 
 export const HARITA_TEMALARI: Record<KonuDersId, HaritaTemasi> = {
+  ingilizce: {
+    ...renkler('ingilizce'),
+    simgeler: [
+      yazi('Aa'), yazi('EN'), yazi('if'), yazi('wish'), yazi('→'),
+      yazi('will'), yazi('&'), yazi('UK'), yazi('US'), yazi('B1'),
+      yazi('ABC'), yazi('...'), yazi('↔'), yazi('!'),
+    ],
+  },
   matematik: {
     ...renkler('matematik'),
     simgeler: [

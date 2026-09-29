@@ -12,7 +12,7 @@
  * Alınan şey **başlık ve sıra**; programın düzyazısı alınmıyor. Kart metinleri
  * bu dosyadan üretilmiyor, elle yazılıyor.
  */
-import { writeFile, mkdir } from 'node:fs/promises'
+import { writeFile, mkdir, readFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -29,6 +29,7 @@ const DERSLER = {
   biyoloji: 'biyoloji-dersi',
   tarih: 'tarih-dersi',
   cografya: 'cografya-dersi',
+  ingilizce: 'ingilizce-dersi-9-12',
 }
 
 const SINIFLAR = [9, 10, 11]
@@ -264,13 +265,29 @@ async function temaCek(dersYolu, temaId) {
     o derslerin temaları adsız ve sırasız kalıyor.
   */
   const eslesme = baslik.match(/(\d+)\s*\.\s*(?:Tema|Ünite)\s*:?\s*(.+?)\s*Teması/i)
+  const ingilizceTema = dersYolu === 'ingilizce-dersi-9-12'
+  const ingilizceBaslik = baslik.match(/Theme\s+(\d+):\s*(.+?)\s*Teması/i)
+  const altBaslik = metneCevir((html.match(/unite-detail__subtitle[^>]*>\s*Sub-Themes:\s*([\s\S]*?)<\/p>/i) || [])[1] ?? '')
+  const altKonular = altBaslik
+    .replace(', Family Problems Related', '; Family Problems Related')
+    .replace(', Social Life In The Rural Areas And Cities', '; Social Life In The Rural Areas And Cities')
+    .replace(', Social Life İn The Rural Areas And Cities', '; Social Life İn The Rural Areas And Cities')
+    .replace(', Future Technologies And Inventions', '; Future Technologies And Inventions')
+    .replace(', Future Technologies And İnventions', '; Future Technologies And İnventions')
+    .split(';')
+    .map((ad) => ad.trim())
+    .filter(Boolean)
 
   return {
     id: temaId,
-    sira: eslesme ? Number(eslesme[1]) : null,
-    ad: eslesme ? eslesme[2].trim() : baslik.split(' - ')[0].trim(),
+    sira: ingilizceTema ? Number(ingilizceBaslik?.[1]) : eslesme ? Number(eslesme[1]) : null,
+    ad: ingilizceTema
+      ? (ingilizceBaslik?.[2] ?? '').replace(/ı/g, 'i').replace(/İ/g, 'I').replace(/&amp;/g, '&')
+      : eslesme ? eslesme[2].trim() : baslik.split(' - ')[0].trim(),
     dersSaati: Number(metneCevir(bolumHtml(html, 'Ders Saati') ?? '')) || null,
-    bolumler: bolumleriAyikla(bolumHtml(html, 'İçerik Çerçevesi')),
+    bolumler: ingilizceTema
+      ? altKonular.map((ad) => ({ ad: null, altKonular: [{ ad: ad.replace(/ı/g, 'i').replace(/İ/g, 'I'), ayrinti: null }] }))
+      : bolumleriAyikla(bolumHtml(html, 'İçerik Çerçevesi')),
     anahtarKavramlar: metneCevir(bolumHtml(html, 'Anahtar Kavramlar') ?? '')
       .split(',')
       .map((x) => x.trim())
@@ -314,9 +331,15 @@ async function dersCek(dersYolu) {
   return siniflar
 }
 
-const iskelet = { kaynak: KOK, cekilme: new Date().toISOString().slice(0, 10), dersler: {} }
+const secilenDers = process.argv[2]
+if (secilenDers && !DERSLER[secilenDers]) throw new Error(`Bilinmeyen ders: ${secilenDers}`)
+const iskelet = secilenDers
+  ? JSON.parse(await readFile(CIKTI, 'utf8'))
+  : { kaynak: KOK, cekilme: new Date().toISOString().slice(0, 10), dersler: {} }
+iskelet.cekilme = new Date().toISOString().slice(0, 10)
 
 for (const [ders, yol] of Object.entries(DERSLER)) {
+  if (secilenDers && ders !== secilenDers) continue
   process.stdout.write(`${ders}… `)
   iskelet.dersler[ders] = await dersCek(yol)
   const sayi = Object.entries(iskelet.dersler[ders])

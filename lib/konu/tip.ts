@@ -25,8 +25,9 @@ export type KonuDersId =
   | 'biyoloji'
   | 'tarih'
   | 'cografya'
+  | 'ingilizce'
 
-/** Programın kapsadığı sınıflar. */
+/** Programın kapsadığı sınıflar; İngilizce içerik yalnızca 11. sınıfta var. */
 export type KonuSinifi = 9 | 10 | 11
 
 /**

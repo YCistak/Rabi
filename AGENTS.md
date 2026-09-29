@@ -2043,7 +2043,9 @@ polinom yok). Yeni bir konu eklemeden önce o yorumu oku: eski müfredattan
 hatırladığın bir başlık, bu programda başka sınıfta olabilir.
 
 İçerik `lib/konu/icerik/<sınıf>-<ders>.ts`. 9, 10 ve 11. sınıfta yedi
-dersin tamamı var. `icerik.test.ts` bütün ders/sınıf çiftlerinin varlığını
+dersin tamamı var; 11. sınıfta ayrıca İngilizce var (sekiz tema, 17 konu).
+İngilizce 9–10'da henüz yazılmadı ve ders seçiminde gösterilmiyor.
+`icerik.test.ts` beklenen ders/sınıf çiftlerinin varlığını
 ve `sinifDersleri`nin tamamını gösterdiğini denetliyor; eksik programlar
 testten süzülmez. `sinifDersleri`, ileride kısmi bir sınıf eklenirse boş
 programları haritada gizlemeye devam eder. Sekizinci bir ders eklemek
@@ -2051,7 +2053,8 @@ programları haritada gizlemeye devam eder. Sekizinci bir ders eklemek
 
 **11. sınıfın soru basamakları da hazır.** Matematik, Fizik, Kimya ve
 Biyoloji soruları ayrı `11-<ders>-sorular.ts` havuzlarından `sorulariBagla`
-ile bağlanıyor; Edebiyat, Tarih ve Coğrafya soruları kendi içeriklerinde.
+ile bağlanıyor; İngilizce de dört parçalı soru havuzundan aynı işleve bağlanıyor.
+Edebiyat, Tarih ve Coğrafya soruları kendi içeriklerinde.
 Soru testleri bütün sınıflarda denge ve sayı kurallarını denetliyor.
 Destenin ortasındaki hızlı kontroller de bütün derslerde yazılı.
 

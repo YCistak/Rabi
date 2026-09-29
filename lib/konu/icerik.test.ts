@@ -26,18 +26,28 @@ const METIN_SINIRI = 240
 const KART_TABANI = 6
 const KART_SINIRI = 16
 
-// Yazılması beklenen programlar eksikse test başarısız olmalı; null kayıtlar süzülmez.
+// İngilizce yalnızca 11'de yazıldı; beklenen programlar eksikse testten süzülmez.
+const beklenenMi = (sinif: number, ders: string) => sinif === 11 || ders !== 'ingilizce'
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
-  KONU_DERSLERI.map(
+  KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map(
     (ders) => [`${sinif}. sınıf ${ders.ad}`, programBul(ders.id, sinif)] as const,
   ),
 )
 const sorulu = programlar
 
 describe('programlar', () => {
-  it('her sınıfta yedi ders erişilebilir', () => {
+  it('9–10. sınıfta yedi, 11. sınıfta sekiz ders erişilebilir', () => {
     for (const sinif of KONU_SINIFLARI) {
-      expect(sinifDersleri(sinif).map((ders) => ders.id)).toEqual(KONU_DERSLERI.map((ders) => ders.id))
+      expect(sinifDersleri(sinif).map((ders) => ders.id)).toEqual(
+        KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map((ders) => ders.id),
+      )
+    }
+  })
+
+  it('9 ve 10. sınıfta İngilizce programı ve ders seçeneği yok', () => {
+    for (const sinif of [9, 10] as const) {
+      expect(programBul('ingilizce', sinif)).toBeNull()
+      expect(sinifDersleri(sinif).map((ders) => ders.id)).not.toContain('ingilizce')
     }
   })
 
@@ -84,6 +94,39 @@ describe('programlar', () => {
         expect(kart.metin.trim().length).toBeGreaterThan(0)
       }
     }
+  })
+})
+
+describe('11. sınıf İngilizce kapsamı', () => {
+  const ingilizce = programBul('ingilizce', 11)!
+
+  it('sekiz temanın tüm alt konuları dolu', () => {
+    expect(ingilizce.temalar).toHaveLength(8)
+    expect(tumKonular(ingilizce)).toHaveLength(17)
+    for (const konu of tumKonular(ingilizce)) {
+      expect(konu.kartlar.length, `${konu.ad}: kart sayısı`).toBeGreaterThanOrEqual(11)
+      expect(konu.sorular.length, `${konu.ad}: soru sayısı`).toBeGreaterThan(konu.kartlar.length)
+      expect(konu.kartlar.filter((kart) => kart.not !== undefined), `${konu.ad}: Rabi notu`).toHaveLength(1)
+    }
+  })
+
+  it('her hızlı kontrol okunmuş karttan sonra gerçekten gösterilir', () => {
+    const hatalar: string[] = []
+    for (const konu of tumKonular(ingilizce)) {
+      for (const rastgeleDeger of [0, 0.5, 0.999]) {
+        const akis = desteAkisi(konu.kartlar.length, konu.kontroller, () => rastgeleDeger)
+        const gorunenler = akis.filter((adim) => adim.tur === 'kontrol')
+        if (gorunenler.length !== konu.kontroller.length)
+          hatalar.push(`${konu.ad}: ${rastgeleDeger} seçiminde ${gorunenler.length}/${konu.kontroller.length} kontrol`)
+        for (const adim of gorunenler) {
+          const yeri = akis.indexOf(adim)
+          const dayanak = konu.kontroller[adim.sira].kart
+          const okunan = akis.slice(0, yeri).filter((onceki) => onceki.tur === 'kart').length
+          expect(okunan, `${konu.ad}: kontrol dayanak kartından önce`).toBeGreaterThanOrEqual(dayanak)
+        }
+      }
+    }
+    expect(hatalar, hatalar.join('\n')).toEqual([])
   })
 })
 

@@ -54,6 +54,10 @@
   --color-konu-cografya-kenar: var(--konu-cografya-kenar);
   --color-konu-cografya-koyu: var(--konu-cografya-koyu);
   --color-konu-cografya-ok: var(--konu-cografya-ok);
+  --color-konu-ingilizce: var(--konu-ingilizce);
+  --color-konu-ingilizce-kenar: var(--konu-ingilizce-kenar);
+  --color-konu-ingilizce-koyu: var(--konu-ingilizce-koyu);
+  --color-konu-ingilizce-ok: var(--konu-ingilizce-ok);
 
   /* Genel pastel aileler (araç kutucukları, rozetler, harita göstergesi) */
   --color-yzm: var(--yzm);
@@ -84,6 +88,10 @@
   --color-fzk-kart: var(--fzk-kart);
   --color-fzk-koyu: var(--fzk-koyu);
   --color-fzk-ok: var(--fzk-ok);
+  --color-dil: var(--dil);
+  --color-dil-kart: var(--dil-kart);
+  --color-dil-koyu: var(--dil-koyu);
+  --color-dil-ok: var(--dil-ok);
 
   /* Tasarımın tek yazı tipi Nunito. Başlık ve gövde ayrı aile değil, ayrı
      kalınlık: gövde 500-600, başlık 800-900. */
@@ -255,6 +263,10 @@ body {
   --fzk-kart: var(--fzk);
   --fzk-koyu: #4a5789;
   --fzk-ok: #6c7cb0;
+  --dil: #e6f2ef;
+  --dil-kart: var(--dil);
+  --dil-koyu: #2c746b;
+  --dil-ok: #4c9a8e;
 
   /* Konu haritasının ders renkleri.
 
@@ -307,6 +319,11 @@ body {
   --konu-cografya-koyu: #1d7067;
   --konu-cografya-cubuk: #bee4de;
   --konu-cografya-ok: #217b70;
+  --konu-ingilizce: #e6f2ef;
+  --konu-ingilizce-kenar: #cde5df;
+  --konu-ingilizce-koyu: #2c746b;
+  --konu-ingilizce-cubuk: #cde5df;
+  --konu-ingilizce-ok: #4c9a8e;
 
   /* Patikanın kendi renkleri: yol, geçilmiş yol ve kilitli kitap.
 
