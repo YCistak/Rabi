@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { KONU_DERSLERI, KONU_SINIFLARI, programBul, tumKonular } from './index'
+import { KONU_DERSLERI, KONU_SINIFLARI, programBul, sinifDersleri, tumKonular } from './index'
 import type { DersProgrami } from './tip'
 import { gorunenMetin, gorunenSatirlar, metniAyristir } from './kart-metni'
 import { desteAkisi } from './deste-akisi'
@@ -26,31 +26,35 @@ const METIN_SINIRI = 240
 const KART_TABANI = 6
 const KART_SINIRI = 16
 
-/**
- * 11. sınıf dört derste yazıldı; öteki üçü henüz yok ve harita onlar için
- * "hazırlanıyor" diyor. Beklenen programlar ayrı sayılıyor ki 9–10'da bir
- * program kaybolursa test bunu "yazılmamış" diye sessizce geçmesin.
- */
-const YAZILAN_11 = ['matematik', 'fizik', 'kimya', 'biyoloji']
-const beklenenMi = (sinif: number, ders: string) => sinif < 11 || YAZILAN_11.includes(ders)
-
+// Yazılması beklenen programlar eksikse test başarısız olmalı; null kayıtlar süzülmez.
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
-  KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map(
+  KONU_DERSLERI.map(
     (ders) => [`${sinif}. sınıf ${ders.ad}`, programBul(ders.id, sinif)] as const,
   ),
 )
 const sorulu = programlar
 
 describe('programlar', () => {
+  it('her sınıfta yedi ders erişilebilir', () => {
+    for (const sinif of KONU_SINIFLARI) {
+      expect(sinifDersleri(sinif).map((ders) => ders.id)).toEqual(KONU_DERSLERI.map((ders) => ders.id))
+    }
+  })
+
+  it('11. sınıf eşit ağırlık konularının anlatımı ve soruları yeterli sayıda', () => {
+    for (const ders of ['turkce', 'tarih', 'cografya'] as const) {
+      const program = programBul(ders, 11)
+      expect(program).not.toBeNull()
+      for (const konu of tumKonular(program!)) {
+        expect(konu.kartlar.length, `${konu.id}: kart`).toBeGreaterThanOrEqual(10)
+        expect(konu.sorular.length, `${konu.id}: soru`).toBeGreaterThanOrEqual(11)
+      }
+    }
+  })
+
   it.each(programlar)('%s programı var', (_ad, program) => {
     expect(program).not.toBeNull()
     expect(program!.temalar.length).toBeGreaterThan(0)
-  })
-
-  it('beklenmeyen program yok', () => {
-    for (const sinif of KONU_SINIFLARI)
-      for (const ders of KONU_DERSLERI)
-        if (!beklenenMi(sinif, ders.id)) expect(programBul(ders.id, sinif)).toBeNull()
   })
 
   it.each(programlar)('%s: her temada konu, her konuda kart var', (_ad, program) => {
@@ -193,7 +197,7 @@ describe('kimlikler', () => {
     for (const sinif of KONU_SINIFLARI) {
       for (const ders of KONU_DERSLERI) {
         const program = programBul(ders.id, sinif)
-        if (program === null) continue
+        if (!program) continue
         expect(program.ders).toBe(ders.id)
         expect(program.sinif).toBe(sinif)
       }

@@ -28,7 +28,8 @@ const HUCRE_SINIRI = 30
 const gorselliKartlar: [string, { gorsel: Gorsel }][] = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.flatMap((ders) => {
     const program = programBul(ders.id, sinif)
-    return (program ? tumKonular(program) : []).flatMap((konu) => {
+    if (!program) return []
+    return tumKonular(program).flatMap((konu) => {
       const kartlar = konu.kartlar
         .filter((k): k is BilgiKarti & { gorsel: Gorsel } => k.gorsel !== undefined)
         .map((k) => [`${sinif}-${ders.id} · ${konu.ad} · ${k.baslik}`, k] as const)

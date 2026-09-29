@@ -13,6 +13,9 @@ import { kimya10 } from './icerik/10-kimya'
 import { matematik10 } from './icerik/10-matematik'
 import { tarih10 } from './icerik/10-tarih'
 import { turkce10 } from './icerik/10-turkce'
+import { cografya11 } from './icerik/11-cografya'
+import { tarih11 } from './icerik/11-tarih'
+import { turkce11 } from './icerik/11-turkce'
 import { biyoloji11 } from './icerik/11-biyoloji'
 import { fizik11 } from './icerik/11-fizik'
 import { kimya11 } from './icerik/11-kimya'
@@ -122,6 +125,9 @@ const PROGRAMLAR: Record<string, DersProgrami> = {
   'biyoloji-10': biyoloji10,
   'tarih-10': tarih10,
   'cografya-10': cografya10,
+  'turkce-11': turkce11,
+  'tarih-11': tarih11,
+  'cografya-11': cografya11,
   'matematik-11': sorulariBagla(matematik11, matematik11Sorulari),
   'fizik-11': sorulariBagla(fizik11, fizik11Sorulari),
   'kimya-11': sorulariBagla(kimya11, kimya11Sorulari),
@@ -131,6 +137,11 @@ const PROGRAMLAR: Record<string, DersProgrami> = {
 /** İçeriği henüz yazılmamış ders/sınıf için `null` döner; ekran bunu yazıyla karşılar. */
 export function programBul(ders: KonuDersId, sinif: KonuSinifi): DersProgrami | null {
   return PROGRAMLAR[`${ders}-${sinif}`] ?? null
+}
+
+/** Kısmi sınıf eklemelerinde boş ders seçeneği gösterilmez. */
+export function sinifDersleri(sinif: KonuSinifi): KonuDersTanimi[] {
+  return KONU_DERSLERI.filter((ders) => programBul(ders.id, sinif) !== null)
 }
 
 export function dersBul(ders: KonuDersId): KonuDersTanimi {
