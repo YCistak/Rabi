@@ -87,8 +87,8 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   (`--background` #F8F8F7). Renk **derse** ait, oyuna değil, ve bir ders
   **her yerde aynı renkte**: konu haritası ile mini oyunlar aynı paleti
   okuyor, `--konu-<ders>` (Tailwind `bg-konu-turkce`, `text-konu-tarih-koyu`,
-  `bg-konu-kimya-ok`…). Matematik pembe, Türkçe hardal, Fizik çivit, Kimya
-  lavanta, Biyoloji yeşil, Tarih kahverengi, Coğrafya gök mavisi. Oyunlar bir
+  `bg-konu-kimya-ok`…). Matematik mavi, Türkçe/Edebiyat sarı, Fizik mor, Kimya
+  turuncu, Biyoloji yeşil, Tarih kahverengi, Coğrafya turkuaz. Oyunlar bir
   süre kendi ailelerindeydi ve Türkçe haritada hardal, oyunlarda pembeydi.
   Eski aileler (`yzm`, `isl`, `edb`, `cog`, `trh`, `byl`, `fzk`) duruyor ama
   artık ders kimliği değil, genel pastel: araç kutucukları, rozet kademeleri
@@ -1820,7 +1820,7 @@ yılın sonunda yarıda; bu kasıtlı — çubuğun sorusu "hazırlığın neres
 ## Ana sayfada günün hâli
 
 Soru hedefi kartının hemen altında bir kart daha var (`GununHali`,
-`components/ekranlar/ana-sayfa.tsx`): "bugün çalıştın mı" sorusuna Rabi'nin
+`components/gunun-hali-karti.tsx`): günlük çalışma durumuna Rabi'nin
 pozuyla cevap veriyor. Cümleyi ve pozu `lib/gunun-hali.ts` seçiyor — saf,
 `gunun-hali.test.ts` her kuralı ayrı denetliyor.
 
@@ -1854,17 +1854,12 @@ Ders adına **ek getirilmiyor** ("Kimya 9 gündür bekliyor", "Kimya'ya … " de
 ünlü uyumu ders adına göre değişiyor ve yanlış ek, yanlış bilgiden daha çok
 göze batıyor.
 
-Maskot 72 piksel, ayağının altında yumuşak bir zemin gölgesi var ve
-ayraca yakın duruyor (bir süre tam ortadaydı, kullanıcı sağa kaydırttı);
-yazıyla arasında soluk, kısa bir dikey ayraç var (`--border`, kartın
-kenarlarına değmiyor). Arkasına bir süre soluk bir leke kondu, kullanıcı geri
-aldı — tavşanı oturtan şey süs değil, yeri, gölgesi ve ayraç. Başlığın
-üstündeki küçük "BUGÜN" etiketi bir süre kaldırıldı, kullanıcı geri istedi.
-
-Sayının kendisi kartta **yazmıyor**: halka zaten sayıyı üç kez söylüyor ve
-kartın işi onu tekrar etmek değil, ona bir yüz vermek. Günlük hedef sıfırken
-kart çizilmiyor: ölçülecek bir eşik yokken "ulaştın" da "ulaşmadın" da
-anlamsız.
+Kartın üstünde “Günün hâli” etiketi ve başlık, sağda 64 piksellik maskot
+bulunur. Tavsiye altta tam genişlikte okunur; son satır açılacak ekranı
+adlandırır. Kartın tamamı aynı ekranı açar. Renkli maskot zemini ve gölge yok;
+ince kenar çizgisi kullanılır. Sınav gününde soru sayısından bağımsız olarak
+hazırlık ve dinlenme mesajı verilir. Kayıt bulunmaması “soru çözmedin” diye
+sunulmaz; serinin sürmesi için günlük hedefin tamamlanması gerekir.
 
 ## Ana sayfadaki dört kutucuk
 
@@ -2413,8 +2408,8 @@ derste yeniden öğretmek olurdu. Yeşil `--success`, turuncu `--primary-parlak`
 ayrı bir kitap paleti yok.
 
 **Derse ait olan iki şey var**: tema bandının rengi ve zemine serpilen
-simgeler (`lib/konu/harita-temasi.ts`). Matematik pembe ve kareköklü, Tarih
-kahverengi ve tüylü, Coğrafya gök mavisi ve pusulalı. Renkler
+simgeler (`lib/konu/harita-temasi.ts`). Matematik mavi ve kareköklü, Tarih
+kahverengi ve tüylü, Coğrafya turkuaz ve pusulalı. Renkler
 `globals.css`teki `--konu-<ders>-*` değişkenlerinde ve mini oyunlar da aynı
 değişkenleri okuyor: bir süre oyunların kendi aileleri vardı (`--isl`,
 `--trh`…) ve aynı ders iki ekranda iki renkteydi. Kart destesinin zemini de bu renkten

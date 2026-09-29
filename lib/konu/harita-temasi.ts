@@ -8,7 +8,7 @@ import type { KonuDersId } from './tip'
  * değişmiyor — yeşil kitap anlatım, turuncu kitap soru; yedi derste yedi
  * ayrı kitap rengi, "yeşile bas, oku" kuralını her derste yeniden öğretmek
  * olurdu. Derse ait olan iki şey var: tema bandının (ve başlığın) rengi ile
- * zemindeki simgeler. Matematik pembe ve kareköklü, Tarih kahverengi ve
+ * zemindeki simgeler. Matematik mavi ve kareköklü, Tarih kahverengi ve
  * tüylü.
  *
  * Renkler burada değil `globals.css`te (`--konu-<ders>-*`); tablo yalnızca
