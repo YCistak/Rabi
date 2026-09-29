@@ -524,7 +524,7 @@ export function PomodoroEkrani({
     mola", molada "sonra 25 dk çalışma", provada kitapçığın kendisi.
   */
   const siradaki = prova
-    ? `${prova.ad} · ${prova.dakika} dk · ${prova.soru} soru`
+    ? prova.ad
     : molaMi
       ? `sonra ${ayar.calisma} dk çalışma`
       : `sonra ${asamaSuresi(sonrakiAsama('calisma', tur, ayar), ayar)} dk mola`

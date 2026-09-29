@@ -44,12 +44,12 @@ describe('gununHali', () => {
     expect(gununHali({ ...sakin, bugun: '2026-09-15', kalanGun: 4 })!.baslik).toContain('Sınava 4 gün')
     expect(gununHali({ ...sakin, kalanGun: 0 })!.baslik).toContain('Sınav günü')
     // 31 gün: sınav kuralı devrede değil
-    expect(gununHali({ ...sakin, kalanGun: 31 })!.baslik).toBe('Bugün hiç soru çözmedin')
+    expect(gununHali({ ...sakin, kalanGun: 31 })!.baslik).toBe('Bugün henüz soru kaydın yok')
   })
 
   it('dün hedef tutmuş, bugün sıfır: seri kırılıyor', () => {
     const h = gununHali({ ...sakin, gunlukKayitlar: [gun('2026-09-13', ['Mat', 50])] })!
-    expect(h.baslik).toBe('Dünkü seri seni bekliyor')
+    expect(h.baslik).toBe('Dün hedefini tamamladın')
     const uc = gununHali({
       ...sakin,
       gunlukKayitlar: [
@@ -80,7 +80,7 @@ describe('gununHali', () => {
       bekleyenYanlis: 4,
       gunlukKayitlar: [gun(BUGUN, ['Mat', 10])],
     })!
-    expect(h.baslik).toBe('Bankada 4 soru bekliyor')
+    expect(h.baslik).toBe('Yanlış bankanda 4 soru var')
     expect(h.ekran).toBe('yanlis-banka')
     // Bugün sıfırsa banka değil, soru çözmeye çağırıyor
     expect(gununHali({ ...sakin, bekleyenYanlis: 4 })!.ekran).toBe('soru')
@@ -88,12 +88,12 @@ describe('gununHali', () => {
 
   it('günün soruları tek derse yığılmışsa uyarır', () => {
     const hepsi = gununHali({ ...sakin, gunlukKayitlar: [gun(BUGUN, ['Matematik', 30])] })!
-    expect(hepsi.baslik).toBe('Hepsi Matematik')
+    expect(hepsi.baslik).toBe('Bugün tek ders: Matematik')
     const cogu = gununHali({
       ...sakin,
       gunlukKayitlar: [gun(BUGUN, ['Matematik', 25], ['Fizik', 5])],
     })!
-    expect(cogu.baslik).toBe('Çoğu Matematik')
+    expect(cogu.baslik).toBe('Bugün ağırlık Matematik dersinde')
     // 20'nin altında oran anlamsız; dengeliyse de sessiz
     expect(gununHali({ ...sakin, gunlukKayitlar: [gun(BUGUN, ['Matematik', 10])] })!.baslik).not.toContain('Matematik')
     expect(
@@ -106,7 +106,7 @@ describe('gununHali', () => {
       ...sakin,
       gunlukKayitlar: [gun('2026-09-05', ['Kimya', 10]), gun('2026-09-13', ['Mat', 10])],
     })!
-    expect(h.baslik).toBe('Kimya 9 gündür bekliyor')
+    expect(h.baslik).toBe('Kimya: 9 gündür kayıt yok')
     // 30 günden eski ders "bırakılmış", hatırlatılmıyor
     expect(
       gununHali({ ...sakin, gunlukKayitlar: [gun('2026-08-01', ['Kimya', 10])] })!.baslik,
@@ -127,7 +127,21 @@ describe('gununHali', () => {
       // Ders ihmal kuralına takılmasın diye dün de aynı ders çalışılmış
       gunlukKayitlar: [gun('2026-09-01', ['Mat', 5]), gun('2026-09-13', ['Mat', 5])],
     })!
-    expect(h.baslik).toBe('Henüz deneme girmedin')
+    expect(h.baslik).toBe('Henüz deneme kaydın yok')
+  })
+
+  it('sınav gününde soru sayısı ne olursa olsun yeni soru çözmeye zorlamaz', () => {
+    for (const toplam of [0, 10, 50]) {
+      const h = gununHali({ ...sakin, kalanGun: 0, gunlukKayitlar: [gun(BUGUN, ['Mat', toplam])] })!
+      expect(h.baslik).toBe('Sınav günü')
+      expect(h.alt).toContain('dinlen')
+      expect(h.alt).not.toContain('soru')
+    }
+  })
+
+  it('sıfır sorulu ders kaydı ders dağılımını değiştirmez', () => {
+    const h = gununHali({ ...sakin, gunlukKayitlar: [gun(BUGUN, ['Matematik', 30], ['Fizik', 0])] })!
+    expect(h.baslik).toBe('Bugün tek ders: Matematik')
   })
 
   it('aynı gün aynı cümle, ertesi gün değişebilir', () => {

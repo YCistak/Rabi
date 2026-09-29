@@ -6,7 +6,7 @@ import type { Ayarlar, GunlukKayit, SoruKaydi } from '@/lib/types'
 import { bosSayisi, gunOzeti } from '@/lib/hesap'
 import { CALISMA_DERSLERI, sadelestir } from '@/lib/dersler'
 import { useGeriKatmani } from '@/lib/geri'
-import { bugun, cn, gunKaydir, tariheCevir, tariheYaz } from '@/lib/utils'
+import { bugun, cn, gunKaydir, tariheCevir, tariheYaz, yediGunlukSerit } from '@/lib/utils'
 import { Alan, BaslikSatiri, Buton, Halka, Kart, Not } from '@/components/ui'
 import { Takvim, type GunIsareti } from '@/components/takvim'
 
@@ -165,26 +165,19 @@ export function SoruTakibiEkrani({
   const oran = hedef > 0 ? Math.min(1, ozet.toplam / hedef) : 0
   const halkaRengi = hedefTuttu ? 'var(--success)' : 'var(--primary-parlak)'
 
-  // Seçili günün haftası, pazartesiden başlayarak.
+  // Bugün ortada kalır; ay takvimi eski kayıtları ayrıca açar.
   const hafta = useMemo(() => {
-    const gun = tariheCevir(secili)
-    const pazartesi = new Date(
-      gun.getFullYear(),
-      gun.getMonth(),
-      gun.getDate() - ((gun.getDay() + 6) % 7),
-    )
-    return Array.from({ length: 7 }, (_, i) => {
-      const tarih = new Date(pazartesi.getFullYear(), pazartesi.getMonth(), pazartesi.getDate() + i)
-      const iso = tariheYaz(tarih)
+    return yediGunlukSerit(bugunIso).map((iso) => {
+      const tarih = tariheCevir(iso)
       return {
         iso,
-        ad: GUN_ADLARI[i],
+        ad: GUN_ADLARI[(tarih.getDay() + 6) % 7],
         sayi: tarih.getDate(),
         etiket: `${tarih.getDate()} ${AY_ADLARI[tarih.getMonth()]}`,
         toplam: gunOzeti(kayitlar.find((k) => k.tarih === iso)).toplam,
       }
     })
-  }, [secili, kayitlar])
+  }, [bugunIso, kayitlar])
   const haftaToplami = hafta.reduce((t, g) => t + g.toplam, 0)
 
   const bugunDon = () => {
@@ -244,7 +237,7 @@ export function SoruTakibiEkrani({
         {/* Hafta şeridi; takvim altında katlanıyor. */}
         <Kart className="rounded-3xl px-3 pb-3 pt-3.5">
           <div className="flex items-baseline gap-2 px-1 pb-2.5">
-            <p className="font-display text-[15px] font-extrabold tracking-tight">Bu hafta</p>
+            <p className="font-display text-[15px] font-extrabold tracking-tight">7 günlük görünüm</p>
             <p className="rakam text-[12.5px] font-bold text-muted-foreground/70">
               {haftaToplami} soru
             </p>

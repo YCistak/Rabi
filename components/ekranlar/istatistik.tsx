@@ -65,10 +65,13 @@ export function IstatistikEkrani({
   varsayilanSablonId: string
 }) {
   // Farklı türdeki denemeler karışmasın diye istatistik tek şablon üzerinden okunur
-  const doluSablonIdler = useMemo(
-    () => new Set(denemeler.map((d) => d.sablonId)),
-    [denemeler],
-  )
+  const doluSablonIdler = useMemo(() => {
+    const sayilar = new Map<string, number>()
+    for (const deneme of denemeler) {
+      sayilar.set(deneme.sablonId, (sayilar.get(deneme.sablonId) ?? 0) + 1)
+    }
+    return new Set([...sayilar].filter(([, sayi]) => sayi >= 2).map(([id]) => id))
+  }, [denemeler])
   const secilebilir = sablonlar.filter((s) => doluSablonIdler.has(s.id))
   const [sablonId, setSablonId] = useState(varsayilanSablonId)
   const [dersSayfasi, setDersSayfasi] = useState(false)

@@ -38,6 +38,7 @@ import {
 import type { DersId } from '@/lib/oyunlar/tanim'
 import { sablonlariBirlestir } from '@/lib/sablonlar'
 import { guncelTahmin, obpHesapla } from '@/lib/tahmin'
+import { istatistikYeterliMi } from '@/lib/istatistik'
 import { egitimYili, gunlukToplam, ilerlemisSinif } from '@/lib/hesap'
 import { bildirilecekler, rozetDurumu, yeniRozetler, type Rozet } from '@/lib/rozetler'
 import { hatirlatmaIptal, hatirlatmaPlanla, pomodoroIptal } from '@/lib/bildirim'
@@ -50,7 +51,7 @@ import { useCokmeRaporu } from '@/lib/cokme-izni'
 import { CokmeSorusu } from '@/components/cokme-sorusu'
 import { useGuncelleme } from '@/lib/guncelleme-kolu'
 import { GuncellemeSeridi } from '@/components/guncelleme-seridi'
-import { bugun, cn, haftaBasi } from '@/lib/utils'
+import { bugun, cn, gunKaydir } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import type { KonuDersId, KonuSinifi } from '@/lib/konu'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
@@ -77,7 +78,7 @@ import { SiralamaEkrani } from '@/components/ekranlar/siralama'
 import { HedefEkrani } from '@/components/ekranlar/hedef'
 import { YanlisBankaEkrani } from '@/components/ekranlar/yanlis-banka'
 import { RozetlerEkrani } from '@/components/ekranlar/rozetler'
-import { gorevleriNormalize, haftaninGorevleri, type Gorev } from '@/lib/yapilacaklar'
+import { gorevleriNormalize, gorevleriTarihtenItibaren, type Gorev } from '@/lib/yapilacaklar'
 import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
 import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
 import { KonuHaritasiEkrani } from '@/components/ekranlar/konu-haritasi'
@@ -162,6 +163,7 @@ export function AppShell() {
     ANAHTARLAR.denemeler,
     [],
   )
+  const istatistikHazir = istatistikYeterliMi(denemeler)
   const [kayitliSablonlar, setSablonlar] = useYerelDepo<Sablon[]>(ANAHTARLAR.sablonlar, [])
   const [okulYillari, setOkulYillari, okulHazir] = useYerelDepo<OkulYili[]>(
     ANAHTARLAR.okulYillari,
@@ -257,18 +259,18 @@ export function AppShell() {
   */
   const [gorevlerHam, setGorevler, gorevlerHazir] = useYerelDepo<Gorev[]>(ANAHTARLAR.notlar, [])
   /*
-    Liste haftalık ve hafta her çizimde yeniden okunuyor.
+    Liste bugünün çevresindeki kayan şeride göre her çizimde yeniden okunuyor.
 
-    Zamanlayıcı kurmak yerine türetmek: pazartesi gece yarısını bekleyen bir
+    Zamanlayıcı kurmak yerine türetmek: gece yarısını bekleyen bir
     `setTimeout` uygulama kapalıyken çalışmaz, uyanan telefonda da geç çalışır.
-    Hafta dönmüşse eski görevler zaten ilk çizimde eleniyor; aşağıdaki etki de
+    Şerit kaymışsa eski görevler zaten ilk çizimde eleniyor; aşağıdaki etki de
     kaydı buna eşitliyor.
   */
-  const gorevler = haftaninGorevleri(gorevleriNormalize(gorevlerHam), haftaBasi(bugunIso))
+  const gorevler = gorevleriTarihtenItibaren(gorevleriNormalize(gorevlerHam), gunKaydir(bugunIso, -3))
   /*
     Elenen görevler kayıttan da siliniyor.
 
-    Yalnızca çizimden düşselerdi geçen haftanın işleri `localStorage`'da
+    Yalnızca çizimden düşselerdi eski işler `localStorage`'da
     birikir, yedeğe girer ve saati geri alan bir cihazda geri gelirdi.
     `gorevlerHazir` şart: ilk okuma bitmeden yazmak, kayıtta duran görevleri
     boş varsayılanla ezerdi.
@@ -948,6 +950,7 @@ export function AppShell() {
                 guncelSiralama={guncelSiralama}
                 bekleyenYanlis={yanlisSorular.filter((s) => !s.cozuldu).length}
                 sonDenemeTarihi={enYeniDenemeTarihi}
+                istatistikHazir={istatistikHazir}
                 ozetHazir={ozetHazir}
                 ozetYetersiz={ozetYetersiz}
                 sonrakiOzet={sonrakiOzet}
@@ -1004,7 +1007,7 @@ export function AppShell() {
                 onOkumaSeansi={(seans) => setOkumaGecmisi((onceki) => okumaSeansiEkle(onceki, seans))}
               />
             )}
-            {sekme === 'daha' && <KartMenusu onKartAc={aracAc} />}
+            {sekme === 'daha' && <KartMenusu onKartAc={aracAc} istatistikHazir={istatistikHazir} />}
             {sekme === 'ayarlar' && (
               <AyarlarEkrani
                 kayitliSablonlar={kayitliSablonlar}

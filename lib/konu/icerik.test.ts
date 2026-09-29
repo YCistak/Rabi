@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { KONU_DERSLERI, KONU_SINIFLARI, programBul, sinifDersleri, tumKonular } from './index'
 import type { DersProgrami } from './tip'
 import { gorunenMetin, gorunenSatirlar, metniAyristir } from './kart-metni'
+import { desteAkisi } from './deste-akisi'
 
 /**
  * İçerik testleri metni değil **kuralı** denetliyor: kimlikler çakışmasın,
@@ -25,20 +26,18 @@ const METIN_SINIRI = 240
 const KART_TABANI = 6
 const KART_SINIRI = 16
 
+// Yazılması beklenen programlar eksikse test başarısız olmalı; null kayıtlar süzülmez.
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.map(
     (ders) => [`${sinif}. sınıf ${ders.ad}`, programBul(ders.id, sinif)] as const,
-  ).filter(([, program]) => program !== null),
+  ),
 )
+const sorulu = programlar
 
 describe('programlar', () => {
-  it('9 ve 10. sınıfta yedi ders, 11. sınıfta eşit ağırlık dersleri erişilebilir', () => {
-    for (const sinif of [9, 10] as const) {
-      expect(sinifDersleri(sinif).length).toBe(KONU_DERSLERI.length)
-    }
-    const onBirinciSinifDersleri = sinifDersleri(11).map((ders) => ders.id)
-    for (const ders of ['turkce', 'tarih', 'cografya'] as const) {
-      expect(onBirinciSinifDersleri).toContain(ders)
+  it('her sınıfta yedi ders erişilebilir', () => {
+    for (const sinif of KONU_SINIFLARI) {
+      expect(sinifDersleri(sinif).map((ders) => ders.id)).toEqual(KONU_DERSLERI.map((ders) => ders.id))
     }
   })
 
@@ -236,7 +235,7 @@ describe('sorular', () => {
   const iddialar = tumSorular.filter((s) => s.tur !== 'sikli')
   const sikliler = tumSorular.filter((s) => s.tur === 'sikli')
 
-  it.each(programlar)('%s: soru sayısı kart sayısıyla orantılı', (_ad, program) => {
+  it.each(sorulu)('%s: soru sayısı kart sayısıyla orantılı', (_ad, program) => {
     for (const konu of tumKonular(program!)) {
       const [enAz, enCok] = soruAraligi(konu.kartlar.length)
       expect(konu.sorular.length, `${konu.ad}: ${konu.kartlar.length} karta ${konu.sorular.length} soru az`).toBeGreaterThanOrEqual(enAz)
@@ -249,7 +248,7 @@ describe('sorular', () => {
     soramıyor, yalnızca şık soran yoklama ise iddiayı tartma alışkanlığını
     kaybettiriyor. En az ikişer — tek bir örnekle denge kurulamaz.
   */
-  it.each(programlar)('%s: her konuda iki soru biçimi de var', (_ad, program) => {
+  it.each(sorulu)('%s: her konuda iki soru biçimi de var', (_ad, program) => {
     for (const konu of tumKonular(program!)) {
       const sikli = konu.sorular.filter((s) => s.tur === 'sikli').length
       expect(sikli, `${konu.ad}: iki şıklı soru az`).toBeGreaterThanOrEqual(2)
@@ -296,7 +295,7 @@ describe('sorular', () => {
     Tek yönlü deste, cevabı içeriğe bakmadan verdiriyor: ilk iki soruda hep
     "doğru" çıktığını gören kullanıcı geri kalanını okumuyor.
   */
-  it.each(programlar)('%s: her destede iki cevap da var', (_ad, program) => {
+  it.each(sorulu)('%s: her destede iki cevap da var', (_ad, program) => {
     for (const konu of tumKonular(program!)) {
       const iddia = konu.sorular.filter((s) => s.tur !== 'sikli')
       const dogru = iddia.filter((s) => s.dogru === true).length
@@ -317,6 +316,18 @@ describe('sorular', () => {
     expect(b).toBeGreaterThan(0.4)
     expect(b).toBeLessThan(0.6)
   })
+
+  it.each(sorulu.filter(([, program]) => program?.sinif === 11))('%s: cevaplar ders içinde dengeli', (_ad, program) => {
+    const sorular = tumKonular(program!).flatMap((konu) => konu.sorular)
+    const iddialar = sorular.filter((s) => s.tur !== 'sikli')
+    const sikliler = sorular.filter((s) => s.tur === 'sikli')
+    const dogruOrani = iddialar.filter((s) => s.dogru === true).length / iddialar.length
+    const bOrani = sikliler.filter((s) => s.dogru === 1).length / sikliler.length
+    expect(dogruOrani).toBeGreaterThan(0.4)
+    expect(dogruOrani).toBeLessThan(0.6)
+    expect(bOrani).toBeGreaterThan(0.4)
+    expect(bOrani).toBeLessThan(0.6)
+  })
 })
 
 /**
@@ -334,6 +345,13 @@ const SIK_SINIRI = 44
 const KONTROL_ACIKLAMA_SINIRI = 170
 
 describe('kart notu ve hızlı kontrol', () => {
+  it.each(programlar)('%s: yazılan kontroller destede görünür', (_ad, program) => {
+    for (const konu of tumKonular(program!)) {
+      const kontrolSayisi = desteAkisi(konu.kartlar.length, konu.kontroller)
+        .filter((adim) => adim.tur === 'kontrol').length
+      expect(kontrolSayisi, `${konu.ad}: ${konu.kartlar.length} kart, kontrol kartları ${konu.kontroller.map((k) => k.kart)}`).toBe(konu.kontroller.length)
+    }
+  })
   it.each(programlar)('%s: etiket ve not kısa', (_ad, program) => {
     for (const konu of tumKonular(program!)) {
       for (const kart of konu.kartlar) {

@@ -73,6 +73,7 @@ const resmiTemalar = (ders: KonuDersId, sinif: number) =>
     IskeletDers[keyof IskeletDers]
   >)[String(sinif)]
 
+/** İçeriği hazır programlar resmî iskeletle karşılaştırılır. */
 const durumlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.filter((ders) => programBul(ders.id, sinif) !== null)
     .map((ders) => [`${sinif}. sınıf ${ders.ad}`, ders.id, sinif] as const),

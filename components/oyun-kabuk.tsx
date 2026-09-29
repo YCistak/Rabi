@@ -13,6 +13,7 @@ import { Halka, kartGirisi } from '@/components/ui'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
 import { BildirimDugmesi, type BildirimKolu } from '@/components/hata-bildir'
 import type { BankaSorusu } from '@/lib/oyunlar/banka'
+import { dersVurgusu } from '@/components/ders-renkleri'
 
 /**
  * Bütün mini oyunların ortak çerçevesi: kapatma, başlık, süre halkası, süre
@@ -226,6 +227,7 @@ export function OyunKabugu({
         'fixed inset-0 z-50 flex flex-col transition-colors duration-300',
         aile.zemin,
       )}
+      style={dersVurgusu(oyunBul(oyunId).ders)}
     >
       {/* Sarsıntı bütün oyun alanına: soru kartını ayrıca sarmak 18 oyunun
           yerleşimine dokunmak demekti, oysa yanlış olan cevap değil o an. */}

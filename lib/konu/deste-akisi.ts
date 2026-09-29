@@ -8,19 +8,17 @@ import type { HizliKontrol } from './tip'
  * karttan iki şıklı soru) geliyor. Hiçbiri kart sayılmıyor; ilerleme çubuğu
  * ve `okunan` yalnızca kartları sayıyor.
  *
- * Yer **rastgele**, ama iki kural var:
+ * Yer kart sayısına göre sabit, iki kural var:
  *
- * - Ara ekran ilk iki kartın ve son iki kartın arasına **girmiyor**. İkinci
- *   karttan sonra gelen mola henüz okuma başlamadan verilen bir mola; son
- *   karttan hemen önce gelen kontrol ise destenin kendi kapanışıyla (soru
- *   sahnesi) üst üste biniyor.
+ * - Mola ve ilk kontrol baştaki ve sondaki iki karttan uzak duruyor. Son
+ *   kontrol son karta dayanıyorsa onu kart okunmadan öne çekmiyoruz.
  * - Kontrol, dayandığı kart (`HizliKontrol.kart`) okunmadan gelmiyor.
  *
  * Yer sığmıyorsa ara ekran hiç konmuyor: üç kartlık destede mola için yer
  * yok ve zorla sıkıştırılan bir mola, kuralın kendisini bozardı.
  *
- * Rastgelelik dışarıdan geliyor (`rastgele`), `Math.random` burada
- * çağrılmıyor: test aynı desteyi aynı yerleşimle görebilmeli.
+ * Eski çağrıların üçüncü parametresi uyumluluk için korunuyor; yerleşimi
+ * değiştirmiyor.
  */
 
 export type DesteAdimi =
@@ -29,86 +27,57 @@ export type DesteAdimi =
   /** `sira`: `Konu.kontroller` içindeki dizin. */
   | { tur: 'kontrol'; sira: number }
 
-/** Ara ekranın giremeyeceği kart sayısı — baştan ve sondan. */
+/** Ara ekran baştaki ve sondaki iki karttan uzak durur. */
 const KENAR_PAYI = 2
 
-/**
- * Ara ekran hangi kartlardan sonra gelebilir (1'den başlayan kart sırası).
- *
- * "k. karttan sonra" demek k ≥ 2 (ilk ikiden sonra) ve k ≤ N−2 (son ikiden
- * önce) demek: N kartlık destede k = 2 … N−2.
- */
 function uygunYerler(kartSayisi: number): number[] {
-  const yerler: number[] = []
-  for (let k = KENAR_PAYI; k <= kartSayisi - KENAR_PAYI; k++) yerler.push(k)
-  return yerler
-}
-
-function rastgeleSec<T>(liste: T[], rastgele: () => number): T | undefined {
-  if (liste.length === 0) return undefined
-  return liste[Math.min(liste.length - 1, Math.floor(rastgele() * liste.length))]
+  return Array.from(
+    { length: Math.max(0, kartSayisi - KENAR_PAYI * 2 + 1) },
+    (_, sira) => sira + KENAR_PAYI,
+  )
 }
 
 /**
- * Kart ve ara ekranların sırası.
- *
- * Önce kontrollerin yeri seçiliyor (her biri dayandığı karttan sonraki
- * **boş** uygun yerlerden), sonra molanın — kalanlardan. Kontroller önce,
- * çünkü seçenekleri daha dar: mola her uygun yere girebiliyor, kontrol
- * yalnızca dayandığı karttan sonrakilere. Uygun yer kalmayan ara ekran o
- * destede yok.
- *
- * Kontroller dayandıkları kartın sırasıyla yerleşiyor; iki kontrolün sırası
- * hiçbir zaman ters dönmüyor — ikinci yarının sorusu ilkinden önce gelseydi
- * daha okunmamış bir kartı sorardı.
+ * Kartlar arasındaki sabit sıra: kısa destede kontrol → mola, uzun destede
+ * kontrol → mola → kontrol. Kontrol yalnızca dayandığı kart okunduktan sonra
+ * gelir; yer yetmezse ara ekranı zorlamayız.
  */
 export function desteAkisi(
   kartSayisi: number,
   kontroller: HizliKontrol[],
-  rastgele: () => number = Math.random,
+  _rastgele: () => number = Math.random,
 ): DesteAdimi[] {
   const yerler = uygunYerler(kartSayisi)
-  const dolu = new Set<number>()
-
-  /** Kart sırası → o karttan sonra gelecek ara ekranlar. */
-  const yerlesim = new Map<number, DesteAdimi[]>()
-  function koy(k: number, adim: DesteAdimi) {
-    dolu.add(k)
-    yerlesim.set(k, [...(yerlesim.get(k) ?? []), adim])
-  }
-
-  // Erken karta dayanan kontrol önce yer seçiyor; sonrakiler onun arkasında
-  // kalan yerlerden seçiyor, böylece sıra korunuyor.
   const sirali = kontroller
     .map((kontrol, sira) => ({ kontrol, sira }))
     .sort((a, b) => a.kontrol.kart - b.kontrol.kart)
-  let enSon = 0
-  const sonYer = yerler[yerler.length - 1] ?? 0
-  sirali.forEach(({ kontrol, sira }, i) => {
-    // Arkadan gelen kontrollere yer bırakılıyor: ilk kontrol son boşluğu
-    // kapsaydı ikincisi hiç yerleşemezdi.
-    const arkadakiler = sirali.length - i - 1
-    const yer = rastgeleSec(
-      yerler.filter(
-        (k) => k >= kontrol.kart && k > enSon && k <= sonYer - arkadakiler && !dolu.has(k),
-      ),
-      rastgele,
-    )
-    if (yer === undefined) return
-    enSon = yer
-    koy(yer, { tur: 'kontrol', sira })
-  })
+  const yerlesim = new Map<number, DesteAdimi>()
 
-  const molaYeri = rastgeleSec(
-    yerler.filter((k) => !dolu.has(k)),
-    rastgele,
-  )
-  if (molaYeri !== undefined) koy(molaYeri, { tur: 'mola' })
+  if (sirali.length > 0) {
+    const ilk = sirali[0]
+    const hedef = Math.max(KENAR_PAYI, Math.round(kartSayisi / 3))
+    const yer = yerler.find((k) => k >= hedef && k >= ilk.kontrol.kart)
+    if (yer !== undefined) yerlesim.set(yer, { tur: 'kontrol', sira: ilk.sira })
+  }
+
+  const ilkKontrolYeri = [...yerlesim.keys()][0]
+  const molaHedefi = Math.max(KENAR_PAYI, Math.round(kartSayisi / 2))
+  const molaYeri = yerler.find((k) => k >= molaHedefi && (ilkKontrolYeri === undefined || k > ilkKontrolYeri))
+  if (molaYeri !== undefined) yerlesim.set(molaYeri, { tur: 'mola' })
+
+  if (sirali.length > 1 && molaYeri !== undefined) {
+    const ikinci = sirali[1]
+    const hedef = Math.max(KENAR_PAYI, Math.round((kartSayisi * 2) / 3))
+    const sonKontrolYerleri = Array.from({ length: Math.max(0, kartSayisi - 1) }, (_, i) => i + 2)
+    const yer = sonKontrolYerleri.find((k) => k >= hedef && k > molaYeri && k >= ikinci.kontrol.kart)
+    if (yer !== undefined) yerlesim.set(yer, { tur: 'kontrol', sira: ikinci.sira })
+  }
 
   const adimlar: DesteAdimi[] = []
   for (let sira = 0; sira < kartSayisi; sira++) {
     adimlar.push({ tur: 'kart', sira })
-    adimlar.push(...(yerlesim.get(sira + 1) ?? []))
+    const araEkran = yerlesim.get(sira + 1)
+    if (araEkran) adimlar.push(araEkran)
   }
   return adimlar
 }

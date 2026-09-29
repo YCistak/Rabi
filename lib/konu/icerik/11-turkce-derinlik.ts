@@ -63,10 +63,10 @@ export const turkceDerinligi: Record<string, KonuDerinligi> = {
   },
   'trk11-turk-dunyasi-hikaye': {
     kartlar: [
+      ['Genelleme tuzağı', 'Bir kahramanın tercihi tüm toplumun geleneği sayılamaz.\nMetindeki kişisel olanı kültürel olandan ayır.'],
       ['Kültürel ayrıntı', 'Bir törenin adı metinde geçebilir.\nNe anlama geldiğini olay ve kişinin davranışıyla yorumla.'],
       ['Anlatıcı sınırı', 'Birinci kişi yalnız gördüğünü ve bildiğini anlatır.\nBaşka kişinin içinden doğrudan söz ediyorsa gerekçe ara.'],
       ['Karşılaştırma ölçütü', 'İki hikâyeyi aynı tema üzerinden karşılaştır.\nBiri aileyi sözle, diğeri eylemle anlatabilir.'],
-      ['Genelleme tuzağı', 'Bir kahramanın tercihi tüm toplumun geleneği sayılamaz.\nMetindeki kişisel olanı kültürel olandan ayır.'],
     ],
     iddialar: [
       ['Bir hikâyedeki tek kişinin davranışı bütün kültürün değişmez kuralı sayılamaz.', true, 'Bireysel ve toplumsal düzey ayrılmalıdır.'],
@@ -79,7 +79,7 @@ export const turkceDerinligi: Record<string, KonuDerinligi> = {
       ['Yerel sözcüğün anlamı belirsizse ilk kaynak?', 'Cümledeki bağlam', 'Yalnız ilk sözlük anlamı', 'Bağlam kullanımı açar.'],
       ['Ortak kültür iziyle yöresel fark birlikte görüldüğünde?', 'İkisi de kaydedilir', 'Farklılık yok sayılır', 'Ortaklık tek tiplik değildir.'],
     ],
-    kontrol: ['Tek bir kişi davranışı neyi göstermez?', 'Bütün toplumun kuralını', 'O kişinin tercihini', 'Kültürel genelleme için daha çok kanıt gerekir.'], kontrolKarti: 9,
+    kontrol: ['Tek bir kişi davranışı neyi göstermez?', 'Bütün toplumun kuralını', 'O kişinin tercihini', 'Kültürel genelleme için daha çok kanıt gerekir.'], kontrolKarti: 7,
   },
   'trk11-orhun': {
     kartlar: [
@@ -163,9 +163,9 @@ export const turkceDerinligi: Record<string, KonuDerinligi> = {
   },
   'trk11-roman': {
     kartlar: [
+      ['Yaşamdan kurmacaya', 'Yazar gördüğü bir yeri dönüştürerek anlatabilir.\nGerçek yer adı bütün olayın yaşandığını kanıtlamaz.'],
       ['Bakış açısının sınırı', '“Ben” anlatıcı bir odadaki konuşmayı aktarabilir.\nBaşka odadaki düşünceyi nasıl bildiğini metin açıklamalı.'],
       ['Zaman düzeni', 'Roman olayları sırayla anlatmak zorunda değildir.\nGeri dönüş kahramanın bugünkü kararını anlamlandırabilir.'],
-      ['Yaşamdan kurmacaya', 'Yazar gördüğü bir yeri dönüştürerek anlatabilir.\nGerçek yer adı bütün olayın yaşandığını kanıtlamaz.'],
       ['Karakter dönüşümü', 'Başlangıç ve son kararı karşılaştır.\nDeğişim varsa hangi olayın etkilediğini metinden göster.'],
     ],
     iddialar: [
@@ -179,7 +179,7 @@ export const turkceDerinligi: Record<string, KonuDerinligi> = {
       ['Geri dönüş hangi işlevi görebilir?', 'Bugünkü çatışmayı açıklama', 'Tüm olayı iptal etme', 'Geçmiş bugünün nedenini açar.'],
       ['Yazarın hayatıyla roman arasında bağ kurarken?', 'Metin ve biyografiyi karşılaştırmak', 'Anlatıcıyı doğrudan yazar saymak', 'Benzerlik kanıtla kurulmalıdır.'],
     ],
-    kontrol: ['Gerçek şehirli roman otomatik gerçek olay mı?', 'Hayır, kurmaca olabilir', 'Evet, belge olur', 'Mekân adı olayın yaşandığını kanıtlamaz.'], kontrolKarti: 9,
+    kontrol: ['Gerçek şehirli roman otomatik gerçek olay mı?', 'Hayır, kurmaca olabilir', 'Evet, belge olur', 'Mekân adı olayın yaşandığını kanıtlamaz.'], kontrolKarti: 7,
   },
   'trk11-biyografi': {
     kartlar: [
@@ -243,8 +243,8 @@ export const turkceDerinligi: Record<string, KonuDerinligi> = {
   },
   'trk11-tiyatro': {
     kartlar: [
-      ['Çatışmanın kaynağı', 'İki kişi aynı nesneyi istiyorsa amaçları çakışır.\nReplikler bu çatışmayı görünür kılar.'],
       ['Yönergeyi sınama', '“Bir adım geri çekilir” sözü korku veya kuşku düşündürebilir.\nAnlamını replik bağlamı belirler.'],
+      ['Çatışmanın kaynağı', 'İki kişi aynı nesneyi istiyorsa amaçları çakışır.\nReplikler bu çatışmayı görünür kılar.'],
       ['Sahnede zaman', 'Işık ve dekor değişimi zaman geçişini gösterebilir.\nMetindeki yer ve zaman bilgisini izle.'],
       ['Canlandırma kararı', 'Aynı cümle farklı duraklamayla başka etki bırakır.\nYorum metnin çatışmasına uygun olmalı.'],
     ],
@@ -259,7 +259,7 @@ export const turkceDerinligi: Record<string, KonuDerinligi> = {
       ['Oyuncu duraklamayı niçin seçer?', 'Sözün etkisini kurmak için', 'Metni gereksiz uzatmak için', 'Ritim ve duygu yorumlanır.'],
       ['Yönerge ve replik arasındaki ilişki?', 'Hareket sözü tamamlar', 'İkisi her zaman aynı şeydir', 'Yönerge söylenmez, oynanır.'],
     ],
-    kontrol: ['“Kapıyı kapatır” ne tür metin parçası?', 'Sahne yönergesi', 'Sözlü replik', 'Hareket oyuncuya yöneliktir.'], kontrolKarti: 9,
+    kontrol: ['“Kapıyı kapatır” ne tür metin parçası?', 'Sahne yönergesi', 'Sözlü replik', 'Hareket oyuncuya yöneliktir.'], kontrolKarti: 7,
   },
   'trk11-kucurek': {
     kartlar: [

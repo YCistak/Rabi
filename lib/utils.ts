@@ -36,6 +36,11 @@ export function gunKaydir(iso: string, fark: number): string {
   return tariheYaz(tarih)
 }
 
+/** Bugünün ortada durduğu yedi günlük kayan takvim şeridi. */
+export function yediGunlukSerit(bugunIso: string): string[] {
+  return Array.from({ length: 7 }, (_, sira) => gunKaydir(bugunIso, sira - 3))
+}
+
 /** 'YYYY-AA-GG' → "16 Ağustos Pazar" — yıl yazılmaz, takvimde zaten görünüyor. */
 export function tarihYaziKisa(iso: string): string {
   return tariheCevir(iso).toLocaleDateString('tr-TR', {

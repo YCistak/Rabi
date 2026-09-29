@@ -4,10 +4,10 @@ import type { KonuDerinligi } from './11-yardimci'
 export const tarihDerinligi: Record<string, KonuDerinligi> = {
   'trh11-mucadele': {
     kartlar: [
+      ['Kırım’ın üç aşaması', '1774: bağımsızlık kabul edildi.\n1783: Rusya ilhak etti.\n1792: Osmanlı Yaş Antlaşması’yla ilhakı tanıdı.'],
       ['Karlofça’nın anlamı', 'Karlofça yalnız toprak kaybı değildi.\nOsmanlı diplomaside geniş bir koalisyonla aynı masaya oturdu.'],
       ['Rusya’nın hedefi', 'Rusya sıcak denizlere inmek için Karadeniz çevresinde güç aradı.\nAzak ve Kırım bu yüzden önemliydi.'],
       ['Belgrad neden iki kez?', 'Belgrad 1718’de kaybedildi, 1739’da geri alındı.\nAynı kentin iki antlaşmada farklı tarafta olması dönemin dengesini gösterir.'],
-      ['Kırım’ın üç aşaması', '1774: bağımsızlık kabul edildi.\n1783: Rusya ilhak etti.\n1792: Osmanlı Yaş Antlaşması’yla ilhakı tanıdı.'],
     ],
     iddialar: [
       ['Belgrad’ın 1739’da geri alınması, 1718’deki kaybın kalıcı olmadığını gösterir.', true, 'İki antlaşmanın sonucu birlikte okunmalı.'],
@@ -20,7 +20,7 @@ export const tarihDerinligi: Record<string, KonuDerinligi> = {
       ['Osmanlı, Kırım’ın ilhakını hangi aşamada tanıdı?', 'Yaş Antlaşması’nda', 'Prut Antlaşması’nda', '1792 Yaş Antlaşması ilhakı kabul etti.'],
       ['Karlofça’yı dönüm noktası yapan ne?', 'Koalisyona karşı büyük kayıp', 'Tek cephede kazanılan zafer', 'Avrupa’da geniş toprak kaybı kabul edildi.'],
     ],
-    kontrol: ['Kırım’ın bağımsız sayılması ile ilhakı arasındaki ilişki?', 'Ayrı tarihlerde yaşandı', 'Aynı antlaşmada tamamlandı', '1774 kararını 1783 ilhakı izledi.'], kontrolKarti: 10,
+    kontrol: ['Kırım’ın bağımsız sayılması ile ilhakı arasındaki ilişki?', 'Ayrı tarihlerde yaşandı', 'Aynı antlaşmada tamamlandı', '1774 kararını 1783 ilhakı izledi.'], kontrolKarti: 7,
   },
   'trh11-lale': {
     kartlar: [
@@ -84,10 +84,10 @@ export const tarihDerinligi: Record<string, KonuDerinligi> = {
   },
   'trh11-ihtilal': {
     kartlar: [
+      ['Osmanlıcılık yanıtı', 'Farklı toplulukları ortak yurttaşlıkta tutma düşüncesi gelişti.\nBu, milliyetçilik baskısına verilen yanıtlardan biriydi.'],
       ['Eski düzenin yükü', 'Vergi yükünün eşitsizliği ve temsil eksikliği tepki doğurdu.\nMali kriz bu gerilimi artırdı.'],
       ['Yurttaşlık fikri', 'Hakların hanedan üyeliğine değil yurttaşlığa bağlanması tartışıldı.\nBu ilke uygulamada zamanla genişledi.'],
       ['İki farklı sonuç', 'Özgürlük ve eşitlik fikri reform talebini besledi.\nMilliyetçilik ise çok uluslu yapılarda ayrılık talebini büyüttü.'],
-      ['Osmanlıcılık yanıtı', 'Farklı toplulukları ortak yurttaşlıkta tutma düşüncesi gelişti.\nBu, milliyetçilik baskısına verilen yanıtlardan biriydi.'],
     ],
     iddialar: [
       ['Eşit yurttaşlık fikri ile milliyetçilik Osmanlı’da aynı sonucu doğurmadı.', true, 'Biri birleştirme, diğeri ayrılık talebine yol açabildi.'],
@@ -100,7 +100,7 @@ export const tarihDerinligi: Record<string, KonuDerinligi> = {
       ['Hak bildirgesi için hangi yorum daha temkinli?', 'İlke ile uygulama ayrılmalı', 'Herkes hemen eşit hak aldı', 'Hakların yayılması zaman aldı.'],
       ['Napolyon savaşları fikirlerin yayılmasını nasıl etkiledi?', 'Avrupa’ya taşıdı', 'Fransa içinde hapsetti', 'Savaşlar ve yönetim değişimi fikirleri yaydı.'],
     ],
-    kontrol: ['Osmanlıcılık hangi soruna yanıt aradı?', 'Toplulukları bir arada tutmaya', 'Toplulukların bağımsızlığını hızlandırmaya', 'Ortak yurttaşlıkla birliği korumak istedi.'], kontrolKarti: 10,
+    kontrol: ['Osmanlıcılık hangi soruna yanıt aradı?', 'Toplulukları bir arada tutmaya', 'Toplulukların bağımsızlığını hızlandırmaya', 'Ortak yurttaşlıkla birliği korumak istedi.'], kontrolKarti: 7,
   },
   'trh11-donusum': {
     kartlar: [
@@ -164,10 +164,10 @@ export const tarihDerinligi: Record<string, KonuDerinligi> = {
   },
   'trh11-siyasi': {
     kartlar: [
+      ['Savaşın kapanışı', 'Mondros bir ateşkesti; barış antlaşması değildi.\nSilah bırakma ve işgallere uzanan bir dönem başlattı.'],
       ['1908 ve 1909 farkı', '1908’de meclis yeniden açıldı.\n1909’da 31 Mart Olayı bastırıldı ve II. Abdülhamid tahttan indirildi.'],
       ['Trablusgarp bağlantısı', 'Osmanlı deniz gücü zayıf olduğu için bölgeye düzenli ordu taşıyamadı.\nSubaylar yerel direnişi örgütledi.'],
       ['Balkan kaybının etkisi', 'Toprak kaybı büyük göç doğurdu ve orduda yenilenme ihtiyacını artırdı.\nEdirne ikinci savaşta geri alındı.'],
-      ['Savaşın kapanışı', 'Mondros bir ateşkesti; barış antlaşması değildi.\nSilah bırakma ve işgallere uzanan bir dönem başlattı.'],
     ],
     iddialar: [
       ['Trablusgarp’ta yerel direnişin örgütlenmesi, Osmanlı’nın düzenli ordu gönderme güçlüğüyle ilişkilidir.', true, 'Deniz ulaşımındaki zorluk belirleyiciydi.'],
@@ -180,13 +180,13 @@ export const tarihDerinligi: Record<string, KonuDerinligi> = {
       ['Mondros için hangi niteleme doğru?', 'Ateşkes', 'Kalıcı barış', '1918’de silah bırakma koşulları belirlendi.'],
       ['Balkan kaybıyla hangi toplumsal sonuç bağlantılı?', 'Rumeli’den göç', 'Lizbon’dan göç', 'Savaş bölgeden Anadolu’ya göç doğurdu.'],
     ],
-    kontrol: ['1918’de savaşın bitiş belgesi?', 'Mondros Ateşkesi', 'Uşi Antlaşması', 'Uşi 1912 Trablusgarp sonudur.'], kontrolKarti: 10,
+    kontrol: ['1918’de savaşın bitiş belgesi?', 'Mondros Ateşkesi', 'Uşi Antlaşması', 'Uşi 1912 Trablusgarp sonudur.'], kontrolKarti: 7,
   },
   'trh11-goc': {
     kartlar: [
+      ['Salgın zinciri', 'Temiz su eksikliği ve kalabalık barınma bulaşmayı kolaylaştırır.\nSağlık hizmetine erişim koruyucu etkendir.'],
       ['Göç tek nedenli değil', 'Savaş, güvenlik kaybı ve geçim sorunu birlikte etkili oldu.\nAynı aile farklı nedenlerle yer değiştirmiş olabilir.'],
       ['Nüfusun yeniden dağılışı', 'Gelenlerin yerleşimi konut ve tarım alanı ihtiyacını artırdı.\nKent ile kırsal farklı tepkiler verdi.'],
-      ['Salgın zinciri', 'Temiz su eksikliği ve kalabalık barınma bulaşmayı kolaylaştırır.\nSağlık hizmetine erişim koruyucu etkendir.'],
       ['Kaynakların sınırı', 'Resmî kayıt sayıyı, anı yaşantıyı gösterir.\nİki kaynak da eksik veya yanlı olabilir; karşılaştırılmalıdır.'],
     ],
     iddialar: [
@@ -200,7 +200,7 @@ export const tarihDerinligi: Record<string, KonuDerinligi> = {
       ['Göçün nedenini açıklarken hangi ifade güçlü?', 'Savaş ve güvenlik kaybı birlikte', 'Yalnız ekonomik fırsat arayışı', 'Birden çok itici etken vardı.'],
       ['Resmî kayıt ile anı arasındaki fark?', 'Sayı ve yaşantı vurgusu', 'İkisinin de aynı tür tanıklık olması', 'Kaynak türleri farklı bilgi sunar.'],
     ],
-    kontrol: ['Göçte salgın riskini artıran iki koşul?', 'Kalabalık ve temiz su eksikliği', 'Sağlık hizmeti ve temiz su', 'Bulaşma kalabalık ve yetersiz hijyenle artar.'], kontrolKarti: 9,
+    kontrol: ['Göçte salgın riskini artıran iki koşul?', 'Kalabalık ve temiz su eksikliği', 'Sağlık hizmeti ve temiz su', 'Bulaşma kalabalık ve yetersiz hijyenle artar.'], kontrolKarti: 7,
   },
   'trh11-katki': {
     kartlar: [

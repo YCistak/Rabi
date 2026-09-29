@@ -1,5 +1,20 @@
 import { describe, expect, it } from 'vitest'
-import { gunKaydir, haftaBasi, tariheCevir, tariheYaz } from './utils'
+import { gunKaydir, haftaBasi, tariheCevir, tariheYaz, yediGunlukSerit } from './utils'
+
+describe('yediGunlukSerit', () => {
+  it('pazar günü de bugünü dördüncü sırada tutup gelecek haftayı gösterir', () => {
+    expect(yediGunlukSerit('2026-09-27')).toEqual([
+      '2026-09-24', '2026-09-25', '2026-09-26', '2026-09-27',
+      '2026-09-28', '2026-09-29', '2026-09-30',
+    ])
+  })
+
+  it('ertesi gün pencere bir gün kayar', () => {
+    expect(yediGunlukSerit('2026-09-28').slice(0, 6)).toEqual(
+      yediGunlukSerit('2026-09-27').slice(1),
+    )
+  })
+})
 
 describe('haftaBasi', () => {
   it('haftayı pazartesiden başlatır', () => {

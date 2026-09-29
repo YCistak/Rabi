@@ -23,10 +23,10 @@ export const cografyaDerinligi: Record<string, KonuDerinligi> = {
   },
   'cog11-cbs': {
     kartlar: [
+      ['Sınıflandırma tuzağı', 'Harita renk aralıkları değişirse aynı veri farklı görünebilir.\nLejant ve birim okunmadan yorum yapma.'],
       ['Nokta, çizgi, alan', 'Okul nokta, yol çizgi, taşkın bölgesi alan olarak işlenebilir.\nHer veri türü başka sorgu sağlar.'],
       ['Yakınlık yeterli mi?', 'Okulun dereye yakınlığı risk için ipucudur.\nKot ve taşkın sınırı olmadan kesin karar verilmez.'],
       ['Veri uyumu', 'Katmanlar aynı koordinat düzeninde olmalı.\nKaymış katman yanlış çakışma üretir.'],
-      ['Sınıflandırma tuzağı', 'Harita renk aralıkları değişirse aynı veri farklı görünebilir.\nLejant ve birim okunmadan yorum yapma.'],
     ],
     iddialar: [
       ['Nüfus yoğunluğu haritasında sınıf aralığı değişirse görsel yorum da değişebilir.', true, 'Lejant verinin nasıl gruplanacağını belirler.'],
@@ -39,7 +39,7 @@ export const cografyaDerinligi: Record<string, KonuDerinligi> = {
       ['Katmanlar kayık duruyorsa önce ne sınanır?', 'Koordinat uyumu', 'Veri toplama tarihi', 'Farklı koordinat düzeni hatalı çakıştırır.'],
       ['İki katmanın birlikte görülmesi ne sağlar?', 'İlişkiyi sorgulama', 'Nedenselliği otomatik ispat', 'Ek kanıtla değerlendirme gerekir.'],
     ],
-    kontrol: ['Haritanın renk aralıklarını nereden okursun?', 'Lejanttan', 'Ölçek çubuğundan', 'Lejant aralıkların anlamını açıklar.'], kontrolKarti: 10,
+    kontrol: ['Haritanın renk aralıklarını nereden okursun?', 'Lejanttan', 'Ölçek çubuğundan', 'Lejant aralıkların anlamını açıklar.'], kontrolKarti: 7,
   },
   'cog11-su-kaynaklari': {
     kartlar: [
@@ -83,9 +83,9 @@ export const cografyaDerinligi: Record<string, KonuDerinligi> = {
   },
   'cog11-yerlesme': {
     kartlar: [
+      ['İşlev çatışması', 'Konut ile ağır sanayi yan yana olduğunda gürültü ve kirlilik sorunu doğar.\nPlanlama bu çatışmayı azaltır.'],
       ['Örnek: kavşak kenti', 'Yol kavşağı ticaret ve hizmeti çekebilir.\nAma su ve arazi kısıtı büyümeyi sınırlayabilir.'],
       ['Yoğunluk farkı', 'Merkezde erişim artarken kira da yükselebilir.\nİşlevler kenara taşınabilir.'],
-      ['İşlev çatışması', 'Konut ile ağır sanayi yan yana olduğunda gürültü ve kirlilik sorunu doğar.\nPlanlama bu çatışmayı azaltır.'],
       ['Zamansal katman', 'Eski çekirdek ile yeni çevre aynı yolla oluşmaz.\nHaritada büyüme yönü izlenebilir.'],
     ],
     iddialar: [
@@ -99,13 +99,13 @@ export const cografyaDerinligi: Record<string, KonuDerinligi> = {
       ['Eski çekirdek ile yeni çevreyi ne gösterir?', 'Büyüme yönü haritası', 'Yalnız nüfus toplamı', 'Mekânsal yayılım zamanla incelenir.'],
       ['Riskli fay alanında yeni konut planı neyi gerektirir?', 'Afet verisini', 'Yalnız işyeri sayısını', 'Yer seçimi tehlike ve zeminle yapılmalı.'],
     ],
-    kontrol: ['Kentte konut ve sanayi çatışması hangi etkiyi doğurur?', 'Gürültü ve kirlilik', 'Daha çok yağış', 'İşlevlerin yakınlığı yaşam kalitesini etkiler.'], kontrolKarti: 9,
+    kontrol: ['Kentte konut ve sanayi çatışması hangi etkiyi doğurur?', 'Gürültü ve kirlilik', 'Daha çok yağış', 'İşlevlerin yakınlığı yaşam kalitesini etkiler.'], kontrolKarti: 7,
   },
   'cog11-etki-alani': {
     kartlar: [
+      ['Akış verisi', 'Hasta sevki veya öğrenci yolculuğu etki alanını gösterir.\nİdari sınıra bakmak tek başına yetmez.'],
       ['Eşik nüfus', 'Bazı hizmetler ancak yeterli kullanıcı varsa açılır.\nUzman hastane için ihtiyaç mahalle bakkalından büyüktür.'],
       ['Mesafe ve süre', 'Dağ arkasındaki yakın kent, hızlı trenle ulaşılan uzak kentten zor erişilebilir olabilir.\nUlaşım süresi belirleyicidir.'],
-      ['Akış verisi', 'Hasta sevki veya öğrenci yolculuğu etki alanını gösterir.\nİdari sınıra bakmak tek başına yetmez.'],
       ['Çekim değişebilir', 'Yeni hastane ya da yol açıldığında bölgesel çekim değişir.\nEtki alanı sabit bir halka değildir.'],
     ],
     iddialar: [
@@ -119,7 +119,7 @@ export const cografyaDerinligi: Record<string, KonuDerinligi> = {
       ['Bakkalın açılması için gereken eşik nüfus, hastaneye göre?', 'Daha düşük olabilir', 'Zorunlu olarak aynıdır', 'Günlük hizmet daha dar çevreye sunulur.'],
       ['Bir ilçe başka ilin hastanesine gidiyorsa ne çıkarılır?', 'Etki alanı sınır aşabilir', 'İl sınırı değişmiştir', 'Hizmet ilişkisi idari sınırdan farklıdır.'],
     ],
-    kontrol: ['Etki alanını doğrudan gösteren veri?', 'Hizmet için yolculuklar', 'Yalnız idari alan', 'Kullanıcı akışı çekim çevresini gösterir.'], kontrolKarti: 9,
+    kontrol: ['Etki alanını doğrudan gösteren veri?', 'Hizmet için yolculuklar', 'Yalnız idari alan', 'Kullanıcı akışı çekim çevresini gösterir.'], kontrolKarti: 7,
   },
   'cog11-gida': {
     kartlar: [
@@ -343,9 +343,9 @@ export const cografyaDerinligi: Record<string, KonuDerinligi> = {
   },
   'cog11-madencilik-ulke': {
     kartlar: [
+      ['Fiyat etkisi', 'Çıkarılan ton sabitken dünya fiyatı düşerse ihracat geliri azalabilir.\nMiktar ve gelir ayrı grafiktir.'],
       ['Pay ve miktar', 'Madenin üretim payı artabilir ama toplam üretim düşebilir.\nYüzdeyi mutlak miktarla birlikte oku.'],
       ['Rezerv süresi', 'Rezervi yıllık üretime bölmek kaba tahmindir.\nYeni keşif, fiyat ve teknoloji süreyi değiştirir.'],
-      ['Fiyat etkisi', 'Çıkarılan ton sabitken dünya fiyatı düşerse ihracat geliri azalabilir.\nMiktar ve gelir ayrı grafiktir.'],
       ['Yerel bedel', 'İş yaratılırken su ve arazi üzerinde baskı doğabilir.\nYarar ve maliyet aynı bölgede bile eşit dağılmaz.'],
     ],
     iddialar: [
@@ -359,7 +359,7 @@ export const cografyaDerinligi: Record<string, KonuDerinligi> = {
       ['Madenin yerel etkisinde hangi ikili tartılır?', 'İş ve su kullanımı', 'Yalnız işletme adı', 'Ekonomik yarar ve çevresel bedel vardır.'],
       ['Zaman grafiğine ne yazılmalı?', 'Yıl ve ölçü birimi', 'Yalnız değişim yüzdesi', 'Değişim ancak eksenler anlaşılırsa yorumlanır.'],
     ],
-    kontrol: ['Çıkarım sabit, gelir düştü: hangi değişken?', 'Fiyat', 'Enlem', 'Birim satış fiyatı toplam geliri değiştirir.'], kontrolKarti: 9,
+    kontrol: ['Çıkarım sabit, gelir düştü: hangi değişken?', 'Fiyat', 'Enlem', 'Birim satış fiyatı toplam geliri değiştirir.'], kontrolKarti: 7,
   },
   'cog11-enerji-ulke': {
     kartlar: [
