@@ -103,7 +103,7 @@ export const BOLUMLER: BolumTanimi[] = [
   {
     id: 'geometri',
     ders: 'matematik',
-    ad: 'Geometri Ustası',
+    ad: 'Geometri',
     aciklama: 'Açı, dik üçgen',
     ikon: '📐',
   },
@@ -145,7 +145,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'yazim',
     ders: 'turkce',
-    ad: 'Yazım Ustası',
+    ad: 'Doğru Yazımı Bul',
     kisaAciklama: 'Doğru yazılışı yakala',
     ikon: '✍️',
     ozet: `İki yazılıştan **doğru** olana dokunursun. Tur bitince karıştırdıkların kuralıyla birlikte listelenir.`,
@@ -246,7 +246,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'harita',
     ders: 'cografya',
-    ad: 'Harita Avı',
+    ad: 'Türkiye İllerini Bul',
     kisaAciklama: 'İli haritada bul',
     ikon: '🗺️',
     ozet: `**“Ankara’yı bul”** dendiğinde ili haritada gösterirsin; il yanıp söndüğünde adını dört şıktan seçersin. Harita iki parmakla yakınlaştırılabilir.`,
@@ -254,7 +254,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'iklim',
     ders: 'cografya',
-    ad: 'İklim Kuşakları',
+    ad: 'Haritadan İklimi Bul',
     kisaAciklama: 'Bu bölgede hangi iklim görülür?',
     ikon: '🌍',
     ozet: `Dünya haritasında bir bölge işaretlenir, sen orada görülen iklim tipini dört şıktan seçersin. Haritadaki kesikli çizgiler dönenceler ve kutup dairesi — iklimin çoğu **enlemden** okunur.`,
@@ -302,7 +302,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'ortak',
     ders: 'biyoloji',
-    ad: 'Ortak Özellikler',
+    ad: 'Canlıların Ortak Özellikleri',
     kisaAciklama: 'Canlıları canlı yapan nedir?',
     ikon: '🌱',
     ozet: `Canlıların ortak özellikleri üzerine gelen soruyu dört şıktan cevaplarsın. Konu 9. sınıfın ilk ünitesi.`,
@@ -318,7 +318,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'hucre',
     ders: 'biyoloji',
-    ad: 'Organel Kartı',
+    ad: 'İpucundan Organeli Bul',
     kisaAciklama: 'İpuçlarından organeli bul',
     ikon: '🧫',
     ozet: `Kart üç saniyede bir yeni ipucu açar, sen organeli dört şıktan bulursun. Erken bilmek çok puan: **1. ipucuyla 3**, 2. ile 2, 3. ile 1.`,
@@ -326,7 +326,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'sirala',
     ders: 'tarih',
-    ad: 'Zaman Şeridi',
+    ad: 'Olayları Tarihe Göre Sırala',
     kisaAciklama: 'Olayları eskiden yeniye diz',
     ikon: '⏳',
     ozet: `Karışık gelen olay kartlarını sürükleyerek **eskiden yeniye** dizip onaylarsın. Puan kısmi: doğru sıralanan her komşu çift bir puan.`,
@@ -334,7 +334,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'tuzak',
     ders: 'matematik',
-    ad: 'Kural Tuzağı',
+    ad: 'Eşitlik Doğru mu?',
     kisaAciklama: 'Eşitlik doğru mu, yanlış mı?',
     ikon: '🪤',
     ozet: `Gelen eşitlik doğruysa kartı **sağa**, yanlışsa **sola** atarsın. Yarım itip bırakırsan kart yerine döner, cevap sayılmaz.`,
@@ -342,7 +342,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'periyodik',
     ders: 'kimya',
-    ad: 'Periyodik Tablo Avı',
+    ad: 'Elementi Tabloda Bul',
     kisaAciklama: 'Elementi tabloda bul',
     ikon: '⚛️',
     ozet: `**“Kalsiyum’u bul”** dendiğinde elementi tabloda gösterirsin; hücre yanıp söndüğünde adını ya da ailesini dört şıktan seçersin. Tabloda yalnızca sınavda karşılığı olan elementler yazılı.`,

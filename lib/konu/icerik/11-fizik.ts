@@ -12,8 +12,7 @@ import { kart, konu, program, tema } from '../tip'
  * sınıftan buraya taşındı; elektrikte Coulomb'dan transformatöre kadar
  * alan ve indüksiyon var.
  *
- * Sorular (turuncu kitaplar) henüz yazılmadı; destelerin ortasındaki hızlı
- * kontroller var.
+ * Konu sonu soruları ayrı dosyada tutulur; hızlı kontroller destelerin içindedir.
  */
 export const fizik11 = program('fizik', 11, 'Hareketten ışığın yoluna', [
   tema('fzk11-t1', 'Kuvvet ve Hareket', [

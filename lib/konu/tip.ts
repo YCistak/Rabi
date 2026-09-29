@@ -27,12 +27,7 @@ export type KonuDersId =
   | 'cografya'
   | 'ingilizce'
 
-/**
- * Programın kapsadığı sınıflar.
- *
- * 11. sınıfta tüm dersler yok: yazılmayanlar `programBul`dan `null` döner
- * ve harita "hazırlanıyor" der. İngilizce içerik yalnızca 11. sınıfta var.
- */
+/** Programın kapsadığı sınıflar; İngilizce içerik yalnızca 11. sınıfta var. */
 export type KonuSinifi = 9 | 10 | 11
 
 /**

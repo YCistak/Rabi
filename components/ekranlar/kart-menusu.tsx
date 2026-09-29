@@ -58,9 +58,11 @@ const BOLUMLER: { baslik: string; ipucu: string; kartlar: Ekran[] }[] = [
 export function KartMenusu({
   onKartAc,
   className,
+  istatistikHazir,
 }: {
   onKartAc: (ekran: Ekran) => void
   className?: string
+  istatistikHazir: boolean
 }) {
   // Bir bölüme yazılmamış kart sessizce kaybolmasın diye: `gezinme.ts`'e yeni
   // kart eklenip `BOLUMLER`'e işlenmezse hiç çizilmezdi.
@@ -71,7 +73,7 @@ export function KartMenusu({
     ...BOLUMLER.map(({ baslik, ipucu, kartlar }) => ({
       baslik,
       ipucu,
-      kartlar: kartlariBul(kartlar),
+      kartlar: kartlariBul(kartlar.filter((kart) => kart !== 'istatistik' || istatistikHazir)),
     })),
     ...(yersizler.length > 0 ? [{ baslik: 'Diğer', ipucu: '', kartlar: yersizler }] : []),
   ]

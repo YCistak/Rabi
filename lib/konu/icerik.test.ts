@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { KONU_DERSLERI, KONU_SINIFLARI, programBul, tumKonular } from './index'
+import { KONU_DERSLERI, KONU_SINIFLARI, programBul, sinifDersleri, tumKonular } from './index'
 import type { DersProgrami } from './tip'
 import { gorunenMetin, gorunenSatirlar, metniAyristir } from './kart-metni'
 import { desteAkisi } from './deste-akisi'
@@ -26,43 +26,45 @@ const METIN_SINIRI = 240
 const KART_TABANI = 6
 const KART_SINIRI = 16
 
-/**
- * 11. sınıfın yazılmış programları ayrı sayılıyor; İngilizce yalnızca 11'de var.
- * Beklenen programlar ayrı sayılıyor ki 9–10'da bir
- * program kaybolursa test bunu "yazılmamış" diye sessizce geçmesin.
- */
-const YAZILAN_11 = ['matematik', 'fizik', 'kimya', 'biyoloji', 'ingilizce']
-const beklenenMi = (sinif: number, ders: string) =>
-  sinif < 11 ? ders !== 'ingilizce' : YAZILAN_11.includes(ders)
-
-/**
- * Sayısal derslerin soru basamakları ana dalda henüz boş. İngilizce soruları
- * burada denetlenir; sayısal sorular ayrı bir dalda tamamlandığında aynı
- * denetimlere katılır.
- */
-
+// İngilizce yalnızca 11'de yazıldı; beklenen programlar eksikse testten süzülmez.
+const beklenenMi = (sinif: number, ders: string) => sinif === 11 || ders !== 'ingilizce'
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map(
     (ders) => [`${sinif}. sınıf ${ders.ad}`, programBul(ders.id, sinif)] as const,
   ),
 )
-const sorulu = programlar.filter(([, p]) =>
-  p !== null && (
-    p.sinif < 11 || p.ders === 'ingilizce' ||
-    p.temalar.every((t) => t.konular.every((k) => k.sorular.length > 0))
-  ),
-)
+const sorulu = programlar
 
 describe('programlar', () => {
+  it('9–10. sınıfta yedi, 11. sınıfta sekiz ders erişilebilir', () => {
+    for (const sinif of KONU_SINIFLARI) {
+      expect(sinifDersleri(sinif).map((ders) => ders.id)).toEqual(
+        KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map((ders) => ders.id),
+      )
+    }
+  })
+
+  it('9 ve 10. sınıfta İngilizce programı ve ders seçeneği yok', () => {
+    for (const sinif of [9, 10] as const) {
+      expect(programBul('ingilizce', sinif)).toBeNull()
+      expect(sinifDersleri(sinif).map((ders) => ders.id)).not.toContain('ingilizce')
+    }
+  })
+
+  it('11. sınıf eşit ağırlık konularının anlatımı ve soruları yeterli sayıda', () => {
+    for (const ders of ['turkce', 'tarih', 'cografya'] as const) {
+      const program = programBul(ders, 11)
+      expect(program).not.toBeNull()
+      for (const konu of tumKonular(program!)) {
+        expect(konu.kartlar.length, `${konu.id}: kart`).toBeGreaterThanOrEqual(10)
+        expect(konu.sorular.length, `${konu.id}: soru`).toBeGreaterThanOrEqual(11)
+      }
+    }
+  })
+
   it.each(programlar)('%s programı var', (_ad, program) => {
     expect(program).not.toBeNull()
     expect(program!.temalar.length).toBeGreaterThan(0)
-  })
-
-  it('beklenmeyen program yok', () => {
-    for (const sinif of KONU_SINIFLARI)
-      for (const ders of KONU_DERSLERI)
-        if (!beklenenMi(sinif, ders.id)) expect(programBul(ders.id, sinif)).toBeNull()
   })
 
   it.each(programlar)('%s: her temada konu, her konuda kart var', (_ad, program) => {
@@ -238,7 +240,7 @@ describe('kimlikler', () => {
     for (const sinif of KONU_SINIFLARI) {
       for (const ders of KONU_DERSLERI) {
         const program = programBul(ders.id, sinif)
-        if (program === null) continue
+        if (!program) continue
         expect(program.ders).toBe(ders.id)
         expect(program.sinif).toBe(sinif)
       }
@@ -357,6 +359,18 @@ describe('sorular', () => {
     expect(b).toBeGreaterThan(0.4)
     expect(b).toBeLessThan(0.6)
   })
+
+  it.each(sorulu.filter(([, program]) => program?.sinif === 11))('%s: cevaplar ders içinde dengeli', (_ad, program) => {
+    const sorular = tumKonular(program!).flatMap((konu) => konu.sorular)
+    const iddialar = sorular.filter((s) => s.tur !== 'sikli')
+    const sikliler = sorular.filter((s) => s.tur === 'sikli')
+    const dogruOrani = iddialar.filter((s) => s.dogru === true).length / iddialar.length
+    const bOrani = sikliler.filter((s) => s.dogru === 1).length / sikliler.length
+    expect(dogruOrani).toBeGreaterThan(0.4)
+    expect(dogruOrani).toBeLessThan(0.6)
+    expect(bOrani).toBeGreaterThan(0.4)
+    expect(bOrani).toBeLessThan(0.6)
+  })
 })
 
 /**
@@ -374,6 +388,13 @@ const SIK_SINIRI = 44
 const KONTROL_ACIKLAMA_SINIRI = 170
 
 describe('kart notu ve hızlı kontrol', () => {
+  it.each(programlar)('%s: yazılan kontroller destede görünür', (_ad, program) => {
+    for (const konu of tumKonular(program!)) {
+      const kontrolSayisi = desteAkisi(konu.kartlar.length, konu.kontroller)
+        .filter((adim) => adim.tur === 'kontrol').length
+      expect(kontrolSayisi, `${konu.ad}: ${konu.kartlar.length} kart, kontrol kartları ${konu.kontroller.map((k) => k.kart)}`).toBe(konu.kontroller.length)
+    }
+  })
   it.each(programlar)('%s: etiket ve not kısa', (_ad, program) => {
     for (const konu of tumKonular(program!)) {
       for (const kart of konu.kartlar) {

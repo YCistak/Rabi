@@ -87,8 +87,8 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   (`--background` #F8F8F7). Renk **derse** ait, oyuna değil, ve bir ders
   **her yerde aynı renkte**: konu haritası ile mini oyunlar aynı paleti
   okuyor, `--konu-<ders>` (Tailwind `bg-konu-turkce`, `text-konu-tarih-koyu`,
-  `bg-konu-kimya-ok`…). Matematik pembe, Türkçe hardal, Fizik çivit, Kimya
-  lavanta, Biyoloji yeşil, Tarih kahverengi, Coğrafya gök mavisi. Oyunlar bir
+  `bg-konu-kimya-ok`…). Matematik mavi, Türkçe/Edebiyat sarı, Fizik mor, Kimya
+  turuncu, Biyoloji yeşil, Tarih kahverengi, Coğrafya turkuaz. Oyunlar bir
   süre kendi ailelerindeydi ve Türkçe haritada hardal, oyunlarda pembeydi.
   Eski aileler (`yzm`, `isl`, `edb`, `cog`, `trh`, `byl`, `fzk`) duruyor ama
   artık ders kimliği değil, genel pastel: araç kutucukları, rozet kademeleri
@@ -1391,7 +1391,7 @@ tekrar çözmek hâlâ mümkün, ama o tur kaydı düşürmüyor. Havuzu süzen 
 
 Turun nasıl işleyeceğini **mod** belirliyor (`lib/oyunlar/mod.ts`).
 
-**Mod tur başlamadan seçiliyor** (`ModSecimi`, "Turu ayarla" penceresinde)
+**Mod tur başlamadan seçiliyor** (`ModSecimi`, tur ayarları ekranında)
 ve dördü de açık. Seçim bütün oyunlarda ortak ve saklanıyor
 (`ANAHTARLAR.oyunModu`): mod turun nasıl işleyeceğini söylüyor, oyunun ne
 sorduğunu değil — "Turbo sevdim" diyen kullanıcı bunu her oyunda yeniden
@@ -1421,15 +1421,12 @@ kez yanlış bilinmiş olanlar ve turun amacı hepsini bir kez daha görmek — 
 saatli bir mod o işi yarıda keser. Ayarlar adımı o turda hiç çıkmıyor
 (`secilebilir`): sunulup dinlenmeyen bir seçim, yalan söyleyen bir arayüzdür.
 
-**Seçim tam ekran bir adım değil, oyunun üstünde açılan bir pencere**
-(`AyarPenceresi`, `tasarim/oyun-modu-secimi.dc.html`): ayar turu değiştiriyor,
-oyunu değil, ve bulanık zeminin altında hangi oyuna girildiği görünüyor. Arkada
-soru **yok** — oyun ekranı tahtayı ancak `asama === 'oynaniyor'` olunca
-çiziyor, tanıtım aşamasında yalnızca kabuk duruyor. Pencere kendi içinde
-kayıyor: dört mod kutusu, zorluk şeridi ve Rahat'ın uyarı şeridi kısa
-telefonlarda taşıyor ve düğme ekranın dışında kalıyordu.
+**Seçim tam ekran açılıyor** (`TurAyariEkrani`): dört mod kısa satırlar,
+başlangıç zorluğu üç düğme olarak gösteriliyor. Geri ve Başlat sabit;
+aralarındaki seçim alanı kısa telefonlarda kayıyor. Oyun adı başlıkta,
+rekor varsa altında sade bir satırda duruyor.
 
-**Pencereden sonra tanıtım yok.** "Başlat" doğrudan 3 · 2 · 1 sayımını
+**Ayarlardan sonra tanıtım yok.** "Başlat" doğrudan 3 · 2 · 1 sayımını
 açıyor. Bir süre arada nasıl oynandığını anlatan tam ekran tanıtım vardı
 ("Devam" → kurallar → "Başla"); kullanıcı kaldırılmasını istedi — tura girmek
 iki ekran ve iki dokunuş sürüyordu. Kural kaybolmadı: tur sırasındaki "?"
@@ -1823,7 +1820,7 @@ yılın sonunda yarıda; bu kasıtlı — çubuğun sorusu "hazırlığın neres
 ## Ana sayfada günün hâli
 
 Soru hedefi kartının hemen altında bir kart daha var (`GununHali`,
-`components/ekranlar/ana-sayfa.tsx`): "bugün çalıştın mı" sorusuna Rabi'nin
+`components/gunun-hali-karti.tsx`): günlük çalışma durumuna Rabi'nin
 pozuyla cevap veriyor. Cümleyi ve pozu `lib/gunun-hali.ts` seçiyor — saf,
 `gunun-hali.test.ts` her kuralı ayrı denetliyor.
 
@@ -1857,17 +1854,12 @@ Ders adına **ek getirilmiyor** ("Kimya 9 gündür bekliyor", "Kimya'ya … " de
 ünlü uyumu ders adına göre değişiyor ve yanlış ek, yanlış bilgiden daha çok
 göze batıyor.
 
-Maskot 72 piksel, ayağının altında yumuşak bir zemin gölgesi var ve
-ayraca yakın duruyor (bir süre tam ortadaydı, kullanıcı sağa kaydırttı);
-yazıyla arasında soluk, kısa bir dikey ayraç var (`--border`, kartın
-kenarlarına değmiyor). Arkasına bir süre soluk bir leke kondu, kullanıcı geri
-aldı — tavşanı oturtan şey süs değil, yeri, gölgesi ve ayraç. Başlığın
-üstündeki küçük "BUGÜN" etiketi bir süre kaldırıldı, kullanıcı geri istedi.
-
-Sayının kendisi kartta **yazmıyor**: halka zaten sayıyı üç kez söylüyor ve
-kartın işi onu tekrar etmek değil, ona bir yüz vermek. Günlük hedef sıfırken
-kart çizilmiyor: ölçülecek bir eşik yokken "ulaştın" da "ulaşmadın" da
-anlamsız.
+Kartın üstünde “Günün hâli” etiketi ve başlık, sağda 64 piksellik maskot
+bulunur. Tavsiye altta tam genişlikte okunur; son satır açılacak ekranı
+adlandırır. Kartın tamamı aynı ekranı açar. Renkli maskot zemini ve gölge yok;
+ince kenar çizgisi kullanılır. Sınav gününde soru sayısından bağımsız olarak
+hazırlık ve dinlenme mesajı verilir. Kayıt bulunmaması “soru çözmedin” diye
+sunulmaz; serinin sürmesi için günlük hedefin tamamlanması gerekir.
 
 ## Ana sayfadaki dört kutucuk
 
@@ -1949,17 +1941,16 @@ Görev metni **düzenlenemiyor**, silinip yeniden yazılıyor: satır tek satır
 iş adı taşıyor ve yirmi dört karakteri düzeltmek, her satıra ikinci bir kalem
 düğmesi koymaktan hızlı.
 
-### Kayıt haftalık, geçmiş salt okunur
+### Kayıt yedi günlük şeritle kayar, geçmiş salt okunur
 
 Tahta **günlükti**, gün dönünce kâğıtlar siliniyordu; gerekçe "dün yazdığını
 bugün de gören kullanıcı biriken ve hiç bitmeyen bir listeye bakıyor" idi.
-Gerekçe duruyor ama hafta şeridi ileriye plan yazdırıyor, yani "bugün" tek başına
-yetmiyor. Kayıt bu yüzden **haftalık**: `haftaninGorevleri` içinde bulunulan
-haftanın pazartesisinden eskisini eliyor. Şerit zaten o haftayı gösteriyor, daha
-eskisine ulaşan bir yol yok — tutulsaydı görünmeyen bir birikim olurdu. Her
-pazartesi liste sıfırlanıyor, bitmemiş işler de gidiyor.
+Gerekçe duruyor ama yedi günlük şerit ileriye plan yazdırıyor, yani "bugün" tek
+başına yetmiyor. Bugün şeridin dördüncü günü; üç geçmiş ve üç gelecek gün
+görünüyor. `gorevleriTarihtenItibaren` bugünden üç günden eski kayıtları eliyor.
+Gelecek günlere yazılanlar hafta sınırında da korunuyor.
 
-Hafta dönümü zamanlayıcıyla değil **türetmeyle** yakalanıyor (`AppShell`):
+Gün dönümü zamanlayıcıyla değil **türetmeyle** yakalanıyor (`AppShell`):
 uygulama kapalıyken çalışmayan bir `setTimeout`'a güvenilmez. Elenen görevler bir
 etkiyle kayıttan da siliniyor, yoksa yedeğe girerlerdi.
 
@@ -1968,17 +1959,15 @@ orada hiç çizilmiyor. Dün yapılmamış işi bugün işaretlemek geçmişi d�
 olur — o iş yapılmadı, ve erteleme varken buna gerek de yok.
 
 Ay takvimi **yok**. Soru Takibi'nde var çünkü orada eski günlere bakmanın bir
-karşılığı var; burada kayıt bir haftadan eskisini tutmuyor, açılan takvim boş
+karşılığı var; burada eski kayıtlar üç gün sonra eleniyor, açılan takvim boş
 günler gösterirdi.
 
 ### Ekleme düğmesi her bölümde
 
 Tasarım `+` düğmesini yalnızca içinde bulunulan dilime koyuyor; o zaman dolu ama
 sırası geçmiş bir bölüme ikinci bir görev yazmanın yolu kalmıyor (boş bölümün
-kesikli düğmesi de yalnızca boşken çıkıyor). Düğme bu yüzden her bölümde;
-tasarımın vurgusu duruyor — şimdiki dilimin düğmesi dolu turuncu, ötekiler
-sessiz. Hangi dilimde olunduğu `simdikiDilim` ile saatten çıkıyor ve saat
-dışarıdan veriliyor, yoksa saf kalmazdı.
+kesikli düğmesi de yalnızca boşken çıkıyor). Düğme bu yüzden her bölümde ve
+üçünün rengi aynı.
 
 Erteleme görevi **ertesi güne, aynı dilime** taşıyor ve hedef dilim doluysa
 `gorevErtele` `null` dönüyor: sessizce yutulan bir erteleme, kullanıcıya işin
@@ -2053,20 +2042,21 @@ yazıyor (Kimya 9'da mol yok, Biyoloji 10'da kalıtım yok, Matematik 10'da
 polinom yok). Yeni bir konu eklemeden önce o yorumu oku: eski müfredattan
 hatırladığın bir başlık, bu programda başka sınıfta olabilir.
 
-İçerik `lib/konu/icerik/<sınıf>-<ders>.ts`. 9 ve 10. sınıfta yedi dersin
-yedisi, 11. sınıfta dördü (Matematik, Fizik, Kimya, Biyoloji) var; öteki üçü
-`programBul`dan `null` dönüyor ve harita "hazırlanıyor" diyor. Hangi
-programların beklendiği `icerik.test.ts`teki `YAZILAN_11` listesinde — yeni
-bir 11. sınıf dersi eklerken oraya da yaz, yoksa test "beklenmeyen program"
-der. Sekizinci bir ders eklemek `KonuDersId` ile birlikte yeni bir renk
-ailesi de gerektirir (Fizik'in `fzk` ailesi bu yüzden açıldı — oyunlarda
-Fizik yok).
+İçerik `lib/konu/icerik/<sınıf>-<ders>.ts`. 9, 10 ve 11. sınıfta yedi
+dersin tamamı var; 11. sınıfta ayrıca İngilizce var (sekiz tema, 17 konu).
+İngilizce 9–10'da henüz yazılmadı ve ders seçiminde gösterilmiyor.
+`icerik.test.ts` beklenen ders/sınıf çiftlerinin varlığını
+ve `sinifDersleri`nin tamamını gösterdiğini denetliyor; eksik programlar
+testten süzülmez. `sinifDersleri`, ileride kısmi bir sınıf eklenirse boş
+programları haritada gizlemeye devam eder. Sekizinci bir ders eklemek
+`KonuDersId` ile birlikte ders rengi tanımlamayı gerektirir.
 
-**11. sınıfın soru basamakları (turuncu kitaplar) henüz boş.** Kullanıcı önce
-anlatımın yazılmasını istedi; `sorular` dizisi `[]` ve soru testleri
-`SORUSUZ_SINIFLAR` ile o sınıfı atlıyor. Destenin ortasındaki hızlı kontroller
-ise yazılı. Sorular gelince 11'i o listeden çıkar; testler 9–10'daki denge ve
-sayı kurallarını 11'e de uygulamaya başlar.
+**11. sınıfın soru basamakları da hazır.** Matematik, Fizik, Kimya ve
+Biyoloji soruları ayrı `11-<ders>-sorular.ts` havuzlarından `sorulariBagla`
+ile bağlanıyor; İngilizce de dört parçalı soru havuzundan aynı işleve bağlanıyor.
+Edebiyat, Tarih ve Coğrafya soruları kendi içeriklerinde.
+Soru testleri bütün sınıflarda denge ve sayı kurallarını denetliyor.
+Destenin ortasındaki hızlı kontroller de bütün derslerde yazılı.
 
 ### Konu listesi yazılmıyor, çekiliyor
 
@@ -2190,12 +2180,9 @@ zıplıyor, okunan kartların adları listeleniyor) ve bir–iki **hızlı kontr
 (`bicim.murekkep`) — mockup Fizik'in mavisiyle çizildi, o mavi burada derse
 göre değişiyor.
 
-- **Yer rastgele, kenarlar yasak.** Ara ekran ilk iki ve son iki kartın
-  arasına girmiyor: ikinci karttan sonraki mola okuma başlamadan verilen bir
-  mola, son karttan önceki kontrol soru sahnesiyle üst üste biniyor. Yer
-  yoksa (üç kartlık deste) ara ekran hiç yok. Rastgelelik deste açılırken
-  bir kez atılıyor ve `Math.random` `desteAkisi`nin **dışından** geliyor —
-  test aynı yerleşimi görebilmeli.
+- **Sıra sabit.** Kısa destede kontrol → mola, uzun destede kontrol → mola →
+  kontrol gelir. İlk kontrol ve mola kenarlardan uzak durur. Son kontrolün
+  sorusu son karta dayanıyorsa kontrol o kart okunduktan sonra gelir.
 - **Ara ekranlar kart sayılmıyor.** `okunan` ve bölmeli çubuk yalnızca
   kartları sayıyor; Geri ara ekranı atlayıp bir önceki karta dönüyor.
 - **Kontrol sayısı kartla orantılı**: on karttan uzun destede iki, kısasında
@@ -2422,8 +2409,8 @@ derste yeniden öğretmek olurdu. Yeşil `--success`, turuncu `--primary-parlak`
 ayrı bir kitap paleti yok.
 
 **Derse ait olan iki şey var**: tema bandının rengi ve zemine serpilen
-simgeler (`lib/konu/harita-temasi.ts`). Matematik pembe ve kareköklü, Tarih
-kahverengi ve tüylü, Coğrafya gök mavisi ve pusulalı. Renkler
+simgeler (`lib/konu/harita-temasi.ts`). Matematik mavi ve kareköklü, Tarih
+kahverengi ve tüylü, Coğrafya turkuaz ve pusulalı. Renkler
 `globals.css`teki `--konu-<ders>-*` değişkenlerinde ve mini oyunlar da aynı
 değişkenleri okuyor: bir süre oyunların kendi aileleri vardı (`--isl`,
 `--trh`…) ve aynı ders iki ekranda iki renkteydi. Kart destesinin zemini de bu renkten
