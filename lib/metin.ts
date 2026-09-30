@@ -9,6 +9,13 @@
  * Saf ve React'ten bağımsız: bileşen yalnızca çıkan parçaları çiziyor.
  */
 
+/** OCR ders adlarında Türkçe büyük/küçük harf farkını birleştirir. */
+export function sadelestir(metin: string): string {
+  return metin.toLocaleLowerCase('tr').replace(/ı/g, 'i').replace(/ş/g, 's')
+    .replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ö/g, 'o').replace(/ç/g, 'c')
+    .replace(/â/g, 'a').replace(/\s+/g, ' ').trim()
+}
+
 export type MetinParcasi = { tur: 'duz' | 'kalin' | 'egik'; metin: string }
 
 /** Yıldızlı bölümleri ayırır; yıldız yoksa tek parça döner. */

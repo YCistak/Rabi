@@ -13,6 +13,7 @@ import { katsayiYaz, net, netYaz, sonucGecerliMi, yuvarla } from '@/lib/hesap'
 import { secilebilirSablonlar, toplamSoru } from '@/lib/sablonlar'
 import { bugun, cn, yeniId } from '@/lib/utils'
 import type { Deneme, PuanTuru, Sablon, YanlisSoru } from '@/lib/types'
+import { DenemeOkut } from '@/components/deneme-okut'
 
 type Giris = { dogru: string; yanlis: string }
 
@@ -223,6 +224,14 @@ export function YeniDenemeEkrani({
         </div>
       </div>
 
+      <DenemeOkut key={sablon.id} sablon={sablon} onAktar={(okunanlar) => {
+        setGirisler((onceki) => {
+          const yeni = { ...onceki }
+          for (const ders of okunanlar) yeni[ders.dersId] = { dogru: String(ders.dogru), yanlis: String(ders.yanlis) }
+          return yeni
+        })
+      }} />
+      <p className="mb-2 text-xs font-semibold text-muted-foreground">Elle gir</p>
       <Kart className="p-0">
         <div className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 border-b border-border px-3 py-2 text-xs font-medium text-muted-foreground">
           <span>Ders</span>
