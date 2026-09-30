@@ -66,3 +66,6 @@ reports/
 # Sürüm alma kılavuzu — makinedeki kuruluma özgü yollar ve JDK sürümleri
 # içeriyor, kişisel bir not defteri gibi tutuluyor.
 RELEASE.md
+public/ocr/ort*.mjs
+public/ocr/ort*.wasm
+public/ocr/okuma-iscisi.js
