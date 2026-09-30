@@ -727,6 +727,16 @@ export function AppShell() {
     }
   }, [geriGit])
 
+  // iOS'ta geri tuşu yok, soldan kaydırma var: hareketi yerli taraf tanıyıp
+  // (`ios/App/App/AnaDenetleyici.swift`) bu olayı gönderiyor. Android'den tek
+  // farkı gidecek yer kalmayınca uygulamanın kapanmaması — iOS'ta uygulama
+  // kendini kapatmaz, Apple bunu çökme gibi sayıyor.
+  useEffect(() => {
+    const dinle = () => void geriGit()
+    window.addEventListener('rabiGeri', dinle)
+    return () => window.removeEventListener('rabiGeri', dinle)
+  }, [geriGit])
+
   const denemeKaydet = useCallback(
     (deneme: Deneme) => {
       setDenemeler((onceki) => {

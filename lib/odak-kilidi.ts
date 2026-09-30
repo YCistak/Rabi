@@ -1,5 +1,5 @@
 import { registerPlugin } from '@capacitor/core'
-import { Capacitor } from '@capacitor/core'
+import { androidMu } from './platform'
 
 /** Kilitlenebilecek bir uygulama — liste yerli taraftan geliyor. */
 export type KilitlenebilirUygulama = {
@@ -110,7 +110,7 @@ const eklenti = registerPlugin<OdakKilidiEklentisi>('OdakKilidi', { web: () => s
 
 /** Özellik yalnızca Android'de var; çağrı yerlerinde tek tek sormamak için. */
 export function odakKilidiDesteklenir(): boolean {
-  return Capacitor.isNativePlatform()
+  return androidMu()
 }
 
 export async function odakDurumu(): Promise<OdakDurumu> {
