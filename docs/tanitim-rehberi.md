@@ -63,8 +63,10 @@ Capacitor aynı statik çıktıyı kullanır. Android geri tuşu etkin turu biti
 
 ## Geçiş ve oyun deneyimi
 
-Animasyon ayarları `/tanitim-deneyi` sayfasında canlı değiştirilir. Çerçeve çizimi, aydınlanma gecikmesi, aydınlanma süresi, balon geçişi, adım bekleme süresi ve karartma ayrı ayarlanır. Ayarlar `rabi_tur_animasyon_ayarlari` anahtarında saklanır; önizleme tamamlanma kayıtlarına dokunmaz. Varsayılan karartma önceki `--foreground` tonunu yüzde 64 opaklıkla kullanır. Kullanıcı hareket azaltmayı seçtiyse rehber geçişleri devre dışıdır.
+Animasyon ayarları `/tanitim-deneyi` sayfasında canlı değiştirilir. Çerçeve çizimi, aydınlanma gecikmesi, aydınlanma süresi, balon geçişi, adım bekleme süresi ve karartma ayrı ayarlanır. Ayarlar `rabi_tur_animasyon_ayarlari` anahtarında saklanır; önizleme tamamlanma kayıtlarına dokunmaz. Varsayılan karartma önceki `--foreground` tonunu yüzde 68 opaklıkla kullanır. Kullanıcı hareket azaltmayı seçtiyse rehber geçişleri devre dışıdır.
 
 Pomodoro’nun sayaç, ders ve ayar blokları tek çerçevede birlikte anlatılır; odak koruması ayrı kartta ve ayrı adımda gösterilir. Tarayıcıda da tanıtım satırı görünür, fakat cihaz izni istenmez veya koruma başlatılmaz.
 
 Tanıtım oyununun görünümü kopyalanmaz: gerçek oyun bileşeni kullanılır. Hazırlık ekranında seçenekler ve başlangıç zorluğu birlikte görünür. Geri sayımda rehber ve karartma tamamen kaldırılır. Ardından önce süre ve tur bilgileri açıklanır; sayaç bu sırada durur. Tanıtımın süresi 600 saniyedir. Oyun aşamasında balon kısa bir ipucuna dönüşür. Sonuç mevcut mini oyunun tam yerleşimini kullanır. Sonuçtan Geri denildiğinde oyun yeni bir deneme için sıfırlanır. Gerçek oyun modu, zorluk tercihi ve rekorlar değiştirilmez.
+
+Varsayılan süreler: adımlar arası bekleme 0 ms, çerçeve çizimi 700 ms, aydınlanma gecikmesi 450 ms, aydınlanma 550 ms, bilgi balonu geçişi 500 ms.
