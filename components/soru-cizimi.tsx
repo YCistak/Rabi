@@ -20,6 +20,7 @@ import {
   type Kutu,
   type Yakinlik,
 } from '@/lib/cizim'
+import { geriKaydirmayiKilitle } from '@/lib/geri-kaydirma'
 import { resimOku, resimSil, resimYaz } from '@/lib/resim-depo'
 import { cn } from '@/lib/utils'
 
@@ -62,6 +63,14 @@ export function useSoruCizimi(resimId: string, onKaydedildi: () => void) {
   const [yakinlik, setYakinlik] = useState<Yakinlik>(YAKINLIK_YOK)
   const [dogal, setDogal] = useState<{ genislik: number; yukseklik: number } | null>(null)
   const [gorunenGenislik, setGorunenGenislik] = useState(0)
+
+  // Çizerken iOS'un kenardan geri kaydırması yok sayılıyor: sol kenardan
+  // başlayan bir çizgi geri hareketi gibi tanınıp çizimi kapatıyordu
+  // (`lib/geri-kaydirma.ts` → `geriKaydirmayiKilitle`).
+  useEffect(() => {
+    if (!ciziyor) return
+    return geriKaydirmayiKilitle()
+  }, [ciziyor])
 
   // Soru değişince (karışık tekrarda sıradaki) çizim de onunki olmalı.
   useEffect(() => {

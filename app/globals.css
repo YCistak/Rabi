@@ -626,25 +626,6 @@ body {
     margin-left: -0.75px;
   }
 
-  /*
-    Kurulum bitince tavşanın başlığa uçuşu (components/acilis.tsx).
-    Varış değerleri açılıştakiyle aynı hesaptan çıkıyor; ikisi de ana sayfa
-    başlığındaki 58px'lik maskotun üstüne oturuyor.
-  */
-  .acilis-gecis {
-    display: block;
-    /* Kurulumun 110px'lik maskotundan ana sayfanın 58px'lik maskotuna.
-       Yatayda `acilis-inis` ile aynı hedef; dikeyde iki maskotun merkez farkı
-       sabit (20+8+31.4) − (32+59.58) = −32.2px, güvenli alan ikisinde de var
-       ve sadeleşiyor. */
-    --gecis-x: calc(max(0px, (100vw - 448px) / 2) + 47px - 50vw);
-    --gecis-y: -32.2px;
-    --gecis-olcek: 0.527;
-    animation: acilis-gecis 900ms cubic-bezier(0.45, 0, 0.2, 1) forwards;
-    /* `acilis-inis`teki gerekçe: katman uçuş başlamadan hazır olsun.
-       Bu geçiş 900 ms ve düşen ilk kareler burada daha da görünür. */
-    will-change: transform;
-  }
 
   /* --- Aylık özet (components/ekranlar/aylik-ozet.tsx) --- */
 
@@ -813,14 +794,6 @@ body {
   100% {
     opacity: 0;
     transform: translate(var(--dx), var(--dy)) scale(0.9) rotate(90deg);
-  }
-}
-
-@keyframes acilis-gecis {
-  0% { transform: translate(0, 0) scale(1); }
-  100% {
-    transform: translate(var(--gecis-x, -147px), var(--gecis-y, 0px))
-      scale(var(--gecis-olcek, 0.527));
   }
 }
 
@@ -1001,16 +974,6 @@ body {
   izlemeye devam ediyor.
 */
 @media (prefers-reduced-motion: reduce) {
-  /* Kurulum sonrası geçiş uçmuyor ama doğrudan varış noktasında duruyor:
-     yerinde kalsaydı ana sayfanın üstünde bir saniye boyunca kocaman bir
-     tavşan asılı kalırdı. Bu bir marka anı değil, ekranlar arası bir
-     hareket. */
-  .acilis-gecis {
-    animation: none;
-    transform: translate(var(--gecis-x), var(--gecis-y)) scale(var(--gecis-olcek));
-    /* Uçuş yok, duran bir dönüşüm var: katman tutmanın karşılığı da yok. */
-    will-change: auto;
-  }
   .acilis-girisi,
   .ozet-girisi,
   .ozet-pop,
@@ -2247,4 +2210,165 @@ body {
   :root[data-platform='ios'][data-gecis-yon='geri'] .sayfa-girisi {
     animation: none;
   }
+}
+
+/*
+  Camdan alt menü — yalnızca iOS (`components/bottom-nav.tsx`).
+
+  Instagram'ın iOS 26 çubuğu gibi: ekranın kenarına yapışık bir yüzey değil,
+  altta yüzen bir kapsül; arkasından geçen sayfa bulanık ve renkleri biraz
+  doygun görünüyor, üst kenarında ışığı yakalayan ince bir parlama var.
+  Android'de çizilmiyor: aynı bulanıklık orada ekran geçişini takıltıyordu
+  (bkz. bottom-nav.tsx).
+
+  Katmansız (layer dışında) yazıldı: menünün donuk hâli Tailwind sınıfları ve
+  utilities katmanındaki bir kural katmansız kuralı ezemiyor — burada
+  `!important`a gerek kalmıyor.
+
+  Renkler beyazın ve tema renklerinin saydam hâlleri; cam kendi rengini değil
+  arkasındakini taşır, bu yüzden ayrı bir palet yok. Gölgenin rengi
+  `--foreground`un sıcak kahvesi, zemindeki gölgelerle aynı aile.
+
+  Yerleşim: kapsülün üst kenarı eski menünün üst kenarının altında kalıyor;
+  menüye göre konumlanan yapışkan öğeler (Pomodoro'nun Başlat'ı, yanlış
+  bankasının düğmesi, yapılacakların bildirimi) bu yüzden kapsülle çakışmıyor.
+*/
+:root {
+  --cam-zemin-ust: rgba(255, 255, 255, 0.66);
+  --cam-zemin-alt: rgba(255, 255, 255, 0.44);
+  --cam-kenar: rgba(255, 255, 255, 0.75);
+  --cam-parlama: rgba(255, 255, 255, 0.95);
+  --cam-golge: rgba(58, 38, 28, 0.16);
+  --cam-mercek: rgba(255, 255, 255, 0.62);
+  /* Cam koyu bir yüzeyin üstüne gelince (`data-koyu`): beyaz pus azalıyor,
+     yazılar açığa dönüyor. Vurgu amberin açık hâli; koyu zeminde koyu amber
+     okunmuyor. */
+  --cam-zemin-ust-koyu: rgba(255, 255, 255, 0.16);
+  --cam-zemin-alt-koyu: rgba(255, 255, 255, 0.06);
+  --cam-yazi-koyu: rgba(255, 255, 255, 0.78);
+  --cam-vurgu-koyu: #ffc9ad;
+}
+
+:root[data-platform='ios'] .alt-menu {
+  /* Kenarlardan içeri çekilmiş, ortalanmış kapsül. */
+  left: 14px;
+  right: 14px;
+  margin-inline: auto;
+  max-width: 26rem;
+  /* Ana ekran çizgisinin hemen üstü: güvenli alanın tamamı kadar yukarı
+     kalksaydı kapsül ekranın ortasına doğru yüzer, başparmaktan uzaklaşırdı. */
+  bottom: max(10px, calc(var(--guvenli-alt) - 12px));
+  padding-bottom: 0;
+  border: 1px solid var(--cam-kenar);
+  border-radius: 999px;
+  /*
+    Camın rengi arkasındakinin tonu (`--cam-ton`, bottom-nav.tsx örnekliyor):
+    renkli bir kartın üstüne gelen kapsül o renge bürünüyor. Beyaz pus tonun
+    üstünde ayrı bir katman — ton tek başına camı düz bir renk levhasına
+    çevirirdi. Geçiş yavaş: kaydırırken renk sıçramasın, aksın.
+  */
+  background-color: rgb(var(--cam-ton, 255 255 255) / 0.38);
+  background-image: linear-gradient(180deg, var(--cam-zemin-ust), var(--cam-zemin-alt));
+  transition: background-color 450ms ease;
+  -webkit-backdrop-filter: blur(22px) saturate(185%);
+  backdrop-filter: blur(22px) saturate(185%);
+  box-shadow:
+    inset 0 1px 0 var(--cam-parlama),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.28),
+    0 12px 32px var(--cam-golge),
+    0 1px 3px rgba(58, 38, 28, 0.08);
+  overflow: hidden;
+}
+
+/* Sol üstten vuran yumuşak ışık: düz bir buzlu yüzeyi cama çeviren şey. */
+:root[data-platform='ios'] .alt-menu::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(120% 90% at 18% -20%, rgba(255, 255, 255, 0.55), transparent 55%),
+    radial-gradient(90% 70% at 100% 120%, rgba(255, 255, 255, 0.18), transparent 60%);
+  pointer-events: none;
+}
+
+:root[data-platform='ios'] .alt-menu[data-koyu='true'] {
+  background-image: linear-gradient(180deg, var(--cam-zemin-ust-koyu), var(--cam-zemin-alt-koyu));
+}
+:root[data-platform='ios'] .alt-menu[data-koyu='true'] button {
+  color: var(--cam-yazi-koyu);
+}
+:root[data-platform='ios'] .alt-menu[data-koyu='true'] button.text-primary {
+  color: var(--cam-vurgu-koyu);
+}
+
+:root[data-platform='ios'] .alt-menu > ul {
+  padding: 6px;
+  /* Yatay sürükleme sayfanın kaydırması sanılmasın (bottom-nav.tsx). */
+  touch-action: none;
+}
+
+:root[data-platform='ios'] .alt-menu button {
+  position: relative;
+  z-index: 1;
+  border-radius: 999px;
+  padding-block: 7px;
+  font-size: 10.5px;
+}
+
+/* Kayan mercek: beş eşit sütundan seçilenin arkasında duruyor. */
+.alt-menu-mercek {
+  display: none;
+}
+:root[data-platform='ios'] .alt-menu-mercek {
+  display: block;
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 6px;
+  width: calc((100% - 12px) / 5);
+  border-radius: 999px;
+  background: var(--cam-mercek);
+  box-shadow:
+    inset 0 1px 0 var(--cam-parlama),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 2px 8px rgba(58, 38, 28, 0.1);
+  /* Sürüklerken parmağın konumu (`--mercek-x`), değilse seçili sekme. */
+  transform: translateX(var(--mercek-x, calc(var(--sekme-sira, 0) * 100%)))
+    scale(var(--mercek-olcek, 1));
+  /* Hafif aşmalı eğri: mercek yerine oturmadan bir tık ileri gidip dönüyor,
+     sistemin kendi sekme çubuğundaki yay hissi. */
+  transition:
+    transform 420ms cubic-bezier(0.34, 1.36, 0.5, 1),
+    background-color 200ms ease;
+}
+/*
+  Sürüklerken mercek "kalkıyor": büyüyüp inceliyor, parmağı gecikmesiz
+  izliyor (geçiş yok — yay eğrisi parmağın gerisinde kalırdı). Bırakınca
+  yay eğrisiyle seçilen sekmeye oturuyor.
+*/
+:root[data-platform='ios'] .alt-menu[data-surukleniyor] .alt-menu-mercek {
+  --mercek-olcek: 1.12;
+  background-color: rgba(255, 255, 255, 0.4);
+  transition: background-color 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-platform='ios'] .alt-menu-mercek,
+  :root[data-platform='ios'] .alt-menu {
+    transition: none;
+  }
+}
+
+/*
+  iOS'ta kaydırma çubukları yok. Sayfanın kendi çubuğu yerli tarafta
+  kapatılıyor (`AnaDenetleyici.swift`); bu, iç kaydırma kutularınınki
+  (listeler, çekmeceler). Uygulama bir belge değil — konumu sayfa kendisi
+  söylüyor, sağda beliren çubuk yalnızca bir kıpırtı. Android'e dokunulmadı.
+*/
+:root[data-platform='ios'] * {
+  scrollbar-width: none;
+}
+:root[data-platform='ios'] *::-webkit-scrollbar {
+  display: none;
 }

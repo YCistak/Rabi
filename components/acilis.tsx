@@ -473,37 +473,40 @@ export function Acilis({ onBitti }: { onBitti: () => void }) {
    Kurulum sonrası geçiş
    =========================================================================== */
 
-/** Geçişin süresi (ms). `globals.css`'teki `acilis-gecis` ile aynı olmalı. */
-export const GECIS_SURESI = 900
+/**
+ * Kurulum bitince örtünün ekranda kalıp sönmeye başlamadan önceki süresi
+ * (ms). Ana sayfa bu sürede örtünün altında kuruluyor; örtü hemen sönseydi
+ * sayfanın ilk, yarım çizilmiş karesi görünürdü.
+ */
+export const GECIS_SURESI = 80
+
+/** Örtünün sönme süresi (ms); `KurulumGecisi`ndeki geçişle aynı. */
+export const GECIS_SOLMA_SURESI = 420
 
 /**
- * Kurulum bitince tavşanı yerine götüren katman.
+ * Kurulumdan ana sayfaya geçiş: zemin renginde bir örtü sönüyor.
  *
- * "Başlayalım"a basılınca kurulum ekranı kalkıp ana sayfa geliyor ve tavşan
- * bir anda sihirbazın tepesinden sayfa başlığının yanına ışınlanıyordu.
- * Açılıştaki hareketin aynısı: tavşan bulunduğu yerden başlığa uçuyor,
- * arkasında ana sayfa duruyor.
+ * Bir süre burada tavşan uçuyordu: "Hazırlanıyor" ekranından sonra kurulumun
+ * üst ortasında belirip ana sayfa başlığına süzülüyordu. Telefonda "tavşan bir
+ * anda ortaya ışınlanıp sol üste kayıyor" diye okundu — hazırlanıyor
+ * ekranında tavşan ortada değil, belirdiği yer ondan kopuktu — ve kullanıcı
+ * uçuş yerine solma istedi (iOS ve Android). Örtü ekranın zemin rengi
+ * (`ZEMIN`), yani geçiş bir renk sıçraması değil, kurulumun yumuşakça ana
+ * sayfaya dönüşmesi. Ana sayfanın maskotu bu sırada gizli değil: örtü
+ * sönerken yerinde beliriyor.
  *
- * Katman yalnız tavşanı çiziyor; ana sayfanın kendi maskotu bu sırada gizli
- * (`Rabi`nin `gizli` propu), yoksa varış noktasında iki tavşan olurdu.
+ * Açılış ekranının kendi uçuşu ayrı ve duruyor; bu karar onu kapsamıyor.
  */
-export function MaskotGecisi({ soluyor }: { soluyor: boolean }) {
+export function KurulumGecisi({ soluyor }: { soluyor: boolean }) {
   return (
     <div
-      className="pointer-events-none fixed inset-0 z-[60] overflow-hidden transition-opacity duration-300"
-      style={{ opacity: soluyor ? 0 : 1 }}
+      className="pointer-events-none fixed inset-0 z-[60]"
+      style={{
+        backgroundColor: ZEMIN,
+        opacity: soluyor ? 0 : 1,
+        transition: `opacity ${GECIS_SOLMA_SURESI}ms ease-out`,
+      }}
       aria-hidden
-    >
-      {/* Başlangıç noktası kurulum sihirbazının maskotuyla birebir aynı:
-          sayfanın üst boşluğu (2rem + güvenli alan), yatayda ortada, 110px. */}
-      <div
-        className="absolute inset-x-0 flex justify-center"
-        style={{ top: 'calc(2rem + var(--guvenli-ust))' }}
-      >
-        <span className="acilis-gecis">
-          <Rabi durum="mutlu" poz="kafa" boyut={110} />
-        </span>
-      </div>
-    </div>
+    />
   )
 }

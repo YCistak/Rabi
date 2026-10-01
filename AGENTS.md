@@ -147,6 +147,13 @@ tavşan ana sayfadaki maskotun tam üstüne konuyor, ikisi farklı boyutta (110'
 karşı 58) ama **aynı görseli** taşımak zorunda. Durumdan türeyen bir görsel,
 katman kalkarken tavşanı başka bir tavşana çevirirdi.
 
+**Kurulumdan ana sayfaya geçiş uçmuyor, soluyor** (`KurulumGecisi`,
+`acilis.tsx`). Tavşan bir süre "Hazırlanıyor" ekranından sonra kurulumun üst
+ortasında belirip ana sayfa başlığına süzülüyordu; telefonda "ortaya ışınlanıp
+sol üste kayıyor" diye okundu ve kullanıcı solma istedi. Zemin renginde bir
+örtü ana sayfanın üstünde kısa bir süre durup sönüyor. Açılış ekranının kendi
+uçuşu bu kararın dışında ve duruyor.
+
 **İki baş çekimi var: `yuz` ve `kafa`.** Tam boy pozlar 70 pikselin altında
 lekeye dönüşüyor (gövde, kollar ve tutulan nesne tek bir şey oluyor), o yüzden
 küçük yerlerde baş kullanılıyor: oyun başlıkları (26–54) `yuz`de, ana sayfanın
@@ -161,9 +168,8 @@ satırı. `kafa` ise kendi kaynağından ("kafası gözüken maskot") geliyor,
 kırpılmıyor ve yalnızca arayüzde kullanılıyor.
 
 **İniş yuvası ile uçan tavşan aynı pozda olmak zorunda.** Ana sayfanın
-selamlaması `kafa` olunca açılış ekranındaki uçan tavşan (`acilis.tsx`),
-kurulum sonrası geçiş (`MaskotGecisi`) ve kurulumun karşılama ekranındaki yuva
-da `kafa`ya geçti. Biri geride kalsaydı katman kalkarken tavşan başka bir
+selamlaması `kafa` olunca açılış ekranındaki uçan tavşan (`acilis.tsx`) ve
+kurulumun karşılama ekranındaki yuva da `kafa`ya geçti. Biri geride kalsaydı katman kalkarken tavşan başka bir
 tavşana dönüşürdü — yukarıdaki `durum`/`poz` kuralının aynı sebebi.
 
 `ikon-uret.mjs` yüzün tuvaldeki kutusunu **sabit sayılarla** biliyor.
@@ -1263,6 +1269,35 @@ sayfanın üstünde duruyor ve altındaki içerik her kıpırdadığında WebVie
 yeniden bulanıklaştırıyor. Görsel katkısı yoktu (zemin zaten %95 donuktu),
 bedeli takılan bir geçişti. Sayfanın üstünde duran yeni bir çubuk eklersen
 aynı soruyu sor.
+
+**iOS'ta menü camdan** ve bu kuralın tek istisnası. Kullanıcı Instagram'ın
+iOS 26 çubuğu gibi bir "liquid glass" istedi: kenarlardan içeri çekilmiş,
+altta yüzen bir kapsül; arkası bulanık ve doygun, seçili sekmenin arkasında
+sekmeden sekmeye kayan bir cam mercek (`alt-menu`, `alt-menu-mercek`,
+`globals.css` → "Camdan alt menü"). Takılma Android WebView'ın bedeliydi;
+WKWebView arkayı GPU'da bulanıklaştırıyor ve camdan çubuk iOS'un kendi dili.
+Android bu yüzden donuk kaldı — Android'e taşımadan önce orada ekran
+geçişini telefonda dene.
+
+**Kapsül sürükleniyor ve arkasının rengini alıyor** (App Store'un çubuğu
+gibi). Parmak kapsülde kayınca mercek parmağı izliyor, büyüyüp "kalkıyor",
+bırakılan sekme açılıyor; parmak altı pikseli geçmeden işaretçi yakalanmıyor,
+yoksa kısa dokunuşun `click`i hiç gelmezdi. Renk: kapsülün arkasındaki ilk
+dolu zemin örnekleniyor (`elementsFromPoint`, kaydırmada kare başına bir kez,
+ekran değişimi için seyrek bir zamanlayıcıyla) ve cam o tona bürünüyor; koyu
+bir zeminin üstünde yazılar açığa dönüyor (`data-koyu`). Hesaplar
+`lib/cam-menu.ts`te, saf ve testli. Seçili sekmeyi gösteren titreşim **yok**:
+kullanıcı titreşimi istemiyor (bkz. yoklama bileti).
+
+**iOS'ta kaydırma çubuğu yok.** Sayfanınki yerli tarafta
+(`showsVerticalScrollIndicator`, `AnaDenetleyici.swift`), iç kutularınki
+`globals.css`te kapalı. Android'e dokunulmadı.
+
+Platform `<html data-platform>`e yerleşim betiğinde (`layout.tsx`) yazılıyor,
+React beklenmiyor: menü ilk karede cam çizilmeli, yoksa bir kare donuk görünüp
+cama döner. `AppShell` aynı işareti yüklendikten sonra yeniden koyuyor; köprü
+geç kalırsa yedek o. Cam kuralları katman dışında yazılı, çünkü menünün donuk
+hâlini veren Tailwind sınıflarını ancak katmansız bir kural ezebiliyor.
 - **Tam ekran katmanlar `clip-path` ile yükseliyor**, `transform` ile değil —
   yukarıdaki ilk sebep. `sahne-iner` ile aynı yöntem, ters yönde: bu katmanlar
   alttan geliyor.
@@ -2340,16 +2375,16 @@ kullanır ve perde hiç oynamazdı.
   değil; haritadan doğrudan soruya giren kullanıcı bir şey okumadı ve
   "okundu" diyen bir bilet ona yalan söylerdi. Oradan sahne ilk soruyla
   açılıyor.
-- **Üç efekt, üçü de damgaya bağlı** (kullanıcı seçti): koçandaki sayılar
-  sıfırdan sayarak doluyor, damga basılırken kısa bir titreşim
-  (`lib/titresim.ts`, manifestte VIBRATE izni), ardından biletin üstünden
-  bir kez altın toz süzülüyor (`bilet-toz`). Damganın sesi de vardı (alçak
-  bir "tak", oyun sesleri anahtarına bağlı); kullanıcı kaldırdı, titreşim
-  tek başına yetiyor. Konfeti değil — konfeti oyunlardaki rekora ait.
-  Bileşendeki `DAMGA_MS`/`TOZ_MS`, `globals.css`teki damga ve basınç
-  gecikmeleriyle eşleşmeli; titreşim görüntüden önce gelirse neyi
-  doğruladığı anlaşılmıyor. `prefers-reduced-motion` altında sayılar dolu,
-  damga basılı, toz yok; titreşim hareket olmadığı için kalıyor.
+- **İki efekt, ikisi de damgaya bağlı:** koçandaki sayılar sıfırdan sayarak
+  doluyor, damga basılınca biletin üstünden bir kez altın toz süzülüyor
+  (`bilet-toz`). Damganın önce bir sesi (alçak bir "tak"), sonra bir
+  titreşimi vardı; kullanıcı ikisini de kaldırdı — titreşimi iOS ve
+  Android'de birden, `lib/titresim.ts` de onunla silindi. Geri getirmeden
+  önce sor. Konfeti değil — konfeti oyunlardaki rekora ait. Bileşendeki
+  `TOZ_MS`, `globals.css`teki basınç gecikmesiyle eşleşmeli.
+  `prefers-reduced-motion` altında sayılar dolu, damga basılı, toz yok.
+  Manifestteki VIBRATE izni duruyor: oyunlardaki dokunuş geri bildirimi
+  (`@capacitor/haptics`) ona bağlı.
 - **"Bu destede öğrendiklerin" alt sayfa**, biletin içinde liste değil: on
   altı kartlık konuda liste bileti taşırırdı.
 - **"Haritaya dön" düğme değil yazı.** Deste zaten okundu ve kaydı yazıldı;
@@ -2662,8 +2697,23 @@ aynı `geriGit`ten geçiyor. JS'te dokunuşla tanımak kaydırmayla yarışıyor
 sistemin kendi tanıyıcısı hareketi kaydırmadan ayırmayı biliyor. Gidecek yer
 kalmayınca uygulama kapanmıyor — iOS'ta uygulama kendini kapatmaz.
 
-**Titreşim iOS'ta Taptic Engine** (`@capacitor/haptics`): `navigator.vibrate`
-iOS'ta hiç yok. Android'deki titreşime dokunulmadı.
+**Çizerken kenardan kaydırma yok sayılıyor** (`geriKaydirmayiKilitle`,
+`lib/geri-kaydirma.ts`). Yanlış soru fotoğrafına sol kenardan başlayan bir
+çizgi geri hareketi olarak da tanınıyor ve çizimi kaydedip kapatıyordu.
+Tanımayı yerli tarafta kapatmak çözüm değil — parmak sayfaya da ulaşmalı,
+çizgi o — tanınan burada yok sayılıyor. Parmağın sayfayı kaydırdığı ya da
+sürüklediği yeni bir yüzey eklersen aynı kilidi kullan. Android'in geri tuşu
+kilide bakmıyor.
+
+**Ses sessiz tuşuna uymuyor** (`AppDelegate.swift`, ses oturumu `.playback`).
+WKWebView'ın sesi varsayılan olarak sessizde susuyordu; kullanıcı oyun
+seslerinin ve lo-fi'ın sessizde de çalmasını istedi. `.mixWithOthers` şart:
+o olmadan bir oyun efekti öğrencinin arkada dinlediği müziği keserdi. Sesleri
+susturmanın yolu Ayarlar'daki anahtarlar.
+
+**Bilet damgasında titreşim yok.** iOS'a bir süre Taptic Engine ile titreşim eklenmişti (bilet
+damgası); kullanıcı iki platformda da kaldırttı. Oyunlardaki doğru/yanlış
+dokunuşu (`@capacitor/haptics`) bu kararın dışında ve duruyor.
 
 **Windows'ta derlenmiyor.** Swift kodu ve Xcode projesi yalnızca CI'da
 (`.github/workflows/ios.yml`, macOS, imzasız simülatör derlemesi) deneniyor;

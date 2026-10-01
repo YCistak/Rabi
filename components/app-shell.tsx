@@ -60,7 +60,7 @@ import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { kullanildi } from '@/lib/son-kullanilan'
 import { useBugun } from '@/lib/gorunurluk'
 import { katmanVarMi, ustKatmaniKapat } from '@/lib/geri'
-import { Acilis, GECIS_SURESI, MaskotGecisi } from '@/components/acilis'
+import { Acilis, GECIS_SOLMA_SURESI, GECIS_SURESI, KurulumGecisi } from '@/components/acilis'
 import { Buton } from '@/components/ui'
 import { BottomNav } from '@/components/bottom-nav'
 import { Kurulum } from '@/components/kurulum'
@@ -352,7 +352,7 @@ function RabiUygulamasi() {
    * uçuyor → soluyor → yok. Ortadaki adım olmadan katman bir anda kalkıyor ve
    * varış noktasındaki tavşan zıplıyormuş gibi görünüyor.
    */
-  const [gecis, setGecis] = useState<'yok' | 'ucuyor' | 'soluyor'>('yok')
+  const [gecis, setGecis] = useState<'yok' | 'ortulu' | 'soluyor'>('yok')
   const [hedef, setHedef] = useYerelDepo<Hedef | null>(ANAHTARLAR.hedef, null)
   const [pomodoroAyarHam, setPomodoroAyar] = useYerelDepo<PomodoroAyar>(
     ANAHTARLAR.pomodoroAyar,
@@ -501,14 +501,14 @@ function RabiUygulamasi() {
   const acilisiKapat = useCallback(() => setAcilisBitti(true), [])
 
   useEffect(() => {
-    if (gecis !== 'ucuyor') return
+    if (gecis !== 'ortulu') return
     const solma = setTimeout(() => setGecis('soluyor'), GECIS_SURESI)
     return () => clearTimeout(solma)
   }, [gecis])
 
   useEffect(() => {
     if (gecis !== 'soluyor') return
-    const kaldirma = setTimeout(() => setGecis('yok'), 320)
+    const kaldirma = setTimeout(() => setGecis('yok'), GECIS_SOLMA_SURESI)
     return () => clearTimeout(kaldirma)
   }, [gecis])
 
@@ -817,12 +817,12 @@ function RabiUygulamasi() {
   const acilisKatmani = acilisGorunur ? <Acilis onBitti={acilisiKapat} /> : null
 
   /**
-   * Uçan tavşanın konacağı maskot bu sırada gizli: açılışta ve kurulum
-   * geçişinde varış noktasında zaten bir tavşan duruyor ve ikisi üst üste
-   * biniyordu. Uçuş bitip katman solmaya başlayınca gizlilik kalkıyor —
-   * ikisi tam olarak aynı yerde olduğu için değişim görünmüyor.
+   * Uçan tavşanın konacağı maskot açılış sürerken gizli: varış noktasında
+   * zaten bir tavşan duruyor ve ikisi üst üste biniyordu. Katman kalkınca
+   * gizlilik de kalkıyor — ikisi aynı yerde olduğu için değişim görünmüyor.
+   * Kurulum geçişi artık uçmuyor (`KurulumGecisi`), orada gizlemeye gerek yok.
    */
-  const maskotGizli = acilisGorunur || gecis === 'ucuyor'
+  const maskotGizli = acilisGorunur
 
   // Veri okunmadan ekran çizilirse "kayıt yok" bir an yanıp söner.
   const icerik = !ayarlarHazir ? (
@@ -843,8 +843,9 @@ function RabiUygulamasi() {
         // Bölüm adımı atlanabiliyor; atlandıysa hedef `null` geliyor ve
         // kayıtlı hedefe (varsa) dokunulmuyor.
         if (secilenHedef) setHedef(secilenHedef)
-        // Kurulum ekranı bu karede kalkıyor; tavşan yerine uçarak gidiyor.
-        setGecis('ucuyor')
+        // Kurulum ekranı bu karede kalkıyor; ana sayfa bir örtünün altında
+        // kurulup örtü sönüyor.
+        setGecis('ortulu')
       }}
     />
   ) : denemeFormu !== null ? (
@@ -1157,7 +1158,7 @@ function RabiUygulamasi() {
       {/* Şerit açılış bitip kurulum tamamlanınca: kurulumun ortasına inen bir
           "güncelle" şeridi, ilk açılışta kullanıcıya iki iş birden verirdi. */}
       {acilisBitti && ayarlar.kurulumTamamlandi && !tanitim.tanitimdaMi && <GuncellemeSeridi kol={guncelleme} />}
-      {gecis !== 'yok' && <MaskotGecisi soluyor={gecis === 'soluyor'} />}
+      {gecis !== 'yok' && <KurulumGecisi soluyor={gecis === 'soluyor'} />}
     </>
   )
 }
