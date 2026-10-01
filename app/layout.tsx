@@ -166,6 +166,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   }
   uygula();
   window.addEventListener('resize', uygula);
+  // Platform <html>e yazılıyor ki yalnızca bir platforma ait görünüm (iOS'ta
+  // camdan alt menü) ilk karede doğru çizilsin. Capacitor köprüsü belge
+  // başlarken enjekte ediliyor, burada hazır; React'i bekleseydik menü bir
+  // kare donuk görünüp cama dönerdi.
+  try {
+    var p = window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlatform();
+    if (p) document.documentElement.setAttribute('data-platform', p);
+  } catch (e) {}
 })();`,
           }}
         />
