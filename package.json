@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:izle": "vitest",
     "sync": "next build && cap sync android",
+    "sync:ios": "next build && cap sync ios && node scripts/ios-yol-duzelt.mjs",
     "apk": "npm run sync && cd android && ./gradlew assembleDebug",
     "aab": "npm run sync && cd android && ./gradlew bundleRelease",
     "apk:imzali": "npm run sync && cd android && ./gradlew assembleRelease -PtekAbi"
@@ -25,6 +26,7 @@
     "@capacitor/device": "^8.0.3",
     "@capacitor/filesystem": "^8.1.2",
     "@capacitor/haptics": "^8.0.2",
+    "@capacitor/ios": "^8.5.2",
     "@capacitor/local-notifications": "^8.3.0",
     "@capacitor/share": "^8.0.1",
     "clsx": "^2.1.1",

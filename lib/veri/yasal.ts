@@ -40,7 +40,9 @@ export const YASAL_BELGELER: YasalBelge[] = [
   {
     id: 'veri-ozeti',
     ad: 'Cihazından ne çıkıyor?',
-    ozet: 'İnternete giden üç şey ve üçü de sana sorularak gidiyor; bir de Play’in sürüm sorgusu',
+    // Platform adı geçmiyor: aynı satır iOS'ta da çiziliyor ve App Store
+    // uygulamanın içinde başka bir mağazanın adını kabul etmiyor (2.3.10).
+    ozet: 'İnternete ne gidiyor, ne zaman sana soruluyor',
     url: `${YASAL_SITE}veri-ozeti.html`,
   },
   {

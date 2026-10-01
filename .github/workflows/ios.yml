@@ -1,0 +1,57 @@
+name: iOS derlemesi
+
+# Depo Windows'ta geliştiriliyor ve iOS yalnızca Mac'te derlenebiliyor: Swift
+# kodu, Xcode projesi ya da Package.swift bozulduğunda bunu görmenin tek yolu
+# burası. İmzasız simülatör derlemesi; Apple hesabı istemiyor. TestFlight'a
+# yükleyen imzalı derleme hesap onaylanınca ayrı bir iş olarak eklenecek.
+#
+# Depo herkese açık olduğu için macOS makinesi ücretsiz.
+
+on:
+  pull_request:
+    paths:
+      - 'ios/**'
+      - 'capacitor.config.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/ios.yml'
+  workflow_dispatch:
+
+jobs:
+  simulator:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      # Capacitor 8 güncel Xcode istiyor; makinenin varsayılanı geride
+      # kalabiliyor.
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - run: npm ci
+
+      - name: Web'i statik olarak derle
+        run: npm run build
+
+      # Package.swift'i Mac'in yollarıyla yeniden yazıyor ve `public/`u
+      # dolduruyor (ikisi de depoda yok ya da Windows'tan geliyor).
+      - name: Capacitor senkronu
+        run: npx cap sync ios
+
+      - name: Simülatör için derle
+        run: |
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build

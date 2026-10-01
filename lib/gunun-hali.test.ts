@@ -106,7 +106,8 @@ describe('gununHali', () => {
       ...sakin,
       gunlukKayitlar: [gun('2026-09-05', ['Kimya', 10]), gun('2026-09-13', ['Mat', 10])],
     })!
-    expect(h.baslik).toBe('Kimya: 9 gündür kayıt yok')
+    expect(h.baslik).toMatch(/^Kimya dersi(ne|nde)? 9 gündür/)
+    expect(h.baslik).not.toContain(':')
     // 30 günden eski ders "bırakılmış", hatırlatılmıyor
     expect(
       gununHali({ ...sakin, gunlukKayitlar: [gun('2026-08-01', ['Kimya', 10])] })!.baslik,
@@ -142,6 +143,20 @@ describe('gununHali', () => {
   it('sıfır sorulu ders kaydı ders dağılımını değiştirmez', () => {
     const h = gununHali({ ...sakin, gunlukKayitlar: [gun(BUGUN, ['Matematik', 30], ['Fizik', 0])] })!
     expect(h.baslik).toBe('Bugün tek ders: Matematik')
+  })
+
+  it('birden çok öneri tutuyorsa günler arasında dönüyor', () => {
+    const girdi = {
+      ...sakin,
+      bekleyenYanlis: 3,
+      sonDenemeTarihi: '2026-08-01',
+      // Bugün ve ertesi gün de çalışılmış: banka kuralı çalışılmış gün ister.
+      gunlukKayitlar: [gun('2026-09-13', ['Mat', 10]), gun('2026-09-14', ['Mat', 10]), gun('2026-09-15', ['Mat', 10])],
+    }
+    const ekranlar = new Set(
+      ['2026-09-14', '2026-09-15'].map((bugun) => gununHali({ ...girdi, bugun })!.ekran),
+    )
+    expect(ekranlar.size).toBe(2)
   })
 
   it('aynı gün aynı cümle, ertesi gün değişebilir', () => {

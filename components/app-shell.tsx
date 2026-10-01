@@ -40,6 +40,8 @@ import { sablonlariBirlestir } from '@/lib/sablonlar'
 import { guncelTahmin, obpHesapla } from '@/lib/tahmin'
 import { istatistikYeterliMi } from '@/lib/istatistik'
 import { egitimYili, gunlukToplam, ilerlemisSinif } from '@/lib/hesap'
+import { iosMu } from '@/lib/platform'
+import { useGeriKaydirma } from '@/lib/geri-kaydirma'
 import { bildirilecekler, rozetDurumu, yeniRozetler, type Rozet } from '@/lib/rozetler'
 import { hatirlatmaIptal, hatirlatmaPlanla, pomodoroIptal } from '@/lib/bildirim'
 import { odakKilidiniBitir } from '@/lib/odak-kilidi'
@@ -57,7 +59,7 @@ import type { KonuDersId, KonuSinifi } from '@/lib/konu'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { kullanildi } from '@/lib/son-kullanilan'
 import { useBugun } from '@/lib/gorunurluk'
-import { ustKatmaniKapat } from '@/lib/geri'
+import { katmanVarMi, ustKatmaniKapat } from '@/lib/geri'
 import { Acilis, GECIS_SURESI, MaskotGecisi } from '@/components/acilis'
 import { Buton } from '@/components/ui'
 import { BottomNav } from '@/components/bottom-nav'
@@ -770,6 +772,24 @@ function RabiUygulamasi() {
     }
   }, [geriGit])
 
+  // iOS'ta geri tuşu yok, soldan kaydırma var: hareketi yerli taraf tanıyıp
+  // (`ios/App/App/AnaDenetleyici.swift`) hem parmak hareket ederken hem
+  // bırakılınca buraya haber veriyor; sayfa parmağı izleyip kayarak çıkıyor
+  // (`lib/geri-kaydirma.ts`). Android'den tek farkı gidecek yer kalmayınca
+  // uygulamanın kapanmaması — iOS'ta uygulama kendini kapatmaz, Apple bunu
+  // çökme gibi sayıyor. Android'de kanca hiçbir şey yapmaz.
+  useEffect(() => {
+    // Yalnızca iOS'ta alt ekranlar sağdan kayarak açılıyor (globals.css).
+    if (iosMu()) document.documentElement.dataset.platform = 'ios'
+  }, [])
+
+  useGeriKaydirma(
+    // Sürüklenebilir: gidilecek yer var ve açık bir katman/tam ekran test yok.
+    // Katman açıksa sayfa kaymaz; bırakılınca geri tuşu gibi onu kapatır.
+    () => !katmanVarMi() && genelTest === null && (denemeFormu !== null || ekran !== null || sekme !== 'ana'),
+    () => void geriGit(),
+  )
+
   const denemeKaydet = useCallback(
     (deneme: Deneme) => {
       setDenemeler((onceki) => {
@@ -862,7 +882,12 @@ function RabiUygulamasi() {
         giriş animasyonu her seferinde baştan oynuyor — sınıf tek başına verilse
         React aynı düğümü koruduğu için animasyon yalnızca ilk açılışta çalışırdı.
       */}
-      <SayfaGecisi key={ekran ?? `sekme:${sekme}`} yavas={tanitim.tanitimdaMi || tanitim.kapanisSuruyor} sure={tanitim.animasyon.gecisMs}>
+      <SayfaGecisi
+        key={ekran ?? `sekme:${sekme}`}
+        ileri={ekran !== null}
+        yavas={tanitim.tanitimdaMi || tanitim.kapanisSuruyor}
+        sure={tanitim.animasyon.gecisMs}
+      >
         {ekran !== null ? (
           <>
             <Buton
@@ -1154,7 +1179,17 @@ function RabiUygulamasi() {
  * duraklatılmış kalan ekran (opaklığı 0'da donmuş) hiç görünmezdi. Açılış
  * ekranındaki `acilis-bekliyor` ile aynı kural, aynı gerekçe.
  */
-function SayfaGecisi({ children, yavas = false, sure = 500 }: { children: React.ReactNode; yavas?: boolean; sure?: number }) {
+function SayfaGecisi({
+  children,
+  ileri = false,
+  yavas = false,
+  sure = 500,
+}: {
+  children: React.ReactNode
+  ileri?: boolean
+  yavas?: boolean
+  sure?: number
+}) {
   const [basladi, setBasladi] = useState(false)
 
   useEffect(() => {
@@ -1171,7 +1206,11 @@ function SayfaGecisi({ children, yavas = false, sure = 500 }: { children: React.
   }, [])
 
   return (
-    <div className={cn('sayfa-girisi', !basladi && 'sayfa-bekliyor')} style={yavas ? { animationDuration: `${sure}ms` } : undefined}>
+    <div
+      data-geri-sayfa
+      className={cn('sayfa-girisi', ileri && 'sayfa-ileri', !basladi && 'sayfa-bekliyor')}
+      style={yavas ? { animationDuration: `${sure}ms` } : undefined}
+    >
       {children}
     </div>
   )

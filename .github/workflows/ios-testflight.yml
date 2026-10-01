@@ -1,0 +1,142 @@
+name: iOS'u TestFlight'a yükle
+
+# Android'deki `v*` etiketi iOS'u da yayına hazırlıyor: aynı etiket, aynı
+# derleme. TestFlight'a düşen derleme herkese açık değil; mağazaya ancak App
+# Store Connect'ten elle incelemeye gönderilince çıkıyor.
+#
+# İmza elle yönetilmiyor: sertifika ve provisioning profili Apple'ın bulut
+# imzalaması API anahtarıyla kendisi üretiyor (`-allowProvisioningUpdates`).
+# `.p12` taşımak her yıl süresi dolan bir dosyayı secret'ta güncel tutmak
+# demekti. Bunun bedeli anahtarın Admin yetkisinde olması.
+#
+# Gereken secret'lar:
+#   APP_STORE_CONNECT_KEY        .p8 dosyasının içeriği (BEGIN/END satırları dahil)
+#   APP_STORE_CONNECT_KEY_ID     anahtarın 10 haneli kimliği
+#   APP_STORE_CONNECT_ISSUER_ID  App Store Connect › Users and Access › Integrations
+#   APPLE_TEAM_ID                developer.apple.com › Membership, 10 hane
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  testflight:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - run: npm ci
+
+      - name: Tip kontrolü
+        run: npm run typecheck
+
+      - name: Birim testler
+        run: npm test
+
+      - name: Web'i statik olarak derle
+        run: npm run build
+
+      - name: Capacitor senkronu
+        run: npx cap sync ios
+
+      # Sürüm tek yerde yazılı: Android'in build.gradle'ı. iOS ondan okuyor,
+      # yoksa iki mağazada aynı derleme iki ayrı numarayla dolaşırdı.
+      #
+      # Derleme numarası `versionCode.çalıştırma` — App Store aynı numarayı
+      # ikinci kez kabul etmiyor ve yarıda kalan bir yüklemeyi aynı etiketle
+      # yeniden denemek, yalnızca versionCode olsaydı reddedilirdi.
+      - name: Sürümü oku
+        id: surum
+        run: |
+          ad=$(sed -nE 's/^[[:space:]]*versionName "([^"]+)".*/\1/p' android/app/build.gradle)
+          kod=$(sed -nE 's/^[[:space:]]*versionCode ([0-9]+).*/\1/p' android/app/build.gradle)
+          if [ -z "$ad" ] || [ -z "$kod" ]; then
+            echo "::error::build.gradle'dan sürüm okunamadı"; exit 1
+          fi
+          echo "ad=$ad" >> "$GITHUB_OUTPUT"
+          echo "numara=$kod.$GITHUB_RUN_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "Sürüm $ad ($kod.$GITHUB_RUN_NUMBER)"
+
+      # Secret adım `if`inde okunamıyor, denetim betikte. Eksikse burada dur:
+      # yoksa hata yirmi dakikalık derlemenin sonunda, imzada çıkar.
+      - name: API anahtarını yaz
+        env:
+          ANAHTAR: ${{ secrets.APP_STORE_CONNECT_KEY }}
+          ANAHTAR_KIMLIGI: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          YAYINCI: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          EKIP: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          for ad in ANAHTAR ANAHTAR_KIMLIGI YAYINCI EKIP; do
+            if [ -z "${!ad}" ]; then echo "::error::$ad secret'ı eksik"; exit 1; fi
+          done
+          printf '%s\n' "$ANAHTAR" > "$RUNNER_TEMP/AuthKey.p8"
+
+      # Arşiv **imzasız** alınıyor, imzayı aşağıdaki dışa aktarma atıyor.
+      #
+      # İki yol denendi ve ikisi de burada düştü:
+      # - Otomatik imza arşivi geliştirme imzasıyla alıyor ve geliştirme profili
+      #   hesapta kayıtlı bir cihaz istiyor ("Your team has no devices").
+      # - Kimliği komut satırından "Apple Distribution" yapmak her hedefe
+      #   uygulanıyor; SPM'in eklenti paketleri (IONCameraLib) otomatik imzada
+      #   kaldığı için Xcode "conflicting provisioning settings" diyor.
+      # Dışa aktarma ise App Store profilini kendisi üretiyor ve o profil cihaz
+      # istemiyor.
+      - name: Arşivle
+        env:
+          EKIP: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          xcodebuild archive \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/Rabi.xcarchive" \
+            DEVELOPMENT_TEAM="$EKIP" \
+            CODE_SIGNING_ALLOWED=NO \
+            MARKETING_VERSION="${{ steps.surum.outputs.ad }}" \
+            CURRENT_PROJECT_VERSION="${{ steps.surum.outputs.numara }}"
+
+      # `destination: upload` dışa aktarmayı App Store Connect'e yüklemeye
+      # çeviriyor; ayrı bir altool/Transporter adımı gerekmiyor.
+      - name: TestFlight'a yükle
+        env:
+          ANAHTAR_KIMLIGI: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          YAYINCI: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          EKIP: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$EKIP</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict>
+          </plist>
+          PLIST
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/Rabi.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -exportPath "$RUNNER_TEMP/cikti" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$RUNNER_TEMP/AuthKey.p8" \
+            -authenticationKeyID "$ANAHTAR_KIMLIGI" \
+            -authenticationKeyIssuerID "$YAYINCI"
+
+      - name: Anahtarı sil
+        if: always()
+        run: rm -f "$RUNNER_TEMP/AuthKey.p8"

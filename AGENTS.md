@@ -37,8 +37,9 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
     kuralda: kural yalnızca `create`e izin veriyor, alan adları ve boyları
     sayılı (`PLANNED.md` → "Firestore kuralları"). Bu istisnayı bu iki kayıt
     türünün ötesine genişletme; alan eklersen kural, ekrandaki liste,
-    `public/gizlilik/index.html`, `public/gizlilik/veri-ozeti.html` ve Play'in
-    Data Safety beyanı birlikte değişmeli.
+    `public/gizlilik/index.html`, `public/gizlilik/veri-ozeti.html`, Play'in
+    Data Safety beyanı, `ios/App/App/PrivacyInfo.xcprivacy` ve App Store
+    Connect'teki App Privacy beyanı birlikte değişmeli.
   - **İkinci istisna: çökme raporları.** WebView uygulamasında çökmenin sebebi
     çoğu zaman uygulamanın kendi kodu değil, cihazdaki Android System WebView
     sürümü oluyor; bunu kullanıcıdan öğrenmenin yolu yok. Firebase Crashlytics
@@ -94,10 +95,11 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   artık ders kimliği değil, genel pastel: araç kutucukları, rozet kademeleri
   ve harita göstergeleri (deniz, kara).
   Kart yüzeyi `golge-kart` sınıfıyla: beyaz kart, sıcak gölge.
-- Zemin rengi üç yerde birden yazılı ve **birlikte** değişmeli:
-  `--background` (globals.css), `acilis.tsx`'teki `ZEMIN` ve Android'in
-  `acilis_zemin` / `uygulama_zemin` renkleri. Ayrılırlarsa açılışta renk
-  sıçraması olur.
+- Zemin rengi dört yerde birden yazılı ve **birlikte** değişmeli:
+  `--background` (globals.css), `acilis.tsx`'teki `ZEMIN`, Android'in
+  `acilis_zemin` / `uygulama_zemin` renkleri ve iOS'un
+  `LaunchScreen.storyboard` + `capacitor.config.ts` → `ios.backgroundColor`.
+  Ayrılırlarsa açılışta renk sıçraması olur.
 - Yazı tipi tek: **Nunito**. İki istisna var, ikisi de tek bir başlık:
   açılış ekranındaki "RABİ" **Outfit** (`font-acilis`, tasarım 2a o
   wordmark'ı Outfit 800 ile çizdi ve 52 pikselde Nunito'nun yuvarlak uçları
@@ -1854,12 +1856,21 @@ Ders adına **ek getirilmiyor** ("Kimya 9 gündür bekliyor", "Kimya'ya … " de
 ünlü uyumu ders adına göre değişiyor ve yanlış ek, yanlış bilgiden daha çok
 göze batıyor.
 
-Kartın üstünde “Günün hâli” etiketi ve başlık, sağda 64 piksellik maskot
-bulunur. Tavsiye altta tam genişlikte okunur; son satır açılacak ekranı
-adlandırır. Kartın tamamı aynı ekranı açar. Renkli maskot zemini ve gölge yok;
-ince kenar çizgisi kullanılır. Sınav gününde soru sayısından bağımsız olarak
-hazırlık ve dinlenme mesajı verilir. Kayıt bulunmaması “soru çözmedin” diye
-sunulmaz; serinin sürmesi için günlük hedefin tamamlanması gerekir.
+Maskot 72 piksel, ayağının altında yumuşak bir zemin gölgesi var ve
+ayraca yakın duruyor (bir süre tam ortadaydı, kullanıcı sağa kaydırttı);
+yazıyla arasında soluk, kısa bir dikey ayraç var (`--border`, kartın
+kenarlarına değmiyor). Arkasına bir süre soluk bir leke kondu, kullanıcı geri
+aldı — tavşanı oturtan şey süs değil, yeri, gölgesi ve ayraç. Başlığın
+üstünde küçük bir "BUGÜN" etiketi var. Kart `golge-kart` ile çizgisiz beyaz;
+bir süre kenar çizgili, altında "…aç" satırı olan bir düzen denendi ve
+kullanıcı eskisine döndürdü.
+
+Sayının kendisi kartta **yazmıyor**: halka zaten sayıyı üç kez söylüyor ve
+kartın işi onu tekrar etmek değil, ona bir yüz vermek. Günlük hedef sıfırken
+kart çizilmiyor: ölçülecek bir eşik yokken "ulaştın" da "ulaşmadın" da
+anlamsız. Sınav gününde soru sayısından bağımsız olarak hazırlık ve dinlenme
+mesajı verilir. Kayıt bulunmaması “soru çözmedin” diye sunulmaz; serinin
+sürmesi için günlük hedefin tamamlanması gerekir.
 
 ## Ana sayfadaki dört kutucuk
 
@@ -2608,6 +2619,88 @@ değil.
 
 Puan ve sıralama hesabı **tahmindir** ve arayüzde her zaman böyle sunulur. Tahmini
 kesin sayı gibi gösteren bir arayüz yazma; uyarıyı kapatılabilir yapma.
+
+## iOS aynı kabuk, eksik parçalarla
+
+iOS sürümü ayrı bir uygulama değil: aynı statik derleme Capacitor'ın iOS
+kabuğunda (`ios/`) çalışıyor. Mimariyi değiştirmek (React Native, Swift)
+tartışıldı ve reddedildi — App Store WebView'i değil, bir web sitesini
+paketlemekten ibaret uygulamayı reddediyor (4.2) ve Rabi'nin kodu da içeriği
+de paketin içinde, çevrimdışı çalışıyor. Yeniden yazım aylar, `lib/` ise
+olduğu gibi taşınıyor.
+
+**Platform `isNativePlatform()` ile sorulmaz.** O iOS'ta da `true` dönüyor ve
+yalnızca Android'de yazılmış eklentiler (odak kilidi, Play güncellemesi, çökme
+raporu) iOS'ta "UNIMPLEMENTED" ile reddediliyor; çağrılar yutulduğu için
+çökme yok ama arayüz, çalışmayan bir özelliği çiziyordu. Özellik varsa
+`androidMu()` / `iosMu()` (`lib/platform.ts`) ile soruluyor. Yeni bir yerli
+eklenti yazarsan iki platformdan hangisinde var olduğunu oradan söyle.
+
+iOS'ta **olmayanlar** ve sebepleri:
+
+- **Odak kilidi, Rahatsız Etme, ses odağı.** iOS başka uygulamanın üstüne
+  katman çizmeye ve önde hangi uygulama olduğunu okumaya izin vermiyor.
+  Karşılığı Screen Time API'si (FamilyControls) ve Apple'dan ayrı yetki
+  istiyor.
+- **Kilit ekranındaki sayaç.** Ön plan servisi yok; karşılığı Live
+  Activity (ActivityKit + widget eklentisi). Tur sonu bildirimi planlı yerel
+  bildirimle geliyor ve sayaç mutlak zamandan okunduğu için uygulama
+  arkadayken de doğru kalıyor.
+- **Play güncellemesi.** Güncellemeyi App Store dağıtıyor.
+- **Çökme raporu.** Crashlytics'in iOS köprüsü henüz yazılmadı; o gelene kadar
+  soru iOS'ta hiç çıkmıyor.
+
+**Uygulamanın içinde başka platform adı geçmez.** App Store 2.3.10 başka bir
+mobil platformun ya da mağazanın adını kabul etmiyor. "Android", "Play" diyen
+metin ya yalnızca Android'de çizilen bir ekranda durmalı ya da platform adı
+olmadan yazılmalı.
+
+**Geri hareketi yerli tarafta tanınıyor.** iOS'ta geri tuşu yok; soldan
+kaydırma `AnaDenetleyici.swift`te `UIScreenEdgePanGestureRecognizer` ile
+yakalanıp `rabiGeri` olayıyla `AppShell`e geçiyor ve Android'in geri tuşuyla
+aynı `geriGit`ten geçiyor. JS'te dokunuşla tanımak kaydırmayla yarışıyordu;
+sistemin kendi tanıyıcısı hareketi kaydırmadan ayırmayı biliyor. Gidecek yer
+kalmayınca uygulama kapanmıyor — iOS'ta uygulama kendini kapatmaz.
+
+**Titreşim iOS'ta Taptic Engine** (`@capacitor/haptics`): `navigator.vibrate`
+iOS'ta hiç yok. Android'deki titreşime dokunulmadı.
+
+**Windows'ta derlenmiyor.** Swift kodu ve Xcode projesi yalnızca CI'da
+(`.github/workflows/ios.yml`, macOS, imzasız simülatör derlemesi) deneniyor;
+`ios/` altına dokunan her PR onu çalıştırıyor. `cap sync ios` Windows'ta
+Package.swift'e ters eğik çizgili yollar yazıyor ve macOS o yolları
+bulamıyor; `npm run sync:ios` arkasından `scripts/ios-yol-duzelt.mjs`i
+çalıştırıyor.
+
+iPhone + iPad (`TARGETED_DEVICE_FAMILY = "1,2"`). Eskiden `1` idi ve iPad'de
+uygulama iPhone uyumluluk kipinde, telefon boyutunda dar bir pencerede (köşede
+yeniden boyutlandırma tutamacıyla) açılıyordu. Şimdi iPad'de tam pencere:
+düzen Android tabletle aynı yolu izliyor — `max-w-md` sütun + `app/layout.tsx`
+betiğinin `--olcek` ile yaptığı `zoom`; ayrıca bir `max-width` konmadı.
+`UIRequiresFullScreen` **yok**: iPad'de Split View / Stage Manager'ın çalışması
+için dört yön de açık (`Info.plist`, `UISupportedInterfaceOrientations~ipad`)
+ve Apple bu anahtarı kullanımdan kaldırıyor. iPhone yalnızca dikey.
+
+**Geri kaydırma parmağı izliyor.** Yerli taraf hareketi tanırken
+(`.began/.changed/.ended`) `window.rabiGeriKaydirma`yı çağırıyor
+(`lib/geri-kaydirma.ts`); ekran içeriği (`[data-geri-sayfa]`) parmakla kayıyor,
+bırakılınca dışarı çıkıp `geriGit`i çağırıyor ya da yerine dönüyor. Alt
+ekranlar iOS'ta sağdan kayarak açılıyor (`data-platform="ios"`, globals.css);
+Android'in aşağıdan gelen geçişi aynı.
+
+İkon `ikon-uret.mjs`ten geliyor (`AppIcon-512@2x.png`, 1024): köşesiz ve
+**alfa kanalı atılmış** — App Store saydamlık taşıyan ikonu yüklemede
+reddediyor.
+
+**Yayın Android'le aynı etiketle.** `v*` etiketi `ios-testflight.yml`i de
+tetikliyor ve derleme TestFlight'a düşüyor; mağazaya çıkması App Store
+Connect'ten elle incelemeye göndermekle oluyor. Sürüm iOS projesine yazılmıyor,
+`android/app/build.gradle`dan okunuyor (`versionName` → sürüm, `versionCode` →
+derleme numarasının başı): iki mağazada aynı derleme aynı numarayı taşımalı.
+Derleme numarasının sonundaki çalıştırma sayısı, App Store'un aynı numarayı
+ikinci kez reddetmesi yüzünden — yarıda kalan yükleme aynı etiketle yeniden
+denenebilsin. İmza Apple'ın bulut imzalaması (Admin yetkili API anahtarı); depoda
+sertifika ya da profil yok.
 
 ## Derleme
 
