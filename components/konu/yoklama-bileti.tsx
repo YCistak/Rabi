@@ -5,7 +5,6 @@ import { ArrowRight, Check } from 'lucide-react'
 import type { Konu } from '@/lib/konu'
 import { yoklamaDakikasi } from '@/lib/konu'
 import { useGeriKatmani } from '@/lib/geri'
-import { titret } from '@/lib/titresim'
 import { Buton } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { Rabi } from '@/components/maskot/rabi'
@@ -66,15 +65,14 @@ import { Rabi } from '@/components/maskot/rabi'
  * kırpılarak) burada da çekiliyor. Bayrak (`cikiyor`) üst bileşenden geliyor
  * — sökme kararını o veriyor ve süreyi o bekliyor (`SoruSahnesi`).
  *
- * **Üç efekt, üçü de damgaya bağlı** (kullanıcı seçti): koçandaki sayılar
- * sıfırdan sayarak doluyor (`useSayac`, halkayla aynı anda), damga basılınca
- * kısa bir titreşim geliyor (`titret`), hemen ardından biletin üstünden bir
- * kez altın toz süzülüyor (`Toz`). Zamanlar `globals.css`teki damga
- * gecikmesiyle **eşleşmeli** (`DAMGA_MS`); titreşim görüntüden önce gelirse
- * neyi doğruladığı anlaşılmıyor. Damganın bir de sesi vardı (alçak bir
- * "tak"); kullanıcı kaldırdı — titreşim tek başına yetiyor. Konfeti yok — o
+ * **İki efekt, ikisi de damgaya bağlı:** koçandaki sayılar sıfırdan sayarak
+ * doluyor (`useSayac`, halkayla aynı anda), damga basılınca biletin üstünden
+ * bir kez altın toz süzülüyor (`Toz`). Toz `globals.css`teki damga
+ * gecikmesinden sonra gelmeli (`TOZ_MS`). Damganın bir sesi, sonra bir
+ * titreşimi vardı; kullanıcı ikisini de kaldırdı (titreşimi iOS ve Android'de
+ * birden) — bilet bir kutlama değil, destenin sonu. Konfeti yok — o
  * oyunlardaki rekora ait. `prefers-reduced-motion` altında damga anında
- * basılı, sayılar dolu, toz yok; titreşim yine geliyor — hareket değil.
+ * basılı, sayılar dolu, toz yok.
  */
 export function YoklamaBileti({
   konu,
@@ -105,17 +103,13 @@ export function YoklamaBileti({
   const dakikaSayaci = useSayac(dakika, sakin ? 0 : 920)
 
   /*
-    Damga ânı: titreşim, hemen ardından toz. Hareket kapalıysa damga ilk
-    karede basılı, o yüzden ikisi de beklemeden geliyor.
+    Damga basılınca toz süzülüyor. Hareket kapalıysa damga ilk karede basılı,
+    toz da hiç çizilmiyor.
   */
   const [toz, setToz] = useState(false)
   useEffect(() => {
-    const damga = window.setTimeout(titret, sakin ? 0 : DAMGA_MS)
     const tozZ = window.setTimeout(() => setToz(true), sakin ? 0 : TOZ_MS)
-    return () => {
-      window.clearTimeout(damga)
-      window.clearTimeout(tozZ)
-    }
+    return () => window.clearTimeout(tozZ)
   }, [sakin])
 
   return (
@@ -358,8 +352,6 @@ export function YoklamaBileti({
   )
 }
 
-/** Damganın basıldığı an — `globals.css`teki `.bilet-damga` gecikmesiyle aynı. */
-const DAMGA_MS = 820
 /** Tozun başladığı an — biletin basınç altında ezildiği kare (`.bilet-basinc`). */
 const TOZ_MS = 1040
 

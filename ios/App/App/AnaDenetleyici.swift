@@ -23,6 +23,13 @@ class AnaDenetleyici: CAPBridgeViewController, UIGestureRecognizerDelegate {
         super.capacitorDidLoad()
         guard let webView = webView else { return }
 
+        // Sağda beliren kaydırma çubuğu: sayfanın kaydırması WKWebView'ın kendi
+        // kaydırma görünümü ve çubuğu CSS'in değil UIKit'in. Uygulama bir belge
+        // değil; konumu sayfanın kendisi söylüyor, çubuk yalnızca kenarda bir
+        // kıpırtı. İç kaydırma kutularınınki `globals.css`te gizleniyor.
+        webView.scrollView.showsVerticalScrollIndicator = false
+        webView.scrollView.showsHorizontalScrollIndicator = false
+
         // iOS'ta geri tuşu yok; kullanıcının geri gitmek için bildiği tek
         // hareket soldan kaydırmak. WKWebView'ın kendi
         // `allowsBackForwardNavigationGestures`ı işe yaramıyor: uygulama tek
