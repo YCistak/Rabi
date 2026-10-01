@@ -687,7 +687,9 @@ Buna rağmen uygulamanın diliyle konuşuyor:
   yazıyordu; sistem yazı tipinden gelen emoji telefondan telefona başka
   çiziliyor ve kullanıcının tanıdığı tavşandan başka bir tavşan çıkıyordu.
   Artık `res/drawable-nodpi/tavsan_yuz.png` — `public/tavsan-yuz.png`in
-  kopyası. Görseli değiştirirsen **ikisini birden** değiştir; yerli taraf
+  kopyası; iOS kalkan ekranında da bir kopyası var
+  (`ios/App/KalkanGorunumu/tavsan_yuz.png`). Görseli değiştirirsen **üçünü
+  birden** değiştir; yerli taraf
   `public/` altını okuyamıyor.
 - **Renkler `values/colors.xml`den**, doğrudan yazılmıyor, ve
   `values-night/` karşılıkları birebir aynı — Rabi'nin koyu teması yok,
@@ -2673,10 +2675,9 @@ eklenti yazarsan iki platformdan hangisinde var olduğunu oradan söyle.
 
 iOS'ta **olmayanlar** ve sebepleri:
 
-- **Odak kilidi, Rahatsız Etme, ses odağı.** iOS başka uygulamanın üstüne
-  katman çizmeye ve önde hangi uygulama olduğunu okumaya izin vermiyor.
-  Karşılığı Screen Time API'si (FamilyControls) ve Apple'dan ayrı yetki
-  istiyor.
+- **Rahatsız Etme ve ses odağı.** Uygulamalar Odak modunu açamıyor, başka
+  bir uygulamanın sesine dokunamıyor. Odak kilidi ise var, başka yoldan —
+  aşağıda.
 - **Kilit ekranındaki sayaç.** Ön plan servisi yok; karşılığı Live
   Activity (ActivityKit + widget eklentisi). Tur sonu bildirimi planlı yerel
   bildirimle geliyor ve sayaç mutlak zamandan okunduğu için uygulama
@@ -2684,6 +2685,59 @@ iOS'ta **olmayanlar** ve sebepleri:
 - **Play güncellemesi.** Güncellemeyi App Store dağıtıyor.
 - **Çökme raporu.** Crashlytics'in iOS köprüsü henüz yazılmadı; o gelene kadar
   soru iOS'ta hiç çıkmıyor.
+
+### iOS'ta odak kilidi Screen Time'la
+
+Android'in odak kilidi (katman + kullanım verisi) iOS'ta yapılamıyor: başka
+uygulamanın üstüne çizilemiyor, önde hangi uygulamanın olduğu okunamıyor.
+Karşılığı Apple'ın Screen Time API'si (FamilyControls + ManagedSettings +
+DeviceActivity) ve bu API **Apple'ın ayrıca verdiği bir yetkiyle** çalışıyor:
+"Family Controls (Distribution)", üç bundle ID için ayrı ayrı başvuruldu ve
+onaylandı (uygulama, `OdakIzleyici`, `KalkanGorunumu`). Yeni bir eklenti
+eklenirse onun kimliği için de başvuru gerekiyor; yetkisiz eklenti TestFlight
+imzasında düşer.
+
+Parçalar:
+
+- `ios/App/App/EkranSuresiEklentisi.swift` — Capacitor eklentisi: izin,
+  Apple'ın uygulama seçicisi, kalkanı koymak ve kaldırmak. Köprüsü
+  `lib/ekran-suresi.ts`; Pomodoro'nun çağırdığı `lib/odak-kilidi.ts`
+  fonksiyonları iOS'ta buraya yönleniyor, sayaç kodu iki platform için ayrı
+  yazılmadı.
+- `ios/App/OdakIzleyici` — DeviceActivity eklentisi. iOS arka plandaki Rabi'yi
+  uyutuyor; tur sonunda kalkanı sistemin zamanlayıcısıyla uyanan bu eklenti
+  kaldırıyor. Olmasaydı Instagram, Rabi açılana kadar kilitli kalırdı.
+  DeviceActivity en az 15 dakikalık aralık istiyor: kısa turda aralığın başı
+  geçmişe çekiliyor, sonu yine turun sonu.
+- `ios/App/KalkanGorunumu` — engellenen uygulama açılınca çıkan ekran, Rabi'nin
+  maskotu ve renkleriyle (Android'in engel katmanının karşılığı). Renkler ve
+  `tavsan_yuz.png` orada yeniden yazılı/kopyalı: eklenti ayrı bir süreç.
+- `components/odak/ios-odak-ayarlari.tsx` — Pomodoro'nun "Odak koruması"
+  satırının iOS içi.
+
+Android'den üç farkı var ve üçü de bilerek:
+
+- **Tek anahtar.** Kalkanlanan uygulama hem açılmıyor hem bildirim
+  göndermiyor; Screen Time ikisini birlikte yapıyor. Android'in ayrı Rahatsız
+  Etme anahtarı iOS'ta çizilmiyor.
+- **Liste Apple'ın.** Seçim Apple'ın seçicisinden yapılıyor, Rabi seçilen
+  uygulamaların adını bile görmüyor (opak belirteçler, yalnızca cihazda,
+  `UserDefaults`). Ekranda yalnızca sayısı var; önerilen uygulama
+  işaretlenemiyor.
+- **Duraklatmak kalkanı kaldırıyor.** Android'de servis donuyor ve kilit
+  sürüyor; iOS'ta donacak bir servis yok ve duraklatılıp unutulan tur
+  uygulamaları süresiz kapalı bırakırdı. Devam edilince kalkan yeniden kuruluyor.
+
+**Xcode hedefleri betikle ekleniyor** (`scripts/ios-eklenti-hedefleri.rb`,
+`xcodeproj` gem'i). Windows'ta ne Xcode ne Ruby var ve `project.pbxproj`i elle
+yazmak tek kimlik hatasında projeyi açılmaz yapıyor. Betik değişince
+`.github/workflows/ios-proje.yml` onu macOS'ta çalıştırıp proje dosyasını dala
+geri commit'liyor.
+
+**Arşiv ad-hoc imzalı** (`ios-testflight.yml`). Tümüyle imzasız arşiv
+yetkileri pakete gömmüyordu ve Screen Time yetkisi dışa aktarmada sessizce
+düşerdi; ad-hoc imza gömüyor ve cihaz istemiyor. Yüklemeden önce bir adım,
+paketin üç parçasında da yetkinin olduğunu denetliyor — eksikse yükleme yok.
 
 **Uygulamanın içinde başka platform adı geçmez.** App Store 2.3.10 başka bir
 mobil platformun ya da mağazanın adını kabul etmiyor. "Android", "Play" diyen

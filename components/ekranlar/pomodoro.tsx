@@ -33,6 +33,7 @@ import { izinIste, pomodoroIptal, pomodoroPlanla } from '@/lib/bildirim'
 import {
   odakKilidiDesteklenir,
   odakKilidiKapatilinca,
+  odakKorumasiVar,
   odakKilidiniBaslat,
   odakKilidiniBitir,
   odakKilidiniDuraklat,
@@ -42,6 +43,8 @@ import {
 import { useGeriKatmani } from '@/lib/geri'
 import { OdakKurulum } from '@/components/ekranlar/odak-kurulum'
 import { OdakAyarlari } from '@/components/odak/odak-ayarlari'
+import { IosOdakAyarlari } from '@/components/odak/ios-odak-ayarlari'
+import { iosMu } from '@/lib/platform'
 import { cn, yeniId } from '@/lib/utils'
 import { Anahtar, BaslikSatiri, Buton, Cip, Kart, Not } from '@/components/ui'
 
@@ -281,14 +284,18 @@ export function PomodoroEkrani({
       ediyor.
     */
     const korumaliTur = asama === 'calisma'
+    const kilitIstendi = korumaliTur && ayar.odakKilidi
     void odakKilidiniBaslat(
-      korumaliTur && ayar.odakKilidi ? ayar.kilitliUygulamalar : [],
+      kilitIstendi ? ayar.kilitliUygulamalar : [],
       bitis,
       // Engel katmanındaki çip provada dersin değil sınavın adını yazıyor:
       // ekranda "MATEMATİK" görünürken çözülen şey TYT kitapçığı oluyordu.
       prova ? `${prova.ad} PROVASI` : (ders ?? undefined),
       korumaliTur && ayar.rahatsizEtme,
       prova ? 'Deneme provası' : ASAMA_ADI[asama],
+      // iOS'ta seçim yerli tarafta durduğu için paket listesi boş; kilidin
+      // istenip istenmediği ayrıca söyleniyor.
+      kilitIstendi,
     )
     if (ayar.ekraniAcikTut && Capacitor.isNativePlatform()) {
       void KeepAwake.keepAwake().catch(() => {})
@@ -506,12 +513,17 @@ export function PomodoroEkrani({
     Satırın altındaki özet: paneli açmadan hangi korumanın açık olduğu
     okunabilmeli, yoksa kapalı bir satır ayarı görünmez kılardı.
   */
-  const korumaVar = ayar.odakKilidi || ayar.rahatsizEtme
-  const korumaOzeti = !korumaVar
-    ? 'Kilit ve rahatsız etme kapalı'
-    : [ayar.odakKilidi && 'Kilit açık', ayar.rahatsizEtme && 'Rahatsız etme açık']
-        .filter(Boolean)
-        .join(' · ')
+  // iOS'ta Rahatsız Etme anahtarı yok: kilit bildirimleri de susturuyor.
+  const korumaVar = ayar.odakKilidi || (!iosMu() && ayar.rahatsizEtme)
+  const korumaOzeti = iosMu()
+    ? ayar.odakKilidi
+      ? 'Kilit açık'
+      : 'Kilit kapalı'
+    : !korumaVar
+      ? 'Kilit ve rahatsız etme kapalı'
+      : [ayar.odakKilidi && 'Kilit açık', ayar.rahatsizEtme && 'Rahatsız etme açık']
+          .filter(Boolean)
+          .join(' · ')
 
   // Halka kalan süreden çiziliyor: duraklatılmış turda da doluluğu koruyor.
   const toplamSaniye = toplamDakika * 60
@@ -769,9 +781,10 @@ export function PomodoroEkrani({
           uygulamalar engelli olsun yeter) ve turu başlatmadan önce görülmeyen
           bir ayar, o turda yanlış kurulmuş bir ayardır.
 
-          Tarayıcıda görünmüyor: odak kilidi cihaza bağlı tek özellik.
+          Tarayıcıda görünmüyor: odak kilidi cihaza bağlı tek özellik. iOS'ta
+          içerik başka (`IosOdakAyarlari`): Screen Time'ın tek kalkanı.
         */}
-        {odakKilidiDesteklenir() && (
+        {odakKorumasiVar() && (
           <>
             <AyarSatiri
               simge={<ShieldCheck size={18} aria-hidden />}
@@ -783,7 +796,11 @@ export function PomodoroEkrani({
             />
             {korumaPaneli && (
               <div className="acilir-giris border-t border-border">
-                <OdakAyarlari ayar={ayar} setAyar={setAyar} />
+                {iosMu() ? (
+                  <IosOdakAyarlari ayar={ayar} setAyar={setAyar} />
+                ) : (
+                  <OdakAyarlari ayar={ayar} setAyar={setAyar} />
+                )}
               </div>
             )}
           </>

@@ -1,4 +1,5 @@
 import { registerPlugin } from '@capacitor/core'
+import { ekranSuresiKaldir, ekranSuresiKilitle, ekranSuresiVar } from './ekran-suresi'
 import { androidMu } from './platform'
 
 /** Kilitlenebilecek bir uygulama — liste yerli taraftan geliyor. */
@@ -108,9 +109,20 @@ const sahte: OdakKilidiEklentisi = {
 
 const eklenti = registerPlugin<OdakKilidiEklentisi>('OdakKilidi', { web: () => sahte })
 
-/** Özellik yalnızca Android'de var; çağrı yerlerinde tek tek sormamak için. */
+/**
+ * Android'in odak kilidi (katman + kullanım verisi). Tanıtım penceresi ve izin
+ * akışı bu yola ait; iOS'unki ayrı (`lib/ekran-suresi.ts`).
+ */
 export function odakKilidiDesteklenir(): boolean {
   return androidMu()
+}
+
+/**
+ * Pomodoro'da "Odak koruması" satırı çizilsin mi: iki platformda da var,
+ * içeriği platforma göre başka (`OdakAyarlari` / `IosOdakAyarlari`).
+ */
+export function odakKorumasiVar(): boolean {
+  return androidMu() || ekranSuresiVar()
 }
 
 export async function odakDurumu(): Promise<OdakDurumu> {
@@ -161,7 +173,14 @@ export async function odakKilidiniBaslat(
   ders?: string,
   rahatsizEtme = false,
   asama?: string,
+  /**
+   * Bu turda uygulama kilidi istendi mi. Android bunu boş olmayan paket
+   * listesinden anlıyor; iOS'ta liste yerli tarafta durduğu için açıkça
+   * söylenmesi gerekiyor.
+   */
+  kilitIstendi = paketler.length > 0,
 ): Promise<boolean> {
+  if (ekranSuresiVar()) return ekranSuresiKilitle(kilitIstendi, bitisZamani)
   if (!odakKilidiDesteklenir()) return false
   try {
     const sonuc = await eklenti.baslat({ paketler, bitisZamani, ders, asama, rahatsizEtme })
@@ -179,6 +198,10 @@ export async function odakKilidiniBaslat(
  * hiç var olmamış gibi görünürdü.
  */
 export async function odakKilidiniDuraklat(): Promise<void> {
+  // iOS'ta duraklatılmış tur kalkanı tutmuyor: Android'deki gibi donan bir
+  // servis yok ve duraklatılıp unutulan bir tur, uygulamaları süresiz kapalı
+  // bırakırdı. Devam edilince `odakKilidiniBaslat` kalkanı yeniden kuruyor.
+  if (ekranSuresiVar()) return ekranSuresiKaldir()
   if (!odakKilidiDesteklenir()) return
   try {
     await eklenti.duraklat()
@@ -195,6 +218,7 @@ export async function odakKilidiniDuraklat(): Promise<void> {
 */
 
 export async function odakKilidiniBitir(): Promise<void> {
+  if (ekranSuresiVar()) return ekranSuresiKaldir()
   if (!odakKilidiDesteklenir()) return
   try {
     await eklenti.bitir()

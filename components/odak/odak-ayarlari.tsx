@@ -219,8 +219,11 @@ export function OdakAyarlari({
  *
  * İzin durumu burada gösterilmiyor. Anahtar "bu turda istiyor muyum"u soruyor;
  * iznin olup olmadığı ayrı bir soru ve cevabı satırın altındaki uyarıda.
+ *
+ * iOS paneli de (`IosOdakAyarlari`) bunu kullanıyor: iki platformda satır
+ * aynı görünmeli.
  */
-function KorumaSatiri({
+export function KorumaSatiri({
   Simge,
   baslik,
   aciklama,

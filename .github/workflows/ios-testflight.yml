@@ -82,16 +82,21 @@ jobs:
           done
           printf '%s\n' "$ANAHTAR" > "$RUNNER_TEMP/AuthKey.p8"
 
-      # Arşiv **imzasız** alınıyor, imzayı aşağıdaki dışa aktarma atıyor.
+      # Arşiv **ad-hoc** imzalanıyor (`-`), gerçek imzayı aşağıdaki dışa aktarma
+      # atıyor.
       #
-      # İki yol denendi ve ikisi de burada düştü:
+      # Üç yol denendi:
       # - Otomatik imza arşivi geliştirme imzasıyla alıyor ve geliştirme profili
       #   hesapta kayıtlı bir cihaz istiyor ("Your team has no devices").
       # - Kimliği komut satırından "Apple Distribution" yapmak her hedefe
       #   uygulanıyor; SPM'in eklenti paketleri (IONCameraLib) otomatik imzada
       #   kaldığı için Xcode "conflicting provisioning settings" diyor.
-      # Dışa aktarma ise App Store profilini kendisi üretiyor ve o profil cihaz
-      # istemiyor.
+      # - Tümüyle imzasız (`CODE_SIGNING_ALLOWED=NO`) arşiv çalışıyordu ama
+      #   yetkileri (entitlements) pakete gömmüyor; dışa aktarma yeniden
+      #   imzalarken onları bulamıyor. Odak kilidinin Screen Time yetkisi
+      #   (`com.apple.developer.family-controls`) böyle sessizce düşerdi.
+      # Ad-hoc imza yetkileri gömüyor ve hiçbir profil, kimlik ya da cihaz
+      # istemiyor. Elle (Manual) çünkü otomatik imza ad-hoc kimliği kabul etmiyor.
       - name: Arşivle
         env:
           EKIP: ${{ secrets.APPLE_TEAM_ID }}
@@ -103,35 +108,74 @@ jobs:
             -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/Rabi.xcarchive" \
             DEVELOPMENT_TEAM="$EKIP" \
-            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY=- \
+            CODE_SIGNING_REQUIRED=NO \
+            PROVISIONING_PROFILE_SPECIFIER= \
             MARKETING_VERSION="${{ steps.surum.outputs.ad }}" \
             CURRENT_PROJECT_VERSION="${{ steps.surum.outputs.numara }}"
 
-      # `destination: upload` dışa aktarmayı App Store Connect'e yüklemeye
-      # çeviriyor; ayrı bir altool/Transporter adımı gerekmiyor.
-      - name: TestFlight'a yükle
+      # Dışa aktarma iki kez: önce diske (denetim için), sonra yüklemeye.
+      # Yükleme `destination: upload` ile tek adımda yapılıyor ve arkasında
+      # denetlenecek bir paket bırakmıyor; ilk geçiş o paketi veriyor.
+      - name: İmzala ve dışa aktar
         env:
           ANAHTAR_KIMLIGI: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           YAYINCI: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           EKIP: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          for hedef in export upload; do
+            cat > "$RUNNER_TEMP/ExportOptions-$hedef.plist" <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
           <dict>
             <key>method</key><string>app-store-connect</string>
-            <key>destination</key><string>upload</string>
+            <key>destination</key><string>$hedef</string>
             <key>teamID</key><string>$EKIP</string>
             <key>signingStyle</key><string>automatic</string>
             <key>manageAppVersionAndBuildNumber</key><false/>
           </dict>
           </plist>
           PLIST
+          done
           xcodebuild -exportArchive \
             -archivePath "$RUNNER_TEMP/Rabi.xcarchive" \
-            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions-export.plist" \
             -exportPath "$RUNNER_TEMP/cikti" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$RUNNER_TEMP/AuthKey.p8" \
+            -authenticationKeyID "$ANAHTAR_KIMLIGI" \
+            -authenticationKeyIssuerID "$YAYINCI"
+
+      # Odak kilidi Screen Time yetkisi olmadan cihazda sessizce çalışmıyor:
+      # izin penceresi hiç çıkmıyor ve hata da vermiyor. Yetki uygulamada ve iki
+      # eklentide de imzanın içinde olmalı; biri eksikse yükleme yapılmıyor.
+      - name: Screen Time yetkisini denetle
+        run: |
+          cd "$RUNNER_TEMP/cikti"
+          unzip -q -o App.ipa -d paket
+          eksik=0
+          for parca in paket/Payload/App.app paket/Payload/App.app/PlugIns/*.appex; do
+            if codesign -d --entitlements :- "$parca" 2>/dev/null | grep -q "com.apple.developer.family-controls"; then
+              echo "✓ $(basename "$parca")"
+            else
+              echo "::error::$(basename "$parca") Screen Time yetkisi taşımıyor"
+              eksik=1
+            fi
+          done
+          ls paket/Payload/App.app/PlugIns/ | grep -q appex || { echo "::error::Eklentiler pakette yok"; eksik=1; }
+          exit $eksik
+
+      - name: TestFlight'a yükle
+        env:
+          ANAHTAR_KIMLIGI: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          YAYINCI: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/Rabi.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions-upload.plist" \
+            -exportPath "$RUNNER_TEMP/yukleme" \
             -allowProvisioningUpdates \
             -authenticationKeyPath "$RUNNER_TEMP/AuthKey.p8" \
             -authenticationKeyID "$ANAHTAR_KIMLIGI" \
