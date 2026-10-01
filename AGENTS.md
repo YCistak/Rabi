@@ -1856,12 +1856,21 @@ Ders adına **ek getirilmiyor** ("Kimya 9 gündür bekliyor", "Kimya'ya … " de
 ünlü uyumu ders adına göre değişiyor ve yanlış ek, yanlış bilgiden daha çok
 göze batıyor.
 
-Kartın üstünde “Günün hâli” etiketi ve başlık, sağda 64 piksellik maskot
-bulunur. Tavsiye altta tam genişlikte okunur; son satır açılacak ekranı
-adlandırır. Kartın tamamı aynı ekranı açar. Renkli maskot zemini ve gölge yok;
-ince kenar çizgisi kullanılır. Sınav gününde soru sayısından bağımsız olarak
-hazırlık ve dinlenme mesajı verilir. Kayıt bulunmaması “soru çözmedin” diye
-sunulmaz; serinin sürmesi için günlük hedefin tamamlanması gerekir.
+Maskot 72 piksel, ayağının altında yumuşak bir zemin gölgesi var ve
+ayraca yakın duruyor (bir süre tam ortadaydı, kullanıcı sağa kaydırttı);
+yazıyla arasında soluk, kısa bir dikey ayraç var (`--border`, kartın
+kenarlarına değmiyor). Arkasına bir süre soluk bir leke kondu, kullanıcı geri
+aldı — tavşanı oturtan şey süs değil, yeri, gölgesi ve ayraç. Başlığın
+üstünde küçük bir "BUGÜN" etiketi var. Kart `golge-kart` ile çizgisiz beyaz;
+bir süre kenar çizgili, altında "…aç" satırı olan bir düzen denendi ve
+kullanıcı eskisine döndürdü.
+
+Sayının kendisi kartta **yazmıyor**: halka zaten sayıyı üç kez söylüyor ve
+kartın işi onu tekrar etmek değil, ona bir yüz vermek. Günlük hedef sıfırken
+kart çizilmiyor: ölçülecek bir eşik yokken "ulaştın" da "ulaşmadın" da
+anlamsız. Sınav gününde soru sayısından bağımsız olarak hazırlık ve dinlenme
+mesajı verilir. Kayıt bulunmaması “soru çözmedin” diye sunulmaz; serinin
+sürmesi için günlük hedefin tamamlanması gerekir.
 
 ## Ana sayfadaki dört kutucuk
 

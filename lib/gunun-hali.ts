@@ -13,7 +13,8 @@
  * Öncelik sabit ve aşağıdaki `KURALLAR` dizisinin sırası: sınava yakınlık
  * her şeyin önünde (o dönemde başka öneri gürültü), sonra seri (kırılan
  * alışkanlık en pahalı kayıp), sonra bankadaki bekleyen yanlışlar, ders
- * dengesi, ihmal edilen ders, deneme; hiçbiri tutmazsa eski üç hâl. Puanla
+ * dengesi, ihmal edilen ders, deneme (bu dördü tutuyorsa gün gün dönüşümlü);
+ * hiçbiri tutmazsa eski üç hâl. Puanla
  * ağırlıklandırma yok — kullanıcının "neden bunu söyledi" sorusuna sıralı
  * listeyle cevap verilebiliyor, puanla verilemiyor.
  *
@@ -244,8 +245,13 @@ const ihmalEdilenDers: Kural = (b) => {
   return {
     poz: tuttu(b) ? 'ziplayan' : b.toplam > 0 ? 'okuyan' : 'uzgun',
     durum: tuttu(b) ? 'kutlama' : b.toplam > 0 ? 'calisiyor' : 'uzgun',
-    // Ada ek getirilmiyor ("Kimya'ya", "Fizik'e" ünlü uyumu ister); ad yalın kalıyor.
-    baslik: `${ders}: ${gun} gündür kayıt yok`,
+    // Ada ek getirilmiyor ("Kimya'ya", "Fizik'e" ünlü uyumu ister); ad "ders" sözcüğüyle
+    // birlikte kullanılıyor, ek o sözcüğe geliyor. İki nokta kullanılmıyor.
+    baslik: sec(b, [
+      `${ders} dersine ${gun} gündür soru girmedin`,
+      `${ders} dersi ${gun} gündür bekliyor`,
+      `${ders} dersinde ${gun} gündür kayıt yok`,
+    ]),
     alt: sec(b, ['Bu dersten kısa bir tekrar yapıp birkaç soru çözebilirsin.', 'Çalışma planına bu dersten küçük bir tekrar ekleyebilirsin.']),
     ekran: 'soru',
   }
@@ -309,16 +315,15 @@ const temel: Kural = (b) => {
   }
 }
 
-const KURALLAR: Kural[] = [
-  sinavaYakin,
-  seriKiriliyor,
-  seriSuruyor,
-  bankaBekliyor,
-  tekDerseYigilma,
-  ihmalEdilenDers,
-  denemeZamani,
-  temel,
-]
+/** Sabit öncelikli kurallar: tutarlarsa her gün kazanırlar. */
+const ONCELIKLI: Kural[] = [sinavaYakin, seriKiriliyor, seriSuruyor]
+
+/**
+ * Eşit ağırlıklı öneriler. Bir öneri günlerce geçerli kalabiliyor (bir ders
+ * haftalarca ihmal edilmiş olabilir) ve ilk tutan hep kazansaydı kart aynı
+ * cümleyi günlerce söylerdi. Tutan öneriler arasında gün sayısıyla dönülüyor.
+ */
+const ONERILER: Kural[] = [bankaBekliyor, tekDerseYigilma, ihmalEdilenDers, denemeZamani]
 
 // --- Giriş -------------------------------------------------------------------
 
@@ -351,9 +356,11 @@ export function gununHali(g: GununHaliGirdisi): GununHali | null {
     seri: hedefSerisi(g.gunlukKayitlar, g.bugun, g.hedef),
     secim: (n) => gun % n,
   }
-  for (const kural of KURALLAR) {
+  for (const kural of ONCELIKLI) {
     const hal = kural(b)
     if (hal) return hal
   }
-  return null
+  const oneriler = ONERILER.map((kural) => kural(b)).filter((h): h is GununHali => h !== null)
+  if (oneriler.length > 0) return oneriler[gun % oneriler.length]
+  return temel(b)
 }
