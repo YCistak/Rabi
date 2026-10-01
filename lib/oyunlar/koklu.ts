@@ -106,8 +106,14 @@ export function kokluTuruHazirla(
   const sorular: KokluSorusu[] = []
   let oncekiSayi = 0
   for (let i = 0; i < adet; i++) {
+    // Tek bir yeniden deneme yetmiyordu: ikinci çekiliş de aynı sayıyı
+    // verebiliyor ve 400 soruluk test bunu arada bir yakalıyordu. Döngü
+    // pratikte bir iki turda çıkıyor; sınır yalnızca sabit dönen bir
+    // `rastgele` ile sonsuza kilitlenmesin diye.
     let soru = soruKur(arasinda(CUBUK_EN_AZ, CUBUK_EN_COK - 1, rastgele), rastgele)
-    if (soru.sayi === oncekiSayi) soru = soruKur(arasinda(CUBUK_EN_AZ, CUBUK_EN_COK - 1, rastgele), rastgele)
+    for (let deneme = 0; soru.sayi === oncekiSayi && deneme < 20; deneme++) {
+      soru = soruKur(arasinda(CUBUK_EN_AZ, CUBUK_EN_COK - 1, rastgele), rastgele)
+    }
     oncekiSayi = soru.sayi
     sorular.push(soru)
   }

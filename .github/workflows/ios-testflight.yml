@@ -82,10 +82,18 @@ jobs:
           done
           printf '%s\n' "$ANAHTAR" > "$RUNNER_TEMP/AuthKey.p8"
 
+      # Arşiv **imzasız** alınıyor, imzayı aşağıdaki dışa aktarma atıyor.
+      #
+      # İki yol denendi ve ikisi de burada düştü:
+      # - Otomatik imza arşivi geliştirme imzasıyla alıyor ve geliştirme profili
+      #   hesapta kayıtlı bir cihaz istiyor ("Your team has no devices").
+      # - Kimliği komut satırından "Apple Distribution" yapmak her hedefe
+      #   uygulanıyor; SPM'in eklenti paketleri (IONCameraLib) otomatik imzada
+      #   kaldığı için Xcode "conflicting provisioning settings" diyor.
+      # Dışa aktarma ise App Store profilini kendisi üretiyor ve o profil cihaz
+      # istemiyor.
       - name: Arşivle
         env:
-          ANAHTAR_KIMLIGI: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          YAYINCI: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           EKIP: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           xcodebuild archive \
@@ -94,12 +102,8 @@ jobs:
             -configuration Release \
             -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/Rabi.xcarchive" \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$RUNNER_TEMP/AuthKey.p8" \
-            -authenticationKeyID "$ANAHTAR_KIMLIGI" \
-            -authenticationKeyIssuerID "$YAYINCI" \
             DEVELOPMENT_TEAM="$EKIP" \
-            CODE_SIGN_STYLE=Automatic \
+            CODE_SIGNING_ALLOWED=NO \
             MARKETING_VERSION="${{ steps.surum.outputs.ad }}" \
             CURRENT_PROJECT_VERSION="${{ steps.surum.outputs.numara }}"
 
