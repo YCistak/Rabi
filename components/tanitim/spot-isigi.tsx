@@ -175,6 +175,46 @@ export function SpotIsigi() {
     }
   }, [adim, turuBitir, rehberGizli, deneyMi])
 
+  /*
+    Rehber açıkken sayfa elle kaydırılamaz.
+
+    Rehber, hedefi kendisi görünür alana getiriyor (`scrollIntoView`,
+    `scrollBy`); kullanıcının ayrıca kaydırması ise aydınlatılan alanı ve
+    balonu birbirinden koparıyordu. Uygulama kabuğu rehber sürerken alta 60vh
+    dolgu ekleyip sayfayı uzattığı için kaydırma da mümkündü.
+
+    `overflow: hidden` programatik kaydırmayı engellemez, yalnızca kullanıcı
+    kaydırmasını keser. iOS WKWebView'da ise yalnızca CSS yetmiyor (lastik bant
+    ve dokunmatik kaydırma sürüyor) — bu yüzden `touchmove` ve `wheel` de
+    balonun kendi içinde kaydırılabilir bir bölge dışında iptal ediliyor.
+  */
+  const rehberGorunur = !!adim && !rehberGizli
+  useEffect(() => {
+    if (!rehberGorunur) return
+    const kok = document.documentElement
+    const govde = document.body
+    const onceki = { kok: [kok.style.overflow, kok.style.overscrollBehavior], govde: [govde.style.overflow, govde.style.overscrollBehavior] }
+    kok.style.overflow = 'hidden'
+    kok.style.overscrollBehavior = 'none'
+    govde.style.overflow = 'hidden'
+    govde.style.overscrollBehavior = 'none'
+    const kaydirmayiEngelle = (olay: Event) => {
+      const balon = balonRef.current
+      // Balon taşıyorsa kendi içinde kaydırılabilsin; sayfaya sıçramasın diye
+      // balonda `overscroll-behavior: contain` var.
+      if (balon && olay.target instanceof Node && balon.contains(olay.target) && balon.scrollHeight > balon.clientHeight) return
+      if (olay.cancelable) olay.preventDefault()
+    }
+    document.addEventListener('touchmove', kaydirmayiEngelle, { capture: true, passive: false })
+    document.addEventListener('wheel', kaydirmayiEngelle, { capture: true, passive: false })
+    return () => {
+      document.removeEventListener('touchmove', kaydirmayiEngelle, true)
+      document.removeEventListener('wheel', kaydirmayiEngelle, true)
+      ;[kok.style.overflow, kok.style.overscrollBehavior] = onceki.kok
+      ;[govde.style.overflow, govde.style.overscrollBehavior] = onceki.govde
+    }
+  }, [rehberGorunur])
+
   // Sayfa yenilenince bellekteki demo kendiliğinden kaybolur; kalıcı kayıt yok.
   useEffect(() => {
     if (!adim) setYerlesim({ ekHedefler: [], hedef: null, balon: BOS_KUTU, ekran: BOS_KUTU })
@@ -193,7 +233,7 @@ export function SpotIsigi() {
         {hedef && <rect x={hedef.sol} y={hedef.ust} width={hedef.genislik} height={hedef.yukseklik} rx="18" fill="none" stroke="var(--primary-parlak)" strokeWidth="2" pathLength="1" strokeDasharray="1" strokeDashoffset={cizimBasladi && !gecisSuruyor ? 0 : 1} style={{ transition: hareketAzalt ? "none" : `stroke-dashoffset ${animasyon.cerceveMs}ms ease, x ${animasyon.cerceveMs}ms ease, y ${animasyon.cerceveMs}ms ease, width ${animasyon.cerceveMs}ms ease, height ${animasyon.cerceveMs}ms ease` }} />}
       </svg>
       <div ref={balonRef} data-tanitim-balonu role="region" aria-label="Rabi tanıtım rehberi"
-        className="pointer-events-auto absolute overflow-y-auto rounded-2xl border border-border bg-card text-card-foreground shadow-xl"
+        className="pointer-events-auto absolute overflow-y-auto overscroll-contain rounded-2xl border border-border bg-card text-card-foreground shadow-xl"
         style={{ padding: adim.kimlik === 'soru-bir' ? 8 : 12, opacity: gecisSuruyor ? 0 : 1, transition: hareketAzalt ? 'none' : `left ${animasyon.balonMs}ms ease, top ${animasyon.balonMs}ms ease, opacity ${animasyon.balonMs}ms ease`, pointerEvents: gecisSuruyor ? 'none' : 'auto', left: balon.sol || 12, top: balon.ust || 12, width: balon.genislik || 'calc(100% - 24px)', maxWidth: 340, maxHeight: ekran.yukseklik ? Math.max(120, ekran.yukseklik * 0.52) : '52dvh', visibility: ekran.genislik ? 'visible' : 'hidden' }}>
         <div className="flex items-center justify-between gap-3" style={{ marginBottom: adim.kimlik === 'soru-bir' ? 0 : 8 }}>
           {adim.kimlik === 'soru-bir' && <div><h2 data-tanitim-baslik tabIndex={-1} className="font-display text-sm font-extrabold outline-none">{adim.baslik}</h2><p className="text-[11px] text-muted-foreground">Sonucu yaz veya pas geç.</p></div>}
