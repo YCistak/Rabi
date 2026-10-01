@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		070E5BD44FCF47A851D54653 /* OdakIzleyici.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CFE65991751DDEB78BDED8 /* OdakIzleyici.swift */; };
+		215149E5DD5E179754C6E77C /* OdakIzleyici.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3D46D1BCFCDE8E6565A97A94 /* OdakIzleyici.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
+		44183931447D82BC0EF87EC3 /* KalkanGorunumu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD468D438E6B79DF424FA29 /* KalkanGorunumu.swift */; };
 		4D22ABE92AF431CB00220026 /* CapApp-SPM in Frameworks */ = {isa = PBXBuildFile; productRef = 4D22ABE82AF431CB00220026 /* CapApp-SPM */; };
 		50379B232058CBB4000EE86E /* capacitor.config.json in Resources */ = {isa = PBXBuildFile; fileRef = 50379B222058CBB4000EE86E /* capacitor.config.json */; };
 		504EC3081FED79650016851F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
@@ -15,13 +18,56 @@
 		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
-		9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6822FE993A50072D4E8 /* SceneDelegate.swift */; };
+		6E695CA8ABA1E81CDD2F9108 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FD94E3D948EC4C869736624 /* Foundation.framework */; };
 		7A1B00012F00000000000001 /* AnaDenetleyici.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1B00012F00000000000002 /* AnaDenetleyici.swift */; };
 		7A1B00012F00000000000003 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7A1B00012F00000000000004 /* PrivacyInfo.xcprivacy */; };
+		9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6822FE993A50072D4E8 /* SceneDelegate.swift */; };
+		A67A757C589FC0D8B598A044 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FD94E3D948EC4C869736624 /* Foundation.framework */; };
+		A9455D3707E38CD54B0F9458 /* EkranSuresiEklentisi.swift in Sources */ = {isa = PBXBuildFile; fileRef = C516C5A8C3EF008C94074DCC /* EkranSuresiEklentisi.swift */; };
+		DDC84D0B18FFFA4744959D88 /* KalkanGorunumu.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 97953AADAE06C8B84A6280AE /* KalkanGorunumu.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		FA1E4D4011C0EA79F4FB0F38 /* tavsan_yuz.png in Resources */ = {isa = PBXBuildFile; fileRef = 6F5945D08BDBCBE47A95F710 /* tavsan_yuz.png */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		475FCEC86B5AC285540FA80B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BCFE0101433269DC90D7AA3D;
+			remoteInfo = KalkanGorunumu;
+		};
+		FC5F3D5D74BF587D75EE1E94 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A598666DD3096829A163425B;
+			remoteInfo = OdakIzleyici;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C9628A66860CD55AF8023B46 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				215149E5DD5E179754C6E77C /* OdakIzleyici.appex in Embed Foundation Extensions */,
+				DDC84D0B18FFFA4744959D88 /* KalkanGorunumu.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		0B7F8D5C1457683F27FE2AD9 /* KalkanGorunumu.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = KalkanGorunumu.entitlements; sourceTree = "<group>"; };
+		0CD468D438E6B79DF424FA29 /* KalkanGorunumu.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KalkanGorunumu.swift; sourceTree = "<group>"; };
+		14631B8427E08103D134DE34 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2FAD9762203C412B000D30F8 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
+		3D46D1BCFCDE8E6565A97A94 /* OdakIzleyici.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OdakIzleyici.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		3FD94E3D948EC4C869736624 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		4023312BAEE3ECBD95DC9BB7 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50379B222058CBB4000EE86E /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
 		504EC3041FED79650016851F /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		504EC3071FED79650016851F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -30,13 +76,27 @@
 		504EC3111FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		504EC3131FED79650016851F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
-		9582B6822FE993A50072D4E8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		958DCC722DB07C7200EA8C5F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../debug.xcconfig; sourceTree = SOURCE_ROOT; };
+		6F5945D08BDBCBE47A95F710 /* tavsan_yuz.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = tavsan_yuz.png; sourceTree = "<group>"; };
 		7A1B00012F00000000000002 /* AnaDenetleyici.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnaDenetleyici.swift; sourceTree = "<group>"; };
 		7A1B00012F00000000000004 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		9582B6822FE993A50072D4E8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		958DCC722DB07C7200EA8C5F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../debug.xcconfig; sourceTree = SOURCE_ROOT; };
+		97953AADAE06C8B84A6280AE /* KalkanGorunumu.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KalkanGorunumu.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3CFE65991751DDEB78BDED8 /* OdakIzleyici.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OdakIzleyici.swift; sourceTree = "<group>"; };
+		C4206306B67CD242674D4551 /* OdakIzleyici.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = OdakIzleyici.entitlements; sourceTree = "<group>"; };
+		C516C5A8C3EF008C94074DCC /* EkranSuresiEklentisi.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EkranSuresiEklentisi.swift; sourceTree = "<group>"; };
+		F7A9115C3A5CB00393F7ADB1 /* App.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0F85465281003A4869C56D1D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E695CA8ABA1E81CDD2F9108 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		504EC3011FED79650016851F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -45,15 +105,45 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		634B0EB7127A7F4D23776D3B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A67A757C589FC0D8B598A044 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		00A498976202AA68EFB6C97F /* OdakIzleyici */ = {
+			isa = PBXGroup;
+			children = (
+				B3CFE65991751DDEB78BDED8 /* OdakIzleyici.swift */,
+				14631B8427E08103D134DE34 /* Info.plist */,
+				C4206306B67CD242674D4551 /* OdakIzleyici.entitlements */,
+			);
+			name = OdakIzleyici;
+			path = OdakIzleyici;
+			sourceTree = "<group>";
+		};
+		4D4D94580FD18A0E2C3E0FBC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6F02F706D80C52AA655BE59B /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		504EC2FB1FED79650016851F = {
 			isa = PBXGroup;
 			children = (
 				958DCC722DB07C7200EA8C5F /* debug.xcconfig */,
 				504EC3061FED79650016851F /* App */,
 				504EC3051FED79650016851F /* Products */,
+				4D4D94580FD18A0E2C3E0FBC /* Frameworks */,
+				00A498976202AA68EFB6C97F /* OdakIzleyici */,
+				8AB6E45D8EA0C94F2CECF116 /* KalkanGorunumu */,
 			);
 			sourceTree = "<group>";
 		};
@@ -61,6 +151,8 @@
 			isa = PBXGroup;
 			children = (
 				504EC3041FED79650016851F /* App.app */,
+				3D46D1BCFCDE8E6565A97A94 /* OdakIzleyici.appex */,
+				97953AADAE06C8B84A6280AE /* KalkanGorunumu.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -79,8 +171,30 @@
 				504EC3131FED79650016851F /* Info.plist */,
 				2FAD9762203C412B000D30F8 /* config.xml */,
 				50B271D01FEDC1A000F3C39B /* public */,
+				C516C5A8C3EF008C94074DCC /* EkranSuresiEklentisi.swift */,
+				F7A9115C3A5CB00393F7ADB1 /* App.entitlements */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		6F02F706D80C52AA655BE59B /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				3FD94E3D948EC4C869736624 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		8AB6E45D8EA0C94F2CECF116 /* KalkanGorunumu */ = {
+			isa = PBXGroup;
+			children = (
+				0CD468D438E6B79DF424FA29 /* KalkanGorunumu.swift */,
+				6F5945D08BDBCBE47A95F710 /* tavsan_yuz.png */,
+				4023312BAEE3ECBD95DC9BB7 /* Info.plist */,
+				0B7F8D5C1457683F27FE2AD9 /* KalkanGorunumu.entitlements */,
+			);
+			name = KalkanGorunumu;
+			path = KalkanGorunumu;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -93,10 +207,13 @@
 				504EC3001FED79650016851F /* Sources */,
 				504EC3011FED79650016851F /* Frameworks */,
 				504EC3021FED79650016851F /* Resources */,
+				C9628A66860CD55AF8023B46 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				198A564C3436BF4A1BC19381 /* PBXTargetDependency */,
+				82E0BBF68F9A584D5C68BF9B /* PBXTargetDependency */,
 			);
 			name = App;
 			packageProductDependencies = (
@@ -105,6 +222,40 @@
 			productName = App;
 			productReference = 504EC3041FED79650016851F /* App.app */;
 			productType = "com.apple.product-type.application";
+		};
+		A598666DD3096829A163425B /* OdakIzleyici */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D94F41E5EEC56C7363A17581 /* Build configuration list for PBXNativeTarget "OdakIzleyici" */;
+			buildPhases = (
+				0068DE7254D312D40BE96025 /* Sources */,
+				634B0EB7127A7F4D23776D3B /* Frameworks */,
+				5995A2852768E52AC3765F4D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OdakIzleyici;
+			productName = OdakIzleyici;
+			productReference = 3D46D1BCFCDE8E6565A97A94 /* OdakIzleyici.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		BCFE0101433269DC90D7AA3D /* KalkanGorunumu */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E630FB83A38594163C1EDE0 /* Build configuration list for PBXNativeTarget "KalkanGorunumu" */;
+			buildPhases = (
+				CF3078F7CCB3220BAC657A97 /* Sources */,
+				0F85465281003A4869C56D1D /* Frameworks */,
+				B91A9FD1808ADC9AAC928920 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KalkanGorunumu;
+			productName = KalkanGorunumu;
+			productReference = 97953AADAE06C8B84A6280AE /* KalkanGorunumu.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -139,6 +290,8 @@
 			projectRoot = "";
 			targets = (
 				504EC3031FED79650016851F /* App */,
+				A598666DD3096829A163425B /* OdakIzleyici */,
+				BCFE0101433269DC90D7AA3D /* KalkanGorunumu */,
 			);
 		};
 /* End PBXProject section */
@@ -158,9 +311,32 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5995A2852768E52AC3765F4D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B91A9FD1808ADC9AAC928920 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FA1E4D4011C0EA79F4FB0F38 /* tavsan_yuz.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0068DE7254D312D40BE96025 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				070E5BD44FCF47A851D54653 /* OdakIzleyici.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		504EC3001FED79650016851F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -168,10 +344,34 @@
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				7A1B00012F00000000000001 /* AnaDenetleyici.swift in Sources */,
 				9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */,
+				A9455D3707E38CD54B0F9458 /* EkranSuresiEklentisi.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF3078F7CCB3220BAC657A97 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44183931447D82BC0EF87EC3 /* KalkanGorunumu.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		198A564C3436BF4A1BC19381 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = OdakIzleyici;
+			target = A598666DD3096829A163425B /* OdakIzleyici */;
+			targetProxy = FC5F3D5D74BF587D75EE1E94 /* PBXContainerItemProxy */;
+		};
+		82E0BBF68F9A584D5C68BF9B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = KalkanGorunumu;
+			target = BCFE0101433269DC90D7AA3D /* KalkanGorunumu */;
+			targetProxy = 475FCEC86B5AC285540FA80B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		504EC30B1FED79650016851F /* Main.storyboard */ = {
@@ -193,6 +393,57 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		0590EF88B9CA6B5CFBE4A5A7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = KalkanGorunumu/KalkanGorunumu.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = KalkanGorunumu/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.9.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fluxifyinteractive.rabi.KalkanGorunumu;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		0D65907D4DC97A09D0882332 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = KalkanGorunumu/KalkanGorunumu.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = KalkanGorunumu/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.9.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fluxifyinteractive.rabi.KalkanGorunumu;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		504EC3141FED79650016851F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 958DCC722DB07C7200EA8C5F /* debug.xcconfig */;
@@ -307,6 +558,7 @@
 			baseConfigurationReference = 958DCC722DB07C7200EA8C5F /* debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = App/Info.plist;
@@ -329,6 +581,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = App/Info.plist;
@@ -345,6 +598,57 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
+		};
+		7884C1CA3F92ED56179CE44E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = OdakIzleyici/OdakIzleyici.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = OdakIzleyici/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.9.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fluxifyinteractive.rabi.OdakIzleyici;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B1F5B95E4A9CE4A0D81F0F62 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = OdakIzleyici/OdakIzleyici.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = OdakIzleyici/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.9.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fluxifyinteractive.rabi.OdakIzleyici;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
 		};
 /* End XCBuildConfiguration section */
 
@@ -363,6 +667,24 @@
 			buildConfigurations = (
 				504EC3171FED79650016851F /* Debug */,
 				504EC3181FED79650016851F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5E630FB83A38594163C1EDE0 /* Build configuration list for PBXNativeTarget "KalkanGorunumu" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0D65907D4DC97A09D0882332 /* Release */,
+				0590EF88B9CA6B5CFBE4A5A7 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D94F41E5EEC56C7363A17581 /* Build configuration list for PBXNativeTarget "OdakIzleyici" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7884C1CA3F92ED56179CE44E /* Release */,
+				B1F5B95E4A9CE4A0D81F0F62 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
