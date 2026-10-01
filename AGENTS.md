@@ -2671,6 +2671,16 @@ hedeflemek ayrı ekran görüntüleri ve ayrı bir inceleme demek.
 **alfa kanalı atılmış** — App Store saydamlık taşıyan ikonu yüklemede
 reddediyor.
 
+**Yayın Android'le aynı etiketle.** `v*` etiketi `ios-testflight.yml`i de
+tetikliyor ve derleme TestFlight'a düşüyor; mağazaya çıkması App Store
+Connect'ten elle incelemeye göndermekle oluyor. Sürüm iOS projesine yazılmıyor,
+`android/app/build.gradle`dan okunuyor (`versionName` → sürüm, `versionCode` →
+derleme numarasının başı): iki mağazada aynı derleme aynı numarayı taşımalı.
+Derleme numarasının sonundaki çalıştırma sayısı, App Store'un aynı numarayı
+ikinci kez reddetmesi yüzünden — yarıda kalan yükleme aynı etiketle yeniden
+denenebilsin. İmza Apple'ın bulut imzalaması (Admin yetkili API anahtarı); depoda
+sertifika ya da profil yok.
+
 ## Derleme
 
 APK için **JDK 21 şart** — sistem varsayılanı JDK 25, Gradle 8.14.3 desteklemiyor.
