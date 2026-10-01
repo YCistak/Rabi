@@ -82,21 +82,18 @@ jobs:
           done
           printf '%s\n' "$ANAHTAR" > "$RUNNER_TEMP/AuthKey.p8"
 
-      # Arşiv **ad-hoc** imzalanıyor (`-`), gerçek imzayı aşağıdaki dışa aktarma
-      # atıyor.
+      # Arşiv **imzasız** alınıyor, imzayı aşağıdaki dışa aktarma atıyor.
       #
-      # Üç yol denendi:
+      # Denenip düşenler:
       # - Otomatik imza arşivi geliştirme imzasıyla alıyor ve geliştirme profili
       #   hesapta kayıtlı bir cihaz istiyor ("Your team has no devices").
       # - Kimliği komut satırından "Apple Distribution" yapmak her hedefe
       #   uygulanıyor; SPM'in eklenti paketleri (IONCameraLib) otomatik imzada
       #   kaldığı için Xcode "conflicting provisioning settings" diyor.
-      # - Tümüyle imzasız (`CODE_SIGNING_ALLOWED=NO`) arşiv çalışıyordu ama
-      #   yetkileri (entitlements) pakete gömmüyor; dışa aktarma yeniden
-      #   imzalarken onları bulamıyor. Odak kilidinin Screen Time yetkisi
-      #   (`com.apple.developer.family-controls`) böyle sessizce düşerdi.
-      # Ad-hoc imza yetkileri gömüyor ve hiçbir profil, kimlik ya da cihaz
-      # istemiyor. Elle (Manual) çünkü otomatik imza ad-hoc kimliği kabul etmiyor.
+      # - Ad-hoc imza (`CODE_SIGN_IDENTITY=-`) yetkileri pakete gömerdi ama
+      #   iOS 26 SDK'sı reddediyor ("Ad Hoc code signing is not allowed").
+      # İmzasız arşivde yetkilerin (Screen Time) dışa aktarmada pakete girip
+      # girmediği tahmin edilmiyor, ölçülüyor: aşağıdaki denetim adımı.
       - name: Arşivle
         env:
           EKIP: ${{ secrets.APPLE_TEAM_ID }}
@@ -108,10 +105,7 @@ jobs:
             -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/Rabi.xcarchive" \
             DEVELOPMENT_TEAM="$EKIP" \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY=- \
-            CODE_SIGNING_REQUIRED=NO \
-            PROVISIONING_PROFILE_SPECIFIER= \
+            CODE_SIGNING_ALLOWED=NO \
             MARKETING_VERSION="${{ steps.surum.outputs.ad }}" \
             CURRENT_PROJECT_VERSION="${{ steps.surum.outputs.numara }}"
 
