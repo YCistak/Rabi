@@ -84,6 +84,7 @@ export function BottomNav({
             <li key={id} className="flex-1">
               <button
                 type="button"
+                data-tanitim={id === 'oyunlar' ? 'oyunlar-ac' : undefined}
                 onClick={() => onDegis(id)}
                 aria-current={aktif ? 'page' : undefined}
                 className={cn(

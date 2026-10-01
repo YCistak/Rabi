@@ -56,10 +56,12 @@ export function PomodoroEkrani({
   ayar,
   setAyar,
   onSeansBitti,
+  demoVeri = false,
 }: {
   ayar: PomodoroAyar
   setAyar: (guncelleyici: PomodoroAyar | ((onceki: PomodoroAyar) => PomodoroAyar)) => void
   onSeansBitti: (seans: PomodoroSeans) => void
+  demoVeri?: boolean
 }) {
   const [asama, setAsama] = useState<Asama>('calisma')
   const [tur, setTur] = useState(1)
@@ -111,8 +113,8 @@ export function PomodoroEkrani({
   /** Koruma paneli açık mı — kapalı başlıyor, sayaç ekranın asıl işi. */
   const [korumaPaneli, setKorumaPaneli] = useState(false)
   useEffect(() => {
-    if (odakKilidiDesteklenir() && !ayar.kilitTanitimiGoruldu) setKurulumAcik(true)
-  }, [ayar.kilitTanitimiGoruldu])
+    if (!demoVeri && odakKilidiDesteklenir() && !ayar.kilitTanitimiGoruldu) setKurulumAcik(true)
+  }, [ayar.kilitTanitimiGoruldu, demoVeri])
 
   /**
    * Kilit kırıldı mı — bir sonraki başlatmaya kadar ekranda duruyor.
@@ -141,6 +143,7 @@ export function PomodoroEkrani({
 
   // Bileşen sökülürken ses ve ekran kilidi bırakılmalı, yoksa arka planda kalır.
   useEffect(() => {
+    if (demoVeri) return
     return () => {
       calarRef.current?.kapat()
       calarRef.current = null
@@ -148,7 +151,7 @@ export function PomodoroEkrani({
       void pomodoroIptal()
       void odakKilidiniBitir()
     }
-  }, [])
+  }, [demoVeri])
 
   const asamayiBitir = useCallback(() => {
     const calar = calarAl()
@@ -239,6 +242,7 @@ export function PomodoroEkrani({
   }, [bitisZamani, asamayiBitir])
 
   const baslat = () => {
+    if (demoVeri) return
     setKirilanKilit(false)
     setBitenProva(null)
     setSahne(true)
@@ -377,11 +381,12 @@ export function PomodoroEkrani({
   })
   useEffect(() => {
     let birak: () => void = () => {}
+    if (demoVeri) return
     void odakKilidiKapatilinca(() => iptalRef.current()).then((kaldir) => {
       birak = kaldir
     })
     return () => birak()
-  }, [])
+  }, [demoVeri])
 
   /**
    * Kilit ekranındaki bildirimin düğmeleri.
@@ -425,11 +430,12 @@ export function PomodoroEkrani({
   })
   useEffect(() => {
     let birak: () => void = () => {}
+    if (demoVeri) return
     void pomodoroKomutuGelince((veri) => komutRef.current(veri)).then((kaldir) => {
       birak = kaldir
     })
     return () => birak()
-  }, [])
+  }, [demoVeri])
 
   /**
    * Prova seçimi; `null` pomodoro kipine dönüş.
@@ -597,7 +603,7 @@ export function PomodoroEkrani({
         kaydırmadan görünmeli. 228'deyken Başlat'a kadar bir ekran boyu
         kaydırmak gerekiyordu.
       */}
-      <Kart className="mb-3 flex flex-col items-center rounded-3xl px-4 pt-4 pb-3.5">
+      <Kart data-tanitim="pomodoro-sayaci" className="mb-3 flex flex-col items-center rounded-3xl px-4 pt-4 pb-3.5">
         <Sayac kalan={kalan} oran={oran} mola={molaMi} boyut={168} kalinlik={10} altYazi={siradaki} />
         <TurNoktalari tur={tur} turSayisi={ayar.turSayisi} gizli={prova !== null} className="mt-3" />
       </Kart>

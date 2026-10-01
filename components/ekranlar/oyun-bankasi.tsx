@@ -94,6 +94,7 @@ export function OyunBankasiEkrani({
   onTestBaslat,
   onKaldir,
   bildir,
+  demoVeri = false,
 }: {
   banka: BankaKaydi[]
   /** Genel testi açar: bankadaki oyunlar karışık sırayla oynatılıyor. */
@@ -101,6 +102,7 @@ export function OyunBankasiEkrani({
   /** Kaydı elle bankadan çıkarır — "bunu öğrendim". */
   onKaldir: (id: string) => void
   bildir: BildirimKolu
+  demoVeri?: boolean
 }) {
   const [suzgec, setSuzgec] = useState<Suzgec>('tumu')
   const dagilim = useMemo(() => bankaDagilimi(banka), [banka])
@@ -121,7 +123,10 @@ export function OyunBankasiEkrani({
 
   return (
     <div>
-      <Baslik />
+      <div data-tanitim={demoVeri ? 'demo-banka' : undefined}>
+        {demoVeri && <p className="mb-2 text-xs font-bold text-primary">TANITIM · 3 ÖRNEK SORU · GEÇİCİ</p>}
+        <Baslik />
+      </div>
 
       {/*
         Düğme kartsız duruyor: bir zamanlar özet cümlesi, oyun turu düğmesi ve

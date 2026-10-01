@@ -151,6 +151,7 @@ export function OyunlarEkrani({
   onDersAcildi,
   onOyunAcildi,
   bildir,
+  tanitimKarti,
 }: {
   kayitlar: OyunKayitlari
   setKayitlar: (guncelleyici: OyunKayitlari | ((onceki: OyunKayitlari) => OyunKayitlari)) => void
@@ -177,6 +178,7 @@ export function OyunlarEkrani({
   /** Bir oyun açıldı — ana sayfadaki kısayol sırası bunu izliyor. */
   onOyunAcildi: (oyun: OyunId) => void
   bildir: BildirimKolu
+  tanitimKarti?: React.ReactNode
 }) {
   const [secilenOyun, setSecilenOyun] = useState<OyunId | null>(null)
   /** Açık kategori; null ise ders ızgarası görünüyor. */
@@ -422,6 +424,8 @@ export function OyunlarEkrani({
         onAc={onBankayaGit}
         className="mt-4"
       />
+
+      {tanitimKarti}
 
       {secilenDers === null ? (
         <>

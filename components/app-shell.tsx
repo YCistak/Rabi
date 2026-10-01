@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { App as CapacitorApp } from '@capacitor/app'
 import { ArrowLeft } from 'lucide-react'
 import type {
@@ -94,6 +94,10 @@ import {
   type AylikOzetArsivi,
 } from '@/lib/ozet'
 import { RozetBildirimi } from '@/components/rozet-bildirimi'
+import { tanitimKonumu } from '@/lib/tanitim'
+import { TanitimSaglayici, useTanitim } from '@/components/tanitim/tanitim-baglami'
+import { SpotIsigi } from '@/components/tanitim/spot-isigi'
+import { DemoOyun, DemoOyunKarti } from '@/components/tanitim/demo-oyun'
 
 /** Rozet kontrolünün, veri durulana kadar beklediği süre (ms). */
 const ROZET_BEKLEME = 1200
@@ -110,6 +114,11 @@ const ROZET_BEKLEME = 1200
 const useYerlesimEtkisi = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
 export function AppShell() {
+  return <TanitimSaglayici><RabiUygulamasi /></TanitimSaglayici>
+}
+
+function RabiUygulamasi() {
+  const tanitim = useTanitim()
   // Açılış teşhisi (app/layout.tsx'teki satır içi betik) bu işareti bekliyor:
   // React buraya kadar gelemezse 8 saniye sonra beyaz ekran yerine hata
   // panelini gösteriyor. İlk boyamada koyuluyor; sonrası betiği ilgilendirmiyor.
@@ -141,10 +150,14 @@ export function AppShell() {
   /** Bir aracı açar ve kısayol sırasında öne alır. */
   const aracAc = useCallback(
     (acilan: Ekran) => {
+      if (tanitim.tanitimdaMi) {
+        if (acilan === 'pomodoro') tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'pomodoro-ac' })
+        return
+      }
       setEkran(acilan)
       setSonAraclar((onceki) => kullanildi(onceki, acilan))
     },
-    [setSonAraclar],
+    [setSonAraclar, tanitim.tanitimdaMi, tanitim.gonder],
   )
 
   /** Oyun açıldı — Oyunlar sekmesi bildiriyor, banka turu da buraya düşüyor. */
@@ -501,6 +514,28 @@ export function AppShell() {
   // sayfaya geçiyordu ve ekran kalkınca ana sayfa ortasından başlıyordu.
   // Ekran görünürken gövde kilitleniyor, kalkarken sayfa başa alınıyor.
   const acilisGorunur = !acilisBitti
+  const tanitimAcikti = useRef(false)
+  useEffect(() => {
+    if (ayarlarHazir && ayarlar.kurulumTamamlandi && acilisBitti && gecis === 'yok' && tanitim.tamamlandi === false && !tanitim.tanitimdaMi) {
+      tanitim.gonder({ tur: 'baslat' })
+    }
+  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, tanitim.tamamlandi, tanitim.tanitimdaMi, tanitim.gonder])
+
+  useYerlesimEtkisi(() => {
+    if (tanitim.adim) {
+      const konum = tanitimKonumu(tanitim.adim)
+      setSekme(konum.sekme)
+      setEkran(konum.ekran)
+      setAcilacakDers(null)
+      tanitimAcikti.current = true
+    } else if (tanitimAcikti.current) {
+      setSekme('ana')
+      setEkran(null)
+      setAcilacakDers(null)
+      tanitimAcikti.current = false
+      window.scrollTo(0, 0)
+    }
+  }, [tanitim.adim])
   useEffect(() => {
     if (!acilisGorunur) return
     const oncekiTasma = document.body.style.overflow
@@ -665,6 +700,8 @@ export function AppShell() {
   }, [sekme, ekran, denemeFormu, bankaTuru])
 
   const geriGit = useCallback(() => {
+    // Donanım geri tuşu turu sonlandırır; demo ekranının arkasına düşmez.
+    if (tanitim.tanitimdaMi) { tanitim.turuBitir(); return true }
     // En içteki katmandan dışa doğru: ekranın kendi açtığı katman (fotoğraf
     // görüntüleyici, onay kutusu) → form → alt ekran → ana sekme → çıkış.
     if (ustKatmaniKapat()) return true
@@ -688,7 +725,7 @@ export function AppShell() {
       return true
     }
     return false
-  }, [genelTest, genelTestiBitir, denemeFormu, ekran, sekme])
+  }, [genelTest, genelTestiBitir, denemeFormu, ekran, sekme, tanitim.tanitimdaMi, tanitim.turuBitir])
 
   /**
    * Açılışta kapanmış bir turdan artakalanları temizler.
@@ -811,7 +848,8 @@ export function AppShell() {
 
     Açılıştaki yumuşak geçişi artık `components/acilis.tsx` hallediyor.
   */
-    <div className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(6rem+var(--guvenli-alt))]">
+    <div className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(6rem+var(--guvenli-alt))]"
+      style={tanitim.tanitimdaMi ? { paddingBottom: 'calc(60vh + var(--guvenli-alt))' } : undefined}>
       {/*
         Ekran ve sekme değişimi tek bir karede oluyordu: içerik tak diye yerine
         oturuyordu. `anahtar` her değişimde kutuyu söküp yeniden kuruyor, böylece
@@ -861,20 +899,22 @@ export function AppShell() {
             )}
             {ekran === 'oyun-bankasi' && (
               <OyunBankasiEkrani
-                banka={oyunBankasi}
+                demoVeri={tanitim.tanitimdaMi}
+                banka={tanitim.tanitimdaMi ? tanitim.demo.banka : oyunBankasi}
                 bildir={hataBildirimi}
                 /*
                   Elle kaldırma `bankadanDustu`'ya uğramıyor: sayaç, soruyu genel
                   testte doğru bilmenin karşılığı ve rozet ona bakıyor. Tuşa
                   basmakla artan bir sayaç ölçtüğü şeyi ölçmez olurdu.
                 */
-                onKaldir={(id) => setOyunBankasi((o) => o.filter((k) => k.id !== id))}
+                onKaldir={(id) => { if (!tanitim.tanitimdaMi) setOyunBankasi((o) => o.filter((k) => k.id !== id)) }}
                 /*
                   Genel test Oyunlar sekmesinde oynanıyor: her oyun soruları kendi
                   ekranıyla soruyor. Sekme değişiyor çünkü oyun katmanı tam ekran
                   ve testten çıkan kullanıcı oyunların yanında kalmalı.
                 */
                 onTestBaslat={() => {
+                  if (tanitim.tanitimdaMi) return
                   const test = genelTestKur(oyunBankasi)
                   if (test === null) return
                   setGenelTest(test)
@@ -885,9 +925,10 @@ export function AppShell() {
             )}
             {ekran === 'pomodoro' && (
               <PomodoroEkrani
+                demoVeri={tanitim.tanitimdaMi}
                 ayar={pomodoroAyar}
-                setAyar={setPomodoroAyar}
-                onSeansBitti={(seans) => setPomodoroGecmis((o) => [...o, seans])}
+                setAyar={(guncelle) => { if (!tanitim.tanitimdaMi) setPomodoroAyar(guncelle) }}
+                onSeansBitti={(seans) => { if (!tanitim.tanitimdaMi) setPomodoroGecmis((o) => [...o, seans]) }}
               />
             )}
             {ekran === 'notlar' && (
@@ -942,6 +983,7 @@ export function AppShell() {
           <>
             {sekme === 'ana' && (
               <AnaSayfa
+                tanitimdaMi={tanitim.tanitimdaMi}
                 maskotGizli={maskotGizli}
                 ayarlar={ayarlar}
                 gunlukKayitlar={gunlukKayitlar}
@@ -968,8 +1010,9 @@ export function AppShell() {
                 acilisSuruyor={!acilisBitti}
               />
             )}
-            {sekme === 'oyunlar' && (
+            {sekme === 'oyunlar' && (tanitim.adim && ['zorluk', 'soru-bir', 'soru-iki', 'sonuc'].includes(tanitim.adim.kimlik) ? <DemoOyun /> : (
               <OyunlarEkrani
+                tanitimKarti={tanitim.adim?.kimlik === 'demo-ac' ? <DemoOyunKarti /> : undefined}
                 kayitlar={oyunlar}
                 setKayitlar={setOyunlar}
                 setGecmis={setOyunGecmisi}
@@ -997,7 +1040,7 @@ export function AppShell() {
                 onOyunAcildi={oyunAcildi}
                 bildir={hataBildirimi}
               />
-            )}
+            ))}
             {sekme === 'harita' && (
               <KonuHaritasiEkrani
                 secim={konuSecimi}
@@ -1046,21 +1089,27 @@ export function AppShell() {
       <BottomNav
         sekme={sekme}
         onDegis={(yeni) => {
+          if (tanitim.tanitimdaMi) {
+            if (yeni === 'oyunlar') tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'oyunlar-ac' })
+            return
+          }
           setEkran(null)
           setSekme(yeni)
         }}
       />
 
-      <RozetBildirimi
+      {!tanitim.tanitimdaMi && <RozetBildirimi
         rozet={bildirimKuyrugu[0] ?? null}
         onBitti={() => setBildirimKuyrugu((onceki) => onceki.slice(1))}
-      />
+      />}
     </div>
   )
 
   return (
     <>
       {icerik}
+      {tanitim.kayitUyarisi && <p role="status" className="mx-auto max-w-md px-4 pb-24 text-sm text-muted-foreground">{tanitim.kayitUyarisi}</p>}
+      <SpotIsigi />
       {/* Özet katmanı açılış ekranının **altında**: uygulama açılırken tavşan
           yuvasına inmeli, üstüne kocaman bir hikâye katmanı düşmemeli. */}
       {ozetAcik && ozet && (
@@ -1076,7 +1125,7 @@ export function AppShell() {
       <CokmeSorusu kol={cokme} />
       {/* Şerit açılış bitip kurulum tamamlanınca: kurulumun ortasına inen bir
           "güncelle" şeridi, ilk açılışta kullanıcıya iki iş birden verirdi. */}
-      {acilisBitti && ayarlar.kurulumTamamlandi && <GuncellemeSeridi kol={guncelleme} />}
+      {acilisBitti && ayarlar.kurulumTamamlandi && !tanitim.tanitimdaMi && <GuncellemeSeridi kol={guncelleme} />}
       {gecis !== 'yok' && <MaskotGecisi soluyor={gecis === 'soluyor'} />}
     </>
   )
