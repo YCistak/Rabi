@@ -23,8 +23,10 @@ describe('Ana ve bağlamsal tanıtım turları', () => {
     expect(TANITIM_ADIMLARI[baslat.aktifAdim!].kimlik).toBe('oyun-baslat')
     expect(tanitimGecisi(baslat, { tur: 'ileri' })).toBe(baslat)
     const oyun = tanitimGecisi(baslat, { tur: 'hedefe-dokun', hedef: 'demo-baslat' })
-    expect(TANITIM_ADIMLARI[oyun.aktifAdim!].kimlik).toBe('soru-bir')
-    expect(tanitimGecisi(oyun, { tur: 'geri' })).toBe(oyun)
+    expect(TANITIM_ADIMLARI[oyun.aktifAdim!].kimlik).toBe('oyun-sayac')
+    const soru = tanitimGecisi(oyun, { tur: 'ileri' })
+    expect(TANITIM_ADIMLARI[soru.aktifAdim!].kimlik).toBe('soru-bir')
+    expect(tanitimGecisi(soru, { tur: 'geri' })).toBe(soru)
   })
   it.each([[1, 0], [0, 1]])('gerçek oyunun %i doğru %i yanlış sonucuyla üç geçici soru hazırlar', (dogru, yanlis) => {
     let durum = tanitimGecisi(adimaKadar('soru-bir'), { tur: 'oyun-bitti', dogru, yanlis })
@@ -39,6 +41,13 @@ describe('Ana ve bağlamsal tanıtım turları', () => {
     durum = tanitimGecisi(durum, { tur: 'hedefe-dokun', hedef: 'oyun-bankasi-ac' })
     expect(tanitimKonumu(TANITIM_ADIMLARI[durum.aktifAdim!])).toEqual({ sekme: 'oyunlar', ekran: 'oyun-bankasi' })
     expect(tanitimGecisi(durum, { tur: 'temizle' })).toEqual(demoVerileriTemizle())
+  })
+  it('kapanış animasyonu sürerken demo verilerini hemen temizler', () => {
+    const sonuc = adimaKadar('sonuc')
+    const temiz = tanitimGecisi(sonuc, { tur: 'demo-temizle' })
+    expect(temiz.aktifAdim).toBe(sonuc.aktifAdim)
+    expect(temiz.aktifTur).toBe('ana_tur')
+    expect(temiz.demo).toEqual(demoVerileriTemizle().demo)
   })
   it('sonuçtan geri gidildiğinde yeni bir oyun için geçici sonucu temizler', () => {
     const durum = tanitimGecisi(adimaKadar('sonuc'), { tur: 'geri' })

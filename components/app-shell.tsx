@@ -862,7 +862,7 @@ function RabiUygulamasi() {
         giriş animasyonu her seferinde baştan oynuyor — sınıf tek başına verilse
         React aynı düğümü koruduğu için animasyon yalnızca ilk açılışta çalışırdı.
       */}
-      <SayfaGecisi key={ekran ?? `sekme:${sekme}`} yavas={tanitim.tanitimdaMi}>
+      <SayfaGecisi key={ekran ?? `sekme:${sekme}`} yavas={tanitim.tanitimdaMi || tanitim.kapanisSuruyor} sure={tanitim.animasyon.gecisMs}>
         {ekran !== null ? (
           <>
             <Buton
@@ -1016,7 +1016,7 @@ function RabiUygulamasi() {
                 acilisSuruyor={!acilisBitti}
               />
             )}
-            {sekme === 'oyunlar' && (tanitim.adim && ['zorluk', 'oyun-baslat', 'soru-bir', 'sonuc'].includes(tanitim.adim.kimlik) ? <DemoOyun bildir={hataBildirimi} /> : (
+            {sekme === 'oyunlar' && (tanitim.adim && ['zorluk', 'oyun-baslat', 'oyun-sayac', 'soru-bir', 'sonuc'].includes(tanitim.adim.kimlik) ? <DemoOyun bildir={hataBildirimi} /> : (
               <OyunlarEkrani
                 tanitimKarti={tanitim.adim?.kimlik === 'demo-ac' ? <DemoOyunKarti /> : undefined}
                 kayitlar={oyunlar}
@@ -1154,7 +1154,7 @@ function RabiUygulamasi() {
  * duraklatılmış kalan ekran (opaklığı 0'da donmuş) hiç görünmezdi. Açılış
  * ekranındaki `acilis-bekliyor` ile aynı kural, aynı gerekçe.
  */
-function SayfaGecisi({ children, yavas = false }: { children: React.ReactNode; yavas?: boolean }) {
+function SayfaGecisi({ children, yavas = false, sure = 500 }: { children: React.ReactNode; yavas?: boolean; sure?: number }) {
   const [basladi, setBasladi] = useState(false)
 
   useEffect(() => {
@@ -1171,7 +1171,7 @@ function SayfaGecisi({ children, yavas = false }: { children: React.ReactNode; y
   }, [])
 
   return (
-    <div className={cn('sayfa-girisi', !basladi && 'sayfa-bekliyor')} style={yavas ? { animationDuration: '500ms' } : undefined}>
+    <div className={cn('sayfa-girisi', !basladi && 'sayfa-bekliyor')} style={yavas ? { animationDuration: `${sure}ms` } : undefined}>
       {children}
     </div>
   )

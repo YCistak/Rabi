@@ -58,8 +58,10 @@ export function OyunTanitim({
   onBasla,
   onKapat,
   demoVeri = false,
+  onSayimBasladi,
 }: {
   demoVeri?: boolean
+  onSayimBasladi?: () => void
   oyun: OyunTanimi
   acik: boolean
   /** Bu oyundaki en iyi puan; 0 ise hiç oynanmamış. */
@@ -116,7 +118,7 @@ export function OyunTanitim({
   if (genelTest && baslatir) return null
 
   // Sayım sürerken ekran yok: sıra hazırlanmada.
-  if (sayiliyor) return <GeriSayim onBitti={onBasla} tanitimHedefi={demoVeri ? "demo-baslat" : undefined} />
+  if (sayiliyor) return <GeriSayim onBitti={onBasla} />
 
   const ornekler = OYUN_ORNEKLERI[oyun.id]
 
@@ -130,7 +132,7 @@ export function OyunTanitim({
       zorluk={zorluk}
       setZorluk={setZorluk}
       dugmeMetni="Başlat"
-      onDevam={() => setSayiliyor(true)}
+      onDevam={() => { onSayimBasladi?.(); setSayiliyor(true) }}
       onKapat={onKapat}
     />
   }
@@ -214,6 +216,7 @@ function TurAyariEkrani({
   onKapat,
 }: {
   demoVeri?: boolean
+  onSayimBasladi?: () => void
   oyun: OyunTanimi
   rekor: number
   mod: OyunModu
@@ -257,9 +260,9 @@ function TurAyariEkrani({
           )}
         </header>
 
-        <div data-tanitim={demoVeri ? "demo-zorluk" : undefined} style={demoVeri ? { flex: "0 1 auto", height: "clamp(140px, calc(100dvh - 460px), 360px)" } : undefined} className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
-          <ModSecimi secili={mod} onSec={setMod} />
-          <div className="mt-6 border-t border-border pt-5">
+        <div data-tanitim={demoVeri ? "demo-zorluk" : undefined} style={demoVeri ? { flex: "0 0 auto" } : undefined} className={cn("min-h-0 flex-1 overflow-y-auto px-5", demoVeri ? "py-2" : "py-5")}>
+          <ModSecimi kompakt={demoVeri} secili={mod} onSec={setMod} />
+          <div className={demoVeri ? "mt-2 border-t border-border pt-2" : "mt-6 border-t border-border pt-5"}>
             <ZorlukSecimi secili={zorluk} onSec={setZorluk} />
           </div>
         </div>

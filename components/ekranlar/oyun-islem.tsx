@@ -140,7 +140,11 @@ export function IslemOyunuEkrani({
   bildir,
   demoSorulari,
   onBasladi,
+  onSayimBasladi,
+  demoDuraklatildi = false,
 }: {
+  onSayimBasladi?: () => void
+  demoDuraklatildi?: boolean
   demoSorulari?: IslemSorusu[]
   onBasladi?: () => void
   istatistik: OyunIstatistigi
@@ -287,7 +291,7 @@ export function IslemOyunuEkrani({
   /** `pas` true ise cevap verilmeden geçiliyor; yanlış sayılır. */
   const cevapla = useCallback(
     (pas: boolean) => {
-      if (asama !== 'oynaniyor' || geriBildirim !== null) return
+      if (asama !== 'oynaniyor' || geriBildirim !== null || demoDuraklatildi) return
       const soru = sorular[sira]
       if (!soru) return
       if (!pas && girilen === '') return
@@ -310,7 +314,7 @@ export function IslemOyunuEkrani({
         }
       }, CEVAP_BEKLEMESI)
     },
-    [asama, bankaTuru, geriBildirim, girilen, sira, sorular, turBitir],
+    [demoDuraklatildi, asama, bankaTuru, geriBildirim, girilen, sira, sorular, turBitir],
   )
 
 
@@ -350,10 +354,11 @@ export function IslemOyunuEkrani({
 
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
+    turSuresi: demoSorulari ? 600 : undefined,
     turNo,
     yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
     onTurBitti: turSuresiDoldu,
-    aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan,
+    aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && !demoDuraklatildi,
     sure: soruSuresi('islem'),
     anahtar: sira,
     onBitti: sureDoldu,
@@ -368,7 +373,7 @@ export function IslemOyunuEkrani({
   // Fiziksel klavye desteği: telefonda kullanılmıyor ama tarayıcıda denemeyi
   // ve klavyeli bir tablette oynamayı mümkün kılıyor.
   useEffect(() => {
-    if (asama !== 'oynaniyor' || yardimAcik) return
+    if (asama !== 'oynaniyor' || yardimAcik || demoDuraklatildi) return
     const dinleyici = (olay: KeyboardEvent) => {
       if (olay.key >= '0' && olay.key <= '9') rakamYaz(olay.key)
       else if (olay.key === 'Backspace') sil()
@@ -378,7 +383,7 @@ export function IslemOyunuEkrani({
     }
     window.addEventListener('keydown', dinleyici)
     return () => window.removeEventListener('keydown', dinleyici)
-  }, [asama, yardimAcik, rakamYaz, sil, cevapla])
+  }, [demoDuraklatildi, asama, yardimAcik, rakamYaz, sil, cevapla])
 
   const yardimAc = () => {
     setDuraklatilan(true)
@@ -400,7 +405,8 @@ export function IslemOyunuEkrani({
     <>
       <OyunKabugu
         oyunId="islem"
-        tanitimBosluk={!!demoSorulari}
+        tanitimBosluk={!!demoSorulari && asama === "oynaniyor"}
+        tanitimSayacHedefi={demoSorulari ? "demo-sayac" : undefined}
         baslik={oyun.ad}
         sayac={
           asama === 'bitti'
@@ -421,7 +427,8 @@ export function IslemOyunuEkrani({
         onYardim={yardimAc}
       >
         {asama === 'bitti' && sonuc ? (
-          <div className={demoSorulari ? "sayfa-girisi" : undefined} style={demoSorulari ? { animationDuration: "500ms" } : undefined} data-tanitim={demoSorulari ? "demo-sonuc" : undefined}><SonucGorunumu
+          <div className={demoSorulari ? "flex flex-1 flex-col sayfa-girisi" : "flex flex-1 flex-col"} style={demoSorulari ? { animationDuration: "500ms" } : undefined}><SonucGorunumu
+            tanitimHedefi={demoSorulari ? "demo-sonuc" : undefined}
             sonuc={sonuc}
             girdiler={yanlisGirdileri}
             turler={turdekiTurler}
@@ -494,6 +501,7 @@ export function IslemOyunuEkrani({
       <OyunTanitim
         oyun={oyun}
         demoVeri={!!demoSorulari}
+        onSayimBasladi={onSayimBasladi}
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
@@ -506,6 +514,7 @@ export function IslemOyunuEkrani({
 
 
 function SonucGorunumu({
+  tanitimHedefi,
   sonuc,
   girdiler,
   turler,
@@ -517,6 +526,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
+  tanitimHedefi?: string
   sonuc: { ozet: TurOzeti<IslemSorusu>; yeniRekor: boolean }
   /** Yanlışlarla aynı sıradaki girdiler; boş dize pas geçildiğini gösterir. */
   girdiler: string[]
@@ -542,6 +552,7 @@ function SonucGorunumu({
 
   return (
     <TurSonu
+      tanitimHedefi={tanitimHedefi}
       oyunId="islem"
       dogru={ozet.dogru}
       yanlis={ozet.yanlis}

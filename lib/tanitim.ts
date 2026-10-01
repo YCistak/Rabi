@@ -13,12 +13,13 @@ export const TANITIM_ADIMLARI = [
   { kimlik: 'soru-takibi', hedef: 'soru-takibi', baslik: 'Çözdüklerini kaydet', aciklama: 'Soru Takibi’nde çözdüğün soruları ders ve konu bazında kaydedersin. Günlük hedefindeki halka bu kayıtlardan dolar. Şimdilik kartı tanımamız yeterli.', tiklamali: false },
   { kimlik: 'pomodoro-ac', hedef: 'pomodoro-ac', baslik: 'Birlikte odaklanalım', aciklama: 'Şimdi odaklanma aracımızı görmek için Pomodoro’ya dokun.', tiklamali: true },
   { kimlik: 'pomodoro-prova', hedef: 'pomodoro-prova', baslik: 'Pomodoro veya deneme provası', aciklama: 'Çalışma ve mola döngüsü için Pomodoro’yu, sınav süresini deneyimlemek için Deneme provası’nı seçebilirsin. Prova kipinde TYT, AYT veya YDT kitapçığını seçersin.', tiklamali: false },
-  { kimlik: 'pomodoro', hedef: 'pomodoro-ayarlar', ekHedefler: ['pomodoro-sayaci', 'pomodoro-ders'], baslik: 'Çalışma ortamını kendine göre kur', aciklama: 'Sayaç çalışma ve mola döngünü gösterir. Çalışacağın dersi seçebilir, Süreler’den çalışma ve molaları ayarlayabilir, Ses’ten müzik açabilirsin. İstersen çalışırken ekranı açık bırakabilirsin. Bu turda ayarlarını değiştirmiyoruz.', tiklamali: false },
+  { kimlik: 'pomodoro', hedef: 'pomodoro-calisma', baslik: 'Çalışma ortamını kendine göre kur', aciklama: 'Sayaç çalışma ve molayı gösterir. Dersi seçebilir, süreleri ayarlayabilir, müzik açabilir ve çalışırken ekranı açık tutabilirsin. Üç blok birlikte çalışma ortamını oluşturur.', tiklamali: false },
   { kimlik: 'pomodoro-kilit', hedef: 'pomodoro-kilit', baslik: 'Dikkatini odak kilidiyle koru', aciklama: 'Odak korumasıyla çalışma sırasında dikkatini dağıtan uygulamaları engelleyebilir ve bildirimleri susturabilirsin. Bu özellik desteklenen Android cihazlarda, verdiğin izinlerle çalışır. Şimdi ana sayfaya dönüp oyunlara bakalım.', tiklamali: false },
   { kimlik: 'oyunlar-ac', hedef: 'oyunlar-ac', baslik: 'Bilgini oyunla pekiştir', aciklama: 'Alt menüdeki Oyunlar’a dokun. Birlikte bir soruluk kısa bir demo oynayacağız.', tiklamali: true },
   { kimlik: 'demo-ac', hedef: 'demo-oyun', baslik: 'Kısa bir deneme', aciklama: 'Tanıtım oyunu kartına dokun. Bu oyundaki cevaplar ve skor yalnızca tanıtımda kalacak.', tiklamali: true },
-  { kimlik: 'zorluk', hedef: 'demo-zorluk', etkilesimli: true, baslik: 'Gerçek oyunun hazırlık ekranı', aciklama: 'Bütün mini oyunlarda bu ekrandan tur modunu ve başlangıç zorluğunu seçersin. Tanıtım oyunu da aynı ekranı kullanıyor; burada seçtiklerin yalnızca bu denemede kalır.', tiklamali: false },
+  { kimlik: 'zorluk', hedef: 'demo-zorluk', etkilesimli: true, baslik: 'Gerçek oyunun hazırlık ekranı', aciklama: 'Tur modunu ve başlangıç zorluğunu seç. Bu seçimler tanıtımda kalır; demo süresi 10 dakikadır.', tiklamali: false },
   { kimlik: 'oyun-baslat', hedef: 'demo-baslat', baslik: 'Hazırsan turu başlat', aciklama: 'Başlat’a dokun. Geri sayımdan sonra gerçek oyun ekranında bir örnek işlem çözeceksin.', tiklamali: true },
+  { kimlik: 'oyun-sayac', hedef: 'demo-sayac', baslik: 'Süre ve tur bilgileri', aciklama: 'Üst bölümde kalan süreyi, doğru ve yanlışlarını, serini izlersin. Tanıtım oyununun süresi 10 dakika. Bu açıklamayı okurken sayaç durur; İleri ile örnek soruya geçeriz.', tiklamali: false },
   { kimlik: 'soru-bir', hedef: 'demo-soru', ekHedefler: ['demo-islem'], baslik: 'Bir işlemi dene', aciklama: 'Sonucu tuş takımından yazıp onayla; istersen pas geç. Bu tuş takımı ve geri bildirimler normal oyunlarla aynı. Bir cevaptan sonra sonucu göreceksin.', tiklamali: true },
   { kimlik: 'sonuc', hedef: 'demo-sonuc', baslik: 'Sonucunu hemen gör', aciklama: 'Doğru ve yanlışlarını burada görürsün. Bankanın nasıl çalıştığını göstermek için üç örnek demo soru hazırladık; senin cevaplarından bağımsızlar.', tiklamali: false },
   { kimlik: 'banka-ac', hedef: 'oyun-bankasi-ac', baslik: 'Yanlışlarına yeniden dön', aciklama: 'Üç geçici örnek hazırladık. Oyunlar menüsündeki Oyun Bankası kartına dokunarak nerede toplandıklarını görelim.', tiklamali: true },
@@ -52,7 +53,7 @@ export type DemoVeri = {
 export type TanitimDurumu = { aktifTur: TanitimTuru | null; aktifAdim: number | null; demo: DemoVeri }
 export type TanitimEylemi = (
   | { tur: 'baslat'; turAdi?: TanitimTuru }
-  | { tur: 'ileri' | 'geri' | 'temizle' }
+  | { tur: 'ileri' | 'geri' | 'temizle' | 'demo-temizle' }
   | { tur: 'hedefe-dokun'; hedef: string }
   | { tur: 'oyun-bitti'; dogru: number; yanlis: number }
 ) & { beklenenAdim?: number | null; beklenenTur?: TanitimTuru | null }
@@ -71,6 +72,7 @@ function demoBankasiKur(): BankaKaydi[] {
 }
 
 export function tanitimGecisi(durum: TanitimDurumu, eylem: TanitimEylemi): TanitimDurumu {
+  if (eylem.tur === 'demo-temizle') return { ...durum, demo: demoVerileriTemizle().demo }
   if (eylem.tur === 'temizle') return demoVerileriTemizle()
   if (eylem.beklenenTur !== undefined && eylem.beklenenTur !== durum.aktifTur) return durum
   if (eylem.beklenenAdim !== undefined && eylem.beklenenAdim !== durum.aktifAdim) return durum
@@ -97,7 +99,7 @@ export function tanitimGecisi(durum: TanitimDurumu, eylem: TanitimEylemi): Tanit
     case 'geri': {
       if (adim.kimlik === 'soru-bir') return durum
       yeniAdim = Math.max(0, yeniAdim - 1)
-      if (['sonuc', 'oyun-baslat'].includes(adim.kimlik)) yeniAdim = adimlar.findIndex((oge) => oge.kimlik === 'zorluk')
+      if (['sonuc', 'oyun-baslat', 'oyun-sayac'].includes(adim.kimlik)) yeniAdim = adimlar.findIndex((oge) => oge.kimlik === 'zorluk')
       if (durum.aktifTur === 'ana_tur' && yeniAdim <= adimlar.findIndex((oge) => oge.kimlik === 'zorluk')) demo = demoVerileriTemizle().demo
       break
     }
@@ -108,7 +110,7 @@ export function tanitimGecisi(durum: TanitimDurumu, eylem: TanitimEylemi): Tanit
 export function tanitimKonumu(adim: TanitimAdimi): { sekme: Sekme; ekran: Ekran | null } {
   if (['pomodoro-prova', 'pomodoro', 'pomodoro-kilit'].includes(adim.kimlik)) return { sekme: 'ana', ekran: 'pomodoro' }
   if (adim.kimlik === 'banka') return { sekme: 'oyunlar', ekran: 'oyun-bankasi' }
-  return { sekme: ['demo-ac', 'zorluk', 'oyun-baslat', 'soru-bir', 'sonuc', 'banka-ac'].includes(adim.kimlik) ? 'oyunlar' : 'ana', ekran: null }
+  return { sekme: ['demo-ac', 'zorluk', 'oyun-baslat', 'oyun-sayac', 'soru-bir', 'sonuc', 'banka-ac'].includes(adim.kimlik) ? 'oyunlar' : 'ana', ekran: null }
 }
 
 export function demoSonucu(demo: DemoVeri) {

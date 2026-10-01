@@ -9,17 +9,17 @@
 5. `components/tanitim/net-gelisimi.tsx`: Gerçek denemelerden net gelişimi; şablon seçimi sayesinde TYT/AYT ve farklı ölçekler karışmaz. Son on kaydı gösterir. Kayıt yokken örnek net oluşturmaz.
 6. `components/app-shell.tsx`: Kurulum ve açılış animasyonu bittikten sonra ana turu başlatır; ekran geçişlerini yönetir. Denemeler ve Harita ilk açıldığında ilgili mini turu başlatır.
 
-`data-tanitim` hedefleri ilgili bileşenlerde bulunur: geri sayım, ana sayfa, alt menü, Pomodoro, oyun bankası, Denemeler ve konu haritası.
+`data-tanitim` hedefleri ilgili bileşenlerde bulunur: ana sayfa, alt menü, Pomodoro, oyun bankası, Denemeler ve konu haritası.
 
 ## Ana akış
 
-Beş ana bölüm, on beş etkileşim adımına ayrılır:
+Beş ana bölüm, on altı etkileşim adımına ayrılır:
 
 1. Sınav geri sayımı ve hedef kartı.
 2. Günlük soru hedefi ve yedi günlük şerit.
 3. Soru Takibi kartı; içeri girilmez.
 4. Pomodoro düğmesine gerçek dokunuş → deneme provası seçimi → sayaç, ders, süreler, ses ve ekran ayarları → ayrı odak kilidi açıklaması → ana sayfa.
-5. Oyunlar sekmesine dokunuş → ders kategorileri arasında Tanıtım oyunu → gerçek tur ayarları → Başlat ve geri sayım → tek örnek işlem → gerçek sonuç ekranı → Oyunlar menüsünde Oyun Bankası kartına dokunuş → üç geçici örnek.
+5. Oyunlar sekmesine dokunuş → ders kategorileri arasında Tanıtım oyunu → gerçek tur ayarları → Başlat ve karartmasız geri sayım → 10 dakikalık süre ve tur bilgileri → tek örnek işlem → gerçek sonuç ekranı → Oyunlar menüsünde Oyun Bankası kartına dokunuş → üç geçici örnek.
 
 Önceki kullanıcı tercihi korunur: oyun yanlışlarının bulunduğu Oyun Bankası tanıtılır; fotoğraflı Yanlış Soru ekranına veri eklenmez.
 
@@ -40,7 +40,7 @@ Ana tur açıkken mini tur başlamaz. Mini turun bitirilmesi veya geçilmesi kul
 
 Her anahtara tamamlamada veya Turu Geç işleminde `'true'` yazılır. Eski `rabi_tanitim_tamamlandi` yeni ana turun kaydı yerine kullanılmaz; güncellenen akış bir kez gösterilir.
 
-Demo cevapları, skor ve banka soruları yalnızca Context belleğindedir. Gerçek banka, oyun geçmişi, soru takibi veya Pomodoro kayıtlarına yazılmaz. `demoVerileriTemizle()` bitişte ve geçmede boş durumu döndürür. Sayfa yenileme de bellekteki demo verilerini kaldırır; tamamlanmayan tur yeniden başlar. Ana tur bittiğinde temiz ana sayfaya dönülür.
+Demo cevapları, skor ve banka soruları yalnızca Context belleğindedir. Gerçek banka, oyun geçmişi, soru takibi veya Pomodoro kayıtlarına yazılmaz. `demoVerileriTemizle()` bitişte ve geçmede boş durumu döndürür. Sayfa yenileme de bellekteki demo verilerini kaldırır; tamamlanmayan tur yeniden başlar. Bitiş veya geçme anında demo temizlenir; rehberin kapanışından sonra temiz ana sayfaya animasyonla dönülür.
 
 Depolama yazılamazsa temizlik yine gerçekleşir ve oturum içindeki tamamlanma durumu korunur; yeniden açılışta turun tekrarlanabileceği kullanıcıya bildirilir. Tur ve adım kimliği kontrolü, gecikmiş veya çift dokunuşun sonraki adımı atlamasını engeller.
 
@@ -63,8 +63,8 @@ Capacitor aynı statik çıktıyı kullanır. Android geri tuşu etkin turu biti
 
 ## Geçiş ve oyun deneyimi
 
-Adım değişiminden önce 320 ms kısa bir geçiş uygulanır; bu sırada ikinci dokunuş kabul edilmez. Ekran girişi, maske ve balon konumu 500 ms boyunca yumuşak geçer. Kullanıcı hareket azaltmayı seçtiyse rehberin geçiş animasyonu devre dışıdır. Karartma nötr gri tema rengini yüzde 82 opaklıkla kullanır.
+Animasyon ayarları `/tanitim-deneyi` sayfasında canlı değiştirilir. Çerçeve çizimi, aydınlanma gecikmesi, aydınlanma süresi, balon geçişi, adım bekleme süresi ve karartma ayrı ayarlanır. Ayarlar `rabi_tur_animasyon_ayarlari` anahtarında saklanır; önizleme tamamlanma kayıtlarına dokunmaz. Varsayılan karartma önceki `--foreground` tonunu yüzde 64 opaklıkla kullanır. Kullanıcı hareket azaltmayı seçtiyse rehber geçişleri devre dışıdır.
 
-Pomodoro’nun çalışma ayarları birlikte anlatılır; odak koruması ayrı kartta ve ayrı adımda gösterilir. Tarayıcıda da tanıtım satırı görünür, fakat cihaz izni istenmez veya koruma başlatılmaz.
+Pomodoro’nun sayaç, ders ve ayar blokları tek çerçevede birlikte anlatılır; odak koruması ayrı kartta ve ayrı adımda gösterilir. Tarayıcıda da tanıtım satırı görünür, fakat cihaz izni istenmez veya koruma başlatılmaz.
 
-Tanıtım oyununun görünümü kopyalanmaz: gerçek oyun bileşeni kullanılır. Tur sırasında rehbere yer açmak için hazırlık alanı kaydırılır; oyun aşamasında balon kısa bir ipucuna dönüşür. Sonuçtan Geri denildiğinde oyun yeni bir deneme için sıfırlanır. Gerçek oyun modu, zorluk tercihi ve rekorlar değiştirilmez.
+Tanıtım oyununun görünümü kopyalanmaz: gerçek oyun bileşeni kullanılır. Hazırlık ekranında seçenekler ve başlangıç zorluğu birlikte görünür. Geri sayımda rehber ve karartma tamamen kaldırılır. Ardından önce süre ve tur bilgileri açıklanır; sayaç bu sırada durur. Tanıtımın süresi 600 saniyedir. Oyun aşamasında balon kısa bir ipucuna dönüşür. Sonuç mevcut mini oyunun tam yerleşimini kullanır. Sonuçtan Geri denildiğinde oyun yeni bir deneme için sıfırlanır. Gerçek oyun modu, zorluk tercihi ve rekorlar değiştirilmez.

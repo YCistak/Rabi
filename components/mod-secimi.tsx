@@ -28,8 +28,10 @@ const SIMGELER: Record<OyunModu, typeof Clock> = {
 
 export function ModSecimi({
   secili,
+  kompakt = false,
   onSec,
 }: {
+  kompakt?: boolean
   secili: OyunModu
   onSec: (mod: OyunModu) => void
 }) {
@@ -37,7 +39,7 @@ export function ModSecimi({
     <div>
       <BolumBasligi>Oyun modu</BolumBasligi>
 
-      <div className="mt-3 flex flex-col gap-2">
+      <div className={kompakt ? "mt-2 grid grid-cols-2 gap-2" : "mt-3 flex flex-col gap-2"}>
         {MOD_SIRASI.map((mod) => {
           const tanim = MODLAR[mod]
           const Simge = SIMGELER[mod]
@@ -49,7 +51,7 @@ export function ModSecimi({
               onClick={() => onSec(mod)}
               aria-pressed={acik}
               className={cn(
-                'flex min-h-[64px] items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition active:brightness-95',
+                kompakt ? 'flex min-h-11 items-center gap-2 rounded-xl border px-2 py-2 text-left' : 'flex min-h-[64px] items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition active:brightness-95',
                 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                 acik
                   ? 'border-primary bg-primary-soft'
@@ -59,7 +61,7 @@ export function ModSecimi({
               <Simge size={20} strokeWidth={2} className={acik ? 'text-primary' : 'text-muted-foreground'} aria-hidden />
               <span className="flex-1">
                 <span className="block text-[15px] font-extrabold leading-tight">{tanim.ad}</span>
-                <span className="mt-0.5 block text-[12px] leading-snug text-muted-foreground">{tanim.ozet}</span>
+                <span className={kompakt ? "hidden" : "mt-0.5 block text-[12px] leading-snug text-muted-foreground"}>{tanim.ozet}</span>
               </span>
               <span aria-hidden className={cn('grid size-5 shrink-0 place-items-center rounded-full border', acik ? 'border-primary bg-primary text-white' : 'border-border')}>
                 {acik && <Check size={13} strokeWidth={3} />}
@@ -71,15 +73,15 @@ export function ModSecimi({
 
       {/* Seçilen modun kuralı tam olarak yazıyor: tur ortasında "bu neden
           bitti" diye sorulmasın. */}
-      <p className="mt-3 text-[12px] leading-relaxed text-muted-foreground">
-        {MODLAR[secili].kural}
+      <p className={kompakt ? "hidden" : "mt-3 text-[12px] leading-relaxed text-muted-foreground"}>
+        {kompakt ? 'Tanıtımda tüm modlar 10 dakika; sonuçlar geçicidir.' : MODLAR[secili].kural}
       </p>
 
       {/*
         Kayıtsız mod seçildiği **anda** söyleniyor. Turun sonunda öğrenilen bir
         kural, o turu boşa harcatır.
       */}
-      {!modKayitliMi(secili) && (
+      {!kompakt && !modKayitliMi(secili) && (
         <p className="mt-2 rounded-xl bg-warning-soft px-2.5 py-1.5 text-[11.5px] font-bold leading-snug text-warning">
           Rekor tutulmaz; yanlışların Oyun Bankası’na eklenir.
         </p>

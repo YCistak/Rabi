@@ -21,11 +21,12 @@ export function DemoOyunKarti() {
 
 /** Gerçek oyunun ekranlarını kullanır; seçimler ve sonuç sadece bellekte kalır. */
 export function DemoOyun({ bildir }: { bildir: BildirimKolu }) {
-  const { gonder, turuBitir, adim } = useTanitim()
+  const { gonder, turuBitir, adim, setRehberGizli } = useTanitim()
+  useEffect(() => { if (adim?.kimlik === "oyun-sayac") setRehberGizli(false) }, [adim?.kimlik, setRehberGizli])
   const [oyunNo, setOyunNo] = useState(0)
   const oncekiAdim = useRef(adim?.kimlik)
   useEffect(() => {
-    if (adim?.kimlik === 'zorluk' && oncekiAdim.current === 'sonuc') setOyunNo((sira) => sira + 1)
+    if (adim?.kimlik === 'zorluk' && ['sonuc', 'oyun-sayac'].includes(oncekiAdim.current ?? '')) setOyunNo((sira) => sira + 1)
     oncekiAdim.current = adim?.kimlik
   }, [adim?.kimlik])
   const [mod, setMod] = useState<OyunModu>('siradan')
@@ -34,11 +35,11 @@ export function DemoOyun({ bildir }: { bildir: BildirimKolu }) {
     const soru = DEMO_SORULAR[zorluk][0]
     return [{ tur: zorluk === 'kolay' ? 'toplama' : 'carpma', metin: soru.metin.replace(' = ?', ''), sonuc: soru.cevap }]
   }, [zorluk])
-  const basladi = useCallback(() => gonder({ tur: 'hedefe-dokun', hedef: 'demo-baslat' }), [gonder])
+  const basladi = useCallback(() => { gonder({ tur: 'hedefe-dokun', hedef: 'demo-baslat' }) }, [gonder, setRehberGizli])
   return <TurAyariSaglayici value={{ mod, setMod, zorluk, setZorluk, secilebilir: true }}>
     <IslemOyunuEkrani key={oyunNo}
       istatistik={{ enIyiDogru: 0, enIyiSeri: 0, oynananTur: 0, hatasizTur: 0, sonTarih: '', toplamDogru: 0, toplamYanlis: 0 }}
-      sesAcik={false} bankaSorulari={[]} demoSorulari={sorular} onBasladi={basladi}
+      sesAcik={false} bankaSorulari={[]} demoSorulari={sorular} onBasladi={basladi} onSayimBasladi={() => setRehberGizli(true)} demoDuraklatildi={adim?.kimlik !== "soru-bir"}
       onTurBitti={(ozet) => gonder({ tur: 'oyun-bitti', dogru: ozet.dogru, yanlis: ozet.yanlis })}
       onCik={() => adim?.kimlik === 'sonuc' ? gonder({ tur: 'ileri' }) : turuBitir()} bildir={bildir}
     />

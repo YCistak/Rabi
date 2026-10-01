@@ -11,8 +11,10 @@ const BOS_KUTU: Kutu = { sol: 0, ust: 0, genislik: 0, yukseklik: 0 }
 const ODAK_SECICI = 'button:not(:disabled), a[href], input:not(:disabled), [tabindex="0"]'
 
 export function SpotIsigi() {
-  const { adim, aktifTur, adimSayisi, gecisSuruyor, aktifAdim, sonrakiAdimaGec, oncekiAdimaDon, turuBitir } = useTanitim()
+  const { adim, animasyon, deneyMi, rehberGizli, aktifTur, adimSayisi, gecisSuruyor, aktifAdim, sonrakiAdimaGec, oncekiAdimaDon, turuBitir } = useTanitim()
   const [yerlesim, setYerlesim] = useState<Yerlesim>({ ekHedefler: [], hedef: null, balon: BOS_KUTU, ekran: BOS_KUTU })
+  const [cizimBasladi, setCizimBasladi] = useState(false)
+  useEffect(() => { setCizimBasladi(false); const zaman = setTimeout(() => setCizimBasladi(true), 32); return () => clearTimeout(zaman) }, [adim, rehberGizli])
   const [hedefEksik, setHedefEksik] = useState(false)
   const balonRef = useRef<HTMLDivElement>(null)
   const katmanRef = useRef<HTMLDivElement>(null)
@@ -20,7 +22,7 @@ export function SpotIsigi() {
   const maske = useId().replace(/:/g, '')
 
   useLayoutEffect(() => {
-    if (!adim) return
+    if (!adim || rehberGizli) return
     const etkilesimAcik = adim.tiklamali || ('etkilesimli' in adim && adim.etkilesimli)
     let kare = 0
     let hedef: HTMLElement | null = null
@@ -38,9 +40,10 @@ export function SpotIsigi() {
       for (const [oge, onceki] of dokunulmazlar) oge.inert = onceki
       dokunulmazlar.clear()
     }
+    const denetim = deneyMi ? document.querySelector<HTMLElement>('[data-tanitim-denetimi]') : null
     const kilitle = (oge: HTMLElement) => {
-      if (oge === katmanRef.current || oge === hedef) return
-      if (oge.contains(katmanRef.current) || (hedef && oge.contains(hedef))) {
+      if (oge === katmanRef.current || oge === hedef || oge === denetim) return
+      if (oge.contains(katmanRef.current) || (denetim && oge.contains(denetim)) || (hedef && oge.contains(hedef))) {
         for (const cocuk of oge.children) if (cocuk instanceof HTMLElement) kilitle(cocuk)
       } else if (!dokunulmazlar.has(oge)) {
         dokunulmazlar.set(oge, oge.inert)
@@ -89,7 +92,7 @@ export function SpotIsigi() {
             duzeltildi = true
           }
           // Uzun konu patikasının ilk bölümü ve ilerleme bandı birlikte görünür.
-          const gorunenAlt = ['konu-haritasi', 'zorluk', 'sonuc'].includes(adim.kimlik) ? Math.min(dikdortgen.bottom, dikdortgen.top + ekran.yukseklik * 0.4) : dikdortgen.bottom
+          const gorunenAlt = ['konu-haritasi'].includes(adim.kimlik) ? Math.min(dikdortgen.bottom, dikdortgen.top + ekran.yukseklik * 0.4) : dikdortgen.bottom
           const sol = Math.max(ekran.sol + 4, dikdortgen.left - 5)
           const ust = Math.max(ustSinir - 8, dikdortgen.top - 5)
           const sag = Math.min(ekran.sol + ekran.genislik - 4, dikdortgen.right + 5)
@@ -133,7 +136,7 @@ export function SpotIsigi() {
       if (eksik !== eksikGosterildi) { eksikGosterildi = eksik; setHedefEksik(eksik) }
       kare = requestAnimationFrame(olc)
     }
-    const izinli = (oge: EventTarget | null) => oge instanceof Node && (balonRef.current?.contains(oge) || (etkilesimAcik && hedef?.contains(oge)))
+    const izinli = (oge: EventTarget | null) => oge instanceof Node && (denetim?.contains(oge) || balonRef.current?.contains(oge) || (etkilesimAcik && hedef?.contains(oge)))
     const engelle = (olay: Event) => {
       if (!izinli(olay.target)) { olay.preventDefault(); olay.stopImmediatePropagation() }
     }
@@ -143,6 +146,7 @@ export function SpotIsigi() {
       if (olay.key === 'Escape') { olay.preventDefault(); olay.stopImmediatePropagation(); turuBitir(); return }
       if (olay.key !== 'Tab') { if (['Enter', ' '].includes(olay.key)) engelle(olay); return }
       const odaklar = [
+        ...Array.from(denetim?.querySelectorAll<HTMLElement>(ODAK_SECICI) ?? []),
         ...(etkilesimAcik && hedef ? Array.from(hedef.matches(ODAK_SECICI) ? [hedef] : hedef.querySelectorAll<HTMLElement>(ODAK_SECICI)) : []),
         ...Array.from(balonRef.current?.querySelectorAll<HTMLElement>(ODAK_SECICI) ?? []),
       ].filter((oge) => !oge.closest('[inert]') && oge.getClientRects().length > 0)
@@ -169,35 +173,36 @@ export function SpotIsigi() {
       kilitleriBirak()
       if (oncekiOdak?.isConnected) oncekiOdak.focus({ preventScroll: true })
     }
-  }, [adim, turuBitir])
+  }, [adim, turuBitir, rehberGizli, deneyMi])
 
   // Sayfa yenilenince bellekteki demo kendiliğinden kaybolur; kalıcı kayıt yok.
   useEffect(() => {
     if (!adim) setYerlesim({ ekHedefler: [], hedef: null, balon: BOS_KUTU, ekran: BOS_KUTU })
   }, [adim])
 
-  if (!adim || typeof document === 'undefined') return null
+  if (!adim || rehberGizli || typeof document === 'undefined') return null
   const hareketAzalt = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const kisaBalon = ['pomodoro', 'zorluk'].includes(adim.kimlik)
   const { hedef, ekHedefler, balon, ekran } = yerlesim
   return createPortal(
-    <div ref={katmanRef} className="pointer-events-none fixed inset-0 z-[10000]">
+    <div ref={katmanRef} className="pointer-events-none fixed inset-0 z-[10000]" style={{ opacity: gecisSuruyor ? 0 : 1, transition: hareketAzalt ? 'none' : `opacity ${animasyon.balonMs}ms ease` }}>
       <div ref={guvenliAlanRef} aria-hidden className="invisible absolute" style={{ paddingTop: 'var(--guvenli-ust)', paddingBottom: 'var(--guvenli-alt)' }} />
       <svg aria-hidden className="absolute inset-0 h-full w-full">
-        <defs><mask id={maske}><rect width="100%" height="100%" fill="white" />{hedef && <rect x={hedef.sol} y={hedef.ust} width={hedef.genislik} height={hedef.yukseklik} rx="18" fill="black" style={{ opacity: gecisSuruyor ? 0 : 1, transition: hareketAzalt ? 'none' : 'all 500ms ease' }} />}{ekHedefler.map((alan, sira) => <rect key={sira} x={alan.sol} y={alan.ust} width={alan.genislik} height={alan.yukseklik} rx="18" fill="black" />)}</mask></defs>
-        <rect width="100%" height="100%" fill="var(--muted-foreground)" opacity="0.82" mask={`url(#${maske})`} />
-        {hedef && <rect x={hedef.sol} y={hedef.ust} width={hedef.genislik} height={hedef.yukseklik} rx="18" fill="none" stroke="var(--primary-parlak)" strokeWidth="2" />}
+        <defs><mask id={maske}><rect width="100%" height="100%" fill="white" />{hedef && <rect x={hedef.sol} y={hedef.ust} width={hedef.genislik} height={hedef.yukseklik} rx="18" fill="black" style={{ opacity: gecisSuruyor || !cizimBasladi ? 0 : 1, transition: hareketAzalt ? 'none' : `opacity ${animasyon.aydinlatmaMs}ms ease ${gecisSuruyor ? 0 : animasyon.aydinlatmaGecikmesiMs}ms, x ${animasyon.cerceveMs}ms ease, y ${animasyon.cerceveMs}ms ease, width ${animasyon.cerceveMs}ms ease, height ${animasyon.cerceveMs}ms ease` }} />}{ekHedefler.map((alan, sira) => <rect key={sira} x={alan.sol} y={alan.ust} width={alan.genislik} height={alan.yukseklik} rx="18" fill="black" />)}</mask></defs>
+        <rect width="100%" height="100%" fill="var(--foreground)" opacity={animasyon.karartma} mask={`url(#${maske})`} />
+        {hedef && <rect x={hedef.sol} y={hedef.ust} width={hedef.genislik} height={hedef.yukseklik} rx="18" fill="none" stroke="var(--primary-parlak)" strokeWidth="2" pathLength="1" strokeDasharray="1" strokeDashoffset={cizimBasladi && !gecisSuruyor ? 0 : 1} style={{ transition: hareketAzalt ? "none" : `stroke-dashoffset ${animasyon.cerceveMs}ms ease, x ${animasyon.cerceveMs}ms ease, y ${animasyon.cerceveMs}ms ease, width ${animasyon.cerceveMs}ms ease, height ${animasyon.cerceveMs}ms ease` }} />}
       </svg>
       <div ref={balonRef} data-tanitim-balonu role="region" aria-label="Rabi tanıtım rehberi"
         className="pointer-events-auto absolute overflow-y-auto rounded-2xl border border-border bg-card text-card-foreground shadow-xl"
-        style={{ padding: adim.kimlik === 'soru-bir' ? 8 : 12, opacity: gecisSuruyor ? 0 : 1, transition: hareketAzalt ? 'none' : 'left 500ms ease, top 500ms ease, opacity 250ms ease', pointerEvents: gecisSuruyor ? 'none' : 'auto', left: balon.sol || 12, top: balon.ust || 12, width: balon.genislik || 'calc(100% - 24px)', maxWidth: 340, maxHeight: ekran.yukseklik ? Math.max(120, ekran.yukseklik * 0.52) : '52dvh', visibility: ekran.genislik ? 'visible' : 'hidden' }}>
+        style={{ padding: adim.kimlik === 'soru-bir' ? 8 : 12, opacity: gecisSuruyor ? 0 : 1, transition: hareketAzalt ? 'none' : `left ${animasyon.balonMs}ms ease, top ${animasyon.balonMs}ms ease, opacity ${animasyon.balonMs}ms ease`, pointerEvents: gecisSuruyor ? 'none' : 'auto', left: balon.sol || 12, top: balon.ust || 12, width: balon.genislik || 'calc(100% - 24px)', maxWidth: 340, maxHeight: ekran.yukseklik ? Math.max(120, ekran.yukseklik * 0.52) : '52dvh', visibility: ekran.genislik ? 'visible' : 'hidden' }}>
         <div className="flex items-center justify-between gap-3" style={{ marginBottom: adim.kimlik === 'soru-bir' ? 0 : 8 }}>
           {adim.kimlik === 'soru-bir' && <div><h2 data-tanitim-baslik tabIndex={-1} className="font-display text-sm font-extrabold outline-none">{adim.baslik}</h2><p className="text-[11px] text-muted-foreground">Sonucu yaz veya pas geç.</p></div>}
           {adim.kimlik !== 'soru-bir' && <span className="text-[11px] font-extrabold tracking-wide text-primary">{aktifTur === 'ana_tur' ? 'RABİ’Yİ TANI' : aktifTur === 'denemeler' ? 'DENEMELER' : 'KONU HARİTASI'} · {(aktifAdim ?? 0) + 1}/{adimSayisi}</span>}
           <button type="button" onClick={turuBitir} className="min-h-11 min-w-11 rounded-lg px-2 text-xs font-bold text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring">Turu Geç</button>
         </div>
-        {adim.kimlik !== 'soru-bir' && <h2 data-tanitim-baslik tabIndex={-1} className="font-display text-lg font-extrabold outline-none">{adim.baslik}</h2>}
-        {(adim.kimlik !== 'soru-bir' || hedefEksik) && <p aria-live="polite" className="mt-2 text-[13px] leading-relaxed text-muted-foreground">{hedefEksik ? 'Bu adımın bileşeni bulunamadı. Geri dönerek yeniden deneyebilir veya turu geçebilirsin.' : adim.kimlik === 'soru-bir' ? 'Sonucu yaz, onayla veya pas geç.' : adim.aciklama}</p>}
-        {adim.kimlik !== 'soru-bir' && <div className="mt-3 flex items-center justify-between gap-2">
+        {adim.kimlik !== 'soru-bir' && <h2 data-tanitim-baslik tabIndex={-1} className={kisaBalon ? 'font-display text-sm font-extrabold outline-none' : 'font-display text-lg font-extrabold outline-none'}>{adim.baslik}</h2>}
+        {(adim.kimlik !== 'soru-bir' || hedefEksik) && <p aria-live="polite" className={kisaBalon ? 'mt-1 text-xs leading-snug text-muted-foreground' : 'mt-2 text-[13px] leading-relaxed text-muted-foreground'}>{hedefEksik ? 'Bu adımın bileşeni bulunamadı. Geri dönerek yeniden deneyebilir veya turu geçebilirsin.' : adim.kimlik === 'soru-bir' ? 'Sonucu yaz, onayla veya pas geç.' : adim.aciklama}</p>}
+        {adim.kimlik !== 'soru-bir' && <div className={kisaBalon ? 'mt-2 flex items-center justify-between gap-2' : 'mt-3 flex items-center justify-between gap-2'}>
           <Buton type="button" bicim="ikincil" className="min-h-11 min-w-11" disabled={aktifAdim === 0 || gecisSuruyor} onClick={oncekiAdimaDon}>Geri</Buton>
           {aktifAdim === adimSayisi - 1 ? <Buton type="button" className="min-h-11 min-w-11" onClick={turuBitir}>Turu Bitir</Buton> : adim.tiklamali ? <span className="text-right text-xs font-bold text-primary">Aydınlatılan alana dokun</span> : <Buton type="button" className="min-h-11 min-w-11" disabled={!hedef || hedefEksik || gecisSuruyor} onClick={sonrakiAdimaGec}>{adim.kimlik === 'pomodoro-kilit' ? 'Oyunlara dön' : adim.kimlik === 'sonuc' ? 'Oyunlara dön' : 'İleri'}</Buton>}
         </div>}
