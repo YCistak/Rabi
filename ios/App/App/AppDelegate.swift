@@ -1,4 +1,5 @@
 import UIKit
+import AVFoundation
 import Capacitor
 
 @UIApplicationMain
@@ -7,7 +8,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // Ses telefonun sessiz tuşuna uymuyor: WKWebView'ın sesi varsayılan
+        // olarak "ortam" türünde ve sessizdeyken oyun efektleri, geri sayım ve
+        // Pomodoro'nun lo-fi'ı hiç duyulmuyordu. Kullanıcı sessizde de çalmasını
+        // istedi; sesleri ayrıca Ayarlar'daki anahtarlar susturuyor.
+        //
+        // `.mixWithOthers` şart: o olmadan "çalma" türü başka uygulamanın
+        // sesini kesiyor ve bir oyun efekti, öğrencinin arkada dinlediği
+        // müziği durdururdu. Hata yutuluyor — oturum kurulamazsa ses eskisi
+        // gibi sessiz tuşuna uyar, uygulama çalışmaya devam eder.
+        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
         return true
     }
 

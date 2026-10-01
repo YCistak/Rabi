@@ -38,6 +38,33 @@ declare global {
 
 const BIRAKMA_MS = 200
 
+/**
+ * Kenardan kaydırmayı yok sayan kilitlerin sayısı.
+ *
+ * Yanlış soru fotoğrafına çizerken sol kenardan başlayan bir çizgi yerli
+ * tarafta kenardan kaydırma olarak da tanınıyordu ve çizimi kaydedip
+ * kapatıyordu (geri, çizimde "kaydet ve çık" demek). Hareketin tanınmasını
+ * yerli taraf yapıyor ve parmağın sayfaya da ulaşması gerekiyor (çizgi o),
+ * yani tanımayı kapatmak değil, tanınanı burada yok saymak gerekiyordu.
+ * Çizimden çıkmanın yolu Vazgeç/Kaydet; Android'in geri tuşu bu kilide
+ * bakmıyor, orada geri hâlâ kaydedip çıkıyor.
+ *
+ * Sayaç, bayrak değil: iki yer aynı anda kilitlerse ilki açınca ikincisi
+ * kilitli kalmalı.
+ */
+let kilitler = 0
+
+/** Kilidi koyar; dönen fonksiyon kaldırır. Bir etkinin dönüşüne verilmek için. */
+export function geriKaydirmayiKilitle(): () => void {
+  kilitler++
+  let acildi = false
+  return () => {
+    if (acildi) return
+    acildi = true
+    kilitler--
+  }
+}
+
 function olcek(): number {
   const v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--olcek'))
   return Number.isFinite(v) && v > 0 ? v : 1
@@ -90,6 +117,7 @@ export function useGeriKaydirma(kaydirilabilir: () => boolean, geriGit: () => vo
     const basla = () => {
       if (bitiyor) return
       temizle()
+      if (kilitler > 0) return
       if (!kaydirRef.current()) return
       const el = document.querySelector<HTMLElement>('[data-geri-sayfa]')
       if (!el) return
@@ -117,6 +145,7 @@ export function useGeriKaydirma(kaydirilabilir: () => boolean, geriGit: () => vo
 
     // Yerli taraf parmağı kaldırınca yollar (eski ve tek yol).
     const onayla = () => {
+      if (kilitler > 0) return
       const el = kutu
       if (!el || bitiyor) {
         geriYonunuIsaretle()
