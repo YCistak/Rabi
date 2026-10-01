@@ -1,13 +1,12 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { BilgiKarti, Konu } from '@/lib/konu'
 import type { HaritaTemasi } from '@/lib/konu/harita-temasi'
 import { desteAkisi, molaSecimi, type DesteAdimi } from '@/lib/konu/deste-akisi'
 import { useGeriKatmani } from '@/lib/geri'
 import { useUygulamaGorunur } from '@/lib/gorunurluk'
-import { Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartGorseli } from './kart-gorseli'
 import { KartMetni } from './kart-metni'
@@ -45,6 +44,10 @@ import { HizliKontrolEkrani } from './hizli-kontrol'
  * onun yerine geçiyor.
  */
 
+/** Geri ve İleri düğmesinin ortak biçimi (turuncu, aynı boyut). */
+const DESTE_DUGMESI =
+  'grid h-[58px] w-16 shrink-0 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-[0_3px_0_rgba(0,0,0,0.14)] transition active:brightness-95 disabled:pointer-events-none disabled:opacity-40'
+
 export type DesteSonucu = {
   /** Okunan kart sayısı — gidilen en ileri kart. */
   okunan: number
@@ -64,15 +67,12 @@ export function KartDestesi({
   konu,
   temaAdi,
   dersAdi,
-  dersIkonu,
   bicim,
   onKapat,
 }: {
   konu: Konu
   temaAdi: string
   dersAdi: string
-  /** Kartın üstünde duran ders simgesi (`KonuDersTanimi.ikon`). */
-  dersIkonu: string
   /**
    * Haritanın ders biçimi (`lib/konu/harita-temasi.ts`). Zemin oradan
    * geliyor — haritadan buraya geçerken renk değişmiyor: Matematik'in pembe
@@ -215,7 +215,6 @@ export function KartDestesi({
           konuAdi={konu.ad}
           dersAdi={dersAdi}
           temaAdi={temaAdi}
-          dersIkonu={dersIkonu}
           bicim={bicim}
           yon={yon}
           ilk={adim === 0}
@@ -243,7 +242,6 @@ function KartEkrani({
   konuAdi,
   dersAdi,
   temaAdi,
-  dersIkonu,
   bicim,
   yon,
   ilk,
@@ -258,7 +256,6 @@ function KartEkrani({
   konuAdi: string
   dersAdi: string
   temaAdi: string
-  dersIkonu: string
   bicim: HaritaTemasi
   yon: number
   ilk: boolean
@@ -298,15 +295,14 @@ function KartEkrani({
         */}
         <div className="mx-auto flex w-full max-w-md min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain">
           <div className="my-auto w-full">
-            {/* Ders simgesi ve altındaki çizgi: kartın üstündeki boşluğu
-                dolduruyor ve destenin hangi derse ait olduğunu söylüyor. */}
+            {/* Rabi (okuyan poz) ve altındaki çizgi: kartın üstündeki boşluğu
+                dolduruyor; eskiden burada ders simgesi duruyordu. */}
             <div className="flex min-h-[70px] flex-col items-center justify-center gap-2.5">
-              <span
-                aria-hidden
-                className="text-[38px] leading-none drop-shadow-[0_6px_8px_rgba(31,36,48,0.14)]"
-              >
-                {dersIkonu}
-              </span>
+              <Rabi
+                poz="okuyan"
+                boyut={56}
+                className="drop-shadow-[0_6px_8px_rgba(31,36,48,0.14)]"
+              />
               <span className="h-px w-full bg-black/12" />
             </div>
 
@@ -396,24 +392,30 @@ function KartEkrani({
           </div>
         </div>
 
-        {/* İlerle geniş, Geri dar: ikisi eşit genişlikteyken destenin asıl
-            yönü okunmuyordu. İlk kartta Geri pasif — gidilecek yer yok. */}
-        <div className="mx-auto mt-4 flex w-full max-w-md gap-3">
+        {/* Geri ve İleri aynı boyutta ve biçimde, ikisi de turuncu (primary).
+            İlk kartta Geri pasif ve soluk — gidilecek yer yok. */}
+        <div className="mx-auto mt-4 flex w-full max-w-md justify-between gap-3">
           <button
             type="button"
             onClick={onGeri}
             disabled={ilk}
             aria-label="Önceki kart"
-            className="golge-kart grid h-[58px] w-16 shrink-0 place-items-center rounded-2xl bg-card text-foreground/80 transition active:brightness-95 disabled:pointer-events-none disabled:opacity-40"
+            className={DESTE_DUGMESI}
           >
             <ChevronLeft size={22} strokeWidth={2.6} aria-hidden />
           </button>
-          <Buton onClick={onIlerle} className="h-[58px] flex-1 text-[16px] shadow-[0_3px_0_var(--primary)]">
-            {son ? 'Desteyi bitir' : 'Sayfayı çevir'}
-            <span className="grid size-[26px] place-items-center rounded-[9px] bg-white/16">
-              <ChevronRight size={16} aria-hidden />
-            </span>
-          </Buton>
+          <button
+            type="button"
+            onClick={onIlerle}
+            aria-label={son ? 'Desteyi bitir' : 'Sonraki kart'}
+            className={DESTE_DUGMESI}
+          >
+            {son ? (
+              <Check size={22} strokeWidth={2.6} aria-hidden />
+            ) : (
+              <ChevronRight size={22} strokeWidth={2.6} aria-hidden />
+            )}
+          </button>
         </div>
       </div>
     </div>
