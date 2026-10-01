@@ -19,6 +19,11 @@ type Kapat = () => void
 
 const katmanlar: Kapat[] = []
 
+/** Açık bir katman var mı? (Kapatmadan sorar.) */
+export function katmanVarMi(): boolean {
+  return katmanlar.length > 0
+}
+
 /** En üstteki katmanı kapatır. Katman yoksa `false` döner — geri tuşu devam eder. */
 export function ustKatmaniKapat(): boolean {
   const kapat = katmanlar.pop()
