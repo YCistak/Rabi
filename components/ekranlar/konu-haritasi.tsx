@@ -1386,7 +1386,7 @@ function KonuKarti({
               ) : (
                 <span className="inline-flex h-[19px] items-center gap-1 rounded-full bg-primary-soft px-2 text-[9.5px] font-black tracking-[0.04em] whitespace-nowrap text-primary">
                   <span className="size-[5px] rounded-full bg-primary" aria-hidden />
-                  Bekliyor
+                  Tamamlanmadı
                 </span>
               )}
             </div>
