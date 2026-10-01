@@ -195,7 +195,7 @@ export function HizliKontrolEkrani({
                   id="kontrol-sonuc-baslik"
                   className="font-display text-[23px] leading-tight font-extrabold tracking-tight"
                 >
-                  {dogru ? 'Doğru bildin!' : 'Neredeyse'}
+                  {dogru ? 'Doğru bildin!' : 'Neredeyse Doğru'}
                 </p>
                 <p className={cn('mt-1 text-[13px] font-bold', dogru ? 'text-success' : 'text-danger')}>
                   {dogru ? 'Kart yerine oturmuş' : 'Kartı bir kez daha oku'}
