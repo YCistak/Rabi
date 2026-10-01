@@ -34,11 +34,30 @@ class AnaDenetleyici: CAPBridgeViewController, UIGestureRecognizerDelegate {
     }
 
     @objc private func kenardanKaydirildi(_ hareket: UIScreenEdgePanGestureRecognizer) {
-        guard hareket.state == .ended, let alan = hareket.view else { return }
+        guard let alan = hareket.view else { return }
         let yol = hareket.translation(in: alan).x
-        let hiz = hareket.velocity(in: alan).x
-        guard yol > yolEsigi || hiz > hizEsigi else { return }
-        bridge?.triggerWindowJSEvent(eventName: geriOlayi)
+
+        // Sayfa parmağı izlesin: web tarafı (`lib/geri-kaydirma.ts`)
+        // `window.rabiGeriKaydirma`yı kuruyor; kurulmamışsa (Android'de ya da
+        // sayfa yüklenmeden) `?.` sessizce hiçbir şey yapmıyor.
+        switch hareket.state {
+        case .began:
+            webView?.evaluateJavaScript("window.rabiGeriKaydirma?.basla()", completionHandler: nil)
+        case .changed:
+            webView?.evaluateJavaScript("window.rabiGeriKaydirma?.ilerle(\(Int(max(0, yol))))", completionHandler: nil)
+        case .ended:
+            let hiz = hareket.velocity(in: alan).x
+            if yol > yolEsigi || hiz > hizEsigi {
+                // Geri git: web tarafı sayfayı dışarı kaydırıp `geriGit`i çağırıyor.
+                bridge?.triggerWindowJSEvent(eventName: geriOlayi)
+            } else {
+                webView?.evaluateJavaScript("window.rabiGeriKaydirma?.iptal()", completionHandler: nil)
+            }
+        case .cancelled, .failed:
+            webView?.evaluateJavaScript("window.rabiGeriKaydirma?.iptal()", completionHandler: nil)
+        default:
+            break
+        }
     }
 
     /// Kaydırmayla birlikte tanınmalı: tanınmasaydı kenardan başlayan her

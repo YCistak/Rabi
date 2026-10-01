@@ -2672,9 +2672,21 @@ Package.swift'e ters eğik çizgili yollar yazıyor ve macOS o yolları
 bulamıyor; `npm run sync:ios` arkasından `scripts/ios-yol-duzelt.mjs`i
 çalıştırıyor.
 
-Yalnızca iPhone (`TARGETED_DEVICE_FAMILY = 1`) ve yalnızca dikey: tasarım
-telefon sütunu, iPad'de uygulama iPhone uyumluluk kipinde açılıyor. iPad'i
-hedeflemek ayrı ekran görüntüleri ve ayrı bir inceleme demek.
+iPhone + iPad (`TARGETED_DEVICE_FAMILY = "1,2"`). Eskiden `1` idi ve iPad'de
+uygulama iPhone uyumluluk kipinde, telefon boyutunda dar bir pencerede (köşede
+yeniden boyutlandırma tutamacıyla) açılıyordu. Şimdi iPad'de tam pencere:
+düzen Android tabletle aynı yolu izliyor — `max-w-md` sütun + `app/layout.tsx`
+betiğinin `--olcek` ile yaptığı `zoom`; ayrıca bir `max-width` konmadı.
+`UIRequiresFullScreen` **yok**: iPad'de Split View / Stage Manager'ın çalışması
+için dört yön de açık (`Info.plist`, `UISupportedInterfaceOrientations~ipad`)
+ve Apple bu anahtarı kullanımdan kaldırıyor. iPhone yalnızca dikey.
+
+**Geri kaydırma parmağı izliyor.** Yerli taraf hareketi tanırken
+(`.began/.changed/.ended`) `window.rabiGeriKaydirma`yı çağırıyor
+(`lib/geri-kaydirma.ts`); ekran içeriği (`[data-geri-sayfa]`) parmakla kayıyor,
+bırakılınca dışarı çıkıp `geriGit`i çağırıyor ya da yerine dönüyor. Alt
+ekranlar iOS'ta sağdan kayarak açılıyor (`data-platform="ios"`, globals.css);
+Android'in aşağıdan gelen geçişi aynı.
 
 İkon `ikon-uret.mjs`ten geliyor (`AppIcon-512@2x.png`, 1024): köşesiz ve
 **alfa kanalı atılmış** — App Store saydamlık taşıyan ikonu yüklemede
