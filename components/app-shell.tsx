@@ -517,12 +517,18 @@ function RabiUygulamasi() {
   const tanitimAcikti = useRef(false)
   useEffect(() => {
     if (ayarlarHazir && ayarlar.kurulumTamamlandi && acilisBitti && gecis === 'yok' && tanitim.tamamlandi === false && !tanitim.tanitimdaMi) {
-      tanitim.gonder({ tur: 'baslat' })
+      tanitim.turuBaslat('ana_tur')
     }
-  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, tanitim.tamamlandi, tanitim.tanitimdaMi, tanitim.gonder])
+  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, tanitim.tamamlandi, tanitim.tanitimdaMi, tanitim.turuBaslat])
+
+  useEffect(() => {
+    if (!ayarlarHazir || !ayarlar.kurulumTamamlandi || !acilisBitti || gecis !== 'yok' || tanitim.tanitimdaMi || tanitim.tamamlandi !== true) return
+    if (ekran === 'deneme' && !denemeFormu) tanitim.turuBaslat('denemeler')
+    else if (sekme === 'harita' && ekran === null) tanitim.turuBaslat('konu_haritasi')
+  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, ekran, sekme, denemeFormu, tanitim.tanitimdaMi, tanitim.tamamlandi, tanitim.turuBaslat])
 
   useYerlesimEtkisi(() => {
-    if (tanitim.adim) {
+    if (tanitim.adim && tanitim.aktifTur === 'ana_tur') {
       const konum = tanitimKonumu(tanitim.adim)
       setSekme(konum.sekme)
       setEkran(konum.ekran)
@@ -535,7 +541,7 @@ function RabiUygulamasi() {
       tanitimAcikti.current = false
       window.scrollTo(0, 0)
     }
-  }, [tanitim.adim])
+  }, [tanitim.adim, tanitim.aktifTur])
   useEffect(() => {
     if (!acilisGorunur) return
     const oncekiTasma = document.body.style.overflow
@@ -1010,7 +1016,7 @@ function RabiUygulamasi() {
                 acilisSuruyor={!acilisBitti}
               />
             )}
-            {sekme === 'oyunlar' && (tanitim.adim && ['zorluk', 'soru-bir', 'soru-iki', 'sonuc'].includes(tanitim.adim.kimlik) ? <DemoOyun /> : (
+            {sekme === 'oyunlar' && (tanitim.adim && ['zorluk', 'soru-bir', 'sonuc'].includes(tanitim.adim.kimlik) ? <DemoOyun /> : (
               <OyunlarEkrani
                 tanitimKarti={tanitim.adim?.kimlik === 'demo-ac' ? <DemoOyunKarti /> : undefined}
                 kayitlar={oyunlar}

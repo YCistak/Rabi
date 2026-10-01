@@ -579,7 +579,7 @@ export function KonuHaritasiEkrani({
       </Kart>
 
       {program === null ? (
-        <Kart className="flex flex-col items-center px-6 py-10 text-center">
+        <Kart data-tanitim="konu-haritasi" className="flex flex-col items-center px-6 py-10 text-center">
           <Rabi durum="calisiyor" poz="okuyan" boyut={92} />
           <p className="mt-3 font-display text-[17px] font-extrabold tracking-tight">
             {secim.sinif}. sınıf {dersAdi} hazırlanıyor
@@ -742,7 +742,7 @@ function TemaBolumu({
         : 0
 
   return (
-    <section>
+    <section data-tanitim={ilk ? "konu-haritasi" : undefined}>
       {/*
         Yapışkan sarmalın zemini yok: bir süre alta doğru saydamlaşan bir
         degrade taşıyordu (kaydırırken altından geçen kitabı yumuşak kessin

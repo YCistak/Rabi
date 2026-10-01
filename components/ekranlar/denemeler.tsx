@@ -1,5 +1,6 @@
 'use client'
 
+import { NetGelisimi } from '@/components/tanitim/net-gelisimi'
 import { useMemo, useState } from 'react'
 import {
   ArrowUpDown,
@@ -67,11 +68,13 @@ export function DenemelerEkrani({
       {/* İlk kayıtta düğme boş durumun içinde, ekranın ortasında duruyor; liste
           doluyken oraya ulaşmak kaydırmak demek, o yüzden başlığın altına geçiyor. */}
       {satirlar.length > 0 && (
-        <Buton onClick={onYeniyeGit} className="mb-3 w-full">
+        <Buton data-tanitim="deneme-ekle" onClick={onYeniyeGit} className="mb-3 w-full">
           <Plus size={18} />
-          Deneme ekle
+          Yeni Deneme Ekle
         </Buton>
       )}
+
+      <NetGelisimi satirlar={satirlar} />
 
       {satirlar.length > 0 && (
         <SuzgecCubugu
@@ -98,9 +101,9 @@ export function DenemelerEkrani({
           baslik="Kayıtlı deneme yok"
           aciklama="İlk denemeni ekle. Girdiğin doğru ve yanlışlardan netini hesaplar, sonrakilerle karşılaştırır."
           eylem={
-            <Buton onClick={onYeniyeGit}>
+            <Buton data-tanitim="deneme-ekle" onClick={onYeniyeGit}>
               <Plus size={18} />
-              Deneme ekle
+              Yeni Deneme Ekle
             </Buton>
           }
         />
