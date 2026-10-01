@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { TanitimSaglayici, useTanitim } from '@/components/tanitim/tanitim-baglami'
 import { SpotIsigi } from '@/components/tanitim/spot-isigi'
 import { VARSAYILAN_ANIMASYON, type TanitimAnimasyonu } from '@/lib/tanitim-animasyonu'
@@ -10,6 +11,8 @@ const ALANLAR: [keyof TanitimAnimasyonu, string][] = [
   ['balonMs', 'Bilgi balonu geçişi'], ['karartma', 'Grinin koyuluğu'],
 ]
 function AnimasyonDeneyi() {
+  // Bağımsız sayfa AppShell kullanmaz; açılış teşhisine React’in hazır olduğunu bildir.
+  useEffect(() => { document.documentElement.dataset.rabiAcildi = '1' }, [])
   const { animasyon, animasyonuAyarla, turuBaslat, turuBitir, tanitimdaMi, aktifAdim, sonrakiAdimaGec, oncekiAdimaDon } = useTanitim()
   return <main className="min-h-dvh bg-background p-4 text-foreground lg:grid lg:grid-cols-[360px_1fr] lg:gap-12">
     <aside data-tanitim-denetimi className="relative z-[10001] h-fit rounded-2xl border border-border bg-card p-5 shadow-lg">
