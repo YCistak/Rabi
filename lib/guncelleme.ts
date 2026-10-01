@@ -14,7 +14,8 @@
  * `cokme-izni.ts` ikilisiyle aynı ayrım.
  */
 
-import { Capacitor, registerPlugin, type PluginListenerHandle } from '@capacitor/core'
+import { registerPlugin, type PluginListenerHandle } from '@capacitor/core'
+import { androidMu } from './platform'
 
 /** Yerli taraftan gelen indirme durumu. */
 export type GuncellemeDurumu = 'indiriliyor' | 'indirildi' | 'kuruluyor' | 'kuruldu' | 'basarisiz'
@@ -39,8 +40,10 @@ const sahte: GuncellemeEklentisi = {
 
 const eklenti = registerPlugin<GuncellemeEklentisi>('Guncelleme', { web: () => sahte })
 
+// Play'e ait; iOS'ta güncellemeyi App Store kendisi dağıtıyor ve uygulamanın
+// soracağı bir şey yok.
 function destekleniyor(): boolean {
-  return Capacitor.isNativePlatform()
+  return androidMu()
 }
 
 /**

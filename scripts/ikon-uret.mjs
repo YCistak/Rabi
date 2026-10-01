@@ -276,4 +276,15 @@ for (const [ad, boy] of YOGUNLUKLAR) {
   await yaz(join(res, `mipmap-${ad}/ic_launcher_round.png`), await ikon(boy, { maske: 'daire', kucult: 0.88 }))
 }
 
+console.log('» iOS ikonu')
+// Tek dosya, 1024: Xcode 14'ten beri öteki boylar bundan türetiliyor. Köşeler
+// yuvarlatılmıyor, maskeyi iOS kendisi uyguluyor — yuvarlatılmış hâli
+// verilseydi sistemin köşesiyle bizimki üst üste biner, köşede ince bir hare
+// kalırdı. Alfa kanalı **atılıyor**: App Store saydamlığı olan ikonu yükleme
+// sırasında reddediyor, zemin tam dolu olsa bile kanalın varlığı yetiyor.
+await yaz(
+  join(kok, 'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png'),
+  await sharp(await ikon(1024, { maske: 'yok' })).removeAlpha().png({ compressionLevel: 9 }).toBuffer(),
+)
+
 console.log('bitti')

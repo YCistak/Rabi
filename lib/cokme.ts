@@ -13,7 +13,8 @@
  * ikilisiyle aynı sebeple: saf mantık `lib/` altında React'siz kalmalı.
  */
 
-import { Capacitor, registerPlugin } from '@capacitor/core'
+import { registerPlugin } from '@capacitor/core'
+import { androidMu } from './platform'
 
 /** Açılışta sorulan: gönderilmeyi bekleyen rapor var mı, önceki oturum çöktü mü. */
 export type BekleyenCokme = {
@@ -45,8 +46,10 @@ const sahte: CokmeEklentisi = {
 
 const eklenti = registerPlugin<CokmeEklentisi>('Cokme', { web: () => sahte })
 
+// Yerli taraf yalnızca Android'de yazılı (`CokmeRaporu.kt`); iOS'un
+// Crashlytics köprüsü henüz yok ve soru orada hiç çıkmamalı.
 function destekleniyor(): boolean {
-  return Capacitor.isNativePlatform()
+  return androidMu()
 }
 
 /**
