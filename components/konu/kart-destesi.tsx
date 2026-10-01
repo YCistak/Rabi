@@ -300,7 +300,7 @@ function KartEkrani({
             <div className="flex min-h-[70px] flex-col items-center justify-center gap-2.5">
               <Rabi
                 poz="okuyan"
-                boyut={56}
+                boyut={96}
                 className="drop-shadow-[0_6px_8px_rgba(31,36,48,0.14)]"
               />
               <span className="h-px w-full bg-black/12" />
