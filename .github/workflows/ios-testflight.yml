@@ -82,20 +82,24 @@ jobs:
           done
           printf '%s\n' "$ANAHTAR" > "$RUNNER_TEMP/AuthKey.p8"
 
-      # Arşiv **imzasız** alınıyor, imzayı aşağıdaki dışa aktarma atıyor.
+      # Arşiv **otomatik imzayla** (geliştirme) alınıyor, dışa aktarma onu
+      # App Store dağıtım imzasıyla yeniden imzalıyor — Xcode'un kendi akışı.
       #
-      # Denenip düşenler:
-      # - Otomatik imza arşivi geliştirme imzasıyla alıyor ve geliştirme profili
-      #   hesapta kayıtlı bir cihaz istiyor ("Your team has no devices").
-      # - Kimliği komut satırından "Apple Distribution" yapmak her hedefe
-      #   uygulanıyor; SPM'in eklenti paketleri (IONCameraLib) otomatik imzada
-      #   kaldığı için Xcode "conflicting provisioning settings" diyor.
-      # - Ad-hoc imza (`CODE_SIGN_IDENTITY=-`) yetkileri pakete gömerdi ama
-      #   iOS 26 SDK'sı reddediyor ("Ad Hoc code signing is not allowed").
-      # İmzasız arşivde yetkilerin (Screen Time) dışa aktarmada pakete girip
-      # girmediği tahmin edilmiyor, ölçülüyor: aşağıdaki denetim adımı.
+      # Geliştirme profili hesapta en az bir kayıtlı iPhone istiyor; o yüzden
+      # developer.apple.com › Devices'ta bir cihaz kayıtlı. Silinirse arşiv
+      # "Your team has no devices" ile düşer.
+      #
+      # Denenip düşen kısa yollar:
+      # - İmzasız arşiv (`CODE_SIGNING_ALLOWED=NO`) derleniyor ama yetkiler
+      #   imzaya hiç girmiyor; dışa aktarma da eklemiyor. Screen Time yetkisi
+      #   sessizce düşüyordu — aşağıdaki denetim adımı bunu yakaladı.
+      # - Ad-hoc imza (`CODE_SIGN_IDENTITY=-`): iOS 26 SDK'sı reddediyor.
+      # - Komut satırından "Apple Distribution": SPM paketleriyle
+      #   "conflicting provisioning settings".
       - name: Arşivle
         env:
+          ANAHTAR_KIMLIGI: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          YAYINCI: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           EKIP: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           xcodebuild archive \
@@ -104,8 +108,12 @@ jobs:
             -configuration Release \
             -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/Rabi.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$RUNNER_TEMP/AuthKey.p8" \
+            -authenticationKeyID "$ANAHTAR_KIMLIGI" \
+            -authenticationKeyIssuerID "$YAYINCI" \
             DEVELOPMENT_TEAM="$EKIP" \
-            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_STYLE=Automatic \
             MARKETING_VERSION="${{ steps.surum.outputs.ad }}" \
             CURRENT_PROJECT_VERSION="${{ steps.surum.outputs.numara }}"
 

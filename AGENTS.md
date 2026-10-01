@@ -2734,10 +2734,12 @@ yazmak tek kimlik hatasında projeyi açılmaz yapıyor. Betik değişince
 `.github/workflows/ios-proje.yml` onu macOS'ta çalıştırıp proje dosyasını dala
 geri commit'liyor.
 
-**Arşiv ad-hoc imzalı** (`ios-testflight.yml`). Tümüyle imzasız arşiv
-yetkileri pakete gömmüyordu ve Screen Time yetkisi dışa aktarmada sessizce
-düşerdi; ad-hoc imza gömüyor ve cihaz istemiyor. Yüklemeden önce bir adım,
-paketin üç parçasında da yetkinin olduğunu denetliyor — eksikse yükleme yok.
+**Arşiv otomatik imzalı** (`ios-testflight.yml`), dışa aktarma onu dağıtım
+imzasıyla yeniden imzalıyor. İmzasız arşiv derleniyordu ama yetkiler imzaya
+girmiyor, Screen Time yetkisi sessizce düşüyordu; ad-hoc imzayı iOS 26 SDK'sı
+reddediyor. Otomatik imzanın bedeli hesapta kayıtlı bir iPhone (geliştirme
+profili cihazsız kurulmuyor). Yüklemeden önce bir adım paketin üç parçasında
+da yetkiyi denetliyor — eksikse yükleme yok.
 
 **Uygulamanın içinde başka platform adı geçmez.** App Store 2.3.10 başka bir
 mobil platformun ya da mağazanın adını kabul etmiyor. "Android", "Play" diyen
