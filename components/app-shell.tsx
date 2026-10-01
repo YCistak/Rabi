@@ -59,7 +59,7 @@ import type { KonuDersId, KonuSinifi } from '@/lib/konu'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { kullanildi } from '@/lib/son-kullanilan'
 import { useBugun } from '@/lib/gorunurluk'
-import { katmanVarMi, ustKatmaniKapat } from '@/lib/geri'
+import { katmanVarMi, tumKatmanlariKapat, ustKatmaniKapat } from '@/lib/geri'
 import { Acilis, GECIS_SOLMA_SURESI, GECIS_SURESI, KurulumGecisi } from '@/components/acilis'
 import { Buton } from '@/components/ui'
 import { BottomNav } from '@/components/bottom-nav'
@@ -1123,6 +1123,24 @@ function RabiUygulamasi() {
         onDegis={(yeni) => {
           if (tanitim.tanitimdaMi) {
             if (yeni === 'oyunlar') tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'oyunlar-ac' })
+            return
+          }
+          if (yeni === sekme) {
+            /*
+              Zaten açık olan sekmeye yeniden basış: bölümün ilk görünümüne
+              dön. Açık her katman (ders, bölüm, oyun, deste, pencere) geri
+              tuşuna basılmış gibi kendi kapanış mantığıyla kapanıyor — yarım
+              kalan tur ya da deste kaydedilmeden atılmıyor. Genel test ve
+              form aynı şekilde geri tuşunun yaptığıyla kapanıyor. Her durumda sayfa
+              yumuşakça en üste kayıyor (kök ekrandaysa tek yapılan bu).
+            */
+            // Genel testin turu bir katmanken onu kendi çıkışı bitiriyor; ikinci
+            // kez bitirmek doğru bilinenleri iki kez düşürürdü.
+            const kapanan = tumKatmanlariKapat()
+            if (kapanan === 0 && genelTest !== null) genelTestiBitir(genelTest)
+            setDenemeFormu(null)
+            setEkran(null)
+            window.scrollTo({ top: 0, behavior: 'smooth' })
             return
           }
           setEkran(null)
