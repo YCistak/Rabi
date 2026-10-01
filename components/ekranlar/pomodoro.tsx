@@ -581,7 +581,7 @@ export function PomodoroEkrani({
         Provaya geçmek TYT'yi seçiyor — boş bir prova kipi olmaz, kitapçık
         seçilmeden sayacın süresi yok.
       */}
-      <div
+      <div data-tanitim="pomodoro-prova"
         className={cn(
           'mb-3 flex rounded-[14px] bg-muted p-1',
           turIcinde && 'pointer-events-none opacity-50',
@@ -613,7 +613,7 @@ export function PomodoroEkrani({
            ekranda iki ayrı "ne çalışıyorsun" cevabı olamaz. Molada da yok —
            sıradaki çalışma turu başlarken yeniden görünüyor. */
         !molaMi && (
-          <div className={cn('mb-3', turIcinde && 'pointer-events-none opacity-50')}>
+          <div data-tanitim="pomodoro-ders" className={cn('mb-3', turIcinde && 'pointer-events-none opacity-50')}>
             <p className="mb-2 ml-0.5 text-[12.5px] font-extrabold text-muted-foreground">
               HANGİ DERSE?
             </p>
@@ -659,7 +659,7 @@ export function PomodoroEkrani({
         </div>
       )}
 
-      <Kart className="mb-3 p-0">
+      <Kart data-tanitim="pomodoro-ayarlar" className="mb-3 p-0">
         {/* Süreler provada yok: o turda kullanılmıyorlar ve kilitli bir satır,
             kullanılıyormuş izlenimi verirdi. Ayarlar kaybolmuyor, prova
             kapatılınca aynı değerlerle geri geliyor. */}
@@ -777,24 +777,6 @@ export function PomodoroEkrani({
 
           Tarayıcıda görünmüyor: odak kilidi cihaza bağlı tek özellik.
         */}
-        {odakKilidiDesteklenir() && (
-          <>
-            <AyarSatiri
-              simge={<ShieldCheck size={18} aria-hidden />}
-              vurgulu={korumaVar}
-              ad="Odak koruması"
-              not={korumaOzeti}
-              eylem={korumaPaneli ? 'Kapat' : 'Ayarla'}
-              onClick={() => setKorumaPaneli((a) => !a)}
-            />
-            {korumaPaneli && (
-              <div className="acilir-giris border-t border-border">
-                <OdakAyarlari ayar={ayar} setAyar={setAyar} />
-              </div>
-            )}
-          </>
-        )}
-
         {/* Ekran anahtarı her iki kipte de burada: provada da geçerli ve
             Süreler çekmecesine konsaydı 165 dakikalık bir turda ona hiç
             ulaşılamazdı. */}
@@ -813,6 +795,25 @@ export function PomodoroEkrani({
           <Anahtar acik={ayar.ekraniAcikTut} />
         </label>
       </Kart>
+
+      {(odakKilidiDesteklenir() || demoVeri) && <Kart className="mb-3 p-0">
+          <div data-tanitim="pomodoro-kilit">
+            <AyarSatiri
+              simge={<ShieldCheck size={18} aria-hidden />}
+              vurgulu={korumaVar}
+              ad="Odak koruması"
+              not={korumaOzeti}
+              eylem={korumaPaneli ? 'Kapat' : 'Ayarla'}
+              onClick={() => { if (!demoVeri) setKorumaPaneli((a) => !a) }}
+              kilitli={demoVeri}
+            />
+            {korumaPaneli && (
+              <div className="acilir-giris border-t border-border">
+                <OdakAyarlari ayar={ayar} setAyar={setAyar} />
+              </div>
+            )}
+          </div>
+      </Kart>}
 
       {/*
         Başlat sayfanın dibine yapışık: ayarlar uzadıkça düğme kaydırmanın

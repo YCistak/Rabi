@@ -95,7 +95,7 @@ export function TusTakimi({
         type="button"
         onClick={onPas}
         disabled={kilitli}
-        className="mx-auto rounded-lg px-2.5 py-1 text-[12.5px] font-extrabold text-muted-foreground transition active:bg-foreground/10 disabled:opacity-45"
+        className="mx-auto min-h-11 min-w-11 rounded-lg px-2.5 py-1 text-[12.5px] font-extrabold text-muted-foreground transition active:bg-foreground/10 disabled:opacity-45"
       >
         Pas geç
       </button>

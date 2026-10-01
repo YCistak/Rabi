@@ -138,7 +138,11 @@ export function IslemOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  demoSorulari,
+  onBasladi,
 }: {
+  demoSorulari?: IslemSorusu[]
+  onBasladi?: () => void
   istatistik: OyunIstatistigi
   /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
   sesAcik: boolean
@@ -155,7 +159,7 @@ export function IslemOyunuEkrani({
   onCik: () => void
   bildir: BildirimKolu
 }) {
-  const oyun = oyunBul('islem')
+  const oyun = demoSorulari ? { ...oyunBul('islem'), ad: 'Tanıtım oyunu' } : oyunBul('islem')
 
   // Seçim kalıcı: her turda altı çipi yeniden işaretlemek, oyunu açıp hemen
   // başlamayı imkânsız kılardı. Yalnızca bu ekranın kullandığı bir tercih,
@@ -216,7 +220,7 @@ export function IslemOyunuEkrani({
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
-    setSorular(bankaTuru ? karistir(bankaHavuzu) : islemTuruHazirla(TUM_ISLEMLER, TUR_SORUSU))
+    setSorular(demoSorulari ?? (bankaTuru ? karistir(bankaHavuzu) : islemTuruHazirla(TUM_ISLEMLER, TUR_SORUSU)))
     setSira(0)
     setGirilen('')
     setCevaplar([])
@@ -226,7 +230,8 @@ export function IslemOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru])
+    onBasladi?.()
+  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru, demoSorulari, onBasladi])
 
   const turBitir = useCallback(
     (verilenler: Cevap<IslemSorusu>[], yarim = false) => {
@@ -395,6 +400,7 @@ export function IslemOyunuEkrani({
     <>
       <OyunKabugu
         oyunId="islem"
+        tanitimBosluk={!!demoSorulari}
         baslik={oyun.ad}
         sayac={
           asama === 'bitti'
@@ -415,7 +421,7 @@ export function IslemOyunuEkrani({
         onYardim={yardimAc}
       >
         {asama === 'bitti' && sonuc ? (
-          <SonucGorunumu
+          <div className={demoSorulari ? "sayfa-girisi" : undefined} style={demoSorulari ? { animationDuration: "500ms" } : undefined} data-tanitim={demoSorulari ? "demo-sonuc" : undefined}><SonucGorunumu
             sonuc={sonuc}
             girdiler={yanlisGirdileri}
             turler={turdekiTurler}
@@ -426,16 +432,16 @@ export function IslemOyunuEkrani({
             onTekrar={turBaslat}
             onCik={onCik}
             bildir={bildir}
-          />
+          /></div>
         ) : (
           asama === 'oynaniyor' &&
           soru && (
             <>
-              <div className="flex flex-1 flex-col gap-2.5 pt-3">
+              <div data-tanitim={demoSorulari ? "demo-soru" : undefined} className={cn("flex flex-col gap-2.5", !demoSorulari && "flex-1 pt-3", demoSorulari && "sayfa-girisi")} style={demoSorulari ? { animationDuration: "500ms" } : undefined}>
                 {/* İşlem türü ("Çarpma", "Bölme") bilerek yazılmıyor: köklü ve
                     üslü sorularda hangi işlemin sorulduğunu söylemek, sorunun
                     yarısını söylemek olurdu. */}
-                <div className="golge-kart rounded-3xl bg-card px-5 pb-5 pt-4">
+                <div data-tanitim={demoSorulari ? "demo-islem" : undefined} className="golge-kart rounded-3xl bg-card px-5 pb-5 pt-4">
                   <div className="flex items-center gap-2 text-[12.5px] font-bold text-muted-foreground">
                     <Rabi durum="calisiyor" boyut={26} />
                     Kaç eder?
@@ -451,6 +457,7 @@ export function IslemOyunuEkrani({
                   </div>
                 </div>
 
+                <div className="flex flex-col gap-2.5">
                 <CevapAlani
                   girilen={geriBildirim ? geriBildirim.girilen : girilen}
                   durum={
@@ -467,6 +474,7 @@ export function IslemOyunuEkrani({
                   onOnayla={() => cevapla(false)}
                   onPas={() => cevapla(true)}
                 />
+                </div>
               </div>
 
               {geriBildirim && (
@@ -485,6 +493,7 @@ export function IslemOyunuEkrani({
 
       <OyunTanitim
         oyun={oyun}
+        demoVeri={!!demoSorulari}
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}

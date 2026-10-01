@@ -862,7 +862,7 @@ function RabiUygulamasi() {
         giriş animasyonu her seferinde baştan oynuyor — sınıf tek başına verilse
         React aynı düğümü koruduğu için animasyon yalnızca ilk açılışta çalışırdı.
       */}
-      <SayfaGecisi key={ekran ?? `sekme:${sekme}`}>
+      <SayfaGecisi key={ekran ?? `sekme:${sekme}`} yavas={tanitim.tanitimdaMi}>
         {ekran !== null ? (
           <>
             <Buton
@@ -1016,7 +1016,7 @@ function RabiUygulamasi() {
                 acilisSuruyor={!acilisBitti}
               />
             )}
-            {sekme === 'oyunlar' && (tanitim.adim && ['zorluk', 'soru-bir', 'sonuc'].includes(tanitim.adim.kimlik) ? <DemoOyun /> : (
+            {sekme === 'oyunlar' && (tanitim.adim && ['zorluk', 'oyun-baslat', 'soru-bir', 'sonuc'].includes(tanitim.adim.kimlik) ? <DemoOyun bildir={hataBildirimi} /> : (
               <OyunlarEkrani
                 tanitimKarti={tanitim.adim?.kimlik === 'demo-ac' ? <DemoOyunKarti /> : undefined}
                 kayitlar={oyunlar}
@@ -1024,10 +1024,10 @@ function RabiUygulamasi() {
                 setGecmis={setOyunGecmisi}
                 soruGecmisi={soruGecmisi}
                 setSoruGecmisi={setSoruGecmisi}
-                banka={oyunBankasi}
+                banka={tanitim.aktifTur === 'ana_tur' ? tanitim.demo.banka : oyunBankasi}
                 setBanka={setOyunBankasi}
                 sesAcik={ayarlar.oyunSesi}
-                onBankayaGit={() => setEkran('oyun-bankasi')}
+                onBankayaGit={() => { if (tanitim.tanitimdaMi) tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'oyun-bankasi-ac' }); else setEkran('oyun-bankasi') }}
                 bankaTuru={bankaTuru}
                 onBankaTuruBitti={() => genelTestiBitir(genelTest)}
                 /*
@@ -1154,7 +1154,7 @@ function RabiUygulamasi() {
  * duraklatılmış kalan ekran (opaklığı 0'da donmuş) hiç görünmezdi. Açılış
  * ekranındaki `acilis-bekliyor` ile aynı kural, aynı gerekçe.
  */
-function SayfaGecisi({ children }: { children: React.ReactNode }) {
+function SayfaGecisi({ children, yavas = false }: { children: React.ReactNode; yavas?: boolean }) {
   const [basladi, setBasladi] = useState(false)
 
   useEffect(() => {
@@ -1171,7 +1171,7 @@ function SayfaGecisi({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <div className={cn('sayfa-girisi', !basladi && 'sayfa-bekliyor')}>
+    <div className={cn('sayfa-girisi', !basladi && 'sayfa-bekliyor')} style={yavas ? { animationDuration: '500ms' } : undefined}>
       {children}
     </div>
   )

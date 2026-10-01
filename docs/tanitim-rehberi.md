@@ -2,10 +2,10 @@
 
 ## Dosyalar ve görevleri
 
-1. `lib/tanitim.ts`: Üç turun adımları, bağımsız kayıt anahtarları, saf geçiş fonksiyonu, tek soruluk demo ve üç örnek banka kaydı.
+1. `lib/tanitim.ts`: Üç turun adımları, bağımsız kayıt anahtarları, saf geçiş fonksiyonu, gerçek oyundan gelen geçici sonuç ve üç örnek banka kaydı.
 2. `components/tanitim/tanitim-baglami.tsx`: React 19 Context, aktif tur/adım, `turuBaslat`, `sonrakiAdimaGec`, `oncekiAdimaDon`, `turuBitir`, `turGorulduMu`, `turuKaydet`.
 3. `components/tanitim/spot-isigi.tsx`: SVG maskesi, güvenli ekran boşlukları, dokunma kilidi, klavye odağı, yumuşak kaydırma ve konum takibi. Yönlendirme düğmeleri en az 44×44 piksel.
-4. `components/tanitim/demo-oyun.tsx`: Zorluk seçimi, tek soru, sonuç. Gerçek oyun bileşenlerinden bağımsızdır.
+4. `components/tanitim/demo-oyun.tsx`: Ders ızgarasındaki Tanıtım oyunu kartı ve gerçek `IslemOyunuEkrani`. Hazırlık, mod/zorluk seçimi, geri sayım, tuş takımı ve sonuç ekranı mevcut oyunlarla aynıdır. Tur ayarları ve sonuç sadece bellekte tutulur.
 5. `components/tanitim/net-gelisimi.tsx`: Gerçek denemelerden net gelişimi; şablon seçimi sayesinde TYT/AYT ve farklı ölçekler karışmaz. Son on kaydı gösterir. Kayıt yokken örnek net oluşturmaz.
 6. `components/app-shell.tsx`: Kurulum ve açılış animasyonu bittikten sonra ana turu başlatır; ekran geçişlerini yönetir. Denemeler ve Harita ilk açıldığında ilgili mini turu başlatır.
 
@@ -13,13 +13,13 @@
 
 ## Ana akış
 
-Beş ana bölüm, on bir etkileşim adımına ayrılır:
+Beş ana bölüm, on beş etkileşim adımına ayrılır:
 
 1. Sınav geri sayımı ve hedef kartı.
 2. Günlük soru hedefi ve yedi günlük şerit.
 3. Soru Takibi kartı; içeri girilmez.
-4. Pomodoro düğmesine gerçek dokunuş → sayaç/döngüler → Devam Et ile ana sayfa.
-5. Oyunlar sekmesine dokunuş → Demo Oyun → zorluk → tek örnek cevap → sonuç → üç geçici örnekle Oyun Bankası.
+4. Pomodoro düğmesine gerçek dokunuş → deneme provası seçimi → sayaç, ders, süreler, ses ve ekran ayarları → ayrı odak kilidi açıklaması → ana sayfa.
+5. Oyunlar sekmesine dokunuş → ders kategorileri arasında Tanıtım oyunu → gerçek tur ayarları → Başlat ve geri sayım → tek örnek işlem → gerçek sonuç ekranı → Oyunlar menüsünde Oyun Bankası kartına dokunuş → üç geçici örnek.
 
 Önceki kullanıcı tercihi korunur: oyun yanlışlarının bulunduğu Oyun Bankası tanıtılır; fotoğraflı Yanlış Soru ekranına veri eklenmez.
 
@@ -60,3 +60,11 @@ Mini turlar için tablodaki ilgili anahtarı kaldır; ana tur tamamlanmışken i
 `npm run typecheck`, `npm test` ve `npm run build` proje doğrulamalarıdır. Tarayıcı senaryoları tur geçişlerini, tek soruluk demo/banka temizliğini, gerçek kayıtların korunmasını, mini tur kayıtlarının bağımsızlığını, yenilemeyi ve 44 piksel düğmeleri denetler.
 
 Capacitor aynı statik çıktıyı kullanır. Android geri tuşu etkin turu bitirip geçici veriyi temizler. Bu değişiklik Android cihazında doğrulanmadı; yeni uygulama paketine alınması için proje derleme ve Capacitor eşitleme süreci ayrıca çalıştırılmalıdır.
+
+## Geçiş ve oyun deneyimi
+
+Adım değişiminden önce 320 ms kısa bir geçiş uygulanır; bu sırada ikinci dokunuş kabul edilmez. Ekran girişi, maske ve balon konumu 500 ms boyunca yumuşak geçer. Kullanıcı hareket azaltmayı seçtiyse rehberin geçiş animasyonu devre dışıdır. Karartma nötr gri tema rengini yüzde 82 opaklıkla kullanır.
+
+Pomodoro’nun çalışma ayarları birlikte anlatılır; odak koruması ayrı kartta ve ayrı adımda gösterilir. Tarayıcıda da tanıtım satırı görünür, fakat cihaz izni istenmez veya koruma başlatılmaz.
+
+Tanıtım oyununun görünümü kopyalanmaz: gerçek oyun bileşeni kullanılır. Tur sırasında rehbere yer açmak için hazırlık alanı kaydırılır; oyun aşamasında balon kısa bir ipucuna dönüşür. Sonuçtan Geri denildiğinde oyun yeni bir deneme için sıfırlanır. Gerçek oyun modu, zorluk tercihi ve rekorlar değiştirilmez.

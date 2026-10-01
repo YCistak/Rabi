@@ -425,7 +425,6 @@ export function OyunlarEkrani({
         className="mt-4"
       />
 
-      {tanitimKarti}
 
       {secilenDers === null ? (
         <>
@@ -434,12 +433,13 @@ export function OyunlarEkrani({
           </h2>
 
           <div className="grid grid-cols-2 gap-3">
+            {tanitimKarti}
             {doluDersler().map((ders, sira, liste) => {
               const aile = AILE[ders.id]
               const oyunlar = dersinOyunlari(ders.id)
               // Tek sayıda ders varsa sonuncusu iki sütunu kaplıyor; yoksa
               // ızgarada yanı boş bir kart kalıyordu.
-              const genis = liste.length % 2 === 1 && sira === liste.length - 1
+              const genis = (liste.length + (tanitimKarti ? 1 : 0)) % 2 === 1 && sira === liste.length - 1
               const giris = kartGirisi(sira)
 
               return (
@@ -513,7 +513,7 @@ export function OyunlarEkrani({
               // Tek sayıda kart varsa sonuncusu iki sütunu birden kaplıyor;
               // yoksa ızgarada boş bir hücre kalırdı. Yatay düzen aynı kartın
               // geniş hâli.
-              const genis = liste.length % 2 === 1 && sira === liste.length - 1
+              const genis = (liste.length + (tanitimKarti ? 1 : 0)) % 2 === 1 && sira === liste.length - 1
 
               if (kart.tip === 'bolum') {
                 const bolumOyunlari = bolumunOyunlari(kart.bolum.id)
@@ -848,6 +848,7 @@ function BankaSatiri({
   return (
     <button
       type="button"
+      data-tanitim="oyun-bankasi-ac"
       onClick={onAc}
       className={cn(
         'golge-kart w-full rounded-[22px] bg-card p-3.5 text-left transition',

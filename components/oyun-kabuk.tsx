@@ -204,12 +204,14 @@ function useTurEfektleri(sayac: SayacBilgisi | null) {
 
 export function OyunKabugu({
   oyunId,
+  tanitimBosluk = false,
   baslik,
   sayac,
   onCik,
   onYardim,
   children,
 }: {
+  tanitimBosluk?: boolean
   oyunId: OyunId
   baslik: string
   /** Sonuç ekranında `null` — orada süre ve sayaçların yeri yok. */
@@ -232,6 +234,7 @@ export function OyunKabugu({
       {/* Sarsıntı bütün oyun alanına: soru kartını ayrıca sarmak 18 oyunun
           yerleşimine dokunmak demekti, oysa yanlış olan cevap değil o an. */}
       <div
+        style={tanitimBosluk ? { paddingBottom: "calc(128px + var(--guvenli-alt))" } : undefined}
         className={cn(
           'guvenli-alt mx-auto flex w-full max-w-md flex-1 flex-col overflow-y-auto px-4 pb-3 pt-[calc(0.9rem+var(--guvenli-ust))]',
           sarsiliyor && 'oyun-sarsinti',

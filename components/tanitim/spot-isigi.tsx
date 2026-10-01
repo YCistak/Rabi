@@ -6,13 +6,13 @@ import { Buton } from '@/components/ui'
 import { useTanitim } from './tanitim-baglami'
 
 type Kutu = { sol: number; ust: number; genislik: number; yukseklik: number }
-type Yerlesim = { hedef: Kutu | null; balon: Kutu; ekran: Kutu }
+type Yerlesim = { ekHedefler: Kutu[]; hedef: Kutu | null; balon: Kutu; ekran: Kutu }
 const BOS_KUTU: Kutu = { sol: 0, ust: 0, genislik: 0, yukseklik: 0 }
 const ODAK_SECICI = 'button:not(:disabled), a[href], input:not(:disabled), [tabindex="0"]'
 
 export function SpotIsigi() {
-  const { adim, aktifTur, adimSayisi, aktifAdim, sonrakiAdimaGec, oncekiAdimaDon, turuBitir } = useTanitim()
-  const [yerlesim, setYerlesim] = useState<Yerlesim>({ hedef: null, balon: BOS_KUTU, ekran: BOS_KUTU })
+  const { adim, aktifTur, adimSayisi, gecisSuruyor, aktifAdim, sonrakiAdimaGec, oncekiAdimaDon, turuBitir } = useTanitim()
+  const [yerlesim, setYerlesim] = useState<Yerlesim>({ ekHedefler: [], hedef: null, balon: BOS_KUTU, ekran: BOS_KUTU })
   const [hedefEksik, setHedefEksik] = useState(false)
   const balonRef = useRef<HTMLDivElement>(null)
   const katmanRef = useRef<HTMLDivElement>(null)
@@ -21,6 +21,7 @@ export function SpotIsigi() {
 
   useLayoutEffect(() => {
     if (!adim) return
+    const etkilesimAcik = adim.tiklamali || ('etkilesimli' in adim && adim.etkilesimli)
     let kare = 0
     let hedef: HTMLElement | null = null
     let kaydirildi = false
@@ -78,13 +79,17 @@ export function SpotIsigi() {
             const alttaYer = altSinir - dikdortgen.bottom
             const ustteYer = dikdortgen.top - ustSinir
             if (Math.max(alttaYer, ustteYer) < balonYuksekligi + 20 && ekran.genislik < 700) {
-              window.scrollBy({ top: dikdortgen.top - ustSinir - 8, behavior: 'instant' })
+              let kaydirmaKabi = hedef.parentElement
+              while (kaydirmaKabi && !(['auto', 'scroll'].includes(getComputedStyle(kaydirmaKabi).overflowY) && kaydirmaKabi.scrollHeight > kaydirmaKabi.clientHeight)) kaydirmaKabi = kaydirmaKabi.parentElement
+              const kaydirma = { top: dikdortgen.top - ustSinir - 8, behavior: 'smooth' as ScrollBehavior }
+              if (kaydirmaKabi) kaydirmaKabi.scrollBy(kaydirma)
+              else window.scrollBy(kaydirma)
               dikdortgen = hedef.getBoundingClientRect()
             }
             duzeltildi = true
           }
           // Uzun konu patikasının ilk bölümü ve ilerleme bandı birlikte görünür.
-          const gorunenAlt = adim.kimlik === 'konu-haritasi' ? Math.min(dikdortgen.bottom, dikdortgen.top + ekran.yukseklik * 0.4) : dikdortgen.bottom
+          const gorunenAlt = ['konu-haritasi', 'zorluk', 'sonuc'].includes(adim.kimlik) ? Math.min(dikdortgen.bottom, dikdortgen.top + ekran.yukseklik * 0.4) : dikdortgen.bottom
           const sol = Math.max(ekran.sol + 4, dikdortgen.left - 5)
           const ust = Math.max(ustSinir - 8, dikdortgen.top - 5)
           const sag = Math.min(ekran.sol + ekran.genislik - 4, dikdortgen.right + 5)
@@ -112,7 +117,14 @@ export function SpotIsigi() {
         else if (kutu.ust - ustSinir >= balonYuksekligi + 16) balonUst = kutu.ust - balonYuksekligi - 16
         else balonUst = alt + 12
       }
-      const yeni = { hedef: kutu, ekran, balon: { sol: balonSol, ust: Math.max(ustSinir, Math.min(balonUst, altSinir - balonYuksekligi)), genislik: balonGenisligi, yukseklik: balonYuksekligi } }
+      const ekHedefler = ('ekHedefler' in adim ? adim.ekHedefler : []).flatMap((hedefAdi) => {
+        const oge = document.querySelector<HTMLElement>(`[data-tanitim="${hedefAdi}"]`)
+        if (!oge) return []
+        const alan = oge.getBoundingClientRect()
+        if (alan.bottom < ustSinir || alan.top > altSinir) return []
+        return [{ sol: alan.left - 4, ust: Math.max(ustSinir, alan.top - 4), genislik: alan.width + 8, yukseklik: Math.min(altSinir, alan.bottom + 4) - Math.max(ustSinir, alan.top - 4) }]
+      })
+      const yeni = { ekHedefler, hedef: kutu, ekran, balon: { sol: balonSol, ust: Math.max(ustSinir, Math.min(balonUst, altSinir - balonYuksekligi)), genislik: balonGenisligi, yukseklik: balonYuksekligi } }
       const imza = JSON.stringify(yeni)
       if (imza !== son) { son = imza; setYerlesim(yeni) }
       if (kutu) eksikBaslangici = null
@@ -121,7 +133,7 @@ export function SpotIsigi() {
       if (eksik !== eksikGosterildi) { eksikGosterildi = eksik; setHedefEksik(eksik) }
       kare = requestAnimationFrame(olc)
     }
-    const izinli = (oge: EventTarget | null) => oge instanceof Node && (balonRef.current?.contains(oge) || (adim.tiklamali && hedef?.contains(oge)))
+    const izinli = (oge: EventTarget | null) => oge instanceof Node && (balonRef.current?.contains(oge) || (etkilesimAcik && hedef?.contains(oge)))
     const engelle = (olay: Event) => {
       if (!izinli(olay.target)) { olay.preventDefault(); olay.stopImmediatePropagation() }
     }
@@ -131,7 +143,7 @@ export function SpotIsigi() {
       if (olay.key === 'Escape') { olay.preventDefault(); olay.stopImmediatePropagation(); turuBitir(); return }
       if (olay.key !== 'Tab') { if (['Enter', ' '].includes(olay.key)) engelle(olay); return }
       const odaklar = [
-        ...(adim.tiklamali && hedef ? Array.from(hedef.matches(ODAK_SECICI) ? [hedef] : hedef.querySelectorAll<HTMLElement>(ODAK_SECICI)) : []),
+        ...(etkilesimAcik && hedef ? Array.from(hedef.matches(ODAK_SECICI) ? [hedef] : hedef.querySelectorAll<HTMLElement>(ODAK_SECICI)) : []),
         ...Array.from(balonRef.current?.querySelectorAll<HTMLElement>(ODAK_SECICI) ?? []),
       ].filter((oge) => !oge.closest('[inert]') && oge.getClientRects().length > 0)
       olay.preventDefault()
@@ -161,32 +173,34 @@ export function SpotIsigi() {
 
   // Sayfa yenilenince bellekteki demo kendiliğinden kaybolur; kalıcı kayıt yok.
   useEffect(() => {
-    if (!adim) setYerlesim({ hedef: null, balon: BOS_KUTU, ekran: BOS_KUTU })
+    if (!adim) setYerlesim({ ekHedefler: [], hedef: null, balon: BOS_KUTU, ekran: BOS_KUTU })
   }, [adim])
 
   if (!adim || typeof document === 'undefined') return null
-  const { hedef, balon, ekran } = yerlesim
+  const hareketAzalt = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const { hedef, ekHedefler, balon, ekran } = yerlesim
   return createPortal(
     <div ref={katmanRef} className="pointer-events-none fixed inset-0 z-[10000]">
       <div ref={guvenliAlanRef} aria-hidden className="invisible absolute" style={{ paddingTop: 'var(--guvenli-ust)', paddingBottom: 'var(--guvenli-alt)' }} />
       <svg aria-hidden className="absolute inset-0 h-full w-full">
-        <defs><mask id={maske}><rect width="100%" height="100%" fill="white" />{hedef && <rect x={hedef.sol} y={hedef.ust} width={hedef.genislik} height={hedef.yukseklik} rx="18" fill="black" />}</mask></defs>
-        <rect width="100%" height="100%" fill="var(--foreground)" opacity="0.58" mask={`url(#${maske})`} />
+        <defs><mask id={maske}><rect width="100%" height="100%" fill="white" />{hedef && <rect x={hedef.sol} y={hedef.ust} width={hedef.genislik} height={hedef.yukseklik} rx="18" fill="black" style={{ opacity: gecisSuruyor ? 0 : 1, transition: hareketAzalt ? 'none' : 'all 500ms ease' }} />}{ekHedefler.map((alan, sira) => <rect key={sira} x={alan.sol} y={alan.ust} width={alan.genislik} height={alan.yukseklik} rx="18" fill="black" />)}</mask></defs>
+        <rect width="100%" height="100%" fill="var(--muted-foreground)" opacity="0.82" mask={`url(#${maske})`} />
         {hedef && <rect x={hedef.sol} y={hedef.ust} width={hedef.genislik} height={hedef.yukseklik} rx="18" fill="none" stroke="var(--primary-parlak)" strokeWidth="2" />}
       </svg>
       <div ref={balonRef} data-tanitim-balonu role="region" aria-label="Rabi tanıtım rehberi"
-        className="pointer-events-auto absolute overflow-y-auto rounded-2xl border border-border bg-card p-4 text-card-foreground shadow-xl"
-        style={{ left: balon.sol || 12, top: balon.ust || 12, width: balon.genislik || 'calc(100% - 24px)', maxWidth: 340, maxHeight: ekran.yukseklik ? Math.max(120, ekran.yukseklik * 0.52) : '52dvh', visibility: ekran.genislik ? 'visible' : 'hidden' }}>
-        <div className="mb-2 flex items-center justify-between gap-3">
-          <span className="text-[11px] font-extrabold tracking-wide text-primary">{aktifTur === 'ana_tur' ? 'RABİ’Yİ TANI' : aktifTur === 'denemeler' ? 'DENEMELER' : 'KONU HARİTASI'} · {(aktifAdim ?? 0) + 1}/{adimSayisi}</span>
+        className="pointer-events-auto absolute overflow-y-auto rounded-2xl border border-border bg-card text-card-foreground shadow-xl"
+        style={{ padding: adim.kimlik === 'soru-bir' ? 8 : 12, opacity: gecisSuruyor ? 0 : 1, transition: hareketAzalt ? 'none' : 'left 500ms ease, top 500ms ease, opacity 250ms ease', pointerEvents: gecisSuruyor ? 'none' : 'auto', left: balon.sol || 12, top: balon.ust || 12, width: balon.genislik || 'calc(100% - 24px)', maxWidth: 340, maxHeight: ekran.yukseklik ? Math.max(120, ekran.yukseklik * 0.52) : '52dvh', visibility: ekran.genislik ? 'visible' : 'hidden' }}>
+        <div className="flex items-center justify-between gap-3" style={{ marginBottom: adim.kimlik === 'soru-bir' ? 0 : 8 }}>
+          {adim.kimlik === 'soru-bir' && <div><h2 data-tanitim-baslik tabIndex={-1} className="font-display text-sm font-extrabold outline-none">{adim.baslik}</h2><p className="text-[11px] text-muted-foreground">Sonucu yaz veya pas geç.</p></div>}
+          {adim.kimlik !== 'soru-bir' && <span className="text-[11px] font-extrabold tracking-wide text-primary">{aktifTur === 'ana_tur' ? 'RABİ’Yİ TANI' : aktifTur === 'denemeler' ? 'DENEMELER' : 'KONU HARİTASI'} · {(aktifAdim ?? 0) + 1}/{adimSayisi}</span>}
           <button type="button" onClick={turuBitir} className="min-h-11 min-w-11 rounded-lg px-2 text-xs font-bold text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring">Turu Geç</button>
         </div>
-        <h2 data-tanitim-baslik tabIndex={-1} className="font-display text-lg font-extrabold outline-none">{adim.baslik}</h2>
-        <p aria-live="polite" className="mt-2 text-[13px] leading-relaxed text-muted-foreground">{hedefEksik ? 'Bu adımın bileşeni bulunamadı. Geri dönerek yeniden deneyebilir veya turu geçebilirsin.' : adim.aciklama}</p>
-        <div className="mt-3 flex items-center justify-between gap-2">
-          <Buton type="button" bicim="ikincil" className="min-h-11 min-w-11" disabled={aktifAdim === 0} onClick={oncekiAdimaDon}>Geri</Buton>
-          {aktifAdim === adimSayisi - 1 ? <Buton type="button" className="min-h-11 min-w-11" onClick={turuBitir}>Turu Bitir</Buton> : adim.tiklamali ? <span className="text-right text-xs font-bold text-primary">Aydınlatılan alana dokun</span> : <Buton type="button" className="min-h-11 min-w-11" disabled={!hedef || hedefEksik} onClick={sonrakiAdimaGec}>{adim.kimlik === 'pomodoro' ? 'Devam Et' : adim.kimlik === 'sonuc' ? 'Bankayı gör' : 'İleri'}</Buton>}
-        </div>
+        {adim.kimlik !== 'soru-bir' && <h2 data-tanitim-baslik tabIndex={-1} className="font-display text-lg font-extrabold outline-none">{adim.baslik}</h2>}
+        {(adim.kimlik !== 'soru-bir' || hedefEksik) && <p aria-live="polite" className="mt-2 text-[13px] leading-relaxed text-muted-foreground">{hedefEksik ? 'Bu adımın bileşeni bulunamadı. Geri dönerek yeniden deneyebilir veya turu geçebilirsin.' : adim.kimlik === 'soru-bir' ? 'Sonucu yaz, onayla veya pas geç.' : adim.aciklama}</p>}
+        {adim.kimlik !== 'soru-bir' && <div className="mt-3 flex items-center justify-between gap-2">
+          <Buton type="button" bicim="ikincil" className="min-h-11 min-w-11" disabled={aktifAdim === 0 || gecisSuruyor} onClick={oncekiAdimaDon}>Geri</Buton>
+          {aktifAdim === adimSayisi - 1 ? <Buton type="button" className="min-h-11 min-w-11" onClick={turuBitir}>Turu Bitir</Buton> : adim.tiklamali ? <span className="text-right text-xs font-bold text-primary">Aydınlatılan alana dokun</span> : <Buton type="button" className="min-h-11 min-w-11" disabled={!hedef || hedefEksik || gecisSuruyor} onClick={sonrakiAdimaGec}>{adim.kimlik === 'pomodoro-kilit' ? 'Oyunlara dön' : adim.kimlik === 'sonuc' ? 'Oyunlara dön' : 'İleri'}</Buton>}
+        </div>}
       </div>
     </div>, document.body,
   )

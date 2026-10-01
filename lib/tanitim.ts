@@ -12,12 +12,16 @@ export const TANITIM_ADIMLARI = [
   { kimlik: 'hedef', hedef: 'gunluk-hedef', baslik: 'Her gün küçük bir adım', aciklama: 'Halka, bugün çözdüğün soruların günlük hedefine ne kadar yaklaştığını gösterir. Altındaki yedi günlük şeritte bugün ortada durur; hedefine ulaştığın günler işaretlenir.', tiklamali: false },
   { kimlik: 'soru-takibi', hedef: 'soru-takibi', baslik: 'Çözdüklerini kaydet', aciklama: 'Soru Takibi’nde çözdüğün soruları ders ve konu bazında kaydedersin. Günlük hedefindeki halka bu kayıtlardan dolar. Şimdilik kartı tanımamız yeterli.', tiklamali: false },
   { kimlik: 'pomodoro-ac', hedef: 'pomodoro-ac', baslik: 'Birlikte odaklanalım', aciklama: 'Şimdi odaklanma aracımızı görmek için Pomodoro’ya dokun.', tiklamali: true },
-  { kimlik: 'pomodoro', hedef: 'pomodoro-sayaci', baslik: 'Çalış, mola ver, tekrarla', aciklama: 'Pomodoro, çalışmayı kısa molalarla böler. Halka süreyi, noktalar çalışma ve mola döngüsünü gösterir. Süreleri kendine göre ayarlayabilirsin. Harika! Şimdi ana sayfaya dönelim.', tiklamali: false },
+  { kimlik: 'pomodoro-prova', hedef: 'pomodoro-prova', baslik: 'Pomodoro veya deneme provası', aciklama: 'Çalışma ve mola döngüsü için Pomodoro’yu, sınav süresini deneyimlemek için Deneme provası’nı seçebilirsin. Prova kipinde TYT, AYT veya YDT kitapçığını seçersin.', tiklamali: false },
+  { kimlik: 'pomodoro', hedef: 'pomodoro-ayarlar', ekHedefler: ['pomodoro-sayaci', 'pomodoro-ders'], baslik: 'Çalışma ortamını kendine göre kur', aciklama: 'Sayaç çalışma ve mola döngünü gösterir. Çalışacağın dersi seçebilir, Süreler’den çalışma ve molaları ayarlayabilir, Ses’ten müzik açabilirsin. İstersen çalışırken ekranı açık bırakabilirsin. Bu turda ayarlarını değiştirmiyoruz.', tiklamali: false },
+  { kimlik: 'pomodoro-kilit', hedef: 'pomodoro-kilit', baslik: 'Dikkatini odak kilidiyle koru', aciklama: 'Odak korumasıyla çalışma sırasında dikkatini dağıtan uygulamaları engelleyebilir ve bildirimleri susturabilirsin. Bu özellik desteklenen Android cihazlarda, verdiğin izinlerle çalışır. Şimdi ana sayfaya dönüp oyunlara bakalım.', tiklamali: false },
   { kimlik: 'oyunlar-ac', hedef: 'oyunlar-ac', baslik: 'Bilgini oyunla pekiştir', aciklama: 'Alt menüdeki Oyunlar’a dokun. Birlikte bir soruluk kısa bir demo oynayacağız.', tiklamali: true },
-  { kimlik: 'demo-ac', hedef: 'demo-oyun', baslik: 'Kısa bir deneme', aciklama: 'Demo Oyun kartına dokun. Bu oyundaki cevaplar ve skor yalnızca tanıtımda kalacak.', tiklamali: true },
-  { kimlik: 'zorluk', hedef: 'demo-zorluk', baslik: 'Başlangıç seviyeni seç', aciklama: 'Kolay, Orta veya Zor’a dokun. Gerçek oyunlarda başlangıç seviyeni seçebilir, oynadıkça sana uyarlanan sorularla ilerleyebilirsin.', tiklamali: true },
-  { kimlik: 'soru-bir', hedef: 'demo-soru', baslik: 'İlk sorunu çöz', aciklama: 'Bir cevaba dokun, ardından Sonucu gör’e bas. Bu bir deneme; doğru ya da yanlış cevap vermen turu etkilemez.', tiklamali: true },
+  { kimlik: 'demo-ac', hedef: 'demo-oyun', baslik: 'Kısa bir deneme', aciklama: 'Tanıtım oyunu kartına dokun. Bu oyundaki cevaplar ve skor yalnızca tanıtımda kalacak.', tiklamali: true },
+  { kimlik: 'zorluk', hedef: 'demo-zorluk', etkilesimli: true, baslik: 'Gerçek oyunun hazırlık ekranı', aciklama: 'Bütün mini oyunlarda bu ekrandan tur modunu ve başlangıç zorluğunu seçersin. Tanıtım oyunu da aynı ekranı kullanıyor; burada seçtiklerin yalnızca bu denemede kalır.', tiklamali: false },
+  { kimlik: 'oyun-baslat', hedef: 'demo-baslat', baslik: 'Hazırsan turu başlat', aciklama: 'Başlat’a dokun. Geri sayımdan sonra gerçek oyun ekranında bir örnek işlem çözeceksin.', tiklamali: true },
+  { kimlik: 'soru-bir', hedef: 'demo-soru', ekHedefler: ['demo-islem'], baslik: 'Bir işlemi dene', aciklama: 'Sonucu tuş takımından yazıp onayla; istersen pas geç. Bu tuş takımı ve geri bildirimler normal oyunlarla aynı. Bir cevaptan sonra sonucu göreceksin.', tiklamali: true },
   { kimlik: 'sonuc', hedef: 'demo-sonuc', baslik: 'Sonucunu hemen gör', aciklama: 'Doğru ve yanlışlarını burada görürsün. Bankanın nasıl çalıştığını göstermek için üç örnek demo soru hazırladık; senin cevaplarından bağımsızlar.', tiklamali: false },
+  { kimlik: 'banka-ac', hedef: 'oyun-bankasi-ac', baslik: 'Yanlışlarına yeniden dön', aciklama: 'Üç geçici örnek hazırladık. Oyunlar menüsündeki Oyun Bankası kartına dokunarak nerede toplandıklarını görelim.', tiklamali: true },
   { kimlik: 'banka', hedef: 'demo-banka', baslik: 'Yanlışlarını öğrenmeye dönüştür', aciklama: 'Oyunlarda bilemediğin sorular Oyun Bankası’nda toplanır. Genel testte tekrar çözüp doğru bildiklerini bankadan çıkarabilirsin. Buradaki üç örnek ve demo skorun tur bitince silinecek.', tiklamali: false },
 ] as const
 
@@ -31,19 +35,18 @@ export const HARITA_ADIMLARI = [
 export type TanitimAdimi = (typeof TANITIM_ADIMLARI | typeof DENEME_ADIMLARI | typeof HARITA_ADIMLARI)[number]
 export const TUR_ADIMLARI: Record<TanitimTuru, readonly TanitimAdimi[]> = { ana_tur: TANITIM_ADIMLARI, denemeler: DENEME_ADIMLARI, konu_haritasi: HARITA_ADIMLARI }
 export type TanitimZorlugu = 'kolay' | 'orta' | 'zor'
-export type DemoSoru = { metin: string; secenekler: readonly number[]; cevap: number }
+export type DemoSoru = { metin: string; cevap: number }
 
 export const DEMO_SORULAR: Record<TanitimZorlugu, readonly [DemoSoru]> = {
-  kolay: [{ metin: '8 + 5 = ?', secenekler: [11, 13, 15], cevap: 13 }],
-  orta: [{ metin: '12 × 4 = ?', secenekler: [36, 48, 56], cevap: 48 }],
-  zor: [{ metin: '18 × 7 = ?', secenekler: [116, 126, 136], cevap: 126 }],
+  kolay: [{ metin: '8 + 5 = ?', cevap: 13 }],
+  orta: [{ metin: '12 × 4 = ?', cevap: 48 }],
+  zor: [{ metin: '18 × 7 = ?', cevap: 126 }],
 }
 
 export type DemoVeri = {
   demoVeri: true
-  zorluk: TanitimZorlugu | null
-  cevaplar: number[]
   banka: BankaKaydi[]
+  sonuc: { dogru: number; yanlis: number; skor: number } | null
 }
 
 export type TanitimDurumu = { aktifTur: TanitimTuru | null; aktifAdim: number | null; demo: DemoVeri }
@@ -51,13 +54,11 @@ export type TanitimEylemi = (
   | { tur: 'baslat'; turAdi?: TanitimTuru }
   | { tur: 'ileri' | 'geri' | 'temizle' }
   | { tur: 'hedefe-dokun'; hedef: string }
-  | { tur: 'zorluk-sec'; zorluk: TanitimZorlugu }
-  | { tur: 'cevapla'; cevap: number }
-  | { tur: 'soruyu-gec' }
+  | { tur: 'oyun-bitti'; dogru: number; yanlis: number }
 ) & { beklenenAdim?: number | null; beklenenTur?: TanitimTuru | null }
 
 export function demoVerileriTemizle(): TanitimDurumu {
-  return { aktifTur: null, aktifAdim: null, demo: { demoVeri: true, zorluk: null, cevaplar: [], banka: [] } }
+  return { aktifTur: null, aktifAdim: null, demo: { demoVeri: true, banka: [], sonuc: null } }
 }
 
 function demoBankasiKur(): BankaKaydi[] {
@@ -85,42 +86,32 @@ export function tanitimGecisi(durum: TanitimDurumu, eylem: TanitimEylemi): Tanit
       yeniAdim++
       break
     case 'hedefe-dokun':
-      if (!['pomodoro-ac', 'oyunlar-ac', 'demo-ac'].includes(adim.kimlik) || adim.hedef !== eylem.hedef) return durum
+      if (!['pomodoro-ac', 'oyunlar-ac', 'demo-ac', 'oyun-baslat', 'banka-ac'].includes(adim.kimlik) || adim.hedef !== eylem.hedef) return durum
       yeniAdim++
       break
-    case 'zorluk-sec':
-      if (adim.kimlik !== 'zorluk') return durum
-      demo = { ...demo, zorluk: eylem.zorluk, cevaplar: [], banka: [] }
+    case 'oyun-bitti':
+      if (adim.kimlik !== 'soru-bir') return durum
+      demo = { ...demo, sonuc: { dogru: eylem.dogru, yanlis: eylem.yanlis, skor: eylem.dogru * 10 }, banka: demoBankasiKur() }
       yeniAdim++
       break
-    case 'cevapla': {
-      if (!demo.zorluk || adim.kimlik !== 'soru-bir') return durum
-      const sira = 0
-      if (demo.cevaplar.length !== sira || !DEMO_SORULAR[demo.zorluk][sira].secenekler.includes(eylem.cevap)) return durum
-      demo = { ...demo, cevaplar: [...demo.cevaplar, eylem.cevap] }
+    case 'geri': {
+      if (adim.kimlik === 'soru-bir') return durum
+      yeniAdim = Math.max(0, yeniAdim - 1)
+      if (['sonuc', 'oyun-baslat'].includes(adim.kimlik)) yeniAdim = adimlar.findIndex((oge) => oge.kimlik === 'zorluk')
+      if (durum.aktifTur === 'ana_tur' && yeniAdim <= adimlar.findIndex((oge) => oge.kimlik === 'zorluk')) demo = demoVerileriTemizle().demo
       break
     }
-    case 'soruyu-gec':
-      if (adim.kimlik !== 'soru-bir' || demo.cevaplar.length !== 1) return durum
-      yeniAdim++
-      if (TANITIM_ADIMLARI[yeniAdim].kimlik === 'sonuc') demo = { ...demo, banka: demoBankasiKur() }
-      break
-    case 'geri':
-      yeniAdim = Math.max(0, yeniAdim - 1)
-      if (yeniAdim <= 7) demo = demoVerileriTemizle().demo
-      else if (yeniAdim === 8) demo = { ...demo, cevaplar: [], banka: [] }
-      break
   }
   return { ...durum, aktifAdim: yeniAdim, demo }
 }
 
 export function tanitimKonumu(adim: TanitimAdimi): { sekme: Sekme; ekran: Ekran | null } {
-  if (adim.kimlik === 'pomodoro') return { sekme: 'ana', ekran: 'pomodoro' }
+  if (['pomodoro-prova', 'pomodoro', 'pomodoro-kilit'].includes(adim.kimlik)) return { sekme: 'ana', ekran: 'pomodoro' }
   if (adim.kimlik === 'banka') return { sekme: 'oyunlar', ekran: 'oyun-bankasi' }
-  return { sekme: ['demo-ac', 'zorluk', 'soru-bir', 'sonuc'].includes(adim.kimlik) ? 'oyunlar' : 'ana', ekran: null }
+  return { sekme: ['demo-ac', 'zorluk', 'oyun-baslat', 'soru-bir', 'sonuc', 'banka-ac'].includes(adim.kimlik) ? 'oyunlar' : 'ana', ekran: null }
 }
 
 export function demoSonucu(demo: DemoVeri) {
-  const dogru = demo.zorluk ? demo.cevaplar.filter((cevap, sira) => DEMO_SORULAR[demo.zorluk!][sira].cevap === cevap).length : 0
-  return { dogru, yanlis: demo.cevaplar.length - dogru, skor: dogru * 10 }
+  if (demo.sonuc) return demo.sonuc
+  return { dogru: 0, yanlis: 0, skor: 0 }
 }
