@@ -1263,6 +1263,21 @@ sayfanın üstünde duruyor ve altındaki içerik her kıpırdadığında WebVie
 yeniden bulanıklaştırıyor. Görsel katkısı yoktu (zemin zaten %95 donuktu),
 bedeli takılan bir geçişti. Sayfanın üstünde duran yeni bir çubuk eklersen
 aynı soruyu sor.
+
+**iOS'ta menü camdan** ve bu kuralın tek istisnası. Kullanıcı Instagram'ın
+iOS 26 çubuğu gibi bir "liquid glass" istedi: kenarlardan içeri çekilmiş,
+altta yüzen bir kapsül; arkası bulanık ve doygun, seçili sekmenin arkasında
+sekmeden sekmeye kayan bir cam mercek (`alt-menu`, `alt-menu-mercek`,
+`globals.css` → "Camdan alt menü"). Takılma Android WebView'ın bedeliydi;
+WKWebView arkayı GPU'da bulanıklaştırıyor ve camdan çubuk iOS'un kendi dili.
+Android bu yüzden donuk kaldı — Android'e taşımadan önce orada ekran
+geçişini telefonda dene.
+
+Platform `<html data-platform>`e yerleşim betiğinde (`layout.tsx`) yazılıyor,
+React beklenmiyor: menü ilk karede cam çizilmeli, yoksa bir kare donuk görünüp
+cama döner. `AppShell` aynı işareti yüklendikten sonra yeniden koyuyor; köprü
+geç kalırsa yedek o. Cam kuralları katman dışında yazılı, çünkü menünün donuk
+hâlini veren Tailwind sınıflarını ancak katmansız bir kural ezebiliyor.
 - **Tam ekran katmanlar `clip-path` ile yükseliyor**, `transform` ile değil —
   yukarıdaki ilk sebep. `sahne-iner` ile aynı yöntem, ters yönde: bu katmanlar
   alttan geliyor.

@@ -2248,3 +2248,109 @@ body {
     animation: none;
   }
 }
+
+/*
+  Camdan alt menü — yalnızca iOS (`components/bottom-nav.tsx`).
+
+  Instagram'ın iOS 26 çubuğu gibi: ekranın kenarına yapışık bir yüzey değil,
+  altta yüzen bir kapsül; arkasından geçen sayfa bulanık ve renkleri biraz
+  doygun görünüyor, üst kenarında ışığı yakalayan ince bir parlama var.
+  Android'de çizilmiyor: aynı bulanıklık orada ekran geçişini takıltıyordu
+  (bkz. bottom-nav.tsx).
+
+  Katmansız (layer dışında) yazıldı: menünün donuk hâli Tailwind sınıfları ve
+  utilities katmanındaki bir kural katmansız kuralı ezemiyor — burada
+  `!important`a gerek kalmıyor.
+
+  Renkler beyazın ve tema renklerinin saydam hâlleri; cam kendi rengini değil
+  arkasındakini taşır, bu yüzden ayrı bir palet yok. Gölgenin rengi
+  `--foreground`un sıcak kahvesi, zemindeki gölgelerle aynı aile.
+
+  Yerleşim: kapsülün üst kenarı eski menünün üst kenarının altında kalıyor;
+  menüye göre konumlanan yapışkan öğeler (Pomodoro'nun Başlat'ı, yanlış
+  bankasının düğmesi, yapılacakların bildirimi) bu yüzden kapsülle çakışmıyor.
+*/
+:root {
+  --cam-zemin-ust: rgba(255, 255, 255, 0.66);
+  --cam-zemin-alt: rgba(255, 255, 255, 0.44);
+  --cam-kenar: rgba(255, 255, 255, 0.75);
+  --cam-parlama: rgba(255, 255, 255, 0.95);
+  --cam-golge: rgba(58, 38, 28, 0.16);
+  --cam-mercek: rgba(255, 255, 255, 0.62);
+}
+
+:root[data-platform='ios'] .alt-menu {
+  /* Kenarlardan içeri çekilmiş, ortalanmış kapsül. */
+  left: 14px;
+  right: 14px;
+  margin-inline: auto;
+  max-width: 26rem;
+  /* Ana ekran çizgisinin hemen üstü: güvenli alanın tamamı kadar yukarı
+     kalksaydı kapsül ekranın ortasına doğru yüzer, başparmaktan uzaklaşırdı. */
+  bottom: max(10px, calc(var(--guvenli-alt) - 12px));
+  padding-bottom: 0;
+  border: 1px solid var(--cam-kenar);
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--cam-zemin-ust), var(--cam-zemin-alt));
+  -webkit-backdrop-filter: blur(22px) saturate(185%);
+  backdrop-filter: blur(22px) saturate(185%);
+  box-shadow:
+    inset 0 1px 0 var(--cam-parlama),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.28),
+    0 12px 32px var(--cam-golge),
+    0 1px 3px rgba(58, 38, 28, 0.08);
+  overflow: hidden;
+}
+
+/* Sol üstten vuran yumuşak ışık: düz bir buzlu yüzeyi cama çeviren şey. */
+:root[data-platform='ios'] .alt-menu::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(120% 90% at 18% -20%, rgba(255, 255, 255, 0.55), transparent 55%),
+    radial-gradient(90% 70% at 100% 120%, rgba(255, 255, 255, 0.18), transparent 60%);
+  pointer-events: none;
+}
+
+:root[data-platform='ios'] .alt-menu > ul {
+  padding: 6px;
+}
+
+:root[data-platform='ios'] .alt-menu button {
+  position: relative;
+  z-index: 1;
+  border-radius: 999px;
+  padding-block: 7px;
+  font-size: 10.5px;
+}
+
+/* Kayan mercek: beş eşit sütundan seçilenin arkasında duruyor. */
+.alt-menu-mercek {
+  display: none;
+}
+:root[data-platform='ios'] .alt-menu-mercek {
+  display: block;
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 6px;
+  width: calc((100% - 12px) / 5);
+  border-radius: 999px;
+  background: var(--cam-mercek);
+  box-shadow:
+    inset 0 1px 0 var(--cam-parlama),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 2px 8px rgba(58, 38, 28, 0.1);
+  transform: translateX(calc(var(--sekme-sira, 0) * 100%));
+  /* Hafif aşmalı eğri: mercek yerine oturmadan bir tık ileri gidip dönüyor,
+     sistemin kendi sekme çubuğundaki yay hissi. */
+  transition: transform 420ms cubic-bezier(0.34, 1.36, 0.5, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-platform='ios'] .alt-menu-mercek {
+    transition: none;
+  }
+}

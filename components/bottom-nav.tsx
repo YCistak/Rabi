@@ -75,9 +75,24 @@ export function BottomNav({
       sayfanın üstünde duruyor ve altındaki içerik her kıpırdadığında —
       kaydırmada, ekran geçişinde — WebView arkayı yeniden bulanıklaştırmak
       zorunda kalıyor. Ekran geçişi bu yüzden takılıyordu.
+
+      **iOS'ta cam** (`alt-menu` sınıfı, `globals.css` → "Camdan alt menü").
+      Yukarıdaki bedel Android WebView'ın; WKWebView arkayı GPU'da
+      bulanıklaştırıyor ve camdan çubuk iOS 26'nın kendi dili. Android bu
+      yüzden donuk kalıyor — kararı geri almadan önce Android'de ekran
+      geçişini telefonda dene.
     */
-    <nav className="guvenli-alt fixed inset-x-0 bottom-0 z-40 rounded-t-[26px] border-t border-border bg-card shadow-[0_-6px_22px_rgba(54,33,112,0.12)]">
-      <ul className="mx-auto flex max-w-md px-2 pt-2.5 pb-1">
+    <nav
+      className="alt-menu guvenli-alt fixed inset-x-0 bottom-0 z-40 rounded-t-[26px] border-t border-border bg-card shadow-[0_-6px_22px_rgba(54,33,112,0.12)]"
+      style={{ '--sekme-sira': SEKMELER.findIndex((s) => s.id === sekme) } as React.CSSProperties}
+    >
+      <ul className="relative mx-auto flex max-w-md px-2 pt-2.5 pb-1">
+        {/*
+          Seçili sekmenin arkasındaki cam mercek; yalnızca iOS'ta görünüyor.
+          Her düğmede ayrı bir zemin olsaydı sekme değişince biri söner öteki
+          yanardı; tek mercek sekmeden sekmeye kayıyor.
+        */}
+        <span className="alt-menu-mercek" aria-hidden />
         {SEKMELER.map(({ id, ad }) => {
           const aktif = sekme === id
           return (
