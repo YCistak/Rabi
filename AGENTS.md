@@ -1318,6 +1318,15 @@ yazmadan önce listedekilerden hangisinin karşılığı olduğuna bak. Altısı
 `prefers-reduced-motion` altında susuyor: hangi ekranda olunduğu başlıkta,
 pencerenin neye ait olduğu metninde yazılı — hareket yalnızca bağlıyor.
 
+**Alttan açılan sayfalar aşağı çekilerek kapanıyor** (`useAsagiKaydirKapat`,
+`lib/asagi-kaydir.ts`). Hepsinin tepesinde bir tutamak vardı ama sayfa yalnızca
+zemine ya da Kapat'a dokununca kapanıyordu; kullanıcı tutamağı çekti, bir şey
+olmadı. Yeni bir alt sayfa eklersen kancayı kutusuna `ref` olarak ver.
+Sürükleme yalnızca içerik en üstteyken başlıyor ve `alt-pencere-girisi`nin
+`both` dolgusu satır içi transformu ezdiği için kanca sürüklerken animasyonu
+kaldırıyor. Sonucu bildiren, kapatılması bir karar olan sayfalar (hızlı
+kontrolün sonucu) kancayı almıyor.
+
 ## Kartlar sırayla beliriyor
 
 Izgaralar (ana sayfanın Araçlar/Oyunlar kutucukları, Oyunlar sekmesinin ders ve

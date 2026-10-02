@@ -35,6 +35,7 @@ import {
 } from '@/lib/yapilacaklar'
 import { bugun, cn, gunKaydir, tariheCevir, yediGunlukSerit, yeniId } from '@/lib/utils'
 import { useGeriKatmani } from '@/lib/geri'
+import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { BaslikSatiri, Buton, Kart, Onay } from '@/components/ui'
 
 /**
@@ -537,6 +538,7 @@ function EklemeSayfasi({
   const [hata, setHata] = useState(false)
 
   useGeriKatmani(true, onKapat)
+  const kaydir = useAsagiKaydirKapat(onKapat)
 
   const yazilan = metniKirp(metin)
   const ozelEksik = kategori === 'diger' && ozelKategoriKirp(ozelKategori) === undefined
@@ -562,6 +564,7 @@ function EklemeSayfasi({
       onClick={onKapat}
     >
       <div
+        ref={kaydir}
         className="alt-pencere-girisi max-h-[88%] w-full max-w-md overflow-y-auto rounded-t-[26px] bg-card px-[18px] pt-2 pb-[calc(1.5rem+var(--guvenli-alt))]"
         onClick={(olay) => olay.stopPropagation()}
       >
