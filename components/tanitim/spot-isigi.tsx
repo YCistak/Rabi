@@ -40,6 +40,9 @@ function yereleCevir(alan: DOMRect, { olcek, sol, ust }: Donusum) {
   return { left, top, right: left + alan.width / olcek, bottom: top + alan.height / olcek, width: alan.width / olcek, height: alan.height / olcek }
 }
 
+const KISA_KAYDIRMA = 0.6
+const azaltilmisHareket = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
 export function SpotIsigi() {
   const { adim, animasyon, deneyMi, rehberGizli, aktifTur, adimSayisi, gecisSuruyor, aktifAdim, sonrakiAdimaGec, oncekiAdimaDon, turuBitir } = useTanitim()
   const [yerlesim, setYerlesim] = useState<Yerlesim>({ ekHedefler: [], hedef: null, balon: BOS_KUTU, ekran: BOS_KUTU })
@@ -58,6 +61,8 @@ export function SpotIsigi() {
     let hedef: HTMLElement | null = null
     let kaydirildi = false
     let kaydirmaBaslangici = 0
+    let oncekiUst = Number.NaN
+    let durgunKare = 0
     let duzeltildi = false
     let sonGorunum = ''
     let eksikBaslangici: number | null = null
@@ -110,11 +115,23 @@ export function SpotIsigi() {
         let dikdortgen = yereleCevir(hedef.getBoundingClientRect(), donusum)
         if (dikdortgen.width > 0 && dikdortgen.height > 0) {
           if (!kaydirildi) {
-            hedef.scrollIntoView({ block: dikdortgen.height > ekran.yukseklik * 0.55 ? 'start' : 'center', inline: 'nearest', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
+            // Kısa mesafede yumuşak, uzunda anında: uzun yumuşak kaydırma adımı yavaşlatıyordu.
+            const bloklama = dikdortgen.height > ekran.yukseklik * 0.55 ? 'start' : 'center'
+            const hedefUst = bloklama === 'start' ? ustSinir : (ustSinir + altSinir - dikdortgen.height) / 2
+            const mesafe = Math.abs(dikdortgen.top - hedefUst)
+            hedef.scrollIntoView({ block: bloklama, inline: 'nearest', behavior: azaltilmisHareket() || mesafe > ekran.yukseklik * KISA_KAYDIRMA ? 'instant' : 'smooth' })
             kaydirmaBaslangici = performance.now()
+            oncekiUst = Number.NaN
+            durgunKare = 0
             kaydirildi = true
           }
-          if (!duzeltildi && performance.now() - kaydirmaBaslangici > 600) {
+          // Düzeltme, sabit süre yerine kaydırma durunca (üç kare aynı konum) yapılır; en fazla 600 ms beklenir.
+          if (!duzeltildi) {
+            const simdiki = hedef.getBoundingClientRect().top
+            durgunKare = Math.abs(simdiki - oncekiUst) < 0.5 ? durgunKare + 1 : 0
+            oncekiUst = simdiki
+          }
+          if (!duzeltildi && ((durgunKare >= 3 && performance.now() - kaydirmaBaslangici > 60) || performance.now() - kaydirmaBaslangici > 600)) {
             dikdortgen = yereleCevir(hedef.getBoundingClientRect(), donusum)
             // Balon ve hedef kısa telefonlarda üst üste binmesin.
             const alttaYer = altSinir - dikdortgen.bottom
@@ -125,8 +142,9 @@ export function SpotIsigi() {
               // Büyütülmüş bir kabın kaydırması kendi CSS pikselinde, pencereninki
               // ekran pikselinde (WebKit ve Chromium'da ölçüldü); `zoom` yalnızca body'de.
               const fark = dikdortgen.top - ustSinir - 8
-              if (kaydirmaKabi) kaydirmaKabi.scrollBy({ top: fark, behavior: 'smooth' })
-              else window.scrollBy({ top: fark * k, behavior: 'smooth' })
+              const davranis = azaltilmisHareket() || Math.abs(fark) > ekran.yukseklik * KISA_KAYDIRMA ? 'instant' : 'smooth'
+              if (kaydirmaKabi) kaydirmaKabi.scrollBy({ top: fark, behavior: davranis })
+              else window.scrollBy({ top: fark * k, behavior: davranis })
               dikdortgen = yereleCevir(hedef.getBoundingClientRect(), donusum)
             }
             duzeltildi = true
