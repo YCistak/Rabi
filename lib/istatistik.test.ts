@@ -3,7 +3,6 @@ import {
   denemeKarsilastir,
   ilerleyenDersler,
   istatistikOzeti,
-  istatistikYeterliMi,
   secimGuncelle,
   yon,
 } from './istatistik'
@@ -35,17 +34,6 @@ function deneme(id: string, tarih: string, tr: number, mat: number, fel: number)
     ],
   }
 }
-
-describe('istatistikYeterliMi', () => {
-  it('aynı şablondan en az iki deneme ister', () => {
-    const ilk = deneme('a', '2026-05-01', 20, 10, 3)
-    const ikinci = deneme('b', '2026-05-08', 22, 11, 4)
-    expect(istatistikYeterliMi([])).toBe(false)
-    expect(istatistikYeterliMi([ilk])).toBe(false)
-    expect(istatistikYeterliMi([ilk, { ...ikinci, sablonId: 'baska' }])).toBe(false)
-    expect(istatistikYeterliMi([ilk, ikinci])).toBe(true)
-  })
-})
 
 describe('istatistikOzeti', () => {
   it('deneme yoksa null döner', () => {

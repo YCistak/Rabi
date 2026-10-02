@@ -67,7 +67,6 @@ export function AnaSayfa({
   guncelSiralama,
   bekleyenYanlis,
   sonDenemeTarihi,
-  istatistikHazir,
   ozetHazir,
   ozetYetersiz,
   sonrakiOzet,
@@ -92,8 +91,6 @@ export function AnaSayfa({
   bekleyenYanlis: number
   /** En yeni denemenin tarihi; yoksa null. Günün hâli kartı için. */
   sonDenemeTarihi: string | null
-  /** Aynı türde karşılaştırılabilir iki deneme olduğunda istatistik açılır. */
-  istatistikHazir: boolean
   /** Konu Anlatımı'nda "bilmiyorum" denen kart sayısı — bölümün alt satırı. */
   /**
    * Biten ayın özeti izlenmeyi bekliyor mu.
@@ -136,8 +133,8 @@ export function AnaSayfa({
 
   // Turun hedefleri eski kullanıcının kısayol sırasından bağımsız görünür.
   const gosterilenAraclar = useMemo(
-    () => kisayollar(KARTLAR.filter((kart) => kart.id !== 'istatistik' || istatistikHazir), tanitimdaMi ? ['pomodoro', 'soru'] : sonAraclar),
-    [sonAraclar, istatistikHazir, tanitimdaMi],
+    () => kisayollar(KARTLAR, tanitimdaMi ? ['pomodoro', 'soru'] : sonAraclar),
+    [sonAraclar, tanitimdaMi],
   )
 
   const dersler = useMemo(() => doluDersler(), [])

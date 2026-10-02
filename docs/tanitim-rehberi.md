@@ -6,8 +6,7 @@
 2. `components/tanitim/tanitim-baglami.tsx`: React 19 Context, aktif tur/adım, `turuBaslat`, `sonrakiAdimaGec`, `oncekiAdimaDon`, `turuBitir`, `turGorulduMu`, `turuKaydet`.
 3. `components/tanitim/spot-isigi.tsx`: SVG maskesi, güvenli ekran boşlukları, dokunma kilidi, klavye odağı, yumuşak kaydırma ve konum takibi. Yönlendirme düğmeleri en az 44×44 piksel.
 4. `components/tanitim/demo-oyun.tsx`: Ders ızgarasındaki Tanıtım oyunu kartı ve gerçek `IslemOyunuEkrani`. Hazırlık, mod/zorluk seçimi, geri sayım, tuş takımı ve sonuç ekranı mevcut oyunlarla aynıdır. Tur ayarları ve sonuç sadece bellekte tutulur.
-5. `components/tanitim/net-gelisimi.tsx`: Gerçek denemelerden net gelişimi; şablon seçimi sayesinde TYT/AYT ve farklı ölçekler karışmaz. Son on kaydı gösterir. Kayıt yokken örnek net oluşturmaz.
-6. `components/app-shell.tsx`: Kurulum ve açılış animasyonu bittikten sonra ana turu başlatır; ekran geçişlerini yönetir. Denemeler ve Harita ilk açıldığında ilgili mini turu başlatır.
+5. `components/app-shell.tsx`: Kurulum ve açılış animasyonu bittikten sonra ana turu başlatır; ekran geçişlerini yönetir. Denemeler ve Harita ilk açıldığında ilgili mini turu başlatır.
 
 `data-tanitim` hedefleri ilgili bileşenlerde bulunur: ana sayfa, alt menü, Pomodoro, oyun bankası, Denemeler ve konu haritası.
 
@@ -25,7 +24,7 @@ Beş ana bölüm, on altı etkileşim adımına ayrılır:
 
 ## Mini turlar
 
-- Denemeler: Yeni Deneme Ekle düğmesi ve net grafiği. İki bilgi adımıdır; kayıt formunu açmaz.
+- Denemeler: Deneme ekle düğmesi. Tek bilgi adımıdır; kayıt formunu açmaz. Net grafiği bir süre bu ekrandaydı ("Net gelişimin"); kullanıcı kaldırttı — gelişim İstatistik ekranının işi ve Denemeler Android'deki hâline döndü.
 - Konu Haritası: İlk bölümün ilerleme bandı ve konu patikasının görünür başlangıcı. Uzun patikanın tamamını aydınlatmak yerine ekrana sığan başlangıcı gösterilir. Henüz içerik bulunmayan programda boş durum açıklaması hedeflenir.
 
 Ana tur açıkken mini tur başlamaz. Mini turun bitirilmesi veya geçilmesi kullanıcıyı bulunduğu ekranda bırakır. Tamamlanan mini tur tekrar girişte veya sayfa yenilemede açılmaz.

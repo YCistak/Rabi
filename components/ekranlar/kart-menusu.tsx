@@ -58,11 +58,9 @@ const BOLUMLER: { baslik: string; ipucu: string; kartlar: Ekran[] }[] = [
 export function KartMenusu({
   onKartAc,
   className,
-  istatistikHazir,
 }: {
   onKartAc: (ekran: Ekran) => void
   className?: string
-  istatistikHazir: boolean
 }) {
   // Bir bölüme yazılmamış kart sessizce kaybolmasın diye: `gezinme.ts`'e yeni
   // kart eklenip `BOLUMLER`'e işlenmezse hiç çizilmezdi.
@@ -73,7 +71,11 @@ export function KartMenusu({
     ...BOLUMLER.map(({ baslik, ipucu, kartlar }) => ({
       baslik,
       ipucu,
-      kartlar: kartlariBul(kartlar.filter((kart) => kart !== 'istatistik' || istatistikHazir)),
+      // İstatistik her zaman listede. Bir süre karşılaştırılabilir iki
+      // deneme olmadan gizleniyordu; denemesi olmayan kullanıcı (yeni
+      // kurulan iOS sürümünde herkes) aracın var olduğunu hiç bilmiyordu.
+      // Veri yokken ekran kendi boş durumunu söylüyor.
+      kartlar: kartlariBul(kartlar),
     })),
     ...(yersizler.length > 0 ? [{ baslik: 'Diğer', ipucu: '', kartlar: yersizler }] : []),
   ]

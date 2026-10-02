@@ -27,8 +27,7 @@ export const TANITIM_ADIMLARI = [
 ] as const
 
 export const DENEME_ADIMLARI = [
-  { kimlik: 'deneme-ekle', hedef: 'deneme-ekle', baslik: 'Netlerini kaydet', aciklama: 'Yeni Deneme Ekle ile TYT, AYT veya diğer denemelerinin doğru ve yanlışlarını girersin. Netlerin otomatik hesaplanır.', tiklamali: false },
-  { kimlik: 'deneme-grafik', hedef: 'deneme-grafik', baslik: 'Gelişimini izle', aciklama: 'Netlerinin dalgalanmasını ve genel gidişatını burada izlersin. Farklı deneme şablonları ayrı gösterilir. İlk kaydından sonra grafik oluşur.', tiklamali: false },
+  { kimlik: 'deneme-ekle', hedef: 'deneme-ekle', baslik: 'Netlerini kaydet', aciklama: 'Deneme ekle ile TYT, AYT veya diğer denemelerinin doğru ve yanlışlarını girersin. Netlerin otomatik hesaplanır; gelişimini İstatistik’te izlersin.', tiklamali: false },
 ] as const
 export const HARITA_ADIMLARI = [
   { kimlik: 'konu-haritasi', hedef: 'konu-haritasi', baslik: 'Eksiklerini tek bakışta gör', aciklama: 'Konuları tamamladıkça dersinin ilerlemesi artar. Konu kartları ve bölüm ilerlemesi, bitirdiklerini ve sıradaki konunu gösterir.', tiklamali: false },

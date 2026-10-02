@@ -38,10 +38,10 @@ import {
 import type { DersId } from '@/lib/oyunlar/tanim'
 import { sablonlariBirlestir } from '@/lib/sablonlar'
 import { guncelTahmin, obpHesapla } from '@/lib/tahmin'
-import { istatistikYeterliMi } from '@/lib/istatistik'
 import { egitimYili, gunlukToplam, ilerlemisSinif } from '@/lib/hesap'
 import { androidMu, iosMu } from '@/lib/platform'
 import { ekranGoruntusuKaydet, geriGecisi, useGeriKaydirma } from '@/lib/geri-kaydirma'
+import { sekmeGecisYonu, useSekmeKaydirma } from '@/lib/sekme-kaydirma'
 import { bildirilecekler, rozetDurumu, yeniRozetler, type Rozet } from '@/lib/rozetler'
 import { hatirlatmaIptal, hatirlatmaPlanla, pomodoroIptal } from '@/lib/bildirim'
 import { odakKilidiniBitir } from '@/lib/odak-kilidi'
@@ -178,7 +178,6 @@ function RabiUygulamasi() {
     ANAHTARLAR.denemeler,
     [],
   )
-  const istatistikHazir = istatistikYeterliMi(denemeler)
   const [kayitliSablonlar, setSablonlar] = useYerelDepo<Sablon[]>(ANAHTARLAR.sablonlar, [])
   const [okulYillari, setOkulYillari, okulHazir] = useYerelDepo<OkulYili[]>(
     ANAHTARLAR.okulYillari,
@@ -803,6 +802,21 @@ function RabiUygulamasi() {
     () => (ekran !== null ? `sekme:${sekme}` : sekme !== 'ana' ? 'sekme:ana' : null),
   )
 
+  // Ana menüde yana kaydırınca komşu sekme (`lib/sekme-kaydirma.ts`). Yalnızca
+  // sekmelerin kendi ekranında: araç, form, test, tanıtım ya da açık bir
+  // katman varken parmak o ekranın işini yapıyor.
+  useSekmeKaydirma(
+    sekme,
+    () =>
+      ayarlar.kurulumTamamlandi &&
+      ekran === null &&
+      denemeFormu === null &&
+      genelTest === null &&
+      !tanitim.tanitimdaMi &&
+      !katmanVarMi(),
+    (yeni) => setSekme(yeni),
+  )
+
   const denemeKaydet = useCallback(
     (deneme: Deneme) => {
       setDenemeler((onceki) => {
@@ -1047,7 +1061,6 @@ function RabiUygulamasi() {
                 guncelSiralama={guncelSiralama}
                 bekleyenYanlis={yanlisSorular.filter((s) => !s.cozuldu).length}
                 sonDenemeTarihi={enYeniDenemeTarihi}
-                istatistikHazir={istatistikHazir}
                 ozetHazir={ozetHazir}
                 ozetYetersiz={ozetYetersiz}
                 sonrakiOzet={sonrakiOzet}
@@ -1106,7 +1119,7 @@ function RabiUygulamasi() {
                 onOkumaSeansi={(seans) => setOkumaGecmisi((onceki) => okumaSeansiEkle(onceki, seans))}
               />
             )}
-            {sekme === 'daha' && <KartMenusu onKartAc={aracAc} istatistikHazir={istatistikHazir} />}
+            {sekme === 'daha' && <KartMenusu onKartAc={aracAc} />}
             {sekme === 'ayarlar' && (
               <AyarlarEkrani
                 kayitliSablonlar={kayitliSablonlar}
@@ -1253,6 +1266,8 @@ function SayfaGecisi({
   // yerindeyse) hiç kaymıyor. Kurulurken **bir kez** okunuyor: yön sonradan
   // değişse de başlamış animasyon değişmemeli (bkz. `geriYonunuIsaretle`).
   const [geri] = useState(geriGecisi)
+  // Yana kaydırarak gelinen sekme o yandan kayarak giriyor.
+  const [yandan] = useState(sekmeGecisYonu)
   const kutu = useRef<HTMLDivElement>(null)
 
   // Sökülürken görüntüsü alınıyor: geri kaydırırken bu ekran altta görünecek
@@ -1287,6 +1302,8 @@ function SayfaGecisi({
         ileri && 'sayfa-ileri',
         geri === 'kayarak' && 'sayfa-geri',
         geri === 'yerinde' && 'sayfa-yerinde',
+        yandan === 'sag' && 'sayfa-sagdan',
+        yandan === 'sol' && 'sayfa-geri',
         !basladi && 'sayfa-bekliyor',
       )}
       style={sabitKalsin ? { animation: 'none' } : yavas ? { animationDuration: `${sure}ms` } : undefined}

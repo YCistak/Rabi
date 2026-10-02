@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { geriKaydirmayiKilitle } from '@/lib/geri-kaydirma'
 import type { Sekme } from '@/lib/gezinme'
+import { SEKME_SIRASI } from '@/lib/sekme-kaydirma'
 import {
   KOYU_ESIGI,
   SURUKLEME_OLCEGI,
@@ -59,15 +60,18 @@ const SIMGELER: Record<Sekme, React.ReactNode> = {
   ),
 }
 
-const SEKMELER: { id: Sekme; ad: string }[] = [
-  { id: 'ana', ad: 'Ana Sayfa' },
-  // Araçlar Oyunlar'dan önce: deneme girişi, sıralama, hedef gibi asıl işler
-  // orada; oyun ikinci sırada. Harita ikisinin arasında, menünün ortasında.
-  { id: 'daha', ad: 'Araçlar' },
-  { id: 'harita', ad: 'Harita' },
-  { id: 'oyunlar', ad: 'Oyunlar' },
-  { id: 'ayarlar', ad: 'Ayarlar' },
-]
+const SEKME_ADI: Record<Sekme, string> = {
+  ana: 'Ana Sayfa',
+  daha: 'Araçlar',
+  harita: 'Harita',
+  oyunlar: 'Oyunlar',
+  ayarlar: 'Ayarlar',
+}
+
+// Sıra `SEKME_SIRASI`ndan: yana kaydırarak sekme değiştirme de aynı sırayı
+// izliyor. Araçlar Oyunlar'dan önce (deneme girişi, sıralama, hedef gibi asıl
+// işler orada), Harita ikisinin arasında, menünün ortasında.
+const SEKMELER = SEKME_SIRASI.map((id) => ({ id, ad: SEKME_ADI[id] }))
 
 /** Parmak bu kadar kaymadan sürükleme sayılmıyor; altı dokunuş. */
 const SURUKLEME_ESIGI = 6

@@ -2856,6 +2856,17 @@ betiğinin `--olcek` ile yaptığı `zoom`; ayrıca bir `max-width` konmadı.
 için dört yön de açık (`Info.plist`, `UISupportedInterfaceOrientations~ipad`)
 ve Apple bu anahtarı kullanımdan kaldırıyor. iPhone yalnızca dikey.
 
+**Sekmeler arasında yana kaydırılıyor** (iOS ve Android, `lib/sekme-kaydirma.ts`).
+Ana menünün beş sekmesinin ekranındayken parmak sağa giderse soldaki sekme,
+sola giderse sağdaki açılıyor (Araçlar → sağa: Ana Sayfa, sola: Harita);
+sıra `SEKME_SIRASI`, alt menü de onu çiziyor. Hareket parmak kalkınca
+değerlendiriliyor, sayfa parmağı izlemiyor; yeni sekme geldiği yandan kayarak
+giriyor (`.sayfa-sagdan` / `.sayfa-geri`). Sayılmayanlar: kenardan başlayan
+hareket (iOS'ta geri kaydırma, Android'de sistemin geri hareketi), yatay kayan
+bir şeridin ya da yazı alanının içinden başlayan hareket, alt menü, ve araç,
+form, genel test, tanıtım ya da açık bir katman (ders ızgarası, deste, oyun,
+pencere) varken her şey.
+
 **Geri kaydırma parmağı izliyor.** Yerli taraf hareketi tanırken
 (`.began/.changed/.ended`) `window.rabiGeriKaydirma`yı çağırıyor
 (`lib/geri-kaydirma.ts`); ekran içeriği (`[data-geri-sayfa]`) parmakla kayıyor,
