@@ -2741,6 +2741,15 @@ reddediyor. Otomatik imzanın bedeli hesapta kayıtlı bir iPhone (geliştirme
 profili cihazsız kurulmuyor). Yüklemeden önce bir adım paketin üç parçasında
 da yetkiyi denetliyor — eksikse yükleme yok.
 
+**Onay yetkiyi kendiliğinden açmıyor.** Apple'ın "Family Controls
+(Distribution)" onayından sonra üç App ID'nin her birinde Identifiers ›
+Additional Capabilities › Family Controls (Distribution) elle işaretlenmeli;
+işaretlenmezse App Store profili yetkiyi taşımıyor ve dışa aktarma "profile
+doesn't include the Family Controls capability" ile düşüyor. Bu kutu API'de
+yok (`scripts/app-store-hazirla.py` yalnızca geliştirme türünü görüyor) ve
+yalnızca hesap sahibi/Admin portaldan açabiliyor. Yeni eklenti kimliği
+eklenirse ona da aynı kutu.
+
 **Uygulamanın içinde başka platform adı geçmez.** App Store 2.3.10 başka bir
 mobil platformun ya da mağazanın adını kabul etmiyor. "Android", "Play" diyen
 metin ya yalnızca Android'de çizilen bir ekranda durmalı ya da platform adı
