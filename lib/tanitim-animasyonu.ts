@@ -1,5 +1,5 @@
 export const ANIMASYON_ANAHTARI = 'rabi_tur_animasyon_ayarlari'
-export const VARSAYILAN_ANIMASYON = { gecisMs: 0, cerceveMs: 700, aydinlatmaGecikmesiMs: 450, aydinlatmaMs: 550, balonMs: 500, karartma: 0.68 }
+export const VARSAYILAN_ANIMASYON = { gecisMs: 0, cerceveMs: 240, aydinlatmaGecikmesiMs: 40, aydinlatmaMs: 160, balonMs: 220, karartma: 0.68 }
 export type TanitimAnimasyonu = typeof VARSAYILAN_ANIMASYON
 export function animasyonuDogrula(deger: unknown): TanitimAnimasyonu {
   const sonuc = { ...VARSAYILAN_ANIMASYON }

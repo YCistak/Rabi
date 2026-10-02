@@ -63,7 +63,7 @@ function useTanitimDurumu(deneyMi: boolean) {
       setKapanisSuruyor(true)
       gecisRef.current = null
       if (kapanisRef.current) clearTimeout(kapanisRef.current)
-      kapanisRef.current = setTimeout(() => { setKapanisSuruyor(false); kapanisRef.current = null }, animasyonRef.current.gecisMs + 500)
+      kapanisRef.current = setTimeout(() => { setKapanisSuruyor(false); kapanisRef.current = null }, animasyonRef.current.gecisMs + 250)
     }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : animasyonRef.current.balonMs)
   }, [durum.aktifTur, turuKaydet])
 
