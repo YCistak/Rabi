@@ -8,6 +8,7 @@ import {
   KOYU_ESIGI,
   SURUKLEME_OLCEGI,
   buyutecOlcegi,
+  enineOlcek,
   mercekKonumu,
   parlaklik,
   parmaktanSira,
@@ -114,12 +115,20 @@ export function BottomNav({
     Parmak eşiği geçmeden işaretçi yakalanmıyor: yakalansaydı bırakma olayı
     şeride gider, düğmenin `click`i hiç gelmez ve kısa dokunuş çalışmazdı.
     Eşik geçilince yakalanıyor ki parmak kapsülden taşsa da izlensin.
+
+    Parmak iner inmez mercek "kalkıyor" (Liquid Glass): parmağın altına
+    yaylanarak gidip damla boyuna büyüyor, kapsülden taşıyor (`basili`).
+    Eşik geçilince parmağı gecikmesiz izliyor (`suruklendi`). Kısa dokunuşta
+    seçimi yine düğmenin `click`i yapıyor; bırakınca mercek yayla oturuyor.
   */
   const [surukleme, setSurukleme] = useState<{
     x: number
     sira: number
     /** Şeridin iç genişliği; büyüteç sekmelerin yerini bundan hesaplıyor. */
     genislik: number
+    /** Enine ölçek (`enineOlcek`); parmak inince bir kez ölçülüyor. */
+    enine: number
+    suruklendi: boolean
   } | null>(null)
   const parmak = useRef<{ id: number; baslangic: number; suruklendi: boolean } | null>(null)
   const dokunusuYut = useRef(false)
@@ -148,11 +157,30 @@ export function BottomNav({
     return { sol, genislik }
   }
 
+  /** Parmağın konumundan merceğin yeri ve parmağın altındaki sekme. */
+  const parmaktanMercek = (konum: number) => {
+    const olcu = seritOlcusu()
+    if (!olcu) return null
+    const x = konum - olcu.sol
+    return {
+      x: mercekKonumu(x, olcu.genislik, SEKMELER.length, SURUKLEME_OLCEGI),
+      sira: parmaktanSira(x, olcu.genislik, SEKMELER.length),
+      genislik: olcu.genislik,
+    }
+  }
+
   const parmakIndi = (e: React.PointerEvent<HTMLUListElement>) => {
     if (!camMi() || !e.isPrimary) return
     parmak.current = { id: e.pointerId, baslangic: e.clientX, suruklendi: false }
     kilitBirak()
     kilidiAc.current = geriKaydirmayiKilitle()
+    // Basılı tutunca mercek kalkıyor (kaydırmadan da). Ölçüler dönüşümsüz
+    // yerleşimden; mercek o an yaylanarak küçülüyor olsa da doğru çıkıyor.
+    const yer = parmaktanMercek(e.clientX)
+    const menu = menuRef.current
+    const mercek = seritRef.current?.querySelector<HTMLElement>('.alt-menu-mercek')
+    if (!yer || !menu || !mercek) return
+    setSurukleme({ ...yer, enine: enineOlcek(menu.offsetHeight, mercek.offsetHeight), suruklendi: false })
   }
 
   const parmakKaydi = (e: React.PointerEvent<HTMLUListElement>) => {
@@ -167,14 +195,9 @@ export function BottomNav({
         seritRef.current?.setPointerCapture(e.pointerId)
       } catch {}
     }
-    const olcu = seritOlcusu()
-    if (!olcu) return
-    const x = e.clientX - olcu.sol
-    setSurukleme({
-      x: mercekKonumu(x, olcu.genislik, SEKMELER.length, SURUKLEME_OLCEGI),
-      sira: parmaktanSira(x, olcu.genislik, SEKMELER.length),
-      genislik: olcu.genislik,
-    })
+    const yer = parmaktanMercek(e.clientX)
+    if (!yer) return
+    setSurukleme((onceki) => (onceki ? { ...onceki, ...yer, suruklendi: true } : null))
   }
 
   const parmakKalkti = (e: React.PointerEvent<HTMLUListElement>) => {
@@ -182,7 +205,11 @@ export function BottomNav({
     if (!p || p.id !== e.pointerId) return
     parmak.current = null
     kilitBirak()
-    if (!p.suruklendi) return
+    if (!p.suruklendi) {
+      // Kısa dokunuş: seçimi düğmenin `click`i yapıyor, mercek yalnızca iniyor.
+      setSurukleme(null)
+      return
+    }
     // Yakalama bitince tarayıcı bir `click` daha yollayabiliyor; sürüklemenin
     // sonucu zaten seçildi, o tıklama ikinci kez seçmesin.
     dokunusuYut.current = true
@@ -263,13 +290,18 @@ export function BottomNav({
     <nav
       data-yuzen
       ref={menuRef}
-      data-surukleniyor={surukleme ? '' : undefined}
+      data-basili={surukleme ? '' : undefined}
+      data-surukleniyor={surukleme?.suruklendi ? '' : undefined}
       className="alt-menu guvenli-alt fixed inset-x-0 bottom-0 z-40 rounded-t-[26px] border-t border-border bg-card shadow-[0_-6px_22px_rgba(54,33,112,0.12)]"
       style={
         {
           '--sekme-sira': sira,
           ...(surukleme
-            ? { '--mercek-x': `${surukleme.x}px`, '--mercek-olcek': SURUKLEME_OLCEGI }
+            ? {
+                '--mercek-x': `${surukleme.x}px`,
+                '--mercek-olcek': SURUKLEME_OLCEGI,
+                '--mercek-enine': surukleme.enine,
+              }
             : {}),
         } as React.CSSProperties
       }
