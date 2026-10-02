@@ -55,7 +55,7 @@ import { useGuncelleme } from '@/lib/guncelleme-kolu'
 import { GuncellemeSeridi } from '@/components/guncelleme-seridi'
 import { bugun, cn, gunKaydir } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
-import type { KonuDersId, KonuSinifi } from '@/lib/konu'
+import { haritaSinifiBul, type HaritaSinifi, type KonuDersId } from '@/lib/konu'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { kullanildi } from '@/lib/son-kullanilan'
 import { useBugun } from '@/lib/gorunurluk'
@@ -262,7 +262,7 @@ function RabiUygulamasi() {
     Konu haritasında kalınan yer. Yedeğe girmeyen bir tercih olduğu için
     ilerlemeden ayrı anahtarda duruyor.
   */
-  const [konuSecimi, setKonuSecimi] = useYerelDepo<{ ders: KonuDersId; sinif: KonuSinifi }>(
+  const [konuSecimi, setKonuSecimi] = useYerelDepo<{ ders: KonuDersId; sinif: HaritaSinifi }>(
     ANAHTARLAR.konuSecimi,
     { ders: 'matematik', sinif: 9 },
   )
@@ -1095,6 +1095,7 @@ function RabiUygulamasi() {
               <KonuHaritasiEkrani
                 secim={konuSecimi}
                 setSecim={(secim) => setKonuSecimi(secim)}
+                kullaniciSinifi={haritaSinifiBul(ayarlar.buYilSinif)}
                 ilerlemeler={konuIlerleme}
                 setIlerlemeler={setKonuIlerleme}
                 onOkumaSeansi={(seans) => setOkumaGecmisi((onceki) => okumaSeansiEkle(onceki, seans))}
