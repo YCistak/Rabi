@@ -432,6 +432,24 @@ body {
 }
 
 @layer utilities {
+  /*
+    Emoji kutuları (araç, ders, oyun, rozet simgeleri).
+
+    iOS'ta kutudaki emoji ortada durmuyordu: satırın ölçüsü ilk yazı
+    tipinden (Nunito) geliyor ve Apple'ın renkli emojisi o satırın tabanına
+    göre yerleşip kutunun bir yanına kayıyordu. Aile burada emoji yazı
+    tipinin kendisi; satır onun ölçüsüyle kuruluyor ve `leading-none` emojiyi
+    kutunun ortasına alıyor. Kalınlık ve eğiklik sıfırlanıyor: kalın bir
+    satırdan miras alınan sentetik kalınlık renkli emojiyi bulanık ve kaymış
+    çiziyor.
+  */
+  .emoji {
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-synthesis: none;
+  }
+
   .font-display {
     font-family: var(--font-display);
   }

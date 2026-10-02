@@ -343,7 +343,7 @@ function ModSeridi({ mod }: { mod: OyunModu }) {
   const tanim = MODLAR[mod]
   return (
     <div className="mt-4 flex flex-none items-center gap-2 rounded-2xl bg-foreground/[0.06] px-3 py-2">
-      <span aria-hidden className="text-base">
+      <span aria-hidden className="emoji text-base">
         {tanim.simge}
       </span>
       <span className="min-w-0 text-[11.5px] font-bold leading-snug text-foreground/70">

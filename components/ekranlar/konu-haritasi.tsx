@@ -474,7 +474,7 @@ export function KonuHaritasiEkrani({
           </h1>
         </div>
         <span
-          className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart text-[21px] leading-none"
+          className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart text-[21px] leading-none emoji"
           aria-hidden
         >
           🗺️
@@ -488,7 +488,7 @@ export function KonuHaritasiEkrani({
           className="flex w-full items-center gap-3 px-3.5 py-3 text-left transition active:brightness-[0.98]"
         >
           <span
-            className="grid size-10 shrink-0 place-items-center rounded-[14px] text-[20px]"
+            className="emoji grid size-10 shrink-0 place-items-center rounded-[14px] text-[20px]"
             style={{ background: bicim.zemin }}
             aria-hidden
           >
@@ -567,7 +567,7 @@ export function KonuHaritasiEkrani({
                         : undefined
                     }
                   >
-                    <span aria-hidden>{d.ikon}</span>
+                    <span aria-hidden className="emoji">{d.ikon}</span>
                     {secim.sinif === 11 && d.id === 'turkce' ? 'Edebiyat' : d.ad}
                   </button>
                 )
