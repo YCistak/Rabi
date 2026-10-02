@@ -335,6 +335,7 @@ export function Onay({
   baslik,
   aciklama,
   onayMetni = 'Sil',
+  tehlikeli = true,
   onOnayla,
   onIptal,
 }: {
@@ -342,6 +343,12 @@ export function Onay({
   baslik: string
   aciklama: string
   onayMetni?: string
+  /**
+   * Onay düğmesi kırmızı mı. Varsayılan evet: pencerenin çoğu silme ve
+   * çıkış onayı. Geri alınabilen bir işte (görevi ertelemek) kırmızı düğme
+   * yapılan şeyi olduğundan tehlikeli gösterirdi; orada markanın dolgusu.
+   */
+  tehlikeli?: boolean
   onOnayla: () => void
   onIptal: () => void
 }) {
@@ -359,7 +366,7 @@ export function Onay({
             Vazgeç
           </Buton>
           <Buton
-            className="flex-1 bg-danger text-white"
+            className={cn('flex-1', tehlikeli && 'bg-danger text-white')}
             onClick={() => {
               onOnayla()
               onIptal()

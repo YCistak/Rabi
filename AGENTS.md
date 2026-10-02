@@ -2001,9 +2001,14 @@ tutuyor ve karakter sınırı tek başına yetmiyor.
 İkisi **birlikte** değişir: sınırı büyütmek isteyen önce satırdaki düğmelere yer
 bulmalı. Yeni bir düğme eklemek de metni daraltır, yani sınırı düşürür.
 
-Görev metni **düzenlenemiyor**, silinip yeniden yazılıyor: satır tek satırlık bir
-iş adı taşıyor ve yirmi dört karakteri düzeltmek, her satıra ikinci bir kalem
-düğmesi koymaktan hızlı.
+Görev **düzenleniyor** (`gorevDuzenle`, aynı ekleme sayfası dolu açılıyor) ve
+her satırda silme düğmesi var. Bir süre ikisi de yoktu — "yirmi dört karakteri
+silip yeniden yazmak, kalem düğmesinden hızlı" diye — ama yeniden yazmak yıldızı,
+bitti işaretini ve dilimdeki yeri de götürüyordu; kullanıcı tik gibi görünür
+düğmeler istedi. Düzenleme gün ve dilimi değiştirmiyor, taşımanın yolu erteleme.
+Düğmeler (yıldız, ertele, düzenle, sil) **kategorinin satırında**, iş adının
+değil: dört düğme ad satırına konsaydı aşağıdaki karakter sınırı yarıya inerdi.
+Silme bir onay penceresinden geçiyor.
 
 ### Kayıt yedi günlük şeritle kayar, geçmiş salt okunur
 
@@ -2037,6 +2042,13 @@ Erteleme görevi **ertesi güne, aynı dilime** taşıyor ve hedef dilim doluysa
 `gorevErtele` `null` dönüyor: sessizce yutulan bir erteleme, kullanıcıya işin
 ekrandan kaybolduğunu gösterirdi. Ekran bu yüzden bir toast taşıyor — ertelenen
 görev bulunduğu günden çıkıyor ve nereye gittiğini söyleyen tek yer o cümle.
+Erteleme önce **soruyor** (`Onay`, kırmızı değil — geri alınabilen bir iş):
+tek dokunuşla ertelenen görev ekrandan kayboluyor, yanlışlıkla basan kullanıcı
+onu yarının listesinde arıyordu.
+
+"Diğer" seçilince kendi kategori adı **zorunlu** ve en çok
+`EN_UZUN_OZEL_KATEGORI` (14) harf, sayacı alanın üstünde. Bir süre isteğe
+bağlıydı; listede yalnızca "DİĞER" yazan bir görev ne olduğunu söylemiyordu.
 
 Ekleme sayfası **"Ne zaman?" diye sormuyor**: dilim, basılan `+` düğmesinin
 bölümünden geliyor. Sayfada bir süre üç dilimlik bir seçici de vardı; kullanıcı
