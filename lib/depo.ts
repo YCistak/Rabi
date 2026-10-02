@@ -1,6 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { TUR_ANAHTARLARI } from './tanitim'
+import { ANIMASYON_ANAHTARI } from './tanitim-animasyonu'
 import type {
   Ayarlar,
   Deneme,
@@ -782,7 +784,13 @@ export function elenenSoruSayisi(yedek: Yedek): number {
 }
 
 export function tumVeriyiSil() {
-  for (const anahtar of [...Object.values(ANAHTARLAR), ...ESKI_ANAHTARLAR]) {
+  /*
+    Tanıtım turu bayrakları (ana tur + mini turlar) ve tur animasyon ayarı
+    `ANAHTARLAR` tablosunda değil, `lib/tanitim*.ts` içinde tanımlı; burada
+    elle eklenmezse sıfırlanan uygulama turu "görülmüş" sanıp başlatmıyordu.
+  */
+  const tanitimAnahtarlari = [...Object.values(TUR_ANAHTARLARI), ANIMASYON_ANAHTARI]
+  for (const anahtar of [...Object.values(ANAHTARLAR), ...ESKI_ANAHTARLAR, ...tanitimAnahtarlari]) {
     try {
       localStorage.removeItem(anahtar)
     } catch {
