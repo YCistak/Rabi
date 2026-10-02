@@ -10,6 +10,36 @@ type Yerlesim = { ekHedefler: Kutu[]; hedef: Kutu | null; balon: Kutu; ekran: Ku
 const BOS_KUTU: Kutu = { sol: 0, ust: 0, genislik: 0, yukseklik: 0 }
 const ODAK_SECICI = 'button:not(:disabled), a[href], input:not(:disabled), [tabindex="0"]'
 
+/*
+  Ekran koordinatlarını katmanın kendi CSS pikseline çeviren dönüşüm.
+
+  Tablette `body`de `zoom: var(--olcek)` var (`app/layout.tsx`, iPad'de 1,2)
+  ve katman `body`ye portal edildiği için o da büyütülüyor. Hem WebKit hem
+  Chromium'da `getBoundingClientRect`, `innerWidth` ve `visualViewport`
+  ekran pikseli döndürüyor; katmana yazılan `left`/`top` ve SVG `x`/`y` ise
+  büyütülmüş koordinatta çiziliyor. Ölçüleni olduğu gibi yazınca her şey
+  ölçek kadar sağa-aşağı kayıyordu: iPad'de delik hedeften ~140 px uzakta,
+  balon ekranın dışındaydı.
+
+  Ölçek `--olcek`ten okunmuyor, katmanın kendisinden ölçülüyor: katman ekranı
+  kaplıyor, ekrandaki genişliği (`getBoundingClientRect`) ile kendi CSS
+  genişliği (`getComputedStyle`) arasındaki oran, motor zoom'u nasıl
+  raporlarsa raporlasın çizim ile ölçüm arasındaki gerçek oran. Telefonda 1.
+*/
+type Donusum = { olcek: number; sol: number; ust: number }
+function katmanDonusumu(katman: HTMLElement | null): Donusum {
+  if (!katman) return { olcek: 1, sol: 0, ust: 0 }
+  const ekranda = katman.getBoundingClientRect()
+  const kendi = parseFloat(getComputedStyle(katman).width)
+  const olcek = kendi > 0 && ekranda.width > 0 ? ekranda.width / kendi : 1
+  return { olcek, sol: ekranda.left, ust: ekranda.top }
+}
+function yereleCevir(alan: DOMRect, { olcek, sol, ust }: Donusum) {
+  const left = (alan.left - sol) / olcek
+  const top = (alan.top - ust) / olcek
+  return { left, top, right: left + alan.width / olcek, bottom: top + alan.height / olcek, width: alan.width / olcek, height: alan.height / olcek }
+}
+
 export function SpotIsigi() {
   const { adim, animasyon, deneyMi, rehberGizli, aktifTur, adimSayisi, gecisSuruyor, aktifAdim, sonrakiAdimaGec, oncekiAdimaDon, turuBitir } = useTanitim()
   const [yerlesim, setYerlesim] = useState<Yerlesim>({ ekHedefler: [], hedef: null, balon: BOS_KUTU, ekran: BOS_KUTU })
@@ -58,18 +88,26 @@ export function SpotIsigi() {
         kaydirildi = false
       }
       for (const cocuk of document.body.children) if (cocuk instanceof HTMLElement) kilitle(cocuk)
+      // Bundan sonraki bütün ölçüler katmanın CSS pikselinde (bkz. `katmanDonusumu`).
+      const donusum = katmanDonusumu(katmanRef.current)
+      const k = donusum.olcek
       const gorunum = window.visualViewport
-      const ekran = { sol: gorunum?.offsetLeft ?? 0, ust: gorunum?.offsetTop ?? 0, genislik: gorunum?.width ?? window.innerWidth, yukseklik: gorunum?.height ?? window.innerHeight }
+      const ekran = {
+        sol: ((gorunum?.offsetLeft ?? 0) - donusum.sol) / k, ust: ((gorunum?.offsetTop ?? 0) - donusum.ust) / k,
+        genislik: (gorunum?.width ?? window.innerWidth) / k, yukseklik: (gorunum?.height ?? window.innerHeight) / k,
+      }
+      // Güvenli alan `env()`ten ekran pikseli olarak geliyor; büyütülmüş
+      // katmanda o kadar ekran pikseli `/ k` CSS pikseline denk.
       const guvenli = guvenliAlanRef.current ? getComputedStyle(guvenliAlanRef.current) : null
-      const ustSinir = ekran.ust + (parseFloat(guvenli?.paddingTop ?? '0') || 0) + 12
-      const altSinir = ekran.ust + ekran.yukseklik - (parseFloat(guvenli?.paddingBottom ?? '0') || 0) - 12
+      const ustSinir = ekran.ust + (parseFloat(guvenli?.paddingTop ?? '0') || 0) / k + 12
+      const altSinir = ekran.ust + ekran.yukseklik - (parseFloat(guvenli?.paddingBottom ?? '0') || 0) / k - 12
       const gorunumImzasi = `${ekran.genislik}:${ekran.yukseklik}:${ustSinir}:${altSinir}`
       if (sonGorunum !== gorunumImzasi) { sonGorunum = gorunumImzasi; kaydirildi = false; duzeltildi = false }
       let balonGenisligi = Math.min(340, ekran.genislik - 24)
-      const balonYuksekligi = balonRef.current?.getBoundingClientRect().height ?? 230
+      const balonYuksekligi = balonRef.current ? balonRef.current.getBoundingClientRect().height / k : 230
       let kutu: Kutu | null = null
       if (hedef) {
-        let dikdortgen = hedef.getBoundingClientRect()
+        let dikdortgen = yereleCevir(hedef.getBoundingClientRect(), donusum)
         if (dikdortgen.width > 0 && dikdortgen.height > 0) {
           if (!kaydirildi) {
             hedef.scrollIntoView({ block: dikdortgen.height > ekran.yukseklik * 0.55 ? 'start' : 'center', inline: 'nearest', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
@@ -77,17 +115,19 @@ export function SpotIsigi() {
             kaydirildi = true
           }
           if (!duzeltildi && performance.now() - kaydirmaBaslangici > 600) {
-            dikdortgen = hedef.getBoundingClientRect()
+            dikdortgen = yereleCevir(hedef.getBoundingClientRect(), donusum)
             // Balon ve hedef kısa telefonlarda üst üste binmesin.
             const alttaYer = altSinir - dikdortgen.bottom
             const ustteYer = dikdortgen.top - ustSinir
-            if (Math.max(alttaYer, ustteYer) < balonYuksekligi + 20 && ekran.genislik < 700) {
+            if (Math.max(alttaYer, ustteYer) < balonYuksekligi + 20 && ekran.genislik * k < 700) {
               let kaydirmaKabi = hedef.parentElement
               while (kaydirmaKabi && !(['auto', 'scroll'].includes(getComputedStyle(kaydirmaKabi).overflowY) && kaydirmaKabi.scrollHeight > kaydirmaKabi.clientHeight)) kaydirmaKabi = kaydirmaKabi.parentElement
-              const kaydirma = { top: dikdortgen.top - ustSinir - 8, behavior: 'smooth' as ScrollBehavior }
-              if (kaydirmaKabi) kaydirmaKabi.scrollBy(kaydirma)
-              else window.scrollBy(kaydirma)
-              dikdortgen = hedef.getBoundingClientRect()
+              // Büyütülmüş bir kabın kaydırması kendi CSS pikselinde, pencereninki
+              // ekran pikselinde (WebKit ve Chromium'da ölçüldü); `zoom` yalnızca body'de.
+              const fark = dikdortgen.top - ustSinir - 8
+              if (kaydirmaKabi) kaydirmaKabi.scrollBy({ top: fark, behavior: 'smooth' })
+              else window.scrollBy({ top: fark * k, behavior: 'smooth' })
+              dikdortgen = yereleCevir(hedef.getBoundingClientRect(), donusum)
             }
             duzeltildi = true
           }
@@ -123,7 +163,7 @@ export function SpotIsigi() {
       const ekHedefler = ('ekHedefler' in adim ? adim.ekHedefler : []).flatMap((hedefAdi) => {
         const oge = document.querySelector<HTMLElement>(`[data-tanitim="${hedefAdi}"]`)
         if (!oge) return []
-        const alan = oge.getBoundingClientRect()
+        const alan = yereleCevir(oge.getBoundingClientRect(), donusum)
         if (alan.bottom < ustSinir || alan.top > altSinir) return []
         return [{ sol: alan.left - 4, ust: Math.max(ustSinir, alan.top - 4), genislik: alan.width + 8, yukseklik: Math.min(altSinir, alan.bottom + 4) - Math.max(ustSinir, alan.top - 4) }]
       })
