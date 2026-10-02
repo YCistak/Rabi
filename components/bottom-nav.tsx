@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
+import { geriKaydirmayiKilitle } from '@/lib/geri-kaydirma'
 import type { Sekme } from '@/lib/gezinme'
 import { KOYU_ESIGI, mercekKonumu, parlaklik, parmaktanSira, rengiCoz, type Ton } from '@/lib/cam-menu'
 
@@ -109,6 +110,20 @@ export function BottomNav({
   const parmak = useRef<{ id: number; baslangic: number; suruklendi: boolean } | null>(null)
   const dokunusuYut = useRef(false)
 
+  /*
+    Parmak menüdeyken kenardan geri kaydırma kilitli. Sol kenardan başlayan
+    bir menü sürüklemesini iOS'un kenar hareketi de tanıyordu: sayfa parmakla
+    birlikte kayıyor, bırakınca hem geri gidiliyor hem sekme seçiliyordu.
+    Parmak inince kilitleniyor (kenar hareketi parmak biraz yol alınca
+    tanınıyor, yani kilit ondan önce konmuş oluyor), kalkınca açılıyor.
+  */
+  const kilidiAc = useRef<(() => void) | null>(null)
+  const kilitBirak = () => {
+    kilidiAc.current?.()
+    kilidiAc.current = null
+  }
+  useEffect(() => kilitBirak, [])
+
   const seritOlcusu = () => {
     const serit = seritRef.current
     if (!serit) return null
@@ -122,6 +137,8 @@ export function BottomNav({
   const parmakIndi = (e: React.PointerEvent<HTMLUListElement>) => {
     if (!camMi() || !e.isPrimary) return
     parmak.current = { id: e.pointerId, baslangic: e.clientX, suruklendi: false }
+    kilitBirak()
+    kilidiAc.current = geriKaydirmayiKilitle()
   }
 
   const parmakKaydi = (e: React.PointerEvent<HTMLUListElement>) => {
@@ -149,6 +166,7 @@ export function BottomNav({
     const p = parmak.current
     if (!p || p.id !== e.pointerId) return
     parmak.current = null
+    kilitBirak()
     if (!p.suruklendi) return
     // Yakalama bitince tarayıcı bir `click` daha yollayabiliyor; sürüklemenin
     // sonucu zaten seçildi, o tıklama ikinci kez seçmesin.
@@ -162,6 +180,7 @@ export function BottomNav({
   }
 
   const parmakIptal = () => {
+    kilitBirak()
     parmak.current = null
     setSurukleme(null)
   }
