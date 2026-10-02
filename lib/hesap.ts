@@ -312,6 +312,32 @@ export function obpSonucu(yillar: OkulYili[], elleGirilen: number | null): ObpSo
   return obpTahmini(yillar)
 }
 
+/**
+ * Doğrudan OBP girişi kilitli mi?
+ *
+ * Mezun tek bir yıl sonu notu bile girdiyse OBP o notlardan hesaplanıyor ve
+ * elle yazılan sayı bununla çelişirdi (`obpSonucu` elle girileni öne alıyor,
+ * yani notlar sessizce yok sayılırdı). Notların hepsi silinince kilit açılıyor.
+ *
+ * `elleGirilen` doluyken kilitlenmiyor: eski bir kayıtta (kurulumda ikisi de
+ * girilmiş) sayı hâlâ geçerli ve kullanıcı onu temizleyebilmeli, kilit onu
+ * çıkmaza sokardı.
+ */
+export function elleObpKilitliMi(yillar: OkulYili[], elleGirilen: number | null): boolean {
+  return elleGirilen === null && yillar.some((y) => Number.isFinite(y.ortalama))
+}
+
+/**
+ * Bir yıl sonu notu girilince elle yazılmış OBP'ye ne olacağı.
+ *
+ * Kullanıcı notları girmeye başladığında niyeti hesaplamak; eski sayı kalsaydı
+ * kilit hiç devreye girmez, OBP de notlardan değil o sayıdan çıkardı. Girilen
+ * not geçersizse (boş ya da sayı değil) hiçbir şey değişmiyor.
+ */
+export function yilNotuSonrasiElleObp(elleGirilen: number | null, yeniNot: number | null): number | null {
+  return yeniNot !== null && Number.isFinite(yeniNot) ? null : elleGirilen
+}
+
 // ---------------------------------------------------------------------------
 // Soru takibi
 // ---------------------------------------------------------------------------
