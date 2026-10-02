@@ -159,7 +159,9 @@ export function YapilacaklarEkrani({
   }
 
   return (
-    <div>
+    // Yatay tablette hafta şeridi solda, günün dilimleri sağda
+    // (`tablet-sutunlar`; başlık iki sütunu kaplıyor).
+    <div className="tablet-sutunlar">
       <BaslikSatiri arac="notlar" baslik="Yapılacaklar" />
 
       {/* Yedi günlük şerit her zaman bugünü ortalar. */}
@@ -306,7 +308,7 @@ export function YapilacaklarEkrani({
       {/* Toast: ertelenen görev ekrandan kayboluyor, nereye gittiğini söyleyen
           tek yer bu. Alt menünün üstünde duruyor. */}
       {mesaj !== null && (
-        <div className="pointer-events-none fixed inset-x-0 bottom-[calc(5.5rem+var(--guvenli-alt))] z-40 flex justify-center px-6">
+        <div className="pointer-events-none fixed inset-x-0 bottom-[calc(5.5rem+var(--guvenli-alt))] z-40 flex justify-center px-6 tablet:right-[var(--ray)] tablet:bottom-[calc(1.5rem+var(--guvenli-alt))]">
           <p className="acilir-giris max-w-md rounded-2xl bg-foreground px-4 py-3 text-center text-[13.5px] font-bold text-background shadow-kart">
             {mesaj}
           </p>

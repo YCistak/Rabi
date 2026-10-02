@@ -2487,3 +2487,96 @@ body {
 :root[data-platform='ios'] *::-webkit-scrollbar {
   display: none;
 }
+
+/*
+  Tablet yerleşimi — `app/layout.tsx` betiği `<html>`e `data-yerlesim="tablet"`
+  ve `data-yon="yatay|dikey"` yazıyor (kısa kenar 480 CSS pikseli ve üstü).
+  Telefonda iki öznitelik de **yok**: aşağıdaki hiçbir kural ve `tablet:` /
+  `yatay:` ile yazılmış hiçbir sınıf telefonda eşleşmiyor. Telefon görünümü
+  bu yüzden piksel piksel aynı kalıyor.
+
+  Gezinme tablette sağda dikey bir ray (`components/bottom-nav.tsx`). Neden
+  sağ: sol kenar kaydırarak geri hareketine ait (`lib/geri-kaydirma.ts`);
+  ray orada dursaydı rayı sürükleyen parmak geri hareketiyle yarışırdı.
+  Yatay tutulan tabletin iki eli yanlarda; sağ başparmak rayın üstünde.
+
+  `--ray`: rayın kapladığı genişlik (iOS'ta kapsül + kenar boşluğu, Android'de
+  kenara yapışık yüzey). İçerik sağdan bu kadar içeri çekiliyor.
+*/
+@custom-variant tablet (&:where(:root[data-yerlesim='tablet'] *));
+@custom-variant yatay (&:where(:root[data-yerlesim='tablet'][data-yon='yatay'] *));
+
+:root {
+  --ray: 0px;
+  --guvenli-sag: max(var(--safe-area-inset-right, 0px), env(safe-area-inset-right, 0px));
+  --guvenli-sol: max(var(--safe-area-inset-left, 0px), env(safe-area-inset-left, 0px));
+}
+:root[data-yerlesim='tablet'] {
+  --ray: 92px;
+}
+
+/*
+  Camdan ray — iOS tabletinde alt menünün kapsülü dikey duruyor, sağ kenarda
+  ekranın ortasında yüzüyor (Duolingo'nun iPad yan çubuğu gibi ama camdan).
+  Yukarıdaki "Camdan alt menü" kurallarının üstüne yazıyor; katmansız olduğu
+  için `tablet:` sınıflarını da eziyor, Android'deki ray sınıfları burada
+  geçersiz. Mercek aynı, yalnızca dikey kayıyor.
+*/
+:root[data-platform='ios'][data-yerlesim='tablet'] .alt-menu {
+  left: auto;
+  right: calc(12px + var(--guvenli-sag));
+  top: 0;
+  bottom: 0;
+  height: fit-content;
+  margin-block: auto;
+  margin-inline: 0;
+  width: calc(var(--ray) - 16px);
+  max-width: none;
+  padding: 0;
+}
+:root[data-platform='ios'][data-yerlesim='tablet'] .alt-menu-mercek {
+  left: 6px;
+  right: 6px;
+  bottom: auto;
+  width: auto;
+  height: calc((100% - 12px) / 5);
+  /* Eksenler yer değiştiriyor: boyuna ölçek dikey, enine (kapsülden taşan)
+     ölçek yatay. Sayılar aynı kaynaktan (bottom-nav.tsx). */
+  transform: translateY(var(--mercek-y, calc(var(--sekme-sira, 0) * 100%)))
+    scale(var(--mercek-enine, 1), var(--mercek-olcek, 1));
+}
+
+/*
+  İki sütun (yatay tablet). Kart yığını olan ekranlar kökündeki yığına
+  `tablet-sutunlar` sınıfını koyuyor; sıra bozulmadan iki sütuna akıyor (önce
+  soldaki sütun yukarıdan aşağı, sonra sağdaki). Kartlar sütun arasında
+  bölünmüyor. Başlık (`header`) ve `sutun-boyu` işaretli öğeler iki sütunu
+  birden kaplıyor.
+
+  Neden ızgara değil sütun: ızgarada yan yana iki kartın satırı en uzununa
+  göre uzuyor, kısa kartın altında boşluk kalıyordu. Neden yalnızca yatay:
+  dikey tablette içerik alanı ~560 CSS pikseli, iki sütun 270'er pikselle
+  telefon kartlarından dar kalırdı.
+*/
+:root[data-yerlesim='tablet'][data-yon='yatay'] .tablet-sutunlar {
+  columns: 2;
+  column-gap: 1.25rem;
+}
+:root[data-yerlesim='tablet'][data-yon='yatay'] .tablet-sutunlar > * {
+  break-inside: avoid;
+}
+:root[data-yerlesim='tablet'][data-yon='yatay'] .tablet-sutunlar > header,
+:root[data-yerlesim='tablet'][data-yon='yatay'] .tablet-sutunlar > .sutun-boyu {
+  column-span: all;
+}
+/*
+  `gap`li dikey flex yığınlar (Soru Takibi, Devamsızlık): sütun düzeni flex
+  kutusunda çalışmıyor, yatayda blok oluyor; aradaki boşluk `gap` yerine
+  üst boşlukla veriliyor (aynı 0,875rem).
+*/
+:root[data-yerlesim='tablet'][data-yon='yatay'] .tablet-sutunlar.flex {
+  display: block;
+}
+:root[data-yerlesim='tablet'][data-yon='yatay'] .tablet-sutunlar.flex > * + * {
+  margin-top: 0.875rem;
+}
