@@ -96,6 +96,37 @@ export function yaylanmaHareketi(konum: number, hiz: number, azaltilmis: boolean
   return hareket(konum, -hiz, YAYLANMA_EN_KISA_MS, YAYLANMA_EN_UZUN_MS)
 }
 
+function egriNoktalari(egri: string): [number, number, number, number] | null {
+  const m = /cubic-bezier\(([\d.]+), ([\d.]+), ([\d.]+), ([\d.]+)\)/.exec(egri)
+  return m ? [+m[1], +m[2], +m[3], +m[4]] : null
+}
+
+const bezier = (a: number, b: number, s: number) => 3 * a * s * (1 - s) ** 2 + 3 * b * s * s * (1 - s) + s ** 3
+
+/**
+ * Hareketin, kutunun ekranda yalnızca `kalan` px'i göründüğü an (ms).
+ *
+ * Çıkış eğrisi sonda yavaşlıyor: 390 px'lik ekranda son ~25 px'i 5-6 kare
+ * sürüyordu ve o karelerde ekranda neredeyse hiçbir şey yoktu (kare kare
+ * ekran yayınında boş görünüyordu). Ekran o noktada değiştiriliyor; kuyruğun
+ * geri kalanı oynatılmıyor.
+ */
+export function cikisDegisimAni(h: Hareket, mesafe: number, kalan: number): number {
+  if (h.sure === 0 || mesafe <= kalan) return 0
+  const n = egriNoktalari(h.egri)
+  if (!n) return h.sure
+  const hedef = 1 - kalan / mesafe
+  // y(s) tekdüze artıyor (y1 ≥ 0, y2 = 1): ikiye bölerek s'yi bul.
+  let alt = 0
+  let ust = 1
+  for (let i = 0; i < 30; i++) {
+    const orta = (alt + ust) / 2
+    if (bezier(n[1], n[3], orta) < hedef) alt = orta
+    else ust = orta
+  }
+  return Math.round(bezier(n[0], n[2], ust) * h.sure)
+}
+
 /** Eğrinin başlangıçtaki hızı (px/ms) — testler ve ölçüm için. */
 export function baslangicHizi(h: Hareket, mesafe: number): number {
   const m = /cubic-bezier\(([\d.]+), ([\d.]+)/.exec(h.egri)

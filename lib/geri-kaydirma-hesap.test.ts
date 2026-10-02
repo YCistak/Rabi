@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   baslangicHizi,
+  cikisDegisimAni,
   CIKIS_EN_KISA_MS,
   CIKIS_EN_UZUN_MS,
   cikisHareketi,
@@ -108,5 +109,25 @@ describe('yaylanmaHareketi', () => {
 
   it('azaltılmış harekette süre 0', () => {
     expect(yaylanmaHareketi(60, 0, true).sure).toBe(0)
+  })
+})
+
+describe('cikisDegisimAni', () => {
+  it('kutunun yalnızca `kalan` px göründüğü an, süre bitmeden önce', () => {
+    const mesafe = 210
+    const h = cikisHareketi(180, 390, 0.5, false)
+    const an = cikisDegisimAni(h, mesafe, 31)
+    expect(an).toBeGreaterThan(0)
+    expect(an).toBeLessThan(h.sure)
+    // Doğrulama: o anki konum, eğriyi sayısal olarak izleyerek.
+    const [x1, y1, x2, y2] = /cubic-bezier\(([\d.]+), ([\d.]+), ([\d.]+), ([\d.]+)\)/.exec(h.egri)!.slice(1).map(Number)
+    const b = (a: number, c: number, s: number) => 3 * a * s * (1 - s) ** 2 + 3 * c * s * s * (1 - s) + s ** 3
+    let s = 0
+    while (b(x1, x2, s) < an / h.sure) s += 0.0005
+    expect(mesafe * (1 - b(y1, y2, s))).toBeCloseTo(31, 0)
+  })
+
+  it('süre 0 ise 0', () => {
+    expect(cikisDegisimAni({ sure: 0, egri: 'linear' }, 200, 30)).toBe(0)
   })
 })

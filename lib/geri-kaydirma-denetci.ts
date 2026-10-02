@@ -1,4 +1,5 @@
 import {
+  cikisDegisimAni,
   cikisHareketi,
   geriGidilmeli,
   HIZ_PENCERESI_MS,
@@ -72,12 +73,12 @@ export type Durum = 'bos' | 'surukleniyor' | 'cikiyor' | 'yaylaniyor'
 const GOLGE = '-10px 0 28px rgba(0, 0, 0, 0.10)'
 
 /**
- * Ekran, çıkış hareketi bitmeden bu kadar önce değişiyor. Hareketin son
- * kareleri (yavaşlayan kuyruk) kutuyu ekranın son birkaç pikselinde
- * gezdiriyor; tam bitişte değişseydi arada iki kare boyunca hiçbir ekran
- * görünmüyordu (ölçüldü: 390 px'lik ekranda 389 ve 390 px'te iki boş kare).
+ * Çıkan sayfanın ekranda bu orandan azı kalınca ekran değişiyor. Hareketin
+ * yavaşlayan kuyruğu kutuyu ekranın son birkaç pikselinde gezdiriyor; tam
+ * bitişte değişseydi arada birkaç kare boyunca hiçbir ekran görünmüyordu
+ * (ölçüldü: 390 px'lik ekranda 5-6 kare boyunca 25 px'ten az sayfa).
  */
-export const CIKIS_ERKEN_MS = 34
+export const CIKIS_DEGISIM_ORANI = 0.08
 
 export class GeriKaydirmaDenetcisi {
   durum: Durum = 'bos'
@@ -173,7 +174,8 @@ export class GeriKaydirmaDenetcisi {
     this.durum = 'cikiyor'
     const genislik = this.o.genislik()
     const h = cikisHareketi(this.konum, genislik, hiz, this.o.azaltilmis())
-    this.oynat(genislik, h, this.cikisBitti, CIKIS_ERKEN_MS)
+    const mesafe = genislik - this.konum
+    this.oynat(genislik, h, this.cikisBitti, h.sure - cikisDegisimAni(h, mesafe, genislik * CIKIS_DEGISIM_ORANI))
   }
 
   /** Kanca sökülürken. */
