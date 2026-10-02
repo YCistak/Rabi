@@ -35,10 +35,20 @@ public class EkranSuresiEklentisi: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "uygulamaSec", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "kilitle", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "kaldir", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "listeGoster", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "listeGizle", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "listeKaldir", returnType: CAPPluginReturnPromise),
     ]
 
     /// Seçimin `UserDefaults` anahtarı.
     private let secimAnahtari = "rabi.odak.secim"
+
+    /// Pomodoro'daki engelli uygulama listesi (bkz. `listeGoster`).
+    private var listeBarindirici: UIViewController?
+    private var kaydirmaGozlemi: NSKeyValueObservation?
+    /// Listenin görünebileceği dikey bant, ekran koordinatında (CSS piksel):
+    /// üstte durum çubuğu, altta yapışık Başlat düğmesi ve alt menü var.
+    private var gorunurBant: (ust: CGFloat, alt: CGFloat) = (0, .greatestFiniteMagnitude)
 
     @objc func durum(_ call: CAPPluginCall) {
         guard #available(iOS 16.0, *) else {
@@ -146,6 +156,110 @@ public class EkranSuresiEklentisi: CAPPlugin, CAPBridgedPlugin {
         call.resolve()
     }
 
+    /// Engellenen uygulamaların listesi, Pomodoro'nun sayfasının içinde.
+    ///
+    /// Uygulamaların adı ve ikonu Rabi'ye verilmiyor (opak belirteç); onları
+    /// yalnızca sistemin kendi çizimi (`Label(token)`) gösterebiliyor ve o
+    /// çizim bir görüntüye de alınamıyor. Web tarafı bu yüzden listenin
+    /// yerini boş bırakıyor, yerli liste tam o yere, WKWebView'ın kaydırma
+    /// görünümünün **içine** konuyor: sayfayla birlikte kayıyor, JS'in
+    /// her kaydırmada yer bildirmesine gerek kalmıyor.
+    ///
+    /// Sayfanın içinde ama web'in üstünde çiziliyor; bu yüzden iki şey
+    /// gerekiyor: kaydırınca durum çubuğunun, yapışık düğmenin ve alt menünün
+    /// üstüne taşmasın diye `gorunurBant`ın dışı maskeleniyor, web'de bir
+    /// pencere açılınca da web tarafı `listeGizle` diyor.
+    ///
+    /// Dokunuş almıyor: kaydırma altındaki sayfaya geçmeli. Değiştirmek
+    /// "Uygulamaları düzenle" düğmesinden.
+    @objc func listeGoster(_ call: CAPPluginCall) {
+        guard #available(iOS 16.0, *) else {
+            call.resolve(["satir": 0])
+            return
+        }
+        let x = CGFloat(call.getDouble("x") ?? 0)
+        let y = CGFloat(call.getDouble("y") ?? 0)
+        let genislik = CGFloat(call.getDouble("genislik") ?? 0)
+        let ust = CGFloat(call.getDouble("ust") ?? 0)
+        let alt = CGFloat(call.getDouble("alt") ?? Double(Float.greatestFiniteMagnitude))
+
+        DispatchQueue.main.async {
+            guard let kaydirma = self.bridge?.webView?.scrollView else {
+                call.resolve(["satir": 0])
+                return
+            }
+            let secim = self.kayitliSecim()
+            let satir = self.secimSayisi(secim)
+            let liste = EngelListesi(secim: secim)
+
+            let barindirici: UIHostingController<EngelListesi>
+            if let mevcut = self.listeBarindirici as? UIHostingController<EngelListesi> {
+                mevcut.rootView = liste
+                barindirici = mevcut
+            } else {
+                barindirici = UIHostingController(rootView: liste)
+                barindirici.view.backgroundColor = .clear
+                barindirici.view.isUserInteractionEnabled = false
+                if let ana = self.bridge?.viewController {
+                    ana.addChild(barindirici)
+                    kaydirma.addSubview(barindirici.view)
+                    barindirici.didMove(toParent: ana)
+                } else {
+                    kaydirma.addSubview(barindirici.view)
+                }
+                self.listeBarindirici = barindirici
+                self.kaydirmaGozlemi = kaydirma.observe(\.contentOffset, options: [.new]) { [weak self] _, _ in
+                    self?.listeyiMaskele()
+                }
+            }
+            barindirici.view.frame = CGRect(
+                x: x, y: y, width: genislik, height: CGFloat(satir) * EngelListesi.satirYuksekligi
+            )
+            barindirici.view.isHidden = satir == 0
+            self.gorunurBant = (ust, alt)
+            self.listeyiMaskele()
+            call.resolve(["satir": satir])
+        }
+    }
+
+    @objc func listeGizle(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            self.listeBarindirici?.view.isHidden = true
+            call.resolve()
+        }
+    }
+
+    @objc func listeKaldir(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            self.kaydirmaGozlemi?.invalidate()
+            self.kaydirmaGozlemi = nil
+            if let barindirici = self.listeBarindirici {
+                barindirici.willMove(toParent: nil)
+                barindirici.view.removeFromSuperview()
+                barindirici.removeFromParent()
+            }
+            self.listeBarindirici = nil
+            call.resolve()
+        }
+    }
+
+    /// Listenin `gorunurBant` dışında kalan kısmını keser.
+    private func listeyiMaskele() {
+        guard let gorunum = listeBarindirici?.view,
+              let kaydirma = bridge?.webView?.scrollView else { return }
+        let ustSinir = kaydirma.contentOffset.y + gorunurBant.ust - gorunum.frame.minY
+        let altSinir = kaydirma.contentOffset.y + gorunurBant.alt - gorunum.frame.minY
+        let bas = min(max(0, ustSinir), gorunum.bounds.height)
+        let son = min(max(bas, altSinir), gorunum.bounds.height)
+        let maske = gorunum.layer.mask ?? CALayer()
+        maske.backgroundColor = UIColor.black.cgColor
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        maske.frame = CGRect(x: 0, y: bas, width: gorunum.bounds.width, height: son - bas)
+        gorunum.layer.mask = maske
+        CATransaction.commit()
+    }
+
     // MARK: - Yardımcılar
 
     @available(iOS 16.0, *)
@@ -206,11 +320,9 @@ final class SecimModeli: ObservableObject {
 /// Aşağı kaydırarak kapatma kapalı: kapatılan sayfa "kaydet" mi "vazgeç" mi
 /// belirsiz kalıyordu ve JS tarafındaki çağrı hiç dönmezdi.
 ///
-/// Üstte seçili olanların şeridi var. Apple'ın seçicisi kayıtlı seçimi
-/// işaretli getiriyor ama uygulamalar kategorilerin içinde kapalı duruyor ve
-/// kullanıcı daha önce neyi engellediğini görmüyordu — "Sosyal (1)" bir
-/// uygulama adı değil. Adları Rabi bilmiyor (opak belirteç); `Label(token)`
-/// sistemin kendi çizimi, ikon ve adı oraya o koyuyor.
+/// Seçili olanlar burada ayrıca listelenmiyor: liste Pomodoro'nun kendi
+/// sayfasında (`EngelListesi`) ve kullanıcı eklerken ikinci bir kopyasını
+/// görmek istemedi. Bir süre seçicinin üstünde bir şerit vardı.
 @available(iOS 16.0, *)
 struct UygulamaSecici: View {
     @ObservedObject var model: SecimModeli
@@ -219,10 +331,7 @@ struct UygulamaSecici: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                SeciliSeridi(secim: model.secim)
-                FamilyActivityPicker(selection: $model.secim)
-            }
+            FamilyActivityPicker(selection: $model.secim)
                 .navigationTitle("Engellenecekler")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -238,56 +347,42 @@ struct UygulamaSecici: View {
     }
 }
 
-/// Seçili uygulama, kategori ve sitelerin yatay şeridi. Boşken de duruyor ve
-/// boş olduğunu söylüyor: kaybolan bir şerit "seçim silindi mi" diye
-/// düşündürürdü.
+/// Pomodoro'daki engelli uygulama listesi: Android'deki uygulama listesinin
+/// satırları gibi, ikon ve ad. Satır yüksekliği sabit, çünkü web tarafı
+/// listenin yerini satır sayısından ayırıyor (`ios-odak-ayarlari.tsx`,
+/// `SATIR_YUKSEKLIGI`); ikisi birlikte değişir.
 @available(iOS 16.0, *)
-struct SeciliSeridi: View {
+struct EngelListesi: View {
+    static let satirYuksekligi: CGFloat = 48
     let secim: FamilyActivitySelection
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(baslik)
-                .font(.footnote.weight(.semibold))
-                .foregroundColor(.secondary)
-            if sayi > 0 {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(Array(secim.applicationTokens), id: \.self) { belirtec in
-                            Label(belirtec).cip()
-                        }
-                        ForEach(Array(secim.categoryTokens), id: \.self) { belirtec in
-                            Label(belirtec).cip()
-                        }
-                        ForEach(Array(secim.webDomainTokens), id: \.self) { belirtec in
-                            Label(belirtec).cip()
-                        }
-                    }
-                }
-            }
+        VStack(spacing: 0) {
+            ForEach(Array(secim.applicationTokens), id: \.self) { Label($0).engelSatiri() }
+            ForEach(Array(secim.categoryTokens), id: \.self) { Label($0).engelSatiri() }
+            ForEach(Array(secim.webDomainTokens), id: \.self) { Label($0).engelSatiri() }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(Color(UIColor.secondarySystemBackground))
-    }
-
-    private var sayi: Int {
-        secim.applicationTokens.count + secim.categoryTokens.count + secim.webDomainTokens.count
-    }
-
-    private var baslik: String {
-        sayi == 0 ? "Henüz engellenen uygulama yok" : "Şu an engellenenler (\(sayi))"
+        .frame(maxWidth: .infinity, alignment: .topLeading)
     }
 }
 
 private extension View {
-    func cip() -> some View {
+    /// Renkler web'in tema değişkenlerinin sayısı: yazı `--foreground`,
+    /// çizgi `--border`. Yerli taraf CSS değişkenini okuyamıyor.
+    @available(iOS 16.0, *)
+    func engelSatiri() -> some View {
         self
-            .font(.subheadline)
+            .labelStyle(.titleAndIcon)
+            .font(.system(size: 15, weight: .semibold))
+            .foregroundColor(Color(red: 0x1B / 255, green: 0x1A / 255, blue: 0x19 / 255))
             .lineLimit(1)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
-            .background(Capsule().fill(Color(UIColor.systemBackground)))
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(height: EngelListesi.satirYuksekligi)
+            .overlay(alignment: .top) {
+                Rectangle()
+                    .fill(Color(red: 0xEA / 255, green: 0xE9 / 255, blue: 0xE6 / 255))
+                    .frame(height: 1)
+            }
     }
 }

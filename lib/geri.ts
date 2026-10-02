@@ -19,10 +19,33 @@ type Kapat = () => void
 
 const katmanlar: Kapat[] = []
 
+/**
+ * Katman sayısını izleyenler. Tek kullanıcısı iOS'taki engelli uygulama
+ * listesi (`ios-odak-ayarlari.tsx`): o liste sayfanın üstüne yerli olarak
+ * çiziliyor ve web'de açılan her pencerenin **üstünde** kalırdı; pencere
+ * açılınca kendini gizlemesi gerekiyor. Pencerelerin hepsi bu yığından
+ * geçtiği için ayrı bir "pencere açık" sinyali yazmak gerekmedi.
+ */
+const izleyiciler = new Set<(sayi: number) => void>()
+
+function haberVer() {
+  for (const izle of izleyiciler) izle(katmanlar.length)
+}
+
+/** Katman sayısı değişince çağrılır; hemen bir kez de güncel sayıyla. */
+export function katmanlariIzle(izle: (sayi: number) => void): () => void {
+  izleyiciler.add(izle)
+  izle(katmanlar.length)
+  return () => {
+    izleyiciler.delete(izle)
+  }
+}
+
 /** En üstteki katmanı kapatır. Katman yoksa `false` döner — geri tuşu devam eder. */
 export function ustKatmaniKapat(): boolean {
   const kapat = katmanlar.pop()
   if (!kapat) return false
+  haberVer()
   kapat()
   return true
 }
@@ -43,9 +66,13 @@ export function useGeriKatmani(acik: boolean, kapat: () => void) {
     if (!acik) return
     const katman = () => kapatRef.current()
     katmanlar.push(katman)
+    haberVer()
     return () => {
       const yer = katmanlar.lastIndexOf(katman)
-      if (yer !== -1) katmanlar.splice(yer, 1)
+      if (yer !== -1) {
+        katmanlar.splice(yer, 1)
+        haberVer()
+      }
     }
   }, [acik])
 }

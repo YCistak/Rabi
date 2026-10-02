@@ -2725,9 +2725,11 @@ Parçalar:
   kaldırıyor. Olmasaydı Instagram, Rabi açılana kadar kilitli kalırdı.
   DeviceActivity en az 15 dakikalık aralık istiyor: kısa turda aralığın başı
   geçmişe çekiliyor, sonu yine turun sonu.
-- `ios/App/KalkanGorunumu` — engellenen uygulama açılınca çıkan ekran, Rabi'nin
-  maskotu ve renkleriyle (Android'in engel katmanının karşılığı). Renkler ve
-  `tavsan_yuz.png` orada yeniden yazılı/kopyalı: eklenti ayrı bir süreç.
+- `ios/App/KalkanGorunumu` — engellenen uygulama açılınca çıkan ekran;
+  metni ve renkleri Android'in engel katmanından ("Odaktasın.", kalan süre).
+  Apple düzeni kendisi çiziyor, neyin taşınamadığı dosyanın başında yazılı.
+  Renkler ve `tavsan_yuz.png` orada yeniden yazılı/kopyalı: eklenti ayrı bir
+  süreç. Kalan süreyi `rabiTur` zamanlayıcısının sonundan okuyor.
 - `components/odak/ios-odak-ayarlari.tsx` — Pomodoro'nun "Odak koruması"
   satırının iOS içi.
 
@@ -2738,8 +2740,13 @@ Android'den üç farkı var ve üçü de bilerek:
   Etme anahtarı iOS'ta çizilmiyor.
 - **Liste Apple'ın.** Seçim Apple'ın seçicisinden yapılıyor, Rabi seçilen
   uygulamaların adını bile görmüyor (opak belirteçler, yalnızca cihazda,
-  `UserDefaults`). Ekranda yalnızca sayısı var; önerilen uygulama
-  işaretlenemiyor.
+  `UserDefaults`); önerilen uygulama işaretlenemiyor. Seçilenler Pomodoro'da
+  ikon ve adıyla görünüyor ama o satırları **yerli taraf** çiziyor
+  (`EngelListesi`, WKWebView'ın kaydırma görünümünün içinde): web sayfası
+  yalnızca yer ayırıyor, pencere açılınca listeyi gizliyor
+  (`katmanlariIzle`) ve yüzen öğelerin (`data-yuzen`) altına taşmasın diye
+  görünür bandı bildiriyor. Sayfaya yüzen yeni bir çubuk eklersen
+  `data-yuzen` ver.
 - **Duraklatmak kalkanı kaldırıyor.** Android'de servis donuyor ve kilit
   sürüyor; iOS'ta donacak bir servis yok ve duraklatılıp unutulan tur
   uygulamaları süresiz kapalı bırakırdı. Devam edilince kalkan yeniden kuruluyor.
