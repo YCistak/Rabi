@@ -2828,6 +2828,20 @@ Android'in aşağıdan gelen geçişi aynı. Bir süre (ilk sürümü boş karel
 bıraktığı için) kaldırılıp parmak kalkınca değişen ekrana dönüldü; boş kare
 hataları giderilince geri geldi.
 
+**Altında önceki ekran görünüyor.** Kayan sayfanın altında bir süre yalnızca
+sayfa zemini vardı ve önceki ekran ancak bırakınca soldan beliriyordu;
+kullanıcı geçişi bozuk buldu. Şimdi her ekran sökülürken DOM'unun bir kopyası
+alınıyor (`ekranGoruntusuKaydet`, `SayfaGecisi`) ve kaydırma başlayınca o kopya
+sayfanın altına seriliyor (`.geri-onizleme`): ekranın %30 solundan, sayfadan
+yavaş kayarak geliyor (`PARALAKS`) ve yalnızca sayfanın solunda görünüyor
+(iPad'de sütunun dışına taşmasın diye kırpılıyor). Kayan sayfa kabın
+boşluklarıyla birlikte donuk bir zemin alıyor (`zeminKur`), yoksa altındaki
+kopya içinden görünürdü. Bırakınca gerçek ekran kopyanın yerine hareketsiz
+kuruluyor (`.sayfa-yerinde`). Kopya canlı değil: dokunulmuyor, animasyonları
+kapalı, `fixed` öğeleri ve kimlikleri (`id`, `data-geri-sayfa`, `data-yuzen`,
+`data-tanitim`) atılmış — kalsaydı `querySelector` gerçek öğe yerine kopyayı
+bulurdu. Kopyası olmayan ekranda eski davranış sürüyor.
+
 Durum makinesi `lib/geri-kaydirma-denetci.ts`, hız/süre/eğri hesapları
 `lib/geri-kaydirma-hesap.ts` (ikisinin de birim testi var). Kurallar,
 ölçülerek bulunmuş hatalardan: sürükleme başlayınca kutunun giriş animasyonu

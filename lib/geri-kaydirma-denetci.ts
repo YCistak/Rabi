@@ -23,6 +23,12 @@ import {
  * - `cikiyor`: bırakıldı, kutu sağa çıkıyor; bitince `geriGit`.
  * - `yaylaniyor`: vazgeçildi, kutu yerine dönüyor. Yeni bir `basla` hareketi
  *   kesip kutuyu **olduğu yerden** yakalıyor.
+ *
+ * **Önizleme.** Sayfa kayarken altında bir önceki ekran görünüyor (iOS'un
+ * kendi gezgini gibi): `onizlemeAc` o ekranın görüntüsünü altına seriyor ve
+ * görüntü sayfadan yavaş, ekranın `PARALAKS` kadar solundan gelerek kayıyor.
+ * Önizleme yokken (görüntü alınmamış) eski davranış sürüyor: altta sayfa
+ * zemini, bırakınca yeni ekran soldan kısa bir kayışla geliyor.
  */
 
 /** Kayan kutunun buradan görülen yüzü (gerçekte bir `HTMLElement`). */
@@ -35,6 +41,11 @@ export type Kutu = {
     animationName: string
   }
   readonly isConnected: boolean
+}
+
+/** Önizlemenin kutusu: yalnızca kayıyor ve kırpılıyor. */
+export type AltKutu = {
+  style: { transform: string; transition: string; clipPath: string }
 }
 
 export type Ortam = {
@@ -53,13 +64,29 @@ export type Ortam = {
   geriGit(): boolean
   /** Gidecek yer kalmadıysa (Android'de uygulamadan çık). */
   cikis(): void
-  /** Bir sonraki ekranın soldan gelmesi için yön işareti. */
-  yonIsaretle(): void
+  /**
+   * Bir sonraki ekranın soldan gelmesi için yön işareti. `yerinde`: önizleme
+   * zaten yerine oturdu, yeni ekran hiç kaymadan gelmeli.
+   */
+  yonIsaretle(yerinde?: boolean): void
   yonuTemizle(): void
   /** Kutunun o anki yatay kayması (görüntü px), yaylanma kesilirken. */
   anlikKonum(kutu: Kutu): number
   /** Kutunun içindeki `fixed` öğeleri gizler; dönen fonksiyon geri getirir. */
   sabitleriGizle(kutu: Kutu): () => void
+  /**
+   * Kayan kutuya kenar boşluklarıyla birlikte donuk bir zemin verir — altında
+   * önizleme varken saydam kutu onu kendi içinden gösterirdi. Dönen fonksiyon
+   * geri alır.
+   */
+  zeminKur?(kutu: Kutu): () => void
+  /**
+   * Önceki ekranın görüntüsünü kutunun altına serer. `sol` kutunun dinlenirken
+   * sol kenarı (görüntü px): geniş ekranda (iPad) kutu ortada duruyor ve
+   * önizleme yalnızca kutunun solunda kalan yerde görünmeli.
+   */
+  onizlemeAc?(): { kutu: AltKutu; sol: number } | null
+  onizlemeKapat?(): void
   genislik(): number
   olcek(): number
   azaltilmis(): boolean
@@ -71,6 +98,12 @@ export type Ortam = {
 export type Durum = 'bos' | 'surukleniyor' | 'cikiyor' | 'yaylaniyor'
 
 const GOLGE = '-10px 0 28px rgba(0, 0, 0, 0.10)'
+
+/**
+ * Önizleme kaymanın başında ekran genişliğinin bu kadarı solda duruyor ve
+ * sayfayla birlikte, ondan yavaş yerine kayıyor — iOS'un kendi oranı.
+ */
+export const PARALAKS = 0.3
 
 /**
  * Çıkan sayfanın ekranda bu orandan azı kalınca ekran değişiyor. Hareketin
@@ -95,6 +128,8 @@ export class GeriKaydirmaDenetcisi {
    * menüden kayıp kalktı); bırakma yine de o hareketin bırakması, yutulmalı.
    */
   private kilitliBasladi = false
+  private alt: { kutu: AltKutu; sol: number } | null = null
+  private zeminiGetir: (() => void) | null = null
 
   constructor(private readonly o: Ortam) {}
 
@@ -107,6 +142,7 @@ export class GeriKaydirmaDenetcisi {
       this.konum = this.taban
       this.ornekler = []
       this.kutu.style.transition = 'none'
+      if (this.alt) this.alt.kutu.style.transition = 'none'
       this.yaz(this.konum)
       this.durum = 'surukleniyor'
       return
@@ -127,10 +163,17 @@ export class GeriKaydirmaDenetcisi {
     kutu.style.willChange = 'transform'
     kutu.style.boxShadow = GOLGE
     this.sabitleriGetir = this.o.sabitleriGizle(kutu)
+    // Zemin önce: önizlemenin `sol`u zeminli kutunun kenarından ölçülüyor.
+    this.zeminiGetir = this.o.zeminKur?.(kutu) ?? null
+    this.alt = this.o.onizlemeAc?.() ?? null
     this.taban = 0
     this.konum = 0
     this.ornekler = []
     this.durum = 'surukleniyor'
+    if (this.alt) {
+      this.alt.kutu.style.transition = 'none'
+      this.yaz(0)
+    }
   }
 
   ilerle = (dx: number) => {
@@ -205,7 +248,7 @@ export class GeriKaydirmaDenetcisi {
   }
 
   private geriAdim(kaydirarak: boolean) {
-    if (kaydirarak) this.o.yonIsaretle()
+    if (kaydirarak) this.o.yonIsaretle(this.alt !== null)
     if (!this.o.geriGit()) this.o.cikis()
   }
 
@@ -225,6 +268,9 @@ export class GeriKaydirmaDenetcisi {
       return
     }
     kutu.style.transition = `transform ${h.sure}ms ${h.egri}`
+    if (this.alt) {
+      this.alt.kutu.style.transition = `transform ${h.sure}ms ${h.egri}, clip-path ${h.sure}ms ${h.egri}`
+    }
     this.konum = hedef
     this.yaz(hedef)
     this.zamanlayici = this.o.zamanla(() => {
@@ -234,7 +280,17 @@ export class GeriKaydirmaDenetcisi {
   }
 
   private yaz(konum: number) {
-    if (this.kutu) this.kutu.style.transform = `translateX(${konum / this.o.olcek()}px)`
+    const olcek = this.o.olcek()
+    if (this.kutu) this.kutu.style.transform = `translateX(${konum / olcek}px)`
+    if (!this.alt) return
+    const genislik = this.o.genislik()
+    const kayma = (konum - genislik) * PARALAKS
+    // Önizleme yalnızca kayan sayfanın solunda görünüyor. Kırpma önizlemenin
+    // kendi koordinatında: sayfanın sol kenarı (sol + konum) önizlemenin
+    // kaymasından arındırılıyor.
+    const sagKesim = Math.max(0, genislik - (this.alt.sol + konum - kayma))
+    this.alt.kutu.style.transform = `translateX(${kayma / olcek}px)`
+    this.alt.kutu.style.clipPath = `inset(0 ${sagKesim / olcek}px 0 0)`
   }
 
   private zamanlayiciyiKes() {
@@ -253,6 +309,10 @@ export class GeriKaydirmaDenetcisi {
     }
     this.sabitleriGetir?.()
     this.sabitleriGetir = null
+    this.zeminiGetir?.()
+    this.zeminiGetir = null
+    if (this.alt) this.o.onizlemeKapat?.()
+    this.alt = null
     this.kutu = null
     this.konum = 0
     this.taban = 0
