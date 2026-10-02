@@ -1463,7 +1463,7 @@ adımı geçiyor. Soru türü seçimi geri gelmedi — havuzun tamamı soruluyor
 | --- | --- | --- | --- |
 | Sıradan | tura ait, 60 sn | süreden 3 sn götürür | var |
 | Turbo | tura ait, 30 sn | süreden 3 sn götürür | var |
-| Ani Ölüm | soruya ait (`SORU_SURESI`) | tur biter | var |
+| Sıfır Tolerans | soruya ait (`SORU_SURESI`) | tur biter | var |
 | Rahat | yok | hiçbir şey | **yok** |
 
 Dördü de seçilebiliyor. Rekora yazılmama kuralının (`kayitliMi`) kapısı

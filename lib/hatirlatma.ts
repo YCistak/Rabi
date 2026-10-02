@@ -9,25 +9,32 @@ import { tariheYaz } from './utils'
  * bugünkü düşüyor, sıradakiler yerinde kalıyor.
  */
 
-/** Mesaj havuzu — Rabi'nin ağzından. Her gün aynısını okumak sıkıcı olurdu. */
+/**
+ * Mesaj havuzu — Rabi'nin ağzından. Her gün aynısını okumak sıkıcı olurdu.
+ *
+ * Metinler **kısa**: bildirim ekranın tepesinden iner ve birkaç saniyede
+ * okunup geçilir. Uzun cümleler iOS'ta iki satırda kesiliyor, kilit ekranında
+ * yarısı "…" ile bitiyordu. Başlık en çok 24, metin en çok 40 karakter;
+ * `hatirlatma.test.ts` ikisini de denetliyor.
+ */
 export const HATIRLATMA_MESAJLARI: { baslik: string; metin: string }[] = [
-  { baslik: 'Bugün hiç soru girmedin', metin: 'Bir 20’lik çözsek mi? 🐰' },
-  { baslik: 'Rabi bekliyor', metin: 'Bugünden bir şey kalsın istemezsin. Az bir şey de olur. 🥕' },
-  { baslik: 'Defteri açalım mı?', metin: 'Bugün hiç soru işaretlemedin. On dakika yeter. 🐰' },
-  { baslik: 'Günü boş geçirme', metin: 'Küçük bir tur at, seriyi bozma. 🌿' },
-  { baslik: 'Bir soru bile sayılır', metin: 'Bugün hiç giriş yok. Başlamak en zor kısmı. 🐰' },
-  { baslik: 'Rabi kulaklarını dikti', metin: 'Bugün defterden hiç ses gelmedi. Bir soru at da duyayım. 🐰' },
-  { baslik: 'Yarınki sen izliyor', metin: 'Bugün çözdüğün soru, sınavda tanıdık gelen soru. 🌱' },
-  { baslik: 'Havuç kaçıyor!', metin: 'Peşinden koşacak bir tavşan lazım. Yirmi soru yeter. 🥕' },
-  { baslik: 'Sıralaman seni bekliyor', metin: 'Bugün girilmeyen her soru, listede geri kalan bir basamak. 📈' },
-  { baslik: 'Zor olan başlamak', metin: 'İlk soruyu çöz; gerisi kendiliğinden geliyor. 🐰' },
-  { baslik: 'On dakikan var mı?', metin: 'Rabi kronometreyi kurdu bile. Tek soruyla da olur. ⏱️' },
-  { baslik: 'Bugünü boş bırakma', metin: 'Bir günlük boşluk, bir haftalık alışkanlığı bozuyor. 🌿' },
-  { baslik: 'Rabi bir tur teklif ediyor', metin: 'Oyunlardan kısa bir tur? Hem eğlence hem tekrar. 🎮' },
-  { baslik: 'Dünkü sen sana güveniyordu', metin: 'Onu haklı çıkaralım mı? 🐰' },
-  { baslik: 'Yanlışların seni bekliyor', metin: 'Bankadaki sorular kendi kendine öğrenilmiyor. 📒' },
-  { baslik: 'Küçük ama her gün', metin: 'Yirmi soru bugün az görünür; bir ayda 600 eder. 🥕' },
-  { baslik: 'Rabi patisini uzattı', metin: 'Bugünlük bir tur, sonrası rahat rahat dinlenmek. 🐾' },
+  { baslik: 'Bugün soru yok', metin: 'Bir 20’lik çözelim mi? 🐰' },
+  { baslik: 'Rabi bekliyor', metin: 'Az bir şey de olur. 🥕' },
+  { baslik: 'Defteri açalım mı?', metin: 'On dakika yeter. 🐰' },
+  { baslik: 'Günü boş geçirme', metin: 'Kısa bir tur, seri bozulmasın. 🌿' },
+  { baslik: 'Bir soru bile sayılır', metin: 'Başlamak en zor kısmı. 🐰' },
+  { baslik: 'Rabi kulak kesildi', metin: 'Bir soru at da duyayım. 🐰' },
+  { baslik: 'Yarınki sen izliyor', metin: 'Bugünkü soru sınavda tanıdık gelir. 🌱' },
+  { baslik: 'Havuç kaçıyor!', metin: 'Yirmi soru yeter. 🥕' },
+  { baslik: 'Sıralaman bekliyor', metin: 'Her soru bir basamak. 📈' },
+  { baslik: 'Zor olan başlamak', metin: 'İlk soruyu çöz, gerisi gelir. 🐰' },
+  { baslik: 'On dakikan var mı?', metin: 'Tek soruyla da olur. ⏱️' },
+  { baslik: 'Bugünü boş bırakma', metin: 'Alışkanlık bir günde bozulur. 🌿' },
+  { baslik: 'Bir tura ne dersin?', metin: 'Oyunlarda kısa bir tekrar. 🎮' },
+  { baslik: 'Dünkü sen güveniyor', metin: 'Onu haklı çıkaralım mı? 🐰' },
+  { baslik: 'Yanlışların bekliyor', metin: 'Bankaya bir göz at. 📒' },
+  { baslik: 'Küçük ama her gün', metin: 'Günde 20 soru, ayda 600. 🥕' },
+  { baslik: 'Rabi patisini uzattı', metin: 'Bir tur, sonra dinlen. 🐾' },
 ]
 
 /**

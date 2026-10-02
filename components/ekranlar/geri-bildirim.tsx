@@ -73,10 +73,7 @@ export function GeriBildirimEkrani({ kol }: { kol: GeriBildirimKolu }) {
 
   return (
     <div>
-      <BaslikSatiri
-        baslik="Öneri ve hata bildir"
-        aciklama="Bir şey bozuksa ya da eksikse buradan yaz"
-      />
+      <BaslikSatiri baslik="Öneri ve hata bildir" />
 
       <Kart className="space-y-3">
         <div className="flex flex-wrap gap-2" role="group" aria-label="Bildirim türü">

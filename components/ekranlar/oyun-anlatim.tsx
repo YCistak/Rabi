@@ -255,7 +255,7 @@ export function AnlatimOyunuEkrani({
   /**
    * Cevaptan sonraki geçiş.
    *
-   * Ani Ölüm'de yanılmak turu bitiriyor; öteki modlarda yalnızca yanlış
+   * Sıfır Tolerans'de yanılmak turu bitiriyor; öteki modlarda yalnızca yanlış
    * sayılıyor. Bekleme süresi ikisinde de aynı: düzeltilmiş cümleyi okumadan
    * ekranın değişmesi, elenirken bile öğretmeyi bırakmak olurdu.
    */

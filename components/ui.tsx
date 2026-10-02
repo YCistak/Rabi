@@ -191,21 +191,19 @@ export function AracSimgesi({ arac }: { arac: Ekran }) {
 
 export function BaslikSatiri({
   baslik,
-  aciklama,
   sag,
   ortala,
   arac,
 }: {
   baslik: string
-  aciklama?: string
   /**
    * Araç ekranıysa sağa o aracın emojisi konur (`sag` verilmemişse). Araç
-   * başlığında `aciklama` ve `ortala` yok sayılıyor — bkz. aşağıdaki not.
+   * başlığında `ortala` yok sayılıyor — bkz. aşağıdaki not.
    */
   arac?: Ekran
   sag?: React.ReactNode
   /**
-   * Başlık ve açıklamayı sayfanın ortasına alır; `sag` sağ üst köşeye konumlanır.
+   * Başlığı sayfanın ortasına alır; `sag` sağ üst köşeye konumlanır.
    * Sağdaki düğme akışta kalsaydı metni ortalamaz, yana iterdi.
    */
   ortala?: boolean
@@ -218,6 +216,11 @@ export function BaslikSatiri({
     ekrandan ekrana değiştiği için başlıklar emojinin karşısında her araçta
     başka yükseklikte duruyordu. Denemeler bir süre ortalıydı; o da sola
     geçti, sekmeler arasında gidip gelirken başlık yerinden oynamasın.
+
+    Bu kural sonra bütün başlıklara yayıldı: hiçbir ekranın başlığının
+    altında açıklama yok (Gizlilik ve Koşullar, Öneri ve hata bildir da bir
+    süre taşıyordu). Kullanıcı istedi — başlık zaten ekranın ne olduğunu
+    söylüyor, alt yazı yalnızca içeriği aşağı itiyordu.
 
     Başlığın boyu emoji kutusuna göre (44 piksel kutu, 26 piksel yazı): satır
     yüksekliği kutunun kendisi, yani başlık kutunun tam karşısında duruyor.
@@ -237,7 +240,6 @@ export function BaslikSatiri({
     return (
       <div className="relative mb-4 px-12 text-center">
         <h1 className="font-display text-2xl font-extrabold tracking-tight">{baslik}</h1>
-        {aciklama && <p className="mt-0.5 text-sm text-muted-foreground">{aciklama}</p>}
         {sag && <div className="absolute right-0 top-0">{sag}</div>}
       </div>
     )
@@ -245,10 +247,7 @@ export function BaslikSatiri({
 
   return (
     <div className="mb-4 flex items-end justify-between gap-3">
-      <div>
-        <h1 className="font-display text-2xl font-extrabold tracking-tight">{baslik}</h1>
-        {aciklama && <p className="mt-0.5 text-sm text-muted-foreground">{aciklama}</p>}
-      </div>
+      <h1 className="font-display text-2xl font-extrabold tracking-tight">{baslik}</h1>
       {sag}
     </div>
   )

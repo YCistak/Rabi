@@ -22,8 +22,6 @@ export type YasalBelge = {
   id: YasalBelgeId
   /** Listede görünen ad. */
   ad: string
-  /** Liste satırının altındaki tek satırlık tanım. */
-  ozet: string
   /** Tarayıcıda açılacak sayfa. */
   url: string
 }
@@ -39,22 +37,19 @@ export const YASAL_SITE = 'https://ycistak.github.io/Rabi/'
 export const YASAL_BELGELER: YasalBelge[] = [
   {
     id: 'veri-ozeti',
-    ad: 'Cihazından ne çıkıyor?',
+    ad: 'Veri Kullanımı Özeti',
     // Platform adı geçmiyor: aynı satır iOS'ta da çiziliyor ve App Store
     // uygulamanın içinde başka bir mağazanın adını kabul etmiyor (2.3.10).
-    ozet: 'İnternete ne gidiyor, ne zaman sana soruluyor',
     url: `${YASAL_SITE}veri-ozeti.html`,
   },
   {
     id: 'gizlilik',
     ad: 'Gizlilik Politikası',
-    ozet: 'Hangi veriyi tutuyoruz, nereye gidiyor',
     url: YASAL_SITE,
   },
   {
     id: 'sozlesme',
     ad: 'Kullanıcı Sözleşmesi',
-    ozet: 'Uygulamayı kullanma koşulları',
     url: `${YASAL_SITE}sozlesme.html`,
   },
 ]

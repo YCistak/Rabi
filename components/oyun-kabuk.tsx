@@ -94,7 +94,7 @@ export const EN_COK_YANLIS = 5
  *
  * `false`: eleme yok — soru sınırına gelindi, banka turu tükendi ya da Rahat
  * turda oyuncu kendisi bitirdi.
- * `'yanlis'` yanlış cevap (ya da süresi dolan soru); yalnızca Ani Ölüm'de
+ * `'yanlis'` yanlış cevap (ya da süresi dolan soru); yalnızca Sıfır Tolerans'de
  * turu bitiriyor. Bir de `'boss'` vardı — boss soruları kaldırıldı
  * (`lib/oyunlar/ritim.ts`).
  * `'sure'` tur saatinin bitmesi (Sıradan, Turbo) — orada yanlış turu
@@ -191,7 +191,7 @@ function useTurEfektleri(sayac: SayacBilgisi | null) {
     }
     // Uyarı yalnızca sayaç gerçekten azalırken çalar. Mod değiştiğinde yeni
     // toplam uygulanmadan önce kalan süre bir çizim boyunca eski değerde
-    // kalabiliyor (Ani Ölüm 10/10 → Sıradan 10/60); bu bir süre olayı değil,
+    // kalabiliyor (Sıfır Tolerans 10/10 → Sıradan 10/60); bu bir süre olayı değil,
     // yalnızca ayar değişimi ve ses üretmemeli.
     if (oncekiKalan === null || kalan === null || kalan >= oncekiKalan) return
     if (uyarildiRef.current) return
@@ -370,7 +370,7 @@ function ModRozeti({ mod }: { mod: OyunModu }) {
  *
  * "Yanlış" ve "Seri" şeritte yok. Seri zaten başlıktaki rozette duruyor;
  * yanlış sayısı ise şeritte yer alacak kadar merak edilmiyor — süreli modda
- * yanlışın bedeli sayacın geri gitmesiyle zaten görülüyor, Ani Ölüm'de de tur
+ * yanlışın bedeli sayacın geri gitmesiyle zaten görülüyor, Sıfır Tolerans'de de tur
  * bitiyor. İkisi de tur sonu ekranında kutu kutu duruyor.
  *
  * Şeritte bir de "Boss'a kalan" sütunu vardı; boss soruları kaldırılınca o da

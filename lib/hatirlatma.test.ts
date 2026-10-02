@@ -165,10 +165,16 @@ describe('hatirlatmaPlanlari', () => {
   })
 })
 
-describe('bildirim başlığı uzunluğu', () => {
-  it('her başlık iOS kilit ekranında kesilmeyecek kadar kısa (en çok 30 karakter)', () => {
+describe('bildirim uzunluğu', () => {
+  it('her başlık bir bakışta okunacak kadar kısa (en çok 24 karakter)', () => {
     for (const { baslik } of HATIRLATMA_MESAJLARI) {
-      expect(baslik.length, baslik).toBeLessThanOrEqual(30)
+      expect(baslik.length, baslik).toBeLessThanOrEqual(24)
+    }
+  })
+
+  it('her metin tek satıra sığacak kadar kısa (en çok 40 karakter)', () => {
+    for (const { metin } of HATIRLATMA_MESAJLARI) {
+      expect(metin.length, metin).toBeLessThanOrEqual(40)
     }
   })
 })

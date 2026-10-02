@@ -95,7 +95,7 @@ export const MODLAR = {
   },
   'ani-olum': {
     id: 'ani-olum',
-    ad: 'Ani Ölüm',
+    ad: 'Sıfır Tolerans',
     simge: '💀',
     ozet: 'Tek yanlış',
     kural:

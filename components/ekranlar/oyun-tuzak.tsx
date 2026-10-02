@@ -55,7 +55,7 @@ import { OyunTanitim } from '@/components/oyun-tanitim'
  * Kural Tuzağı — mini oyun.
  *
  * Tur kuralı öteki oyunlarla aynı: modun belirlediği kural (`mod.ts`). Cevap ikili olduğu için şansın payı var;
- * buna karşılık Ani Ölüm'de süre sekiz saniye ve kural bilinmiyorsa o sürede
+ * buna karşılık Sıfır Tolerans'de süre sekiz saniye ve kural bilinmiyorsa o sürede
  * sağlaması yapılamıyor — atılan yazı tura uzun vadede tutmuyor.
  */
 

@@ -151,7 +151,7 @@ export function EklemeFormu({
 
   return (
     <div>
-      <BaslikSatiri baslik="Soruyu ekle" aciklama="Hangi dersten olduğunu seç, sonra kaydet" />
+      <BaslikSatiri baslik="Soruyu ekle" />
 
       <div className="mb-4 overflow-hidden rounded-2xl border border-border bg-muted">
         {/* eslint-disable-next-line @next/next/no-img-element */}
