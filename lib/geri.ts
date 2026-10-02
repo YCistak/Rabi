@@ -51,6 +51,43 @@ export function ustKatmaniKapat(): boolean {
 }
 
 /**
+ * Yığına bir katman ekler; dönen fonksiyon katmanı yığından çıkarır.
+ * `useGeriKatmani` bunu kullanıyor; ayrı dışa açık olması birim testi için.
+ */
+export function katmanKaydet(katman: Kapat): () => void {
+  katmanlar.push(katman)
+  haberVer()
+  return () => {
+    const yer = katmanlar.lastIndexOf(katman)
+    if (yer !== -1) {
+      katmanlar.splice(yer, 1)
+      haberVer()
+    }
+  }
+}
+
+/** Açık bir katman var mı? (Kapatmadan sorar.) */
+export function katmanVarMi(): boolean {
+  return katmanlar.length > 0
+}
+
+/**
+ * Açık bütün katmanları, geri tuşuna art arda basılmış gibi en üsttekinden
+ * başlayarak kapatır; kaç katman kapandığını döner.
+ *
+ * Alt menüde zaten açık olan sekmeye yeniden basılınca kullanılıyor. Her
+ * katman kendi kapanış mantığını çalıştırıyor (tur yarıda bırakılırsa
+ * kaydedilir, deste okunan kartı yazar), yani geri tuşundan farkı yok —
+ * yalnızca tek basış hepsini kapatıyor. Üst sınır, kendini yeniden kaydeden
+ * bir katmana karşı.
+ */
+export function tumKatmanlariKapat(): number {
+  let kapanan = 0
+  while (kapanan < 50 && ustKatmaniKapat()) kapanan++
+  return kapanan
+}
+
+/**
  * Açık olduğu sürece geri tuşunu yakalayan katman.
  *
  * `kapat` çoğunlukla satır içi bir ok fonksiyonu olarak veriliyor, yani her
@@ -64,15 +101,6 @@ export function useGeriKatmani(acik: boolean, kapat: () => void) {
 
   useEffect(() => {
     if (!acik) return
-    const katman = () => kapatRef.current()
-    katmanlar.push(katman)
-    haberVer()
-    return () => {
-      const yer = katmanlar.lastIndexOf(katman)
-      if (yer !== -1) {
-        katmanlar.splice(yer, 1)
-        haberVer()
-      }
-    }
+    return katmanKaydet(() => kapatRef.current())
   }, [acik])
 }

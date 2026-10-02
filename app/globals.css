@@ -2176,6 +2176,53 @@ body {
   }
 }
 
+/*
+  iOS ekran geçişleri (`data-platform="ios"` `AppShell`de konuyor).
+
+  Android'de ve tarayıcıda hiçbiri geçerli değil: oralarda ekranlar aşağıdan
+  geliyor (`.sayfa-girisi`). iOS'ta yerli bir yığın gezgininin dili var: alt
+  ekran sağdan kayarak açılıyor (`.sayfa-ileri`). Kaydırarak geri dönüşte
+  önceki ekran hafifçe soldan geliyor (`.sayfa-geri`, aşağıda — o iOS'a özgü
+  değil, Android'in geri hareketinde de geçerli). Dolgu `backwards` kalıyor:
+  transform animasyon bitince tümüyle kalkmalı (yukarıdaki `.sayfa-girisi`
+  notu — `fixed` katmanların kapsayıcı bloğu olmasın).
+*/
+@keyframes sayfaSagdan {
+  from { opacity: 0.6; transform: translateX(28px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes sayfaSoldan {
+  from { opacity: 0.6; transform: translateX(-24px); }
+  to { opacity: 1; transform: none; }
+}
+
+:root[data-platform='ios'] .sayfa-ileri {
+  animation: sayfaSagdan 280ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+}
+
+/*
+  Kaydırarak geri gelinen ekran (iOS ve Android; `lib/geri-kaydirma.ts`).
+
+  Sınıf kutuya kurulurken bir kez konuyor (`SayfaGecisi`). Eskiden kökteki
+  bir `data-gecis-yon` özniteliğine bakılıyordu: öznitelik konduğu an çıkan
+  sayfanın da animasyonunu değiştiriyor (sayfa sağa çıkacağına soldan geri
+  giriyordu), 400 ms sonra silinince yeni ekranın animasyonu `sayfaGirisi`ne
+  dönüp opaklık 0'dan baştan oynuyordu.
+
+  `:root` ile `.sayfa-ileri` kuralıyla aynı ağırlıkta ve ondan sonra: geri
+  gelinen ekran bir alt ekransa da soldan gelmeli.
+*/
+:root .sayfa-girisi.sayfa-geri {
+  animation: sayfaSoldan 260ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-platform='ios'] .sayfa-ileri,
+  :root .sayfa-girisi.sayfa-geri {
+    animation: none;
+  }
+}
 
 /*
   Camdan alt menü — yalnızca iOS (`components/bottom-nav.tsx`).

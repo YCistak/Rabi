@@ -2819,12 +2819,32 @@ betiğinin `--olcek` ile yaptığı `zoom`; ayrıca bir `max-width` konmadı.
 için dört yön de açık (`Info.plist`, `UISupportedInterfaceOrientations~ipad`)
 ve Apple bu anahtarı kullanımdan kaldırıyor. iPhone yalnızca dikey.
 
-**Geri kaydırma parmağı izlemiyor.** Yerli taraf hareketi tanıyıp parmak
-kalkınca `rabiGeri` yolluyor (`lib/geri-kaydirma.ts`); ekran Android'in geri
-tuşundaki gibi değişiyor ve yeni ekran kendi giriş hareketiyle geliyor. Bir
-süre sayfa parmakla kayıyor, alt ekranlar sağdan açılıyordu; kullanıcı geri
-aldı: önceki ekran DOM'da durmadığı için kayan sayfanın altında boş zemin
-açılıyordu.
+**Geri kaydırma parmağı izliyor.** Yerli taraf hareketi tanırken
+(`.began/.changed/.ended`) `window.rabiGeriKaydirma`yı çağırıyor
+(`lib/geri-kaydirma.ts`); ekran içeriği (`[data-geri-sayfa]`) parmakla kayıyor,
+bırakılınca dışarı çıkıp `geriGit`i çağırıyor ya da yerine dönüyor. Alt
+ekranlar iOS'ta sağdan kayarak açılıyor (`data-platform="ios"`, globals.css);
+Android'in aşağıdan gelen geçişi aynı. Bir süre (ilk sürümü boş kareler
+bıraktığı için) kaldırılıp parmak kalkınca değişen ekrana dönüldü; boş kare
+hataları giderilince geri geldi.
+
+Durum makinesi `lib/geri-kaydirma-denetci.ts`, hız/süre/eğri hesapları
+`lib/geri-kaydirma-hesap.ts` (ikisinin de birim testi var). Kurallar,
+ölçülerek bulunmuş hatalardan: sürükleme başlayınca kutunun giriş animasyonu
+kapanıyor (`animation-name: none`, yoksa transform'u animasyon eziyor); ekran
+`flushSync` ile aynı görevde değişiyor; geri yönü kutuya kurulurken bir kez
+okunan `.sayfa-geri` sınıfı (kökte bir öznitelik çıkan sayfanın da
+animasyonunu değiştiriyordu); çıkış hızı parmağın hızıyla başlıyor; yaylanma
+yeni bir hareketle kesilebiliyor; tanıtım turunda ve alt menü sürüklenirken
+sayfa kaymıyor.
+
+**Android'de de var (Android 14+).** `MainActivity.geriKaydirmayiBagla`
+sistemin öngörülü geri hareketini (`OnBackPressedCallback`,
+`handleOnBackStarted/Progressed/Cancelled`) aynı arayüze iletiyor; bırakınca
+`rabiGeriKaydirma.bitir()`. Yalnızca sol kenardan başlayan hareket; sağ kenar,
+3 düğmeli gezinme ve eski sürümler Capacitor'ın `backButton` yoluna olduğu
+gibi gidiyor. `enableOnBackInvokedCallback` yalnızca `MainActivity`de
+(uygulama düzeyinde odak kilidi katmanının `KEYCODE_BACK` yutması bozulurdu).
 
 İkon `ikon-uret.mjs`ten geliyor (`AppIcon-512@2x.png`, 1024): köşesiz ve
 **alfa kanalı atılmış** — App Store saydamlık taşıyan ikonu yüklemede

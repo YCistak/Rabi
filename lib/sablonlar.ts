@@ -174,9 +174,11 @@ export function sablonlariBirlestir(kayitli: Sablon[]): Sablon[] {
  * Yeni deneme ekranında **seçilebilen** şablonlar. Seviye tespit ve TYT
  * herkeste; AYT ve YDT yalnızca 11, 12 ve mezunda, o da öğrencinin kendi
  * alanının sınavı (`Ayarlar.puanTuru`): sayısal öğrenciye AYT Sözel çipi,
- * 9. sınıfa AYT'nin kendisi giremeyeceği bir sınavı gösteriyordu. Alanını
- * seçmemiş 11/12 yalnızca ilk ikisini görüyor — bir alanın sınavını
- * varsayılan diye önermek, kullanıcının vermediği bir kararı vermek olurdu.
+ * 9. sınıfa AYT'nin kendisi giremeyeceği bir sınavı gösteriyordu. "Alanımda
+ * karar vermedim" (`null`) diyen 11/12/mezun ise **tüm** hazır şablonları
+ * görüyor: bir alanın sınavını varsayılan diye önermek de, öteki alanları
+ * gizlemek de kullanıcının vermediği bir karar olurdu; kararsız öğrenci her
+ * alandan deneme girebilmeli. 9 ve 10. sınıfta alan ne olursa olsun AYT yok.
  *
  * Kullanıcının kendi şablonları süzülmüyor: onları o oluşturdu.
  * Süzgeç yalnızca seçim listesine ait; kayıtlı denemenin şablonu
@@ -193,6 +195,8 @@ export function secilebilirSablonlar(
     soz: 'ayt-soz',
     dil: 'ydt',
   }
+  // Kararsız 11/12/mezun: süzgeç yok, tüm hazır şablonlar çıkıyor.
+  if (sinif >= 11 && puanTuru === null) return sablonlar
   const alanSinaviId = sinif >= 11 && puanTuru ? alanSinavi[puanTuru] : null
   return sablonlar.filter(
     (s) => !s.hazir || s.id === 'okul' || s.id === 'tyt' || s.id === alanSinaviId,

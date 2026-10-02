@@ -36,12 +36,22 @@
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />
 
+        <!--
+          `enableOnBackInvokedCallback` yalnızca bu etkinlikte: Android 14+'ta
+          soldan kaydırarak geri hareketinin ilerlemesi sayfaya aktarılıyor
+          (`MainActivity.geriKaydirmayiBagla`). Uygulama düzeyinde değil, çünkü
+          odak kilidinin katmanı (`EngelKatmani`) geri tuşunu eski yoldan
+          (`KEYCODE_BACK`) yutuyor; uygulama düzeyinde açılsa o pencereye geri
+          tuşu olayı hiç gelmezdi. Android 13 etkinlik düzeyindeki bayrağı
+          tanımıyor; orada her şey eskisi gibi.
+        -->
         <activity
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation|density"
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBarLaunch"
             android:launchMode="singleTask"
+            android:enableOnBackInvokedCallback="true"
             android:exported="true">
 
             <intent-filter>

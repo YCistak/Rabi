@@ -164,3 +164,11 @@ describe('hatirlatmaPlanlari', () => {
     expect(planlar.every((p) => p.zaman.getDate() !== 16)).toBe(true)
   })
 })
+
+describe('bildirim başlığı uzunluğu', () => {
+  it('her başlık iOS kilit ekranında kesilmeyecek kadar kısa (en çok 30 karakter)', () => {
+    for (const { baslik } of HATIRLATMA_MESAJLARI) {
+      expect(baslik.length, baslik).toBeLessThanOrEqual(30)
+    }
+  })
+})

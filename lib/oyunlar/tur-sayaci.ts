@@ -38,6 +38,7 @@ export type TurSayaci = {
 
 export function useTurSayaci({
   mod,
+  turSuresi,
   aktif,
   sure,
   anahtar,
@@ -46,6 +47,7 @@ export function useTurSayaci({
   onBitti,
   onTurBitti,
 }: {
+  turSuresi?: number
   mod: OyunModu
   /** Sayaç işliyor mu: cevap verildikten sonra ya da yardım açıkken duruyor. */
   aktif: boolean
@@ -64,8 +66,8 @@ export function useTurSayaci({
 }): TurSayaci {
   const tanim = MODLAR[mod]
   /** Saat tura mı ait: öyleyse sorudan soruya sıfırlanmıyor. */
-  const turSaati = tanim.turSuresi !== null
-  const toplam = tanim.turSuresi ?? (tanim.soruSayaci ? sure : 0)
+  const turSaati = turSuresi !== undefined || tanim.turSuresi !== null
+  const toplam = turSuresi ?? tanim.turSuresi ?? (tanim.soruSayaci ? sure : 0)
   /** Sayacı sıfırlayan şey: tur saatinde tur, soru saatinde soru. */
   const sifirlama = turSaati ? turNo : anahtar
 

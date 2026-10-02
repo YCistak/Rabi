@@ -45,14 +45,40 @@ class AnaDenetleyici: CAPBridgeViewController, UIGestureRecognizerDelegate {
         webView.addGestureRecognizer(kenar)
     }
 
-    /// Parmak kalkınca, yeterince yol alındıysa geri. Sayfa parmağı izlemiyor
-    /// (bkz. `lib/geri-kaydirma.ts`, neden bırakıldı).
     @objc private func kenardanKaydirildi(_ hareket: UIScreenEdgePanGestureRecognizer) {
-        guard hareket.state == .ended, let alan = hareket.view else { return }
+        guard let alan = hareket.view else { return }
         let yol = hareket.translation(in: alan).x
-        let hiz = hareket.velocity(in: alan).x
-        guard yol > yolEsigi || hiz > hizEsigi else { return }
-        bridge?.triggerWindowJSEvent(eventName: geriOlayi)
+
+        // Sayfa parmağı izlesin: web tarafı (`lib/geri-kaydirma.ts`)
+        // `window.rabiGeriKaydirma`yı kuruyor; kurulmamışsa (Android'de ya da
+        // sayfa yüklenmeden) `?.` sessizce hiçbir şey yapmıyor.
+        switch hareket.state {
+        case .began:
+            // Kenar hareketi sayfanın kaydırmasıyla birlikte tanınıyor
+            // (aşağıdaki delege); çapraz çeken parmak sayfayı yana kaydırırken
+            // aşağı-yukarı da oynatıyordu. Hareket sürdükçe sayfanın kendi
+            // kaydırması kapalı; kapatmak süren kaydırmayı da kesiyor.
+            webView?.scrollView.isScrollEnabled = false
+            webView?.evaluateJavaScript("window.rabiGeriKaydirma?.basla()", completionHandler: nil)
+        case .changed:
+            webView?.evaluateJavaScript("window.rabiGeriKaydirma?.ilerle(\(Int(max(0, yol))))", completionHandler: nil)
+        case .ended:
+            webView?.scrollView.isScrollEnabled = true
+            let hiz = hareket.velocity(in: alan).x
+            if yol > yolEsigi || hiz > hizEsigi {
+                // Geri git: web tarafı sayfayı dışarı kaydırıp `geriGit`i
+                // çağırıyor. Sola fırlatılmışsa (vazgeçme) web tarafı sayfayı
+                // yerine döndürüyor (`lib/geri-kaydirma-hesap.ts`).
+                bridge?.triggerWindowJSEvent(eventName: geriOlayi)
+            } else {
+                webView?.evaluateJavaScript("window.rabiGeriKaydirma?.iptal()", completionHandler: nil)
+            }
+        case .cancelled, .failed:
+            webView?.scrollView.isScrollEnabled = true
+            webView?.evaluateJavaScript("window.rabiGeriKaydirma?.iptal()", completionHandler: nil)
+        default:
+            break
+        }
     }
 
     /// Kaydırmayla birlikte tanınmalı: tanınmasaydı kenardan başlayan her

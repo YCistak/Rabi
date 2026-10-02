@@ -445,7 +445,6 @@ export function KonuHaritasiEkrani({
         konu={acikKonu.konu}
         temaAdi={acikKonu.temaAdi}
         dersAdi={dersAdi}
-        dersIkonu={ders.ikon}
         bicim={bicim}
         onKapat={(sonuc) => desteBitti(acikKonu, sonuc)}
       />
@@ -579,7 +578,7 @@ export function KonuHaritasiEkrani({
       </Kart>
 
       {program === null ? (
-        <Kart className="flex flex-col items-center px-6 py-10 text-center">
+        <Kart data-tanitim="konu-haritasi" className="flex flex-col items-center px-6 py-10 text-center">
           <Rabi durum="calisiyor" poz="okuyan" boyut={92} />
           <p className="mt-3 font-display text-[17px] font-extrabold tracking-tight">
             {secim.sinif}. sınıf {dersAdi} hazırlanıyor
@@ -742,7 +741,7 @@ function TemaBolumu({
         : 0
 
   return (
-    <section>
+    <section data-tanitim={ilk ? "konu-haritasi" : undefined}>
       {/*
         Yapışkan sarmalın zemini yok: bir süre alta doğru saydamlaşan bir
         degrade taşıyordu (kaydırırken altından geçen kitabı yumuşak kessin
@@ -1386,7 +1385,7 @@ function KonuKarti({
               ) : (
                 <span className="inline-flex h-[19px] items-center gap-1 rounded-full bg-primary-soft px-2 text-[9.5px] font-black tracking-[0.04em] whitespace-nowrap text-primary">
                   <span className="size-[5px] rounded-full bg-primary" aria-hidden />
-                  Bekliyor
+                  Tamamlanmadı
                 </span>
               )}
             </div>

@@ -57,7 +57,11 @@ export function OyunTanitim({
   baslatir,
   onBasla,
   onKapat,
+  demoVeri = false,
+  onSayimBasladi,
 }: {
+  demoVeri?: boolean
+  onSayimBasladi?: () => void
   oyun: OyunTanimi
   acik: boolean
   /** Bu oyundaki en iyi puan; 0 ise hiç oynanmamış. */
@@ -78,7 +82,7 @@ export function OyunTanitim({
      tanıtım kuralı okutuyor, ayar değiştirmiyor — başlamış bir turun modu
      değişmemeli. */
   const secimVar = baslatir && secilebilir
-  const gizli = gizliler.includes(oyun.id)
+  const gizli = !demoVeri && gizliler.includes(oyun.id)
 
   /*
     Ekran her açıldığında baştan başlıyor: bir önceki turda sayım yarıda
@@ -121,13 +125,14 @@ export function OyunTanitim({
   if (secimVar) {
     return <TurAyariEkrani
       oyun={oyun}
+      demoVeri={demoVeri}
       rekor={rekor}
       mod={mod}
       setMod={setMod}
       zorluk={zorluk}
       setZorluk={setZorluk}
       dugmeMetni="Başlat"
-      onDevam={() => setSayiliyor(true)}
+      onDevam={() => { onSayimBasladi?.(); setSayiliyor(true) }}
       onKapat={onKapat}
     />
   }
@@ -200,6 +205,7 @@ export function OyunTanitim({
  */
 function TurAyariEkrani({
   oyun,
+  demoVeri = false,
   rekor,
   mod,
   setMod,
@@ -209,6 +215,8 @@ function TurAyariEkrani({
   onDevam,
   onKapat,
 }: {
+  demoVeri?: boolean
+  onSayimBasladi?: () => void
   oyun: OyunTanimi
   rekor: number
   mod: OyunModu
@@ -252,16 +260,17 @@ function TurAyariEkrani({
           )}
         </header>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
-          <ModSecimi secili={mod} onSec={setMod} />
-          <div className="mt-6 border-t border-border pt-5">
+        <div data-tanitim={demoVeri ? "demo-zorluk" : undefined} style={demoVeri ? { flex: "0 0 auto" } : undefined} className={cn("min-h-0 flex-1 overflow-y-auto px-5", demoVeri ? "py-2" : "py-5")}>
+          <ModSecimi kompakt={demoVeri} secili={mod} onSec={setMod} />
+          <div className={demoVeri ? "mt-2 border-t border-border pt-2" : "mt-6 border-t border-border pt-5"}>
             <ZorlukSecimi secili={zorluk} onSec={setZorluk} />
           </div>
         </div>
 
-        <footer className="shrink-0 border-t border-border bg-background px-5 pt-3" style={{ paddingBottom: 'calc(0.75rem + var(--guvenli-alt))' }}>
+        <footer className={cn("shrink-0 border-t border-border bg-background px-5 pt-3", demoVeri && "mt-auto")} style={{ paddingBottom: 'calc(0.75rem + var(--guvenli-alt))' }}>
           <button
             type="button"
+            data-tanitim={demoVeri ? "demo-baslat" : undefined}
             onClick={onDevam}
             className="flex min-h-14 w-full items-center justify-center gap-2 rounded-xl bg-primary-parlak font-display text-[17px] font-extrabold text-white transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
