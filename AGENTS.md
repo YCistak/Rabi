@@ -2738,6 +2738,24 @@ bırakılınca dışarı çıkıp `geriGit`i çağırıyor ya da yerine dönüyo
 ekranlar iOS'ta sağdan kayarak açılıyor (`data-platform="ios"`, globals.css);
 Android'in aşağıdan gelen geçişi aynı.
 
+Durum makinesi `lib/geri-kaydirma-denetci.ts`, hız/süre/eğri hesapları
+`lib/geri-kaydirma-hesap.ts` (ikisinin de birim testi var). Kurallar,
+ölçülerek bulunmuş hatalardan: sürükleme başlayınca kutunun giriş animasyonu
+kapanıyor (`animation-name: none`, yoksa transform'u animasyon eziyor); ekran
+`flushSync` ile aynı görevde değişiyor; geri yönü kutuya kurulurken bir kez
+okunan `.sayfa-geri` sınıfı (kökte bir öznitelik çıkan sayfanın da
+animasyonunu değiştiriyordu); çıkış hızı parmağın hızıyla başlıyor; yaylanma
+yeni bir hareketle kesilebiliyor; tanıtım turunda ve alt menü sürüklenirken
+sayfa kaymıyor.
+
+**Android'de de var (Android 14+).** `MainActivity.geriKaydirmayiBagla`
+sistemin öngörülü geri hareketini (`OnBackPressedCallback`,
+`handleOnBackStarted/Progressed/Cancelled`) aynı arayüze iletiyor; bırakınca
+`rabiGeriKaydirma.bitir()`. Yalnızca sol kenardan başlayan hareket; sağ kenar,
+3 düğmeli gezinme ve eski sürümler Capacitor'ın `backButton` yoluna olduğu
+gibi gidiyor. `enableOnBackInvokedCallback` yalnızca `MainActivity`de
+(uygulama düzeyinde odak kilidi katmanının `KEYCODE_BACK` yutması bozulurdu).
+
 İkon `ikon-uret.mjs`ten geliyor (`AppIcon-512@2x.png`, 1024): köşesiz ve
 **alfa kanalı atılmış** — App Store saydamlık taşıyan ikonu yüklemede
 reddediyor.
