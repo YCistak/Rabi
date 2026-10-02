@@ -165,7 +165,11 @@ export function SpotIsigi() {
         const solBosluk = kutu.sol - ekran.sol
         const sagBosluk = ekran.sol + ekran.genislik - kutu.sol - kutu.genislik
         // Yatay telefonda balon yanda, kendi içinde kaydırılabilir kalır.
-        if (ekran.genislik > ekran.yukseklik && Math.max(solBosluk, sagBosluk) >= 188) {
+        // Tablette yan boşluk dar diye balon daraltılmıyor: sağdaki rayla
+        // geniş bir hedefin arasına 170 piksellik bir şerit olarak sıkışıyor,
+        // düğmeleri kesiliyordu. Yeterince yer yoksa balon üste/alta geçiyor.
+        const enDarYan = document.documentElement.dataset.yerlesim === 'tablet' ? 300 : 188
+        if (ekran.genislik > ekran.yukseklik && Math.max(solBosluk, sagBosluk) >= enDarYan) {
           balonGenisligi = Math.min(340, Math.max(solBosluk, sagBosluk) - 28)
         }
         if (ekran.sol + ekran.genislik - kutu.sol - kutu.genislik >= balonGenisligi + 28) {
