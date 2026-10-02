@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { KOYU_ESIGI, mercekKonumu, parlaklik, parmaktanSira, rengiCoz } from './cam-menu'
+import {
+  BUYUTEC_EN_COK,
+  KOYU_ESIGI,
+  buyutecOlcegi,
+  mercekKonumu,
+  parlaklik,
+  parmaktanSira,
+  rengiCoz,
+} from './cam-menu'
 
 describe('parmaktanSira', () => {
   it('şeridi eşit beşe bölüyor', () => {
@@ -23,6 +31,24 @@ describe('mercekKonumu', () => {
   it('mercek şeridin dışına çıkmıyor', () => {
     expect(mercekKonumu(5, 500, 5)).toBe(0)
     expect(mercekKonumu(495, 500, 5)).toBe(400)
+  })
+  it('büyümüş mercek de kapsülün içinde kalıyor', () => {
+    // Mercek 100, ölçek 1,3: her yana 15 taşar.
+    expect(mercekKonumu(495, 500, 5, 1.3)).toBeCloseTo(385)
+    expect(mercekKonumu(5, 500, 5, 1.3)).toBeCloseTo(15)
+    const sag = mercekKonumu(10_000, 500, 5, 1.3)
+    expect(sag + 100 + 15).toBeLessThanOrEqual(500)
+  })
+})
+
+describe('buyutecOlcegi', () => {
+  it('tam altındaki sekme en çok büyüyor', () => {
+    expect(buyutecOlcegi(0, 80)).toBeCloseTo(1 + BUYUTEC_EN_COK)
+  })
+  it('uzaklaştıkça azalıyor, bir sütun ötede etkisiz', () => {
+    expect(buyutecOlcegi(40, 80)).toBeLessThan(buyutecOlcegi(10, 80))
+    expect(buyutecOlcegi(80, 80)).toBe(1)
+    expect(buyutecOlcegi(-200, 80)).toBe(1)
   })
 })
 

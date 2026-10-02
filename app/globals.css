@@ -2241,17 +2241,28 @@ body {
   arkasındakini taşır, bu yüzden ayrı bir palet yok. Gölgenin rengi
   `--foreground`un sıcak kahvesi, zemindeki gölgelerle aynı aile.
 
+  Kullanıcı ilk hâli "pek belirgin değil" buldu: beyaz pus ince, kenar
+  silikti ve seçili sekmenin merceği beyaz camın üstünde beyazdı — neredeyse
+  görünmüyordu. Pus kalınlaştı, kenar ve gölge belirginleşti, mercek dinlenirken
+  hafif koyu bir hap (App Store'daki gibi). Sürüklerken mercek kapsülden büyük,
+  berrak bir cam damlasına dönüşüyor ve altından geçen simgeyi büyütüyor
+  (`buyutecOlcegi`, `lib/cam-menu.ts`). Damla kapsülün üstünden ve altından
+  taşabilsin diye kapsülde `overflow: hidden` yok; yanlardan taşmayı konum
+  hesabı engelliyor (`mercekKonumu`).
+
   Yerleşim: kapsülün üst kenarı eski menünün üst kenarının altında kalıyor;
   menüye göre konumlanan yapışkan öğeler (Pomodoro'nun Başlat'ı, yanlış
   bankasının düğmesi, yapılacakların bildirimi) bu yüzden kapsülle çakışmıyor.
 */
 :root {
-  --cam-zemin-ust: rgba(255, 255, 255, 0.66);
-  --cam-zemin-alt: rgba(255, 255, 255, 0.44);
-  --cam-kenar: rgba(255, 255, 255, 0.75);
-  --cam-parlama: rgba(255, 255, 255, 0.95);
-  --cam-golge: rgba(58, 38, 28, 0.16);
-  --cam-mercek: rgba(255, 255, 255, 0.62);
+  --cam-zemin-ust: rgba(255, 255, 255, 0.82);
+  --cam-zemin-alt: rgba(255, 255, 255, 0.64);
+  --cam-kenar: rgba(255, 255, 255, 0.9);
+  --cam-cizgi: rgba(58, 38, 28, 0.1);
+  --cam-parlama: rgba(255, 255, 255, 1);
+  --cam-golge: rgba(58, 38, 28, 0.22);
+  /* Dinlenen mercek: beyaz camın üstünde beyaz görünmüyordu, sıcak bir gri. */
+  --cam-mercek: rgba(58, 38, 28, 0.085);
   /* Cam koyu bir yüzeyin üstüne gelince (`data-koyu`): beyaz pus azalıyor,
      yazılar açığa dönüyor. Vurgu amberin açık hâli; koyu zeminde koyu amber
      okunmuyor. */
@@ -2273,6 +2284,8 @@ body {
   padding-bottom: 0;
   border: 1px solid var(--cam-kenar);
   border-radius: 999px;
+  /* Beyaz kenar açık zeminde kayboluyor; dışına ince koyu bir çizgi. */
+  outline: 0.5px solid var(--cam-cizgi);
   /*
     Camın rengi arkasındakinin tonu (`--cam-ton`, bottom-nav.tsx örnekliyor):
     renkli bir kartın üstüne gelen kapsül o renge bürünüyor. Beyaz pus tonun
@@ -2282,14 +2295,13 @@ body {
   background-color: rgb(var(--cam-ton, 255 255 255) / 0.38);
   background-image: linear-gradient(180deg, var(--cam-zemin-ust), var(--cam-zemin-alt));
   transition: background-color 450ms ease;
-  -webkit-backdrop-filter: blur(22px) saturate(185%);
-  backdrop-filter: blur(22px) saturate(185%);
+  -webkit-backdrop-filter: blur(26px) saturate(190%);
+  backdrop-filter: blur(26px) saturate(190%);
   box-shadow:
     inset 0 1px 0 var(--cam-parlama),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.28),
-    0 12px 32px var(--cam-golge),
-    0 1px 3px rgba(58, 38, 28, 0.08);
-  overflow: hidden;
+    inset 0 -1px 0 rgba(255, 255, 255, 0.35),
+    0 14px 36px var(--cam-golge),
+    0 2px 6px rgba(58, 38, 28, 0.12);
 }
 
 /* Sol üstten vuran yumuşak ışık: düz bir buzlu yüzeyi cama çeviren şey. */
@@ -2341,10 +2353,7 @@ body {
   width: calc((100% - 12px) / 5);
   border-radius: 999px;
   background: var(--cam-mercek);
-  box-shadow:
-    inset 0 1px 0 var(--cam-parlama),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
-    0 2px 8px rgba(58, 38, 28, 0.1);
+  box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.6);
   /* Sürüklerken parmağın konumu (`--mercek-x`), değilse seçili sekme. */
   transform: translateX(var(--mercek-x, calc(var(--sekme-sira, 0) * 100%)))
     scale(var(--mercek-olcek, 1));
@@ -2352,21 +2361,43 @@ body {
      sistemin kendi sekme çubuğundaki yay hissi. */
   transition:
     transform 420ms cubic-bezier(0.34, 1.36, 0.5, 1),
-    background-color 200ms ease;
+    background-color 200ms ease,
+    box-shadow 200ms ease;
+}
+:root[data-platform='ios'] .alt-menu[data-koyu='true'] .alt-menu-mercek {
+  background: rgba(255, 255, 255, 0.18);
 }
 /*
-  Sürüklerken mercek "kalkıyor": büyüyüp inceliyor, parmağı gecikmesiz
-  izliyor (geçiş yok — yay eğrisi parmağın gerisinde kalırdı). Bırakınca
-  yay eğrisiyle seçilen sekmeye oturuyor.
+  Sürüklerken mercek "kalkıyor": kapsülden büyük, berrak bir cam damlası
+  oluyor (ölçek JS'ten, `SURUKLEME_OLCEGI`) ve parmağı gecikmesiz izliyor
+  (geçiş yok — yay eğrisi parmağın gerisinde kalırdı). Damlanın kendi
+  `backdrop-filter`ı altındaki simgeleri parlatıp doygunlaştırıyor; asıl
+  büyüteç simgelerin kendisinde (`alt-menu-icerik`). Bırakınca yay eğrisiyle
+  seçilen sekmeye oturuyor.
 */
 :root[data-platform='ios'] .alt-menu[data-surukleniyor] .alt-menu-mercek {
-  --mercek-olcek: 1.12;
-  background-color: rgba(255, 255, 255, 0.4);
-  transition: background-color 200ms ease;
+  background: rgba(255, 255, 255, 0.3);
+  -webkit-backdrop-filter: saturate(170%) brightness(1.08);
+  backdrop-filter: saturate(170%) brightness(1.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.85),
+    inset 0 -6px 12px rgba(255, 255, 255, 0.35),
+    0 8px 22px rgba(58, 38, 28, 0.24);
+  transition: background-color 200ms ease, box-shadow 200ms ease;
+}
+
+/* Büyüteç: simge ve yazı birlikte büyüyor; bırakınca yaylanarak dönüyor. */
+:root[data-platform='ios'] .alt-menu-icerik {
+  transition: transform 380ms cubic-bezier(0.34, 1.36, 0.5, 1);
+}
+:root[data-platform='ios'] .alt-menu[data-surukleniyor] .alt-menu-icerik {
+  transition: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root[data-platform='ios'] .alt-menu-mercek,
+  :root[data-platform='ios'] .alt-menu-icerik,
   :root[data-platform='ios'] .alt-menu {
     transition: none;
   }
