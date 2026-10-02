@@ -1,33 +1,39 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { iosMu } from '@/lib/platform'
+import { flushSync } from 'react-dom'
+import { androidMu, iosMu } from '@/lib/platform'
+import { GeriKaydirmaDenetcisi, type Kutu } from '@/lib/geri-kaydirma-denetci'
 
 /**
- * iOS'ta kenardan geri kaydırmanın görsel tarafı.
+ * Kenardan kaydırarak geri gitmenin görsel tarafı (iOS ve Android).
  *
- * Hareketin **tanınması** yerli tarafta (`AnaDenetleyici.swift`,
- * `UIScreenEdgePanGestureRecognizer`): JS'te dokunuşla tanımak sayfanın kendi
- * kaydırmasıyla yarışıyordu. Eskiden yerli taraf yalnızca parmak kalkınca
- * `rabiGeri` olayı yolluyordu ve ekran animasyonsuz, bir anda değişiyordu.
- * Şimdi yerli taraf parmak hareket ederken de `window.rabiGeriKaydirma`yı
- * çağırıyor; sayfa parmağı izliyor, bırakılınca ya dışarı kayıyor ya geri
- * yerine oturuyor.
+ * Hareketin **tanınması** yerli tarafta: iOS'ta `AnaDenetleyici.swift`
+ * (`UIScreenEdgePanGestureRecognizer`), Android 14+'ta `MainActivity.java`
+ * (sistemin öngörülü geri hareketi, `OnBackPressedCallback`). JS'te dokunuşla
+ * tanımak sayfanın kendi kaydırmasıyla ve Android'de sistemin geri
+ * hareketiyle yarışırdı. İki taraf da aynı arayüzü çağırıyor:
  *
- * Uygulama tek sayfa ve bir önceki ekran DOM'da durmuyor; bu yüzden altta
- * önceki ekranın görünmesi (yerli UINavigationController gibi) yok — kayan
- * sayfanın altında sayfa zemini görünüyor. Sayfa kayınca önceki ekran soldan
- * kısa bir kayışla geliyor (`data-gecis-yon="geri"`, globals.css).
+ *   window.rabiGeriKaydirma.basla() → ilerle(dx)… → bitir() | iptal()
+ *
+ * iOS bırakmayı eskisi gibi `rabiGeri` olayıyla da bildiriyor; o da `bitir`.
+ * Mantık `GeriKaydirmaDenetcisi`nde (`lib/geri-kaydirma-denetci.ts`), burası
+ * yalnızca onu DOM'a ve React'e bağlıyor.
+ *
+ * Uygulama tek sayfa ve bir önceki ekran DOM'da durmuyor; kayan sayfanın
+ * altında sayfa zemini görünüyor. Sayfa çıkınca önceki ekran **aynı karede**
+ * kuruluyor (`flushSync`) ve soldan kısa bir kayışla geliyor
+ * (`.sayfa-geri`, globals.css).
  *
  * Kayan kutu yalnızca `[data-geri-sayfa]` (ekran içeriği); alt menü gibi
  * `fixed` öğeler transformlu bir atanın içine girmesin diye kutunun dışında.
- * Android'de hiçbir şey yapmaz.
  */
 
 type Kolu = {
   basla: () => void
   ilerle: (dx: number) => void
   iptal: () => void
+  bitir: () => void
 }
 
 declare global {
@@ -35,8 +41,6 @@ declare global {
     rabiGeriKaydirma?: Kolu
   }
 }
-
-const BIRAKMA_MS = 200
 
 /**
  * Kenardan kaydırmayı yok sayan kilitlerin sayısı.
@@ -46,8 +50,12 @@ const BIRAKMA_MS = 200
  * kapatıyordu (geri, çizimde "kaydet ve çık" demek). Hareketin tanınmasını
  * yerli taraf yapıyor ve parmağın sayfaya da ulaşması gerekiyor (çizgi o),
  * yani tanımayı kapatmak değil, tanınanı burada yok saymak gerekiyordu.
- * Çizimden çıkmanın yolu Vazgeç/Kaydet; Android'in geri tuşu bu kilide
- * bakmıyor, orada geri hâlâ kaydedip çıkıyor.
+ * Çizimden çıkmanın yolu Vazgeç/Kaydet. Android'de kilit yalnızca sürüklemeyi
+ * kapatıyor; geri hareketi geri tuşu demek ve geri tuşu kilide bakmıyor,
+ * orada geri hâlâ kaydedip çıkıyor.
+ *
+ * Alt menüyü sürüklerken de kilitli (`bottom-nav.tsx`): sol kenardan başlayan
+ * bir menü sürüklemesi sayfayı da kaydırıp geri gidiyordu.
  *
  * Sayaç, bayrak değil: iki yer aynı anda kilitlerse ilki açınca ikincisi
  * kilitli kalmalı.
@@ -65,114 +73,111 @@ export function geriKaydirmayiKilitle(): () => void {
   }
 }
 
+/**
+ * Geri yön işareti. Kaydırarak geri gidilince bir sonraki kurulan ekran
+ * soldan gelsin diye. Eskiden kökte bir `data-gecis-yon` özniteliğiydi ve
+ * 400 ms sonra siliniyordu: (1) öznitelik konduğu anda **çıkan** sayfanın
+ * animasyonunu da `sayfaSoldan`a çeviriyor, sayfa sağa çıkacağına soldan geri
+ * giriyordu; (2) silindiğinde yeni ekranın animasyonu `sayfaGirisi`ne dönüp
+ * opaklık 0'dan **baştan** oynuyordu (bir kare boş ekran). Artık ekran
+ * kurulurken bir kez okunup kutunun kendi sınıfı oluyor (`SayfaGecisi`).
+ */
+let geriYonuZamani = -Infinity
+const YON_OMRU_MS = 400
+
+export function geriYonunuIsaretle() {
+  geriYonuZamani = performance.now()
+}
+
+/** Şu an kurulan ekran kaydırarak geri gelinen ekran mı? */
+export function geriGecisiMi(): boolean {
+  return typeof performance !== 'undefined' && performance.now() - geriYonuZamani < YON_OMRU_MS
+}
+
 function olcek(): number {
   const v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--olcek'))
   return Number.isFinite(v) && v > 0 ? v : 1
 }
 
-function azaltilmisHareket(): boolean {
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
-}
-
-/** Geri gidiş yönünü bir süre işaretler: önceki ekran soldan gelsin. */
-export function geriYonunuIsaretle() {
-  if (!iosMu()) return
-  const kok = document.documentElement
-  kok.dataset.gecisYon = 'geri'
-  window.setTimeout(() => {
-    delete kok.dataset.gecisYon
-  }, 400)
-}
-
 /**
  * `kaydirilabilir`: geri gidilecek bir yer var ve sürüklemeyi bozacak bir
- * katman (tam ekran test, açık pencere) yok. Yanlışsa parmak hiçbir şeyi
- * oynatmaz; bırakılınca `geriGit` doğrudan çalışır.
+ * katman (tam ekran test, açık pencere, tanıtım turu) yok. Yanlışsa parmak
+ * hiçbir şeyi oynatmaz; bırakılınca `geriGit` doğrudan çalışır.
+ *
+ * `geriGit` gidecek yer kalmadıysa `false` dönmeli; o zaman `cikis` çağrılır.
  */
-export function useGeriKaydirma(kaydirilabilir: () => boolean, geriGit: () => void) {
+export function useGeriKaydirma(kaydirilabilir: () => boolean, geriGit: () => boolean, cikis: () => void) {
   const kaydirRef = useRef(kaydirilabilir)
   const geriRef = useRef(geriGit)
+  const cikisRef = useRef(cikis)
   kaydirRef.current = kaydirilabilir
   geriRef.current = geriGit
+  cikisRef.current = cikis
 
   useEffect(() => {
-    if (!iosMu()) return
+    const ios = iosMu()
+    if (!ios && !androidMu()) return
 
-    let kutu: HTMLElement | null = null
-    let sonDx = 0
-    let bitiyor = false
+    let olcekDegeri = 1
+    const denetci = new GeriKaydirmaDenetcisi({
+      kutuBul: () => {
+        olcekDegeri = olcek()
+        return document.querySelector<HTMLElement>('[data-geri-sayfa]')
+      },
+      kaydirilabilir: () => kaydirRef.current(),
+      kilitli: () => kilitler > 0,
+      kilitBirakmayiYutar: ios,
+      // Ekran aynı görevde değişmeli: değişim React'in bir sonraki işine
+      // kalınca kutu bir kare boyunca ekranın dışında ya da (eski hâlinde)
+      // yerinde eski ekranı gösteriyordu.
+      geriGit: () => {
+        let sonuc = false
+        flushSync(() => {
+          sonuc = geriRef.current()
+        })
+        return sonuc
+      },
+      cikis: () => cikisRef.current(),
+      yonIsaretle: geriYonunuIsaretle,
+      yonuTemizle: () => {
+        geriYonuZamani = -Infinity
+      },
+      anlikKonum: (kutu: Kutu) => {
+        const t = getComputedStyle(kutu as unknown as HTMLElement).transform
+        return t && t !== 'none' ? new DOMMatrix(t).m41 * olcekDegeri : 0
+      },
+      sabitleriGizle: (kutu: Kutu) => {
+        // Transformlu kutu içindeki `fixed` öğelerin kapsayıcı bloğu olur:
+        // ekranın altındaki bir bildirim sayfanın (uzun) dibine kayardı.
+        // Kaydırma boyunca gizleniyor; vazgeçilirse geri geliyor.
+        const el = kutu as unknown as HTMLElement
+        const gizlenen = [...el.querySelectorAll<HTMLElement>('.fixed')].filter(
+          (x) => getComputedStyle(x).position === 'fixed',
+        )
+        const eski = gizlenen.map((x) => x.style.visibility)
+        gizlenen.forEach((x) => (x.style.visibility = 'hidden'))
+        return () => gizlenen.forEach((x, i) => (x.style.visibility = eski[i]))
+      },
+      genislik: () => window.innerWidth,
+      olcek: () => olcekDegeri,
+      azaltilmis: () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      simdi: () => performance.now(),
+      zamanla: (is, ms) => window.setTimeout(is, ms),
+      zamanlamaIptal: (k) => window.clearTimeout(k as number),
+    })
 
-    const temizle = () => {
-      if (kutu) {
-        kutu.style.transition = ''
-        kutu.style.transform = ''
-        kutu.style.boxShadow = ''
-        kutu.style.willChange = ''
-      }
-      kutu = null
-      sonDx = 0
-      bitiyor = false
+    window.rabiGeriKaydirma = {
+      basla: denetci.basla,
+      ilerle: denetci.ilerle,
+      iptal: denetci.iptal,
+      bitir: denetci.bitir,
     }
-
-    const basla = () => {
-      if (bitiyor) return
-      temizle()
-      if (kilitler > 0) return
-      if (!kaydirRef.current()) return
-      const el = document.querySelector<HTMLElement>('[data-geri-sayfa]')
-      if (!el) return
-      kutu = el
-      el.style.transition = 'none'
-      el.style.willChange = 'transform'
-      el.style.boxShadow = '-10px 0 28px rgba(0, 0, 0, 0.10)'
-    }
-
-    const ilerle = (dx: number) => {
-      if (!kutu || bitiyor) return
-      sonDx = Math.max(0, dx)
-      kutu.style.transform = `translateX(${sonDx / olcek()}px)`
-    }
-
-    const iptal = () => {
-      if (!kutu || bitiyor) return
-      const el = kutu
-      if (azaltilmisHareket()) return temizle()
-      el.style.transition = `transform ${BIRAKMA_MS}ms cubic-bezier(0.2, 0.7, 0.3, 1)`
-      el.style.transform = 'translateX(0px)'
-      bitiyor = true
-      window.setTimeout(temizle, BIRAKMA_MS + 30)
-    }
-
-    // Yerli taraf parmağı kaldırınca yollar (eski ve tek yol).
-    const onayla = () => {
-      if (kilitler > 0) return
-      const el = kutu
-      if (!el || bitiyor) {
-        geriYonunuIsaretle()
-        geriRef.current()
-        return
-      }
-      bitiyor = true
-      geriYonunuIsaretle()
-      const bitir = () => {
-        // Önce ekranı değiştir, sonra kutuyu eski yerine al: yeni ekran
-        // kendi giriş hareketiyle geliyor, kutu temizlenmeden gelseydi
-        // kayık görünürdü. Anahtar değişince kutu zaten sökülüyor.
-        geriRef.current()
-        temizle()
-      }
-      if (azaltilmisHareket()) return bitir()
-      el.style.transition = `transform ${BIRAKMA_MS}ms cubic-bezier(0.3, 0, 0.8, 0.15)`
-      el.style.transform = `translateX(${window.innerWidth / olcek()}px)`
-      window.setTimeout(bitir, BIRAKMA_MS)
-    }
-
-    window.rabiGeriKaydirma = { basla, ilerle, iptal }
-    window.addEventListener('rabiGeri', onayla)
+    // iOS'un yerli tarafı bırakmayı bu olayla bildiriyor (eski ve tek yol).
+    window.addEventListener('rabiGeri', denetci.bitir)
     return () => {
-      window.removeEventListener('rabiGeri', onayla)
+      window.removeEventListener('rabiGeri', denetci.bitir)
       delete window.rabiGeriKaydirma
-      temizle()
+      denetci.birak()
     }
   }, [])
 }

@@ -40,8 +40,8 @@ import { sablonlariBirlestir } from '@/lib/sablonlar'
 import { guncelTahmin, obpHesapla } from '@/lib/tahmin'
 import { istatistikYeterliMi } from '@/lib/istatistik'
 import { egitimYili, gunlukToplam, ilerlemisSinif } from '@/lib/hesap'
-import { iosMu } from '@/lib/platform'
-import { useGeriKaydirma } from '@/lib/geri-kaydirma'
+import { androidMu, iosMu } from '@/lib/platform'
+import { geriGecisiMi, useGeriKaydirma } from '@/lib/geri-kaydirma'
 import { bildirilecekler, rozetDurumu, yeniRozetler, type Rozet } from '@/lib/rozetler'
 import { hatirlatmaIptal, hatirlatmaPlanla, pomodoroIptal } from '@/lib/bildirim'
 import { odakKilidiniBitir } from '@/lib/odak-kilidi'
@@ -786,8 +786,19 @@ function RabiUygulamasi() {
   useGeriKaydirma(
     // Sürüklenebilir: gidilecek yer var ve açık bir katman/tam ekran test yok.
     // Katman açıksa sayfa kaymaz; bırakılınca geri tuşu gibi onu kapatır.
-    () => !katmanVarMi() && genelTest === null && (denemeFormu !== null || ekran !== null || sekme !== 'ana'),
-    () => void geriGit(),
+    // Tanıtım turunda da kaymaz: orada geri turu bitiriyor, ekranı
+    // değiştirmiyor — dışarı kayan sayfa aynı ekrana sıçrayarak dönüyordu.
+    () =>
+      !tanitim.tanitimdaMi &&
+      !katmanVarMi() &&
+      genelTest === null &&
+      (denemeFormu !== null || ekran !== null || sekme !== 'ana'),
+    geriGit,
+    // Android'de geri hareketi geri tuşunun kendisi: gidecek yer kalmayınca
+    // çıkıyor. iOS'ta uygulama kendini kapatmaz (Apple bunu çökme sayıyor).
+    () => {
+      if (androidMu()) void CapacitorApp.exitApp()
+    },
   )
 
   const denemeKaydet = useCallback(
@@ -1218,6 +1229,10 @@ function SayfaGecisi({
   sure?: number
 }) {
   const [basladi, setBasladi] = useState(false)
+  // Kaydırarak geri gelindiyse ekran soldan geliyor. Kurulurken **bir kez**
+  // okunuyor: yön sonradan değişse de başlamış animasyon değişmemeli
+  // (bkz. `geriYonunuIsaretle`).
+  const [geri] = useState(geriGecisiMi)
 
   useEffect(() => {
     let ikinci = 0
@@ -1235,7 +1250,7 @@ function SayfaGecisi({
   return (
     <div
       data-geri-sayfa
-      className={cn('sayfa-girisi', ileri && 'sayfa-ileri', !basladi && 'sayfa-bekliyor')}
+      className={cn('sayfa-girisi', ileri && 'sayfa-ileri', geri && 'sayfa-geri', !basladi && 'sayfa-bekliyor')}
       style={yavas ? { animationDuration: `${sure}ms` } : undefined}
     >
       {children}
