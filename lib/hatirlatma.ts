@@ -24,7 +24,7 @@ export const HATIRLATMA_MESAJLARI: { baslik: string; metin: string }[] = [
   { baslik: 'On dakikan var mı?', metin: 'Rabi kronometreyi kurdu bile. Tek soruyla da olur. ⏱️' },
   { baslik: 'Bugünü boş bırakma', metin: 'Bir günlük boşluk, bir haftalık alışkanlığı bozuyor. 🌿' },
   { baslik: 'Rabi bir tur teklif ediyor', metin: 'Oyunlardan kısa bir tur? Hem eğlence hem tekrar. 🎮' },
-  { baslik: 'Dünkü sen bugünküne güveniyordu', metin: 'Onu haklı çıkaralım mı? 🐰' },
+  { baslik: 'Dünkü sen sana güveniyordu', metin: 'Onu haklı çıkaralım mı? 🐰' },
   { baslik: 'Yanlışların seni bekliyor', metin: 'Bankadaki sorular kendi kendine öğrenilmiyor. 📒' },
   { baslik: 'Küçük ama her gün', metin: 'Yirmi soru bugün az görünür; bir ayda 600 eder. 🥕' },
   { baslik: 'Rabi patisini uzattı', metin: 'Bugünlük bir tur, sonrası rahat rahat dinlenmek. 🐾' },

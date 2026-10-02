@@ -138,7 +138,15 @@ export function IslemOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  demoSorulari,
+  onBasladi,
+  onSayimBasladi,
+  demoDuraklatildi = false,
 }: {
+  onSayimBasladi?: () => void
+  demoDuraklatildi?: boolean
+  demoSorulari?: IslemSorusu[]
+  onBasladi?: () => void
   istatistik: OyunIstatistigi
   /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
   sesAcik: boolean
@@ -155,7 +163,7 @@ export function IslemOyunuEkrani({
   onCik: () => void
   bildir: BildirimKolu
 }) {
-  const oyun = oyunBul('islem')
+  const oyun = demoSorulari ? { ...oyunBul('islem'), ad: 'Tanıtım oyunu' } : oyunBul('islem')
 
   // Seçim kalıcı: her turda altı çipi yeniden işaretlemek, oyunu açıp hemen
   // başlamayı imkânsız kılardı. Yalnızca bu ekranın kullandığı bir tercih,
@@ -216,7 +224,7 @@ export function IslemOyunuEkrani({
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
-    setSorular(bankaTuru ? karistir(bankaHavuzu) : islemTuruHazirla(TUM_ISLEMLER, TUR_SORUSU))
+    setSorular(demoSorulari ?? (bankaTuru ? karistir(bankaHavuzu) : islemTuruHazirla(TUM_ISLEMLER, TUR_SORUSU)))
     setSira(0)
     setGirilen('')
     setCevaplar([])
@@ -226,7 +234,8 @@ export function IslemOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru])
+    onBasladi?.()
+  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru, demoSorulari, onBasladi])
 
   const turBitir = useCallback(
     (verilenler: Cevap<IslemSorusu>[], yarim = false) => {
@@ -282,7 +291,7 @@ export function IslemOyunuEkrani({
   /** `pas` true ise cevap verilmeden geçiliyor; yanlış sayılır. */
   const cevapla = useCallback(
     (pas: boolean) => {
-      if (asama !== 'oynaniyor' || geriBildirim !== null) return
+      if (asama !== 'oynaniyor' || geriBildirim !== null || demoDuraklatildi) return
       const soru = sorular[sira]
       if (!soru) return
       if (!pas && girilen === '') return
@@ -305,7 +314,7 @@ export function IslemOyunuEkrani({
         }
       }, CEVAP_BEKLEMESI)
     },
-    [asama, bankaTuru, geriBildirim, girilen, sira, sorular, turBitir],
+    [demoDuraklatildi, asama, bankaTuru, geriBildirim, girilen, sira, sorular, turBitir],
   )
 
 
@@ -345,10 +354,11 @@ export function IslemOyunuEkrani({
 
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
+    turSuresi: demoSorulari ? 600 : undefined,
     turNo,
     yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
     onTurBitti: turSuresiDoldu,
-    aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan,
+    aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && !demoDuraklatildi,
     sure: soruSuresi('islem'),
     anahtar: sira,
     onBitti: sureDoldu,
@@ -363,7 +373,7 @@ export function IslemOyunuEkrani({
   // Fiziksel klavye desteği: telefonda kullanılmıyor ama tarayıcıda denemeyi
   // ve klavyeli bir tablette oynamayı mümkün kılıyor.
   useEffect(() => {
-    if (asama !== 'oynaniyor' || yardimAcik) return
+    if (asama !== 'oynaniyor' || yardimAcik || demoDuraklatildi) return
     const dinleyici = (olay: KeyboardEvent) => {
       if (olay.key >= '0' && olay.key <= '9') rakamYaz(olay.key)
       else if (olay.key === 'Backspace') sil()
@@ -373,7 +383,7 @@ export function IslemOyunuEkrani({
     }
     window.addEventListener('keydown', dinleyici)
     return () => window.removeEventListener('keydown', dinleyici)
-  }, [asama, yardimAcik, rakamYaz, sil, cevapla])
+  }, [demoDuraklatildi, asama, yardimAcik, rakamYaz, sil, cevapla])
 
   const yardimAc = () => {
     setDuraklatilan(true)
@@ -395,6 +405,8 @@ export function IslemOyunuEkrani({
     <>
       <OyunKabugu
         oyunId="islem"
+        tanitimBosluk={!!demoSorulari && asama === "oynaniyor"}
+        tanitimSayacHedefi={demoSorulari ? "demo-sayac" : undefined}
         baslik={oyun.ad}
         sayac={
           asama === 'bitti'
@@ -415,7 +427,8 @@ export function IslemOyunuEkrani({
         onYardim={yardimAc}
       >
         {asama === 'bitti' && sonuc ? (
-          <SonucGorunumu
+          <div className={demoSorulari ? "flex flex-1 flex-col sayfa-girisi" : "flex flex-1 flex-col"} style={demoSorulari ? { animationDuration: "500ms" } : undefined}><SonucGorunumu
+            tanitimHedefi={demoSorulari ? "demo-sonuc" : undefined}
             sonuc={sonuc}
             girdiler={yanlisGirdileri}
             turler={turdekiTurler}
@@ -426,16 +439,16 @@ export function IslemOyunuEkrani({
             onTekrar={turBaslat}
             onCik={onCik}
             bildir={bildir}
-          />
+          /></div>
         ) : (
           asama === 'oynaniyor' &&
           soru && (
             <>
-              <div className="flex flex-1 flex-col gap-2.5 pt-3">
+              <div data-tanitim={demoSorulari ? "demo-soru" : undefined} className={cn("flex flex-col gap-2.5", !demoSorulari && "flex-1 pt-3", demoSorulari && "sayfa-girisi")} style={demoSorulari ? { animationDuration: "500ms" } : undefined}>
                 {/* İşlem türü ("Çarpma", "Bölme") bilerek yazılmıyor: köklü ve
                     üslü sorularda hangi işlemin sorulduğunu söylemek, sorunun
                     yarısını söylemek olurdu. */}
-                <div className="golge-kart rounded-3xl bg-card px-5 pb-5 pt-4">
+                <div data-tanitim={demoSorulari ? "demo-islem" : undefined} className="golge-kart rounded-3xl bg-card px-5 pb-5 pt-4">
                   <div className="flex items-center gap-2 text-[12.5px] font-bold text-muted-foreground">
                     <Rabi durum="calisiyor" boyut={26} />
                     Kaç eder?
@@ -451,6 +464,7 @@ export function IslemOyunuEkrani({
                   </div>
                 </div>
 
+                <div className="flex flex-col gap-2.5">
                 <CevapAlani
                   girilen={geriBildirim ? geriBildirim.girilen : girilen}
                   durum={
@@ -467,6 +481,7 @@ export function IslemOyunuEkrani({
                   onOnayla={() => cevapla(false)}
                   onPas={() => cevapla(true)}
                 />
+                </div>
               </div>
 
               {geriBildirim && (
@@ -485,6 +500,8 @@ export function IslemOyunuEkrani({
 
       <OyunTanitim
         oyun={oyun}
+        demoVeri={!!demoSorulari}
+        onSayimBasladi={onSayimBasladi}
         acik={asama === 'tanitim' || yardimAcik}
         rekor={istatistik.enIyiDogru}
         baslatir={asama === 'tanitim'}
@@ -497,6 +514,7 @@ export function IslemOyunuEkrani({
 
 
 function SonucGorunumu({
+  tanitimHedefi,
   sonuc,
   girdiler,
   turler,
@@ -508,6 +526,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
+  tanitimHedefi?: string
   sonuc: { ozet: TurOzeti<IslemSorusu>; yeniRekor: boolean }
   /** Yanlışlarla aynı sıradaki girdiler; boş dize pas geçildiğini gösterir. */
   girdiler: string[]
@@ -533,6 +552,7 @@ function SonucGorunumu({
 
   return (
     <TurSonu
+      tanitimHedefi={tanitimHedefi}
       oyunId="islem"
       dogru={ozet.dogru}
       yanlis={ozet.yanlis}

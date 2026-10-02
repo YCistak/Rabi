@@ -6,7 +6,11 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.webkit.WebView;
+import androidx.activity.BackEventCompat;
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.splashscreen.SplashScreen;
 import com.getcapacitor.BridgeActivity;
@@ -43,6 +47,96 @@ public class MainActivity extends BridgeActivity {
         super.onCreate(savedInstanceState);
         webHatalariniRaporla();
         gorevTaniminiAyarla();
+        geriKaydirmayiBagla();
+    }
+
+    /**
+     * Soldan kaydırarak geri: Android 14+'ın öngörülü geri hareketi
+     * (predictive back) sayfaya bağlanıyor.
+     *
+     * Hareket kenarı sistemin; WebView'da JS ile kenar dokunuşu tanımak
+     * sistemin geri hareketiyle yarışırdı. Sistem hareketi tanıyıp ilerlemesini
+     * bu geri çağrıya veriyor (`handleOnBackStarted/Progressed/Cancelled`),
+     * buradan iOS'un (`AnaDenetleyici.swift`) çağırdığı aynı JS arayüzüne
+     * iletiliyor: `window.rabiGeriKaydirma.basla/ilerle/iptal/bitir`
+     * (`lib/geri-kaydirma.ts`). Bırakılınca geri mi vazgeç mi kararını sistem
+     * veriyor (konum ve fırlatma hızı).
+     *
+     * Bu çağrılar yalnızca Android 14+'ta ve manifest'te etkinliğe
+     * `android:enableOnBackInvokedCallback="true"` konunca geliyor. Daha eski
+     * sürümlerde, 3 düğmeli gezinmede ve sağ kenardan kaydırmada yalnızca
+     * `handleOnBackPressed` geliyor ve iş olduğu gibi Capacitor'ın App
+     * eklentisine devrediliyor: JS'teki `backButton` dinleyicisi
+     * (`app-shell.tsx`) — katmanlar, çıkış onayları, uygulamadan çıkış
+     * eskisi gibi.
+     *
+     * Bu geri çağrı Capacitor'ınkinden sonra ekleniyor (eklentiler
+     * `super.onCreate` içinde yükleniyor), yani önce bu çalışıyor.
+     */
+    private void geriKaydirmayiBagla() {
+        final float yogunluk = getResources().getDisplayMetrics().density;
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            /** Soldan başlamış ve JS'e `basla` gitmiş bir hareket sürüyor. */
+            private boolean suruyor = false;
+            private float baslangicX = 0f;
+
+            @Override
+            public void handleOnBackStarted(@NonNull BackEventCompat olay) {
+                suruyor = olay.getSwipeEdge() == BackEventCompat.EDGE_LEFT;
+                if (!suruyor) return;
+                baslangicX = olay.getTouchX();
+                js("window.rabiGeriKaydirma&&window.rabiGeriKaydirma.basla()", null);
+            }
+
+            @Override
+            public void handleOnBackProgressed(@NonNull BackEventCompat olay) {
+                if (!suruyor) return;
+                // Ekran pikselinden CSS pikseline.
+                int dx = Math.round(Math.max(0f, olay.getTouchX() - baslangicX) / yogunluk);
+                js("window.rabiGeriKaydirma&&window.rabiGeriKaydirma.ilerle(" + dx + ")", null);
+            }
+
+            @Override
+            public void handleOnBackCancelled() {
+                if (!suruyor) return;
+                suruyor = false;
+                js("window.rabiGeriKaydirma&&window.rabiGeriKaydirma.iptal()", null);
+            }
+
+            @Override
+            public void handleOnBackPressed() {
+                if (!suruyor) {
+                    capacitoraDevret();
+                    return;
+                }
+                suruyor = false;
+                // Sayfa dışarı kayıp geri gidiyor (gidecek yer yoksa JS
+                // uygulamadan çıkıyor). Arayüz yoksa (sayfa yüklenmemiş)
+                // sıradan geri tuşu.
+                js(
+                    "(function(){var k=window.rabiGeriKaydirma;if(!k||!k.bitir)return false;k.bitir();return true})()",
+                    sonuc -> {
+                        if (!"true".equals(sonuc)) capacitoraDevret();
+                    }
+                );
+            }
+
+            /** Geri tuşunu bu geri çağrı yokmuş gibi Capacitor'a ilet. */
+            private void capacitoraDevret() {
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+                setEnabled(true);
+            }
+        });
+    }
+
+    private void js(String betik, android.webkit.ValueCallback<String> sonuc) {
+        WebView web = bridge != null ? bridge.getWebView() : null;
+        if (web == null) {
+            if (sonuc != null) sonuc.onReceiveValue("false");
+            return;
+        }
+        web.evaluateJavascript(betik, sonuc);
     }
 
 

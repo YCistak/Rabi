@@ -56,10 +56,12 @@ export function PomodoroEkrani({
   ayar,
   setAyar,
   onSeansBitti,
+  demoVeri = false,
 }: {
   ayar: PomodoroAyar
   setAyar: (guncelleyici: PomodoroAyar | ((onceki: PomodoroAyar) => PomodoroAyar)) => void
   onSeansBitti: (seans: PomodoroSeans) => void
+  demoVeri?: boolean
 }) {
   const [asama, setAsama] = useState<Asama>('calisma')
   const [tur, setTur] = useState(1)
@@ -111,8 +113,8 @@ export function PomodoroEkrani({
   /** Koruma paneli açık mı — kapalı başlıyor, sayaç ekranın asıl işi. */
   const [korumaPaneli, setKorumaPaneli] = useState(false)
   useEffect(() => {
-    if (odakKilidiDesteklenir() && !ayar.kilitTanitimiGoruldu) setKurulumAcik(true)
-  }, [ayar.kilitTanitimiGoruldu])
+    if (!demoVeri && odakKilidiDesteklenir() && !ayar.kilitTanitimiGoruldu) setKurulumAcik(true)
+  }, [ayar.kilitTanitimiGoruldu, demoVeri])
 
   /**
    * Kilit kırıldı mı — bir sonraki başlatmaya kadar ekranda duruyor.
@@ -141,6 +143,7 @@ export function PomodoroEkrani({
 
   // Bileşen sökülürken ses ve ekran kilidi bırakılmalı, yoksa arka planda kalır.
   useEffect(() => {
+    if (demoVeri) return
     return () => {
       calarRef.current?.kapat()
       calarRef.current = null
@@ -148,7 +151,7 @@ export function PomodoroEkrani({
       void pomodoroIptal()
       void odakKilidiniBitir()
     }
-  }, [])
+  }, [demoVeri])
 
   const asamayiBitir = useCallback(() => {
     const calar = calarAl()
@@ -239,6 +242,7 @@ export function PomodoroEkrani({
   }, [bitisZamani, asamayiBitir])
 
   const baslat = () => {
+    if (demoVeri) return
     setKirilanKilit(false)
     setBitenProva(null)
     setSahne(true)
@@ -377,11 +381,12 @@ export function PomodoroEkrani({
   })
   useEffect(() => {
     let birak: () => void = () => {}
+    if (demoVeri) return
     void odakKilidiKapatilinca(() => iptalRef.current()).then((kaldir) => {
       birak = kaldir
     })
     return () => birak()
-  }, [])
+  }, [demoVeri])
 
   /**
    * Kilit ekranındaki bildirimin düğmeleri.
@@ -425,11 +430,12 @@ export function PomodoroEkrani({
   })
   useEffect(() => {
     let birak: () => void = () => {}
+    if (demoVeri) return
     void pomodoroKomutuGelince((veri) => komutRef.current(veri)).then((kaldir) => {
       birak = kaldir
     })
     return () => birak()
-  }, [])
+  }, [demoVeri])
 
   /**
    * Prova seçimi; `null` pomodoro kipine dönüş.
@@ -575,7 +581,7 @@ export function PomodoroEkrani({
         Provaya geçmek TYT'yi seçiyor — boş bir prova kipi olmaz, kitapçık
         seçilmeden sayacın süresi yok.
       */}
-      <div
+      <div data-tanitim="pomodoro-prova"
         className={cn(
           'mb-3 flex rounded-[14px] bg-muted p-1',
           turIcinde && 'pointer-events-none opacity-50',
@@ -597,7 +603,8 @@ export function PomodoroEkrani({
         kaydırmadan görünmeli. 228'deyken Başlat'a kadar bir ekran boyu
         kaydırmak gerekiyordu.
       */}
-      <Kart className="mb-3 flex flex-col items-center rounded-3xl px-4 pt-4 pb-3.5">
+      <div data-tanitim="pomodoro-calisma" style={demoVeri ? { maxHeight: "calc(100dvh - 300px)", overflowY: "auto" } : undefined}>
+      <Kart data-tanitim="pomodoro-sayaci" className="mb-3 flex flex-col items-center rounded-3xl px-4 pt-4 pb-3.5">
         <Sayac kalan={kalan} oran={oran} mola={molaMi} boyut={168} kalinlik={10} altYazi={siradaki} />
         <TurNoktalari tur={tur} turSayisi={ayar.turSayisi} gizli={prova !== null} className="mt-3" />
       </Kart>
@@ -607,7 +614,7 @@ export function PomodoroEkrani({
            ekranda iki ayrı "ne çalışıyorsun" cevabı olamaz. Molada da yok —
            sıradaki çalışma turu başlarken yeniden görünüyor. */
         !molaMi && (
-          <div className={cn('mb-3', turIcinde && 'pointer-events-none opacity-50')}>
+          <div data-tanitim="pomodoro-ders" className={cn('mb-3', turIcinde && 'pointer-events-none opacity-50')}>
             <p className="mb-2 ml-0.5 text-[12.5px] font-extrabold text-muted-foreground">
               HANGİ DERSE?
             </p>
@@ -653,7 +660,7 @@ export function PomodoroEkrani({
         </div>
       )}
 
-      <Kart className="mb-3 p-0">
+      <Kart data-tanitim="pomodoro-ayarlar" className="mb-3 p-0">
         {/* Süreler provada yok: o turda kullanılmıyorlar ve kilitli bir satır,
             kullanılıyormuş izlenimi verirdi. Ayarlar kaybolmuyor, prova
             kapatılınca aynı değerlerle geri geliyor. */}
@@ -771,24 +778,6 @@ export function PomodoroEkrani({
 
           Tarayıcıda görünmüyor: odak kilidi cihaza bağlı tek özellik.
         */}
-        {odakKilidiDesteklenir() && (
-          <>
-            <AyarSatiri
-              simge={<ShieldCheck size={18} aria-hidden />}
-              vurgulu={korumaVar}
-              ad="Odak koruması"
-              not={korumaOzeti}
-              eylem={korumaPaneli ? 'Kapat' : 'Ayarla'}
-              onClick={() => setKorumaPaneli((a) => !a)}
-            />
-            {korumaPaneli && (
-              <div className="acilir-giris border-t border-border">
-                <OdakAyarlari ayar={ayar} setAyar={setAyar} />
-              </div>
-            )}
-          </>
-        )}
-
         {/* Ekran anahtarı her iki kipte de burada: provada da geçerli ve
             Süreler çekmecesine konsaydı 165 dakikalık bir turda ona hiç
             ulaşılamazdı. */}
@@ -807,6 +796,26 @@ export function PomodoroEkrani({
           <Anahtar acik={ayar.ekraniAcikTut} />
         </label>
       </Kart>
+
+      </div>
+      {(odakKilidiDesteklenir() || demoVeri) && <Kart className="mb-3 p-0">
+          <div data-tanitim="pomodoro-kilit">
+            <AyarSatiri
+              simge={<ShieldCheck size={18} aria-hidden />}
+              vurgulu={korumaVar}
+              ad="Odak koruması"
+              not={korumaOzeti}
+              eylem={korumaPaneli ? 'Kapat' : 'Ayarla'}
+              onClick={() => { if (!demoVeri) setKorumaPaneli((a) => !a) }}
+              kilitli={demoVeri}
+            />
+            {korumaPaneli && (
+              <div className="acilir-giris border-t border-border">
+                <OdakAyarlari ayar={ayar} setAyar={setAyar} />
+              </div>
+            )}
+          </div>
+      </Kart>}
 
       {/*
         Başlat sayfanın dibine yapışık: ayarlar uzadıkça düğme kaydırmanın

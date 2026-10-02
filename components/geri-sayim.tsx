@@ -59,7 +59,7 @@ export function GeriSayim({
     sayim.toplamGun > 0 ? Math.round((sayim.gecenGun / sayim.toplamGun) * 100) : 0
 
   return (
-    <section
+    <section data-tanitim="sinav-hedefi"
       aria-label={`${sayim.takvim.yil} YKS geri sayımı`}
       className={cn(
         'golge-kart overflow-hidden rounded-[26px] p-3.5',

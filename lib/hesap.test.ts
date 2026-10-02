@@ -10,7 +10,9 @@ import {
   mezunMu,
   net,
   obpBildirilen,
+  elleObpKilitliMi,
   obpSonucu,
+  yilNotuSonrasiElleObp,
   obpTahmini,
   osymNetleri,
   sinifAdi,
@@ -273,5 +275,34 @@ describe('elle girilen OBP', () => {
   it('elle giriş silinince yıl notlarına dönülüyor', () => {
     expect(obpSonucu([yil(9, 80)], null)?.obp).toBe(400)
     expect(obpSonucu([], null)).toBeNull()
+  })
+})
+
+describe('doğrudan OBP kilidi (mezun)', () => {
+  const yil = (sinif: number, ortalama: number) => ({ id: String(sinif), sinif, ortalama })
+
+  it('hiç yıl sonu notu yokken açık', () => {
+    expect(elleObpKilitliMi([], null)).toBe(false)
+  })
+
+  it('tek bir not bile girilince kilitleniyor', () => {
+    expect(elleObpKilitliMi([yil(9, 80)], null)).toBe(true)
+  })
+
+  it('tüm notlar silinince kilit açılıyor', () => {
+    const notlar = [yil(9, 80), yil(10, 85)]
+    expect(elleObpKilitliMi(notlar, null)).toBe(true)
+    expect(elleObpKilitliMi([], null)).toBe(false)
+  })
+
+  it('eski kayıtta elle sayı doluysa kilitlenmiyor (temizlenebilsin)', () => {
+    expect(elleObpKilitliMi([yil(9, 80)], 450)).toBe(false)
+  })
+
+  it('not girilince elle OBP temizleniyor, geçersiz notta kalıyor', () => {
+    expect(yilNotuSonrasiElleObp(450, 80)).toBeNull()
+    expect(yilNotuSonrasiElleObp(450, null)).toBe(450)
+    expect(yilNotuSonrasiElleObp(450, Number.NaN)).toBe(450)
+    expect(yilNotuSonrasiElleObp(null, 80)).toBeNull()
   })
 })

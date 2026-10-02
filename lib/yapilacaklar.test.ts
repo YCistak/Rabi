@@ -22,6 +22,9 @@ import {
   SURE_SECENEKLERI,
   gorevleriTarihtenItibaren,
   metniKirp,
+  kategoriAdiGoster,
+  ozelKategoriKirp,
+  EN_UZUN_OZEL_KATEGORI,
   simdikiDilim,
   type Gorev,
   type GorevDilimi,
@@ -453,5 +456,58 @@ describe('elle süre', () => {
   it('hazır sürelerde 90 yok, 120 son hazır süre', () => {
     expect(SURE_SECENEKLERI).not.toContain(90)
     expect(SURE_SECENEKLERI.at(-1)).toBe(120)
+  })
+})
+
+describe('özel kategori ("Diğer")', () => {
+  const yeni = (pay: Partial<Parameters<typeof gorevEkle>[1]> = {}) => ({
+    id: 'o1',
+    metin: 'kitap oku',
+    gun: GUN,
+    dilim: 'aksam' as GorevDilimi,
+    kategori: 'diger' as const,
+    renk: 'turuncu' as const,
+    sure: null,
+    ...pay,
+  })
+
+  it('"Diğer"de yazılan ad kaydediliyor ve satırda görünüyor', () => {
+    const [g] = gorevEkle([], yeni({ ozelKategori: '  Kitap  ' }))!
+    expect(g.ozelKategori).toBe('Kitap')
+    expect(kategoriAdiGoster(g)).toBe('Kitap')
+  })
+
+  it('boş ya da boşluk olan ad "Diğer" kalıyor, alan yazılmıyor', () => {
+    const [g] = gorevEkle([], yeni({ ozelKategori: '   ' }))!
+    expect('ozelKategori' in g).toBe(false)
+    expect(kategoriAdiGoster(g)).toBe('Diğer')
+  })
+
+  it('ad sınıra kırpılıyor', () => {
+    const [g] = gorevEkle([], yeni({ ozelKategori: 'a'.repeat(40) }))!
+    expect(g.ozelKategori).toHaveLength(EN_UZUN_OZEL_KATEGORI)
+  })
+
+  it('başka kategoriye ad sızmıyor', () => {
+    const [g] = gorevEkle([], yeni({ kategori: 'soru', ozelKategori: 'Kitap' }))!
+    expect(g.ozelKategori).toBeUndefined()
+    expect(kategoriAdiGoster(g)).toBe('Soru')
+  })
+
+  it('kayıttan okurken korunuyor, eski kayıt (alansız) bozulmuyor', () => {
+    const ham = [
+      { ...gorev({ id: 'a', kategori: 'diger' }), ozelKategori: 'Kitap' },
+      gorev({ id: 'b', kategori: 'diger' }),
+      { ...gorev({ id: 'c', kategori: 'soru' }), ozelKategori: 'Sızan' },
+    ]
+    const [a, b, c] = gorevleriNormalize(ham)
+    expect(a.ozelKategori).toBe('Kitap')
+    expect(b.ozelKategori).toBeUndefined()
+    expect(c.ozelKategori).toBeUndefined()
+  })
+
+  it('ozelKategoriKirp boşta undefined döner', () => {
+    expect(ozelKategoriKirp(undefined)).toBeUndefined()
+    expect(ozelKategoriKirp('  ')).toBeUndefined()
   })
 })

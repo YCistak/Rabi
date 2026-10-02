@@ -78,6 +78,7 @@ export function AnaSayfa({
   onDahaGit,
   onOyunlaraGit,
   acilisSuruyor = false,
+  tanitimdaMi = false,
 }: {
   /** Açılış ya da kurulum geçişindeki tavşan buranın üstüne konarken gizlenir. */
   maskotGizli: boolean
@@ -129,12 +130,14 @@ export function AnaSayfa({
    * kalıyor, yoksa ekranda iki tavşan birden görünüyor.
    */
   acilisSuruyor?: boolean
+  tanitimdaMi?: boolean
 }) {
   const tarih = bugun()
 
+  // Turun hedefleri eski kullanıcının kısayol sırasından bağımsız görünür.
   const gosterilenAraclar = useMemo(
-    () => kisayollar(KARTLAR.filter((kart) => kart.id !== 'istatistik' || istatistikHazir), sonAraclar),
-    [sonAraclar, istatistikHazir],
+    () => kisayollar(KARTLAR.filter((kart) => kart.id !== 'istatistik' || istatistikHazir), tanitimdaMi ? ['pomodoro', 'soru'] : sonAraclar),
+    [sonAraclar, istatistikHazir, tanitimdaMi],
   )
 
   const dersler = useMemo(() => doluDersler(), [])
@@ -214,7 +217,7 @@ export function AnaSayfa({
       {/* Günlük hedef. Yedi günlük seri buranın altında, ayrı kart değil: seri
           "bugünkü hedefi tutturdun mu"nun yedi günlük hâli, ayrı kartta
           dururken iki ayrı ölçü gibi okunuyordu. */}
-      <Kart className="px-4 py-4">
+      <Kart data-tanitim="gunluk-hedef" className="px-4 py-4">
         {/* Halka ve yanındaki satır tıklanabilir: karttaki sayı "bugün kaç soru
             çözdün" ve o sayıyı büyütmenin tek yolu soru takibi ekranı. Kartın
             tamamı değil yalnızca bu satır — altındaki hafta şeridi yedi günü
@@ -349,6 +352,7 @@ export function AnaSayfa({
             ikon={ikon}
             renk={KUTUCUK_RENGI[renk]}
             sira={sira}
+            tanitimHedefi={id === 'pomodoro' ? 'pomodoro-ac' : id === 'soru' ? 'soru-takibi' : undefined}
             onSec={() => onKartAc(id)}
           />
         ))}
@@ -435,6 +439,7 @@ function Kutucuk({
   renk,
   sira,
   onSec,
+  tanitimHedefi,
 }: {
   ad: string
   ikon: string
@@ -443,12 +448,14 @@ function Kutucuk({
   /** Izgaradaki sırası — kutucuklar bu sırayla beliriyor. */
   sira: number
   onSec: () => void
+  tanitimHedefi?: string
 }) {
   const giris = kartGirisi(sira)
 
   return (
     <button
       type="button"
+      data-tanitim={tanitimHedefi}
       onClick={onSec}
       style={giris.style}
       className={cn(

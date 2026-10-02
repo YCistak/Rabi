@@ -94,6 +94,7 @@ export function OyunBankasiEkrani({
   onTestBaslat,
   onKaldir,
   bildir,
+  demoVeri = false,
 }: {
   banka: BankaKaydi[]
   /** Genel testi açar: bankadaki oyunlar karışık sırayla oynatılıyor. */
@@ -101,6 +102,7 @@ export function OyunBankasiEkrani({
   /** Kaydı elle bankadan çıkarır — "bunu öğrendim". */
   onKaldir: (id: string) => void
   bildir: BildirimKolu
+  demoVeri?: boolean
 }) {
   const [suzgec, setSuzgec] = useState<Suzgec>('tumu')
   const dagilim = useMemo(() => bankaDagilimi(banka), [banka])
@@ -113,7 +115,7 @@ export function OyunBankasiEkrani({
         <BosDurum
           simge={<Rabi durum="mutlu" poz="sevinen" boyut={72} />}
           baslik="Banka boş — iyi haber"
-          aciklama="Mini oyunlarda yanlış bildiğin sorular buraya düşer. Genel testte doğru bilince çıkar, öğrendiğine karar verdiklerini de tikle kaldırırsın."
+          aciklama={'Mini oyunlarda yanlış yaptığın sorular burada toplanır. Genel testte doğru cevaplanan sorular buradan kalkar. Öğrendiğinden emin olduğun soruları "Öğrendim" butonuna basarak buradan kaldırabilirsin.'}
         />
       </div>
     )
@@ -121,7 +123,10 @@ export function OyunBankasiEkrani({
 
   return (
     <div>
-      <Baslik />
+      <div data-tanitim={demoVeri ? 'demo-banka' : undefined}>
+        {demoVeri && <p className="mb-2 text-xs font-bold text-primary">TANITIM · 3 ÖRNEK SORU · GEÇİCİ</p>}
+        <Baslik />
+      </div>
 
       {/*
         Düğme kartsız duruyor: bir zamanlar özet cümlesi, oyun turu düğmesi ve
@@ -299,7 +304,7 @@ function KayitKarti({
         </span>
       </div>
 
-      {/* Sağ pay "Çözdüm" tuşunun yeri: bildirim satırının yazısı tuşun altına girmesin. */}
+      {/* Sağ pay "Öğrendim" tuşunun yeri: bildirim satırının yazısı tuşun altına girmesin. */}
       <div className="pr-28">
         <BildirimDugmesi soru={kayit.soru} kol={bildir} />
       </div>
@@ -315,12 +320,12 @@ function KayitKarti({
         type="button"
         onClick={() => setKalkiyor(true)}
         disabled={kalkiyor}
-        aria-label="Çözdüm, bu soruyu bankadan kaldır"
+        aria-label="Öğrendim, bu soruyu bankadan kaldır"
         title="Öğrendim, bankadan kaldır"
         /*
           Bir süre yazısız, yuvarlak bir tikti; ne yaptığı basmadan
-          anlaşılmıyordu. Yazı "Çözdüm": tik bir onay işareti ama kullanıcının
-          verdiği karar soruyu çözmüş olmak.
+          anlaşılmıyordu. Yazı "Öğrendim": tik bir onay işareti ama kullanıcının
+          verdiği karar soruyu öğrenmiş olmak.
         */
         className={cn(
           'absolute bottom-2.5 right-2.5 flex h-9 items-center gap-1.5 rounded-lg px-3 text-[13px] font-extrabold transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
@@ -330,7 +335,7 @@ function KayitKarti({
         )}
       >
         <Check size={16} strokeWidth={3} aria-hidden />
-        Çözdüm
+        Öğrendim
       </button>
     </div>
   )

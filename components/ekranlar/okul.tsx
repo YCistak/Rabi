@@ -4,11 +4,13 @@ import { useMemo, useState } from 'react'
 import { X } from 'lucide-react'
 import type { Ayarlar, OkulYili } from '@/lib/types'
 import {
+  elleObpKilitliMi,
   ILK_SINIF,
   mezunMu,
   netYaz,
   obpSonucu,
   ORTAOGRETIM_YIL_SAYISI,
+  yilNotuSonrasiElleObp,
   yilSayisiYaz,
   type ObpSonucu,
 } from '@/lib/hesap'
@@ -42,6 +44,7 @@ export function OkulEkrani({
     [yillar, ayarlar.elleObp],
   )
   const elleGirildi = ayarlar.elleObp !== null
+  const elleKilitli = elleObpKilitliMi(yillar, ayarlar.elleObp)
 
   // 9'dan bu yılki sınıfa kadar. Henüz okunmamış sınıflar gösterilmiyor.
   // 9'dan bu yılki sınıfa kadar; mezunda dördü birden görünüyor.
@@ -54,6 +57,12 @@ export function OkulEkrani({
 
   const notuYaz = (sinif: number, metin: string) => {
     const temiz = metin.replace(',', '.').trim()
+
+    // Not girilmeye başlandı: eski elle OBP'yi bırak, hesap notlardan gelsin.
+    const girilen = temiz === '' ? null : Number(temiz)
+    if (ayarlar.elleObp !== null && yilNotuSonrasiElleObp(ayarlar.elleObp, girilen) === null) {
+      setAyarlar((onceki) => ({ ...onceki, elleObp: null }))
+    }
 
     setYillar((onceki) => {
       const kalan = onceki.filter((y) => y.sinif !== sinif)
@@ -113,6 +122,9 @@ export function OkulEkrani({
           tekrarı gibi durumlarda o sayı okul ortalamalarından ayrışabiliyor. */}
       {mezun && (
         <ElleObpKarti
+          // Kilit açılıp kapanırken yerel metin sıfırdan başlasın.
+          key={elleKilitli ? 'kilitli' : 'acik'}
+          kilitli={elleKilitli}
           deger={ayarlar.elleObp}
           onDegis={(yeni) => setAyarlar((onceki) => ({ ...onceki, elleObp: yeni }))}
         />
@@ -228,9 +240,11 @@ function YilSatiri({
  * kırpılıyor ve bu ekranda söyleniyor.
  */
 function ElleObpKarti({
+  kilitli,
   deger,
   onDegis,
 }: {
+  kilitli: boolean
   deger: number | null
   onDegis: (yeni: number | null) => void
 }) {
@@ -256,7 +270,9 @@ function ElleObpKarti({
         <div className="min-w-0 flex-1">
           <p className="font-medium">OBP’ni biliyorsan</p>
           <p className="text-xs text-muted-foreground">
-            Doğrudan yaz; yıl notlarından hesaplamam gerekmez.
+            {kilitli
+              ? 'Yıl sonu notlarından hesaplanıyor.'
+              : 'Doğrudan yaz; yıl notlarından hesaplamam gerekmez.'}
           </p>
         </div>
 
@@ -266,10 +282,11 @@ function ElleObpKarti({
           onChange={(e) => yaz(e.target.value)}
           placeholder="—"
           aria-label="Elle girilen OBP"
-          className="rakam h-11 w-24 shrink-0 text-center text-lg font-semibold focus:placeholder:text-transparent"
+          disabled={kilitli}
+          className="rakam h-11 w-24 shrink-0 text-center text-lg font-semibold focus:placeholder:text-transparent disabled:cursor-not-allowed disabled:opacity-50"
         />
 
-        {metin !== '' && (
+        {!kilitli && metin !== '' && (
           <button
             type="button"
             onClick={() => yaz('')}

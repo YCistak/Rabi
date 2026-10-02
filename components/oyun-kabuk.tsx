@@ -204,12 +204,16 @@ function useTurEfektleri(sayac: SayacBilgisi | null) {
 
 export function OyunKabugu({
   oyunId,
+  tanitimBosluk = false,
+  tanitimSayacHedefi,
   baslik,
   sayac,
   onCik,
   onYardim,
   children,
 }: {
+  tanitimBosluk?: boolean
+  tanitimSayacHedefi?: string
   oyunId: OyunId
   baslik: string
   /** Sonuç ekranında `null` — orada süre ve sayaçların yeri yok. */
@@ -232,6 +236,7 @@ export function OyunKabugu({
       {/* Sarsıntı bütün oyun alanına: soru kartını ayrıca sarmak 18 oyunun
           yerleşimine dokunmak demekti, oysa yanlış olan cevap değil o an. */}
       <div
+        style={tanitimBosluk ? { paddingBottom: "calc(128px + var(--guvenli-alt))" } : undefined}
         className={cn(
           'guvenli-alt mx-auto flex w-full max-w-md flex-1 flex-col overflow-y-auto px-4 pb-3 pt-[calc(0.9rem+var(--guvenli-ust))]',
           sarsiliyor && 'oyun-sarsinti',
@@ -261,7 +266,7 @@ export function OyunKabugu({
         {sayac && sayac.toplam <= 0 && <ModSeridi mod={sayac.mod} />}
 
         {sayac && sayac.toplam > 0 && (
-          <>
+          <div data-tanitim={tanitimSayacHedefi}>
             <div className="relative mt-4 flex flex-none items-center gap-3">
               {/* Nabız halkayı saran kapta: `Halka` bir SVG çiziyor ve onu
                   döndürmek yerine kabını ölçeklemek çizimi bozmuyor. */}
@@ -277,7 +282,7 @@ export function OyunKabugu({
                     className="rakam font-display text-[17px] font-extrabold"
                     style={{ color: sureRengi(sayac.kalan, sayac.toplam) }}
                   >
-                    {sayac.kalan}
+                    {tanitimSayacHedefi ? `${Math.floor(sayac.kalan / 60)}:${String(sayac.kalan % 60).padStart(2, '0')}` : sayac.kalan}
                   </span>
                 </Halka>
               </span>
@@ -299,7 +304,7 @@ export function OyunKabugu({
             </div>
 
             <SayacSeridi sayac={sayac} />
-          </>
+          </div>
         )}
 
         {sayac && sayac.toplam <= 0 && <SayacSeridi sayac={sayac} />}
@@ -607,7 +612,9 @@ export function TurSonu({
   onTekrar,
   onCik,
   children,
+  tanitimHedefi,
 }: {
+  tanitimHedefi?: string
   oyunId: OyunId
   dogru: number
   yanlis: number
@@ -718,6 +725,7 @@ export function TurSonu({
           turun ortasından bir karede beliriyordu ve oyuncu ekranın değiştiğini
           değil, oyunun kaybolduğunu görüyordu. */}
       <div
+        data-tanitim={tanitimHedefi}
         style={kartGirisi(0).style}
         className={cn(
           'golge-kart flex-none rounded-[20px] bg-card px-4 pb-4 pt-3.5',

@@ -34,7 +34,7 @@ const BASLANGIC = 480
 /** Sayımın adımları: üçten geriye, sonda söz. */
 const ADIMLAR = ['3', '2', '1', 'Başla!'] as const
 
-export function GeriSayim({ onBitti }: { onBitti: () => void }) {
+export function GeriSayim({ onBitti, tanitimHedefi }: { onBitti: () => void; tanitimHedefi?: string }) {
   const [sira, setSira] = useState(0)
 
   useEffect(() => {
@@ -68,6 +68,7 @@ export function GeriSayim({ onBitti }: { onBitti: () => void }) {
         // Anahtar her adımda değişiyor: aynı öğe kalsaydı animasyon yalnızca
         // ilk rakamda oynardı.
         key={sira}
+        data-tanitim={tanitimHedefi}
         aria-hidden
         className={
           sonMu
