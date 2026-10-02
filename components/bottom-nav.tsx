@@ -137,6 +137,8 @@ export function BottomNav({
   const parmakIndi = (e: React.PointerEvent<HTMLUListElement>) => {
     if (!camMi() || !e.isPrimary) return
     parmak.current = { id: e.pointerId, baslangic: e.clientX, suruklendi: false }
+    // Basılı tutunca mercek büyüyor (kaydırmadan da).
+    menuRef.current?.setAttribute('data-basili', '')
     kilitBirak()
     kilidiAc.current = geriKaydirmayiKilitle()
   }
@@ -167,6 +169,7 @@ export function BottomNav({
     if (!p || p.id !== e.pointerId) return
     parmak.current = null
     kilitBirak()
+    menuRef.current?.removeAttribute('data-basili')
     if (!p.suruklendi) return
     // Yakalama bitince tarayıcı bir `click` daha yollayabiliyor; sürüklemenin
     // sonucu zaten seçildi, o tıklama ikinci kez seçmesin.
@@ -182,6 +185,7 @@ export function BottomNav({
   const parmakIptal = () => {
     kilitBirak()
     parmak.current = null
+    menuRef.current?.removeAttribute('data-basili')
     setSurukleme(null)
   }
 
