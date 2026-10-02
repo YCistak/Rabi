@@ -10,6 +10,9 @@ import {
   GOREV_RENKLERI,
   KATEGORILER,
   KATEGORI_ADI,
+  EN_UZUN_OZEL_KATEGORI,
+  kategoriAdiGoster,
+  ozelKategoriKirp,
   dilimGorevleri,
   dilimeYerVarMi,
   gorevEkle,
@@ -120,6 +123,7 @@ export function YapilacaklarEkrani({
     metin: string
     dilim: GorevDilimi
     kategori: GorevKategorisi
+    ozelKategori?: string
     renk: GorevRengi
     sure: number | null
   }) => {
@@ -356,7 +360,7 @@ function GorevSatiri({
           style={{ color: renk }}
         >
           <span aria-hidden className="size-1.5 rounded-full" style={{ background: renk }} />
-          {KATEGORI_ADI[gorev.kategori]}
+          {kategoriAdiGoster(gorev)}
           {/* Süre kategorinin satırında: iş adının satırı tek satırlık ve
               genişliği sayılı (`EN_UZUN_GOREV`), oraya sığmazdı. */}
           {gorev.sure !== null && <span className="rakam">· {sureYaz(gorev.sure)}</span>}
@@ -442,6 +446,7 @@ function EklemeSayfasi({
     metin: string
     dilim: GorevDilimi
     kategori: GorevKategorisi
+    ozelKategori?: string
     renk: GorevRengi
     sure: number | null
   }) => void
@@ -456,6 +461,10 @@ function EklemeSayfasi({
   const [elle, setElle] = useState('')
   const sure = elle !== '' ? elleSure(elle) : hazirSure
   const [kategori, setKategori] = useState<GorevKategorisi | null>(null)
+  // "Diğer"de yazılan ad. Boş bırakılırsa görev "Diğer" kalıyor (engellemek
+  // yerine): "Diğer" zaten geçerli bir kategori, zorunlu kılmak seçeneği
+  // seçeni bir şey uydurmaya itmek olurdu.
+  const [ozelKategori, setOzelKategori] = useState('')
   const [renk, setRenk] = useState<GorevRengi | null>(null)
   const [hata, setHata] = useState(false)
 
@@ -469,7 +478,14 @@ function EklemeSayfasi({
       setHata(true)
       return
     }
-    onKaydet({ metin: yazilan, dilim, kategori, renk, sure })
+    onKaydet({
+      metin: yazilan,
+      dilim,
+      kategori,
+      ozelKategori: kategori === 'diger' ? ozelKategoriKirp(ozelKategori) : undefined,
+      renk,
+      sure,
+    })
   }
 
   return (
@@ -575,6 +591,16 @@ function EklemeSayfasi({
             </SecimDugmesi>
           ))}
         </div>
+        {kategori === 'diger' && (
+          <input
+            value={ozelKategori}
+            onChange={(olay) => setOzelKategori(olay.target.value.slice(0, EN_UZUN_OZEL_KATEGORI))}
+            maxLength={EN_UZUN_OZEL_KATEGORI}
+            placeholder="Kendi kategorini yaz (isteğe bağlı)"
+            aria-label="Özel kategori adı"
+            className="mt-2 h-11 w-full rounded-[14px] border border-input bg-background px-3.5 text-[14px] font-bold outline-none transition placeholder:font-semibold placeholder:text-muted-foreground/70 focus-visible:border-primary-parlak focus-visible:bg-card"
+          />
+        )}
 
         <AlanBasligi baslik="Renk" hata={hata && renk === null ? 'Bir renk seç' : undefined} />
         <div

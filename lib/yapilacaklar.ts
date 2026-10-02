@@ -131,6 +131,14 @@ export type Gorev = {
   gun: string
   dilim: GorevDilimi
   kategori: GorevKategorisi
+  /**
+   * "Diğer" seçilince kullanıcının yazdığı kendi kategori adı.
+   *
+   * Yalnızca `kategori === 'diger'` iken anlamlı; boşsa alan hiç yazılmıyor ve
+   * görev "Diğer" olarak görünüyor. Alan isteğe bağlı olduğu için eski kayıtlar
+   * (alan yok) olduğu gibi geçerli, taşıma gerekmiyor.
+   */
+  ozelKategori?: string
   renk: GorevRengi
   /**
    * Ortalama kaç dakika süreceği — kullanıcının tahmini.
@@ -217,6 +225,27 @@ export const EN_COK_GOREV = 10
  */
 export const EN_UZUN_GOREV = 24
 
+/**
+ * Özel kategori adının en fazla karakteri.
+ *
+ * Ad, görev satırında kategorinin yerinde büyük harfle ve süreyle yan yana
+ * (`TEKRAR · 45 dk`) çiziliyor; satır tek ve dar. On dört karakter büyük
+ * harfle de süreyle birlikte telefonda sığıyor.
+ */
+export const EN_UZUN_OZEL_KATEGORI = 14
+
+/** Özel kategori adını sınıra indirir; boşluklar atılır, boş kalırsa `undefined`. */
+export function ozelKategoriKirp(metin: string | undefined): string | undefined {
+  const temiz = (metin ?? '').trim().slice(0, EN_UZUN_OZEL_KATEGORI).trim()
+  return temiz === '' ? undefined : temiz
+}
+
+/** Satırda görünen kategori adı: "Diğer"de kullanıcının yazdığı, yoksa "Diğer". */
+export function kategoriAdiGoster(gorev: Pick<Gorev, 'kategori' | 'ozelKategori'>): string {
+  if (gorev.kategori === 'diger') return ozelKategoriKirp(gorev.ozelKategori) ?? KATEGORI_ADI.diger
+  return KATEGORI_ADI[gorev.kategori]
+}
+
 /** Görev adını sınıra indirir ve baştaki/sondaki boşluğu atar. */
 export function metniKirp(metin: string): string {
   return metin.trim().slice(0, EN_UZUN_GOREV)
@@ -278,6 +307,9 @@ export function gorevleriNormalize(ham: unknown): Gorev[] {
       kategori: KATEGORILER.includes(g.kategori as GorevKategorisi)
         ? (g.kategori as GorevKategorisi)
         : 'diger',
+      ...(g.kategori === 'diger' && ozelKategoriKirp(g.ozelKategori)
+        ? { ozelKategori: ozelKategoriKirp(g.ozelKategori) }
+        : {}),
       renk: RENK_KIMLIKLERI.includes(g.renk as string) ? (g.renk as GorevRengi) : 'turuncu',
       sure:
         typeof g.sure === 'number' && Number.isFinite(g.sure) && g.sure > 0
@@ -351,7 +383,13 @@ export function gorevEkle(
   const metin = metniKirp(yeni.metin)
   if (metin === '') return null
   if (!dilimeYerVarMi(gorevler, yeni.gun, yeni.dilim)) return null
-  return [...gorevler, { ...yeni, metin, bitti: false, yildiz: false }]
+  const { ozelKategori: ham, ...gerisi } = yeni
+  // Özel ad yalnızca "Diğer"de saklanıyor; başka kategoriye sızmasın.
+  const ozelKategori = yeni.kategori === 'diger' ? ozelKategoriKirp(ham) : undefined
+  return [
+    ...gorevler,
+    { ...gerisi, ...(ozelKategori ? { ozelKategori } : {}), metin, bitti: false, yildiz: false },
+  ]
 }
 
 export function gorevSil(gorevler: readonly Gorev[], id: string): Gorev[] {
