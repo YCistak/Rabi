@@ -829,7 +829,12 @@ export function PomodoroEkrani({
         Başlat sayfanın dibine yapışık: ayarlar uzadıkça düğme kaydırmanın
         sonuna gitmesin. Alt menü hâlâ altta, çubuk onun hemen üstünde duruyor.
       */}
-      <div className="sticky bottom-[calc(4.5rem+var(--guvenli-alt))] -mx-4 bg-background/95 px-4 pt-2 pb-3">
+      {/* `data-yuzen`: iOS'taki yerli engel listesi bunun altına kaymamalı
+          (`ios-odak-ayarlari.tsx`). */}
+      <div
+        data-yuzen
+        className="sticky bottom-[calc(4.5rem+var(--guvenli-alt))] -mx-4 bg-background/95 px-4 pt-2 pb-3"
+      >
         <Buton className="h-[52px] w-full rounded-2xl text-[17px] shadow-[0_8px_18px_rgba(217,98,47,0.26)]" onClick={baslat}>
           <Play size={20} fill="currentColor" aria-hidden />
           {turIcinde ? 'Devam et' : 'Başlat'}

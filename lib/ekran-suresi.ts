@@ -32,7 +32,16 @@ type Eklenti = {
   uygulamaSec(): Promise<{ secimSayisi: number; kaydedildi: boolean }>
   kilitle(secenekler: { kilitAcik: boolean; bitisZamani: number }): Promise<{ kilitlendi: boolean }>
   kaldir(): Promise<void>
+  listeGoster(yer: ListeYeri): Promise<{ satir: number }>
+  listeGizle(): Promise<void>
+  listeKaldir(): Promise<void>
 }
+
+/**
+ * Engelli uygulama listesinin sayfadaki yeri. `x`/`y` belge koordinatında
+ * (kaydırmadan bağımsız), `ust`/`alt` ekranda listenin görünebileceği bant.
+ */
+export type ListeYeri = { x: number; y: number; genislik: number; ust: number; alt: number }
 
 const YOK: EkranSuresiDurumu = { destek: false, izin: 'yok', secimSayisi: 0 }
 
@@ -82,6 +91,38 @@ export async function ekranSuresiKilitle(kilitAcik: boolean, bitisZamani: number
     return (await eklenti.kilitle({ kilitAcik, bitisZamani })).kilitlendi
   } catch {
     return false
+  }
+}
+
+/**
+ * Engellenen uygulamaların yerli listesi (yerli taraftaki `listeGoster`ın
+ * yorumunda neden yerli olduğu yazıyor). Hata yutuluyor: liste yalnızca
+ * gösterim, kilidin kendisi ona bağlı değil.
+ */
+export async function ekranSuresiListeGoster(yer: ListeYeri): Promise<void> {
+  if (!ekranSuresiVar()) return
+  try {
+    await eklenti.listeGoster(yer)
+  } catch {
+    // Liste çizilemedi; kilit yine çalışıyor.
+  }
+}
+
+export async function ekranSuresiListeGizle(): Promise<void> {
+  if (!ekranSuresiVar()) return
+  try {
+    await eklenti.listeGizle()
+  } catch {
+    // Liste zaten yok.
+  }
+}
+
+export async function ekranSuresiListeKaldir(): Promise<void> {
+  if (!ekranSuresiVar()) return
+  try {
+    await eklenti.listeKaldir()
+  } catch {
+    // Liste zaten yok.
   }
 }
 

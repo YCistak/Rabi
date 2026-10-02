@@ -227,6 +227,7 @@ export function BottomNav({
       geçişini telefonda dene.
     */
     <nav
+      data-yuzen
       ref={menuRef}
       data-surukleniyor={surukleme ? '' : undefined}
       className="alt-menu guvenli-alt fixed inset-x-0 bottom-0 z-40 rounded-t-[26px] border-t border-border bg-card shadow-[0_-6px_22px_rgba(54,33,112,0.12)]"
