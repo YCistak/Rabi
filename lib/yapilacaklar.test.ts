@@ -12,6 +12,7 @@ import {
   gorevIsaretle,
   gorevRengi,
   gorevSil,
+  gorevDuzenle,
   gorevYildizla,
   gorevleriNormalize,
   gununGorevleri,
@@ -290,6 +291,39 @@ describe('işaretleme, yıldız ve silme', () => {
   it('bilinmeyen kimlik listeyi bozmaz', () => {
     expect(gorevIsaretle(liste, 'yok')).toEqual(liste)
     expect(gorevSil(liste, 'yok')).toEqual(liste)
+  })
+})
+
+describe('gorevDuzenle', () => {
+  const liste = [gorev({ id: 'a', yildiz: true, bitti: true }), gorev({ id: 'b' })]
+  const duzen = { metin: '  yeni ad  ', kategori: 'tekrar', renk: 'mavi', sure: 45 } as const
+
+  it('ad, kategori, renk ve süreyi değiştirir; gün, dilim ve durum yerinde kalır', () => {
+    const sonuc = gorevDuzenle(liste, 'a', duzen)!
+    expect(sonuc[0]).toMatchObject({
+      id: 'a',
+      metin: 'yeni ad',
+      kategori: 'tekrar',
+      renk: 'mavi',
+      sure: 45,
+      gun: GUN,
+      dilim: 'sabah',
+      yildiz: true,
+      bitti: true,
+    })
+    expect(sonuc[1]).toEqual(liste[1])
+  })
+
+  it("özel ad yalnızca Diğer'de kalır", () => {
+    const diger = gorevDuzenle(liste, 'b', { ...duzen, kategori: 'diger', ozelKategori: 'Spor' })!
+    expect(diger[1].ozelKategori).toBe('Spor')
+    const geri = gorevDuzenle(diger, 'b', duzen)!
+    expect(geri[1]).not.toHaveProperty('ozelKategori')
+  })
+
+  it('boş metinde ya da bilinmeyen kimlikte null', () => {
+    expect(gorevDuzenle(liste, 'a', { ...duzen, metin: '   ' })).toBeNull()
+    expect(gorevDuzenle(liste, 'yok', duzen)).toBeNull()
   })
 })
 
