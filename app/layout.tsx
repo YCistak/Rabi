@@ -149,6 +149,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           telefonlar 360–430, 8" tabletler 533'ten başlıyor. Ölçek kısa
           kenardan hesaplanıyor ki döndürünce yazı boyutu değişmesin.
 
+          iPad'de ölçek 1,2 ile sınırlı (`IOS_EN_COK`); gerekçe betikte. Android
+          tablet kısa kenar / 430 ölçeğinde kalıyor.
+
           Hidrasyondan önce, satır içi: React beklenirse ilk kare dar
           düzende çizilip sonra zıplıyor.
         */}
@@ -160,9 +163,22 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   // yüksekliği tablet sayılıp her şey 2 kat büyüyordu. DevTools cihaz modu
   // dokunmatik taklit ettiği için orada tablet emülasyonu çalışmaya devam eder.
   var masaustu = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  // iPad'de ölçek tavanı. Tavan olmadan 820 pt'lik iPad 1,9 kat büyüyordu:
+  // telefonun iki katı, her şey devasa. 1,2'de içerik okunaklı kalıyor ve
+  // max-w-md sütun ekranın ortasında duruyor, yanlarda boşluk kalıyor.
+  // Android tablete dokunulmadı: tavan yalnızca iOS'ta (Capacitor platformu
+  // ya da iPadOS Safari'nin 'Macintosh' + dokunmatik imzası).
+  var ios = false;
+  try {
+    var pl = window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlatform();
+    ios = pl === 'ios' || /iPad/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  } catch (e) {}
+  var IOS_EN_COK = 1.2;
   function uygula(){
     var kisa = Math.min(window.innerWidth, window.innerHeight);
-    document.documentElement.style.setProperty('--olcek', masaustu || kisa < ESIK ? '1' : String(kisa / TELEFON_GENISLIGI));
+    var olcek = kisa / TELEFON_GENISLIGI;
+    if (ios) olcek = Math.min(olcek, IOS_EN_COK);
+    document.documentElement.style.setProperty('--olcek', masaustu || kisa < ESIK ? '1' : String(olcek));
   }
   uygula();
   window.addEventListener('resize', uygula);
