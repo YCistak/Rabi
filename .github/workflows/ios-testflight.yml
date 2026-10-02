@@ -91,46 +91,18 @@ jobs:
           done
           printf '%s\n' "$ANAHTAR" > "$RUNNER_TEMP/AuthKey.p8"
 
-      # Cihazı Admin API anahtarıyla kaydetmek. Arşivin geliştirme imzası
-      # hesapta kayıtlı bir iPhone istiyor ve portala giren herkesin cihaz
-      # ekleme yetkisi yok; anahtarın var. Cihaz zaten kayıtlıysa (409) geçiyor.
-      - name: Cihazı kaydet
-        if: ${{ github.event.inputs.cihaz_udid != '' }}
+      # Hesabı API'yle hazırla: istenirse cihazı kaydet, üç kimlikte Family
+      # Controls'ü açık tut. Ayrıntı ve gerekçe betiğin başında.
+      - name: Apple hesabını hazırla
         env:
           ANAHTAR_KIMLIGI: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           YAYINCI: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          UDID: ${{ github.event.inputs.cihaz_udid }}
-          AD: ${{ github.event.inputs.cihaz_adi }}
+          CIHAZ_UDID: ${{ github.event.inputs.cihaz_udid }}
+          CIHAZ_ADI: ${{ github.event.inputs.cihaz_adi }}
         run: |
           python3 -m venv "$RUNNER_TEMP/py"
           "$RUNNER_TEMP/py/bin/pip" install -q pyjwt cryptography
-          "$RUNNER_TEMP/py/bin/python" - <<'PY'
-          import json, os, time, urllib.request, urllib.error, jwt
-          anahtar = open(os.path.join(os.environ['RUNNER_TEMP'], 'AuthKey.p8')).read()
-          simdi = int(time.time())
-          belirtec = jwt.encode(
-              {'iss': os.environ['YAYINCI'], 'iat': simdi, 'exp': simdi + 600,
-               'aud': 'appstoreconnect-v1'},
-              anahtar, algorithm='ES256',
-              headers={'kid': os.environ['ANAHTAR_KIMLIGI'], 'typ': 'JWT'})
-          govde = json.dumps({'data': {'type': 'devices', 'attributes': {
-              'name': os.environ['AD'], 'platform': 'IOS',
-              'udid': os.environ['UDID'].strip()}}}).encode()
-          istek = urllib.request.Request(
-              'https://api.appstoreconnect.apple.com/v1/devices', data=govde,
-              headers={'Authorization': 'Bearer ' + belirtec,
-                       'Content-Type': 'application/json'})
-          try:
-              urllib.request.urlopen(istek)
-              print('Cihaz kaydedildi')
-          except urllib.error.HTTPError as h:
-              metin = h.read().decode()
-              if h.code == 409:
-                  print('Cihaz zaten kayıtlı ya da kabul edilmedi:', metin)
-              else:
-                  print('::error::Cihaz kaydı başarısız', h.code, metin)
-                  raise SystemExit(1)
-          PY
+          "$RUNNER_TEMP/py/bin/python" scripts/app-store-hazirla.py
 
       # Arşiv **otomatik imzayla** (geliştirme) alınıyor, dışa aktarma onu
       # App Store dağıtım imzasıyla yeniden imzalıyor — Xcode'un kendi akışı.
