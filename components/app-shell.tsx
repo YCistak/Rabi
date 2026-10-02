@@ -773,13 +773,12 @@ function RabiUygulamasi() {
   }, [geriGit])
 
   // iOS'ta geri tuşu yok, soldan kaydırma var: hareketi yerli taraf tanıyıp
-  // (`ios/App/App/AnaDenetleyici.swift`) hem parmak hareket ederken hem
-  // bırakılınca buraya haber veriyor; sayfa parmağı izleyip kayarak çıkıyor
-  // (`lib/geri-kaydirma.ts`). Android'den tek farkı gidecek yer kalmayınca
-  // uygulamanın kapanmaması — iOS'ta uygulama kendini kapatmaz, Apple bunu
-  // çökme gibi sayıyor. Android'de kanca hiçbir şey yapmaz.
+  // (`ios/App/App/AnaDenetleyici.swift`) parmak kalkınca buraya haber
+  // veriyor (`lib/geri-kaydirma.ts`). Android'den tek farkı gidecek yer
+  // kalmayınca uygulamanın kapanmaması — iOS'ta uygulama kendini kapatmaz,
+  // Apple bunu çökme gibi sayıyor. Android'de kanca hiçbir şey yapmaz.
   useEffect(() => {
-    // Yalnızca iOS'ta alt ekranlar sağdan kayarak açılıyor (globals.css).
+    // `layout.tsx`teki satır içi betiğin yedeği (iOS'a özel CSS buna bakıyor).
     if (iosMu()) document.documentElement.dataset.platform = 'ios'
   }, [])
 

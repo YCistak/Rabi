@@ -105,31 +105,31 @@ type Aile = { zemin: string; yazi: string; ok: string }
 
 /** Kart başlığındaki satır kırma — iki kelimelik adlar iki satıra iniyor. */
 const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
-  yazim: ['Yazım', 'Ustası'],
+  yazim: ['Yazım', 'Kuralları'],
   noktalama: ['Noktalama', 'İşaretleri'],
   ses: ['Ses', 'Olayları'],
   oge: ['Cümlenin', 'Ögeleri'],
-  soz: ['Deyim ve', 'Atasözü'],
-  islem: ['Zihinden', 'İşlem'],
+  soz: ['Deyimler ve', 'Atasözleri'],
+  islem: ['Dört', 'İşlem'],
   bolunme: ['Bölünebilme', 'Kuralları'],
-  aci: ['Açı', 'Tamamlama'],
+  aci: ['Üçgende', 'Açılar'],
   ucgen: ['Özel', 'Üçgenler'],
-  edebiyat: ['Edebiyat', 'Eşleştirme'],
-  harita: ['Harita', 'Avı'],
-  iklim: ['İklim', 'Kuşakları'],
-  izohips: ['İzohips', 'Okuma'],
-  antlasma: ['Antlaşma', 'Eşleştirme'],
-  kavram: ['Kavram', 'Eşleştirme'],
-  anlatim: ['Anlatım', 'Bozukluğu'],
-  koklu: ['Köklü Sayı', 'Aralığı'],
-  ortak: ['Ortak', 'Özellikler'],
-  siniflandirma: ['Canlıları', 'Sınıflandır'],
-  hucre: ['Organel', 'Kartı'],
-  sirala: ['Zaman', 'Şeridi'],
-  tuzak: ['Kural', 'Tuzağı'],
-  periyodik: ['Periyodik', 'Tablo Avı'],
-  formul: ['Formül', 'Eşleştirme'],
-  tepkime: ['Tepkime', 'Türü'],
+  edebiyat: ['Eserler ve', 'Yazarlar'],
+  harita: ["Türkiye'nin", 'İlleri'],
+  iklim: ['İklim', 'Tipleri'],
+  izohips: ['İzohips', 'Haritaları'],
+  antlasma: ['Tarihî', 'Antlaşmalar'],
+  kavram: ['Tarih', 'Kavramları'],
+  anlatim: ['Anlatım', 'Bozuklukları'],
+  koklu: ['Köklü', 'Sayılar'],
+  ortak: ['Canlıların', 'Ortak Özellikleri'],
+  siniflandirma: ['Canlıların', 'Sınıflandırılması'],
+  hucre: ['Hücre ve', 'Organeller'],
+  sirala: ['Tarihî', 'Kronoloji'],
+  tuzak: ['Sayılar', 've Cebir'],
+  periyodik: ['Periyodik', 'Tablo'],
+  formul: ['Kimyasal', 'Formüller'],
+  tepkime: ['Tepkime', 'Türleri'],
   trigonometri: ['Trigonometrik', 'Oranlar'],
 }
 
@@ -924,7 +924,7 @@ function OyunKarti({
         'relative rounded-[22px] p-4 text-left transition active:brightness-[0.97]',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         aile.zemin,
-        genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[186px] flex-col',
+        genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[168px] flex-col',
         giris.className,
       )}
     >
@@ -955,9 +955,6 @@ function OyunKarti({
           {ustSatir}
           {genis ? ' ' : <br />}
           {altSatir}
-        </span>
-        <span className="mt-1.5 block text-[12.5px] font-medium leading-snug text-foreground/60">
-          {oyun.kisaAciklama}
         </span>
       </span>
 
@@ -1010,7 +1007,7 @@ function BolumKarti({
         'relative rounded-[22px] p-4 text-left transition active:brightness-[0.97]',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         aile.zemin,
-        genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[186px] flex-col',
+        genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[168px] flex-col',
         giris.className,
       )}
     >
@@ -1024,9 +1021,6 @@ function BolumKarti({
       <span className={cn('min-w-0', genis ? 'flex-1' : 'mt-2.5')}>
         <span className="block font-display text-[16.5px] font-extrabold leading-[1.15] tracking-tight text-foreground">
           {bolum.ad}
-        </span>
-        <span className="mt-1.5 block text-[12.5px] font-medium leading-snug text-foreground/60">
-          {bolum.aciklama}
         </span>
         <span className={cn('mt-1.5 block text-[11.5px] font-bold', aile.yazi)}>
           {oyunSayisi} oyun

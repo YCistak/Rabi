@@ -115,7 +115,15 @@ export type OyunTanimi = {
   ders: DersId
   /** Varsa dersin hangi bölümünün altında duruyor. */
   bolum?: BolumId
+  /**
+   * Konunun adı, oyunun değil ("Yazım Kuralları", "Periyodik Tablo"). Bir
+   * süre "Doğru Yazımı Bul", "Harita Avı" gibi oyun adlarıydı ve kart ile
+   * tanıtım iki ayrı ad taşıyordu; öğrenci kartta hangi konuya çalışacağını
+   * arıyor. Kart iki satıra bölünmüş hâlini `BASLIK_SATIRLARI`ndan
+   * (`oyunlar.tsx`) okuyor — ikisi birlikte değişir.
+   */
   ad: string
+  /** Yalnızca tur ayarları ekranında; kartta açıklama yok, ad yetiyor. */
   kisaAciklama: string
   ikon: string
   /**
@@ -145,7 +153,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'yazim',
     ders: 'turkce',
-    ad: 'Doğru Yazımı Bul',
+    ad: 'Yazım Kuralları',
     kisaAciklama: 'Doğru yazılışı yakala',
     ikon: '✍️',
     ozet: `İki yazılıştan **doğru** olana dokunursun. Tur bitince karıştırdıkların kuralıyla birlikte listelenir.`,
@@ -185,7 +193,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'soz',
     ders: 'turkce',
-    ad: 'Deyim ve Atasözü',
+    ad: 'Deyimler ve Atasözleri',
     kisaAciklama: 'Anlamını doğru şıkta bul',
     ikon: '💬',
     ozet: `Gelen deyim ya da atasözünün anlamını dört şıktan seçersin. Tur bitince yanlış bildiklerin anlamlarıyla listelenir.`,
@@ -193,7 +201,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'bolunme',
     ders: 'matematik',
-    ad: 'Bölünebilme',
+    ad: 'Bölünebilme Kuralları',
     kisaAciklama: 'Bölünür mü, kalan kaç?',
     ikon: '➗',
     ozet: `Gelen sayı için ya **kalanı** tuş takımıyla yazarsın ya da **bölünür mü** diye cevaplarsın. Hangi bölenlerin (2–10) geleceğini aşağıdan seçebilirsin.`,
@@ -201,7 +209,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'islem',
     ders: 'matematik',
-    ad: 'Zihinden İşlem',
+    ad: 'Dört İşlem',
     kisaAciklama: 'İşlem hızını aç, sonucu tuşla yaz',
     ikon: '🧮',
     ozet: `Ekrana gelen işlemin sonucunu tuş takımıyla yazıp onaylarsın; sonuçlar hep tam sayı. Hangi işlemlerle çalışacağını aşağıdan seçersin.`,
@@ -210,7 +218,7 @@ export const OYUNLAR: OyunTanimi[] = [
     id: 'aci',
     ders: 'matematik',
     bolum: 'geometri',
-    ad: 'Açı Tamamlama',
+    ad: 'Üçgende Açılar',
     kisaAciklama: 'Şekildeki x kaç derece?',
     ikon: '📐',
     ozet: `Şekilde **x** ile gösterilen açının kaç derece olduğunu tuş takımıyla yazarsın. Şekiller ölçekli — takıldığında bakmak işe yarar.`,
@@ -238,7 +246,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'edebiyat',
     ders: 'turkce',
-    ad: 'Edebiyat Eşleştirme',
+    ad: 'Eserler ve Yazarlar',
     kisaAciklama: 'Eseri yazarıyla eşleştir',
     ikon: '📚',
     ozet: `Üstteki esere, sonra alttaki yazarına dokunursun — sıra fark etmez. Altı çift bitince yeni altılı gelir.`,
@@ -246,7 +254,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'harita',
     ders: 'cografya',
-    ad: 'Türkiye İllerini Bul',
+    ad: "Türkiye'nin İlleri",
     kisaAciklama: 'İli haritada bul',
     ikon: '🗺️',
     ozet: `**“Ankara’yı bul”** dendiğinde ili haritada gösterirsin; il yanıp söndüğünde adını dört şıktan seçersin. Harita iki parmakla yakınlaştırılabilir.`,
@@ -254,7 +262,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'iklim',
     ders: 'cografya',
-    ad: 'Haritadan İklimi Bul',
+    ad: 'İklim Tipleri',
     kisaAciklama: 'Bu bölgede hangi iklim görülür?',
     ikon: '🌍',
     ozet: `Dünya haritasında bir bölge işaretlenir, sen orada görülen iklim tipini dört şıktan seçersin. Haritadaki kesikli çizgiler dönenceler ve kutup dairesi — iklimin çoğu **enlemden** okunur.`,
@@ -262,7 +270,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'izohips',
     ders: 'cografya',
-    ad: 'İzohips Okuma',
+    ad: 'İzohips Haritaları',
     kisaAciklama: 'Daire içindeki yer şekli hangisi?',
     ikon: '⛰️',
     ozet: `Eş yükselti eğrileriyle çizilmiş haritada daire içine alınan yerdeki şekli dört şıktan seçersin. Eğrilerin üstündeki **sayılara** bak: tepe ile kapalı çukurun çizimi aynı, sayıları ters.`,
@@ -270,7 +278,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'antlasma',
     ders: 'tarih',
-    ad: 'Antlaşma Eşleştirme',
+    ad: 'Tarihî Antlaşmalar',
     kisaAciklama: 'Bu madde hangi antlaşmadan?',
     ikon: '📜',
     ozet: `Üstteki maddeyi ait olduğu antlaşmayla eşleştirirsin — sıra fark etmez. El bitince yenisi gelir.`,
@@ -278,7 +286,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'kavram',
     ders: 'tarih',
-    ad: 'Kavram Eşleştirme',
+    ad: 'Tarih Kavramları',
     kisaAciklama: 'Kavramı tanımıyla eşleştir',
     ikon: '🧭',
     ozet: `Soldaki kavrama, sonra sağdaki tanımına dokunursun. Tanımların birkaçının karşılığı yok; tahta bitince açıkta kalırlar.`,
@@ -286,7 +294,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'anlatim',
     ders: 'turkce',
-    ad: 'Anlatım Bozukluğu',
+    ad: 'Anlatım Bozuklukları',
     kisaAciklama: 'Cümle bozuk — sebebi hangisi?',
     ikon: '🚧',
     ozet: `Gelen **bozuk** cümlede bozukluğun sebebini dört şıktan seçersin — cümleyi düzeltmen değil, hatayı adlandırman isteniyor.`,
@@ -294,7 +302,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'koklu',
     ders: 'matematik',
-    ad: 'Köklü Sayı Aralığı',
+    ad: 'Köklü Sayılar',
     kisaAciklama: 'Köklü sayı hangi iki sayı arasında?',
     ikon: '🔢',
     ozet: `Çubuğun iki ucunu sürükleyip köklü sayının hangi iki sayı arasında olduğunu gösterirsin; yalnızca **en dar** aralık doğru (√50 → 7 – 8). Doğru bilirsen kısa bir bonus soru gelir.`,
@@ -310,7 +318,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'siniflandirma',
     ders: 'biyoloji',
-    ad: 'Canlıları Sınıflandır',
+    ad: 'Canlıların Sınıflandırılması',
     kisaAciklama: 'Âlemler, birimler, ikili adlandırma',
     ikon: '🔬',
     ozet: `Gelen soruyu dört şıktan cevaplarsın. Konu 9. sınıf “Canlılar Dünyası”: taksonomi, ikili adlandırma ve altı âlem.`,
@@ -318,7 +326,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'hucre',
     ders: 'biyoloji',
-    ad: 'İpucundan Organeli Bul',
+    ad: 'Hücre ve Organeller',
     kisaAciklama: 'İpuçlarından organeli bul',
     ikon: '🧫',
     ozet: `Kart üç saniyede bir yeni ipucu açar, sen organeli dört şıktan bulursun. Erken bilmek çok puan: **1. ipucuyla 3**, 2. ile 2, 3. ile 1.`,
@@ -326,7 +334,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'sirala',
     ders: 'tarih',
-    ad: 'Olayları Tarihe Göre Sırala',
+    ad: 'Tarihî Kronoloji',
     kisaAciklama: 'Olayları eskiden yeniye diz',
     ikon: '⏳',
     ozet: `Karışık gelen olay kartlarını sürükleyerek **eskiden yeniye** dizip onaylarsın. Puan kısmi: doğru sıralanan her komşu çift bir puan.`,
@@ -334,7 +342,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'tuzak',
     ders: 'matematik',
-    ad: 'Eşitlik Doğru mu?',
+    ad: 'Sayılar ve Cebir',
     kisaAciklama: 'Eşitlik doğru mu, yanlış mı?',
     ikon: '🪤',
     ozet: `Gelen eşitlik doğruysa kartı **sağa**, yanlışsa **sola** atarsın. Yarım itip bırakırsan kart yerine döner, cevap sayılmaz.`,
@@ -342,7 +350,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'periyodik',
     ders: 'kimya',
-    ad: 'Elementi Tabloda Bul',
+    ad: 'Periyodik Tablo',
     kisaAciklama: 'Elementi tabloda bul',
     ikon: '⚛️',
     ozet: `**“Kalsiyum’u bul”** dendiğinde elementi tabloda gösterirsin; hücre yanıp söndüğünde adını ya da ailesini dört şıktan seçersin. Tabloda yalnızca sınavda karşılığı olan elementler yazılı.`,
@@ -350,7 +358,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'formul',
     ders: 'kimya',
-    ad: 'Formül Eşleştirme',
+    ad: 'Kimyasal Formüller',
     kisaAciklama: 'Formülü adıyla eşleştir',
     ikon: '⚗️',
     ozet: `Üstteki formüle, sonra alttaki adına dokunursun — sıra fark etmez. El mümkün oldukça tek türden kuruluyor: altı asit, altı tuz.`,
@@ -358,7 +366,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'tepkime',
     ders: 'kimya',
-    ad: 'Tepkime Türü',
+    ad: 'Tepkime Türleri',
     kisaAciklama: 'Denklemin türünü bul',
     ikon: '🔥',
     ozet: `Denklemi okur, türünü dört şıktan seçersin: yanma, sentez, analiz, asit-baz, çökelme, yer değiştirme ya da redoks. Bir denklem birden çok türe girebilir; şıklarda yalnızca biri durur.`,

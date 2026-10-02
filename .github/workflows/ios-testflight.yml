@@ -19,6 +19,15 @@ on:
   push:
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      cihaz_udid:
+        description: 'Hesaba kaydedilecek iPhone UDID (isteğe bağlı)'
+        required: false
+        default: ''
+      cihaz_adi:
+        description: 'Cihazın developer portalındaki adı'
+        required: false
+        default: 'Test iPhone'
 
 jobs:
   testflight:
@@ -82,18 +91,37 @@ jobs:
           done
           printf '%s\n' "$ANAHTAR" > "$RUNNER_TEMP/AuthKey.p8"
 
-      # Arşiv **imzasız** alınıyor, imzayı aşağıdaki dışa aktarma atıyor.
+      # Hesabı API'yle hazırla: istenirse cihazı kaydet, üç kimlikte Family
+      # Controls'ü açık tut. Ayrıntı ve gerekçe betiğin başında.
+      - name: Apple hesabını hazırla
+        env:
+          ANAHTAR_KIMLIGI: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          YAYINCI: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          CIHAZ_UDID: ${{ github.event.inputs.cihaz_udid }}
+          CIHAZ_ADI: ${{ github.event.inputs.cihaz_adi }}
+        run: |
+          python3 -m venv "$RUNNER_TEMP/py"
+          "$RUNNER_TEMP/py/bin/pip" install -q pyjwt cryptography
+          "$RUNNER_TEMP/py/bin/python" scripts/app-store-hazirla.py
+
+      # Arşiv **otomatik imzayla** (geliştirme) alınıyor, dışa aktarma onu
+      # App Store dağıtım imzasıyla yeniden imzalıyor — Xcode'un kendi akışı.
       #
-      # İki yol denendi ve ikisi de burada düştü:
-      # - Otomatik imza arşivi geliştirme imzasıyla alıyor ve geliştirme profili
-      #   hesapta kayıtlı bir cihaz istiyor ("Your team has no devices").
-      # - Kimliği komut satırından "Apple Distribution" yapmak her hedefe
-      #   uygulanıyor; SPM'in eklenti paketleri (IONCameraLib) otomatik imzada
-      #   kaldığı için Xcode "conflicting provisioning settings" diyor.
-      # Dışa aktarma ise App Store profilini kendisi üretiyor ve o profil cihaz
-      # istemiyor.
+      # Geliştirme profili hesapta en az bir kayıtlı iPhone istiyor; o yüzden
+      # developer.apple.com › Devices'ta bir cihaz kayıtlı. Silinirse arşiv
+      # "Your team has no devices" ile düşer.
+      #
+      # Denenip düşen kısa yollar:
+      # - İmzasız arşiv (`CODE_SIGNING_ALLOWED=NO`) derleniyor ama yetkiler
+      #   imzaya hiç girmiyor; dışa aktarma da eklemiyor. Screen Time yetkisi
+      #   sessizce düşüyordu — aşağıdaki denetim adımı bunu yakaladı.
+      # - Ad-hoc imza (`CODE_SIGN_IDENTITY=-`): iOS 26 SDK'sı reddediyor.
+      # - Komut satırından "Apple Distribution": SPM paketleriyle
+      #   "conflicting provisioning settings".
       - name: Arşivle
         env:
+          ANAHTAR_KIMLIGI: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          YAYINCI: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           EKIP: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           xcodebuild archive \
@@ -102,36 +130,76 @@ jobs:
             -configuration Release \
             -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/Rabi.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$RUNNER_TEMP/AuthKey.p8" \
+            -authenticationKeyID "$ANAHTAR_KIMLIGI" \
+            -authenticationKeyIssuerID "$YAYINCI" \
             DEVELOPMENT_TEAM="$EKIP" \
-            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_STYLE=Automatic \
             MARKETING_VERSION="${{ steps.surum.outputs.ad }}" \
             CURRENT_PROJECT_VERSION="${{ steps.surum.outputs.numara }}"
 
-      # `destination: upload` dışa aktarmayı App Store Connect'e yüklemeye
-      # çeviriyor; ayrı bir altool/Transporter adımı gerekmiyor.
-      - name: TestFlight'a yükle
+      # Dışa aktarma iki kez: önce diske (denetim için), sonra yüklemeye.
+      # Yükleme `destination: upload` ile tek adımda yapılıyor ve arkasında
+      # denetlenecek bir paket bırakmıyor; ilk geçiş o paketi veriyor.
+      - name: İmzala ve dışa aktar
         env:
           ANAHTAR_KIMLIGI: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           YAYINCI: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           EKIP: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          for hedef in export upload; do
+            cat > "$RUNNER_TEMP/ExportOptions-$hedef.plist" <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
           <dict>
             <key>method</key><string>app-store-connect</string>
-            <key>destination</key><string>upload</string>
+            <key>destination</key><string>$hedef</string>
             <key>teamID</key><string>$EKIP</string>
             <key>signingStyle</key><string>automatic</string>
             <key>manageAppVersionAndBuildNumber</key><false/>
           </dict>
           </plist>
           PLIST
+          done
           xcodebuild -exportArchive \
             -archivePath "$RUNNER_TEMP/Rabi.xcarchive" \
-            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions-export.plist" \
             -exportPath "$RUNNER_TEMP/cikti" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$RUNNER_TEMP/AuthKey.p8" \
+            -authenticationKeyID "$ANAHTAR_KIMLIGI" \
+            -authenticationKeyIssuerID "$YAYINCI"
+
+      # Odak kilidi Screen Time yetkisi olmadan cihazda sessizce çalışmıyor:
+      # izin penceresi hiç çıkmıyor ve hata da vermiyor. Yetki uygulamada ve iki
+      # eklentide de imzanın içinde olmalı; biri eksikse yükleme yapılmıyor.
+      - name: Screen Time yetkisini denetle
+        run: |
+          cd "$RUNNER_TEMP/cikti"
+          unzip -q -o App.ipa -d paket
+          eksik=0
+          for parca in paket/Payload/App.app paket/Payload/App.app/PlugIns/*.appex; do
+            if codesign -d --entitlements :- "$parca" 2>/dev/null | grep -q "com.apple.developer.family-controls"; then
+              echo "✓ $(basename "$parca")"
+            else
+              echo "::error::$(basename "$parca") Screen Time yetkisi taşımıyor"
+              eksik=1
+            fi
+          done
+          ls paket/Payload/App.app/PlugIns/ | grep -q appex || { echo "::error::Eklentiler pakette yok"; eksik=1; }
+          exit $eksik
+
+      - name: TestFlight'a yükle
+        env:
+          ANAHTAR_KIMLIGI: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          YAYINCI: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/Rabi.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions-upload.plist" \
+            -exportPath "$RUNNER_TEMP/yukleme" \
             -allowProvisioningUpdates \
             -authenticationKeyPath "$RUNNER_TEMP/AuthKey.p8" \
             -authenticationKeyID "$ANAHTAR_KIMLIGI" \

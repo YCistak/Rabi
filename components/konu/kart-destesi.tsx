@@ -7,6 +7,7 @@ import type { HaritaTemasi } from '@/lib/konu/harita-temasi'
 import { desteAkisi, molaSecimi, type DesteAdimi } from '@/lib/konu/deste-akisi'
 import { useGeriKatmani } from '@/lib/geri'
 import { useUygulamaGorunur } from '@/lib/gorunurluk'
+import { Buton, Onay } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartGorseli } from './kart-gorseli'
 import { KartMetni } from './kart-metni'
@@ -170,13 +171,28 @@ export function KartDestesi({
     window.scrollTo({ top: 0 })
   }, [adim])
 
-  const kapat = () => onKapat(sonucla())
+  // İlk ekranda kaybedilecek bir şey yok, orada sormadan çıkıyor.
+  const [cikisSoruluyor, setCikisSoruluyor] = useState(false)
+  const kapat = () => (adim === 0 ? onKapat(sonucla()) : setCikisSoruluyor(true))
 
   return (
     <div
       className="deste-zemin fixed inset-0 z-50 flex flex-col"
       style={{ backgroundColor: bicim.zemin }}
     >
+      {/*
+        Çarpı doğrudan çıkmıyor, önce soruyor: yanlışlıkla dokunulan çarpı
+        desteyi yarıda bitiriyordu ve geri dönüşü yoktu. Geri tuşu ve kenardan kaydırma
+        sormadan çıkmaya devam ediyor — orada niyet belli.
+      */}
+      <Onay
+        acik={cikisSoruluyor}
+        baslik="Konudan çıkılsın mı?"
+        aciklama="Deste yarım kalır, konu bitmiş sayılmaz."
+        onayMetni="Çık"
+        onOnayla={() => onKapat(sonucla())}
+        onIptal={() => setCikisSoruluyor(false)}
+      />
       {bu.tur === 'mola' && (
         <KisaMola
           konuAdi={konu.ad}

@@ -505,8 +505,9 @@ provada:
   satırları çizilmiyor** — kilitli bir kutu, kullanılıyormuş izlenimi verir.
   Ayarlar kaybolmuyor, prova kapatılınca aynı değerlerle geri geliyor.
 - Ders çipleri yok: seans `PROVA_DERSI` ("Deneme Çözümü") ile kaydediliyor.
-  Ad uydurulmadı — istatistik seansları ders adına göre topluyor ve listede
-  (`CALISMA_DERSLERI`) olmayan bir ad orada tek başına bir dilim olurdu.
+  Seçilebilen derslerden biri değil (ders listesi on dersle sınırlı, bkz.
+  **Ders listesi on ders**); ad, liste kısalmadan önceki seanslarla aynı
+  dilime düşsün diye eskisi gibi kaldı.
 - Tur sayacı ilerlemiyor, arkasından mola gelmiyor; sayaç dolunca sıradan
   çalışma turuna dönüyor. Dönmeseydi bir sonraki "Başlat" yeniden 165 dakika
   verirdi.
@@ -687,7 +688,9 @@ Buna rağmen uygulamanın diliyle konuşuyor:
   yazıyordu; sistem yazı tipinden gelen emoji telefondan telefona başka
   çiziliyor ve kullanıcının tanıdığı tavşandan başka bir tavşan çıkıyordu.
   Artık `res/drawable-nodpi/tavsan_yuz.png` — `public/tavsan-yuz.png`in
-  kopyası. Görseli değiştirirsen **ikisini birden** değiştir; yerli taraf
+  kopyası; iOS kalkan ekranında da bir kopyası var
+  (`ios/App/KalkanGorunumu/tavsan_yuz.png`). Görseli değiştirirsen **üçünü
+  birden** değiştir; yerli taraf
   `public/` altını okuyamıyor.
 - **Renkler `values/colors.xml`den**, doğrudan yazılmıyor, ve
   `values-night/` karşılıkları birebir aynı — Rabi'nin koyu teması yok,
@@ -842,12 +845,17 @@ isteyen kullanıcı düğmeye yeniden basıyor.
 
 Ekleme formundaki ders alanı serbest metindi (önerili); "matematik", "Mat",
 "mat." aynı dersin üç ayrı süzgeç çipi oluyordu. Artık on çipten biri
-seçiliyor (`YANLIS_SORU_DERSLERI`, `lib/dersler.ts`) ve Kaydet ancak bir
-ders seçilince açılıyor. Liste `CALISMA_DERSLERI`den **ayrı**: o liste soru
-takibi ve Pomodoro'nun ve seans türlerini ("Tekrar") de taşıyor. Türkçe ile
-Edebiyat tek ders (Türk Dili ve Edebiyatı), Geometri yok (Matematik'in
-içinde), diller tek "Yabancı Dil"; uymayan her şey "Diğer". Eski kayıtlardaki
-adlar yeniden adlandırılmıyor — süzgeç ve renk onları da tanıyor.
+seçiliyor ve Kaydet ancak bir ders seçilince açılıyor.
+
+**Ders listesi on ders** ve uygulamada tek (`CALISMA_DERSLERI`,
+`lib/dersler.ts`): Pomodoro, Soru Takibi ve yanlış soru aynı listeyi
+gösteriyor — Türkçe, Matematik, Fizik, Kimya, Biyoloji, Tarih, Coğrafya,
+Yabancı Dil, Felsefe, Din Kültürü. Kullanıcının kararı, "fazlası olmasın".
+Yanlış sorunun bir süre ayrı, "Diğer"li bir listesi vardı ve Pomodoro'nunki
+seans türlerini ("Tekrar", "Soru Çözümü") de taşıyordu; aynı ders iki ekranda
+iki adla duruyordu. Geometri Matematik'in, Edebiyat Türkçe'nin içinde. Eski
+kayıtlardaki adlar yeniden adlandırılmıyor — süzgeç, renk ve istatistik
+onları da tanıyor. Yeni bir ders eklemeden önce kullanıcıya sor.
 
 Konu 30, not 60 harfle sınırlı (`YANLIS_SORU_KONU_SINIRI`,
 `YANLIS_SORU_NOT_SINIRI`): ikisi de küçük karede ve görüntüleyicinin
@@ -1349,6 +1357,16 @@ karşılığı yoktu.
 Puan çubuğu da dolarak geliyor (`tur-cubugu`). Genişlik değil `transform`
 oynatılıyor: genişlik her karede yeniden yerleşim demek ve rekor çizgisi
 çubuğun üstünde durduğu için o da her karede kayardı.
+
+## Çarpı önce soruyor
+
+Turun, destenin ya da yoklamanın ortasında çarpıya basmak doğrudan çıkmıyor,
+`Onay` penceresi açılıyor: oyun turu (`OyunKabugu`, tur sürerken), konu
+destesi (ilk ekrandan sonra), yoklama (en az bir cevaptan sonra) ve
+Pomodoro'nun "Turu bitir"i (başlamış turda). Çarpı yanlışlıkla
+dokunuluyordu ve arkasındaki iş geri gelmiyordu. Kaybedilecek bir şey
+yokken (başlamamış tur, ilk kart) sormuyor. Geri tuşu ve kenardan kaydırma
+sormuyor — orada niyet belli, Pomodoro'nun geri oku da yalnızca duraklatıyor.
 
 ## Yarıda bırakılan tur da bir tur
 
@@ -2673,10 +2691,9 @@ eklenti yazarsan iki platformdan hangisinde var olduğunu oradan söyle.
 
 iOS'ta **olmayanlar** ve sebepleri:
 
-- **Odak kilidi, Rahatsız Etme, ses odağı.** iOS başka uygulamanın üstüne
-  katman çizmeye ve önde hangi uygulama olduğunu okumaya izin vermiyor.
-  Karşılığı Screen Time API'si (FamilyControls) ve Apple'dan ayrı yetki
-  istiyor.
+- **Rahatsız Etme ve ses odağı.** Uygulamalar Odak modunu açamıyor, başka
+  bir uygulamanın sesine dokunamıyor. Odak kilidi ise var, başka yoldan —
+  aşağıda.
 - **Kilit ekranındaki sayaç.** Ön plan servisi yok; karşılığı Live
   Activity (ActivityKit + widget eklentisi). Tur sonu bildirimi planlı yerel
   bildirimle geliyor ve sayaç mutlak zamandan okunduğu için uygulama
@@ -2684,6 +2701,77 @@ iOS'ta **olmayanlar** ve sebepleri:
 - **Play güncellemesi.** Güncellemeyi App Store dağıtıyor.
 - **Çökme raporu.** Crashlytics'in iOS köprüsü henüz yazılmadı; o gelene kadar
   soru iOS'ta hiç çıkmıyor.
+
+### iOS'ta odak kilidi Screen Time'la
+
+Android'in odak kilidi (katman + kullanım verisi) iOS'ta yapılamıyor: başka
+uygulamanın üstüne çizilemiyor, önde hangi uygulamanın olduğu okunamıyor.
+Karşılığı Apple'ın Screen Time API'si (FamilyControls + ManagedSettings +
+DeviceActivity) ve bu API **Apple'ın ayrıca verdiği bir yetkiyle** çalışıyor:
+"Family Controls (Distribution)", üç bundle ID için ayrı ayrı başvuruldu ve
+onaylandı (uygulama, `OdakIzleyici`, `KalkanGorunumu`). Yeni bir eklenti
+eklenirse onun kimliği için de başvuru gerekiyor; yetkisiz eklenti TestFlight
+imzasında düşer.
+
+Parçalar:
+
+- `ios/App/App/EkranSuresiEklentisi.swift` — Capacitor eklentisi: izin,
+  Apple'ın uygulama seçicisi, kalkanı koymak ve kaldırmak. Köprüsü
+  `lib/ekran-suresi.ts`; Pomodoro'nun çağırdığı `lib/odak-kilidi.ts`
+  fonksiyonları iOS'ta buraya yönleniyor, sayaç kodu iki platform için ayrı
+  yazılmadı.
+- `ios/App/OdakIzleyici` — DeviceActivity eklentisi. iOS arka plandaki Rabi'yi
+  uyutuyor; tur sonunda kalkanı sistemin zamanlayıcısıyla uyanan bu eklenti
+  kaldırıyor. Olmasaydı Instagram, Rabi açılana kadar kilitli kalırdı.
+  DeviceActivity en az 15 dakikalık aralık istiyor: kısa turda aralığın başı
+  geçmişe çekiliyor, sonu yine turun sonu.
+- `ios/App/KalkanGorunumu` — engellenen uygulama açılınca çıkan ekran;
+  metni ve renkleri Android'in engel katmanından ("Odaktasın.", kalan süre).
+  Apple düzeni kendisi çiziyor, neyin taşınamadığı dosyanın başında yazılı.
+  Renkler ve `tavsan_yuz.png` orada yeniden yazılı/kopyalı: eklenti ayrı bir
+  süreç. Kalan süreyi `rabiTur` zamanlayıcısının sonundan okuyor.
+- `components/odak/ios-odak-ayarlari.tsx` — Pomodoro'nun "Odak koruması"
+  satırının iOS içi.
+
+Android'den üç farkı var ve üçü de bilerek:
+
+- **Tek anahtar.** Kalkanlanan uygulama hem açılmıyor hem bildirim
+  göndermiyor; Screen Time ikisini birlikte yapıyor. Android'in ayrı Rahatsız
+  Etme anahtarı iOS'ta çizilmiyor.
+- **Liste Apple'ın.** Seçim Apple'ın seçicisinden yapılıyor, Rabi seçilen
+  uygulamaların adını bile görmüyor (opak belirteçler, yalnızca cihazda,
+  `UserDefaults`); önerilen uygulama işaretlenemiyor. Seçilenler Pomodoro'da
+  ikon ve adıyla görünüyor ama o satırları **yerli taraf** çiziyor
+  (`EngelListesi`, WKWebView'ın kaydırma görünümünün içinde): web sayfası
+  yalnızca yer ayırıyor, pencere açılınca listeyi gizliyor
+  (`katmanlariIzle`) ve yüzen öğelerin (`data-yuzen`) altına taşmasın diye
+  görünür bandı bildiriyor. Sayfaya yüzen yeni bir çubuk eklersen
+  `data-yuzen` ver.
+- **Duraklatmak kalkanı kaldırıyor.** Android'de servis donuyor ve kilit
+  sürüyor; iOS'ta donacak bir servis yok ve duraklatılıp unutulan tur
+  uygulamaları süresiz kapalı bırakırdı. Devam edilince kalkan yeniden kuruluyor.
+
+**Xcode hedefleri betikle ekleniyor** (`scripts/ios-eklenti-hedefleri.rb`,
+`xcodeproj` gem'i). Windows'ta ne Xcode ne Ruby var ve `project.pbxproj`i elle
+yazmak tek kimlik hatasında projeyi açılmaz yapıyor. Betik değişince
+`.github/workflows/ios-proje.yml` onu macOS'ta çalıştırıp proje dosyasını dala
+geri commit'liyor.
+
+**Arşiv otomatik imzalı** (`ios-testflight.yml`), dışa aktarma onu dağıtım
+imzasıyla yeniden imzalıyor. İmzasız arşiv derleniyordu ama yetkiler imzaya
+girmiyor, Screen Time yetkisi sessizce düşüyordu; ad-hoc imzayı iOS 26 SDK'sı
+reddediyor. Otomatik imzanın bedeli hesapta kayıtlı bir iPhone (geliştirme
+profili cihazsız kurulmuyor). Yüklemeden önce bir adım paketin üç parçasında
+da yetkiyi denetliyor — eksikse yükleme yok.
+
+**Onay yetkiyi kendiliğinden açmıyor.** Apple'ın "Family Controls
+(Distribution)" onayından sonra üç App ID'nin her birinde Identifiers ›
+Additional Capabilities › Family Controls (Distribution) elle işaretlenmeli;
+işaretlenmezse App Store profili yetkiyi taşımıyor ve dışa aktarma "profile
+doesn't include the Family Controls capability" ile düşüyor. Bu kutu API'de
+yok (`scripts/app-store-hazirla.py` yalnızca geliştirme türünü görüyor) ve
+yalnızca hesap sahibi/Admin portaldan açabiliyor. Yeni eklenti kimliği
+eklenirse ona da aynı kutu.
 
 **Uygulamanın içinde başka platform adı geçmez.** App Store 2.3.10 başka bir
 mobil platformun ya da mağazanın adını kabul etmiyor. "Android", "Play" diyen
@@ -2736,7 +2824,9 @@ ve Apple bu anahtarı kullanımdan kaldırıyor. iPhone yalnızca dikey.
 (`lib/geri-kaydirma.ts`); ekran içeriği (`[data-geri-sayfa]`) parmakla kayıyor,
 bırakılınca dışarı çıkıp `geriGit`i çağırıyor ya da yerine dönüyor. Alt
 ekranlar iOS'ta sağdan kayarak açılıyor (`data-platform="ios"`, globals.css);
-Android'in aşağıdan gelen geçişi aynı.
+Android'in aşağıdan gelen geçişi aynı. Bir süre (ilk sürümü boş kareler
+bıraktığı için) kaldırılıp parmak kalkınca değişen ekrana dönüldü; boş kare
+hataları giderilince geri geldi.
 
 Durum makinesi `lib/geri-kaydirma-denetci.ts`, hız/süre/eğri hesapları
 `lib/geri-kaydirma-hesap.ts` (ikisinin de birim testi var). Kurallar,

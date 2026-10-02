@@ -33,6 +33,7 @@ import { izinIste, pomodoroIptal, pomodoroPlanla } from '@/lib/bildirim'
 import {
   odakKilidiDesteklenir,
   odakKilidiKapatilinca,
+  odakKorumasiVar,
   odakKilidiniBaslat,
   odakKilidiniBitir,
   odakKilidiniDuraklat,
@@ -42,8 +43,10 @@ import {
 import { useGeriKatmani } from '@/lib/geri'
 import { OdakKurulum } from '@/components/ekranlar/odak-kurulum'
 import { OdakAyarlari } from '@/components/odak/odak-ayarlari'
+import { IosOdakAyarlari } from '@/components/odak/ios-odak-ayarlari'
+import { iosMu } from '@/lib/platform'
 import { cn, yeniId } from '@/lib/utils'
-import { Anahtar, BaslikSatiri, Buton, Cip, Kart, Not } from '@/components/ui'
+import { Anahtar, BaslikSatiri, Buton, Cip, Kart, Not, Onay } from '@/components/ui'
 
 /**
  * Hazırlık ekranında ders ızgarası dört kutu: üç ders ve "Diğer". Gerisi
@@ -285,14 +288,18 @@ export function PomodoroEkrani({
       ediyor.
     */
     const korumaliTur = asama === 'calisma'
+    const kilitIstendi = korumaliTur && ayar.odakKilidi
     void odakKilidiniBaslat(
-      korumaliTur && ayar.odakKilidi ? ayar.kilitliUygulamalar : [],
+      kilitIstendi ? ayar.kilitliUygulamalar : [],
       bitis,
       // Engel katmanındaki çip provada dersin değil sınavın adını yazıyor:
       // ekranda "MATEMATİK" görünürken çözülen şey TYT kitapçığı oluyordu.
       prova ? `${prova.ad} PROVASI` : (ders ?? undefined),
       korumaliTur && ayar.rahatsizEtme,
       prova ? 'Deneme provası' : ASAMA_ADI[asama],
+      // iOS'ta seçim yerli tarafta durduğu için paket listesi boş; kilidin
+      // istenip istenmediği ayrıca söyleniyor.
+      kilitIstendi,
     )
     if (ayar.ekraniAcikTut && Capacitor.isNativePlatform()) {
       void KeepAwake.keepAwake().catch(() => {})
@@ -512,12 +519,17 @@ export function PomodoroEkrani({
     Satırın altındaki özet: paneli açmadan hangi korumanın açık olduğu
     okunabilmeli, yoksa kapalı bir satır ayarı görünmez kılardı.
   */
-  const korumaVar = ayar.odakKilidi || ayar.rahatsizEtme
-  const korumaOzeti = !korumaVar
-    ? 'Kilit ve rahatsız etme kapalı'
-    : [ayar.odakKilidi && 'Kilit açık', ayar.rahatsizEtme && 'Rahatsız etme açık']
-        .filter(Boolean)
-        .join(' · ')
+  // iOS'ta Rahatsız Etme anahtarı yok: kilit bildirimleri de susturuyor.
+  const korumaVar = ayar.odakKilidi || (!iosMu() && ayar.rahatsizEtme)
+  const korumaOzeti = iosMu()
+    ? ayar.odakKilidi
+      ? 'Kilit açık'
+      : 'Kilit kapalı'
+    : !korumaVar
+      ? 'Kilit ve rahatsız etme kapalı'
+      : [ayar.odakKilidi && 'Kilit açık', ayar.rahatsizEtme && 'Rahatsız etme açık']
+          .filter(Boolean)
+          .join(' · ')
 
   // Halka kalan süreden çiziliyor: duraklatılmış turda da doluluğu koruyor.
   const toplamSaniye = toplamDakika * 60
@@ -776,7 +788,8 @@ export function PomodoroEkrani({
           uygulamalar engelli olsun yeter) ve turu başlatmadan önce görülmeyen
           bir ayar, o turda yanlış kurulmuş bir ayardır.
 
-          Tarayıcıda görünmüyor: odak kilidi cihaza bağlı tek özellik.
+          Tarayıcıda görünmüyor: odak kilidi cihaza bağlı tek özellik. iOS'ta
+          içerik başka (`IosOdakAyarlari`): Screen Time'ın tek kalkanı.
         */}
         {/* Ekran anahtarı her iki kipte de burada: provada da geçerli ve
             Süreler çekmecesine konsaydı 165 dakikalık bir turda ona hiç
@@ -798,7 +811,7 @@ export function PomodoroEkrani({
       </Kart>
 
       </div>
-      {(odakKilidiDesteklenir() || demoVeri) && <Kart className="mb-3 p-0">
+      {(odakKorumasiVar() || demoVeri) && <Kart className="mb-3 p-0">
           <div data-tanitim="pomodoro-kilit">
             <AyarSatiri
               simge={<ShieldCheck size={18} aria-hidden />}
@@ -811,7 +824,12 @@ export function PomodoroEkrani({
             />
             {korumaPaneli && (
               <div className="acilir-giris border-t border-border">
-                <OdakAyarlari ayar={ayar} setAyar={setAyar} />
+                {/* iOS'ta içerik başka: Screen Time'ın tek kalkanı. */}
+                {iosMu() ? (
+                  <IosOdakAyarlari ayar={ayar} setAyar={setAyar} />
+                ) : (
+                  <OdakAyarlari ayar={ayar} setAyar={setAyar} />
+                )}
               </div>
             )}
           </div>
@@ -821,7 +839,12 @@ export function PomodoroEkrani({
         Başlat sayfanın dibine yapışık: ayarlar uzadıkça düğme kaydırmanın
         sonuna gitmesin. Alt menü hâlâ altta, çubuk onun hemen üstünde duruyor.
       */}
-      <div className="sticky bottom-[calc(4.5rem+var(--guvenli-alt))] -mx-4 bg-background/95 px-4 pt-2 pb-3">
+      {/* `data-yuzen`: iOS'taki yerli engel listesi bunun altına kaymamalı
+          (`ios-odak-ayarlari.tsx`). */}
+      <div
+        data-yuzen
+        className="sticky bottom-[calc(4.5rem+var(--guvenli-alt))] -mx-4 bg-background/95 px-4 pt-2 pb-3"
+      >
         <Buton className="h-[52px] w-full rounded-2xl text-[17px] shadow-[0_8px_18px_rgba(217,98,47,0.26)]" onClick={baslat}>
           <Play size={20} fill="currentColor" aria-hidden />
           {turIcinde ? 'Devam et' : 'Başlat'}
@@ -918,6 +941,7 @@ function CalismaSahnesi({
   onAtla: () => void
 }) {
   useGeriKatmani(true, onGeri)
+  const [bitirSoruluyor, setBitirSoruluyor] = useState(false)
 
   /*
     Sayacın altında bitiş saati: "kaç dakika kaldı"yı saate çevirmek
@@ -932,6 +956,20 @@ function CalismaSahnesi({
 
   return (
     <div className="tam-katman-girisi fixed inset-0 z-50 flex yuk-ekran justify-center bg-background">
+      {/*
+        "Turu bitir" doğrudan bitirmiyor, önce soruyor: sayaç sıfırlanıyor ve
+        tur kaydedilmiyor; düğme Duraklat'ın hemen yanında ve yanlışlıkla
+        basılıyordu. Başlamamış turda kaybedilecek bir şey yok, orada sormuyor.
+        Geri oku sormuyor — o yalnızca duraklatıyor.
+      */}
+      <Onay
+        acik={bitirSoruluyor}
+        baslik="Tur bitirilsin mi?"
+        aciklama="Sayaç sıfırlanır, bu tur kaydedilmez."
+        onayMetni="Bitir"
+        onOnayla={onBitir}
+        onIptal={() => setBitirSoruluyor(false)}
+      />
       <div
         className="flex w-full max-w-md flex-col px-5"
         style={{
@@ -961,7 +999,10 @@ function CalismaSahnesi({
         </div>
 
         <div className="flex shrink-0 items-center gap-2.5">
-          <SahneDugmesi etiket="Turu bitir" onClick={onBitir}>
+          <SahneDugmesi
+            etiket="Turu bitir"
+            onClick={() => (dokunulmadi ? onBitir() : setBitirSoruluyor(true))}
+          >
             <X size={20} aria-hidden />
           </SahneDugmesi>
           <Buton
