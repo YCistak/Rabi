@@ -2464,3 +2464,14 @@ body {
 :root[data-yerlesim='tablet'][data-yon='yatay'] .tablet-sutunlar > .sutun-boyu {
   column-span: all;
 }
+/*
+  `gap`li dikey flex yığınlar (Soru Takibi, Devamsızlık): sütun düzeni flex
+  kutusunda çalışmıyor, yatayda blok oluyor; aradaki boşluk `gap` yerine
+  üst boşlukla veriliyor (aynı 0,875rem).
+*/
+:root[data-yerlesim='tablet'][data-yon='yatay'] .tablet-sutunlar.flex {
+  display: block;
+}
+:root[data-yerlesim='tablet'][data-yon='yatay'] .tablet-sutunlar.flex > * + * {
+  margin-top: 0.875rem;
+}

@@ -148,7 +148,9 @@ export function YapilacaklarEkrani({
   }
 
   return (
-    <div>
+    // Yatay tablette hafta şeridi solda, günün dilimleri sağda
+    // (`tablet-sutunlar`; başlık iki sütunu kaplıyor).
+    <div className="tablet-sutunlar">
       <BaslikSatiri arac="notlar" baslik="Yapılacaklar" />
 
       {/* Yedi günlük şerit her zaman bugünü ortalar. */}

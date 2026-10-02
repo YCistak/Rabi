@@ -1219,6 +1219,9 @@ const GENIS_SAYFALAR: ReadonlySet<string> = new Set([
   'sekme:daha',
   'sekme:oyunlar',
   'sekme:ayarlar',
+  'soru',
+  'devamsizlik',
+  'notlar',
 ])
 
 /**

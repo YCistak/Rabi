@@ -152,7 +152,8 @@ export function DevamsizlikEkrani({
     <div>
       <BaslikSatiri arac="devamsizlik" baslik="Devamsızlık" />
 
-      <div className="flex flex-col gap-3.5">
+      {/* Yatay tablette kartlar iki sütuna akıyor (`tablet-sutunlar`). */}
+      <div className="tablet-sutunlar flex flex-col gap-3.5">
         {(ozet.asildi || ozet.uyari) && (
           <Not tur={ozet.asildi ? 'tehlike' : 'uyari'} className="rounded-[18px]">
             <span className="flex items-start gap-2">

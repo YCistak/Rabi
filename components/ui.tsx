@@ -224,7 +224,8 @@ export function BaslikSatiri({
   */
   if (arac) {
     return (
-      <div className="mb-4 flex items-center justify-between gap-3">
+      // `sutun-boyu`: iki sütunlu tablet ekranında başlık iki sütunu kaplıyor.
+      <div className="sutun-boyu mb-4 flex items-center justify-between gap-3">
         <h1 className="flex min-h-11 items-center font-display text-[26px] font-extrabold leading-tight tracking-tight">
           {baslik}
         </h1>
