@@ -875,7 +875,15 @@ function RabiUygulamasi() {
 
     Açılıştaki yumuşak geçişi artık `components/acilis.tsx` hallediyor.
   */
-    <div className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(6rem+var(--guvenli-alt))]"
+    /*
+      Alt boşluk alt menüye göre: menü 71 px + kendi güvenli alanı, buradaki
+      boşluk 5rem (80 px) + güvenli alan. Eskiden 6rem'di ve menünün üstünde
+      25 px fazladan yer ayırıyordu: içerik ekrana sığdığı hâlde sayfa 13-25 px
+      kayıyordu (Oyunlar'ın ders ızgarası 740 px yüksekliğinde 753 px çıkıyordu).
+      Uzun içerikte kaydırma aynen duruyor; yalnızca son öğe menünün 9 px
+      üstünde bitiyor.
+    */
+    <div className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(5rem+var(--guvenli-alt))]"
       style={tanitim.tanitimdaMi ? { paddingBottom: 'calc(60vh + var(--guvenli-alt))' } : undefined}>
       {/*
         Ekran ve sekme değişimi tek bir karede oluyordu: içerik tak diye yerine
