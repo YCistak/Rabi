@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest'
 import {
   BUYUTEC_EN_COK,
   KOYU_ESIGI,
+  SURUKLEME_OLCEGI,
   buyutecOlcegi,
+  enineOlcek,
   mercekKonumu,
   parlaklik,
   parmaktanSira,
@@ -38,6 +40,18 @@ describe('mercekKonumu', () => {
     expect(mercekKonumu(5, 500, 5, 1.3)).toBeCloseTo(15)
     const sag = mercekKonumu(10_000, 500, 5, 1.3)
     expect(sag + 100 + 15).toBeLessThanOrEqual(500)
+  })
+})
+
+describe('enineOlcek', () => {
+  it('büyümüş mercek kapsülün dışına iki yandan da tasma kadar çıkıyor', () => {
+    // Kapsül 72, mercek 58: (72 + 14) / 58.
+    const o = enineOlcek(72, 58, 7)
+    expect((58 * o - 72) / 2).toBeCloseTo(7)
+  })
+  it('boyuna ölçekten küçük olmuyor, bozuk ölçüde de güvenli', () => {
+    expect(enineOlcek(40, 60, 0)).toBe(SURUKLEME_OLCEGI)
+    expect(enineOlcek(0, 0)).toBe(SURUKLEME_OLCEGI)
   })
 })
 

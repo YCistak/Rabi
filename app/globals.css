@@ -2289,7 +2289,7 @@ body {
   Kullanıcı ilk hâli "pek belirgin değil" buldu: beyaz pus ince, kenar
   silikti ve seçili sekmenin merceği beyaz camın üstünde beyazdı — neredeyse
   görünmüyordu. Pus kalınlaştı, kenar ve gölge belirginleşti, mercek dinlenirken
-  hafif koyu bir hap (App Store'daki gibi). Sürüklerken mercek kapsülden büyük,
+  hafif koyu bir hap (App Store'daki gibi). Basılı/sürüklenirken mercek kapsülden büyük,
   berrak bir cam damlasına dönüşüyor ve altından geçen simgeyi büyütüyor
   (`buyutecOlcegi`, `lib/cam-menu.ts`). Damla kapsülün üstünden ve altından
   taşabilsin diye kapsülde `overflow: hidden` yok; yanlardan taşmayı konum
@@ -2306,8 +2306,10 @@ body {
   --cam-cizgi: rgba(58, 38, 28, 0.1);
   --cam-parlama: rgba(255, 255, 255, 1);
   --cam-golge: rgba(58, 38, 28, 0.22);
-  /* Dinlenen mercek: beyaz camın üstünde beyaz görünmüyordu, sıcak bir gri. */
-  --cam-mercek: rgba(58, 38, 28, 0.085);
+  /* Dinlenen mercek: beyaz camın üstünde beyaz görünmüyordu, sıcak bir gri.
+     Kullanıcı daha saydam istedi; 0,085'ten inceldi, seçili olduğunu artık
+     merceğin parlak kenarı da söylüyor. */
+  --cam-mercek: rgba(58, 38, 28, 0.055);
   /* Cam koyu bir yüzeyin üstüne gelince (`data-koyu`): beyaz pus azalıyor,
      yazılar açığa dönüyor. Vurgu amberin açık hâli; koyu zeminde koyu amber
      okunmuyor. */
@@ -2397,38 +2399,63 @@ body {
   left: 6px;
   width: calc((100% - 12px) / 5);
   border-radius: 999px;
+  /*
+    Dinlenen mercek: #180'deki sıcak gri ton korunuyor (beyaz camın üstünde
+    beyaz görünmüyordu), ama kullanıcı daha saydam istedi. Dolgu inceldi;
+    merceği artık dolgusu değil ince parlak kenarı ve üstteki ışık çizgisi
+    seçtiriyor — Liquid Glass'taki gibi içi berrak, sınırı belirgin bir cam.
+  */
   background: var(--cam-mercek);
-  box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.6);
-  /* Sürüklerken parmağın konumu (`--mercek-x`), değilse seçili sekme. */
+  box-shadow:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.85),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0.5px rgba(255, 255, 255, 0.3);
+  /*
+    Konum: sürüklerken/basılıyken parmağın yeri (`--mercek-x`), değilse seçili
+    sekme. Ölçek tek kaynaktan, JS'ten: boyuna `--mercek-olcek`
+    (`SURUKLEME_OLCEGI`, konum sınırı da aynı sayıyla hesaplanıyor), enine
+    `--mercek-enine` (`enineOlcek`: kapsülün dışına `MERCEK_TASMASI` kadar).
+  */
   transform: translateX(var(--mercek-x, calc(var(--sekme-sira, 0) * 100%)))
-    scale(var(--mercek-olcek, 1));
+    scale(var(--mercek-olcek, 1), var(--mercek-enine, 1));
   /* Hafif aşmalı eğri: mercek yerine oturmadan bir tık ileri gidip dönüyor,
-     sistemin kendi sekme çubuğundaki yay hissi. */
+     sistemin kendi sekme çubuğundaki yay hissi. Parmak inince büyüme ve
+     parmağa gidiş de bu yayla. */
   transition:
     transform 420ms cubic-bezier(0.34, 1.36, 0.5, 1),
     background-color 200ms ease,
     box-shadow 200ms ease;
 }
 :root[data-platform='ios'] .alt-menu[data-koyu='true'] .alt-menu-mercek {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.12);
 }
 /*
-  Sürüklerken mercek "kalkıyor": kapsülden büyük, berrak bir cam damlası
-  oluyor (ölçek JS'ten, `SURUKLEME_OLCEGI`) ve parmağı gecikmesiz izliyor
-  (geçiş yok — yay eğrisi parmağın gerisinde kalırdı). Damlanın kendi
-  `backdrop-filter`ı altındaki simgeleri parlatıp doygunlaştırıyor; asıl
-  büyüteç simgelerin kendisinde (`alt-menu-icerik`). Bırakınca yay eğrisiyle
-  seçilen sekmeye oturuyor.
+  Basılı/sürüklenirken mercek "kalkıyor": kapsülden büyük, berrak bir cam
+  damlası oluyor ve kapsülün üstünden/altından ~7 px taşıyor (kapsülde
+  `overflow: hidden` yok; yanlardan taşmayı `mercekKonumu` engelliyor).
+  Damla dinlenen hâlinden de saydam; kenar ışığı ve gölge derinleşiyor
+  (büyüyen camda kırılma/yansıma artar). Damlanın kendi `backdrop-filter`ı
+  altındaki simgeleri parlatıp doygunlaştırıyor; asıl büyüteç simgelerin
+  kendisinde (`alt-menu-icerik`).
 */
-:root[data-platform='ios'] .alt-menu[data-surukleniyor] .alt-menu-mercek {
-  background: rgba(255, 255, 255, 0.3);
-  -webkit-backdrop-filter: saturate(170%) brightness(1.08);
-  backdrop-filter: saturate(170%) brightness(1.08);
+:root[data-platform='ios'] .alt-menu[data-basili] .alt-menu-mercek {
+  background:
+    radial-gradient(110% 90% at 50% -5%, rgba(255, 255, 255, 0.34), transparent 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04) 55%, rgba(120, 90, 70, 0.05));
+  -webkit-backdrop-filter: saturate(175%) brightness(1.08);
+  backdrop-filter: saturate(175%) brightness(1.08);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.85),
-    inset 0 -6px 12px rgba(255, 255, 255, 0.35),
-    0 8px 22px rgba(58, 38, 28, 0.24);
+    inset 0 1.5px 1px rgba(255, 255, 255, 1),
+    inset 0 -1.5px 1px rgba(255, 255, 255, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    inset 0 -10px 16px rgba(255, 255, 255, 0.22),
+    inset 0 8px 12px rgba(70, 45, 30, 0.07),
+    0 10px 24px rgba(58, 38, 28, 0.2),
+    0 2px 5px rgba(58, 38, 28, 0.1);
+}
+/* Eşik geçilince parmağı gecikmesiz izliyor — yay eğrisi parmağın gerisinde
+   kalırdı. Bırakınca (öznitelikler kalkınca) yay eğrisiyle oturuyor. */
+:root[data-platform='ios'] .alt-menu[data-surukleniyor] .alt-menu-mercek {
   transition: background-color 200ms ease, box-shadow 200ms ease;
 }
 
@@ -2459,4 +2486,97 @@ body {
 }
 :root[data-platform='ios'] *::-webkit-scrollbar {
   display: none;
+}
+
+/*
+  Tablet yerleşimi — `app/layout.tsx` betiği `<html>`e `data-yerlesim="tablet"`
+  ve `data-yon="yatay|dikey"` yazıyor (kısa kenar 480 CSS pikseli ve üstü).
+  Telefonda iki öznitelik de **yok**: aşağıdaki hiçbir kural ve `tablet:` /
+  `yatay:` ile yazılmış hiçbir sınıf telefonda eşleşmiyor. Telefon görünümü
+  bu yüzden piksel piksel aynı kalıyor.
+
+  Gezinme tablette sağda dikey bir ray (`components/bottom-nav.tsx`). Neden
+  sağ: sol kenar kaydırarak geri hareketine ait (`lib/geri-kaydirma.ts`);
+  ray orada dursaydı rayı sürükleyen parmak geri hareketiyle yarışırdı.
+  Yatay tutulan tabletin iki eli yanlarda; sağ başparmak rayın üstünde.
+
+  `--ray`: rayın kapladığı genişlik (iOS'ta kapsül + kenar boşluğu, Android'de
+  kenara yapışık yüzey). İçerik sağdan bu kadar içeri çekiliyor.
+*/
+@custom-variant tablet (&:where(:root[data-yerlesim='tablet'] *));
+@custom-variant yatay (&:where(:root[data-yerlesim='tablet'][data-yon='yatay'] *));
+
+:root {
+  --ray: 0px;
+  --guvenli-sag: max(var(--safe-area-inset-right, 0px), env(safe-area-inset-right, 0px));
+  --guvenli-sol: max(var(--safe-area-inset-left, 0px), env(safe-area-inset-left, 0px));
+}
+:root[data-yerlesim='tablet'] {
+  --ray: 92px;
+}
+
+/*
+  Camdan ray — iOS tabletinde alt menünün kapsülü dikey duruyor, sağ kenarda
+  ekranın ortasında yüzüyor (Duolingo'nun iPad yan çubuğu gibi ama camdan).
+  Yukarıdaki "Camdan alt menü" kurallarının üstüne yazıyor; katmansız olduğu
+  için `tablet:` sınıflarını da eziyor, Android'deki ray sınıfları burada
+  geçersiz. Mercek aynı, yalnızca dikey kayıyor.
+*/
+:root[data-platform='ios'][data-yerlesim='tablet'] .alt-menu {
+  left: auto;
+  right: calc(12px + var(--guvenli-sag));
+  top: 0;
+  bottom: 0;
+  height: fit-content;
+  margin-block: auto;
+  margin-inline: 0;
+  width: calc(var(--ray) - 16px);
+  max-width: none;
+  padding: 0;
+}
+:root[data-platform='ios'][data-yerlesim='tablet'] .alt-menu-mercek {
+  left: 6px;
+  right: 6px;
+  bottom: auto;
+  width: auto;
+  height: calc((100% - 12px) / 5);
+  /* Eksenler yer değiştiriyor: boyuna ölçek dikey, enine (kapsülden taşan)
+     ölçek yatay. Sayılar aynı kaynaktan (bottom-nav.tsx). */
+  transform: translateY(var(--mercek-y, calc(var(--sekme-sira, 0) * 100%)))
+    scale(var(--mercek-enine, 1), var(--mercek-olcek, 1));
+}
+
+/*
+  İki sütun (yatay tablet). Kart yığını olan ekranlar kökündeki yığına
+  `tablet-sutunlar` sınıfını koyuyor; sıra bozulmadan iki sütuna akıyor (önce
+  soldaki sütun yukarıdan aşağı, sonra sağdaki). Kartlar sütun arasında
+  bölünmüyor. Başlık (`header`) ve `sutun-boyu` işaretli öğeler iki sütunu
+  birden kaplıyor.
+
+  Neden ızgara değil sütun: ızgarada yan yana iki kartın satırı en uzununa
+  göre uzuyor, kısa kartın altında boşluk kalıyordu. Neden yalnızca yatay:
+  dikey tablette içerik alanı ~560 CSS pikseli, iki sütun 270'er pikselle
+  telefon kartlarından dar kalırdı.
+*/
+:root[data-yerlesim='tablet'][data-yon='yatay'] .tablet-sutunlar {
+  columns: 2;
+  column-gap: 1.25rem;
+}
+:root[data-yerlesim='tablet'][data-yon='yatay'] .tablet-sutunlar > * {
+  break-inside: avoid;
+}
+:root[data-yerlesim='tablet'][data-yon='yatay'] .tablet-sutunlar > header,
+:root[data-yerlesim='tablet'][data-yon='yatay'] .tablet-sutunlar > .sutun-boyu {
+  column-span: all;
+}
+/*
+  `gap`li dikey flex yığınlar (Soru Takibi, Devamsızlık): sütun düzeni flex
+  kutusunda çalışmıyor, yatayda blok oluyor; aradaki boşluk `gap` yerine
+  üst boşlukla veriliyor (aynı 0,875rem).
+*/
+:root[data-yerlesim='tablet'][data-yon='yatay'] .tablet-sutunlar.flex {
+  display: block;
+}
+:root[data-yerlesim='tablet'][data-yon='yatay'] .tablet-sutunlar.flex > * + * {
+  margin-top: 0.875rem;
 }

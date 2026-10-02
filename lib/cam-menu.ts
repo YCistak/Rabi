@@ -25,7 +25,29 @@ export function parmaktanSira(x: number, genislik: number, adet: number): number
  * altındaki simgeyi büyütüyor. CSS bu sayıyı `--mercek-olcek` olarak okuyor;
  * konum hesabı da aynı sayıyı kullanmak zorunda (aşağıya bak).
  */
-export const SURUKLEME_OLCEGI = 1.3
+export const SURUKLEME_OLCEGI = 1.4
+
+/**
+ * Basılı/sürüklenen merceğin kapsülün **dışına** taşma payı (CSS pikseli).
+ * Kullanıcı Liquid Glass'taki gibi merceğin menüden belirli oranda dışarı
+ * çıkmasını istedi: boyuna büyüme yalnızca yanlara yayıyordu, damla kapsülün
+ * içinde kalıyordu. Enine (telefonda dikey, tablet rayında yatay) taşma
+ * buradan; yanlardan taşmayı `mercekKonumu` engelliyor.
+ */
+export const MERCEK_TASMASI = 7
+
+/**
+ * Merceğin enine büyüme oranı: büyümüş mercek kapsülün dış kenarından her iki
+ * yana `tasma` kadar çıksın. `kapsul` kapsülün enine dış ölçüsü, `mercek`
+ * merceğin büyümemiş enine ölçüsü (ikisi de dönüşümsüz yerleşim ölçüsü,
+ * `offsetHeight`/`offsetWidth`). Sabit bir oran yerine ölçüden: telefonda ve
+ * tablet rayında mercek kalınlığı farklı, taşma ikisinde de aynı kalıyor.
+ * En az boyuna ölçek kadar — damla hiçbir yönde basık görünmesin.
+ */
+export function enineOlcek(kapsul: number, mercek: number, tasma = MERCEK_TASMASI): number {
+  if (mercek <= 0 || kapsul <= 0) return SURUKLEME_OLCEGI
+  return Math.max(SURUKLEME_OLCEGI, (kapsul + 2 * tasma) / mercek)
+}
 
 /**
  * Sürüklenen merceğin sol kenarı. Mercek parmağı ortasından izliyor ama

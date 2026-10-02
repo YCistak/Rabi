@@ -230,7 +230,7 @@ export function YanlisBankaEkrani({
               bankanın işi değil. Düğme alt menünün hemen üstüne yapışık, liste
               uzadıkça kaydırmanın sonuna gitmesin. */}
           {sekme === 'bekleyen' && liste.length > 0 && (
-            <div className="sticky bottom-[calc(5.25rem+var(--guvenli-alt))] pt-2">
+            <div className="sticky bottom-[calc(5.25rem+var(--guvenli-alt))] pt-2 tablet:bottom-[calc(1rem+var(--guvenli-alt))]">
               <button
                 type="button"
                 onClick={tekrarBaslat}

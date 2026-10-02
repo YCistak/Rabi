@@ -69,6 +69,7 @@ import { BiyolojiOyunuEkrani } from '@/components/ekranlar/oyun-biyoloji'
 import { HucreOyunuEkrani } from '@/components/ekranlar/oyun-hucre'
 import { SiralaOyunuEkrani } from '@/components/ekranlar/oyun-sirala'
 import { TuzakOyunuEkrani } from '@/components/ekranlar/oyun-tuzak'
+import { izgaraSutunu, useYerlesim } from '@/lib/yerlesim'
 
 /**
  * Oyunlar sekmesi.
@@ -393,6 +394,9 @@ export function OyunlarEkrani({
 
   /** Açık dersin ailesi — başlıktaki geri tuşu bu renkte duruyor. */
   const acikAile = secilenDers === null ? AILE.turkce : AILE[secilenDers]
+  // Izgaranın sütun sayısı (telefonda 2, tablette 3-4). Son satırda tek
+  // kalan kart geniş çiziliyor; hangi kartın tek kaldığı sütuna bağlı.
+  const sutun = izgaraSutunu(useYerlesim())
 
   return (
     /*
@@ -432,14 +436,14 @@ export function OyunlarEkrani({
             Dersler
           </h2>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 tablet:grid-cols-3 yatay:grid-cols-4">
             {tanitimKarti}
             {doluDersler().map((ders, sira, liste) => {
               const aile = AILE[ders.id]
               const oyunlar = dersinOyunlari(ders.id)
               // Tek sayıda ders varsa sonuncusu iki sütunu kaplıyor; yoksa
               // ızgarada yanı boş bir kart kalıyordu.
-              const genis = (liste.length + (tanitimKarti ? 1 : 0)) % 2 === 1 && sira === liste.length - 1
+              const genis = (liste.length + (tanitimKarti ? 1 : 0)) % sutun === 1 && sira === liste.length - 1
               const giris = kartGirisi(sira)
 
               return (
@@ -459,7 +463,7 @@ export function OyunlarEkrani({
                     'rounded-2xl p-3.5 text-left transition active:brightness-[0.97]',
                     'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                     aile.zemin,
-                    genis ? 'col-span-2 flex items-center gap-3.5' : 'flex flex-col',
+                    genis ? 'col-span-full flex items-center gap-3.5' : 'flex flex-col',
                     giris.className,
                   )}
                 >
@@ -508,12 +512,12 @@ export function OyunlarEkrani({
             </h2>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 tablet:grid-cols-3 yatay:grid-cols-4">
             {kartlar.map((kart, sira, liste) => {
               // Tek sayıda kart varsa sonuncusu iki sütunu birden kaplıyor;
               // yoksa ızgarada boş bir hücre kalırdı. Yatay düzen aynı kartın
               // geniş hâli.
-              const genis = (liste.length + (tanitimKarti ? 1 : 0)) % 2 === 1 && sira === liste.length - 1
+              const genis = (liste.length + (tanitimKarti ? 1 : 0)) % sutun === 1 && sira === liste.length - 1
 
               if (kart.tip === 'bolum') {
                 const bolumOyunlari = bolumunOyunlari(kart.bolum.id)
@@ -924,7 +928,7 @@ function OyunKarti({
         'relative rounded-[22px] p-4 text-left transition active:brightness-[0.97]',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         aile.zemin,
-        genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[168px] flex-col',
+        genis ? 'col-span-full flex items-center gap-3.5' : 'flex min-h-[168px] flex-col',
         giris.className,
       )}
     >
@@ -1007,7 +1011,7 @@ function BolumKarti({
         'relative rounded-[22px] p-4 text-left transition active:brightness-[0.97]',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         aile.zemin,
-        genis ? 'col-span-2 flex items-center gap-3.5' : 'flex min-h-[168px] flex-col',
+        genis ? 'col-span-full flex items-center gap-3.5' : 'flex min-h-[168px] flex-col',
         giris.className,
       )}
     >
