@@ -2482,6 +2482,19 @@ ekranın ortasında beliriyor, harita arkasında kararıyordu; kullanıcı
 kaldırdı — her açılışta beklenen bir buçuk saniye, haritaya giden yolu
 uzatıyordu.
 
+### Harita öğrencinin sınıfıyla açılıyor, 12 kapalı
+
+Sekme her açıldığında sınıf seçici ayarlardaki sınıfa geçiyor
+(`haritaSinifiBul`); bir süre en son bakılan sınıfta kalıyordu ve 10. sınıf
+öğrencisi her açılışta 9. sınıfın haritasını görüyordu. Ekranın içinde başka
+sınıfa geçmek o ziyaret boyunca geçerli. Mezunun tek bir sınıfı yok, onda son
+seçim kalıyor.
+
+Seçicide **12. sınıf** da var (`HARITA_SINIFLARI`) ama içeriği yok: seçilince
+ders çipleri kalkıyor ve harita yerine kilitli bir "yapım aşamasında" kartı
+duruyor. `KonuSinifi` 9–11 kalıyor; 12 yalnızca seçicinin tipi
+(`HaritaSinifi`). Kartlar yazılınca `KONU_SINIFLARI`na eklenir ve kart kalkar.
+
 ### Patika kitaplı bir yol
 
 Harita (`components/ekranlar/konu-haritasi.tsx`) bir oyun dünyası gibi
