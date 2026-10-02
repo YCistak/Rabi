@@ -46,7 +46,7 @@ import { OdakAyarlari } from '@/components/odak/odak-ayarlari'
 import { IosOdakAyarlari } from '@/components/odak/ios-odak-ayarlari'
 import { iosMu } from '@/lib/platform'
 import { cn, yeniId } from '@/lib/utils'
-import { Anahtar, BaslikSatiri, Buton, Cip, Kart, Not } from '@/components/ui'
+import { Anahtar, BaslikSatiri, Buton, Cip, Kart, Not, Onay } from '@/components/ui'
 
 /**
  * Hazırlık ekranında ders ızgarası dört kutu: üç ders ve "Diğer". Gerisi
@@ -829,7 +829,12 @@ export function PomodoroEkrani({
         Başlat sayfanın dibine yapışık: ayarlar uzadıkça düğme kaydırmanın
         sonuna gitmesin. Alt menü hâlâ altta, çubuk onun hemen üstünde duruyor.
       */}
-      <div className="sticky bottom-[calc(4.5rem+var(--guvenli-alt))] -mx-4 bg-background/95 px-4 pt-2 pb-3">
+      {/* `data-yuzen`: iOS'taki yerli engel listesi bunun altına kaymamalı
+          (`ios-odak-ayarlari.tsx`). */}
+      <div
+        data-yuzen
+        className="sticky bottom-[calc(4.5rem+var(--guvenli-alt))] -mx-4 bg-background/95 px-4 pt-2 pb-3"
+      >
         <Buton className="h-[52px] w-full rounded-2xl text-[17px] shadow-[0_8px_18px_rgba(217,98,47,0.26)]" onClick={baslat}>
           <Play size={20} fill="currentColor" aria-hidden />
           {turIcinde ? 'Devam et' : 'Başlat'}
@@ -926,6 +931,7 @@ function CalismaSahnesi({
   onAtla: () => void
 }) {
   useGeriKatmani(true, onGeri)
+  const [bitirSoruluyor, setBitirSoruluyor] = useState(false)
 
   /*
     Sayacın altında bitiş saati: "kaç dakika kaldı"yı saate çevirmek
@@ -940,6 +946,20 @@ function CalismaSahnesi({
 
   return (
     <div className="tam-katman-girisi fixed inset-0 z-50 flex yuk-ekran justify-center bg-background">
+      {/*
+        "Turu bitir" doğrudan bitirmiyor, önce soruyor: sayaç sıfırlanıyor ve
+        tur kaydedilmiyor; düğme Duraklat'ın hemen yanında ve yanlışlıkla
+        basılıyordu. Başlamamış turda kaybedilecek bir şey yok, orada sormuyor.
+        Geri oku sormuyor — o yalnızca duraklatıyor.
+      */}
+      <Onay
+        acik={bitirSoruluyor}
+        baslik="Tur bitirilsin mi?"
+        aciklama="Sayaç sıfırlanır, bu tur kaydedilmez."
+        onayMetni="Bitir"
+        onOnayla={onBitir}
+        onIptal={() => setBitirSoruluyor(false)}
+      />
       <div
         className="flex w-full max-w-md flex-col px-5"
         style={{
@@ -969,7 +989,10 @@ function CalismaSahnesi({
         </div>
 
         <div className="flex shrink-0 items-center gap-2.5">
-          <SahneDugmesi etiket="Turu bitir" onClick={onBitir}>
+          <SahneDugmesi
+            etiket="Turu bitir"
+            onClick={() => (dokunulmadi ? onBitir() : setBitirSoruluyor(true))}
+          >
             <X size={20} aria-hidden />
           </SahneDugmesi>
           <Buton

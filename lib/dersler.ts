@@ -1,58 +1,31 @@
 /**
- * Soru takibi ve yanlış soru bankasında kullanılan çalışma dersleri.
- * YKS'de sorulan testler esas alınır — okulun ders listesi değil.
+ * Ders seçilen her yerin listesi: Pomodoro, Soru Takibi, yanlış soru ekleme.
+ *
+ * Kullanıcı on derste sabitledi ve "fazlası olmasın" dedi. Liste bir süre
+ * okulun ve YKS'nin bütün adlarını taşıyordu (Geometri, Edebiyat, Psikoloji,
+ * Sosyoloji, Mantık, üç dil ayrı ayrı) ve Pomodoro'da seans türlerini de
+ * ("Deneme Çözümü", "Soru Çözümü", "Tekrar"); yanlış sorunun ayrı, "Diğer"li
+ * bir listesi vardı. On sekiz çip arasında aranan ders kayboluyordu ve aynı
+ * ders iki ekranda iki adla duruyordu ("Türkçe" / "Türk Dili ve Edebiyatı").
+ * Geometri Matematik'in, Edebiyat Türkçe'nin, sosyal bilimler Felsefe'nin
+ * içinde.
+ *
+ * Eski kayıtlardaki adlar yeniden adlandırılmıyor: istatistik ve süzgeç
+ * onları kendi adlarıyla göstermeye devam ediyor, yalnızca yeni seçimde
+ * yoklar. Sınav provası seansı da listede değil, kendi adıyla kaydediliyor
+ * (`PROVA_DERSI`, `lib/sinav-provasi.ts`) — seçilen bir ders değil.
  */
 export const CALISMA_DERSLERI: string[] = [
   'Türkçe',
   'Matematik',
-  'Geometri',
-  'Fizik',
-  'Kimya',
-  'Biyoloji',
-  'Edebiyat',
-  'Tarih',
-  'Coğrafya',
-  'Felsefe',
-  'Psikoloji',
-  'Sosyoloji',
-  'Mantık',
-  'Din Kültürü',
-  'İngilizce',
-  'Almanca',
-  'Fransızca',
-  // Ders değil ama çalışma seansının gerçekten geçtiği yerler. Pomodoro'da
-  // "hangi derse çalışıyorsun" sorusunun en sık cevabı bunlar oluyor ve
-  // listede yoklarsa seans dersiz kaydediliyordu.
-  'Deneme Çözümü',
-  'Soru Çözümü',
-  'Tekrar',
-]
-
-/**
- * Yanlış soru eklerken seçilebilen dersler — `CALISMA_DERSLERI`den ayrı.
- *
- * Çalışma listesi soru takibi ve Pomodoro'ya ait ve seans türlerini
- * ("Tekrar", "Deneme Çözümü") da taşıyor; bir soru fotoğrafı ise tek bir
- * derse aittir. Türkçe ile Edebiyat tek ders (kâğıttaki soru hangisi olduğunu
- * ayırmıyor), Geometri Matematik'in içinde, diller tek "Yabancı Dil" altında:
- * liste kısa kalsın ki seçim yazmadan yapılabilsin. Serbest metin kapalı —
- * "matematik", "Mat", "mat." aynı dersin üç ayrı süzgeç çipi oluyordu.
- * Uymayan her şey "Diğer".
- *
- * Eski kayıtlarda bu listede olmayan adlar (Geometri, İngilizce…) duruyor;
- * süzgeç ve renk onları da tanıyor, yeniden adlandırılmıyorlar.
- */
-export const YANLIS_SORU_DERSLERI: string[] = [
-  'Türk Dili ve Edebiyatı',
-  'Matematik',
   'Fizik',
   'Kimya',
   'Biyoloji',
   'Tarih',
   'Coğrafya',
-  'Felsefe',
   'Yabancı Dil',
-  'Diğer',
+  'Felsefe',
+  'Din Kültürü',
 ]
 
 /**

@@ -6,7 +6,7 @@ import type { Konu } from '@/lib/konu'
 import { isabetOrani, kapanisKademesi, sureYaz } from '@/lib/konu/kapanis'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
-import { Buton } from '@/components/ui'
+import { Buton, Onay } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartGorseli } from './kart-gorseli'
 import { YoklamaBileti } from './yoklama-bileti'
@@ -158,6 +158,7 @@ export function SoruSahnesi({
   const sonucRef = useRef<SahneSonucu>({ dogru: 0, yanlis: 0, bitti: false })
   sonucRef.current = { dogru, yanlis, bitti }
   useGeriKatmani(true, () => onKapat(sonucRef.current))
+  const [cikisSoruluyor, setCikisSoruluyor] = useState(false)
 
   function karar(cevap: number) {
     if (secim !== null) return
@@ -263,11 +264,26 @@ export function SoruSahnesi({
       <div aria-hidden className="sahne-cerceve pointer-events-none absolute inset-[14px] rounded-[32px]" />
       <div aria-hidden className="sahne-cerceve-ic pointer-events-none absolute inset-[20px] rounded-[26px]" />
 
+      {/*
+        Çarpı doğrudan çıkmıyor, önce soruyor: yanlışlıkla dokunulan çarpı
+        yoklamayı bitiriyordu ve geri dönüşü yoktu. Geri tuşu ve kenardan kaydırma
+        sormadan çıkmaya devam ediyor — orada niyet belli.
+      */}
+      <Onay
+        acik={cikisSoruluyor}
+        baslik="Yoklamadan çıkılsın mı?"
+        aciklama="Verdiğin cevaplar kaydedilmez, yoklama baştan başlar."
+        onayMetni="Çık"
+        onOnayla={() => onKapat(sonucRef.current)}
+        onIptal={() => setCikisSoruluyor(false)}
+      />
       <header className="relative shrink-0 px-7 pt-[calc(1.75rem+var(--guvenli-ust))]">
         <div className="mx-auto flex max-w-md items-center gap-3">
           <button
             type="button"
-            onClick={() => onKapat(sonucRef.current)}
+            onClick={() =>
+              dogru + yanlis > 0 ? setCikisSoruluyor(true) : onKapat(sonucRef.current)
+            }
             aria-label="Kapat"
             className="sahne-kapat grid size-[46px] shrink-0 place-items-center rounded-2xl bg-card transition active:brightness-95"
           >

@@ -59,7 +59,7 @@ import type { KonuDersId, KonuSinifi } from '@/lib/konu'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { kullanildi } from '@/lib/son-kullanilan'
 import { useBugun } from '@/lib/gorunurluk'
-import { katmanVarMi, ustKatmaniKapat } from '@/lib/geri'
+import { ustKatmaniKapat } from '@/lib/geri'
 import { Acilis, GECIS_SOLMA_SURESI, GECIS_SURESI, KurulumGecisi } from '@/components/acilis'
 import { Buton } from '@/components/ui'
 import { BottomNav } from '@/components/bottom-nav'
@@ -730,22 +730,16 @@ export function AppShell() {
   }, [geriGit])
 
   // iOS'ta geri tuşu yok, soldan kaydırma var: hareketi yerli taraf tanıyıp
-  // (`ios/App/App/AnaDenetleyici.swift`) hem parmak hareket ederken hem
-  // bırakılınca buraya haber veriyor; sayfa parmağı izleyip kayarak çıkıyor
-  // (`lib/geri-kaydirma.ts`). Android'den tek farkı gidecek yer kalmayınca
-  // uygulamanın kapanmaması — iOS'ta uygulama kendini kapatmaz, Apple bunu
-  // çökme gibi sayıyor. Android'de kanca hiçbir şey yapmaz.
+  // (`ios/App/App/AnaDenetleyici.swift`) parmak kalkınca buraya haber
+  // veriyor (`lib/geri-kaydirma.ts`). Android'den tek farkı gidecek yer
+  // kalmayınca uygulamanın kapanmaması — iOS'ta uygulama kendini kapatmaz,
+  // Apple bunu çökme gibi sayıyor. Android'de kanca hiçbir şey yapmaz.
   useEffect(() => {
-    // Yalnızca iOS'ta alt ekranlar sağdan kayarak açılıyor (globals.css).
+    // `layout.tsx`teki satır içi betiğin yedeği (iOS'a özel CSS buna bakıyor).
     if (iosMu()) document.documentElement.dataset.platform = 'ios'
   }, [])
 
-  useGeriKaydirma(
-    // Sürüklenebilir: gidilecek yer var ve açık bir katman/tam ekran test yok.
-    // Katman açıksa sayfa kaymaz; bırakılınca geri tuşu gibi onu kapatır.
-    () => !katmanVarMi() && genelTest === null && (denemeFormu !== null || ekran !== null || sekme !== 'ana'),
-    () => void geriGit(),
-  )
+  useGeriKaydirma(() => void geriGit())
 
   const denemeKaydet = useCallback(
     (deneme: Deneme) => {
@@ -839,7 +833,7 @@ export function AppShell() {
         giriş animasyonu her seferinde baştan oynuyor — sınıf tek başına verilse
         React aynı düğümü koruduğu için animasyon yalnızca ilk açılışta çalışırdı.
       */}
-      <SayfaGecisi key={ekran ?? `sekme:${sekme}`} ileri={ekran !== null}>
+      <SayfaGecisi key={ekran ?? `sekme:${sekme}`}>
         {ekran !== null ? (
           <>
             <Buton
@@ -1120,7 +1114,7 @@ export function AppShell() {
  * duraklatılmış kalan ekran (opaklığı 0'da donmuş) hiç görünmezdi. Açılış
  * ekranındaki `acilis-bekliyor` ile aynı kural, aynı gerekçe.
  */
-function SayfaGecisi({ children, ileri = false }: { children: React.ReactNode; ileri?: boolean }) {
+function SayfaGecisi({ children }: { children: React.ReactNode }) {
   const [basladi, setBasladi] = useState(false)
 
   useEffect(() => {
@@ -1137,10 +1131,7 @@ function SayfaGecisi({ children, ileri = false }: { children: React.ReactNode; i
   }, [])
 
   return (
-    <div
-      data-geri-sayfa
-      className={cn('sayfa-girisi', ileri && 'sayfa-ileri', !basladi && 'sayfa-bekliyor')}
-    >
+    <div className={cn('sayfa-girisi', !basladi && 'sayfa-bekliyor')}>
       {children}
     </div>
   )

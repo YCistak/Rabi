@@ -9,7 +9,7 @@ import { oyunBul, type DersId } from '@/lib/oyunlar/tanim'
 import { sureOrani } from '@/lib/oyunlar/tur'
 import { MODLAR, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { cn } from '@/lib/utils'
-import { Halka, kartGirisi } from '@/components/ui'
+import { Halka, kartGirisi, Onay } from '@/components/ui'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
 import { BildirimDugmesi, type BildirimKolu } from '@/components/hata-bildir'
 import type { BankaSorusu } from '@/lib/oyunlar/banka'
@@ -220,6 +220,7 @@ export function OyunKabugu({
 }) {
   const aile = oyunAilesi(oyunId)
   const { sarsiliyor, baski } = useTurEfektleri(sayac)
+  const [cikisSoruluyor, setCikisSoruluyor] = useState(false)
 
   return (
     <div
@@ -229,6 +230,19 @@ export function OyunKabugu({
       )}
       style={dersVurgusu(oyunBul(oyunId).ders)}
     >
+      {/*
+        Çarpı doğrudan çıkmıyor, önce soruyor: yanlışlıkla dokunulan çarpı
+        turu bitiriyordu ve geri dönüşü yoktu. Geri tuşu ve kenardan kaydırma
+        sormadan çıkmaya devam ediyor — orada niyet belli.
+      */}
+      <Onay
+        acik={cikisSoruluyor}
+        baslik="Turdan çıkılsın mı?"
+        aciklama="Tur burada biter. Yarım tur rekora ve istatistiğe yazılmaz."
+        onayMetni="Çık"
+        onOnayla={onCik}
+        onIptal={() => setCikisSoruluyor(false)}
+      />
       {/* Sarsıntı bütün oyun alanına: soru kartını ayrıca sarmak 18 oyunun
           yerleşimine dokunmak demekti, oysa yanlış olan cevap değil o an. */}
       <div
@@ -238,7 +252,10 @@ export function OyunKabugu({
         )}
       >
         <div className="flex flex-none items-center gap-2">
-          <YuvarlakDugme etiket="Oyundan çık" onClick={onCik}>
+          <YuvarlakDugme
+            etiket="Oyundan çık"
+            onClick={() => (sayac ? setCikisSoruluyor(true) : onCik())}
+          >
             <X size={17} aria-hidden />
           </YuvarlakDugme>
           {/* Yardım yalnızca tur sürerken: sonuç ekranında kuralları açmanın

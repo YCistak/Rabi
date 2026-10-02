@@ -88,8 +88,9 @@ export function provaBul(id: string | null): Prova | null {
 /**
  * Prova turunun seans kaydındaki ders adı.
  *
- * `CALISMA_DERSLERI` içindeki "Deneme Çözümü" kullanılıyor, "TYT provası" gibi
- * yeni bir ad uydurulmuyor: istatistik ekranı seansları ders adına göre
- * topluyor ve listede olmayan bir ad orada tek başına bir dilim olurdu.
+ * Seçilebilen derslerden (`CALISMA_DERSLERI`) biri değil: prova bir derse
+ * değil bütün denemeye ait ve ders listesi on dersle sınırlı. Ad eskisi gibi
+ * "Deneme Çözümü" kalıyor — liste kısalmadan önce seçilebilen bir addı ve eski
+ * seanslar istatistikte bu adla duruyor; yenileri aynı dilime düşmeli.
  */
 export const PROVA_DERSI = 'Deneme Çözümü'

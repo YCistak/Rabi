@@ -31,8 +31,8 @@ describe('provaBul', () => {
 })
 
 describe('PROVA_DERSI', () => {
-  it('çalışma dersleri listesinde var', () => {
-    // Listede olmayan bir ad istatistikte tek başına bir dilim olurdu.
-    expect(CALISMA_DERSLERI).toContain(PROVA_DERSI)
+  it('seçilebilen derslerden biri değil', () => {
+    // Prova bir derse değil denemenin tamamına ait.
+    expect(CALISMA_DERSLERI).not.toContain(PROVA_DERSI)
   })
 })
