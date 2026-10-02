@@ -49,18 +49,27 @@ class AnaDenetleyici: CAPBridgeViewController, UIGestureRecognizerDelegate {
         // sayfa yüklenmeden) `?.` sessizce hiçbir şey yapmıyor.
         switch hareket.state {
         case .began:
+            // Kenar hareketi sayfanın kaydırmasıyla birlikte tanınıyor
+            // (aşağıdaki delege); çapraz çeken parmak sayfayı yana kaydırırken
+            // aşağı-yukarı da oynatıyordu. Hareket sürdükçe sayfanın kendi
+            // kaydırması kapalı; kapatmak süren kaydırmayı da kesiyor.
+            webView?.scrollView.isScrollEnabled = false
             webView?.evaluateJavaScript("window.rabiGeriKaydirma?.basla()", completionHandler: nil)
         case .changed:
             webView?.evaluateJavaScript("window.rabiGeriKaydirma?.ilerle(\(Int(max(0, yol))))", completionHandler: nil)
         case .ended:
+            webView?.scrollView.isScrollEnabled = true
             let hiz = hareket.velocity(in: alan).x
             if yol > yolEsigi || hiz > hizEsigi {
-                // Geri git: web tarafı sayfayı dışarı kaydırıp `geriGit`i çağırıyor.
+                // Geri git: web tarafı sayfayı dışarı kaydırıp `geriGit`i
+                // çağırıyor. Sola fırlatılmışsa (vazgeçme) web tarafı sayfayı
+                // yerine döndürüyor (`lib/geri-kaydirma-hesap.ts`).
                 bridge?.triggerWindowJSEvent(eventName: geriOlayi)
             } else {
                 webView?.evaluateJavaScript("window.rabiGeriKaydirma?.iptal()", completionHandler: nil)
             }
         case .cancelled, .failed:
+            webView?.scrollView.isScrollEnabled = true
             webView?.evaluateJavaScript("window.rabiGeriKaydirma?.iptal()", completionHandler: nil)
         default:
             break
