@@ -20,12 +20,43 @@ export function parmaktanSira(x: number, genislik: number, adet: number): number
 }
 
 /**
+ * Sürüklerken merceğin büyüme oranı. App Store'un çubuğundaki gibi mercek
+ * parmağın altında "kalkıyor": kapsülden büyük bir cam damlasına dönüyor ve
+ * altındaki simgeyi büyütüyor. CSS bu sayıyı `--mercek-olcek` olarak okuyor;
+ * konum hesabı da aynı sayıyı kullanmak zorunda (aşağıya bak).
+ */
+export const SURUKLEME_OLCEGI = 1.3
+
+/**
  * Sürüklenen merceğin sol kenarı. Mercek parmağı ortasından izliyor ama
  * şeridin dışına çıkmıyor; çıksaydı kapsülün yuvarlak ucunda yarısı kesilirdi.
+ *
+ * Sınır **büyümüş** merceğe göre: ölçek merkezden büyüttüğü için mercek her
+ * iki yana `mercek × (ölçek − 1) / 2` taşıyor. Sınır bir süre büyümemiş
+ * merceğe göreydi ve en sağa (ya da sola) çekilen mercek kapsülün dışına
+ * birkaç piksel taşıyordu — iPad'de geniş kapsülde göze batıyordu.
  */
-export function mercekKonumu(x: number, genislik: number, adet: number): number {
+export function mercekKonumu(x: number, genislik: number, adet: number, olcek = 1): number {
   const mercek = genislik / adet
-  return Math.min(genislik - mercek, Math.max(0, x - mercek / 2))
+  const pay = (mercek * (olcek - 1)) / 2
+  return Math.min(genislik - mercek - pay, Math.max(pay, x - mercek / 2))
+}
+
+/**
+ * Büyüteç: sürüklerken bir sekmenin simgesi ne kadar büyüsün.
+ *
+ * `uzaklik` merceğin ortası ile sekmenin ortası arasındaki mesafe, `sutun`
+ * bir sekmenin genişliği. Tam altındaki sekme en çok büyüyor, uzaklaştıkça
+ * yumuşakça normale dönüyor; bir sütundan uzaktakiler hiç etkilenmiyor —
+ * mercek yalnızca üstünden geçtiğini büyütüyor.
+ */
+export const BUYUTEC_EN_COK = 0.28
+export function buyutecOlcegi(uzaklik: number, sutun: number): number {
+  if (sutun <= 0) return 1
+  const yakinlik = Math.max(0, 1 - Math.abs(uzaklik) / sutun)
+  // Yumuşak tepe: ortada düz, kenarda sıfıra iniyor (smoothstep).
+  const yumusak = yakinlik * yakinlik * (3 - 2 * yakinlik)
+  return 1 + BUYUTEC_EN_COK * yumusak
 }
 
 export type Ton = { r: number; g: number; b: number }
