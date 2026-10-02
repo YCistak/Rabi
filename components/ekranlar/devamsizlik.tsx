@@ -16,6 +16,7 @@ import { bugun, cn, tariheCevir, tariheYaz, yediGunlukSerit, yeniId } from '@/li
 import { Alan, BaslikSatiri, Buton, Kart, Not, Onay, SecimSatiri } from '@/components/ui'
 import { Takvim, type GunIsareti } from '@/components/takvim'
 import { useGeriKatmani } from '@/lib/geri'
+import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 
 const GUN_ADLARI = ['Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct', 'Pz']
 
@@ -464,6 +465,7 @@ function DevamsizlikEkleSayfasi({
   onKaydet: (tur: DevamsizlikTuru, yarimGun: boolean, not: string) => void
 }) {
   useGeriKatmani(true, onKapat)
+  const kaydir = useAsagiKaydirKapat(onKapat)
   const [tur, setTur] = useState<DevamsizlikTuru>('ozursuz')
   const [yarimGun, setYarimGun] = useState(false)
   const [not, setNot] = useState('')
@@ -474,6 +476,7 @@ function DevamsizlikEkleSayfasi({
       onClick={onKapat}
     >
       <div
+        ref={kaydir}
         className="alt-pencere-girisi max-h-[76%] w-full max-w-md overflow-y-auto rounded-t-[26px] bg-card px-4 pt-3 pb-[calc(1.5rem+var(--guvenli-alt))]"
         onClick={(e) => e.stopPropagation()}
       >

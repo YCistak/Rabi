@@ -5,6 +5,7 @@ import { ArrowRight, Check } from 'lucide-react'
 import type { Konu } from '@/lib/konu'
 import { yoklamaDakikasi } from '@/lib/konu'
 import { useGeriKatmani } from '@/lib/geri'
+import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { Buton } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { Rabi } from '@/components/maskot/rabi'
@@ -92,6 +93,7 @@ export function YoklamaBileti({
 }) {
   const [liste, setListe] = useState(false)
   useGeriKatmani(liste, () => setListe(false))
+  const listeKaydir = useAsagiKaydirKapat(() => setListe(false))
 
   const kartSayisi = konu.kartlar.length
   const soruSayisi = konu.sorular.length
@@ -318,6 +320,7 @@ export function YoklamaBileti({
           onClick={() => setListe(false)}
         >
           <div
+            ref={listeKaydir}
             role="dialog"
             aria-label="Bu destede öğrendiklerin"
             className="alt-pencere-girisi relative w-full max-w-md rounded-t-[26px] bg-card px-5 pt-5 pb-[calc(1.5rem+var(--guvenli-alt))] shadow-[0_-8px_30px_-12px_rgba(31,36,48,0.4)]"

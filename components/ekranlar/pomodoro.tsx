@@ -41,6 +41,7 @@ import {
   type PomodoroKomutu,
 } from '@/lib/odak-kilidi'
 import { useGeriKatmani } from '@/lib/geri'
+import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { OdakKurulum } from '@/components/ekranlar/odak-kurulum'
 import { OdakAyarlari } from '@/components/odak/odak-ayarlari'
 import { IosOdakAyarlari } from '@/components/odak/ios-odak-ayarlari'
@@ -1157,6 +1158,7 @@ function Cekmece({
   children: React.ReactNode
 }) {
   useGeriKatmani(acik, onKapat)
+  const kaydir = useAsagiKaydirKapat(onKapat)
   if (!acik) return null
   return (
     <div
@@ -1164,6 +1166,7 @@ function Cekmece({
       onClick={onKapat}
     >
       <div
+        ref={kaydir}
         className="alt-pencere-girisi max-h-[86%] w-full max-w-md overflow-y-auto rounded-t-[26px] bg-card px-[18px] pt-2 pb-[calc(1.5rem+var(--guvenli-alt))]"
         onClick={(e) => e.stopPropagation()}
       >
