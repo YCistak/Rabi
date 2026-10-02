@@ -1,5 +1,7 @@
-import { describe, expect, it } from 'vitest'
-import { ayarlariNormalize, elenenSoruSayisi, yedegiDogrula, yedekOlustur } from './depo'
+import { describe, expect, it, vi } from 'vitest'
+import { ayarlariNormalize, elenenSoruSayisi, tumVeriyiSil, yedegiDogrula, yedekOlustur } from './depo'
+import { TUR_ANAHTARLARI } from './tanitim'
+import { ANIMASYON_ANAHTARI } from './tanitim-animasyonu'
 import type { Yedek } from './types'
 
 const bos: Omit<Yedek, 'uygulama' | 'surum' | 'tarih'> = {
@@ -196,5 +198,22 @@ describe('ayarlariNormalize', () => {
     expect(ayarlariNormalize({ buYilSinif: null as unknown as number }).buYilSinif).toBe(12)
     expect(ayarlariNormalize({ buYilSinif: Number.NaN }).buYilSinif).toBe(12)
     expect(ayarlariNormalize({ buYilSinif: 11 }).buYilSinif).toBe(11)
+  })
+})
+
+describe('tumVeriyiSil', () => {
+  it('tanıtım tur bayraklarını ve animasyon ayarını da siler', () => {
+    const depo = new Map<string, string>()
+    for (const k of [...Object.values(TUR_ANAHTARLARI), ANIMASYON_ANAHTARI, 'rabi-ayarlar']) depo.set(k, 'true')
+    vi.stubGlobal('localStorage', {
+      getItem: (k: string) => depo.get(k) ?? null,
+      setItem: (k: string, v: string) => void depo.set(k, v),
+      removeItem: (k: string) => void depo.delete(k),
+      key: (i: number) => [...depo.keys()][i] ?? null,
+      get length() { return depo.size },
+    })
+    tumVeriyiSil()
+    vi.unstubAllGlobals()
+    expect(depo.size).toBe(0)
   })
 })
