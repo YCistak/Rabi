@@ -94,6 +94,16 @@ describe('bildirimEkle', () => {
   })
 })
 
+describe('sebepGuncelle ve not', () => {
+  it('notu değişen kayıt yeniden kuyruğa giriyor, sebep değişince not düşüyor', () => {
+    const bir = gonderildiIsaretle(bildirimEkle([], ses('burun'), 'baska', AN, 'eski'), ['ses:burun'])
+    const iki = sebepGuncelle(bir, 'ses:burun', 'baska', 'yeni')
+    expect(iki[0]).toMatchObject({ not: 'yeni', gonderildi: false })
+    const uc = sebepGuncelle(iki, 'ses:burun', 'yazim')
+    expect(uc[0]).not.toHaveProperty('not')
+  })
+})
+
 describe('sebepGuncelle', () => {
   it('gönderilmiş kaydı yeniden kuyruğa alıyor', () => {
     const bir = gonderildiIsaretle(bildirimEkle([], ses('burun'), 'belirtilmedi', AN), ['ses:burun'])
@@ -143,6 +153,20 @@ describe('formVerisi', () => {
     expect(veri.sebep).toBe('Cevap yanlış')
     expect(veri.cihaz).toBe('cihaz-1')
     expect(veri.surum).toBe('1.4.0')
+  })
+
+  it('"Başka"nın notu sebep alanının içinde ve kuralın 40 harfine sığıyor', () => {
+    const [b] = bildirimEkle([], bolunme, 'baska', AN, '  şıklardan   ikisi aynı  ')
+    expect(b.not).toBe('şıklardan ikisi aynı')
+    expect(formVerisi(b, 'c', '1').sebep).toBe('Başka: şıklardan ikisi aynı')
+    const [uzun] = bildirimEkle([], bolunme, 'baska', AN, 'x'.repeat(200))
+    expect(formVerisi(uzun, 'c', '1').sebep.length).toBeLessThanOrEqual(40)
+  })
+
+  it('not yalnızca "Başka"da tutuluyor', () => {
+    const [b] = bildirimEkle([], bolunme, 'yazim', AN, 'boşa yazılmış')
+    expect(b).not.toHaveProperty('not')
+    expect(formVerisi(b, 'c', '1').sebep).toBe('Yazım hatası')
   })
 
   it('tarih ve deneme sayısı gönderilmiyor', () => {

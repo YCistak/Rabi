@@ -17,7 +17,10 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
     hataları öğrenmenin başka yolu yok. Ağa çıkan tek dosya `lib/hata-gonder.ts`;
     gönderilen veri `formVerisi()` içinde tek tek sayılan yedi alandan ibaret (soru
     kimliği, oyun, soru metni, doğru sanılan cevap, sebep, sürüm, cihaz alanı —
-    telefon modeli ve ada bağlı olmayan okunur bir ad). Ne gönderildiği hem ilk
+    telefon modeli ve ada bağlı olmayan okunur bir ad). "Başka" sebebinin
+    kısa notu (en çok 32 harf) yeni bir alan değil, `sebep` alanının içinde
+    ("Başka: …") gidiyor — kural `sebep`e 40 harf veriyor ve yeni alan,
+    kural konsolda değişene kadar her bildirimi 403 ile düşürürdü. Ne gönderildiği hem ilk
     bildirimde çıkan izin kartında hem Gizlilik ve Koşullar ekranında yazıyor;
     kart "Gönder" denmeden hiçbir şey ağa çıkmıyor. Ayarlarda ayrıca bir
     açma/kapama anahtarı vardı, kaldırıldı: bildirim bayrağa basıp sebep

@@ -47,6 +47,13 @@ export interface HataBildirimi {
   /** Uygulamanın doğru sandığı cevap; bildirimin çoğu zaten buna itiraz. */
   cevapMetni: string
   sebep: HataSebebi
+  /**
+   * "Başka" seçilince kullanıcının yazdığı kısa açıklama; öteki sebeplerde yok.
+   *
+   * Bir süre "Başka" tek başına gidiyordu ve tabloda "Başka" yazan satır neyin
+   * bozuk olduğunu söylemiyordu; kullanıcı da yazacak yer arayıp bulamadı.
+   */
+  not?: string
   tarih: string
   gonderildi: boolean
   /** Kaç kez gönderilmeye çalışıldı — sürekli başarısız olan kayıt anlaşılsın. */
@@ -60,6 +67,23 @@ export interface HataBildirimi {
  * düğmeye dayanan birinin tabloyu doldurmasını engelliyor.
  */
 export const GUNLUK_SINIR = 20
+
+/**
+ * "Başka" notunun en çok uzunluğu.
+ *
+ * Not ayrı bir alan olarak değil `sebep` alanının içinde gidiyor ("Başka: …"):
+ * Firestore kuralı alanları sayıyor ve `sebep`e 40 harf veriyor
+ * (`PLANNED.md` → "Firestore kuralları"). Yeni bir alan, kural konsolda
+ * güncellenene kadar her bildirimi 403 ile düşürürdü. "Başka: " yedi harf,
+ * geriye 33 kalıyor; 32 bir harf pay bırakıyor.
+ */
+export const BASKA_NOTU_SINIRI = 32
+
+/** Notu temizler: baştaki/sondaki boşluk, art arda boşluklar, sınır. Boşsa `undefined`. */
+export function notuKirp(metin: string | undefined): string | undefined {
+  const temiz = (metin ?? '').replace(/\s+/g, ' ').trim().slice(0, BASKA_NOTU_SINIRI).trim()
+  return temiz === '' ? undefined : temiz
+}
 
 /** Kuyrukta tutulan en fazla kayıt; taşarsa gönderilmişlerin en eskisi düşer. */
 export const KUYRUK_SINIRI = 200
@@ -123,18 +147,21 @@ export function bildirimEkle(
   soru: BankaSorusu,
   sebep: HataSebebi,
   simdi: Date,
+  not?: string,
 ): HataBildirimi[] {
   const kimlik = bankaKimligi(soru)
   const mevcut = liste.find((b) => b.kimlik === kimlik)
-  if (mevcut) return sebepGuncelle(liste, kimlik, sebep)
+  if (mevcut) return sebepGuncelle(liste, kimlik, sebep, not)
   if (sinirdaMi(liste, simdi)) return liste
 
+  const temizNot = sebep === 'baska' ? notuKirp(not) : undefined
   const yeni: HataBildirimi = {
     kimlik,
     oyun: soru.oyun,
     soruMetni: bankaSorusuMetni(soru),
     cevapMetni: bankaCevabiMetni(soru),
     sebep,
+    ...(temizNot ? { not: temizNot } : {}),
     tarih: simdi.toISOString(),
     gonderildi: false,
     denemeSayisi: 0,
@@ -153,11 +180,26 @@ export function sebepGuncelle(
   liste: HataBildirimi[],
   kimlik: string,
   sebep: HataSebebi,
+  not?: string,
 ): HataBildirimi[] {
+  const temizNot = sebep === 'baska' ? notuKirp(not) : undefined
   return liste.map((b) => {
-    if (b.kimlik !== kimlik || b.sebep === sebep) return b
-    return { ...b, sebep, gonderildi: false, denemeSayisi: 0 }
+    if (b.kimlik !== kimlik || (b.sebep === sebep && b.not === temizNot)) return b
+    const { not: _eski, ...gerisi } = b
+    return {
+      ...gerisi,
+      sebep,
+      ...(temizNot ? { not: temizNot } : {}),
+      gonderildi: false,
+      denemeSayisi: 0,
+    }
   })
+}
+
+/** Gönderilen `sebep` metni: "Başka"da not varsa yanına ekleniyor. */
+export function sebepMetni(b: Pick<HataBildirimi, 'sebep' | 'not'>): string {
+  const not = b.sebep === 'baska' ? notuKirp(b.not) : undefined
+  return not ? `${SEBEP_ADI.baska}: ${not}` : SEBEP_ADI[b.sebep]
 }
 
 /** Sırada bekleyenler — en eskiden başlayarak, parti boyu kadar. */
@@ -197,7 +239,7 @@ export function formVerisi(
     oyun: b.oyun,
     soru: b.soruMetni,
     cevap: b.cevapMetni,
-    sebep: SEBEP_ADI[b.sebep],
+    sebep: sebepMetni(b),
     surum,
     // Telefon modeli + okunur cihaz adı; `lib/hata-gonder.ts` → `cihazAlani()`.
     cihaz,
