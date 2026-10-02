@@ -41,7 +41,7 @@ import { guncelTahmin, obpHesapla } from '@/lib/tahmin'
 import { istatistikYeterliMi } from '@/lib/istatistik'
 import { egitimYili, gunlukToplam, ilerlemisSinif } from '@/lib/hesap'
 import { androidMu, iosMu } from '@/lib/platform'
-import { geriGecisiMi, useGeriKaydirma } from '@/lib/geri-kaydirma'
+import { ekranGoruntusuKaydet, geriGecisi, useGeriKaydirma } from '@/lib/geri-kaydirma'
 import { bildirilecekler, rozetDurumu, yeniRozetler, type Rozet } from '@/lib/rozetler'
 import { hatirlatmaIptal, hatirlatmaPlanla, pomodoroIptal } from '@/lib/bildirim'
 import { odakKilidiniBitir } from '@/lib/odak-kilidi'
@@ -798,6 +798,9 @@ function RabiUygulamasi() {
     () => {
       if (androidMu()) void CapacitorApp.exitApp()
     },
+    // Geri gidince açılacak ekranın `SayfaGecisi` anahtarı (`geriGit` ile
+    // aynı sıra): alt ekrandan sekmeye, sekmeden ana sayfaya.
+    () => (ekran !== null ? `sekme:${sekme}` : sekme !== 'ana' ? 'sekme:ana' : null),
   )
 
   const denemeKaydet = useCallback(
@@ -903,6 +906,7 @@ function RabiUygulamasi() {
       */}
       <SayfaGecisi
         key={ekran ?? `sekme:${sekme}`}
+        anahtar={ekran ?? `sekme:${sekme}`}
         ileri={ekran !== null}
         sabit={genelTest !== null}
         yavas={tanitim.tanitimdaMi || tanitim.kapanisSuruyor}
@@ -1220,12 +1224,15 @@ function RabiUygulamasi() {
  */
 function SayfaGecisi({
   children,
+  anahtar,
   ileri = false,
   sabit = false,
   yavas = false,
   sure = 500,
 }: {
   children: React.ReactNode
+  /** Bileşenin `key`i; görüntüsü bu adla saklanıyor. */
+  anahtar: string
   ileri?: boolean
   /**
    * Giriş animasyonu yok. Genel test Oyun Bankası'ndan Oyunlar sekmesine
@@ -1242,10 +1249,21 @@ function SayfaGecisi({
   // Kurulurken bir kez: test bitince prop düşüyor ve animasyon o an baştan
   // başlardı.
   const [sabitKalsin] = useState(sabit)
-  // Kaydırarak geri gelindiyse ekran soldan geliyor. Kurulurken **bir kez**
-  // okunuyor: yön sonradan değişse de başlamış animasyon değişmemeli
-  // (bkz. `geriYonunuIsaretle`).
-  const [geri] = useState(geriGecisiMi)
+  // Kaydırarak geri gelindiyse ekran soldan geliyor ya da (önizleme zaten
+  // yerindeyse) hiç kaymıyor. Kurulurken **bir kez** okunuyor: yön sonradan
+  // değişse de başlamış animasyon değişmemeli (bkz. `geriYonunuIsaretle`).
+  const [geri] = useState(geriGecisi)
+  const kutu = useRef<HTMLDivElement>(null)
+
+  // Sökülürken görüntüsü alınıyor: geri kaydırırken bu ekran altta görünecek
+  // (`lib/geri-kaydirma.ts`). Etkinin temizliği DOM sökülmeden önce çalışıyor;
+  // öğe yine de baştan yakalanıyor, ref o sırada boşalmış olabilir.
+  useLayoutEffect(() => {
+    const el = kutu.current
+    return () => {
+      if (el) ekranGoruntusuKaydet(anahtar, el)
+    }
+  }, [anahtar])
 
   useEffect(() => {
     let ikinci = 0
@@ -1262,8 +1280,15 @@ function SayfaGecisi({
 
   return (
     <div
+      ref={kutu}
       data-geri-sayfa
-      className={cn('sayfa-girisi', ileri && 'sayfa-ileri', geri && 'sayfa-geri', !basladi && 'sayfa-bekliyor')}
+      className={cn(
+        'sayfa-girisi',
+        ileri && 'sayfa-ileri',
+        geri === 'kayarak' && 'sayfa-geri',
+        geri === 'yerinde' && 'sayfa-yerinde',
+        !basladi && 'sayfa-bekliyor',
+      )}
       style={sabitKalsin ? { animation: 'none' } : yavas ? { animationDuration: `${sure}ms` } : undefined}
     >
       {children}

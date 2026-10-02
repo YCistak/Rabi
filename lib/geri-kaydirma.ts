@@ -20,10 +20,19 @@ import { GeriKaydirmaDenetcisi, type Kutu } from '@/lib/geri-kaydirma-denetci'
  * Mantık `GeriKaydirmaDenetcisi`nde (`lib/geri-kaydirma-denetci.ts`), burası
  * yalnızca onu DOM'a ve React'e bağlıyor.
  *
- * Uygulama tek sayfa ve bir önceki ekran DOM'da durmuyor; kayan sayfanın
- * altında sayfa zemini görünüyor. Sayfa çıkınca önceki ekran **aynı karede**
- * kuruluyor (`flushSync`) ve soldan kısa bir kayışla geliyor
- * (`.sayfa-geri`, globals.css).
+ * Uygulama tek sayfa ve bir önceki ekran React'te durmuyor. Kayan sayfanın
+ * altında yine de o ekran görünüyor: her ekran sökülürken DOM'unun bir
+ * kopyası alınıyor (`ekranGoruntusuKaydet`, `SayfaGecisi` çağırıyor) ve
+ * kaydırma başlayınca o kopya sayfanın altına seriliyor (`.geri-onizleme`).
+ * Kopya canlı değil — dokunulmuyor, animasyonları kapalı — yalnızca bir
+ * görüntü. Bırakınca gerçek ekran **aynı karede** ve kopyanın tam yerine
+ * kuruluyor (`flushSync`), kaymadan; kopya ardından kalkıyor.
+ *
+ * Bir süre altta yalnızca sayfa zemini vardı ve önceki ekran ancak
+ * bırakınca soldan kısa bir kayışla geliyordu. Kullanıcı bunu bozuk buldu:
+ * sayfa sağa kayarken solda boşluk, sonra birden beliren bir ekran. iOS'un
+ * kendi gezgininde önceki ekran parmakla birlikte soldan açılıyor. Kopyası
+ * olmayan ekranda (uygulama o ekranla açıldıysa) eski davranış sürüyor.
  *
  * Kayan kutu yalnızca `[data-geri-sayfa]` (ekran içeriği); alt menü gibi
  * `fixed` öğeler transformlu bir atanın içine girmesin diye kutunun dışında.
@@ -83,15 +92,61 @@ export function geriKaydirmayiKilitle(): () => void {
  * kurulurken bir kez okunup kutunun kendi sınıfı oluyor (`SayfaGecisi`).
  */
 let geriYonuZamani = -Infinity
+let geriYerinde = false
 const YON_OMRU_MS = 400
 
-export function geriYonunuIsaretle() {
+/**
+ * `yerinde`: önizleme zaten tam yerinde duruyor, yeni ekran hiç kaymadan
+ * gelmeli — kaysaydı kopyanın üstünde ikinci bir hareket görünürdü.
+ */
+export function geriYonunuIsaretle(yerinde = false) {
   geriYonuZamani = performance.now()
+  geriYerinde = yerinde
 }
 
-/** Şu an kurulan ekran kaydırarak geri gelinen ekran mı? */
-export function geriGecisiMi(): boolean {
-  return typeof performance !== 'undefined' && performance.now() - geriYonuZamani < YON_OMRU_MS
+/**
+ * Şu an kurulan ekran kaydırarak mı geri gelindi: `'kayarak'` soldan kısa
+ * bir kayışla, `'yerinde'` hareketsiz; değilse `null`.
+ */
+export function geriGecisi(): 'kayarak' | 'yerinde' | null {
+  if (typeof performance === 'undefined' || performance.now() - geriYonuZamani >= YON_OMRU_MS) return null
+  return geriYerinde ? 'yerinde' : 'kayarak'
+}
+
+/**
+ * Sökülen ekranların görüntüleri, ekranın `key`ine göre. Geri gidilecek
+ * ekran hep yakın zamanda sökülmüş olanlardan biri; sınır belleği tutuyor.
+ */
+const goruntuler = new Map<string, HTMLElement>()
+const GORUNTU_SINIRI = 8
+
+/**
+ * Sökülmekte olan ekranın kopyasını saklar.
+ *
+ * Kopyadan çıkarılanlar: `fixed` öğeler (açık bir pencere ya da bildirim
+ * önizlemede havada asılı kalırdı), kimlikler ve işaretler (`id`,
+ * `data-geri-sayfa`, `data-yuzen`, `data-tanitim`) — kopya sayfada dururken
+ * `querySelector` gerçek öğenin yerine onu bulurdu.
+ */
+export function ekranGoruntusuKaydet(anahtar: string, kok: HTMLElement) {
+  const kopya = kok.cloneNode(true) as HTMLElement
+  for (const el of [kopya, ...kopya.querySelectorAll<HTMLElement>('*')]) {
+    if (el !== kopya && /(^|\s)fixed(\s|$)/.test(el.getAttribute('class') ?? '')) {
+      el.remove()
+      continue
+    }
+    el.removeAttribute('id')
+    el.removeAttribute('data-geri-sayfa')
+    el.removeAttribute('data-yuzen')
+    el.removeAttribute('data-tanitim')
+  }
+  goruntuler.delete(anahtar)
+  goruntuler.set(anahtar, kopya)
+  while (goruntuler.size > GORUNTU_SINIRI) {
+    const ilk = goruntuler.keys().next().value
+    if (ilk === undefined) break
+    goruntuler.delete(ilk)
+  }
 }
 
 function olcek(): number {
@@ -106,23 +161,34 @@ function olcek(): number {
  *
  * `geriGit` gidecek yer kalmadıysa `false` dönmeli; o zaman `cikis` çağrılır.
  */
-export function useGeriKaydirma(kaydirilabilir: () => boolean, geriGit: () => boolean, cikis: () => void) {
+export function useGeriKaydirma(
+  kaydirilabilir: () => boolean,
+  geriGit: () => boolean,
+  cikis: () => void,
+  /** Geri gidince açılacak ekranın `key`i; önizleme onun görüntüsü. */
+  oncekiAnahtar: () => string | null,
+) {
   const kaydirRef = useRef(kaydirilabilir)
   const geriRef = useRef(geriGit)
   const cikisRef = useRef(cikis)
+  const oncekiRef = useRef(oncekiAnahtar)
   kaydirRef.current = kaydirilabilir
   geriRef.current = geriGit
   cikisRef.current = cikis
+  oncekiRef.current = oncekiAnahtar
 
   useEffect(() => {
     const ios = iosMu()
     if (!ios && !androidMu()) return
 
     let olcekDegeri = 1
+    let onizleme: HTMLElement | null = null
+    let kutuEl: HTMLElement | null = null
     const denetci = new GeriKaydirmaDenetcisi({
       kutuBul: () => {
         olcekDegeri = olcek()
-        return document.querySelector<HTMLElement>('[data-geri-sayfa]')
+        kutuEl = document.querySelector<HTMLElement>('[data-geri-sayfa]')
+        return kutuEl
       },
       kaydirilabilir: () => kaydirRef.current(),
       kilitli: () => kilitler > 0,
@@ -138,7 +204,7 @@ export function useGeriKaydirma(kaydirilabilir: () => boolean, geriGit: () => bo
         return sonuc
       },
       cikis: () => cikisRef.current(),
-      yonIsaretle: geriYonunuIsaretle,
+      yonIsaretle: (yerinde) => geriYonunuIsaretle(yerinde),
       yonuTemizle: () => {
         geriYonuZamani = -Infinity
       },
@@ -157,6 +223,59 @@ export function useGeriKaydirma(kaydirilabilir: () => boolean, geriGit: () => bo
         const eski = gizlenen.map((x) => x.style.visibility)
         gizlenen.forEach((x) => (x.style.visibility = 'hidden'))
         return () => gizlenen.forEach((x, i) => (x.style.visibility = eski[i]))
+      },
+      zeminKur: (kutu: Kutu) => {
+        /*
+          Kutu saydam ve ekranın kenarlarına kadar uzanmıyor (kabın iç
+          boşluğu var). Altında önizleme dururken ikisi de onu gösterirdi.
+          Kabın boşlukları kutuya eksi kenar + aynı dolgu olarak taşınıyor:
+          içerik yerinden oynamıyor, kutu kabın tamamını kaplıyor.
+        */
+        const el = kutu as unknown as HTMLElement
+        const kap = el.parentElement
+        if (!kap) return () => {}
+        const cs = getComputedStyle(kap)
+        const eski = el.getAttribute('style') ?? ''
+        Object.assign(el.style, {
+          marginLeft: `-${cs.paddingLeft}`,
+          marginRight: `-${cs.paddingRight}`,
+          marginTop: `-${cs.paddingTop}`,
+          paddingLeft: cs.paddingLeft,
+          paddingRight: cs.paddingRight,
+          paddingTop: cs.paddingTop,
+          minHeight: `${kap.clientHeight}px`,
+          background: 'var(--background)',
+        })
+        return () => {
+          // Kutunun kendi stilleri (transform, gölge) denetçide ayrıca
+          // temizleniyor; burada yalnızca eklenenler geri alınıyor.
+          for (const ad of ['margin-left', 'margin-right', 'margin-top', 'padding-left', 'padding-right', 'padding-top', 'min-height', 'background']) {
+            if (!new RegExp(`(^|;)\\s*${ad}\\s*:`).test(eski)) el.style.removeProperty(ad)
+          }
+        }
+      },
+      onizlemeAc: () => {
+        const anahtar = oncekiRef.current()
+        const goruntu = anahtar ? goruntuler.get(anahtar) : undefined
+        const kap = kutuEl?.parentElement
+        if (!goruntu || !kutuEl || !kap) return null
+        // Kopya kabın birebir sınıflarıyla sarılıyor: boşluklar ve genişlik
+        // gerçek ekranla aynı olsun, bırakınca yer değiştirmesi görünmesin.
+        const alt = document.createElement('div')
+        alt.className = 'geri-onizleme'
+        alt.setAttribute('aria-hidden', 'true')
+        alt.inert = true
+        const ic = document.createElement('div')
+        ic.className = kap.className
+        ic.appendChild(goruntu.cloneNode(true))
+        alt.appendChild(ic)
+        document.body.prepend(alt)
+        onizleme = alt
+        return { kutu: alt, sol: kutuEl.getBoundingClientRect().left * olcekDegeri }
+      },
+      onizlemeKapat: () => {
+        onizleme?.remove()
+        onizleme = null
       },
       genislik: () => window.innerWidth,
       olcek: () => olcekDegeri,
@@ -178,6 +297,7 @@ export function useGeriKaydirma(kaydirilabilir: () => boolean, geriGit: () => bo
       window.removeEventListener('rabiGeri', denetci.bitir)
       delete window.rabiGeriKaydirma
       denetci.birak()
+      onizleme?.remove()
     }
   }, [])
 }

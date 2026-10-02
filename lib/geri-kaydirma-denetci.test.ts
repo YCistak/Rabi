@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { GeriKaydirmaDenetcisi, type Kutu, type Ortam } from './geri-kaydirma-denetci'
+import { GeriKaydirmaDenetcisi, PARALAKS, type AltKutu, type Kutu, type Ortam } from './geri-kaydirma-denetci'
 
 /**
  * Sahte ortam: zaman elle ilerliyor, kutu düz bir nesne, `geriGit` ekranı
@@ -259,5 +259,61 @@ describe('GeriKaydirmaDenetcisi', () => {
     ilerlet(1000)
     expect(kayit.geri).toBe(0)
     expect(kutu.style.transform).toBe('')
+  })
+
+  describe('önizleme', () => {
+    const onizlemeli = () => {
+      const alt: AltKutu = { style: { transform: '', transition: '', clipPath: '' } }
+      const sayac = { ac: 0, kapat: 0, zemin: 0, zeminGeri: 0, yerinde: [] as (boolean | undefined)[] }
+      const k = kur({
+        onizlemeAc: () => {
+          sayac.ac++
+          return { kutu: alt, sol: 0 }
+        },
+        onizlemeKapat: () => sayac.kapat++,
+        zeminKur: () => {
+          sayac.zemin++
+          return () => sayac.zeminGeri++
+        },
+        yonIsaretle: (yerinde) => sayac.yerinde.push(yerinde),
+      })
+      const altTx = () => +(/translateX\((-?[\d.]+)px\)/.exec(alt.style.transform)?.[1] ?? NaN)
+      return { ...k, alt, sayac, altTx }
+    }
+
+    it('önceki ekran soldan, sayfadan yavaş kayıyor ve yalnızca sayfanın solunda görünüyor', () => {
+      const { d, sayac, surukle, altTx, alt } = onizlemeli()
+      d.basla()
+      expect(sayac.ac).toBe(1)
+      expect(sayac.zemin).toBe(1)
+      expect(altTx()).toBeCloseTo(-390 * PARALAKS)
+      surukle(10, 13) // 130 px
+      expect(altTx()).toBeCloseTo((130 - 390) * PARALAKS)
+      // Görünen genişlik = sayfanın sol kenarı (130): kesim 390 − (130 − kayma).
+      expect(alt.style.clipPath).toBe(`inset(0 ${390 - (130 - (130 - 390) * PARALAKS)}px 0 0)`)
+    })
+
+    it('bırakınca önizleme yerine oturuyor, yeni ekran kaymadan geliyor', () => {
+      const { d, sayac, surukle, ilerlet, altTx } = onizlemeli()
+      d.basla()
+      surukle(10, 15)
+      d.bitir()
+      expect(altTx()).toBe(0)
+      ilerlet(400)
+      expect(sayac.yerinde).toEqual([true])
+      expect(sayac.kapat).toBe(1)
+      expect(sayac.zeminGeri).toBe(1)
+    })
+
+    it('vazgeçince önizleme geri kayıyor ve kalkıyor', () => {
+      const { d, sayac, surukle, ilerlet, altTx } = onizlemeli()
+      d.basla()
+      surukle(3, 10)
+      d.iptal()
+      expect(altTx()).toBeCloseTo(-390 * PARALAKS)
+      ilerlet(1000)
+      expect(sayac.kapat).toBe(1)
+      expect(sayac.yerinde).toEqual([])
+    })
   })
 })
