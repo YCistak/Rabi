@@ -1,40 +1,61 @@
 'use client'
 
 /**
- * "Bu soru hatalı" düğmesi.
+ * "Bu soru hatalı" düğmesi ve açtığı bildirim sayfası.
  *
  * İki yerde kullanılıyor: tur sonundaki yanlış kartları ve Oyun Bankası
  * kayıtları. İkisi de süresiz ekranlar — tur **içinde** bildirim yok, çünkü
  * orada süre işliyor ve geri bildirim şeridi yalnızca bir saniye duruyor;
  * yanlış dokunuş puana mal olurdu.
  *
- * Akış iki adım: bayrak sebep çiplerini açıyor, çipe basmak bildirimi
- * kaydediyor ve gönderim kuyruğuna sokuyor. **Sebep zorunlu.**
+ * **Sebep zorunlu.** Önce tek dokunuşla sebepsiz kaydediliyordu; gelen
+ * bildirimlerin çoğu "belirtilmedi" ile geliyordu ve o kayıt "biri bu soruya
+ * kızmış" demekten başka bir şey söylemiyordu. "Başka" seçilirse kısa bir not
+ * da zorunlu: "Başka" tek başına aynı boşluğu bırakıyordu.
  *
- * Önce tek dokunuşla sebepsiz kaydediliyordu, çipler altında isteğe bağlı
- * duruyordu. Sonuç: bildirimlerin çoğu "belirtilmedi" ile geliyordu ve o kayıt
- * "biri bu soruya kızmış" demekten başka bir şey söylemiyor — sorunun gerçekten
- * bozuk olup olmadığı, bozuksa cevabının mı yazımının mı bozuk olduğu
- * anlaşılmıyordu. Bildirimin tek işi bunu anlatmak; sebepsiz bildirim işe
- * yaramıyor.
+ * Akış bir süre kartın içinde açılan küçük çiplerdi: on bir piksellik yazı,
+ * çipe dokunur dokunmaz kaydedilen bildirim, kayıttan **sonra** beliren izin
+ * kartı ve "Başka" için yazacak hiçbir yer. Kullanıcı deneyimi zayıf bulundu;
+ * şimdi bayrak alttan bir sayfa açıyor: soru, büyük seçenek satırları, gerekirse
+ * not, izin metni ve tek bir Gönder düğmesi. Bildirim ancak Gönder'e basınca
+ * kaydediliyor.
  *
- * İkinci dokunuş bildirim sayısını düşürüyor olabilir, ama gelen her bildirim
- * artık düzeltilebilir bir şey söylüyor.
- *
- * **İlk** bildirimde bir kez izin soruluyor: ne gönderileceği tek tek yazılı
- * ve karar verilmeden hiçbir şey ağa çıkmıyor. Google Play'in kullanıcı verisi
+ * **İlk** bildirimde izin sayfanın içinde soruluyor: ne gönderileceği tek tek
+ * yazılı ve düğme "İzin ver ve gönder". Google Play'in kullanıcı verisi
  * politikası veri cihazdan çıkmadan önce belirgin açıklama ve kullanıcının
- * olumlu bir eylemini istiyor, bunu gizlilik politikasına havale etmeye izin
- * vermiyor. Soru bir kez soruluyor; "Gönderme" denirse karar aynı yerdeki
- * "Yine de gönder" ile geri alınabiliyor — ayarlardaki izin bölümü kalktı.
+ * olumlu bir eylemini istiyor. "Gönderme" diyen kullanıcının bildirimi
+ * telefonda kalıyor; kararı aynı sayfadaki "Gönderilsin" ile geri alabiliyor.
+ *
+ * Sayfa `document.body`'ye taşınarak çiziliyor: tur sonu kartları
+ * `clip-path`li bir tam ekran katmanın içinde ve sabit konumlu bir katman
+ * orada kırpılırdı (AGENTS.md, "Ekranlar ve katmanlar bağlanarak geliyor").
  */
 
-import { useState } from 'react'
-import { Flag } from 'lucide-react'
-import { SECILEBILIR_SEBEPLER, SEBEP_ADI, type HataBildirimi, type HataSebebi } from '@/lib/hata-bildirimi'
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
+import {
+  CircleCheck,
+  CircleX,
+  Flag,
+  MessageSquareText,
+  SpellCheck,
+  TriangleAlert,
+  X,
+  type LucideIcon,
+} from 'lucide-react'
+import {
+  BASKA_NOTU_SINIRI,
+  SECILEBILIR_SEBEPLER,
+  SEBEP_ADI,
+  notuKirp,
+  type HataBildirimi,
+  type HataSebebi,
+} from '@/lib/hata-bildirimi'
 import type { BildirimIzni } from '@/lib/hata-kuyrugu'
 import type { BankaSorusu } from '@/lib/oyunlar/banka'
-import { bankaKimligi } from '@/lib/oyunlar/banka'
+import { bankaCevabiMetni, bankaKimligi, bankaSorusuMetni } from '@/lib/oyunlar/banka'
+import { useGeriKatmani } from '@/lib/geri'
+import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { cn } from '@/lib/utils'
 
 /** Bildirim özelliğinin ekranlara inen kolu; AppShell'den prop olarak geçiyor. */
@@ -44,9 +65,9 @@ export interface BildirimKolu {
   sinirda: boolean
   /** Gönderim izni; `'verildi'` olmadan hiçbir bildirim ağa çıkmıyor. */
   izin: BildirimIzni
-  /** Sebep zorunlu: sebepsiz bildirim kaydedilmiyor. */
-  onBildir: (soru: BankaSorusu, sebep: HataSebebi) => void
-  onSebep: (kimlik: string, sebep: HataSebebi) => void
+  /** Sebep zorunlu: sebepsiz bildirim kaydedilmiyor. Not yalnızca "Başka"da. */
+  onBildir: (soru: BankaSorusu, sebep: HataSebebi, not?: string) => void
+  onSebep: (kimlik: string, sebep: HataSebebi, not?: string) => void
   onIzin: (karar: BildirimIzni) => void
 }
 
@@ -61,85 +82,34 @@ const GONDERILENLER = [
   'sorunun kendisi ve havuzdaki kimliği',
   'hangi oyundan geldiği',
   'uygulamanın doğru saydığı cevap',
-  'senin seçtiğin sebep',
+  'seçtiğin sebep ve "Başka" dediysen yazdığın kısa not',
   'uygulama sürümü',
   'telefonunun modeli ve ada bağlı olmayan bir cihaz adı',
 ]
 
-/**
- * İlk bildirimde bir kez çıkan izin kartı.
- *
- * Kartta onayın **kapsamı** da yazılı: düğme yalnızca o bildirimi değil
- * sonrakileri de gönderiyor. Play'in kullanıcı verisi politikası onayın "açık
- * ve tereddütsüz" olmasını istiyor ve üstünde "Gönder" yazan bir düğme tek
- * seferlik sanılabilirdi.
- */
-function IzinKarti({ kol }: { kol: BildirimKolu }) {
-  return (
-    <div className="mt-2 rounded-xl bg-foreground/[0.05] p-3">
-      <p className="text-[12px] font-extrabold">Bildirimin gönderilmesine izin veriyor musun?</p>
-      <p className="mt-1 text-[11.5px] font-medium leading-snug text-muted-foreground">
-        Soruyu düzeltebilmemiz için bildirim telefonundan çıkıp bize ulaşmalı. Gönderilecekler:
-      </p>
-      <ul className="mt-1.5 list-disc pl-4 text-[11.5px] font-medium leading-snug text-muted-foreground">
-        {GONDERILENLER.map((alan) => (
-          <li key={alan}>{alan}</li>
-        ))}
-      </ul>
-      <p className="mt-1.5 text-[11.5px] font-medium leading-snug text-muted-foreground">
-        Adın, netlerin, notların ve fotoğrafların <b>gönderilmez</b>; onlar telefonunda kalır.
-        &ldquo;Gönder&rdquo; dersen <b>bundan sonraki bildirimlerin de</b> aynı şekilde
-        gönderilir.
-      </p>
-      <div className="mt-2.5 flex gap-2">
-        <button
-          type="button"
-          onClick={() => kol.onIzin('verildi')}
-          className="rounded-full bg-ikincil px-3 py-1.5 text-[11.5px] font-extrabold text-white transition active:scale-[0.97]"
-        >
-          Gönder
-        </button>
-        <button
-          type="button"
-          onClick={() => kol.onIzin('reddedildi')}
-          className="rounded-full bg-foreground/[0.08] px-3 py-1.5 text-[11.5px] font-extrabold text-muted-foreground transition active:scale-[0.97]"
-        >
-          Gönderme
-        </button>
-      </div>
-    </div>
-  )
+/** Seçenek satırlarının simgesi ve alt yazısı. */
+const SEBEP_BILGISI: Record<HataSebebi, { simge: LucideIcon; ipucu: string }> = {
+  'cevap-yanlis': { simge: CircleX, ipucu: 'Doğru cevap başka' },
+  anlasilmiyor: { simge: TriangleAlert, ipucu: 'Soru ya da şıklar belirsiz' },
+  yazim: { simge: SpellCheck, ipucu: 'Harf, imla ya da noktalama' },
+  baska: { simge: MessageSquareText, ipucu: 'Kısaca kendin yaz' },
+  belirtilmedi: { simge: Flag, ipucu: '' },
 }
 
 export function BildirimDugmesi({ soru, kol }: { soru: BankaSorusu; kol: BildirimKolu }) {
   const kimlik = bankaKimligi(soru)
   const kayit = kol.bildirimler.find((b) => b.kimlik === kimlik)
   const bildirildi = kayit !== undefined
-  /*
-    Panel açık mı.
-
-    Bayrak artık bildirimi **göndermiyor**, yalnızca sebep çiplerini açıyor.
-    Bildirilmiş bir soruda panel sebebi değiştirmeye yarıyor.
-  */
   const [acik, setAcik] = useState(false)
   const [reddedildi, setReddedildi] = useState(false)
 
   const bas = () => {
-    // Sınır dolmuşsa paneli hiç açma: seçilecek çipler var ama seçmenin bir
-    // sonucu olmayacak; kullanıcıyı boşuna gezdirmek olurdu.
+    // Sınır dolmuşsa sayfayı hiç açma: seçmenin bir sonucu olmayacak.
     if (!bildirildi && kol.sinirda) {
       setReddedildi(true)
       return
     }
-    setAcik((a) => !a)
-  }
-
-  const sebepSec = (sebep: HataSebebi) => {
-    if (bildirildi) {
-      kol.onSebep(kimlik, sebep)
-      return
-    }
-    kol.onBildir(soru, sebep)
+    setAcik(true)
   }
 
   return (
@@ -148,82 +118,263 @@ export function BildirimDugmesi({ soru, kol }: { soru: BankaSorusu; kol: Bildiri
         type="button"
         onClick={bas}
         aria-pressed={bildirildi}
-        aria-expanded={acik}
+        aria-haspopup="dialog"
         className={cn(
-          'flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-extrabold transition active:scale-[0.97]',
+          'flex min-h-9 items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px] font-extrabold transition active:scale-[0.97]',
           bildirildi
             ? 'bg-ikincil-soft text-ikincil'
             : 'bg-foreground/[0.06] text-muted-foreground active:bg-foreground/12',
         )}
       >
-        <Flag size={13} className="shrink-0" fill={bildirildi ? 'currentColor' : 'none'} aria-hidden />
-        {bildirildi ? 'Bildirildi' : 'Bu soru hatalı'}
+        <Flag size={14} className="shrink-0" fill={bildirildi ? 'currentColor' : 'none'} aria-hidden />
+        {bildirildi ? `Bildirildi · ${SEBEP_ADI[kayit.sebep]}` : 'Bu soru hatalı'}
       </button>
 
       {reddedildi && !bildirildi && (
-        <p className="mt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
+        <p className="mt-1.5 text-[12px] font-semibold leading-snug text-muted-foreground">
           Bugünlük bildirim sınırına ulaştın. Yarın yeniden bildirebilirsin.
         </p>
       )}
 
-      {acik && (
-        <div className="acilir-giris mt-2">
-          {/* Soru **çiplerin üstünde**: seçilecek şeyin ne olduğu, seçenekler
-              görünmeden önce okunuyor. Bildirilmişse aynı yer sebebin
-              değiştirilebildiğini söylüyor — ekranda "Bildirildi" yazarken
-              çiplerin ne işe yaradığı yoksa belirsiz kalıyordu. */}
-          <p className="text-[11px] font-bold text-muted-foreground">
-            {bildirildi ? 'Sebebi değiştir' : 'Nesi hatalı? Birini seç, öyle gönderilsin.'}
-          </p>
-          <div className="mt-1.5 flex flex-wrap gap-1.5">
-            {SECILEBILIR_SEBEPLER.map((sebep) => {
-              const secili = kayit?.sebep === sebep
-              return (
-                <button
-                  key={sebep}
-                  type="button"
-                  onClick={() => sebepSec(sebep)}
-                  aria-pressed={secili}
-                  className={cn(
-                    'rounded-full px-2.5 py-1 text-[11.5px] font-bold transition active:scale-[0.97]',
-                    secili
-                      ? 'bg-ikincil text-white'
-                      : 'bg-foreground/[0.06] text-muted-foreground active:bg-foreground/12',
-                  )}
-                >
-                  {SEBEP_ADI[sebep]}
-                </button>
-              )
-            })}
-          </div>
+      {acik && <BildirimSayfasi soru={soru} kol={kol} kayit={kayit} onKapat={() => setAcik(false)} />}
+    </div>
+  )
+}
 
-          {/* İzin kartı ve gönderim notu **kayıt açıldıktan sonra**: sebep
-              seçilmeden ortada gönderilecek bir şey yok. */}
-          {bildirildi && kol.izin === 'sorulmadi' && <IzinKarti kol={kol} />}
+function BildirimSayfasi({
+  soru,
+  kol,
+  kayit,
+  onKapat,
+}: {
+  soru: BankaSorusu
+  kol: BildirimKolu
+  kayit: HataBildirimi | undefined
+  onKapat: () => void
+}) {
+  useGeriKatmani(true, onKapat)
+  const kaydir = useAsagiKaydirKapat(onKapat)
+  // Portal yalnızca istemcide: sunucuda üretilen HTML'de `document` yok.
+  const [hazir, setHazir] = useState(false)
+  useEffect(() => setHazir(true), [])
 
-          {/* Kararın geri alınabildiği tek yer burası.
+  const [sebep, setSebep] = useState<HataSebebi | null>(
+    kayit && kayit.sebep !== 'belirtilmedi' ? kayit.sebep : null,
+  )
+  const [not, setNot] = useState(kayit?.not ?? '')
+  const [bitti, setBitti] = useState(false)
 
-              Eskiden Ayarlar'da bir izin seçimi vardı ve bu satır oraya
-              yolluyordu; o bölüm kalkınca "Gönderme" demiş kullanıcının önünde
-              hiçbir kapı kalmıyordu. Düğme aynı kararı verildiği yerde geri
-              alıyor — bekleyen bildirimler silinmediği için basıldığı anda
-              gidiyorlar. */}
-          {bildirildi && kol.izin === 'reddedildi' && (
-            <div className="mt-1.5">
-              <p className="text-[11px] font-semibold leading-snug text-muted-foreground">
-                Bildirimin telefonunda kayıtlı; gönderilmiyor.
+  const notEksik = sebep === 'baska' && notuKirp(not) === undefined
+  const gonderilebilir = sebep !== null && !notEksik
+  const izinSorulacak = kol.izin === 'sorulmadi'
+
+  const kaydet = (izin: BildirimIzni | null) => {
+    if (sebep === null || notEksik) return
+    const temizNot = sebep === 'baska' ? notuKirp(not) : undefined
+    if (kayit) kol.onSebep(kayit.kimlik, sebep, temizNot)
+    else kol.onBildir(soru, sebep, temizNot)
+    if (izin) kol.onIzin(izin)
+    setBitti(true)
+  }
+
+  if (!hazir) return null
+  return createPortal(
+    <div
+      className="katman-zemin fixed inset-0 z-[70] flex items-end justify-center bg-black/40"
+      onClick={onKapat}
+    >
+      <div
+        ref={kaydir}
+        role="dialog"
+        aria-modal
+        aria-labelledby="hata-bildir-baslik"
+        className="alt-pencere-girisi max-h-[90%] w-full max-w-md overflow-y-auto rounded-t-[26px] bg-card px-[18px] pt-2 pb-[calc(1.25rem+var(--guvenli-alt))]"
+        onClick={(olay) => olay.stopPropagation()}
+      >
+        <div className="flex justify-center pt-1.5 pb-3">
+          <span className="h-[5px] w-[42px] rounded-[3px] bg-border" />
+        </div>
+
+        {bitti ? (
+          <Tesekkur gonderilecek={kol.izin === 'verildi'} onKapat={onKapat} />
+        ) : (
+          <>
+            <div className="mb-3 flex items-center gap-2.5">
+              <p id="hata-bildir-baslik" className="font-display text-lg font-extrabold tracking-tight">
+                Bu soruda ne yanlış?
               </p>
               <button
                 type="button"
-                onClick={() => kol.onIzin('verildi')}
-                className="mt-1.5 rounded-full bg-foreground/[0.08] px-3 py-1.5 text-[11.5px] font-extrabold text-muted-foreground transition active:scale-[0.97]"
+                onClick={onKapat}
+                aria-label="Kapat"
+                className="ml-auto grid size-9 shrink-0 place-items-center rounded-xl bg-muted/70 text-muted-foreground transition active:brightness-95"
               >
-                Yine de gönder
+                <X size={16} strokeWidth={2.4} aria-hidden />
               </button>
             </div>
-          )}
-        </div>
-      )}
+
+            {/* Hangi sorunun bildirildiği sayfada da görünsün: kart altta,
+                sayfanın arkasında kalıyor. */}
+            <div className="rounded-2xl bg-muted/60 px-3.5 py-3">
+              <p className="line-clamp-3 text-[14px] font-bold leading-snug">{bankaSorusuMetni(soru)}</p>
+              <p className="mt-1.5 text-[12.5px] font-semibold text-muted-foreground">
+                Uygulamanın cevabı:{' '}
+                <span className="font-extrabold text-foreground">{bankaCevabiMetni(soru)}</span>
+              </p>
+            </div>
+
+            <div className="mt-3 flex flex-col gap-2" role="radiogroup" aria-label="Sebep">
+              {SECILEBILIR_SEBEPLER.map((s) => {
+                const { simge: Simge, ipucu } = SEBEP_BILGISI[s]
+                const secili = sebep === s
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    role="radio"
+                    aria-checked={secili}
+                    onClick={() => setSebep(s)}
+                    className={cn(
+                      'flex min-h-[58px] items-center gap-3 rounded-2xl border-[1.5px] px-3.5 text-left transition active:scale-[0.99]',
+                      secili ? 'border-ikincil bg-ikincil-soft' : 'border-border bg-card active:bg-muted',
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        'grid size-9 shrink-0 place-items-center rounded-xl',
+                        secili ? 'bg-ikincil text-white' : 'bg-muted text-muted-foreground',
+                      )}
+                    >
+                      <Simge size={18} strokeWidth={2.2} aria-hidden />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[15px] font-extrabold">{SEBEP_ADI[s]}</span>
+                      <span className="block text-[12.5px] font-semibold text-muted-foreground">{ipucu}</span>
+                    </span>
+                    <span
+                      aria-hidden
+                      className={cn(
+                        'grid size-5 shrink-0 place-items-center rounded-full border-2',
+                        secili ? 'border-ikincil bg-ikincil' : 'border-border',
+                      )}
+                    >
+                      {secili && <span className="size-2 rounded-full bg-white" />}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+
+            {sebep === 'baska' && (
+              <div className="acilir-giris mt-3">
+                <div className="mb-1.5 flex items-center justify-between">
+                  <label
+                    htmlFor="hata-bildir-not"
+                    className="text-[11.5px] font-extrabold uppercase tracking-[0.05em] text-muted-foreground"
+                  >
+                    Ne yanlış?
+                  </label>
+                  <span className="rakam text-xs font-extrabold text-muted-foreground/70">
+                    {not.trim().length}/{BASKA_NOTU_SINIRI}
+                  </span>
+                </div>
+                <input
+                  id="hata-bildir-not"
+                  value={not}
+                  onChange={(olay) => setNot(olay.target.value.slice(0, BASKA_NOTU_SINIRI))}
+                  maxLength={BASKA_NOTU_SINIRI}
+                  autoFocus
+                  enterKeyHint="done"
+                  placeholder="Örn. iki şık aynı"
+                  className="h-12 w-full rounded-[14px] border border-input bg-background px-3.5 text-[15px] font-bold outline-none transition placeholder:font-semibold placeholder:text-muted-foreground/70 focus-visible:border-ikincil focus-visible:bg-card"
+                />
+              </div>
+            )}
+
+            {izinSorulacak && (
+              <div className="mt-3 rounded-2xl bg-foreground/[0.04] px-3.5 py-3 text-[12.5px] font-medium leading-snug text-muted-foreground">
+                <p className="font-extrabold text-foreground">Bildirim bize gönderilir</p>
+                <p className="mt-1">Soruyu düzeltebilmemiz için şunlar telefonundan çıkar:</p>
+                <ul className="mt-1 list-disc pl-4">
+                  {GONDERILENLER.map((alan) => (
+                    <li key={alan}>{alan}</li>
+                  ))}
+                </ul>
+                <p className="mt-1.5">
+                  Adın, netlerin, notların ve fotoğrafların <b>gönderilmez</b>. İzin verirsen
+                  <b> sonraki bildirimlerin de</b> aynı şekilde gönderilir.
+                </p>
+              </div>
+            )}
+
+            {kol.izin === 'reddedildi' && (
+              <div className="mt-3 flex items-center gap-3 rounded-2xl bg-foreground/[0.04] px-3.5 py-3">
+                <p className="min-w-0 flex-1 text-[12.5px] font-semibold leading-snug text-muted-foreground">
+                  Bildirimlerin gönderilmiyor, telefonunda kalıyor.
+                </p>
+                {/* Kararın geri alınabildiği tek yer burası: Ayarlar'daki izin
+                    bölümü kalktı. Bekleyen bildirimler silinmediği için
+                    basıldığı anda gidiyorlar. */}
+                <button
+                  type="button"
+                  onClick={() => kol.onIzin('verildi')}
+                  className="shrink-0 rounded-full bg-foreground/[0.08] px-3 py-1.5 text-[12px] font-extrabold text-foreground transition active:scale-[0.97]"
+                >
+                  Gönderilsin
+                </button>
+              </div>
+            )}
+
+            {/* Eksikte düğme soluk; neyin eksik olduğu üstünde yazıyor. */}
+            <p className="mt-3 min-h-4 text-center text-[12px] font-bold text-muted-foreground">
+              {sebep === null ? 'Bir sebep seç' : notEksik ? 'Ne yanlış olduğunu kısaca yaz' : ''}
+            </p>
+            <button
+              type="button"
+              onClick={() => kaydet(izinSorulacak ? 'verildi' : null)}
+              disabled={!gonderilebilir}
+              className="mt-1.5 h-[54px] w-full rounded-[17px] bg-ikincil text-base font-extrabold text-white transition active:scale-[0.99] disabled:opacity-40"
+            >
+              {izinSorulacak ? 'İzin ver ve gönder' : kayit ? 'Güncelle' : 'Gönder'}
+            </button>
+            {izinSorulacak && (
+              <button
+                type="button"
+                onClick={() => kaydet('reddedildi')}
+                disabled={!gonderilebilir}
+                className="mt-1 w-full py-2.5 text-[13.5px] font-extrabold text-muted-foreground transition active:opacity-70 disabled:opacity-40"
+              >
+                Gönderme, telefonumda kalsın
+              </button>
+            )}
+          </>
+        )}
+      </div>
+    </div>,
+    document.body,
+  )
+}
+
+/** Gönderimden sonra sayfanın kendisi teşekkür ediyor; kapatma kullanıcıda. */
+function Tesekkur({ gonderilecek, onKapat }: { gonderilecek: boolean; onKapat: () => void }) {
+  return (
+    <div className="flex flex-col items-center px-2 pt-2 pb-1 text-center">
+      <span className="grid size-14 place-items-center rounded-full bg-success-soft text-success">
+        <CircleCheck size={30} strokeWidth={2.2} aria-hidden />
+      </span>
+      <p className="mt-3 font-display text-xl font-extrabold tracking-tight">Teşekkürler!</p>
+      <p className="mt-1 text-[14px] font-semibold leading-snug text-muted-foreground">
+        {gonderilecek
+          ? 'Bildirimin bize ulaşacak, soruya bakacağız.'
+          : 'Bildirimin telefonunda kayıtlı.'}
+      </p>
+      <button
+        type="button"
+        onClick={onKapat}
+        className="mt-5 h-[52px] w-full rounded-[17px] bg-foreground/[0.07] text-base font-extrabold transition active:scale-[0.99]"
+      >
+        Tamam
+      </button>
     </div>
   )
 }
