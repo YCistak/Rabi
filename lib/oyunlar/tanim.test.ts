@@ -58,7 +58,7 @@ describe('oyun listesi', () => {
   })
 
   it('kimlikten oyunu bulur', () => {
-    expect(oyunBul('edebiyat').ad).toBe('Edebiyat Eşleştirme')
+    expect(oyunBul('edebiyat').ad).toBe('Eserler ve Yazarlar')
   })
 })
 

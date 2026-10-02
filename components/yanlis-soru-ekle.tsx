@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Camera, Check, ImagePlus } from 'lucide-react'
 import type { YanlisSoru } from '@/lib/types'
 import {
-  YANLIS_SORU_DERSLERI,
+  CALISMA_DERSLERI,
   YANLIS_SORU_KONU_SINIRI,
   YANLIS_SORU_NOT_SINIRI,
 } from '@/lib/dersler'
@@ -169,7 +169,7 @@ export function EklemeFormu({
           <Etiket id="banka-ders">Ders</Etiket>
           {/* Yazılmıyor, seçiliyor: Kaydet bir ders seçilene kadar pasif. */}
           <div className="flex flex-wrap gap-2" role="group" aria-labelledby="banka-ders">
-            {YANLIS_SORU_DERSLERI.map((d) => (
+            {CALISMA_DERSLERI.map((d) => (
               <Cip key={d} secili={ders === d} onClick={() => setDers(d)}>
                 {d}
               </Cip>

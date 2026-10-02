@@ -128,9 +128,15 @@ export function KartMenusu({
   )
 }
 
-/** Tek satır: pastel simge kutusu, ad, açıklama ve sağda ok. */
+/**
+ * Tek satır: pastel simge kutusu, ad ve sağda ok.
+ *
+ * Adın altında bir açıklama satırı vardı ("Sayaçlı çalışma seansı");
+ * kullanıcı kaldırdı — araçların adı zaten ne olduklarını söylüyor ve bölüm
+ * başlığının yanındaki ipucu kalan boşluğu dolduruyor.
+ */
 function AracSatiri({ kart, onAc }: { kart: KartTanimi; onAc: () => void }) {
-  const { ad, aciklama, ikon, renk } = kart
+  const { ad, ikon, renk } = kart
 
   return (
     <button
@@ -151,9 +157,6 @@ function AracSatiri({ kart, onAc }: { kart: KartTanimi; onAc: () => void }) {
       <span className="min-w-0 flex-1">
         <span className="block font-display text-[16px] leading-tight font-extrabold tracking-tight">
           {ad}
-        </span>
-        <span className="mt-0.5 block text-[12.5px] leading-snug font-medium text-muted-foreground">
-          {aciklama}
         </span>
       </span>
 

@@ -505,8 +505,9 @@ provada:
   satırları çizilmiyor** — kilitli bir kutu, kullanılıyormuş izlenimi verir.
   Ayarlar kaybolmuyor, prova kapatılınca aynı değerlerle geri geliyor.
 - Ders çipleri yok: seans `PROVA_DERSI` ("Deneme Çözümü") ile kaydediliyor.
-  Ad uydurulmadı — istatistik seansları ders adına göre topluyor ve listede
-  (`CALISMA_DERSLERI`) olmayan bir ad orada tek başına bir dilim olurdu.
+  Seçilebilen derslerden biri değil (ders listesi on dersle sınırlı, bkz.
+  **Ders listesi on ders**); ad, liste kısalmadan önceki seanslarla aynı
+  dilime düşsün diye eskisi gibi kaldı.
 - Tur sayacı ilerlemiyor, arkasından mola gelmiyor; sayaç dolunca sıradan
   çalışma turuna dönüyor. Dönmeseydi bir sonraki "Başlat" yeniden 165 dakika
   verirdi.
@@ -844,12 +845,17 @@ isteyen kullanıcı düğmeye yeniden basıyor.
 
 Ekleme formundaki ders alanı serbest metindi (önerili); "matematik", "Mat",
 "mat." aynı dersin üç ayrı süzgeç çipi oluyordu. Artık on çipten biri
-seçiliyor (`YANLIS_SORU_DERSLERI`, `lib/dersler.ts`) ve Kaydet ancak bir
-ders seçilince açılıyor. Liste `CALISMA_DERSLERI`den **ayrı**: o liste soru
-takibi ve Pomodoro'nun ve seans türlerini ("Tekrar") de taşıyor. Türkçe ile
-Edebiyat tek ders (Türk Dili ve Edebiyatı), Geometri yok (Matematik'in
-içinde), diller tek "Yabancı Dil"; uymayan her şey "Diğer". Eski kayıtlardaki
-adlar yeniden adlandırılmıyor — süzgeç ve renk onları da tanıyor.
+seçiliyor ve Kaydet ancak bir ders seçilince açılıyor.
+
+**Ders listesi on ders** ve uygulamada tek (`CALISMA_DERSLERI`,
+`lib/dersler.ts`): Pomodoro, Soru Takibi ve yanlış soru aynı listeyi
+gösteriyor — Türkçe, Matematik, Fizik, Kimya, Biyoloji, Tarih, Coğrafya,
+Yabancı Dil, Felsefe, Din Kültürü. Kullanıcının kararı, "fazlası olmasın".
+Yanlış sorunun bir süre ayrı, "Diğer"li bir listesi vardı ve Pomodoro'nunki
+seans türlerini ("Tekrar", "Soru Çözümü") de taşıyordu; aynı ders iki ekranda
+iki adla duruyordu. Geometri Matematik'in, Edebiyat Türkçe'nin içinde. Eski
+kayıtlardaki adlar yeniden adlandırılmıyor — süzgeç, renk ve istatistik
+onları da tanıyor. Yeni bir ders eklemeden önce kullanıcıya sor.
 
 Konu 30, not 60 harfle sınırlı (`YANLIS_SORU_KONU_SINIRI`,
 `YANLIS_SORU_NOT_SINIRI`): ikisi de küçük karede ve görüntüleyicinin
@@ -1351,6 +1357,16 @@ karşılığı yoktu.
 Puan çubuğu da dolarak geliyor (`tur-cubugu`). Genişlik değil `transform`
 oynatılıyor: genişlik her karede yeniden yerleşim demek ve rekor çizgisi
 çubuğun üstünde durduğu için o da her karede kayardı.
+
+## Çarpı önce soruyor
+
+Turun, destenin ya da yoklamanın ortasında çarpıya basmak doğrudan çıkmıyor,
+`Onay` penceresi açılıyor: oyun turu (`OyunKabugu`, tur sürerken), konu
+destesi (ilk ekrandan sonra), yoklama (en az bir cevaptan sonra) ve
+Pomodoro'nun "Turu bitir"i (başlamış turda). Çarpı yanlışlıkla
+dokunuluyordu ve arkasındaki iş geri gelmiyordu. Kaybedilecek bir şey
+yokken (başlamamış tur, ilk kart) sormuyor. Geri tuşu ve kenardan kaydırma
+sormuyor — orada niyet belli, Pomodoro'nun geri oku da yalnızca duraklatıyor.
 
 ## Yarıda bırakılan tur da bir tur
 
@@ -2796,12 +2812,12 @@ betiğinin `--olcek` ile yaptığı `zoom`; ayrıca bir `max-width` konmadı.
 için dört yön de açık (`Info.plist`, `UISupportedInterfaceOrientations~ipad`)
 ve Apple bu anahtarı kullanımdan kaldırıyor. iPhone yalnızca dikey.
 
-**Geri kaydırma parmağı izliyor.** Yerli taraf hareketi tanırken
-(`.began/.changed/.ended`) `window.rabiGeriKaydirma`yı çağırıyor
-(`lib/geri-kaydirma.ts`); ekran içeriği (`[data-geri-sayfa]`) parmakla kayıyor,
-bırakılınca dışarı çıkıp `geriGit`i çağırıyor ya da yerine dönüyor. Alt
-ekranlar iOS'ta sağdan kayarak açılıyor (`data-platform="ios"`, globals.css);
-Android'in aşağıdan gelen geçişi aynı.
+**Geri kaydırma parmağı izlemiyor.** Yerli taraf hareketi tanıyıp parmak
+kalkınca `rabiGeri` yolluyor (`lib/geri-kaydirma.ts`); ekran Android'in geri
+tuşundaki gibi değişiyor ve yeni ekran kendi giriş hareketiyle geliyor. Bir
+süre sayfa parmakla kayıyor, alt ekranlar sağdan açılıyordu; kullanıcı geri
+aldı: önceki ekran DOM'da durmadığı için kayan sayfanın altında boş zemin
+açılıyordu.
 
 İkon `ikon-uret.mjs`ten geliyor (`AppIcon-512@2x.png`, 1024): köşesiz ve
 **alfa kanalı atılmış** — App Store saydamlık taşıyan ikonu yüklemede
