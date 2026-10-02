@@ -182,7 +182,7 @@ export function AracSimgesi({ arac }: { arac: Ekran }) {
   return (
     <span
       aria-hidden
-      className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-primary-soft text-xl"
+      className="emoji grid size-11 shrink-0 place-items-center rounded-[15px] bg-primary-soft text-xl"
     >
       {ikon}
     </span>

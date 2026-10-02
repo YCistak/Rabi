@@ -904,6 +904,7 @@ function RabiUygulamasi() {
       <SayfaGecisi
         key={ekran ?? `sekme:${sekme}`}
         ileri={ekran !== null}
+        sabit={genelTest !== null}
         yavas={tanitim.tanitimdaMi || tanitim.kapanisSuruyor}
         sure={tanitim.animasyon.gecisMs}
       >
@@ -1219,15 +1220,27 @@ function RabiUygulamasi() {
 function SayfaGecisi({
   children,
   ileri = false,
+  sabit = false,
   yavas = false,
   sure = 500,
 }: {
   children: React.ReactNode
   ileri?: boolean
+  /**
+   * Giriş animasyonu yok. Genel test Oyun Bankası'ndan Oyunlar sekmesine
+   * geçip oyunu doğrudan tam ekran açıyor; kutunun kayışı sürerken kutu
+   * transformlu ve içindeki tam ekran oyun ekrana değil kutuya göre
+   * konumlanıyordu — oyun önce kenarları beyaz, dar bir kutuda açılıyor,
+   * animasyon bitince birden ekranı kaplıyordu.
+   */
+  sabit?: boolean
   yavas?: boolean
   sure?: number
 }) {
   const [basladi, setBasladi] = useState(false)
+  // Kurulurken bir kez: test bitince prop düşüyor ve animasyon o an baştan
+  // başlardı.
+  const [sabitKalsin] = useState(sabit)
   // Kaydırarak geri gelindiyse ekran soldan geliyor. Kurulurken **bir kez**
   // okunuyor: yön sonradan değişse de başlamış animasyon değişmemeli
   // (bkz. `geriYonunuIsaretle`).
@@ -1250,7 +1263,7 @@ function SayfaGecisi({
     <div
       data-geri-sayfa
       className={cn('sayfa-girisi', ileri && 'sayfa-ileri', geri && 'sayfa-geri', !basladi && 'sayfa-bekliyor')}
-      style={yavas ? { animationDuration: `${sure}ms` } : undefined}
+      style={sabitKalsin ? { animation: 'none' } : yavas ? { animationDuration: `${sure}ms` } : undefined}
     >
       {children}
     </div>

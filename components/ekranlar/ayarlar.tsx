@@ -301,7 +301,7 @@ export function AyarlarEkrani({
             sekmeye başlığın bittiği yeri kaydırıyor, sağ üstteki kutu ise üç
             sekmede de aynı noktada duruyor. */}
         <span
-          className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart text-[21px] leading-none"
+          className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart text-[21px] leading-none emoji"
           aria-hidden
         >
           ⚙️

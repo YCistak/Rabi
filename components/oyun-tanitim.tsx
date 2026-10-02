@@ -402,7 +402,7 @@ function OrnekKutusu({ ornek }: { ornek: OyunOrnegi }) {
 function Bilgi({ simge, metin }: { simge: string; metin: string }) {
   return (
     <div className="flex flex-1 items-center gap-2.5 rounded-2xl bg-primary-soft px-3.5 py-3">
-      <span aria-hidden className="text-lg leading-none">
+      <span aria-hidden className="emoji text-lg leading-none">
         {simge}
       </span>
       <span className="rakam text-[13.5px] font-bold leading-snug">{metin}</span>
