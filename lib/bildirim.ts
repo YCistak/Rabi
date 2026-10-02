@@ -91,8 +91,8 @@ export async function pomodoroPlanla(bitisZamani: number, mola: boolean) {
           id: POMODORO_ID,
           title: mola ? 'Mola bitti' : 'Seans bitti',
           body: mola
-            ? 'Molan doldu. Hazırsan bir tur daha? 🐰'
-            : 'Bir pomodoro tamamlandı. Biraz ara ver. 🐰',
+            ? 'Hazırsan bir tur daha? 🐰'
+            : 'Biraz ara ver. 🐰',
           ...GORUNUS,
           schedule: { at: new Date(bitisZamani) },
         },

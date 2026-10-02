@@ -9,7 +9,7 @@
  * - **Tur saati** (Sıradan, Turbo): sayaç bir kez tur başında kuruluyor,
  *   sorular arasında sıfırlanmıyor. Yanlış cevap sayacı geri alıyor —
  *   `yanlisSayisi` arttıkça ceza düşülüyor.
- * - **Soru saati** (Ani Ölüm): sayaç her soruda sıfırlanıyor, süre dolunca
+ * - **Soru saati** (Sıfır Tolerans): sayaç her soruda sıfırlanıyor, süre dolunca
  *   soru yanlış sayılıyor.
  * - **Saatsiz** (Rahat): sayaç hiç çalışmıyor, `toplam` sıfır dönüyor. Arayüz
  *   halkayı ve çubuğu bu sıfıra bakarak gizliyor.
@@ -59,7 +59,7 @@ export function useTurSayaci({
   turNo: number
   /** Turda o ana kadar verilen yanlış sayısı; tur saatinden ceza düşüyor. */
   yanlisSayisi: number
-  /** Soru süresi doldu — soru yanlış sayılır (Ani Ölüm). */
+  /** Soru süresi doldu — soru yanlış sayılır (Sıfır Tolerans). */
   onBitti: () => void
   /** Tur süresi doldu — tur biter (Sıradan, Turbo). */
   onTurBitti: () => void

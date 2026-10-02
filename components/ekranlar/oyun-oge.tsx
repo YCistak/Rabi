@@ -256,7 +256,7 @@ export function OgeOyunuEkrani({
   /**
    * Cevaptan sonraki geçiş.
    *
-   * Ani Ölüm'de yanlış cevap turu bitiriyor (banka turu hariç). Bekleme süresi
+   * Sıfır Tolerans'de yanlış cevap turu bitiriyor (banka turu hariç). Bekleme süresi
    * doğruda da yanlışta da aynı: doğrusunu okumadan ekranın değişmesi,
    * elenirken bile öğretmeyi bırakmak olurdu.
    */
