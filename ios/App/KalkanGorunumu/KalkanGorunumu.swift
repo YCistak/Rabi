@@ -38,8 +38,12 @@ class KalkanGorunumu: ShieldConfigurationDataSource {
         let yazi = UIColor(red: 0x2A / 255, green: 0x21 / 255, blue: 0x1C / 255, alpha: 1)
         let soluk = UIColor(red: 0x7A / 255, green: 0x6E / 255, blue: 0x66 / 255, alpha: 1)
         let amber = UIColor(red: 0xD9 / 255, green: 0x62 / 255, blue: 0x2F / 255, alpha: 1)
+        // Bulanıklık açık ve **açık tonda**: `nil` verilince sistem zemin
+        // rengini kararmış uygulama görüntüsünün üstüne yarı saydam koyuyor ve
+        // ekran gri-koyu görünüyordu. Açık bulanıklık altta beyaz bir taban
+        // kuruyor, zemin rengi telefonun gece modundan bağımsız kırık beyaz kalıyor.
         return ShieldConfiguration(
-            backgroundBlurStyle: nil,
+            backgroundBlurStyle: .extraLight,
             backgroundColor: zemin,
             icon: UIImage(named: "tavsan_yuz"),
             title: ShieldConfiguration.Label(text: "Odak modundasın", color: yazi),

@@ -205,6 +205,12 @@ final class SecimModeli: ObservableObject {
 ///
 /// Aşağı kaydırarak kapatma kapalı: kapatılan sayfa "kaydet" mi "vazgeç" mi
 /// belirsiz kalıyordu ve JS tarafındaki çağrı hiç dönmezdi.
+///
+/// Üstte seçili olanların şeridi var. Apple'ın seçicisi kayıtlı seçimi
+/// işaretli getiriyor ama uygulamalar kategorilerin içinde kapalı duruyor ve
+/// kullanıcı daha önce neyi engellediğini görmüyordu — "Sosyal (1)" bir
+/// uygulama adı değil. Adları Rabi bilmiyor (opak belirteç); `Label(token)`
+/// sistemin kendi çizimi, ikon ve adı oraya o koyuyor.
 @available(iOS 16.0, *)
 struct UygulamaSecici: View {
     @ObservedObject var model: SecimModeli
@@ -213,7 +219,10 @@ struct UygulamaSecici: View {
 
     var body: some View {
         NavigationView {
-            FamilyActivityPicker(selection: $model.secim)
+            VStack(spacing: 0) {
+                SeciliSeridi(secim: model.secim)
+                FamilyActivityPicker(selection: $model.secim)
+            }
                 .navigationTitle("Engellenecekler")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -226,5 +235,59 @@ struct UygulamaSecici: View {
                 }
         }
         .interactiveDismissDisabled()
+    }
+}
+
+/// Seçili uygulama, kategori ve sitelerin yatay şeridi. Boşken de duruyor ve
+/// boş olduğunu söylüyor: kaybolan bir şerit "seçim silindi mi" diye
+/// düşündürürdü.
+@available(iOS 16.0, *)
+struct SeciliSeridi: View {
+    let secim: FamilyActivitySelection
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(baslik)
+                .font(.footnote.weight(.semibold))
+                .foregroundColor(.secondary)
+            if sayi > 0 {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(Array(secim.applicationTokens), id: \.self) { belirtec in
+                            Label(belirtec).cip()
+                        }
+                        ForEach(Array(secim.categoryTokens), id: \.self) { belirtec in
+                            Label(belirtec).cip()
+                        }
+                        ForEach(Array(secim.webDomainTokens), id: \.self) { belirtec in
+                            Label(belirtec).cip()
+                        }
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(Color(UIColor.secondarySystemBackground))
+    }
+
+    private var sayi: Int {
+        secim.applicationTokens.count + secim.categoryTokens.count + secim.webDomainTokens.count
+    }
+
+    private var baslik: String {
+        sayi == 0 ? "Henüz engellenen uygulama yok" : "Şu an engellenenler (\(sayi))"
+    }
+}
+
+private extension View {
+    func cip() -> some View {
+        self
+            .font(.subheadline)
+            .lineLimit(1)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(Capsule().fill(Color(UIColor.systemBackground)))
     }
 }

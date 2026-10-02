@@ -103,7 +103,9 @@ export function IosOdakAyarlari({
             </Not>
           )}
           <Buton bicim="ikincil" boy="kucuk" onClick={() => void sec()}>
-            {`Uygulamaları seç (${durum?.secimSayisi ?? 0})`}
+            {durum && durum.secimSayisi > 0
+              ? `Engellenenleri gör ve düzenle (${durum.secimSayisi})`
+              : 'Uygulamaları seç'}
           </Buton>
           <Not className="mt-2.5">
             Kilit yalnızca çalışma turunda devrede, molada kalkar. Tur bitince ya da duraklatınca
