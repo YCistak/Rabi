@@ -89,15 +89,15 @@ export function useHataBildirimi(): BildirimKolu {
    * olduğunu, bozuksa nesinin bozuk olduğunu ayırt ettiren tek alan sebep.
    */
   const onBildir = useCallback(
-    (soru: BankaSorusu, sebep: HataSebebi) => {
-      setBildirimler((l) => bildirimEkle(l, soru, sebep, new Date()))
+    (soru: BankaSorusu, sebep: HataSebebi, not?: string) => {
+      setBildirimler((l) => bildirimEkle(l, soru, sebep, new Date(), not))
     },
     [setBildirimler],
   )
 
   const onSebep = useCallback(
-    (kimlik: string, sebep: HataSebebi) => {
-      setBildirimler((l) => sebepGuncelle(l, kimlik, sebep))
+    (kimlik: string, sebep: HataSebebi, not?: string) => {
+      setBildirimler((l) => sebepGuncelle(l, kimlik, sebep, not))
     },
     [setBildirimler],
   )

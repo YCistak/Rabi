@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, type ComponentType } from 'react'
+import { useEffect, useMemo, useState, type ComponentType } from 'react'
 import {
   Atom,
   Beaker,
@@ -46,15 +46,15 @@ import {
   Zap,
 } from 'lucide-react'
 import {
-  KONU_SINIFLARI,
+  HARITA_SINIFLARI,
   dersBul,
   okumaDakikasi,
   programBul,
   sinifDersleri,
   tumKonular,
   type Konu,
+  type HaritaSinifi,
   type KonuDersId,
-  type KonuSinifi,
   type Tema,
 } from '@/lib/konu'
 import {
@@ -278,12 +278,15 @@ type DugumDurumu = 'bitti' | 'aktif' | 'kilitli' | 'yazilmadi'
 export function KonuHaritasiEkrani({
   secim,
   setSecim,
+  kullaniciSinifi,
   ilerlemeler,
   setIlerlemeler,
   onOkumaSeansi,
 }: {
-  secim: { ders: KonuDersId; sinif: KonuSinifi }
-  setSecim: (secim: { ders: KonuDersId; sinif: KonuSinifi }) => void
+  secim: { ders: KonuDersId; sinif: HaritaSinifi }
+  setSecim: (secim: { ders: KonuDersId; sinif: HaritaSinifi }) => void
+  /** Ayarlardaki sınıf; harita her açılışta onunla açılıyor. Mezunda `null`. */
+  kullaniciSinifi: HaritaSinifi | null
   ilerlemeler: KonuIlerlemeleri
   setIlerlemeler: (guncelle: (onceki: KonuIlerlemeleri) => KonuIlerlemeleri) => void
   /** Deste kapanınca geçen süre buraya yazılıyor; kayıt `AppShell`de. */
@@ -329,6 +332,26 @@ export function KonuHaritasiEkrani({
   */
   const [secimAcik, setSecimAcik] = useState(false)
 
+  /** Sınıf değişince ders o sınıfta yoksa ilk derse geçiliyor; 12'de ders kalıyor. */
+  const sinifSec = (sinif: HaritaSinifi) =>
+    setSecim({
+      sinif,
+      ders:
+        sinif === 12 || programBul(secim.ders, sinif) ? secim.ders : sinifDersleri(sinif)[0].id,
+    })
+
+  /*
+    Harita öğrencinin kendi sınıfıyla açılıyor (`haritaSinifiBul`). Etki
+    yalnızca açılışta ve kayıtlı sınıf değişince çalışıyor: ekranın içinde
+    başka bir sınıfa geçen kullanıcının seçimi o ziyaret boyunca kalıyor.
+  */
+  useEffect(() => {
+    if (kullaniciSinifi !== null && secim.sinif !== kullaniciSinifi) sinifSec(kullaniciSinifi)
+    // Seçimin kendisi bağımlılık değil: her seçimde kendi sınıfına geri atardı.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kullaniciSinifi])
+
+  const yapimda = secim.sinif === 12
   const ders = dersBul(secim.ders)
   const dersAdi = secim.sinif === 11 && secim.ders === 'turkce' ? 'Edebiyat' : ders.ad
   const bicim = haritaTemasi(secim.ders)
@@ -464,17 +487,10 @@ export function KonuHaritasiEkrani({
       <header className="flex items-start gap-3 px-0.5 pt-1">
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
-          <h1 className="mt-1 flex items-center gap-2 font-display text-[27px] font-extrabold tracking-tight">
-            Harita
-            {/* Bölüm kapalı betada: içerik ve kilit kuralı hâlâ oturuyor,
-                kullanıcı bir hatayı bilerek beta olan bir yerde görmeli. */}
-            <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[10px] font-black tracking-[0.12em] text-primary uppercase">
-              Beta
-            </span>
-          </h1>
+          <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Harita</h1>
         </div>
         <span
-          className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart text-[21px] leading-none"
+          className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart text-[21px] leading-none emoji"
           aria-hidden
         >
           🗺️
@@ -488,7 +504,7 @@ export function KonuHaritasiEkrani({
           className="flex w-full items-center gap-3 px-3.5 py-3 text-left transition active:brightness-[0.98]"
         >
           <span
-            className="grid size-10 shrink-0 place-items-center rounded-[14px] text-[20px]"
+            className="emoji grid size-10 shrink-0 place-items-center rounded-[14px] text-[20px]"
             style={{ background: bicim.zemin }}
             aria-hidden
           >
@@ -502,7 +518,7 @@ export function KonuHaritasiEkrani({
               Çalıştığın program
             </span>
             <span className="block truncate font-display text-[15px] font-extrabold tracking-tight">
-              {secim.sinif}. sınıf · {dersAdi}
+              {yapimda ? '12. sınıf' : `${secim.sinif}. sınıf · ${dersAdi}`}
             </span>
           </span>
           <span className="inline-flex h-9 shrink-0 items-center gap-1 rounded-full bg-muted pr-2.5 pl-3 text-[13px] font-extrabold text-muted-foreground">
@@ -519,22 +535,20 @@ export function KonuHaritasiEkrani({
         {secimAcik && (
           <div className="space-y-2.5 border-t border-border px-3.5 py-3">
             <div className="flex gap-2">
-              {KONU_SINIFLARI.map((sinif) => (
+              {HARITA_SINIFLARI.map((sinif) => (
                 <button
                   key={sinif}
                   type="button"
-                  onClick={() => setSecim({
-                    sinif,
-                    ders: programBul(secim.ders, sinif) ? secim.ders : sinifDersleri(sinif)[0].id,
-                  })}
+                  onClick={() => sinifSec(sinif)}
                   aria-pressed={secim.sinif === sinif}
                   className={cn(
-                    'flex-1 rounded-md py-2 text-[13.5px] font-extrabold transition',
+                    'flex flex-1 items-center justify-center gap-1 rounded-md py-2 text-[13px] font-extrabold transition',
                     secim.sinif === sinif
                       ? 'bg-primary-dolu text-white'
                       : 'bg-muted text-muted-foreground active:brightness-95',
                   )}
                 >
+                  {sinif === 12 && <Lock size={11} strokeWidth={2.8} aria-label="Yapım aşamasında" />}
                   {sinif}. sınıf
                 </button>
               ))}
@@ -543,6 +557,7 @@ export function KonuHaritasiEkrani({
             {/* Çipin rengi haritanın rengi: seçilen dersin bandı hangi
                 tondaysa çip de o tonda; ders değişince ekranın ne renge
                 döneceği çipten okunuyor. */}
+            {!yapimda && (
             <div className="-mx-3.5 flex gap-2 overflow-x-auto px-3.5 pb-1">
               {sinifDersleri(secim.sinif).map((d) => {
                 const secili = secim.ders === d.id
@@ -567,17 +582,33 @@ export function KonuHaritasiEkrani({
                         : undefined
                     }
                   >
-                    <span aria-hidden>{d.ikon}</span>
+                    <span aria-hidden className="emoji">{d.ikon}</span>
                     {secim.sinif === 11 && d.id === 'turkce' ? 'Edebiyat' : d.ad}
                   </button>
                 )
               })}
             </div>
+            )}
           </div>
         )}
       </Kart>
 
-      {program === null ? (
+      {yapimda ? (
+        /* 12. sınıf seçicide duruyor ama içeriği yok: harita kapalı, kilitli
+           bir kartla. Patikanın sönük bir kopyası çizilmiyor — açılacakmış
+           gibi duran ama dokunulamayan kitaplar, bozuk bir ekran gibi okunurdu. */
+        <Kart data-tanitim="konu-haritasi" className="flex flex-col items-center px-6 py-10 text-center">
+          <span className="grid size-16 place-items-center rounded-full bg-muted text-muted-foreground">
+            <Lock size={28} strokeWidth={2.2} aria-hidden />
+          </span>
+          <p className="mt-4 font-display text-[18px] font-extrabold tracking-tight">
+            12. sınıf yapım aşamasında
+          </p>
+          <p className="mt-1 text-[13.5px] font-semibold text-pretty text-muted-foreground">
+            Bu sınıfın haritası hazırlanıyor. Hazır olunca burada açılacak.
+          </p>
+        </Kart>
+      ) : program === null ? (
         <Kart data-tanitim="konu-haritasi" className="flex flex-col items-center px-6 py-10 text-center">
           <Rabi durum="calisiyor" poz="okuyan" boyut={92} />
           <p className="mt-3 font-display text-[17px] font-extrabold tracking-tight">

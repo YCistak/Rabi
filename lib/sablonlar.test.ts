@@ -19,17 +19,14 @@ describe('secilebilirSablonlar', () => {
     expect(idler(MEZUN, 'dil')).toEqual(['okul', 'tyt', 'ydt'])
   })
 
-  it('alanında karar vermemiş 11, 12 ve mezun tüm hazır şablonları görüyor', () => {
+  it('alanında karar vermemiş öğrenci, sınıfı ne olursa olsun tüm hazır şablonları görüyor', () => {
     const tumu = HAZIR_SABLONLAR.map((s) => s.id)
     expect(tumu).toEqual(expect.arrayContaining(['okul', 'tyt', 'ayt-say', 'ayt-ea', 'ayt-soz', 'ydt']))
     expect(idler(11, null)).toEqual(tumu)
     expect(idler(12, null)).toEqual(tumu)
     expect(idler(MEZUN, null)).toEqual(tumu)
-  })
-
-  it('alanında karar vermemiş 9 ve 10. sınıf yine AYT görmüyor', () => {
-    expect(idler(9, null)).toEqual(['okul', 'tyt'])
-    expect(idler(10, null)).toEqual(['okul', 'tyt'])
+    expect(idler(9, null)).toEqual(tumu)
+    expect(idler(10, null)).toEqual(tumu)
   })
 
   it('kullanıcının kendi şablonu süzülmüyor', () => {

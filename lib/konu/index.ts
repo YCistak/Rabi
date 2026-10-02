@@ -90,6 +90,30 @@ export const KONU_DERSLERI: KonuDersTanimi[] = [
 /** Programın kapsadığı sınıflar. */
 export const KONU_SINIFLARI: KonuSinifi[] = [9, 10, 11]
 
+/**
+ * Haritanın sınıf seçicisindeki sınıflar: içeriği olanlar ve **12**.
+ *
+ * 12. sınıfın kartları henüz yazılmadı; seçici onu yine de gösteriyor ve
+ * seçilince harita "yapım aşamasında" diye kapalı duruyor. Kullanıcı istedi:
+ * 12. sınıf öğrencisi kendi sınıfını listede hiç görmeyince bölümün kendisine
+ * ait olmadığını düşünüyordu. `KonuSinifi` 9–11 kalıyor — içerik tipleri
+ * olmayan bir sınıfı taşımasın.
+ */
+export type HaritaSinifi = KonuSinifi | 12
+export const HARITA_SINIFLARI: HaritaSinifi[] = [...KONU_SINIFLARI, 12]
+
+/**
+ * Kullanıcının kayıtlı sınıfından haritanın açılacağı sınıf.
+ *
+ * Harita her açılışta öğrencinin kendi sınıfıyla açılıyor; bir süre en son
+ * bakılan sınıfta kalıyordu ve 10. sınıf öğrencisi her seferinde 9. sınıfın
+ * haritasını görüp sınıf değiştiriyordu. Mezun ve 9'dan küçük değerler için
+ * `null`: o kullanıcıların tek bir sınıfı yok, son seçim yerinde kalıyor.
+ */
+export function haritaSinifiBul(buYilSinif: number): HaritaSinifi | null {
+  return HARITA_SINIFLARI.find((s) => s === buYilSinif) ?? null
+}
+
 function sorulariBagla(program: DersProgrami, havuz: Record<string, Omit<SoruKarti, 'id'>[]>): DersProgrami {
   const konuKimlikleri = new Set(program.temalar.flatMap((tema) => tema.konular.map((konu) => konu.id)))
   for (const kimlik of Object.keys(havuz)) {
@@ -153,12 +177,12 @@ const PROGRAMLAR: Record<string, DersProgrami> = {
 }
 
 /** İçeriği henüz yazılmamış ders/sınıf için `null` döner; ekran bunu yazıyla karşılar. */
-export function programBul(ders: KonuDersId, sinif: KonuSinifi): DersProgrami | null {
+export function programBul(ders: KonuDersId, sinif: HaritaSinifi): DersProgrami | null {
   return PROGRAMLAR[`${ders}-${sinif}`] ?? null
 }
 
-/** Kısmi sınıf eklemelerinde boş ders seçeneği gösterilmez. */
-export function sinifDersleri(sinif: KonuSinifi): KonuDersTanimi[] {
+/** Kısmi sınıf eklemelerinde boş ders seçeneği gösterilmez. 12'de liste boş. */
+export function sinifDersleri(sinif: HaritaSinifi): KonuDersTanimi[] {
   return KONU_DERSLERI.filter((ders) => programBul(ders.id, sinif) !== null)
 }
 

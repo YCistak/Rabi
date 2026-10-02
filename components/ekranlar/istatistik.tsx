@@ -16,6 +16,7 @@ import {
   type Yon,
 } from '@/lib/istatistik'
 import { useGeriKatmani } from '@/lib/geri'
+import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { cn } from '@/lib/utils'
 import type { Deneme, Sablon } from '@/lib/types'
 
@@ -397,12 +398,14 @@ function AltSayfa({
   children: React.ReactNode
 }) {
   useGeriKatmani(true, onKapat)
+  const kaydir = useAsagiKaydirKapat(onKapat)
   return (
     <div
       className="katman-zemin fixed inset-0 z-50 flex items-end justify-center bg-foreground/35"
       onClick={onKapat}
     >
       <div
+        ref={kaydir}
         className={cn(
           'alt-pencere-girisi flex w-full max-w-md flex-col rounded-t-[26px] bg-background shadow-[0_-12px_34px_rgba(54,33,112,0.2)]',
           yukseklik,

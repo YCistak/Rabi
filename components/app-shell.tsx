@@ -55,7 +55,7 @@ import { useGuncelleme } from '@/lib/guncelleme-kolu'
 import { GuncellemeSeridi } from '@/components/guncelleme-seridi'
 import { bugun, cn, gunKaydir } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
-import type { KonuDersId, KonuSinifi } from '@/lib/konu'
+import { haritaSinifiBul, type HaritaSinifi, type KonuDersId } from '@/lib/konu'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { kullanildi } from '@/lib/son-kullanilan'
 import { useBugun } from '@/lib/gorunurluk'
@@ -262,7 +262,7 @@ function RabiUygulamasi() {
     Konu haritasında kalınan yer. Yedeğe girmeyen bir tercih olduğu için
     ilerlemeden ayrı anahtarda duruyor.
   */
-  const [konuSecimi, setKonuSecimi] = useYerelDepo<{ ders: KonuDersId; sinif: KonuSinifi }>(
+  const [konuSecimi, setKonuSecimi] = useYerelDepo<{ ders: KonuDersId; sinif: HaritaSinifi }>(
     ANAHTARLAR.konuSecimi,
     { ders: 'matematik', sinif: 9 },
   )
@@ -908,6 +908,7 @@ function RabiUygulamasi() {
         key={ekran ?? `sekme:${sekme}`}
         anahtar={ekran ?? `sekme:${sekme}`}
         ileri={ekran !== null}
+        sabit={genelTest !== null}
         yavas={tanitim.tanitimdaMi || tanitim.kapanisSuruyor}
         sure={tanitim.animasyon.gecisMs}
       >
@@ -1099,6 +1100,7 @@ function RabiUygulamasi() {
               <KonuHaritasiEkrani
                 secim={konuSecimi}
                 setSecim={(secim) => setKonuSecimi(secim)}
+                kullaniciSinifi={haritaSinifiBul(ayarlar.buYilSinif)}
                 ilerlemeler={konuIlerleme}
                 setIlerlemeler={setKonuIlerleme}
                 onOkumaSeansi={(seans) => setOkumaGecmisi((onceki) => okumaSeansiEkle(onceki, seans))}
@@ -1224,6 +1226,7 @@ function SayfaGecisi({
   children,
   anahtar,
   ileri = false,
+  sabit = false,
   yavas = false,
   sure = 500,
 }: {
@@ -1231,10 +1234,21 @@ function SayfaGecisi({
   /** Bileşenin `key`i; görüntüsü bu adla saklanıyor. */
   anahtar: string
   ileri?: boolean
+  /**
+   * Giriş animasyonu yok. Genel test Oyun Bankası'ndan Oyunlar sekmesine
+   * geçip oyunu doğrudan tam ekran açıyor; kutunun kayışı sürerken kutu
+   * transformlu ve içindeki tam ekran oyun ekrana değil kutuya göre
+   * konumlanıyordu — oyun önce kenarları beyaz, dar bir kutuda açılıyor,
+   * animasyon bitince birden ekranı kaplıyordu.
+   */
+  sabit?: boolean
   yavas?: boolean
   sure?: number
 }) {
   const [basladi, setBasladi] = useState(false)
+  // Kurulurken bir kez: test bitince prop düşüyor ve animasyon o an baştan
+  // başlardı.
+  const [sabitKalsin] = useState(sabit)
   // Kaydırarak geri gelindiyse ekran soldan geliyor ya da (önizleme zaten
   // yerindeyse) hiç kaymıyor. Kurulurken **bir kez** okunuyor: yön sonradan
   // değişse de başlamış animasyon değişmemeli (bkz. `geriYonunuIsaretle`).
@@ -1275,7 +1289,7 @@ function SayfaGecisi({
         geri === 'yerinde' && 'sayfa-yerinde',
         !basladi && 'sayfa-bekliyor',
       )}
-      style={yavas ? { animationDuration: `${sure}ms` } : undefined}
+      style={sabitKalsin ? { animation: 'none' } : yavas ? { animationDuration: `${sure}ms` } : undefined}
     >
       {children}
     </div>

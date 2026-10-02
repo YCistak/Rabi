@@ -17,7 +17,10 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
     hataları öğrenmenin başka yolu yok. Ağa çıkan tek dosya `lib/hata-gonder.ts`;
     gönderilen veri `formVerisi()` içinde tek tek sayılan yedi alandan ibaret (soru
     kimliği, oyun, soru metni, doğru sanılan cevap, sebep, sürüm, cihaz alanı —
-    telefon modeli ve ada bağlı olmayan okunur bir ad). Ne gönderildiği hem ilk
+    telefon modeli ve ada bağlı olmayan okunur bir ad). "Başka" sebebinin
+    kısa notu (en çok 32 harf) yeni bir alan değil, `sebep` alanının içinde
+    ("Başka: …") gidiyor — kural `sebep`e 40 harf veriyor ve yeni alan,
+    kural konsolda değişene kadar her bildirimi 403 ile düşürürdü. Ne gönderildiği hem ilk
     bildirimde çıkan izin kartında hem Gizlilik ve Koşullar ekranında yazıyor;
     kart "Gönder" denmeden hiçbir şey ağa çıkmıyor. Ayarlarda ayrıca bir
     açma/kapama anahtarı vardı, kaldırıldı: bildirim bayrağa basıp sebep
@@ -1318,6 +1321,15 @@ yazmadan önce listedekilerden hangisinin karşılığı olduğuna bak. Altısı
 `prefers-reduced-motion` altında susuyor: hangi ekranda olunduğu başlıkta,
 pencerenin neye ait olduğu metninde yazılı — hareket yalnızca bağlıyor.
 
+**Alttan açılan sayfalar aşağı çekilerek kapanıyor** (`useAsagiKaydirKapat`,
+`lib/asagi-kaydir.ts`). Hepsinin tepesinde bir tutamak vardı ama sayfa yalnızca
+zemine ya da Kapat'a dokununca kapanıyordu; kullanıcı tutamağı çekti, bir şey
+olmadı. Yeni bir alt sayfa eklersen kancayı kutusuna `ref` olarak ver.
+Sürükleme yalnızca içerik en üstteyken başlıyor ve `alt-pencere-girisi`nin
+`both` dolgusu satır içi transformu ezdiği için kanca sürüklerken animasyonu
+kaldırıyor. Sonucu bildiren, kapatılması bir karar olan sayfalar (hızlı
+kontrolün sonucu) kancayı almıyor.
+
 ## Kartlar sırayla beliriyor
 
 Izgaralar (ana sayfanın Araçlar/Oyunlar kutucukları, Oyunlar sekmesinin ders ve
@@ -1463,7 +1475,7 @@ adımı geçiyor. Soru türü seçimi geri gelmedi — havuzun tamamı soruluyor
 | --- | --- | --- | --- |
 | Sıradan | tura ait, 60 sn | süreden 3 sn götürür | var |
 | Turbo | tura ait, 30 sn | süreden 3 sn götürür | var |
-| Ani Ölüm | soruya ait (`SORU_SURESI`) | tur biter | var |
+| Sıfır Tolerans | soruya ait (`SORU_SURESI`) | tur biter | var |
 | Rahat | yok | hiçbir şey | **yok** |
 
 Dördü de seçilebiliyor. Rekora yazılmama kuralının (`kayitliMi`) kapısı
@@ -2001,9 +2013,14 @@ tutuyor ve karakter sınırı tek başına yetmiyor.
 İkisi **birlikte** değişir: sınırı büyütmek isteyen önce satırdaki düğmelere yer
 bulmalı. Yeni bir düğme eklemek de metni daraltır, yani sınırı düşürür.
 
-Görev metni **düzenlenemiyor**, silinip yeniden yazılıyor: satır tek satırlık bir
-iş adı taşıyor ve yirmi dört karakteri düzeltmek, her satıra ikinci bir kalem
-düğmesi koymaktan hızlı.
+Görev **düzenleniyor** (`gorevDuzenle`, aynı ekleme sayfası dolu açılıyor) ve
+her satırda silme düğmesi var. Bir süre ikisi de yoktu — "yirmi dört karakteri
+silip yeniden yazmak, kalem düğmesinden hızlı" diye — ama yeniden yazmak yıldızı,
+bitti işaretini ve dilimdeki yeri de götürüyordu; kullanıcı tik gibi görünür
+düğmeler istedi. Düzenleme gün ve dilimi değiştirmiyor, taşımanın yolu erteleme.
+Düğmeler (yıldız, ertele, düzenle, sil) **kategorinin satırında**, iş adının
+değil: dört düğme ad satırına konsaydı aşağıdaki karakter sınırı yarıya inerdi.
+Silme bir onay penceresinden geçiyor.
 
 ### Kayıt yedi günlük şeritle kayar, geçmiş salt okunur
 
@@ -2037,6 +2054,13 @@ Erteleme görevi **ertesi güne, aynı dilime** taşıyor ve hedef dilim doluysa
 `gorevErtele` `null` dönüyor: sessizce yutulan bir erteleme, kullanıcıya işin
 ekrandan kaybolduğunu gösterirdi. Ekran bu yüzden bir toast taşıyor — ertelenen
 görev bulunduğu günden çıkıyor ve nereye gittiğini söyleyen tek yer o cümle.
+Erteleme önce **soruyor** (`Onay`, kırmızı değil — geri alınabilen bir iş):
+tek dokunuşla ertelenen görev ekrandan kayboluyor, yanlışlıkla basan kullanıcı
+onu yarının listesinde arıyordu.
+
+"Diğer" seçilince kendi kategori adı **zorunlu** ve en çok
+`EN_UZUN_OZEL_KATEGORI` (14) harf, sayacı alanın üstünde. Bir süre isteğe
+bağlıydı; listede yalnızca "DİĞER" yazan bir görev ne olduğunu söylemiyordu.
 
 Ekleme sayfası **"Ne zaman?" diye sormuyor**: dilim, basılan `+` düğmesinin
 bölümünden geliyor. Sayfada bir süre üç dilimlik bir seçici de vardı; kullanıcı
@@ -2457,6 +2481,19 @@ Sekme açılırken ayrıca bir karşılama yok. Bir süre Rabi bir buçuk saniye
 ekranın ortasında beliriyor, harita arkasında kararıyordu; kullanıcı
 kaldırdı — her açılışta beklenen bir buçuk saniye, haritaya giden yolu
 uzatıyordu.
+
+### Harita öğrencinin sınıfıyla açılıyor, 12 kapalı
+
+Sekme her açıldığında sınıf seçici ayarlardaki sınıfa geçiyor
+(`haritaSinifiBul`); bir süre en son bakılan sınıfta kalıyordu ve 10. sınıf
+öğrencisi her açılışta 9. sınıfın haritasını görüyordu. Ekranın içinde başka
+sınıfa geçmek o ziyaret boyunca geçerli. Mezunun tek bir sınıfı yok, onda son
+seçim kalıyor.
+
+Seçicide **12. sınıf** da var (`HARITA_SINIFLARI`) ama içeriği yok: seçilince
+ders çipleri kalkıyor ve harita yerine kilitli bir "yapım aşamasında" kartı
+duruyor. `KonuSinifi` 9–11 kalıyor; 12 yalnızca seçicinin tipi
+(`HaritaSinifi`). Kartlar yazılınca `KONU_SINIFLARI`na eklenir ve kart kalkar.
 
 ### Patika kitaplı bir yol
 

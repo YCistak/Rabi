@@ -4,7 +4,16 @@ import { useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { geriKaydirmayiKilitle } from '@/lib/geri-kaydirma'
 import type { Sekme } from '@/lib/gezinme'
-import { KOYU_ESIGI, mercekKonumu, parlaklik, parmaktanSira, rengiCoz, type Ton } from '@/lib/cam-menu'
+import {
+  KOYU_ESIGI,
+  SURUKLEME_OLCEGI,
+  buyutecOlcegi,
+  mercekKonumu,
+  parlaklik,
+  parmaktanSira,
+  rengiCoz,
+  type Ton,
+} from '@/lib/cam-menu'
 
 /**
  * Alt menü simgeleri elle çiziliyor, hazır setten alınmıyor.
@@ -106,7 +115,12 @@ export function BottomNav({
     şeride gider, düğmenin `click`i hiç gelmez ve kısa dokunuş çalışmazdı.
     Eşik geçilince yakalanıyor ki parmak kapsülden taşsa da izlensin.
   */
-  const [surukleme, setSurukleme] = useState<{ x: number; sira: number } | null>(null)
+  const [surukleme, setSurukleme] = useState<{
+    x: number
+    sira: number
+    /** Şeridin iç genişliği; büyüteç sekmelerin yerini bundan hesaplıyor. */
+    genislik: number
+  } | null>(null)
   const parmak = useRef<{ id: number; baslangic: number; suruklendi: boolean } | null>(null)
   const dokunusuYut = useRef(false)
 
@@ -157,8 +171,9 @@ export function BottomNav({
     if (!olcu) return
     const x = e.clientX - olcu.sol
     setSurukleme({
-      x: mercekKonumu(x, olcu.genislik, SEKMELER.length),
+      x: mercekKonumu(x, olcu.genislik, SEKMELER.length, SURUKLEME_OLCEGI),
       sira: parmaktanSira(x, olcu.genislik, SEKMELER.length),
+      genislik: olcu.genislik,
     })
   }
 
@@ -253,7 +268,9 @@ export function BottomNav({
       style={
         {
           '--sekme-sira': sira,
-          ...(surukleme ? { '--mercek-x': `${surukleme.x}px` } : {}),
+          ...(surukleme
+            ? { '--mercek-x': `${surukleme.x}px`, '--mercek-olcek': SURUKLEME_OLCEGI }
+            : {}),
         } as React.CSSProperties
       }
     >
@@ -276,6 +293,16 @@ export function BottomNav({
           // Sürüklerken renk parmağın altındaki sekmeye geçiyor; seçim ancak
           // bırakınca değişiyor.
           const vurgulu = i === gorunenSira
+          /*
+            Büyüteç: sürüklerken merceğin altından geçen simge büyüyor
+            (App Store'un çubuğu gibi). Merceğin ortası ile sekmenin ortası
+            arasındaki uzaklıktan; bırakınca hepsi yerine dönüyor.
+          */
+          let buyutec = 1
+          if (surukleme) {
+            const sutun = surukleme.genislik / SEKMELER.length
+            buyutec = buyutecOlcegi(surukleme.x + sutun / 2 - (i + 0.5) * sutun, sutun)
+          }
           return (
             <li key={id} className="flex-1">
               <button
@@ -287,25 +314,30 @@ export function BottomNav({
                 }}
                 aria-current={aktif ? 'page' : undefined}
                 className={cn(
-                  'flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[11px] font-bold transition',
+                  'flex w-full justify-center rounded-xl py-1.5 text-[11px] font-bold transition',
                   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                   vurgulu ? 'text-primary' : 'text-muted-foreground',
                 )}
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  width={24}
-                  height={24}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={vurgulu ? 2.3 : 2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden
+                <span
+                  className="alt-menu-icerik flex flex-col items-center gap-1"
+                  style={{ transform: buyutec === 1 ? undefined : `scale(${buyutec})` }}
                 >
-                  {SIMGELER[id]}
-                </svg>
-                {ad}
+                  <svg
+                    viewBox="0 0 24 24"
+                    width={24}
+                    height={24}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={vurgulu ? 2.3 : 2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                  >
+                    {SIMGELER[id]}
+                  </svg>
+                  {ad}
+                </span>
               </button>
             </li>
           )

@@ -412,7 +412,7 @@ export function OyunlarEkrani({
         {/* Araçlar'daki 🧰 ile aynı kutu ve aynı hiza; başlığın sonuna yapışan
             emoji sekme değiştikçe kayıyordu, sağ üstteki kutu sabit duruyor. */}
         <span
-          className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart text-[21px] leading-none"
+          className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart text-[21px] leading-none emoji"
           aria-hidden
         >
           🎮
@@ -464,7 +464,7 @@ export function OyunlarEkrani({
                   )}
                 >
                   <span
-                    className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-[14px] bg-white/80 text-[21px] leading-none"
+                    className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-[14px] bg-white/80 text-[21px] leading-none emoji"
                     aria-hidden
                   >
                     {ders.ikon}
@@ -944,7 +944,7 @@ function OyunKarti({
       )}
 
       <span
-        className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80 text-[23px] leading-none"
+        className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80 text-[23px] leading-none emoji"
         aria-hidden
       >
         {oyun.ikon}
@@ -1012,7 +1012,7 @@ function BolumKarti({
       )}
     >
       <span
-        className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80 text-[23px] leading-none"
+        className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80 text-[23px] leading-none emoji"
         aria-hidden
       >
         {bolum.ikon}

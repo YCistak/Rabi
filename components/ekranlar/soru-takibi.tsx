@@ -6,6 +6,7 @@ import type { Ayarlar, GunlukKayit, SoruKaydi } from '@/lib/types'
 import { bosSayisi, gunOzeti } from '@/lib/hesap'
 import { CALISMA_DERSLERI, sadelestir } from '@/lib/dersler'
 import { useGeriKatmani } from '@/lib/geri'
+import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { bugun, cn, gunKaydir, tariheCevir, tariheYaz, yediGunlukSerit } from '@/lib/utils'
 import { Alan, BaslikSatiri, Buton, Halka, Kart, Not } from '@/components/ui'
 import { Takvim, type GunIsareti } from '@/components/takvim'
@@ -607,6 +608,7 @@ function SoruEkleSayfasi({
   onKaydet: (ders: string, toplam: number, dogru: number, yanlis: number) => void
 }) {
   useGeriKatmani(true, onKapat)
+  const kaydir = useAsagiKaydirKapat(onKapat)
   const [listeAcik, setListeAcik] = useState(false)
   const [ders, setDers] = useState<string | null>(null)
   const [toplam, setToplam] = useState('')
@@ -634,6 +636,7 @@ function SoruEkleSayfasi({
       onClick={onKapat}
     >
       <div
+        ref={kaydir}
         className="alt-pencere-girisi max-h-[76%] w-full max-w-md overflow-y-auto rounded-t-[26px] bg-card px-4 pt-3 pb-[calc(1.5rem+var(--guvenli-alt))]"
         onClick={(e) => e.stopPropagation()}
       >

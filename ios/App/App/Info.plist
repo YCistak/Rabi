@@ -6,8 +6,12 @@
 	<string>$(CAPACITOR_DEBUG)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>tr</string>
+	<!-- Ana ekranda görünen ad. iOS ikonun altına sığmayan adı sonundan
+	     kısaltıyor ("Rabi — YKS…"); tam ad Ayarlar'da, bildirimlerde ve
+	     Screen Time izin penceresinde görünüyor. CFBundleName "Rabi" kalıyor:
+	     paket ve arşiv adları ondan türüyor. -->
 	<key>CFBundleDisplayName</key>
-	<string>Rabi</string>
+	<string>Rabi — YKS Asistanı</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

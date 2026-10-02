@@ -312,7 +312,7 @@ function RozetSatiri({ satir }: { satir: RozetIlerlemesi }) {
     <div className="golge-kart flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
       <span
         className={cn(
-          'flex size-11 flex-none items-center justify-center rounded-[14px] border text-[22px] leading-none',
+          'emoji flex size-11 flex-none items-center justify-center rounded-[14px] border text-[22px] leading-none',
           kazanildi
             ? cn(renk.kenar, renk.zemin)
             : 'border-border bg-muted opacity-45 grayscale',

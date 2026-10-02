@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Check, ChevronRight, Plus, Star, Trash2, X } from 'lucide-react'
+import { Check, ChevronRight, Pencil, Plus, Star, Trash2, X } from 'lucide-react'
 import {
   DILIMLER,
   DILIM_ADI,
@@ -20,6 +20,7 @@ import {
   SURE_SECENEKLERI,
   sureYaz,
   elleSure,
+  gorevDuzenle,
   gorevErtele,
   gorevIsaretle,
   gorevRengi,
@@ -28,12 +29,14 @@ import {
   metniKirp,
   type Gorev,
   type GorevDilimi,
+  type GorevDuzeni,
   type GorevKategorisi,
   type GorevRengi,
 } from '@/lib/yapilacaklar'
 import { bugun, cn, gunKaydir, tariheCevir, yediGunlukSerit, yeniId } from '@/lib/utils'
 import { useGeriKatmani } from '@/lib/geri'
-import { BaslikSatiri, Buton, Kart } from '@/components/ui'
+import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
+import { BaslikSatiri, Buton, Kart, Onay } from '@/components/ui'
 
 /**
  * Yapılacaklar — hafta şeridi + günün üç dilimi.
@@ -44,9 +47,11 @@ import { BaslikSatiri, Buton, Kart } from '@/components/ui'
  * noktalı kâğıt üstünde Sabah/Öğle/Akşam bölümleri, görev eklemek alttan
  * açılan bir sayfada.
  *
- * Görev metni **düzenlenemiyor**, yalnızca silinip yeniden yazılıyor: satır tek
- * satırlık bir iş adı taşıyor ve yirmi sekiz karakteri düzeltmek, her satıra
- * ikinci bir kalem düğmesi koymaktan hızlı.
+ * Görev **düzenlenebiliyor** ve her satırda silme düğmesi var. Bir süre ikisi
+ * de yoktu (metin silinip yeniden yazılıyordu, sil yalnızca bitmiş görevde
+ * çıkıyordu); kullanıcı tik düğmesi gibi görünür birer düğme istedi. Düğmeler
+ * iş adının satırında değil kategorinin satırında: ad satırının genişliği
+ * `EN_UZUN_GOREV`in dayanağı ve dört düğme oraya sığmazdı.
  */
 
 const GUN_ADLARI = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz']
@@ -78,8 +83,14 @@ export function YapilacaklarEkrani({
 }) {
   const bugunIso = bugun()
   const [secili, setSecili] = useState(bugunIso)
-  /** Açık ekleme sayfası — hangi dilime ekleneceğini de taşıyor. */
-  const [eklenen, setEklenen] = useState<GorevDilimi | null>(null)
+  /**
+   * Açık ekleme/düzenleme sayfası: hangi dilime ekleneceği, düzenlemedeyse
+   * düzenlenen görev.
+   */
+  const [sayfa, setSayfa] = useState<{ dilim: GorevDilimi; gorev?: Gorev } | null>(null)
+  /** Onay bekleyen erteleme ve silme. */
+  const [ertelenecek, setErtelenecek] = useState<Gorev | null>(null)
+  const [silinecek, setSilinecek] = useState<Gorev | null>(null)
   const [mesaj, setMesaj] = useState<string | null>(null)
 
   /*
@@ -119,22 +130,22 @@ export function YapilacaklarEkrani({
     window.setTimeout(() => setMesaj((o) => (o === metin ? null : o)), MESAJ_SURESI)
   }
 
-  const kaydet = (yeni: {
-    metin: string
-    dilim: GorevDilimi
-    kategori: GorevKategorisi
-    ozelKategori?: string
-    renk: GorevRengi
-    sure: number | null
-  }) => {
-    const sonuc = gorevEkle(gorevler, { id: yeniId(), gun: secili, ...yeni })
+  const kaydet = (dilim: GorevDilimi, duzen: GorevDuzeni, duzenlenen?: Gorev) => {
+    if (duzenlenen) {
+      const sonuc = gorevDuzenle(gorevler, duzenlenen.id, duzen)
+      if (sonuc) setGorevler(sonuc)
+      setSayfa(null)
+      soyle('Görev güncellendi.')
+      return
+    }
+    const sonuc = gorevEkle(gorevler, { id: yeniId(), gun: secili, dilim, ...duzen })
     if (!sonuc) {
-      soyle(`${DILIM_ADI[yeni.dilim]} listesi dolu (${EN_COK_GOREV} görev).`)
+      soyle(`${DILIM_ADI[dilim]} listesi dolu (${EN_COK_GOREV} görev).`)
       return
     }
     setGorevler(sonuc)
-    setEklenen(null)
-    soyle(`${DILIM_ADI[yeni.dilim]} listesine eklendi.`)
+    setSayfa(null)
+    soyle(`${DILIM_ADI[dilim]} listesine eklendi.`)
   }
 
   const ertele = (gorev: Gorev) => {
@@ -246,7 +257,7 @@ export function YapilacaklarEkrani({
                 {!gecmis && (
                   <button
                     type="button"
-                    onClick={() => setEklenen(dilim)}
+                    onClick={() => setSayfa({ dilim })}
                     disabled={!yerVar}
                     aria-label={`${DILIM_ADI[dilim]} için görev ekle`}
                     className={cn(
@@ -266,8 +277,9 @@ export function YapilacaklarEkrani({
                     gecmis={gecmis}
                     onIsaretle={() => setGorevler((o) => gorevIsaretle(o, gorev.id))}
                     onYildiz={() => setGorevler((o) => gorevYildizla(o, gorev.id))}
-                    onErtele={() => ertele(gorev)}
-                    onSil={() => setGorevler((o) => gorevSil(o, gorev.id))}
+                    onErtele={() => setErtelenecek(gorev)}
+                    onDuzenle={() => setSayfa({ dilim, gorev })}
+                    onSil={() => setSilinecek(gorev)}
                   />
                 ))}
 
@@ -279,7 +291,7 @@ export function YapilacaklarEkrani({
                   ) : (
                     <button
                       type="button"
-                      onClick={() => setEklenen(dilim)}
+                      onClick={() => setSayfa({ dilim })}
                       className="w-full rounded-[14px] border-[1.5px] border-dashed border-border bg-card/70 px-3.5 py-3 text-center text-[12.5px] font-bold text-muted-foreground transition active:border-primary active:text-primary"
                     >
                       + {DILIM_ADI[dilim]} için görev ekle
@@ -301,25 +313,59 @@ export function YapilacaklarEkrani({
         </div>
       )}
 
-      {eklenen !== null && (
+      {sayfa !== null && (
         <EklemeSayfasi
-          dilim={eklenen}
+          dilim={sayfa.dilim}
+          duzenlenen={sayfa.gorev}
           gunEtiketi={gunEtiketi}
-          onKapat={() => setEklenen(null)}
-          onKaydet={kaydet}
+          onKapat={() => setSayfa(null)}
+          onKaydet={(duzen) => kaydet(sayfa.dilim, duzen, sayfa.gorev)}
         />
       )}
+
+      {/* Erteleme bir dokunuşla oluyordu ve görev o an ekrandan kayboluyordu;
+          yanlışlıkla basan kullanıcı işini yarının listesinde arıyordu.
+          Kullanıcı önce sorulmasını istedi. Geri alınabilen bir iş, düğme
+          kırmızı değil. */}
+      <Onay
+        acik={ertelenecek !== null}
+        baslik="Yarına ertelensin mi?"
+        aciklama={
+          ertelenecek
+            ? `"${ertelenecek.metin}" yarının ${DILIM_ADI[ertelenecek.dilim].toLocaleLowerCase('tr-TR')} listesine taşınacak.`
+            : ''
+        }
+        onayMetni="Ertele"
+        tehlikeli={false}
+        onOnayla={() => ertelenecek && ertele(ertelenecek)}
+        onIptal={() => setErtelenecek(null)}
+      />
+
+      <Onay
+        acik={silinecek !== null}
+        baslik="Görev silinsin mi?"
+        aciklama={silinecek ? `"${silinecek.metin}" listeden kalkacak.` : ''}
+        onOnayla={() => silinecek && setGorevler((o) => gorevSil(o, silinecek.id))}
+        onIptal={() => setSilinecek(null)}
+      />
     </div>
   )
 }
 
-/** Tek görev satırı: tik, kategori, iş adı ve eylemler. */
+/**
+ * Tek görev satırı: tik, kategori, iş adı ve eylemler.
+ *
+ * İki satır: üstte kategori + süre ve düğmeler, altta iş adı tam genişlikte.
+ * Düğmeler bir süre ad ile aynı satırdaydı; düzenle ve sil eklenince adın
+ * yeri yarıya iniyordu.
+ */
 function GorevSatiri({
   gorev,
   gecmis,
   onIsaretle,
   onYildiz,
   onErtele,
+  onDuzenle,
   onSil,
 }: {
   gorev: Gorev
@@ -327,6 +373,7 @@ function GorevSatiri({
   onIsaretle: () => void
   onYildiz: () => void
   onErtele: () => void
+  onDuzenle: () => void
   onSil: () => void
 }) {
   const renk = gorevRengi(gorev.renk)
@@ -334,7 +381,7 @@ function GorevSatiri({
   return (
     <div
       className={cn(
-        'flex items-center gap-1.5 rounded-[16px] border border-border bg-card py-2.5 pl-3 pr-1 transition-opacity',
+        'flex items-start gap-2 rounded-[16px] border border-border bg-card py-2 pl-3 pr-1.5 transition-opacity',
         gorev.bitti ? 'opacity-55' : 'shadow-kart',
       )}
     >
@@ -345,7 +392,7 @@ function GorevSatiri({
         aria-pressed={gorev.bitti}
         aria-label={gorev.bitti ? 'Bitmedi olarak işaretle' : 'Bitti olarak işaretle'}
         className={cn(
-          'grid size-[26px] shrink-0 place-items-center rounded-full border-2 transition',
+          'mt-2.5 grid size-[26px] shrink-0 place-items-center rounded-full border-2 transition',
           gorev.bitti
             ? 'border-success bg-success text-white'
             : 'border-border bg-card text-transparent',
@@ -355,65 +402,89 @@ function GorevSatiri({
       </button>
 
       <div className="min-w-0 flex-1">
-        <span
-          className="flex items-center gap-1.5 text-[10.5px] font-extrabold uppercase tracking-[0.06em]"
-          style={{ color: renk }}
-        >
-          <span aria-hidden className="size-1.5 rounded-full" style={{ background: renk }} />
-          {kategoriAdiGoster(gorev)}
-          {/* Süre kategorinin satırında: iş adının satırı tek satırlık ve
-              genişliği sayılı (`EN_UZUN_GOREV`), oraya sığmazdı. */}
-          {gorev.sure !== null && <span className="rakam">· {sureYaz(gorev.sure)}</span>}
-        </span>
+        <div className="flex min-h-8 items-center gap-0.5">
+          <span
+            className="flex min-w-0 flex-1 items-center gap-1.5 text-[10.5px] font-extrabold uppercase tracking-[0.06em]"
+            style={{ color: renk }}
+          >
+            <span aria-hidden className="size-1.5 shrink-0 rounded-full" style={{ background: renk }} />
+            <span className="truncate">{kategoriAdiGoster(gorev)}</span>
+            {/* Süre kategorinin satırında: iş adının satırı tek satırlık ve
+                genişliği sayılı (`EN_UZUN_GOREV`). */}
+            {gorev.sure !== null && <span className="rakam shrink-0">· {sureYaz(gorev.sure)}</span>}
+          </span>
+
+          {!gecmis && !gorev.bitti && (
+            <>
+              <SatirDugmesi
+                etiket="Öncelikli"
+                basili={gorev.yildiz}
+                onClick={onYildiz}
+                className={gorev.yildiz ? 'text-isl-ok' : undefined}
+              >
+                <Star size={16} fill={gorev.yildiz ? 'currentColor' : 'none'} aria-hidden />
+              </SatirDugmesi>
+              <SatirDugmesi etiket="Ertesi güne ertele" onClick={onErtele}>
+                <ChevronRight size={17} strokeWidth={2.4} aria-hidden />
+              </SatirDugmesi>
+              <SatirDugmesi etiket="Düzenle" onClick={onDuzenle}>
+                <Pencil size={14.5} strokeWidth={2.3} aria-hidden />
+              </SatirDugmesi>
+            </>
+          )}
+          {!gecmis && (
+            <SatirDugmesi
+              etiket="Sil"
+              onClick={onSil}
+              className="active:bg-danger-soft active:text-danger"
+            >
+              <Trash2 size={14.5} strokeWidth={2.2} aria-hidden />
+            </SatirDugmesi>
+          )}
+        </div>
         {/* Tek satır: metin sınırı karakterle tutuluyor (`EN_UZUN_GOREV`), bu
             da taşmaya karşı son emniyet — büyük harfli görev sınıra uysa da
             piksele sığmayabiliyor. */}
         <span
           className={cn(
-            'block truncate text-[14.5px] font-bold leading-snug',
+            'block truncate pb-0.5 text-[14.5px] font-bold leading-snug',
             gorev.bitti && 'line-through',
           )}
         >
           {gorev.metin}
         </span>
       </div>
-
-      {!gecmis && !gorev.bitti && (
-        <>
-          <button
-            type="button"
-            onClick={onYildiz}
-            aria-pressed={gorev.yildiz}
-            aria-label="Öncelikli"
-            className={cn(
-              'grid size-7 shrink-0 place-items-center rounded-[10px] transition active:bg-muted',
-              gorev.yildiz ? 'text-isl-ok' : 'text-muted-foreground',
-            )}
-          >
-            <Star size={17} fill={gorev.yildiz ? 'currentColor' : 'none'} aria-hidden />
-          </button>
-          <button
-            type="button"
-            onClick={onErtele}
-            aria-label="Ertesi güne ertele"
-            className="grid size-7 shrink-0 place-items-center rounded-[10px] bg-muted text-muted-foreground transition active:brightness-95"
-          >
-            <ChevronRight size={16} strokeWidth={2.4} aria-hidden />
-          </button>
-        </>
-      )}
-
-      {!gecmis && gorev.bitti && (
-        <button
-          type="button"
-          onClick={onSil}
-          aria-label="Sil"
-          className="grid size-7 shrink-0 place-items-center rounded-[10px] text-muted-foreground transition active:bg-danger-soft active:text-danger"
-        >
-          <Trash2 size={14} aria-hidden />
-        </button>
-      )}
     </div>
+  )
+}
+
+/** Satırın sağ üstündeki küçük düğme. */
+function SatirDugmesi({
+  etiket,
+  basili,
+  onClick,
+  className,
+  children,
+}: {
+  etiket: string
+  basili?: boolean
+  onClick: () => void
+  className?: string
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={etiket}
+      aria-pressed={basili}
+      className={cn(
+        'grid size-8 shrink-0 place-items-center rounded-[10px] text-muted-foreground transition active:bg-muted',
+        className,
+      )}
+    >
+      {children}
+    </button>
   )
 }
 
@@ -435,43 +506,43 @@ function GorevSatiri({
  */
 function EklemeSayfasi({
   dilim,
+  duzenlenen,
   gunEtiketi,
   onKapat,
   onKaydet,
 }: {
   dilim: GorevDilimi
+  /** Verilirse sayfa bu görevi düzenliyor, alanlar onun değerleriyle açılıyor. */
+  duzenlenen?: Gorev
   gunEtiketi: string
   onKapat: () => void
-  onKaydet: (yeni: {
-    metin: string
-    dilim: GorevDilimi
-    kategori: GorevKategorisi
-    ozelKategori?: string
-    renk: GorevRengi
-    sure: number | null
-  }) => void
+  onKaydet: (duzen: GorevDuzeni) => void
 }) {
-  const [metin, setMetin] = useState('')
+  const [metin, setMetin] = useState(duzenlenen?.metin ?? '')
   /*
     İki kaynak, tek cevap: çip ya da kutu. Birine dokunmak ötekini
     temizliyor; ikisi birden dolu kalsaydı hangisinin kaydedileceği ekranda
     okunmazdı.
   */
-  const [hazirSure, setHazirSure] = useState<number | null>(null)
-  const [elle, setElle] = useState('')
+  const ilkSure = duzenlenen?.sure ?? null
+  const ilkHazir = ilkSure !== null && SURE_SECENEKLERI.includes(ilkSure)
+  const [hazirSure, setHazirSure] = useState<number | null>(ilkHazir ? ilkSure : null)
+  const [elle, setElle] = useState(ilkSure !== null && !ilkHazir ? String(ilkSure) : '')
   const sure = elle !== '' ? elleSure(elle) : hazirSure
-  const [kategori, setKategori] = useState<GorevKategorisi | null>(null)
-  // "Diğer"de yazılan ad. Boş bırakılırsa görev "Diğer" kalıyor (engellemek
-  // yerine): "Diğer" zaten geçerli bir kategori, zorunlu kılmak seçeneği
-  // seçeni bir şey uydurmaya itmek olurdu.
-  const [ozelKategori, setOzelKategori] = useState('')
-  const [renk, setRenk] = useState<GorevRengi | null>(null)
+  const [kategori, setKategori] = useState<GorevKategorisi | null>(duzenlenen?.kategori ?? null)
+  // "Diğer"de yazılan ad **zorunlu**. Bir süre isteğe bağlıydı ("Diğer" zaten
+  // geçerli bir kategori diye); kullanıcı zorunlu olmasını istedi — listede
+  // "DİĞER" yazan bir görev ne olduğunu söylemiyordu.
+  const [ozelKategori, setOzelKategori] = useState(duzenlenen?.ozelKategori ?? '')
+  const [renk, setRenk] = useState<GorevRengi | null>(duzenlenen?.renk ?? null)
   const [hata, setHata] = useState(false)
 
   useGeriKatmani(true, onKapat)
+  const kaydir = useAsagiKaydirKapat(onKapat)
 
   const yazilan = metniKirp(metin)
-  const gecerli = yazilan !== '' && kategori !== null && renk !== null
+  const ozelEksik = kategori === 'diger' && ozelKategoriKirp(ozelKategori) === undefined
+  const gecerli = yazilan !== '' && kategori !== null && !ozelEksik && renk !== null
 
   const gonder = () => {
     if (!gecerli) {
@@ -480,7 +551,6 @@ function EklemeSayfasi({
     }
     onKaydet({
       metin: yazilan,
-      dilim,
       kategori,
       ozelKategori: kategori === 'diger' ? ozelKategoriKirp(ozelKategori) : undefined,
       renk,
@@ -494,6 +564,7 @@ function EklemeSayfasi({
       onClick={onKapat}
     >
       <div
+        ref={kaydir}
         className="alt-pencere-girisi max-h-[88%] w-full max-w-md overflow-y-auto rounded-t-[26px] bg-card px-[18px] pt-2 pb-[calc(1.5rem+var(--guvenli-alt))]"
         onClick={(olay) => olay.stopPropagation()}
       >
@@ -502,7 +573,9 @@ function EklemeSayfasi({
         </div>
 
         <div className="mb-3.5 flex items-center gap-2.5">
-          <p className="font-display text-lg font-extrabold tracking-tight">Görev ekle</p>
+          <p className="font-display text-lg font-extrabold tracking-tight">
+            {duzenlenen ? 'Görevi düzenle' : 'Görev ekle'}
+          </p>
           <p className="ml-auto text-[12.5px] font-bold text-muted-foreground">
             {gunEtiketi} · {DILIM_ADI[dilim]}
           </p>
@@ -592,14 +665,25 @@ function EklemeSayfasi({
           ))}
         </div>
         {kategori === 'diger' && (
-          <input
-            value={ozelKategori}
-            onChange={(olay) => setOzelKategori(olay.target.value.slice(0, EN_UZUN_OZEL_KATEGORI))}
-            maxLength={EN_UZUN_OZEL_KATEGORI}
-            placeholder="Kendi kategorini yaz (isteğe bağlı)"
-            aria-label="Özel kategori adı"
-            className="mt-2 h-11 w-full rounded-[14px] border border-input bg-background px-3.5 text-[14px] font-bold outline-none transition placeholder:font-semibold placeholder:text-muted-foreground/70 focus-visible:border-primary-parlak focus-visible:bg-card"
-          />
+          <>
+            <AlanBasligi
+              baslik="Kategorinin adı"
+              sayac={`${ozelKategori.trim().length}/${EN_UZUN_OZEL_KATEGORI}`}
+              hata={hata && ozelEksik ? 'Bir ad yaz' : undefined}
+            />
+            <input
+              value={ozelKategori}
+              onChange={(olay) => setOzelKategori(olay.target.value.slice(0, EN_UZUN_OZEL_KATEGORI))}
+              maxLength={EN_UZUN_OZEL_KATEGORI}
+              placeholder="Kendi kategorini yaz"
+              aria-label="Özel kategori adı"
+              aria-required
+              className={cn(
+                'h-11 w-full rounded-[14px] border bg-background px-3.5 text-[14px] font-bold outline-none transition placeholder:font-semibold placeholder:text-muted-foreground/70 focus-visible:border-primary-parlak focus-visible:bg-card',
+                hata && ozelEksik ? 'border-danger' : 'border-input',
+              )}
+            />
+          </>
         )}
 
         <AlanBasligi baslik="Renk" hata={hata && renk === null ? 'Bir renk seç' : undefined} />

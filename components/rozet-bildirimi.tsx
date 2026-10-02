@@ -105,7 +105,7 @@ export function RozetBildirimi({ rozet, onBitti }: { rozet: Rozet | null; onBitt
             className={cn('rozet-hale absolute inset-[-2px] rounded-full border-2', kademe.kenar)}
             aria-hidden
           />
-          <span className="rozet-ikon relative text-[25px] leading-none" aria-hidden>
+          <span className="rozet-ikon emoji relative text-[25px] leading-none" aria-hidden>
             {rozet.ikon}
           </span>
           {/*
