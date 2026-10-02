@@ -2,7 +2,8 @@
 # hazırlıyor (`ios-testflight.yml`). Portala giren herkesin Identifiers ve
 # Devices sayfalarına yetkisi yok; derlemenin Admin anahtarının var.
 #
-# İki iş:
+# Üç iş (ayrıntısı her bölümün başında):
+# - Önceki derlemelerin işe yaramaz geliştirme sertifikalarını silmek.
 # - CIHAZ_UDID verildiyse cihazı kaydetmek. Arşivin geliştirme imzası hesapta
 #   kayıtlı bir iPhone istiyor.
 # - Üç kimlikte Family Controls yeteneğini açık tutmak. Kapalıysa App Store
@@ -47,6 +48,41 @@ def istek(yol, govde=None):
     except urllib.error.HTTPError as h:
         return h.code, h.read().decode()
 
+
+def istek_sil(yol):
+    r = urllib.request.Request(
+        KOK + yol, method='DELETE',
+        headers={'Authorization': 'Bearer ' + belirtec})
+    try:
+        with urllib.request.urlopen(r) as yanit:
+            return yanit.status, ''
+    except urllib.error.HTTPError as h:
+        return h.code, h.read().decode()
+
+
+# Önceki derlemelerin geliştirme sertifikalarını temizle.
+#
+# Arşivin geliştirme imzası için Xcode her derlemede yeni bir "Apple
+# Development" sertifikası üretiyor; özel anahtarı derleme makinesiyle
+# birlikte siliniyor ve sertifika bir daha kullanılamıyor. Hesabın sınırı
+# dolunca arşiv "maximum number of certificates" ile düşüyordu. Yalnızca API
+# anahtarıyla üretilenler ("Created via API") siliniyor: hesaptaki kişilerin
+# kendi Mac'lerindeki sertifikalara dokunulmuyor. Geliştirme sertifikasını
+# silmek TestFlight'taki ya da mağazadaki derlemeleri etkilemiyor.
+if os.environ.get('SERTIFIKA_TEMIZLE', 'true') == 'true':
+    kod, yanit = istek('/certificates?limit=200')
+    if kod != 200:
+        print(f'::warning::Sertifikalar okunamadı: {kod} {yanit}')
+    else:
+        for sertifika in yanit['data']:
+            nit = sertifika['attributes']
+            tur = nit.get('certificateType') or ''
+            ad = nit.get('displayName') or nit.get('name') or ''
+            print(f'Sertifika: {tur} · {ad} · {nit.get("expirationDate", "")}')
+            if 'DEVELOPMENT' not in tur or 'Created via API' not in ad:
+                continue
+            kod, yanit2 = istek_sil('/certificates/' + sertifika['id'])
+            print(f'  silindi' if kod == 204 else f'::warning::  silinemedi: {kod} {yanit2}')
 
 udid = os.environ.get('CIHAZ_UDID', '').strip()
 if udid:
