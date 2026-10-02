@@ -113,7 +113,7 @@ export function HizliKontrolEkrani({
             </div>
             <span
               aria-hidden
-              className="golge-kart absolute top-1.5 -right-1.5 grid size-11 place-items-center rounded-[15px] bg-card text-[21px] leading-none"
+              className="golge-kart absolute top-1.5 -right-1.5 grid size-11 place-items-center rounded-[15px] bg-card emoji text-[21px] leading-none"
             >
               💭
             </span>
@@ -184,7 +184,7 @@ export function HizliKontrolEkrani({
               <span
                 aria-hidden
                 className={cn(
-                  'grid size-12 shrink-0 place-items-center rounded-[17px] text-[25px] leading-none',
+                  'emoji grid size-12 shrink-0 place-items-center rounded-[17px] text-[25px] leading-none',
                   dogru ? 'bg-success-soft' : 'bg-danger-soft',
                 )}
               >
@@ -251,7 +251,7 @@ export function HizliKontrolEkrani({
           >
             <span
               aria-hidden
-              className="mx-auto grid size-14 place-items-center rounded-[19px] bg-warning-soft text-[27px] leading-none"
+              className="mx-auto grid size-14 place-items-center rounded-[19px] bg-warning-soft text-[27px] leading-none emoji"
             >
               ⚠️
             </span>

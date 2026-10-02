@@ -1,7 +1,7 @@
 /**
  * Turun ritmi — soru başına süre, zorluk şeritleri ve eleme kuralları.
  *
- * Buradaki süreler **soru** başına ve yalnızca Ani Ölüm modunda işliyor; öteki
+ * Buradaki süreler **soru** başına ve yalnızca Sıfır Tolerans modunda işliyor; öteki
  * modlarda saat tura ait ya da hiç yok (`mod.ts`). İkisi ayrı dosyada çünkü
  * ayrı sorular: burası "bu soru ne kadar sürer", orası "tur ne zaman biter".
  *
@@ -169,7 +169,7 @@ export function soruSuresi(oyun: OyunId): number {
 /**
  * Bu cevap turu bitirir mi.
  *
- * Kural artık moda ait (`mod.ts`): eleme yalnızca **Ani Ölüm**'de var. Bir
+ * Kural artık moda ait (`mod.ts`): eleme yalnızca **Sıfır Tolerans**'de var. Bir
  * süre bütün turlar öyle işledi ve tasarımın gerekçesi hâlâ geçerli —
  * bilmediğin soruyu rastgele işaretleyip geçmek bedava olmamalı. Ama tek kural
  * olarak kaldığında oyun yeni öğrenene öğretmeyi bırakıp onu eliyordu; süreli

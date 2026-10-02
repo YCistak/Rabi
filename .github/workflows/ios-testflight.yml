@@ -178,9 +178,13 @@ jobs:
       - name: Screen Time yetkisini denetle
         run: |
           cd "$RUNNER_TEMP/cikti"
-          unzip -q -o App.ipa -d paket
+          # Ad sabit yazılmıyor: paket adı CFBundleName'den geliyor ve "App"ten
+          # "Rabi"ye döndüğünde denetim dosyayı bulamayıp düşmüştü.
+          ipa=$(ls *.ipa | head -1)
+          unzip -q -o "$ipa" -d paket
+          uygulama=$(ls -d paket/Payload/*.app | head -1)
           eksik=0
-          for parca in paket/Payload/App.app paket/Payload/App.app/PlugIns/*.appex; do
+          for parca in "$uygulama" "$uygulama"/PlugIns/*.appex; do
             if codesign -d --entitlements :- "$parca" 2>/dev/null | grep -q "com.apple.developer.family-controls"; then
               echo "✓ $(basename "$parca")"
             else
@@ -188,7 +192,7 @@ jobs:
               eksik=1
             fi
           done
-          ls paket/Payload/App.app/PlugIns/ | grep -q appex || { echo "::error::Eklentiler pakette yok"; eksik=1; }
+          ls "$uygulama"/PlugIns/ | grep -q appex || { echo "::error::Eklentiler pakette yok"; eksik=1; }
           exit $eksik
 
       - name: TestFlight'a yükle

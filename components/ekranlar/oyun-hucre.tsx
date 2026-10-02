@@ -500,7 +500,7 @@ export function HucreOyunuEkrani({
  *   birden açık başlıyordu.
  * - Rahat'ta sayaç hiç yok (`toplam` 0) ve `gorunenIpucu` bu durumda üç
  *   ipucunu birden veriyordu.
- * - Yalnızca Ani Ölüm'de saat soruya aitti; oyun yalnızca orada doğru
+ * - Yalnızca Sıfır Tolerans'de saat soruya aitti; oyun yalnızca orada doğru
  *   çalışıyordu.
  *
  * Bu saat sorunun kendi süresini (`soruSuresi`) ölçüyor ve her soruda

@@ -469,7 +469,7 @@ function Kutucuk({
       <span
         className={cn('grid aspect-square w-full max-w-[64px] place-items-center rounded-[18px]', renk)}
       >
-        <span className="text-[26px] leading-none" aria-hidden>
+        <span className="emoji text-[26px] leading-none" aria-hidden>
           {ikon}
         </span>
       </span>

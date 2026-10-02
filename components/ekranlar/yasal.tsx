@@ -22,10 +22,7 @@ import { BaslikSatiri, Not } from '@/components/ui'
 export function YasalEkrani() {
   return (
     <div>
-      <BaslikSatiri
-        baslik="Gizlilik ve Koşullar"
-        aciklama="Verinin nerede durduğu ve uygulamayı kullanma koşulları"
-      />
+      <BaslikSatiri baslik="Gizlilik ve Koşullar" />
 
       <ul className="space-y-2">
         {YASAL_BELGELER.map((belge) => (
@@ -37,17 +34,14 @@ export function YasalEkrani() {
               className="flex w-full items-center gap-3 rounded-2xl border border-border bg-card p-3.5 text-left transition active:bg-muted"
             >
               <FileText size={18} className="shrink-0 text-primary" aria-hidden />
-              <span className="min-w-0 flex-1">
-                <span className="block font-medium">{belge.ad}</span>
-                <span className="block text-xs text-muted-foreground">{belge.ozet}</span>
-              </span>
+              <span className="min-w-0 flex-1 font-medium">{belge.ad}</span>
               <ExternalLink size={16} className="shrink-0 text-muted-foreground/50" aria-hidden />
             </a>
           </li>
         ))}
       </ul>
 
-      <Not className="mt-3">Sayfalar tarayıcıda açılır; internet bağlantısı gerekir.</Not>
+      <Not className="mt-3">İnternet bağlantısı gerekir.</Not>
     </div>
   )
 }

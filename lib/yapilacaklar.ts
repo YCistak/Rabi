@@ -134,9 +134,10 @@ export type Gorev = {
   /**
    * "Diğer" seçilince kullanıcının yazdığı kendi kategori adı.
    *
-   * Yalnızca `kategori === 'diger'` iken anlamlı; boşsa alan hiç yazılmıyor ve
-   * görev "Diğer" olarak görünüyor. Alan isteğe bağlı olduğu için eski kayıtlar
-   * (alan yok) olduğu gibi geçerli, taşıma gerekmiyor.
+   * Yalnızca `kategori === 'diger'` iken anlamlı. Ekleme sayfası artık onu
+   * **zorunlu** tutuyor (kullanıcı istedi: "Diğer" tek başına görevin ne
+   * olduğunu söylemiyordu); tipte isteğe bağlı kalıyor çünkü eski kayıtlarda
+   * yok ve onlar "Diğer" olarak görünmeye devam ediyor.
    */
   ozelKategori?: string
   renk: GorevRengi
@@ -390,6 +391,40 @@ export function gorevEkle(
     ...gorevler,
     { ...gerisi, ...(ozelKategori ? { ozelKategori } : {}), metin, bitti: false, yildiz: false },
   ]
+}
+
+/** Düzenlemede değişebilen alanlar: gün, dilim ve durum yerinde kalıyor. */
+export type GorevDuzeni = Pick<Gorev, 'metin' | 'kategori' | 'ozelKategori' | 'renk' | 'sure'>
+
+/**
+ * Görevin adını, kategorisini, rengini ve süresini değiştirir.
+ *
+ * Görev bir süre düzenlenemiyordu ("silip yeniden yazmak daha hızlı" diye);
+ * kullanıcı düzenleme düğmesi istedi — yeniden yazmak yıldızı, bitti
+ * işaretini ve görevin dilimdeki yerini de götürüyordu. Gün ve dilim burada
+ * değişmiyor: taşımanın yolu erteleme. Metin boşsa ya da görev yoksa `null`,
+ * `gorevEkle` ile aynı kural.
+ */
+export function gorevDuzenle(
+  gorevler: readonly Gorev[],
+  id: string,
+  duzen: GorevDuzeni,
+): Gorev[] | null {
+  const metin = metniKirp(duzen.metin)
+  if (metin === '' || !gorevler.some((g) => g.id === id)) return null
+  const ozelKategori = duzen.kategori === 'diger' ? ozelKategoriKirp(duzen.ozelKategori) : undefined
+  return gorevDegistir(gorevler, id, (g) => {
+    // Eski özel ad, kategori değişince geride kalmasın.
+    const { ozelKategori: _eski, ...gerisi } = g
+    return {
+      ...gerisi,
+      metin,
+      kategori: duzen.kategori,
+      ...(ozelKategori ? { ozelKategori } : {}),
+      renk: duzen.renk,
+      sure: duzen.sure,
+    }
+  })
 }
 
 export function gorevSil(gorevler: readonly Gorev[], id: string): Gorev[] {

@@ -89,7 +89,7 @@ export function KartMenusu({
         {/* Başlığın simgesi sağ üstte, ana sayfada maskotun durduğu hizada:
             iki sekme aynı yerden başlasın diye. */}
         <span
-          className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart text-[21px] leading-none"
+          className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart text-[21px] leading-none emoji"
           aria-hidden
         >
           🧰
@@ -146,7 +146,7 @@ function AracSatiri({ kart, onAc }: { kart: KartTanimi; onAc: () => void }) {
     >
       <span
         className={cn(
-          'grid size-[42px] shrink-0 place-items-center rounded-full text-[20px] leading-none',
+          'emoji grid size-[42px] shrink-0 place-items-center rounded-full text-[20px] leading-none',
           RENK_SINIFI[renk],
         )}
         aria-hidden
