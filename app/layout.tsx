@@ -149,8 +149,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           telefonlar 360–430, 8" tabletler 533'ten başlıyor. Ölçek kısa
           kenardan hesaplanıyor ki döndürünce yazı boyutu değişmesin.
 
-          iPad'de ölçek 1,2 ile sınırlı (`IOS_EN_COK`); gerekçe betikte. Android
-          tablet kısa kenar / 430 ölçeğinde kalıyor.
+          Tablette ölçek 1,2 ile sınırlı (iPad'de `IOS_EN_COK`, Android'de
+          `TABLET_EN_COK`); gerekçe betikte. Betik tablette ayrıca
+          `data-yerlesim="tablet"` ve `data-yon` yazıyor: arayüz artık telefon
+          sütununun büyütülmüşü değil, tablete göre diziliyor (sağda ray,
+          yatayda iki sütun). Telefonda ikisi de yok.
 
           Hidrasyondan önce, satır içi: React beklenirse ilk kare dar
           düzende çizilip sonra zıplıyor.
@@ -174,11 +177,30 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     ios = pl === 'ios' || /iPad/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   } catch (e) {}
   var IOS_EN_COK = 1.2;
+  // Tablet yerleşimi (sağda dikey ray, geniş sayfa, yatayda iki sütun;
+  // \`globals.css\` → "Tablet yerleşimi"). Artık telefon görüntüsü büyütülmüyor,
+  // tablete göre dizilmiş arayüz hafifçe büyütülüyor; bu yüzden tavan
+  // Android tablette de geçerli. Eskiden Android'de ölçek kısa kenar / 430
+  // idi (1280x800'de 1,86): 448 piksellik sütunu ekrana yaymak için. Sütun
+  // kalkınca o büyütme yalnızca yazıları devasa yapıyordu; iki platform aynı
+  // tavanla aynı boyda görünüyor.
+  //
+  // Telefonda (kısa kenar ESIK altı) iki öznitelik de konmuyor ve ölçek 1:
+  // telefon görünümü bu betikten önceki hâliyle aynı.
+  var TABLET_EN_COK = 1.2;
+  var kok = document.documentElement;
   function uygula(){
     var kisa = Math.min(window.innerWidth, window.innerHeight);
-    var olcek = kisa / TELEFON_GENISLIGI;
-    if (ios) olcek = Math.min(olcek, IOS_EN_COK);
-    document.documentElement.style.setProperty('--olcek', masaustu || kisa < ESIK ? '1' : String(olcek));
+    var tablet = kisa >= ESIK;
+    var olcek = Math.min(kisa / TELEFON_GENISLIGI, ios ? IOS_EN_COK : TABLET_EN_COK);
+    kok.style.setProperty('--olcek', masaustu || !tablet ? '1' : String(olcek));
+    if (tablet) {
+      kok.setAttribute('data-yerlesim', 'tablet');
+      kok.setAttribute('data-yon', window.innerWidth > window.innerHeight ? 'yatay' : 'dikey');
+    } else {
+      kok.removeAttribute('data-yerlesim');
+      kok.removeAttribute('data-yon');
+    }
   }
   uygula();
   window.addEventListener('resize', uygula);

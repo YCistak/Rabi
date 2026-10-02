@@ -69,6 +69,19 @@ function camMi(): boolean {
 }
 
 /**
+ * Tablette menü sağ kenarda dikey bir ray (`data-yerlesim="tablet"`, yerleşim
+ * betiği koyuyor). Sürükleme ve mercek o zaman yatay değil dikey eksende.
+ */
+function rayMi(): boolean {
+  return typeof document !== 'undefined' && document.documentElement.dataset.yerlesim === 'tablet'
+}
+
+/** Parmağın şerit boyunca konumu: telefonda yatay, rayda dikey eksen. */
+function eksen(e: { clientX: number; clientY: number }): number {
+  return rayMi() ? e.clientY : e.clientX
+}
+
+/**
  * Menünün arkasında duran ilk "dolu" zeminin tonu.
  *
  * Kapsülün üst kısmındaki noktada üst üste duran öğelere bakılıyor; menünün
@@ -106,7 +119,7 @@ export function BottomNav({
     şeride gider, düğmenin `click`i hiç gelmez ve kısa dokunuş çalışmazdı.
     Eşik geçilince yakalanıyor ki parmak kapsülden taşsa da izlensin.
   */
-  const [surukleme, setSurukleme] = useState<{ x: number; sira: number } | null>(null)
+  const [surukleme, setSurukleme] = useState<{ x: number; sira: number; dikey: boolean } | null>(null)
   const parmak = useRef<{ id: number; baslangic: number; suruklendi: boolean } | null>(null)
   const dokunusuYut = useRef(false)
 
@@ -129,6 +142,12 @@ export function BottomNav({
     if (!serit) return null
     const kutu = serit.getBoundingClientRect()
     const stil = getComputedStyle(serit)
+    // Rayda aynı hesap dikey eksende: "sol" üst kenar, "genişlik" yükseklik.
+    if (rayMi()) {
+      const sol = kutu.top + parseFloat(stil.paddingTop)
+      const genislik = kutu.height - parseFloat(stil.paddingTop) - parseFloat(stil.paddingBottom)
+      return { sol, genislik }
+    }
     const sol = kutu.left + parseFloat(stil.paddingLeft)
     const genislik = kutu.width - parseFloat(stil.paddingLeft) - parseFloat(stil.paddingRight)
     return { sol, genislik }
@@ -136,7 +155,7 @@ export function BottomNav({
 
   const parmakIndi = (e: React.PointerEvent<HTMLUListElement>) => {
     if (!camMi() || !e.isPrimary) return
-    parmak.current = { id: e.pointerId, baslangic: e.clientX, suruklendi: false }
+    parmak.current = { id: e.pointerId, baslangic: eksen(e), suruklendi: false }
     kilitBirak()
     kilidiAc.current = geriKaydirmayiKilitle()
   }
@@ -145,7 +164,7 @@ export function BottomNav({
     const p = parmak.current
     if (!p || p.id !== e.pointerId) return
     if (!p.suruklendi) {
-      if (Math.abs(e.clientX - p.baslangic) < SURUKLEME_ESIGI) return
+      if (Math.abs(eksen(e) - p.baslangic) < SURUKLEME_ESIGI) return
       p.suruklendi = true
       // İşaretçi o arada bırakılmışsa yakalama hata fırlatıyor; yakalanamasa
       // da sürükleme şeridin içinde çalışmaya devam ediyor.
@@ -155,10 +174,11 @@ export function BottomNav({
     }
     const olcu = seritOlcusu()
     if (!olcu) return
-    const x = e.clientX - olcu.sol
+    const x = eksen(e) - olcu.sol
     setSurukleme({
       x: mercekKonumu(x, olcu.genislik, SEKMELER.length),
       sira: parmaktanSira(x, olcu.genislik, SEKMELER.length),
+      dikey: rayMi(),
     })
   }
 
@@ -249,17 +269,28 @@ export function BottomNav({
       data-yuzen
       ref={menuRef}
       data-surukleniyor={surukleme ? '' : undefined}
-      className="alt-menu guvenli-alt fixed inset-x-0 bottom-0 z-40 rounded-t-[26px] border-t border-border bg-card shadow-[0_-6px_22px_rgba(54,33,112,0.12)]"
+      /*
+        Tablette (`tablet:`) aynı menü sağ kenarda dikey bir ray: ekranın
+        yüksekliği boyunca uzanan, sol köşeleri kırık bir yüzey. Neden sağ ve
+        neden `zoom`lu ölçüde: `globals.css` → "Tablet yerleşimi". iOS'ta
+        kapsül yine cam, bu kez dikey (aynı dosya, "Camdan ray").
+      */
+      className={cn(
+        'alt-menu guvenli-alt fixed inset-x-0 bottom-0 z-40 rounded-t-[26px] border-t border-border bg-card shadow-[0_-6px_22px_rgba(54,33,112,0.12)]',
+        'tablet:inset-x-auto tablet:top-0 tablet:right-0 tablet:flex tablet:w-[calc(var(--ray)+var(--guvenli-sag))] tablet:items-center',
+        'tablet:rounded-t-none tablet:rounded-l-[26px] tablet:border-t-0 tablet:border-l tablet:pt-[var(--guvenli-ust)] tablet:pr-[var(--guvenli-sag)]',
+        'tablet:shadow-[-6px_0_22px_rgba(54,33,112,0.10)]',
+      )}
       style={
         {
           '--sekme-sira': sira,
-          ...(surukleme ? { '--mercek-x': `${surukleme.x}px` } : {}),
+          ...(surukleme ? { [surukleme.dikey ? '--mercek-y' : '--mercek-x']: `${surukleme.x}px` } : {}),
         } as React.CSSProperties
       }
     >
       <ul
         ref={seritRef}
-        className="relative mx-auto flex max-w-md px-2 pt-2.5 pb-1"
+        className="relative mx-auto flex max-w-md px-2 pt-2.5 pb-1 tablet:w-full tablet:flex-col tablet:px-2 tablet:py-2"
         onPointerDown={parmakIndi}
         onPointerMove={parmakKaydi}
         onPointerUp={parmakKalkti}
@@ -277,7 +308,7 @@ export function BottomNav({
           // bırakınca değişiyor.
           const vurgulu = i === gorunenSira
           return (
-            <li key={id} className="flex-1">
+            <li key={id} className="flex-1 tablet:h-[68px] tablet:flex-none">
               <button
                 type="button"
                 data-tanitim={id === 'oyunlar' ? 'oyunlar-ac' : undefined}
@@ -288,6 +319,7 @@ export function BottomNav({
                 aria-current={aktif ? 'page' : undefined}
                 className={cn(
                   'flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[11px] font-bold transition',
+                  'tablet:h-full tablet:justify-center',
                   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                   vurgulu ? 'text-primary' : 'text-muted-foreground',
                 )}

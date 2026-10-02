@@ -98,7 +98,8 @@ export function KartMenusu({
 
       {/* Süzgeç çipleri kaldırıldı: dört başlık zaten ekranda görünüyor ve
           süzmek listeyi kısaltmaktan çok kaydırmayı yerinden ediyordu. */}
-      <div className="mt-5 space-y-5">
+      {/* Yatay tablette dört bölüm iki sütuna akıyor (`tablet-sutunlar`). */}
+      <div className="tablet-sutunlar mt-5 space-y-5">
         {bolumler.map(({ baslik, ipucu, kartlar }) => (
           <section key={baslik}>
             <div className="mb-2 flex items-baseline justify-between gap-3 px-1.5">

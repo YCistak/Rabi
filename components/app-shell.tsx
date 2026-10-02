@@ -859,7 +859,7 @@ function RabiUygulamasi() {
       }}
     />
   ) : denemeFormu !== null ? (
-    <div className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
+    <div className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))] tablet:max-w-[40rem] tablet:px-8">
       <YeniDenemeEkrani
         sablonlar={sablonlar}
         varsayilanSablonId={ayarlar.varsayilanSablonId}
@@ -893,7 +893,13 @@ function RabiUygulamasi() {
       Uzun içerikte kaydırma aynen duruyor; yalnızca son öğe menünün 9 px
       üstünde bitiyor.
     */
-    <div className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(5rem+var(--guvenli-alt))]"
+    /*
+      Tablette (`tablet:`) sütun ekranın ortasında dar durmuyor: sağda ray
+      kadar (`--ray`) boşluk bırakılıp sayfa genişliğe yayılıyor; alt menü
+      olmadığı için alttaki 5rem'lik pay da yok. İçeriğin en geniş hâlini
+      `SayfaGecisi` sınırlıyor (`tabletGenisligi`).
+    */
+    <div className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(5rem+var(--guvenli-alt))] tablet:max-w-none tablet:pt-[calc(1.75rem+var(--guvenli-ust))] tablet:pr-[calc(var(--ray)+var(--guvenli-sag)+2rem)] tablet:pb-[calc(2rem+var(--guvenli-alt))] tablet:pl-[calc(2rem+var(--guvenli-sol))]"
       style={tanitim.tanitimdaMi ? { paddingBottom: 'calc(60vh + var(--guvenli-alt))' } : undefined}>
       {/*
         Ekran ve sekme değişimi tek bir karede oluyordu: içerik tak diye yerine
@@ -906,6 +912,7 @@ function RabiUygulamasi() {
         ileri={ekran !== null}
         yavas={tanitim.tanitimdaMi || tanitim.kapanisSuruyor}
         sure={tanitim.animasyon.gecisMs}
+        genis={GENIS_SAYFALAR.has(ekran ?? `sekme:${sekme}`)}
       >
         {ekran !== null ? (
           <>
@@ -1200,6 +1207,21 @@ function RabiUygulamasi() {
 }
 
 /**
+ * Tablette geniş açılan sayfalar (`sekme:<id>` ya da alt ekranın adı).
+ *
+ * Bunlar yatay tablette kart yığınını iki sütuna (`tablet-sutunlar`) ya da
+ * ızgarayı daha çok sütuna açıyor; en çok 60rem. Listede olmayanlar tek
+ * sütun kalıyor ve 40rem'de duruyor: tek sütunlu bir formun kartları 900
+ * piksele yayılınca satırlar okunmaz uzunluğa çıkıyordu.
+ */
+const GENIS_SAYFALAR: ReadonlySet<string> = new Set([
+  'sekme:ana',
+  'sekme:daha',
+  'sekme:oyunlar',
+  'sekme:ayarlar',
+])
+
+/**
  * Ekran geçişini oynatan kutu.
  *
  * `key` **bu bileşene** konuyor, içindeki `div`e değil: sökülmesi gereken şey
@@ -1221,11 +1243,13 @@ function SayfaGecisi({
   ileri = false,
   yavas = false,
   sure = 500,
+  genis = false,
 }: {
   children: React.ReactNode
   ileri?: boolean
   yavas?: boolean
   sure?: number
+  genis?: boolean
 }) {
   const [basladi, setBasladi] = useState(false)
   // Kaydırarak geri gelindiyse ekran soldan geliyor. Kurulurken **bir kez**
@@ -1249,7 +1273,15 @@ function SayfaGecisi({
   return (
     <div
       data-geri-sayfa
-      className={cn('sayfa-girisi', ileri && 'sayfa-ileri', geri && 'sayfa-geri', !basladi && 'sayfa-bekliyor')}
+      className={cn(
+        'sayfa-girisi',
+        ileri && 'sayfa-ileri',
+        geri && 'sayfa-geri',
+        !basladi && 'sayfa-bekliyor',
+        // Tablette sayfanın en geniş hâli; telefonda bu sınıflar eşleşmiyor.
+        'tablet:mx-auto',
+        genis ? 'tablet:max-w-[60rem]' : 'tablet:max-w-[40rem]',
+      )}
       style={yavas ? { animationDuration: `${sure}ms` } : undefined}
     >
       {children}

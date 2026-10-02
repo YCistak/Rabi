@@ -843,7 +843,7 @@ export function PomodoroEkrani({
           (`ios-odak-ayarlari.tsx`). */}
       <div
         data-yuzen
-        className="sticky bottom-[calc(4.5rem+var(--guvenli-alt))] -mx-4 bg-background/95 px-4 pt-2 pb-3"
+        className="sticky bottom-[calc(4.5rem+var(--guvenli-alt))] -mx-4 bg-background/95 px-4 pt-2 pb-3 tablet:bottom-[calc(0.5rem+var(--guvenli-alt))]"
       >
         <Buton className="h-[52px] w-full rounded-2xl text-[17px] shadow-[0_8px_18px_rgba(217,98,47,0.26)]" onClick={baslat}>
           <Play size={20} fill="currentColor" aria-hidden />

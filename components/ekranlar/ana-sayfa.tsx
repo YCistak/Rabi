@@ -190,7 +190,8 @@ export function AnaSayfa({
         : 'uykulu'
 
   return (
-    <div className="space-y-3.5">
+    // Yatay tablette kartlar iki sütuna akıyor (`tablet-sutunlar`, globals.css).
+    <div className="tablet-sutunlar space-y-3.5">
       {ozetHazir && <OzetDaveti onAc={onOzetAc} />}
 
       {/* Selamlama — tasarımda ad sorulmuyor, kurulumda ad adımı yok. */}

@@ -308,7 +308,8 @@ export function AyarlarEkrani({
         </span>
       </header>
 
-      <div className="mt-4 space-y-4">
+      {/* Yatay tablette bölümler iki sütuna akıyor (`tablet-sutunlar`). */}
+      <div className="tablet-sutunlar mt-4 space-y-4">
         {/* Görünüm bölümü yok: tek tema var, seçilecek bir şey kalmadı. */}
 
         {/* ------------------------------ Çalışma ------------------------- */}
