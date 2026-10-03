@@ -95,3 +95,33 @@ export function ornekDenemeSonucu(sablon: Sablon): DersSonuc[] {
     return { dersId: ders.id, dogru: d, yanlis: Math.min(yanlis, ders.soruSayisi - d) }
   })
 }
+
+/*
+  Turun İstatistik ekranına giden denemeler. İstatistik bir türü ancak o
+  türden iki deneme varken açıyor. Turdaki deneme formu artık normal akışla
+  aynı şablonları ve aynı varsayılanı sunuyor (Okut aynı kâğıdı turda da
+  okusun diye); kullanıcı denemesini örneklerin türünden başka bir türde
+  (ör. Seviye Tespit) kaydedebiliyor. O türün eşi yoksa, kullanıcının
+  denemesinden birkaç net geride, bir hafta önceye tarihli geçici bir örnek
+  ekleniyor; o da `tanitim-` önekli ve tur bitince siliniyor.
+*/
+export function turIstatistikDenemeleri(ornekler: readonly Deneme[], eklenenler: readonly Deneme[], sablonlar: readonly Sablon[]): Deneme[] {
+  const liste = [...ornekler, ...eklenenler]
+  for (const deneme of eklenenler) {
+    if (liste.filter((d) => d.sablonId === deneme.sablonId).length >= 2) continue
+    const sablon = sablonlar.find((s) => s.id === deneme.sablonId)
+    if (!sablon) continue
+    liste.unshift({
+      id: `${TANITIM_ONEKI}deneme-onceki-${sablon.id}`,
+      sablonId: sablon.id,
+      ad: `${sablon.ad} örnek`,
+      tarih: gunKaydir(deneme.tarih, -7),
+      sonuclar: sablon.dersler.map((ders) => {
+        const sonuc = deneme.sonuclar.find((s) => s.dersId === ders.id) ?? { dogru: 0, yanlis: 0 }
+        const dogru = Math.max(0, sonuc.dogru - Math.max(1, Math.round(ders.soruSayisi * 0.08)))
+        return { dersId: ders.id, dogru, yanlis: Math.min(ders.soruSayisi - dogru, sonuc.yanlis + (sonuc.dogru > 0 ? 1 : 0)) }
+      }),
+    })
+  }
+  return liste
+}

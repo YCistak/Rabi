@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { sablonlariBirlestir, secilebilirSablonlar } from './sablonlar'
-import { demoDenemeleri, demoSablonIdleri, ornekDenemeSonucu, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi } from './tanitim-veri'
+import { demoDenemeleri, demoSablonIdleri, ornekDenemeSonucu, turIstatistikDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi } from './tanitim-veri'
 import { net } from './hesap'
 import type { PuanTuru } from './types'
 
@@ -93,5 +93,31 @@ describe('Turun deneme formuna yazılan örnek sonuçlar', () => {
   it('özel şablonda soru sayısına oranla doldurur', () => {
     const ozel = { id: 'ozel-1', ad: 'Okul sınavı', tur: 'okul', yanlisKatsayi: 4, hazir: false, dersler: [{ id: 'a', ad: 'A', soruSayisi: 20 }, { id: 'b', ad: 'B', soruSayisi: 1 }] } as unknown as Parameters<typeof ornekDenemeSonucu>[0]
     expect(ornekDenemeSonucu(ozel)).toEqual([{ dersId: 'a', dogru: 11, yanlis: 3 }, { dersId: 'b', dogru: 1, yanlis: 0 }])
+  })
+})
+
+describe('Turun İstatistik denemeleri', () => {
+  const okul = SABLONLAR.find((s) => s.id === 'okul')!
+  const kullanicinin = { id: 'tanitim-k1', sablonId: 'okul', ad: 'Seviye', tarih: '2026-10-03', sonuclar: ornekDenemeSonucu(okul) }
+  it('örneklerin türünde olmayan kullanıcı denemesine geri tarihli bir eş ekler', () => {
+    const ornekler = demoDenemeleri(12, 'ea', '2026-10-03')
+    const liste = turIstatistikDenemeleri(ornekler, [kullanicinin], SABLONLAR)
+    const okulDenemeleri = liste.filter((d) => d.sablonId === 'okul')
+    expect(okulDenemeleri).toHaveLength(2)
+    const es = okulDenemeleri.find((d) => d.id !== kullanicinin.id)!
+    expect(tanitimKaydiMi(es)).toBe(true)
+    expect(es.tarih).toBe('2026-09-26')
+    const toplam = (d: typeof es) => d.sonuclar.reduce((t, s) => t + net(s.dogru, s.yanlis, 4), 0)
+    expect(toplam(es)).toBeLessThan(toplam(kullanicinin))
+    for (const s of es.sonuclar) {
+      const ders = okul.dersler.find((d) => d.id === s.dersId)!
+      expect(s.dogru).toBeGreaterThanOrEqual(0)
+      expect(s.dogru + s.yanlis).toBeLessThanOrEqual(ders.soruSayisi)
+    }
+  })
+  it('türün eşi zaten varsa bir şey eklemez', () => {
+    const ornekler = demoDenemeleri(12, null, '2026-10-03')
+    const tyt = { ...kullanicinin, sablonId: 'tyt', sonuclar: ornekDenemeSonucu(SABLONLAR.find((s) => s.id === 'tyt')!) }
+    expect(turIstatistikDenemeleri(ornekler, [tyt], SABLONLAR)).toEqual([...ornekler, tyt])
   })
 })
