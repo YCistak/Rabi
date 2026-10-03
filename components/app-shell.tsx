@@ -929,7 +929,7 @@ function RabiUygulamasi() {
         anahtar={ekran ?? `sekme:${sekme}`}
         ileri={ekran !== null}
         sabit={genelTest !== null}
-        yavas={tanitim.tanitimdaMi || tanitim.kapanisSuruyor}
+        yavas={tanitim.tanitimdaMi}
         sure={tanitim.animasyon.gecisMs}
         genis={GENIS_SAYFALAR.has(ekran ?? `sekme:${sekme}`)}
       >
