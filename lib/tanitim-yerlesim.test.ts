@@ -30,6 +30,21 @@ describe('balon yerleşimi', () => {
     icinde(yer, IPAD_YATAY, 340, 244, alt)
   })
 
+  it('klavye açıkken odaktaki kutunun üstüne binmez', () => {
+    // iPhone, Soru ekle formu, ders listesi açık: görünür alan 224–732, form bütün alanı kaplıyor,
+    // odaktaki "Toplam" kutusu görünür alanın dibinde (664–716).
+    const ekran = { sol: 0, ust: 224, genislik: 390, yukseklik: 508 }
+    const hedef = { sol: 4, ust: 283, genislik: 382, yukseklik: 445 }
+    const odak = { sol: 16, ust: 664, genislik: 80, yukseklik: 52 }
+    const yer = balonKonumu(hedef, ekran, 283, 720, 340, 110, odak)
+    expect(ortusme({ ...yer, genislik: 340, yukseklik: 110 }, odak)).toBe(0)
+    expect(yer.ust).toBe(283)
+    // Kutu üstteyse balon alta iner.
+    const usttekiOdak = { ...odak, ust: 300 }
+    const alttaki = balonKonumu(hedef, ekran, 283, 720, 340, 110, usttekiOdak)
+    expect(ortusme({ ...alttaki, genislik: 340, yukseklik: 110 }, usttekiOdak)).toBe(0)
+  })
+
   it('her durumda balon ekranın içinde kalır', () => {
     for (let ust = 0; ust < 844; ust += 37) for (const yukseklik of [40, 200, 500, 800]) {
       const hedef = { sol: 11, ust, genislik: 368, yukseklik: Math.min(yukseklik, 844 - ust) }

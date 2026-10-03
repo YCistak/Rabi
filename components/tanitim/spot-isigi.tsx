@@ -144,6 +144,13 @@ export function SpotIsigi() {
   const gorunurRef = useRef(gorunur)
   gorunurRef.current = gorunur
   const [hedefEksik, setHedefEksik] = useState(false)
+  /*
+    Klavye açık ve odak hedefteki bir yazı kutusunda (Soru ekle, Görev ekle):
+    görünür alan yarıya iniyor, form onu tümüyle kaplıyor. Tam balon (açıklama
+    + Geri) formun yarısını örtüyordu; o sırada yalnızca başlık ve ipucu kalıyor.
+  */
+  const [sikisik, setSikisik] = useState(false)
+  const sikisikRef = useRef(false)
   const balonRef = useRef<HTMLDivElement>(null)
   const katmanRef = useRef<HTMLDivElement>(null)
   const guvenliAlanRef = useRef<HTMLDivElement>(null)
@@ -223,10 +230,12 @@ export function SpotIsigi() {
       // Güvenli alan `env()`ten ekran pikseli olarak geliyor; büyütülmüş
       // katmanda o kadar ekran pikseli `/ k` CSS pikseline denk.
       const guvenli = guvenliAlanRef.current ? getComputedStyle(guvenliAlanRef.current) : null
-      const ustSinir = ekran.ust + (parseFloat(guvenli?.paddingTop ?? '0') || 0) / k + 12
-      const altSinir = ekran.ust + ekran.yukseklik - (parseFloat(guvenli?.paddingBottom ?? '0') || 0) / k - 12
-      // Yazılım klavyesi açık: görünür alan pencereden belirgin kısa (iOS'ta pencere değil yalnızca visualViewport küçülüyor).
+      // Yazılım klavyesi açık: görünür alan pencereden belirgin kısa (iOS'ta
+      // pencere değil yalnızca visualViewport küçülüyor). Klavye ev çubuğunun
+      // üstünde durduğu için alttaki güvenli alan o sırada düşülmüyor.
       const klavye = !!gorunum && window.innerHeight - gorunum.height > 100
+      const ustSinir = ekran.ust + (parseFloat(guvenli?.paddingTop ?? '0') || 0) / k + 12
+      const altSinir = ekran.ust + ekran.yukseklik - (klavye ? 0 : (parseFloat(guvenli?.paddingBottom ?? '0') || 0) / k) - 12
       return { donusum, k, ekran, ustSinir, altSinir, klavye }
     }
     type Ortam = ReturnType<typeof ortam>
@@ -258,10 +267,17 @@ export function SpotIsigi() {
       const alt = Math.min(o.altSinir + 8, gorunenAlt + 5)
       return sag > sol && alt > ust ? { sol, ust, genislik: sag - sol, yukseklik: alt - ust } : null
     }
+    /** Klavye açıkken hedefteki odaklı yazı kutusu: balon onu örtmemeli. */
+    const odakKutusu = (o: Ortam): Kutu | null => {
+      const odak = document.activeElement
+      if (!o.klavye || !hedef || !(odak instanceof HTMLElement) || !hedef.contains(odak) || !odak.matches('input, textarea')) return null
+      const r = yereleCevir(odak.getBoundingClientRect(), o.donusum)
+      return { sol: r.left, ust: r.top, genislik: r.width, yukseklik: r.height }
+    }
     const hesapla = (o: Ortam, kutu: Kutu | null): Yerlesim => {
       const genislik = balonGenisligi(kutu, o.ekran, tablet())
       const yukseklik = balonYuksekligi(genislik, o.k)
-      const yer = balonKonumu(kutu, o.ekran, o.ustSinir, o.altSinir, genislik, yukseklik)
+      const yer = balonKonumu(kutu, o.ekran, o.ustSinir, o.altSinir, genislik, yukseklik, odakKutusu(o))
       const ekHedefler = (adim.ekHedefler ?? []).flatMap((hedefAdi) => {
         const oge = document.querySelector<HTMLElement>(`[data-tanitim="${hedefAdi}"]`)
         if (!oge) return []
@@ -320,6 +336,9 @@ export function SpotIsigi() {
       }
       for (const cocuk of document.body.children) if (cocuk instanceof HTMLElement) kilitle(cocuk)
       const o = ortam()
+      // Klavye hedefteki bir kutuya açıldıysa balon yalnızca başlık ve ipucuna iner.
+      const sikisikOlmali = !!odakKutusu(o)
+      if (sikisikOlmali !== sikisikRef.current) { sikisikRef.current = sikisikOlmali; setSikisik(sikisikOlmali) }
       const gorunumImzasi = `${o.ekran.genislik}:${o.ekran.yukseklik}:${o.ustSinir}:${o.altSinir}`
       if (sonGorunum !== gorunumImzasi) {
         if (sonGorunum && faz !== 'bekle') { faz = 'bekle'; beklemeBasi = performance.now(); durgun.sifirla() }
@@ -389,6 +408,8 @@ export function SpotIsigi() {
       if (balonRef.current?.contains(odaklar[yeni])) odaklar[yeni].scrollIntoView({ block: 'nearest', behavior: 'instant' })
     }
     setHedefEksik(false)
+    sikisikRef.current = false
+    setSikisik(false)
     olc()
     odaklan()
     const olaylar = ['pointerdown', 'mousedown', 'touchstart', 'click', 'dblclick', 'contextmenu']
@@ -478,7 +499,7 @@ export function SpotIsigi() {
 
   if (!adim || rehberGizli || typeof document === 'undefined') return null
   const hareketAzalt = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  const kisaBalon = !!adim.kisa || ['pomodoro', 'zorluk'].includes(adim.kimlik)
+  const kisaBalon = !!adim.kisa || sikisik || ['pomodoro', 'zorluk'].includes(adim.kimlik)
   const aciklama = adim.tabletAciklama && document.documentElement.dataset.yerlesim === 'tablet' ? adim.tabletAciklama : adim.aciklama
   const { hedef, cizilen, ekHedefler, balon, ekran, spotAnlik, balonAnlik } = yerlesim
   /*
@@ -518,9 +539,9 @@ export function SpotIsigi() {
           <button type="button" onClick={turuBitir} className="min-h-11 min-w-11 rounded-lg px-2 text-xs font-bold text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring">Turu Geç</button>
         </div>
         {adim.kimlik !== 'soru-bir' && <h2 data-tanitim-baslik tabIndex={-1} className={kisaBalon ? 'font-display text-sm font-extrabold outline-none' : 'font-display text-lg font-extrabold outline-none'}>{adim.baslik}</h2>}
-        {(adim.kimlik !== 'soru-bir' || hedefEksik) && <p aria-live="polite" className={kisaBalon ? 'mt-1 text-xs leading-snug text-muted-foreground' : 'mt-2 text-[13px] leading-relaxed text-muted-foreground'}>{hedefEksik ? 'Bu adımın bileşeni bulunamadı. Geri dönerek yeniden deneyebilir veya turu geçebilirsin.' : adim.kimlik === 'soru-bir' ? 'Sonucu yaz, onayla veya pas geç.' : aciklama}</p>}
+        {(adim.kimlik !== 'soru-bir' || hedefEksik) && !(sikisik && !hedefEksik) && <p aria-live="polite" className={kisaBalon ? 'mt-1 text-xs leading-snug text-muted-foreground' : 'mt-2 text-[13px] leading-relaxed text-muted-foreground'}>{hedefEksik ? 'Bu adımın bileşeni bulunamadı. Geri dönerek yeniden deneyebilir veya turu geçebilirsin.' : adim.kimlik === 'soru-bir' ? 'Sonucu yaz, onayla veya pas geç.' : aciklama}</p>}
         {adim.kimlik !== 'soru-bir' && <div className={kisaBalon ? 'mt-2 flex items-center justify-between gap-2' : 'mt-3 flex items-center justify-between gap-2'}>
-          <Buton type="button" bicim="ikincil" className="min-h-11 min-w-11" disabled={aktifAdim === 0 || gecisSuruyor} onClick={oncekiAdimaDon}>Geri</Buton>
+          {!sikisik && <Buton type="button" bicim="ikincil" className="min-h-11 min-w-11" disabled={aktifAdim === 0 || gecisSuruyor} onClick={oncekiAdimaDon}>Geri</Buton>}
           {aktifAdim === adimSayisi - 1 ? <Buton type="button" className="min-h-11 min-w-11" onClick={turuBitir}>Turu Bitir</Buton> : adim.tiklamali ? <span className="text-right text-xs font-bold text-primary">{adim.ipucu ?? 'Aydınlatılan alana dokun'}</span> : <Buton type="button" className="min-h-11 min-w-11" disabled={!hedef || hedefEksik || gecisSuruyor} onClick={sonrakiAdimaGec}>{adim.ileriEtiketi ?? (adim.kimlik === 'sonuc' ? 'Oyunlara dön' : 'İleri')}</Buton>}
         </div>}
       </div>

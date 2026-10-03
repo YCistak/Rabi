@@ -35,8 +35,13 @@ export function balonGenisligi(kutu: Kutu | null, ekran: Ekran, tablet: boolean)
  * hiza). Eskiden son çare "hedefin 12 piksel altı"ydı ve ekran
  * sınırına kırpılınca balon iPad yatayda Pomodoro'nun ayar kartının
  * üstüne biniyordu. Sonuç her zaman ekranın içinde.
+ *
+ * `korunan`: balonun hiç örtmemesi gereken kutu (klavye açıkken odaktaki
+ * yazı kutusu). Son çaredeki adaylardan onu örtenler ancak hepsi örtüyorsa
+ * seçiliyor. Klavyeli formda (Soru ekle, ders listesi açık) balon görünür
+ * alanın dibine konup yazılan kutunun üstüne biniyordu.
  */
-export function balonKonumu(kutu: Kutu | null, ekran: Ekran, ustSinir: number, altSinir: number, genislik: number, yukseklik: number): { sol: number; ust: number } {
+export function balonKonumu(kutu: Kutu | null, ekran: Ekran, ustSinir: number, altSinir: number, genislik: number, yukseklik: number, korunan: Kutu | null = null): { sol: number; ust: number } {
   let sol = ekran.sol + (ekran.genislik - genislik) / 2
   let ust = altSinir - yukseklik
   if (kutu) {
@@ -56,7 +61,8 @@ export function balonKonumu(kutu: Kutu | null, ekran: Ekran, ustSinir: number, a
       const sagHiza = ekran.sol + ekran.genislik - 12 - genislik
       let enAz = Number.POSITIVE_INFINITY
       for (const aday of [altSinir - yukseklik, ustSinir]) for (const x of [sol, solHiza, sagHiza]) {
-        const alan = ortusmeAlani({ sol: x, ust: aday, genislik, yukseklik }, kutu)
+        const balon = { sol: x, ust: Math.max(ustSinir, aday), genislik, yukseklik }
+        const alan = ortusmeAlani(balon, kutu) + (korunan && ortusmeAlani(balon, korunan) > 0 ? 1e9 : 0)
         if (alan < enAz - 0.5) { enAz = alan; ust = aday; sol = x }
       }
     }
