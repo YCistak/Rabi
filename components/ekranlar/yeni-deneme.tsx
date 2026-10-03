@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { AlertCircle, Camera, Check, X } from 'lucide-react'
 import { Alan, Buton, Etiket, Kart, Not } from '@/components/ui'
 import {
@@ -15,6 +15,8 @@ import { bugun, cn, yeniId } from '@/lib/utils'
 import type { Deneme, PuanTuru, Sablon, YanlisSoru } from '@/lib/types'
 import { DenemeOkut } from '@/components/deneme-okut'
 import { ornekDenemeSonucu } from '@/lib/tanitim-veri'
+
+const useYerlesimEtkisi = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
 type Giris = { dogru: string; yanlis: string }
 
@@ -137,7 +139,13 @@ export function YeniDenemeEkrani({
     doldurmak için açılan klavye ve rehberin balonu dersleri kapatıyordu.
   */
   const ornekDoldur = !!tanitim?.ornekDoldur
-  useEffect(() => {
+  /*
+    Boyamadan önce: sonuçlar bir sonraki karede yazılınca "Kaydetmek için en az
+    bir derse sonuç gir" notu bir kare görünüyor, Kaydet bölümü 24 px kısalıyor
+    ve rehberin spotu o arada ölçtüğü uzun hâle gidip ikinci kez oynuyordu
+    (yavaş telefonda iki karelik durgunluk o notun ömründen kısa).
+  */
+  useYerlesimEtkisi(() => {
     if (!ornekDoldur) return
     setGirisler((onceki) => {
       const bos = sablon.dersler.every((d) => !Number(onceki[d.id]?.dogru || 0) && !Number(onceki[d.id]?.yanlis || 0))
