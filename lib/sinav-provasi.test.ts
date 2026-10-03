@@ -8,18 +8,22 @@ describe('PROVALAR', () => {
     expect(provaBul('tyt')?.soru).toBe(120)
     expect(provaBul('ayt')?.soru).toBe(160)
     expect(provaBul('ydt')?.soru).toBe(80)
+    // STS ÖSYM sınavı değil: ders başına tek oturum.
+    expect(provaBul('sts')?.soru).toBe(20)
   })
 
   it('süreler kılavuzdaki değerler', () => {
     expect(provaBul('tyt')?.dakika).toBe(165)
     expect(provaBul('ayt')?.dakika).toBe(180)
     expect(provaBul('ydt')?.dakika).toBe(120)
+    expect(provaBul('sts')?.dakika).toBe(40)
   })
 
-  it('her provanın süresi pomodoro turundan uzun', () => {
+  it('YKS provalarının süresi pomodoro turundan uzun', () => {
     // Provanın ayrı bir kip olmasının sebebi bu: hiçbiri mola vermeden
-    // geçilebilecek bir çalışma turu değil.
-    for (const prova of PROVALAR) expect(prova.dakika).toBeGreaterThan(60)
+    // geçilebilecek bir çalışma turu değil. STS kısa ama yine kesintisiz bir
+    // sınav oturumu.
+    for (const prova of PROVALAR.filter((p) => p.id !== 'sts')) expect(prova.dakika).toBeGreaterThan(60)
   })
 })
 

@@ -85,14 +85,14 @@ describe('etkinMod', () => {
   })
 
   /*
-    Banka turu modu dinlemiyor: süreli bir tur onu yarıda keserdi. Seçim
-    ekranı da orada çıkmıyor ama fonksiyon yine de seçimi yok saymalı —
-    kayıtta duran bir "Rahat" tercihi banka turunu sessizce kayıtsız yapardı.
+    Banka turu (genel test) modu dinlemiyor ve hep Rahat: süre de eleme de
+    yok. Kayıtta duran bir "Turbo" tercihi testi saate bağlamamalı.
   */
-  it('banka turu seçimi yok sayıp soru başına süreyle işliyor', () => {
+  it('banka turu seçimi yok sayıp Rahat işliyor', () => {
     for (const mod of MOD_SIRASI) {
-      expect(MODLAR[etkinMod(true, mod)].soruSayaci, mod).toBe(true)
-      expect(MODLAR[etkinMod(true, mod)].kayitliMi, mod).toBe(true)
+      expect(etkinMod(true, mod), mod).toBe('rahat')
+      expect(MODLAR[etkinMod(true, mod)].turSuresi, mod).toBeNull()
+      expect(MODLAR[etkinMod(true, mod)].soruSayaci, mod).toBe(false)
     }
   })
 })

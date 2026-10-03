@@ -9,7 +9,7 @@ import type { Zorluk } from '@/lib/oyunlar/ritim'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { vurgulariAyir } from '@/lib/metin'
 import { useGeriKatmani } from '@/lib/geri'
-import { useGenelTest } from '@/components/genel-test-baglami'
+import { useGenelTest, useGenelTestIlkMi } from '@/components/genel-test-baglami'
 import { useTurAyari } from '@/components/tur-ayari-baglami'
 import { cn } from '@/lib/utils'
 import { Rabi } from '@/components/maskot/rabi'
@@ -74,6 +74,7 @@ export function OyunTanitim({
   const [sayiliyor, setSayiliyor] = useState(false)
   const [gizliler, setGizliler] = useYerelDepo<OyunId[]>(ANAHTARLAR.tanitimGizli, [])
   const genelTest = useGenelTest()
+  const genelTestIlk = useGenelTestIlkMi()
   /* Ayarlar prop olarak gelmiyor: pencereyi çizen yirmi iki oyun dosyasının
      her birine aynı dört satırı yazmak gerekirdi (`tur-ayari-baglami.tsx`). */
   const { mod, zorluk, setMod, setZorluk, secilebilir } = useTurAyari()
@@ -109,16 +110,21 @@ export function OyunTanitim({
   */
   useEffect(() => {
     if (!genelTest || !acik || !baslatir) return
-    onBasla()
-  }, [genelTest, acik, baslatir, onBasla])
+    /* Testin ilk oyunu 3 · 2 · 1 ile açılıyor: kullanıcı "Teste başla"ya
+       basınca ilk soru hemen geliyordu, sıradan bir turun başlangıcıyla
+       aynı sayım burada da olmalı. Sonraki oyunlar sayımsız. */
+    if (genelTestIlk) setSayiliyor(true)
+    else onBasla()
+  }, [genelTest, genelTestIlk, acik, baslatir, onBasla])
 
   if (!acik) return null
-  /* Genel test bankadaki oyunları arka arkaya oynatıyor; her oyunun başında
-     bir tanıtım ekranı, tek bir testi yarım düzine ekrana bölerdi. */
-  if (genelTest && baslatir) return null
 
   // Sayım sürerken ekran yok: sıra hazırlanmada.
   if (sayiliyor) return <GeriSayim onBitti={onBasla} />
+
+  /* Genel test bankadaki oyunları arka arkaya oynatıyor; her oyunun başında
+     bir tanıtım ekranı, tek bir testi yarım düzine ekrana bölerdi. */
+  if (genelTest && baslatir) return null
 
   const ornekler = OYUN_ORNEKLERI[oyun.id]
 

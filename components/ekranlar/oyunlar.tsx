@@ -404,7 +404,7 @@ export function OyunlarEkrani({
       başlıyor. Bilgi bağlamla iniyor: pencereyi on sekiz oyun dosyasının her
       biri kendi çiziyor ve prop olsaydı aynı satır on sekiz kez yazılacaktı.
     */
-    <GenelTestSaglayici value={bankaTuru !== null}>
+    <GenelTestSaglayici value={bankaTuru === null ? null : { ilk: bankaTuru.ilk === true }}>
     <TurAyariSaglayici value={turAyari}>
     <div>
       <header className="flex items-start gap-3 px-0.5 pt-1">

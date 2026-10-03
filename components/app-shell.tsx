@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { App as CapacitorApp } from '@capacitor/app'
 import { ArrowLeft } from 'lucide-react'
 import type {
@@ -75,7 +76,8 @@ import { OkulEkrani } from '@/components/ekranlar/okul'
 import { AyarlarEkrani } from '@/components/ekranlar/ayarlar'
 import { SoruTakibiEkrani } from '@/components/ekranlar/soru-takibi'
 import { DevamsizlikEkrani } from '@/components/ekranlar/devamsizlik'
-import { PomodoroEkrani } from '@/components/ekranlar/pomodoro'
+import { PomodoroEkrani, type PomodoroDurumu } from '@/components/ekranlar/pomodoro'
+import { PomodoroSaati } from '@/components/pomodoro-saati'
 import { SiralamaEkrani } from '@/components/ekranlar/siralama'
 import { HedefEkrani } from '@/components/ekranlar/hedef'
 import { YanlisBankaEkrani } from '@/components/ekranlar/yanlis-banka'
@@ -141,6 +143,33 @@ function RabiUygulamasi() {
 
   const [sekme, setSekme] = useState<Sekme>('ana')
   const [ekran, setEkran] = useState<Ekran | null>(null)
+
+  /*
+    Pomodoro ekrandan çıkınca sürüyor.
+
+    Tur bir süre Pomodoro ekranından çıkınca bitiyordu: bileşen ekranla
+    birlikte sökülüyor, sayaç, bildirim ve odak kilidi onunla gidiyordu;
+    sahnenin geri oku da turu duraklatıyordu. Kullanıcı Android'deki gibi
+    turun sürmesini ve sayacın sağ altta bir saat olarak görünmesini istedi.
+
+    Bileşen bu yüzden ekranın içinde değil burada, kökte kuruluyor ve ekran
+    değişince sökülmüyor (`pomodoroTakili`). Çizildiği yer sabit, ayrık bir
+    `div` (`pomodoroKalici`, portalın kabı) ve o div ekran açıkken sayfanın
+    içindeki yuvaya taşınıyor (`pomodoroYuvasi`). Portalın kabı hiç
+    değişmemeli: React kabı değişen portalı söküp yeniden kurar — tam da
+    kaçınılan şey. Deneme formu gibi bütün sayfa ağacını değiştiren bir ekran
+    yuvayı söktüğünde kap yalnızca DOM'dan düşüyor, bileşen yaşıyor.
+  */
+  const [pomodoroDurumu, setPomodoroDurumu] = useState<PomodoroDurumu | null>(null)
+  const [pomodoroKalici, setPomodoroKalici] = useState<HTMLDivElement | null>(null)
+  const [pomodoroYuvasi, setPomodoroYuvasi] = useState<HTMLDivElement | null>(null)
+  // Sunucuda `document` yok; kap ilk çizimden sonra kuruluyor.
+  useEffect(() => setPomodoroKalici(document.createElement('div')), [])
+  useLayoutEffect(() => {
+    if (pomodoroYuvasi && pomodoroKalici && pomodoroKalici.parentElement !== pomodoroYuvasi) {
+      pomodoroYuvasi.appendChild(pomodoroKalici)
+    }
+  }, [pomodoroYuvasi, pomodoroKalici])
   /** Deneme ekleme/düzenleme, sekmenin üstünde açılan bir alt ekran. */
   const [denemeFormu, setDenemeFormu] = useState<{ duzenlenen: Deneme | null } | null>(null)
 
@@ -313,7 +342,7 @@ function RabiUygulamasi() {
   const bankaTuru: BankaTuru | null = (() => {
     if (genelTest === null) return null
     const oyun = genelTestOyunu(genelTest)
-    return oyun === null ? null : { oyun }
+    return oyun === null ? null : { oyun, ilk: genelTest.adim === 0 }
   })()
   /**
    * Bildirilen hatalı sorular. Kuyruk, gönderim ve arayüzün kolu hook'un
@@ -961,6 +990,16 @@ function RabiUygulamasi() {
         giriş animasyonu her seferinde baştan oynuyor — sınıf tek başına verilse
         React aynı düğümü koruduğu için animasyon yalnızca ilk açılışta çalışırdı.
       */}
+      {/* Pomodoro'nun yuvası (yukarıda, "Pomodoro ekrandan çıkınca
+          sürüyor"). Geri kaydırma kaydırılacak sayfayı `[data-geri-sayfa]`
+          ile ilk bulduğu öğeden alıyor; yuva o yüzden `SayfaGecisi`nden
+          önce ve işareti yalnızca açıkken taşıyor. Gizliden görünüre geçen
+          öğenin animasyonu baştan oynuyor: giriş hareketi her açılışta var. */}
+      <div
+        ref={setPomodoroYuvasi}
+        data-geri-sayfa={ekran === 'pomodoro' ? '' : undefined}
+        className={ekran === 'pomodoro' ? 'sayfa-girisi sayfa-ileri tablet:mx-auto tablet:max-w-[40rem]' : 'hidden'}
+      />
       <SayfaGecisi
         key={ekran ?? `sekme:${sekme}`}
         anahtar={ekran ?? `sekme:${sekme}`}
@@ -1036,15 +1075,7 @@ function RabiUygulamasi() {
                 }}
               />
             )}
-            {ekran === 'pomodoro' && (
-              <PomodoroEkrani
-                demoVeri={tanitim.tanitimdaMi}
-                ayar={pomodoroAyar}
-                seanslar={pomodoroGecmis}
-                setAyar={(guncelle) => { if (!tanitim.tanitimdaMi) setPomodoroAyar(guncelle) }}
-                onSeansBitti={(seans) => { if (!tanitim.tanitimdaMi) setPomodoroGecmis((o) => [...o, seans]) }}
-              />
-            )}
+            {/* Pomodoro burada çizilmiyor: kökte kalıcı, yuvası yukarıda. */}
             {ekran === 'notlar' && (
               <YapilacaklarEkrani
                 gorevler={anaTurda ? tanitim.demo.gorevler : gorevler}
@@ -1243,6 +1274,32 @@ function RabiUygulamasi() {
   return (
     <>
       {icerik}
+      {pomodoroKalici &&
+        (ekran === 'pomodoro' || pomodoroDurumu?.canli === true) &&
+        createPortal(
+          <PomodoroEkrani
+            demoVeri={tanitim.tanitimdaMi}
+            ayar={pomodoroAyar}
+            seanslar={pomodoroGecmis}
+            setAyar={(guncelle) => { if (!tanitim.tanitimdaMi) setPomodoroAyar(guncelle) }}
+            onSeansBitti={(seans) => { if (!tanitim.tanitimdaMi) setPomodoroGecmis((o) => [...o, seans]) }}
+            gorunur={ekran === 'pomodoro' && denemeFormu === null}
+            onDurum={setPomodoroDurumu}
+            // `geriGit` değil: o önce üstteki katmanı kapatıyor ve o katman
+            // tam da bu çağrıyı yapan sahne — kendini yeniden çağırırdı.
+            onArkaPlan={() => setEkran(null)}
+          />,
+          pomodoroKalici,
+        )}
+      {pomodoroDurumu?.canli && ekran !== 'pomodoro' && genelTest === null && !tanitim.tanitimdaMi && (
+        <PomodoroSaati
+          durum={pomodoroDurumu}
+          onAc={() => {
+            setDenemeFormu(null)
+            setEkran('pomodoro')
+          }}
+        />
+      )}
       {tanitim.kayitUyarisi && <p role="status" className="mx-auto max-w-md px-4 pb-24 text-sm text-muted-foreground">{tanitim.kayitUyarisi}</p>}
       <SpotIsigi />
       {/* Özet katmanı açılış ekranının **altında**: uygulama açılırken tavşan
@@ -1372,6 +1429,7 @@ function SayfaGecisi({
         geri === 'yerinde' && 'sayfa-yerinde',
         yandan === 'sag' && 'sayfa-sagdan',
         yandan === 'sol' && 'sayfa-geri',
+        yandan === 'yerinde' && 'sayfa-yerinde',
         !basladi && 'sayfa-bekliyor',
         // Tablette sayfanın en geniş hâli; telefonda bu sınıflar eşleşmiyor.
         'tablet:mx-auto',

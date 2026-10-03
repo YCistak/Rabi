@@ -6,17 +6,14 @@ import { Capacitor } from '@capacitor/core'
 import {
   ChevronLeft,
   Clock,
-  Music,
   Pause,
   Play,
   ShieldCheck,
   SkipForward,
   Sun,
-  Volume2,
-  VolumeX,
   X,
 } from 'lucide-react'
-import type { PomodoroAyar, PomodoroSeans, SesSecimi } from '@/lib/types'
+import type { PomodoroAyar, PomodoroSeans } from '@/lib/types'
 import {
   ASAMA_ADI,
   asamaSuresi,
@@ -26,7 +23,6 @@ import {
   type Asama,
 } from '@/lib/pomodoro'
 import { SesCalar } from '@/lib/ses'
-import { LOFI_PARCALAR } from '@/lib/lofi'
 import { calismaSirasi } from '@/lib/dersler'
 import { PROVALAR, PROVA_DERSI, type Prova } from '@/lib/sinav-provasi'
 import { izinIste, pomodoroIptal, pomodoroPlanla } from '@/lib/bildirim'
@@ -47,7 +43,7 @@ import { OdakAyarlari } from '@/components/odak/odak-ayarlari'
 import { IosOdakAyarlari } from '@/components/odak/ios-odak-ayarlari'
 import { iosMu } from '@/lib/platform'
 import { cn, yeniId } from '@/lib/utils'
-import { Anahtar, BaslikSatiri, Buton, Cip, Kart, Not, Onay } from '@/components/ui'
+import { Anahtar, BaslikSatiri, Buton, Kart, Not, Onay } from '@/components/ui'
 
 export function PomodoroEkrani({
   ayar,
@@ -55,6 +51,9 @@ export function PomodoroEkrani({
   onSeansBitti,
   seanslar,
   demoVeri = false,
+  gorunur = true,
+  onDurum,
+  onArkaPlan,
 }: {
   ayar: PomodoroAyar
   /** Geçmiş seanslar — ders şeridi en çok çalışılanları başa alıyor. */
@@ -62,6 +61,20 @@ export function PomodoroEkrani({
   setAyar: (guncelleyici: PomodoroAyar | ((onceki: PomodoroAyar) => PomodoroAyar)) => void
   onSeansBitti: (seans: PomodoroSeans) => void
   demoVeri?: boolean
+  /**
+   * Ekran açık mı. Tur başlayınca bileşen ekrandan çıkılsa da sökülmüyor
+   * (`AppShell` → "Pomodoro ekrandan çıkınca sürüyor"), yalnızca gizleniyor;
+   * gizliyken sahne çizilmiyor — açık bir sahne geri katmanı kurar ve
+   * başka ekranda geri tuşunu yutardı.
+   */
+  gorunur?: boolean
+  /** Sağ alttaki saat bunu çiziyor (`PomodoroSaati`). */
+  onDurum?: (durum: PomodoroDurumu) => void
+  /**
+   * Sahnenin geri oku sayaç işlerken turu **duraklatmıyor**: ekrandan
+   * çıkılıyor, tur sürüyor. Verilmezse eski davranış (duraklat).
+   */
+  onArkaPlan?: () => void
 }) {
   const [asama, setAsama] = useState<Asama>('calisma')
   const [tur, setTur] = useState(1)
@@ -94,16 +107,7 @@ export function PomodoroEkrani({
    * hazırlığa döner), turu bitir ve provadan çıkış.
    */
   const [sahne, setSahne] = useState(false)
-  const [sesPaneli, setSesPaneli] = useState(false)
   const [sureCekmecesi, setSureCekmecesi] = useState(false)
-  /**
-   * Önizlemesi çalan parçanın dosya adı.
-   *
-   * Seçimden ayrı bir state: dinlemek seçmek değil. Kullanıcı üç parçayı
-   * dinleyip hiçbirini seçmeden paneli kapatabilmeli — dinlenen parçayı seçili
-   * saymak, kararı onun yerine vermek olurdu.
-   */
-  const [onizlenen, setOnizlenen] = useState<string | null>(null)
   /**
    * Odak kilidi tanıtımı pomodoroya ilk girişte bir kez çıkıyor. Tarayıcıda
    * özellik hiç yok; orada tanıtım da gösterilmiyor.
@@ -252,9 +256,7 @@ export function PomodoroEkrani({
     // turun ilk başlatıldığı an kalmalı, "Devam et"e basılan an değil.
     if (baslangicRef.current === null) baslangicRef.current = new Date().toISOString()
 
-    const calar = calarAl()
-    calar.sesSeviyesi(ayar.sesSeviyesi)
-    calar.cal(ayar.ses)
+    calarAl().sesSeviyesi(ayar.sesSeviyesi)
 
     /*
       İzin turu başlatırken isteniyor, ayarlarda değil.
@@ -324,9 +326,36 @@ export function PomodoroEkrani({
    * yerden açılıyor.
    */
   const sahnedenCik = () => {
-    if (calisiyor) duraklat()
     setSahne(false)
+    if (calisiyor && onArkaPlan) {
+      onArkaPlan()
+      return
+    }
+    if (calisiyor) duraklat()
   }
+
+  /*
+    Tur sürerken ekrana dönülünce (sağ alttaki saat, Araçlar'daki kutucuk)
+    doğrudan sahne açılıyor: işleyen bir sayacın hazırlık ekranı, "Başlat"
+    yazan bir düğmeyle yanlış bir şey söylerdi.
+  */
+  useEffect(() => {
+    if (gorunur && calisiyor) setSahne(true)
+    // Yalnızca görünürlük değişince; sayaç her tikte buraya uğramasın.
+  }, [gorunur])
+
+  /*
+    Saat için durum. Kalan süre işlerken gönderilmiyor — saat onu bitiş
+    zamanından kendisi sayıyor; her tikte AppShell'i yeniden çizmek bütün
+    uygulamayı saniyede iki kez çizmek olurdu.
+  */
+  const canli = !(dokunulmadi && tur === 1 && asama === 'calisma')
+  const molaDurumu = asama !== 'calisma'
+  const donukKalan = calisiyor ? null : kalan
+  const toplamSaniyeDurum = toplamDakika * 60
+  useEffect(() => {
+    onDurum?.({ canli, bitisZamani, donukKalan, mola: molaDurumu, toplamSaniye: toplamSaniyeDurum })
+  }, [canli, bitisZamani, donukKalan, molaDurumu, toplamSaniyeDurum])
 
   /** Turdan çıkılıyor: duraklamanın aksine bildirim de kalkıyor. */
   const turuBirak = () => {
@@ -414,9 +443,7 @@ export function PomodoroEkrani({
     if (veri.komut === 'devam') {
       setBitisZamani(veri.bitisZamani)
       setDokunulmadi(false)
-      const calar = calarAl()
-      calar.sesSeviyesi(ayar.sesSeviyesi)
-      calar.cal(ayar.ses)
+      calarAl().sesSeviyesi(ayar.sesSeviyesi)
       void pomodoroPlanla(veri.bitisZamani, asama !== 'calisma')
       if (ayar.ekraniAcikTut && Capacitor.isNativePlatform()) {
         void KeepAwake.keepAwake().catch(() => {})
@@ -454,61 +481,6 @@ export function PomodoroEkrani({
     setKalan((yeni ? yeni.dakika : ayar.calisma) * 60)
     setDokunulmadi(true)
     baslangicRef.current = null
-  }
-
-  const sesSec = (secim: SesSecimi) => {
-    setAyar((o) => ({ ...o, ses: secim }))
-    const calar = calarAl()
-    calar.sesSeviyesi(ayar.sesSeviyesi)
-    // Seçim önizlemeyi bitiriyor: seçtikten sonra hâlâ başka bir parçayı
-    // dinliyor olmak, hangisinin seçildiğini duyulamaz yapardı.
-    setOnizlenen(null)
-    // Ses seçimi çalışırken değişirse anında geçilir; duraklatılmışsa sessiz kalır.
-    if (calisiyor) calar.cal(secim)
-    else calar.onizlemeyiDurdur()
-  }
-
-  /**
-   * Önizleme düğmesi: aynı parçaya ikinci kez basmak durduruyor.
-   *
-   * Kullanıcı bir parçayı **seçmeden önce** dinleyebilmeli; on iki adın
-   * arasından "Glow on the Overpass"i ada bakarak seçmek seçim değil kura.
-   * Eskiden dinlemenin tek yolu parçayı seçip turu başlatmaktı ve beğenilmeyen
-   * parça, başlamış bir turun ortasında değiştiriliyordu.
-   *
-   * Çalar tek olduğu için önizleme onu ödünç alıyor: tur sürerken bir başka
-   * parçayı dinlemek çalanı susturuyor, önizleme bitince seçili parça geri
-   * geliyor.
-   */
-  const onizlemeyiDegistir = (dosya: string) => {
-    const calar = calarAl()
-    if (onizlenen === dosya) {
-      setOnizlenen(null)
-      if (calisiyor) calar.cal(ayar.ses)
-      else calar.onizlemeyiDurdur()
-      return
-    }
-    calar.sesSeviyesi(ayar.sesSeviyesi)
-    setOnizlenen(dosya)
-    calar.onizle(dosya, () => {
-      setOnizlenen(null)
-      // Süresi dolduğunda çalar geri veriliyor. `onBitti` yalnızca önizleme
-      // hâlâ etkin kaynakken çağrılıyor, yani buradaki `calisiyor` bayat olamaz:
-      // turu başlatmak da duraklatmak da çaları önizlemeden almış olurdu.
-      if (calisiyor) calarRef.current?.cal(ayar.ses)
-    })
-  }
-
-  /** Panel kapanırken önizleme de susuyor; kapalı bir panelden ses gelmemeli. */
-  const sesPaneliniDegistir = () => {
-    setSesPaneli((acik) => {
-      if (acik && onizlenen !== null) {
-        setOnizlenen(null)
-        if (calisiyor) calarRef.current?.cal(ayar.ses)
-        else calarRef.current?.onizlemeyiDurdur()
-      }
-      return !acik
-    })
   }
 
   /*
@@ -632,13 +604,13 @@ export function PomodoroEkrani({
                 son çip, yana kaydırılabildiğini söyleyen tek işaret. Yana kayan
                 kutunun içinden başlayan hareket sekme değiştirmiyor
                 (`sekme-kaydirma.ts`). */}
-            <div className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {gorunenDersler.map((d) => (
                 <SecimKutusu
                   key={d}
                   secili={ders === d}
                   onClick={() => setDers(ders === d ? null : d)}
-                  className="h-11 shrink-0 snap-start px-4 text-[12.5px] whitespace-nowrap"
+                  className="h-11 shrink-0 px-4 text-[12.5px] whitespace-nowrap"
                 >
                   {d}
                 </SecimKutusu>
@@ -651,7 +623,7 @@ export function PomodoroEkrani({
           <p className="mb-2 ml-0.5 text-[12.5px] font-extrabold text-muted-foreground">
             HANGİ DENEMEYİ ÇÖZÜYORSUN?
           </p>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-4 gap-2">
             {PROVALAR.map((p) => (
               <SecimKutusu
                 key={p.id}
@@ -683,112 +655,52 @@ export function PomodoroEkrani({
           />
         )}
 
-        <AyarSatiri
-          simge={ayar.ses === 'yok' ? <VolumeX size={18} aria-hidden /> : <Volume2 size={18} aria-hidden />}
-          vurgulu={ayar.ses !== 'yok'}
-          ad="Ses"
-          not={sesAdi(ayar.ses)}
-          eylem={sesPaneli ? 'Kapat' : 'Değiştir'}
-          onClick={sesPaneliniDegistir}
-        />
-
-        {sesPaneli && (
-          <div className="acilir-giris border-t border-border p-4">
-            <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-              <Music size={13} aria-hidden />
-              Lo-fi
-            </p>
-            {/*
-              Çip bulutu yerine satır listesi: her parçanın kendi önizleme
-              düğmesi var ve iç içe düğme yazılamıyor — dinlemek ile seçmek iki
-              ayrı dokunuş, o yüzden iki ayrı hedef. Ada dokunmak seçiyor,
-              üçgene dokunmak dinletiyor.
-            */}
-            <div className="mb-4 space-y-1.5">
-              <Cip
-                secili={ayar.ses === 'yok'}
-                onClick={() => sesSec('yok')}
-                className="w-full !rounded-2xl text-left"
-              >
-                Sessiz
-              </Cip>
-              {LOFI_PARCALAR.map((p) => {
-                const secim: SesSecimi = `lofi:${p.dosya}`
-                const calanOnizleme = onizlenen === p.dosya
-                return (
-                  <div key={p.dosya} className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => onizlemeyiDegistir(p.dosya)}
-                      aria-label={
-                        calanOnizleme
-                          ? `${p.ad} önizlemesini durdur`
-                          : `${p.ad} parçasını dinle`
-                      }
-                      className={cn(
-                        'flex size-10 shrink-0 items-center justify-center rounded-full border transition',
-                        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-                        calanOnizleme
-                          ? 'border-primary-parlak bg-primary-parlak text-white'
-                          : 'border-border bg-card text-primary active:bg-muted',
-                      )}
-                    >
-                      {calanOnizleme ? (
-                        <Pause size={15} aria-hidden />
-                      ) : (
-                        <Play size={15} aria-hidden />
-                      )}
-                    </button>
-                    <Cip
-                      secili={ayar.ses === secim}
-                      onClick={() => sesSec(secim)}
-                      className="min-w-0 flex-1 truncate !rounded-2xl text-left"
-                    >
-                      {p.ad}
-                    </Cip>
-                  </div>
-                )
-              })}
-            </div>
-
-            <label className="block">
-              <span className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                Ses seviyesi
-              </span>
-              <input
-                type="range"
-                min={0}
-                max={100}
-                value={Math.round(ayar.sesSeviyesi * 100)}
-                onChange={(e) => {
-                  const deger = Number(e.target.value) / 100
-                  setAyar((o) => ({ ...o, sesSeviyesi: deger }))
-                  calarRef.current?.sesSeviyesi(deger)
-                }}
-                className="w-full accent-[var(--primary)]"
-              />
-            </label>
-          </div>
-        )}
-
         {/*
-          Korumaların kapısı sayacın altında ve kapalı.
+          Odak koruması Süreler'in hemen altında, ekran anahtarı en altta
+          (kullanıcının sırası). Koruma bir süre ayrı bir kartta, Başlat'a en
+          yakın yerdeydi; turun süresiyle birlikte kurulan bir karar olduğu
+          için Süreler'in yanına geldi.
 
-          İki anahtar (odak kilidi, rahatsız etme) bir süre burada açık duruyordu
-          ve ikisi de ayrıca Ayarlar'da vardı; iki kopya zamanla birbirinden
-          ayrıldı. Ayarlar'daki kaldırıldı, buradaki tek satıra indi: paneli
+          Korumaların kapısı kapalı bir satır: iki anahtar (odak kilidi,
+          rahatsız etme) bir süre açık duruyordu ve ikisi de ayrıca
+          Ayarlar'da vardı; iki kopya zamanla birbirinden ayrıldı. Paneli
           açmadan da hangi korumanın açık olduğu satırın altında yazıyor.
-
-          Karar her turda değişiyor (kütüphanede telefon sussun, evde
-          uygulamalar engelli olsun yeter) ve turu başlatmadan önce görülmeyen
-          bir ayar, o turda yanlış kurulmuş bir ayardır.
+          Karar her turda değişiyor ve turu başlatmadan önce görülmeyen bir
+          ayar, o turda yanlış kurulmuş bir ayardır.
 
           Tarayıcıda görünmüyor: odak kilidi cihaza bağlı tek özellik. iOS'ta
           içerik başka (`IosOdakAyarlari`): Screen Time'ın tek kalkanı.
+
+          **Ses satırı yok.** Lo-fi çalar ve önizlemeli parça listesi burada
+          duruyordu; kullanıcı kaldırttı. Tur sessiz, aşama sonundaki zil
+          duruyor — o müzik değil, haber.
         */}
-        {/* Ekran anahtarı her iki kipte de burada: provada da geçerli ve
-            Süreler çekmecesine konsaydı 165 dakikalık bir turda ona hiç
-            ulaşılamazdı. */}
+        {(odakKorumasiVar() || demoVeri) && (
+          <div data-tanitim="pomodoro-kilit" className="border-t border-border first:border-t-0">
+            <AyarSatiri
+              simge={<ShieldCheck size={18} aria-hidden />}
+              vurgulu={korumaVar}
+              ad="Odak koruması"
+              not={korumaOzeti}
+              eylem={korumaPaneli ? 'Kapat' : 'Ayarla'}
+              onClick={() => { if (!demoVeri) setKorumaPaneli((a) => !a) }}
+              kilitli={demoVeri}
+            />
+            {korumaPaneli && (
+              <div className="acilir-giris border-t border-border">
+                {iosMu() ? (
+                  <IosOdakAyarlari ayar={ayar} setAyar={setAyar} />
+                ) : (
+                  <OdakAyarlari ayar={ayar} setAyar={setAyar} />
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Ekran anahtarı her iki kipte de burada ve en altta: provada da
+            geçerli ve Süreler çekmecesine konsaydı 165 dakikalık bir turda
+            ona hiç ulaşılamazdı. */}
         <label className="flex w-full cursor-pointer items-center gap-3 border-t border-border px-4 py-3.5">
           <Sun size={18} className="shrink-0 text-muted-foreground" aria-hidden />
           <span className="min-w-0 flex-1">
@@ -806,29 +718,6 @@ export function PomodoroEkrani({
       </Kart>
 
       </div>
-      {(odakKorumasiVar() || demoVeri) && <Kart className="mb-3 p-0">
-          <div data-tanitim="pomodoro-kilit">
-            <AyarSatiri
-              simge={<ShieldCheck size={18} aria-hidden />}
-              vurgulu={korumaVar}
-              ad="Odak koruması"
-              not={korumaOzeti}
-              eylem={korumaPaneli ? 'Kapat' : 'Ayarla'}
-              onClick={() => { if (!demoVeri) setKorumaPaneli((a) => !a) }}
-              kilitli={demoVeri}
-            />
-            {korumaPaneli && (
-              <div className="acilir-giris border-t border-border">
-                {/* iOS'ta içerik başka: Screen Time'ın tek kalkanı. */}
-                {iosMu() ? (
-                  <IosOdakAyarlari ayar={ayar} setAyar={setAyar} />
-                ) : (
-                  <OdakAyarlari ayar={ayar} setAyar={setAyar} />
-                )}
-              </div>
-            )}
-          </div>
-      </Kart>}
 
       {/*
         Başlat sayfanın dibine yapışık: ayarlar uzadıkça düğme kaydırmanın
@@ -850,7 +739,7 @@ export function PomodoroEkrani({
         <SureAyarlari ayar={ayar} setAyar={setAyar} />
       </Cekmece>
 
-      {sahne && (
+      {sahne && gorunur && (
         <CalismaSahnesi
           durum={prova ? 'DENEME PROVASI' : durumEtiketi.toLocaleUpperCase('tr-TR')}
           baslik={
@@ -881,7 +770,8 @@ export function PomodoroEkrani({
 /**
  * Sayaç tam ekran: alt menü ve ayarlar arkada kalıyor, ekranda tek iş
  * sayaç. `tam-katman-girisi` ile alttan yükseliyor ve geri tuşu (donanım
- * dahil) turu bitirmiyor, sahneyi kapatıp turu duraklatıyor.
+ * dahil) turu bitirmiyor: sayaç işliyorsa ekrandan çıkılıyor ve tur sürüyor
+ * (sağ altta saat), duraklatılmışsa sahne kapanıyor.
  */
 function CalismaSahnesi({
   durum,
@@ -1468,9 +1358,15 @@ function SerbestSure({
   )
 }
 
-function sesAdi(secim: SesSecimi): string {
-  const parca = LOFI_PARCALAR.find((p) => `lofi:${p.dosya}` === secim)
-  // Eski kayıtlarda kaldırılmış ortam sesleri (yağmur, kafe…) olabilir;
-  // tanınmayan her seçim sessize düşer.
-  return parca ? `Lo-fi · ${parca.ad}` : 'Sessiz'
+
+/** Sağ alttaki saatin okuduğu durum (`PomodoroEkrani` → `AppShell`). */
+export type PomodoroDurumu = {
+  /** Başlamış ya da bir aşaması bitmiş tur var — bileşen sökülmemeli. */
+  canli: boolean
+  /** İşliyorsa bitiş zamanı; duraklatılmışsa null. */
+  bitisZamani: number | null
+  /** Duraklatılmışken kalan saniye. */
+  donukKalan: number | null
+  mola: boolean
+  toplamSaniye: number
 }

@@ -190,7 +190,7 @@ export function AnaSayfa({
         <Rabi durum={maskotDurumu} poz="kafa" boyut={58} />
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-extrabold tracking-wide text-ikincil">Rabi</p>
-          <h1 className="mt-px font-display text-[22px] font-extrabold tracking-tight text-balance">
+          <h1 className="mt-px font-display text-[22px] leading-[1.15] font-extrabold tracking-tight text-balance">
             {/* Ad kurulumda boş bırakılmış olabilir; o zaman selamlama adsız
                 kalıyor, "Merhaba  👋" gibi çift boşluk oluşmuyor. */}
             {ayarlar.ad ? `Merhaba ${ayarlar.ad} 👋` : 'Merhaba 👋'}
@@ -200,7 +200,7 @@ export function AnaSayfa({
               başlık, ikinci bir cümle ve ok; kullanıcı kartı kökten kaldırttı
               ve buraya tek bir cümle istedi. Hedef sıfırken cümle yok. */}
           {gununCumlesi && (
-            <p className="mt-1 text-[13.5px] leading-snug font-semibold text-muted-foreground text-pretty">
+            <p className="mt-0.5 text-[13.5px] leading-snug font-semibold text-muted-foreground text-pretty">
               {gununCumlesi}
             </p>
           )}
@@ -243,8 +243,8 @@ export function AnaSayfa({
           {/* Başlık ve satırlar `span`: düğmenin içi yalnızca metin öğesi
               alıyor, `h2`/`p` orada geçersiz iç içe geçme oluyor. Görünüş
               `block` ile aynı kalıyor. */}
-          <span className="min-w-0 flex-1 space-y-1">
-            <span className="block font-display text-base font-extrabold tracking-tight">
+          <span className="min-w-0 flex-1 space-y-0.5">
+            <span className="block font-display text-base leading-tight font-extrabold tracking-tight">
               Bugünkü soru hedefin
             </span>
             {/*
