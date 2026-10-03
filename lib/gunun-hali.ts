@@ -1,12 +1,19 @@
 /**
- * Ana sayfadaki "Bugün" kartının söylediği cümle.
+ * Ana sayfada selamlamanın altındaki tek cümle: günün hâli.
  *
- * Kart bir süre yalnızca üç şey diyordu: hiç soru yok / başladın / hedef
- * tuttu. Üçü de doğruydu ama her gün aynıydı ve "başladın" hâli hiçbir şey
- * önermiyordu. Şimdi kart, ana sayfanın zaten bildiği veriden bir **öneri**
- * çıkarıyor: seri kırılmak üzere mi, bankada bekleyen soru var mı, bugün tek
- * derse mi yığıldı, hangi derse uzun süredir dokunulmadı, son deneme ne
- * zamandı, sınava kaç gün kaldı.
+ * Bu cümle bir süre kendi kartıydı (`GununHali`, `gunun-hali-karti.tsx`):
+ * 72 piksellik bir tavşan, "BUGÜN" etiketi, kalın bir başlık, altında ikinci
+ * bir cümle ve bir ok. Kullanıcı kartı kökten kaldırttı ve yerine
+ * "Merhaba"nın altında tek bir cümle istedi. Kart hedef kartının hemen
+ * altında, aynı sayıyı ikinci kez yorumlayan ayrı bir yüzeydi; selamlamanın
+ * altındaki satır ise Rabi'nin kendisinin söylediği söz gibi okunuyor — maskot
+ * zaten orada. Başlık + açıklama ikilisi tek cümleye indi: noktalı virgülle
+ * bağlanan iki yarım, ilki durum, ikincisi öneri. Dokunulmuyor; öneri
+ * gidilecek yeri adıyla söylüyor.
+ *
+ * Kurallar kartın kurallarıyla aynı: seri kırılmak üzere mi, bankada bekleyen
+ * soru var mı, bugün tek derse mi yığıldı, hangi derse uzun süredir
+ * dokunulmadı, son deneme ne zamandı, sınava kaç gün kaldı.
  *
  * ## Kurallar sıralı, ilk tutan kazanır
  *
@@ -21,7 +28,7 @@
  * ## Cümleler günden güne değişiyor ama gün içinde sabit
  *
  * Bir kuralın birden çok cümlesi var ve seçim **günün tarihinden** türeyen
- * bir sayıyla yapılıyor (`secim`). Rastgele olsaydı kart her yeniden çizimde
+ * bir sayıyla yapılıyor (`secim`). Rastgele olsaydı satır her yeniden çizimde
  * başka cümle söyler, kullanıcı "az önce başka bir şey yazıyordu" derdi.
  *
  * Saf ve React'ten bağımsız; `gunun-hali.test.ts` kuralları tek tek
@@ -29,27 +36,17 @@
  */
 
 import type { GunlukKayit } from './types'
-import type { Ekran } from './gezinme'
 import { gunOzeti } from './hesap'
 import { gunFarki } from './sinav-tarihi'
 import { tariheCevir, tariheYaz } from './utils'
 
-export type GununHaliPozu = 'ziplayan' | 'okuyan' | 'uzgun'
-export type GununHaliDurumu = 'kutlama' | 'calisiyor' | 'uzgun'
-
-export type GununHali = {
-  poz: GununHaliPozu
-  durum: GununHaliDurumu
-  baslik: string
-  alt: string
-  /** Dokununca açılacak ekran; öneri neyi işaret ediyorsa orası. */
-  ekran: Ekran
-}
+/** Selamlamanın altındaki tek cümle. */
+export type GununHali = string
 
 export type GununHaliGirdisi = {
-  /** 'YYYY-AA-GG' — kart kendi saatini okumuyor, ana sayfa veriyor. */
+  /** 'YYYY-AA-GG' — cümle kendi saatini okumuyor, ana sayfa veriyor. */
   bugun: string
-  /** Günlük soru hedefi; 0 ise kart çizilmiyor. */
+  /** Günlük soru hedefi; 0 ise cümle yok. */
   hedef: number
   gunlukKayitlar: GunlukKayit[]
   /** Yanlış soru bankasında henüz "çözdüm" denmemiş soru sayısı. */
@@ -84,7 +81,7 @@ type Baglam = {
   secim: (n: number) => number
 }
 
-type Kural = (b: Baglam) => GununHali | null
+type Kural = (b: Baglam) => string | null
 
 function tuttu(b: Baglam): boolean {
   return b.toplam >= b.g.hedef
@@ -94,13 +91,13 @@ function sec<T>(b: Baglam, secenekler: T[]): T {
   return secenekler[b.secim(secenekler.length)]
 }
 
-// --- Kurallar ---------------------------------------------------------------
+/// --- Kurallar ---------------------------------------------------------------
 
 /**
  * Sınava ≤ 30 gün: üç hâlin de sınav cümlesi var.
  *
  * Son haftada her gün; 8–30 gün arasında **gün aşırı**. Otuz gün boyunca her
- * sabah aynı "sınava N gün" cümlesi, kartı bir takvime çevirirdi ve öteki
+ * sabah aynı "sınava N gün" cümlesi, satırı bir takvime çevirirdi ve öteki
  * öneriler (banka, ihmal edilen ders) tam da en gerekli oldukları dönemde
  * hiç görünmezdi. Seçim tarihten (`secim`) — gün içinde sabit.
  */
@@ -108,88 +105,46 @@ const sinavaYakin: Kural = (b) => {
   const n = b.g.kalanGun
   if (n < 0 || n > SINAV_YAKIN_GUN) return null
   if (n > SINAV_SON_HAFTA && b.secim(2) === 1) return null
-  const gun = n === 0 ? 'Sınav günü' : `Sınava ${n} gün`
   if (n === 0) {
-    return {
-      poz: 'okuyan',
-      durum: 'calisiyor',
-      baslik: gun,
-      alt: sec(b, [
-        'Bugün kendine dinlenmek için zaman ayır. Sınavda başarılar!',
-        'Hazırlıklarını kontrol et ve dinlen. Sınavda başarılar!',
-      ]),
-      ekran: 'soru',
-    }
+    return sec(b, [
+      'Bugün sınav günü; dinlen, kendine güven ve başarılar!',
+      'Bugün sınav günü; hazırlığını gözden geçir ve dinlen, başarılar!',
+    ])
   }
   if (tuttu(b)) {
-    return {
-      poz: 'ziplayan',
-      durum: 'kutlama',
-      baslik: sec(b, ['Bugünkü hedefini tamamladın', 'Hedefine ulaştın']),
-      alt: `${gun}. Bugün ${b.toplam} soru kaydettin; şimdi kısa bir mola verebilirsin.`,
-      ekran: 'soru',
-    }
+    return sec(b, [
+      `Sınava ${n} gün kaldı ve bugünkü hedefini tamamladın.`,
+      `Hedefine ulaştın; sınava ${n} gün kaldı.`,
+    ])
   }
-  if (b.toplam > 0) {
-    return {
-      poz: 'okuyan',
-      durum: 'calisiyor',
-      baslik: `${gun} kaldı`,
-      alt: sec(b, [
-        `Günlük hedefine ulaşmak için ${b.g.hedef - b.toplam} soru daha çözebilirsin.`,
-        `Hedefine ${b.g.hedef - b.toplam} soru kaldı. Kalan soruları kısa çalışma aralıklarına bölebilirsin.`,
-      ]),
-      ekran: 'soru',
-    }
-  }
-  return {
-    poz: 'uzgun',
-    durum: 'uzgun',
-    baslik: `${gun} kaldı`,
-    alt: sec(b, ['Bugünkü çalışmana kısa bir tekrarla başlayabilirsin.', 'Önce zorlandığın bir konuyu seçip birkaç soru çözebilirsin.']),
-    ekran: 'soru',
-  }
+  if (b.toplam > 0) return `Sınava ${n} gün kaldı; hedefine ${b.g.hedef - b.toplam} soru var.`
+  return sec(b, [
+    `Sınava ${n} gün kaldı; güne kısa bir tekrarla başlayabilirsin.`,
+    `Sınava ${n} gün kaldı; zorlandığın bir konudan birkaç soruyla başla.`,
+  ])
 }
 
 /** Dün (ve öncesinde) hedef tutmuş, bugün henüz sıfır: seri kırılmak üzere. */
 const seriKiriliyor: Kural = (b) => {
   if (b.toplam > 0 || b.seri < 1) return null
-  return {
-    poz: 'uzgun',
-    durum: 'uzgun',
-    baslik: b.seri === 1 ? 'Dün hedefini tamamladın' : `${b.seri} günlük seri kırılmasın`,
-    alt: sec(b, ['Serini sürdürmek için bugün de günlük hedefine ulaşmalısın.', 'Birkaç soruyla başlayıp günlük hedefine doğru ilerleyebilirsin.']),
-    ekran: 'soru',
-  }
+  return b.seri === 1
+    ? 'Dün hedefini tamamladın; bugün de devam edelim.'
+    : `${b.seri} günlük serin var; bugün de hedefini tamamla.`
 }
 
 /** Bugün hedef tuttu ve dün de tutmuştu: seri sürüyor. */
 const seriSuruyor: Kural = (b) => {
   if (!tuttu(b) || b.seri < 1) return null
-  const gun = b.seri + 1
-  return {
-    poz: 'ziplayan',
-    durum: 'kutlama',
-    baslik: `${gun} gündür hedefteysin`,
-    alt: sec(b, ['Bugünkü hedefin tamamlandı. Yarın da aynı düzeni sürdürebilirsin.', `Bugün ${b.toplam} soru kaydettin. Kısa bir mola verebilirsin.`]),
-    ekran: 'soru',
-  }
+  return `${b.seri + 1} gündür hedeftesin; bugünü de tamamladın.`
 }
 
 /** Bankada bekleyen yanlış var ve bugün çalışılmış: bir tanesine bak. */
 const bankaBekliyor: Kural = (b) => {
   const n = b.g.bekleyenYanlis
   if (n < 1 || b.toplam === 0) return null
-  return {
-    poz: tuttu(b) ? 'ziplayan' : 'okuyan',
-    durum: tuttu(b) ? 'kutlama' : 'calisiyor',
-    baslik: n === 1 ? 'Yanlış bankanda bir soru var' : `Yanlış bankanda ${n} soru var`,
-    alt: sec(b, [
-      n === 1 ? 'Yanlış yaptığın soruyu yeniden çözmeyi deneyebilirsin.' : 'Yanlış yaptığın sorulardan birini seçip yeniden çözebilirsin.',
-      'Çözümü inceleyip hangi adımda hata yaptığını bulmaya çalışabilirsin.',
-    ]),
-    ekran: 'yanlis-banka',
-  }
+  return n === 1
+    ? 'Yanlış bankanda bir soru seni bekliyor.'
+    : `Yanlış bankanda ${n} soru seni bekliyor.`
 }
 
 /** Günün sorularının çoğu tek dersten. */
@@ -210,13 +165,9 @@ const tekDerseYigilma: Kural = (b) => {
     }
   }
   if (enCokSayi / b.toplam < YIGILMA_ORANI) return null
-  return {
-    poz: tuttu(b) ? 'ziplayan' : 'okuyan',
-    durum: tuttu(b) ? 'kutlama' : 'calisiyor',
-    baslik: dersler.size === 1 ? `Bugün tek ders: ${enCok}` : `Bugün ağırlık ${enCok} dersinde`,
-    alt: sec(b, ['Planında başka bir ders varsa ondan da birkaç soru çözebilirsin.', 'Bir sonraki çalışma aralığında başka bir derse geçebilirsin.']),
-    ekran: 'soru',
-  }
+  return dersler.size === 1
+    ? `Bugün yalnızca ${enCok} dersi çalıştın; başka bir derse de göz at.`
+    : `Bugün ağırlık ${enCok} dersinde; başka bir derse de geçebilirsin.`
 }
 
 /** Son 30 günde çalışılmış ama 7+ gündür dokunulmamış ders. */
@@ -242,19 +193,13 @@ const ihmalEdilenDers: Kural = (b) => {
     }
   }
   if (!ders || gun < IHMAL_GUNU) return null
-  return {
-    poz: tuttu(b) ? 'ziplayan' : b.toplam > 0 ? 'okuyan' : 'uzgun',
-    durum: tuttu(b) ? 'kutlama' : b.toplam > 0 ? 'calisiyor' : 'uzgun',
-    // Ada ek getirilmiyor ("Kimya'ya", "Fizik'e" ünlü uyumu ister); ad "ders" sözcüğüyle
-    // birlikte kullanılıyor, ek o sözcüğe geliyor. İki nokta kullanılmıyor.
-    baslik: sec(b, [
-      `${ders} dersine ${gun} gündür soru girmedin`,
-      `${ders} dersi ${gun} gündür bekliyor`,
-      `${ders} dersinde ${gun} gündür kayıt yok`,
-    ]),
-    alt: sec(b, ['Bu dersten kısa bir tekrar yapıp birkaç soru çözebilirsin.', 'Çalışma planına bu dersten küçük bir tekrar ekleyebilirsin.']),
-    ekran: 'soru',
-  }
+  // Ada ek getirilmiyor ("Kimya'ya", "Fizik'e" ünlü uyumu ister); ad "ders"
+  // sözcüğüyle birlikte kullanılıyor, ek o sözcüğe geliyor.
+  return sec(b, [
+    `${ders} dersine ${gun} gündür soru girmedin.`,
+    `${ders} dersi ${gun} gündür bekliyor.`,
+    `${ders} dersinde ${gun} gündür kayıt yok.`,
+  ])
 }
 
 /** Son deneme 10+ gün önce (ya da hiç yok ama düzenli çalışılıyor). */
@@ -267,52 +212,26 @@ const denemeZamani: Kural = (b) => {
       null,
     )
     if (enEski === null || gunFarki(enEski, b.g.bugun) < IHMAL_GUNU) return null
-    return {
-      poz: tuttu(b) ? 'ziplayan' : b.toplam > 0 ? 'okuyan' : 'uzgun',
-      durum: tuttu(b) ? 'kutlama' : b.toplam > 0 ? 'calisiyor' : 'uzgun',
-      baslik: 'Henüz deneme kaydın yok',
-      alt: 'Çözdüğün bir denemenin sonuçlarını ekleyerek gelişimini takip edebilirsin.',
-      ekran: 'deneme',
-    }
+    return 'Henüz deneme kaydın yok; çözdüğün ilk denemeyi ekleyebilirsin.'
   }
   const gun = gunFarki(t, b.g.bugun)
   if (gun < DENEME_GUNU) return null
-  return {
-    poz: tuttu(b) ? 'ziplayan' : b.toplam > 0 ? 'okuyan' : 'uzgun',
-    durum: tuttu(b) ? 'kutlama' : b.toplam > 0 ? 'calisiyor' : 'uzgun',
-    baslik: `Son deneme ${gun} gün önceydi`,
-    alt: sec(b, ['Yeni bir deneme çözdüysen sonuçlarını ekleyebilirsin.', 'Çalışma planında uygunsa bu hafta bir denemeye zaman ayırabilirsin.']),
-    ekran: 'deneme',
-  }
+  return `Son denemen ${gun} gün önceydi; yenisine zaman ayırabilirsin.`
 }
 
 /** Hiçbir öneri tutmadı: eski üç hâl. */
 const temel: Kural = (b) => {
   if (tuttu(b)) {
-    return {
-      poz: 'ziplayan',
-      durum: 'kutlama',
-      baslik: sec(b, ['Günlük hedefin tamamlandı', 'Bugünkü hedefine ulaştın']),
-      alt: `Bugün ${b.toplam} soru kaydettin. Mola verebilir ya da yanlışlarını gözden geçirebilirsin.`,
-      ekran: 'soru',
-    }
+    return sec(b, [
+      `Günlük hedefini tamamladın; bugün ${b.toplam} soru çözdün.`,
+      `Bugünkü hedefine ulaştın; ${b.toplam} soru kaydettin.`,
+    ])
   }
-  if (b.toplam > 0) {
-    return {
-      poz: 'okuyan',
-      durum: 'calisiyor',
-      baslik: sec(b, ['Hedefine doğru ilerliyorsun', 'Bugünkü çalışman başladı']),
-      alt: `Hedefine ${b.g.hedef - b.toplam} soru kaldı.`,
-      ekran: 'soru',
-    }
-  }
-  return {
-    poz: 'uzgun',
-    durum: 'uzgun',
-    baslik: 'Bugün henüz soru kaydın yok',
-    alt: sec(b, ['Kısa bir çalışma aralığı seçip birkaç soruyla başlayabilirsin.', 'Soru çözdüysen kaydını ekle; henüz başlamadıysan küçük bir hedef seç.']),
-    ekran: 'soru',
-  }
+  if (b.toplam > 0) return `Güzel gidiyorsun; hedefine ${b.g.hedef - b.toplam} soru kaldı.`
+  return sec(b, [
+    'Bugün henüz soru kaydın yok; birkaç soruyla başlayabilirsin.',
+    'Bugün henüz soru kaydın yok; çözdüysen kaydını eklemeyi unutma.',
+  ])
 }
 
 /** Sabit öncelikli kurallar: tutarlarsa her gün kazanırlar. */
@@ -360,7 +279,7 @@ export function gununHali(g: GununHaliGirdisi): GununHali | null {
     const hal = kural(b)
     if (hal) return hal
   }
-  const oneriler = ONERILER.map((kural) => kural(b)).filter((h): h is GununHali => h !== null)
+  const oneriler = ONERILER.map((kural) => kural(b)).filter((h): h is string => h !== null)
   if (oneriler.length > 0) return oneriler[gun % oneriler.length]
   return temel(b)
 }

@@ -98,8 +98,11 @@ export function UcgenOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler,
 }: {
   istatistik: OyunIstatistigi
+  /** Önceki turlarda sorulanlar; deste onları sona atıyor. */
+  gorulenler: readonly string[]
   /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
   sesAcik: boolean
   /** Boş değilse tur yalnızca bu sorularla kurulur (Oyun Bankası turu). */
@@ -168,7 +171,7 @@ export function UcgenOyunuEkrani({
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
-    setSorular(siklariEkle(bankaTuru ? karistir(bankaHavuzu) : ucgenTuruHazirla(TUR_SORUSU)))
+    setSorular(siklariEkle(bankaTuru ? karistir(bankaHavuzu) : ucgenTuruHazirla(TUR_SORUSU, Math.random, gorulenler)))
     setSira(0)
     setCevaplar([])
     setGeriBildirim(null)
@@ -176,7 +179,7 @@ export function UcgenOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru])
+  }, [bankaHavuzu, bankaTuru, gorulenler, istatistik.enIyiDogru])
 
   const turBitir = useCallback(
     (verilenler: Cevap<UcgenSorusu>[], yarim = false) => {

@@ -166,6 +166,16 @@ export function BottomNav({
   }
   useEffect(() => kilitBirak, [])
 
+  /*
+    Şeridin ölçüsü **yerleşim** pikselinde. Tablette `<body>` `zoom`lu
+    (`--olcek`, iPad'de ~1,3): `getBoundingClientRect` ve `clientX` ekranda
+    görünen (büyütülmüş) pikseli veriyor, merceğe yazılan `translateX` ise
+    büyütülmüş kutunun içinde yeniden büyüyor. Ölçü bölünmeden yazılınca
+    mercek parmaktan `zoom` kat ileri gidiyordu ve en sağa çekilince kapsülün
+    dışına taşıyordu; telefonda `zoom` 1 olduğu için hiç görünmedi. Oran
+    ölçülüyor (`offsetWidth` büyütülmemiş genişlik), `--olcek` okunmuyor:
+    tarayıcının `zoom`u nasıl uyguladığına güvenmek gerekmiyor.
+  */
   const seritOlcusu = () => {
     const serit = seritRef.current
     if (!serit) return null
@@ -173,20 +183,23 @@ export function BottomNav({
     const stil = getComputedStyle(serit)
     // Rayda aynı hesap dikey eksende: "sol" üst kenar, "genişlik" yükseklik.
     if (rayMi()) {
-      const sol = kutu.top + parseFloat(stil.paddingTop)
-      const genislik = kutu.height - parseFloat(stil.paddingTop) - parseFloat(stil.paddingBottom)
-      return { sol, genislik }
+      const oran = serit.offsetHeight > 0 ? kutu.height / serit.offsetHeight : 1
+      const sol = kutu.top + parseFloat(stil.paddingTop) * oran
+      const genislik =
+        serit.offsetHeight - parseFloat(stil.paddingTop) - parseFloat(stil.paddingBottom)
+      return { sol, genislik, oran }
     }
-    const sol = kutu.left + parseFloat(stil.paddingLeft)
-    const genislik = kutu.width - parseFloat(stil.paddingLeft) - parseFloat(stil.paddingRight)
-    return { sol, genislik }
+    const oran = serit.offsetWidth > 0 ? kutu.width / serit.offsetWidth : 1
+    const sol = kutu.left + parseFloat(stil.paddingLeft) * oran
+    const genislik = serit.offsetWidth - parseFloat(stil.paddingLeft) - parseFloat(stil.paddingRight)
+    return { sol, genislik, oran }
   }
 
   /** Parmağın konumundan merceğin yeri ve parmağın altındaki sekme. */
   const parmaktanMercek = (konum: number) => {
     const olcu = seritOlcusu()
     if (!olcu) return null
-    const x = konum - olcu.sol
+    const x = (konum - olcu.sol) / olcu.oran
     return {
       x: mercekKonumu(x, olcu.genislik, SEKMELER.length, SURUKLEME_OLCEGI),
       sira: parmaktanSira(x, olcu.genislik, SEKMELER.length),

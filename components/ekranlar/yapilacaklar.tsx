@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Check, ChevronRight, Pencil, Plus, Star, Trash2, X } from 'lucide-react'
+import { CalendarArrowUp, Check, MoreHorizontal, Pencil, Plus, Star, Trash2, X } from 'lucide-react'
 import {
   DILIMLER,
   DILIM_ADI,
@@ -47,11 +47,9 @@ import { BaslikSatiri, Buton, Kart, Onay } from '@/components/ui'
  * noktalı kâğıt üstünde Sabah/Öğle/Akşam bölümleri, görev eklemek alttan
  * açılan bir sayfada.
  *
- * Görev **düzenlenebiliyor** ve her satırda silme düğmesi var. Bir süre ikisi
- * de yoktu (metin silinip yeniden yazılıyordu, sil yalnızca bitmiş görevde
- * çıkıyordu); kullanıcı tik düğmesi gibi görünür birer düğme istedi. Düğmeler
- * iş adının satırında değil kategorinin satırında: ad satırının genişliği
- * `EN_UZUN_GOREV`in dayanağı ve dört düğme oraya sığmazdı.
+ * Görev **düzenlenebiliyor, erteleniyor ve siliniyor**; üçü satırdaki "⋯"nün
+ * açtığı alt sayfada (`GorevEylemleri`). Satırda yalnızca tik ve yıldız
+ * duruyor — neden, `GorevSatiri`nin başında.
  */
 
 const GUN_ADLARI = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz']
@@ -97,6 +95,8 @@ export function YapilacaklarEkrani({
   /** Onay bekleyen erteleme ve silme. */
   const [ertelenecek, setErtelenecek] = useState<Gorev | null>(null)
   const [silinecek, setSilinecek] = useState<Gorev | null>(null)
+  /** "⋯" ile açılan işlem sayfasının görevi. */
+  const [eylemli, setEylemli] = useState<Gorev | null>(null)
   const [mesaj, setMesaj] = useState<string | null>(null)
 
   /*
@@ -291,9 +291,7 @@ export function YapilacaklarEkrani({
                     gecmis={gecmis}
                     onIsaretle={() => setGorevler((o) => gorevIsaretle(o, gorev.id))}
                     onYildiz={() => setGorevler((o) => gorevYildizla(o, gorev.id))}
-                    onErtele={() => setErtelenecek(gorev)}
-                    onDuzenle={() => setSayfa({ dilim, gorev })}
-                    onSil={() => setSilinecek(gorev)}
+                    onEylemler={() => setEylemli(gorev)}
                   />
                 ))}
 
@@ -337,6 +335,16 @@ export function YapilacaklarEkrani({
         />
       )}
 
+      {eylemli !== null && (
+        <GorevEylemleri
+          gorev={eylemli}
+          onKapat={() => setEylemli(null)}
+          onDuzenle={() => setSayfa({ dilim: eylemli.dilim, gorev: eylemli })}
+          onErtele={() => setErtelenecek(eylemli)}
+          onSil={() => setSilinecek(eylemli)}
+        />
+      )}
+
       {/* Erteleme bir dokunuşla oluyordu ve görev o an ekrandan kayboluyordu;
           yanlışlıkla basan kullanıcı işini yarının listesinde arıyordu.
           Kullanıcı önce sorulmasını istedi. Geri alınabilen bir iş, düğme
@@ -367,35 +375,35 @@ export function YapilacaklarEkrani({
 }
 
 /**
- * Tek görev satırı: tik, kategori, iş adı ve eylemler.
+ * Tek görev satırı: tik, kategori + iş adı, yıldız ve "⋯".
  *
- * İki satır: üstte kategori + süre ve düğmeler, altta iş adı tam genişlikte.
- * Düğmeler bir süre ad ile aynı satırdaydı; düzenle ve sil eklenince adın
- * yeri yarıya iniyordu.
+ * Satırda iki düğme var, dört değil. Yıldız, düzenle, ertele ve sil bir süre
+ * kategorinin satırında yan yana dört küçük simgeydi: işin **üstünde** bir
+ * düğme sırası, 32 piksellik hedefler, simgeden anlaşılmayan eylemler (ok
+ * "ertele" demiyordu) ve kaleme yapışık bir çöp kutusu. Kullanıcı dizilimi
+ * kötü buldu. Yıldız satırda kaldı çünkü bir eylem değil görevin **hâli** —
+ * bakınca görülmeli. Öteki üçü seyrek yapılan işler ve "⋯"nün açtığı alt
+ * sayfada adlarıyla duruyor (`GorevEylemleri`); sil orada en altta ve kırmızı.
  */
 function GorevSatiri({
   gorev,
   gecmis,
   onIsaretle,
   onYildiz,
-  onErtele,
-  onDuzenle,
-  onSil,
+  onEylemler,
 }: {
   gorev: Gorev
   gecmis: boolean
   onIsaretle: () => void
   onYildiz: () => void
-  onErtele: () => void
-  onDuzenle: () => void
-  onSil: () => void
+  onEylemler: () => void
 }) {
   const renk = gorevRengi(gorev.renk)
 
   return (
     <div
       className={cn(
-        'flex items-start gap-2 rounded-[16px] border border-border bg-card py-2 pl-3 pr-1.5 transition-opacity',
+        'flex items-center gap-2.5 rounded-[16px] border border-border bg-card py-2.5 pl-3 pr-1 transition-opacity',
         gorev.bitti ? 'opacity-55' : 'shadow-kart',
       )}
     >
@@ -406,7 +414,7 @@ function GorevSatiri({
         aria-pressed={gorev.bitti}
         aria-label={gorev.bitti ? 'Bitmedi olarak işaretle' : 'Bitti olarak işaretle'}
         className={cn(
-          'mt-2.5 grid size-[26px] shrink-0 place-items-center rounded-full border-2 transition',
+          'grid size-[26px] shrink-0 place-items-center rounded-full border-2 transition',
           gorev.bitti
             ? 'border-success bg-success text-white'
             : 'border-border bg-card text-transparent',
@@ -416,63 +424,48 @@ function GorevSatiri({
       </button>
 
       <div className="min-w-0 flex-1">
-        <div className="flex min-h-8 items-center gap-0.5">
-          <span
-            className="flex min-w-0 flex-1 items-center gap-1.5 text-[10.5px] font-extrabold uppercase tracking-[0.06em]"
-            style={{ color: renk }}
-          >
-            <span aria-hidden className="size-1.5 shrink-0 rounded-full" style={{ background: renk }} />
-            <span className="truncate">{kategoriAdiGoster(gorev)}</span>
-            {/* Süre kategorinin satırında: iş adının satırı tek satırlık ve
-                genişliği sayılı (`EN_UZUN_GOREV`). */}
-            {gorev.sure !== null && <span className="rakam shrink-0">· {sureYaz(gorev.sure)}</span>}
-          </span>
-
-          {!gecmis && !gorev.bitti && (
-            <>
-              <SatirDugmesi
-                etiket="Öncelikli"
-                basili={gorev.yildiz}
-                onClick={onYildiz}
-                className={gorev.yildiz ? 'text-isl-ok' : undefined}
-              >
-                <Star size={16} fill={gorev.yildiz ? 'currentColor' : 'none'} aria-hidden />
-              </SatirDugmesi>
-              <SatirDugmesi etiket="Ertesi güne ertele" onClick={onErtele}>
-                <ChevronRight size={17} strokeWidth={2.4} aria-hidden />
-              </SatirDugmesi>
-              <SatirDugmesi etiket="Düzenle" onClick={onDuzenle}>
-                <Pencil size={14.5} strokeWidth={2.3} aria-hidden />
-              </SatirDugmesi>
-            </>
-          )}
-          {!gecmis && (
-            <SatirDugmesi
-              etiket="Sil"
-              onClick={onSil}
-              className="active:bg-danger-soft active:text-danger"
-            >
-              <Trash2 size={14.5} strokeWidth={2.2} aria-hidden />
-            </SatirDugmesi>
-          )}
-        </div>
+        <span
+          className="flex min-w-0 items-center gap-1.5 text-[10.5px] font-extrabold uppercase tracking-[0.06em]"
+          style={{ color: renk }}
+        >
+          <span aria-hidden className="size-1.5 shrink-0 rounded-full" style={{ background: renk }} />
+          <span className="truncate">{kategoriAdiGoster(gorev)}</span>
+          {gorev.sure !== null && <span className="rakam shrink-0">· {sureYaz(gorev.sure)}</span>}
+        </span>
         {/* Tek satır: metin sınırı karakterle tutuluyor (`EN_UZUN_GOREV`), bu
             da taşmaya karşı son emniyet — büyük harfli görev sınıra uysa da
             piksele sığmayabiliyor. */}
         <span
           className={cn(
-            'block truncate pb-0.5 text-[14.5px] font-bold leading-snug',
+            'mt-0.5 block truncate text-[14.5px] font-bold leading-snug',
             gorev.bitti && 'line-through',
           )}
         >
           {gorev.metin}
         </span>
       </div>
+
+      {/* Bitmiş görevin önceliği bir şey söylemiyor; geçmiş gün salt okunur. */}
+      {!gecmis && !gorev.bitti && (
+        <SatirDugmesi
+          etiket={gorev.yildiz ? 'Önceliği kaldır' : 'Öncelikli yap'}
+          basili={gorev.yildiz}
+          onClick={onYildiz}
+          className={gorev.yildiz ? 'text-isl-ok' : undefined}
+        >
+          <Star size={18} fill={gorev.yildiz ? 'currentColor' : 'none'} aria-hidden />
+        </SatirDugmesi>
+      )}
+      {!gecmis && (
+        <SatirDugmesi etiket="Diğer işlemler" onClick={onEylemler}>
+          <MoreHorizontal size={19} strokeWidth={2.4} aria-hidden />
+        </SatirDugmesi>
+      )}
     </div>
   )
 }
 
-/** Satırın sağ üstündeki küçük düğme. */
+/** Satırın sağındaki düğme; dokunma hedefi 40 piksel. */
 function SatirDugmesi({
   etiket,
   basili,
@@ -493,10 +486,109 @@ function SatirDugmesi({
       aria-label={etiket}
       aria-pressed={basili}
       className={cn(
-        'grid size-8 shrink-0 place-items-center rounded-[10px] text-muted-foreground transition active:bg-muted',
+        'grid size-10 shrink-0 place-items-center rounded-xl text-muted-foreground transition active:bg-muted',
         className,
       )}
     >
+      {children}
+    </button>
+  )
+}
+
+/**
+ * "⋯"nün açtığı alt sayfa: görevin adı ve işlemleri.
+ *
+ * Bitmiş görevde yalnızca sil var: bitmiş işi ertelemek ya da düzenlemek bir
+ * şey değiştirmiyor. Seçim sayfayı kapatıyor; ertele ve sil yine kendi onay
+ * penceresinden geçiyor (yanlış dokunuşla kaybolan görev kuralı).
+ */
+function GorevEylemleri({
+  gorev,
+  onKapat,
+  onDuzenle,
+  onErtele,
+  onSil,
+}: {
+  gorev: Gorev
+  onKapat: () => void
+  onDuzenle: () => void
+  onErtele: () => void
+  onSil: () => void
+}) {
+  useGeriKatmani(true, onKapat)
+  const kaydir = useAsagiKaydirKapat(onKapat)
+  const sec = (eylem: () => void) => () => {
+    onKapat()
+    eylem()
+  }
+
+  return (
+    <div
+      className="katman-zemin fixed inset-0 z-50 flex items-end justify-center bg-black/40"
+      onClick={onKapat}
+    >
+      <div
+        ref={kaydir}
+        className="alt-pencere-girisi w-full max-w-md rounded-t-[26px] bg-card px-[18px] pt-2 pb-[calc(1.25rem+var(--guvenli-alt))]"
+        onClick={(olay) => olay.stopPropagation()}
+      >
+        <div className="flex justify-center pt-1.5 pb-3">
+          <span className="h-[5px] w-[42px] rounded-[3px] bg-border" />
+        </div>
+        <p className="truncate px-1 pb-3 font-display text-[17px] font-extrabold tracking-tight">
+          {gorev.metin}
+        </p>
+        <div className="flex flex-col gap-2">
+          {!gorev.bitti && (
+            <>
+              <EylemSatiri
+                simge={<Pencil size={18} strokeWidth={2.3} aria-hidden />}
+                onClick={sec(onDuzenle)}
+              >
+                Düzenle
+              </EylemSatiri>
+              <EylemSatiri
+                simge={<CalendarArrowUp size={18} strokeWidth={2.3} aria-hidden />}
+                onClick={sec(onErtele)}
+              >
+                Yarına ertele
+              </EylemSatiri>
+            </>
+          )}
+          <EylemSatiri
+            simge={<Trash2 size={18} strokeWidth={2.3} aria-hidden />}
+            onClick={sec(onSil)}
+            tehlikeli
+          >
+            Sil
+          </EylemSatiri>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function EylemSatiri({
+  simge,
+  onClick,
+  tehlikeli,
+  children,
+}: {
+  simge: React.ReactNode
+  onClick: () => void
+  tehlikeli?: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-left text-[15px] font-bold transition active:brightness-95',
+        tehlikeli ? 'mt-1 bg-danger-soft text-danger' : 'bg-muted/70 text-foreground',
+      )}
+    >
+      {simge}
       {children}
     </button>
   )

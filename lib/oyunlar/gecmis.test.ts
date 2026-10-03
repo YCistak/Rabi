@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { GECMIS_SINIRI, gecmiseIsle, yakinlariSonaAt, type SoruGecmisi } from './gecmis'
+import { GECMIS_SINIRI, destedenSira, gecmiseIsle, yakinlariSonaAt, type SoruGecmisi } from './gecmis'
 import { turSirasi, type Zorluk } from './ritim'
 
 describe('gecmiseIsle', () => {
@@ -78,5 +78,25 @@ describe('turSirasi + geçmiş', () => {
   it('geçmiş verilmezse davranış eskisi gibi', () => {
     const akis = turSirasi(havuz, Math.random, 10)
     expect(new Set(akis.kolay.map((s) => s.ad)).size).toBe(10)
+  })
+})
+
+describe('destedenSira', () => {
+  const desteler = { a: ['a1', 'a2', 'a3'], b: ['b1', 'b2'], c: ['c1'] }
+  const kimlik = (s: string) => s
+
+  it('aynı tür art arda gelmiyor', () => {
+    const sira = destedenSira(desteler, 60, Math.random, [], kimlik)
+    for (let i = 1; i < sira.length; i++) expect(sira[i][0]).not.toBe(sira[i - 1][0])
+  })
+
+  it('deste bitmeden aynı soru ikinci kez gelmiyor', () => {
+    const sira = destedenSira({ a: ['a1', 'a2', 'a3', 'a4'] }, 4, Math.random, [], kimlik)
+    expect(new Set(sira).size).toBe(4)
+  })
+
+  it('geçmişte görülen sona atılıyor', () => {
+    const sira = destedenSira({ a: ['a1', 'a2', 'a3'] }, 3, Math.random, ['a1'], kimlik)
+    expect(sira[2]).toBe('a1')
   })
 })

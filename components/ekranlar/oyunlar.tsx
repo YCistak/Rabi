@@ -634,6 +634,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('aci', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.aci ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -644,6 +645,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('ucgen', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.ucgen ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />

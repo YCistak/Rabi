@@ -1,4 +1,5 @@
-import { arasinda, sec } from './tur'
+import { sec } from './tur'
+import { destedenSira } from './gecmis'
 import {
   TUVAL_GENISLIK,
   TUVAL_YUKSEKLIK,
@@ -221,24 +222,73 @@ function celdiriciSec(
   return uygun.length > 0 ? sec(uygun, rastgele) : tam(dogru.kat + 1)
 }
 
-function pisagorUret(rastgele: () => number): UcgenSorusu {
-  const uclu = sec(UCLULER, rastgele)
-  const kat = sec(uclu.katlar, rastgele)
-  const [kisa, uzun, hip] = uclu.kenarlar.map((k) => k * kat)
+/**
+ * Sorunun çekirdeği: şekli ve sorulan kenarı belirleyen şey.
+ *
+ * Çizimin yönü (uzun kenar dik mi yatık mı) ve çeldirici çekirdeğe girmiyor —
+ * ikisi aynı soruyu başka biçimde gösteriyor, başka bir soru yapmıyor. Deste
+ * çekirdeklerden kuruluyor (`destedenSira`), yani yalnızca yönü değişmiş bir
+ * üçgen de tekrar sayılıyor.
+ */
+type Cekirdek =
+  | { tur: 'pisagor'; uclu: number; kat: number; sorulan: Sorulan }
+  | { tur: 'otuz-altmis'; a: number; sorulan: Sorulan }
+  | { tur: 'kirkbes'; bicim: 'hipotenus'; a: number }
+  | { tur: 'kirkbes'; bicim: 'dik'; m: number }
+
+type Sorulan = 'kisa' | 'uzun' | 'hipotenus'
+
+const SORULANLAR: readonly Sorulan[] = ['kisa', 'uzun', 'hipotenus']
+
+function araliktakiler(bas: number, son: number, adim = 1): number[] {
+  const liste: number[] = []
+  for (let n = bas; n <= son; n += adim) liste.push(n)
+  return liste
+}
+
+/** Türün olası bütün çekirdekleri. */
+const CEKIRDEKLER: Record<UcgenTuru, Cekirdek[]> = {
+  pisagor: UCLULER.flatMap((uclu, i) =>
+    uclu.katlar.flatMap((kat) =>
+      SORULANLAR.map((sorulan): Cekirdek => ({ tur: 'pisagor', uclu: i, kat, sorulan })),
+    ),
+  ),
+  'otuz-altmis': araliktakiler(2, 9).flatMap((a) =>
+    SORULANLAR.map((sorulan): Cekirdek => ({ tur: 'otuz-altmis', a, sorulan })),
+  ),
+  kirkbes: [
+    ...araliktakiler(3, 12).map((a): Cekirdek => ({ tur: 'kirkbes', bicim: 'hipotenus', a })),
+    // Hipotenüs tam sayı olsun diye çift: dik kenar (m / 2)√2 çıkıyor.
+    ...araliktakiler(6, 18, 2).map((m): Cekirdek => ({ tur: 'kirkbes', bicim: 'dik', m })),
+  ],
+}
+
+/** Sorulan kenar şekilde hangi yanda: uzun kenar dik duruyorsa dikeyde. */
+function sorulanKenar(sorulan: Sorulan, dikDurur: boolean): UcgenKenari {
+  if (sorulan === 'hipotenus') return 'hipotenus'
+  return (sorulan === 'uzun') === dikDurur ? 'dikey' : 'yatay'
+}
+
+function pisagorKur(
+  c: Extract<Cekirdek, { tur: 'pisagor' }>,
+  dikDurur: boolean,
+  rastgele: () => number,
+): UcgenSorusu {
+  const [kisa, uzun, hip] = UCLULER[c.uclu].kenarlar.map((k) => k * c.kat)
 
   // Uzun kenar bazen dikey: her soruda aynı duran bir şekil ezberleniyordu.
-  const dikDurur = rastgele() < 0.5
   const dikey = tam(dikDurur ? uzun : kisa)
   const yatay = tam(dikDurur ? kisa : uzun)
   const hipotenus = tam(hip)
+  const bilinmeyen = sorulanKenar(c.sorulan, dikDurur)
 
-  if (rastgele() < 0.45) {
+  if (bilinmeyen === 'hipotenus') {
     return {
       tur: 'pisagor',
       dikey,
       yatay,
       hipotenus,
-      bilinmeyen: 'hipotenus',
+      bilinmeyen,
       gizli: null,
       // İki dik kenarı toplamak, hipotenüs sorularının en yaygın hatası.
       celdirici: celdiriciSec(
@@ -250,7 +300,6 @@ function pisagorUret(rastgele: () => number): UcgenSorusu {
     }
   }
 
-  const bilinmeyen: UcgenKenari = rastgele() < 0.5 ? 'dikey' : 'yatay'
   const oteki = bilinmeyen === 'dikey' ? yatay : dikey
   return {
     tur: 'pisagor',
@@ -269,17 +318,20 @@ function pisagorUret(rastgele: () => number): UcgenSorusu {
   }
 }
 
-function otuzAltmisUret(rastgele: () => number): UcgenSorusu {
-  const a = arasinda(2, 9, rastgele)
+function otuzAltmisKur(
+  c: Extract<Cekirdek, { tur: 'otuz-altmis' }>,
+  dikDurur: boolean,
+  rastgele: () => number,
+): UcgenSorusu {
+  const a = c.a
   const kisa = tam(a)
   const uzun: Kenar = { kat: a, kok: 3 }
   const hipotenus = tam(2 * a)
 
-  const dikDurur = rastgele() < 0.5
   const dikey = dikDurur ? uzun : kisa
   const yatay = dikDurur ? kisa : uzun
+  const bilinmeyen = sorulanKenar(c.sorulan, dikDurur)
 
-  const bilinmeyen = sec<UcgenKenari>(['dikey', 'yatay', 'hipotenus'], rastgele)
   const soru: UcgenSorusu = {
     tur: 'otuz-altmis',
     dikey,
@@ -307,10 +359,14 @@ function otuzAltmisUret(rastgele: () => number): UcgenSorusu {
   }
 }
 
-function kirkbesUret(rastgele: () => number): UcgenSorusu {
+function kirkbesKur(
+  c: Extract<Cekirdek, { tur: 'kirkbes' }>,
+  dikeySoruluyor: boolean,
+  rastgele: () => number,
+): UcgenSorusu {
   // İki biçim: dik kenarlar verilip hipotenüs, ya da hipotenüs verilip dik kenar.
-  if (rastgele() < 0.55) {
-    const a = arasinda(3, 12, rastgele)
+  if (c.bicim === 'hipotenus') {
+    const a = c.a
     const dikKenar = tam(a)
     const hipotenus: Kenar = { kat: a, kok: 2 }
     return {
@@ -329,11 +385,10 @@ function kirkbesUret(rastgele: () => number): UcgenSorusu {
     }
   }
 
-  // Hipotenüs tam sayı olsun diye çift seçiliyor: dik kenar (m / 2)√2 çıkıyor.
-  const m = arasinda(3, 9, rastgele) * 2
+  const m = c.m
   const dikKenar: Kenar = { kat: m / 2, kok: 2 }
   const hipotenus = tam(m)
-  const bilinmeyen: UcgenKenari = rastgele() < 0.5 ? 'dikey' : 'yatay'
+  const bilinmeyen: UcgenKenari = dikeySoruluyor ? 'dikey' : 'yatay'
 
   return {
     tur: 'kirkbes',
@@ -352,16 +407,19 @@ function kirkbesUret(rastgele: () => number): UcgenSorusu {
   }
 }
 
-const URETECLER: Record<UcgenTuru, (rastgele: () => number) => UcgenSorusu> = {
-  pisagor: pisagorUret,
-  'otuz-altmis': otuzAltmisUret,
-  kirkbes: kirkbesUret,
+/** Çekirdeği yönüyle birlikte bir soruya çevirir. */
+function soruKur(c: Cekirdek, yon: boolean, rastgele: () => number): UcgenSorusu {
+  switch (c.tur) {
+    case 'pisagor':
+      return pisagorKur(c, yon, rastgele)
+    case 'otuz-altmis':
+      return otuzAltmisKur(c, yon, rastgele)
+    case 'kirkbes':
+      return kirkbesKur(c, yon, rastgele)
+  }
 }
 
 export const TUM_UCGEN_TURLERI: UcgenTuru[] = ['pisagor', 'otuz-altmis', 'kirkbes']
-
-/** Aynı sorunun kaç soru içinde tekrarlanmayacağı. */
-const TEKRAR_PENCERESI = 10
 
 export function ucgenKimligi(soru: UcgenSorusu): string {
   return [
@@ -374,27 +432,31 @@ export function ucgenKimligi(soru: UcgenSorusu): string {
 }
 
 /**
+ * Çekirdeğin geçmişteki kimlikleri — iki yönün ikisi de.
+ *
+ * Soru geçmişi `bankaKimligi` ile yazılıyor ve o kimlik yönü de taşıyor;
+ * yönü değişmiş üçgen yine aynı soru sayılsın diye çekirdek iki yönün
+ * kimliğiyle birden anılıyor. Kimlikte çeldirici yok, sabit üreteç yetiyor.
+ */
+function cekirdekKimlikleri(c: Cekirdek): string[] {
+  const sabit = () => 0
+  return [true, false].map((yon) => `ucgen:${ucgenKimligi(soruKur(c, yon, sabit))}`)
+}
+
+/**
  * Bir turun soruları.
  *
- * Üç tür de eşit olasılıkla geliyor: Pisagor üçlüleri daha çok çeşit ürettiği
- * için ağırlıklandırılsaydı 30-60-90 turda birkaç kez görünürdü.
+ * Üç tür eşit olasılıkla ve art arda aynı tür gelmeden: Pisagor üçlüleri
+ * daha çok çeşit ürettiği için ağırlıklandırılsaydı 30-60-90 turda birkaç kez
+ * görünürdü. Türün içinde her çekirdek deste bitmeden bir kez geliyor ve
+ * önceki turlarda görülenler sona atılıyor (`destedenSira`).
  */
 export function ucgenTuruHazirla(
   adet: number,
   rastgele: () => number = Math.random,
+  gorulenler: readonly string[] = [],
 ): UcgenSorusu[] {
-  const sorular: UcgenSorusu[] = []
-  const sonGorulen: string[] = []
-
-  for (let deneme = 0; deneme < adet * 20 && sorular.length < adet; deneme++) {
-    const soru = URETECLER[sec(TUM_UCGEN_TURLERI, rastgele)](rastgele)
-    const kimlik = ucgenKimligi(soru)
-    if (sonGorulen.includes(kimlik)) continue
-
-    sorular.push(soru)
-    sonGorulen.push(kimlik)
-    if (sonGorulen.length > TEKRAR_PENCERESI) sonGorulen.shift()
-  }
-
-  return sorular
+  return destedenSira(CEKIRDEKLER, adet, rastgele, gorulenler, cekirdekKimlikleri).map((c) =>
+    soruKur(c, rastgele() < 0.5, rastgele),
+  )
 }
