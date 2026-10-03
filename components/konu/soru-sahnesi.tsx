@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
 import { Buton, Onay } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartGorseli } from './kart-gorseli'
-import { YoklamaBileti } from './yoklama-bileti'
+import { KonuOzeti } from './konu-ozeti'
 
 /**
  * Soru sahnesi — deste okunduktan **hemen sonra** gelen ekran.
@@ -33,10 +33,11 @@ import { YoklamaBileti } from './yoklama-bileti'
  * eklenen ikinci bir ekran gibi uzatıyordu. Gerekçe (`aciklama`) içerikte
  * duruyor; burada gösterilmiyor.
  *
- * Sahnenin **üç** hâli var: kartlardan devralan giriş — yoklama bileti,
- * `yoklama-bileti.tsx` —, soruların kendisi ve kapanış (`Kapanis`, burada).
- * Bilet bir süre sahnenin kendi ilk ekranıydı (`Giris`, burada); tasarım onu
- * destenin tarafına aldı ve sahne "Yoklamaya başla" denince açılıyor. Kökler
+ * Sahnenin **üç** hâli var: kartlardan devralan giriş — konunun özeti,
+ * `konu-ozeti.tsx` —, soruların kendisi ve kapanış (`Kapanis`, burada).
+ * Giriş bir süre sahnenin kendi ilk ekranıydı (`Giris`, burada), sonra bir
+ * yoklama biletine döndü, şimdi düz bir özet; sahne "Yoklamaya başla" denince
+ * açılıyor. Kökler
  * ayrı `key` taşıyor: aynı `div` yeniden kullanılsaydı `sahne-iner` ikinci
  * kökte hiç oynamazdı. Kapanış bir kez gidip geldi: koyu sahnedeki ilk özet
  * (`Sonuc`: iki sayı, maskot, "Haritaya dön") kullanıcı isteğiyle
@@ -62,7 +63,7 @@ export type SahneSonucu = {
    *
    * Yarıda çıkılan yoklama sayı **yazdırmıyor** (`konu-haritasi.tsx`):
    * destenin kendi kuralının aynısı — tamamlanma sona gelmekle kazanılıyor.
-   * Bayrak olmadan, bilette "Haritaya dön" diyen kullanıcının kaydına hiç
+   * Bayrak olmadan, özette "Haritaya dön" diyen kullanıcının kaydına hiç
    * verilmemiş bir yoklamanın "0 doğru"su yazılıyordu.
    */
   bitti: boolean
@@ -72,7 +73,8 @@ export function SoruSahnesi({
   konu,
   temaAdi,
   dersAdi,
-  biletli,
+  ozetli,
+  okumaSaniyesi = 0,
   onKapat,
   cikiyor = false,
   onCikisBitti,
@@ -81,16 +83,18 @@ export function SoruSahnesi({
   temaAdi: string
   dersAdi: string
   /**
-   * Önce yoklama bileti gelsin mi. Destenin ucundan gelince evet; haritadaki
-   * turuncu kitaptan gelince hayır — bilet destenin kapanışı, yoklamanın
+   * Önce konunun özeti gelsin mi. Destenin ucundan gelince evet; haritadaki
+   * turuncu kitaptan gelince hayır — özet destenin kapanışı, yoklamanın
    * girişi değil, ve kitaptan giren kullanıcı bir şey okumadı.
    */
-  biletli: boolean
+  ozetli: boolean
+  /** Destede geçen süre, saniye — özet gösteriyor. */
+  okumaSaniyesi?: number
   onKapat: (sonuc: SahneSonucu) => void
   /**
    * Kapanış perdesi çekiliyor mu. `onKapat`tan sonra üst bileşen sahneyi
    * hemen sökmüyor, bu bayrakla perdeyi çektiriyor ve `onCikisBitti`
-   * gelince söküyor. Perde iki uçtan çekiliyor — bilette "Haritaya dön" ve
+   * gelince söküyor. Perde iki uçtan çekiliyor — özette "Haritaya dön" ve
    * kapanış ekranı; ikisi de sahnenin düzenli bir kapısı. Soruların
    * ortasında ✕ ile çıkış anında kapanıyor — yarıda bırakılan bir yoklamanın
    * arkasından perde çekmek, bitmiş gibi göstermek olurdu.
@@ -112,7 +116,7 @@ export function SoruSahnesi({
   const [yanlis, setYanlis] = useState(0)
   const [bitti, setBitti] = useState(false)
   /** Biletteki düğmeye basıldı mı; basılana kadar ilk soru görünmüyor. Biletsiz açılışta hemen doğru. */
-  const [basladi, setBasladi] = useState(!biletli)
+  const [basladi, setBasladi] = useState(!ozetli)
   /**
    * Yanlış bilinen soruların metinleri, sırayla — kapanış "tekrar
    * bakılacaklar" diye listeliyor. Sayaç (`yanlis`) kaç tane olduğunu
@@ -120,8 +124,8 @@ export function SoruSahnesi({
    */
   const [yanlislar, setYanlislar] = useState<string[]>([])
   /**
-   * İlk sorunun göründüğü an; kapanıştaki süre buradan ölçülüyor. Biletli
-   * açılışta "Yoklamaya başla" denince yeniden damgalanıyor — bilette geçen
+   * İlk sorunun göründüğü an; kapanıştaki süre buradan ölçülüyor. Özetli
+   * açılışta "Yoklamaya başla" denince yeniden damgalanıyor — özette geçen
    * süre yoklamanın değil.
    */
   const baslangicRef = useRef(Date.now())
@@ -201,11 +205,12 @@ export function SoruSahnesi({
 
   if (!basladi) {
     return (
-      <YoklamaBileti
-        key="bilet"
+      <KonuOzeti
+        key="ozet"
         konu={konu}
         dersAdi={dersAdi}
         temaAdi={temaAdi}
+        okumaSaniyesi={okumaSaniyesi}
         onBasla={() => {
           baslangicRef.current = Date.now()
           setBasladi(true)

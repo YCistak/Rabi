@@ -1040,6 +1040,7 @@ function RabiUygulamasi() {
               <PomodoroEkrani
                 demoVeri={tanitim.tanitimdaMi}
                 ayar={pomodoroAyar}
+                seanslar={pomodoroGecmis}
                 setAyar={(guncelle) => { if (!tanitim.tanitimdaMi) setPomodoroAyar(guncelle) }}
                 onSeansBitti={(seans) => { if (!tanitim.tanitimdaMi) setPomodoroGecmis((o) => [...o, seans]) }}
               />

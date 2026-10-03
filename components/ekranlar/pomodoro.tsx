@@ -27,7 +27,7 @@ import {
 } from '@/lib/pomodoro'
 import { SesCalar } from '@/lib/ses'
 import { LOFI_PARCALAR } from '@/lib/lofi'
-import { CALISMA_DERSLERI } from '@/lib/dersler'
+import { calismaSirasi } from '@/lib/dersler'
 import { PROVALAR, PROVA_DERSI, type Prova } from '@/lib/sinav-provasi'
 import { izinIste, pomodoroIptal, pomodoroPlanla } from '@/lib/bildirim'
 import {
@@ -49,20 +49,16 @@ import { iosMu } from '@/lib/platform'
 import { cn, yeniId } from '@/lib/utils'
 import { Anahtar, BaslikSatiri, Buton, Cip, Kart, Not, Onay } from '@/components/ui'
 
-/**
- * Hazırlık ekranında ders ızgarası dört kutu: üç ders ve "Diğer". Gerisi
- * çekmecede — bütün liste sayacın altında birkaç satır kaplıyor ve Başlat'ı
- * aşağı itiyordu.
- */
-const KISA_DERS_SAYISI = 3
-
 export function PomodoroEkrani({
   ayar,
   setAyar,
   onSeansBitti,
+  seanslar,
   demoVeri = false,
 }: {
   ayar: PomodoroAyar
+  /** Geçmiş seanslar — ders şeridi en çok çalışılanları başa alıyor. */
+  seanslar: readonly PomodoroSeans[]
   setAyar: (guncelleyici: PomodoroAyar | ((onceki: PomodoroAyar) => PomodoroAyar)) => void
   onSeansBitti: (seans: PomodoroSeans) => void
   demoVeri?: boolean
@@ -100,7 +96,6 @@ export function PomodoroEkrani({
   const [sahne, setSahne] = useState(false)
   const [sesPaneli, setSesPaneli] = useState(false)
   const [sureCekmecesi, setSureCekmecesi] = useState(false)
-  const [dersCekmecesi, setDersCekmecesi] = useState(false)
   /**
    * Önizlemesi çalan parçanın dosya adı.
    *
@@ -549,15 +544,14 @@ export function PomodoroEkrani({
       : `sonra ${asamaSuresi(sonrakiAsama('calisma', tur, ayar), ayar)} dk mola`
 
   /*
-    Hazırlıktaki ders ızgarası: ilk üç ders ve "Diğer". Seçili ders ilk üçte
-    değilse başa alınıyor, yoksa kullanıcı çekmeceden seçtiği dersin nereye
-    gittiğini göremezdi.
+    Hazırlıktaki ders şeridi: en çok çalışılan üç ders başta, kalanı yana
+    kayarak (`calismaSirasi`). Bir süre dört kutuluk bir ızgaraydı — ilk üç
+    ders ve "Diğer" — ve listenin geri kalanı alttan açılan bir çekmecedeydi;
+    kullanıcı çekmeceyi istemedi: ders seçmek için yeni bir ekran açılmamalı.
+    Sıra tur boyunca sabit kalsın diye ekran açılınca bir kez kuruluyor;
+    seans bitince yeniden sıralansaydı seçili ders parmağın altından kayardı.
   */
-  const kisaListe = CALISMA_DERSLERI.slice(0, KISA_DERS_SAYISI)
-  const gorunenDersler =
-    ders !== null && !kisaListe.includes(ders)
-      ? [ders, ...kisaListe.slice(0, KISA_DERS_SAYISI - 1)]
-      : kisaListe
+  const [gorunenDersler] = useState(() => calismaSirasi(seanslar))
 
   const sureOzeti = `${ayar.calisma} dk · mola ${ayar.kisaMola} / ${ayar.uzunMola} · ${ayar.turSayisi} turda bir`
 
@@ -634,24 +628,21 @@ export function PomodoroEkrani({
             <p className="mb-2 ml-0.5 text-[12.5px] font-extrabold text-muted-foreground">
               HANGİ DERSE?
             </p>
-            <div className="grid grid-cols-4 gap-2">
+            {/* Şerit kartın kenarına kadar kayıyor (`-mx-4 px-4`): kesik duran
+                son çip, yana kaydırılabildiğini söyleyen tek işaret. Yana kayan
+                kutunun içinden başlayan hareket sekme değiştirmiyor
+                (`sekme-kaydirma.ts`). */}
+            <div className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {gorunenDersler.map((d) => (
                 <SecimKutusu
                   key={d}
                   secili={ders === d}
                   onClick={() => setDers(ders === d ? null : d)}
-                  className="h-11 text-[12.5px]"
+                  className="h-11 shrink-0 snap-start px-4 text-[12.5px] whitespace-nowrap"
                 >
                   {d}
                 </SecimKutusu>
               ))}
-              <button
-                type="button"
-                onClick={() => setDersCekmecesi(true)}
-                className="h-11 rounded-[13px] border border-dashed border-border text-[12.5px] font-bold text-muted-foreground transition active:bg-muted"
-              >
-                Diğer
-              </button>
             </div>
           </div>
         )
@@ -857,23 +848,6 @@ export function PomodoroEkrani({
 
       <Cekmece acik={sureCekmecesi} baslik="Süreler" onKapat={() => setSureCekmecesi(false)}>
         <SureAyarlari ayar={ayar} setAyar={setAyar} />
-      </Cekmece>
-
-      <Cekmece acik={dersCekmecesi} baslik="Hangi derse?" onKapat={() => setDersCekmecesi(false)}>
-        <div className="flex flex-wrap gap-2">
-          {CALISMA_DERSLERI.map((d) => (
-            <Cip
-              key={d}
-              secili={ders === d}
-              onClick={() => {
-                setDers(ders === d ? null : d)
-                setDersCekmecesi(false)
-              }}
-            >
-              {d}
-            </Cip>
-          ))}
-        </div>
       </Cekmece>
 
       {sahne && (

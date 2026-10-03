@@ -1,4 +1,4 @@
-import { sec } from './tur'
+import { destedenSira } from './gecmis'
 import {
   TUVAL_GENISLIK,
   TUVAL_YUKSEKLIK,
@@ -387,33 +387,25 @@ export const TUM_ACI_SORULARI: AciSorusu[] = TUM_ACI_KURALLARI.flatMap(
   (kural) => KURAL_SORULARI[kural],
 )
 
-/** Aynı sorunun kaç soru içinde tekrarlanmayacağı. */
-const TEKRAR_PENCERESI = 10
+/**
+ * Sorunun geçmişteki kimliği — Oyun Bankası'nın kimliğiyle aynı dize
+ * (`bankaKimligi`), çünkü soru geçmişi oradan yazılıyor.
+ */
+export function aciGecmisKimligi(soru: AciSorusu): string {
+  return `aci:${soru.kural}:${soru.a}:${soru.b ?? ''}`
+}
 
 /**
  * Bir turun soruları.
  *
- * Son `TEKRAR_PENCERESI` soruda görülen aynı kural+açı ikilisi yeniden
- * üretilmiyor: arka arkaya gelen aynı şekil hesap değil hatırlama olurdu.
+ * Kurallar eşit olasılıkla ve art arda aynı kural gelmeden; kuralın içinde
+ * her açı kombinasyonu deste bitmeden bir kez (`destedenSira`). Önceki
+ * turlarda görülenler (`gorulenler`) destenin sonuna atılıyor.
  */
 export function aciTuruHazirla(
   adet: number,
   rastgele: () => number = Math.random,
+  gorulenler: readonly string[] = [],
 ): AciSorusu[] {
-  const sorular: AciSorusu[] = []
-  const sonGorulen: string[] = []
-
-  for (let deneme = 0; deneme < adet * 20 && sorular.length < adet; deneme++) {
-    // Önce kural, sonra o kuralın soruları arasından biri: kurallar eşit
-    // olasılıkla geliyor, yoksa çok kombinasyonlu üçgen ötekileri bastırırdı.
-    const soru = sec(KURAL_SORULARI[sec(TUM_ACI_KURALLARI, rastgele)], rastgele)
-    const kimlik = `${soru.kural}:${soru.a}:${soru.b ?? ''}`
-    if (sonGorulen.includes(kimlik)) continue
-
-    sorular.push(soru)
-    sonGorulen.push(kimlik)
-    if (sonGorulen.length > TEKRAR_PENCERESI) sonGorulen.shift()
-  }
-
-  return sorular
+  return destedenSira(KURAL_SORULARI, adet, rastgele, gorulenler, aciGecmisKimligi)
 }

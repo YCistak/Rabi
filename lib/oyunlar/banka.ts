@@ -12,7 +12,7 @@
  */
 
 import type { OyunId } from '../types'
-import { ACI_KURALI_ADI, type AciSorusu } from './aci'
+import { ACI_KURALI_ADI, aciGecmisKimligi, type AciSorusu } from './aci'
 import type { IslemTuru } from './islem'
 import type { NoktalamaIsareti, NoktalamaSorusu } from './noktalama-havuzu'
 import { OLAY_ADI, type SesOlayi } from './ses-havuzu'
@@ -395,7 +395,7 @@ export function bankaKimligi(soru: BankaSorusu): string {
     // Şekil sorularında kimlik verilen açılardan/kenarlardan geliyor: aynı
     // kuralın 40°'lik hâli ile 65°'lik hâli ayrı sorular.
     case 'aci':
-      return `aci:${soru.aci.kural}:${soru.aci.a}:${soru.aci.b ?? ''}`
+      return aciGecmisKimligi(soru.aci)
     case 'ucgen':
       return `ucgen:${ucgenKimligi(soru.ucgen)}`
     // Aynı il hem "haritada bul" hem "adını seç" olarak geçebiliyor; ikisi

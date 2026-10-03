@@ -117,7 +117,6 @@ export function DenemeOkut({ sablon, onAktar, onAcikDegisti }: {
           <h2 id="deneme-okut-baslik" className="font-display flex items-center gap-2 text-xl font-semibold">Denemeyi okut <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs text-primary">Beta</span></h2>
           <Buton bicim="hayalet" boy="simge" onClick={kapat} aria-label="Okumayı kapat"><X size={20} /></Buton>
         </div>
-        <Not className="mb-4">Okuma yanılabilir. Sayıları kontrol ettikten sonra forma aktar. Fotoğraf cihazında okunur ve saklanmaz.</Not>
         <p className="mb-2 text-sm text-muted-foreground">{sablon.ad} için ders adını, doğru ve yanlış sayısını her satıra ayrı yaz.</p>
         <Kart className="mb-4 space-y-1 font-semibold text-sm"><p>Matematik 38D 2Y</p><p>Türkçe 32D 6Y 2B</p></Kart>
         <input ref={girdi} type="file" accept="image/*" className="hidden" aria-label="Deneme fotoğrafı seç" onChange={(olay) => {
@@ -129,6 +128,11 @@ export function DenemeOkut({ sablon, onAktar, onAcikDegisti }: {
           {cihazdaMi() && <Buton bicim="ikincil" className="flex-1" onClick={() => void fotografSec('kamera')}><Camera size={18} />Çek</Buton>}
           <Buton bicim="ikincil" className="flex-1" onClick={() => void fotografSec('galeri')}><ImagePlus size={18} />Fotoğraf seç</Buton>
         </div>}
+        {/* Uyarı düğmelerin altında: ekranın tepesinde, yönergeden ve örnekten
+            önce okunuyordu ve okumanın kendisi daha başlamamışken "yanılabilir"
+            diyordu. Kullanıcı Çek'in altına istedi — fotoğrafı çekecek kişinin
+            gözü orada. */}
+        {!okunuyor && <Not className="mb-4">Okuma yanılabilir. Sayıları kontrol ettikten sonra forma aktar. Fotoğraf cihazında okunur ve saklanmaz.</Not>}
         {okunuyor && <div role="status" className="my-8 flex flex-col items-center gap-3 text-sm text-muted-foreground"><LoaderCircle className="animate-spin text-primary" size={28} />{ilerleme}<Buton bicim="hayalet" onClick={kapat}>Vazgeç</Buton></div>}
         {hata && <Not tur="tehlike" className="mb-4">{hata}</Not>}
         {hamMetin && <details className="mb-4 rounded-xl border border-border bg-card px-3 py-2 text-sm">

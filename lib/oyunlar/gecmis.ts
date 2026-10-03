@@ -111,3 +111,59 @@ export function yakinlariSonaAt<T>(
 
   return [...gorulmeyenler, ...gorulenlerSirali.map((g) => g.soru)]
 }
+
+/**
+ * Türlere ayrılmış desteden bir turun soru sırası.
+ *
+ * Soruları üreterek kuran oyunlar (Açı Avı, Özel Üçgenler) havuzdan değil
+ * her soruda yeniden kura çekiyordu ve yalnızca son on soruya bakıyordu;
+ * turlar arası geçmişi de hiç okumuyordu. Sonuç: sekiz çeşitlik bir kuralda
+ * aynı şekil bir turda iki üç kez, yeni turun başında da az önceki turun
+ * sorusu geliyordu.
+ *
+ * Artık her türün olası bütün soruları bir **deste**: karıştırılıyor, yakın
+ * geçmişte görülenler sona atılıyor ve deste bitmeden hiçbir soru ikinci kez
+ * gelmiyor. Deste biterse yeniden karıştırılıp baştan dönülüyor. Türler eşit
+ * olasılıkla ama **art arda aynı tür gelmeden** seçiliyor — aynı kuralın iki
+ * ayrı açısı da gözde "yine aynı soru" diye okunuyordu.
+ */
+export function destedenSira<K extends string, T>(
+  desteler: Readonly<Record<K, readonly T[]>>,
+  adet: number,
+  rastgele: () => number,
+  gorulenler: readonly string[],
+  anahtar: Anahtar<T>,
+): T[] {
+  const turler = (Object.keys(desteler) as K[]).filter((t) => desteler[t].length > 0)
+  if (turler.length === 0) return []
+
+  const karistir = (liste: readonly T[]): T[] => {
+    const kopya = [...liste]
+    for (let i = kopya.length - 1; i > 0; i--) {
+      const j = Math.floor(rastgele() * (i + 1))
+      ;[kopya[i], kopya[j]] = [kopya[j], kopya[i]]
+    }
+    return kopya
+  }
+
+  const sira = new Map<K, { liste: T[]; i: number }>()
+  for (const tur of turler) {
+    sira.set(tur, { liste: yakinlariSonaAt(karistir(desteler[tur]), gorulenler, anahtar), i: 0 })
+  }
+
+  const sonuc: T[] = []
+  let onceki: K | null = null
+  for (let n = 0; n < adet; n++) {
+    const adaylar = turler.length > 1 ? turler.filter((t) => t !== onceki) : turler
+    const tur = adaylar[Math.floor(rastgele() * adaylar.length)]
+    const deste = sira.get(tur)!
+    if (deste.i >= deste.liste.length) {
+      // İkinci turda geçmiş yok: destenin tamamı zaten bir kez görüldü.
+      deste.liste = karistir(desteler[tur])
+      deste.i = 0
+    }
+    sonuc.push(deste.liste[deste.i++])
+    onceki = tur
+  }
+  return sonuc
+}

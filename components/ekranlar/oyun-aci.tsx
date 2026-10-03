@@ -84,8 +84,11 @@ export function AciOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler,
 }: {
   istatistik: OyunIstatistigi
+  /** Önceki turlarda sorulanlar; deste onları sona atıyor. */
+  gorulenler: readonly string[]
   /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
   sesAcik: boolean
   /** Boş değilse tur yalnızca bu sorularla kurulur (Oyun Bankası turu). */
@@ -157,7 +160,7 @@ export function AciOyunuEkrani({
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
-    setSorular(bankaTuru ? karistir(bankaHavuzu) : aciTuruHazirla(TUR_SORUSU))
+    setSorular(bankaTuru ? karistir(bankaHavuzu) : aciTuruHazirla(TUR_SORUSU, Math.random, gorulenler))
     setSira(0)
     setGirilen('')
     setCevaplar([])
@@ -167,7 +170,7 @@ export function AciOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru])
+  }, [bankaHavuzu, bankaTuru, gorulenler, istatistik.enIyiDogru])
 
   const turBitir = useCallback(
     (verilenler: Cevap<AciSorusu>[], yarim = false) => {
