@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { balonGenisligi, balonKonumu, durgunlukSayaci, kutuFarki, type Kutu } from './tanitim-yerlesim'
+import { balonGenisligi, balonKonumu, durgunlukSayaci, kaydirmaKis, kutuFarki, type Kutu } from './tanitim-yerlesim'
 
 const TELEFON = { sol: 0, ust: 0, genislik: 390, yukseklik: 844 }
 const IPAD_YATAY = { sol: 0, ust: 0, genislik: 983, yukseklik: 683 }
@@ -83,6 +83,27 @@ describe('durgunluk sayacı', () => {
     expect(sayac.bildir({ ...kutu, ust: 104.3 })).toBe(true)
     sayac.sifirla()
     expect(sayac.bildir(kutu)).toBe(false)
+  })
+
+  it('kare sayısı yetmez, durgunluk en az süre kadar sürmeli (120 Hz)', () => {
+    const sayac = durgunlukSayaci(1, 60)
+    const kutu = { sol: 0, ust: 100, genislik: 10, yukseklik: 10 }
+    expect(sayac.bildir(kutu, 0)).toBe(false)
+    expect(sayac.bildir(kutu, 8)).toBe(false)
+    expect(sayac.bildir(kutu, 50)).toBe(false)
+    expect(sayac.bildir(kutu, 61)).toBe(true)
+    // Kıpırdayınca süre baştan.
+    expect(sayac.bildir({ ...kutu, ust: 120 }, 70)).toBe(false)
+    expect(sayac.bildir({ ...kutu, ust: 120 }, 100)).toBe(false)
+    expect(sayac.bildir({ ...kutu, ust: 120 }, 131)).toBe(true)
+  })
+
+  it('kaydırma isteği kabın sınırına kısılır', () => {
+    expect(kaydirmaKis(9, -180, 1200)).toBe(-9)
+    expect(kaydirmaKis(0, -230, 1200)).toBe(0)
+    expect(kaydirmaKis(1150, 200, 1200)).toBe(50)
+    expect(kaydirmaKis(100, 40, 1200)).toBe(40)
+    expect(kaydirmaKis(0, 10, 0)).toBe(0)
   })
 
   it('kutu farkı', () => {

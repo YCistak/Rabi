@@ -89,21 +89,47 @@ export function kutuFarki(a: Kutu | null, b: Kutu | null): number {
 }
 
 /**
- * Hedef yerine oturdu mu: art arda `gereken` kare boyunca yarım pikselden az
- * kıpırdadıysa evet. Ekran girişi (`sayfa-girisi`) ya da oyun ekranının kendi
- * girişi sürerken hedef her karede biraz kayıyor; spot o sırada izlemeye
- * başlarsa geçişin her karesine yeniden hedeflenen bir CSS geçişiyle
- * kovalıyor ve hedefin önüne geçip geri dönüyordu.
+ * Hedef yerine oturdu mu: art arda `gereken` ölçüm boyunca yarım pikselden az
+ * kıpırdadıysa **ve** bu durgunluk en az `enAzMs` sürdüyse evet. Ekran girişi
+ * (`sayfa-girisi`) ya da oyun ekranının kendi girişi sürerken hedef her karede
+ * biraz kayıyor; spot o sırada izlemeye başlarsa geçişin her karesine yeniden
+ * hedeflenen bir CSS geçişiyle kovalıyor ve hedefin önüne geçip geri dönüyordu.
+ *
+ * Süre şartı kare sayısının tek başına yetmemesinden: 120 Hz ekranda (iPhone
+ * ProMotion) iki kare 16 ms, ağır bir karede (yavaş telefon, React'in ikinci
+ * çizimi) iki ölçüm arası 100 ms'yi aşabiliyor. "İki kare durdu" ekranın
+ * hızına göre başka bir süre demekti; deneme formunda örnek sonuçlar yazılırken
+ * spot ara bir yerde "yerleşti" sanıp 24 px sonra ikinci kez kayıyordu.
  */
-export function durgunlukSayaci(gereken = 2) {
+export function durgunlukSayaci(gereken = 2, enAzMs = 0) {
   let onceki: Kutu | null = null
   let sayi = 0
+  let durgunBasi = 0
   return {
-    bildir(kutu: Kutu): boolean {
-      sayi = onceki && kutuFarki(onceki, kutu) < 0.5 ? sayi + 1 : 0
+    bildir(kutu: Kutu, simdi = 0): boolean {
+      if (onceki && kutuFarki(onceki, kutu) < 0.5) sayi++
+      else { sayi = 0; durgunBasi = simdi }
       onceki = kutu
-      return sayi >= gereken
+      return sayi >= gereken && simdi - durgunBasi >= enAzMs
     },
     sifirla() { onceki = null; sayi = 0 },
   }
+}
+
+/**
+ * Kaydırma isteğini kabın gerçekten gidebileceği aralığa kısar.
+ *
+ * iOS WebKit'te `window.scrollBy`/`scrollTo` sınırın dışına (0'ın altına ya da
+ * en çok kaydırmanın üstüne) istenince sayfa kenetleniyor ama hemen ardından
+ * okunan `getBoundingClientRect`, sayfa **istenen** yere gitmiş gibi
+ * hesaplanıyor (WebKit r216803; muffinman.io "iOS Safari window.scrollTo /
+ * getBoundingClientRect bug"). Spot planlanırken hedef sayfanın tepesindeyse
+ * (Araçlar'daki Pomodoro satırı, istatistik türleri, ana sayfadaki sınav
+ * kartı) ortalamak için eksi yöne kaydırma isteniyor; ölçüm hedefi o kadar
+ * aşağıda sanıyor, spot önce aşağıya gidip bir sonraki ölçümde yukarı
+ * sıçrıyordu. Başsız WebKit kenetlemeyi ölçüme hemen yansıttığı için orada
+ * görünmüyordu. İstek baştan kısılınca motorun neyi raporladığı önemsizleşiyor.
+ */
+export function kaydirmaKis(simdiki: number, istenen: number, enCok: number): number {
+  return Math.min(Math.max(0, enCok), Math.max(0, simdiki + istenen)) - simdiki
 }

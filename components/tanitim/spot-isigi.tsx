@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { createPortal, flushSync } from 'react-dom'
 import { Buton } from '@/components/ui'
 import { TANITIM_EGRISI, egriDegeri } from '@/lib/tanitim-animasyonu'
-import { balonGenisligi, balonKonumu, durgunlukSayaci, kutuFarki, type Kutu } from '@/lib/tanitim-yerlesim'
+import { balonGenisligi, balonKonumu, durgunlukSayaci, kaydirmaKis, kutuFarki, type Kutu } from '@/lib/tanitim-yerlesim'
+import { taniAcikMi, taniKaydet, taniKutu } from '@/lib/tanitim-tani'
 import { useTanitim } from './tanitim-baglami'
 
 /*
@@ -16,7 +17,12 @@ import { useTanitim } from './tanitim-baglami'
   `anlik`: bu yerleşim geçişsiz konacak (turun ilk karesi, kaybolan hedefin
   yeniden belirmesi). Bir sonraki karede kalkıyor.
 */
-type Yerlesim = { ekHedefler: Kutu[]; hedef: Kutu | null; cizilen: Kutu | null; balon: Kutu; ekran: Kutu; spotAnlik: boolean; balonAnlik: boolean }
+/*
+  `sakli`: ekran değişti, yeni hedef henüz ölçülmedi — delik ve balon o arada
+  görünmüyor (eski yerde kalıp yeni ekranın alakasız bir yerini aydınlatmasın).
+  `belir`: her artışında delik ve balon yerinde, hafif büyüyüp belirerek açılıyor.
+*/
+type Yerlesim = { ekHedefler: Kutu[]; hedef: Kutu | null; cizilen: Kutu | null; balon: Kutu; ekran: Kutu; spotAnlik: boolean; balonAnlik: boolean; sakli?: boolean; belir?: number; sayfa?: Element | null }
 const BOS_KUTU: Kutu = { sol: 0, ust: 0, genislik: 0, yukseklik: 0 }
 const BOS_YERLESIM: Yerlesim = { ekHedefler: [], hedef: null, cizilen: null, balon: BOS_KUTU, ekran: BOS_KUTU, spotAnlik: true, balonAnlik: true }
 const ODAK_SECICI = 'button:not(:disabled), a[href], input:not(:disabled), [tabindex="0"]'
@@ -81,7 +87,9 @@ function kaydir({ oge, x, y }: KaydirmaKaydi) {
     göre ~30 px aşağıda duruyordu (Pomodoro, yatay iPad).
 
   Kaydırma önce hedefin kaydırılabilir atalarında yapılıyor, artanı
-  pencereye kalıyor. Hedef sabit (`position: fixed`) bir katmandaysa (alttan
+  pencereye kalıyor. Her istek kabın gidebileceği aralığa önceden kısılıyor
+  (`kaydirmaKis`): iOS'ta sınırın dışına istenen kaydırmadan hemen sonraki
+  ölçüm, kenetlenmiş yeri değil istenen yeri raporluyor. Hedef sabit (`position: fixed`) bir katmandaysa (alttan
   açılan form) pencere kaydırması onu yerinden oynatmaz, yalnızca arkadaki
   sayfayı kaydırır; klavye açıkken iOS'ta da görünür alanı (visualViewport)
   hedefin altından kaçırır. İkisinde de pencereye dokunulmuyor.
@@ -94,19 +102,22 @@ function hedefiKaydir(hedef: HTMLElement, istenenUst: number, k: number, pencere
     if (['auto', 'scroll'].includes(stil.overflowX) && kab.scrollWidth > kab.clientWidth) {
       // Yatay şeritte hedef görünmüyorsa en yakın kenara getir ('nearest').
       const h = hedef.getBoundingClientRect(), c = kab.getBoundingClientRect()
-      if (h.left < c.left) kab.scrollBy({ left: (h.left - c.left) / k, behavior: 'instant' })
-      else if (h.right > c.right) kab.scrollBy({ left: Math.min(h.right - c.right, h.left - c.left) / k, behavior: 'instant' })
+      const yatay = h.left < c.left ? (h.left - c.left) / k : h.right > c.right ? Math.min(h.right - c.right, h.left - c.left) / k : 0
+      if (yatay) kab.scrollBy({ left: kaydirmaKis(kab.scrollLeft, yatay, kab.scrollWidth - kab.clientWidth), behavior: 'instant' })
     }
     if (Math.abs(kalan) >= 0.5 && ['auto', 'scroll'].includes(stil.overflowY) && kab.scrollHeight > kab.clientHeight) {
       const once = ust()
       // Büyütülmüş kabın kaydırması kendi (katmanla aynı) CSS pikselinde.
-      kab.scrollBy({ top: kalan, behavior: 'instant' })
+      kab.scrollBy({ top: kaydirmaKis(kab.scrollTop, kalan, kab.scrollHeight - kab.clientHeight), behavior: 'instant' })
       kalan -= once - ust()
     }
     if (stil.position === 'fixed') return
   }
   // Pencerenin kaydırması ekran pikselinde (WebKit ve Chromium'da ölçüldü); `zoom` yalnızca body'de.
-  if (pencereSerbest && Math.abs(kalan) >= 0.5) window.scrollBy({ top: kalan * k, behavior: 'instant' })
+  if (!pencereSerbest || Math.abs(kalan) < 0.5) return
+  const kok = document.scrollingElement ?? document.documentElement
+  const adim = kaydirmaKis(window.scrollY, kalan * k, kok.scrollHeight - window.innerHeight)
+  if (Math.abs(adim) >= 0.5) window.scrollBy({ top: adim, behavior: 'instant' })
 }
 
 /*
@@ -186,9 +197,11 @@ export function SpotIsigi() {
     */
     let faz: 'bekle' | 'kaydir' | 'izle' = 'bekle'
     const adimBasi = performance.now()
+    taniKaydet('adim', { adim: adim.kimlik, hedefAdi: adim.hedef })
     let beklemeBasi = adimBasi
-    const durgun = durgunlukSayaci(1)
-    const izleDurgun = durgunlukSayaci(2)
+    // Süreler kare değil milisaniye: 120 Hz'de ve ağır karelerde aynı bekleme (bkz. `durgunlukSayaci`).
+    const durgun = durgunlukSayaci(1, 50)
+    const izleDurgun = durgunlukSayaci(2, 40)
     let kaydirmalar: { bas: KaydirmaKaydi; son: KaydirmaKaydi }[] = []
     let kaydirmaBasi = 0
     let sonGorunum = ''
@@ -213,18 +226,38 @@ export function SpotIsigi() {
     }
     const ciz = (yeni: Yerlesim) => {
       const onceki = sonRef.current
-      if (onceki && !yeni.spotAnlik && !yeni.balonAnlik && kutuFarki(onceki.hedef, yeni.hedef) < 0.5 && kutuFarki(onceki.balon, yeni.balon) < 0.5
+      if (onceki && !yeni.spotAnlik && !yeni.balonAnlik && !!onceki.sakli === !!yeni.sakli && onceki.belir === yeni.belir && kutuFarki(onceki.hedef, yeni.hedef) < 0.5 && kutuFarki(onceki.balon, yeni.balon) < 0.5
         && kutuFarki(onceki.ekran, yeni.ekran) < 0.5 && JSON.stringify(onceki.ekHedefler) === JSON.stringify(yeni.ekHedefler)) return
       sonRef.current = yeni
       setYerlesim(yeni)
+      if (taniAcikMi()) {
+        const kutu = (k: Kutu | null) => (k ? [k.sol, k.ust, k.genislik, k.yukseklik].map((v) => Math.round(v * 10) / 10) : null)
+        taniKaydet('ciz', { adim: adim.kimlik, faz, spot: kutu(yeni.hedef), balon: kutu(yeni.balon), ekran: kutu(yeni.ekran), anlik: [yeni.spotAnlik, yeni.balonAnlik], sakli: !!yeni.sakli, belir: yeni.belir ?? 0,
+          hedefEkran: taniKutu(hedef?.getBoundingClientRect()), katman: taniKutu(katmanRef.current?.getBoundingClientRect()) })
+      }
     }
     // Bundan sonraki bütün ölçüler katmanın CSS pikselinde (bkz. `katmanDonusumu`).
     const ortam = () => {
       const donusum = katmanDonusumu(katmanRef.current)
       const k = donusum.olcek
       const gorunum = window.visualViewport
+      /*
+        Görünür alanın (visualViewport) katmandaki yeri. `offsetTop` doğrudan
+        kullanılmıyor: o, görünür alanın yerleşim görünümüne göre kaymasını
+        veriyor; istemci koordinatlarının hangisine göre olduğu ise motora
+        bağlı. iOS'ta klavye açıkken (görünür alan kaydırılmışken) dikdörtgenler
+        görünür alana göre gelirse sabit katman `-offsetTop`ta raporlanıyor ve
+        `offsetTop - katman.top` kaymayı iki kez sayıyordu: görünür alan
+        olduğundan aşağıda sanılıyor, form "ekranın dışında" kalıyor ve delik
+        sönüyordu (kart 10, "soru girerken her yer gri"). Belgenin başlangıcının
+        istemci koordinatı (`html`in üstü) ile görünür alanın belgedeki yeri
+        (`pageTop`) toplanınca görünür alanın istemci koordinatı çıkıyor —
+        motor hangi görünüme göre ölçerse ölçsün.
+      */
+      const belge = document.documentElement.getBoundingClientRect()
       const ekran = {
-        sol: ((gorunum?.offsetLeft ?? 0) - donusum.sol) / k, ust: ((gorunum?.offsetTop ?? 0) - donusum.ust) / k,
+        sol: gorunum ? (belge.left + gorunum.pageLeft - donusum.sol) / k : -donusum.sol / k,
+        ust: gorunum ? (belge.top + gorunum.pageTop - donusum.ust) / k : -donusum.ust / k,
         genislik: (gorunum?.width ?? window.innerWidth) / k, yukseklik: (gorunum?.height ?? window.innerHeight) / k,
       }
       // Güvenli alan `env()`ten ekran pikseli olarak geliyor; büyütülmüş
@@ -236,7 +269,16 @@ export function SpotIsigi() {
       const klavye = !!gorunum && window.innerHeight - gorunum.height > 100
       const ustSinir = ekran.ust + (parseFloat(guvenli?.paddingTop ?? '0') || 0) / k + 12
       const altSinir = ekran.ust + ekran.yukseklik - (klavye ? 0 : (parseFloat(guvenli?.paddingBottom ?? '0') || 0) / k) - 12
-      return { donusum, k, ekran, ustSinir, altSinir, klavye }
+      /*
+        Alt menü (telefon) ya da sağ ray (tablet) sayfanın üstünde duruyor:
+        altında kalan içerik görünmüyor. Spot o kısmı da aydınlatınca delik
+        menünün üstüne taşıyordu (kart 6, Pomodoro'nun çalışma bloğu).
+      */
+      const menu = document.querySelector<HTMLElement>('nav[data-yuzen]')
+      const m = menu && menu.getClientRects().length ? yereleCevir(menu.getBoundingClientRect(), donusum) : null
+      const menuUst = m && m.width > m.height && m.top > ekran.ust + ekran.yukseklik / 2 ? m.top : null
+      const raySol = m && m.height > m.width && m.left > ekran.sol + ekran.genislik / 2 ? m.left : null
+      return { donusum, k, ekran, ustSinir, altSinir, klavye, menu, menuUst, raySol }
     }
     type Ortam = ReturnType<typeof ortam>
     const tablet = () => document.documentElement.dataset.yerlesim === 'tablet'
@@ -255,16 +297,35 @@ export function SpotIsigi() {
       balon.style.width = onceki
       return yukseklik
     }
+    /*
+      Hedef sabit (`position: fixed`) bir katmandaysa (alt menü, alttan açılan
+      form) güvenli alan sınırına kırpılmıyor, yalnızca ekranın kenarına: menü
+      ev çubuğunun üstüne kadar iniyor ve spot güvenli alanın 12 px üstünde
+      kesilince sekme düğmesinin alt 14 px'i dışarıda kalıyor, aydınlık alan
+      düğmeye göre yukarıda duruyordu. Akıştaki hedef ise menünün/rayın
+      altında kalan kısmıyla birlikte aydınlatılmıyor.
+    */
+    const sabitKatmanda = (oge: HTMLElement) => {
+      for (let a: HTMLElement | null = oge; a && a !== document.body; a = a.parentElement) if (getComputedStyle(a).position === 'fixed') return true
+      return false
+    }
     const hedefKutusu = (o: Ortam): Kutu | null => {
       if (!hedef) return null
       const d = yereleCevir(hedef.getBoundingClientRect(), o.donusum)
       if (d.width <= 0 || d.height <= 0) return null
       // Uzun konu patikasının ilk bölümü ve ilerleme bandı birlikte görünür.
       const gorunenAlt = adim.kimlik === 'konu-haritasi' ? Math.min(d.bottom, d.top + o.ekran.yukseklik * 0.4) : d.bottom
+      const sabit = sabitKatmanda(hedef)
+      const ustKenar = sabit ? o.ekran.ust + 2 : o.ustSinir - 8
+      let altKenar = sabit ? o.ekran.ust + o.ekran.yukseklik - 2 : o.altSinir + 8
+      let sagKenar = o.ekran.sol + o.ekran.genislik - 4
+      // Sabit katmanlar (form, menünün kendisi) menünün üstünde çiziliyor; kırpılmıyor.
+      if (!sabit && o.menuUst !== null) altKenar = Math.min(altKenar, o.menuUst)
+      if (!sabit && o.raySol !== null) sagKenar = Math.min(sagKenar, o.raySol)
       const sol = Math.max(o.ekran.sol + 4, d.left - 5)
-      const ust = Math.max(o.ustSinir - 8, d.top - 5)
-      const sag = Math.min(o.ekran.sol + o.ekran.genislik - 4, d.right + 5)
-      const alt = Math.min(o.altSinir + 8, gorunenAlt + 5)
+      const ust = Math.max(ustKenar, d.top - 5)
+      const sag = Math.min(sagKenar, d.right + 5)
+      const alt = Math.min(altKenar, gorunenAlt + 5)
       return sag > sol && alt > ust ? { sol, ust, genislik: sag - sol, yukseklik: alt - ust } : null
     }
     /** Klavye açıkken hedefteki odaklı yazı kutusu: balon onu örtmemeli. */
@@ -285,7 +346,7 @@ export function SpotIsigi() {
         if (alan.bottom < o.ustSinir || alan.top > o.altSinir) return []
         return [{ sol: alan.left - 4, ust: Math.max(o.ustSinir, alan.top - 4), genislik: alan.width + 8, yukseklik: Math.min(o.altSinir, alan.bottom + 4) - Math.max(o.ustSinir, alan.top - 4) }]
       })
-      return { ekHedefler, hedef: kutu, cizilen: kutu ?? sonRef.current?.cizilen ?? null, ekran: o.ekran, balon: { ...yer, genislik, yukseklik }, spotAnlik: false, balonAnlik: false }
+      return { ekHedefler, hedef: kutu, cizilen: kutu ?? sonRef.current?.cizilen ?? null, ekran: o.ekran, balon: { ...yer, genislik, yukseklik }, spotAnlik: false, balonAnlik: false, belir: sonRef.current?.belir ?? 0, sayfa: document.querySelector('[data-geri-sayfa]') }
     }
     /*
       Kaydırmanın sonunu boyamadan önce ölç: hedef anında kaydırılıyor,
@@ -309,8 +370,10 @@ export function SpotIsigi() {
       const yeni = hesapla(o, hedefKutusu(o))
       const son = kaydirmalariOku(hedef)
       const hareketsiz = azaltilmisHareket()
+      const yeniEkran = ekranDegisti()
       kaydirmalar = []
-      if (!hareketsiz && onceki) {
+      // Yeni ekranda sayfa zaten tak diye değişti; kaydırma da canlandırılmıyor, son yerinde kalıyor.
+      if (!hareketsiz && onceki && !yeniEkran) {
         for (let i = bas.length - 1; i >= 0; i--) {
           if (Math.abs(bas[i].x - son[i].x) < 0.5 && Math.abs(bas[i].y - son[i].y) < 0.5) continue
           kaydir(bas[i])
@@ -319,13 +382,34 @@ export function SpotIsigi() {
       }
       kaydirmaBasi = performance.now()
       // İlk yerleşim ve kaybolup yeniden beliren delik geçişsiz konuyor.
-      ciz({ ...yeni, spotAnlik: hareketsiz || !onceki || !onceki.hedef || !gorunurRef.current, balonAnlik: hareketsiz || !onceki || !gorunurRef.current })
+      if (yeniEkran && onceki && gorunurRef.current) ciz({ ...yeni, sakli: false, belir: (onceki.belir ?? 0) + 1, spotAnlik: true, balonAnlik: true })
+      else ciz({ ...yeni, spotAnlik: hareketsiz || !onceki || !onceki.hedef || !gorunurRef.current, balonAnlik: hareketsiz || !onceki || !gorunurRef.current })
       faz = kaydirmalar.length ? 'kaydir' : 'izle'
       izleDurgun.sifirla()
+      if (taniAcikMi()) taniKaydet('planla', { adim: adim.kimlik, yeniEkran, k: o.k, ustSinir: o.ustSinir, altSinir: o.altSinir, istenen, kaydirma: kaydirmalar.map(({ bas: b, son: z }) => [b.oge ? 'kap' : 'pencere', b.y, z.y]), bekleme: Math.round(performance.now() - adimBasi) })
+    }
+    /*
+      Ekran değişti mi: sayfa kutusu (`SayfaGecisi`, `data-geri-sayfa`) her
+      ekranda yeniden kuruluyor; spotun son çizildiği kutu artık yoksa başka
+      bir ekrandayız (ileri, Geri, sekme ya da formun kaydı ekranı kapattıysa).
+      Adımın başındaki kutuya bakılmıyor: deneme kaydedilince ekran ile adım
+      aynı çizimde değişiyor. Öyleyse spot ve balon eski yerden
+      uçmuyor — Pomodoro satırına dokununca Pomodoro ekranında eski satırın
+      yerinden gelen spot, orada olmayan bir şeyden geliyordu. Aynı ekranda
+      kayarak gidiyor.
+    */
+    const ekranDegisti = () => {
+      // `null`: sayfa kutusunun dışında çizilen tam ekran form (yeni deneme).
+      const onceki = sonRef.current?.sayfa
+      if (onceki === undefined) return false
+      return (onceki !== null && !onceki.isConnected) || document.querySelector('[data-geri-sayfa]') !== onceki
     }
     const olc = () => {
       kare = requestAnimationFrame(olc)
       if (donukRef.current) return
+      if (faz === 'bekle' && sonRef.current && !sonRef.current.sakli && ekranDegisti() && gorunurRef.current && !azaltilmisHareket()) {
+        ciz({ ...sonRef.current, sakli: true, spotAnlik: true, balonAnlik: true })
+      }
       const bulunan = hedefiBul()
       if (bulunan !== hedef) {
         kilitleriBirak()
@@ -348,12 +432,16 @@ export function SpotIsigi() {
       // Hedef var mı (ekranın dışında da olabilir; onu kaydırarak getiriyoruz)
       // ve görünür kısmı (spotun çizileceği kutu) ayrı sorular.
       const ham = sonHalindeOlc(hedef, () => (hedef ? yereleCevir(hedef.getBoundingClientRect(), o.donusum) : null))
+      // Tanı: adımın ilk 1,5 saniyesi kare kare (yalnızca tanı modu açıkken).
+      if (taniAcikMi() && simdi - adimBasi < 1500) taniKaydet('kare', { adim: adim.kimlik, faz, hedef: taniKutu(ham), katman: taniKutu(katmanRef.current?.getBoundingClientRect()), ekranUst: Math.round(o.ekran.ust * 10) / 10 })
       if (!ham || ham.width <= 0 || ham.height <= 0) {
         if (eksikBaslangici === null) eksikBaslangici = simdi
         if (simdi - adimBasi >= KAYIP_BEKLEMESI) {
           // Delik söner, balon yerinde kalır; turun ilk adımıysa balon altta belirir.
           const onceki = sonRef.current
           if (!onceki) ciz({ ...hesapla(o, null), spotAnlik: true, balonAnlik: true })
+          // Ekran değişiminde gizlenen balon hedef gelmezse geri getiriliyor (bulunamadı notu görünsün).
+          else if (onceki.sakli) ciz({ ...onceki, hedef: null, ekHedefler: [], sakli: false, belir: (onceki.belir ?? 0) + 1, spotAnlik: true, balonAnlik: true })
           else if (onceki.hedef) ciz({ ...onceki, hedef: null, ekHedefler: [], spotAnlik: false, balonAnlik: false })
         }
         const eksik = simdi - eksikBaslangici >= 5000
@@ -364,7 +452,9 @@ export function SpotIsigi() {
       eksikBaslangici = null
       if (eksikGosterildi) { eksikGosterildi = false; setHedefEksik(false) }
       if (faz === 'bekle') {
-        if (!durgun.bildir({ sol: ham.left, ust: ham.top, genislik: ham.width, yukseklik: ham.height }) && simdi - beklemeBasi < EN_UZUN_YERLESME) return
+        // Yazı tipi yükleniyorsa satırlar birazdan yeniden kırılacak; o zamana kadar yerleşme yok.
+        const yaziBekliyor = document.fonts?.status === 'loading'
+        if ((!durgun.bildir({ sol: ham.left, ust: ham.top, genislik: ham.width, yukseklik: ham.height }, simdi) || yaziBekliyor) && simdi - beklemeBasi < EN_UZUN_YERLESME) return
         sonHalindeOlc(hedef, () => planla(o))
         return
       }
@@ -379,7 +469,7 @@ export function SpotIsigi() {
       const kutu = sonHalindeOlc(hedef, () => hedefKutusu(o))
       // Ekrandan çıktıysa (içerik kaydı) yeniden planla: kaydırıp getir.
       if (!kutu) { faz = 'bekle'; beklemeBasi = simdi; durgun.sifirla(); return }
-      if (!izleDurgun.bildir(kutu)) return
+      if (!izleDurgun.bildir(kutu, simdi)) return
       const son = sonRef.current
       const balonBoyu = (balonRef.current?.getBoundingClientRect().height ?? 0) / o.k
       if (son && !adim.ekHedefler && kutuFarki(son.hedef, kutu) < 0.5 && Math.abs(son.balon.yukseklik - balonBoyu) < 0.5) return
@@ -411,12 +501,25 @@ export function SpotIsigi() {
     sikisikRef.current = false
     setSikisik(false)
     olc()
+    /*
+      Kabuk yeni ekranı bu etkiden sonra, aynı görevde kuruyor ve ilk kare
+      boyanmadan önce. Ekran değiştiyse delik ve balon o kareden önce
+      gizleniyor; bir sonraki rAF'i bekleseydik yeni ekran bir kare eski
+      deliğin altında, yeni adımın yazısı eski balonda görünürdü.
+    */
+    let iptal = false
+    queueMicrotask(() => {
+      if (iptal || !sonRef.current || sonRef.current.sakli || !ekranDegisti() || !gorunurRef.current || azaltilmisHareket()) return
+      const gizli = { ...sonRef.current, sakli: true, spotAnlik: true, balonAnlik: true }
+      flushSync(() => ciz(gizli))
+    })
     odaklan()
     const olaylar = ['pointerdown', 'mousedown', 'touchstart', 'click', 'dblclick', 'contextmenu']
     for (const olay of olaylar) document.addEventListener(olay, engelle, { capture: true, passive: false })
     document.addEventListener('keydown', tusuYakala, true)
     document.addEventListener('focusin', odagiKoru, true)
     return () => {
+      iptal = true
       cancelAnimationFrame(kare)
       for (const olay of olaylar) document.removeEventListener(olay, engelle, true)
       document.removeEventListener('keydown', tusuYakala, true)
@@ -501,7 +604,9 @@ export function SpotIsigi() {
   const hareketAzalt = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const kisaBalon = !!adim.kisa || sikisik || ['pomodoro', 'zorluk'].includes(adim.kimlik)
   const aciklama = adim.tabletAciklama && document.documentElement.dataset.yerlesim === 'tablet' ? adim.tabletAciklama : adim.aciklama
-  const { hedef, cizilen, ekHedefler, balon, ekran, spotAnlik, balonAnlik } = yerlesim
+  const { hedef, cizilen, ekHedefler, balon, ekran, spotAnlik, balonAnlik, sakli, belir = 0 } = yerlesim
+  // Yeni ekranda yerinde beliriş: iki eş anahtar kare dönüşümlü, her `belir` artışında animasyon baştan oynuyor.
+  const belirme = belir > 0 && !hareketAzalt ? `tanitim-belir-${belir % 2} ${animasyon.aydinlatmaMs + 40}ms ${TANITIM_EGRISI} backwards` : undefined
   /*
     Süreler ve eğri `lib/tanitim-animasyonu.ts`te. Spot (delik + çerçeve) ve
     sayfa kaydırması aynı süre ve eğriyle yürüyor; balon aynı eğriyle,
@@ -519,9 +624,9 @@ export function SpotIsigi() {
     <div ref={katmanRef} className="pointer-events-none fixed inset-0 z-[10000]" style={{ opacity: katmanOpakligi, transition: hareketAzalt ? 'none' : `opacity ${animasyon.aydinlatmaMs}ms ease-out` }}>
       <div ref={guvenliAlanRef} aria-hidden className="invisible absolute" style={{ paddingTop: 'var(--guvenli-ust)', paddingBottom: 'var(--guvenli-alt)' }} />
       <svg aria-hidden className="absolute inset-0 h-full w-full">
-        <defs><mask id={maske}><rect width="100%" height="100%" fill="white" />{cizilen && <rect x={cizilen.sol} y={cizilen.ust} width={cizilen.genislik} height={cizilen.yukseklik} rx="18" fill="black" style={{ opacity: delikOpakligi, transition: [spotGecisi === 'none' ? '' : spotGecisi, hareketAzalt ? '' : `opacity ${animasyon.aydinlatmaMs}ms ease-out ${gorunur && hedef ? animasyon.aydinlatmaGecikmesiMs : 0}ms`].filter(Boolean).join(', ') || 'none' }} />}{ekHedefler.map((alan, sira) => <rect key={sira} x={alan.sol} y={alan.ust} width={alan.genislik} height={alan.yukseklik} rx="18" fill="black" />)}</mask></defs>
+        <defs><mask id={maske}><rect width="100%" height="100%" fill="white" />{cizilen && <rect x={cizilen.sol} y={cizilen.ust} width={cizilen.genislik} height={cizilen.yukseklik} rx="18" fill="black" style={{ opacity: sakli ? 0 : delikOpakligi, animation: belirme, transformBox: 'fill-box', transformOrigin: 'center', transition: sakli ? 'none' : [spotGecisi === 'none' ? '' : spotGecisi, hareketAzalt ? '' : `opacity ${animasyon.aydinlatmaMs}ms ease-out ${gorunur && hedef ? animasyon.aydinlatmaGecikmesiMs : 0}ms`].filter(Boolean).join(', ') || 'none' }} />}{ekHedefler.map((alan, sira) => <rect key={sira} x={alan.sol} y={alan.ust} width={alan.genislik} height={alan.yukseklik} rx="18" fill="black" />)}</mask></defs>
         <rect width="100%" height="100%" fill="var(--foreground)" opacity={animasyon.karartma} mask={`url(#${maske})`} />
-        {cizilen && <rect x={cizilen.sol} y={cizilen.ust} width={cizilen.genislik} height={cizilen.yukseklik} rx="18" fill="none" stroke="var(--primary-parlak)" strokeWidth="2" pathLength="1" strokeDasharray="1" strokeDashoffset={gorunur ? 0 : 1} style={{ opacity: delikOpakligi, transition: [spotGecisi === 'none' ? '' : spotGecisi, cizgiGecisi === 'none' ? '' : cizgiGecisi].filter(Boolean).join(', ') || 'none' }} />}
+        {cizilen && <rect x={cizilen.sol} y={cizilen.ust} width={cizilen.genislik} height={cizilen.yukseklik} rx="18" fill="none" stroke="var(--primary-parlak)" strokeWidth="2" pathLength="1" strokeDasharray="1" strokeDashoffset={gorunur ? 0 : 1} style={{ opacity: sakli ? 0 : delikOpakligi, animation: belirme, transformBox: 'fill-box', transformOrigin: 'center', transition: sakli ? 'none' : [spotGecisi === 'none' ? '' : spotGecisi, cizgiGecisi === 'none' ? '' : cizgiGecisi].filter(Boolean).join(', ') || 'none' }} />}
       </svg>
       <div ref={balonRef} data-tanitim-balonu role="region" aria-label="Rabi tanıtım rehberi"
         className="pointer-events-auto absolute left-0 top-0 overflow-y-auto overscroll-contain rounded-2xl border border-border bg-card text-card-foreground shadow-xl"
@@ -529,7 +634,8 @@ export function SpotIsigi() {
           padding: adim.kimlik === 'soru-bir' ? 8 : 12,
           transform: `translate3d(${balon.sol || 12}px, ${(balon.ust || 12) + balonKaymasi}px, 0)`,
           transition: hareketAzalt || balonAnlik ? 'none' : `transform ${animasyon.balonMs}ms ${egri} ${gorunur ? animasyon.balonGecikmesiMs : animasyon.aydinlatmaGecikmesiMs}ms`,
-          pointerEvents: gecisSuruyor ? 'none' : 'auto',
+          pointerEvents: gecisSuruyor || sakli ? 'none' : 'auto',
+          opacity: sakli ? 0 : undefined, animation: belirme,
           width: balon.genislik || 'calc(100% - 24px)', maxWidth: 340, maxHeight: ekran.yukseklik ? Math.max(120, ekran.yukseklik * 0.52) : '52dvh',
           visibility: ekran.genislik ? 'visible' : 'hidden',
         }}>
