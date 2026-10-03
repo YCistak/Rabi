@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { demoVerileriTemizle, TUR_ADIMLARI, TUR_ANAHTARLARI, tanitimGecisi, type TanitimTuru, type TanitimEylemi } from '@/lib/tanitim'
 
-import { ANIMASYON_ANAHTARI, VARSAYILAN_ANIMASYON, animasyonuDogrula, type TanitimAnimasyonu } from '@/lib/tanitim-animasyonu'
+import { ANIMASYON_ANAHTARI, VARSAYILAN_ANIMASYON, animasyonKaydi, animasyonuDogrula, type TanitimAnimasyonu } from '@/lib/tanitim-animasyonu'
 
 function useTanitimDurumu(deneyMi: boolean) {
   const [animasyon, setAnimasyon] = useState(VARSAYILAN_ANIMASYON)
@@ -12,7 +12,7 @@ function useTanitimDurumu(deneyMi: boolean) {
   const [rehberGizli, setRehberGizli] = useState(false)
   const [kapanisSuruyor, setKapanisSuruyor] = useState(false)
   useEffect(() => { try { setAnimasyon(animasyonuDogrula(JSON.parse(localStorage.getItem(ANIMASYON_ANAHTARI) ?? 'null'))) } catch {} }, [])
-  const animasyonuAyarla = useCallback((deger: TanitimAnimasyonu) => { const yeni = animasyonuDogrula(deger); setAnimasyon(yeni); try { localStorage.setItem(ANIMASYON_ANAHTARI, JSON.stringify(yeni)) } catch {} }, [])
+  const animasyonuAyarla = useCallback((deger: TanitimAnimasyonu) => { const yeni = animasyonuDogrula(deger); setAnimasyon(yeni); try { localStorage.setItem(ANIMASYON_ANAHTARI, JSON.stringify(animasyonKaydi(yeni))) } catch {} }, [])
   const [durum, eylemGonder] = useReducer(tanitimGecisi, undefined, demoVerileriTemizle)
   const [gecisSuruyor, setGecisSuruyor] = useState(false)
   const kapanisRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -21,12 +21,20 @@ function useTanitimDurumu(deneyMi: boolean) {
   const gonder = useCallback((eylem: TanitimEylemi) => {
     if (gecisRef.current) return
     const beklenen = { ...eylem, beklenenAdim: durum.aktifAdim, beklenenTur: durum.aktifTur }
+    const sure = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : animasyon.gecisMs
+    /*
+      Bekleme yoksa adım aynı anda değişiyor. Eskiden süre 0 iken de bir
+      zamanlayıcıdan geçiliyordu ve araya giren `gecisSuruyor` katmanı bir an
+      soldurmaya başlatıp geri getiriyordu. Çift dokunuşu yine
+      `beklenenAdim` eliyor: ikinci dokunuş eski adım numarasını taşıyor.
+    */
+    if (sure <= 0) { eylemGonder(beklenen); return }
     setGecisSuruyor(true)
     gecisRef.current = setTimeout(() => {
       eylemGonder(beklenen)
       gecisRef.current = null
       setGecisSuruyor(false)
-    }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : animasyon.gecisMs)
+    }, sure)
   }, [durum.aktifAdim, durum.aktifTur, animasyon.gecisMs])
   useEffect(() => () => { if (gecisRef.current) clearTimeout(gecisRef.current); if (kapanisRef.current) clearTimeout(kapanisRef.current) }, [])
   const [gorulenler, setGorulenler] = useState<Record<TanitimTuru, boolean> | null>(null)
@@ -64,7 +72,8 @@ function useTanitimDurumu(deneyMi: boolean) {
       gecisRef.current = null
       if (kapanisRef.current) clearTimeout(kapanisRef.current)
       kapanisRef.current = setTimeout(() => { setKapanisSuruyor(false); kapanisRef.current = null }, animasyonRef.current.gecisMs + 250)
-    }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : animasyonRef.current.balonMs)
+      // Katman `aydinlatmaMs` içinde sönüyor (spot-isigi.tsx); tur onu bekleyip kapanıyor.
+    }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : animasyonRef.current.aydinlatmaMs)
   }, [durum.aktifTur, turuKaydet])
 
   return useMemo(() => ({

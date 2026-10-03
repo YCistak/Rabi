@@ -6,9 +6,9 @@ import { SpotIsigi } from '@/components/tanitim/spot-isigi'
 import { VARSAYILAN_ANIMASYON, type TanitimAnimasyonu } from '@/lib/tanitim-animasyonu'
 
 const ALANLAR: [keyof TanitimAnimasyonu, string][] = [
-  ['gecisMs', 'Adımlar arası bekleme'], ['cerceveMs', 'Turuncu çerçevenin çizilmesi'],
-  ['aydinlatmaGecikmesiMs', 'Aydınlanma gecikmesi'], ['aydinlatmaMs', 'Aydınlanma süresi'],
-  ['balonMs', 'Bilgi balonu geçişi'], ['karartma', 'Grinin koyuluğu'],
+  ['gecisMs', 'Adımlar arası bekleme'], ['cerceveMs', 'Spotun ve sayfanın kayması'],
+  ['aydinlatmaGecikmesiMs', 'Açılışta aydınlanma gecikmesi'], ['aydinlatmaMs', 'Açılış/kapanış solması'],
+  ['balonMs', 'Bilgi balonu geçişi'], ['balonGecikmesiMs', 'Balonun spottan gecikmesi'], ['karartma', 'Grinin koyuluğu'],
 ]
 function AnimasyonDeneyi() {
   // Bağımsız sayfa AppShell kullanmaz; açılış teşhisine React’in hazır olduğunu bildir.
