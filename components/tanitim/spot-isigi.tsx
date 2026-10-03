@@ -116,7 +116,7 @@ export function SpotIsigi() {
 
   useLayoutEffect(() => {
     if (!adim || rehberGizli) return
-    const etkilesimAcik = adim.tiklamali || ('etkilesimli' in adim && adim.etkilesimli)
+    const etkilesimAcik = adim.tiklamali || !!adim.etkilesimli
     let kare = 0
     let hedef: HTMLElement | null = null
     /*
@@ -218,7 +218,7 @@ export function SpotIsigi() {
       const genislik = balonGenisligi(kutu, o.ekran, tablet())
       const yukseklik = balonYuksekligi(genislik, o.k)
       const yer = balonKonumu(kutu, o.ekran, o.ustSinir, o.altSinir, genislik, yukseklik)
-      const ekHedefler = ('ekHedefler' in adim ? adim.ekHedefler : []).flatMap((hedefAdi) => {
+      const ekHedefler = (adim.ekHedefler ?? []).flatMap((hedefAdi) => {
         const oge = document.querySelector<HTMLElement>(`[data-tanitim="${hedefAdi}"]`)
         if (!oge) return []
         const alan = yereleCevir(oge.getBoundingClientRect(), o.donusum)
@@ -326,7 +326,7 @@ export function SpotIsigi() {
       if (!izleDurgun.bildir(kutu)) return
       const son = sonRef.current
       const balonBoyu = (balonRef.current?.getBoundingClientRect().height ?? 0) / o.k
-      if (son && !('ekHedefler' in adim) && kutuFarki(son.hedef, kutu) < 0.5 && Math.abs(son.balon.yukseklik - balonBoyu) < 0.5) return
+      if (son && !adim.ekHedefler && kutuFarki(son.hedef, kutu) < 0.5 && Math.abs(son.balon.yukseklik - balonBoyu) < 0.5) return
       ciz(sonHalindeOlc(hedef, () => hesapla(o, kutu)))
     }
     const izinli = (oge: EventTarget | null) => oge instanceof Node && (denetim?.contains(oge) || balonRef.current?.contains(oge) || (etkilesimAcik && hedef?.contains(oge)))
@@ -441,7 +441,8 @@ export function SpotIsigi() {
 
   if (!adim || rehberGizli || typeof document === 'undefined') return null
   const hareketAzalt = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  const kisaBalon = ['pomodoro', 'zorluk'].includes(adim.kimlik)
+  const kisaBalon = !!adim.kisa || ['pomodoro', 'zorluk'].includes(adim.kimlik)
+  const aciklama = adim.tabletAciklama && document.documentElement.dataset.yerlesim === 'tablet' ? adim.tabletAciklama : adim.aciklama
   const { hedef, cizilen, ekHedefler, balon, ekran, spotAnlik, balonAnlik } = yerlesim
   /*
     Süreler ve eğri `lib/tanitim-animasyonu.ts`te. Spot (delik + çerçeve) ve
@@ -480,10 +481,10 @@ export function SpotIsigi() {
           <button type="button" onClick={turuBitir} className="min-h-11 min-w-11 rounded-lg px-2 text-xs font-bold text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring">Turu Geç</button>
         </div>
         {adim.kimlik !== 'soru-bir' && <h2 data-tanitim-baslik tabIndex={-1} className={kisaBalon ? 'font-display text-sm font-extrabold outline-none' : 'font-display text-lg font-extrabold outline-none'}>{adim.baslik}</h2>}
-        {(adim.kimlik !== 'soru-bir' || hedefEksik) && <p aria-live="polite" className={kisaBalon ? 'mt-1 text-xs leading-snug text-muted-foreground' : 'mt-2 text-[13px] leading-relaxed text-muted-foreground'}>{hedefEksik ? 'Bu adımın bileşeni bulunamadı. Geri dönerek yeniden deneyebilir veya turu geçebilirsin.' : adim.kimlik === 'soru-bir' ? 'Sonucu yaz, onayla veya pas geç.' : adim.aciklama}</p>}
+        {(adim.kimlik !== 'soru-bir' || hedefEksik) && <p aria-live="polite" className={kisaBalon ? 'mt-1 text-xs leading-snug text-muted-foreground' : 'mt-2 text-[13px] leading-relaxed text-muted-foreground'}>{hedefEksik ? 'Bu adımın bileşeni bulunamadı. Geri dönerek yeniden deneyebilir veya turu geçebilirsin.' : adim.kimlik === 'soru-bir' ? 'Sonucu yaz, onayla veya pas geç.' : aciklama}</p>}
         {adim.kimlik !== 'soru-bir' && <div className={kisaBalon ? 'mt-2 flex items-center justify-between gap-2' : 'mt-3 flex items-center justify-between gap-2'}>
           <Buton type="button" bicim="ikincil" className="min-h-11 min-w-11" disabled={aktifAdim === 0 || gecisSuruyor} onClick={oncekiAdimaDon}>Geri</Buton>
-          {aktifAdim === adimSayisi - 1 ? <Buton type="button" className="min-h-11 min-w-11" onClick={turuBitir}>Turu Bitir</Buton> : adim.tiklamali ? <span className="text-right text-xs font-bold text-primary">Aydınlatılan alana dokun</span> : <Buton type="button" className="min-h-11 min-w-11" disabled={!hedef || hedefEksik || gecisSuruyor} onClick={sonrakiAdimaGec}>{adim.kimlik === 'pomodoro-kilit' ? 'Oyunlara dön' : adim.kimlik === 'sonuc' ? 'Oyunlara dön' : 'İleri'}</Buton>}
+          {aktifAdim === adimSayisi - 1 ? <Buton type="button" className="min-h-11 min-w-11" onClick={turuBitir}>Turu Bitir</Buton> : adim.tiklamali ? <span className="text-right text-xs font-bold text-primary">{adim.ipucu ?? 'Aydınlatılan alana dokun'}</span> : <Buton type="button" className="min-h-11 min-w-11" disabled={!hedef || hedefEksik || gecisSuruyor} onClick={sonrakiAdimaGec}>{adim.ileriEtiketi ?? (adim.kimlik === 'sonuc' ? 'Oyunlara dön' : 'İleri')}</Buton>}
         </div>}
       </div>
     </div>, document.body,

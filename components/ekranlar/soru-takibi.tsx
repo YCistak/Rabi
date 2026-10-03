@@ -56,10 +56,17 @@ export function SoruTakibiEkrani({
   kayitlar,
   setKayitlar,
   ayarlar,
+  tanitim,
 }: {
   kayitlar: GunlukKayit[]
   setKayitlar: (guncelleyici: GunlukKayit[] | ((onceki: GunlukKayit[]) => GunlukKayit[])) => void
   ayarlar: Ayarlar
+  /**
+   * Başlangıç turunda ekleme sayfasının açık olup olmadığını tur belirliyor:
+   * sayfa ancak tur o adımdayken açık. Kendi state'inde kalsaydı turda geri
+   * gidilince sayfa açık kalır, aydınlatılan düğmenin üstünü örterdi.
+   */
+  tanitim?: { formAcik: boolean; formuAc: () => void; formuKapat: () => void }
 }) {
   const [bugunIso, setBugunIso] = useState(bugun)
   const [secili, setSecili] = useState(bugunIso)
@@ -320,7 +327,8 @@ export function SoruTakibiEkrani({
 
         {duzenlenebilir ? (
           <Buton
-            onClick={() => setSayfaAcik(true)}
+            data-tanitim="soru-ekle"
+            onClick={() => (tanitim ? tanitim.formuAc() : setSayfaAcik(true))}
             className="h-[54px] w-full rounded-[18px] text-base shadow-[0_8px_18px_rgba(217,98,47,0.24)]"
           >
             <Plus size={19} strokeWidth={2.8} aria-hidden />
@@ -362,7 +370,7 @@ export function SoruTakibiEkrani({
             </p>
           </div>
         ) : (
-          <div className="flex flex-col gap-2.5">
+          <div data-tanitim="soru-listesi" className="flex flex-col gap-2.5">
             {satirlar.map((satir, indeks) => (
               <DersSatiri
                 key={satir.ders}
@@ -376,10 +384,10 @@ export function SoruTakibiEkrani({
         )}
       </div>
 
-      {sayfaAcik && (
+      {(tanitim ? tanitim.formAcik : sayfaAcik) && (
         <SoruEkleSayfasi
           kullanilan={satirlar.map((s) => s.ders)}
-          onKapat={() => setSayfaAcik(false)}
+          onKapat={() => (tanitim ? tanitim.formuKapat() : setSayfaAcik(false))}
           onKaydet={girisKaydet}
         />
       )}
@@ -638,6 +646,7 @@ function SoruEkleSayfasi({
     >
       <div
         ref={kaydir}
+        data-tanitim="soru-formu"
         className="alt-pencere-girisi max-h-[76%] w-full max-w-md overflow-y-auto rounded-t-[26px] bg-card px-4 pt-3 pb-[calc(1.5rem+var(--guvenli-alt))]"
         onClick={(e) => e.stopPropagation()}
       >

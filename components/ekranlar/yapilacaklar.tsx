@@ -77,9 +77,15 @@ const MESAJ_SURESI = 2400
 export function YapilacaklarEkrani({
   gorevler,
   setGorevler,
+  tanitim,
 }: {
   gorevler: Gorev[]
   setGorevler: (guncelleyici: Gorev[] | ((onceki: Gorev[]) => Gorev[])) => void
+  /**
+   * Başlangıç turunda ekleme sayfası yalnızca tur o adımdayken görünüyor
+   * (`SoruTakibiEkrani` ile aynı gerekçe). Dilim yine basılan düğmeden geliyor.
+   */
+  tanitim?: { formAcik: boolean; formuAc: () => void; formuKapat: () => void }
 }) {
   const bugunIso = bugun()
   const [secili, setSecili] = useState(bugunIso)
@@ -146,6 +152,12 @@ export function YapilacaklarEkrani({
     setGorevler(sonuc)
     setSayfa(null)
     soyle(`${DILIM_ADI[dilim]} listesine eklendi.`)
+  }
+
+  /** Ekleme sayfası; turda açılışı tura da bildiriliyor (adım ilerliyor). */
+  const sayfaAc = (dilim: GorevDilimi) => {
+    setSayfa({ dilim })
+    tanitim?.formuAc()
   }
 
   const ertele = (gorev: Gorev) => {
@@ -230,7 +242,7 @@ export function YapilacaklarEkrani({
       </Kart>
 
       {/* Üç dilim için sade bir yüzey; görev kartları öne çıkar. */}
-      <div className="mx-1 mt-3.5 flex flex-col gap-4 rounded-[20px] border border-border bg-card/60 px-2.5 pb-3.5 pt-4">
+      <div data-tanitim="gorev-dilimleri" className="mx-1 mt-3.5 flex flex-col gap-4 rounded-[20px] border border-border bg-card/60 px-2.5 pb-3.5 pt-4">
         {DILIMLER.map((dilim) => {
           const isler = dilimGorevleri(gorevler, secili, dilim)
           const yerVar = dilimeYerVarMi(gorevler, secili, dilim)
@@ -259,7 +271,7 @@ export function YapilacaklarEkrani({
                 {!gecmis && (
                   <button
                     type="button"
-                    onClick={() => setSayfa({ dilim })}
+                    onClick={() => sayfaAc(dilim)}
                     disabled={!yerVar}
                     aria-label={`${DILIM_ADI[dilim]} için görev ekle`}
                     className={cn(
@@ -293,7 +305,7 @@ export function YapilacaklarEkrani({
                   ) : (
                     <button
                       type="button"
-                      onClick={() => setSayfa({ dilim })}
+                      onClick={() => sayfaAc(dilim)}
                       className="w-full rounded-[14px] border-[1.5px] border-dashed border-border bg-card/70 px-3.5 py-3 text-center text-[12.5px] font-bold text-muted-foreground transition active:border-primary active:text-primary"
                     >
                       + {DILIM_ADI[dilim]} için görev ekle
@@ -315,12 +327,12 @@ export function YapilacaklarEkrani({
         </div>
       )}
 
-      {sayfa !== null && (
+      {sayfa !== null && (!tanitim || tanitim.formAcik) && (
         <EklemeSayfasi
           dilim={sayfa.dilim}
           duzenlenen={sayfa.gorev}
           gunEtiketi={gunEtiketi}
-          onKapat={() => setSayfa(null)}
+          onKapat={() => (tanitim ? tanitim.formuKapat() : setSayfa(null))}
           onKaydet={(duzen) => kaydet(sayfa.dilim, duzen, sayfa.gorev)}
         />
       )}
@@ -567,6 +579,7 @@ function EklemeSayfasi({
     >
       <div
         ref={kaydir}
+        data-tanitim="gorev-formu"
         className="alt-pencere-girisi max-h-[88%] w-full max-w-md overflow-y-auto rounded-t-[26px] bg-card px-[18px] pt-2 pb-[calc(1.5rem+var(--guvenli-alt))]"
         onClick={(olay) => olay.stopPropagation()}
       >
