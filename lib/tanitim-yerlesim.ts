@@ -31,8 +31,8 @@ export function balonGenisligi(kutu: Kutu | null, ekran: Ekran, tablet: boolean)
 
 /**
  * Balonun sol-üst köşesi. Sıra: hedefin sağı, solu, altı, üstü; hiçbirine
- * sığmıyorsa hedefle **en az örtüşen** yer (altta ve üstte kalan boşluktan
- * büyük olanı). Eskiden son çare "hedefin 12 piksel altı"ydı ve ekran
+ * sığmıyorsa hedefle **en az örtüşen** yer (alt/üst kenar × sol/orta/sağ
+ * hiza). Eskiden son çare "hedefin 12 piksel altı"ydı ve ekran
  * sınırına kırpılınca balon iPad yatayda Pomodoro'nun ayar kartının
  * üstüne biniyordu. Sonuç her zaman ekranın içinde.
  */
@@ -49,7 +49,17 @@ export function balonKonumu(kutu: Kutu | null, ekran: Ekran, ustSinir: number, a
       ust = kutu.ust
     } else if (altSinir - alt >= yukseklik + 16) ust = alt + 16
     else if (kutu.ust - ustSinir >= yukseklik + 16) ust = kutu.ust - yukseklik - 16
-    else ust = altSinir - alt >= kutu.ust - ustSinir ? altSinir - yukseklik : ustSinir
+    else {
+      // Hiçbir yana sığmıyor: alt/üst kenar ile sol/orta/sağ hizalardan
+      // hedefle en az örtüşeni. Eşitlikte sıra korunur (önce alt orta).
+      const solHiza = ekran.sol + 12
+      const sagHiza = ekran.sol + ekran.genislik - 12 - genislik
+      let enAz = Number.POSITIVE_INFINITY
+      for (const aday of [altSinir - yukseklik, ustSinir]) for (const x of [sol, solHiza, sagHiza]) {
+        const alan = ortusmeAlani({ sol: x, ust: aday, genislik, yukseklik }, kutu)
+        if (alan < enAz - 0.5) { enAz = alan; ust = aday; sol = x }
+      }
+    }
   }
   const solSinir = ekran.sol + 12
   const sagSinir = ekran.sol + ekran.genislik - 12 - genislik
@@ -57,6 +67,12 @@ export function balonKonumu(kutu: Kutu | null, ekran: Ekran, ustSinir: number, a
     sol: Math.max(solSinir, Math.min(sol, sagSinir)),
     ust: Math.max(ustSinir, Math.min(ust, altSinir - yukseklik)),
   }
+}
+
+export function ortusmeAlani(a: Kutu, b: Kutu): number {
+  const x = Math.min(a.sol + a.genislik, b.sol + b.genislik) - Math.max(a.sol, b.sol)
+  const y = Math.min(a.ust + a.yukseklik, b.ust + b.yukseklik) - Math.max(a.ust, b.ust)
+  return Math.max(0, x) * Math.max(0, y)
 }
 
 /** İki kutu arasındaki en büyük kenar farkı (yoksa sonsuz). */

@@ -76,3 +76,14 @@ describe('durgunluk sayacı', () => {
     expect(kutuFarki({ sol: 0, ust: 0, genislik: 1, yukseklik: 1 }, { sol: 3, ust: -2, genislik: 1, yukseklik: 1 })).toBe(3)
   })
 })
+
+describe('sığmayan hedefte en az örtüşme', () => {
+  it('iPad yatayda Pomodoro kartında balon köşeye kaçar, örtüşme ortadakinden az', () => {
+    const alt = 683 - 12
+    const hedef = { sol: 121, ust: 4, genislik: 650, yukseklik: 522 }
+    const yer = balonKonumu(hedef, IPAD_YATAY, ustSinir, alt, 340, 203)
+    const ortada = { sol: (983 - 340) / 2, ust: alt - 203, genislik: 340, yukseklik: 203 }
+    expect(ortusme({ ...yer, genislik: 340, yukseklik: 203 }, hedef)).toBeLessThan(ortusme(ortada, hedef) / 2)
+    icinde(yer, IPAD_YATAY, 340, 203, alt)
+  })
+})
