@@ -616,7 +616,10 @@ export function PomodoroEkrani({
         kaydırmadan görünmeli. 228'deyken Başlat'a kadar bir ekran boyu
         kaydırmak gerekiyordu.
       */}
-      <div data-tanitim="pomodoro-calisma" style={demoVeri ? { maxHeight: "calc(100dvh - 300px)", overflowY: "auto" } : undefined}>
+      {/* Turda blok ekrana sığsın. `100dvh` body'deki tablet büyütmesinden
+          (`zoom`) etkilenmiyor; bölünmezse iPad'de blok 1,2 kat uzuyor ve
+          alt kenarı ekranın dışına taşıyordu (kart 6). */}
+      <div data-tanitim="pomodoro-calisma" style={demoVeri ? { maxHeight: "calc(100dvh / var(--olcek, 1) - 300px)", overflowY: "auto" } : undefined}>
       <Kart data-tanitim="pomodoro-sayaci" className="mb-3 flex flex-col items-center rounded-3xl px-4 pt-4 pb-3.5">
         <Sayac kalan={kalan} oran={oran} mola={molaMi} boyut={168} kalinlik={10} altYazi={siradaki} />
         <TurNoktalari tur={tur} turSayisi={ayar.turSayisi} gizli={prova !== null} className="mt-3" />

@@ -229,8 +229,23 @@ export function SpotIsigi() {
       const donusum = katmanDonusumu(katmanRef.current)
       const k = donusum.olcek
       const gorunum = window.visualViewport
+      /*
+        Görünür alanın (visualViewport) katmandaki yeri. `offsetTop` doğrudan
+        kullanılmıyor: o, görünür alanın yerleşim görünümüne göre kaymasını
+        veriyor; istemci koordinatlarının hangisine göre olduğu ise motora
+        bağlı. iOS'ta klavye açıkken (görünür alan kaydırılmışken) dikdörtgenler
+        görünür alana göre gelirse sabit katman `-offsetTop`ta raporlanıyor ve
+        `offsetTop - katman.top` kaymayı iki kez sayıyordu: görünür alan
+        olduğundan aşağıda sanılıyor, form "ekranın dışında" kalıyor ve delik
+        sönüyordu (kart 10, "soru girerken her yer gri"). Belgenin başlangıcının
+        istemci koordinatı (`html`in üstü) ile görünür alanın belgedeki yeri
+        (`pageTop`) toplanınca görünür alanın istemci koordinatı çıkıyor —
+        motor hangi görünüme göre ölçerse ölçsün.
+      */
+      const belge = document.documentElement.getBoundingClientRect()
       const ekran = {
-        sol: ((gorunum?.offsetLeft ?? 0) - donusum.sol) / k, ust: ((gorunum?.offsetTop ?? 0) - donusum.ust) / k,
+        sol: gorunum ? (belge.left + gorunum.pageLeft - donusum.sol) / k : -donusum.sol / k,
+        ust: gorunum ? (belge.top + gorunum.pageTop - donusum.ust) / k : -donusum.ust / k,
         genislik: (gorunum?.width ?? window.innerWidth) / k, yukseklik: (gorunum?.height ?? window.innerHeight) / k,
       }
       // Güvenli alan `env()`ten ekran pikseli olarak geliyor; büyütülmüş
@@ -242,7 +257,16 @@ export function SpotIsigi() {
       const klavye = !!gorunum && window.innerHeight - gorunum.height > 100
       const ustSinir = ekran.ust + (parseFloat(guvenli?.paddingTop ?? '0') || 0) / k + 12
       const altSinir = ekran.ust + ekran.yukseklik - (klavye ? 0 : (parseFloat(guvenli?.paddingBottom ?? '0') || 0) / k) - 12
-      return { donusum, k, ekran, ustSinir, altSinir, klavye }
+      /*
+        Alt menü (telefon) ya da sağ ray (tablet) sayfanın üstünde duruyor:
+        altında kalan içerik görünmüyor. Spot o kısmı da aydınlatınca delik
+        menünün üstüne taşıyordu (kart 6, Pomodoro'nun çalışma bloğu).
+      */
+      const menu = document.querySelector<HTMLElement>('nav[data-yuzen]')
+      const m = menu && menu.getClientRects().length ? yereleCevir(menu.getBoundingClientRect(), donusum) : null
+      const menuUst = m && m.width > m.height && m.top > ekran.ust + ekran.yukseklik / 2 ? m.top : null
+      const raySol = m && m.height > m.width && m.left > ekran.sol + ekran.genislik / 2 ? m.left : null
+      return { donusum, k, ekran, ustSinir, altSinir, klavye, menu, menuUst, raySol }
     }
     type Ortam = ReturnType<typeof ortam>
     const tablet = () => document.documentElement.dataset.yerlesim === 'tablet'
@@ -261,16 +285,35 @@ export function SpotIsigi() {
       balon.style.width = onceki
       return yukseklik
     }
+    /*
+      Hedef sabit (`position: fixed`) bir katmandaysa (alt menü, alttan açılan
+      form) güvenli alan sınırına kırpılmıyor, yalnızca ekranın kenarına: menü
+      ev çubuğunun üstüne kadar iniyor ve spot güvenli alanın 12 px üstünde
+      kesilince sekme düğmesinin alt 14 px'i dışarıda kalıyor, aydınlık alan
+      düğmeye göre yukarıda duruyordu. Akıştaki hedef ise menünün/rayın
+      altında kalan kısmıyla birlikte aydınlatılmıyor.
+    */
+    const sabitKatmanda = (oge: HTMLElement) => {
+      for (let a: HTMLElement | null = oge; a && a !== document.body; a = a.parentElement) if (getComputedStyle(a).position === 'fixed') return true
+      return false
+    }
     const hedefKutusu = (o: Ortam): Kutu | null => {
       if (!hedef) return null
       const d = yereleCevir(hedef.getBoundingClientRect(), o.donusum)
       if (d.width <= 0 || d.height <= 0) return null
       // Uzun konu patikasının ilk bölümü ve ilerleme bandı birlikte görünür.
       const gorunenAlt = adim.kimlik === 'konu-haritasi' ? Math.min(d.bottom, d.top + o.ekran.yukseklik * 0.4) : d.bottom
+      const sabit = sabitKatmanda(hedef)
+      const ustKenar = sabit ? o.ekran.ust + 2 : o.ustSinir - 8
+      let altKenar = sabit ? o.ekran.ust + o.ekran.yukseklik - 2 : o.altSinir + 8
+      let sagKenar = o.ekran.sol + o.ekran.genislik - 4
+      // Sabit katmanlar (form, menünün kendisi) menünün üstünde çiziliyor; kırpılmıyor.
+      if (!sabit && o.menuUst !== null) altKenar = Math.min(altKenar, o.menuUst)
+      if (!sabit && o.raySol !== null) sagKenar = Math.min(sagKenar, o.raySol)
       const sol = Math.max(o.ekran.sol + 4, d.left - 5)
-      const ust = Math.max(o.ustSinir - 8, d.top - 5)
-      const sag = Math.min(o.ekran.sol + o.ekran.genislik - 4, d.right + 5)
-      const alt = Math.min(o.altSinir + 8, gorunenAlt + 5)
+      const ust = Math.max(ustKenar, d.top - 5)
+      const sag = Math.min(sagKenar, d.right + 5)
+      const alt = Math.min(altKenar, gorunenAlt + 5)
       return sag > sol && alt > ust ? { sol, ust, genislik: sag - sol, yukseklik: alt - ust } : null
     }
     /** Klavye açıkken hedefteki odaklı yazı kutusu: balon onu örtmemeli. */
