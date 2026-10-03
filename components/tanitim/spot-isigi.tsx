@@ -4,7 +4,7 @@ import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Buton } from '@/components/ui'
 import { TANITIM_EGRISI, egriDegeri } from '@/lib/tanitim-animasyonu'
-import { balonGenisligi, balonKonumu, durgunlukSayaci, kutuFarki, type Kutu } from '@/lib/tanitim-yerlesim'
+import { balonGenisligi, balonKonumu, durgunlukSayaci, kaydirmaKis, kutuFarki, type Kutu } from '@/lib/tanitim-yerlesim'
 import { useTanitim } from './tanitim-baglami'
 
 /*
@@ -81,7 +81,9 @@ function kaydir({ oge, x, y }: KaydirmaKaydi) {
     göre ~30 px aşağıda duruyordu (Pomodoro, yatay iPad).
 
   Kaydırma önce hedefin kaydırılabilir atalarında yapılıyor, artanı
-  pencereye kalıyor. Hedef sabit (`position: fixed`) bir katmandaysa (alttan
+  pencereye kalıyor. Her istek kabın gidebileceği aralığa önceden kısılıyor
+  (`kaydirmaKis`): iOS'ta sınırın dışına istenen kaydırmadan hemen sonraki
+  ölçüm, kenetlenmiş yeri değil istenen yeri raporluyor. Hedef sabit (`position: fixed`) bir katmandaysa (alttan
   açılan form) pencere kaydırması onu yerinden oynatmaz, yalnızca arkadaki
   sayfayı kaydırır; klavye açıkken iOS'ta da görünür alanı (visualViewport)
   hedefin altından kaçırır. İkisinde de pencereye dokunulmuyor.
@@ -94,19 +96,22 @@ function hedefiKaydir(hedef: HTMLElement, istenenUst: number, k: number, pencere
     if (['auto', 'scroll'].includes(stil.overflowX) && kab.scrollWidth > kab.clientWidth) {
       // Yatay şeritte hedef görünmüyorsa en yakın kenara getir ('nearest').
       const h = hedef.getBoundingClientRect(), c = kab.getBoundingClientRect()
-      if (h.left < c.left) kab.scrollBy({ left: (h.left - c.left) / k, behavior: 'instant' })
-      else if (h.right > c.right) kab.scrollBy({ left: Math.min(h.right - c.right, h.left - c.left) / k, behavior: 'instant' })
+      const yatay = h.left < c.left ? (h.left - c.left) / k : h.right > c.right ? Math.min(h.right - c.right, h.left - c.left) / k : 0
+      if (yatay) kab.scrollBy({ left: kaydirmaKis(kab.scrollLeft, yatay, kab.scrollWidth - kab.clientWidth), behavior: 'instant' })
     }
     if (Math.abs(kalan) >= 0.5 && ['auto', 'scroll'].includes(stil.overflowY) && kab.scrollHeight > kab.clientHeight) {
       const once = ust()
       // Büyütülmüş kabın kaydırması kendi (katmanla aynı) CSS pikselinde.
-      kab.scrollBy({ top: kalan, behavior: 'instant' })
+      kab.scrollBy({ top: kaydirmaKis(kab.scrollTop, kalan, kab.scrollHeight - kab.clientHeight), behavior: 'instant' })
       kalan -= once - ust()
     }
     if (stil.position === 'fixed') return
   }
   // Pencerenin kaydırması ekran pikselinde (WebKit ve Chromium'da ölçüldü); `zoom` yalnızca body'de.
-  if (pencereSerbest && Math.abs(kalan) >= 0.5) window.scrollBy({ top: kalan * k, behavior: 'instant' })
+  if (!pencereSerbest || Math.abs(kalan) < 0.5) return
+  const kok = document.scrollingElement ?? document.documentElement
+  const adim = kaydirmaKis(window.scrollY, kalan * k, kok.scrollHeight - window.innerHeight)
+  if (Math.abs(adim) >= 0.5) window.scrollBy({ top: adim, behavior: 'instant' })
 }
 
 /*
@@ -187,8 +192,9 @@ export function SpotIsigi() {
     let faz: 'bekle' | 'kaydir' | 'izle' = 'bekle'
     const adimBasi = performance.now()
     let beklemeBasi = adimBasi
-    const durgun = durgunlukSayaci(1)
-    const izleDurgun = durgunlukSayaci(2)
+    // Süreler kare değil milisaniye: 120 Hz'de ve ağır karelerde aynı bekleme (bkz. `durgunlukSayaci`).
+    const durgun = durgunlukSayaci(1, 50)
+    const izleDurgun = durgunlukSayaci(2, 40)
     let kaydirmalar: { bas: KaydirmaKaydi; son: KaydirmaKaydi }[] = []
     let kaydirmaBasi = 0
     let sonGorunum = ''
@@ -364,7 +370,9 @@ export function SpotIsigi() {
       eksikBaslangici = null
       if (eksikGosterildi) { eksikGosterildi = false; setHedefEksik(false) }
       if (faz === 'bekle') {
-        if (!durgun.bildir({ sol: ham.left, ust: ham.top, genislik: ham.width, yukseklik: ham.height }) && simdi - beklemeBasi < EN_UZUN_YERLESME) return
+        // Yazı tipi yükleniyorsa satırlar birazdan yeniden kırılacak; o zamana kadar yerleşme yok.
+        const yaziBekliyor = document.fonts?.status === 'loading'
+        if ((!durgun.bildir({ sol: ham.left, ust: ham.top, genislik: ham.width, yukseklik: ham.height }, simdi) || yaziBekliyor) && simdi - beklemeBasi < EN_UZUN_YERLESME) return
         sonHalindeOlc(hedef, () => planla(o))
         return
       }
@@ -379,7 +387,7 @@ export function SpotIsigi() {
       const kutu = sonHalindeOlc(hedef, () => hedefKutusu(o))
       // Ekrandan çıktıysa (içerik kaydı) yeniden planla: kaydırıp getir.
       if (!kutu) { faz = 'bekle'; beklemeBasi = simdi; durgun.sifirla(); return }
-      if (!izleDurgun.bildir(kutu)) return
+      if (!izleDurgun.bildir(kutu, simdi)) return
       const son = sonRef.current
       const balonBoyu = (balonRef.current?.getBoundingClientRect().height ?? 0) / o.k
       if (son && !adim.ekHedefler && kutuFarki(son.hedef, kutu) < 0.5 && Math.abs(son.balon.yukseklik - balonBoyu) < 0.5) return
