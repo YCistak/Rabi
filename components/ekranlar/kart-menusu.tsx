@@ -144,6 +144,7 @@ function AracSatiri({ kart, onAc }: { kart: KartTanimi; onAc: () => void }) {
   return (
     <button
       type="button"
+      data-tanitim={`arac-${kart.id}`}
       onClick={onAc}
       className="flex w-full items-center gap-3 px-3.5 py-3 text-left transition active:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
     >

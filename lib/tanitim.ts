@@ -1,5 +1,7 @@
 import type { Ekran, Sekme } from './gezinme'
 import type { BankaKaydi } from './oyunlar/banka'
+import type { Deneme, GunlukKayit } from './types'
+import type { Gorev } from './yapilacaklar'
 
 export type TanitimTuru = 'ana_tur' | 'denemeler' | 'konu_haritasi'
 export const TUR_ANAHTARLARI: Record<TanitimTuru, string> = {
@@ -7,14 +9,56 @@ export const TUR_ANAHTARLARI: Record<TanitimTuru, string> = {
 }
 export const TANITIM_ANAHTARI = TUR_ANAHTARLARI.ana_tur
 
-export const TANITIM_ADIMLARI = [
+/** Turda kullanıcının kendisinin eklediği kayıt türleri (bkz. `lib/tanitim-veri.ts`). */
+export type TanitimKaydi = 'soru' | 'gorev' | 'deneme'
+
+export type TanitimAdimi = {
+  kimlik: string
+  /** Aydınlatılan öğenin `data-tanitim` değeri. */
+  hedef: string
+  baslik: string
+  aciklama: string
+  /** Tablette (sağ ray) farklı yönerge gerektiğinde. */
+  tabletAciklama?: string
+  /** İleri yok; adım hedefe dokunulunca (ya da `kayit` eklenince) ilerliyor. */
+  tiklamali: boolean
+  /** İleri var ama hedefin içi kullanılabilir. */
+  etkilesimli?: boolean
+  ekHedefler?: readonly string[]
+  /** Adım, bu türden bir kayıt eklenince ilerliyor (form adımları). */
+  kayit?: TanitimKaydi
+  /** Dokunma adımında "Aydınlatılan alana dokun" yerine yazılan ipucu. */
+  ipucu?: string
+  /** İleri düğmesinin yazısı (varsayılan "İleri"). */
+  ileriEtiketi?: string
+  /** Kısa balon: büyük formların yanında yer kaplamasın. */
+  kisa?: boolean
+}
+
+export const TANITIM_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'sinav-hedefi', hedef: 'sinav-hedefi', baslik: 'Hedefin hep gözünün önünde', aciklama: 'Sınava kalan süreyi, hedeflediğin bölüm ve üniversiteyi bu karttan izlersin. Hedef sıralaman ile güncel tahminin arasındaki fark, ne kadar yaklaştığını gösterir.', tiklamali: false },
   { kimlik: 'hedef', hedef: 'gunluk-hedef', baslik: 'Her gün küçük bir adım', aciklama: 'Halka, bugün çözdüğün soruların günlük hedefine ne kadar yaklaştığını gösterir. Altındaki yedi günlük şeritte bugün ortada durur; hedefine ulaştığın günler işaretlenir.', tiklamali: false },
-  { kimlik: 'soru-takibi', hedef: 'soru-takibi', baslik: 'Çözdüklerini kaydet', aciklama: 'Soru Takibi’nde çözdüğün soruları ders ve konu bazında kaydedersin. Günlük hedefindeki halka bu kayıtlardan dolar. Şimdilik kartı tanımamız yeterli.', tiklamali: false },
-  { kimlik: 'pomodoro-ac', hedef: 'pomodoro-ac', baslik: 'Birlikte odaklanalım', aciklama: 'Şimdi odaklanma aracımızı görmek için Pomodoro’ya dokun.', tiklamali: true },
+  { kimlik: 'araclar-ac', hedef: 'araclar-ac', baslik: 'Çalışma araçların bir dokunuş uzakta', aciklama: 'Alt menüdeki Araçlar’a dokun. Pomodoro, Soru Takibi, Yapılacaklar ve Denemeler orada.', tabletAciklama: 'Sağdaki menüde Araçlar’a dokun. Pomodoro, Soru Takibi, Yapılacaklar ve Denemeler orada.', tiklamali: true },
+  { kimlik: 'pomodoro-ac', hedef: 'arac-pomodoro', baslik: 'Birlikte odaklanalım', aciklama: 'Önce odaklanma aracımıza bakalım: Pomodoro’ya dokun.', tiklamali: true },
   { kimlik: 'pomodoro-prova', hedef: 'pomodoro-prova', baslik: 'Pomodoro veya deneme provası', aciklama: 'Çalışma ve mola döngüsü için Pomodoro’yu, sınav süresini deneyimlemek için Deneme provası’nı seçebilirsin. Prova kipinde TYT, AYT veya YDT kitapçığını seçersin.', tiklamali: false },
   { kimlik: 'pomodoro', hedef: 'pomodoro-calisma', baslik: 'Çalışma ortamını kendine göre kur', aciklama: 'Sayaç çalışma ve molayı gösterir. Dersi seçebilir, süreleri ayarlayabilir, müzik açabilir ve çalışırken ekranı açık tutabilirsin. Üç blok birlikte çalışma ortamını oluşturur.', tiklamali: false },
-  { kimlik: 'pomodoro-kilit', hedef: 'pomodoro-kilit', baslik: 'Dikkatini odak kilidiyle koru', aciklama: 'Odak korumasıyla çalışma sırasında dikkatini dağıtan uygulamaları engelleyebilir ve bildirimleri susturabilirsin. Bu özellik desteklenen Android cihazlarda, verdiğin izinlerle çalışır. Şimdi ana sayfaya dönüp oyunlara bakalım.', tiklamali: false },
+  { kimlik: 'pomodoro-kilit', hedef: 'pomodoro-kilit', baslik: 'Dikkatini odak kilidiyle koru', aciklama: 'Odak korumasıyla çalışma sırasında dikkatini dağıtan uygulamaları engelleyebilir ve bildirimleri susturabilirsin. Bu özellik desteklenen Android cihazlarda, verdiğin izinlerle çalışır. Şimdi Araçlar’a dönüp Soru Takibi’ne geçelim.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
+  { kimlik: 'soru-ac', hedef: 'arac-soru', baslik: 'Çözdüklerini kaydet', aciklama: 'Soru Takibi’nde gün gün çözdüğün soruları ders bazında kaydedersin. Soru Takibi’ne dokun.', tiklamali: true },
+  { kimlik: 'soru-ekle', hedef: 'soru-ekle', baslik: 'İlk kaydını birlikte girelim', aciklama: 'Soru ekle’ye dokun. Bu kayıt yalnızca tanıtım için; tur bitince silinecek.', tiklamali: true },
+  { kimlik: 'soru-form', hedef: 'soru-formu', kayit: 'soru', kisa: true, baslik: 'Ders ve sayıları gir', aciklama: 'Bir ders seç, toplam soruyu ve doğru, yanlış sayını yaz. Boşları Rabi hesaplar.', ipucu: 'Kaydet’e dokununca devam ederiz', tiklamali: true },
+  { kimlik: 'soru-kaydedildi', hedef: 'soru-listesi', baslik: 'Kaydın günlük hedefe işlendi', aciklama: 'Girdiğin sorular günün halkasını doldurur; gün içinde aynı derse yeniden eklersen sayılar toplanır. Bu örnek kayıt tur bitince silinecek.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
+  { kimlik: 'gorev-ac', hedef: 'arac-notlar', baslik: 'Gününü planla', aciklama: 'Yapılacaklar’da gününü sabah, öğle ve akşam diye bölüp görev yazarsın. Yapılacaklar’a dokun.', tiklamali: true },
+  { kimlik: 'gorev-ekle', hedef: 'gorev-dilimleri', baslik: 'Bir görev ekle', aciklama: 'Sabah, öğle ya da akşamın + düğmesine dokun. Bu görev de tur bitince silinecek.', tiklamali: true },
+  { kimlik: 'gorev-form', hedef: 'gorev-formu', kayit: 'gorev', kisa: true, baslik: 'Görevini yaz', aciklama: 'Ne yapacağını yaz, kategori ve renk seç. Süre isteğe bağlı.', ipucu: 'Kaydet’e dokununca devam ederiz', tiklamali: true },
+  { kimlik: 'gorev-kaydedildi', hedef: 'gorev-dilimleri', baslik: 'Görevin listede', aciklama: 'Bitirince işaretler, yıldızla öne alır, gerekirse ertesi güne ertelersin. Bu örnek görev tur bitince silinecek.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
+  { kimlik: 'deneme-ac', hedef: 'arac-deneme', baslik: 'Denemelerini kaydet', aciklama: 'Denemeler’e dokun. Nasıl göründüğünü göstermek için iki örnek deneme hazırladık.', tiklamali: true },
+  { kimlik: 'deneme-liste', hedef: 'deneme-listesi', baslik: 'Örnek denemeler', aciklama: 'Bu iki deneme senin alanına göre seçildi. Her kartta denemenin türünü, tarihini ve netini görürsün; karta dokununca ders ders döküm açılır. Tur bitince silinecekler.', tiklamali: false },
+  { kimlik: 'deneme-ekle', hedef: 'deneme-ekle', baslik: 'Şimdi sıra sende', aciklama: 'Deneme ekle’ye dokun ve bir sonuç gir. Bu deneme de tanıtıma ait; tur bitince silinecek.', tiklamali: true },
+  { kimlik: 'deneme-okut', hedef: 'deneme-okut', etkilesimli: true, baslik: 'Fotoğraftan okut', aciklama: 'Sonuç kâğıdının fotoğrafını verirsen Okut doğru ve yanlışları forma kendisi yazar. Denemek istersen Okut’a dokun; istemezsen İleri ile elle girelim.', tiklamali: false },
+  { kimlik: 'deneme-elle', hedef: 'deneme-elle', etkilesimli: true, kisa: true, baslik: 'Ya da elle gir', aciklama: 'Birkaç dersin doğru ve yanlışını yaz; netin kendiliğinden hesaplanır.', tiklamali: false },
+  { kimlik: 'deneme-kaydet', hedef: 'deneme-kaydet', kayit: 'deneme', kisa: true, baslik: 'Denemeni kaydet', aciklama: 'Kaydet’e dokun. Sonuç girmediysen Geri ile tabloya dön.', ipucu: 'Kaydet’e dokun', tiklamali: true },
+  { kimlik: 'istatistik-ac', hedef: 'arac-istatistik', baslik: 'Gidişatını izle', aciklama: 'Denemen kaydedildi. Şimdi İstatistik’e dokun; denemelerin orada karşılaştırılır.', tiklamali: true },
+  { kimlik: 'istatistik', hedef: 'istatistik-ozet', baslik: 'Netlerin tek bakışta', aciklama: 'Aynı türdeki denemeler karşılaştırılır: son netin, bir öncekiyle farkı ve ortalaman. Altta en çok ilerlediğin dersler sıralanır. Örnek denemeler ve seninki tur bitince silinecek.', ileriEtiketi: 'Oyunlara geç', tiklamali: false },
   { kimlik: 'oyunlar-ac', hedef: 'oyunlar-ac', baslik: 'Bilgini oyunla pekiştir', aciklama: 'Alt menüdeki Oyunlar’a dokun. Birlikte bir soruluk kısa bir demo oynayacağız.', tiklamali: true },
   { kimlik: 'demo-ac', hedef: 'demo-oyun', baslik: 'Kısa bir deneme', aciklama: 'Tanıtım oyunu kartına dokun. Bu oyundaki cevaplar ve skor yalnızca tanıtımda kalacak.', tiklamali: true },
   { kimlik: 'zorluk', hedef: 'demo-zorluk', etkilesimli: true, baslik: 'Gerçek oyunun hazırlık ekranı', aciklama: 'Tur modunu ve başlangıç zorluğunu seç. Bu seçimler tanıtımda kalır; demo süresi 10 dakikadır.', tiklamali: false },
@@ -24,15 +68,14 @@ export const TANITIM_ADIMLARI = [
   { kimlik: 'sonuc', hedef: 'demo-sonuc', baslik: 'Sonucunu hemen gör', aciklama: 'Doğru ve yanlışlarını burada görürsün. Bankanın nasıl çalıştığını göstermek için üç örnek demo soru hazırladık; senin cevaplarından bağımsızlar.', tiklamali: false },
   { kimlik: 'banka-ac', hedef: 'oyun-bankasi-ac', baslik: 'Yanlışlarına yeniden dön', aciklama: 'Üç geçici örnek hazırladık. Oyunlar menüsündeki Oyun Bankası kartına dokunarak nerede toplandıklarını görelim.', tiklamali: true },
   { kimlik: 'banka', hedef: 'demo-banka', baslik: 'Yanlışlarını öğrenmeye dönüştür', aciklama: 'Oyunlarda bilemediğin sorular Oyun Bankası’nda toplanır. Genel testte tekrar çözüp doğru bildiklerini bankadan çıkarabilirsin. Buradaki üç örnek ve demo skorun tur bitince silinecek.', tiklamali: false },
-] as const
+]
 
-export const DENEME_ADIMLARI = [
+export const DENEME_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'deneme-ekle', hedef: 'deneme-ekle', baslik: 'Netlerini kaydet', aciklama: 'Deneme ekle ile TYT, AYT veya diğer denemelerinin doğru ve yanlışlarını girersin. Netlerin otomatik hesaplanır; gelişimini İstatistik’te izlersin.', tiklamali: false },
-] as const
-export const HARITA_ADIMLARI = [
+]
+export const HARITA_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'konu-haritasi', hedef: 'konu-haritasi', baslik: 'Eksiklerini tek bakışta gör', aciklama: 'Konuları tamamladıkça dersinin ilerlemesi artar. Konu kartları ve bölüm ilerlemesi, bitirdiklerini ve sıradaki konunu gösterir.', tiklamali: false },
-] as const
-export type TanitimAdimi = (typeof TANITIM_ADIMLARI | typeof DENEME_ADIMLARI | typeof HARITA_ADIMLARI)[number]
+]
 export const TUR_ADIMLARI: Record<TanitimTuru, readonly TanitimAdimi[]> = { ana_tur: TANITIM_ADIMLARI, denemeler: DENEME_ADIMLARI, konu_haritasi: HARITA_ADIMLARI }
 export type TanitimZorlugu = 'kolay' | 'orta' | 'zor'
 export type DemoSoru = { metin: string; cevap: number }
@@ -43,11 +86,25 @@ export const DEMO_SORULAR: Record<TanitimZorlugu, readonly [DemoSoru]> = {
   zor: [{ metin: '18 × 7 = ?', cevap: 126 }],
 }
 
+/*
+  Turun geçici verisi. Hiçbiri cihaz deposuna yazılmıyor: ekranlar tur
+  sürerken gerçek listeler yerine bunları çiziyor, tur bitince (`temizle`,
+  `demo-temizle`) hepsi birden siliniyor. Kullanıcının turda eklediği soru,
+  görev ve deneme de burada; iki hazır örnek deneme ise alana göre her
+  çizimde yeniden kuruluyor (`demoDenemeleri`, `lib/tanitim-veri.ts`).
+*/
 export type DemoVeri = {
   demoVeri: true
   banka: BankaKaydi[]
   sonuc: { dogru: number; yanlis: number; skor: number } | null
+  soruKayitlari: GunlukKayit[]
+  gorevler: Gorev[]
+  denemeler: Deneme[]
 }
+
+type DemoListeleri = { soruKayitlari: GunlukKayit[]; gorevler: Gorev[]; denemeler: Deneme[] }
+export type DemoAlani = keyof DemoListeleri
+type Guncelleyici<T> = T[] | ((onceki: T[]) => T[])
 
 export type TanitimDurumu = { aktifTur: TanitimTuru | null; aktifAdim: number | null; demo: DemoVeri }
 export type TanitimEylemi = (
@@ -55,10 +112,12 @@ export type TanitimEylemi = (
   | { tur: 'ileri' | 'geri' | 'temizle' | 'demo-temizle' }
   | { tur: 'hedefe-dokun'; hedef: string }
   | { tur: 'oyun-bitti'; dogru: number; yanlis: number }
+  | { tur: 'kayit-eklendi'; kayit: TanitimKaydi }
+  | { [A in DemoAlani]: { tur: 'demo-veri'; alan: A; guncelle: Guncelleyici<DemoListeleri[A][number]> } }[DemoAlani]
 ) & { beklenenAdim?: number | null; beklenenTur?: TanitimTuru | null }
 
 export function demoVerileriTemizle(): TanitimDurumu {
-  return { aktifTur: null, aktifAdim: null, demo: { demoVeri: true, banka: [], sonuc: null } }
+  return { aktifTur: null, aktifAdim: null, demo: { demoVeri: true, banka: [], sonuc: null, soruKayitlari: [], gorevler: [], denemeler: [] } }
 }
 
 function demoBankasiKur(): BankaKaydi[] {
@@ -70,9 +129,32 @@ function demoBankasiKur(): BankaKaydi[] {
   ].map((soru, sira) => ({ id: `tanitim-demo-${sira}`, soru: { oyun: 'islem', ...soru }, kacKez: 1, eklenme: '2026-01-01', sonYanlis: '2026-01-01' }))
 }
 
+const sira = (kimlik: string) => TANITIM_ADIMLARI.findIndex((adim) => adim.kimlik === kimlik)
+
+/*
+  Geri, bazı adımlarda bir önceki adıma değil anlamlı bir başlangıca döner:
+  kaydedildi adımından geri gidince form kapalı ve yeniden açılabilir hâlde
+  ("ekle" adımı) bulunuyor; yoksa kapalı bir forma işaret eden adıma düşülürdü.
+*/
+const GERI_HEDEFI: Record<string, string> = {
+  'soru-kaydedildi': 'soru-ekle',
+  'gorev-kaydedildi': 'gorev-ekle',
+  'istatistik-ac': 'deneme-liste',
+}
+/** Deneme formunun Vazgeç'i: form kapanıp "Deneme ekle" adımına dönülüyor. */
+export const DENEME_VAZGEC = 'deneme-vazgec'
+const DENEME_FORMU_ADIMLARI = ['deneme-okut', 'deneme-elle', 'deneme-kaydet']
+
 export function tanitimGecisi(durum: TanitimDurumu, eylem: TanitimEylemi): TanitimDurumu {
   if (eylem.tur === 'demo-temizle') return { ...durum, demo: demoVerileriTemizle().demo }
   if (eylem.tur === 'temizle') return demoVerileriTemizle()
+  // Veri değişikliği adımdan bağımsız: geçiş beklenmeden hemen işleniyor.
+  if (eylem.tur === 'demo-veri') {
+    if (durum.aktifTur !== 'ana_tur') return durum
+    const onceki = durum.demo[eylem.alan] as unknown[]
+    const yeni = typeof eylem.guncelle === 'function' ? (eylem.guncelle as (o: unknown[]) => unknown[])(onceki) : eylem.guncelle
+    return { ...durum, demo: { ...durum.demo, [eylem.alan]: yeni } }
+  }
   if (eylem.beklenenTur !== undefined && eylem.beklenenTur !== durum.aktifTur) return durum
   if (eylem.beklenenAdim !== undefined && eylem.beklenenAdim !== durum.aktifAdim) return durum
   if (eylem.tur === 'baslat') return durum.aktifAdim === null ? { ...demoVerileriTemizle(), aktifTur: eylem.turAdi ?? 'ana_tur', aktifAdim: 0 } : durum
@@ -87,7 +169,13 @@ export function tanitimGecisi(durum: TanitimDurumu, eylem: TanitimEylemi): Tanit
       yeniAdim++
       break
     case 'hedefe-dokun':
-      if (!['pomodoro-ac', 'oyunlar-ac', 'demo-ac', 'oyun-baslat', 'banka-ac'].includes(adim.kimlik) || adim.hedef !== eylem.hedef) return durum
+      if (eylem.hedef === DENEME_VAZGEC && durum.aktifTur === 'ana_tur' && DENEME_FORMU_ADIMLARI.includes(adim.kimlik)) { yeniAdim = sira('deneme-ekle'); break }
+      // Kayıt bekleyen form adımı ve demo oyunun sorusu dokunuşla geçilmiyor.
+      if (!adim.tiklamali || adim.kayit || adim.kimlik === 'soru-bir' || adim.hedef !== eylem.hedef) return durum
+      yeniAdim++
+      break
+    case 'kayit-eklendi':
+      if (adim.kayit !== eylem.kayit) return durum
       yeniAdim++
       break
     case 'oyun-bitti':
@@ -98,18 +186,34 @@ export function tanitimGecisi(durum: TanitimDurumu, eylem: TanitimEylemi): Tanit
     case 'geri': {
       if (adim.kimlik === 'soru-bir') return durum
       yeniAdim = Math.max(0, yeniAdim - 1)
+      if (durum.aktifTur === 'ana_tur' && GERI_HEDEFI[adim.kimlik]) yeniAdim = sira(GERI_HEDEFI[adim.kimlik])
       if (['sonuc', 'oyun-baslat', 'oyun-sayac'].includes(adim.kimlik)) yeniAdim = adimlar.findIndex((oge) => oge.kimlik === 'zorluk')
-      if (durum.aktifTur === 'ana_tur' && yeniAdim <= adimlar.findIndex((oge) => oge.kimlik === 'zorluk')) demo = demoVerileriTemizle().demo
+      // Yalnızca oyunun sonucu ve örnek banka sıfırlanıyor; turda eklenen
+      // soru, görev ve deneme oyuna geri dönülünce de yerinde kalıyor.
+      if (durum.aktifTur === 'ana_tur' && yeniAdim <= adimlar.findIndex((oge) => oge.kimlik === 'zorluk')) demo = { ...demo, banka: [], sonuc: null }
       break
     }
   }
   return { ...durum, aktifAdim: yeniAdim, demo }
 }
 
-export function tanitimKonumu(adim: TanitimAdimi): { sekme: Sekme; ekran: Ekran | null } {
-  if (['pomodoro-prova', 'pomodoro', 'pomodoro-kilit'].includes(adim.kimlik)) return { sekme: 'ana', ekran: 'pomodoro' }
-  if (adim.kimlik === 'banka') return { sekme: 'oyunlar', ekran: 'oyun-bankasi' }
-  return { sekme: ['demo-ac', 'zorluk', 'oyun-baslat', 'oyun-sayac', 'soru-bir', 'sonuc', 'banka-ac'].includes(adim.kimlik) ? 'oyunlar' : 'ana', ekran: null }
+export type TanitimKonumu = { sekme: Sekme; ekran: Ekran | null; denemeFormu: boolean }
+
+const ARAC_EKRANLARI: Record<string, Ekran> = {
+  'pomodoro-prova': 'pomodoro', pomodoro: 'pomodoro', 'pomodoro-kilit': 'pomodoro',
+  'soru-ekle': 'soru', 'soru-form': 'soru', 'soru-kaydedildi': 'soru',
+  'gorev-ekle': 'notlar', 'gorev-form': 'notlar', 'gorev-kaydedildi': 'notlar',
+  'deneme-liste': 'deneme', 'deneme-ekle': 'deneme', 'deneme-okut': 'deneme', 'deneme-elle': 'deneme', 'deneme-kaydet': 'deneme',
+  istatistik: 'istatistik',
+}
+const ARACLAR_SEKMESI = ['pomodoro-ac', 'soru-ac', 'gorev-ac', 'deneme-ac', 'istatistik-ac']
+
+export function tanitimKonumu(adim: TanitimAdimi): TanitimKonumu {
+  const ekran = ARAC_EKRANLARI[adim.kimlik]
+  if (ekran) return { sekme: 'daha', ekran, denemeFormu: DENEME_FORMU_ADIMLARI.includes(adim.kimlik) }
+  if (ARACLAR_SEKMESI.includes(adim.kimlik)) return { sekme: 'daha', ekran: null, denemeFormu: false }
+  if (adim.kimlik === 'banka') return { sekme: 'oyunlar', ekran: 'oyun-bankasi', denemeFormu: false }
+  return { sekme: ['demo-ac', 'zorluk', 'oyun-baslat', 'oyun-sayac', 'soru-bir', 'sonuc', 'banka-ac'].includes(adim.kimlik) ? 'oyunlar' : 'ana', ekran: null, denemeFormu: false }
 }
 
 export function demoSonucu(demo: DemoVeri) {
