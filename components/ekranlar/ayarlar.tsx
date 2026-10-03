@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import { Alan, Anahtar, Buton, Cip, Etiket, Not, Onay } from '@/components/ui'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
+import { TaniPaneli, useTaniKapisi } from '@/components/tanitim/tani-paneli'
 import { SINIF_SECENEKLERI, egitimYili, mezunMu, sinifAdi } from '@/lib/hesap'
 import type { Gorev } from '@/lib/yapilacaklar'
 import type { AylikOzetArsivi } from '@/lib/ozet'
@@ -160,6 +161,7 @@ export function AyarlarEkrani({
    * kaydırıyordu. Artık satır ne seçili olduğunu sağında yazıyor, çipler ancak
    * satıra dokununca açılıyor.
    */
+  const tani = useTaniKapisi()
   const [acikAyar, setAcikAyar] = useState<AyarId | null>(null)
   /**
    * Ad alanının taslağı: kayda geçmemiş yazım.
@@ -293,7 +295,9 @@ export function AyarlarEkrani({
       <header className="flex items-start gap-3 px-0.5 pt-1">
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
-          <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">Ayarlar</h1>
+          {/* Başlığa beş dokunuş tanıtım rehberinin gizli tanı kaydını açar (geliştirici aracı). */}
+          <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight" onClick={tani.dokun}>Ayarlar</h1>
+          {tani.acik && <TaniPaneli onKapat={tani.kapat} />}
         </div>
 
         {/* Simge başlığın içinden çıkıp sağ üste taşındı (Araçlar'daki 🧰 ile

@@ -5,6 +5,7 @@ import { createPortal, flushSync } from 'react-dom'
 import { Buton } from '@/components/ui'
 import { TANITIM_EGRISI, egriDegeri } from '@/lib/tanitim-animasyonu'
 import { balonGenisligi, balonKonumu, durgunlukSayaci, kaydirmaKis, kutuFarki, type Kutu } from '@/lib/tanitim-yerlesim'
+import { taniAcikMi, taniKaydet, taniKutu } from '@/lib/tanitim-tani'
 import { useTanitim } from './tanitim-baglami'
 
 /*
@@ -196,6 +197,7 @@ export function SpotIsigi() {
     */
     let faz: 'bekle' | 'kaydir' | 'izle' = 'bekle'
     const adimBasi = performance.now()
+    taniKaydet('adim', { adim: adim.kimlik, hedefAdi: adim.hedef })
     let beklemeBasi = adimBasi
     // Süreler kare değil milisaniye: 120 Hz'de ve ağır karelerde aynı bekleme (bkz. `durgunlukSayaci`).
     const durgun = durgunlukSayaci(1, 50)
@@ -228,6 +230,11 @@ export function SpotIsigi() {
         && kutuFarki(onceki.ekran, yeni.ekran) < 0.5 && JSON.stringify(onceki.ekHedefler) === JSON.stringify(yeni.ekHedefler)) return
       sonRef.current = yeni
       setYerlesim(yeni)
+      if (taniAcikMi()) {
+        const kutu = (k: Kutu | null) => (k ? [k.sol, k.ust, k.genislik, k.yukseklik].map((v) => Math.round(v * 10) / 10) : null)
+        taniKaydet('ciz', { adim: adim.kimlik, faz, spot: kutu(yeni.hedef), balon: kutu(yeni.balon), ekran: kutu(yeni.ekran), anlik: [yeni.spotAnlik, yeni.balonAnlik], sakli: !!yeni.sakli, belir: yeni.belir ?? 0,
+          hedefEkran: taniKutu(hedef?.getBoundingClientRect()), katman: taniKutu(katmanRef.current?.getBoundingClientRect()) })
+      }
     }
     // Bundan sonraki bütün ölçüler katmanın CSS pikselinde (bkz. `katmanDonusumu`).
     const ortam = () => {
@@ -379,6 +386,7 @@ export function SpotIsigi() {
       else ciz({ ...yeni, spotAnlik: hareketsiz || !onceki || !onceki.hedef || !gorunurRef.current, balonAnlik: hareketsiz || !onceki || !gorunurRef.current })
       faz = kaydirmalar.length ? 'kaydir' : 'izle'
       izleDurgun.sifirla()
+      if (taniAcikMi()) taniKaydet('planla', { adim: adim.kimlik, yeniEkran, k: o.k, ustSinir: o.ustSinir, altSinir: o.altSinir, istenen, kaydirma: kaydirmalar.map(({ bas: b, son: z }) => [b.oge ? 'kap' : 'pencere', b.y, z.y]), bekleme: Math.round(performance.now() - adimBasi) })
     }
     /*
       Ekran değişti mi: sayfa kutusu (`SayfaGecisi`, `data-geri-sayfa`) her
@@ -424,6 +432,8 @@ export function SpotIsigi() {
       // Hedef var mı (ekranın dışında da olabilir; onu kaydırarak getiriyoruz)
       // ve görünür kısmı (spotun çizileceği kutu) ayrı sorular.
       const ham = sonHalindeOlc(hedef, () => (hedef ? yereleCevir(hedef.getBoundingClientRect(), o.donusum) : null))
+      // Tanı: adımın ilk 1,5 saniyesi kare kare (yalnızca tanı modu açıkken).
+      if (taniAcikMi() && simdi - adimBasi < 1500) taniKaydet('kare', { adim: adim.kimlik, faz, hedef: taniKutu(ham), katman: taniKutu(katmanRef.current?.getBoundingClientRect()), ekranUst: Math.round(o.ekran.ust * 10) / 10 })
       if (!ham || ham.width <= 0 || ham.height <= 0) {
         if (eksikBaslangici === null) eksikBaslangici = simdi
         if (simdi - adimBasi >= KAYIP_BEKLEMESI) {
