@@ -10,7 +10,7 @@
   `tanitimKayitlariniAyikla` onları ayırt edip yalnızca onları siliyor.
 */
 import { gunKaydir } from './utils'
-import type { Deneme, DersSonuc, PuanTuru } from './types'
+import type { Deneme, DersSonuc, PuanTuru, Sablon } from './types'
 
 export const TANITIM_ONEKI = 'tanitim-'
 
@@ -68,4 +68,60 @@ export function demoDenemeleri(sinif: number, puanTuru: PuanTuru | null, bugunIs
     tarih: gunKaydir(bugunIso, sira === 0 ? -14 : -7),
     sonuclar: sonuclar(ORNEK_SONUCLAR[sablonId][ilk === ikinci ? sira : 0]),
   }))
+}
+
+/*
+  Turun "Deneme ekle" formuna kendiliğinden yazılan sonuçlar. Kullanıcıya
+  deneme elle girdirilmiyor: tabloyu doldurmak için açılan klavye ve balon
+  dersleri kapatıyordu. Bilinen şablonlarda ikinci örnekten birkaç net
+  yukarıda (İstatistik'te "en çok ilerleyen dersler" dolsun); öğrencinin
+  kendi şablonunda soru sayısına oranla ortalama bir aday. Hiçbir satır
+  soru sayısını aşmıyor.
+*/
+const TUR_FORMU_SONUCLARI: Record<string, Satir[]> = {
+  tyt: [['turkce', 31, 6], ['tarih', 3, 1], ['cografya', 4, 1], ['felsefe', 3, 1], ['din', 4, 1], ['matematik', 21, 8], ['fizik', 4, 2], ['kimya', 4, 2], ['biyoloji', 3, 1]],
+  'ayt-say': [['matematik', 18, 7], ['fizik', 6, 4], ['kimya', 6, 3], ['biyoloji', 6, 3]],
+  'ayt-ea': [['matematik', 17, 8], ['edebiyat', 14, 5], ['tarih1', 6, 2], ['cografya1', 4, 1]],
+  'ayt-soz': [['edebiyat', 15, 5], ['tarih1', 6, 2], ['cografya1', 4, 1], ['tarih2', 6, 3], ['cografya2', 6, 2], ['felsefe', 7, 3], ['din', 4, 1]],
+  ydt: [['ydt', 50, 13]],
+  okul: [['edebiyat', 18, 5], ['matematik', 15, 7], ['tarih', 7, 2], ['cografya', 7, 2], ['fizik', 5, 2], ['kimya', 5, 2], ['biyoloji', 5, 2], ['din', 4, 1]],
+}
+
+export function ornekDenemeSonucu(sablon: Sablon): DersSonuc[] {
+  const hazir = new Map((TUR_FORMU_SONUCLARI[sablon.id] ?? []).map(([dersId, dogru, yanlis]) => [dersId, [dogru, yanlis] as const]))
+  return sablon.dersler.map((ders) => {
+    const [dogru, yanlis] = hazir.get(ders.id) ?? [Math.round(ders.soruSayisi * 0.55), Math.round(ders.soruSayisi * 0.15)]
+    const d = Math.min(dogru, ders.soruSayisi)
+    return { dersId: ders.id, dogru: d, yanlis: Math.min(yanlis, ders.soruSayisi - d) }
+  })
+}
+
+/*
+  Turun İstatistik ekranına giden denemeler. İstatistik bir türü ancak o
+  türden iki deneme varken açıyor. Turdaki deneme formu artık normal akışla
+  aynı şablonları ve aynı varsayılanı sunuyor (Okut aynı kâğıdı turda da
+  okusun diye); kullanıcı denemesini örneklerin türünden başka bir türde
+  (ör. Seviye Tespit) kaydedebiliyor. O türün eşi yoksa, kullanıcının
+  denemesinden birkaç net geride, bir hafta önceye tarihli geçici bir örnek
+  ekleniyor; o da `tanitim-` önekli ve tur bitince siliniyor.
+*/
+export function turIstatistikDenemeleri(ornekler: readonly Deneme[], eklenenler: readonly Deneme[], sablonlar: readonly Sablon[]): Deneme[] {
+  const liste = [...ornekler, ...eklenenler]
+  for (const deneme of eklenenler) {
+    if (liste.filter((d) => d.sablonId === deneme.sablonId).length >= 2) continue
+    const sablon = sablonlar.find((s) => s.id === deneme.sablonId)
+    if (!sablon) continue
+    liste.unshift({
+      id: `${TANITIM_ONEKI}deneme-onceki-${sablon.id}`,
+      sablonId: sablon.id,
+      ad: `${sablon.ad} örnek`,
+      tarih: gunKaydir(deneme.tarih, -7),
+      sonuclar: sablon.dersler.map((ders) => {
+        const sonuc = deneme.sonuclar.find((s) => s.dersId === ders.id) ?? { dogru: 0, yanlis: 0 }
+        const dogru = Math.max(0, sonuc.dogru - Math.max(1, Math.round(ders.soruSayisi * 0.08)))
+        return { dersId: ders.id, dogru, yanlis: Math.min(ders.soruSayisi - dogru, sonuc.yanlis + (sonuc.dogru > 0 ? 1 : 0)) }
+      }),
+    })
+  }
+  return liste
 }

@@ -137,9 +137,9 @@ export function IstatistikEkrani({
 
       {/* Her deneme türü kendi içinde hesaplanır: TYT ile seviye tespit sınavının
           soru sayısı farklı olduğu için netleri aynı ortalamaya girmez. */}
-      {/* Başlangıç turu tür seçimini ve son net kartını birlikte aydınlatıyor. */}
-      <div data-tanitim="istatistik-ozet">
-      <div className="mb-3 flex gap-2">
+      {/* Başlangıç turu ekranın her bölümünü ayrı adımda aydınlatıyor (`data-tanitim`). */}
+      <div>
+      <div data-tanitim="istatistik-turler" className="mb-3 flex gap-2">
         {secilebilir.map((s) => {
           const aktif = s.id === sablon.id
           return (
@@ -162,7 +162,7 @@ export function IstatistikEkrani({
       </div>
 
       {/* Son deneme neti + son dört denemenin sütunları */}
-      <div className="golge-kart mb-3 rounded-2xl bg-card px-4 pt-4 pb-3.5">
+      <div data-tanitim="istatistik-son-net" className="golge-kart mb-3 rounded-2xl bg-card px-4 pt-4 pb-3.5">
         <div className="flex items-end justify-between gap-3">
           <div>
             <p className="text-xs font-bold text-muted-foreground">Son deneme neti</p>
@@ -208,7 +208,7 @@ export function IstatistikEkrani({
       </div>
 
       {/* En çok ilerleyen dersler */}
-      <div className="golge-kart rounded-2xl bg-card pt-1.5 pb-1">
+      <div data-tanitim="istatistik-ilerleyen" className="golge-kart rounded-2xl bg-card pt-1.5 pb-1">
         <div className="flex items-center justify-between gap-2.5 px-4 pt-2.5 pb-2">
           <p className="whitespace-nowrap text-base font-extrabold tracking-[-0.01em]">
             En çok ilerleyen dersler
@@ -260,7 +260,7 @@ export function IstatistikEkrani({
         )}
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-2">
+      <div data-tanitim="istatistik-kutular" className="mt-3 grid grid-cols-2 gap-2">
         <OzetKutusu etiket="En güçlü ders" deger={ozet.enGucluDers ?? '—'} ton="iyi" />
         <OzetKutusu etiket="En kötü ders" deger={ozet.enZayifDers ?? '—'} ton="kotu" />
         <OzetKutusu etiket="En yüksek net" deger={netYaz(ozet.enYuksek)} rakam />
@@ -268,6 +268,7 @@ export function IstatistikEkrani({
       </div>
 
       <button
+        data-tanitim="istatistik-karsilastir"
         type="button"
         onClick={karsilastirmaAc}
         disabled={sablonDenemeleri.length < 2}

@@ -97,7 +97,7 @@ import {
 } from '@/lib/ozet'
 import { RozetBildirimi } from '@/components/rozet-bildirimi'
 import { DENEME_VAZGEC, tanitimKonumu } from '@/lib/tanitim'
-import { demoDenemeleri, demoSablonIdleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi } from '@/lib/tanitim-veri'
+import { demoDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi, turIstatistikDenemeleri } from '@/lib/tanitim-veri'
 import { TanitimSaglayici, useTanitim } from '@/components/tanitim/tanitim-baglami'
 import { SpotIsigi } from '@/components/tanitim/spot-isigi'
 import { DemoOyun, DemoOyunKarti } from '@/components/tanitim/demo-oyun'
@@ -380,12 +380,15 @@ function RabiUygulamasi() {
     kullanıcının turda eklediğini gösteriyor; gerçek denemeler o sırada
     görünmüyor ve hiçbirine yazılmıyor.
   */
-  const turSablonIdleri = useMemo(() => demoSablonIdleri(ayarlar.buYilSinif, ayarlar.puanTuru), [ayarlar.buYilSinif, ayarlar.puanTuru])
   const turDenemeleri = useMemo(
     () => (anaTurda ? [...demoDenemeleri(ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso), ...tanitim.demo.denemeler] : null),
     [anaTurda, ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso, tanitim.demo.denemeler],
   )
   const gorunenDenemeler = turDenemeleri ?? denemeler
+  const turIstatistigi = useMemo(
+    () => (anaTurda ? turIstatistikDenemeleri(demoDenemeleri(ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso), tanitim.demo.denemeler, sablonlar) : null),
+    [anaTurda, ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso, tanitim.demo.denemeler, sablonlar],
+  )
 
   /** Soru Takibi ve Yapılacaklar'ın ekleme sayfası turda turun adımına bağlı. */
   const turFormu = (formAdimi: string, ekleHedefi: string) => ({
@@ -905,10 +908,14 @@ function RabiUygulamasi() {
   ) : denemeFormu !== null ? (
     <div className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))] tablet:max-w-[40rem] tablet:px-8">
       <YeniDenemeEkrani
-        /* Turda yalnızca örnek denemelerin türleri: kullanıcının denemesi
-           onlardan biriyle aynı türde olsun ki İstatistik karşılaştırabilsin. */
-        sablonlar={anaTurda ? sablonlar.filter((s) => turSablonIdleri.includes(s.id)) : sablonlar}
-        varsayilanSablonId={anaTurda ? 'tyt' : ayarlar.varsayilanSablonId}
+        /* Turda da normal akışla aynı şablonlar ve aynı varsayılan. Bir süre
+           yalnızca örneklerin türleri (TYT + alan) sunuluyor, TYT seçili
+           geliyordu: Okut kâğıdı seçili şablonun derslerine ve soru
+           sayılarına göre okuduğu için Seviye Tespit kâğıdı turda hiç
+           okunmuyor, tur dışında okunuyordu. İstatistik'in eşleşmesi artık
+           `turIstatistikDenemeleri`nde. */
+        sablonlar={sablonlar}
+        varsayilanSablonId={ayarlar.varsayilanSablonId}
         sinif={ayarlar.buYilSinif}
         puanTuru={ayarlar.puanTuru}
         duzenlenen={denemeFormu.duzenlenen}
@@ -916,7 +923,7 @@ function RabiUygulamasi() {
         setYanlisSorular={setYanlisSorular}
         onKaydet={denemeKaydet}
         onVazgec={() => (anaTurda ? tanitim.gonder({ tur: 'hedefe-dokun', hedef: DENEME_VAZGEC }) : setDenemeFormu(null))}
-        tanitim={anaTurda ? { onOkutAcik: tanitim.setRehberGizli } : undefined}
+        tanitim={anaTurda ? { onOkutAcik: tanitim.setRehberGizli, ornekDoldur: tanitim.adim?.kimlik === 'deneme-kaydet' } : undefined}
       />
     </div>
   ) : (
@@ -1082,9 +1089,9 @@ function RabiUygulamasi() {
             )}
             {ekran === 'istatistik' && (
               <IstatistikEkrani
-                denemeler={gorunenDenemeler}
+                denemeler={turIstatistigi ?? gorunenDenemeler}
                 sablonlar={sablonlar}
-                varsayilanSablonId={anaTurda ? 'tyt' : ayarlar.varsayilanSablonId}
+                varsayilanSablonId={anaTurda ? (tanitim.demo.denemeler.at(-1)?.sablonId ?? 'tyt') : ayarlar.varsayilanSablonId}
               />
             )}
             {ekran === 'yasal' && <YasalEkrani />}

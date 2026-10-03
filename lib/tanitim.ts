@@ -36,29 +36,32 @@ export type TanitimAdimi = {
 }
 
 export const TANITIM_ADIMLARI: readonly TanitimAdimi[] = [
-  { kimlik: 'sinav-hedefi', hedef: 'sinav-hedefi', baslik: 'Hedefin hep gözünün önünde', aciklama: 'Sınava kalan süreyi, hedeflediğin bölüm ve üniversiteyi bu karttan izlersin. Hedef sıralaman ile güncel tahminin arasındaki fark, ne kadar yaklaştığını gösterir.', tiklamali: false },
-  { kimlik: 'hedef', hedef: 'gunluk-hedef', baslik: 'Her gün küçük bir adım', aciklama: 'Halka, bugün çözdüğün soruların günlük hedefine ne kadar yaklaştığını gösterir. Altındaki yedi günlük şeritte bugün ortada durur; hedefine ulaştığın günler işaretlenir.', tiklamali: false },
-  { kimlik: 'araclar-ac', hedef: 'araclar-ac', baslik: 'Çalışma araçların bir dokunuş uzakta', aciklama: 'Alt menüdeki Araçlar’a dokun. Pomodoro, Soru Takibi, Yapılacaklar ve Denemeler orada.', tabletAciklama: 'Sağdaki menüde Araçlar’a dokun. Pomodoro, Soru Takibi, Yapılacaklar ve Denemeler orada.', tiklamali: true },
+  { kimlik: 'sinav-hedefi', hedef: 'sinav-hedefi', baslik: 'Hedefin hep gözünün önünde', aciklama: 'Sınava kalan süreyi, hedeflediğin bölüm ve üniversiteyi bu karttan izleyebilirsin. Hedefine ne kadar yaklaştığını gösterir.', tiklamali: false },
+  { kimlik: 'hedef', hedef: 'gunluk-hedef', baslik: 'Her gün küçük bir adım at', aciklama: 'Her gün çözdüğün soru sayısını ve günlük soru hedefine ne kadar yakın olduğunu görürsün.', tiklamali: false },
+  { kimlik: 'araclar-ac', hedef: 'araclar-ac', baslik: 'Çalışma araçların bir dokunuş uzakta', aciklama: 'Alt menüde Araçlar’a dokun.', tabletAciklama: 'Sağdaki menüde Araçlar’a dokun.', tiklamali: true },
   { kimlik: 'pomodoro-ac', hedef: 'arac-pomodoro', baslik: 'Birlikte odaklanalım', aciklama: 'Önce odaklanma aracımıza bakalım: Pomodoro’ya dokun.', tiklamali: true },
-  { kimlik: 'pomodoro-prova', hedef: 'pomodoro-prova', baslik: 'Pomodoro veya deneme provası', aciklama: 'Çalışma ve mola döngüsü için Pomodoro’yu, sınav süresini deneyimlemek için Deneme provası’nı seçebilirsin. Prova kipinde TYT, AYT veya YDT kitapçığını seçersin.', tiklamali: false },
-  { kimlik: 'pomodoro', hedef: 'pomodoro-calisma', baslik: 'Çalışma ortamını kendine göre kur', aciklama: 'Sayaç çalışma ve molayı gösterir. Dersi seçebilir, süreleri ayarlayabilir, müzik açabilir ve çalışırken ekranı açık tutabilirsin. Üç blok birlikte çalışma ortamını oluşturur.', tiklamali: false },
-  { kimlik: 'pomodoro-kilit', hedef: 'pomodoro-kilit', baslik: 'Dikkatini odak kilidiyle koru', aciklama: 'Odak korumasıyla çalışma sırasında dikkatini dağıtan uygulamaları engelleyebilir ve bildirimleri susturabilirsin. Bu özellik desteklenen Android cihazlarda, verdiğin izinlerle çalışır. Şimdi Araçlar’a dönüp Soru Takibi’ne geçelim.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
+  { kimlik: 'pomodoro-prova', hedef: 'pomodoro-prova', baslik: 'Pomodoro veya deneme provası', aciklama: 'Çalışma ve mola döngüsü için Pomodoro’yu, sınav süresini deneyimlemek için Deneme provası’nı seçebilirsin.', tiklamali: false },
+  { kimlik: 'pomodoro', hedef: 'pomodoro-calisma', baslik: 'Çalışma ortamını kendine göre kur', aciklama: 'Dersi seçebilir, süreleri ayarlayabilir, müzik açabilir ve çalışırken ekranı açık tutabilirsin. Üç blok birlikte çalışma ortamını oluşturur.', tiklamali: false },
+  { kimlik: 'pomodoro-kilit', hedef: 'pomodoro-kilit', baslik: 'Dikkatini odak kilidiyle koru', aciklama: 'Odak korumasıyla çalışma sırasında dikkatini dağıtan uygulamaları engelleyebilir ve bildirimleri susturabilirsin. Bu özellik izin ile çalışır. Şimdi Araçlar’a dönüp Soru Takibi’ne geçelim.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
   { kimlik: 'soru-ac', hedef: 'arac-soru', baslik: 'Çözdüklerini kaydet', aciklama: 'Soru Takibi’nde gün gün çözdüğün soruları ders bazında kaydedersin. Soru Takibi’ne dokun.', tiklamali: true },
   { kimlik: 'soru-ekle', hedef: 'soru-ekle', baslik: 'İlk kaydını birlikte girelim', aciklama: 'Soru ekle’ye dokun. Bu kayıt yalnızca tanıtım için; tur bitince silinecek.', tiklamali: true },
   { kimlik: 'soru-form', hedef: 'soru-formu', kayit: 'soru', kisa: true, baslik: 'Ders ve sayıları gir', aciklama: 'Bir ders seç, toplam soruyu ve doğru, yanlış sayını yaz. Boşları Rabi hesaplar.', ipucu: 'Kaydet’e dokununca devam ederiz', tiklamali: true },
-  { kimlik: 'soru-kaydedildi', hedef: 'soru-listesi', baslik: 'Kaydın günlük hedefe işlendi', aciklama: 'Girdiğin sorular günün halkasını doldurur; gün içinde aynı derse yeniden eklersen sayılar toplanır. Bu örnek kayıt tur bitince silinecek.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
+  { kimlik: 'soru-kaydedildi', hedef: 'soru-listesi', baslik: 'Kaydın günlük hedefe işlendi', aciklama: 'Bu örnek tur bitince silinecek.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
   { kimlik: 'gorev-ac', hedef: 'arac-notlar', baslik: 'Gününü planla', aciklama: 'Yapılacaklar’da gününü sabah, öğle ve akşam diye bölüp görev yazarsın. Yapılacaklar’a dokun.', tiklamali: true },
-  { kimlik: 'gorev-ekle', hedef: 'gorev-dilimleri', baslik: 'Bir görev ekle', aciklama: 'Sabah, öğle ya da akşamın + düğmesine dokun. Bu görev de tur bitince silinecek.', tiklamali: true },
+  { kimlik: 'gorev-ekle', hedef: 'gorev-dilimleri', baslik: 'Bir görev ekle', aciklama: 'Sabah, öğle ya da akşamın + düğmesine dokun. Tur bitince eklediklerin silinecek.', tiklamali: true },
   { kimlik: 'gorev-form', hedef: 'gorev-formu', kayit: 'gorev', kisa: true, baslik: 'Görevini yaz', aciklama: 'Ne yapacağını yaz, kategori ve renk seç. Süre isteğe bağlı.', ipucu: 'Kaydet’e dokununca devam ederiz', tiklamali: true },
   { kimlik: 'gorev-kaydedildi', hedef: 'gorev-dilimleri', baslik: 'Görevin listede', aciklama: 'Bitirince işaretler, yıldızla öne alır, gerekirse ertesi güne ertelersin. Bu örnek görev tur bitince silinecek.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
   { kimlik: 'deneme-ac', hedef: 'arac-deneme', baslik: 'Denemelerini kaydet', aciklama: 'Denemeler’e dokun. Nasıl göründüğünü göstermek için iki örnek deneme hazırladık.', tiklamali: true },
-  { kimlik: 'deneme-liste', hedef: 'deneme-listesi', baslik: 'Örnek denemeler', aciklama: 'Bu iki deneme senin alanına göre seçildi. Her kartta denemenin türünü, tarihini ve netini görürsün; karta dokununca ders ders döküm açılır. Tur bitince silinecekler.', tiklamali: false },
-  { kimlik: 'deneme-ekle', hedef: 'deneme-ekle', baslik: 'Şimdi sıra sende', aciklama: 'Deneme ekle’ye dokun ve bir sonuç gir. Bu deneme de tanıtıma ait; tur bitince silinecek.', tiklamali: true },
-  { kimlik: 'deneme-okut', hedef: 'deneme-okut', etkilesimli: true, baslik: 'Fotoğraftan okut', aciklama: 'Sonuç kâğıdının fotoğrafını verirsen Okut doğru ve yanlışları forma kendisi yazar. Denemek istersen Okut’a dokun; istemezsen İleri ile elle girelim.', tiklamali: false },
-  { kimlik: 'deneme-elle', hedef: 'deneme-elle', etkilesimli: true, kisa: true, baslik: 'Ya da elle gir', aciklama: 'Birkaç dersin doğru ve yanlışını yaz; netin kendiliğinden hesaplanır.', tiklamali: false },
-  { kimlik: 'deneme-kaydet', hedef: 'deneme-kaydet', kayit: 'deneme', kisa: true, baslik: 'Denemeni kaydet', aciklama: 'Kaydet’e dokun. Sonuç girmediysen Geri ile tabloya dön.', ipucu: 'Kaydet’e dokun', tiklamali: true },
+  { kimlik: 'deneme-liste', hedef: 'deneme-listesi', baslik: 'Örnek denemeler', aciklama: 'Her kartta denemenin türünü, tarihini ve netini görürsün; karta dokunursan ayrıntılı rapor açılır. Tur bitince silinecekler.', tiklamali: false },
+  { kimlik: 'deneme-ekle', hedef: 'deneme-ekle', baslik: 'Şimdi sıra sende', aciklama: 'Deneme ekle’ye dokun. Bu deneme de tanıtıma ait; tur bitince silinecek.', tiklamali: true },
+  { kimlik: 'deneme-okut', hedef: 'deneme-okut', etkilesimli: true, baslik: 'Fotoğraftan okut', aciklama: 'Derslerin doğru ve yanlış sayılarını bir kâğıda satır satır yazdıysan fotoğrafını çek, Rabi okuyup forma yazsın. Denemek istersen Okut’a dokun; İleri’ye dokunursan örnek sonuçlar forma kendiliğinden yazılır.', tiklamali: false },
+  { kimlik: 'deneme-kaydet', hedef: 'deneme-kaydet', kayit: 'deneme', kisa: true, baslik: 'Denemeni kaydet', aciklama: 'Sonuçlar forma yazıldı ve netin hesaplandı. Kaydet’e dokun.', ipucu: 'Kaydet’e dokun', tiklamali: true },
   { kimlik: 'istatistik-ac', hedef: 'arac-istatistik', baslik: 'Gidişatını izle', aciklama: 'Denemen kaydedildi. Şimdi İstatistik’e dokun; denemelerin orada karşılaştırılır.', tiklamali: true },
-  { kimlik: 'istatistik', hedef: 'istatistik-ozet', baslik: 'Netlerin tek bakışta', aciklama: 'Aynı türdeki denemeler karşılaştırılır: son netin, bir öncekiyle farkı ve ortalaman. Altta en çok ilerlediğin dersler sıralanır. Örnek denemeler ve seninki tur bitince silinecek.', ileriEtiketi: 'Oyunlara geç', tiklamali: false },
+  { kimlik: 'istatistik-tur', hedef: 'istatistik-turler', baslik: 'Deneme türünü seç', aciklama: 'Her tür kendi içinde hesaplanır; TYT ile AYT netleri birbirine karışmaz. Bir türün istatistiği o türden iki deneme olunca açılır.', tiklamali: false },
+  { kimlik: 'istatistik-son', hedef: 'istatistik-son-net', baslik: 'Son netin ve değişimi', aciklama: 'Son denemenin netini ve bir öncekine göre farkını görürsün. Altında önceki netin ve ortalaman, sağda son dört denemenin netleri yan yana.', tiklamali: false },
+  { kimlik: 'istatistik-ilerleyen', hedef: 'istatistik-ilerleyen', baslik: 'En çok ilerlediğin dersler', aciklama: 'Son iki deneme arasında neti en çok artan dersler sıralanır. Daha fazla ile bütün derslerin değişimini görürsün.', tiklamali: false },
+  { kimlik: 'istatistik-kutular', hedef: 'istatistik-kutular', baslik: 'Güçlü ve zayıf yanların', aciklama: 'En güçlü ve en kötü dersin, bu türdeki en yüksek ve en düşük netin burada. Dersler soru sayısına oranla kıyaslanır.', tiklamali: false },
+  { kimlik: 'istatistik-karsilastir', hedef: 'istatistik-karsilastir', baslik: 'İki denemeyi karşılaştır', aciklama: 'İki deneme seçip hangi derste kazandığını, hangisinde kaybettiğini görürsün. Örnek denemeler ve seninki tur bitince silinecek.', ileriEtiketi: 'Oyunlara geç', tiklamali: false },
   { kimlik: 'oyunlar-ac', hedef: 'oyunlar-ac', baslik: 'Bilgini oyunla pekiştir', aciklama: 'Alt menüdeki Oyunlar’a dokun. Birlikte bir soruluk kısa bir demo oynayacağız.', tiklamali: true },
   { kimlik: 'demo-ac', hedef: 'demo-oyun', baslik: 'Kısa bir deneme', aciklama: 'Tanıtım oyunu kartına dokun. Bu oyundaki cevaplar ve skor yalnızca tanıtımda kalacak.', tiklamali: true },
   { kimlik: 'zorluk', hedef: 'demo-zorluk', etkilesimli: true, baslik: 'Gerçek oyunun hazırlık ekranı', aciklama: 'Tur modunu ve başlangıç zorluğunu seç. Bu seçimler tanıtımda kalır; demo süresi 10 dakikadır.', tiklamali: false },
@@ -67,7 +70,10 @@ export const TANITIM_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'soru-bir', hedef: 'demo-soru', ekHedefler: ['demo-islem'], baslik: 'Bir işlemi dene', aciklama: 'Sonucu tuş takımından yazıp onayla; istersen pas geç. Bu tuş takımı ve geri bildirimler normal oyunlarla aynı. Bir cevaptan sonra sonucu göreceksin.', tiklamali: true },
   { kimlik: 'sonuc', hedef: 'demo-sonuc', baslik: 'Sonucunu hemen gör', aciklama: 'Doğru ve yanlışlarını burada görürsün. Bankanın nasıl çalıştığını göstermek için üç örnek demo soru hazırladık; senin cevaplarından bağımsızlar.', tiklamali: false },
   { kimlik: 'banka-ac', hedef: 'oyun-bankasi-ac', baslik: 'Yanlışlarına yeniden dön', aciklama: 'Üç geçici örnek hazırladık. Oyunlar menüsündeki Oyun Bankası kartına dokunarak nerede toplandıklarını görelim.', tiklamali: true },
-  { kimlik: 'banka', hedef: 'demo-banka', baslik: 'Yanlışlarını öğrenmeye dönüştür', aciklama: 'Oyunlarda bilemediğin sorular Oyun Bankası’nda toplanır. Genel testte tekrar çözüp doğru bildiklerini bankadan çıkarabilirsin. Buradaki üç örnek ve demo skorun tur bitince silinecek.', tiklamali: false },
+  { kimlik: 'banka', hedef: 'demo-banka', baslik: 'Yanlışların burada toplanır', aciklama: 'Mini oyunlarda bilemediğin sorular Oyun Bankası’na kendiliğinden düşer. Buradaki üç soru tanıtım için hazırlanmış örnekler.', tiklamali: false },
+  { kimlik: 'banka-liste', hedef: 'banka-liste', baslik: 'Soruların listesi', aciklama: 'Her kartta soru, doğru cevabı ve kaç kez yanlış yaptığın yazar. Üstteki çiplerle oyuna göre süzebilirsin.', tiklamali: false },
+  { kimlik: 'banka-test', hedef: 'banka-genel-test', baslik: 'Genel testle yeniden çöz', aciklama: 'Genel test bankadaki soruları karışık sırayla, cevabı göstermeden yeniden sorar. Doğru bildiğin soru bankadan kendiliğinden kalkar.', tiklamali: false },
+  { kimlik: 'banka-ogrendim', hedef: 'banka-ogrendim', baslik: 'Öğrendiysen kaldır', aciklama: 'Bir soruyu öğrendiğinden eminsen Öğrendim’e dokun; soru bankadan kalkar. Buradaki üç örnek ve demo skorun tur bitince silinecek.', tiklamali: false },
 ]
 
 export const DENEME_ADIMLARI: readonly TanitimAdimi[] = [
@@ -143,7 +149,7 @@ const GERI_HEDEFI: Record<string, string> = {
 }
 /** Deneme formunun Vazgeç'i: form kapanıp "Deneme ekle" adımına dönülüyor. */
 export const DENEME_VAZGEC = 'deneme-vazgec'
-const DENEME_FORMU_ADIMLARI = ['deneme-okut', 'deneme-elle', 'deneme-kaydet']
+const DENEME_FORMU_ADIMLARI = ['deneme-okut', 'deneme-kaydet']
 
 export function tanitimGecisi(durum: TanitimDurumu, eylem: TanitimEylemi): TanitimDurumu {
   if (eylem.tur === 'demo-temizle') return { ...durum, demo: demoVerileriTemizle().demo }
@@ -203,16 +209,17 @@ const ARAC_EKRANLARI: Record<string, Ekran> = {
   'pomodoro-prova': 'pomodoro', pomodoro: 'pomodoro', 'pomodoro-kilit': 'pomodoro',
   'soru-ekle': 'soru', 'soru-form': 'soru', 'soru-kaydedildi': 'soru',
   'gorev-ekle': 'notlar', 'gorev-form': 'notlar', 'gorev-kaydedildi': 'notlar',
-  'deneme-liste': 'deneme', 'deneme-ekle': 'deneme', 'deneme-okut': 'deneme', 'deneme-elle': 'deneme', 'deneme-kaydet': 'deneme',
-  istatistik: 'istatistik',
+  'deneme-liste': 'deneme', 'deneme-ekle': 'deneme', 'deneme-okut': 'deneme', 'deneme-kaydet': 'deneme',
+  'istatistik-tur': 'istatistik', 'istatistik-son': 'istatistik', 'istatistik-ilerleyen': 'istatistik', 'istatistik-kutular': 'istatistik', 'istatistik-karsilastir': 'istatistik',
 }
+const BANKA_ADIMLARI = ['banka', 'banka-liste', 'banka-test', 'banka-ogrendim']
 const ARACLAR_SEKMESI = ['pomodoro-ac', 'soru-ac', 'gorev-ac', 'deneme-ac', 'istatistik-ac']
 
 export function tanitimKonumu(adim: TanitimAdimi): TanitimKonumu {
   const ekran = ARAC_EKRANLARI[adim.kimlik]
   if (ekran) return { sekme: 'daha', ekran, denemeFormu: DENEME_FORMU_ADIMLARI.includes(adim.kimlik) }
   if (ARACLAR_SEKMESI.includes(adim.kimlik)) return { sekme: 'daha', ekran: null, denemeFormu: false }
-  if (adim.kimlik === 'banka') return { sekme: 'oyunlar', ekran: 'oyun-bankasi', denemeFormu: false }
+  if (BANKA_ADIMLARI.includes(adim.kimlik)) return { sekme: 'oyunlar', ekran: 'oyun-bankasi', denemeFormu: false }
   return { sekme: ['demo-ac', 'zorluk', 'oyun-baslat', 'oyun-sayac', 'soru-bir', 'sonuc', 'banka-ac'].includes(adim.kimlik) ? 'oyunlar' : 'ana', ekran: null, denemeFormu: false }
 }
 
