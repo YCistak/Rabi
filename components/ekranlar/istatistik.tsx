@@ -137,6 +137,8 @@ export function IstatistikEkrani({
 
       {/* Her deneme türü kendi içinde hesaplanır: TYT ile seviye tespit sınavının
           soru sayısı farklı olduğu için netleri aynı ortalamaya girmez. */}
+      {/* Başlangıç turu tür seçimini ve son net kartını birlikte aydınlatıyor. */}
+      <div data-tanitim="istatistik-ozet">
       <div className="mb-3 flex gap-2">
         {secilebilir.map((s) => {
           const aktif = s.id === sablon.id
@@ -202,6 +204,7 @@ export function IstatistikEkrani({
           </div>
           <MiniSutunlar netler={ozet.sonDortNet} />
         </div>
+      </div>
       </div>
 
       {/* En çok ilerleyen dersler */}
