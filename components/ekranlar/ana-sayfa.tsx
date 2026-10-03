@@ -15,7 +15,6 @@ import { Halka, Kart, kartGirisi, Not } from '@/components/ui'
 import { GeriSayim } from '@/components/geri-sayim'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
 import { gununHali } from '@/lib/gunun-hali'
-import { GununHali } from '@/components/gunun-hali-karti'
 import { geriSayim } from '@/lib/sinav-tarihi'
 
 /**
@@ -175,6 +174,15 @@ export function AnaSayfa({
         ? 'normal'
         : 'uykulu'
 
+  const gununCumlesi = gununHali({
+    bugun: tarih,
+    hedef: ayarlar.gunlukHedef,
+    gunlukKayitlar,
+    bekleyenYanlis,
+    sonDenemeTarihi,
+    kalanGun: geriSayim(tarih, ayarlar.buYilSinif).kalanGun,
+  })
+
   return (
     // Yatay tablette kartlar iki sütuna akıyor (`tablet-sutunlar`, globals.css).
     <div className="tablet-sutunlar space-y-3.5">
@@ -190,6 +198,15 @@ export function AnaSayfa({
                 kalıyor, "Merhaba  👋" gibi çift boşluk oluşmuyor. */}
             {ayarlar.ad ? `Merhaba ${ayarlar.ad} 👋` : 'Merhaba 👋'}
           </h1>
+          {/* Günün hâli tek cümle (`lib/gunun-hali.ts`). Bir süre hedef
+              kartının altında kendi kartıydı — maskot, "BUGÜN" etiketi,
+              başlık, ikinci bir cümle ve ok; kullanıcı kartı kökten kaldırttı
+              ve buraya tek bir cümle istedi. Hedef sıfırken cümle yok. */}
+          {gununCumlesi && (
+            <p className="mt-1 text-[13.5px] leading-snug font-semibold text-muted-foreground text-pretty">
+              {gununCumlesi}
+            </p>
+          )}
         </div>
       </header>
 
@@ -293,23 +310,6 @@ export function AnaSayfa({
           ))}
         </ul>
       </Kart>
-
-      {/* Günün hâli, hedef kartının hemen altında: yukarıdaki kart "kaç soru"
-          diyor, bu kart o sayının ne anlama geldiğini Rabi'nin yüzüyle
-          söylüyor. Ayrı kart olması şart — halkanın yanına konsaydı maskot
-          sayıyla aynı satırda ikinci bir gösterge olurdu ve ikisi de aynı
-          şeyi ölçtüğü için biri gereksiz görünürdü. */}
-      <GununHali
-        hal={gununHali({
-          bugun: tarih,
-          hedef: ayarlar.gunlukHedef,
-          gunlukKayitlar,
-          bekleyenYanlis,
-          sonDenemeTarihi,
-          kalanGun: geriSayim(tarih, ayarlar.buYilSinif).kalanGun,
-        })}
-        onAc={onKartAc}
-      />
 
       {/* Devamsızlık uyarısı — yalnızca gerektiğinde görünür */}
       {(devamsizlikDurumu.asildi || devamsizlikDurumu.uyari) && (

@@ -300,15 +300,16 @@ export function KonuHaritasiEkrani({
   /*
     Açık soru sahnesi. Deste bitince kendiliğinden açılıyor: soru, kartların
     devamı ve arada haritaya dönmek okumayla soruyu birbirinden ayırıyordu.
-    `biletli` yalnızca destenin ucundan gelince doğru: bilet destenin
+    `ozetli` yalnızca destenin ucundan gelince doğru: özet destenin
     kapanışı, turuncu kitaptan girilen yoklamanın girişi değil — oradan
-    gelen kullanıcı hiçbir şey okumadı, "okundu" diyen bir bilet ona yalan
-    söylerdi.
+    gelen kullanıcı hiçbir şey okumadı, "bitirdin" diyen bir özet ona yalan
+    söylerdi. `saniye` destede geçen süre; özet onu gösteriyor.
   */
   const [acikSorular, setAcikSorular] = useState<{
     konu: Konu
     temaAdi: string
-    biletli: boolean
+    ozetli: boolean
+    saniye: number
   } | null>(null)
   /**
    * Kapanış perdesi çekilirken sahne hâlâ ekranda: "Haritaya dön" denince
@@ -414,7 +415,7 @@ export function KonuHaritasiEkrani({
 
     // Sorular yalnızca deste **sonuna kadar** okunduysa geliyor: yarıda
     // bırakılan bir konunun sorusu, okunmamış kartları sormak olurdu.
-    if (sonuc.bitti && acik.konu.sorular.length > 0) setAcikSorular({ ...acik, biletli: true })
+    if (sonuc.bitti && acik.konu.sorular.length > 0) setAcikSorular({ ...acik, ozetli: true, saniye: sonuc.saniye })
   }
 
   function sorularBitti(konu: Konu, sonuc: SahneSonucu) {
@@ -431,7 +432,7 @@ export function KonuHaritasiEkrani({
             Sayı yalnızca yoklama **sonuna kadar** verildiyse yazılıyor;
             yarıda çıkanda alan hiç konmuyor. Destenin kuralının aynısı:
             tamamlanma sona gelmekle kazanılıyor. Koşulsuz yazılsaydı,
-            bilette "Haritaya dön" diyen kullanıcının kaydına hiç verilmemiş
+            özette "Haritaya dön" diyen kullanıcının kaydına hiç verilmemiş
             bir yoklamanın "0 doğru"su geçerdi.
           */
           ...(sonuc.bitti ? { dogru: sonuc.dogru } : {}),
@@ -453,7 +454,8 @@ export function KonuHaritasiEkrani({
       konu={sahne.konu}
       temaAdi={sahne.temaAdi}
       dersAdi={dersAdi}
-      biletli={sahne.biletli}
+      ozetli={sahne.ozetli}
+      okumaSaniyesi={sahne.saniye}
       cikiyor={acikSorular === null}
       onKapat={(sonuc) => {
         if (acikSorular) sorularBitti(acikSorular.konu, sonuc)
@@ -661,7 +663,7 @@ export function KonuHaritasiEkrani({
             const { konu, temaAdi } = sayfa.basamak
             setSayfa(null)
             if (sayfa.basamak.tur === 'kart') setAcikKonu({ konu, temaAdi })
-            else setAcikSorular({ konu, temaAdi, biletli: false })
+            else setAcikSorular({ konu, temaAdi, ozetli: false, saniye: 0 })
           }}
         />
       )}

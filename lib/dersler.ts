@@ -44,3 +44,31 @@ export function sadelestir(metin: string): string {
     .replaceAll('’', "'")
     .trim()
 }
+
+/**
+ * Pomodoro'nun ders şeridinin sırası: en çok çalışılan üç ders başta, kalanı
+ * listenin kendi sırasıyla.
+ *
+ * Hazırlık ekranı bir süre listenin ilk üç dersini ve bir "Diğer" düğmesi
+ * gösteriyordu; Kimya çalışan öğrenci her turda çekmeceyi açıyordu. Şimdi
+ * şerit yana kayıyor ve öğrencinin en çok seçtiği ders elinin altında.
+ * Ölçü toplam dakika, seans sayısı değil: iki kısa deneme, üç saatlik bir
+ * çalışmadan daha çok "çalışılmış" sayılmasın. Hiç çalışılmamış ders öne
+ * alınmıyor — sıfır dakikalık bir "en çok" yok. Listede olmayan eski adlar
+ * (`PROVA_DERSI`, kaldırılmış dersler) seçilemediği için sayılmıyor.
+ */
+export function calismaSirasi(
+  seanslar: readonly { dakika: number; ders?: string }[],
+  oneAlinan = 3,
+): string[] {
+  const toplam = new Map<string, number>()
+  for (const s of seanslar) {
+    if (s.ders && CALISMA_DERSLERI.includes(s.ders)) {
+      toplam.set(s.ders, (toplam.get(s.ders) ?? 0) + s.dakika)
+    }
+  }
+  const one = CALISMA_DERSLERI.filter((d) => (toplam.get(d) ?? 0) > 0)
+    .sort((a, b) => (toplam.get(b) ?? 0) - (toplam.get(a) ?? 0))
+    .slice(0, oneAlinan)
+  return [...one, ...CALISMA_DERSLERI.filter((d) => !one.includes(d))]
+}

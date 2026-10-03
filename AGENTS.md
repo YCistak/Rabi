@@ -506,9 +506,15 @@ değil.
 
 Hazırlık ekranında süre, prova ve kip **tur içinde** (`turIcinde`, yani
 duraklatılmış tur dahil) kilitli: başlamış bir turun uzunluğu değişmemeli.
-Süreler bir çekmecede (`Cekmece`, alttan açılır), ders listesinin tamamı da
-öyle: hazırlıkta yalnızca üç ders ve "Diğer" var, bütün çipler sayacın altında
-birkaç satır kaplayıp Başlat'ı aşağı itiyordu. "Çalışırken ekran açık kalsın"
+Süreler bir çekmecede (`Cekmece`, alttan açılır). Dersler ise **yana kayan
+tek bir şeritte** ve sıranın başında öğrencinin **en çok çalıştığı üç ders**
+var (`calismaSirasi`, `lib/dersler.ts`: toplam dakikaya göre; hiç
+çalışılmamış ders öne alınmıyor). Bir süre dört kutuluk bir ızgaraydı — listenin
+ilk üç dersi ve bir "Diğer" düğmesi, gerisi alttan açılan bir çekmecede;
+kullanıcı "Diğer"i kaldırttı: ders seçmek için yeni bir ekran açılmamalı. Bütün
+çipler alt alta dizilse sayacın altında birkaç satır kaplayıp Başlat'ı aşağı
+iterdi; şerit tek satır. Sıra ekran açılınca bir kez kuruluyor — seans bitince
+yeniden sıralansaydı seçili ders parmağın altından kayardı. "Çalışırken ekran açık kalsın"
 anahtarı çekmecede değil ayar kartının kendi satırında ve her iki kipte de
 duruyor: provada da geçerli ve çekmeceye konsaydı prova kipinde ona hiç
 ulaşılamazdı. Tur içinde ona da ulaşılmıyor (sahne her şeyi örtüyor); sonraki
@@ -1249,7 +1255,14 @@ dolu zemin örnekleniyor (`elementsFromPoint`, kaydırmada kare başına bir kez
 ekran değişimi için seyrek bir zamanlayıcıyla) ve cam o tona bürünüyor; koyu
 bir zeminin üstünde yazılar açığa dönüyor (`data-koyu`). Hesaplar
 `lib/cam-menu.ts`te, saf ve testli. Seçili sekmeyi gösteren titreşim **yok**:
-kullanıcı titreşimi istemiyor (bkz. yoklama bileti).
+kullanıcı titreşimi istemiyor (bkz. "Deste bir özetle kapanıyor").
+
+**Merceğin konumu yerleşim pikselinde.** Tablette `<body>` `zoom`lu
+(`--olcek`); `getBoundingClientRect` ve `clientX` büyütülmüş pikseli veriyor,
+`translateX` ise büyütülmüş kutunun içinde yeniden büyüyor. Bölünmeden
+yazılınca iPad'de mercek parmaktan ileri gidiyor ve en sağa çekilince
+kapsülden taşıyordu. `seritOlcusu` oranı ölçüyor (`offsetWidth` büyütülmemiş
+genişlik); `--olcek` okunmuyor.
 
 **iOS'ta kaydırma çubuğu yok.** Sayfanınki yerli tarafta
 (`showsVerticalScrollIndicator`, `AnaDenetleyici.swift`), iç kutularınki
@@ -1835,58 +1848,56 @@ sınavından" değil: 11. sınıf için o sınav henüz yapılmadı ve çubuk b�
 sıfırda dururdu. Yani 11. sınıfta çubuk iki yıllık yolu gösteriyor ve ilk
 yılın sonunda yarıda; bu kasıtlı — çubuğun sorusu "hazırlığın neresindeyim".
 
-## Ana sayfada günün hâli
+## Ana sayfada günün hâli tek cümle
 
-Soru hedefi kartının hemen altında bir kart daha var (`GununHali`,
-`components/gunun-hali-karti.tsx`): günlük çalışma durumuna Rabi'nin
-pozuyla cevap veriyor. Cümleyi ve pozu `lib/gunun-hali.ts` seçiyor — saf,
-`gunun-hali.test.ts` her kuralı ayrı denetliyor.
+Selamlamanın ("Merhaba Emre 👋") hemen altında tek bir cümle var: günlük
+çalışma durumu ve bir öneri, noktalı virgülle bağlanan iki yarım ("Yanlış
+bankanda 4 soru seni bekliyor.", "Sınava 12 gün kaldı; hedefine 30 soru
+var."). Cümleyi `lib/gunun-hali.ts` seçiyor — saf, `gunun-hali.test.ts` her
+kuralı ve cümlenin **tek** cümle olduğunu denetliyor.
 
-Kart bir süre yalnızca üç şey diyordu: hiç soru yok / başladın / hedef tuttu.
-Doğruydu ama her gün aynıydı ve "başladın" hâli hiçbir şey önermiyordu. Şimdi
-ana sayfanın zaten bildiği veriden bir **öneri** çıkıyor ve kurallar sıralı,
-ilk tutan kazanıyor:
+**Kart kaldırıldı, geri gelmiyor.** Bu cümle bir süre hedef kartının altında
+kendi kartıydı (`GununHali`, `gunun-hali-karti.tsx`): 72 piksellik bir
+tavşan, zemin gölgesi, dikey ayraç, "BUGÜN" etiketi, kalın bir başlık, altında
+ikinci bir cümle ve bir ok. Kullanıcı kartı kökten kaldırttı ve "Merhaba"nın
+altında tek bir cümle istedi. Kart, hedef kartının sayısını ikinci bir
+yüzeyde yorumluyordu; selamlamanın altındaki satır ise Rabi'nin söylediği söz
+gibi okunuyor — maskot zaten orada. Satır dokunulmuyor: öneri gidilecek yeri
+adıyla söylüyor ("yanlış bankan", "deneme").
 
-| Sıra | Kural | Koşul | Dokunuş |
-| --- | --- | --- | --- |
-| 1 | Sınava yakın | kalan gün ≤ 7 her gün; 8–30 gün aşırı | soru |
-| 2 | Seri kırılıyor | dün hedef tuttu, bugün 0 | soru |
-| 3 | Seri sürüyor | bugün ve dün hedef tuttu | soru |
-| 4 | Banka bekliyor | çözülmemiş yanlış var, bugün çalışılmış | yanlış bankası |
-| 5 | Tek derse yığılma | ≥ 20 soru ve %80'i tek dersten | soru |
-| 6 | İhmal edilen ders | son 30 günde çalışılmış, 7+ gündür yok | soru |
-| 7 | Deneme zamanı | son deneme 10+ gün önce (ya da hiç yok, 7+ günlük geçmiş var) | denemeler |
-| 8 | Temel | eski üç hâl | soru |
+Kurallar sıralı, ilk tutan kazanıyor:
 
-Sıra puanla değil listeyle: "neden bunu söyledi" sorusuna sıralı liste cevap
-verebiliyor, puan veremiyor. Sınav en önde ama son hafta dışında **gün aşırı**: otuz gün her sabah aynı
-"sınava N gün" cümlesi kartı takvime çevirir ve öteki öneriler tam en gerekli
+| Sıra | Kural | Koşul |
+| --- | --- | --- |
+| 1 | Sınava yakın | kalan gün ≤ 7 her gün; 8–30 gün aşırı |
+| 2 | Seri kırılıyor | dün hedef tuttu, bugün 0 |
+| 3 | Seri sürüyor | bugün ve dün hedef tuttu |
+| 4 | Banka bekliyor | çözülmemiş yanlış var, bugün çalışılmış |
+| 5 | Tek derse yığılma | ≥ 20 soru ve %80'i tek dersten |
+| 6 | İhmal edilen ders | son 30 günde çalışılmış, 7+ gündür yok |
+| 7 | Deneme zamanı | son deneme 10+ gün önce (ya da hiç yok, 7+ günlük geçmiş var) |
+| 8 | Temel | hiç kayıt yok / başladın / hedef tuttu |
+
+4–7 aynı anda tutuyorsa günden güne dönüşümlü. Sıra puanla değil listeyle:
+"neden bunu söyledi" sorusuna sıralı liste cevap verebiliyor, puan veremiyor.
+Sınav en önde ama son hafta dışında **gün aşırı**: otuz gün her sabah aynı
+"sınava N gün" cümlesi satırı takvime çevirir ve öteki öneriler tam en gerekli
 dönemde hiç görünmezdi. Seri ondan sonra çünkü kırılan alışkanlık en pahalı
 kayıp.
 
 Her kuralın birden çok cümlesi var ve seçim **günün tarihinden** türeyen bir
-sayıyla yapılıyor: kart gün içinde sabit, günden güne değişiyor. Rastgele
+sayıyla yapılıyor: cümle gün içinde sabit, günden güne değişiyor. Rastgele
 olsaydı her yeniden çizimde başka cümle söylerdi.
 
-Ders adına **ek getirilmiyor** ("Kimya 9 gündür bekliyor", "Kimya'ya … " değil):
-ünlü uyumu ders adına göre değişiyor ve yanlış ek, yanlış bilgiden daha çok
-göze batıyor.
+Ders adına **ek getirilmiyor** ("Kimya dersi 9 gündür bekliyor", "Kimya'ya …"
+değil): ünlü uyumu ders adına göre değişiyor ve yanlış ek, yanlış bilgiden
+daha çok göze batıyor.
 
-Maskot 72 piksel, ayağının altında yumuşak bir zemin gölgesi var ve
-ayraca yakın duruyor (bir süre tam ortadaydı, kullanıcı sağa kaydırttı);
-yazıyla arasında soluk, kısa bir dikey ayraç var (`--border`, kartın
-kenarlarına değmiyor). Arkasına bir süre soluk bir leke kondu, kullanıcı geri
-aldı — tavşanı oturtan şey süs değil, yeri, gölgesi ve ayraç. Başlığın
-üstünde küçük bir "BUGÜN" etiketi var. Kart `golge-kart` ile çizgisiz beyaz;
-bir süre kenar çizgili, altında "…aç" satırı olan bir düzen denendi ve
-kullanıcı eskisine döndürdü.
-
-Sayının kendisi kartta **yazmıyor**: halka zaten sayıyı üç kez söylüyor ve
-kartın işi onu tekrar etmek değil, ona bir yüz vermek. Günlük hedef sıfırken
-kart çizilmiyor: ölçülecek bir eşik yokken "ulaştın" da "ulaşmadın" da
-anlamsız. Sınav gününde soru sayısından bağımsız olarak hazırlık ve dinlenme
-mesajı verilir. Kayıt bulunmaması “soru çözmedin” diye sunulmaz; serinin
-sürmesi için günlük hedefin tamamlanması gerekir.
+Günlük hedef sıfırken cümle yok: ölçülecek bir eşik yokken "ulaştın" da
+"ulaşmadın" da anlamsız. Sınav gününde soru sayısından bağımsız olarak
+dinlenme cümlesi geliyor. Kayıt bulunmaması "soru çözmedin" diye sunulmaz
+("henüz soru kaydın yok"); serinin sürmesi için günlük hedefin tamamlanması
+gerekir.
 
 ## Ana sayfadaki dört kutucuk
 
@@ -1955,8 +1966,8 @@ kurcalanmış bir kayıt yüzünden ekranda "11/10" yazmasın diye.
 ### Metin tek satır, sınır ölçüyle konuyor
 
 `EN_UZUN_GOREV` = 24 karakter ve bu sayı tasarımdan değil **satırın
-kendisinden** geliyor: solda tik yuvarlağı, sağda yıldız ve erteleme düğmeleri
-varken metne kalan yer 375 piksellik telefonda ~198 piksel, Nunito 700/14,5'te
+kendisinden** geliyor: solda tik yuvarlağı, sağda yıldız ve "⋯" düğmeleri
+varken metne kalan yer 375 piksellik telefonda ~200 piksel, Nunito 700/14,5'te
 Türkçe küçük harfli metin de karakter başına ~7,4 piksel. Satır ayrıca
 `truncate` ile kırpılıyor: büyük harfli metin karakter başına ~9,6 piksel
 tutuyor ve karakter sınırı tek başına yetmiyor.
@@ -1969,9 +1980,14 @@ her satırda silme düğmesi var. Bir süre ikisi de yoktu — "yirmi dört kara
 silip yeniden yazmak, kalem düğmesinden hızlı" diye — ama yeniden yazmak yıldızı,
 bitti işaretini ve dilimdeki yeri de götürüyordu; kullanıcı tik gibi görünür
 düğmeler istedi. Düzenleme gün ve dilimi değiştirmiyor, taşımanın yolu erteleme.
-Düğmeler (yıldız, ertele, düzenle, sil) **kategorinin satırında**, iş adının
-değil: dört düğme ad satırına konsaydı aşağıdaki karakter sınırı yarıya inerdi.
-Silme bir onay penceresinden geçiyor.
+**Satırda yalnızca iki düğme var: yıldız ve "⋯".** Dört düğme (yıldız,
+ertele, düzenle, sil) bir süre kategorinin satırında, iş adının **üstünde**
+yan yana duruyordu: 32 piksellik hedefler, simgeden anlaşılmayan eylemler (ok
+"ertele" demiyordu), kaleme yapışık bir çöp kutusu; kullanıcı dizilimi kötü
+buldu. Yıldız satırda kaldı çünkü bir eylem değil görevin **hâli** — bakınca
+görülmeli. Düzenle, yarına ertele ve sil "⋯"nün açtığı alt sayfada adlarıyla
+(`GorevEylemleri`); sil orada en altta ve kırmızı. Bitmiş görevde yalnızca
+sil var. Ertele ve sil hâlâ kendi onay penceresinden geçiyor.
 
 ### Kayıt yedi günlük şeritle kayar, geçmiş salt okunur
 
@@ -2321,76 +2337,62 @@ yoklamadan bırakıyordu. Her konuda iki biçimden en az ikişer tane var; A/B
 ve doğru/yanlış dengesi bütünde %40–60 arasında tutuluyor — tek yönlü deste
 cevabı içeriğe bakmadan verdirir.
 
-### Deste bir biletle kapanıyor
+### Deste bir özetle kapanıyor
 
-Üç ekran var: destenin kapanışı — **yoklama bileti**
-(`components/konu/yoklama-bileti.tsx`, `tasarim/yoklama-bileti.html`) —,
-soruların kendisi ve yoklamanın kapanışı (ikisi `soru-sahnesi.tsx` içinde,
-`Kapanis`). Kapanış bir kez gidip geldi: koyu sahnedeki ilk hâli (`Sonuc`:
-maskot, iki sayı, "Haritaya dön") kullanıcı isteğiyle kaldırılmış, son
-sorudan sonra sahne doğrudan haritaya dönüyordu; tasarım gelince kâğıt
-zeminli yeni hâliyle geri geldi (aşağıda **Kapanış kâğıt zeminde**).
+Üç ekran var: destenin kapanışı — **konunun özeti**
+(`components/konu/konu-ozeti.tsx`) —, soruların kendisi ve yoklamanın
+kapanışı (ikisi `soru-sahnesi.tsx` içinde, `Kapanis`).
 
-Bilet bir süre yoktu ve yokluğu bilinçliydi — "arada duran bir 'deste
-bitti' ekranı, okumayla soruyu birbirinden ayıran fazladan bir dokunuş".
-Fazladan dokunuşun bedeli doğruydu, ayrılmayan iki işin bedeli hesaba
-katılmamıştı: son kartta "İlerle"ye basan kullanıcı dersin aydınlık
-destesinden koyu sahnedeki bir **iddianın üstüne** düşüyordu. Okumayı
-bitirdiğini sanan kullanıcı kendini cevaplayacağı bir şeyin karşısında
-buluyordu; aradaki dokunuş gecikme değil, sonraki ekranın ne olduğunu
-söyleyen tek yer.
+Kapanış ekranı şart: son kartta "İlerle"ye basan kullanıcı bir süre doğrudan
+yoklamanın ilk **iddiasının üstüne** düşüyordu — okumayı bitirdiğini sanan
+kullanıcı kendini cevaplayacağı bir şeyin karşısında buluyordu. Aradaki
+dokunuş gecikme değil, sonraki ekranın ne olduğunu söyleyen tek yer.
 
-Önce koyu sahnenin kendi ilk ekranıydı (`Giris`); tasarım onu destenin
-**aydınlık** tarafına aldı: bembeyaz zemin, ortada koyu bir bilet, kupayı
-kaldıran Rabi biletin arkasından çıkıyor, sağ üste "BİTTİ" damgası
-basılıyor, koçanda üç sayı (kart, soru, ~dakika) ve dolan bir %100 halkası.
-Perde (`sahne-iner`; sahne o zaman koyuydu, şimdi krem) "Yoklamaya başla"
-denince iniyor; iki kök ayrı `key` taşıyor, yoksa React aynı `div`i yeniden
-kullanır ve perde hiç oynamazdı.
+**Yoklama bileti kaldırıldı.** Bu ekran bir süre bir biletti
+(`tasarim/yoklama-bileti.html`): kupayı kaldıran Rabi biletin arkasından
+çıkıyor, "BİTTİ" damgası basılıyor, çentikli koçanda üç sayı sayarak
+doluyor, damgayla altın toz süzülüyordu. Kullanıcı ekranı kötü buldu ve
+**tasarımdan değil koddan** yeniden yazılmasını istedi; istediği şey de
+açıktı: ders sonunda gerekli bilgiyi ver. Biletin bilgisi üç sayıdan
+ibaretti ve süslerin arasında okunmuyordu. Bilet bileşeni, `bilet-*` CSS'i
+ve animasyonları silindi; mockup `tasarim/` altında tarih olarak duruyor,
+yeniden uygulanmamalı.
 
-- **Bilet dersin değil uygulamanın rengi.** Mockup Fizik'in lacivertiyle
-  çizildi ve üstte dersin rengine boyalı noktalı bir bant vardı; uygulama
-  bir süre yedi derse yedi bilet taşıdı (şarap+nane, mor+limon, kahve+
-  turkuaz…), sonra tek bir koyu kızıl kahve + altın bilete indi
-  (`--bilet*`). Kullanıcı onu da geri aldı: bilet artık uygulamanın kendi
-  paletinde — zemin `--background`, bilet `--card`, yazı ve damga
-  `--primary`, dolgular (üst şerit, halka, tik) `--primary-parlak`. Ayrı
-  bir bilet paleti yok; koyu bilet açık zeminli uygulamada tek koyu
-  yüzeydi. Bileşen bu yüzden `bicim` almıyor ve `SoruSahnesi` de
-  almıyor — koyu sahne zaten derse göre renk almıyordu, bilet de almıyor.
-- **Koçan çentiği gerçek bir satırda.** Mockup çentiği `mask-image` ile 177
-  piksele kesiyordu; konu adı iki satıra kırılınca çizgi kayar, çentik
-  kalırdı. Çentik kesik çizginin kendi satırındaki iki daire, `overflow`
-  dış yarısını kırpıyor.
-- **Halka hep %100**: bilet yalnızca deste sonuna kadar okununca geliyor.
-- **Bilet destenin ucundan gelince var, turuncu kitaptan girince yok**
-  (`SoruSahnesi.biletli`). Bilet destenin kapanışı, yoklamanın girişi
-  değil; haritadan doğrudan soruya giren kullanıcı bir şey okumadı ve
-  "okundu" diyen bir bilet ona yalan söylerdi. Oradan sahne ilk soruyla
-  açılıyor.
-- **İki efekt, ikisi de damgaya bağlı:** koçandaki sayılar sıfırdan sayarak
-  doluyor, damga basılınca biletin üstünden bir kez altın toz süzülüyor
-  (`bilet-toz`). Damganın önce bir sesi (alçak bir "tak"), sonra bir
-  titreşimi vardı; kullanıcı ikisini de kaldırdı — titreşimi iOS ve
-  Android'de birden, `lib/titresim.ts` de onunla silindi. Geri getirmeden
-  önce sor. Konfeti değil — konfeti oyunlardaki rekora ait. Bileşendeki
-  `TOZ_MS`, `globals.css`teki basınç gecikmesiyle eşleşmeli.
-  `prefers-reduced-motion` altında sayılar dolu, damga basılı, toz yok.
-  Manifestteki VIBRATE izni duruyor: oyunlardaki dokunuş geri bildirimi
-  (`@capacitor/haptics`) ona bağlı.
-- **"Bu destede öğrendiklerin" alt sayfa**, biletin içinde liste değil: on
-  altı kartlık konuda liste bileti taşırırdı.
+Özet yukarıdan aşağı dört soruya cevap veriyor:
+
+1. **Ne bitti?** Konunun adı, ders ve tema.
+2. **Ne kadar?** Okunan kart ve destede geçen süre (`DesteSonucu.saniye`,
+   `konu-haritasi.tsx` sahneye `okumaSaniyesi` olarak geçiriyor). Destede
+   süre gösterilmiyor — okumayı yarışa çevirmesin diye — ama okuma
+   bittikten sonra söylemek bir şey yarıştırmıyor.
+3. **Neyi aklında tutmalı?** Kartların başlıkları sırayla (konunun
+   iskeleti) ve varsa Rabi'nin notu — her konuda tek kartta duran, konunun en
+   çok tuzak barındıran yeri. Kart metinleri yazılmıyor: özet destenin ikinci
+   kopyası olurdu.
+4. **Sırada ne var?** Yoklamanın soru sayısı, yaklaşık süresi ve konunun ne
+   zaman tamamlanmış sayıldığı (`GECME_ORANI`). Eşik eskiden hiçbir ekranda
+   yazmıyordu.
+
+- **Renk derse göre değişmiyor, süs yok**: ekranın işi okunmak. Bileşen
+  `bicim` almıyor.
+- **Özet destenin ucundan gelince var, turuncu kitaptan girince yok**
+  (`SoruSahnesi.ozetli`). Haritadan doğrudan soruya giren kullanıcı bir şey
+  okumadı; "konu bitti" diyen bir özet ona yalan söylerdi. Oradan sahne ilk
+  soruyla açılıyor.
 - **"Haritaya dön" düğme değil yazı.** Deste zaten okundu ve kaydı yazıldı;
   yoklamayı vermemek konuyu okunmamış yapmıyor. İki dolu düğme yan yana
-  dursaydı hangisinin ileri götürdüğü okunmazdı — kurulumdaki "Şimdilik
-  atla" kuralı. Yazı bir süre "Şimdi değil"di; nereye gidildiğini
-  söylemiyordu. Çıkış da kapanış ekranındaki perdeyle (`kapanis-cikar`,
-  `cikiyor` bayrağı `SoruSahnesi`den geliyor): bilet tek karede sökülünce
-  kullanıcı haritaya döndüğünü değil atıldığını görüyordu.
+  dursaydı hangisinin ileri götürdüğü okunmazdı. Üstte çarpı yok: destenin
+  çarpısıyla aynı yerde duran bir düğme alışkanlıkla basılıyordu. Çıkış
+  kapanış ekranındaki perdeyle (`kapanis-cikar`, `cikiyor` bayrağı
+  `SoruSahnesi`den geliyor).
+- **Titreşim ve ses yok.** Biletin damgasında önce bir ses, sonra bir
+  titreşim vardı; kullanıcı ikisini de kaldırttı (`lib/titresim.ts` silindi).
+  Geri getirmeden önce sor. Manifestteki VIBRATE izni duruyor: oyunlardaki
+  dokunuş geri bildirimi (`@capacitor/haptics`) ona bağlı.
 
 `SahneSonucu.bitti` bu yüzden var: yarıda bırakılan yoklama ilerlemeye sayı
 **yazdırmıyor** (`konu-haritasi.tsx`), destenin kuralının aynısı. Bayraksız
-hâlde bilette "Haritaya dön" diyen kullanıcının kaydına, hiç verilmemiş bir
+hâlde özette "Haritaya dön" diyen kullanıcının kaydına, hiç verilmemiş bir
 yoklamanın "0 doğru"su geçiyordu.
 
 ### Kapanış kâğıt zeminde

@@ -9,7 +9,7 @@ import {
   useYanlisSoruEkleme,
 } from '@/components/yanlis-soru-ekle'
 import { useGeriKatmani } from '@/lib/geri'
-import { katsayiYaz, net, netYaz, sonucGecerliMi, yuvarla } from '@/lib/hesap'
+import { katsayiYaz, net, netYaz, sonucGecerliMi } from '@/lib/hesap'
 import { secilebilirSablonlar, toplamSoru } from '@/lib/sablonlar'
 import { bugun, cn, yeniId } from '@/lib/utils'
 import type { Deneme, PuanTuru, Sablon, YanlisSoru } from '@/lib/types'
@@ -121,7 +121,6 @@ export function YeniDenemeEkrani({
     [sablon, girisler],
   )
 
-  const toplamNet = yuvarla(satirlar.reduce((acc, s) => acc + (s.asim ? 0 : s.net), 0))
   const hataliDers = satirlar.find((s) => s.asim)
   const bosMu = satirlar.every((s) => s.dogru === 0 && s.yanlis === 0)
   /*
@@ -154,28 +153,32 @@ export function YeniDenemeEkrani({
     })
   }
 
+  /*
+    Kök `overflow-x-clip`: ekran yana kayıyordu. Sebep tarih kutusu — iOS'un
+    tarih alanının kendi en küçük genişliği var ve ızgara hücresinin varsayılan
+    `min-width: auto`su onu daraltmıyor; hücre taşıyor, sayfa da onunla yana
+    kayıyordu. Hücreler artık `minmax(0,1fr)`; kırpma, başka bir alanın aynı
+    şeyi yapmasına karşı emniyet. (`hidden` değil `clip`: kaydırma kabı
+    kurmuyor, içerideki yapışkan öğeleri bozmuyor.)
+
+    Üstte bir süre yapışkan bir "Toplam net" kutusu duruyordu; kullanıcı
+    kaldırılmasını istedi — her dersin neti satırında yazıyor, toplam da
+    kaydedilen denemenin kartında.
+  */
   return (
-    <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-semibold tracking-tight">
-          {duzenlenen ? 'Denemeyi Düzenle' : 'Yeni Deneme'}
-        </h1>
+    <div className="overflow-x-clip">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="font-display text-2xl font-semibold tracking-tight">
+            {duzenlenen ? 'Denemeyi Düzenle' : 'Yeni Deneme'}
+          </h1>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {sablon.ad} · {toplamSoru(sablon)} soru · {katsayiYaz(sablon.yanlisKatsayi)}
+          </p>
+        </div>
         <Buton bicim="hayalet" boy="simge" onClick={onVazgec} aria-label="Vazgeç">
           <X size={20} />
         </Buton>
-      </div>
-
-      {/* Toplam net — girişler değiştikçe canlı güncellenir */}
-      <div className="sticky top-0 z-30 -mx-4 mb-4 border-b border-border bg-background/95 px-4 pb-3 backdrop-blur">
-        <div className="flex items-baseline justify-between rounded-xl bg-primary-soft px-4 py-3">
-          <span className="text-sm font-medium text-muted-foreground">Toplam net</span>
-          <span className="font-display text-3xl font-semibold text-primary">
-            {netYaz(toplamNet)}
-          </span>
-        </div>
-        <p className="mt-1.5 text-center text-xs text-muted-foreground">
-          {sablon.ad} · {toplamSoru(sablon)} soru · {katsayiYaz(sablon.yanlisKatsayi)}
-        </p>
       </div>
 
       {!duzenlenen && (
@@ -203,8 +206,8 @@ export function YeniDenemeEkrani({
         </div>
       )}
 
-      <div className="mb-4 grid grid-cols-2 gap-3">
-        <div>
+      <div className="mb-4 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3">
+        <div className="min-w-0">
           <Etiket htmlFor="deneme-ad">Deneme adı</Etiket>
           <Alan
             id="deneme-ad"
@@ -213,11 +216,12 @@ export function YeniDenemeEkrani({
             placeholder={`${sablon.ad} ${denemeSayisi + 1}`}
           />
         </div>
-        <div>
+        <div className="min-w-0">
           <Etiket htmlFor="deneme-tarih">Tarih</Etiket>
           <Alan
             id="deneme-tarih"
             type="date"
+            className="w-full min-w-0"
             value={tarih}
             onChange={(e) => setTarih(e.target.value)}
           />
