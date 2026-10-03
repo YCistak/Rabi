@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Manrope, Nunito, Outfit } from 'next/font/google'
+import { Manrope, Nunito, Rubik } from 'next/font/google'
 import './globals.css'
 
 // Tasarımın tek yazı tipi. 400-900 arası kalınlıkların hepsi isteniyor:
@@ -13,7 +13,7 @@ const nunito = Nunito({
 
 // Yalnızca aylık özetin kapağındaki ay adı (`font-marka`). Tasarım o başlığı
 // 66 pikselde Manrope ile çizdi. Açılış ekranı da bir süre Manrope'tu; 2a
-// tasarımıyla Outfit'e geçti (aşağıda).
+// tasarımıyla Outfit'e, 2d ile Rubik'e geçti (aşağıda).
 const manrope = Manrope({
   subsets: ['latin', 'latin-ext'],
   weight: ['800'],
@@ -21,20 +21,21 @@ const manrope = Manrope({
   display: 'block',
 })
 
-// Yalnızca açılış ekranındaki "RABİ" (`font-acilis`). Tasarım (2a,
-// `tasarim/acilis-ekrani.dc.html`) wordmark'ı Outfit 800 ile çizdi; 52
-// pikselde Nunito'nun yuvarlak uçları başka bir marka gibi duruyor.
+// Yalnızca açılış ekranındaki "RABI" (`font-acilis`). Tasarım (2d,
+// `tasarim/acilis-ekrani.dc.html`) ismi Rubik 800 ile çizdi. Önce 2a'nın
+// Outfit'iydi; 2d ile tavşan kalktı ve ekranda yalnızca isim kaldı, Rubik'in
+// köşeli ağırlığı ve İ'nin noktasının yerini tutan kare onunla geldi.
 //
-// `display: 'block'` bilerek: açılış ekranı 4,2 saniye sürüyor ve wordmark o
+// `display: 'block'` bilerek: açılış ekranı 4,65 saniye sürüyor ve isim o
 // ekranın tamamı. `swap` ile yazı önce yedek aileyle çizilip sonra yerine
 // oturuyordu — marka adının ilk yarım saniyede başka bir yazı tipinde
 // görünmesi, en çok bakılan anda gözden kaçmıyor. Yazı tipi uygulamayla
 // birlikte geliyor (next/font derleme anında indirip gömüyor), yani beklenen
 // süre ağ değil yalnızca çözümleme.
-const outfit = Outfit({
+const rubik = Rubik({
   subsets: ['latin', 'latin-ext'],
   weight: ['800'],
-  variable: '--font-outfit',
+  variable: '--font-rubik',
   display: 'block',
 })
 
@@ -82,7 +83,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html
       lang="tr"
-      className={`${nunito.variable} ${manrope.variable} ${outfit.variable}`}
+      className={`${nunito.variable} ${manrope.variable} ${rubik.variable}`}
       // Tablet betiği hidrasyondan önce `style="--olcek: …"` yazıyor; React
       // bunu sunucu çıktısıyla karşılaştırıp uyarıyordu. Uyarı dev'de kalıyor
       // ama gürültü; öznitelik bilerek farklı.

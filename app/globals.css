@@ -99,8 +99,8 @@
   --font-display: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
   /* Yalnızca aylık özetin kapağı (Manrope). */
   --font-marka: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  /* Yalnızca açılış ekranındaki "RABİ" (Outfit, 2a tasarımı). */
-  --font-acilis: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  /* Yalnızca açılış ekranındaki "RABI" (Rubik, 2d tasarımı). */
+  --font-acilis: var(--font-rubik), ui-sans-serif, system-ui, sans-serif;
 
   /* Kartlar tasarımda çerçeveyle değil gölgeyle ayrılıyor: kırık beyaz
      zeminin üstünde yüzen beyaz yüzeyler. */
@@ -518,47 +518,24 @@ body {
     animation: acilis-girisi 420ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
   }
 
-  /* --- Açılış ekranı (components/acilis.tsx, tasarım 2a) --- */
+  /* --- Açılış ekranı (components/acilis.tsx, tasarım 2d) --- */
 
   /*
-    Tek seferlik, `ACILIS_SURESI` (4,2s) boyunca akan bir gösteri
-    (`tasarim/acilis-ekrani.dc.html` → 2a). Parçalar iki türlü zamanlanıyor:
+    Tek seferlik, `ACILIS_SURESI` (4,65 s) boyunca akan bir gösteri
+    (`tasarim/acilis-ekrani.dc.html` → 2d). Her parça kendi süresinde ve
+    gecikmesiyle zamanlanıyor, yüzdelerle değil — 4,65 saniyelik bir çizgide
+    700 ms'lik bir hareket yüzdelerle kaba adımlara bölünürdü:
 
-    - **Giriş** kısa ve kendi süresinde (`acilis-belir`, 700 ms): tavşan,
-      RABİ, slogan ve noktalar sırayla 100 / 280 / 420 / 560 ms gecikmeyle
-      aşağıdan yükselerek geliyor. Yüzdeyle yazılsaydı 4,2 saniyelik bir
-      çizgide 700 ms'lik bir hareket kaba adımlara bölünürdü.
-    - **Çıkış** zaman çizgisinin yüzdelerinde: %64–90 tavşan varış noktasına
-      süzülüyor, %82–100 sahnenin geri kalanı (zemin, yazılar, noktalar,
-      artılar) hafifçe büyüyerek soluyor. Tavşan bu sahnenin **dışında**:
-      soluyan zeminin altından ana sayfa görünürken tavşan yerine oturmuş
-      oluyor.
+    - 1000 ms: isim bulanıktan netleşiyor (`acilis-netles`, 900 ms).
+    - 1400 ms: noktalar aşağıdan yükseliyor (`acilis-belir`).
+    - 1650 ms: İ'nin noktası dönerek düşüyor (`acilis-yildiz`, 1200 ms).
+    - 3750 ms: noktalar sönüyor (300 ms) — isimden önce gitsinler.
+    - 4000 ms: isim büyüyüp bulanıklaşarak dağılıyor (`acilis-dagil`, 650 ms).
+    - 4280 ms: zemin sönüyor (`acilis-sahne`), dağılmayla aynı anda biter.
 
-    Artılar (`acilis-arti`) 1,45–3,9 saniye arasında ortadan ve kenarlardan
-    süzülüyor; her birinin yönü `--dx/--dy`, gecikmesi satır içinde.
+    Gecikmeler sınıfta yazılı, satır içinde değil: hepsi tek zaman çizgisinin
+    parçası ve ayrı yerlere dağılsalardı biri değişince ötekiler unutulurdu.
   */
-  /*
-    Varış noktası (`--acilis-x/y/olcek`) `components/acilis.tsx`'ten `style` ile
-    geliyor ve orada **ölçülerek** bulunuyor — tavşan inene kadar yenileniyor;
-    tarayıcı `var()`ı animasyon sürerken yeniden okuyor. Tasarım uçuşu sabit sayılarla
-    çiziyor (`translate(-134px, -229px) scale(.49)`); o sayılar 360×780'lik
-    prototip çerçevesine ait ve telefonda tavşanı yuvanın yanına indirirdi.
-    Burada yedeği de yok: değer her çizimde satır içinde veriliyor.
-  */
-  /* Zamanlama `linear`: eğriyi keyframe'lerin kendisi taşıyor
-     (`animation-timing-function`), öğeye ikinci bir eğri koymak ikisini
-     çarpardı. */
-  /*
-    `will-change`: uçuş başlamadan katman hazır olsun. Hazır değilse WebView
-    tavşanı ilk karelerde ana iş parçacığında boyuyor ve uçuş tam başlarken
-    tıkanıyor. Yalnızca uçan kutuya konuyor — dönüşen bir öğe `position:
-    fixed` çocukları için kapsayıcı blok olur ve bu kutunun altında
-    maskottan başka bir şey yok.
-  */
-  .acilis-inis {
-    animation: acilis-inis 4200ms linear forwards;
-    will-change: transform;
-  }
 
   /*
     Ekran, uygulama penceresi gerçekten görünene kadar ilk karesinde duruyor.
@@ -575,33 +552,42 @@ body {
     animation-play-state: paused !important;
   }
   /*
-    Tavşanın dışındaki her şey. Ayrı bir katman, çünkü gösteri biterken
-    **yalnız bu katman** kayboluyor: tavşan son yolunu ana sayfanın (ya da
-    kurulumun) üstünde uçarak alıyor. Tavşan da bu katmanda dursaydı ya
-    onunla birlikte sönerdi ya da bomboş bir zeminde süzülürdü.
+    Zemin ve üstündeki her şey. Zemin uygulamanın zeminiyle aynı renk;
+    sönerken bir renk değişimi değil, altındaki ana sayfanın belirmesi
+    görünüyor. Katmanı kaldıran `animationend` bu animasyondan geliyor.
   */
   .acilis-sahne {
     position: absolute;
     inset: 0;
-    animation: acilis-cikis 4200ms ease-in forwards;
+    animation: acilis-sahne 370ms ease-in 4280ms forwards;
   }
   /*
-    Sahnenin içindekiler (yazılar, noktalar, artılar) zeminden **önce** ve
-    hızlı soluyor: tavşan yola çıktığı an (%64) başlıyor, ~300 ms'de bitiyor.
-    Bir süre zeminle birlikte %82'de sönüyorlardı ve tavşan uçarken "RABİ"
-    yerinde duruyordu; göz uçan tavşanla duran yazı arasında bölünüyordu.
-    Zemin kendi hızında kalıyor — o da hızlı sönseydi tavşan yolun başında
-    ana sayfanın üstüne çıkar, yuvaya varana kadar arkasında hareketsiz bir
-    sayfa olurdu.
+    İsim: önce netleşiyor, sonunda dağılıyor. İki animasyon aynı öğede ve
+    ikisi de `transform` oynatıyor; çakışmıyorlar çünkü ikincisi ancak
+    birincisi bittikten sonra başlıyor ve listede sonra geldiği için o andan
+    itibaren o geçerli.
   */
-  .acilis-icerik {
-    position: absolute;
-    inset: 0;
-    animation: acilis-icerik-cikis 4200ms linear forwards;
+  .acilis-yazi {
+    animation:
+      acilis-netles 900ms cubic-bezier(0.16, 1, 0.3, 1) 1000ms both,
+      acilis-dagil 650ms cubic-bezier(0.7, 0, 0.84, 0) 4000ms forwards;
   }
-  /* Girişin ortak hareketi; gecikme satır içinde veriliyor. */
-  .acilis-belir {
-    animation: acilis-belir 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  /* İ'nin noktası: yazının renginde küçük bir kare, harfin tepesinde. */
+  .acilis-i-noktasi {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 8px;
+    height: 8px;
+    margin-left: -4px;
+    border-radius: 2px;
+    background: var(--foreground);
+    animation: acilis-yildiz 1200ms cubic-bezier(0.16, 1, 0.3, 1) 1650ms both;
+  }
+  .acilis-noktalar {
+    animation:
+      acilis-belir 700ms cubic-bezier(0.2, 0.8, 0.2, 1) 1400ms both,
+      acilis-son 300ms ease-in 3750ms forwards;
   }
   /* Yükleme noktaları: sırayla nabız atan üç nokta. */
   .acilis-nokta {
@@ -612,38 +598,6 @@ body {
     background: var(--primary);
     animation: acilis-nokta 1200ms ease-in-out infinite;
   }
-  /* Ölçüm hiç tutmadıysa uçmayan tavşan sahneyle birlikte sönüyor. */
-  .acilis-son {
-    animation: acilis-cikis 4200ms ease-in forwards;
-  }
-  /* Süzülen artı: iki ince çizgi, markanın dolgu tonunda. */
-  .acilis-arti {
-    position: absolute;
-    opacity: 0;
-    animation: acilis-arti 2000ms linear both;
-  }
-  .acilis-arti::before,
-  .acilis-arti::after {
-    content: '';
-    position: absolute;
-    border-radius: 2px;
-    background: var(--primary-parlak);
-  }
-  .acilis-arti::before {
-    left: 0;
-    right: 0;
-    top: 50%;
-    height: 1.5px;
-    margin-top: -0.75px;
-  }
-  .acilis-arti::after {
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    width: 1.5px;
-    margin-left: -0.75px;
-  }
-
 
   /* --- Aylık özet (components/ekranlar/aylik-ozet.tsx) --- */
 
@@ -723,22 +677,52 @@ body {
   }
 }
 
-/*
-  Tavşanın uçuşu (2a). %64'e kadar yerinde duruyor, %90'da varış noktasında —
-  ana sayfa başlığındaki (ya da kurulumdaki) maskotun tam üstünde — ve
-  gösterinin sonuna kadar orada bekliyor. Varış noktası ölçülüyor
-  (`components/acilis.tsx` → `useVaris`); tasarımın sabit sayıları
-  kullanılmıyor.
-*/
-@keyframes acilis-inis {
-  0%,
-  64% {
-    transform: translate(0, 0) scale(1);
-    animation-timing-function: cubic-bezier(0.5, 0, 0.2, 1);
+/* Açılış (2d). Bkz. `.acilis-sahne` üstündeki zaman çizgisi. */
+@keyframes acilis-sahne {
+  to {
+    opacity: 0;
   }
-  90%,
+}
+
+@keyframes acilis-netles {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: scale(1.08);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+}
+
+@keyframes acilis-dagil {
+  from {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    filter: blur(8px);
+    transform: scale(1.35);
+  }
+}
+
+/* İ'nin noktası yukarıdan dönerek düşüyor, biraz büyüyüp yerine oturuyor. */
+@keyframes acilis-yildiz {
+  0% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.3) rotate(-90deg);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(0) scale(1.25) rotate(20deg);
+  }
   100% {
-    transform: translate(var(--acilis-x), var(--acilis-y)) scale(var(--acilis-olcek));
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0);
   }
 }
 
@@ -753,6 +737,12 @@ body {
   }
 }
 
+@keyframes acilis-son {
+  to {
+    opacity: 0;
+  }
+}
+
 @keyframes acilis-nokta {
   0%,
   100% {
@@ -762,56 +752,6 @@ body {
   50% {
     opacity: 1;
     transform: scale(1);
-  }
-}
-
-/* Zeminin çıkışı: tavşan yuvaya yaklaşırken (%70–90) hafifçe büyüyerek
-   solar; tavşan vardığında altından ana sayfa görünmüş oluyor. */
-@keyframes acilis-cikis {
-  0%,
-  70% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  90%,
-  100% {
-    opacity: 0;
-    transform: scale(1.04);
-  }
-}
-
-/* İçeriğin çıkışı: tavşan kalkınca (%64) ~300 ms'de söner. */
-@keyframes acilis-icerik-cikis {
-  0%,
-  64% {
-    opacity: 1;
-    transform: scale(1);
-    animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
-  }
-  71%,
-  100% {
-    opacity: 0;
-    transform: scale(1.04);
-  }
-}
-
-@keyframes acilis-arti {
-  0% {
-    opacity: 0;
-    transform: translate(0, 0) scale(0.4) rotate(0);
-    animation-timing-function: cubic-bezier(0.1, 0.8, 0.3, 1);
-  }
-  22% {
-    opacity: 0.5;
-    transform: translate(calc(var(--dx) * 0.4), calc(var(--dy) * 0.4)) scale(1) rotate(35deg);
-    animation-timing-function: cubic-bezier(0.3, 0.2, 0.6, 1);
-  }
-  85% {
-    opacity: 0.35;
-  }
-  100% {
-    opacity: 0;
-    transform: translate(var(--dx), var(--dy)) scale(0.9) rotate(90deg);
   }
 }
 
@@ -1008,8 +948,8 @@ body {
     animation: none;
   }
   /* Susan animasyonun katmanı da kalkmalı: oynamayan bir öğeyi kompozitörde
-     tutmak bedava değil, kazandığı bir şey de yok. `.acilis-inis` burada
-     **yok** — açılış animasyonu bu tercihte de oynuyor, katmanı da duruyor. */
+     tutmak bedava değil, kazandığı bir şey de yok. Açılışın sınıfları burada
+     **yok** — açılış animasyonu bu tercihte de oynuyor. */
   .ozet-suzul {
     will-change: auto;
   }
