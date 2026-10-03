@@ -289,8 +289,10 @@ export function SpotIsigi() {
         sonGorunum = gorunumImzasi
       }
       const simdi = performance.now()
-      const kutu = sonHalindeOlc(hedef, () => hedefKutusu(o))
-      if (!kutu) {
+      // Hedef var mı (ekranın dışında da olabilir; onu kaydırarak getiriyoruz)
+      // ve görünür kısmı (spotun çizileceği kutu) ayrı sorular.
+      const ham = sonHalindeOlc(hedef, () => (hedef ? yereleCevir(hedef.getBoundingClientRect(), o.donusum) : null))
+      if (!ham || ham.width <= 0 || ham.height <= 0) {
         if (eksikBaslangici === null) eksikBaslangici = simdi
         if (simdi - adimBasi >= KAYIP_BEKLEMESI) {
           // Delik söner, balon yerinde kalır; turun ilk adımıysa balon altta belirir.
@@ -306,7 +308,7 @@ export function SpotIsigi() {
       eksikBaslangici = null
       if (eksikGosterildi) { eksikGosterildi = false; setHedefEksik(false) }
       if (faz === 'bekle') {
-        if (!durgun.bildir(kutu) && simdi - beklemeBasi < EN_UZUN_YERLESME) return
+        if (!durgun.bildir({ sol: ham.left, ust: ham.top, genislik: ham.width, yukseklik: ham.height }) && simdi - beklemeBasi < EN_UZUN_YERLESME) return
         sonHalindeOlc(hedef, () => planla(o))
         return
       }
@@ -318,6 +320,9 @@ export function SpotIsigi() {
         return
       }
       // İzle: hedef ancak yeni yerinde durunca, tek bir geçişle takip ediliyor.
+      const kutu = sonHalindeOlc(hedef, () => hedefKutusu(o))
+      // Ekrandan çıktıysa (içerik kaydı) yeniden planla: kaydırıp getir.
+      if (!kutu) { faz = 'bekle'; beklemeBasi = simdi; durgun.sifirla(); return }
       if (!izleDurgun.bildir(kutu)) return
       const son = sonRef.current
       const balonBoyu = (balonRef.current?.getBoundingClientRect().height ?? 0) / o.k
