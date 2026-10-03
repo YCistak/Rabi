@@ -68,6 +68,48 @@ function kaydir({ oge, x, y }: KaydirmaKaydi) {
 }
 
 /*
+  Hedefi, üst kenarı katmanın `istenenUst` noktasına gelecek kadar kaydırır
+  (katman CSS pikseli; `k` = katmanın ölçeği). `scrollIntoView` kullanılmıyor:
+
+  - Çok sütunlu kapta (`tablet-sutunlar`, yatay iPad) WebKit, sağ sütundaki
+    öğenin yerini sütunlara bölünmemiş akıştaki yerinden hesaplıyor. Ekranda
+    192 px'te, tamamen görünen Yapılacaklar dilimleri için pencereyi 379 px
+    kaydırıp hedefi -187 px'e, ekranın dışına itiyordu; görünen yalnızca
+    "Akşam" kalıyordu.
+  - `block: 'start'` hedefin üstünü ekranın 0 noktasına, durum çubuğunun
+    altına koyuyordu; spot güvenli alanın altından başladığı için hedefe
+    göre ~30 px aşağıda duruyordu (Pomodoro, yatay iPad).
+
+  Kaydırma önce hedefin kaydırılabilir atalarında yapılıyor, artanı
+  pencereye kalıyor. Hedef sabit (`position: fixed`) bir katmandaysa (alttan
+  açılan form) pencere kaydırması onu yerinden oynatmaz, yalnızca arkadaki
+  sayfayı kaydırır; klavye açıkken iOS'ta da görünür alanı (visualViewport)
+  hedefin altından kaçırır. İkisinde de pencereye dokunulmuyor.
+*/
+function hedefiKaydir(hedef: HTMLElement, istenenUst: number, k: number, pencereSerbest: boolean) {
+  const ust = () => hedef.getBoundingClientRect().top / k
+  let kalan = ust() - istenenUst
+  for (let kab = hedef.parentElement; kab && kab !== document.body && kab !== document.documentElement; kab = kab.parentElement) {
+    const stil = getComputedStyle(kab)
+    if (['auto', 'scroll'].includes(stil.overflowX) && kab.scrollWidth > kab.clientWidth) {
+      // Yatay şeritte hedef görünmüyorsa en yakın kenara getir ('nearest').
+      const h = hedef.getBoundingClientRect(), c = kab.getBoundingClientRect()
+      if (h.left < c.left) kab.scrollBy({ left: (h.left - c.left) / k, behavior: 'instant' })
+      else if (h.right > c.right) kab.scrollBy({ left: Math.min(h.right - c.right, h.left - c.left) / k, behavior: 'instant' })
+    }
+    if (Math.abs(kalan) >= 0.5 && ['auto', 'scroll'].includes(stil.overflowY) && kab.scrollHeight > kab.clientHeight) {
+      const once = ust()
+      // Büyütülmüş kabın kaydırması kendi (katmanla aynı) CSS pikselinde.
+      kab.scrollBy({ top: kalan, behavior: 'instant' })
+      kalan -= once - ust()
+    }
+    if (stil.position === 'fixed') return
+  }
+  // Pencerenin kaydırması ekran pikselinde (WebKit ve Chromium'da ölçüldü); `zoom` yalnızca body'de.
+  if (pencereSerbest && Math.abs(kalan) >= 0.5) window.scrollBy({ top: kalan * k, behavior: 'instant' })
+}
+
+/*
   Hedefin (ya da bir atasının) giriş animasyonu sürüyorsa ölçüm o animasyon
   bitmiş gibi yapılıyor: animasyonlar bir an sonlarına sarılıp ölçülüyor ve
   aynı karede geri alınıyor, ekrana hiçbir ara hâl çizilmiyor. Oyunun soru
@@ -102,6 +144,13 @@ export function SpotIsigi() {
   const gorunurRef = useRef(gorunur)
   gorunurRef.current = gorunur
   const [hedefEksik, setHedefEksik] = useState(false)
+  /*
+    Klavye açık ve odak hedefteki bir yazı kutusunda (Soru ekle, Görev ekle):
+    görünür alan yarıya iniyor, form onu tümüyle kaplıyor. Tam balon (açıklama
+    + Geri) formun yarısını örtüyordu; o sırada yalnızca başlık ve ipucu kalıyor.
+  */
+  const [sikisik, setSikisik] = useState(false)
+  const sikisikRef = useRef(false)
   const balonRef = useRef<HTMLDivElement>(null)
   const katmanRef = useRef<HTMLDivElement>(null)
   const guvenliAlanRef = useRef<HTMLDivElement>(null)
@@ -181,9 +230,13 @@ export function SpotIsigi() {
       // Güvenli alan `env()`ten ekran pikseli olarak geliyor; büyütülmüş
       // katmanda o kadar ekran pikseli `/ k` CSS pikseline denk.
       const guvenli = guvenliAlanRef.current ? getComputedStyle(guvenliAlanRef.current) : null
+      // Yazılım klavyesi açık: görünür alan pencereden belirgin kısa (iOS'ta
+      // pencere değil yalnızca visualViewport küçülüyor). Klavye ev çubuğunun
+      // üstünde durduğu için alttaki güvenli alan o sırada düşülmüyor.
+      const klavye = !!gorunum && window.innerHeight - gorunum.height > 100
       const ustSinir = ekran.ust + (parseFloat(guvenli?.paddingTop ?? '0') || 0) / k + 12
-      const altSinir = ekran.ust + ekran.yukseklik - (parseFloat(guvenli?.paddingBottom ?? '0') || 0) / k - 12
-      return { donusum, k, ekran, ustSinir, altSinir }
+      const altSinir = ekran.ust + ekran.yukseklik - (klavye ? 0 : (parseFloat(guvenli?.paddingBottom ?? '0') || 0) / k) - 12
+      return { donusum, k, ekran, ustSinir, altSinir, klavye }
     }
     type Ortam = ReturnType<typeof ortam>
     const tablet = () => document.documentElement.dataset.yerlesim === 'tablet'
@@ -214,10 +267,17 @@ export function SpotIsigi() {
       const alt = Math.min(o.altSinir + 8, gorunenAlt + 5)
       return sag > sol && alt > ust ? { sol, ust, genislik: sag - sol, yukseklik: alt - ust } : null
     }
+    /** Klavye açıkken hedefteki odaklı yazı kutusu: balon onu örtmemeli. */
+    const odakKutusu = (o: Ortam): Kutu | null => {
+      const odak = document.activeElement
+      if (!o.klavye || !hedef || !(odak instanceof HTMLElement) || !hedef.contains(odak) || !odak.matches('input, textarea')) return null
+      const r = yereleCevir(odak.getBoundingClientRect(), o.donusum)
+      return { sol: r.left, ust: r.top, genislik: r.width, yukseklik: r.height }
+    }
     const hesapla = (o: Ortam, kutu: Kutu | null): Yerlesim => {
       const genislik = balonGenisligi(kutu, o.ekran, tablet())
       const yukseklik = balonYuksekligi(genislik, o.k)
-      const yer = balonKonumu(kutu, o.ekran, o.ustSinir, o.altSinir, genislik, yukseklik)
+      const yer = balonKonumu(kutu, o.ekran, o.ustSinir, o.altSinir, genislik, yukseklik, odakKutusu(o))
       const ekHedefler = (adim.ekHedefler ?? []).flatMap((hedefAdi) => {
         const oge = document.querySelector<HTMLElement>(`[data-tanitim="${hedefAdi}"]`)
         if (!oge) return []
@@ -238,20 +298,13 @@ export function SpotIsigi() {
       if (!hedef) return
       const bas = kaydirmalariOku(hedef)
       const d0 = yereleCevir(hedef.getBoundingClientRect(), o.donusum)
-      hedef.scrollIntoView({ block: d0.height > o.ekran.yukseklik * 0.55 ? 'start' : 'center', inline: 'nearest', behavior: 'instant' })
-      let d = yereleCevir(hedef.getBoundingClientRect(), o.donusum)
+      // Uzun hedefin üstü güvenli alanın hemen altına, kısası görünür alanın ortasına.
+      const alan = o.altSinir - o.ustSinir
+      let istenen = d0.height > o.ekran.yukseklik * 0.55 ? o.ustSinir + 8 : o.ustSinir + (alan - d0.height) / 2
+      // Balon ve hedef kısa telefonlarda üst üste binmesin: hedef üste alınıyor, balon altına.
       const yukseklik = balonYuksekligi(balonGenisligi(hedefKutusu(o), o.ekran, tablet()), o.k)
-      // Balon ve hedef kısa telefonlarda üst üste binmesin.
-      if (Math.max(o.altSinir - d.bottom, d.top - o.ustSinir) < yukseklik + 20 && o.ekran.genislik * o.k < 700) {
-        let kab = hedef.parentElement
-        while (kab && !(['auto', 'scroll'].includes(getComputedStyle(kab).overflowY) && kab.scrollHeight > kab.clientHeight)) kab = kab.parentElement
-        // Büyütülmüş bir kabın kaydırması kendi CSS pikselinde, pencereninki
-        // ekran pikselinde (WebKit ve Chromium'da ölçüldü); `zoom` yalnızca body'de.
-        const fark = d.top - o.ustSinir - 8
-        if (kab) kab.scrollBy({ top: fark, behavior: 'instant' })
-        else window.scrollBy({ top: fark * o.k, behavior: 'instant' })
-        d = yereleCevir(hedef.getBoundingClientRect(), o.donusum)
-      }
+      if (Math.max(o.altSinir - (istenen + d0.height), istenen - o.ustSinir) < yukseklik + 20 && o.ekran.genislik * o.k < 700) istenen = o.ustSinir + 8
+      hedefiKaydir(hedef, istenen + o.donusum.ust / o.k, o.k, !o.klavye)
       const onceki = sonRef.current
       const yeni = hesapla(o, hedefKutusu(o))
       const son = kaydirmalariOku(hedef)
@@ -283,6 +336,9 @@ export function SpotIsigi() {
       }
       for (const cocuk of document.body.children) if (cocuk instanceof HTMLElement) kilitle(cocuk)
       const o = ortam()
+      // Klavye hedefteki bir kutuya açıldıysa balon yalnızca başlık ve ipucuna iner.
+      const sikisikOlmali = !!odakKutusu(o)
+      if (sikisikOlmali !== sikisikRef.current) { sikisikRef.current = sikisikOlmali; setSikisik(sikisikOlmali) }
       const gorunumImzasi = `${o.ekran.genislik}:${o.ekran.yukseklik}:${o.ustSinir}:${o.altSinir}`
       if (sonGorunum !== gorunumImzasi) {
         if (sonGorunum && faz !== 'bekle') { faz = 'bekle'; beklemeBasi = performance.now(); durgun.sifirla() }
@@ -352,6 +408,8 @@ export function SpotIsigi() {
       if (balonRef.current?.contains(odaklar[yeni])) odaklar[yeni].scrollIntoView({ block: 'nearest', behavior: 'instant' })
     }
     setHedefEksik(false)
+    sikisikRef.current = false
+    setSikisik(false)
     olc()
     odaklan()
     const olaylar = ['pointerdown', 'mousedown', 'touchstart', 'click', 'dblclick', 'contextmenu']
@@ -441,7 +499,7 @@ export function SpotIsigi() {
 
   if (!adim || rehberGizli || typeof document === 'undefined') return null
   const hareketAzalt = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  const kisaBalon = !!adim.kisa || ['pomodoro', 'zorluk'].includes(adim.kimlik)
+  const kisaBalon = !!adim.kisa || sikisik || ['pomodoro', 'zorluk'].includes(adim.kimlik)
   const aciklama = adim.tabletAciklama && document.documentElement.dataset.yerlesim === 'tablet' ? adim.tabletAciklama : adim.aciklama
   const { hedef, cizilen, ekHedefler, balon, ekran, spotAnlik, balonAnlik } = yerlesim
   /*
@@ -481,9 +539,9 @@ export function SpotIsigi() {
           <button type="button" onClick={turuBitir} className="min-h-11 min-w-11 rounded-lg px-2 text-xs font-bold text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring">Turu Geç</button>
         </div>
         {adim.kimlik !== 'soru-bir' && <h2 data-tanitim-baslik tabIndex={-1} className={kisaBalon ? 'font-display text-sm font-extrabold outline-none' : 'font-display text-lg font-extrabold outline-none'}>{adim.baslik}</h2>}
-        {(adim.kimlik !== 'soru-bir' || hedefEksik) && <p aria-live="polite" className={kisaBalon ? 'mt-1 text-xs leading-snug text-muted-foreground' : 'mt-2 text-[13px] leading-relaxed text-muted-foreground'}>{hedefEksik ? 'Bu adımın bileşeni bulunamadı. Geri dönerek yeniden deneyebilir veya turu geçebilirsin.' : adim.kimlik === 'soru-bir' ? 'Sonucu yaz, onayla veya pas geç.' : aciklama}</p>}
+        {(adim.kimlik !== 'soru-bir' || hedefEksik) && !(sikisik && !hedefEksik) && <p aria-live="polite" className={kisaBalon ? 'mt-1 text-xs leading-snug text-muted-foreground' : 'mt-2 text-[13px] leading-relaxed text-muted-foreground'}>{hedefEksik ? 'Bu adımın bileşeni bulunamadı. Geri dönerek yeniden deneyebilir veya turu geçebilirsin.' : adim.kimlik === 'soru-bir' ? 'Sonucu yaz, onayla veya pas geç.' : aciklama}</p>}
         {adim.kimlik !== 'soru-bir' && <div className={kisaBalon ? 'mt-2 flex items-center justify-between gap-2' : 'mt-3 flex items-center justify-between gap-2'}>
-          <Buton type="button" bicim="ikincil" className="min-h-11 min-w-11" disabled={aktifAdim === 0 || gecisSuruyor} onClick={oncekiAdimaDon}>Geri</Buton>
+          {!sikisik && <Buton type="button" bicim="ikincil" className="min-h-11 min-w-11" disabled={aktifAdim === 0 || gecisSuruyor} onClick={oncekiAdimaDon}>Geri</Buton>}
           {aktifAdim === adimSayisi - 1 ? <Buton type="button" className="min-h-11 min-w-11" onClick={turuBitir}>Turu Bitir</Buton> : adim.tiklamali ? <span className="text-right text-xs font-bold text-primary">{adim.ipucu ?? 'Aydınlatılan alana dokun'}</span> : <Buton type="button" className="min-h-11 min-w-11" disabled={!hedef || hedefEksik || gecisSuruyor} onClick={sonrakiAdimaGec}>{adim.ileriEtiketi ?? (adim.kimlik === 'sonuc' ? 'Oyunlara dön' : 'İleri')}</Buton>}
         </div>}
       </div>

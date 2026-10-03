@@ -277,3 +277,22 @@ describe('okuma puanı', () => {
     expect(okumaPuani('')).toBe(0)
   })
 })
+
+/*
+  Turda Okut'un aynı kâğıdı okumamasının sebebi: okuma seçili şablona bağlı
+  (ders adları ve soru sayıları). Tur deneme formunda yalnızca TYT + alan
+  şablonlarını sunup TYT'yi seçili getiriyordu; tur dışında varsayılan
+  Seviye Tespit (okul). Aynı metin (gerçek kâğıt: ~/Downloads/ocr,
+  "Edebiyat: 30D ... Biyoloji: 10D") iki şablonla:
+*/
+describe('Okuma seçili şablona bağlı (tanıtım turu OCR farkı)', () => {
+  const KAGIT = 'Edebiyat: 30D\nTarih: 12D\nCoğrafya: 12D\nDin: 6D\nMatematik: 30D\nFizik: 10D\nKimya: 10D\nBiyoloji: 10D'
+  it('Seviye Tespit şablonuyla (tur dışı varsayılan) sekiz dersin hepsi okunur', () => {
+    expect(denemeyiCoz(KAGIT, sablon('okul')).okunanlar).toHaveLength(8)
+  })
+  it('TYT şablonuyla (turun eski seçimi) hiçbir ders okunmaz', () => {
+    const sonuc = denemeyiCoz(KAGIT, sablon('tyt'))
+    expect(sonuc.okunanlar).toHaveLength(0)
+    expect(sonuc.atlananlar.length).toBeGreaterThan(0)
+  })
+})

@@ -137,6 +137,7 @@ export function OyunBankasiEkrani({
         tek yolunu açmak.
       */}
       <Buton
+        data-tanitim={demoVeri ? 'banka-genel-test' : undefined}
         className="mb-4 w-full bg-ikincil text-white"
         disabled={banka.length < 2}
         onClick={onTestBaslat}
@@ -145,6 +146,8 @@ export function OyunBankasiEkrani({
         {banka.length < 2 ? 'Genel test için en az iki soru gerekiyor' : 'Genel test'}
       </Buton>
 
+      {/* Tur listeyi süzgeç çipleriyle birlikte tek adımda aydınlatıyor. */}
+      <div data-tanitim={demoVeri ? 'banka-liste' : undefined}>
       <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
         <SuzgecCipi
           etkin={suzgec === 'tumu'}
@@ -168,12 +171,13 @@ export function OyunBankasiEkrani({
       </div>
 
       <ul className="space-y-2.5">
-        {gorunen.map((kayit) => (
+        {gorunen.map((kayit, sira) => (
           <li key={kayit.id}>
-            <KayitKarti kayit={kayit} onKaldir={() => onKaldir(kayit.id)} bildir={bildir} />
+            <KayitKarti kayit={kayit} onKaldir={() => onKaldir(kayit.id)} bildir={bildir} tanitimHedefi={demoVeri && sira === 0} />
           </li>
         ))}
       </ul>
+      </div>
     </div>
   )
 }
@@ -226,10 +230,13 @@ function KayitKarti({
   kayit,
   onKaldir,
   bildir,
+  tanitimHedefi = false,
 }: {
   kayit: BankaKaydi
   onKaldir: () => void
   bildir: BildirimKolu
+  /** Turun "Öğrendim" adımı ilk kartın düğmesini aydınlatıyor. */
+  tanitimHedefi?: boolean
 }) {
   const aile = DERS_AILESI[oyunBul(kayit.soru.oyun).ders]
   /**
@@ -317,6 +324,7 @@ function KayitKarti({
         aynı ağırlıkta görünür, kart da iki eylemli bir forma dönerdi.
       */}
       <button
+        data-tanitim={tanitimHedefi ? 'banka-ogrendim' : undefined}
         type="button"
         onClick={() => setKalkiyor(true)}
         disabled={kalkiyor}

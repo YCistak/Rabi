@@ -14,6 +14,7 @@ import { secilebilirSablonlar, toplamSoru } from '@/lib/sablonlar'
 import { bugun, cn, yeniId } from '@/lib/utils'
 import type { Deneme, PuanTuru, Sablon, YanlisSoru } from '@/lib/types'
 import { DenemeOkut } from '@/components/deneme-okut'
+import { ornekDenemeSonucu } from '@/lib/tanitim-veri'
 
 type Giris = { dogru: string; yanlis: string }
 
@@ -51,8 +52,10 @@ export function YeniDenemeEkrani({
    * Başlangıç turunda: net başlığı yapışmıyor (rehber tabloyu en üste
    * kaydırınca başlığın altında kalıyordu) ve yanlış soru düğmesi yok —
    * o katman gerçek Yanlış Soru Bankası'na yazıyor, turun verisi değil.
+   * `ornekDoldur`: tur kaydetme adımına geçti; form boşsa örnek sonuçlar
+   * yazılıyor (kullanıcıya deneme elle girdirilmiyor).
    */
-  tanitim?: { onOkutAcik: (acik: boolean) => void }
+  tanitim?: { onOkutAcik: (acik: boolean) => void; ornekDoldur?: boolean }
 }) {
   /*
     Seçim listesi sınıfa ve alana göre süzülü (`secilebilirSablonlar`);
@@ -127,6 +130,21 @@ export function YeniDenemeEkrani({
       }),
     [sablon, girisler],
   )
+
+  /*
+    Turun kaydetme adımı: Okut ile okunan bir sonuç varsa ona dokunulmuyor,
+    form boşsa örnek sonuçlar yazılıyor. Elle giriş adımı kaldırıldı; tabloyu
+    doldurmak için açılan klavye ve rehberin balonu dersleri kapatıyordu.
+  */
+  const ornekDoldur = !!tanitim?.ornekDoldur
+  useEffect(() => {
+    if (!ornekDoldur) return
+    setGirisler((onceki) => {
+      const bos = sablon.dersler.every((d) => !Number(onceki[d.id]?.dogru || 0) && !Number(onceki[d.id]?.yanlis || 0))
+      if (!bos) return onceki
+      return Object.fromEntries(ornekDenemeSonucu(sablon).map((s) => [s.dersId, { dogru: String(s.dogru), yanlis: String(s.yanlis) }]))
+    })
+  }, [ornekDoldur, sablon])
 
   const hataliDers = satirlar.find((s) => s.asim)
   const bosMu = satirlar.every((s) => s.dogru === 0 && s.yanlis === 0)
