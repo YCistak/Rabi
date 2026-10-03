@@ -3,12 +3,27 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Buton } from '@/components/ui'
+import { TANITIM_EGRISI, egriDegeri } from '@/lib/tanitim-animasyonu'
+import { balonGenisligi, balonKonumu, durgunlukSayaci, kutuFarki, type Kutu } from '@/lib/tanitim-yerlesim'
 import { useTanitim } from './tanitim-baglami'
 
-type Kutu = { sol: number; ust: number; genislik: number; yukseklik: number }
-type Yerlesim = { ekHedefler: Kutu[]; hedef: Kutu | null; balon: Kutu; ekran: Kutu }
+/*
+  `hedef` null ise delik görünmüyor ama son çizildiği yerde (`cizilen`)
+  duruyor: hedef bir an kaybolunca (ekran değişirken, oyun sonucu gelirken)
+  delik sökülüp yeniden kurulduğunda geçişsiz yeni yerinde beliriyor, balon
+  da ekranın dibine düşüp geri uçuyordu.
+
+  `anlik`: bu yerleşim geçişsiz konacak (turun ilk karesi, kaybolan hedefin
+  yeniden belirmesi). Bir sonraki karede kalkıyor.
+*/
+type Yerlesim = { ekHedefler: Kutu[]; hedef: Kutu | null; cizilen: Kutu | null; balon: Kutu; ekran: Kutu; spotAnlik: boolean; balonAnlik: boolean }
 const BOS_KUTU: Kutu = { sol: 0, ust: 0, genislik: 0, yukseklik: 0 }
+const BOS_YERLESIM: Yerlesim = { ekHedefler: [], hedef: null, cizilen: null, balon: BOS_KUTU, ekran: BOS_KUTU, spotAnlik: true, balonAnlik: true }
 const ODAK_SECICI = 'button:not(:disabled), a[href], input:not(:disabled), [tabindex="0"]'
+/** Hedef bu kadar süre bulunamazsa delik söner (ekran değişiminin tek karesi için sönmesin). */
+const KAYIP_BEKLEMESI = 400
+/** Hedef kıpırdamaya devam etse de en geç bu kadar beklenip yerleşiliyor. */
+const EN_UZUN_YERLESME = 700
 
 /*
   Ekran koordinatlarını katmanın kendi CSS pikseline çeviren dönüşüm.
@@ -40,18 +55,63 @@ function yereleCevir(alan: DOMRect, { olcek, sol, ust }: Donusum) {
   return { left, top, right: left + alan.width / olcek, bottom: top + alan.height / olcek, width: alan.width / olcek, height: alan.height / olcek }
 }
 
-const KISA_KAYDIRMA = 0.6
+/** Hedefin bütün atalarının ve pencerenin kaydırma konumu (`null` = pencere). */
+type KaydirmaKaydi = { oge: Element | null; x: number; y: number }
+function kaydirmalariOku(hedef: HTMLElement): KaydirmaKaydi[] {
+  const kayitlar: KaydirmaKaydi[] = [{ oge: null, x: window.scrollX, y: window.scrollY }]
+  for (let oge = hedef.parentElement; oge; oge = oge.parentElement) kayitlar.push({ oge, x: oge.scrollLeft, y: oge.scrollTop })
+  return kayitlar
+}
+function kaydir({ oge, x, y }: KaydirmaKaydi) {
+  if (oge) { oge.scrollLeft = x; oge.scrollTop = y }
+  else window.scrollTo({ left: x, top: y, behavior: 'instant' })
+}
+
+/*
+  Hedefin (ya da bir atasının) giriş animasyonu sürüyorsa ölçüm o animasyon
+  bitmiş gibi yapılıyor: animasyonlar bir an sonlarına sarılıp ölçülüyor ve
+  aynı karede geri alınıyor, ekrana hiçbir ara hâl çizilmiyor. Oyunun soru
+  ekranı 500 ms'lik bir girişle geliyor ve ilk iki karesi duraklatılmış
+  (`sayfa-bekliyor`); spot o duraklamayı "yerleşti" sanıp gidiyor, hedef
+  20 px kayınca ikinci kez düzeltiliyordu. Bitmeyen (sonsuz) animasyonlara
+  dokunulmuyor.
+*/
+function sonHalindeOlc<T>(hedef: HTMLElement | null, olc: () => T): T {
+  const sarilanlar: [Animation, CSSNumberish | null][] = []
+  for (let oge: Element | null = hedef; oge; oge = oge.parentElement) {
+    if (typeof oge.getAnimations !== 'function') break
+    for (const animasyon of oge.getAnimations()) {
+      const bitis = Number(animasyon.effect?.getComputedTiming().endTime)
+      if (animasyon.playState === 'finished' || !Number.isFinite(bitis)) continue
+      sarilanlar.push([animasyon, animasyon.currentTime])
+      animasyon.currentTime = bitis
+    }
+  }
+  try { return olc() } finally { for (const [animasyon, zaman] of sarilanlar) animasyon.currentTime = zaman }
+}
+
 const azaltilmisHareket = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 export function SpotIsigi() {
   const { adim, animasyon, deneyMi, rehberGizli, aktifTur, adimSayisi, gecisSuruyor, aktifAdim, sonrakiAdimaGec, oncekiAdimaDon, turuBitir } = useTanitim()
-  const [yerlesim, setYerlesim] = useState<Yerlesim>({ ekHedefler: [], hedef: null, balon: BOS_KUTU, ekran: BOS_KUTU })
-  const [cizimBasladi, setCizimBasladi] = useState(false)
-  useEffect(() => { setCizimBasladi(false); const zaman = setTimeout(() => setCizimBasladi(true), 32); return () => clearTimeout(zaman) }, [adim, rehberGizli])
+  const [yerlesim, setYerlesim] = useState<Yerlesim>(BOS_YERLESIM)
+  /** Turun ilk yerleşimi yapıldı ve katman belirdi. */
+  const [gorunur, setGorunur] = useState(false)
+  // Katman görünmüyorken (turun başı, oyunun geri sayımından dönüş) yerleşim
+  // geçişsiz konuyor; yoksa balon görünmez hâldeki eski yerinden uçarak geliyordu.
+  const gorunurRef = useRef(gorunur)
+  gorunurRef.current = gorunur
   const [hedefEksik, setHedefEksik] = useState(false)
   const balonRef = useRef<HTMLDivElement>(null)
   const katmanRef = useRef<HTMLDivElement>(null)
   const guvenliAlanRef = useRef<HTMLDivElement>(null)
+  /** Son çizilen yerleşim; adımlar arasında yaşıyor, yeni adımın animasyonu buradan başlıyor. */
+  const sonRef = useRef<Yerlesim | null>(null)
+  // Kapanış (ve ayarlıysa adımlar arası solma) sürerken ölçüm donuyor: son
+  // adımda demo verisi silinince hedef kayboluyor ve balon, solarken ekranın
+  // dibine uçuyordu.
+  const donukRef = useRef(gecisSuruyor)
+  donukRef.current = gecisSuruyor
   const maske = useId().replace(/:/g, '')
 
   useLayoutEffect(() => {
@@ -59,15 +119,32 @@ export function SpotIsigi() {
     const etkilesimAcik = adim.tiklamali || ('etkilesimli' in adim && adim.etkilesimli)
     let kare = 0
     let hedef: HTMLElement | null = null
-    let kaydirildi = false
-    let kaydirmaBaslangici = 0
-    let oncekiUst = Number.NaN
-    let durgunKare = 0
-    let duzeltildi = false
+    /*
+      Adımın sırası, olaya bağlı:
+      1. `bekle`  — hedef bulunup yerinde durana (iki kare kıpırdamayana) kadar
+                    spot ve balon eski adımda kalıyor.
+      2. planla   — hedefin kaydırılmış son yeri aynı karede (boyamadan)
+                    ölçülüyor, kaydırma geri alınıyor; spot ve balon tek
+                    seferde o son yere yollanıyor.
+      3. `kaydir` — sayfa, spotla aynı süre ve eğriyle o yere kaydırılıyor:
+                    delik içerikle birlikte hedefin üstüne iniyor.
+      4. `izle`   — hedef sonradan oynarsa (içerik yüklendi, klavye açıldı)
+                    yerleştiği an tek bir geçişle izleniyor.
+      Eskiden spot her karede hedefin o anki yerine yeniden hedefleniyordu:
+      kaydırma sürerken 240 ms'lik geçiş hedefi geriden kovalıyor, önüne geçip
+      geri dönüyor; kaydırma bitince ikinci bir düzeltme kaydırması daha
+      geliyordu.
+    */
+    let faz: 'bekle' | 'kaydir' | 'izle' = 'bekle'
+    const adimBasi = performance.now()
+    let beklemeBasi = adimBasi
+    const durgun = durgunlukSayaci(1)
+    const izleDurgun = durgunlukSayaci(2)
+    let kaydirmalar: { bas: KaydirmaKaydi; son: KaydirmaKaydi }[] = []
+    let kaydirmaBasi = 0
     let sonGorunum = ''
     let eksikBaslangici: number | null = null
     let eksikGosterildi = false
-    let son = ''
     const oncekiOdak = document.activeElement instanceof HTMLElement ? document.activeElement : null
     const dokunulmazlar = new Map<HTMLElement, boolean>()
     const hedefiBul = () => document.querySelector<HTMLElement>(`[data-tanitim="${adim.hedef}"]`)
@@ -85,15 +162,15 @@ export function SpotIsigi() {
         oge.inert = true
       }
     }
-    const olc = () => {
-      const bulunan = hedefiBul()
-      if (bulunan !== hedef) {
-        kilitleriBirak()
-        hedef = bulunan
-        kaydirildi = false
-      }
-      for (const cocuk of document.body.children) if (cocuk instanceof HTMLElement) kilitle(cocuk)
-      // Bundan sonraki bütün ölçüler katmanın CSS pikselinde (bkz. `katmanDonusumu`).
+    const ciz = (yeni: Yerlesim) => {
+      const onceki = sonRef.current
+      if (onceki && !yeni.spotAnlik && !yeni.balonAnlik && kutuFarki(onceki.hedef, yeni.hedef) < 0.5 && kutuFarki(onceki.balon, yeni.balon) < 0.5
+        && kutuFarki(onceki.ekran, yeni.ekran) < 0.5 && JSON.stringify(onceki.ekHedefler) === JSON.stringify(yeni.ekHedefler)) return
+      sonRef.current = yeni
+      setYerlesim(yeni)
+    }
+    // Bundan sonraki bütün ölçüler katmanın CSS pikselinde (bkz. `katmanDonusumu`).
+    const ortam = () => {
       const donusum = katmanDonusumu(katmanRef.current)
       const k = donusum.olcek
       const gorunum = window.visualViewport
@@ -106,97 +183,146 @@ export function SpotIsigi() {
       const guvenli = guvenliAlanRef.current ? getComputedStyle(guvenliAlanRef.current) : null
       const ustSinir = ekran.ust + (parseFloat(guvenli?.paddingTop ?? '0') || 0) / k + 12
       const altSinir = ekran.ust + ekran.yukseklik - (parseFloat(guvenli?.paddingBottom ?? '0') || 0) / k - 12
-      const gorunumImzasi = `${ekran.genislik}:${ekran.yukseklik}:${ustSinir}:${altSinir}`
-      if (sonGorunum !== gorunumImzasi) { sonGorunum = gorunumImzasi; kaydirildi = false; duzeltildi = false }
-      let balonGenisligi = Math.min(340, ekran.genislik - 24)
-      const balonYuksekligi = balonRef.current ? balonRef.current.getBoundingClientRect().height / k : 230
-      let kutu: Kutu | null = null
-      if (hedef) {
-        let dikdortgen = yereleCevir(hedef.getBoundingClientRect(), donusum)
-        if (dikdortgen.width > 0 && dikdortgen.height > 0) {
-          if (!kaydirildi) {
-            // Kısa mesafede yumuşak, uzunda anında: uzun yumuşak kaydırma adımı yavaşlatıyordu.
-            const bloklama = dikdortgen.height > ekran.yukseklik * 0.55 ? 'start' : 'center'
-            const hedefUst = bloklama === 'start' ? ustSinir : (ustSinir + altSinir - dikdortgen.height) / 2
-            const mesafe = Math.abs(dikdortgen.top - hedefUst)
-            hedef.scrollIntoView({ block: bloklama, inline: 'nearest', behavior: azaltilmisHareket() || mesafe > ekran.yukseklik * KISA_KAYDIRMA ? 'instant' : 'smooth' })
-            kaydirmaBaslangici = performance.now()
-            oncekiUst = Number.NaN
-            durgunKare = 0
-            kaydirildi = true
-          }
-          // Düzeltme, sabit süre yerine kaydırma durunca (üç kare aynı konum) yapılır; en fazla 600 ms beklenir.
-          if (!duzeltildi) {
-            const simdiki = hedef.getBoundingClientRect().top
-            durgunKare = Math.abs(simdiki - oncekiUst) < 0.5 ? durgunKare + 1 : 0
-            oncekiUst = simdiki
-          }
-          if (!duzeltildi && ((durgunKare >= 3 && performance.now() - kaydirmaBaslangici > 60) || performance.now() - kaydirmaBaslangici > 600)) {
-            dikdortgen = yereleCevir(hedef.getBoundingClientRect(), donusum)
-            // Balon ve hedef kısa telefonlarda üst üste binmesin.
-            const alttaYer = altSinir - dikdortgen.bottom
-            const ustteYer = dikdortgen.top - ustSinir
-            if (Math.max(alttaYer, ustteYer) < balonYuksekligi + 20 && ekran.genislik * k < 700) {
-              let kaydirmaKabi = hedef.parentElement
-              while (kaydirmaKabi && !(['auto', 'scroll'].includes(getComputedStyle(kaydirmaKabi).overflowY) && kaydirmaKabi.scrollHeight > kaydirmaKabi.clientHeight)) kaydirmaKabi = kaydirmaKabi.parentElement
-              // Büyütülmüş bir kabın kaydırması kendi CSS pikselinde, pencereninki
-              // ekran pikselinde (WebKit ve Chromium'da ölçüldü); `zoom` yalnızca body'de.
-              const fark = dikdortgen.top - ustSinir - 8
-              const davranis = azaltilmisHareket() || Math.abs(fark) > ekran.yukseklik * KISA_KAYDIRMA ? 'instant' : 'smooth'
-              if (kaydirmaKabi) kaydirmaKabi.scrollBy({ top: fark, behavior: davranis })
-              else window.scrollBy({ top: fark * k, behavior: davranis })
-              dikdortgen = yereleCevir(hedef.getBoundingClientRect(), donusum)
-            }
-            duzeltildi = true
-          }
-          // Uzun konu patikasının ilk bölümü ve ilerleme bandı birlikte görünür.
-          const gorunenAlt = ['konu-haritasi'].includes(adim.kimlik) ? Math.min(dikdortgen.bottom, dikdortgen.top + ekran.yukseklik * 0.4) : dikdortgen.bottom
-          const sol = Math.max(ekran.sol + 4, dikdortgen.left - 5)
-          const ust = Math.max(ustSinir - 8, dikdortgen.top - 5)
-          const sag = Math.min(ekran.sol + ekran.genislik - 4, dikdortgen.right + 5)
-          const alt = Math.min(altSinir + 8, gorunenAlt + 5)
-          if (sag > sol && alt > ust) kutu = { sol, ust, genislik: sag - sol, yukseklik: alt - ust }
-        }
-      }
-      let balonSol = ekran.sol + (ekran.genislik - balonGenisligi) / 2
-      let balonUst = altSinir - balonYuksekligi
-      if (kutu) {
-        const alt = kutu.ust + kutu.yukseklik
-        const solBosluk = kutu.sol - ekran.sol
-        const sagBosluk = ekran.sol + ekran.genislik - kutu.sol - kutu.genislik
-        // Yatay telefonda balon yanda, kendi içinde kaydırılabilir kalır.
-        // Tablette yan boşluk dar diye balon daraltılmıyor: sağdaki rayla
-        // geniş bir hedefin arasına 170 piksellik bir şerit olarak sıkışıyor,
-        // düğmeleri kesiliyordu. Yeterince yer yoksa balon üste/alta geçiyor.
-        const enDarYan = document.documentElement.dataset.yerlesim === 'tablet' ? 300 : 188
-        if (ekran.genislik > ekran.yukseklik && Math.max(solBosluk, sagBosluk) >= enDarYan) {
-          balonGenisligi = Math.min(340, Math.max(solBosluk, sagBosluk) - 28)
-        }
-        if (ekran.sol + ekran.genislik - kutu.sol - kutu.genislik >= balonGenisligi + 28) {
-          balonSol = kutu.sol + kutu.genislik + 16
-          balonUst = kutu.ust
-        } else if (kutu.sol - ekran.sol >= balonGenisligi + 28) {
-          balonSol = kutu.sol - balonGenisligi - 16
-          balonUst = kutu.ust
-        } else if (altSinir - alt >= balonYuksekligi + 16) balonUst = alt + 16
-        else if (kutu.ust - ustSinir >= balonYuksekligi + 16) balonUst = kutu.ust - balonYuksekligi - 16
-        else balonUst = alt + 12
-      }
+      return { donusum, k, ekran, ustSinir, altSinir }
+    }
+    type Ortam = ReturnType<typeof ortam>
+    const tablet = () => document.documentElement.dataset.yerlesim === 'tablet'
+    /*
+      Balonun yeni adımdaki yüksekliği, konacağı genişlikte ölçülüyor. Eskiden
+      bir önceki karenin yüksekliği kullanılıyordu: içerik değişince balon önce
+      eski boyuna göre konuyor, bir kare sonra yeniden konup ikinci kez
+      sıçrıyordu (Pomodoro adımında 72 px).
+    */
+    const balonYuksekligi = (genislik: number, k: number) => {
+      const balon = balonRef.current
+      if (!balon) return 230
+      const onceki = balon.style.width
+      balon.style.width = `${genislik}px`
+      const yukseklik = balon.getBoundingClientRect().height / k
+      balon.style.width = onceki
+      return yukseklik
+    }
+    const hedefKutusu = (o: Ortam): Kutu | null => {
+      if (!hedef) return null
+      const d = yereleCevir(hedef.getBoundingClientRect(), o.donusum)
+      if (d.width <= 0 || d.height <= 0) return null
+      // Uzun konu patikasının ilk bölümü ve ilerleme bandı birlikte görünür.
+      const gorunenAlt = adim.kimlik === 'konu-haritasi' ? Math.min(d.bottom, d.top + o.ekran.yukseklik * 0.4) : d.bottom
+      const sol = Math.max(o.ekran.sol + 4, d.left - 5)
+      const ust = Math.max(o.ustSinir - 8, d.top - 5)
+      const sag = Math.min(o.ekran.sol + o.ekran.genislik - 4, d.right + 5)
+      const alt = Math.min(o.altSinir + 8, gorunenAlt + 5)
+      return sag > sol && alt > ust ? { sol, ust, genislik: sag - sol, yukseklik: alt - ust } : null
+    }
+    const hesapla = (o: Ortam, kutu: Kutu | null): Yerlesim => {
+      const genislik = balonGenisligi(kutu, o.ekran, tablet())
+      const yukseklik = balonYuksekligi(genislik, o.k)
+      const yer = balonKonumu(kutu, o.ekran, o.ustSinir, o.altSinir, genislik, yukseklik)
       const ekHedefler = ('ekHedefler' in adim ? adim.ekHedefler : []).flatMap((hedefAdi) => {
         const oge = document.querySelector<HTMLElement>(`[data-tanitim="${hedefAdi}"]`)
         if (!oge) return []
-        const alan = yereleCevir(oge.getBoundingClientRect(), donusum)
-        if (alan.bottom < ustSinir || alan.top > altSinir) return []
-        return [{ sol: alan.left - 4, ust: Math.max(ustSinir, alan.top - 4), genislik: alan.width + 8, yukseklik: Math.min(altSinir, alan.bottom + 4) - Math.max(ustSinir, alan.top - 4) }]
+        const alan = yereleCevir(oge.getBoundingClientRect(), o.donusum)
+        if (alan.bottom < o.ustSinir || alan.top > o.altSinir) return []
+        return [{ sol: alan.left - 4, ust: Math.max(o.ustSinir, alan.top - 4), genislik: alan.width + 8, yukseklik: Math.min(o.altSinir, alan.bottom + 4) - Math.max(o.ustSinir, alan.top - 4) }]
       })
-      const yeni = { ekHedefler, hedef: kutu, ekran, balon: { sol: balonSol, ust: Math.max(ustSinir, Math.min(balonUst, altSinir - balonYuksekligi)), genislik: balonGenisligi, yukseklik: balonYuksekligi } }
-      const imza = JSON.stringify(yeni)
-      if (imza !== son) { son = imza; setYerlesim(yeni) }
-      if (kutu) eksikBaslangici = null
-      else if (eksikBaslangici === null) eksikBaslangici = Date.now()
-      const eksik = eksikBaslangici !== null && Date.now() - eksikBaslangici >= 5000
-      if (eksik !== eksikGosterildi) { eksikGosterildi = eksik; setHedefEksik(eksik) }
+      return { ekHedefler, hedef: kutu, cizilen: kutu ?? sonRef.current?.cizilen ?? null, ekran: o.ekran, balon: { ...yer, genislik, yukseklik }, spotAnlik: false, balonAnlik: false }
+    }
+    /*
+      Kaydırmanın sonunu boyamadan önce ölç: hedef anında kaydırılıyor,
+      yerleşim hesaplanıyor, kaydırma geri alınıyor. Tarayıcı aradaki hâlleri
+      hiç çizmiyor. Böylece spot ilk seferde doğru yere gidiyor; kısa
+      telefondaki "balon sığmıyor, hedefi üste al" düzeltmesi de aynı ölçümün
+      içinde, ayrı ve ikinci bir kaydırma değil.
+    */
+    const planla = (o: Ortam) => {
+      if (!hedef) return
+      const bas = kaydirmalariOku(hedef)
+      const d0 = yereleCevir(hedef.getBoundingClientRect(), o.donusum)
+      hedef.scrollIntoView({ block: d0.height > o.ekran.yukseklik * 0.55 ? 'start' : 'center', inline: 'nearest', behavior: 'instant' })
+      let d = yereleCevir(hedef.getBoundingClientRect(), o.donusum)
+      const yukseklik = balonYuksekligi(balonGenisligi(hedefKutusu(o), o.ekran, tablet()), o.k)
+      // Balon ve hedef kısa telefonlarda üst üste binmesin.
+      if (Math.max(o.altSinir - d.bottom, d.top - o.ustSinir) < yukseklik + 20 && o.ekran.genislik * o.k < 700) {
+        let kab = hedef.parentElement
+        while (kab && !(['auto', 'scroll'].includes(getComputedStyle(kab).overflowY) && kab.scrollHeight > kab.clientHeight)) kab = kab.parentElement
+        // Büyütülmüş bir kabın kaydırması kendi CSS pikselinde, pencereninki
+        // ekran pikselinde (WebKit ve Chromium'da ölçüldü); `zoom` yalnızca body'de.
+        const fark = d.top - o.ustSinir - 8
+        if (kab) kab.scrollBy({ top: fark, behavior: 'instant' })
+        else window.scrollBy({ top: fark * o.k, behavior: 'instant' })
+        d = yereleCevir(hedef.getBoundingClientRect(), o.donusum)
+      }
+      const onceki = sonRef.current
+      const yeni = hesapla(o, hedefKutusu(o))
+      const son = kaydirmalariOku(hedef)
+      const hareketsiz = azaltilmisHareket()
+      kaydirmalar = []
+      if (!hareketsiz && onceki) {
+        for (let i = bas.length - 1; i >= 0; i--) {
+          if (Math.abs(bas[i].x - son[i].x) < 0.5 && Math.abs(bas[i].y - son[i].y) < 0.5) continue
+          kaydir(bas[i])
+          kaydirmalar.push({ bas: bas[i], son: son[i] })
+        }
+      }
+      kaydirmaBasi = performance.now()
+      // İlk yerleşim ve kaybolup yeniden beliren delik geçişsiz konuyor.
+      ciz({ ...yeni, spotAnlik: hareketsiz || !onceki || !onceki.hedef || !gorunurRef.current, balonAnlik: hareketsiz || !onceki || !gorunurRef.current })
+      faz = kaydirmalar.length ? 'kaydir' : 'izle'
+      izleDurgun.sifirla()
+    }
+    const olc = () => {
       kare = requestAnimationFrame(olc)
+      if (donukRef.current) return
+      const bulunan = hedefiBul()
+      if (bulunan !== hedef) {
+        kilitleriBirak()
+        hedef = bulunan
+        if (faz !== 'bekle') beklemeBasi = performance.now()
+        faz = 'bekle'
+        durgun.sifirla()
+      }
+      for (const cocuk of document.body.children) if (cocuk instanceof HTMLElement) kilitle(cocuk)
+      const o = ortam()
+      const gorunumImzasi = `${o.ekran.genislik}:${o.ekran.yukseklik}:${o.ustSinir}:${o.altSinir}`
+      if (sonGorunum !== gorunumImzasi) {
+        if (sonGorunum && faz !== 'bekle') { faz = 'bekle'; beklemeBasi = performance.now(); durgun.sifirla() }
+        sonGorunum = gorunumImzasi
+      }
+      const simdi = performance.now()
+      const kutu = sonHalindeOlc(hedef, () => hedefKutusu(o))
+      if (!kutu) {
+        if (eksikBaslangici === null) eksikBaslangici = simdi
+        if (simdi - adimBasi >= KAYIP_BEKLEMESI) {
+          // Delik söner, balon yerinde kalır; turun ilk adımıysa balon altta belirir.
+          const onceki = sonRef.current
+          if (!onceki) ciz({ ...hesapla(o, null), spotAnlik: true, balonAnlik: true })
+          else if (onceki.hedef) ciz({ ...onceki, hedef: null, ekHedefler: [], spotAnlik: false, balonAnlik: false })
+        }
+        const eksik = simdi - eksikBaslangici >= 5000
+        if (eksik !== eksikGosterildi) { eksikGosterildi = eksik; setHedefEksik(eksik) }
+        faz = 'bekle'
+        return
+      }
+      eksikBaslangici = null
+      if (eksikGosterildi) { eksikGosterildi = false; setHedefEksik(false) }
+      if (faz === 'bekle') {
+        if (!durgun.bildir(kutu) && simdi - beklemeBasi < EN_UZUN_YERLESME) return
+        sonHalindeOlc(hedef, () => planla(o))
+        return
+      }
+      if (faz === 'kaydir') {
+        const ilerleme = Math.min(1, (simdi - kaydirmaBasi) / Math.max(1, animasyon.cerceveMs))
+        const e = egriDegeri(ilerleme)
+        for (const { bas, son } of kaydirmalar) kaydir({ oge: bas.oge, x: bas.x + (son.x - bas.x) * e, y: bas.y + (son.y - bas.y) * e })
+        if (ilerleme >= 1) { faz = 'izle'; izleDurgun.sifirla() }
+        return
+      }
+      // İzle: hedef ancak yeni yerinde durunca, tek bir geçişle takip ediliyor.
+      if (!izleDurgun.bildir(kutu)) return
+      const son = sonRef.current
+      const balonBoyu = (balonRef.current?.getBoundingClientRect().height ?? 0) / o.k
+      if (son && !('ekHedefler' in adim) && kutuFarki(son.hedef, kutu) < 0.5 && Math.abs(son.balon.yukseklik - balonBoyu) < 0.5) return
+      ciz(sonHalindeOlc(hedef, () => hesapla(o, kutu)))
     }
     const izinli = (oge: EventTarget | null) => oge instanceof Node && (denetim?.contains(oge) || balonRef.current?.contains(oge) || (etkilesimAcik && hedef?.contains(oge)))
     const engelle = (olay: Event) => {
@@ -235,7 +361,30 @@ export function SpotIsigi() {
       kilitleriBirak()
       if (oncekiOdak?.isConnected) oncekiOdak.focus({ preventScroll: true })
     }
-  }, [adim, turuBitir, rehberGizli, deneyMi])
+  }, [adim, turuBitir, rehberGizli, deneyMi, animasyon.cerceveMs])
+
+  // Geçişsiz konan yerleşim bir kare boyandıktan sonra geçişler açılıyor;
+  // turun ilk yerleşiminden sonra katman da beliriyor.
+  useEffect(() => {
+    if (!yerlesim.spotAnlik && !yerlesim.balonAnlik && (gorunur || !yerlesim.ekran.genislik)) return
+    // Geçişsiz hâlin stili şimdi hesaplatılıyor. Yoksa React'in iki
+    // güncellemesi aynı stil hesabına düşebiliyor ve geçiş, balonun hiç
+    // çizilmemiş eski yerinden (sol üst köşeden) başlıyordu.
+    balonRef.current?.getBoundingClientRect()
+    katmanRef.current?.querySelector('svg')?.getBoundingClientRect()
+    const kare = requestAnimationFrame(() => {
+      if (yerlesim.ekran.genislik) setGorunur(true)
+      // Yalnızca bu etkinin gördüğü yerleşim: arada yenisi geldiyse (o da
+      // geçişsiz olabilir) ona dokunma, kendi etkisi temizleyecek.
+      if (yerlesim.spotAnlik || yerlesim.balonAnlik) setYerlesim((onceki) => {
+        if (onceki !== yerlesim) return onceki
+        const yeni = { ...onceki, spotAnlik: false, balonAnlik: false }
+        if (sonRef.current === onceki) sonRef.current = yeni
+        return yeni
+      })
+    })
+    return () => cancelAnimationFrame(kare)
+  }, [yerlesim, gorunur])
 
   /*
     Rehber açıkken sayfa elle kaydırılamaz.
@@ -277,26 +426,49 @@ export function SpotIsigi() {
     }
   }, [rehberGorunur])
 
-  // Sayfa yenilenince bellekteki demo kendiliğinden kaybolur; kalıcı kayıt yok.
+  // Tur bitince ya da rehber gizlenince bir sonraki açılış baştan, belirerek başlar.
   useEffect(() => {
-    if (!adim) setYerlesim({ ekHedefler: [], hedef: null, balon: BOS_KUTU, ekran: BOS_KUTU })
-  }, [adim])
+    if (adim && !rehberGizli) return
+    sonRef.current = null
+    setGorunur(false)
+    setYerlesim(BOS_YERLESIM)
+  }, [adim, rehberGizli])
 
   if (!adim || rehberGizli || typeof document === 'undefined') return null
   const hareketAzalt = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const kisaBalon = ['pomodoro', 'zorluk'].includes(adim.kimlik)
-  const { hedef, ekHedefler, balon, ekran } = yerlesim
+  const { hedef, cizilen, ekHedefler, balon, ekran, spotAnlik, balonAnlik } = yerlesim
+  /*
+    Süreler ve eğri `lib/tanitim-animasyonu.ts`te. Spot (delik + çerçeve) ve
+    sayfa kaydırması aynı süre ve eğriyle yürüyor; balon aynı eğriyle,
+    `balonGecikmesiMs` kadar arkadan. Katman opaklığı yalnızca turun açılışı
+    ve kapanışında oynuyor.
+  */
+  const egri = TANITIM_EGRISI
+  const spotGecisi = hareketAzalt || spotAnlik ? 'none'
+    : ['x', 'y', 'width', 'height'].map((ozellik) => `${ozellik} ${animasyon.cerceveMs}ms ${egri}`).join(', ')
+  const delikOpakligi = gorunur && hedef && !gecisSuruyor ? 1 : 0
+  const cizgiGecisi = hareketAzalt ? 'none' : `stroke-dashoffset ${animasyon.cerceveMs + 120}ms ${egri} ${animasyon.aydinlatmaGecikmesiMs}ms, opacity ${animasyon.aydinlatmaMs}ms ease-out`
+  const katmanOpakligi = gorunur && !gecisSuruyor ? 1 : 0
+  const balonKaymasi = gorunur ? 0 : 8
   return createPortal(
-    <div ref={katmanRef} className="pointer-events-none fixed inset-0 z-[10000]" style={{ opacity: gecisSuruyor ? 0 : 1, transition: hareketAzalt ? 'none' : `opacity ${animasyon.balonMs}ms ease` }}>
+    <div ref={katmanRef} className="pointer-events-none fixed inset-0 z-[10000]" style={{ opacity: katmanOpakligi, transition: hareketAzalt ? 'none' : `opacity ${animasyon.aydinlatmaMs}ms ease-out` }}>
       <div ref={guvenliAlanRef} aria-hidden className="invisible absolute" style={{ paddingTop: 'var(--guvenli-ust)', paddingBottom: 'var(--guvenli-alt)' }} />
       <svg aria-hidden className="absolute inset-0 h-full w-full">
-        <defs><mask id={maske}><rect width="100%" height="100%" fill="white" />{hedef && <rect x={hedef.sol} y={hedef.ust} width={hedef.genislik} height={hedef.yukseklik} rx="18" fill="black" style={{ opacity: gecisSuruyor || !cizimBasladi ? 0 : 1, transition: hareketAzalt ? 'none' : `opacity ${animasyon.aydinlatmaMs}ms ease ${gecisSuruyor ? 0 : animasyon.aydinlatmaGecikmesiMs}ms, x ${animasyon.cerceveMs}ms ease, y ${animasyon.cerceveMs}ms ease, width ${animasyon.cerceveMs}ms ease, height ${animasyon.cerceveMs}ms ease` }} />}{ekHedefler.map((alan, sira) => <rect key={sira} x={alan.sol} y={alan.ust} width={alan.genislik} height={alan.yukseklik} rx="18" fill="black" />)}</mask></defs>
+        <defs><mask id={maske}><rect width="100%" height="100%" fill="white" />{cizilen && <rect x={cizilen.sol} y={cizilen.ust} width={cizilen.genislik} height={cizilen.yukseklik} rx="18" fill="black" style={{ opacity: delikOpakligi, transition: [spotGecisi === 'none' ? '' : spotGecisi, hareketAzalt ? '' : `opacity ${animasyon.aydinlatmaMs}ms ease-out ${gorunur && hedef ? animasyon.aydinlatmaGecikmesiMs : 0}ms`].filter(Boolean).join(', ') || 'none' }} />}{ekHedefler.map((alan, sira) => <rect key={sira} x={alan.sol} y={alan.ust} width={alan.genislik} height={alan.yukseklik} rx="18" fill="black" />)}</mask></defs>
         <rect width="100%" height="100%" fill="var(--foreground)" opacity={animasyon.karartma} mask={`url(#${maske})`} />
-        {hedef && <rect x={hedef.sol} y={hedef.ust} width={hedef.genislik} height={hedef.yukseklik} rx="18" fill="none" stroke="var(--primary-parlak)" strokeWidth="2" pathLength="1" strokeDasharray="1" strokeDashoffset={cizimBasladi && !gecisSuruyor ? 0 : 1} style={{ transition: hareketAzalt ? "none" : `stroke-dashoffset ${animasyon.cerceveMs}ms ease, x ${animasyon.cerceveMs}ms ease, y ${animasyon.cerceveMs}ms ease, width ${animasyon.cerceveMs}ms ease, height ${animasyon.cerceveMs}ms ease` }} />}
+        {cizilen && <rect x={cizilen.sol} y={cizilen.ust} width={cizilen.genislik} height={cizilen.yukseklik} rx="18" fill="none" stroke="var(--primary-parlak)" strokeWidth="2" pathLength="1" strokeDasharray="1" strokeDashoffset={gorunur ? 0 : 1} style={{ opacity: delikOpakligi, transition: [spotGecisi === 'none' ? '' : spotGecisi, cizgiGecisi === 'none' ? '' : cizgiGecisi].filter(Boolean).join(', ') || 'none' }} />}
       </svg>
       <div ref={balonRef} data-tanitim-balonu role="region" aria-label="Rabi tanıtım rehberi"
-        className="pointer-events-auto absolute overflow-y-auto overscroll-contain rounded-2xl border border-border bg-card text-card-foreground shadow-xl"
-        style={{ padding: adim.kimlik === 'soru-bir' ? 8 : 12, opacity: gecisSuruyor ? 0 : 1, transition: hareketAzalt ? 'none' : `left ${animasyon.balonMs}ms ease, top ${animasyon.balonMs}ms ease, opacity ${animasyon.balonMs}ms ease`, pointerEvents: gecisSuruyor ? 'none' : 'auto', left: balon.sol || 12, top: balon.ust || 12, width: balon.genislik || 'calc(100% - 24px)', maxWidth: 340, maxHeight: ekran.yukseklik ? Math.max(120, ekran.yukseklik * 0.52) : '52dvh', visibility: ekran.genislik ? 'visible' : 'hidden' }}>
+        className="pointer-events-auto absolute left-0 top-0 overflow-y-auto overscroll-contain rounded-2xl border border-border bg-card text-card-foreground shadow-xl"
+        style={{
+          padding: adim.kimlik === 'soru-bir' ? 8 : 12,
+          transform: `translate3d(${balon.sol || 12}px, ${(balon.ust || 12) + balonKaymasi}px, 0)`,
+          transition: hareketAzalt || balonAnlik ? 'none' : `transform ${animasyon.balonMs}ms ${egri} ${gorunur ? animasyon.balonGecikmesiMs : animasyon.aydinlatmaGecikmesiMs}ms`,
+          pointerEvents: gecisSuruyor ? 'none' : 'auto',
+          width: balon.genislik || 'calc(100% - 24px)', maxWidth: 340, maxHeight: ekran.yukseklik ? Math.max(120, ekran.yukseklik * 0.52) : '52dvh',
+          visibility: ekran.genislik ? 'visible' : 'hidden',
+        }}>
         <div className="flex items-center justify-between gap-3" style={{ marginBottom: adim.kimlik === 'soru-bir' ? 0 : 8 }}>
           {adim.kimlik === 'soru-bir' && <div><h2 data-tanitim-baslik tabIndex={-1} className="font-display text-sm font-extrabold outline-none">{adim.baslik}</h2><p className="text-[11px] text-muted-foreground">Sonucu yaz veya pas geç.</p></div>}
           {adim.kimlik !== 'soru-bir' && <span className="text-[11px] font-extrabold tracking-wide text-primary">{aktifTur === 'ana_tur' ? 'RABİ’Yİ TANI' : aktifTur === 'denemeler' ? 'DENEMELER' : 'KONU HARİTASI'} · {(aktifAdim ?? 0) + 1}/{adimSayisi}</span>}
