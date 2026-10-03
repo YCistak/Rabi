@@ -393,7 +393,7 @@ export function BottomNav({
             <li key={id} className="flex-1 tablet:h-[68px] tablet:flex-none">
               <button
                 type="button"
-                data-tanitim={id === 'oyunlar' ? 'oyunlar-ac' : undefined}
+                data-tanitim={id === 'oyunlar' ? 'oyunlar-ac' : id === 'daha' ? 'araclar-ac' : undefined}
                 onClick={() => {
                   if (dokunusuYut.current) return
                   onDegis(id)

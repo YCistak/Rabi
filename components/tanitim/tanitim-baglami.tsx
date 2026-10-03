@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react'
-import { demoVerileriTemizle, TUR_ADIMLARI, TUR_ANAHTARLARI, tanitimGecisi, type TanitimTuru, type TanitimEylemi } from '@/lib/tanitim'
+import { demoVerileriTemizle, TANITIM_ADIMLARI, TUR_ADIMLARI, TUR_ANAHTARLARI, tanitimGecisi, type DemoAlani, type TanitimEylemi, type TanitimKaydi, type TanitimTuru } from '@/lib/tanitim'
 
 import { ANIMASYON_ANAHTARI, VARSAYILAN_ANIMASYON, animasyonKaydi, animasyonuDogrula, type TanitimAnimasyonu } from '@/lib/tanitim-animasyonu'
 
@@ -57,6 +57,15 @@ function useTanitimDurumu(deneyMi: boolean) {
   const turuBaslat = useCallback((turAdi: TanitimTuru) => {
     if (!durum.aktifTur && (deneyMi || turGorulduMu(turAdi) === false)) gonder({ tur: 'baslat', turAdi })
   }, [durum.aktifTur, turGorulduMu, gonder, deneyMi])
+  /*
+    Turda eklenen soru/görev/deneme turun kendi listesine yazılıyor (cihaz
+    deposuna değil). Veri beklemeden işleniyor; ardından gelen "kayıt
+    eklendi" ise sıradan bir adım geçişi, form adımında değilse yok sayılıyor.
+  */
+  const demoGuncelle = useCallback(<A extends DemoAlani>(alan: A, guncelle: Extract<TanitimEylemi, { tur: 'demo-veri'; alan: A }>['guncelle'], kayit?: TanitimKaydi) => {
+    eylemGonder({ tur: 'demo-veri', alan, guncelle } as TanitimEylemi)
+    if (kayit) gonder({ tur: 'kayit-eklendi', kayit })
+  }, [gonder])
   const turuBitir = useCallback(() => {
     if (!durum.aktifTur) return
     if (gecisRef.current) clearTimeout(gecisRef.current)
@@ -64,6 +73,8 @@ function useTanitimDurumu(deneyMi: boolean) {
     setGecisSuruyor(true)
     setRehberGizli(false)
     turuKaydet(durum.aktifTur)
+    // Ana tur deneme eklemeyi gösterdiyse Denemeler'in kendi kısa turu bir daha açılmıyor.
+    if (durum.aktifTur === 'ana_tur' && durum.aktifAdim !== null && durum.aktifAdim >= TANITIM_ADIMLARI.findIndex((adim) => adim.kimlik === 'deneme-ekle')) turuKaydet('denemeler')
     eylemGonder({ tur: 'demo-temizle' })
     gecisRef.current = setTimeout(() => {
       eylemGonder({ tur: 'temizle' })
@@ -74,7 +85,7 @@ function useTanitimDurumu(deneyMi: boolean) {
       kapanisRef.current = setTimeout(() => { setKapanisSuruyor(false); kapanisRef.current = null }, animasyonRef.current.gecisMs + 250)
       // Katman `aydinlatmaMs` içinde sönüyor (spot-isigi.tsx); tur onu bekleyip kapanıyor.
     }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : animasyonRef.current.aydinlatmaMs)
-  }, [durum.aktifTur, turuKaydet])
+  }, [durum.aktifTur, durum.aktifAdim, turuKaydet])
 
   return useMemo(() => ({
     ...durum, animasyon, animasyonuAyarla, deneyMi, rehberGizli, setRehberGizli, kapanisSuruyor,
@@ -85,10 +96,11 @@ function useTanitimDurumu(deneyMi: boolean) {
     adimSayisi: durum.aktifTur ? TUR_ADIMLARI[durum.aktifTur].length : 0,
     kayitUyarisi, gecisSuruyor,
     gonder,
+    demoGuncelle,
     turuBitir,
     sonrakiAdimaGec: () => gonder({ tur: 'ileri' }),
     oncekiAdimaDon: () => gonder({ tur: 'geri' }),
-  }), [animasyon, animasyonuAyarla, deneyMi, rehberGizli, kapanisSuruyor, durum, gorulenler, turGorulduMu, turuKaydet, turuBaslat, kayitUyarisi, gecisSuruyor, turuBitir, gonder])
+  }), [animasyon, animasyonuAyarla, deneyMi, rehberGizli, kapanisSuruyor, durum, gorulenler, turGorulduMu, turuKaydet, turuBaslat, kayitUyarisi, gecisSuruyor, turuBitir, gonder, demoGuncelle])
 }
 
 export const TanitimBaglami = createContext<ReturnType<typeof useTanitimDurumu> | null>(null)

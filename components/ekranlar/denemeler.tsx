@@ -105,7 +105,7 @@ export function DenemelerEkrani({
           }
         />
       ) : (
-        <ul className="space-y-3">
+        <ul data-tanitim="deneme-listesi" className="space-y-3">
           {kartlar.map(({ deneme, sablon, ozet, degisim }) => {
             const acik = acikId === deneme.id
 

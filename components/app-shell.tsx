@@ -96,7 +96,8 @@ import {
   type AylikOzetArsivi,
 } from '@/lib/ozet'
 import { RozetBildirimi } from '@/components/rozet-bildirimi'
-import { tanitimKonumu } from '@/lib/tanitim'
+import { DENEME_VAZGEC, tanitimKonumu } from '@/lib/tanitim'
+import { demoDenemeleri, demoSablonIdleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi } from '@/lib/tanitim-veri'
 import { TanitimSaglayici, useTanitim } from '@/components/tanitim/tanitim-baglami'
 import { SpotIsigi } from '@/components/tanitim/spot-isigi'
 import { DemoOyun, DemoOyunKarti } from '@/components/tanitim/demo-oyun'
@@ -121,6 +122,8 @@ export function AppShell() {
 
 function RabiUygulamasi() {
   const tanitim = useTanitim()
+  /** Başlangıç turu sürüyor: araç ekranları gerçek kayıtlar yerine turun listelerini çiziyor. */
+  const anaTurda = tanitim.aktifTur === 'ana_tur'
   // Açılış teşhisi (app/layout.tsx'teki satır içi betik) bu işareti bekliyor:
   // React buraya kadar gelemezse 8 saniye sonra beyaz ekran yerine hata
   // panelini gösteriyor. İlk boyamada koyuluyor; sonrası betiği ilgilendirmiyor.
@@ -153,7 +156,8 @@ function RabiUygulamasi() {
   const aracAc = useCallback(
     (acilan: Ekran) => {
       if (tanitim.tanitimdaMi) {
-        if (acilan === 'pomodoro') tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'pomodoro-ac' })
+        // Araçlar'daki satırların hedefi `arac-<ekran>`; tur hangi satırı beklemiyorsa geçiş yok sayılıyor.
+        tanitim.gonder({ tur: 'hedefe-dokun', hedef: `arac-${acilan}` })
         return
       }
       setEkran(acilan)
@@ -370,6 +374,25 @@ function RabiUygulamasi() {
     rozet ölçüleri) her çizimde yeniden çalışırdı.
   */
   const sablonlar = useMemo(() => sablonlariBirlestir(kayitliSablonlar), [kayitliSablonlar])
+
+  /*
+    Turda Denemeler ve İstatistik alana uygun iki örnek denemeyi ve
+    kullanıcının turda eklediğini gösteriyor; gerçek denemeler o sırada
+    görünmüyor ve hiçbirine yazılmıyor.
+  */
+  const turSablonIdleri = useMemo(() => demoSablonIdleri(ayarlar.buYilSinif, ayarlar.puanTuru), [ayarlar.buYilSinif, ayarlar.puanTuru])
+  const turDenemeleri = useMemo(
+    () => (anaTurda ? [...demoDenemeleri(ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso), ...tanitim.demo.denemeler] : null),
+    [anaTurda, ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso, tanitim.demo.denemeler],
+  )
+  const gorunenDenemeler = turDenemeleri ?? denemeler
+
+  /** Soru Takibi ve Yapılacaklar'ın ekleme sayfası turda turun adımına bağlı. */
+  const turFormu = (formAdimi: string, ekleHedefi: string) => ({
+    formAcik: tanitim.adim?.kimlik === formAdimi,
+    formuAc: () => tanitim.gonder({ tur: 'hedefe-dokun', hedef: ekleHedefi }),
+    formuKapat: () => { if (tanitim.adim?.kimlik === formAdimi) tanitim.oncekiAdimaDon() },
+  })
   // Günün hâli kartı "son deneme ne zamandı" diye soruyor; liste tarih
   // sırasında tutulmuyor, en yeni burada bir kez bulunuyor.
   const enYeniDenemeTarihi = useMemo(
@@ -533,16 +556,27 @@ function RabiUygulamasi() {
       const konum = tanitimKonumu(tanitim.adim)
       setSekme(konum.sekme)
       setEkran(konum.ekran)
+      // Fonksiyonel: açık formun nesnesi her adımda yenilenmesin (yenilenirse sayfa başa kayıyor).
+      setDenemeFormu((onceki) => (konum.denemeFormu ? (onceki ?? { duzenlenen: null }) : null))
       setAcilacakDers(null)
       tanitimAcikti.current = true
     } else if (tanitimAcikti.current) {
       setSekme('ana')
       setEkran(null)
+      setDenemeFormu(null)
       setAcilacakDers(null)
       tanitimAcikti.current = false
+      /*
+        Turun soru, görev ve denemeleri cihaz deposuna hiç yazılmıyor (turun
+        kendi listesinde, `DemoVeri`). Yine de bir yoldan sızan olursa
+        `tanitim-` önekli kimliğinden tanınıp yalnızca o siliniyor; gerçek
+        kayıtlara dokunulmuyor.
+      */
+      setDenemeler((onceki) => (onceki.some(tanitimKaydiMi) ? tanitimKayitlariniAyikla(onceki) : onceki))
+      setGorevler((onceki) => (onceki.some(tanitimKaydiMi) ? tanitimKayitlariniAyikla(onceki) : onceki))
       window.scrollTo(0, 0)
     }
-  }, [tanitim.adim, tanitim.aktifTur])
+  }, [tanitim.adim, tanitim.aktifTur, setDenemeler, setGorevler])
   useEffect(() => {
     if (!acilisGorunur) return
     const oncekiTasma = document.body.style.overflow
@@ -819,13 +853,18 @@ function RabiUygulamasi() {
 
   const denemeKaydet = useCallback(
     (deneme: Deneme) => {
+      // Turda deneme turun listesine gidiyor; formu tur bir sonraki adımda kapatıyor.
+      if (anaTurda) {
+        tanitim.demoGuncelle('denemeler', (onceki) => [...onceki, { ...deneme, id: tanitimKimligi(deneme.id) }], 'deneme')
+        return
+      }
       setDenemeler((onceki) => {
         const varMi = onceki.some((d) => d.id === deneme.id)
         return varMi ? onceki.map((d) => (d.id === deneme.id ? deneme : d)) : [...onceki, deneme]
       })
       setDenemeFormu(null)
     },
-    [setDenemeler],
+    [setDenemeler, anaTurda, tanitim.demoGuncelle],
   )
 
   /**
@@ -866,15 +905,18 @@ function RabiUygulamasi() {
   ) : denemeFormu !== null ? (
     <div className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))] tablet:max-w-[40rem] tablet:px-8">
       <YeniDenemeEkrani
-        sablonlar={sablonlar}
-        varsayilanSablonId={ayarlar.varsayilanSablonId}
+        /* Turda yalnızca örnek denemelerin türleri: kullanıcının denemesi
+           onlardan biriyle aynı türde olsun ki İstatistik karşılaştırabilsin. */
+        sablonlar={anaTurda ? sablonlar.filter((s) => turSablonIdleri.includes(s.id)) : sablonlar}
+        varsayilanSablonId={anaTurda ? 'tyt' : ayarlar.varsayilanSablonId}
         sinif={ayarlar.buYilSinif}
         puanTuru={ayarlar.puanTuru}
         duzenlenen={denemeFormu.duzenlenen}
-        denemeSayisi={denemeler.length}
+        denemeSayisi={gorunenDenemeler.length}
         setYanlisSorular={setYanlisSorular}
         onKaydet={denemeKaydet}
-        onVazgec={() => setDenemeFormu(null)}
+        onVazgec={() => (anaTurda ? tanitim.gonder({ tur: 'hedefe-dokun', hedef: DENEME_VAZGEC }) : setDenemeFormu(null))}
+        tanitim={anaTurda ? { onOkutAcik: tanitim.setRehberGizli } : undefined}
       />
     </div>
   ) : (
@@ -997,23 +1039,28 @@ function RabiUygulamasi() {
               />
             )}
             {ekran === 'notlar' && (
-              <YapilacaklarEkrani gorevler={gorevler} setGorevler={setGorevler} />
+              <YapilacaklarEkrani
+                gorevler={anaTurda ? tanitim.demo.gorevler : gorevler}
+                setGorevler={anaTurda ? (g) => tanitim.demoGuncelle('gorevler', g, 'gorev') : setGorevler}
+                tanitim={anaTurda ? turFormu('gorev-form', 'gorev-dilimleri') : undefined}
+              />
             )}
             {ekran === 'soru' && (
               <SoruTakibiEkrani
-                kayitlar={gunlukKayitlar}
-                setKayitlar={setGunlukKayitlar}
+                kayitlar={anaTurda ? tanitim.demo.soruKayitlari : gunlukKayitlar}
+                setKayitlar={anaTurda ? (g) => tanitim.demoGuncelle('soruKayitlari', g, 'soru') : setGunlukKayitlar}
                 ayarlar={ayarlar}
+                tanitim={anaTurda ? turFormu('soru-form', 'soru-ekle') : undefined}
               />
             )}
             {ekran === 'deneme' && (
               <DenemelerEkrani
-                denemeler={denemeler}
+                denemeler={gorunenDenemeler}
                 sablonlar={sablonlar}
-                hazir={denemelerHazir}
-                onSil={(id) => setDenemeler((onceki) => onceki.filter((d) => d.id !== id))}
-                onDuzenle={(deneme) => setDenemeFormu({ duzenlenen: deneme })}
-                onYeniyeGit={() => setDenemeFormu({ duzenlenen: null })}
+                hazir={anaTurda || denemelerHazir}
+                onSil={(id) => (anaTurda ? tanitim.demoGuncelle('denemeler', (o) => o.filter((d) => d.id !== id)) : setDenemeler((onceki) => onceki.filter((d) => d.id !== id)))}
+                onDuzenle={(deneme) => { if (!anaTurda) setDenemeFormu({ duzenlenen: deneme }) }}
+                onYeniyeGit={() => (anaTurda ? tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'deneme-ekle' }) : setDenemeFormu({ duzenlenen: null }))}
               />
             )}
             {ekran === 'rozetler' && (
@@ -1036,9 +1083,9 @@ function RabiUygulamasi() {
             )}
             {ekran === 'istatistik' && (
               <IstatistikEkrani
-                denemeler={denemeler}
+                denemeler={gorunenDenemeler}
                 sablonlar={sablonlar}
-                varsayilanSablonId={ayarlar.varsayilanSablonId}
+                varsayilanSablonId={anaTurda ? 'tyt' : ayarlar.varsayilanSablonId}
               />
             )}
             {ekran === 'yasal' && <YasalEkrani />}
@@ -1048,7 +1095,6 @@ function RabiUygulamasi() {
           <>
             {sekme === 'ana' && (
               <AnaSayfa
-                tanitimdaMi={tanitim.tanitimdaMi}
                 ayarlar={ayarlar}
                 gunlukKayitlar={gunlukKayitlar}
                 devamsizlik={devamsizlik}
@@ -1154,6 +1200,7 @@ function RabiUygulamasi() {
         onDegis={(yeni) => {
           if (tanitim.tanitimdaMi) {
             if (yeni === 'oyunlar') tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'oyunlar-ac' })
+            else if (yeni === 'daha') tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'araclar-ac' })
             return
           }
           if (yeni === sekme) {

@@ -74,7 +74,6 @@ export function AnaSayfa({
   onKartAc,
   onDahaGit,
   onOyunlaraGit,
-  tanitimdaMi = false,
 }: {
   ayarlar: Ayarlar
   gunlukKayitlar: GunlukKayit[]
@@ -115,14 +114,12 @@ export function AnaSayfa({
    * sekmenin başına düşen kullanıcı aynı seçimi bir kez daha yapıyordu.
    */
   onOyunlaraGit: (ders?: DersId) => void
-  tanitimdaMi?: boolean
 }) {
   const tarih = bugun()
 
-  // Turun hedefleri eski kullanıcının kısayol sırasından bağımsız görünür.
   const gosterilenAraclar = useMemo(
-    () => kisayollar(KARTLAR, tanitimdaMi ? ['pomodoro', 'soru'] : sonAraclar),
-    [sonAraclar, tanitimdaMi],
+    () => kisayollar(KARTLAR, sonAraclar),
+    [sonAraclar],
   )
 
   const dersler = useMemo(() => doluDersler(), [])
@@ -339,7 +336,6 @@ export function AnaSayfa({
             ikon={ikon}
             renk={KUTUCUK_RENGI[renk]}
             sira={sira}
-            tanitimHedefi={id === 'pomodoro' ? 'pomodoro-ac' : id === 'soru' ? 'soru-takibi' : undefined}
             onSec={() => onKartAc(id)}
           />
         ))}
@@ -426,7 +422,6 @@ function Kutucuk({
   renk,
   sira,
   onSec,
-  tanitimHedefi,
 }: {
   ad: string
   ikon: string
@@ -435,14 +430,12 @@ function Kutucuk({
   /** Izgaradaki sırası — kutucuklar bu sırayla beliriyor. */
   sira: number
   onSec: () => void
-  tanitimHedefi?: string
 }) {
   const giris = kartGirisi(sira)
 
   return (
     <button
       type="button"
-      data-tanitim={tanitimHedefi}
       onClick={onSec}
       style={giris.style}
       className={cn(

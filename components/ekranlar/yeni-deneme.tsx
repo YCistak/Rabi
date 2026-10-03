@@ -36,6 +36,7 @@ export function YeniDenemeEkrani({
   setYanlisSorular,
   onKaydet,
   onVazgec,
+  tanitim,
 }: {
   sablonlar: Sablon[]
   varsayilanSablonId: string
@@ -46,6 +47,12 @@ export function YeniDenemeEkrani({
   setYanlisSorular: (guncelleyici: (onceki: YanlisSoru[]) => YanlisSoru[]) => void
   onKaydet: (deneme: Deneme) => void
   onVazgec: () => void
+  /**
+   * Başlangıç turunda: net başlığı yapışmıyor (rehber tabloyu en üste
+   * kaydırınca başlığın altında kalıyordu) ve yanlış soru düğmesi yok —
+   * o katman gerçek Yanlış Soru Bankası'na yazıyor, turun verisi değil.
+   */
+  tanitim?: { onOkutAcik: (acik: boolean) => void }
 }) {
   /*
     Seçim listesi sınıfa ve alana göre süzülü (`secilebilirSablonlar`);
@@ -228,13 +235,14 @@ export function YeniDenemeEkrani({
         </div>
       </div>
 
-      <DenemeOkut key={sablon.id} sablon={sablon} onAktar={(okunanlar) => {
+      <DenemeOkut key={sablon.id} sablon={sablon} onAcikDegisti={tanitim?.onOkutAcik} onAktar={(okunanlar) => {
         setGirisler((onceki) => {
           const yeni = { ...onceki }
           for (const ders of okunanlar) yeni[ders.dersId] = { dogru: String(ders.dogru), yanlis: String(ders.yanlis) }
           return yeni
         })
       }} />
+      <div data-tanitim="deneme-elle">
       <p className="mb-2 text-xs font-semibold text-muted-foreground">Elle gir</p>
       <Kart className="p-0">
         <div className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 border-b border-border px-3 py-2 text-xs font-medium text-muted-foreground">
@@ -300,13 +308,14 @@ export function YeniDenemeEkrani({
           </span>
         </p>
       )}
+      </div>
 
       {/*
         Yanlış soru düğmesi Kaydet'in hemen üstünde: yanlışlar kâğıttan tam da
         sayılar yazılırken çekiliyor ve kaydettikten sonra ekran kapandığı için
         "sonra eklerim" pratikte "hiç eklemem" oluyordu.
       */}
-      <Buton
+      {!tanitim && <Buton
         bicim="ikincil"
         className="mt-4 w-full"
         onClick={() => setYanlisAcik(true)}
@@ -314,7 +323,7 @@ export function YeniDenemeEkrani({
         <Camera size={18} aria-hidden />
         Yanlış soru ekle
         {eklenenYanlis > 0 && ` (${eklenenYanlis})`}
-      </Buton>
+      </Buton>}
 
       {eklenenYanlis > 0 && (
         <p className="mt-2 text-center text-xs text-muted-foreground">
@@ -322,7 +331,8 @@ export function YeniDenemeEkrani({
         </p>
       )}
 
-      <div className="mt-3 flex gap-2">
+      <div data-tanitim="deneme-kaydet" className="mt-3">
+      <div className="flex gap-2">
         <Buton bicim="ikincil" className="flex-1" onClick={onVazgec}>
           Vazgeç
         </Buton>
@@ -341,6 +351,7 @@ export function YeniDenemeEkrani({
           Kaydetmek için denemenin tarihini seç.
         </p>
       )}
+      </div>
 
       {yanlisAcik && (
         /* Katman tam ekran ve donuk: altındaki form görünür kalsaydı iki ayrı
