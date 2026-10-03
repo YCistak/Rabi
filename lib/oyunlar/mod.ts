@@ -137,16 +137,19 @@ export function modKayitliMi(mod: OyunModu): boolean {
 /**
  * Turun hangi modla işlediği.
  *
- * Oyun Bankası turu seçimi **dinlemiyor**: oradaki sorular zaten bir kez
- * yanlış bilinmiş olanlar ve turun amacı hepsini bir kez daha görmek. Tur
- * saatli bir mod o işi yarıda keser, o yüzden banka turu soru başına süreyle
- * işliyor; eleme de `elerMi` içinde ayrıca kapatılıyor (`ritim.ts`). Seçim
- * ekranı da bu yüzden banka turunda hiç çıkmıyor — sunulup dinlenmeyen bir
- * seçim, yalan söyleyen bir arayüzdür.
+ * Oyun Bankası turu (genel test) seçimi **dinlemiyor** ve hep **Rahat**:
+ * oradaki sorular zaten bir kez yanlış bilinmiş olanlar ve turun amacı
+ * hepsini bir kez daha görmek. Tur saatli bir mod o işi yarıda keser. Bir
+ * süre soru başına süreyle işliyordu; kullanıcı testin Rahat olmasını
+ * istedi — bankadaki soru zaten bilinmeyen soru, üstüne bir de saat koymak
+ * öğrenmeyi değil yetişmeyi ölçüyordu. Rekora yazılmaması sorun değil: genel
+ * test turları zaten hiçbir sayaca yazılmıyor (`oyunlar.tsx` → `turBitti`).
+ * Seçim ekranı banka turunda hiç çıkmıyor — sunulup dinlenmeyen bir seçim,
+ * yalan söyleyen bir arayüzdür.
  *
  * Oyun ekranları bunu doğrudan çağırmıyor, seçimi bağlamdan okuyan
  * `useEtkinMod` sarmalını kullanıyor (`components/tur-ayari-baglami.tsx`).
  */
 export function etkinMod(bankaTuru: boolean, secilen: OyunModu = VARSAYILAN_MOD): OyunModu {
-  return bankaTuru ? 'ani-olum' : secilen
+  return bankaTuru ? 'rahat' : secilen
 }

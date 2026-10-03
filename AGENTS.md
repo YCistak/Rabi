@@ -445,7 +445,10 @@ ediyor, artık ayarlardan değiştirilmiyor.
 ### Pomodoro'da sınav provası
 
 Süreler kartındaki **Deneme provası** çipleri turu ÖSYM'nin süresine
-çeviriyor: TYT 165, AYT 180, YDT 120 dakika (`lib/sinav-provasi.ts`). Amaç
+çeviriyor: TYT 165, AYT 180, YDT 120 dakika (`lib/sinav-provasi.ts`), ayrıca
+MEB'in Seviye Tespit Sınavı (**STS**) 40 dakika / 20 soru — ÖSYM sınavı değil,
+ders başına tek oturum; kullanıcı istedi ve süresi Pomodoro turundan kısa olsa
+da mola döngüsünün dışında kesintisiz bir sınav oturumu. Amaç
 denemeyi uygulamanın içinde çözdürmek değil, kâğıdı çözerken süreyi buradan
 tutturmak — öğrenci zaten telefonun kronometresini açıyordu ve o süre hiçbir
 yere yazılmıyordu.
@@ -492,8 +495,35 @@ menü de duruyordu. Şimdi Başlat, sayacı tam ekran bir **sahneye**
 halka ve bitiş saati, altta üç düğme (turu bitir · duraklat/devam · atla).
 Alt menü ve ayarlar arkada kalıyor — turun içindeyken yapılacak tek iş sayaç.
 Katman `tam-katman-girisi` ile geliyor ve geri tuşu (donanım dahil) turu
-**bitirmiyor**: sahneyi kapatıp turu duraklatıyor; hazırlık ekranı kalan
-süreyi ve "Devam et"i gösteriyor, oradan basınca sahne aynı yerden açılıyor.
+**bitirmiyor**, **duraklatmıyor da**: sayaç işliyorsa Pomodoro ekranından
+çıkılıyor ve tur sürüyor (aşağıda **Pomodoro ekrandan çıkınca sürüyor**).
+Duraklatılmış turda geri yalnızca sahneyi kapatıyor; hazırlık ekranı kalan
+süreyi ve "Devam et"i gösteriyor.
+
+### Pomodoro ekrandan çıkınca sürüyor
+
+Tur bir süre ekrandan çıkınca bitiyordu: `PomodoroEkrani` ekranla birlikte
+sökülüyor, sayaç, bildirim ve odak kilidi onunla gidiyordu; sahnenin geri oku
+da turu duraklatıyordu. Kullanıcı Android'deki gibi turun sürmesini ve
+sayacın uygulamanın sağ altında bir saat olarak görünmesini istedi.
+
+- **Bileşen kalıcı.** `AppShell` onu ekranın içinde değil kökte kuruyor ve
+  tur canlıyken (`PomodoroDurumu.canli`: başlamış ya da bir aşaması bitmiş
+  tur) ekran değişince sökmüyor. Çizildiği yer sabit, ayrık bir `div`
+  (portalın kabı) ve o div ekran açıkken sayfadaki yuvaya taşınıyor. Kap
+  **hiç değişmemeli**: React kabı değişen portalı söküp yeniden kurar.
+  Deneme formu gibi bütün sayfa ağacını değiştiren bir ekran yuvayı
+  söktüğünde kap yalnızca DOM'dan düşüyor, bileşen yaşıyor.
+- **Gizliyken sahne yok** (`gorunur`): açık bir sahne geri katmanı kurar,
+  başka ekranda geri tuşunu ve sekme kaydırmayı yutardı. Tur sürerken
+  ekrana dönülünce sahne kendiliğinden açılıyor.
+- **Saat** (`components/pomodoro-saati.tsx`): alt menünün hemen üstünde
+  sağda, halkalı, kalan süre ve ODAK/MOLA ya da duraklat işareti. Kalan
+  süreyi bitiş zamanından **kendisi** sayıyor; Pomodoro her tikte durum
+  gönderseydi `AppShell` saniyede iki kez çizilirdi. Dokununca Pomodoro.
+- Sahnenin geri oku `onArkaPlan` ile doğrudan `setEkran(null)` çağırıyor,
+  `geriGit` değil: o önce üstteki katmanı kapatıyor ve o katman sahnenin
+  kendisi — kendini yeniden çağırırdı.
 
 Sahne `calisiyor`dan ayrı bir state (`sahne`): duraklatmak sahneyi kapatmıyor
 ve aşama bitince de açık kalıyor — mola sahnedeki Başlat ile başlıyor.
@@ -539,32 +569,18 @@ onları yönetiyor. Aylık özetin sesi de artık o anahtara bakıyor.
 
 `Ayarlar.oyunMuzigi` ve `Ayarlar.oyunMuzikTuru` kayıtta ve yedekte duruyor
 ama hiçbir yerden okunmuyor; alanları silmek eski yedekleri geçersiz kılardı
-(`varsayilanSablonId` ile aynı gerekçe). Lo-fi çalarının kendisi duruyor:
-aşağıdaki ses paneli **Pomodoro'nun** paneli ve orada seçim hâlâ anlamlı.
+(`varsayilanSablonId` ile aynı gerekçe).
 
-### Müzik seçilmeden önce dinleniyor
+### Pomodoro'da müzik yok
 
-Ses panelindeki on iki lo-fi parçanın arasından "Glow on the Overpass"i **ada
-bakarak** seçmek seçim değil kura. Dinlemenin tek yolu parçayı seçip turu
-başlatmaktı ve beğenilmeyen parça, başlamış bir turun ortasında değiştiriliyordu.
-
-Her satırın kendi önizleme düğmesi var: üçgene dokunmak dinletiyor, ada dokunmak
-seçiyor. İki ayrı iş, iki ayrı dokunuş hedefi — çip bulutu bu yüzden satır
-listesine döndü, iç içe düğme yazılamıyor.
-
-Dinlemek seçmek değil: `onizlenen` seçimden ayrı bir state ve panel üç parçayı
-dinleyip hiçbirini seçmeden kapatılabiliyor. Dinlenen parçayı seçili saymak,
-kararı kullanıcının yerine vermek olurdu.
-
-Çalar tek (`SesCalar`) ve önizleme onu **ödünç alıyor**: iki ses kaynağı üst üste
-binseydi önizlenen parça çalmakta olanın üstüne karışırdı. Tur sürerken bir
-başka parçayı dinlemek çalanı susturuyor, önizleme bitince seçili parça geri
-geliyor — bunu `onizle`nin `onBitti` geri çağrısı yapıyor.
-
-Önizleme yirmi saniye sonra kendiliğinden bitiyor: sonu gelmeyen bir önizleme,
-önizleme değil çalan müzik. Sonunda kesilmiyor **kısılıyor** (`kis`) — mp3'ün
-ortasında aniden kesilen ses, parçanın değil uygulamanın bozuk olduğunu
-düşündürüyor.
+Hazırlık ekranında bir **Ses** satırı vardı: on iki lo-fi parça, her birinin
+önizleme düğmesi ve ses seviyesi. Kullanıcı kaldırttı; tur sessiz.
+`Ayarlar.ses` ve `sesSeviyesi` kayıtta ve yedekte duruyor ama artık çalmıyor
+(`oyunMuzigi` ile aynı gerekçe). Aşama sonundaki **zil** duruyor — o müzik
+değil, haber. Çalar (`lib/ses.ts`) ve parça listesi (`lib/lofi.ts`) dosyada
+duruyor; geri getirilirse önizlemenin dersleri tarihçede
+(`git log -- components/ekranlar/pomodoro.tsx`): dinlemek seçmek değil, tek
+çalar ödünç alınıyor, önizleme kesilmiyor kısılıyor.
 
 ### Sayaç kilit ekranında da duruyor
 
@@ -628,8 +644,9 @@ Tek yerleri artık Pomodoro'daki **"Odak koruması"** satırı; içeriği
 `components/odak/odak-ayarlari.tsx`, iki ekran arasında paylaşılmıyor çünkü
 ikinci ekran kalmadı. Satır **kapalı** başlıyor ve açık korumaları altında
 yazıyor: sayaç ekranın asıl işi, iki anahtar sürekli açık dururken sayacı aşağı
-itiyorlardı. Satır sayacın **altındaki** ayar kartında (Süreler ve Ses ile
-yan yana) ama hâlâ hazırlık ekranında, sahnede değil, çünkü gerekçe
+itiyorlardı. Satır sayacın **altındaki** ayar kartında, **Süreler'in hemen
+altında** (ekran anahtarı kartın en altında; kullanıcının sırası) ama hâlâ
+hazırlık ekranında, sahnede değil, çünkü gerekçe
 değişmedi — karar her turda değişiyor ve turu başlatmadan önce görülmeyen bir
 ayar, o turda yanlış kurulmuş bir ayardır.
 
@@ -1447,9 +1464,12 @@ Dördü de seçilebiliyor. Rekora yazılmama kuralının (`kayitliMi`) kapısı
 yere yazılmıyor. Seçim ekranı bunu seçildiği anda sarı bir şeritle söylüyor:
 turun sonunda öğrenilen bir kural, o turu boşa harcatır.
 
-**Oyun Bankası turu** modu dinlemiyor (`etkinMod`): oradaki sorular zaten bir
-kez yanlış bilinmiş olanlar ve turun amacı hepsini bir kez daha görmek — tur
-saatli bir mod o işi yarıda keser. Ayarlar adımı o turda hiç çıkmıyor
+**Oyun Bankası turu** (genel test) modu dinlemiyor ve hep **Rahat**
+(`etkinMod`): oradaki sorular zaten bir kez yanlış bilinmiş olanlar ve turun
+amacı hepsini bir kez daha görmek — saatli bir mod o işi yarıda keser. Bir
+süre soru başına süreyle işliyordu; kullanıcı Rahat istedi. Test 3 · 2 · 1
+sayımıyla açılıyor ama yalnızca **ilk** oyunda (`BankaTuru.ilk`): oyunlar arka
+arkaya geliyor ve her birinin başında bir sayım testi parçalara bölerdi. Ayarlar adımı o turda hiç çıkmıyor
 (`secilebilir`): sunulup dinlenmeyen bir seçim, yalan söyleyen bir arayüzdür.
 
 **Seçim tam ekran açılıyor** (`TurAyariEkrani`): dört mod kısa satırlar,
@@ -2812,13 +2832,30 @@ ve Apple bu anahtarı kullanımdan kaldırıyor. iPhone yalnızca dikey.
 **Sekmeler arasında yana kaydırılıyor** (iOS ve Android, `lib/sekme-kaydirma.ts`).
 Ana menünün beş sekmesinin ekranındayken parmak sağa giderse soldaki sekme,
 sola giderse sağdaki açılıyor (Araçlar → sağa: Ana Sayfa, sola: Harita);
-sıra `SEKME_SIRASI`, alt menü de onu çiziyor. Hareket parmak kalkınca
-değerlendiriliyor, sayfa parmağı izlemiyor; yeni sekme geldiği yandan kayarak
-giriyor (`.sayfa-sagdan` / `.sayfa-geri`). Sayılmayanlar: kenardan başlayan
-hareket (iOS'ta geri kaydırma, Android'de sistemin geri hareketi), yatay kayan
-bir şeridin ya da yazı alanının içinden başlayan hareket, alt menü, ve araç,
-form, genel test, tanıtım ya da açık bir katman (ders ızgarası, deste, oyun,
-pencere) varken her şey.
+sıra `SEKME_SIRASI`, alt menü de onu çiziyor.
+
+Kullanıcı bunu üç kez istedi. İlk sürüm yalnızca parmak kalkınca karar
+veriyordu (70 pikselden uzun, 0,7 saniyeden kısa, neredeyse düz) ve sayfa
+parmağı izlemiyordu: yavaş ya da hafif eğik kaydırma hiçbir şey yapmıyor,
+kullanıcı hareketin tanınıp tanınmadığını göremiyordu ve özellik "yok"
+sanıldı. Şimdi Instagram'daki gibi: yön yataya kilitlenince sayfa **parmakla
+birlikte kayıyor**, komşu sekme yandan görünüyor (daha önce açıldıysa
+görüntüsüyle, `ekranGoruntusu` — geri kaydırmanın kopyaları; açılmadıysa boş
+zemin) ve bırakınca karar mesafe ya da hızla (`birakmaKarari`,
+`lib/sekme-kaydirma-hesap.ts`): ekranın üçte biri ya da hızlı savrulma.
+Görüntü yerine oturduysa yeni sekme hareketsiz geliyor (`.sayfa-yerinde`),
+görüntü yoksa o yandan kayarak. Uçtaki sekmede sayfa direnerek az kayıp geri
+dönüyor. Kilitlenince `touchmove` engelleniyor (dinleyici pasif değil): sayfa
+aynı anda dikeyde kaymasın.
+
+Yatay kayan bir şeridin içinden başlayan hareket önce şeridi kaydırıyor; şerit
+o yönde sonuna gelmişse sekme kayıyor. İlk sürüm şeridin içini tümüyle
+yasaklıyordu ve dikey kayan bir kabı da (`overflow-y: auto` olan öğenin
+`overflow-x`i `auto` hesaplanıyor) şerit sayabiliyordu; artık yalnızca
+yatayda kayan kutular şerit. Sayılmayanlar: kenardan başlayan hareket (iOS'ta
+geri kaydırma, Android'de sistemin geri hareketi), yazı alanı, alt menü, ve
+araç, form, genel test, tanıtım ya da açık bir katman (ders ızgarası, deste,
+oyun, pencere, Harita'nın ilk açılış ipucu) varken her şey.
 
 **Geri kaydırma parmağı izliyor.** Yerli taraf hareketi tanırken
 (`.began/.changed/.ended`) `window.rabiGeriKaydirma`yı çağırıyor

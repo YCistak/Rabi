@@ -10,7 +10,7 @@ import type { OsymTest } from './types'
  * çipleri devre dışı kalıyor — 165 dakikanın ortasında beş dakikalık kısa mola
  * vermek provayı prova olmaktan çıkarır.
  */
-export type ProvaId = 'tyt' | 'ayt' | 'ydt'
+export type ProvaId = 'tyt' | 'ayt' | 'ydt' | 'sts'
 
 export type Prova = {
   id: ProvaId
@@ -22,18 +22,28 @@ export type Prova = {
 }
 
 /**
+ * MEB Seviye Tespit Sınavı (STS): her ders tek oturumda 20 soru, 40 dakika
+ * (MEB Denklik Seviye Tespit Sınavı Başvuru ve Uygulama Kılavuzu, 2025).
+ * ÖSYM sınavı değil, kitapçığı da yok — prova tek dersin oturumu. Kullanıcı
+ * istedi; süresi Pomodoro turundan kısa olsa da mola döngüsünün dışında
+ * kesintisiz bir sınav oturumu, o yüzden yeri yine burası.
+ */
+const STS_DAKIKA = 40
+const STS_SORU = 20
+
+/**
  * Süreler 2026 YKS kılavuzundan: TYT 165, AYT 180, YDT 120 dakika.
  *
  * Sayılar burada yazılı çünkü ÖSYM'nin kararı — soru sayısından türetilemez.
  */
-const SURE: Record<ProvaId, number> = { tyt: 165, ayt: 180, ydt: 120 }
+const SURE: Record<ProvaId, number> = { tyt: 165, ayt: 180, ydt: 120, sts: STS_DAKIKA }
 
 /**
  * Kitapçıktaki testler. Soru sayısı bu tablodan **toplanıyor**, elle
  * yazılmıyor: aynı sayı `sablonlar.ts`te zaten duruyor ve iki yere yazılan bir
  * sayı ÖSYM dağılımı değişince birinde eski kalırdı.
  */
-const TESTLER: Record<ProvaId, OsymTest[]> = {
+const TESTLER: Record<Exclude<ProvaId, 'sts'>, OsymTest[]> = {
   tyt: ['tyt-turkce', 'tyt-sosyal', 'tyt-mat', 'tyt-fen'],
   ayt: [
     'ayt-mat',
@@ -51,7 +61,7 @@ const TESTLER: Record<ProvaId, OsymTest[]> = {
   ydt: ['ydt'],
 }
 
-function soruSayisi(id: ProvaId): number {
+function soruSayisi(id: Exclude<ProvaId, 'sts'>): number {
   return TESTLER[id].reduce((toplam, test) => toplam + OSYM_TEST_SORU[test], 0)
 }
 
@@ -77,6 +87,12 @@ export const PROVALAR: Prova[] = [
     ad: 'YDT',
     dakika: SURE.ydt,
     soru: soruSayisi('ydt'),
+  },
+  {
+    id: 'sts',
+    ad: 'STS',
+    dakika: SURE.sts,
+    soru: STS_SORU,
   },
 ]
 

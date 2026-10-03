@@ -1,21 +1,30 @@
 import { describe, expect, it } from 'vitest'
-import { EN_AZ_YOL, KENAR_PAYI, kaydirmaYonu, komsuSekme } from './sekme-kaydirma'
+import { GECIS_ORANI, SAVRULMA_HIZI, SAVRULMA_YOLU, birakmaKarari, hedefYonu, komsuSekme } from './sekme-kaydirma-hesap'
 
 const G = 390
 
-describe('kaydirmaYonu', () => {
+describe('hedefYonu', () => {
   it('parmak sağa: soldaki sekme, sola: sağdaki', () => {
-    expect(kaydirmaYonu(100, 120, 10, 250, G)).toBe(-1)
-    expect(kaydirmaYonu(300, -120, 10, 250, G)).toBe(1)
+    expect(hedefYonu(120)).toBe(-1)
+    expect(hedefYonu(-120)).toBe(1)
   })
-  it('kısa, dikey ya da yavaş hareket sekme değiştirmiyor', () => {
-    expect(kaydirmaYonu(100, EN_AZ_YOL - 1, 0, 200, G)).toBe(0)
-    expect(kaydirmaYonu(100, 120, 100, 200, G)).toBe(0)
-    expect(kaydirmaYonu(100, 120, 0, 1500, G)).toBe(0)
+})
+
+describe('birakmaKarari', () => {
+  it('ekranın üçte birini geçen kaydırma sekmeyi değiştiriyor, yavaş da olsa', () => {
+    expect(birakmaKarari(G * GECIS_ORANI + 1, 0.05, G)).toBe(true)
+    expect(birakmaKarari(-(G * GECIS_ORANI + 1), -0.05, G)).toBe(true)
   })
-  it('kenardan başlayan hareket sistemin geri hareketi', () => {
-    expect(kaydirmaYonu(KENAR_PAYI - 1, 150, 0, 200, G)).toBe(0)
-    expect(kaydirmaYonu(G - KENAR_PAYI + 1, -150, 0, 200, G)).toBe(0)
+  it('kısa ve yavaş kaydırma yerine dönüyor', () => {
+    expect(birakmaKarari(60, 0.1, G)).toBe(false)
+  })
+  it('kısa ama hızlı savrulma sekmeyi değiştiriyor', () => {
+    expect(birakmaKarari(SAVRULMA_YOLU + 4, SAVRULMA_HIZI + 0.1, G)).toBe(true)
+    expect(birakmaKarari(SAVRULMA_YOLU - 4, SAVRULMA_HIZI + 0.5, G)).toBe(false)
+  })
+  it('geri savrulan parmak vazgeçmek demek', () => {
+    expect(birakmaKarari(G * 0.5, -(SAVRULMA_HIZI + 0.2), G)).toBe(false)
+    expect(birakmaKarari(60, -(SAVRULMA_HIZI + 0.2), G)).toBe(false)
   })
 })
 

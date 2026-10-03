@@ -13,10 +13,15 @@ import { createContext, useContext } from 'react'
  *
  * Varsayılan `false`: bağlam kurulmadan çizilen bir oyun sıradan bir turdur.
  */
-const GenelTestBaglami = createContext(false)
+const GenelTestBaglami = createContext<{ ilk: boolean } | null>(null)
 
 export const GenelTestSaglayici = GenelTestBaglami.Provider
 
 export function useGenelTest(): boolean {
-  return useContext(GenelTestBaglami)
+  return useContext(GenelTestBaglami) !== null
+}
+
+/** Testin ilk oyunu mu — test geri sayımla başlıyor (`oyun-tanitim.tsx`). */
+export function useGenelTestIlkMi(): boolean {
+  return useContext(GenelTestBaglami)?.ilk === true
 }

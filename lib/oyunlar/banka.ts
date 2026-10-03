@@ -180,7 +180,15 @@ export type BankaSorusu =
  * (`lib/oyunlar/genel-test.ts`) ve yanında duran ikinci bir tur düğmesi,
  * hangisinin kaydı düşürdüğünü belirsiz bırakıyordu.
  */
-export type BankaTuru = { oyun: OyunId }
+export type BankaTuru = {
+  oyun: OyunId
+  /**
+   * Genel testin ilk oyunu mu. Test 3 · 2 · 1 sayımıyla başlıyor; sonraki
+   * oyunlar arka arkaya, sayımsız geliyor — her oyunun başında bir sayım,
+   * tek bir testi parçalara bölerdi.
+   */
+  ilk?: boolean
+}
 
 export type BankaKaydi = {
   /** Soru içeriğinden türetilen kimlik; aynı soru iki kez eklenmez. */
