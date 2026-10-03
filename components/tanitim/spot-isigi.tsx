@@ -68,6 +68,48 @@ function kaydir({ oge, x, y }: KaydirmaKaydi) {
 }
 
 /*
+  Hedefi, üst kenarı katmanın `istenenUst` noktasına gelecek kadar kaydırır
+  (katman CSS pikseli; `k` = katmanın ölçeği). `scrollIntoView` kullanılmıyor:
+
+  - Çok sütunlu kapta (`tablet-sutunlar`, yatay iPad) WebKit, sağ sütundaki
+    öğenin yerini sütunlara bölünmemiş akıştaki yerinden hesaplıyor. Ekranda
+    192 px'te, tamamen görünen Yapılacaklar dilimleri için pencereyi 379 px
+    kaydırıp hedefi -187 px'e, ekranın dışına itiyordu; görünen yalnızca
+    "Akşam" kalıyordu.
+  - `block: 'start'` hedefin üstünü ekranın 0 noktasına, durum çubuğunun
+    altına koyuyordu; spot güvenli alanın altından başladığı için hedefe
+    göre ~30 px aşağıda duruyordu (Pomodoro, yatay iPad).
+
+  Kaydırma önce hedefin kaydırılabilir atalarında yapılıyor, artanı
+  pencereye kalıyor. Hedef sabit (`position: fixed`) bir katmandaysa (alttan
+  açılan form) pencere kaydırması onu yerinden oynatmaz, yalnızca arkadaki
+  sayfayı kaydırır; klavye açıkken iOS'ta da görünür alanı (visualViewport)
+  hedefin altından kaçırır. İkisinde de pencereye dokunulmuyor.
+*/
+function hedefiKaydir(hedef: HTMLElement, istenenUst: number, k: number, pencereSerbest: boolean) {
+  const ust = () => hedef.getBoundingClientRect().top / k
+  let kalan = ust() - istenenUst
+  for (let kab = hedef.parentElement; kab && kab !== document.body && kab !== document.documentElement; kab = kab.parentElement) {
+    const stil = getComputedStyle(kab)
+    if (['auto', 'scroll'].includes(stil.overflowX) && kab.scrollWidth > kab.clientWidth) {
+      // Yatay şeritte hedef görünmüyorsa en yakın kenara getir ('nearest').
+      const h = hedef.getBoundingClientRect(), c = kab.getBoundingClientRect()
+      if (h.left < c.left) kab.scrollBy({ left: (h.left - c.left) / k, behavior: 'instant' })
+      else if (h.right > c.right) kab.scrollBy({ left: Math.min(h.right - c.right, h.left - c.left) / k, behavior: 'instant' })
+    }
+    if (Math.abs(kalan) >= 0.5 && ['auto', 'scroll'].includes(stil.overflowY) && kab.scrollHeight > kab.clientHeight) {
+      const once = ust()
+      // Büyütülmüş kabın kaydırması kendi (katmanla aynı) CSS pikselinde.
+      kab.scrollBy({ top: kalan, behavior: 'instant' })
+      kalan -= once - ust()
+    }
+    if (stil.position === 'fixed') return
+  }
+  // Pencerenin kaydırması ekran pikselinde (WebKit ve Chromium'da ölçüldü); `zoom` yalnızca body'de.
+  if (pencereSerbest && Math.abs(kalan) >= 0.5) window.scrollBy({ top: kalan * k, behavior: 'instant' })
+}
+
+/*
   Hedefin (ya da bir atasının) giriş animasyonu sürüyorsa ölçüm o animasyon
   bitmiş gibi yapılıyor: animasyonlar bir an sonlarına sarılıp ölçülüyor ve
   aynı karede geri alınıyor, ekrana hiçbir ara hâl çizilmiyor. Oyunun soru
@@ -183,7 +225,9 @@ export function SpotIsigi() {
       const guvenli = guvenliAlanRef.current ? getComputedStyle(guvenliAlanRef.current) : null
       const ustSinir = ekran.ust + (parseFloat(guvenli?.paddingTop ?? '0') || 0) / k + 12
       const altSinir = ekran.ust + ekran.yukseklik - (parseFloat(guvenli?.paddingBottom ?? '0') || 0) / k - 12
-      return { donusum, k, ekran, ustSinir, altSinir }
+      // Yazılım klavyesi açık: görünür alan pencereden belirgin kısa (iOS'ta pencere değil yalnızca visualViewport küçülüyor).
+      const klavye = !!gorunum && window.innerHeight - gorunum.height > 100
+      return { donusum, k, ekran, ustSinir, altSinir, klavye }
     }
     type Ortam = ReturnType<typeof ortam>
     const tablet = () => document.documentElement.dataset.yerlesim === 'tablet'
@@ -238,20 +282,13 @@ export function SpotIsigi() {
       if (!hedef) return
       const bas = kaydirmalariOku(hedef)
       const d0 = yereleCevir(hedef.getBoundingClientRect(), o.donusum)
-      hedef.scrollIntoView({ block: d0.height > o.ekran.yukseklik * 0.55 ? 'start' : 'center', inline: 'nearest', behavior: 'instant' })
-      let d = yereleCevir(hedef.getBoundingClientRect(), o.donusum)
+      // Uzun hedefin üstü güvenli alanın hemen altına, kısası görünür alanın ortasına.
+      const alan = o.altSinir - o.ustSinir
+      let istenen = d0.height > o.ekran.yukseklik * 0.55 ? o.ustSinir + 8 : o.ustSinir + (alan - d0.height) / 2
+      // Balon ve hedef kısa telefonlarda üst üste binmesin: hedef üste alınıyor, balon altına.
       const yukseklik = balonYuksekligi(balonGenisligi(hedefKutusu(o), o.ekran, tablet()), o.k)
-      // Balon ve hedef kısa telefonlarda üst üste binmesin.
-      if (Math.max(o.altSinir - d.bottom, d.top - o.ustSinir) < yukseklik + 20 && o.ekran.genislik * o.k < 700) {
-        let kab = hedef.parentElement
-        while (kab && !(['auto', 'scroll'].includes(getComputedStyle(kab).overflowY) && kab.scrollHeight > kab.clientHeight)) kab = kab.parentElement
-        // Büyütülmüş bir kabın kaydırması kendi CSS pikselinde, pencereninki
-        // ekran pikselinde (WebKit ve Chromium'da ölçüldü); `zoom` yalnızca body'de.
-        const fark = d.top - o.ustSinir - 8
-        if (kab) kab.scrollBy({ top: fark, behavior: 'instant' })
-        else window.scrollBy({ top: fark * o.k, behavior: 'instant' })
-        d = yereleCevir(hedef.getBoundingClientRect(), o.donusum)
-      }
+      if (Math.max(o.altSinir - (istenen + d0.height), istenen - o.ustSinir) < yukseklik + 20 && o.ekran.genislik * o.k < 700) istenen = o.ustSinir + 8
+      hedefiKaydir(hedef, istenen + o.donusum.ust / o.k, o.k, !o.klavye)
       const onceki = sonRef.current
       const yeni = hesapla(o, hedefKutusu(o))
       const son = kaydirmalariOku(hedef)
