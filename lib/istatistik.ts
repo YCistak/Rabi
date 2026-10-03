@@ -12,17 +12,6 @@
 import { denemeOzeti, tarihSirala, yuvarla } from './hesap'
 import type { Deneme, Sablon } from './types'
 
-/** Karşılaştırma için aynı şablondan en az iki deneme gerekir. */
-export function istatistikYeterliMi(denemeler: readonly Deneme[]): boolean {
-  const sayilar = new Map<string, number>()
-  for (const deneme of denemeler) {
-    const sayi = (sayilar.get(deneme.sablonId) ?? 0) + 1
-    if (sayi >= 2) return true
-    sayilar.set(deneme.sablonId, sayi)
-  }
-  return false
-}
-
 /** Kayan nokta artığı: 0,25'lik netlerin farkında 1e-15 kalıyor ve "değişmedi"yi bozuyor. */
 const ESIK = 0.001
 

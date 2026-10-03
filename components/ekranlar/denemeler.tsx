@@ -1,6 +1,5 @@
 'use client'
 
-import { NetGelisimi } from '@/components/tanitim/net-gelisimi'
 import { useMemo, useState } from 'react'
 import {
   ArrowUpDown,
@@ -70,11 +69,9 @@ export function DenemelerEkrani({
       {satirlar.length > 0 && (
         <Buton data-tanitim="deneme-ekle" onClick={onYeniyeGit} className="mb-3 w-full">
           <Plus size={18} />
-          Yeni Deneme Ekle
+          Deneme ekle
         </Buton>
       )}
-
-      <NetGelisimi satirlar={satirlar} />
 
       {satirlar.length > 0 && (
         <SuzgecCubugu
@@ -103,7 +100,7 @@ export function DenemelerEkrani({
           eylem={
             <Buton data-tanitim="deneme-ekle" onClick={onYeniyeGit}>
               <Plus size={18} />
-              Yeni Deneme Ekle
+              Deneme ekle
             </Buton>
           }
         />
