@@ -916,7 +916,7 @@ function RabiUygulamasi() {
         setYanlisSorular={setYanlisSorular}
         onKaydet={denemeKaydet}
         onVazgec={() => (anaTurda ? tanitim.gonder({ tur: 'hedefe-dokun', hedef: DENEME_VAZGEC }) : setDenemeFormu(null))}
-        tanitim={anaTurda ? { onOkutAcik: tanitim.setRehberGizli } : undefined}
+        tanitim={anaTurda ? { onOkutAcik: tanitim.setRehberGizli, ornekDoldur: tanitim.adim?.kimlik === 'deneme-kaydet' } : undefined}
       />
     </div>
   ) : (

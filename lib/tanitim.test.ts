@@ -101,12 +101,31 @@ describe('Ana ve bağlamsal tanıtım turları', () => {
     expect(kimlik(tanitimGecisi(adimaKadar('gorev-kaydedildi'), { tur: 'geri' }))).toBe('gorev-ekle')
     expect(kimlik(tanitimGecisi(adimaKadar('istatistik-ac'), { tur: 'geri' }))).toBe('deneme-liste')
     expect(kimlik(tanitimGecisi(adimaKadar('soru-form'), { tur: 'geri' }))).toBe('soru-ekle')
-    for (const adim of ['deneme-okut', 'deneme-elle', 'deneme-kaydet']) {
+    for (const adim of ['deneme-okut', 'deneme-kaydet']) {
       expect(kimlik(tanitimGecisi(adimaKadar(adim), { tur: 'hedefe-dokun', hedef: 'deneme-vazgec' }))).toBe('deneme-ekle')
       expect(tanitimKonumu(TANITIM_ADIMLARI.find((a) => a.kimlik === adim)!)).toEqual({ sekme: 'daha', ekran: 'deneme', denemeFormu: true })
     }
     const liste = adimaKadar('deneme-liste')
     expect(tanitimGecisi(liste, { tur: 'hedefe-dokun', hedef: 'deneme-vazgec' })).toBe(liste)
+  })
+  it('deneme elle girdirilmiyor: Okut adımından İleri doğrudan kaydetme adımına geçer', () => {
+    const kimlikler = TANITIM_ADIMLARI.map((adim) => adim.kimlik)
+    expect(kimlikler).not.toContain('deneme-elle')
+    const okut = adimaKadar('deneme-okut')
+    expect(TANITIM_ADIMLARI[tanitimGecisi(okut, { tur: 'ileri' }).aktifAdim!].kimlik).toBe('deneme-kaydet')
+    expect(TANITIM_ADIMLARI[tanitimGecisi(adimaKadar('deneme-kaydet'), { tur: 'geri' }).aktifAdim!].kimlik).toBe('deneme-okut')
+  })
+  it('İstatistik ve Oyun Bankası ekranın her bölümünü ayrı adımda, kendi ekranında tanıtır', () => {
+    const kimlikler = TANITIM_ADIMLARI.map((adim) => adim.kimlik)
+    const istatistik = ['istatistik-tur', 'istatistik-son', 'istatistik-ilerleyen', 'istatistik-kutular', 'istatistik-karsilastir']
+    const banka = ['banka', 'banka-liste', 'banka-test', 'banka-ogrendim']
+    expect(kimlikler.slice(kimlikler.indexOf('istatistik-ac') + 1, kimlikler.indexOf('oyunlar-ac'))).toEqual(istatistik)
+    expect(kimlikler.slice(kimlikler.indexOf('banka-ac') + 1)).toEqual(banka)
+    for (const k of istatistik) expect(tanitimKonumu(TANITIM_ADIMLARI.find((a) => a.kimlik === k)!)).toEqual({ sekme: 'daha', ekran: 'istatistik', denemeFormu: false })
+    for (const k of banka) expect(tanitimKonumu(TANITIM_ADIMLARI.find((a) => a.kimlik === k)!)).toEqual({ sekme: 'oyunlar', ekran: 'oyun-bankasi', denemeFormu: false })
+    // Bilgi adımları dokunuş beklemiyor; her birinin kendi hedefi var.
+    for (const k of [...istatistik, ...banka]) expect(TANITIM_ADIMLARI.find((a) => a.kimlik === k)!.tiklamali).toBe(false)
+    expect(new Set([...istatistik, ...banka].map((k) => TANITIM_ADIMLARI.find((a) => a.kimlik === k)!.hedef)).size).toBe(istatistik.length + banka.length)
   })
   it('gecikmiş adım veya başka turdan gelen dokunuşu yok sayar', () => {
     const durum = adimaKadar('hedef')
