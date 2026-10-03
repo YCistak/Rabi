@@ -838,25 +838,13 @@ function RabiUygulamasi() {
    * kaçıp bir daha iniyordu. Tek bir kökün altında sabit sırada durunca
    * animasyon kesintisiz akıyor.
    */
-  // Varış noktası burada seçilmiyor: ekranda tek bir maskot yuvası var (ilk
-  // açılışta kurulum sihirbazının tepesindeki, sonrasında ana sayfa
-  // başlığındaki) ve açılış onu bulup mesafeyi kendi ölçüyor.
   const acilisKatmani = acilisGorunur ? <Acilis onBitti={acilisiKapat} /> : null
-
-  /**
-   * Uçan tavşanın konacağı maskot açılış sürerken gizli: varış noktasında
-   * zaten bir tavşan duruyor ve ikisi üst üste biniyordu. Katman kalkınca
-   * gizlilik de kalkıyor — ikisi aynı yerde olduğu için değişim görünmüyor.
-   * Kurulum geçişi artık uçmuyor (`KurulumGecisi`), orada gizlemeye gerek yok.
-   */
-  const maskotGizli = acilisGorunur
 
   // Veri okunmadan ekran çizilirse "kayıt yok" bir an yanıp söner.
   const icerik = !ayarlarHazir ? (
     <div className="en-az-ekran" aria-busy="true" />
   ) : !ayarlar.kurulumTamamlandi ? (
     <Kurulum
-      maskotGizli={maskotGizli}
       onBitir={({ ayarlar: secimler, okulYillari: girilenler, hedef: secilenHedef }) => {
         setAyarlar((o) => ({
           ...ayarlariNormalize(o),
@@ -1060,7 +1048,6 @@ function RabiUygulamasi() {
             {sekme === 'ana' && (
               <AnaSayfa
                 tanitimdaMi={tanitim.tanitimdaMi}
-                maskotGizli={maskotGizli}
                 ayarlar={ayarlar}
                 gunlukKayitlar={gunlukKayitlar}
                 devamsizlik={devamsizlik}
@@ -1082,7 +1069,6 @@ function RabiUygulamasi() {
                   setAcilacakDers(ders ?? null)
                   setSekme('oyunlar')
                 }}
-                acilisSuruyor={!acilisBitti}
               />
             )}
             {sekme === 'oyunlar' && (tanitim.adim && ['zorluk', 'oyun-baslat', 'oyun-sayac', 'soru-bir', 'sonuc'].includes(tanitim.adim.kimlik) ? <DemoOyun bildir={hataBildirimi} /> : (

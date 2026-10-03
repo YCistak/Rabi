@@ -104,11 +104,11 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   `LaunchScreen.storyboard` + `capacitor.config.ts` → `ios.backgroundColor`.
   Ayrılırlarsa açılışta renk sıçraması olur.
 - Yazı tipi tek: **Nunito**. İki istisna var, ikisi de tek bir başlık:
-  açılış ekranındaki "RABİ" **Outfit** (`font-acilis`, tasarım 2a o
-  wordmark'ı Outfit 800 ile çizdi ve 52 pikselde Nunito'nun yuvarlak uçları
-  başka bir marka gibi duruyor) ve aylık özetin kapağındaki ay adı
-  **Manrope** (`font-marka`). Açılış bir süre Manrope'tu; 2a ile Outfit'e
-  geçti. İkisi de başka hiçbir yerde kullanılmıyor; yeni bir yerde
+  açılış ekranındaki "RABI" **Rubik** (`font-acilis`, tasarım 2d ismi
+  Rubik 800 ile çizdi; ekranda tek şey isim ve Nunito'nun yuvarlak uçları
+  orada başka bir marka gibi duruyor) ve aylık özetin kapağındaki ay adı
+  **Manrope** (`font-marka`). Açılış bir süre Manrope'tu, 2a ile Outfit'e,
+  2d ile Rubik'e geçti. İkisi de başka hiçbir yerde kullanılmıyor; yeni bir yerde
   kullanmadan önce istisnanın neden açıldığına bak. Başlık ayrı aile değil ayrı kalınlık — `font-display`
 - Tasarım kaynağı `tasarim/` altındaki HTML mockup'lar. Derlemeye girmiyorlar,
   uygulama onlardan hiçbir şey import etmiyor — ekran değiştirirken oraya bak.
@@ -145,22 +145,22 @@ kaynağın kendisinde bitiyor.
 
 **`durum` ile `poz` ayrı kalıyor.** `durum` yalnızca ekran okuyucu etiketi,
 çizilecek dosyayı `poz` seçiyor. İkisini birleştirmek — durumdan doğrudan
-dosya türetmek — denenebilir görünüyor ve açılışı bozuyor: açılıştaki uçan
-tavşan ana sayfadaki maskotun tam üstüne konuyor, ikisi farklı boyutta (110'a
-karşı 58) ama **aynı görseli** taşımak zorunda. Durumdan türeyen bir görsel,
-katman kalkarken tavşanı başka bir tavşana çevirirdi.
+dosya türetmek — denenebilir görünüyor ama bir ekranın görselini başka bir
+ekranın durumuna bağlar: kurulumda adımdan adıma uçan tavşan (`KurulumMaskotu`)
+iki adımda **aynı görseli** taşımak zorunda, durumdan türeyen bir görsel onu
+yolun ortasında başka bir tavşana çevirirdi.
 
 **Kurulumdan ana sayfaya geçiş uçmuyor, soluyor** (`KurulumGecisi`,
 `acilis.tsx`). Tavşan bir süre "Hazırlanıyor" ekranından sonra kurulumun üst
 ortasında belirip ana sayfa başlığına süzülüyordu; telefonda "ortaya ışınlanıp
 sol üste kayıyor" diye okundu ve kullanıcı solma istedi. Zemin renginde bir
-örtü ana sayfanın üstünde kısa bir süre durup sönüyor. Açılış ekranının kendi
-uçuşu bu kararın dışında ve duruyor.
+örtü ana sayfanın üstünde kısa bir süre durup sönüyor. Açılış ekranında da
+artık uçan tavşan yok (tasarım 2d, aşağıda).
 
 **İki baş çekimi var: `yuz` ve `kafa`.** Tam boy pozlar 70 pikselin altında
 lekeye dönüşüyor (gövde, kollar ve tutulan nesne tek bir şey oluyor), o yüzden
 küçük yerlerde baş kullanılıyor: oyun başlıkları (26–54) `yuz`de, ana sayfanın
-selamlaması ve açılışın iniş yuvası `kafa`da.
+selamlaması ve kurulumun karşılama ekranı `kafa`da.
 
 İkisi ayrı duruyor çünkü kaynakları ve işleri ayrı. `yuz`, "normal maskot"un
 elle ölçülmüş bir kırpımı ve aynı zamanda uygulama ikonunun (`ikon-uret.mjs`),
@@ -169,11 +169,6 @@ ikon üretimini de dokundurur. Kırpımın kutusu göz kararı değil ölçüler
 bulundu: alt kenar gövdenin en dar satırı, yan kenarlar yanakların en geniş
 satırı. `kafa` ise kendi kaynağından ("kafası gözüken maskot") geliyor,
 kırpılmıyor ve yalnızca arayüzde kullanılıyor.
-
-**İniş yuvası ile uçan tavşan aynı pozda olmak zorunda.** Ana sayfanın
-selamlaması `kafa` olunca açılış ekranındaki uçan tavşan (`acilis.tsx`) ve
-kurulumun karşılama ekranındaki yuva da `kafa`ya geçti. Biri geride kalsaydı katman kalkarken tavşan başka bir
-tavşana dönüşürdü — yukarıdaki `durum`/`poz` kuralının aynı sebebi.
 
 `ikon-uret.mjs` yüzün tuvaldeki kutusunu **sabit sayılarla** biliyor.
 `maskot-uret.mjs` çalışınca o sayıları ekrana yazıyor; kırpma değişirse ikon
@@ -197,77 +192,33 @@ Kaynak klasöründeki her kaynak kullanılmıyor. Dışarıda kalan "sinirli" bi
 kaldı: uygulamada karşılığı olan bir ruh hâli değil — Rabi yanlış cevapta
 kullanıcıya kızmıyor, efekt zaten sarsıntıyla "yanlış" diyor.
 
-### Açılışın son hareketi ana sayfaya bağlanıyor
+### Açılışta yalnızca isim var
 
-Ekran 4,2 saniye sürüyor (`ACILIS_SURESI`) ve tasarımı 2a
-(`tasarim/acilis-ekrani.dc.html`): tavşan, Outfit ile "RABİ" ve slogan
-sırayla aşağıdan yükseliyor (`acilis-belir`, 100/280/420/560 ms), altta üç
-nokta nabız atıyor, arkada on iki küçük artı süzülüyor. Önceki ekranın düşen
-tavşanı, dönen çarkı, tarayan şeridi, "HAZIRLANIYOR" ve "çevrimdışı çalışır"
-yazıları 2a ile kalktı.
+Ekran 4,65 saniye sürüyor (`ACILIS_SURESI`) ve tasarımı 2d
+(`tasarim/acilis-ekrani.dc.html`, "Toplanan yıldızlar"): Rubik ile "RABI"
+1000 ms'de bulanıktan netleşiyor, 1650 ms'de İ'nin noktası — harfin kendisi
+değil ayrı çizilen küçük bir kare — yukarıdan dönerek düşüp harfi
+tamamlıyor, altta üç nokta nabız atıyor. 3750 ms'de noktalar, 4000 ms'de
+isim büyüyüp bulanıklaşarak dağılıyor; zemin dağılmanın ikinci yarısında
+söndüğü için isim ana sayfanın üstünde kayboluyor. Zaman çizgisi
+`globals.css`teki açılış bloğunun başında yazılı; süreyi değiştirirsen
+oradaki gecikmeleri birlikte değiştir.
 
-Çıkış tek bir zaman çizgisinin yüzdelerinde: %64–90 tavşan yerine uçuyor
-(`acilis-inis`); yazılar, noktalar ve artılar tavşan kalktığı an hızla,
-%64–71'de sönüyor (`acilis-icerik`); zemin %70–90'da hafifçe büyüyerek
-soluyor (`acilis-sahne`). İçerik bir süre zeminle birlikte %82'de sönüyordu
-ve tavşan uçarken "RABİ" yerinde duruyordu; kullanıcı hızlı solmasını
-istedi. Zemin ayrı kalıyor: o da hızlı sönseydi tavşan yolun başında ana
-sayfanın üstüne çıkardı. Üç süre birlikte değişmeli.
+**Tavşan yok.** 2a'da tavşan, "RABİ", slogan ve süzülen on iki artı vardı ve
+tavşan sonunda ana sayfadaki maskotun tam üstüne uçarak bitiyordu. 2d ile
+ekranda yalnızca isim kaldı; uçuşla birlikte varış noktasının ölçümü
+(`useVaris`), maskot yuvası (`MASKOT_YUVASI`, `yuvaMi`) ve açılış boyunca
+maskotu gizleyen `gizli`/`maskotGizli` zinciri de silindi. Konacak bir
+tavşan olmayınca ana sayfanın maskotu açılışın altında baştan görünür
+duruyor ve zemin sönerken zaten yerinde. Uçuşu geri getirmek istersen
+tarihçe `git log -- components/acilis.tsx`; oradaki ana ders hâlâ geçerli:
+varış noktası **ölçülür**, yazılmaz.
 
-Çıkışta tavşan varış noktasındaki maskotun **tam üstüne** süzülüyor; katman
-kalktığında ekranda zaten yalnızca o maskot duruyor ve altındaki sayfa görünür
-durumda, yani geçiş tek bir hareket gibi okunuyor. Dört şey buna bağlı:
-
-- **Ekranda hep tek tavşan var.** Açılış sürerken varış noktasındaki maskot
-  `visibility: hidden` (`Rabi` → `gizli`). Zemin son saniyede saydamlaşıyor ve
-  altındaki sayfa görünür oluyor; gizlenmeseydi biri uçarken öteki yerinde
-  dururken **iki** tavşan görünürdü. Katman kalkarken gizlilik de kalkıyor,
-  ikisi aynı görsel olduğu için takas görünmüyor. `display: none` olamaz:
-  varış noktası bu öğe ölçülerek bulunuyor ve düzenden çıkmış bir öğenin
-  ölçüsü sıfırdır.
-- **Varış noktası ölçülüyor, yazılmıyor — yedeği de yok.** Tasarım
-  `translate(-134px, -229px) scale(0.49)` diyor (önceki tasarım
-  `-147px, -224px, 0.33`) ama o sayılar 360×780lik prototip çerçevesine
-  ait; 375 piksellik telefonda ölçülen hedef −140,5 / −229,3 çıkıyor. Bir süre uygulamada da yazılıydı (`VARIS` tablosu,
-  `calc()` ile) ve tam da beklendiği gibi bozuldu: düzen değişti, sayılar
-  kaldı, tavşan yuvanın 93 piksel altına indi. Tablo yalnızca ölçüm
-  yetişmediğinde devreye girdiği için hata da **arada bir** görünüyordu —
-  telefonun o açılışta ne kadar hızlı olduğuna bağlıydı. Tablo silindi: ölçüm
-  tutmazsa tavşan hiç uçmuyor, olduğu yerde sönüyor. Yuva yoksa konacak maskot
-  da yok; tahmin edilen bir köşeye inmek hareketi kurtarmıyor, yanlış yere
-  inen bir tavşan gösteriyor.
-- **Ölçüm tavşan inene kadar sürüyor, donmuyor.** Bir süre uçuşun başında
-  (%64) donuyordu — "uçuş başladıktan sonra hedefi değiştirmek tavşanı
-  ışınlar" diye — ve telefonda tavşan yuvanın yanına iniyordu: ana sayfanın
-  düzeni donmadan **sonra** da kayabiliyor (güvenli alan `--guvenli-ust`
-  yerli köprüden gecikmeli geliyor, yazı tipi sonradan takas olup
-  selamlamayı kırabiliyor, özet daveti veri okununca beliriyor). Tarayıcıda
-  bunların hiçbiri olmadığı için orada tam oturuyordu. Işınlanma da olmuyor:
-  keyframe konumu `ilerleme × hedef` diye hesaplıyor, tarayıcı `var()`ı
-  animasyon sürerken yeniden okuyor ve hedef değişince tavşan ancak
-  ilerlemesi oranında kayıyor. Uçan tavşanın başlangıcı da sabit sayıdan
-  değil kendi yerleşiminden (`offsetLeft/Top`) ölçülüyor. Ölçü
-  `window.innerHeight`ten değil ekranın kendi kutusundan alınıyor; WebView
-  açılırken ikisi bir süre ayrı düşüyor.
-- **Yuva tek.** Ekranda ya ana sayfanın başlığı vardır ya kurulum sihirbazı,
-  o yüzden ikisinde de aynı kimlik duruyor ve ölçüm hangisi varsa onu buluyor.
-  Kurulumun ilk ekranı (karşılama) kendi düzenini çizdiği için yuva orada
-  ekranın **ortasında** duruyor; varış noktası yazılmayıp ölçüldüğü için uçuş
-  kendiliğinden oraya iniyor. Karşılama ekranına ikinci bir maskot eklersen
-  aynı kimlikten iki tane olur ve `getElementById` hangisini önce bulursa
-  tavşan oraya iner.
-- **Ölçüm zamanlayıcıyla yineleniyor, `requestAnimationFrame` ile değil.**
-  Sayfa görünür değilken rAF hiç çağrılmıyor ve ölçüm sonsuza kadar bekliyor.
-
-Ayrı bir solma adımı yok: ekran kendi çıkışını kendi yapıyor (`acilis-sahne`,
-ölçüm tutmazsa tavşan için `acilis-son`), üstüne bir de opaklık geçişi koymak
-biten bir geçişin üstüne ikincisini koymak olurdu.
-
-Tavşanın girişi ile uçuşu **ayrı kaplarda** (`acilis-belir` içte,
-`acilis-inis` dışta): ikisi de `transform` oynatıyor ve aynı öğede olsalardı
-sonuncusu öncekini ezerdi. Katmanı kaldıran `animationend` bu yüzden adla
-süzülüyor — içteki girişin bitişi de kabarcıklanıyor ve süzülmeseydi katman
-800 ms'de kalkardı.
+Katmanı kaldıran şey zeminin kendi `animationend`i (`acilis-sahne`, adla
+süzülüyor — içerideki yazının ve noktaların bitişi de kabarcıklanıyor);
+zamanlayıcı yalnızca emniyet kemeri. Katman sonuna kadar dokunuşları
+yutuyor: zemin sönerken altındaki düğmeler görünür ama basılabilir
+olmamalı.
 
 ### Android'de uçtan uca ekran bütün sürümlerde açık
 
@@ -305,7 +256,7 @@ kare hiç gelmezse ekran donuk kalır ve uygulama katmanın altında kilitlenird
 Ekranın sayacı da bu yüzden `acilis.tsx` içinde, `AppShell` içinde değil:
 katman ancak animasyon başladıktan `ACILIS_SURESI` sonra kalkmalı. Dışarıda
 tutulsaydı sayaç animasyondan önce işlemeye başlar, yavaş açılan bir telefonda
-tavşan yuvasına varmadan katman silinirdi.
+isim dağılmadan katman silinirdi.
 
 **2. `prefers-reduced-motion` ekranı tümüyle susturuyordu.** Tasarımın kendi
 kuralı buydu ve uygulama bir süre öyle çıktı. Android'de bu tercih çoğu zaman
@@ -407,7 +358,7 @@ karede oradan oraya **ışınlanırken** görüyordu.
 `KurulumMaskotu` aradaki farkı ölçüp uçarak kapatıyor: her yerleştiğinde kendi
 kutusunu `Kurulum`daki ref'e yazıyor, bir sonraki adımda yeni kutusunu ölçüp
 farkı bir kare boyunca **ters** dönüşüm olarak uyguluyor, sonra dönüşümü
-kaldırıyor. Varış noktası açılış ekranındaki kuralın aynısıyla ölçülüyor,
+kaldırıyor. Varış noktası ölçülüyor,
 yazılmıyor. Dört incelik:
 
 - Ref `Kurulum`da duruyor, bileşenin içinde değil — bileşen adım değişince
@@ -1024,8 +975,8 @@ içinde de duruyor; ikisi **birlikte** değişmeli. Tek koyu sayfa ayın dersi
 (kızıl zemin, altın vurgu): geri sayımın sonu, ötekilerden ayrılmalı.
 
 Kapaktaki ay adı **Manrope** (`font-marka`): tasarım o başlığı 66 pikselde
-Manrope ile çizdi. Açılış bir süre aynı aileyi paylaşıyordu, 2a ile Outfit'e
-geçti; Manrope artık yalnızca burada. Başka bir yerde kullanmadan önce
+Manrope ile çizdi. Açılış bir süre aynı aileyi paylaşıyordu, sonra Outfit'e
+ve Rubik'e geçti; Manrope artık yalnızca burada. Başka bir yerde kullanmadan önce
 yukarıdaki yazı tipi istisnasına bak.
 
 Punto ve kalınlıklar Tailwind sınıfı değil `yz()` yardımcısıyla satır içi.

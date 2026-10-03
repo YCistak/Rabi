@@ -169,11 +169,8 @@ const PUAN_TURLERI: { id: PuanTuru | typeof ALANSIZ; ad: string }[] = [
 
 export function Kurulum({
   onBitir,
-  maskotGizli = false,
 }: {
   onBitir: (sonuc: KurulumSonucu) => void
-  /** Açılış ekranındaki tavşan buranın üstüne konarken maskot gizleniyor. */
-  maskotGizli?: boolean
 }) {
   const [adim, setAdim] = useState(0)
   const [ad, setAd] = useState('')
@@ -466,8 +463,7 @@ export function Kurulum({
 
     Soru sormuyor: kart, adım noktaları ve geri düğmesi burada gürültü olurdu —
     ekranda yapılacak tek bir şey var. Maskot da ekranın **ortasında** duruyor,
-    başlığın yanında değil; açılıştaki tavşan buranın üstüne konduğu için
-    (`yuvaMi`) ilk açılışta uçuş doğrudan bu tavşanın üstünde bitiyor.
+    başlığın yanında değil.
   */
   if (suanki === 'karsilama') {
     return (
@@ -478,15 +474,12 @@ export function Kurulum({
         <div className="flex-[0.85]" aria-hidden />
 
         <div className="flex flex-col items-center text-center">
-          {/* Açılıştaki tavşan buranın üstüne konuyor: kurulumun ilk ekranı bu. */}
           <KurulumMaskotu
             oncekiKutu={maskotKutusu}
             adimAnahtari={suanki}
             durum="mutlu"
             poz="kafa"
             boyut={BUYUK_MASKOT}
-            gizli={maskotGizli}
-            yuvaMi
           />
           <h1 className="mt-6 font-display text-[27px] leading-tight font-extrabold tracking-tight text-balance">
             {ADIM_BILGISI.karsilama.baslik}
@@ -512,15 +505,11 @@ export function Kurulum({
     geri kalanı sınıf, alan ve hedef soruyor ve ad bir daha görünmüyordu.
     Maskot burada el sallıyor; selam veren bir yüz, karşılamadaki duran yüzle
     aynı görsel olsaydı ekran ileri gitmiş gibi durmazdı.
-
-    Yuva değil: açılış çoktan bitti ve kullanıcı buraya ancak iki dokunuşla
-    gelebiliyor.
   */
   if (suanki === 'tanisma') {
     return (
       <TanismaEkrani
         ad={ad}
-        maskotGizli={maskotGizli}
         oncekiKutu={maskotKutusu}
         adimAnahtari={suanki}
         onDevam={devamEt}
@@ -559,8 +548,6 @@ export function Kurulum({
           adimAnahtari={suanki}
           durum={siradaki === sonAdim ? 'mutlu' : 'normal'}
           boyut={KUCUK_MASKOT}
-          gizli={maskotGizli}
-          yuvaMi
         />
         <div className="golge-kart relative min-w-0 flex-1 rounded-[22px] bg-card p-4 text-card-foreground">
           {/* Balonun kuyruğu: kartla aynı renkte, 45° çevrilmiş bir kare.
@@ -942,8 +929,8 @@ const MASKOT_UCUS_SURESI = 460
  * yazıyor; bir sonraki adımda yeni kutusunu ölçüp aradaki farkı **ters**
  * dönüşüm olarak uyguluyor (yani bir kare boyunca eski yerinde ve eski boyunda
  * duruyor), sonra dönüşümü kaldırıyor ve tarayıcı aradaki yolu kendi kat
- * ediyor. Varış noktası yazılmıyor, ölçülüyor — açılış ekranındaki kuralın
- * aynısı: yazılmış bir koordinat düzen değişince bayatlıyor.
+ * ediyor. Varış noktası yazılmıyor, ölçülüyor:
+ * yazılmış bir koordinat düzen değişince bayatlıyor.
  *
  * Ters dönüşüm `useLayoutEffect` içinde konuyor: boyamadan önce çalışmazsa
  * kullanıcı tavşanı bir kare varış noktasında görür, uçuş oradan başlar.
@@ -959,8 +946,6 @@ function KurulumMaskotu({
   durum,
   poz,
   boyut,
-  gizli,
-  yuvaMi,
 }: {
   oncekiKutu: RefObject<DOMRect | null>
   /** Değiştiğinde uçuş kuruluyor; aynı adımdaki çizimler tavşana dokunmuyor. */
@@ -968,8 +953,6 @@ function KurulumMaskotu({
   durum: 'normal' | 'mutlu'
   poz?: 'yuz' | 'kafa' | 'el-sallayan'
   boyut: number
-  gizli: boolean
-  yuvaMi?: boolean
 }) {
   const sarmalRef = useRef<HTMLSpanElement>(null)
 
@@ -1058,7 +1041,7 @@ function KurulumMaskotu({
     /*
       Sarmalayıcı şart: uçan şey `transform` alan bir kutu ve maskotun kendisi
       ölçüsünü `width`/`height` ile veriyor — dönüşümü doğrudan ona koymak,
-      açılış ekranının ölçtüğü öğeyi de oynatırdı.
+      bir sonraki adımın ölçtüğü kutuyu da oynatırdı.
 
       `z-10`: uçuşun ortasında büyümüş tavşan konuşma balonunun üstünden
       geçiyor; balon DOM'da sonra geldiği için katman verilmezse onun altında
@@ -1069,7 +1052,7 @@ function KurulumMaskotu({
       className="relative z-10 inline-flex shrink-0"
       style={{ transformOrigin: 'top left' }}
     >
-      <Rabi durum={durum} poz={poz} boyut={boyut} gizli={gizli} yuvaMi={yuvaMi} />
+      <Rabi durum={durum} poz={poz} boyut={boyut} />
     </span>
   )
 }
@@ -1113,19 +1096,14 @@ function tahminHedefi(
  * Maskot el sallıyor. Tasarımda dairenin sağ üstünde ayrıca bir 👋 duruyordu;
  * alındı — maskot zaten el sallıyor ve iki el aynı anda iki selam gibi
  * okunuyordu.
- *
- * Yuva değil: açılış çoktan bitti, kullanıcı buraya ancak iki dokunuşla
- * geliyor.
  */
 function TanismaEkrani({
   ad,
-  maskotGizli,
   oncekiKutu,
   adimAnahtari,
   onDevam,
 }: {
   ad: string
-  maskotGizli: boolean
   oncekiKutu: RefObject<DOMRect | null>
   adimAnahtari: string
   onDevam: () => void
@@ -1148,7 +1126,6 @@ function TanismaEkrani({
           durum="mutlu"
           poz="el-sallayan"
           boyut={BUYUK_MASKOT}
-          gizli={maskotGizli}
         />
 
         {/* Ad vurgulu: ekranın tek işi adı geri söylemek, o yüzden cümlenin

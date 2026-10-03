@@ -59,7 +59,6 @@ const DERS_RENGI: Record<DersId, string> = {
 }
 
 export function AnaSayfa({
-  maskotGizli,
   ayarlar,
   gunlukKayitlar,
   devamsizlik,
@@ -76,11 +75,8 @@ export function AnaSayfa({
   onKartAc,
   onDahaGit,
   onOyunlaraGit,
-  acilisSuruyor = false,
   tanitimdaMi = false,
 }: {
-  /** Açılış ya da kurulum geçişindeki tavşan buranın üstüne konarken gizlenir. */
-  maskotGizli: boolean
   ayarlar: Ayarlar
   gunlukKayitlar: GunlukKayit[]
   devamsizlik: Devamsizlik[]
@@ -120,13 +116,6 @@ export function AnaSayfa({
    * sekmenin başına düşen kullanıcı aynı seçimi bir kez daha yapıyordu.
    */
   onOyunlaraGit: (ders?: DersId) => void
-  /**
-   * Açılış ekranı hâlâ duruyor mu.
-   *
-   * Yalnızca başlıktaki maskotu ilgilendiriyor: açılış sürerken gizli
-   * kalıyor, yoksa ekranda iki tavşan birden görünüyor.
-   */
-  acilisSuruyor?: boolean
   tanitimdaMi?: boolean
 }) {
   const tarih = bugun()
@@ -193,7 +182,7 @@ export function AnaSayfa({
 
       {/* Selamlama — tasarımda ad sorulmuyor, kurulumda ad adımı yok. */}
       <header className="flex items-center gap-3 px-0.5 pt-2 pb-1">
-        <Rabi durum={maskotDurumu} poz="kafa" boyut={58} gizli={maskotGizli} yuvaMi />
+        <Rabi durum={maskotDurumu} poz="kafa" boyut={58} />
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-extrabold tracking-wide text-ikincil">Rabi</p>
           <h1 className="mt-px font-display text-[22px] font-extrabold tracking-tight text-balance">

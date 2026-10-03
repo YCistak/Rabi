@@ -71,29 +71,8 @@ type Props = {
   poz?: MaskotPozu
   /** Piksel cinsinden genişlik; yükseklik oranla belirlenir. */
   boyut?: number
-  /**
-   * Yerini koruyarak görünmez olur.
-   *
-   * Açılış ve kurulum sonrası geçişlerinde uçan tavşan tam olarak bu maskotun
-   * üstüne konuyor. İkisi birden çizilseydi son karede tavşanın üstünde
-   * tavşan olurdu; `display: none` ise satırın hizasını bozardı.
-   */
-  gizli?: boolean
-  /**
-   * Uçan tavşanın **varış noktası** burası.
-   *
-   * Açılış ekranı bu öğeyi kimliğinden bulup mesafeyi kendisi ölçüyor; varış
-   * koda yazılıydı ve o hesap başlığın yerini, güvenli alanı ve kabın
-   * genişliğini bilmek zorundaydı — biri değişince tavşan yuvanın yanına
-   * düşüyor, katman kalkınca zıplıyordu. Aynı anda **tek** bir yuva olabilir:
-   * ekranda ya ana sayfanın başlığı vardır ya kurulum sihirbazı.
-   */
-  yuvaMi?: boolean
   className?: string
 }
-
-/** Açılış ekranının aradığı yuvanın kimliği. */
-export const MASKOT_YUVASI = 'rabi-maskot-yuvasi'
 
 /**
  * Rabi — uygulamanın tavşan maskotu.
@@ -113,21 +92,17 @@ export function Rabi({
   durum = 'normal',
   poz = 'yuz',
   boyut = 96,
-  gizli = false,
-  yuvaMi = false,
   className,
 }: Props) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      id={yuvaMi ? MASKOT_YUVASI : undefined}
       src={POZ_GORSELI[poz]}
       width={boyut}
       height={(boyut * 130) / 120}
       style={{
         width: boyut,
         height: (boyut * 130) / 120,
-        visibility: gizli ? 'hidden' : undefined,
       }}
       className={cn('shrink-0 object-contain', className)}
       alt={`Rabi — ${DURUM_ETIKETI[durum]}`}
