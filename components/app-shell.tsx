@@ -1147,6 +1147,13 @@ function RabiUygulamasi() {
                 sonAraclar={sonAraclar}
                 sonOyunlar={sonOyunlar}
                 onKartAc={aracAc}
+                pomodoro={
+                  pomodoroDurumu?.canli && pomodoroDurumu.bitisZamani !== null
+                    ? pomodoroDurumu.mola
+                      ? 'mola'
+                      : 'calisma'
+                    : null
+                }
                 onDahaGit={() => setSekme('daha')}
                 onOyunlaraGit={(ders) => {
                   // Ders kutucuğu doğrudan o dersin ızgarasını açıyor; sekmenin
