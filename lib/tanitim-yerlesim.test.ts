@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { balonGenisligi, balonKonumu, durgunlukSayaci, kaydirmaKis, kutuFarki, type Kutu } from './tanitim-yerlesim'
+import { balonGenisligi, balonKonumu, durgunlukSayaci, kaydirmaKis, kaydirmaKisTam, kutuFarki, type Kutu } from './tanitim-yerlesim'
 
 const TELEFON = { sol: 0, ust: 0, genislik: 390, yukseklik: 844 }
 const IPAD_YATAY = { sol: 0, ust: 0, genislik: 983, yukseklik: 683 }
@@ -121,5 +121,36 @@ describe('sığmayan hedefte en az örtüşme', () => {
     const ortada = { sol: (983 - 340) / 2, ust: alt - 203, genislik: 340, yukseklik: 203 }
     expect(ortusme({ ...yer, genislik: 340, yukseklik: 203 }, hedef)).toBeLessThan(ortusme(ortada, hedef) / 2)
     icinde(yer, IPAD_YATAY, 340, 203, alt)
+  })
+})
+
+describe('gerçek cihaz kaydı (iPad 10, TestFlight 84.32)', () => {
+  // Deneme listesi: hedef 0,8 px kayınca balon üstten alta 384 px uçuyordu (t=64503→64828).
+  const ekran = { sol: 0, ust: 0, genislik: 983.3, yukseklik: 683.3 }
+  const ust = 38.67, alt = 654.67, g = 340, y = 231.6
+  const ilk = { sol: 120.7, ust: 260.1, genislik: 650, yukseklik: 173.6 }
+  const kaymis = { ...ilk, ust: 259.3 }
+
+  it('ilk yerleşim üstte; önceki yer bilinmeden 0,8 px sonra alta geçiyordu', () => {
+    expect(balonKonumu(ilk, ekran, ust, alt, g, y).ust).toBeCloseTo(38.67, 1)
+    expect(balonKonumu(kaymis, ekran, ust, alt, g, y).ust).toBeCloseTo(alt - y, 1)
+  })
+
+  it('örtüşmeler neredeyse eşitken balon yerinde kalır', () => {
+    const yer = balonKonumu(ilk, ekran, ust, alt, g, y)
+    expect(balonKonumu(kaymis, ekran, ust, alt, g, y, null, yer)).toEqual(yer)
+  })
+
+  it('belirgin biçimde daha az örtüşen yer varsa yine de oraya geçer', () => {
+    const yer = balonKonumu(ilk, ekran, ust, alt, g, y)
+    const yukarida = { ...ilk, ust: 230 }
+    expect(balonKonumu(yukarida, ekran, ust, alt, g, y, null, yer).ust).toBeGreaterThanOrEqual(yukarida.ust + yukarida.yukseklik)
+  })
+
+  it('kaydırma tam piksele yuvarlanıyor (iOS 361,35 → belgede 361, ekranda 362)', () => {
+    expect(kaydirmaKisTam(0, 361.35, 2000)).toBe(361)
+    expect(kaydirmaKisTam(14.5, 0.3, 2000)).toBe(0.5)
+    expect(kaydirmaKisTam(10, -20, 2000)).toBe(-10)
+    expect(kaydirmaKisTam(0, 500, 300.7)).toBe(300)
   })
 })

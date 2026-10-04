@@ -4,7 +4,7 @@ import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal, flushSync } from 'react-dom'
 import { Buton } from '@/components/ui'
 import { TANITIM_EGRISI, egriDegeri } from '@/lib/tanitim-animasyonu'
-import { balonGenisligi, balonKonumu, durgunlukSayaci, kaydirmaKis, kutuFarki, type Kutu } from '@/lib/tanitim-yerlesim'
+import { balonGenisligi, balonKonumu, durgunlukSayaci, kaydirmaKis, kaydirmaKisTam, kutuFarki, type Kutu } from '@/lib/tanitim-yerlesim'
 import { taniAcikMi, taniKaydet, taniKutu } from '@/lib/tanitim-tani'
 import { useTanitim } from './tanitim-baglami'
 
@@ -108,7 +108,7 @@ function hedefiKaydir(hedef: HTMLElement, istenenUst: number, k: number, pencere
     if (Math.abs(kalan) >= 0.5 && ['auto', 'scroll'].includes(stil.overflowY) && kab.scrollHeight > kab.clientHeight) {
       const once = ust()
       // Büyütülmüş kabın kaydırması kendi (katmanla aynı) CSS pikselinde.
-      kab.scrollBy({ top: kaydirmaKis(kab.scrollTop, kalan, kab.scrollHeight - kab.clientHeight), behavior: 'instant' })
+      kab.scrollBy({ top: kaydirmaKisTam(kab.scrollTop, kalan, kab.scrollHeight - kab.clientHeight), behavior: 'instant' })
       kalan -= once - ust()
     }
     if (stil.position === 'fixed') return
@@ -116,7 +116,7 @@ function hedefiKaydir(hedef: HTMLElement, istenenUst: number, k: number, pencere
   // Pencerenin kaydırması ekran pikselinde (WebKit ve Chromium'da ölçüldü); `zoom` yalnızca body'de.
   if (!pencereSerbest || Math.abs(kalan) < 0.5) return
   const kok = document.scrollingElement ?? document.documentElement
-  const adim = kaydirmaKis(window.scrollY, kalan * k, kok.scrollHeight - window.innerHeight)
+  const adim = kaydirmaKisTam(window.scrollY, kalan * k, kok.scrollHeight - window.innerHeight)
   if (Math.abs(adim) >= 0.5) window.scrollBy({ top: adim, behavior: 'instant' })
 }
 
@@ -165,6 +165,8 @@ export function SpotIsigi() {
   const balonRef = useRef<HTMLDivElement>(null)
   const katmanRef = useRef<HTMLDivElement>(null)
   const guvenliAlanRef = useRef<HTMLDivElement>(null)
+  /** Görünür alanın klavyesiz (en büyük) yüksekliği; pencere genişliği değişince sıfırlanıyor. */
+  const tamGorunumRef = useRef({ genislik: 0, yukseklik: 0 })
   /** Son çizilen yerleşim; adımlar arasında yaşıyor, yeni adımın animasyonu buradan başlıyor. */
   const sonRef = useRef<Yerlesim | null>(null)
   // Kapanış (ve ayarlıysa adımlar arası solma) sürerken ölçüm donuyor: son
@@ -195,7 +197,23 @@ export function SpotIsigi() {
       geri dönüyor; kaydırma bitince ikinci bir düzeltme kaydırması daha
       geliyordu.
     */
-    let faz: 'bekle' | 'kaydir' | 'izle' = 'bekle'
+    /*
+      5. `dogrula` — yalnızca yeni ekranda: sayfa son yerine anında kaydırıldı,
+                    delik ve balon gizli. iOS WebKit, ekran değişiminin
+                    `scrollTo(0, 0)`ından hemen sonra yapılan kaydırmayı bir
+                    kare geri alıyor: iPad tanı kaydında planla `scrollY`=361
+                    okudu, bir sonraki kare 0, ondan sonraki 362 (t=72735 →
+                    72796 → 72879; aynısı Yapılacaklar, Deneme okut, Deneme
+                    listesi ve iPhone'da dört adımda). Spot o karede belirdiği
+                    için yeni ekran spotun 300 px altında görünüp yukarı
+                    sıçrıyordu. Kaydırma geri dönerse yeniden uygulanıyor;
+                    spot ancak kaydırma iki kare yerinde kalınca, o anki
+                    ölçümle beliriyor.
+    */
+    let faz: 'bekle' | 'kaydir' | 'izle' | 'dogrula' = 'bekle'
+    let dogrulama: { kayitlar: KaydirmaKaydi[]; bas: number; temiz: number } | null = null
+    /** Bir önceki karenin görünür alan imzası: iOS kaydırırken bir karelik ara değerler raporluyor. */
+    let oncekiImza = ''
     const adimBasi = performance.now()
     taniKaydet('adim', { adim: adim.kimlik, hedefAdi: adim.hedef })
     let beklemeBasi = adimBasi
@@ -210,6 +228,12 @@ export function SpotIsigi() {
     const oncekiOdak = document.activeElement instanceof HTMLElement ? document.activeElement : null
     const dokunulmazlar = new Map<HTMLElement, boolean>()
     const hedefiBul = () => document.querySelector<HTMLElement>(`[data-tanitim="${adim.hedef}"]`)
+    /** Tanı: odaktaki öğenin kısa adı (klavyenin hangi kutu için açıldığı). */
+    const odakAdi = () => {
+      const odak = document.activeElement
+      if (!(odak instanceof HTMLElement) || odak === document.body) return null
+      return `${odak.tagName.toLowerCase()}${odak.getAttribute('name') ? `[${odak.getAttribute('name')}]` : ''}${odak.closest('[data-tanitim]') ? `@${odak.closest('[data-tanitim]')!.getAttribute('data-tanitim')}` : ''}`
+    }
     const kilitleriBirak = () => {
       for (const [oge, onceki] of dokunulmazlar) oge.inert = onceki
       dokunulmazlar.clear()
@@ -266,7 +290,17 @@ export function SpotIsigi() {
       // Yazılım klavyesi açık: görünür alan pencereden belirgin kısa (iOS'ta
       // pencere değil yalnızca visualViewport küçülüyor). Klavye ev çubuğunun
       // üstünde durduğu için alttaki güvenli alan o sırada düşülmüyor.
-      const klavye = !!gorunum && window.innerHeight - gorunum.height > 100
+      /*
+        Karşılaştırma `innerHeight` ile değil, görünür alanın klavyesiz
+        yüksekliğiyle: iOS klavye açıkken `innerHeight`i de küçültüyor (iPhone
+        tanı kaydında 812 → 666 → 526, görünür alan 442). Fark 84'e inince
+        klavye "kapalı" sanıldı, alt sınır ve balon yeniden hesaplandı
+        (Soru ekle, t=47147).
+      */
+      const tam = tamGorunumRef.current
+      if (Math.abs(tam.genislik - window.innerWidth) > 1) { tam.genislik = window.innerWidth; tam.yukseklik = 0 }
+      tam.yukseklik = Math.max(tam.yukseklik, window.innerHeight, gorunum?.height ?? 0)
+      const klavye = !!gorunum && tam.yukseklik - gorunum.height > 100
       const ustSinir = ekran.ust + (parseFloat(guvenli?.paddingTop ?? '0') || 0) / k + 12
       const altSinir = ekran.ust + ekran.yukseklik - (klavye ? 0 : (parseFloat(guvenli?.paddingBottom ?? '0') || 0) / k) - 12
       /*
@@ -338,7 +372,8 @@ export function SpotIsigi() {
     const hesapla = (o: Ortam, kutu: Kutu | null): Yerlesim => {
       const genislik = balonGenisligi(kutu, o.ekran, tablet())
       const yukseklik = balonYuksekligi(genislik, o.k)
-      const yer = balonKonumu(kutu, o.ekran, o.ustSinir, o.altSinir, genislik, yukseklik, odakKutusu(o))
+      const simdiki = sonRef.current && !sonRef.current.sakli && sonRef.current.balon.genislik === genislik ? sonRef.current.balon : null
+      const yer = balonKonumu(kutu, o.ekran, o.ustSinir, o.altSinir, genislik, yukseklik, odakKutusu(o), simdiki)
       const ekHedefler = (adim.ekHedefler ?? []).flatMap((hedefAdi) => {
         const oge = document.querySelector<HTMLElement>(`[data-tanitim="${hedefAdi}"]`)
         if (!oge) return []
@@ -381,10 +416,14 @@ export function SpotIsigi() {
         }
       }
       kaydirmaBasi = performance.now()
+      const kaydirilan = son.filter((z, i) => Math.abs(bas[i].x - z.x) >= 0.5 || Math.abs(bas[i].y - z.y) >= 0.5)
+      dogrulama = null
+      // Yeni ekranda sayfa kaydırıldıysa delik, kaydırma yerinde kalana dek gizli (bkz. `dogrula`).
+      if (yeniEkran && onceki?.sakli && gorunurRef.current && !hareketsiz && kaydirilan.length) dogrulama = { kayitlar: kaydirilan, bas: kaydirmaBasi, temiz: 0 }
       // İlk yerleşim ve kaybolup yeniden beliren delik geçişsiz konuyor.
-      if (yeniEkran && onceki && gorunurRef.current) ciz({ ...yeni, sakli: false, belir: (onceki.belir ?? 0) + 1, spotAnlik: true, balonAnlik: true })
+      else if (yeniEkran && onceki && gorunurRef.current) ciz({ ...yeni, sakli: false, belir: (onceki.belir ?? 0) + 1, spotAnlik: true, balonAnlik: true })
       else ciz({ ...yeni, spotAnlik: hareketsiz || !onceki || !onceki.hedef || !gorunurRef.current, balonAnlik: hareketsiz || !onceki || !gorunurRef.current })
-      faz = kaydirmalar.length ? 'kaydir' : 'izle'
+      faz = dogrulama ? 'dogrula' : kaydirmalar.length ? 'kaydir' : 'izle'
       izleDurgun.sifirla()
       if (taniAcikMi()) taniKaydet('planla', { adim: adim.kimlik, yeniEkran, k: o.k, ustSinir: o.ustSinir, altSinir: o.altSinir, istenen, kaydirma: kaydirmalar.map(({ bas: b, son: z }) => [b.oge ? 'kap' : 'pencere', b.y, z.y]), bekleme: Math.round(performance.now() - adimBasi) })
     }
@@ -423,8 +462,22 @@ export function SpotIsigi() {
       // Klavye hedefteki bir kutuya açıldıysa balon yalnızca başlık ve ipucuna iner.
       const sikisikOlmali = !!odakKutusu(o)
       if (sikisikOlmali !== sikisikRef.current) { sikisikRef.current = sikisikOlmali; setSikisik(sikisikOlmali) }
+      /*
+        Görünür alan ancak iki kare aynı kaldıysa değişmiş sayılıyor, rehberin
+        kendi kaydırması sürerken hiç sayılmıyor. iOS programla kaydırılan
+        sayfada bir kare boyunca belgenin ve görünür alanın yerini birbirinden
+        ayrı raporluyor: iPhone tanı kaydında kaydırma sürerken görünür alanın
+        üstü 9, 5, 4 px oynadı (t=24944, 25075, 25192); her seferinde kaydırma
+        kesilip baştan planlandı, 360 ms'lik kaydırma bir saniyeyi aştı (bir
+        adımda 17 kez planla), spot ise sayfadan önce varıp bekledi. Sekme
+        değişiminin ilk karesinde görünür alan -378 px'te raporlandı
+        (Oyunlar, t=108707); spot o karede planlanıp boş çizildi, balon 320 px
+        sıçradı.
+      */
       const gorunumImzasi = `${o.ekran.genislik}:${o.ekran.yukseklik}:${o.ustSinir}:${o.altSinir}`
-      if (sonGorunum !== gorunumImzasi) {
+      const gorunumSabit = gorunumImzasi === oncekiImza
+      oncekiImza = gorunumImzasi
+      if (gorunumSabit && faz !== 'kaydir' && sonGorunum !== gorunumImzasi) {
         if (sonGorunum && faz !== 'bekle') { faz = 'bekle'; beklemeBasi = performance.now(); durgun.sifirla() }
         sonGorunum = gorunumImzasi
       }
@@ -433,7 +486,11 @@ export function SpotIsigi() {
       // ve görünür kısmı (spotun çizileceği kutu) ayrı sorular.
       const ham = sonHalindeOlc(hedef, () => (hedef ? yereleCevir(hedef.getBoundingClientRect(), o.donusum) : null))
       // Tanı: adımın ilk 1,5 saniyesi kare kare (yalnızca tanı modu açıkken).
-      if (taniAcikMi() && simdi - adimBasi < 1500) taniKaydet('kare', { adim: adim.kimlik, faz, hedef: taniKutu(ham), katman: taniKutu(katmanRef.current?.getBoundingClientRect()), ekranUst: Math.round(o.ekran.ust * 10) / 10 })
+      // Bekleme her yeniden başladığında (klavye, form büyüdü) yine 1,5 saniye.
+      if (taniAcikMi() && (simdi - adimBasi < 1500 || simdi - beklemeBasi < 1500 || faz === 'dogrula')) {
+        taniKaydet('kare', { adim: adim.kimlik, faz, hedef: taniKutu(ham), katman: taniKutu(katmanRef.current?.getBoundingClientRect()), ekranUst: Math.round(o.ekran.ust * 10) / 10,
+          ekranY: Math.round(o.ekran.yukseklik * 10) / 10, klavye: o.klavye, sabit: gorunumSabit, odak: odakAdi() })
+      }
       if (!ham || ham.width <= 0 || ham.height <= 0) {
         if (eksikBaslangici === null) eksikBaslangici = simdi
         if (simdi - adimBasi >= KAYIP_BEKLEMESI) {
@@ -454,8 +511,23 @@ export function SpotIsigi() {
       if (faz === 'bekle') {
         // Yazı tipi yükleniyorsa satırlar birazdan yeniden kırılacak; o zamana kadar yerleşme yok.
         const yaziBekliyor = document.fonts?.status === 'loading'
-        if ((!durgun.bildir({ sol: ham.left, ust: ham.top, genislik: ham.width, yukseklik: ham.height }, simdi) || yaziBekliyor) && simdi - beklemeBasi < EN_UZUN_YERLESME) return
+        const durdu = durgun.bildir({ sol: ham.left, ust: ham.top, genislik: ham.width, yukseklik: ham.height }, simdi)
+        if ((!durdu || yaziBekliyor || !gorunumSabit) && simdi - beklemeBasi < EN_UZUN_YERLESME) return
         sonHalindeOlc(hedef, () => planla(o))
+        return
+      }
+      if (faz === 'dogrula' && dogrulama) {
+        // Kaydırma geri döndüyse (iOS) aynı karede yeniden uygula; 1 px'lik yuvarlama sayılmıyor.
+        const sapanlar = dogrulama.kayitlar.filter(({ oge, y }) => Math.abs((oge ? oge.scrollTop : window.scrollY) - y) > 1.5)
+        if (taniAcikMi() && sapanlar.length) taniKaydet('geriDondu', { adim: adim.kimlik, istenen: sapanlar.map((z) => z.y), okunan: sapanlar.map(({ oge }) => (oge ? oge.scrollTop : window.scrollY)) })
+        if (sapanlar.length) { for (const kayit of sapanlar) kaydir(kayit); dogrulama.temiz = 0; return }
+        if (gorunumSabit) dogrulama.temiz++
+        if (dogrulama.temiz < 2 && simdi - dogrulama.bas < 500) return
+        dogrulama = null
+        faz = 'izle'
+        izleDurgun.sifirla()
+        const onceki = sonRef.current
+        ciz({ ...sonHalindeOlc(hedef, () => hesapla(o, hedefKutusu(o))), sakli: false, belir: (onceki?.belir ?? 0) + 1, spotAnlik: true, balonAnlik: true })
         return
       }
       if (faz === 'kaydir') {
@@ -518,7 +590,32 @@ export function SpotIsigi() {
     for (const olay of olaylar) document.addEventListener(olay, engelle, { capture: true, passive: false })
     document.addEventListener('keydown', tusuYakala, true)
     document.addEventListener('focusin', odagiKoru, true)
+    /*
+      Tanı: kare kaydı aralıklı (adımın ve her beklemenin ilk 1,5 saniyesi);
+      klavyenin açıldığı, sayfanın kaydığı ve dokunulan an ise olay olarak
+      yazılıyor. Kart 10'da "klavye açılınca her yer gri" kaydı bu anları
+      içermediği için kayıttan doğrulanamadı.
+    */
+    // Pencerede, yakalama evresinde: rehberin `engelle`si belgede durdurduğu dokunmalar da yazılsın.
+    const tani = taniAcikMi()
+    const gorunumOlayi = (olay: Event) => taniKaydet(olay.type === 'resize' ? 'vvBoyut' : olay.currentTarget === window ? 'kaydirma' : 'vvKayma', { adim: adim.kimlik, faz, odak: odakAdi() })
+    const dokunmaOlayi = (olay: Event) => {
+      const oge = olay.target instanceof Element ? olay.target : null
+      taniKaydet(olay.type === 'pointerdown' ? 'dokunma' : olay.type, { adim: adim.kimlik, faz, oge: oge ? `${oge.tagName.toLowerCase()}@${oge.closest('[data-tanitim]')?.getAttribute('data-tanitim') ?? ''}` : null, odak: odakAdi() })
+    }
+    if (tani) {
+      window.visualViewport?.addEventListener('resize', gorunumOlayi)
+      window.visualViewport?.addEventListener('scroll', gorunumOlayi)
+      window.addEventListener('scroll', gorunumOlayi, { passive: true })
+      for (const ad of ['pointerdown', 'focusin', 'focusout']) window.addEventListener(ad, dokunmaOlayi, true)
+    }
     return () => {
+      if (tani) {
+        window.visualViewport?.removeEventListener('resize', gorunumOlayi)
+        window.visualViewport?.removeEventListener('scroll', gorunumOlayi)
+        window.removeEventListener('scroll', gorunumOlayi)
+        for (const ad of ['pointerdown', 'focusin', 'focusout']) window.removeEventListener(ad, dokunmaOlayi, true)
+      }
       iptal = true
       cancelAnimationFrame(kare)
       for (const olay of olaylar) document.removeEventListener(olay, engelle, true)

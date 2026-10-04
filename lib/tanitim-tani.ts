@@ -15,8 +15,12 @@
 
 const ACIK_ANAHTARI = 'rabi_tani_acik'
 const KAYIT_ANAHTARI = 'rabi_tani_kaydi'
-/** Kaydın tavanı: bir tur ~40 adım, adım başına en çok birkaç düzine satır. */
-const EN_COK_SATIR = 4000
+/**
+ * Kaydın tavanı. iPhone'daki bir tur 3668 satır tuttu; kare kaydı artık her
+ * yeniden beklemede de açık ve klavye, kaydırma, dokunma olayları da yazılıyor.
+ * Satır ~250 bayt: 8000 satır ~2 MB, localStorage'ın 5 MB'ının altında.
+ */
+const EN_COK_SATIR = 8000
 
 let acik: boolean | null = null
 let satirlar: string[] | null = null
@@ -96,6 +100,8 @@ export function taniMetni(): string {
   const guvenli = [getComputedStyle(olcu).paddingTop, getComputedStyle(olcu).paddingBottom]
   olcu.remove()
   const bas = {
+    // 2: kare kaydı her beklemede; vvBoyut/vvKayma/kaydirma/dokunma/focusin/focusout/geriDondu olayları; karede klavye, sabit, odak.
+    kayitSurumu: 2,
     ua: navigator.userAgent, dpr: window.devicePixelRatio, ekran: [screen.width, screen.height], pencere: [window.innerWidth, window.innerHeight],
     olcek: kok.getPropertyValue('--olcek').trim(), yerlesim: document.documentElement.dataset.yerlesim ?? 'telefon',
     platform: document.documentElement.dataset.platform ?? '', guvenli,
