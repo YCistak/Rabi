@@ -10,6 +10,8 @@ export type Kutu = { sol: number; ust: number; genislik: number; yukseklik: numb
 export type Ekran = { sol: number; ust: number; genislik: number; yukseklik: number }
 
 export const BALON_EN_GENIS = 340
+/** Son çaredeki balon adayları arasında şu anki yerin piksel cinsinden avantajı (bkz. `balonKonumu`). */
+export const ONCEKI_YER_PAYI = 16
 
 /**
  * Balonun genişliği. Yatay ekranda hedefin yanında yer varsa balon o yana
@@ -40,8 +42,14 @@ export function balonGenisligi(kutu: Kutu | null, ekran: Ekran, tablet: boolean)
  * yazı kutusu). Son çaredeki adaylardan onu örtenler ancak hepsi örtüyorsa
  * seçiliyor. Klavyeli formda (Soru ekle, ders listesi açık) balon görünür
  * alanın dibine konup yazılan kutunun üstüne biniyordu.
+ *
+ * `onceki`: balonun şu an durduğu yer. Son çarede adaylar hedefle neredeyse
+ * eşit örtüşüyorsa balon yerinde kalıyor (`ONCEKI_YER_PAYI` piksellik şerit
+ * kadar avantaj). iPad'deki tanı kaydında (deneme listesi, t=64503→64828)
+ * üst ve alt aday 10,2 ile 10,7 px örtüşüyordu; sayfa 1 px kayınca sıra
+ * değişti ve balon ekranın tepesinden dibine 384 px uçtu.
  */
-export function balonKonumu(kutu: Kutu | null, ekran: Ekran, ustSinir: number, altSinir: number, genislik: number, yukseklik: number, korunan: Kutu | null = null): { sol: number; ust: number } {
+export function balonKonumu(kutu: Kutu | null, ekran: Ekran, ustSinir: number, altSinir: number, genislik: number, yukseklik: number, korunan: Kutu | null = null, onceki: { sol: number; ust: number } | null = null): { sol: number; ust: number } {
   let sol = ekran.sol + (ekran.genislik - genislik) / 2
   let ust = altSinir - yukseklik
   if (kutu) {
@@ -62,7 +70,8 @@ export function balonKonumu(kutu: Kutu | null, ekran: Ekran, ustSinir: number, a
       let enAz = Number.POSITIVE_INFINITY
       for (const aday of [altSinir - yukseklik, ustSinir]) for (const x of [sol, solHiza, sagHiza]) {
         const balon = { sol: x, ust: Math.max(ustSinir, aday), genislik, yukseklik }
-        const alan = ortusmeAlani(balon, kutu) + (korunan && ortusmeAlani(balon, korunan) > 0 ? 1e9 : 0)
+        const yerinde = !!onceki && Math.abs(onceki.sol - x) < 1 && Math.abs(onceki.ust - balon.ust) < 1
+        const alan = ortusmeAlani(balon, kutu) + (korunan && ortusmeAlani(balon, korunan) > 0 ? 1e9 : 0) - (yerinde ? genislik * ONCEKI_YER_PAYI : 0)
         if (alan < enAz - 0.5) { enAz = alan; ust = aday; sol = x }
       }
     }
@@ -132,4 +141,17 @@ export function durgunlukSayaci(gereken = 2, enAzMs = 0) {
  */
 export function kaydirmaKis(simdiki: number, istenen: number, enCok: number): number {
   return Math.min(Math.max(0, enCok), Math.max(0, simdiki + istenen)) - simdiki
+}
+
+/**
+ * `kaydirmaKis` gibi, ama varılacak yer tam piksel.
+ *
+ * iOS WebKit kesirli kaydırmayı belgede aşağı, ekranda yukarı yuvarlıyor:
+ * iPad tanı kaydında istenen 361,35 px'lik kaydırma `scrollY`de 361, bir kare
+ * sonra 362 okundu (aynısı 67→68, 79→80, 14→15). Spot 361'e göre
+ * çizilmişti; 1 px'lik kayma yeniden çizim, bir adımda da balonun ekranın
+ * öbür ucuna geçmesi demekti. Tam piksel istenince iki taraf aynı yerde.
+ */
+export function kaydirmaKisTam(simdiki: number, istenen: number, enCok: number): number {
+  return kaydirmaKis(simdiki, Math.round(simdiki + istenen) - simdiki, Math.floor(enCok))
 }
