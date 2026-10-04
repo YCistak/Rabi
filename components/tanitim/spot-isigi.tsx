@@ -598,7 +598,7 @@ export function SpotIsigi() {
     */
     // Pencerede, yakalama evresinde: rehberin `engelle`si belgede durdurduğu dokunmalar da yazılsın.
     const tani = taniAcikMi()
-    const gorunumOlayi = (olay: Event) => taniKaydet(olay.type === 'resize' ? 'vvBoyut' : olay.target === window ? 'kaydirma' : 'vvKayma', { adim: adim.kimlik, faz, odak: odakAdi() })
+    const gorunumOlayi = (olay: Event) => taniKaydet(olay.type === 'resize' ? 'vvBoyut' : olay.currentTarget === window ? 'kaydirma' : 'vvKayma', { adim: adim.kimlik, faz, odak: odakAdi() })
     const dokunmaOlayi = (olay: Event) => {
       const oge = olay.target instanceof Element ? olay.target : null
       taniKaydet(olay.type === 'pointerdown' ? 'dokunma' : olay.type, { adim: adim.kimlik, faz, oge: oge ? `${oge.tagName.toLowerCase()}@${oge.closest('[data-tanitim]')?.getAttribute('data-tanitim') ?? ''}` : null, odak: odakAdi() })

@@ -100,6 +100,8 @@ export function taniMetni(): string {
   const guvenli = [getComputedStyle(olcu).paddingTop, getComputedStyle(olcu).paddingBottom]
   olcu.remove()
   const bas = {
+    // 2: kare kaydı her beklemede; vvBoyut/vvKayma/kaydirma/dokunma/focusin/focusout/geriDondu olayları; karede klavye, sabit, odak.
+    kayitSurumu: 2,
     ua: navigator.userAgent, dpr: window.devicePixelRatio, ekran: [screen.width, screen.height], pencere: [window.innerWidth, window.innerHeight],
     olcek: kok.getPropertyValue('--olcek').trim(), yerlesim: document.documentElement.dataset.yerlesim ?? 'telefon',
     platform: document.documentElement.dataset.platform ?? '', guvenli,
