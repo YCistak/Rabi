@@ -20,7 +20,7 @@ import {
   type Universite,
 } from '@/lib/hedef-katalog'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
-import { Rabi } from '@/components/maskot/rabi'
+import { Rabi, type MaskotPozu } from '@/components/maskot/rabi'
 import { HAZIRLIK_SURESI, Hazirlaniyor } from '@/components/hazirlaniyor'
 import { AD_EN_AZ, adBiciminde, adGecerliMi } from '@/lib/ad'
 import { izinIste } from '@/lib/bildirim'
@@ -564,6 +564,7 @@ export function Kurulum({
           oncekiKutu={maskotKutusu}
           adimAnahtari={suanki}
           durum={siradaki === sonAdim ? 'mutlu' : 'normal'}
+          poz={ADIM_POZU[suanki]}
           boyut={KUCUK_MASKOT}
         />
         <div className="golge-kart relative min-w-0 flex-1 rounded-[22px] bg-card p-4 text-card-foreground">
@@ -925,6 +926,26 @@ function SonraSec({
 const BUYUK_MASKOT = 150
 /** Balonun yanındaki maskotun boyu — soru soran ekranlar. */
 const KUCUK_MASKOT = 76
+
+/**
+ * Soru adımlarında maskotun pozu — her adım kendi sorusuna uygun bir iş
+ * yapan tavşan: sınıfı not alan, notları abaküsle sayan, bölümü dürbünle
+ * arayan, hatırlatmayı megafonla duyuran.
+ *
+ * Bir süre bütün soru adımlarında aynı yüz duruyordu ve adım değişince
+ * değişen tek şey balondaki cümleydi; ekran ilerlemiyormuş gibi görünüyordu.
+ * 76 piksel tam boy pozun okunduğu sınırın (70) hemen üstünde. İsim adımı
+ * yüzde kalıyor: karşılamadan uçarak geliyor ve büyük baştan küçük başa
+ * geçiş, baştan tam boya geçişten daha sakin.
+ */
+const ADIM_POZU: Partial<Record<AdimId, MaskotPozu>> = {
+  sinif: 'defterli',
+  notlar: 'abakuslu',
+  alan: 'dusunen',
+  bolum: 'durbunlu',
+  hedef: 'elleri-belde',
+  hatirlatma: 'megafonlu',
+}
 /**
  * Maskotun bir adımdan ötekine uçma süresi.
  *
@@ -968,7 +989,7 @@ function KurulumMaskotu({
   /** Değiştiğinde uçuş kuruluyor; aynı adımdaki çizimler tavşana dokunmuyor. */
   adimAnahtari: string
   durum: 'normal' | 'mutlu'
-  poz?: 'yuz' | 'kafa' | 'el-sallayan'
+  poz?: MaskotPozu
   boyut: number
 }) {
   const sarmalRef = useRef<HTMLSpanElement>(null)

@@ -206,7 +206,7 @@ export function HizliKontrolEkrani({
             <div className="mt-4 flex items-end gap-2.5">
               <Rabi
                 durum={dogru ? 'mutlu' : 'calisiyor'}
-                poz={dogru ? 'sevinen' : 'dusunen'}
+                poz={dogru ? 'basparmak' : 'dusunen'}
                 boyut={80}
                 className="drop-shadow-[0_6px_9px_rgba(31,36,48,0.16)]"
               />

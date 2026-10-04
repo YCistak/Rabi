@@ -113,7 +113,7 @@ export function OyunBankasiEkrani({
       <div>
         <Baslik />
         <BosDurum
-          simge={<Rabi durum="mutlu" poz="sevinen" boyut={72} />}
+          simge={<Rabi durum="mutlu" poz="supuren" boyut={72} />}
           baslik="Banka boş — iyi haber"
           aciklama={'Mini oyunlarda yanlış yaptığın sorular burada toplanır. Genel testte doğru cevaplanan sorular buradan kalkar. Öğrendiğinden emin olduğun soruları "Öğrendim" butonuna basarak buradan kaldırabilirsin.'}
         />
