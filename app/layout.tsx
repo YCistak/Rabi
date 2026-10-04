@@ -24,10 +24,10 @@ const manrope = Manrope({
 // Yalnızca açılış ekranındaki "RABI" (`font-acilis`). Tasarım (2d,
 // `tasarim/acilis-ekrani.dc.html`) ismi Rubik 800 ile çizdi. Önce 2a'nın
 // Outfit'iydi; 2d ile tavşan kalktı ve ekranda yalnızca isim kaldı, Rubik'in
-// köşeli ağırlığı ve İ'nin noktasının yerini tutan kare onunla geldi.
+// köşeli ağırlığı onunla geldi. Ders makarası (bugünkü açılış) aynı aileyi
+// makaranın harflerinde kullanıyor.
 //
-// `display: 'block'` bilerek: açılış ekranı 4,65 saniye sürüyor ve isim o
-// ekranın tamamı. `swap` ile yazı önce yedek aileyle çizilip sonra yerine
+// `display: 'block'` bilerek: açılış ekranının tamamı isim. `swap` ile yazı önce yedek aileyle çizilip sonra yerine
 // oturuyordu — marka adının ilk yarım saniyede başka bir yazı tipinde
 // görünmesi, en çok bakılan anda gözden kaçmıyor. Yazı tipi uygulamayla
 // birlikte geliyor (next/font derleme anında indirip gömüyor), yani beklenen

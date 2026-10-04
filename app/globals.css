@@ -99,7 +99,7 @@
   --font-display: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
   /* Yalnızca aylık özetin kapağı (Manrope). */
   --font-marka: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  /* Yalnızca açılış ekranındaki "RABI" (Rubik, 2d tasarımı). */
+  /* Yalnızca açılış ekranındaki "RABI" (Rubik; 2d ile geldi, ders makarası korudu). */
   --font-acilis: var(--font-rubik), ui-sans-serif, system-ui, sans-serif;
 
   /* Kartlar tasarımda çerçeveyle değil gölgeyle ayrılıyor: kırık beyaz
@@ -518,20 +518,21 @@ body {
     animation: acilis-girisi 420ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
   }
 
-  /* --- Açılış ekranı (components/acilis.tsx, tasarım 2d) --- */
+  /* --- Açılış ekranı (components/acilis.tsx, ders makarası) --- */
 
   /*
-    Tek seferlik, `ACILIS_SURESI` (4,65 s) boyunca akan bir gösteri
-    (`tasarim/acilis-ekrani.dc.html` → 2d). Her parça kendi süresinde ve
-    gecikmesiyle zamanlanıyor, yüzdelerle değil — 4,65 saniyelik bir çizgide
-    700 ms'lik bir hareket yüzdelerle kaba adımlara bölünürdü:
+    Tek seferlik, `ACILIS_SURESI` (2,26 s) boyunca akan bir gösteri
+    (`tasarim/acilis-arsiv.html` → 3. tur, Yazı C · 2). Her parça kendi
+    süresinde ve gecikmesiyle zamanlanıyor:
 
-    - 1000 ms: isim bulanıktan netleşiyor (`acilis-netles`, 900 ms).
-    - 1400 ms: noktalar aşağıdan yükseliyor (`acilis-belir`).
-    - 1650 ms: İ'nin noktası dönerek düşüyor (`acilis-yildiz`, 1200 ms).
-    - 3750 ms: noktalar sönüyor (300 ms) — isimden önce gitsinler.
-    - 4000 ms: isim büyüyüp bulanıklaşarak dağılıyor (`acilis-dagil`, 650 ms).
-    - 4280 ms: zemin sönüyor (`acilis-sahne`), dağılmayla aynı anda biter.
+    -   60–1080 ms: dört makara sırayla dönüp R·A·B·I'ya kilitleniyor;
+        her makara bir öncekinden 40 ms sonra başlıyor, 100 ms uzun dönüyor.
+    - 1080–1400 ms: kelime okunacak kadar duruyor.
+    - 1400–1700 ms: harfler bir tık daha dönüp çıkıyor (40 ms arayla).
+    - 1700 ms: kelime sönüyor; kuyuların zemin renkli gölgeleri ana sayfanın
+      üstünde iz bırakmasın diye şeritlerden önce gidiyor.
+    - 1660–2260 ms: zemin dört şerit hâlinde (60 ms arayla) yukarı kalkıyor.
+      Katmanı kaldıran `animationend` sonuncusundan geliyor.
 
     Gecikmeler sınıfta yazılı, satır içinde değil: hepsi tek zaman çizgisinin
     parçası ve ayrı yerlere dağılsalardı biri değişince ötekiler unutulurdu.
@@ -544,59 +545,133 @@ body {
     açılış ekranı ise o sırada hâlâ ekranı kaplıyor olabiliyor. Animasyon
     arkada akıp bitiyor ve pencere açıldığında kullanıcı yalnızca son
     karesini görüyor. Sınıf, ilk kare üretildiği an kalkıyor (bkz.
-    acilis.tsx → `useBaslangic`). Gecikmeli giriş animasyonları da bu yüzden
-    `both` dolgulu: duraklatılmışken ilk (görünmez) karelerinde bekliyorlar.
+    acilis.tsx → `useBaslangic`). Gecikmeli animasyonlar da bu yüzden
+    `both` dolgulu: duraklatılmışken ilk karelerinde bekliyorlar.
   */
   .acilis-bekliyor,
   .acilis-bekliyor * {
     animation-play-state: paused !important;
   }
-  /*
-    Zemin ve üstündeki her şey. Zemin uygulamanın zeminiyle aynı renk;
-    sönerken bir renk değişimi değil, altındaki ana sayfanın belirmesi
-    görünüyor. Katmanı kaldıran `animationend` bu animasyondan geliyor.
-  */
-  .acilis-sahne {
+  /* Zeminin dört şeridi; her biri ekranın dörtte biri. */
+  .acilis-serit {
     position: absolute;
-    inset: 0;
-    animation: acilis-sahne 370ms ease-in 4280ms forwards;
-  }
-  /*
-    İsim: önce netleşiyor, sonunda dağılıyor. İki animasyon aynı öğede ve
-    ikisi de `transform` oynatıyor; çakışmıyorlar çünkü ikincisi ancak
-    birincisi bittikten sonra başlıyor ve listede sonra geldiği için o andan
-    itibaren o geçerli.
-  */
-  .acilis-yazi {
-    animation:
-      acilis-netles 900ms cubic-bezier(0.16, 1, 0.3, 1) 1000ms both,
-      acilis-dagil 650ms cubic-bezier(0.7, 0, 0.84, 0) 4000ms forwards;
-  }
-  /* İ'nin noktası: yazının renginde küçük bir kare, harfin tepesinde. */
-  .acilis-i-noktasi {
-    position: absolute;
-    left: 50%;
     top: 0;
-    width: 8px;
-    height: 8px;
-    margin-left: -4px;
-    border-radius: 2px;
-    background: var(--foreground);
-    animation: acilis-yildiz 1200ms cubic-bezier(0.16, 1, 0.3, 1) 1650ms both;
+    bottom: 0;
+    width: 25%;
+    animation: acilis-serit-kalk 420ms cubic-bezier(0.6, 0, 0.3, 1) both;
   }
-  .acilis-noktalar {
-    animation:
-      acilis-belir 700ms cubic-bezier(0.2, 0.8, 0.2, 1) 1400ms both,
-      acilis-son 300ms ease-in 3750ms forwards;
+  .acilis-serit:nth-child(1) {
+    animation-delay: 1660ms;
   }
-  /* Yükleme noktaları: sırayla nabız atan üç nokta. */
-  .acilis-nokta {
+  .acilis-serit:nth-child(2) {
+    animation-delay: 1720ms;
+  }
+  .acilis-serit:nth-child(3) {
+    animation-delay: 1780ms;
+  }
+  .acilis-serit:nth-child(4) {
+    animation-delay: 1840ms;
+  }
+  /*
+    Kelime ekranın ortasında; hücre 84 px, harf 76 px. Tablette `zoom`
+    zaten büyütüyor, ayrıca ölçeklenmiyor.
+  */
+  .acilis-kelime {
+    position: absolute;
+    inset-inline: 0;
+    top: 50%;
+    height: 84px;
+    margin-top: -42px;
+    display: flex;
+    justify-content: center;
+    font-size: 76px;
+    animation: acilis-kelime-son 60ms linear 1700ms forwards;
+  }
+  .acilis-pencere {
+    position: relative;
+    margin: 0 0.03em;
+  }
+  /* Pencerenin genişliğini veren görünmez harf. */
+  .acilis-olcu {
     display: block;
-    width: 7px;
-    height: 7px;
-    border-radius: 999px;
-    background: var(--primary);
-    animation: acilis-nokta 1200ms ease-in-out infinite;
+    visibility: hidden;
+    line-height: 84px;
+  }
+  /* Kırpma kuyusu: simgeler harften geniş olabildiği için iki yana taşıyor. */
+  .acilis-kuyu {
+    position: absolute;
+    inset-block: 0;
+    left: -24px;
+    right: -24px;
+    overflow: hidden;
+  }
+  /*
+    Makara silindir gibi görünsün: üst ve alt 12 px zemine doğru soluyor.
+    Harfin büyük harf kısmı hücrenin ortasında, gölgeye değmiyor.
+  */
+  .acilis-kuyu::before,
+  .acilis-kuyu::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    height: 12px;
+    z-index: 1;
+  }
+  .acilis-kuyu::before {
+    top: 0;
+    background: linear-gradient(var(--background), transparent);
+  }
+  .acilis-kuyu::after {
+    bottom: 0;
+    background: linear-gradient(transparent, var(--background));
+  }
+  /*
+    Bir makarada iki animasyon var ve ikisi de `transform` oynatıyor:
+    çıkışın dolgusu yalnızca `forwards`, yani gecikmesi boyunca dönüşü
+    ezmiyor; başladığında dönüş çoktan bitmiş oluyor.
+  */
+  .acilis-makara {
+    display: flex;
+    flex-direction: column;
+    animation:
+      acilis-makara-don 600ms linear both,
+      acilis-makara-cik 180ms cubic-bezier(0.6, 0, 0.85, 0.4) forwards;
+  }
+  .acilis-pencere:nth-child(1) .acilis-makara {
+    animation-duration: 600ms, 180ms;
+    animation-delay: 60ms, 1400ms;
+  }
+  .acilis-pencere:nth-child(2) .acilis-makara {
+    animation-duration: 700ms, 180ms;
+    animation-delay: 100ms, 1440ms;
+  }
+  .acilis-pencere:nth-child(3) .acilis-makara {
+    animation-duration: 800ms, 180ms;
+    animation-delay: 140ms, 1480ms;
+  }
+  .acilis-pencere:nth-child(4) .acilis-makara {
+    animation-duration: 900ms, 180ms;
+    animation-delay: 180ms, 1520ms;
+  }
+  .acilis-hucre {
+    height: 84px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  /* Simgeler Nunito: kalın ve küçük, komşu kuyuya taşmayacak kadar. */
+  .acilis-simge {
+    font-size: 26px;
+    font-weight: 900;
+  }
+  .acilis-simge-kucuk {
+    font-size: 23px;
+  }
+  .acilis-simge sub {
+    font-size: 0.6em;
+    vertical-align: -0.25em;
+    line-height: 0;
   }
 
   /* --- Aylık özet (components/ekranlar/aylik-ozet.tsx) --- */
@@ -677,81 +752,71 @@ body {
   }
 }
 
-/* Açılış (2d). Bkz. `.acilis-sahne` üstündeki zaman çizgisi. */
-@keyframes acilis-sahne {
-  to {
-    opacity: 0;
-  }
-}
+/* Açılış (ders makarası). Bkz. `.acilis-serit` üstündeki zaman çizgisi. */
 
-@keyframes acilis-netles {
-  from {
-    opacity: 0;
-    filter: blur(10px);
-    transform: scale(1.08);
-  }
-  to {
-    opacity: 1;
-    filter: blur(0);
-    transform: scale(1);
-  }
-}
-
-@keyframes acilis-dagil {
-  from {
-    opacity: 1;
-    filter: blur(0);
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    filter: blur(8px);
-    transform: scale(1.35);
-  }
-}
-
-/* İ'nin noktası yukarıdan dönerek düşüyor, biraz büyüyüp yerine oturuyor. */
-@keyframes acilis-yildiz {
+/*
+  Tık tık: %10 dön, %10 bekle; son tık uzun ve hafif taşarak kilitleniyor.
+  Hücre 84 px; harf beşinci hücrede (−420), çıkış altıncıya (−504).
+*/
+@keyframes acilis-makara-don {
   0% {
-    opacity: 0;
-    transform: translateY(-40px) scale(0.3) rotate(-90deg);
-  }
-  60% {
-    opacity: 1;
-    transform: translateY(0) scale(1.25) rotate(20deg);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1) rotate(0);
-  }
-}
-
-@keyframes acilis-belir {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
     transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.3, 1);
   }
-}
-
-@keyframes acilis-son {
-  to {
-    opacity: 0;
+  10% {
+    transform: translateY(-84px);
   }
-}
-
-@keyframes acilis-nokta {
-  0%,
-  100% {
-    opacity: 0.25;
-    transform: scale(0.85);
+  20% {
+    transform: translateY(-84px);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.3, 1);
+  }
+  30% {
+    transform: translateY(-168px);
+  }
+  40% {
+    transform: translateY(-168px);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.3, 1);
   }
   50% {
-    opacity: 1;
-    transform: scale(1);
+    transform: translateY(-252px);
+  }
+  60% {
+    transform: translateY(-252px);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.3, 1);
+  }
+  70% {
+    transform: translateY(-336px);
+  }
+  80% {
+    transform: translateY(-336px);
+    animation-timing-function: cubic-bezier(0.3, 1.5, 0.5, 1);
+  }
+  100% {
+    transform: translateY(-420px);
+  }
+}
+
+@keyframes acilis-makara-cik {
+  from {
+    transform: translateY(-420px);
+  }
+  to {
+    transform: translateY(-504px);
+  }
+}
+
+@keyframes acilis-kelime-son {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes acilis-serit-kalk {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
   }
 }
 
