@@ -2542,6 +2542,47 @@ sayfası vardı ve hangi kitaba basıldığı sayfada görünmüyordu. Kilitli
 konunun kartında düğme "Kilidi aç" ve önce onay penceresi çıkıyor (bkz.
 **Kilit var, anahtarı kullanıcıda**).
 
+## Konu Takibi YKS'nin diliyle konuşuyor
+
+Araçlar › Çalışma'daki **Konu Takibi** (`components/ekranlar/konu-takibi.tsx`,
+mantık `lib/konu-takibi/`): öğrenci TYT ve AYT konularını aşama aşama
+işaretliyor — 🗺️ Haritada çalıştım, 🏫 Okulda öğrendim, ✍️ Soru çözdüm ve
+ayrı, daha ağır bir ✅ Bitirdim.
+
+- **Liste haritadan ayrı.** Harita Maarif'in ders → sınıf → tema → konu
+  yapısında; YKS sınıf değil sınav soruyor ve öğrencinin bankası, deneme
+  karnesi sınavın başlıklarıyla konuşuyor ("Üslü Sayılar", "Fiilimsiler").
+  Liste (`liste.ts`) yayınevlerinin ortak YKS konu listesinden derlendi;
+  ÖSYM konu konu liste yayımlamıyor. **AYT'de TYT konuları tekrar
+  yazılmıyor** — aynı konuyu iki kez işaretletmek takibi iki kat uzatırdı;
+  ekran bunu bir notla söylüyor. Konu kimliği kayıt anahtarı: adı değiştir,
+  kimliğe dokunma.
+- **AYT alana göre süzülüyor** (`oturumDersleri`): Sayısal → Mat, Fiz, Kim,
+  Biyo; EA → Mat, Edebiyat, Tarih, Coğrafya; Sözel → Edebiyat, Tarih,
+  Coğrafya, Felsefe Grubu, Din; Dil → YDT. Alan `Ayarlar.puanTuru`dan;
+  `null` ise AYT sekmesi alanı soruyor ve cevabı ayarlara yazıyor (bkz.
+  **Alan seçilmemiş olabilir** — varsayılan alan uydurulmuyor). Tarih-1/2 ve
+  Coğrafya-1/2'nin kapsamı konu konu ayrılmadığı için tek ders; adı alana
+  göre "Tarih-1" ya da "Tarih-1 ve 2".
+- **"Haritada çalıştım" elle işaretlenmiyor.** `harita-eslemesi.ts`teki açık
+  tablo YKS konusunu harita konularına bağlıyor; aşama haritanın kendi
+  kaydından (`konuTamam`) hesaplanıyor ve "Haritaya git" haritayı o konunun
+  kartıyla açıyor (`acilacakKonu`, sınıf kendi sınıfından farklı olsa da).
+  Eşleme **yalnızca kartlar konunun asıl içeriğini anlatıyorsa** var; tek
+  kartta değinip geçmek yetmiyor. Karşılığı olmayan konuda aşama hiç
+  gösterilmiyor — elle bir kutu, olmayan bir haritayı çalışılmış saymak
+  olurdu. 12. sınıf kartları yazılınca tabloya eklenir; `takip.test.ts` iki
+  uçtaki kimliklerin varlığını denetliyor.
+- **Bitirdim engellenmiyor.** Aşamalar sıralı ya da zorunlu değil; eksik
+  aşama varsa nazik bir onay hatırlatıyor (kırmızı değil, geri alınabilir).
+- **Kayıt** `rabi-yks-konu-takibi`, sürümlü (`{ surum: 1, konular }`), işaret
+  yerine gün tutuyor; okurken `takibiCoz` süzüyor ve yedeğe giriyor
+  (`Yedek.yksKonuTakibi`, eski yedekte yoksa mevcut kayda dokunulmuyor).
+  `kayit.ts` konu içeriğini yüklemiyor, depo yalnızca onu okuyor.
+- Renk derse ait: haritada karşılığı olan ders haritadaki rengini taşıyor ve
+  ortak düğmelere `dersVurgusu` ile geçiyor; Felsefe ve Din, Yanlış Soru
+  Bankası'ndaki gibi nötr.
+
 ## Hedef kataloğu
 
 Kullanıcı eskiden hedef ekranında dört kutuyu da elle dolduruyordu: bölüm,
