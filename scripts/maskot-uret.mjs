@@ -14,9 +14,23 @@
  * geçişlere de sızıyor, gövdenin yanında düz bir kesik bırakıyordu — kürk
  * yuvarlak biterken kenar bıçakla kesilmiş gibi duruyordu.
  *
- * Yeni kaynaklar zemini kesilmiş, gerçek alfa taşıyan 2048'lik PNG'ler. Silinecek
- * bir zemin yok; betik saydamlığı kaynağın kendisinden okuyor. Kalan iş yalnızca
+ * Yeni kaynaklar zemini kesilmiş, gerçek alfa taşıyan PNG'ler. Silinecek bir
+ * zemin yok; betik saydamlığı kaynağın kendisinden okuyor. Kalan iş yalnızca
  * ölçü: kırpma, ölçekleme ve ortak tuvale oturtma.
+ *
+ * Kaynakların ölçüsü sabit değil: ilk takım 2048'lik, ikinci takım (v2, 2026
+ * ekimi) 1254'lük. Betik ölçüyü kaynaktan okuyor ve kutuyu saydamlıktan
+ * buluyor; yalnızca `YUZ` kırpımı sabit piksel taşıyor ve o da 2048'lik "normal
+ * maskot"a ait.
+ *
+ * ## İkinci takım paletli PNG
+ *
+ * v2 pozları (`sikistir: true`) 256 renklik palete indirilip yazılıyor:
+ * dosya başına ~60 kB yerine ~15 kB. Otuzu aşkın yeni poz düz PNG'yle paketi
+ * iki megabayt şişirirdi. Fark yalnızca üç kat büyütmede kürkte ince bir
+ * kumlanma olarak görülüyor. İlk takım ve `yuz` bilerek dokunulmadan
+ * kalıyor: `yuz` ikonun kaynağı ve onun baytlarının değişmesi ikon üretimini
+ * dokundururdu.
  *
  * ## Pozların boyu eşitleniyor
  *
@@ -59,6 +73,36 @@ const KUTU_ALFA = 8
  * seçilenlerin başka açıdan çekilmiş eşleri.
  */
 const POZLAR = [
+  // --- İkinci takım (v2). Nerede kullanıldıkları AGENTS.md › Maskotun pozları.
+  ...[
+    ['tavsan-defterli', 'defter tutan.png'],
+    ['tavsan-basparmak', 'başparmak kaldıran.png'],
+    ['tavsan-uzanan', 'uzanan.png'],
+    ['tavsan-dans', 'dans eden.png'],
+    ['tavsan-gerinen', 'gerinen.png'],
+    ['tavsan-selamlayan', 'eğilerek selamlayan.png'],
+    ['tavsan-bagdas', 'bağdaş kuran.png'],
+    ['tavsan-takla', 'takla atan.png'],
+    ['tavsan-kahkaha', 'kahkaha atan.png'],
+    ['tavsan-elleri-belde', 'elleri belde.png'],
+    ['tavsan-megafonlu', 'megafonla konuşan.png'],
+    ['tavsan-kitapli', 'kitabı inceleyen.png'],
+    ['tavsan-saatli', 'saate bakan.png'],
+    ['tavsan-laptoplu', 'laptopta çalışan.png'],
+    ['tavsan-tahtali', 'tahtaya yazan.png'],
+    ['tavsan-buyutecli', 'büyüteçle inceleyen.png'],
+    ['tavsan-abakuslu', 'abaküsle sayan.png'],
+    ['tavsan-bitkili', 'bitki sulayan.png'],
+    ['tavsan-haritali', 'haritadan yol bulan.png'],
+    ['tavsan-damgali', 'onay damgası basan.png'],
+    ['tavsan-fotografci', 'fotoğraf çeken.png'],
+    ['tavsan-supuren', 'yaprak süpüren.png'],
+    ['tavsan-cantali', 'çanta kapatan.png'],
+    ['tavsan-durbunlu', 'dürbünle bakan.png'],
+    ['tavsan-esneyen', 'esneme yapan.png'],
+    ['tavsan-alkislayan', 'alkışlayan.png'],
+  ].map(([ad, kaynak]) => ({ ad, kaynak, sikistir: true })),
+  // --- İlk takım.
   { ad: 'tavsan-tam', kaynak: 'normal maskot.png' },
   { ad: 'tavsan-el-sallayan', kaynak: 'selam veren maskot.png' },
   { ad: 'tavsan-okuyan', kaynak: 'kitap okuyan maskot.png' },
@@ -75,6 +119,36 @@ const POZLAR = [
   // Zıplayan sevinç: `tavsan-sevinen`den ayrı bir poz, çünkü ikisi aynı anda
   // kullanılıyor — bu, günlük hedefi tutturan kullanıcıya çıkan hâl.
   { ad: 'tavsan-ziplayan', kaynak: 'sevinen maskot 3.png' },
+]
+
+/**
+ * Ana sayfa başlığının durum kafaları: `tavsan-kafa-*.png`.
+ *
+ * Sol üstteki tavşan 58 piksel ve tam boy poz o ölçüde lekeye dönüyor (70
+ * kuralı). Alanı büyütmek başlığı ve selamlama cümlesini aşağı iterdi; onun
+ * yerine pozun **üst kısmı** kırpılıyor: baş, kollar ve tutulan nesnenin
+ * üstü (laptop, defter, kitap) — durumu anlatan şey zaten orası.
+ *
+ * `ust` ve `alt`, pozun saydamlıktan bulunan kutusunun boyuna oran: 0 tepesi,
+ * 1 tabanı. `sol`/`sag` aynı şekilde enine oran; verilmezse kutunun tamamı.
+ * Oranlar gözle değil çıktılara bakılarak ayarlandı; değiştirince
+ * `public/tavsan-kafa-*.png`yi aç ve 58 pikselde kontrol et.
+ *
+ * Uyuyan tavşan kıvrılmış, zaten yatay ve kısa: tamamı alınıyor.
+ */
+const KAFALAR = [
+  { ad: 'tavsan-kafa-uyuyan', kaynak: 'kıvrılıp uyuyan.png', alt: 1 },
+  { ad: 'tavsan-kafa-gerinen', kaynak: 'gerinen.png', alt: 0.62 },
+  { ad: 'tavsan-kafa-yazan', kaynak: 'deftere yazan.png', alt: 0.94 },
+  { ad: 'tavsan-kafa-kitapli', kaynak: 'kitabı inceleyen.png', alt: 1, sag: 0.8 },
+  { ad: 'tavsan-kafa-laptoplu', kaynak: 'laptopta çalışan.png', alt: 0.9 },
+  { ad: 'tavsan-kafa-kahveli', kaynak: 'kahve içen maskot.png', alt: 0.68 },
+  { ad: 'tavsan-kafa-dans', kaynak: 'dans eden.png', alt: 0.6 },
+  { ad: 'tavsan-kafa-alkislayan', kaynak: 'alkışlayan.png', alt: 0.62 },
+  { ad: 'tavsan-kafa-kahkaha', kaynak: 'kahkaha atan.png', alt: 0.62 },
+  { ad: 'tavsan-kafa-elleri-belde', kaynak: 'elleri belde.png', alt: 0.68 },
+  { ad: 'tavsan-kafa-bagdas', kaynak: 'bağdaş kuran.png', alt: 1 },
+  { ad: 'tavsan-kafa-uzgun', kaynak: 'üzülen maskot.png', alt: 0.6 },
 ]
 
 /**
@@ -111,8 +185,13 @@ function kutuBul(rgba, en, boy) {
   return { sol, ust, en: sag - sol + 1, boy: alt - ust + 1 }
 }
 
-/** Bir kaynağı tuvale oturtur; yazılan dosyanın yolunu döner. */
-async function uret(ad, kaynak, kirpma) {
+/**
+ * Bir kaynağı tuvale oturtur; yazılan dosyanın yolunu döner.
+ *
+ * `kirpma` kaynak pikselinde sabit bir kutu (`YUZ`); `oran` ise saydamlıktan
+ * bulunan kutunun oranlı bir parçası (`KAFALAR`).
+ */
+async function uret(ad, kaynak, kirpma, { sikistir = false, oran = null } = {}) {
   let girdi = sharp(join(kaynakKlasoru, kaynak)).ensureAlpha()
   if (kirpma) {
     girdi = girdi.extract({
@@ -125,7 +204,24 @@ async function uret(ad, kaynak, kirpma) {
 
   const { data, info } = await girdi.raw().toBuffer({ resolveWithObject: true })
   const rgba = data
-  const kutu = kutuBul(rgba, info.width, info.height)
+  const tumKutu = kutuBul(rgba, info.width, info.height)
+  let kutu = tumKutu
+  if (oran) {
+    const ust = Math.round(tumKutu.ust + tumKutu.boy * (oran.ust ?? 0))
+    const alt = Math.round(tumKutu.ust + tumKutu.boy * (oran.alt ?? 1))
+    const sol = Math.round(tumKutu.sol + tumKutu.en * (oran.sol ?? 0))
+    const sag = Math.round(tumKutu.sol + tumKutu.en * (oran.sag ?? 1))
+    // Kırpılan parçanın da kendi saydam kenarları olabiliyor (kollar kutunun
+    // genişliğini veriyorsa baş dar kalır); ikinci bir kutu araması onları atıyor.
+    const parca = await sharp(rgba, {
+      raw: { width: info.width, height: info.height, channels: 4 },
+    })
+      .extract({ left: sol, top: ust, width: sag - sol, height: alt - ust })
+      .raw()
+      .toBuffer()
+    const ic = kutuBul(parca, sag - sol, alt - ust)
+    kutu = { sol: sol + ic.sol, ust: ust + ic.ust, en: ic.en, boy: ic.boy }
+  }
 
   // Ölçek boydan alınıyor: bir poz kollarını açtığında (sevinen) enden
   // ölçeklemek onu ötekilerden alçak gösterirdi.
@@ -157,7 +253,7 @@ async function uret(ad, kaynak, kirpma) {
         top: Math.round((TUVAL - hedefBoy) / 2),
       },
     ])
-    .png({ compressionLevel: 9 })
+    .png(sikistir ? { palette: true, quality: 90, effort: 10, compressionLevel: 9 } : { compressionLevel: 9 })
     .toFile(dosya)
 
   return { dosya, hedefEn, hedefBoy }
@@ -165,8 +261,13 @@ async function uret(ad, kaynak, kirpma) {
 
 await mkdir(cikisKlasoru, { recursive: true })
 
-for (const { ad, kaynak } of POZLAR) {
-  const { hedefEn, hedefBoy } = await uret(ad, kaynak)
+for (const { ad, kaynak, sikistir } of POZLAR) {
+  const { hedefEn, hedefBoy } = await uret(ad, kaynak, null, { sikistir })
+  console.log(`${ad}.png  ${hedefEn}×${hedefBoy}`)
+}
+
+for (const { ad, kaynak, ...oran } of KAFALAR) {
+  const { hedefEn, hedefBoy } = await uret(ad, kaynak, null, { sikistir: true, oran })
   console.log(`${ad}.png  ${hedefEn}×${hedefBoy}`)
 }
 
