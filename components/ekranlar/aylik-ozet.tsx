@@ -1203,7 +1203,7 @@ function kapanisKarti(ozet: AylikOzet): Kart {
           style={{ background: AMBER_ZEMIN, borderColor: AMBER_CIZGI }}
         >
           <div className="shrink-0" style={{ filter: 'drop-shadow(0 12px 14px rgba(27,26,25,.16))' }}>
-            <Rabi poz="sevinen" durum="mutlu" boyut={96} />
+            <Rabi poz="selamlayan" durum="mutlu" boyut={96} />
           </div>
           <p className="text-pretty" style={yz(800, 15, 1.45)}>
             {ozet.sonrakiAyHedefi > 0 ? (

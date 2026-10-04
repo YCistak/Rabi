@@ -5,13 +5,13 @@ import type { BilgiKarti } from '@/lib/konu'
 import type { HaritaTemasi } from '@/lib/konu/harita-temasi'
 import { molaMetni } from '@/lib/konu/deste-akisi'
 import { Buton } from '@/components/ui'
-import { Rabi } from '@/components/maskot/rabi'
+import { Rabi, type MaskotPozu } from '@/components/maskot/rabi'
 import { DesteBasligi, DesteCubugu, DesteRozeti } from './deste-basligi'
 
 /**
  * Kısa mola — destenin ortasında bir kez gelen nefes.
  *
- * Kart değil, soru da değil: Rabi zıplıyor, kaç kart okunduğu yazıyor ve
+ * Kart değil, soru da değil: Rabi dinleniyor, kaç kart okunduğu yazıyor ve
  * okunan kartların adları alt alta duruyor. Listenin işi tekrar: okuyan
  * kişi yedi başlığı görünce hangisini hatırlamadığını fark ediyor; sayı
  * tek başına bunu söylemiyor.
@@ -82,8 +82,8 @@ export function KisaMola({
           <div className="mola-maskot relative">
             <div className="mola-suzul">
               <Rabi
-                durum="kutlama"
-                poz="ziplayan"
+                durum="normal"
+                poz={MOLA_POZLARI[secim % MOLA_POZLARI.length]}
                 boyut={168}
                 className="drop-shadow-[0_16px_20px_rgba(31,36,48,0.18)]"
               />
@@ -166,3 +166,13 @@ export function KisaMola({
     </div>
   )
 }
+
+/**
+ * Molada tavşan dinleniyor: geriniyor, esneme yapıyor, bağdaş kuruyor ya da
+ * uzanıyor. Bir süre zıplıyordu — mola bir kutlama değil, kartların arasında
+ * nefes; zıplayan tavşan "aferin"i, mola ise "biraz dur"u anlatmalı.
+ *
+ * Seçim mola metninin varyasyonuyla (`secim`) aynı sayıdan: deste açılınca bir
+ * kez seçiliyor, ekran yeniden çizilince tavşan değişmiyor.
+ */
+const MOLA_POZLARI: readonly MaskotPozu[] = ['gerinen', 'esneyen', 'bagdas', 'uzanan']

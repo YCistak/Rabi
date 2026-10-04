@@ -5,7 +5,8 @@ import { Check, ChevronRight, X } from 'lucide-react'
 import type { Konu } from '@/lib/konu'
 import { isabetOrani, kapanisKademesi, sureYaz } from '@/lib/konu/kapanis'
 import { useGeriKatmani } from '@/lib/geri'
-import { cn } from '@/lib/utils'
+import { bugun, cn } from '@/lib/utils'
+import { gununPozu, type MaskotPozu } from '@/lib/maskot'
 import { Buton, Onay } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartGorseli } from './kart-gorseli'
@@ -577,7 +578,7 @@ function Kapanis({
             <div className="kapanis-suzul kapanis-maskot">
               <Rabi
                 durum={kademe === 'tekrar' ? 'normal' : 'kutlama'}
-                poz={kademe === 'tekrar' ? 'dusunen' : 'sevinen'}
+                poz={kapanisPozu(kademe)}
                 boyut={112}
                 className="drop-shadow-[0_12px_16px_rgba(31,36,48,0.18)]"
               />
@@ -759,4 +760,22 @@ function Kutu({
       </p>
     </div>
   )
+}
+
+/**
+ * Yoklama kapanışında maskotun pozu.
+ *
+ * Kademe ruh hâlini seçiyor (tekrar düşünüyor, iyi onaylıyor, harika
+ * kutluyor), günün tarihi de kademenin içinden pozu: her yoklamanın sonunda
+ * aynı zıplayan tavşan sonucu değil alışkanlığı gösteriyordu. Seçim gün
+ * içinde sabit (`gununPozu`), art arda iki konu bitiren aynı tavşanı görüyor.
+ */
+const KAPANIS_POZLARI: Record<ReturnType<typeof kapanisKademesi>, readonly MaskotPozu[]> = {
+  harika: ['sevinen', 'alkislayan', 'dans', 'takla'],
+  iyi: ['basparmak', 'damgali'],
+  tekrar: ['dusunen'],
+}
+
+function kapanisPozu(kademe: ReturnType<typeof kapanisKademesi>): MaskotPozu {
+  return gununPozu(bugun(), KAPANIS_POZLARI[kademe])
 }

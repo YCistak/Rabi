@@ -13,7 +13,8 @@ import { kisayollar } from '@/lib/son-kullanilan'
 import { doluDersler, oyunlarinDersleri, type DersId } from '@/lib/oyunlar/tanim'
 import { Halka, Kart, kartGirisi, Not } from '@/components/ui'
 import { GeriSayim } from '@/components/geri-sayim'
-import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
+import { Rabi } from '@/components/maskot/rabi'
+import { anaMaskot, type PomodoroHali } from '@/lib/ana-maskot'
 import { gununHali } from '@/lib/gunun-hali'
 import { geriSayim } from '@/lib/sinav-tarihi'
 
@@ -74,6 +75,7 @@ export function AnaSayfa({
   onKartAc,
   onDahaGit,
   onOyunlaraGit,
+  pomodoro,
 }: {
   ayarlar: Ayarlar
   gunlukKayitlar: GunlukKayit[]
@@ -96,6 +98,11 @@ export function AnaSayfa({
    * pasif: kullanıcı özetin var olduğunu ve ne zaman geleceğini görsün.
    */
   ozetHazir: boolean
+  /**
+   * İşleyen Pomodoro aşaması; duraklatılmışsa ya da tur yoksa null. Başlıktaki
+   * tavşan tur sürerken laptopta çalışıyor (`lib/ana-maskot.ts`).
+   */
+  pomodoro: PomodoroHali
   /** Bugün ayın 1'i ama kapanan ay yedi etkin gün eşiğine ulaşmadı mı. */
   ozetYetersiz: boolean
   /** Bir sonraki özetin açılacağı gün, 'YYYY-AA-GG' — pasif kartın satırı. */
@@ -162,14 +169,21 @@ export function AnaSayfa({
     [devamsizlik],
   )
 
-  const hedefTuttu = bugunku.toplam >= ayarlar.gunlukHedef && ayarlar.gunlukHedef > 0
-  const maskotDurumu: MaskotDurumu = devamsizlikDurumu.asildi
-    ? 'uzgun'
-    : hedefTuttu
-      ? 'mutlu'
-      : bugunku.toplam > 0
-        ? 'normal'
-        : 'uykulu'
+  const kalanGun = geriSayim(tarih, ayarlar.buYilSinif).kalanGun
+  /*
+    Başlıktaki tavşan günü gösteriyor: kayıt yoksa uyuyor, çalışılıyorsa
+    yazıyor, hedef tuttuysa dans ediyor. Kural `lib/ana-maskot.ts`te; saat
+    burada okunuyor çünkü karar fonksiyonu saf.
+  */
+  const maskot = anaMaskot({
+    bugun: tarih,
+    saat: new Date().getHours(),
+    hedef: ayarlar.gunlukHedef,
+    gunlukKayitlar,
+    kalanGun,
+    pomodoro,
+    devamsizlikAsildi: devamsizlikDurumu.asildi,
+  })
 
   const gununCumlesi = gununHali({
     bugun: tarih,
@@ -177,7 +191,7 @@ export function AnaSayfa({
     gunlukKayitlar,
     bekleyenYanlis,
     sonDenemeTarihi,
-    kalanGun: geriSayim(tarih, ayarlar.buYilSinif).kalanGun,
+    kalanGun,
   })
 
   return (
@@ -187,7 +201,14 @@ export function AnaSayfa({
 
       {/* Selamlama — tasarımda ad sorulmuyor, kurulumda ad adımı yok. */}
       <header className="flex items-center gap-3 px-0.5 pt-2 pb-1">
-        <Rabi durum={maskotDurumu} poz="kafa" boyut={58} />
+        {/* `key`: poz değişince öğe yeniden kuruluyor ve kısa bir solmayla
+            geliyor (`ana-maskot-gecis`). Yerinde src değiştirmek bir kare
+            boş görsel bırakıyordu. Ölçü 58'de kaldı: tam boy poz orada
+            lekeye dönüyor, durum kafaları o yüzden pozların baş ve üst gövde
+            kırpımı (`scripts/maskot-uret.mjs` → `KAFALAR`). */}
+        <span key={maskot.poz} className="ana-maskot-gecis shrink-0">
+          <Rabi durum={maskot.durum} poz={maskot.poz} etiket={maskot.etiket} boyut={58} />
+        </span>
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-extrabold tracking-wide text-ikincil">Rabi</p>
           <h1 className="mt-px font-display text-[22px] leading-[1.15] font-extrabold tracking-tight text-balance">

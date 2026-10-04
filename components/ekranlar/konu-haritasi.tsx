@@ -652,7 +652,7 @@ export function KonuHaritasiEkrani({
         </Kart>
       ) : program === null ? (
         <Kart data-tanitim="konu-haritasi" className="flex flex-col items-center px-6 py-10 text-center">
-          <Rabi durum="calisiyor" poz="okuyan" boyut={92} />
+          <Rabi durum="calisiyor" poz="haritali" boyut={92} />
           <p className="mt-3 font-display text-[17px] font-extrabold tracking-tight">
             {secim.sinif}. sınıf {dersAdi} hazırlanıyor
           </p>
@@ -1434,7 +1434,7 @@ function KonuKarti({
             style={{ filter: 'drop-shadow(0 8px 10px var(--patika-golge))' }}
             aria-hidden
           >
-            <Rabi durum="calisiyor" poz={soru ? 'dusunen' : 'okuyan'} boyut={84} />
+            <Rabi durum="calisiyor" poz={soru ? 'dusunen' : 'kitapli'} boyut={84} />
           </div>
 
           <div className="flex min-w-0 flex-1 flex-col gap-3">

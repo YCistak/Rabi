@@ -1,70 +1,15 @@
 import { cn } from '@/lib/utils'
 
-/**
- * Rabi'nin ruh hâlleri.
- *
- * Durum **çizimi değiştirmiyor**; yalnızca ekran okuyucuya söylenen etiketi ve
- * bazı ekranlardaki eşlik eden yazıyı belirliyor. Çizilecek görseli seçen şey
- * `poz`.
- *
- * İkisinin ayrı kalması bilerek: ifadeli görseller geldiğinde durumu doğrudan
- * dosyaya bağlamak denendi ve açılışı bozuyordu. Açılış ekranındaki uçan
- * tavşan ana sayfadaki maskotun tam üstüne konuyor; ikisi aynı `durum`u değil
- * aynı **görseli** taşımak zorunda ve aralarında boyut farkı var (110'a karşı
- * 58). Durumdan türeyen bir görsel, katman kalkarken tavşanı başka bir tavşana
- * çevirirdi.
- */
-export type MaskotDurumu = 'normal' | 'mutlu' | 'uykulu' | 'calisiyor' | 'uzgun' | 'kutlama'
+import { pozGorseli, type MaskotDurumu, type MaskotPozu } from '@/lib/maskot'
 
-/**
- * Maskotun pozu — hangi görselin çizileceği.
- *
- * `yuz` ile `kafa` dışındakiler **tam boy**: gövde ancak 70 pikselin üstünde
- * okunuyor, altında kollar ve tutulan nesne tek bir lekeye dönüşüyor. Oyun
- * başlıkları (26–54 piksel) bu yüzden yüzde kalıyor; poz vermeyen her çağrı da
- * oraya düşüyor.
- *
- * `kafa` ikinci bir baş çekimi ve `yuz`den şuna göre ayrı duruyor: `yuz`
- * "normal maskot"un elle ölçülmüş kırpımı ve aynı zamanda uygulama ikonunun,
- * Android engel katmanının ve pomodoro bildiriminin kaynağı — onu değiştirmek
- * ikon üretimini de dokundurur. `kafa` kendi kaynağından geliyor ve yalnızca
- * arayüzde kullanılıyor.
- */
-export type MaskotPozu =
-  | 'yuz'
-  | 'tam'
-  | 'el-sallayan'
-  | 'okuyan'
-  | 'kupali'
-  | 'sevinen'
-  | 'uzgun'
-  | 'dusunen'
-  | 'kahveli'
-  | 'isaretci'
-  | 'kafa'
-  | 'ziplayan'
-
-/**
- * Poz → dosya.
- *
- * Hepsi `public/` altında, 256'lık kare tuvalde ve **aynı yükseklikte**;
- * üreten yer `scripts/maskot-uret.mjs`. Elle eklenen bir dosya bu boy
- * eşitliğini bozar ve maskot poz değiştirdiğinde büyüyüp küçülür.
- */
-const POZ_GORSELI: Record<MaskotPozu, string> = {
-  yuz: '/tavsan-yuz.png',
-  tam: '/tavsan-tam.png',
-  'el-sallayan': '/tavsan-el-sallayan.png',
-  okuyan: '/tavsan-okuyan.png',
-  kupali: '/tavsan-kupali.png',
-  sevinen: '/tavsan-sevinen.png',
-  uzgun: '/tavsan-uzgun.png',
-  dusunen: '/tavsan-dusunen.png',
-  kahveli: '/tavsan-kahveli.png',
-  isaretci: '/tavsan-isaretci.png',
-  kafa: '/tavsan-kafa.png',
-  ziplayan: '/tavsan-ziplayan.png',
-}
+/*
+  Durum ve poz listesi `lib/maskot.ts`te. İkisinin ayrı kalması bilerek:
+  ifadeli görseller geldiğinde durumu doğrudan dosyaya bağlamak denendi ve
+  bir ekranın görselini başka bir ekranın durumuna bağlıyordu (kurulumda
+  adımdan adıma uçan tavşan). Poz eklemek: kaynağı `assets/maskot/`a koy,
+  `scripts/maskot-uret.mjs`e ve `MASKOT_POZLARI`na ekle.
+*/
+export type { MaskotDurumu, MaskotPozu }
 
 type Props = {
   durum?: MaskotDurumu
@@ -72,6 +17,11 @@ type Props = {
   /** Piksel cinsinden genişlik; yükseklik oranla belirlenir. */
   boyut?: number
   className?: string
+  /**
+   * Ekran okuyucu etiketi; verilmezse durumdan türüyor. Ana sayfa başlığı
+   * gibi durumu daha ince anlatan yerler için ("uyuyor", "dans ediyor").
+   */
+  etiket?: string
 }
 
 /**
@@ -93,11 +43,12 @@ export function Rabi({
   poz = 'yuz',
   boyut = 96,
   className,
+  etiket,
 }: Props) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={POZ_GORSELI[poz]}
+      src={pozGorseli(poz)}
       width={boyut}
       height={(boyut * 130) / 120}
       style={{
@@ -105,7 +56,7 @@ export function Rabi({
         height: (boyut * 130) / 120,
       }}
       className={cn('shrink-0 object-contain', className)}
-      alt={`Rabi — ${DURUM_ETIKETI[durum]}`}
+      alt={`Rabi — ${etiket ?? DURUM_ETIKETI[durum]}`}
       // Maskot her ekranda var: geciktirmek ekranlar arasında geçerken bir
       // kare boş yer bırakıyordu. Pozlar ayrı dosyalar ama her biri yetmiş
       // kilobaytın altında ve ilk gösterimden sonra önbellekten geliyor.
@@ -121,8 +72,9 @@ export function Rabi({
       */
       onError={(olay) => {
         const img = olay.currentTarget
-        if (img.src.endsWith(POZ_GORSELI.yuz)) return
-        img.src = POZ_GORSELI.yuz
+        const yuz = pozGorseli('yuz')
+        if (img.src.endsWith(yuz)) return
+        img.src = yuz
       }}
     />
   )

@@ -147,7 +147,7 @@ export function OyunTanitim({
     <Sayfa onGeri={onKapat} geriEtiketi="Vazgeç">
       <Orta>
         <div className="flex justify-center py-2">
-          <Rabi durum="calisiyor" poz="isaretci" boyut={84} />
+          <Rabi durum="calisiyor" poz="tahtali" boyut={84} />
         </div>
 
         <div className="golge-kart rounded-[24px] bg-card px-4 py-4">
