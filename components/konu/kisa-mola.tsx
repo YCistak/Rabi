@@ -11,7 +11,7 @@ import { DesteBasligi, DesteCubugu, DesteRozeti } from './deste-basligi'
 /**
  * Kısa mola — destenin ortasında bir kez gelen nefes.
  *
- * Kart değil, soru da değil: Rabi zıplıyor, kaç kart okunduğu yazıyor ve
+ * Kart değil, soru da değil: Rabi dinleniyor, kaç kart okunduğu yazıyor ve
  * okunan kartların adları alt alta duruyor. Listenin işi tekrar: okuyan
  * kişi yedi başlığı görünce hangisini hatırlamadığını fark ediyor; sayı
  * tek başına bunu söylemiyor.
@@ -172,7 +172,7 @@ export function KisaMola({
  * uzanıyor. Bir süre zıplıyordu — mola bir kutlama değil, kartların arasında
  * nefes; zıplayan tavşan "aferin"i, mola ise "biraz dur"u anlatmalı.
  *
- * Seçim mola metninin varyasyonuyla (`secim`) aynı sayıdan: destede bir kez
- * seçiliyor, aynı destenin molası hep aynı tavşanı gösteriyor.
+ * Seçim mola metninin varyasyonuyla (`secim`) aynı sayıdan: deste açılınca bir
+ * kez seçiliyor, ekran yeniden çizilince tavşan değişmiyor.
  */
 const MOLA_POZLARI: readonly MaskotPozu[] = ['gerinen', 'esneyen', 'bagdas', 'uzanan']

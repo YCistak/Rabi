@@ -133,7 +133,8 @@ o duruyordu. Yerini maskotun kendi çizimleri aldı.
 Pozlar elle konmuyor, üretiliyor: kaynak `assets/maskot/*.png`, betik
 `scripts/maskot-uret.mjs`, çıktı `public/tavsan-*.png`. Çıktılar depoya
 giriyor ama **elle düzenlenmemeli** — `ikon-uret.mjs` ile aynı gerekçe.
-Kaynaklar zemini kesilmiş, gerçek alfa taşıyan 2048'lik PNG; betik saydamlığı
+Kaynaklar zemini kesilmiş, gerçek alfa taşıyan PNG (ilk takım 2048'lik, ikinci
+takım 1254'lük; betik ölçüyü kaynaktan okuyor); betik saydamlığı
 kaynaktan okuyor ve tek işi ölçü: bütün pozları aynı tuvalde **aynı
 yükseklikte** vermek. Boy eşitliği şart: `Rabi` ölçüyü tek bir sayı olarak
 biliyor, eşit olmasalardı maskot poz değiştirdiğinde büyüyüp küçülürdü.
@@ -159,8 +160,9 @@ artık uçan tavşan yok (tasarım 2d, aşağıda).
 
 **İki baş çekimi var: `yuz` ve `kafa`.** Tam boy pozlar 70 pikselin altında
 lekeye dönüşüyor (gövde, kollar ve tutulan nesne tek bir şey oluyor), o yüzden
-küçük yerlerde baş kullanılıyor: oyun başlıkları (26–54) `yuz`de, ana sayfanın
-selamlaması ve kurulumun karşılama ekranı `kafa`da.
+küçük yerlerde baş kullanılıyor: oyun başlıkları (26–54) `yuz`de, kurulumun
+karşılama ekranı `kafa`da. Ana sayfanın selamlaması artık durum kafalarında
+(`kafa-*`, aşağıda).
 
 İkisi ayrı duruyor çünkü kaynakları ve işleri ayrı. `yuz`, "normal maskot"un
 elle ölçülmüş bir kırpımı ve aynı zamanda uygulama ikonunun (`ikon-uret.mjs`),
@@ -178,9 +180,8 @@ taraf `public/` altını okuyamıyor.
 
 **Zıplayan sevinç ayrı bir poz.** `sevinen` ("sevinen maskot 2") ile
 `ziplayan` ("sevinen maskot 3") aynı ruh hâlinin iki çizimi ve ikisi de
-kullanılıyor: `ziplayan` ana sayfada günlük hedefi tutturan kullanıcıya
-çıkıyor, `sevinen` başka yerlerde duruyor. Tek poza indirilseydi aynı görsel
-iki ayrı bağlamda tekrarlanırdı.
+kullanılıyor: `ziplayan` aylık özette, `sevinen` başka yerlerde duruyor. Tek
+poza indirilseydi aynı görsel iki ayrı bağlamda tekrarlanırdı.
 
 **Bütün pozlar saydam PNG'den geliyor.** `kafa` ve `ziplayan` bir süre siyah
 zeminli JPEG'den geliyordu ve betik yalnızca o ikisi için zemini kenardan
@@ -191,6 +192,128 @@ eklerken kaynak saydam PNG olmak zorunda, betikte zemin silecek bir şey yok.
 Kaynak klasöründeki her kaynak kullanılmıyor. Dışarıda kalan "sinirli" bilerek
 kaldı: uygulamada karşılığı olan bir ruh hâli değil — Rabi yanlış cevapta
 kullanıcıya kızmıyor, efekt zaten sarsıntıyla "yanlış" diyor.
+
+**İkinci takım (v2, 2026 ekimi) çeşit için geldi.** Uygulamada on iki poz
+vardı ve boş durumların beşi aynı uyuyan, kahve içen tavşandı; kullanıcı
+çeşidi artırmak istedi. 63 pozluk takımdan 28'i alındı. Kural: **poz ekranın
+işini yapıyor.** Boş bir ekranda duran tavşan oranın ne için olduğunu
+gösteriyor — yanlış bankasında büyüteçle inceliyor, istatistikte bitki
+suluyor (veri girdikçe büyüyor), oyun bankası boşken yaprak süpürüyor
+("temizlendi"). Ruh hâli değil eylem; durum etiketi ruh hâlini zaten
+ekran okuyucuya söylüyor.
+
+| Poz | Kaynak | Nerede |
+| --- | --- | --- |
+| `defterli` | defter tutan | kurulum › sınıf adımı |
+| `abakuslu` | abaküsle sayan | kurulum › notlar; Sıralama › deneme yok |
+| `durbunlu` | dürbünle bakan | kurulum › bölüm |
+| `elleri-belde` | elleri belde | kurulum › günlük hedef |
+| `megafonlu` | megafonla konuşan | kurulum › hatırlatma |
+| `cantali` | çanta kapatan | "Uygulaman hazırlanıyor" |
+| `fotografci` | fotoğraf çeken | Denemeler › kayıt yok (kâğıt fotoğrafla okunuyor) |
+| `buyutecli` | büyüteçle inceleyen | Yanlış Soru Bankası › boş |
+| `supuren` | yaprak süpüren | Oyun Bankası › boş ("iyi haber") |
+| `bitkili` | bitki sulayan | İstatistik › veri yok |
+| `haritali` | haritadan yol bulan | Harita › dersin kartları hazırlanıyor |
+| `kitapli` | kitabı inceleyen | Harita › anlatım kartı (`okuyan`ın yerine) |
+| `tahtali` | tahtaya yazan | oyun tanıtımı (nasıl oynanır) |
+| `laptoplu` | laptopta çalışan | odak daveti (Pomodoro) |
+| `saatli` | saate bakan | odak kilidi kurulumu |
+| `basparmak` | başparmak kaldıran | hızlı kontrol › doğru; kapanış › iyi |
+| `damgali` | onay damgası basan | kapanış › iyi |
+| `alkislayan`, `dans`, `takla` | alkışlayan, dans eden, takla atan | kapanış › harika (`sevinen` ile dönüşümlü) |
+| `gerinen`, `esneyen`, `bagdas`, `uzanan` | gerinen, ayak parmaklarına uzanan, bağdaş kuran, uzanan | deste molası (dönüşümlü) |
+| `selamlayan` | eğilerek selamlayan | aylık özetin kapanışı ("Yarın yine buradayım") |
+| `kahkaha` | kahkaha atan | yalnızca durum kafası |
+
+**Dönüşüm tarihten ya da destenin seçiminden, rastgele değil.** Aynı yere
+birden çok poz düşüyorsa (`gununPozu`, `lib/maskot.ts`) seçim günün
+tarihinden türüyor — `gunun-hali.ts`teki cümle kuralı: gün içinde sabit,
+günden güne değişiyor. Mola pozları mola metniyle aynı `secim` sayısından.
+Rastgele seçim, ekran her yeniden çizildiğinde başka bir tavşan demekti.
+
+**Mola zıplamıyor.** Deste molasında tavşan bir süre zıplıyordu; mola bir
+kutlama değil, kartların arasında nefes. Dört dinlenen poz dönüyor.
+
+**Dışarıda kalanlar ve nedeni:**
+
+- **Müzik aletleri** (flüt, davul, tef): uygulamada müzik yok ve kaldırılışı
+  bilinçli (bkz. **Oyunda müzik yok**, **Pomodoro'da müzik yok**). Müzik
+  çalan tavşan olmayan bir özelliği vaat ederdi.
+- **Havuç tutan**: havuç para birimi kaldırıldı (bkz. **Seviye, havuç ve
+  mağaza kaldırıldı**); havuç kaldıran tavşan onu çağrıştırıyor.
+- **Hediye tutan**: ödül/hediye mekaniği yok, aynı gerekçe.
+- **Oyun/el işi** (top sektiren, top yuvarlayan, satranç, yapboz, blok kule,
+  kâğıt kesen/katlayan, yapıştırıcı, fırça, kâğıt uçak, seksek): uygulamanın
+  bir işine karşılık gelmiyor. Yapboz ve satranç aday olabilirdi; konu
+  bitişi ve oyun tanıtımı zaten başka pozla dolu.
+- **Eşi olanlar**: büyüteç tutan (büyüteçle inceleyen seçildi), kupadan içen
+  (`kahveli` var), düşünerek çenesine dokunan (`dusunen` var), cetvelle çizen
+  (abaküsle aynı işi anlatıyor), kitap ayracı ve kutuya kitap (okuyan/kitaplı
+  var), deftere yazan (yalnızca durum kafası olarak alındı), teleskop
+  (dürbün aynı "uzaktaki hedef"i anlatıyor ve Hedefim'in maskotu 64 piksel —
+  tam boy orada okunmuyor).
+- **Anlamı belirsiz ruh hâlleri**: oturan, çömelen, koşan, parmak ucunda
+  yürüyen, emekleyen, tek ayakta denge, yüzüstü ayak sallayan, utangaç,
+  şaşırıp sıçrayan, kucak açan, çiçek tutan, silgiyle silen. Yerleştirilecek bir ekran bulunduğunda kaynağı
+  kopyalayıp betiğe eklemek yeterli; boşta duran poz paketi şişiriyor.
+
+**İkinci takım paletli PNG.** Yeni pozlar 256 renge indirilip yazılıyor
+(`sikistir: true`): ~60 kB yerine ~15–20 kB. 38 yeni dosya (26 poz + 12 durum
+kafası) toplam ~670 kB ekliyor; düz PNG'yle iki megabaytı aşardı. Fark
+yalnızca üç kat büyütmede kürkte ince bir kumlanma. İlk takım ve `yuz`
+dokunulmadı — `yuz` ikonun kaynağı, baytlarının değişmesi ikon üretimini
+dokundururdu. Kaynak PNG'ler (`assets/maskot/`, ~28 MB yeni) pakete girmiyor.
+
+### Başlıktaki tavşan günü gösteriyor
+
+Ana sayfa selamlamasının yanındaki baş bir süre her durumda aynı çizimdi
+(`kafa`); durum yalnızca ekran okuyucu etiketini değiştiriyordu. Kullanıcı
+tavşanın günü göstermesini istedi — örneği "o gün hiç soru girilmediyse
+uyusun". Karar `lib/ana-maskot.ts`te, saf ve testli; saat ana sayfadan
+geliyor.
+
+| Sıra | Koşul | Poz |
+| --- | --- | --- |
+| 1 | Pomodoro çalışma turu işliyor | `kafa-laptoplu` |
+| 2 | Pomodoro molası işliyor | `kafa-kahveli` |
+| 3 | Devamsızlık hakkı aşıldı | `kafa-uzgun` |
+| 4 | Sınav günü | `kafa-bagdas` |
+| 5 | Günlük hedef tuttu | `kafa-dans` / `kafa-alkislayan` / `kafa-kahkaha` (günden güne) |
+| 6 | Bugün başlandı, hedefte değil | `kafa-yazan` / `kafa-kitapli` (günden güne) |
+| 7 | Kayıt yok, gece (22:00–04:59) | `kafa-uyuyan` |
+| 8 | Kayıt yok, sabah (05:00–10:59) | `kafa-gerinen` |
+| 9 | Kayıt yok, seri kırılmak üzere | `kafa-elleri-belde` |
+| 10 | Kayıt yok | `kafa-uyuyan` |
+
+**Sabah uyumuyor, geriniyor.** Sabah sekizde uyuyan bir tavşan "bugün bir şey
+yapmadın" gibi okunuyor; oysa yapılacak bir şey için daha vakit olmadı.
+Gerinen tavşan güne birlikte başlıyor. On birden sonra kayıtsız gün
+kullanıcının istediği gibi uyuyan tavşan.
+
+Seri kuralı `gunun-hali.ts`teki "seri kırılıyor"un aynısı ve seri hesabı
+oradan (`hedefSerisi`); günlük hedef sıfırken "tuttu" yok, aynı kural.
+Duraklatılmış Pomodoro işleyen sayılmıyor: tur durmuş, laptopta çalışan
+tavşan yalan olurdu.
+
+**Durum kafaları kırpım, alan büyütülmedi.** Başlıktaki yer 58 piksel ve tam
+boy poz orada lekeye dönüyor. Alanı büyütmek selamlama cümlesini ve geri
+sayımı aşağı iterdi; onun yerine pozun **üst kısmı** kırpılıyor
+(`maskot-uret.mjs` → `KAFALAR`): baş, kollar ve tutulan nesnenin görünen
+kısmı — durumu anlatan yer orası. Kırpım oranları pozun saydamlıktan
+bulunan kutusuna oran (`alt: 0.62` = kutunun üst %62'si); nesnesi aşağıda
+duran pozlarda (laptop, defter, kitap) daha uzun, kıvrılıp uyuyan ve bağdaş
+kuran tavşanda tam. Oranı değiştirirsen çıktıyı 58 pikselde aç.
+
+Poz değişince öğe yeniden kuruluyor (`key`) ve kısa bir solmayla geliyor
+(`ana-maskot-gecis`, `prefers-reduced-motion` altında yok). Ekran okuyucu
+etiketi duruma özel (`Rabi.etiket`: "uyuyor, bugün henüz kayıt yok",
+"Pomodoro turunda çalışıyor"); `durum` yine ayrı ve ruh hâlini taşıyor.
+
+Poz listesi `lib/maskot.ts`te (`MASKOT_POZLARI`, dosya adı kuralı
+`tavsan-<poz>.png`), bileşen değil — `lib/` altındaki karar fonksiyonu bir
+bileşen dosyasına bağımlı olmasın diye. `maskot.test.ts` her pozun dosyası
+olduğunu denetliyor: listeye eklenip betikte üretilmeyen poz test düşürür.
 
 ### Açılış bir ders makarası
 
@@ -2272,7 +2395,7 @@ kartı işaretleyip çıkmak konuyu tamamlamanın yolu olurdu.
 
 Deste yalnızca kart değil (`tasarim/bilgi-karti.html`, akış
 `lib/konu/deste-akisi.ts`): kartların arasına bir **kısa mola** (Rabi
-zıplıyor, okunan kartların adları listeleniyor) ve bir–iki **hızlı kontrol**
+dinleniyor, okunan kartların adları listeleniyor) ve bir–iki **hızlı kontrol**
 (okunmuş bir karttan iki şıklı soru) giriyor. Üç ekranın başlığı ortak
 (`deste-basligi.tsx`), zemin dersin rengi, vurgu dersin mürekkebi
 (`bicim.murekkep`) — mockup Fizik'in mavisiyle çizildi, o mavi burada derse
