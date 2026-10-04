@@ -23,14 +23,18 @@
  * buluyor; yalnızca `YUZ` kırpımı sabit piksel taşıyor ve o da 2048'lik "normal
  * maskot"a ait.
  *
- * ## İkinci takım paletli PNG
+ * ## Pozlar paletli PNG, `yuz` hariç
  *
- * v2 pozları (`sikistir: true`) 256 renklik palete indirilip yazılıyor:
- * dosya başına ~60 kB yerine ~15 kB. Otuzu aşkın yeni poz düz PNG'yle paketi
- * iki megabayt şişirirdi. Fark yalnızca üç kat büyütmede kürkte ince bir
- * kumlanma olarak görülüyor. İlk takım ve `yuz` bilerek dokunulmadan
- * kalıyor: `yuz` ikonun kaynağı ve onun baytlarının değişmesi ikon üretimini
- * dokundururdu.
+ * Bütün pozlar 256 renklik palete indirilip yazılıyor: dosya başına ~60 kB
+ * yerine ~15–20 kB. Elliyi aşkın poz düz PNG'yle paketi iki buçuk megabayta
+ * çıkarırdı. Fark yalnızca üç kat büyütmede kürkte ince bir kumlanma olarak
+ * görülüyor. Önce yalnızca ikinci takım (v2) sıkıştırılıyordu; ilk takım da
+ * aynı yola alındı.
+ *
+ * Tek istisna `yuz`: uygulama ikonunun (`ikon-uret.mjs`) ve Android
+ * `drawable-nodpi/tavsan_yuz.png` ile iOS `KalkanGorunumu/tavsan_yuz.png`
+ * kopyalarının kaynağı. Baytları değişirse ikon yeniden üretilmeli ve iki
+ * kopya yenilenmeli; o yüzden düz PNG kalıyor (`sikistir: false`).
  *
  * ## Pozların boyu eşitleniyor
  *
@@ -101,7 +105,7 @@ const POZLAR = [
     ['tavsan-durbunlu', 'dürbünle bakan.png'],
     ['tavsan-esneyen', 'esneme yapan.png'],
     ['tavsan-alkislayan', 'alkışlayan.png'],
-  ].map(([ad, kaynak]) => ({ ad, kaynak, sikistir: true })),
+  ].map(([ad, kaynak]) => ({ ad, kaynak })),
   // --- İlk takım.
   { ad: 'tavsan-tam', kaynak: 'normal maskot.png' },
   { ad: 'tavsan-el-sallayan', kaynak: 'selam veren maskot.png' },
@@ -191,7 +195,7 @@ function kutuBul(rgba, en, boy) {
  * `kirpma` kaynak pikselinde sabit bir kutu (`YUZ`); `oran` ise saydamlıktan
  * bulunan kutunun oranlı bir parçası (`KAFALAR`).
  */
-async function uret(ad, kaynak, kirpma, { sikistir = false, oran = null } = {}) {
+async function uret(ad, kaynak, kirpma, { sikistir = true, oran = null } = {}) {
   let girdi = sharp(join(kaynakKlasoru, kaynak)).ensureAlpha()
   if (kirpma) {
     girdi = girdi.extract({
@@ -261,17 +265,18 @@ async function uret(ad, kaynak, kirpma, { sikistir = false, oran = null } = {}) 
 
 await mkdir(cikisKlasoru, { recursive: true })
 
-for (const { ad, kaynak, sikistir } of POZLAR) {
-  const { hedefEn, hedefBoy } = await uret(ad, kaynak, null, { sikistir })
+for (const { ad, kaynak } of POZLAR) {
+  const { hedefEn, hedefBoy } = await uret(ad, kaynak)
   console.log(`${ad}.png  ${hedefEn}×${hedefBoy}`)
 }
 
 for (const { ad, kaynak, ...oran } of KAFALAR) {
-  const { hedefEn, hedefBoy } = await uret(ad, kaynak, null, { sikistir: true, oran })
+  const { hedefEn, hedefBoy } = await uret(ad, kaynak, null, { oran })
   console.log(`${ad}.png  ${hedefEn}×${hedefBoy}`)
 }
 
-const yuz = await uret('tavsan-yuz', YUZ.kaynak, YUZ)
+// `yuz` sıkıştırılmıyor: ikonun ve yerli kopyaların kaynağı (dosya başındaki not).
+const yuz = await uret('tavsan-yuz', YUZ.kaynak, YUZ, { sikistir: false })
 console.log(`tavsan-yuz.png  ${yuz.hedefEn}×${yuz.hedefBoy}`)
 
 // `ikon-uret.mjs` yüzün tuvaldeki kutusunu sabit sayılarla biliyor; kırpma

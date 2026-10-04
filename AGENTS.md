@@ -258,12 +258,18 @@ kutlama değil, kartların arasında nefes. Dört dinlenen poz dönüyor.
   şaşırıp sıçrayan, kucak açan, çiçek tutan, silgiyle silen. Yerleştirilecek bir ekran bulunduğunda kaynağı
   kopyalayıp betiğe eklemek yeterli; boşta duran poz paketi şişiriyor.
 
-**İkinci takım paletli PNG.** Yeni pozlar 256 renge indirilip yazılıyor
-(`sikistir: true`): ~60 kB yerine ~15–20 kB. 38 yeni dosya (26 poz + 12 durum
-kafası) toplam ~670 kB ekliyor; düz PNG'yle iki megabaytı aşardı. Fark
-yalnızca üç kat büyütmede kürkte ince bir kumlanma. İlk takım ve `yuz`
-dokunulmadı — `yuz` ikonun kaynağı, baytlarının değişmesi ikon üretimini
-dokundururdu. Kaynak PNG'ler (`assets/maskot/`, ~28 MB yeni) pakete girmiyor.
+**Pozlar paletli PNG, `yuz` hariç.** Bütün pozlar 256 renge indirilip
+yazılıyor (`uret`'in varsayılanı `sikistir: true`): ~60 kB yerine ~15–20 kB.
+Önce yalnızca ikinci takım sıkıştırılıyordu (38 yeni dosya ~670 kB, düz
+PNG'yle iki megabaytı aşardı); sonra ilk takımın 11 pozu da aynı yola alındı
+ve 671 kB'tan 176 kB'a indi. `public/tavsan-*.png` toplamı 1,42 MB'tan
+0,93 MB'a düştü. Fark yalnızca üç kat büyütmede kürkte ince bir kumlanma.
+
+**`yuz` düz PNG kalıyor** (`sikistir: false`) ve betik onu baytı baytına aynı
+üretiyor: uygulama ikonunun (`ikon-uret.mjs`), Android
+`drawable-nodpi/tavsan_yuz.png` ve iOS `KalkanGorunumu/tavsan_yuz.png`
+kopyalarının kaynağı. Baytları değişirse ikon yeniden üretilmeli ve iki
+kopya yenilenmeli. Kaynak PNG'ler (`assets/maskot/`) pakete girmiyor.
 
 ### Başlıktaki tavşan günü gösteriyor
 
