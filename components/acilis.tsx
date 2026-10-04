@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 
 /**
@@ -11,15 +11,17 @@ import { cn } from '@/lib/utils'
  * uygulamada çoğu zaman hiç görünmüyor. İstenen ekran bu yüzden uygulamanın
  * içinde kuruldu.
  *
- * Tasarım 2d (`tasarim/acilis-ekrani.dc.html`, "Toplanan yıldızlar"): ekranda
- * yalnızca isim var. "RABI" bulanıktan netleşiyor, İ'nin noktası yukarıdan
- * dönerek düşüp harfi tamamlıyor, altta üç nokta nabız atıyor; sonunda isim
- * büyüyüp bulanıklaşarak dağılıyor ve zemin ana sayfaya açılıyor.
+ * Tasarım "Ders makarası" (`tasarim/acilis-arsiv.html` → 3. tur, Yazı C · 2):
+ * dört makara harf yerine derslerin simgelerini çeviriyor (√x, 1453, DNA,
+ * H₂O, MÖ, Ω…), her simge kendi dersinin renginde, ve soldan sağa tık tık
+ * R·A·B·I'ya kilitleniyor — bütün dersler tek kelimede toplanıyor. Sonra
+ * harfler bir tık daha dönüp çıkıyor ve zemin dört şerit hâlinde yukarı
+ * kalkarak ana sayfayı açıyor.
  *
- * Önceki tasarım (2a) tavşanı, sloganı ve süzülen artıları taşıyordu ve tavşan
- * ana sayfadaki maskotun üstüne uçarak bitiyordu. 2d tavşansız: uçuş, varış
- * noktasının ölçümü ve maskotun açılış boyunca gizlenmesi onunla birlikte
- * kalktı. Ekranda tavşan olmayınca konacak bir yuva da yok.
+ * Önceki tasarım 2d 4,65 saniye sürüyordu; günde birkaç kez açılan bir
+ * uygulamada beklemeye dönüşüyordu. Bu tasarım 2,26 saniye. Tavşan hiçbir
+ * yere uçmuyor (kullanıcının şartı): yalnızca son makarada, I'dan önceki bir
+ * an, bir simge olarak görünüyor.
  *
  * Zemin rengi sistemin açılış ekranıyla **birebir aynı** (`#F8F8F7`,
  * `android/app/src/main/res/values/colors.xml` içindeki `acilis_zemin`). İkisi
@@ -32,28 +34,70 @@ const ZEMIN = '#F8F8F7'
 /**
  * Ekranın ömrü (ms) — tasarımın kendi süresi.
  *
- * İsim 4000 ms'de dağılmaya başlıyor ve 650 ms'de bitiyor; zemin o sırada,
- * dağılmanın ikinci yarısında söndüğü için isim ana sayfanın üstünde
- * kayboluyor. Süreyi değiştirirsen `globals.css`'teki `acilis-sahne` ile
- * `acilis-yazi` gecikmelerini birlikte değiştir.
+ * Son şerit 1840 ms'de kalkmaya başlıyor ve 420 ms sürüyor. Süreyi
+ * değiştirirsen `globals.css`'teki açılış zaman çizgisini birlikte değiştir.
  *
  * Veri okumasına bağlanmadı: localStorage neredeyse anında dönüyor,
  * bağlansaydı ekran bir kare görünüp kaybolur ve animasyon hiç izlenmezdi.
  */
-export const ACILIS_SURESI = 4650
+export const ACILIS_SURESI = 2260
 
 /**
- * Yerleşim — tasarımın 360×760'lık çerçevesinden.
+ * Makaraların simgeleri. Her makara: boş · dört simge · harf · boş; harf
+ * beşinci hücrede, çıkış altıncıya (bkz. `acilis-makara-don`).
  *
- * Tasarım ismi çerçevenin tepesinden 331 piksele koyuyor; satırın ortası
- * (331 + 52,8 / 2) çerçevenin ortasının 22,6 piksel üstünde kalıyor. Burada
- * tepeden değil ortadan ölçülüyor: uzun telefonda tepeden ölçülen isim
- * ekranın üst yarısına kayardı.
+ * Renk derse ait (`text-konu-<ders>-koyu`), konu haritası ve oyunlarla aynı.
+ * Simgeler YKS'nin dersleri: matematik (√x, π, ∑, x², %), tarih (1453, MÖ),
+ * biyoloji (DNA), kimya (H₂O, Fe), coğrafya (40°K, °), fizik (Ω), Türkçe
+ * (Aa, !). Son makaranın son simgesi Rabi'nin yüzü.
  */
-const YAZI_BOYU = 40
-/** "İ"nin noktası satırın tepesine konuyor; satır dar olsaydı kırpılırdı. */
-const YAZI_SATIRI = YAZI_BOYU * 1.32
-const YAZI_KAYMASI = 331 + YAZI_SATIRI / 2 - 760 / 2
+type Simge = { metin: ReactNode; renk: string; kucuk?: boolean } | 'tavsan'
+
+const MAKARALAR: { harf: string; simgeler: Simge[] }[] = [
+  {
+    harf: 'R',
+    simgeler: [
+      { metin: '√x', renk: 'text-konu-matematik-koyu' },
+      { metin: '1453', renk: 'text-konu-tarih-koyu', kucuk: true },
+      { metin: 'DNA', renk: 'text-konu-biyoloji-koyu' },
+      { metin: 'π', renk: 'text-konu-matematik-koyu' },
+    ],
+  },
+  {
+    harf: 'A',
+    simgeler: [
+      {
+        metin: (
+          <>
+            H<sub>2</sub>O
+          </>
+        ),
+        renk: 'text-konu-kimya-koyu',
+      },
+      { metin: '40°K', renk: 'text-konu-cografya-koyu' },
+      { metin: 'MÖ', renk: 'text-konu-tarih-koyu' },
+      { metin: '∑', renk: 'text-konu-matematik-koyu' },
+    ],
+  },
+  {
+    harf: 'B',
+    simgeler: [
+      { metin: 'Ω', renk: 'text-konu-fizik-koyu' },
+      { metin: 'x²', renk: 'text-konu-matematik-koyu' },
+      { metin: 'Fe', renk: 'text-konu-kimya-koyu' },
+      { metin: 'Aa', renk: 'text-konu-turkce-koyu' },
+    ],
+  },
+  {
+    harf: 'I',
+    simgeler: [
+      { metin: '°', renk: 'text-konu-cografya-koyu' },
+      { metin: '%', renk: 'text-konu-matematik-koyu' },
+      { metin: '!', renk: 'text-konu-turkce-koyu' },
+      'tavsan',
+    ],
+  },
+]
 
 /**
  * Emniyet zamanlayıcısının animasyona verdiği pay (ms).
@@ -128,8 +172,8 @@ function useBaslangic(): boolean {
  *
  * Sayaç bu bileşenin içinde, çağıranda değil: ekran ancak animasyon başlayınca
  * yaşamaya başlıyor ve o anı yalnızca burası biliyor. Dışarıda tutulsaydı sayaç
- * animasyondan önce işlemeye başlar, yavaş açılan bir telefonda katman isim
- * dağılmadan kaldırılırdı.
+ * animasyondan önce işlemeye başlar, yavaş açılan bir telefonda katman
+ * makaralar dönerken kaldırılırdı.
  */
 export function Acilis({ onBitti }: { onBitti: () => void }) {
   const basladi = useBaslangic()
@@ -146,7 +190,7 @@ export function Acilis({ onBitti }: { onBitti: () => void }) {
    * animasyon `acilis-bekliyor` kalkınca değil ondan sonraki ilk stil
    * hesabında salınıyor, WebView açılırken o kare gecikebiliyor ve uygulama
    * bir an arka plana düşerse animasyon duruyor ama zamanlayıcı işliyor.
-   * Zamanlayıcıyla kalkan katman, zemin daha sönmeden "tak" diye
+   * Zamanlayıcıyla kalkan katman, şeritler daha kalkmadan "tak" diye
    * kayboluyordu. `animationend` bunu tanım gereği çözüyor; zamanlayıcı
    * yalnızca emniyet kemeri.
    */
@@ -164,11 +208,11 @@ export function Acilis({ onBitti }: { onBitti: () => void }) {
 
   return (
     <div
-      // Katman dokunuşları **yutuyor** (`pointer-events-none` yok): son
-      // yarım saniyede zemin sönüyor ve altındaki düğmeler görünüyor, ama
-      // görünen her şey basılabilir olsaydı kullanıcı daha uygulamayı
-      // görmeden sekme değiştirirdi. `touch-none`, aynı şeyi
-      // kaydırma/yakınlaştırma için yapıyor.
+      // Katman dokunuşları **yutuyor** (`pointer-events-none` yok): şeritler
+      // kalkarken altındaki düğmeler görünüyor, ama görünen her şey
+      // basılabilir olsaydı kullanıcı daha uygulamayı görmeden sekme
+      // değiştirirdi. `touch-none`, aynı şeyi kaydırma/yakınlaştırma için
+      // yapıyor.
       className={cn(
         'fixed inset-0 z-[60] touch-none overflow-hidden select-none',
         !basladi && 'acilis-bekliyor',
@@ -176,57 +220,66 @@ export function Acilis({ onBitti }: { onBitti: () => void }) {
       role="status"
       aria-label="Rabi açılıyor"
     >
-      <div
-        className="acilis-sahne"
-        style={{ backgroundColor: ZEMIN }}
-        /*
-          Ekranın ömrünü bitiren olay bu. Ad denetimi şart: içerideki
-          yazının, noktaların ve İ noktasının animasyonları da bitiyor ve
-          `animationend` kabarcıklanıyor.
-        */
-        onAnimationEnd={(olay) => {
-          if (olay.animationName === 'acilis-sahne') setSahneBitti(true)
-        }}
-      >
-        {/*
-          "RABI" + ayrı çizilen nokta: İ'nin noktası harfin kendisi değil,
-          düşüp harfi tamamlayan kare. Yazı tipi tasarımın Rubik'i
-          (`font-acilis`). Ekran okuyucuya kapalı; katmanın kendi etiketi
-          var ve "R A B I" diye harf harf okunmasının anlamı yok.
-        */}
-        <p
-          className="acilis-yazi font-acilis text-foreground absolute inset-x-0 top-1/2 text-center font-extrabold"
-          style={{
-            marginTop: YAZI_KAYMASI - YAZI_SATIRI / 2,
-            fontSize: YAZI_BOYU,
-            lineHeight: 1.32,
-            // Harf aralığı sağa da pay bırakıyor; sol dolgu olmadan kelime
-            // yarım aralık sola kayık dururdu.
-            letterSpacing: '0.02em',
-            paddingLeft: '0.02em',
-          }}
-          aria-hidden
-        >
-          <span>RAB</span>
-          <span className="relative inline-block">
-            I
-            <span className="acilis-i-noktasi" />
-          </span>
-        </p>
-
-        {/* Yükleme: üç nokta. Bir yükleme ölçmüyor — ekran zaten sabit
-            sürede kalkıyor — yalnızca ekranın donmadığını söylüyor. İsimden
-            önce sönüyorlar (`acilis-noktalar`): dağılan isim ekranın son
-            hareketi olsun. */}
+      {/*
+        Zemin dört dikey şerit; sırayla yukarı kalkıp ana sayfayı açıyorlar.
+        Ekranın ömrünü bitiren olay **sonuncusunun** bitişi; en geç o
+        kalkıyor. Ad denetimi emniyet için: olay başka bir animasyondan
+        gelmemeli.
+      */}
+      {[0, 1, 2, 3].map((sira) => (
         <div
-          className="acilis-noktalar absolute inset-x-0 flex justify-center gap-2"
-          style={{ bottom: 'calc(72px + var(--guvenli-alt))' }}
-          aria-hidden
-        >
-          {[0, 160, 320].map((gecikme) => (
-            <span key={gecikme} className="acilis-nokta" style={{ animationDelay: `${gecikme}ms` }} />
-          ))}
-        </div>
+          key={sira}
+          className="acilis-serit"
+          style={{ left: `${sira * 25}%`, backgroundColor: ZEMIN }}
+          onAnimationEnd={
+            sira === 3
+              ? (olay) => {
+                  if (olay.animationName === 'acilis-serit-kalk') setSahneBitti(true)
+                }
+              : undefined
+          }
+        />
+      ))}
+
+      {/*
+        Kelime: dört pencere, her birinin genişliğini içindeki görünmez son
+        harf belirliyor (`acilis-olcu`). Eşit genişlikte pencereler dar I'yı
+        geniş bir kutunun ortasında bırakıyor ve "RAB I" gibi okunuyordu.
+        Simgeler harften geniş olabildiği için kırpma pencerede değil, iki
+        yana taşan "kuyu"da. Ekran okuyucuya kapalı; katmanın kendi etiketi
+        var.
+      */}
+      <div className="acilis-kelime font-acilis text-primary font-extrabold" aria-hidden>
+        {MAKARALAR.map(({ harf, simgeler }) => (
+          <div key={harf} className="acilis-pencere">
+            <span className="acilis-olcu">{harf}</span>
+            <div className="acilis-kuyu">
+              <div className="acilis-makara">
+                <div className="acilis-hucre" />
+                {simgeler.map((simge, i) =>
+                  simge === 'tavsan' ? (
+                    <div key={i} className="acilis-hucre">
+                      <img src="/tavsan-yuz.png" alt="" width={32} height={32} draggable={false} />
+                    </div>
+                  ) : (
+                    <div
+                      key={i}
+                      className={cn(
+                        'acilis-hucre acilis-simge font-sans',
+                        simge.renk,
+                        simge.kucuk && 'acilis-simge-kucuk',
+                      )}
+                    >
+                      {simge.metin}
+                    </div>
+                  ),
+                )}
+                <div className="acilis-hucre">{harf}</div>
+                <div className="acilis-hucre" />
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )
@@ -258,7 +311,7 @@ export const GECIS_SOLMA_SURESI = 420
  * sayfaya dönüşmesi. Ana sayfanın maskotu bu sırada gizli değil: örtü
  * sönerken yerinde beliriyor.
  *
- * Açılış ekranında da artık uçan tavşan yok (tasarım 2d); iki geçiş de solma.
+ * Açılış ekranında da uçan tavşan yok (ders makarası); tavşan yerinde kalıyor.
  */
 export function KurulumGecisi({ soluyor }: { soluyor: boolean }) {
   return (

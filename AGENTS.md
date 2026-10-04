@@ -105,7 +105,7 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
   Ayrılırlarsa açılışta renk sıçraması olur.
 - Yazı tipi tek: **Nunito**. İki istisna var, ikisi de tek bir başlık:
   açılış ekranındaki "RABI" **Rubik** (`font-acilis`, tasarım 2d ismi
-  Rubik 800 ile çizdi; ekranda tek şey isim ve Nunito'nun yuvarlak uçları
+  Rubik 800 ile çizdi, ders makarası korudu; ekranda tek şey isim ve Nunito'nun yuvarlak uçları
   orada başka bir marka gibi duruyor) ve aylık özetin kapağındaki ay adı
   **Manrope** (`font-marka`). Açılış bir süre Manrope'tu, 2a ile Outfit'e,
   2d ile Rubik'e geçti. İkisi de başka hiçbir yerde kullanılmıyor; yeni bir yerde
@@ -192,33 +192,47 @@ Kaynak klasöründeki her kaynak kullanılmıyor. Dışarıda kalan "sinirli" bi
 kaldı: uygulamada karşılığı olan bir ruh hâli değil — Rabi yanlış cevapta
 kullanıcıya kızmıyor, efekt zaten sarsıntıyla "yanlış" diyor.
 
-### Açılışta yalnızca isim var
+### Açılış bir ders makarası
 
-Ekran 4,65 saniye sürüyor (`ACILIS_SURESI`) ve tasarımı 2d
-(`tasarim/acilis-ekrani.dc.html`, "Toplanan yıldızlar"): Rubik ile "RABI"
-1000 ms'de bulanıktan netleşiyor, 1650 ms'de İ'nin noktası — harfin kendisi
-değil ayrı çizilen küçük bir kare — yukarıdan dönerek düşüp harfi
-tamamlıyor, altta üç nokta nabız atıyor. 3750 ms'de noktalar, 4000 ms'de
-isim büyüyüp bulanıklaşarak dağılıyor; zemin dağılmanın ikinci yarısında
-söndüğü için isim ana sayfanın üstünde kayboluyor. Zaman çizgisi
+Ekran 2,26 saniye sürüyor (`ACILIS_SURESI`) ve tasarımı "Ders makarası"
+(`tasarim/acilis-arsiv.html` → 3. tur, Yazı C · 2): dört makara harf yerine
+derslerin simgelerini çeviriyor (√x, 1453, DNA, H₂O, MÖ, Ω, Fe…), her simge
+kendi dersinin `--konu-<ders>-koyu` renginde, ve soldan sağa R·A·B·I'ya
+kilitleniyor. Kelime bir an duruyor, harfler bir tık daha dönüp çıkıyor ve
+zemin dört şerit hâlinde yukarı kalkarak ana sayfayı açıyor. Zaman çizgisi
 `globals.css`teki açılış bloğunun başında yazılı; süreyi değiştirirsen
 oradaki gecikmeleri birlikte değiştir.
 
-**Tavşan yok.** 2a'da tavşan, "RABİ", slogan ve süzülen on iki artı vardı ve
-tavşan sonunda ana sayfadaki maskotun tam üstüne uçarak bitiyordu. 2d ile
-ekranda yalnızca isim kaldı; uçuşla birlikte varış noktasının ölçümü
+Arşiv dosyası üç tasarım turunun bütün taslaklarını taşıyor (13 sayfa,
+görseller gömülü, sunucusuz açılıyor). Kullanıcının o turlarda koyduğu
+şartlar yeni bir açılış tasarlarken de geçerli: tavşan köşeye (özellikle sol
+üste) kayıp uçmuyor; yuvadan zıplayan tavşan ve yerden fırlayan harf yok;
+ışın saçan "güneş" zemin yok; defter dokusu ve yazının altına kıvrık çizgi
+yok. Ekran kısa kalıyor — 2d 4,65 saniyeydi ve günde birkaç kez açılan bir
+uygulamada beklemeye dönüşüyordu.
+
+**Pencere genişliği harften ölçülüyor.** Her makaranın genişliğini içindeki
+görünmez son harf (`acilis-olcu`) veriyor. Taslağın ilk hâlinde pencereler
+eşit genişlikteydi ve dar I geniş bir kutunun ortasında kalınca kelime
+"RAB I" diye okunuyordu. Simgeler harften geniş olabildiği için kırpma
+pencerede değil iki yana taşan kuyuda (`acilis-kuyu`).
+
+**Kelime şeritlerden önce sönüyor.** Kuyuların üst ve alt kenarındaki
+zemin renkli gölgeler, şeritler kalkarken ana sayfanın üstünde iz
+bırakırdı.
+
+**Tavşan uçmuyor.** 2a'da tavşan ana sayfadaki maskotun tam üstüne uçarak
+bitiyordu; 2d ile kalktı ve uçuşla birlikte varış noktasının ölçümü
 (`useVaris`), maskot yuvası (`MASKOT_YUVASI`, `yuvaMi`) ve açılış boyunca
-maskotu gizleyen `gizli`/`maskotGizli` zinciri de silindi. Konacak bir
-tavşan olmayınca ana sayfanın maskotu açılışın altında baştan görünür
-duruyor ve zemin sönerken zaten yerinde. Uçuşu geri getirmek istersen
+maskotu gizleyen `gizli`/`maskotGizli` zinciri de silindi. Ders makarasında
+tavşan yalnızca son makaranın bir simgesi. Uçuşu geri getirmek istersen
 tarihçe `git log -- components/acilis.tsx`; oradaki ana ders hâlâ geçerli:
 varış noktası **ölçülür**, yazılmaz.
 
-Katmanı kaldıran şey zeminin kendi `animationend`i (`acilis-sahne`, adla
-süzülüyor — içerideki yazının ve noktaların bitişi de kabarcıklanıyor);
-zamanlayıcı yalnızca emniyet kemeri. Katman sonuna kadar dokunuşları
-yutuyor: zemin sönerken altındaki düğmeler görünür ama basılabilir
-olmamalı.
+Katmanı kaldıran şey son şeridin kendi `animationend`i
+(`acilis-serit-kalk`, adla süzülüyor); zamanlayıcı yalnızca emniyet kemeri.
+Katman sonuna kadar dokunuşları yutuyor: şeritler kalkarken altındaki
+düğmeler görünür ama basılabilir olmamalı.
 
 ### Android'de uçtan uca ekran bütün sürümlerde açık
 
