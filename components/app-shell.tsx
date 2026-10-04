@@ -86,6 +86,8 @@ import { gorevleriNormalize, gorevleriTarihtenItibaren, type Gorev } from '@/lib
 import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
 import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
 import { KonuHaritasiEkrani } from '@/components/ekranlar/konu-haritasi'
+import { KonuTakibiEkrani } from '@/components/ekranlar/konu-takibi'
+import { BOS_TAKIP, takibiCoz, type YksTakip } from '@/lib/konu-takibi/kayit'
 import { YapilacaklarEkrani } from '@/components/ekranlar/yapilacaklar'
 import { AylikOzetEkrani } from '@/components/ekranlar/aylik-ozet'
 import { okumaSeansiEkle, type OkumaSeansi } from '@/lib/konu/okuma-suresi'
@@ -298,6 +300,27 @@ function RabiUygulamasi() {
     ANAHTARLAR.konuSecimi,
     { ders: 'matematik', sinif: 9 },
   )
+  /*
+    Konu Takibi'nin kaydı. Depodan geleni her okumada `takibiCoz` süzüyor:
+    elle kurcalanmış ya da yarım yazılmış bir kayıt ekranı çökertmesin.
+  */
+  const [yksTakipHam, setYksTakipHam] = useYerelDepo<YksTakip>(ANAHTARLAR.yksKonuTakibi, BOS_TAKIP)
+  const yksTakip = useMemo(() => takibiCoz(yksTakipHam), [yksTakipHam])
+  const setYksTakip = useCallback(
+    (guncelle: (onceki: YksTakip) => YksTakip) => setYksTakipHam((onceki) => guncelle(takibiCoz(onceki))),
+    [setYksTakipHam],
+  )
+  /*
+    Konu Takibi'nden "Haritaya git" isteği: harita sekmesi açılınca bu konunun
+    kartını açıp isteği tüketiyor (`onKonuAcildi`). Prop doğrudan okunsaydı
+    haritadan çıkıp dönen kullanıcı aynı kartı her seferinde yeniden görürdü —
+    ana sayfadaki ders kutucuğunun `acilacakDers` kalıbı.
+  */
+  const [haritaIstegi, setHaritaIstegi] = useState<{
+    ders: KonuDersId
+    sinif: HaritaSinifi
+    konuId: string
+  } | null>(null)
   /*
     Depo anahtarı `rabi-notlar` kalıyor: ekran not tahtasından görev listesine
     döndü ama kayıtlı görevler o anahtarda duruyor ve kimliği değiştirmek
@@ -1126,6 +1149,21 @@ function RabiUygulamasi() {
                 varsayilanSablonId={anaTurda ? (tanitim.demo.denemeler.at(-1)?.sablonId ?? 'tyt') : ayarlar.varsayilanSablonId}
               />
             )}
+            {ekran === 'konu-takibi' && (
+              <KonuTakibiEkrani
+                takip={yksTakip}
+                setTakip={setYksTakip}
+                ilerlemeler={konuIlerleme}
+                alan={ayarlar.puanTuru}
+                setAlan={(puanTuru) => setAyarlar((o) => ({ ...o, puanTuru }))}
+                onHaritayaGit={({ ders, sinif, konu }) => {
+                  setKonuSecimi({ ders, sinif })
+                  setHaritaIstegi({ ders, sinif, konuId: konu.id })
+                  setEkran(null)
+                  setSekme('harita')
+                }}
+              />
+            )}
             {ekran === 'yasal' && <YasalEkrani />}
             {ekran === 'geri-bildirim' && <GeriBildirimEkrani kol={geriBildirim} />}
           </>
@@ -1194,6 +1232,8 @@ function RabiUygulamasi() {
                 kullaniciSinifi={haritaSinifiBul(ayarlar.buYilSinif)}
                 ilerlemeler={konuIlerleme}
                 setIlerlemeler={setKonuIlerleme}
+                acilacakKonu={haritaIstegi}
+                onKonuAcildi={() => setHaritaIstegi(null)}
                 onOkumaSeansi={(seans) => setOkumaGecmisi((onceki) => okumaSeansiEkle(onceki, seans))}
               />
             )}
@@ -1221,6 +1261,7 @@ function RabiUygulamasi() {
                   notlar: gorevler,
                   konuIlerleme,
                   bilinmeyenKartlar,
+                  yksKonuTakibi: yksTakip,
                   aylikOzetler,
                   okumaGecmisi,
                   pomodoroGecmis,

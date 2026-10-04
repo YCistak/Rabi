@@ -431,7 +431,7 @@ const KONFETI: readonly { sol: number; gecikme: number; renk: string }[] = [
   { sol: 93, gecikme: 470, renk: 'var(--success)' },
 ]
 
-function Konfeti() {
+export function Konfeti() {
   return (
     <span
       aria-hidden

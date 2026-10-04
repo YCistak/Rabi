@@ -669,3 +669,11 @@ export function yksDersBul(id: string): YksDers | null {
 export function tumYksKonulari(): YksKonu[] {
   return YKS_DERSLERI.flatMap((d) => d.konular)
 }
+
+/** Alanların ekrandaki adı — Ayarlar › Alanım ve kurulumla aynı adlar. */
+export const ALAN_ADLARI: Record<PuanTuru, string> = {
+  say: 'Sayısal',
+  ea: 'Eşit Ağırlık',
+  soz: 'Sözel',
+  dil: 'Dil',
+}

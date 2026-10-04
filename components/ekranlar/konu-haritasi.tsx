@@ -282,6 +282,8 @@ export function KonuHaritasiEkrani({
   ilerlemeler,
   setIlerlemeler,
   onOkumaSeansi,
+  acilacakKonu = null,
+  onKonuAcildi,
 }: {
   secim: { ders: KonuDersId; sinif: HaritaSinifi }
   setSecim: (secim: { ders: KonuDersId; sinif: HaritaSinifi }) => void
@@ -291,6 +293,13 @@ export function KonuHaritasiEkrani({
   setIlerlemeler: (guncelle: (onceki: KonuIlerlemeleri) => KonuIlerlemeleri) => void
   /** Deste kapanınca geçen süre buraya yazılıyor; kayıt `AppShell`de. */
   onOkumaSeansi: (seans: OkumaSeansi) => void
+  /**
+   * Konu Takibi'nden gelen "bu konuyu aç" isteği. Harita o dersin ve sınıfın
+   * programına geçip konunun kartını açıyor, sonra `onKonuAcildi` ile isteği
+   * tüketiyor.
+   */
+  acilacakKonu?: { ders: KonuDersId; sinif: HaritaSinifi; konuId: string } | null
+  onKonuAcildi?: () => void
 }) {
   /** Açık deste; null ise harita görünüyor. */
   const [acikKonu, setAcikKonu] = useState<{
@@ -347,6 +356,9 @@ export function KonuHaritasiEkrani({
     başka bir sınıfa geçen kullanıcının seçimi o ziyaret boyunca kalıyor.
   */
   useEffect(() => {
+    // Konu Takibi'nden belirli bir konu istendiyse onun sınıfı kazanıyor:
+    // 11. sınıf öğrencisi TYT trigonometrisi için 10. sınıfın haritasına gidiyor.
+    if (acilacakKonu) return
     if (kullaniciSinifi !== null && secim.sinif !== kullaniciSinifi) sinifSec(kullaniciSinifi)
     // Seçimin kendisi bağımlılık değil: her seçimde kendi sınıfına geri atardı.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -396,6 +408,34 @@ export function KonuHaritasiEkrani({
 
   /** Yoldaki ilk yapılabilir basamak — halka ve geçilen yol buna bakıyor. */
   const siradaki = basamaklar.find((b) => basamakDurumu(b) === 'aktif') ?? null
+
+  /*
+    Konu Takibi'nden gelen istek. Seçim önce isteğin programına geçiyor
+    (`AppShell` zaten geçirdi ama ilk çizimde eski seçim olabilir); program
+    tuttuğunda konunun anlatım kitabının kartı açılıyor — öğrenci haritada
+    konuyu aramak zorunda kalmasın. Kart, kitaba basınca açılanın aynısı:
+    kilitliyse "Kilidi aç" diyor, kural burada da geçerli.
+  */
+  useEffect(() => {
+    if (!acilacakKonu) return
+    if (secim.ders !== acilacakKonu.ders || secim.sinif !== acilacakKonu.sinif) {
+      setSecim({ ders: acilacakKonu.ders, sinif: acilacakKonu.sinif })
+      return
+    }
+    const temaSirasi = program?.temalar.findIndex((t) => t.konular.some((k) => k.id === acilacakKonu.konuId)) ?? -1
+    const basamak = basamaklar.find((b) => b.tur === 'kart' && b.konu.id === acilacakKonu.konuId)
+    if (program && basamak && temaSirasi >= 0) {
+      const tema = program.temalar[temaSirasi]
+      setSayfa({
+        basamak,
+        bolum: { sira: temaSirasi + 1, biten: temadaBiten(tema, ilerlemeler), toplam: tema.konular.length },
+      })
+    }
+    onKonuAcildi?.()
+    // Yalnızca istek ve seçim değişince; `ilerlemeler` kartın sayısını
+    // belirliyor ama değişmesi isteği yeniden açtırmamalı.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [acilacakKonu, secim, basamaklar])
 
   function desteBitti(acik: { konu: Konu; temaAdi: string }, sonuc: DesteSonucu) {
     setAcikKonu(null)

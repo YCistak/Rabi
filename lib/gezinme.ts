@@ -26,6 +26,8 @@ export type Ekran =
   | 'rozetler'
   | 'istatistik'
   | 'oyun-bankasi'
+  /** Konu Takibi — TYT/AYT konularının aşamaları (`lib/konu-takibi/`). */
+  | 'konu-takibi'
   /** Gizlilik ve Koşullar — yalnızca Ayarlar'dan açılıyor, kart menüsünde yok. */
   | 'yasal'
   /** Öneri ve hata bildir — o da yalnızca Ayarlar'dan. */
@@ -119,5 +121,17 @@ export const KARTLAR: KartTanimi[] = [
     aciklama: 'Ders bazlı gidişat',
     ikon: '📊',
     renk: 'mavi',
+  },
+  /*
+    Listenin sonunda: ana sayfadaki ilk dört kutucuk yeni kullanıcıya bu
+    sıradan doluyor ve yeni bir aracın, alışılmış dördün yerini kendiliğinden
+    alması gerekmiyor — kullanıldıkça zaten öne geçiyor (`son-kullanilan.ts`).
+  */
+  {
+    id: 'konu-takibi',
+    ad: 'Konu Takibi',
+    aciklama: 'TYT ve AYT konularını bitirdikçe işaretle',
+    ikon: '📚',
+    renk: 'nane',
   },
 ]

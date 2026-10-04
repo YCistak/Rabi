@@ -45,6 +45,7 @@ import {
 import { cizimAnahtari } from '@/lib/cizim'
 import type { BankaKaydi } from '@/lib/oyunlar/banka'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
+import type { YksTakip } from '@/lib/konu-takibi/kayit'
 import { izinIste } from '@/lib/bildirim'
 import { saatYaz } from '@/lib/hatirlatma'
 import { AD_EN_AZ, adBiciminde, adGecerliMi } from '@/lib/ad'
@@ -142,6 +143,8 @@ export function AyarlarEkrani({
     /** Konu Anlatımı kayıtları — okunan konular ve bilinmeyen kartlar. */
     konuIlerleme?: KonuIlerlemeleri
     bilinmeyenKartlar?: BilinmeyenKart[]
+    /** Konu Takibi — YKS konularında işaretlenen aşamalar. */
+    yksKonuTakibi?: YksTakip
     /** Aylık özet arşivi — yıllık özetin dayanağı. */
     aylikOzetler?: AylikOzetArsivi
     okumaGecmisi?: OkumaSeansi[]
