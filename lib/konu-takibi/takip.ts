@@ -1,6 +1,6 @@
 import { KONU_DERSLERI, KONU_SINIFLARI, programBul, tumKonular } from '../konu'
 import type { Konu, KonuDersId, KonuSinifi } from '../konu/tip'
-import { konuTamam, type KonuIlerlemeleri } from '../konu/ilerleme'
+import { konuBitti, konuTamam, type KonuIlerlemeleri } from '../konu/ilerleme'
 import { HARITA_ESLEMESI } from './harita-eslemesi'
 import type { YksDers, YksKonu } from './liste'
 import type { ElleAsama, YksKonuKaydi, YksTakip } from './kayit'
@@ -55,6 +55,12 @@ export type HaritaDurumu = {
   durum: 'yok' | 'basladi' | 'tamam'
   /** Tamamlanan harita konusu sayısı. */
   biten: number
+  /**
+   * Kartları sonuna kadar okunmuş konu sayısı (sorusu geçilmemiş olsa da).
+   * `biten`den büyükse ekran "sorular bekliyor" diyor: öğrenciye neyin
+   * eksik kaldığını söylemek, yalnızca "bitmedi" demekten iyi.
+   */
+  okunan: number
   toplam: number
   /**
    * "Haritaya git" düğmesinin açacağı konu: tamamlanmamış ilk karşılık;
@@ -87,10 +93,11 @@ export function haritaDurumu(yksKonuId: string, ilerlemeler: KonuIlerlemeleri): 
 
   const tamamlar = konumlar.map((k) => konuTamam(ilerlemeler, k.konu))
   const biten = tamamlar.filter(Boolean).length
+  const okunan = konumlar.filter((k) => konuBitti(ilerlemeler, k.konu.id)).length
   const basladi = konumlar.some((k) => haritadaBasladi(ilerlemeler, k.konu.id))
   const durum = biten === konumlar.length ? 'tamam' : biten > 0 || basladi ? 'basladi' : 'yok'
   const ilkEksik = konumlar.find((_, i) => !tamamlar[i])
-  return { durum, biten, toplam: konumlar.length, hedef: ilkEksik ?? konumlar[0] }
+  return { durum, biten, okunan, toplam: konumlar.length, hedef: ilkEksik ?? konumlar[0] }
 }
 
 // ---------------------------------------------------------------------------

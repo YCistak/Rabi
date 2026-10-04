@@ -207,6 +207,7 @@ describe('haritaDurumu — otomatik aşama', () => {
     const durum = haritaDurumu('ayt-fiz-newton', ilerleme)
     expect(durum?.durum).toBe('basladi')
     expect(durum?.biten).toBe(0)
+    expect(durum?.okunan).toBe(1)
   })
 })
 

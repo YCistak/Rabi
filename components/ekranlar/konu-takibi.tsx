@@ -351,7 +351,7 @@ function DersSatiri({
       </span>
       <Halka deger={ozet.biten} hedef={ozet.toplam} boyut={40} kalinlik={4} renk={bitti ? 'var(--success)' : r.dolgu}>
         <span className="rakam text-[10.5px] font-extrabold" style={{ color: bitti ? 'var(--success)' : r.koyu }}>
-          {yuzde(ozet.biten, ozet.toplam)}
+          %{yuzde(ozet.biten, ozet.toplam)}
         </span>
       </Halka>
     </button>
@@ -618,14 +618,14 @@ function KonuSatiri({
           )}
           <SecimSatiri
             ad={`${ASAMA.okul.simge}  ${ASAMA.okul.ad}`}
-            ornek={kayit.okul ? `${gunYazisi(kayit.okul)} işaretledin` : 'Okulda ya da derste işlendiyse'}
+            ornek={kayit.okul ? `İşaretledin · ${gunYazisi(kayit.okul)}` : 'Okulda ya da derste işlendiyse'}
             secili={kayit.okul !== undefined}
             onClick={() => onYaz('okul', kayit.okul === undefined)}
             className="py-2.5"
           />
           <SecimSatiri
             ad={`${ASAMA.soru.simge}  ${ASAMA.soru.ad}`}
-            ornek={kayit.soru ? `${gunYazisi(kayit.soru)} işaretledin` : 'Bu konudan soru çözdüysen'}
+            ornek={kayit.soru ? `İşaretledin · ${gunYazisi(kayit.soru)}` : 'Bu konudan soru çözdüysen'}
             secili={kayit.soru !== undefined}
             onClick={() => onYaz('soru', kayit.soru === undefined)}
             className="py-2.5"
@@ -637,7 +637,8 @@ function KonuSatiri({
                 {ASAMA.bitti.simge}
               </span>
               <span className="min-w-0 flex-1 text-sm font-extrabold text-success">
-                {kayit.bitti ? `${gunYazisi(kayit.bitti)}’de bitirdin` : 'Bitirdin'}
+                {/* Ek yok ("4 Ekim'de"): ay adına göre -de/-da/-ta değişiyor. */}
+                Bitirdin{kayit.bitti ? ` · ${gunYazisi(kayit.bitti)}` : ''}
               </span>
               <Buton bicim="hayalet" boy="kucuk" onClick={() => onYaz('bitti', false)}>
                 Geri al
@@ -681,11 +682,13 @@ function HaritaAsamasi({
   const tamam = harita.durum === 'tamam'
   const alt = tamam
     ? 'Haritadaki karşılığını bitirdin'
-    : harita.toplam > 1
-      ? `Haritada ${harita.biten}/${harita.toplam} konu tamam`
-      : harita.durum === 'basladi'
-        ? 'Haritada başladın, henüz bitmedi'
-        : 'Haritadaki kartları okuyunca kendiliğinden dolar'
+    : harita.okunan > harita.biten
+      ? 'Kartları okudun, soruları bekliyor'
+      : harita.toplam > 1 && harita.durum === 'basladi'
+        ? `Haritada ${harita.biten}/${harita.toplam} konu tamam`
+        : harita.durum === 'basladi'
+          ? 'Haritada başladın, henüz bitmedi'
+          : 'Haritada kartları okuyup soruları geçince kendiliğinden dolar'
   return (
     <div
       className={cn(
