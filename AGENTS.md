@@ -335,10 +335,11 @@ bırakıyordu.
 
 ### Boş kutuyla ilerlenmiyor
 
-Devam düğmesi eksik cevapta **pasif**. Dört adımın kuralı var: ad geçerli
-olacak, alan kartlarından birine dokunulacak, bölüm adımında üniversite+bölüm
-seçili olacak, notlar adımında en az bir sayı yazılacak. Ötekiler
-(sınıf, hedef, hatırlatma) varsayılanla geliyor — varsayılan da bir cevap.
+Devam düğmesi eksik cevapta **pasif**. Beş adımın kuralı var: ad geçerli
+olacak, sınıf kartlarından birine dokunulacak, alan kartlarından birine
+dokunulacak, bölüm adımında üniversite+bölüm seçili olacak, notlar adımında
+en az bir sayı yazılacak. Ötekiler (hedef, hatırlatma) varsayılanla geliyor —
+orada varsayılan da bir cevap, çünkü çubuk ve saat her değerde anlamlı.
 
 Boş bırakılabilen iki adımın (bölüm, notlar) atlama yolu düğmenin hemen
 üstündeki **"daha sonra seçeceğim"** onay kutusu (`SonraSec`). Onay kutusu,
@@ -356,6 +357,14 @@ Alan adımı bir süre "Karar vermedim"i **seçili** gösteriyordu (`puanTuru ??
 hiçbir şeye dokunmamış kullanıcı, kendi adına verilmiş bir cevap görüyordu.
 Artık hiçbiri seçili gelmiyor; "Karar vermedim" o adımın açık atlama yolu ve
 seçilmesi de bir dokunuş istiyor.
+
+Sınıf adımı da bir süre **12'yi seçili** getiriyordu (`useState(12)`). Kurulumu
+hızlı geçen 10. sınıf öğrencisi kendini 12'de kaydediyor; geri sayım, harita
+ve OBP adımı o yanlış yıldan açılıyordu. Artık hiçbiri seçili gelmiyor ve
+Devam seçim yapılana kadar pasif. `null` yalnızca kurulumun yerel state'inde
+yaşıyor — kayda giden `Ayarlar.buYilSinif` yine `number`, çünkü adım seçimsiz
+geçilemiyor; `bitir` de `null` görürse kayıt yazmadan dönüyor. Sınıf seçilmeden
+notlar adımı da listede yok: hangi yılların sorulacağı seçimle belli oluyor.
 
 Ad adımında uyarı eskiden yalnızca Devam'a basılınca çıkıyordu; düğme pasif
 olduğu için o an hiç gelmiyor. İpucu bu yüzden iki yüzlü: boş alanda soluk bir

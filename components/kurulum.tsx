@@ -174,7 +174,16 @@ export function Kurulum({
 }) {
   const [adim, setAdim] = useState(0)
   const [ad, setAd] = useState('')
-  const [sinif, setSinif] = useState(12)
+  /**
+   * Bu yılın sınıfı; `null` "henüz seçilmedi" demek.
+   *
+   * Bir süre 12 seçili geliyordu: kurulumu hiç ellemeyen 10. sınıf öğrencisi
+   * kendisini 12'de kaydediyor, geri sayım ve harita da yanlış yıldan
+   * açılıyordu. Alan adımı gibi hiçbiri seçili gelmiyor ve Devam, seçim
+   * yapılana kadar pasif. `null` yalnızca burada yaşıyor: kayda giden
+   * `Ayarlar.buYilSinif` hep bir sayı, çünkü bu adım seçimsiz geçilemiyor.
+   */
+  const [sinif, setSinif] = useState<number | null>(null)
   /** Mezunun yıl sonu notları: sınıf → yazılan metin. Boşlar hesaba girmiyor. */
   const [notlar, setNotlar] = useState<Record<number, string>>({})
   const [obpMetni, setObpMetni] = useState('')
@@ -268,7 +277,7 @@ export function Kurulum({
     setBolumArama('')
   }
 
-  const mezun = mezunMu(sinif)
+  const mezun = sinif !== null && mezunMu(sinif)
   /**
    * Notu sorulacak sınıflar: **bitmiş** yıllar.
    *
@@ -276,7 +285,10 @@ export function Kurulum({
    * 11'deki öğrencinin 9 ve 10'u bitti, 11'i sürüyor. Yarım yılın notu OBP'ye
    * girmiyor, sorulması da kafa karıştırırdı.
    */
-  const notluSiniflar = mezun ? SINIFLAR : SINIFLAR.filter((s) => s < sinif)
+  // Sınıf seçilmeden notlar adımı da yok: adım sınıftan sonra geliyor ve
+  // hangi yılların sorulacağı ancak seçimle belli oluyor.
+  const notluSiniflar =
+    sinif === null ? [] : mezun ? SINIFLAR : SINIFLAR.filter((s) => s < sinif)
   // Sınıf geri dönülüp değiştirilebildiği için liste her çizimde kuruluyor;
   // sıra numarası da listenin boyuna kırpılıyor.
   const adimlar: AdimId[] = [
@@ -340,13 +352,15 @@ export function Kurulum({
   const devamEdilebilir =
     suanki === 'isim'
       ? adGecerli
-      : suanki === 'alan'
-        ? alanSecildi
-        : suanki === 'bolum'
-          ? bolumSonra || (secilenUni !== null && secilenBolum !== null)
-          : suanki === 'notlar'
-            ? notlarSonra || notVar
-            : true
+      : suanki === 'sinif'
+        ? sinif !== null
+          : suanki === 'alan'
+            ? alanSecildi
+            : suanki === 'bolum'
+              ? bolumSonra || (secilenUni !== null && secilenBolum !== null)
+              : suanki === 'notlar'
+                ? notlarSonra || notVar
+                : true
   /**
    * Ad ipucu iki yüzlü: boş alanda **soluk** bir yönerge, kısa yazılmış adda
    * **kırmızı** bir uyarı.
@@ -397,6 +411,9 @@ export function Kurulum({
     // Android 13+ izni de burada isteniyor: saat kurulduktan hemen sonra, ne
     // için sorulduğu belliyken. Reddedilirse kurulum yine tamamlanıyor,
     // yalnızca hatırlatma kapalı kaydediliyor — Ayarlar'dan tekrar denenebilir.
+    // Sınıf adımı seçimsiz geçilemiyor; buraya `null` gelmesi akışın
+    // bozulduğu anlamına gelir ve kayda uydurma bir sınıf yazılmamalı.
+    if (sinif === null) return
     const izinli = await izinIste()
     const obp = Number(obpMetni.replace(',', '.'))
     setHazirlanan({
