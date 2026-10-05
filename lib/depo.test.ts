@@ -1,5 +1,13 @@
 import { describe, expect, it, vi } from 'vitest'
-import { ayarlariNormalize, elenenSoruSayisi, tumVeriyiSil, yedegiDogrula, yedekOlustur } from './depo'
+import {
+  ANAHTARLAR,
+  ayarlariNormalize,
+  elenenSoruSayisi,
+  tumVeriyiSil,
+  yedegiDogrula,
+  yedegiUygula,
+  yedekOlustur,
+} from './depo'
 import { TUR_ANAHTARLARI } from './tanitim'
 import { ANIMASYON_ANAHTARI } from './tanitim-animasyonu'
 import type { Yedek } from './types'
@@ -165,6 +173,57 @@ describe('yedegiDogrula', () => {
 
   it('resim alanı yoksa undefined kalır', () => {
     expect(coz(yedekOlustur(bos)).resimler).toBeUndefined()
+  })
+
+  it('konu takibini taşır ve bozuk alanlarını süzer', () => {
+    const yedek = coz({
+      ...yedekOlustur(bos),
+      yksKonuTakibi: {
+        surum: 1,
+        konular: {
+          'tyt-mat-uslu': { okul: '2026-10-01', bitti: '2026-10-04' },
+          'tyt-mat-koklu': { soru: 'bozuk' },
+        },
+      },
+    })
+    expect(yedek.yksKonuTakibi).toEqual({
+      surum: 1,
+      konular: { 'tyt-mat-uslu': { okul: '2026-10-01', bitti: '2026-10-04' } },
+    })
+  })
+
+  it('konu takibi olmayan eski yedekte alan undefined kalır', () => {
+    expect(coz(yedekOlustur(bos)).yksKonuTakibi).toBeUndefined()
+  })
+})
+
+describe('yedegiUygula — konu takibi', () => {
+  function sahteDepo() {
+    const depo = new Map<string, string>()
+    vi.stubGlobal('localStorage', {
+      getItem: (k: string) => depo.get(k) ?? null,
+      setItem: (k: string, v: string) => void depo.set(k, v),
+      removeItem: (k: string) => void depo.delete(k),
+      key: (i: number) => [...depo.keys()][i] ?? null,
+      get length() { return depo.size },
+    })
+    return depo
+  }
+
+  it('yedekteki takibi yazar', () => {
+    const depo = sahteDepo()
+    const takip = { surum: 1 as const, konular: { 'tyt-mat-uslu': { bitti: '2026-10-04' } } }
+    yedegiUygula({ ...yedekOlustur(bos), yksKonuTakibi: takip })
+    vi.unstubAllGlobals()
+    expect(JSON.parse(depo.get(ANAHTARLAR.yksKonuTakibi)!)).toEqual(takip)
+  })
+
+  it('eski yedek mevcut takibe dokunmaz', () => {
+    const depo = sahteDepo()
+    depo.set(ANAHTARLAR.yksKonuTakibi, '{"surum":1,"konular":{"a":{"okul":"2026-10-01"}}}')
+    yedegiUygula(yedekOlustur(bos))
+    vi.unstubAllGlobals()
+    expect(depo.get(ANAHTARLAR.yksKonuTakibi)).toBe('{"surum":1,"konular":{"a":{"okul":"2026-10-01"}}}')
   })
 })
 

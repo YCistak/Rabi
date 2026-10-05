@@ -34,6 +34,7 @@ import { dakikayiKirp, saatiKirp } from './hatirlatma'
 import { yeniId } from './utils'
 import { gorevleriNormalize, type Gorev } from './yapilacaklar'
 import type { BilinmeyenKart, KonuIlerlemeleri } from './konu/ilerleme'
+import { takibiCoz } from './konu-takibi/kayit'
 import type { AylikOzetArsivi } from './ozet'
 import { okumaGecmisiniCoz, type OkumaSeansi } from './konu/okuma-suresi'
 
@@ -65,6 +66,13 @@ export const ANAHTARLAR = {
   konuIlerleme: 'rabi-konu-ilerleme',
   /** Konu Anlatımı'nda "bilmiyorum" denen kartlar. */
   bilinmeyenKartlar: 'rabi-bilinmeyen-kartlar',
+  /**
+   * Konu Takibi: YKS konularında elle işaretlenen aşamalar ve "bitirdim"
+   * (`lib/konu-takibi/takip.ts`). Sürümlü (`{ surum: 1, konular }`); okurken
+   * `takibiCoz` süzüyor. "Haritada çalıştım" burada değil, `konuIlerleme`den
+   * hesaplanıyor. Yedeğe giriyor.
+   */
+  yksKonuTakibi: 'rabi-yks-konu-takibi',
   /**
    * Konu haritasında en son seçili ders ve sınıf.
    *
@@ -535,6 +543,9 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       konuIlerleme: nesne.konuIlerleme as KonuIlerlemeleri | undefined,
       aylikOzetler: nesne.aylikOzetler as AylikOzetArsivi | undefined,
       okumaGecmisi: Array.isArray(nesne.okumaGecmisi) ? okumaGecmisiniCoz(nesne.okumaGecmisi) : undefined,
+      // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
+      // kullanıcının mevcut takibine dokunulmuyor.
+      yksKonuTakibi: nesne.yksKonuTakibi === undefined ? undefined : takibiCoz(nesne.yksKonuTakibi),
       bilinmeyenKartlar: Array.isArray(nesne.bilinmeyenKartlar)
         ? (nesne.bilinmeyenKartlar as BilinmeyenKart[])
         : undefined,
@@ -768,6 +779,8 @@ export function yedegiUygula(yedek: Yedek) {
     yaz(ANAHTARLAR.aylikOzetler, { ...oku<AylikOzetArsivi>(ANAHTARLAR.aylikOzetler, {}), ...yedek.aylikOzetler })
   }
   if (yedek.bilinmeyenKartlar) yaz(ANAHTARLAR.bilinmeyenKartlar, yedek.bilinmeyenKartlar)
+  // Eski yedeklerde konu takibi yok; boş yazmak işaretlenmiş konuları silerdi.
+  if (yedek.yksKonuTakibi) yaz(ANAHTARLAR.yksKonuTakibi, yedek.yksKonuTakibi)
   // Eski yedeklerde tahta yok; boş dizi yazmak kullanıcının kâğıtlarını silerdi.
   if (yedek.notlar) yaz(ANAHTARLAR.notlar, yedek.notlar)
   yaz(ANAHTARLAR.pomodoroGecmis, yedek.pomodoroGecmis)

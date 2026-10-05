@@ -110,7 +110,7 @@ export function IstatistikEkrani({
       <div>
         {baslik}
         <BosDurum
-          simge={<Rabi durum="uykulu" poz="kahveli" boyut={96} />}
+          simge={<Rabi durum="normal" poz="bitkili" boyut={96} />}
           baslik="Henüz veri yok"
           aciklama="Deneme ekledikçe son netin, hangi derste kazanıp kaybettiğin ve denemelerinin karşılaştırması burada oluşur."
         />

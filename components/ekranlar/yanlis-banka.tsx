@@ -163,7 +163,7 @@ export function YanlisBankaEkrani({
 
       {ozet.toplam === 0 ? (
         <BosDurum
-          simge={<Rabi durum="uykulu" poz="kahveli" boyut={96} />}
+          simge={<Rabi durum="normal" poz="buyutecli" boyut={96} />}
           baslik="Banka boş"
           aciklama="Çözemediğin bir soruyla karşılaşınca fotoğrafını çek. Rabi ders ders ayırıp saklar, sonra hepsine tek tek dönersin."
         />

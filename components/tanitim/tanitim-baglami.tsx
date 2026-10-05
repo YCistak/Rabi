@@ -75,6 +75,8 @@ function useTanitimDurumu(deneyMi: boolean) {
     turuKaydet(durum.aktifTur)
     // Ana tur deneme eklemeyi gösterdiyse Denemeler'in kendi kısa turu bir daha açılmıyor.
     if (durum.aktifTur === 'ana_tur' && durum.aktifAdim !== null && durum.aktifAdim >= TANITIM_ADIMLARI.findIndex((adim) => adim.kimlik === 'deneme-ekle')) turuKaydet('denemeler')
+    // Haritanın iki kitabını gösterdiyse Harita'nın kendi kısa turu da açılmıyor.
+    if (durum.aktifTur === 'ana_tur' && durum.aktifAdim !== null && durum.aktifAdim >= TANITIM_ADIMLARI.findIndex((adim) => adim.kimlik === 'harita-ders')) turuKaydet('konu_haritasi')
     eylemGonder({ tur: 'demo-temizle' })
     gecisRef.current = setTimeout(() => {
       eylemGonder({ tur: 'temizle' })

@@ -282,6 +282,8 @@ export function KonuHaritasiEkrani({
   ilerlemeler,
   setIlerlemeler,
   onOkumaSeansi,
+  acilacakKonu = null,
+  onKonuAcildi,
 }: {
   secim: { ders: KonuDersId; sinif: HaritaSinifi }
   setSecim: (secim: { ders: KonuDersId; sinif: HaritaSinifi }) => void
@@ -291,6 +293,13 @@ export function KonuHaritasiEkrani({
   setIlerlemeler: (guncelle: (onceki: KonuIlerlemeleri) => KonuIlerlemeleri) => void
   /** Deste kapanınca geçen süre buraya yazılıyor; kayıt `AppShell`de. */
   onOkumaSeansi: (seans: OkumaSeansi) => void
+  /**
+   * Konu Takibi'nden gelen "bu konuyu aç" isteği. Harita o dersin ve sınıfın
+   * programına geçip konunun kartını açıyor, sonra `onKonuAcildi` ile isteği
+   * tüketiyor.
+   */
+  acilacakKonu?: { ders: KonuDersId; sinif: HaritaSinifi; konuId: string } | null
+  onKonuAcildi?: () => void
 }) {
   /** Açık deste; null ise harita görünüyor. */
   const [acikKonu, setAcikKonu] = useState<{
@@ -347,6 +356,9 @@ export function KonuHaritasiEkrani({
     başka bir sınıfa geçen kullanıcının seçimi o ziyaret boyunca kalıyor.
   */
   useEffect(() => {
+    // Konu Takibi'nden belirli bir konu istendiyse onun sınıfı kazanıyor:
+    // 11. sınıf öğrencisi TYT trigonometrisi için 10. sınıfın haritasına gidiyor.
+    if (acilacakKonu) return
     if (kullaniciSinifi !== null && secim.sinif !== kullaniciSinifi) sinifSec(kullaniciSinifi)
     // Seçimin kendisi bağımlılık değil: her seçimde kendi sınıfına geri atardı.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -396,6 +408,34 @@ export function KonuHaritasiEkrani({
 
   /** Yoldaki ilk yapılabilir basamak — halka ve geçilen yol buna bakıyor. */
   const siradaki = basamaklar.find((b) => basamakDurumu(b) === 'aktif') ?? null
+
+  /*
+    Konu Takibi'nden gelen istek. Seçim önce isteğin programına geçiyor
+    (`AppShell` zaten geçirdi ama ilk çizimde eski seçim olabilir); program
+    tuttuğunda konunun anlatım kitabının kartı açılıyor — öğrenci haritada
+    konuyu aramak zorunda kalmasın. Kart, kitaba basınca açılanın aynısı:
+    kilitliyse "Kilidi aç" diyor, kural burada da geçerli.
+  */
+  useEffect(() => {
+    if (!acilacakKonu) return
+    if (secim.ders !== acilacakKonu.ders || secim.sinif !== acilacakKonu.sinif) {
+      setSecim({ ders: acilacakKonu.ders, sinif: acilacakKonu.sinif })
+      return
+    }
+    const temaSirasi = program?.temalar.findIndex((t) => t.konular.some((k) => k.id === acilacakKonu.konuId)) ?? -1
+    const basamak = basamaklar.find((b) => b.tur === 'kart' && b.konu.id === acilacakKonu.konuId)
+    if (program && basamak && temaSirasi >= 0) {
+      const tema = program.temalar[temaSirasi]
+      setSayfa({
+        basamak,
+        bolum: { sira: temaSirasi + 1, biten: temadaBiten(tema, ilerlemeler), toplam: tema.konular.length },
+      })
+    }
+    onKonuAcildi?.()
+    // Yalnızca istek ve seçim değişince; `ilerlemeler` kartın sayısını
+    // belirliyor ama değişmesi isteği yeniden açtırmamalı.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [acilacakKonu, secim, basamaklar])
 
   function desteBitti(acik: { konu: Konu; temaAdi: string }, sonuc: DesteSonucu) {
     setAcikKonu(null)
@@ -612,7 +652,7 @@ export function KonuHaritasiEkrani({
         </Kart>
       ) : program === null ? (
         <Kart data-tanitim="konu-haritasi" className="flex flex-col items-center px-6 py-10 text-center">
-          <Rabi durum="calisiyor" poz="okuyan" boyut={92} />
+          <Rabi durum="calisiyor" poz="haritali" boyut={92} />
           <p className="mt-3 font-display text-[17px] font-extrabold tracking-tight">
             {secim.sinif}. sınıf {dersAdi} hazırlanıyor
           </p>
@@ -766,6 +806,10 @@ function TemaBolumu({
     kadar boyanıyor, ötesine değil — kullanıcı oraya yürüdü, orada duruyor.
   */
   const siradakiIndeks = basamaklar.findIndex((b) => b.no === siradakiNo)
+  /** Tanıtım turunun gösterdiği iki kitap: ilk bölümün ilk yeşil ve ilk turuncu kitabı. */
+  const ilkKart = basamaklar.findIndex((b) => b.tur === 'kart')
+  const ilkSoru = basamaklar.findIndex((b) => b.tur === 'soru')
+  const tanitimHedefi = (i: number) => (i === ilkKart ? 'harita-kart' : i === ilkSoru ? 'harita-soru' : undefined)
   const gecilen =
     siradakiIndeks >= 0
       ? siradakiIndeks + (ilk ? 0 : 1)
@@ -840,6 +884,7 @@ function TemaBolumu({
         {basamaklar.map((b, i) => (
           <Dugum
             key={`${b.konu.id}-${b.tur}`}
+            tanitimHedefi={ilk ? tanitimHedefi(i) : undefined}
             basamak={b}
             x={kayma(b.no)}
             y={ust + i * ADIM}
@@ -1046,7 +1091,10 @@ function Dugum({
   durum,
   simdi,
   onAc,
+  tanitimHedefi,
 }: {
+  /** Tanıtım turunun aydınlattığı kitaplar (`data-tanitim`). */
+  tanitimHedefi?: string
   basamak: Basamak
   /** Kutunun ortasının ekran ortasından kayması, piksel. */
   x: number
@@ -1072,6 +1120,7 @@ function Dugum({
     <button
       type="button"
       role="listitem"
+      data-tanitim={tanitimHedefi}
       onClick={onAc}
       aria-label={`${basamak.konuSirasi}. konu — ${soru ? 'sorular' : 'bilgi kartları'} — ${nedeni}`}
       className={cn('absolute grid place-items-center', durum === 'yazilmadi' && 'opacity-60')}
@@ -1394,7 +1443,7 @@ function KonuKarti({
             style={{ filter: 'drop-shadow(0 8px 10px var(--patika-golge))' }}
             aria-hidden
           >
-            <Rabi durum="calisiyor" poz={soru ? 'dusunen' : 'okuyan'} boyut={84} />
+            <Rabi durum="calisiyor" poz={soru ? 'dusunen' : 'kitapli'} boyut={84} />
           </div>
 
           <div className="flex min-w-0 flex-1 flex-col gap-3">

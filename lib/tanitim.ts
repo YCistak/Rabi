@@ -56,7 +56,12 @@ export const TANITIM_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'deneme-ekle', hedef: 'deneme-ekle', baslik: 'Şimdi sıra sende', aciklama: 'Deneme ekle’ye dokun. Bu deneme de tanıtıma ait; tur bitince silinecek.', tiklamali: true },
   { kimlik: 'deneme-okut', hedef: 'deneme-okut', etkilesimli: true, baslik: 'Fotoğraftan okut', aciklama: 'Derslerin doğru ve yanlış sayılarını bir kâğıda satır satır yazdıysan fotoğrafını çek, Rabi okuyup forma yazsın. Denemek istersen Okut’a dokun; İleri’ye dokunursan örnek sonuçlar forma kendiliğinden yazılır.', tiklamali: false },
   { kimlik: 'deneme-kaydet', hedef: 'deneme-kaydet', kayit: 'deneme', kisa: true, baslik: 'Denemeni kaydet', aciklama: 'Sonuçlar forma yazıldı ve netin hesaplandı. Kaydet’e dokun.', ipucu: 'Kaydet’e dokun', tiklamali: true },
-  { kimlik: 'istatistik-ac', hedef: 'arac-istatistik', baslik: 'Gidişatını izle', aciklama: 'Denemen kaydedildi. Şimdi İstatistik’e dokun; denemelerin orada karşılaştırılır.', tiklamali: true },
+  { kimlik: 'konu-takibi-ac', hedef: 'arac-konu-takibi', baslik: 'Konularını takip et', aciklama: 'Denemen kaydedildi. Şimdi Konu Takibi’ne dokun.', tiklamali: true },
+  { kimlik: 'konu-takibi', hedef: 'konu-takibi', baslik: 'Konu konu işaretle', aciklama: 'TYT ve AYT konularını alanına göre görürsün. Okulda öğrendiğin ve soru çözdüğün konuyu işaretle; konu bitince soldaki daireye dokun.', ileriEtiketi: 'Haritaya geç', tiklamali: false },
+  { kimlik: 'harita-ac', hedef: 'harita-ac', baslik: 'Konuları haritada çalış', aciklama: 'Alt menüde Harita’ya dokun.', tabletAciklama: 'Sağdaki menüde Harita’ya dokun.', tiklamali: true },
+  { kimlik: 'harita-ders', hedef: 'harita-kart', baslik: 'Yeşil kitap: konu anlatımı', aciklama: 'Yeşil kitaba dokunup konunun kartlarını okursun; dersi burada çalışırsın.', tiklamali: false },
+  { kimlik: 'harita-soru', hedef: 'harita-soru', baslik: 'Turuncu kitap: sorular', aciklama: 'Kartları okuyunca turuncu kitapla konunun sorularını çözersin. Haritada bitirdiğin konu Konu Takibi’nde kendiliğinden işaretlenir.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
+  { kimlik: 'istatistik-ac', hedef: 'arac-istatistik', baslik: 'Gidişatını izle', aciklama: 'Şimdi İstatistik’e dokun; kaydettiğin deneme orada öncekilerle karşılaştırılır.', tiklamali: true },
   { kimlik: 'istatistik-tur', hedef: 'istatistik-turler', baslik: 'Deneme türünü seç', aciklama: 'Her tür kendi içinde hesaplanır; TYT ile AYT netleri birbirine karışmaz. Bir türün istatistiği o türden iki deneme olunca açılır.', tiklamali: false },
   { kimlik: 'istatistik-son', hedef: 'istatistik-son-net', baslik: 'Son netin ve değişimi', aciklama: 'Son denemenin netini ve bir öncekine göre farkını görürsün. Altında önceki netin ve ortalaman, sağda son dört denemenin netleri yan yana.', tiklamali: false },
   { kimlik: 'istatistik-ilerleyen', hedef: 'istatistik-ilerleyen', baslik: 'En çok ilerlediğin dersler', aciklama: 'Son iki deneme arasında neti en çok artan dersler sıralanır. Daha fazla ile bütün derslerin değişimini görürsün.', tiklamali: false },
@@ -80,7 +85,7 @@ export const DENEME_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'deneme-ekle', hedef: 'deneme-ekle', baslik: 'Netlerini kaydet', aciklama: 'Deneme ekle ile TYT, AYT veya diğer denemelerinin doğru ve yanlışlarını girersin. Netlerin otomatik hesaplanır; gelişimini İstatistik’te izlersin.', tiklamali: false },
 ]
 export const HARITA_ADIMLARI: readonly TanitimAdimi[] = [
-  { kimlik: 'konu-haritasi', hedef: 'konu-haritasi', baslik: 'Eksiklerini tek bakışta gör', aciklama: 'Konuları tamamladıkça dersinin ilerlemesi artar. Konu kartları ve bölüm ilerlemesi, bitirdiklerini ve sıradaki konunu gösterir.', tiklamali: false },
+  { kimlik: 'konu-haritasi', hedef: 'konu-haritasi', baslik: 'Eksiklerini tek bakışta gör', aciklama: 'Yeşil kitapta konunun kartlarını okursun, turuncu kitapta sorularını çözersin. Haritada bitirdiğin konu Konu Takibi’nde kendiliğinden işaretlenir.', tiklamali: false },
 ]
 export const TUR_ADIMLARI: Record<TanitimTuru, readonly TanitimAdimi[]> = { ana_tur: TANITIM_ADIMLARI, denemeler: DENEME_ADIMLARI, konu_haritasi: HARITA_ADIMLARI }
 export type TanitimZorlugu = 'kolay' | 'orta' | 'zor'
@@ -145,7 +150,9 @@ const sira = (kimlik: string) => TANITIM_ADIMLARI.findIndex((adim) => adim.kimli
 const GERI_HEDEFI: Record<string, string> = {
   'soru-kaydedildi': 'soru-ekle',
   'gorev-kaydedildi': 'gorev-ekle',
-  'istatistik-ac': 'deneme-liste',
+  // Deneme kaydedildikten sonra geri, kaydetme formuna değil listeye dönüyor
+  // (form yeniden açılsaydı ikinci bir örnek deneme kaydedilirdi).
+  'konu-takibi-ac': 'deneme-liste',
 }
 /** Deneme formunun Vazgeç'i: form kapanıp "Deneme ekle" adımına dönülüyor. */
 export const DENEME_VAZGEC = 'deneme-vazgec'
@@ -210,16 +217,20 @@ const ARAC_EKRANLARI: Record<string, Ekran> = {
   'soru-ekle': 'soru', 'soru-form': 'soru', 'soru-kaydedildi': 'soru',
   'gorev-ekle': 'notlar', 'gorev-form': 'notlar', 'gorev-kaydedildi': 'notlar',
   'deneme-liste': 'deneme', 'deneme-ekle': 'deneme', 'deneme-okut': 'deneme', 'deneme-kaydet': 'deneme',
+  'konu-takibi': 'konu-takibi', 'harita-ac': 'konu-takibi',
   'istatistik-tur': 'istatistik', 'istatistik-son': 'istatistik', 'istatistik-ilerleyen': 'istatistik', 'istatistik-kutular': 'istatistik', 'istatistik-karsilastir': 'istatistik',
 }
 const BANKA_ADIMLARI = ['banka', 'banka-liste', 'banka-test', 'banka-ogrendim']
-const ARACLAR_SEKMESI = ['pomodoro-ac', 'soru-ac', 'gorev-ac', 'deneme-ac', 'istatistik-ac']
+const ARACLAR_SEKMESI = ['pomodoro-ac', 'soru-ac', 'gorev-ac', 'deneme-ac', 'konu-takibi-ac', 'istatistik-ac']
+/** Ana turun Harita sekmesinde geçen adımları — kitaplar ve "Araçlara dön". */
+export const HARITA_TUR_ADIMLARI = ['harita-ders', 'harita-soru']
 
 export function tanitimKonumu(adim: TanitimAdimi): TanitimKonumu {
   const ekran = ARAC_EKRANLARI[adim.kimlik]
   if (ekran) return { sekme: 'daha', ekran, denemeFormu: DENEME_FORMU_ADIMLARI.includes(adim.kimlik) }
   if (ARACLAR_SEKMESI.includes(adim.kimlik)) return { sekme: 'daha', ekran: null, denemeFormu: false }
   if (BANKA_ADIMLARI.includes(adim.kimlik)) return { sekme: 'oyunlar', ekran: 'oyun-bankasi', denemeFormu: false }
+  if (HARITA_TUR_ADIMLARI.includes(adim.kimlik)) return { sekme: 'harita', ekran: null, denemeFormu: false }
   return { sekme: ['demo-ac', 'zorluk', 'oyun-baslat', 'oyun-sayac', 'soru-bir', 'sonuc', 'banka-ac'].includes(adim.kimlik) ? 'oyunlar' : 'ana', ekran: null, denemeFormu: false }
 }
 

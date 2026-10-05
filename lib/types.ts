@@ -7,6 +7,7 @@ import type { Gorev } from './yapilacaklar'
 import type { BilinmeyenKart, KonuIlerlemeleri } from './konu/ilerleme'
 import type { AylikOzetArsivi } from './ozet'
 import type { OkumaSeansi } from './konu/okuma-suresi'
+import type { YksTakip } from './konu-takibi/kayit'
 
 // ---------------------------------------------------------------------------
 // Deneme
@@ -437,6 +438,11 @@ export type Yedek = {
    */
   konuIlerleme?: KonuIlerlemeleri
   bilinmeyenKartlar?: BilinmeyenKart[]
+  /**
+   * Konu Takibi'nin elle işaretlenen aşamaları. Eski yedeklerde yok — geri
+   * yüklemede yazılmıyor, kullanıcının mevcut kaydına dokunulmuyor.
+   */
+  yksKonuTakibi?: YksTakip
   /**
    * Kapanmış ayların hesaplanmış özetleri. Eski yedeklerde yok; geri
    * yüklemede cihazdaki arşivle **birleştiriliyor**, üstüne yazılmıyor.
