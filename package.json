@@ -1,6 +1,6 @@
 {
   "name": "rabi",
-  "version": "0.1.0",
+  "version": "0.9.2",
   "private": true,
   "scripts": {
     "predev": "node scripts/ocr-hazirla.mjs",
