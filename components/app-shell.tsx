@@ -1034,10 +1034,20 @@ function RabiUygulamasi() {
       >
         {ekran !== null ? (
           <>
+            {/*
+              Ekranın içinde açılan bir alt görünüm varsa (Konu Takibi'nde bir
+              ders) "Geri" önce onu kapatıyor — Android'in geri tuşu ve iOS'un
+              kenar kaydırmasıyla aynı sıra. Ekran kendi ikinci geri düğmesini
+              çizmek zorunda kalmıyor; üstte iki geri, hangisinin nereye
+              götürdüğünü belirsiz bırakıyordu. Pencereler ve tam ekran
+              katmanlar bu düğmeyi zaten örtüyor.
+            */}
             <Buton
               bicim="hayalet"
               boy="kucuk"
-              onClick={() => setEkran(null)}
+              onClick={() => {
+                if (!ustKatmaniKapat()) setEkran(null)
+              }}
               className="-ml-2 mb-3"
             >
               <ArrowLeft size={16} aria-hidden /> Geri

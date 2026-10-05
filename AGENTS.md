@@ -2684,8 +2684,8 @@ konunun kartında düğme "Kilidi aç" ve önce onay penceresi çıkıyor (bkz.
 
 Araçlar › Çalışma'daki **Konu Takibi** (`components/ekranlar/konu-takibi.tsx`,
 mantık `lib/konu-takibi/`): öğrenci TYT ve AYT konularını aşama aşama
-işaretliyor — 🗺️ Haritada çalıştım, 🏫 Okulda öğrendim, ✍️ Soru çözdüm ve
-ayrı, daha ağır bir ✅ Bitirdim.
+işaretliyor — Haritada çalıştım, Okulda öğrendim, Soru çözdüm ve ayrı bir
+Bitirdim.
 
 - **Liste haritadan ayrı.** Harita Maarif'in ders → sınıf → tema → konu
   yapısında; YKS sınıf değil sınav soruyor ve öğrencinin bankası, deneme
@@ -2711,8 +2711,37 @@ ayrı, daha ağır bir ✅ Bitirdim.
   gösterilmiyor — elle bir kutu, olmayan bir haritayı çalışılmış saymak
   olurdu. 12. sınıf kartları yazılınca tabloya eklenir; `takip.test.ts` iki
   uçtaki kimliklerin varlığını denetliyor.
-- **Bitirdim engellenmiyor.** Aşamalar sıralı ya da zorunlu değil; eksik
-  aşama varsa nazik bir onay hatırlatıyor (kırmızı değil, geri alınabilir).
+- **İşaret satırın kendisinde.** Solda ilerleme dairesi (aşama sayısına göre
+  dolan yay; dokununca Bitirdim aç/kapa), sağda sabit genişlikte üç yuva:
+  harita (salt okunur, küçük ve boşken kesik kenarlı; karşılığı olmayan
+  konuda yuva boş ama yer tutuyor), okul, soru (44 piksel dokunma alanı).
+  Simgeler lucide çizgi ikon, emoji değil; dolu hâl ders renginde dolgu,
+  boş hâl kenarlık. Ada dokunmak kompakt ayrıntıyı açıyor: harita durumu ve
+  "Haritaya git", toplu eylem, işaret günleri. Eskiden bir konu dört-beş
+  dokunuştu (aç → okul → soru → Bitirdim → onay), şimdi en çok üç.
+- **Bitirdim engellenmiyor ve sormuyor.** Eksik aşama varsa pencere değil
+  Geri al'lı kısa bir bildirim ("Bitti · eksik: okul, soru"). Konfeti
+  yalnızca dersin son konusu bitince; art arda işaretlemede her konuda
+  patlayan kutlama listeyi kapatıyordu.
+- **"Bu ve önceki konuları okulda işlendi say"** (`oncekiOkulsuzlar`):
+  ilk kullanımda okulda işlenmiş yirmi-kırk konuyu tek dokunuşla girmenin
+  yolu. Yalnızca aynı bölümde, yalnızca okul aşaması, bildirimde Geri al.
+- **Özet tek segmentli çubuk** (bitti › soru › okul › kalan, her konu en
+  ileri aşamasında) ve tek satır sayı; yüzde yok. Büyük halka yalnızca
+  Bitirdim'i sayıyordu ve okulda işaretleyen öğrenci haftalarca %0
+  görüyordu.
+- **Öneri yarım kalanı öne alıyor** (`siradakiKonu`, `devamKonusu`): önce en
+  son işaretlenen yarım konu (aynı gün işaretlenenlerde listede sonraki),
+  yoksa müfredat sırasındaki ilk dokunulmamış konu. Girişte dersler arası
+  tek "Devam et" kartı. Hiç işaret yokken ipucu ve lejant — ayrı bir ayar
+  değil, kayıt boş mu diye türetiliyor.
+- **Tek geri.** Ders ekranının kendi geri düğmesi yok; kabuğun "Geri"si
+  önce açık katmanı (dersi) kapatıyor, Android geri tuşu ve iOS kenar
+  kaydırmasıyla aynı sıra. Seçili sekme, açık ders ve liste kaydırması
+  `sessionStorage`'da (oturumluk, kalıcı ayar değil).
+- **Binom AYT'de** ama kimliği `tyt-mat-binom`: TYT'lerde soru çıkmıyor,
+  AYT'lerde her yıl bir soru var. Taşınan konu kimliğini korur
+  (`TASINAN_KONULAR`, `takip.test.ts`).
 - **Kayıt** `rabi-yks-konu-takibi`, sürümlü (`{ surum: 1, konular }`), işaret
   yerine gün tutuyor; okurken `takibiCoz` süzüyor ve yedeğe giriyor
   (`Yedek.yksKonuTakibi`, eski yedekte yoksa mevcut kayda dokunulmuyor).

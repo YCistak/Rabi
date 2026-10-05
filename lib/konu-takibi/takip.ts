@@ -3,7 +3,7 @@ import type { Konu, KonuDersId, KonuSinifi } from '../konu/tip'
 import { konuBitti, konuTamam, type KonuIlerlemeleri } from '../konu/ilerleme'
 import { HARITA_ESLEMESI } from './harita-eslemesi'
 import type { YksDers, YksKonu } from './liste'
-import type { ElleAsama, YksKonuKaydi, YksTakip } from './kayit'
+import { asamaYaz, type ElleAsama, type YksKonuKaydi, type YksTakip } from './kayit'
 
 export { BOS_TAKIP, asamaYaz, takibiCoz } from './kayit'
 export type { ElleAsama, YazilanAlan, YksKonuKaydi, YksTakip } from './kayit'
@@ -136,8 +136,10 @@ export function konuDurumu(
 /**
  * "Bitirdim"e basarken hatırlatılacak eksik aşamalar.
  *
- * Yalnızca **hatırlatma**: liste boş değilse ekran nazik bir onay soruyor,
- * öğrenci yine de bitirebiliyor. Haritada karşılığı olmayan konuda harita
+ * Yalnızca **hatırlatma**: konu yine de bitiyor, ekran eksikleri kısa ve
+ * kendiliğinden kaybolan bir bildirimde ("Bitti · eksik: okul, soru · Geri
+ * al") söylüyor. Bir süre onay penceresiydi; art arda işaretlemede her konu
+ * fazladan bir dokunuş istiyordu. Haritada karşılığı olmayan konuda harita
  * eksik sayılmıyor — orada yapılabilecek bir şey yok.
  */
 export function eksikAsamalar(durum: KonuDurumu): AsamaId[] {
@@ -151,24 +153,37 @@ export function eksikAsamalar(durum: KonuDurumu): AsamaId[] {
 export type DersOzeti = {
   toplam: number
   biten: number
-  /** Aşama dağılımı: o aşaması dolu konu sayısı. */
+  /** Aşama dağılımı: o aşaması dolu konu sayısı (bitmişler dahil). */
   okul: number
   soru: number
   harita: number
   /** Haritada karşılığı olan konu sayısı — harita sayısının paydası. */
   haritali: number
+  /**
+   * Segmentli çubuğun dilimleri — her konu **en ileri** aşamasına göre tek
+   * dilimde: bitti › soru çözüldü › okulda işlendi › kalan. Yukarıdaki
+   * sayılar örtüşüyor (soru çözülen konu çoğunlukla okulda da işlendi);
+   * çubuk örtüşen sayılarla çizilseydi dilimlerin toplamı konu sayısını
+   * aşardı.
+   */
+  soruda: number
+  okulda: number
 }
+
+const BOS_OZET: DersOzeti = { toplam: 0, biten: 0, okul: 0, soru: 0, harita: 0, haritali: 0, soruda: 0, okulda: 0 }
 
 export function dersOzeti(
   ders: YksDers,
   takip: YksTakip,
   ilerlemeler: KonuIlerlemeleri,
 ): DersOzeti {
-  const ozet: DersOzeti = { toplam: 0, biten: 0, okul: 0, soru: 0, harita: 0, haritali: 0 }
+  const ozet: DersOzeti = { ...BOS_OZET }
   for (const konu of ders.konular) {
     const d = konuDurumu(konu.id, takip, ilerlemeler)
     ozet.toplam += 1
     if (d.bitti) ozet.biten += 1
+    else if (d.kayit.soru) ozet.soruda += 1
+    else if (d.kayit.okul) ozet.okulda += 1
     if (d.kayit.okul) ozet.okul += 1
     if (d.kayit.soru) ozet.soru += 1
     if (d.harita) {
@@ -179,46 +194,132 @@ export function dersOzeti(
   return ozet
 }
 
-/** Birden çok dersin toplamı — sekmenin üstündeki büyük halka. */
+/** Birden çok dersin toplamı — sekmenin üstündeki özet çubuğu. */
 export function toplamOzet(ozetler: readonly DersOzeti[]): DersOzeti {
-  return ozetler.reduce<DersOzeti>(
-    (t, o) => ({
-      toplam: t.toplam + o.toplam,
-      biten: t.biten + o.biten,
-      okul: t.okul + o.okul,
-      soru: t.soru + o.soru,
-      harita: t.harita + o.harita,
-      haritali: t.haritali + o.haritali,
-    }),
-    { toplam: 0, biten: 0, okul: 0, soru: 0, harita: 0, haritali: 0 },
-  )
+  const toplam: DersOzeti = { ...BOS_OZET }
+  for (const o of ozetler) {
+    for (const alan of Object.keys(toplam) as (keyof DersOzeti)[]) toplam[alan] += o[alan]
+  }
+  return toplam
 }
 
-/** Yüzde, aşağı yuvarlanmış: "%100" yalnızca gerçekten hepsi bitince yazılsın. */
-export function yuzde(biten: number, toplam: number): number {
-  return toplam > 0 ? Math.floor((biten / toplam) * 100) : 0
+// ---------------------------------------------------------------------------
+// Öneri: yarım kalan konu önde
+// ---------------------------------------------------------------------------
+
+/** Konunun en son işaretlendiği gün (okul, soru ya da bitti); hiç yoksa `null`. */
+export function sonIsaretGunu(kayit: YksKonuKaydi): string | null {
+  let son: string | null = null
+  for (const gun of [kayit.okul, kayit.soru, kayit.bitti]) {
+    // 'YYYY-AA-GG' metin olarak da tarih sırasında karşılaştırılıyor.
+    if (gun && (son === null || gun > son)) son = gun
+  }
+  return son
+}
+
+/**
+ * Yarım kalan konu: bitmemiş ama dokunulmuş — en az bir aşaması dolu ya da
+ * haritada başlanmış. "Devam et" ve sıradaki öneri önce bunlara bakıyor:
+ * öğrencinin elinde yarım kalan iş, hiç başlanmamış bir konudan önce gelir.
+ */
+export function yarimMi(durum: KonuDurumu): boolean {
+  return !durum.bitti && (durum.dolu > 0 || durum.harita?.durum === 'basladi')
+}
+
+/**
+ * İki yarım konudan hangisi önde: en son işaretlenen. Kayıtta saat değil
+ * gün var; aynı gün işaretlenenlerde **listede sonra gelen** önde. Öğrenci
+ * listeyi yukarıdan aşağı işaretliyor ve toplu "bu ve öncekiler" eylemi de
+ * en alttaki konuda bitiyor — aynı gündeki en alttaki, büyük olasılıkla en
+ * son dokunulanı. Haritada başlanmış ama elle işaretlenmemiş konunun günü
+ * yok; o, günü olanların arkasında kalıyor.
+ */
+function dahaYeni(a: { gun: string | null; sira: number }, b: { gun: string | null; sira: number }): boolean {
+  const ga = a.gun ?? ''
+  const gb = b.gun ?? ''
+  if (ga !== gb) return ga > gb
+  return a.sira > b.sira
 }
 
 /**
  * Derste sıradaki önerilen konu.
  *
- * Bitmemiş konulardan **en çok aşaması dolu** olan: bitmeye en yakın konu,
- * öğrencinin elinde yarım kalan iş. Eşitlikte listedeki sıra kazanıyor
- * (müfredat sırası). Hiçbirine dokunulmamışsa ilk bitmemiş konu; hepsi
- * bittiyse `null`. Yarım harita, dolu aşama sayılmıyor ama eşitliği bozuyor:
- * haritada başlanmış konu, hiç başlanmamış olandan önce geliyor.
+ * Önce **yarım kalan** konular, en son işaretlenen önde (`dahaYeni`); yarım
+ * konu yoksa müfredat sırasındaki ilk dokunulmamış konu; hepsi bittiyse
+ * `null`. Eski kural "en çok aşaması dolu" konuyu öneriyordu ve eşitlikte
+ * ilk konu kazandığı için, birkaç konuyu okulda işaretleyen öğrenciye hep
+ * dersin ilk konusu öneriliyordu.
  */
 export function siradakiKonu(
   ders: YksDers,
   takip: YksTakip,
   ilerlemeler: KonuIlerlemeleri,
 ): YksKonu | null {
-  let enIyi: { konu: YksKonu; puan: number } | null = null
-  for (const konu of ders.konular) {
+  let enIyi: { konu: YksKonu; gun: string | null; sira: number } | null = null
+  let ilkBos: YksKonu | null = null
+  for (const [sira, konu] of ders.konular.entries()) {
     const d = konuDurumu(konu.id, takip, ilerlemeler)
     if (d.bitti) continue
-    const puan = d.dolu * 2 + (d.harita?.durum === 'basladi' ? 1 : 0)
-    if (enIyi === null || puan > enIyi.puan) enIyi = { konu, puan }
+    if (!yarimMi(d)) {
+      ilkBos ??= konu
+      continue
+    }
+    const aday = { konu, gun: sonIsaretGunu(d.kayit), sira }
+    if (enIyi === null || dahaYeni(aday, enIyi)) enIyi = aday
   }
-  return enIyi?.konu ?? null
+  return enIyi?.konu ?? ilkBos
+}
+
+/**
+ * Giriş ekranının "Devam et" kartı: dersler arasında en son işaretlenen
+ * yarım konu. Yalnızca elle işaretlenmiş (günü olan) konular aday — "en son
+ * dokunulan" sorusunun cevabı ancak bir günle verilebiliyor. Aday yoksa
+ * `null` ve kart çizilmiyor.
+ */
+export function devamKonusu(
+  dersler: readonly YksDers[],
+  takip: YksTakip,
+  ilerlemeler: KonuIlerlemeleri,
+): { ders: YksDers; konu: YksKonu } | null {
+  let enIyi: { ders: YksDers; konu: YksKonu; gun: string; sira: number } | null = null
+  let sira = 0
+  for (const ders of dersler) {
+    for (const konu of ders.konular) {
+      sira += 1
+      const kayit = takip.konular[konu.id]
+      if (!kayit || kayit.bitti) continue
+      const gun = sonIsaretGunu(kayit)
+      if (gun === null) continue
+      const aday = { ders, konu, gun, sira }
+      if (enIyi === null || dahaYeni(aday, enIyi)) enIyi = aday
+    }
+  }
+  return enIyi && { ders: enIyi.ders, konu: enIyi.konu }
+}
+
+// ---------------------------------------------------------------------------
+// Toplu işaret
+// ---------------------------------------------------------------------------
+
+/**
+ * "Bu ve önceki konuları okulda işlendi say"ın dokunacağı konular: aynı
+ * bölümde (TYT Matematik'te Geometri ayrı) bu konuya kadar — bu konu dahil —
+ * okul aşaması boş olanlar. İlk kullanımda okulda işlenmiş yirmi-kırk
+ * konuyu tek tek girmek yerine tek dokunuş. Bölüm sınırı şart: Geometri'nin
+ * ilk konusunda basan öğrenci, Matematik'in bütün konularını okulda
+ * işlemiş olmayabilir.
+ */
+export function oncekiOkulsuzlar(ders: YksDers, konuId: string, takip: YksTakip): string[] {
+  const sira = ders.konular.findIndex((k) => k.id === konuId)
+  if (sira === -1) return []
+  const bolum = ders.konular[sira].bolum
+  return ders.konular
+    .slice(0, sira + 1)
+    .filter((k) => k.bolum === bolum && !takip.konular[k.id]?.okul)
+    .map((k) => k.id)
+}
+
+/** Birden çok konunun okul aşamasını işaretler ya da kaldırır (toplu eylem ve geri alması). */
+export function okuluTopluYaz(takip: YksTakip, konuIdleri: readonly string[], acik: boolean, bugun: string): YksTakip {
+  return konuIdleri.reduce((t, id) => asamaYaz(t, id, 'okul', acik, bugun), takip)
 }
