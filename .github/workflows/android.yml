@@ -4,6 +4,12 @@ on:
   push:
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      iz:
+        description: 'Play izi (track). Etiketle tetiklemede varsayılan alpha (kapalı test).'
+        type: choice
+        options: [alpha, internal, beta, production]
+        default: alpha
 
 permissions:
   contents: write
@@ -29,6 +35,20 @@ jobs:
       - uses: android-actions/setup-android@v3
 
       - run: npm ci
+
+      # Play'in "yeni neler var" sınırı 500 karakter; aşılırsa yükleme en
+      # sonda, derlemeden sonra patlıyor. Burada baştan durdur.
+      - name: Sürüm notu uzunluğunu denetle
+        run: |
+          dosya=android/surum-notlari/whatsnew-tr-TR
+          if [ ! -s "$dosya" ]; then
+            echo "::error::$dosya yok ya da boş."; exit 1
+          fi
+          uzunluk=$(node -e "console.log([...require('fs').readFileSync(process.argv[1],'utf8').trim()].length)" "$dosya")
+          echo "Sürüm notu: $uzunluk karakter (sınır 500)"
+          if [ "$uzunluk" -gt 500 ]; then
+            echo "::error::Sürüm notu $uzunluk karakter; Play sınırı 500."; exit 1
+          fi
 
       - name: Tip kontrolü
         run: npm run typecheck
@@ -101,6 +121,63 @@ jobs:
           cp "$APK" "dist/rabi-${GITHUB_REF_NAME}.apk"
           AAB=$(find android/app/build/outputs/bundle/release -name '*.aab' | head -1)
           cp "$AAB" "dist/rabi-${GITHUB_REF_NAME}.aab"
+
+      # Play'e yükleme. Secret yoksa iş kırılmaz, adım atlanır; etiketli
+      # sürümde bu açıkça uyarıyla duyurulur (sessizce atlanmasın).
+      - name: Play yükleme ayarlarını hazırla
+        id: play
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          KEYSTORE_YOL: ${{ steps.keystore.outputs.path }}
+          GIRDI_IZ: ${{ inputs.iz }}
+        run: |
+          yukle=true
+          if [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]; then
+            yukle=false
+            if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+              echo "::warning::PLAY_SERVICE_ACCOUNT_JSON tanımlı değil — AAB Play'e YÜKLENMEDİ, elle yüklemen gerekiyor."
+            else
+              echo "::warning::PLAY_SERVICE_ACCOUNT_JSON yok; Play'e yükleme atlandı."
+            fi
+          elif [ -z "$KEYSTORE_YOL" ]; then
+            yukle=false
+            echo "::warning::Paket imzasız; Play'e yükleme atlandı."
+          fi
+
+          iz="${GIRDI_IZ:-alpha}"   # etiket tetiklemesinde girdi boş: kapalı test
+          # Production'da `completed` değil `draft`: etiket yanlışlıkla canlıya
+          # çıkmasın; taslak Console'da elle gözden geçirilip gönderilir.
+          if [ "$iz" = "production" ]; then durum=draft; else durum=completed; fi
+
+          paket=$(sed -nE 's/^[[:space:]]*applicationId "([^"]+)".*/\1/p' android/app/build.gradle)
+          ad=$(sed -nE 's/^[[:space:]]*versionName "([^"]+)".*/\1/p' android/app/build.gradle)
+          if [ -z "$paket" ]; then echo "::error::applicationId okunamadı"; exit 1; fi
+
+          mapping=android/app/build/outputs/mapping/release/mapping.txt
+          if [ -f "$mapping" ]; then echo "mapping=$mapping" >> "$GITHUB_OUTPUT"
+          else echo "mapping=" >> "$GITHUB_OUTPUT"; echo "Mapping dosyası yok, atlanıyor."; fi
+
+          {
+            echo "yukle=$yukle"
+            echo "iz=$iz"
+            echo "durum=$durum"
+            echo "paket=$paket"
+            echo "ad=$ad"
+          } >> "$GITHUB_OUTPUT"
+          echo "Play: iz=$iz durum=$durum paket=$paket yukle=$yukle"
+
+      - name: Play'e yükle
+        if: steps.play.outputs.yukle == 'true'
+        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: ${{ steps.play.outputs.paket }}
+          releaseFiles: dist/rabi-${{ github.ref_name }}.aab
+          releaseName: ${{ steps.play.outputs.ad }}
+          track: ${{ steps.play.outputs.iz }}
+          status: ${{ steps.play.outputs.durum }}
+          whatsNewDirectory: android/surum-notlari
+          mappingFile: ${{ steps.play.outputs.mapping }}
 
       - name: Sürüm oluştur
         if: startsWith(github.ref, 'refs/tags/')
