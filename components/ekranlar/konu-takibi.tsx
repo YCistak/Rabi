@@ -23,6 +23,7 @@ import {
   okuluTopluYaz,
   oncekiOkulsuzlar,
   siradakiKonu,
+  bitirmeyeHazir,
   toplamOzet,
   type AsamaId,
   type DersOzeti,
@@ -857,7 +858,7 @@ function KonuSatiri({
           type="button"
           onClick={onBitir}
           aria-pressed={bitti}
-          aria-label={`${konu.ad}: Bitirdim`}
+          aria-label={`${konu.ad}: Bitirdim${!bitti && bitirmeyeHazir(durum) ? ' (aşamalar tamam)' : ''}`}
           className="grid size-11 shrink-0 place-items-center rounded-full focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
         >
           <IlerlemeDairesi durum={durum} r={r} kutlaniyor={kutlaniyor} />
@@ -1021,23 +1022,39 @@ function IlerlemeDairesi({ durum, r, kutlaniyor }: { durum: KonuDurumu; r: Renkl
       </span>
     )
   }
+  /*
+    Bitirmeye hazır: yay tam dolu, ortada ders renginde soluk bir tik.
+    Öneri bu konuyu atlıyor (`siradakiKonu`); işaret öğrenciye "bitirmeyi
+    unuttun" demiyor, yalnızca daireye basınca biteceğini hatırlatıyor.
+  */
+  const hazir = bitirmeyeHazir(durum)
   return (
-    <svg width={boyut} height={boyut} className="-rotate-90" aria-hidden>
-      <circle cx={boyut / 2} cy={boyut / 2} r={yaricap} fill="none" stroke="var(--border)" strokeWidth={kalinlik} />
-      {oran > 0 && (
-        <circle
-          cx={boyut / 2}
-          cy={boyut / 2}
-          r={yaricap}
-          fill="none"
-          stroke={r.dolgu}
-          strokeWidth={kalinlik}
-          strokeLinecap="round"
-          strokeDasharray={cevre}
-          strokeDashoffset={cevre * (1 - oran)}
-          className="transition-[stroke-dashoffset] duration-300"
+    <span className="relative grid size-7 place-items-center" aria-hidden>
+      {hazir && (
+        <Check
+          size={13}
+          strokeWidth={3.2}
+          className="absolute inset-0 m-auto opacity-60"
+          style={{ color: r.dolgu }}
         />
       )}
-    </svg>
+      <svg width={boyut} height={boyut} className="-rotate-90" aria-hidden>
+        <circle cx={boyut / 2} cy={boyut / 2} r={yaricap} fill="none" stroke="var(--border)" strokeWidth={kalinlik} />
+        {oran > 0 && (
+          <circle
+            cx={boyut / 2}
+            cy={boyut / 2}
+            r={yaricap}
+            fill="none"
+            stroke={r.dolgu}
+            strokeWidth={kalinlik}
+            strokeLinecap="round"
+            strokeDasharray={cevre}
+            strokeDashoffset={cevre * (1 - oran)}
+            className="transition-[stroke-dashoffset] duration-300"
+          />
+        )}
+      </svg>
+    </span>
   )
 }

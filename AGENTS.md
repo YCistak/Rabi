@@ -2592,11 +2592,17 @@ Bitirdim.
   ileri aşamasında) ve tek satır sayı; yüzde yok. Büyük halka yalnızca
   Bitirdim'i sayıyordu ve okulda işaretleyen öğrenci haftalarca %0
   görüyordu.
-- **Öneri yarım kalanı öne alıyor** (`siradakiKonu`, `devamKonusu`): önce en
-  son işaretlenen yarım konu (aynı gün işaretlenenlerde listede sonraki),
-  yoksa müfredat sırasındaki ilk dokunulmamış konu. Girişte dersler arası
-  tek "Devam et" kartı. Hiç işaret yokken ipucu ve lejant — ayrı bir ayar
-  değil, kayıt boş mu diye türetiliyor.
+- **Öneri müfredat sırasında ilerliyor** (`siradakiKonu`, `devamKonusu`):
+  ders içi Sıradaki, müfredat sırasında bitmemiş **ve** aşamaları
+  tamamlanmamış ilk konu (haritada karşılığı yoksa harita sayılmıyor).
+  Girişteki dersler arası tek "Devam et" kartı, en son dokunulan dersin
+  (bitirmek de dokunuş) Sıradaki'si. Bir süre "önce en son işaretlenen
+  yarım konu" kuralıydı: aşamaları dolu ama Bitirdim basılmamış konu yarım
+  sayılıp öneride takılı kalıyordu, başka bir yuvaya dokununca öneri oraya
+  zıplıyordu (TestFlight geri bildirimi). Aşamaları tamam ama bitmemiş konu
+  (`bitirmeyeHazir`) öneri olmuyor; dairesinde yay dolu ve ortada ders
+  renginde soluk bir tik — bitirmek yine öğrencinin dokunuşu. Hiç işaret
+  yokken ipucu ve lejant — ayrı bir ayar değil, kayıt boş mu diye türetiliyor.
 - **Tek geri.** Ders ekranının kendi geri düğmesi yok; kabuğun "Geri"si
   önce açık katmanı (dersi) kapatıyor, Android geri tuşu ve iOS kenar
   kaydırmasıyla aynı sıra. Seçili sekme, açık ders ve liste kaydırması

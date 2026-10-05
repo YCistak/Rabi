@@ -17,7 +17,7 @@ import {
   oncekiOkulsuzlar,
   sonIsaretGunu,
   toplamOzet,
-  yarimMi,
+  bitirmeyeHazir,
   type YksTakip,
 } from './takip'
 
@@ -371,38 +371,40 @@ describe('dersOzeti ve toplamOzet', () => {
   })
 })
 
-describe('siradakiKonu', () => {
+describe('siradakiKonu — müfredat sırasında ilk eksik konu', () => {
   const ders = yksDersBul('tyt-fizik')!
 
   it('hiç dokunulmamışsa ilk konu', () => {
     expect(siradakiKonu(ders, BOS_TAKIP, {})?.id).toBe('tyt-fiz-giris')
   })
 
-  it('yarım kalan konu, dokunulmamış ilk konudan önce geliyor', () => {
+  it('sonraki bir konuya dokunmak öneriyi oraya zıplatmıyor', () => {
     const takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-optik', 'okul', true, BUGUN)
-    expect(siradakiKonu(ders, takip, {})?.id).toBe('tyt-fiz-optik')
+    expect(siradakiKonu(ders, takip, {})?.id).toBe('tyt-fiz-giris')
   })
 
-  it('yarımlar arasında en son işaretlenen önde', () => {
-    let takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-dalgalar', 'okul', true, '2026-10-01')
-    takip = asamaYaz(takip, 'tyt-fiz-dalgalar', 'soru', true, '2026-10-02')
-    takip = asamaYaz(takip, 'tyt-fiz-basinc', 'okul', true, '2026-10-03')
-    expect(siradakiKonu(ders, takip, {})?.id).toBe('tyt-fiz-basinc')
+  it('yarım konu, aşamaları tamamlanana kadar öneride kalıyor', () => {
+    const takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-giris', 'okul', true, BUGUN)
+    expect(siradakiKonu(ders, takip, {})?.id).toBe('tyt-fiz-giris')
   })
 
-  it('aynı gün işaretlenenlerde listede sonra gelen önde', () => {
-    let takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-madde', 'okul', true, BUGUN)
-    takip = asamaYaz(takip, 'tyt-fiz-basinc', 'okul', true, BUGUN)
-    const sira = ders.konular.map((k) => k.id)
-    const beklenen = sira.indexOf('tyt-fiz-basinc') > sira.indexOf('tyt-fiz-madde') ? 'tyt-fiz-basinc' : 'tyt-fiz-madde'
-    expect(siradakiKonu(ders, takip, {})?.id).toBe(beklenen)
+  it('aşamaları tamamlanan konu bitmeden de öneriden çıkıyor', () => {
+    let ilerleme: KonuIlerlemeleri = {}
+    for (const id of HARITA_ESLEMESI['tyt-fiz-giris']) ilerleme = tamamla(ilerleme, id)
+    let takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-giris', 'okul', true, BUGUN)
+    takip = asamaYaz(takip, 'tyt-fiz-giris', 'soru', true, BUGUN)
+    expect(siradakiKonu(ders, takip, ilerleme)?.id).toBe('tyt-fiz-madde')
+    // Harita yarımken aşamalar tamam sayılmıyor.
+    expect(siradakiKonu(ders, takip, {})?.id).toBe('tyt-fiz-giris')
   })
 
-  it('haritada başlanmış konu yarım sayılıyor ama günü olanın arkasında', () => {
-    const ilerleme: KonuIlerlemeleri = { 'fzk9-kaldirma': { okunan: 1, bitti: false, tarih: BUGUN } }
-    expect(siradakiKonu(ders, BOS_TAKIP, ilerleme)?.id).toBe('tyt-fiz-kaldirma')
-    const takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-optik', 'soru', true, BUGUN)
-    expect(siradakiKonu(ders, takip, ilerleme)?.id).toBe('tyt-fiz-optik')
+  it('haritada karşılığı olmayan konuda okul ve soru yetiyor', () => {
+    const din = yksDersBul('tyt-din')!
+    const ilk = din.konular[0].id
+    expect(HARITA_ESLEMESI[ilk]).toBeUndefined()
+    let takip = asamaYaz(BOS_TAKIP, ilk, 'okul', true, BUGUN)
+    takip = asamaYaz(takip, ilk, 'soru', true, BUGUN)
+    expect(siradakiKonu(din, takip, {})?.id).toBe(din.konular[1].id)
   })
 
   it('bitmiş konuyu atlıyor, hepsi bitince null', () => {
@@ -413,13 +415,47 @@ describe('siradakiKonu', () => {
   })
 })
 
-describe('yarımMi ve sonIsaretGunu', () => {
-  it('bitmiş konu yarım değil, tek aşama yetiyor', () => {
-    const takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-optik', 'okul', true, BUGUN)
-    expect(yarimMi(konuDurumu('tyt-fiz-optik', takip, {}))).toBe(true)
-    expect(yarimMi(konuDurumu('tyt-fiz-giris', takip, {}))).toBe(false)
-    const bitti = asamaYaz(takip, 'tyt-fiz-optik', 'bitti', true, BUGUN)
-    expect(yarimMi(konuDurumu('tyt-fiz-optik', bitti, {}))).toBe(false)
+describe('kullanıcının senaryosu — TYT Türkçe', () => {
+  const turkce = yksDersBul('tyt-turkce')!
+  const tumAsamalar = (takip: YksTakip, konuId: string) =>
+    asamaYaz(asamaYaz(takip, konuId, 'okul', true, BUGUN), konuId, 'soru', true, BUGUN)
+  const haritaTamam = (konuId: string) =>
+    HARITA_ESLEMESI[konuId].reduce<KonuIlerlemeleri>((i, id) => tamamla(i, id), {})
+
+  it('Sözcükte Anlam\'a harita + okul + soru: öneri Sözcükte Anlam\'da takılı kalmıyor', () => {
+    const ilerleme = haritaTamam('tyt-trk-sozcukte-anlam')
+    const takip = tumAsamalar(BOS_TAKIP, 'tyt-trk-sozcukte-anlam')
+    expect(bitirmeyeHazir(konuDurumu('tyt-trk-sozcukte-anlam', takip, ilerleme))).toBe(true)
+    // Müfredatta Sözcükte Anlam'dan sonra Söz Yorumu geliyor.
+    expect(siradakiKonu(turkce, takip, ilerleme)?.id).toBe('tyt-trk-soz-yorumu')
+    expect(devamKonusu(oturumDersleri('tyt', null), takip, ilerleme)?.konu.id).toBe('tyt-trk-soz-yorumu')
+  })
+
+  it('Söz Yorumu bittiyse sıradaki Cümlede Anlam; ona soru işaretlenince yine Cümlede Anlam', () => {
+    const ilerleme = haritaTamam('tyt-trk-sozcukte-anlam')
+    let takip = tumAsamalar(BOS_TAKIP, 'tyt-trk-sozcukte-anlam')
+    takip = asamaYaz(takip, 'tyt-trk-soz-yorumu', 'bitti', true, BUGUN)
+    expect(siradakiKonu(turkce, takip, ilerleme)?.id).toBe('tyt-trk-cumlede-anlam')
+    takip = asamaYaz(takip, 'tyt-trk-cumlede-anlam', 'soru', true, BUGUN)
+    expect(siradakiKonu(turkce, takip, ilerleme)?.id).toBe('tyt-trk-cumlede-anlam')
+    expect(devamKonusu(oturumDersleri('tyt', null), takip, ilerleme)?.konu.id).toBe('tyt-trk-cumlede-anlam')
+  })
+
+  it('bitirmeye hazır konu daireye basılınca bitiyor ve hazır olmaktan çıkıyor', () => {
+    const ilerleme = haritaTamam('tyt-trk-sozcukte-anlam')
+    const takip = asamaYaz(tumAsamalar(BOS_TAKIP, 'tyt-trk-sozcukte-anlam'), 'tyt-trk-sozcukte-anlam', 'bitti', true, BUGUN)
+    expect(bitirmeyeHazir(konuDurumu('tyt-trk-sozcukte-anlam', takip, ilerleme))).toBe(false)
+  })
+})
+
+describe('bitirmeyeHazir ve sonIsaretGunu', () => {
+  it('tek aşama yetmiyor, bitmiş konu hazır değil', () => {
+    const takip = asamaYaz(BOS_TAKIP, 'tyt-din-bilgi-inanc', 'okul', true, BUGUN)
+    expect(bitirmeyeHazir(konuDurumu('tyt-din-bilgi-inanc', takip, {}))).toBe(false)
+    const iki = asamaYaz(takip, 'tyt-din-bilgi-inanc', 'soru', true, BUGUN)
+    expect(bitirmeyeHazir(konuDurumu('tyt-din-bilgi-inanc', iki, {}))).toBe(true)
+    const bitti = asamaYaz(iki, 'tyt-din-bilgi-inanc', 'bitti', true, BUGUN)
+    expect(bitirmeyeHazir(konuDurumu('tyt-din-bilgi-inanc', bitti, {}))).toBe(false)
   })
 
   it('en geç günü döndürüyor', () => {
@@ -428,26 +464,35 @@ describe('yarımMi ve sonIsaretGunu', () => {
   })
 })
 
-describe('devamKonusu — dersler arası', () => {
+describe('devamKonusu — en son dokunulan dersin sıradakisi', () => {
   const dersler = oturumDersleri('tyt', null)
 
   it('hiç işaret yoksa null', () => {
     expect(devamKonusu(dersler, BOS_TAKIP, {})).toBeNull()
   })
 
-  it('dersler arasında en son işaretlenen yarım konu', () => {
+  it('en son dokunulan ders, o dersin müfredattaki ilk eksik konusu', () => {
     let takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-optik', 'okul', true, '2026-10-01')
     takip = asamaYaz(takip, 'tyt-trk-paragraf', 'soru', true, '2026-10-03')
     takip = asamaYaz(takip, 'tyt-mat-uslu', 'okul', true, '2026-10-02')
     const sonuc = devamKonusu(dersler, takip, {})
     expect(sonuc?.ders.id).toBe('tyt-turkce')
-    expect(sonuc?.konu.id).toBe('tyt-trk-paragraf')
+    expect(sonuc?.konu.id).toBe('tyt-trk-sozcukte-anlam')
   })
 
-  it('bitmiş konu aday değil', () => {
+  it('bitirmek de dokunuş sayılıyor', () => {
     let takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-optik', 'okul', true, '2026-10-01')
-    takip = asamaYaz(takip, 'tyt-mat-uslu', 'bitti', true, '2026-10-05')
-    expect(devamKonusu(dersler, takip, {})?.konu.id).toBe('tyt-fiz-optik')
+    takip = asamaYaz(takip, 'tyt-mat-temel-kavramlar', 'bitti', true, '2026-10-05')
+    const sonuc = devamKonusu(dersler, takip, {})
+    expect(sonuc?.ders.id).toBe('tyt-matematik')
+    expect(sonuc?.konu.id).toBe(yksDersBul('tyt-matematik')!.konular[1].id)
+  })
+
+  it('en son dokunulan derste öneri kalmadıysa bir öncekine bakıyor', () => {
+    const din = yksDersBul('tyt-din')!
+    let takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-optik', 'okul', true, '2026-10-01')
+    for (const konu of din.konular) takip = asamaYaz(takip, konu.id, 'bitti', true, '2026-10-05')
+    expect(devamKonusu(dersler, takip, {})?.ders.id).toBe('tyt-fizik')
   })
 })
 
