@@ -14,6 +14,7 @@
     "sync:ios": "next build && cap sync ios && node scripts/ios-yol-duzelt.mjs",
     "apk": "npm run sync && cd android && ./gradlew assembleDebug",
     "aab": "npm run sync && cd android && ./gradlew bundleRelease",
+    "surum": "node scripts/surum-yukselt.mjs",
     "apk:imzali": "npm run sync && cd android && ./gradlew assembleRelease -PtekAbi"
   },
   "dependencies": {
