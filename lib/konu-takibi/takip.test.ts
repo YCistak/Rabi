@@ -12,8 +12,12 @@ import {
   konuDurumu,
   siradakiKonu,
   takibiCoz,
+  devamKonusu,
+  okuluTopluYaz,
+  oncekiOkulsuzlar,
+  sonIsaretGunu,
   toplamOzet,
-  yuzde,
+  yarimMi,
   type YksTakip,
 } from './takip'
 
@@ -326,10 +330,16 @@ describe('dersOzeti ve toplamOzet', () => {
     expect(toplamOzet([])).toMatchObject({ toplam: 0, biten: 0 })
   })
 
-  it('yüzde aşağı yuvarlanır, payda sıfırsa sıfır', () => {
-    expect(yuzde(199, 200)).toBe(99)
-    expect(yuzde(2, 2)).toBe(100)
-    expect(yuzde(0, 0)).toBe(0)
+  it('çubuk dilimleri en ileri aşamaya göre ayrık ve toplamı aşmıyor', () => {
+    let takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-basinc', 'okul', true, BUGUN)
+    takip = asamaYaz(takip, 'tyt-fiz-basinc', 'soru', true, BUGUN)
+    takip = asamaYaz(takip, 'tyt-fiz-optik', 'okul', true, BUGUN)
+    takip = asamaYaz(takip, 'tyt-fiz-giris', 'okul', true, BUGUN)
+    takip = asamaYaz(takip, 'tyt-fiz-giris', 'bitti', true, BUGUN)
+    const ozet = dersOzeti(ders, takip, {})
+    expect(ozet).toMatchObject({ biten: 1, soruda: 1, okulda: 1, okul: 3, soru: 1 })
+    expect(ozet.biten + ozet.soruda + ozet.okulda).toBeLessThanOrEqual(ozet.toplam)
+    expect(toplamOzet([ozet, ozet])).toMatchObject({ soruda: 2, okulda: 2 })
   })
 })
 
@@ -340,16 +350,31 @@ describe('siradakiKonu', () => {
     expect(siradakiKonu(ders, BOS_TAKIP, {})?.id).toBe('tyt-fiz-giris')
   })
 
-  it('bitmeye en yakın konuyu öneriyor', () => {
-    let takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-dalgalar', 'okul', true, BUGUN)
-    takip = asamaYaz(takip, 'tyt-fiz-dalgalar', 'soru', true, BUGUN)
-    takip = asamaYaz(takip, 'tyt-fiz-basinc', 'okul', true, BUGUN)
-    expect(siradakiKonu(ders, takip, {})?.id).toBe('tyt-fiz-dalgalar')
+  it('yarım kalan konu, dokunulmamış ilk konudan önce geliyor', () => {
+    const takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-optik', 'okul', true, BUGUN)
+    expect(siradakiKonu(ders, takip, {})?.id).toBe('tyt-fiz-optik')
   })
 
-  it('haritada başlanmış konu eşitliği bozuyor', () => {
+  it('yarımlar arasında en son işaretlenen önde', () => {
+    let takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-dalgalar', 'okul', true, '2026-10-01')
+    takip = asamaYaz(takip, 'tyt-fiz-dalgalar', 'soru', true, '2026-10-02')
+    takip = asamaYaz(takip, 'tyt-fiz-basinc', 'okul', true, '2026-10-03')
+    expect(siradakiKonu(ders, takip, {})?.id).toBe('tyt-fiz-basinc')
+  })
+
+  it('aynı gün işaretlenenlerde listede sonra gelen önde', () => {
+    let takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-madde', 'okul', true, BUGUN)
+    takip = asamaYaz(takip, 'tyt-fiz-basinc', 'okul', true, BUGUN)
+    const sira = ders.konular.map((k) => k.id)
+    const beklenen = sira.indexOf('tyt-fiz-basinc') > sira.indexOf('tyt-fiz-madde') ? 'tyt-fiz-basinc' : 'tyt-fiz-madde'
+    expect(siradakiKonu(ders, takip, {})?.id).toBe(beklenen)
+  })
+
+  it('haritada başlanmış konu yarım sayılıyor ama günü olanın arkasında', () => {
     const ilerleme: KonuIlerlemeleri = { 'fzk9-kaldirma': { okunan: 1, bitti: false, tarih: BUGUN } }
     expect(siradakiKonu(ders, BOS_TAKIP, ilerleme)?.id).toBe('tyt-fiz-kaldirma')
+    const takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-optik', 'soru', true, BUGUN)
+    expect(siradakiKonu(ders, takip, ilerleme)?.id).toBe('tyt-fiz-optik')
   })
 
   it('bitmiş konuyu atlıyor, hepsi bitince null', () => {
@@ -357,5 +382,68 @@ describe('siradakiKonu', () => {
     expect(siradakiKonu(ders, takip, {})?.id).toBe('tyt-fiz-madde')
     for (const konu of ders.konular) takip = asamaYaz(takip, konu.id, 'bitti', true, BUGUN)
     expect(siradakiKonu(ders, takip, {})).toBeNull()
+  })
+})
+
+describe('yarımMi ve sonIsaretGunu', () => {
+  it('bitmiş konu yarım değil, tek aşama yetiyor', () => {
+    const takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-optik', 'okul', true, BUGUN)
+    expect(yarimMi(konuDurumu('tyt-fiz-optik', takip, {}))).toBe(true)
+    expect(yarimMi(konuDurumu('tyt-fiz-giris', takip, {}))).toBe(false)
+    const bitti = asamaYaz(takip, 'tyt-fiz-optik', 'bitti', true, BUGUN)
+    expect(yarimMi(konuDurumu('tyt-fiz-optik', bitti, {}))).toBe(false)
+  })
+
+  it('en geç günü döndürüyor', () => {
+    expect(sonIsaretGunu({})).toBeNull()
+    expect(sonIsaretGunu({ okul: '2026-09-30', soru: '2026-10-02' })).toBe('2026-10-02')
+  })
+})
+
+describe('devamKonusu — dersler arası', () => {
+  const dersler = oturumDersleri('tyt', null)
+
+  it('hiç işaret yoksa null', () => {
+    expect(devamKonusu(dersler, BOS_TAKIP, {})).toBeNull()
+  })
+
+  it('dersler arasında en son işaretlenen yarım konu', () => {
+    let takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-optik', 'okul', true, '2026-10-01')
+    takip = asamaYaz(takip, 'tyt-trk-paragraf', 'soru', true, '2026-10-03')
+    takip = asamaYaz(takip, 'tyt-mat-uslu', 'okul', true, '2026-10-02')
+    const sonuc = devamKonusu(dersler, takip, {})
+    expect(sonuc?.ders.id).toBe('tyt-turkce')
+    expect(sonuc?.konu.id).toBe('tyt-trk-paragraf')
+  })
+
+  it('bitmiş konu aday değil', () => {
+    let takip = asamaYaz(BOS_TAKIP, 'tyt-fiz-optik', 'okul', true, '2026-10-01')
+    takip = asamaYaz(takip, 'tyt-mat-uslu', 'bitti', true, '2026-10-05')
+    expect(devamKonusu(dersler, takip, {})?.konu.id).toBe('tyt-fiz-optik')
+  })
+})
+
+describe('toplu okul işareti', () => {
+  const mat = yksDersBul('tyt-matematik')!
+
+  it('bu ve önceki konular, yalnızca okulu boş olanlar', () => {
+    const takip = asamaYaz(BOS_TAKIP, 'tyt-mat-basamak', 'okul', true, '2026-09-01')
+    const ids = oncekiOkulsuzlar(mat, 'tyt-mat-ebob-ekok', takip)
+    expect(ids).toEqual(['tyt-mat-temel-kavramlar', 'tyt-mat-bolunebilme', 'tyt-mat-ebob-ekok'])
+  })
+
+  it('bölüm sınırını geçmiyor', () => {
+    const geo = mat.konular.find((k) => k.bolum === 'Geometri')!
+    const ids = oncekiOkulsuzlar(mat, geo.id, BOS_TAKIP)
+    expect(ids).toEqual([geo.id])
+  })
+
+  it('yazıp geri alınca kayıt eski hâline dönüyor, önceki gün korunuyor', () => {
+    const once = asamaYaz(BOS_TAKIP, 'tyt-mat-basamak', 'okul', true, '2026-09-01')
+    const ids = oncekiOkulsuzlar(mat, 'tyt-mat-ebob-ekok', once)
+    const sonra = okuluTopluYaz(once, ids, true, BUGUN)
+    expect(sonra.konular['tyt-mat-ebob-ekok']).toEqual({ okul: BUGUN })
+    expect(sonra.konular['tyt-mat-basamak']).toEqual({ okul: '2026-09-01' })
+    expect(okuluTopluYaz(sonra, ids, false, BUGUN)).toEqual(once)
   })
 })
