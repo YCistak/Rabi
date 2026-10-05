@@ -129,6 +129,7 @@ function gunYazisi(iso: string): string {
 }
 
 export function KonuTakibiEkrani({
+  tanitimda = false,
   takip,
   setTakip,
   ilerlemeler,
@@ -136,6 +137,12 @@ export function KonuTakibiEkrani({
   setAlan,
   onHaritayaGit,
 }: {
+  /**
+   * Tanıtım turu ekranı gösteriyor: giriş görünümü TYT'de açılıyor (oturumda
+   * açık kalmış ders ya da alan sorusu turun hedefini örtmesin) ve lejant
+   * kayıt dolu olsa da görünüyor — tur aşamaları onun üstünden anlatıyor.
+   */
+  tanitimda?: boolean
   takip: YksTakip
   setTakip: (guncelle: (onceki: YksTakip) => YksTakip) => void
   /** Konu haritasının kaydı — "Haritada çalıştım" buradan hesaplanıyor. */
@@ -158,7 +165,8 @@ export function KonuTakibiEkrani({
 
   const tytDersleri = useMemo(() => oturumDersleri('tyt', alan), [alan])
   const aytDersleri = useMemo(() => oturumDersleri('ayt', alan), [alan])
-  const dersler = oturum === 'tyt' ? tytDersleri : aytDersleri
+  const gorunenOturum: YksOturum = tanitimda ? 'tyt' : oturum
+  const dersler = gorunenOturum === 'tyt' ? tytDersleri : aytDersleri
 
   /*
     Ders özetleri bir kez hesaplanıyor; sekmenin özeti ve ders satırları aynı
@@ -203,7 +211,7 @@ export function KonuTakibiEkrani({
     else window.scrollTo(0, 0)
   }, [acikDersId])
 
-  const acikDers = dersler.find((d) => d.id === acikDersId) ?? null
+  const acikDers = tanitimda ? null : (dersler.find((d) => d.id === acikDersId) ?? null)
   // Android'in geri tuşu ve kabuğun "Geri"si önce dersi kapatıyor, sonra araçtan çıkıyor.
   useGeriKatmani(acikDers !== null, () => setAcikDersId(null))
 
@@ -228,19 +236,22 @@ export function KonuTakibiEkrani({
     <div>
       <BaslikSatiri baslik="Konu Takibi" arac="konu-takibi" />
 
-      <div className="mb-3 flex gap-1 rounded-[14px] bg-muted p-1" role="tablist">
-        <SegmentDugmesi secili={oturum === 'tyt'} onClick={() => setOturum('tyt')}>
-          TYT
-        </SegmentDugmesi>
-        <SegmentDugmesi secili={oturum === 'ayt'} onClick={() => setOturum('ayt')}>
-          {alan === 'dil' ? 'YDT' : 'AYT'}
-        </SegmentDugmesi>
+      {/* Tanıtım turunun "Konu konu işaretle" adımı bu bloğu aydınlatıyor. */}
+      <div data-tanitim="konu-takibi">
+        <div className="mb-3 flex gap-1 rounded-[14px] bg-muted p-1" role="tablist">
+          <SegmentDugmesi secili={gorunenOturum === 'tyt'} onClick={() => setOturum('tyt')}>
+            TYT
+          </SegmentDugmesi>
+          <SegmentDugmesi secili={gorunenOturum === 'ayt'} onClick={() => setOturum('ayt')}>
+            {alan === 'dil' ? 'YDT' : 'AYT'}
+          </SegmentDugmesi>
+        </div>
+
+        {devam && <DevamKarti ders={devam.ders} konu={devam.konu} alan={alan} onAc={() => dersAc(devam.ders, devam.konu.id)} />}
+        {(bos || tanitimda) && <IlkKullanim />}
       </div>
 
-      {devam && <DevamKarti ders={devam.ders} konu={devam.konu} alan={alan} onAc={() => dersAc(devam.ders, devam.konu.id)} />}
-      {bos && <IlkKullanim />}
-
-      {oturum === 'ayt' && alan === null ? (
+      {gorunenOturum === 'ayt' && alan === null ? (
         <AlanSorusu onSec={setAlan} />
       ) : (
         <>
@@ -248,7 +259,7 @@ export function KonuTakibiEkrani({
             <OzetCubugu ozet={toplam} r={MARKA_RENGI} />
           </Kart>
 
-          {oturum === 'ayt' && (
+          {gorunenOturum === 'ayt' && (
             <Not className="mt-3">
               {alan === 'dil'
                 ? 'YDT, alanın Dil olduğu için burada. '
