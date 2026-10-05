@@ -3132,7 +3132,8 @@ gibi gidiyor. `enableOnBackInvokedCallback` yalnızca `MainActivity`de
 **alfa kanalı atılmış** — App Store saydamlık taşıyan ikonu yüklemede
 reddediyor.
 
-**Yayın Android'le aynı etiketle.** `v*` etiketi `ios-testflight.yml`i de
+**Yayın Android'le aynı etiketle.** `v*` etiketi Play'e (varsayılan kapalı test) otomatik
+yükleniyor (kurulum ve sürüm akışı `RELEASE.md` › "Otomatik yayın") ve `ios-testflight.yml`i de
 tetikliyor ve derleme TestFlight'a düşüyor; mağazaya çıkması App Store
 Connect'ten elle incelemeye göndermekle oluyor. Sürüm iOS projesine yazılmıyor,
 `android/app/build.gradle`dan okunuyor (`versionName` → sürüm, `versionCode` →
