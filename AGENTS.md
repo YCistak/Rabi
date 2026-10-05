@@ -2571,8 +2571,10 @@ Bitirdim.
   Eşleme **yalnızca kartlar konunun asıl içeriğini anlatıyorsa** var; tek
   kartta değinip geçmek yetmiyor. Karşılığı olmayan konuda aşama hiç
   gösterilmiyor — elle bir kutu, olmayan bir haritayı çalışılmış saymak
-  olurdu. 12. sınıf kartları yazılınca tabloya eklenir; `takip.test.ts` iki
-  uçtaki kimliklerin varlığını denetliyor.
+  olurdu. AYT'de TYT ile içeriği örtüşen konu da aynı harita konusuna
+  bağlı (AYT Enerji ve Hareket ↔ TYT İş, Güç ve Enerji): kayıt tek, iki
+  satırda da dolu. 12. sınıf kartları yazılınca tabloya eklenir;
+  `takip.test.ts` iki uçtaki kimliklerin varlığını denetliyor.
 - **İşaret satırın kendisinde.** Solda ilerleme dairesi (aşama sayısına göre
   dolan yay; dokununca Bitirdim aç/kapa), sağda sabit genişlikte üç yuva:
   harita (salt okunur, küçük ve boşken kesik kenarlı; karşılığı olmayan

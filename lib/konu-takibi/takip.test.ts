@@ -194,6 +194,34 @@ describe('harita eşlemesi', () => {
   })
 })
 
+describe('AYT\'de TYT ile ortak konuların haritası', () => {
+  it('AYT\'nin TYT ile örtüşen konuları haritaya bağlı', () => {
+    for (const id of ['ayt-mat-esitsizlik', 'ayt-fiz-enerji-hareket', 'ayt-fiz-bhh', 'ayt-mat-fonksiyon']) {
+      expect(haritaDurumu(id, {}), id).not.toBeNull()
+    }
+  })
+
+  it('harita konusu bir kez bitirilince TYT ve AYT satırında aynı kayıt okunuyor', () => {
+    let ilerleme: KonuIlerlemeleri = {}
+    for (const id of HARITA_ESLEMESI['ayt-fiz-enerji-hareket']) ilerleme = tamamla(ilerleme, id)
+    expect(haritaDurumu('ayt-fiz-enerji-hareket', ilerleme)?.durum).toBe('tamam')
+    // TYT İş, Güç ve Enerji'nin dört konusundan ikisi aynı desteler.
+    expect(haritaDurumu('tyt-fiz-is-enerji', ilerleme)).toMatchObject({ durum: 'basladi', biten: 2 })
+  })
+
+  it('AYT satırında harita dolu sayılıyor: aşama ve özet', () => {
+    const ilerleme = tamamla({}, 'fzk10-periyodik')
+    expect(konuDurumu('ayt-fiz-bhh', BOS_TAKIP, ilerleme).dolu).toBe(1)
+    expect(dersOzeti(yksDersBul('ayt-fizik')!, BOS_TAKIP, ilerleme).harita).toBe(1)
+  })
+
+  it('12. sınıf konuları eşlenmiyor', () => {
+    for (const id of ['ayt-mat-turev', 'ayt-mat-integral', 'ayt-mat-limit', 'ayt-kim-organik', 'ayt-biy-genden-proteine']) {
+      expect(HARITA_ESLEMESI[id], id).toBeUndefined()
+    }
+  })
+})
+
 describe('haritaDurumu — otomatik aşama', () => {
   it('eşlemesi olmayan konuda null', () => {
     expect(haritaDurumu('ayt-mat-turev', {})).toBeNull()
