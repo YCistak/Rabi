@@ -298,6 +298,8 @@ export function PomodoroEkrani({
       // iOS'ta seçim yerli tarafta durduğu için paket listesi boş; kilidin
       // istenip istenmediği ayrıca söyleniyor.
       kilitIstendi,
+      toplamDakika * 60,
+      asama !== 'calisma',
     )
     if (ayar.ekraniAcikTut && Capacitor.isNativePlatform()) {
       void KeepAwake.keepAwake().catch(() => {})

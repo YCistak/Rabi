@@ -1,4 +1,4 @@
-# iOS odak kilidinin Xcode hedeflerini projeye ekler.
+# iOS'un yerli Xcode hedeflerini (odak kilidi, kilit ekranı sayacı) projeye ekler.
 #
 #   gem install xcodeproj && ruby scripts/ios-eklenti-hedefleri.rb
 #
@@ -32,6 +32,25 @@ EKLENTILER = [
     kaynaklar: %w[KalkanGorunumu.swift],
     varliklar: %w[tavsan_yuz.png],
   },
+  # Pomodoro sayacının kilit ekranı ve Dynamic Island çizimi (Live Activity).
+  # Screen Time'dan bağımsız: Family Controls yetkisi yok, kendi dağıtım
+  # sürümü var (`ActivityContent` iOS 16.2 istiyor). `PomodoroEtkinligi.swift`
+  # uygulamayla ortak — veri tipi iki tarafta aynı olmalı.
+  {
+    ad: 'KilitSayaci',
+    kimlik: 'com.fluxifyinteractive.rabi.KilitSayaci',
+    kaynaklar: %w[KilitSayaci.swift],
+    varliklar: %w[tavsan_yuz.png],
+    ortak: %w[PomodoroEtkinligi.swift],
+    dagitim: '16.2',
+  },
+].freeze
+
+# Uygulama hedefinin kendi Swift dosyaları (Capacitor'ın şablonunda olmayanlar).
+UYGULAMA_KAYNAKLARI = %w[
+  EkranSuresiEklentisi.swift
+  CanliSayacEklentisi.swift
+  PomodoroEtkinligi.swift
 ].freeze
 
 proje = Xcodeproj::Project.open(PROJE)
@@ -40,9 +59,14 @@ uygulama_grubu = proje.main_group.children.find { |g| g.respond_to?(:path) && g.
 
 # --- Uygulamanın kendi parçaları -------------------------------------------
 
-unless uygulama.source_build_phase.files_references.any? { |f| f.path == 'EkranSuresiEklentisi.swift' }
-  dosya = uygulama_grubu.new_reference('EkranSuresiEklentisi.swift')
-  uygulama.add_file_references([dosya])
+# Grubun içindeki dosya başvurusu; yoksa açılıyor.
+def uygulama_dosyasi(grup, ad)
+  grup.children.find { |f| f.respond_to?(:path) && f.path == ad } || grup.new_reference(ad)
+end
+
+UYGULAMA_KAYNAKLARI.each do |ad|
+  next if uygulama.source_build_phase.files_references.any? { |f| f.path == ad }
+  uygulama.add_file_references([uygulama_dosyasi(uygulama_grubu, ad)])
 end
 unless uygulama_grubu.children.any? { |f| f.path == 'App.entitlements' }
   uygulama_grubu.new_reference('App.entitlements')
@@ -62,10 +86,12 @@ end
 EKLENTILER.each do |e|
   next if proje.targets.any? { |t| t.name == e[:ad] }
 
-  hedef = proje.new_target(:app_extension, e[:ad], :ios, DAGITIM, nil, :swift)
+  dagitim = e[:dagitim] || DAGITIM
+  hedef = proje.new_target(:app_extension, e[:ad], :ios, dagitim, nil, :swift)
 
   grup = proje.main_group.new_group(e[:ad], e[:ad])
   hedef.add_file_references(e[:kaynaklar].map { |k| grup.new_reference(k) })
+  hedef.add_file_references((e[:ortak] || []).map { |k| uygulama_dosyasi(uygulama_grubu, k) })
   e[:varliklar].each { |v| hedef.resources_build_phase.add_file_reference(grup.new_reference(v)) }
   grup.new_reference('Info.plist')
   grup.new_reference("#{e[:ad]}.entitlements")
@@ -82,7 +108,7 @@ EKLENTILER.each do |e|
     s['GENERATE_INFOPLIST_FILE'] = 'NO'
     s['CODE_SIGN_ENTITLEMENTS'] = "#{e[:ad]}/#{e[:ad]}.entitlements"
     s['CODE_SIGN_STYLE'] = 'Automatic'
-    s['IPHONEOS_DEPLOYMENT_TARGET'] = DAGITIM
+    s['IPHONEOS_DEPLOYMENT_TARGET'] = dagitim
     s['TARGETED_DEVICE_FAMILY'] = '1'
     s['SWIFT_VERSION'] = '5.0'
     s['SKIP_INSTALL'] = 'YES'

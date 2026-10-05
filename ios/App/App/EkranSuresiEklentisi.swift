@@ -41,7 +41,7 @@ public class EkranSuresiEklentisi: CAPPlugin, CAPBridgedPlugin {
     ]
 
     /// Seçimin `UserDefaults` anahtarı.
-    private let secimAnahtari = "rabi.odak.secim"
+    private static let secimAnahtari = "rabi.odak.secim"
 
     /// Pomodoro'daki engelli uygulama listesi (bkz. `listeGoster`).
     private var listeBarindirici: UIViewController?
@@ -58,7 +58,7 @@ public class EkranSuresiEklentisi: CAPPlugin, CAPBridgedPlugin {
         call.resolve([
             "destek": true,
             "izin": izinAdi(AuthorizationCenter.shared.authorizationStatus),
-            "secimSayisi": secimSayisi(kayitliSecim()),
+            "secimSayisi": Self.secimSayisi(Self.kayitliSecim()),
         ])
     }
 
@@ -80,18 +80,18 @@ public class EkranSuresiEklentisi: CAPPlugin, CAPBridgedPlugin {
             return
         }
         DispatchQueue.main.async {
-            let model = SecimModeli(secim: self.kayitliSecim())
+            let model = SecimModeli(secim: Self.kayitliSecim())
             var sayfa: UIViewController?
             let gorunum = UygulamaSecici(
                 model: model,
                 kaydet: { secim in
                     self.secimiKaydet(secim)
                     sayfa?.dismiss(animated: true)
-                    call.resolve(["secimSayisi": self.secimSayisi(secim), "kaydedildi": true])
+                    call.resolve(["secimSayisi": Self.secimSayisi(secim), "kaydedildi": true])
                 },
                 vazgec: {
                     sayfa?.dismiss(animated: true)
-                    call.resolve(["secimSayisi": self.secimSayisi(self.kayitliSecim()), "kaydedildi": false])
+                    call.resolve(["secimSayisi": Self.secimSayisi(Self.kayitliSecim()), "kaydedildi": false])
                 }
             )
             let barindirici = UIHostingController(rootView: gorunum)
@@ -109,14 +109,22 @@ public class EkranSuresiEklentisi: CAPPlugin, CAPBridgedPlugin {
         }
         let kilitAcik = call.getBool("kilitAcik") ?? false
         let bitisMs = call.getDouble("bitisZamani") ?? 0
-        let secim = kayitliSecim()
+        call.resolve(["kilitlendi": Self.kalkaniKur(kilitAcik: kilitAcik, bitisMs: bitisMs)])
+    }
 
-        guard kilitAcik, bitisMs > 0, secimSayisi(secim) > 0,
+    /// `kilitle`ın kendisi, köprüsüz. Kilit ekranındaki sayacın "Devam et"
+    /// düğmesi de (`CanliSayac`) kalkanı buradan yeniden kuruyor: o sırada
+    /// web tarafı uyuyor olabilir ve kalkan ancak uygulama açılınca
+    /// kurulsaydı devam eden tur korumasız geçerdi.
+    @available(iOS 16.0, *)
+    static func kalkaniKur(kilitAcik: Bool, bitisMs: Double) -> Bool {
+        let secim = Self.kayitliSecim()
+
+        guard kilitAcik, bitisMs > 0, Self.secimSayisi(secim) > 0,
               AuthorizationCenter.shared.authorizationStatus == .approved
         else {
-            kalkaniKaldir()
-            call.resolve(["kilitlendi": false])
-            return
+            Self.kalkaniKaldir()
+            return false
         }
 
         let depo = ManagedSettingsStore(named: .rabi)
@@ -146,12 +154,12 @@ public class EkranSuresiEklentisi: CAPPlugin, CAPBridgedPlugin {
             // Zamanlayıcı kurulamadıysa kalkan yine duruyor; web tarafı tur
             // sonunda ve uygulama açılınca `kaldir` çağırıyor.
         }
-        call.resolve(["kilitlendi": true])
+        return true
     }
 
     @objc func kaldir(_ call: CAPPluginCall) {
         if #available(iOS 16.0, *) {
-            kalkaniKaldir()
+            Self.kalkaniKaldir()
         }
         call.resolve()
     }
@@ -188,8 +196,8 @@ public class EkranSuresiEklentisi: CAPPlugin, CAPBridgedPlugin {
                 call.resolve(["satir": 0])
                 return
             }
-            let secim = self.kayitliSecim()
-            let satir = self.secimSayisi(secim)
+            let secim = Self.kayitliSecim()
+            let satir = Self.secimSayisi(secim)
             let liste = EngelListesi(secim: secim)
 
             let barindirici: UIHostingController<EngelListesi>
@@ -263,14 +271,14 @@ public class EkranSuresiEklentisi: CAPPlugin, CAPBridgedPlugin {
     // MARK: - Yardımcılar
 
     @available(iOS 16.0, *)
-    private func kalkaniKaldir() {
+    static func kalkaniKaldir() {
         ManagedSettingsStore(named: .rabi).clearAllSettings()
         DeviceActivityCenter().stopMonitoring([.rabiTur])
     }
 
     @available(iOS 16.0, *)
-    private func kayitliSecim() -> FamilyActivitySelection {
-        guard let veri = UserDefaults.standard.data(forKey: secimAnahtari),
+    static func kayitliSecim() -> FamilyActivitySelection {
+        guard let veri = UserDefaults.standard.data(forKey: Self.secimAnahtari),
               let secim = try? JSONDecoder().decode(FamilyActivitySelection.self, from: veri)
         else { return FamilyActivitySelection() }
         return secim
@@ -279,12 +287,12 @@ public class EkranSuresiEklentisi: CAPPlugin, CAPBridgedPlugin {
     @available(iOS 16.0, *)
     private func secimiKaydet(_ secim: FamilyActivitySelection) {
         if let veri = try? JSONEncoder().encode(secim) {
-            UserDefaults.standard.set(veri, forKey: secimAnahtari)
+            UserDefaults.standard.set(veri, forKey: Self.secimAnahtari)
         }
     }
 
     @available(iOS 16.0, *)
-    private func secimSayisi(_ secim: FamilyActivitySelection) -> Int {
+    static func secimSayisi(_ secim: FamilyActivitySelection) -> Int {
         secim.applicationTokens.count + secim.categoryTokens.count + secim.webDomainTokens.count
     }
 

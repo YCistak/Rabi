@@ -2718,13 +2718,38 @@ iOS'ta **olmayanlar** ve sebepleri:
 - **Rahatsız Etme ve ses odağı.** Uygulamalar Odak modunu açamıyor, başka
   bir uygulamanın sesine dokunamıyor. Odak kilidi ise var, başka yoldan —
   aşağıda.
-- **Kilit ekranındaki sayaç.** Ön plan servisi yok; karşılığı Live
-  Activity (ActivityKit + widget eklentisi). Tur sonu bildirimi planlı yerel
-  bildirimle geliyor ve sayaç mutlak zamandan okunduğu için uygulama
-  arkadayken de doğru kalıyor.
 - **Play güncellemesi.** Güncellemeyi App Store dağıtıyor.
 - **Çökme raporu.** Crashlytics'in iOS köprüsü henüz yazılmadı; o gelene kadar
   soru iOS'ta hiç çıkmıyor.
+
+### iOS'ta sayaç kilit ekranında Live Activity
+
+Tur başlatılıp uygulama alta alınınca ya da ekran kilitlenince iOS'ta sayaç
+hiçbir yerde görünmüyordu: Android'deki kalıcı bildirimin (`OdakServisi`)
+karşılığı yoktu. Kullanıcı "iPhone'daki kronometre gibi" istedi; karşılığı
+Live Activity — kilit ekranında kart, Dynamic Island'da akan sayı.
+
+- **Düzen iPhone'un zamanlayıcısından**: solda yuvarlak duraklat/devam ve
+  bitir, sağda aşama · ders ve büyük sayı, altta ince çubuk. Zemin koyu
+  (Dynamic Island zaten siyah), amber `bildirim_amber`. Önizleme
+  `tasarim/ios-kilit-sayaci.html`.
+- **Parçalar.** Köprü `lib/canli-sayac.ts`; Pomodoro onu doğrudan değil
+  `lib/odak-kilidi.ts`in üç fonksiyonu üzerinden çağırıyor (Android'de aynı
+  işi servis yapıyor). Yerli taraf `ios/App/App/CanliSayacEklentisi.swift`,
+  çizim `ios/App/KilitSayaci` (widget eklentisi, iOS 16.2+). Veri tipi
+  `PomodoroEtkinligi.swift` **iki hedefte birden** derleniyor.
+- **Sayı güncellenmiyor, akıyor.** Durumda bitiş anı var; sayıyı sistemin
+  sayacı (`Text(timerInterval:)`) akıtıyor. Uygulama arkada uyurken web'in
+  sayacı duruyor, o yüzden başka yolu yok. Süre dolunca web uyuyorsa
+  etkinliği kapatan olmuyor; bayatlama tarihi bitiş ve kart "Süre doldu" diyor.
+- **Düğmeler iOS 17** (`LiveActivityIntent`); 16'da yerlerinde maskot.
+  Niyet uygulamanın sürecinde çalışıyor ve işi web'i beklemeden yapıyor:
+  sayacı donduruyor, kalkanı kaldırıyor/yeniden kuruyor, bitiş zilini
+  geri alıyor/kuruyor, sonra `pomodoroKomutu` ile web'e haber veriyor
+  (Android'deki bildirim düğmesinin aynı olayı). Zilin metni
+  `lib/bildirim.ts` ile `CanliSayacEklentisi.swift`te iki kez yazılı.
+- Eklenti Screen Time'a dokunmuyor: Family Controls yetkisi yok ve
+  TestFlight'ın yetki denetimi onu atlıyor.
 
 ### iOS'ta odak kilidi Screen Time'la
 
