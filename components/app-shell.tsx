@@ -56,7 +56,7 @@ import { useGuncelleme } from '@/lib/guncelleme-kolu'
 import { GuncellemeSeridi } from '@/components/guncelleme-seridi'
 import { bugun, cn, gunKaydir } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
-import { haritaSinifiBul, type HaritaSinifi, type KonuDersId } from '@/lib/konu'
+import { haritaSinifiBul, programBul, type HaritaSinifi, type KonuDersId } from '@/lib/konu'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { kullanildi } from '@/lib/son-kullanilan'
 import { useBugun } from '@/lib/gorunurluk'
@@ -100,7 +100,7 @@ import {
   type AylikOzetArsivi,
 } from '@/lib/ozet'
 import { RozetBildirimi } from '@/components/rozet-bildirimi'
-import { DENEME_VAZGEC, tanitimKonumu } from '@/lib/tanitim'
+import { DENEME_VAZGEC, HARITA_TUR_ADIMLARI, tanitimKonumu } from '@/lib/tanitim'
 import { demoDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi, turIstatistikDenemeleri } from '@/lib/tanitim-veri'
 import { TanitimSaglayici, useTanitim } from '@/components/tanitim/tanitim-baglami'
 import { SpotIsigi } from '@/components/tanitim/spot-isigi'
@@ -321,6 +321,18 @@ function RabiUygulamasi() {
     sinif: HaritaSinifi
     konuId: string
   } | null>(null)
+  /*
+    Tanıtım turu Harita'nın yeşil ve turuncu kitabını gösteriyor. 12. sınıfın
+    (ya da kartı yazılmamış bir dersin) haritasında kitap yok ve adım
+    hedefsiz kalırdı; tur sürerken kitabı olan ilk programa bakılıyor.
+    Kayda yazılmıyor: tur bitince harita kendi seçimiyle açılıyor.
+  */
+  const turHaritaSecimi = useMemo(() => {
+    if (!anaTurda || !tanitim.adim || !HARITA_TUR_ADIMLARI.includes(tanitim.adim.kimlik)) return null
+    if (konuSecimi.sinif !== 12 && programBul(konuSecimi.ders, konuSecimi.sinif)) return null
+    const sinif: HaritaSinifi = konuSecimi.sinif === 12 ? 11 : konuSecimi.sinif
+    return { ders: programBul(konuSecimi.ders, sinif) ? konuSecimi.ders : ('matematik' as const), sinif }
+  }, [anaTurda, tanitim.adim, konuSecimi])
   /*
     Depo anahtarı `rabi-notlar` kalıyor: ekran not tahtasından görev listesine
     döndü ama kayıtlı görevler o anahtarda duruyor ve kimliği değiştirmek
@@ -1161,6 +1173,7 @@ function RabiUygulamasi() {
             )}
             {ekran === 'konu-takibi' && (
               <KonuTakibiEkrani
+                tanitimda={anaTurda}
                 takip={yksTakip}
                 setTakip={setYksTakip}
                 ilerlemeler={konuIlerleme}
@@ -1244,7 +1257,7 @@ function RabiUygulamasi() {
             ))}
             {sekme === 'harita' && (
               <KonuHaritasiEkrani
-                secim={konuSecimi}
+                secim={turHaritaSecimi ?? konuSecimi}
                 setSecim={(secim) => setKonuSecimi(secim)}
                 kullaniciSinifi={haritaSinifiBul(ayarlar.buYilSinif)}
                 ilerlemeler={konuIlerleme}
@@ -1297,6 +1310,7 @@ function RabiUygulamasi() {
           if (tanitim.tanitimdaMi) {
             if (yeni === 'oyunlar') tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'oyunlar-ac' })
             else if (yeni === 'daha') tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'araclar-ac' })
+            else if (yeni === 'harita') tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'harita-ac' })
             return
           }
           if (yeni === sekme) {

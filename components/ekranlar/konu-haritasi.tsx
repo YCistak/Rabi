@@ -806,6 +806,10 @@ function TemaBolumu({
     kadar boyanıyor, ötesine değil — kullanıcı oraya yürüdü, orada duruyor.
   */
   const siradakiIndeks = basamaklar.findIndex((b) => b.no === siradakiNo)
+  /** Tanıtım turunun gösterdiği iki kitap: ilk bölümün ilk yeşil ve ilk turuncu kitabı. */
+  const ilkKart = basamaklar.findIndex((b) => b.tur === 'kart')
+  const ilkSoru = basamaklar.findIndex((b) => b.tur === 'soru')
+  const tanitimHedefi = (i: number) => (i === ilkKart ? 'harita-kart' : i === ilkSoru ? 'harita-soru' : undefined)
   const gecilen =
     siradakiIndeks >= 0
       ? siradakiIndeks + (ilk ? 0 : 1)
@@ -880,6 +884,7 @@ function TemaBolumu({
         {basamaklar.map((b, i) => (
           <Dugum
             key={`${b.konu.id}-${b.tur}`}
+            tanitimHedefi={ilk ? tanitimHedefi(i) : undefined}
             basamak={b}
             x={kayma(b.no)}
             y={ust + i * ADIM}
@@ -1086,7 +1091,10 @@ function Dugum({
   durum,
   simdi,
   onAc,
+  tanitimHedefi,
 }: {
+  /** Tanıtım turunun aydınlattığı kitaplar (`data-tanitim`). */
+  tanitimHedefi?: string
   basamak: Basamak
   /** Kutunun ortasının ekran ortasından kayması, piksel. */
   x: number
@@ -1112,6 +1120,7 @@ function Dugum({
     <button
       type="button"
       role="listitem"
+      data-tanitim={tanitimHedefi}
       onClick={onAc}
       aria-label={`${basamak.konuSirasi}. konu — ${soru ? 'sorular' : 'bilgi kartları'} — ${nedeni}`}
       className={cn('absolute grid place-items-center', durum === 'yazilmadi' && 'opacity-60')}

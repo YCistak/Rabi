@@ -204,7 +204,7 @@ export function toplamOzet(ozetler: readonly DersOzeti[]): DersOzeti {
 }
 
 // ---------------------------------------------------------------------------
-// Öneri: yarım kalan konu önde
+// Öneri: müfredat sırasında ilk eksik konu
 // ---------------------------------------------------------------------------
 
 /** Konunun en son işaretlendiği gün (okul, soru ya da bitti); hiç yoksa `null`. */
@@ -218,83 +218,75 @@ export function sonIsaretGunu(kayit: YksKonuKaydi): string | null {
 }
 
 /**
- * Yarım kalan konu: bitmemiş ama dokunulmuş — en az bir aşaması dolu ya da
- * haritada başlanmış. "Devam et" ve sıradaki öneri önce bunlara bakıyor:
- * öğrencinin elinde yarım kalan iş, hiç başlanmamış bir konudan önce gelir.
+ * Bitirmeye hazır: bitmemiş ama gösterilen bütün aşamaları dolu (haritada
+ * karşılığı yoksa harita sayılmıyor). Öneri bu konuyu atlıyor; satır onu
+ * dairedeki ince bir işaretle belli ediyor, öğrenci emin olunca daireye
+ * basıp bitiriyor.
  */
-export function yarimMi(durum: KonuDurumu): boolean {
-  return !durum.bitti && (durum.dolu > 0 || durum.harita?.durum === 'basladi')
+export function bitirmeyeHazir(durum: KonuDurumu): boolean {
+  return !durum.bitti && durum.dolu >= durum.asamaToplam
 }
 
 /**
- * İki yarım konudan hangisi önde: en son işaretlenen. Kayıtta saat değil
- * gün var; aynı gün işaretlenenlerde **listede sonra gelen** önde. Öğrenci
- * listeyi yukarıdan aşağı işaretliyor ve toplu "bu ve öncekiler" eylemi de
- * en alttaki konuda bitiyor — aynı gündeki en alttaki, büyük olasılıkla en
- * son dokunulanı. Haritada başlanmış ama elle işaretlenmemiş konunun günü
- * yok; o, günü olanların arkasında kalıyor.
- */
-function dahaYeni(a: { gun: string | null; sira: number }, b: { gun: string | null; sira: number }): boolean {
-  const ga = a.gun ?? ''
-  const gb = b.gun ?? ''
-  if (ga !== gb) return ga > gb
-  return a.sira > b.sira
-}
-
-/**
- * Derste sıradaki önerilen konu.
+ * Derste sıradaki önerilen konu: müfredat sırasında, bitmemiş **ve**
+ * aşamaları tamamlanmamış ilk konu. Hepsi bittiyse ya da bitirmeye hazırsa
+ * `null`.
  *
- * Önce **yarım kalan** konular, en son işaretlenen önde (`dahaYeni`); yarım
- * konu yoksa müfredat sırasındaki ilk dokunulmamış konu; hepsi bittiyse
- * `null`. Eski kural "en çok aşaması dolu" konuyu öneriyordu ve eşitlikte
- * ilk konu kazandığı için, birkaç konuyu okulda işaretleyen öğrenciye hep
- * dersin ilk konusu öneriliyordu.
+ * Bir süre "önce yarım kalan, en son işaretlenen önde" kuralıydı. Bütün
+ * aşamaları dolu ama "Bitirdim"i basılmamış konu da yarım sayılıyordu ve
+ * öneride takılı kalıyordu: Sözcükte Anlam'da harita, okul ve soru dolu
+ * olan öğrenciye sıradaki hâlâ Sözcükte Anlam'dı; başka konuda bir yuvaya
+ * dokununca öneri oraya zıplıyordu. Öğrenci öneriyi müfredatta ilerleyen,
+ * öngörülebilir bir şey olarak bekliyor. (Daha önce de "en çok aşaması dolu
+ * konu" kuralı vardı; o da hep dersin ilk konusunu öneriyordu.)
  */
 export function siradakiKonu(
   ders: YksDers,
   takip: YksTakip,
   ilerlemeler: KonuIlerlemeleri,
 ): YksKonu | null {
-  let enIyi: { konu: YksKonu; gun: string | null; sira: number } | null = null
-  let ilkBos: YksKonu | null = null
-  for (const [sira, konu] of ders.konular.entries()) {
+  for (const konu of ders.konular) {
     const d = konuDurumu(konu.id, takip, ilerlemeler)
-    if (d.bitti) continue
-    if (!yarimMi(d)) {
-      ilkBos ??= konu
-      continue
-    }
-    const aday = { konu, gun: sonIsaretGunu(d.kayit), sira }
-    if (enIyi === null || dahaYeni(aday, enIyi)) enIyi = aday
+    if (!d.bitti && !bitirmeyeHazir(d)) return konu
   }
-  return enIyi?.konu ?? ilkBos
+  return null
 }
 
 /**
- * Giriş ekranının "Devam et" kartı: dersler arasında en son işaretlenen
- * yarım konu. Yalnızca elle işaretlenmiş (günü olan) konular aday — "en son
- * dokunulan" sorusunun cevabı ancak bir günle verilebiliyor. Aday yoksa
- * `null` ve kart çizilmiyor.
+ * Giriş ekranının "Devam et" kartı: **en son dokunulan dersin** sıradaki
+ * konusu (`siradakiKonu`). Dokunulan ders, elle işaretlenmiş (günü olan)
+ * konulardan bulunuyor — bitirmek de dokunuş. Kayıtta saat değil gün var;
+ * aynı gün dokunulan derslerde **listede sonra gelen** konunun dersi önde:
+ * öğrenci listeyi yukarıdan aşağı işaretliyor, aynı gündeki en alttaki
+ * büyük olasılıkla en son dokunulanı.
+ *
+ * En son dokunulan dersin önerisi kalmadıysa (her konu bitti ya da bitirmeye
+ * hazır) bir önceki dokunulan derse bakılıyor. Hiç işaret yoksa `null` ve
+ * kart çizilmiyor.
  */
 export function devamKonusu(
   dersler: readonly YksDers[],
   takip: YksTakip,
   ilerlemeler: KonuIlerlemeleri,
 ): { ders: YksDers; konu: YksKonu } | null {
-  let enIyi: { ders: YksDers; konu: YksKonu; gun: string; sira: number } | null = null
+  const dokunulan: { ders: YksDers; gun: string; sira: number }[] = []
   let sira = 0
   for (const ders of dersler) {
+    let enSon: { gun: string; sira: number } | null = null
     for (const konu of ders.konular) {
       sira += 1
       const kayit = takip.konular[konu.id]
-      if (!kayit || kayit.bitti) continue
-      const gun = sonIsaretGunu(kayit)
-      if (gun === null) continue
-      const aday = { ders, konu, gun, sira }
-      if (enIyi === null || dahaYeni(aday, enIyi)) enIyi = aday
+      const gun = kayit ? sonIsaretGunu(kayit) : null
+      if (gun !== null && (enSon === null || gun >= enSon.gun)) enSon = { gun, sira }
     }
+    if (enSon) dokunulan.push({ ders, ...enSon })
   }
-  return enIyi && { ders: enIyi.ders, konu: enIyi.konu }
+  dokunulan.sort((a, b) => (a.gun !== b.gun ? (a.gun > b.gun ? -1 : 1) : b.sira - a.sira))
+  for (const { ders } of dokunulan) {
+    const konu = siradakiKonu(ders, takip, ilerlemeler)
+    if (konu) return { ders, konu }
+  }
+  return null
 }
 
 // ---------------------------------------------------------------------------

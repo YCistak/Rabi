@@ -23,6 +23,17 @@
  * `HARITA_SINIFLARI`); AYT'nin türev, integral, organik kimya gibi
  * başlıkları bu yüzden eşlenmedi. Kartlar yazılınca buraya eklenir.
  *
+ * AYT'de TYT ile içeriği örtüşen konular da aynı harita konularına bağlı
+ * (AYT Enerji ve Hareket ↔ TYT İş, Güç ve Enerji): kayıt tek, harita
+ * konusu TYT'den ya da AYT'den gidilerek bitirilmiş olsun iki satırda da
+ * dolu görünüyor. Bakılıp **eşlenmeyenler**: İkinci Dereceden Denklemler
+ * (Karesel Fonksiyon destesi diskriminant ve kök-katsayıya yalnızca birer
+ * kartla değiniyor), Toplam-Fark Formülleri (11. sınıf trigonometri
+ * destelerinde yok), Divan ve Geçiş Dönemi Edebiyatı (Mesnevi ve Dîvânu
+ * Lugâti't-Türk desteleri konunun bir parçası), Sığa ve Alternatif Akım
+ * (birer kart), Coğrafya'nın Türkiye'de tarım, sanayi ve çevre konuları
+ * (11. sınıf desteleri Türkiye'ye özgü değil, genel kavramlar).
+ *
  * `takip.test.ts` her iki uçtaki kimliklerin gerçekten var olduğunu
  * denetliyor: harita içeriği değişip bir konu kimliği kayarsa test kırılır,
  * aşama sessizce boş kalmaz.
@@ -180,6 +191,10 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   // --- AYT Matematik -----------------------------------------------------
   'ayt-mat-fonksiyon': ['mat11-bileske', 'mat11-dort-islem'],
   'ayt-mat-parabol': ['mat10-karesel'],
+  // Deste ikinci derece eşitsizliği işaret tablosu ve çift katlı kökle
+  // anlatıyor — AYT Eşitsizlikler'in asıl içeriği. Birinci derece
+  // eşitsizlik (`mat9-denklem-esitsizlik`) TYT'nin.
+  'ayt-mat-esitsizlik': ['mat10-denklem-problem'],
   'ayt-mat-kosullu-olasilik': ['mat10-kosullu', 'mat10-bayes'],
   'ayt-mat-trig-fonksiyon': ['mat11-trig-fonk'],
   'ayt-mat-trig-denklem': ['mat11-trig-denklem'],
@@ -192,6 +207,12 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   'ayt-fiz-vektor': ['fzk9-vektor'],
   'ayt-fiz-newton': ['fzk11-newton', 'fzk11-surtunme'],
   'ayt-fiz-sabit-ivme': ['fzk10-sabit-ivme', 'fzk11-serbest'],
+  // AYT'nin iş, enerji ve korunumu (yay enerjisi dahil) TYT'deki İş, Güç ve
+  // Enerji ile aynı desteler; haritada okunmuşsa iki satırda da dolu.
+  'ayt-fiz-enerji-hareket': ['fzk10-is-guc', 'fzk10-mekanik'],
+  // Periyodik Hareketler basit ve yay sarkacının periyodunu anlatıyor
+  // (T = 2π√(L/g), T = 2π√(m/k)) — AYT'de BHH sorularının çekirdeği.
+  'ayt-fiz-bhh': ['fzk10-periyodik'],
   'ayt-fiz-iki-boyut': ['fzk11-iki-boyut'],
   'ayt-fiz-elektrik-alan': ['fzk11-elektrik-alan'],
   'ayt-fiz-induksiyon': ['fzk11-manyetik', 'fzk11-induksiyon'],
