@@ -23,6 +23,14 @@ import {
 
 const BUGUN = '2026-10-04'
 
+/**
+ * Başka derse taşınan konular: kimlik → şimdiki ders. Kimlik kayıt anahtarı
+ * olduğu için taşırken değişmiyor; önek eski dersi gösteriyor.
+ */
+const TASINAN_KONULAR: Record<string, string> = {
+  'tyt-mat-binom': 'ayt-matematik',
+}
+
 /** Bir harita konusunu tamamlanmış yazar: deste bitti, soruların hepsi doğru. */
 function tamamla(ilerlemeler: KonuIlerlemeleri, konuId: string): KonuIlerlemeleri {
   const konum = haritaKonumu(konuId)
@@ -50,7 +58,8 @@ describe('YKS konu listesi', () => {
 
   it('konu kimliği dersin önekini taşıyor', () => {
     // Kimlik kayıt anahtarı; önek, dağınık bir kimliğin hangi derse ait
-    // olduğunu kayıttan okuyabilmek için.
+    // olduğunu kayıttan okuyabilmek için. Başka derse taşınan konu kimliğini
+    // koruyor (kayıtlı işaret o kimlikte) — onlar ayrıca sayılı.
     const onekler: Record<string, string> = {
       'tyt-turkce': 'tyt-trk-',
       'tyt-matematik': 'tyt-',
@@ -59,8 +68,27 @@ describe('YKS konu listesi', () => {
     }
     for (const ders of YKS_DERSLERI) {
       const onek = onekler[ders.id] ?? `${ders.id.slice(0, 3)}-`
-      for (const konu of ders.konular) expect(konu.id.startsWith(onek), konu.id).toBe(true)
+      for (const konu of ders.konular) {
+        if (TASINAN_KONULAR[konu.id] === ders.id) continue
+        expect(konu.id.startsWith(onek), konu.id).toBe(true)
+      }
     }
+  })
+
+  it('taşınan konu yeni dersinde, kimliği aynı ve kaydı okunuyor', () => {
+    for (const [konuId, dersId] of Object.entries(TASINAN_KONULAR)) {
+      const ders = YKS_DERSLERI.find((d) => d.konular.some((k) => k.id === konuId))
+      expect(ders?.id, konuId).toBe(dersId)
+    }
+    // Eski sürümde TYT'de işaretlenen Binom, AYT Matematik'in özetinde sayılıyor.
+    const takip = takibiCoz({ surum: 1, konular: { 'tyt-mat-binom': { okul: BUGUN } } })
+    expect(dersOzeti(yksDersBul('ayt-matematik')!, takip, {}).okul).toBe(1)
+    expect(dersOzeti(yksDersBul('tyt-matematik')!, takip, {}).okul).toBe(0)
+  })
+
+  it('AYT Matematik TYT konusunu aynı adla tekrar etmiyor', () => {
+    const tyt = new Set(yksDersBul('tyt-matematik')!.konular.map((k) => k.ad))
+    for (const konu of yksDersBul('ayt-matematik')!.konular) expect(tyt.has(konu.ad), konu.ad).toBe(false)
   })
 
   it('TYT dersleri alanı olmayan, AYT dersleri alanı olan dersler', () => {

@@ -144,7 +144,6 @@ const TYT_MATEMATIK: YksDers = {
     k('tyt-mat-polinom', 'Polinomlar'),
     k('tyt-mat-permutasyon', 'Permütasyon'),
     k('tyt-mat-kombinasyon', 'Kombinasyon'),
-    k('tyt-mat-binom', 'Binom'),
     k('tyt-mat-olasilik', 'Olasılık'),
     k('tyt-mat-istatistik', 'Veri ve İstatistik'),
     k('tyt-geo-dogruda-aci', 'Doğruda Açılar', GEO),
@@ -339,11 +338,20 @@ const AYT_MATEMATIK: YksDers = {
   alanlar: ['say', 'ea'],
   konular: [
     k('ayt-mat-fonksiyon', 'Fonksiyonlar (Bileşke ve Dört İşlem)'),
-    k('ayt-mat-polinom', 'Polinomlar'),
+    // TYT'de "Polinomlar" var (tanım, dört işlem, bölme ve kalan). AYT'nin
+    // sorduğu kısım üst dereceden polinomun kökleri, kökler–katsayılar bağı ve
+    // çarpanlar; ad o kapsamı söylüyor, kimlik eski kalıyor (kayıt anahtarı).
+    k('ayt-mat-polinom', 'Polinomlarda Kökler ve Çarpanlar'),
     k('ayt-mat-ikinci-derece', 'İkinci Dereceden Denklemler'),
     k('ayt-mat-karmasik', 'Karmaşık Sayılar'),
     k('ayt-mat-parabol', 'Parabol'),
     k('ayt-mat-esitsizlik', 'Eşitsizlikler'),
+    // Binom bir süre TYT'deydi. 2018–2025 TYT'lerinde Binom'dan soru yok,
+    // AYT'lerde her yıl bir soru var; yayınevlerinin listeleri de onu AYT'nin
+    // "Sayma, Olasılık ve Binom" başlığında sayıyor. Kimlik `tyt-` önekiyle
+    // kaldı: öğrencinin kayıtlı işareti bu kimlikte, yalnızca yeri değişti
+    // (`TASINAN_KONULAR`, takip.test.ts).
+    k('tyt-mat-binom', 'Binom Açılımı'),
     k('ayt-mat-kosullu-olasilik', 'Koşullu Olasılık'),
     k('ayt-mat-trig-fonksiyon', 'Trigonometrik Fonksiyonlar'),
     k('ayt-mat-trig-denklem', 'Trigonometrik Denklemler'),
