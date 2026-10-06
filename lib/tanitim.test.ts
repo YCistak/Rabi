@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  ESKI_ANA_TUR_ANAHTARI,
   HARITA_TUR_ADIMLARI,
   TANITIM_ADIMLARI,
   TUR_ADIMLARI,
@@ -8,6 +9,7 @@ import {
   demoSonucu,
   demoVerileriTemizle,
   miniTurSec,
+  turGorulduOku,
   tanitimGecisi,
   tanitimKonumu,
   type MiniTurKonumu,
@@ -228,5 +230,23 @@ describe('miniTurSec', () => {
     expect(miniTurSec(yer({ sekme: 'daha', ekran: 'pomodoro', pomodoroIsliyor: true }))).toBeNull()
     expect(miniTurSec(yer({ sekme: 'daha', ekran: 'pomodoro', pomodoroIstegi: true }))).toBeNull()
     expect(miniTurSec(yer({ sekme: 'oyunlar', genelTest: true }))).toBeNull()
+  })
+})
+
+describe('turGorulduOku (eski anahtar göçü)', () => {
+  const depo = (kayit: Record<string, string>) => (anahtar: string) => kayit[anahtar] ?? null
+  it('yeni anahtar varsa görülmüş', () => {
+    expect(turGorulduOku('ana_tur', depo({ rabi_ana_tur_tamamlandi: 'true' }))).toBe(true)
+  })
+  it('yalnız eski rabi_tanitim_tamamlandi varsa ana tur görülmüş sayılır', () => {
+    expect(turGorulduOku('ana_tur', depo({ [ESKI_ANA_TUR_ANAHTARI]: 'true' }))).toBe(true)
+  })
+  it('eski anahtar mini turları görülmüş saymaz', () => {
+    expect(turGorulduOku('denemeler', depo({ [ESKI_ANA_TUR_ANAHTARI]: 'true' }))).toBe(false)
+    expect(turGorulduOku('konu_haritasi', depo({ [ESKI_ANA_TUR_ANAHTARI]: 'true' }))).toBe(false)
+  })
+  it('hiç kayıt yoksa ya da değer true değilse görülmemiş', () => {
+    expect(turGorulduOku('ana_tur', depo({}))).toBe(false)
+    expect(turGorulduOku('ana_tur', depo({ [ESKI_ANA_TUR_ANAHTARI]: 'false' }))).toBe(false)
   })
 })

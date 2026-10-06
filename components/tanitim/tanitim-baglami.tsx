@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react'
-import { demoVerileriTemizle, TANITIM_ADIMLARI, TUR_ADIMLARI, TUR_ANAHTARLARI, tanitimGecisi, type DemoAlani, type TanitimEylemi, type TanitimKaydi, type TanitimTuru } from '@/lib/tanitim'
+import { demoVerileriTemizle, TANITIM_ADIMLARI, TUR_ADIMLARI, TUR_ANAHTARLARI, tanitimGecisi, turGorulduOku, type DemoAlani, type TanitimEylemi, type TanitimKaydi, type TanitimTuru } from '@/lib/tanitim'
 
 import { ANIMASYON_ANAHTARI, VARSAYILAN_ANIMASYON, animasyonKaydi, animasyonuDogrula, type TanitimAnimasyonu } from '@/lib/tanitim-animasyonu'
 
@@ -42,7 +42,7 @@ function useTanitimDurumu(deneyMi: boolean) {
   useEffect(() => {
     const kayitlar = {} as Record<TanitimTuru, boolean>
     for (const turAdi of Object.keys(TUR_ANAHTARLARI) as TanitimTuru[]) {
-      try { kayitlar[turAdi] = localStorage.getItem(TUR_ANAHTARLARI[turAdi]) === 'true' }
+      try { kayitlar[turAdi] = turGorulduOku(turAdi, (anahtar) => localStorage.getItem(anahtar)) }
       catch { kayitlar[turAdi] = false }
     }
     setGorulenler(kayitlar)

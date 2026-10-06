@@ -63,7 +63,7 @@ Ana tur açıkken mini tur başlamaz ve ana tur bitmeden hiçbiri başlamaz. **M
 | Oyunlar | `rabi-mini-tur-oyunlar-v1` |
 | Oyun Bankası | `rabi-mini-tur-oyun-bankasi-v1` |
 
-İlk üç anahtar eski adlarıyla kaldı (değişselerdi turu bitirmiş herkes yeniden görürdü); yeniler projenin anahtar kuralında (`rabi-` öneki, sürümlü). Her anahtara tur tamamlanınca `'true'` yazılır. Tur atlanamaz: balonda "Turu Geç"/kapat düğmesi, adım sayacı ve ilerleme göstergesi yoktur; Escape tuşu ve arka plana dokunma turu kapatmaz, Android geri tuşu bir adım geri alır. Tek çıkış, son adımdaki "Turu Bitir" düğmesidir. Eski `rabi_tanitim_tamamlandi` yeni ana turun kaydı yerine kullanılmaz.
+İlk üç anahtar eski adlarıyla kaldı (değişselerdi turu bitirmiş herkes yeniden görürdü); yeniler projenin anahtar kuralında (`rabi-` öneki, sürümlü). Her anahtara tur tamamlanınca `'true'` yazılır. Tur atlanamaz: balonda "Turu Geç"/kapat düğmesi, adım sayacı ve ilerleme göstergesi yoktur; Escape tuşu ve arka plana dokunma turu kapatmaz, Android geri tuşu bir adım geri alır. Tek çıkış, son adımdaki "Turu Bitir" düğmesidir. Eski `rabi_tanitim_tamamlandi` anahtarı `true` ise ana tur görülmüş sayılır (`turGorulduOku`): eski turu bitirmiş kullanıcıya yeni tur bir kez daha zorla açılıyordu ve Play güncellemesinden sonra açılışta çökme sorusuyla çakışıp kullanıcıyı kilitliyordu. Çökme sorusu açıkken hiçbir tur başlamaz, tur sürerken soru tur bitene kadar bekler (`lib/cokme-tanitim.ts`).
 
 Demo cevapları, skor, örnek denemeler ve banka soruları yalnızca Context belleğindedir. Gerçek banka, oyun geçmişi, soru takibi veya Pomodoro kayıtlarına yazılmaz. `demoVerileriTemizle()` bitişte boş durumu döndürür. Sayfa yenileme de bellekteki demo verilerini kaldırır; tamamlanmayan tur yeniden başlar.
 

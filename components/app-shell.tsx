@@ -52,6 +52,7 @@ import { useHataBildirimi } from '@/lib/hata-kuyrugu'
 import { useGeriBildirim } from '@/lib/geri-bildirim-kolu'
 import { useCokmeRaporu } from '@/lib/cokme-izni'
 import { CokmeSorusu } from '@/components/cokme-sorusu'
+import { cokmeTanitimKarari } from '@/lib/cokme-tanitim'
 import { useGuncelleme } from '@/lib/guncelleme-kolu'
 import { GuncellemeSeridi } from '@/components/guncelleme-seridi'
 import { bugun, cn, gunKaydir } from '@/lib/utils'
@@ -403,7 +404,17 @@ function RabiUygulamasi() {
    * gitmiyor, ama onay verilen an öncesindeki hatalar kaybolmasın diye
    * dinleyiciler baştan takılı duruyor.
    */
-  const cokme = useCokmeRaporu()
+  const cokmeHam = useCokmeRaporu()
+  /*
+    Çökme penceresi ile tanıtım turu asla aynı anda görünmüyor
+    (`lib/cokme-tanitim.ts`): tur katmanı dokunmaları ve odağı yuttuğu için
+    pencerenin düğmeleri çalışmıyor, kullanıcı kilitleniyordu. Pencere
+    bekliyorsa tur başlamıyor; tur sürüyorsa pencere tur bitene kadar
+    bekliyor. Pencerenin bileşeni ve geri tuşu kaydı yalnızca bu süzülmüş
+    `soruAcik`i görüyor.
+  */
+  const cokmeKarari = cokmeTanitimKarari({ cokmeBekliyor: cokmeHam.soruAcik, tanitimdaMi: tanitim.tanitimdaMi, turKapaniyor: tanitim.kapanisSuruyor })
+  const cokme = { ...cokmeHam, soruAcik: cokmeKarari.soruGorunsun }
   const guncelleme = useGuncelleme()
   /** İzlenmiş haftalık özetlerin hafta başı tarihleri. */
   /*
@@ -623,11 +634,14 @@ function RabiUygulamasi() {
   // Ekran görünürken gövde kilitleniyor, kalkarken sayfa başa alınıyor.
   const acilisGorunur = !acilisBitti
   const tanitimAcikti = useRef(false)
+  // Çökme penceresi açıkken tur başlamıyor; pencere cevaplanınca
+  // (`turBaslayabilir` döner) etki yeniden çalışıp turu başlatıyor.
+  const turBaslayabilir = cokmeKarari.turBaslayabilir
   useEffect(() => {
-    if (ayarlarHazir && ayarlar.kurulumTamamlandi && acilisBitti && gecis === 'yok' && tanitim.tamamlandi === false && !tanitim.tanitimdaMi) {
+    if (ayarlarHazir && ayarlar.kurulumTamamlandi && acilisBitti && gecis === 'yok' && turBaslayabilir && tanitim.tamamlandi === false && !tanitim.tanitimdaMi) {
       tanitim.turuBaslat('ana_tur')
     }
-  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, tanitim.tamamlandi, tanitim.tanitimdaMi, tanitim.turuBaslat])
+  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, turBaslayabilir, tanitim.tamamlandi, tanitim.tanitimdaMi, tanitim.turuBaslat])
 
   /*
     Mini turlar: ekran ilk kez açıldığında bir kez (`miniTurSec`). Ana tur
@@ -637,7 +651,7 @@ function RabiUygulamasi() {
   */
   const pomodoroIsliyor = pomodoroDurumu?.canli === true
   useEffect(() => {
-    if (!ayarlarHazir || !ayarlar.kurulumTamamlandi || !acilisBitti || gecis !== 'yok' || tanitim.tanitimdaMi || tanitim.tamamlandi !== true) return
+    if (!ayarlarHazir || !ayarlar.kurulumTamamlandi || !acilisBitti || gecis !== 'yok' || !turBaslayabilir || tanitim.tanitimdaMi || tanitim.tamamlandi !== true) return
     const tur = miniTurSec({
       sekme,
       ekran,
@@ -647,7 +661,7 @@ function RabiUygulamasi() {
       genelTest: genelTest !== null,
     })
     if (tur) tanitim.turuBaslat(tur)
-  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, ekran, sekme, denemeFormu, pomodoroIsliyor, pomodoroIstegi, genelTest, tanitim.tanitimdaMi, tanitim.tamamlandi, tanitim.turuBaslat])
+  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, turBaslayabilir, ekran, sekme, denemeFormu, pomodoroIsliyor, pomodoroIstegi, genelTest, tanitim.tanitimdaMi, tanitim.tamamlandi, tanitim.turuBaslat])
 
   useYerlesimEtkisi(() => {
     if (tanitim.adim && tanitim.aktifTur === 'ana_tur') {
@@ -838,7 +852,14 @@ function RabiUygulamasi() {
     window.scrollTo(0, 0)
   }, [sekme, ekran, denemeFormu, bankaTuru])
 
+  const cokmeSoruAcik = cokme.soruAcik
+  const cokmeyiGonderme = cokme.onGonderme
   const geriGit = useCallback(() => {
+    // Çökme penceresi açıksa geri tuşu önce onu kapatıyor, "Gönderme" ile
+    // aynı anlamda (kapanan pencere veri göndermemeli). Pencere turla aynı
+    // anda görünmüyor (`lib/cokme-tanitim.ts`); bu sıra yine de turun önünde
+    // duruyor ki bir gün ikisi çakışsa tuş kullanıcıyı pencerede kilitlemesin.
+    if (cokmeSoruAcik) { cokmeyiGonderme(); return true }
     // Donanım geri tuşu turu bitirmiyor: tur yalnızca ilerleyerek biter. Tuş bir adım geri alıyor.
     if (tanitim.tanitimdaMi) { tanitim.oncekiAdimaDon(); return true }
     // En içteki katmandan dışa doğru: ekranın kendi açtığı katman (fotoğraf
@@ -864,7 +885,7 @@ function RabiUygulamasi() {
       return true
     }
     return false
-  }, [genelTest, genelTestiBitir, denemeFormu, ekran, sekme, tanitim.tanitimdaMi, tanitim.oncekiAdimaDon])
+  }, [cokmeSoruAcik, cokmeyiGonderme, genelTest, genelTestiBitir, denemeFormu, ekran, sekme, tanitim.tanitimdaMi, tanitim.oncekiAdimaDon])
 
   /**
    * Açılışta kapanmış bir turdan artakalanları temizler.
