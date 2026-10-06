@@ -581,6 +581,15 @@ Seçenek çipleri satırın altında sürekli açık dururken ekran üç ekran b
 (hatırlatma, müzik) açılamaz: satıra dokunmak anahtarı çeviriyor, aynı satır hem
 anahtar hem liste olamaz — hatırlatma saati o yüzden **ayrı** bir satır.
 
+### Ayarlar simge kutuları bölümün renginde
+
+Satırın simge kutusu satıra değil **bölüme** ait renk taşır (`Bolum` `ton`unu
+bağlamla veriyor, `Satir` ayrı `renk` almaz): Çalışma kırmızı, Hatırlatma sarı, Ses
+mor, Yasal mavi, Destek yeşil, Veri turkuaz. Renkler `--ayar-*` (`globals.css`);
+her zemin ve `-koyu` simge rengi çifti ≥ 4.5:1 olmalı. Yeni bölüm eklersen kendi
+`--ayar-<bölüm>` çiftini ve `SatirRengi` üyesini ekle. Ders aileleri (`yzm`, `isl`…)
+kullanılmadı: koyuları kırmızı/sarıda 4.5'in altında. Kullanıcı istedi.
+
 ### Ayarlarda şablon yok
 
 "Varsayılan deneme türü" ve "Deneme şablonları" satırları kaldırıldı: ayarlar

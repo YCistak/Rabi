@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import {
   Bell,
@@ -320,10 +320,9 @@ export function AyarlarEkrani({
         {/* Görünüm bölümü yok: tek tema var, seçilecek bir şey kalmadı. */}
 
         {/* ------------------------------ Çalışma ------------------------- */}
-        <Bolum baslik="Çalışma">
+        <Bolum baslik="Çalışma" ton="calisma">
           <Satir
             Simge={UserRound}
-            renk="mercan"
             baslik="Adım"
             deger={ayarlar.ad || 'Belirtilmedi'}
             {...acilir('ad')}
@@ -368,7 +367,6 @@ export function AyarlarEkrani({
 
           <Satir
             Simge={Target}
-            renk="mavi"
             baslik="Günlük soru hedefim"
             deger={ayarlar.gunlukHedef}
             {...acilir('hedef')}
@@ -399,7 +397,6 @@ export function AyarlarEkrani({
 
           <Satir
             Simge={GraduationCap}
-            renk="nane"
             baslik="Alanım"
             deger={ayarlar.puanTuru ? PUAN_TURU_ADI[ayarlar.puanTuru] : ALANSIZ_ADI}
             {...acilir('alan')}
@@ -432,7 +429,6 @@ export function AyarlarEkrani({
 
           <Satir
             Simge={ClipboardList}
-            renk="krem"
             baslik="Sınıfım"
             deger={sinifAdi(ayarlar.buYilSinif)}
             {...acilir('sinif')}
@@ -480,10 +476,9 @@ export function AyarlarEkrani({
         </Bolum>
 
         {/* ------------------------------ Hatırlatma ---------------------- */}
-        <Bolum baslik="Hatırlatma">
+        <Bolum baslik="Hatırlatma" ton="hatirlatma">
           <Satir
             Simge={Bell}
-            renk="mercan"
             baslik="Günlük hatırlatma"
             onClick={() => void hatirlatmaDegistir()}
             basiliMi={ayarlar.bildirimAcik}
@@ -497,7 +492,6 @@ export function AyarlarEkrani({
           {ayarlar.bildirimAcik && (
             <Satir
               Simge={Bell}
-              renk="mercan"
               baslik="Hatırlatma saati"
               deger={saatYaz(ayarlar.hatirlatmaSaati, ayarlar.hatirlatmaDakikasi)}
               {...acilir('hatirlatma-saati')}
@@ -536,10 +530,9 @@ export function AyarlarEkrani({
         </Bolum>
 
         {/* ------------------------------ Ses ----------------------------- */}
-        <Bolum baslik="Ses">
+        <Bolum baslik="Ses" ton="ses">
           <Satir
             Simge={Volume2}
-            renk="krem"
             baslik="Mini oyun sesleri"
             onClick={() => setAyarlar((o) => ({ ...o, oyunSesi: !o.oyunSesi }))}
             basiliMi={ayarlar.oyunSesi}
@@ -559,10 +552,9 @@ export function AyarlarEkrani({
             (`components/ekranlar/yasal.tsx`), geriye onu açan tek satır kaldı.
             O ekran da metni kendisi göstermiyor, GitHub Pages'teki sayfaları
             tarayıcıda açıyor — tek kopya. */}
-        <Bolum baslik="Yasal">
+        <Bolum baslik="Yasal" ton="yasal">
           <Satir
             Simge={Shield}
-            renk="lavanta"
             baslik="Gizlilik ve Koşullar"
             onClick={onYasalAc}
             sag={<ChevronRight size={18} className="shrink-0 text-muted-foreground/50" aria-hidden />}
@@ -580,10 +572,9 @@ export function AyarlarEkrani({
         {/* Play yorumları buranın yerini tutmuyor: yorumda sürüm ve telefon
             yazmıyor, cevap da verilemiyor. Ekranın kendisi
             `components/ekranlar/geri-bildirim.tsx`. */}
-        <Bolum baslik="Destek">
+        <Bolum baslik="Destek" ton="destek">
           <Satir
             Simge={MessageSquare}
-            renk="mavi"
             baslik="Öneri ve hata bildir"
             onClick={onGeriBildirimAc}
             sag={<ChevronRight size={18} className="shrink-0 text-muted-foreground/50" aria-hidden />}
@@ -602,10 +593,9 @@ export function AyarlarEkrani({
             oluşan ayrı bir blok hâlindeydi; ekranın geri kalanı satır diliyle
             konuşurken orası gri bir levha gibi duruyordu. Her işlem kendi satırı
             oldu. Fotoğraf seçimi ayrı bir işlem değil, indirmenin içindeki karar. */}
-        <Bolum baslik="Veri">
+        <Bolum baslik="Veri" ton="veri">
           <Satir
             Simge={Download}
-            renk="mavi"
             baslik="Yedeği indir"
             onClick={() => {
               if (resimIdleri.length > 0) setYedekSecimiAcik(true)
@@ -615,7 +605,6 @@ export function AyarlarEkrani({
 
           <Satir
             Simge={Upload}
-            renk="nane"
             baslik="Yedeği yükle"
             onClick={() => dosyaRef.current?.click()}
             sag={
@@ -642,7 +631,6 @@ export function AyarlarEkrani({
               aitmiş gibi duruyordu. */}
           <Satir
             Simge={Trash2}
-            renk="mercan"
             baslik="Tüm veriyi sil"
             sag={
               <button
@@ -769,25 +757,40 @@ function YedekSecimi({
   )
 }
 
-/** Satır ikonunun pastel zemini ve üstünde okunan koyu tonu. */
-type SatirRengi = 'mavi' | 'pembe' | 'krem' | 'nane' | 'lavanta' | 'mercan'
+/**
+ * Satır ikonunun zemini bölümün rengini taşır: Çalışma kırmızı, Hatırlatma sarı,
+ * Ses mor, Yasal mavi, Destek yeşil, Veri turkuaz. Satır ayrı renk almaz; ton
+ * `Bolum`dan bağlamla gelir ki bir kategorideki kutucuklar hep aynı renkte kalsın.
+ */
+type SatirRengi = 'calisma' | 'hatirlatma' | 'ses' | 'yasal' | 'destek' | 'veri'
 
 const IKON_RENGI: Record<SatirRengi, string> = {
-  mavi: 'bg-primary-soft text-primary',
-  pembe: 'bg-yzm-kart text-yzm-koyu',
-  krem: 'bg-isl-kart text-isl-koyu',
-  nane: 'bg-success-soft text-success',
-  lavanta: 'bg-edb-kart text-edb-koyu',
-  mercan: 'bg-ikincil-soft text-ikincil',
+  calisma: 'bg-ayar-calisma text-ayar-calisma-koyu',
+  hatirlatma: 'bg-ayar-hatirlatma text-ayar-hatirlatma-koyu',
+  ses: 'bg-ayar-ses text-ayar-ses-koyu',
+  yasal: 'bg-ayar-yasal text-ayar-yasal-koyu',
+  destek: 'bg-ayar-destek text-ayar-destek-koyu',
+  veri: 'bg-ayar-veri text-ayar-veri-koyu',
 }
+
+const BolumTonu = createContext<SatirRengi>('calisma')
 
 /**
  * Ayar bölümü: üstte küçük başlık, altında satırların toplandığı tek kart.
  * Dokuz ayrı kart alt alta dizildiğinde hangi ayarın nerede olduğu ancak
  * kaydırarak bulunuyordu.
  */
-function Bolum({ baslik, children }: { baslik: string; children: React.ReactNode }) {
+function Bolum({
+  baslik,
+  ton,
+  children,
+}: {
+  baslik: string
+  ton: SatirRengi
+  children: React.ReactNode
+}) {
   return (
+    <BolumTonu.Provider value={ton}>
     <section>
       <h2 className="mb-2 ml-1 text-[11.5px] font-extrabold uppercase tracking-[0.09em] text-muted-foreground">
         {baslik}
@@ -799,6 +802,7 @@ function Bolum({ baslik, children }: { baslik: string; children: React.ReactNode
           Arcade/Lo-fi seçimi iki ayrı ayar gibi duruyordu. */}
       <div className="golge-kart overflow-hidden rounded-[22px] bg-card">{children}</div>
     </section>
+    </BolumTonu.Provider>
   )
 }
 
@@ -827,7 +831,6 @@ const AYRAC = 'border-t border-border first:border-t-0'
  */
 function Satir({
   Simge,
-  renk,
   baslik,
   deger,
   sag,
@@ -836,7 +839,6 @@ function Satir({
   acikMi,
 }: {
   Simge: LucideIcon
-  renk: SatirRengi
   baslik: string
   deger?: React.ReactNode
   sag?: React.ReactNode
@@ -846,6 +848,7 @@ function Satir({
   /** Altındaki alanı açıp kapatan satırlarda. */
   acikMi?: boolean
 }) {
+  const renk = useContext(BolumTonu)
   const icerik = (
     <>
       <span
