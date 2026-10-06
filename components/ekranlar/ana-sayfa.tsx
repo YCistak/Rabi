@@ -206,11 +206,13 @@ export function AnaSayfa({
       <header className="flex items-center gap-3 px-0.5 pt-2 pb-1">
         {/* `key`: poz değişince öğe yeniden kuruluyor ve kısa bir solmayla
             geliyor (`ana-maskot-gecis`). Yerinde src değiştirmek bir kare
-            boş görsel bırakıyordu. Ölçü 58'de kaldı: tam boy poz orada
-            lekeye dönüyor, durum kafaları o yüzden pozların baş ve üst gövde
-            kırpımı (`scripts/maskot-uret.mjs` → `KAFALAR`). */}
+            boş görsel bırakıyordu. Poz tam boy ve kesilmiyor: bir süre 58
+            piksellik baş kırpımlarıydı, kesik kenarlar pozdan poza bozuk
+            duruyordu, kullanıcı kaldırttı. Tam boy 70 pikselin altında
+            lekeye döndüğü için tavşan 84'e büyüdü; yazı sütunu ona göre
+            dikeyde ortalanıyor (`items-center`). */}
         <span key={maskot.poz} className="ana-maskot-gecis shrink-0">
-          <Rabi durum={maskot.durum} poz={maskot.poz} etiket={maskot.etiket} boyut={58} />
+          <Rabi durum={maskot.durum} poz={maskot.poz} etiket={maskot.etiket} boyut={84} />
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-extrabold tracking-wide text-ikincil">Rabi</p>
