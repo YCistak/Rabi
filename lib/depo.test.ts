@@ -143,6 +143,23 @@ describe('yedegiDogrula', () => {
     expect(coz(eski).okulYillari).toEqual([{ id: 'y9', sinif: 9, ortalama: 91 }])
   })
 
+  /**
+   * Dilim dönemindeki yedeklerde görevlerin `dilim`i var, `saat`i yok.
+   * Görevler kaybolmadan saatsiz geri yükleniyor; dilimden saat uydurulmuyor.
+   */
+  it('dilimli eski görevleri saatsiz okur', () => {
+    const eski = {
+      ...yedekOlustur(bos),
+      notlar: [
+        { id: 'g1', gun: '2026-10-05', dilim: 'aksam', metin: 'etüt', kategori: 'tekrar', renk: 'mavi', sure: 60, bitti: false, yildiz: false },
+      ],
+    }
+    const notlar = coz(eski).notlar!
+    expect(notlar).toHaveLength(1)
+    expect(notlar[0]).toMatchObject({ id: 'g1', metin: 'etüt', saat: null, sure: 60 })
+    expect(notlar[0]).not.toHaveProperty('dilim')
+  })
+
   it('sınıfı veya notu olmayan yıl kaydını atar', () => {
     const yedek = coz({
       ...yedekOlustur(bos),
