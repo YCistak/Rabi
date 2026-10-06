@@ -11,6 +11,7 @@ import { Buton, Onay } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartGorseli } from './kart-gorseli'
 import { KonuOzeti } from './konu-ozeti'
+import type { KonuDersId } from '@/lib/konu/tip'
 
 /**
  * Soru sahnesi — deste okunduktan **hemen sonra** gelen ekran.
@@ -72,6 +73,7 @@ export type SahneSonucu = {
 
 export function SoruSahnesi({
   konu,
+  ders,
   temaAdi,
   dersAdi,
   ozetli,
@@ -81,6 +83,8 @@ export function SoruSahnesi({
   onCikisBitti,
 }: {
   konu: Konu
+  /** Özetin rengi için. */
+  ders: KonuDersId
   temaAdi: string
   dersAdi: string
   /**
@@ -209,6 +213,7 @@ export function SoruSahnesi({
       <KonuOzeti
         key="ozet"
         konu={konu}
+        ders={ders}
         dersAdi={dersAdi}
         temaAdi={temaAdi}
         okumaSaniyesi={okumaSaniyesi}

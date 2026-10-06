@@ -2546,7 +2546,7 @@ ibaretti ve süslerin arasında okunmuyordu. Bilet bileşeni, `bilet-*` CSS'i
 ve animasyonları silindi; mockup `tasarim/` altında tarih olarak duruyor,
 yeniden uygulanmamalı.
 
-Özet yukarıdan aşağı dört soruya cevap veriyor:
+Özet yukarıdan aşağı üç soruya cevap veriyor:
 
 1. **Ne bitti?** Konunun adı, ders ve tema.
 2. **Ne kadar?** Okunan kart ve destede geçen süre (`DesteSonucu.saniye`,
@@ -2557,12 +2557,13 @@ yeniden uygulanmamalı.
    iskeleti) ve varsa Rabi'nin notu — her konuda tek kartta duran, konunun en
    çok tuzak barındıran yeri. Kart metinleri yazılmıyor: özet destenin ikinci
    kopyası olurdu.
-4. **Sırada ne var?** Yoklamanın soru sayısı, yaklaşık süresi ve konunun ne
-   zaman tamamlanmış sayıldığı (`GECME_ORANI`). Eşik eskiden hiçbir ekranda
-   yazmıyordu.
 
-- **Renk derse göre değişmiyor, süs yok**: ekranın işi okunmak. Bileşen
-  `bicim` almıyor.
+- **"Sırada yoklama var" kartı yok** (kullanıcı kaldırttı): sıradakini
+  "Yoklamaya başla" düğmesi söylüyor.
+- **Renk dersin rengi** (`dersVurgusu`, `SoruSahnesi.ders`; kullanıcı istedi).
+  Hareket hafif ve tek seferlik: ders renkli bant yükselir, içindeki çubuk
+  dolar, sayı kutuları sırayla gelir, Rabi süzülür (`ozet-bandi*`,
+  `ozet-sayi`, `kapanis-suzul`). Konfeti, damga, ses ekleme.
 - **Özet destenin ucundan gelince var, turuncu kitaptan girince yok**
   (`SoruSahnesi.ozetli`). Haritadan doğrudan soruya giren kullanıcı bir şey
   okumadı; "konu bitti" diyen bir özet ona yalan söylerdi. Oradan sahne ilk
