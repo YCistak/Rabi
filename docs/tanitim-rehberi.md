@@ -8,7 +8,7 @@
 4. `components/tanitim/demo-oyun.tsx`: Ders ızgarasındaki Tanıtım oyunu kartı ve gerçek `IslemOyunuEkrani`. Hazırlık, mod/zorluk seçimi, geri sayım, tuş takımı ve sonuç ekranı mevcut oyunlarla aynıdır. Tur ayarları ve sonuç sadece bellekte tutulur.
 5. `components/app-shell.tsx`: Kurulum ve açılış animasyonu bittikten sonra ana turu başlatır; ekran geçişlerini yönetir. Denemeler ve Harita ilk açıldığında ilgili mini turu başlatır.
 
-`data-tanitim` hedefleri ilgili bileşenlerde bulunur: ana sayfa, alt menü, Pomodoro, oyun bankası, Denemeler ve konu haritası.
+`data-tanitim` hedefleri ilgili bileşenlerde bulunur: ana sayfa, alt menü, Pomodoro, oyun bankası, Denemeler, Konu Takibi ve konu haritası.
 
 ## Ana akış
 
@@ -20,12 +20,14 @@ Beş ana bölüm, on altı etkileşim adımına ayrılır:
 4. Pomodoro düğmesine gerçek dokunuş → deneme provası seçimi → sayaç, ders, süreler, ses ve ekran ayarları → ayrı odak kilidi açıklaması → ana sayfa.
 5. Oyunlar sekmesine dokunuş → ders kategorileri arasında Tanıtım oyunu → gerçek tur ayarları → Başlat ve karartmasız geri sayım → 10 dakikalık süre ve tur bilgileri → tek örnek işlem → gerçek sonuç ekranı → Oyunlar menüsünde Oyun Bankası kartına dokunuş → üç geçici örnek.
 
+Deneme kaydedildikten hemen sonra (İstatistik'ten önce) **Konu Takibi → Harita** bölümü gelir: Araçlar'da Konu Takibi kartına dokunuş → girişin üstü (TYT/AYT seçici ve aşama lejantı; tur sürerken ekran TYT girişinde açılır, oturumda açık kalmış ders gösterilmez) → aynı ekranda alt menüden Harita'ya dokunuş → ilk bölümün ilk yeşil kitabı (konu anlatımı) → ilk turuncu kitabı (sorular; "haritada bitirdiğin konu takipte kendiliğinden işaretlenir") → "Araçlara dön" ile İstatistik. 12. sınıfın ya da kartı yazılmamış bir dersin haritasında kitap olmadığı için tur sürerken harita kitabı olan ilk programla çizilir (`turHaritaSecimi`, `app-shell.tsx`); seçim kayda yazılmaz. Ana tur bu iki kitabı gösterdiyse Konu Haritası mini turu da görülmüş sayılır. Konu Takibi kaydına tur hiçbir şey yazmaz.
+
 Önceki kullanıcı tercihi korunur: oyun yanlışlarının bulunduğu Oyun Bankası tanıtılır; fotoğraflı Yanlış Soru ekranına veri eklenmez.
 
 ## Mini turlar
 
 - Denemeler: Deneme ekle düğmesi. Tek bilgi adımıdır; kayıt formunu açmaz. Net grafiği bir süre bu ekrandaydı ("Net gelişimin"); kullanıcı kaldırttı — gelişim İstatistik ekranının işi ve Denemeler Android'deki hâline döndü.
-- Konu Haritası: İlk bölümün ilerleme bandı ve konu patikasının görünür başlangıcı. Uzun patikanın tamamını aydınlatmak yerine ekrana sığan başlangıcı gösterilir. Henüz içerik bulunmayan programda boş durum açıklaması hedeflenir.
+- Konu Haritası: İlk bölümün ilerleme bandı ve konu patikasının görünür başlangıcı; metin yeşil kitabın (anlatım), turuncu kitabın (sorular) ve Konu Takibi bağının söylendiği tek adımdır. Uzun patikanın tamamını aydınlatmak yerine ekrana sığan başlangıcı gösterilir. Henüz içerik bulunmayan programda boş durum açıklaması hedeflenir.
 
 Ana tur açıkken mini tur başlamaz. Mini turun bitirilmesi veya geçilmesi kullanıcıyı bulunduğu ekranda bırakır. Tamamlanan mini tur tekrar girişte veya sayfa yenilemede açılmaz.
 
@@ -37,11 +39,15 @@ Ana tur açıkken mini tur başlamaz. Mini turun bitirilmesi veya geçilmesi kul
 | Denemeler | `rabi_deneme_turu_tamamlandi` |
 | Konu Haritası | `rabi_harita_turu_tamamlandi` |
 
-Her anahtara tamamlamada veya Turu Geç işleminde `'true'` yazılır. Eski `rabi_tanitim_tamamlandi` yeni ana turun kaydı yerine kullanılmaz; güncellenen akış bir kez gösterilir.
+Her anahtara tur tamamlanınca `'true'` yazılır. Tur atlanamaz: balonda "Turu Geç"/kapat düğmesi, adım sayacı ve ilerleme göstergesi yoktur; Escape tuşu ve arka plana dokunma turu kapatmaz, Android geri tuşu bir adım geri alır. Tek çıkış, son adımdaki "Turu Bitir" düğmesidir. Eski `rabi_tanitim_tamamlandi` yeni ana turun kaydı yerine kullanılmaz; güncellenen akış bir kez gösterilir.
 
-Demo cevapları, skor ve banka soruları yalnızca Context belleğindedir. Gerçek banka, oyun geçmişi, soru takibi veya Pomodoro kayıtlarına yazılmaz. `demoVerileriTemizle()` bitişte ve geçmede boş durumu döndürür. Sayfa yenileme de bellekteki demo verilerini kaldırır; tamamlanmayan tur yeniden başlar. Bitiş veya geçme anında demo temizlenir; rehberin kapanışından sonra temiz ana sayfaya animasyonla dönülür.
+Demo cevapları, skor ve banka soruları yalnızca Context belleğindedir. Gerçek banka, oyun geçmişi, soru takibi veya Pomodoro kayıtlarına yazılmaz. `demoVerileriTemizle()` bitişte boş durumu döndürür. Sayfa yenileme de bellekteki demo verilerini kaldırır; tamamlanmayan tur yeniden başlar. Bitiş anında demo temizlenir; rehberin kapanışından sonra temiz ana sayfaya animasyonla dönülür.
 
 Depolama yazılamazsa temizlik yine gerçekleşir ve oturum içindeki tamamlanma durumu korunur; yeniden açılışta turun tekrarlanabileceği kullanıcıya bildirilir. Tur ve adım kimliği kontrolü, gecikmiş veya çift dokunuşun sonraki adımı atlamasını engeller.
+
+## Maskot (Rabi)
+
+Her balonun üst satırında küçük bir Rabi tavşanı durur (`components/maskot/rabi.tsx`; 48 piksel, kısa balonda ve oyun adımında 36). Poz `lib/tanitim.ts` içindeki `adimPozu` ile seçilir: önce adımın isteğe bağlı `poz` alanı, ana turun son adımında `alkislayan` (kutlama), sonra `ADIM_POZLARI` tablosu (kimliğe göre), tabloda yoksa dokunma adımında `isaretci`, değilse `tam`. İlk adım `selamlayan`dır. Örnekler: Pomodoro `saatli`, deneme okutma `fotografci`, konu takibi `okuyan`, harita `haritali`/`kitapli`, istatistik `buyutecli`/`tahtali`/`ziplayan`, oyun sonucu `sevinen`. Tavşan dekoratiftir (`aria-hidden`); balonun yüksekliği ölçülerek yerleştiğinden hedefi örtmez.
 
 ## Yeniden deneme
 

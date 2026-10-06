@@ -33,7 +33,7 @@ const BOLUMLER: { baslik: string; ipucu: string; kartlar: Ekran[] }[] = [
   {
     baslik: 'Çalışma',
     ipucu: 'Günlük rutin',
-    kartlar: ['pomodoro', 'soru', 'yanlis-banka', 'notlar'],
+    kartlar: ['pomodoro', 'soru', 'konu-takibi', 'yanlis-banka', 'notlar'],
   },
   {
     baslik: 'Denemeler',

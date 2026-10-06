@@ -7,11 +7,20 @@ import type { Ayarlar, Hedef, OkulYili, PuanTuru } from '@/lib/types'
 import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
 import { cn, yeniId } from '@/lib/utils'
 import { Alan, Buton, Etiket, Kart } from '@/components/ui'
-import { AramaAlani, Liste, SecilenSatir, SecimSatiri } from '@/components/hedef-secici'
+import {
+  AramaAlani,
+  HedefKontrolu,
+  Liste,
+  SecilenSatir,
+  SecimSatiri,
+  uniListesiBos,
+} from '@/components/hedef-secici'
 import {
   bolumAra,
   bolumBul,
-  bolumleriGetir,
+  hedefSayilariGecerli,
+  puanMetni,
+  sayiOku,
   tahminEt,
   turAdi,
   universiteAra,
@@ -20,7 +29,7 @@ import {
   type Universite,
 } from '@/lib/hedef-katalog'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
-import { Rabi } from '@/components/maskot/rabi'
+import { Rabi, type MaskotPozu } from '@/components/maskot/rabi'
 import { HAZIRLIK_SURESI, Hazirlaniyor } from '@/components/hazirlaniyor'
 import { AD_EN_AZ, adBiciminde, adGecerliMi } from '@/lib/ad'
 import { izinIste } from '@/lib/bildirim'
@@ -174,7 +183,16 @@ export function Kurulum({
 }) {
   const [adim, setAdim] = useState(0)
   const [ad, setAd] = useState('')
-  const [sinif, setSinif] = useState(12)
+  /**
+   * Bu yılın sınıfı; `null` "henüz seçilmedi" demek.
+   *
+   * Bir süre 12 seçili geliyordu: kurulumu hiç ellemeyen 10. sınıf öğrencisi
+   * kendisini 12'de kaydediyor, geri sayım ve harita da yanlış yıldan
+   * açılıyordu. Alan adımı gibi hiçbiri seçili gelmiyor ve Devam, seçim
+   * yapılana kadar pasif. `null` yalnızca burada yaşıyor: kayda giden
+   * `Ayarlar.buYilSinif` hep bir sayı, çünkü bu adım seçimsiz geçilemiyor.
+   */
+  const [sinif, setSinif] = useState<number | null>(null)
   /** Mezunun yıl sonu notları: sınıf → yazılan metin. Boşlar hesaba girmiyor. */
   const [notlar, setNotlar] = useState<Record<number, string>>({})
   const [obpMetni, setObpMetni] = useState('')
@@ -213,6 +231,13 @@ export function Kurulum({
   const [hedefBolum, setHedefBolum] = useState('')
   const [uniArama, setUniArama] = useState('')
   const [bolumArama, setBolumArama] = useState('')
+  /*
+    Elle kontrol kutuları: seçilen bölümün sırası ve taban puanı, katalog
+    değeriyle dolu geliyor ve kullanıcı yanlışsa düzeltiyor. Kayda kutudaki
+    değer giriyor (Hedefim ekranıyla aynı kural).
+  */
+  const [kontrolPuan, setKontrolPuan] = useState('')
+  const [kontrolSira, setKontrolSira] = useState('')
   const [saat, setSaat] = useState(20)
   const [dakika, setDakika] = useState(0)
   /**
@@ -258,17 +283,29 @@ export function Kurulum({
     // üniversitede olmayan bir hedefi kaydedilebilir gösterirdi. Denetim
     // süzgeçsiz listeye bakıyor: alan dışındaki bir seçim geçerli, yalnızca
     // listede gizli.
-    if (secilenBolum && !bolumleriGetir(secilen).some((b) => b.id === secilenBolum.id)) {
-      setHedefBolum('')
+    if (secilenBolum) {
+      // Aynı adlı bölüm yeni üniversitede de varsa sırası başka: kutular
+      // yeni programın değeriyle yeniden dolsun.
+      const ayni = bolumBul(secilen, secilenBolum.ad)
+      if (ayni) kontrolDoldur(secilen, ayni)
+      else setHedefBolum('')
     }
   }
 
   const bolumSec = (secilen: Bolum) => {
     setHedefBolum(secilen.ad)
     setBolumArama('')
+    if (secilenUni) kontrolDoldur(secilenUni, secilen)
   }
 
-  const mezun = mezunMu(sinif)
+  /** Seçilen programın katalog değerini kontrol kutularına yazar. */
+  const kontrolDoldur = (universite: Universite, bolum: Bolum) => {
+    const tahmin = tahminEt(universite, bolum)
+    setKontrolPuan(puanMetni(tahmin.tabanPuan))
+    setKontrolSira(tahmin.siralama.toString())
+  }
+
+  const mezun = sinif !== null && mezunMu(sinif)
   /**
    * Notu sorulacak sınıflar: **bitmiş** yıllar.
    *
@@ -276,7 +313,10 @@ export function Kurulum({
    * 11'deki öğrencinin 9 ve 10'u bitti, 11'i sürüyor. Yarım yılın notu OBP'ye
    * girmiyor, sorulması da kafa karıştırırdı.
    */
-  const notluSiniflar = mezun ? SINIFLAR : SINIFLAR.filter((s) => s < sinif)
+  // Sınıf seçilmeden notlar adımı da yok: adım sınıftan sonra geliyor ve
+  // hangi yılların sorulacağı ancak seçimle belli oluyor.
+  const notluSiniflar =
+    sinif === null ? [] : mezun ? SINIFLAR : SINIFLAR.filter((s) => s < sinif)
   // Sınıf geri dönülüp değiştirilebildiği için liste her çizimde kuruluyor;
   // sıra numarası da listenin boyuna kırpılıyor.
   const adimlar: AdimId[] = [
@@ -340,13 +380,18 @@ export function Kurulum({
   const devamEdilebilir =
     suanki === 'isim'
       ? adGecerli
-      : suanki === 'alan'
-        ? alanSecildi
-        : suanki === 'bolum'
-          ? bolumSonra || (secilenUni !== null && secilenBolum !== null)
-          : suanki === 'notlar'
-            ? notlarSonra || notVar
-            : true
+      : suanki === 'sinif'
+        ? sinif !== null
+          : suanki === 'alan'
+            ? alanSecildi
+            : suanki === 'bolum'
+              ? bolumSonra ||
+                (secilenUni !== null &&
+                  secilenBolum !== null &&
+                  hedefSayilariGecerli(kontrolPuan, kontrolSira))
+              : suanki === 'notlar'
+                ? notlarSonra || notVar
+                : true
   /**
    * Ad ipucu iki yüzlü: boş alanda **soluk** bir yönerge, kısa yazılmış adda
    * **kırmızı** bir uyarı.
@@ -397,6 +442,9 @@ export function Kurulum({
     // Android 13+ izni de burada isteniyor: saat kurulduktan hemen sonra, ne
     // için sorulduğu belliyken. Reddedilirse kurulum yine tamamlanıyor,
     // yalnızca hatırlatma kapalı kaydediliyor — Ayarlar'dan tekrar denenebilir.
+    // Sınıf adımı seçimsiz geçilemiyor; buraya `null` gelmesi akışın
+    // bozulduğu anlamına gelir ve kayda uydurma bir sınıf yazılmamalı.
+    if (sinif === null) return
     const izinli = await izinIste()
     const obp = Number(obpMetni.replace(',', '.'))
     setHazirlanan({
@@ -418,9 +466,8 @@ export function Kurulum({
       // O yüzden kayda yalnızca güncel sınıfa göre bitmiş yıllar giriyor.
       okulYillari: okulYillariKur(notlar, notluSiniflar),
       /*
-        Taban puan ve sıra katalogdan hesaplanıyor, kullanıcıya sorulmuyor:
-        ikisini de bilen kimse yok ve `hedef-katalog.ts` sırayı üniversitenin
-        kademesinden, puanı da o sıradan çıkarıyor. Puan türü seçilen bölümün
+        Taban puan ve sıra kontrol kutularından geliyor: katalog değeriyle
+        dolu açıldılar, kullanıcı yanlışsa düzeltti. Puan türü seçilen bölümün
         türü — kurulumdaki "Hangi alandasın?" öğrencinin kendi alanını soruyor
         ve hedef bölümünkiyle aynı olmak zorunda değil.
       */
@@ -430,7 +477,8 @@ export function Kurulum({
               universite: secilenUni.ad,
               bolum: secilenBolum.ad,
               puanTuru: secilenBolum.puanTuru,
-              ...tahminHedefi(secilenUni, secilenBolum),
+              tabanPuan: sayiOku(kontrolPuan),
+              basariSirasi: sayiOku(kontrolSira),
             }
           : null,
     })
@@ -547,6 +595,7 @@ export function Kurulum({
           oncekiKutu={maskotKutusu}
           adimAnahtari={suanki}
           durum={siradaki === sonAdim ? 'mutlu' : 'normal'}
+          poz={ADIM_POZU[suanki]}
           boyut={KUCUK_MASKOT}
         />
         <div className="golge-kart relative min-w-0 flex-1 rounded-[22px] bg-card p-4 text-card-foreground">
@@ -687,7 +736,7 @@ export function Kurulum({
                       onDegis={setUniArama}
                       ipucu="Üniversite ya da şehir ara"
                     />
-                    <Liste bos="Bu adla üniversite bulamadım.">
+                    <Liste bos={uniListesiBos(uniArama)}>
                       {uniSonuclari.map((u) => (
                         <SecimSatiri
                           key={u.id}
@@ -768,6 +817,18 @@ export function Kurulum({
                     </>
                   )}
                 </div>
+              )}
+
+              {/* Elle kontrol: Devam'dan önce sıra ve puan gösteriliyor; geçersiz
+                  değerle Devam pasif. */}
+              {secilenUni && secilenBolum && (
+                <HedefKontrolu
+                  idOneki="kurulum-kontrol"
+                  tabanPuan={kontrolPuan}
+                  basariSirasi={kontrolSira}
+                  onTabanPuan={setKontrolPuan}
+                  onBasariSirasi={setKontrolSira}
+                />
               )}
             </div>
           )}
@@ -908,6 +969,26 @@ function SonraSec({
 const BUYUK_MASKOT = 150
 /** Balonun yanındaki maskotun boyu — soru soran ekranlar. */
 const KUCUK_MASKOT = 76
+
+/**
+ * Soru adımlarında maskotun pozu — her adım kendi sorusuna uygun bir iş
+ * yapan tavşan: sınıfı not alan, notları abaküsle sayan, bölümü dürbünle
+ * arayan, hatırlatmayı megafonla duyuran.
+ *
+ * Bir süre bütün soru adımlarında aynı yüz duruyordu ve adım değişince
+ * değişen tek şey balondaki cümleydi; ekran ilerlemiyormuş gibi görünüyordu.
+ * 76 piksel tam boy pozun okunduğu sınırın (70) hemen üstünde. İsim adımı
+ * yüzde kalıyor: karşılamadan uçarak geliyor ve büyük baştan küçük başa
+ * geçiş, baştan tam boya geçişten daha sakin.
+ */
+const ADIM_POZU: Partial<Record<AdimId, MaskotPozu>> = {
+  sinif: 'defterli',
+  notlar: 'abakuslu',
+  alan: 'dusunen',
+  bolum: 'durbunlu',
+  hedef: 'elleri-belde',
+  hatirlatma: 'megafonlu',
+}
 /**
  * Maskotun bir adımdan ötekine uçma süresi.
  *
@@ -951,7 +1032,7 @@ function KurulumMaskotu({
   /** Değiştiğinde uçuş kuruluyor; aynı adımdaki çizimler tavşana dokunmuyor. */
   adimAnahtari: string
   durum: 'normal' | 'mutlu'
-  poz?: 'yuz' | 'kafa' | 'el-sallayan'
+  poz?: MaskotPozu
   boyut: number
 }) {
   const sarmalRef = useRef<HTMLSpanElement>(null)
@@ -1055,20 +1136,6 @@ function KurulumMaskotu({
       <Rabi durum={durum} poz={poz} boyut={boyut} />
     </span>
   )
-}
-
-/**
- * Seçilen bölümün tahmini taban puanı ve başarı sırası.
- *
- * Sayılar `hedef-katalog.ts`ten geliyor ve **tahmin**: kurulum onları
- * sormuyor, kullanıcı sonradan Hedefim ekranından düzeltebiliyor.
- */
-function tahminHedefi(
-  universite: Universite,
-  bolum: Bolum,
-): { tabanPuan: number; basariSirasi: number } {
-  const tahmin = tahminEt(universite, bolum)
-  return { tabanPuan: tahmin.tabanPuan, basariSirasi: tahmin.siralama }
 }
 
 /**

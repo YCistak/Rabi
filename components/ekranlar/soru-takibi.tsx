@@ -1,31 +1,16 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { CalendarDays, ChevronDown, Plus, X } from 'lucide-react'
+import { CalendarDays, Plus, X } from 'lucide-react'
 import type { Ayarlar, GunlukKayit, SoruKaydi } from '@/lib/types'
 import { bosSayisi, gunOzeti } from '@/lib/hesap'
-import { CALISMA_DERSLERI, sadelestir } from '@/lib/dersler'
+import { calismaSirasi, sadelestir } from '@/lib/dersler'
 import { useGeriKatmani } from '@/lib/geri'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { bugun, cn, gunKaydir, tariheCevir, tariheYaz, yediGunlukSerit } from '@/lib/utils'
-import { Alan, BaslikSatiri, Buton, Halka, Kart, Not } from '@/components/ui'
-import { Takvim, type GunIsareti } from '@/components/takvim'
-
-const GUN_ADLARI = ['Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct', 'Pz']
-const AY_ADLARI = [
-  'Ocak',
-  'Şubat',
-  'Mart',
-  'Nisan',
-  'Mayıs',
-  'Haziran',
-  'Temmuz',
-  'Ağustos',
-  'Eylül',
-  'Ekim',
-  'Kasım',
-  'Aralık',
-]
+import { Alan, BaslikSatiri, Buton, Halka, Kart, Not, useKapatmaOnayi } from '@/components/ui'
+import { DersSeridi } from '@/components/ders-seridi'
+import { AY_ADLARI, HaftaSeridi, Takvim, type GunIsareti } from '@/components/takvim'
 
 /**
  * "12 Eylül" — `tarihYaziKisa` gün adını da ekliyor ve "12 Eylül Cumartesi"
@@ -173,20 +158,15 @@ export function SoruTakibiEkrani({
   const oran = hedef > 0 ? Math.min(1, ozet.toplam / hedef) : 0
   const halkaRengi = hedefTuttu ? 'var(--success)' : 'var(--primary-parlak)'
 
-  // Bugün ortada kalır; ay takvimi eski kayıtları ayrıca açar.
-  const hafta = useMemo(() => {
-    return yediGunlukSerit(bugunIso).map((iso) => {
-      const tarih = tariheCevir(iso)
-      return {
-        iso,
-        ad: GUN_ADLARI[(tarih.getDay() + 6) % 7],
-        sayi: tarih.getDate(),
-        etiket: `${tarih.getDate()} ${AY_ADLARI[tarih.getMonth()]}`,
-        toplam: gunOzeti(kayitlar.find((k) => k.tarih === iso)).toplam,
-      }
-    })
-  }, [bugunIso, kayitlar])
-  const haftaToplami = hafta.reduce((t, g) => t + g.toplam, 0)
+  // Şeritteki yedi günün toplamı; bugün ortada kalır, ay takvimi eskisini açar.
+  const haftaToplami = useMemo(
+    () =>
+      yediGunlukSerit(bugunIso).reduce(
+        (t, iso) => t + gunOzeti(kayitlar.find((k) => k.tarih === iso)).toplam,
+        0,
+      ),
+    [bugunIso, kayitlar],
+  )
 
   const bugunDon = () => {
     gunSec(bugunIso)
@@ -243,75 +223,42 @@ export function SoruTakibiEkrani({
           </div>
         </Kart>
 
-        {/* Hafta şeridi; takvim altında katlanıyor. */}
-        <Kart className="rounded-3xl px-3 pb-3 pt-3.5">
-          <div className="flex items-baseline gap-2 px-1 pb-2.5">
-            <p className="font-display text-[15px] font-extrabold tracking-tight">7 günlük görünüm</p>
-            <p className="rakam text-[12.5px] font-bold text-muted-foreground/70">
-              {haftaToplami} soru
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                setTakvimAcik((o) => !o)
-                setAy(tariheCevir(secili))
-              }}
-              aria-expanded={takvimAcik}
-              aria-label={takvimAcik ? 'Takvimi kapat' : 'Takvimi aç'}
-              className="ml-auto inline-flex h-8 w-8 items-center justify-center self-center rounded-[11px] bg-muted/60 text-muted-foreground active:bg-muted"
-            >
-              <CalendarDays size={17} aria-hidden />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-7 gap-1">
-            {hafta.map((g) => {
-              const kapali = g.iso > bugunIso
-              const seciliMi = g.iso === secili
-              return (
-                <button
-                  key={g.iso}
-                  type="button"
-                  onClick={() => gunSec(g.iso)}
-                  disabled={kapali}
-                  aria-pressed={seciliMi}
-                  aria-label={`${g.etiket}${kapali ? ' — henüz gelmedi' : ''}`}
-                  className={cn(
-                    'flex flex-col items-center gap-1.5 rounded-2xl pb-2.5 pt-2 transition-colors',
-                    seciliMi && 'bg-primary-soft',
-                  )}
-                >
-                  <span
-                    className={cn(
-                      'text-[10px] font-bold tracking-wide',
-                      seciliMi
-                        ? 'text-primary'
-                        : kapali
-                          ? 'text-muted-foreground/45'
-                          : 'text-muted-foreground/80',
-                    )}
-                  >
-                    {g.ad}
-                  </span>
-                  <span
-                    className={cn(
-                      'rakam text-[15px] font-extrabold leading-none',
-                      seciliMi
-                        ? 'text-primary'
-                        : kapali
-                          ? 'text-muted-foreground/45'
-                          : 'text-foreground',
-                    )}
-                  >
-                    {g.sayi}
-                  </span>
-                </button>
-              )
-            })}
-          </div>
-
+        {/* Hafta şeridi (ortak takvim); ay takvimi altında katlanıyor. Dünden
+            eskisi salt okunur olduğu için soluk, yarından sonrası kapalı. */}
+        <HaftaSeridi
+          secili={secili}
+          onSec={gunSec}
+          bugunIso={bugunIso}
+          isaretler={isaretler}
+          enGecIso={bugunIso}
+          solukMu={(iso) => iso < dunIso}
+          ek={
+            <>
+              <p className="rakam text-[12.5px] font-bold text-muted-foreground/70">
+                {haftaToplami} soru
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setTakvimAcik((o) => !o)
+                  setAy(tariheCevir(secili))
+                }}
+                aria-expanded={takvimAcik}
+                aria-label={takvimAcik ? 'Takvimi kapat' : 'Takvimi aç'}
+                className={cn(
+                  'ml-auto inline-flex h-8 w-8 items-center justify-center rounded-[11px] transition-colors',
+                  takvimAcik
+                    ? 'bg-primary-soft text-primary'
+                    : 'bg-muted/60 text-muted-foreground active:bg-muted',
+                )}
+              >
+                <CalendarDays size={17} aria-hidden />
+              </button>
+            </>
+          }
+        >
           {takvimAcik && (
-            <div className="acilir-giris mt-3.5 border-t border-border/70 pt-3">
+            <div className="acilir-giris mt-2 border-t border-dashed border-primary/25 px-1 pt-3">
               <Takvim
                 ay={ay}
                 onAyDegis={setAy}
@@ -320,10 +267,11 @@ export function SoruTakibiEkrani({
                 isaretler={isaretler}
                 bugunIso={bugunIso}
                 enGecIso={bugunIso}
+                solukMu={(iso) => iso < dunIso}
               />
             </div>
           )}
-        </Kart>
+        </HaftaSeridi>
 
         {duzenlenebilir ? (
           <Buton
@@ -386,7 +334,7 @@ export function SoruTakibiEkrani({
 
       {(tanitim ? tanitim.formAcik : sayfaAcik) && (
         <SoruEkleSayfasi
-          kullanilan={satirlar.map((s) => s.ders)}
+          gecmisSoru={kayitlar.flatMap((k) => k.kayitlar)}
           onKapat={() => (tanitim ? tanitim.formuKapat() : setSayfaAcik(false))}
           onKaydet={girisKaydet}
         />
@@ -600,7 +548,7 @@ function HataNotu() {
  *
  * Ders listesi ekranın kendisinde çip bulutu olarak duruyordu ve sekiz çip +
  * bir yazı kutusu + Ekle düğmesi, ders satırlarını ekranın dibine itiyordu.
- * Şimdi seçim tek düğmenin arkasında; günün dersleri ekranın kendisi.
+ * Şimdi seçim tek satırlık yatay şerit (Pomodoro ile aynı DersSeridi); günün dersleri ekranın kendisi.
  *
  * Listede yalnızca `CALISMA_DERSLERI` var, serbest metin yok: eski ekranda
  * elle yazılan ad ("matematık") istatistikte ayrı bir ders olarak dilim
@@ -608,17 +556,16 @@ function HataNotu() {
  * giriş üstüne ekleniyor (`girisKaydet`).
  */
 function SoruEkleSayfasi({
-  kullanilan,
+  gecmisSoru,
   onKapat,
   onKaydet,
 }: {
-  kullanilan: string[]
+  gecmisSoru: SoruKaydi[]
   onKapat: () => void
   onKaydet: (ders: string, toplam: number, dogru: number, yanlis: number) => void
 }) {
   useGeriKatmani(true, onKapat)
   const kaydir = useAsagiKaydirKapat(onKapat)
-  const [listeAcik, setListeAcik] = useState(false)
   const [ders, setDers] = useState<string | null>(null)
   const [toplam, setToplam] = useState('')
   const [dogru, setDogru] = useState('')
@@ -628,22 +575,24 @@ function SoruEkleSayfasi({
   const d = Number(dogru || 0)
   const y = Number(yanlis || 0)
   const hata = d + y > t
-  const gecerli = ders !== null && t > 0 && !hata
+  // "0" geçerli bir girdi (yanlış 0); "girilmemiş" boş alan demek.
+  const doluMu = toplam !== '' && dogru !== '' && yanlis !== ''
+  const gecerli = ders !== null && doluMu && t > 0 && !hata
 
-  // Bugün girilmiş dersler listenin başında: ikinci girişin en sık hedefi onlar.
-  const secenekler = useMemo(() => {
-    const kullanilanSet = new Set(kullanilan.map(sadelestir))
-    return [
-      ...CALISMA_DERSLERI.filter((x) => kullanilanSet.has(sadelestir(x))),
-      ...CALISMA_DERSLERI.filter((x) => !kullanilanSet.has(sadelestir(x))),
-    ]
-  }, [kullanilan])
+  // En çok soru çözülen üç ders başta (Pomodoro'daki `calismaSirasi`); ölçü
+  // geçmiş kayıtlardaki toplam soru sayısı. Sıra form açılınca bir kez kurulur.
+  const [secenekler] = useState(() =>
+    calismaSirasi(gecmisSoru.map((k) => ({ ders: k.ders, dakika: k.toplam }))),
+  )
+
+  const kapatmaOnayi = useKapatmaOnayi({ aciklama: 'Girdiğin sayılar kaydedilmeden pencere kapanır.' })
 
   return (
     <div
       className="katman-zemin fixed inset-0 z-50 flex items-end justify-center bg-black/40"
       onClick={onKapat}
     >
+      {kapatmaOnayi.pencere}
       <div
         ref={kaydir}
         data-tanitim="soru-formu"
@@ -656,7 +605,7 @@ function SoruEkleSayfasi({
           <p className="ml-auto text-[12.5px] font-bold text-muted-foreground/70">Bugün</p>
           <button
             type="button"
-            onClick={onKapat}
+            onClick={() => kapatmaOnayi.sor(onKapat)}
             aria-label="Kapat"
             className="inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-xl bg-muted/70 text-muted-foreground active:bg-muted"
           >
@@ -667,52 +616,7 @@ function SoruEkleSayfasi({
         <span className="mb-1.5 block text-[11.5px] font-extrabold uppercase tracking-wider text-muted-foreground">
           Ders
         </span>
-        <button
-          type="button"
-          onClick={() => setListeAcik((o) => !o)}
-          aria-expanded={listeAcik}
-          className={cn(
-            'flex h-[52px] w-full items-center gap-2.5 rounded-2xl border border-border bg-background px-3.5 text-left text-[15px] font-extrabold active:bg-muted/60',
-            ders ? 'text-foreground' : 'text-muted-foreground/70',
-          )}
-        >
-          <span className="flex-1 truncate">{ders ?? 'Ders seç'}</span>
-          <ChevronDown
-            size={17}
-            strokeWidth={2.4}
-            aria-hidden
-            className={cn(
-              'shrink-0 text-muted-foreground/70 transition-transform duration-200',
-              listeAcik && 'rotate-180',
-            )}
-          />
-        </button>
-        {listeAcik && (
-          <div className="acilir-giris mt-2 max-h-[216px] overflow-y-auto rounded-2xl border border-border bg-card p-1.5">
-            <div className="grid grid-cols-2 gap-1.5">
-              {secenekler.map((ad) => {
-                const seciliMi = ders === ad
-                return (
-                  <button
-                    key={ad}
-                    type="button"
-                    onClick={() => {
-                      setDers(ad)
-                      setListeAcik(false)
-                    }}
-                    aria-pressed={seciliMi}
-                    className={cn(
-                      'h-11 w-full truncate rounded-[13px] px-3 text-left text-[13.5px] font-bold active:bg-primary-soft active:text-primary',
-                      seciliMi ? 'bg-primary-soft text-primary' : 'bg-muted/60 text-foreground',
-                    )}
-                  >
-                    {ad}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        )}
+        <DersSeridi dersler={secenekler} secili={ders} onSec={setDers} />
 
         <div className="mt-4 grid grid-cols-4 gap-2">
           <SayiKutusu

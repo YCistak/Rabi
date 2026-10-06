@@ -56,7 +56,7 @@ import { useGuncelleme } from '@/lib/guncelleme-kolu'
 import { GuncellemeSeridi } from '@/components/guncelleme-seridi'
 import { bugun, cn, gunKaydir } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
-import { haritaSinifiBul, type HaritaSinifi, type KonuDersId } from '@/lib/konu'
+import { haritaSinifiBul, programBul, type HaritaSinifi, type KonuDersId } from '@/lib/konu'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { kullanildi } from '@/lib/son-kullanilan'
 import { useBugun } from '@/lib/gorunurluk'
@@ -86,6 +86,8 @@ import { gorevleriNormalize, gorevleriTarihtenItibaren, type Gorev } from '@/lib
 import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
 import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
 import { KonuHaritasiEkrani } from '@/components/ekranlar/konu-haritasi'
+import { KonuTakibiEkrani } from '@/components/ekranlar/konu-takibi'
+import { BOS_TAKIP, takibiCoz, type YksTakip } from '@/lib/konu-takibi/kayit'
 import { YapilacaklarEkrani } from '@/components/ekranlar/yapilacaklar'
 import { AylikOzetEkrani } from '@/components/ekranlar/aylik-ozet'
 import { okumaSeansiEkle, type OkumaSeansi } from '@/lib/konu/okuma-suresi'
@@ -98,7 +100,7 @@ import {
   type AylikOzetArsivi,
 } from '@/lib/ozet'
 import { RozetBildirimi } from '@/components/rozet-bildirimi'
-import { DENEME_VAZGEC, tanitimKonumu } from '@/lib/tanitim'
+import { DENEME_VAZGEC, HARITA_TUR_ADIMLARI, tanitimKonumu } from '@/lib/tanitim'
 import { demoDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi, turIstatistikDenemeleri } from '@/lib/tanitim-veri'
 import { TanitimSaglayici, useTanitim } from '@/components/tanitim/tanitim-baglami'
 import { SpotIsigi } from '@/components/tanitim/spot-isigi'
@@ -298,6 +300,39 @@ function RabiUygulamasi() {
     ANAHTARLAR.konuSecimi,
     { ders: 'matematik', sinif: 9 },
   )
+  /*
+    Konu Takibi'nin kaydı. Depodan geleni her okumada `takibiCoz` süzüyor:
+    elle kurcalanmış ya da yarım yazılmış bir kayıt ekranı çökertmesin.
+  */
+  const [yksTakipHam, setYksTakipHam] = useYerelDepo<YksTakip>(ANAHTARLAR.yksKonuTakibi, BOS_TAKIP)
+  const yksTakip = useMemo(() => takibiCoz(yksTakipHam), [yksTakipHam])
+  const setYksTakip = useCallback(
+    (guncelle: (onceki: YksTakip) => YksTakip) => setYksTakipHam((onceki) => guncelle(takibiCoz(onceki))),
+    [setYksTakipHam],
+  )
+  /*
+    Konu Takibi'nden "Haritaya git" isteği: harita sekmesi açılınca bu konunun
+    kartını açıp isteği tüketiyor (`onKonuAcildi`). Prop doğrudan okunsaydı
+    haritadan çıkıp dönen kullanıcı aynı kartı her seferinde yeniden görürdü —
+    ana sayfadaki ders kutucuğunun `acilacakDers` kalıbı.
+  */
+  const [haritaIstegi, setHaritaIstegi] = useState<{
+    ders: KonuDersId
+    sinif: HaritaSinifi
+    konuId: string
+  } | null>(null)
+  /*
+    Tanıtım turu Harita'nın yeşil ve turuncu kitabını gösteriyor. 12. sınıfın
+    (ya da kartı yazılmamış bir dersin) haritasında kitap yok ve adım
+    hedefsiz kalırdı; tur sürerken kitabı olan ilk programa bakılıyor.
+    Kayda yazılmıyor: tur bitince harita kendi seçimiyle açılıyor.
+  */
+  const turHaritaSecimi = useMemo(() => {
+    if (!anaTurda || !tanitim.adim || !HARITA_TUR_ADIMLARI.includes(tanitim.adim.kimlik)) return null
+    if (konuSecimi.sinif !== 12 && programBul(konuSecimi.ders, konuSecimi.sinif)) return null
+    const sinif: HaritaSinifi = konuSecimi.sinif === 12 ? 11 : konuSecimi.sinif
+    return { ders: programBul(konuSecimi.ders, sinif) ? konuSecimi.ders : ('matematik' as const), sinif }
+  }, [anaTurda, tanitim.adim, konuSecimi])
   /*
     Depo anahtarı `rabi-notlar` kalıyor: ekran not tahtasından görev listesine
     döndü ama kayıtlı görevler o anahtarda duruyor ve kimliği değiştirmek
@@ -773,8 +808,8 @@ function RabiUygulamasi() {
   }, [sekme, ekran, denemeFormu, bankaTuru])
 
   const geriGit = useCallback(() => {
-    // Donanım geri tuşu turu sonlandırır; demo ekranının arkasına düşmez.
-    if (tanitim.tanitimdaMi) { tanitim.turuBitir(); return true }
+    // Donanım geri tuşu turu bitirmiyor: tur yalnızca ilerleyerek biter. Tuş bir adım geri alıyor.
+    if (tanitim.tanitimdaMi) { tanitim.oncekiAdimaDon(); return true }
     // En içteki katmandan dışa doğru: ekranın kendi açtığı katman (fotoğraf
     // görüntüleyici, onay kutusu) → form → alt ekran → ana sekme → çıkış.
     if (ustKatmaniKapat()) return true
@@ -798,7 +833,7 @@ function RabiUygulamasi() {
       return true
     }
     return false
-  }, [genelTest, genelTestiBitir, denemeFormu, ekran, sekme, tanitim.tanitimdaMi, tanitim.turuBitir])
+  }, [genelTest, genelTestiBitir, denemeFormu, ekran, sekme, tanitim.tanitimdaMi, tanitim.oncekiAdimaDon])
 
   /**
    * Açılışta kapanmış bir turdan artakalanları temizler.
@@ -911,6 +946,24 @@ function RabiUygulamasi() {
    */
   const acilisKatmani = acilisGorunur ? <Acilis onBitti={acilisiKapat} /> : null
 
+  /**
+   * Alt ekranların üstündeki "Geri". Kenardan kaydırma ve Android'in geri
+   * tuşuyla aynı sıra (`geriGit`): önce ekranın kendi açtığı katman, sonra
+   * ekran. Pomodoro'da onu kendi yuvası çiziyor (aşağıda).
+   */
+  const geriDugmesi = (
+    <Buton
+      bicim="hayalet"
+      boy="kucuk"
+      onClick={() => {
+        if (!ustKatmaniKapat()) setEkran(null)
+      }}
+      className="-ml-2 mb-3"
+    >
+      <ArrowLeft size={16} aria-hidden /> Geri
+    </Buton>
+  )
+
   // Veri okunmadan ekran çizilirse "kayıt yok" bir an yanıp söner.
   const icerik = !ayarlarHazir ? (
     <div className="en-az-ekran" aria-busy="true" />
@@ -993,13 +1046,28 @@ function RabiUygulamasi() {
       {/* Pomodoro'nun yuvası (yukarıda, "Pomodoro ekrandan çıkınca
           sürüyor"). Geri kaydırma kaydırılacak sayfayı `[data-geri-sayfa]`
           ile ilk bulduğu öğeden alıyor; yuva o yüzden `SayfaGecisi`nden
-          önce ve işareti yalnızca açıkken taşıyor. Gizliden görünüre geçen
-          öğenin animasyonu baştan oynuyor: giriş hareketi her açılışta var. */}
-      <div
-        ref={setPomodoroYuvasi}
-        data-geri-sayfa={ekran === 'pomodoro' ? '' : undefined}
-        className={ekran === 'pomodoro' ? 'sayfa-girisi sayfa-ileri tablet:mx-auto tablet:max-w-[40rem]' : 'hidden'}
-      />
+          önce.
+
+          Yuva yalnızca ekran açıkken **kurulu**, gizlenmiyor. Bir süre hep
+          kuruluydu ve ekran kapanınca `hidden` oluyordu; geri kaydırma ise
+          ekranın değiştiğini kayan kutunun sökülmesinden anlıyor
+          (`isConnected`, `geri-kaydirma-denetci.ts`). Sökülmeyen yuvada
+          "ekran değişmedi" sanıp gizli yuvayı yerine yaylandırıyor, önceki
+          ekranın kopyası o süre boyunca yeni ekranın üstünde kayıp
+          kayboluyordu (iOS'ta Pomodoro'dan kaydırarak çıkınca). Sökülen
+          yuvada kap yalnızca DOM'dan düşüyor, bileşen yaşıyor (deneme formu
+          da hep böyle yapıyordu). Her açılışta yeni kutu: giriş hareketi
+          her seferinde baştan oynuyor.
+
+          Geri düğmesi de burada, Pomodoro'nun başlığının üstünde: diğer
+          araçlardaki gibi `SayfaGecisi`nin içinde dursaydı yuvanın, yani
+          bütün Pomodoro'nun altında kalırdı. */}
+      {ekran === 'pomodoro' && (
+        <div data-geri-sayfa className="sayfa-girisi sayfa-ileri tablet:mx-auto tablet:max-w-[40rem]">
+          {geriDugmesi}
+          <div ref={setPomodoroYuvasi} />
+        </div>
+      )}
       <SayfaGecisi
         key={ekran ?? `sekme:${sekme}`}
         anahtar={ekran ?? `sekme:${sekme}`}
@@ -1011,14 +1079,16 @@ function RabiUygulamasi() {
       >
         {ekran !== null ? (
           <>
-            <Buton
-              bicim="hayalet"
-              boy="kucuk"
-              onClick={() => setEkran(null)}
-              className="-ml-2 mb-3"
-            >
-              <ArrowLeft size={16} aria-hidden /> Geri
-            </Buton>
+            {/*
+              Ekranın içinde açılan bir alt görünüm varsa (Konu Takibi'nde bir
+              ders) "Geri" önce onu kapatıyor — Android'in geri tuşu ve iOS'un
+              kenar kaydırmasıyla aynı sıra. Ekran kendi ikinci geri düğmesini
+              çizmek zorunda kalmıyor; üstte iki geri, hangisinin nereye
+              götürdüğünü belirsiz bırakıyordu. Pencereler ve tam ekran
+              katmanlar bu düğmeyi zaten örtüyor.
+            */}
+            {/* Pomodoro'nun geri düğmesi kendi yuvasında (yukarıda). */}
+            {ekran !== 'pomodoro' && geriDugmesi}
 
             {ekran === 'okul' && (
               <OkulEkrani
@@ -1043,7 +1113,6 @@ function RabiUygulamasi() {
                 setHedef={setHedef}
                 varsayilanTur={ayarlar.puanTuru}
                 guncelSiralama={guncelSiralama}
-                onKaydedildi={() => setEkran(null)}
               />
             )}
             {ekran === 'yanlis-banka' && (
@@ -1080,7 +1149,7 @@ function RabiUygulamasi() {
               <YapilacaklarEkrani
                 gorevler={anaTurda ? tanitim.demo.gorevler : gorevler}
                 setGorevler={anaTurda ? (g) => tanitim.demoGuncelle('gorevler', g, 'gorev') : setGorevler}
-                tanitim={anaTurda ? turFormu('gorev-form', 'gorev-dilimleri') : undefined}
+                tanitim={anaTurda ? turFormu('gorev-form', 'gorev-listesi') : undefined}
               />
             )}
             {ekran === 'soru' && (
@@ -1126,6 +1195,22 @@ function RabiUygulamasi() {
                 varsayilanSablonId={anaTurda ? (tanitim.demo.denemeler.at(-1)?.sablonId ?? 'tyt') : ayarlar.varsayilanSablonId}
               />
             )}
+            {ekran === 'konu-takibi' && (
+              <KonuTakibiEkrani
+                tanitimda={anaTurda}
+                takip={yksTakip}
+                setTakip={setYksTakip}
+                ilerlemeler={konuIlerleme}
+                alan={ayarlar.puanTuru}
+                setAlan={(puanTuru) => setAyarlar((o) => ({ ...o, puanTuru }))}
+                onHaritayaGit={({ ders, sinif, konu }) => {
+                  setKonuSecimi({ ders, sinif })
+                  setHaritaIstegi({ ders, sinif, konuId: konu.id })
+                  setEkran(null)
+                  setSekme('harita')
+                }}
+              />
+            )}
             {ekran === 'yasal' && <YasalEkrani />}
             {ekran === 'geri-bildirim' && <GeriBildirimEkrani kol={geriBildirim} />}
           </>
@@ -1147,6 +1232,13 @@ function RabiUygulamasi() {
                 sonAraclar={sonAraclar}
                 sonOyunlar={sonOyunlar}
                 onKartAc={aracAc}
+                pomodoro={
+                  pomodoroDurumu?.canli && pomodoroDurumu.bitisZamani !== null
+                    ? pomodoroDurumu.mola
+                      ? 'mola'
+                      : 'calisma'
+                    : null
+                }
                 onDahaGit={() => setSekme('daha')}
                 onOyunlaraGit={(ders) => {
                   // Ders kutucuğu doğrudan o dersin ızgarasını açıyor; sekmenin
@@ -1189,11 +1281,13 @@ function RabiUygulamasi() {
             ))}
             {sekme === 'harita' && (
               <KonuHaritasiEkrani
-                secim={konuSecimi}
+                secim={turHaritaSecimi ?? konuSecimi}
                 setSecim={(secim) => setKonuSecimi(secim)}
                 kullaniciSinifi={haritaSinifiBul(ayarlar.buYilSinif)}
                 ilerlemeler={konuIlerleme}
                 setIlerlemeler={setKonuIlerleme}
+                acilacakKonu={haritaIstegi}
+                onKonuAcildi={() => setHaritaIstegi(null)}
                 onOkumaSeansi={(seans) => setOkumaGecmisi((onceki) => okumaSeansiEkle(onceki, seans))}
               />
             )}
@@ -1221,6 +1315,7 @@ function RabiUygulamasi() {
                   notlar: gorevler,
                   konuIlerleme,
                   bilinmeyenKartlar,
+                  yksKonuTakibi: yksTakip,
                   aylikOzetler,
                   okumaGecmisi,
                   pomodoroGecmis,
@@ -1239,6 +1334,7 @@ function RabiUygulamasi() {
           if (tanitim.tanitimdaMi) {
             if (yeni === 'oyunlar') tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'oyunlar-ac' })
             else if (yeni === 'daha') tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'araclar-ac' })
+            else if (yeni === 'harita') tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'harita-ac' })
             return
           }
           if (yeni === sekme) {

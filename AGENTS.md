@@ -133,7 +133,8 @@ o duruyordu. Yerini maskotun kendi çizimleri aldı.
 Pozlar elle konmuyor, üretiliyor: kaynak `assets/maskot/*.png`, betik
 `scripts/maskot-uret.mjs`, çıktı `public/tavsan-*.png`. Çıktılar depoya
 giriyor ama **elle düzenlenmemeli** — `ikon-uret.mjs` ile aynı gerekçe.
-Kaynaklar zemini kesilmiş, gerçek alfa taşıyan 2048'lik PNG; betik saydamlığı
+Kaynaklar zemini kesilmiş, gerçek alfa taşıyan PNG (ilk takım 2048'lik, ikinci
+takım 1254'lük; betik ölçüyü kaynaktan okuyor); betik saydamlığı
 kaynaktan okuyor ve tek işi ölçü: bütün pozları aynı tuvalde **aynı
 yükseklikte** vermek. Boy eşitliği şart: `Rabi` ölçüyü tek bir sayı olarak
 biliyor, eşit olmasalardı maskot poz değiştirdiğinde büyüyüp küçülürdü.
@@ -159,8 +160,9 @@ artık uçan tavşan yok (tasarım 2d, aşağıda).
 
 **İki baş çekimi var: `yuz` ve `kafa`.** Tam boy pozlar 70 pikselin altında
 lekeye dönüşüyor (gövde, kollar ve tutulan nesne tek bir şey oluyor), o yüzden
-küçük yerlerde baş kullanılıyor: oyun başlıkları (26–54) `yuz`de, ana sayfanın
-selamlaması ve kurulumun karşılama ekranı `kafa`da.
+küçük yerlerde baş kullanılıyor: oyun başlıkları (26–54) `yuz`de, kurulumun
+karşılama ekranı `kafa`da. Ana sayfanın selamlaması artık durum kafalarında
+(`kafa-*`, aşağıda).
 
 İkisi ayrı duruyor çünkü kaynakları ve işleri ayrı. `yuz`, "normal maskot"un
 elle ölçülmüş bir kırpımı ve aynı zamanda uygulama ikonunun (`ikon-uret.mjs`),
@@ -178,9 +180,8 @@ taraf `public/` altını okuyamıyor.
 
 **Zıplayan sevinç ayrı bir poz.** `sevinen` ("sevinen maskot 2") ile
 `ziplayan` ("sevinen maskot 3") aynı ruh hâlinin iki çizimi ve ikisi de
-kullanılıyor: `ziplayan` ana sayfada günlük hedefi tutturan kullanıcıya
-çıkıyor, `sevinen` başka yerlerde duruyor. Tek poza indirilseydi aynı görsel
-iki ayrı bağlamda tekrarlanırdı.
+kullanılıyor: `ziplayan` aylık özette, `sevinen` başka yerlerde duruyor. Tek
+poza indirilseydi aynı görsel iki ayrı bağlamda tekrarlanırdı.
 
 **Bütün pozlar saydam PNG'den geliyor.** `kafa` ve `ziplayan` bir süre siyah
 zeminli JPEG'den geliyordu ve betik yalnızca o ikisi için zemini kenardan
@@ -192,14 +193,144 @@ Kaynak klasöründeki her kaynak kullanılmıyor. Dışarıda kalan "sinirli" bi
 kaldı: uygulamada karşılığı olan bir ruh hâli değil — Rabi yanlış cevapta
 kullanıcıya kızmıyor, efekt zaten sarsıntıyla "yanlış" diyor.
 
+**İkinci takım (v2, 2026 ekimi) çeşit için geldi.** Uygulamada on iki poz
+vardı ve boş durumların beşi aynı uyuyan, kahve içen tavşandı; kullanıcı
+çeşidi artırmak istedi. 63 pozluk takımdan 28'i alındı. Kural: **poz ekranın
+işini yapıyor.** Boş bir ekranda duran tavşan oranın ne için olduğunu
+gösteriyor — yanlış bankasında büyüteçle inceliyor, istatistikte bitki
+suluyor (veri girdikçe büyüyor), oyun bankası boşken yaprak süpürüyor
+("temizlendi"). Ruh hâli değil eylem; durum etiketi ruh hâlini zaten
+ekran okuyucuya söylüyor.
+
+| Poz | Kaynak | Nerede |
+| --- | --- | --- |
+| `defterli` | defter tutan | kurulum › sınıf adımı |
+| `abakuslu` | abaküsle sayan | kurulum › notlar; Sıralama › deneme yok |
+| `durbunlu` | dürbünle bakan | kurulum › bölüm |
+| `elleri-belde` | elleri belde | kurulum › günlük hedef |
+| `megafonlu` | megafonla konuşan | kurulum › hatırlatma |
+| `cantali` | çanta kapatan | "Uygulaman hazırlanıyor" |
+| `fotografci` | fotoğraf çeken | Denemeler › kayıt yok (kâğıt fotoğrafla okunuyor) |
+| `buyutecli` | büyüteçle inceleyen | Yanlış Soru Bankası › boş |
+| `supuren` | yaprak süpüren | Oyun Bankası › boş ("iyi haber") |
+| `bitkili` | bitki sulayan | İstatistik › veri yok |
+| `haritali` | haritadan yol bulan | Harita › dersin kartları hazırlanıyor |
+| `kitapli` | kitabı inceleyen | Harita › anlatım kartı (`okuyan`ın yerine) |
+| `tahtali` | tahtaya yazan | oyun tanıtımı (nasıl oynanır) |
+| `laptoplu` | laptopta çalışan | odak daveti (Pomodoro) |
+| `saatli` | saate bakan | odak kilidi kurulumu |
+| `basparmak` | başparmak kaldıran | hızlı kontrol › doğru; kapanış › iyi |
+| `damgali` | onay damgası basan | kapanış › iyi |
+| `alkislayan`, `dans`, `takla` | alkışlayan, dans eden, takla atan | kapanış › harika (`sevinen` ile dönüşümlü) |
+| `gerinen`, `esneyen`, `bagdas`, `uzanan` | gerinen, ayak parmaklarına uzanan, bağdaş kuran, uzanan | deste molası (dönüşümlü) |
+| `selamlayan` | eğilerek selamlayan | aylık özetin kapanışı ("Yarın yine buradayım") |
+| `kahkaha` | kahkaha atan | yalnızca durum kafası |
+
+**Dönüşüm tarihten ya da destenin seçiminden, rastgele değil.** Aynı yere
+birden çok poz düşüyorsa (`gununPozu`, `lib/maskot.ts`) seçim günün
+tarihinden türüyor — `gunun-hali.ts`teki cümle kuralı: gün içinde sabit,
+günden güne değişiyor. Mola pozları mola metniyle aynı `secim` sayısından.
+Rastgele seçim, ekran her yeniden çizildiğinde başka bir tavşan demekti.
+
+**Mola zıplamıyor.** Deste molasında tavşan bir süre zıplıyordu; mola bir
+kutlama değil, kartların arasında nefes. Dört dinlenen poz dönüyor.
+
+**Dışarıda kalanlar ve nedeni:**
+
+- **Müzik aletleri** (flüt, davul, tef): uygulamada müzik yok ve kaldırılışı
+  bilinçli (bkz. **Oyunda müzik yok**, **Pomodoro'da müzik yok**). Müzik
+  çalan tavşan olmayan bir özelliği vaat ederdi.
+- **Havuç tutan**: havuç para birimi kaldırıldı (bkz. **Seviye, havuç ve
+  mağaza kaldırıldı**); havuç kaldıran tavşan onu çağrıştırıyor.
+- **Hediye tutan**: ödül/hediye mekaniği yok, aynı gerekçe.
+- **Oyun/el işi** (top sektiren, top yuvarlayan, satranç, yapboz, blok kule,
+  kâğıt kesen/katlayan, yapıştırıcı, fırça, kâğıt uçak, seksek): uygulamanın
+  bir işine karşılık gelmiyor. Yapboz ve satranç aday olabilirdi; konu
+  bitişi ve oyun tanıtımı zaten başka pozla dolu.
+- **Eşi olanlar**: büyüteç tutan (büyüteçle inceleyen seçildi), kupadan içen
+  (`kahveli` var), düşünerek çenesine dokunan (`dusunen` var), cetvelle çizen
+  (abaküsle aynı işi anlatıyor), kitap ayracı ve kutuya kitap (okuyan/kitaplı
+  var), deftere yazan (yalnızca durum kafası olarak alındı), teleskop
+  (dürbün aynı "uzaktaki hedef"i anlatıyor ve Hedefim'in maskotu 64 piksel —
+  tam boy orada okunmuyor).
+- **Anlamı belirsiz ruh hâlleri**: oturan, çömelen, koşan, parmak ucunda
+  yürüyen, emekleyen, tek ayakta denge, yüzüstü ayak sallayan, utangaç,
+  şaşırıp sıçrayan, kucak açan, çiçek tutan, silgiyle silen. Yerleştirilecek bir ekran bulunduğunda kaynağı
+  kopyalayıp betiğe eklemek yeterli; boşta duran poz paketi şişiriyor.
+
+**Pozlar paletli PNG, `yuz` hariç.** Bütün pozlar 256 renge indirilip
+yazılıyor (`uret`'in varsayılanı `sikistir: true`): ~60 kB yerine ~15–20 kB.
+Önce yalnızca ikinci takım sıkıştırılıyordu (38 yeni dosya ~670 kB, düz
+PNG'yle iki megabaytı aşardı); sonra ilk takımın 11 pozu da aynı yola alındı
+ve 671 kB'tan 176 kB'a indi. `public/tavsan-*.png` toplamı 1,42 MB'tan
+0,93 MB'a düştü. Fark yalnızca üç kat büyütmede kürkte ince bir kumlanma.
+
+**`yuz` düz PNG kalıyor** (`sikistir: false`) ve betik onu baytı baytına aynı
+üretiyor: uygulama ikonunun (`ikon-uret.mjs`), Android
+`drawable-nodpi/tavsan_yuz.png` ve iOS `KalkanGorunumu/tavsan_yuz.png`
+kopyalarının kaynağı. Baytları değişirse ikon yeniden üretilmeli ve iki
+kopya yenilenmeli. Kaynak PNG'ler (`assets/maskot/`) pakete girmiyor.
+
+### Başlıktaki tavşan günü gösteriyor
+
+Ana sayfa selamlamasının yanındaki baş bir süre her durumda aynı çizimdi
+(`kafa`); durum yalnızca ekran okuyucu etiketini değiştiriyordu. Kullanıcı
+tavşanın günü göstermesini istedi — örneği "o gün hiç soru girilmediyse
+uyusun". Karar `lib/ana-maskot.ts`te, saf ve testli; saat ana sayfadan
+geliyor.
+
+| Sıra | Koşul | Poz |
+| --- | --- | --- |
+| 1 | Pomodoro çalışma turu işliyor | `kafa-laptoplu` |
+| 2 | Pomodoro molası işliyor | `kafa-kahveli` |
+| 3 | Devamsızlık hakkı aşıldı | `kafa-uzgun` |
+| 4 | Sınav günü | `kafa-bagdas` |
+| 5 | Günlük hedef tuttu | `kafa-dans` / `kafa-alkislayan` / `kafa-kahkaha` (günden güne) |
+| 6 | Bugün başlandı, hedefte değil | `kafa-yazan` / `kafa-kitapli` (günden güne) |
+| 7 | Kayıt yok, gece (22:00–04:59) | `kafa-uyuyan` |
+| 8 | Kayıt yok, sabah (05:00–10:59) | `kafa-gerinen` |
+| 9 | Kayıt yok, seri kırılmak üzere | `kafa-elleri-belde` |
+| 10 | Kayıt yok | `kafa-uyuyan` |
+
+**Sabah uyumuyor, geriniyor.** Sabah sekizde uyuyan bir tavşan "bugün bir şey
+yapmadın" gibi okunuyor; oysa yapılacak bir şey için daha vakit olmadı.
+Gerinen tavşan güne birlikte başlıyor. On birden sonra kayıtsız gün
+kullanıcının istediği gibi uyuyan tavşan.
+
+Seri kuralı `gunun-hali.ts`teki "seri kırılıyor"un aynısı ve seri hesabı
+oradan (`hedefSerisi`); günlük hedef sıfırken "tuttu" yok, aynı kural.
+Duraklatılmış Pomodoro işleyen sayılmıyor: tur durmuş, laptopta çalışan
+tavşan yalan olurdu.
+
+**Durum kafaları kırpım, alan büyütülmedi.** Başlıktaki yer 58 piksel ve tam
+boy poz orada lekeye dönüyor. Alanı büyütmek selamlama cümlesini ve geri
+sayımı aşağı iterdi; onun yerine pozun **üst kısmı** kırpılıyor
+(`maskot-uret.mjs` → `KAFALAR`): baş, kollar ve tutulan nesnenin görünen
+kısmı — durumu anlatan yer orası. Kırpım oranları pozun saydamlıktan
+bulunan kutusuna oran (`alt: 0.62` = kutunun üst %62'si); nesnesi aşağıda
+duran pozlarda (laptop, defter, kitap) daha uzun, kıvrılıp uyuyan ve bağdaş
+kuran tavşanda tam. Oranı değiştirirsen çıktıyı 58 pikselde aç.
+
+Poz değişince öğe yeniden kuruluyor (`key`) ve kısa bir solmayla geliyor
+(`ana-maskot-gecis`, `prefers-reduced-motion` altında yok). Ekran okuyucu
+etiketi duruma özel (`Rabi.etiket`: "uyuyor, bugün henüz kayıt yok",
+"Pomodoro turunda çalışıyor"); `durum` yine ayrı ve ruh hâlini taşıyor.
+
+Poz listesi `lib/maskot.ts`te (`MASKOT_POZLARI`, dosya adı kuralı
+`tavsan-<poz>.png`), bileşen değil — `lib/` altındaki karar fonksiyonu bir
+bileşen dosyasına bağımlı olmasın diye. `maskot.test.ts` her pozun dosyası
+olduğunu denetliyor: listeye eklenip betikte üretilmeyen poz test düşürür.
+
 ### Açılış bir ders makarası
 
-Ekran 2,26 saniye sürüyor (`ACILIS_SURESI`) ve tasarımı "Ders makarası"
+Ekran 2,08 saniye sürüyor (`ACILIS_SURESI`) ve tasarımı "Ders makarası"
 (`tasarim/acilis-arsiv.html` → 3. tur, Yazı C · 2): dört makara harf yerine
 derslerin simgelerini çeviriyor (√x, 1453, DNA, H₂O, MÖ, Ω, Fe…), her simge
 kendi dersinin `--konu-<ders>-koyu` renginde, ve soldan sağa R·A·B·I'ya
-kilitleniyor. Kelime bir an duruyor, harfler bir tık daha dönüp çıkıyor ve
-zemin dört şerit hâlinde yukarı kalkarak ana sayfayı açıyor. Zaman çizgisi
+kilitleniyor. RABI ortada ~600 ms duruyor, sonra katman bütün olarak
+opaklıkla sönüp (400 ms, ease-in-out) ana sayfayı gösteriyor. Zemin dört
+şerit hâlinde yukarı kalkıyordu; kullanıcı parça parça kalkış yerine solma
+istedi — geri getirmeden önce sor. Zaman çizgisi
 `globals.css`teki açılış bloğunun başında yazılı; süreyi değiştirirsen
 oradaki gecikmeleri birlikte değiştir.
 
@@ -217,9 +348,10 @@ eşit genişlikteydi ve dar I geniş bir kutunun ortasında kalınca kelime
 "RAB I" diye okunuyordu. Simgeler harften geniş olabildiği için kırpma
 pencerede değil iki yana taşan kuyuda (`acilis-kuyu`).
 
-**Kelime şeritlerden önce sönüyor.** Kuyuların üst ve alt kenarındaki
-zemin renkli gölgeler, şeritler kalkarken ana sayfanın üstünde iz
-bırakırdı.
+**Katman tek parça sönüyor.** Zemin, kelime ve kuyuların zemin renkli
+gölgeleri aynı opaklıkla gidiyor; parçalar ayrı ayrı gitseydi gölgeler ana
+sayfanın üstünde iz bırakırdı. Katmanın zemini `ZEMIN`, yani sönüş renk
+sıçraması değil.
 
 **Tavşan uçmuyor.** 2a'da tavşan ana sayfadaki maskotun tam üstüne uçarak
 bitiyordu; 2d ile kalktı ve uçuşla birlikte varış noktasının ölçümü
@@ -229,10 +361,10 @@ tavşan yalnızca son makaranın bir simgesi. Uçuşu geri getirmek istersen
 tarihçe `git log -- components/acilis.tsx`; oradaki ana ders hâlâ geçerli:
 varış noktası **ölçülür**, yazılmaz.
 
-Katmanı kaldıran şey son şeridin kendi `animationend`i
-(`acilis-serit-kalk`, adla süzülüyor); zamanlayıcı yalnızca emniyet kemeri.
-Katman sonuna kadar dokunuşları yutuyor: şeritler kalkarken altındaki
-düğmeler görünür ama basılabilir olmamalı.
+Katmanı kaldıran şey katmanın kendi `animationend`i (`acilis-katman-son`,
+hedef ve adla süzülüyor; makaraların olayları da kabarıyor); zamanlayıcı
+yalnızca emniyet kemeri. Katman sonuna kadar dokunuşları yutuyor: sönerken
+altındaki düğmeler görünür ama basılabilir olmamalı.
 
 ### Android'de uçtan uca ekran bütün sürümlerde açık
 
@@ -335,10 +467,11 @@ bırakıyordu.
 
 ### Boş kutuyla ilerlenmiyor
 
-Devam düğmesi eksik cevapta **pasif**. Dört adımın kuralı var: ad geçerli
-olacak, alan kartlarından birine dokunulacak, bölüm adımında üniversite+bölüm
-seçili olacak, notlar adımında en az bir sayı yazılacak. Ötekiler
-(sınıf, hedef, hatırlatma) varsayılanla geliyor — varsayılan da bir cevap.
+Devam düğmesi eksik cevapta **pasif**. Beş adımın kuralı var: ad geçerli
+olacak, sınıf kartlarından birine dokunulacak, alan kartlarından birine
+dokunulacak, bölüm adımında üniversite+bölüm seçili olacak, notlar adımında
+en az bir sayı yazılacak. Ötekiler (hedef, hatırlatma) varsayılanla geliyor —
+orada varsayılan da bir cevap, çünkü çubuk ve saat her değerde anlamlı.
 
 Boş bırakılabilen iki adımın (bölüm, notlar) atlama yolu düğmenin hemen
 üstündeki **"daha sonra seçeceğim"** onay kutusu (`SonraSec`). Onay kutusu,
@@ -356,6 +489,14 @@ Alan adımı bir süre "Karar vermedim"i **seçili** gösteriyordu (`puanTuru ??
 hiçbir şeye dokunmamış kullanıcı, kendi adına verilmiş bir cevap görüyordu.
 Artık hiçbiri seçili gelmiyor; "Karar vermedim" o adımın açık atlama yolu ve
 seçilmesi de bir dokunuş istiyor.
+
+Sınıf adımı da bir süre **12'yi seçili** getiriyordu (`useState(12)`). Kurulumu
+hızlı geçen 10. sınıf öğrencisi kendini 12'de kaydediyor; geri sayım, harita
+ve OBP adımı o yanlış yıldan açılıyordu. Artık hiçbiri seçili gelmiyor ve
+Devam seçim yapılana kadar pasif. `null` yalnızca kurulumun yerel state'inde
+yaşıyor — kayda giden `Ayarlar.buYilSinif` yine `number`, çünkü adım seçimsiz
+geçilemiyor; `bitir` de `null` görürse kayıt yazmadan dönüyor. Sınıf seçilmeden
+notlar adımı da listede yok: hangi yılların sorulacağı seçimle belli oluyor.
 
 Ad adımında uyarı eskiden yalnızca Devam'a basılınca çıkıyordu; düğme pasif
 olduğu için o an hiç gelmiyor. İpucu bu yüzden iki yüzlü: boş alanda soluk bir
@@ -443,6 +584,16 @@ Seçenek çipleri satırın altında sürekli açık dururken ekran üç ekran b
 (hatırlatma, müzik) açılamaz: satıra dokunmak anahtarı çeviriyor, aynı satır hem
 anahtar hem liste olamaz — hatırlatma saati o yüzden **ayrı** bir satır.
 
+### Ayarlar bölümleri kategorinin renginde
+
+Bölüm kartı (`Bolum`) kategorinin açık zeminini taşır; simge kutusu beyaz, simge
+`-koyu` renkte, seçili değer de `-koyu` (ana renk kırmızı/mor pastelde 4.5 altı).
+`Bolum` `ton`u bağlamla `Satir`a verir, `Satir` ayrı `renk` almaz: Çalışma kırmızı,
+Hatırlatma sarı, Ses mor, Yasal mavi, Destek yeşil, Veri turkuaz. Renkler `--ayar-*`
+(`globals.css`); zemin ile `-koyu` ve ikincil yazı ≥ 4.5:1 olmalı. Yeni bölümde kendi
+`--ayar-<bölüm>` çiftini ve `SatirRengi` üyesini ekle. Ders aileleri (`yzm`, `isl`…)
+kullanılmadı: koyuları 4.5 altı. Kullanıcı istedi.
+
 ### Ayarlarda şablon yok
 
 "Varsayılan deneme türü" ve "Deneme şablonları" satırları kaldırıldı: ayarlar
@@ -460,9 +611,10 @@ ediyor, artık ayarlardan değiştirilmiyor.
 
 Süreler kartındaki **Deneme provası** çipleri turu ÖSYM'nin süresine
 çeviriyor: TYT 165, AYT 180, YDT 120 dakika (`lib/sinav-provasi.ts`), ayrıca
-MEB'in Seviye Tespit Sınavı (**STS**) 40 dakika / 20 soru — ÖSYM sınavı değil,
-ders başına tek oturum; kullanıcı istedi ve süresi Pomodoro turundan kısa olsa
-da mola döngüsünün dışında kesintisiz bir sınav oturumu. Amaç
+**"Süre gir"**: kullanıcı kendi süresini yazıyor (1–300 dk, `ozelProva`; son
+yazılan `PomodoroAyar.provaSuresi`de hatırlanıyor). Yerinde bir süre MEB'in
+STS'si (40 dk) duruyordu; kullanıcı kaldırttı. Prova kimliği hiçbir yere
+kaydedilmiyor, eski 'sts' seçiminin taşınacak kaydı yok. Amaç
 denemeyi uygulamanın içinde çözdürmek değil, kâğıdı çözerken süreyi buradan
 tutturmak — öğrenci zaten telefonun kronometresini açıyordu ve o süre hiçbir
 yere yazılmıyordu.
@@ -526,8 +678,14 @@ sayacın uygulamanın sağ altında bir saat olarak görünmesini istedi.
   tur) ekran değişince sökmüyor. Çizildiği yer sabit, ayrık bir `div`
   (portalın kabı) ve o div ekran açıkken sayfadaki yuvaya taşınıyor. Kap
   **hiç değişmemeli**: React kabı değişen portalı söküp yeniden kurar.
-  Deneme formu gibi bütün sayfa ağacını değiştiren bir ekran yuvayı
-  söktüğünde kap yalnızca DOM'dan düşüyor, bileşen yaşıyor.
+  Yuva ise yalnızca ekran açıkken **kurulu** (gizlenmiyor, sökülüyor); kap
+  o zaman DOM'dan düşüyor, bileşen yaşıyor. Gizlenen yuva geri kaydırmayı
+  bozuyordu: denetçi ekranın değiştiğini kayan kutunun sökülmesinden
+  anlıyor, sökülmeyen kutuyu yerine yaylandırıyor ve önceki ekranın kopyası
+  yeni ekranın üstünde kayıp kayboluyordu.
+- **Geri düğmesi yuvada**, Pomodoro'nun üstünde (`AppShell` → `geriDugmesi`).
+  Diğer araçlarınki `SayfaGecisi`nde; Pomodoro yuvası ondan önce geldiği için
+  orada bütün Pomodoro'nun altında kalıyordu.
 - **Gizliyken sahne yok** (`gorunur`): açık bir sahne geri katmanı kurar,
   başka ekranda geri tuşunu ve sekme kaydırmayı yutardı. Tur sürerken
   ekrana dönülünce sahne kendiliğinden açılıyor.
@@ -838,6 +996,12 @@ Ekleme formundaki ders alanı serbest metindi (önerili); "matematik", "Mat",
 "mat." aynı dersin üç ayrı süzgeç çipi oluyordu. Artık on çipten biri
 seçiliyor ve Kaydet ancak bir ders seçilince açılıyor.
 
+**Ders şeridi tek bileşen** (`components/ders-seridi.tsx`, `DersSeridi`):
+Pomodoro ve Soru Takibi'nin "Soru ekle" sayfası aynı şeridi kullanır. Soru
+Takibi'nde sıra geçmiş kayıtlardaki toplam soru sayısına göre (`calismaSirasi`),
+Kaydet ise ders seçilmeden ve Toplam/Doğru/Yanlış üçü de doldurulmadan açılmaz
+(0 geçerli, boş alan girilmemiş demek).
+
 **Ders listesi on ders** ve uygulamada tek (`CALISMA_DERSLERI`,
 `lib/dersler.ts`): Pomodoro, Soru Takibi ve yanlış soru aynı listeyi
 gösteriyor — Türkçe, Matematik, Fizik, Kimya, Biyoloji, Tarih, Coğrafya,
@@ -909,6 +1073,20 @@ Soru Takibi'nde bugün ve yalnızca bir önceki gün düzenlenebilir. Daha eski
 günler geçmişi incelemek için seçilebilir fakat salt okunur kalır; gelecek
 günler seçilemez. Önceki gün `gunKaydir(bugunIso, -1)` ile yerel takvimden
 hesaplanır; böylece ay, yıl ve artık yıl sınırlarında da aynı kural geçerlidir.
+
+## Takvim tek bileşen
+
+Gün seçen her takvim `components/takvim.tsx`ten: yedi günlük `HaftaSeridi`
+(bugün ortada, görünüş Yapılacaklar'ınki) ve açılır ay `Takvim`i; ikisi aynı
+`GunHucresi`ni çiziyor. Ekrana kendi takvimini yazma — kurallar prop'la gelir:
+`enGecIso` (sonrası kapalı), `solukMu` (salt okunur günler), `isaretler`
+(`doluluk` zemini, `nokta`: görev / devamsızlık türü). Ana sayfadaki hedef
+hapları gün seçmediği için takvim değil, ayrı kalır.
+
+Pazartesi hücresinin üstünde ince bir çizgi hafta başını gösterir
+(`haftaBasiIsaretiMi`, `lib/utils.ts`); kayan şeritte haftanın nerede
+başladığı başka türlü okunmuyordu. Bugün pazartesiyse o gün işaretsiz —
+"bugün" zaten belli. Çizgi üstte, noktalar altta: ikisi karışmasın.
 
 ## Aylık özet ayın 1'inde, yalnızca o gün
 
@@ -1367,13 +1545,18 @@ oynatılıyor: genişlik her karede yeniden yerleşim demek ve rekor çizgisi
 
 ## Çarpı önce soruyor
 
-Turun, destenin ya da yoklamanın ortasında çarpıya basmak doğrudan çıkmıyor,
-`Onay` penceresi açılıyor: oyun turu (`OyunKabugu`, tur sürerken), konu
-destesi (ilk ekrandan sonra), yoklama (en az bir cevaptan sonra) ve
-Pomodoro'nun "Turu bitir"i (başlamış turda). Çarpı yanlışlıkla
-dokunuluyordu ve arkasındaki iş geri gelmiyordu. Kaybedilecek bir şey
-yokken (başlamamış tur, ilk kart) sormuyor. Geri tuşu ve kenardan kaydırma
-sormuyor — orada niyet belli, Pomodoro'nun geri oku da yalnızca duraklatıyor.
+**Uygulamadaki her ✕ kapatma düğmesi önce sorar** — kullanıcı istedi, kaybedilecek
+bir şey olmasa da. Yeni bir ✕ eklerken `useKapatmaOnayi` (`components/ui.tsx`)
+kullan: `sor(kapat)` pencereyi açar, "Çık" denince eski kapanma yolu aynen
+çalışır; `pencere`yi bileşende çiz (body'ye portal, z-[100]). Metin bağlama
+göre; iş kaybolacaksa bunu söyler. Oyun turu, konu destesi, yoklama ve
+Pomodoro "Turu bitir" kendi `Onay`larını kullanıyor; kaybedilecek bir şey
+yokken yalnız metinleri değişiyor.
+- Kapsam yalnız ✕ düğmeleri: geri oku, geri tuşu, kenardan kaydırma, aşağı
+  çekerek ve zemine basarak kapatma sormaz. Satır silen/alan temizleyen ✕'ler
+  (Kaydı sil, notu sil, Saati kaldır) kapatma değil, kapsam dışı.
+- Tanıtım turu sürerken (`useTanitimSuruyor`) sorulmaz: spot ışığı hedef
+  dışındaki dokunuşu yutuyor, onay penceresi açılsa tur kilitlenirdi.
 
 ## Yarıda bırakılan tur da bir tur
 
@@ -1970,32 +2153,57 @@ Ders kutucuklarının geçmişi ayrı tutulmuyor, oynanan oyunlardan türetiliyo
 (`oyunlarinDersleri`): ikinci bir "son açılan ders" listesi aynı bilgiyi ikinci
 kez saklamak olurdu ve iki liste zamanla birbirinden ayrılırdı.
 
-## Yapılacaklar: günün üç dilimi
+## Yapılacaklar: günün listesi, saat isteğe bağlı
 
 Araçlardaki görev listesi (`lib/yapilacaklar.ts`, ekran
 `components/ekranlar/yapilacaklar.tsx`, tasarım
-`tasarim/yapilacaklar-v3.dc.html`). Üstte haftanın yedi günü, altında noktalı
-kâğıt üstünde **Sabah / Öğle / Akşam** bölümleri, görev eklemek alttan açılan
-bir sayfada.
+`tasarim/yapilacaklar-v3.dc.html` — dilimli hâli). Üstte haftanın yedi günü,
+altında günün **tek listesi**, görev eklemek alttan açılan bir sayfada.
 
 Burası bir süre **tahtaydı**: not kâğıtları sürükleniyor, konum da kullanıcının
 verdiği bilgi sayılıyordu ("bunlar okul, şunlar ev"). 390 piksellik bir tahtada
 on kâğıt, okunmak için yerleştirilmesi gereken on kâğıt demekti — kullanıcı işini
 yazmak yerine tahtayı düzenliyordu. Gruplama da konumdan okunmuyordu: iki kâğıdın
 yan yana durması ancak onu koyan kişiye bir şey söylüyor, ertesi gün ona da
-söylemiyor. Yeni düzen gruplamayı konuma değil **zamana** bağlıyor; günün
-kendisinde gerçekten var olan tek sıra bu. Konum alanları (`x`, `y`) kalktı,
-eski kayıtlar `gorevleriNormalize` ile taşınıyor (kâğıtlar kalıyor, konumları
-atılıyor).
+söylemiyor. Konum alanları (`x`, `y`) kalktı, eski kayıtlar
+`gorevleriNormalize` ile taşınıyor (kâğıtlar kalıyor, konumları atılıyor).
 
-### Sınır dilim başına on
+### Dilimler kalktı, saat isteğe bağlı
 
-`EN_COK_GOREV` **bir günün bir dilimi** için geçerli, gün için değil: on işi
-sabaha yığmak bir plan değil istek listesi, ama sınırı günde ona indirmek üç
-dilimi anlamsızlaştırırdı — sabahı dolduran akşama hiç yazamazdı. Sınır iki
-yerde birden duruyor: `gorevEkle` eklemeyi engelliyor (ve dolu dilimin `+`
-düğmesi pasif), `gorevleriNormalize` de kayıttan okurken fazlasını eliyor —
-kurcalanmış bir kayıt yüzünden ekranda "11/10" yazmasın diye.
+Sonra gruplama zamana bağlandı: **Sabah / Öğle / Akşam** bölümleri, ekleme
+düğmesi her bölümde. Kullanıcı istemedi ("sabah öğle akşam olmasın, saatler
+olsun kullanıcı isterse"): üç kaba kutu her işi bir bölüme sokmayı zorunlu
+kılıyordu, saati bilen kullanıcıya da bir şey söyletmiyordu.
+
+Şimdi her görevin **isteğe bağlı** saati var (`Gorev.saat`, 'SS:DD' ya da
+`null`). Liste `gununSiraliGorevleri` ile: saatliler saate göre üstte,
+saatsizler altta — saatsiz görev "gün içinde bir ara" demek ve saatlilerin
+arasına yerleştirilemez. Aynı saatte ve saatsizler içinde yıldızlılar üstte;
+yıldız saatin önüne **geçmiyor** (18:00'deki öncelikli iş 09:00'dan önce
+yapılmıyor).
+
+Ekleme sayfasında saat **kapalı** bir "Saat ekle" düğmesi; tek dokunuş
+telefonun kendi seçicisini açıyor (`<input type="time">` + `showPicker`,
+yoksa kutu odakta açık kalıyor). Açık duran boş bir saat kutusu her eklemede
+doldurulması gereken bir alan gibi görünürdü. Çarpı saati siliyor.
+Düzenlemede saat değişebiliyor; erteleme saati koruyor. Satırda saat,
+kategori satırının başında renk noktasının yerinde ve ön plan renginde
+duruyor — iş adının tek satırına sığmazdı.
+
+**Göç:** kayıt sürümsüz bir dizi ve şemayı okurken `gorevleriNormalize`
+çeviriyor (tahta göçüyle aynı yol, eski yedekler de buradan geçiyor). Eski
+görevin `dilim`i atılıyor, görev **saatsiz** kalıyor. Dilim saate
+çevrilmiyor: "sabah" 09:00 demek değildi ve kullanıcının vermediği bir saati
+onun adına yazmak olurdu.
+
+### Sınır gün başına otuz
+
+`EN_COK_GOREV` artık **gün** başına ve otuz. Dilimli dönemde dilim başına
+ondu (günde 3 × 10); daha düşük bir sayı, o dönemde dolu yazılmış bir günü
+taşırken görev elerdi. Sınır iki yerde birden duruyor: `gorevEkle` eklemeyi
+engelliyor (ve dolu günün `+` düğmesi pasif), `gorevleriNormalize` de
+kayıttan okurken fazlasını eliyor — kurcalanmış bir kayıt yüzünden ekranda
+"31/30" yazmasın diye.
 
 ### Metin tek satır, sınır ölçüyle konuyor
 
@@ -2012,8 +2220,8 @@ bulmalı. Yeni bir düğme eklemek de metni daraltır, yani sınırı düşürü
 Görev **düzenleniyor** (`gorevDuzenle`, aynı ekleme sayfası dolu açılıyor) ve
 her satırda silme düğmesi var. Bir süre ikisi de yoktu — "yirmi dört karakteri
 silip yeniden yazmak, kalem düğmesinden hızlı" diye — ama yeniden yazmak yıldızı,
-bitti işaretini ve dilimdeki yeri de götürüyordu; kullanıcı tik gibi görünür
-düğmeler istedi. Düzenleme gün ve dilimi değiştirmiyor, taşımanın yolu erteleme.
+bitti işaretini de götürüyordu; kullanıcı tik gibi görünür düğmeler istedi.
+Düzenleme günü değiştirmiyor, taşımanın yolu erteleme.
 **Satırda yalnızca iki düğme var: yıldız ve "⋯".** Dört düğme (yıldız,
 ertele, düzenle, sil) bir süre kategorinin satırında, iş adının **üstünde**
 yan yana duruyordu: 32 piksellik hedefler, simgeden anlaşılmayan eylemler (ok
@@ -2044,14 +2252,9 @@ Ay takvimi **yok**. Soru Takibi'nde var çünkü orada eski günlere bakmanın b
 karşılığı var; burada eski kayıtlar üç gün sonra eleniyor, açılan takvim boş
 günler gösterirdi.
 
-### Ekleme düğmesi her bölümde
+### Erteleme
 
-Tasarım `+` düğmesini yalnızca içinde bulunulan dilime koyuyor; o zaman dolu ama
-sırası geçmiş bir bölüme ikinci bir görev yazmanın yolu kalmıyor (boş bölümün
-kesikli düğmesi de yalnızca boşken çıkıyor). Düğme bu yüzden her bölümde ve
-üçünün rengi aynı.
-
-Erteleme görevi **ertesi güne, aynı dilime** taşıyor ve hedef dilim doluysa
+Erteleme görevi **ertesi güne, aynı saate** taşıyor ve hedef gün doluysa
 `gorevErtele` `null` dönüyor: sessizce yutulan bir erteleme, kullanıcıya işin
 ekrandan kaybolduğunu gösterirdi. Ekran bu yüzden bir toast taşıyor — ertelenen
 görev bulunduğu günden çıkıyor ve nereye gittiğini söyleyen tek yer o cümle.
@@ -2063,17 +2266,13 @@ onu yarının listesinde arıyordu.
 `EN_UZUN_OZEL_KATEGORI` (14) harf, sayacı alanın üstünde. Bir süre isteğe
 bağlıydı; listede yalnızca "DİĞER" yazan bir görev ne olduğunu söylemiyordu.
 
-Ekleme sayfası **"Ne zaman?" diye sormuyor**: dilim, basılan `+` düğmesinin
-bölümünden geliyor. Sayfada bir süre üç dilimlik bir seçici de vardı; kullanıcı
-kaldırılmasını istedi — "Akşam"ın düğmesine basan kullanıcı cevabı zaten
-vermişti. Dilimin adı sayfanın başlığında gün etiketinin yanında yazıyor
-("Bugün · Akşam"), görev nereye gideceği görünmeden kaydedilmiyor. Başka bir
-dilime yazmak isteyen o bölümün düğmesine basıyor.
+Ekleme sayfasının başlığında gün etiketi yazıyor ("Bugün"): görev nereye
+gideceği görünmeden kaydedilmiyor.
 
 ### Görevin süresi soruluyor
 
 Ekleme sayfası "Ortalama kaç dakika sürer?" diye soruyor (`Gorev.sure`,
-çipler `SURE_SECENEKLERI` ve elle yazma kutusu). Dilim başlığı bitmemiş görevlerin toplamını
+çipler `SURE_SECENEKLERI` ve elle yazma kutusu). Liste başlığı bitmemiş görevlerin toplamını
 yazıyor (`kalanSure`), satırda süre kategorinin yanında duruyor — iş adının
 satırı tek satırlık ve genişliği sayılı, oraya sığmazdı. Plan, işlerin ne kadar
 süreceği bilinince plan oluyor; "akşama beş iş" ile "akşama dört saat" ayrı
@@ -2093,7 +2292,7 @@ kullanıcının vermediği bir tahmini onun adına kaydederdi) ve seçili çipe
 yeniden dokunmak seçimi kaldırıyor.
 
 Süresiz görevin `sure`'u `null` ve toplamda sayılmıyor; eski görevler de öyle.
-Uydurma bir süre, dilimin toplamını kullanıcının söylemediği bir sayıyla
+Uydurma bir süre, günün toplamını kullanıcının söylemediği bir sayıyla
 şişirirdi.
 
 ### Renkler ayrı bir palette
@@ -2263,7 +2462,7 @@ kartı işaretleyip çıkmak konuyu tamamlamanın yolu olurdu.
 
 Deste yalnızca kart değil (`tasarim/bilgi-karti.html`, akış
 `lib/konu/deste-akisi.ts`): kartların arasına bir **kısa mola** (Rabi
-zıplıyor, okunan kartların adları listeleniyor) ve bir–iki **hızlı kontrol**
+dinleniyor, okunan kartların adları listeleniyor) ve bir–iki **hızlı kontrol**
 (okunmuş bir karttan iki şıklı soru) giriyor. Üç ekranın başlığı ortak
 (`deste-basligi.tsx`), zemin dersin rengi, vurgu dersin mürekkebi
 (`bicim.murekkep`) — mockup Fizik'in mavisiyle çizildi, o mavi burada derse
@@ -2392,7 +2591,7 @@ ibaretti ve süslerin arasında okunmuyordu. Bilet bileşeni, `bilet-*` CSS'i
 ve animasyonları silindi; mockup `tasarim/` altında tarih olarak duruyor,
 yeniden uygulanmamalı.
 
-Özet yukarıdan aşağı dört soruya cevap veriyor:
+Özet yukarıdan aşağı üç soruya cevap veriyor:
 
 1. **Ne bitti?** Konunun adı, ders ve tema.
 2. **Ne kadar?** Okunan kart ve destede geçen süre (`DesteSonucu.saniye`,
@@ -2403,12 +2602,13 @@ yeniden uygulanmamalı.
    iskeleti) ve varsa Rabi'nin notu — her konuda tek kartta duran, konunun en
    çok tuzak barındıran yeri. Kart metinleri yazılmıyor: özet destenin ikinci
    kopyası olurdu.
-4. **Sırada ne var?** Yoklamanın soru sayısı, yaklaşık süresi ve konunun ne
-   zaman tamamlanmış sayıldığı (`GECME_ORANI`). Eşik eskiden hiçbir ekranda
-   yazmıyordu.
 
-- **Renk derse göre değişmiyor, süs yok**: ekranın işi okunmak. Bileşen
-  `bicim` almıyor.
+- **"Sırada yoklama var" kartı yok** (kullanıcı kaldırttı): sıradakini
+  "Yoklamaya başla" düğmesi söylüyor.
+- **Renk dersin rengi** (`dersVurgusu`, `SoruSahnesi.ders`; kullanıcı istedi).
+  Hareket hafif ve tek seferlik: ders renkli bant yükselir, içindeki çubuk
+  dolar, sayı kutuları sırayla gelir, Rabi süzülür (`ozet-bandi*`,
+  `ozet-sayi`, `kapanis-suzul`). Konfeti, damga, ses ekleme.
 - **Özet destenin ucundan gelince var, turuncu kitaptan girince yok**
   (`SoruSahnesi.ozetli`). Haritadan doğrudan soruya giren kullanıcı bir şey
   okumadı; "konu bitti" diyen bir özet ona yalan söylerdi. Oradan sahne ilk
@@ -2542,6 +2742,84 @@ sayfası vardı ve hangi kitaba basıldığı sayfada görünmüyordu. Kilitli
 konunun kartında düğme "Kilidi aç" ve önce onay penceresi çıkıyor (bkz.
 **Kilit var, anahtarı kullanıcıda**).
 
+## Konu Takibi YKS'nin diliyle konuşuyor
+
+Araçlar › Çalışma'daki **Konu Takibi** (`components/ekranlar/konu-takibi.tsx`,
+mantık `lib/konu-takibi/`): öğrenci TYT ve AYT konularını aşama aşama
+işaretliyor — Haritada çalıştım, Okulda öğrendim, Soru çözdüm ve ayrı bir
+Bitirdim.
+
+- **Liste haritadan ayrı.** Harita Maarif'in ders → sınıf → tema → konu
+  yapısında; YKS sınıf değil sınav soruyor ve öğrencinin bankası, deneme
+  karnesi sınavın başlıklarıyla konuşuyor ("Üslü Sayılar", "Fiilimsiler").
+  Liste (`liste.ts`) yayınevlerinin ortak YKS konu listesinden derlendi;
+  ÖSYM konu konu liste yayımlamıyor. **AYT'de TYT konuları tekrar
+  yazılmıyor** — aynı konuyu iki kez işaretletmek takibi iki kat uzatırdı;
+  ekran bunu bir notla söylüyor. Konu kimliği kayıt anahtarı: adı değiştir,
+  kimliğe dokunma.
+- **AYT alana göre süzülüyor** (`oturumDersleri`): Sayısal → Mat, Fiz, Kim,
+  Biyo; EA → Mat, Edebiyat, Tarih, Coğrafya; Sözel → Edebiyat, Tarih,
+  Coğrafya, Felsefe Grubu, Din; Dil → YDT. Alan `Ayarlar.puanTuru`dan;
+  `null` ise AYT sekmesi alanı soruyor ve cevabı ayarlara yazıyor (bkz.
+  **Alan seçilmemiş olabilir** — varsayılan alan uydurulmuyor). Tarih-1/2 ve
+  Coğrafya-1/2'nin kapsamı konu konu ayrılmadığı için tek ders; adı alana
+  göre "Tarih-1" ya da "Tarih-1 ve 2".
+- **"Haritada çalıştım" elle işaretlenmiyor.** `harita-eslemesi.ts`teki açık
+  tablo YKS konusunu harita konularına bağlıyor; aşama haritanın kendi
+  kaydından (`konuTamam`) hesaplanıyor ve "Haritaya git" haritayı o konunun
+  kartıyla açıyor (`acilacakKonu`, sınıf kendi sınıfından farklı olsa da).
+  Eşleme **yalnızca kartlar konunun asıl içeriğini anlatıyorsa** var; tek
+  kartta değinip geçmek yetmiyor. Karşılığı olmayan konuda aşama hiç
+  gösterilmiyor — elle bir kutu, olmayan bir haritayı çalışılmış saymak
+  olurdu. AYT'de TYT ile içeriği örtüşen konu da aynı harita konusuna
+  bağlı (AYT Enerji ve Hareket ↔ TYT İş, Güç ve Enerji): kayıt tek, iki
+  satırda da dolu. 12. sınıf kartları yazılınca tabloya eklenir;
+  `takip.test.ts` iki uçtaki kimliklerin varlığını denetliyor.
+- **İşaret satırın kendisinde.** Solda ilerleme dairesi (aşama sayısına göre
+  dolan yay; dokununca Bitirdim aç/kapa), sağda sabit genişlikte üç yuva:
+  harita (salt okunur, küçük ve boşken kesik kenarlı; karşılığı olmayan
+  konuda yuva boş ama yer tutuyor), okul, soru (44 piksel dokunma alanı).
+  Simgeler lucide çizgi ikon, emoji değil; dolu hâl ders renginde dolgu,
+  boş hâl kenarlık. Ada dokunmak kompakt ayrıntıyı açıyor: harita durumu ve
+  "Haritaya git", toplu eylem, işaret günleri. Eskiden bir konu dört-beş
+  dokunuştu (aç → okul → soru → Bitirdim → onay), şimdi en çok üç.
+- **Bitirdim engellenmiyor ve sormuyor.** Eksik aşama varsa pencere değil
+  Geri al'lı kısa bir bildirim ("Bitti · eksik: okul, soru"). Konfeti
+  yalnızca dersin son konusu bitince; art arda işaretlemede her konuda
+  patlayan kutlama listeyi kapatıyordu.
+- **"Bu ve önceki konuları okulda işlendi say"** (`oncekiOkulsuzlar`):
+  ilk kullanımda okulda işlenmiş yirmi-kırk konuyu tek dokunuşla girmenin
+  yolu. Yalnızca aynı bölümde, yalnızca okul aşaması, bildirimde Geri al.
+- **Özet tek segmentli çubuk** (bitti › soru › okul › kalan, her konu en
+  ileri aşamasında) ve tek satır sayı; yüzde yok. Büyük halka yalnızca
+  Bitirdim'i sayıyordu ve okulda işaretleyen öğrenci haftalarca %0
+  görüyordu.
+- **Öneri müfredat sırasında ilerliyor** (`siradakiKonu`, `devamKonusu`):
+  ders içi Sıradaki, müfredat sırasında bitmemiş **ve** aşamaları
+  tamamlanmamış ilk konu (haritada karşılığı yoksa harita sayılmıyor).
+  Girişteki dersler arası tek "Devam et" kartı, en son dokunulan dersin
+  (bitirmek de dokunuş) Sıradaki'si. Bir süre "önce en son işaretlenen
+  yarım konu" kuralıydı: aşamaları dolu ama Bitirdim basılmamış konu yarım
+  sayılıp öneride takılı kalıyordu, başka bir yuvaya dokununca öneri oraya
+  zıplıyordu (TestFlight geri bildirimi). Aşamaları tamam ama bitmemiş konu
+  (`bitirmeyeHazir`) öneri olmuyor; dairesinde yay dolu ve ortada ders
+  renginde soluk bir tik — bitirmek yine öğrencinin dokunuşu. Hiç işaret
+  yokken ipucu ve lejant — ayrı bir ayar değil, kayıt boş mu diye türetiliyor.
+- **Tek geri.** Ders ekranının kendi geri düğmesi yok; kabuğun "Geri"si
+  önce açık katmanı (dersi) kapatıyor, Android geri tuşu ve iOS kenar
+  kaydırmasıyla aynı sıra. Seçili sekme, açık ders ve liste kaydırması
+  `sessionStorage`'da (oturumluk, kalıcı ayar değil).
+- **Binom AYT'de** ama kimliği `tyt-mat-binom`: TYT'lerde soru çıkmıyor,
+  AYT'lerde her yıl bir soru var. Taşınan konu kimliğini korur
+  (`TASINAN_KONULAR`, `takip.test.ts`).
+- **Kayıt** `rabi-yks-konu-takibi`, sürümlü (`{ surum: 1, konular }`), işaret
+  yerine gün tutuyor; okurken `takibiCoz` süzüyor ve yedeğe giriyor
+  (`Yedek.yksKonuTakibi`, eski yedekte yoksa mevcut kayda dokunulmuyor).
+  `kayit.ts` konu içeriğini yüklemiyor, depo yalnızca onu okuyor.
+- Renk derse ait: haritada karşılığı olan ders haritadaki rengini taşıyor ve
+  ortak düğmelere `dersVurgusu` ile geçiyor; Felsefe ve Din, Yanlış Soru
+  Bankası'ndaki gibi nötr.
+
 ## Hedef kataloğu
 
 Kullanıcı eskiden hedef ekranında dört kutuyu da elle dolduruyordu: bölüm,
@@ -2665,6 +2943,26 @@ Ekranın serbest metin kipi silinmedi. Katalog dışı bir hedef kayıtlıysa ek
 kiple açılıyor (`universiteBul` null dönüyor), çünkü eski sürümde herkes iki adı
 elle yazıyordu ve o kayıtlar duruyor. `Hedef` tipi de kimlik değil **ad**
 tutmaya devam ediyor — kimliğe geçmek o kayıtları geçersiz kılardı.
+
+### Seçim kuralları (Hedefim ve kurulum ortak)
+
+- **Üniversite listesi boş aramada görünmez** (kullanıcı istedi):
+  `universiteAra('')` boş dizi döner, kutunun altında "Üniversite adını yazmaya
+  başla." durur (`uniListesiBos`). **Bölüm listesi bu kurala uymaz**, boş
+  aramada üniversitenin bütün bölümleri listelenir — kullanıcı öyle kalsın dedi.
+- **Kaydetmeden önce elle kontrol** (kullanıcı istedi): katalogdan bölüm
+  seçilince `HedefKontrolu` (`hedef-secici.tsx`) 2025 başarı sırasını ve
+  taban puanını düzenlenebilir kutularda dolu gösterir. Kayda kutudaki değer
+  girer — yeni alan yok, mevcut `Hedef.tabanPuan` / `basariSirasi` düzeltilmiş
+  değeri tutar ve ana sayfa, geri sayım, Hedefim onu okur (katalogdan yeniden
+  hesaplanmaz). Geçersiz değer (boş, sıfır, puan 100–560 dışı, sıra 1–3.000.000
+  dışı; `hedefSayilariGecerli`) Kaydet'i / kurulumda Devam'ı pasif yapar ve
+  sebebi kutunun altında yazar. Elle giriş kipinde sayılar isteğe bağlı kalır
+  ama yazılmışsa aynı denetimden geçer.
+- **Hedefim'de Kaydet ekranı kapatmaz** (kullanıcı istedi): ekranda kalır,
+  "Hedefin kaydedildi." toast'ı çıkar. Kurulum Devam ile ilerlemeye devam eder.
+- Üniversite değiştirilip aynı adlı bölüm yeni üniversitede de varsa kutular
+  **yeni programın** değeriyle yeniden dolar; eski üniversitenin sırası kalmaz.
 
 Seçim ekranda ayrı bir state'te durmuyor, iki addan türetiliyor: iki kaynak
 olsaydı elle yazılan ad ile seçili kayıt birbiriyle çelişebilirdi.
@@ -2919,6 +3217,11 @@ kapalı, `fixed` öğeleri ve kimlikleri (`id`, `data-geri-sayfa`, `data-yuzen`,
 `data-tanitim`) atılmış — kalsaydı `querySelector` gerçek öğe yerine kopyayı
 bulurdu. Kopyası olmayan ekranda eski davranış sürüyor.
 
+**Kayan kutu ekranla birlikte sökülmeli.** Denetçi bırakınca ekranın
+değişip değişmediğini kutunun `isConnected`ından anlıyor; ekran kapanınca
+yalnızca gizlenen bir `[data-geri-sayfa]` "değişmedi" sayılıyor ve önizleme
+yeni ekranın üstünde kalıyor (Pomodoro yuvası bu yüzden koşullu kuruluyor).
+
 Durum makinesi `lib/geri-kaydirma-denetci.ts`, hız/süre/eğri hesapları
 `lib/geri-kaydirma-hesap.ts` (ikisinin de birim testi var). Kurallar,
 ölçülerek bulunmuş hatalardan: sürükleme başlayınca kutunun giriş animasyonu
@@ -2941,7 +3244,8 @@ gibi gidiyor. `enableOnBackInvokedCallback` yalnızca `MainActivity`de
 **alfa kanalı atılmış** — App Store saydamlık taşıyan ikonu yüklemede
 reddediyor.
 
-**Yayın Android'le aynı etiketle.** `v*` etiketi `ios-testflight.yml`i de
+**Yayın Android'le aynı etiketle.** `v*` etiketi Play'e (varsayılan kapalı test) otomatik
+yükleniyor (kurulum ve sürüm akışı `RELEASE.md` › "Otomatik yayın") ve `ios-testflight.yml`i de
 tetikliyor ve derleme TestFlight'a düşüyor; mağazaya çıkması App Store
 Connect'ten elle incelemeye göndermekle oluyor. Sürüm iOS projesine yazılmıyor,
 `android/app/build.gradle`dan okunuyor (`versionName` → sürüm, `versionCode` →

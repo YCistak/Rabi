@@ -7,6 +7,7 @@ import type { Gorev } from './yapilacaklar'
 import type { BilinmeyenKart, KonuIlerlemeleri } from './konu/ilerleme'
 import type { AylikOzetArsivi } from './ozet'
 import type { OkumaSeansi } from './konu/okuma-suresi'
+import type { YksTakip } from './konu-takibi/kayit'
 
 // ---------------------------------------------------------------------------
 // Deneme
@@ -200,6 +201,12 @@ export type PomodoroAyar = {
   kilitliUygulamalar: string[]
   /** Odak kilidi tanıtımı bir kez gösterilir; kullanıcı geçtiyse bir daha sorulmaz. */
   kilitTanitimiGoruldu: boolean
+  /**
+   * Deneme provasında "Süre gir"e yazılan son süre, dakika — bir sonraki
+   * provada kutuda hazır dursun. Sonradan eklendi; eski kayıtta yok
+   * (`pomodoroAyariniNormalize` varsayılanla dolduruyor).
+   */
+  provaSuresi: number
 }
 
 export type PomodoroSeans = {
@@ -437,6 +444,11 @@ export type Yedek = {
    */
   konuIlerleme?: KonuIlerlemeleri
   bilinmeyenKartlar?: BilinmeyenKart[]
+  /**
+   * Konu Takibi'nin elle işaretlenen aşamaları. Eski yedeklerde yok — geri
+   * yüklemede yazılmıyor, kullanıcının mevcut kaydına dokunulmuyor.
+   */
+  yksKonuTakibi?: YksTakip
   /**
    * Kapanmış ayların hesaplanmış özetleri. Eski yedeklerde yok; geri
    * yüklemede cihazdaki arşivle **birleştiriliyor**, üstüne yazılmıyor.

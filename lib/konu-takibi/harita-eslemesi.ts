@@ -1,0 +1,287 @@
+/**
+ * YKS konusu → konu haritasındaki Maarif konuları.
+ *
+ * Konu Takibi'ndeki "Haritada çalıştım" aşaması elle işaretlenmiyor, buradan
+ * hesaplanıyor: bir YKS konusunun karşılığı olan harita konularının hepsi
+ * tamamlanmışsa (`lib/konu/ilerleme.ts` → `konuTamam`) aşama dolu, bir kısmı
+ * okunmuşsa yarım görünüyor.
+ *
+ * **Eşleme yalnızca emin olunan yerde.** Yanlış bir eşleme hiç eşlememekten
+ * kötü: öğrenciye "haritada çalıştın" deyip hiç okumadığı bir konuyu
+ * çalışılmış göstermek, ya da tersine okuduğu konuyu boş göstermek takibin
+ * kendisine güveni bitirir. Ölçü şu: harita konusunun kartları YKS
+ * başlığının **asıl içeriğini** anlatıyor mu? Tek bir kartta değinip geçmek
+ * yetmiyor — `mat9-denklem-esitsizlik` destesinde bir "Yaş problemleri"
+ * kartı var ama "Yaş Problemleri" konusu ona eşlenmedi.
+ *
+ * Bir YKS konusu birden çok harita konusuna gidebilir (Basınç: dört konu)
+ * ve bir harita konusu birden çok YKS konusuna (Sözcük Türleri destesi beş
+ * ayrı YKS başlığını birlikte anlatıyor). Tabloda olmayan konunun haritada
+ * karşılığı yok; o konuda aşama hiç gösterilmiyor.
+ *
+ * 12. sınıfın harita kartları henüz yazılmadı (`lib/konu/index.ts` →
+ * `HARITA_SINIFLARI`); AYT'nin türev, integral, organik kimya gibi
+ * başlıkları bu yüzden eşlenmedi. Kartlar yazılınca buraya eklenir.
+ *
+ * AYT'de TYT ile içeriği örtüşen konular da aynı harita konularına bağlı
+ * (AYT Enerji ve Hareket ↔ TYT İş, Güç ve Enerji): kayıt tek, harita
+ * konusu TYT'den ya da AYT'den gidilerek bitirilmiş olsun iki satırda da
+ * dolu görünüyor. Bakılıp **eşlenmeyenler**: İkinci Dereceden Denklemler
+ * (Karesel Fonksiyon destesi diskriminant ve kök-katsayıya yalnızca birer
+ * kartla değiniyor), Toplam-Fark Formülleri (11. sınıf trigonometri
+ * destelerinde yok), Divan ve Geçiş Dönemi Edebiyatı (Mesnevi ve Dîvânu
+ * Lugâti't-Türk desteleri konunun bir parçası), Sığa ve Alternatif Akım
+ * (birer kart), Coğrafya'nın Türkiye'de tarım, sanayi ve çevre konuları
+ * (11. sınıf desteleri Türkiye'ye özgü değil, genel kavramlar).
+ *
+ * `takip.test.ts` her iki uçtaki kimliklerin gerçekten var olduğunu
+ * denetliyor: harita içeriği değişip bir konu kimliği kayarsa test kırılır,
+ * aşama sessizce boş kalmaz.
+ */
+export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
+  // --- TYT Türkçe --------------------------------------------------------
+  'tyt-trk-sozcukte-anlam': ['trk9-sozcuk'],
+  'tyt-trk-soz-yorumu': ['trk9-soz'],
+  'tyt-trk-cumlede-anlam': ['trk9-cumle'],
+  'tyt-trk-paragraf': ['trk9-paragraf'],
+  'tyt-trk-ses': ['trk9-ses'],
+  'tyt-trk-yazim': ['trk9-yazim'],
+  'tyt-trk-noktalama': ['trk9-noktalama'],
+  // Sözcük Türleri destesi isim, sıfat, zamir, zarf ve edat-bağlaç-ünlemi
+  // ayrı ayrı kartlarla anlatıyor.
+  'tyt-trk-isim': ['trk10-sozcuk-turleri'],
+  'tyt-trk-sifat': ['trk10-sozcuk-turleri'],
+  'tyt-trk-zamir': ['trk10-sozcuk-turleri'],
+  'tyt-trk-zarf': ['trk10-sozcuk-turleri'],
+  'tyt-trk-edat': ['trk10-sozcuk-turleri'],
+  // Fiiller destesi kip, kişi, yapı, çatı, ek fiil ve fiilimsiyi kapsıyor.
+  'tyt-trk-fiil': ['trk10-fiil'],
+  'tyt-trk-ek-fiil': ['trk10-fiil'],
+  'tyt-trk-fiilimsi': ['trk10-fiil'],
+  'tyt-trk-cati': ['trk10-fiil'],
+
+  // --- TYT Matematik -----------------------------------------------------
+  'tyt-mat-temel-kavramlar': ['mat9-sayi-kumeleri'],
+  'tyt-mat-bolunebilme': ['mat10-bolunebilme'],
+  'tyt-mat-ebob-ekok': ['mat10-ebob-ekok'],
+  'tyt-mat-esitsizlik': ['mat9-denklem-esitsizlik'],
+  'tyt-mat-mutlak-deger': ['mat9-mutlak-deger'],
+  'tyt-mat-uslu': ['mat9-uslu-koklu'],
+  'tyt-mat-koklu': ['mat9-uslu-koklu'],
+  'tyt-mat-denklem': ['mat9-denklem-esitsizlik'],
+  'tyt-mat-mantik': ['mat9-mantik'],
+  'tyt-mat-fonksiyon': ['mat10-fonksiyon-sart', 'mat10-ters-fonksiyon'],
+  // Sayma Stratejileri destesi permütasyon ve kombinasyonu anlatıyor;
+  // binom açılımı yok (yalnızca Pascal üçgeni), o yüzden Binom eşlenmedi.
+  'tyt-mat-permutasyon': ['mat10-sayma'],
+  'tyt-mat-kombinasyon': ['mat10-sayma'],
+  'tyt-mat-olasilik': ['mat9-deneysel', 'mat9-teorik'],
+  'tyt-mat-istatistik': ['mat9-veri-dagilim'],
+  'tyt-geo-ucgende-aci': ['mat9-ucgen-ozellik'],
+  'tyt-geo-aci-kenar': ['mat9-ucgen-ozellik'],
+  'tyt-geo-dik-ucgen': ['mat9-teoremler'],
+  'tyt-geo-trigonometri': ['mat10-trigonometri'],
+  'tyt-geo-aciortay-kenarortay': ['mat10-yardimci'],
+  'tyt-geo-eslik-benzerlik': ['mat9-eslik-kosul', 'mat9-benzer-ucgen', 'mat9-benzerlik-problem'],
+  'tyt-geo-ucgende-alan': ['mat10-alan'],
+  'tyt-geo-cokgen': ['mat11-cokgen-sinif', 'mat11-disbukey', 'mat11-cokgen-problem'],
+  'tyt-geo-dortgen': ['mat11-dortgen'],
+  'tyt-geo-ozel-dortgen': ['mat11-ozel-dortgen'],
+
+  // --- TYT Fizik ---------------------------------------------------------
+  'tyt-fiz-giris': ['fzk9-bilim', 'fzk9-altdal', 'fzk9-nicelik', 'fzk9-skaler-vektorel'],
+  'tyt-fiz-hareket-kuvvet': ['fzk9-hareket', 'fzk9-temel-kuvvet', 'fzk10-sabit-hiz'],
+  'tyt-fiz-is-enerji': ['fzk10-is-guc', 'fzk10-enerji-bicim', 'fzk10-mekanik', 'fzk10-kaynak'],
+  'tyt-fiz-isi': [
+    'fzk9-ic-enerji',
+    'fzk9-oz-isi',
+    'fzk9-hal-degisim',
+    'fzk9-isil-denge',
+    'fzk9-aktarim',
+    'fzk9-iletim-hizi',
+  ],
+  'tyt-fiz-elektrik': [
+    'fzk10-devre',
+    'fzk10-akim',
+    'fzk10-ohm',
+    'fzk10-direnc-baglama',
+    'fzk10-uretec-baglama',
+  ],
+  'tyt-fiz-basinc': ['fzk9-basinc', 'fzk9-sivi-basinc', 'fzk9-acik-hava', 'fzk9-bernoulli'],
+  'tyt-fiz-kaldirma': ['fzk9-kaldirma'],
+  'tyt-fiz-dalgalar': [
+    'fzk10-dalga-kavram',
+    'fzk10-dalga-sinif',
+    'fzk10-yayilma-surati',
+    'fzk10-yansima-kirilma',
+  ],
+  // Maarif'te optik 11. sınıfta; YKS'de TYT konusu.
+  'tyt-fiz-optik': [
+    'fzk11-aydinlanma',
+    'fzk11-duzlem-ayna',
+    'fzk11-kuresel-ayna',
+    'fzk11-kirilma',
+    'fzk11-gorunur-derinlik',
+    'fzk11-prizma',
+    'fzk11-mercek',
+  ],
+
+  // --- TYT Kimya ---------------------------------------------------------
+  'tyt-kim-bilim': ['kim9-gunluk', 'kim9-guvenlik', 'kim9-altdal'],
+  'tyt-kim-atom-periyodik': ['kim9-atom-teori', 'kim9-periyodik-yer', 'kim9-periyodik-ozellik'],
+  'tyt-kim-etkilesim': [
+    'kim9-metalik',
+    'kim9-iyonik',
+    'kim9-kovalent',
+    'kim9-lewis',
+    'kim9-polarlik',
+    'kim9-adlandirma',
+    'kim9-molekuller-arasi',
+  ],
+  'tyt-kim-haller': ['kim9-katilar', 'kim9-sivilar'],
+  // Sera etkisi, asit yağmuru, ozon: TYT'deki "Doğa ve Kimya"nın çevre kısmı.
+  'tyt-kim-doga': ['kim10-atmosfer'],
+  'tyt-kim-mol': ['kim10-mol'],
+  'tyt-kim-tepkimeler': ['kim10-gosterge', 'kim10-olusum', 'kim10-tur', 'kim10-denklestirme'],
+  'tyt-kim-hesaplamalar': ['kim10-hesap'],
+  'tyt-kim-karisimlar': ['kim10-cozunme', 'kim10-cozunebilirlik', 'kim10-cozelti-sinif'],
+
+  // --- TYT Biyoloji ------------------------------------------------------
+  'tyt-biy-ortak-ozellik': ['byl9-ortak-ozellik'],
+  'tyt-biy-bilesenler': ['byl9-inorganik', 'byl9-organik'],
+  'tyt-biy-hucre': ['byl9-hucre-tur', 'byl9-zar', 'byl9-sitoplazma', 'byl9-sitoplazmik', 'byl9-organel'],
+  'tyt-biy-madde-gecisi': ['byl9-madde-gecis'],
+  'tyt-biy-siniflandirma': ['byl9-siniflandirma', 'byl9-uc-alem', 'byl9-biyocesitlilik'],
+  'tyt-biy-ekosistem': ['byl10-bilesen', 'byl10-madde-enerji', 'byl10-dongu'],
+  'tyt-biy-cevre': ['byl10-kisitlayan', 'byl10-saglanmasi'],
+
+  // --- TYT Tarih ---------------------------------------------------------
+  'tyt-tar-tarih-zaman': ['trh9-fayda', 'trh9-doga', 'trh9-uretim', 'trh9-dijital'],
+  'tyt-tar-ilk-donemler': ['trh9-tarim', 'trh9-yonetim', 'trh9-hukuk', 'trh9-inanc'],
+  'tyt-tar-orta-cag': ['trh9-goc', 'trh9-devletler', 'trh9-ticaret', 'trh9-medeniyet'],
+  'tyt-tar-turk-dunyasi': ['trh9-konargocer'],
+  'tyt-tar-selcuklu': ['trh10-mucadele', 'trh10-teskilat', 'trh10-sosyal', 'trh10-turk-islam'],
+  'tyt-tar-osmanli-siyaset': ['trh10-kurulus', 'trh10-anadolu-rumeli'],
+  'tyt-tar-savascilar': ['trh10-devletlesme'],
+  'tyt-tar-osmanli-medeniyet': ['trh10-kalicilik', 'trh10-ilim-irfan'],
+  'tyt-tar-dunya-gucu': ['trh10-siyasi'],
+  'tyt-tar-merkez-teskilat': ['trh10-yonetim-degisim'],
+  'tyt-tar-degisen-dengeler': ['trh11-mucadele'],
+  'tyt-tar-devrimler-cagi': ['trh11-ihtilal', 'trh11-donusum'],
+  'tyt-tar-sermaye-emek': ['trh11-sanayi', 'trh11-sanayilesme'],
+  'tyt-tar-xx-yuzyil': ['trh11-siyasi', 'trh11-goc'],
+
+  // --- TYT Coğrafya ------------------------------------------------------
+  'tyt-cog-doga-insan': ['cog9-konu-bolum', 'cog9-nicin', 'cog9-gelisim'],
+  'tyt-cog-konum': ['cog9-konum'],
+  'tyt-cog-harita': ['cog9-harita'],
+  'tyt-cog-iklim-bilgisi': ['cog9-hava-olay', 'cog9-iklim-sistem'],
+  'tyt-cog-iklim-tipleri': ['cog9-iklim-tur'],
+  'tyt-cog-ic-kuvvet': ['cog10-tektonik'],
+  'tyt-cog-dis-kuvvet': ['cog10-asinma', 'cog10-asinim-birikim'],
+  'tyt-cog-nufus': ['cog9-nufus-degisim', 'cog9-demografik', 'cog9-nufus-politika'],
+  // "Nüfusun Dağılışı ve Hareketleri" göç türlerini, itici-çekici güçleri ve
+  // Türkiye'de iç göçü anlatıyor.
+  'tyt-cog-goc': ['cog9-nufus-dagilis'],
+  'tyt-cog-yerlesme': ['cog10-yerlesme-kurulus', 'cog10-yerlesme-fonksiyon'],
+  'tyt-cog-ekonomik': ['cog9-ekonomi-faktor', 'cog10-ekonomi-ozellik', 'cog10-sektor-gelismislik'],
+  'tyt-cog-bolgeler': ['cog9-bolge'],
+  'tyt-cog-afetler': ['cog9-tehlike-risk', 'cog9-afet-tur', 'cog9-afet-yonetim'],
+
+  // --- AYT Matematik -----------------------------------------------------
+  'ayt-mat-fonksiyon': ['mat11-bileske', 'mat11-dort-islem'],
+  'ayt-mat-parabol': ['mat10-karesel'],
+  // Deste ikinci derece eşitsizliği işaret tablosu ve çift katlı kökle
+  // anlatıyor — AYT Eşitsizlikler'in asıl içeriği. Birinci derece
+  // eşitsizlik (`mat9-denklem-esitsizlik`) TYT'nin.
+  'ayt-mat-esitsizlik': ['mat10-denklem-problem'],
+  'ayt-mat-kosullu-olasilik': ['mat10-kosullu', 'mat10-bayes'],
+  'ayt-mat-trig-fonksiyon': ['mat11-trig-fonk'],
+  'ayt-mat-trig-denklem': ['mat11-trig-denklem'],
+  'ayt-mat-sinus-kosinus': ['mat10-sinus-kosinus'],
+  'ayt-mat-logaritma': ['mat11-ustel', 'mat11-ustel-ters', 'mat11-log', 'mat11-ustel-log-denklem'],
+  'ayt-geo-analitik': ['mat10-nokta', 'mat10-dogru'],
+  'ayt-geo-donusum': ['mat9-donusum'],
+
+  // --- AYT Fizik ---------------------------------------------------------
+  'ayt-fiz-vektor': ['fzk9-vektor'],
+  'ayt-fiz-newton': ['fzk11-newton', 'fzk11-surtunme'],
+  'ayt-fiz-sabit-ivme': ['fzk10-sabit-ivme', 'fzk11-serbest'],
+  // AYT'nin iş, enerji ve korunumu (yay enerjisi dahil) TYT'deki İş, Güç ve
+  // Enerji ile aynı desteler; haritada okunmuşsa iki satırda da dolu.
+  'ayt-fiz-enerji-hareket': ['fzk10-is-guc', 'fzk10-mekanik'],
+  // Periyodik Hareketler basit ve yay sarkacının periyodunu anlatıyor
+  // (T = 2π√(L/g), T = 2π√(m/k)) — AYT'de BHH sorularının çekirdeği.
+  'ayt-fiz-bhh': ['fzk10-periyodik'],
+  'ayt-fiz-iki-boyut': ['fzk11-iki-boyut'],
+  'ayt-fiz-elektrik-alan': ['fzk11-elektrik-alan'],
+  'ayt-fiz-induksiyon': ['fzk11-manyetik', 'fzk11-induksiyon'],
+  'ayt-fiz-transformator': ['fzk11-transformator'],
+  'ayt-fiz-cembersel': ['fzk11-cembersel'],
+
+  // --- AYT Kimya ---------------------------------------------------------
+  'ayt-kim-modern-atom': ['kim9-orbital'],
+  'ayt-kim-gazlar': ['kim10-gaz-ozellik', 'kim10-gaz-yasa', 'kim10-ideal', 'kim10-graham'],
+  'ayt-kim-cozeltiler': ['kim10-cozunurluk', 'kim10-etkileyen', 'kim10-derisim', 'kim10-koligatif'],
+  'ayt-kim-enerji': [
+    'kim11-enerji-degisim',
+    'kim11-enerji-kaynagi',
+    'kim11-bag-entalpi',
+    'kim11-olusum-entalpisi',
+  ],
+  'ayt-kim-hiz': ['kim11-hiz-sartlar', 'kim11-ortalama-hiz', 'kim11-hiz-faktor', 'kim11-hiz-denklemi'],
+  'ayt-kim-denge': [
+    'kim11-tersinir',
+    'kim11-fiziksel-denge',
+    'kim11-denge-sabiti',
+    'kim11-tepkime-orani',
+    'kim11-denge-faktor',
+  ],
+  'ayt-kim-asit-baz': [
+    'kim11-otoiyonizasyon',
+    'kim11-asit-baz-teori',
+    'kim11-asit-kuvvet',
+    'kim11-ph',
+    'kim11-notrallesme',
+    'kim11-titrasyon',
+  ],
+  'ayt-kim-cozunurluk': ['kim11-molar-cozunurluk', 'kim11-kcc', 'kim11-cozunurluk-faktor'],
+
+  // --- AYT Biyoloji ------------------------------------------------------
+  'ayt-biy-sinir': ['byl11-noron', 'byl11-sinaps', 'byl11-insan-sinir', 'byl11-refleks'],
+  'ayt-biy-endokrin': ['byl11-endokrin'],
+  'ayt-biy-duyu': ['byl11-uyarti-alma', 'byl11-duyu-organ', 'byl11-yorumlama'],
+  'ayt-biy-destek-hareket': [
+    'byl11-kemik',
+    'byl11-eklem-kas',
+    'byl11-kemik-kas-birlikte',
+    'byl11-kasilma-kontrol',
+    'byl11-kasilma-mekanizma',
+  ],
+  'ayt-biy-sindirim': ['byl10-sindirim', 'byl10-sindirim-yapi', 'byl10-insan-sindirim', 'byl10-emilim'],
+  'ayt-biy-dolasim': ['byl11-dolasim-homeo', 'byl11-dogal-bagisiklik', 'byl11-kazanilmis'],
+  'ayt-biy-solunum': ['byl11-solunum-homeo'],
+  'ayt-biy-uriner': ['byl11-bosaltim-homeo'],
+  'ayt-biy-komunite': ['byl10-etkilesim', 'byl10-suksesyon', 'byl10-populasyon'],
+  'ayt-biy-enerji': ['byl10-fotosentez', 'byl10-kemosentez', 'byl10-solunum', 'byl10-fermantasyon'],
+
+  // --- AYT Edebiyat ------------------------------------------------------
+  'ayt-edb-guzel-sanatlar': ['trk9-edebiyat'],
+  'ayt-edb-siir-bilgisi': ['trk9-siir', 'trk10-ahenk'],
+  'ayt-edb-soz-sanatlari': ['trk9-sanat'],
+  'ayt-edb-anlatmaya-bagli': ['trk9-yapi', 'trk9-anlatici', 'trk9-hikaye'],
+  'ayt-edb-masal-fabl': ['trk10-masal'],
+  'ayt-edb-ogretici': ['trk9-deneme', 'trk11-mektup', 'trk11-biyografi'],
+  'ayt-edb-tiyatro': ['trk9-tiyatro', 'trk11-karagoz', 'trk11-tiyatro'],
+  'ayt-edb-islamiyet-oncesi': ['trk10-destan', 'trk11-orhun'],
+  'ayt-edb-halk': ['trk10-anonim', 'trk11-asik'],
+  'ayt-edb-milli': ['trk10-milli', 'trk10-milli-turler'],
+
+  // --- AYT Coğrafya ------------------------------------------------------
+  'ayt-cog-nufus-politika': ['cog9-nufus-politika'],
+  'ayt-cog-sehirler': ['cog11-yerlesme', 'cog11-etki-alani'],
+  'ayt-cog-turkiye-ekonomi': ['cog10-turkiye-ekonomi'],
+  'ayt-cog-maden-enerji': ['cog11-maden', 'cog11-enerji'],
+  'ayt-cog-kultur': ['cog10-turk-kultur'],
+  'ayt-cog-iklim-degisimi': ['cog11-iklim'],
+}

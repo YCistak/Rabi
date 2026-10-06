@@ -10,40 +10,39 @@ import type { OsymTest } from './types'
  * çipleri devre dışı kalıyor — 165 dakikanın ortasında beş dakikalık kısa mola
  * vermek provayı prova olmaktan çıkarır.
  */
-export type ProvaId = 'tyt' | 'ayt' | 'ydt' | 'sts'
+export type KitapcikId = 'tyt' | 'ayt' | 'ydt'
+
+/**
+ * `ozel`: kullanıcının kendi yazdığı süre ("Süre gir"). Branş denemesi,
+ * okulun deneme sınavı gibi süresi ÖSYM'nin yazmadığı bir oturum. Bir süre
+ * yerinde MEB'in STS'si (40 dk) duruyordu; kullanıcı kaldırttı, sabit tek
+ * bir süre yerine her öğrenci kendi süresini girsin istedi. Prova kimliği
+ * hiçbir yere kaydedilmiyor, 'sts' kimliğinin eski bir kaydı yok.
+ */
+export type ProvaId = KitapcikId | 'ozel'
 
 export type Prova = {
   id: ProvaId
   ad: string
-  /** Kitapçığın sınav süresi, dakika. */
+  /** Sınav süresi, dakika. */
   dakika: number
-  /** Kitapçıktaki toplam soru. */
-  soru: number
+  /** Kitapçıktaki toplam soru; kullanıcının süresinde bilinmiyor. */
+  soru: number | null
 }
-
-/**
- * MEB Seviye Tespit Sınavı (STS): her ders tek oturumda 20 soru, 40 dakika
- * (MEB Denklik Seviye Tespit Sınavı Başvuru ve Uygulama Kılavuzu, 2025).
- * ÖSYM sınavı değil, kitapçığı da yok — prova tek dersin oturumu. Kullanıcı
- * istedi; süresi Pomodoro turundan kısa olsa da mola döngüsünün dışında
- * kesintisiz bir sınav oturumu, o yüzden yeri yine burası.
- */
-const STS_DAKIKA = 40
-const STS_SORU = 20
 
 /**
  * Süreler 2026 YKS kılavuzundan: TYT 165, AYT 180, YDT 120 dakika.
  *
  * Sayılar burada yazılı çünkü ÖSYM'nin kararı — soru sayısından türetilemez.
  */
-const SURE: Record<ProvaId, number> = { tyt: 165, ayt: 180, ydt: 120, sts: STS_DAKIKA }
+const SURE: Record<KitapcikId, number> = { tyt: 165, ayt: 180, ydt: 120 }
 
 /**
  * Kitapçıktaki testler. Soru sayısı bu tablodan **toplanıyor**, elle
  * yazılmıyor: aynı sayı `sablonlar.ts`te zaten duruyor ve iki yere yazılan bir
  * sayı ÖSYM dağılımı değişince birinde eski kalırdı.
  */
-const TESTLER: Record<Exclude<ProvaId, 'sts'>, OsymTest[]> = {
+const TESTLER: Record<KitapcikId, OsymTest[]> = {
   tyt: ['tyt-turkce', 'tyt-sosyal', 'tyt-mat', 'tyt-fen'],
   ayt: [
     'ayt-mat',
@@ -61,7 +60,7 @@ const TESTLER: Record<Exclude<ProvaId, 'sts'>, OsymTest[]> = {
   ydt: ['ydt'],
 }
 
-function soruSayisi(id: Exclude<ProvaId, 'sts'>): number {
+function soruSayisi(id: KitapcikId): number {
   return TESTLER[id].reduce((toplam, test) => toplam + OSYM_TEST_SORU[test], 0)
 }
 
@@ -88,15 +87,32 @@ export const PROVALAR: Prova[] = [
     dakika: SURE.ydt,
     soru: soruSayisi('ydt'),
   },
-  {
-    id: 'sts',
-    ad: 'STS',
-    dakika: SURE.sts,
-    soru: STS_SORU,
-  },
 ]
 
-/** Kimliğe göre prova; tanınmayan kimlikte `null`. */
+/**
+ * "Süre gir"in sınırları, dakika. Üst sınır en uzun kitapçığın (AYT, 180)
+ * üstünde bırakıldı: ek süreli öğrenci ya da art arda iki oturum da yazılabilsin.
+ */
+export const OZEL_PROVA_SINIRI = { enAz: 1, enCok: 300 } as const
+
+/** Hiç süre girilmemişken kutuda duran değer. */
+export const VARSAYILAN_OZEL_PROVA = 60
+
+/**
+ * Kayıtlı ya da yazılan süreyi sınırların içine alır. Sayı olmayan her şey
+ * (eski kurulumda alan yok, bozuk kayıt) varsayılana düşüyor.
+ */
+export function ozelProvaSuresi(ham: unknown): number {
+  if (typeof ham !== 'number' || !Number.isFinite(ham)) return VARSAYILAN_OZEL_PROVA
+  return Math.min(OZEL_PROVA_SINIRI.enCok, Math.max(OZEL_PROVA_SINIRI.enAz, Math.round(ham)))
+}
+
+/** Kullanıcının kendi süresiyle prova. */
+export function ozelProva(dakika: number): Prova {
+  return { id: 'ozel', ad: 'Deneme', dakika: ozelProvaSuresi(dakika), soru: null }
+}
+
+/** Kimliğe göre hazır kitapçık provası; tanınmayan kimlikte `null`. */
 export function provaBul(id: string | null): Prova | null {
   return PROVALAR.find((p) => p.id === id) ?? null
 }

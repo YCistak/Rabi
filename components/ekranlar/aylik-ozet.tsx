@@ -24,6 +24,7 @@ import { LOFI_PARCALAR } from '@/lib/lofi'
 import { useUygulamaGorunur } from '@/lib/gorunurluk'
 import { useGeriKatmani } from '@/lib/geri'
 import { Rabi, type MaskotPozu } from '@/components/maskot/rabi'
+import { useKapatmaOnayi } from '@/components/ui'
 import { cn } from '@/lib/utils'
 
 /**
@@ -122,6 +123,9 @@ export function AylikOzetEkrani({
   const oran = useSayac(sira)
 
   useGeriKatmani(true, onKapat)
+  const kapatmaOnayi = useKapatmaOnayi({
+    aciklama: 'Özet kapanır, kaldığın sayfa hatırlanmaz.',
+  })
 
   // Ana tuşa basıldığında WebView durmuyor: müzik çalmaya devam ediyordu.
   const gorunur = useUygulamaGorunur()
@@ -194,6 +198,7 @@ export function AylikOzetEkrani({
       className="fixed inset-0 z-50 overflow-hidden select-none"
       style={{ background: KAGIT, color: MUREKKEP }}
     >
+      {kapatmaOnayi.pencere}
       <div className="absolute inset-0 mx-auto w-full max-w-md overflow-hidden">
         {/* Kâğıdın defter çizgisi ve çift amber çerçeve. Koyu kartta çizgi
             yok — kızıl zeminde amber çizgi kirli duruyordu — çerçeve duruyor:
@@ -256,7 +261,7 @@ export function AylikOzetEkrani({
             ))}
           </div>
           <div className="mt-3 flex items-center justify-between gap-2">
-            <YuvarlakDugme etiket="Özeti kapat" koyu={koyu} onClick={onKapat}>
+            <YuvarlakDugme etiket="Özeti kapat" koyu={koyu} onClick={() => kapatmaOnayi.sor(onKapat)}>
               <X size={17} aria-hidden />
             </YuvarlakDugme>
 
@@ -1203,7 +1208,7 @@ function kapanisKarti(ozet: AylikOzet): Kart {
           style={{ background: AMBER_ZEMIN, borderColor: AMBER_CIZGI }}
         >
           <div className="shrink-0" style={{ filter: 'drop-shadow(0 12px 14px rgba(27,26,25,.16))' }}>
-            <Rabi poz="sevinen" durum="mutlu" boyut={96} />
+            <Rabi poz="selamlayan" durum="mutlu" boyut={96} />
           </div>
           <p className="text-pretty" style={yz(800, 15, 1.45)}>
             {ozet.sonrakiAyHedefi > 0 ? (

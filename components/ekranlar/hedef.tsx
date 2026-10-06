@@ -1,13 +1,17 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { Check, Pencil, Trash2 } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { Check, Trash2 } from 'lucide-react'
 import type { Hedef, PuanTuru } from '@/lib/types'
 import { siraYaz } from '@/lib/siralama'
 import {
+  basariSirasiGecerli,
   bolumAra,
   bolumBul,
-  bolumleriGetir,
+  hedefSayilariGecerli,
+  puanMetni,
+  sayiOku,
+  tabanPuanGecerli,
   tahminEt,
   turAdi,
   universiteAra,
@@ -16,7 +20,14 @@ import {
   type Universite,
 } from '@/lib/hedef-katalog'
 import { Alan, BaslikSatiri, Buton, Cip, Etiket, Kart, Not, Onay } from '@/components/ui'
-import { AramaAlani, Liste, SecilenSatir, SecimSatiri } from '@/components/hedef-secici'
+import {
+  AramaAlani,
+  HedefKontrolu,
+  Liste,
+  SecilenSatir,
+  SecimSatiri,
+  uniListesiBos,
+} from '@/components/hedef-secici'
 import { Rabi } from '@/components/maskot/rabi'
 
 const PUAN_TURU_ADI: Record<PuanTuru, string> = {
@@ -26,29 +37,26 @@ const PUAN_TURU_ADI: Record<PuanTuru, string> = {
   dil: 'Dil',
 }
 
+/** Kayıt bildirimi ekranda ne kadar duruyor — Yapılacaklar'daki toast'la aynı. */
+const BILDIRIM_SURESI = 2400
+
+/** Elle giriş kipinde kutular boş kalabilir; yazılmışsa geçerli olmalı. */
+function bosVeyaGecerli(metin: string, gecerli: (sayi: number | null) => boolean): boolean {
+  return metin.trim() === '' || gecerli(sayiOku(metin))
+}
+
 export function HedefEkrani({
   hedef,
   setHedef,
   varsayilanTur,
   /** Sıralama ekranından gelen güncel tahmin; yoksa karşılaştırma gösterilmez. */
   guncelSiralama,
-  /**
-   * Kaydettikten sonra ekranı kapatır.
-   *
-   * Kaydedince ekranda kalmak, kaydın işlenip işlenmediğini belirsiz
-   * bırakıyordu: aynı form aynı değerlerle duruyor ve tek fark bir yerdeki
-   * özet. Hedef ana sayfada zaten görünüyor — kullanıcıyı oraya bırakmak
-   * kaydın karşılığını gösteriyor. Silme burada değil: silen kullanıcı yeni
-   * bir hedef girmek için ekranda kalıyor.
-   */
-  onKaydedildi,
 }: {
   hedef: Hedef | null
   setHedef: (hedef: Hedef | null) => void
   /** Öğrencinin kendi alanı; bölüm listesini süzüyor. `null` = karar vermedi. */
   varsayilanTur: PuanTuru | null
   guncelSiralama: number | null
-  onKaydedildi: () => void
 }) {
   const [universite, setUniversite] = useState(hedef?.universite ?? '')
   const [bolum, setBolum] = useState(hedef?.bolum ?? '')
@@ -67,16 +75,29 @@ export function HedefEkrani({
     değiştirmeyi düşünen öğrenci aradığını hiç bulamazdı.
   */
   const [alanDisiniGoster, setAlanDisiniGoster] = useState(false)
-  const [tabanPuan, setTabanPuan] = useState(hedef?.tabanPuan?.toString() ?? '')
+  const [tabanPuan, setTabanPuan] = useState(
+    hedef?.tabanPuan != null ? puanMetni(hedef.tabanPuan) : '',
+  )
   const [basariSirasi, setBasariSirasi] = useState(hedef?.basariSirasi?.toString() ?? '')
   const [silmeAcik, setSilmeAcik] = useState(false)
+  /*
+    Kayıt bildirimi. Kaydet ekranı kapatmıyor (kullanıcı kaldırttı: araç
+    menüsüne atılmak, kaydettiği değeri görmeden ekrandan çıkarıyordu); kaydın
+    işlendiğini bu kısa şerit söylüyor. Değer bir sayaç: art arda iki kayıtta
+    şerit yeniden başlasın.
+  */
+  const [kayitBildirimi, setKayitBildirimi] = useState(0)
+  useEffect(() => {
+    if (kayitBildirimi === 0) return
+    const zamanlayici = window.setTimeout(() => setKayitBildirimi(0), BILDIRIM_SURESI)
+    return () => window.clearTimeout(zamanlayici)
+  }, [kayitBildirimi])
 
   // Katalog dışı bir hedef kayıtlıysa ekran elle giriş kipinde açılıyor: eski
   // sürümde herkes iki adı serbest metin yazıyordu ve o kayıtlar duruyor.
   const [elleMod, setElleMod] = useState(
     () => hedef !== null && universiteBul(hedef.universite) === null,
   )
-  const [duzenleAcik, setDuzenleAcik] = useState(false)
   const [uniArama, setUniArama] = useState('')
   const [bolumArama, setBolumArama] = useState('')
 
@@ -109,12 +130,17 @@ export function HedefEkrani({
     // üniversitede olmayan bir hedefi kaydedilebilir gösterirdi.
     // Denetim süzgeçsiz listeye bakıyor: alan dışındaki bir seçim geçerli,
     // yalnızca listede gizli.
-    if (secilenBolum && !bolumleriGetir(secilen).some((b) => b.id === secilenBolum.id)) {
-      setBolum('')
-      setTabanPuan('')
-      setBasariSirasi('')
-    } else if (secilenBolum) {
-      yaz(secilen, secilenBolum)
+    if (secilenBolum) {
+      // Aynı adlı bölüm yeni üniversitede de varsa sırası başka: kutular eski
+      // üniversitenin kaydıyla değil yeni programınkiyle dolmalı.
+      const ayni = bolumBul(secilen, secilenBolum.ad)
+      if (ayni) {
+        yaz(secilen, ayni)
+      } else {
+        setBolum('')
+        setTabanPuan('')
+        setBasariSirasi('')
+      }
     }
   }
 
@@ -124,27 +150,39 @@ export function HedefEkrani({
     if (secilenUni) yaz(secilenUni, secilen)
   }
 
-  /** Seçimden çıkan tahmini kutulara yazar; kullanıcı sonra elle düzeltebiliyor. */
+  /** Seçimden çıkan sayıları kontrol kutularına yazar; kullanıcı sonra düzeltebiliyor. */
   const yaz = (secilenUniversite: Universite, secilenBolumu: Bolum) => {
     const yeni = tahminEt(secilenUniversite, secilenBolumu)
     setPuanTuru(secilenBolumu.puanTuru)
     // Ondalık ayraç virgül: kutuya nokta yazan bir arayüz, sayfanın geri
     // kalanında virgül gördüğü için kullanıcıya yabancı geliyor.
-    setTabanPuan(yeni.tabanPuan.toString().replace('.', ','))
+    setTabanPuan(puanMetni(yeni.tabanPuan))
     setBasariSirasi(yeni.siralama.toString())
   }
 
-  const kaydedilebilir = bolum.trim() !== ''
+  /*
+    Katalogdan seçilmiş hedefte iki sayı da geçerli olmadan kayıt yok: kontrol
+    adımı onları dolu getiriyor, boşaltılmış ya da saçma bir sayı "hedefine ne
+    kadar kaldı" cümlesini bozardı. Elle giriş kipinde sayılar eskisi gibi
+    isteğe bağlı, ama yazılmışsa geçerli olmalı.
+  */
+  const kaydedilebilir =
+    tahmin && !elleMod
+      ? hedefSayilariGecerli(tabanPuan, basariSirasi)
+      : bolum.trim() !== '' &&
+        bosVeyaGecerli(tabanPuan, tabanPuanGecerli) &&
+        bosVeyaGecerli(basariSirasi, basariSirasiGecerli)
 
   const kaydet = () => {
+    if (!kaydedilebilir) return
     setHedef({
       universite: universite.trim(),
       bolum: bolum.trim(),
       puanTuru,
-      tabanPuan: sayiVeyaNull(tabanPuan),
-      basariSirasi: sayiVeyaNull(basariSirasi),
+      tabanPuan: sayiOku(tabanPuan),
+      basariSirasi: sayiOku(basariSirasi),
     })
-    onKaydedildi()
+    setKayitBildirimi((n) => n + 1)
   }
 
   const fark =
@@ -212,7 +250,7 @@ export function HedefEkrani({
                     onDegis={setUniArama}
                     ipucu="Üniversite ya da şehir ara"
                   />
-                  <Liste bos="Bu adla üniversite bulamadım.">
+                  <Liste bos={uniListesiBos(uniArama)}>
                     {uniSonuclari.map((u) => (
                       <SecimSatiri
                         key={u.id}
@@ -304,9 +342,9 @@ export function HedefEkrani({
           </>
         )}
 
-        {/* Sayı kutuları katalog kipinde kapalı duruyor: seçim zaten dolduruyor
-            ve dört kutuyu birden göstermek ekranı eski hâline döndürürdü. */}
-        {(elleMod || duzenleAcik) && (
+        {/* Elle giriş kipinin sayı kutuları. Katalog kipinde puan türü
+            bölümden geliyor, iki sayı da aşağıdaki kontrol kutusunda. */}
+        {elleMod && (
           <div className="space-y-3">
             <div>
               <Etiket>Puan türü</Etiket>
@@ -350,12 +388,13 @@ export function HedefEkrani({
           </div>
         )}
 
-        {tahmin && !elleMod && !duzenleAcik && (
-          <TahminOzeti
+        {tahmin && !elleMod && (
+          <HedefKontrolu
+            idOneki="hedef-kontrol"
             tabanPuan={tabanPuan}
             basariSirasi={basariSirasi}
-            puanTuru={puanTuru}
-            onDuzenle={() => setDuzenleAcik(true)}
+            onTabanPuan={setTabanPuan}
+            onBasariSirasi={setBasariSirasi}
           />
         )}
 
@@ -378,10 +417,7 @@ export function HedefEkrani({
 
         <button
           type="button"
-          onClick={() => {
-            setElleMod((a) => !a)
-            setDuzenleAcik(false)
-          }}
+          onClick={() => setElleMod((a) => !a)}
           className="w-full rounded-lg py-1 text-center text-[13px] font-bold text-ikincil transition active:opacity-70"
         >
           {elleMod ? 'Listeden seçeyim' : 'Bölümüm listede yok, kendim yazayım'}
@@ -401,6 +437,21 @@ export function HedefEkrani({
         yayınlarından derlenmiştir.
       </Not>
 
+      {/* Kayıt bildirimi — Yapılacaklar'daki toast'ın kalıbı, alt menünün üstünde. */}
+      {kayitBildirimi > 0 && (
+        <div
+          key={kayitBildirimi}
+          className="pointer-events-none fixed inset-x-0 bottom-[calc(5.5rem+var(--guvenli-alt))] z-40 flex justify-center px-6 tablet:right-[var(--ray)] tablet:bottom-[calc(1.5rem+var(--guvenli-alt))]"
+        >
+          <p
+            role="status"
+            className="acilir-giris max-w-md rounded-2xl bg-foreground px-4 py-3 text-center text-[13.5px] font-bold text-background shadow-kart"
+          >
+            Hedefin kaydedildi.
+          </p>
+        </div>
+      )}
+
       <Onay
         acik={silmeAcik}
         baslik="Hedef silinsin mi?"
@@ -408,49 +459,6 @@ export function HedefEkrani({
         onOnayla={() => setHedef(null)}
         onIptal={() => setSilmeAcik(false)}
       />
-    </div>
-  )
-}
-
-/** Seçimden çıkan iki sayı ve "elle düzelt" kapısı. */
-function TahminOzeti({
-  tabanPuan,
-  basariSirasi,
-  puanTuru,
-  onDuzenle,
-}: {
-  tabanPuan: string
-  basariSirasi: string
-  puanTuru: PuanTuru
-  onDuzenle: () => void
-}) {
-  // Kutulardaki metin virgüllü olabiliyor; `Number` onu NaN yapıp özeti
-  // boşaltıyordu. Kaydedilen değerle aynı ayrıştırıcı kullanılıyor.
-  const puan = sayiVeyaNull(tabanPuan)
-  const sira = sayiVeyaNull(basariSirasi)
-  return (
-    <div className="rounded-xl bg-muted/70 px-3.5 py-3">
-      <div className="flex items-baseline justify-between gap-3">
-        <span className="text-xs font-bold text-muted-foreground">
-          Tahmini taban · {PUAN_TURU_ADI[puanTuru]}
-        </span>
-        <button
-          type="button"
-          onClick={onDuzenle}
-          className="inline-flex shrink-0 items-center gap-1 text-[13px] font-extrabold text-ikincil transition active:opacity-70"
-        >
-          <Pencil size={13} aria-hidden />
-          Elle düzelt
-        </button>
-      </div>
-      <div className="mt-1.5 flex items-baseline gap-4">
-        <span className="rakam font-display text-xl font-extrabold text-primary">
-          {puan === null ? '—' : puanYaz(puan)}
-        </span>
-        <span className="rakam text-sm font-bold text-muted-foreground">
-          {sira === null ? '—' : `${siraYaz(sira)}. sıra`}
-        </span>
-      </div>
     </div>
   )
 }
@@ -495,11 +503,4 @@ function ElleGiris({
 function puanYaz(puan: number): string {
   if (!Number.isFinite(puan)) return '—'
   return puan.toLocaleString('tr-TR', { maximumFractionDigits: 1 })
-}
-
-function sayiVeyaNull(metin: string): number | null {
-  const temiz = metin.replace(',', '.').trim()
-  if (temiz === '') return null
-  const sayi = Number(temiz)
-  return Number.isFinite(sayi) ? sayi : null
 }

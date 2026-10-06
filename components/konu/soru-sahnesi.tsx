@@ -5,11 +5,13 @@ import { Check, ChevronRight, X } from 'lucide-react'
 import type { Konu } from '@/lib/konu'
 import { isabetOrani, kapanisKademesi, sureYaz } from '@/lib/konu/kapanis'
 import { useGeriKatmani } from '@/lib/geri'
-import { cn } from '@/lib/utils'
-import { Buton, Onay } from '@/components/ui'
+import { bugun, cn } from '@/lib/utils'
+import { gununPozu, type MaskotPozu } from '@/lib/maskot'
+import { Buton, Onay, useTanitimSuruyor } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartGorseli } from './kart-gorseli'
 import { KonuOzeti } from './konu-ozeti'
+import type { KonuDersId } from '@/lib/konu/tip'
 
 /**
  * Soru sahnesi — deste okunduktan **hemen sonra** gelen ekran.
@@ -71,6 +73,7 @@ export type SahneSonucu = {
 
 export function SoruSahnesi({
   konu,
+  ders,
   temaAdi,
   dersAdi,
   ozetli,
@@ -80,6 +83,8 @@ export function SoruSahnesi({
   onCikisBitti,
 }: {
   konu: Konu
+  /** Özetin rengi için. */
+  ders: KonuDersId
   temaAdi: string
   dersAdi: string
   /**
@@ -163,6 +168,8 @@ export function SoruSahnesi({
   sonucRef.current = { dogru, yanlis, bitti }
   useGeriKatmani(true, () => onKapat(sonucRef.current))
   const [cikisSoruluyor, setCikisSoruluyor] = useState(false)
+  // Tanıtımda eskisi gibi: cevapsız yoklamadan sormadan çık (bkz. `useTanitimSuruyor`).
+  const tanitimda = useTanitimSuruyor()
 
   function karar(cevap: number) {
     if (secim !== null) return
@@ -208,6 +215,7 @@ export function SoruSahnesi({
       <KonuOzeti
         key="ozet"
         konu={konu}
+        ders={ders}
         dersAdi={dersAdi}
         temaAdi={temaAdi}
         okumaSaniyesi={okumaSaniyesi}
@@ -271,13 +279,18 @@ export function SoruSahnesi({
 
       {/*
         Çarpı doğrudan çıkmıyor, önce soruyor: yanlışlıkla dokunulan çarpı
-        yoklamayı bitiriyordu ve geri dönüşü yoktu. Geri tuşu ve kenardan kaydırma
-        sormadan çıkmaya devam ediyor — orada niyet belli.
+        yoklamayı bitiriyordu ve geri dönüşü yoktu. Cevap verilmemişken de
+        soruyor (kullanıcı istedi: bütün ✕'ler sorar). Geri tuşu ve kenardan
+        kaydırma sormadan çıkmaya devam ediyor — orada niyet belli.
       */}
       <Onay
         acik={cikisSoruluyor}
         baslik="Yoklamadan çıkılsın mı?"
-        aciklama="Verdiğin cevaplar kaydedilmez, yoklama baştan başlar."
+        aciklama={
+          dogru + yanlis > 0
+            ? 'Verdiğin cevaplar kaydedilmez, yoklama baştan başlar.'
+            : 'Henüz cevap vermedin; yoklama kapanır.'
+        }
         onayMetni="Çık"
         onOnayla={() => onKapat(sonucRef.current)}
         onIptal={() => setCikisSoruluyor(false)}
@@ -287,7 +300,7 @@ export function SoruSahnesi({
           <button
             type="button"
             onClick={() =>
-              dogru + yanlis > 0 ? setCikisSoruluyor(true) : onKapat(sonucRef.current)
+              dogru + yanlis > 0 || !tanitimda ? setCikisSoruluyor(true) : onKapat(sonucRef.current)
             }
             aria-label="Kapat"
             className="sahne-kapat grid size-[46px] shrink-0 place-items-center rounded-2xl bg-card transition active:brightness-95"
@@ -577,7 +590,7 @@ function Kapanis({
             <div className="kapanis-suzul kapanis-maskot">
               <Rabi
                 durum={kademe === 'tekrar' ? 'normal' : 'kutlama'}
-                poz={kademe === 'tekrar' ? 'dusunen' : 'sevinen'}
+                poz={kapanisPozu(kademe)}
                 boyut={112}
                 className="drop-shadow-[0_12px_16px_rgba(31,36,48,0.18)]"
               />
@@ -759,4 +772,22 @@ function Kutu({
       </p>
     </div>
   )
+}
+
+/**
+ * Yoklama kapanışında maskotun pozu.
+ *
+ * Kademe ruh hâlini seçiyor (tekrar düşünüyor, iyi onaylıyor, harika
+ * kutluyor), günün tarihi de kademenin içinden pozu: her yoklamanın sonunda
+ * aynı zıplayan tavşan sonucu değil alışkanlığı gösteriyordu. Seçim gün
+ * içinde sabit (`gununPozu`), art arda iki konu bitiren aynı tavşanı görüyor.
+ */
+const KAPANIS_POZLARI: Record<ReturnType<typeof kapanisKademesi>, readonly MaskotPozu[]> = {
+  harika: ['sevinen', 'alkislayan', 'dans', 'takla'],
+  iyi: ['basparmak', 'damgali'],
+  tekrar: ['dusunen'],
+}
+
+function kapanisPozu(kademe: ReturnType<typeof kapanisKademesi>): MaskotPozu {
+  return gununPozu(bugun(), KAPANIS_POZLARI[kademe])
 }

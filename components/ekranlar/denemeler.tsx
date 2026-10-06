@@ -94,7 +94,7 @@ export function DenemelerEkrani({
         />
       ) : kartlar.length === 0 ? (
         <BosDurum
-          simge={<Rabi durum="uykulu" poz="kahveli" boyut={96} />}
+          simge={<Rabi durum="normal" poz="fotografci" boyut={96} />}
           baslik="Kayıtlı deneme yok"
           aciklama="İlk denemeni ekle. Girdiğin doğru ve yanlışlardan netini hesaplar, sonrakilerle karşılaştırır."
           eylem={
