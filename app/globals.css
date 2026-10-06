@@ -88,6 +88,18 @@
   --color-fzk-kart: var(--fzk-kart);
   --color-fzk-koyu: var(--fzk-koyu);
   --color-fzk-ok: var(--fzk-ok);
+  --color-ayar-calisma: var(--ayar-calisma);
+  --color-ayar-calisma-koyu: var(--ayar-calisma-koyu);
+  --color-ayar-hatirlatma: var(--ayar-hatirlatma);
+  --color-ayar-hatirlatma-koyu: var(--ayar-hatirlatma-koyu);
+  --color-ayar-ses: var(--ayar-ses);
+  --color-ayar-ses-koyu: var(--ayar-ses-koyu);
+  --color-ayar-yasal: var(--ayar-yasal);
+  --color-ayar-yasal-koyu: var(--ayar-yasal-koyu);
+  --color-ayar-destek: var(--ayar-destek);
+  --color-ayar-destek-koyu: var(--ayar-destek-koyu);
+  --color-ayar-veri: var(--ayar-veri);
+  --color-ayar-veri-koyu: var(--ayar-veri-koyu);
   --color-dil: var(--dil);
   --color-dil-kart: var(--dil-kart);
   --color-dil-koyu: var(--dil-koyu);
@@ -263,6 +275,21 @@ body {
   --fzk-kart: var(--fzk);
   --fzk-koyu: #4a5789;
   --fzk-ok: #6c7cb0;
+  /* Ayarlar kategorileri: bölümün simge kutularının zemini (`-koyu` o zeminde
+     okunan simge rengi, kontrast >= 4.5:1). Ders rengi değil; yzm/isl ailelerine
+     bağlanmadı, çünkü onların koyuları kırmızı/sarıda 4.5'in altında kalıyor. */
+  --ayar-calisma: #fbe4e1;
+  --ayar-calisma-koyu: #a62f22;
+  --ayar-hatirlatma: #fbefc4;
+  --ayar-hatirlatma-koyu: #7a5800;
+  --ayar-ses: #ece6f8;
+  --ayar-ses-koyu: #5b4a9a;
+  --ayar-yasal: #e1ecf9;
+  --ayar-yasal-koyu: #1f5a99;
+  --ayar-destek: #e2f1e5;
+  --ayar-destek-koyu: #2d6a3a;
+  --ayar-veri: #dcf1ee;
+  --ayar-veri-koyu: #1b6860;
   --dil: #e6f2ef;
   --dil-kart: var(--dil);
   --dil-koyu: #2c746b;
