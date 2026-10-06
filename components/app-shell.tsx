@@ -946,6 +946,24 @@ function RabiUygulamasi() {
    */
   const acilisKatmani = acilisGorunur ? <Acilis onBitti={acilisiKapat} /> : null
 
+  /**
+   * Alt ekranların üstündeki "Geri". Kenardan kaydırma ve Android'in geri
+   * tuşuyla aynı sıra (`geriGit`): önce ekranın kendi açtığı katman, sonra
+   * ekran. Pomodoro'da onu kendi yuvası çiziyor (aşağıda).
+   */
+  const geriDugmesi = (
+    <Buton
+      bicim="hayalet"
+      boy="kucuk"
+      onClick={() => {
+        if (!ustKatmaniKapat()) setEkran(null)
+      }}
+      className="-ml-2 mb-3"
+    >
+      <ArrowLeft size={16} aria-hidden /> Geri
+    </Buton>
+  )
+
   // Veri okunmadan ekran çizilirse "kayıt yok" bir an yanıp söner.
   const icerik = !ayarlarHazir ? (
     <div className="en-az-ekran" aria-busy="true" />
@@ -1028,13 +1046,28 @@ function RabiUygulamasi() {
       {/* Pomodoro'nun yuvası (yukarıda, "Pomodoro ekrandan çıkınca
           sürüyor"). Geri kaydırma kaydırılacak sayfayı `[data-geri-sayfa]`
           ile ilk bulduğu öğeden alıyor; yuva o yüzden `SayfaGecisi`nden
-          önce ve işareti yalnızca açıkken taşıyor. Gizliden görünüre geçen
-          öğenin animasyonu baştan oynuyor: giriş hareketi her açılışta var. */}
-      <div
-        ref={setPomodoroYuvasi}
-        data-geri-sayfa={ekran === 'pomodoro' ? '' : undefined}
-        className={ekran === 'pomodoro' ? 'sayfa-girisi sayfa-ileri tablet:mx-auto tablet:max-w-[40rem]' : 'hidden'}
-      />
+          önce.
+
+          Yuva yalnızca ekran açıkken **kurulu**, gizlenmiyor. Bir süre hep
+          kuruluydu ve ekran kapanınca `hidden` oluyordu; geri kaydırma ise
+          ekranın değiştiğini kayan kutunun sökülmesinden anlıyor
+          (`isConnected`, `geri-kaydirma-denetci.ts`). Sökülmeyen yuvada
+          "ekran değişmedi" sanıp gizli yuvayı yerine yaylandırıyor, önceki
+          ekranın kopyası o süre boyunca yeni ekranın üstünde kayıp
+          kayboluyordu (iOS'ta Pomodoro'dan kaydırarak çıkınca). Sökülen
+          yuvada kap yalnızca DOM'dan düşüyor, bileşen yaşıyor (deneme formu
+          da hep böyle yapıyordu). Her açılışta yeni kutu: giriş hareketi
+          her seferinde baştan oynuyor.
+
+          Geri düğmesi de burada, Pomodoro'nun başlığının üstünde: diğer
+          araçlardaki gibi `SayfaGecisi`nin içinde dursaydı yuvanın, yani
+          bütün Pomodoro'nun altında kalırdı. */}
+      {ekran === 'pomodoro' && (
+        <div data-geri-sayfa className="sayfa-girisi sayfa-ileri tablet:mx-auto tablet:max-w-[40rem]">
+          {geriDugmesi}
+          <div ref={setPomodoroYuvasi} />
+        </div>
+      )}
       <SayfaGecisi
         key={ekran ?? `sekme:${sekme}`}
         anahtar={ekran ?? `sekme:${sekme}`}
@@ -1054,16 +1087,8 @@ function RabiUygulamasi() {
               götürdüğünü belirsiz bırakıyordu. Pencereler ve tam ekran
               katmanlar bu düğmeyi zaten örtüyor.
             */}
-            <Buton
-              bicim="hayalet"
-              boy="kucuk"
-              onClick={() => {
-                if (!ustKatmaniKapat()) setEkran(null)
-              }}
-              className="-ml-2 mb-3"
-            >
-              <ArrowLeft size={16} aria-hidden /> Geri
-            </Buton>
+            {/* Pomodoro'nun geri düğmesi kendi yuvasında (yukarıda). */}
+            {ekran !== 'pomodoro' && geriDugmesi}
 
             {ekran === 'okul' && (
               <OkulEkrani

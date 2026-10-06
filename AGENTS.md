@@ -598,9 +598,10 @@ ediyor, artık ayarlardan değiştirilmiyor.
 
 Süreler kartındaki **Deneme provası** çipleri turu ÖSYM'nin süresine
 çeviriyor: TYT 165, AYT 180, YDT 120 dakika (`lib/sinav-provasi.ts`), ayrıca
-MEB'in Seviye Tespit Sınavı (**STS**) 40 dakika / 20 soru — ÖSYM sınavı değil,
-ders başına tek oturum; kullanıcı istedi ve süresi Pomodoro turundan kısa olsa
-da mola döngüsünün dışında kesintisiz bir sınav oturumu. Amaç
+**"Süre gir"**: kullanıcı kendi süresini yazıyor (1–300 dk, `ozelProva`; son
+yazılan `PomodoroAyar.provaSuresi`de hatırlanıyor). Yerinde bir süre MEB'in
+STS'si (40 dk) duruyordu; kullanıcı kaldırttı. Prova kimliği hiçbir yere
+kaydedilmiyor, eski 'sts' seçiminin taşınacak kaydı yok. Amaç
 denemeyi uygulamanın içinde çözdürmek değil, kâğıdı çözerken süreyi buradan
 tutturmak — öğrenci zaten telefonun kronometresini açıyordu ve o süre hiçbir
 yere yazılmıyordu.
@@ -664,8 +665,14 @@ sayacın uygulamanın sağ altında bir saat olarak görünmesini istedi.
   tur) ekran değişince sökmüyor. Çizildiği yer sabit, ayrık bir `div`
   (portalın kabı) ve o div ekran açıkken sayfadaki yuvaya taşınıyor. Kap
   **hiç değişmemeli**: React kabı değişen portalı söküp yeniden kurar.
-  Deneme formu gibi bütün sayfa ağacını değiştiren bir ekran yuvayı
-  söktüğünde kap yalnızca DOM'dan düşüyor, bileşen yaşıyor.
+  Yuva ise yalnızca ekran açıkken **kurulu** (gizlenmiyor, sökülüyor); kap
+  o zaman DOM'dan düşüyor, bileşen yaşıyor. Gizlenen yuva geri kaydırmayı
+  bozuyordu: denetçi ekranın değiştiğini kayan kutunun sökülmesinden
+  anlıyor, sökülmeyen kutuyu yerine yaylandırıyor ve önceki ekranın kopyası
+  yeni ekranın üstünde kayıp kayboluyordu.
+- **Geri düğmesi yuvada**, Pomodoro'nun üstünde (`AppShell` → `geriDugmesi`).
+  Diğer araçlarınki `SayfaGecisi`nde; Pomodoro yuvası ondan önce geldiği için
+  orada bütün Pomodoro'nun altında kalıyordu.
 - **Gizliyken sahne yok** (`gorunur`): açık bir sahne geri katmanı kurar,
   başka ekranda geri tuşunu ve sekme kaydırmayı yutardı. Tur sürerken
   ekrana dönülünce sahne kendiliğinden açılıyor.
@@ -3109,6 +3116,11 @@ kuruluyor (`.sayfa-yerinde`). Kopya canlı değil: dokunulmuyor, animasyonları
 kapalı, `fixed` öğeleri ve kimlikleri (`id`, `data-geri-sayfa`, `data-yuzen`,
 `data-tanitim`) atılmış — kalsaydı `querySelector` gerçek öğe yerine kopyayı
 bulurdu. Kopyası olmayan ekranda eski davranış sürüyor.
+
+**Kayan kutu ekranla birlikte sökülmeli.** Denetçi bırakınca ekranın
+değişip değişmediğini kutunun `isConnected`ından anlıyor; ekran kapanınca
+yalnızca gizlenen bir `[data-geri-sayfa]` "değişmedi" sayılıyor ve önizleme
+yeni ekranın üstünde kalıyor (Pomodoro yuvası bu yüzden koşullu kuruluyor).
 
 Durum makinesi `lib/geri-kaydirma-denetci.ts`, hız/süre/eğri hesapları
 `lib/geri-kaydirma-hesap.ts` (ikisinin de birim testi var). Kurallar,
