@@ -8,8 +8,11 @@ import type { Gorev } from './yapilacaklar'
   Bir ana tur ve ekran başına mini turlar.
 
   Ana tur bir süre 46 adımdı ve uygulamanın neredeyse her ekranını gezdiriyordu;
-  kullanıcı değerlendirmesinde uzun bulundu. Şimdi 12 adım: ana sayfa, soru
-  ekleme, Konu Takibi ve Harita. Gerisi ekran bazlı mini turlara bölündü —
+  kullanıcı değerlendirmesinde uzun bulundu. Önce 12 adıma indi (ana sayfa,
+  soru ekleme, Konu Takibi, Harita), deneme ekleme ve İstatistik mini turlara
+  taştı; kullanıcı o ikisini mini turda zayıf buldu ve ana tura geri istedi.
+  Şimdi 26 adım: Harita'dan sonra deneme ekleme ve İstatistik. Gerisi
+  (Pomodoro, Yapılacaklar, Oyunlar, Oyun Bankası) ekran bazlı mini turlarda —
   ilgili ekran **ilk kez** açıldığında 1–5 adımlık kısa bir tur (`miniTurSec`).
   Mini turlar da ana tur gibi atlanamıyor ve her biri bir kez görülüyor.
 */
@@ -71,7 +74,7 @@ export function turGorulduOku(turAdi: TanitimTuru, oku: (anahtar: string) => str
 }
 
 /** Turda kullanıcının kendisinin eklediği kayıt türleri (bkz. `lib/tanitim-veri.ts`). */
-export type TanitimKaydi = 'soru' | 'gorev' | 'deneme'
+export type TanitimKaydi = 'soru' | 'gorev' | 'deneme' | 'deneme-ders' | 'yanlis-soru'
 
 export type TanitimAdimi = {
   kimlik: string
@@ -110,7 +113,7 @@ const ADIM_POZLARI: Record<string, MaskotPozu> = {
   'pomodoro-prova': 'saatli', pomodoro: 'saatli', 'pomodoro-kilit': 'elleri-belde',
   'soru-form': 'defterli', 'soru-kaydedildi': 'sevinen',
   'gorev-ekle-bilgi': 'defterli', 'gorev-liste-bilgi': 'basparmak',
-  'deneme-ekle': 'fotografci',
+  'deneme-liste': 'buyutecli', 'deneme-okut': 'fotografci', 'deneme-elle': 'defterli', 'deneme-yanlis-form': 'dusunen', 'deneme-kaydet': 'defterli',
   'konu-takibi': 'okuyan', 'harita-ders': 'haritali', 'harita-soru': 'kitapli', 'konu-haritasi': 'haritali',
   'istatistik-tur': 'buyutecli', 'istatistik-son': 'tahtali', 'istatistik-ilerleyen': 'ziplayan', 'istatistik-kutular': 'durbunlu', 'istatistik-karsilastir': 'abakuslu',
   zorluk: 'elleri-belde', 'oyun-sayac': 'saatli', 'soru-bir': 'dusunen', sonuc: 'sevinen',
@@ -125,9 +128,15 @@ export function adimPozu(adim: TanitimAdimi, tur: TanitimTuru | null, sonAdimMi:
 }
 
 /**
- * Ana tur — 12 adım. Sıra kullanıcının istediği gibi: ana sayfa, soru ekleme,
- * sonra Konu Takibi ve hemen ardından Harita (deneme eklemeden sonra Konu
- * Takibi ve Harita sırası; deneme ekleme artık Denemeler'in kendi turunda).
+ * Ana tur — 26 adım. Sıra: ana sayfa, soru ekleme, Konu Takibi, Harita, sonra
+ * deneme ekleme ve İstatistik (kullanıcı ikisini mini turda değil ana turda
+ * istedi; sayaç yok, atlanamaz). "Turu Bitir" son İstatistik adımında.
+ *
+ * Deneme formu: Okut tanıtılıyor; okutmadan İleri denirse örnek sonuçlar
+ * **bir ders hariç** her derse yazılıyor (`turFormuSonuclari`). Boş ders
+ * (`turBosDersi`) aydınlatılıyor ve geçerli bir doğru/yanlış girilmeden tur
+ * ilerlemiyor; ardından "Yanlış soru ekle" ile örnek bir soru kaydediliyor
+ * ve en son deneme kaydediliyor. Hepsi turun geçici verisi.
  */
 export const TANITIM_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'sinav-hedefi', hedef: 'sinav-hedefi', baslik: 'Sınava kalan süre', aciklama: 'Kalan süreyi ve hedef bölümünü bu karttan izlersin.', tiklamali: false },
@@ -141,7 +150,21 @@ export const TANITIM_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'konu-takibi', hedef: 'konu-takibi', baslik: 'Konu konu işaretle', aciklama: 'Öğrendiğin konunun solundaki daireye dokunup işaretle.', ileriEtiketi: 'Haritaya geç', tiklamali: false },
   { kimlik: 'harita-ac', hedef: 'harita-ac', baslik: 'Konu haritası', aciklama: 'Alt menüde Harita’ya dokun.', tabletAciklama: 'Sağdaki menüde Harita’ya dokun.', tiklamali: true },
   { kimlik: 'harita-ders', hedef: 'harita-kart', dolgu: 14, baslik: 'Yeşil kitap', aciklama: 'Dokunup konunun kartlarını oku.', tiklamali: false },
-  { kimlik: 'harita-soru', hedef: 'harita-soru', dolgu: 14, baslik: 'Turuncu kitap', aciklama: 'Konunun sorularını çöz; biten konu takipte işaretlenir.', tiklamali: false },
+  { kimlik: 'harita-soru', hedef: 'harita-soru', dolgu: 14, baslik: 'Turuncu kitap', aciklama: 'Konunun sorularını çöz; biten konu takipte işaretlenir.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
+  { kimlik: 'deneme-ac', hedef: 'arac-deneme', baslik: 'Denemelerin', aciklama: 'Denemeler’e dokun; iki örnek deneme hazırladık.', tiklamali: true },
+  { kimlik: 'deneme-liste', hedef: 'deneme-listesi', baslik: 'Örnek denemeler', aciklama: 'Karta dokunursan ayrıntılı rapor açılır.', tiklamali: false },
+  { kimlik: 'deneme-ekle', hedef: 'deneme-ekle', baslik: 'Şimdi sıra sende', aciklama: 'Deneme ekle’ye dokun.', tiklamali: true },
+  { kimlik: 'deneme-okut', hedef: 'deneme-okut', etkilesimli: true, baslik: 'Fotoğraftan okut', aciklama: 'Kâğıdı fotoğrafla, Rabi forma yazsın. İleri dersen biri hariç örnekle dolar.', tiklamali: false },
+  { kimlik: 'deneme-elle', hedef: 'deneme-bos-ders', kayit: 'deneme-ders', kisa: true, baslik: 'Bu ders sende', aciklama: 'Bu dersin doğru ve yanlış sayısını kendin yaz.', ipucu: 'Doğru ve yanlışı yaz', tiklamali: true },
+  { kimlik: 'deneme-yanlis', hedef: 'deneme-yanlis-ekle', baslik: 'Yanlışını sakla', aciklama: 'Yanlış soru ekle’ye dokun; soru bankana gider.', tiklamali: true },
+  { kimlik: 'deneme-yanlis-form', hedef: 'yanlis-soru-formu', kayit: 'yanlis-soru', kisa: true, baslik: 'Örnek soru', aciklama: 'Dersini seç ve kaydet. Gerçekte sorunun fotoğrafını çekersin.', ipucu: 'Kaydet’e dokun', tiklamali: true },
+  { kimlik: 'deneme-kaydet', hedef: 'deneme-kaydet', kayit: 'deneme', kisa: true, baslik: 'Denemeni kaydet', aciklama: 'Net hesaplandı. Kaydet’e dokun.', ipucu: 'Kaydet’e dokun', tiklamali: true },
+  { kimlik: 'istatistik-ac', hedef: 'arac-istatistik', baslik: 'Gidişatın', aciklama: 'İstatistik’e dokun.', tiklamali: true },
+  { kimlik: 'istatistik-tur', hedef: 'istatistik-turler', baslik: 'Deneme türü', aciklama: 'Her tür ayrı hesaplanır; iki denemeden sonra açılır.', tiklamali: false },
+  { kimlik: 'istatistik-son', hedef: 'istatistik-son-net', baslik: 'Son net', aciklama: 'Son netini ve bir öncekine göre farkını görürsün.', tiklamali: false },
+  { kimlik: 'istatistik-ilerleyen', hedef: 'istatistik-ilerleyen', baslik: 'En çok ilerleyenler', aciklama: 'Son iki denemede neti en çok artan dersler.', tiklamali: false },
+  { kimlik: 'istatistik-kutular', hedef: 'istatistik-kutular', baslik: 'Güçlü ve zayıf yanların', aciklama: 'En güçlü ve en zayıf dersin, en yüksek ve en düşük netin.', tiklamali: false },
+  { kimlik: 'istatistik-karsilastir', hedef: 'istatistik-karsilastir', baslik: 'Denemeleri karşılaştır', aciklama: 'İki deneme seç, hangi derste kazandığını gör.', tiklamali: false },
 ]
 
 /*
@@ -251,9 +274,10 @@ export const DEMO_SORULAR: Record<TanitimZorlugu, readonly [DemoSoru]> = {
   Turun geçici verisi. Hiçbiri cihaz deposuna yazılmıyor: ekranlar tur
   sürerken gerçek listeler yerine bunları çiziyor, tur bitince (`temizle`,
   `demo-temizle`) hepsi birden siliniyor. Kullanıcının ana turda eklediği
-  soru burada (görev ve deneme alanları ana tur kısalmadan önceden kalma,
-  boş duruyor); İstatistik turunun iki hazır örnek denemesi alana göre her
-  çizimde yeniden kuruluyor (`demoDenemeleri`, `lib/tanitim-veri.ts`).
+  soru ve deneme burada (görev alanı ana tur kısalmadan önceden kalma, boş
+  duruyor); iki hazır örnek deneme alana göre her çizimde yeniden kuruluyor
+  (`demoDenemeleri`, `lib/tanitim-veri.ts`). Deneme formundaki örnek yanlış
+  soru hiçbir listeye yazılmıyor, yalnızca adımı geçiriyor.
 */
 export type DemoVeri = {
   demoVeri: true
@@ -300,7 +324,14 @@ const sira = (kimlik: string) => TANITIM_ADIMLARI.findIndex((adim) => adim.kimli
 */
 const GERI_HEDEFI: Record<string, string> = {
   'soru-kaydedildi': 'soru-ekle',
+  // Deneme kaydedildikten sonra geri, kaydetme formuna değil listeye dönüyor
+  // (form yeniden açılsaydı ikinci bir örnek deneme kaydedilirdi).
+  'istatistik-ac': 'deneme-liste',
 }
+/** Deneme formunun Vazgeç'i: form kapanıp "Deneme ekle" adımına dönülüyor. */
+export const DENEME_VAZGEC = 'deneme-vazgec'
+/** Ana turun deneme formu açıkken geçen adımları. */
+export const DENEME_FORMU_ADIMLARI = ['deneme-okut', 'deneme-elle', 'deneme-yanlis', 'deneme-yanlis-form', 'deneme-kaydet']
 
 export function tanitimGecisi(durum: TanitimDurumu, eylem: TanitimEylemi): TanitimDurumu {
   if (eylem.tur === 'demo-temizle') return { ...durum, demo: demoVerileriTemizle().demo }
@@ -334,6 +365,7 @@ export function tanitimGecisi(durum: TanitimDurumu, eylem: TanitimEylemi): Tanit
       yeniAdim++
       break
     case 'hedefe-dokun':
+      if (eylem.hedef === DENEME_VAZGEC && durum.aktifTur === 'ana_tur' && DENEME_FORMU_ADIMLARI.includes(adim.kimlik)) { yeniAdim = sira('deneme-ekle'); break }
       // Kayıt bekleyen form adımı ve demo oyunun sorusu dokunuşla geçilmiyor.
       if (!adim.tiklamali || adim.kayit || adim.kimlik === 'soru-bir' || adim.hedef !== eylem.hedef) return durum
       yeniAdim++
@@ -368,19 +400,21 @@ export type TanitimKonumu = { sekme: Sekme; ekran: Ekran | null; denemeFormu: bo
 const ARAC_EKRANLARI: Record<string, Ekran> = {
   'soru-ekle': 'soru', 'soru-form': 'soru', 'soru-kaydedildi': 'soru',
   'konu-takibi': 'konu-takibi', 'harita-ac': 'konu-takibi',
+  'deneme-liste': 'deneme', 'deneme-ekle': 'deneme',
+  ...Object.fromEntries(DENEME_FORMU_ADIMLARI.map((kimlik) => [kimlik, 'deneme' as const])),
+  'istatistik-tur': 'istatistik', 'istatistik-son': 'istatistik', 'istatistik-ilerleyen': 'istatistik', 'istatistik-kutular': 'istatistik', 'istatistik-karsilastir': 'istatistik',
 }
-const ARACLAR_SEKMESI = ['soru-ac', 'konu-takibi-ac']
+const ARACLAR_SEKMESI = ['soru-ac', 'konu-takibi-ac', 'deneme-ac', 'istatistik-ac']
 /** Ana turun Harita sekmesinde geçen adımları — iki kitap. */
 export const HARITA_TUR_ADIMLARI = ['harita-ders', 'harita-soru']
 
 /**
  * Ana turun adımı hangi sekmede ve ekranda geçiyor. Yalnızca ana tur
- * gezdiriyor; mini turlar bulunulan ekranda kalıyor. `denemeFormu` artık hep
- * `false` (deneme formu ana turdan çıktı) ama `AppShell` alanı okuyor.
+ * gezdiriyor; mini turlar bulunulan ekranda kalıyor.
  */
 export function tanitimKonumu(adim: TanitimAdimi): TanitimKonumu {
   const ekran = ARAC_EKRANLARI[adim.kimlik]
-  if (ekran) return { sekme: 'daha', ekran, denemeFormu: false }
+  if (ekran) return { sekme: 'daha', ekran, denemeFormu: DENEME_FORMU_ADIMLARI.includes(adim.kimlik) }
   if (ARACLAR_SEKMESI.includes(adim.kimlik)) return { sekme: 'daha', ekran: null, denemeFormu: false }
   if (HARITA_TUR_ADIMLARI.includes(adim.kimlik)) return { sekme: 'harita', ekran: null, denemeFormu: false }
   return { sekme: 'ana', ekran: null, denemeFormu: false }

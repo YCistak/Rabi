@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { sablonlariBirlestir, secilebilirSablonlar } from './sablonlar'
-import { demoDenemeleri, istatistikTuruDenemeleri, demoSablonIdleri, ornekDenemeSonucu, turIstatistikDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi } from './tanitim-veri'
+import { bosDersGirisiGecerli, demoDenemeleri, istatistikTuruDenemeleri, turBosDersi, turFormuSonuclari, demoSablonIdleri, ornekDenemeSonucu, turIstatistikDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi } from './tanitim-veri'
 import { net } from './hesap'
 import type { PuanTuru } from './types'
 
@@ -136,5 +136,36 @@ describe('İstatistik mini turunun denemeleri', () => {
     expect([...sayilar.values()].some((n) => n >= 2)).toBe(true)
     expect(liste.every(tanitimKaydiMi)).toBe(true)
     expect(new Set(liste.map((d) => d.id)).size).toBe(liste.length)
+  })
+})
+
+describe('Turun deneme formu: bir ders boş kalıyor', () => {
+  it('her şablonda yalnızca ilk ders boş; ötekiler soru sayısını aşmadan dolu', () => {
+    for (const sablon of SABLONLAR) {
+      const bos = turBosDersi(sablon)
+      expect(bos, sablon.id).toBe(sablon.dersler[0].id)
+      const sonuclar = turFormuSonuclari(sablon)
+      expect(sonuclar.map((s) => s.dersId), sablon.id).toEqual(sablon.dersler.slice(1).map((d) => d.id))
+      for (const s of sonuclar) {
+        const ders = sablon.dersler.find((d) => d.id === s.dersId)!
+        expect(s.dogru + s.yanlis, `${sablon.id}/${s.dersId}`).toBeLessThanOrEqual(ders.soruSayisi)
+        expect(s.dogru + s.yanlis, `${sablon.id}/${s.dersId}`).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('TYT’de boş kalan Türkçe', () => {
+    expect(turBosDersi(SABLONLAR.find((s) => s.id === 'tyt')!)).toBe('turkce')
+  })
+
+  it('boş derse geçerli giriş: iki kutu dolu, en az bir soru, soru sayısını aşmıyor', () => {
+    const ders = { soruSayisi: 40 }
+    expect(bosDersGirisiGecerli(undefined, ders)).toBe(false)
+    expect(bosDersGirisiGecerli({ dogru: '', yanlis: '' }, ders)).toBe(false)
+    expect(bosDersGirisiGecerli({ dogru: '25', yanlis: '' }, ders)).toBe(false)
+    expect(bosDersGirisiGecerli({ dogru: '0', yanlis: '0' }, ders)).toBe(false)
+    expect(bosDersGirisiGecerli({ dogru: '30', yanlis: '11' }, ders)).toBe(false)
+    expect(bosDersGirisiGecerli({ dogru: '25', yanlis: '0' }, ders)).toBe(true)
+    expect(bosDersGirisiGecerli({ dogru: '30', yanlis: '10' }, ders)).toBe(true)
   })
 })
