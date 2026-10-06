@@ -323,12 +323,14 @@ olduğunu denetliyor: listeye eklenip betikte üretilmeyen poz test düşürür.
 
 ### Açılış bir ders makarası
 
-Ekran 2,26 saniye sürüyor (`ACILIS_SURESI`) ve tasarımı "Ders makarası"
+Ekran 2,08 saniye sürüyor (`ACILIS_SURESI`) ve tasarımı "Ders makarası"
 (`tasarim/acilis-arsiv.html` → 3. tur, Yazı C · 2): dört makara harf yerine
 derslerin simgelerini çeviriyor (√x, 1453, DNA, H₂O, MÖ, Ω, Fe…), her simge
 kendi dersinin `--konu-<ders>-koyu` renginde, ve soldan sağa R·A·B·I'ya
-kilitleniyor. Kelime bir an duruyor, harfler bir tık daha dönüp çıkıyor ve
-zemin dört şerit hâlinde yukarı kalkarak ana sayfayı açıyor. Zaman çizgisi
+kilitleniyor. RABI ortada ~600 ms duruyor, sonra katman bütün olarak
+opaklıkla sönüp (400 ms, ease-in-out) ana sayfayı gösteriyor. Zemin dört
+şerit hâlinde yukarı kalkıyordu; kullanıcı parça parça kalkış yerine solma
+istedi — geri getirmeden önce sor. Zaman çizgisi
 `globals.css`teki açılış bloğunun başında yazılı; süreyi değiştirirsen
 oradaki gecikmeleri birlikte değiştir.
 
@@ -346,9 +348,10 @@ eşit genişlikteydi ve dar I geniş bir kutunun ortasında kalınca kelime
 "RAB I" diye okunuyordu. Simgeler harften geniş olabildiği için kırpma
 pencerede değil iki yana taşan kuyuda (`acilis-kuyu`).
 
-**Kelime şeritlerden önce sönüyor.** Kuyuların üst ve alt kenarındaki
-zemin renkli gölgeler, şeritler kalkarken ana sayfanın üstünde iz
-bırakırdı.
+**Katman tek parça sönüyor.** Zemin, kelime ve kuyuların zemin renkli
+gölgeleri aynı opaklıkla gidiyor; parçalar ayrı ayrı gitseydi gölgeler ana
+sayfanın üstünde iz bırakırdı. Katmanın zemini `ZEMIN`, yani sönüş renk
+sıçraması değil.
 
 **Tavşan uçmuyor.** 2a'da tavşan ana sayfadaki maskotun tam üstüne uçarak
 bitiyordu; 2d ile kalktı ve uçuşla birlikte varış noktasının ölçümü
@@ -358,10 +361,10 @@ tavşan yalnızca son makaranın bir simgesi. Uçuşu geri getirmek istersen
 tarihçe `git log -- components/acilis.tsx`; oradaki ana ders hâlâ geçerli:
 varış noktası **ölçülür**, yazılmaz.
 
-Katmanı kaldıran şey son şeridin kendi `animationend`i
-(`acilis-serit-kalk`, adla süzülüyor); zamanlayıcı yalnızca emniyet kemeri.
-Katman sonuna kadar dokunuşları yutuyor: şeritler kalkarken altındaki
-düğmeler görünür ama basılabilir olmamalı.
+Katmanı kaldıran şey katmanın kendi `animationend`i (`acilis-katman-son`,
+hedef ve adla süzülüyor; makaraların olayları da kabarıyor); zamanlayıcı
+yalnızca emniyet kemeri. Katman sonuna kadar dokunuşları yutuyor: sönerken
+altındaki düğmeler görünür ama basılabilir olmamalı.
 
 ### Android'de uçtan uca ekran bütün sürümlerde açık
 
@@ -975,6 +978,12 @@ isteyen kullanıcı düğmeye yeniden basıyor.
 Ekleme formundaki ders alanı serbest metindi (önerili); "matematik", "Mat",
 "mat." aynı dersin üç ayrı süzgeç çipi oluyordu. Artık on çipten biri
 seçiliyor ve Kaydet ancak bir ders seçilince açılıyor.
+
+**Ders şeridi tek bileşen** (`components/ders-seridi.tsx`, `DersSeridi`):
+Pomodoro ve Soru Takibi'nin "Soru ekle" sayfası aynı şeridi kullanır. Soru
+Takibi'nde sıra geçmiş kayıtlardaki toplam soru sayısına göre (`calismaSirasi`),
+Kaydet ise ders seçilmeden ve Toplam/Doğru/Yanlış üçü de doldurulmadan açılmaz
+(0 geçerli, boş alan girilmemiş demek).
 
 **Ders listesi on ders** ve uygulamada tek (`CALISMA_DERSLERI`,
 `lib/dersler.ts`): Pomodoro, Soru Takibi ve yanlış soru aynı listeyi
@@ -2122,32 +2131,57 @@ Ders kutucuklarının geçmişi ayrı tutulmuyor, oynanan oyunlardan türetiliyo
 (`oyunlarinDersleri`): ikinci bir "son açılan ders" listesi aynı bilgiyi ikinci
 kez saklamak olurdu ve iki liste zamanla birbirinden ayrılırdı.
 
-## Yapılacaklar: günün üç dilimi
+## Yapılacaklar: günün listesi, saat isteğe bağlı
 
 Araçlardaki görev listesi (`lib/yapilacaklar.ts`, ekran
 `components/ekranlar/yapilacaklar.tsx`, tasarım
-`tasarim/yapilacaklar-v3.dc.html`). Üstte haftanın yedi günü, altında noktalı
-kâğıt üstünde **Sabah / Öğle / Akşam** bölümleri, görev eklemek alttan açılan
-bir sayfada.
+`tasarim/yapilacaklar-v3.dc.html` — dilimli hâli). Üstte haftanın yedi günü,
+altında günün **tek listesi**, görev eklemek alttan açılan bir sayfada.
 
 Burası bir süre **tahtaydı**: not kâğıtları sürükleniyor, konum da kullanıcının
 verdiği bilgi sayılıyordu ("bunlar okul, şunlar ev"). 390 piksellik bir tahtada
 on kâğıt, okunmak için yerleştirilmesi gereken on kâğıt demekti — kullanıcı işini
 yazmak yerine tahtayı düzenliyordu. Gruplama da konumdan okunmuyordu: iki kâğıdın
 yan yana durması ancak onu koyan kişiye bir şey söylüyor, ertesi gün ona da
-söylemiyor. Yeni düzen gruplamayı konuma değil **zamana** bağlıyor; günün
-kendisinde gerçekten var olan tek sıra bu. Konum alanları (`x`, `y`) kalktı,
-eski kayıtlar `gorevleriNormalize` ile taşınıyor (kâğıtlar kalıyor, konumları
-atılıyor).
+söylemiyor. Konum alanları (`x`, `y`) kalktı, eski kayıtlar
+`gorevleriNormalize` ile taşınıyor (kâğıtlar kalıyor, konumları atılıyor).
 
-### Sınır dilim başına on
+### Dilimler kalktı, saat isteğe bağlı
 
-`EN_COK_GOREV` **bir günün bir dilimi** için geçerli, gün için değil: on işi
-sabaha yığmak bir plan değil istek listesi, ama sınırı günde ona indirmek üç
-dilimi anlamsızlaştırırdı — sabahı dolduran akşama hiç yazamazdı. Sınır iki
-yerde birden duruyor: `gorevEkle` eklemeyi engelliyor (ve dolu dilimin `+`
-düğmesi pasif), `gorevleriNormalize` de kayıttan okurken fazlasını eliyor —
-kurcalanmış bir kayıt yüzünden ekranda "11/10" yazmasın diye.
+Sonra gruplama zamana bağlandı: **Sabah / Öğle / Akşam** bölümleri, ekleme
+düğmesi her bölümde. Kullanıcı istemedi ("sabah öğle akşam olmasın, saatler
+olsun kullanıcı isterse"): üç kaba kutu her işi bir bölüme sokmayı zorunlu
+kılıyordu, saati bilen kullanıcıya da bir şey söyletmiyordu.
+
+Şimdi her görevin **isteğe bağlı** saati var (`Gorev.saat`, 'SS:DD' ya da
+`null`). Liste `gununSiraliGorevleri` ile: saatliler saate göre üstte,
+saatsizler altta — saatsiz görev "gün içinde bir ara" demek ve saatlilerin
+arasına yerleştirilemez. Aynı saatte ve saatsizler içinde yıldızlılar üstte;
+yıldız saatin önüne **geçmiyor** (18:00'deki öncelikli iş 09:00'dan önce
+yapılmıyor).
+
+Ekleme sayfasında saat **kapalı** bir "Saat ekle" düğmesi; tek dokunuş
+telefonun kendi seçicisini açıyor (`<input type="time">` + `showPicker`,
+yoksa kutu odakta açık kalıyor). Açık duran boş bir saat kutusu her eklemede
+doldurulması gereken bir alan gibi görünürdü. Çarpı saati siliyor.
+Düzenlemede saat değişebiliyor; erteleme saati koruyor. Satırda saat,
+kategori satırının başında renk noktasının yerinde ve ön plan renginde
+duruyor — iş adının tek satırına sığmazdı.
+
+**Göç:** kayıt sürümsüz bir dizi ve şemayı okurken `gorevleriNormalize`
+çeviriyor (tahta göçüyle aynı yol, eski yedekler de buradan geçiyor). Eski
+görevin `dilim`i atılıyor, görev **saatsiz** kalıyor. Dilim saate
+çevrilmiyor: "sabah" 09:00 demek değildi ve kullanıcının vermediği bir saati
+onun adına yazmak olurdu.
+
+### Sınır gün başına otuz
+
+`EN_COK_GOREV` artık **gün** başına ve otuz. Dilimli dönemde dilim başına
+ondu (günde 3 × 10); daha düşük bir sayı, o dönemde dolu yazılmış bir günü
+taşırken görev elerdi. Sınır iki yerde birden duruyor: `gorevEkle` eklemeyi
+engelliyor (ve dolu günün `+` düğmesi pasif), `gorevleriNormalize` de
+kayıttan okurken fazlasını eliyor — kurcalanmış bir kayıt yüzünden ekranda
+"31/30" yazmasın diye.
 
 ### Metin tek satır, sınır ölçüyle konuyor
 
@@ -2164,8 +2198,8 @@ bulmalı. Yeni bir düğme eklemek de metni daraltır, yani sınırı düşürü
 Görev **düzenleniyor** (`gorevDuzenle`, aynı ekleme sayfası dolu açılıyor) ve
 her satırda silme düğmesi var. Bir süre ikisi de yoktu — "yirmi dört karakteri
 silip yeniden yazmak, kalem düğmesinden hızlı" diye — ama yeniden yazmak yıldızı,
-bitti işaretini ve dilimdeki yeri de götürüyordu; kullanıcı tik gibi görünür
-düğmeler istedi. Düzenleme gün ve dilimi değiştirmiyor, taşımanın yolu erteleme.
+bitti işaretini de götürüyordu; kullanıcı tik gibi görünür düğmeler istedi.
+Düzenleme günü değiştirmiyor, taşımanın yolu erteleme.
 **Satırda yalnızca iki düğme var: yıldız ve "⋯".** Dört düğme (yıldız,
 ertele, düzenle, sil) bir süre kategorinin satırında, iş adının **üstünde**
 yan yana duruyordu: 32 piksellik hedefler, simgeden anlaşılmayan eylemler (ok
@@ -2196,14 +2230,9 @@ Ay takvimi **yok**. Soru Takibi'nde var çünkü orada eski günlere bakmanın b
 karşılığı var; burada eski kayıtlar üç gün sonra eleniyor, açılan takvim boş
 günler gösterirdi.
 
-### Ekleme düğmesi her bölümde
+### Erteleme
 
-Tasarım `+` düğmesini yalnızca içinde bulunulan dilime koyuyor; o zaman dolu ama
-sırası geçmiş bir bölüme ikinci bir görev yazmanın yolu kalmıyor (boş bölümün
-kesikli düğmesi de yalnızca boşken çıkıyor). Düğme bu yüzden her bölümde ve
-üçünün rengi aynı.
-
-Erteleme görevi **ertesi güne, aynı dilime** taşıyor ve hedef dilim doluysa
+Erteleme görevi **ertesi güne, aynı saate** taşıyor ve hedef gün doluysa
 `gorevErtele` `null` dönüyor: sessizce yutulan bir erteleme, kullanıcıya işin
 ekrandan kaybolduğunu gösterirdi. Ekran bu yüzden bir toast taşıyor — ertelenen
 görev bulunduğu günden çıkıyor ve nereye gittiğini söyleyen tek yer o cümle.
@@ -2215,17 +2244,13 @@ onu yarının listesinde arıyordu.
 `EN_UZUN_OZEL_KATEGORI` (14) harf, sayacı alanın üstünde. Bir süre isteğe
 bağlıydı; listede yalnızca "DİĞER" yazan bir görev ne olduğunu söylemiyordu.
 
-Ekleme sayfası **"Ne zaman?" diye sormuyor**: dilim, basılan `+` düğmesinin
-bölümünden geliyor. Sayfada bir süre üç dilimlik bir seçici de vardı; kullanıcı
-kaldırılmasını istedi — "Akşam"ın düğmesine basan kullanıcı cevabı zaten
-vermişti. Dilimin adı sayfanın başlığında gün etiketinin yanında yazıyor
-("Bugün · Akşam"), görev nereye gideceği görünmeden kaydedilmiyor. Başka bir
-dilime yazmak isteyen o bölümün düğmesine basıyor.
+Ekleme sayfasının başlığında gün etiketi yazıyor ("Bugün"): görev nereye
+gideceği görünmeden kaydedilmiyor.
 
 ### Görevin süresi soruluyor
 
 Ekleme sayfası "Ortalama kaç dakika sürer?" diye soruyor (`Gorev.sure`,
-çipler `SURE_SECENEKLERI` ve elle yazma kutusu). Dilim başlığı bitmemiş görevlerin toplamını
+çipler `SURE_SECENEKLERI` ve elle yazma kutusu). Liste başlığı bitmemiş görevlerin toplamını
 yazıyor (`kalanSure`), satırda süre kategorinin yanında duruyor — iş adının
 satırı tek satırlık ve genişliği sayılı, oraya sığmazdı. Plan, işlerin ne kadar
 süreceği bilinince plan oluyor; "akşama beş iş" ile "akşama dört saat" ayrı
@@ -2245,7 +2270,7 @@ kullanıcının vermediği bir tahmini onun adına kaydederdi) ve seçili çipe
 yeniden dokunmak seçimi kaldırıyor.
 
 Süresiz görevin `sure`'u `null` ve toplamda sayılmıyor; eski görevler de öyle.
-Uydurma bir süre, dilimin toplamını kullanıcının söylemediği bir sayıyla
+Uydurma bir süre, günün toplamını kullanıcının söylemediği bir sayıyla
 şişirirdi.
 
 ### Renkler ayrı bir palette

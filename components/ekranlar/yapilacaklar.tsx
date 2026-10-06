@@ -1,10 +1,8 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { CalendarArrowUp, Check, MoreHorizontal, Pencil, Plus, Star, Trash2, X } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { CalendarArrowUp, Check, Clock, MoreHorizontal, Pencil, Plus, Star, Trash2, X } from 'lucide-react'
 import {
-  DILIMLER,
-  DILIM_ADI,
   EN_COK_GOREV,
   EN_UZUN_GOREV,
   GOREV_RENKLERI,
@@ -13,8 +11,8 @@ import {
   EN_UZUN_OZEL_KATEGORI,
   kategoriAdiGoster,
   ozelKategoriKirp,
-  dilimGorevleri,
-  dilimeYerVarMi,
+  gununSiraliGorevleri,
+  gunuYerVarMi,
   gorevEkle,
   kalanSure,
   SURE_SECENEKLERI,
@@ -27,8 +25,8 @@ import {
   gorevSil,
   gorevYildizla,
   metniKirp,
+  saatKirp,
   type Gorev,
-  type GorevDilimi,
   type GorevDuzeni,
   type GorevKategorisi,
   type GorevRengi,
@@ -40,13 +38,13 @@ import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { BaslikSatiri, Buton, Onay } from '@/components/ui'
 
 /**
- * Yapılacaklar — hafta şeridi + günün üç dilimi.
+ * Yapılacaklar — hafta şeridi + günün görev listesi.
  *
- * Ekran eskiden sürüklenebilir not kâğıtlarından bir tahtaydı; neden listeye
- * döndüğü `lib/yapilacaklar.ts` başında yazıyor. Buradaki düzen tasarımın
- * kendisi (`tasarim/yapilacaklar-v3.dc.html`): üstte haftanın yedi günü, altında
- * noktalı kâğıt üstünde Sabah/Öğle/Akşam bölümleri, görev eklemek alttan
- * açılan bir sayfada.
+ * Ekran eskiden sürüklenebilir not kâğıtlarından bir tahtaydı, sonra
+ * Sabah/Öğle/Akşam bölümlerine ayrıldı; ikisinin de neden bırakıldığı
+ * `lib/yapilacaklar.ts` başında yazıyor. Şimdi: üstte haftanın yedi günü,
+ * altında günün tek listesi (saatliler saate göre üstte), görev eklemek
+ * alttan açılan bir sayfada. Saat isteğe bağlı.
  *
  * Görev **düzenlenebiliyor, erteleniyor ve siliniyor**; üçü satırdaki "⋯"nün
  * açtığı alt sayfada (`GorevEylemleri`). Satırda yalnızca tik ve yıldız
@@ -65,17 +63,14 @@ export function YapilacaklarEkrani({
   setGorevler: (guncelleyici: Gorev[] | ((onceki: Gorev[]) => Gorev[])) => void
   /**
    * Başlangıç turunda ekleme sayfası yalnızca tur o adımdayken görünüyor
-   * (`SoruTakibiEkrani` ile aynı gerekçe). Dilim yine basılan düğmeden geliyor.
+   * (`SoruTakibiEkrani` ile aynı gerekçe).
    */
   tanitim?: { formAcik: boolean; formuAc: () => void; formuKapat: () => void }
 }) {
   const bugunIso = bugun()
   const [secili, setSecili] = useState(bugunIso)
-  /**
-   * Açık ekleme/düzenleme sayfası: hangi dilime ekleneceği, düzenlemedeyse
-   * düzenlenen görev.
-   */
-  const [sayfa, setSayfa] = useState<{ dilim: GorevDilimi; gorev?: Gorev } | null>(null)
+  /** Açık ekleme/düzenleme sayfası; düzenlemedeyse düzenlenen görev. */
+  const [sayfa, setSayfa] = useState<{ gorev?: Gorev } | null>(null)
   /** Onay bekleyen erteleme ve silme. */
   const [ertelenecek, setErtelenecek] = useState<Gorev | null>(null)
   const [silinecek, setSilinecek] = useState<Gorev | null>(null)
@@ -95,6 +90,10 @@ export function YapilacaklarEkrani({
     return harita
   }, [gorevler])
 
+  /** Seçili günün görevleri: saatliler saate göre üstte, saatsizler altta. */
+  const isler = gununSiraliGorevleri(gorevler, secili)
+  const yerVar = gunuYerVarMi(gorevler, secili)
+
   const seciliTarih = tariheCevir(secili)
   const gunEtiketi =
     secili === bugunIso
@@ -111,7 +110,7 @@ export function YapilacaklarEkrani({
     window.setTimeout(() => setMesaj((o) => (o === metin ? null : o)), MESAJ_SURESI)
   }
 
-  const kaydet = (dilim: GorevDilimi, duzen: GorevDuzeni, duzenlenen?: Gorev) => {
+  const kaydet = (duzen: GorevDuzeni, duzenlenen?: Gorev) => {
     if (duzenlenen) {
       const sonuc = gorevDuzenle(gorevler, duzenlenen.id, duzen)
       if (sonuc) setGorevler(sonuc)
@@ -119,26 +118,26 @@ export function YapilacaklarEkrani({
       soyle('Görev güncellendi.')
       return
     }
-    const sonuc = gorevEkle(gorevler, { id: yeniId(), gun: secili, dilim, ...duzen })
+    const sonuc = gorevEkle(gorevler, { id: yeniId(), gun: secili, ...duzen })
     if (!sonuc) {
-      soyle(`${DILIM_ADI[dilim]} listesi dolu (${EN_COK_GOREV} görev).`)
+      soyle(`Bu günün listesi dolu (${EN_COK_GOREV} görev).`)
       return
     }
     setGorevler(sonuc)
     setSayfa(null)
-    soyle(`${DILIM_ADI[dilim]} listesine eklendi.`)
+    soyle('Listeye eklendi.')
   }
 
   /** Ekleme sayfası; turda açılışı tura da bildiriliyor (adım ilerliyor). */
-  const sayfaAc = (dilim: GorevDilimi) => {
-    setSayfa({ dilim })
+  const sayfaAc = () => {
+    setSayfa({})
     tanitim?.formuAc()
   }
 
   const ertele = (gorev: Gorev) => {
     const sonuc = gorevErtele(gorevler, gorev.id)
     if (!sonuc) {
-      soyle(`Ertesi günün ${DILIM_ADI[gorev.dilim].toLocaleLowerCase('tr-TR')} listesi dolu.`)
+      soyle(`Ertesi günün listesi dolu (${EN_COK_GOREV} görev).`)
       return
     }
     setGorevler(sonuc)
@@ -146,7 +145,7 @@ export function YapilacaklarEkrani({
   }
 
   return (
-    // Yatay tablette hafta şeridi solda, günün dilimleri sağda
+    // Yatay tablette hafta şeridi solda, günün listesi sağda
     // (`tablet-sutunlar`; başlık iki sütunu kaplıyor).
     <div className="tablet-sutunlar">
       <BaslikSatiri arac="notlar" baslik="Yapılacaklar" />
@@ -161,78 +160,69 @@ export function YapilacaklarEkrani({
         solukMu={(iso) => iso < bugunIso}
       />
 
-      {/* Üç dilim için sade bir yüzey; görev kartları öne çıkar. */}
-      <div data-tanitim="gorev-dilimleri" className="mx-1 mt-3.5 flex flex-col gap-4 rounded-[20px] border border-border bg-card/60 px-2.5 pb-3.5 pt-4">
-        {DILIMLER.map((dilim) => {
-          const isler = dilimGorevleri(gorevler, secili, dilim)
-          const yerVar = dilimeYerVarMi(gorevler, secili, dilim)
-          return (
-            <section key={dilim}>
-              <div className="flex items-center gap-2 px-0.5 pb-2">
-                <h2 className="shrink-0 font-display text-[15px] font-extrabold tracking-tight">
-                  {DILIM_ADI[dilim]}
-                </h2>
-                <span aria-hidden className="h-px flex-1 bg-border" />
-                {/* Sayaç kalan yeri söylüyor; geçmiş günde yazılacak bir şey
-                    olmadığı için orada da anlamı yok. */}
-                {/* Kalan süre: dilimde daha ne kadar iş var. Biten görevler
-                    düşüyor, hepsi bitince sayı da kalkıyor. */}
-                {kalanSure(isler) > 0 && (
-                  <span className="rakam shrink-0 text-[11px] font-bold text-muted-foreground">
-                    {sureYaz(kalanSure(isler))}
-                  </span>
-                )}
-                {!gecmis && isler.length > 0 && (
-                  <span className="rakam shrink-0 text-[11px] font-bold text-muted-foreground/70">
-                    {isler.length}/{EN_COK_GOREV}
-                  </span>
-                )}
-                {/* Ekleme düğmesi her dilimde aynı ağırlıkta durur. */}
-                {!gecmis && (
-                  <button
-                    type="button"
-                    onClick={() => sayfaAc(dilim)}
-                    disabled={!yerVar}
-                    aria-label={`${DILIM_ADI[dilim]} için görev ekle`}
-                    className={cn(
-                      'grid size-9 shrink-0 place-items-center rounded-full bg-primary-soft text-primary transition active:scale-95 disabled:opacity-40 disabled:active:scale-100',
-                    )}
-                  >
-                    <Plus size={18} strokeWidth={2.8} aria-hidden />
-                  </button>
-                )}
-              </div>
+      {/* Günün tek listesi için sade bir yüzey; görev kartları öne çıkar. */}
+      <div data-tanitim="gorev-listesi" className="mx-1 mt-3.5 rounded-[20px] border border-border bg-card/60 px-2.5 pb-3.5 pt-4">
+        <section>
+          <div className="flex items-center gap-2 px-0.5 pb-2">
+            <h2 className="shrink-0 font-display text-[15px] font-extrabold tracking-tight">
+              {gunEtiketi}
+            </h2>
+            <span aria-hidden className="h-px flex-1 bg-border" />
+            {/* Kalan süre: günde daha ne kadar iş var. Biten görevler
+                düşüyor, hepsi bitince sayı da kalkıyor. */}
+            {kalanSure(isler) > 0 && (
+              <span className="rakam shrink-0 text-[11px] font-bold text-muted-foreground">
+                {sureYaz(kalanSure(isler))}
+              </span>
+            )}
+            {/* Sayaç kalan yeri söylüyor; geçmiş günde yazılacak bir şey
+                olmadığı için orada anlamı yok. */}
+            {!gecmis && isler.length > 0 && (
+              <span className="rakam shrink-0 text-[11px] font-bold text-muted-foreground/70">
+                {isler.length}/{EN_COK_GOREV}
+              </span>
+            )}
+            {!gecmis && (
+              <button
+                type="button"
+                onClick={sayfaAc}
+                disabled={!yerVar}
+                aria-label="Görev ekle"
+                className="grid size-9 shrink-0 place-items-center rounded-full bg-primary-soft text-primary transition active:scale-95 disabled:opacity-40 disabled:active:scale-100"
+              >
+                <Plus size={18} strokeWidth={2.8} aria-hidden />
+              </button>
+            )}
+          </div>
 
-              <div className="flex flex-col gap-2">
-                {isler.map((gorev) => (
-                  <GorevSatiri
-                    key={gorev.id}
-                    gorev={gorev}
-                    gecmis={gecmis}
-                    onIsaretle={() => setGorevler((o) => gorevIsaretle(o, gorev.id))}
-                    onYildiz={() => setGorevler((o) => gorevYildizla(o, gorev.id))}
-                    onEylemler={() => setEylemli(gorev)}
-                  />
-                ))}
+          <div className="flex flex-col gap-2">
+            {isler.map((gorev) => (
+              <GorevSatiri
+                key={gorev.id}
+                gorev={gorev}
+                gecmis={gecmis}
+                onIsaretle={() => setGorevler((o) => gorevIsaretle(o, gorev.id))}
+                onYildiz={() => setGorevler((o) => gorevYildizla(o, gorev.id))}
+                onEylemler={() => setEylemli(gorev)}
+              />
+            ))}
 
-                {isler.length === 0 &&
-                  (gecmis ? (
-                    <p className="rounded-[14px] border border-dashed border-border bg-card/70 px-3.5 py-3 text-center text-[12.5px] font-bold text-muted-foreground/80">
-                      {DILIM_ADI[dilim]} için plan yoktu.
-                    </p>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => sayfaAc(dilim)}
-                      className="w-full rounded-[14px] border-[1.5px] border-dashed border-border bg-card/70 px-3.5 py-3 text-center text-[12.5px] font-bold text-muted-foreground transition active:border-primary active:text-primary"
-                    >
-                      + {DILIM_ADI[dilim]} için görev ekle
-                    </button>
-                  ))}
-              </div>
-            </section>
-          )
-        })}
+            {isler.length === 0 &&
+              (gecmis ? (
+                <p className="rounded-[14px] border border-dashed border-border bg-card/70 px-3.5 py-3 text-center text-[12.5px] font-bold text-muted-foreground/80">
+                  Bu gün için plan yoktu.
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={sayfaAc}
+                  className="w-full rounded-[14px] border-[1.5px] border-dashed border-border bg-card/70 px-3.5 py-3 text-center text-[12.5px] font-bold text-muted-foreground transition active:border-primary active:text-primary"
+                >
+                  + Görev ekle
+                </button>
+              ))}
+          </div>
+        </section>
       </div>
 
       {/* Toast: ertelenen görev ekrandan kayboluyor, nereye gittiğini söyleyen
@@ -247,11 +237,10 @@ export function YapilacaklarEkrani({
 
       {sayfa !== null && (!tanitim || tanitim.formAcik) && (
         <EklemeSayfasi
-          dilim={sayfa.dilim}
           duzenlenen={sayfa.gorev}
           gunEtiketi={gunEtiketi}
           onKapat={() => (tanitim ? tanitim.formuKapat() : setSayfa(null))}
-          onKaydet={(duzen) => kaydet(sayfa.dilim, duzen, sayfa.gorev)}
+          onKaydet={(duzen) => kaydet(duzen, sayfa.gorev)}
         />
       )}
 
@@ -259,7 +248,7 @@ export function YapilacaklarEkrani({
         <GorevEylemleri
           gorev={eylemli}
           onKapat={() => setEylemli(null)}
-          onDuzenle={() => setSayfa({ dilim: eylemli.dilim, gorev: eylemli })}
+          onDuzenle={() => setSayfa({ gorev: eylemli })}
           onErtele={() => setErtelenecek(eylemli)}
           onSil={() => setSilinecek(eylemli)}
         />
@@ -274,7 +263,7 @@ export function YapilacaklarEkrani({
         baslik="Yarına ertelensin mi?"
         aciklama={
           ertelenecek
-            ? `"${ertelenecek.metin}" yarının ${DILIM_ADI[ertelenecek.dilim].toLocaleLowerCase('tr-TR')} listesine taşınacak.`
+            ? `"${ertelenecek.metin}" yarının listesine taşınacak.`
             : ''
         }
         onayMetni="Ertele"
@@ -348,7 +337,13 @@ function GorevSatiri({
           className="flex min-w-0 items-center gap-1.5 text-[10.5px] font-extrabold uppercase tracking-[0.06em]"
           style={{ color: renk }}
         >
-          <span aria-hidden className="size-1.5 shrink-0 rounded-full" style={{ background: renk }} />
+          {/* Saat kategorinin önünde ve ön plan renginde: listenin sırası
+              ondan geliyor, göz satırı onunla tarıyor. */}
+          {gorev.saat !== null ? (
+            <span className="rakam shrink-0 text-foreground">{gorev.saat}</span>
+          ) : (
+            <span aria-hidden className="size-1.5 shrink-0 rounded-full" style={{ background: renk }} />
+          )}
           <span className="truncate">{kategoriAdiGoster(gorev)}</span>
           {gorev.sure !== null && <span className="rakam shrink-0">· {sureYaz(gorev.sure)}</span>}
         </span>
@@ -517,27 +512,26 @@ function EylemSatiri({
 /**
  * "Görev ekle" alt sayfası.
  *
- * Dört soru: ne, ortalama kaç dakika, hangi tür, hangi renk. Süre sonradan
- * geldi: dilimin başlığı kalan işin toplamını gösteriyor ve plan ancak
- * işlerin ne kadar süreceği bilinince plan oluyor. Süre **isteğe bağlı** —
- * bir süre zorunluydu, kullanıcı kaldırılmasını istedi: kısa bir iş için
- * tahmin uydurmak, eklemeyi uzatıyordu. "Ne zaman?" sorulmuyor: dilim basılan
- * düğmenin bölümünden geliyor — kullanıcı "Akşam"ın düğmesine bastıysa cevabı
- * zaten verdi. Sayfada bir süre üç dilimlik bir seçici de duruyordu;
- * kullanıcı kaldırılmasını istedi, verilmiş bir cevabı ikinci kez soruyordu.
- * Dilim başlıktaki gün etiketinin yanında yazıyor: görevin nereye gideceği
- * görünmeden kaydetmek, onu ekranda aratırdı. Kaydet, eksik alan varken **pasif** ve eksikler kırmızı
+ * Sorular: ne, saat kaçta (isteğe bağlı), ortalama kaç dakika, hangi tür,
+ * hangi renk. Süre de **isteğe bağlı** — bir süre zorunluydu, kullanıcı
+ * kaldırılmasını istedi: kısa bir iş için tahmin uydurmak, eklemeyi
+ * uzatıyordu.
+ *
+ * Saat ikincil: alan kapalı bir "Saat ekle" düğmesi olarak duruyor ve tek
+ * dokunuşla telefonun kendi saat seçicisini açıyor (`<input type="time">`;
+ * iOS'ta çark, Android'de saat kadranı). Görevlerin çoğu "gün içinde bir
+ * ara" yapılıyor; açık duran boş bir saat kutusu her eklemede doldurulması
+ * gereken bir alan gibi görünürdü. Gün etiketi başlıkta yazıyor: görevin
+ * nereye gideceği görünmeden kaydetmek, onu ekranda aratırdı. Kaydet, eksik alan varken **pasif** ve eksikler kırmızı
  * çerçeveyle işaretleniyor: pasif bir düğmenin yanında sebebi yazmayan ekran
  * kullanıcıyı formda kilitler (AGENTS.md, "Boş kutuyla ilerlenmiyor").
  */
 function EklemeSayfasi({
-  dilim,
   duzenlenen,
   gunEtiketi,
   onKapat,
   onKaydet,
 }: {
-  dilim: GorevDilimi
   /** Verilirse sayfa bu görevi düzenliyor, alanlar onun değerleriyle açılıyor. */
   duzenlenen?: Gorev
   gunEtiketi: string
@@ -545,6 +539,27 @@ function EklemeSayfasi({
   onKaydet: (duzen: GorevDuzeni) => void
 }) {
   const [metin, setMetin] = useState(duzenlenen?.metin ?? '')
+  /** Saat kutusunun ham değeri; boşsa görev saatsiz. */
+  const [saat, setSaat] = useState(duzenlenen?.saat ?? '')
+  /** Saat alanı açık mı — düzenlenen görevin saati varsa açık geliyor. */
+  const [saatAcik, setSaatAcik] = useState((duzenlenen?.saat ?? null) !== null)
+  /** "Saat ekle"ye basılınca seçici bir kez açılsın diye. */
+  const seciciAcilsin = useRef(false)
+  const saatKutusu = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    if (!saatAcik || !seciciAcilsin.current) return
+    seciciAcilsin.current = false
+    const kutu = saatKutusu.current
+    if (!kutu) return
+    kutu.focus()
+    // `showPicker` eski WebView'da yok ya da kullanıcı hareketi dışında
+    // reddediliyor; o durumda kutu açık ve odakta kalıyor, bir dokunuş yetiyor.
+    try {
+      kutu.showPicker?.()
+    } catch {
+      /* yok sayılıyor */
+    }
+  }, [saatAcik])
   /*
     İki kaynak, tek cevap: çip ya da kutu. Birine dokunmak ötekini
     temizliyor; ikisi birden dolu kalsaydı hangisinin kaydedileceği ekranda
@@ -577,6 +592,7 @@ function EklemeSayfasi({
     }
     onKaydet({
       metin: yazilan,
+      saat: saatKirp(saat),
       kategori,
       ozelKategori: kategori === 'diger' ? ozelKategoriKirp(ozelKategori) : undefined,
       renk,
@@ -604,7 +620,7 @@ function EklemeSayfasi({
             {duzenlenen ? 'Görevi düzenle' : 'Görev ekle'}
           </p>
           <p className="ml-auto text-[12.5px] font-bold text-muted-foreground">
-            {gunEtiketi} · {DILIM_ADI[dilim]}
+            {gunEtiketi}
           </p>
           <button
             type="button"
@@ -633,6 +649,48 @@ function EklemeSayfasi({
             hata && yazilan === '' ? 'border-danger' : 'border-input',
           )}
         />
+
+        {/* Saat isteğe bağlı ve kapalı başlıyor: tek dokunuşla telefonun saat
+            seçicisi açılıyor. Çarpı saati siler, görev saatsiz kalır. */}
+        <AlanBasligi baslik="Saat" sayac="isteğe bağlı" />
+        {saatAcik ? (
+          <div className="flex items-center gap-2">
+            <label className="flex h-[46px] min-w-0 flex-1 items-center gap-2.5 rounded-[12px] border-[1.5px] border-primary-parlak bg-card px-3.5 text-primary">
+              <Clock size={17} strokeWidth={2.4} aria-hidden className="shrink-0" />
+              <input
+                ref={saatKutusu}
+                type="time"
+                value={saat}
+                onChange={(olay) => setSaat(olay.target.value)}
+                aria-label="Görevin saati"
+                className="rakam h-full min-w-0 flex-1 bg-transparent text-[15px] font-extrabold text-foreground outline-none"
+              />
+            </label>
+            <button
+              type="button"
+              onClick={() => {
+                setSaat('')
+                setSaatAcik(false)
+              }}
+              aria-label="Saati kaldır"
+              className="grid size-[46px] shrink-0 place-items-center rounded-[12px] bg-muted/70 text-muted-foreground transition active:brightness-95"
+            >
+              <X size={17} strokeWidth={2.4} aria-hidden />
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              seciciAcilsin.current = true
+              setSaatAcik(true)
+            }}
+            className="flex h-[46px] w-full items-center justify-center gap-2 rounded-[12px] border-[1.5px] border-dashed border-border bg-card text-[13.5px] font-extrabold text-muted-foreground transition active:border-primary active:text-primary"
+          >
+            <Clock size={16} strokeWidth={2.4} aria-hidden />
+            Saat ekle
+          </button>
+        )}
 
         {/* Varsayılan seçili gelmiyor: seçili bir "30 dk", kullanıcının hiç
             vermediği bir tahmini onun adına kaydederdi. Seçili çipe yeniden

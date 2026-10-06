@@ -170,7 +170,7 @@ export function EklemeFormu({
           {/* Yazılmıyor, seçiliyor: Kaydet bir ders seçilene kadar pasif. */}
           <div className="flex flex-wrap gap-2" role="group" aria-labelledby="banka-ders">
             {CALISMA_DERSLERI.map((d) => (
-              <Cip key={d} secili={ders === d} onClick={() => setDers(d)}>
+              <Cip key={d} secili={ders === d} className="rounded-xl" onClick={() => setDers(d)}>
                 {d}
               </Cip>
             ))}
