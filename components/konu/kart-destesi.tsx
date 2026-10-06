@@ -7,7 +7,7 @@ import type { HaritaTemasi } from '@/lib/konu/harita-temasi'
 import { desteAkisi, molaSecimi, type DesteAdimi } from '@/lib/konu/deste-akisi'
 import { useGeriKatmani } from '@/lib/geri'
 import { useUygulamaGorunur } from '@/lib/gorunurluk'
-import { Buton, Onay } from '@/components/ui'
+import { Buton, Onay, useTanitimSuruyor } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartGorseli } from './kart-gorseli'
 import { KartMetni } from './kart-metni'
@@ -171,9 +171,12 @@ export function KartDestesi({
     window.scrollTo({ top: 0 })
   }, [adim])
 
-  // İlk ekranda kaybedilecek bir şey yok, orada sormadan çıkıyor.
+  // İlk ekranda da soruyor (kullanıcı istedi: bütün ✕'ler sorar); orada
+  // kaybedilecek bir şey olmadığı için yalnız metin değişiyor.
   const [cikisSoruluyor, setCikisSoruluyor] = useState(false)
-  const kapat = () => (adim === 0 ? onKapat(sonucla()) : setCikisSoruluyor(true))
+  // Tanıtımda eskisi gibi: ilk ekrandan sormadan çık (bkz. `useTanitimSuruyor`).
+  const tanitimda = useTanitimSuruyor()
+  const kapat = () => (adim === 0 && tanitimda ? onKapat(sonucla()) : setCikisSoruluyor(true))
 
   return (
     <div
@@ -188,7 +191,11 @@ export function KartDestesi({
       <Onay
         acik={cikisSoruluyor}
         baslik="Konudan çıkılsın mı?"
-        aciklama="Deste yarım kalır, konu bitmiş sayılmaz."
+        aciklama={
+          adim === 0
+            ? 'Henüz okumaya başlamadın; haritaya dönersin.'
+            : 'Deste yarım kalır, konu bitmiş sayılmaz.'
+        }
         onayMetni="Çık"
         onOnayla={() => onKapat(sonucla())}
         onIptal={() => setCikisSoruluyor(false)}

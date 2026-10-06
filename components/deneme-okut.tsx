@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Camera, ImagePlus, LoaderCircle, ScanLine, X } from 'lucide-react'
 import { Camera as CihazKamerasi, CameraResultType, CameraSource } from '@capacitor/camera'
-import { Buton, Kart, Not } from '@/components/ui'
+import { Buton, Kart, Not, useKapatmaOnayi } from '@/components/ui'
 import { cihazdaMi } from '@/lib/kamera'
 import { denemeyiCoz, type OkunanDers, type OkumaSonucu } from '@/lib/deneme-okuma'
 import { useGeriKatmani } from '@/lib/geri'
@@ -39,6 +39,10 @@ export function DenemeOkut({ sablon, onAktar, onAcikDegisti }: {
     acikBildir.current?.(acik)
     return () => { if (acik) acikBildir.current?.(false) }
   }, [acik])
+
+  const kapatmaOnayi = useKapatmaOnayi({
+    aciklama: 'Okunan sonuçlar aktarılmadıysa kaybolur.',
+  })
 
   const kapat = () => {
     secimSurumu.current++
@@ -111,11 +115,12 @@ export function DenemeOkut({ sablon, onAktar, onAcikDegisti }: {
       Okut
       <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[11px] font-extrabold text-primary">Beta</span>
     </Buton>
+    {kapatmaOnayi.pencere}
     {acik && <div role="dialog" aria-modal="true" aria-labelledby="deneme-okut-baslik" className="tam-katman-girisi fixed inset-0 z-50 overflow-y-auto bg-background">
       <div className="mx-auto max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
         <div className="mb-4 flex items-center justify-between">
           <h2 id="deneme-okut-baslik" className="font-display flex items-center gap-2 text-xl font-semibold">Denemeyi okut <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs text-primary">Beta</span></h2>
-          <Buton bicim="hayalet" boy="simge" onClick={kapat} aria-label="Okumayı kapat"><X size={20} /></Buton>
+          <Buton bicim="hayalet" boy="simge" onClick={() => kapatmaOnayi.sor(kapat)} aria-label="Okumayı kapat"><X size={20} /></Buton>
         </div>
         <p className="mb-2 text-sm text-muted-foreground">{sablon.ad} için ders adını, doğru ve yanlış sayısını her satıra ayrı yaz.</p>
         <Kart className="mb-4 space-y-1 font-semibold text-sm"><p>Matematik 38D 2Y</p><p>Türkçe 32D 6Y 2B</p></Kart>

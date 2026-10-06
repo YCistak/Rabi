@@ -56,6 +56,7 @@ import type { BankaSorusu } from '@/lib/oyunlar/banka'
 import { bankaCevabiMetni, bankaKimligi, bankaSorusuMetni } from '@/lib/oyunlar/banka'
 import { useGeriKatmani } from '@/lib/geri'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
+import { useKapatmaOnayi } from '@/components/ui'
 import { cn } from '@/lib/utils'
 
 /** Bildirim özelliğinin ekranlara inen kolu; AppShell'den prop olarak geçiyor. */
@@ -163,6 +164,7 @@ function BildirimSayfasi({
   )
   const [not, setNot] = useState(kayit?.not ?? '')
   const [bitti, setBitti] = useState(false)
+  const kapatmaOnayi = useKapatmaOnayi({ aciklama: 'Bildirim gönderilmeden pencere kapanır.' })
 
   const notEksik = sebep === 'baska' && notuKirp(not) === undefined
   const gonderilebilir = sebep !== null && !notEksik
@@ -183,6 +185,7 @@ function BildirimSayfasi({
       className="katman-zemin fixed inset-0 z-[70] flex items-end justify-center bg-black/40"
       onClick={onKapat}
     >
+      {kapatmaOnayi.pencere}
       <div
         ref={kaydir}
         role="dialog"
@@ -205,7 +208,7 @@ function BildirimSayfasi({
               </p>
               <button
                 type="button"
-                onClick={onKapat}
+                onClick={() => kapatmaOnayi.sor(onKapat)}
                 aria-label="Kapat"
                 className="ml-auto grid size-9 shrink-0 place-items-center rounded-xl bg-muted/70 text-muted-foreground transition active:brightness-95"
               >

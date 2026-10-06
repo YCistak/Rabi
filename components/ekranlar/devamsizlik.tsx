@@ -13,7 +13,7 @@ import {
   tarihYaz,
 } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz, yediGunlukSerit, yeniId } from '@/lib/utils'
-import { Alan, BaslikSatiri, Buton, Kart, Not, Onay, SecimSatiri } from '@/components/ui'
+import { Alan, BaslikSatiri, Buton, Kart, Not, Onay, SecimSatiri, useKapatmaOnayi } from '@/components/ui'
 import { Takvim, type GunIsareti } from '@/components/takvim'
 import { useGeriKatmani } from '@/lib/geri'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
@@ -470,12 +470,14 @@ function DevamsizlikEkleSayfasi({
   const [tur, setTur] = useState<DevamsizlikTuru>('ozursuz')
   const [yarimGun, setYarimGun] = useState(false)
   const [not, setNot] = useState('')
+  const kapatmaOnayi = useKapatmaOnayi({ aciklama: 'Devamsızlık kaydedilmeden pencere kapanır.' })
 
   return (
     <div
       className="katman-zemin fixed inset-0 z-50 flex items-end justify-center bg-black/40"
       onClick={onKapat}
     >
+      {kapatmaOnayi.pencere}
       <div
         ref={kaydir}
         className="alt-pencere-girisi max-h-[76%] w-full max-w-md overflow-y-auto rounded-t-[26px] bg-card px-4 pt-3 pb-[calc(1.5rem+var(--guvenli-alt))]"
@@ -489,7 +491,7 @@ function DevamsizlikEkleSayfasi({
           </p>
           <button
             type="button"
-            onClick={onKapat}
+            onClick={() => kapatmaOnayi.sor(onKapat)}
             aria-label="Kapat"
             className="inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-xl bg-muted/70 text-muted-foreground active:bg-muted"
           >
