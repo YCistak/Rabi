@@ -1,47 +1,46 @@
 'use client'
 
-import { ArrowRight, BookOpenCheck, Clock3, ListChecks } from 'lucide-react'
+import { useState } from 'react'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 import type { Konu } from '@/lib/konu'
 import type { KonuDersId } from '@/lib/konu/tip'
+import { ozetPozuSec, type OzetPozu } from '@/lib/konu/ozet-maskotu'
 import { dersVurgusu } from '@/components/ders-renkleri'
-import { Buton, kartGirisi } from '@/components/ui'
+import { Buton } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { Rabi } from '@/components/maskot/rabi'
 
 /**
  * Destenin kapanışı: konunun özeti.
  *
- * Son kart okununca gelen ekran. Bir süre bir **yoklama biletiydi**
- * (`tasarim/yoklama-bileti.html`): kupayı kaldıran Rabi, "BİTTİ" damgası,
- * çentikli koçan, dolan halka, damgayla süzülen altın toz. Kullanıcı ekranı
- * kötü buldu ve tasarımdan değil koddan yeniden yazılmasını istedi; isteği
- * de açıktı: ders sonunda **gerekli bilgiyi** ver. Biletin bilgisi üç sayıdan
- * ibaretti (kart, soru, dakika) ve sayılar süslerin arasında okunmuyordu.
+ * Son kart okununca gelen ekran. Tasarım `tasarim/konu-bitti-v8.html`:
+ * yoklama kapanışının (`soru-sahnesi.tsx` → `Kapanis`) dili, **dersin
+ * renginde** — kapanışın altın tonlarının yerinde `dersVurgusu`, çizgili
+ * kâğıdın yerinde kareli defter (`ozet-zemin`). Bir süre bir **yoklama
+ * biletiydi** (`tasarim/yoklama-bileti.html`); kullanıcı süslerin arasında
+ * bilginin okunmadığını söyledi, o yüzden süs yine yok: konfeti, damga, ses,
+ * dolan halka yok.
  *
- * Ekran şimdi üç soruya cevap veriyor, yukarıdan aşağı:
+ * Yukarıdan aşağı:
  *
- * 1. **Ne bitti?** Konunun adı, ders ve tema.
- * 2. **Ne kadar?** Okunan kart ve destede geçen süre. Süre destenin kendi
- *    ölçüsü (`DesteSonucu.saniye`, uygulama öndeyken akan); destede
- *    gösterilmiyor — okumayı yarışa çevirmesin diye — ama okuma bitince
- *    söylemek bir şey yarıştırmıyor. Ölçü yoksa (sıfır) kutu çizilmiyor.
- * 3. **Neyi aklında tutmalı?** Kartların başlıkları, sırayla — konunun
- *    iskeleti — ve varsa Rabi'nin notu. Not her konuda tek kartta ve o
- *    kart konunun en çok tuzak barındıran yeri (`BilgiKarti.not`); destenin
- *    ortasında bir kez geçip kayboluyordu, kapanışta bir kez daha söylenmeye
- *    değer. Kart metinleri yazılmıyor: özet destenin ikinci kopyası olurdu.
+ * 1. **Ne bitti?** Ders · tema ve konunun adı; altında büyük Rabi ve
+ *    "Konu bitti!". Rabi kutlayan üç pozdan biri (`ozetPozuSec`) ve
+ *    **kıpırdamıyor** (kullanıcı istedi).
+ * 2. **Ne kadar?** Kart, okuma süresi, yoklamadaki soru. Süre destenin kendi
+ *    ölçüsü (`DesteSonucu.saniye`); destede gösterilmiyor — okumayı yarışa
+ *    çevirmesin diye — ama okuma bitince söylemek bir şey yarıştırmıyor.
+ *    Ölçü yoksa (sıfır) kutu çizilmiyor.
+ * 3. **Neyi aklında tutmalı?** Kartların başlıkları (konunun iskeleti): ilk
+ *    ikisi görünür, kalanı "Devamını gör" ile açılır (kullanıcı istedi).
+ *    Altında varsa Rabi'nin notu: her konuda tek kartta, konunun en çok
+ *    tuzak barındıran yeri.
  *
- * En alttaki "Sırada yoklama var" kartı kullanıcının isteğiyle kalktı;
- * sıradakini "Yoklamaya başla" düğmesi söylüyor.
- *
- * Renk **dersin rengi** (`dersVurgusu`, kullanıcı istedi): ders bir yerde
- * hangi renkteyse burada da o. Hareket hafif ve tek seferlik — başlık bandı
- * yükselir, Rabi süzülür, bant çubuğu dolar, kutular sırayla gelir; bilgi
- * süsün arasında kaybolmasın diye konfeti, damga, ses yok. "Haritaya
- * dön" düğme değil yazı — deste okundu ve kaydı yazıldı, yoklamayı vermemek
- * konuyu okunmamış yapmıyor; iki dolu düğme yan yana dursaydı hangisinin
- * ileri götürdüğü okunmazdı. Üstte çarpı yok, aynı sebeple: destenin
- * çarpısıyla aynı yerde duran bir düğme alışkanlıkla basılıyordu.
+ * "Sırada yoklama var" kartı kullanıcının isteğiyle kalktı; sıradakini
+ * "Yoklamaya başla" düğmesi söylüyor. "Haritaya dön" düğme değil yazı —
+ * deste okundu ve kaydı yazıldı, yoklamayı vermemek konuyu okunmamış
+ * yapmıyor; iki dolu düğme yan yana dursaydı hangisinin ileri götürdüğü
+ * okunmazdı. Üstte çarpı yok, aynı sebeple: destenin çarpısıyla aynı yerde
+ * duran bir düğme alışkanlıkla basılıyordu.
  *
  * **Çıkış perdeyle** (`kapanis-cikar`): bayrak (`cikiyor`) üst bileşenden
  * geliyor — sökme kararını o veriyor ve süreyi o bekliyor (`SoruSahnesi`).
@@ -68,145 +67,194 @@ export function KonuOzeti({
   /** Perde çekiliyor; bkz. yukarıdaki yorum. */
   cikiyor?: boolean
 }) {
+  // Poz açılışta bir kez seçilir; yeniden çizimde tavşan değişmesin.
+  const [poz] = useState(() => {
+    sonPoz = ozetPozuSec(sonPoz)
+    return sonPoz
+  })
+  const [acik, setAcik] = useState(false)
+
   const kartSayisi = konu.kartlar.length
   const soruSayisi = konu.sorular.length
   const notluKart = konu.kartlar.find((k) => k.not)
+  const ilkKartlar = konu.kartlar.slice(0, ILK_KART)
+  const kalanKartlar = konu.kartlar.slice(ILK_KART)
+
+  const kutular = [
+    { deger: String(kartSayisi), etiket: 'Kart' },
+    ...(okumaSaniyesi > 0 ? [{ deger: sureYaz(okumaSaniyesi), etiket: 'Süre' }] : []),
+    ...(soruSayisi > 0 ? [{ deger: String(soruSayisi), etiket: 'Soru' }] : []),
+  ]
 
   return (
     <div
-      style={dersVurgusu(ders)}
-      className={cn('fixed inset-0 z-50 flex flex-col bg-background', cikiyor && 'kapanis-cikar')}
+      style={{ ...dersVurgusu(ders), '--ozet-cizgi': `var(--konu-${ders}-kenar)` } as React.CSSProperties}
+      className={cn('ozet-zemin fixed inset-0 z-50 flex flex-col', cikiyor && 'kapanis-cikar')}
     >
-      <div className="mx-auto w-full max-w-md min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pt-[calc(1.25rem+var(--guvenli-ust))] pb-4">
-        <div className="ozet-bandi relative overflow-hidden rounded-3xl bg-primary-soft px-4 pt-4 pb-5">
-          <div className="flex items-center gap-3.5">
-            <div className="kapanis-suzul shrink-0">
-              <Rabi durum="kutlama" poz="kafa" boyut={64} />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[11px] font-extrabold tracking-[0.12em] text-primary uppercase">
-                Konu bitti
-              </p>
-              <h1 className="font-display text-[22px] leading-tight font-extrabold tracking-tight">
-                {konu.ad}
-              </h1>
-              <p className="mt-0.5 truncate text-[12.5px] font-bold text-muted-foreground">
-                {dersAdi} · {temaAdi}
-              </p>
-            </div>
-          </div>
-          {/* Destenin bittiğini söyleyen çubuk: boştan dolar, bir kez. */}
-          <div className="absolute inset-x-4 bottom-2.5 h-1 overflow-hidden rounded-full bg-card/60">
-            <div className="ozet-bandi-cubuk h-full rounded-full bg-primary-parlak" />
-          </div>
-        </div>
+      <header className="mx-auto w-full max-w-md shrink-0 px-4 pt-[calc(0.9rem+var(--guvenli-ust))] text-center">
+        <p className="truncate text-[10.5px] font-extrabold tracking-[0.14em] text-primary uppercase">
+          {dersAdi} · {temaAdi}
+        </p>
+        <h1 className="mt-0.5 font-display text-[16px] leading-tight font-extrabold tracking-tight text-balance">
+          {konu.ad}
+        </h1>
+      </header>
 
-        <div className="mt-4 grid grid-cols-2 gap-2.5">
-          <Sayi
-            sira={0}
-            simge={<BookOpenCheck size={17} strokeWidth={2.3} aria-hidden />}
-            deger={`${kartSayisi}/${kartSayisi}`}
-            etiket="kart okundu"
-          />
-          {okumaSaniyesi > 0 ? (
-            <Sayi
-              sira={1}
-              simge={<Clock3 size={17} strokeWidth={2.3} aria-hidden />}
-              deger={sureYaz(okumaSaniyesi)}
-              etiket="okuma süresi"
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-5">
+        <div className="mx-auto my-auto w-full max-w-md py-2">
+          <div className="kapanis-gel flex flex-col items-center">
+            <Rabi
+              durum="kutlama"
+              poz={poz}
+              boyut={140}
+              className="drop-shadow-[0_10px_12px_rgba(31,36,48,0.16)]"
             />
-          ) : (
-            <Sayi
-              sira={1}
-              simge={<ListChecks size={17} strokeWidth={2.3} aria-hidden />}
-              deger={String(soruSayisi)}
-              etiket="yoklama sorusu"
-            />
+            <h2 className="mt-2 text-center font-display text-[23px] font-black tracking-tight">
+              Konu bitti!
+            </h2>
+          </div>
+
+          <div className="mt-4 flex gap-2.5">
+            {kutular.map((k, i) => (
+              <div
+                key={k.etiket}
+                style={{ animationDelay: `${300 + i * 120}ms` }}
+                className="kapanis-gel golge-kart flex-1 rounded-[16px] border border-[var(--ozet-cizgi)] bg-card px-2 py-2.5 text-center"
+              >
+                <p className="rakam text-[22px] leading-none font-black text-primary">{k.deger}</p>
+                <p className="mt-1 text-[10.5px] font-extrabold tracking-[0.08em] text-muted-foreground uppercase">
+                  {k.etiket}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <section
+            style={{ animationDelay: `${300 + kutular.length * 120}ms` }}
+            className="kapanis-gel golge-kart mt-2.5 overflow-hidden rounded-[18px] border border-[var(--ozet-cizgi)] bg-card"
+          >
+            <div className="flex items-center justify-between gap-2 px-4 pt-3 pb-1">
+              <h3 className="text-[10px] font-extrabold tracking-[0.18em] text-muted-foreground uppercase">
+                Bu konuda öğrendiklerin
+              </h3>
+              <span className="rakam shrink-0 rounded-full bg-primary-soft px-2 py-0.5 text-[11.5px] font-extrabold text-primary">
+                {kartSayisi} kart
+              </span>
+            </div>
+            <KartListesi kartlar={ilkKartlar} baslangic={0} son={kalanKartlar.length === 0} />
+            {kalanKartlar.length > 0 && (
+              <>
+                <div id="ozet-kalan" data-acik={acik} className="ozet-liste">
+                  <div className="min-h-0 overflow-hidden">
+                    <KartListesi kartlar={kalanKartlar} baslangic={ILK_KART} son />
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  aria-expanded={acik}
+                  aria-controls="ozet-kalan"
+                  onClick={() => setAcik((a) => !a)}
+                  className="flex w-full items-center justify-center gap-1.5 border-t border-border px-4 pt-2.5 pb-3 text-[13px] font-extrabold text-primary transition active:bg-primary-soft"
+                >
+                  {acik ? 'Daha az göster' : 'Devamını gör'}
+                  <ChevronDown
+                    size={16}
+                    strokeWidth={2.6}
+                    aria-hidden
+                    className={cn('transition-transform duration-200', acik && 'rotate-180')}
+                  />
+                </button>
+              </>
+            )}
+          </section>
+
+          {notluKart?.not && (
+            <section
+              style={{ animationDelay: `${420 + kutular.length * 120}ms` }}
+              className="kapanis-gel golge-kart mt-2.5 flex items-start gap-2.5 rounded-[18px] border border-[var(--ozet-cizgi)] bg-card px-4 py-3"
+            >
+              <span
+                aria-hidden
+                className="mt-px grid size-5 shrink-0 place-items-center rounded-[7px] bg-primary-parlak text-[12px] font-black text-white"
+              >
+                !
+              </span>
+              <div className="min-w-0">
+                <p className="text-[10px] font-extrabold tracking-[0.14em] text-primary uppercase">
+                  Dikkat · {notluKart.baslik}
+                </p>
+                <p className="mt-0.5 text-[13px] leading-snug font-bold text-foreground/85">{notluKart.not}</p>
+              </div>
+            </section>
           )}
         </div>
-
-        <section className="mt-5">
-          <h2 className="mb-2 ml-0.5 text-[12px] font-extrabold tracking-[0.06em] text-muted-foreground uppercase">
-            Bu konuda öğrendiklerin
-          </h2>
-          <ol className="golge-kart overflow-hidden rounded-2xl bg-card">
-            {konu.kartlar.map((kart, i) => (
-              <li
-                key={kart.id}
-                style={kartGirisi(i).style}
-                className="kart-girisi flex items-start gap-3 border-t border-border px-4 py-2.5 first:border-t-0"
-              >
-                <span className="rakam mt-px w-5 shrink-0 text-right text-[12.5px] font-extrabold text-primary">
-                  {i + 1}
-                </span>
-                <span className="min-w-0 text-[14px] leading-snug font-bold">{kart.baslik}</span>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        {notluKart?.not && (
-          <section className="mt-4 flex items-start gap-3 rounded-2xl bg-primary-soft px-4 py-3.5">
-            <Rabi poz="isaretci" boyut={40} className="-my-1" />
-            <div className="min-w-0">
-              <p className="text-[11px] font-extrabold tracking-[0.08em] text-primary uppercase">
-                Dikkat · {notluKart.baslik}
-              </p>
-              <p className="mt-0.5 text-[13.5px] leading-snug font-semibold">{notluKart.not}</p>
-            </div>
-          </section>
-        )}
       </div>
 
-      <div className="mx-auto w-full max-w-md shrink-0 border-t border-border bg-background px-5 pt-3 pb-[calc(0.75rem+var(--guvenli-alt))]">
-        <Buton className="w-full" onClick={onBasla}>
-          Yoklamaya başla
-          <ArrowRight size={18} aria-hidden />
-        </Buton>
-        <button
-          type="button"
-          onClick={onVazgec}
-          className="mt-1 w-full py-2.5 text-[13.5px] font-bold text-muted-foreground transition active:text-foreground"
-        >
-          Haritaya dön
-        </button>
+      <div className="shrink-0 px-4 pt-2 pb-[calc(0.75rem+var(--guvenli-alt))]">
+        <div className="mx-auto w-full max-w-md">
+          {/* Kapanıştaki "basılabilir" düğme: dolgu dersin parlak tonu, altındaki
+              çizgi koyu tonu; basınca çizgi kadar iniyor. */}
+          <Buton
+            onClick={onBasla}
+            className="h-14 w-full gap-2.5 rounded-[18px] bg-primary-parlak text-[16.5px] font-extrabold text-white shadow-[0_3px_0_var(--primary)] active:translate-y-0.5 active:shadow-[0_1px_0_var(--primary)] active:brightness-100"
+          >
+            Yoklamaya başla
+            <span className="grid size-[26px] place-items-center rounded-[9px] bg-white/18">
+              <ChevronRight size={16} strokeWidth={3} aria-hidden />
+            </span>
+          </Buton>
+          <button
+            type="button"
+            onClick={onVazgec}
+            className="mt-0.5 w-full pt-2.5 pb-1 text-[13.5px] font-bold text-muted-foreground transition active:text-foreground"
+          >
+            Haritaya dön
+          </button>
+        </div>
       </div>
     </div>
   )
 }
 
-function Sayi({
-  sira,
-  simge,
-  deger,
-  etiket,
+/** Liste kapalıyken görünen kart sayısı. */
+const ILK_KART = 2
+
+/**
+ * Bir önceki özetin pozu — art arda iki özette aynı tavşan gelmesin diye
+ * (`ozetPozuSec`). Oturumluk; kayda yazılmıyor.
+ */
+let sonPoz: OzetPozu | null = null
+
+function KartListesi({
+  kartlar,
+  baslangic,
+  son,
 }: {
-  /** Bant yükseldikten sonra sırayla gelsin diye. */
-  sira: number
-  simge: React.ReactNode
-  deger: string
-  etiket: string
+  kartlar: Konu['kartlar']
+  baslangic: number
+  /** Kutunun en alttaki listesi: alt boşluk yalnız onda, iki liste birleşince arada boşluk kalmasın. */
+  son?: boolean
 }) {
   return (
-    <div
-      style={{ animationDelay: `${180 + sira * 70}ms` }}
-      className="ozet-sayi golge-kart rounded-2xl bg-card px-3.5 py-3"
-    >
-      <span className="text-primary">{simge}</span>
-      <p className="rakam mt-1.5 font-display text-[22px] leading-none font-extrabold">{deger}</p>
-      <p className="mt-1 text-[12px] font-bold text-muted-foreground">{etiket}</p>
-    </div>
+    <ol className={cn(son && 'pb-1.5')}>
+      {kartlar.map((kart, i) => (
+        <li key={kart.id} className="flex items-start gap-2.5 px-4 py-1.5">
+          <span className="rakam mt-px grid size-5 shrink-0 place-items-center rounded-[7px] bg-primary-soft text-[11px] font-black text-primary">
+            {baslangic + i + 1}
+          </span>
+          <span className="min-w-0 text-[13px] leading-snug font-bold text-foreground/85">{kart.baslik}</span>
+        </li>
+      ))}
+    </ol>
   )
 }
 
 /**
- * "4 dk 20 sn", bir dakikanın altında "45 sn". Saat yazılmıyor: tek seans
- * zaten iki saatte kırpılıyor (`okuma-suresi.ts`) ve bir konu o kadar sürmüyor.
+ * "6:40". Saat yazılmıyor: tek seans zaten iki saatte kırpılıyor
+ * (`okuma-suresi.ts`) ve bir konu o kadar sürmüyor. Dakikalı biçim üçlü
+ * kutuya sığsın diye; "6 dk 40 sn" dar kutuda iki satıra düşerdi.
  */
 function sureYaz(saniye: number): string {
   const s = Math.round(saniye)
-  if (s < 60) return `${s} sn`
-  const dk = Math.floor(s / 60)
-  const kalan = s % 60
-  return kalan === 0 ? `${dk} dk` : `${dk} dk ${kalan} sn`
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 }
