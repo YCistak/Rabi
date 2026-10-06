@@ -186,6 +186,25 @@ describe('harita eşlemesi', () => {
     }
   })
 
+  it('ilk Türk-İslam devletleri ve Selçuklu Türkiyesi desteleri ayrıştı', () => {
+    expect(HARITA_ESLEMESI['tyt-tar-ilk-turk-islam']).toEqual(['trh10-teskilat', 'trh10-turk-islam'])
+    // Teşkilat destesi Selçuklu'dan çıktı; bilim-kültür iki konuda ortak.
+    expect(HARITA_ESLEMESI['tyt-tar-selcuklu']).not.toContain('trh10-teskilat')
+    expect(HARITA_ESLEMESI['tyt-tar-selcuklu']).toContain('trh10-turk-islam')
+  })
+
+  it('tamamlanan eşlemeler: bölünebilme asal çarpanları, iklim değişimi iki sınıfı kapsıyor', () => {
+    expect(HARITA_ESLEMESI['tyt-mat-bolunebilme']).toContain('mat10-asal-carpan')
+    expect(HARITA_ESLEMESI['ayt-cog-iklim-degisimi']).toEqual(['cog9-iklim-degisim', 'cog11-iklim'])
+  })
+
+  it('emin olunmayan eşlemeler bilerek yok', () => {
+    expect(HARITA_ESLEMESI['tyt-geo-eslik-benzerlik']).not.toContain('mat9-teoremler')
+    expect(HARITA_ESLEMESI['ayt-edb-siir-bilgisi']).not.toContain('trk10-imge')
+    expect(HARITA_ESLEMESI['tyt-tar-toplum-duzeni']).toBeUndefined()
+    expect(HARITA_ESLEMESI['tyt-tar-degisim-cagi']).toBeUndefined()
+  })
+
   it('kullanıcının örneği: TYT trigonometri haritadaki 10. sınıf trigonometriye bağlı', () => {
     const durum = haritaDurumu('tyt-geo-trigonometri', {})
     expect(durum?.hedef.ders).toBe('matematik')
