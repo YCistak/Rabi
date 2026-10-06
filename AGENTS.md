@@ -303,13 +303,18 @@ Duraklatılmış Pomodoro işleyen sayılmıyor: tur durmuş, laptopta çalışa
 tavşan yalan olurdu.
 
 **Durum kafaları kırpım, alan büyütülmedi.** Başlıktaki yer 58 piksel ve tam
-boy poz orada lekeye dönüyor. Alanı büyütmek selamlama cümlesini ve geri
-sayımı aşağı iterdi; onun yerine pozun **üst kısmı** kırpılıyor
-(`maskot-uret.mjs` → `KAFALAR`): baş, kollar ve tutulan nesnenin görünen
-kısmı — durumu anlatan yer orası. Kırpım oranları pozun saydamlıktan
-bulunan kutusuna oran (`alt: 0.62` = kutunun üst %62'si); nesnesi aşağıda
-duran pozlarda (laptop, defter, kitap) daha uzun, kıvrılıp uyuyan ve bağdaş
-kuran tavşanda tam. Oranı değiştirirsen çıktıyı 58 pikselde aç.
+boy poz orada lekeye dönüyor; alanı büyütmek selamlama cümlesini ve geri
+sayımı aşağı iterdi. Pozun baş ve üst gövdesi gösteriliyor
+(`maskot-uret.mjs` → `KAFALAR`).
+
+**Kafalar gözlerden hizalanır, kutudan değil.** Her pozun iki göz merkezi
+kaynak pikselinde yazılı; poz göz arası `GOZ_ARASI` olacak kadar ölçeklenir,
+göz ortası tuvalde hep aynı noktaya gelir, taşan gövde kesilir ve alt kenar
+solar. Kutuya oranla kırpmak kafayı pozdan poza büyütüp küçültüyordu,
+uyuyan tavşan yere çökmüş duruyordu; kullanıcı bunu "yamukluk" diye gördü.
+Yeni kafa eklerken göz merkezlerini ölç, `public/tavsan-kafa-*.png`yi yan
+yana açıp kafa boyunu karşılaştır; tutmazsa `duzelt` çarpanı. Kaynaklardaki
+"esneme yapan" esnemiyor (oturmuş, gülümseyen tavşan); adına güvenme.
 
 Poz değişince öğe yeniden kuruluyor (`key`) ve kısa bir solmayla geliyor
 (`ana-maskot-gecis`, `prefers-reduced-motion` altında yok). Ekran okuyucu
