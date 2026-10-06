@@ -1,6 +1,11 @@
 /**
  * Ana sayfada selamlamanın altındaki tek cümle: günün hâli.
  *
+ * **Cümleyi artık doğrudan bu dosya seçmiyor**: `ana-baslik.ts` önce tavşanı
+ * seçiyor, cümleyi tavşanın kuralından kuruyor ve buradaki öneri listesine
+ * (`gununHali`) yalnızca tavşan çalışırken başvuruyor. Ayrı seçildiklerinde
+ * tavşan dans ederken cümle başka bir işe yönlendirebiliyordu.
+ *
  * Bu cümle bir süre kendi kartıydı (`GununHali`, `gunun-hali-karti.tsx`):
  * 72 piksellik bir tavşan, "BUGÜN" etiketi, kalın bir başlık, altında ikinci
  * bir cümle ve bir ok. Kullanıcı kartı kökten kaldırttı ve yerine
@@ -72,7 +77,7 @@ export const YIGILMA_EN_AZ = 20
 /** Son denemeden bu kadar gün geçince hatırlatma. */
 export const DENEME_GUNU = 10
 
-type Baglam = {
+export type Baglam = {
   g: GununHaliGirdisi
   toplam: number
   /** Dünle biten, hedefin tutturulduğu ardışık gün sayısı (bugün hariç). */
@@ -105,6 +110,16 @@ const sinavaYakin: Kural = (b) => {
   const n = b.g.kalanGun
   if (n < 0 || n > SINAV_YAKIN_GUN) return null
   if (n > SINAV_SON_HAFTA && b.secim(2) === 1) return null
+  return sinavCumlesi(b)
+}
+
+/**
+ * Sınav cümlesi, gün aşırı süzgeci olmadan. Ana sayfa başlığı sınava 30 günden
+ * az kalınca tavşanı her gün saate baktırıyor (`ana-baslik.ts`); cümle de o
+ * gün sınavı söylemek zorunda.
+ */
+export function sinavCumlesi(b: Baglam): string {
+  const n = b.g.kalanGun
   if (n === 0) {
     return sec(b, [
       'Bugün sınav günü; dinlen, kendine güven ve başarılar!',
@@ -125,7 +140,7 @@ const sinavaYakin: Kural = (b) => {
 }
 
 /** Dün (ve öncesinde) hedef tutmuş, bugün henüz sıfır: seri kırılmak üzere. */
-const seriKiriliyor: Kural = (b) => {
+export const seriKiriliyor: Kural = (b) => {
   if (b.toplam > 0 || b.seri < 1) return null
   return b.seri === 1
     ? 'Dün hedefini tamamladın; bugün de devam edelim.'
@@ -170,8 +185,8 @@ const tekDerseYigilma: Kural = (b) => {
     : `Bugün ağırlık ${enCok} dersinde; başka bir derse de geçebilirsin.`
 }
 
-/** Son 30 günde çalışılmış ama 7+ gündür dokunulmamış ders. */
-const ihmalEdilenDers: Kural = (b) => {
+/** Son 30 günde çalışılmış ama 7+ gündür dokunulmamış ders; yoksa null. */
+export function ihmalBul(b: Baglam): { ders: string; gun: number } | null {
   const sonKayit = new Map<string, string>()
   for (const k of b.g.gunlukKayitlar) {
     const yas = gunFarki(k.tarih, b.g.bugun)
@@ -193,6 +208,13 @@ const ihmalEdilenDers: Kural = (b) => {
     }
   }
   if (!ders || gun < IHMAL_GUNU) return null
+  return { ders, gun }
+}
+
+const ihmalEdilenDers: Kural = (b) => {
+  const ihmal = ihmalBul(b)
+  if (!ihmal) return null
+  const { ders, gun } = ihmal
   // Ada ek getirilmiyor ("Kimya'ya", "Fizik'e" ünlü uyumu ister); ad "ders"
   // sözcüğüyle birlikte kullanılıyor, ek o sözcüğe geliyor.
   return sec(b, [
@@ -220,7 +242,7 @@ const denemeZamani: Kural = (b) => {
 }
 
 /** Hiçbir öneri tutmadı: eski üç hâl. */
-const temel: Kural = (b) => {
+export const temel: Kural = (b) => {
   if (tuttu(b)) {
     return sec(b, [
       `Günlük hedefini tamamladın; bugün ${b.toplam} soru çözdün.`,
@@ -265,16 +287,35 @@ function gunSayisi(iso: string): number {
   return Math.round(tariheCevir(iso).getTime() / 86_400_000)
 }
 
-export function gununHali(g: GununHaliGirdisi): GununHali | null {
-  if (g.hedef <= 0) return null
-  const toplam = gunOzeti(g.gunlukKayitlar.find((k) => k.tarih === g.bugun)).toplam
+/** Kuralların ortak bağlamı; `ana-baslik.ts` de aynı bağlamla cümle kuruyor. */
+export function baglamKur(g: GununHaliGirdisi): Baglam {
   const gun = gunSayisi(g.bugun)
-  const b: Baglam = {
+  return {
     g,
-    toplam,
+    toplam: gunOzeti(g.gunlukKayitlar.find((k) => k.tarih === g.bugun)).toplam,
     seri: hedefSerisi(g.gunlukKayitlar, g.bugun, g.hedef),
     secim: (n) => gun % n,
   }
+}
+
+/**
+ * Hedef tuttuğu günün cümlesi: sınav, seri ya da temel "tamamladın".
+ *
+ * Öneriler (banka, ihmal, deneme) burada yok: başlıktaki tavşan o gün dans
+ * ediyor ve cümle de kutlamayı söylemeli, başka bir işe yönlendirmemeli.
+ */
+export function hedefTuttuCumlesi(b: Baglam): string {
+  for (const kural of ONCELIKLI) {
+    const hal = kural(b)
+    if (hal) return hal
+  }
+  return temel(b)!
+}
+
+export function gununHali(g: GununHaliGirdisi): GununHali | null {
+  if (g.hedef <= 0) return null
+  const b = baglamKur(g)
+  const gun = gunSayisi(g.bugun)
   for (const kural of ONCELIKLI) {
     const hal = kural(b)
     if (hal) return hal
