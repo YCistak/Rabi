@@ -63,6 +63,17 @@ export function haftaBasi(iso: string): string {
 }
 
 /**
+ * Takvimde hafta başını gösteren işaret bu güne konur mu?
+ *
+ * Pazartesi günleri işaretlenir ki kayan yedi günlük şeritte haftanın nerede
+ * başladığı okunabilsin. Bugün pazartesiyse o gün işaretsiz kalır: "bugün"
+ * vurgusu zaten orada ve kullanıcı hangi günde olduğunu biliyor.
+ */
+export function haftaBasiIsaretiMi(iso: string, bugunIso: string): boolean {
+  return iso !== bugunIso && haftaBasi(iso) === iso
+}
+
+/**
  * Bir listeden tohuma göre kararlı seçim yapar: aynı tohum aynı öğeyi verir.
  * Günün sözü gibi "gün boyu sabit, ertesi gün başka" olması istenen yerlerde
  * tarih tohum olarak veriliyor — yoksa her yeniden çizimde metin zıplardı.

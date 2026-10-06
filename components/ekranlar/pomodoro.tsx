@@ -24,7 +24,14 @@ import {
 } from '@/lib/pomodoro'
 import { SesCalar } from '@/lib/ses'
 import { calismaSirasi } from '@/lib/dersler'
-import { PROVALAR, PROVA_DERSI, type Prova } from '@/lib/sinav-provasi'
+import { DersSeridi, SecimKutusu } from '@/components/ders-seridi'
+import {
+  OZEL_PROVA_SINIRI,
+  PROVALAR,
+  PROVA_DERSI,
+  ozelProva,
+  type Prova,
+} from '@/lib/sinav-provasi'
 import { izinIste, pomodoroIptal, pomodoroPlanla } from '@/lib/bildirim'
 import {
   odakKilidiDesteklenir,
@@ -292,7 +299,7 @@ export function PomodoroEkrani({
       bitis,
       // Engel katmanındaki çip provada dersin değil sınavın adını yazıyor:
       // ekranda "MATEMATİK" görünürken çözülen şey TYT kitapçığı oluyordu.
-      prova ? `${prova.ad} PROVASI` : (ders ?? undefined),
+      prova ? `${prova.ad} PROVASI`.toLocaleUpperCase('tr-TR') : (ders ?? undefined),
       korumaliTur && ayar.rahatsizEtme,
       prova ? 'Deneme provası' : ASAMA_ADI[asama],
       // iOS'ta seçim yerli tarafta durduğu için paket listesi boş; kilidin
@@ -483,6 +490,16 @@ export function PomodoroEkrani({
     baslangicRef.current = null
   }
 
+  /**
+   * "Süre gir"e yazılan süre: ayarda hatırlanıyor ve seçili provaysa sayaç
+   * da ona geçiyor. Tur içinde kutu zaten kilitli.
+   */
+  const ozelSureyiAyarla = (dakika: number) => {
+    if (turIcinde) return
+    setAyar((o) => ({ ...o, provaSuresi: dakika }))
+    if (prova?.id === 'ozel') provayiAyarla(ozelProva(dakika))
+  }
+
   /*
     Satırın altındaki özet: paneli açmadan hangi korumanın açık olduğu
     okunabilmeli, yoksa kapalı bir satır ayarı görünmez kılardı.
@@ -510,7 +527,9 @@ export function PomodoroEkrani({
     mola", molada "sonra 25 dk çalışma", provada kitapçığın kendisi.
   */
   const siradaki = prova
-    ? prova.ad
+    ? prova.id === 'ozel'
+      ? 'kendi süren'
+      : prova.ad
     : molaMi
       ? `sonra ${ayar.calisma} dk çalışma`
       : `sonra ${asamaSuresi(sonrakiAsama('calisma', tur, ayar), ayar)} dk mola`
@@ -600,22 +619,7 @@ export function PomodoroEkrani({
             <p className="mb-2 ml-0.5 text-[12.5px] font-extrabold text-muted-foreground">
               HANGİ DERSE?
             </p>
-            {/* Şerit kartın kenarına kadar kayıyor (`-mx-4 px-4`): kesik duran
-                son çip, yana kaydırılabildiğini söyleyen tek işaret. Yana kayan
-                kutunun içinden başlayan hareket sekme değiştirmiyor
-                (`sekme-kaydirma.ts`). */}
-            <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {gorunenDersler.map((d) => (
-                <SecimKutusu
-                  key={d}
-                  secili={ders === d}
-                  onClick={() => setDers(ders === d ? null : d)}
-                  className="h-11 shrink-0 px-4 text-[12.5px] whitespace-nowrap"
-                >
-                  {d}
-                </SecimKutusu>
-              ))}
-            </div>
+            <DersSeridi dersler={gorunenDersler} secili={ders} onSec={setDers} />
           </div>
         )
       ) : (
@@ -635,7 +639,32 @@ export function PomodoroEkrani({
                 <span className="text-[11.5px] font-semibold opacity-85">{p.dakika} dk</span>
               </SecimKutusu>
             ))}
+            {/* Dördüncü kutu bir süre MEB'in STS'siydi (40 dk); kullanıcı
+                kaldırttı, yerine her öğrenci kendi süresini yazıyor. Son
+                yazılan süre ayarda hatırlanıyor (`provaSuresi`). */}
+            <SecimKutusu
+              secili={prova.id === 'ozel'}
+              onClick={() => provayiAyarla(ozelProva(ayar.provaSuresi))}
+              className="h-[60px] flex-col gap-0.5"
+            >
+              <span className="text-[14px] leading-tight font-extrabold">Süre gir</span>
+              <span className="text-[11.5px] font-semibold opacity-85">{ayar.provaSuresi} dk</span>
+            </SecimKutusu>
           </div>
+          {prova.id === 'ozel' && (
+            <label className="mt-2 flex items-center gap-3">
+              <span className="flex-1 text-[13px] font-bold text-muted-foreground">
+                Kaç dakika? ({OZEL_PROVA_SINIRI.enAz}–{OZEL_PROVA_SINIRI.enCok})
+              </span>
+              <SerbestSure
+                deger={ayar.provaSuresi}
+                hazirlar={[]}
+                sinir={OZEL_PROVA_SINIRI}
+                onDegis={ozelSureyiAyarla}
+                className="w-28 shrink-0"
+              />
+            </label>
+          )}
         </div>
       )}
 
@@ -744,7 +773,9 @@ export function PomodoroEkrani({
           durum={prova ? 'DENEME PROVASI' : durumEtiketi.toLocaleUpperCase('tr-TR')}
           baslik={
             prova
-              ? `${prova.ad} DENEMESİ`
+              ? prova.id === 'ozel'
+                ? 'DENEME'
+                : `${prova.ad} DENEMESİ`
               : (ders ?? ASAMA_ADI[asama]).toLocaleUpperCase('tr-TR')
           }
           kalan={kalan}
@@ -953,28 +984,6 @@ function KipDugmesi({
     >
       {children}
     </button>
-  )
-}
-
-/** Izgaradaki seçim kutusu: ders çipi, prova kartı. Seçiliyken amber çerçeve ve açık zemin. */
-function SecimKutusu({
-  secili,
-  className,
-  ...props
-}: React.ComponentProps<'button'> & { secili: boolean }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={secili}
-      className={cn(
-        'flex items-center justify-center rounded-[13px] border transition',
-        secili
-          ? 'border-[1.5px] border-primary-parlak bg-primary-soft font-extrabold text-primary'
-          : 'border-border bg-card font-bold text-muted-foreground active:bg-muted',
-        className,
-      )}
-      {...props}
-    />
   )
 }
 
@@ -1317,11 +1326,13 @@ function SerbestSure({
   hazirlar,
   sinir,
   onDegis,
+  className,
 }: {
   deger: number
   hazirlar: number[]
   sinir: { enAz: number; enCok: number }
   onDegis: (deger: number) => void
+  className?: string
 }) {
   const ozel = !hazirlar.includes(deger)
   const [metin, setMetin] = useState(ozel ? String(deger) : '')
@@ -1360,6 +1371,7 @@ function SerbestSure({
         'placeholder:text-sm placeholder:font-semibold placeholder:text-muted-foreground',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         ozel ? 'border-solid border-primary-parlak bg-primary-soft text-primary' : 'border-border text-muted-foreground',
+        className,
       )}
     />
   )

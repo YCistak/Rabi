@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { gunKaydir, haftaBasi, tariheCevir, tariheYaz, yediGunlukSerit } from './utils'
+import { gunKaydir, haftaBasi, haftaBasiIsaretiMi, tariheCevir, tariheYaz, yediGunlukSerit } from './utils'
 
 describe('yediGunlukSerit', () => {
   it('pazar günü de bugünü dördüncü sırada tutup gelecek haftayı gösterir', () => {
@@ -62,5 +62,32 @@ describe('gunKaydir', () => {
 
   it('artık yıldaki 29 Şubat üzerinden ilerler', () => {
     expect(gunKaydir('2028-03-01', -1)).toBe('2028-02-29')
+  })
+})
+
+describe('haftaBasiIsaretiMi', () => {
+  it('geçmişteki ve gelecekteki pazartesiyi işaretler', () => {
+    // 2026-10-07 çarşamba; 5 ve 12 Ekim pazartesi.
+    expect(haftaBasiIsaretiMi('2026-10-05', '2026-10-07')).toBe(true)
+    expect(haftaBasiIsaretiMi('2026-10-12', '2026-10-07')).toBe(true)
+  })
+
+  it('pazartesi olmayan günleri işaretlemez', () => {
+    for (const iso of ['2026-10-06', '2026-10-08', '2026-10-11']) {
+      expect(haftaBasiIsaretiMi(iso, '2026-10-07')).toBe(false)
+    }
+  })
+
+  it('bugün pazartesiyse o gün işaretsiz kalır, ötekiler işaretli', () => {
+    expect(haftaBasiIsaretiMi('2026-10-05', '2026-10-05')).toBe(false)
+    expect(haftaBasiIsaretiMi('2026-10-12', '2026-10-05')).toBe(true)
+    expect(haftaBasiIsaretiMi('2026-09-28', '2026-10-05')).toBe(true)
+  })
+
+  it('yedi günlük şeritte en çok bir gün işaretli', () => {
+    for (const bugunIso of ['2026-10-04', '2026-10-05', '2026-10-06', '2026-10-08']) {
+      const isaretli = yediGunlukSerit(bugunIso).filter((iso) => haftaBasiIsaretiMi(iso, bugunIso))
+      expect(isaretli.length).toBe(bugunIso === '2026-10-05' ? 0 : 1)
+    }
   })
 })
