@@ -521,18 +521,18 @@ body {
   /* --- Açılış ekranı (components/acilis.tsx, ders makarası) --- */
 
   /*
-    Tek seferlik, `ACILIS_SURESI` (2,26 s) boyunca akan bir gösteri
+    Tek seferlik, `ACILIS_SURESI` (2,08 s) boyunca akan bir gösteri
     (`tasarim/acilis-arsiv.html` → 3. tur, Yazı C · 2). Her parça kendi
     süresinde ve gecikmesiyle zamanlanıyor:
 
     -   60–1080 ms: dört makara sırayla dönüp R·A·B·I'ya kilitleniyor;
         her makara bir öncekinden 40 ms sonra başlıyor, 100 ms uzun dönüyor.
-    - 1080–1400 ms: kelime okunacak kadar duruyor.
-    - 1400–1700 ms: harfler bir tık daha dönüp çıkıyor (40 ms arayla).
-    - 1700 ms: kelime sönüyor; kuyuların zemin renkli gölgeleri ana sayfanın
-      üstünde iz bırakmasın diye şeritlerden önce gidiyor.
-    - 1660–2260 ms: zemin dört şerit hâlinde (60 ms arayla) yukarı kalkıyor.
-      Katmanı kaldıran `animationend` sonuncusundan geliyor.
+    - 1080–1680 ms: RABI ortada okunacak kadar duruyor.
+    - 1680–2080 ms: katman bütün olarak (zemin, kelime, kuyuların gölgeleri
+      birlikte) sönüp ana sayfayı gösteriyor. Hepsi aynı opaklıkla gittiği
+      için ana sayfanın üstünde iz kalmıyor; zemin ana sayfanınkiyle aynı
+      renk olduğundan renk sıçraması da yok. Katmanı kaldıran `animationend`
+      bu sönüşten geliyor.
 
     Gecikmeler sınıfta yazılı, satır içinde değil: hepsi tek zaman çizgisinin
     parçası ve ayrı yerlere dağılsalardı biri değişince ötekiler unutulurdu.
@@ -552,25 +552,9 @@ body {
   .acilis-bekliyor * {
     animation-play-state: paused !important;
   }
-  /* Zeminin dört şeridi; her biri ekranın dörtte biri. */
-  .acilis-serit {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 25%;
-    animation: acilis-serit-kalk 420ms cubic-bezier(0.6, 0, 0.3, 1) both;
-  }
-  .acilis-serit:nth-child(1) {
-    animation-delay: 1660ms;
-  }
-  .acilis-serit:nth-child(2) {
-    animation-delay: 1720ms;
-  }
-  .acilis-serit:nth-child(3) {
-    animation-delay: 1780ms;
-  }
-  .acilis-serit:nth-child(4) {
-    animation-delay: 1840ms;
+  /* Katmanın tümü tek parça sönüyor; ease-in-out, başı ve sonu yumuşak. */
+  .acilis-katman {
+    animation: acilis-katman-son 400ms cubic-bezier(0.4, 0, 0.2, 1) 1680ms both;
   }
   /*
     Kelime ekranın ortasında; hücre 84 px, harf 76 px. Tablette `zoom`
@@ -585,7 +569,6 @@ body {
     display: flex;
     justify-content: center;
     font-size: 76px;
-    animation: acilis-kelime-son 60ms linear 1700ms forwards;
   }
   .acilis-pencere {
     position: relative;
@@ -625,33 +608,27 @@ body {
     bottom: 0;
     background: linear-gradient(transparent, var(--background));
   }
-  /*
-    Bir makarada iki animasyon var ve ikisi de `transform` oynatıyor:
-    çıkışın dolgusu yalnızca `forwards`, yani gecikmesi boyunca dönüşü
-    ezmiyor; başladığında dönüş çoktan bitmiş oluyor.
-  */
+  /* Harfte kilitlenip orada kalıyor (`both`); katman sönene kadar dönmüyor. */
   .acilis-makara {
     display: flex;
     flex-direction: column;
-    animation:
-      acilis-makara-don 600ms linear both,
-      acilis-makara-cik 180ms cubic-bezier(0.6, 0, 0.85, 0.4) forwards;
+    animation: acilis-makara-don 600ms linear both;
   }
   .acilis-pencere:nth-child(1) .acilis-makara {
-    animation-duration: 600ms, 180ms;
-    animation-delay: 60ms, 1400ms;
+    animation-duration: 600ms;
+    animation-delay: 60ms;
   }
   .acilis-pencere:nth-child(2) .acilis-makara {
-    animation-duration: 700ms, 180ms;
-    animation-delay: 100ms, 1440ms;
+    animation-duration: 700ms;
+    animation-delay: 100ms;
   }
   .acilis-pencere:nth-child(3) .acilis-makara {
-    animation-duration: 800ms, 180ms;
-    animation-delay: 140ms, 1480ms;
+    animation-duration: 800ms;
+    animation-delay: 140ms;
   }
   .acilis-pencere:nth-child(4) .acilis-makara {
-    animation-duration: 900ms, 180ms;
-    animation-delay: 180ms, 1520ms;
+    animation-duration: 900ms;
+    animation-delay: 180ms;
   }
   .acilis-hucre {
     height: 84px;
@@ -752,11 +729,11 @@ body {
   }
 }
 
-/* Açılış (ders makarası). Bkz. `.acilis-serit` üstündeki zaman çizgisi. */
+/* Açılış (ders makarası). Bkz. açılış bloğunun başındaki zaman çizgisi. */
 
 /*
   Tık tık: %10 dön, %10 bekle; son tık uzun ve hafif taşarak kilitleniyor.
-  Hücre 84 px; harf beşinci hücrede (−420), çıkış altıncıya (−504).
+  Hücre 84 px; harf beşinci hücrede (−420).
 */
 @keyframes acilis-makara-don {
   0% {
@@ -796,27 +773,12 @@ body {
   }
 }
 
-@keyframes acilis-makara-cik {
+@keyframes acilis-katman-son {
   from {
-    transform: translateY(-420px);
+    opacity: 1;
   }
-  to {
-    transform: translateY(-504px);
-  }
-}
-
-@keyframes acilis-kelime-son {
   to {
     opacity: 0;
-  }
-}
-
-@keyframes acilis-serit-kalk {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-100%);
   }
 }
 
