@@ -2,7 +2,8 @@ import { KONU_DERSLERI, KONU_SINIFLARI, programBul, tumKonular } from '../konu'
 import type { Konu, KonuDersId, KonuSinifi } from '../konu/tip'
 import { konuBitti, konuTamam, type KonuIlerlemeleri } from '../konu/ilerleme'
 import { HARITA_ESLEMESI } from './harita-eslemesi'
-import type { YksDers, YksKonu } from './liste'
+import type { YksDers, YksKonu, YksOturum } from './liste'
+import { geriSayim, gunFarki } from '../sinav-tarihi'
 import { asamaYaz, type ElleAsama, type YksKonuKaydi, type YksTakip } from './kayit'
 
 export { BOS_TAKIP, asamaYaz, takibiCoz } from './kayit'
@@ -314,4 +315,100 @@ export function oncekiOkulsuzlar(ders: YksDers, konuId: string, takip: YksTakip)
 /** Birden çok konunun okul aşamasını işaretler ya da kaldırır (toplu eylem ve geri alması). */
 export function okuluTopluYaz(takip: YksTakip, konuIdleri: readonly string[], acik: boolean, bugun: string): YksTakip {
   return konuIdleri.reduce((t, id) => asamaYaz(t, id, 'okul', acik, bugun), takip)
+}
+
+// ---------------------------------------------------------------------------
+// Tempo: kalan konu ve sınava kalan gün
+// ---------------------------------------------------------------------------
+
+export type Tempo = {
+  /** Bitmemiş konu sayısı. */
+  kalanKonu: number
+  /** Sınava yetişmek için günde bitirilmesi gereken konu, yukarı yuvarlı. */
+  gunluk: number
+}
+
+/**
+ * Özet çubuğunun altındaki "Kalan N konu · günde ~k konu ile sınava
+ * yetişir" satırının hesabı: k = ⌈kalan / kalan gün⌉.
+ *
+ * Kalan gün yoksa (sınav bugün ya da geçti) ya da bitmemiş konu kalmadıysa
+ * `null` ve satır çizilmiyor: sıfıra bölmek ya da "günde 0 konu" demek bir
+ * şey söylemiyor.
+ */
+export function tempoHesapla(kalanKonu: number, kalanGun: number): Tempo | null {
+  if (kalanKonu <= 0 || kalanGun <= 0) return null
+  return { kalanKonu, gunluk: Math.ceil(kalanKonu / kalanGun) }
+}
+
+/**
+ * Oturumun sınavına kalan gün. TYT cumartesi, AYT ve YDT pazar
+ * (`lib/sinav-tarihi.ts` → `geriSayim`); takvim öğrencinin **kendi**
+ * sınavının yılı. Oturumun günü geçtiyse sayı eksi çıkıyor ve tempo
+ * gösterilmiyor (`tempoHesapla`).
+ */
+export function oturumKalanGun(bugunIso: string, sinif: number, oturum: YksOturum): number {
+  const { takvim } = geriSayim(bugunIso, sinif)
+  return gunFarki(bugunIso, oturum === 'tyt' ? takvim.tyt : takvim.ayt)
+}
+
+// ---------------------------------------------------------------------------
+// Hızlı başlangıç: "TYT'de neredeyim?"
+// ---------------------------------------------------------------------------
+
+/**
+ * Hızlı başlangıç kartının seçenekleri ve her birinin "okulda işlendi"
+ * sayılacak konu oranı. Bitti değil, yalnızca okul aşaması: öğrenci konuyu
+ * okulda görmüş olabilir ama sorusunu çözmemiş.
+ */
+export const HIZLI_SECENEKLER = [
+  { id: 'cogu', ad: 'Çoğunu bitirdim', oran: 0.8 },
+  { id: 'yarisi', ad: 'Yarısı', oran: 0.5 },
+  { id: 'yeni', ad: 'Yeni başlıyorum', oran: 0 },
+] as const
+
+export type HizliSecim = (typeof HIZLI_SECENEKLER)[number]['id']
+
+/**
+ * Kart kime gösteriliyor: 12. sınıf ve mezun. Daha alt sınıfta "çoğunu
+ * bitirdim" cevabı okulun henüz işlemediği konuları işaretletirdi; onlar
+ * konuları okulla birlikte tek tek işaretliyor.
+ */
+export function hizliBaslangicSinifi(sinif: number): boolean {
+  return sinif >= 12
+}
+
+/** Oturumun derslerinde hiç işaret yok mu — kart yalnızca o zaman çıkıyor. */
+export function oturumIsaretsiz(dersler: readonly YksDers[], takip: YksTakip): boolean {
+  return dersler.every((d) => d.konular.every((k) => !takip.konular[k.id]))
+}
+
+/**
+ * Seçilen orana göre okulda işlendi sayılacak konular: **her dersin**
+ * müfredat sırasında ilk ⌊n × oran⌋ konusu, bölüm sınırı gözetmeden (TYT
+ * Matematik'te Geometri de aynı sıranın devamı). Ders bazında, çünkü okul
+ * bütün dersleri aynı takvimde ilerletiyor; tek bir toplam oran Türkçe'yi
+ * bitirip Felsefe'ye hiç dokunmamış gibi bir dağılım üretirdi.
+ */
+export function hizliBaslangicKonulari(dersler: readonly YksDers[], oran: number): string[] {
+  if (oran <= 0) return []
+  return dersler.flatMap((d) => d.konular.slice(0, Math.floor(d.konular.length * oran)).map((k) => k.id))
+}
+
+/**
+ * Hızlı başlangıç kartının gösterildiği oturumlar — kalıcı bayrak
+ * (`rabi-konu-takibi-hizli-baslangic`, sürümlü). Kart her oturumda bir
+ * kez: seçim yapıldı ya da "Atla"ya basıldıysa bir daha çıkmıyor.
+ */
+export type HizliBaslangicBayragi = { surum: 1; gosterilen: YksOturum[] }
+
+export const BOS_HIZLI_BAYRAK: HizliBaslangicBayragi = { surum: 1, gosterilen: [] }
+
+/** Depodaki bayrağı güvenli okur; bozuk ya da bilinmeyen sürüm boş sayılıyor. */
+export function hizliBayragiCoz(ham: unknown): HizliBaslangicBayragi {
+  if (typeof ham !== 'object' || ham === null) return BOS_HIZLI_BAYRAK
+  const nesne = ham as Record<string, unknown>
+  if (nesne.surum !== 1 || !Array.isArray(nesne.gosterilen)) return BOS_HIZLI_BAYRAK
+  const gosterilen = (['tyt', 'ayt'] as const).filter((o) => (nesne.gosterilen as unknown[]).includes(o))
+  return { surum: 1, gosterilen }
 }

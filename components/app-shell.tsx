@@ -1215,6 +1215,7 @@ function RabiUygulamasi() {
                 ilerlemeler={konuIlerleme}
                 alan={ayarlar.puanTuru}
                 setAlan={(puanTuru) => setAyarlar((o) => ({ ...o, puanTuru }))}
+                sinif={ayarlar.buYilSinif}
                 onHaritayaGit={({ ders, sinif, konu }) => {
                   setKonuSecimi({ ders, sinif })
                   setHaritaIstegi({ ders, sinif, konuId: konu.id })

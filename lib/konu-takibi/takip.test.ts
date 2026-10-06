@@ -19,6 +19,13 @@ import {
   sonIsaretGunu,
   toplamOzet,
   bitirmeyeHazir,
+  tempoHesapla,
+  oturumKalanGun,
+  hizliBaslangicSinifi,
+  hizliBaslangicKonulari,
+  oturumIsaretsiz,
+  hizliBayragiCoz,
+  BOS_HIZLI_BAYRAK,
   type YksTakip,
 } from './takip'
 
@@ -612,5 +619,85 @@ describe('toplu okul işareti', () => {
     expect(sonra.konular['tyt-mat-ebob-ekok']).toEqual({ okul: BUGUN })
     expect(sonra.konular['tyt-mat-basamak']).toEqual({ okul: '2026-09-01' })
     expect(okuluTopluYaz(sonra, ids, false, BUGUN)).toEqual(once)
+  })
+})
+
+describe('tempo — günde kaç konu', () => {
+  it('kalan konuyu kalan güne böler ve yukarı yuvarlar', () => {
+    expect(tempoHesapla(100, 30)).toEqual({ kalanKonu: 100, gunluk: 4 })
+    expect(tempoHesapla(90, 30)).toEqual({ kalanKonu: 90, gunluk: 3 })
+    expect(tempoHesapla(5, 200)).toEqual({ kalanKonu: 5, gunluk: 1 })
+  })
+
+  it('kalan gün yoksa ya da konu kalmadıysa gösterilmiyor', () => {
+    expect(tempoHesapla(10, 0)).toBeNull()
+    expect(tempoHesapla(10, -3)).toBeNull()
+    expect(tempoHesapla(0, 30)).toBeNull()
+  })
+
+  it('TYT cumartesiye, AYT pazara sayıyor', () => {
+    // 2026-10-04'te 12. sınıf: sınav 2027 haziranı (tahmini 19-20 Haziran).
+    const tyt = oturumKalanGun(BUGUN, 12, 'tyt')
+    const ayt = oturumKalanGun(BUGUN, 12, 'ayt')
+    expect(tyt).toBeGreaterThan(200)
+    expect(ayt).toBe(tyt + 1)
+  })
+
+  it('TYT günü geçmiş, AYT ertesi gün: TYT eksi, AYT bir gün', () => {
+    expect(oturumKalanGun('2026-06-20', 12, 'tyt')).toBeLessThanOrEqual(0)
+    expect(oturumKalanGun('2026-06-20', 12, 'ayt')).toBe(1)
+  })
+})
+
+describe('hızlı başlangıç', () => {
+  const tyt = YKS_DERSLERI.filter((d) => d.oturum === 'tyt')
+
+  it('yalnızca 12. sınıf ve mezun', () => {
+    expect(hizliBaslangicSinifi(11)).toBe(false)
+    expect(hizliBaslangicSinifi(12)).toBe(true)
+    expect(hizliBaslangicSinifi(13)).toBe(true)
+  })
+
+  it('her dersin müfredat sırasındaki ilk konuları, bölüm sınırı gözetmeden', () => {
+    const konular = hizliBaslangicKonulari(tyt, 0.8)
+    for (const ders of tyt) {
+      const beklenen = ders.konular.slice(0, Math.floor(ders.konular.length * 0.8)).map((k) => k.id)
+      expect(konular.filter((id) => ders.konular.some((k) => k.id === id)), ders.id).toEqual(beklenen)
+    }
+    // TYT Matematik'in %80'i Geometri bölümüne de uzanıyor.
+    const geometri = yksDersBul('tyt-matematik')!.konular.filter((k) => k.bolum === 'Geometri').map((k) => k.id)
+    expect(konular.some((id) => geometri.includes(id))).toBe(true)
+  })
+
+  it('yarısı ve yeni başlıyorum', () => {
+    const turkce = yksDersBul('tyt-turkce')!
+    expect(hizliBaslangicKonulari([turkce], 0.5)).toHaveLength(Math.floor(turkce.konular.length / 2))
+    expect(hizliBaslangicKonulari(tyt, 0)).toEqual([])
+  })
+
+  it('okulda işlendi olarak yazılıyor, bitti değil; geri alınca kayıt boşalıyor', () => {
+    const konular = hizliBaslangicKonulari(tyt, 0.5)
+    const takip = okuluTopluYaz(BOS_TAKIP, konular, true, BUGUN)
+    expect(Object.values(takip.konular).every((k) => k.okul === BUGUN && !k.bitti && !k.soru)).toBe(true)
+    expect(oturumIsaretsiz(tyt, takip)).toBe(false)
+    expect(okuluTopluYaz(takip, konular, false, BUGUN)).toEqual(BOS_TAKIP)
+  })
+
+  it('oturum işaretsiz mi: öteki oturumun işareti saymıyor', () => {
+    const takip = asamaYaz(BOS_TAKIP, 'ayt-mat-turev', 'okul', true, BUGUN)
+    expect(oturumIsaretsiz(tyt, takip)).toBe(true)
+    expect(oturumIsaretsiz(tyt, asamaYaz(takip, 'tyt-trk-ses', 'soru', true, BUGUN))).toBe(false)
+  })
+})
+
+describe('hızlı başlangıç bayrağı', () => {
+  it('bozuk değer ve bilinmeyen sürüm boş', () => {
+    expect(hizliBayragiCoz(null)).toEqual(BOS_HIZLI_BAYRAK)
+    expect(hizliBayragiCoz({ surum: 2, gosterilen: ['tyt'] })).toEqual(BOS_HIZLI_BAYRAK)
+    expect(hizliBayragiCoz({ surum: 1, gosterilen: 'tyt' })).toEqual(BOS_HIZLI_BAYRAK)
+  })
+
+  it('yalnızca bilinen oturumlar kalıyor', () => {
+    expect(hizliBayragiCoz({ surum: 1, gosterilen: ['ayt', 'xyz', 'tyt'] })).toEqual({ surum: 1, gosterilen: ['tyt', 'ayt'] })
   })
 })

@@ -25,6 +25,8 @@ import {
   siradakiKonu,
   bitirmeyeHazir,
   toplamOzet,
+  tempoHesapla,
+  oturumKalanGun,
   type AsamaId,
   type DersOzeti,
   type HaritaKonumu,
@@ -135,6 +137,7 @@ export function KonuTakibiEkrani({
   ilerlemeler,
   alan,
   setAlan,
+  sinif,
   onHaritayaGit,
 }: {
   /**
@@ -151,6 +154,8 @@ export function KonuTakibiEkrani({
   alan: PuanTuru | null
   /** Alan seçilmemişse AYT sekmesinde soruluyor; cevap ayarlara yazılıyor. */
   setAlan: (alan: PuanTuru) => void
+  /** Ayarlardaki `buYilSinif` (mezun 13) — sınav tarihi ve hızlı başlangıç buna bakıyor. */
+  sinif: number
   onHaritayaGit: (konum: HaritaKonumu) => void
 }) {
   const [oturum, setOturum] = useState<YksOturum>(() => (oturumOku(OTURUM_ANAHTARI) === 'ayt' ? 'ayt' : 'tyt'))
@@ -179,6 +184,8 @@ export function KonuTakibiEkrani({
   }, [tytDersleri, aytDersleri, takip, ilerlemeler])
 
   const toplam = toplamOzet(dersler.map((d) => ozetler.get(d.id)!))
+  /** Sekmenin kendi sınavına göre tempo: TYT cumartesiye, AYT/YDT pazara. */
+  const tempo = tempoHesapla(toplam.toplam - toplam.biten, oturumKalanGun(bugun(), sinif, gorunenOturum))
   const devam = useMemo(
     () => devamKonusu([...tytDersleri, ...aytDersleri], takip, ilerlemeler),
     [tytDersleri, aytDersleri, takip, ilerlemeler],
@@ -257,6 +264,12 @@ export function KonuTakibiEkrani({
         <>
           <Kart className="py-3.5">
             <OzetCubugu ozet={toplam} r={MARKA_RENGI} />
+            {tempo && (
+              <p className="mt-1.5 text-[12.5px] font-bold text-muted-foreground">
+                Kalan <span className="rakam text-foreground">{tempo.kalanKonu}</span> konu · günde ~
+                <span className="rakam text-foreground">{tempo.gunluk}</span> konu ile sınava yetişir
+              </p>
+            )}
           </Kart>
 
           {gorunenOturum === 'ayt' && (
