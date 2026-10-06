@@ -1545,13 +1545,18 @@ oynatılıyor: genişlik her karede yeniden yerleşim demek ve rekor çizgisi
 
 ## Çarpı önce soruyor
 
-Turun, destenin ya da yoklamanın ortasında çarpıya basmak doğrudan çıkmıyor,
-`Onay` penceresi açılıyor: oyun turu (`OyunKabugu`, tur sürerken), konu
-destesi (ilk ekrandan sonra), yoklama (en az bir cevaptan sonra) ve
-Pomodoro'nun "Turu bitir"i (başlamış turda). Çarpı yanlışlıkla
-dokunuluyordu ve arkasındaki iş geri gelmiyordu. Kaybedilecek bir şey
-yokken (başlamamış tur, ilk kart) sormuyor. Geri tuşu ve kenardan kaydırma
-sormuyor — orada niyet belli, Pomodoro'nun geri oku da yalnızca duraklatıyor.
+**Uygulamadaki her ✕ kapatma düğmesi önce sorar** — kullanıcı istedi, kaybedilecek
+bir şey olmasa da. Yeni bir ✕ eklerken `useKapatmaOnayi` (`components/ui.tsx`)
+kullan: `sor(kapat)` pencereyi açar, "Çık" denince eski kapanma yolu aynen
+çalışır; `pencere`yi bileşende çiz (body'ye portal, z-[100]). Metin bağlama
+göre; iş kaybolacaksa bunu söyler. Oyun turu, konu destesi, yoklama ve
+Pomodoro "Turu bitir" kendi `Onay`larını kullanıyor; kaybedilecek bir şey
+yokken yalnız metinleri değişiyor.
+- Kapsam yalnız ✕ düğmeleri: geri oku, geri tuşu, kenardan kaydırma, aşağı
+  çekerek ve zemine basarak kapatma sormaz. Satır silen/alan temizleyen ✕'ler
+  (Kaydı sil, notu sil, Saati kaldır) kapatma değil, kapsam dışı.
+- Tanıtım turu sürerken (`useTanitimSuruyor`) sorulmaz: spot ışığı hedef
+  dışındaki dokunuşu yutuyor, onay penceresi açılsa tur kilitlenirdi.
 
 ## Yarıda bırakılan tur da bir tur
 

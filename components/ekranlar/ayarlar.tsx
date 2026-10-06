@@ -19,7 +19,7 @@ import {
   Volume2,
   X,
 } from 'lucide-react'
-import { Alan, Anahtar, Buton, Cip, Etiket, Not, Onay } from '@/components/ui'
+import { Alan, Anahtar, Buton, Cip, Etiket, Not, Onay, useKapatmaOnayi } from '@/components/ui'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { TaniPaneli, useTaniKapisi } from '@/components/tanitim/tani-paneli'
 import { SINIF_SECENEKLERI, egitimYili, mezunMu, sinifAdi } from '@/lib/hesap'
@@ -701,6 +701,7 @@ function YedekSecimi({
   onKapat: () => void
 }) {
   useGeriKatmani(acik, onKapat)
+  const kapatmaOnayi = useKapatmaOnayi({ aciklama: 'Yedek indirilmeden pencere kapanır.' })
 
   if (!acik) return null
 
@@ -711,6 +712,7 @@ function YedekSecimi({
       aria-modal="true"
       aria-labelledby="yedek-secimi-baslik"
     >
+      {kapatmaOnayi.pencere}
       <div className="alt-pencere-girisi w-full max-w-md rounded-2xl border border-border bg-card p-5">
         <div className="flex items-start gap-3">
           <div className="grid size-10 shrink-0 place-items-center rounded-[14px] bg-yzm-kart text-yzm-koyu">
@@ -736,7 +738,7 @@ function YedekSecimi({
           </div>
           <button
             type="button"
-            onClick={onKapat}
+            onClick={() => kapatmaOnayi.sor(onKapat)}
             aria-label="Kapat"
             className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted/70 text-muted-foreground active:bg-muted"
           >

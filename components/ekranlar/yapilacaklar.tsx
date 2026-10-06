@@ -35,7 +35,7 @@ import { bugun, cn, gunKaydir, tariheCevir, yeniId } from '@/lib/utils'
 import { AY_ADLARI, HaftaSeridi, type GunIsareti } from '@/components/takvim'
 import { useGeriKatmani } from '@/lib/geri'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
-import { BaslikSatiri, Buton, Onay } from '@/components/ui'
+import { BaslikSatiri, Buton, Onay, useKapatmaOnayi } from '@/components/ui'
 
 /**
  * Yapılacaklar — hafta şeridi + günün görev listesi.
@@ -580,6 +580,11 @@ function EklemeSayfasi({
 
   useGeriKatmani(true, onKapat)
   const kaydir = useAsagiKaydirKapat(onKapat)
+  const kapatmaOnayi = useKapatmaOnayi({
+    aciklama: duzenlenen
+      ? 'Yaptığın değişiklikler kaydedilmeden pencere kapanır.'
+      : 'Görev eklenmeden pencere kapanır.',
+  })
 
   const yazilan = metniKirp(metin)
   const ozelEksik = kategori === 'diger' && ozelKategoriKirp(ozelKategori) === undefined
@@ -605,6 +610,7 @@ function EklemeSayfasi({
       className="katman-zemin fixed inset-0 z-50 flex items-end justify-center bg-black/40"
       onClick={onKapat}
     >
+      {kapatmaOnayi.pencere}
       <div
         ref={kaydir}
         data-tanitim="gorev-formu"
@@ -624,7 +630,7 @@ function EklemeSayfasi({
           </p>
           <button
             type="button"
-            onClick={onKapat}
+            onClick={() => kapatmaOnayi.sor(onKapat)}
             aria-label="Kapat"
             className="grid size-9 shrink-0 place-items-center rounded-xl bg-muted/70 text-muted-foreground transition active:brightness-95"
           >

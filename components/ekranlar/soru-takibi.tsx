@@ -8,7 +8,7 @@ import { calismaSirasi, sadelestir } from '@/lib/dersler'
 import { useGeriKatmani } from '@/lib/geri'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { bugun, cn, gunKaydir, tariheCevir, tariheYaz, yediGunlukSerit } from '@/lib/utils'
-import { Alan, BaslikSatiri, Buton, Halka, Kart, Not } from '@/components/ui'
+import { Alan, BaslikSatiri, Buton, Halka, Kart, Not, useKapatmaOnayi } from '@/components/ui'
 import { DersSeridi } from '@/components/ders-seridi'
 import { AY_ADLARI, HaftaSeridi, Takvim, type GunIsareti } from '@/components/takvim'
 
@@ -585,11 +585,14 @@ function SoruEkleSayfasi({
     calismaSirasi(gecmisSoru.map((k) => ({ ders: k.ders, dakika: k.toplam }))),
   )
 
+  const kapatmaOnayi = useKapatmaOnayi({ aciklama: 'Girdiğin sayılar kaydedilmeden pencere kapanır.' })
+
   return (
     <div
       className="katman-zemin fixed inset-0 z-50 flex items-end justify-center bg-black/40"
       onClick={onKapat}
     >
+      {kapatmaOnayi.pencere}
       <div
         ref={kaydir}
         data-tanitim="soru-formu"
@@ -602,7 +605,7 @@ function SoruEkleSayfasi({
           <p className="ml-auto text-[12.5px] font-bold text-muted-foreground/70">Bugün</p>
           <button
             type="button"
-            onClick={onKapat}
+            onClick={() => kapatmaOnayi.sor(onKapat)}
             aria-label="Kapat"
             className="inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-xl bg-muted/70 text-muted-foreground active:bg-muted"
           >
