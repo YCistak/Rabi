@@ -45,9 +45,9 @@ import { HizliKontrolEkrani } from './hizli-kontrol'
  * onun yerine geçiyor.
  */
 
-/** Geri ve İleri düğmesinin ortak biçimi (turuncu, aynı boyut). */
+/** Geri ve İleri düğmesinin ortak biçimi; renk ve genişlik düğmede. */
 const DESTE_DUGMESI =
-  'grid h-[58px] w-16 shrink-0 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-[0_3px_0_rgba(0,0,0,0.14)] transition active:brightness-95 disabled:pointer-events-none disabled:opacity-40'
+  'grid h-[58px] place-items-center rounded-2xl shadow-[0_3px_0_rgba(0,0,0,0.14)] transition active:brightness-95 disabled:pointer-events-none disabled:opacity-40'
 
 export type DesteSonucu = {
   /** Okunan kart sayısı — gidilen en ileri kart. */
@@ -415,15 +415,15 @@ function KartEkrani({
           </div>
         </div>
 
-        {/* Geri ve İleri aynı boyutta ve biçimde, ikisi de turuncu (primary).
-            İlk kartta Geri pasif ve soluk — gidilecek yer yok. */}
-        <div className="mx-auto mt-4 flex w-full max-w-md justify-between gap-3">
+        {/* İleri asıl iş: sağda uzun, turuncu dolgu. Geri ikincil: solda küçük,
+            beyaz. İlk kartta Geri pasif ve soluk — gidilecek yer yok. */}
+        <div className="mx-auto mt-4 flex w-full max-w-md gap-3">
           <button
             type="button"
             onClick={onGeri}
             disabled={ilk}
             aria-label="Önceki kart"
-            className={DESTE_DUGMESI}
+            className={`${DESTE_DUGMESI} w-[58px] shrink-0 bg-card text-foreground`}
           >
             <ChevronLeft size={22} strokeWidth={2.6} aria-hidden />
           </button>
@@ -431,7 +431,7 @@ function KartEkrani({
             type="button"
             onClick={onIlerle}
             aria-label={son ? 'Desteyi bitir' : 'Sonraki kart'}
-            className={DESTE_DUGMESI}
+            className={`${DESTE_DUGMESI} flex-1 bg-primary-parlak text-primary-foreground`}
           >
             {son ? (
               <Check size={22} strokeWidth={2.6} aria-hidden />
