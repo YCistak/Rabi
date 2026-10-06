@@ -2626,10 +2626,20 @@ yeniden uygulanmamalı.
 
 - **"Sırada yoklama var" kartı yok** (kullanıcı kaldırttı): sıradakini
   "Yoklamaya başla" düğmesi söylüyor.
-- **Renk dersin rengi** (`dersVurgusu`, `SoruSahnesi.ders`; kullanıcı istedi).
-  Hareket hafif ve tek seferlik: ders renkli bant yükselir, içindeki çubuk
-  dolar, sayı kutuları sırayla gelir, Rabi süzülür (`ozet-bandi*`,
-  `ozet-sayi`, `kapanis-suzul`). Konfeti, damga, ses ekleme.
+- **Görünüş yoklama kapanışının dili, dersin renginde** (tasarım
+  `tasarim/konu-bitti-v8.html`; kullanıcı seçti). Renk `dersVurgusu`
+  (`SoruSahnesi.ders`); zemin dersin açık tonu üstünde kareli defter
+  (`ozet-zemin`, çizgi `--konu-<ders>-kenar` ayrı katmanda yarı saydam —
+  `color-mix` eski WebView'de yok). Yukarıdan: ders · tema ve konu adı, büyük
+  Rabi, "Konu bitti!", Kart / Süre / Soru kutuları, kart başlıkları, not.
+  Parçalar `kapanis-gel` ile bir kez gelir. Konfeti, damga, ses, dolan halka
+  ekleme (halka kullanıcı isteğiyle kalktı).
+- **Rabi kıpırdamaz ve kutlayan pozlardan biri** (kullanıcı): her açılışta
+  `OZET_POZLARI` (sevinen, zıplayan, kupalı) arasından rastgele, bir
+  öncekiyle aynı değil (`lib/konu/ozet-maskotu.ts`). Listeye ekrana uymayan
+  poz (el sallayan, kitaplı, düşünen, kahveli) koyma.
+- **Kart başlıkları kapalı gelir:** ilk iki kart görünür, kalanı "Devamını
+  gör" ile açılır (`ozet-liste`, kullanıcı istedi).
 - **Özet destenin ucundan gelince var, turuncu kitaptan girince yok**
   (`SoruSahnesi.ozetli`). Haritadan doğrudan soruya giren kullanıcı bir şey
   okumadı; "konu bitti" diyen bir özet ona yalan söylerdi. Oradan sahne ilk
