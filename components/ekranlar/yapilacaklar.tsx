@@ -33,10 +33,11 @@ import {
   type GorevKategorisi,
   type GorevRengi,
 } from '@/lib/yapilacaklar'
-import { bugun, cn, gunKaydir, tariheCevir, yediGunlukSerit, yeniId } from '@/lib/utils'
+import { bugun, cn, gunKaydir, tariheCevir, yeniId } from '@/lib/utils'
+import { AY_ADLARI, HaftaSeridi, type GunIsareti } from '@/components/takvim'
 import { useGeriKatmani } from '@/lib/geri'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
-import { BaslikSatiri, Buton, Kart, Onay } from '@/components/ui'
+import { BaslikSatiri, Buton, Onay } from '@/components/ui'
 
 /**
  * Yapılacaklar — hafta şeridi + günün üç dilimi.
@@ -51,23 +52,6 @@ import { BaslikSatiri, Buton, Kart, Onay } from '@/components/ui'
  * açtığı alt sayfada (`GorevEylemleri`). Satırda yalnızca tik ve yıldız
  * duruyor — neden, `GorevSatiri`nin başında.
  */
-
-const GUN_ADLARI = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz']
-
-const AY_ADLARI = [
-  'Ocak',
-  'Şubat',
-  'Mart',
-  'Nisan',
-  'Mayıs',
-  'Haziran',
-  'Temmuz',
-  'Ağustos',
-  'Eylül',
-  'Ekim',
-  'Kasım',
-  'Aralık',
-]
 
 /** Toast ekranda ne kadar duruyor. Okunacak tek cümle, uzatmak gerekmiyor. */
 const MESAJ_SURESI = 2400
@@ -105,20 +89,11 @@ export function YapilacaklarEkrani({
   */
   const gecmis = secili < bugunIso
 
-  // Her gün bir gün kayan şerit; bugün daima ortada kalır.
-  const hafta = useMemo(() => {
-    return yediGunlukSerit(bugunIso).map((iso) => {
-      const tarih = tariheCevir(iso)
-      return {
-        iso,
-        ad: GUN_ADLARI[(tarih.getDay() + 6) % 7],
-        sayi: tarih.getDate(),
-        etiket: `${tarih.getDate()} ${AY_ADLARI[tarih.getMonth()]}`,
-        doluMu: gorevler.some((g) => g.gun === iso),
-        gecmisMi: iso < bugunIso,
-      }
-    })
-  }, [gorevler, bugunIso])
+  const isaretler = useMemo(() => {
+    const harita = new Map<string, GunIsareti>()
+    for (const g of gorevler) harita.set(g.gun, { nokta: 'is' })
+    return harita
+  }, [gorevler])
 
   const seciliTarih = tariheCevir(secili)
   const gunEtiketi =
@@ -176,70 +151,15 @@ export function YapilacaklarEkrani({
     <div className="tablet-sutunlar">
       <BaslikSatiri arac="notlar" baslik="Yapılacaklar" />
 
-      {/* Yedi günlük şerit her zaman bugünü ortalar. */}
-      <Kart className="rounded-[20px] px-2 pb-2 pt-2.5">
-        <p className="mb-1.5 border-b border-dashed border-primary/25 px-1.5 pb-2 font-display text-[15px] font-extrabold tracking-tight">
-          {AY_ADLARI[seciliTarih.getMonth()]} {seciliTarih.getFullYear()}
-        </p>
-        <div className="grid grid-cols-7 gap-1">
-          {hafta.map((g) => {
-            const seciliMi = g.iso === secili
-            return (
-              <button
-                key={g.iso}
-                type="button"
-                onClick={() => setSecili(g.iso)}
-                aria-pressed={seciliMi}
-                aria-label={g.etiket}
-                className={cn(
-                  'flex h-[68px] flex-col items-center justify-center gap-1.5 rounded-[14px] transition-colors',
-                  seciliMi ? 'bg-primary-parlak' : 'active:bg-muted/70',
-                )}
-              >
-                <span
-                  className={cn(
-                    'text-[11px] font-bold',
-                    seciliMi
-                      ? 'text-white'
-                      : g.gecmisMi
-                        ? 'text-muted-foreground/60'
-                        : 'text-muted-foreground',
-                  )}
-                >
-                  {g.ad}
-                </span>
-                <span
-                  className={cn(
-                    'rakam text-[17px] font-extrabold leading-none',
-                    seciliMi
-                      ? 'text-white'
-                      : g.gecmisMi
-                        ? 'text-muted-foreground/60'
-                        : 'text-foreground',
-                  )}
-                >
-                  {g.sayi}
-                </span>
-                {/* Nokta "o günde iş var" diyor; geçmiş günde soluk, çünkü
-                    oradaki iş artık yapılacak bir şey değil. */}
-                <span
-                  aria-hidden
-                  className={cn(
-                    'size-[5px] rounded-full',
-                    !g.doluMu
-                      ? 'bg-transparent'
-                      : seciliMi
-                        ? 'bg-white'
-                        : g.gecmisMi
-                          ? 'bg-muted-foreground/35'
-                          : 'bg-primary-parlak',
-                  )}
-                />
-              </button>
-            )
-          })}
-        </div>
-      </Kart>
+      {/* Yedi günlük şerit her zaman bugünü ortalar; nokta "o günde iş var". */}
+      <HaftaSeridi
+        secili={secili}
+        onSec={setSecili}
+        bugunIso={bugunIso}
+        isaretler={isaretler}
+        // Geçmiş gün salt okunur: oradaki iş artık yapılacak bir şey değil.
+        solukMu={(iso) => iso < bugunIso}
+      />
 
       {/* Üç dilim için sade bir yüzey; görev kartları öne çıkar. */}
       <div data-tanitim="gorev-dilimleri" className="mx-1 mt-3.5 flex flex-col gap-4 rounded-[20px] border border-border bg-card/60 px-2.5 pb-3.5 pt-4">
