@@ -323,12 +323,14 @@ olduğunu denetliyor: listeye eklenip betikte üretilmeyen poz test düşürür.
 
 ### Açılış bir ders makarası
 
-Ekran 2,26 saniye sürüyor (`ACILIS_SURESI`) ve tasarımı "Ders makarası"
+Ekran 2,08 saniye sürüyor (`ACILIS_SURESI`) ve tasarımı "Ders makarası"
 (`tasarim/acilis-arsiv.html` → 3. tur, Yazı C · 2): dört makara harf yerine
 derslerin simgelerini çeviriyor (√x, 1453, DNA, H₂O, MÖ, Ω, Fe…), her simge
 kendi dersinin `--konu-<ders>-koyu` renginde, ve soldan sağa R·A·B·I'ya
-kilitleniyor. Kelime bir an duruyor, harfler bir tık daha dönüp çıkıyor ve
-zemin dört şerit hâlinde yukarı kalkarak ana sayfayı açıyor. Zaman çizgisi
+kilitleniyor. RABI ortada ~600 ms duruyor, sonra katman bütün olarak
+opaklıkla sönüp (400 ms, ease-in-out) ana sayfayı gösteriyor. Zemin dört
+şerit hâlinde yukarı kalkıyordu; kullanıcı parça parça kalkış yerine solma
+istedi — geri getirmeden önce sor. Zaman çizgisi
 `globals.css`teki açılış bloğunun başında yazılı; süreyi değiştirirsen
 oradaki gecikmeleri birlikte değiştir.
 
@@ -346,9 +348,10 @@ eşit genişlikteydi ve dar I geniş bir kutunun ortasında kalınca kelime
 "RAB I" diye okunuyordu. Simgeler harften geniş olabildiği için kırpma
 pencerede değil iki yana taşan kuyuda (`acilis-kuyu`).
 
-**Kelime şeritlerden önce sönüyor.** Kuyuların üst ve alt kenarındaki
-zemin renkli gölgeler, şeritler kalkarken ana sayfanın üstünde iz
-bırakırdı.
+**Katman tek parça sönüyor.** Zemin, kelime ve kuyuların zemin renkli
+gölgeleri aynı opaklıkla gidiyor; parçalar ayrı ayrı gitseydi gölgeler ana
+sayfanın üstünde iz bırakırdı. Katmanın zemini `ZEMIN`, yani sönüş renk
+sıçraması değil.
 
 **Tavşan uçmuyor.** 2a'da tavşan ana sayfadaki maskotun tam üstüne uçarak
 bitiyordu; 2d ile kalktı ve uçuşla birlikte varış noktasının ölçümü
@@ -358,10 +361,10 @@ tavşan yalnızca son makaranın bir simgesi. Uçuşu geri getirmek istersen
 tarihçe `git log -- components/acilis.tsx`; oradaki ana ders hâlâ geçerli:
 varış noktası **ölçülür**, yazılmaz.
 
-Katmanı kaldıran şey son şeridin kendi `animationend`i
-(`acilis-serit-kalk`, adla süzülüyor); zamanlayıcı yalnızca emniyet kemeri.
-Katman sonuna kadar dokunuşları yutuyor: şeritler kalkarken altındaki
-düğmeler görünür ama basılabilir olmamalı.
+Katmanı kaldıran şey katmanın kendi `animationend`i (`acilis-katman-son`,
+hedef ve adla süzülüyor; makaraların olayları da kabarıyor); zamanlayıcı
+yalnızca emniyet kemeri. Katman sonuna kadar dokunuşları yutuyor: sönerken
+altındaki düğmeler görünür ama basılabilir olmamalı.
 
 ### Android'de uçtan uca ekran bütün sürümlerde açık
 
