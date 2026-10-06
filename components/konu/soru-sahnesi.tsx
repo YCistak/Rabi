@@ -580,7 +580,7 @@ function Kapanis({
           {dersAdi} · {temaAdi}
         </p>
         <h2 className="mt-0.5 font-display text-[16px] leading-tight font-extrabold tracking-tight text-balance">
-          {konuAdi} · yoklama bitti
+          {konuAdi}
         </h2>
       </header>
 
