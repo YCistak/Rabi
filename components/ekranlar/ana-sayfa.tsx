@@ -76,6 +76,8 @@ export function AnaSayfa({
   onDahaGit,
   onOyunlaraGit,
   pomodoro,
+  konuBitti,
+  gorevlerBitti,
 }: {
   ayarlar: Ayarlar
   gunlukKayitlar: GunlukKayit[]
@@ -103,6 +105,10 @@ export function AnaSayfa({
    * tavşan tur sürerken laptopta çalışıyor (`lib/ana-maskot.ts`).
    */
   pomodoro: PomodoroHali
+  /** Bugün bir konu anlatımı bitirildi mi — başlıktaki tavşan için. */
+  konuBitti: boolean
+  /** Bugünün görevleri var ve hepsi işaretli mi — başlıktaki tavşan için. */
+  gorevlerBitti: boolean
   /** Bugün ayın 1'i ama kapanan ay yedi etkin gün eşiğine ulaşmadı mı. */
   ozetYetersiz: boolean
   /** Bir sonraki özetin açılacağı gün, 'YYYY-AA-GG' — pasif kartın satırı. */
@@ -183,6 +189,11 @@ export function AnaSayfa({
     kalanGun,
     pomodoro,
     devamsizlikAsildi: devamsizlikDurumu.asildi,
+    ozetHazir,
+    sonDenemeTarihi,
+    konuBitti,
+    gorevlerBitti,
+    bekleyenYanlis,
   })
 
   const gununCumlesi = gununHali({

@@ -99,6 +99,7 @@ import {
   sonrakiOzetGunu,
   type AylikOzetArsivi,
 } from '@/lib/ozet'
+import { bugunKonuBittiMi, gorevlerBittiMi } from '@/lib/ana-maskot'
 import { RozetBildirimi } from '@/components/rozet-bildirimi'
 import { DENEME_VAZGEC, HARITA_TUR_ADIMLARI, tanitimKonumu } from '@/lib/tanitim'
 import { demoDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi, turIstatistikDenemeleri } from '@/lib/tanitim-veri'
@@ -1215,6 +1216,8 @@ function RabiUygulamasi() {
                       : 'calisma'
                     : null
                 }
+                konuBitti={bugunKonuBittiMi(konuIlerleme, bugunIso)}
+                gorevlerBitti={gorevlerBittiMi(gorevler, bugunIso)}
                 onDahaGit={() => setSekme('daha')}
                 onOyunlaraGit={(ders) => {
                   // Ders kutucuğu doğrudan o dersin ızgarasını açıyor; sekmenin
