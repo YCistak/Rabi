@@ -14,26 +14,9 @@ import {
 } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz, yediGunlukSerit, yeniId } from '@/lib/utils'
 import { Alan, BaslikSatiri, Buton, Kart, Not, Onay, SecimSatiri } from '@/components/ui'
-import { Takvim, type GunIsareti } from '@/components/takvim'
+import { AY_ADLARI, HaftaSeridi, Takvim, type GunIsareti } from '@/components/takvim'
 import { useGeriKatmani } from '@/lib/geri'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
-
-const GUN_ADLARI = ['Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct', 'Pz']
-
-const AY_ADLARI = [
-  'Ocak',
-  'Şubat',
-  'Mart',
-  'Nisan',
-  'Mayıs',
-  'Haziran',
-  'Temmuz',
-  'Ağustos',
-  'Eylül',
-  'Ekim',
-  'Kasım',
-  'Aralık',
-]
 
 /** Notun tavanı: liste satırında tek satıra sığması gereken bir hatırlatma. */
 const NOT_SINIRI = 32
@@ -88,30 +71,17 @@ export function DevamsizlikEkrani({
   const isaretler = useMemo(() => {
     const harita = new Map<string, GunIsareti>()
     for (const kayit of kayitlar) {
-      harita.set(kayit.tarih, { doluluk: 0, nokta: kayit.tur })
+      harita.set(kayit.tarih, { nokta: kayit.tur })
     }
     return harita
   }, [kayitlar])
 
-  // Bugün ortada kalır; ay takvimi eski kayıtları ayrıca açar.
-  const hafta = useMemo(() => {
-    return yediGunlukSerit(bugunIso).map((iso) => {
-      const tarih = tariheCevir(iso)
-      return {
-        iso,
-        ad: GUN_ADLARI[(tarih.getDay() + 6) % 7],
-        sayi: tarih.getDate(),
-        etiket: `${tarih.getDate()} ${AY_ADLARI[tarih.getMonth()]}`,
-        kayit: kayitlar.find((k) => k.tarih === iso),
-      }
-    })
-  }, [bugunIso, kayitlar])
-
+  // Şeritteki yedi günün devamsızlığı; bugün ortada kalır, ay takvimi eskisini açar.
   const haftaToplami = useMemo(() => {
-    const haftaninGunleri = new Set(hafta.map((g) => g.iso))
+    const haftaninGunleri = new Set(yediGunlukSerit(bugunIso))
     const h = devamsizlikOzeti(kayitlar.filter((k) => haftaninGunleri.has(k.tarih)))
     return h.ozursuz + h.ozurlu
-  }, [hafta, kayitlar])
+  }, [bugunIso, kayitlar])
 
   /**
    * Gelecek güne devamsızlık girilemez.
@@ -193,89 +163,41 @@ export function DevamsizlikEkrani({
           </div>
         </Kart>
 
-        {/* Hafta şeridi; takvim altında katlanıyor. */}
-        <Kart className="rounded-3xl px-3 pb-3 pt-3.5">
-          <div className="flex items-baseline gap-2 px-1 pb-2.5">
-            <p className="font-display text-[15px] font-extrabold tracking-tight">7 günlük görünüm</p>
-            <p className="rakam text-[12.5px] font-bold text-muted-foreground/70">
-              {haftaToplami === 0 ? 'devamsızlık yok' : `${gunYaz(haftaToplami)} gün`}
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                setTakvimAcik((o) => !o)
-                setAy(tariheCevir(secili))
-              }}
-              aria-expanded={takvimAcik}
-              aria-label={takvimAcik ? 'Takvimi kapat' : 'Takvimi aç'}
-              className={cn(
-                'ml-auto inline-flex h-8 w-8 items-center justify-center self-center rounded-[11px] transition-colors',
-                takvimAcik
-                  ? 'bg-primary-soft text-primary'
-                  : 'bg-muted/60 text-muted-foreground active:bg-muted',
-              )}
-            >
-              <CalendarDays size={17} aria-hidden />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-7 gap-1">
-            {hafta.map((g) => {
-              const kapali = g.iso > bugunIso
-              const seciliMi = g.iso === secili
-              return (
-                <button
-                  key={g.iso}
-                  type="button"
-                  onClick={() => gunSec(g.iso)}
-                  disabled={kapali}
-                  aria-pressed={seciliMi}
-                  aria-label={`${g.etiket}${kapali ? ' — henüz gelmedi' : ''}`}
-                  className={cn(
-                    'relative flex flex-col items-center gap-1.5 rounded-2xl pb-3.5 pt-2 transition-colors',
-                    seciliMi && 'bg-primary-soft',
-                  )}
-                >
-                  <span
-                    className={cn(
-                      'text-[10px] font-bold tracking-wide',
-                      seciliMi
-                        ? 'text-primary'
-                        : kapali
-                          ? 'text-muted-foreground/45'
-                          : 'text-muted-foreground/80',
-                    )}
-                  >
-                    {g.ad}
-                  </span>
-                  <span
-                    className={cn(
-                      'rakam text-[15px] font-extrabold leading-none',
-                      seciliMi
-                        ? 'text-primary'
-                        : kapali
-                          ? 'text-muted-foreground/45'
-                          : 'text-foreground',
-                    )}
-                  >
-                    {g.sayi}
-                  </span>
-                  {g.kayit && (
-                    <span
-                      aria-hidden
-                      className={cn(
-                        'absolute bottom-1.5 size-[5px] rounded-full',
-                        g.kayit.tur === 'ozursuz' ? 'bg-danger' : 'bg-warning',
-                      )}
-                    />
-                  )}
-                </button>
-              )
-            })}
-          </div>
-
+        {/* Hafta şeridi (ortak takvim); ay takvimi altında katlanıyor. Nokta
+            devamsızlığın türü, yarından sonrası kapalı. */}
+        <HaftaSeridi
+          secili={secili}
+          onSec={gunSec}
+          bugunIso={bugunIso}
+          isaretler={isaretler}
+          enGecIso={bugunIso}
+          ek={
+            <>
+              <p className="rakam text-[12.5px] font-bold text-muted-foreground/70">
+                {haftaToplami === 0 ? 'devamsızlık yok' : `${gunYaz(haftaToplami)} gün`}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setTakvimAcik((o) => !o)
+                  setAy(tariheCevir(secili))
+                }}
+                aria-expanded={takvimAcik}
+                aria-label={takvimAcik ? 'Takvimi kapat' : 'Takvimi aç'}
+                className={cn(
+                  'ml-auto inline-flex h-8 w-8 items-center justify-center rounded-[11px] transition-colors',
+                  takvimAcik
+                    ? 'bg-primary-soft text-primary'
+                    : 'bg-muted/60 text-muted-foreground active:bg-muted',
+                )}
+              >
+                <CalendarDays size={17} aria-hidden />
+              </button>
+            </>
+          }
+        >
           {takvimAcik && (
-            <div className="acilir-giris mt-3.5 border-t border-border/70 pt-3">
+            <div className="acilir-giris mt-2 border-t border-dashed border-primary/25 px-1 pt-3">
               <Takvim
                 ay={ay}
                 onAyDegis={setAy}
@@ -285,7 +207,7 @@ export function DevamsizlikEkrani({
                 bugunIso={bugunIso}
                 enGecIso={bugunIso}
               />
-              <div className="mt-3 flex items-center justify-center gap-4 text-xs text-muted-foreground">
+              <div className="mt-3 flex items-center justify-center gap-4 pb-1 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-danger" aria-hidden />
                   özürsüz
@@ -297,7 +219,7 @@ export function DevamsizlikEkrani({
               </div>
             </div>
           )}
-        </Kart>
+        </HaftaSeridi>
 
         {gelecekGun ? (
           <Not tur="uyari" className="rounded-2xl text-center text-[13px] font-extrabold">

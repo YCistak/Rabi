@@ -1057,6 +1057,20 @@ günler geçmişi incelemek için seçilebilir fakat salt okunur kalır; gelecek
 günler seçilemez. Önceki gün `gunKaydir(bugunIso, -1)` ile yerel takvimden
 hesaplanır; böylece ay, yıl ve artık yıl sınırlarında da aynı kural geçerlidir.
 
+## Takvim tek bileşen
+
+Gün seçen her takvim `components/takvim.tsx`ten: yedi günlük `HaftaSeridi`
+(bugün ortada, görünüş Yapılacaklar'ınki) ve açılır ay `Takvim`i; ikisi aynı
+`GunHucresi`ni çiziyor. Ekrana kendi takvimini yazma — kurallar prop'la gelir:
+`enGecIso` (sonrası kapalı), `solukMu` (salt okunur günler), `isaretler`
+(`doluluk` zemini, `nokta`: görev / devamsızlık türü). Ana sayfadaki hedef
+hapları gün seçmediği için takvim değil, ayrı kalır.
+
+Pazartesi hücresinin üstünde ince bir çizgi hafta başını gösterir
+(`haftaBasiIsaretiMi`, `lib/utils.ts`); kayan şeritte haftanın nerede
+başladığı başka türlü okunmuyordu. Bugün pazartesiyse o gün işaretsiz —
+"bugün" zaten belli. Çizgi üstte, noktalar altta: ikisi karışmasın.
+
 ## Aylık özet ayın 1'inde, yalnızca o gün
 
 Özet (`components/ekranlar/aylik-ozet.tsx`, hesabı `lib/ozet.ts`, afişi
