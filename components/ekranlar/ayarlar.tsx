@@ -765,32 +765,12 @@ function YedekSecimi({
 type SatirRengi = 'calisma' | 'hatirlatma' | 'ses' | 'yasal' | 'destek' | 'veri'
 
 const IKON_RENGI: Record<SatirRengi, string> = {
-  calisma: 'bg-white text-ayar-calisma-koyu',
-  hatirlatma: 'bg-white text-ayar-hatirlatma-koyu',
-  ses: 'bg-white text-ayar-ses-koyu',
-  yasal: 'bg-white text-ayar-yasal-koyu',
-  destek: 'bg-white text-ayar-destek-koyu',
-  veri: 'bg-white text-ayar-veri-koyu',
-}
-
-/** Bölüm kartının zemini: kategorinin açık tonu; ikincil yazılar bunun üstünde >= 4.5:1. */
-const KART_RENGI: Record<SatirRengi, string> = {
-  calisma: 'bg-ayar-calisma',
-  hatirlatma: 'bg-ayar-hatirlatma',
-  ses: 'bg-ayar-ses',
-  yasal: 'bg-ayar-yasal',
-  destek: 'bg-ayar-destek',
-  veri: 'bg-ayar-veri',
-}
-
-/** Sağdaki seçili değer: ana renk bazı pastellerde 4.5'in altında kaldığı için bölüm koyusu. */
-const DEGER_RENGI: Record<SatirRengi, string> = {
-  calisma: 'text-ayar-calisma-koyu',
-  hatirlatma: 'text-ayar-hatirlatma-koyu',
-  ses: 'text-ayar-ses-koyu',
-  yasal: 'text-ayar-yasal-koyu',
-  destek: 'text-ayar-destek-koyu',
-  veri: 'text-ayar-veri-koyu',
+  calisma: 'bg-ayar-calisma text-ayar-calisma-koyu',
+  hatirlatma: 'bg-ayar-hatirlatma text-ayar-hatirlatma-koyu',
+  ses: 'bg-ayar-ses text-ayar-ses-koyu',
+  yasal: 'bg-ayar-yasal text-ayar-yasal-koyu',
+  destek: 'bg-ayar-destek text-ayar-destek-koyu',
+  veri: 'bg-ayar-veri text-ayar-veri-koyu',
 }
 
 const BolumTonu = createContext<SatirRengi>('calisma')
@@ -811,19 +791,17 @@ function Bolum({
 }) {
   return (
     <BolumTonu.Provider value={ton}>
-      <section>
-        <h2 className="mb-2 ml-1 text-[11.5px] font-extrabold uppercase tracking-[0.09em] text-muted-foreground">
-          {baslik}
-        </h2>
-        {/* Ayracı `Satir` kendi çiziyor (bkz. `AYRAC`). Burada bir zamanlar
-            "ilk çocuk dışında her çocuğa çizgi" kuralı vardı; `GenisAlan` da bir
-            çocuk olduğu için çizgi ayarı bir sonrakinden değil **kendi
-            seçeneklerinden** ayırıyordu ve "Mini oyun müziği" anahtarı ile onun
-            Arcade/Lo-fi seçimi iki ayrı ayar gibi duruyordu. */}
-        <div className={cn('golge-kart overflow-hidden rounded-[22px]', KART_RENGI[ton])}>
-          {children}
-        </div>
-      </section>
+    <section>
+      <h2 className="mb-2 ml-1 text-[11.5px] font-extrabold uppercase tracking-[0.09em] text-muted-foreground">
+        {baslik}
+      </h2>
+      {/* Ayracı `Satir` kendi çiziyor (bkz. `AYRAC`). Burada bir zamanlar
+          "ilk çocuk dışında her çocuğa çizgi" kuralı vardı; `GenisAlan` da bir
+          çocuk olduğu için çizgi ayarı bir sonrakinden değil **kendi
+          seçeneklerinden** ayırıyordu ve "Mini oyun müziği" anahtarı ile onun
+          Arcade/Lo-fi seçimi iki ayrı ayar gibi duruyordu. */}
+      <div className="golge-kart overflow-hidden rounded-[22px] bg-card">{children}</div>
+    </section>
     </BolumTonu.Provider>
   )
 }
@@ -841,7 +819,7 @@ function AcilirOk({ acik }: { acik: boolean }) {
 }
 
 /** Satırın üstündeki ayraç; bölümün ilk satırında çizilmiyor. */
-const AYRAC = 'border-t border-black/10 first:border-t-0'
+const AYRAC = 'border-t border-border first:border-t-0'
 
 /**
  * Bir ayar satırı: ikon · başlık · sağda değer ya da denetim.
@@ -891,7 +869,7 @@ function Satir({
 
       {/* Sağdaki değer seçili olanı söylüyor: çiplere bakmadan okunuyor. */}
       {deger !== undefined && (
-        <span className={cn('rakam shrink-0 text-[13px] font-extrabold', DEGER_RENGI[renk])}>
+        <span className="rakam shrink-0 text-[13px] font-extrabold text-primary">
           {deger}
         </span>
       )}
@@ -911,7 +889,7 @@ function Satir({
       aria-expanded={acikMi}
       className={cn(
         AYRAC,
-        'flex w-full items-center gap-3 px-3.5 py-2.5 text-left transition active:brightness-95',
+        'flex w-full items-center gap-3 px-3.5 py-2.5 text-left transition active:bg-muted',
         'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring',
       )}
     >
