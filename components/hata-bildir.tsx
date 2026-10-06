@@ -164,6 +164,7 @@ function BildirimSayfasi({
   )
   const [not, setNot] = useState(kayit?.not ?? '')
   const [bitti, setBitti] = useState(false)
+  // Yalnız yazılmış not kaybolacaksa sorar; sebep seçimi bir dokunuşla geri gelir.
   const kapatmaOnayi = useKapatmaOnayi({ aciklama: 'Bildirim gönderilmeden pencere kapanır.' })
 
   const notEksik = sebep === 'baska' && notuKirp(not) === undefined
@@ -208,7 +209,9 @@ function BildirimSayfasi({
               </p>
               <button
                 type="button"
-                onClick={() => kapatmaOnayi.sor(onKapat)}
+                onClick={() =>
+                  !bitti && not !== (kayit?.not ?? '') ? kapatmaOnayi.sor(onKapat) : onKapat()
+                }
                 aria-label="Kapat"
                 className="ml-auto grid size-9 shrink-0 place-items-center rounded-xl bg-muted/70 text-muted-foreground transition active:brightness-95"
               >

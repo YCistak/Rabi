@@ -70,7 +70,7 @@ import {
 import { haritaTemasi, type CizimAdi, type HaritaTemasi } from '@/lib/konu/harita-temasi'
 import { bugun, cn } from '@/lib/utils'
 import { useGeriKatmani } from '@/lib/geri'
-import { Kart, Onay, useKapatmaOnayi } from '@/components/ui'
+import { Kart, Onay } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartDestesi, type DesteSonucu } from '@/components/konu/kart-destesi'
 import type { OkumaSeansi } from '@/lib/konu/okuma-suresi'
@@ -1328,7 +1328,6 @@ function KonuKarti({
   onBasla: () => void
 }) {
   useGeriKatmani(true, onKapat)
-  const kapatmaOnayi = useKapatmaOnayi({ aciklama: 'Konu kartı kapanır, haritaya dönersin.' })
 
   const { konu, tur } = basamak
   const soru = tur === 'soru'
@@ -1403,7 +1402,6 @@ function KonuKarti({
 
   return (
     <div className="katman-zemin fixed inset-0 z-50 grid place-items-center bg-black/35 px-6">
-      {kapatmaOnayi.pencere}
       {/* Zemine basmak kapatıyor: kartın dışına dokunmak haritaya dönmek demek. */}
       <button
         type="button"
@@ -1426,7 +1424,7 @@ function KonuKarti({
         />
         <button
           type="button"
-          onClick={() => kapatmaOnayi.sor(onKapat)}
+          onClick={onKapat}
           aria-label="Kapat"
           className="absolute top-3 right-3 grid size-8 place-items-center rounded-full bg-muted text-muted-foreground"
         >

@@ -1564,13 +1564,15 @@ oynatılıyor: genişlik her karede yeniden yerleşim demek ve rekor çizgisi
 
 ## Çarpı önce soruyor
 
-**Uygulamadaki her ✕ kapatma düğmesi önce sorar** — kullanıcı istedi, kaybedilecek
-bir şey olmasa da. Yeni bir ✕ eklerken `useKapatmaOnayi` (`components/ui.tsx`)
-kullan: `sor(kapat)` pencereyi açar, "Çık" denince eski kapanma yolu aynen
-çalışır; `pencere`yi bileşende çiz (body'ye portal, z-[100]). Metin bağlama
-göre; iş kaybolacaksa bunu söyler. Oyun turu, konu destesi, yoklama ve
-Pomodoro "Turu bitir" kendi `Onay`larını kullanıyor; kaybedilecek bir şey
-yokken yalnız metinleri değişiyor.
+**✕ yalnızca hemen geri gelmeyecek bir şey kaybolacaksa sorar** — kullanıcı
+istedi; kaybedilecek bir şey yoksa ✕ sormadan kapatır. Silme her zaman sorar.
+Soranlar: oyun turu (tur sürerken), konu destesi (ilk ekrandan sonra), yoklama
+(ilk cevaptan sonra), Pomodoro "Turu bitir" (başlamış turda) — kendi `Onay`ları;
+Yeni/Düzenlenen Deneme, Soru Takibi, Yapılacaklar ve Devamsızlık formları, hata
+bildirimi, deneme okutma — `useKapatmaOnayi` (`components/ui.tsx`) ile, yalnız
+girilmiş/değişmiş bir şey varken (`girildi ? sor(kapat) : kapat()`). Bilgi
+pencereleri (konu kartı, istatistik, aylık özet, Ayarlar yedeği, yanlış soru
+ayrıntısı, güncelleme şeridi) sormaz.
 - Kapsam yalnız ✕ düğmeleri: geri oku, geri tuşu, kenardan kaydırma, aşağı
   çekerek ve zemine basarak kapatma sormaz. Satır silen/alan temizleyen ✕'ler
   (Kaydı sil, notu sil, Saati kaldır) kapatma değil, kapsam dışı.

@@ -392,7 +392,8 @@ function DevamsizlikEkleSayfasi({
   const [tur, setTur] = useState<DevamsizlikTuru>('ozursuz')
   const [yarimGun, setYarimGun] = useState(false)
   const [not, setNot] = useState('')
-  const kapatmaOnayi = useKapatmaOnayi({ aciklama: 'Devamsızlık kaydedilmeden pencere kapanır.' })
+  // Yalnız yazılmış not kaybolacaksa sorar; tür seçimi bir dokunuşla geri gelir.
+  const kapatmaOnayi = useKapatmaOnayi({ aciklama: 'Yazdığın not kaydedilmeden pencere kapanır.' })
 
   return (
     <div
@@ -413,7 +414,7 @@ function DevamsizlikEkleSayfasi({
           </p>
           <button
             type="button"
-            onClick={() => kapatmaOnayi.sor(onKapat)}
+            onClick={() => (not.trim() ? kapatmaOnayi.sor(onKapat) : onKapat())}
             aria-label="Kapat"
             className="inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-xl bg-muted/70 text-muted-foreground active:bg-muted"
           >

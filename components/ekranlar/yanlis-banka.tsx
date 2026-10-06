@@ -42,7 +42,7 @@ import {
 import { useGeriKatmani } from '@/lib/geri'
 import { tarihYaz } from '@/lib/hesap'
 import { bugun, cn } from '@/lib/utils'
-import { BaslikSatiri, BosDurum, Buton, Not, Onay, useKapatmaOnayi } from '@/components/ui'
+import { BaslikSatiri, BosDurum, Buton, Not, Onay } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 
 export function YanlisBankaEkrani({
@@ -508,13 +508,11 @@ function Goruntuleyici({
   // Geri tuşu çizimi kaydedip çizimden çıkıyor, atmıyor: yanlışlıkla
   // basılan geri, çizilen her şeyi sessizce silerdi. Atmak için "Vazgeç" var.
   useGeriKatmani(cizim.ciziyor, () => void cizim.kaydet())
-  const kapatmaOnayi = useKapatmaOnayi({ aciklama: 'Soru kapanır, bankaya dönersin.' })
 
   return (
     // Tam ekran katman: uygulamanın geri kalanı `max-w-md` olduğu için iç sütun
     // da öyle tutuluyor, yoksa geniş ekranda düğmeler kenarlara savruluyor.
     <div className="tam-katman-girisi guvenli-ust guvenli-alt fixed inset-0 z-50 flex flex-col items-center bg-black">
-      {kapatmaOnayi.pencere}
       <div className="flex w-full max-w-md items-center justify-between px-4 py-3 text-white">
         <div className="min-w-0">
           {tekrar && (
@@ -533,7 +531,7 @@ function Goruntuleyici({
         {!cizim.ciziyor && (
           <button
             type="button"
-            onClick={() => kapatmaOnayi.sor(onKapat)}
+            onClick={onKapat}
             aria-label="Kapat"
             className="-mr-2 rounded-full p-2 text-white/80 active:bg-white/10"
           >
