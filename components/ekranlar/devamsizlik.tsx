@@ -209,7 +209,8 @@ export function DevamsizlikEkrani({
               aria-expanded={takvimAcik}
               aria-label={takvimAcik ? 'Takvimi kapat' : 'Takvimi aç'}
               className={cn(
-                'ml-auto inline-flex h-8 w-8 items-center justify-center self-center rounded-[11px] transition-colors',
+                // Görsel 32 piksel kalıyor; `::after` dokunma alanını 44'e çıkarıyor.
+                'relative ml-auto inline-flex h-8 w-8 items-center justify-center self-center rounded-[11px] transition-colors after:absolute after:-inset-1.5',
                 takvimAcik
                   ? 'bg-primary-soft text-primary'
                   : 'bg-muted/60 text-muted-foreground active:bg-muted',
@@ -375,7 +376,10 @@ export function DevamsizlikEkrani({
                       type="button"
                       aria-label="Kaydı sil"
                       onClick={() => setSilinecek(kayit)}
-                      className="-mr-1 inline-flex size-7 shrink-0 items-center justify-center rounded-[10px] text-muted-foreground/70 active:bg-danger-soft active:text-danger"
+                      /* Görsel 28 piksel; `::after` dokunma alanını 44'e çıkarıyor. Sol
+                         boşluk silmenin "1 gün" yazısına yapışmasını önlüyor —
+                         satıra dokunmak isterken kaydı silmeye basılıyordu. */
+                      className="relative ml-1.5 inline-flex size-7 shrink-0 items-center justify-center rounded-[10px] text-muted-foreground/70 after:absolute after:-inset-2 active:bg-danger-soft active:text-danger"
                     >
                       <X size={16} aria-hidden />
                     </button>

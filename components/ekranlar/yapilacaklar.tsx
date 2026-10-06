@@ -268,7 +268,8 @@ export function YapilacaklarEkrani({
                 onClick={sayfaAc}
                 disabled={!yerVar}
                 aria-label="Görev ekle"
-                className="grid size-9 shrink-0 place-items-center rounded-full bg-primary-soft text-primary transition active:scale-95 disabled:opacity-40 disabled:active:scale-100"
+                // Görsel 36 piksel; `::after` dokunma alanını 44'e çıkarıyor.
+                className="relative grid size-9 shrink-0 place-items-center rounded-full bg-primary-soft text-primary transition after:absolute after:-inset-1 active:scale-95 disabled:opacity-40 disabled:active:scale-100"
               >
                 <Plus size={18} strokeWidth={2.8} aria-hidden />
               </button>
@@ -706,7 +707,8 @@ function EklemeSayfasi({
             type="button"
             onClick={onKapat}
             aria-label="Kapat"
-            className="grid size-9 shrink-0 place-items-center rounded-xl bg-muted/70 text-muted-foreground transition active:brightness-95"
+            // Görsel 36 piksel; `::after` dokunma alanını 44'e çıkarıyor.
+            className="relative grid size-9 shrink-0 place-items-center rounded-xl bg-muted/70 text-muted-foreground transition after:absolute after:-inset-1 active:brightness-95"
           >
             <X size={16} strokeWidth={2.4} aria-hidden />
           </button>
