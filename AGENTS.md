@@ -161,8 +161,8 @@ artık uçan tavşan yok (tasarım 2d, aşağıda).
 **İki baş çekimi var: `yuz` ve `kafa`.** Tam boy pozlar 70 pikselin altında
 lekeye dönüşüyor (gövde, kollar ve tutulan nesne tek bir şey oluyor), o yüzden
 küçük yerlerde baş kullanılıyor: oyun başlıkları (26–54) `yuz`de, kurulumun
-karşılama ekranı `kafa`da. Ana sayfanın selamlaması artık durum kafalarında
-(`kafa-*`, aşağıda).
+karşılama ekranı `kafa`da. Ana sayfanın selamlaması tam boy pozda ve 84
+pikselde (aşağıda).
 
 İkisi ayrı duruyor çünkü kaynakları ve işleri ayrı. `yuz`, "normal maskot"un
 elle ölçülmüş bir kırpımı ve aynı zamanda uygulama ikonunun (`ikon-uret.mjs`),
@@ -281,24 +281,24 @@ geliyor.
 
 | Sıra | Koşul | Poz |
 | --- | --- | --- |
-| 1 | Pomodoro çalışma turu işliyor | `kafa-laptoplu` |
-| 2 | Pomodoro molası işliyor | `kafa-kahveli` |
-| 3 | Devamsızlık hakkı aşıldı | `kafa-uzgun` |
-| 4 | Sınav günü | `kafa-bagdas` |
-| 5 | Aylık özet açılmayı bekliyor | `kafa-megafonlu` |
-| 6 | Bugünün tarihli deneme var | `kafa-damgali` |
-| 7 | Bugün bir konu anlatımı bitti | `kafa-tahtali` |
-| 8 | Günlük hedef tuttu | `kafa-dans` / `kafa-alkislayan` / `kafa-kahkaha` (günden güne) |
-| 9 | Bugünün görevleri var ve hepsi işaretli | `kafa-cantali` |
-| 10 | Bugün kayıt var, öncesinde 3+ boş gün | `kafa-selamlayan` |
-| 11 | Bugün başlandı, hedefte değil | `kafa-yazan` / `kafa-kitapli` (günden güne) |
-| 12 | Kayıt yok, gece (22:00–04:59) | `kafa-uyuyan` |
-| 13 | Kayıt yok, sabah (05:00–10:59) | `kafa-gerinen`, hafta sonu `kafa-bitkili` |
-| 14 | Kayıt yok, seri kırılmak üzere | `kafa-elleri-belde` |
-| 15 | Kayıt yok, bankada 10+ çözülmemiş yanlış | `kafa-buyutecli` |
-| 16 | Kayıt yok, sınava ≤ 30 gün | `kafa-saatli` |
-| 17 | Kayıt yok, akşam (18:00–21:59) | `kafa-dusunen` |
-| 18 | Kayıt yok | `kafa-uyuyan` |
+| 1 | Pomodoro çalışma turu işliyor | `laptoplu` |
+| 2 | Pomodoro molası işliyor | `kahveli` |
+| 3 | Devamsızlık hakkı aşıldı | `uzgun` |
+| 4 | Sınav günü | `bagdas` |
+| 5 | Aylık özet açılmayı bekliyor | `megafonlu` |
+| 6 | Bugünün tarihli deneme var | `damgali` |
+| 7 | Bugün bir konu anlatımı bitti | `tahtali` |
+| 8 | Günlük hedef tuttu | `dans` / `alkislayan` / `kahkaha` (günden güne) |
+| 9 | Bugünün görevleri var ve hepsi işaretli | `cantali` |
+| 10 | Bugün kayıt var, öncesinde 3+ boş gün | `selamlayan` |
+| 11 | Bugün başlandı, hedefte değil | `yazan` / `okuyan` (günden güne) |
+| 12 | Kayıt yok, gece (22:00–04:59) | `uyuyan` |
+| 13 | Kayıt yok, sabah (05:00–10:59) | `gerinen`, hafta sonu `bitkili` |
+| 14 | Kayıt yok, seri kırılmak üzere | `elleri-belde` |
+| 15 | Kayıt yok, bankada 10+ çözülmemiş yanlış | `buyutecli` |
+| 16 | Kayıt yok, sınava ≤ 30 gün | `saatli` |
+| 17 | Kayıt yok, akşam (18:00–21:59) | `dusunen` |
+| 18 | Kayıt yok | `uyuyan` |
 
 5–7, 9–10, 13'ün hafta sonu kolu ve 15–17 kullanıcının seçtiği durumlar
 (2026-10). Akşam için önce "esneyen" seçildi; kaynak görsel esnemediği
@@ -323,19 +323,12 @@ oradan (`hedefSerisi`); günlük hedef sıfırken "tuttu" yok, aynı kural.
 Duraklatılmış Pomodoro işleyen sayılmıyor: tur durmuş, laptopta çalışan
 tavşan yalan olurdu.
 
-**Durum kafaları kırpım, alan büyütülmedi.** Başlıktaki yer 58 piksel ve tam
-boy poz orada lekeye dönüyor; alanı büyütmek selamlama cümlesini ve geri
-sayımı aşağı iterdi. Pozun baş ve üst gövdesi gösteriliyor
-(`maskot-uret.mjs` → `KAFALAR`).
-
-**Kafalar gözlerden hizalanır, kutudan değil.** Her pozun iki göz merkezi
-kaynak pikselinde yazılı; poz göz arası `GOZ_ARASI` olacak kadar ölçeklenir,
-göz ortası tuvalde hep aynı noktaya gelir, taşan gövde kesilir ve alt kenar
-solar. Kutuya oranla kırpmak kafayı pozdan poza büyütüp küçültüyordu,
-uyuyan tavşan yere çökmüş duruyordu; kullanıcı bunu "yamukluk" diye gördü.
-Yeni kafa eklerken göz merkezlerini ölç, `public/tavsan-kafa-*.png`yi yan
-yana açıp kafa boyunu karşılaştır; tutmazsa `duzelt` çarpanı. Kaynaklardaki
-"esneme yapan" esnemiyor (oturmuş, gülümseyen tavşan); adına güvenme.
+**Başlıktaki tavşan kesilmez, tam boy durur** (kullanıcı istedi). Bir süre
+58 piksellik baş kırpımlarıydı (gözlerden hizalanmış, kenarı solan); kesik
+kenarlar pozdan poza bozuk görünüyordu. Tam boy 70 pikselin altında lekeye
+döndüğü için tavşan 84 piksel; yazı sütunu yanında dikeyde ortalanır
+(`items-center`). Kırpım geri getirme. Kaynaklardaki "esneme yapan"
+esnemiyor (oturmuş, gülümseyen tavşan); adına güvenme.
 
 Poz değişince öğe yeniden kuruluyor (`key`) ve kısa bir solmayla geliyor
 (`ana-maskot-gecis`, `prefers-reduced-motion` altında yok). Ekran okuyucu

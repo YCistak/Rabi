@@ -131,17 +131,17 @@ export const GERI_DONUS_BOSLUK = 3
 export const YANLIS_BIRIKTI = 10
 
 const KUTLAMA: readonly AnaMaskot[] = [
-  { kural: 'kutlama', poz: 'kafa-dans', durum: 'kutlama', etiket: 'hedefini tutturdun, dans ediyor' },
-  { kural: 'kutlama', poz: 'kafa-alkislayan', durum: 'kutlama', etiket: 'hedefini tutturdun, alkışlıyor' },
-  { kural: 'kutlama', poz: 'kafa-kahkaha', durum: 'kutlama', etiket: 'hedefini tutturdun, gülüyor' },
+  { kural: 'kutlama', poz: 'dans', durum: 'kutlama', etiket: 'hedefini tutturdun, dans ediyor' },
+  { kural: 'kutlama', poz: 'alkislayan', durum: 'kutlama', etiket: 'hedefini tutturdun, alkışlıyor' },
+  { kural: 'kutlama', poz: 'kahkaha', durum: 'kutlama', etiket: 'hedefini tutturdun, gülüyor' },
 ]
 
 const CALISMA: readonly AnaMaskot[] = [
-  { kural: 'calisma', poz: 'kafa-yazan', durum: 'calisiyor', etiket: 'seninle birlikte çalışıyor' },
-  { kural: 'calisma', poz: 'kafa-kitapli', durum: 'calisiyor', etiket: 'seninle birlikte çalışıyor' },
+  { kural: 'calisma', poz: 'yazan', durum: 'calisiyor', etiket: 'seninle birlikte çalışıyor' },
+  { kural: 'calisma', poz: 'okuyan', durum: 'calisiyor', etiket: 'seninle birlikte çalışıyor' },
 ]
 
-const UYUYAN: AnaMaskot = { kural: 'uyuyan', poz: 'kafa-uyuyan', durum: 'uykulu', etiket: 'uyuyor, bugün henüz kayıt yok' }
+const UYUYAN: AnaMaskot = { kural: 'uyuyan', poz: 'uyuyan', durum: 'uykulu', etiket: 'uyuyor, bugün henüz kayıt yok' }
 
 /** Bugün kayıt var ve ondan önceki son kayıtlı günle arada en az `GERI_DONUS_BOSLUK` boş gün var. */
 function geriDondu(kayitlar: GunlukKayit[], bugun: string): boolean {
@@ -175,35 +175,35 @@ export function gorevlerBittiMi(gorevler: { gun: string; bitti: boolean }[], bug
 
 export function anaMaskot(g: AnaMaskotGirdisi): AnaMaskot {
   if (g.pomodoro === 'calisma') {
-    return { kural: 'pomodoro', poz: 'kafa-laptoplu', durum: 'calisiyor', etiket: 'Pomodoro turunda çalışıyor' }
+    return { kural: 'pomodoro', poz: 'laptoplu', durum: 'calisiyor', etiket: 'Pomodoro turunda çalışıyor' }
   }
   if (g.pomodoro === 'mola') {
-    return { kural: 'mola', poz: 'kafa-kahveli', durum: 'normal', etiket: 'molada, kahvesini içiyor' }
+    return { kural: 'mola', poz: 'kahveli', durum: 'normal', etiket: 'molada, kahvesini içiyor' }
   }
   if (g.devamsizlikAsildi) {
-    return { kural: 'devamsizlik', poz: 'kafa-uzgun', durum: 'uzgun', etiket: 'üzgün, devamsızlık hakkın aşıldı' }
+    return { kural: 'devamsizlik', poz: 'uzgun', durum: 'uzgun', etiket: 'üzgün, devamsızlık hakkın aşıldı' }
   }
   if (g.kalanGun === 0) {
-    return { kural: 'sinav-gunu', poz: 'kafa-bagdas', durum: 'normal', etiket: 'sınav günü, sakin' }
+    return { kural: 'sinav-gunu', poz: 'bagdas', durum: 'normal', etiket: 'sınav günü, sakin' }
   }
   if (g.ozetHazir) {
-    return { kural: 'ozet', poz: 'kafa-megafonlu', durum: 'mutlu', etiket: 'aylık özetin hazır diye duyuruyor' }
+    return { kural: 'ozet', poz: 'megafonlu', durum: 'mutlu', etiket: 'aylık özetin hazır diye duyuruyor' }
   }
   if (g.sonDenemeTarihi === g.bugun) {
-    return { kural: 'deneme', poz: 'kafa-damgali', durum: 'mutlu', etiket: 'bugünkü denemeni onaylıyor' }
+    return { kural: 'deneme', poz: 'damgali', durum: 'mutlu', etiket: 'bugünkü denemeni onaylıyor' }
   }
   if (g.konuBitti) {
-    return { kural: 'konu', poz: 'kafa-tahtali', durum: 'mutlu', etiket: 'bugün bir konuyu bitirdin, tahtaya yazıyor' }
+    return { kural: 'konu', poz: 'tahtali', durum: 'mutlu', etiket: 'bugün bir konuyu bitirdin, tahtaya yazıyor' }
   }
 
   const toplam = gunOzeti(g.gunlukKayitlar.find((k) => k.tarih === g.bugun)).toplam
   if (g.hedef > 0 && toplam >= g.hedef) return gununPozu(g.bugun, KUTLAMA)
   if (g.gorevlerBitti) {
-    return { kural: 'gorevler', poz: 'kafa-cantali', durum: 'mutlu', etiket: 'bugünkü görevlerin bitti, çantasını kapatıyor' }
+    return { kural: 'gorevler', poz: 'cantali', durum: 'mutlu', etiket: 'bugünkü görevlerin bitti, çantasını kapatıyor' }
   }
   if (toplam > 0) {
     if (geriDondu(g.gunlukKayitlar, g.bugun)) {
-      return { kural: 'geri-donus', poz: 'kafa-selamlayan', durum: 'mutlu', etiket: 'tekrar hoş geldin diyor' }
+      return { kural: 'geri-donus', poz: 'selamlayan', durum: 'mutlu', etiket: 'tekrar hoş geldin diyor' }
     }
     return gununPozu(g.bugun, CALISMA)
   }
@@ -211,20 +211,20 @@ export function anaMaskot(g: AnaMaskotGirdisi): AnaMaskot {
   if (g.saat < SABAH_BASI || g.saat >= GECE_BASI) return { ...UYUYAN, kural: 'gece' }
   if (g.saat < SABAH_SONU) {
     return haftaSonu(g.bugun)
-      ? { kural: 'hafta-sonu', poz: 'kafa-bitkili', durum: 'normal', etiket: 'hafta sonu sabahı, bitkisini suluyor' }
-      : { kural: 'sabah', poz: 'kafa-gerinen', durum: 'normal', etiket: 'güne gerinerek başlıyor' }
+      ? { kural: 'hafta-sonu', poz: 'bitkili', durum: 'normal', etiket: 'hafta sonu sabahı, bitkisini suluyor' }
+      : { kural: 'sabah', poz: 'gerinen', durum: 'normal', etiket: 'güne gerinerek başlıyor' }
   }
   if (hedefSerisi(g.gunlukKayitlar, g.bugun, g.hedef) > 0) {
-    return { kural: 'seri', poz: 'kafa-elleri-belde', durum: 'normal', etiket: 'serin bozulmasın diye seni bekliyor' }
+    return { kural: 'seri', poz: 'elleri-belde', durum: 'normal', etiket: 'serin bozulmasın diye seni bekliyor' }
   }
   if (g.bekleyenYanlis >= YANLIS_BIRIKTI) {
-    return { kural: 'yanlis', poz: 'kafa-buyutecli', durum: 'normal', etiket: 'biriken yanlışlarına bakıyor' }
+    return { kural: 'yanlis', poz: 'buyutecli', durum: 'normal', etiket: 'biriken yanlışlarına bakıyor' }
   }
   if (g.kalanGun > 0 && g.kalanGun <= SINAV_YAKIN_GUN) {
-    return { kural: 'sinav-yakin', poz: 'kafa-saatli', durum: 'normal', etiket: 'sınava az kaldı, saate bakıyor' }
+    return { kural: 'sinav-yakin', poz: 'saatli', durum: 'normal', etiket: 'sınava az kaldı, saate bakıyor' }
   }
   if (g.saat >= AKSAM_BASI) {
-    return { kural: 'aksam', poz: 'kafa-dusunen', durum: 'normal', etiket: 'akşam oldu, bugün ne yapsak diye düşünüyor' }
+    return { kural: 'aksam', poz: 'dusunen', durum: 'normal', etiket: 'akşam oldu, bugün ne yapsak diye düşünüyor' }
   }
   return UYUYAN
 }
