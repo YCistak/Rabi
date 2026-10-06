@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { AlertCircle, Camera, Check, X } from 'lucide-react'
 import { Alan, Buton, Etiket, Kart, Not, useKapatmaOnayi } from '@/components/ui'
 import {
@@ -14,6 +14,7 @@ import { secilebilirSablonlar, toplamSoru } from '@/lib/sablonlar'
 import { bugun, cn, yeniId } from '@/lib/utils'
 import type { Deneme, PuanTuru, Sablon, YanlisSoru } from '@/lib/types'
 import { DenemeOkut } from '@/components/deneme-okut'
+import { TarihSecici } from '@/components/tarih-secici'
 import { ornekDenemeSonucu } from '@/lib/tanitim-veri'
 
 const useYerlesimEtkisi = typeof window === 'undefined' ? useEffect : useLayoutEffect
@@ -70,6 +71,21 @@ export function YeniDenemeEkrani({
     : (secenekler.find((s) => s.id === varsayilanSablonId) ?? secenekler[0])
 
   const [sablonId, setSablonId] = useState(ilkSablon.id)
+  const turSeridi = useRef<HTMLDivElement>(null)
+
+  /*
+    Varsayılan tür satırın sonundaysa (11. sınıf ve üstünde alanın AYT'si)
+    açılışta görünmezdi; şerit ilk çizimde seçili düğmeye kaydırılıyor.
+    Yalnız açılışta: kullanıcı kaydırıp seçtikten sonra şerit yerinde kalır.
+  */
+  useYerlesimEtkisi(() => {
+    const serit = turSeridi.current
+    const secili = serit?.querySelector<HTMLElement>('[aria-pressed="true"]')
+    if (!serit || !secili) return
+    const kutu = serit.getBoundingClientRect()
+    const dugme = secili.getBoundingClientRect()
+    if (dugme.right > kutu.right) serit.scrollLeft += dugme.left - kutu.left
+  }, [])
   const [tarih, setTarih] = useState(duzenlenen?.tarih ?? bugun())
   const [ad, setAd] = useState(duzenlenen?.ad ?? '')
   const [girisler, setGirisler] = useState<Record<string, Giris>>(() => {
@@ -228,8 +244,13 @@ export function YeniDenemeEkrani({
       {!duzenlenen && (
         <div className="mb-4">
           <Etiket>Deneme türü</Etiket>
-          {/* Pomodoro'nun ders kutularıyla aynı biçim: dikdörtgen, ızgarada. */}
-          <div className="grid grid-cols-2 gap-2">
+          {/* Kullanıcı istedi: türler iki sütunlu ızgara yerine tek satırda,
+              sağa kaydırılarak seçiliyor. Sağ kenarda kesilen düğme satırın
+              devam ettiğini gösteriyor. */}
+          <div
+            ref={turSeridi}
+            className="flex snap-x snap-proximity gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
             {secenekler.map((s) => (
               <button
                 key={s.id}
@@ -237,7 +258,7 @@ export function YeniDenemeEkrani({
                 aria-pressed={s.id === sablonId}
                 onClick={() => setSablonId(s.id)}
                 className={cn(
-                  'flex h-11 items-center justify-center rounded-[13px] border px-2 text-[12.5px] transition',
+                  'flex h-11 shrink-0 snap-start items-center justify-center whitespace-nowrap rounded-[13px] border px-4 text-[12.5px] transition',
                   s.id === sablonId
                     ? 'border-[1.5px] border-primary-parlak bg-primary-soft font-extrabold text-primary'
                     : 'border-border bg-card font-bold text-muted-foreground active:bg-muted',
@@ -262,13 +283,7 @@ export function YeniDenemeEkrani({
         </div>
         <div className="min-w-0">
           <Etiket htmlFor="deneme-tarih">Tarih</Etiket>
-          <Alan
-            id="deneme-tarih"
-            type="date"
-            className="w-full min-w-0"
-            value={tarih}
-            onChange={(e) => setTarih(e.target.value)}
-          />
+          <TarihSecici id="deneme-tarih" deger={tarih} onDegis={setTarih} />
         </div>
       </div>
 
