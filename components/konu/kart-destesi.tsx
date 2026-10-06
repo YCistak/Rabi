@@ -14,6 +14,7 @@ import { KartMetni } from './kart-metni'
 import { DesteBasligi, DesteCubugu } from './deste-basligi'
 import { KisaMola } from './kisa-mola'
 import { HizliKontrolEkrani } from './hizli-kontrol'
+import { Sigdir } from './sigdir'
 
 /**
  * Bilgi kartı destesi.
@@ -312,24 +313,27 @@ function KartEkrani({
 
       <div className="flex min-h-0 flex-1 flex-col px-4 pb-[calc(1rem+var(--guvenli-alt))]">
         {/*
-          Kutu **kaydırılabilir**: görselli kartlar yazıdan uzun ve kısa bir
-          telefonda alt kenardan taşıyordu. `my-auto` yalnızca sığan içeriği
-          ortalıyor; sığmayan yukarıdan başlayıp kaydırılıyor.
+          Kart kaydırılmadan okunmalı (`Sigdir`): görselli kartlar yazıdan uzun
+          ve iPhone'da alt kenardan taşıyordu. Sığmazsa önce üstteki tavşan
+          kalkıyor, sonra kart orantılı küçülüyor.
         */}
-        <div className="mx-auto flex w-full max-w-md min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain">
-          <div className="my-auto w-full">
+        <Sigdir anahtar={kart.id} className="mx-auto w-full max-w-md min-h-0 flex-1">
+          {(sikisik) => (
+          <>
             {/* Rabi (okuyan poz) ve altındaki çizgi: kartın üstündeki boşluğu
                 dolduruyor; eskiden burada ders simgesi duruyordu. */}
-            <div className="flex min-h-[70px] flex-col items-center justify-center gap-2.5">
-              <Rabi
-                poz="okuyan"
-                boyut={96}
-                className="drop-shadow-[0_6px_8px_rgba(31,36,48,0.14)]"
-              />
-              <span className="h-px w-full bg-black/12" />
-            </div>
+            {!sikisik && (
+              <div className="flex min-h-[70px] flex-col items-center justify-center gap-2.5">
+                <Rabi
+                  poz="okuyan"
+                  boyut={96}
+                  className="drop-shadow-[0_6px_8px_rgba(31,36,48,0.14)]"
+                />
+                <span className="h-px w-full bg-black/12" />
+              </div>
+            )}
 
-            <div className="relative mt-3.5">
+            <div className={sikisik ? 'relative mt-3' : 'relative mt-3.5'}>
               {/* Arkadaki iki kâğıt. */}
               <span
                 aria-hidden
@@ -412,8 +416,9 @@ function KartEkrani({
                 </div>
               )}
             </div>
-          </div>
-        </div>
+          </>
+          )}
+        </Sigdir>
 
         {/* Geri ve İleri aynı boyutta ve biçimde, ikisi de turuncu (primary).
             İlk kartta Geri pasif ve soluk — gidilecek yer yok. */}

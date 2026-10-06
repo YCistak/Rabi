@@ -11,6 +11,7 @@ import { Buton, Onay, useTanitimSuruyor } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartGorseli } from './kart-gorseli'
 import { KonuOzeti } from './konu-ozeti'
+import { Sigdir } from './sigdir'
 import type { KonuDersId } from '@/lib/konu/tip'
 
 /**
@@ -340,8 +341,8 @@ export function SoruSahnesi({
 
       <div className="relative flex min-h-0 flex-1 flex-col px-7 pb-[calc(2rem+var(--guvenli-alt))]">
         {/*
-          Kartın boyu içeriğe göre değişiyor ve gerekirse kendi içinde
-          kaydırılıyor: görselli soru ile tek cümlelik soru aynı kutuya
+          Kartın boyu içeriğe göre değişiyor ve sığmazsa küçülüyor (`Sigdir`):
+          görselli soru ile tek cümlelik soru aynı kutuya
           sığmıyor, sabit boy ikisinden birini bozardı. Dikey ortalama
           `my-auto` ile, `flex-1` ile değil — artan yeri paylaşan kutu kartı
           yukarı yapıştırmıyor.
@@ -349,11 +350,19 @@ export function SoruSahnesi({
           Kaydırma kutusunun üstünde ve yanlarında pay var: rozet çerçevenin
           dışına taşıyor ve paysız bir `overflow` onu kırpıyordu.
         */}
-        <div className="mx-auto my-auto w-full max-w-md overflow-y-auto overscroll-contain px-3 pt-5 -mx-3">
-          {/* Maskot kartın üstünde oturuyor; kararın kendisi kartta, tavşan izliyor. */}
-          <div className="flex justify-center">
-            <Rabi poz="kahveli" boyut={134} durum="normal" className="sahne-maskot" />
-          </div>
+        <Sigdir
+          anahtar={soru.id}
+          className="mx-auto w-full max-w-md min-h-0 flex-1 px-3 pt-5 -mx-3"
+        >
+          {(sikisik) => (
+          <>
+          {/* Maskot kartın üstünde oturuyor; kararın kendisi kartta, tavşan
+              izliyor. Kart kaydırmadan sığmıyorsa (`Sigdir`) önce o kalkıyor. */}
+          {!sikisik && (
+            <div className="flex justify-center">
+              <Rabi poz="kahveli" boyut={134} durum="normal" className="sahne-maskot" />
+            </div>
+          )}
 
           {/*
             Kararın izi kartın **çerçevesinde**: kart amber bir paspartuyla
@@ -416,7 +425,9 @@ export function SoruSahnesi({
               </div>
             </div>
           </div>
-        </div>
+          </>
+          )}
+        </Sigdir>
 
         <div className="mx-auto mt-[18px] w-full max-w-md">
           {soru.tur === 'sikli' ? (
