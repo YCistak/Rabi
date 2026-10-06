@@ -1125,7 +1125,7 @@ function RabiUygulamasi() {
               <YapilacaklarEkrani
                 gorevler={anaTurda ? tanitim.demo.gorevler : gorevler}
                 setGorevler={anaTurda ? (g) => tanitim.demoGuncelle('gorevler', g, 'gorev') : setGorevler}
-                tanitim={anaTurda ? turFormu('gorev-form', 'gorev-dilimleri') : undefined}
+                tanitim={anaTurda ? turFormu('gorev-form', 'gorev-listesi') : undefined}
               />
             )}
             {ekran === 'soru' && (
