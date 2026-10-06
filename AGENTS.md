@@ -2625,16 +2625,35 @@ uzatıyordu.
 
 ### Harita öğrencinin sınıfıyla açılıyor, 12 kapalı
 
-Sekme her açıldığında sınıf seçici ayarlardaki sınıfa geçiyor
-(`haritaSinifiBul`); bir süre en son bakılan sınıfta kalıyordu ve 10. sınıf
-öğrencisi her açılışta 9. sınıfın haritasını görüyordu. Ekranın içinde başka
-sınıfa geçmek o ziyaret boyunca geçerli. Mezunun tek bir sınıfı yok, onda son
-seçim kalıyor.
+Sekme her açıldığında sınıf ayarlardaki sınıfa geçiyor
+(`haritaSinifiBul` → `haritaAcilisSinifi`); bir süre en son bakılan sınıfta
+kalıyordu ve 10. sınıf öğrencisi her açılışta 9. sınıfın haritasını
+görüyordu. Ekranın içinde başka sınıfa geçmek o ziyaret boyunca geçerli.
+Mezunun tek bir sınıfı yok, onda son seçim kalıyor. 12. sınıf öğrencisi
+11'de açılıyor: 12'nin haritası yazılmadı.
 
-Seçicide **12. sınıf** da var (`HARITA_SINIFLARI`) ama içeriği yok: seçilince
-ders çipleri kalkıyor ve harita yerine kilitli bir "yapım aşamasında" kartı
-duruyor. `KonuSinifi` 9–11 kalıyor; 12 yalnızca seçicinin tipi
-(`HaritaSinifi`). Kartlar yazılınca `KONU_SINIFLARI`na eklenir ve kart kalkar.
+**Sınıf patikanın üstünde bir sekme** (`SinifSekmesi`, mantığı
+`lib/konu/sinif-sekmesi.ts`): `9 · 10 · 11 · 12`, her zaman görünür, her
+sekmenin altında seçili dersin o sınıftaki ilerleme yüzdesi (ders o sınıfta
+yoksa çizgi) ve kullanıcının kendi sınıfında küçük bir "sen" işareti. Sınıf
+bir süre "Çalıştığın program" kartında, "Değiştir" ile açılan bir seçicideydi;
+kullanıcı değerlendirmesinde başka sınıfa geçilebildiği fark edilmedi. Kart
+artık yalnızca dersi seçtiriyor. Sınıf değişince ders o sınıfta yoksa
+sınıfın ilk dersine geçiliyor ve bunu söyleyen kısa bir satır çıkıyor
+(`sinifDegisimi`) — sessiz geçiş "neden Matematik açıldı" sorusunu
+cevapsız bırakıyordu.
+
+**12. sınıf sekmede var ama pasif** (`sinifPasifMi`: hiçbir dersi yazılmamış
+sınıf) ve "Yakında" rozetli; dokunuş boş bir ekrana götürmüyor. `KonuSinifi`
+9–11 kalıyor; 12 yalnızca sekmenin tipi (`HaritaSinifi`). Kartlar yazılınca
+`KONU_SINIFLARI`na eklenir, sekme kendiliğinden açılır. Ekrandaki kilitli
+"yapım aşamasında" kartı eski bir kayıtta seçim 12 kalmışsa diye duruyor.
+
+**Konu Takibi'nden gelen yönlendirme şerit bırakıyor.** "Haritaya git"
+sınıfı kendiliğinden değiştiriyor (11. sınıf öğrencisi TYT trigonometrisi
+için 10'a); öğrencinin kendi sınıfından farklıysa patikanın üstünde
+kapatılabilir ince bir şerit çıkıyor: "Trigonometri için 10. sınıfa geçildi ·
+Kendi sınıfıma dön" (`yonlendirmeMetni`). Sınıf elle değişince şerit kalkıyor.
 
 ### Patika kitaplı bir yol
 
