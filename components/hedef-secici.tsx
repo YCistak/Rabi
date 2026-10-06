@@ -1,7 +1,16 @@
 'use client'
 
 import { ChevronRight, School, Search } from 'lucide-react'
-import { Alan } from '@/components/ui'
+import { Alan, Etiket } from '@/components/ui'
+import { cn } from '@/lib/utils'
+import {
+  EN_DUSUK_TABAN_PUAN,
+  EN_YUKSEK_TABAN_PUAN,
+  KATALOG_VERI_YILI,
+  basariSirasiGecerli,
+  sayiOku,
+  tabanPuanGecerli,
+} from '@/lib/hedef-katalog'
 
 /**
  * Üniversite/bölüm seçiminin ortak parçaları.
@@ -115,6 +124,80 @@ export function SecilenSatir({
       >
         Değiştir
       </button>
+    </div>
+  )
+}
+
+/** Üniversite listesinin boş hâli: arama kutusu boşken ipucu, doluyken "bulamadım". */
+export function uniListesiBos(arama: string): string {
+  return arama.trim() === '' ? 'Üniversite adını yazmaya başla.' : 'Bu adla üniversite bulamadım.'
+}
+
+/**
+ * Elle kontrol: katalogdan seçilen bölümün sırası ve taban puanı, kaydetmeden
+ * önce düzenlenebilir kutularda.
+ *
+ * Kutular katalog değeriyle dolu geliyor; kullanıcı yalnızca yanlışsa
+ * dokunuyor. Sıra ÖSYM'nin yayımladığı değer ama ETL bir satırı yanlış okumuş
+ * olabilir; puan zaten sıradan hesaplanan bir tahmin. Kaydedilen hedef kutudaki
+ * değeri tutuyor, ana sayfa ve Hedefim de onu okuyor.
+ *
+ * Geçersiz değerin kaydını engellemek çağıranın işi (`hedefSayilariGecerli`);
+ * burada yalnızca hangi kutunun neden kırmızı olduğu yazıyor — pasif bir
+ * düğmenin yanında sebebi yazmayan ekran kullanıcıyı kilitler.
+ */
+export function HedefKontrolu({
+  idOneki,
+  tabanPuan,
+  basariSirasi,
+  onTabanPuan,
+  onBasariSirasi,
+}: {
+  idOneki: string
+  tabanPuan: string
+  basariSirasi: string
+  onTabanPuan: (deger: string) => void
+  onBasariSirasi: (deger: string) => void
+}) {
+  const puanHatali = !tabanPuanGecerli(sayiOku(tabanPuan))
+  const siraHatali = !basariSirasiGecerli(sayiOku(basariSirasi))
+  return (
+    <div className="rounded-xl bg-muted/70 px-3.5 py-3">
+      <p className="text-sm font-extrabold">Kaydetmeden önce kontrol et</p>
+      <p className="mt-0.5 text-xs font-medium text-muted-foreground">
+        ÖSYM {KATALOG_VERI_YILI} verisi; yanlışsa düzelt.
+      </p>
+      <div className="mt-2.5 grid grid-cols-2 gap-3">
+        <div>
+          <Etiket htmlFor={`${idOneki}-sira`}>{KATALOG_VERI_YILI} başarı sırası</Etiket>
+          <Alan
+            id={`${idOneki}-sira`}
+            inputMode="numeric"
+            value={basariSirasi}
+            onChange={(e) => onBasariSirasi(e.target.value.replace(/[^0-9]/g, '').slice(0, 8))}
+            aria-invalid={siraHatali}
+            className={cn('rakam', siraHatali && 'border-danger focus-visible:border-danger')}
+          />
+        </div>
+        <div>
+          <Etiket htmlFor={`${idOneki}-taban`}>Taban puan (tahmini)</Etiket>
+          <Alan
+            id={`${idOneki}-taban`}
+            inputMode="decimal"
+            value={tabanPuan}
+            onChange={(e) => onTabanPuan(e.target.value.replace(/[^0-9,.]/g, '').slice(0, 7))}
+            aria-invalid={puanHatali}
+            className={cn('rakam', puanHatali && 'border-danger focus-visible:border-danger')}
+          />
+        </div>
+      </div>
+      {(siraHatali || puanHatali) && (
+        <p role="alert" className="mt-2 text-xs font-medium text-danger">
+          {siraHatali && 'Başarı sırası 1 ya da daha büyük bir tam sayı olmalı. '}
+          {puanHatali &&
+            `Taban puan ${EN_DUSUK_TABAN_PUAN} ile ${EN_YUKSEK_TABAN_PUAN} arasında olmalı.`}
+        </p>
+      )}
     </div>
   )
 }

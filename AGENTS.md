@@ -2939,6 +2939,26 @@ kiple açılıyor (`universiteBul` null dönüyor), çünkü eski sürümde herk
 elle yazıyordu ve o kayıtlar duruyor. `Hedef` tipi de kimlik değil **ad**
 tutmaya devam ediyor — kimliğe geçmek o kayıtları geçersiz kılardı.
 
+### Seçim kuralları (Hedefim ve kurulum ortak)
+
+- **Üniversite listesi boş aramada görünmez** (kullanıcı istedi):
+  `universiteAra('')` boş dizi döner, kutunun altında "Üniversite adını yazmaya
+  başla." durur (`uniListesiBos`). **Bölüm listesi bu kurala uymaz**, boş
+  aramada üniversitenin bütün bölümleri listelenir — kullanıcı öyle kalsın dedi.
+- **Kaydetmeden önce elle kontrol** (kullanıcı istedi): katalogdan bölüm
+  seçilince `HedefKontrolu` (`hedef-secici.tsx`) 2025 başarı sırasını ve
+  taban puanını düzenlenebilir kutularda dolu gösterir. Kayda kutudaki değer
+  girer — yeni alan yok, mevcut `Hedef.tabanPuan` / `basariSirasi` düzeltilmiş
+  değeri tutar ve ana sayfa, geri sayım, Hedefim onu okur (katalogdan yeniden
+  hesaplanmaz). Geçersiz değer (boş, sıfır, puan 100–560 dışı, sıra 1–3.000.000
+  dışı; `hedefSayilariGecerli`) Kaydet'i / kurulumda Devam'ı pasif yapar ve
+  sebebi kutunun altında yazar. Elle giriş kipinde sayılar isteğe bağlı kalır
+  ama yazılmışsa aynı denetimden geçer.
+- **Hedefim'de Kaydet ekranı kapatmaz** (kullanıcı istedi): ekranda kalır,
+  "Hedefin kaydedildi." toast'ı çıkar. Kurulum Devam ile ilerlemeye devam eder.
+- Üniversite değiştirilip aynı adlı bölüm yeni üniversitede de varsa kutular
+  **yeni programın** değeriyle yeniden dolar; eski üniversitenin sırası kalmaz.
+
 Seçim ekranda ayrı bir state'te durmuyor, iki addan türetiliyor: iki kaynak
 olsaydı elle yazılan ad ile seçili kayıt birbiriyle çelişebilirdi.
 
