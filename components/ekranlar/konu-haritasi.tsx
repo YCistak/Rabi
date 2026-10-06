@@ -492,6 +492,7 @@ export function KonuHaritasiEkrani({
   const sahneKatmani = sahne && (
     <SoruSahnesi
       konu={sahne.konu}
+      ders={secim.ders}
       temaAdi={sahne.temaAdi}
       dersAdi={dersAdi}
       ozetli={sahne.ozetli}
