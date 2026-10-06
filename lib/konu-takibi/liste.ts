@@ -439,7 +439,12 @@ const AYT_BIYOLOJI: YksDers = {
     k('ayt-biy-duyu', 'Duyu Organları'),
     k('ayt-biy-destek-hareket', 'Destek ve Hareket Sistemi'),
     k('ayt-biy-sindirim', 'Sindirim Sistemi'),
-    k('ayt-biy-dolasim', 'Dolaşım ve Bağışıklık Sistemi'),
+    // "Dolaşım ve Bağışıklık Sistemi" Maarif'in başlıklarıyla ikiye bölündü
+    // (Dolaşım Sistemi ve Homeostazi; Doğal ve Kazanılmış Bağışıklık). Eski
+    // kimlik Dolaşım'da kaldı, kaydı Bağışıklık'a da kopyalandı
+    // (`BOLUNEN_KONULAR`, kayit.ts).
+    k('ayt-biy-dolasim', 'Dolaşım Sistemi'),
+    k('ayt-biy-bagisiklik', 'Bağışıklık Sistemi'),
     k('ayt-biy-solunum', 'Solunum Sistemi'),
     k('ayt-biy-uriner', 'Üriner Sistem'),
     k('ayt-biy-ureme', 'Üreme Sistemi ve Embriyonik Gelişim'),
@@ -468,7 +473,13 @@ const AYT_EDEBIYAT: YksDers = {
     k('ayt-edb-tiyatro', 'Tiyatro'),
     k('ayt-edb-islamiyet-oncesi', 'İslamiyet Öncesi Türk Edebiyatı (Destan Dönemi)'),
     k('ayt-edb-gecis', 'Geçiş Dönemi Türk Edebiyatı'),
-    k('ayt-edb-halk', 'Halk Edebiyatı'),
+    // "Halk Edebiyatı" üç koluna bölündü: ilk ikisi Maarif'in başlıkları
+    // (Anonim Halk Edebiyatı, Âşık Geleneği), üçüncüsünün Maarif'te destesi
+    // yok, YKS listelerinin adıyla duruyor. Eski kimlik Anonim'de kaldı,
+    // kaydı öteki ikisine de kopyalandı (`BOLUNEN_KONULAR`, kayit.ts).
+    k('ayt-edb-halk', 'Anonim Halk Edebiyatı'),
+    k('ayt-edb-halk-asik', 'Âşık Edebiyatı (Âşık Geleneği)'),
+    k('ayt-edb-halk-tekke', 'Dinî-Tasavvufi Halk Edebiyatı (Tekke)'),
     k('ayt-edb-divan', 'Divan Edebiyatı'),
     k('ayt-edb-tanzimat', 'Tanzimat Edebiyatı'),
     k('ayt-edb-servetifunun', 'Servetifünun Edebiyatı'),

@@ -273,7 +273,8 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
     'byl11-kasilma-mekanizma',
   ],
   'ayt-biy-sindirim': ['byl10-sindirim', 'byl10-sindirim-yapi', 'byl10-insan-sindirim', 'byl10-emilim'],
-  'ayt-biy-dolasim': ['byl11-dolasim-homeo', 'byl11-dogal-bagisiklik', 'byl11-kazanilmis'],
+  'ayt-biy-dolasim': ['byl11-dolasim-homeo'],
+  'ayt-biy-bagisiklik': ['byl11-dogal-bagisiklik', 'byl11-kazanilmis'],
   'ayt-biy-solunum': ['byl11-solunum-homeo'],
   'ayt-biy-uriner': ['byl11-bosaltim-homeo'],
   'ayt-biy-komunite': ['byl10-etkilesim', 'byl10-suksesyon', 'byl10-populasyon'],
@@ -288,7 +289,8 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   'ayt-edb-ogretici': ['trk9-deneme', 'trk11-mektup', 'trk11-biyografi'],
   'ayt-edb-tiyatro': ['trk9-tiyatro', 'trk11-karagoz', 'trk11-tiyatro'],
   'ayt-edb-islamiyet-oncesi': ['trk10-destan', 'trk11-orhun'],
-  'ayt-edb-halk': ['trk10-anonim', 'trk11-asik'],
+  'ayt-edb-halk': ['trk10-anonim'],
+  'ayt-edb-halk-asik': ['trk11-asik'],
   'ayt-edb-milli': ['trk10-milli', 'trk10-milli-turler'],
 
   // --- AYT Coğrafya ------------------------------------------------------

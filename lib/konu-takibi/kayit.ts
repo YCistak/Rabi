@@ -37,13 +37,44 @@ export type YksKonuKaydi = {
  * Depodaki biçim. Sürüm alanı şema değişirse eski kaydı tanıyıp taşımak için:
  * bilinmeyen bir sürüm boş kayıt sayılıyor (`takibiCoz`), yani yeni bir
  * uygulamanın yazdığı kaydı eski sürüm okuyup bozmuyor — yalnızca görmüyor.
+ *
+ * Sürüm 2: bölünen konuların göçü (`BOLUNEN_KONULAR`). Şema aynı; sürüm
+ * yalnızca göçün **bir kez** yapıldığını söylüyor. Sürümsüz bir göç her
+ * okumada yeniden çalışırdı: öğrenci yeni alt konudaki işareti kaldırınca
+ * eski kimliğin kaydı onu bir sonraki okumada geri yazardı.
  */
 export type YksTakip = {
-  surum: 1
+  surum: 2
   konular: Record<string, YksKonuKaydi>
 }
 
-export const BOS_TAKIP: YksTakip = { surum: 1, konular: {} }
+export const BOS_TAKIP: YksTakip = { surum: 2, konular: {} }
+
+/**
+ * Bölünen konular: kimlik → kaydını da alan yeni alt konular.
+ *
+ * Kaba duran bir YKS başlığı Maarif programının konu başlıklarıyla
+ * bölündüğünde eski kimlik **parçalardan biri olarak kalıyor** (adı
+ * değişiyor, kaydı yerinde) ve yeni parçalar eski kaydın kopyasıyla
+ * başlıyor: "Halk Edebiyatı"nı okulda işlediğini söyleyen öğrenci Âşık
+ * Edebiyatı'nı da işlemiş. Göç sürüm 1 kayıtta bir kez çalışıyor
+ * (`takibiCoz`); eski yedek geri yüklenince de.
+ */
+export const BOLUNEN_KONULAR: Readonly<Record<string, readonly string[]>> = {
+  'ayt-edb-halk': ['ayt-edb-halk-asik', 'ayt-edb-halk-tekke'],
+  'ayt-biy-dolasim': ['ayt-biy-bagisiklik'],
+}
+
+/** Sürüm 1 → 2: bölünen konunun kaydı yeni parçalara kopyalanıyor (parçada kayıt yoksa). */
+function bolunenleriTasi(konular: Record<string, YksKonuKaydi>): Record<string, YksKonuKaydi> {
+  const sonuc = { ...konular }
+  for (const [eski, yeniler] of Object.entries(BOLUNEN_KONULAR)) {
+    const kayit = konular[eski]
+    if (!kayit) continue
+    for (const yeni of yeniler) if (!sonuc[yeni]) sonuc[yeni] = { ...kayit }
+  }
+  return sonuc
+}
 
 const GUN = /^\d{4}-\d{2}-\d{2}$/
 
@@ -62,7 +93,7 @@ function gunMu(deger: unknown): deger is string {
 export function takibiCoz(ham: unknown): YksTakip {
   if (typeof ham !== 'object' || ham === null) return BOS_TAKIP
   const nesne = ham as Record<string, unknown>
-  if (nesne.surum !== 1) return BOS_TAKIP
+  if (nesne.surum !== 1 && nesne.surum !== 2) return BOS_TAKIP
   if (typeof nesne.konular !== 'object' || nesne.konular === null) return BOS_TAKIP
 
   const konular: Record<string, YksKonuKaydi> = {}
@@ -75,7 +106,7 @@ export function takibiCoz(ham: unknown): YksTakip {
     if (gunMu(kayit.bitti)) temiz.bitti = kayit.bitti
     if (Object.keys(temiz).length > 0) konular[id] = temiz
   }
-  return { surum: 1, konular }
+  return { surum: 2, konular: nesne.surum === 1 ? bolunenleriTasi(konular) : konular }
 }
 
 /**
@@ -101,5 +132,5 @@ export function asamaYaz(
   const konular = { ...takip.konular }
   if (Object.keys(sonraki).length === 0) delete konular[konuId]
   else konular[konuId] = sonraki
-  return { surum: 1, konular }
+  return { surum: 2, konular }
 }

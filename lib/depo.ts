@@ -68,7 +68,7 @@ export const ANAHTARLAR = {
   bilinmeyenKartlar: 'rabi-bilinmeyen-kartlar',
   /**
    * Konu Takibi: YKS konularında elle işaretlenen aşamalar ve "bitirdim"
-   * (`lib/konu-takibi/takip.ts`). Sürümlü (`{ surum: 1, konular }`); okurken
+   * (`lib/konu-takibi/takip.ts`). Sürümlü (`{ surum: 2, konular }`); okurken
    * `takibiCoz` süzüyor. "Haritada çalıştım" burada değil, `konuIlerleme`den
    * hesaplanıyor. Yedeğe giriyor.
    */

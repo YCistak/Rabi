@@ -204,7 +204,7 @@ describe('yedegiDogrula', () => {
       },
     })
     expect(yedek.yksKonuTakibi).toEqual({
-      surum: 1,
+      surum: 2,
       konular: { 'tyt-mat-uslu': { okul: '2026-10-01', bitti: '2026-10-04' } },
     })
   })
@@ -229,7 +229,7 @@ describe('yedegiUygula — konu takibi', () => {
 
   it('yedekteki takibi yazar', () => {
     const depo = sahteDepo()
-    const takip = { surum: 1 as const, konular: { 'tyt-mat-uslu': { bitti: '2026-10-04' } } }
+    const takip = { surum: 2 as const, konular: { 'tyt-mat-uslu': { bitti: '2026-10-04' } } }
     yedegiUygula({ ...yedekOlustur(bos), yksKonuTakibi: takip })
     vi.unstubAllGlobals()
     expect(JSON.parse(depo.get(ANAHTARLAR.yksKonuTakibi)!)).toEqual(takip)

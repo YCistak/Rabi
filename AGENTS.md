@@ -2804,7 +2804,13 @@ Bitirdim.
 - **Binom AYT'de** ama kimliği `tyt-mat-binom`: TYT'lerde soru çıkmıyor,
   AYT'lerde her yıl bir soru var. Taşınan konu kimliğini korur
   (`TASINAN_KONULAR`, `takip.test.ts`).
-- **Kayıt** `rabi-yks-konu-takibi`, sürümlü (`{ surum: 1, konular }`), işaret
+- **Kaba başlıklar Maarif başlıklarıyla bölünüyor** (`BOLUNEN_KONULAR`,
+  `kayit.ts`): Halk Edebiyatı → Anonim / Âşık / Dinî-Tasavvufi, Dolaşım ve
+  Bağışıklık → Dolaşım / Bağışıklık. Eski kimlik parçalardan biri olarak
+  kalıyor, kaydı yeni parçalara sürüm 1 → 2 göçünde **bir kez** kopyalanıyor.
+  Maarif'te karşılığı olmayan başlıklar (Cumhuriyet Dönemi, Edebî Akımlar,
+  Divan, Genden Proteine) bölünmedi; uydurma alt başlık yok.
+- **Kayıt** `rabi-yks-konu-takibi`, sürümlü (`{ surum: 2, konular }`), işaret
   yerine gün tutuyor; okurken `takibiCoz` süzüyor ve yedeğe giriyor
   (`Yedek.yksKonuTakibi`, eski yedekte yoksa mevcut kayda dokunulmuyor).
   `kayit.ts` konu içeriğini yüklemiyor, depo yalnızca onu okuyor.

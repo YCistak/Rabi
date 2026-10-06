@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { KonuIlerlemeleri } from '../konu/ilerleme'
 import { HARITA_ESLEMESI } from './harita-eslemesi'
+import { BOLUNEN_KONULAR } from './kayit'
 import { YKS_DERSLERI, dersAdi, oturumDersleri, tumYksKonulari, yksDersBul } from './liste'
 import {
   BOS_TAKIP,
@@ -290,12 +291,58 @@ describe('haritaDurumu — otomatik aşama', () => {
   })
 })
 
+describe('bölünen konuların göçü', () => {
+  it('bölünen her konunun parçaları listede, eski kimlik de listede kaldı', () => {
+    const kimlikler = new Set(tumYksKonulari().map((k) => k.id))
+    for (const [eski, yeniler] of Object.entries(BOLUNEN_KONULAR)) {
+      expect(kimlikler.has(eski), eski).toBe(true)
+      for (const yeni of yeniler) expect(kimlikler.has(yeni), yeni).toBe(true)
+    }
+  })
+
+  it('sürüm 1 kayıtta eski kimliğin işareti yeni parçalara kopyalanıyor', () => {
+    const kayit = { okul: '2026-09-01', bitti: '2026-09-20' }
+    const sonuc = takibiCoz({ surum: 1, konular: { 'ayt-edb-halk': kayit, 'ayt-biy-dolasim': { soru: BUGUN } } })
+    expect(sonuc.surum).toBe(2)
+    expect(sonuc.konular['ayt-edb-halk']).toEqual(kayit)
+    expect(sonuc.konular['ayt-edb-halk-asik']).toEqual(kayit)
+    expect(sonuc.konular['ayt-edb-halk-tekke']).toEqual(kayit)
+    expect(sonuc.konular['ayt-biy-bagisiklik']).toEqual({ soru: BUGUN })
+    // Edebiyat özeti: üç parça da bitti sayılıyor.
+    expect(dersOzeti(yksDersBul('ayt-edebiyat')!, sonuc, {}).biten).toBe(3)
+  })
+
+  it('parçada zaten kayıt varsa üstüne yazılmıyor', () => {
+    const sonuc = takibiCoz({
+      surum: 1,
+      konular: { 'ayt-edb-halk': { okul: '2026-09-01' }, 'ayt-edb-halk-asik': { soru: BUGUN } },
+    })
+    expect(sonuc.konular['ayt-edb-halk-asik']).toEqual({ soru: BUGUN })
+  })
+
+  it('göç bir kez: sürüm 2 kayıtta parçadan kaldırılan işaret geri gelmiyor', () => {
+    let takip = takibiCoz({ surum: 1, konular: { 'ayt-edb-halk': { okul: '2026-09-01' } } })
+    takip = asamaYaz(takip, 'ayt-edb-halk-tekke', 'okul', false, BUGUN)
+    const yeniden = takibiCoz(JSON.parse(JSON.stringify(takip)))
+    expect(yeniden.konular['ayt-edb-halk-tekke']).toBeUndefined()
+    expect(yeniden.konular['ayt-edb-halk-asik']).toEqual({ okul: '2026-09-01' })
+  })
+
+  it('bölünen konular Maarif başlıklarına ayrı ayrı bağlı', () => {
+    expect(HARITA_ESLEMESI['ayt-edb-halk']).toEqual(['trk10-anonim'])
+    expect(HARITA_ESLEMESI['ayt-edb-halk-asik']).toEqual(['trk11-asik'])
+    expect(HARITA_ESLEMESI['ayt-edb-halk-tekke']).toBeUndefined()
+    expect(HARITA_ESLEMESI['ayt-biy-dolasim']).toEqual(['byl11-dolasim-homeo'])
+    expect(HARITA_ESLEMESI['ayt-biy-bagisiklik']).toEqual(['byl11-dogal-bagisiklik', 'byl11-kazanilmis'])
+  })
+})
+
 describe('takibiCoz — şema güvenliği', () => {
   it('bozuk değerlerde boş kayıt', () => {
     expect(takibiCoz(null)).toEqual(BOS_TAKIP)
     expect(takibiCoz('metin')).toEqual(BOS_TAKIP)
     expect(takibiCoz({ konular: {} })).toEqual(BOS_TAKIP)
-    expect(takibiCoz({ surum: 2, konular: { a: { bitti: BUGUN } } })).toEqual(BOS_TAKIP)
+    expect(takibiCoz({ surum: 3, konular: { a: { bitti: BUGUN } } })).toEqual(BOS_TAKIP)
     expect(takibiCoz({ surum: 1, konular: null })).toEqual(BOS_TAKIP)
   })
 
@@ -309,7 +356,7 @@ describe('takibiCoz — şema güvenliği', () => {
         d: 'bozuk',
       },
     })
-    expect(sonuc).toEqual({ surum: 1, konular: { a: { okul: BUGUN }, b: { soru: '2026-09-01' } } })
+    expect(sonuc).toEqual({ surum: 2, konular: { a: { okul: BUGUN }, b: { soru: '2026-09-01' } } })
   })
 
   it('listede olmayan kimliği atmıyor', () => {
