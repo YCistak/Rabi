@@ -305,7 +305,9 @@ export function KonuTakibiEkrani({
   }
 
   return (
-    <div>
+    // Tablette içerik ortada sınırlı genişlikte, ders listesi iki sütun;
+    // telefonda bu sınıflar eşleşmiyor.
+    <div className="tablet:mx-auto tablet:max-w-3xl">
       <BaslikSatiri baslik="Konu Takibi" arac="konu-takibi" />
 
       {/* Tanıtım turunun "Konu konu işaretle" adımı bu bloğu aydınlatıyor. */}
@@ -355,9 +357,12 @@ export function KonuTakibiEkrani({
             </Not>
           )}
 
-          <ul className="golge-kart mt-4 overflow-hidden rounded-[22px] bg-card">
+          <ul className="golge-kart mt-4 overflow-hidden rounded-[22px] bg-card tablet:grid tablet:grid-cols-2">
             {dersler.map((ders) => (
-              <li key={ders.id} className="border-t border-border first:border-t-0">
+              <li
+                key={ders.id}
+                className="border-t border-border first:border-t-0 tablet:odd:border-r tablet:[&:nth-child(2)]:border-t-0"
+              >
                 <DersSatiri
                   ders={ders}
                   ad={dersAdi(ders, alan)}
@@ -811,7 +816,8 @@ function DersEkrani({
   return (
     // Dersin rengi ortak bileşenlere de geçiyor (`dersVurgusu`): çip,
     // odak halkası ve başlıktaki kutu Matematik'te mavi, Kimya'da turuncu.
-    <div style={ders.renk ? dersVurgusu(ders.renk) : undefined}>
+    // Tablette konu satırları tek sütun ama ortada sınırlı genişlikte.
+    <div className="tablet:mx-auto tablet:max-w-3xl" style={ders.renk ? dersVurgusu(ders.renk) : undefined}>
       <BaslikSatiri
         baslik={ad}
         arac="konu-takibi"

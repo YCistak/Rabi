@@ -1449,6 +1449,8 @@ const GENIS_SAYFALAR: ReadonlySet<string> = new Set([
   'soru',
   'devamsizlik',
   'notlar',
+  // İçerik kendi içinde max-w-3xl; ders listesi tablette iki sütun.
+  'konu-takibi',
 ])
 
 /**
