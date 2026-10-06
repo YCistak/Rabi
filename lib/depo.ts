@@ -29,6 +29,7 @@ import {
   type BankaSorusu,
 } from './oyunlar/banka'
 import { VARSAYILAN_SABLON_ID } from './sablonlar'
+import { VARSAYILAN_OZEL_PROVA, ozelProvaSuresi } from './sinav-provasi'
 import { egitimYili } from './hesap'
 import { dakikayiKirp, saatiKirp } from './hatirlatma'
 import { yeniId } from './utils'
@@ -358,6 +359,7 @@ export const VARSAYILAN_POMODORO: PomodoroAyar = {
   rahatsizEtme: false,
   kilitliUygulamalar: [],
   kilitTanitimiGoruldu: false,
+  provaSuresi: VARSAYILAN_OZEL_PROVA,
 }
 
 /**
@@ -380,6 +382,7 @@ export function pomodoroAyariniNormalize(
       ? birlesik.kilitliUygulamalar.filter((paket) => typeof paket === 'string')
       : [],
     kilitTanitimiGoruldu: birlesik.kilitTanitimiGoruldu === true,
+    provaSuresi: ozelProvaSuresi(birlesik.provaSuresi),
   }
 }
 

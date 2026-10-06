@@ -118,13 +118,17 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew bundleRelease assembleRelease --no-daemon
 
+      # Dal adında '/' olabilir (ux/...); dosya adına girmeden önce '-' yap.
       - name: Çıktıları topla
+        id: cikti
         run: |
+          ad="${GITHUB_REF_NAME//\//-}"
+          echo "ad=$ad" >> "$GITHUB_OUTPUT"
           mkdir -p dist
           APK=$(find android/app/build/outputs/apk/release -name '*.apk' | head -1)
-          cp "$APK" "dist/rabi-${GITHUB_REF_NAME}.apk"
+          cp "$APK" "dist/rabi-${ad}.apk"
           AAB=$(find android/app/build/outputs/bundle/release -name '*.aab' | head -1)
-          cp "$AAB" "dist/rabi-${GITHUB_REF_NAME}.aab"
+          cp "$AAB" "dist/rabi-${ad}.aab"
 
       # Play'e yükleme. Secret yoksa iş kırılmaz, adım atlanır; etiketli
       # sürümde bu açıkça uyarıyla duyurulur (sessizce atlanmasın).
@@ -176,7 +180,7 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: ${{ steps.play.outputs.paket }}
-          releaseFiles: dist/rabi-${{ github.ref_name }}.aab
+          releaseFiles: dist/rabi-${{ steps.cikti.outputs.ad }}.aab
           releaseName: ${{ steps.play.outputs.ad }}
           track: ${{ steps.play.outputs.iz }}
           status: ${{ steps.play.outputs.durum }}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { GunlukKayit } from './types'
-import { anaMaskot, type AnaMaskotGirdisi } from './ana-maskot'
+import { anaMaskot, bugunKonuBittiMi, gorevlerBittiMi, type AnaMaskotGirdisi } from './ana-maskot'
 
 const BUGUN = '2026-09-14'
 const DUN = '2026-09-13'
@@ -17,6 +17,11 @@ const temel: AnaMaskotGirdisi = {
   kalanGun: 200,
   pomodoro: null,
   devamsizlikAsildi: false,
+  ozetHazir: false,
+  sonDenemeTarihi: null,
+  konuBitti: false,
+  gorevlerBitti: false,
+  bekleyenYanlis: 0,
 }
 
 const poz = (g: Partial<AnaMaskotGirdisi>) => anaMaskot({ ...temel, ...g }).poz
@@ -84,6 +89,66 @@ describe('anaMaskot', () => {
     expect(new Set(gunler).size).toBe(3)
   })
 
+  it('ay özeti bekliyorsa megafonla duyuruyor; pomodoro ve sınav günü önde', () => {
+    expect(poz({ ozetHazir: true, gunlukKayitlar: [gun(BUGUN, 80)] })).toBe('kafa-megafonlu')
+    expect(poz({ ozetHazir: true, pomodoro: 'calisma' })).toBe('kafa-laptoplu')
+    expect(poz({ ozetHazir: true, kalanGun: 0 })).toBe('kafa-bagdas')
+  })
+
+  it('bugün deneme girildiyse damga, konu bittiyse tahta; ikisi de hedef kutlamasının önünde', () => {
+    expect(poz({ sonDenemeTarihi: BUGUN })).toBe('kafa-damgali')
+    expect(poz({ sonDenemeTarihi: DUN })).toBe('kafa-uyuyan')
+    expect(poz({ konuBitti: true, gunlukKayitlar: [gun(BUGUN, 80)] })).toBe('kafa-tahtali')
+    expect(poz({ sonDenemeTarihi: BUGUN, konuBitti: true })).toBe('kafa-damgali')
+  })
+
+  it('görevler bittiyse çanta; hedef tuttuysa kutlama önde', () => {
+    expect(poz({ gorevlerBitti: true })).toBe('kafa-cantali')
+    expect(poz({ gorevlerBitti: true, gunlukKayitlar: [gun(BUGUN, 10)] })).toBe('kafa-cantali')
+    expect(poz({ gorevlerBitti: true, gunlukKayitlar: [gun(BUGUN, 60)] })).not.toBe('kafa-cantali')
+  })
+
+  it('üç gün ve daha uzun aradan sonra ilk kayıtta selamlıyor', () => {
+    const bugun = [gun(BUGUN, 10)]
+    // 2026-09-10 ile 14 arasında 3 boş gün (11, 12, 13).
+    expect(poz({ gunlukKayitlar: [gun('2026-09-10', 20), ...bugun] })).toBe('kafa-selamlayan')
+    // 2 boş gün yetmiyor.
+    expect(poz({ gunlukKayitlar: [gun('2026-09-11', 20), ...bugun] })).not.toBe('kafa-selamlayan')
+    // Eski kaydı hiç olmayan yeni kullanıcı geri dönmüş sayılmıyor.
+    expect(poz({ gunlukKayitlar: bugun })).not.toBe('kafa-selamlayan')
+    // Bugün hedef tuttuysa kutlama önde.
+    expect(poz({ gunlukKayitlar: [gun('2026-09-01', 20), gun(BUGUN, 60)] })).not.toBe('kafa-selamlayan')
+  })
+
+  it('hafta sonu sabahı bitki suluyor', () => {
+    expect(poz({ bugun: '2026-09-12', saat: 9 })).toBe('kafa-bitkili')
+    expect(poz({ bugun: '2026-09-13', saat: 9 })).toBe('kafa-bitkili')
+    expect(poz({ bugun: BUGUN, saat: 9 })).toBe('kafa-gerinen')
+  })
+
+  it('kayıtsız günde: seri > yanlış birikti > sınav yakın > akşam', () => {
+    expect(poz({ bekleyenYanlis: 10 })).toBe('kafa-buyutecli')
+    expect(poz({ bekleyenYanlis: 9 })).toBe('kafa-uyuyan')
+    expect(poz({ bekleyenYanlis: 10, gunlukKayitlar: [gun(DUN, 60)] })).toBe('kafa-elleri-belde')
+    expect(poz({ kalanGun: 30 })).toBe('kafa-saatli')
+    expect(poz({ kalanGun: 31 })).toBe('kafa-uyuyan')
+    expect(poz({ kalanGun: 20, bekleyenYanlis: 12 })).toBe('kafa-buyutecli')
+    expect(poz({ saat: 18 })).toBe('kafa-dusunen')
+    expect(poz({ saat: 21 })).toBe('kafa-dusunen')
+    expect(poz({ saat: 17 })).toBe('kafa-uyuyan')
+    expect(poz({ saat: 19, kalanGun: 10 })).toBe('kafa-saatli')
+    // Kayıt varsa hatırlatma yok.
+    expect(poz({ bekleyenYanlis: 50, gunlukKayitlar: [gun(BUGUN, 10)] })).not.toBe('kafa-buyutecli')
+  })
+
+  it('bugunKonuBittiMi ve gorevlerBittiMi', () => {
+    expect(bugunKonuBittiMi({ a: { bitisTarihi: DUN }, b: { bitisTarihi: BUGUN } }, BUGUN)).toBe(true)
+    expect(bugunKonuBittiMi({ a: { bitisTarihi: DUN }, b: {} }, BUGUN)).toBe(false)
+    expect(gorevlerBittiMi([], BUGUN)).toBe(false)
+    expect(gorevlerBittiMi([{ gun: BUGUN, bitti: true }, { gun: DUN, bitti: false }], BUGUN)).toBe(true)
+    expect(gorevlerBittiMi([{ gun: BUGUN, bitti: true }, { gun: BUGUN, bitti: false }], BUGUN)).toBe(false)
+  })
+
   it('her durumun Türkçe bir ekran okuyucu etiketi var', () => {
     const girdiler: Partial<AnaMaskotGirdisi>[] = [
       {},
@@ -95,6 +160,15 @@ describe('anaMaskot', () => {
       { pomodoro: 'mola' },
       { devamsizlikAsildi: true },
       { kalanGun: 0 },
+      { ozetHazir: true },
+      { sonDenemeTarihi: BUGUN },
+      { konuBitti: true },
+      { gorevlerBitti: true },
+      { gunlukKayitlar: [gun('2026-09-01', 20), gun(BUGUN, 10)] },
+      { bugun: '2026-09-12', saat: 9 },
+      { bekleyenYanlis: 10 },
+      { kalanGun: 20 },
+      { saat: 19 },
     ]
     for (const g of girdiler) expect(anaMaskot({ ...temel, ...g }).etiket.length).toBeGreaterThan(3)
   })

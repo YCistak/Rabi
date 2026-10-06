@@ -77,6 +77,15 @@ export const MASKOT_POZLARI = [
   'kafa-elleri-belde',
   'kafa-bagdas',
   'kafa-uzgun',
+  'kafa-damgali',
+  'kafa-selamlayan',
+  'kafa-buyutecli',
+  'kafa-saatli',
+  'kafa-dusunen',
+  'kafa-megafonlu',
+  'kafa-tahtali',
+  'kafa-cantali',
+  'kafa-bitkili',
 ] as const
 
 export type MaskotPozu = (typeof MASKOT_POZLARI)[number]

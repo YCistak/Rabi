@@ -14,8 +14,8 @@ import { doluDersler, oyunlarinDersleri, type DersId } from '@/lib/oyunlar/tanim
 import { Halka, Kart, kartGirisi, Not } from '@/components/ui'
 import { GeriSayim } from '@/components/geri-sayim'
 import { Rabi } from '@/components/maskot/rabi'
-import { anaMaskot, type PomodoroHali } from '@/lib/ana-maskot'
-import { gununHali } from '@/lib/gunun-hali'
+import { type PomodoroHali } from '@/lib/ana-maskot'
+import { anaBaslik } from '@/lib/ana-baslik'
 import { geriSayim } from '@/lib/sinav-tarihi'
 
 /**
@@ -76,6 +76,8 @@ export function AnaSayfa({
   onDahaGit,
   onOyunlaraGit,
   pomodoro,
+  konuBitti,
+  gorevlerBitti,
 }: {
   ayarlar: Ayarlar
   gunlukKayitlar: GunlukKayit[]
@@ -103,6 +105,10 @@ export function AnaSayfa({
    * tavşan tur sürerken laptopta çalışıyor (`lib/ana-maskot.ts`).
    */
   pomodoro: PomodoroHali
+  /** Bugün bir konu anlatımı bitirildi mi — başlıktaki tavşan için. */
+  konuBitti: boolean
+  /** Bugünün görevleri var ve hepsi işaretli mi — başlıktaki tavşan için. */
+  gorevlerBitti: boolean
   /** Bugün ayın 1'i ama kapanan ay yedi etkin gün eşiğine ulaşmadı mı. */
   ozetYetersiz: boolean
   /** Bir sonraki özetin açılacağı gün, 'YYYY-AA-GG' — pasif kartın satırı. */
@@ -172,10 +178,11 @@ export function AnaSayfa({
   const kalanGun = geriSayim(tarih, ayarlar.buYilSinif).kalanGun
   /*
     Başlıktaki tavşan günü gösteriyor: kayıt yoksa uyuyor, çalışılıyorsa
-    yazıyor, hedef tuttuysa dans ediyor. Kural `lib/ana-maskot.ts`te; saat
-    burada okunuyor çünkü karar fonksiyonu saf.
+    yazıyor, hedef tuttuysa dans ediyor. Altındaki cümle aynı karardan
+    çıkıyor, ikisi çelişemiyor (`lib/ana-baslik.ts`). Saat burada okunuyor
+    çünkü karar fonksiyonu saf.
   */
-  const maskot = anaMaskot({
+  const { maskot, cumle: gununCumlesi } = anaBaslik({
     bugun: tarih,
     saat: new Date().getHours(),
     hedef: ayarlar.gunlukHedef,
@@ -183,15 +190,11 @@ export function AnaSayfa({
     kalanGun,
     pomodoro,
     devamsizlikAsildi: devamsizlikDurumu.asildi,
-  })
-
-  const gununCumlesi = gununHali({
-    bugun: tarih,
-    hedef: ayarlar.gunlukHedef,
-    gunlukKayitlar,
-    bekleyenYanlis,
+    ozetHazir,
     sonDenemeTarihi,
-    kalanGun,
+    konuBitti,
+    gorevlerBitti,
+    bekleyenYanlis,
   })
 
   return (
@@ -216,7 +219,7 @@ export function AnaSayfa({
                 kalıyor, "Merhaba  👋" gibi çift boşluk oluşmuyor. */}
             {ayarlar.ad ? `Merhaba ${ayarlar.ad} 👋` : 'Merhaba 👋'}
           </h1>
-          {/* Günün hâli tek cümle (`lib/gunun-hali.ts`). Bir süre hedef
+          {/* Günün hâli tek cümle; tavşanla aynı karardan (`lib/ana-baslik.ts`). Bir süre hedef
               kartının altında kendi kartıydı — maskot, "BUGÜN" etiketi,
               başlık, ikinci bir cümle ve ok; kullanıcı kartı kökten kaldırttı
               ve buraya tek bir cümle istedi. Hedef sıfırken cümle yok. */}

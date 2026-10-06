@@ -129,30 +129,64 @@ const POZLAR = [
  * Ana sayfa başlığının durum kafaları: `tavsan-kafa-*.png`.
  *
  * Sol üstteki tavşan 58 piksel ve tam boy poz o ölçüde lekeye dönüyor (70
- * kuralı). Alanı büyütmek başlığı ve selamlama cümlesini aşağı iterdi; onun
- * yerine pozun **üst kısmı** kırpılıyor: baş, kollar ve tutulan nesnenin
- * üstü (laptop, defter, kitap) — durumu anlatan şey zaten orası.
+ * kuralı); pozun baş ve üst gövdesi gösteriliyor.
  *
- * `ust` ve `alt`, pozun saydamlıktan bulunan kutusunun boyuna oran: 0 tepesi,
- * 1 tabanı. `sol`/`sag` aynı şekilde enine oran; verilmezse kutunun tamamı.
- * Oranlar gözle değil çıktılara bakılarak ayarlandı; değiştirince
- * `public/tavsan-kafa-*.png`yi aç ve 58 pikselde kontrol et.
+ * ## Kafaya göre hizalanıyor, kutuya göre değil
  *
- * Uyuyan tavşan kıvrılmış, zaten yatay ve kısa: tamamı alınıyor.
+ * Kafalar bir süre pozun kutusundan oranla kırpılıp (`alt: 0.62` gibi) tuvale
+ * sığdırılıyordu. Kırpılan parçanın boyu pozdan poza değiştiği için **kafa**
+ * değişiyordu: üst gövdeden kırpılan kahkahada baş kocaman, tam boy alınan
+ * bağdaşta küçücüktü; yatan uyuyan tavşan enine sığdırılıp yere çökmüş gibi
+ * duruyordu. Poz her değiştiğinde tavşan büyüyüp küçülüyor, gözleri yukarı
+ * aşağı zıplıyordu. Kullanıcı bunu "tavşanlarda yamukluk" diye fark etti.
+ *
+ * Şimdi ölçü gözlerden: her pozun iki göz merkezi kaynak pikselinde yazılı
+ * (`gozler`), poz göz arası `GOZ_ARASI` olacak şekilde ölçekleniyor ve göz
+ * ortası tuvalde hep aynı noktaya (`GOZ_Y`, yatayda orta) konuyor. Poz
+ * değişince yalnızca ifade, kollar ve tutulan nesne değişiyor. Tuvalin dışına
+ * düşen gövde kesiliyor; kesik alt kenarda `SOLMA`, yanlarda `YAN_SOLMA`
+ * boyunca saydamlaşıyor, düz bir bıçak çizgisi bırakmasın diye.
+ *
+ * Göz merkezleri koyu piksellerin en büyük iki lekesinden bulundu ve
+ * çıktılara bakılarak denetlendi. Defter, kitap ve kahkahada en büyük koyu
+ * leke defter, kitap ya da ağızdı; orada göz çifti elle seçildi.
+ *
+ * `duzelt`, göz arasının kafa boyunu yanlış söylediği pozlar için çarpan:
+ * kahkahada ve uyuyanda gözler kapalı yaylar; laptop, megafon, saat ve
+ * tahtada baş yana dönük ya da öne eğik (göz arası kısalıyor). Değiştirince `public/tavsan-kafa-*.png`yi yan yana aç ve
+ * kafaların aynı boyda durduğunu gör.
+ *
+ * `kitapli` "kitap okuyan"dan geliyor: "kitabı inceleyen" yüzüstü yatıyor ve
+ * yüzü kısalmış, başı ötekilerden iri görünüyordu.
  */
+const GOZ_ARASI = 58
+const GOZ_Y = 152
+const SOLMA = 40
+/** Yan kenarlarda solma: yatan uyuyanın gövdesi sağdan kesiliyor. */
+const YAN_SOLMA = 24
+
 const KAFALAR = [
-  { ad: 'tavsan-kafa-uyuyan', kaynak: 'kıvrılıp uyuyan.png', alt: 1 },
-  { ad: 'tavsan-kafa-gerinen', kaynak: 'gerinen.png', alt: 0.62 },
-  { ad: 'tavsan-kafa-yazan', kaynak: 'deftere yazan.png', alt: 0.94 },
-  { ad: 'tavsan-kafa-kitapli', kaynak: 'kitabı inceleyen.png', alt: 1, sag: 0.8 },
-  { ad: 'tavsan-kafa-laptoplu', kaynak: 'laptopta çalışan.png', alt: 0.9 },
-  { ad: 'tavsan-kafa-kahveli', kaynak: 'kahve içen maskot.png', alt: 0.68 },
-  { ad: 'tavsan-kafa-dans', kaynak: 'dans eden.png', alt: 0.6 },
-  { ad: 'tavsan-kafa-alkislayan', kaynak: 'alkışlayan.png', alt: 0.62 },
-  { ad: 'tavsan-kafa-kahkaha', kaynak: 'kahkaha atan.png', alt: 0.62 },
-  { ad: 'tavsan-kafa-elleri-belde', kaynak: 'elleri belde.png', alt: 0.68 },
-  { ad: 'tavsan-kafa-bagdas', kaynak: 'bağdaş kuran.png', alt: 1 },
-  { ad: 'tavsan-kafa-uzgun', kaynak: 'üzülen maskot.png', alt: 0.6 },
+  { ad: 'tavsan-kafa-uyuyan', kaynak: 'kıvrılıp uyuyan.png', gozler: [[307, 731], [570, 580]], duzelt: 1.12 },
+  { ad: 'tavsan-kafa-gerinen', kaynak: 'gerinen.png', gozler: [[560, 519], [752, 478]] },
+  { ad: 'tavsan-kafa-yazan', kaynak: 'deftere yazan.png', gozler: [[547, 609], [760, 655]] },
+  { ad: 'tavsan-kafa-kitapli', kaynak: 'kitap okuyan maskot.png', gozler: [[863, 828], [1189, 828]] },
+  { ad: 'tavsan-kafa-laptoplu', kaynak: 'laptopta çalışan.png', gozler: [[553, 594], [749, 626]], duzelt: 0.9 },
+  { ad: 'tavsan-kafa-kahveli', kaynak: 'kahve içen maskot.png', gozler: [[859, 811], [1194, 808]] },
+  { ad: 'tavsan-kafa-dans', kaynak: 'dans eden.png', gozler: [[519, 546], [702, 453]] },
+  { ad: 'tavsan-kafa-alkislayan', kaynak: 'alkışlayan.png', gozler: [[542, 553], [735, 488]] },
+  { ad: 'tavsan-kafa-kahkaha', kaynak: 'kahkaha atan.png', gozler: [[499, 561], [762, 500]], duzelt: 1.15 },
+  { ad: 'tavsan-kafa-elleri-belde', kaynak: 'elleri belde.png', gozler: [[619, 480], [796, 454]] },
+  { ad: 'tavsan-kafa-bagdas', kaynak: 'bağdaş kuran.png', gozler: [[585, 615], [801, 560]] },
+  { ad: 'tavsan-kafa-uzgun', kaynak: 'üzülen maskot.png', gozler: [[863, 828], [1183, 821]] },
+  { ad: 'tavsan-kafa-damgali', kaynak: 'onay damgası basan.png', gozler: [[564, 584], [776, 619]] },
+  { ad: 'tavsan-kafa-selamlayan', kaynak: 'eğilerek selamlayan.png', gozler: [[644, 592], [838, 529]] },
+  { ad: 'tavsan-kafa-buyutecli', kaynak: 'büyüteçle inceleyen.png', gozler: [[610, 614], [808, 578]] },
+  { ad: 'tavsan-kafa-saatli', kaynak: 'saate bakan.png', gozler: [[609, 548], [779, 579]], duzelt: 0.88 },
+  { ad: 'tavsan-kafa-dusunen', kaynak: 'düşünen maskot.png', gozler: [[921, 801], [1244, 754]] },
+  { ad: 'tavsan-kafa-megafonlu', kaynak: 'megafonla konuşan.png', gozler: [[602, 610], [701, 493]], duzelt: 0.8 },
+  { ad: 'tavsan-kafa-tahtali', kaynak: 'tahtaya yazan.png', gozler: [[541, 560], [701, 532]], duzelt: 0.85 },
+  { ad: 'tavsan-kafa-cantali', kaynak: 'çanta kapatan.png', gozler: [[538, 549], [740, 588]] },
+  { ad: 'tavsan-kafa-bitkili', kaynak: 'bitki sulayan.png', gozler: [[616, 520], [810, 585]] },
 ]
 
 /**
@@ -192,10 +226,9 @@ function kutuBul(rgba, en, boy) {
 /**
  * Bir kaynağı tuvale oturtur; yazılan dosyanın yolunu döner.
  *
- * `kirpma` kaynak pikselinde sabit bir kutu (`YUZ`); `oran` ise saydamlıktan
- * bulunan kutunun oranlı bir parçası (`KAFALAR`).
+ * `kirpma` kaynak pikselinde sabit bir kutu (`YUZ`).
  */
-async function uret(ad, kaynak, kirpma, { sikistir = true, oran = null } = {}) {
+async function uret(ad, kaynak, kirpma, { sikistir = true } = {}) {
   let girdi = sharp(join(kaynakKlasoru, kaynak)).ensureAlpha()
   if (kirpma) {
     girdi = girdi.extract({
@@ -208,24 +241,7 @@ async function uret(ad, kaynak, kirpma, { sikistir = true, oran = null } = {}) {
 
   const { data, info } = await girdi.raw().toBuffer({ resolveWithObject: true })
   const rgba = data
-  const tumKutu = kutuBul(rgba, info.width, info.height)
-  let kutu = tumKutu
-  if (oran) {
-    const ust = Math.round(tumKutu.ust + tumKutu.boy * (oran.ust ?? 0))
-    const alt = Math.round(tumKutu.ust + tumKutu.boy * (oran.alt ?? 1))
-    const sol = Math.round(tumKutu.sol + tumKutu.en * (oran.sol ?? 0))
-    const sag = Math.round(tumKutu.sol + tumKutu.en * (oran.sag ?? 1))
-    // Kırpılan parçanın da kendi saydam kenarları olabiliyor (kollar kutunun
-    // genişliğini veriyorsa baş dar kalır); ikinci bir kutu araması onları atıyor.
-    const parca = await sharp(rgba, {
-      raw: { width: info.width, height: info.height, channels: 4 },
-    })
-      .extract({ left: sol, top: ust, width: sag - sol, height: alt - ust })
-      .raw()
-      .toBuffer()
-    const ic = kutuBul(parca, sag - sol, alt - ust)
-    kutu = { sol: sol + ic.sol, ust: ust + ic.ust, en: ic.en, boy: ic.boy }
-  }
+  const kutu = kutuBul(rgba, info.width, info.height)
 
   // Ölçek boydan alınıyor: bir poz kollarını açtığında (sevinen) enden
   // ölçeklemek onu ötekilerden alçak gösterirdi.
@@ -263,6 +279,51 @@ async function uret(ad, kaynak, kirpma, { sikistir = true, oran = null } = {}) {
   return { dosya, hedefEn, hedefBoy }
 }
 
+/**
+ * Bir durum kafasını gözlerinden hizalayarak tuvale oturtur (`KAFALAR`).
+ *
+ * Poz göz arası `GOZ_ARASI` olacak kadar ölçekleniyor, göz ortası tuvalin
+ * (orta, `GOZ_Y`) noktasına geliyor; dışarıda kalan kısım atılıyor.
+ */
+async function kafaUret({ ad, kaynak, gozler, duzelt = 1 }) {
+  const girdi = sharp(join(kaynakKlasoru, kaynak)).ensureAlpha()
+  const { width: en, height: boy } = await girdi.metadata()
+  const [[x1, y1], [x2, y2]] = gozler
+  const olcek = (GOZ_ARASI * duzelt) / Math.hypot(x2 - x1, y2 - y1)
+  const buyukEn = Math.round(en * olcek)
+  const buyukBoy = Math.round(boy * olcek)
+  const kaynakPiksel = await girdi.resize(buyukEn, buyukBoy).raw().toBuffer()
+
+  // Göz ortasının büyütülmüş görseldeki yeri, tuvalin sol üstüne kaydırma.
+  const sol = Math.round(((x1 + x2) / 2) * olcek - TUVAL / 2)
+  const ust = Math.round(((y1 + y2) / 2) * olcek - GOZ_Y)
+
+  const tuval = Buffer.alloc(TUVAL * TUVAL * 4)
+  for (let y = 0; y < TUVAL; y++) {
+    const ky = y + ust
+    if (ky < 0 || ky >= buyukBoy) continue
+    // Kesilen kenarlar doğrusal saydamlaşıyor (alt `SOLMA`, yanlar `YAN_SOLMA`).
+    const altSolma = y > TUVAL - SOLMA ? (TUVAL - y) / SOLMA : 1
+    for (let x = 0; x < TUVAL; x++) {
+      const kx = x + sol
+      if (kx < 0 || kx >= buyukEn) continue
+      const kenar = Math.min(x, TUVAL - 1 - x)
+      const solma = altSolma * (kenar < YAN_SOLMA ? kenar / YAN_SOLMA : 1)
+      const k = (ky * buyukEn + kx) * 4
+      const t = (y * TUVAL + x) * 4
+      tuval[t] = kaynakPiksel[k]
+      tuval[t + 1] = kaynakPiksel[k + 1]
+      tuval[t + 2] = kaynakPiksel[k + 2]
+      tuval[t + 3] = Math.round(kaynakPiksel[k + 3] * solma)
+    }
+  }
+
+  await sharp(tuval, { raw: { width: TUVAL, height: TUVAL, channels: 4 } })
+    .png({ palette: true, quality: 90, effort: 10, compressionLevel: 9 })
+    .toFile(join(cikisKlasoru, `${ad}.png`))
+  return olcek
+}
+
 await mkdir(cikisKlasoru, { recursive: true })
 
 for (const { ad, kaynak } of POZLAR) {
@@ -270,9 +331,9 @@ for (const { ad, kaynak } of POZLAR) {
   console.log(`${ad}.png  ${hedefEn}×${hedefBoy}`)
 }
 
-for (const { ad, kaynak, ...oran } of KAFALAR) {
-  const { hedefEn, hedefBoy } = await uret(ad, kaynak, null, { oran })
-  console.log(`${ad}.png  ${hedefEn}×${hedefBoy}`)
+for (const kafa of KAFALAR) {
+  const olcek = await kafaUret(kafa)
+  console.log(`${kafa.ad}.png  ölçek ${olcek.toFixed(3)}`)
 }
 
 // `yuz` sıkıştırılmıyor: ikonun ve yerli kopyaların kaynağı (dosya başındaki not).
