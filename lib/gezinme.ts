@@ -55,6 +55,11 @@ export type KartTanimi = {
 /**
  * "Araçlar" sekmesindeki kart menüsü. Sıra önem taşıyor: ana sayfadaki "Araçlar"
  * bölümü bu listenin ilk dördünü gösteriyor, o yüzden en sık açılanlar başta.
+ *
+ * İlk dört Pomodoro, Yapılacaklar, Soru Takibi, Denemeler: kullanıcı
+ * değerlendirmesinde günlük akışın bu dördü olduğu söylendi (çalış, planla,
+ * soruyu gir, denemeyi gir). Yanlış Soru, Devamsızlık ve Sıralama bir süre
+ * ilk dörtteydi; geri kalanların kendi arasındaki sırası korunuyor.
  */
 export const KARTLAR: KartTanimi[] = [
   {
@@ -63,6 +68,27 @@ export const KARTLAR: KartTanimi[] = [
     aciklama: 'Sayaçlı çalışma seansı',
     ikon: '⏱️',
     renk: 'krem',
+  },
+  {
+    id: 'notlar',
+    ad: 'Yapılacaklar',
+    aciklama: 'Günü planla, istersen saat ver',
+    ikon: '🗒️',
+    renk: 'deniz',
+  },
+  {
+    id: 'soru',
+    ad: 'Soru Takibi',
+    aciklama: 'Günlük çözdüğün sorular',
+    ikon: '✏️',
+    renk: 'mavi',
+  },
+  {
+    id: 'deneme',
+    ad: 'Denemeler',
+    aciklama: 'Net ve gidişat',
+    ikon: '📝',
+    renk: 'pembe',
   },
   {
     id: 'yanlis-banka',
@@ -84,27 +110,6 @@ export const KARTLAR: KartTanimi[] = [
     aciklama: 'Denemeden tahmini YKS sırası',
     ikon: '📈',
     renk: 'lavanta',
-  },
-  {
-    id: 'soru',
-    ad: 'Soru Takibi',
-    aciklama: 'Günlük çözdüğün sorular',
-    ikon: '✏️',
-    renk: 'mavi',
-  },
-  {
-    id: 'notlar',
-    ad: 'Yapılacaklar',
-    aciklama: 'Günü planla, istersen saat ver',
-    ikon: '🗒️',
-    renk: 'deniz',
-  },
-  {
-    id: 'deneme',
-    ad: 'Denemeler',
-    aciklama: 'Net ve gidişat',
-    ikon: '📝',
-    renk: 'pembe',
   },
   {
     id: 'okul',
