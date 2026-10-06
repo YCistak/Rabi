@@ -14,12 +14,13 @@ import { cn } from '@/lib/utils'
  * Tasarım "Ders makarası" (`tasarim/acilis-arsiv.html` → 3. tur, Yazı C · 2):
  * dört makara harf yerine derslerin simgelerini çeviriyor (√x, 1453, DNA,
  * H₂O, MÖ, Ω…), her simge kendi dersinin renginde, ve soldan sağa tık tık
- * R·A·B·I'ya kilitleniyor — bütün dersler tek kelimede toplanıyor. Sonra
- * harfler bir tık daha dönüp çıkıyor ve zemin dört şerit hâlinde yukarı
- * kalkarak ana sayfayı açıyor.
+ * R·A·B·I'ya kilitleniyor — bütün dersler tek kelimede toplanıyor. Kelime
+ * ortada kısa bir an duruyor, sonra katman bütün olarak sönüp ana sayfayı
+ * gösteriyor. Bir süre burada zemin dört şerit hâlinde yukarı kalkıyordu;
+ * kullanıcı parça parça kalkış yerine solma istedi.
  *
  * Önceki tasarım 2d 4,65 saniye sürüyordu; günde birkaç kez açılan bir
- * uygulamada beklemeye dönüşüyordu. Bu tasarım 2,26 saniye. Tavşan hiçbir
+ * uygulamada beklemeye dönüşüyordu. Bu tasarım 2,08 saniye. Tavşan hiçbir
  * yere uçmuyor (kullanıcının şartı): yalnızca son makarada, I'dan önceki bir
  * an, bir simge olarak görünüyor.
  *
@@ -34,17 +35,17 @@ const ZEMIN = '#F8F8F7'
 /**
  * Ekranın ömrü (ms) — tasarımın kendi süresi.
  *
- * Son şerit 1840 ms'de kalkmaya başlıyor ve 420 ms sürüyor. Süreyi
+ * Katman 1680 ms'de sönmeye başlıyor ve 400 ms sürüyor. Süreyi
  * değiştirirsen `globals.css`'teki açılış zaman çizgisini birlikte değiştir.
  *
  * Veri okumasına bağlanmadı: localStorage neredeyse anında dönüyor,
  * bağlansaydı ekran bir kare görünüp kaybolur ve animasyon hiç izlenmezdi.
  */
-export const ACILIS_SURESI = 2260
+export const ACILIS_SURESI = 2080
 
 /**
- * Makaraların simgeleri. Her makara: boş · dört simge · harf · boş; harf
- * beşinci hücrede, çıkış altıncıya (bkz. `acilis-makara-don`).
+ * Makaraların simgeleri. Her makara: boş · dört simge · harf; harf beşinci
+ * hücrede (bkz. `acilis-makara-don`).
  *
  * Renk derse ait (`text-konu-<ders>-koyu`), konu haritası ve oyunlarla aynı.
  * Simgeler YKS'nin dersleri: matematik (√x, π, ∑, x², %), tarih (1453, MÖ),
@@ -190,8 +191,7 @@ export function Acilis({ onBitti }: { onBitti: () => void }) {
    * animasyon `acilis-bekliyor` kalkınca değil ondan sonraki ilk stil
    * hesabında salınıyor, WebView açılırken o kare gecikebiliyor ve uygulama
    * bir an arka plana düşerse animasyon duruyor ama zamanlayıcı işliyor.
-   * Zamanlayıcıyla kalkan katman, şeritler daha kalkmadan "tak" diye
-   * kayboluyordu. `animationend` bunu tanım gereği çözüyor; zamanlayıcı
+   * Zamanlayıcıyla kalkan katman, daha sönmeden "tak" diye kayboluyordu. `animationend` bunu tanım gereği çözüyor; zamanlayıcı
    * yalnızca emniyet kemeri.
    */
   const [sahneBitti, setSahneBitti] = useState(false)
@@ -208,38 +208,25 @@ export function Acilis({ onBitti }: { onBitti: () => void }) {
 
   return (
     <div
-      // Katman dokunuşları **yutuyor** (`pointer-events-none` yok): şeritler
-      // kalkarken altındaki düğmeler görünüyor, ama görünen her şey
-      // basılabilir olsaydı kullanıcı daha uygulamayı görmeden sekme
-      // değiştirirdi. `touch-none`, aynı şeyi kaydırma/yakınlaştırma için
-      // yapıyor.
+      // Katman dokunuşları **yutuyor** (`pointer-events-none` yok): sönerken
+      // altındaki düğmeler görünüyor, ama görünen her şey basılabilir olsaydı
+      // kullanıcı daha uygulamayı görmeden sekme değiştirirdi. `touch-none`,
+      // aynı şeyi kaydırma/yakınlaştırma için yapıyor.
       className={cn(
-        'fixed inset-0 z-[60] touch-none overflow-hidden select-none',
+        'acilis-katman fixed inset-0 z-[60] touch-none overflow-hidden select-none',
         !basladi && 'acilis-bekliyor',
       )}
+      style={{ backgroundColor: ZEMIN }}
+      // Ekranın ömrünü bitiren olay katmanın kendi sönüşünün bitişi. Makaraların
+      // olayları da buraya kabarıyor; hedef ve ad denetimi onları eliyor.
+      onAnimationEnd={(olay) => {
+        if (olay.target === olay.currentTarget && olay.animationName === 'acilis-katman-son') {
+          setSahneBitti(true)
+        }
+      }}
       role="status"
       aria-label="Rabi açılıyor"
     >
-      {/*
-        Zemin dört dikey şerit; sırayla yukarı kalkıp ana sayfayı açıyorlar.
-        Ekranın ömrünü bitiren olay **sonuncusunun** bitişi; en geç o
-        kalkıyor. Ad denetimi emniyet için: olay başka bir animasyondan
-        gelmemeli.
-      */}
-      {[0, 1, 2, 3].map((sira) => (
-        <div
-          key={sira}
-          className="acilis-serit"
-          style={{ left: `${sira * 25}%`, backgroundColor: ZEMIN }}
-          onAnimationEnd={
-            sira === 3
-              ? (olay) => {
-                  if (olay.animationName === 'acilis-serit-kalk') setSahneBitti(true)
-                }
-              : undefined
-          }
-        />
-      ))}
 
       {/*
         Kelime: dört pencere, her birinin genişliğini içindeki görünmez son
@@ -275,7 +262,6 @@ export function Acilis({ onBitti }: { onBitti: () => void }) {
                   ),
                 )}
                 <div className="acilis-hucre">{harf}</div>
-                <div className="acilis-hucre" />
               </div>
             </div>
           </div>

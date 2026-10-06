@@ -84,7 +84,7 @@ describe('Ana ve bağlamsal tanıtım turları', () => {
   it('turda eklenen veriyi turun listesinde tutar, temizleyince siler', () => {
     let durum = adimaKadar('soru-form')
     durum = tanitimGecisi(durum, { tur: 'demo-veri', alan: 'soruKayitlari', guncelle: (o) => [...o, { tarih: '2026-10-03', kayitlar: [{ ders: 'Matematik', toplam: 20, dogru: 15, yanlis: 3 }] }] })
-    durum = tanitimGecisi(durum, { tur: 'demo-veri', alan: 'gorevler', guncelle: [{ id: 'tanitim-g', metin: 'Paragraf', gun: '2026-10-03', dilim: 'sabah', kategori: 'tekrar', renk: 'turuncu', sure: null, bitti: false, yildiz: false }] })
+    durum = tanitimGecisi(durum, { tur: 'demo-veri', alan: 'gorevler', guncelle: [{ id: 'tanitim-g', metin: 'Paragraf', gun: '2026-10-03', saat: null, kategori: 'tekrar', renk: 'turuncu', sure: null, bitti: false, yildiz: false }] })
     expect(durum.demo.soruKayitlari).toHaveLength(1)
     expect(durum.demo.gorevler).toHaveLength(1)
     // Oyunun hazırlığına geri dönmek turda eklenenleri silmiyor; yalnızca oyun sonucu sıfırlanıyor.

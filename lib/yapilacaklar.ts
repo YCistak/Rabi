@@ -1,5 +1,5 @@
 /**
- * Yapılacaklar — günün görevleri, üç zaman dilimine bölünmüş.
+ * Yapılacaklar — günün görevleri, tek liste; görevin saati isteğe bağlı.
  *
  * ## Tahta neden listeye döndü
  *
@@ -11,10 +11,16 @@
  * konumdan okunmuyordu: iki kâğıdın yan yana durması ancak onu koyan kişiye
  * bir şey söylüyor, ertesi gün ona da söylemiyor.
  *
- * Yeni tasarım gruplamayı konuma değil **zamana** bağlıyor: sabah, öğle,
- * akşam. Bu, günün kendisinde gerçekten var olan tek sıra — "akşam etüt" ile
- * "sabah 40 soru" arasındaki fark keyfî bir yerleşim değil. `x`/`y` alanları
- * bu yüzden kalktı; eski kayıtlar taşınırken konumları atılıyor (`normalize`).
+ * Sonraki tasarım gruplamayı konuma değil zamana bağladı: sabah, öğle,
+ * akşam. Kullanıcı dilimleri istemedi ("saatler olsun, kullanıcı isterse"):
+ * üç kaba bölüm her işi bir kutuya sokmayı zorunlu kılıyordu, saati bilen
+ * kullanıcıya da bir şey söyletmiyordu. Şimdi günün görevleri **tek liste**
+ * ve her görevin **isteğe bağlı** bir saati var (`saat`, 'SS:DD'). Saatliler
+ * saate göre üstte, saatsizler altta (`gununSiraliGorevleri`).
+ *
+ * Eski kayıtların konumu (`x`/`y`) ve dilimi (`dilim`) taşınırken atılıyor
+ * (`gorevleriNormalize`). Dilim saate **çevrilmiyor**: "sabah" 09:00 demek
+ * değildi ve kullanıcının vermediği bir saati onun adına yazmak olurdu.
  *
  * ## Yedi günlük şerit neden duruyor, ay neden durmuyor
  *
@@ -35,15 +41,18 @@
 
 import { gunKaydir } from './utils'
 
-/** Günün üç dilimi. Sıra anlamlı: ekran da bu sırayla çiziyor. */
-export type GorevDilimi = 'sabah' | 'ogle' | 'aksam'
+/**
+ * Görevin saati: 'SS:DD', 24 saat. Yerel `<input type="time">` bu biçimi
+ * veriyor; bazı platformlar saniye de ekleyebiliyor ('14:30:00'), o yüzden
+ * kayda girmeden `saatKirp` ile beş karaktere iniyor.
+ */
+const SAAT_DESENI = /^([01]\d|2[0-3]):[0-5]\d$/
 
-export const DILIMLER: readonly GorevDilimi[] = ['sabah', 'ogle', 'aksam']
-
-export const DILIM_ADI: Record<GorevDilimi, string> = {
-  sabah: 'Sabah',
-  ogle: 'Öğle',
-  aksam: 'Akşam',
+/** Geçerli bir 'SS:DD' ise onu, değilse `null` döner. */
+export function saatKirp(ham: unknown): string | null {
+  if (typeof ham !== 'string') return null
+  const saat = ham.trim().slice(0, 5)
+  return SAAT_DESENI.test(saat) ? saat : null
 }
 
 /**
@@ -129,7 +138,13 @@ export type Gorev = {
    * daha yazıldığı anda dünün görevi sayılırdı.
    */
   gun: string
-  dilim: GorevDilimi
+  /**
+   * Görevin saati ('SS:DD') ya da `null` — saat isteğe bağlı.
+   *
+   * Eski kayıtlarda alan yok, `sabah`/`ogle`/`aksam` dilimi var; taşınırken
+   * dilim atılıyor ve görev saatsiz kalıyor (bkz. dosya başı).
+   */
+  saat: string | null
   kategori: GorevKategorisi
   /**
    * "Diğer" seçilince kullanıcının yazdığı kendi kategori adı.
@@ -146,12 +161,12 @@ export type Gorev = {
    *
    * `null` "süre verilmedi" demek: ekleme sayfasında süre isteğe bağlı ve
    * alan gelmeden önce yazılmış eski görevler de süresiz. İkisine de bir süre
-   * uydurmak, dilimin toplamını kullanıcının hiç söylemediği bir sayıyla
+   * uydurmak, günün toplamını kullanıcının hiç söylemediği bir sayıyla
    * şişirirdi.
    */
   sure: number | null
   bitti: boolean
-  /** Öncelikli — dilimin içinde yıldızlılar üstte duruyor. */
+  /** Öncelikli — aynı saatteki ya da saatsiz görevler içinde üstte duruyor. */
   yildiz: boolean
 }
 
@@ -191,9 +206,9 @@ export function sureYaz(dakika: number): string {
 }
 
 /**
- * Bitmemiş görevlerin toplam süresi — dilim başlığındaki sayı.
+ * Bitmemiş görevlerin toplam süresi — liste başlığındaki sayı.
  *
- * Biten görev düşüyor: sayı "bu dilimde daha ne kadar işim var" diyor.
+ * Biten görev düşüyor: sayı "bugün daha ne kadar işim var" diyor.
  * Süresi olmayan eski görevler sayılmıyor, tahmin edilmiyor.
  */
 export function kalanSure(gorevler: readonly Gorev[]): number {
@@ -201,14 +216,13 @@ export function kalanSure(gorevler: readonly Gorev[]): number {
 }
 
 /**
- * Bir dilime bir günde girilebilecek en fazla görev.
+ * Bir güne girilebilecek en fazla görev.
  *
- * Sınır **dilim başına**, gün başına değil: on işi sabaha yığmak da bir plan
- * değil, bir istek listesi. Üç dilim çarpı on, bir güne otuz iş demek ki o da
- * kimsenin yapacağı bir gün değil — ama sınırı günde ona indirmek üç dilimi
- * anlamsızlaştırırdı, çünkü sabahı dolduran akşama hiç yazamazdı.
+ * Eskiden sınır dilim başına ondu (üç dilim, günde otuz). Dilimler kalkınca
+ * sınır güne taşındı ve **otuz** kaldı: daha düşük bir sayı, dilimli dönemde
+ * yazılmış dolu bir günün görevlerini taşırken eleyip kaybederdi.
  */
-export const EN_COK_GOREV = 10
+export const EN_COK_GOREV = 30
 
 /**
  * Bir görev adının en fazla karakteri.
@@ -253,28 +267,19 @@ export function metniKirp(metin: string): string {
 }
 
 /**
- * Saate göre içinde bulunulan dilim.
- *
- * Saat dışarıdan alınıyor: `new Date()` okuyan bir mantık test edilemezdi.
- * Eşikler kaba ama kullanıcının günü de kaba — 12'ye kadar sabah, 17'ye kadar
- * öğle, sonrası akşam.
- */
-export function simdikiDilim(saat: number): GorevDilimi {
-  if (saat < 12) return 'sabah'
-  if (saat < 17) return 'ogle'
-  return 'aksam'
-}
-
-/**
  * Kayıttan okunan listeyi güncel şemaya uydurur.
  *
  * Üç iş birden yapıyor: `localStorage` elle kurcalanabildiği için bozuk
- * kayıtları eliyor, **eski tahta kayıtlarını** taşıyor ve dilim sınırını
- * uyguluyor.
+ * kayıtları eliyor, **eski kayıtları** taşıyor ve gün sınırını uyguluyor.
  *
- * Eski kâğıtta dilim ile kategori yok; konumdan dilim çıkarılamıyor (tahtanın
- * üstü sabah demek değildi), o yüzden hepsi sabaha ve "Diğer"e düşüyor. Uzun
- * metin de sınıra kırpılıyor: yeni satır tek satır ve kırpılmamış metnin
+ * Göç (kayıt sürümsüz bir dizi; şemayı okurken burası çeviriyor, eski
+ * yedekler de aynı yoldan geçiyor):
+ *  - tahta dönemi kâğıdı: konum atılıyor, kategorisi yoksa "Diğer";
+ *  - dilim dönemi görevi: `dilim` atılıyor, görev **saatsiz** kalıyor —
+ *    dilimden saat uydurulmuyor;
+ *  - saat bozuksa (`saatKirp` geçmiyorsa) saatsiz.
+ *
+ * Uzun metin de sınıra kırpılıyor: satır tek satır ve kırpılmamış metnin
  * görünmeyen kısmına ulaşmanın yolu olmazdı.
  *
  * Sınırı aşan görevler de burada eleniyor. `gorevEkle` zaten engelliyor ama
@@ -285,7 +290,7 @@ export function simdikiDilim(saat: number): GorevDilimi {
 export function gorevleriNormalize(ham: unknown): Gorev[] {
   if (!Array.isArray(ham)) return []
   const gorevler: Gorev[] = []
-  /** Gün + dilim başına kaç görev yazıldı — sınır burada tutuluyor. */
+  /** Gün başına kaç görev yazıldı — sınır burada tutuluyor. */
   const sayac = new Map<string, number>()
   for (const kayit of ham) {
     if (typeof kayit !== 'object' || kayit === null) continue
@@ -294,17 +299,15 @@ export function gorevleriNormalize(ham: unknown): Gorev[] {
     // Günü olmayan kayıt hiçbir güne ait değil; haftalık eleme onu atıyor.
     if (typeof g.gun !== 'string') continue
 
-    const dilim = DILIMLER.includes(g.dilim as GorevDilimi) ? (g.dilim as GorevDilimi) : 'sabah'
-    const anahtar = `${g.gun}|${dilim}`
-    const yazilan = sayac.get(anahtar) ?? 0
+    const yazilan = sayac.get(g.gun) ?? 0
     if (yazilan >= EN_COK_GOREV) continue
-    sayac.set(anahtar, yazilan + 1)
+    sayac.set(g.gun, yazilan + 1)
 
     gorevler.push({
       id: g.id,
       metin: typeof g.metin === 'string' ? metniKirp(g.metin) : '',
       gun: g.gun,
-      dilim,
+      saat: saatKirp(g.saat),
       kategori: KATEGORILER.includes(g.kategori as GorevKategorisi)
         ? (g.kategori as GorevKategorisi)
         : 'diger',
@@ -344,36 +347,40 @@ export function gununGorevleri(gorevler: readonly Gorev[], gun: string): Gorev[]
 }
 
 /**
- * Bir günün bir dilimindeki görevler — yıldızlılar üstte.
+ * Bir günün görevleri ekrandaki sırayla.
  *
- * Biten görev yerinde kalıyor, sona atılmıyor: liste kullanıcının yazdığı
- * sırayı koruyor ve bir işi bitirmek ötekilerin yerini oynatmıyor. Sıralama
- * kararlı (`sort` modern JS'te kararlı), yani yıldızsızlar arasında eklenme
- * sırası bozulmuyor.
+ * Saatliler saate göre üstte, saatsizler altta: saat bir sıra bildiriyor,
+ * saatsiz görev "gün içinde bir ara" demek ve saatlilerin arasına
+ * yerleştirilemez. Aynı saatte ve saatsizlerin içinde yıldızlılar üstte —
+ * yıldız saatin önüne geçmiyor, 18:00'deki öncelikli iş 09:00'dan önce
+ * yapılmıyor.
+ *
+ * Biten görev yerinde kalıyor, sona atılmıyor: bir işi bitirmek ötekilerin
+ * yerini oynatmıyor. Sıralama kararlı (`sort` modern JS'te kararlı), yani
+ * eşitler arasında eklenme sırası bozulmuyor.
  */
-export function dilimGorevleri(
-  gorevler: readonly Gorev[],
-  gun: string,
-  dilim: GorevDilimi,
-): Gorev[] {
+export function gununSiraliGorevleri(gorevler: readonly Gorev[], gun: string): Gorev[] {
   return gorevler
-    .filter((g) => g.gun === gun && g.dilim === dilim)
-    .sort((a, b) => Number(b.yildiz) - Number(a.yildiz))
+    .filter((g) => g.gun === gun)
+    .sort((a, b) => {
+      if (a.saat !== b.saat) {
+        if (a.saat === null) return 1
+        if (b.saat === null) return -1
+        return a.saat < b.saat ? -1 : 1
+      }
+      return Number(b.yildiz) - Number(a.yildiz)
+    })
 }
 
-/** O gün o dilimde yer kaldı mı. */
-export function dilimeYerVarMi(
-  gorevler: readonly Gorev[],
-  gun: string,
-  dilim: GorevDilimi,
-): boolean {
-  return gorevler.filter((g) => g.gun === gun && g.dilim === dilim).length < EN_COK_GOREV
+/** O gün yer kaldı mı. */
+export function gunuYerVarMi(gorevler: readonly Gorev[], gun: string): boolean {
+  return gorevler.filter((g) => g.gun === gun).length < EN_COK_GOREV
 }
 
 /**
  * Yeni görev.
  *
- * Dilim doluysa ya da metin boşsa `null`: çağıran taraf "olmadı" durumunu tek
+ * Gün doluysa ya da metin boşsa `null`: çağıran taraf "olmadı" durumunu tek
  * yerden okusun, sessizce en eski görev silinmesin. Görev silmek kullanıcının
  * kararı.
  */
@@ -383,26 +390,35 @@ export function gorevEkle(
 ): Gorev[] | null {
   const metin = metniKirp(yeni.metin)
   if (metin === '') return null
-  if (!dilimeYerVarMi(gorevler, yeni.gun, yeni.dilim)) return null
-  const { ozelKategori: ham, ...gerisi } = yeni
+  if (!gunuYerVarMi(gorevler, yeni.gun)) return null
+  const { ozelKategori: ham, saat: hamSaat, ...gerisi } = yeni
   // Özel ad yalnızca "Diğer"de saklanıyor; başka kategoriye sızmasın.
   const ozelKategori = yeni.kategori === 'diger' ? ozelKategoriKirp(ham) : undefined
   return [
     ...gorevler,
-    { ...gerisi, ...(ozelKategori ? { ozelKategori } : {}), metin, bitti: false, yildiz: false },
+    {
+      ...gerisi,
+      saat: saatKirp(hamSaat),
+      ...(ozelKategori ? { ozelKategori } : {}),
+      metin,
+      bitti: false,
+      yildiz: false,
+    },
   ]
 }
 
-/** Düzenlemede değişebilen alanlar: gün, dilim ve durum yerinde kalıyor. */
-export type GorevDuzeni = Pick<Gorev, 'metin' | 'kategori' | 'ozelKategori' | 'renk' | 'sure'>
+/** Düzenlemede değişebilen alanlar: gün ve durum yerinde kalıyor. */
+export type GorevDuzeni = Pick<
+  Gorev,
+  'metin' | 'saat' | 'kategori' | 'ozelKategori' | 'renk' | 'sure'
+>
 
 /**
- * Görevin adını, kategorisini, rengini ve süresini değiştirir.
+ * Görevin adını, saatini, kategorisini, rengini ve süresini değiştirir.
  *
  * Görev bir süre düzenlenemiyordu ("silip yeniden yazmak daha hızlı" diye);
- * kullanıcı düzenleme düğmesi istedi — yeniden yazmak yıldızı, bitti
- * işaretini ve görevin dilimdeki yerini de götürüyordu. Gün ve dilim burada
- * değişmiyor: taşımanın yolu erteleme. Metin boşsa ya da görev yoksa `null`,
+ * kullanıcı düzenleme düğmesi istedi — yeniden yazmak yıldızı ve bitti
+ * işaretini de götürüyordu. Gün burada değişmiyor: taşımanın yolu erteleme. Metin boşsa ya da görev yoksa `null`,
  * `gorevEkle` ile aynı kural.
  */
 export function gorevDuzenle(
@@ -419,6 +435,7 @@ export function gorevDuzenle(
     return {
       ...gerisi,
       metin,
+      saat: saatKirp(duzen.saat),
       kategori: duzen.kategori,
       ...(ozelKategori ? { ozelKategori } : {}),
       renk: duzen.renk,
@@ -449,9 +466,9 @@ export function gorevYildizla(gorevler: readonly Gorev[], id: string): Gorev[] {
 }
 
 /**
- * Görevi ertesi güne, aynı dilime taşır.
+ * Görevi ertesi güne, aynı saate taşır.
  *
- * Hedef gün o dilimde doluysa `null`: erteleme sessizce yutulursa kullanıcı
+ * Hedef gün doluysa `null`: erteleme sessizce yutulursa kullanıcı
  * işi ertelediğini sanıp ekrandan kaybolmasını izler. Bitmiş görev de
  * ertelenmiyor — yapılmış bir işi yarına taşımak anlamsız.
  */
@@ -459,7 +476,7 @@ export function gorevErtele(gorevler: readonly Gorev[], id: string): Gorev[] | n
   const gorev = gorevler.find((g) => g.id === id)
   if (!gorev || gorev.bitti) return null
   const yarin = gunKaydir(gorev.gun, 1)
-  if (!dilimeYerVarMi(gorevler, yarin, gorev.dilim)) return null
+  if (!gunuYerVarMi(gorevler, yarin)) return null
   return gorevDegistir(gorevler, id, (g) => ({ ...g, gun: yarin }))
 }
 
