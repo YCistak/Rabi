@@ -183,6 +183,17 @@ function RabiUygulamasi() {
   /** Ana sayfadan seçilen ders — Oyunlar sekmesi açılırken onun ızgarasına giriyor. */
   const [acilacakDers, setAcilacakDers] = useState<DersId | null>(null)
 
+  /**
+   * Yapılacaklar'dan "Pomodoro ile başlat" isteği. Pomodoro ekranı açıkken
+   * duruyor (ekran onu kimliğiyle bir kez işliyor); ekrandan çıkılınca
+   * siliniyor. Pomodoro'nun ilk açılış turu da bu sırada başlamıyor — kullanıcı
+   * sayacı başlatmak için geldi, tanıtım için değil.
+   */
+  const [pomodoroIstegi, setPomodoroIstegi] = useState<{ kimlik: string; dakika: number | null } | null>(null)
+  useEffect(() => {
+    if (ekran !== 'pomodoro') setPomodoroIstegi(null)
+  }, [ekran])
+
   /** Bir aracı açar ve kısayol sırasında öne alır. */
   const aracAc = useCallback(
     (acilan: Ekran) => {
@@ -1126,6 +1137,12 @@ function RabiUygulamasi() {
                 gorevler={anaTurda ? tanitim.demo.gorevler : gorevler}
                 setGorevler={anaTurda ? (g) => tanitim.demoGuncelle('gorevler', g, 'gorev') : setGorevler}
                 tanitim={anaTurda ? turFormu('gorev-form', 'gorev-listesi') : undefined}
+                onPomodoroBaslat={(gorev) => {
+                  if (tanitim.tanitimdaMi) return
+                  // Mevcut yol: Pomodoro bir araç olarak açılıyor, tur onun "Başlat"ıyla başlıyor.
+                  setPomodoroIstegi({ kimlik: `${gorev.id}-${Date.now()}`, dakika: gorev.sure })
+                  aracAc('pomodoro')
+                }}
               />
             )}
             {ekran === 'soru' && (
@@ -1360,6 +1377,7 @@ function RabiUygulamasi() {
             // `geriGit` değil: o önce üstteki katmanı kapatıyor ve o katman
             // tam da bu çağrıyı yapan sahne — kendini yeniden çağırırdı.
             onArkaPlan={() => setEkran(null)}
+            baslatIstegi={pomodoroIstegi}
           />,
           pomodoroKalici,
         )}

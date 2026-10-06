@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { CalendarArrowUp, Check, Clock, MoreHorizontal, Pencil, Plus, Star, Trash2, X } from 'lucide-react'
+import { CalendarArrowUp, Check, Clock, MoreHorizontal, Pencil, Plus, Star, Timer, Trash2, X } from 'lucide-react'
 import {
   EN_COK_GOREV,
   EN_UZUN_GOREV,
@@ -34,7 +34,7 @@ import {
 import { bugun, cn, gunKaydir, tariheCevir, yediGunlukSerit, yeniId } from '@/lib/utils'
 import { useGeriKatmani } from '@/lib/geri'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
-import { BaslikSatiri, Buton, Kart, Onay } from '@/components/ui'
+import { Anahtar, BaslikSatiri, Buton, Kart, Onay } from '@/components/ui'
 
 /**
  * Yapılacaklar — hafta şeridi + günün görev listesi.
@@ -74,9 +74,15 @@ export function YapilacaklarEkrani({
   gorevler,
   setGorevler,
   tanitim,
+  onPomodoroBaslat,
 }: {
   gorevler: Gorev[]
   setGorevler: (guncelleyici: Gorev[] | ((onceki: Gorev[]) => Gorev[])) => void
+  /**
+   * "Pomodoro ile çalış" işaretli görevin satırındaki sayaç düğmesi: Pomodoro
+   * ekranını açıp turu başlatıyor (`AppShell`). Verilmezse düğme çizilmiyor.
+   */
+  onPomodoroBaslat?: (gorev: Gorev) => void
   /**
    * Başlangıç turunda ekleme sayfası yalnızca tur o adımdayken görünüyor
    * (`SoruTakibiEkrani` ile aynı gerekçe).
@@ -285,6 +291,7 @@ export function YapilacaklarEkrani({
                 onIsaretle={() => setGorevler((o) => gorevIsaretle(o, gorev.id))}
                 onYildiz={() => setGorevler((o) => gorevYildizla(o, gorev.id))}
                 onEylemler={() => setEylemli(gorev)}
+                onPomodoro={onPomodoroBaslat && (() => onPomodoroBaslat(gorev))}
               />
             ))}
 
@@ -381,12 +388,15 @@ function GorevSatiri({
   onIsaretle,
   onYildiz,
   onEylemler,
+  onPomodoro,
 }: {
   gorev: Gorev
   gecmis: boolean
   onIsaretle: () => void
   onYildiz: () => void
   onEylemler: () => void
+  /** Yalnızca "Pomodoro ile çalış" işaretli, bitmemiş görevde çiziliyor. */
+  onPomodoro?: () => void
 }) {
   const renk = gorevRengi(gorev.renk)
 
@@ -441,6 +451,17 @@ function GorevSatiri({
         </span>
       </div>
 
+      {/*
+        Sayaç düğmesi yalnızca "Pomodoro ile çalış" işaretli görevde: her
+        satırda olsaydı tek satırlık iş adı her görevde daralırdı (bkz.
+        `EN_UZUN_GOREV`). İşaretli görevde ad biraz erken kırpılabiliyor —
+        `truncate` orada son emniyet.
+      */}
+      {!gecmis && !gorev.bitti && gorev.pomodoro === true && onPomodoro && (
+        <SatirDugmesi etiket="Pomodoro ile başlat" onClick={onPomodoro} className="text-primary">
+          <Timer size={19} strokeWidth={2.4} aria-hidden />
+        </SatirDugmesi>
+      )}
       {/* Bitmiş görevin önceliği bir şey söylemiyor; geçmiş gün salt okunur. */}
       {!gecmis && !gorev.bitti && (
         <SatirDugmesi
@@ -657,6 +678,8 @@ function EklemeSayfasi({
   // "DİĞER" yazan bir görev ne olduğunu söylemiyordu.
   const [ozelKategori, setOzelKategori] = useState(duzenlenen?.ozelKategori ?? '')
   const [renk, setRenk] = useState<GorevRengi | null>(duzenlenen?.renk ?? null)
+  /** "Pomodoro ile çalış" — kapalı başlıyor; düzenlemede görevin kendi değeri. */
+  const [pomodoro, setPomodoro] = useState(duzenlenen?.pomodoro === true)
   const [hata, setHata] = useState(false)
 
   useGeriKatmani(true, onKapat)
@@ -678,6 +701,7 @@ function EklemeSayfasi({
       ozelKategori: kategori === 'diger' ? ozelKategoriKirp(ozelKategori) : undefined,
       renk,
       sure,
+      pomodoro,
     })
   }
 
@@ -812,6 +836,28 @@ function EklemeSayfasi({
             )}
           />
         </div>
+
+        {/*
+          İsteğe bağlı ve kapalı: açıksa görevin satırında Pomodoro'yu tek
+          dokunuşla başlatan sayaç düğmesi çıkıyor. Süre verildiyse sayaç o
+          süreyle, verilmediyse Pomodoro'nun kendi çalışma süresiyle başlıyor.
+        */}
+        <button
+          type="button"
+          role="switch"
+          aria-checked={pomodoro}
+          onClick={() => setPomodoro((o) => !o)}
+          className="mt-4 flex min-h-[52px] w-full items-center gap-3 rounded-[16px] border-[1.5px] border-border bg-card px-3.5 py-2 text-left transition active:bg-muted"
+        >
+          <Timer size={18} strokeWidth={2.4} aria-hidden className={pomodoro ? 'text-primary' : 'text-muted-foreground'} />
+          <span className="min-w-0 flex-1">
+            <span className="block text-[14px] font-extrabold">Pomodoro ile çalış</span>
+            <span className="block text-[11.5px] font-bold text-muted-foreground">
+              {sure !== null ? `Satırdan ${sure} dakikalık sayaç başlar` : 'Satırdan Pomodoro sayacı başlar'}
+            </span>
+          </span>
+          <Anahtar acik={pomodoro} />
+        </button>
 
         <AlanBasligi baslik="Kategori" hata={hata && kategori === null ? 'Birini seç' : undefined} />
         <div

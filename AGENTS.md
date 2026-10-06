@@ -2250,6 +2250,25 @@ Süresiz görevin `sure`'u `null` ve toplamda sayılmıyor; eski görevler de ö
 Uydurma bir süre, günün toplamını kullanıcının söylemediği bir sayıyla
 şişirirdi.
 
+### Görevden Pomodoro başlıyor
+
+Ekleme ve düzenleme sayfasında isteğe bağlı, **kapalı** gelen bir "Pomodoro
+ile çalış" anahtarı var (`Gorev.pomodoro`). Açık görevin satırında yıldızın
+solunda bir sayaç düğmesi (lucide `Timer`) çıkıyor; tek dokunuş Pomodoro
+ekranını açıp çalışma turunu başlatıyor. Süre görevin süresi, görev süresizse
+Pomodoro'nun kendi çalışma süresi. Yeni bir sayaç yazılmadı: istek
+(`baslatIstegi`) hazırlık ekranındaki "Başlat"ın yolundan (`turuBaslat`)
+geçiyor; görevin süresi yalnızca o tur için geçerli ve ayara yazılmıyor.
+Tur zaten başlamışsa (duraklatılmış da olsa) istek yalnızca ekranı açıyor —
+işleyen turu bir görev düğmesiyle silmek dakikalarını kaybettirirdi. İlk
+girişteki odak kilidi tanıtımı açıksa sayaç onun kapanmasını bekliyor.
+
+Düğme **yalnızca işaretli görevde**: her satırda olsaydı tek satırlık iş adı
+her görevde daralırdı (yukarıda **Metin tek satır**). İşaretli görevde ad biraz
+erken kırpılabiliyor; `truncate` orada son emniyet. Alan yalnızca `true`
+iken yazılıyor, eski kayıtlar ve yedekler düğmesiz görev olarak okunuyor
+(`gorevleriNormalize`).
+
 ### Renkler ayrı bir palette
 
 Görev rengi kullanıcının seçtiği on iki tondan biri (`--gorev-*`,
