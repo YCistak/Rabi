@@ -358,10 +358,11 @@ export function SpotIsigi() {
       // Sabit katmanlar (form, menünün kendisi) menünün üstünde çiziliyor; kırpılmıyor.
       if (!sabit && o.menuUst !== null) altKenar = Math.min(altKenar, o.menuUst)
       if (!sabit && o.raySol !== null) sagKenar = Math.min(sagKenar, o.raySol)
-      const sol = Math.max(o.ekran.sol + 4, d.left - 5)
-      const ust = Math.max(ustKenar, d.top - 5)
-      const sag = Math.min(sagKenar, d.right + 5)
-      const alt = Math.min(altKenar, gorunenAlt + 5)
+      const pay = adim.dolgu ?? 5
+      const sol = Math.max(o.ekran.sol + 4, d.left - pay)
+      const ust = Math.max(ustKenar, d.top - pay)
+      const sag = Math.min(sagKenar, d.right + pay)
+      const alt = Math.min(altKenar, gorunenAlt + pay)
       return sag > sol && alt > ust ? { sol, ust, genislik: sag - sol, yukseklik: alt - ust } : null
     }
     /** Klavye açıkken hedefteki odaklı yazı kutusu: balon onu örtmemeli. */

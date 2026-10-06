@@ -26,6 +26,12 @@ export type TanitimAdimi = {
   /** İleri var ama hedefin içi kullanılabilir. */
   etkilesimli?: boolean
   ekHedefler?: readonly string[]
+  /**
+   * Spotun hedef kutusundan taşma payı, CSS pikseli (varsayılan 5). Çizimi
+   * kutusundan taşan hedefler için: haritadaki kitapların gölgesi, halkası ve
+   * büyütmesi düğmenin 60×76'lık kutusunun dışına çıkıyor.
+   */
+  dolgu?: number
   /** Adım, bu türden bir kayıt eklenince ilerliyor (form adımları). */
   kayit?: TanitimKaydi
   /** Dokunma adımında "Aydınlatılan alana dokun" yerine yazılan ipucu. */
@@ -82,8 +88,8 @@ export const TANITIM_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'konu-takibi-ac', hedef: 'arac-konu-takibi', baslik: 'Konularını takip et', aciklama: 'Denemen kaydedildi. Şimdi Konu Takibi’ne dokun.', tiklamali: true },
   { kimlik: 'konu-takibi', hedef: 'konu-takibi', baslik: 'Konu konu işaretle', aciklama: 'TYT ve AYT konularını alanına göre görürsün. Okulda öğrendiğin ve soru çözdüğün konuyu işaretle; konu bitince soldaki daireye dokun.', ileriEtiketi: 'Haritaya geç', tiklamali: false },
   { kimlik: 'harita-ac', hedef: 'harita-ac', baslik: 'Konuları haritada çalış', aciklama: 'Alt menüde Harita’ya dokun.', tabletAciklama: 'Sağdaki menüde Harita’ya dokun.', tiklamali: true },
-  { kimlik: 'harita-ders', hedef: 'harita-kart', baslik: 'Yeşil kitap: konu anlatımı', aciklama: 'Yeşil kitaba dokunup konunun kartlarını okursun; dersi burada çalışırsın.', tiklamali: false },
-  { kimlik: 'harita-soru', hedef: 'harita-soru', baslik: 'Turuncu kitap: sorular', aciklama: 'Kartları okuyunca turuncu kitapla konunun sorularını çözersin. Haritada bitirdiğin konu Konu Takibi’nde kendiliğinden işaretlenir.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
+  { kimlik: 'harita-ders', hedef: 'harita-kart', dolgu: 14, baslik: 'Yeşil kitap: konu anlatımı', aciklama: 'Yeşil kitaba dokunup konunun kartlarını okursun; dersi burada çalışırsın.', tiklamali: false },
+  { kimlik: 'harita-soru', hedef: 'harita-soru', dolgu: 14, baslik: 'Turuncu kitap: sorular', aciklama: 'Kartları okuyunca turuncu kitapla konunun sorularını çözersin. Haritada bitirdiğin konu Konu Takibi’nde kendiliğinden işaretlenir.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
   { kimlik: 'istatistik-ac', hedef: 'arac-istatistik', baslik: 'Gidişatını izle', aciklama: 'Şimdi İstatistik’e dokun; kaydettiğin deneme orada öncekilerle karşılaştırılır.', tiklamali: true },
   { kimlik: 'istatistik-tur', hedef: 'istatistik-turler', baslik: 'Deneme türünü seç', aciklama: 'Her tür kendi içinde hesaplanır; TYT ile AYT netleri birbirine karışmaz. Bir türün istatistiği o türden iki deneme olunca açılır.', tiklamali: false },
   { kimlik: 'istatistik-son', hedef: 'istatistik-son-net', baslik: 'Son netin ve değişimi', aciklama: 'Son denemenin netini ve bir öncekine göre farkını görürsün. Altında önceki netin ve ortalaman, sağda son dört denemenin netleri yan yana.', tiklamali: false },
