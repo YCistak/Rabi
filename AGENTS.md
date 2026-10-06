@@ -304,6 +304,15 @@ geliyor.
 (2026-10). Akşam için önce "esneyen" seçildi; kaynak görsel esnemediği
 için kullanıcı düşüneni seçti.
 
+**Tavşan ile altındaki cümle tek karardan çıkar** (`lib/ana-baslik.ts`).
+Önce tavşan seçilir (`anaMaskot`, `kural` alanı), cümle o kuraldan kurulur;
+`gununHali`nin önerileri yalnızca tavşan çalışırken (`calisma`) gelir. Ayrı
+seçildiklerinde tavşan dans ederken cümle "Kimya dersi bekliyor" diyebiliyordu;
+kullanıcı "hiçbir uyumsuzluk olmamalı" dedi. Yeni kural eklerken `MaskotKurali`na
+ve `kuralCumlesi`ne birlikte ekle; `ana-baslik.test.ts` bütün kombinasyonları
+dolaşıp her kuralın cümlesini denetliyor ve her kuralın en az bir kez
+tutmasını istiyor.
+
 **Sabah uyumuyor, geriniyor.** Sabah sekizde uyuyan bir tavşan "bugün bir şey
 yapmadın" gibi okunuyor; oysa yapılacak bir şey için daha vakit olmadı.
 Gerinen tavşan güne birlikte başlıyor. On birden sonra kayıtsız gün
