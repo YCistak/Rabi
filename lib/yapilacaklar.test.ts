@@ -609,3 +609,48 @@ describe('özel kategori ("Diğer")', () => {
     expect(ozelKategoriKirp('  ')).toBeUndefined()
   })
 })
+
+describe('Pomodoro ile çalış işareti', () => {
+  const yeniGorev = {
+    id: 'p',
+    metin: 'Paragraf',
+    gun: GUN,
+    saat: null,
+    kategori: 'soru',
+    renk: 'turuncu',
+    sure: 40,
+  } as const
+
+  it('eklerken açıksa yazılıyor, kapalıysa alan hiç yok', () => {
+    const [acik] = gorevEkle([], { ...yeniGorev, pomodoro: true })!
+    expect(acik.pomodoro).toBe(true)
+    const [kapali] = gorevEkle([], { ...yeniGorev, pomodoro: false })!
+    expect('pomodoro' in kapali).toBe(false)
+    const [hic] = gorevEkle([], yeniGorev)!
+    expect('pomodoro' in hic).toBe(false)
+  })
+
+  it('düzenlemede açılıp kapanabiliyor; kapanınca alan düşüyor', () => {
+    const duzen = { metin: 'Paragraf', saat: null, kategori: 'soru', renk: 'turuncu', sure: 40 } as const
+    const acik = gorevDuzenle([gorev({ id: 'a', yildiz: true })], 'a', { ...duzen, pomodoro: true })!
+    expect(acik[0]).toMatchObject({ pomodoro: true, yildiz: true })
+    const kapali = gorevDuzenle(acik, 'a', { ...duzen, pomodoro: false })!
+    expect('pomodoro' in kapali[0]).toBe(false)
+  })
+
+  it('eski kayıtlar (alansız) sorunsuz okunuyor, bozuk değer düşüyor', () => {
+    const [eski, yeni, bozuk] = gorevleriNormalize([
+      gorev({ id: 'a' }),
+      { ...gorev({ id: 'b' }), pomodoro: true },
+      { ...gorev({ id: 'c' }), pomodoro: 'evet' },
+    ])
+    expect('pomodoro' in eski).toBe(false)
+    expect(yeni.pomodoro).toBe(true)
+    expect('pomodoro' in bozuk).toBe(false)
+  })
+
+  it('yedekten dönen kayıt aynı kalıyor', () => {
+    const liste = gorevEkle([], { ...yeniGorev, pomodoro: true })!
+    expect(gorevleriNormalize(JSON.parse(JSON.stringify(liste)))).toEqual(liste)
+  })
+})

@@ -430,7 +430,10 @@ export function OyunlarEkrani({
       />
 
 
-      {secilenDers === null ? (
+      {/* Oyunlar turunun ilk adımı ders ızgarasındaki tanıtım kartını
+          bekliyor; ana sayfadaki ders kutucuğundan gelindiyse de ızgara o
+          adım boyunca görünüyor, yoksa kart bulunamaz ve tur takılırdı. */}
+      {secilenDers === null || tanitimKarti ? (
         <>
           <h2 className="mt-5 mb-3 px-0.5 font-display text-lg font-extrabold tracking-tight text-primary">
             Dersler

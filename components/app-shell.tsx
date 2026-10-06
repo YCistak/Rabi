@@ -52,6 +52,7 @@ import { useHataBildirimi } from '@/lib/hata-kuyrugu'
 import { useGeriBildirim } from '@/lib/geri-bildirim-kolu'
 import { useCokmeRaporu } from '@/lib/cokme-izni'
 import { CokmeSorusu } from '@/components/cokme-sorusu'
+import { cokmeTanitimKarari } from '@/lib/cokme-tanitim'
 import { useGuncelleme } from '@/lib/guncelleme-kolu'
 import { GuncellemeSeridi } from '@/components/guncelleme-seridi'
 import { bugun, cn, gunKaydir } from '@/lib/utils'
@@ -101,8 +102,8 @@ import {
 } from '@/lib/ozet'
 import { bugunKonuBittiMi, gorevlerBittiMi } from '@/lib/ana-maskot'
 import { RozetBildirimi } from '@/components/rozet-bildirimi'
-import { DENEME_VAZGEC, HARITA_TUR_ADIMLARI, tanitimKonumu } from '@/lib/tanitim'
-import { demoDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi, turIstatistikDenemeleri } from '@/lib/tanitim-veri'
+import { HARITA_TUR_ADIMLARI, miniTurSec, tanitimKonumu } from '@/lib/tanitim'
+import { demoDenemeleri, istatistikTuruDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi, turIstatistikDenemeleri } from '@/lib/tanitim-veri'
 import { TanitimSaglayici, useTanitim } from '@/components/tanitim/tanitim-baglami'
 import { SpotIsigi } from '@/components/tanitim/spot-isigi'
 import { DemoOyun, DemoOyunKarti } from '@/components/tanitim/demo-oyun'
@@ -183,6 +184,17 @@ function RabiUygulamasi() {
   const [sonOyunlar, setSonOyunlar] = useYerelDepo<string[]>(ANAHTARLAR.sonOyunlar, [])
   /** Ana sayfadan seçilen ders — Oyunlar sekmesi açılırken onun ızgarasına giriyor. */
   const [acilacakDers, setAcilacakDers] = useState<DersId | null>(null)
+
+  /**
+   * Yapılacaklar'dan "Pomodoro ile başlat" isteği. Pomodoro ekranı açıkken
+   * duruyor (ekran onu kimliğiyle bir kez işliyor); ekrandan çıkılınca
+   * siliniyor. Pomodoro'nun ilk açılış turu da bu sırada başlamıyor — kullanıcı
+   * sayacı başlatmak için geldi, tanıtım için değil.
+   */
+  const [pomodoroIstegi, setPomodoroIstegi] = useState<{ kimlik: string; dakika: number | null } | null>(null)
+  useEffect(() => {
+    if (ekran !== 'pomodoro') setPomodoroIstegi(null)
+  }, [ekran])
 
   /** Bir aracı açar ve kısayol sırasında öne alır. */
   const aracAc = useCallback(
@@ -392,7 +404,17 @@ function RabiUygulamasi() {
    * gitmiyor, ama onay verilen an öncesindeki hatalar kaybolmasın diye
    * dinleyiciler baştan takılı duruyor.
    */
-  const cokme = useCokmeRaporu()
+  const cokmeHam = useCokmeRaporu()
+  /*
+    Çökme penceresi ile tanıtım turu asla aynı anda görünmüyor
+    (`lib/cokme-tanitim.ts`): tur katmanı dokunmaları ve odağı yuttuğu için
+    pencerenin düğmeleri çalışmıyor, kullanıcı kilitleniyordu. Pencere
+    bekliyorsa tur başlamıyor; tur sürüyorsa pencere tur bitene kadar
+    bekliyor. Pencerenin bileşeni ve geri tuşu kaydı yalnızca bu süzülmüş
+    `soruAcik`i görüyor.
+  */
+  const cokmeKarari = cokmeTanitimKarari({ cokmeBekliyor: cokmeHam.soruAcik, tanitimdaMi: tanitim.tanitimdaMi, turKapaniyor: tanitim.kapanisSuruyor })
+  const cokme = { ...cokmeHam, soruAcik: cokmeKarari.soruGorunsun }
   const guncelleme = useGuncelleme()
   /** İzlenmiş haftalık özetlerin hafta başı tarihleri. */
   /*
@@ -450,9 +472,14 @@ function RabiUygulamasi() {
     [anaTurda, ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso, tanitim.demo.denemeler],
   )
   const gorunenDenemeler = turDenemeleri ?? denemeler
+  // İstatistik'in mini turu örnek denemelerle: bölümlerinin çoğu iki
+  // denemeden önce hiç çizilmiyor ve turun hedefleri boş kalırdı.
+  const istatistikTurunda = tanitim.aktifTur === 'istatistik'
   const turIstatistigi = useMemo(
-    () => (anaTurda ? turIstatistikDenemeleri(demoDenemeleri(ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso), tanitim.demo.denemeler, sablonlar) : null),
-    [anaTurda, ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso, tanitim.demo.denemeler, sablonlar],
+    () => (anaTurda
+      ? turIstatistikDenemeleri(demoDenemeleri(ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso), tanitim.demo.denemeler, sablonlar)
+      : istatistikTurunda ? istatistikTuruDenemeleri(ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso, sablonlar) : null),
+    [anaTurda, istatistikTurunda, ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso, tanitim.demo.denemeler, sablonlar],
   )
 
   /** Soru Takibi ve Yapılacaklar'ın ekleme sayfası turda turun adımına bağlı. */
@@ -607,17 +634,34 @@ function RabiUygulamasi() {
   // Ekran görünürken gövde kilitleniyor, kalkarken sayfa başa alınıyor.
   const acilisGorunur = !acilisBitti
   const tanitimAcikti = useRef(false)
+  // Çökme penceresi açıkken tur başlamıyor; pencere cevaplanınca
+  // (`turBaslayabilir` döner) etki yeniden çalışıp turu başlatıyor.
+  const turBaslayabilir = cokmeKarari.turBaslayabilir
   useEffect(() => {
-    if (ayarlarHazir && ayarlar.kurulumTamamlandi && acilisBitti && gecis === 'yok' && tanitim.tamamlandi === false && !tanitim.tanitimdaMi) {
+    if (ayarlarHazir && ayarlar.kurulumTamamlandi && acilisBitti && gecis === 'yok' && turBaslayabilir && tanitim.tamamlandi === false && !tanitim.tanitimdaMi) {
       tanitim.turuBaslat('ana_tur')
     }
-  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, tanitim.tamamlandi, tanitim.tanitimdaMi, tanitim.turuBaslat])
+  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, turBaslayabilir, tanitim.tamamlandi, tanitim.tanitimdaMi, tanitim.turuBaslat])
 
+  /*
+    Mini turlar: ekran ilk kez açıldığında bir kez (`miniTurSec`). Ana tur
+    bitmeden hiçbiri başlamıyor; ana turu eski sürümde bitirmiş kullanıcıda
+    da yeni mini turlar ilk ziyarette bir kez çıkıyor. `turuBaslat` görülmüş
+    turu yeniden açmıyor.
+  */
+  const pomodoroIsliyor = pomodoroDurumu?.canli === true
   useEffect(() => {
-    if (!ayarlarHazir || !ayarlar.kurulumTamamlandi || !acilisBitti || gecis !== 'yok' || tanitim.tanitimdaMi || tanitim.tamamlandi !== true) return
-    if (ekran === 'deneme' && !denemeFormu) tanitim.turuBaslat('denemeler')
-    else if (sekme === 'harita' && ekran === null) tanitim.turuBaslat('konu_haritasi')
-  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, ekran, sekme, denemeFormu, tanitim.tanitimdaMi, tanitim.tamamlandi, tanitim.turuBaslat])
+    if (!ayarlarHazir || !ayarlar.kurulumTamamlandi || !acilisBitti || gecis !== 'yok' || !turBaslayabilir || tanitim.tanitimdaMi || tanitim.tamamlandi !== true) return
+    const tur = miniTurSec({
+      sekme,
+      ekran,
+      denemeFormu: denemeFormu !== null,
+      pomodoroIsliyor,
+      pomodoroIstegi: pomodoroIstegi !== null,
+      genelTest: genelTest !== null,
+    })
+    if (tur) tanitim.turuBaslat(tur)
+  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, turBaslayabilir, ekran, sekme, denemeFormu, pomodoroIsliyor, pomodoroIstegi, genelTest, tanitim.tanitimdaMi, tanitim.tamamlandi, tanitim.turuBaslat])
 
   useYerlesimEtkisi(() => {
     if (tanitim.adim && tanitim.aktifTur === 'ana_tur') {
@@ -808,7 +852,14 @@ function RabiUygulamasi() {
     window.scrollTo(0, 0)
   }, [sekme, ekran, denemeFormu, bankaTuru])
 
+  const cokmeSoruAcik = cokme.soruAcik
+  const cokmeyiGonderme = cokme.onGonderme
   const geriGit = useCallback(() => {
+    // Çökme penceresi açıksa geri tuşu önce onu kapatıyor, "Gönderme" ile
+    // aynı anlamda (kapanan pencere veri göndermemeli). Pencere turla aynı
+    // anda görünmüyor (`lib/cokme-tanitim.ts`); bu sıra yine de turun önünde
+    // duruyor ki bir gün ikisi çakışsa tuş kullanıcıyı pencerede kilitlemesin.
+    if (cokmeSoruAcik) { cokmeyiGonderme(); return true }
     // Donanım geri tuşu turu bitirmiyor: tur yalnızca ilerleyerek biter. Tuş bir adım geri alıyor.
     if (tanitim.tanitimdaMi) { tanitim.oncekiAdimaDon(); return true }
     // En içteki katmandan dışa doğru: ekranın kendi açtığı katman (fotoğraf
@@ -834,7 +885,7 @@ function RabiUygulamasi() {
       return true
     }
     return false
-  }, [genelTest, genelTestiBitir, denemeFormu, ekran, sekme, tanitim.tanitimdaMi, tanitim.oncekiAdimaDon])
+  }, [cokmeSoruAcik, cokmeyiGonderme, genelTest, genelTestiBitir, denemeFormu, ekran, sekme, tanitim.tanitimdaMi, tanitim.oncekiAdimaDon])
 
   /**
    * Açılışta kapanmış bir turdan artakalanları temizler.
@@ -1005,7 +1056,7 @@ function RabiUygulamasi() {
         denemeSayisi={gorunenDenemeler.length}
         setYanlisSorular={setYanlisSorular}
         onKaydet={denemeKaydet}
-        onVazgec={() => (anaTurda ? tanitim.gonder({ tur: 'hedefe-dokun', hedef: DENEME_VAZGEC }) : setDenemeFormu(null))}
+        onVazgec={() => setDenemeFormu(null)}
         tanitim={anaTurda ? { onOkutAcik: tanitim.setRehberGizli, ornekDoldur: tanitim.adim?.kimlik === 'deneme-kaydet' } : undefined}
       />
     </div>
@@ -1151,6 +1202,12 @@ function RabiUygulamasi() {
                 gorevler={anaTurda ? tanitim.demo.gorevler : gorevler}
                 setGorevler={anaTurda ? (g) => tanitim.demoGuncelle('gorevler', g, 'gorev') : setGorevler}
                 tanitim={anaTurda ? turFormu('gorev-form', 'gorev-listesi') : undefined}
+                onPomodoroBaslat={(gorev) => {
+                  if (tanitim.tanitimdaMi) return
+                  // Mevcut yol: Pomodoro bir araç olarak açılıyor, tur onun "Başlat"ıyla başlıyor.
+                  setPomodoroIstegi({ kimlik: `${gorev.id}-${Date.now()}`, dakika: gorev.sure })
+                  aracAc('pomodoro')
+                }}
               />
             )}
             {ekran === 'soru' && (
@@ -1193,7 +1250,7 @@ function RabiUygulamasi() {
               <IstatistikEkrani
                 denemeler={turIstatistigi ?? gorunenDenemeler}
                 sablonlar={sablonlar}
-                varsayilanSablonId={anaTurda ? (tanitim.demo.denemeler.at(-1)?.sablonId ?? 'tyt') : ayarlar.varsayilanSablonId}
+                varsayilanSablonId={anaTurda || istatistikTurunda ? (tanitim.demo.denemeler.at(-1)?.sablonId ?? 'tyt') : ayarlar.varsayilanSablonId}
               />
             )}
             {ekran === 'konu-takibi' && (
@@ -1204,6 +1261,7 @@ function RabiUygulamasi() {
                 ilerlemeler={konuIlerleme}
                 alan={ayarlar.puanTuru}
                 setAlan={(puanTuru) => setAyarlar((o) => ({ ...o, puanTuru }))}
+                sinif={ayarlar.buYilSinif}
                 onHaritayaGit={({ ders, sinif, konu }) => {
                   setKonuSecimi({ ders, sinif })
                   setHaritaIstegi({ ders, sinif, konuId: konu.id })
@@ -1251,7 +1309,7 @@ function RabiUygulamasi() {
                 }}
               />
             )}
-            {sekme === 'oyunlar' && (tanitim.adim && ['zorluk', 'oyun-baslat', 'oyun-sayac', 'soru-bir', 'sonuc'].includes(tanitim.adim.kimlik) ? <DemoOyun bildir={hataBildirimi} /> : (
+            {sekme === 'oyunlar' && (tanitim.adim && ['zorluk', 'oyun-baslat', 'soru-bir', 'sonuc'].includes(tanitim.adim.kimlik) ? <DemoOyun bildir={hataBildirimi} /> : (
               <OyunlarEkrani
                 tanitimKarti={tanitim.adim?.kimlik === 'demo-ac' ? <DemoOyunKarti /> : undefined}
                 kayitlar={oyunlar}
@@ -1387,6 +1445,7 @@ function RabiUygulamasi() {
             // `geriGit` değil: o önce üstteki katmanı kapatıyor ve o katman
             // tam da bu çağrıyı yapan sahne — kendini yeniden çağırırdı.
             onArkaPlan={() => setEkran(null)}
+            baslatIstegi={pomodoroIstegi}
           />,
           pomodoroKalici,
         )}
@@ -1438,6 +1497,8 @@ const GENIS_SAYFALAR: ReadonlySet<string> = new Set([
   'soru',
   'devamsizlik',
   'notlar',
+  // İçerik kendi içinde max-w-3xl; ders listesi tablette iki sütun.
+  'konu-takibi',
 ])
 
 /**

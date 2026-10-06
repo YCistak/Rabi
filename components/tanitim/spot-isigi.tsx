@@ -4,7 +4,7 @@ import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal, flushSync } from 'react-dom'
 import { Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
-import { adimPozu } from '@/lib/tanitim'
+import { adimPozu, TUR_ETIKETLERI } from '@/lib/tanitim'
 import { TANITIM_EGRISI, egriDegeri } from '@/lib/tanitim-animasyonu'
 import { balonGenisligi, balonKonumu, durgunlukSayaci, kaydirmaKis, kaydirmaKisTam, kutuFarki, type Kutu } from '@/lib/tanitim-yerlesim'
 import { taniAcikMi, taniKaydet, taniKutu } from '@/lib/tanitim-tani'
@@ -28,6 +28,18 @@ type Yerlesim = { ekHedefler: Kutu[]; hedef: Kutu | null; cizilen: Kutu | null; 
 const BOS_KUTU: Kutu = { sol: 0, ust: 0, genislik: 0, yukseklik: 0 }
 const BOS_YERLESIM: Yerlesim = { ekHedefler: [], hedef: null, cizilen: null, balon: BOS_KUTU, ekran: BOS_KUTU, spotAnlik: true, balonAnlik: true }
 const ODAK_SECICI = 'button:not(:disabled), a[href], input:not(:disabled), [tabindex="0"]'
+/**
+ * Tam ekran sistem pencerelerinin işareti (`data-sistem-penceresi`; ör.
+ * çökme raporu sorusu). Bu pencereler turla aynı anda açılmamalı
+ * (`lib/cokme-tanitim.ts`), ama açılırsa rehber içlerindeki dokunmayı ve
+ * odağı yutmuyor: yutsaydı pencere kapanamaz, tur da ilerleyemez ve kullanıcı
+ * kilitlenirdi.
+ */
+function sistemPenceresinde(oge: EventTarget | null): boolean {
+  // Yazı düğümünden gelen olayda hedef bir `Element` değil; üst öğesine bakılıyor.
+  const eleman = oge instanceof Element ? oge : oge instanceof Node ? oge.parentElement : null
+  return !!eleman?.closest('[data-sistem-penceresi]')
+}
 /** Hedef bu kadar süre bulunamazsa delik söner (ekran değişiminin tek karesi için sönmesin). */
 const KAYIP_BEKLEMESI = 400
 /** Hedef kıpırdamaya devam etse de en geç bu kadar beklenip yerleşiliyor. */
@@ -550,7 +562,7 @@ export function SpotIsigi() {
       if (son && !adim.ekHedefler && kutuFarki(son.hedef, kutu) < 0.5 && Math.abs(son.balon.yukseklik - balonBoyu) < 0.5) return
       ciz(sonHalindeOlc(hedef, () => hesapla(o, kutu)))
     }
-    const izinli = (oge: EventTarget | null) => oge instanceof Node && (denetim?.contains(oge) || balonRef.current?.contains(oge) || (etkilesimAcik && hedef?.contains(oge)))
+    const izinli = (oge: EventTarget | null) => sistemPenceresinde(oge) || (oge instanceof Node && (denetim?.contains(oge) || balonRef.current?.contains(oge) || (etkilesimAcik && hedef?.contains(oge))))
     const engelle = (olay: Event) => {
       if (!izinli(olay.target)) { olay.preventDefault(); olay.stopImmediatePropagation() }
     }
@@ -560,6 +572,8 @@ export function SpotIsigi() {
       // Escape tuşu turu bitirmiyor: tur yalnızca ilerleyerek biter. Tuş, altındaki sayfaya da geçmesin.
       if (olay.key === 'Escape') { olay.preventDefault(); olay.stopImmediatePropagation(); return }
       if (olay.key !== 'Tab') { if (['Enter', ' '].includes(olay.key)) engelle(olay); return }
+      // Odak bir sistem penceresindeyse Tab o pencerenin içinde dolaşsın.
+      if (sistemPenceresinde(document.activeElement)) return
       const odaklar = [
         ...Array.from(denetim?.querySelectorAll<HTMLElement>(ODAK_SECICI) ?? []),
         ...(etkilesimAcik && hedef ? Array.from(hedef.matches(ODAK_SECICI) ? [hedef] : hedef.querySelectorAll<HTMLElement>(ODAK_SECICI)) : []),
@@ -681,6 +695,8 @@ export function SpotIsigi() {
       // Balon taşıyorsa kendi içinde kaydırılabilsin; sayfaya sıçramasın diye
       // balonda `overscroll-behavior: contain` var.
       if (balon && olay.target instanceof Node && balon.contains(olay.target) && balon.scrollHeight > balon.clientHeight) return
+      // Sistem penceresinin (çökme sorusu) kendi kaydırılan içeriği çalışsın.
+      if (sistemPenceresinde(olay.target)) return
       if (olay.cancelable) olay.preventDefault()
     }
     document.addEventListener('touchmove', kaydirmayiEngelle, { capture: true, passive: false })
@@ -744,7 +760,7 @@ export function SpotIsigi() {
         <div className="flex items-center gap-2.5" style={{ marginBottom: adim.kimlik === 'soru-bir' ? 0 : 8 }}>
           <span aria-hidden className="shrink-0"><Rabi poz={adimPozu(adim, aktifTur, aktifAdim === adimSayisi - 1)} boyut={adim.kimlik === 'soru-bir' || kisaBalon ? 36 : 48} /></span>
           {adim.kimlik === 'soru-bir' && <div><h2 data-tanitim-baslik tabIndex={-1} className="font-display text-sm font-extrabold outline-none">{adim.baslik}</h2><p className="text-[11px] text-muted-foreground">Sonucu yaz veya pas geç.</p></div>}
-          {adim.kimlik !== 'soru-bir' && <span className="text-[11px] font-extrabold tracking-wide text-primary">{aktifTur === 'ana_tur' ? 'RABİ’Yİ TANI' : aktifTur === 'denemeler' ? 'DENEMELER' : 'KONU HARİTASI'}</span>}
+          {adim.kimlik !== 'soru-bir' && <span className="text-[11px] font-extrabold tracking-wide text-primary">{aktifTur ? TUR_ETIKETLERI[aktifTur] : ''}</span>}
         </div>
         {adim.kimlik !== 'soru-bir' && <h2 data-tanitim-baslik tabIndex={-1} className={kisaBalon ? 'font-display text-sm font-extrabold outline-none' : 'font-display text-lg font-extrabold outline-none'}>{adim.baslik}</h2>}
         {(adim.kimlik !== 'soru-bir' || hedefEksik) && !(sikisik && !hedefEksik) && <p aria-live="polite" className={kisaBalon ? 'mt-1 text-xs leading-snug text-muted-foreground' : 'mt-2 text-[13px] leading-relaxed text-muted-foreground'}>{hedefEksik ? 'Bu adımın bileşeni bulunamadı. Geri dönerek yeniden deneyebilirsin.' : adim.kimlik === 'soru-bir' ? 'Sonucu yaz, onayla veya pas geç.' : aciklama}</p>}

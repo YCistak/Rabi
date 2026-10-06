@@ -2317,6 +2317,25 @@ Süresiz görevin `sure`'u `null` ve toplamda sayılmıyor; eski görevler de ö
 Uydurma bir süre, günün toplamını kullanıcının söylemediği bir sayıyla
 şişirirdi.
 
+### Görevden Pomodoro başlıyor
+
+Ekleme ve düzenleme sayfasında isteğe bağlı, **kapalı** gelen bir "Pomodoro
+ile çalış" anahtarı var (`Gorev.pomodoro`). Açık görevin satırında yıldızın
+solunda bir sayaç düğmesi (lucide `Timer`) çıkıyor; tek dokunuş Pomodoro
+ekranını açıp çalışma turunu başlatıyor. Süre görevin süresi, görev süresizse
+Pomodoro'nun kendi çalışma süresi. Yeni bir sayaç yazılmadı: istek
+(`baslatIstegi`) hazırlık ekranındaki "Başlat"ın yolundan (`turuBaslat`)
+geçiyor; görevin süresi yalnızca o tur için geçerli ve ayara yazılmıyor.
+Tur zaten başlamışsa (duraklatılmış da olsa) istek yalnızca ekranı açıyor —
+işleyen turu bir görev düğmesiyle silmek dakikalarını kaybettirirdi. İlk
+girişteki odak kilidi tanıtımı açıksa sayaç onun kapanmasını bekliyor.
+
+Düğme **yalnızca işaretli görevde**: her satırda olsaydı tek satırlık iş adı
+her görevde daralırdı (yukarıda **Metin tek satır**). İşaretli görevde ad biraz
+erken kırpılabiliyor; `truncate` orada son emniyet. Alan yalnızca `true`
+iken yazılıyor, eski kayıtlar ve yedekler düğmesiz görev olarak okunuyor
+(`gorevleriNormalize`).
+
 ### Renkler ayrı bir palette
 
 Görev rengi kullanıcının seçtiği on iki tondan biri (`--gorev-*`,
@@ -2703,16 +2722,35 @@ uzatıyordu.
 
 ### Harita öğrencinin sınıfıyla açılıyor, 12 kapalı
 
-Sekme her açıldığında sınıf seçici ayarlardaki sınıfa geçiyor
-(`haritaSinifiBul`); bir süre en son bakılan sınıfta kalıyordu ve 10. sınıf
-öğrencisi her açılışta 9. sınıfın haritasını görüyordu. Ekranın içinde başka
-sınıfa geçmek o ziyaret boyunca geçerli. Mezunun tek bir sınıfı yok, onda son
-seçim kalıyor.
+Sekme her açıldığında sınıf ayarlardaki sınıfa geçiyor
+(`haritaSinifiBul` → `haritaAcilisSinifi`); bir süre en son bakılan sınıfta
+kalıyordu ve 10. sınıf öğrencisi her açılışta 9. sınıfın haritasını
+görüyordu. Ekranın içinde başka sınıfa geçmek o ziyaret boyunca geçerli.
+Mezunun tek bir sınıfı yok, onda son seçim kalıyor. 12. sınıf öğrencisi
+11'de açılıyor: 12'nin haritası yazılmadı.
 
-Seçicide **12. sınıf** da var (`HARITA_SINIFLARI`) ama içeriği yok: seçilince
-ders çipleri kalkıyor ve harita yerine kilitli bir "yapım aşamasında" kartı
-duruyor. `KonuSinifi` 9–11 kalıyor; 12 yalnızca seçicinin tipi
-(`HaritaSinifi`). Kartlar yazılınca `KONU_SINIFLARI`na eklenir ve kart kalkar.
+**Sınıf patikanın üstünde bir sekme** (`SinifSekmesi`, mantığı
+`lib/konu/sinif-sekmesi.ts`): `9 · 10 · 11 · 12`, her zaman görünür, her
+sekmenin altında seçili dersin o sınıftaki ilerleme yüzdesi (ders o sınıfta
+yoksa çizgi) ve kullanıcının kendi sınıfında küçük bir "sen" işareti. Sınıf
+bir süre "Çalıştığın program" kartında, "Değiştir" ile açılan bir seçicideydi;
+kullanıcı değerlendirmesinde başka sınıfa geçilebildiği fark edilmedi. Kart
+artık yalnızca dersi seçtiriyor. Sınıf değişince ders o sınıfta yoksa
+sınıfın ilk dersine geçiliyor ve bunu söyleyen kısa bir satır çıkıyor
+(`sinifDegisimi`) — sessiz geçiş "neden Matematik açıldı" sorusunu
+cevapsız bırakıyordu.
+
+**12. sınıf sekmede var ama pasif** (`sinifPasifMi`: hiçbir dersi yazılmamış
+sınıf) ve "Yakında" rozetli; dokunuş boş bir ekrana götürmüyor. `KonuSinifi`
+9–11 kalıyor; 12 yalnızca sekmenin tipi (`HaritaSinifi`). Kartlar yazılınca
+`KONU_SINIFLARI`na eklenir, sekme kendiliğinden açılır. Ekrandaki kilitli
+"yapım aşamasında" kartı eski bir kayıtta seçim 12 kalmışsa diye duruyor.
+
+**Konu Takibi'nden gelen yönlendirme şerit bırakıyor.** "Haritaya git"
+sınıfı kendiliğinden değiştiriyor (11. sınıf öğrencisi TYT trigonometrisi
+için 10'a); öğrencinin kendi sınıfından farklıysa patikanın üstünde
+kapatılabilir ince bir şerit çıkıyor: "Trigonometri için 10. sınıfa geçildi ·
+Kendi sınıfıma dön" (`yonlendirmeMetni`). Sınıf elle değişince şerit kalkıyor.
 
 ### Patika kitaplı bir yol
 
@@ -2844,7 +2882,13 @@ Bitirdim.
 - **Binom AYT'de** ama kimliği `tyt-mat-binom`: TYT'lerde soru çıkmıyor,
   AYT'lerde her yıl bir soru var. Taşınan konu kimliğini korur
   (`TASINAN_KONULAR`, `takip.test.ts`).
-- **Kayıt** `rabi-yks-konu-takibi`, sürümlü (`{ surum: 1, konular }`), işaret
+- **Kaba başlıklar Maarif başlıklarıyla bölünüyor** (`BOLUNEN_KONULAR`,
+  `kayit.ts`): Halk Edebiyatı → Anonim / Âşık / Dinî-Tasavvufi, Dolaşım ve
+  Bağışıklık → Dolaşım / Bağışıklık. Eski kimlik parçalardan biri olarak
+  kalıyor, kaydı yeni parçalara sürüm 1 → 2 göçünde **bir kez** kopyalanıyor.
+  Maarif'te karşılığı olmayan başlıklar (Cumhuriyet Dönemi, Edebî Akımlar,
+  Divan, Genden Proteine) bölünmedi; uydurma alt başlık yok.
+- **Kayıt** `rabi-yks-konu-takibi`, sürümlü (`{ surum: 2, konular }`), işaret
   yerine gün tutuyor; okurken `takibiCoz` süzüyor ve yedeğe giriyor
   (`Yedek.yksKonuTakibi`, eski yedekte yoksa mevcut kayda dokunulmuyor).
   `kayit.ts` konu içeriğini yüklemiyor, depo yalnızca onu okuyor.

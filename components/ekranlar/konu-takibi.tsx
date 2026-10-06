@@ -25,6 +25,15 @@ import {
   siradakiKonu,
   bitirmeyeHazir,
   toplamOzet,
+  tempoHesapla,
+  oturumKalanGun,
+  HIZLI_SECENEKLER,
+  hizliBaslangicKonulari,
+  hizliBaslangicSinifi,
+  hizliBayragiCoz,
+  oturumIsaretsiz,
+  BOS_HIZLI_BAYRAK,
+  type HizliBaslangicBayragi,
   type AsamaId,
   type DersOzeti,
   type HaritaKonumu,
@@ -33,6 +42,7 @@ import {
   type YksTakip,
 } from '@/lib/konu-takibi/takip'
 import { useGeriKatmani } from '@/lib/geri'
+import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { bugun, cn, tariheCevir } from '@/lib/utils'
 import { BaslikSatiri, Cip, Kart, Not } from '@/components/ui'
 import { dersVurgusu } from '@/components/ders-renkleri'
@@ -135,6 +145,7 @@ export function KonuTakibiEkrani({
   ilerlemeler,
   alan,
   setAlan,
+  sinif,
   onHaritayaGit,
 }: {
   /**
@@ -151,6 +162,8 @@ export function KonuTakibiEkrani({
   alan: PuanTuru | null
   /** Alan seçilmemişse AYT sekmesinde soruluyor; cevap ayarlara yazılıyor. */
   setAlan: (alan: PuanTuru) => void
+  /** Ayarlardaki `buYilSinif` (mezun 13) — sınav tarihi ve hızlı başlangıç buna bakıyor. */
+  sinif: number
   onHaritayaGit: (konum: HaritaKonumu) => void
 }) {
   const [oturum, setOturum] = useState<YksOturum>(() => (oturumOku(OTURUM_ANAHTARI) === 'ayt' ? 'ayt' : 'tyt'))
@@ -179,12 +192,71 @@ export function KonuTakibiEkrani({
   }, [tytDersleri, aytDersleri, takip, ilerlemeler])
 
   const toplam = toplamOzet(dersler.map((d) => ozetler.get(d.id)!))
+  /** Sekmenin kendi sınavına göre tempo: TYT cumartesiye, AYT/YDT pazara. */
+  const tempo = tempoHesapla(toplam.toplam - toplam.biten, oturumKalanGun(bugun(), sinif, gorunenOturum))
   const devam = useMemo(
     () => devamKonusu([...tytDersleri, ...aytDersleri], takip, ilerlemeler),
     [tytDersleri, aytDersleri, takip, ilerlemeler],
   )
   /** Hiç işaret yok — ilk kullanım ipucu bundan türüyor, ayrı bir ayar tutulmuyor. */
   const bos = Object.keys(takip.konular).length === 0
+
+  /*
+    Hızlı başlangıç: 12. sınıf ve mezunda, oturumda hiç işaret yokken bir
+    kez "TYT'de neredeyim?". Bayrak kalıcı; `hazir` beklenmeden çizilseydi
+    kart depo okunana kadar bir kare görünüp kaybolurdu.
+  */
+  const [hizliHam, setHizliBayrak, hizliHazir] = useYerelDepo<HizliBaslangicBayragi>(
+    ANAHTARLAR.konuTakibiHizliBaslangic,
+    BOS_HIZLI_BAYRAK,
+  )
+  const hizliBayrak = hizliBayragiCoz(hizliHam)
+  const hizliGoster =
+    hizliHazir &&
+    !tanitimda &&
+    hizliBaslangicSinifi(sinif) &&
+    dersler.length > 0 &&
+    !hizliBayrak.gosterilen.includes(gorunenOturum) &&
+    oturumIsaretsiz(dersler, takip)
+
+  const [bildirim, setBildirim] = useState<Bildirim | null>(null)
+  const bildirimZamani = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(
+    () => () => {
+      if (bildirimZamani.current) clearTimeout(bildirimZamani.current)
+    },
+    [],
+  )
+  const soyle = (metin: string, geriAl?: () => void) => {
+    const kimlik = Date.now()
+    setBildirim({ kimlik, metin, geriAl })
+    if (bildirimZamani.current) clearTimeout(bildirimZamani.current)
+    bildirimZamani.current = setTimeout(() => setBildirim((o) => (o?.kimlik === kimlik ? null : o)), BILDIRIM_SURESI)
+  }
+
+  const bayrakYaz = (o: YksOturum, gosterildi: boolean) =>
+    setHizliBayrak((onceki) => {
+      const eski = hizliBayragiCoz(onceki).gosterilen.filter((x) => x !== o)
+      return { surum: 1, gosterilen: gosterildi ? [...eski, o] : eski }
+    })
+
+  /**
+   * Seçime göre her dersin ilk konularını "okulda işlendi" yazar ve kartı
+   * kapatır. Geri al ikisini birden geri alıyor: işaretler kalkıyor, kart
+   * yeniden çıkıyor — öğrenci yanlış seçeneğe bastıysa doğrusunu seçebilsin.
+   */
+  const hizliSec = (oran: number) => {
+    const o = gorunenOturum
+    const konuIdleri = hizliBaslangicKonulari(dersler, oran)
+    bayrakYaz(o, true)
+    if (konuIdleri.length === 0) return
+    const gun = bugun()
+    setTakip((onceki) => okuluTopluYaz(onceki, konuIdleri, true, gun))
+    soyle(`${konuIdleri.length} konu okulda işlendi`, () => {
+      setTakip((onceki) => okuluTopluYaz(onceki, konuIdleri, false, gun))
+      bayrakYaz(o, false)
+    })
+  }
 
   const dersAc = (ders: YksDers, konuId: string | null = null) => {
     listeKaydirma.current = window.scrollY
@@ -233,7 +305,9 @@ export function KonuTakibiEkrani({
   }
 
   return (
-    <div>
+    // Tablette içerik ortada sınırlı genişlikte, ders listesi iki sütun;
+    // telefonda bu sınıflar eşleşmiyor.
+    <div className="tablet:mx-auto tablet:max-w-3xl">
       <BaslikSatiri baslik="Konu Takibi" arac="konu-takibi" />
 
       {/* Tanıtım turunun "Konu konu işaretle" adımı bu bloğu aydınlatıyor. */}
@@ -248,7 +322,15 @@ export function KonuTakibiEkrani({
         </div>
 
         {devam && <DevamKarti ders={devam.ders} konu={devam.konu} alan={alan} onAc={() => dersAc(devam.ders, devam.konu.id)} />}
-        {(bos || tanitimda) && <IlkKullanim />}
+        {hizliGoster ? (
+          <HizliBaslangic
+            sinav={gorunenOturum === 'tyt' ? 'TYT' : alan === 'dil' ? 'YDT' : 'AYT'}
+            onSec={hizliSec}
+            onAtla={() => bayrakYaz(gorunenOturum, true)}
+          />
+        ) : (
+          (bos || tanitimda) && <IlkKullanim />
+        )}
       </div>
 
       {gorunenOturum === 'ayt' && alan === null ? (
@@ -257,6 +339,12 @@ export function KonuTakibiEkrani({
         <>
           <Kart className="py-3.5">
             <OzetCubugu ozet={toplam} r={MARKA_RENGI} />
+            {tempo && (
+              <p className="mt-1.5 text-[12.5px] font-bold text-muted-foreground">
+                Kalan <span className="rakam text-foreground">{tempo.kalanKonu}</span> konu · günde ~
+                <span className="rakam text-foreground">{tempo.gunluk}</span> konu ile sınava yetişir
+              </p>
+            )}
           </Kart>
 
           {gorunenOturum === 'ayt' && (
@@ -269,9 +357,12 @@ export function KonuTakibiEkrani({
             </Not>
           )}
 
-          <ul className="golge-kart mt-4 overflow-hidden rounded-[22px] bg-card">
+          <ul className="golge-kart mt-4 overflow-hidden rounded-[22px] bg-card tablet:grid tablet:grid-cols-2">
             {dersler.map((ders) => (
-              <li key={ders.id} className="border-t border-border first:border-t-0">
+              <li
+                key={ders.id}
+                className="border-t border-border first:border-t-0 tablet:odd:border-r tablet:[&:nth-child(2)]:border-t-0"
+              >
                 <DersSatiri
                   ders={ders}
                   ad={dersAdi(ders, alan)}
@@ -284,7 +375,50 @@ export function KonuTakibiEkrani({
           </ul>
         </>
       )}
+
+      {bildirim && <BildirimSeridi key={bildirim.kimlik} bildirim={bildirim} onKapat={() => setBildirim(null)} />}
     </div>
+  )
+}
+
+/**
+ * Tek soruluk hızlı başlangıç. Otuz-kırk konuyu tek tek "okulda" işaretlemek
+ * son sınıftaki öğrenci için aracı açmamak için yeterli sebep; bu kart onu
+ * bir dokunuşa indiriyor. Tanıtım değil: "Atla" kartı kapatıyor, cevap
+ * vermek zorunlu değil.
+ */
+function HizliBaslangic({
+  sinav,
+  onSec,
+  onAtla,
+}: {
+  sinav: string
+  onSec: (oran: number) => void
+  onAtla: () => void
+}) {
+  return (
+    <Kart className="mb-3">
+      <div className="flex items-start gap-2">
+        <p className="min-w-0 flex-1 font-display text-[17px] font-extrabold tracking-tight">{sinav}’de neredeyim?</p>
+        <button
+          type="button"
+          onClick={onAtla}
+          className="-mt-2 -mr-2 min-h-11 shrink-0 rounded-xl px-3 text-[13.5px] font-bold text-muted-foreground transition active:bg-muted"
+        >
+          Atla
+        </button>
+      </div>
+      <p className="mt-0.5 text-[13.5px] font-semibold text-pretty text-muted-foreground">
+        Okulda işlenen konuları her derste müfredat sırasıyla işaretleyeyim; sonra tek tek düzeltebilirsin.
+      </p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {HIZLI_SECENEKLER.map((s) => (
+          <Cip key={s.id} onClick={() => onSec(s.oran)} className="min-h-11">
+            {s.ad}
+          </Cip>
+        ))}
+      </div>
+    </Kart>
   )
 }
 
@@ -682,7 +816,8 @@ function DersEkrani({
   return (
     // Dersin rengi ortak bileşenlere de geçiyor (`dersVurgusu`): çip,
     // odak halkası ve başlıktaki kutu Matematik'te mavi, Kimya'da turuncu.
-    <div style={ders.renk ? dersVurgusu(ders.renk) : undefined}>
+    // Tablette konu satırları tek sütun ama ortada sınırlı genişlikte.
+    <div className="tablet:mx-auto tablet:max-w-3xl" style={ders.renk ? dersVurgusu(ders.renk) : undefined}>
       <BaslikSatiri
         baslik={ad}
         arac="konu-takibi"

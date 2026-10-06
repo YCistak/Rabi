@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react'
-import { demoVerileriTemizle, TANITIM_ADIMLARI, TUR_ADIMLARI, TUR_ANAHTARLARI, tanitimGecisi, type DemoAlani, type TanitimEylemi, type TanitimKaydi, type TanitimTuru } from '@/lib/tanitim'
+import { demoVerileriTemizle, TANITIM_ADIMLARI, TUR_ADIMLARI, TUR_ANAHTARLARI, tanitimGecisi, turGorulduOku, type DemoAlani, type TanitimEylemi, type TanitimKaydi, type TanitimTuru } from '@/lib/tanitim'
 
 import { ANIMASYON_ANAHTARI, VARSAYILAN_ANIMASYON, animasyonKaydi, animasyonuDogrula, type TanitimAnimasyonu } from '@/lib/tanitim-animasyonu'
 
@@ -42,7 +42,7 @@ function useTanitimDurumu(deneyMi: boolean) {
   useEffect(() => {
     const kayitlar = {} as Record<TanitimTuru, boolean>
     for (const turAdi of Object.keys(TUR_ANAHTARLARI) as TanitimTuru[]) {
-      try { kayitlar[turAdi] = localStorage.getItem(TUR_ANAHTARLARI[turAdi]) === 'true' }
+      try { kayitlar[turAdi] = turGorulduOku(turAdi, (anahtar) => localStorage.getItem(anahtar)) }
       catch { kayitlar[turAdi] = false }
     }
     setGorulenler(kayitlar)
@@ -73,8 +73,6 @@ function useTanitimDurumu(deneyMi: boolean) {
     setGecisSuruyor(true)
     setRehberGizli(false)
     turuKaydet(durum.aktifTur)
-    // Ana tur deneme eklemeyi gösterdiyse Denemeler'in kendi kısa turu bir daha açılmıyor.
-    if (durum.aktifTur === 'ana_tur' && durum.aktifAdim !== null && durum.aktifAdim >= TANITIM_ADIMLARI.findIndex((adim) => adim.kimlik === 'deneme-ekle')) turuKaydet('denemeler')
     // Haritanın iki kitabını gösterdiyse Harita'nın kendi kısa turu da açılmıyor.
     if (durum.aktifTur === 'ana_tur' && durum.aktifAdim !== null && durum.aktifAdim >= TANITIM_ADIMLARI.findIndex((adim) => adim.kimlik === 'harita-ders')) turuKaydet('konu_haritasi')
     eylemGonder({ tur: 'demo-temizle' })

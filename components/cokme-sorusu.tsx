@@ -27,7 +27,10 @@ export function CokmeSorusu({ kol }: { kol: CokmeKolu }) {
   if (!kol.soruAcik) return null
 
   return (
-    <div className="katman-zemin fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-5 pt-[calc(1rem+var(--guvenli-ust))] pb-[calc(1rem+var(--guvenli-alt))]">
+    // `data-sistem-penceresi`: tanıtım rehberi (`spot-isigi.tsx`) bu pencerenin
+    // içindeki dokunmayı/odağı yutmuyor. z-[10001]: ikisi bir gün çakışsa
+    // pencere rehber katmanının (z-[10000]) altında kararıp kalmasın.
+    <div data-sistem-penceresi="" className="katman-zemin fixed inset-0 z-[10001] flex items-center justify-center bg-black/45 px-5 pt-[calc(1rem+var(--guvenli-ust))] pb-[calc(1rem+var(--guvenli-alt))]">
       <div className="pencere-girisi flex max-h-full w-full max-w-[340px] flex-col overflow-hidden rounded-[26px] bg-card golge-kart">
         <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-1 text-center">
           <Rabi durum="uzgun" poz="uzgun" boyut={92} className="mx-auto" />

@@ -69,11 +69,19 @@ export const ANAHTARLAR = {
   bilinmeyenKartlar: 'rabi-bilinmeyen-kartlar',
   /**
    * Konu Takibi: YKS konularında elle işaretlenen aşamalar ve "bitirdim"
-   * (`lib/konu-takibi/takip.ts`). Sürümlü (`{ surum: 1, konular }`); okurken
+   * (`lib/konu-takibi/takip.ts`). Sürümlü (`{ surum: 2, konular }`); okurken
    * `takibiCoz` süzüyor. "Haritada çalıştım" burada değil, `konuIlerleme`den
    * hesaplanıyor. Yedeğe giriyor.
    */
   yksKonuTakibi: 'rabi-yks-konu-takibi',
+  /**
+   * Konu Takibi'nin hızlı başlangıç kartının ("TYT'de neredeyim?")
+   * gösterildiği oturumlar, sürümlü (`{ surum: 1, gosterilen }`, okurken
+   * `hizliBayragiCoz`). Yedeğe **girmiyor**: kart zaten yalnızca oturumda
+   * hiç işaret yokken çıkıyor; yedekteki işaretler onu kendiliğinden
+   * gizliyor.
+   */
+  konuTakibiHizliBaslangic: 'rabi-konu-takibi-hizli-baslangic',
   /**
    * Konu haritasında en son seçili ders ve sınıf.
    *

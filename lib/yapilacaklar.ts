@@ -168,6 +168,16 @@ export type Gorev = {
   bitti: boolean
   /** Öncelikli — aynı saatteki ya da saatsiz görevler içinde üstte duruyor. */
   yildiz: boolean
+  /**
+   * "Pomodoro ile çalış" — satırda Pomodoro'yu tek dokunuşla başlatan düğme
+   * yalnızca bu görevlerde çiziliyor.
+   *
+   * İsteğe bağlı ve yalnızca `true` iken yazılıyor: alan gelmeden önce
+   * yazılmış kayıtlarda ve yedeklerde yok, onlar düğmesiz görev olarak
+   * okunuyor. Her görevde düğme olsaydı satırın tek satırlık metni daralırdı
+   * (bkz. `EN_UZUN_GOREV`) ve alışveriş listesine sayaç koymanın anlamı yok.
+   */
+  pomodoro?: boolean
 }
 
 /**
@@ -321,6 +331,7 @@ export function gorevleriNormalize(ham: unknown): Gorev[] {
           : null,
       bitti: g.bitti === true,
       yildiz: g.yildiz === true,
+      ...(g.pomodoro === true ? { pomodoro: true } : {}),
     })
   }
   return gorevler
@@ -391,7 +402,7 @@ export function gorevEkle(
   const metin = metniKirp(yeni.metin)
   if (metin === '') return null
   if (!gunuYerVarMi(gorevler, yeni.gun)) return null
-  const { ozelKategori: ham, saat: hamSaat, ...gerisi } = yeni
+  const { ozelKategori: ham, saat: hamSaat, pomodoro, ...gerisi } = yeni
   // Özel ad yalnızca "Diğer"de saklanıyor; başka kategoriye sızmasın.
   const ozelKategori = yeni.kategori === 'diger' ? ozelKategoriKirp(ham) : undefined
   return [
@@ -400,6 +411,7 @@ export function gorevEkle(
       ...gerisi,
       saat: saatKirp(hamSaat),
       ...(ozelKategori ? { ozelKategori } : {}),
+      ...(pomodoro === true ? { pomodoro: true } : {}),
       metin,
       bitti: false,
       yildiz: false,
@@ -410,7 +422,7 @@ export function gorevEkle(
 /** Düzenlemede değişebilen alanlar: gün ve durum yerinde kalıyor. */
 export type GorevDuzeni = Pick<
   Gorev,
-  'metin' | 'saat' | 'kategori' | 'ozelKategori' | 'renk' | 'sure'
+  'metin' | 'saat' | 'kategori' | 'ozelKategori' | 'renk' | 'sure' | 'pomodoro'
 >
 
 /**
@@ -431,7 +443,8 @@ export function gorevDuzenle(
   const ozelKategori = duzen.kategori === 'diger' ? ozelKategoriKirp(duzen.ozelKategori) : undefined
   return gorevDegistir(gorevler, id, (g) => {
     // Eski özel ad, kategori değişince geride kalmasın.
-    const { ozelKategori: _eski, ...gerisi } = g
+    // Pomodoro işareti de: kapatılınca alan kayıttan tümüyle düşüyor.
+    const { ozelKategori: _eski, pomodoro: _eskiPomodoro, ...gerisi } = g
     return {
       ...gerisi,
       metin,
@@ -440,6 +453,7 @@ export function gorevDuzenle(
       ...(ozelKategori ? { ozelKategori } : {}),
       renk: duzen.renk,
       sure: duzen.sure,
+      ...(duzen.pomodoro === true ? { pomodoro: true } : {}),
     }
   })
 }

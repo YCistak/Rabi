@@ -32,7 +32,12 @@
  * destelerinde yok), Divan ve Geçiş Dönemi Edebiyatı (Mesnevi ve Dîvânu
  * Lugâti't-Türk desteleri konunun bir parçası), Sığa ve Alternatif Akım
  * (birer kart), Coğrafya'nın Türkiye'de tarım, sanayi ve çevre konuları
- * (11. sınıf desteleri Türkiye'ye özgü değil, genel kavramlar).
+ * (11. sınıf desteleri Türkiye'ye özgü değil, genel kavramlar), Eşlik ve
+ * Benzerlik ↔ Tales-Öklid-Pisagor destesi (Tales üç kart, gerisi dik üçgen),
+ * Şiir Bilgisi ↔ Şiirde İmge (konu nazım biçimi, ölçü, uyak; imge şiir
+ * çözümlemesi), Klasik Çağda Osmanlı Toplum Düzeni ve Değişim Çağında Avrupa
+ * (Sömürgecilik, İsyanlar ve 1453-1683 Bilim-Kültür desteleri bu başlıkların
+ * asıl içeriği değil; sınırları tartışmalı).
  *
  * `takip.test.ts` her iki uçtaki kimliklerin gerçekten var olduğunu
  * denetliyor: harita içeriği değişip bir konu kimliği kayarsa test kırılır,
@@ -62,7 +67,10 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
 
   // --- TYT Matematik -----------------------------------------------------
   'tyt-mat-temel-kavramlar': ['mat9-sayi-kumeleri'],
-  'tyt-mat-bolunebilme': ['mat10-bolunebilme'],
+  // Asal çarpanlara ayırma ve bölen sayısı YKS listelerinde Bölünebilme'nin
+  // içinde. EBOB – EKOK asal çarpanları yalnızca araç olarak kullanıyor; ona
+  // eklenmedi.
+  'tyt-mat-bolunebilme': ['mat10-bolunebilme', 'mat10-asal-carpan'],
   'tyt-mat-ebob-ekok': ['mat10-ebob-ekok'],
   'tyt-mat-esitsizlik': ['mat9-denklem-esitsizlik'],
   'tyt-mat-mutlak-deger': ['mat9-mutlak-deger'],
@@ -160,7 +168,13 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   'tyt-tar-ilk-donemler': ['trh9-tarim', 'trh9-yonetim', 'trh9-hukuk', 'trh9-inanc'],
   'tyt-tar-orta-cag': ['trh9-goc', 'trh9-devletler', 'trh9-ticaret', 'trh9-medeniyet'],
   'tyt-tar-turk-dunyasi': ['trh9-konargocer'],
-  'tyt-tar-selcuklu': ['trh10-mucadele', 'trh10-teskilat', 'trh10-sosyal', 'trh10-turk-islam'],
+  // Teşkilat destesi (divan, ikta, gulam, Nizamülmülk, atabeylik) ilk
+  // Türk-İslam devletlerinin düzenini anlatıyor; Bilim-Kültür destesi
+  // Karahanlı eserleri, medrese ve Yesevi'den Mevlânâ'ya, kümbete uzanıyor —
+  // iki konuya da ait. Askerî mücadeleler (Malazgirt'ten Kösedağ'a) ve sosyal
+  // yaşam (ahilik, vakıf, kervansaray) Selçuklu Türkiyesi'nin.
+  'tyt-tar-ilk-turk-islam': ['trh10-teskilat', 'trh10-turk-islam'],
+  'tyt-tar-selcuklu': ['trh10-mucadele', 'trh10-sosyal', 'trh10-turk-islam'],
   'tyt-tar-osmanli-siyaset': ['trh10-kurulus', 'trh10-anadolu-rumeli'],
   'tyt-tar-savascilar': ['trh10-devletlesme'],
   'tyt-tar-osmanli-medeniyet': ['trh10-kalicilik', 'trh10-ilim-irfan'],
@@ -259,7 +273,8 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
     'byl11-kasilma-mekanizma',
   ],
   'ayt-biy-sindirim': ['byl10-sindirim', 'byl10-sindirim-yapi', 'byl10-insan-sindirim', 'byl10-emilim'],
-  'ayt-biy-dolasim': ['byl11-dolasim-homeo', 'byl11-dogal-bagisiklik', 'byl11-kazanilmis'],
+  'ayt-biy-dolasim': ['byl11-dolasim-homeo'],
+  'ayt-biy-bagisiklik': ['byl11-dogal-bagisiklik', 'byl11-kazanilmis'],
   'ayt-biy-solunum': ['byl11-solunum-homeo'],
   'ayt-biy-uriner': ['byl11-bosaltim-homeo'],
   'ayt-biy-komunite': ['byl10-etkilesim', 'byl10-suksesyon', 'byl10-populasyon'],
@@ -274,7 +289,8 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   'ayt-edb-ogretici': ['trk9-deneme', 'trk11-mektup', 'trk11-biyografi'],
   'ayt-edb-tiyatro': ['trk9-tiyatro', 'trk11-karagoz', 'trk11-tiyatro'],
   'ayt-edb-islamiyet-oncesi': ['trk10-destan', 'trk11-orhun'],
-  'ayt-edb-halk': ['trk10-anonim', 'trk11-asik'],
+  'ayt-edb-halk': ['trk10-anonim'],
+  'ayt-edb-halk-asik': ['trk11-asik'],
   'ayt-edb-milli': ['trk10-milli', 'trk10-milli-turler'],
 
   // --- AYT Coğrafya ------------------------------------------------------
@@ -283,5 +299,7 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   'ayt-cog-turkiye-ekonomi': ['cog10-turkiye-ekonomi'],
   'ayt-cog-maden-enerji': ['cog11-maden', 'cog11-enerji'],
   'ayt-cog-kultur': ['cog10-turk-kultur'],
-  'ayt-cog-iklim-degisimi': ['cog11-iklim'],
+  // 9. sınıfın destesi sera etkisi, Kyoto ve Türkiye'ye etkileri; 11.'nin
+  // azaltım, uyum ve iklim adaleti. İkisi birlikte konunun tamamı.
+  'ayt-cog-iklim-degisimi': ['cog9-iklim-degisim', 'cog11-iklim'],
 }

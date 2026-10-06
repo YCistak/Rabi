@@ -61,6 +61,7 @@ export function PomodoroEkrani({
   gorunur = true,
   onDurum,
   onArkaPlan,
+  baslatIstegi = null,
 }: {
   ayar: PomodoroAyar
   /** Geçmiş seanslar — ders şeridi en çok çalışılanları başa alıyor. */
@@ -82,6 +83,14 @@ export function PomodoroEkrani({
    * çıkılıyor, tur sürüyor. Verilmezse eski davranış (duraklat).
    */
   onArkaPlan?: () => void
+  /**
+   * Yapılacaklar'dan "Pomodoro ile başlat": ekran açılınca çalışma turu
+   * kendiliğinden başlıyor. `dakika` görevin süresi; `null` ise ayardaki
+   * çalışma süresi. İstek `kimlik`iyle bir kez işleniyor. Tur zaten
+   * başlamışsa (duraklatılmış olsa da) dokunulmuyor — işleyen bir turu bir
+   * görev düğmesiyle silmek, o turun dakikalarını kaybettirirdi.
+   */
+  baslatIstegi?: { kimlik: string; dakika: number | null } | null
 }) {
   const [asama, setAsama] = useState<Asama>('calisma')
   const [tur, setTur] = useState(1)
@@ -96,6 +105,13 @@ export function PomodoroEkrani({
   /** Biten prova — bir sonraki başlatmaya kadar ekranda duruyor. */
   const [bitenProva, setBitenProva] = useState<Prova | null>(null)
   const [ders, setDers] = useState<string | null>(null)
+  /**
+   * Görevden başlatılan çalışma turunun süresi. Yalnızca o tur için geçerli:
+   * tur bitince, atlanınca ya da sıfırlanınca ayardaki süreye dönülüyor.
+   * Ayarın kendisine yazılmıyor — bir görevin 40 dakikası kullanıcının
+   * Pomodoro tercihi değil.
+   */
+  const [gorevDakikasi, setGorevDakikasi] = useState<number | null>(null)
   const [bitisZamani, setBitisZamani] = useState<number | null>(null)
   const [kalan, setKalan] = useState(ayar.calisma * 60)
   /**
@@ -138,7 +154,11 @@ export function PomodoroEkrani({
   const baslangicRef = useRef<string | null>(null)
 
   // Provada süre ÖSYM'nin, ayarların değil.
-  const toplamDakika = prova ? prova.dakika : asamaSuresi(asama, ayar)
+  const toplamDakika = prova
+    ? prova.dakika
+    : asama === 'calisma' && gorevDakikasi !== null
+      ? gorevDakikasi
+      : asamaSuresi(asama, ayar)
   const calisiyor = bitisZamani !== null
   /**
    * Tur başladı mı — duraklatılmış olsa da. Süreler, prova ve kip bu sırada
@@ -192,9 +212,10 @@ export function PomodoroEkrani({
       onSeansBitti({
         id: yeniId(),
         baslangic: baslangicRef.current ?? new Date().toISOString(),
-        dakika: ayar.calisma,
+        dakika: gorevDakikasi ?? ayar.calisma,
         ders: ders ?? undefined,
       })
+      setGorevDakikasi(null)
       const yeniAsama = sonrakiAsama('calisma', tur, ayar)
       setAsama(yeniAsama)
       setKalan(asamaSuresi(yeniAsama, ayar) * 60)
@@ -207,7 +228,7 @@ export function PomodoroEkrani({
     setBitisZamani(null)
     setDokunulmadi(true)
     baslangicRef.current = null
-  }, [asama, ayar, calarAl, ders, onSeansBitti, prova, tur])
+  }, [asama, ayar, calarAl, ders, gorevDakikasi, onSeansBitti, prova, tur])
 
   // Ayarlardan süre değiştirildiğinde ekrandaki sayaç da değişmeli. Bu olmadan
   // "60 dakika" seçilip Başlat'a basılınca sayaç eski süreyle çalışıyordu.
@@ -251,12 +272,18 @@ export function PomodoroEkrani({
     }
   }, [bitisZamani, asamayiBitir])
 
-  const baslat = () => {
+  const baslat = () => turuBaslat(kalan, asama, prova)
+
+  /**
+   * Turu başlatır. Aşama ve prova parametre: görevden gelen istek aşamayı
+   * aynı karede çalışmaya çeviriyor ve state henüz yenilenmemiş oluyor.
+   */
+  const turuBaslat = (saniye: number, asama: Asama, prova: Prova | null) => {
     if (demoVeri) return
     setKirilanKilit(false)
     setBitenProva(null)
     setSahne(true)
-    const bitis = Date.now() + kalan * 1000
+    const bitis = Date.now() + saniye * 1000
     setBitisZamani(bitis)
     setDokunulmadi(false)
     // Duraklatılmış turu sürdürmek de buradan geçiyor; seansın başlangıcı
@@ -374,6 +401,7 @@ export function PomodoroEkrani({
 
   const sifirla = () => {
     turuBirak()
+    setGorevDakikasi(null)
     setKalan(toplamDakika * 60)
     setDokunulmadi(true)
     baslangicRef.current = null
@@ -382,6 +410,7 @@ export function PomodoroEkrani({
 
   const atla = () => {
     turuBirak()
+    setGorevDakikasi(null)
     baslangicRef.current = null
     /*
       Provada atlamak provadan çıkmak demek: yarıda bırakılan kitapçık seans
@@ -486,6 +515,7 @@ export function PomodoroEkrani({
     if (turIcinde) return
     setProva(yeni)
     setBitenProva(null)
+    setGorevDakikasi(null)
     setAsama('calisma')
     setKalan((yeni ? yeni.dakika : ayar.calisma) * 60)
     setDokunulmadi(true)
@@ -501,6 +531,30 @@ export function PomodoroEkrani({
     setAyar((o) => ({ ...o, provaSuresi: dakika }))
     if (prova?.id === 'ozel') provayiAyarla(ozelProva(dakika))
   }
+
+  /*
+    Yapılacaklar'dan gelen başlatma isteği. Yeni bir sayaç değil: hazırlık
+    ekranındaki "Başlat" ile aynı yol (`turuBaslat`), yalnızca aşama
+    çalışmaya, kip Pomodoro'ya çekiliyor ve süre görevden geliyor. Tur zaten
+    başlamışsa istek yalnızca ekranı açmış oluyor.
+  */
+  const islenenIstek = useRef<string | null>(null)
+  // İlk girişteki odak kilidi tanıtımı ekranın yerine geçiyor; sayaç onun
+  // arkasında görünmeden işlemesin diye istek tanıtım kapanana kadar bekliyor.
+  const kurulumBekliyor = kurulumAcik || (odakKilidiDesteklenir() && !ayar.kilitTanitimiGoruldu)
+  useEffect(() => {
+    if (!baslatIstegi || demoVeri || kurulumBekliyor || islenenIstek.current === baslatIstegi.kimlik) return
+    islenenIstek.current = baslatIstegi.kimlik
+    if (turIcinde || calisiyor) return
+    const dakika = baslatIstegi.dakika ?? ayar.calisma
+    setProva(null)
+    setAsama('calisma')
+    setGorevDakikasi(baslatIstegi.dakika)
+    setKalan(dakika * 60)
+    turuBaslat(dakika * 60, 'calisma', null)
+    // Yalnızca yeni istek geldiğinde; sayaç ve ayar değişimi isteği yeniden işletmemeli.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [baslatIstegi, demoVeri, kurulumBekliyor])
 
   /*
     Satırın altındaki özet: paneli açmadan hangi korumanın açık olduğu
@@ -548,7 +602,9 @@ export function PomodoroEkrani({
 
   const sureOzeti = `${ayar.calisma} dk · mola ${ayar.kisaMola} / ${ayar.uzunMola} · ${ayar.turSayisi} turda bir`
 
-  if (kurulumAcik) {
+  // Mini tur sürerken (`demoVeri`) tanıtım ekranı turun hedeflerini örtmesin;
+  // tur bitince açık kalan tanıtım yerine geliyor.
+  if (kurulumAcik && !demoVeri) {
     return (
       <div>
         <BaslikSatiri arac="pomodoro" baslik="Pomodoro" />

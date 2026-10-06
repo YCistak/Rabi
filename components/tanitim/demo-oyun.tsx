@@ -22,11 +22,12 @@ export function DemoOyunKarti() {
 /** Gerçek oyunun ekranlarını kullanır; seçimler ve sonuç sadece bellekte kalır. */
 export function DemoOyun({ bildir }: { bildir: BildirimKolu }) {
   const { gonder, adim, setRehberGizli } = useTanitim()
-  useEffect(() => { if (adim?.kimlik === "oyun-sayac") setRehberGizli(false) }, [adim?.kimlik, setRehberGizli])
+  // Geri sayımda gizlenen rehber, tur başlayınca soruyla geri geliyor (eskiden araya "Süre ve skor" adımı giriyordu).
+  useEffect(() => { if (adim?.kimlik === "soru-bir") setRehberGizli(false) }, [adim?.kimlik, setRehberGizli])
   const [oyunNo, setOyunNo] = useState(0)
   const oncekiAdim = useRef(adim?.kimlik)
   useEffect(() => {
-    if (adim?.kimlik === 'zorluk' && ['sonuc', 'oyun-sayac'].includes(oncekiAdim.current ?? '')) setOyunNo((sira) => sira + 1)
+    if (adim?.kimlik === 'zorluk' && oncekiAdim.current === 'sonuc') setOyunNo((sira) => sira + 1)
     oncekiAdim.current = adim?.kimlik
   }, [adim?.kimlik])
   const [mod, setMod] = useState<OyunModu>('siradan')
