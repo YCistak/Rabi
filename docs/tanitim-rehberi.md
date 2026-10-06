@@ -39,7 +39,7 @@ Ana tur açıkken mini tur başlamaz. Mini turun bitirilmesi veya geçilmesi kul
 | Denemeler | `rabi_deneme_turu_tamamlandi` |
 | Konu Haritası | `rabi_harita_turu_tamamlandi` |
 
-Her anahtara tur tamamlanınca `'true'` yazılır. Tur atlanamaz: balonda "Turu Geç"/kapat düğmesi, adım sayacı ve ilerleme göstergesi yoktur; Escape tuşu ve arka plana dokunma turu kapatmaz, Android geri tuşu bir adım geri alır. Tek çıkış, son adımdaki "Turu Bitir" düğmesidir. Eski `rabi_tanitim_tamamlandi` yeni ana turun kaydı yerine kullanılmaz; güncellenen akış bir kez gösterilir.
+Her anahtara tur tamamlanınca `'true'` yazılır. Tur atlanamaz: balonda "Turu Geç"/kapat düğmesi, adım sayacı ve ilerleme göstergesi yoktur; Escape tuşu ve arka plana dokunma turu kapatmaz, Android geri tuşu bir adım geri alır. Tek çıkış, son adımdaki "Turu Bitir" düğmesidir. Eski `rabi_tanitim_tamamlandi` anahtarı `true` ise ana tur görülmüş sayılır (`turGorulduOku`): eski turu bitirmiş kullanıcıya yeni tur bir kez daha zorla açılıyordu ve Play güncellemesinden sonra açılışta çökme sorusuyla çakışıp kullanıcıyı kilitliyordu. Çökme sorusu açıkken hiçbir tur başlamaz, tur sürerken soru tur bitene kadar bekler (`lib/cokme-tanitim.ts`).
 
 Demo cevapları, skor ve banka soruları yalnızca Context belleğindedir. Gerçek banka, oyun geçmişi, soru takibi veya Pomodoro kayıtlarına yazılmaz. `demoVerileriTemizle()` bitişte boş durumu döndürür. Sayfa yenileme de bellekteki demo verilerini kaldırır; tamamlanmayan tur yeniden başlar. Bitiş anında demo temizlenir; rehberin kapanışından sonra temiz ana sayfaya animasyonla dönülür.
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { HARITA_TUR_ADIMLARI, demoSonucu, demoVerileriTemizle, TUR_ADIMLARI, TUR_ANAHTARLARI, TANITIM_ADIMLARI, tanitimGecisi, tanitimKonumu, type TanitimDurumu, type TanitimTuru } from './tanitim'
+import { ESKI_ANA_TUR_ANAHTARI, HARITA_TUR_ADIMLARI, turGorulduOku, demoSonucu, demoVerileriTemizle, TUR_ADIMLARI, TUR_ANAHTARLARI, TANITIM_ADIMLARI, tanitimGecisi, tanitimKonumu, type TanitimDurumu, type TanitimTuru } from './tanitim'
 
 function adimaKadar(kimlik: string): TanitimDurumu {
   let durum = tanitimGecisi(demoVerileriTemizle(), { tur: 'baslat' })
@@ -166,5 +166,23 @@ describe('Ana ve bağlamsal tanıtım turları', () => {
     for (const turAdi of Object.keys(TUR_ADIMLARI) as TanitimTuru[]) for (let aktifAdim = 0; aktifAdim < TUR_ADIMLARI[turAdi].length; aktifAdim++) {
       expect(tanitimGecisi({ ...demoVerileriTemizle(), aktifTur: turAdi, aktifAdim }, { tur: 'temizle' })).toEqual(demoVerileriTemizle())
     }
+  })
+})
+
+describe('turGorulduOku (eski anahtar göçü)', () => {
+  const depo = (kayit: Record<string, string>) => (anahtar: string) => kayit[anahtar] ?? null
+  it('yeni anahtar varsa görülmüş', () => {
+    expect(turGorulduOku('ana_tur', depo({ rabi_ana_tur_tamamlandi: 'true' }))).toBe(true)
+  })
+  it('yalnız eski rabi_tanitim_tamamlandi varsa ana tur görülmüş sayılır', () => {
+    expect(turGorulduOku('ana_tur', depo({ [ESKI_ANA_TUR_ANAHTARI]: 'true' }))).toBe(true)
+  })
+  it('eski anahtar mini turları görülmüş saymaz', () => {
+    expect(turGorulduOku('denemeler', depo({ [ESKI_ANA_TUR_ANAHTARI]: 'true' }))).toBe(false)
+    expect(turGorulduOku('konu_haritasi', depo({ [ESKI_ANA_TUR_ANAHTARI]: 'true' }))).toBe(false)
+  })
+  it('hiç kayıt yoksa ya da değer true değilse görülmemiş', () => {
+    expect(turGorulduOku('ana_tur', depo({}))).toBe(false)
+    expect(turGorulduOku('ana_tur', depo({ [ESKI_ANA_TUR_ANAHTARI]: 'false' }))).toBe(false)
   })
 })

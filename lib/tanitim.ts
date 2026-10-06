@@ -9,6 +9,23 @@ export const TUR_ANAHTARLARI: Record<TanitimTuru, string> = {
   ana_tur: 'rabi_ana_tur_tamamlandi', denemeler: 'rabi_deneme_turu_tamamlandi', konu_haritasi: 'rabi_harita_turu_tamamlandi',
 }
 export const TANITIM_ANAHTARI = TUR_ANAHTARLARI.ana_tur
+/**
+ * Ana turun eski kayıt anahtarı. Tur yenilenince anahtar
+ * `rabi_ana_tur_tamamlandi` oldu ve eski turu bitirmiş kullanıcıya yeni tur
+ * bir kez daha zorla açılıyordu; Play güncellemesinden sonra açılışta
+ * çökme sorusuyla çakışıp kullanıcıyı kilitleyen de buydu. Eski anahtar
+ * `'true'` ise ana tur görülmüş sayılıyor.
+ */
+export const ESKI_ANA_TUR_ANAHTARI = 'rabi_tanitim_tamamlandi'
+
+/**
+ * Bir turun kayıtta görülmüş olup olmadığı. `oku` depo okuyucusu
+ * (`localStorage.getItem`); test edilebilsin diye dışarıdan veriliyor.
+ */
+export function turGorulduOku(turAdi: TanitimTuru, oku: (anahtar: string) => string | null): boolean {
+  if (oku(TUR_ANAHTARLARI[turAdi]) === 'true') return true
+  return turAdi === 'ana_tur' && oku(ESKI_ANA_TUR_ANAHTARI) === 'true'
+}
 
 /** Turda kullanıcının kendisinin eklediği kayıt türleri (bkz. `lib/tanitim-veri.ts`). */
 export type TanitimKaydi = 'soru' | 'gorev' | 'deneme'
