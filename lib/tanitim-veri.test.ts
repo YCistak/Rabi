@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { sablonlariBirlestir, secilebilirSablonlar } from './sablonlar'
-import { demoDenemeleri, demoSablonIdleri, ornekDenemeSonucu, turIstatistikDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi } from './tanitim-veri'
+import { demoDenemeleri, istatistikTuruDenemeleri, demoSablonIdleri, ornekDenemeSonucu, turIstatistikDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi } from './tanitim-veri'
 import { net } from './hesap'
 import type { PuanTuru } from './types'
 
@@ -119,5 +119,22 @@ describe('Turun İstatistik denemeleri', () => {
     const ornekler = demoDenemeleri(12, null, '2026-10-03')
     const tyt = { ...kullanicinin, sablonId: 'tyt', sonuclar: ornekDenemeSonucu(SABLONLAR.find((s) => s.id === 'tyt')!) }
     expect(turIstatistikDenemeleri(ornekler, [tyt], SABLONLAR)).toEqual([...ornekler, tyt])
+  })
+})
+
+describe('İstatistik mini turunun denemeleri', () => {
+  it.each([
+    [12, 'say'],
+    [11, 'ea'],
+    [13, 'dil'],
+    [10, 'say'],
+    [12, null],
+  ] as const)('%i. sınıf, %s: en az bir tür iki denemeye ulaşıyor ve hepsi geçici', (sinif, puanTuru) => {
+    const liste = istatistikTuruDenemeleri(sinif, puanTuru as PuanTuru | null, '2026-10-03', SABLONLAR)
+    const sayilar = new Map<string, number>()
+    for (const d of liste) sayilar.set(d.sablonId, (sayilar.get(d.sablonId) ?? 0) + 1)
+    expect([...sayilar.values()].some((n) => n >= 2)).toBe(true)
+    expect(liste.every(tanitimKaydiMi)).toBe(true)
+    expect(new Set(liste.map((d) => d.id)).size).toBe(liste.length)
   })
 })

@@ -581,7 +581,9 @@ export function PomodoroEkrani({
 
   const sureOzeti = `${ayar.calisma} dk · mola ${ayar.kisaMola} / ${ayar.uzunMola} · ${ayar.turSayisi} turda bir`
 
-  if (kurulumAcik) {
+  // Mini tur sürerken (`demoVeri`) tanıtım ekranı turun hedeflerini örtmesin;
+  // tur bitince açık kalan tanıtım yerine geliyor.
+  if (kurulumAcik && !demoVeri) {
     return (
       <div>
         <BaslikSatiri arac="pomodoro" baslik="Pomodoro" />

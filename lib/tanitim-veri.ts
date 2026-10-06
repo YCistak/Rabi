@@ -125,3 +125,18 @@ export function turIstatistikDenemeleri(ornekler: readonly Deneme[], eklenenler:
   }
   return liste
 }
+
+/**
+ * İstatistik mini turunun denemeleri.
+ *
+ * Ana turda kullanıcı kendi denemesini ekliyordu ve o, örneklerden biriyle
+ * aynı türde ikinci deneme oluyordu. Mini turda eklenen deneme yok; iki örnek
+ * de farklı türdeyse (TYT + alan sınavı) hiçbir tür iki denemeye ulaşmaz,
+ * ekran "Henüz veri yok" der ve turun hedefleri hiç çizilmezdi. İkinci
+ * örnek bu yüzden "eklenen" yerine geçiyor: eşi yoksa bir hafta önceye
+ * tarihli geçici bir eş alıyor (`turIstatistikDenemeleri`).
+ */
+export function istatistikTuruDenemeleri(sinif: number, puanTuru: PuanTuru | null, bugunIso: string, sablonlar: readonly Sablon[]): Deneme[] {
+  const ornekler = demoDenemeleri(sinif, puanTuru, bugunIso)
+  return turIstatistikDenemeleri(ornekler.slice(0, 1), ornekler.slice(1), sablonlar)
+}
