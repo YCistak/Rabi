@@ -58,6 +58,10 @@
       </array>
     </dict>
 	</dict>
+	<!-- Pomodoro sayacı kilit ekranında ve Dynamic Island'da (Live Activity,
+	     `CanliSayacEklentisi.swift`). Bu anahtar olmadan istek sessizce düşüyor. -->
+	<key>NSSupportsLiveActivities</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

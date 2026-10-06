@@ -18,13 +18,20 @@
 		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
+		678032D073EE534E84A04E15 /* PomodoroEtkinligi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4FE96816B56D27848F81D9 /* PomodoroEtkinligi.swift */; };
+		6DBFA194ECA510B07601ABC4 /* CanliSayacEklentisi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6184550EF3A57C094DEBC3CB /* CanliSayacEklentisi.swift */; };
 		6E695CA8ABA1E81CDD2F9108 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FD94E3D948EC4C869736624 /* Foundation.framework */; };
+		70537B37F2F1D15149F72C06 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FD94E3D948EC4C869736624 /* Foundation.framework */; };
 		7A1B00012F00000000000001 /* AnaDenetleyici.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1B00012F00000000000002 /* AnaDenetleyici.swift */; };
 		7A1B00012F00000000000003 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7A1B00012F00000000000004 /* PrivacyInfo.xcprivacy */; };
 		9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6822FE993A50072D4E8 /* SceneDelegate.swift */; };
+		9D568B813034E8667134A8DB /* tavsan_yuz.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C655029A247E82702EF4EB7 /* tavsan_yuz.png */; };
+		A14EDFBF948F4F6B4C671302 /* KilitSayaci.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124F3C0D8314F2E73447964E /* KilitSayaci.swift */; };
 		A67A757C589FC0D8B598A044 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FD94E3D948EC4C869736624 /* Foundation.framework */; };
 		A9455D3707E38CD54B0F9458 /* EkranSuresiEklentisi.swift in Sources */ = {isa = PBXBuildFile; fileRef = C516C5A8C3EF008C94074DCC /* EkranSuresiEklentisi.swift */; };
+		CB5FF71EAA0C3AE4E9F4632D /* KilitSayaci.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3AC2D8E75F959FB92DFB0C16 /* KilitSayaci.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		DDC84D0B18FFFA4744959D88 /* KalkanGorunumu.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 97953AADAE06C8B84A6280AE /* KalkanGorunumu.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F06FF156F513F0ED40E602CD /* PomodoroEtkinligi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4FE96816B56D27848F81D9 /* PomodoroEtkinligi.swift */; };
 		FA1E4D4011C0EA79F4FB0F38 /* tavsan_yuz.png in Resources */ = {isa = PBXBuildFile; fileRef = 6F5945D08BDBCBE47A95F710 /* tavsan_yuz.png */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +42,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = BCFE0101433269DC90D7AA3D;
 			remoteInfo = KalkanGorunumu;
+		};
+		C647DBDFC8976607E0DC49AA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 781C5322E42CC368C68CD186;
+			remoteInfo = KilitSayaci;
 		};
 		FC5F3D5D74BF587D75EE1E94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -54,6 +68,7 @@
 			files = (
 				215149E5DD5E179754C6E77C /* OdakIzleyici.appex in Embed Foundation Extensions */,
 				DDC84D0B18FFFA4744959D88 /* KalkanGorunumu.appex in Embed Foundation Extensions */,
+				CB5FF71EAA0C3AE4E9F4632D /* KilitSayaci.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -63,8 +78,11 @@
 /* Begin PBXFileReference section */
 		0B7F8D5C1457683F27FE2AD9 /* KalkanGorunumu.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = KalkanGorunumu.entitlements; sourceTree = "<group>"; };
 		0CD468D438E6B79DF424FA29 /* KalkanGorunumu.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KalkanGorunumu.swift; sourceTree = "<group>"; };
+		0E4FE96816B56D27848F81D9 /* PomodoroEtkinligi.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PomodoroEtkinligi.swift; sourceTree = "<group>"; };
+		124F3C0D8314F2E73447964E /* KilitSayaci.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KilitSayaci.swift; sourceTree = "<group>"; };
 		14631B8427E08103D134DE34 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2FAD9762203C412B000D30F8 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
+		3AC2D8E75F959FB92DFB0C16 /* KilitSayaci.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KilitSayaci.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D46D1BCFCDE8E6565A97A94 /* OdakIzleyici.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OdakIzleyici.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FD94E3D948EC4C869736624 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		4023312BAEE3ECBD95DC9BB7 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -76,6 +94,9 @@
 		504EC3111FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		504EC3131FED79650016851F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
+		5C655029A247E82702EF4EB7 /* tavsan_yuz.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = tavsan_yuz.png; sourceTree = "<group>"; };
+		6184550EF3A57C094DEBC3CB /* CanliSayacEklentisi.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CanliSayacEklentisi.swift; sourceTree = "<group>"; };
+		62CCF3252B9B7F81E6899C7B /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6F5945D08BDBCBE47A95F710 /* tavsan_yuz.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = tavsan_yuz.png; sourceTree = "<group>"; };
 		7A1B00012F00000000000002 /* AnaDenetleyici.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnaDenetleyici.swift; sourceTree = "<group>"; };
 		7A1B00012F00000000000004 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -85,6 +106,7 @@
 		B3CFE65991751DDEB78BDED8 /* OdakIzleyici.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OdakIzleyici.swift; sourceTree = "<group>"; };
 		C4206306B67CD242674D4551 /* OdakIzleyici.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = OdakIzleyici.entitlements; sourceTree = "<group>"; };
 		C516C5A8C3EF008C94074DCC /* EkranSuresiEklentisi.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EkranSuresiEklentisi.swift; sourceTree = "<group>"; };
+		DF30B17E4C879D3BC75659D3 /* KilitSayaci.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = KilitSayaci.entitlements; sourceTree = "<group>"; };
 		F7A9115C3A5CB00393F7ADB1 /* App.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -110,6 +132,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				A67A757C589FC0D8B598A044 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		774F21D58C97925826527AD9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70537B37F2F1D15149F72C06 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,6 +174,7 @@
 				4D4D94580FD18A0E2C3E0FBC /* Frameworks */,
 				00A498976202AA68EFB6C97F /* OdakIzleyici */,
 				8AB6E45D8EA0C94F2CECF116 /* KalkanGorunumu */,
+				94FD5CCA726F9C456F907171 /* KilitSayaci */,
 			);
 			sourceTree = "<group>";
 		};
@@ -153,6 +184,7 @@
 				504EC3041FED79650016851F /* App.app */,
 				3D46D1BCFCDE8E6565A97A94 /* OdakIzleyici.appex */,
 				97953AADAE06C8B84A6280AE /* KalkanGorunumu.appex */,
+				3AC2D8E75F959FB92DFB0C16 /* KilitSayaci.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -173,6 +205,8 @@
 				50B271D01FEDC1A000F3C39B /* public */,
 				C516C5A8C3EF008C94074DCC /* EkranSuresiEklentisi.swift */,
 				F7A9115C3A5CB00393F7ADB1 /* App.entitlements */,
+				6184550EF3A57C094DEBC3CB /* CanliSayacEklentisi.swift */,
+				0E4FE96816B56D27848F81D9 /* PomodoroEtkinligi.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -197,6 +231,18 @@
 			path = KalkanGorunumu;
 			sourceTree = "<group>";
 		};
+		94FD5CCA726F9C456F907171 /* KilitSayaci */ = {
+			isa = PBXGroup;
+			children = (
+				124F3C0D8314F2E73447964E /* KilitSayaci.swift */,
+				5C655029A247E82702EF4EB7 /* tavsan_yuz.png */,
+				62CCF3252B9B7F81E6899C7B /* Info.plist */,
+				DF30B17E4C879D3BC75659D3 /* KilitSayaci.entitlements */,
+			);
+			name = KilitSayaci;
+			path = KilitSayaci;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -214,6 +260,7 @@
 			dependencies = (
 				198A564C3436BF4A1BC19381 /* PBXTargetDependency */,
 				82E0BBF68F9A584D5C68BF9B /* PBXTargetDependency */,
+				A902153D9091F33F46213F1B /* PBXTargetDependency */,
 			);
 			name = App;
 			packageProductDependencies = (
@@ -222,6 +269,23 @@
 			productName = App;
 			productReference = 504EC3041FED79650016851F /* App.app */;
 			productType = "com.apple.product-type.application";
+		};
+		781C5322E42CC368C68CD186 /* KilitSayaci */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D9F441AE5F63D17D5B122F44 /* Build configuration list for PBXNativeTarget "KilitSayaci" */;
+			buildPhases = (
+				DABEB04DC624C1E455BBA02F /* Sources */,
+				774F21D58C97925826527AD9 /* Frameworks */,
+				AA1F4118446D504982F727ED /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KilitSayaci;
+			productName = KilitSayaci;
+			productReference = 3AC2D8E75F959FB92DFB0C16 /* KilitSayaci.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 		A598666DD3096829A163425B /* OdakIzleyici */ = {
 			isa = PBXNativeTarget;
@@ -292,6 +356,7 @@
 				504EC3031FED79650016851F /* App */,
 				A598666DD3096829A163425B /* OdakIzleyici */,
 				BCFE0101433269DC90D7AA3D /* KalkanGorunumu */,
+				781C5322E42CC368C68CD186 /* KilitSayaci */,
 			);
 		};
 /* End PBXProject section */
@@ -315,6 +380,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA1F4118446D504982F727ED /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9D568B813034E8667134A8DB /* tavsan_yuz.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,6 +418,8 @@
 				7A1B00012F00000000000001 /* AnaDenetleyici.swift in Sources */,
 				9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */,
 				A9455D3707E38CD54B0F9458 /* EkranSuresiEklentisi.swift in Sources */,
+				6DBFA194ECA510B07601ABC4 /* CanliSayacEklentisi.swift in Sources */,
+				678032D073EE534E84A04E15 /* PomodoroEtkinligi.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -353,6 +428,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				44183931447D82BC0EF87EC3 /* KalkanGorunumu.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DABEB04DC624C1E455BBA02F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A14EDFBF948F4F6B4C671302 /* KilitSayaci.swift in Sources */,
+				F06FF156F513F0ED40E602CD /* PomodoroEtkinligi.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,6 +454,12 @@
 			name = KalkanGorunumu;
 			target = BCFE0101433269DC90D7AA3D /* KalkanGorunumu */;
 			targetProxy = 475FCEC86B5AC285540FA80B /* PBXContainerItemProxy */;
+		};
+		A902153D9091F33F46213F1B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = KilitSayaci;
+			target = 781C5322E42CC368C68CD186 /* KilitSayaci */;
+			targetProxy = C647DBDFC8976607E0DC49AA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -435,6 +525,32 @@
 				);
 				MARKETING_VERSION = 0.9.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fluxifyinteractive.rabi.KalkanGorunumu;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		34277E47042451D18568BBDA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = KilitSayaci/KilitSayaci.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = KilitSayaci/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.9.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fluxifyinteractive.rabi.KilitSayaci;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -650,6 +766,31 @@
 			};
 			name = Debug;
 		};
+		CE5093798157B4FF4A84AE4C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = KilitSayaci/KilitSayaci.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = KilitSayaci/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.9.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fluxifyinteractive.rabi.KilitSayaci;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -685,6 +826,15 @@
 			buildConfigurations = (
 				7884C1CA3F92ED56179CE44E /* Release */,
 				B1F5B95E4A9CE4A0D81F0F62 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D9F441AE5F63D17D5B122F44 /* Build configuration list for PBXNativeTarget "KilitSayaci" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				34277E47042451D18568BBDA /* Release */,
+				CE5093798157B4FF4A84AE4C /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
