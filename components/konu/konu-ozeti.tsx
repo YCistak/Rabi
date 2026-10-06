@@ -1,12 +1,12 @@
-"use client";
+'use client'
 
-import { ArrowRight, BookOpenCheck, Clock3, ListChecks } from "lucide-react";
-import type { Konu } from "@/lib/konu";
-import type { KonuDersId } from "@/lib/konu/tip";
-import { dersVurgusu } from "@/components/ders-renkleri";
-import { Buton, kartGirisi } from "@/components/ui";
-import { cn } from "@/lib/utils";
-import { Rabi } from "@/components/maskot/rabi";
+import { ArrowRight, BookOpenCheck, Clock3, ListChecks } from 'lucide-react'
+import type { Konu } from '@/lib/konu'
+import type { KonuDersId } from '@/lib/konu/tip'
+import { dersVurgusu } from '@/components/ders-renkleri'
+import { Buton, kartGirisi } from '@/components/ui'
+import { cn } from '@/lib/utils'
+import { Rabi } from '@/components/maskot/rabi'
 
 /**
  * Destenin kapanışı: konunun özeti.
@@ -56,29 +56,26 @@ export function KonuOzeti({
   onVazgec,
   cikiyor,
 }: {
-  konu: Konu;
+  konu: Konu
   /** Ekranın rengi bu dersten gelir. */
-  ders: KonuDersId;
-  dersAdi: string;
-  temaAdi: string;
+  ders: KonuDersId
+  dersAdi: string
+  temaAdi: string
   /** Destede geçen süre; bilinmiyorsa 0. */
-  okumaSaniyesi: number;
-  onBasla: () => void;
-  onVazgec: () => void;
+  okumaSaniyesi: number
+  onBasla: () => void
+  onVazgec: () => void
   /** Perde çekiliyor; bkz. yukarıdaki yorum. */
-  cikiyor?: boolean;
+  cikiyor?: boolean
 }) {
-  const kartSayisi = konu.kartlar.length;
-  const soruSayisi = konu.sorular.length;
-  const notluKart = konu.kartlar.find((k) => k.not);
+  const kartSayisi = konu.kartlar.length
+  const soruSayisi = konu.sorular.length
+  const notluKart = konu.kartlar.find((k) => k.not)
 
   return (
     <div
       style={dersVurgusu(ders)}
-      className={cn(
-        "fixed inset-0 z-50 flex flex-col bg-background",
-        cikiyor && "kapanis-cikar",
-      )}
+      className={cn('fixed inset-0 z-50 flex flex-col bg-background', cikiyor && 'kapanis-cikar')}
     >
       <div className="mx-auto w-full max-w-md min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pt-[calc(1.25rem+var(--guvenli-ust))] pb-4">
         <div className="ozet-bandi relative overflow-hidden rounded-3xl bg-primary-soft px-4 pt-4 pb-5">
@@ -142,9 +139,7 @@ export function KonuOzeti({
                 <span className="rakam mt-px w-5 shrink-0 text-right text-[12.5px] font-extrabold text-primary">
                   {i + 1}
                 </span>
-                <span className="min-w-0 text-[14px] leading-snug font-bold">
-                  {kart.baslik}
-                </span>
+                <span className="min-w-0 text-[14px] leading-snug font-bold">{kart.baslik}</span>
               </li>
             ))}
           </ol>
@@ -157,9 +152,7 @@ export function KonuOzeti({
               <p className="text-[11px] font-extrabold tracking-[0.08em] text-primary uppercase">
                 Dikkat · {notluKart.baslik}
               </p>
-              <p className="mt-0.5 text-[13.5px] leading-snug font-semibold">
-                {notluKart.not}
-              </p>
+              <p className="mt-0.5 text-[13.5px] leading-snug font-semibold">{notluKart.not}</p>
             </div>
           </section>
         )}
@@ -179,7 +172,7 @@ export function KonuOzeti({
         </button>
       </div>
     </div>
-  );
+  )
 }
 
 function Sayi({
@@ -189,10 +182,10 @@ function Sayi({
   etiket,
 }: {
   /** Bant yükseldikten sonra sırayla gelsin diye. */
-  sira: number;
-  simge: React.ReactNode;
-  deger: string;
-  etiket: string;
+  sira: number
+  simge: React.ReactNode
+  deger: string
+  etiket: string
 }) {
   return (
     <div
@@ -200,14 +193,10 @@ function Sayi({
       className="ozet-sayi golge-kart rounded-2xl bg-card px-3.5 py-3"
     >
       <span className="text-primary">{simge}</span>
-      <p className="rakam mt-1.5 font-display text-[22px] leading-none font-extrabold">
-        {deger}
-      </p>
-      <p className="mt-1 text-[12px] font-bold text-muted-foreground">
-        {etiket}
-      </p>
+      <p className="rakam mt-1.5 font-display text-[22px] leading-none font-extrabold">{deger}</p>
+      <p className="mt-1 text-[12px] font-bold text-muted-foreground">{etiket}</p>
     </div>
-  );
+  )
 }
 
 /**
@@ -215,9 +204,9 @@ function Sayi({
  * zaten iki saatte kırpılıyor (`okuma-suresi.ts`) ve bir konu o kadar sürmüyor.
  */
 function sureYaz(saniye: number): string {
-  const s = Math.round(saniye);
-  if (s < 60) return `${s} sn`;
-  const dk = Math.floor(s / 60);
-  const kalan = s % 60;
-  return kalan === 0 ? `${dk} dk` : `${dk} dk ${kalan} sn`;
+  const s = Math.round(saniye)
+  if (s < 60) return `${s} sn`
+  const dk = Math.floor(s / 60)
+  const kalan = s % 60
+  return kalan === 0 ? `${dk} dk` : `${dk} dk ${kalan} sn`
 }
