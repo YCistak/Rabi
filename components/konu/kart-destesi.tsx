@@ -5,6 +5,8 @@ import { Check, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { BilgiKarti, Konu } from '@/lib/konu'
 import type { HaritaTemasi } from '@/lib/konu/harita-temasi'
 import { desteAkisi, molaSecimi, type DesteAdimi } from '@/lib/konu/deste-akisi'
+import { kartPozlari } from '@/lib/konu/kart-maskotu'
+import type { MaskotPozu } from '@/lib/maskot'
 import { useGeriKatmani } from '@/lib/geri'
 import { useUygulamaGorunur } from '@/lib/gorunurluk'
 import { Buton, Onay, useTanitimSuruyor } from '@/components/ui'
@@ -92,6 +94,7 @@ export function KartDestesi({
   */
   const [akis] = useState<DesteAdimi[]>(() => desteAkisi(konu.kartlar.length, konu.kontroller))
   const [molaSecimi_] = useState(() => molaSecimi())
+  const [pozlar] = useState(() => kartPozlari(konu.kartlar.length))
 
   const [adim, setAdim] = useState(0)
   /** Gidilen en ileri kart sayısı; geri dönüp yeniden ilerlemek sayıyı büyütmüyor. */
@@ -234,6 +237,7 @@ export function KartDestesi({
         <KartEkrani
           kart={konu.kartlar[bu.sira]}
           sira={bu.sira}
+          poz={pozlar[bu.sira]}
           toplam={toplam}
           konuAdi={konu.ad}
           dersAdi={dersAdi}
@@ -261,6 +265,7 @@ export function KartDestesi({
 function KartEkrani({
   kart,
   sira,
+  poz,
   toplam,
   konuAdi,
   dersAdi,
@@ -275,6 +280,7 @@ function KartEkrani({
 }: {
   kart: BilgiKarti
   sira: number
+  poz: MaskotPozu
   toplam: number
   konuAdi: string
   dersAdi: string
@@ -318,11 +324,12 @@ function KartEkrani({
         */}
         <div className="mx-auto flex w-full max-w-md min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain">
           <div className="my-auto w-full">
-            {/* Rabi (okuyan poz) ve altındaki çizgi: kartın üstündeki boşluğu
-                dolduruyor; eskiden burada ders simgesi duruyordu. */}
+            {/* Rabi ve altındaki çizgi: kartın üstündeki boşluğu dolduruyor;
+                eskiden burada ders simgesi duruyordu. Poz her kartta değişiyor
+                (`lib/konu/kart-maskotu.ts`). */}
             <div className="flex min-h-[70px] flex-col items-center justify-center gap-2.5">
               <Rabi
-                poz="okuyan"
+                poz={poz}
                 boyut={96}
                 className="drop-shadow-[0_6px_8px_rgba(31,36,48,0.14)]"
               />
