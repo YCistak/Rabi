@@ -610,15 +610,16 @@ Seçenek çipleri satırın altında sürekli açık dururken ekran üç ekran b
 (hatırlatma, müzik) açılamaz: satıra dokunmak anahtarı çeviriyor, aynı satır hem
 anahtar hem liste olamaz — hatırlatma saati o yüzden **ayrı** bir satır.
 
-### Ayarlar bölümleri kategorinin renginde
+### Ayarlar simge kutuları bölümün renginde
 
-Bölüm kartı (`Bolum`) kategorinin açık zeminini taşır; simge kutusu beyaz, simge
-`-koyu` renkte, seçili değer de `-koyu` (ana renk kırmızı/mor pastelde 4.5 altı).
-`Bolum` `ton`u bağlamla `Satir`a verir, `Satir` ayrı `renk` almaz: Çalışma kırmızı,
-Hatırlatma sarı, Ses mor, Yasal mavi, Destek yeşil, Veri turkuaz. Renkler `--ayar-*`
-(`globals.css`); zemin ile `-koyu` ve ikincil yazı ≥ 4.5:1 olmalı. Yeni bölümde kendi
+Satırın simge kutusu satıra değil **bölüme** ait renk taşır (`Bolum` `ton`unu
+bağlamla veriyor, `Satir` ayrı `renk` almaz): Çalışma kırmızı, Hatırlatma sarı, Ses
+mor, Yasal mavi, Destek yeşil, Veri turkuaz. Renkler `--ayar-*` (`globals.css`);
+her zemin ve `-koyu` simge rengi çifti ≥ 4.5:1 olmalı. Yeni bölüm eklersen kendi
 `--ayar-<bölüm>` çiftini ve `SatirRengi` üyesini ekle. Ders aileleri (`yzm`, `isl`…)
-kullanılmadı: koyuları 4.5 altı. Kullanıcı istedi.
+kullanılmadı: koyuları kırmızı/sarıda 4.5'in altında. Kullanıcı istedi.
+Yalnız simge dairesi boyanır; bölüm kartının zemini beyaz kalır (`bg-card`).
+Kartın tamamını boyayan sürüm kullanıcı isteğiyle geri alındı.
 
 ### Ayarlarda şablon yok
 
