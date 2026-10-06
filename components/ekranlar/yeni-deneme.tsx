@@ -171,13 +171,20 @@ export function YeniDenemeEkrani({
     }))
   }
 
+  /*
+    Vazgeç yalnız girilmiş bir şey kaybolacaksa soruyor: yeni denemede bir
+    sayı ya da ad yazıldıysa, düzenlemede bir şey değiştiyse. Boş formu
+    kapatmak bir şey kaybettirmez.
+  */
+  const [ilkHal] = useState(() => JSON.stringify({ ad, girisler }))
+  const girildi = duzenlenen
+    ? JSON.stringify({ ad, girisler }) !== ilkHal
+    : ad.trim() !== '' ||
+      Object.values(girisler).some((g) => g.dogru !== '' || g.yanlis !== '')
   const vazgecOnayi = useKapatmaOnayi({
     aciklama: duzenlenen
       ? 'Yaptığın değişiklikler kaydedilmez.'
       : 'Girdiğin sonuçlar kaydedilmez.',
-  })
-  const yanlisKapatmaOnayi = useKapatmaOnayi({
-    aciklama: 'Yanlış soru eklenmeden deneme formuna dönersin.',
   })
 
   const kaydet = () => {
@@ -210,7 +217,6 @@ export function YeniDenemeEkrani({
   return (
     <div className="overflow-x-clip">
       {vazgecOnayi.pencere}
-      {yanlisKapatmaOnayi.pencere}
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="min-w-0">
           <h1 className="font-display text-2xl font-semibold tracking-tight">
@@ -220,7 +226,7 @@ export function YeniDenemeEkrani({
             {sablon.ad} · {toplamSoru(sablon)} soru · {katsayiYaz(sablon.yanlisKatsayi)}
           </p>
         </div>
-        <Buton bicim="hayalet" boy="simge" onClick={() => vazgecOnayi.sor(onVazgec)} aria-label="Vazgeç">
+        <Buton bicim="hayalet" boy="simge" onClick={() => (girildi ? vazgecOnayi.sor(onVazgec) : onVazgec())} aria-label="Vazgeç">
           <X size={20} />
         </Buton>
       </div>
@@ -420,7 +426,7 @@ export function YeniDenemeEkrani({
                   <Buton
                     bicim="hayalet"
                     boy="simge"
-                    onClick={() => yanlisKapatmaOnayi.sor(() => setYanlisAcik(false))}
+                    onClick={() => setYanlisAcik(false)}
                     aria-label="Kapat"
                   >
                     <X size={20} />

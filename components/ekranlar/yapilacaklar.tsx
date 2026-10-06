@@ -580,6 +580,7 @@ function EklemeSayfasi({
 
   useGeriKatmani(true, onKapat)
   const kaydir = useAsagiKaydirKapat(onKapat)
+  // Yalnız görev metni değiştiyse sorar; seçimler birkaç dokunuşla geri gelir.
   const kapatmaOnayi = useKapatmaOnayi({
     aciklama: duzenlenen
       ? 'Yaptığın değişiklikler kaydedilmeden pencere kapanır.'
@@ -630,7 +631,9 @@ function EklemeSayfasi({
           </p>
           <button
             type="button"
-            onClick={() => kapatmaOnayi.sor(onKapat)}
+            onClick={() =>
+              metin !== (duzenlenen?.metin ?? '') ? kapatmaOnayi.sor(onKapat) : onKapat()
+            }
             aria-label="Kapat"
             className="grid size-9 shrink-0 place-items-center rounded-xl bg-muted/70 text-muted-foreground transition active:brightness-95"
           >

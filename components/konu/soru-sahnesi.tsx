@@ -7,7 +7,7 @@ import { isabetOrani, kapanisKademesi, sureYaz } from '@/lib/konu/kapanis'
 import { useGeriKatmani } from '@/lib/geri'
 import { bugun, cn } from '@/lib/utils'
 import { gununPozu, type MaskotPozu } from '@/lib/maskot'
-import { Buton, Onay, useTanitimSuruyor } from '@/components/ui'
+import { Buton, Onay } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartGorseli } from './kart-gorseli'
 import { KonuOzeti } from './konu-ozeti'
@@ -168,8 +168,6 @@ export function SoruSahnesi({
   sonucRef.current = { dogru, yanlis, bitti }
   useGeriKatmani(true, () => onKapat(sonucRef.current))
   const [cikisSoruluyor, setCikisSoruluyor] = useState(false)
-  // Tanıtımda eskisi gibi: cevapsız yoklamadan sormadan çık (bkz. `useTanitimSuruyor`).
-  const tanitimda = useTanitimSuruyor()
 
   function karar(cevap: number) {
     if (secim !== null) return
@@ -279,18 +277,14 @@ export function SoruSahnesi({
 
       {/*
         Çarpı doğrudan çıkmıyor, önce soruyor: yanlışlıkla dokunulan çarpı
-        yoklamayı bitiriyordu ve geri dönüşü yoktu. Cevap verilmemişken de
-        soruyor (kullanıcı istedi: bütün ✕'ler sorar). Geri tuşu ve kenardan
-        kaydırma sormadan çıkmaya devam ediyor — orada niyet belli.
+        yoklamayı bitiriyordu ve geri dönüşü yoktu. Cevap verilmemişken
+        kaybedilecek bir şey yok, orada sormuyor. Geri tuşu ve kenardan kaydırma
+        sormadan çıkmaya devam ediyor — orada niyet belli.
       */}
       <Onay
         acik={cikisSoruluyor}
         baslik="Yoklamadan çıkılsın mı?"
-        aciklama={
-          dogru + yanlis > 0
-            ? 'Verdiğin cevaplar kaydedilmez, yoklama baştan başlar.'
-            : 'Henüz cevap vermedin; yoklama kapanır.'
-        }
+        aciklama="Verdiğin cevaplar kaydedilmez, yoklama baştan başlar."
         onayMetni="Çık"
         onOnayla={() => onKapat(sonucRef.current)}
         onIptal={() => setCikisSoruluyor(false)}
@@ -300,7 +294,7 @@ export function SoruSahnesi({
           <button
             type="button"
             onClick={() =>
-              dogru + yanlis > 0 || !tanitimda ? setCikisSoruluyor(true) : onKapat(sonucRef.current)
+              dogru + yanlis > 0 ? setCikisSoruluyor(true) : onKapat(sonucRef.current)
             }
             aria-label="Kapat"
             className="sahne-kapat grid size-[46px] shrink-0 place-items-center rounded-2xl bg-card transition active:brightness-95"
