@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>iOS kilit sayacı</title>
+<!--
+  iOS'ta Pomodoro'nun kilit ekranı ve Dynamic Island hâli (Live Activity).
+  Gerçeği SwiftUI: ios/App/KilitSayaci/KilitSayaci.swift. Bu sayfa yalnızca
+  önizleme; düzen iPhone'un kendi zamanlayıcısından (solda düğmeler, sağda
+  akan sayı), renkler Android bildiriminin (bildirim_amber #E8783F,
+  odak_metin #1B1A19).
+-->
+<style>
+  :root {
+    --amber: #E8783F;
+    --zemin: #1B1A19;
+    --soluk: rgba(255,255,255,.6);
+    --sayfa: #EDEBE8;
+    --yazi: #1B1A19;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--sayfa);
+    color: var(--yazi);
+    font-family: -apple-system, "SF Pro Text", system-ui, sans-serif;
+    padding: 32px 16px 64px;
+  }
+  h1 { font-size: 20px; margin-bottom: 4px; }
+  p.alt { color: #6B6764; font-size: 14px; margin-bottom: 28px; max-width: 640px; }
+  .izgara { display: flex; flex-wrap: wrap; gap: 32px; }
+  .telefon {
+    width: 320px; max-width: 100%;
+    border-radius: 44px;
+    padding: 14px 12px 28px;
+    background: linear-gradient(160deg, #6f7f96, #3c4556 55%, #262a33);
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+  }
+  .etiket { font-size: 13px; font-weight: 600; color: #6B6764; margin: 0 0 10px 4px; }
+  .saat { color: #fff; text-align: center; margin-top: 30px; }
+  .saat .tarih { font-size: 15px; font-weight: 600; opacity: .85; }
+  .saat .buyuk { font-size: 76px; font-weight: 700; line-height: 1; letter-spacing: -1px; }
+
+  /* Kilit ekranı kartı */
+  .kart {
+    width: 100%;
+    background: rgba(27,26,25,.92);
+    border-radius: 22px;
+    padding: 16px 18px;
+    color: #fff;
+    margin-top: 24px;
+  }
+  .satir { display: flex; align-items: center; gap: 12px; }
+  .dugmeler { display: flex; gap: 10px; }
+  .yuvarlak {
+    width: 46px; height: 46px; border-radius: 50%;
+    display: grid; place-items: center;
+    border: 0; cursor: pointer;
+  }
+  .yuvarlak.amber { background: rgba(232,120,63,.22); color: var(--amber); }
+  .yuvarlak.gri { background: rgba(255,255,255,.22); color: #fff; }
+  .yuvarlak svg { width: 18px; height: 18px; }
+  .sag { margin-left: auto; text-align: right; min-width: 0; }
+  .baslik { color: var(--soluk); font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sayi {
+    font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif;
+    font-size: 46px; font-weight: 600; line-height: 1.05;
+    font-variant-numeric: tabular-nums; color: var(--amber);
+  }
+  .sayi.donuk { color: var(--soluk); }
+  .cubuk { height: 4px; border-radius: 2px; background: rgba(255,255,255,.18); margin-top: 12px; overflow: hidden; }
+  .cubuk i { display: block; height: 100%; background: var(--amber); border-radius: 2px; }
+  .cubuk.donuk i { background: var(--soluk); }
+
+  /* Dynamic Island */
+  .ada {
+    background: #000; color: #fff;
+    border-radius: 22px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 37px; width: 200px; padding: 0 12px 0 8px;
+  }
+  .ada img { width: 22px; height: 22px; }
+  .ada .sayi { font-size: 15px; }
+  .ada-acik {
+    background: #000; color: #fff; border-radius: 44px;
+    width: 100%; padding: 18px 20px 20px;
+  }
+  .ada-acik .dugmeler .yuvarlak { width: 44px; height: 44px; }
+  .ada-acik .baslik { font-size: 13px; }
+  .ada-acik .sayi { font-size: 38px; }
+  .ada-acik .cubuk { margin-top: 10px; }
+  .not { font-size: 13px; color: #6B6764; max-width: 320px; margin-top: 10px; line-height: 1.45; }
+</style>
+</head>
+<body>
+  <h1>Pomodoro — iOS kilit ekranı ve Dynamic Island</h1>
+  <p class="alt">iPhone'un zamanlayıcısıyla aynı düzen: solda duraklat ve bitir, sağda aşama ve akan sayı, altta ince çubuk. Sayı sistemin kendi sayacıyla akıyor; uygulama arka planda uyurken de doğru kalıyor.</p>
+
+  <div class="izgara">
+    <div>
+      <div class="etiket">Kilit ekranı · çalışıyor</div>
+      <div class="telefon">
+        <div class="saat"><div class="tarih">5 Ekim Pazartesi</div><div class="buyuk">19:24</div></div>
+        <div class="kart">
+          <div class="satir">
+            <div class="dugmeler">
+              <button class="yuvarlak amber" id="d1" aria-label="Duraklat"></button>
+              <button class="yuvarlak gri" aria-label="Turu bitir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+            <div class="sag">
+              <div class="baslik" id="b1">Çalışma · Matematik</div>
+              <div class="sayi" id="s1">18:42</div>
+            </div>
+          </div>
+          <div class="cubuk" id="c1"><i style="width:25%"></i></div>
+        </div>
+      </div>
+      <p class="not">Düğmeler gerçek: önizlemede duraklat/devam et çalışıyor. Kilit ekranında basınca uygulama açılmadan tur duruyor, kalkan (Ekran Süresi) kalkıyor, bitiş zili geri alınıyor.</p>
+    </div>
+
+    <div>
+      <div class="etiket">Kilit ekranı · duraklatıldı</div>
+      <div class="telefon">
+        <div class="saat"><div class="tarih">5 Ekim Pazartesi</div><div class="buyuk">19:24</div></div>
+        <div class="kart">
+          <div class="satir">
+            <div class="dugmeler">
+              <button class="yuvarlak amber" aria-label="Devam et"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg></button>
+              <button class="yuvarlak gri" aria-label="Turu bitir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+            <div class="sag">
+              <div class="baslik">Duraklatıldı · Matematik</div>
+              <div class="sayi donuk">12:05</div>
+            </div>
+          </div>
+          <div class="cubuk donuk"><i style="width:52%"></i></div>
+        </div>
+      </div>
+      <p class="not">Duraklatınca kart kalkmıyor, donuyor. Süre dolunca başlık "Süre doldu" oluyor ve yalnızca bitir düğmesi kalıyor.</p>
+    </div>
+
+    <div>
+      <div class="etiket">Dynamic Island</div>
+      <div class="telefon" style="padding-top:12px">
+        <div class="ada">
+          <img src="../public/tavsan-yuz.png" alt="">
+          <span class="sayi" id="s2">18:42</span>
+        </div>
+        <div style="height:18px"></div>
+        <div class="ada-acik">
+          <div class="satir">
+            <div class="dugmeler">
+              <button class="yuvarlak amber" aria-label="Duraklat"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg></button>
+              <button class="yuvarlak gri" aria-label="Turu bitir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+            <div class="sag">
+              <div class="baslik">Kısa mola</div>
+              <div class="sayi" id="s3">4:12</div>
+            </div>
+          </div>
+          <div class="cubuk"><i style="width:16%"></i></div>
+        </div>
+      </div>
+      <p class="not">Üstte küçük hâli (maskot + sayı), altta basılı tutunca açılan hâli. iOS 16'da (düğmesiz Live Activity) düğmelerin yerinde maskot duruyor.</p>
+    </div>
+  </div>
+
+<script>
+  // Önizlemede sayı aksın, ilk kartın düğmesi duraklatıp sürdürsün.
+  const DURAKLAT = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg>';
+  const DEVAM = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>';
+  const toplam = 25 * 60;
+  let kalan = 18 * 60 + 42, isliyor = true, mola = 4 * 60 + 12;
+  const d1 = document.getElementById('d1'), s1 = document.getElementById('s1');
+  const b1 = document.getElementById('b1'), c1 = document.getElementById('c1');
+  const yaz = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  const ciz = () => {
+    d1.innerHTML = isliyor ? DURAKLAT : DEVAM;
+    d1.setAttribute('aria-label', isliyor ? 'Duraklat' : 'Devam et');
+    b1.textContent = (isliyor ? 'Çalışma' : 'Duraklatıldı') + ' · Matematik';
+    s1.textContent = yaz(kalan);
+    s1.classList.toggle('donuk', !isliyor);
+    c1.classList.toggle('donuk', !isliyor);
+    c1.firstElementChild.style.width = (100 * (1 - kalan / toplam)) + '%';
+    document.getElementById('s2').textContent = yaz(kalan);
+    document.getElementById('s3').textContent = yaz(mola);
+  };
+  d1.addEventListener('click', () => { isliyor = !isliyor; ciz(); });
+  setInterval(() => {
+    if (isliyor && kalan > 0) kalan--;
+    if (mola > 0) mola--;
+    ciz();
+  }, 1000);
+  ciz();
+</script>
+</body>
+</html>

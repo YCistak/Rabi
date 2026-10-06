@@ -1,4 +1,10 @@
 import { registerPlugin } from '@capacitor/core'
+import {
+  canliSayacBaslat,
+  canliSayacBitir,
+  canliSayacDuraklat,
+  canliSayacKomutuGelince,
+} from './canli-sayac'
 import { ekranSuresiKaldir, ekranSuresiKilitle, ekranSuresiVar } from './ekran-suresi'
 import { androidMu } from './platform'
 
@@ -179,8 +185,24 @@ export async function odakKilidiniBaslat(
    * söylenmesi gerekiyor.
    */
   kilitIstendi = paketler.length > 0,
+  /**
+   * Aşamanın tam süresi. Yalnızca iOS'un kilit ekranındaki çubuğu okuyor;
+   * Android'in çubuğu servisin kurulduğu andan ölçüyor.
+   */
+  toplamSaniye?: number,
+  mola = false,
 ): Promise<boolean> {
-  if (ekranSuresiVar()) return ekranSuresiKilitle(kilitIstendi, bitisZamani)
+  if (ekranSuresiVar()) {
+    void canliSayacBaslat({
+      bitisZamani,
+      toplamSaniye,
+      asama,
+      ders,
+      mola,
+      kilitAcik: kilitIstendi,
+    })
+    return ekranSuresiKilitle(kilitIstendi, bitisZamani)
+  }
   if (!odakKilidiDesteklenir()) return false
   try {
     const sonuc = await eklenti.baslat({ paketler, bitisZamani, ders, asama, rahatsizEtme })
@@ -201,7 +223,10 @@ export async function odakKilidiniDuraklat(): Promise<void> {
   // iOS'ta duraklatılmış tur kalkanı tutmuyor: Android'deki gibi donan bir
   // servis yok ve duraklatılıp unutulan bir tur, uygulamaları süresiz kapalı
   // bırakırdı. Devam edilince `odakKilidiniBaslat` kalkanı yeniden kuruyor.
-  if (ekranSuresiVar()) return ekranSuresiKaldir()
+  if (ekranSuresiVar()) {
+    void canliSayacDuraklat()
+    return ekranSuresiKaldir()
+  }
   if (!odakKilidiDesteklenir()) return
   try {
     await eklenti.duraklat()
@@ -218,7 +243,10 @@ export async function odakKilidiniDuraklat(): Promise<void> {
 */
 
 export async function odakKilidiniBitir(): Promise<void> {
-  if (ekranSuresiVar()) return ekranSuresiKaldir()
+  if (ekranSuresiVar()) {
+    void canliSayacBitir()
+    return ekranSuresiKaldir()
+  }
   if (!odakKilidiDesteklenir()) return
   try {
     await eklenti.bitir()
@@ -241,6 +269,8 @@ export async function odakKilidiniBitir(): Promise<void> {
 export async function pomodoroKomutuGelince(
   dinleyici: (veri: PomodoroKomutu) => void,
 ): Promise<() => void> {
+  // iOS'ta düğmeler kilit ekranındaki canlı etkinlikte (`lib/canli-sayac.ts`).
+  if (ekranSuresiVar()) return canliSayacKomutuGelince(dinleyici)
   if (!odakKilidiDesteklenir()) return () => {}
   try {
     const kayit = await eklenti.addListener('pomodoroKomutu', dinleyici)

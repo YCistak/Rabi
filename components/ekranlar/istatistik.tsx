@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowLeftRight, ChevronRight, Minus, TrendingDown, TrendingUp, X } from 'lucide-react'
-import { BaslikSatiri, BosDurum } from '@/components/ui'
+import { BaslikSatiri, BosDurum, useKapatmaOnayi } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { denemeOzeti, netYaz } from '@/lib/hesap'
 import {
@@ -422,16 +422,29 @@ function AltSayfa({
   )
 }
 
-function KapatDugmesi({ onClick, etiket = 'Kapat' }: { onClick: () => void; etiket?: string }) {
+/** Bu ekrandaki bütün ✕'ler buradan geçiyor; onay da burada, tek yerde. */
+function KapatDugmesi({
+  onClick,
+  etiket = 'Kapat',
+  aciklama = 'Pencere kapanır.',
+}: {
+  onClick: () => void
+  etiket?: string
+  aciklama?: string
+}) {
+  const kapatmaOnayi = useKapatmaOnayi({ aciklama })
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={etiket}
-      className="grid size-8 shrink-0 place-items-center rounded-[11px] bg-muted text-muted-foreground active:brightness-95"
-    >
-      <X size={17} strokeWidth={2.6} aria-hidden />
-    </button>
+    <>
+      {kapatmaOnayi.pencere}
+      <button
+        type="button"
+        onClick={() => kapatmaOnayi.sor(onClick)}
+        aria-label={etiket}
+        className="grid size-8 shrink-0 place-items-center rounded-[11px] bg-muted text-muted-foreground active:brightness-95"
+      >
+        <X size={17} strokeWidth={2.6} aria-hidden />
+      </button>
+    </>
   )
 }
 
@@ -613,7 +626,11 @@ function KarsilastirmaKatmani({
           className="shrink-0 border-b border-border bg-card px-4 pb-3"
           style={{ paddingTop: 'calc(1rem + var(--guvenli-ust))' }}
         >
-          <KapatDugmesi onClick={onKapat} etiket="Karşılaştırmayı kapat" />
+          <KapatDugmesi
+            onClick={onKapat}
+            etiket="Karşılaştırmayı kapat"
+            aciklama="Karşılaştırma kapanır."
+          />
           <h2 className="mt-2.5 text-[19px] font-extrabold tracking-[-0.02em]">Karşılaştırma</h2>
           <div className="mt-2.5 flex items-start gap-3">
             <div className="min-w-0 flex-1">

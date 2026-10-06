@@ -349,12 +349,14 @@ olduğunu denetliyor: listeye eklenip betikte üretilmeyen poz test düşürür.
 
 ### Açılış bir ders makarası
 
-Ekran 2,26 saniye sürüyor (`ACILIS_SURESI`) ve tasarımı "Ders makarası"
+Ekran 2,08 saniye sürüyor (`ACILIS_SURESI`) ve tasarımı "Ders makarası"
 (`tasarim/acilis-arsiv.html` → 3. tur, Yazı C · 2): dört makara harf yerine
 derslerin simgelerini çeviriyor (√x, 1453, DNA, H₂O, MÖ, Ω, Fe…), her simge
 kendi dersinin `--konu-<ders>-koyu` renginde, ve soldan sağa R·A·B·I'ya
-kilitleniyor. Kelime bir an duruyor, harfler bir tık daha dönüp çıkıyor ve
-zemin dört şerit hâlinde yukarı kalkarak ana sayfayı açıyor. Zaman çizgisi
+kilitleniyor. RABI ortada ~600 ms duruyor, sonra katman bütün olarak
+opaklıkla sönüp (400 ms, ease-in-out) ana sayfayı gösteriyor. Zemin dört
+şerit hâlinde yukarı kalkıyordu; kullanıcı parça parça kalkış yerine solma
+istedi — geri getirmeden önce sor. Zaman çizgisi
 `globals.css`teki açılış bloğunun başında yazılı; süreyi değiştirirsen
 oradaki gecikmeleri birlikte değiştir.
 
@@ -372,9 +374,10 @@ eşit genişlikteydi ve dar I geniş bir kutunun ortasında kalınca kelime
 "RAB I" diye okunuyordu. Simgeler harften geniş olabildiği için kırpma
 pencerede değil iki yana taşan kuyuda (`acilis-kuyu`).
 
-**Kelime şeritlerden önce sönüyor.** Kuyuların üst ve alt kenarındaki
-zemin renkli gölgeler, şeritler kalkarken ana sayfanın üstünde iz
-bırakırdı.
+**Katman tek parça sönüyor.** Zemin, kelime ve kuyuların zemin renkli
+gölgeleri aynı opaklıkla gidiyor; parçalar ayrı ayrı gitseydi gölgeler ana
+sayfanın üstünde iz bırakırdı. Katmanın zemini `ZEMIN`, yani sönüş renk
+sıçraması değil.
 
 **Tavşan uçmuyor.** 2a'da tavşan ana sayfadaki maskotun tam üstüne uçarak
 bitiyordu; 2d ile kalktı ve uçuşla birlikte varış noktasının ölçümü
@@ -384,10 +387,10 @@ tavşan yalnızca son makaranın bir simgesi. Uçuşu geri getirmek istersen
 tarihçe `git log -- components/acilis.tsx`; oradaki ana ders hâlâ geçerli:
 varış noktası **ölçülür**, yazılmaz.
 
-Katmanı kaldıran şey son şeridin kendi `animationend`i
-(`acilis-serit-kalk`, adla süzülüyor); zamanlayıcı yalnızca emniyet kemeri.
-Katman sonuna kadar dokunuşları yutuyor: şeritler kalkarken altındaki
-düğmeler görünür ama basılabilir olmamalı.
+Katmanı kaldıran şey katmanın kendi `animationend`i (`acilis-katman-son`,
+hedef ve adla süzülüyor; makaraların olayları da kabarıyor); zamanlayıcı
+yalnızca emniyet kemeri. Katman sonuna kadar dokunuşları yutuyor: sönerken
+altındaki düğmeler görünür ama basılabilir olmamalı.
 
 ### Android'de uçtan uca ekran bütün sürümlerde açık
 
@@ -607,6 +610,16 @@ Seçenek çipleri satırın altında sürekli açık dururken ekran üç ekran b
 (hatırlatma, müzik) açılamaz: satıra dokunmak anahtarı çeviriyor, aynı satır hem
 anahtar hem liste olamaz — hatırlatma saati o yüzden **ayrı** bir satır.
 
+### Ayarlar bölümleri kategorinin renginde
+
+Bölüm kartı (`Bolum`) kategorinin açık zeminini taşır; simge kutusu beyaz, simge
+`-koyu` renkte, seçili değer de `-koyu` (ana renk kırmızı/mor pastelde 4.5 altı).
+`Bolum` `ton`u bağlamla `Satir`a verir, `Satir` ayrı `renk` almaz: Çalışma kırmızı,
+Hatırlatma sarı, Ses mor, Yasal mavi, Destek yeşil, Veri turkuaz. Renkler `--ayar-*`
+(`globals.css`); zemin ile `-koyu` ve ikincil yazı ≥ 4.5:1 olmalı. Yeni bölümde kendi
+`--ayar-<bölüm>` çiftini ve `SatirRengi` üyesini ekle. Ders aileleri (`yzm`, `isl`…)
+kullanılmadı: koyuları 4.5 altı. Kullanıcı istedi.
+
 ### Ayarlarda şablon yok
 
 "Varsayılan deneme türü" ve "Deneme şablonları" satırları kaldırıldı: ayarlar
@@ -624,9 +637,10 @@ ediyor, artık ayarlardan değiştirilmiyor.
 
 Süreler kartındaki **Deneme provası** çipleri turu ÖSYM'nin süresine
 çeviriyor: TYT 165, AYT 180, YDT 120 dakika (`lib/sinav-provasi.ts`), ayrıca
-MEB'in Seviye Tespit Sınavı (**STS**) 40 dakika / 20 soru — ÖSYM sınavı değil,
-ders başına tek oturum; kullanıcı istedi ve süresi Pomodoro turundan kısa olsa
-da mola döngüsünün dışında kesintisiz bir sınav oturumu. Amaç
+**"Süre gir"**: kullanıcı kendi süresini yazıyor (1–300 dk, `ozelProva`; son
+yazılan `PomodoroAyar.provaSuresi`de hatırlanıyor). Yerinde bir süre MEB'in
+STS'si (40 dk) duruyordu; kullanıcı kaldırttı. Prova kimliği hiçbir yere
+kaydedilmiyor, eski 'sts' seçiminin taşınacak kaydı yok. Amaç
 denemeyi uygulamanın içinde çözdürmek değil, kâğıdı çözerken süreyi buradan
 tutturmak — öğrenci zaten telefonun kronometresini açıyordu ve o süre hiçbir
 yere yazılmıyordu.
@@ -690,8 +704,14 @@ sayacın uygulamanın sağ altında bir saat olarak görünmesini istedi.
   tur) ekran değişince sökmüyor. Çizildiği yer sabit, ayrık bir `div`
   (portalın kabı) ve o div ekran açıkken sayfadaki yuvaya taşınıyor. Kap
   **hiç değişmemeli**: React kabı değişen portalı söküp yeniden kurar.
-  Deneme formu gibi bütün sayfa ağacını değiştiren bir ekran yuvayı
-  söktüğünde kap yalnızca DOM'dan düşüyor, bileşen yaşıyor.
+  Yuva ise yalnızca ekran açıkken **kurulu** (gizlenmiyor, sökülüyor); kap
+  o zaman DOM'dan düşüyor, bileşen yaşıyor. Gizlenen yuva geri kaydırmayı
+  bozuyordu: denetçi ekranın değiştiğini kayan kutunun sökülmesinden
+  anlıyor, sökülmeyen kutuyu yerine yaylandırıyor ve önceki ekranın kopyası
+  yeni ekranın üstünde kayıp kayboluyordu.
+- **Geri düğmesi yuvada**, Pomodoro'nun üstünde (`AppShell` → `geriDugmesi`).
+  Diğer araçlarınki `SayfaGecisi`nde; Pomodoro yuvası ondan önce geldiği için
+  orada bütün Pomodoro'nun altında kalıyordu.
 - **Gizliyken sahne yok** (`gorunur`): açık bir sahne geri katmanı kurar,
   başka ekranda geri tuşunu ve sekme kaydırmayı yutardı. Tur sürerken
   ekrana dönülünce sahne kendiliğinden açılıyor.
@@ -1002,6 +1022,12 @@ Ekleme formundaki ders alanı serbest metindi (önerili); "matematik", "Mat",
 "mat." aynı dersin üç ayrı süzgeç çipi oluyordu. Artık on çipten biri
 seçiliyor ve Kaydet ancak bir ders seçilince açılıyor.
 
+**Ders şeridi tek bileşen** (`components/ders-seridi.tsx`, `DersSeridi`):
+Pomodoro ve Soru Takibi'nin "Soru ekle" sayfası aynı şeridi kullanır. Soru
+Takibi'nde sıra geçmiş kayıtlardaki toplam soru sayısına göre (`calismaSirasi`),
+Kaydet ise ders seçilmeden ve Toplam/Doğru/Yanlış üçü de doldurulmadan açılmaz
+(0 geçerli, boş alan girilmemiş demek).
+
 **Ders listesi on ders** ve uygulamada tek (`CALISMA_DERSLERI`,
 `lib/dersler.ts`): Pomodoro, Soru Takibi ve yanlış soru aynı listeyi
 gösteriyor — Türkçe, Matematik, Fizik, Kimya, Biyoloji, Tarih, Coğrafya,
@@ -1073,6 +1099,20 @@ Soru Takibi'nde bugün ve yalnızca bir önceki gün düzenlenebilir. Daha eski
 günler geçmişi incelemek için seçilebilir fakat salt okunur kalır; gelecek
 günler seçilemez. Önceki gün `gunKaydir(bugunIso, -1)` ile yerel takvimden
 hesaplanır; böylece ay, yıl ve artık yıl sınırlarında da aynı kural geçerlidir.
+
+## Takvim tek bileşen
+
+Gün seçen her takvim `components/takvim.tsx`ten: yedi günlük `HaftaSeridi`
+(bugün ortada, görünüş Yapılacaklar'ınki) ve açılır ay `Takvim`i; ikisi aynı
+`GunHucresi`ni çiziyor. Ekrana kendi takvimini yazma — kurallar prop'la gelir:
+`enGecIso` (sonrası kapalı), `solukMu` (salt okunur günler), `isaretler`
+(`doluluk` zemini, `nokta`: görev / devamsızlık türü). Ana sayfadaki hedef
+hapları gün seçmediği için takvim değil, ayrı kalır.
+
+Pazartesi hücresinin üstünde ince bir çizgi hafta başını gösterir
+(`haftaBasiIsaretiMi`, `lib/utils.ts`); kayan şeritte haftanın nerede
+başladığı başka türlü okunmuyordu. Bugün pazartesiyse o gün işaretsiz —
+"bugün" zaten belli. Çizgi üstte, noktalar altta: ikisi karışmasın.
 
 ## Aylık özet ayın 1'inde, yalnızca o gün
 
@@ -1531,13 +1571,18 @@ oynatılıyor: genişlik her karede yeniden yerleşim demek ve rekor çizgisi
 
 ## Çarpı önce soruyor
 
-Turun, destenin ya da yoklamanın ortasında çarpıya basmak doğrudan çıkmıyor,
-`Onay` penceresi açılıyor: oyun turu (`OyunKabugu`, tur sürerken), konu
-destesi (ilk ekrandan sonra), yoklama (en az bir cevaptan sonra) ve
-Pomodoro'nun "Turu bitir"i (başlamış turda). Çarpı yanlışlıkla
-dokunuluyordu ve arkasındaki iş geri gelmiyordu. Kaybedilecek bir şey
-yokken (başlamamış tur, ilk kart) sormuyor. Geri tuşu ve kenardan kaydırma
-sormuyor — orada niyet belli, Pomodoro'nun geri oku da yalnızca duraklatıyor.
+**Uygulamadaki her ✕ kapatma düğmesi önce sorar** — kullanıcı istedi, kaybedilecek
+bir şey olmasa da. Yeni bir ✕ eklerken `useKapatmaOnayi` (`components/ui.tsx`)
+kullan: `sor(kapat)` pencereyi açar, "Çık" denince eski kapanma yolu aynen
+çalışır; `pencere`yi bileşende çiz (body'ye portal, z-[100]). Metin bağlama
+göre; iş kaybolacaksa bunu söyler. Oyun turu, konu destesi, yoklama ve
+Pomodoro "Turu bitir" kendi `Onay`larını kullanıyor; kaybedilecek bir şey
+yokken yalnız metinleri değişiyor.
+- Kapsam yalnız ✕ düğmeleri: geri oku, geri tuşu, kenardan kaydırma, aşağı
+  çekerek ve zemine basarak kapatma sormaz. Satır silen/alan temizleyen ✕'ler
+  (Kaydı sil, notu sil, Saati kaldır) kapatma değil, kapsam dışı.
+- Tanıtım turu sürerken (`useTanitimSuruyor`) sorulmaz: spot ışığı hedef
+  dışındaki dokunuşu yutuyor, onay penceresi açılsa tur kilitlenirdi.
 
 ## Yarıda bırakılan tur da bir tur
 
@@ -2572,7 +2617,7 @@ ibaretti ve süslerin arasında okunmuyordu. Bilet bileşeni, `bilet-*` CSS'i
 ve animasyonları silindi; mockup `tasarim/` altında tarih olarak duruyor,
 yeniden uygulanmamalı.
 
-Özet yukarıdan aşağı dört soruya cevap veriyor:
+Özet yukarıdan aşağı üç soruya cevap veriyor:
 
 1. **Ne bitti?** Konunun adı, ders ve tema.
 2. **Ne kadar?** Okunan kart ve destede geçen süre (`DesteSonucu.saniye`,
@@ -2583,12 +2628,13 @@ yeniden uygulanmamalı.
    iskeleti) ve varsa Rabi'nin notu — her konuda tek kartta duran, konunun en
    çok tuzak barındıran yeri. Kart metinleri yazılmıyor: özet destenin ikinci
    kopyası olurdu.
-4. **Sırada ne var?** Yoklamanın soru sayısı, yaklaşık süresi ve konunun ne
-   zaman tamamlanmış sayıldığı (`GECME_ORANI`). Eşik eskiden hiçbir ekranda
-   yazmıyordu.
 
-- **Renk derse göre değişmiyor, süs yok**: ekranın işi okunmak. Bileşen
-  `bicim` almıyor.
+- **"Sırada yoklama var" kartı yok** (kullanıcı kaldırttı): sıradakini
+  "Yoklamaya başla" düğmesi söylüyor.
+- **Renk dersin rengi** (`dersVurgusu`, `SoruSahnesi.ders`; kullanıcı istedi).
+  Hareket hafif ve tek seferlik: ders renkli bant yükselir, içindeki çubuk
+  dolar, sayı kutuları sırayla gelir, Rabi süzülür (`ozet-bandi*`,
+  `ozet-sayi`, `kapanis-suzul`). Konfeti, damga, ses ekleme.
 - **Özet destenin ucundan gelince var, turuncu kitaptan girince yok**
   (`SoruSahnesi.ozetli`). Haritadan doğrudan soruya giren kullanıcı bir şey
   okumadı; "konu bitti" diyen bir özet ona yalan söylerdi. Oradan sahne ilk
@@ -2924,6 +2970,26 @@ kiple açılıyor (`universiteBul` null dönüyor), çünkü eski sürümde herk
 elle yazıyordu ve o kayıtlar duruyor. `Hedef` tipi de kimlik değil **ad**
 tutmaya devam ediyor — kimliğe geçmek o kayıtları geçersiz kılardı.
 
+### Seçim kuralları (Hedefim ve kurulum ortak)
+
+- **Üniversite listesi boş aramada görünmez** (kullanıcı istedi):
+  `universiteAra('')` boş dizi döner, kutunun altında "Üniversite adını yazmaya
+  başla." durur (`uniListesiBos`). **Bölüm listesi bu kurala uymaz**, boş
+  aramada üniversitenin bütün bölümleri listelenir — kullanıcı öyle kalsın dedi.
+- **Kaydetmeden önce elle kontrol** (kullanıcı istedi): katalogdan bölüm
+  seçilince `HedefKontrolu` (`hedef-secici.tsx`) 2025 başarı sırasını ve
+  taban puanını düzenlenebilir kutularda dolu gösterir. Kayda kutudaki değer
+  girer — yeni alan yok, mevcut `Hedef.tabanPuan` / `basariSirasi` düzeltilmiş
+  değeri tutar ve ana sayfa, geri sayım, Hedefim onu okur (katalogdan yeniden
+  hesaplanmaz). Geçersiz değer (boş, sıfır, puan 100–560 dışı, sıra 1–3.000.000
+  dışı; `hedefSayilariGecerli`) Kaydet'i / kurulumda Devam'ı pasif yapar ve
+  sebebi kutunun altında yazar. Elle giriş kipinde sayılar isteğe bağlı kalır
+  ama yazılmışsa aynı denetimden geçer.
+- **Hedefim'de Kaydet ekranı kapatmaz** (kullanıcı istedi): ekranda kalır,
+  "Hedefin kaydedildi." toast'ı çıkar. Kurulum Devam ile ilerlemeye devam eder.
+- Üniversite değiştirilip aynı adlı bölüm yeni üniversitede de varsa kutular
+  **yeni programın** değeriyle yeniden dolar; eski üniversitenin sırası kalmaz.
+
 Seçim ekranda ayrı bir state'te durmuyor, iki addan türetiliyor: iki kaynak
 olsaydı elle yazılan ad ile seçili kayıt birbiriyle çelişebilirdi.
 
@@ -2976,13 +3042,38 @@ iOS'ta **olmayanlar** ve sebepleri:
 - **Rahatsız Etme ve ses odağı.** Uygulamalar Odak modunu açamıyor, başka
   bir uygulamanın sesine dokunamıyor. Odak kilidi ise var, başka yoldan —
   aşağıda.
-- **Kilit ekranındaki sayaç.** Ön plan servisi yok; karşılığı Live
-  Activity (ActivityKit + widget eklentisi). Tur sonu bildirimi planlı yerel
-  bildirimle geliyor ve sayaç mutlak zamandan okunduğu için uygulama
-  arkadayken de doğru kalıyor.
 - **Play güncellemesi.** Güncellemeyi App Store dağıtıyor.
 - **Çökme raporu.** Crashlytics'in iOS köprüsü henüz yazılmadı; o gelene kadar
   soru iOS'ta hiç çıkmıyor.
+
+### iOS'ta sayaç kilit ekranında Live Activity
+
+Tur başlatılıp uygulama alta alınınca ya da ekran kilitlenince iOS'ta sayaç
+hiçbir yerde görünmüyordu: Android'deki kalıcı bildirimin (`OdakServisi`)
+karşılığı yoktu. Kullanıcı "iPhone'daki kronometre gibi" istedi; karşılığı
+Live Activity — kilit ekranında kart, Dynamic Island'da akan sayı.
+
+- **Düzen iPhone'un zamanlayıcısından**: solda yuvarlak duraklat/devam ve
+  bitir, sağda aşama · ders ve büyük sayı, altta ince çubuk. Zemin koyu
+  (Dynamic Island zaten siyah), amber `bildirim_amber`. Önizleme
+  `tasarim/ios-kilit-sayaci.html`.
+- **Parçalar.** Köprü `lib/canli-sayac.ts`; Pomodoro onu doğrudan değil
+  `lib/odak-kilidi.ts`in üç fonksiyonu üzerinden çağırıyor (Android'de aynı
+  işi servis yapıyor). Yerli taraf `ios/App/App/CanliSayacEklentisi.swift`,
+  çizim `ios/App/KilitSayaci` (widget eklentisi, iOS 16.2+). Veri tipi
+  `PomodoroEtkinligi.swift` **iki hedefte birden** derleniyor.
+- **Sayı güncellenmiyor, akıyor.** Durumda bitiş anı var; sayıyı sistemin
+  sayacı (`Text(timerInterval:)`) akıtıyor. Uygulama arkada uyurken web'in
+  sayacı duruyor, o yüzden başka yolu yok. Süre dolunca web uyuyorsa
+  etkinliği kapatan olmuyor; bayatlama tarihi bitiş ve kart "Süre doldu" diyor.
+- **Düğmeler iOS 17** (`LiveActivityIntent`); 16'da yerlerinde maskot.
+  Niyet uygulamanın sürecinde çalışıyor ve işi web'i beklemeden yapıyor:
+  sayacı donduruyor, kalkanı kaldırıyor/yeniden kuruyor, bitiş zilini
+  geri alıyor/kuruyor, sonra `pomodoroKomutu` ile web'e haber veriyor
+  (Android'deki bildirim düğmesinin aynı olayı). Zilin metni
+  `lib/bildirim.ts` ile `CanliSayacEklentisi.swift`te iki kez yazılı.
+- Eklenti Screen Time'a dokunmuyor: Family Controls yetkisi yok ve
+  TestFlight'ın yetki denetimi onu atlıyor.
 
 ### iOS'ta odak kilidi Screen Time'la
 
@@ -3151,6 +3242,11 @@ kuruluyor (`.sayfa-yerinde`). Kopya canlı değil: dokunulmuyor, animasyonları
 kapalı, `fixed` öğeleri ve kimlikleri (`id`, `data-geri-sayfa`, `data-yuzen`,
 `data-tanitim`) atılmış — kalsaydı `querySelector` gerçek öğe yerine kopyayı
 bulurdu. Kopyası olmayan ekranda eski davranış sürüyor.
+
+**Kayan kutu ekranla birlikte sökülmeli.** Denetçi bırakınca ekranın
+değişip değişmediğini kutunun `isConnected`ından anlıyor; ekran kapanınca
+yalnızca gizlenen bir `[data-geri-sayfa]` "değişmedi" sayılıyor ve önizleme
+yeni ekranın üstünde kalıyor (Pomodoro yuvası bu yüzden koşullu kuruluyor).
 
 Durum makinesi `lib/geri-kaydirma-denetci.ts`, hız/süre/eğri hesapları
 `lib/geri-kaydirma-hesap.ts` (ikisinin de birim testi var). Kurallar,

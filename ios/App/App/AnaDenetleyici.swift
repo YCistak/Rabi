@@ -22,9 +22,10 @@ class AnaDenetleyici: CAPBridgeViewController, UIGestureRecognizerDelegate {
     override func capacitorDidLoad() {
         super.capacitorDidLoad()
 
-        // Uygulamanın kendi eklentisi; npm paketi olmadığı için Capacitor onu
+        // Uygulamanın kendi eklentileri; npm paketi olmadığı için Capacitor onları
         // kendiliğinden bulamıyor (Android'de `MainActivity.registerPlugin`).
         bridge?.registerPluginInstance(EkranSuresiEklentisi())
+        bridge?.registerPluginInstance(CanliSayacEklentisi())
 
         guard let webView = webView else { return }
 

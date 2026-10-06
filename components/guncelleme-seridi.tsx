@@ -2,6 +2,7 @@
 
 import { Download, RefreshCw, X } from 'lucide-react'
 import { Rabi } from '@/components/maskot/rabi'
+import { useKapatmaOnayi } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import type { GuncellemeKolu } from '@/lib/guncelleme-kolu'
 
@@ -24,6 +25,11 @@ import type { GuncellemeKolu } from '@/lib/guncelleme-kolu'
  */
 export function GuncellemeSeridi({ kol }: { kol: GuncellemeKolu }) {
   const { hal } = kol
+  const kapatmaOnayi = useKapatmaOnayi({
+    baslik: 'Güncelleme şeridi kapansın mı?',
+    aciklama: 'Yeni sürümü sonra Play’den kurabilirsin.',
+    onayMetni: 'Kapat',
+  })
   if (hal === 'yok' || hal === 'kapali') return null
 
   const indirildi = hal === 'indirildi' || hal === 'kuruluyor'
@@ -45,6 +51,7 @@ export function GuncellemeSeridi({ kol }: { kol: GuncellemeKolu }) {
       role="status"
       aria-live="polite"
     >
+      {kapatmaOnayi.pencere}
       <div
         className={cn(
           'acilir-giris golge-kart pointer-events-auto flex w-full items-center gap-3',
@@ -83,7 +90,7 @@ export function GuncellemeSeridi({ kol }: { kol: GuncellemeKolu }) {
         {hal === 'hazir' && (
           <button
             type="button"
-            onClick={kol.onKapat}
+            onClick={() => kapatmaOnayi.sor(kol.onKapat)}
             aria-label="Kapat"
             className="grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground active:bg-foreground/[0.06]"
           >

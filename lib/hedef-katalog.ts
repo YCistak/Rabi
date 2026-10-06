@@ -119,8 +119,14 @@ function sirala<T>(kayitlar: readonly T[], sorgu: string, metni: (k: T) => strin
  *
  * KKTC üniversiteleri şehirleriyle (Lefkoşa, Girne…) duruyor ama arayan
  * öğrenci "kıbrıs" yazıyor; o yüzden aranan metne ülke adı da ekleniyor.
+ *
+ * Boş sorgu **boş liste** veriyor: harf yazılmadan alfabetik ilk 40
+ * üniversiteyi dökmek, aradığı üniversiteyi yazacak kullanıcıya bir duvar
+ * gösteriyordu (kullanıcı kaldırttı). Bölüm araması bu kurala uymuyor — bir
+ * üniversitenin bölümleri zaten sınırlı ve göz gezdirerek seçiliyor.
  */
 export function universiteAra(sorgu: string, alan: PuanTuru | null = null): Universite[] {
+  if (sadelestir(sorgu.trim()) === '') return []
   /*
     Alan verilmişse o alanda hiç programı olmayan üniversite listeye girmiyor.
     Bölüm listesi alana göre süzülürken üniversite listesi süzülmüyordu: Dil
@@ -203,4 +209,54 @@ export function universiteKisaAdi(ad: string): string {
 
   // `toLocaleUpperCase('tr')` şart: "istanbul" → "İSTANBUL", "i" değil "İ".
   return kelimeler.map((k) => k[0].toLocaleUpperCase('tr')).join('') + 'Ü'
+}
+
+/*
+  Elle kontrol adımının sınırları.
+
+  Katalogdan seçilen hedefin sırası ve puanı kaydetmeden önce kullanıcıya
+  gösteriliyor ve düzeltilebiliyor: ETL bir satırı yanlış okumuş olabilir,
+  puan da zaten sıradan geri hesaplanan bir tahmin. Ama elle yazılan sayı
+  "hedefine ne kadar kaldı" cümlesini doğrudan besliyor; sıfır ya da yanlışlıkla
+  bir hane fazla yazılmış bir sayı o cümleyi saçmalatırdı. Sınırlar bu yüzden
+  kaba: yalnızca imkânsız olanı eliyor.
+
+  - Puan: YKS yerleştirme puanı 100–560 aralığında (ÖSYM puan ölçeği).
+  - Sıra: bir puan türünde sıralanan aday sayısı üç milyonu aşmıyor.
+*/
+export const EN_DUSUK_TABAN_PUAN = 100
+export const EN_YUKSEK_TABAN_PUAN = 560
+export const EN_BUYUK_BASARI_SIRASI = 3_000_000
+
+/**
+ * Kutudaki metni sayıya çevirir; boş ya da sayı olmayan metin `null`.
+ *
+ * Ondalık ayraç virgül de olabiliyor ("452,3"): arayüz puanı virgülle
+ * yazıyor, `Number` virgüllü metni NaN yapardı.
+ */
+export function sayiOku(metin: string): number | null {
+  const temiz = metin.replace(',', '.').trim()
+  if (temiz === '') return null
+  const sayi = Number(temiz)
+  return Number.isFinite(sayi) ? sayi : null
+}
+
+/** Taban puan kaydedilebilir mi — boş, sıfır ya da ölçek dışı değil. */
+export function tabanPuanGecerli(puan: number | null): puan is number {
+  return puan !== null && puan >= EN_DUSUK_TABAN_PUAN && puan <= EN_YUKSEK_TABAN_PUAN
+}
+
+/** Başarı sırası kaydedilebilir mi — pozitif tam sayı, aday sayısını aşmıyor. */
+export function basariSirasiGecerli(sira: number | null): sira is number {
+  return sira !== null && Number.isInteger(sira) && sira >= 1 && sira <= EN_BUYUK_BASARI_SIRASI
+}
+
+/** Kontrol kutularındaki iki metin de kaydedilebilir mi. */
+export function hedefSayilariGecerli(tabanPuan: string, basariSirasi: string): boolean {
+  return tabanPuanGecerli(sayiOku(tabanPuan)) && basariSirasiGecerli(sayiOku(basariSirasi))
+}
+
+/** Kutudaki puan metni: ondalık ayraç virgül, arayüzün geri kalanıyla aynı. */
+export function puanMetni(puan: number): string {
+  return puan.toString().replace('.', ',')
 }

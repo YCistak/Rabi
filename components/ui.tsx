@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useContext, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useGeriKatmani } from '@/lib/geri'
 import { KARTLAR, type Ekran } from '@/lib/gezinme'
+import { TanitimBaglami } from '@/components/tanitim/tanitim-baglami'
 
 /**
  * Izgaradaki bir kartın giriş animasyonu: sınıf + sıraya göre gecikme.
@@ -378,6 +380,76 @@ export function Onay({
       </div>
     </div>
   )
+}
+
+/**
+ * Tanıtım turu sürüyor mu. Sürerken ✕ onayları sorulmuyor: spot ışığı
+ * vurgulanan hedefin dışındaki her dokunuşu yutuyor, onay penceresi de hedefin
+ * dışında — tur kilitlenirdi (tur ✕'e bastırıyor: deneme formu, demo oyun).
+ */
+export function useTanitimSuruyor() {
+  return useContext(TanitimBaglami)?.tanitimdaMi === true
+}
+
+/**
+ * Kapatma (✕) düğmelerinin onayı. Kullanıcı istedi: uygulamadaki bütün ✕'ler
+ * kapatmadan önce sorar — kaybedilecek bir şey olmasa da.
+ *
+ * `sor(kapat)` pencereyi açar; "Çık" denince `kapat` hiç değiştirilmeden
+ * çağrılır, böylece katmanın kendi kapanış yolu (perde, `cikiyor` bayrağı,
+ * geri yığını) aynen çalışır. Pencere `body`ye taşınıyor: ✕'lerin bir kısmı
+ * z-[70]'lik katmanların ya da transform'lu kapların içinde; orada çizilse
+ * altta kalabilir ya da kabın içine hapsolurdu.
+ *
+ * Geri tuşu, kenardan kaydırma ve aşağı çekerek kapatma sormaz: istek
+ * "kapatma tuşları" içindi.
+ */
+export function useKapatmaOnayi({
+  baslik = 'Çıkmak istediğine emin misin?',
+  aciklama,
+  onayMetni = 'Çık',
+}: {
+  baslik?: string
+  aciklama: string
+  onayMetni?: string
+}) {
+  const [bekleyen, setBekleyen] = useState<{ kapat: () => void } | null>(null)
+  const tanitimda = useTanitimSuruyor()
+
+  function sor(kapat: () => void) {
+    if (tanitimda) kapat()
+    else setBekleyen({ kapat })
+  }
+
+  // React olayları portaldan da ata kabarır: pencerede bir dokunuş, onu çizen
+  // katmanın "zemine basınca kapan" ya da "dokununca ilerle" işleyicisine
+  // ulaşıp Vazgeç'i kapatmaya çevirirdi.
+  const durdur = (e: React.SyntheticEvent) => e.stopPropagation()
+
+  const pencere = bekleyen
+    ? createPortal(
+        <div
+          className="relative z-[100]"
+          onClick={durdur}
+          onPointerDown={durdur}
+          onPointerUp={durdur}
+          onTouchStart={durdur}
+          onTouchEnd={durdur}
+        >
+          <Onay
+            acik
+            baslik={baslik}
+            aciklama={aciklama}
+            onayMetni={onayMetni}
+            onOnayla={bekleyen.kapat}
+            onIptal={() => setBekleyen(null)}
+          />
+        </div>,
+        document.body,
+      )
+    : null
+
+  return { sor, pencere }
 }
 
 /** Günlük hedef ilerlemesini gösteren halka. Yüzde 100'ü aşarsa halka doldu kalır. */

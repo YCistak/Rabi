@@ -3,6 +3,11 @@ import { SON_VERI_YILI } from './puan'
 import { siralamadanPuan, yilSiralamasi } from './siralama'
 import {
   EN_COK_SONUC,
+  basariSirasiGecerli,
+  hedefSayilariGecerli,
+  puanMetni,
+  sayiOku,
+  tabanPuanGecerli,
   bolumAra,
   bolumBul,
   bolumleriGetir,
@@ -180,8 +185,15 @@ describe('arama', () => {
     expect(sonuc[0].ad.startsWith('Ankara')).toBe(true)
   })
 
-  it('boş sorgu listenin başını veriyor — kutu açılır açılmaz seçenek görünsün', () => {
-    expect(universiteAra('').length).toBe(EN_COK_SONUC)
+  it('boş sorguda üniversite listesi yok — liste harf yazıldıkça çıkıyor', () => {
+    expect(universiteAra('')).toEqual([])
+    expect(universiteAra('   ')).toEqual([])
+    expect(universiteAra('a').length).toBeLessThanOrEqual(EN_COK_SONUC)
+  })
+
+  it('boş sorguda bölüm listesi tam — bölüm araması değişmedi', () => {
+    const itu = uni('İstanbul Teknik Üniversitesi')
+    expect(bolumAra(itu, '')).toEqual(bolumleriGetir(itu))
   })
 
   it('bölüm araması üniversitenin dışına çıkmıyor', () => {
@@ -227,6 +239,54 @@ describe('universiteKisaAdi', () => {
     for (const u of UNIVERSITELER) {
       expect(universiteKisaAdi(u.ad).length).toBeGreaterThan(0)
       expect(universiteKisaAdi(u.ad).length).toBeLessThanOrEqual(u.ad.length)
+    }
+  })
+})
+
+describe('elle kontrol', () => {
+  it('virgüllü ve noktalı metni okur, boş metin null', () => {
+    expect(sayiOku('452,3')).toBe(452.3)
+    expect(sayiOku('452.3')).toBe(452.3)
+    expect(sayiOku(' 12000 ')).toBe(12000)
+    expect(sayiOku('')).toBeNull()
+    expect(sayiOku('abc')).toBeNull()
+    expect(sayiOku(puanMetni(452.3))).toBe(452.3)
+  })
+
+  it('taban puanı ölçek dışında geçersiz', () => {
+    expect(tabanPuanGecerli(null)).toBe(false)
+    expect(tabanPuanGecerli(0)).toBe(false)
+    expect(tabanPuanGecerli(99.9)).toBe(false)
+    expect(tabanPuanGecerli(4523)).toBe(false)
+    expect(tabanPuanGecerli(100)).toBe(true)
+    expect(tabanPuanGecerli(452.3)).toBe(true)
+    expect(tabanPuanGecerli(560)).toBe(true)
+  })
+
+  it('başarı sırası pozitif tam sayı ve aday sayısını aşmıyor', () => {
+    expect(basariSirasiGecerli(null)).toBe(false)
+    expect(basariSirasiGecerli(0)).toBe(false)
+    expect(basariSirasiGecerli(12.5)).toBe(false)
+    expect(basariSirasiGecerli(30_000_000)).toBe(false)
+    expect(basariSirasiGecerli(1)).toBe(true)
+    expect(basariSirasiGecerli(25_000)).toBe(true)
+  })
+
+  it('iki kutu birlikte geçerli olmadan kayıt yok', () => {
+    expect(hedefSayilariGecerli('452,3', '25000')).toBe(true)
+    expect(hedefSayilariGecerli('', '25000')).toBe(false)
+    expect(hedefSayilariGecerli('452,3', '0')).toBe(false)
+  })
+
+  it('katalogun ürettiği sayılar kontrolden geçiyor', () => {
+    // Kontrol adımı katalog değeriyle dolu açılıyor; o değer kendi
+    // denetiminden geçmezse kullanıcı hiçbir şeye dokunmadan kaydedemezdi.
+    for (const u of UNIVERSITELER) {
+      for (const b of bolumleriGetir(u)) {
+        const t = tahminEt(u, b)
+        expect(basariSirasiGecerli(t.siralama)).toBe(true)
+        expect(tabanPuanGecerli(t.tabanPuan)).toBe(true)
+      }
     }
   })
 })

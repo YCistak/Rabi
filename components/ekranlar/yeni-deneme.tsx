@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { AlertCircle, Camera, Check, X } from 'lucide-react'
-import { Alan, Buton, Etiket, Kart, Not } from '@/components/ui'
+import { Alan, Buton, Etiket, Kart, Not, useKapatmaOnayi } from '@/components/ui'
 import {
   EklemeFormu,
   FotografDugmeleri,
@@ -171,6 +171,15 @@ export function YeniDenemeEkrani({
     }))
   }
 
+  const vazgecOnayi = useKapatmaOnayi({
+    aciklama: duzenlenen
+      ? 'Yaptığın değişiklikler kaydedilmez.'
+      : 'Girdiğin sonuçlar kaydedilmez.',
+  })
+  const yanlisKapatmaOnayi = useKapatmaOnayi({
+    aciklama: 'Yanlış soru eklenmeden deneme formuna dönersin.',
+  })
+
   const kaydet = () => {
     if (hataliDers || bosMu || !tarihGecerli) return
     onKaydet({
@@ -200,6 +209,8 @@ export function YeniDenemeEkrani({
   */
   return (
     <div className="overflow-x-clip">
+      {vazgecOnayi.pencere}
+      {yanlisKapatmaOnayi.pencere}
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="min-w-0">
           <h1 className="font-display text-2xl font-semibold tracking-tight">
@@ -209,7 +220,7 @@ export function YeniDenemeEkrani({
             {sablon.ad} · {toplamSoru(sablon)} soru · {katsayiYaz(sablon.yanlisKatsayi)}
           </p>
         </div>
-        <Buton bicim="hayalet" boy="simge" onClick={onVazgec} aria-label="Vazgeç">
+        <Buton bicim="hayalet" boy="simge" onClick={() => vazgecOnayi.sor(onVazgec)} aria-label="Vazgeç">
           <X size={20} />
         </Buton>
       </div>
@@ -409,7 +420,7 @@ export function YeniDenemeEkrani({
                   <Buton
                     bicim="hayalet"
                     boy="simge"
-                    onClick={() => setYanlisAcik(false)}
+                    onClick={() => yanlisKapatmaOnayi.sor(() => setYanlisAcik(false))}
                     aria-label="Kapat"
                   >
                     <X size={20} />

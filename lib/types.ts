@@ -201,6 +201,12 @@ export type PomodoroAyar = {
   kilitliUygulamalar: string[]
   /** Odak kilidi tanıtımı bir kez gösterilir; kullanıcı geçtiyse bir daha sorulmaz. */
   kilitTanitimiGoruldu: boolean
+  /**
+   * Deneme provasında "Süre gir"e yazılan son süre, dakika — bir sonraki
+   * provada kutuda hazır dursun. Sonradan eklendi; eski kayıtta yok
+   * (`pomodoroAyariniNormalize` varsayılanla dolduruyor).
+   */
+  provaSuresi: number
 }
 
 export type PomodoroSeans = {

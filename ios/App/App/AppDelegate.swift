@@ -18,6 +18,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // müziği durdururdu. Hata yutuluyor — oturum kurulamazsa ses eskisi
         // gibi sessiz tuşuna uyar, uygulama çalışmaya devam eder.
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
+
+        // Kilit ekranındaki sayacın düğmeleri (`PomodoroKomutuNiyeti`). Burada,
+        // köprüde değil: düğme uygulamayı arka planda uyandırabiliyor ve o
+        // sırada ne sahne ne WebView kurulmuş oluyor.
+        PomodoroKomutuKoprusu.isleyici = { komut in
+            await CanliSayacEklentisi.komutIsle(komut)
+        }
         return true
     }
 

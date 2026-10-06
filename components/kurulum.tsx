@@ -7,11 +7,20 @@ import type { Ayarlar, Hedef, OkulYili, PuanTuru } from '@/lib/types'
 import { SINIFLAR, SINIF_SECENEKLERI, mezunMu, sinifAdi } from '@/lib/hesap'
 import { cn, yeniId } from '@/lib/utils'
 import { Alan, Buton, Etiket, Kart } from '@/components/ui'
-import { AramaAlani, Liste, SecilenSatir, SecimSatiri } from '@/components/hedef-secici'
+import {
+  AramaAlani,
+  HedefKontrolu,
+  Liste,
+  SecilenSatir,
+  SecimSatiri,
+  uniListesiBos,
+} from '@/components/hedef-secici'
 import {
   bolumAra,
   bolumBul,
-  bolumleriGetir,
+  hedefSayilariGecerli,
+  puanMetni,
+  sayiOku,
   tahminEt,
   turAdi,
   universiteAra,
@@ -222,6 +231,13 @@ export function Kurulum({
   const [hedefBolum, setHedefBolum] = useState('')
   const [uniArama, setUniArama] = useState('')
   const [bolumArama, setBolumArama] = useState('')
+  /*
+    Elle kontrol kutuları: seçilen bölümün sırası ve taban puanı, katalog
+    değeriyle dolu geliyor ve kullanıcı yanlışsa düzeltiyor. Kayda kutudaki
+    değer giriyor (Hedefim ekranıyla aynı kural).
+  */
+  const [kontrolPuan, setKontrolPuan] = useState('')
+  const [kontrolSira, setKontrolSira] = useState('')
   const [saat, setSaat] = useState(20)
   const [dakika, setDakika] = useState(0)
   /**
@@ -267,14 +283,26 @@ export function Kurulum({
     // üniversitede olmayan bir hedefi kaydedilebilir gösterirdi. Denetim
     // süzgeçsiz listeye bakıyor: alan dışındaki bir seçim geçerli, yalnızca
     // listede gizli.
-    if (secilenBolum && !bolumleriGetir(secilen).some((b) => b.id === secilenBolum.id)) {
-      setHedefBolum('')
+    if (secilenBolum) {
+      // Aynı adlı bölüm yeni üniversitede de varsa sırası başka: kutular
+      // yeni programın değeriyle yeniden dolsun.
+      const ayni = bolumBul(secilen, secilenBolum.ad)
+      if (ayni) kontrolDoldur(secilen, ayni)
+      else setHedefBolum('')
     }
   }
 
   const bolumSec = (secilen: Bolum) => {
     setHedefBolum(secilen.ad)
     setBolumArama('')
+    if (secilenUni) kontrolDoldur(secilenUni, secilen)
+  }
+
+  /** Seçilen programın katalog değerini kontrol kutularına yazar. */
+  const kontrolDoldur = (universite: Universite, bolum: Bolum) => {
+    const tahmin = tahminEt(universite, bolum)
+    setKontrolPuan(puanMetni(tahmin.tabanPuan))
+    setKontrolSira(tahmin.siralama.toString())
   }
 
   const mezun = sinif !== null && mezunMu(sinif)
@@ -357,7 +385,10 @@ export function Kurulum({
           : suanki === 'alan'
             ? alanSecildi
             : suanki === 'bolum'
-              ? bolumSonra || (secilenUni !== null && secilenBolum !== null)
+              ? bolumSonra ||
+                (secilenUni !== null &&
+                  secilenBolum !== null &&
+                  hedefSayilariGecerli(kontrolPuan, kontrolSira))
               : suanki === 'notlar'
                 ? notlarSonra || notVar
                 : true
@@ -435,9 +466,8 @@ export function Kurulum({
       // O yüzden kayda yalnızca güncel sınıfa göre bitmiş yıllar giriyor.
       okulYillari: okulYillariKur(notlar, notluSiniflar),
       /*
-        Taban puan ve sıra katalogdan hesaplanıyor, kullanıcıya sorulmuyor:
-        ikisini de bilen kimse yok ve `hedef-katalog.ts` sırayı üniversitenin
-        kademesinden, puanı da o sıradan çıkarıyor. Puan türü seçilen bölümün
+        Taban puan ve sıra kontrol kutularından geliyor: katalog değeriyle
+        dolu açıldılar, kullanıcı yanlışsa düzeltti. Puan türü seçilen bölümün
         türü — kurulumdaki "Hangi alandasın?" öğrencinin kendi alanını soruyor
         ve hedef bölümünkiyle aynı olmak zorunda değil.
       */
@@ -447,7 +477,8 @@ export function Kurulum({
               universite: secilenUni.ad,
               bolum: secilenBolum.ad,
               puanTuru: secilenBolum.puanTuru,
-              ...tahminHedefi(secilenUni, secilenBolum),
+              tabanPuan: sayiOku(kontrolPuan),
+              basariSirasi: sayiOku(kontrolSira),
             }
           : null,
     })
@@ -705,7 +736,7 @@ export function Kurulum({
                       onDegis={setUniArama}
                       ipucu="Üniversite ya da şehir ara"
                     />
-                    <Liste bos="Bu adla üniversite bulamadım.">
+                    <Liste bos={uniListesiBos(uniArama)}>
                       {uniSonuclari.map((u) => (
                         <SecimSatiri
                           key={u.id}
@@ -786,6 +817,18 @@ export function Kurulum({
                     </>
                   )}
                 </div>
+              )}
+
+              {/* Elle kontrol: Devam'dan önce sıra ve puan gösteriliyor; geçersiz
+                  değerle Devam pasif. */}
+              {secilenUni && secilenBolum && (
+                <HedefKontrolu
+                  idOneki="kurulum-kontrol"
+                  tabanPuan={kontrolPuan}
+                  basariSirasi={kontrolSira}
+                  onTabanPuan={setKontrolPuan}
+                  onBasariSirasi={setKontrolSira}
+                />
               )}
             </div>
           )}
@@ -1093,20 +1136,6 @@ function KurulumMaskotu({
       <Rabi durum={durum} poz={poz} boyut={boyut} />
     </span>
   )
-}
-
-/**
- * Seçilen bölümün tahmini taban puanı ve başarı sırası.
- *
- * Sayılar `hedef-katalog.ts`ten geliyor ve **tahmin**: kurulum onları
- * sormuyor, kullanıcı sonradan Hedefim ekranından düzeltebiliyor.
- */
-function tahminHedefi(
-  universite: Universite,
-  bolum: Bolum,
-): { tabanPuan: number; basariSirasi: number } {
-  const tahmin = tahminEt(universite, bolum)
-  return { tabanPuan: tahmin.tabanPuan, basariSirasi: tahmin.siralama }
 }
 
 /**
