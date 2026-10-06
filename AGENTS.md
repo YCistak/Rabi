@@ -976,6 +976,12 @@ Ekleme formundaki ders alanı serbest metindi (önerili); "matematik", "Mat",
 "mat." aynı dersin üç ayrı süzgeç çipi oluyordu. Artık on çipten biri
 seçiliyor ve Kaydet ancak bir ders seçilince açılıyor.
 
+**Ders şeridi tek bileşen** (`components/ders-seridi.tsx`, `DersSeridi`):
+Pomodoro ve Soru Takibi'nin "Soru ekle" sayfası aynı şeridi kullanır. Soru
+Takibi'nde sıra geçmiş kayıtlardaki toplam soru sayısına göre (`calismaSirasi`),
+Kaydet ise ders seçilmeden ve Toplam/Doğru/Yanlış üçü de doldurulmadan açılmaz
+(0 geçerli, boş alan girilmemiş demek).
+
 **Ders listesi on ders** ve uygulamada tek (`CALISMA_DERSLERI`,
 `lib/dersler.ts`): Pomodoro, Soru Takibi ve yanlış soru aynı listeyi
 gösteriyor — Türkçe, Matematik, Fizik, Kimya, Biyoloji, Tarih, Coğrafya,
