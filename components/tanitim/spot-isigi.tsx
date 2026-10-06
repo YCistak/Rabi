@@ -3,6 +3,8 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal, flushSync } from 'react-dom'
 import { Buton } from '@/components/ui'
+import { Rabi } from '@/components/maskot/rabi'
+import { adimPozu } from '@/lib/tanitim'
 import { TANITIM_EGRISI, egriDegeri } from '@/lib/tanitim-animasyonu'
 import { balonGenisligi, balonKonumu, durgunlukSayaci, kaydirmaKis, kaydirmaKisTam, kutuFarki, type Kutu } from '@/lib/tanitim-yerlesim'
 import { taniAcikMi, taniKaydet, taniKutu } from '@/lib/tanitim-tani'
@@ -554,7 +556,8 @@ export function SpotIsigi() {
     const odaklan = () => balonRef.current?.querySelector<HTMLElement>('[data-tanitim-baslik]')?.focus({ preventScroll: true })
     const odagiKoru = (olay: FocusEvent) => { if (!izinli(olay.target)) odaklan() }
     const tusuYakala = (olay: KeyboardEvent) => {
-      if (olay.key === 'Escape') { olay.preventDefault(); olay.stopImmediatePropagation(); turuBitir(); return }
+      // Escape tuşu turu bitirmiyor: tur yalnızca ilerleyerek biter. Tuş, altındaki sayfaya da geçmesin.
+      if (olay.key === 'Escape') { olay.preventDefault(); olay.stopImmediatePropagation(); return }
       if (olay.key !== 'Tab') { if (['Enter', ' '].includes(olay.key)) engelle(olay); return }
       const odaklar = [
         ...Array.from(denetim?.querySelectorAll<HTMLElement>(ODAK_SECICI) ?? []),
@@ -736,13 +739,14 @@ export function SpotIsigi() {
           width: balon.genislik || 'calc(100% - 24px)', maxWidth: 340, maxHeight: ekran.yukseklik ? Math.max(120, ekran.yukseklik * 0.52) : '52dvh',
           visibility: ekran.genislik ? 'visible' : 'hidden',
         }}>
-        <div className="flex items-center justify-between gap-3" style={{ marginBottom: adim.kimlik === 'soru-bir' ? 0 : 8 }}>
+        {/* Üst satır: Rabi ve turun etiketi. Sayaç, "Turu Geç" ya da kapatma düğmesi yok; tur yalnızca ilerleyerek biter. */}
+        <div className="flex items-center gap-2.5" style={{ marginBottom: adim.kimlik === 'soru-bir' ? 0 : 8 }}>
+          <span aria-hidden className="shrink-0"><Rabi poz={adimPozu(adim, aktifTur, aktifAdim === adimSayisi - 1)} boyut={adim.kimlik === 'soru-bir' || kisaBalon ? 36 : 48} /></span>
           {adim.kimlik === 'soru-bir' && <div><h2 data-tanitim-baslik tabIndex={-1} className="font-display text-sm font-extrabold outline-none">{adim.baslik}</h2><p className="text-[11px] text-muted-foreground">Sonucu yaz veya pas geç.</p></div>}
-          {adim.kimlik !== 'soru-bir' && <span className="text-[11px] font-extrabold tracking-wide text-primary">{aktifTur === 'ana_tur' ? 'RABİ’Yİ TANI' : aktifTur === 'denemeler' ? 'DENEMELER' : 'KONU HARİTASI'} · {(aktifAdim ?? 0) + 1}/{adimSayisi}</span>}
-          <button type="button" onClick={turuBitir} className="min-h-11 min-w-11 rounded-lg px-2 text-xs font-bold text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring">Turu Geç</button>
+          {adim.kimlik !== 'soru-bir' && <span className="text-[11px] font-extrabold tracking-wide text-primary">{aktifTur === 'ana_tur' ? 'RABİ’Yİ TANI' : aktifTur === 'denemeler' ? 'DENEMELER' : 'KONU HARİTASI'}</span>}
         </div>
         {adim.kimlik !== 'soru-bir' && <h2 data-tanitim-baslik tabIndex={-1} className={kisaBalon ? 'font-display text-sm font-extrabold outline-none' : 'font-display text-lg font-extrabold outline-none'}>{adim.baslik}</h2>}
-        {(adim.kimlik !== 'soru-bir' || hedefEksik) && !(sikisik && !hedefEksik) && <p aria-live="polite" className={kisaBalon ? 'mt-1 text-xs leading-snug text-muted-foreground' : 'mt-2 text-[13px] leading-relaxed text-muted-foreground'}>{hedefEksik ? 'Bu adımın bileşeni bulunamadı. Geri dönerek yeniden deneyebilir veya turu geçebilirsin.' : adim.kimlik === 'soru-bir' ? 'Sonucu yaz, onayla veya pas geç.' : aciklama}</p>}
+        {(adim.kimlik !== 'soru-bir' || hedefEksik) && !(sikisik && !hedefEksik) && <p aria-live="polite" className={kisaBalon ? 'mt-1 text-xs leading-snug text-muted-foreground' : 'mt-2 text-[13px] leading-relaxed text-muted-foreground'}>{hedefEksik ? 'Bu adımın bileşeni bulunamadı. Geri dönerek yeniden deneyebilirsin.' : adim.kimlik === 'soru-bir' ? 'Sonucu yaz, onayla veya pas geç.' : aciklama}</p>}
         {adim.kimlik !== 'soru-bir' && <div className={kisaBalon ? 'mt-2 flex items-center justify-between gap-2' : 'mt-3 flex items-center justify-between gap-2'}>
           {!sikisik && <Buton type="button" bicim="ikincil" className="min-h-11 min-w-11" disabled={aktifAdim === 0 || gecisSuruyor} onClick={oncekiAdimaDon}>Geri</Buton>}
           {aktifAdim === adimSayisi - 1 ? <Buton type="button" className="min-h-11 min-w-11" onClick={turuBitir}>Turu Bitir</Buton> : adim.tiklamali ? <span className="text-right text-xs font-bold text-primary">{adim.ipucu ?? 'Aydınlatılan alana dokun'}</span> : <Buton type="button" className="min-h-11 min-w-11" disabled={!hedef || hedefEksik || gecisSuruyor} onClick={sonrakiAdimaGec}>{adim.ileriEtiketi ?? (adim.kimlik === 'sonuc' ? 'Oyunlara dön' : 'İleri')}</Buton>}

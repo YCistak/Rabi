@@ -39,11 +39,15 @@ Ana tur açıkken mini tur başlamaz. Mini turun bitirilmesi veya geçilmesi kul
 | Denemeler | `rabi_deneme_turu_tamamlandi` |
 | Konu Haritası | `rabi_harita_turu_tamamlandi` |
 
-Her anahtara tamamlamada veya Turu Geç işleminde `'true'` yazılır. Eski `rabi_tanitim_tamamlandi` yeni ana turun kaydı yerine kullanılmaz; güncellenen akış bir kez gösterilir.
+Her anahtara tur tamamlanınca `'true'` yazılır. Tur atlanamaz: balonda "Turu Geç"/kapat düğmesi, adım sayacı ve ilerleme göstergesi yoktur; Escape tuşu ve arka plana dokunma turu kapatmaz, Android geri tuşu bir adım geri alır. Tek çıkış, son adımdaki "Turu Bitir" düğmesidir. Eski `rabi_tanitim_tamamlandi` yeni ana turun kaydı yerine kullanılmaz; güncellenen akış bir kez gösterilir.
 
-Demo cevapları, skor ve banka soruları yalnızca Context belleğindedir. Gerçek banka, oyun geçmişi, soru takibi veya Pomodoro kayıtlarına yazılmaz. `demoVerileriTemizle()` bitişte ve geçmede boş durumu döndürür. Sayfa yenileme de bellekteki demo verilerini kaldırır; tamamlanmayan tur yeniden başlar. Bitiş veya geçme anında demo temizlenir; rehberin kapanışından sonra temiz ana sayfaya animasyonla dönülür.
+Demo cevapları, skor ve banka soruları yalnızca Context belleğindedir. Gerçek banka, oyun geçmişi, soru takibi veya Pomodoro kayıtlarına yazılmaz. `demoVerileriTemizle()` bitişte boş durumu döndürür. Sayfa yenileme de bellekteki demo verilerini kaldırır; tamamlanmayan tur yeniden başlar. Bitiş anında demo temizlenir; rehberin kapanışından sonra temiz ana sayfaya animasyonla dönülür.
 
 Depolama yazılamazsa temizlik yine gerçekleşir ve oturum içindeki tamamlanma durumu korunur; yeniden açılışta turun tekrarlanabileceği kullanıcıya bildirilir. Tur ve adım kimliği kontrolü, gecikmiş veya çift dokunuşun sonraki adımı atlamasını engeller.
+
+## Maskot (Rabi)
+
+Her balonun üst satırında küçük bir Rabi tavşanı durur (`components/maskot/rabi.tsx`; 48 piksel, kısa balonda ve oyun adımında 36). Poz `lib/tanitim.ts` içindeki `adimPozu` ile seçilir: önce adımın isteğe bağlı `poz` alanı, ana turun son adımında `alkislayan` (kutlama), sonra `ADIM_POZLARI` tablosu (kimliğe göre), tabloda yoksa dokunma adımında `isaretci`, değilse `tam`. İlk adım `selamlayan`dır. Örnekler: Pomodoro `saatli`, deneme okutma `fotografci`, konu takibi `okuyan`, harita `haritali`/`kitapli`, istatistik `buyutecli`/`tahtali`/`ziplayan`, oyun sonucu `sevinen`. Tavşan dekoratiftir (`aria-hidden`); balonun yüksekliği ölçülerek yerleştiğinden hedefi örtmez.
 
 ## Yeniden deneme
 

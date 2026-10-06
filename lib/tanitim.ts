@@ -1,4 +1,5 @@
 import type { Ekran, Sekme } from './gezinme'
+import type { MaskotPozu } from './maskot'
 import type { BankaKaydi } from './oyunlar/banka'
 import type { Deneme, GunlukKayit } from './types'
 import type { Gorev } from './yapilacaklar'
@@ -33,6 +34,28 @@ export type TanitimAdimi = {
   ileriEtiketi?: string
   /** Kısa balon: büyük formların yanında yer kaplamasın. */
   kisa?: boolean
+  /** Balondaki Rabi'nin pozu; verilmezse `adimPozu` içeriğe göre seçer. */
+  poz?: MaskotPozu
+}
+
+/** Adım kimliğine göre varsayılan poz; burada olmayan adım dokunmalıysa işaret eden, değilse tam boy poz alır. */
+const ADIM_POZLARI: Record<string, MaskotPozu> = {
+  'sinav-hedefi': 'selamlayan', hedef: 'basparmak',
+  'pomodoro-prova': 'saatli', pomodoro: 'saatli', 'pomodoro-kilit': 'elleri-belde',
+  'soru-form': 'defterli', 'soru-kaydedildi': 'sevinen',
+  'gorev-form': 'defterli', 'gorev-kaydedildi': 'basparmak',
+  'deneme-liste': 'buyutecli', 'deneme-okut': 'fotografci', 'deneme-kaydet': 'defterli',
+  'konu-takibi': 'okuyan', 'harita-ders': 'haritali', 'harita-soru': 'kitapli', 'konu-haritasi': 'haritali',
+  'istatistik-tur': 'buyutecli', 'istatistik-son': 'tahtali', 'istatistik-ilerleyen': 'ziplayan', 'istatistik-kutular': 'durbunlu', 'istatistik-karsilastir': 'abakuslu',
+  zorluk: 'elleri-belde', 'oyun-sayac': 'saatli', 'soru-bir': 'dusunen', sonuc: 'sevinen',
+  banka: 'dusunen', 'banka-liste': 'okuyan', 'banka-test': 'defterli', 'banka-ogrendim': 'basparmak',
+}
+
+/** Balondaki Rabi'nin pozu: adımın kendi `poz`u, ana turun son adımında kutlama, yoksa içeriğe uyan varsayılan. */
+export function adimPozu(adim: TanitimAdimi, tur: TanitimTuru | null, sonAdimMi: boolean): MaskotPozu {
+  if (adim.poz) return adim.poz
+  if (sonAdimMi && tur === 'ana_tur') return 'alkislayan'
+  return ADIM_POZLARI[adim.kimlik] ?? (adim.tiklamali ? 'isaretci' : 'tam')
 }
 
 export const TANITIM_ADIMLARI: readonly TanitimAdimi[] = [

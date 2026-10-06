@@ -808,8 +808,8 @@ function RabiUygulamasi() {
   }, [sekme, ekran, denemeFormu, bankaTuru])
 
   const geriGit = useCallback(() => {
-    // Donanım geri tuşu turu sonlandırır; demo ekranının arkasına düşmez.
-    if (tanitim.tanitimdaMi) { tanitim.turuBitir(); return true }
+    // Donanım geri tuşu turu bitirmiyor: tur yalnızca ilerleyerek biter. Tuş bir adım geri alıyor.
+    if (tanitim.tanitimdaMi) { tanitim.oncekiAdimaDon(); return true }
     // En içteki katmandan dışa doğru: ekranın kendi açtığı katman (fotoğraf
     // görüntüleyici, onay kutusu) → form → alt ekran → ana sekme → çıkış.
     if (ustKatmaniKapat()) return true
@@ -833,7 +833,7 @@ function RabiUygulamasi() {
       return true
     }
     return false
-  }, [genelTest, genelTestiBitir, denemeFormu, ekran, sekme, tanitim.tanitimdaMi, tanitim.turuBitir])
+  }, [genelTest, genelTestiBitir, denemeFormu, ekran, sekme, tanitim.tanitimdaMi, tanitim.oncekiAdimaDon])
 
   /**
    * Açılışta kapanmış bir turdan artakalanları temizler.
