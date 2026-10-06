@@ -74,6 +74,14 @@ export const ANAHTARLAR = {
    */
   yksKonuTakibi: 'rabi-yks-konu-takibi',
   /**
+   * Konu Takibi'nin hızlı başlangıç kartının ("TYT'de neredeyim?")
+   * gösterildiği oturumlar, sürümlü (`{ surum: 1, gosterilen }`, okurken
+   * `hizliBayragiCoz`). Yedeğe **girmiyor**: kart zaten yalnızca oturumda
+   * hiç işaret yokken çıkıyor; yedekteki işaretler onu kendiliğinden
+   * gizliyor.
+   */
+  konuTakibiHizliBaslangic: 'rabi-konu-takibi-hizli-baslangic',
+  /**
    * Konu haritasında en son seçili ders ve sınıf.
    *
    * Yedeğe girmiyor: kısayollarla aynı sebep — bu veri değil, bu cihazda
