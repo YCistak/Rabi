@@ -285,12 +285,24 @@ geliyor.
 | 2 | Pomodoro molası işliyor | `kafa-kahveli` |
 | 3 | Devamsızlık hakkı aşıldı | `kafa-uzgun` |
 | 4 | Sınav günü | `kafa-bagdas` |
-| 5 | Günlük hedef tuttu | `kafa-dans` / `kafa-alkislayan` / `kafa-kahkaha` (günden güne) |
-| 6 | Bugün başlandı, hedefte değil | `kafa-yazan` / `kafa-kitapli` (günden güne) |
-| 7 | Kayıt yok, gece (22:00–04:59) | `kafa-uyuyan` |
-| 8 | Kayıt yok, sabah (05:00–10:59) | `kafa-gerinen` |
-| 9 | Kayıt yok, seri kırılmak üzere | `kafa-elleri-belde` |
-| 10 | Kayıt yok | `kafa-uyuyan` |
+| 5 | Aylık özet açılmayı bekliyor | `kafa-megafonlu` |
+| 6 | Bugünün tarihli deneme var | `kafa-damgali` |
+| 7 | Bugün bir konu anlatımı bitti | `kafa-tahtali` |
+| 8 | Günlük hedef tuttu | `kafa-dans` / `kafa-alkislayan` / `kafa-kahkaha` (günden güne) |
+| 9 | Bugünün görevleri var ve hepsi işaretli | `kafa-cantali` |
+| 10 | Bugün kayıt var, öncesinde 3+ boş gün | `kafa-selamlayan` |
+| 11 | Bugün başlandı, hedefte değil | `kafa-yazan` / `kafa-kitapli` (günden güne) |
+| 12 | Kayıt yok, gece (22:00–04:59) | `kafa-uyuyan` |
+| 13 | Kayıt yok, sabah (05:00–10:59) | `kafa-gerinen`, hafta sonu `kafa-bitkili` |
+| 14 | Kayıt yok, seri kırılmak üzere | `kafa-elleri-belde` |
+| 15 | Kayıt yok, bankada 10+ çözülmemiş yanlış | `kafa-buyutecli` |
+| 16 | Kayıt yok, sınava ≤ 30 gün | `kafa-saatli` |
+| 17 | Kayıt yok, akşam (18:00–21:59) | `kafa-dusunen` |
+| 18 | Kayıt yok | `kafa-uyuyan` |
+
+5–7, 9–10, 13'ün hafta sonu kolu ve 15–17 kullanıcının seçtiği durumlar
+(2026-10). Akşam için önce "esneyen" seçildi; kaynak görsel esnemediği
+için kullanıcı düşüneni seçti.
 
 **Sabah uyumuyor, geriniyor.** Sabah sekizde uyuyan bir tavşan "bugün bir şey
 yapmadın" gibi okunuyor; oysa yapılacak bir şey için daha vakit olmadı.

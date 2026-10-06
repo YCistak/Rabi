@@ -152,8 +152,8 @@ const POZLAR = [
  * leke defter, kitap ya da ağızdı; orada göz çifti elle seçildi.
  *
  * `duzelt`, göz arasının kafa boyunu yanlış söylediği pozlar için çarpan:
- * kahkahada ve uyuyanda gözler kapalı yaylar, laptopta baş
- * öne eğik. Değiştirince `public/tavsan-kafa-*.png`yi yan yana aç ve
+ * kahkahada ve uyuyanda gözler kapalı yaylar; laptop, megafon, saat ve
+ * tahtada baş yana dönük ya da öne eğik (göz arası kısalıyor). Değiştirince `public/tavsan-kafa-*.png`yi yan yana aç ve
  * kafaların aynı boyda durduğunu gör.
  *
  * `kitapli` "kitap okuyan"dan geliyor: "kitabı inceleyen" yüzüstü yatıyor ve
@@ -178,6 +178,15 @@ const KAFALAR = [
   { ad: 'tavsan-kafa-elleri-belde', kaynak: 'elleri belde.png', gozler: [[619, 480], [796, 454]] },
   { ad: 'tavsan-kafa-bagdas', kaynak: 'bağdaş kuran.png', gozler: [[585, 615], [801, 560]] },
   { ad: 'tavsan-kafa-uzgun', kaynak: 'üzülen maskot.png', gozler: [[863, 828], [1183, 821]] },
+  { ad: 'tavsan-kafa-damgali', kaynak: 'onay damgası basan.png', gozler: [[564, 584], [776, 619]] },
+  { ad: 'tavsan-kafa-selamlayan', kaynak: 'eğilerek selamlayan.png', gozler: [[644, 592], [838, 529]] },
+  { ad: 'tavsan-kafa-buyutecli', kaynak: 'büyüteçle inceleyen.png', gozler: [[610, 614], [808, 578]] },
+  { ad: 'tavsan-kafa-saatli', kaynak: 'saate bakan.png', gozler: [[609, 548], [779, 579]], duzelt: 0.88 },
+  { ad: 'tavsan-kafa-dusunen', kaynak: 'düşünen maskot.png', gozler: [[921, 801], [1244, 754]] },
+  { ad: 'tavsan-kafa-megafonlu', kaynak: 'megafonla konuşan.png', gozler: [[602, 610], [701, 493]], duzelt: 0.8 },
+  { ad: 'tavsan-kafa-tahtali', kaynak: 'tahtaya yazan.png', gozler: [[541, 560], [701, 532]], duzelt: 0.85 },
+  { ad: 'tavsan-kafa-cantali', kaynak: 'çanta kapatan.png', gozler: [[538, 549], [740, 588]] },
+  { ad: 'tavsan-kafa-bitkili', kaynak: 'bitki sulayan.png', gozler: [[616, 520], [810, 585]] },
 ]
 
 /**
