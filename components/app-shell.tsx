@@ -1088,7 +1088,6 @@ function RabiUygulamasi() {
                 setHedef={setHedef}
                 varsayilanTur={ayarlar.puanTuru}
                 guncelSiralama={guncelSiralama}
-                onKaydedildi={() => setEkran(null)}
               />
             )}
             {ekran === 'yanlis-banka' && (
