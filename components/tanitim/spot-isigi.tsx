@@ -28,6 +28,18 @@ type Yerlesim = { ekHedefler: Kutu[]; hedef: Kutu | null; cizilen: Kutu | null; 
 const BOS_KUTU: Kutu = { sol: 0, ust: 0, genislik: 0, yukseklik: 0 }
 const BOS_YERLESIM: Yerlesim = { ekHedefler: [], hedef: null, cizilen: null, balon: BOS_KUTU, ekran: BOS_KUTU, spotAnlik: true, balonAnlik: true }
 const ODAK_SECICI = 'button:not(:disabled), a[href], input:not(:disabled), [tabindex="0"]'
+/**
+ * Tam ekran sistem pencerelerinin işareti (`data-sistem-penceresi`; ör.
+ * çökme raporu sorusu). Bu pencereler turla aynı anda açılmamalı
+ * (`lib/cokme-tanitim.ts`), ama açılırsa rehber içlerindeki dokunmayı ve
+ * odağı yutmuyor: yutsaydı pencere kapanamaz, tur da ilerleyemez ve kullanıcı
+ * kilitlenirdi.
+ */
+function sistemPenceresinde(oge: EventTarget | null): boolean {
+  // Yazı düğümünden gelen olayda hedef bir `Element` değil; üst öğesine bakılıyor.
+  const eleman = oge instanceof Element ? oge : oge instanceof Node ? oge.parentElement : null
+  return !!eleman?.closest('[data-sistem-penceresi]')
+}
 /** Hedef bu kadar süre bulunamazsa delik söner (ekran değişiminin tek karesi için sönmesin). */
 const KAYIP_BEKLEMESI = 400
 /** Hedef kıpırdamaya devam etse de en geç bu kadar beklenip yerleşiliyor. */
@@ -550,7 +562,7 @@ export function SpotIsigi() {
       if (son && !adim.ekHedefler && kutuFarki(son.hedef, kutu) < 0.5 && Math.abs(son.balon.yukseklik - balonBoyu) < 0.5) return
       ciz(sonHalindeOlc(hedef, () => hesapla(o, kutu)))
     }
-    const izinli = (oge: EventTarget | null) => oge instanceof Node && (denetim?.contains(oge) || balonRef.current?.contains(oge) || (etkilesimAcik && hedef?.contains(oge)))
+    const izinli = (oge: EventTarget | null) => sistemPenceresinde(oge) || (oge instanceof Node && (denetim?.contains(oge) || balonRef.current?.contains(oge) || (etkilesimAcik && hedef?.contains(oge))))
     const engelle = (olay: Event) => {
       if (!izinli(olay.target)) { olay.preventDefault(); olay.stopImmediatePropagation() }
     }
@@ -560,6 +572,8 @@ export function SpotIsigi() {
       // Escape tuşu turu bitirmiyor: tur yalnızca ilerleyerek biter. Tuş, altındaki sayfaya da geçmesin.
       if (olay.key === 'Escape') { olay.preventDefault(); olay.stopImmediatePropagation(); return }
       if (olay.key !== 'Tab') { if (['Enter', ' '].includes(olay.key)) engelle(olay); return }
+      // Odak bir sistem penceresindeyse Tab o pencerenin içinde dolaşsın.
+      if (sistemPenceresinde(document.activeElement)) return
       const odaklar = [
         ...Array.from(denetim?.querySelectorAll<HTMLElement>(ODAK_SECICI) ?? []),
         ...(etkilesimAcik && hedef ? Array.from(hedef.matches(ODAK_SECICI) ? [hedef] : hedef.querySelectorAll<HTMLElement>(ODAK_SECICI)) : []),
@@ -681,6 +695,8 @@ export function SpotIsigi() {
       // Balon taşıyorsa kendi içinde kaydırılabilsin; sayfaya sıçramasın diye
       // balonda `overscroll-behavior: contain` var.
       if (balon && olay.target instanceof Node && balon.contains(olay.target) && balon.scrollHeight > balon.clientHeight) return
+      // Sistem penceresinin (çökme sorusu) kendi kaydırılan içeriği çalışsın.
+      if (sistemPenceresinde(olay.target)) return
       if (olay.cancelable) olay.preventDefault()
     }
     document.addEventListener('touchmove', kaydirmayiEngelle, { capture: true, passive: false })
