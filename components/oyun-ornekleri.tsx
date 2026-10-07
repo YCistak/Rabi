@@ -586,22 +586,15 @@ export const OYUN_ORNEKLERI: Record<OyunId, OyunOrnegi[]> = {
 
   hucre: [
     {
-      baslik: 'İpucu kartı',
-      kural: (
-        <>
-          Kart üç saniyede bir yeni ipucu açar; erken bilmek <b>çok puan</b>.
-        </>
-      ),
+      baslik: 'Hücre ve organeller',
+      kural: <>Gelen soruyu dört şıktan cevaplarsın.</>,
       gorunum: (
-        <div className="flex flex-col gap-2">
-          <Metin>
-            <span className="mr-2 rounded-md bg-primary-soft px-1.5 py-0.5 text-xs font-extrabold text-primary">
-              1. ipucu
-            </span>
-            Çift zarflıyım.
-          </Metin>
-          <Alt dogru="Mitokondri" yanlis="Ribozom" />
-        </div>
+        <DortSik
+          soru="Hücrede protein sentezinin yapıldığı organel hangisidir?"
+          yonerge="Doğru cevabı seç"
+          dogru="Ribozom"
+          yanlis="Golgi cisimciği"
+        />
       ),
     },
   ],

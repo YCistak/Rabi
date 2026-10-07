@@ -720,13 +720,10 @@ function bankayiCoz(ham: unknown): BankaKaydi[] {
           Array.isArray(s.biyoloji?.celdiriciler) &&
           s.biyoloji.celdiriciler.length === 3
         )
-      // İpuçları olmadan kart açılamaz; üçü de yerinde olmalı.
-      if (s.oyun === 'hucre')
-        return (
-          typeof s.hucre?.organel === 'string' &&
-          Array.isArray(s.hucre?.ipuclari) &&
-          s.hucre.ipuclari.length === 3
-        )
+      // Soru ve çeldiriciler okunurken havuzdan bulunuyor (`kayittanSoru`);
+      // kayıtta organel adı yetiyor. İpuçlu kart döneminin kayıtlarında
+      // `soru` yok — onlar da bu yüzden düşürülmüyor.
+      if (s.oyun === 'hucre') return typeof s.hucre?.organel === 'string'
       if (s.oyun === 'trigonometri')
         return typeof s.trig?.tur === 'string' && typeof s.trig?.oran === 'string'
       if (s.oyun === 'ucgen')

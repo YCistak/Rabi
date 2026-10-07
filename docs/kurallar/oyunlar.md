@@ -83,6 +83,11 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 
 ## Oyunlara özel
 
+- **Hücre ve Organeller** düz soru + dört şık, Canlıları Sınıflandırma düzeninde
+  (kullanıcı istedi; ipuçlu dönen kart ve ipucu puanı kaldırıldı). Çeldiriciler
+  satırın `karistirilan` listesinden, bütün organellerden değil: parça–bütün çiftleri
+  (kloroplast–tilakoid) iki doğru şık doğurur; `hucre.test.ts` → `BIRBIRINE_UYANLAR`.
+  Banka kaydı organel adıyla havuzdan okunur (`kayittanSoru`), eski ipuçlu kayıtlar da.
 - **Trigonometrik Oranlar** gizli (`OyunTanimi.kapali`, listeler süzer), silinmedi;
   geri açmak için `tanim.ts`teki `kapali: true`yi sil. Çeldiriciler aynı üçgenin öteki
   oranları; değeri doğruya eşit şık olmaz (`degerSayisi`). tan 30° "√3/3". Kesirler

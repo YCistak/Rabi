@@ -1,491 +1,403 @@
 /**
- * Organel Kartı oyununun havuzu.
+ * Hücre ve Organeller oyununun havuzu.
  *
- * Her satır bir organel ve onu tarif eden **üç ipucu**. İpuçlarının sırası
- * rastgele değil: birincisi birkaç organele birden uyar, ikincisi alanı
- * daraltır, üçüncüsü tek bir cevabı gösterir. Oyunun puanı da buna dayanıyor —
- * erken bilmek çok puan, geç bilmek az puan getiriyor. Sıra bozulursa oyunun
- * ölçtüğü şey bozulur.
- *
- * İpuçları organelin ağzından yazılıyor ("çift zarlıyım"): kart arkası dönük
- * duruyor ve ipuçlarını o veriyor.
+ * Her satır bir yapı ve onu soran **tek bir soru cümlesi**. Oyun Canlıları
+ * Sınıflandırma ile aynı biçimde: soru okunur, dört şıktan doğrusu seçilir.
+ * (Önceden arkası dönük bir kart üç ipucunu sırayla açıyordu; kullanıcı
+ * ipuçlu kart yerine düz soru istedi.)
  *
  * Kapsam 9. sınıf "Hücre" ünitesi; hücrenin bütün yapı ve organelleri, ökaryot
  * ve prokaryot. Hücre zarı, hücre duvarı, sitoplazma ve kromozom organel değil
  * ama havuzda: ünite onları da anlatıyor ve şıklarda birlikte geçiyorlar.
  *
- * Havuzun büyüklüğü konuyla sınırlı: bir hücrede sayılı sayıda yapı var, o
- * yüzden burası öteki oyunların havuzları gibi istendiği kadar büyüyemez.
- * Yeni kart eklerken sınır şu: **her kartın cevabı benzersiz bir yapı adı
- * olmalı** (`hucre.test.ts` denetliyor) ve şıklar bu adlardan çekildiği için
- * iki kart aynı yapının iki adı olamaz — "hücre çeperi" ile "hücre duvarı" ya
- * da "sitozol" ile "sitoplazma" ayrı kart olarak konulamaz, cevabı ikiye
- * bölerdi. Alt bölmeler (krista, granum, stroma) ayrı kart, çünkü ipuçları
- * onları ait oldukları organelden ayırt edebiliyor.
+ * **Çeldiriciler elle seçiliyor** (`karistirilan`), havuzun tamamından
+ * rastgele değil. İki sebep:
+ *
+ * - Bazı yapılar başka bir yapının parçası ya da aynı işi paylaşıyor
+ *   (kloroplast–tilakoid, sentrozom–sentriyol, hücre iskeleti–mikrotübül).
+ *   Rastgele çekilseydi "fotosentezin yapıldığı organel" sorusunda tilakoid de
+ *   şık olur, iki doğru çıkardı. `hucre.test.ts` bu çiftleri tek tek denetliyor.
+ * - Rastgele çeldirici çoğu soruda okumadan elenirdi ("kamçı" ile "stroma"
+ *   aynı soruda). Elle seçilenler sorunun alanından: plastit sorusunda öteki
+ *   plastitler, iskelet sorusunda öteki iplikler.
+ *
+ * Yeni satır eklerken sınır şu: **her satırın cevabı benzersiz bir yapı adı
+ * olmalı** — banka kaydının kimliği bu ad (`hucre:<organel>`), iki satır aynı
+ * adı taşısaydı kayıtları birbirine karışırdı. Aynı yapının iki adı da ayrı
+ * satır olamaz ("hücre çeperi" ile "hücre duvarı"): biri ötekinin çeldiricisi
+ * olup iki doğru şık doğururdu.
  */
 
 import type { Zorluk } from './ritim'
 
 export type OrganelSorusu = {
-  /** Kartın arkasındaki cevap — şıklarda da bu ad görünüyor. */
+  /** Doğru cevap — şıklarda da bu ad görünüyor; banka kaydının kimliği. */
   organel: string
-  /** Üç ipucu; belirsizden belirgine sıralı. */
-  ipuclari: [string, string, string]
+  /**
+   * Ekranda okunan soru cümlesi.
+   *
+   * Yalnızca bu yapıya uymalı: bir özellik birkaç yapıda ortaksa (kendi DNA'sı
+   * mitokondride de kloroplastta da var) o özellik tek başına sorulmuyor.
+   */
+  soru: string
+  /**
+   * Çeldirici adayları; her turda içlerinden üçü rastgele seçiliyor.
+   *
+   * En az üç tane, hepsi havuzda geçen bir ad ve hiçbiri soruya uymuyor —
+   * üçünü de `hucre.test.ts` denetliyor.
+   */
+  karistirilan: readonly string[]
   /** Tur sonunda yanlışın altında görünen kısa öğretici not. */
   aciklama: string
   zorluk: Zorluk
 }
 
+/**
+ * Bankada duran hücre kaydı.
+ *
+ * İpuçlu kart döneminin kayıtlarında `soru` ve `karistirilan` yok,
+ * `ipuclari` var. Kayıtlar yeniden adlandırılmıyor ya da silinmiyor
+ * (`AGENTS.md`); okurken havuzdan güncel hâli bulunuyor
+ * (`hucre.ts` → `kayittanSoru`), eski alanlar yalnızca havuzda karşılığı
+ * kalmamış bir kaydı listede göstermeye yarıyor.
+ */
+export type HucreKaydi = {
+  organel: string
+  soru?: string
+  karistirilan?: readonly string[]
+  /** Eski kayıtlar: kartın üç ipucu. */
+  ipuclari?: readonly string[]
+  aciklama?: string
+  zorluk?: Zorluk
+}
+
 export const HUCRE_HAVUZU: readonly OrganelSorusu[] = [
   {
     organel: 'Mitokondri',
-    ipuclari: [
-      'Çift zarlıyım; kendi DNA’m ve kendi ribozomum var.',
-      'İç zarım kıvrımlar yaparak yüzeyimi artırır.',
-      'Oksijenli solunumun büyük kısmı bende olur, hücrenin ATP’sini ben üretirim.',
-    ],
+    soru: 'Oksijenli solunumla hücrenin ATP’sinin büyük kısmını üreten organel hangisidir?',
+    karistirilan: ['Kloroplast', 'Ribozom', 'Golgi cisimciği', 'Peroksizom', 'Lizozom'],
     aciklama:
       'Enerji ihtiyacı yüksek hücrelerde (kas, karaciğer) sayısı artar. Çift zarlı ve kendi DNA’sı olan iki organelden biridir.',
     zorluk: 'kolay',
   },
   {
     organel: 'Ribozom',
-    ipuclari: [
-      'Zarsızım ve istisnasız bütün hücrelerde bulunurum.',
-      'İki alt birimden oluşurum; ancak birleşince çalışırım.',
-      'Protein sentezi bende yapılır.',
-    ],
+    soru: 'Hücrede protein sentezinin yapıldığı organel hangisidir?',
+    karistirilan: ['Golgi cisimciği', 'Lizozom', 'Çekirdekçik', 'Granülsüz endoplazmik retikulum', 'Peroksizom'],
     aciklama:
-      'Prokaryot hücrelerde bulunan tek organeldir. Alt birimleri çekirdekçikte üretilir.',
+      'Zarsızdır ve bütün hücrelerde bulunur; prokaryot hücrelerde bulunan tek organeldir. Alt birimleri çekirdekçikte üretilir.',
     zorluk: 'kolay',
   },
   {
     organel: 'Kloroplast',
-    ipuclari: [
-      'Çift zarlıyım; kendi DNA’m ve ribozomum var.',
-      'Yalnızca bitki ve alg hücrelerinde bulunurum.',
-      'Klorofil taşırım, fotosentez bende gerçekleşir.',
-    ],
+    soru: 'Bitki hücresinde klorofil taşıyan ve fotosentezin gerçekleştiği organel hangisidir?',
+    karistirilan: ['Kromoplast', 'Lökoplast', 'Mitokondri', 'Koful'],
     aciklama:
-      'Plastitlerdendir. Işık enerjisini kimyasal enerjiye çevirerek besin üretir.',
+      'Plastitlerdendir. Çift zarlıdır, kendi DNA’sı ve ribozomu vardır; ışık enerjisini kimyasal enerjiye çevirerek besin üretir.',
     zorluk: 'kolay',
   },
   {
     organel: 'Çekirdek',
-    ipuclari: [
-      'Çift zarlıyım ve zarımın üstünde porlar var.',
-      'İçimde kalıtım maddesi bulunur.',
-      'Hücrenin yönetim merkeziyim; prokaryot hücrelerde bulunmam.',
-    ],
+    soru: 'Ökaryot hücrede kalıtım maddesini taşıyan ve hücrenin yönetim merkezi olan yapı hangisidir?',
+    karistirilan: ['Çekirdekçik', 'Ribozom', 'Sentrozom', 'Golgi cisimciği'],
     aciklama:
-      'Porları sayesinde sitoplazmayla madde alışverişi yapar. DNA’yı taşıdığı için bölünmeyi ve sentezi yönetir.',
+      'Çift zarlıdır; porları sayesinde sitoplazmayla madde alışverişi yapar. DNA’yı taşıdığı için bölünmeyi ve sentezi yönetir. Prokaryotlarda bulunmaz.',
     zorluk: 'kolay',
   },
   {
     organel: 'Hücre zarı',
-    ipuclari: [
-      'Bütün hücrelerde bulunurum.',
-      'Yapımda yağ ve protein var; akıcı mozaik modeliyle açıklanırım.',
-      'Seçici geçirgenim: hücreye neyin girip çıkacağına ben karar veririm.',
-    ],
+    soru: 'Seçici geçirgen olup hücreye madde giriş çıkışını denetleyen yapı hangisidir?',
+    karistirilan: ['Hücre duvarı', 'Kapsül', 'Hücre dışı matriks', 'Hücre iskeleti'],
     aciklama:
-      'Canlı ve seçici geçirgendir. Hücreyi dış ortamdan ayırır, madde alışverişini ve iletişimi sağlar.',
+      'Canlı ve seçici geçirgendir; yağ ve proteinden oluşur (akıcı mozaik model). Hücreyi dış ortamdan ayırır, madde alışverişini ve iletişimi sağlar.',
     zorluk: 'kolay',
   },
   {
     organel: 'Koful',
-    ipuclari: [
-      'Tek zarlı bir keseyim.',
-      'Madde depolar, atıkları ve fazla suyu içimde tutarım.',
-      'Bitki hücrelerinde tek ve çok büyüğüm; tatlı su canlılarında kasılarak fazla suyu dışarı atarım.',
-    ],
+    soru: 'Bitki hücrelerinde genellikle tek ve büyük olan, su ve madde depolayan organel hangisidir?',
+    karistirilan: ['Lizozom', 'Vezikül', 'Peroksizom', 'Golgi cisimciği'],
     aciklama:
-      'Genç bitki hücrelerinde küçük ve çok sayıda, yaşlı hücrelerde birleşerek tek ve büyüktür.',
+      'Genç bitki hücrelerinde küçük ve çok sayıda, yaşlı hücrelerde birleşerek tek ve büyüktür. Tatlı su canlılarında kasılarak fazla suyu dışarı atar.',
     zorluk: 'kolay',
   },
   {
     organel: 'Hücre duvarı',
-    ipuclari: [
-      'Cansızım ve tam geçirgenim.',
-      'Hayvan hücrelerinde bulunmam.',
-      'Bitkide selülozdan, mantarda kitinden yapılırım; hücreye şekil ve dayanıklılık veririm.',
-    ],
+    soru: 'Bitkide selülozdan, mantarda kitinden yapılan; cansız ve tam geçirgen yapı hangisidir?',
+    karistirilan: ['Hücre zarı', 'Kapsül', 'Glikokaliks', 'Hücre dışı matriks'],
     aciklama:
-      'Hücre zarının dışındadır. Cansız olduğu için madde geçişini seçemez, gelen her şeyi geçirir.',
+      'Hücre zarının dışındadır ve hayvan hücrelerinde bulunmaz. Cansız olduğu için madde geçişini seçemez; hücreye şekil ve dayanıklılık verir.',
     zorluk: 'kolay',
   },
   {
     organel: 'Lizozom',
-    ipuclari: [
-      'Tek zarlı bir keseyim.',
-      'İçim sindirim enzimiyle dolu; beni golgi üretir.',
-      'Zarım yırtılırsa hücreyi kendi kendine sindiririm; bu yüzden bana “intihar kesesi” denir.',
-    ],
+    soru: 'İçinde sindirim enzimleri bulunan ve hücre içi sindirimi yapan organel hangisidir?',
+    karistirilan: ['Peroksizom', 'Golgi cisimciği', 'Ribozom', 'Mitokondri'],
     aciklama:
-      'Hücre içi sindirimden sorumludur. Yaşlanmış organelleri ve dışarıdan alınan büyük molekülleri parçalar.',
+      'Golgi tarafından üretilir. Yaşlanmış organelleri ve dışarıdan alınan büyük molekülleri parçalar; zarı yırtılırsa hücreyi sindirir.',
     zorluk: 'orta',
   },
   {
     organel: 'Golgi cisimciği',
-    ipuclari: [
-      'Üst üste dizilmiş yassı keselerden oluşuyorum.',
-      'Bana gelen maddeleri işler, paketler ve gideceği yere gönderirim.',
-      'Salgı yapan hücrelerde sayım artar; lizozomu da ben oluştururum.',
-    ],
+    soru: 'Üst üste dizilmiş yassı keselerden oluşan, maddeleri işleyip paketleyerek salgılayan organel hangisidir?',
+    karistirilan: ['Lizozom', 'Granüllü endoplazmik retikulum', 'Ribozom', 'Peroksizom'],
     aciklama:
-      'Endoplazmik retikulumdan gelen protein ve yağları işler; salgı kesecikleri hâlinde hücre dışına gönderir.',
+      'Endoplazmik retikulumdan gelen protein ve yağları işler; salgı kesecikleri hâlinde hücre dışına gönderir. Lizozomu da o oluşturur.',
     zorluk: 'orta',
   },
   {
     organel: 'Granüllü endoplazmik retikulum',
-    ipuclari: [
-      'Hücre içinde kanal ve keselerden oluşan bir ağım.',
-      'Yüzeyimde ribozomlar olduğu için pürtüklü görünürüm.',
-      'Ribozomda üretilen proteinleri taşır ve golgiye gönderirim.',
-    ],
+    soru: 'Yüzeyinde ribozom bulunan, ribozomda üretilen proteinleri taşıyan kanal sistemi hangisidir?',
+    karistirilan: ['Granülsüz endoplazmik retikulum', 'Golgi cisimciği', 'Hücre iskeleti', 'Lizozom'],
     aciklama:
-      'Protein sentezi ve taşınmasıyla ilgilidir; salgı üreten hücrelerde bol bulunur.',
+      'Protein sentezi ve taşınmasıyla ilgilidir; proteinleri golgiye gönderir. Salgı üreten hücrelerde bol bulunur.',
     zorluk: 'orta',
   },
   {
     organel: 'Sentrozom',
-    ipuclari: [
-      'Zarsızım ve hücre bölünmesiyle ilgiliyim.',
-      'Bitki hücrelerinde bulunmam, hayvan hücrelerinde varım.',
-      'Bölünme sırasında iğ ipliklerini ben oluştururum.',
-    ],
+    soru: 'Hayvan hücresinde birbirine dik duran iki sentriyolden oluşan yapı hangisidir?',
+    karistirilan: ['Çekirdekçik', 'Ribozom', 'Golgi cisimciği', 'Kromatin', 'Lizozom'],
     aciklama:
-      'Birbirine dik iki sentriyolden oluşur. Bölünmede kromozomların kutuplara çekilmesini sağlar.',
+      'Zarsızdır, bitki hücrelerinde bulunmaz. Bölünmede iğ ipliklerini oluşturarak kromozomların kutuplara çekilmesini sağlar.',
     zorluk: 'orta',
   },
   {
     organel: 'Çekirdekçik',
-    ipuclari: [
-      'Çekirdeğin içindeyim ve zarsızım.',
-      'RNA ile protein bakımından zenginim.',
-      'Ribozomun alt birimleri bende üretilir.',
-    ],
+    soru: 'Çekirdeğin içinde bulunan, ribozom alt birimlerinin üretildiği zarsız yapı hangisidir?',
+    karistirilan: ['Nükleoplazma', 'Kromatin', 'Sentrozom', 'Golgi cisimciği'],
     aciklama:
-      'Bölünme başlarken kaybolur, bölünme bitince yeniden oluşur. Protein sentezi hızlı olan hücrelerde belirgindir.',
+      'RNA ve protein bakımından zengindir. Bölünme başlarken kaybolur, bölünme bitince yeniden oluşur. Protein sentezi hızlı olan hücrelerde belirgindir.',
     zorluk: 'orta',
   },
   {
     organel: 'Granülsüz endoplazmik retikulum',
-    ipuclari: [
-      'Kanallardan oluşuyorum ama yüzeyim düzgün.',
-      'Yağ ve karbonhidrat sentezi bende yapılır.',
-      'Karaciğer hücrelerinde ilaç ve alkol gibi zararlı maddeleri etkisizleştiririm.',
-    ],
+    soru: 'Yüzeyinde ribozom bulunmayan; yağ sentezinde ve karaciğerde zararlı maddelerin etkisizleştirilmesinde görev alan kanal sistemi hangisidir?',
+    karistirilan: ['Granüllü endoplazmik retikulum', 'Golgi cisimciği', 'Lizozom', 'Vezikül'],
     aciklama:
-      'Üzerinde ribozom yoktur. Yağ sentezi, kalsiyum depolanması ve zehirlerin etkisizleştirilmesinde görevlidir.',
+      'Üzerinde ribozom yoktur. Yağ ve karbonhidrat sentezi, kalsiyum depolanması ve ilaç, alkol gibi zehirlerin etkisizleştirilmesinde görevlidir.',
     zorluk: 'zor',
   },
   {
     organel: 'Peroksizom',
-    ipuclari: [
-      'Tek zarlı, küçük bir keseyim.',
-      'Karaciğer ve böbrek hücrelerinde çok bulunurum.',
-      'Katalaz enzimimle hidrojen peroksiti su ve oksijene parçalarım.',
-    ],
+    soru: 'Katalaz enzimiyle hidrojen peroksidi su ve oksijene parçalayan organel hangisidir?',
+    karistirilan: ['Lizozom', 'Golgi cisimciği', 'Mitokondri', 'Koful', 'Granülsüz endoplazmik retikulum'],
     aciklama:
-      'Hücrede biriken hidrojen peroksit zehirlidir; peroksizom onu zararsız hâle getirir.',
+      'Hücrede biriken hidrojen peroksit zehirlidir; peroksizom onu zararsız hâle getirir. Karaciğer ve böbrek hücrelerinde çok bulunur.',
     zorluk: 'zor',
   },
   {
     organel: 'Kromoplast',
-    ipuclari: [
-      'Bitki hücrelerindeki plastitlerden biriyim.',
-      'Renk veririm ama fotosentez yapmam.',
-      'Havucun turuncusu, domatesin kırmızısı bendeki pigmentlerden gelir.',
-    ],
+    soru: 'Havuca turuncu, domatese kırmızı rengini veren pigmentleri taşıyan plastit hangisidir?',
+    karistirilan: ['Kloroplast', 'Lökoplast', 'Lizozom', 'Peroksizom'],
     aciklama:
-      'Karoten (turuncu), ksantofil (sarı) ve likopen (kırmızı) gibi pigmentleri taşır; böceklerin çiçeğe gelmesini sağlar.',
+      'Renk verir ama fotosentez yapmaz. Karoten (turuncu), ksantofil (sarı) ve likopen (kırmızı) gibi pigmentleri taşır; böceklerin çiçeğe gelmesini sağlar.',
     zorluk: 'zor',
   },
   {
     organel: 'Lökoplast',
-    ipuclari: [
-      'Renksiz bir plastitim.',
-      'Bitkinin ışık almayan kök, yumru ve tohum gibi yerlerinde bulunurum.',
-      'Nişasta, yağ ve protein depolarım; patatesteki nişasta bende durur.',
-    ],
+    soru: 'Patates yumrusu gibi ışık almayan yerlerde nişasta depolayan renksiz plastit hangisidir?',
+    karistirilan: ['Kloroplast', 'Kromoplast', 'Koful', 'Vezikül'],
     aciklama:
-      'Işık aldığında kloroplasta dönüşebilir; patatesin yeşermesinin sebebi budur.',
+      'Kök, yumru ve tohumda nişasta, yağ ve protein depolar. Işık aldığında kloroplasta dönüşebilir; patatesin yeşermesinin sebebi budur.',
     zorluk: 'zor',
   },
   {
     organel: 'Sitoplazma',
-    ipuclari: [
-      'Hücrenin içini dolduran, yarı akışkan bir yapıyım.',
-      'Bütün organeller benim içimde asılı durur; hücredeki tepkimelerin çoğu bende geçer.',
-      'Hücre zarı ile çekirdek arasında kalan her yer benim; bölünmenin sonunda ikiye ayrılırım.',
-    ],
+    soru: 'Hücre zarı ile çekirdek arasını dolduran, organellerin içinde bulunduğu yarı akışkan yapı hangisidir?',
+    karistirilan: ['Nükleoplazma', 'Stroma', 'Mitokondri matriksi', 'Hücre dışı matriks'],
     aciklama:
       'Organeller ile onları saran akışkan öz sudan (sitozol) oluşur. Prokaryot hücrelerde de bulunur; orada kalıtım maddesi doğrudan bunun içindedir.',
     zorluk: 'kolay',
   },
   {
     organel: 'Çekirdek zarı',
-    ipuclari: [
-      'İki katmandan oluşan, gözenekli bir örtüyüm.',
-      'Dış katmanım granüllü endoplazmik retikulumla devam eder.',
-      'Kalıtım maddesini saran örtü benim; gözeneklerimden RNA ve ribozom alt birimleri sitoplazmaya çıkar.',
-    ],
+    soru: 'Kalıtım maddesini sitoplazmadan ayıran, gözenekli ve çift katlı örtü hangisidir?',
+    karistirilan: ['Hücre zarı', 'Hücre duvarı', 'Glikokaliks', 'Kapsül'],
     aciklama:
-      'Bölünme başlarken erir, bölünme bitince yeniden oluşur. Prokaryot hücrelerde bulunmaz.',
+      'Dış katmanı granüllü endoplazmik retikulumla devam eder; gözeneklerinden RNA ve ribozom alt birimleri geçer. Bölünme başlarken erir, prokaryotlarda bulunmaz.',
     zorluk: 'kolay',
   },
   {
     organel: 'Nükleoplazma',
-    ipuclari: [
-      'Zarla çevrili bir bölmenin içini dolduran sıvıyım; yalnızca ökaryot hücrelerde bulunurum.',
-      'İçimde kromatin iplikler ve çekirdekçik yüzer.',
-      'Çekirdeğin öz suyuyum; DNA’nın eşlenmesi ve RNA sentezi benim içimde olur.',
-    ],
+    soru: 'Çekirdeğin içini dolduran, kromatin ve çekirdekçiğin içinde bulunduğu sıvı hangisidir?',
+    karistirilan: ['Sitoplazma', 'Stroma', 'Mitokondri matriksi', 'Hücre dışı matriks'],
     aciklama:
-      'Çekirdek plazması da denir. Kromatini, çekirdekçiği ve çekirdek tepkimeleri için gereken enzimleri barındırır.',
+      'Çekirdek plazması da denir. Kromatini, çekirdekçiği ve çekirdek tepkimeleri için gereken enzimleri barındırır; DNA’nın eşlenmesi burada olur.',
     zorluk: 'zor',
   },
   {
     organel: 'Kromatin',
-    ipuclari: [
-      'DNA ile proteinin birlikte oluşturduğu bir yapıyım.',
-      'Bölünme yapmayan hücrede çekirdeğin içinde ince, dağınık iplikler hâlinde görünürüm.',
-      'Bölünme başlayınca kısalıp kalınlaşır, kromozom hâline gelirim.',
-    ],
+    soru: 'Bölünme yapmayan hücrenin çekirdeğinde ince ve dağınık iplikler hâlinde duran DNA-protein yapısı hangisidir?',
+    karistirilan: ['Kromozom', 'Plazmit', 'Çekirdekçik', 'Nükleoid'],
     aciklama:
-      'Kromatin ile kromozom aynı maddenin iki hâlidir: bölünme arası dönemde kromatin, bölünme sırasında kromozom.',
+      'Kromatin ile kromozom aynı maddenin iki hâlidir: bölünme arası dönemde kromatin, bölünme sırasında kısalıp kalınlaşınca kromozom.',
     zorluk: 'orta',
   },
   {
     organel: 'Kromozom',
-    ipuclari: [
-      'DNA ve proteinden oluşurum; sayım türe özgüdür.',
-      'Bölünme sırasında kısalıp kalınlaşarak mikroskopta görünür hâle gelirim.',
-      'İki kardeş kromatidim sentromerden birbirine bağlıdır; insan vücut hücresinde 46 tanem bulunurum.',
-    ],
+    soru: 'Bölünme sırasında kısalıp kalınlaşarak görünür hâle gelen, iki kardeş kromatidi sentromerle bağlı yapı hangisidir?',
+    karistirilan: ['Kromatin', 'Sentriyol', 'Plazmit', 'Çekirdekçik'],
     aciklama:
       'Genleri taşır. İnsanın vücut hücrelerinde 46, üreme hücrelerinde 23 tanedir; sayı türü belirler, birey farkını değil.',
     zorluk: 'kolay',
   },
   {
     organel: 'Sentriyol',
-    ipuclari: [
-      'Zarsızım; hayvan hücrelerinde ve bazı ilkel bitkilerde bulunurum.',
-      'Dokuzar üçlü mikrotübül demetinden yapılmış, içi boş bir silindirim.',
-      'İkimiz birbirine dik durup sentrozomu oluştururuz; silin ve kamçının tabanında da yer alırım.',
-    ],
+    soru: 'Dokuzar üçlü mikrotübül demetinden oluşan, sil ve kamçının tabanında da bulunan silindir biçimli yapı hangisidir?',
+    karistirilan: ['Ribozom', 'Mikrofilament', 'Ara filament', 'Çekirdekçik'],
     aciklama:
-      'Sentrozomu oluşturan çift yapıdır. Bölünmede iğ ipliklerinin çıktığı merkezdir; sil ve kamçının temelini de kurar.',
+      'İkisi birbirine dik durup sentrozomu oluşturur. Bölünmede iğ ipliklerinin çıktığı merkezdir; sil ve kamçının temelini de kurar.',
     zorluk: 'orta',
   },
   {
     organel: 'Hücre iskeleti',
-    ipuclari: [
-      'Sitoplazmanın içine yayılmış bir protein ağıyım.',
-      'Hücreye şeklini veririm, organelleri yerinde tutar ve onları bir yerden bir yere taşırım.',
-      'Mikrotübül, mikrofilament ve ara filamentlerin hepsi birlikte beni oluşturur.',
-    ],
+    soru: 'Mikrotübül, mikrofilament ve ara filamentlerin birlikte oluşturduğu, hücreye şekil veren protein ağı hangisidir?',
+    karistirilan: ['Hücre dışı matriks', 'Hücre duvarı', 'Granülsüz endoplazmik retikulum', 'Golgi cisimciği'],
     aciklama:
-      'Üç çeşit protein ipliğinden oluşur. Hücrenin şekli, hücre içi taşıma ve hücrenin hareketi buna bağlıdır.',
+      'Üç çeşit protein ipliğinden oluşur. Hücrenin şekli, organellerin yerinde durması, hücre içi taşıma ve hücrenin hareketi buna bağlıdır.',
     zorluk: 'kolay',
   },
   {
     organel: 'Mikrotübül',
-    ipuclari: [
-      'Hücre iskeletinin en kalın ipliğiyim; içim boş bir boru gibidir.',
-      'Tübülin proteininden yapılırım; organeller benim üzerimde ray üstündeki vagon gibi taşınır.',
-      'Bölünmedeki iğ ipliklerini, silin ve kamçının içindeki dizilimi ben oluştururum.',
-    ],
+    soru: 'Hücre iskeletinin tübülin proteininden yapılmış, içi boş boru biçimindeki en kalın ipliği hangisidir?',
+    karistirilan: ['Mikrofilament', 'Ara filament', 'Kromatin', 'Plazmodesma'],
     aciklama:
-      'Hücre iskeletinin en kalın elemanıdır. Sentriyol, sil, kamçı ve iğ ipliklerinin yapı taşıdır.',
+      'Organeller onun üzerinde taşınır. Sentriyol, sil, kamçı ve bölünmedeki iğ ipliklerinin yapı taşıdır.',
     zorluk: 'orta',
   },
   {
     organel: 'Mikrofilament',
-    ipuclari: [
-      'Hücre iskeletinin en ince ipliğiyim.',
-      'Aktin proteininden yapılırım ve hücre zarının hemen altında yoğunlaşırım.',
-      'Kas kasılmasında ve hayvan hücresinin bölünme sonunda boğumlanmasında görev alırım.',
-    ],
+    soru: 'Aktin proteininden yapılan, kas kasılmasında görev alan, hücre iskeletinin en ince ipliği hangisidir?',
+    karistirilan: ['Mikrotübül', 'Ara filament', 'Sil', 'Kromatin'],
     aciklama:
-      'Aktin ipliklerinden oluşur. Kas kasılması, sitoplazma bölünmesi ve hücrenin şekil değiştirmesi bununla olur.',
+      'Hücre zarının hemen altında yoğunlaşır. Kas kasılması, hayvan hücresinin bölünme sonunda boğumlanması ve şekil değiştirmesi bununla olur.',
     zorluk: 'orta',
   },
   {
     organel: 'Ara filament',
-    ipuclari: [
-      'Hücre iskeletinde kalınlık bakımından ortada duran ipliğim.',
-      'Keratin gibi dayanıklı proteinlerden örülüyüm; kolay kolay sökülüp yeniden kurulmam.',
-      'Hücreye mekanik dayanıklılık veririm, çekirdeği ve organelleri yerinde tutan ağı ben gererim.',
-    ],
+    soru: 'Hücre iskeletinde keratin gibi dayanıklı proteinlerden yapılan, hücreye mekanik dayanıklılık veren iplik hangisidir?',
+    karistirilan: ['Mikrotübül', 'Mikrofilament', 'Kromatin', 'Sil'],
     aciklama:
-      'Kalınlığı mikrotübül ile mikrofilament arasındadır. Deri ve tırnak gibi baskıya uğrayan dokularda boldur.',
+      'Kalınlığı mikrotübül ile mikrofilament arasındadır. Çekirdeği ve organelleri yerinde tutar; deri gibi baskıya uğrayan dokularda boldur.',
     zorluk: 'zor',
   },
   {
     organel: 'Sil',
-    ipuclari: [
-      'Kısayım ve çok sayıda bulunurum; hücrenin yüzeyinden dışarı uzanırım.',
-      'Mikrotübüllerden yapılıyım; kürek çeker gibi ileri geri hareket ederim.',
-      'Paramesyum benimle yüzer, soluk borusu epitelinde ise tozu ve mukusu ben süpürürüm.',
-    ],
+    soru: 'Hücre yüzeyinde kısa ve çok sayıda bulunan, paramesyumun yüzmesini sağlayan yapı hangisidir?',
+    karistirilan: ['Kamçı', 'Glikokaliks', 'Kapsül', 'Plazmodesma'],
     aciklama:
-      'Sil ile kamçının iç yapısı aynıdır; sil kısa ve çok sayıdadır, kamçı uzun ve azdır.',
+      'Kürek çeker gibi hareket eder; soluk borusunda tozu ve mukusu süpürür. İç yapısı kamçıyla aynıdır; sil kısa ve çok, kamçı uzun ve azdır.',
     zorluk: 'kolay',
   },
   {
     organel: 'Kamçı',
-    ipuclari: [
-      'Uzunum ve genellikle bir ya da iki tanem bulunur.',
-      'Mikrotübüllerden yapılıyım; kırbaç gibi savrularak hücreyi yüzdürürüm.',
-      'Spermin kuyruğu ve öglenanın hareket yapısı benim.',
-    ],
+    soru: 'Uzun ve genellikle bir ya da iki tane olan, spermin hareketini sağlayan yapı hangisidir?',
+    karistirilan: ['Sil', 'Kapsül', 'Glikokaliks'],
     aciklama:
-      'Hücreye hareket sağlar. Sperm, öglena ve bazı bakterilerde bulunur; sile göre uzun ve az sayıdadır.',
+      'Kırbaç gibi savrularak hücreyi yüzdürür. Sperm, öglena ve bazı bakterilerde bulunur; sile göre uzun ve az sayıdadır.',
     zorluk: 'kolay',
   },
   {
     organel: 'Glikokaliks',
-    ipuclari: [
-      'Hücre zarının dış yüzeyinde yer alırım.',
-      'Zardaki proteinlere ve yağlara bağlanmış karbonhidrat zincirlerinden oluşurum.',
-      'Hücrelerin birbirini tanımasını sağlarım; kan gruplarını belirleyen işaretler bende bulunur.',
-    ],
+    soru: 'Hücre zarının dış yüzeyinde bulunan, hücrelerin birbirini tanımasını sağlayan karbonhidrat örtüsü hangisidir?',
+    karistirilan: ['Kapsül', 'Hücre duvarı', 'Hücre dışı matriks', 'Çekirdek zarı'],
     aciklama:
-      'Glikoprotein ve glikolipitlerden oluşan bu karbonhidrat örtüsü hücre tanınmasında, doku oluşumunda ve bağışıklıkta görevlidir.',
+      'Zardaki protein ve yağlara bağlı karbonhidrat zincirlerinden oluşur. Hücre tanınmasında, doku oluşumunda ve bağışıklıkta görevlidir; kan grubu işaretleri buradadır.',
     zorluk: 'zor',
   },
   {
     organel: 'Plazmodesma',
-    ipuclari: [
-      'Bitki hücrelerinin arasında bulunan ince bir bağlantıyım.',
-      'Hücre duvarındaki boşluklardan geçerek komşu iki hücrenin sitoplazmasını birleştiririm.',
-      'Bitkide hücreden hücreye madde ve uyartı geçişi benim içimden olur.',
-    ],
+    soru: 'Bitkide komşu hücrelerin sitoplazmasını, hücre duvarındaki geçitlerden birbirine bağlayan yapı hangisidir?',
+    karistirilan: ['Hücre dışı matriks', 'Glikokaliks', 'Vezikül', 'Mikrotübül'],
     aciklama:
       'Bitki hücrelerini duvarlarındaki geçitler üzerinden birbirine bağlar; su, besin ve sinyal molekülleri buradan geçer.',
     zorluk: 'zor',
   },
   {
     organel: 'Tilakoid',
-    ipuclari: [
-      'Kloroplastın içinde yassı bir kese hâlinde bulunurum.',
-      'Zarımın üzerinde klorofil ve elektron taşıma sistemi vardır.',
-      'Fotosentezin ışığa bağlı tepkimeleri, yani ATP ile NADPH üretimi bende olur.',
-    ],
+    soru: 'Kloroplastta zarında klorofil bulunan, fotosentezin ışığa bağlı tepkimelerinin geçtiği yassı kese hangisidir?',
+    karistirilan: ['Stroma', 'Krista', 'Vezikül', 'Golgi cisimciği'],
     aciklama:
-      'Işık enerjisinin tutulduğu zar sistemidir. Üst üste dizilenleri granumu oluşturur.',
+      'Işık enerjisinin tutulduğu zar sistemidir; ATP ve NADPH burada üretilir. Üst üste dizilenleri granumu oluşturur.',
     zorluk: 'orta',
   },
   {
     organel: 'Granum',
-    ipuclari: [
-      'Kloroplastın içindeyim ve bozuk para yığınına benzerim.',
-      'Üst üste dizilmiş tilakoid keselerinden oluşurum.',
-      'Klorofilin yoğunlaştığı yer benim; ışık enerjisi bende tutulur.',
-    ],
+    soru: 'Kloroplastta tilakoidlerin bozuk para gibi üst üste dizilmesiyle oluşan yapı hangisidir?',
+    karistirilan: ['Stroma', 'Krista', 'Golgi cisimciği', 'Mitokondri matriksi'],
     aciklama:
-      'Tilakoid keselerin üst üste dizilmesiyle oluşur; kloroplastta ışık tepkimelerinin geçtiği bölgedir.',
+      'Klorofilin yoğunlaştığı yerdir; kloroplastta ışık tepkimelerinin geçtiği bölgedir.',
     zorluk: 'zor',
   },
   {
     organel: 'Stroma',
-    ipuclari: [
-      'Kloroplastın iç zarı ile tilakoidleri arasındaki boşluğu doldururum.',
-      'İçimde kloroplastın kendi DNA’sı ve ribozomları yüzer.',
-      'Fotosentezin ışıktan bağımsız tepkimeleri, karbondioksidin şekere çevrildiği devir bende geçer.',
-    ],
+    soru: 'Kloroplastın içini dolduran, karbondioksidin şekere çevrildiği tepkimelerin geçtiği sıvı hangisidir?',
+    karistirilan: ['Mitokondri matriksi', 'Nükleoplazma', 'Tilakoid', 'Granum'],
     aciklama:
-      'Kloroplastın renksiz temel maddesidir. Calvin döngüsü burada işler, üretilen nişasta yine burada birikir.',
+      'Kloroplastın renksiz temel maddesidir. Fotosentezin ışıktan bağımsız tepkimeleri burada işler; kloroplastın DNA’sı ve ribozomları da buradadır.',
     zorluk: 'zor',
   },
   {
     organel: 'Krista',
-    ipuclari: [
-      'Bir organelin iç zarının içeriye doğru kıvrılmasıyla oluştum.',
-      'Sayım arttıkça yüzey alanı, yüzey alanı arttıkça üretilen ATP miktarı artar.',
-      'Üzerimde elektron taşıma sistemi enzimleri dizilidir; oksijenli solunumun son basamağı bende geçer.',
-    ],
+    soru: 'Mitokondrinin iç zarının içe doğru kıvrılmasıyla oluşan ve yüzeyi artıran yapı hangisidir?',
+    karistirilan: ['Mitokondri matriksi', 'Tilakoid', 'Granum', 'Mezozom'],
     aciklama:
-      'Mitokondrinin iç zar kıvrımlarıdır. Enerji ihtiyacı yüksek hücrelerde daha sık ve daha çoktur.',
+      'Üzerinde elektron taşıma sistemi dizilidir. Sayısı arttıkça yüzey, yüzey arttıkça üretilen ATP artar; enerji ihtiyacı yüksek hücrelerde çoktur.',
     zorluk: 'orta',
   },
   {
     organel: 'Mitokondri matriksi',
-    ipuclari: [
-      'Bir organelin en iç bölmesini dolduran koyu kıvamlı sıvıyım.',
-      'İçimde halkasal DNA ve ribozomlar bulunur; kendi proteinlerimin bir kısmını bende üretirim.',
-      'Krebs döngüsü enzimlerini taşırım; pirüvat bende karbondioksite parçalanır.',
-    ],
+    soru: 'Mitokondrinin en iç bölmesini dolduran, kendi DNA’sı ve ribozomlarının bulunduğu sıvı hangisidir?',
+    karistirilan: ['Stroma', 'Krista', 'Sitoplazma', 'Nükleoplazma'],
     aciklama:
-      'Mitokondrinin iç zarının kuşattığı sıvıdır. Krebs döngüsü burada geçer; mitokondrinin DNA ve ribozomları da buradadır.',
+      'Mitokondrinin iç zarının kuşattığı sıvıdır. Krebs döngüsü burada geçer; mitokondrinin halkasal DNA’sı ve ribozomları da buradadır.',
     zorluk: 'zor',
   },
   {
     organel: 'Vezikül',
-    ipuclari: [
-      'Zardan koparak oluşmuş, küçük ve kısa ömürlü bir keseciğim.',
-      'Endoplazmik retikulumdan golgiye, golgiden hücre zarına yük taşırım.',
-      'Ekzositozda hücre zarıyla kaynaşıp içimdeki salgıyı dışarı bırakırım.',
-    ],
+    soru: 'Zardan koparak oluşan, maddeleri golgiden hücre zarına taşıyan küçük ve kısa ömürlü kesecik hangisidir?',
+    karistirilan: ['Koful', 'Lizozom', 'Peroksizom'],
     aciklama:
       'Zarla çevrili küçük taşıma kesesidir. Kofuldan farkı depolamak değil, madde taşımak için kısa süre var olmasıdır.',
     zorluk: 'orta',
   },
   {
     organel: 'Nükleoid',
-    ipuclari: [
-      'Bakteri hücresinde sitoplazmanın ortasında yer alan bir bölgeyim.',
-      'Beni saran bir zar yoktur, bu yüzden sınırlarım belirsizdir.',
-      'Bakterinin halkasal DNA’sı bende bulunur; ökaryottaki çekirdeğin işini ben görürüm.',
-    ],
+    soru: 'Bakteride halkasal DNA’nın toplandığı, zarla çevrili olmayan bölge hangisidir?',
+    karistirilan: ['Plazmit', 'Mezozom', 'Çekirdek', 'Kapsül'],
     aciklama:
-      'Prokaryot hücrede halkasal DNA’nın toplandığı, zarla çevrili olmayan bölgedir.',
+      'Prokaryot hücrede kalıtım maddesinin toplandığı bölgedir; ökaryottaki çekirdeğin işini görür ama zarı yoktur.',
     zorluk: 'orta',
   },
   {
     organel: 'Plazmit',
-    ipuclari: [
-      'Bakterilerde asıl kalıtım maddesinin dışında, ondan bağımsız bulunurum.',
-      'Küçük ve halkasal bir DNA parçasıyım; kendimi tek başıma eşleyebilirim.',
-      'Antibiyotik direnci genlerini taşırım; gen aktarımında biyoteknolojinin taşıyıcısıyım.',
-    ],
+    soru: 'Bakteride asıl kalıtım maddesinden bağımsız bulunan, antibiyotik direnci genleri taşıyabilen küçük halkasal DNA hangisidir?',
+    karistirilan: ['Nükleoid', 'Mezozom', 'Kapsül'],
     aciklama:
-      'Bakterinin yaşaması için zorunlu değildir ama antibiyotik direnci gibi ek özellikler kazandırır; gen mühendisliğinde taşıyıcı olarak kullanılır.',
+      'Kendini tek başına eşleyebilir. Bakterinin yaşaması için zorunlu değildir ama ek özellikler kazandırır; gen mühendisliğinde taşıyıcı olarak kullanılır.',
     zorluk: 'orta',
   },
   {
     organel: 'Mezozom',
-    ipuclari: [
-      'Yalnızca bakteri hücrelerinde bulunurum.',
-      'Hücre zarının içeriye doğru kıvrılmasıyla oluşurum.',
-      'Solunum enzimlerini taşıdığım için bana bakterinin mitokondrisi denir; DNA’nın eşlenmesine de yardım ederim.',
-    ],
+    soru: 'Bakteride hücre zarının içe kıvrılmasıyla oluşan, solunum enzimlerini taşıyan yapı hangisidir?',
+    karistirilan: ['Nükleoid', 'Plazmit', 'Kapsül', 'Krista'],
     aciklama:
-      'Ders kitaplarında bakterinin solunum ve bölünme yeri olarak anlatılır; enerji üretimini zarın kendisi üstlenir.',
+      'Ders kitaplarında bakterinin solunum ve bölünme yeri olarak anlatılır; bu yüzden “bakterinin mitokondrisi” de denir.',
     zorluk: 'zor',
   },
   {
     organel: 'Kapsül',
-    ipuclari: [
-      'Bazı bakterilerin en dışında yer alırım.',
-      'Hücre duvarının da dışındayım; yapışkan bir polisakkarit örtüyüm.',
-      'Bakteriyi kurumaya ve akyuvarlara karşı korurum, hastalık yapma gücünü artırırım.',
-    ],
+    soru: 'Bazı bakterilerde hücre duvarının dışını saran, bakteriyi akyuvarlara karşı koruyan yapışkan örtü hangisidir?',
+    karistirilan: ['Hücre zarı', 'Glikokaliks', 'Mezozom', 'Nükleoid'],
     aciklama:
-      'Bakterinin hücre duvarını saran yapışkan koruyucu tabakadır; bunu taşıyan bakteriler bağışıklık sisteminden daha kolay kaçar.',
+      'Polisakkarit yapılı koruyucu tabakadır; bakteriyi kurumaya karşı da korur. Kapsüllü bakteriler bağışıklık sisteminden daha kolay kaçar.',
     zorluk: 'zor',
   },
   {
     organel: 'Hücre dışı matriks',
-    ipuclari: [
-      'Hayvan hücrelerinde, hücrelerin arasındaki boşlukta bulunurum.',
-      'Kollajen gibi proteinlerden ve karbonhidratlardan örülü bir ağım.',
-      'Hücrelerin birbirine tutunmasını sağlarım; kemiğin ve kıkırdağın sertliği benim yapımdan gelir.',
-    ],
+    soru: 'Hayvan dokularında hücrelerin arasını dolduran, kollajen gibi proteinlerden oluşan ağ hangisidir?',
+    karistirilan: ['Hücre duvarı', 'Glikokaliks', 'Hücre iskeleti', 'Sitoplazma'],
     aciklama:
-      'Hayvan hücresinde duvar yoktur; hücreleri bir arada tutan ve dokuya dayanıklılık veren yapı budur.',
+      'Hayvan hücresinde duvar yoktur; hücreleri bir arada tutan ve kemiğe, kıkırdağa dayanıklılık veren yapı budur.',
     zorluk: 'zor',
   },
 ]

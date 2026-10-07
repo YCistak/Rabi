@@ -126,8 +126,7 @@ export type SayacBilgisi = {
   /**
    * Turun puanı — yalnızca doğru sayısıyla ölçülemeyen oyunlarda.
    *
-   * Organel Kartı'nda cevabı kaçıncı ipucunda bulduğun, Köklü Sayı'da bonusu
-   * bilip bilmediğin doğru/yanlış ayrımına sığmıyor. Verilmezse sütun hiç
+   * Köklü Sayı'da bonusu bilip bilmediğin doğru/yanlış ayrımına sığmıyor. Verilmezse sütun hiç
    * çıkmıyor: öteki oyunlarda gösterilecek bir puan yok, sıfır yazan bir
    * sütun ise yanlış bilgi olurdu.
    */

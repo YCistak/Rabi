@@ -1,82 +1,33 @@
-import type { OrganelSorusu } from './hucre-havuzu'
+import type { HucreKaydi, OrganelSorusu } from './hucre-havuzu'
 import { HUCRE_HAVUZU } from './hucre-havuzu'
 import { siklariKur as coktanSecmeliSik, SIK_SAYISI, type Sik } from './coktan-secmeli'
 import { karistir } from './tur'
 
 /**
- * Organel Kartı'nın puan mantığı.
+ * Hücre ve Organeller oyununun mantığı.
  *
- * Öteki oyunlarda bir soru ya doğru ya yanlış; burada **ne zaman** bilindiği de
- * sayılıyor. Kartın arkasındaki organel üç ipucuyla açılıyor ve her ipucu
- * cevabı bir adım kolaylaştırdığı için puanı bir azaltıyor: birinci ipucuyla
- * bilmek 3, ikinciyle 2, üçüncüyle 1 puan. Süre dolarsa puan yok.
+ * Canlıları Sınıflandırma ile aynı mekanik: bir soru cümlesi, dört şık, biri
+ * doğru. Puan yok, doğru sayısı var — öteki oyunlarla aynı ölçü.
  *
- * Puan tur içinde duruyor, kalıcı istatistiğe yazılmıyor: rekor bütün
- * oyunlarda "kaç doğru" demek ve tek bir oyunun kendi puanıyla rekor tutması
- * o karşılaştırmayı bozardı. (`lib/oyunlar/tur.ts`)
+ * Çeldiriciler sorunun kendi listesinden (`karistirilan`) çekiliyor, bütün
+ * organellerden değil: bazı yapılar birbirinin parçası ve rastgele çekilseydi
+ * aynı soruya iki doğru şık düşebilirdi (`hucre-havuzu.ts`).
  */
 
 export { SIK_SAYISI }
 
-/** Kartın açtığı en fazla ipucu. */
-export const IPUCU_SAYISI = 3
-
 export type HucreSikki = Sik<string>
 export type HucreOyunSorusu = { soru: OrganelSorusu; siklar: HucreSikki[] }
 
-/** Şıklarda kullanılan bütün organel adları — çeldiriciler buradan seçiliyor. */
+/** Havuzdaki bütün yapı adları — çeldirici listesi bunlardan oluşmalı. */
 export const ORGANELLER = HUCRE_HAVUZU.map((s) => s.organel)
 
-/**
- * İpuçları sorunun **ilk dörtte üçünde** tükeniyor; son çeyrek karara kalıyor.
- *
- * İki uç da denendi. Süreye tamamen yayılınca üçüncü ipucu tam süre dolarken
- * geliyordu — gördüğü an cevaplayacak vakit kalmıyor, bekleme "oyun donmuş"
- * gibi duruyordu. İlk yarıya sıkıştırılınca (dokuz saniyede bir buçuk saniye
- * arayla) ikinci ve üçüncü ipucu, ilki daha okunmadan geliyordu: kart üç
- * satırı üst üste yığıyor, oyuncu ilk ipucuyla düşünme fırsatını hiç
- * bulamıyordu. On iki saniyelik soruda üçer saniye — bir ipucunu okuyup
- * şıklara bir kez bakmaya yetecek kadar.
- *
- * Oran olarak duruyor, sabit saniye olarak değil: süre tabloda değişebiliyor
- * (`SORU_SURESI`) ve sabit aralık orada aynı sorunu geri getirirdi.
- */
-const IPUCU_PAYI = 0.75
-
-/**
- * Şu an kaçıncı ipucu görünüyor: 1, 2 ya da `IPUCU_SAYISI`.
- *
- * İpuçları soru süresinin `IPUCU_PAYI` kadarını eşit üçe bölüyor, sabit
- * saniyeye değil: süre tabloda değişebiliyor ve sabit aralık kalsaydı ipuçları
- * ona göre farklı hızda gelirdi.
- *
- * Geçen süreyi besleyen saat **turun sayacı değil** (`oyun-hucre.tsx`,
- * `useAcikIpucu`): Sıradan ve Turbo'da saat tura ait, Rahat'ta hiç yok. İkisi
- * karıştırıldığında kart tur boyunca tek ipucunda donuyordu.
- */
-export function gorunenIpucu(gecenSaniye: number, toplamSure: number): number {
-  if (toplamSure <= 0) return IPUCU_SAYISI
-  const aralik = (toplamSure * IPUCU_PAYI) / IPUCU_SAYISI
-  const sira = Math.floor(gecenSaniye / aralik) + 1
-  return Math.min(IPUCU_SAYISI, Math.max(1, sira))
-}
-
-/**
- * Kaçıncı ipucunda bilindiyse kaç puan.
- *
- * Erken bilmek pahalıdır: ilk ipucu tek başına birkaç organele birden uyar,
- * oradan cevabı çıkarmak gerçekten bilmeyi gerektirir.
- */
-export function ipucuPuani(gorunen: number): number {
-  return Math.max(0, IPUCU_SAYISI + 1 - gorunen)
-}
-
-/** Bir sorunun şıkları: doğru organel + üç çeldirici, karışık sırada. */
+/** Bir sorunun şıkları: doğru yapı + sorunun listesinden üç çeldirici, karışık sırada. */
 export function siklariKur(
   soru: OrganelSorusu,
   rastgele: () => number = Math.random,
 ): HucreSikki[] {
-  return coktanSecmeliSik(soru.organel, ORGANELLER, (ad) => ad, rastgele)
+  return coktanSecmeliSik(soru.organel, soru.karistirilan, (ad) => ad, rastgele)
 }
 
 /**
@@ -93,4 +44,34 @@ export function turHazirla(
 ): HucreOyunSorusu[] {
   const sira = karistirilsin ? karistir(havuz, rastgele) : havuz
   return sira.map((soru) => ({ soru, siklar: siklariKur(soru, rastgele) }))
+}
+
+/**
+ * Banka kaydından sorulabilir soru.
+ *
+ * Önce havuza bakılıyor, kayda değil: havuzda düzeltilen bir soru ya da
+ * çeldirici bankadaki eski kopyada yanlış kalmaya devam ederdi. İpuçlu kart
+ * döneminin kayıtları (`soru` alanı yok) da böylece yeni biçimde soruluyor.
+ *
+ * Havuzdan düşmüş bir yapının kaydı ancak kendi sorusunu ve en az üç
+ * çeldiricisini taşıyorsa sorulabiliyor; taşımıyorsa `undefined` — eksik
+ * şıklı bir soru kurmaktansa hiç sorulmaması iyi.
+ */
+export function kayittanSoru(kayit: HucreKaydi): OrganelSorusu | undefined {
+  const havuzdaki = HUCRE_HAVUZU.find((s) => s.organel === kayit.organel)
+  if (havuzdaki) return havuzdaki
+  if (
+    typeof kayit.soru === 'string' &&
+    Array.isArray(kayit.karistirilan) &&
+    kayit.karistirilan.length >= SIK_SAYISI - 1
+  ) {
+    return {
+      organel: kayit.organel,
+      soru: kayit.soru,
+      karistirilan: kayit.karistirilan,
+      aciklama: kayit.aciklama ?? '',
+      zorluk: kayit.zorluk ?? 'orta',
+    }
+  }
+  return undefined
 }
