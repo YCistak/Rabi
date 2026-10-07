@@ -155,3 +155,24 @@ export function kaydirmaKis(simdiki: number, istenen: number, enCok: number): nu
 export function kaydirmaKisTam(simdiki: number, istenen: number, enCok: number): number {
   return kaydirmaKis(simdiki, Math.round(simdiki + istenen) - simdiki, Math.floor(enCok))
 }
+
+/** Bir kabın kaydırmaya dair ölçüleri (`getComputedStyle` + `scroll*`/`client*`). */
+export type KabOlcusu = { overflowX: string; overflowY: string; scrollWidth: number; clientWidth: number; scrollHeight: number; clientHeight: number }
+
+const kaydirilir = (deger: string) => deger === 'auto' || deger === 'scroll'
+
+/**
+ * Rehber açıkken bir dokunma/tekerlek hareketi serbest bırakılmalı mı?
+ *
+ * `zincir`: olayın hedefinden aydınlatılan hedefe kadar (ikisi de dahil) olan
+ * kapların ölçüleri; olay hedefin dışındaysa `null`. Hedefin içinde yatayda ya
+ * da dikeyde gerçekten taşan, kaydırılabilir bir kap varsa hareket o kabı
+ * kaydırsın diye serbest. Hedefin dışı ve hedef içindeki kaydırılamaz alanlar
+ * kilitli kalıyor: sayfanın kendisi kaymamalı (spot ile balon kopar).
+ */
+export function hedefteKaydirilabilir(zincir: readonly KabOlcusu[] | null): boolean {
+  if (!zincir) return false
+  return zincir.some((kab) =>
+    (kaydirilir(kab.overflowX) && kab.scrollWidth > kab.clientWidth + 1)
+    || (kaydirilir(kab.overflowY) && kab.scrollHeight > kab.clientHeight + 1))
+}

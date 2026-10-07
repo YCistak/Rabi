@@ -6,7 +6,7 @@ import { Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { adimPozu, TUR_ETIKETLERI } from '@/lib/tanitim'
 import { TANITIM_EGRISI, egriDegeri } from '@/lib/tanitim-animasyonu'
-import { balonGenisligi, balonKonumu, durgunlukSayaci, kaydirmaKis, kaydirmaKisTam, kutuFarki, type Kutu } from '@/lib/tanitim-yerlesim'
+import { balonGenisligi, balonKonumu, durgunlukSayaci, hedefteKaydirilabilir, kaydirmaKis, kaydirmaKisTam, kutuFarki, type KabOlcusu, type Kutu } from '@/lib/tanitim-yerlesim'
 import { taniAcikMi, taniKaydet, taniKutu } from '@/lib/tanitim-tani'
 import { useTanitim } from './tanitim-baglami'
 
@@ -39,6 +39,24 @@ function sistemPenceresinde(oge: EventTarget | null): boolean {
   // Yazı düğümünden gelen olayda hedef bir `Element` değil; üst öğesine bakılıyor.
   const eleman = oge instanceof Element ? oge : oge instanceof Node ? oge.parentElement : null
   return !!eleman?.closest('[data-sistem-penceresi]')
+}
+/**
+ * Olay, aydınlatılan hedefin içindeki kaydırılabilir bir kapta mı (hedefin
+ * kendisi dahil)? Karar `hedefteKaydirilabilir`da; burada yalnızca olay
+ * öğesinden hedefe kadar olan zincir ölçülüyor. Olay hedefin dışındaysa
+ * zincir `null`.
+ */
+function hedefIcindeKaydirma(oge: EventTarget | null, hedef: Element | null): boolean {
+  if (!hedef) return false
+  let eleman = oge instanceof Element ? oge : oge instanceof Node ? oge.parentElement : null
+  if (!eleman || !hedef.contains(eleman)) return hedefteKaydirilabilir(null)
+  const zincir: KabOlcusu[] = []
+  for (; eleman; eleman = eleman.parentElement) {
+    const { overflowX, overflowY } = getComputedStyle(eleman)
+    zincir.push({ overflowX, overflowY, scrollWidth: eleman.scrollWidth, clientWidth: eleman.clientWidth, scrollHeight: eleman.scrollHeight, clientHeight: eleman.clientHeight })
+    if (eleman === hedef) break
+  }
+  return hedefteKaydirilabilir(zincir)
 }
 /** Hedef bu kadar süre bulunamazsa delik söner (ekran değişiminin tek karesi için sönmesin). */
 const KAYIP_BEKLEMESI = 400
@@ -564,7 +582,16 @@ export function SpotIsigi() {
     }
     const izinli = (oge: EventTarget | null) => sistemPenceresinde(oge) || (oge instanceof Node && (denetim?.contains(oge) || balonRef.current?.contains(oge) || (etkilesimAcik && hedef?.contains(oge))))
     const engelle = (olay: Event) => {
-      if (!izinli(olay.target)) { olay.preventDefault(); olay.stopImmediatePropagation() }
+      if (izinli(olay.target)) return
+      /*
+        Dokunmanın başlangıcı iptal edilirse tarayıcı o hareketle hiç kaydırma
+        yapmıyor. Bilgi adımında da hedefin içindeki kayan şerit (ör. çipler)
+        elle kaydırılabilsin diye `touchstart` orada serbest; dokunuşun
+        tıklamaya dönüşmesini `click`/`pointerdown` engeli zaten kesiyor.
+      */
+      if (olay.type === 'touchstart' && hedefIcindeKaydirma(olay.target, hedef)) return
+      olay.preventDefault()
+      olay.stopImmediatePropagation()
     }
     const odaklan = () => balonRef.current?.querySelector<HTMLElement>('[data-tanitim-baslik]')?.focus({ preventScroll: true })
     const odagiKoru = (olay: FocusEvent) => { if (!izinli(olay.target)) odaklan() }
@@ -681,6 +708,9 @@ export function SpotIsigi() {
     balonun kendi içinde kaydırılabilir bir bölge dışında iptal ediliyor.
   */
   const rehberGorunur = !!adim && !rehberGizli
+  /** Kaydırma engeli adımlar arasında yeniden kurulmuyor; o anki hedefi buradan okuyor. */
+  const hedefAdiRef = useRef<string | null>(null)
+  hedefAdiRef.current = adim?.hedef ?? null
   useEffect(() => {
     if (!rehberGorunur) return
     const kok = document.documentElement
@@ -697,6 +727,14 @@ export function SpotIsigi() {
       if (balon && olay.target instanceof Node && balon.contains(olay.target) && balon.scrollHeight > balon.clientHeight) return
       // Sistem penceresinin (çökme sorusu) kendi kaydırılan içeriği çalışsın.
       if (sistemPenceresinde(olay.target)) return
+      /*
+        Aydınlatılan hedefin içindeki kaydırılabilir kaplar (Soru ekle formunun
+        ders şeridi, formun kendi dikey kaydırması) çalışsın. Eskiden hedef de
+        burada engelleniyordu: telefonda ekranın dışında kalan derslere
+        kaydırılamıyordu. Hedefin dışında engel sürüyor.
+      */
+      const hedefAdi = hedefAdiRef.current
+      if (hedefAdi && hedefIcindeKaydirma(olay.target, document.querySelector(`[data-tanitim="${hedefAdi}"]`))) return
       if (olay.cancelable) olay.preventDefault()
     }
     document.addEventListener('touchmove', kaydirmayiEngelle, { capture: true, passive: false })
