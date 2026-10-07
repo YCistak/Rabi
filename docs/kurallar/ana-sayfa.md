@@ -61,11 +61,9 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - Başlık tavşanı **tam boy, kırpılmaz** (kullanıcı istedi; kırpım geri getirilmez):
   84 px (tam boy 70 altında leke), yazı sütunu yanında `items-center`. Poz değişince
   `key` ile yeniden kurulur, `ana-maskot-gecis` ile solarak gelir (reduced-motion'da
-  yok). **Hiza tavşanın kendisine göre** (kullanıcı istedi): kutu görselin değil
-  görünen tavşanın genişliğinde (`gorunurKutu`, `MASKOT_YAN_BOSLUK` — saydam yan
-  boşluk ölçüleri, `maskot.test.ts` görsellerle karşılaştırır). Tavşanın sol kenarı
-  her pozda geri sayım kartının sol kenarıyla aynı hizada (başlıkta sol dolgu yok),
-  yazı her pozda tavşana `gap-3` uzaklıkta. Görsel değişirse tabloyu yeniden ölç.
+  yok). **Sabit 64 px yuva** (kullanıcı seçti, 2026-10): tavşan yuvanın ortasında
+  (`-mx-2.5`), yazı her pozda aynı yerden başlar. Yuvayı pozun genişliğine
+  uydurma: boşluk eşitlenir ama poz değişince yazı kayar (denendi, geri alındı).
   Etiket duruma özel (`Rabi.etiket`: "geriniyor, bugün henüz kayıt yok",
   "Pomodoro turunda çalışıyor"); `durum` ayrı, ruh hâlini taşır.
 - **Dört kutucuk** (Araçlar, Oyunlar) en son kullanılan başta (`lib/son-kullanilan.ts`).
