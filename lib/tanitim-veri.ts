@@ -172,12 +172,3 @@ export function bosDersGirisiGecerli(giris: { dogru: string; yanlis: string } | 
   const yanlis = Number(giris.yanlis)
   return dogru + yanlis >= 1 && dogru + yanlis <= ders.soruSayisi
 }
-
-/*
-  "Yanlış soru ekle"nin turdaki örnek sorusu. Turda kamera açılmıyor (izin
-  penceresi turun katmanıyla çakışır, fotoğraf da gerçek bankaya yazılırdı);
-  ekleme formu bu çizimle açılıyor ve kaydedilen hiçbir yere yazılmıyor.
-  Geniş ve kısa: formun önizleme kutusunda Kaydet'i ekranın altına itmesin.
-*/
-const ORNEK_SORU_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 220"><rect width="600" height="220" rx="16" fill="#fffdf8"/><g font-family="sans-serif" fill="#2b2420"><text x="28" y="48" font-size="22" font-weight="700">12.</text><text x="70" y="48" font-size="22">3x + 5 = 20 ise x kaçtır?</text><g font-size="20"><text x="70" y="100">A) 3</text><text x="190" y="100">B) 4</text><text x="310" y="100">C) 5</text><text x="70" y="140">D) 6</text><text x="190" y="140">E) 7</text></g></g><circle cx="211" cy="93" r="18" fill="none" stroke="#c0392b" stroke-width="3"/><text x="70" y="192" font-family="sans-serif" font-size="16" fill="#8a7f78">Tanıtım için örnek soru</text></svg>`
-export const ORNEK_YANLIS_SORU_GORSELI = `data:image/svg+xml,${encodeURIComponent(ORNEK_SORU_SVG)}`
