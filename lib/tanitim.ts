@@ -11,7 +11,7 @@ import type { Gorev } from './yapilacaklar'
   kullanıcı değerlendirmesinde uzun bulundu. Önce 12 adıma indi (ana sayfa,
   soru ekleme, Konu Takibi, Harita), deneme ekleme ve İstatistik mini turlara
   taştı; kullanıcı o ikisini mini turda zayıf buldu ve ana tura geri istedi.
-  Şimdi 26 adım: Harita'dan sonra deneme ekleme ve İstatistik. Gerisi
+  Şimdi 25 adım: Harita'dan sonra deneme ekleme ve İstatistik. Gerisi
   (Pomodoro, Yapılacaklar, Oyunlar, Oyun Bankası) ekran bazlı mini turlarda —
   ilgili ekran **ilk kez** açıldığında 1–5 adımlık kısa bir tur (`miniTurSec`).
   Mini turlar da ana tur gibi atlanamıyor ve her biri bir kez görülüyor.
@@ -92,7 +92,7 @@ export function turBitisKayitlari(turAdi: TanitimTuru): [anahtar: string, deger:
 }
 
 /** Turda kullanıcının kendisinin eklediği kayıt türleri (bkz. `lib/tanitim-veri.ts`). */
-export type TanitimKaydi = 'soru' | 'gorev' | 'deneme' | 'deneme-ders' | 'yanlis-soru'
+export type TanitimKaydi = 'soru' | 'gorev' | 'deneme' | 'deneme-ders'
 
 export type TanitimAdimi = {
   kimlik: string
@@ -131,7 +131,7 @@ const ADIM_POZLARI: Record<string, MaskotPozu> = {
   'pomodoro-prova': 'saatli', pomodoro: 'saatli', 'pomodoro-kilit': 'elleri-belde',
   'soru-form': 'defterli', 'soru-kaydedildi': 'sevinen',
   'gorev-ekle-bilgi': 'defterli', 'gorev-liste-bilgi': 'basparmak',
-  'deneme-liste': 'buyutecli', 'deneme-okut': 'fotografci', 'deneme-elle': 'defterli', 'deneme-yanlis-form': 'dusunen', 'deneme-kaydet': 'defterli',
+  'deneme-liste': 'buyutecli', 'deneme-okut': 'fotografci', 'deneme-elle': 'defterli', 'deneme-yanlis': 'dusunen', 'deneme-kaydet': 'defterli',
   'konu-takibi': 'okuyan', 'harita-ders': 'haritali', 'harita-soru': 'kitapli', 'konu-haritasi': 'haritali',
   'istatistik-tur': 'buyutecli', 'istatistik-son': 'tahtali', 'istatistik-ilerleyen': 'ziplayan', 'istatistik-kutular': 'durbunlu', 'istatistik-karsilastir': 'abakuslu',
   zorluk: 'elleri-belde', 'oyun-sayac': 'saatli', 'soru-bir': 'dusunen', sonuc: 'sevinen',
@@ -146,15 +146,21 @@ export function adimPozu(adim: TanitimAdimi, tur: TanitimTuru | null, sonAdimMi:
 }
 
 /**
- * Ana tur — 26 adım. Sıra: ana sayfa, soru ekleme, Konu Takibi, Harita, sonra
+ * Ana tur — 25 adım. Sıra: ana sayfa, soru ekleme, Konu Takibi, Harita, sonra
  * deneme ekleme ve İstatistik (kullanıcı ikisini mini turda değil ana turda
  * istedi; sayaç yok, atlanamaz). "Turu Bitir" son İstatistik adımında.
  *
  * Deneme formu: Okut tanıtılıyor; okutmadan İleri denirse örnek sonuçlar
  * **bir ders hariç** her derse yazılıyor (`turFormuSonuclari`). Boş ders
  * (`turBosDersi`) aydınlatılıyor ve geçerli bir doğru/yanlış girilmeden tur
- * ilerlemiyor; ardından "Yanlış soru ekle" ile örnek bir soru kaydediliyor
- * ve en son deneme kaydediliyor. Hepsi turun geçici verisi.
+ * ilerlemiyor; ardından "Yanlış soru ekle" yalnızca gösteriliyor (bilgi
+ * adımı, İleri ile geçilir) ve en son deneme kaydediliyor. Hepsi turun
+ * geçici verisi.
+ *
+ * "Yanlış soru ekle" bir süre dokundurulup örnek soru formu açtırılıyor,
+ * Kaydet'e bastırılıyordu; Android'de (Mi Note 10 Lite) hatalı bulundu ve
+ * kullanıcı turda yanlış soru eklettirilmesin, yalnızca gösterilsin istedi
+ * (2026-10). Formu turda yeniden açtırma.
  */
 export const TANITIM_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'sinav-hedefi', hedef: 'sinav-hedefi', baslik: 'Sınava kalan süre', aciklama: 'Kalan süreyi ve hedef bölümünü bu karttan izlersin.', tiklamali: false },
@@ -174,8 +180,7 @@ export const TANITIM_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'deneme-ekle', hedef: 'deneme-ekle', baslik: 'Şimdi sıra sende', aciklama: 'Deneme ekle’ye dokun.', tiklamali: true },
   { kimlik: 'deneme-okut', hedef: 'deneme-okut', etkilesimli: true, baslik: 'Fotoğraftan okut', aciklama: 'Kâğıdı fotoğrafla, Rabi forma yazsın. İleri dersen biri hariç örnekle dolar.', tiklamali: false },
   { kimlik: 'deneme-elle', hedef: 'deneme-bos-ders', kayit: 'deneme-ders', kisa: true, baslik: 'Bu ders sende', aciklama: 'Bu dersin doğru ve yanlış sayısını kendin yaz.', ipucu: 'Doğru ve yanlışı yaz', tiklamali: true },
-  { kimlik: 'deneme-yanlis', hedef: 'deneme-yanlis-ekle', baslik: 'Yanlışını sakla', aciklama: 'Yanlış soru ekle’ye dokun; soru bankana gider.', tiklamali: true },
-  { kimlik: 'deneme-yanlis-form', hedef: 'yanlis-soru-formu', kayit: 'yanlis-soru', kisa: true, baslik: 'Örnek soru', aciklama: 'Dersini seç ve kaydet. Gerçekte sorunun fotoğrafını çekersin.', ipucu: 'Kaydet’e dokun', tiklamali: true },
+  { kimlik: 'deneme-yanlis', hedef: 'deneme-yanlis-ekle', baslik: 'Yanlışını sakla', aciklama: 'Buradan yanlış sorularını fotoğraflayıp soru bankana ekleyebilirsin.', tiklamali: false },
   { kimlik: 'deneme-kaydet', hedef: 'deneme-kaydet', kayit: 'deneme', kisa: true, baslik: 'Denemeni kaydet', aciklama: 'Net hesaplandı. Kaydet’e dokun.', ipucu: 'Kaydet’e dokun', tiklamali: true },
   { kimlik: 'istatistik-ac', hedef: 'arac-istatistik', baslik: 'Gidişatın', aciklama: 'İstatistik’e dokun.', tiklamali: true },
   { kimlik: 'istatistik-tur', hedef: 'istatistik-turler', baslik: 'Deneme türü', aciklama: 'Her tür ayrı hesaplanır; iki denemeden sonra açılır.', tiklamali: false },
@@ -294,8 +299,7 @@ export const DEMO_SORULAR: Record<TanitimZorlugu, readonly [DemoSoru]> = {
   `demo-temizle`) hepsi birden siliniyor. Kullanıcının ana turda eklediği
   soru ve deneme burada (görev alanı ana tur kısalmadan önceden kalma, boş
   duruyor); iki hazır örnek deneme alana göre her çizimde yeniden kuruluyor
-  (`demoDenemeleri`, `lib/tanitim-veri.ts`). Deneme formundaki örnek yanlış
-  soru hiçbir listeye yazılmıyor, yalnızca adımı geçiriyor.
+  (`demoDenemeleri`, `lib/tanitim-veri.ts`).
 */
 export type DemoVeri = {
   demoVeri: true
@@ -349,7 +353,7 @@ const GERI_HEDEFI: Record<string, string> = {
 /** Deneme formunun Vazgeç'i: form kapanıp "Deneme ekle" adımına dönülüyor. */
 export const DENEME_VAZGEC = 'deneme-vazgec'
 /** Ana turun deneme formu açıkken geçen adımları. */
-export const DENEME_FORMU_ADIMLARI = ['deneme-okut', 'deneme-elle', 'deneme-yanlis', 'deneme-yanlis-form', 'deneme-kaydet']
+export const DENEME_FORMU_ADIMLARI = ['deneme-okut', 'deneme-elle', 'deneme-yanlis', 'deneme-kaydet']
 
 export function tanitimGecisi(durum: TanitimDurumu, eylem: TanitimEylemi): TanitimDurumu {
   if (eylem.tur === 'demo-temizle') return { ...durum, demo: demoVerileriTemizle().demo }

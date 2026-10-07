@@ -53,7 +53,7 @@ describe('Ana tur kısa ve kritik akışta', () => {
       'sinav-hedefi', 'hedef', 'araclar-ac',
       'soru-ac', 'soru-ekle', 'soru-form', 'soru-kaydedildi',
       'konu-takibi-ac', 'konu-takibi', 'harita-ac', 'harita-ders', 'harita-soru',
-      'deneme-ac', 'deneme-liste', 'deneme-ekle', 'deneme-okut', 'deneme-elle', 'deneme-yanlis', 'deneme-yanlis-form', 'deneme-kaydet',
+      'deneme-ac', 'deneme-liste', 'deneme-ekle', 'deneme-okut', 'deneme-elle', 'deneme-yanlis', 'deneme-kaydet',
       'istatistik-ac', 'istatistik-tur', 'istatistik-son', 'istatistik-ilerleyen', 'istatistik-kutular', 'istatistik-karsilastir',
     ])
   })
@@ -138,18 +138,21 @@ describe('Ana tur kısa ve kritik akışta', () => {
     expect(kimlik(tanitimGecisi(elle, { tur: 'kayit-eklendi', kayit: 'deneme-ders' }))).toBe('deneme-yanlis')
   })
 
-  it('"Yanlış soru ekle"ye dokunulup örnek soru kaydedilince Kaydet adımına geçiliyor', () => {
+  it('"Yanlış soru ekle" yalnızca gösteriliyor: İleri ile geçiliyor, dokunuş formu açmıyor', () => {
     const yanlis = adimaKadar('deneme-yanlis')
-    expect(tanitimGecisi(yanlis, { tur: 'ileri' })).toBe(yanlis)
-    const form = tanitimGecisi(yanlis, { tur: 'hedefe-dokun', hedef: 'deneme-yanlis-ekle' })
-    expect(kimlik(form)).toBe('deneme-yanlis-form')
-    expect(tanitimGecisi(form, { tur: 'hedefe-dokun', hedef: 'yanlis-soru-formu' })).toBe(form)
-    // Katmanın Vazgeç'i bir adım geri alıyor: katman kapanıp düğme yeniden aydınlanıyor.
-    expect(kimlik(tanitimGecisi(form, { tur: 'geri' }))).toBe('deneme-yanlis')
-    const kaydet = tanitimGecisi(form, { tur: 'kayit-eklendi', kayit: 'yanlis-soru' })
+    expect(TANITIM_ADIMLARI.find((a) => a.kimlik === 'deneme-yanlis')).toMatchObject({ tiklamali: false })
+    expect(tanitimGecisi(yanlis, { tur: 'hedefe-dokun', hedef: 'deneme-yanlis-ekle' })).toBe(yanlis)
+    const kaydet = tanitimGecisi(yanlis, { tur: 'ileri' })
     expect(kimlik(kaydet)).toBe('deneme-kaydet')
+    expect(kimlik(tanitimGecisi(kaydet, { tur: 'geri' }))).toBe('deneme-yanlis')
     expect(tanitimGecisi(kaydet, { tur: 'hedefe-dokun', hedef: 'deneme-kaydet' })).toBe(kaydet)
     expect(kimlik(tanitimGecisi(kaydet, { tur: 'kayit-eklendi', kayit: 'deneme' }))).toBe('istatistik-ac')
+  })
+
+  it('turda hiçbir adım yanlış soru formunu hedeflemiyor', () => {
+    for (const adimlar of Object.values(TUR_ADIMLARI)) {
+      for (const adim of adimlar) expect(adim.hedef, adim.kimlik).not.toBe('yanlis-soru-formu')
+    }
   })
 
   it('deneme formunun Vazgeç’i "Deneme ekle" adımına dönüyor; formun dışında yok sayılıyor', () => {
