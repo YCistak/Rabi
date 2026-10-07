@@ -27,7 +27,7 @@ kuralı oraya yazılır, buraya değil; yeni dosya açarsan aşağıdaki dizine 
 | [ana-sayfa.md](docs/kurallar/ana-sayfa.md) | YKS geri sayımı, başlıktaki tavşan, günün hâli cümlesi, kutucuklar |
 | [yanlis-soru.md](docs/kurallar/yanlis-soru.md) | yanlış soru ekleme, ders listesi, fotoğrafa çizim |
 | [yapilacaklar-ve-soru-takibi.md](docs/kurallar/yapilacaklar-ve-soru-takibi.md) | Yapılacaklar, Soru Takibi, ortak takvim bileşeni |
-| [konu-takibi.md](docs/kurallar/konu-takibi.md) | YKS Konu Takibi (TYT/AYT işaretleme, haritayla eşleme) |
+| [konu-takibi.md](docs/kurallar/konu-takibi.md) | YKS Konu Takibi (sınıf → okul dersi işaretleme, haritayla eşleme) |
 | [aylik-ozet.md](docs/kurallar/aylik-ozet.md) | aylık özet, arşiv, paylaşım afişi |
 | [basarimlar.md](docs/kurallar/basarimlar.md) | başarımlar/rozetler, ödül sistemi fikirleri |
 | [hedef-katalogu.md](docs/kurallar/hedef-katalogu.md) | hedef üniversite/bölüm, puan türü, sıralama |
