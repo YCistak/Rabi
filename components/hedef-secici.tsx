@@ -164,9 +164,6 @@ export function HedefKontrolu({
   return (
     <div className="rounded-xl bg-muted/70 px-3.5 py-3">
       <p className="text-sm font-extrabold">Kaydetmeden önce kontrol et</p>
-      <p className="mt-0.5 text-xs font-medium text-muted-foreground">
-        ÖSYM {KATALOG_VERI_YILI} verisi; yanlışsa düzelt.
-      </p>
       <div className="mt-2.5 grid grid-cols-2 gap-3">
         <div>
           <Etiket htmlFor={`${idOneki}-sira`}>{KATALOG_VERI_YILI} başarı sırası</Etiket>
