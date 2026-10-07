@@ -22,6 +22,8 @@ import { kalanSaniye } from '@/lib/pomodoro'
  * Yeri alt menünün hemen üstü, sağ kenar (tablette rayın solu). Hiçbir
  * ekranın sağ alt köşesinde basılması gereken bir şey yok; yapışkan
  * Başlat/Kaydet çubukları tam genişlik ve saat onlardan yüksekte.
+ *
+ * 80 piksel: 64'teyken kullanıcı saatin hiç belli olmadığını söyledi.
  */
 export function PomodoroSaati({ durum, onAc }: { durum: PomodoroDurumu; onAc: () => void }) {
   const [simdi, setSimdi] = useState(() => Date.now())
@@ -40,7 +42,7 @@ export function PomodoroSaati({ durum, onAc }: { durum: PomodoroDurumu; onAc: ()
   const metin = `${dk}:${String(sn).padStart(2, '0')}`
   const duraklatildi = durum.bitisZamani === null
 
-  const R = 27
+  const R = 34
   const cevre = 2 * Math.PI * R
 
   return (
@@ -48,17 +50,17 @@ export function PomodoroSaati({ durum, onAc }: { durum: PomodoroDurumu; onAc: ()
       type="button"
       onClick={onAc}
       aria-label={`Pomodoro: ${durum.mola ? 'mola' : 'çalışma'}, ${dk} dakika ${sn} saniye kaldı${duraklatildi ? ', duraklatıldı' : ''}. Aç`}
-      className="acilir-giris fixed right-4 bottom-[calc(5.75rem+var(--guvenli-alt))] z-40 grid size-[64px] place-items-center rounded-full bg-card shadow-[0_8px_22px_rgba(54,33,40,0.22)] transition active:scale-95 tablet:right-[calc(var(--ray)+var(--guvenli-sag)+1rem)] tablet:bottom-[calc(1.25rem+var(--guvenli-alt))]"
+      className="acilir-giris fixed right-4 bottom-[calc(5.75rem+var(--guvenli-alt))] z-40 grid size-[80px] place-items-center rounded-full bg-card shadow-[0_8px_22px_rgba(54,33,40,0.22)] transition active:scale-95 tablet:right-[calc(var(--ray)+var(--guvenli-sag)+1rem)] tablet:bottom-[calc(1.25rem+var(--guvenli-alt))]"
     >
-      <svg viewBox="0 0 64 64" className="absolute inset-0 size-full -rotate-90" aria-hidden>
-        <circle cx="32" cy="32" r={R} fill="none" stroke="var(--muted)" strokeWidth="4" />
+      <svg viewBox="0 0 80 80" className="absolute inset-0 size-full -rotate-90" aria-hidden>
+        <circle cx="40" cy="40" r={R} fill="none" stroke="var(--muted)" strokeWidth="5" />
         <circle
-          cx="32"
-          cy="32"
+          cx="40"
+          cy="40"
           r={R}
           fill="none"
           stroke={durum.mola ? 'var(--success)' : 'var(--primary-parlak)'}
-          strokeWidth="4"
+          strokeWidth="5"
           strokeLinecap="round"
           strokeDasharray={cevre}
           strokeDashoffset={cevre * (1 - oran)}
@@ -66,11 +68,11 @@ export function PomodoroSaati({ durum, onAc }: { durum: PomodoroDurumu; onAc: ()
         />
       </svg>
       <span className="relative flex flex-col items-center leading-none">
-        <span className="rakam text-[14px] font-extrabold">{metin}</span>
+        <span className="rakam text-[18px] font-extrabold">{metin}</span>
         {duraklatildi ? (
-          <Pause size={11} className="mt-1 text-muted-foreground" fill="currentColor" aria-hidden />
+          <Pause size={13} className="mt-1 text-muted-foreground" fill="currentColor" aria-hidden />
         ) : (
-          <span className="mt-1 text-[8.5px] font-extrabold tracking-[0.1em] text-muted-foreground">
+          <span className="mt-1 text-[10px] font-extrabold tracking-[0.1em] text-muted-foreground">
             {durum.mola ? 'MOLA' : 'ODAK'}
           </span>
         )}

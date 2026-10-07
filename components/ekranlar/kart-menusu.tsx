@@ -1,5 +1,6 @@
 'use client'
 
+import { OlcekliEmoji } from '@/components/olcekli-emoji'
 import { KARTLAR, type Ekran, type KartRengi, type KartTanimi } from '@/lib/gezinme'
 import { cn } from '@/lib/utils'
 
@@ -28,22 +29,29 @@ const RENK_SINIFI: Record<KartRengi, string> = {
  *
  * `ipucu` başlığın sağında duran soluk yazı: başlık ne olduğunu, ipucu ne işe
  * yaradığını söylüyor. "Okul" tek başına takvim mi not mu belli etmiyordu.
+ *
+ * `renk` bölümün bütün simge dairelerinin rengi: aynı bölümdeki araçlar aynı
+ * renkte duruyor (Okul Notları ile Devamsızlık ikisi de sarı). Kartın kendi
+ * `renk`i ana sayfadaki kutucuklarda kullanılmaya devam ediyor.
  */
-const BOLUMLER: { baslik: string; ipucu: string; kartlar: Ekran[] }[] = [
+const BOLUMLER: { baslik: string; ipucu: string; renk: KartRengi; kartlar: Ekran[] }[] = [
   {
     baslik: 'Çalışma',
     ipucu: 'Günlük rutin',
+    renk: 'pembe',
     kartlar: ['pomodoro', 'soru', 'konu-takibi', 'yanlis-banka', 'notlar'],
   },
   {
     baslik: 'Denemeler',
     ipucu: 'Sınav performansın',
+    renk: 'lavanta',
     kartlar: ['deneme', 'siralama', 'istatistik'],
   },
-  { baslik: 'Okul', ipucu: 'Dönem takibi', kartlar: ['okul', 'devamsizlik'] },
+  { baslik: 'Okul', ipucu: 'Dönem takibi', renk: 'krem', kartlar: ['okul', 'devamsizlik'] },
   {
     baslik: 'Motivasyon',
     ipucu: 'Devam etme sebebin',
+    renk: 'nane',
     kartlar: ['hedef', 'rozetler'],
   },
 ]
@@ -68,16 +76,17 @@ export function KartMenusu({
   const yersizler = KARTLAR.filter((k) => !yerlesenler.has(k.id))
 
   const bolumler = [
-    ...BOLUMLER.map(({ baslik, ipucu, kartlar }) => ({
+    ...BOLUMLER.map(({ baslik, ipucu, renk, kartlar }) => ({
       baslik,
       ipucu,
+      renk,
       // İstatistik her zaman listede. Bir süre karşılaştırılabilir iki
       // deneme olmadan gizleniyordu; denemesi olmayan kullanıcı (yeni
       // kurulan iOS sürümünde herkes) aracın var olduğunu hiç bilmiyordu.
       // Veri yokken ekran kendi boş durumunu söylüyor.
       kartlar: kartlariBul(kartlar),
     })),
-    ...(yersizler.length > 0 ? [{ baslik: 'Diğer', ipucu: '', kartlar: yersizler }] : []),
+    ...(yersizler.length > 0 ? [{ baslik: 'Diğer', ipucu: '', renk: undefined, kartlar: yersizler }] : []),
   ]
 
   return (
@@ -91,10 +100,10 @@ export function KartMenusu({
         {/* Başlığın simgesi sağ üstte, ana sayfada maskotun durduğu hizada:
             iki sekme aynı yerden başlasın diye. */}
         <span
-          className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart text-[21px] leading-none emoji"
+          className="grid size-11 shrink-0 place-items-center rounded-[15px] bg-yzm-kart"
           aria-hidden
         >
-          🧰
+          <OlcekliEmoji emoji="🧰" boyut={22} />
         </span>
       </header>
 
@@ -102,7 +111,7 @@ export function KartMenusu({
           süzmek listeyi kısaltmaktan çok kaydırmayı yerinden ediyordu. */}
       {/* Yatay tablette dört bölüm iki sütuna akıyor (`tablet-sutunlar`). */}
       <div className="tablet-sutunlar mt-5 space-y-5">
-        {bolumler.map(({ baslik, ipucu, kartlar }) => (
+        {bolumler.map(({ baslik, ipucu, renk, kartlar }) => (
           <section key={baslik}>
             <div className="mb-2 flex items-baseline justify-between gap-3 px-1.5">
               <h2 className="text-[11.5px] font-extrabold tracking-[0.09em] text-muted-foreground uppercase">
@@ -120,7 +129,11 @@ export function KartMenusu({
             <ul className="golge-kart overflow-hidden rounded-[22px] bg-card">
               {kartlar.map((kart) => (
                 <li key={kart.id} className="border-t border-border first:border-t-0">
-                  <AracSatiri kart={kart} onAc={() => onKartAc(kart.id)} />
+                  <AracSatiri
+                    kart={kart}
+                    renk={renk ?? kart.renk}
+                    onAc={() => onKartAc(kart.id)}
+                  />
                 </li>
               ))}
             </ul>
@@ -138,8 +151,16 @@ export function KartMenusu({
  * kullanıcı kaldırdı — araçların adı zaten ne olduklarını söylüyor ve bölüm
  * başlığının yanındaki ipucu kalan boşluğu dolduruyor.
  */
-function AracSatiri({ kart, onAc }: { kart: KartTanimi; onAc: () => void }) {
-  const { ad, ikon, renk } = kart
+function AracSatiri({
+  kart,
+  renk,
+  onAc,
+}: {
+  kart: KartTanimi
+  renk: KartRengi
+  onAc: () => void
+}) {
+  const { ad, ikon } = kart
 
   return (
     <button
@@ -150,12 +171,12 @@ function AracSatiri({ kart, onAc }: { kart: KartTanimi; onAc: () => void }) {
     >
       <span
         className={cn(
-          'emoji grid size-[42px] shrink-0 place-items-center rounded-full text-[20px] leading-none',
+          'grid size-[42px] shrink-0 place-items-center rounded-full',
           RENK_SINIFI[renk],
         )}
         aria-hidden
       >
-        {ikon}
+        <OlcekliEmoji emoji={ikon} boyut={22} />
       </span>
 
       <span className="min-w-0 flex-1">

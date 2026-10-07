@@ -50,7 +50,7 @@ import { OdakAyarlari } from '@/components/odak/odak-ayarlari'
 import { IosOdakAyarlari } from '@/components/odak/ios-odak-ayarlari'
 import { iosMu } from '@/lib/platform'
 import { cn, yeniId } from '@/lib/utils'
-import { Anahtar, BaslikSatiri, Buton, Kart, Not, Onay, useTanitimSuruyor } from '@/components/ui'
+import { Anahtar, BaslikSatiri, Buton, Kart, Not, Onay } from '@/components/ui'
 
 export function PomodoroEkrani({
   ayar,
@@ -899,8 +899,6 @@ function CalismaSahnesi({
 }) {
   useGeriKatmani(true, onGeri)
   const [bitirSoruluyor, setBitirSoruluyor] = useState(false)
-  // Tanıtımda eskisi gibi: başlamamış turu sormadan bitir (bkz. `useTanitimSuruyor`).
-  const tanitimda = useTanitimSuruyor()
 
   /*
     Sayacın altında bitiş saati: "kaç dakika kaldı"yı saate çevirmek
@@ -918,18 +916,13 @@ function CalismaSahnesi({
       {/*
         "Turu bitir" doğrudan bitirmiyor, önce soruyor: sayaç sıfırlanıyor ve
         tur kaydedilmiyor; düğme Duraklat'ın hemen yanında ve yanlışlıkla
-        basılıyordu. Başlamamış turda da soruyor (kullanıcı istedi: bütün ✕'ler
-        sorar), yalnız metni kayıptan söz etmiyor. Geri oku sormuyor — o yalnızca
-        duraklatıyor.
+        basılıyordu. Başlamamış turda kaybedilecek bir şey yok, orada sormuyor.
+        Geri oku sormuyor — o yalnızca duraklatıyor.
       */}
       <Onay
         acik={bitirSoruluyor}
         baslik="Tur bitirilsin mi?"
-        aciklama={
-          dokunulmadi
-            ? 'Tur henüz başlamadı; sayaç ekranı kapanır.'
-            : 'Sayaç sıfırlanır, bu tur kaydedilmez.'
-        }
+        aciklama="Sayaç sıfırlanır, bu tur kaydedilmez."
         onayMetni="Bitir"
         onOnayla={onBitir}
         onIptal={() => setBitirSoruluyor(false)}
@@ -965,7 +958,7 @@ function CalismaSahnesi({
         <div className="flex shrink-0 items-center gap-2.5">
           <SahneDugmesi
             etiket="Turu bitir"
-            onClick={() => (dokunulmadi && tanitimda ? onBitir() : setBitirSoruluyor(true))}
+            onClick={() => (dokunulmadi ? onBitir() : setBitirSoruluyor(true))}
           >
             <X size={20} aria-hidden />
           </SahneDugmesi>

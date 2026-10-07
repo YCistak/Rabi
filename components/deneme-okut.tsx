@@ -40,6 +40,7 @@ export function DenemeOkut({ sablon, onAktar, onAcikDegisti }: {
     return () => { if (acik) acikBildir.current?.(false) }
   }, [acik])
 
+  // Yalnız okunmuş sonuç varken sorar: o fotoğrafı yeniden çekmek gerekir.
   const kapatmaOnayi = useKapatmaOnayi({
     aciklama: 'Okunan sonuçlar aktarılmadıysa kaybolur.',
   })
@@ -120,7 +121,7 @@ export function DenemeOkut({ sablon, onAktar, onAcikDegisti }: {
       <div className="mx-auto max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
         <div className="mb-4 flex items-center justify-between">
           <h2 id="deneme-okut-baslik" className="font-display flex items-center gap-2 text-xl font-semibold">Denemeyi okut <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs text-primary">Beta</span></h2>
-          <Buton bicim="hayalet" boy="simge" onClick={() => kapatmaOnayi.sor(kapat)} aria-label="Okumayı kapat"><X size={20} /></Buton>
+          <Buton bicim="hayalet" boy="simge" onClick={() => (sonuc ? kapatmaOnayi.sor(kapat) : kapat())} aria-label="Okumayı kapat"><X size={20} /></Buton>
         </div>
         <p className="mb-2 text-sm text-muted-foreground">{sablon.ad} için ders adını, doğru ve yanlış sayısını her satıra ayrı yaz.</p>
         <Kart className="mb-4 space-y-1 font-semibold text-sm"><p>Matematik 38D 2Y</p><p>Türkçe 32D 6Y 2B</p></Kart>

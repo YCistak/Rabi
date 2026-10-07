@@ -5,15 +5,18 @@ import { Check, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { BilgiKarti, Konu } from '@/lib/konu'
 import type { HaritaTemasi } from '@/lib/konu/harita-temasi'
 import { desteAkisi, molaSecimi, type DesteAdimi } from '@/lib/konu/deste-akisi'
+import { kartPozlari } from '@/lib/konu/kart-maskotu'
+import type { MaskotPozu } from '@/lib/maskot'
 import { useGeriKatmani } from '@/lib/geri'
 import { useUygulamaGorunur } from '@/lib/gorunurluk'
-import { Buton, Onay, useTanitimSuruyor } from '@/components/ui'
+import { Buton, Onay } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartGorseli } from './kart-gorseli'
 import { KartMetni } from './kart-metni'
 import { DesteBasligi, DesteCubugu } from './deste-basligi'
 import { KisaMola } from './kisa-mola'
 import { HizliKontrolEkrani } from './hizli-kontrol'
+import { Sigdir } from './sigdir'
 
 /**
  * Bilgi kartı destesi.
@@ -45,9 +48,9 @@ import { HizliKontrolEkrani } from './hizli-kontrol'
  * onun yerine geçiyor.
  */
 
-/** Geri ve İleri düğmesinin ortak biçimi (turuncu, aynı boyut). */
+/** Geri ve İleri düğmesinin ortak biçimi; renk ve genişlik düğmede. */
 const DESTE_DUGMESI =
-  'grid h-[58px] w-16 shrink-0 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-[0_3px_0_rgba(0,0,0,0.14)] transition active:brightness-95 disabled:pointer-events-none disabled:opacity-40'
+  'grid h-[58px] place-items-center rounded-2xl shadow-[0_3px_0_rgba(0,0,0,0.14)] transition active:brightness-95 disabled:pointer-events-none disabled:opacity-40'
 
 export type DesteSonucu = {
   /** Okunan kart sayısı — gidilen en ileri kart. */
@@ -92,6 +95,7 @@ export function KartDestesi({
   */
   const [akis] = useState<DesteAdimi[]>(() => desteAkisi(konu.kartlar.length, konu.kontroller))
   const [molaSecimi_] = useState(() => molaSecimi())
+  const [pozlar] = useState(() => kartPozlari(konu.kartlar.length))
 
   const [adim, setAdim] = useState(0)
   /** Gidilen en ileri kart sayısı; geri dönüp yeniden ilerlemek sayıyı büyütmüyor. */
@@ -171,12 +175,9 @@ export function KartDestesi({
     window.scrollTo({ top: 0 })
   }, [adim])
 
-  // İlk ekranda da soruyor (kullanıcı istedi: bütün ✕'ler sorar); orada
-  // kaybedilecek bir şey olmadığı için yalnız metin değişiyor.
+  // İlk ekranda kaybedilecek bir şey yok, orada sormadan çıkıyor.
   const [cikisSoruluyor, setCikisSoruluyor] = useState(false)
-  // Tanıtımda eskisi gibi: ilk ekrandan sormadan çık (bkz. `useTanitimSuruyor`).
-  const tanitimda = useTanitimSuruyor()
-  const kapat = () => (adim === 0 && tanitimda ? onKapat(sonucla()) : setCikisSoruluyor(true))
+  const kapat = () => (adim === 0 ? onKapat(sonucla()) : setCikisSoruluyor(true))
 
   return (
     <div
@@ -191,11 +192,7 @@ export function KartDestesi({
       <Onay
         acik={cikisSoruluyor}
         baslik="Konudan çıkılsın mı?"
-        aciklama={
-          adim === 0
-            ? 'Henüz okumaya başlamadın; haritaya dönersin.'
-            : 'Deste yarım kalır, konu bitmiş sayılmaz.'
-        }
+        aciklama="Deste yarım kalır, konu bitmiş sayılmaz."
         onayMetni="Çık"
         onOnayla={() => onKapat(sonucla())}
         onIptal={() => setCikisSoruluyor(false)}
@@ -234,6 +231,7 @@ export function KartDestesi({
         <KartEkrani
           kart={konu.kartlar[bu.sira]}
           sira={bu.sira}
+          poz={pozlar[bu.sira]}
           toplam={toplam}
           konuAdi={konu.ad}
           dersAdi={dersAdi}
@@ -261,6 +259,7 @@ export function KartDestesi({
 function KartEkrani({
   kart,
   sira,
+  poz,
   toplam,
   konuAdi,
   dersAdi,
@@ -275,6 +274,7 @@ function KartEkrani({
 }: {
   kart: BilgiKarti
   sira: number
+  poz: MaskotPozu
   toplam: number
   konuAdi: string
   dersAdi: string
@@ -312,24 +312,28 @@ function KartEkrani({
 
       <div className="flex min-h-0 flex-1 flex-col px-4 pb-[calc(1rem+var(--guvenli-alt))]">
         {/*
-          Kutu **kaydırılabilir**: görselli kartlar yazıdan uzun ve kısa bir
-          telefonda alt kenardan taşıyordu. `my-auto` yalnızca sığan içeriği
-          ortalıyor; sığmayan yukarıdan başlayıp kaydırılıyor.
+          Kart kaydırılmadan okunmalı (`Sigdir`): görselli kartlar yazıdan uzun
+          ve iPhone'da alt kenardan taşıyordu. Sığmazsa önce üstteki tavşan
+          kalkıyor, sonra kart orantılı küçülüyor.
         */}
-        <div className="mx-auto flex w-full max-w-md min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain">
-          <div className="my-auto w-full">
-            {/* Rabi (okuyan poz) ve altındaki çizgi: kartın üstündeki boşluğu
-                dolduruyor; eskiden burada ders simgesi duruyordu. */}
-            <div className="flex min-h-[70px] flex-col items-center justify-center gap-2.5">
-              <Rabi
-                poz="okuyan"
-                boyut={96}
-                className="drop-shadow-[0_6px_8px_rgba(31,36,48,0.14)]"
-              />
-              <span className="h-px w-full bg-black/12" />
-            </div>
+        <Sigdir anahtar={kart.id} className="mx-auto w-full max-w-md min-h-0 flex-1">
+          {(sikisik) => (
+          <>
+            {/* Rabi ve altındaki çizgi: kartın üstündeki boşluğu dolduruyor;
+                eskiden burada ders simgesi duruyordu. Poz her kartta değişiyor
+                (`lib/konu/kart-maskotu.ts`). */}
+            {!sikisik && (
+              <div className="flex min-h-[70px] flex-col items-center justify-center gap-2.5">
+                <Rabi
+                  poz={poz}
+                  boyut={96}
+                  className="drop-shadow-[0_6px_8px_rgba(31,36,48,0.14)]"
+                />
+                <span className="h-px w-full bg-black/12" />
+              </div>
+            )}
 
-            <div className="relative mt-3.5">
+            <div className={sikisik ? 'relative mt-3' : 'relative mt-3.5'}>
               {/* Arkadaki iki kâğıt. */}
               <span
                 aria-hidden
@@ -412,18 +416,19 @@ function KartEkrani({
                 </div>
               )}
             </div>
-          </div>
-        </div>
+          </>
+          )}
+        </Sigdir>
 
-        {/* Geri ve İleri aynı boyutta ve biçimde, ikisi de turuncu (primary).
-            İlk kartta Geri pasif ve soluk — gidilecek yer yok. */}
-        <div className="mx-auto mt-4 flex w-full max-w-md justify-between gap-3">
+        {/* İleri asıl iş: sağda uzun, turuncu dolgu. Geri ikincil: solda küçük,
+            beyaz. İlk kartta Geri pasif ve soluk — gidilecek yer yok. */}
+        <div className="mx-auto mt-4 flex w-full max-w-md gap-3">
           <button
             type="button"
             onClick={onGeri}
             disabled={ilk}
             aria-label="Önceki kart"
-            className={DESTE_DUGMESI}
+            className={`${DESTE_DUGMESI} w-[58px] shrink-0 bg-card text-foreground`}
           >
             <ChevronLeft size={22} strokeWidth={2.6} aria-hidden />
           </button>
@@ -431,7 +436,7 @@ function KartEkrani({
             type="button"
             onClick={onIlerle}
             aria-label={son ? 'Desteyi bitir' : 'Sonraki kart'}
-            className={DESTE_DUGMESI}
+            className={`${DESTE_DUGMESI} flex-1 bg-primary-parlak text-primary-foreground`}
           >
             {son ? (
               <Check size={22} strokeWidth={2.6} aria-hidden />

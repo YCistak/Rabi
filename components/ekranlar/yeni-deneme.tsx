@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { AlertCircle, Camera, Check, X } from 'lucide-react'
 import { Alan, Buton, Etiket, Kart, Not, useKapatmaOnayi } from '@/components/ui'
 import {
@@ -15,6 +15,7 @@ import { bugun, cn, yeniId } from '@/lib/utils'
 import type { Deneme, PuanTuru, Sablon, YanlisSoru } from '@/lib/types'
 import { DenemeOkut } from '@/components/deneme-okut'
 import { bosDersGirisiGecerli, ORNEK_YANLIS_SORU_GORSELI, turBosDersi, turFormuSonuclari } from '@/lib/tanitim-veri'
+import { TarihSecici } from '@/components/tarih-secici'
 
 const useYerlesimEtkisi = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
@@ -80,6 +81,21 @@ export function YeniDenemeEkrani({
     : (secenekler.find((s) => s.id === varsayilanSablonId) ?? secenekler[0])
 
   const [sablonId, setSablonId] = useState(ilkSablon.id)
+  const turSeridi = useRef<HTMLDivElement>(null)
+
+  /*
+    Varsayılan tür satırın sonundaysa (11. sınıf ve üstünde alanın AYT'si)
+    açılışta görünmezdi; şerit ilk çizimde seçili düğmeye kaydırılıyor.
+    Yalnız açılışta: kullanıcı kaydırıp seçtikten sonra şerit yerinde kalır.
+  */
+  useYerlesimEtkisi(() => {
+    const serit = turSeridi.current
+    const secili = serit?.querySelector<HTMLElement>('[aria-pressed="true"]')
+    if (!serit || !secili) return
+    const kutu = serit.getBoundingClientRect()
+    const dugme = secili.getBoundingClientRect()
+    if (dugme.right > kutu.right) serit.scrollLeft += dugme.left - kutu.left
+  }, [])
   const [tarih, setTarih] = useState(duzenlenen?.tarih ?? bugun())
   const [ad, setAd] = useState(duzenlenen?.ad ?? '')
   const [girisler, setGirisler] = useState<Record<string, Giris>>(() => {
@@ -204,13 +220,20 @@ export function YeniDenemeEkrani({
     }))
   }
 
+  /*
+    Vazgeç yalnız girilmiş bir şey kaybolacaksa soruyor: yeni denemede bir
+    sayı ya da ad yazıldıysa, düzenlemede bir şey değiştiyse. Boş formu
+    kapatmak bir şey kaybettirmez.
+  */
+  const [ilkHal] = useState(() => JSON.stringify({ ad, girisler }))
+  const girildi = duzenlenen
+    ? JSON.stringify({ ad, girisler }) !== ilkHal
+    : ad.trim() !== '' ||
+      Object.values(girisler).some((g) => g.dogru !== '' || g.yanlis !== '')
   const vazgecOnayi = useKapatmaOnayi({
     aciklama: duzenlenen
       ? 'Yaptığın değişiklikler kaydedilmez.'
       : 'Girdiğin sonuçlar kaydedilmez.',
-  })
-  const yanlisKapatmaOnayi = useKapatmaOnayi({
-    aciklama: 'Yanlış soru eklenmeden deneme formuna dönersin.',
   })
 
   const kaydet = () => {
@@ -243,7 +266,6 @@ export function YeniDenemeEkrani({
   return (
     <div className="overflow-x-clip">
       {vazgecOnayi.pencere}
-      {yanlisKapatmaOnayi.pencere}
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="min-w-0">
           <h1 className="font-display text-2xl font-semibold tracking-tight">
@@ -253,7 +275,7 @@ export function YeniDenemeEkrani({
             {sablon.ad} · {toplamSoru(sablon)} soru · {katsayiYaz(sablon.yanlisKatsayi)}
           </p>
         </div>
-        <Buton bicim="hayalet" boy="simge" onClick={() => vazgecOnayi.sor(onVazgec)} aria-label="Vazgeç">
+        <Buton bicim="hayalet" boy="simge" onClick={() => (girildi ? vazgecOnayi.sor(onVazgec) : onVazgec())} aria-label="Vazgeç">
           <X size={20} />
         </Buton>
       </div>
@@ -261,8 +283,13 @@ export function YeniDenemeEkrani({
       {!duzenlenen && (
         <div className="mb-4">
           <Etiket>Deneme türü</Etiket>
-          {/* Pomodoro'nun ders kutularıyla aynı biçim: dikdörtgen, ızgarada. */}
-          <div className="grid grid-cols-2 gap-2">
+          {/* Kullanıcı istedi: türler iki sütunlu ızgara yerine tek satırda,
+              sağa kaydırılarak seçiliyor. Sağ kenarda kesilen düğme satırın
+              devam ettiğini gösteriyor. */}
+          <div
+            ref={turSeridi}
+            className="flex snap-x snap-proximity gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
             {secenekler.map((s) => (
               <button
                 key={s.id}
@@ -270,7 +297,7 @@ export function YeniDenemeEkrani({
                 aria-pressed={s.id === sablonId}
                 onClick={() => setSablonId(s.id)}
                 className={cn(
-                  'flex h-11 items-center justify-center rounded-[13px] border px-2 text-[12.5px] transition',
+                  'flex h-11 shrink-0 snap-start items-center justify-center whitespace-nowrap rounded-[13px] border px-4 text-[12.5px] transition',
                   s.id === sablonId
                     ? 'border-[1.5px] border-primary-parlak bg-primary-soft font-extrabold text-primary'
                     : 'border-border bg-card font-bold text-muted-foreground active:bg-muted',
@@ -295,13 +322,7 @@ export function YeniDenemeEkrani({
         </div>
         <div className="min-w-0">
           <Etiket htmlFor="deneme-tarih">Tarih</Etiket>
-          <Alan
-            id="deneme-tarih"
-            type="date"
-            className="w-full min-w-0"
-            value={tarih}
-            onChange={(e) => setTarih(e.target.value)}
-          />
+          <TarihSecici id="deneme-tarih" deger={tarih} onDegis={setTarih} />
         </div>
       </div>
 
@@ -466,7 +487,7 @@ export function YeniDenemeEkrani({
                   <Buton
                     bicim="hayalet"
                     boy="simge"
-                    onClick={() => yanlisKapatmaOnayi.sor(() => setYanlisAcik(false))}
+                    onClick={() => setYanlisAcik(false)}
                     aria-label="Kapat"
                   >
                     <X size={20} />

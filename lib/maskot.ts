@@ -19,9 +19,8 @@ export type MaskotDurumu = 'normal' | 'mutlu' | 'uykulu' | 'calisiyor' | 'uzgun'
  * Bütün pozlar. Her biri `public/tavsan-<poz>.png` — üreten yer
  * `scripts/maskot-uret.mjs`, `maskot.test.ts` dosyaların varlığını denetliyor.
  *
- * `yuz`, `kafa` ve `kafa-*` dışındakiler **tam boy**: gövde ancak 70
- * pikselin üstünde okunuyor. `kafa-*` ana sayfa başlığının durum kırpımları
- * (58 piksel): pozun baş ve üst gövdesi.
+ * `yuz` ve `kafa` dışındakiler **tam boy**: gövde ancak 70 pikselin üstünde
+ * okunuyor.
  */
 export const MASKOT_POZLARI = [
   // İlk takım
@@ -64,28 +63,9 @@ export const MASKOT_POZLARI = [
   'durbunlu',
   'esneyen',
   'alkislayan',
-  // Ana sayfa başlığının durum kafaları
-  'kafa-uyuyan',
-  'kafa-gerinen',
-  'kafa-yazan',
-  'kafa-kitapli',
-  'kafa-laptoplu',
-  'kafa-kahveli',
-  'kafa-dans',
-  'kafa-alkislayan',
-  'kafa-kahkaha',
-  'kafa-elleri-belde',
-  'kafa-bagdas',
-  'kafa-uzgun',
-  'kafa-damgali',
-  'kafa-selamlayan',
-  'kafa-buyutecli',
-  'kafa-saatli',
-  'kafa-dusunen',
-  'kafa-megafonlu',
-  'kafa-tahtali',
-  'kafa-cantali',
-  'kafa-bitkili',
+  'uyuyan',
+  'yazan',
+  'ayracli',
 ] as const
 
 export type MaskotPozu = (typeof MASKOT_POZLARI)[number]

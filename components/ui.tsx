@@ -392,8 +392,10 @@ export function useTanitimSuruyor() {
 }
 
 /**
- * Kapatma (✕) düğmelerinin onayı. Kullanıcı istedi: uygulamadaki bütün ✕'ler
- * kapatmadan önce sorar — kaybedilecek bir şey olmasa da.
+ * Kapatma (✕) düğmelerinin onayı. Kullanıcı istedi: ✕ yalnızca hemen geri
+ * gelmeyecek bir şey kaybolacaksa sorar (yazılmış metin, girilmiş sayılar,
+ * okunmuş sonuç); öbür ✕'ler sormadan kapanır. Koşulu çağıran yer kurar:
+ * `girildi ? sor(kapat) : kapat()`.
  *
  * `sor(kapat)` pencereyi açar; "Çık" denince `kapat` hiç değiştirilmeden
  * çağrılır, böylece katmanın kendi kapanış yolu (perde, `cikiyor` bayrağı,

@@ -7,6 +7,7 @@ import type { HaritaTemasi } from '@/lib/konu/harita-temasi'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
 import { Buton } from '@/components/ui'
+import { Sigdir } from './sigdir'
 import { Rabi } from '@/components/maskot/rabi'
 import { DesteBasligi, DesteCubugu, DesteRozeti } from './deste-basligi'
 
@@ -93,8 +94,15 @@ export function HizliKontrolEkrani({
         <DesteCubugu toplam={toplam} okunan={okunan} bicim={bicim} />
       </header>
 
-      <div className="mx-auto flex w-full max-w-md min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-5 pb-[calc(1rem+var(--guvenli-alt))]">
-        <div className="relative mt-8 flex flex-col items-center">
+      {/* Kaydırmadan okunmalı (`Sigdir`): sığmazsa önce tavşan kalkıyor, sonra soru küçülüyor. */}
+      <Sigdir
+        anahtar={kontrol.soru}
+        ortala={false}
+        className="mx-auto w-full max-w-md min-h-0 flex-1 px-5 pb-[calc(1rem+var(--guvenli-alt))]"
+      >
+        {(sikisik) => (
+        <>
+        <div className={cn('relative flex flex-col items-center', sikisik ? 'mt-4' : 'mt-8')}>
           <span
             aria-hidden
             className="pointer-events-none absolute top-[90px] left-1/2 size-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full"
@@ -102,6 +110,7 @@ export function HizliKontrolEkrani({
               background: 'radial-gradient(closest-side, rgba(255,255,255,0.9), rgba(255,255,255,0))',
             }}
           />
+          {!sikisik && (
           <div className="mola-maskot relative">
             <div className="mola-suzul">
               <Rabi
@@ -118,6 +127,7 @@ export function HizliKontrolEkrani({
               💭
             </span>
           </div>
+          )}
 
           <div className="mola-yazi relative mt-4 text-center">
             <p className="text-[10.5px] font-extrabold tracking-[0.18em] text-muted-foreground uppercase">
@@ -166,8 +176,9 @@ export function HizliKontrolEkrani({
             )
           })}
         </div>
-        <div className="min-h-4 flex-1" />
-      </div>
+        </>
+        )}
+      </Sigdir>
 
       {secim !== null && (
         <div className="katman-zemin fixed inset-0 z-[60] flex items-end justify-center bg-black/35">

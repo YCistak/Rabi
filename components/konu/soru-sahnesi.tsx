@@ -7,10 +7,11 @@ import { isabetOrani, kapanisKademesi, sureYaz } from '@/lib/konu/kapanis'
 import { useGeriKatmani } from '@/lib/geri'
 import { bugun, cn } from '@/lib/utils'
 import { gununPozu, type MaskotPozu } from '@/lib/maskot'
-import { Buton, Onay, useTanitimSuruyor } from '@/components/ui'
+import { Buton, Onay } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartGorseli } from './kart-gorseli'
 import { KonuOzeti } from './konu-ozeti'
+import { Sigdir } from './sigdir'
 import type { KonuDersId } from '@/lib/konu/tip'
 
 /**
@@ -168,8 +169,6 @@ export function SoruSahnesi({
   sonucRef.current = { dogru, yanlis, bitti }
   useGeriKatmani(true, () => onKapat(sonucRef.current))
   const [cikisSoruluyor, setCikisSoruluyor] = useState(false)
-  // Tanıtımda eskisi gibi: cevapsız yoklamadan sormadan çık (bkz. `useTanitimSuruyor`).
-  const tanitimda = useTanitimSuruyor()
 
   function karar(cevap: number) {
     if (secim !== null) return
@@ -279,18 +278,14 @@ export function SoruSahnesi({
 
       {/*
         Çarpı doğrudan çıkmıyor, önce soruyor: yanlışlıkla dokunulan çarpı
-        yoklamayı bitiriyordu ve geri dönüşü yoktu. Cevap verilmemişken de
-        soruyor (kullanıcı istedi: bütün ✕'ler sorar). Geri tuşu ve kenardan
-        kaydırma sormadan çıkmaya devam ediyor — orada niyet belli.
+        yoklamayı bitiriyordu ve geri dönüşü yoktu. Cevap verilmemişken
+        kaybedilecek bir şey yok, orada sormuyor. Geri tuşu ve kenardan kaydırma
+        sormadan çıkmaya devam ediyor — orada niyet belli.
       */}
       <Onay
         acik={cikisSoruluyor}
         baslik="Yoklamadan çıkılsın mı?"
-        aciklama={
-          dogru + yanlis > 0
-            ? 'Verdiğin cevaplar kaydedilmez, yoklama baştan başlar.'
-            : 'Henüz cevap vermedin; yoklama kapanır.'
-        }
+        aciklama="Verdiğin cevaplar kaydedilmez, yoklama baştan başlar."
         onayMetni="Çık"
         onOnayla={() => onKapat(sonucRef.current)}
         onIptal={() => setCikisSoruluyor(false)}
@@ -300,7 +295,7 @@ export function SoruSahnesi({
           <button
             type="button"
             onClick={() =>
-              dogru + yanlis > 0 || !tanitimda ? setCikisSoruluyor(true) : onKapat(sonucRef.current)
+              dogru + yanlis > 0 ? setCikisSoruluyor(true) : onKapat(sonucRef.current)
             }
             aria-label="Kapat"
             className="sahne-kapat grid size-[46px] shrink-0 place-items-center rounded-2xl bg-card transition active:brightness-95"
@@ -340,8 +335,8 @@ export function SoruSahnesi({
 
       <div className="relative flex min-h-0 flex-1 flex-col px-7 pb-[calc(2rem+var(--guvenli-alt))]">
         {/*
-          Kartın boyu içeriğe göre değişiyor ve gerekirse kendi içinde
-          kaydırılıyor: görselli soru ile tek cümlelik soru aynı kutuya
+          Kartın boyu içeriğe göre değişiyor ve sığmazsa küçülüyor (`Sigdir`):
+          görselli soru ile tek cümlelik soru aynı kutuya
           sığmıyor, sabit boy ikisinden birini bozardı. Dikey ortalama
           `my-auto` ile, `flex-1` ile değil — artan yeri paylaşan kutu kartı
           yukarı yapıştırmıyor.
@@ -349,11 +344,19 @@ export function SoruSahnesi({
           Kaydırma kutusunun üstünde ve yanlarında pay var: rozet çerçevenin
           dışına taşıyor ve paysız bir `overflow` onu kırpıyordu.
         */}
-        <div className="mx-auto my-auto w-full max-w-md overflow-y-auto overscroll-contain px-3 pt-5 -mx-3">
-          {/* Maskot kartın üstünde oturuyor; kararın kendisi kartta, tavşan izliyor. */}
-          <div className="flex justify-center">
-            <Rabi poz="kahveli" boyut={134} durum="normal" className="sahne-maskot" />
-          </div>
+        <Sigdir
+          anahtar={soru.id}
+          className="mx-auto w-full max-w-md min-h-0 flex-1 px-3 pt-5 -mx-3"
+        >
+          {(sikisik) => (
+          <>
+          {/* Maskot kartın üstünde oturuyor; kararın kendisi kartta, tavşan
+              izliyor. Kart kaydırmadan sığmıyorsa (`Sigdir`) önce o kalkıyor. */}
+          {!sikisik && (
+            <div className="flex justify-center">
+              <Rabi poz="kahveli" boyut={134} durum="normal" className="sahne-maskot" />
+            </div>
+          )}
 
           {/*
             Kararın izi kartın **çerçevesinde**: kart amber bir paspartuyla
@@ -416,7 +419,9 @@ export function SoruSahnesi({
               </div>
             </div>
           </div>
-        </div>
+          </>
+          )}
+        </Sigdir>
 
         <div className="mx-auto mt-[18px] w-full max-w-md">
           {soru.tur === 'sikli' ? (
@@ -580,7 +585,7 @@ function Kapanis({
           {dersAdi} · {temaAdi}
         </p>
         <h2 className="mt-0.5 font-display text-[16px] leading-tight font-extrabold tracking-tight text-balance">
-          {konuAdi} · yoklama bitti
+          {konuAdi}
         </h2>
       </header>
 

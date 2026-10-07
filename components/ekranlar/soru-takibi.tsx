@@ -585,7 +585,9 @@ function SoruEkleSayfasi({
     calismaSirasi(gecmisSoru.map((k) => ({ ders: k.ders, dakika: k.toplam }))),
   )
 
+  // Yalnız sayı girildiyse sorar: boş formu kapatmak bir şey kaybettirmez.
   const kapatmaOnayi = useKapatmaOnayi({ aciklama: 'Girdiğin sayılar kaydedilmeden pencere kapanır.' })
+  const girildi = toplam !== '' || dogru !== '' || yanlis !== ''
 
   return (
     <div
@@ -605,7 +607,7 @@ function SoruEkleSayfasi({
           <p className="ml-auto text-[12.5px] font-bold text-muted-foreground/70">Bugün</p>
           <button
             type="button"
-            onClick={() => kapatmaOnayi.sor(onKapat)}
+            onClick={() => (girildi ? kapatmaOnayi.sor(onKapat) : onKapat())}
             aria-label="Kapat"
             className="inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-xl bg-muted/70 text-muted-foreground active:bg-muted"
           >

@@ -4,7 +4,7 @@
 
 1. `lib/tanitim.ts`: Ana tur ve yedi mini turun adımları, bağımsız kayıt anahtarları, mini tur seçimi (`miniTurSec`), saf geçiş fonksiyonu, gerçek oyundan gelen geçici sonuç ve üç örnek banka kaydı.
 2. `components/tanitim/tanitim-baglami.tsx`: React 19 Context, aktif tur/adım, `turuBaslat`, `sonrakiAdimaGec`, `oncekiAdimaDon`, `turuBitir`, `turGorulduMu`, `turuKaydet`.
-3. `components/tanitim/spot-isigi.tsx`: SVG maskesi, güvenli ekran boşlukları, dokunma kilidi, klavye odağı, yumuşak kaydırma ve konum takibi. Yönlendirme düğmeleri en az 44×44 piksel.
+3. `components/tanitim/spot-isigi.tsx`: SVG maskesi, güvenli ekran boşlukları, dokunma kilidi, klavye odağı, yumuşak kaydırma ve konum takibi. Belge düzeyindeki kaydırma engeli aydınlatılan hedefin içindeki taşan kaplarda (hedef dahil) kalkar — ör. Soru ekle'deki ders şeridi; karar `hedefteKaydirilabilir` (`lib/tanitim-yerlesim.ts`, testli). Yönlendirme düğmeleri en az 44×44 piksel.
 4. `components/tanitim/demo-oyun.tsx`: Ders ızgarasındaki Tanıtım oyunu kartı ve gerçek `IslemOyunuEkrani`. Hazırlık, mod/zorluk seçimi, geri sayım, tuş takımı ve sonuç ekranı mevcut oyunlarla aynıdır. Tur ayarları ve sonuç sadece bellekte tutulur.
 5. `components/app-shell.tsx`: Kurulum ve açılış animasyonu bittikten sonra ana turu başlatır; ana turun ekran geçişlerini yönetir. Bir ekran ilk açıldığında `miniTurSec` ile o ekranın mini turunu başlatır.
 

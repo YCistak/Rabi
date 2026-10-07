@@ -118,7 +118,7 @@ describe('anaBaslik', () => {
   it('hedef sıfırsa cümle yok, tavşan yine poz veriyor', () => {
     const { maskot, cumle } = anaBaslik({ ...temel, hedef: 0, pomodoro: 'calisma' })
     expect(cumle).toBeNull()
-    expect(maskot.poz).toBe('kafa-laptoplu')
+    expect(maskot.poz).toBe('laptoplu')
   })
 
   it('örnek cümleler', () => {
