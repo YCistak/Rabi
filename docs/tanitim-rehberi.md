@@ -63,18 +63,18 @@ Mini tur, ilgili ekran **ilk kez** açıldığında bir kez çalışır (`miniTu
 | Oyunlar | Oyunlar sekmesi açılınca | Tanıtım oyunu kartı · Hazırlık · Başlat · Bir işlem · Sonuç |
 | Oyun Bankası | Oyun Bankası açılınca | Yanlışların · Liste · Genel test · Öğrendim |
 
-- **Denemeler** ve **İstatistik** mini turları yalnızca ana turu bu sürümden önce (12 adımlı hâliyle) bitirmiş kullanıcıya ilk ziyarette bir kez çıkar; yeni ana turu bitirende ikisi de görülmüş sayılır. Denemeler tek adımlı: mini turlar kayıt eklettirmiyor (turun geçici verisi yalnızca ana turda yazılıyor).
+- **Denemeler** ve **İstatistik** mini turları ana turla örtüşür: ana turu (sürüm 2) bitirende ikisi de görülmüş sayılır. Eski turu bitirmiş kullanıcı da artık önce yeni ana turu gördüğünden (mini turlar ana tur bitmeden başlamaz) bu iki mini tur pratikte bir daha çıkmaz. Denemeler tek adımlı: mini turlar kayıt eklettirmiyor (turun geçici verisi yalnızca ana turda yazılıyor).
 - **İstatistik** ve **Oyun Bankası** gerçek veri olmadan boş durum çiziyor; tur kendi örnek verisini gösteriyor (İstatistik'te alana göre iki örnek deneme ve gerekiyorsa geçici eşi — `istatistikTuruDenemeleri`; bankada üç örnek soru — tur başlarken kuruluyor). Örnekler yalnızca bellekte, tur bitince siliniyor.
 - **Pomodoro** turu sayaç işlerken (tam ekran sahne) ya da Yapılacaklar'dan "Pomodoro ile başlat" ile gelinmişken başlamıyor; bir sonraki boş ziyarette çıkıyor. İlk girişteki odak kilidi tanıtımı (Android) tur bitene kadar bekliyor.
 - **Oyunlar** turunda eski "Süre ve skor" adımı kalktı (beş adıma sığmak için): rehber geri sayımdan sonra doğrudan soruyla geri geliyor ve demo sayacı o sırada işliyor. Ana sayfadaki ders kutucuğundan gelindiyse de ızgara ilk adımda görünüyor.
 
-Ana tur açıkken mini tur başlamaz ve ana tur bitmeden hiçbiri başlamaz. **Mevcut kullanıcı:** eski ana turu bitirmiş kullanıcı (`rabi_ana_tur_tamamlandi` = `true`) yeni ana turu yeniden görmez; mini turlar (Pomodoro, Yapılacaklar, İstatistik, Oyunlar, Oyun Bankası) o ekranları ilk ziyaretinde bir kez görür. Eski (46 adımlı) ana tur Denemeler ve Harita turlarını zaten görülmüş saydıysa onlar çıkmaz.
+Ana tur açıkken mini tur başlamaz ve ana tur bitmeden hiçbiri başlamaz. **Mevcut kullanıcı:** ana tur sürümlüdür (`ANA_TUR_SURUMU`, şu an 2). Kayıtlı sürümü (`rabi_ana_tur_surumu`) güncelden küçük olan kurulu kullanıcı — eski `rabi_ana_tur_tamamlandi` ya da `rabi_tanitim_tamamlandi` anahtarı `true` olsa da — yeni ana turu **bir kez** görür; bitirince sürüm yazılır ve bir daha çıkmaz (kullanıcı istedi, 2026-10). Ana turu bitirince Denemeler ve İstatistik mini turları görülmüş sayılır; mini turlar (Pomodoro, Yapılacaklar, İstatistik, Oyunlar, Oyun Bankası) o ekranları ilk ziyaretinde bir kez görür. Eski (46 adımlı) ana tur Denemeler ve Harita turlarını zaten görülmüş saydıysa onlar çıkmaz.
 
 ## Kayıt ve geçici veri
 
 | Tur | localStorage anahtarı |
 |---|---|
-| Ana tur | `rabi_ana_tur_tamamlandi` |
+| Ana tur | `rabi_ana_tur_surumu` (= `2`; okunan bu) + `rabi_ana_tur_tamamlandi` (= `true`, yalnız geriye uyum için yazılır) |
 | Denemeler | `rabi_deneme_turu_tamamlandi` |
 | Konu Haritası | `rabi_harita_turu_tamamlandi` |
 | Pomodoro | `rabi-mini-tur-pomodoro-v1` |
@@ -83,7 +83,7 @@ Ana tur açıkken mini tur başlamaz ve ana tur bitmeden hiçbiri başlamaz. **M
 | Oyunlar | `rabi-mini-tur-oyunlar-v1` |
 | Oyun Bankası | `rabi-mini-tur-oyun-bankasi-v1` |
 
-İlk üç anahtar eski adlarıyla kaldı (değişselerdi turu bitirmiş herkes yeniden görürdü); yeniler projenin anahtar kuralında (`rabi-` öneki, sürümlü). Her anahtara tur tamamlanınca `'true'` yazılır. Tur atlanamaz: balonda "Turu Geç"/kapat düğmesi, adım sayacı ve ilerleme göstergesi yoktur; Escape tuşu ve arka plana dokunma turu kapatmaz, Android geri tuşu bir adım geri alır. Tek çıkış, son adımdaki "Turu Bitir" düğmesidir. Eski `rabi_tanitim_tamamlandi` anahtarı `true` ise ana tur görülmüş sayılır (`turGorulduOku`): eski turu bitirmiş kullanıcıya yeni tur bir kez daha zorla açılıyordu ve Play güncellemesinden sonra açılışta çökme sorusuyla çakışıp kullanıcıyı kilitliyordu. Çökme sorusu açıkken hiçbir tur başlamaz, tur sürerken soru tur bitene kadar bekler (`lib/cokme-tanitim.ts`).
+İlk üç anahtar eski adlarıyla kaldı (değişselerdi turu bitirmiş herkes yeniden görürdü); yeniler projenin anahtar kuralında (`rabi-` öneki, sürümlü). Her anahtara tur tamamlanınca `'true'` yazılır; ana tur ayrıca `rabi_ana_tur_surumu`na güncel sürümü yazar ve görülmüş sayılması **yalnız** bu sürüme bakar (`turGorulduOku`, `turBitisKayitlari`). Tur içeriği baştan değişirse `ANA_TUR_SURUMU` artırılır: herkes yeni turu bir kez görür. Tur atlanamaz: balonda "Turu Geç"/kapat düğmesi, adım sayacı ve ilerleme göstergesi yoktur; Escape tuşu ve arka plana dokunma turu kapatmaz, Android geri tuşu bir adım geri alır. Tek çıkış, son adımdaki "Turu Bitir" düğmesidir. Eski anahtarlar (`rabi_tanitim_tamamlandi`, `rabi_ana_tur_tamamlandi`) artık ana turu görülmüş saydırmaz. Güncellemeden sonra açılışta çökme sorusuyla tur bir kez çakışıp kullanıcıyı kilitlemişti; bu yüzden çökme sorusu açıkken hiçbir tur başlamaz, tur sürerken soru tur bitene kadar bekler (`lib/cokme-tanitim.ts`).
 
 Demo cevapları, skor, örnek denemeler ve banka soruları yalnızca Context belleğindedir. Gerçek banka, oyun geçmişi, soru takibi veya Pomodoro kayıtlarına yazılmaz. `demoVerileriTemizle()` bitişte boş durumu döndürür. Sayfa yenileme de bellekteki demo verilerini kaldırır; tamamlanmayan tur yeniden başlar.
 
@@ -98,7 +98,7 @@ Her balonun üst satırında küçük bir Rabi tavşanı ve turun etiketi (`TUR_
 Tarayıcı konsolunda yalnızca denenecek turun anahtarını kaldırıp sayfayı yenile:
 
 ```js
-localStorage.removeItem('rabi_ana_tur_tamamlandi')
+localStorage.removeItem('rabi_ana_tur_surumu')
 location.reload()
 ```
 

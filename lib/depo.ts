@@ -1,8 +1,9 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { TUR_ANAHTARLARI } from './tanitim'
+import { ANA_TUR_SURUM_ANAHTARI, TUR_ANAHTARLARI } from './tanitim'
 import { ANIMASYON_ANAHTARI } from './tanitim-animasyonu'
+import { CEVAPSIZ_COKME_ANAHTARI } from './cokme-karari'
 import type {
   Ayarlar,
   Deneme,
@@ -814,10 +815,12 @@ export function elenenSoruSayisi(yedek: Yedek): number {
 export function tumVeriyiSil() {
   /*
     Tanıtım turu bayrakları (ana tur + mini turlar) ve tur animasyon ayarı
-    `ANAHTARLAR` tablosunda değil, `lib/tanitim*.ts` içinde tanımlı; burada
+    (ana turun sürüm kaydı dahil) ve cevaplanmamış çökme bayrağı
+    `ANAHTARLAR` tablosunda değil, `lib/tanitim*.ts` / `lib/cokme-karari.ts`
+    içinde tanımlı; burada
     elle eklenmezse sıfırlanan uygulama turu "görülmüş" sanıp başlatmıyordu.
   */
-  const tanitimAnahtarlari = [...Object.values(TUR_ANAHTARLARI), ANIMASYON_ANAHTARI]
+  const tanitimAnahtarlari = [...Object.values(TUR_ANAHTARLARI), ANA_TUR_SURUM_ANAHTARI, ANIMASYON_ANAHTARI, CEVAPSIZ_COKME_ANAHTARI]
   for (const anahtar of [...Object.values(ANAHTARLAR), ...ESKI_ANAHTARLAR, ...tanitimAnahtarlari]) {
     try {
       localStorage.removeItem(anahtar)
