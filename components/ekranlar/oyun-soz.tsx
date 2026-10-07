@@ -398,7 +398,7 @@ export function SozOyunuEkrani({
             <>
               <div className="flex flex-1 flex-col justify-center gap-3 py-2">
                 <div className="grid place-items-center">
-                  <Rabi durum={maskotDurumu} boyut={54} />
+                  <Rabi durum={maskotDurumu} poz="yapboz" boyut={96} />
                 </div>
 
                 <div className="golge-kart rounded-[20px] bg-card px-4 py-4">

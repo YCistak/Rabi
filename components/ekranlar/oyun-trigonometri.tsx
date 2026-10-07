@@ -418,7 +418,7 @@ function SoruKarti({ soru, maskot }: { soru: TrigSorusu; maskot: MaskotDurumu })
 
   return (
     <div className="golge-kart flex min-h-0 flex-1 flex-col items-center justify-center gap-3 rounded-3xl bg-card px-3 py-4">
-      <Rabi durum={maskot} boyut={44} />
+      <Rabi durum={maskot} poz="yapboz" boyut={96} />
       {kosul && (
         <span className="rounded-full bg-muted px-3 py-1 text-[12.5px] font-bold text-muted-foreground">
           {kosul}
