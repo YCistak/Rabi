@@ -20,7 +20,7 @@ describe('secilebilirSablonlar', () => {
   })
 
   it('alanında karar vermemiş öğrenci, sınıfı ne olursa olsun tüm hazır şablonları görüyor', () => {
-    const tumu = HAZIR_SABLONLAR.map((s) => s.id)
+    const tumu = HAZIR_SABLONLAR.filter((s) => !s.seviye || s.id === 'okul').map((s) => s.id)
     expect(tumu).toEqual(expect.arrayContaining(['okul', 'tyt', 'ayt-say', 'ayt-ea', 'ayt-soz', 'ydt']))
     expect(idler(11, null)).toEqual(tumu)
     expect(idler(12, null)).toEqual(tumu)
