@@ -14,7 +14,7 @@ import { secilebilirSablonlar, toplamSoru } from '@/lib/sablonlar'
 import { bugun, cn, yeniId } from '@/lib/utils'
 import type { Deneme, PuanTuru, Sablon, YanlisSoru } from '@/lib/types'
 import { DenemeOkut } from '@/components/deneme-okut'
-import { bosDersGirisiGecerli, ORNEK_YANLIS_SORU_GORSELI, turBosDersi, turFormuSonuclari } from '@/lib/tanitim-veri'
+import { bosDersGirisiGecerli, turBosDersi, turFormuSonuclari } from '@/lib/tanitim-veri'
 import { TarihSecici } from '@/components/tarih-secici'
 
 const useYerlesimEtkisi = typeof window === 'undefined' ? useEffect : useLayoutEffect
@@ -55,19 +55,13 @@ export function YeniDenemeEkrani({
    * Başlangıç turunda. `ornekDoldur`: tur Okut adımını geçti; form boşsa
    * örnek sonuçlar bir ders hariç yazılıyor (`turFormuSonuclari`), boş
    * dersi kullanıcı dolduruyor ve geçerli giriş `dersGirildi` ile bildiriliyor.
-   * Yanlış soru katmanı turda kamerasız, örnek bir soruyla açılıyor ve
-   * gerçek bankaya hiçbir şey yazmıyor: açık olup olmadığını tur belirliyor
-   * (`yanlisAcik`), açmak `yanlisAc`, kaydetmek `yanlisEklendi`, kapatmak
-   * `yanlisKapat` (turu bir adım geri alıyor).
+   * "Yanlış soru ekle" turda yalnızca gösteriliyor: düğme katmanı açmıyor
+   * (turda yanlış soru eklettirilmiyor — kullanıcı istedi, 2026-10).
    */
   tanitim?: {
     onOkutAcik: (acik: boolean) => void
     ornekDoldur?: boolean
     dersGirildi?: () => void
-    yanlisAcik?: boolean
-    yanlisAc?: () => void
-    yanlisEklendi?: () => void
-    yanlisKapat?: () => void
   }
 }) {
   /*
@@ -125,15 +119,12 @@ export function YeniDenemeEkrani({
     doğru/yanlışını yazdıktan sonra bir soru fotoğraflayıp döndüğünde boş bir
     form buluyordu. Katman üstte açılıyor, form altında olduğu gibi duruyor.
   */
-  const [yanlisAcikYerel, setYanlisAcik] = useState(false)
-  // Turda katmanın açıklığı turun adımından geliyor: turun Geri'si de katmanı kapatabilsin.
-  const yanlisAcik = tanitim ? !!tanitim.yanlisAcik : yanlisAcikYerel
+  const [yanlisAcik, setYanlisAcik] = useState(false)
   const [eklenenYanlis, setEklenenYanlis] = useState(0)
   const yanlisEkleme = useYanlisSoruEkleme(setYanlisSorular)
-  // Geri tuşu önce ekleme formunu, sonra katmanı kapatmalı. Turda geri tuşu
-  // turun kendi Geri'sine gidiyor (`AppShell`), katman onunla kapanıyor.
-  useGeriKatmani(!tanitim && yanlisAcik && yanlisEkleme.bekleyen === null, () => setYanlisAcik(false))
-  useGeriKatmani(!tanitim && yanlisEkleme.bekleyen !== null, yanlisEkleme.vazgec)
+  // Geri tuşu önce ekleme formunu, sonra katmanı kapatmalı. Turda katman hiç açılmıyor.
+  useGeriKatmani(yanlisAcik && yanlisEkleme.bekleyen === null, () => setYanlisAcik(false))
+  useGeriKatmani(yanlisEkleme.bekleyen !== null, yanlisEkleme.vazgec)
 
   // Şablon değişince ders listesi değişir, girişler sıfırlanır
   useEffect(() => {
@@ -411,7 +402,8 @@ export function YeniDenemeEkrani({
         data-tanitim="deneme-yanlis-ekle"
         bicim="ikincil"
         className="mt-4 w-full"
-        onClick={() => (tanitim ? tanitim.yanlisAc?.() : setYanlisAcik(true))}
+        // Turda düğme yalnızca gösteriliyor; kamera/izin penceresi açılmasın.
+        onClick={() => { if (!tanitim) setYanlisAcik(true) }}
       >
         <Camera size={18} aria-hidden />
         Yanlış soru ekle
@@ -420,7 +412,7 @@ export function YeniDenemeEkrani({
 
       {eklenenYanlis > 0 && (
         <p className="mt-2 text-center text-xs text-muted-foreground">
-          {tanitim ? 'Örnek soru eklendi; tanıtım bitince silinir.' : `${eklenenYanlis} soru bankaya eklendi. Girdiğin netler yerinde duruyor.`}
+          {eklenenYanlis} soru bankaya eklendi. Girdiğin netler yerinde duruyor.
         </p>
       )}
 
@@ -453,18 +445,7 @@ export function YeniDenemeEkrani({
           <div className="mx-auto max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
             {yanlisEkleme.gizliGirdi}
 
-            {tanitim ? (
-              <EklemeFormu
-                onizleme={ORNEK_YANLIS_SORU_GORSELI}
-                tanitimHedefi="yanlis-soru-formu"
-                onKaydet={async () => {
-                  setEklenenYanlis((n) => n + 1)
-                  tanitim.yanlisEklendi?.()
-                }}
-                onVazgec={() => tanitim.yanlisKapat?.()}
-                hata={null}
-              />
-            ) : yanlisEkleme.bekleyen ? (
+            {yanlisEkleme.bekleyen ? (
               <EklemeFormu
                 onizleme={yanlisEkleme.bekleyen.url}
                 onKaydet={async (bilgi) => {
