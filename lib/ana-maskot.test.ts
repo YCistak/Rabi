@@ -27,31 +27,31 @@ const temel: AnaMaskotGirdisi = {
 const poz = (g: Partial<AnaMaskotGirdisi>) => anaMaskot({ ...temel, ...g }).poz
 
 describe('anaMaskot', () => {
-  it('öğleden sonra hiç kayıt yoksa uyuyor', () => {
-    expect(poz({})).toBe('uyuyan')
+  it('öğleden sonra hiç kayıt yoksa esniyor', () => {
+    expect(poz({})).toBe('esneyen')
   })
 
-  it('gece kayıt yoksa uyuyor, sabah geriniyor', () => {
-    expect(poz({ saat: 23 })).toBe('uyuyan')
-    expect(poz({ saat: 3 })).toBe('uyuyan')
+  it('gece kayıt yoksa esniyor, sabah geriniyor', () => {
+    expect(poz({ saat: 23 })).toBe('esneyen')
+    expect(poz({ saat: 3 })).toBe('esneyen')
     expect(poz({ saat: 5 })).toBe('gerinen')
     expect(poz({ saat: 10 })).toBe('gerinen')
-    expect(poz({ saat: 11 })).toBe('uyuyan')
+    expect(poz({ saat: 11 })).toBe('esneyen')
   })
 
   it('seri kırılmak üzereyse (dün tuttu, bugün 0) elleri belde bekliyor', () => {
     expect(poz({ gunlukKayitlar: [gun(DUN, 60)] })).toBe('elleri-belde')
     // Sabah ve gece saat kuralı önde: gün yeni başladı ya da bitti.
     expect(poz({ gunlukKayitlar: [gun(DUN, 60)], saat: 8 })).toBe('gerinen')
-    expect(poz({ gunlukKayitlar: [gun(DUN, 60)], saat: 22 })).toBe('uyuyan')
+    expect(poz({ gunlukKayitlar: [gun(DUN, 60)], saat: 22 })).toBe('esneyen')
     // Dün hedefin altındaysa seri yok.
-    expect(poz({ gunlukKayitlar: [gun(DUN, 10)] })).toBe('uyuyan')
+    expect(poz({ gunlukKayitlar: [gun(DUN, 10)] })).toBe('esneyen')
   })
 
   it('bugün başlandıysa ama hedefe ulaşılmadıysa çalışıyor', () => {
     expect(['yazan', 'okuyan']).toContain(poz({ gunlukKayitlar: [gun(BUGUN, 10)] }))
     // Gece de olsa kayıt varsa uyumuyor.
-    expect(poz({ gunlukKayitlar: [gun(BUGUN, 10)], saat: 23 })).not.toBe('uyuyan')
+    expect(poz({ gunlukKayitlar: [gun(BUGUN, 10)], saat: 23 })).not.toBe('esneyen')
   })
 
   it('hedef tuttuysa kutluyor', () => {
@@ -64,7 +64,7 @@ describe('anaMaskot', () => {
     expect(['yazan', 'okuyan']).toContain(
       poz({ hedef: 0, gunlukKayitlar: [gun(BUGUN, 500)] }),
     )
-    expect(poz({ hedef: 0, gunlukKayitlar: [gun(DUN, 500)] })).toBe('uyuyan')
+    expect(poz({ hedef: 0, gunlukKayitlar: [gun(DUN, 500)] })).toBe('esneyen')
   })
 
   it('pomodoro her şeyin önünde', () => {
@@ -97,7 +97,7 @@ describe('anaMaskot', () => {
 
   it('bugün deneme girildiyse damga, konu bittiyse tahta; ikisi de hedef kutlamasının önünde', () => {
     expect(poz({ sonDenemeTarihi: BUGUN })).toBe('damgali')
-    expect(poz({ sonDenemeTarihi: DUN })).toBe('uyuyan')
+    expect(poz({ sonDenemeTarihi: DUN })).toBe('esneyen')
     expect(poz({ konuBitti: true, gunlukKayitlar: [gun(BUGUN, 80)] })).toBe('tahtali')
     expect(poz({ sonDenemeTarihi: BUGUN, konuBitti: true })).toBe('damgali')
   })
@@ -128,14 +128,14 @@ describe('anaMaskot', () => {
 
   it('kayıtsız günde: seri > yanlış birikti > sınav yakın > akşam', () => {
     expect(poz({ bekleyenYanlis: 10 })).toBe('buyutecli')
-    expect(poz({ bekleyenYanlis: 9 })).toBe('uyuyan')
+    expect(poz({ bekleyenYanlis: 9 })).toBe('esneyen')
     expect(poz({ bekleyenYanlis: 10, gunlukKayitlar: [gun(DUN, 60)] })).toBe('elleri-belde')
     expect(poz({ kalanGun: 30 })).toBe('saatli')
-    expect(poz({ kalanGun: 31 })).toBe('uyuyan')
+    expect(poz({ kalanGun: 31 })).toBe('esneyen')
     expect(poz({ kalanGun: 20, bekleyenYanlis: 12 })).toBe('buyutecli')
     expect(poz({ saat: 18 })).toBe('dusunen')
     expect(poz({ saat: 21 })).toBe('dusunen')
-    expect(poz({ saat: 17 })).toBe('uyuyan')
+    expect(poz({ saat: 17 })).toBe('esneyen')
     expect(poz({ saat: 19, kalanGun: 10 })).toBe('saatli')
     // Kayıt varsa hatırlatma yok.
     expect(poz({ bekleyenYanlis: 50, gunlukKayitlar: [gun(BUGUN, 10)] })).not.toBe('buyutecli')

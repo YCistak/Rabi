@@ -16,7 +16,11 @@ import { GeriSayim } from '@/components/geri-sayim'
 import { Rabi } from '@/components/maskot/rabi'
 import { type PomodoroHali } from '@/lib/ana-maskot'
 import { anaBaslik } from '@/lib/ana-baslik'
+import { gorunurKutu } from '@/lib/maskot'
 import { geriSayim } from '@/lib/sinav-tarihi'
+
+/** Başlık tavşanının genişliği: tam boy 70 pikselin altında lekeye dönüyor. */
+const MASKOT_BOYUTU = 84
 
 /**
  * `getDay()` sırasına göre kısa gün adları. `toLocaleDateString` yerine sabit
@@ -177,7 +181,7 @@ export function AnaSayfa({
 
   const kalanGun = geriSayim(tarih, ayarlar.buYilSinif).kalanGun
   /*
-    Başlıktaki tavşan günü gösteriyor: kayıt yoksa uyuyor, çalışılıyorsa
+    Başlıktaki tavşan günü gösteriyor: kayıt yoksa esniyor, çalışılıyorsa
     yazıyor, hedef tuttuysa dans ediyor. Altındaki cümle aynı karardan
     çıkıyor, ikisi çelişemiyor (`lib/ana-baslik.ts`). Saat burada okunuyor
     çünkü karar fonksiyonu saf.
@@ -196,6 +200,7 @@ export function AnaSayfa({
     gorevlerBitti,
     bekleyenYanlis,
   })
+  const maskotKutusu = gorunurKutu(maskot.poz, MASKOT_BOYUTU)
 
   return (
     // Yatay tablette kartlar iki sütuna akıyor (`tablet-sutunlar`, globals.css).
@@ -203,16 +208,29 @@ export function AnaSayfa({
       {ozetHazir && <OzetDaveti onAc={onOzetAc} />}
 
       {/* Selamlama — tasarımda ad sorulmuyor, kurulumda ad adımı yok. */}
-      <header className="flex items-center gap-3 px-0.5 pt-2 pb-1">
+      <header className="flex items-center gap-3 pt-2 pr-0.5 pb-1">
         {/* `key`: poz değişince öğe yeniden kuruluyor ve kısa bir solmayla
             geliyor (`ana-maskot-gecis`). Yerinde src değiştirmek bir kare
             boş görsel bırakıyordu. Poz tam boy ve kesilmiyor: bir süre 58
             piksellik baş kırpımlarıydı, kesik kenarlar pozdan poza bozuk
             duruyordu, kullanıcı kaldırttı. Tam boy 70 pikselin altında
             lekeye döndüğü için tavşan 84'e büyüdü; yazı sütunu ona göre
-            dikeyde ortalanıyor (`items-center`). */}
-        <span key={maskot.poz} className="ana-maskot-gecis shrink-0">
-          <Rabi durum={maskot.durum} poz={maskot.poz} etiket={maskot.etiket} boyut={84} />
+            dikeyde ortalanıyor (`items-center`).
+
+            Kutu görselin değil tavşanın kendisi kadar (`gorunurKutu`): saydam
+            yan boşluklar kesiliyor, tavşan değil. Böylece tavşanın sol kenarı
+            her pozda alttaki geri sayım kartının sol kenarıyla aynı hizada
+            (başlıkta sol dolgu yok) ve yazı her pozda tavşana aynı uzaklıkta
+            (`gap-3`). Görsel kutusuna göre hizalanınca kitap okuyan gibi dar
+            pozlarda yazıyla arasında geniş boşluk kalıyordu. */}
+        <span
+          key={maskot.poz}
+          className="ana-maskot-gecis shrink-0 overflow-hidden"
+          style={{ width: maskotKutusu.genislik }}
+        >
+          <span className="flex shrink-0" style={{ marginLeft: -maskotKutusu.sol }}>
+            <Rabi durum={maskot.durum} poz={maskot.poz} etiket={maskot.etiket} boyut={MASKOT_BOYUTU} />
+          </span>
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-extrabold tracking-wide text-ikincil">Rabi</p>

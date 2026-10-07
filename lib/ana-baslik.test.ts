@@ -28,7 +28,7 @@ const temel: AnaMaskotGirdisi = {
  * Her kuralın cümlesinde **olması** ve **olmaması** gerekenler.
  *
  * "Olmaması gerekenler" uyumsuzluğun kendisi: dans eden tavşanın altında
- * "hedefine N soru kaldı", uyuyan ya da kayıtsız günün tavşanının altında
+ * "hedefine N soru kaldı", esneyen ya da kayıtsız günün tavşanının altında
  * "hedefine ulaştın", çalışan tavşanın altında "henüz kaydın yok".
  */
 const KAYITSIZ_DEGIL = /hedefine \d+ soru|tamamladın|ulaştın|hedeftesin|Tekrar hoş geldin/
@@ -56,7 +56,7 @@ const UYUM: Record<MaskotKurali, { olmali?: RegExp; olmamali?: RegExp }> = {
   yanlis: { olmali: /Yanlış bankanda \d+ soru/, olmamali: KAYITSIZ_DEGIL },
   'sinav-yakin': { olmali: /Sınava \d+ gün kaldı/, olmamali: KAYITSIZ_DEGIL },
   aksam: { olmali: /Akşam/, olmamali: KAYITSIZ_DEGIL },
-  uyuyan: { olmali: /henüz/, olmamali: KAYITSIZ_DEGIL },
+  esneyen: { olmali: /henüz/, olmamali: KAYITSIZ_DEGIL },
 }
 
 /** Bütün girdilerin kombinasyonları: her kuralın tutabileceği her yol. */
