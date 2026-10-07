@@ -8,7 +8,8 @@ import {
   yedegiUygula,
   yedekOlustur,
 } from './depo'
-import { TUR_ANAHTARLARI } from './tanitim'
+import { ANA_TUR_SURUM_ANAHTARI, TUR_ANAHTARLARI } from './tanitim'
+import { CEVAPSIZ_COKME_ANAHTARI } from './cokme-karari'
 import { ANIMASYON_ANAHTARI } from './tanitim-animasyonu'
 import type { Yedek } from './types'
 
@@ -287,7 +288,7 @@ describe('ayarlariNormalize', () => {
 describe('tumVeriyiSil', () => {
   it('tanıtım tur bayraklarını ve animasyon ayarını da siler', () => {
     const depo = new Map<string, string>()
-    for (const k of [...Object.values(TUR_ANAHTARLARI), ANIMASYON_ANAHTARI, 'rabi-ayarlar']) depo.set(k, 'true')
+    for (const k of [...Object.values(TUR_ANAHTARLARI), ANA_TUR_SURUM_ANAHTARI, CEVAPSIZ_COKME_ANAHTARI, ANIMASYON_ANAHTARI, 'rabi-ayarlar']) depo.set(k, 'true')
     vi.stubGlobal('localStorage', {
       getItem: (k: string) => depo.get(k) ?? null,
       setItem: (k: string, v: string) => void depo.set(k, v),

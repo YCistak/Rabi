@@ -19,6 +19,9 @@ import type { CokmeKolu } from '@/lib/cokme-izni'
  * Gönderilecek şeyler yine tek tek yazılı, çünkü Play'in kullanıcı verisi
  * politikası veri çıkmadan önce belirgin açıklama istiyor.
  *
+ * Yalnız gerçek çökmede açılıyor (`lib/cokme-karari.ts`); kapanmamış bir
+ * oturumun kayıtları için soru sorulmuyor.
+ *
  * Geri tuşu "Gönderme" ile aynı: kapanan pencere veri göndermemeli.
  */
 export function CokmeSorusu({ kol }: { kol: CokmeKolu }) {
@@ -36,12 +39,10 @@ export function CokmeSorusu({ kol }: { kol: CokmeKolu }) {
           <Rabi durum="uzgun" poz="uzgun" boyut={92} className="mx-auto" />
 
           <h2 className="mt-2 font-display text-[20px] font-extrabold leading-tight tracking-tight text-balance">
-            {kol.cokmeyleBitti ? 'Kusura bakma, kapandım' : 'Bir aksaklık kaydettim'}
+            Kusura bakma, kapandım
           </h2>
           <p className="mt-1.5 text-[13.5px] font-medium leading-snug text-muted-foreground">
-            {kol.cokmeyleBitti
-              ? 'Geçen sefer beklenmedik şekilde kapandım. Neden olduğunu ancak raporu görürsem bulabilirim.'
-              : 'Bir şeyler ters gitti ama kapanmadım. Raporu görürsem düzeltebilirim.'}
+            Geçen sefer beklenmedik şekilde kapandım. Neden olduğunu ancak raporu görürsem bulabilirim.
           </p>
 
           <div className="mt-4 rounded-xl bg-foreground/[0.05] p-3 text-left">

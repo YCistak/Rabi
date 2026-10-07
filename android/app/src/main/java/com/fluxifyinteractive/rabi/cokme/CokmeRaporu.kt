@@ -74,7 +74,9 @@ object CokmeRaporu {
      * `didCrashOnPreviousExecution` ayrıca soruluyor çünkü bekleyen rapor
      * yalnızca çökmeden gelmiyor: WebView kanallarının yazdığı non-fatal
      * kayıtlar da kuyruğa giriyor. Soruyu "uygulama çöktü" diye sormak ancak
-     * gerçekten çöktüyse doğru.
+     * gerçekten çöktüyse doğru. Web tarafı soruyu **yalnız** çökmede açıyor;
+     * çökme olmayan bekleyen kayıtları sormadan [sil] ile siliyor
+     * (`lib/cokme-karari.ts`).
      */
     fun bekleyenleriSor(cevap: (bekleyen: Boolean, oncekiCokme: Boolean) -> Unit) {
         val c = crashlytics()
@@ -95,7 +97,10 @@ object CokmeRaporu {
         crashlytics()?.let { runCatching { it.sendUnsentReports() } }
     }
 
-    /** Kullanıcı "gönderme" dedi — kayıtlar cihazdan siliniyor, bir daha sorulmuyor. */
+    /**
+     * Kullanıcı "gönderme" dedi ya da bekleyenler çökme değil (non-fatal) —
+     * kayıtlar gönderilmeden cihazdan siliniyor, birikmiyor.
+     */
     fun bekleyenleriSil() {
         crashlytics()?.let { runCatching { it.deleteUnsentReports() } }
     }

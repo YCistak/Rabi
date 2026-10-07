@@ -56,21 +56,39 @@ export const TUR_ETIKETLERI: Record<TanitimTuru, string> = {
 }
 export const TANITIM_ANAHTARI = TUR_ANAHTARLARI.ana_tur
 /**
- * Ana turun eski kayıt anahtarı. Tur yenilenince anahtar
- * `rabi_ana_tur_tamamlandi` oldu ve eski turu bitirmiş kullanıcıya yeni tur
- * bir kez daha zorla açılıyordu; Play güncellemesinden sonra açılışta
- * çökme sorusuyla çakışıp kullanıcıyı kilitleyen de buydu. Eski anahtar
- * `'true'` ise ana tur görülmüş sayılıyor.
+ * Ana turun eski kayıt anahtarı (ilk turun). Artık okunmuyor: ana tur
+ * sürümlü (`ANA_TUR_SURUMU`) ve eski anahtarlardan biri olan kullanıcı da
+ * güncel turu bir kez görüyor. Anahtar "Tüm verileri sil" için duruyor.
  */
 export const ESKI_ANA_TUR_ANAHTARI = 'rabi_tanitim_tamamlandi'
+
+/**
+ * Ana turun güncel sürümü. Tur içeriği baştan değişince artırılır; kayıtlı
+ * sürümü bundan küçük olan kurulu kullanıcı yeni turu **bir kez** görür
+ * (kullanıcı istedi, 2026-10: eski turu bitirenler de yeni tanıtımı görsün).
+ * `rabi_ana_tur_tamamlandi` / `rabi_tanitim_tamamlandi` (`'true'`) sürüm
+ * 1 sayılır — yani artık turu görülmüş yapmaz.
+ */
+export const ANA_TUR_SURUMU = 2
+export const ANA_TUR_SURUM_ANAHTARI = 'rabi_ana_tur_surumu'
 
 /**
  * Bir turun kayıtta görülmüş olup olmadığı. `oku` depo okuyucusu
  * (`localStorage.getItem`); test edilebilsin diye dışarıdan veriliyor.
  */
 export function turGorulduOku(turAdi: TanitimTuru, oku: (anahtar: string) => string | null): boolean {
-  if (oku(TUR_ANAHTARLARI[turAdi]) === 'true') return true
-  return turAdi === 'ana_tur' && oku(ESKI_ANA_TUR_ANAHTARI) === 'true'
+  if (turAdi === 'ana_tur') return Number(oku(ANA_TUR_SURUM_ANAHTARI) ?? 0) >= ANA_TUR_SURUMU
+  return oku(TUR_ANAHTARLARI[turAdi]) === 'true'
+}
+
+/**
+ * Tur bitince yazılacak kayıtlar. Ana turda eski `'true'` anahtarı da
+ * yazılıyor: eski bir sürüme geri dönülürse tur yeniden açılmasın.
+ */
+export function turBitisKayitlari(turAdi: TanitimTuru): [anahtar: string, deger: string][] {
+  const kayitlar: [string, string][] = [[TUR_ANAHTARLARI[turAdi], 'true']]
+  if (turAdi === 'ana_tur') kayitlar.push([ANA_TUR_SURUM_ANAHTARI, String(ANA_TUR_SURUMU)])
+  return kayitlar
 }
 
 /** Turda kullanıcının kendisinin eklediği kayıt türleri (bkz. `lib/tanitim-veri.ts`). */

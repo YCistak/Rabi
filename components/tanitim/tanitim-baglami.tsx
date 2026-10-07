@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react'
-import { demoVerileriTemizle, TANITIM_ADIMLARI, TUR_ADIMLARI, TUR_ANAHTARLARI, tanitimGecisi, turGorulduOku, type DemoAlani, type TanitimEylemi, type TanitimKaydi, type TanitimTuru } from '@/lib/tanitim'
+import { demoVerileriTemizle, TANITIM_ADIMLARI, TUR_ADIMLARI, TUR_ANAHTARLARI, tanitimGecisi, turBitisKayitlari, turGorulduOku, type DemoAlani, type TanitimEylemi, type TanitimKaydi, type TanitimTuru } from '@/lib/tanitim'
 
 import { ANIMASYON_ANAHTARI, VARSAYILAN_ANIMASYON, animasyonKaydi, animasyonuDogrula, type TanitimAnimasyonu } from '@/lib/tanitim-animasyonu'
 
@@ -51,7 +51,7 @@ function useTanitimDurumu(deneyMi: boolean) {
   const turuKaydet = useCallback((turAdi: TanitimTuru) => {
     if (deneyMi) return
     setGorulenler((onceki) => onceki ? { ...onceki, [turAdi]: true } : onceki)
-    try { localStorage.setItem(TUR_ANAHTARLARI[turAdi], 'true') }
+    try { for (const [anahtar, deger] of turBitisKayitlari(turAdi)) localStorage.setItem(anahtar, deger) }
     catch { setKayitUyarisi('Tanıtım temizlendi. Cihaz depolaması kullanılamadığı için uygulamayı yeniden açınca tur tekrar görünebilir.') }
   }, [deneyMi])
   const turuBaslat = useCallback((turAdi: TanitimTuru) => {
