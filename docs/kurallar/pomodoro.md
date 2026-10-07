@@ -34,6 +34,11 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - Saat `components/pomodoro-saati.tsx`: alt menünün üstünde sağda; kalan süreyi
   bitiş zamanından **kendisi** sayar (her tikte durum göndermek `AppShell`i
   çizdirirdi). Dokununca Pomodoro.
+- **Sahne `body`ye portalla çizilir.** Saatten ya da Yapılacaklar'dan gelince sahne,
+  yuvanın giriş animasyonu (`sayfa-girisi`, transformlu) sürerken açılıyor; yuvanın
+  içinde kalan `fixed` sahne kutuyla birlikte kayıyor ve alt menünün altına
+  düşüyordu. Saatten dönüşte sahne `useLayoutEffect` ile açılır (bir kare hazırlık
+  ekranı görünmesin).
 - Sahnenin geri oku `onArkaPlan` → `setEkran(null)`, `geriGit` değil (o sahneyi kapatıp
   kendini çağırırdı). `sahne` state'i `calisiyor`dan ayrı; kapatan: geri oku, "Turu
   bitir", provadan çıkış. Sahnede açıklama satırı yok (kullanıcı kaldırttı).

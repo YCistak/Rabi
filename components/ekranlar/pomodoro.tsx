@@ -1,6 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { KeepAwake } from '@capacitor-community/keep-awake'
 import { Capacitor } from '@capacitor/core'
 import {
@@ -375,7 +376,9 @@ export function PomodoroEkrani({
     doğrudan sahne açılıyor: işleyen bir sayacın hazırlık ekranı, "Başlat"
     yazan bir düğmeyle yanlış bir şey söylerdi.
   */
-  useEffect(() => {
+  // `useLayoutEffect`: boyamadan önce. `useEffect`te bir kare hazırlık ekranı
+  // ("Başlat" düğmesiyle) görünüp ardından sahne açılıyordu.
+  useLayoutEffect(() => {
     if (gorunur && calisiyor) setSahne(true)
     // Yalnızca görünürlük değişince; sayaç her tikte buraya uğramasın.
   }, [gorunur])
@@ -826,7 +829,16 @@ export function PomodoroEkrani({
         <SureAyarlari ayar={ayar} setAyar={setAyar} />
       </Cekmece>
 
-      {sahne && gorunur && (
+      {/*
+        Sahne `body`ye çiziliyor, Pomodoro'nun içine değil. Pomodoro, kayarak
+        giren sayfa yuvasının (`sayfa-girisi`) içinde duruyor ve o kutu geçiş
+        süresince transformlu: içindeki `fixed` katman ekrana değil kutuya göre
+        konumlanıyor, kutunun yığın bağlamında kaldığı için de alt menünün
+        altına düşüyordu. Saatten ya da Yapılacaklar'dan gelince sahne tam o
+        sırada açılıyor; sayaç sayfayla birlikte kayıp alt menünün arkasında
+        kalıyor, geçiş bitince yerine sıçrıyordu.
+      */}
+      {sahne && gorunur && createPortal(
         <CalismaSahnesi
           durum={prova ? 'DENEME PROVASI' : durumEtiketi.toLocaleUpperCase('tr-TR')}
           baslik={
@@ -850,7 +862,8 @@ export function PomodoroEkrani({
           onBaslat={baslat}
           onDuraklat={duraklat}
           onAtla={atla}
-        />
+        />,
+        document.body,
       )}
     </div>
   )
