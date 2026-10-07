@@ -5,7 +5,15 @@ import { HARITA_ESLEMESI } from './harita-eslemesi'
 import type { YksDers, YksKonu, YksOturum } from './liste'
 import { geriSayim, gunFarki } from '../sinav-tarihi'
 import { asamaYaz, type ElleAsama, type YksKonuKaydi, type YksTakip } from './kayit'
-import { HARITASIZ_SINIF, YKS_SINIFLARI, konuSinifi, sinifKonulari, type SinifSecimi, type YksSinif } from './sinif'
+import {
+  HARITASIZ_SINIF,
+  YKS_SINIFLARI,
+  ogrenciMufredati,
+  sinifAtamasi,
+  sinifKonulari,
+  type SinifSecimi,
+  type SinifYeri,
+} from './sinif'
 
 export { BOS_TAKIP, asamaYaz, takibiCoz } from './kayit'
 export type { ElleAsama, YazilanAlan, YksKonuKaydi, YksTakip } from './kayit'
@@ -313,12 +321,20 @@ export type SinifSekmesi = {
    * Sekmede konu yoksa `null`.
    */
   yuzde: number | null
-  /** Bu derste o sınıfın konusu yok: sekme seçilemiyor, "—". */
+  /** Bu derste o sınıfın konusu yok ya da sınıf "Yakında": sekme seçilemiyor. */
   pasif: boolean
   /** Öğrencinin kendi sınıfı — küçük "sen" işareti. */
   sen: boolean
-  /** Haritası yazılmamış sınıf (12): aşama yok, sekmede "Haritası yok". */
+  /**
+   * Eski programda (12/mezun) haritası yazılmamış sınıf (12): sekme açık,
+   * aşama yok, sekmede "harita yok".
+   */
   haritasiz: boolean
+  /**
+   * Maarif öğrencisinde (9–11) 12: programı yayımlanmadı, sekme pasif ve
+   * haritadaki gibi "Yakında" rozetli. O sınıfın konuları "Tümü"nün sonunda.
+   */
+  yakinda: boolean
 }
 
 /** Ders ekranının sekmeleri: `9 · 10 · 11 · 12 · Tümü`. */
@@ -329,15 +345,18 @@ export function sinifSekmeleri(
   buYilSinif: number,
 ): SinifSekmesi[] {
   const oranlar = new Map(ders.konular.map((k) => [k.id, konuOrani(konuDurumu(k.id, takip, ilerlemeler))]))
+  const maarif = ogrenciMufredati(buYilSinif) === 'maarif'
   const sekme = (secim: SinifSecimi): SinifSekmesi => {
-    const konular = sinifKonulari(ders, secim)
+    const konular = sinifKonulari(ders, secim, buYilSinif)
     const toplam = konular.reduce((t, k) => t + oranlar.get(k.id)!, 0)
+    const yakinda = maarif && secim === HARITASIZ_SINIF
     return {
       secim,
-      yuzde: konular.length === 0 ? null : Math.round((toplam / konular.length) * 100),
-      pasif: konular.length === 0,
+      yuzde: konular.length === 0 || yakinda ? null : Math.round((toplam / konular.length) * 100),
+      pasif: konular.length === 0 || yakinda,
       sen: secim === buYilSinif,
-      haritasiz: secim === HARITASIZ_SINIF,
+      haritasiz: !maarif && secim === HARITASIZ_SINIF,
+      yakinda,
     }
   }
   return [...YKS_SINIFLARI.map((s): SinifSekmesi => sekme(s)), sekme('tumu')]
@@ -346,14 +365,15 @@ export function sinifSekmeleri(
 /**
  * Sekmedeki konu listesinin blokları: ekran her bloğu yapışkan bir başlıkla
  * çiziyor. Sınıfta bölümler (TYT Matematik → Geometri); "Tümü"de sınıf ve
- * bölüm birlikte ("10. sınıf · Geometri").
+ * bölüm birlikte ("10. sınıf · Geometri"). Maarif'te karşılığı olmayanlar
+ * "Tümü"nün sonunda `'henuz-yok'` bloğunda.
  */
-export type KonuBlogu = { sinif: YksSinif | null; bolum: string | null; konular: YksKonu[] }
+export type KonuBlogu = { sinif: SinifYeri | null; bolum: string | null; konular: YksKonu[] }
 
-export function konuBloklari(ders: YksDers, secim: SinifSecimi): KonuBlogu[] {
+export function konuBloklari(ders: YksDers, secim: SinifSecimi, buYilSinif: number): KonuBlogu[] {
   const bloklar: KonuBlogu[] = []
-  for (const konu of sinifKonulari(ders, secim)) {
-    const sinif = secim === 'tumu' ? konuSinifi(konu.id) : null
+  for (const konu of sinifKonulari(ders, secim, buYilSinif)) {
+    const sinif = secim === 'tumu' ? sinifAtamasi(konu.id, buYilSinif) : null
     const bolum = konu.bolum ?? null
     const son = bloklar.at(-1)
     if (son && son.sinif === sinif && son.bolum === bolum) son.konular.push(konu)
@@ -378,13 +398,13 @@ export function oncekiOkulsuzlar(
   ders: YksDers,
   konuId: string,
   takip: YksTakip,
-  secim: SinifSecimi | null = null,
+  sekme: { secim: SinifSecimi; buYilSinif: number } | null = null,
 ): string[] {
   // "Önceki" ekranda bu konunun üstünde duran demek. Sınıf sekmesinde liste
   // yalnızca o sınıfın konuları — gizli bir 12. sınıf konusunu "önceki"
   // diye işaretlemek, öğrencinin görmediği bir şeyi yazmak olurdu. "Tümü"de
   // liste sınıf sınıf dizili, alt sınıfların konuları üstte kalıyor.
-  const liste = secim === null ? ders.konular : sinifKonulari(ders, secim)
+  const liste = sekme === null ? ders.konular : sinifKonulari(ders, sekme.secim, sekme.buYilSinif)
   const sira = liste.findIndex((k) => k.id === konuId)
   if (sira === -1) return []
   const bolum = liste[sira].bolum
