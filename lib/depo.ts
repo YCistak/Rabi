@@ -323,6 +323,7 @@ export const VARSAYILAN_AYARLAR: Ayarlar = {
   hatirlatmaSaati: 20,
   hatirlatmaDakikasi: 0,
   bildirimAcik: false,
+  gorevHatirlatma: true,
   oyunSesi: true,
   oyunMuzigi: true,
   oyunMuzikTuru: 'mod',
@@ -402,6 +403,9 @@ export function ayarlariNormalize(ham: Partial<Ayarlar> | null | undefined): Aya
     elleObp: Number.isFinite(birlesik.elleObp as number) ? (birlesik.elleObp as number) : null,
     hatirlatmaSaati: saatiKirp(birlesik.hatirlatmaSaati),
     hatirlatmaDakikasi: dakikayiKirp(birlesik.hatirlatmaDakikasi),
+    // Alan gelmeden önceki kurulumlarda yok: varsayılan açık, yalnızca açıkça
+    // kapatılmışsa kapalı.
+    gorevHatirlatma: birlesik.gorevHatirlatma !== false,
     gunlukHedef: Number.isFinite(birlesik.gunlukHedef) && birlesik.gunlukHedef > 0
       ? birlesik.gunlukHedef
       : VARSAYILAN_AYARLAR.gunlukHedef,
