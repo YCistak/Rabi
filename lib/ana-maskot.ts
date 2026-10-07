@@ -27,7 +27,7 @@
  *    geri dönmüş sayılmıyor.
  * 11. Bugün başlandı, hedefe ulaşılmadı → deftere yazan / kitap okuyan.
  * 12. Bugün hiç kayıt yok:
- *    - gece (22:00–04:59) → esneyen;
+ *    - gece (22:00–04:59) → gerinen;
  *    - sabah (05:00–10:59) → gerinen, hafta sonu bitki sulayan. Gün daha yeni
  *      başladı: sabah sekizde uyuyan bir tavşan "bugün bir şey yapmadın" gibi
  *      okunurdu;
@@ -36,7 +36,7 @@
  *    - yanlış bankasında `YANLIS_BIRIKTI`+ çözülmemiş soru → büyüteçle inceleyen;
  *    - sınava `SINAV_YAKIN_GUN` ya da daha az gün → saate bakan;
  *    - akşam (18:00–21:59) → düşünen, "bugün ne yapsak";
- *    - kalan durum → esneyen (kullanıcının ilk örneği "uyusun"du; yatan
+ *    - kalan durum → gerinen (kullanıcının ilk örneği "uyusun"du; yatan
  *      tavşan sonra istenmedi).
  *
  * 5–10 kullanıcının seçtiği durumlar. Etkinlik bildirenler (deneme, konu,
@@ -108,7 +108,7 @@ export type MaskotKurali =
   | 'yanlis'
   | 'sinav-yakin'
   | 'aksam'
-  | 'esneyen'
+  | 'kayitsiz'
 
 export type AnaMaskot = {
   kural: MaskotKurali
@@ -122,7 +122,7 @@ export type AnaMaskot = {
 export const SABAH_BASI = 5
 /** Bu saatten sonra kayıtsız gün "henüz başlamadı" değil. */
 export const SABAH_SONU = 11
-/** Bu saatten sonra gece: kayıt yoksa tavşan esniyor. */
+/** Bu saatten sonra gece: kayıt yoksa tavşan geriniyor. */
 export const GECE_BASI = 22
 /** Bu saatten sonra kayıtsız gün akşam: tavşan düşünüyor. */
 export const AKSAM_BASI = 18
@@ -143,10 +143,10 @@ const CALISMA: readonly AnaMaskot[] = [
 ]
 
 /*
-  Kayıtsız günün tavşanı esniyor, uyumuyor: başlıkta yere yatmış uyuyan
+  Kayıtsız günün tavşanı geriniyor, uyumuyor: başlıkta yere yatmış uyuyan
   tavşan istenmedi (kullanıcı, 2026-10: "hiçbir yerde olmasın").
 */
-const ESNEYEN: AnaMaskot = { kural: 'esneyen', poz: 'esneyen', durum: 'uykulu', etiket: 'esniyor, bugün henüz kayıt yok' }
+const GERINEN: AnaMaskot = { kural: 'kayitsiz', poz: 'gerinen', durum: 'uykulu', etiket: 'geriniyor, bugün henüz kayıt yok' }
 
 /** Bugün kayıt var ve ondan önceki son kayıtlı günle arada en az `GERI_DONUS_BOSLUK` boş gün var. */
 function geriDondu(kayitlar: GunlukKayit[], bugun: string): boolean {
@@ -213,7 +213,7 @@ export function anaMaskot(g: AnaMaskotGirdisi): AnaMaskot {
     return gununPozu(g.bugun, CALISMA)
   }
 
-  if (g.saat < SABAH_BASI || g.saat >= GECE_BASI) return { ...ESNEYEN, kural: 'gece' }
+  if (g.saat < SABAH_BASI || g.saat >= GECE_BASI) return { ...GERINEN, kural: 'gece' }
   if (g.saat < SABAH_SONU) {
     return haftaSonu(g.bugun)
       ? { kural: 'hafta-sonu', poz: 'bitkili', durum: 'normal', etiket: 'hafta sonu sabahı, bitkisini suluyor' }
@@ -231,5 +231,5 @@ export function anaMaskot(g: AnaMaskotGirdisi): AnaMaskot {
   if (g.saat >= AKSAM_BASI) {
     return { kural: 'aksam', poz: 'dusunen', durum: 'normal', etiket: 'akşam oldu, bugün ne yapsak diye düşünüyor' }
   }
-  return ESNEYEN
+  return GERINEN
 }
