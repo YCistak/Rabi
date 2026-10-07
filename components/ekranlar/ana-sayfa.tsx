@@ -178,7 +178,7 @@ export function AnaSayfa({
   const kalanGun = geriSayim(tarih, ayarlar.buYilSinif).kalanGun
   /*
     Başlıktaki tavşan günü gösteriyor: kayıt yoksa geriniyor, çalışılıyorsa
-    yazıyor, hedef tuttuysa dans ediyor. Altındaki cümle aynı karardan
+    yazıyor, hedef tuttuysa kutluyor. Altındaki cümle aynı karardan
     çıkıyor, ikisi çelişemiyor (`lib/ana-baslik.ts`). Saat burada okunuyor
     çünkü karar fonksiyonu saf.
   */
