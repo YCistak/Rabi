@@ -41,6 +41,17 @@ listesi**.
   için, ayara yazılmaz. Yeni sayaç yok: `baslatIstegi` → `turuBaslat`. Tur zaten
   başlamışsa (duraklatılmış da) yalnız ekranı açar; odak kilidi tanıtımı açıksa
   kapanmasını bekler. Düğme yalnız işaretli görevde (iş adı daralmasın).
+- **Görev hatırlatması:** saatli, bitmemiş görevde saatten **5 dk önce** yerel
+  bildirim (`lib/gorev-bildirimi.ts` saf + test, `gorevBildirimleriniEsitle` in
+  `lib/bildirim.ts`). Tek tek güncellenmez: `AppShell` görev imzası, ayar ya da öne
+  gelişte bekleyen görev bildirimlerini kimlik aralığıyla (1.000.000+) silip kayıttan
+  yeniden kurar. Kimlik görev kimliğinden FNV özeti — Pomodoro (1), günlük
+  hatırlatma (2–8), odak servisi (4211) aralık dışında kalmalı. Geçmiş an
+  planlanmaz (Android hemen gösterir); 00:00–00:04 önceki güne düşer. iOS 64
+  bekleyen sınırı için en çok `GOREV_BILDIRIM_EN_COK`. Metin emojisiz. Dokunuş:
+  kayıtta Pomodoro'lu ve bitmemişse `pomodoroIstegi`, değilse Yapılacaklar. İzin
+  saat girilince formda sorulur, açılışta değil; red → saatin altında not. Ayar
+  `Ayarlar.gorevHatirlatma` (varsayılan açık), günlük hatırlatmadan bağımsız.
 - Renkler ayrı palet (`--gorev-*`), ders aileleri değil; beyaz kartta en az 4,6:1 —
   yeni tonda kontrastı ölç. Kayıtta rengin **adı**.
 - Dosya adı `notlar.*` **olamaz**: `.gitignore` deseni yakalar (depoya ve Tailwind
