@@ -33,11 +33,11 @@ import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
-import { Rabi } from '@/components/maskot/rabi'
 import {
   Bildirim,
   EN_COK_YANLIS,
   KalanHapi,
+  KoseRabisi,
   OyunKabugu,
   TurSonu,
   YanlisKarti,
@@ -450,7 +450,7 @@ export function IslemOyunuEkrani({
                     yarısını söylemek olurdu. */}
                 <div data-tanitim={demoSorulari ? "demo-islem" : undefined} className="golge-kart rounded-3xl bg-card px-5 pb-5 pt-4">
                   <div className="flex items-center gap-2 text-[12.5px] font-bold text-muted-foreground">
-                    <Rabi durum="calisiyor" boyut={26} />
+                    <KoseRabisi durum="calisiyor" />
                     Kaç eder?
                   </div>
 
