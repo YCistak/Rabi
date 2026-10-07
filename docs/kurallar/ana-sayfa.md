@@ -39,19 +39,20 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   | 9 | Bugünün görevleri var ve hepsi işaretli | `cantali` |
   | 10 | Bugün kayıt var, öncesinde 3+ boş gün | `selamlayan` |
   | 11 | Bugün başlandı, hedefte değil | `yazan` / `okuyan` (günden güne) |
-  | 12 | Kayıt yok, gece (22:00–04:59) | `uyuyan` |
+  | 12 | Kayıt yok, gece (22:00–04:59) | `gerinen` |
   | 13 | Kayıt yok, sabah (05:00–10:59) | `gerinen`, hafta sonu `bitkili` |
   | 14 | Kayıt yok, seri kırılmak üzere | `elleri-belde` |
   | 15 | Kayıt yok, bankada 10+ çözülmemiş yanlış | `buyutecli` |
   | 16 | Kayıt yok, sınava ≤ 30 gün | `saatli` |
   | 17 | Kayıt yok, akşam (18:00–21:59) | `dusunen` |
-  | 18 | Kayıt yok | `uyuyan` |
+  | 18 | Kayıt yok | `gerinen` |
 
   5–7, 9–10, 13'ün hafta sonu kolu ve 15–17 kullanıcının seçimi (2026-10); akşam
   `dusunen` (kaynaktaki "esneyen" esnemiyor). Sabah uyumaz, gerinir: sabah uyuyan
   tavşan "bir şey yapmadın" gibi okunur. Seri kuralı ve hesabı `gunun-hali.ts`ten
   (`hedefSerisi`); günlük hedef sıfırken "tuttu" yok. Duraklatılmış Pomodoro işleyen
-  sayılmaz.
+  sayılmaz. **Yerde uyuyan tavşan (`uyuyan`) başlıkta hiçbir durumda yok**
+  (kullanıcı kaldırttı, 2026-10); kayıtsız gün `gerinen`.
 - **Tavşan ile cümle tek karardan çıkar** (`lib/ana-baslik.ts`, kullanıcı: "hiçbir
   uyumsuzluk olmamalı"): önce tavşan (`anaMaskot`, `kural` alanı), cümle o kuraldan;
   `gununHali` önerileri yalnız tavşan çalışırken (`calisma`). Yeni kural
@@ -60,7 +61,12 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - Başlık tavşanı **tam boy, kırpılmaz** (kullanıcı istedi; kırpım geri getirilmez):
   84 px (tam boy 70 altında leke), yazı sütunu yanında `items-center`. Poz değişince
   `key` ile yeniden kurulur, `ana-maskot-gecis` ile solarak gelir (reduced-motion'da
-  yok). Etiket duruma özel (`Rabi.etiket`: "uyuyor, bugün henüz kayıt yok",
+  yok). **Hiza tavşanın kendisine göre** (kullanıcı istedi): kutu görselin değil
+  görünen tavşanın genişliğinde (`gorunurKutu`, `MASKOT_YAN_BOSLUK` — saydam yan
+  boşluk ölçüleri, `maskot.test.ts` görsellerle karşılaştırır). Tavşanın sol kenarı
+  her pozda geri sayım kartının sol kenarıyla aynı hizada (başlıkta sol dolgu yok),
+  yazı her pozda tavşana `gap-3` uzaklıkta. Görsel değişirse tabloyu yeniden ölç.
+  Etiket duruma özel (`Rabi.etiket`: "geriniyor, bugün henüz kayıt yok",
   "Pomodoro turunda çalışıyor"); `durum` ayrı, ruh hâlini taşır.
 - **Dört kutucuk** (Araçlar, Oyunlar) en son kullanılan başta (`lib/son-kullanilan.ts`).
   Sabitleme/"Düzenle" yok (kaldırıldı, anahtarları `ESKI_ANAHTARLAR`ta). Oyun

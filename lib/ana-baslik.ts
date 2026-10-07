@@ -15,7 +15,7 @@
  * `gununHali`nin önerileri (yanlış bankası, tek derse yığılma, ihmal edilen
  * ders, deneme) yalnızca tavşan çalışırken (`calisma`) geliyor: o zaman
  * kullanıcı gün içinde ve öneri tavşanla çelişmiyor. İhmal edilen ders bir
- * de tavşan gündüz uyurken "o dersle başla" olarak geliyor.
+ * de tavşan gündüz gerinirken "o dersle başla" olarak geliyor.
  *
  * Günlük hedef sıfırken cümle yok (`gununHali` ile aynı kural); tavşan yine
  * duruma göre poz veriyor.
@@ -110,7 +110,7 @@ function kuralCumlesi(maskot: AnaMaskot, g: AnaMaskotGirdisi, b: Baglam): string
       return sinavCumlesi(b)
     case 'aksam':
       return 'Akşam oldu, bugün henüz kaydın yok; kısa bir tekrar yapalım mı?'
-    case 'uyuyan': {
+    case 'kayitsiz': {
       const ihmal = ihmalBul(b)
       if (ihmal) return `Bugün henüz kaydın yok; ${ihmal.ders} dersiyle başlamaya ne dersin?`
       return sec(b, [
