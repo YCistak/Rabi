@@ -2,7 +2,7 @@ import { HARITA_ESLEMESI } from './harita-eslemesi'
 import type { YksDers, YksKonu } from './liste'
 
 /**
- * YKS konusunun sınıfı — Konu Takibi'ndeki `9 · 10 · 11 · 12 · Tümü` sekmesi.
+ * YKS konusunun sınıfı — Konu Takibi'nin en üstündeki `9 · 10 · 11 · 12` sekmesi.
  *
  * YKS sınıf sormuyor ama öğrenci konuyu okulda bir sınıfta görüyor ve
  * listeyi "benim sınıfımda ne var" diye süzmek istiyor. Hangi konunun hangi
@@ -18,23 +18,20 @@ import type { YksDers, YksKonu } from './liste'
  * - **Maarif** (`maarifSinifi`, 9–11. sınıf ve sınıfı bilinmeyen): önce
  *   harita eşlemesi, yoksa `MAARIF_SINIF`. Maarif 9–11'de karşılığı olmayan
  *   konu `'henuz-yok'`: 12. sınıf programı yayımlanmadı, konunun sınıfını
- *   uydurmak yerine "program henüz yok" deniyor.
+ *   uydurmak yerine hiçbir sınıfta gösterilmiyor (sekmede yalnız o yılın
+ *   konuları; "Tümü" sekmesi kullanıcının isteğiyle kalktı).
  *
- * Sınıf yalnızca **liste görünümünü** süzüyor. Özet, tempo, "Devam et",
- * hızlı başlangıç ve Sıradaki bütün dersi sayıyor; kayıt şeması değişmedi.
+ * Ekran sınıf → okul dersi → konu (`okul-dersleri.ts`); kayıt şeması değişmedi.
  */
 
 export type YksSinif = 9 | 10 | 11 | 12
 
 export const YKS_SINIFLARI: readonly YksSinif[] = [9, 10, 11, 12]
 
-/** Sekmedeki seçim: bir sınıf ya da hepsi. */
-export type SinifSecimi = YksSinif | 'tumu'
-
 /** Haritası yazılmamış sınıf — sekmede "harita yok" ya da Maarif'te "Yakında". */
 export const HARITASIZ_SINIF: YksSinif = 12
 
-/** Maarif 9–11'de karşılığı olmayan konu: 12. sınıf programı henüz yok. */
+/** Maarif 9–11'de karşılığı olmayan konu: 12. sınıf programı henüz yok, gösterilmiyor. */
 export const HENUZ_YOK = 'henuz-yok'
 
 /** Konunun öğrencinin müfredatındaki yeri: bir sınıf ya da (Maarif'te) "henüz yok". */
@@ -700,51 +697,26 @@ export function sinifAtamasi(konuId: string, ogrenciSinifi: number): SinifYeri {
 }
 
 /**
- * "Tümü"deki grupların sırası: sınıflar 9'dan 12'ye, Maarif'te karşılığı
- * olmayanlar en sonda (12'nin yerinde — o sınıfın programını bekliyorlar).
+ * Bir YKS dersinin seçili sınıftaki konuları, müfredat sırasıyla. Maarif'te
+ * 12 boş (sekme "Yakında") ve "henüz yok" konular hiçbir sınıfta yok.
  */
-const TUMU_SIRASI: readonly SinifYeri[] = [...YKS_SINIFLARI, HENUZ_YOK]
-
-/**
- * Sekmede görünen konular. Sınıfta yalnızca o sınıfınkiler, müfredat
- * sırasıyla; "Tümü"de hepsi, sınıf sınıf ve sınıfın içinde müfredat
- * sırasıyla — ekran onları sınıf başlıkları altında grupluyor. Maarif'te 12
- * sekmesi boş (pasif): "henüz yok" konuları yalnız "Tümü"de.
- */
-export function sinifKonulari(ders: YksDers, secim: SinifSecimi, ogrenciSinifi: number): YksKonu[] {
-  if (secim !== 'tumu') return ders.konular.filter((k) => sinifAtamasi(k.id, ogrenciSinifi) === secim)
-  return TUMU_SIRASI.flatMap((s) => ders.konular.filter((k) => sinifAtamasi(k.id, ogrenciSinifi) === s))
+export function sinifKonulari(ders: YksDers, sinif: YksSinif, ogrenciSinifi: number): YksKonu[] {
+  return ders.konular.filter((k) => sinifAtamasi(k.id, ogrenciSinifi) === sinif)
 }
 
 /**
- * Sekme seçilebilir mi: "Tümü" her zaman; sınıf, o derste konusu varsa.
- * Maarif'te 12 hiç seçilemiyor ("Yakında") — `sinifKonulari` onu zaten boş
- * döndürüyor. Oturumdan geri yüklenen sekme de bununla sınanıyor.
+ * Ekran açılırken seçili sınıf: öğrencinin kendi sınıfı; mezun (13) 12'de —
+ * son okuduğu sınıf. Bilinmeyen değer (eski kayıt) 9: Maarif sayılıyor ve
+ * en baştan başlamak boş bir sekmeye açılmaktan iyi.
  */
-export function sekmeSecilebilir(ders: YksDers, secim: SinifSecimi, ogrenciSinifi: number): boolean {
-  return secim === 'tumu' || sinifKonulari(ders, secim, ogrenciSinifi).length > 0
+export function varsayilanSinif(buYilSinif: number): YksSinif {
+  if (!Number.isFinite(buYilSinif)) return 9
+  if (buYilSinif >= 12) return 12
+  if (buYilSinif === 10 || buYilSinif === 11) return buYilSinif
+  return 9
 }
 
-/**
- * Ders ekranı açılırken seçili sekme: öğrencinin kendi sınıfı (9–11). 12.
- * sınıf ve mezun "Tümü"de açılıyor — YKS'ye hazırlanan öğrenci bütün
- * konuların karşısında, yalnızca 12'ninkilerle değil. Kendi sınıfında o
- * dersin konusu yoksa (9. sınıfta AYT Edebiyat'ın bir kısmı, YDT) yine
- * "Tümü": boş bir sekmeye açılmak "liste bozuk" diye okunur.
- */
-export function varsayilanSinifSecimi(ders: YksDers, buYilSinif: number): SinifSecimi {
-  if (buYilSinif !== 9 && buYilSinif !== 10 && buYilSinif !== 11) return 'tumu'
-  return sinifKonulari(ders, buYilSinif, buYilSinif).length > 0 ? buYilSinif : 'tumu'
-}
-
-/**
- * Belirli bir konuya gidilirken sekme ("Devam et", Sıradaki): konu seçili
- * sekmede görünüyorsa sekme kalıyor, görünmüyorsa konunun sınıfına
- * geçiliyor; sınıfı "henüz yok" ise (yalnız "Tümü"de görünüyor) "Tümü".
- */
-export function konuyuGosterenSecim(konuId: string, secim: SinifSecimi, ogrenciSinifi: number): SinifSecimi {
-  if (secim === 'tumu') return secim
-  const sinif = sinifAtamasi(konuId, ogrenciSinifi)
-  if (sinif === HENUZ_YOK) return 'tumu'
-  return sinif === secim ? secim : sinif
+/** Oturumdan okunan değer bir sınıf mı. */
+export function sinifMi(deger: unknown): deger is YksSinif {
+  return YKS_SINIFLARI.includes(deger as YksSinif)
 }

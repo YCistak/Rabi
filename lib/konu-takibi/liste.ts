@@ -24,7 +24,8 @@ import type { KonuDersId } from '../konu/tip'
  * AYT Edebiyat anlam ve dil bilgisini, AYT Tarih/Coğrafya da TYT'nin bütün
  * başlıklarını yeniden sorar; ama aynı konuyu iki kez işaretletmek takibi
  * iki kat uzatır ve ikisi zamanla birbirini tutmaz. AYT bölümünde yalnızca
- * AYT'ye özgü başlıklar var; ekran bunu bir notla söylüyor.
+ * AYT'ye özgü başlıklar var. Ekran TYT/AYT ayırmıyor: dersleri okul dersi
+ * başına birleştirip sınıf sınıf gösteriyor (`okul-dersleri.ts`).
  *
  * **Kimlikler kayıt anahtarı.** Öğrencinin işaretleri konu kimliğiyle
  * saklanıyor (`takip.ts`); bir kimliği değiştirmek o konunun kaydını öksüz
@@ -497,8 +498,8 @@ const AYT_EDEBIYAT: YksDers = {
  * ÖSYM Tarih-1 ile Tarih-2'yi (Coğrafya-1 ile -2'yi) ayrı testlerde soruyor
  * ama kapsamları konu konu ayrılmıyor: ikisi de bütün ortaöğretim
  * programına dayanıyor. Aynı başlıkları iki ders altında yazmak öğrenciye
- * her konuyu iki kez işaretletmek olurdu. Ders adı alana göre değişiyor
- * (`dersAdi`): Eşit Ağırlık öğrencisi "Tarih-1", Sözel "Tarih-1 ve 2" görüyor.
+ * her konuyu iki kez işaretletmek olurdu. Ekranda okul dersi "Tarih"in
+ * içinde, TYT Tarih konularıyla birlikte.
  */
 const AYT_TARIH: YksDers = {
   id: 'ayt-tarih',
@@ -630,7 +631,7 @@ const YDT: YksDers = {
   ],
 }
 
-/** Bütün dersler, ekrandaki sırayla. TYT'de sıra sınavdaki test sırası. */
+/** Bütün YKS dersleri; TYT'de sıra sınavdaki test sırası. Ekran sırası `OKUL_DERSLERI`nde. */
 export const YKS_DERSLERI: readonly YksDers[] = [
   TYT_TURKCE,
   TYT_MATEMATIK,
@@ -652,32 +653,6 @@ export const YKS_DERSLERI: readonly YksDers[] = [
   AYT_DIN,
   YDT,
 ]
-
-/**
- * Bir oturumda öğrencinin gördüğü dersler.
- *
- * TYT herkese aynı. AYT öğrencinin alanına göre süzülüyor; alan seçilmemişse
- * (`null`, "Karar vermedim") boş liste dönüyor ve ekran alanı soruyor —
- * hedef kataloğundaki kuralın aynısı (AGENTS.md → "Alan seçilmemiş
- * olabilir"): bir alan varsayıp ona göre ders göstermek, öğrencinin hiç
- * söylemediği bir kararı onun yerine vermek olurdu.
- */
-export function oturumDersleri(oturum: YksOturum, alan: PuanTuru | null): YksDers[] {
-  if (oturum === 'tyt') return YKS_DERSLERI.filter((d) => d.oturum === 'tyt')
-  if (alan === null) return []
-  return YKS_DERSLERI.filter((d) => d.oturum === 'ayt' && d.alanlar?.includes(alan))
-}
-
-/**
- * Ekranda yazılan ders adı. AYT Tarih/Coğrafya alana göre test adını alıyor
- * (bkz. `AYT_TARIH`); öteki dersler kendi adını.
- */
-export function dersAdi(ders: YksDers, alan: PuanTuru | null): string {
-  if (ders.id !== 'ayt-tarih' && ders.id !== 'ayt-cografya') return ders.ad
-  if (alan === 'ea') return `${ders.ad}-1`
-  if (alan === 'soz') return `${ders.ad}-1 ve 2`
-  return ders.ad
-}
 
 /** Kimlikten ders. */
 export function yksDersBul(id: string): YksDers | null {
