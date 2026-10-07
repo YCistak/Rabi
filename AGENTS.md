@@ -2882,6 +2882,18 @@ Bitirdim.
   kalıyor, kaydı yeni parçalara sürüm 1 → 2 göçünde **bir kez** kopyalanıyor.
   Maarif'te karşılığı olmayan başlıklar (Cumhuriyet Dönemi, Edebî Akımlar,
   Divan, Genden Proteine) bölünmedi; uydurma alt başlık yok.
+- **Ders ekranı sınıf sınıf süzülüyor** (`lib/konu-takibi/sinif.ts`):
+  `9 · 10 · 11 · 12 · Tümü`, haritanın sınıf sekmesinin görsel dili (yüzde
+  = satır dairelerinin ortalaması, kendi sınıfında "sen"). Konunun sınıfı
+  eşliyse destelerin önekinden (çoğunluk, eşitlikte en erken), değilse
+  `ELLE_SINIFLAR`dan (Maarif 9–11 karşılığı, yoksa 2018 programı). 12
+  haritasız: sekme açık ama harita aşaması yok; 12 olan konu eşlenemez
+  (`sinif.test.ts`). Varsayılan öğrencinin sınıfı, 12/mezun ya da sınıfında
+  konusu olmayan derste "Tümü" (sınıf başlıklarıyla). Süzgeç yalnızca liste:
+  özet, tempo, Sıradaki, Devam et, hızlı başlangıç bütün dersi sayıyor;
+  Devam et/Sıradaki konunun sekmesini açıyor, "bu ve öncekiler" görünen
+  listeyle sınırlı. Maarif 12 yayımlanınca elle tablodaki "2018" satırlarına
+  yeniden bakılmalı.
 - **Kayıt** `rabi-yks-konu-takibi`, sürümlü (`{ surum: 2, konular }`), işaret
   yerine gün tutuyor; okurken `takibiCoz` süzüyor ve yedeğe giriyor
   (`Yedek.yksKonuTakibi`, eski yedekte yoksa mevcut kayda dokunulmuyor).
