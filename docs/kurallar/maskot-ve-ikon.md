@@ -63,7 +63,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   | `gerinen`, `esneyen`, `bagdas`, `uzanan` | gerinen, ayak parmaklarına uzanan, bağdaş kuran, uzanan | deste molası (dönüşümlü) |
   | `selamlayan` | eğilerek selamlayan | aylık özetin kapanışı ("Yarın yine buradayım") |
   | `kahkaha` | kahkaha atan | yalnızca durum kafası |
-  | `yapboz` | yapboz tamamlayan | Yazım Kuralları oyununda sorunun üstü, 96 px (kullanıcı istedi) |
+  | `yapboz` | yapboz tamamlayan | mini oyunlarda sorunun üstünde ortada duran tavşan, 96 px (kullanıcı istedi); başlık satırındaki küçük baş (26–38 px) `yuz` kalır |
 
 - **Dönüşüm rastgele değil.** Aynı yere düşen pozlar `gununPozu` (`lib/maskot.ts`)
   ile günün tarihinden seçilir (gün içinde sabit, `gunun-hali.ts`teki cümle kuralı);
