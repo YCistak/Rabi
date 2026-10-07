@@ -20,7 +20,8 @@
  *    açılana kadar; açılınca `ozetHazir` düşüyor.
  * 6. Bugünün tarihli bir deneme girildi → onay damgası basan.
  * 7. Bugün bir konu anlatımı bitirildi → tahtaya yazan.
- * 8. Günlük hedef tuttu → dans eden / alkışlayan / kahkaha atan (günden güne).
+ * 8. Günlük hedef tuttu → kahkaha atan / elleri belde / kucak açan / laptopta
+ *    çalışan (günden güne; dans eden ve alkışlayan kullanıcı isteğiyle çıktı).
  * 9. Bugünün bütün görevleri işaretlendi → çantasını kapatan.
  * 10. Bugün kayıt var ve öncesinde en az `GERI_DONUS_BOSLUK` boş gün → eğilerek
  *    selamlayan: "tekrar hoş geldin". Hiç eski kaydı olmayan yeni kullanıcı
@@ -132,9 +133,10 @@ export const GERI_DONUS_BOSLUK = 3
 export const YANLIS_BIRIKTI = 10
 
 const KUTLAMA: readonly AnaMaskot[] = [
-  { kural: 'kutlama', poz: 'dans', durum: 'kutlama', etiket: 'hedefini tutturdun, dans ediyor' },
-  { kural: 'kutlama', poz: 'alkislayan', durum: 'kutlama', etiket: 'hedefini tutturdun, alkışlıyor' },
   { kural: 'kutlama', poz: 'kahkaha', durum: 'kutlama', etiket: 'hedefini tutturdun, gülüyor' },
+  { kural: 'kutlama', poz: 'elleri-belde', durum: 'kutlama', etiket: 'hedefini tutturdun, gururla duruyor' },
+  { kural: 'kutlama', poz: 'kucak-acan', durum: 'kutlama', etiket: 'hedefini tutturdun, kucak açıyor' },
+  { kural: 'kutlama', poz: 'laptoplu', durum: 'kutlama', etiket: 'hedefini tutturdun, çalışmaya devam ediyor' },
 ]
 
 const CALISMA: readonly AnaMaskot[] = [

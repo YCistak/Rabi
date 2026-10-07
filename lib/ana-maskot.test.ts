@@ -56,7 +56,7 @@ describe('anaMaskot', () => {
 
   it('hedef tuttuysa kutluyor', () => {
     const m = anaMaskot({ ...temel, gunlukKayitlar: [gun(BUGUN, 50)] })
-    expect(['dans', 'alkislayan', 'kahkaha']).toContain(m.poz)
+    expect(['kahkaha', 'elleri-belde', 'kucak-acan', 'laptoplu']).toContain(m.poz)
     expect(m.durum).toBe('kutlama')
   })
 

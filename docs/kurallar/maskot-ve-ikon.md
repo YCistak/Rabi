@@ -55,6 +55,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   | `kitapli` | kitabı inceleyen | Harita › anlatım kartı (`okuyan`ın yerine) |
   | `tahtali` | tahtaya yazan | oyun tanıtımı (nasıl oynanır) |
   | `laptoplu` | laptopta çalışan | odak daveti (Pomodoro) |
+  | `kucak-acan` | kucak açan | ana sayfa › hedef tuttu (dönüşümlü) |
   | `saatli` | saate bakan | odak kilidi kurulumu |
   | `basparmak` | başparmak kaldıran | hızlı kontrol › doğru; kapanış › iyi |
   | `damgali` | onay damgası basan | kapanış › iyi |
@@ -83,7 +84,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     maskotu 64 px, tam boy okunmaz).
   - Anlamı belirsiz ruh hâlleri: oturan, çömelen, koşan, parmak ucunda yürüyen,
     emekleyen, tek ayakta denge, yüzüstü ayak sallayan, utangaç, şaşırıp sıçrayan,
-    kucak açan, çiçek tutan, silgiyle silen. Ekran bulununca kaynağı kopyalayıp
+    çiçek tutan, silgiyle silen. Ekran bulununca kaynağı kopyalayıp
     betiğe eklemek yeter; boşta duran poz paketi şişirir.
 
 ## Uygulama ikonu

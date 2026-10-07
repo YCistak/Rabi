@@ -108,6 +108,8 @@ const POZLAR = [
     // Ana sayfa başlığı için: öteki durumların tam boy pozu zaten vardı.
     ['tavsan-uyuyan', 'kıvrılıp uyuyan.png'],
     ['tavsan-yazan', 'deftere yazan.png'],
+    // Ana sayfada günlük hedef tutunca dönüşümlü çıkan kutlama pozlarından biri.
+    ['tavsan-kucak-acan', 'kucak açan.png'],
     // Konu kartının üstünde dönüşümlü çıkan çalışma pozlarından biri.
     ['tavsan-ayracli', 'kitaba ayraç koyan.png'],
   ].map(([ad, kaynak]) => ({ ad, kaynak })),
