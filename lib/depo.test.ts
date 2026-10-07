@@ -35,6 +35,7 @@ const bos: Omit<Yedek, 'uygulama' | 'surum' | 'tarih'> = {
     hatirlatmaSaati: 20,
     hatirlatmaDakikasi: 0,
     bildirimAcik: false,
+    gorevHatirlatma: true,
     oyunSesi: true,
     oyunMuzigi: true,
   oyunMuzikTuru: 'mod' as const,
@@ -274,6 +275,12 @@ describe('ayarlariNormalize', () => {
     expect(ayarlariNormalize({ buYilSinif: null as unknown as number }).buYilSinif).toBe(12)
     expect(ayarlariNormalize({ buYilSinif: Number.NaN }).buYilSinif).toBe(12)
     expect(ayarlariNormalize({ buYilSinif: 11 }).buYilSinif).toBe(11)
+  })
+
+  it('görev hatırlatması eski kurulumda açık, yalnız açıkça kapatılınca kapalı', () => {
+    expect(ayarlariNormalize({}).gorevHatirlatma).toBe(true)
+    expect(ayarlariNormalize({ gorevHatirlatma: null as unknown as boolean }).gorevHatirlatma).toBe(true)
+    expect(ayarlariNormalize({ gorevHatirlatma: false }).gorevHatirlatma).toBe(false)
   })
 })
 

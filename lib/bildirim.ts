@@ -3,6 +3,8 @@
 import { LocalNotifications } from '@capacitor/local-notifications'
 import { Capacitor } from '@capacitor/core'
 import { PLANLANAN_GUN, hatirlatmaPlanlari } from './hatirlatma'
+import { gorevBildirimPlanlari, gorevBildirimiMi } from './gorev-bildirimi'
+import type { Gorev } from './yapilacaklar'
 
 /**
  * Yerel bildirimler. Tarayıcıda (npm run dev) eklenti yok; bütün çağrılar
@@ -167,5 +169,96 @@ export async function hatirlatmaIptal() {
     await LocalNotifications.cancel({ notifications: HATIRLATMA_IDLERI })
   } catch {
     // yoksay
+  }
+}
+
+/** Yerel bildirim bu ortamda var mı — tarayıcıda (geliştirme, web) yok. */
+export function bildirimDestekleniyor(): boolean {
+  return eklentiVar()
+}
+
+/**
+ * Görev hatırlatmalarını kayıttan baştan kurar: telefonda bekleyen bütün görev
+ * bildirimleri silinip `gorevBildirimPlanlari`nın listesi yazılıyor.
+ *
+ * Silinecekler bekleyen listeden **kimlik aralığıyla** bulunuyor
+ * (`gorevBildirimiMi`), bellekteki eski planla değil: uygulama kapanıp
+ * açıldığında bellek boş, ama telefonda silinmiş bir görevin bildirimi
+ * duruyor olabilir. Pomodoro ve günlük hatırlatma aralığın dışında kalıyor.
+ *
+ * Çağrılar sıraya giriyor: üst üste iki değişiklikte ikinci eşitleme
+ * birincinin silmesiyle yazması arasına girseydi, eski listenin bildirimi
+ * yenisinin üstüne yazılıp silinmiş bir görevi hatırlatabilirdi.
+ */
+let gorevSirasi: Promise<void> = Promise.resolve()
+
+export function gorevBildirimleriniEsitle(
+  gorevler: readonly Gorev[],
+  acik: boolean,
+  simdi: () => Date = () => new Date(),
+): Promise<void> {
+  if (!eklentiVar()) return Promise.resolve()
+  gorevSirasi = gorevSirasi.then(() => gorevleriEsitle(gorevler, acik, simdi()))
+  return gorevSirasi
+}
+
+async function gorevleriEsitle(gorevler: readonly Gorev[], acik: boolean, simdi: Date) {
+  try {
+    const bekleyen = await LocalNotifications.getPending()
+    const eskiler = bekleyen.notifications
+      .map((b) => Number(b.id))
+      .filter(gorevBildirimiMi)
+      .map((id) => ({ id }))
+    if (eskiler.length > 0) await LocalNotifications.cancel({ notifications: eskiler })
+
+    // İzin yoksa sistem penceresi burada açılmıyor: izin, saat girilen
+    // görevde soruluyor (`gorevIzniIste`), arka planda değil.
+    if (!acik || !(await izinVarMi())) return
+    const planlar = gorevBildirimPlanlari(gorevler, simdi)
+    if (planlar.length === 0) return
+    await LocalNotifications.schedule({
+      notifications: planlar.map(({ id, gorevId, zaman, baslik, metin }) => ({
+        id,
+        title: baslik,
+        body: metin,
+        ...GORUNUS,
+        // Dokununca hangi göreve gidileceği (`AppShell`). Pomodoro işareti
+        // burada değil kayıtta okunuyor: bildirim kurulduktan sonra
+        // değişmiş olabilir.
+        extra: { gorevId },
+        schedule: {
+          at: zaman,
+          // Günlük hatırlatmadan farklı olarak dakika önemli: "5 dakika
+          // sonra" diyen bildirim telefon uykudayken yarım saat gecikirse
+          // anlamını yitirir. Bu bayrak ek izin istemiyor.
+          allowWhileIdle: true,
+        },
+      })),
+    })
+  } catch {
+    // Bildirim kurulamasa da görev listesi çalışmaya devam etsin.
+  }
+}
+
+/**
+ * Saat girilen görevde bildirim izni. `null`: bu ortamda bildirim yok (web),
+ * form hiçbir şey göstermiyor. `false`: izin verilmedi, formda küçük bir not.
+ */
+export async function gorevIzniIste(): Promise<boolean | null> {
+  if (!eklentiVar()) return null
+  return izinIste()
+}
+
+/** Bildirime dokunuş: görev bildirimiyse görevin kimliğini verir. */
+export function bildirimDokunusunuDinle(
+  gorevBildirimi: (gorevId: string) => void,
+): () => void {
+  if (!eklentiVar()) return () => {}
+  const dinleyici = LocalNotifications.addListener('localNotificationActionPerformed', (olay) => {
+    const gorevId = (olay.notification.extra as { gorevId?: unknown } | undefined)?.gorevId
+    if (typeof gorevId === 'string' && gorevId !== '') gorevBildirimi(gorevId)
+  })
+  return () => {
+    void dinleyici.then((d) => d.remove())
   }
 }

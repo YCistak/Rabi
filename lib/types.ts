@@ -383,6 +383,13 @@ export type Ayarlar = {
   /** Hatırlatma dakikası, 0–59. Kullanıcı "21.30" gibi bir saat seçebiliyor. */
   hatirlatmaDakikasi: number
   bildirimAcik: boolean
+  /**
+   * Yapılacaklar'da saati olan görevden beş dakika önce bildirim
+   * (`lib/gorev-bildirimi.ts`). Günlük hatırlatmadan bağımsız ve varsayılan
+   * açık: saat yazan kullanıcı o saati hatırlamak istiyor. Bildirim yine de
+   * telefon izni verilmeden gelmiyor.
+   */
+  gorevHatirlatma: boolean
   /** Mini oyunlarda doğru/yanlış/bitiş ses efektleri. */
   oyunSesi: boolean
   /** Eski "Mini oyun müziği" anahtarı. Müzik kaldırıldı; alan yedek uyumluluğu için duruyor, okunmuyor. */

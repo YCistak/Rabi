@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import {
   Bell,
+  BellRing,
   ChevronDown,
   ChevronRight,
   ClipboardList,
@@ -46,7 +47,7 @@ import { cizimAnahtari } from '@/lib/cizim'
 import type { BankaKaydi } from '@/lib/oyunlar/banka'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import type { YksTakip } from '@/lib/konu-takibi/kayit'
-import { izinIste } from '@/lib/bildirim'
+import { gorevIzniIste, izinIste } from '@/lib/bildirim'
 import { saatYaz } from '@/lib/hatirlatma'
 import { AD_EN_AZ, adBiciminde, adGecerliMi } from '@/lib/ad'
 import { bugun, cn, yeniId } from '@/lib/utils'
@@ -209,6 +210,21 @@ export function AyarlarEkrani({
     const izinli = await izinIste()
     setIzinReddedildi(!izinli)
     if (izinli) setAyarlar((o) => ({ ...o, bildirimAcik: true }))
+  }
+
+  /**
+   * Görev hatırlatmalarını açarken izin de soruluyor; reddedilse de anahtar
+   * açık kalıyor (tercih), bildirim ise izin verilene kadar kurulmuyor ve
+   * aynı uyarı notu çıkıyor. Web'de (`null`) sorulmuyor.
+   */
+  const gorevHatirlatmaDegistir = async () => {
+    if (ayarlar.gorevHatirlatma) {
+      setAyarlar((o) => ({ ...o, gorevHatirlatma: false }))
+      return
+    }
+    setAyarlar((o) => ({ ...o, gorevHatirlatma: true }))
+    const izinli = await gorevIzniIste()
+    if (izinli === false) setIzinReddedildi(true)
   }
 
   // Soru çizimleri de fotoğraf deposunda; çizimi olmayan anahtar dışa
@@ -518,6 +534,16 @@ export function AyarlarEkrani({
               </AlanNotu>
             </GenisAlan>
           )}
+
+          {/* Günlük hatırlatmadan bağımsız: saat yazılan görevden beş dakika
+              önce gelir (`lib/gorev-bildirimi.ts`). Varsayılan açık. */}
+          <Satir
+            Simge={BellRing}
+            baslik="Görev hatırlatmaları (5 dk önce)"
+            onClick={() => void gorevHatirlatmaDegistir()}
+            basiliMi={ayarlar.gorevHatirlatma}
+            sag={<Anahtar acik={ayarlar.gorevHatirlatma} />}
+          />
 
           {izinReddedildi && (
             <GenisAlan tam>

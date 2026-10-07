@@ -59,6 +59,7 @@ export function YapilacaklarEkrani({
   setGorevler,
   tanitim,
   onPomodoroBaslat,
+  gorevIzniIste,
 }: {
   gorevler: Gorev[]
   setGorevler: (guncelleyici: Gorev[] | ((onceki: Gorev[]) => Gorev[])) => void
@@ -67,6 +68,12 @@ export function YapilacaklarEkrani({
    * ekranını açıp turu başlatıyor (`AppShell`). Verilmezse düğme çizilmiyor.
    */
   onPomodoroBaslat?: (gorev: Gorev) => void
+  /**
+   * Saat girilen görevde bildirim izni (`lib/bildirim.ts`): "5 dakika önce"
+   * hatırlatması izinsiz gelmiyor. Verilmezse (ayar kapalı, tur) sorulmuyor;
+   * `null` dönerse ortamda bildirim yok (web), form sessiz kalıyor.
+   */
+  gorevIzniIste?: () => Promise<boolean | null>
   /**
    * Başlangıç turunda ekleme sayfası yalnızca tur o adımdayken görünüyor
    * (`SoruTakibiEkrani` ile aynı gerekçe).
@@ -249,6 +256,7 @@ export function YapilacaklarEkrani({
           gunEtiketi={gunEtiketi}
           onKapat={() => (tanitim ? tanitim.formuKapat() : setSayfa(null))}
           onKaydet={(duzen) => kaydet(duzen, sayfa.gorev)}
+          gorevIzniIste={gorevIzniIste}
         />
       )}
 
@@ -553,12 +561,14 @@ function EklemeSayfasi({
   gunEtiketi,
   onKapat,
   onKaydet,
+  gorevIzniIste,
 }: {
   /** Verilirse sayfa bu görevi düzenliyor, alanlar onun değerleriyle açılıyor. */
   duzenlenen?: Gorev
   gunEtiketi: string
   onKapat: () => void
   onKaydet: (duzen: GorevDuzeni) => void
+  gorevIzniIste?: () => Promise<boolean | null>
 }) {
   const [metin, setMetin] = useState(duzenlenen?.metin ?? '')
   /** Saat kutusunun ham değeri; boşsa görev saatsiz. */
@@ -582,6 +592,23 @@ function EklemeSayfasi({
       /* yok sayılıyor */
     }
   }, [saatAcik])
+  /*
+    Bildirim izni saat girilince soruluyor, uygulama açılırken değil: izin
+    penceresi "neden?" sorusunun cevabı ekrandayken anlamlı. İzin zaten
+    verildiyse pencere açılmıyor; reddedildiyse görev yine kaydediliyor,
+    yalnızca hatırlatma kurulmuyor ve saatin altında bunu söyleyen bir not
+    çıkıyor. Sayfa başına bir kez.
+  */
+  const izinSoruldu = useRef(false)
+  const [izinYok, setIzinYok] = useState(false)
+  const saatGirildi = saatKirp(saat) !== null
+  useEffect(() => {
+    if (!saatGirildi || !gorevIzniIste || izinSoruldu.current) return
+    izinSoruldu.current = true
+    // İptal edilmiyor: izin penceresi açıkken saat silinirse cevap yine
+    // yazılmalı, yoksa saat geri girildiğinde not çıkmazdı.
+    void gorevIzniIste().then((izinli) => setIzinYok(izinli === false))
+  }, [saatGirildi, gorevIzniIste])
   /*
     İki kaynak, tek cevap: çip ya da kutu. Birine dokunmak ötekini
     temizliyor; ikisi birden dolu kalsaydı hangisinin kaydedileceği ekranda
@@ -725,6 +752,11 @@ function EklemeSayfasi({
             <Clock size={16} strokeWidth={2.4} aria-hidden />
             Saat ekle
           </button>
+        )}
+        {izinYok && saatGirildi && (
+          <p className="mt-1.5 px-0.5 text-[11.5px] font-bold text-muted-foreground">
+            Bildirim izni kapalı, bu görev için hatırlatma gelmez.
+          </p>
         )}
 
         {/* Varsayılan seçili gelmiyor: seçili bir "30 dk", kullanıcının hiç

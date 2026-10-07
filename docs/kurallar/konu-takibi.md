@@ -56,13 +56,24 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   Genden Proteine) bölünmez; uydurma alt başlık yok.
 - **Ders ekranı sınıf sınıf süzülür** (`lib/konu-takibi/sinif.ts`): `9 · 10 · 11 · 12 ·
   Tümü`, haritanın sınıf sekmesinin dili (yüzde = satır dairelerinin ortalaması, kendi
-  sınıfında "sen"). Konunun sınıfı eşliyse destelerin önekinden (çoğunluk, eşitlikte en
-  erken), değilse `ELLE_SINIFLAR`dan (Maarif 9–11, yoksa 2018 programı). 12 haritasız:
-  sekme açık, harita aşaması yok (`sinif.test.ts`). Varsayılan öğrencinin sınıfı;
-  12/mezun ya da sınıfında konusu olmayan derste "Tümü". Süzgeç yalnız liste: özet,
-  tempo, Sıradaki, Devam et, hızlı başlangıç bütün dersi sayar; Devam et/Sıradaki
-  konunun sekmesini açar, "bu ve öncekiler" görünen listeyle sınırlı. Maarif 12
-  yayımlanınca elle tablodaki "2018" satırlarına yeniden bakılmalı.
+  sınıfında "sen"). **Sınıf ataması öğrencinin müfredatına göre** (kullanıcı istedi,
+  2026-10; `sinifAtamasi(konu, buYilSinif)`):
+  - **12. sınıf ve mezun** (2018 programı): `ESKI_SINIF`, her konu için 9–12. Harita
+    eşlemesine bakılmaz. 12 sekmesi açık, "harita yok"; harita aşaması yok.
+  - **9–11 ve bilinmeyen** (Maarif): eşliyse destelerin önekinden (çoğunluk, eşitlikte
+    en erken), değilse `MAARIF_SINIF`. Maarif 9–11'de karşılığı olmayan konu
+    `HENUZ_YOK`: sınıf sekmelerinde görünmez, "Tümü"nün sonunda "12. sınıf · program
+    henüz yok" başlığı altında, işaretlenebilir. 12 sekmesi haritadaki gibi pasif,
+    "Yakında" rozetli (`yakinda`). Felsefe/Din iskelette yok; 2018 sınıflarıyla durur.
+  - `sinif.test.ts`: eski tabloda her konu 9–12, Maarif tablosu eşlemeyle tutarlı ve 12
+    vermez, seçici 9/10/11/12/mezun, 9–11'de 12 pasif.
+
+  Varsayılan öğrencinin sınıfı; 12/mezun ya da sınıfında konusu olmayan derste "Tümü".
+  Oturumdan dönen sekme seçilemiyorsa (`sekmeSecilebilir`) varsayılan. Süzgeç yalnız
+  liste: özet, tempo, Sıradaki, Devam et, hızlı başlangıç bütün dersi sayar; Devam
+  et/Sıradaki konunun sekmesini açar ("henüz yok" ise "Tümü"), "bu ve öncekiler" görünen
+  listeyle sınırlı. Maarif 12 yayımlanınca `MAARIF_SINIF`taki `HENUZ_YOK` satırları sınıf
+  alır ve 12 sekmesinin "Yakında"sı kalkar.
 - **Kayıt** `rabi-yks-konu-takibi`, sürümlü (`{ surum: 2, konular }`), işaret yerine gün
   tutar; okurken `takibiCoz` süzer. Yedeğe girer (`Yedek.yksKonuTakibi`; eski yedekte
   yoksa mevcut kayda dokunulmaz). `kayit.ts` konu içeriğini yüklemez, depo yalnız onu

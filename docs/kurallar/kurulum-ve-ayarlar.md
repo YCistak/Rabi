@@ -41,5 +41,8 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   üyesi. Ders aileleri (`yzm`, `isl`…) kullanılmaz (koyuları kırmızı/sarıda 4.5 altı).
   Yalnız simge dairesi boyanır, bölüm kartı beyaz (`bg-card`) — kartı boyayan sürüm
   kullanıcı isteğiyle geri alındı.
+- Hatırlatma bölümünde iki bağımsız anahtar: "Günlük hatırlatma" (izin yoksa
+  açılmaz) ve "Görev hatırlatmaları (5 dk önce)" (varsayılan açık; izin reddedilse de
+  açık kalır, bildirim izin gelene kadar kurulmaz). Kullanıcı başka ayar istemedi.
 - Şablon düzenleme ayarlarda yok. `lib/sablonlar.ts` duruyor (yeni denemede seçiliyor,
   yedeğe giriyor); `ayarlar.varsayilanSablonId` okunuyor ama ayarlardan değişmiyor.

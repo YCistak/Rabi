@@ -44,7 +44,14 @@ import { androidMu, iosMu } from '@/lib/platform'
 import { ekranGoruntusuKaydet, geriGecisi, useGeriKaydirma } from '@/lib/geri-kaydirma'
 import { sekmeGecisYonu, useSekmeKaydirma } from '@/lib/sekme-kaydirma'
 import { bildirilecekler, rozetDurumu, yeniRozetler, type Rozet } from '@/lib/rozetler'
-import { hatirlatmaIptal, hatirlatmaPlanla, pomodoroIptal } from '@/lib/bildirim'
+import {
+  bildirimDokunusunuDinle,
+  gorevBildirimleriniEsitle,
+  gorevIzniIste,
+  hatirlatmaIptal,
+  hatirlatmaPlanla,
+  pomodoroIptal,
+} from '@/lib/bildirim'
 import { odakKilidiniBitir } from '@/lib/odak-kilidi'
 import type { SoruGecmisi } from '@/lib/oyunlar/gecmis'
 import { bekleyenSayisi } from '@/lib/hata-bildirimi'
@@ -60,7 +67,7 @@ import type { Ekran, Sekme } from '@/lib/gezinme'
 import { haritaSinifiBul, programBul, type HaritaSinifi, type KonuDersId } from '@/lib/konu'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { kullanildi } from '@/lib/son-kullanilan'
-import { useBugun } from '@/lib/gorunurluk'
+import { useBugun, useUygulamaGorunur } from '@/lib/gorunurluk'
 import { katmanVarMi, tumKatmanlariKapat, ustKatmaniKapat } from '@/lib/geri'
 import { Acilis, GECIS_SOLMA_SURESI, GECIS_SURESI, KurulumGecisi } from '@/components/acilis'
 import { Buton } from '@/components/ui'
@@ -840,6 +847,59 @@ function RabiUygulamasi() {
     bugunIso,
   ])
 
+  // ---- Görev hatırlatmaları (saatten 5 dk önce) ----
+  /*
+    Görevlerde bildirimi ilgilendiren her değişiklik (ekleme, düzenleme, saat,
+    erteleme, bitirme, silme) ve her açılış/öne geliş, telefondaki görev
+    bildirimlerini kayıttan baştan kuruyor (`gorevBildirimleriniEsitle`).
+    Tek tek "şu görev değişti" diye izlenmiyor: yedekten geri yükleme ya da
+    eski günlerin elenmesi gibi kaçan bir yol eski bildirimi telefonda
+    bırakırdı.
+
+    Bağımlılık listedeki diziye değil imzaya bakıyor: `gorevler` her çizimde
+    yeniden türetiliyor, diziye bağlansaydı her çizimde eşitlenirdi. Öne
+    gelişte de eşitleniyor — izni telefonun ayarlarından verip dönen
+    kullanıcının bildirimleri o an kuruluyor.
+  */
+  const uygulamaGorunur = useUygulamaGorunur()
+  const gorevBildirimImzasi = JSON.stringify(
+    gorevler.map((g) => [g.id, g.gun, g.saat, g.bitti, g.metin, g.pomodoro === true]),
+  )
+  useEffect(() => {
+    if (!ayarlarHazir || !gorevlerHazir || !ayarlar.kurulumTamamlandi || !uygulamaGorunur) return
+    void gorevBildirimleriniEsitle(gorevler, ayarlar.gorevHatirlatma)
+    // `gorevler` imzayla birlikte değişiyor; imza aynıyken bildirimi
+    // ilgilendiren bir şey değişmemiş demek.
+  }, [ayarlarHazir, gorevlerHazir, ayarlar.kurulumTamamlandi, ayarlar.gorevHatirlatma, uygulamaGorunur, gorevBildirimImzasi])
+
+  /*
+    Görev bildirimine dokunuş. Pomodoro işaretli ve bitmemiş görevde
+    Yapılacaklar'daki sayaç düğmesinin yolu (`pomodoroIstegi` → Pomodoro),
+    ötekilerde Yapılacaklar açılıyor. İşareti bildirim değil **kayıt**
+    söylüyor: bildirim kurulduktan sonra görev değişmiş ya da silinmiş
+    olabilir.
+
+    Dokunuş bekletiliyor: uygulama bildirimle soğuk açıldığında olay, kayıt
+    okunmadan ve açılış animasyonu bitmeden geliyor (eklenti olayı dinleyici
+    kurulana kadar tutuyor).
+  */
+  const [bildirimGorevi, setBildirimGorevi] = useState<string | null>(null)
+  useEffect(() => bildirimDokunusunuDinle(setBildirimGorevi), [])
+  useEffect(() => {
+    if (bildirimGorevi === null) return
+    if (!ayarlarHazir || !gorevlerHazir || !ayarlar.kurulumTamamlandi || !acilisBitti) return
+    // Başlangıç turu sürerken ekran değiştirmek turu bozar; dokunuş düşüyor.
+    setBildirimGorevi(null)
+    if (tanitim.tanitimdaMi) return
+    const gorev = gorevler.find((g) => g.id === bildirimGorevi)
+    if (gorev && gorev.pomodoro === true && !gorev.bitti) {
+      setPomodoroIstegi({ kimlik: `${gorev.id}-${Date.now()}`, dakika: gorev.sure })
+      aracAc('pomodoro')
+      return
+    }
+    aracAc('notlar')
+  }, [bildirimGorevi, ayarlarHazir, gorevlerHazir, ayarlar.kurulumTamamlandi, acilisBitti, tanitim.tanitimdaMi])
+
   /*
     Ekran değişince sayfa başa döner.
 
@@ -1211,6 +1271,8 @@ function RabiUygulamasi() {
                 gorevler={anaTurda ? tanitim.demo.gorevler : gorevler}
                 setGorevler={anaTurda ? (g) => tanitim.demoGuncelle('gorevler', g, 'gorev') : setGorevler}
                 tanitim={anaTurda ? turFormu('gorev-form', 'gorev-listesi') : undefined}
+                // Turda ve ayar kapalıyken izin sorulmuyor.
+                gorevIzniIste={!anaTurda && ayarlar.gorevHatirlatma ? gorevIzniIste : undefined}
                 onPomodoroBaslat={(gorev) => {
                   if (tanitim.tanitimdaMi) return
                   // Mevcut yol: Pomodoro bir araç olarak açılıyor, tur onun "Başlat"ıyla başlıyor.

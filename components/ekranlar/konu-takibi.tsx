@@ -46,7 +46,9 @@ import {
 } from '@/lib/konu-takibi/takip'
 import {
   HARITASIZ_SINIF,
+  HENUZ_YOK,
   konuyuGosterenSecim,
+  sekmeSecilebilir,
   sinifKonulari,
   varsayilanSinifSecimi,
   type SinifSecimi,
@@ -729,11 +731,12 @@ function DersEkrani({
   */
   const [secim, setSecim] = useState<SinifSecimi>(() => {
     const varsayilan = varsayilanSinifSecimi(ders, sinif)
-    if (hedefKonu) return konuyuGosterenSecim(hedefKonu, varsayilan)
+    if (hedefKonu) return konuyuGosterenSecim(hedefKonu, varsayilan, sinif)
     const [dersId, kayitli] = (oturumOku(SINIF_ANAHTARI) ?? '').split(':')
     if (dersId !== ders.id) return varsayilan
     const onceki: SinifSecimi = kayitli === 'tumu' ? 'tumu' : (Number(kayitli) as SinifSecimi)
-    return sinifKonulari(ders, onceki).length > 0 ? onceki : varsayilan
+    // Kayıtlı sekme artık boş ya da pasifse (sınıf değişti, Maarif'te 12) varsayılana dön.
+    return sekmeSecilebilir(ders, onceki, sinif) ? onceki : varsayilan
   })
   useEffect(() => oturumYaz(SINIF_ANAHTARI, `${ders.id}:${secim}`), [ders.id, secim])
   const [kutlanan, setKutlanan] = useState<string | null>(null)
@@ -769,7 +772,7 @@ function DersEkrani({
 
   const siradaki = siradakiKonu(ders, takip, ilerlemeler)
   const sekmeler = useMemo(() => sinifSekmeleri(ders, takip, ilerlemeler, sinif), [ders, takip, ilerlemeler, sinif])
-  const gorunenKonular = useMemo(() => sinifKonulari(ders, secim), [ders, secim])
+  const gorunenKonular = useMemo(() => sinifKonulari(ders, secim, sinif), [ders, secim, sinif])
   /**
    * Görünen konuların hiçbirinin haritada karşılığı yoksa harita yuvası hiç
    * çizilmiyor: Felsefe, Din, YDT ve her dersin 12. sınıf sekmesi.
@@ -784,7 +787,7 @@ function DersEkrani({
     bölüm birlikte. Bölümsüz konular başta; bölüm varsa onların başlığı
     dersin adı — yapışkan başlık uzun listede nerede olunduğunu söylüyor.
   */
-  const bloklar = useMemo(() => konuBloklari(ders, secim), [ders, secim])
+  const bloklar = useMemo(() => konuBloklari(ders, secim, sinif), [ders, secim, sinif])
   const cokBlok = bloklar.length > 1
 
   const soyle = (metin: string, geriAl?: () => void) => {
@@ -835,7 +838,7 @@ function DersEkrani({
 
   /** Sıradaki konuya git: gerekirse sekmesine geç, satırı aç ve görünür yere kaydır. */
   const konuyaGit = (konuId: string) => {
-    setSecim((o) => konuyuGosterenSecim(konuId, o))
+    setSecim((o) => konuyuGosterenSecim(konuId, o, sinif))
     setAcikKonu(konuId)
     requestAnimationFrame(() =>
       document.getElementById(`yks-konu-${konuId}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' }),
@@ -921,9 +924,14 @@ function DersEkrani({
             <section key={`${blokSinifi ?? 'sinif'}-${bolum ?? 'ana'}`}>
               {(bolum || cokBlok) && (
                 <h2 className="sticky top-[var(--guvenli-ust)] z-10 -mx-1 mb-1 bg-background px-2.5 py-2 text-[12px] font-extrabold tracking-[0.08em] text-muted-foreground uppercase">
-                  {blokSinifi === null ? (bolum ?? ad) : `${blokSinifi}. sınıf${bolum ? ` · ${bolum}` : ''}`}
+                  {blokSinifi === null
+                    ? (bolum ?? ad)
+                    : `${blokSinifi === HENUZ_YOK ? HARITASIZ_SINIF : blokSinifi}. sınıf${bolum ? ` · ${bolum}` : ''}`}
                   {blokSinifi === HARITASIZ_SINIF && (
                     <span className="font-bold tracking-normal normal-case"> · haritası yok</span>
+                  )}
+                  {blokSinifi === HENUZ_YOK && (
+                    <span className="font-bold tracking-normal normal-case"> · program henüz yok</span>
                   )}
                 </h2>
               )}
@@ -937,7 +945,7 @@ function DersEkrani({
                       haritaKolonu={haritaKolonu}
                       acik={acikKonu === konu.id}
                       kutlaniyor={kutlanan === konu.id}
-                      oncekiler={acikKonu === konu.id ? oncekiOkulsuzlar(ders, konu.id, takip, secim) : []}
+                      oncekiler={acikKonu === konu.id ? oncekiOkulsuzlar(ders, konu.id, takip, { secim, buYilSinif: sinif }) : []}
                       onAcKapa={() => setAcikKonu((o) => (o === konu.id ? null : konu.id))}
                       onYaz={(alan, acik) => yaz(konu.id, alan, acik)}
                       onBitir={() => bitirAcKapa(konu)}
@@ -960,11 +968,12 @@ function DersEkrani({
 /**
  * Sınıf sekmesi: `9 · 10 · 11 · 12 · Tümü` — haritanın sınıf sekmesinin
  * (`konu-haritasi.tsx` → `SinifSekmesi`) görsel dili: aynı yuva, aynı
- * "sen" işareti, altında küçük yüzde. Fark iki yerde: 12 burada **açık**
- * (YKS listesinde 12'nin konuları var, yalnızca haritası yok — sekmede
- * "harita yok" yazıyor) ve beşinci sekme "Tümü". Dersin o sınıfta konusu
- * yoksa sekme pasif ve "—". Yüzde satırlardaki dairelerin ortalaması
- * (`sinifSekmeleri`); seçili sekmenin yüzdesi ders renginde.
+ * "sen" işareti, altında küçük yüzde; beşinci sekme "Tümü". 12 müfredata
+ * göre: 12. sınıf ve mezunda (2018 programı) **açık**, haritası yok diye
+ * "harita yok" yazıyor; 9–11'de (Maarif) haritadaki gibi pasif ve "Yakında"
+ * rozetli. Dersin o sınıfta konusu yoksa sekme pasif ve "—". Yüzde
+ * satırlardaki dairelerin ortalaması (`sinifSekmeleri`); seçili sekmenin
+ * yüzdesi ders renginde.
  */
 function SinifSekmesi({
   sekmeler,
@@ -979,11 +988,11 @@ function SinifSekmesi({
 }) {
   return (
     <div role="group" aria-label="Sınıf" className="mb-3 grid grid-cols-5 gap-1 rounded-[18px] bg-muted/70 p-1">
-      {sekmeler.map(({ secim, yuzde, pasif, sen, haritasiz }) => {
+      {sekmeler.map(({ secim, yuzde, pasif, sen, haritasiz, yakinda }) => {
         const seciliMi = secim === secili
         const ad = secim === 'tumu' ? 'Tümü' : `${secim}. sınıf`
         const etiket = `${ad}${sen ? ', senin sınıfın' : ''}${
-          pasif ? ', bu derste konu yok' : `, yüzde ${yuzde}`
+          yakinda ? ', yakında' : pasif ? ', bu derste konu yok' : `, yüzde ${yuzde}`
         }${haritasiz && !pasif ? ', haritası yok' : ''}`
         return (
           <button
@@ -996,7 +1005,7 @@ function SinifSekmesi({
             className={cn(
               'relative flex min-h-[52px] min-w-0 flex-col items-center justify-center rounded-[14px] transition',
               seciliMi ? 'golge-kart bg-card text-foreground' : 'text-muted-foreground active:bg-card/60',
-              pasif && 'opacity-50',
+              pasif && (yakinda ? 'opacity-60' : 'opacity-50'),
             )}
           >
             {sen && (
@@ -1015,12 +1024,19 @@ function SinifSekmesi({
             >
               {secim === 'tumu' ? 'Tümü' : `${secim}.`}
             </span>
-            <span
-              className="rakam mt-0.5 text-[11px] leading-[15px] font-bold"
-              style={seciliMi && !pasif ? { color: r.koyu } : undefined}
-            >
-              {pasif ? '—' : `%${yuzde}`}
-            </span>
+            {yakinda ? (
+              // Haritanın sınıf sekmesindeki rozetin aynısı (`konu-haritasi.tsx`).
+              <span className="mt-0.5 rounded-full bg-background px-1.5 text-[9.5px] leading-[15px] font-extrabold">
+                Yakında
+              </span>
+            ) : (
+              <span
+                className="rakam mt-0.5 text-[11px] leading-[15px] font-bold"
+                style={seciliMi && !pasif ? { color: r.koyu } : undefined}
+              >
+                {pasif ? '—' : `%${yuzde}`}
+              </span>
+            )}
             {haritasiz && !pasif && (
               <span aria-hidden className="text-[9px] leading-[11px] font-extrabold opacity-80">
                 harita yok
