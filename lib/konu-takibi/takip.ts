@@ -2,18 +2,10 @@ import { KONU_DERSLERI, KONU_SINIFLARI, programBul, tumKonular } from '../konu'
 import type { Konu, KonuDersId, KonuSinifi } from '../konu/tip'
 import { konuBitti, konuTamam, type KonuIlerlemeleri } from '../konu/ilerleme'
 import { HARITA_ESLEMESI } from './harita-eslemesi'
-import type { YksDers, YksKonu, YksOturum } from './liste'
-import { geriSayim, gunFarki } from '../sinav-tarihi'
-import { asamaYaz, type ElleAsama, type YksKonuKaydi, type YksTakip } from './kayit'
-import {
-  HARITASIZ_SINIF,
-  YKS_SINIFLARI,
-  ogrenciMufredati,
-  sinifAtamasi,
-  sinifKonulari,
-  type SinifSecimi,
-  type SinifYeri,
-} from './sinif'
+import type { PuanTuru } from '../types'
+import { asamaYaz, type ElleAsama, type YazilanAlan, type YksKonuKaydi, type YksTakip } from './kayit'
+import { satirKimlikleri, sinifDersleri, type TakipSatiri } from './okul-dersleri'
+import { HARITASIZ_SINIF, YKS_SINIFLARI, ogrenciMufredati, type YksSinif } from './sinif'
 
 export { BOS_TAKIP, asamaYaz, takibiCoz } from './kayit'
 export type { ElleAsama, YazilanAlan, YksKonuKaydi, YksTakip } from './kayit'
@@ -96,8 +88,16 @@ function haritadaBasladi(ilerlemeler: KonuIlerlemeleri, konuId: string): boolean
  * (`takip.test.ts`), bu yalnızca çalışma anındaki emniyet.
  */
 export function haritaDurumu(yksKonuId: string, ilerlemeler: KonuIlerlemeleri): HaritaDurumu | null {
-  const kimlikler = HARITA_ESLEMESI[yksKonuId]
-  if (!kimlikler) return null
+  return birlesikHaritaDurumu([yksKonuId], ilerlemeler)
+}
+
+/**
+ * Birden çok YKS konusunun (birleşen satır) haritadaki ortak durumu: eşli
+ * harita konularının birleşimi, her biri bir kez.
+ */
+export function birlesikHaritaDurumu(yksKonuIdleri: readonly string[], ilerlemeler: KonuIlerlemeleri): HaritaDurumu | null {
+  const kimlikler = [...new Set(yksKonuIdleri.flatMap((id) => HARITA_ESLEMESI[id] ?? []))]
+  if (kimlikler.length === 0) return null
   const konumlar = kimlikler.map(haritaKonumu).filter((k): k is HaritaKonumu => k !== null)
   if (konumlar.length === 0) return null
 
@@ -130,8 +130,32 @@ export function konuDurumu(
   takip: YksTakip,
   ilerlemeler: KonuIlerlemeleri,
 ): KonuDurumu {
-  const kayit = takip.konular[konuId] ?? {}
-  const harita = haritaDurumu(konuId, ilerlemeler)
+  return satirDurumu({ id: konuId, ad: '' }, takip, ilerlemeler)
+}
+
+/**
+ * Birleşen satırın tek kaydı: her alan, kimliklerden **herhangi birinde**
+ * varsa var, günü en erkeni. "Hepsinde" sayılsaydı yalnız TYT yarısı eski
+ * sürümde işaretlenmiş satır boş görünür, işaret kaybolmuş sanılırdı.
+ */
+export function birlesikKayit(kimlikler: readonly string[], takip: YksTakip): YksKonuKaydi {
+  const sonuc: YksKonuKaydi = {}
+  for (const id of kimlikler) {
+    const kayit = takip.konular[id]
+    if (!kayit) continue
+    for (const alan of ['okul', 'soru', 'bitti'] as const) {
+      const gun = kayit[alan]
+      if (gun && (sonuc[alan] === undefined || gun < sonuc[alan]!)) sonuc[alan] = gun
+    }
+  }
+  return sonuc
+}
+
+/** Ekrandaki satırın durumu — tek konu ya da birleşen TYT–AYT çifti. */
+export function satirDurumu(satir: TakipSatiri, takip: YksTakip, ilerlemeler: KonuIlerlemeleri): KonuDurumu {
+  const kimlikler = satirKimlikleri(satir)
+  const kayit = kimlikler.length === 1 ? (takip.konular[kimlikler[0]] ?? {}) : birlesikKayit(kimlikler, takip)
+  const harita = birlesikHaritaDurumu(kimlikler, ilerlemeler)
   const dolu =
     (harita?.durum === 'tamam' ? 1 : 0) + (kayit.okul ? 1 : 0) + (kayit.soru ? 1 : 0)
   return {
@@ -182,14 +206,25 @@ export type DersOzeti = {
 
 const BOS_OZET: DersOzeti = { toplam: 0, biten: 0, okul: 0, soru: 0, harita: 0, haritali: 0, soruda: 0, okulda: 0 }
 
+/** Satırları olan her şey: okul dersi (`TakipDersi`) ya da YKS dersi. */
+export type SatirliDers = { konular: readonly TakipSatiri[] }
+
+/**
+ * Satırı işaretler ya da kaldırır; birleşen satırda iki kimliğe birden
+ * yazılıyor (zaten işaretli olanın ilk günü korunuyor — `asamaYaz`).
+ */
+export function satirYaz(takip: YksTakip, satir: TakipSatiri, alan: YazilanAlan, acik: boolean, bugun: string): YksTakip {
+  return satirKimlikleri(satir).reduce((t, id) => asamaYaz(t, id, alan, acik, bugun), takip)
+}
+
 export function dersOzeti(
-  ders: YksDers,
+  ders: SatirliDers,
   takip: YksTakip,
   ilerlemeler: KonuIlerlemeleri,
 ): DersOzeti {
   const ozet: DersOzeti = { ...BOS_OZET }
   for (const konu of ders.konular) {
-    const d = konuDurumu(konu.id, takip, ilerlemeler)
+    const d = satirDurumu(konu, takip, ilerlemeler)
     ozet.toplam += 1
     if (d.bitti) ozet.biten += 1
     else if (d.kayit.soru) ozet.soruda += 1
@@ -250,21 +285,21 @@ export function bitirmeyeHazir(durum: KonuDurumu): boolean {
  * öngörülebilir bir şey olarak bekliyor. (Daha önce de "en çok aşaması dolu
  * konu" kuralı vardı; o da hep dersin ilk konusunu öneriyordu.)
  */
-export function siradakiKonu(
-  ders: YksDers,
+export function siradakiKonu<S extends TakipSatiri>(
+  ders: { konular: readonly S[] },
   takip: YksTakip,
   ilerlemeler: KonuIlerlemeleri,
-): YksKonu | null {
+): S | null {
   for (const konu of ders.konular) {
-    const d = konuDurumu(konu.id, takip, ilerlemeler)
+    const d = satirDurumu(konu, takip, ilerlemeler)
     if (!d.bitti && !bitirmeyeHazir(d)) return konu
   }
   return null
 }
 
 /**
- * Giriş ekranının "Devam et" kartı: **en son dokunulan dersin** sıradaki
- * konusu (`siradakiKonu`). Dokunulan ders, elle işaretlenmiş (günü olan)
+ * Giriş ekranının "Devam et" kartı: seçili sınıfta **en son dokunulan
+ * dersin** sıradaki konusu (`siradakiKonu`). Dokunulan ders, elle işaretlenmiş (günü olan)
  * konulardan bulunuyor — bitirmek de dokunuş. Kayıtta saat değil gün var;
  * aynı gün dokunulan derslerde **listede sonra gelen** konunun dersi önde:
  * öğrenci listeyi yukarıdan aşağı işaretliyor, aynı gündeki en alttaki
@@ -274,19 +309,18 @@ export function siradakiKonu(
  * hazır) bir önceki dokunulan derse bakılıyor. Hiç işaret yoksa `null` ve
  * kart çizilmiyor.
  */
-export function devamKonusu(
-  dersler: readonly YksDers[],
+export function devamKonusu<D extends SatirliDers>(
+  dersler: readonly D[],
   takip: YksTakip,
   ilerlemeler: KonuIlerlemeleri,
-): { ders: YksDers; konu: YksKonu } | null {
-  const dokunulan: { ders: YksDers; gun: string; sira: number }[] = []
+): { ders: D; konu: D['konular'][number] } | null {
+  const dokunulan: { ders: D; gun: string; sira: number }[] = []
   let sira = 0
   for (const ders of dersler) {
     let enSon: { gun: string; sira: number } | null = null
     for (const konu of ders.konular) {
       sira += 1
-      const kayit = takip.konular[konu.id]
-      const gun = kayit ? sonIsaretGunu(kayit) : null
+      const gun = sonIsaretGunu(birlesikKayit(satirKimlikleri(konu), takip))
       if (gun !== null && (enSon === null || gun >= enSon.gun)) enSon = { gun, sira }
     }
     if (enSon) dokunulan.push({ ders, ...enSon })
@@ -299,8 +333,9 @@ export function devamKonusu(
   return null
 }
 
+
 // ---------------------------------------------------------------------------
-// Sınıf sekmesi
+// Sınıf sekmesi (ekranın en üstü)
 // ---------------------------------------------------------------------------
 
 /**
@@ -313,71 +348,62 @@ export function konuOrani(durum: KonuDurumu): number {
 }
 
 export type SinifSekmesi = {
-  secim: SinifSecimi
+  sinif: YksSinif
   /**
-   * Sekmedeki konuların ortalama yol oranı, yüzde (0–100) — satırlardaki
-   * dairelerin ortalaması. Yalnızca "Bitirdim"i saymak, okulda işaretlemeye
-   * başlayan öğrenciye haftalarca %0 gösterirdi (özet çubuğunun gerekçesi).
-   * Sekmede konu yoksa `null`.
+   * O sınıfın bütün satırlarının (görünen bütün dersler) ortalama yol oranı,
+   * yüzde (0–100) — satırlardaki dairelerin ortalaması. Yalnızca
+   * "Bitirdim"i saymak, okulda işaretlemeye başlayan öğrenciye haftalarca
+   * %0 gösterirdi. Sekmede konu yoksa ya da "Yakında"ysa `null`.
    */
   yuzde: number | null
-  /** Bu derste o sınıfın konusu yok ya da sınıf "Yakında": sekme seçilemiyor. */
+  /** Sınıfta konu yok ya da sınıf "Yakında": sekme seçilemiyor. */
   pasif: boolean
   /** Öğrencinin kendi sınıfı — küçük "sen" işareti. */
   sen: boolean
-  /**
-   * Eski programda (12/mezun) haritası yazılmamış sınıf (12): sekme açık,
-   * aşama yok, sekmede "harita yok".
-   */
+  /** Eski programda (12/mezun) haritası yazılmamış sınıf (12): açık, "harita yok". */
   haritasiz: boolean
-  /**
-   * Maarif öğrencisinde (9–11) 12: programı yayımlanmadı, sekme pasif ve
-   * haritadaki gibi "Yakında" rozetli. O sınıfın konuları "Tümü"nün sonunda.
-   */
+  /** Maarif öğrencisinde (9–11) 12: programı yayımlanmadı, pasif ve "Yakında". */
   yakinda: boolean
 }
 
-/** Ders ekranının sekmeleri: `9 · 10 · 11 · 12 · Tümü`. */
+/** Ekranın en üstündeki sekmeler: `9 · 10 · 11 · 12`, haritanın sınıf sekmesinin dili. */
 export function sinifSekmeleri(
-  ders: YksDers,
+  alan: PuanTuru | null,
+  buYilSinif: number,
   takip: YksTakip,
   ilerlemeler: KonuIlerlemeleri,
-  buYilSinif: number,
 ): SinifSekmesi[] {
-  const oranlar = new Map(ders.konular.map((k) => [k.id, konuOrani(konuDurumu(k.id, takip, ilerlemeler))]))
   const maarif = ogrenciMufredati(buYilSinif) === 'maarif'
-  const sekme = (secim: SinifSecimi): SinifSekmesi => {
-    const konular = sinifKonulari(ders, secim, buYilSinif)
-    const toplam = konular.reduce((t, k) => t + oranlar.get(k.id)!, 0)
-    const yakinda = maarif && secim === HARITASIZ_SINIF
+  return YKS_SINIFLARI.map((sinif): SinifSekmesi => {
+    const satirlar = sinifDersleri(sinif, alan, buYilSinif).flatMap((d) => d.konular)
+    const yakinda = maarif && sinif === HARITASIZ_SINIF
+    const toplam = satirlar.reduce((t, s) => t + konuOrani(satirDurumu(s, takip, ilerlemeler)), 0)
+    const bos = satirlar.length === 0 || yakinda
     return {
-      secim,
-      yuzde: konular.length === 0 || yakinda ? null : Math.round((toplam / konular.length) * 100),
-      pasif: konular.length === 0 || yakinda,
-      sen: secim === buYilSinif,
-      haritasiz: !maarif && secim === HARITASIZ_SINIF,
+      sinif,
+      yuzde: bos ? null : Math.round((toplam / satirlar.length) * 100),
+      pasif: bos,
+      sen: sinif === buYilSinif,
+      haritasiz: !maarif && sinif === HARITASIZ_SINIF,
       yakinda,
     }
-  }
-  return [...YKS_SINIFLARI.map((s): SinifSekmesi => sekme(s)), sekme('tumu')]
+  })
 }
 
 /**
- * Sekmedeki konu listesinin blokları: ekran her bloğu yapışkan bir başlıkla
- * çiziyor. Sınıfta bölümler (TYT Matematik → Geometri); "Tümü"de sınıf ve
- * bölüm birlikte ("10. sınıf · Geometri"). Maarif'te karşılığı olmayanlar
- * "Tümü"nün sonunda `'henuz-yok'` bloğunda.
+ * Ders ekranının blokları: bölüm bölüm (Matematik → Geometri, Türk Dili ve
+ * Edebiyatı → Dil ve Anlatım / Edebiyat). Ekran her bloğu yapışkan bir
+ * başlıkla çiziyor.
  */
-export type KonuBlogu = { sinif: SinifYeri | null; bolum: string | null; konular: YksKonu[] }
+export type KonuBlogu<S extends TakipSatiri = TakipSatiri> = { bolum: string | null; konular: S[] }
 
-export function konuBloklari(ders: YksDers, secim: SinifSecimi, buYilSinif: number): KonuBlogu[] {
-  const bloklar: KonuBlogu[] = []
-  for (const konu of sinifKonulari(ders, secim, buYilSinif)) {
-    const sinif = secim === 'tumu' ? sinifAtamasi(konu.id, buYilSinif) : null
+export function konuBloklari<S extends TakipSatiri>(ders: { konular: readonly S[] }): KonuBlogu<S>[] {
+  const bloklar: KonuBlogu<S>[] = []
+  for (const konu of ders.konular) {
     const bolum = konu.bolum ?? null
     const son = bloklar.at(-1)
-    if (son && son.sinif === sinif && son.bolum === bolum) son.konular.push(konu)
-    else bloklar.push({ sinif, bolum, konular: [konu] })
+    if (son && son.bolum === bolum) son.konular.push(konu)
+    else bloklar.push({ bolum, konular: [konu] })
   }
   return bloklar
 }
@@ -387,31 +413,26 @@ export function konuBloklari(ders: YksDers, secim: SinifSecimi, buYilSinif: numb
 // ---------------------------------------------------------------------------
 
 /**
- * "Bu ve önceki konuları okulda işlendi say"ın dokunacağı konular: aynı
- * bölümde (TYT Matematik'te Geometri ayrı) bu konuya kadar — bu konu dahil —
- * okul aşaması boş olanlar. İlk kullanımda okulda işlenmiş yirmi-kırk
- * konuyu tek tek girmek yerine tek dokunuş. Bölüm sınırı şart: Geometri'nin
- * ilk konusunda basan öğrenci, Matematik'in bütün konularını okulda
- * işlemiş olmayabilir.
+ * "Bu ve önceki konuları okulda işlendi say"ın dokunacağı satırlar: ekranda
+ * bu satırın üstünde duran (liste zaten seçili sınıfın, o dersin
+ * satırları), **aynı bölümdeki**, okul aşaması boş olanlar — bu satır dahil.
+ * İlk kullanımda okulda işlenmiş yirmi-kırk konuyu tek tek girmek yerine
+ * tek dokunuş. Bölüm sınırı şart: Geometri'nin ilk konusunda basan öğrenci,
+ * Matematik'in bütün konularını okulda işlemiş olmayabilir.
  */
-export function oncekiOkulsuzlar(
-  ders: YksDers,
-  konuId: string,
-  takip: YksTakip,
-  sekme: { secim: SinifSecimi; buYilSinif: number } | null = null,
-): string[] {
-  // "Önceki" ekranda bu konunun üstünde duran demek. Sınıf sekmesinde liste
-  // yalnızca o sınıfın konuları — gizli bir 12. sınıf konusunu "önceki"
-  // diye işaretlemek, öğrencinin görmediği bir şeyi yazmak olurdu. "Tümü"de
-  // liste sınıf sınıf dizili, alt sınıfların konuları üstte kalıyor.
-  const liste = sekme === null ? ders.konular : sinifKonulari(ders, sekme.secim, sekme.buYilSinif)
-  const sira = liste.findIndex((k) => k.id === konuId)
+export function oncekiOkulsuzlar<S extends TakipSatiri>(ders: { konular: readonly S[] }, satirId: string, takip: YksTakip): S[] {
+  const liste = ders.konular
+  const sira = liste.findIndex((k) => k.id === satirId)
   if (sira === -1) return []
   const bolum = liste[sira].bolum
   return liste
     .slice(0, sira + 1)
-    .filter((k) => k.bolum === bolum && !takip.konular[k.id]?.okul)
-    .map((k) => k.id)
+    .filter((k) => k.bolum === bolum && !birlesikKayit(satirKimlikleri(k), takip).okul)
+}
+
+/** Satırların bütün kayıt kimlikleri — toplu yazımın girdisi. */
+export function satirlarinKimlikleri(satirlar: readonly TakipSatiri[]): string[] {
+  return satirlar.flatMap((s) => [...satirKimlikleri(s)])
 }
 
 /** Birden çok konunun okul aşamasını işaretler ya da kaldırır (toplu eylem ve geri alması). */
@@ -420,42 +441,7 @@ export function okuluTopluYaz(takip: YksTakip, konuIdleri: readonly string[], ac
 }
 
 // ---------------------------------------------------------------------------
-// Tempo: kalan konu ve sınava kalan gün
-// ---------------------------------------------------------------------------
-
-export type Tempo = {
-  /** Bitmemiş konu sayısı. */
-  kalanKonu: number
-  /** Sınava yetişmek için günde bitirilmesi gereken konu, yukarı yuvarlı. */
-  gunluk: number
-}
-
-/**
- * Özet çubuğunun altındaki "Kalan N konu · günde ~k konu ile sınava
- * yetişir" satırının hesabı: k = ⌈kalan / kalan gün⌉.
- *
- * Kalan gün yoksa (sınav bugün ya da geçti) ya da bitmemiş konu kalmadıysa
- * `null` ve satır çizilmiyor: sıfıra bölmek ya da "günde 0 konu" demek bir
- * şey söylemiyor.
- */
-export function tempoHesapla(kalanKonu: number, kalanGun: number): Tempo | null {
-  if (kalanKonu <= 0 || kalanGun <= 0) return null
-  return { kalanKonu, gunluk: Math.ceil(kalanKonu / kalanGun) }
-}
-
-/**
- * Oturumun sınavına kalan gün. TYT cumartesi, AYT ve YDT pazar
- * (`lib/sinav-tarihi.ts` → `geriSayim`); takvim öğrencinin **kendi**
- * sınavının yılı. Oturumun günü geçtiyse sayı eksi çıkıyor ve tempo
- * gösterilmiyor (`tempoHesapla`).
- */
-export function oturumKalanGun(bugunIso: string, sinif: number, oturum: YksOturum): number {
-  const { takvim } = geriSayim(bugunIso, sinif)
-  return gunFarki(bugunIso, oturum === 'tyt' ? takvim.tyt : takvim.ayt)
-}
-
-// ---------------------------------------------------------------------------
-// Hızlı başlangıç: "TYT'de neredeyim?"
+// Hızlı başlangıç: "N. sınıfta neredeyim?"
 // ---------------------------------------------------------------------------
 
 /**
@@ -480,37 +466,46 @@ export function hizliBaslangicSinifi(sinif: number): boolean {
   return sinif >= 12
 }
 
-/** Oturumun derslerinde hiç işaret yok mu — kart yalnızca o zaman çıkıyor. */
-export function oturumIsaretsiz(dersler: readonly YksDers[], takip: YksTakip): boolean {
-  return dersler.every((d) => d.konular.every((k) => !takip.konular[k.id]))
+/** Derslerde (seçili sınıfın dersleri) hiç işaret yok mu — kart yalnızca o zaman çıkıyor. */
+export function dersleriIsaretsiz(dersler: readonly SatirliDers[], takip: YksTakip): boolean {
+  return dersler.every((d) => d.konular.every((k) => satirKimlikleri(k).every((id) => !takip.konular[id])))
 }
 
 /**
- * Seçilen orana göre okulda işlendi sayılacak konular: **her dersin**
- * müfredat sırasında ilk ⌊n × oran⌋ konusu, bölüm sınırı gözetmeden (TYT
- * Matematik'te Geometri de aynı sıranın devamı). Ders bazında, çünkü okul
- * bütün dersleri aynı takvimde ilerletiyor; tek bir toplam oran Türkçe'yi
- * bitirip Felsefe'ye hiç dokunmamış gibi bir dağılım üretirdi.
+ * Seçilen orana göre okulda işlendi sayılacak kimlikler: **her dersin**
+ * (seçili sınıfta) sırasındaki ilk ⌊n × oran⌋ satırı, bölüm sınırı
+ * gözetmeden. Ders bazında, çünkü okul bütün dersleri aynı takvimde
+ * ilerletiyor; tek bir toplam oran Türk Dili'ni bitirip Felsefe'ye hiç
+ * dokunmamış gibi bir dağılım üretirdi.
  */
-export function hizliBaslangicKonulari(dersler: readonly YksDers[], oran: number): string[] {
+export function hizliBaslangicKonulari(dersler: readonly SatirliDers[], oran: number): string[] {
   if (oran <= 0) return []
-  return dersler.flatMap((d) => d.konular.slice(0, Math.floor(d.konular.length * oran)).map((k) => k.id))
+  return dersler.flatMap((d) => satirlarinKimlikleri(d.konular.slice(0, Math.floor(d.konular.length * oran))))
 }
 
 /**
- * Hızlı başlangıç kartının gösterildiği oturumlar — kalıcı bayrak
- * (`rabi-konu-takibi-hizli-baslangic`, sürümlü). Kart her oturumda bir
- * kez: seçim yapıldı ya da "Atla"ya basıldıysa bir daha çıkmıyor.
+ * Hızlı başlangıç kartının gösterildiği sınıflar — kalıcı bayrak
+ * (`rabi-konu-takibi-hizli-baslangic`, sürümlü). Kart her sınıfta bir kez:
+ * seçim yapıldı ya da "Atla"ya basıldıysa o sınıfta bir daha çıkmıyor.
+ *
+ * Sürüm 2 sınıf tutuyor; sürüm 1 TYT/AYT oturumu tutuyordu. Sürüm 1'de kartı
+ * bir kez görmüş (cevaplamış ya da atlamış) öğrenciye yeniden sorulmuyor:
+ * bütün sınıflar gösterilmiş sayılıyor.
  */
-export type HizliBaslangicBayragi = { surum: 1; gosterilen: YksOturum[] }
+export type HizliBaslangicBayragi = { surum: 2; gosterilen: YksSinif[] }
 
-export const BOS_HIZLI_BAYRAK: HizliBaslangicBayragi = { surum: 1, gosterilen: [] }
+export const BOS_HIZLI_BAYRAK: HizliBaslangicBayragi = { surum: 2, gosterilen: [] }
 
 /** Depodaki bayrağı güvenli okur; bozuk ya da bilinmeyen sürüm boş sayılıyor. */
 export function hizliBayragiCoz(ham: unknown): HizliBaslangicBayragi {
   if (typeof ham !== 'object' || ham === null) return BOS_HIZLI_BAYRAK
   const nesne = ham as Record<string, unknown>
-  if (nesne.surum !== 1 || !Array.isArray(nesne.gosterilen)) return BOS_HIZLI_BAYRAK
-  const gosterilen = (['tyt', 'ayt'] as const).filter((o) => (nesne.gosterilen as unknown[]).includes(o))
-  return { surum: 1, gosterilen }
+  if (!Array.isArray(nesne.gosterilen)) return BOS_HIZLI_BAYRAK
+  const liste = nesne.gosterilen as unknown[]
+  if (nesne.surum === 1) {
+    const goruldu = liste.includes('tyt') || liste.includes('ayt')
+    return goruldu ? { surum: 2, gosterilen: [...YKS_SINIFLARI] } : BOS_HIZLI_BAYRAK
+  }
+  if (nesne.surum !== 2) return BOS_HIZLI_BAYRAK
+  return { surum: 2, gosterilen: YKS_SINIFLARI.filter((s) => liste.includes(s)) }
 }

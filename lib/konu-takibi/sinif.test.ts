@@ -9,15 +9,23 @@ import {
   YKS_SINIFLARI,
   eskiSinifi,
   eslemeSinifi,
-  konuyuGosterenSecim,
   maarifSinifi,
   ogrenciMufredati,
-  sekmeSecilebilir,
   sinifAtamasi,
   sinifKonulari,
-  varsayilanSinifSecimi,
+  sinifMi,
+  varsayilanSinif,
 } from './sinif'
-import { BOS_TAKIP, asamaYaz, konuBloklari, oncekiOkulsuzlar, sinifSekmeleri, type YksTakip } from './takip'
+import { sinifDersleri } from './okul-dersleri'
+import {
+  BOS_TAKIP,
+  asamaYaz,
+  konuBloklari,
+  oncekiOkulsuzlar,
+  satirlarinKimlikleri,
+  sinifSekmeleri,
+  type YksTakip,
+} from './takip'
 
 const ders = (id: string) => yksDersBul(id)!
 
@@ -134,26 +142,23 @@ describe('eslemeSinifi — çok sınıflı eşleme', () => {
 // Bir Maarif (10) ve bir eski program (12) öğrencisi.
 const MAARIF = 10
 const ESKI = 12
-const sira = (s: ReturnType<typeof sinifAtamasi>) => (s === HENUZ_YOK ? 13 : s)
 
-describe('sinifKonulari ve konuBloklari', () => {
-  it('sekmelerin birleşimi dersin bütün konuları, tekrar yok (eski program)', () => {
+describe('sinifKonulari', () => {
+  it('sınıfların birleşimi dersin bütün konuları, tekrar yok (eski program)', () => {
     for (const d of YKS_DERSLERI) {
       const birlesim = YKS_SINIFLARI.flatMap((s) => sinifKonulari(d, s, ESKI).map((k) => k.id))
       expect(new Set(birlesim).size, d.id).toBe(d.konular.length)
       expect(birlesim, d.id).toHaveLength(d.konular.length)
-      expect(sinifKonulari(d, 'tumu', ESKI)).toHaveLength(d.konular.length)
     }
   })
 
-  it('Maarif: 12 sekmesi boş, "henüz yok" konuları yalnız "Tümü"de', () => {
+  it('Maarif: 12 boş, "henüz yok" konuları hiçbir sınıfta yok', () => {
     for (const d of YKS_DERSLERI) {
       expect(sinifKonulari(d, 12, MAARIF), d.id).toEqual([])
       const sinifta = [9, 10, 11].flatMap((s) => sinifKonulari(d, s as 9 | 10 | 11, MAARIF).map((k) => k.id))
       const yok = d.konular.filter((k) => maarifSinifi(k.id) === HENUZ_YOK).map((k) => k.id)
       expect(sinifta.length + yok.length, d.id).toBe(d.konular.length)
       expect(sinifta.some((id) => yok.includes(id)), d.id).toBe(false)
-      expect(sinifKonulari(d, 'tumu', MAARIF), d.id).toHaveLength(d.konular.length)
     }
   })
 
@@ -163,152 +168,93 @@ describe('sinifKonulari ve konuBloklari', () => {
     const sirali = mat.konular.map((k) => k.id).filter((id) => dokuz.includes(id))
     expect(dokuz).toEqual(sirali)
   })
+})
 
-  it('"Tümü" sınıf sınıf diziliyor, Maarif\'te "henüz yok" en sonda', () => {
-    for (const ogrenci of [MAARIF, ESKI]) {
-      const siniflar = sinifKonulari(ders('tyt-tarih'), 'tumu', ogrenci).map((k) => sira(sinifAtamasi(k.id, ogrenci)))
-      expect(siniflar).toEqual([...siniflar].sort((a, b) => a - b))
-    }
-    const tumu = sinifKonulari(ders('tyt-tarih'), 'tumu', MAARIF).map((k) => k.id)
-    expect(tumu.slice(-2)).toEqual(['tyt-tar-milli-mucadele', 'tyt-tar-ataturkculuk'])
+describe('varsayılan sınıf', () => {
+  it('9–12 kendi sınıfı, mezun 12, bilinmeyen 9', () => {
+    expect(varsayilanSinif(9)).toBe(9)
+    expect(varsayilanSinif(10)).toBe(10)
+    expect(varsayilanSinif(11)).toBe(11)
+    expect(varsayilanSinif(12)).toBe(12)
+    expect(varsayilanSinif(13)).toBe(12)
+    expect(varsayilanSinif(Number.NaN)).toBe(9)
   })
 
-  it('bloklar: sınıfta bölüm, "Tümü"de sınıf + bölüm', () => {
-    const mat = ders('tyt-matematik')
-    const sinifta = konuBloklari(mat, 9, MAARIF)
-    expect(sinifta.every((b) => b.sinif === null)).toBe(true)
-    expect(sinifta.map((b) => b.bolum)).toEqual([null, 'Geometri'])
-    const tumu = konuBloklari(mat, 'tumu', MAARIF)
-    expect(tumu[0]).toMatchObject({ sinif: 9, bolum: null })
-    expect(tumu.some((b) => b.sinif === 11 && b.bolum === 'Geometri')).toBe(true)
-    expect(tumu.at(-1)).toMatchObject({ sinif: HENUZ_YOK, bolum: 'Geometri' })
-    expect(tumu.flatMap((b) => b.konular)).toHaveLength(mat.konular.length)
-    // Eski programda "henüz yok" bloğu yok; 12 bloğu 2018'in 12'si.
-    const eski = konuBloklari(ders('ayt-matematik'), 'tumu', ESKI)
-    expect(eski.some((b) => b.sinif === HENUZ_YOK)).toBe(false)
-    expect(eski.at(-2)).toMatchObject({ sinif: 12, bolum: null })
+  it('oturumdan okunan değer: yalnız 9–12', () => {
+    expect(sinifMi(9)).toBe(true)
+    expect(sinifMi(12)).toBe(true)
+    expect(sinifMi(13)).toBe(false)
+    expect(sinifMi(Number('tyt'))).toBe(false)
   })
 })
 
-describe('varsayılan sekme', () => {
-  const mat = ders('tyt-matematik')
-  it('9–11 öğrencisi kendi sınıfında açılıyor', () => {
-    expect(varsayilanSinifSecimi(mat, 9)).toBe(9)
-    expect(varsayilanSinifSecimi(mat, 10)).toBe(10)
-    expect(varsayilanSinifSecimi(mat, 11)).toBe(11)
+describe('sinifSekmeleri — ekranın üstü', () => {
+  it('dört sekme (TYT/AYT ve "Tümü" yok); kendi sınıfında "sen"', () => {
+    const sekmeler = sinifSekmeleri('say', 10, BOS_TAKIP, {})
+    expect(sekmeler.map((s) => s.sinif)).toEqual([9, 10, 11, 12])
+    expect(sekmeler.filter((s) => s.sen).map((s) => s.sinif)).toEqual([10])
+    expect(sinifSekmeleri('say', 13, BOS_TAKIP, {}).some((s) => s.sen)).toBe(false)
   })
 
-  it('12 ve mezun "Tümü"de', () => {
-    expect(varsayilanSinifSecimi(mat, 12)).toBe('tumu')
-    expect(varsayilanSinifSecimi(mat, 13)).toBe('tumu')
-  })
-
-  it('kendi sınıfında dersin konusu yoksa "Tümü"', () => {
-    expect(varsayilanSinifSecimi(ders('ydt'), 11)).toBe('tumu')
-    expect(varsayilanSinifSecimi(ders('ayt-tarih'), 10)).toBe('tumu')
-  })
-})
-
-describe('sekmeSecilebilir — oturumdan geri yüklenen sekme', () => {
-  it('Maarif\'te 12 seçilemiyor, eski programda seçilebiliyor', () => {
-    const mat = ders('ayt-matematik')
-    expect(sekmeSecilebilir(mat, 12, MAARIF)).toBe(false)
-    expect(sekmeSecilebilir(mat, 12, ESKI)).toBe(true)
-    expect(sekmeSecilebilir(mat, 'tumu', MAARIF)).toBe(true)
-    expect(sekmeSecilebilir(ders('ayt-tarih'), 9, ESKI)).toBe(false)
-  })
-})
-
-describe('konuyuGosterenSecim — "Devam et" ve Sıradaki', () => {
-  it('konu seçili sekmedeyse sekme kalıyor, değilse konunun sınıfına geçiliyor', () => {
-    expect(konuyuGosterenSecim('tyt-trk-paragraf', 9, MAARIF)).toBe(9)
-    expect(konuyuGosterenSecim('tyt-trk-fiilimsi', 9, MAARIF)).toBe(10)
-    expect(konuyuGosterenSecim('tyt-trk-fiilimsi', 9, ESKI)).toBe(11)
-    expect(konuyuGosterenSecim('ayt-mat-turev', 11, ESKI)).toBe(12)
-  })
-
-  it('Maarif\'te "henüz yok" konusu için "Tümü"', () => {
-    expect(konuyuGosterenSecim('ayt-mat-turev', 11, MAARIF)).toBe('tumu')
-  })
-
-  it('"Tümü" her konuyu gösteriyor', () => {
-    expect(konuyuGosterenSecim('ayt-mat-turev', 'tumu', MAARIF)).toBe('tumu')
-  })
-})
-
-describe('sinifSekmeleri', () => {
-  const trk = ders('tyt-turkce')
-
-  it('beş sekme; kendi sınıfında "sen"', () => {
-    const sekmeler = sinifSekmeleri(trk, BOS_TAKIP, {}, 10)
-    expect(sekmeler.map((s) => s.secim)).toEqual([9, 10, 11, 12, 'tumu'])
-    expect(sekmeler.filter((s) => s.sen).map((s) => s.secim)).toEqual([10])
-  })
-
-  it('9–11 (Maarif): 12 pasif ve "Yakında", harita yok yazmıyor', () => {
+  it('9–11 (Maarif): 12 pasif ve "Yakında", öteki sınıflar açık', () => {
     for (const ogrenci of [9, 10, 11]) {
-      for (const d of YKS_DERSLERI) {
-        const on_iki = sinifSekmeleri(d, BOS_TAKIP, {}, ogrenci).find((s) => s.secim === 12)!
-        expect(on_iki, `${d.id} ${ogrenci}`).toMatchObject({ pasif: true, yakinda: true, haritasiz: false, yuzde: null })
+      for (const alan of ['say', 'ea', 'soz', 'dil', null] as const) {
+        const sekmeler = sinifSekmeleri(alan, ogrenci, BOS_TAKIP, {})
+        expect(sekmeler.find((s) => s.sinif === 12), `${alan} ${ogrenci}`).toMatchObject({
+          pasif: true,
+          yakinda: true,
+          haritasiz: false,
+          yuzde: null,
+        })
+        expect(sekmeler.filter((s) => s.sinif !== 12).every((s) => !s.pasif)).toBe(true)
       }
     }
   })
 
   it('12 ve mezun (eski program): 12 açık ve haritasız, "Yakında" yok', () => {
     for (const ogrenci of [12, 13]) {
-      const sekmeler = sinifSekmeleri(trk, BOS_TAKIP, {}, ogrenci)
+      const sekmeler = sinifSekmeleri('ea', ogrenci, BOS_TAKIP, {})
       expect(sekmeler.some((s) => s.yakinda)).toBe(false)
-      expect(sekmeler.find((s) => s.secim === 12)).toMatchObject({ pasif: false, haritasiz: true, yuzde: 0 })
+      expect(sekmeler.find((s) => s.sinif === 12)).toMatchObject({ pasif: false, haritasiz: true, yuzde: 0 })
     }
   })
 
-  it('konusu olmayan sınıf pasif ve yüzdesiz', () => {
-    const sekmeler = sinifSekmeleri(ders('ayt-tarih'), BOS_TAKIP, {}, 12)
-    expect(sekmeler.find((s) => s.secim === 9)).toMatchObject({ pasif: true, yuzde: null, yakinda: false })
-    expect(sekmeler.find((s) => s.secim === 12)!.pasif).toBe(false)
-  })
-
-  it('yüzde satır dairelerinin ortalaması', () => {
-    const dokuz = sinifKonulari(trk, 9, 9)
+  it('yüzde, sınıftaki bütün satırların dairelerinin ortalaması', () => {
+    const satirlar = sinifDersleri(9, 'say', 9).flatMap((d) => d.konular)
     let takip: YksTakip = BOS_TAKIP
-    // Bir konu bitti (1), bir konunun haritalı üç aşamasından biri dolu (1/3).
-    takip = asamaYaz(takip, dokuz[0].id, 'bitti', true, '2026-10-01')
-    takip = asamaYaz(takip, dokuz[1].id, 'okul', true, '2026-10-01')
-    const sekme = sinifSekmeleri(trk, takip, {}, 9).find((s) => s.secim === 9)!
-    expect(sekme.yuzde).toBe(Math.round(((1 + 1 / 3) / dokuz.length) * 100))
-    const on = sinifSekmeleri(trk, takip, {}, 9).find((s) => s.secim === 10)!
-    expect(on.yuzde).toBe(0)
+    // Bir konu bitti (1), haritasız bir konunun iki aşamasından biri dolu (1/2).
+    takip = asamaYaz(takip, 'tyt-trk-sozcukte-anlam', 'bitti', true, '2026-10-01')
+    takip = asamaYaz(takip, 'tyt-din-bilgi-inanc', 'okul', true, '2026-10-01')
+    const sekmeler = sinifSekmeleri('say', 9, takip, {})
+    expect(sekmeler.find((s) => s.sinif === 9)!.yuzde).toBe(Math.round(((1 + 1 / 2) / satirlar.length) * 100))
+    expect(sekmeler.find((s) => s.sinif === 10)!.yuzde).toBe(0)
   })
 })
 
-describe('oncekiOkulsuzlar — sınıf sekmesiyle', () => {
-  const mat = ders('tyt-matematik')
+describe('konuBloklari ve oncekiOkulsuzlar — sınıfın ders listesi', () => {
+  const mat = (ogrenci: number, sinif: 9 | 10 | 11 | 12) =>
+    sinifDersleri(sinif, 'say', ogrenci).find((d) => d.id === 'matematik')!
 
-  it('sınıf sekmesinde yalnızca o sınıfın önceki konuları', () => {
-    const ids = oncekiOkulsuzlar(mat, 'tyt-mat-polinom', BOS_TAKIP, { secim: 10, buYilSinif: ESKI })
-    expect(ids.every((id) => sinifAtamasi(id, ESKI) === 10)).toBe(true)
-    expect(ids).toContain('tyt-mat-carpanlara-ayirma')
-    expect(ids).not.toContain('tyt-mat-temel-kavramlar')
-    expect(ids.at(-1)).toBe('tyt-mat-polinom')
+  it('bloklar bölüm bölüm: bölümsüz önce, sonra Geometri', () => {
+    expect(konuBloklari(mat(MAARIF, 9)).map((b) => b.bolum)).toEqual([null, 'Geometri'])
   })
 
-  it('Maarif\'te görünmeyen konu sekmede yok sayılıyor', () => {
-    expect(oncekiOkulsuzlar(mat, 'tyt-mat-polinom', BOS_TAKIP, { secim: 10, buYilSinif: MAARIF })).toEqual([])
-  })
-
-  it('"Tümü"de alt sınıflar üstte kaldığı için öncekiler arasında', () => {
-    const ids = oncekiOkulsuzlar(mat, 'tyt-mat-polinom', BOS_TAKIP, { secim: 'tumu', buYilSinif: ESKI })
-    expect(ids).toContain('tyt-mat-temel-kavramlar')
-    // 11. sınıfın konusu (Çember) listede Polinomlar'dan sonra; dokunulmuyor.
-    expect(ids.some((id) => sinifAtamasi(id, ESKI) === 11)).toBe(false)
-  })
-
-  it('sekmesiz çağrı eski davranış: dersin sırası', () => {
-    expect(oncekiOkulsuzlar(mat, 'tyt-mat-ebob-ekok', BOS_TAKIP)).toEqual([
-      'tyt-mat-temel-kavramlar',
-      'tyt-mat-basamak',
-      'tyt-mat-bolunebilme',
-      'tyt-mat-ebob-ekok',
+  it('"bu ve öncekiler" yalnız o sınıfın, aynı bölümün önceki satırları', () => {
+    const on = mat(ESKI, 10)
+    const satirlar = oncekiOkulsuzlar(on, 'tyt-mat-polinom', BOS_TAKIP)
+    expect(satirlar.map((s) => s.id)).toEqual(['tyt-mat-carpanlara-ayirma', 'tyt-mat-fonksiyon', 'tyt-mat-polinom'])
+    // Birleşen satırlar iki kimliği de yazıyor.
+    expect(satirlarinKimlikleri(satirlar)).toEqual([
+      'tyt-mat-carpanlara-ayirma',
+      'tyt-mat-fonksiyon',
+      'ayt-mat-fonksiyon',
+      'tyt-mat-polinom',
+      'ayt-mat-polinom',
     ])
+    expect(satirlar.every((s) => sinifAtamasi(s.id, ESKI) === 10)).toBe(true)
+  })
+
+  it('Maarif\'te görünmeyen konu listede yok', () => {
+    expect(oncekiOkulsuzlar(mat(MAARIF, 10), 'tyt-mat-polinom', BOS_TAKIP)).toEqual([])
   })
 })

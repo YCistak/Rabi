@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest'
 import type { KonuIlerlemeleri } from '../konu/ilerleme'
 import { HARITA_ESLEMESI } from './harita-eslemesi'
 import { BOLUNEN_KONULAR } from './kayit'
-import { YKS_DERSLERI, dersAdi, oturumDersleri, tumYksKonulari, yksDersBul } from './liste'
+import { YKS_DERSLERI, tumYksKonulari, yksDersBul } from './liste'
+
+const TYT_DERSLERI = YKS_DERSLERI.filter((d) => d.oturum === 'tyt')
 import {
   BOS_TAKIP,
   asamaYaz,
@@ -19,11 +21,9 @@ import {
   sonIsaretGunu,
   toplamOzet,
   bitirmeyeHazir,
-  tempoHesapla,
-  oturumKalanGun,
   hizliBaslangicSinifi,
   hizliBaslangicKonulari,
-  oturumIsaretsiz,
+  dersleriIsaretsiz,
   hizliBayragiCoz,
   BOS_HIZLI_BAYRAK,
   type YksTakip,
@@ -104,62 +104,6 @@ describe('YKS konu listesi', () => {
       if (ders.oturum === 'tyt') expect(ders.alanlar, ders.id).toBeUndefined()
       else expect(ders.alanlar?.length, ders.id).toBeGreaterThan(0)
     }
-  })
-})
-
-describe('oturumDersleri — alan süzgeci', () => {
-  const adlar = (oturum: 'tyt' | 'ayt', alan: Parameters<typeof oturumDersleri>[1]) =>
-    oturumDersleri(oturum, alan).map((d) => d.id)
-
-  it('TYT herkese aynı dokuz ders', () => {
-    const beklenen = [
-      'tyt-turkce',
-      'tyt-matematik',
-      'tyt-fizik',
-      'tyt-kimya',
-      'tyt-biyoloji',
-      'tyt-tarih',
-      'tyt-cografya',
-      'tyt-felsefe',
-      'tyt-din',
-    ]
-    for (const alan of ['say', 'ea', 'soz', 'dil', null] as const) expect(adlar('tyt', alan)).toEqual(beklenen)
-  })
-
-  it('sayısal: Matematik, Fizik, Kimya, Biyoloji', () => {
-    expect(adlar('ayt', 'say')).toEqual(['ayt-matematik', 'ayt-fizik', 'ayt-kimya', 'ayt-biyoloji'])
-  })
-
-  it('eşit ağırlık: Matematik, Edebiyat, Tarih, Coğrafya', () => {
-    expect(adlar('ayt', 'ea')).toEqual(['ayt-matematik', 'ayt-edebiyat', 'ayt-tarih', 'ayt-cografya'])
-  })
-
-  it('sözel: Edebiyat, Tarih, Coğrafya, Felsefe Grubu, Din', () => {
-    expect(adlar('ayt', 'soz')).toEqual([
-      'ayt-edebiyat',
-      'ayt-tarih',
-      'ayt-cografya',
-      'ayt-felsefe',
-      'ayt-din',
-    ])
-  })
-
-  it('dil: yalnızca YDT', () => {
-    expect(adlar('ayt', 'dil')).toEqual(['ydt'])
-  })
-
-  it('alan seçilmemişse AYT boş — bir alan varsayılmıyor', () => {
-    expect(adlar('ayt', null)).toEqual([])
-  })
-
-  it('Tarih ve Coğrafya adı alana göre test adını alıyor', () => {
-    const tarih = yksDersBul('ayt-tarih')!
-    const cografya = yksDersBul('ayt-cografya')!
-    expect(dersAdi(tarih, 'ea')).toBe('Tarih-1')
-    expect(dersAdi(tarih, 'soz')).toBe('Tarih-1 ve 2')
-    expect(dersAdi(cografya, 'ea')).toBe('Coğrafya-1')
-    expect(dersAdi(cografya, 'soz')).toBe('Coğrafya-1 ve 2')
-    expect(dersAdi(yksDersBul('ayt-edebiyat')!, 'soz')).toBe('Edebiyat')
   })
 })
 
@@ -529,7 +473,7 @@ describe('kullanıcının senaryosu — TYT Türkçe', () => {
     expect(bitirmeyeHazir(konuDurumu('tyt-trk-sozcukte-anlam', takip, ilerleme))).toBe(true)
     // Müfredatta Sözcükte Anlam'dan sonra Söz Yorumu geliyor.
     expect(siradakiKonu(turkce, takip, ilerleme)?.id).toBe('tyt-trk-soz-yorumu')
-    expect(devamKonusu(oturumDersleri('tyt', null), takip, ilerleme)?.konu.id).toBe('tyt-trk-soz-yorumu')
+    expect(devamKonusu(TYT_DERSLERI, takip, ilerleme)?.konu.id).toBe('tyt-trk-soz-yorumu')
   })
 
   it('Söz Yorumu bittiyse sıradaki Cümlede Anlam; ona soru işaretlenince yine Cümlede Anlam', () => {
@@ -539,7 +483,7 @@ describe('kullanıcının senaryosu — TYT Türkçe', () => {
     expect(siradakiKonu(turkce, takip, ilerleme)?.id).toBe('tyt-trk-cumlede-anlam')
     takip = asamaYaz(takip, 'tyt-trk-cumlede-anlam', 'soru', true, BUGUN)
     expect(siradakiKonu(turkce, takip, ilerleme)?.id).toBe('tyt-trk-cumlede-anlam')
-    expect(devamKonusu(oturumDersleri('tyt', null), takip, ilerleme)?.konu.id).toBe('tyt-trk-cumlede-anlam')
+    expect(devamKonusu(TYT_DERSLERI, takip, ilerleme)?.konu.id).toBe('tyt-trk-cumlede-anlam')
   })
 
   it('bitirmeye hazır konu daireye basılınca bitiyor ve hazır olmaktan çıkıyor', () => {
@@ -566,7 +510,7 @@ describe('bitirmeyeHazir ve sonIsaretGunu', () => {
 })
 
 describe('devamKonusu — en son dokunulan dersin sıradakisi', () => {
-  const dersler = oturumDersleri('tyt', null)
+  const dersler = TYT_DERSLERI
 
   it('hiç işaret yoksa null', () => {
     expect(devamKonusu(dersler, BOS_TAKIP, {})).toBeNull()
@@ -602,50 +546,23 @@ describe('toplu okul işareti', () => {
 
   it('bu ve önceki konular, yalnızca okulu boş olanlar', () => {
     const takip = asamaYaz(BOS_TAKIP, 'tyt-mat-basamak', 'okul', true, '2026-09-01')
-    const ids = oncekiOkulsuzlar(mat, 'tyt-mat-ebob-ekok', takip)
+    const ids = oncekiOkulsuzlar(mat, 'tyt-mat-ebob-ekok', takip).map((k) => k.id)
     expect(ids).toEqual(['tyt-mat-temel-kavramlar', 'tyt-mat-bolunebilme', 'tyt-mat-ebob-ekok'])
   })
 
   it('bölüm sınırını geçmiyor', () => {
     const geo = mat.konular.find((k) => k.bolum === 'Geometri')!
-    const ids = oncekiOkulsuzlar(mat, geo.id, BOS_TAKIP)
+    const ids = oncekiOkulsuzlar(mat, geo.id, BOS_TAKIP).map((k) => k.id)
     expect(ids).toEqual([geo.id])
   })
 
   it('yazıp geri alınca kayıt eski hâline dönüyor, önceki gün korunuyor', () => {
     const once = asamaYaz(BOS_TAKIP, 'tyt-mat-basamak', 'okul', true, '2026-09-01')
-    const ids = oncekiOkulsuzlar(mat, 'tyt-mat-ebob-ekok', once)
+    const ids = oncekiOkulsuzlar(mat, 'tyt-mat-ebob-ekok', once).map((k) => k.id)
     const sonra = okuluTopluYaz(once, ids, true, BUGUN)
     expect(sonra.konular['tyt-mat-ebob-ekok']).toEqual({ okul: BUGUN })
     expect(sonra.konular['tyt-mat-basamak']).toEqual({ okul: '2026-09-01' })
     expect(okuluTopluYaz(sonra, ids, false, BUGUN)).toEqual(once)
-  })
-})
-
-describe('tempo — günde kaç konu', () => {
-  it('kalan konuyu kalan güne böler ve yukarı yuvarlar', () => {
-    expect(tempoHesapla(100, 30)).toEqual({ kalanKonu: 100, gunluk: 4 })
-    expect(tempoHesapla(90, 30)).toEqual({ kalanKonu: 90, gunluk: 3 })
-    expect(tempoHesapla(5, 200)).toEqual({ kalanKonu: 5, gunluk: 1 })
-  })
-
-  it('kalan gün yoksa ya da konu kalmadıysa gösterilmiyor', () => {
-    expect(tempoHesapla(10, 0)).toBeNull()
-    expect(tempoHesapla(10, -3)).toBeNull()
-    expect(tempoHesapla(0, 30)).toBeNull()
-  })
-
-  it('TYT cumartesiye, AYT pazara sayıyor', () => {
-    // 2026-10-04'te 12. sınıf: sınav 2027 haziranı (tahmini 19-20 Haziran).
-    const tyt = oturumKalanGun(BUGUN, 12, 'tyt')
-    const ayt = oturumKalanGun(BUGUN, 12, 'ayt')
-    expect(tyt).toBeGreaterThan(200)
-    expect(ayt).toBe(tyt + 1)
-  })
-
-  it('TYT günü geçmiş, AYT ertesi gün: TYT eksi, AYT bir gün', () => {
-    expect(oturumKalanGun('2026-06-20', 12, 'tyt')).toBeLessThanOrEqual(0)
-    expect(oturumKalanGun('2026-06-20', 12, 'ayt')).toBe(1)
   })
 })
 
@@ -679,25 +596,30 @@ describe('hızlı başlangıç', () => {
     const konular = hizliBaslangicKonulari(tyt, 0.5)
     const takip = okuluTopluYaz(BOS_TAKIP, konular, true, BUGUN)
     expect(Object.values(takip.konular).every((k) => k.okul === BUGUN && !k.bitti && !k.soru)).toBe(true)
-    expect(oturumIsaretsiz(tyt, takip)).toBe(false)
+    expect(dersleriIsaretsiz(tyt, takip)).toBe(false)
     expect(okuluTopluYaz(takip, konular, false, BUGUN)).toEqual(BOS_TAKIP)
   })
 
-  it('oturum işaretsiz mi: öteki oturumun işareti saymıyor', () => {
+  it('dersler işaretsiz mi: başka dersin işareti saymıyor', () => {
     const takip = asamaYaz(BOS_TAKIP, 'ayt-mat-turev', 'okul', true, BUGUN)
-    expect(oturumIsaretsiz(tyt, takip)).toBe(true)
-    expect(oturumIsaretsiz(tyt, asamaYaz(takip, 'tyt-trk-ses', 'soru', true, BUGUN))).toBe(false)
+    expect(dersleriIsaretsiz(tyt, takip)).toBe(true)
+    expect(dersleriIsaretsiz(tyt, asamaYaz(takip, 'tyt-trk-ses', 'soru', true, BUGUN))).toBe(false)
   })
 })
 
 describe('hızlı başlangıç bayrağı', () => {
   it('bozuk değer ve bilinmeyen sürüm boş', () => {
     expect(hizliBayragiCoz(null)).toEqual(BOS_HIZLI_BAYRAK)
-    expect(hizliBayragiCoz({ surum: 2, gosterilen: ['tyt'] })).toEqual(BOS_HIZLI_BAYRAK)
-    expect(hizliBayragiCoz({ surum: 1, gosterilen: 'tyt' })).toEqual(BOS_HIZLI_BAYRAK)
+    expect(hizliBayragiCoz({ surum: 3, gosterilen: [9] })).toEqual(BOS_HIZLI_BAYRAK)
+    expect(hizliBayragiCoz({ surum: 2, gosterilen: 9 })).toEqual(BOS_HIZLI_BAYRAK)
   })
 
-  it('yalnızca bilinen oturumlar kalıyor', () => {
-    expect(hizliBayragiCoz({ surum: 1, gosterilen: ['ayt', 'xyz', 'tyt'] })).toEqual({ surum: 1, gosterilen: ['tyt', 'ayt'] })
+  it('yalnızca bilinen sınıflar kalıyor', () => {
+    expect(hizliBayragiCoz({ surum: 2, gosterilen: [12, 'xyz', 9, 13] })).toEqual({ surum: 2, gosterilen: [9, 12] })
+  })
+
+  it('sürüm 1 (TYT/AYT): kartı görmüş öğrenciye yeniden sorulmuyor', () => {
+    expect(hizliBayragiCoz({ surum: 1, gosterilen: ['tyt'] })).toEqual({ surum: 2, gosterilen: [9, 10, 11, 12] })
+    expect(hizliBayragiCoz({ surum: 1, gosterilen: [] })).toEqual(BOS_HIZLI_BAYRAK)
   })
 })
