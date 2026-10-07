@@ -5,6 +5,7 @@ import { HARITA_ESLEMESI } from './harita-eslemesi'
 import type { YksDers, YksKonu, YksOturum } from './liste'
 import { geriSayim, gunFarki } from '../sinav-tarihi'
 import { asamaYaz, type ElleAsama, type YksKonuKaydi, type YksTakip } from './kayit'
+import { HARITASIZ_SINIF, YKS_SINIFLARI, konuSinifi, sinifKonulari, type SinifSecimi, type YksSinif } from './sinif'
 
 export { BOS_TAKIP, asamaYaz, takibiCoz } from './kayit'
 export type { ElleAsama, YazilanAlan, YksKonuKaydi, YksTakip } from './kayit'
@@ -291,6 +292,77 @@ export function devamKonusu(
 }
 
 // ---------------------------------------------------------------------------
+// Sınıf sekmesi
+// ---------------------------------------------------------------------------
+
+/**
+ * Konunun yol oranı (0–1): bitmişse 1, değilse dolu aşama / gösterilen aşama
+ * — satırdaki ilerleme dairesinin oranı.
+ */
+export function konuOrani(durum: KonuDurumu): number {
+  if (durum.bitti) return 1
+  return durum.asamaToplam > 0 ? durum.dolu / durum.asamaToplam : 0
+}
+
+export type SinifSekmesi = {
+  secim: SinifSecimi
+  /**
+   * Sekmedeki konuların ortalama yol oranı, yüzde (0–100) — satırlardaki
+   * dairelerin ortalaması. Yalnızca "Bitirdim"i saymak, okulda işaretlemeye
+   * başlayan öğrenciye haftalarca %0 gösterirdi (özet çubuğunun gerekçesi).
+   * Sekmede konu yoksa `null`.
+   */
+  yuzde: number | null
+  /** Bu derste o sınıfın konusu yok: sekme seçilemiyor, "—". */
+  pasif: boolean
+  /** Öğrencinin kendi sınıfı — küçük "sen" işareti. */
+  sen: boolean
+  /** Haritası yazılmamış sınıf (12): aşama yok, sekmede "Haritası yok". */
+  haritasiz: boolean
+}
+
+/** Ders ekranının sekmeleri: `9 · 10 · 11 · 12 · Tümü`. */
+export function sinifSekmeleri(
+  ders: YksDers,
+  takip: YksTakip,
+  ilerlemeler: KonuIlerlemeleri,
+  buYilSinif: number,
+): SinifSekmesi[] {
+  const oranlar = new Map(ders.konular.map((k) => [k.id, konuOrani(konuDurumu(k.id, takip, ilerlemeler))]))
+  const sekme = (secim: SinifSecimi): SinifSekmesi => {
+    const konular = sinifKonulari(ders, secim)
+    const toplam = konular.reduce((t, k) => t + oranlar.get(k.id)!, 0)
+    return {
+      secim,
+      yuzde: konular.length === 0 ? null : Math.round((toplam / konular.length) * 100),
+      pasif: konular.length === 0,
+      sen: secim === buYilSinif,
+      haritasiz: secim === HARITASIZ_SINIF,
+    }
+  }
+  return [...YKS_SINIFLARI.map((s): SinifSekmesi => sekme(s)), sekme('tumu')]
+}
+
+/**
+ * Sekmedeki konu listesinin blokları: ekran her bloğu yapışkan bir başlıkla
+ * çiziyor. Sınıfta bölümler (TYT Matematik → Geometri); "Tümü"de sınıf ve
+ * bölüm birlikte ("10. sınıf · Geometri").
+ */
+export type KonuBlogu = { sinif: YksSinif | null; bolum: string | null; konular: YksKonu[] }
+
+export function konuBloklari(ders: YksDers, secim: SinifSecimi): KonuBlogu[] {
+  const bloklar: KonuBlogu[] = []
+  for (const konu of sinifKonulari(ders, secim)) {
+    const sinif = secim === 'tumu' ? konuSinifi(konu.id) : null
+    const bolum = konu.bolum ?? null
+    const son = bloklar.at(-1)
+    if (son && son.sinif === sinif && son.bolum === bolum) son.konular.push(konu)
+    else bloklar.push({ sinif, bolum, konular: [konu] })
+  }
+  return bloklar
+}
+
+// ---------------------------------------------------------------------------
 // Toplu işaret
 // ---------------------------------------------------------------------------
 
@@ -302,11 +374,21 @@ export function devamKonusu(
  * ilk konusunda basan öğrenci, Matematik'in bütün konularını okulda
  * işlemiş olmayabilir.
  */
-export function oncekiOkulsuzlar(ders: YksDers, konuId: string, takip: YksTakip): string[] {
-  const sira = ders.konular.findIndex((k) => k.id === konuId)
+export function oncekiOkulsuzlar(
+  ders: YksDers,
+  konuId: string,
+  takip: YksTakip,
+  secim: SinifSecimi | null = null,
+): string[] {
+  // "Önceki" ekranda bu konunun üstünde duran demek. Sınıf sekmesinde liste
+  // yalnızca o sınıfın konuları — gizli bir 12. sınıf konusunu "önceki"
+  // diye işaretlemek, öğrencinin görmediği bir şeyi yazmak olurdu. "Tümü"de
+  // liste sınıf sınıf dizili, alt sınıfların konuları üstte kalıyor.
+  const liste = secim === null ? ders.konular : sinifKonulari(ders, secim)
+  const sira = liste.findIndex((k) => k.id === konuId)
   if (sira === -1) return []
-  const bolum = ders.konular[sira].bolum
-  return ders.konular
+  const bolum = liste[sira].bolum
+  return liste
     .slice(0, sira + 1)
     .filter((k) => k.bolum === bolum && !takip.konular[k.id]?.okul)
     .map((k) => k.id)

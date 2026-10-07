@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { balonGenisligi, balonKonumu, durgunlukSayaci, kaydirmaKis, kaydirmaKisTam, kutuFarki, type Kutu } from './tanitim-yerlesim'
+import { balonGenisligi, balonKonumu, durgunlukSayaci, kaydirmaKis, kaydirmaKisTam, kutuFarki, hedefteKaydirilabilir, type KabOlcusu, type Kutu } from './tanitim-yerlesim'
 
 const TELEFON = { sol: 0, ust: 0, genislik: 390, yukseklik: 844 }
 const IPAD_YATAY = { sol: 0, ust: 0, genislik: 983, yukseklik: 683 }
@@ -152,5 +152,26 @@ describe('gerçek cihaz kaydı (iPad 10, TestFlight 84.32)', () => {
     expect(kaydirmaKisTam(14.5, 0.3, 2000)).toBe(0.5)
     expect(kaydirmaKisTam(10, -20, 2000)).toBe(-10)
     expect(kaydirmaKisTam(0, 500, 300.7)).toBe(300)
+  })
+})
+
+describe('rehberde hedef içi kaydırma', () => {
+  const kab = (o: Partial<KabOlcusu> = {}): KabOlcusu => ({ overflowX: 'visible', overflowY: 'visible', scrollWidth: 300, clientWidth: 300, scrollHeight: 100, clientHeight: 100, ...o })
+  it('hedefin dışındaki olay engellenir', () => {
+    expect(hedefteKaydirilabilir(null)).toBe(false)
+  })
+  it('hedef içinde taşan yatay şerit (ders şeridi) kaydırılabilir', () => {
+    const serit = kab({ overflowX: 'auto', scrollWidth: 720, clientWidth: 360 })
+    expect(hedefteKaydirilabilir([kab(), serit, kab()])).toBe(true)
+  })
+  it('taşmayan şerit ya da overflow gizliyse engellenir', () => {
+    expect(hedefteKaydirilabilir([kab({ overflowX: 'auto' }), kab()])).toBe(false)
+    expect(hedefteKaydirilabilir([kab({ overflowX: 'hidden', scrollWidth: 720 })])).toBe(false)
+  })
+  it('hedefin kendisi dikeyde kayan bir formsa kaydırılabilir', () => {
+    expect(hedefteKaydirilabilir([kab(), kab({ overflowY: 'auto', scrollHeight: 900, clientHeight: 600 })])).toBe(true)
+  })
+  it('yuvarlama kaynaklı 1 px taşma sayılmaz', () => {
+    expect(hedefteKaydirilabilir([kab({ overflowX: 'scroll', scrollWidth: 301 })])).toBe(false)
   })
 })

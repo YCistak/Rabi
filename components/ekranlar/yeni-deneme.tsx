@@ -14,8 +14,8 @@ import { secilebilirSablonlar, toplamSoru } from '@/lib/sablonlar'
 import { bugun, cn, yeniId } from '@/lib/utils'
 import type { Deneme, PuanTuru, Sablon, YanlisSoru } from '@/lib/types'
 import { DenemeOkut } from '@/components/deneme-okut'
+import { bosDersGirisiGecerli, ORNEK_YANLIS_SORU_GORSELI, turBosDersi, turFormuSonuclari } from '@/lib/tanitim-veri'
 import { TarihSecici } from '@/components/tarih-secici'
-import { ornekDenemeSonucu } from '@/lib/tanitim-veri'
 
 const useYerlesimEtkisi = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
@@ -52,13 +52,23 @@ export function YeniDenemeEkrani({
   onKaydet: (deneme: Deneme) => void
   onVazgec: () => void
   /**
-   * Başlangıç turunda: net başlığı yapışmıyor (rehber tabloyu en üste
-   * kaydırınca başlığın altında kalıyordu) ve yanlış soru düğmesi yok —
-   * o katman gerçek Yanlış Soru Bankası'na yazıyor, turun verisi değil.
-   * `ornekDoldur`: tur kaydetme adımına geçti; form boşsa örnek sonuçlar
-   * yazılıyor (kullanıcıya deneme elle girdirilmiyor).
+   * Başlangıç turunda. `ornekDoldur`: tur Okut adımını geçti; form boşsa
+   * örnek sonuçlar bir ders hariç yazılıyor (`turFormuSonuclari`), boş
+   * dersi kullanıcı dolduruyor ve geçerli giriş `dersGirildi` ile bildiriliyor.
+   * Yanlış soru katmanı turda kamerasız, örnek bir soruyla açılıyor ve
+   * gerçek bankaya hiçbir şey yazmıyor: açık olup olmadığını tur belirliyor
+   * (`yanlisAcik`), açmak `yanlisAc`, kaydetmek `yanlisEklendi`, kapatmak
+   * `yanlisKapat` (turu bir adım geri alıyor).
    */
-  tanitim?: { onOkutAcik: (acik: boolean) => void; ornekDoldur?: boolean }
+  tanitim?: {
+    onOkutAcik: (acik: boolean) => void
+    ornekDoldur?: boolean
+    dersGirildi?: () => void
+    yanlisAcik?: boolean
+    yanlisAc?: () => void
+    yanlisEklendi?: () => void
+    yanlisKapat?: () => void
+  }
 }) {
   /*
     Seçim listesi sınıfa ve alana göre süzülü (`secilebilirSablonlar`);
@@ -115,12 +125,15 @@ export function YeniDenemeEkrani({
     doğru/yanlışını yazdıktan sonra bir soru fotoğraflayıp döndüğünde boş bir
     form buluyordu. Katman üstte açılıyor, form altında olduğu gibi duruyor.
   */
-  const [yanlisAcik, setYanlisAcik] = useState(false)
+  const [yanlisAcikYerel, setYanlisAcik] = useState(false)
+  // Turda katmanın açıklığı turun adımından geliyor: turun Geri'si de katmanı kapatabilsin.
+  const yanlisAcik = tanitim ? !!tanitim.yanlisAcik : yanlisAcikYerel
   const [eklenenYanlis, setEklenenYanlis] = useState(0)
   const yanlisEkleme = useYanlisSoruEkleme(setYanlisSorular)
-  // Geri tuşu önce ekleme formunu, sonra katmanı kapatmalı.
-  useGeriKatmani(yanlisAcik && yanlisEkleme.bekleyen === null, () => setYanlisAcik(false))
-  useGeriKatmani(yanlisEkleme.bekleyen !== null, yanlisEkleme.vazgec)
+  // Geri tuşu önce ekleme formunu, sonra katmanı kapatmalı. Turda geri tuşu
+  // turun kendi Geri'sine gidiyor (`AppShell`), katman onunla kapanıyor.
+  useGeriKatmani(!tanitim && yanlisAcik && yanlisEkleme.bekleyen === null, () => setYanlisAcik(false))
+  useGeriKatmani(!tanitim && yanlisEkleme.bekleyen !== null, yanlisEkleme.vazgec)
 
   // Şablon değişince ders listesi değişir, girişler sıfırlanır
   useEffect(() => {
@@ -150,9 +163,10 @@ export function YeniDenemeEkrani({
   )
 
   /*
-    Turun kaydetme adımı: Okut ile okunan bir sonuç varsa ona dokunulmuyor,
-    form boşsa örnek sonuçlar yazılıyor. Elle giriş adımı kaldırıldı; tabloyu
-    doldurmak için açılan klavye ve rehberin balonu dersleri kapatıyordu.
+    Turun Okut'tan sonraki adımları: Okut ile okunan bir sonuç varsa ona
+    dokunulmuyor, form boşsa örnek sonuçlar bir ders hariç yazılıyor. Bir süre
+    hepsi doluyordu ve kullanıcı tabloya hiç dokunmuyordu; tek ders, klavyenin
+    ve balonun tabloyu kapatmadığı ilk satır (`turBosDersi`).
   */
   const ornekDoldur = !!tanitim?.ornekDoldur
   /*
@@ -166,9 +180,28 @@ export function YeniDenemeEkrani({
     setGirisler((onceki) => {
       const bos = sablon.dersler.every((d) => !Number(onceki[d.id]?.dogru || 0) && !Number(onceki[d.id]?.yanlis || 0))
       if (!bos) return onceki
-      return Object.fromEntries(ornekDenemeSonucu(sablon).map((s) => [s.dersId, { dogru: String(s.dogru), yanlis: String(s.yanlis) }]))
+      return { ...bosGirisler(sablon), ...Object.fromEntries(turFormuSonuclari(sablon).map((s) => [s.dersId, { dogru: String(s.dogru), yanlis: String(s.yanlis) }])) }
     })
   }, [ornekDoldur, sablon])
+
+  /*
+    Boş derse geçerli sonuç girilince tur bir sonraki adıma geçiyor; ama son
+    tuştan kısa bir süre sonra: "12" yazan kullanıcı "1"de ileri atılmasın.
+    Klavye de kapatılıyor, yoksa sıradaki adımın düğmesini örterdi.
+  */
+  const bosDers = ornekDoldur ? turBosDersi(sablon) : null
+  const bosGiris = bosDers ? girisler[bosDers] : undefined
+  const bosDersTanimi = bosDers ? sablon.dersler.find((d) => d.id === bosDers) : undefined
+  const bosDersGecerli = !!bosDersTanimi && bosDersGirisiGecerli(bosGiris, bosDersTanimi)
+  const dersGirildi = tanitim?.dersGirildi
+  useEffect(() => {
+    if (!bosDersGecerli || !dersGirildi) return
+    const zamanlayici = setTimeout(() => {
+      if (document.activeElement instanceof HTMLElement) document.activeElement.blur()
+      dersGirildi()
+    }, 900)
+    return () => clearTimeout(zamanlayici)
+  }, [bosDersGecerli, bosGiris, dersGirildi])
 
   const hataliDers = satirlar.find((s) => s.asim)
   const bosMu = satirlar.every((s) => s.dogru === 0 && s.yanlis === 0)
@@ -314,6 +347,7 @@ export function YeniDenemeEkrani({
           {satirlar.map((satir) => (
             <li
               key={satir.ders.id}
+              data-tanitim={satir.ders.id === bosDers ? 'deneme-bos-ders' : undefined}
               className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 border-b border-border px-3 py-2 last:border-b-0"
             >
               <div className="min-w-0">
@@ -373,19 +407,20 @@ export function YeniDenemeEkrani({
         sayılar yazılırken çekiliyor ve kaydettikten sonra ekran kapandığı için
         "sonra eklerim" pratikte "hiç eklemem" oluyordu.
       */}
-      {!tanitim && <Buton
+      <Buton
+        data-tanitim="deneme-yanlis-ekle"
         bicim="ikincil"
         className="mt-4 w-full"
-        onClick={() => setYanlisAcik(true)}
+        onClick={() => (tanitim ? tanitim.yanlisAc?.() : setYanlisAcik(true))}
       >
         <Camera size={18} aria-hidden />
         Yanlış soru ekle
         {eklenenYanlis > 0 && ` (${eklenenYanlis})`}
-      </Buton>}
+      </Buton>
 
       {eklenenYanlis > 0 && (
         <p className="mt-2 text-center text-xs text-muted-foreground">
-          {eklenenYanlis} soru bankaya eklendi. Girdiğin netler yerinde duruyor.
+          {tanitim ? 'Örnek soru eklendi; tanıtım bitince silinir.' : `${eklenenYanlis} soru bankaya eklendi. Girdiğin netler yerinde duruyor.`}
         </p>
       )}
 
@@ -418,7 +453,18 @@ export function YeniDenemeEkrani({
           <div className="mx-auto max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
             {yanlisEkleme.gizliGirdi}
 
-            {yanlisEkleme.bekleyen ? (
+            {tanitim ? (
+              <EklemeFormu
+                onizleme={ORNEK_YANLIS_SORU_GORSELI}
+                tanitimHedefi="yanlis-soru-formu"
+                onKaydet={async () => {
+                  setEklenenYanlis((n) => n + 1)
+                  tanitim.yanlisEklendi?.()
+                }}
+                onVazgec={() => tanitim.yanlisKapat?.()}
+                hata={null}
+              />
+            ) : yanlisEkleme.bekleyen ? (
               <EklemeFormu
                 onizleme={yanlisEkleme.bekleyen.url}
                 onKaydet={async (bilgi) => {

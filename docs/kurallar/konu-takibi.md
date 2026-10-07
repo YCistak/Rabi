@@ -54,6 +54,15 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   Bağışıklık. Eski kimlik parçalardan biri kalır, kaydı sürüm 1 → 2 göçünde **bir kez**
   kopyalanır. Maarif'te karşılığı olmayanlar (Cumhuriyet Dönemi, Edebî Akımlar, Divan,
   Genden Proteine) bölünmez; uydurma alt başlık yok.
+- **Ders ekranı sınıf sınıf süzülür** (`lib/konu-takibi/sinif.ts`): `9 · 10 · 11 · 12 ·
+  Tümü`, haritanın sınıf sekmesinin dili (yüzde = satır dairelerinin ortalaması, kendi
+  sınıfında "sen"). Konunun sınıfı eşliyse destelerin önekinden (çoğunluk, eşitlikte en
+  erken), değilse `ELLE_SINIFLAR`dan (Maarif 9–11, yoksa 2018 programı). 12 haritasız:
+  sekme açık, harita aşaması yok (`sinif.test.ts`). Varsayılan öğrencinin sınıfı;
+  12/mezun ya da sınıfında konusu olmayan derste "Tümü". Süzgeç yalnız liste: özet,
+  tempo, Sıradaki, Devam et, hızlı başlangıç bütün dersi sayar; Devam et/Sıradaki
+  konunun sekmesini açar, "bu ve öncekiler" görünen listeyle sınırlı. Maarif 12
+  yayımlanınca elle tablodaki "2018" satırlarına yeniden bakılmalı.
 - **Kayıt** `rabi-yks-konu-takibi`, sürümlü (`{ surum: 2, konular }`), işaret yerine gün
   tutar; okurken `takibiCoz` süzer. Yedeğe girer (`Yedek.yksKonuTakibi`; eski yedekte
   yoksa mevcut kayda dokunulmaz). `kayit.ts` konu içeriğini yüklemez, depo yalnız onu
