@@ -33,11 +33,11 @@ import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
-import { Rabi } from '@/components/maskot/rabi'
 import {
   Bildirim,
   EN_COK_YANLIS,
   KalanHapi,
+  KoseRabisi,
   OyunKabugu,
   TurSonu,
   YanlisKarti,
@@ -437,7 +437,7 @@ export function BolunmeOyunuEkrani({
                     aşağıya sabitli, başparmağın gittiği yerde kalsın diye. */}
                 <div className="golge-kart my-auto rounded-3xl bg-card px-5 pb-4 pt-4">
                   <div className="flex items-center gap-2 text-[12.5px] font-bold text-muted-foreground">
-                    <Rabi durum="calisiyor" boyut={26} />
+                    <KoseRabisi durum="calisiyor" />
                     {soru.tip === 'kalan' ? 'Kalanı bul' : 'Evet mi, hayır mı?'}
                   </div>
 

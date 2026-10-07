@@ -36,11 +36,12 @@ import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
-import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
+import { type MaskotDurumu } from '@/components/maskot/rabi'
 import {
   Bildirim,
   EN_COK_YANLIS,
   KalanHapi,
+  KoseRabisi,
   OyunKabugu,
   TurSonu,
   YanlisKarti,
@@ -380,7 +381,7 @@ export function UcgenOyunuEkrani({
                     hatırlamak yerine okumak yeterdi. Şekilde açılar var. */}
                 <div className="golge-kart flex min-h-0 flex-1 flex-col rounded-3xl bg-card px-3 pb-2.5 pt-3">
                   <div className="flex flex-none items-center gap-2 text-[12.5px] font-bold text-muted-foreground">
-                    <Rabi durum={maskotDurumu} boyut={26} />x kaç birim?
+                    <KoseRabisi durum={maskotDurumu} />x kaç birim?
                   </div>
 
                   {/* Şekil kalan yere göre büyüyüp küçülüyor; alt sınır olmasa

@@ -925,3 +925,15 @@ export function KalanHapi({ kalan }: { kalan: number }) {
     </div>
   )
 }
+
+/**
+ * Soru kartının köşesine oturan Rabi.
+ *
+ * Kartın başlık satırında eskiden 26–38 px'lik baş vardı; yapboz pozu tam boy
+ * ve 70 pikselin altında leke oluyor. Satıra büyük tavşan koymak şekilli
+ * oyunlarda (açı, üçgen) şekli küçültürdü: negatif üst boşlukla kulaklar
+ * kartın üstüne taşıyor, satıra yalnızca ~16 px ekleniyor.
+ */
+export function KoseRabisi({ durum }: { durum: MaskotDurumu }) {
+  return <Rabi durum={durum} poz="yapboz" boyut={68} className="-mb-1 -ml-1 -mt-8" />
+}
