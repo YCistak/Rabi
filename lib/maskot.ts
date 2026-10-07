@@ -67,6 +67,7 @@ export const MASKOT_POZLARI = [
   'yazan',
   'ayracli',
   'kucak-acan',
+  'yapboz',
 ] as const
 
 export type MaskotPozu = (typeof MASKOT_POZLARI)[number]

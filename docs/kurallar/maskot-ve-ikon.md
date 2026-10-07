@@ -63,6 +63,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   | `gerinen`, `esneyen`, `bagdas`, `uzanan` | gerinen, ayak parmaklarına uzanan, bağdaş kuran, uzanan | deste molası (dönüşümlü) |
   | `selamlayan` | eğilerek selamlayan | aylık özetin kapanışı ("Yarın yine buradayım") |
   | `kahkaha` | kahkaha atan | yalnızca durum kafası |
+  | `yapboz` | yapboz tamamlayan | Yazım Kuralları oyununda sorunun üstü, 96 px (kullanıcı istedi) |
 
 - **Dönüşüm rastgele değil.** Aynı yere düşen pozlar `gununPozu` (`lib/maskot.ts`)
   ile günün tarihinden seçilir (gün içinde sabit, `gunun-hali.ts`teki cümle kuralı);
@@ -75,9 +76,9 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   - Müzik aletleri (flüt, davul, tef): uygulamada müzik yok (oyun ve Pomodoro'dan
     bilerek kaldırıldı); olmayan özelliği vaat eder.
   - Havuç tutan ve hediye tutan: havuç/ödül mekaniği kaldırıldı, onu çağrıştırır.
-  - Oyun/el işi (top sektiren, top yuvarlayan, satranç, yapboz, blok kule, kâğıt
+  - Oyun/el işi (top sektiren, top yuvarlayan, satranç, blok kule, kâğıt
     kesen/katlayan, yapıştırıcı, fırça, kâğıt uçak, seksek): bir işe karşılık
-    gelmiyor (yapboz/satranç aday olabilirdi, yerleri doluydu).
+    gelmiyor (satranç aday olabilirdi; yapboz sonradan oyun ekranına alındı).
   - Eşi olanlar: büyüteç tutan, kupadan içen (`kahveli`), çenesine dokunan
     (`dusunen`), cetvelle çizen (abaküs), kitap ayracı ve kutuya kitap
     (okuyan/kitaplı), deftere yazan (yalnız durum kafası), teleskop (dürbün; Hedefim

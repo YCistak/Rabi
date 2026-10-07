@@ -112,6 +112,8 @@ const POZLAR = [
     ['tavsan-kucak-acan', 'kucak açan.png'],
     // Konu kartının üstünde dönüşümlü çıkan çalışma pozlarından biri.
     ['tavsan-ayracli', 'kitaba ayraç koyan.png'],
+    // Mini oyunlarda sorunun üstünde: oyun bir bulmaca, tavşan yapboz tamamlıyor.
+    ['tavsan-yapboz', 'yapboz tamamlayan.png'],
   ].map(([ad, kaynak]) => ({ ad, kaynak })),
   // --- İlk takım.
   { ad: 'tavsan-tam', kaynak: 'normal maskot.png' },

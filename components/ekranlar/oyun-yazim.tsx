@@ -475,7 +475,7 @@ export function YazimOyunuEkrani({
             <>
               <div className="flex flex-1 flex-col justify-center gap-3.5 py-3">
                 <div className="grid place-items-center">
-                  <Rabi durum={maskotDurumu} boyut={62} />
+                  <Rabi durum={maskotDurumu} poz="yapboz" boyut={96} />
                 </div>
 
                 {/* Noktalamada cümlenin kendisi sorunun bir parçası; şıklar
