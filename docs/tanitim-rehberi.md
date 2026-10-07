@@ -12,7 +12,7 @@
 
 ## Ana akış
 
-Ana tur **12 adım** (eskiden ~46). Uzun tur kullanıcı değerlendirmesinde ağır bulundu; yalnızca ana sayfa ve temel akış kaldı, gerisi ekran bazlı mini turlara bölündü.
+Ana tur **26 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bulundu), sonra 12'ye indi ve deneme ekleme ile İstatistik mini turlara taşındı; kullanıcı o ikisini mini turda zayıf buldu ve Harita'dan sonra ana turda istedi. Metinler kısa (≤ 85 karakter, testte), sayaç yok, atlanamaz.
 
 1. Sınav geri sayımı ve hedef kartı.
 2. Günlük soru hedefi.
@@ -25,9 +25,29 @@ Ana tur **12 adım** (eskiden ~46). Uzun tur kullanıcı değerlendirmesinde ağ
 9. Girişin üstü (TYT/AYT seçici, aşama lejantı; tur sürerken ekran TYT girişinde açılır) → "Haritaya geç".
 10. Aynı ekranda alt menüden Harita'ya dokunuş.
 11. İlk bölümün ilk yeşil kitabı (konu anlatımı).
-12. İlk turuncu kitap (sorular; biten konu takipte işaretlenir) → "Turu Bitir".
+12. İlk turuncu kitap (sorular; biten konu takipte işaretlenir) → "Araçlara dön".
+13. Denemeler satırına dokunuş (iki örnek deneme hazır).
+14. Örnek deneme listesi.
+15. "Deneme ekle"ye dokunuş.
+16. "Fotoğraftan okut" (etkileşimli; okutmadan İleri denebilir).
+17. **Boş ders**: form bir ders hariç örnekle doldu; o dersin satırı aydınlanır, kullanıcı doğru ve yanlışı yazar. Geçerli giriş olmadan ilerlemez.
+18. "Yanlış soru ekle"ye dokunuş.
+19. Örnek soru: ekleme formu açılır, ders seçilip Kaydet'e dokunulur.
+20. Deneme formunun Kaydet'ine dokunuş (deneme turun belleğine).
+21. İstatistik satırına dokunuş.
+22–26. Deneme türü · Son net · En çok ilerleyenler · Güçlü/zayıf · Karşılaştır → "Turu Bitir".
 
-Kullanıcının istediği sıra korunuyor: Konu Takibi'nden hemen sonra Harita. Deneme ekleme ana turdan çıktı (Denemeler'in kendi turunda); böylece "deneme → Konu Takibi → Harita" sırası soru ekleme → Konu Takibi → Harita olarak kaldı. 12. sınıfın ya da kartı yazılmamış bir dersin haritasında kitap olmadığı için tur sürerken harita kitabı olan ilk programla çizilir (`turHaritaSecimi`, `app-shell.tsx`); seçim kayda yazılmaz. Ana tur iki kitabı gösterdiyse Konu Haritası mini turu da görülmüş sayılır. Konu Takibi kaydına tur hiçbir şey yazmaz.
+12. sınıfın ya da kartı yazılmamış bir dersin haritasında kitap olmadığı için tur sürerken harita kitabı olan ilk programla çizilir (`turHaritaSecimi`, `app-shell.tsx`); seçim kayda yazılmaz. Konu Takibi kaydına tur hiçbir şey yazmaz.
+
+### Deneme formu: bir ders boş kalır
+
+- Okut adımında kullanıcı kâğıdı gerçekten okutabilir (rehber Okut açıkken gizlenir). Okutmadan İleri derse form, şablonun **ilk dersi hariç** örnek sonuçlarla dolar (`turFormuSonuclari`, `turBosDersi` — `lib/tanitim-veri.ts`). Okut bir sonuç yazdıysa forma dokunulmaz.
+- Boş kalan ilk ders: TYT'de **Türkçe**, AYT Sayısal/EA'da Matematik, Sözel'de Edebiyat, YDT'de tek ders. İlk satır "Elle gir" başlığının hemen altında: kaydırmadan görünür, açılan klavye onu örtmez ve öğrencinin netini en iyi bildiği derslerden biri.
+- Satır `data-tanitim="deneme-bos-ders"` ile aydınlanır. Adım `kayit: 'deneme-ders'` bekler; form, iki kutu da yazılmış, en az bir soru cevaplanmış ve toplam soru sayısını aşmıyorsa (`bosDersGirisiGecerli`) son tuştan 0,9 saniye sonra klavyeyi kapatıp bildirir — "12" yazan kullanıcı "1"de ileri atılmasın.
+- "Yanlış soru ekle" turda da görünür (`deneme-yanlis-ekle`). Turda katman kamera açmaz (izin penceresi turla çakışır, fotoğraf gerçek bankaya yazılırdı): ekleme formu doğrudan örnek bir soru görseliyle açılır (`ORNEK_YANLIS_SORU_GORSELI`), aydınlanan alan formun kartı (`yanlis-soru-formu`). Ders seçilip Kaydet'e basılınca hiçbir yere yazılmaz, yalnızca adım geçer (`kayit: 'yanlis-soru'`). Katmanın açıklığı turun adımına bağlı; turun Geri'si ve formun Vazgeç'i katmanı kapatıp bir önceki adıma döner.
+- Deneme Kaydet'le turun listesine (`demo.denemeler`, `tanitim-` önekli) gider, cihaz deposuna yazılmaz; İstatistik adımları bu deneme ile örneklerden çizilir (`turIstatistikDenemeleri`). Formun Vazgeç'i "Deneme ekle" adımına döner; kayıttan sonra Geri, forma değil listeye döner.
+
+Ana tur iki kitabı gösterdiyse Konu Haritası, deneme eklemeyi gösterdiyse Denemeler, İstatistik'i gösterdiyse İstatistik mini turu da görülmüş sayılır (`turuBitir`).
 
 ## Mini turlar
 
@@ -35,20 +55,20 @@ Mini tur, ilgili ekran **ilk kez** açıldığında bir kez çalışır (`miniTu
 
 | Tur | Ne zaman | Adımlar |
 |---|---|---|
-| Denemeler | Denemeler açılınca (form kapalıyken) | Deneme ekle (elle ya da fotoğrafla okut) |
+| Denemeler | Denemeler açılınca (form kapalıyken), ana turda görülmediyse | Deneme ekle (elle ya da fotoğrafla okut) |
 | Konu Haritası | Harita sekmesi açılınca | Patikanın başı: yeşil kitap, turuncu kitap |
 | Pomodoro | Pomodoro açılınca, sayaç işlemiyorken | İki mod · Çalışma ayarları · Odak kilidi |
 | Yapılacaklar | Yapılacaklar açılınca | Görev ekle · Görevlerin (işaretle, Pomodoro ile başlat) |
-| İstatistik | İstatistik açılınca | Deneme türü · Son net · En çok ilerleyenler · Güçlü/zayıf · Karşılaştır |
+| İstatistik | İstatistik açılınca, ana turda görülmediyse | Deneme türü · Son net · En çok ilerleyenler · Güçlü/zayıf · Karşılaştır |
 | Oyunlar | Oyunlar sekmesi açılınca | Tanıtım oyunu kartı · Hazırlık · Başlat · Bir işlem · Sonuç |
 | Oyun Bankası | Oyun Bankası açılınca | Yanlışların · Liste · Genel test · Öğrendim |
 
-- **Denemeler** tek adımlı kaldı: mini turlar kayıt eklettirmiyor (turun geçici verisi yalnızca ana turda yazılıyor) ve ekranda her zaman bulunan tek hedef "Deneme ekle". Net grafiği bir süre bu ekrandaydı; kullanıcı kaldırttı.
+- **Denemeler** ve **İstatistik** mini turları yalnızca ana turu bu sürümden önce (12 adımlı hâliyle) bitirmiş kullanıcıya ilk ziyarette bir kez çıkar; yeni ana turu bitirende ikisi de görülmüş sayılır. Denemeler tek adımlı: mini turlar kayıt eklettirmiyor (turun geçici verisi yalnızca ana turda yazılıyor).
 - **İstatistik** ve **Oyun Bankası** gerçek veri olmadan boş durum çiziyor; tur kendi örnek verisini gösteriyor (İstatistik'te alana göre iki örnek deneme ve gerekiyorsa geçici eşi — `istatistikTuruDenemeleri`; bankada üç örnek soru — tur başlarken kuruluyor). Örnekler yalnızca bellekte, tur bitince siliniyor.
 - **Pomodoro** turu sayaç işlerken (tam ekran sahne) ya da Yapılacaklar'dan "Pomodoro ile başlat" ile gelinmişken başlamıyor; bir sonraki boş ziyarette çıkıyor. İlk girişteki odak kilidi tanıtımı (Android) tur bitene kadar bekliyor.
 - **Oyunlar** turunda eski "Süre ve skor" adımı kalktı (beş adıma sığmak için): rehber geri sayımdan sonra doğrudan soruyla geri geliyor ve demo sayacı o sırada işliyor. Ana sayfadaki ders kutucuğundan gelindiyse de ızgara ilk adımda görünüyor.
 
-Ana tur açıkken mini tur başlamaz ve ana tur bitmeden hiçbiri başlamaz. **Mevcut kullanıcı:** eski ana turu bitirmiş kullanıcı (`rabi_ana_tur_tamamlandi` = `true`) yeni ana turu yeniden görmez; yeni mini turlar (Pomodoro, Yapılacaklar, İstatistik, Oyunlar, Oyun Bankası) o ekranları ilk ziyaretinde bir kez görür. Eski ana tur Denemeler ve Harita turlarını zaten görülmüş saydıysa onlar çıkmaz.
+Ana tur açıkken mini tur başlamaz ve ana tur bitmeden hiçbiri başlamaz. **Mevcut kullanıcı:** eski ana turu bitirmiş kullanıcı (`rabi_ana_tur_tamamlandi` = `true`) yeni ana turu yeniden görmez; mini turlar (Pomodoro, Yapılacaklar, İstatistik, Oyunlar, Oyun Bankası) o ekranları ilk ziyaretinde bir kez görür. Eski (46 adımlı) ana tur Denemeler ve Harita turlarını zaten görülmüş saydıysa onlar çıkmaz.
 
 ## Kayıt ve geçici veri
 

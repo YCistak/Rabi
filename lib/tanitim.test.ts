@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
+  DENEME_FORMU_ADIMLARI,
+  DENEME_VAZGEC,
   ESKI_ANA_TUR_ANAHTARI,
   HARITA_TUR_ADIMLARI,
   TANITIM_ADIMLARI,
@@ -43,19 +45,26 @@ function adimaKadar(kimlik: string, turAdi: TanitimTuru = 'ana_tur'): TanitimDur
 const kimlik = (d: TanitimDurumu) => TUR_ADIMLARI[d.aktifTur!][d.aktifAdim!].kimlik
 
 describe('Ana tur kısa ve kritik akışta', () => {
-  it('10–12 adım: ana sayfa, soru ekleme, Konu Takibi, Harita', () => {
-    expect(TANITIM_ADIMLARI.length).toBeGreaterThanOrEqual(10)
-    expect(TANITIM_ADIMLARI.length).toBeLessThanOrEqual(12)
+  it('ana sayfa, soru ekleme, Konu Takibi, Harita; ardından deneme ekleme ve İstatistik', () => {
     expect(TANITIM_ADIMLARI.map((a) => a.kimlik)).toEqual([
       'sinav-hedefi', 'hedef', 'araclar-ac',
       'soru-ac', 'soru-ekle', 'soru-form', 'soru-kaydedildi',
       'konu-takibi-ac', 'konu-takibi', 'harita-ac', 'harita-ders', 'harita-soru',
+      'deneme-ac', 'deneme-liste', 'deneme-ekle', 'deneme-okut', 'deneme-elle', 'deneme-yanlis', 'deneme-yanlis-form', 'deneme-kaydet',
+      'istatistik-ac', 'istatistik-tur', 'istatistik-son', 'istatistik-ilerleyen', 'istatistik-kutular', 'istatistik-karsilastir',
     ])
   })
 
-  it('başka ekranların adımları ana turda yok; onlar mini turlarda', () => {
+  it('balon metinleri kısa (≤ 85 karakter)', () => {
+    for (const adim of TANITIM_ADIMLARI) expect(adim.aciklama.length, adim.kimlik).toBeLessThanOrEqual(85)
+  })
+
+  it('Pomodoro, Yapılacaklar, Oyunlar ve Oyun Bankası ana turda yok; onlar mini turlarda', () => {
     const ana = new Set(TANITIM_ADIMLARI.map((a) => a.kimlik))
-    for (const tur of MINI_TURLAR) for (const adim of TUR_ADIMLARI[tur]) expect(ana.has(adim.kimlik), adim.kimlik).toBe(false)
+    // Denemeler ve İstatistik'in mini turları ana turu bu sürümden önce bitirmiş kullanıcı için duruyor.
+    for (const tur of MINI_TURLAR.filter((t) => t !== 'denemeler' && t !== 'istatistik')) {
+      for (const adim of TUR_ADIMLARI[tur]) expect(ana.has(adim.kimlik), adim.kimlik).toBe(false)
+    }
   })
 
   it('her adım kendi sekmesinde ve ekranında geçiyor', () => {
@@ -67,6 +76,12 @@ describe('Ana tur kısa ve kritik akışta', () => {
     expect(tanitimKonumu(bul('konu-takibi'))).toEqual({ sekme: 'daha', ekran: 'konu-takibi', denemeFormu: false })
     expect(tanitimKonumu(bul('harita-ac'))).toEqual({ sekme: 'daha', ekran: 'konu-takibi', denemeFormu: false })
     for (const k of HARITA_TUR_ADIMLARI) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'harita', ekran: null, denemeFormu: false })
+    for (const k of ['deneme-ac', 'istatistik-ac']) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: null, denemeFormu: false })
+    for (const k of ['deneme-liste', 'deneme-ekle']) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'deneme', denemeFormu: false })
+    for (const k of DENEME_FORMU_ADIMLARI) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'deneme', denemeFormu: true })
+    for (const k of ['istatistik-tur', 'istatistik-son', 'istatistik-ilerleyen', 'istatistik-kutular', 'istatistik-karsilastir']) {
+      expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'istatistik', denemeFormu: false })
+    }
   })
 
   it('dokunma adımı yalnızca kendi hedefiyle geçiyor', () => {
@@ -101,8 +116,51 @@ describe('Ana tur kısa ve kritik akışta', () => {
     expect(kimlik(tanitimGecisi(harita, { tur: 'hedefe-dokun', hedef: 'harita-ac' }))).toBe('harita-ders')
   })
 
-  it('son adımı aşamıyor; çıkış yalnızca Turu Bitir', () => {
-    const son = adimaKadar('harita-soru')
+  it('Harita’dan sonra Araçlar’a dönüp Denemeler açılıyor', () => {
+    const harita = adimaKadar('harita-soru')
+    expect(TANITIM_ADIMLARI[harita.aktifAdim!].ileriEtiketi).toBe('Araçlara dön')
+    const deneme = tanitimGecisi(harita, { tur: 'ileri' })
+    expect(kimlik(deneme)).toBe('deneme-ac')
+    expect(tanitimGecisi(deneme, { tur: 'ileri' })).toBe(deneme)
+    expect(kimlik(tanitimGecisi(deneme, { tur: 'hedefe-dokun', hedef: 'arac-deneme' }))).toBe('deneme-liste')
+  })
+
+  it('Okut’tan İleri ile boş ders adımına geçiliyor; geçerli giriş bildirilmeden ilerlemiyor', () => {
+    const okut = adimaKadar('deneme-okut')
+    const elle = tanitimGecisi(okut, { tur: 'ileri' })
+    expect(kimlik(elle)).toBe('deneme-elle')
+    expect(tanitimGecisi(elle, { tur: 'ileri' })).toBe(elle)
+    expect(tanitimGecisi(elle, { tur: 'hedefe-dokun', hedef: 'deneme-bos-ders' })).toBe(elle)
+    expect(tanitimGecisi(elle, { tur: 'kayit-eklendi', kayit: 'deneme' })).toBe(elle)
+    expect(kimlik(tanitimGecisi(elle, { tur: 'kayit-eklendi', kayit: 'deneme-ders' }))).toBe('deneme-yanlis')
+  })
+
+  it('"Yanlış soru ekle"ye dokunulup örnek soru kaydedilince Kaydet adımına geçiliyor', () => {
+    const yanlis = adimaKadar('deneme-yanlis')
+    expect(tanitimGecisi(yanlis, { tur: 'ileri' })).toBe(yanlis)
+    const form = tanitimGecisi(yanlis, { tur: 'hedefe-dokun', hedef: 'deneme-yanlis-ekle' })
+    expect(kimlik(form)).toBe('deneme-yanlis-form')
+    expect(tanitimGecisi(form, { tur: 'hedefe-dokun', hedef: 'yanlis-soru-formu' })).toBe(form)
+    // Katmanın Vazgeç'i bir adım geri alıyor: katman kapanıp düğme yeniden aydınlanıyor.
+    expect(kimlik(tanitimGecisi(form, { tur: 'geri' }))).toBe('deneme-yanlis')
+    const kaydet = tanitimGecisi(form, { tur: 'kayit-eklendi', kayit: 'yanlis-soru' })
+    expect(kimlik(kaydet)).toBe('deneme-kaydet')
+    expect(tanitimGecisi(kaydet, { tur: 'hedefe-dokun', hedef: 'deneme-kaydet' })).toBe(kaydet)
+    expect(kimlik(tanitimGecisi(kaydet, { tur: 'kayit-eklendi', kayit: 'deneme' }))).toBe('istatistik-ac')
+  })
+
+  it('deneme formunun Vazgeç’i "Deneme ekle" adımına dönüyor; formun dışında yok sayılıyor', () => {
+    for (const k of DENEME_FORMU_ADIMLARI) expect(kimlik(tanitimGecisi(adimaKadar(k), { tur: 'hedefe-dokun', hedef: DENEME_VAZGEC })), k).toBe('deneme-ekle')
+    const liste = adimaKadar('deneme-liste')
+    expect(tanitimGecisi(liste, { tur: 'hedefe-dokun', hedef: DENEME_VAZGEC })).toBe(liste)
+  })
+
+  it('deneme kaydedildikten sonra geri, forma değil listeye dönüyor', () => {
+    expect(kimlik(tanitimGecisi(adimaKadar('istatistik-ac'), { tur: 'geri' }))).toBe('deneme-liste')
+  })
+
+  it('son adım İstatistik’in karşılaştırması; aşılamıyor, çıkış yalnızca Turu Bitir', () => {
+    const son = adimaKadar('istatistik-karsilastir')
     expect(son.aktifAdim).toBe(TANITIM_ADIMLARI.length - 1)
     expect(tanitimGecisi(son, { tur: 'ileri' })).toBe(son)
   })

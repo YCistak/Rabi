@@ -136,11 +136,14 @@ export function EklemeFormu({
   onKaydet,
   onVazgec,
   hata,
+  tanitimHedefi,
 }: {
   onizleme: string
   onKaydet: (bilgi: SoruBilgisi) => Promise<void>
   onVazgec: () => void
   hata: string | null
+  /** Tanıtım turunda formun kartına konan `data-tanitim` (önizleme hariç: balon görseli değil alanları göstersin). */
+  tanitimHedefi?: string
 }) {
   const [ders, setDers] = useState('')
   const [konu, setKonu] = useState('')
@@ -164,7 +167,7 @@ export function EklemeFormu({
         </Not>
       )}
 
-      <Kart className="space-y-3">
+      <Kart data-tanitim={tanitimHedefi} className="space-y-3">
         <div>
           <Etiket id="banka-ders">Ders</Etiket>
           {/* Yazılmıyor, seçiliyor: Kaydet bir ders seçilene kadar pasif. */}

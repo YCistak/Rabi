@@ -102,7 +102,7 @@ import {
 } from '@/lib/ozet'
 import { bugunKonuBittiMi, gorevlerBittiMi } from '@/lib/ana-maskot'
 import { RozetBildirimi } from '@/components/rozet-bildirimi'
-import { HARITA_TUR_ADIMLARI, miniTurSec, tanitimKonumu } from '@/lib/tanitim'
+import { DENEME_FORMU_ADIMLARI, DENEME_VAZGEC, HARITA_TUR_ADIMLARI, miniTurSec, tanitimKonumu } from '@/lib/tanitim'
 import { demoDenemeleri, istatistikTuruDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi, turIstatistikDenemeleri } from '@/lib/tanitim-veri'
 import { TanitimSaglayici, useTanitim } from '@/components/tanitim/tanitim-baglami'
 import { SpotIsigi } from '@/components/tanitim/spot-isigi'
@@ -1056,8 +1056,17 @@ function RabiUygulamasi() {
         denemeSayisi={gorunenDenemeler.length}
         setYanlisSorular={setYanlisSorular}
         onKaydet={denemeKaydet}
-        onVazgec={() => setDenemeFormu(null)}
-        tanitim={anaTurda ? { onOkutAcik: tanitim.setRehberGizli, ornekDoldur: tanitim.adim?.kimlik === 'deneme-kaydet' } : undefined}
+        onVazgec={() => (anaTurda ? tanitim.gonder({ tur: 'hedefe-dokun', hedef: DENEME_VAZGEC }) : setDenemeFormu(null))}
+        tanitim={anaTurda ? {
+          onOkutAcik: tanitim.setRehberGizli,
+          // Okut adımı geçilince (İleri) form bir ders hariç örnekle doluyor.
+          ornekDoldur: !!tanitim.adim && DENEME_FORMU_ADIMLARI.indexOf(tanitim.adim.kimlik) > 0,
+          dersGirildi: () => tanitim.gonder({ tur: 'kayit-eklendi', kayit: 'deneme-ders' }),
+          yanlisAcik: tanitim.adim?.kimlik === 'deneme-yanlis-form',
+          yanlisAc: () => tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'deneme-yanlis-ekle' }),
+          yanlisEklendi: () => tanitim.gonder({ tur: 'kayit-eklendi', kayit: 'yanlis-soru' }),
+          yanlisKapat: tanitim.oncekiAdimaDon,
+        } : undefined}
       />
     </div>
   ) : (
