@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
-import { Check, X } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
 import { DUNYA, DUNYA_GENISLIK, DUNYA_YUKSEKLIK, noktayaCevir } from '@/lib/oyunlar/dunya-havuzu'
 import { IKLIM_ADI, IKLIM_HAVUZU, type IklimSorusu } from '@/lib/oyunlar/iklim-havuzu'
@@ -53,6 +52,7 @@ import {
   rekorCumlesi,
   type Eleme,
 } from '@/components/oyun-kabuk'
+import { OyunSikki, sikHali } from '@/components/oyun-sikki'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
 /**
@@ -375,10 +375,11 @@ export function IklimOyunuEkrani({
               </div>
 
               <div className="flex flex-col gap-2">
-                {soru.siklar.map((sik) => (
+                {soru.siklar.map((sik, i) => (
                   <SikDugmesi
                     key={sik.deger}
                     sik={sik}
+                    sira={i}
                     geriBildirim={geriBildirim}
                     onSec={() => cevapla(sik)}
                   />
@@ -503,39 +504,22 @@ function DunyaHaritasi({ soru }: { soru: IklimSorusu }) {
  */
 function SikDugmesi({
   sik,
+  sira,
   geriBildirim,
   onSec,
 }: {
   sik: IklimSikki
+  sira: number
   geriBildirim: GeriBildirim | null
   onSec: () => void
 }) {
   const acikta = geriBildirim !== null
-  const secilen = acikta && geriBildirim.secilen === sik.metin
-  const dogruSecim = secilen && sik.dogruMu
-  const yanlisSecim = secilen && !sik.dogruMu
-  const isaretli = acikta && !secilen && sik.dogruMu
+  const hal = sikHali(acikta, acikta && geriBildirim.secilen === sik.metin, sik.dogruMu)
 
   return (
-    <button
-      type="button"
-      onClick={onSec}
-      disabled={acikta}
-      className={cn(
-        'golge-kart flex min-h-[46px] w-full items-center justify-center gap-2 rounded-[16px] border-2 px-3 py-2',
-        'font-display text-[14px] font-extrabold leading-snug transition',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        !acikta && 'border-border bg-card active:brightness-95',
-        dogruSecim && 'border-success bg-success text-white',
-        yanlisSecim && 'border-ikincil bg-ikincil text-white',
-        isaretli && 'border-success bg-card text-success',
-        acikta && !secilen && !sik.dogruMu && 'border-border bg-card opacity-45',
-      )}
-    >
-      <span className="min-w-0 break-words">{sik.metin}</span>
-      {(dogruSecim || isaretli) && <Check size={17} className="shrink-0" aria-hidden />}
-      {yanlisSecim && <X size={17} className="shrink-0" aria-hidden />}
-    </button>
+    <OyunSikki sira={sira} hal={hal} onSec={onSec} className="min-h-[46px] py-2 text-[14px]">
+      {sik.metin}
+    </OyunSikki>
   )
 }
 
