@@ -17,9 +17,11 @@ import {
 } from '@/lib/oyunlar/kavram'
 import {
   guncelSeri,
+  kalanPas,
   karistir,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -38,6 +40,7 @@ import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
 import {
+  Bildirim,
   EN_COK_YANLIS,
   KalanHapi,
   OyunKabugu,
@@ -175,8 +178,13 @@ export function KavramOyunuEkrani({
   /** Tahta doldu, yenisi bekleniyor — bu sırada dokunuşlar yok sayılır. */
   const [tahtaBekliyor, setTahtaBekliyor] = useState(false)
   const [cevaplar, setCevaplar] = useState<Cevap<KavramEsi>[]>([])
-  /** Yanlışlarla aynı sıradaki tanım seçimleri — "sen bunu dedin" için. */
-  const [yanlisGirdileri, setYanlisGirdileri] = useState<string[]>([])
+  /**
+   * Yanlışlarla aynı sıradaki tanım seçimleri — "sen bunu dedin" için.
+   * `null`: o kavram pas geçildi.
+   */
+  const [yanlisGirdileri, setYanlisGirdileri] = useState<(string | null)[]>([])
+  /** Pas geçilen çift, doğrusu gösterilirken — bu sırada dokunuşlar yok sayılır. */
+  const [pasEsi, setPasEsi] = useState<KavramEsi | null>(null)
 
   /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
   const [elendi, setElendi] = useState<Eleme>(false)
@@ -257,6 +265,7 @@ export function KavramOyunuEkrani({
     setSecim(BOS_SECIM)
     setEslesenler([])
     setYanlisCift(null)
+    setPasEsi(null)
     setTahtaBekliyor(false)
     setCevaplar([])
     setYanlisGirdileri([])
@@ -377,7 +386,7 @@ export function KavramOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && !duraklatilan && !tahtaBekliyor && tahta !== null,
     sure: soruSuresi('kavram'),
@@ -429,9 +438,45 @@ export function KavramOyunuEkrani({
     zamanlayiciRef.current = setTimeout(tahtaDagit, CEVAP_BEKLEMESI)
   }
 
+  /**
+   * Pas hakkı.
+   *
+   * Tahtada cevaplanabilir birim tek bir çift: seçili kavram varsa o, yoksa
+   * sıradaki eşleşmemiş kavram geçiliyor ve doğru tanımıyla birlikte bir an
+   * işaretleniyor. Bedelsiz — yanlış sayılmıyor, uyuma girmiyor, Sıfır
+   * Tolerans'ta turu bitirmiyor; ama bilinmeyen bir çift, bankaya düşüyor.
+   */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || !tahta || yanlisCift !== null || tahtaBekliyor || pasEsi) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    const es =
+      tahta.esler.find((e) => e.kavram === secim.kavram && !eslesenKavramlar.has(e.kavram)) ??
+      tahta.kavramlar
+        .map((k) => tahta.esler.find((e) => e.kavram === k))
+        .find((e) => e !== undefined && !eslesenKavramlar.has(e.kavram))
+    if (!es) return
+
+    setCevaplar((onceki) => [...onceki, { soru: es, dogruMu: false, pas: true }])
+    setYanlisGirdileri((onceki) => [...onceki, null])
+    setSecim(BOS_SECIM)
+    setPasEsi(es)
+
+    // Çift hemen eşleşmiş sayılıyor: süre bu arada dolarsa yanlış diye bir
+    // kez daha yazılmasın.
+    const yeniEslesenler = [...eslesenler, es]
+    setEslesenler(yeniEslesenler)
+    const tahtaBitti = yeniEslesenler.length >= KAVRAM_SAYISI
+    if (tahtaBitti) setTahtaBekliyor(true)
+    zamanlayiciRef.current = setTimeout(() => {
+      setPasEsi(null)
+      if (tahtaBitti) tahtaDagit()
+    }, CEVAP_BEKLEMESI)
+  }
+
   const kavramSec = (kavram: string) => {
     if (
       asama !== 'oynaniyor' ||
+      pasEsi !== null ||
       yanlisCift !== null ||
       tahtaBekliyor ||
       eslesenKavramlar.has(kavram)
@@ -445,6 +490,7 @@ export function KavramOyunuEkrani({
   const tanimSec = (tanim: string) => {
     if (
       asama !== 'oynaniyor' ||
+      pasEsi !== null ||
       yanlisCift !== null ||
       tahtaBekliyor ||
       eslesenTanimlar.has(tanim)
@@ -482,11 +528,17 @@ export function KavramOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{
+          kalan: kalanPas(cevaplar),
+          kilitli:
+            asama !== 'oynaniyor' || yanlisCift !== null || tahtaBekliyor || pasEsi !== null,
+          onPas: pasGec,
+        }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -522,9 +574,9 @@ export function KavramOyunuEkrani({
                     <li key={kavram}>
                       <EslestirmeDugmesi
                         durum={eslestirmeDurumu({
-                          eslesti: eslesenKavramlar.has(kavram),
+                          eslesti: eslesenKavramlar.has(kavram) && pasEsi?.kavram !== kavram,
                           hatali: yanlisCift?.kavram === kavram,
-                          secili: secim.kavram === kavram,
+                          secili: secim.kavram === kavram || pasEsi?.kavram === kavram,
                         })}
                         renk={RENK}
                         onSec={() => kavramSec(kavram)}
@@ -552,10 +604,12 @@ export function KavramOyunuEkrani({
                     return (
                       <li key={tanim}>
                         <EslestirmeDugmesi
+                          // Pas geçilen çift bir an seçili renkte: doğrusu
+                          // öteki eşleşmelerin arasında kaybolmasın.
                           durum={eslestirmeDurumu({
-                            eslesti: eslesenTanimlar.has(tanim),
+                            eslesti: eslesenTanimlar.has(tanim) && pasEsi?.tanim !== tanim,
                             hatali: yanlisCift?.tanim === tanim,
-                            secili: secim.tanim === tanim,
+                            secili: secim.tanim === tanim || pasEsi?.tanim === tanim,
                           })}
                           renk={RENK}
                           onSec={() => tanimSec(tanim)}
@@ -572,13 +626,19 @@ export function KavramOyunuEkrani({
                 </ul>
               </section>
 
-              <p className="mt-auto flex-none pt-1 text-center text-[11.5px] font-bold text-muted-foreground">
-                {secim.kavram
-                  ? 'Şimdi tanımına dokun'
-                  : secim.tanim
-                    ? 'Şimdi kavramına dokun'
-                    : `İki tanımın karşılığı yok`}
-              </p>
+              {pasEsi ? (
+                <div className="mt-auto flex-none pt-1">
+                  <Bildirim iyi={false} pas baslik="Pas geçtin" aciklama={`— ${pasEsi.kavram}`} />
+                </div>
+              ) : (
+                <p className="mt-auto flex-none pt-1 text-center text-[11.5px] font-bold text-muted-foreground">
+                  {secim.kavram
+                    ? 'Şimdi tanımına dokun'
+                    : secim.tanim
+                      ? 'Şimdi kavramına dokun'
+                      : `İki tanımın karşılığı yok`}
+                </p>
+              )}
             </div>
           )
         )}
@@ -608,8 +668,8 @@ function SonucGorunumu({
   bildir,
 }: {
   sonuc: { ozet: TurOzeti<KavramEsi>; yeniRekor: boolean }
-  /** Yanlışlarla aynı sıradaki tanım seçimleri. */
-  girdiler: string[]
+  /** Yanlışlarla aynı sıradaki tanım seçimleri; `null` pas geçildi demek. */
+  girdiler: (string | null)[]
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -659,10 +719,16 @@ function SonucGorunumu({
                 <Check size={13} className="mt-0.5 shrink-0" aria-hidden />
                 {es.tanim}
               </span>
-              {girdiler[sira] && (
+              {girdiler[sira] === null ? (
                 <span className="mt-0.5 block text-[11px] font-semibold text-muted-foreground">
-                  Sen <s className="text-ikincil">{girdiler[sira]}</s> dedin
+                  Pas geçtin
                 </span>
+              ) : (
+                girdiler[sira] && (
+                  <span className="mt-0.5 block text-[11px] font-semibold text-muted-foreground">
+                    Sen <s className="text-ikincil">{girdiler[sira]}</s> dedin
+                  </span>
+                )
               )}
             </YanlisKarti>
           ))}

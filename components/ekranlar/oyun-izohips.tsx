@@ -18,8 +18,10 @@ import {
 } from '@/lib/oyunlar/izohips'
 import {
   guncelSeri,
+  kalanPas,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -66,8 +68,13 @@ const CEVAP_BEKLEMESI = 1600
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
-/** `secilen` süre dolduğunda `null`: oyuncu bir şık işaretlemedi. */
-type GeriBildirim = { secilen: string | null; dogruMu: boolean; soru: IzohipsSorusu }
+/** `secilen` süre dolduğunda ve pasta `null`: oyuncu bir şık işaretlemedi. */
+type GeriBildirim = {
+  secilen: string | null
+  dogruMu: boolean
+  pas: boolean
+  soru: IzohipsSorusu
+}
 
 /**
  * Turun üç zorluk şeridi.
@@ -133,10 +140,7 @@ export function IzohipsOyunuEkrani({
   const [duraklatilan, setDuraklatilan] = useState(false)
   const [turNo, setTurNo] = useState(0)
 
-  const [sonuc, setSonuc] = useState<{
-    ozet: TurOzeti<IzohipsSorusu>
-    yeniRekor: boolean
-  } | null>(null)
+  const [sonuc, setSonuc] = useState<SonucBilgisi | null>(null)
 
   const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
@@ -175,6 +179,7 @@ export function IzohipsOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
+        paslar: verilenler.filter((c) => !c.dogruMu).map((c) => c.pas === true),
         yeniRekor:
           !yarim &&
           !bankaTuru &&
@@ -229,9 +234,14 @@ export function IzohipsOyunuEkrani({
   */
   const cizim = useMemo(() => (soru ? haritaCiz(soru.soru) : null), [soru])
 
-  const ilerle = (dogruMu: boolean) => {
+  const ilerle = (dogruMu: boolean, pas = false) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
+      // Pas bedelsiz: zorluğu kaydırmıyor, Sıfır Tolerans'ta turu bitirmiyor.
+      if (pas) {
+        setSira((s) => s + 1)
+        return
+      }
       /*
         Zorluk **ilerlerken** güncelleniyor, cevap verilirken değil.
 
@@ -254,7 +264,7 @@ export function IzohipsOyunuEkrani({
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     const dogruMu = sik.dogruMu
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu }])
-    setGeriBildirim({ secilen: sik.deger, dogruMu, soru: soru.soru })
+    setGeriBildirim({ secilen: sik.deger, dogruMu, pas: false, soru: soru.soru })
     geriBildir(dogruMu)
     ilerle(dogruMu)
   }
@@ -262,11 +272,20 @@ export function IzohipsOyunuEkrani({
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false }])
-    setGeriBildirim({ secilen: null, dogruMu: false, soru: soru.soru })
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: false, soru: soru.soru })
     geriBildir(false)
     ilerle(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asama, geriBildirim, soru])
+
+  /** Pas: doğru şık gösterilip geçiliyor; ses ve titreşim yok, hata değil. */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false, pas: true }])
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: true, soru: soru.soru })
+    ilerle(false, true)
+  }
 
   const turSuresiDoldu = () => {
     setElendi('sure')
@@ -284,7 +303,7 @@ export function IzohipsOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: soruSuresi('izohips'),
@@ -319,11 +338,16 @@ export function IzohipsOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{
+          kalan: kalanPas(cevaplar),
+          kilitli: geriBildirim !== null,
+          onPas: pasGec,
+        }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -370,7 +394,8 @@ export function IzohipsOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
-                  baslik={geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
+                  pas={geriBildirim.pas}
+                  baslik={geriBildirim.pas ? 'Pas geçtin' : geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
                   aciklama={
                     geriBildirim.dogruMu
                       ? undefined
@@ -505,6 +530,13 @@ function SikDugmesi({
   )
 }
 
+type SonucBilgisi = {
+  ozet: TurOzeti<IzohipsSorusu>
+  /** `ozet.yanlislar` ile aynı sırada: o soru pas mı geçildi. */
+  paslar: boolean[]
+  yeniRekor: boolean
+}
+
 /**
  * Tur sonu.
  *
@@ -522,7 +554,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
-  sonuc: { ozet: TurOzeti<IzohipsSorusu>; yeniRekor: boolean }
+  sonuc: SonucBilgisi
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -531,7 +563,7 @@ function SonucGorunumu({
   onCik: () => void
   bildir: BildirimKolu
 }) {
-  const { ozet, yeniRekor } = sonuc
+  const { ozet, paslar, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
   const kalan = ozet.yanlislar.length - gorunen.length
 
@@ -567,6 +599,11 @@ function SonucGorunumu({
             >
               <b className="block font-display text-[13.5px] font-extrabold leading-tight text-success">
                 {SEKIL_ADI[yanlis.sekil]}
+                {paslar[sira] && (
+                  <span className="ml-1.5 text-[11px] font-bold text-muted-foreground">
+                    · Pas geçtin
+                  </span>
+                )}
               </b>
               <span className="mt-1.5 block border-t border-border pt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
                 {SEKIL_ACIKLAMASI[yanlis.sekil].replace(/\*\*/g, '')}

@@ -21,9 +21,11 @@ import {
 } from '@/lib/oyunlar/koklu'
 import {
   guncelSeri,
+  kalanPas,
   karistir,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -80,6 +82,8 @@ type Evre = 'aralik' | 'bonus'
 type GeriBildirim = {
   evre: Evre
   dogruMu: boolean
+  /** Aralık evresinde pas hakkı kullanıldı; yanlış değil, nötr gösterilir. */
+  pas: boolean
   soru: KokluSorusu
   /** Aralık evresinde oyuncunun bıraktığı uçlar. */
   secilenAlt: number
@@ -156,6 +160,8 @@ export function KokluOyunuEkrani({
 
   const [sonuc, setSonuc] = useState<{
     ozet: TurOzeti<KokluSorusu>
+    /** `ozet.yanlislar` ile aynı sırada: o soru pas mı geçildi. */
+    paslar: boolean[]
     yeniRekor: boolean
     puan: number
   } | null>(null)
@@ -202,6 +208,7 @@ export function KokluOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
+        paslar: verilenler.filter((c) => !c.dogruMu).map((c) => c.pas === true),
         puan: puanRef.current,
         yeniRekor:
           !yarim &&
@@ -267,6 +274,7 @@ export function KokluOyunuEkrani({
     setGeriBildirim({
       evre: 'aralik',
       dogruMu,
+      pas: false,
       soru,
       secilenAlt,
       secilenUst,
@@ -294,6 +302,27 @@ export function KokluOyunuEkrani({
   }
 
   /**
+   * Pas hakkı — yalnızca aralık evresinde. Bedelsiz (`Cevap.pas`): yanlış
+   * sayılmıyor, elemeye ve sese girmiyor; çubuk doğru aralığı gösterip sıradaki
+   * soruya geçiyor. Bonusa geçilmiyor, çünkü soru bilinmedi.
+   */
+  const pasGec = () => {
+    if (!soru || evre !== 'aralik' || geriBildirim !== null) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    setCevaplar((onceki) => [...onceki, { soru, dogruMu: false, pas: true }])
+    setGeriBildirim({
+      evre: 'aralik',
+      dogruMu: false,
+      pas: true,
+      soru,
+      secilenAlt: altSinir(soru),
+      secilenUst: ustSinir(soru),
+      secilenUc: null,
+    })
+    zamanlayiciRef.current = setTimeout(sonrakiSoru, CEVAP_BEKLEMESI)
+  }
+
+  /**
    * Bonus cevabı.
    *
    * Doğru/yanlış sayacına girmiyor: soru zaten bir kez cevaplandı. Yalnızca
@@ -306,6 +335,7 @@ export function KokluOyunuEkrani({
     setGeriBildirim({
       evre: 'bonus',
       dogruMu,
+      pas: false,
       soru,
       secilenAlt: altSinir(soru),
       secilenUst: ustSinir(soru),
@@ -353,7 +383,7 @@ export function KokluOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: evre === 'bonus' ? BONUS_SURESI : soruSuresi('koklu'),
@@ -376,7 +406,7 @@ export function KokluOyunuEkrani({
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
   const kilitli = geriBildirim !== null
 
-  const maskotDurumu: MaskotDurumu = geriBildirim
+  const maskotDurumu: MaskotDurumu = geriBildirim && !geriBildirim.pas
     ? geriBildirim.dogruMu
       ? 'kutlama'
       : 'uzgun'
@@ -397,12 +427,18 @@ export function KokluOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 puan,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{
+          kalan: kalanPas(cevaplar),
+          // Bonus ayrı bir soru değil, bilinmiş sorunun devamı: geçilecek bir şey yok.
+          kilitli: kilitli || evre === 'bonus',
+          onPas: pasGec,
+        }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -444,9 +480,17 @@ export function KokluOyunuEkrani({
                       alt={kilitli ? geriBildirim.secilenAlt : aralik.alt}
                       ust={kilitli ? geriBildirim.secilenUst : aralik.ust}
                       kilitli={kilitli}
-                      durum={kilitli ? (geriBildirim.dogruMu ? 'dogru' : 'yanlis') : null}
+                      durum={
+                        kilitli && !geriBildirim.pas
+                          ? geriBildirim.dogruMu
+                            ? 'dogru'
+                            : 'yanlis'
+                          : null
+                      }
                       dogruAlt={
-                        kilitli && !geriBildirim.dogruMu ? altSinir(soru) : undefined
+                        kilitli && !geriBildirim.dogruMu && !geriBildirim.pas
+                          ? altSinir(soru)
+                          : undefined
                       }
                       onDegis={setAralik}
                     />
@@ -476,6 +520,7 @@ export function KokluOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
+                  pas={geriBildirim.pas}
                   baslik={geriBildirimBasligi(geriBildirim)}
                   aciklama={`√${geriBildirim.soru.sayi} ≈ ${yaklasikDeger(geriBildirim.soru)} · ${aralikAciklamasi(geriBildirim.soru)}`}
                 />
@@ -498,6 +543,7 @@ export function KokluOyunuEkrani({
 }
 
 function geriBildirimBasligi(geri: GeriBildirim): string {
+  if (geri.pas) return 'Pas geçtin'
   if (geri.evre === 'aralik') {
     return geri.dogruMu ? `Doğru! +${TEMEL_PUAN} puan · bonus geliyor` : 'Olmadı'
   }
@@ -575,7 +621,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
-  sonuc: { ozet: TurOzeti<KokluSorusu>; yeniRekor: boolean; puan: number }
+  sonuc: { ozet: TurOzeti<KokluSorusu>; paslar: boolean[]; yeniRekor: boolean; puan: number }
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -624,6 +670,9 @@ function SonucGorunumu({
               </b>
               <span className="rakam mt-0.5 block text-[11.5px] font-extrabold text-success">
                 {altSinir(yanlis)} – {ustSinir(yanlis)} arasında
+                {sonuc.paslar[sira] && (
+                  <span className="font-semibold text-muted-foreground"> · Pas geçtin</span>
+                )}
               </span>
               <span className="rakam mt-1.5 block border-t border-border pt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
                 {aralikAciklamasi(yanlis)} · {yakinUc(yanlis)} sayısına daha yakın

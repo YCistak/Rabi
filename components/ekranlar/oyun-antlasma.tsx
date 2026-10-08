@@ -14,9 +14,11 @@ import {
 import { EL_BOYUTU, elHazirla, eslesiyorMu, type AntlasmaEli } from '@/lib/oyunlar/antlasma'
 import {
   guncelSeri,
+  kalanPas,
   karistir,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -34,6 +36,7 @@ import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
 import {
+  Bildirim,
   EN_COK_YANLIS,
   KalanHapi,
   OyunKabugu,
@@ -181,8 +184,13 @@ export function AntlasmaOyunuEkrani({
   /** El tamamlandı, yenisi dağıtılmayı bekliyor — bu sırada dokunuşlar yok sayılır. */
   const [elBekliyor, setElBekliyor] = useState(false)
   const [cevaplar, setCevaplar] = useState<Cevap<AntlasmaMaddesi>[]>([])
-  /** Yanlışlarla aynı sıradaki seçimler — tur sonunda "sen X dedin" için. */
-  const [yanlisGirdileri, setYanlisGirdileri] = useState<string[]>([])
+  /**
+   * Yanlışlarla aynı sıradaki seçimler — tur sonunda "sen X dedin" için;
+   * `null` o çiftin pas geçildiğini gösterir.
+   */
+  const [yanlisGirdileri, setYanlisGirdileri] = useState<(string | null)[]>([])
+  /** Pas geçilen çift, doğrusu okunurken; bu sırada dokunuşlar yok sayılır. */
+  const [pasCifti, setPasCifti] = useState<AntlasmaMaddesi | null>(null)
 
   /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
   const [elendi, setElendi] = useState<Eleme>(false)
@@ -255,6 +263,7 @@ export function AntlasmaOyunuEkrani({
     setSecim(BOS_SECIM)
     setEslesenler([])
     setYanlisCift(null)
+    setPasCifti(null)
     setElBekliyor(false)
     setCevaplar([])
     setYanlisGirdileri([])
@@ -329,6 +338,38 @@ export function AntlasmaOyunuEkrani({
   }
 
   /**
+   * Pas: tek bir çift geçiliyor, bütün el değil — elin birimi eşleştirme.
+   *
+   * Seçili bir kutu varsa geçilen onun çifti; yoksa maddeler sütununda
+   * eşleşmemiş ilk madde, böylece hangi çiftin açılacağı tahmin edilebiliyor.
+   * Çift doğrusuyla birlikte eşleşmiş gibi yerine oturuyor. Bedelsiz: yanlış
+   * sesi, zorluk kaydı ve Sıfır Tolerans elemesi yok (`Cevap.pas`).
+   */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || !el || yanlisCift !== null || elBekliyor || pasCifti !== null)
+      return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    const kalanEsler = el.esler.filter((e) => !eslesenler.some((s) => s.madde === e.madde))
+    const es =
+      kalanEsler.find((e) => e.madde === secim.madde || e.antlasma === secim.antlasma) ??
+      el.maddeler.map((m) => kalanEsler.find((e) => e.madde === m)).find((e) => e !== undefined)
+    if (!es) return
+
+    setCevaplar((onceki) => [...onceki, { soru: es, dogruMu: false, pas: true }])
+    setYanlisGirdileri((onceki) => [...onceki, null])
+    setSecim(BOS_SECIM)
+    setPasCifti(es)
+    const yeniEslesenler = [...eslesenler, es]
+    setEslesenler(yeniEslesenler)
+    const elBitti = yeniEslesenler.length >= EL_BOYUTU
+    if (elBitti) setElBekliyor(true)
+    zamanlayiciRef.current = setTimeout(() => {
+      setPasCifti(null)
+      if (elBitti) elDagit()
+    }, CEVAP_BEKLEMESI)
+  }
+
+  /**
    * El süresi dolunca.
    *
    * Eşleştirilmemiş maddeler cevaplanmamış sayılıyor — süre dolması bilememekle
@@ -378,7 +419,7 @@ export function AntlasmaOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && !duraklatilan && !elBekliyor && el !== null,
     sure: soruSuresi('antlasma'),
@@ -431,8 +472,8 @@ export function AntlasmaOyunuEkrani({
   }
 
   const maddeSec = (madde: string) => {
-    if (asama !== 'oynaniyor' || yanlisCift !== null || elBekliyor || eslesenMaddeler.has(madde))
-      return
+    if (asama !== 'oynaniyor' || yanlisCift !== null || elBekliyor || pasCifti !== null) return
+    if (eslesenMaddeler.has(madde)) return
     // Aynı kutuya ikinci dokunuş seçimi geri alır; yanlış dokunan kilitlenmesin.
     if (secim.madde === madde) return setSecim({ ...secim, madde: null })
     if (secim.antlasma) return denetle(madde, secim.antlasma)
@@ -444,6 +485,7 @@ export function AntlasmaOyunuEkrani({
       asama !== 'oynaniyor' ||
       yanlisCift !== null ||
       elBekliyor ||
+      pasCifti !== null ||
       eslesenAntlasmalar.has(antlasma)
     )
       return
@@ -479,11 +521,16 @@ export function AntlasmaOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{
+          kalan: kalanPas(cevaplar),
+          kilitli: yanlisCift !== null || elBekliyor || pasCifti !== null,
+          onPas: pasGec,
+        }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -561,13 +608,24 @@ export function AntlasmaOyunuEkrani({
 
               {/* İki adımlı bir işlemde ilk adımdan sonra ne olacağını söylemek
                   gerekiyor. */}
-              <p className="mt-auto flex-none pt-1 text-center text-[11.5px] font-bold text-muted-foreground">
-                {secim.madde
-                  ? 'Şimdi antlaşmasına dokun'
-                  : secim.antlasma
-                    ? 'Şimdi maddesine dokun'
-                    : 'Bir maddeye dokun'}
-              </p>
+              {pasCifti ? (
+                <div className="mt-auto flex-none pt-1">
+                  <Bildirim
+                    iyi={false}
+                    pas
+                    baslik="Pas geçtin"
+                    aciklama={`— ${pasCifti.antlasma}`}
+                  />
+                </div>
+              ) : (
+                <p className="mt-auto flex-none pt-1 text-center text-[11.5px] font-bold text-muted-foreground">
+                  {secim.madde
+                    ? 'Şimdi antlaşmasına dokun'
+                    : secim.antlasma
+                      ? 'Şimdi maddesine dokun'
+                      : 'Bir maddeye dokun'}
+                </p>
+              )}
             </div>
           )
         )}
@@ -597,8 +655,8 @@ function SonucGorunumu({
   bildir,
 }: {
   sonuc: { ozet: TurOzeti<AntlasmaMaddesi>; yeniRekor: boolean }
-  /** Yanlışlarla aynı sıradaki antlaşma seçimleri. */
-  girdiler: string[]
+  /** Yanlışlarla aynı sıradaki antlaşma seçimleri; `null` pas. */
+  girdiler: (string | null)[]
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -646,10 +704,16 @@ function SonucGorunumu({
                 <Check size={13} className="shrink-0" aria-hidden />
                 {es.antlasma}
               </span>
-              {girdiler[sira] && (
+              {girdiler[sira] === null ? (
                 <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
-                  Sen <s className="text-ikincil">{girdiler[sira]}</s> dedin
+                  Pas geçtin
                 </span>
+              ) : (
+                girdiler[sira] && (
+                  <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
+                    Sen <s className="text-ikincil">{girdiler[sira]}</s> dedin
+                  </span>
+                )
               )}
             </YanlisKarti>
           ))}

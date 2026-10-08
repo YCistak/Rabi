@@ -10,9 +10,11 @@ import { DONEM_ADI, EDEBIYAT_HAVUZU } from '@/lib/oyunlar/edebiyat-havuzu'
 import { EL_BOYUTU, elHazirla, eslesiyorMu, type EdebiyatEli } from '@/lib/oyunlar/edebiyat'
 import {
   guncelSeri,
+  kalanPas,
   karistir,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -34,6 +36,7 @@ import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
 import {
+  Bildirim,
   EN_COK_YANLIS,
   KalanHapi,
   OyunKabugu,
@@ -191,8 +194,13 @@ export function EdebiyatOyunuEkrani({
   /** El tamamlandı, yenisi dağıtılmayı bekliyor — bu sırada dokunuşlar yok sayılır. */
   const [elBekliyor, setElBekliyor] = useState(false)
   const [cevaplar, setCevaplar] = useState<Cevap<EdebiyatEsi>[]>([])
-  /** Yanlışlarla aynı sıradaki seçimler — tur sonunda "sen X dedin" için. */
-  const [yanlisGirdileri, setYanlisGirdileri] = useState<string[]>([])
+  /**
+   * Yanlışlarla aynı sıradaki seçimler — tur sonunda "sen X dedin" için;
+   * `null` o çiftin pas geçildiğini gösterir.
+   */
+  const [yanlisGirdileri, setYanlisGirdileri] = useState<(string | null)[]>([])
+  /** Pas geçilen çift, doğrusu okunurken; bu sırada dokunuşlar yok sayılır. */
+  const [pasCifti, setPasCifti] = useState<EdebiyatEsi | null>(null)
 
   /** Yanlış eşleştirmeyle elendi mi. */
   const [elendi, setElendi] = useState<Eleme>(false)
@@ -272,6 +280,7 @@ export function EdebiyatOyunuEkrani({
     setSecim(BOS_SECIM)
     setEslesenler([])
     setYanlisCift(null)
+    setPasCifti(null)
     // Tur, el dağıtımı beklenirken bittiyse bayrak açık kalırdı ve yeni tur
     // dokunuşları yok sayardı.
     setElBekliyor(false)
@@ -348,6 +357,38 @@ export function EdebiyatOyunuEkrani({
   }
 
   /**
+   * Pas: tek bir çift geçiliyor, bütün el değil — elin birimi eşleştirme.
+   *
+   * Seçili bir kutu varsa geçilen onun çifti; yoksa eserler sütununda
+   * eşleşmemiş ilk eser, böylece hangi çiftin açılacağı tahmin edilebiliyor.
+   * Çift doğrusuyla birlikte eşleşmiş gibi yerine oturuyor. Bedelsiz: yanlış
+   * sesi, zorluk kaydı ve Sıfır Tolerans elemesi yok (`Cevap.pas`).
+   */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || !el || yanlisCift !== null || elBekliyor || pasCifti !== null)
+      return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    const kalanEsler = el.esler.filter((e) => !eslesenler.some((s) => s.eser === e.eser))
+    const es =
+      kalanEsler.find((e) => e.eser === secim.eser || e.yazar === secim.yazar) ??
+      el.eserler.map((ad) => kalanEsler.find((e) => e.eser === ad)).find((e) => e !== undefined)
+    if (!es) return
+
+    setCevaplar((onceki) => [...onceki, { soru: es, dogruMu: false, pas: true }])
+    setYanlisGirdileri((onceki) => [...onceki, null])
+    setSecim(BOS_SECIM)
+    setPasCifti(es)
+    const yeniEslesenler = [...eslesenler, es]
+    setEslesenler(yeniEslesenler)
+    const elBitti = yeniEslesenler.length >= EL_BOYUTU
+    if (elBitti) setElBekliyor(true)
+    zamanlayiciRef.current = setTimeout(() => {
+      setPasCifti(null)
+      if (elBitti) elDagit()
+    }, CEVAP_BEKLEMESI)
+  }
+
+  /**
    * El süresi dolunca.
    *
    * Kalan eşleşmeler cevaplanmamış sayılıyor — süre dolması bilememekle aynı,
@@ -397,9 +438,10 @@ export function EdebiyatOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
-    aktif: asama === 'oynaniyor' && !duraklatilan && !elBekliyor && el !== null,
+    aktif:
+      asama === 'oynaniyor' && !duraklatilan && !elBekliyor && pasCifti === null && el !== null,
     sure: soruSuresi('edebiyat'),
     anahtar: elSayisi,
     onBitti: sureDoldu,
@@ -454,7 +496,8 @@ export function EdebiyatOyunuEkrani({
   }
 
   const eserSec = (eser: string) => {
-    if (asama !== 'oynaniyor' || yanlisCift !== null || elBekliyor || eslesenEserler.has(eser)) return
+    if (asama !== 'oynaniyor' || yanlisCift !== null || elBekliyor || pasCifti !== null) return
+    if (eslesenEserler.has(eser)) return
     // Aynı kutuya ikinci dokunuş seçimi geri alır; yanlış dokunan kilitlenmesin.
     if (secim.eser === eser) return setSecim({ ...secim, eser: null })
     if (secim.yazar) return denetle(eser, secim.yazar)
@@ -462,7 +505,8 @@ export function EdebiyatOyunuEkrani({
   }
 
   const yazarSec = (yazar: string) => {
-    if (asama !== 'oynaniyor' || yanlisCift !== null || elBekliyor || eslesenYazarlar.has(yazar)) return
+    if (asama !== 'oynaniyor' || yanlisCift !== null || elBekliyor || pasCifti !== null) return
+    if (eslesenYazarlar.has(yazar)) return
     if (secim.yazar === yazar) return setSecim({ ...secim, yazar: null })
     if (secim.eser) return denetle(secim.eser, yazar)
     setSecim({ ...secim, yazar })
@@ -495,11 +539,16 @@ export function EdebiyatOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{
+          kalan: kalanPas(cevaplar),
+          kilitli: yanlisCift !== null || elBekliyor || pasCifti !== null,
+          onPas: pasGec,
+        }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -546,13 +595,24 @@ export function EdebiyatOyunuEkrani({
 
               {/* İki adımlı bir işlemde ilk adımdan sonra ne olacağını söylemek
                   gerekiyor. */}
-              <p className="mt-auto flex-none pt-1 text-center text-[11.5px] font-bold text-muted-foreground">
-                {secim.eser
-                  ? 'Şimdi yazarına dokun'
-                  : secim.yazar
-                    ? 'Şimdi eserine dokun'
-                    : 'Bir esere dokun'}
-              </p>
+              {pasCifti ? (
+                <div className="mt-auto flex-none pt-1">
+                  <Bildirim
+                    iyi={false}
+                    pas
+                    baslik="Pas geçtin"
+                    aciklama={`— ${pasCifti.eser}: ${pasCifti.yazar}`}
+                  />
+                </div>
+              ) : (
+                <p className="mt-auto flex-none pt-1 text-center text-[11.5px] font-bold text-muted-foreground">
+                  {secim.eser
+                    ? 'Şimdi yazarına dokun'
+                    : secim.yazar
+                      ? 'Şimdi eserine dokun'
+                      : 'Bir esere dokun'}
+                </p>
+              )}
             </div>
           )
         )}
@@ -624,8 +684,8 @@ function SonucGorunumu({
   bildir,
 }: {
   sonuc: { ozet: TurOzeti<EdebiyatEsi>; yeniRekor: boolean }
-  /** Yanlışlarla aynı sıradaki yazar seçimleri. */
-  girdiler: string[]
+  /** Yanlışlarla aynı sıradaki yazar seçimleri; `null` pas. */
+  girdiler: (string | null)[]
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -675,10 +735,16 @@ function SonucGorunumu({
                 <Check size={13} className="shrink-0" aria-hidden />
                 {es.yazar}
               </span>
-              {girdiler[sira] && (
+              {girdiler[sira] === null ? (
                 <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
-                  Sen <s className="text-ikincil">{girdiler[sira]}</s> dedin
+                  Pas geçtin
                 </span>
+              ) : (
+                girdiler[sira] && (
+                  <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
+                    Sen <s className="text-ikincil">{girdiler[sira]}</s> dedin
+                  </span>
+                )
               )}
             </YanlisKarti>
           ))}

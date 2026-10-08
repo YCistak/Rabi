@@ -14,8 +14,10 @@ import {
 import { turHazirla, type AnlatimOyunSorusu, type AnlatimSikki } from '@/lib/oyunlar/anlatim'
 import {
   guncelSeri,
+  kalanPas,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -76,8 +78,16 @@ function sirayiKur(akis: SoruAkisi<AnlatimSorusu>): SoruAkisi<AnlatimOyunSorusu>
   return akisiEsle(akis, (sorular) => turHazirla(sorular, Math.random, false))
 }
 
-/** `secilen` süre dolduğunda `null`: oyuncu bir şık işaretlemedi. */
-type GeriBildirim = { secilen: BozuklukTuru | null; dogruMu: boolean; soru: AnlatimSorusu }
+/** `secilen` süre dolduğunda ya da pas geçilince `null`: oyuncu bir şık işaretlemedi. */
+type GeriBildirim = {
+  secilen: BozuklukTuru | null
+  dogruMu: boolean
+  pas: boolean
+  soru: AnlatimSorusu
+}
+
+/** Tur sonu: özet ve listedeki her yanlışın pas mı olduğu (aynı sırada). */
+type Sonuc = { ozet: TurOzeti<AnlatimSorusu>; paslar: boolean[]; yeniRekor: boolean }
 
 /**
  * Banka kayıtlarından cümle havuzu.
@@ -156,10 +166,7 @@ export function AnlatimOyunuEkrani({
    */
   const [turNo, setTurNo] = useState(0)
 
-  const [sonuc, setSonuc] = useState<{
-    ozet: TurOzeti<AnlatimSorusu>
-    yeniRekor: boolean
-  } | null>(null)
+  const [sonuc, setSonuc] = useState<Sonuc | null>(null)
 
   const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
@@ -206,6 +213,7 @@ export function AnlatimOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
+        paslar: verilenler.filter((c) => !c.dogruMu).map((c) => c.pas === true),
         yeniRekor:
           !yarim &&
           !bankaTuru &&
@@ -258,8 +266,11 @@ export function AnlatimOyunuEkrani({
    * Sıfır Tolerans'de yanılmak turu bitiriyor; öteki modlarda yalnızca yanlış
    * sayılıyor. Bekleme süresi ikisinde de aynı: düzeltilmiş cümleyi okumadan
    * ekranın değişmesi, elenirken bile öğretmeyi bırakmak olurdu.
+   *
+   * Pas bedelsiz: uyuma yanlış diye yazılmıyor, Sıfır Tolerans'ta turu
+   * bitirmiyor.
    */
-  const ilerle = (dogruMu: boolean) => {
+  const ilerle = (dogruMu: boolean, pas = false) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
       /*
@@ -270,8 +281,8 @@ export function AnlatimOyunuEkrani({
         değişirdi. İkisi aynı karede güncellenince değişen tek şey bir
         sonraki soru oluyor.
       */
-      zorlukKaydet(dogruMu)
-      if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
+      if (!pas) zorlukKaydet(dogruMu)
+      if (!pas && elerMi(dogruMu, bankaTuru, gecerliMod)) {
         setElendi('yanlis')
         turBitir(cevaplarRef.current)
       } else {
@@ -287,7 +298,7 @@ export function AnlatimOyunuEkrani({
 
     const dogruMu = sik.dogruMu
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu }])
-    setGeriBildirim({ secilen: sik.deger, dogruMu, soru: soru.soru })
+    setGeriBildirim({ secilen: sik.deger, dogruMu, pas: false, soru: soru.soru })
     geriBildir(dogruMu)
     ilerle(dogruMu)
   }
@@ -296,13 +307,25 @@ export function AnlatimOyunuEkrani({
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false }])
-    setGeriBildirim({ secilen: null, dogruMu: false, soru: soru.soru })
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: false, soru: soru.soru })
     geriBildir(false)
     ilerle(false)
     // `ilerle` ve `geriBildir` her renderda yeniden kuruluyor; sayaç yalnızca
     // güncel olanı çağırsın diye bağımlılıklar bilerek dar tutuldu.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asama, geriBildirim, soru])
+
+  /**
+   * Pas hakkı: soru bilinmeyen olarak kaydediliyor (bankaya düşsün) ama
+   * bedelsiz — yanlış sesi, titreşimi yok; düzeltilmiş cümle yine gösteriliyor.
+   */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false, pas: true }])
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: true, soru: soru.soru })
+    ilerle(false, true)
+  }
 
   /** Tur saati bitti: yanlış değil, tur biter. */
   const turSuresiDoldu = () => {
@@ -332,7 +355,7 @@ export function AnlatimOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: soruSuresi('anlatim'),
@@ -352,7 +375,7 @@ export function AnlatimOyunuEkrani({
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
 
-  const maskotDurumu: MaskotDurumu = geriBildirim
+  const maskotDurumu: MaskotDurumu = geriBildirim && !geriBildirim.pas
     ? geriBildirim.dogruMu
       ? 'kutlama'
       : 'uzgun'
@@ -373,11 +396,16 @@ export function AnlatimOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{
+          kalan: kalanPas(cevaplar),
+          kilitli: asama !== 'oynaniyor' || geriBildirim !== null,
+          onPas: pasGec,
+        }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -426,7 +454,10 @@ export function AnlatimOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
-                  baslik={geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
+                  pas={geriBildirim.pas}
+                  baslik={
+                    geriBildirim.pas ? 'Pas geçtin' : geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'
+                  }
                   aciklama={`Doğrusu: ${geriBildirim.soru.duzeltme}`}
                 />
               )}
@@ -501,7 +532,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
-  sonuc: { ozet: TurOzeti<AnlatimSorusu>; yeniRekor: boolean }
+  sonuc: Sonuc
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -510,7 +541,7 @@ function SonucGorunumu({
   onCik: () => void
   bildir: BildirimKolu
 }) {
-  const { ozet, yeniRekor } = sonuc
+  const { ozet, paslar, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
   const kalan = ozet.yanlislar.length - gorunen.length
 
@@ -552,6 +583,7 @@ function SonucGorunumu({
               </span>
               <span className="mt-1 block text-[11.5px] font-extrabold text-muted-foreground">
                 {BOZUKLUK_ADI[yanlis.tur]}
+                {paslar[sira] && ' · Pas geçtin'}
               </span>
               <span className="mt-1.5 block border-t border-border pt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
                 {BOZUKLUK_ACIKLAMASI[yanlis.tur]}

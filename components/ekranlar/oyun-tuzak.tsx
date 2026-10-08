@@ -15,8 +15,10 @@ import {
 } from '@/lib/oyunlar/tuzak'
 import {
   guncelSeri,
+  kalanPas,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -72,8 +74,16 @@ const TUR_SORUSU = TUR_SORU_SINIRI
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
-/** `dogruDedi` null: oyuncu kaydırmadan süre doldu. */
-type GeriBildirim = { dogruDedi: boolean | null; dogruMu: boolean; soru: TuzakSorusu }
+/** `dogruDedi` null: oyuncu kaydırmadan süre doldu ya da pas geçti. */
+type GeriBildirim = {
+  dogruDedi: boolean | null
+  dogruMu: boolean
+  pas: boolean
+  soru: TuzakSorusu
+}
+
+/** Tur sonu: özet ve listedeki her yanlışın pas mı olduğu (aynı sırada). */
+type Sonuc = { ozet: TurOzeti<TuzakSorusu>; paslar: boolean[]; yeniRekor: boolean }
 
 /** Banka kayıtlarından kural havuzu; kayıt kuralın tamamını taşıyor. */
 function bankaHavuzu(kayitlar: readonly BankaKaydi[]): TuzakKurali[] {
@@ -140,10 +150,7 @@ export function TuzakOyunuEkrani({
   */
   const { zorluk, kaydet: zorlukKaydet, sifirla: zorluguSifirla } = useUyarlananZorluk()
 
-  const [sonuc, setSonuc] = useState<{
-    ozet: TurOzeti<TuzakSorusu>
-    yeniRekor: boolean
-  } | null>(null)
+  const [sonuc, setSonuc] = useState<Sonuc | null>(null)
 
   const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
@@ -194,6 +201,7 @@ export function TuzakOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
+        paslar: verilenler.filter((c) => !c.dogruMu).map((c) => c.pas === true),
         yeniRekor:
           !yarim &&
           !bankaTuru &&
@@ -242,8 +250,13 @@ export function TuzakOyunuEkrani({
 
   const soru = sorular[zorluk][sira]
 
-  /** Cevaptan sonra: yanlışsa tur biter, doğruysa sıradaki soru gelir. */
-  const ilerle = (dogruMu: boolean) => {
+  /**
+   * Cevaptan sonra: yanlışsa tur biter, doğruysa sıradaki soru gelir.
+   *
+   * Pas bedelsiz: uyuma yanlış diye yazılmıyor, Sıfır Tolerans'ta turu
+   * bitirmiyor.
+   */
+  const ilerle = (dogruMu: boolean, pas = false) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
       /*
@@ -254,8 +267,8 @@ export function TuzakOyunuEkrani({
         değişirdi. İkisi aynı karede güncellenince değişen tek şey bir
         sonraki soru oluyor.
       */
-      zorlukKaydet(dogruMu)
-      if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
+      if (!pas) zorlukKaydet(dogruMu)
+      if (!pas && elerMi(dogruMu, bankaTuru, gecerliMod)) {
         setElendi('yanlis')
         turBitir(cevaplarRef.current)
       } else {
@@ -271,7 +284,7 @@ export function TuzakOyunuEkrani({
 
     const dogruMu = cevapDogruMu(soru, dogruDedi)
     setCevaplar((onceki) => [...onceki, { soru, dogruMu }])
-    setGeriBildirim({ dogruDedi, dogruMu, soru })
+    setGeriBildirim({ dogruDedi, dogruMu, pas: false, soru })
     geriBildir(dogruMu)
     ilerle(dogruMu)
   }
@@ -280,13 +293,25 @@ export function TuzakOyunuEkrani({
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     setCevaplar((onceki) => [...onceki, { soru, dogruMu: false }])
-    setGeriBildirim({ dogruDedi: null, dogruMu: false, soru })
+    setGeriBildirim({ dogruDedi: null, dogruMu: false, pas: false, soru })
     geriBildir(false)
     ilerle(false)
     // `ilerle` ve `geriBildir` her renderda yeniden kuruluyor; sayaç yalnızca
     // güncel olanı çağırsın diye bağımlılıklar bilerek dar tutuldu.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asama, geriBildirim, soru])
+
+  /**
+   * Pas hakkı: soru bilinmeyen olarak kaydediliyor (bankaya düşsün) ama
+   * bedelsiz — yanlış sesi, titreşimi yok; doğrusu yine gösteriliyor.
+   */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    setCevaplar((onceki) => [...onceki, { soru, dogruMu: false, pas: true }])
+    setGeriBildirim({ dogruDedi: null, dogruMu: false, pas: true, soru })
+    ilerle(false, true)
+  }
 
   /** Tur saati bitti: yanlış değil, tur biter. */
   const turSuresiDoldu = () => {
@@ -316,7 +341,7 @@ export function TuzakOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: soruSuresi('tuzak'),
@@ -336,7 +361,7 @@ export function TuzakOyunuEkrani({
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
 
-  const maskotDurumu: MaskotDurumu = geriBildirim
+  const maskotDurumu: MaskotDurumu = geriBildirim && !geriBildirim.pas
     ? geriBildirim.dogruMu
       ? 'kutlama'
       : 'uzgun'
@@ -357,11 +382,16 @@ export function TuzakOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{
+          kalan: kalanPas(cevaplar),
+          kilitli: asama !== 'oynaniyor' || geriBildirim !== null,
+          onPas: pasGec,
+        }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -390,11 +420,14 @@ export function TuzakOyunuEkrani({
                   </span>
                 </div>
 
+                {/* Pas geçilince kart kilitlenmiyor: kilitli kart sonucu yalnızca
+                    yeşil ya da kırmızı çerçeveyle söyleyebiliyor, pas ise
+                    yanlış değil. Bu arada kaydırmayı `cevapla` yok sayıyor. */}
                 <KaydirmaKarti
                   metin={ifade(soru)}
-                  kilitli={geriBildirim !== null}
+                  kilitli={geriBildirim !== null && !geriBildirim.pas}
                   sonuc={
-                    geriBildirim
+                    geriBildirim && !geriBildirim.pas
                       ? { dogruDedi: geriBildirim.dogruDedi, dogruMu: geriBildirim.dogruMu }
                       : null
                   }
@@ -405,12 +438,15 @@ export function TuzakOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
+                  pas={geriBildirim.pas}
                   baslik={
-                    geriBildirim.dogruDedi === null
-                      ? 'Süre doldu'
-                      : geriBildirim.dogruMu
-                        ? 'Doğru!'
-                        : 'Olmadı'
+                    geriBildirim.pas
+                      ? 'Pas geçtin'
+                      : geriBildirim.dogruDedi === null
+                        ? 'Süre doldu'
+                        : geriBildirim.dogruMu
+                          ? 'Doğru!'
+                          : 'Olmadı'
                   }
                   aciklama={
                     geriBildirim.dogruMu
@@ -457,7 +493,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
-  sonuc: { ozet: TurOzeti<TuzakSorusu>; yeniRekor: boolean }
+  sonuc: Sonuc
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -466,7 +502,7 @@ function SonucGorunumu({
   onCik: () => void
   bildir: BildirimKolu
 }) {
-  const { ozet, yeniRekor } = sonuc
+  const { ozet, paslar, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
   const kalan = ozet.yanlislar.length - gorunen.length
 
@@ -509,6 +545,7 @@ function SonucGorunumu({
                 {yanlis.kural.dogru}
               </span>
               <span className="mt-1.5 block border-t border-border pt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
+                {paslar[sira] && <b className="font-extrabold">Pas geçtin. </b>}
                 {yanlis.kural.aciklama}
               </span>
             </YanlisKarti>
