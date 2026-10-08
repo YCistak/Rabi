@@ -57,7 +57,7 @@ export const matematik12Sorulari: Record<string, Omit<SoruKarti, 'id'>[]> = {
     ['a₁ = 3 ve r = 2 olan geometrik dizide a₆ = 192 olur.', false, 'a₆ = 3 · 2⁵ = 96; 192 için üs n − 1 yerine n alınmış.'],
     ['Ortak çarpanı negatif olan geometrik dizi ne artan ne azalandır.', true, 'Terimlerin işareti sırayla değişir.'],
     ['Geometrik dizide a₃ · a₇ = a₅² eşitliği doğrudur.', true, 'İndis toplamları eşit: 3 + 7 = 5 + 5.'],
-    ['3, 6, 9, 12, … bir geometrik dizidir.', false, 'Oranlar 2, 1,5, 1,33… sabit değil; farklar sabit, aritmetik.'],
+    ['3, 6, 9, 12, … bir geometrik dizidir.', false, 'Oranlar 2; 1,5; 1,33… sabit değil. Farklar sabit (3): dizi aritmetik.'],
     ['1 + 3 + 9 + 27 + 81 toplamı 121’dir.', true, 'S₅ = (3⁵ − 1) / (3 − 1) = 242 / 2 = 121.'],
   ], [
     ['a₂ = 12, a₄ = 48 ve terimler pozitif ise r?', '2', '4', 'r² = 48 / 12 = 4 → r = 2 (pozitif).'],
@@ -105,7 +105,7 @@ export const matematik12Sorulari: Record<string, Omit<SoruKarti, 'id'>[]> = {
   ]),
   'mat12-turev': sorular([
     ['f(x) = x² için [2, 4] aralığındaki ortalama değişim oranı 6’dır.', true, '(16 − 4) / (4 − 2) = 6.'],
-    ['f′(a), grafiğe a’da çizilen teğetin eğimidir.', true, 'Kesenin eğimi h → 0 iken teğetin eğimine gider.'],
+    ['f′(a), grafiğe x = a noktasında çizilen teğetin eğimidir.', true, 'Kesenin eğimi h → 0 iken teğetin eğimine gider.'],
     ['Bir noktada sürekli olan fonksiyonun o noktada türevi mutlaka vardır.', false, '|x| x = 0’da sürekli ama sivri; türevi yok.'],
     ['(x⁵)′ = 5x⁴ olur.', true, 'Kuvvet kuralı: n · xⁿ⁻¹.'],
     ['(f · g)′ = f′ · g′ eşitliği her zaman doğrudur.', false, 'Çarpım kuralı f′g + fg′; (x · x)′ = 2x, 1 · 1 = 1 değil.'],
