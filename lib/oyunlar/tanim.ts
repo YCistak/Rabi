@@ -247,6 +247,8 @@ export const OYUNLAR: OyunTanimi[] = [
     id: 'edebiyat',
     ders: 'turkce',
     ad: 'Eserler ve Yazarlar',
+    // Kaldırıldı (kullanıcı istedi), soruları ileride kullanılabilir diye silinmedi.
+    kapali: true,
     kisaAciklama: 'Eseri yazarıyla eşleştir',
     ikon: '📚',
     ozet: `Üstteki esere, sonra alttaki yazarına dokunursun — sıra fark etmez. Altı çift bitince yeni altılı gelir.`,
