@@ -26,10 +26,10 @@ const METIN_SINIRI = 240
 const KART_TABANI = 6
 const KART_SINIRI = 16
 
-// İngilizce yalnızca 11'de, 12'de Matematik, Fizik, Kimya, Biyoloji, Tarih ve Coğrafya (2018 programı) yazıldı;
-// beklenen programlar eksikse testten süzülmez.
+// 12'de yedi ders (2018 programı) yazıldı: Matematik, Fizik, Kimya, Biyoloji, Tarih, Coğrafya, İngilizce;
+// İngilizce 9 ve 10'da yok. Beklenen programlar eksikse testten süzülmez.
 const beklenenMi = (sinif: number, ders: string) =>
-  sinif === 12 ? ['matematik', 'fizik', 'kimya', 'biyoloji', 'tarih', 'cografya'].includes(ders) : sinif === 11 || ders !== 'ingilizce'
+  sinif === 12 ? ['matematik', 'fizik', 'kimya', 'biyoloji', 'tarih', 'cografya', 'ingilizce'].includes(ders) : sinif === 11 || ders !== 'ingilizce'
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map(
     (ders) => [`${sinif}. sınıf ${ders.ad}`, programBul(ders.id, sinif)] as const,
@@ -197,6 +197,24 @@ describe('12. sınıf Coğrafya (2018 programı)', () => {
     const adlar = tumKonular(cografya).map((k) => k.ad.toLocaleLowerCase('tr'))
     for (const yasak of ['iklim değişikliği', 'afet türleri', 'tektonik']) {
       expect(adlar.filter((ad) => ad.includes(yasak)), yasak).toEqual([])
+    }
+  })
+})
+
+describe('12. sınıf İngilizce (2018 programı)', () => {
+  const ingilizce = programBul('ingilizce', 12)!
+
+  it('programın on teması, yirmi konusu dolu', () => {
+    expect(ingilizce.temalar.map((t) => t.ad)).toEqual([
+      'Music', 'Friendship', 'Human Rights', 'Coming Soon', 'Psychology',
+      'Favors', 'News Stories', 'Alternative Energy', 'Technology', 'Manners',
+    ])
+    expect(tumKonular(ingilizce)).toHaveLength(20)
+    for (const konu of tumKonular(ingilizce)) {
+      expect(konu.kartlar.length, `${konu.ad}: kart sayısı`).toBeGreaterThanOrEqual(11)
+      expect(konu.sorular.length, `${konu.ad}: soru sayısı`).toBeGreaterThan(konu.kartlar.length)
+      expect(konu.kartlar.filter((kart) => kart.not !== undefined), `${konu.ad}: Rabi notu`).toHaveLength(1)
+      expect(konu.kontroller, `${konu.ad}: kontrol`).toHaveLength(2)
     }
   })
 })

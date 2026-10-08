@@ -38,6 +38,14 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   kazanımlar (12.1.1 … 12.4.4) MEB ölçme-değerlendirme tablosundan. Rakam, yıl ve
   anlaşma tarihleri tek tek doğrulandı; emin olunmayan ayrıntı yazılmadı. Örgütler
   (BM, NATO, AB) ayrı deste değil. `icerik.test.ts` `beklenenMi` 12'de Coğrafya'yı da sayar.
+- **12. sınıf İngilizce (2018 programı):** `12-ingilizce-1…4.ts` (+ `-sorular`), MEB
+  Ortaöğretim İngilizce 9–12 programının 12th Grade bölümündeki on tema
+  (Music … Manners), temada iki konu = 20 deste. Tema adı programın İngilizcesi;
+  konu kapsamı programın Functions sütunundan. 11 (Maarif) desteleriyle çakışan
+  dil bilgisi (edilgen, gelecek, ikinci koşul, wish + past) tekrar yazılmadı;
+  past perfect yalnız haber anlatımı, wish + had V3 / would ise pişmanlık
+  bağlamında yeniden geçiyor. YDT'ye bağlanan harita eşlemesi yok (kartlar
+  işlev odaklı).
 - Konu ölçüsü `lib/konu/maarif/iskelet.json`, `scripts/maarif-cek.mjs` ile
   tymm.meb.gov.tr'den çekilir; **elle düzenlenmez**. `maarif.test.ts` kelime
   örtüşmesiyle denetler (kısaltırken konuyu tanıtan kelimeyi atma); Türk Dili ve

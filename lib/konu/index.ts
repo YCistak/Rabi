@@ -43,6 +43,14 @@ import { biyoloji12 } from './icerik/12-biyoloji'
 import { biyoloji12Sorulari } from './icerik/12-biyoloji-sorular'
 import { tarih12 } from './icerik/12-tarih'
 import { cografya12 } from './icerik/12-cografya'
+import { ingilizce12Temalar1 } from './icerik/12-ingilizce-1'
+import { ingilizce12Sorulari1 } from './icerik/12-ingilizce-1-sorular'
+import { ingilizce12Temalar2 } from './icerik/12-ingilizce-2'
+import { ingilizce12Sorulari2 } from './icerik/12-ingilizce-2-sorular'
+import { ingilizce12Temalar3 } from './icerik/12-ingilizce-3'
+import { ingilizce12Sorulari3 } from './icerik/12-ingilizce-3-sorular'
+import { ingilizce12Temalar4 } from './icerik/12-ingilizce-4'
+import { ingilizce12Sorulari4 } from './icerik/12-ingilizce-4-sorular'
 
 export type {
   AkisGorseli,
@@ -192,6 +200,14 @@ const PROGRAMLAR: Record<string, DersProgrami> = {
   'biyoloji-12': sorulariBagla(biyoloji12, biyoloji12Sorulari),
   'tarih-12': tarih12,
   'cografya-12': cografya12,
+  'ingilizce-12': sorulariBagla(
+    program('ingilizce', 12, 'Müzikten davranış kurallarına, 2018 programı', [
+      ...ingilizce12Temalar1, ...ingilizce12Temalar2, ...ingilizce12Temalar3,
+      ...ingilizce12Temalar4,
+    ]),
+    { ...ingilizce12Sorulari1, ...ingilizce12Sorulari2, ...ingilizce12Sorulari3,
+      ...ingilizce12Sorulari4 },
+  ),
 }
 
 /** İçeriği henüz yazılmamış ders/sınıf için `null` döner; ekran bunu yazıyla karşılar. */
