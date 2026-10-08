@@ -228,6 +228,14 @@ describe('Mini turlar', () => {
     expect(tanitimGecisi(soru, { tur: 'hedefe-dokun', hedef: 'demo-soru' })).toBe(soru)
   })
 
+  it('tanıtım oyununda pas yok: soru adımı pas önermiyor, Onayla’yı anlatıyor', () => {
+    // 0.9.14'te tuş takımındaki "Pas geç" kalktı, kabuğun ortak pası demoya
+    // verilmedi (`oyun-islem.tsx`); balon hâlâ "pas geç" diyordu.
+    const soru = TUR_ADIMLARI.oyunlar.find((adim) => adim.kimlik === 'soru-bir')!
+    expect(soru.aciklama.toLocaleLowerCase('tr')).not.toContain('pas')
+    expect(soru.aciklama).toContain('Onayla')
+  })
+
   it.each([[1, 0], [0, 1]])('oyun %i doğru %i yanlışla bitince sonuç adımı, geri hazırlığa ve temiz sonuca', (dogru, yanlis) => {
     const sonuc = tanitimGecisi(adimaKadar('soru-bir', 'oyunlar'), { tur: 'oyun-bitti', dogru, yanlis })
     expect(kimlik(sonuc)).toBe('sonuc')
