@@ -26,10 +26,10 @@ const METIN_SINIRI = 240
 const KART_TABANI = 6
 const KART_SINIRI = 16
 
-// İngilizce yalnızca 11'de, 12'de yalnız Matematik (2018 programı) yazıldı;
+// İngilizce yalnızca 11'de, 12'de Matematik ve Kimya (2018 programı) yazıldı;
 // beklenen programlar eksikse testten süzülmez.
 const beklenenMi = (sinif: number, ders: string) =>
-  sinif === 12 ? ders === 'matematik' : sinif === 11 || ders !== 'ingilizce'
+  sinif === 12 ? ['matematik', 'kimya'].includes(ders) : sinif === 11 || ders !== 'ingilizce'
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map(
     (ders) => [`${sinif}. sınıf ${ders.ad}`, programBul(ders.id, sinif)] as const,
@@ -112,6 +112,30 @@ describe('12. sınıf Matematik (2018 programı)', () => {
     // Üstel-logaritma (11), trigonometrik denklem (11) ve dönüşümler (9) zaten haritada.
     const adlar = tumKonular(matematik).map((k) => k.ad.toLocaleLowerCase('tr'))
     for (const yasak of ['logaritma', 'üstel', 'trigonometrik denklem', 'dönüşüm']) {
+      expect(adlar.filter((ad) => ad.includes(yasak)), yasak).toEqual([])
+    }
+  })
+})
+
+describe('12. sınıf Kimya (2018 programı)', () => {
+  const kimya = programBul('kimya', 12)!
+
+  it('dört ünite, her konuda tek Rabi notu', () => {
+    expect(kimya.temalar.map((t) => t.ad)).toEqual([
+      'Kimya ve Elektrik',
+      'Karbon Kimyasına Giriş',
+      'Organik Bileşikler',
+      'Enerji Kaynakları ve Bilimsel Gelişmeler',
+    ])
+    for (const konu of tumKonular(kimya)) {
+      expect(konu.kartlar.filter((kart) => kart.not !== undefined), `${konu.ad}: Rabi notu`).toHaveLength(1)
+    }
+  })
+
+  it('9–11 haritasında kartı olan konular tekrar yazılmadı', () => {
+    // Lewis (9), nanoteknoloji (9, 11) ve sürdürülebilirlik/yeşil kimya (9, 11) zaten haritada.
+    const adlar = tumKonular(kimya).map((k) => k.ad.toLocaleLowerCase('tr'))
+    for (const yasak of ['lewis', 'nano', 'sürdürülebilir', 'yeşil']) {
       expect(adlar.filter((ad) => ad.includes(yasak)), yasak).toEqual([])
     }
   })

@@ -785,7 +785,7 @@ export const kimya12 = program('kimya', 12, 'Pilden elektrolize, karbondan yakı
       ),
       kart(
         'Adlandırma',
-        '-an yerine -in eki gelir; üçlü bağa yakın uçtan numaralanır:\n- CH≡C–CH₂–CH₃ → 1-bütin\n- CH₃–C≡C–CH₃ → 2-bütin\n- CH≡C–CH₃ → propin',
+        'Alkan adındaki -an yerine -in gelir; üçlü bağa yakın uçtan numaralanır:\n- CH≡C–CH₂–CH₃ → 1-bütin\n- CH₃–C≡C–CH₃ → 2-bütin\n- CH≡C–CH₃ → propin',
       ),
       kart(
         'Cis-trans yok',

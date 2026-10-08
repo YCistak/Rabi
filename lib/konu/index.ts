@@ -35,6 +35,8 @@ import { kimya11Sorulari } from './icerik/11-kimya-sorular'
 import { matematik11Sorulari } from './icerik/11-matematik-sorular'
 import { matematik12 } from './icerik/12-matematik'
 import { matematik12Sorulari } from './icerik/12-matematik-sorular'
+import { kimya12 } from './icerik/12-kimya'
+import { kimya12Sorulari } from './icerik/12-kimya-sorular'
 
 export type {
   AkisGorseli,
@@ -179,6 +181,7 @@ const PROGRAMLAR: Record<string, DersProgrami> = {
       ...ingilizce11Sorulari3, ...ingilizce11Sorulari4 },
   ),
   'matematik-12': sorulariBagla(matematik12, matematik12Sorulari),
+  'kimya-12': sorulariBagla(kimya12, kimya12Sorulari),
 }
 
 /** İçeriği henüz yazılmamış ders/sınıf için `null` döner; ekran bunu yazıyla karşılar. */
