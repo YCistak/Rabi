@@ -15,6 +15,7 @@ import { bugun, cn, yeniId } from '@/lib/utils'
 import type { Deneme, PuanTuru, Sablon, YanlisSoru } from '@/lib/types'
 import { DenemeOkut } from '@/components/deneme-okut'
 import { bosDersGirisiGecerli, turBosDersi, turFormuSonuclari } from '@/lib/tanitim-veri'
+import { bosSifir } from '@/lib/bos-sifir'
 import { TarihSecici } from '@/components/tarih-secici'
 
 const useYerlesimEtkisi = typeof window === 'undefined' ? useEffect : useLayoutEffect
@@ -25,10 +26,8 @@ function bosGirisler(sablon: Sablon): Record<string, Giris> {
   return Object.fromEntries(sablon.dersler.map((d) => [d.id, { dogru: '', yanlis: '' }]))
 }
 
-function sayi(metin: string): number {
-  const deger = Number.parseInt(metin, 10)
-  return Number.isFinite(deger) && deger > 0 ? deger : 0
-}
+// Boş kutu 0 sayılır (ortak kural: lib/bos-sifir.ts).
+const sayi = bosSifir
 
 export function YeniDenemeEkrani({
   sablonlar,
@@ -350,21 +349,23 @@ export function YeniDenemeEkrani({
 
               <Alan
                 inputMode="numeric"
+                placeholder="0"
                 aria-label={`${satir.ders.ad} doğru sayısı`}
                 value={girisler[satir.ders.id]?.dogru ?? ''}
                 onChange={(e) => girisDegistir(satir.ders.id, 'dogru', e.target.value)}
                 className={cn(
-                  'h-10 w-14 px-0 text-center rakam',
+                  'h-10 w-14 px-0 text-center rakam focus:placeholder:text-transparent',
                   satir.asim && 'border-danger text-danger',
                 )}
               />
               <Alan
                 inputMode="numeric"
+                placeholder="0"
                 aria-label={`${satir.ders.ad} yanlış sayısı`}
                 value={girisler[satir.ders.id]?.yanlis ?? ''}
                 onChange={(e) => girisDegistir(satir.ders.id, 'yanlis', e.target.value)}
                 className={cn(
-                  'h-10 w-14 px-0 text-center rakam',
+                  'h-10 w-14 px-0 text-center rakam focus:placeholder:text-transparent',
                   satir.asim && 'border-danger text-danger',
                 )}
               />
