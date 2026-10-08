@@ -98,7 +98,7 @@ describe('Maarif tablosu', () => {
     for (const [id, desteler] of Object.entries(HARITA_ESLEMESI)) {
       const sinif = eslemeSinifi(desteler)
       if (sinif === null) {
-        expect(desteler.every((d) => d.startsWith('mat12-')), id).toBe(true)
+        expect(desteler.every((d) => d.startsWith('mat12-') || d.startsWith('trh12-')), id).toBe(true)
         expect(maarifSinifi(id), id).toBe(MAARIF_SINIF[id])
       } else {
         expect(maarifSinifi(id), id).toBe(sinif)
@@ -111,6 +111,13 @@ describe('Maarif tablosu', () => {
     expect(yok.length).toBeGreaterThan(0)
     for (const k of tumYksKonulari()) expect(maarifSinifi(k.id), k.id).not.toBe(12)
     for (const k of yok) expect(eslemeSinifi(HARITA_ESLEMESI[k.id] ?? []), k.id).toBeNull()
+  })
+
+  it('12. sınıf Tarih destelerine eşli konular Maarif\'te yine "henüz yok"', () => {
+    for (const id of ['tyt-tar-milli-mucadele', 'tyt-tar-ataturkculuk', 'ayt-tar-iki-savas-arasi', 'ayt-tar-xxi-yuzyil']) {
+      expect(HARITA_ESLEMESI[id]?.length, id).toBeGreaterThan(0)
+      expect(maarifSinifi(id), id).toBe(HENUZ_YOK)
+    }
   })
 
   it('12. sınıf Matematik destelerine eşli konular Maarif\'te yine "henüz yok"', () => {

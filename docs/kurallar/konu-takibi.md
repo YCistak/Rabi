@@ -57,7 +57,7 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   konunun **asıl içeriğini** anlatıyorsa; tek kartta değinmek yetmez. Karşılığı
   olmayan konuda aşama hiç gösterilmez. 12. sınıf kartları yazılınca tabloya eklenir
   (Matematik eklendi: diziler, toplam-fark, limit, türev, integral, çemberin
-  analitiği); yalnız `mat12-*` destesine eşli konu `MAARIF_SINIF`ta "henüz yok"
+  analitiği; Tarih: Millî Mücadele, Atatürkçülük ve AYT Tarih'in beş konusu `trh12-*`); yalnız `mat12-*`/`trh12-*` destesine eşli konu `MAARIF_SINIF`ta "henüz yok"
   kalır. `takip.test.ts` iki uçtaki kimlikleri denetler.
 - **İşaret satırda:** solda ilerleme dairesi (aşama sayısına göre yay; dokununca
   Bitirdim aç/kapa), sağda sabit genişlikte üç yuva — harita (salt okunur, boşken kesik
