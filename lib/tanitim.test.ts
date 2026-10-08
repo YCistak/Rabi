@@ -119,6 +119,19 @@ describe('Ana tur kısa ve kritik akışta', () => {
     expect(kimlik(tanitimGecisi(harita, { tur: 'hedefe-dokun', hedef: 'harita-ac' }))).toBe('harita-ders')
   })
 
+  it('Konu Takibi düğmesi normal "İleri"; harita kitapları dokunuş istemeyen bilgi adımı', () => {
+    const bul = (k: string) => TANITIM_ADIMLARI.find((a) => a.kimlik === k)!
+    expect(bul('konu-takibi').ileriEtiketi).toBeUndefined()
+    for (const k of HARITA_TUR_ADIMLARI) {
+      expect(bul(k).tiklamali, k).toBe(false)
+      expect(bul(k).aciklama.toLocaleLowerCase('tr'), k).not.toContain('dokun')
+    }
+    // Kitaba dokunmak adımı geçirmiyor; yalnızca İleri geçiriyor.
+    const ders = adimaKadar('harita-ders')
+    expect(tanitimGecisi(ders, { tur: 'hedefe-dokun', hedef: 'harita-kart' })).toBe(ders)
+    expect(kimlik(tanitimGecisi(ders, { tur: 'ileri' }))).toBe('harita-soru')
+  })
+
   it('Harita’dan sonra Araçlar’a dönüp Denemeler açılıyor', () => {
     const harita = adimaKadar('harita-soru')
     expect(TANITIM_ADIMLARI[harita.aktifAdim!].ileriEtiketi).toBe('Araçlara dön')

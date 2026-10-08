@@ -22,10 +22,10 @@ Ana tur **25 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bul
 6. Form: ders ve sayılar; Kaydet'le (kayıt turun belleğinde, tur bitince siliniyor).
 7. "Kaydın günlük hedefine eklendi" → "Araçlara dön".
 8. Konu Takibi satırına dokunuş.
-9. Girişin üstü (TYT/AYT seçici, aşama lejantı; tur sürerken ekran TYT girişinde açılır) → "Haritaya geç".
+9. Girişin üstü (TYT/AYT seçici, aşama lejantı; tur sürerken ekran TYT girişinde açılır) → "İleri" (özel düğme yazısı yok).
 10. Aynı ekranda alt menüden Harita'ya dokunuş.
-11. İlk bölümün ilk yeşil kitabı (konu anlatımı).
-12. İlk turuncu kitap (sorular; biten konu takipte işaretlenir) → "Araçlara dön".
+11. İlk bölümün ilk yeşil kitabı (konu anlatımı) — bilgi adımı, İleri ile geçilir; balon "dokun" demez ("Konuyu kısa kartlarla buradan çalışırsın.").
+12. İlk turuncu kitap (sorular; biten konu takipte işaretlenir) → "Araçlara dön". Bilgi adımı. Kitap kilitli/yazılmamış olsa da bu adımda gerçek turuncu rengiyle çizilir (gri ve soluklaştırma yok, kilit rozeti kalır); yalnızca tur sırasında ve yalnızca bu kitap için (`Dugum`, `konu-haritasi.tsx`).
 13. Denemeler satırına dokunuş (iki örnek deneme hazır).
 14. Örnek deneme listesi.
 15. "Deneme ekle"ye dokunuş.
