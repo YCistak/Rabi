@@ -14,6 +14,10 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   şimdilik yalnız Matematik; öteki dersler eklenince `beklenenMi` (`icerik.test.ts`)
   genişler. Sekizinci ders `KonuDersId` + ders rengi ister. 11. sınıf soruları ayrı
   `11-<ders>-sorular.ts` (`sorulariBagla`), Edebiyat/Tarih/Coğrafya içerikte.
+- **12. sınıf Kimya** (`12-kimya.ts`, 2018'in dört ünitesi): Lewis (`kim9-lewis`),
+  nanoteknoloji (`kim9/11-nano`), sürdürülebilirlik/yeşil kimya (`kim9-yesil`,
+  `kim11-mikroplastik`) ve hidrojen üretimi (`kim11-yesil-hidrojen`) 9–11'de var,
+  12'de yazılmaz; Nernst hesabı ve yakıt pili (Fen Lisesi) yok.
 - Konu ölçüsü `lib/konu/maarif/iskelet.json`, `scripts/maarif-cek.mjs` ile
   tymm.meb.gov.tr'den çekilir; **elle düzenlenmez**. `maarif.test.ts` kelime
   örtüşmesiyle denetler (kısaltırken konuyu tanıtan kelimeyi atma); Türk Dili ve
