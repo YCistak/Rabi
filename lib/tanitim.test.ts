@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import {
   DENEME_FORMU_ADIMLARI,
   DENEME_VAZGEC,
+  ANA_TUR_SURUM_ANAHTARI,
+  ANA_TUR_SURUMU,
   ESKI_ANA_TUR_ANAHTARI,
   HARITA_TUR_ADIMLARI,
   TANITIM_ADIMLARI,
@@ -11,6 +13,7 @@ import {
   demoSonucu,
   demoVerileriTemizle,
   miniTurSec,
+  turBitisKayitlari,
   turGorulduOku,
   tanitimGecisi,
   tanitimKonumu,
@@ -50,7 +53,7 @@ describe('Ana tur kısa ve kritik akışta', () => {
       'sinav-hedefi', 'hedef', 'araclar-ac',
       'soru-ac', 'soru-ekle', 'soru-form', 'soru-kaydedildi',
       'konu-takibi-ac', 'konu-takibi', 'harita-ac', 'harita-ders', 'harita-soru',
-      'deneme-ac', 'deneme-liste', 'deneme-ekle', 'deneme-okut', 'deneme-elle', 'deneme-yanlis', 'deneme-yanlis-form', 'deneme-kaydet',
+      'deneme-ac', 'deneme-liste', 'deneme-ekle', 'deneme-okut', 'deneme-elle', 'deneme-yanlis', 'deneme-kaydet',
       'istatistik-ac', 'istatistik-tur', 'istatistik-son', 'istatistik-ilerleyen', 'istatistik-kutular', 'istatistik-karsilastir',
     ])
   })
@@ -116,6 +119,19 @@ describe('Ana tur kısa ve kritik akışta', () => {
     expect(kimlik(tanitimGecisi(harita, { tur: 'hedefe-dokun', hedef: 'harita-ac' }))).toBe('harita-ders')
   })
 
+  it('Konu Takibi düğmesi normal "İleri"; harita kitapları dokunuş istemeyen bilgi adımı', () => {
+    const bul = (k: string) => TANITIM_ADIMLARI.find((a) => a.kimlik === k)!
+    expect(bul('konu-takibi').ileriEtiketi).toBeUndefined()
+    for (const k of HARITA_TUR_ADIMLARI) {
+      expect(bul(k).tiklamali, k).toBe(false)
+      expect(bul(k).aciklama.toLocaleLowerCase('tr'), k).not.toContain('dokun')
+    }
+    // Kitaba dokunmak adımı geçirmiyor; yalnızca İleri geçiriyor.
+    const ders = adimaKadar('harita-ders')
+    expect(tanitimGecisi(ders, { tur: 'hedefe-dokun', hedef: 'harita-kart' })).toBe(ders)
+    expect(kimlik(tanitimGecisi(ders, { tur: 'ileri' }))).toBe('harita-soru')
+  })
+
   it('Harita’dan sonra Araçlar’a dönüp Denemeler açılıyor', () => {
     const harita = adimaKadar('harita-soru')
     expect(TANITIM_ADIMLARI[harita.aktifAdim!].ileriEtiketi).toBe('Araçlara dön')
@@ -135,18 +151,21 @@ describe('Ana tur kısa ve kritik akışta', () => {
     expect(kimlik(tanitimGecisi(elle, { tur: 'kayit-eklendi', kayit: 'deneme-ders' }))).toBe('deneme-yanlis')
   })
 
-  it('"Yanlış soru ekle"ye dokunulup örnek soru kaydedilince Kaydet adımına geçiliyor', () => {
+  it('"Yanlış soru ekle" yalnızca gösteriliyor: İleri ile geçiliyor, dokunuş formu açmıyor', () => {
     const yanlis = adimaKadar('deneme-yanlis')
-    expect(tanitimGecisi(yanlis, { tur: 'ileri' })).toBe(yanlis)
-    const form = tanitimGecisi(yanlis, { tur: 'hedefe-dokun', hedef: 'deneme-yanlis-ekle' })
-    expect(kimlik(form)).toBe('deneme-yanlis-form')
-    expect(tanitimGecisi(form, { tur: 'hedefe-dokun', hedef: 'yanlis-soru-formu' })).toBe(form)
-    // Katmanın Vazgeç'i bir adım geri alıyor: katman kapanıp düğme yeniden aydınlanıyor.
-    expect(kimlik(tanitimGecisi(form, { tur: 'geri' }))).toBe('deneme-yanlis')
-    const kaydet = tanitimGecisi(form, { tur: 'kayit-eklendi', kayit: 'yanlis-soru' })
+    expect(TANITIM_ADIMLARI.find((a) => a.kimlik === 'deneme-yanlis')).toMatchObject({ tiklamali: false })
+    expect(tanitimGecisi(yanlis, { tur: 'hedefe-dokun', hedef: 'deneme-yanlis-ekle' })).toBe(yanlis)
+    const kaydet = tanitimGecisi(yanlis, { tur: 'ileri' })
     expect(kimlik(kaydet)).toBe('deneme-kaydet')
+    expect(kimlik(tanitimGecisi(kaydet, { tur: 'geri' }))).toBe('deneme-yanlis')
     expect(tanitimGecisi(kaydet, { tur: 'hedefe-dokun', hedef: 'deneme-kaydet' })).toBe(kaydet)
     expect(kimlik(tanitimGecisi(kaydet, { tur: 'kayit-eklendi', kayit: 'deneme' }))).toBe('istatistik-ac')
+  })
+
+  it('turda hiçbir adım yanlış soru formunu hedeflemiyor', () => {
+    for (const adimlar of Object.values(TUR_ADIMLARI)) {
+      for (const adim of adimlar) expect(adim.hedef, adim.kimlik).not.toBe('yanlis-soru-formu')
+    }
   })
 
   it('deneme formunun Vazgeç’i "Deneme ekle" adımına dönüyor; formun dışında yok sayılıyor', () => {
@@ -222,6 +241,14 @@ describe('Mini turlar', () => {
     expect(tanitimGecisi(soru, { tur: 'hedefe-dokun', hedef: 'demo-soru' })).toBe(soru)
   })
 
+  it('tanıtım oyununda pas yok: soru adımı pas önermiyor, Onayla’yı anlatıyor', () => {
+    // 0.9.14'te tuş takımındaki "Pas geç" kalktı, kabuğun ortak pası demoya
+    // verilmedi (`oyun-islem.tsx`); balon hâlâ "pas geç" diyordu.
+    const soru = TUR_ADIMLARI.oyunlar.find((adim) => adim.kimlik === 'soru-bir')!
+    expect(soru.aciklama.toLocaleLowerCase('tr')).not.toContain('pas')
+    expect(soru.aciklama).toContain('Onayla')
+  })
+
   it.each([[1, 0], [0, 1]])('oyun %i doğru %i yanlışla bitince sonuç adımı, geri hazırlığa ve temiz sonuca', (dogru, yanlis) => {
     const sonuc = tanitimGecisi(adimaKadar('soru-bir', 'oyunlar'), { tur: 'oyun-bitti', dogru, yanlis })
     expect(kimlik(sonuc)).toBe('sonuc')
@@ -291,20 +318,35 @@ describe('miniTurSec', () => {
   })
 })
 
-describe('turGorulduOku (eski anahtar göçü)', () => {
+describe('turGorulduOku / turBitisKayitlari (ana tur sürümü)', () => {
   const depo = (kayit: Record<string, string>) => (anahtar: string) => kayit[anahtar] ?? null
-  it('yeni anahtar varsa görülmüş', () => {
-    expect(turGorulduOku('ana_tur', depo({ rabi_ana_tur_tamamlandi: 'true' }))).toBe(true)
+  it('eski anahtarlardan biri olan kullanıcı yeni ana turu görür', () => {
+    expect(turGorulduOku('ana_tur', depo({ rabi_ana_tur_tamamlandi: 'true' }))).toBe(false)
+    expect(turGorulduOku('ana_tur', depo({ [ESKI_ANA_TUR_ANAHTARI]: 'true' }))).toBe(false)
+    expect(turGorulduOku('ana_tur', depo({ rabi_ana_tur_tamamlandi: 'true', [ESKI_ANA_TUR_ANAHTARI]: 'true' }))).toBe(false)
   })
-  it('yalnız eski rabi_tanitim_tamamlandi varsa ana tur görülmüş sayılır', () => {
-    expect(turGorulduOku('ana_tur', depo({ [ESKI_ANA_TUR_ANAHTARI]: 'true' }))).toBe(true)
+  it('güncel sürüm yazılmış kullanıcı ana turu görmez', () => {
+    expect(ANA_TUR_SURUMU).toBe(2)
+    expect(turGorulduOku('ana_tur', depo({ [ANA_TUR_SURUM_ANAHTARI]: '2' }))).toBe(true)
+    expect(turGorulduOku('ana_tur', depo({ [ANA_TUR_SURUM_ANAHTARI]: '1', rabi_ana_tur_tamamlandi: 'true' }))).toBe(false)
   })
-  it('eski anahtar mini turları görülmüş saymaz', () => {
-    expect(turGorulduOku('denemeler', depo({ [ESKI_ANA_TUR_ANAHTARI]: 'true' }))).toBe(false)
+  it('tur bitince sürüm yazılır ve bir daha görülmez', () => {
+    const kayit: Record<string, string> = { rabi_ana_tur_tamamlandi: 'true' }
+    expect(turGorulduOku('ana_tur', depo(kayit))).toBe(false)
+    for (const [anahtar, deger] of turBitisKayitlari('ana_tur')) kayit[anahtar] = deger
+    expect(kayit[ANA_TUR_SURUM_ANAHTARI]).toBe(String(ANA_TUR_SURUMU))
+    expect(turGorulduOku('ana_tur', depo(kayit))).toBe(true)
+  })
+  it('mini turlar kendi anahtarına true yazar, ana tur sürümüne dokunmaz', () => {
+    expect(turBitisKayitlari('pomodoro')).toEqual([[TUR_ANAHTARLARI.pomodoro, 'true']])
+    expect(turGorulduOku('pomodoro', depo({ [TUR_ANAHTARLARI.pomodoro]: 'true' }))).toBe(true)
+  })
+  it('eski anahtar ve ana tur sürümü mini turları görülmüş saymaz', () => {
+    expect(turGorulduOku('denemeler', depo({ [ESKI_ANA_TUR_ANAHTARI]: 'true', [ANA_TUR_SURUM_ANAHTARI]: '2' }))).toBe(false)
     expect(turGorulduOku('konu_haritasi', depo({ [ESKI_ANA_TUR_ANAHTARI]: 'true' }))).toBe(false)
   })
-  it('hiç kayıt yoksa ya da değer true değilse görülmemiş', () => {
+  it('hiç kayıt yoksa ya da değer geçersizse görülmemiş', () => {
     expect(turGorulduOku('ana_tur', depo({}))).toBe(false)
-    expect(turGorulduOku('ana_tur', depo({ [ESKI_ANA_TUR_ANAHTARI]: 'false' }))).toBe(false)
+    expect(turGorulduOku('ana_tur', depo({ [ANA_TUR_SURUM_ANAHTARI]: 'bozuk' }))).toBe(false)
   })
 })

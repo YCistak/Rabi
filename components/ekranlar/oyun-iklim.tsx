@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
-import { Check, X } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
 import { DUNYA, DUNYA_GENISLIK, DUNYA_YUKSEKLIK, noktayaCevir } from '@/lib/oyunlar/dunya-havuzu'
 import { IKLIM_ADI, IKLIM_HAVUZU, type IklimSorusu } from '@/lib/oyunlar/iklim-havuzu'
@@ -19,8 +18,10 @@ import {
 } from '@/lib/oyunlar/iklim'
 import {
   guncelSeri,
+  kalanPas,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -53,6 +54,7 @@ import {
   rekorCumlesi,
   type Eleme,
 } from '@/components/oyun-kabuk'
+import { OyunSikki, sikHali } from '@/components/oyun-sikki'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
 /**
@@ -69,8 +71,13 @@ const CEVAP_BEKLEMESI = 1500
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
-/** `secilen` süre dolduğunda `null`: oyuncu bir şık işaretlemedi. */
-type GeriBildirim = { secilen: string | null; dogruMu: boolean; soru: IklimSorusu }
+/** `secilen` süre dolduğunda ve pasta `null`: oyuncu bir şık işaretlemedi. */
+type GeriBildirim = {
+  secilen: string | null
+  dogruMu: boolean
+  pas: boolean
+  soru: IklimSorusu
+}
 
 /**
  * `ritim.ts`'in kurduğu sıraya şıkları ekler.
@@ -147,10 +154,7 @@ export function IklimOyunuEkrani({
   const [duraklatilan, setDuraklatilan] = useState(false)
   const [turNo, setTurNo] = useState(0)
 
-  const [sonuc, setSonuc] = useState<{
-    ozet: TurOzeti<IklimSorusu>
-    yeniRekor: boolean
-  } | null>(null)
+  const [sonuc, setSonuc] = useState<SonucBilgisi | null>(null)
 
   const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
@@ -196,6 +200,7 @@ export function IklimOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
+        paslar: verilenler.filter((c) => !c.dogruMu).map((c) => c.pas === true),
         yeniRekor:
           !yarim &&
           !bankaTuru &&
@@ -242,9 +247,14 @@ export function IklimOyunuEkrani({
 
   const soru = sorular[zorluk][sira]
 
-  const ilerle = (dogruMu: boolean) => {
+  const ilerle = (dogruMu: boolean, pas = false) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
+      // Pas bedelsiz: zorluğu kaydırmıyor, Sıfır Tolerans'ta turu bitirmiyor.
+      if (pas) {
+        setSira((s) => s + 1)
+        return
+      }
       /*
         Zorluk **ilerlerken** güncelleniyor, cevap verilirken değil.
 
@@ -267,7 +277,7 @@ export function IklimOyunuEkrani({
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     const dogruMu = sik.dogruMu
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu }])
-    setGeriBildirim({ secilen: sik.metin, dogruMu, soru: soru.soru })
+    setGeriBildirim({ secilen: sik.metin, dogruMu, pas: false, soru: soru.soru })
     geriBildir(dogruMu)
     ilerle(dogruMu)
   }
@@ -276,13 +286,22 @@ export function IklimOyunuEkrani({
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false }])
-    setGeriBildirim({ secilen: null, dogruMu: false, soru: soru.soru })
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: false, soru: soru.soru })
     geriBildir(false)
     ilerle(false)
     // `ilerle` ve `geriBildir` her renderda yeniden kuruluyor; sayaç yalnızca
     // güncel olanı çağırsın diye bağımlılıklar bilerek dar tutuldu.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asama, geriBildirim, soru])
+
+  /** Pas: doğru şık gösterilip geçiliyor; ses ve titreşim yok, hata değil. */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false, pas: true }])
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: true, soru: soru.soru })
+    ilerle(false, true)
+  }
 
   const turSuresiDoldu = () => {
     setElendi('sure')
@@ -300,7 +319,7 @@ export function IklimOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: soruSuresi('iklim'),
@@ -335,11 +354,16 @@ export function IklimOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{
+          kalan: kalanPas(cevaplar),
+          kilitli: geriBildirim !== null,
+          onPas: pasGec,
+        }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -375,10 +399,11 @@ export function IklimOyunuEkrani({
               </div>
 
               <div className="flex flex-col gap-2">
-                {soru.siklar.map((sik) => (
+                {soru.siklar.map((sik, i) => (
                   <SikDugmesi
                     key={sik.deger}
                     sik={sik}
+                    sira={i}
                     geriBildirim={geriBildirim}
                     onSec={() => cevapla(sik)}
                   />
@@ -388,7 +413,8 @@ export function IklimOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
-                  baslik={geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
+                  pas={geriBildirim.pas}
+                  baslik={geriBildirim.pas ? 'Pas geçtin' : geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
                   aciklama={
                     geriBildirim.dogruMu
                       ? geriBildirim.soru.aciklama
@@ -503,40 +529,30 @@ function DunyaHaritasi({ soru }: { soru: IklimSorusu }) {
  */
 function SikDugmesi({
   sik,
+  sira,
   geriBildirim,
   onSec,
 }: {
   sik: IklimSikki
+  sira: number
   geriBildirim: GeriBildirim | null
   onSec: () => void
 }) {
   const acikta = geriBildirim !== null
-  const secilen = acikta && geriBildirim.secilen === sik.metin
-  const dogruSecim = secilen && sik.dogruMu
-  const yanlisSecim = secilen && !sik.dogruMu
-  const isaretli = acikta && !secilen && sik.dogruMu
+  const hal = sikHali(acikta, acikta && geriBildirim.secilen === sik.metin, sik.dogruMu)
 
   return (
-    <button
-      type="button"
-      onClick={onSec}
-      disabled={acikta}
-      className={cn(
-        'golge-kart flex min-h-[46px] w-full items-center justify-center gap-2 rounded-[16px] border-2 px-3 py-2',
-        'font-display text-[14px] font-extrabold leading-snug transition',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        !acikta && 'border-border bg-card active:brightness-95',
-        dogruSecim && 'border-success bg-success text-white',
-        yanlisSecim && 'border-ikincil bg-ikincil text-white',
-        isaretli && 'border-success bg-card text-success',
-        acikta && !secilen && !sik.dogruMu && 'border-border bg-card opacity-45',
-      )}
-    >
-      <span className="min-w-0 break-words">{sik.metin}</span>
-      {(dogruSecim || isaretli) && <Check size={17} className="shrink-0" aria-hidden />}
-      {yanlisSecim && <X size={17} className="shrink-0" aria-hidden />}
-    </button>
+    <OyunSikki sira={sira} hal={hal} onSec={onSec} className="min-h-[46px] py-2 text-[14px]">
+      {sik.metin}
+    </OyunSikki>
   )
+}
+
+type SonucBilgisi = {
+  ozet: TurOzeti<IklimSorusu>
+  /** `ozet.yanlislar` ile aynı sırada: o soru pas mı geçildi. */
+  paslar: boolean[]
+  yeniRekor: boolean
 }
 
 function SonucGorunumu({
@@ -549,7 +565,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
-  sonuc: { ozet: TurOzeti<IklimSorusu>; yeniRekor: boolean }
+  sonuc: SonucBilgisi
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -558,7 +574,7 @@ function SonucGorunumu({
   onCik: () => void
   bildir: BildirimKolu
 }) {
-  const { ozet, yeniRekor } = sonuc
+  const { ozet, paslar, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
   const kalan = ozet.yanlislar.length - gorunen.length
 
@@ -594,6 +610,11 @@ function SonucGorunumu({
             >
               <b className="block font-display text-[13.5px] font-extrabold leading-tight">
                 {yanlis.ad}
+                {paslar[sira] && (
+                  <span className="ml-1.5 text-[11px] font-bold text-muted-foreground">
+                    · Pas geçtin
+                  </span>
+                )}
               </b>
               <span className="mt-1 block text-[12px] font-extrabold text-success">
                 {IKLIM_ADI[yanlis.iklim]}

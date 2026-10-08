@@ -17,8 +17,10 @@ import {
 } from '@/lib/oyunlar/hucre'
 import {
   guncelSeri,
+  kalanPas,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -92,10 +94,14 @@ function sirayiKur(akis: SoruAkisi<OrganelSorusu>): SoruAkisi<HucreOyunSorusu> {
   return akisiEsle(akis, (sorular) => turHazirla(sorular, Math.random, false))
 }
 
-/** `secilen` süre dolduğunda `null`: oyuncu bir şık işaretlemedi, kart dönmüyor. */
+/**
+ * `secilen` süre dolduğunda ya da pas geçilince `null`: oyuncu bir şık
+ * işaretlemedi, kart dönmüyor.
+ */
 type GeriBildirim = {
   secilen: string | null
   dogruMu: boolean
+  pas: boolean
   soru: OrganelSorusu
   /** Cevabın kaçıncı ipucunda verildiği — puanı bu belirliyor. */
   ipucu: number
@@ -171,6 +177,8 @@ export function HucreOyunuEkrani({
 
   const [sonuc, setSonuc] = useState<{
     ozet: TurOzeti<OrganelSorusu>
+    /** `ozet.yanlislar` ile aynı sırada: o kart pas mı geçildi. */
+    paslar: boolean[]
     yeniRekor: boolean
     puan: number
   } | null>(null)
@@ -224,6 +232,7 @@ export function HucreOyunuEkrani({
       setSonuc({
         ozet,
         puan: puanRef.current,
+        paslar: verilenler.filter((c) => !c.dogruMu).map((c) => c.pas === true),
         yeniRekor:
           !yarim &&
           !bankaTuru &&
@@ -271,7 +280,8 @@ export function HucreOyunuEkrani({
   const soru = sorular[zorluk][sira]
   const sure = soruSuresi('hucre')
 
-  const ilerle = (dogruMu: boolean) => {
+  /** `pas`: bedelsiz geçiş — zorluğu kaydırmıyor, Sıfır Tolerans'ta elemiyor. */
+  const ilerle = (dogruMu: boolean, pas = false) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
       /*
@@ -282,8 +292,8 @@ export function HucreOyunuEkrani({
         değişirdi. İkisi aynı karede güncellenince değişen tek şey bir
         sonraki soru oluyor.
       */
-      zorlukKaydet(dogruMu)
-      if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
+      if (!pas) zorlukKaydet(dogruMu)
+      if (!pas && elerMi(dogruMu, bankaTuru, gecerliMod)) {
         setElendi('yanlis')
         turBitir(cevaplarRef.current)
       } else {
@@ -324,7 +334,7 @@ export function HucreOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: soruAktif,
     sure,
@@ -347,6 +357,7 @@ export function HucreOyunuEkrani({
     setGeriBildirim({
       secilen: sik.deger,
       dogruMu,
+      pas: false,
       soru: soru.soru,
       ipucu: acikIpucu,
       kazanilanPuan: kazanilan,
@@ -366,6 +377,7 @@ export function HucreOyunuEkrani({
     setGeriBildirim({
       secilen: null,
       dogruMu: false,
+      pas: false,
       soru: soru.soru,
       ipucu: IPUCU_SAYISI,
       kazanilanPuan: 0,
@@ -376,6 +388,25 @@ export function HucreOyunuEkrani({
     // güncel olanı çağırsın diye bağımlılıklar bilerek dar tutuldu.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asama, geriBildirim, soru])
+
+  /**
+   * Pas hakkı: süre dolması gibi kart dönmüyor ve puan yok, ama bedelsiz —
+   * yanlış sayılmıyor, yanlış sesi ve titreşimi yok.
+   */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false, pas: true }])
+    setGeriBildirim({
+      secilen: null,
+      dogruMu: false,
+      pas: true,
+      soru: soru.soru,
+      ipucu: acikIpucu,
+      kazanilanPuan: 0,
+    })
+    ilerle(false, true)
+  }
 
   const yardimAc = () => {
     setDuraklatilan(true)
@@ -391,7 +422,7 @@ export function HucreOyunuEkrani({
   /** Kart yalnızca şık seçildiyse dönüyor. */
   const cevrildi = geriBildirim !== null && geriBildirim.secilen !== null
 
-  const maskotDurumu: MaskotDurumu = geriBildirim
+  const maskotDurumu: MaskotDurumu = geriBildirim && !geriBildirim.pas
     ? geriBildirim.dogruMu
       ? 'kutlama'
       : 'uzgun'
@@ -412,12 +443,13 @@ export function HucreOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 puan,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{ kalan: kalanPas(cevaplar), kilitli: geriBildirim !== null, onPas: pasGec }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -460,10 +492,13 @@ export function HucreOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
+                  pas={geriBildirim.pas}
                   baslik={
-                    geriBildirim.dogruMu
-                      ? `Doğru! +${geriBildirim.kazanilanPuan} puan`
-                      : 'Olmadı'
+                    geriBildirim.pas
+                      ? 'Pas geçtin'
+                      : geriBildirim.dogruMu
+                        ? `Doğru! +${geriBildirim.kazanilanPuan} puan`
+                        : 'Olmadı'
                   }
                   aciklama={
                     geriBildirim.dogruMu
@@ -691,7 +726,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
-  sonuc: { ozet: TurOzeti<OrganelSorusu>; yeniRekor: boolean; puan: number }
+  sonuc: { ozet: TurOzeti<OrganelSorusu>; paslar: boolean[]; yeniRekor: boolean; puan: number }
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -700,7 +735,7 @@ function SonucGorunumu({
   onCik: () => void
   bildir: BildirimKolu
 }) {
-  const { ozet, yeniRekor } = sonuc
+  const { ozet, paslar, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
   const kalan = ozet.yanlislar.length - gorunen.length
 
@@ -738,6 +773,11 @@ function SonucGorunumu({
               <b className="block font-display text-[13.5px] font-extrabold leading-tight text-success">
                 {yanlis.organel}
               </b>
+              {paslar[sira] && (
+                <span className="mt-0.5 block text-[11px] font-extrabold text-muted-foreground">
+                  Pas geçtin
+                </span>
+              )}
               <span className="mt-0.5 block text-[11.5px] font-semibold leading-snug text-muted-foreground">
                 {yanlis.ipuclari[yanlis.ipuclari.length - 1]}
               </span>

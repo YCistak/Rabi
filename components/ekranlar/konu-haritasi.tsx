@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState, type ComponentType } from 'react'
+import { useContext, useEffect, useMemo, useState, type ComponentType } from 'react'
 import {
   Atom,
   Beaker,
@@ -79,6 +79,7 @@ import {
 import { bugun, cn } from '@/lib/utils'
 import { useGeriKatmani } from '@/lib/geri'
 import { Kart, Onay } from '@/components/ui'
+import { TanitimBaglami } from '@/components/tanitim/tanitim-baglami'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartDestesi, type DesteSonucu } from '@/components/konu/kart-destesi'
 import type { OkumaSeansi } from '@/lib/konu/okuma-suresi'
@@ -1226,7 +1227,15 @@ function Dugum({
   onAc: () => void
 }) {
   const soru = basamak.tur === 'soru'
-  const gri = durum === 'kilitli' || durum === 'yazilmadi'
+  /*
+    Tanıtım turu turuncu kitabı aydınlatırken kitap çoğunlukla kilitli; gri
+    çizilirse balonun "turuncu kitap" dediği renk görünmüyor. Yalnızca o adımda
+    ve yalnızca hedef kitap gerçek rengiyle çiziliyor; kilit rozeti ve kilit
+    mantığı yerinde.
+  */
+  const turAdimi = useContext(TanitimBaglami)?.adim?.kimlik
+  const turdaAydinlik = tanitimHedefi === 'harita-soru' && turAdimi === 'harita-soru'
+  const gri = !turdaAydinlik && (durum === 'kilitli' || durum === 'yazilmadi')
   const ton = soru ? 'var(--primary-parlak)' : 'var(--success)'
 
   const nedeni =
@@ -1243,7 +1252,7 @@ function Dugum({
       data-tanitim={tanitimHedefi}
       onClick={onAc}
       aria-label={`${basamak.konuSirasi}. konu — ${soru ? 'sorular' : 'bilgi kartları'} — ${nedeni}`}
-      className={cn('absolute grid place-items-center', durum === 'yazilmadi' && 'opacity-60')}
+      className={cn('absolute grid place-items-center', durum === 'yazilmadi' && !turdaAydinlik && 'opacity-60')}
       style={{
         left: `calc(50% + ${x}px)`,
         top: y,

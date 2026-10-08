@@ -24,8 +24,9 @@ export function CevapAlani({
   bosYazi,
 }: {
   girilen: string
-  durum: 'yaziliyor' | 'dogru' | 'yanlis'
-  /** Hiç rakam yazılmamışken görünen metin ("sonucu yaz", "pas"). */
+  /** `pas`: pas hakkı kullanıldı — yanlış değil, alan nötr renkte. */
+  durum: 'yaziliyor' | 'dogru' | 'yanlis' | 'pas'
+  /** Hiç rakam yazılmamışken görünen metin ("sonucu yaz", "pas", "süre doldu"). */
   bosYazi: string
 }) {
   return (
@@ -37,6 +38,7 @@ export function CevapAlani({
         durum === 'yaziliyor' && 'bg-card',
         durum === 'dogru' && 'bg-success text-white',
         durum === 'yanlis' && 'bg-ikincil text-white',
+        durum === 'pas' && 'bg-foreground/10 text-foreground',
       )}
     >
       {girilen === '' ? (
@@ -61,14 +63,12 @@ export function TusTakimi({
   onRakam,
   onSil,
   onOnayla,
-  onPas,
 }: {
   kilitli: boolean
   bosMu: boolean
   onRakam: (rakam: string) => void
   onSil: () => void
   onOnayla: () => void
-  onPas: () => void
 }) {
   return (
     <div className="flex flex-none flex-col gap-2">
@@ -90,15 +90,9 @@ export function TusTakimi({
         </Tus>
       </div>
 
-      {/* Pas geçmenin bedeli düğmenin üstünde yazıyor: aynı yanlış cezası. */}
-      <button
-        type="button"
-        onClick={onPas}
-        disabled={kilitli}
-        className="mx-auto min-h-11 min-w-11 rounded-lg px-2.5 py-1 text-[12.5px] font-extrabold text-muted-foreground transition active:bg-foreground/10 disabled:opacity-45"
-      >
-        Pas geç
-      </button>
+      {/* Sınırsız "Pas geç" burada duruyordu ve yanlış sayılıyordu; yerini
+          bütün oyunlarda ortak, beş haklı ve bedelsiz pas aldı (kabuğun
+          sayaç şeridinde, `PasBilgisi`). */}
     </div>
   )
 }

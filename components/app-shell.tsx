@@ -38,6 +38,7 @@ import {
 } from '@/lib/oyunlar/genel-test'
 import type { DersId } from '@/lib/oyunlar/tanim'
 import { sablonlariBirlestir } from '@/lib/sablonlar'
+import { seviyeDersleriniKaydet } from '@/lib/seviye-tespit'
 import { guncelTahmin, obpHesapla } from '@/lib/tahmin'
 import { egitimYili, gunlukToplam, ilerlemisSinif } from '@/lib/hesap'
 import { androidMu, iosMu } from '@/lib/platform'
@@ -62,7 +63,7 @@ import { CokmeSorusu } from '@/components/cokme-sorusu'
 import { cokmeTanitimKarari } from '@/lib/cokme-tanitim'
 import { useGuncelleme } from '@/lib/guncelleme-kolu'
 import { GuncellemeSeridi } from '@/components/guncelleme-seridi'
-import { bugun, cn, gunKaydir } from '@/lib/utils'
+import { bugun, cn, gunKaydir, yeniId } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import { haritaSinifiBul, programBul, type HaritaSinifi, type KonuDersId } from '@/lib/konu'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
@@ -111,6 +112,8 @@ import { bugunKonuBittiMi, gorevlerBittiMi } from '@/lib/ana-maskot'
 import { RozetBildirimi } from '@/components/rozet-bildirimi'
 import { DENEME_FORMU_ADIMLARI, DENEME_VAZGEC, HARITA_TUR_ADIMLARI, miniTurSec, tanitimKonumu } from '@/lib/tanitim'
 import { demoDenemeleri, istatistikTuruDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi, turIstatistikDenemeleri } from '@/lib/tanitim-veri'
+import { tanitimGeriKarari } from '@/lib/tanitim-rehber'
+import { taniKaydet } from '@/lib/tanitim-tani'
 import { TanitimSaglayici, useTanitim } from '@/components/tanitim/tanitim-baglami'
 import { SpotIsigi } from '@/components/tanitim/spot-isigi'
 import { DemoOyun, DemoOyunKarti } from '@/components/tanitim/demo-oyun'
@@ -191,6 +194,12 @@ function RabiUygulamasi() {
   const [sonOyunlar, setSonOyunlar] = useYerelDepo<string[]>(ANAHTARLAR.sonOyunlar, [])
   /** Ana sayfadan seçilen ders — Oyunlar sekmesi açılırken onun ızgarasına giriyor. */
   const [acilacakDers, setAcilacakDers] = useState<DersId | null>(null)
+  /*
+    Ders kutucuğundan açılan ders. Oyunlar turunun demo adımlarında
+    `OyunlarEkrani` yerine `DemoOyun` çiziliyor ve ekranın seçili dersi
+    kayboluyordu; tur bitince ders buradan yeniden açılıyor.
+  */
+  const oyunlarDersiRef = useRef<DersId | null>(null)
 
   /**
    * Yapılacaklar'dan "Pomodoro ile başlat" isteği. Pomodoro ekranı açıkken
@@ -670,6 +679,15 @@ function RabiUygulamasi() {
     if (tur) tanitim.turuBaslat(tur)
   }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, turBaslayabilir, ekran, sekme, denemeFormu, pomodoroIsliyor, pomodoroIstegi, genelTest, tanitim.tanitimdaMi, tanitim.tamamlandi, tanitim.turuBaslat])
 
+  // Oyunlar sekmesinden çıkınca hatırlanan ders unutuluyor; Oyunlar turu
+  // bitince (kullanıcı hâlâ sekmedeyse) ders kutucuğundan gelinen ders geri açılıyor.
+  const oncekiTurRef = useRef(tanitim.aktifTur)
+  useEffect(() => {
+    if (sekme !== 'oyunlar') oyunlarDersiRef.current = null
+    else if (oncekiTurRef.current === 'oyunlar' && tanitim.aktifTur === null && oyunlarDersiRef.current !== null) setAcilacakDers(oyunlarDersiRef.current)
+    oncekiTurRef.current = tanitim.aktifTur
+  }, [sekme, tanitim.aktifTur])
+
   useYerlesimEtkisi(() => {
     if (tanitim.adim && tanitim.aktifTur === 'ana_tur') {
       const konum = tanitimKonumu(tanitim.adim)
@@ -920,8 +938,13 @@ function RabiUygulamasi() {
     // anda görünmüyor (`lib/cokme-tanitim.ts`); bu sıra yine de turun önünde
     // duruyor ki bir gün ikisi çakışsa tuş kullanıcıyı pencerede kilitlemesin.
     if (cokmeSoruAcik) { cokmeyiGonderme(); return true }
-    // Donanım geri tuşu turu bitirmiyor: tur yalnızca ilerleyerek biter. Tuş bir adım geri alıyor.
-    if (tanitim.tanitimdaMi) { tanitim.oncekiAdimaDon(); return true }
+    // Donanım geri tuşu turu bitirmiyor: tur yalnızca ilerleyerek biter. Tuş bir adım geri alıyor;
+    // geri sayım sürerken yutuluyor, Okut açıkken önce onu kapatıyor (`lib/tanitim-rehber.ts`).
+    const turKarari = tanitimGeriKarari({ tanitimdaMi: tanitim.tanitimdaMi, rehberGizli: tanitim.rehberGizli, adimKimligi: tanitim.adim?.kimlik ?? null, katmanVar: katmanVarMi() })
+    if (turKarari !== 'normal') taniKaydet('geriTusu', { karar: turKarari, adim: tanitim.adim?.kimlik ?? null, rehberGizli: tanitim.rehberGizli })
+    if (turKarari === 'yut') return true
+    if (turKarari === 'katman') { if (!ustKatmaniKapat()) tanitim.oncekiAdimaDon(); return true }
+    if (turKarari === 'adim-geri') { tanitim.oncekiAdimaDon(); return true }
     // En içteki katmandan dışa doğru: ekranın kendi açtığı katman (fotoğraf
     // görüntüleyici, onay kutusu) → form → alt ekran → ana sekme → çıkış.
     if (ustKatmaniKapat()) return true
@@ -945,7 +968,7 @@ function RabiUygulamasi() {
       return true
     }
     return false
-  }, [cokmeSoruAcik, cokmeyiGonderme, genelTest, genelTestiBitir, denemeFormu, ekran, sekme, tanitim.tanitimdaMi, tanitim.oncekiAdimaDon])
+  }, [cokmeSoruAcik, cokmeyiGonderme, genelTest, genelTestiBitir, denemeFormu, ekran, sekme, tanitim.tanitimdaMi, tanitim.rehberGizli, tanitim.adim, tanitim.oncekiAdimaDon])
 
   /**
    * Açılışta kapanmış bir turdan artakalanları temizler.
@@ -1116,16 +1139,17 @@ function RabiUygulamasi() {
         denemeSayisi={gorunenDenemeler.length}
         setYanlisSorular={setYanlisSorular}
         onKaydet={denemeKaydet}
+        onSeviyeDersleriKaydet={(sinif, alan, dersler) =>
+          setSablonlar((kayitli) =>
+            seviyeDersleriniKaydet(kayitli, sinif, alan, dersler, new Set(denemeler.map((d) => d.sablonId)), yeniId()),
+          )
+        }
         onVazgec={() => (anaTurda ? tanitim.gonder({ tur: 'hedefe-dokun', hedef: DENEME_VAZGEC }) : setDenemeFormu(null))}
         tanitim={anaTurda ? {
           onOkutAcik: tanitim.setRehberGizli,
           // Okut adımı geçilince (İleri) form bir ders hariç örnekle doluyor.
           ornekDoldur: !!tanitim.adim && DENEME_FORMU_ADIMLARI.indexOf(tanitim.adim.kimlik) > 0,
           dersGirildi: () => tanitim.gonder({ tur: 'kayit-eklendi', kayit: 'deneme-ders' }),
-          yanlisAcik: tanitim.adim?.kimlik === 'deneme-yanlis-form',
-          yanlisAc: () => tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'deneme-yanlis-ekle' }),
-          yanlisEklendi: () => tanitim.gonder({ tur: 'kayit-eklendi', kayit: 'yanlis-soru' }),
-          yanlisKapat: tanitim.oncekiAdimaDon,
         } : undefined}
       />
     </div>
@@ -1406,7 +1430,7 @@ function RabiUygulamasi() {
                   else setGenelTest(sonraki)
                 }}
                 acilacakDers={acilacakDers}
-                onDersAcildi={() => setAcilacakDers(null)}
+                onDersAcildi={() => { oyunlarDersiRef.current = acilacakDers; setAcilacakDers(null) }}
                 onOyunAcildi={oyunAcildi}
                 bildir={hataBildirimi}
               />

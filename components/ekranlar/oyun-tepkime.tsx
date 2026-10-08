@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
-import { Check, X } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
 import type { TepkimeSorusu, TepkimeTuru } from '@/lib/oyunlar/tepkime-havuzu'
 import { TEPKIME_HAVUZU, TUR_ADI } from '@/lib/oyunlar/tepkime-havuzu'
@@ -16,8 +15,10 @@ import {
 } from '@/lib/oyunlar/tepkime'
 import {
   guncelSeri,
+  kalanPas,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -44,7 +45,6 @@ import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
-import { cn } from '@/lib/utils'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
 import {
   Bildirim,
@@ -56,6 +56,7 @@ import {
   rekorCumlesi,
   type Eleme,
 } from '@/components/oyun-kabuk'
+import { OyunSikki, sikHali } from '@/components/oyun-sikki'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 import { DenklemYazisi } from '@/components/denklem-yazisi'
 
@@ -82,8 +83,13 @@ function sirayiKur(akis: SoruAkisi<TepkimeSorusu>): SoruAkisi<TepkimeOyunSorusu>
   return akisiEsle(akis, (sorular) => turHazirla(sorular, Math.random, false))
 }
 
-/** `secilen` süre dolduğunda `null`: oyuncu bir şık işaretlemedi. */
-type GeriBildirim = { secilen: TepkimeTuru | null; dogruMu: boolean; soru: TepkimeSorusu }
+/** `secilen` süre dolduğunda ya da pas geçilince `null`: oyuncu bir şık işaretlemedi. */
+type GeriBildirim = {
+  secilen: TepkimeTuru | null
+  dogruMu: boolean
+  pas: boolean
+  soru: TepkimeSorusu
+}
 
 /**
  * Banka kayıtlarından tepkime havuzu.
@@ -163,9 +169,12 @@ export function TepkimeOyunuEkrani({
    */
   const [turNo, setTurNo] = useState(0)
 
-  const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<TepkimeSorusu>; yeniRekor: boolean } | null>(
-    null,
-  )
+  const [sonuc, setSonuc] = useState<{
+    ozet: TurOzeti<TepkimeSorusu>
+    /** `ozet.yanlislar` ile aynı sırada: o soru pas mı geçildi. */
+    paslar: boolean[]
+    yeniRekor: boolean
+  } | null>(null)
 
   const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
@@ -221,6 +230,7 @@ export function TepkimeOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
+        paslar: verilenler.filter((c) => !c.dogruMu).map((c) => c.pas === true),
         yeniRekor:
           !yarim &&
           !bankaTuru &&
@@ -270,8 +280,11 @@ export function TepkimeOyunuEkrani({
    * Sıfır Tolerans'de yanlış cevap turu bitiriyor (banka turu hariç). Bekleme süresi
    * doğruda da yanlışta da aynı: doğrusunu okumadan ekranın değişmesi,
    * elenirken bile öğretmeyi bırakmak olurdu.
+   *
+   * `pas` bedelsiz geçiş: zorluğu kaydırmıyor, elemiyor; bekleme yanlışınki
+   * kadar, çünkü doğrusu ve kuralı yine okunacak.
    */
-  const ilerle = (dogruMu: boolean) => {
+  const ilerle = (dogruMu: boolean, pas = false) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
       /*
@@ -282,8 +295,8 @@ export function TepkimeOyunuEkrani({
         değişirdi. İkisi aynı karede güncellenince değişen tek şey bir
         sonraki soru oluyor.
       */
-      zorlukKaydet(dogruMu)
-      if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
+      if (!pas) zorlukKaydet(dogruMu)
+      if (!pas && elerMi(dogruMu, bankaTuru, gecerliMod)) {
         setElendi('yanlis')
         turBitir(cevaplarRef.current)
       } else {
@@ -299,16 +312,25 @@ export function TepkimeOyunuEkrani({
 
     const dogruMu = sik.dogruMu
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu }])
-    setGeriBildirim({ secilen: sik.deger, dogruMu, soru: soru.soru })
+    setGeriBildirim({ secilen: sik.deger, dogruMu, pas: false, soru: soru.soru })
     geriBildir(dogruMu)
     ilerle(dogruMu)
+  }
+
+  /** Pas hakkı: doğrusu gösterilip geçiliyor; yanlış sesi ve titreşimi yok. */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false, pas: true }])
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: true, soru: soru.soru })
+    ilerle(false, true)
   }
 
   /** Süre dolması cevap vermemekle aynı: yanlış sayılıyor ve turu bitiriyor. */
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false }])
-    setGeriBildirim({ secilen: null, dogruMu: false, soru: soru.soru })
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: false, soru: soru.soru })
     geriBildir(false)
     ilerle(false)
     // `ilerle` ve `geriBildir` her renderda yeniden kuruluyor; sayaç yalnızca
@@ -344,7 +366,7 @@ export function TepkimeOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: soruSuresi('tepkime'),
@@ -364,7 +386,7 @@ export function TepkimeOyunuEkrani({
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
 
-  const maskotDurumu: MaskotDurumu = geriBildirim
+  const maskotDurumu: MaskotDurumu = geriBildirim && !geriBildirim.pas
     ? geriBildirim.dogruMu
       ? 'kutlama'
       : 'uzgun'
@@ -385,11 +407,12 @@ export function TepkimeOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{ kalan: kalanPas(cevaplar), kilitli: geriBildirim !== null, onPas: pasGec }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -425,10 +448,11 @@ export function TepkimeOyunuEkrani({
                 </p>
 
                 <div className="flex flex-col gap-2">
-                  {soru.siklar.map((sik) => (
+                  {soru.siklar.map((sik, i) => (
                     <SikDugmesi
                       key={sik.deger}
                       sik={sik}
+                      sira={i}
                       geriBildirim={geriBildirim}
                       onSec={() => cevapla(sik)}
                     />
@@ -439,7 +463,8 @@ export function TepkimeOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
-                  baslik={geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
+                  pas={geriBildirim.pas}
+                  baslik={geriBildirim.pas ? 'Pas geçtin' : geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
                   aciklama={
                     geriBildirim.dogruMu
                       ? aciklama(geriBildirim.soru)
@@ -474,39 +499,22 @@ export function TepkimeOyunuEkrani({
  */
 function SikDugmesi({
   sik,
+  sira,
   geriBildirim,
   onSec,
 }: {
   sik: TepkimeSikki
+  sira: number
   geriBildirim: GeriBildirim | null
   onSec: () => void
 }) {
   const acikta = geriBildirim !== null
-  const secilen = acikta && geriBildirim.secilen === sik.deger
-  const dogruSecim = secilen && sik.dogruMu
-  const yanlisSecim = secilen && !sik.dogruMu
-  const isaretli = acikta && !secilen && sik.dogruMu
+  const hal = sikHali(acikta, acikta && geriBildirim.secilen === sik.deger, sik.dogruMu)
 
   return (
-    <button
-      type="button"
-      onClick={onSec}
-      disabled={acikta}
-      className={cn(
-        'golge-kart flex min-h-[52px] w-full items-center justify-center gap-2 rounded-[16px] border-2 px-3 py-2.5',
-        'font-display text-[15.5px] font-extrabold leading-snug transition',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        !acikta && 'border-border bg-card active:brightness-95',
-        dogruSecim && 'border-success bg-success text-white',
-        yanlisSecim && 'border-ikincil bg-ikincil text-white',
-        isaretli && 'border-success bg-card text-success',
-        acikta && !secilen && !sik.dogruMu && 'border-border bg-card opacity-45',
-      )}
-    >
-      <span className="min-w-0 break-words">{sik.metin}</span>
-      {(dogruSecim || isaretli) && <Check size={18} className="shrink-0" aria-hidden />}
-      {yanlisSecim && <X size={18} className="shrink-0" aria-hidden />}
-    </button>
+    <OyunSikki sira={sira} hal={hal} onSec={onSec} className="min-h-[52px] py-2.5 text-[15.5px]">
+      {sik.metin}
+    </OyunSikki>
   )
 }
 
@@ -520,7 +528,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
-  sonuc: { ozet: TurOzeti<TepkimeSorusu>; yeniRekor: boolean }
+  sonuc: { ozet: TurOzeti<TepkimeSorusu>; paslar: boolean[]; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -529,7 +537,7 @@ function SonucGorunumu({
   onCik: () => void
   bildir: BildirimKolu
 }) {
-  const { ozet, yeniRekor } = sonuc
+  const { ozet, paslar, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
   const kalan = ozet.yanlislar.length - gorunen.length
 
@@ -569,6 +577,7 @@ function SonucGorunumu({
               />
               <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
                 {TUR_ADI[yanlis.tur]}
+                {paslar[sira] && ' · Pas geçtin'}
               </span>
               <span className="mt-1.5 block border-t border-border pt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
                 {aciklama(yanlis)}

@@ -1,102 +1,77 @@
 'use client'
 
 /**
- * Tur ayarlarında dört mod aynı genişlikte satırlar olarak gösterilir.
- * Seçilen mod işaretle ve renkle belirtilir; süre adıyla birlikte okunur.
- * Mod bütün oyunlarda ortak saklanır, zorluk ise oyun başına seçilir.
+ * Oyun modu penceresindeki dört mod: 2×2 ayrı kartlar
+ * (`tasarim/oyun-modu-penceresi.html`).
+ *
+ * Kartta emoji, ad ve tek satırlık özet var; uzun kural yok (kullanıcı
+ * kaldırttı — kartın altındaki açıklama pencereyi uzatıyordu, özet yetiyor).
+ * Seçili kart **modun kendi rengine** boyanıyor, oyunun dersine değil: dört
+ * mod dört ayrı şey ve ders rengi her oyunda dördünü de aynı kahverengiye
+ * ya da maviye çeviriyordu.
+ *
+ * Simge emoji (kullanıcı istedi). Bir süre lucide çizgi ikondu — emoji
+ * telefondan telefona başka çiziliyor ve hizalanan kardeşleri olan yerde
+ * kural çizgi ikon diyor; burada istisna, karar kullanıcının.
  */
 
-import { AlertTriangle, Check, Clock, Moon, Zap } from 'lucide-react'
-import { MODLAR, MOD_SIRASI, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
+import { MODLAR, MOD_SIRASI, type OyunModu } from '@/lib/oyunlar/mod'
 import { cn } from '@/lib/utils'
 
 /**
- * Kutudaki çizgi ikon.
- *
- * `ModTanimi.simge`deki emoji burada kullanılmıyor: tasarım çizgi ikon
- * istiyor ve emoji telefondan telefona başka çiziliyor — dört kutunun
- * dördü de aynı ailede olmalı. Emoji duruyor ve tur içindeki mod rozetinde
- * (`oyun-kabuk.tsx`) hâlâ o çiziliyor; orası tek bir simge, hizalanacak
- * kardeşi yok.
+ * Seçili kartın zemini, kenarı ve yazısı. Genel pastel aileler (`isl`, `yzm`,
+ * `fzk`, `cog`): ders kimliği değiller, ders renkleriyle karışmasınlar diye.
  */
-const SIMGELER: Record<OyunModu, typeof Clock> = {
-  siradan: Clock,
-  turbo: Zap,
-  'ani-olum': AlertTriangle,
-  rahat: Moon,
+const RENKLER: Record<OyunModu, string> = {
+  siradan: 'bg-isl border-isl-koyu text-isl-koyu',
+  turbo: 'bg-yzm border-yzm-koyu text-yzm-koyu',
+  'ani-olum': 'bg-fzk border-fzk-koyu text-fzk-koyu',
+  rahat: 'bg-cog border-cog-koyu text-cog-koyu',
 }
 
 export function ModSecimi({
   secili,
-  kompakt = false,
   onSec,
 }: {
-  kompakt?: boolean
   secili: OyunModu
   onSec: (mod: OyunModu) => void
 }) {
   return (
-    <div>
-      <BolumBasligi>Oyun modu</BolumBasligi>
-
-      <div className={kompakt ? "mt-2 grid grid-cols-2 gap-2" : "mt-3 flex flex-col gap-2"}>
-        {MOD_SIRASI.map((mod) => {
-          const tanim = MODLAR[mod]
-          const Simge = SIMGELER[mod]
-          const acik = mod === secili
-          return (
-            <button
-              key={mod}
-              type="button"
-              onClick={() => onSec(mod)}
-              aria-pressed={acik}
+    <div className="grid grid-cols-2 gap-2.5">
+      {MOD_SIRASI.map((mod) => {
+        const tanim = MODLAR[mod]
+        const acik = mod === secili
+        return (
+          <button
+            key={mod}
+            type="button"
+            onClick={() => onSec(mod)}
+            aria-pressed={acik}
+            className={cn(
+              'flex flex-col items-center rounded-[20px] border-[1.5px] px-2.5 pt-4 pb-3.5 text-center transition-colors active:brightness-[0.97]',
+              'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+              acik
+                ? cn(RENKLER[mod], 'shadow-[0_0_0_1px_currentColor,0_4px_12px_rgb(27_26_25/0.10)]')
+                : 'golge-kart border-foreground/15 bg-card text-foreground',
+            )}
+          >
+            <span aria-hidden className="emoji text-[40px] leading-none">
+              {tanim.simge}
+            </span>
+            <span className="mt-2.5 whitespace-nowrap text-[15px] font-extrabold leading-tight">
+              {tanim.ad}
+            </span>
+            <span
               className={cn(
-                kompakt ? 'flex min-h-11 items-center gap-2 rounded-xl border px-2 py-2 text-left' : 'flex min-h-[64px] items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition active:brightness-95',
-                'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-                acik
-                  ? 'border-primary bg-primary-soft'
-                  : 'border-border bg-card',
+                'mt-0.5 whitespace-nowrap text-[11.5px] font-semibold leading-snug',
+                !acik && 'text-muted-foreground',
               )}
             >
-              <Simge size={20} strokeWidth={2} className={acik ? 'text-primary' : 'text-muted-foreground'} aria-hidden />
-              <span className="flex-1">
-                <span className="block text-[15px] font-extrabold leading-tight">{tanim.ad}</span>
-                <span className={kompakt ? "hidden" : "mt-0.5 block text-[12px] leading-snug text-muted-foreground"}>{tanim.ozet}</span>
-              </span>
-              <span aria-hidden className={cn('grid size-5 shrink-0 place-items-center rounded-full border', acik ? 'border-primary bg-primary text-white' : 'border-border')}>
-                {acik && <Check size={13} strokeWidth={3} />}
-              </span>
-            </button>
-          )
-        })}
-      </div>
-
-      {/* Seçilen modun kuralı tam olarak yazıyor: tur ortasında "bu neden
-          bitti" diye sorulmasın. */}
-      <p className={kompakt ? "hidden" : "mt-3 text-[12px] leading-relaxed text-muted-foreground"}>
-        {kompakt ? 'Tanıtımda tüm modlar 10 dakika; sonuçlar geçicidir.' : MODLAR[secili].kural}
-      </p>
-
-      {/*
-        Kayıtsız mod seçildiği **anda** söyleniyor. Turun sonunda öğrenilen bir
-        kural, o turu boşa harcatır.
-      */}
-      {!kompakt && !modKayitliMi(secili) && (
-        <p className="mt-2 rounded-xl bg-warning-soft px-2.5 py-1.5 text-[11.5px] font-bold leading-snug text-warning">
-          Rekor tutulmaz; yanlışların Oyun Bankası’na eklenir.
-        </p>
-      )}
+              {tanim.ozet}
+            </span>
+          </button>
+        )
+      })}
     </div>
   )
 }
-
-/** Seçim alanlarının ortak başlığı. */
-function BolumBasligi({ children }: { children: React.ReactNode }) {
-  return (
-    <h2 className="font-display text-[16px] font-extrabold leading-tight tracking-tight">
-      {children}
-    </h2>
-  )
-}
-
-export { BolumBasligi }

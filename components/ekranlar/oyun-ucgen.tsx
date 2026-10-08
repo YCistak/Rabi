@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
-import { Check, X } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
 import {
   UCGEN_ACIKLAMASI,
@@ -20,9 +19,11 @@ import {
 } from '@/lib/oyunlar/ucgen'
 import {
   guncelSeri,
+  kalanPas,
   karistir,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -48,6 +49,7 @@ import {
   rekorCumlesi,
   type Eleme,
 } from '@/components/oyun-kabuk'
+import { OyunSikki, sikHali } from '@/components/oyun-sikki'
 import { OyunSekli } from '@/components/oyun-sekil'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
@@ -75,7 +77,7 @@ type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 type TurSorusu = { soru: UcgenSorusu; siklar: [Kenar, Kenar] }
 
 /** `secilen` süre dolduğunda `null`: oyuncu bir kenar işaretlemedi. */
-type GeriBildirim = { secilen: Kenar | null; dogruMu: boolean; soru: UcgenSorusu }
+type GeriBildirim = { secilen: Kenar | null; dogruMu: boolean; pas: boolean; soru: UcgenSorusu }
 
 /** Banka kayıtlarından tur soruları; şekil sorudan yeniden kuruluyor. */
 function bankaSorulariniCoz(kayitlar: readonly BankaKaydi[]): UcgenSorusu[] {
@@ -141,9 +143,12 @@ export function UcgenOyunuEkrani({
    */
   const [turNo, setTurNo] = useState(0)
 
-  const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<UcgenSorusu>; yeniRekor: boolean } | null>(
-    null,
-  )
+  const [sonuc, setSonuc] = useState<{
+    ozet: TurOzeti<UcgenSorusu>
+    /** `ozet.yanlislar` ile aynı sırada: o soru pas mı geçildi. */
+    paslar: boolean[]
+    yeniRekor: boolean
+  } | null>(null)
 
   const bankaHavuzu = useMemo(() => bankaSorulariniCoz(bankaSorulari), [bankaSorulari])
   const bankaTuru = bankaHavuzu.length > 0
@@ -189,6 +194,7 @@ export function UcgenOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
+        paslar: verilenler.filter((c) => !c.dogruMu).map((c) => c.pas === true),
         yeniRekor:
           !yarim &&
           !bankaTuru &&
@@ -242,18 +248,33 @@ export function UcgenOyunuEkrani({
 
     const dogruMu = kenarEsit(secilen, ucgenCevabi(gecerli.soru))
     setCevaplar((onceki) => [...onceki, { soru: gecerli.soru, dogruMu }])
-    setGeriBildirim({ secilen, dogruMu, soru: gecerli.soru })
+    setGeriBildirim({ secilen, dogruMu, pas: false, soru: gecerli.soru })
     geriBildir(dogruMu)
 
 
     ilerle(dogruMu)
   }
 
+  /**
+   * Pas hakkı: bedelsiz (`Cevap.pas`) — yanlış sayılmıyor, elemeye ve sese
+   * girmiyor. Doğru şık işaretlenip sıradaki soruya geçiliyor.
+   */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    const gecerli = sorular[sira]
+    if (!gecerli) return
+
+    setCevaplar((onceki) => [...onceki, { soru: gecerli.soru, dogruMu: false, pas: true }])
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: true, soru: gecerli.soru })
+    ilerle(false, true)
+  }
+
   /** Cevaptan sonra: yanlışsa tur biter, doğruysa sıradaki soru gelir. */
-  const ilerle = (dogruMu: boolean) => {
+  const ilerle = (dogruMu: boolean, pas = false) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
-      if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
+      if (!pas && elerMi(dogruMu, bankaTuru, gecerliMod)) {
         setElendi('yanlis')
         turBitir(cevaplarRef.current)
       } else {
@@ -263,7 +284,8 @@ export function UcgenOyunuEkrani({
   }
 
   /**
-   * Süre dolması cevap vermemekle aynı: soru pas geçilmiş sayılıyor.
+   * Süre dolması cevap vermemekle aynı: soru yanlış sayılıyor (pas hakkı
+   * harcanmıyor, pas bedelsiz olduğu için ikisi ayrı).
    *
    * Yanlış sayıldığı için turu da bitiriyor — beklemek de bilmemek.
    */
@@ -274,7 +296,7 @@ export function UcgenOyunuEkrani({
 
     // Şık seçilmedi: `secilen` null, cevap yanlış sayılıyor.
     setCevaplar((onceki) => [...onceki, { soru: gecerli.soru, dogruMu: false }])
-    setGeriBildirim({ secilen: null, dogruMu: false, soru: gecerli.soru })
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: false, soru: gecerli.soru })
     oyunSesiCal('yanlis', sesAcik)
 
     ilerle(false)
@@ -311,7 +333,7 @@ export function UcgenOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan,
     sure: soruSuresi('ucgen'),
@@ -332,7 +354,7 @@ export function UcgenOyunuEkrani({
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
   const gecerli = sorular[sira]
 
-  const maskotDurumu: MaskotDurumu = geriBildirim
+  const maskotDurumu: MaskotDurumu = geriBildirim && !geriBildirim.pas
     ? geriBildirim.dogruMu
       ? 'kutlama'
       : 'uzgun'
@@ -353,11 +375,16 @@ export function UcgenOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{
+          kalan: kalanPas(cevaplar),
+          kilitli: geriBildirim !== null,
+          onPas: pasGec,
+        }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -395,10 +422,11 @@ export function UcgenOyunuEkrani({
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5">
-                  {gecerli.siklar.map((sik) => (
+                  {gecerli.siklar.map((sik, i) => (
                     <SikDugmesi
                       key={kenarMetni(sik)}
                       sik={sik}
+                      sira={i}
                       dogruMu={kenarEsit(sik, ucgenCevabi(gecerli.soru))}
                       geriBildirim={geriBildirim}
                       onSec={() => cevapla(sik)}
@@ -410,7 +438,8 @@ export function UcgenOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
-                  baslik={geriBildirim.dogruMu ? 'Aynen böyle!' : 'Olmadı'}
+                  pas={geriBildirim.pas}
+                  baslik={geriBildirim.pas ? 'Pas geçtin' : geriBildirim.dogruMu ? 'Aynen böyle!' : 'Olmadı'}
                   aciklama={
                     geriBildirim.dogruMu
                       ? UCGEN_ADI[geriBildirim.soru.tur]
@@ -444,11 +473,13 @@ export function UcgenOyunuEkrani({
  */
 function SikDugmesi({
   sik,
+  sira,
   dogruMu,
   geriBildirim,
   onSec,
 }: {
   sik: Kenar
+  sira: number
   dogruMu: boolean
   geriBildirim: GeriBildirim | null
   onSec: () => void
@@ -457,30 +488,17 @@ function SikDugmesi({
   // Süre dolduysa hiçbir şık seçili değil; yalnızca doğrusu işaretleniyor.
   const secilen =
     acikta && geriBildirim.secilen !== null && kenarEsit(geriBildirim.secilen, sik)
-  const dogruSecim = secilen && dogruMu
-  const yanlisSecim = secilen && !dogruMu
-  const isaretli = acikta && !secilen && dogruMu
+  const hal = sikHali(acikta, secilen, dogruMu)
 
   return (
-    <button
-      type="button"
-      onClick={onSec}
-      disabled={acikta}
-      className={cn(
-        'golge-kart flex min-h-[60px] w-full items-center justify-center gap-2 rounded-[20px] border-2 px-4 py-3',
-        'rakam font-display text-[26px] font-extrabold leading-none transition',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        !acikta && 'border-border bg-card active:brightness-95',
-        dogruSecim && 'border-success bg-success text-white',
-        yanlisSecim && 'border-ikincil bg-ikincil text-white',
-        isaretli && 'border-success bg-card text-success',
-        acikta && !secilen && !dogruMu && 'border-border bg-card opacity-45',
-      )}
+    <OyunSikki
+      sira={sira}
+      hal={hal}
+      onSec={onSec}
+      className="min-h-[60px] py-3 rakam text-[26px] leading-none"
     >
       {kenarMetni(sik)}
-      {(dogruSecim || isaretli) && <Check size={19} className="shrink-0" aria-hidden />}
-      {yanlisSecim && <X size={19} className="shrink-0" aria-hidden />}
-    </button>
+    </OyunSikki>
   )
 }
 
@@ -494,7 +512,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
-  sonuc: { ozet: TurOzeti<UcgenSorusu>; yeniRekor: boolean }
+  sonuc: { ozet: TurOzeti<UcgenSorusu>; paslar: boolean[]; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -545,6 +563,7 @@ function SonucGorunumu({
               <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
                 <span className="rakam text-success">x = {kenarMetni(ucgenCevabi(yanlis))}</span> ·{' '}
                 {UCGEN_ADI[yanlis.tur]}
+                {sonuc.paslar[sira] && ' · Pas geçtin'}
               </span>
               <span className="mt-1.5 block border-t border-border pt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
                 {UCGEN_ACIKLAMASI[yanlis.tur]}

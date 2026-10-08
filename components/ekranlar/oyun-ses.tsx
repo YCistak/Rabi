@@ -3,15 +3,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
-import { Check, X } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
 import type { SesOlayi, SesSorusu } from '@/lib/oyunlar/ses-havuzu'
 import { SES_HAVUZU, OLAY_ACIKLAMASI, OLAY_ADI } from '@/lib/oyunlar/ses-havuzu'
 import { turHazirla, type SesOyunSorusu, type SesSikki } from '@/lib/oyunlar/ses'
 import {
   guncelSeri,
+  kalanPas,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -33,7 +34,6 @@ import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
-import { cn } from '@/lib/utils'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
 import {
   Bildirim,
@@ -45,6 +45,7 @@ import {
   rekorCumlesi,
   type Eleme,
 } from '@/components/oyun-kabuk'
+import { OyunSikki, sikHali } from '@/components/oyun-sikki'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
 /** Cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms) — doğru ve yanlış için aynı. */
@@ -52,7 +53,7 @@ const CEVAP_BEKLEMESI = 1100
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
-/** `secilen` süre dolduğunda `null`: oyuncu bir şık işaretlemedi. */
+/** `secilen` süre dolduğunda ya da pas geçilince `null`: oyuncu bir şık işaretlemedi. */
 /**
  * `ritim.ts`'in kurduğu sıraya şıkları ekler.
  *
@@ -64,7 +65,7 @@ function sirayiKur(akis: SoruAkisi<SesSorusu>): SoruAkisi<SesOyunSorusu> {
   return akisiEsle(akis, (sorular) => turHazirla(sorular, Math.random, false))
 }
 
-type GeriBildirim = { secilen: SesOlayi | null; dogruMu: boolean; soru: SesSorusu }
+type GeriBildirim = { secilen: SesOlayi | null; dogruMu: boolean; pas: boolean; soru: SesSorusu }
 
 /**
  * Banka kayıtlarından ses havuzu.
@@ -260,7 +261,7 @@ export function SesOyunuEkrani({
    * doğruda da yanlışta da aynı: doğrusunu okumadan ekranın değişmesi,
    * elenirken bile öğretmeyi bırakmak olurdu.
    */
-  const ilerle = (dogruMu: boolean) => {
+  const ilerle = (dogruMu: boolean, pas = false) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
       /*
@@ -271,8 +272,9 @@ export function SesOyunuEkrani({
         değişirdi. İkisi aynı karede güncellenince değişen tek şey bir
         sonraki soru oluyor.
       */
-      zorlukKaydet(dogruMu)
-      if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
+      // Pas bedelsiz: zorluğu düşürmüyor, Sıfır Tolerans'ta turu bitirmiyor.
+      if (!pas) zorlukKaydet(dogruMu)
+      if (!pas && elerMi(dogruMu, bankaTuru, gecerliMod)) {
         setElendi('yanlis')
         turBitir(cevaplarRef.current)
       } else {
@@ -288,7 +290,7 @@ export function SesOyunuEkrani({
 
     const dogruMu = sik.dogruMu
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu }])
-    setGeriBildirim({ secilen: sik.deger, dogruMu, soru: soru.soru })
+    setGeriBildirim({ secilen: sik.deger, dogruMu, pas: false, soru: soru.soru })
     geriBildir(dogruMu)
     ilerle(dogruMu)
   }
@@ -297,13 +299,22 @@ export function SesOyunuEkrani({
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false }])
-    setGeriBildirim({ secilen: null, dogruMu: false, soru: soru.soru })
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: false, soru: soru.soru })
     geriBildir(false)
     ilerle(false)
     // `ilerle` ve `geriBildir` her renderda yeniden kuruluyor; sayaç yalnızca
     // güncel olanı çağırsın diye bağımlılıklar bilerek dar tutuldu.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asama, geriBildirim, soru])
+
+  /** Pas hakkı: doğrusu gösterilip geçiliyor; yanlış sesi ve titreşimi yok. */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false, pas: true }])
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: true, soru: soru.soru })
+    ilerle(false, true)
+  }
 
   /** Tur saati bitti: yanlış değil, tur biter. */
   const turSuresiDoldu = () => {
@@ -333,7 +344,7 @@ export function SesOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: soruSuresi('ses'),
@@ -353,7 +364,7 @@ export function SesOyunuEkrani({
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
 
-  const maskotDurumu: MaskotDurumu = geriBildirim
+  const maskotDurumu: MaskotDurumu = geriBildirim && !geriBildirim.pas
     ? geriBildirim.dogruMu
       ? 'kutlama'
       : 'uzgun'
@@ -374,11 +385,12 @@ export function SesOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{ kalan: kalanPas(cevaplar), kilitli: geriBildirim !== null, onPas: pasGec }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -416,10 +428,11 @@ export function SesOyunuEkrani({
                 </p>
 
                 <div className="flex flex-col gap-2">
-                  {soru.siklar.map((sik) => (
+                  {soru.siklar.map((sik, i) => (
                     <SikDugmesi
                       key={sik.deger}
                       sik={sik}
+                      sira={i}
                       geriBildirim={geriBildirim}
                       onSec={() => cevapla(sik)}
                     />
@@ -430,7 +443,8 @@ export function SesOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
-                  baslik={geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
+                  pas={geriBildirim.pas}
+                  baslik={geriBildirim.pas ? 'Pas geçtin' : geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
                   aciklama={
                     geriBildirim.dogruMu
                       ? soru.soru.olusum
@@ -465,39 +479,22 @@ export function SesOyunuEkrani({
  */
 function SikDugmesi({
   sik,
+  sira,
   geriBildirim,
   onSec,
 }: {
   sik: SesSikki
+  sira: number
   geriBildirim: GeriBildirim | null
   onSec: () => void
 }) {
   const acikta = geriBildirim !== null
-  const secilen = acikta && geriBildirim.secilen === sik.deger
-  const dogruSecim = secilen && sik.dogruMu
-  const yanlisSecim = secilen && !sik.dogruMu
-  const isaretli = acikta && !secilen && sik.dogruMu
+  const hal = sikHali(acikta, acikta && geriBildirim.secilen === sik.deger, sik.dogruMu)
 
   return (
-    <button
-      type="button"
-      onClick={onSec}
-      disabled={acikta}
-      className={cn(
-        'golge-kart flex min-h-[52px] w-full items-center justify-center gap-2 rounded-[16px] border-2 px-3 py-2.5',
-        'font-display text-[15.5px] font-extrabold leading-snug transition',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        !acikta && 'border-border bg-card active:brightness-95',
-        dogruSecim && 'border-success bg-success text-white',
-        yanlisSecim && 'border-ikincil bg-ikincil text-white',
-        isaretli && 'border-success bg-card text-success',
-        acikta && !secilen && !sik.dogruMu && 'border-border bg-card opacity-45',
-      )}
-    >
-      <span className="min-w-0 break-words">{sik.metin}</span>
-      {(dogruSecim || isaretli) && <Check size={18} className="shrink-0" aria-hidden />}
-      {yanlisSecim && <X size={18} className="shrink-0" aria-hidden />}
-    </button>
+    <OyunSikki sira={sira} hal={hal} onSec={onSec} className="min-h-[52px] py-2.5 text-[15.5px]">
+      {sik.metin}
+    </OyunSikki>
   )
 }
 

@@ -3,15 +3,18 @@ import type { YazimSorusu } from './yazim-havuzu'
 import { YAZIM_HAVUZU } from './yazim-havuzu'
 import {
   BOS_ISTATISTIK,
+  PAS_HAKKI,
   TUR_SURESI,
   enIyiSeri,
   guncelSeri,
   istatistigiGuncelle,
+  kalanPas,
   kalanSaniye,
   karistir,
   rekorKirildiMi,
   sureOrani,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
 } from './tur'
 import { turHazirla } from './yazim-oyunu'
@@ -125,6 +128,42 @@ describe('turOzeti', () => {
 
   it('yanlışsız tur hatasız sayılır', () => {
     expect(turOzeti([{ soru: ornek[0], dogruMu: true }]).hatasiz).toBe(true)
+  })
+})
+
+describe('pas', () => {
+  const pasli: Cevap<YazimSorusu>[] = [
+    { soru: ornek[0], dogruMu: true },
+    { soru: ornek[1], dogruMu: false, pas: true },
+    { soru: ornek[2], dogruMu: true },
+  ]
+
+  it('yanlış sayılmaz, isabeti düşürmez', () => {
+    const ozet = turOzeti(pasli)
+    expect(ozet).toMatchObject({ dogru: 2, yanlis: 0, pas: 1, toplam: 2, hatasiz: true })
+    expect(ozet.oran).toBe(1)
+    expect(yanlisSayisi(pasli)).toBe(0)
+  })
+
+  it('geçilen soru listede kalır: tur sonunda görünür, bankaya düşer', () => {
+    expect(turOzeti(pasli).yanlislar).toEqual([ornek[1]])
+  })
+
+  it('seriyi ne bozar ne uzatır', () => {
+    expect(enIyiSeri(pasli)).toBe(2)
+    expect(guncelSeri(pasli)).toBe(2)
+    expect(guncelSeri([...pasli, { soru: ornek[0], dogruMu: false, pas: true }])).toBe(2)
+  })
+
+  it('yalnız pas geçilmiş tur hatasız sayılmaz', () => {
+    expect(turOzeti([{ soru: ornek[0], dogruMu: false, pas: true }]).hatasiz).toBe(false)
+  })
+
+  it('hak cevaplardan türer ve sıfırın altına inmez', () => {
+    expect(kalanPas([])).toBe(PAS_HAKKI)
+    expect(kalanPas(pasli)).toBe(PAS_HAKKI - 1)
+    const hepsi = Array.from({ length: PAS_HAKKI + 2 }, () => ({ pas: true }))
+    expect(kalanPas(hepsi)).toBe(0)
   })
 })
 

@@ -96,7 +96,7 @@ export const MODLAR = {
   'ani-olum': {
     id: 'ani-olum',
     ad: 'Sıfır Tolerans',
-    simge: '💀',
+    simge: '🎯',
     ozet: 'Tek yanlış',
     kural:
       'Her sorunun kendi süresi var ve ilk yanlışta tur biter. Süre dolması da yanlış sayılır.',

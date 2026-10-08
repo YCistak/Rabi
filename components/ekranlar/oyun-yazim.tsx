@@ -23,8 +23,10 @@ import {
 } from '@/lib/oyunlar/yazim-oyunu'
 import {
   guncelSeri,
+  kalanPas,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -54,6 +56,7 @@ import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
+import { OyunSikki, sikHali } from '@/components/oyun-sikki'
 import {
   Bildirim,
   EN_COK_YANLIS,
@@ -78,8 +81,19 @@ const CEVAP_BEKLEMESI = 900
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
-/** `secilenMetin` süre dolduğunda `null`: oyuncu bir şık işaretlemedi. */
-type GeriBildirim = { secilenMetin: string | null; dogruMu: boolean; icerik: SoruIcerigi }
+/** `secilenMetin` süre dolduğunda ya da pas geçilince `null`: oyuncu bir şık işaretlemedi. */
+type GeriBildirim = {
+  secilenMetin: string | null
+  dogruMu: boolean
+  pas: boolean
+  icerik: SoruIcerigi
+}
+
+/**
+ * Tur sonucu. `paslar` yanlışlarla aynı sırada: özet yalnızca soruları
+ * taşıyor, "sen şunu dedin" mi "pas geçtin" mi yazılacağını bu söylüyor.
+ */
+type Sonuc = { ozet: TurOzeti<SoruIcerigi>; paslar: boolean[]; yeniRekor: boolean }
 
 /** Bu ekranı paylaşan iki oyun; kimlik aynı zamanda sorulan soru türü. */
 type YaziOyunu = 'yazim' | 'noktalama'
@@ -206,9 +220,7 @@ export function YazimOyunuEkrani({
    */
   const [turNo, setTurNo] = useState(0)
 
-  const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<SoruIcerigi>; yeniRekor: boolean } | null>(
-    null,
-  )
+  const [sonuc, setSonuc] = useState<Sonuc | null>(null)
 
   /** Banka turunda havuz bankadaki kayıtlar; normal turda oyunun kendi havuzu. */
   const bankaHavuzu = useMemo(
@@ -278,6 +290,7 @@ export function YazimOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
+        paslar: verilenler.filter((c) => !c.dogruMu).map((c) => c.pas === true),
         yeniRekor:
           !yarim &&
           !bankaTuru &&
@@ -336,7 +349,7 @@ export function YazimOyunuEkrani({
    * doğruda da yanlışta da aynı: doğrusunu okumadan ekranın değişmesi,
    * elenirken bile öğretmeyi bırakmak olurdu.
    */
-  const ilerle = (dogruMu: boolean) => {
+  const ilerle = (dogruMu: boolean, pas = false) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
       /*
@@ -347,8 +360,9 @@ export function YazimOyunuEkrani({
         değişirdi. İkisi aynı karede güncellenince değişen tek şey bir
         sonraki soru oluyor.
       */
-      zorlukKaydet(dogruMu)
-      if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
+      // Pas bedelsiz: zorluğu düşürmüyor, Sıfır Tolerans'ta turu bitirmiyor.
+      if (!pas) zorlukKaydet(dogruMu)
+      if (!pas && elerMi(dogruMu, bankaTuru, gecerliMod)) {
         setElendi('yanlis')
         turBitir(cevaplarRef.current)
       } else {
@@ -364,7 +378,7 @@ export function YazimOyunuEkrani({
     const dogruMu = sik.dogruMu
     const icerik = icerikAl(soru)
     setCevaplar((onceki) => [...onceki, { soru: icerik, dogruMu }])
-    setGeriBildirim({ secilenMetin: sik.metin, dogruMu, icerik })
+    setGeriBildirim({ secilenMetin: sik.metin, dogruMu, pas: false, icerik })
     geriBildir(dogruMu)
     ilerle(dogruMu)
   }
@@ -374,11 +388,21 @@ export function YazimOyunuEkrani({
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     const icerik = icerikAl(soru)
     setCevaplar((onceki) => [...onceki, { soru: icerik, dogruMu: false }])
-    setGeriBildirim({ secilenMetin: null, dogruMu: false, icerik })
+    setGeriBildirim({ secilenMetin: null, dogruMu: false, pas: false, icerik })
     geriBildir(false)
     ilerle(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asama, geriBildirim, soru])
+
+  /** Pas hakkı: doğrusu gösterilip geçiliyor; yanlış sesi ve titreşimi yok. */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    const icerik = icerikAl(soru)
+    setCevaplar((onceki) => [...onceki, { soru: icerik, dogruMu: false, pas: true }])
+    setGeriBildirim({ secilenMetin: null, dogruMu: false, pas: true, icerik })
+    ilerle(false, true)
+  }
 
   /** Tur saati bitti: yanlış değil, tur biter. */
   const turSuresiDoldu = () => {
@@ -408,7 +432,7 @@ export function YazimOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: soruSuresi(oyunId),
@@ -428,7 +452,7 @@ export function YazimOyunuEkrani({
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
 
-  const maskotDurumu: MaskotDurumu = geriBildirim
+  const maskotDurumu: MaskotDurumu = geriBildirim && !geriBildirim.pas
     ? geriBildirim.dogruMu
       ? 'kutlama'
       : 'uzgun'
@@ -449,11 +473,12 @@ export function YazimOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{ kalan: kalanPas(cevaplar), kilitli: geriBildirim !== null, onPas: pasGec }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -498,10 +523,11 @@ export function YazimOyunuEkrani({
                     soru.tur === 'yazim' ? 'flex flex-col' : 'grid grid-cols-2',
                   )}
                 >
-                  {soru.siklar.map((sik) => (
+                  {soru.siklar.map((sik, i) => (
                     <SikDugmesi
                       key={sik.metin}
                       sik={sik}
+                      sira={i}
                       geriBildirim={geriBildirim}
                       onSec={() => cevapla(sik)}
                     />
@@ -530,13 +556,15 @@ export function YazimOyunuEkrani({
 
 /** Cevaptan sonra çıkan şerit; iki soru türü farklı şey söylüyor. */
 function CevapBildirimi({ geriBildirim }: { geriBildirim: GeriBildirim }) {
-  const { dogruMu, icerik } = geriBildirim
+  const { dogruMu, pas, icerik } = geriBildirim
+  const baslik = pas ? 'Pas geçtin' : dogruMu ? 'Aynen böyle!' : 'Olmadı'
 
   if (icerik.tur === 'yazim') {
     return (
       <Bildirim
         iyi={dogruMu}
-        baslik={dogruMu ? 'Aynen böyle!' : 'Olmadı'}
+        pas={pas}
+        baslik={baslik}
         aciklama={dogruMu ? `“${icerik.soru.yanlis}” değil` : `— doğrusu “${icerik.soru.dogru}”`}
       />
     )
@@ -545,7 +573,8 @@ function CevapBildirimi({ geriBildirim }: { geriBildirim: GeriBildirim }) {
   return (
     <Bildirim
       iyi={dogruMu}
-      baslik={dogruMu ? 'Aynen böyle!' : 'Olmadı'}
+      pas={pas}
+      baslik={baslik}
       aciklama={dogruMu ? undefined : `— yanlış olan ${ISARET_ADI[icerik.soru.yanlisIsaret]}`}
     />
   )
@@ -560,37 +589,21 @@ function CevapBildirimi({ geriBildirim }: { geriBildirim: GeriBildirim }) {
  */
 function SikDugmesi({
   sik,
+  sira,
   geriBildirim,
   onSec,
 }: {
   sik: Sik
+  sira: number
   geriBildirim: GeriBildirim | null
   onSec: () => void
 }) {
   const acikta = geriBildirim !== null
-  const secilen = acikta && geriBildirim.secilenMetin === sik.metin
-  const dogruSecim = secilen && sik.dogruMu
-  const yanlisSecim = secilen && !sik.dogruMu
-  /** Yanlış seçildiğinde doğrusu da işaretleniyor — öğrenme burada oluyor. */
-  const isaretli = acikta && !secilen && sik.dogruMu
+  const hal = sikHali(acikta, acikta && geriBildirim.secilenMetin === sik.metin, sik.dogruMu)
 
   return (
-    <button
-      type="button"
-      onClick={onSec}
-      disabled={acikta}
-      className={cn(
-        'golge-kart flex min-h-[62px] w-full items-center justify-center gap-2 rounded-[20px] border-2 px-4 py-3',
-        'font-display text-lg font-extrabold leading-snug transition',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        !acikta && 'border-border bg-card active:brightness-95',
-        dogruSecim && 'border-success bg-success text-white',
-        yanlisSecim && 'border-ikincil bg-ikincil text-white',
-        isaretli && 'border-success bg-card text-success',
-        acikta && !secilen && !sik.dogruMu && 'border-border bg-card opacity-45',
-      )}
-    >
-      <span className="flex min-w-0 flex-col items-center">
+    <OyunSikki sira={sira} hal={hal} onSec={onSec} className="min-h-[62px] py-3 text-lg">
+      <span className="flex flex-col items-center">
         {/* İşaret büyük, adı altında: tek başına bir “;” küçük ekranda “,” ile
             karışıyor, ad da işareti okumadan seçmeyi engellemiyor. */}
         <span className={cn('break-words', sik.altYazi && 'text-[28px] leading-[1.1]')}>
@@ -598,9 +611,7 @@ function SikDugmesi({
         </span>
         {sik.altYazi && <span className="text-[11.5px] font-semibold">{sik.altYazi}</span>}
       </span>
-      {(dogruSecim || isaretli) && <Check size={19} className="shrink-0" aria-hidden />}
-      {yanlisSecim && <X size={19} className="shrink-0" aria-hidden />}
-    </button>
+    </OyunSikki>
   )
 }
 
@@ -616,7 +627,7 @@ function SonucGorunumu({
   bildir,
 }: {
   oyunId: YaziOyunu
-  sonuc: { ozet: TurOzeti<SoruIcerigi>; yeniRekor: boolean }
+  sonuc: Sonuc
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -625,7 +636,7 @@ function SonucGorunumu({
   onCik: () => void
   bildir: BildirimKolu
 }) {
-  const { ozet, yeniRekor } = sonuc
+  const { ozet, paslar, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
   const kalan = ozet.yanlislar.length - gorunen.length
 
@@ -660,9 +671,9 @@ function SonucGorunumu({
               bildir={bildir}
             >
               {yanlis.tur === 'yazim' ? (
-                <YazimYanlisi soru={yanlis.soru} />
+                <YazimYanlisi soru={yanlis.soru} pas={paslar[sira]} />
               ) : (
-                <NoktalamaYanlisi soru={yanlis.soru} />
+                <NoktalamaYanlisi soru={yanlis.soru} pas={paslar[sira]} />
               )}
             </YanlisKarti>
           ))}
@@ -674,12 +685,20 @@ function SonucGorunumu({
   )
 }
 
-function YazimYanlisi({ soru }: { soru: YazimSorusu }) {
+function YazimYanlisi({ soru, pas }: { soru: YazimSorusu; pas: boolean }) {
   return (
     <>
       <b className="block font-display text-[13.5px] font-extrabold leading-tight">{soru.dogru}</b>
       <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
-        Sen <s className="text-ikincil">{soru.yanlis}</s> dedin
+        {pas ? (
+          <>
+            Pas geçtin · <s>{soru.yanlis}</s> değil
+          </>
+        ) : (
+          <>
+            Sen <s className="text-ikincil">{soru.yanlis}</s> dedin
+          </>
+        )}
       </span>
       {/* Kuralın kendisi: doğrusunu ezberlemek yerine neden öyle yazıldığını
           bilmek, havuzdaki benzer kelimelerin hepsini birden çözüyor. */}
@@ -696,12 +715,12 @@ function YazimYanlisi({ soru }: { soru: YazimSorusu }) {
  * Önce hatalı cümle, sonra doğrusu: iki cümleyi yan yana görmek, "hangi işaret
  * yanlıştı" cevabından daha çok şey öğretiyor — fark gözle bulunuyor.
  */
-function NoktalamaYanlisi({ soru }: { soru: NoktalamaSorusu }) {
+function NoktalamaYanlisi({ soru, pas }: { soru: NoktalamaSorusu; pas: boolean }) {
   return (
     <>
       <b className="block font-display text-[13.5px] font-extrabold leading-tight">{soru.cumle}</b>
       <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
-        Yanlış olan <b className="text-ikincil">{ISARET_ADI[soru.yanlisIsaret]}</b> — doğrusu:{' '}
+        {pas && 'Pas geçtin · '}Yanlış olan <b className="text-ikincil">{ISARET_ADI[soru.yanlisIsaret]}</b> — doğrusu:{' '}
         {soru.duzeltme}
       </span>
       <span className="mt-1.5 block border-t border-border pt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">

@@ -6,6 +6,7 @@ import type { Ayarlar, GunlukKayit, SoruKaydi } from '@/lib/types'
 import { bosSayisi, gunOzeti } from '@/lib/hesap'
 import { calismaSirasi, sadelestir } from '@/lib/dersler'
 import { useGeriKatmani } from '@/lib/geri'
+import { bosSifir, herhangiDolu } from '@/lib/bos-sifir'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { bugun, cn, gunKaydir, tariheCevir, tariheYaz, yediGunlukSerit } from '@/lib/utils'
 import { Alan, BaslikSatiri, Buton, Halka, Kart, Not, useKapatmaOnayi } from '@/components/ui'
@@ -571,13 +572,13 @@ function SoruEkleSayfasi({
   const [dogru, setDogru] = useState('')
   const [yanlis, setYanlis] = useState('')
 
-  const t = Number(toplam || 0)
-  const d = Number(dogru || 0)
-  const y = Number(yanlis || 0)
+  // Boş kutu 0 sayılır (60 soru, 60 doğru → yanlış boş kalabilir). Hiçbir sayı
+  // girilmemiş form yine kaydedilmez: toplam 0 olduğu için `t > 0` eler.
+  const t = bosSifir(toplam)
+  const d = bosSifir(dogru)
+  const y = bosSifir(yanlis)
   const hata = d + y > t
-  // "0" geçerli bir girdi (yanlış 0); "girilmemiş" boş alan demek.
-  const doluMu = toplam !== '' && dogru !== '' && yanlis !== ''
-  const gecerli = ders !== null && doluMu && t > 0 && !hata
+  const gecerli = ders !== null && t > 0 && !hata
 
   // En çok soru çözülen üç ders başta (Pomodoro'daki `calismaSirasi`); ölçü
   // geçmiş kayıtlardaki toplam soru sayısı. Sıra form açılınca bir kez kurulur.
@@ -587,7 +588,7 @@ function SoruEkleSayfasi({
 
   // Yalnız sayı girildiyse sorar: boş formu kapatmak bir şey kaybettirmez.
   const kapatmaOnayi = useKapatmaOnayi({ aciklama: 'Girdiğin sayılar kaydedilmeden pencere kapanır.' })
-  const girildi = toplam !== '' || dogru !== '' || yanlis !== ''
+  const girildi = herhangiDolu(toplam, dogru, yanlis)
 
   return (
     <div

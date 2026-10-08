@@ -31,6 +31,12 @@ sürümünden; kullanıcıdan öğrenilemiyor.
   `firebase_crashlytics_collection_enabled=false`). Çökme cihazda saklanır, uygulama
   yeniden açılınca **her seferinde sorulur**; "Gönderme" raporu siler. Ayarlarda
   soruyu kapatan anahtar yok (kaldırıldı). `firebase-analytics` bilerek yok.
+- Pencere **yalnız gerçek çökmede** açılır (`didCrashOnPreviousExecution`; kullanıcı
+  istedi, 2026-10). WebView kanallarının non-fatal kayıtları (`console.error`,
+  `window.onerror`, `unhandledrejection`, kaynak yükleme) için soru sorulmaz; kalıcı
+  "gönder" izni olmadığından **gönderilmeden silinir** (`deleteUnsentReports`), yoksa
+  birikir. Karar saf ve testli: `lib/cokme-karari.ts`. Cevaplanmadan kapatılan çökme
+  `rabi-cokme-cevapsiz-v1` bayrağıyla bir sonraki açılışta yeniden sorulur.
 
 **3. Play güncelleme denetimi (In-App Updates).** Ağa çıkan Play Store; giden yalnız
 paket adı ve sürüm.

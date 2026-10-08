@@ -63,6 +63,13 @@ export type Sablon = {
   yanlisKatsayi: number
   /** Hazır şablonlar silinemez; kopyalanıp düzenlenebilir. */
   hazir: boolean
+  /**
+   * Seviye tespit şablonuysa hangi sınıfın sınavı; 11 ve 12'de hangi alanın.
+   * Deneme türü satırında seviye tespit tek düğme, sınıf altındaki satırdan
+   * seçiliyor (`lib/seviye-tespit.ts`). `eski`: kullanıcının düzenlediği ve
+   * yerine yenisi gelen şablon — yalnızca onunla girilmiş denemeler için duruyor.
+   */
+  seviye?: { sinif: number; alan?: PuanTuru; eski?: boolean }
 }
 
 /** Bir denemede tek dersin sonucu. Boş = soruSayisi − doğru − yanlış. */

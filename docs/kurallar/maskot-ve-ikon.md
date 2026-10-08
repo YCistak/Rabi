@@ -64,6 +64,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   | `selamlayan` | eğilerek selamlayan | aylık özetin kapanışı ("Yarın yine buradayım") |
   | `kahkaha` | kahkaha atan | yalnızca durum kafası |
   | `yapboz` | yapboz tamamlayan | bütün mini oyunlar (kullanıcı istedi): yer olan yerde sorunun üstünde ortada 96 px; dar şekilli/tuşlu oyunlarda kartın sol üst köşesinde 68 px, kulaklar kartın dışına taşar (`KoseRabisi`, `oyun-kabuk.tsx`) |
+  | `oturan` | oturan (kaynak `oturan.png`, kullanıcı verdi) | oyun modu penceresinin başı, 80 px: tur başlamadan oyuncuyu bekliyor |
 
 - **Dönüşüm rastgele değil.** Aynı yere düşen pozlar `gununPozu` (`lib/maskot.ts`)
   ile günün tarihinden seçilir (gün içinde sabit, `gunun-hali.ts`teki cümle kuralı);
@@ -83,7 +84,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     (`dusunen`), cetvelle çizen (abaküs), kitap ayracı ve kutuya kitap
     (okuyan/kitaplı), deftere yazan (yalnız durum kafası), teleskop (dürbün; Hedefim
     maskotu 64 px, tam boy okunmaz).
-  - Anlamı belirsiz ruh hâlleri: oturan, çömelen, koşan, parmak ucunda yürüyen,
+  - Anlamı belirsiz ruh hâlleri: çömelen, koşan, parmak ucunda yürüyen,
     emekleyen, tek ayakta denge, yüzüstü ayak sallayan, utangaç, şaşırıp sıçrayan,
     çiçek tutan, silgiyle silen. Ekran bulununca kaynağı kopyalayıp
     betiğe eklemek yeter; boşta duran poz paketi şişirir.

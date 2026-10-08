@@ -47,8 +47,10 @@ export const OSYM_TEST_ADI: Record<OsymTest, string> = {
 
 /**
  * Hazır şablonlar. Ders dağılımları 2026 YKS'nin resmî soru sayılarına göredir;
- * "Seviye Tespit Sınavı" ise Asaf'ın okulunun uyguladığı 120 soruluk eşit ağırlık
+ * seviye tespit ise Asaf'ın okulunun uyguladığı 120 soruluk eşit ağırlık
  * formatı (TYT ile aynı soru sayısı ama tamamen farklı dağılım — karıştırılmamalı).
+ * O biçim 9. sınıfın; 10, 11 ve 12'ninkiler aşağıda ondan ve AYT'den
+ * türetiliyor (`SEVIYE_SABLONLARI`).
  *
  * Şablonun kimliği bilerek `okul` kaldı: kayıtlı denemeler `sablonId` ile buna
  * bağlı, kimlik değişseydi hepsi şablonsuz kalır ve net dökümleri kaybolurdu.
@@ -56,13 +58,14 @@ export const OSYM_TEST_ADI: Record<OsymTest, string> = {
  * Bu liste her açılışta koddan gelir — güncelleme yayınlandığında kullanıcının
  * kendi şablonlarına dokunmadan yenilenir (bkz. `sablonlariBirlestir`).
  */
-export const HAZIR_SABLONLAR: Sablon[] = [
+const TEMEL_SABLONLAR: Sablon[] = [
   {
     id: 'okul',
-    ad: 'Seviye Tespit Sınavı',
+    ad: 'Seviye Tespit · 9. sınıf',
     tur: 'okul',
     yanlisKatsayi: 4,
     hazir: true,
+    seviye: { sinif: 9 },
     dersler: [
       { id: 'edebiyat', ad: 'Edebiyat', soruSayisi: 30, osymTesti: 'ayt-edebiyat' },
       { id: 'matematik', ad: 'Matematik', soruSayisi: 30, osymTesti: 'ayt-mat' },
@@ -144,6 +147,68 @@ export const HAZIR_SABLONLAR: Sablon[] = [
   },
 ]
 
+/** Alanın kısa adı — seviye tespit şablonlarının adında ve alan seçiminde. */
+export const ALAN_KISA_ADI: Record<PuanTuru, string> = {
+  say: 'Sayısal',
+  ea: 'EA',
+  soz: 'Sözel',
+  dil: 'Dil',
+}
+
+/** Alanın gerçek sınavının şablonu: 11 ve 12'nin seviye tespiti onun dersleriyle. */
+const ALAN_SINAVI: Record<PuanTuru, string> = {
+  say: 'ayt-say',
+  ea: 'ayt-ea',
+  soz: 'ayt-soz',
+  dil: 'ydt',
+}
+
+function temelSablon(id: string): Sablon {
+  return TEMEL_SABLONLAR.find((s) => s.id === id)!
+}
+
+/**
+ * 10, 11 ve 12. sınıfın seviye tespit şablonları (kullanıcı istedi, 2026-10).
+ *
+ * - 10. sınıf: 9'un dersleri ve Felsefe. 10'da Felsefe dersi başlıyor; soru
+ *   sayısı Din Kültürü'yle aynı tutuldu (kullanıcı seçti).
+ * - 11 ve 12: AYT'nin aynısı, öğrencinin alanına göre. Dersler ve kimlikler
+ *   AYT şablonundan kopya; tür yine `okul`, deneme listesinde seviye
+ *   tespitlerin yanında duruyor (tahmin türe değil testlere bakıyor).
+ *
+ * Kullanıcı bunların derslerini "Dersleri düzenle"yle değiştirebiliyor;
+ * hazır şablon değişmiyor, yanına kullanıcının şablonu ekleniyor
+ * (`lib/seviye-tespit.ts`).
+ */
+const SEVIYE_SABLONLARI: Sablon[] = [
+  {
+    ...temelSablon('okul'),
+    id: 'okul-10',
+    ad: 'Seviye Tespit · 10. sınıf',
+    seviye: { sinif: 10 },
+    dersler: [
+      ...temelSablon('okul').dersler.filter((d) => d.id !== 'din'),
+      { id: 'felsefe', ad: 'Felsefe', soruSayisi: 6, osymTesti: 'ayt-felsefe' },
+      ...temelSablon('okul').dersler.filter((d) => d.id === 'din'),
+    ],
+  },
+  ...[11, 12].flatMap((sinif) =>
+    (Object.keys(ALAN_SINAVI) as PuanTuru[]).map(
+      (alan): Sablon => ({
+        id: `okul-${sinif}-${alan}`,
+        ad: `Seviye Tespit · ${sinif}. sınıf ${ALAN_KISA_ADI[alan]}`,
+        tur: 'okul',
+        yanlisKatsayi: 4,
+        hazir: true,
+        seviye: { sinif, alan },
+        dersler: temelSablon(ALAN_SINAVI[alan]).dersler,
+      }),
+    ),
+  ),
+]
+
+export const HAZIR_SABLONLAR: Sablon[] = [...TEMEL_SABLONLAR, ...SEVIYE_SABLONLARI]
+
 export const VARSAYILAN_SABLON_ID = 'okul'
 
 /** Şablonun toplam soru sayısı. */
@@ -191,16 +256,13 @@ export function secilebilirSablonlar(
   sinif: number,
   puanTuru: PuanTuru | null,
 ): Sablon[] {
-  const alanSinavi: Record<PuanTuru, string> = {
-    say: 'ayt-say',
-    ea: 'ayt-ea',
-    soz: 'ayt-soz',
-    dil: 'ydt',
-  }
+  // Seviye tespit satırda tek düğme (`okul`); sınıfı ve alanı altındaki
+  // satırdan seçiliyor, öteki seviye şablonları burada yer tutmuyor.
+  const turSatiri = sablonlar.filter((s) => !s.seviye || s.id === 'okul')
   // Kararsız öğrenci: süzgeç yok, tüm hazır şablonlar çıkıyor.
-  if (puanTuru === null) return sablonlar
-  const alanSinaviId = sinif >= 11 && puanTuru ? alanSinavi[puanTuru] : null
-  return sablonlar.filter(
+  if (puanTuru === null) return turSatiri
+  const alanSinaviId = sinif >= 11 && puanTuru ? ALAN_SINAVI[puanTuru] : null
+  return turSatiri.filter(
     (s) => !s.hazir || s.id === 'okul' || s.id === 'tyt' || s.id === alanSinaviId,
   )
 }
