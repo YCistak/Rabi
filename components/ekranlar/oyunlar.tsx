@@ -109,7 +109,7 @@ const BASLIK_SATIRLARI: Record<OyunId, [string, string]> = {
   ses: ['Ses', 'Olayları'],
   oge: ['Cümlenin', 'Ögeleri'],
   soz: ['Deyimler ve', 'Atasözleri'],
-  islem: ['Dört', 'İşlem'],
+  islem: ['Hızlı', 'Hesap'],
   bolunme: ['Bölünebilme', 'Kuralları'],
   aci: ['Üçgende', 'Açılar'],
   ucgen: ['Özel', 'Üçgenler'],
