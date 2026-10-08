@@ -1,6 +1,8 @@
 import { program } from '../tip'
 import { girisHikayeTemalari } from './12-turkce-hikaye'
 import { siirTemalari } from './12-turkce-siir'
+import { romanTiyatroTemalari } from './12-turkce-roman'
+import { denemeSoylevTemalari } from './12-turkce-deneme'
 
 /**
  * 12. sınıf Türk Dili ve Edebiyatı — **2018 programı** (MEB Ortaöğretim Türk
@@ -23,4 +25,6 @@ import { siirTemalari } from './12-turkce-siir'
 export const turkce12 = program('turkce', 12, 'Cumhuriyet edebiyatı: şiir, roman, sahne', [
   ...girisHikayeTemalari,
   ...siirTemalari,
+  ...romanTiyatroTemalari,
+  ...denemeSoylevTemalari,
 ])
