@@ -28,8 +28,7 @@ export function SecimKutusu({
  * Tek satırlık yatay ders şeridi (Pomodoro ve Soru Takibi aynı görünümü
  * kullanıyor). Sıra çağıran yerde kurulur (`calismaSirasi`). Şerit kartın
  * kenarına kadar kayıyor (`-mx-4 px-4`): kesik duran son çip, yana
- * kaydırılabildiğini söyleyen tek işaret. Yana kayan kutunun içinden başlayan
- * hareket sekme değiştirmiyor (`sekme-kaydirma.ts`). Seçili çipe yeniden
+ * kaydırılabildiğini söyleyen tek işaret. Seçili çipe yeniden
  * dokunmak seçimi kaldırır.
  */
 export function DersSeridi({
