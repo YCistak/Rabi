@@ -59,6 +59,8 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   (Matematik eklendi: diziler, toplam-fark, limit, türev, integral, çemberin
   analitiği); yalnız `mat12-*` destesine eşli konu `MAARIF_SINIF`ta "henüz yok"
   kalır. `takip.test.ts` iki uçtaki kimlikleri denetler.
+  - Biyoloji 12: Genden Proteine, Bitki Biyolojisi, Canlılar ve Çevre `byl12-*`
+    destelerine eşli (Maarif'te yine "henüz yok"); AYT Enerji 10'un destelerinde kalır.
 - **İşaret satırda:** solda ilerleme dairesi (aşama sayısına göre yay; dokununca
   Bitirdim aç/kapa), sağda sabit genişlikte üç yuva — harita (salt okunur, boşken kesik
   kenarlı; karşılığı yoksa boş ama yer tutar), okul, soru (44 piksel dokunma alanı).
