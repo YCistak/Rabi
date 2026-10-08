@@ -196,6 +196,15 @@ describe('AYT\'de TYT ile ortak konuların haritası', () => {
   })
 })
 
+describe('12. sınıf Edebiyat eşlemesi', () => {
+  it('Cumhuriyet Dönemi 12. sınıf hikâye, şiir, roman ve tiyatro desteleriyle eşli', () => {
+    const desteler = HARITA_ESLEMESI['ayt-edb-cumhuriyet'] ?? []
+    expect(desteler.length).toBeGreaterThan(0)
+    for (const deste of desteler) expect(deste.startsWith('trk12-'), deste).toBe(true)
+    expect(HARITA_ESLEMESI['ayt-edb-ogretici']).toEqual(expect.arrayContaining(['trk12-deneme', 'trk12-soylev']))
+  })
+})
+
 describe('haritaDurumu — otomatik aşama', () => {
   it('eşlemesi olmayan konuda null', () => {
     expect(haritaDurumu('ayt-kim-organik', {})).toBeNull()

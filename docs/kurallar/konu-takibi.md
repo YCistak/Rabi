@@ -59,6 +59,9 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   (Matematik eklendi: diziler, toplam-fark, limit, türev, integral, çemberin
   analitiği); yalnız `mat12-*` destesine eşli konu `MAARIF_SINIF`ta "henüz yok"
   kalır. `takip.test.ts` iki uçtaki kimlikleri denetler.
+  12. sınıf Edebiyat (`trk12-*`): AYT "Cumhuriyet Dönemi Türk Edebiyatı" hikâye, şiir,
+  roman ve tiyatro desteleriyle, "Öğretici Metinler" deneme ve söylev desteleriyle,
+  "Tiyatro" iki tiyatro desteyle eşli; dil/sözlük destesi hiçbir başlığa eşli değil.
 - **İşaret satırda:** solda ilerleme dairesi (aşama sayısına göre yay; dokununca
   Bitirdim aç/kapa), sağda sabit genişlikte üç yuva — harita (salt okunur, boşken kesik
   kenarlı; karşılığı yoksa boş ama yer tutar), okul, soru (44 piksel dokunma alanı).
