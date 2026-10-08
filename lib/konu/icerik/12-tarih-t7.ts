@@ -132,7 +132,7 @@ export const tarih12Kuresel = [
       ['Tam üyelik başvurusu', 'Türkiye 14 Nisan 1987’de tam üyelik başvurusu yaptı.\nKıbrıs ve insan hakları sorunları süreci zorlaştırdı.'],
       ['Maastricht', '1992 Maastricht Antlaşması ile AB kuruldu (yürürlük 1993).\nOrtak para ve ortak politikalar öngörüldü.'],
       ['Kopenhag Kriterleri', '1993’te belirlendi.\nDemokrasi, hukuk devleti, insan hakları ve işleyen piyasa ekonomisi şartı getirdi.'],
-      ['Gümrük Birliği', 'Türkiye-AB Gümrük Birliği 1 Ocak 1996’da yürürlüğe girdi.\nTürkiye üye olmadan gümrük birliğine giren ilk ülke oldu.'],
+      ['Gümrük Birliği', 'Türkiye-AB Gümrük Birliği 1 Ocak 1996’da yürürlüğe girdi.\nTürkiye tam üye olmadan gümrük birliğine girdi.'],
       ['Lüksemburg (1997)', '1997 Lüksemburg Zirvesi Türkiye’yi aday ilan etmedi.\nİlişkiler bir süre gerildi.'],
       ['Helsinki (1999)', 'Aralık 1999 Helsinki Zirvesi Türkiye’ye adaylık statüsü verdi.\nKopenhag Kriterleri uygulanacaktı.'],
       ['Müzakere süreci', '3 Ekim 2005’te katılım müzakereleri başladı.\nÜyelik hedefi sürdü.'],

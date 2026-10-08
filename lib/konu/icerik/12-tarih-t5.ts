@@ -193,7 +193,7 @@ export const tarih12Yumusama = [
       ['Petrol ambargosu', '1973’te Arap üreticiler Batı’ya petrol satışını kısıtladı.\nFiyatlar yükseldi, dünya ekonomisi bunalıma girdi.'],
       ['OPEC', '1960’ta kuruldu.\nPetrol üretici ülkeler fiyat ve üretim üzerinde etkili hâle geldi.'],
       ['Camp David', '1978 Camp David görüşmeleri, 1979 Mısır-İsrail Barış Antlaşması.\nMısır İsrail’i tanıyan ilk Arap devleti oldu.'],
-      ['İran İslam Devrimi', '1979’da Şah Rıza Pehlevi devrildi, Humeyni liderliğinde yeni rejim kuruldu.\nBölgesel dengeler değişti.'],
+      ['İran İslam Devrimi', '1979’da Şah Muhammed Rıza Pehlevi devrildi, Humeyni liderliğinde yeni rejim kuruldu.\nBölgesel dengeler değişti.'],
       ['İran-Irak Savaşı', '22 Eylül 1980’de Irak İran’a saldırdı.\nSavaş 1988’de BM ateşkesiyle bitti.'],
       ['Savaşın etkisi', 'Savaş sekiz yıl sürdü, iki ülke ağır kayıp verdi.\nTürkiye tarafsız kaldı.'],
       ['Filistin sorunu', 'Filistin Kurtuluş Örgütü (FKÖ) 1964’te kuruldu.\nİntifada 1987’de başladı.'],
@@ -211,7 +211,7 @@ export const tarih12Yumusama = [
       ['SSCB Afganistan’ı 1979’da işgal etti.', true, 'Aralık 1979.'],
     ],
     secimler: [
-      ['İran Devrimi’nin lideri kimdir?', 'Humeyni', 'Şah Rıza Pehlevi', 'Şah devrildi.'],
+      ['İran Devrimi’nin lideri kimdir?', 'Humeyni', 'Muhammed Rıza Şah', 'Şah devrildi.'],
       ['İran-Irak Savaşı hangi yıl başladı?', '1980', '1973', '1973 Arap-İsrail Savaşı.'],
       ['1967’de hangi savaş yaşandı?', 'Altı Gün Savaşı', 'Kore Savaşı', 'Altı Gün Savaşı.'],
       ['Camp David ile kim barış yaptı?', 'Mısır', 'Suriye', 'Mısır-İsrail.'],
