@@ -181,7 +181,7 @@ describe('AYT\'de TYT ile ortak konuların haritası', () => {
   })
 
   it('AYT satırında harita dolu sayılıyor: aşama ve özet', () => {
-    const ilerleme = tamamla({}, 'fzk10-periyodik')
+    const ilerleme = tamamla(tamamla({}, 'fzk10-periyodik'), 'fzk12-bhh')
     expect(konuDurumu('ayt-fiz-bhh', BOS_TAKIP, ilerleme).dolu).toBe(1)
     expect(dersOzeti(yksDersBul('ayt-fizik')!, BOS_TAKIP, ilerleme).harita).toBe(1)
   })

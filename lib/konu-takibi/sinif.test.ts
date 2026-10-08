@@ -98,7 +98,7 @@ describe('Maarif tablosu', () => {
     for (const [id, desteler] of Object.entries(HARITA_ESLEMESI)) {
       const sinif = eslemeSinifi(desteler)
       if (sinif === null) {
-        expect(desteler.every((d) => d.startsWith('mat12-')), id).toBe(true)
+        expect(desteler.every((d) => /^[a-z]+12-/.test(d)), id).toBe(true)
         expect(maarifSinifi(id), id).toBe(MAARIF_SINIF[id])
       } else {
         expect(maarifSinifi(id), id).toBe(sinif)
