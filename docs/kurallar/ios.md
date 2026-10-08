@@ -61,12 +61,8 @@ reddedildi.
 - Android 14+'da aynı arayüz: `MainActivity.geriKaydirmayiBagla`
   (`OnBackPressedCallback`), yalnız sol kenar; `enableOnBackInvokedCallback` yalnız
   `MainActivity`de (odak katmanının `KEYCODE_BACK`i bozulmasın).
-- **Sekmeler arası yana kaydırma** (iki platform, `lib/sekme-kaydirma.ts`, hesap
-  `lib/sekme-kaydirma-hesap.ts` → `birakmaKarari`): sıra `SEKME_SIRASI`; sayfa parmağı
-  izler, karar ekranın üçte biri ya da hızlı savrulma; kilitlenince `touchmove`
-  engellenir (pasif olmayan dinleyici). Yalnız yatay kayan şerit önce kendini kaydırır.
-  Sayılmaz: kenardan başlayan, yazı alanı, alt menü, araç/form/genel test/tanıtım ya da
-  açık katman varken.
+- **Sekmeler arası yana kaydırma yok** (iki platform; kullanıcı kaldırttı, 2026-10):
+  sekme yalnız alt menüden değişir. Kenardan geri kaydırma bundan ayrı, durur.
 - Ses oturumu `.playback` + `.mixWithOthers` (`AppDelegate.swift`): sessizde de çalar,
   arkadaki müziği kesmez. Sayfa ve iç kutularda kaydırma çubuğu yok
   (`showsVerticalScrollIndicator`, `globals.css`).

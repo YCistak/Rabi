@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { programBul, tumKonular } from './index'
+import { programBul, sinifDersleri, tumKonular } from './index'
 import { ilerlemeyiYaz, type KonuIlerlemeleri } from './ilerleme'
 import {
   haritaAcilisSinifi,
+  pencereBilgisi,
   sinifDegisimi,
+  sinifOrtalamasi,
   sinifPasifMi,
   sinifSekmeleri,
   sinifYuzdesi,
@@ -91,5 +93,22 @@ describe('haritanın sınıf sekmesi', () => {
     expect(yonlendirmeMetni('Türev', 12, 12)).toBeNull()
     expect(yonlendirmeMetni('Logaritma', 11, 12)).toBe('Logaritma için 11. sınıfa geçildi')
     expect(yonlendirmeMetni('Kümeler', 9, 12)).toBe('Kümeler için 9. sınıfa geçildi')
+  })
+})
+
+describe('haritanın seçim penceresi', () => {
+  it('sınıf yüzdesi o sınıftaki derslerin ortalaması; 12 dolu', () => {
+    const dersSayisi = sinifDersleri(9).length
+    const mat = Math.round((2 / tumKonular(programBul('matematik', 9)!).length) * 100)
+    expect(sinifOrtalamasi(9, bitir('matematik', 9, 2))).toBe(Math.round(mat / dersSayisi))
+    expect(sinifOrtalamasi(9, {})).toBe(0)
+    expect(sinifOrtalamasi(12, {})).toBe(0) // 12 artık dolu (8 ders)
+  })
+
+  it('bakılan sınıfta seçili ders yoksa söylüyor, varsa ya da aynı sınıfsa susuyor', () => {
+    expect(pencereBilgisi({ ders: 'ingilizce', sinif: 11 }, 9)).toBe('İngilizce 9. sınıfta yok, başka bir ders seç.')
+    expect(pencereBilgisi({ ders: 'kimya', sinif: 10 }, 9)).toBeNull()
+    expect(pencereBilgisi({ ders: 'ingilizce', sinif: 11 }, 11)).toBeNull()
+    expect(pencereBilgisi({ ders: 'turkce', sinif: 10 }, 11)).toBeNull()
   })
 })

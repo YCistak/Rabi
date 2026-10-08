@@ -1244,24 +1244,96 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
-   Kurulum sonrası hazırlık ekranı
+   Kurulum sonrası "uygulaman hazır" ekranı (`components/kurulum-hazir.tsx`)
 
-   Çubuk beklemenin ne kadar süreceğini söyleyen tek işaret; süresi bileşenden
-   `--hazirlik-sure` ile geliyor ki iki yerde iki ayrı sayı tutulmasın —
-   ayrılırlarsa çubuk ya erken dolup boş boş bekler ya ekran çubuk dolmadan
-   kalkar.
+   Sıra: hale açılır → tavşan yaylanarak gelir (konfeti onun ortasından,
+   bileşendeki betikle) → başlık → kutucuklar 90 ms arayla kalkıp oturur, her
+   birinde tik belirir → en son düğme. Kutucuk gecikmesi `--sira`dan.
 
-   `prefers-reduced-motion` altında **susmuyor**: buradaki hareket süsleme
-   değil, ilerlemenin kendisi. Susturulsaydı kullanıcı dokuz saniye boyunca boş
-   bir çubuğa bakardı.
+   `prefers-reduced-motion` altında hepsi son hâlinde durur; konfetiyi de
+   bileşen atlar. Ekran bilgi taşıyor ama hareket bilgi taşımıyor.
    --------------------------------------------------------------------------- */
-@keyframes hazirlikDolusu {
-  from { width: 0%; }
-  to { width: 100%; }
+.hazir-hale {
+  background: radial-gradient(closest-side, var(--primary-soft) 0%, rgb(251 238 231 / 0.55) 55%, rgb(251 238 231 / 0) 100%);
+  animation: hazirHale 900ms ease-out both;
+}
+.hazir-maskot {
+  animation: hazirMaskotGel 700ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.hazir-maskot > img {
+  transform-origin: 50% 100%;
+  animation: hazirNefes 3.6s ease-in-out 1.2s infinite;
+}
+.hazir-yukari {
+  animation: hazirYukari 550ms ease-out both;
+}
+.hazir-kutu {
+  animation: hazirKalk 560ms cubic-bezier(0.3, 1.35, 0.55, 1) both;
+  animation-delay: calc(950ms + var(--sira, 0) * 90ms);
+}
+.hazir-tik {
+  box-shadow: 0 0 0 3px var(--card);
+  animation: hazirTik 420ms cubic-bezier(0.34, 1.7, 0.64, 1) both;
+  animation-delay: calc(1450ms + var(--sira, 0) * 90ms);
+}
+/* Tik oturunca etrafından bir halka yayılıp söner. */
+.hazir-tik::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid var(--success);
+  opacity: 0;
+  animation: hazirHalka 650ms ease-out both;
+  animation-delay: calc(1520ms + var(--sira, 0) * 90ms);
+}
+.hazir-konfeti {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform, opacity;
 }
 
-.hazirlik-cubugu {
-  animation: hazirlikDolusu var(--hazirlik-sure, 9110ms) cubic-bezier(0.35, 0, 0.25, 1) forwards;
+@keyframes hazirHale {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes hazirMaskotGel {
+  0% { opacity: 0; transform: translateY(24px) scale(0.7); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes hazirNefes {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  50% { transform: translateY(-3px) scale(1.012, 0.99); }
+}
+@keyframes hazirYukari {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes hazirKalk {
+  0% { opacity: 0; transform: translateY(26px) scale(0.84); }
+  60% { opacity: 1; transform: translateY(-4px) scale(1.025); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes hazirTik {
+  from { opacity: 0; transform: scale(0) rotate(-40deg); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes hazirHalka {
+  0% { opacity: 0.7; transform: scale(0.8); }
+  100% { opacity: 0; transform: scale(1.9); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hazir-hale,
+  .hazir-maskot,
+  .hazir-maskot > img,
+  .hazir-yukari,
+  .hazir-kutu,
+  .hazir-tik,
+  .hazir-tik::after {
+    animation: none;
+  }
 }
 
 /*
@@ -2170,14 +2242,6 @@ body {
   Önizlemesiyle geri gelinen ekran hiç kaymıyor: kaydırma sırasında altında
   duran görüntüsü zaten tam yerine oturdu, gerçek ekran onun yerini alıyor.
 */
-:root .sayfa-girisi.sayfa-sagdan {
-  animation: sayfaSagdan 260ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
-}
-
-/* Yana kaydırarak sekme değiştirmede (`lib/sekme-kaydirma.ts`) yeni sekme
-   sağdan (`.sayfa-sagdan`) ya da soldan (`.sayfa-geri`) geliyor; parmağın
-   yönü ekranın yönü olsun. */
-
 :root .sayfa-girisi.sayfa-yerinde {
   animation: none;
 }
@@ -2203,8 +2267,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   :root[data-platform='ios'] .sayfa-ileri,
-  :root .sayfa-girisi.sayfa-geri,
-  :root .sayfa-girisi.sayfa-sagdan {
+  :root .sayfa-girisi.sayfa-geri {
     animation: none;
   }
 }

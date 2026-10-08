@@ -8,7 +8,6 @@ import {
   Bug,
   Castle,
   Check,
-  ChevronDown,
   CloudRain,
   Compass,
   Crown,
@@ -46,10 +45,8 @@ import {
   Zap,
 } from 'lucide-react'
 import {
-  dersBul,
   okumaDakikasi,
   programBul,
-  sinifDersleri,
   tumKonular,
   type Konu,
   type HaritaSinifi,
@@ -72,9 +69,7 @@ import {
   haritaDersAdi,
   sinifDegisimi,
   sinifPasifMi,
-  sinifSekmeleri,
   yonlendirmeMetni,
-  type SinifSekmesi as SinifSekmesiVerisi,
 } from '@/lib/konu/sinif-sekmesi'
 import { bugun, cn } from '@/lib/utils'
 import { useGeriKatmani } from '@/lib/geri'
@@ -84,6 +79,7 @@ import { Rabi } from '@/components/maskot/rabi'
 import { KartDestesi, type DesteSonucu } from '@/components/konu/kart-destesi'
 import type { OkumaSeansi } from '@/lib/konu/okuma-suresi'
 import { SoruSahnesi, type SahneSonucu } from '@/components/konu/soru-sahnesi'
+import { SecimKarti, SecimPenceresi } from '@/components/konu/harita-secimi'
 
 /**
  * Konu Anlatımı haritası — kitaplı yol.
@@ -345,10 +341,8 @@ export function KonuHaritasiEkrani({
   /** Kilidi açılmak istenen konu — "emin misin" onayı bunu bekliyor. */
   const [kilitOnayi, setKilitOnayi] = useState<Konu | null>(null)
   /*
-    Ders seçici **kapalı** başlıyor. Yedi ders çipi sürekli açıkken ekranın
-    üstünü kaplıyor, patika katlamanın altında kalıyordu; oysa ders bir kez
-    seçilip uzun süre değişmiyor. Sınıf ise burada değil, patikanın üstündeki
-    her zaman görünen sekmede (`SinifSekmesi`).
+    Sınıf ve ders seçimi alttan açılan pencerede (`SecimPenceresi`); üstte
+    yalnız seçimi söyleyen tek kart duruyor ki patika ilk ekrandan başlasın.
   */
   const [secimAcik, setSecimAcik] = useState(false)
 
@@ -396,12 +390,7 @@ export function KonuHaritasiEkrani({
   // Hiçbir dersi yazılmamış sınıf. 12'de Matematik yazıldı; kart yalnız ileride
   // içeriği boşalan bir sınıf ya da eski kayıt için duruyor.
   const yapimda = sinifPasifMi(secim.sinif)
-  const ders = dersBul(secim.ders)
   const dersAdi = haritaDersAdi(secim.ders, secim.sinif)
-  const sekmeler = useMemo(
-    () => sinifSekmeleri(secim.ders, ilerlemeler, kullaniciSinifi),
-    [secim.ders, ilerlemeler, kullaniciSinifi],
-  )
   const bicim = haritaTemasi(secim.ders)
   const program = useMemo(() => programBul(secim.ders, secim.sinif), [secim])
   /** Program boyunca tek sıra: kilit tema sınırına değil, bir önceki konuya bakıyor. */
@@ -577,88 +566,25 @@ export function KonuHaritasiEkrani({
           🗺️
         </span>
       </header>
-      <Kart className="overflow-hidden p-0">
-        <button
-          type="button"
-          onClick={() => setSecimAcik((o) => !o)}
-          aria-expanded={secimAcik}
-          className="flex w-full items-center gap-3 px-3.5 py-3 text-left transition active:brightness-[0.98]"
-        >
-          <span
-            className="emoji grid size-10 shrink-0 place-items-center rounded-[14px] text-[20px]"
-            style={{ background: bicim.zemin }}
-            aria-hidden
-          >
-            {ders.ikon}
-          </span>
-          <span className="min-w-0 flex-1">
-            <span
-              className="block text-[10px] font-extrabold tracking-[0.09em] uppercase"
-              style={{ color: bicim.murekkep }}
-            >
-              Ders
-            </span>
-            <span className="block truncate font-display text-[15px] font-extrabold tracking-tight">
-              {dersAdi}
-            </span>
-          </span>
-          <span className="inline-flex h-9 shrink-0 items-center gap-1 rounded-full bg-muted pr-2.5 pl-3 text-[13px] font-extrabold text-muted-foreground">
-            Değiştir
-            <ChevronDown
-              size={15}
-              strokeWidth={3}
-              aria-hidden
-              className={cn('transition-transform', secimAcik && 'rotate-180')}
-            />
-          </span>
-        </button>
-
-        {/* Çipin rengi haritanın rengi: seçilen dersin bandı hangi tondaysa
-            çip de o tonda; ders değişince ekranın ne renge döneceği çipten
-            okunuyor. */}
-        {secimAcik && !yapimda && (
-          <div className="flex gap-2 overflow-x-auto border-t border-border px-3.5 py-3">
-            {sinifDersleri(secim.sinif).map((d) => {
-              const secili = secim.ders === d.id
-              const db = haritaTemasi(d.id)
-              return (
-                <button
-                  key={d.id}
-                  type="button"
-                  onClick={() => {
-                    setSecim({ ...secim, ders: d.id })
-                    setSinifBilgisi(null)
-                  }}
-                  aria-pressed={secili}
-                  className={cn(
-                    'flex shrink-0 items-center gap-1.5 rounded-md px-3.5 py-2 text-[13px] font-extrabold transition active:brightness-95',
-                    !secili && 'bg-muted text-muted-foreground',
-                  )}
-                  style={
-                    secili
-                      ? {
-                          background: db.zemin,
-                          color: db.murekkep,
-                          boxShadow: `0 0 0 2px ${db.kenar}`,
-                        }
-                      : undefined
-                  }
-                >
-                  <span aria-hidden className="emoji">{d.ikon}</span>
-                  {haritaDersAdi(d.id, secim.sinif)}
-                </button>
-              )
-            })}
-          </div>
-        )}
-      </Kart>
-
-      <SinifSekmesi
-        sekmeler={sekmeler}
-        secili={secim.sinif}
-        dersAdi={dersAdi}
-        onSec={sinifSec}
+      <SecimKarti
+        secim={secim}
+        ilerlemeler={ilerlemeler}
+        acik={secimAcik}
+        onAc={() => setSecimAcik(true)}
       />
+      {secimAcik && (
+        <SecimPenceresi
+          secim={secim}
+          ilerlemeler={ilerlemeler}
+          onKapat={() => setSecimAcik(false)}
+          onSec={(yeni) => {
+            setSecimAcik(false)
+            if (yeni.sinif !== secim.sinif) setYonlendirme(null)
+            setSecim(yeni)
+            setSinifBilgisi(null)
+          }}
+        />
+      )}
 
       {sinifBilgisi && (
         <p role="status" className="-mt-2 px-1 text-[12.5px] font-bold text-muted-foreground">
@@ -785,72 +711,6 @@ export function KonuHaritasiEkrani({
     </div>
   )
 }
-
-/**
- * Sınıf sekmesi — patikanın hemen üstünde, her zaman görünür: 9 · 10 · 11 · 12.
- *
- * Her sekmenin altında seçili dersin o sınıftaki ilerlemesi yazıyor; ders o
- * sınıfta yoksa çizgi. Kullanıcının kendi sınıfında küçük bir "sen" işareti
- * var. İçeriği olmayan sınıf pasif ve "Yakında" rozetli: dokunuşu boş
- * bir ekrana götürmüyor. Hesaplar `lib/konu/sinif-sekmesi.ts`te.
- */
-function SinifSekmesi({
-  sekmeler,
-  secili,
-  dersAdi,
-  onSec,
-}: {
-  sekmeler: SinifSekmesiVerisi[]
-  secili: HaritaSinifi
-  dersAdi: string
-  onSec: (sinif: HaritaSinifi) => void
-}) {
-  return (
-    <div role="group" aria-label="Sınıf" className="grid grid-cols-4 gap-1 rounded-[18px] bg-muted/70 p-1">
-      {sekmeler.map(({ sinif, yuzde, pasif, sen }) => {
-        const seciliMi = sinif === secili
-        const etiket = `${sinif}. sınıf${sen ? ', senin sınıfın' : ''}${
-          pasif ? ', yakında' : yuzde === null ? `, ${dersAdi} yok` : `, ${dersAdi} yüzde ${yuzde}`
-        }`
-        return (
-          <button
-            key={sinif}
-            type="button"
-            disabled={pasif}
-            onClick={() => onSec(sinif)}
-            aria-pressed={seciliMi}
-            aria-label={etiket}
-            className={cn(
-              'relative flex min-h-[52px] flex-col items-center justify-center rounded-[14px] transition',
-              seciliMi ? 'golge-kart bg-card text-foreground' : 'text-muted-foreground active:bg-card/60',
-              pasif && 'opacity-60',
-            )}
-          >
-            {sen && (
-              <span
-                aria-hidden
-                className="absolute top-1 right-1.5 rounded-full bg-primary-parlak px-1 text-[8.5px] leading-[13px] font-black text-white"
-              >
-                sen
-              </span>
-            )}
-            <span className="rakam font-display text-[16px] leading-tight font-extrabold">{sinif}.</span>
-            {pasif ? (
-              <span className="mt-0.5 rounded-full bg-background px-1.5 text-[9.5px] leading-[15px] font-extrabold">
-                Yakında
-              </span>
-            ) : (
-              <span className={cn('rakam mt-0.5 text-[11px] leading-[15px] font-bold', seciliMi && 'text-primary')}>
-                {yuzde === null ? '—' : `%${yuzde}`}
-              </span>
-            )}
-          </button>
-        )
-      })}
-    </div>
-  )
-}
-
 
 /**
  * Tek tema: üstte yapışkan başlık bandı, altında basamakların kitaplı yolu.

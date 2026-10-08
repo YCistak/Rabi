@@ -209,7 +209,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'islem',
     ders: 'matematik',
-    ad: 'Dört İşlem',
+    ad: 'Hızlı Hesap',
     kisaAciklama: 'İşlem hızını aç, sonucu tuşla yaz',
     ikon: '🧮',
     ozet: `Ekrana gelen işlemin sonucunu tuş takımıyla yazıp onaylarsın; sonuçlar hep tam sayı. Hangi işlemlerle çalışacağını aşağıdan seçersin.`,
@@ -247,6 +247,8 @@ export const OYUNLAR: OyunTanimi[] = [
     id: 'edebiyat',
     ders: 'turkce',
     ad: 'Eserler ve Yazarlar',
+    // Kaldırıldı (kullanıcı istedi), soruları ileride kullanılabilir diye silinmedi.
+    kapali: true,
     kisaAciklama: 'Eseri yazarıyla eşleştir',
     ikon: '📚',
     ozet: `Üstteki esere, sonra alttaki yazarına dokunursun — sıra fark etmez. Altı çift bitince yeni altılı gelir.`,

@@ -46,7 +46,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   | `durbunlu` | dürbünle bakan | kurulum › bölüm |
   | `elleri-belde` | elleri belde | kurulum › günlük hedef |
   | `megafonlu` | megafonla konuşan | kurulum › hatırlatma |
-  | `cantali` | çanta kapatan | "Uygulaman hazırlanıyor" |
+  | `cantali` | çanta kapatan | ana sayfa › bugünkü görevler bitti |
   | `fotografci` | fotoğraf çeken | Denemeler › kayıt yok (kâğıt fotoğrafla okunuyor) |
   | `buyutecli` | büyüteçle inceleyen | Yanlış Soru Bankası › boş |
   | `supuren` | yaprak süpüren | Oyun Bankası › boş ("iyi haber") |
@@ -55,7 +55,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   | `kitapli` | kitabı inceleyen | Harita › anlatım kartı (`okuyan`ın yerine) |
   | `tahtali` | tahtaya yazan | oyun tanıtımı (nasıl oynanır) |
   | `laptoplu` | laptopta çalışan | odak daveti (Pomodoro) |
-  | `kucak-acan` | kucak açan | ana sayfa › hedef tuttu (dönüşümlü) |
+  | `kucak-acan` | kucak açan | ana sayfa › hedef tuttu (dönüşümlü); kurulum › "uygulaman hazır" |
   | `saatli` | saate bakan | odak kilidi kurulumu |
   | `basparmak` | başparmak kaldıran | hızlı kontrol › doğru; kapanış › iyi |
   | `damgali` | onay damgası basan | kapanış › iyi |

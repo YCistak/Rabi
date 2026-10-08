@@ -114,3 +114,31 @@ export function yonlendirmeMetni(
   if (kendi === null || kendi === hedefSinif) return null
   return `${konuAdi} için ${hedefSinif}. sınıfa geçildi`
 }
+
+/**
+ * Seçim penceresindeki sınıf hücresinin yüzdesi: o sınıftaki bütün derslerin
+ * ilerlemesinin ortalaması. Pencerede henüz ders seçilmemiş oluyor (sınıfa
+ * basmak dersi değiştirmiyor, yalnız listeyi), o yüzden tek dersin değil
+ * sınıfın durumu yazıyor. İçeriği olmayan sınıfta `null`.
+ */
+export function sinifOrtalamasi(sinif: HaritaSinifi, ilerlemeler: KonuIlerlemeleri): number | null {
+  const yuzdeler = sinifDersleri(sinif)
+    .map((d) => sinifYuzdesi(d.id, sinif, ilerlemeler))
+    .filter((y): y is number => y !== null)
+  if (yuzdeler.length === 0) return null
+  return Math.round(yuzdeler.reduce((a, b) => a + b, 0) / yuzdeler.length)
+}
+
+/**
+ * Pencerede başka bir sınıfa bakılırken seçili ders o sınıfta yoksa bunu
+ * söyleyen satır. Liste o sınıfın dersleriyle değiştiği için seçili ders
+ * işaretsiz kalıyor; satır olmasa ders sessizce kaybolmuş gibi görünürdü.
+ */
+export function pencereBilgisi(
+  secim: { ders: KonuDersId; sinif: HaritaSinifi },
+  bakilanSinif: HaritaSinifi,
+): string | null {
+  if (bakilanSinif === secim.sinif || sinifPasifMi(bakilanSinif)) return null
+  if (programBul(secim.ders, bakilanSinif)) return null
+  return `${haritaDersAdi(secim.ders, secim.sinif)} ${bakilanSinif}. sınıfta yok, başka bir ders seç.`
+}

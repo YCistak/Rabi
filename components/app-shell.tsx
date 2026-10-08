@@ -43,7 +43,6 @@ import { guncelTahmin, obpHesapla } from '@/lib/tahmin'
 import { egitimYili, gunlukToplam, ilerlemisSinif } from '@/lib/hesap'
 import { androidMu, iosMu } from '@/lib/platform'
 import { ekranGoruntusuKaydet, geriGecisi, useGeriKaydirma } from '@/lib/geri-kaydirma'
-import { sekmeGecisYonu, useSekmeKaydirma } from '@/lib/sekme-kaydirma'
 import { bildirilecekler, rozetDurumu, yeniRozetler, type Rozet } from '@/lib/rozetler'
 import {
   bildirimDokunusunuDinle,
@@ -1042,21 +1041,6 @@ function RabiUygulamasi() {
     () => (ekran !== null ? `sekme:${sekme}` : sekme !== 'ana' ? 'sekme:ana' : null),
   )
 
-  // Ana menüde yana kaydırınca komşu sekme (`lib/sekme-kaydirma.ts`). Yalnızca
-  // sekmelerin kendi ekranında: araç, form, test, tanıtım ya da açık bir
-  // katman varken parmak o ekranın işini yapıyor.
-  useSekmeKaydirma(
-    sekme,
-    () =>
-      ayarlar.kurulumTamamlandi &&
-      ekran === null &&
-      denemeFormu === null &&
-      genelTest === null &&
-      !tanitim.tanitimdaMi &&
-      !katmanVarMi(),
-    (yeni) => setSekme(yeni),
-  )
-
   const denemeKaydet = useCallback(
     (deneme: Deneme) => {
       // Turda deneme turun listesine gidiyor; formu tur bir sonraki adımda kapatıyor.
@@ -1655,8 +1639,6 @@ function SayfaGecisi({
   // yerindeyse) hiç kaymıyor. Kurulurken **bir kez** okunuyor: yön sonradan
   // değişse de başlamış animasyon değişmemeli (bkz. `geriYonunuIsaretle`).
   const [geri] = useState(geriGecisi)
-  // Yana kaydırarak gelinen sekme o yandan kayarak giriyor.
-  const [yandan] = useState(sekmeGecisYonu)
   const kutu = useRef<HTMLDivElement>(null)
 
   // Sökülürken görüntüsü alınıyor: geri kaydırırken bu ekran altta görünecek
@@ -1691,9 +1673,6 @@ function SayfaGecisi({
         ileri && 'sayfa-ileri',
         geri === 'kayarak' && 'sayfa-geri',
         geri === 'yerinde' && 'sayfa-yerinde',
-        yandan === 'sag' && 'sayfa-sagdan',
-        yandan === 'sol' && 'sayfa-geri',
-        yandan === 'yerinde' && 'sayfa-yerinde',
         !basladi && 'sayfa-bekliyor',
         // Tablette sayfanın en geniş hâli; telefonda bu sınıflar eşleşmiyor.
         'tablet:mx-auto',

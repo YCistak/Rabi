@@ -112,18 +112,20 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   Her açılışta ayarlardaki sınıfla açılır (`haritaSinifiBul` → `haritaAcilisSinifi`);
   ekran içi sınıf değişimi o ziyaretlik; mezunda son seçim kalır; pasif sınıfın
   öğrencisi içeriği olan en büyük sınıfta açılır (12 artık açık, 12'de açılır). `sinifDersleri` boş programları haritada gizler.
-- **Sınıf patikanın üstünde sekme** (`SinifSekmesi`, `lib/konu/sinif-sekmesi.ts`):
-  `9 · 10 · 11 · 12` hep görünür, altında seçili dersin o sınıftaki ilerleme yüzdesi
-  (ders yoksa çizgi), kendi sınıfında "sen" işareti; seçici içinde gizli sınıf fark
-  edilmiyordu. "Çalıştığın program" kartı yalnız dersi seçtirir. Ders yeni sınıfta
-  yoksa sınıfın ilk dersine geçilir ve bunu kısa bir satır söyler (`sinifDegisimi`).
-- **Pasif sınıf** (`sinifPasifMi`: hiçbir dersi yazılmamış sınıf) sekmede "Yakında"
-  rozetli, boş ekrana götürmez. 12, Matematik yazılınca `KONU_SINIFLARI`na girdi ve
-  sekme kendiliğinden açıldı (Maarif öğrencisi için de: harita sınıfa göre, müfredata
-  göre süzülmüyor). `HaritaSinifi` artık `KonuSinifi`nin eşi. 12'de ders şeridinde
-  yalnız Matematik; başka dersten 12'ye geçen `sinifDegisimi` ile Matematik'e düşer.
-  Kilitli "yapım aşamasında" kartı yalnız pasif sınıf seçili kalmışsa diye duruyor.
-- **Konu Takibi yönlendirmesi şerit bırakır:** "Haritada pekiştir" sınıfı değiştirir; kendi
+- **Sınıf ve ders tek kart + alt pencere** (kullanıcı seçti, 2026-10;
+  `components/konu/harita-secimi.tsx`, tasarım "Tek başlık + alt sayfa"): patikanın
+  üstünde yalnız "10. sınıf · Kimya" kartı (ders emojisi, ilerleme, turuncu ok);
+  basınca alttan pencere. Pencerede önce `SINIF` (seçili turuncu dolgu, yüzde =
+  sınıfın ders ortalaması `sinifOrtalamasi`), sonra o sınıfın dersleri gri grupta
+  beyaz satırlar; seçili ders turuncu kenar + `--primary-soft`. Sınıfa basmak yalnız
+  listeyi değiştirir, seçim derse basınca biter; bakılan sınıfta seçili ders yoksa
+  `pencereBilgisi` satırı. **"sen" işareti yok** (kullanıcı kaldırttı). Emojiler
+  `OlcekliEmoji` ile (kullanıcı istedi; hizalı satırda ham emoji telefona göre kayar).
+- **Pasif sınıf** (`sinifPasifMi`: hiçbir dersi yazılmamış sınıf) pencerede "Yakında"
+  rozetli, boş ekrana götürmez. 12, 8 dersle (2018 programı) `KONU_SINIFLARI`na girdi ve
+  hücre kendiliğinden açıldı; `HaritaSinifi` artık `KonuSinifi`nin eşi. Kilitli "yapım
+  aşamasında" kartı yalnız içeriği boşalan sınıf ya da eski kayıt için duruyor.
+- **Konu Takibi yönlendirmesi şerit bırakır:** "Haritaya git" sınıfı değiştirir; kendi
   sınıfından farklıysa patikanın üstünde kapatılabilir şerit ("Trigonometri için 10.
   sınıfa geçildi · Kendi sınıfıma dön", `yonlendirmeMetni`); sınıf elle değişince
   kalkar.

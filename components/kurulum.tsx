@@ -30,7 +30,7 @@ import {
 } from '@/lib/hedef-katalog'
 import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { Rabi, type MaskotPozu } from '@/components/maskot/rabi'
-import { HAZIRLIK_SURESI, Hazirlaniyor } from '@/components/hazirlaniyor'
+import { KurulumHazir } from '@/components/kurulum-hazir'
 import { AD_EN_AZ, adBiciminde, adGecerliMi } from '@/lib/ad'
 import { izinIste } from '@/lib/bildirim'
 import { HEDEF_ADIMI, HEDEF_EN_AZ, HEDEF_EN_COK } from '@/lib/depo'
@@ -241,10 +241,10 @@ export function Kurulum({
   const [saat, setSaat] = useState(20)
   const [dakika, setDakika] = useState(0)
   /**
-   * Kurulum bitti, hazırlık ekranı akıyor.
+   * Kurulum bitti, "uygulaman hazır" ekranı açık.
    *
    * Sonuç burada bekliyor çünkü `onBitir` çağrıldığı anda ekran ana sayfaya
-   * dönüyor; hazırlık ekranı da tam olarak o anı geciktirmek için var.
+   * dönüyor; hazır ekranı o anı "Başlayalım"a kadar erteliyor.
    */
   const [hazirlanan, setHazirlanan] = useState<KurulumSonucu | null>(null)
   /*
@@ -485,26 +485,30 @@ export function Kurulum({
   }
 
   /*
-    Hazırlık ekranı dolunca sonuç yukarı veriliyor.
+    Sonuç "Başlayalım"a basılınca yukarı veriliyor.
 
-    Sayaç burada, `Hazirlaniyor` içinde değil: bileşen yalnızca çiziyor, akışı
-    kesen karar kurulumun kendisine ait. Ekran arada kapanırsa (uygulama
-    kapatılırsa) sayaç da temizleniyor — kurulum kaydedilmemiş sayılıyor ve
-    açılışta baştan başlıyor.
+    Ekran kendiliğinden kalkmıyor (eskiden dokuz saniyelik bir sayaç vardı):
+    kutucuklar kullanıcının cevaplarını gösteriyor ve okunmaya vakit kalmalı.
+    Uygulama bu ekrandayken kapatılırsa kurulum kaydedilmemiş sayılıyor ve
+    açılışta baştan başlıyor — sayaçlı ekranda da öyleydi.
   */
-  const bitirRef = useRef(onBitir)
-  bitirRef.current = onBitir
+  const hazirGirdisi = useMemo(
+    () =>
+      hazirlanan && {
+        sinif: hazirlanan.ayarlar.buYilSinif,
+        puanTuru: hazirlanan.ayarlar.puanTuru,
+        hedef: hazirlanan.hedef,
+        gunlukHedef: hazirlanan.ayarlar.gunlukHedef,
+        hatirlatmaSaati: hazirlanan.ayarlar.hatirlatmaSaati,
+        hatirlatmaDakikasi: hazirlanan.ayarlar.hatirlatmaDakikasi,
+        bildirimAcik: hazirlanan.ayarlar.bildirimAcik,
+      },
+    [hazirlanan],
+  )
 
-  useEffect(() => {
-    if (!hazirlanan) return
-    // `onBitir` bağımlılığa konamaz: `AppShell` onu satır içi bir fonksiyon
-    // olarak veriyor, yani her çizimde yeni bir referans. Bağımlılık olsaydı
-    // üstteki her çizim sayacı baştan kurar ve ekran hiç kapanmazdı.
-    const sayac = setTimeout(() => bitirRef.current(hazirlanan), HAZIRLIK_SURESI)
-    return () => clearTimeout(sayac)
-  }, [hazirlanan])
-
-  if (hazirlanan) return <Hazirlaniyor ad={ad.trim()} />
+  if (hazirlanan && hazirGirdisi) {
+    return <KurulumHazir ad={hazirlanan.ayarlar.ad} girdi={hazirGirdisi} onBasla={() => onBitir(hazirlanan)} />
+  }
 
   /*
     Karşılama ekranının düzeni ötekilere benzemiyor, o yüzden erken dönüyor.
