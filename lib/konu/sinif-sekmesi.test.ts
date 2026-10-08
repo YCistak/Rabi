@@ -52,7 +52,7 @@ describe('haritanın sınıf sekmesi', () => {
     expect(sinifYuzdesi('ingilizce', 9, {})).toBeNull()
     expect(sinifYuzdesi('fizik', 12, {})).toBeNull()
     expect(sinifYuzdesi('matematik', 12, {})).toBe(0)
-    expect(sinifSekmeleri('ingilizce', {}, 11).map((s) => s.yuzde)).toEqual([null, null, 0, null])
+    expect(sinifSekmeleri('ingilizce', {}, 11).map((s) => s.yuzde)).toEqual([null, null, 0, 0])
   })
 
   it('12. sınıf Matematik yüzdesi 12\'nin kendi konularından', () => {
