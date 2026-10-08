@@ -33,7 +33,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 
 ## Pas (`lib/oyunlar/tur.ts` → `PAS_HAKKI`)
 
-- Bütün oyunlarda turda **5 pas hakkı** (kullanıcı istedi). Düğme kabuğun sayaç
+- Eşleştirme dışındaki bütün oyunlarda turda **5 pas hakkı** (kullanıcı istedi). Düğme kabuğun sayaç
   şeridinin sağında (`OyunKabugu` → `pas`, `PasBilgisi`), oyun dosyasında değil.
   Kalan hak ayrı sayaç değil, cevaplardan türer (`kalanPas`).
 - Pas **bedelsiz** (kullanıcı seçti): yanlış sayılmaz (`yanlisSayisi`), süreden
@@ -41,9 +41,9 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   titreşimi yok. Kayıt `{ dogruMu: false, pas: true }`: doğrusu gösterilir ("Pas
   geçtin", nötr `Bildirim pas`), tur sonunda listelenir ve **bankaya düşer**.
 - Süre dolması pas değil, yanlıştır.
-- Eşleştirme oyunlarında (edebiyat, antlaşma, formül, kavram) pas tek çifti geçer:
-  seçili kutunun çifti, seçim yoksa sıradaki eşleşmemiş çift. Köklü'de yalnız aralık
-  aşamasında; Sıralama'da sorunun tamamı.
+- **Eşleştirme oyunlarında pas yok** (edebiyat, antlaşma, formül, kavram; kullanıcı
+  kaldırttı): `pas` prop'u verilmez, düğme çizilmez. Köklü'de pas yalnız aralık
+  aşamasında; Sıralama'da sorunun tamamını geçer.
 - Eskiden bazı oyunlarda sınırsız pas vardı (yanlış sayılıyordu) ve Harita/Bölünme'de
   "ilk tercih oluyor" diye kaldırılmıştı; hak sınırı o sorunu karşılıyor. Sınırsız
   pası geri getirme.

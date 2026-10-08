@@ -16,11 +16,9 @@ import {
 } from '@/lib/oyunlar/formul'
 import {
   guncelSeri,
-  kalanPas,
   karistir,
   rekorKirildiMi,
   turOzeti,
-  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -37,7 +35,6 @@ import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
 import {
-  Bildirim,
   EN_COK_YANLIS,
   KalanHapi,
   OyunKabugu,
@@ -200,11 +197,6 @@ export function FormulOyunuEkrani({
   const [cevaplar, setCevaplar] = useState<Cevap<FormulEsi>[]>([])
   /** Yanlışlarla aynı sıradaki seçimler — tur sonunda "sen X dedin" için. */
   const [yanlisGirdileri, setYanlisGirdileri] = useState<string[]>([])
-  /**
-   * Pas geçilip eşi gösterilen çift. Tahtada tek cevaplanabilir birim bir
-   * çift; pas da tek çifti açıyor, bütün eli değil.
-   */
-  const [pasEsi, setPasEsi] = useState<FormulEsi | null>(null)
 
   const [elendi, setElendi] = useState<Eleme>(false)
   /** Kaçıncı el — sayaç her elde sıfırlansın diye. */
@@ -220,12 +212,9 @@ export function FormulOyunuEkrani({
   const [duraklatilan, setDuraklatilan] = useState(false)
   const [turNo, setTurNo] = useState(0)
 
-  const [sonuc, setSonuc] = useState<{
-    ozet: TurOzeti<FormulEsi>
-    /** `ozet.yanlislar` ile aynı sırada: o çift pas mı geçildi. */
-    paslar: boolean[]
-    yeniRekor: boolean
-  } | null>(null)
+  const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<FormulEsi>; yeniRekor: boolean } | null>(
+    null,
+  )
 
   const bankaHavuzu = useMemo(() => bankaEsleri(bankaSorulari), [bankaSorulari])
   const bankaTuru = bankaHavuzu.length > 0
@@ -267,7 +256,6 @@ export function FormulOyunuEkrani({
     setSecim(BOS_SECIM)
     setEslesenler([])
     setYanlisCift(null)
-    setPasEsi(null)
     setElBekliyor(false)
     setCevaplar([])
     setYanlisGirdileri([])
@@ -283,7 +271,6 @@ export function FormulOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
-        paslar: verilenler.filter((c) => !c.dogruMu).map((c) => c.pas === true),
         yeniRekor:
           !yarim &&
           !bankaTuru &&
@@ -375,11 +362,9 @@ export function FormulOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: yanlisSayisi(cevaplar),
+    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
     onTurBitti: turSuresiDoldu,
-    // Pas gösterilirken tahta kilitli; o arada el saati işlemesin.
-    aktif:
-      asama === 'oynaniyor' && !duraklatilan && !elBekliyor && pasEsi === null && el !== null,
+    aktif: asama === 'oynaniyor' && !duraklatilan && !elBekliyor && el !== null,
     sure: soruSuresi('formul'),
     anahtar: elSayisi,
     onBitti: sureDoldu,
@@ -429,44 +414,14 @@ export function FormulOyunuEkrani({
     zamanlayiciRef.current = setTimeout(elDagit, CEVAP_BEKLEMESI)
   }
 
-  /** Tahta bir cevap gösterirken (yanlış çift, pas, el değişimi) dokunuş yok. */
-  const tahtaKilitli = yanlisCift !== null || pasEsi !== null || elBekliyor
-
-  /**
-   * Pas hakkı: bir çiftin eşi gösterilip eşleşmiş sayılıyor — bedelsiz, yanlış
-   * sesi ve zorluk kaydı yok.
-   *
-   * Hangi çift? Yarım bir seçim varsa onunki: oyuncu takıldığı kutuyu seçip
-   * pasa basıyor. Seçim yoksa ekrandaki sırayla ilk eşleşmemiş formül.
-   */
-  const pasGec = () => {
-    if (asama !== 'oynaniyor' || !el || tahtaKilitli) return
-    if (kalanPas(cevaplarRef.current) <= 0) return
-    const es = secim.formul
-      ? el.esler.find((e) => e.formul === secim.formul)
-      : secim.ad
-        ? el.esler.find((e) => e.ad === secim.ad)
-        : el.esler.find(
-            (e) => e.formul === el.formuller.find((f) => !eslesenFormuller.has(f)),
-          )
-    if (!es) return
-
-    setCevaplar((onceki) => [...onceki, { soru: es, dogruMu: false, pas: true }])
-    // Girdi listesi yanlışlarla aynı sırada; pasın girdisi yok.
-    setYanlisGirdileri((onceki) => [...onceki, ''])
-    setSecim(BOS_SECIM)
-    setPasEsi(es)
-
-    zamanlayiciRef.current = setTimeout(() => {
-      setPasEsi(null)
-      const yeniEslesenler = [...eslesenler, es]
-      if (yeniEslesenler.length < EL_BOYUTU) setEslesenler(yeniEslesenler)
-      else elDagit()
-    }, CEVAP_BEKLEMESI)
-  }
-
   const formulSec = (formul: string) => {
-    if (asama !== 'oynaniyor' || tahtaKilitli || eslesenFormuller.has(formul)) return
+    if (
+      asama !== 'oynaniyor' ||
+      yanlisCift !== null ||
+      elBekliyor ||
+      eslesenFormuller.has(formul)
+    )
+      return
     // Aynı kutuya ikinci dokunuş seçimi geri alır; yanlış dokunan kilitlenmesin.
     if (secim.formul === formul) return setSecim({ ...secim, formul: null })
     if (secim.ad) return denetle(formul, secim.ad)
@@ -474,7 +429,7 @@ export function FormulOyunuEkrani({
   }
 
   const adSec = (ad: string) => {
-    if (asama !== 'oynaniyor' || tahtaKilitli || eslesenAdlar.has(ad)) return
+    if (asama !== 'oynaniyor' || yanlisCift !== null || elBekliyor || eslesenAdlar.has(ad)) return
     if (secim.ad === ad) return setSecim({ ...secim, ad: null })
     if (secim.formul) return denetle(secim.formul, ad)
     setSecim({ ...secim, ad })
@@ -507,12 +462,11 @@ export function FormulOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: yanlisSayisi(cevaplar),
+                yanlis: cevaplar.length - dogruSayisi,
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
-        pas={{ kalan: kalanPas(cevaplar), kilitli: tahtaKilitli, onPas: pasGec }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -554,7 +508,7 @@ export function FormulOyunuEkrani({
                         durum={eslestirmeDurumu({
                           eslesti: eslesenFormuller.has(formul),
                           hatali: yanlisCift?.formul === formul,
-                          secili: secim.formul === formul || pasEsi?.formul === formul,
+                          secili: secim.formul === formul,
                         })}
                         renk={RENK}
                         onSec={() => formulSec(formul)}
@@ -578,7 +532,7 @@ export function FormulOyunuEkrani({
                         durum={eslestirmeDurumu({
                           eslesti: eslesenAdlar.has(ad),
                           hatali: yanlisCift?.ad === ad,
-                          secili: secim.ad === ad || pasEsi?.ad === ad,
+                          secili: secim.ad === ad,
                         })}
                         renk={RENK}
                         onSec={() => adSec(ad)}
@@ -591,21 +545,15 @@ export function FormulOyunuEkrani({
                 </ul>
               </section>
 
-              {pasEsi ? (
-                <div className="mt-auto">
-                  <Bildirim iyi={false} pas baslik="Pas geçtin" aciklama={`— eşi ${pasEsi.ad}`} />
-                </div>
-              ) : (
-                /* İki adımlı bir işlemde ilk adımdan sonra ne olacağını söylemek
-                   gerekiyor. */
-                <p className="mt-auto flex-none pt-1 text-center text-[11.5px] font-bold text-muted-foreground">
-                  {secim.formul
-                    ? 'Şimdi adına dokun'
-                    : secim.ad
-                      ? 'Şimdi formülüne dokun'
-                      : 'Bir formüle dokun'}
-                </p>
-              )}
+              {/* İki adımlı bir işlemde ilk adımdan sonra ne olacağını söylemek
+                  gerekiyor. */}
+              <p className="mt-auto flex-none pt-1 text-center text-[11.5px] font-bold text-muted-foreground">
+                {secim.formul
+                  ? 'Şimdi adına dokun'
+                  : secim.ad
+                    ? 'Şimdi formülüne dokun'
+                    : 'Bir formüle dokun'}
+              </p>
             </div>
           )
         )}
@@ -634,7 +582,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
-  sonuc: { ozet: TurOzeti<FormulEsi>; paslar: boolean[]; yeniRekor: boolean }
+  sonuc: { ozet: TurOzeti<FormulEsi>; yeniRekor: boolean }
   /** Yanlışlarla aynı sıradaki ad seçimleri. */
   girdiler: string[]
   rekor: number
@@ -645,7 +593,7 @@ function SonucGorunumu({
   onCik: () => void
   bildir: BildirimKolu
 }) {
-  const { ozet, paslar, yeniRekor } = sonuc
+  const { ozet, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
   const kalan = ozet.yanlislar.length - gorunen.length
 
@@ -686,16 +634,10 @@ function SonucGorunumu({
                 <Check size={13} className="shrink-0" aria-hidden />
                 {es.ad}
               </span>
-              {paslar[sira] ? (
+              {girdiler[sira] && (
                 <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
-                  Pas geçtin
+                  Sen <s className="text-ikincil">{girdiler[sira]}</s> dedin
                 </span>
-              ) : (
-                girdiler[sira] && (
-                  <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
-                    Sen <s className="text-ikincil">{girdiler[sira]}</s> dedin
-                  </span>
-                )
               )}
             </YanlisKarti>
           ))}
