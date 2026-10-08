@@ -117,6 +117,32 @@ describe('12. sınıf Matematik (2018 programı)', () => {
   })
 })
 
+describe('12. sınıf Coğrafya (2018 programı)', () => {
+  const cografya = programBul('cografya', 12)!
+
+  it('2018 programının dört ünitesi var', () => {
+    expect(cografya.temalar.map((t) => t.ad)).toEqual([
+      'Doğal Sistemler',
+      'Beşerî Sistemler',
+      'Küresel Ortam: Bölgeler ve Ülkeler',
+      'Çevre ve Toplum',
+    ])
+  })
+
+  it('her konuda tek Rabi notu var', () => {
+    for (const konu of tumKonular(cografya)) {
+      expect(konu.kartlar.filter((kart) => kart.not !== undefined), `${konu.ad}: Rabi notu`).toHaveLength(1)
+    }
+  })
+
+  it('9–11 haritasında kartı olan iklim değişikliği ve afet türleri tekrar yazılmadı', () => {
+    const adlar = tumKonular(cografya).map((k) => k.ad.toLocaleLowerCase('tr'))
+    for (const yasak of ['iklim değişikliği', 'afet türleri', 'tektonik']) {
+      expect(adlar.filter((ad) => ad.includes(yasak)), yasak).toEqual([])
+    }
+  })
+})
+
 describe('11. sınıf İngilizce kapsamı', () => {
   const ingilizce = programBul('ingilizce', 11)!
 

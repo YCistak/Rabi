@@ -58,7 +58,7 @@ export const cografya12Cevre = [
     ],
     secimler: [
       ['Rio Zirvesi hangi yılda toplandı?', '1992', '1972', '1992’de İklim Çerçeve Sözleşmesi kabul edildi.'],
-      ['AB karbon pazarının kısa adı?', 'Emisyon Ticaret Sistemi', 'NATO', 'Karbon salımına fiyat koyar.'],
+      ['AB’nin karbon salımına fiyat koyan sistemi?', 'Emisyon Ticaret Sistemi', 'Gümrük Birliği', 'Emisyon Ticaret Sistemi 2005’te başladı.'],
       ['Toplam karbon salımında ilk sırada olan ülke?', 'Çin', 'Norveç', 'Toplam salımda Çin ilk sıradadır.'],
       ['Türkiye’nin net sıfır hedef yılı?', '2053', '2030', '2053 olarak açıklandı.'],
     ],

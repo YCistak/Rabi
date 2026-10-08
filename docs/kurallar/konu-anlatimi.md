@@ -15,7 +15,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   genişler. Sekizinci ders `KonuDersId` + ders rengi ister. 11. sınıf soruları ayrı
   `11-<ders>-sorular.ts` (`sorulariBagla`), Edebiyat/Tarih/Coğrafya içerikte.
 - **12. sınıf Coğrafya (2018 programı):** `12-cografya.ts` (+ `12-cografya-t1…t4.ts`,
-  kalıp `12-cografya-yardimci.ts`); 4 ünite, 25 deste (Doğal Sistemler, Beşerî
+  kalıp `12-cografya-yardimci.ts`); 4 ünite, 29 deste (Doğal Sistemler, Beşerî
   Sistemler, Küresel Ortam: Bölgeler ve Ülkeler, Çevre ve Toplum). Tema adları ve
   kazanımlar (12.1.1 … 12.4.4) MEB ölçme-değerlendirme tablosundan. Rakam, yıl ve
   anlaşma tarihleri tek tek doğrulandı; emin olunmayan ayrıntı yazılmadı. Örgütler
