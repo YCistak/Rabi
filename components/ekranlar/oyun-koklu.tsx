@@ -458,8 +458,11 @@ export function KokluOyunuEkrani({
           soru && (
             <>
               <div className="flex flex-1 flex-col justify-center gap-3 py-2">
+                <div className="grid place-items-center">
+                  <Rabi durum={maskotDurumu} poz="yapboz" boyut={96} />
+                </div>
+
                 <div className="golge-kart flex items-center justify-center gap-3 rounded-[20px] bg-card px-4 py-3.5">
-                  <Rabi durum={maskotDurumu} boyut={38} />
                   <p className="rakam font-display text-[34px] font-extrabold leading-none tracking-tight">
                     √{soru.sayi}
                   </p>

@@ -51,6 +51,7 @@ import {
   Bildirim,
   EN_COK_YANLIS,
   KalanHapi,
+  KoseRabisi,
   OyunKabugu,
   TurSonu,
   YanlisKarti,
@@ -426,7 +427,7 @@ function SoruKarti({ soru, maskot }: { soru: TrigSorusu; maskot: MaskotDurumu })
     return (
       <div className="golge-kart flex min-h-0 flex-1 flex-col rounded-3xl bg-card px-3 pb-2.5 pt-3">
         <div className="flex flex-none items-center gap-2 text-[12.5px] font-bold text-muted-foreground">
-          <Rabi durum={maskot} boyut={26} />
+          <KoseRabisi durum={maskot} />
           <span>
             <b className="font-display text-[15px] font-extrabold text-foreground">{sorulanAd(soru)}</b>{' '}
             kaçtır?

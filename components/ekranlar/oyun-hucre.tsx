@@ -43,11 +43,12 @@ import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
-import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
+import { type MaskotDurumu } from '@/components/maskot/rabi'
 import {
   Bildirim,
   EN_COK_YANLIS,
   KalanHapi,
+  KoseRabisi,
   OyunKabugu,
   TurSonu,
   YanlisKarti,
@@ -613,7 +614,7 @@ function Kart({
         {/* Arka yüz: kartın kapalı hâli, ipuçlarını veren taraf. */}
         <div className="golge-kart absolute inset-0 flex flex-col rounded-[20px] bg-card px-4 py-3.5 [backface-visibility:hidden]">
           <div className="flex flex-none items-center gap-2">
-            <Rabi durum={maskotDurumu} boyut={30} />
+            <KoseRabisi durum={maskotDurumu} />
             <span className="font-display text-[13px] font-extrabold text-muted-foreground">
               Kartın arkasındaki organel hangisi?
             </span>

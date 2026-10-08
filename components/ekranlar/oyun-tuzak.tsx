@@ -411,8 +411,8 @@ export function TuzakOyunuEkrani({
           soru && (
             <>
               <div className="flex flex-1 flex-col justify-center gap-3 py-2">
-                <div className="flex items-center justify-center gap-2">
-                  <Rabi durum={maskotDurumu} boyut={34} />
+                <div className="flex flex-col items-center justify-center gap-2">
+                  <Rabi durum={maskotDurumu} poz="yapboz" boyut={96} />
                   {/* Konu adı ipucu değil çerçeve: kuralın hangi ailede
                       olduğunu bilmek doğru/yanlış kararını vermiyor. */}
                   <span className="rounded-full bg-konu-matematik px-2.5 py-1 text-[11px] font-extrabold text-konu-matematik-koyu">
