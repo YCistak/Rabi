@@ -239,7 +239,7 @@ export const fizik12Sorulari: Record<string, Soru[]> = {
   ], [
     ['Kontrolsüz zincirleme fisyon tepkimesi hangisinde görülür?', 'Atom bombası', 'Nükleer santral', 'Santralde kontrol çubukları tepkimeyi denetler; bombada zincir kontrolsüzdür.'],
     ['Hangisi bir füzyon tepkimesidir?', 'Döteryumla trityumun birleşmesi', 'Uranyum-235’in bölünmesi', 'Hafif çekirdeklerin birleşmesi füzyondur; uranyumun bölünmesi fisyon.'],
-    ['Türkiye’nin ilk nükleer santrali nerede kuruluyor?', 'Mersin Akkuyu', 'Sinop', 'Akkuyu Nükleer Güç Santrali Mersin’dedir; Sinop için ayrı bir proje planlandı.'],
+    ['Türkiye’nin ilk nükleer santrali hangi ilde yer alır?', 'Mersin Akkuyu', 'Sinop', 'Akkuyu Nükleer Güç Santrali Mersin’dedir; Sinop için ayrı bir proje planlandı.'],
     ['Gama kaynağına karşı en etkili zırh hangisidir?', 'Kalın kurşun', 'Kâğıt', 'Kâğıt yalnız alfayı durdurur; gama için kalın kurşun ya da beton gerekir.'],
     ['Gıda ışınlamanın amacı nedir?', 'Mikropları öldürmek', 'Gıdayı radyoaktif yapmak', 'Işınlanan gıda radyoaktif olmaz; gama mikropları öldürüp raf ömrünü uzatır.'],
     ['Fisyonda açığa çıkan enerjinin kaynağı nedir?', 'Kütle kaybı', 'Elektronların kopması', 'E = mc²: ürünlerin kütlesi azalır, fark enerjiye dönüşür.'],

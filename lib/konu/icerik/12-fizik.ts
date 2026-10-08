@@ -1057,7 +1057,7 @@ export const fizik12 = program('fizik', 12, 'Dönen tekerden lazere', [
       ),
       kart(
         'Santrallerin iki yüzü',
-        '- **Artısı:** az yakıttan çok enerji, çalışırken sera gazı salmaz\n- **Eksisi:** uzun ömürlü radyoaktif atık, kaza riski (Çernobil 1986, Fukuşima 2011)\nTürkiye’nin ilk nükleer santrali Mersin Akkuyu’da.',
+        '- **Artısı:** az yakıttan çok enerji, çalışırken sera gazı salmaz\n- **Eksisi:** uzun ömürlü radyoaktif atık, kaza riski (Çernobil 1986, Fukuşima 2011)\nTürkiye’nin ilk nükleer santrali Mersin Akkuyu’dadır (Akkuyu Nükleer Güç Santrali).',
       ),
       kart(
         'Atom bombası ve barış',
