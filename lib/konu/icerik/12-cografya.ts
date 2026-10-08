@@ -1,5 +1,6 @@
 import { program, tema } from '../tip'
 import { cografya12Dogal, cografya12BeseriA } from './12-cografya-t1'
+import { cografya12BeseriB } from './12-cografya-t2'
 
 /**
  * 12. sınıf Coğrafya — **2018 programı** (MEB Ortaöğretim Coğrafya, 12. sınıf).
@@ -13,5 +14,5 @@ import { cografya12Dogal, cografya12BeseriA } from './12-cografya-t1'
  */
 export const cografya12 = program('cografya', 12, 'Doğal sistemlerden küresel ortama', [
   tema('cog12-t1', 'Doğal Sistemler', cografya12Dogal),
-  tema('cog12-t2', 'Beşerî Sistemler', [...cografya12BeseriA]),
+  tema('cog12-t2', 'Beşerî Sistemler', [...cografya12BeseriA, ...cografya12BeseriB]),
 ])
