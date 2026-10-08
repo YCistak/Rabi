@@ -77,7 +77,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   (`HaritaSinifi`); kartlar yazılınca `KONU_SINIFLARI`na eklenir, sekme kendiliğinden
   açılır. Kilitli "yapım aşamasında" kartı yalnız eski kayıtta seçim 12 kaldıysa diye
   duruyor.
-- **Konu Takibi yönlendirmesi şerit bırakır:** "Haritaya git" sınıfı değiştirir; kendi
+- **Konu Takibi yönlendirmesi şerit bırakır:** "Haritada pekiştir" sınıfı değiştirir; kendi
   sınıfından farklıysa patikanın üstünde kapatılabilir şerit ("Trigonometri için 10.
   sınıfa geçildi · Kendi sınıfıma dön", `yonlendirmeMetni`); sınıf elle değişince
   kalkar.

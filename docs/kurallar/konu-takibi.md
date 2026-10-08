@@ -50,39 +50,42 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   bütün satırların dairelerinin ortalaması (`sinifSekmeleri`), kendi sınıfında "sen".
 - **"Haritada çalıştım" elle işaretlenmez:** `harita-eslemesi.ts`teki açık tablo YKS
   konusunu harita konularına bağlar; aşama haritanın kaydından (`konuTamam`) hesaplanır,
-  "Haritaya git" o konunun kartıyla açar (`acilacakKonu`, sınıf farklı olsa da).
+  "Haritada pekiştir" o konunun kartıyla açar (`acilacakKonu`, sınıf farklı olsa da).
   Birleşen satırda iki konunun eşlemesinin birleşimi sayılır. Eşleme yalnız kartlar
   konunun **asıl içeriğini** anlatıyorsa; tek kartta değinmek yetmez. Karşılığı
   olmayan konuda aşama hiç gösterilmez. 12. sınıf kartları yazılınca tabloya eklenir;
   `takip.test.ts` iki uçtaki kimlikleri denetler.
-- **İşaret satırda:** solda ilerleme dairesi (aşama sayısına göre yay; dokununca
-  Bitirdim aç/kapa), sağda sabit genişlikte üç yuva — harita (salt okunur, boşken kesik
-  kenarlı; karşılığı yoksa boş ama yer tutar), okul, soru (44 piksel dokunma alanı).
-  Simgeler lucide, emoji değil; dolu hâl ders renginde dolgu, boş hâl kenarlık. Ada
-  dokunmak kompakt ayrıntıyı açar (harita durumu + "Haritaya git", toplu eylem, işaret
-  günleri). Bir konu en çok üç dokunuş.
+- **Ders içi liste ve konu kartı** (tasarım D/K1a, kullanıcı onayladı 2026-10): satır tek
+  dokunuşluk bir düğme; solda **dilimli halka** (harita · okul · soru üç dilim, haritasız
+  konuda iki; dolu dilim ders renginde, yarım harita açık ton, bitince tam yeşil halka + tik,
+  aşamalar tamamsa ortada soluk tik), ortada ad + **tek satır durum** ("Okulda gördün · soru
+  çözdün", "Bitti · 20 Eyl", "Aşamalar tamam · bitirmeye hazır", "Başlamadın"), sağda ok.
+  Başlıkta ders halkası + "N. sınıf · b/n bitti"; bölüm başlığında "b/n bitti" + ince çubuk;
+  altta halka açıklaması. Satıra dokunmak alttan **konu kartı** açar: bölüm · sıra, konu adı,
+  önceki/sonraki/kapat, yan yana üç karo **Okul · Soru · Bitti**. İşaretli karo ders renginde
+  dolu (Bitti yeşil), içinde tik ve işaret günü ("8 Eki"), boşta "Dokun"; dokununca zıplar
+  (`.karo-pop`). Aşamalar bağımsız, kayıt şeması aynı. Kart açıkken bildirim üstte çıkar.
+  Her karo dokunuşu Geri al'lı bildirim verir ("Okulda öğrendim · bugün", "X işareti kaldırıldı").
+  Haritası olan konuda kartta **"Haritada pekiştir"** (eski "Haritaya git"/"Tekrar et" yerine).
+  Eski satırdaki ilerleme dairesi + sağdaki okul/soru yuvaları ve ayrıntı satırı kalktı,
+  geri getirme.
 - **Bitirdim engellenmez ve sormaz:** eksik aşamada pencere değil Geri al'lı bildirim
   ("Bitti · eksik: okul, soru"). Konfeti yalnız dersin **o sınıftaki** son konusu
   bitince.
-- **"Bu ve önceki konuları okulda işlendi say"** (`oncekiOkulsuzlar`): görünen liste
-  (seçili sınıf, o ders), yalnız aynı bölüm, yalnız okul aşaması, bildirimde Geri al.
+- **Toplu "bu ve önceki konuları okulda işlendi say" kalktı:** kullanıcı 2026-10'da
+  kaldırttı, geri getirme (`oncekiOkulsuzlar` ve testi silindi). Toplu okul yazımı yalnız
+  hızlı başlangıçta (`okuluTopluYaz`).
 - **Giriş ekranı (tasarım C):** sınıf sekmesi, altında iki sütunlu ders kartları (`DersKarti`: ders
   simgeli ilerleme halkası, ad, "x/y bitti"). **Girişte öneri kutusu ("Bugün sırada"/"Devam et") yok:**
   kullanıcı 2026-10'da kaldırttı, geri getirme. Girişte sınıf özeti çubuğu ve kartta
   "Sıradaki" satırı da yok: ilerleme sekmede yüzde, kartta halka + sayı olarak bir kez
   yazılır; tekrar ekleme. Halka dolumu bitti 1, soru 0,66, okul 0,33 ağırlıklı (yalnız görsel).
-- **Ders ekranında özet tek segmentli çubuk** (bitti › soru › okul › kalan, her konu en ileri
-  aşamasında) + tek satır sayı, seçili sınıfa göre ("10. sınıf · …"); yüzde ve büyük
-  halka yok. **Tempo satırı kaldırıldı:** sınıf görünümü sınav takvimiyle konuşmuyor
-  (10. sınıfın kalan konusunu YKS'ye kalan güne bölmek anlamsız).
-- **Öneri müfredat sırasında, seçili sınıfın içinde** (`siradakiKonu`,
-  `devamKonusu`): ders içi Sıradaki, bitmemiş **ve** aşamaları tamamlanmamış ilk satır
-  (harita karşılığı yoksa harita sayılmaz). `devamKonusu` (en son dokunulan dersin Sıradaki'si) lib'de
-  duruyor ama girişte kullanılmıyor; öneri yalnız ders içi Sıradaki'dir. "En son
-  işaretlenen yarım konu" kuralına dönme: öneri takılıyor ve zıplıyordu (TestFlight
-  geri bildirimi). Aşamaları tamam ama bitmemiş konu (`bitirmeyeHazir`) öneri olmaz;
-  dairesi dolu, ortada ders renginde soluk tik. Hiç işaret yokken ipucu ve lejant —
-  ayar değil, kayıt boşluğundan türetilir.
+- **Ders ekranında özet başlıkta:** ders halkası + "N. sınıf · b/n bitti"; yüzde ve segmentli
+  çubuk yok. **Tempo satırı kaldırıldı:** sınıf görünümü sınav takvimiyle konuşmuyor.
+- **Ders içinde öneri ("Sıradaki") kartı yok:** kullanıcı 2026-10'da kaldırttı (girişteki
+  "Bugün sırada" gibi), geri getirme. `siradakiKonu`/`devamKonusu` lib'de duruyor ama ekranda
+  kullanılmıyor. Aşamaları tamam ama bitmemiş konu (`bitirmeyeHazir`) satırda soluk tikle
+  ve "bitirmeye hazır" yazısıyla belli olur. Halka açıklaması her zaman altta.
 - **Hızlı başlangıç** (yalnız 12/mezun): seçili sınıfta hiç işaret yokken bir kez "N.
   sınıfta neredeyim?"; seçenek o sınıfın her dersinde ilk ⌊n × oran⌋ satırı okulda
   işlendi yazar. Bayrak `rabi-konu-takibi-hizli-baslangic` sürüm 2, sınıf tutar;
