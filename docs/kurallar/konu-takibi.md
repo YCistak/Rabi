@@ -59,6 +59,9 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   (Matematik eklendi: diziler, toplam-fark, limit, türev, integral, çemberin
   analitiği); yalnız `mat12-*` destesine eşli konu `MAARIF_SINIF`ta "henüz yok"
   kalır. `takip.test.ts` iki uçtaki kimlikleri denetler.
+  Coğrafya (`cog12-*`): ulaşım-ticaret-turizm, jeopolitik, ekstrem doğa olayları ve
+  çevre başlıkları eşlendi; `ayt-cog-ulasim-ticaret` `ESKI_SINIF`ta 12 (2018: 12.2.7-17).
+  Küresel ve bölgesel örgütler eşlenmedi (12 destelerinde ayrı deste yok).
 - **İşaret satırda:** solda ilerleme dairesi (aşama sayısına göre yay; dokununca
   Bitirdim aç/kapa), sağda sabit genişlikte üç yuva — harita (salt okunur, boşken kesik
   kenarlı; karşılığı yoksa boş ama yer tutar), okul, soru (44 piksel dokunma alanı).

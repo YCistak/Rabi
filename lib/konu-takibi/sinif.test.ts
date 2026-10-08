@@ -98,7 +98,7 @@ describe('Maarif tablosu', () => {
     for (const [id, desteler] of Object.entries(HARITA_ESLEMESI)) {
       const sinif = eslemeSinifi(desteler)
       if (sinif === null) {
-        expect(desteler.every((d) => d.startsWith('mat12-')), id).toBe(true)
+        expect(desteler.every((d) => d.startsWith('mat12-') || d.startsWith('cog12-')), id).toBe(true)
         expect(maarifSinifi(id), id).toBe(MAARIF_SINIF[id])
       } else {
         expect(maarifSinifi(id), id).toBe(sinif)
@@ -119,6 +119,13 @@ describe('Maarif tablosu', () => {
       expect(maarifSinifi(id), id).toBe(HENUZ_YOK)
     }
     expect(eslemeSinifi(['mat12-limit'])).toBeNull()
+  })
+
+  it('12. sınıf Coğrafya destelerine eşli konular Maarif\'te yine "henüz yok"', () => {
+    for (const id of ['ayt-cog-ulasim-ticaret', 'ayt-cog-jeopolitik', 'ayt-cog-ekstrem', 'ayt-cog-cevre']) {
+      expect(HARITA_ESLEMESI[id]?.length, id).toBeGreaterThan(0)
+      expect(maarifSinifi(id), id).toBe(HENUZ_YOK)
+    }
   })
 
   it('eşli konu destelerinin sınıfını alıyor', () => {

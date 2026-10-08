@@ -313,4 +313,10 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   // 9. sınıfın destesi sera etkisi, Kyoto ve Türkiye'ye etkileri; 11.'nin
   // azaltım, uyum ve iklim adaleti. İkisi birlikte konunun tamamı.
   'ayt-cog-iklim-degisimi': ['cog9-iklim-degisim', 'cog11-iklim'],
+  // 12. sınıf (2018 programı) desteleri. Küresel ve Bölgesel Örgütler eşlenmedi:
+  // 12 destelerinde BM/NATO/AB örgütleri ayrı bir deste değil (AB ve KEİ birer kart).
+  'ayt-cog-ulasim-ticaret': ['cog12-ulasim-faktor', 'cog12-ulasim-turkiye', 'cog12-turkiye-ticaret', 'cog12-turizm-sembol', 'cog12-turizm-ekonomi'],
+  'ayt-cog-jeopolitik': ['cog12-konum-etki', 'cog12-turkiye-jeopolitik', 'cog12-jeopolitik-bolge'],
+  'ayt-cog-ekstrem': ['cog12-ekstrem'],
+  'ayt-cog-cevre': ['cog12-cevre-sinir', 'cog12-cevre-politika', 'cog12-orgut-anlasma'],
 }
