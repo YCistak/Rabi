@@ -41,6 +41,7 @@ import { kimya12 } from './icerik/12-kimya'
 import { kimya12Sorulari } from './icerik/12-kimya-sorular'
 import { biyoloji12 } from './icerik/12-biyoloji'
 import { biyoloji12Sorulari } from './icerik/12-biyoloji-sorular'
+import { tarih12 } from './icerik/12-tarih'
 
 export type {
   AkisGorseli,
@@ -188,6 +189,7 @@ const PROGRAMLAR: Record<string, DersProgrami> = {
   'fizik-12': sorulariBagla(fizik12, fizik12Sorulari),
   'kimya-12': sorulariBagla(kimya12, kimya12Sorulari),
   'biyoloji-12': sorulariBagla(biyoloji12, biyoloji12Sorulari),
+  'tarih-12': tarih12,
 }
 
 /** İçeriği henüz yazılmamış ders/sınıf için `null` döner; ekran bunu yazıyla karşılar. */

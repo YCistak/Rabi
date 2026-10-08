@@ -26,10 +26,10 @@ const METIN_SINIRI = 240
 const KART_TABANI = 6
 const KART_SINIRI = 16
 
-// İngilizce yalnızca 11'de, 12'de Matematik, Fizik, Kimya ve Biyoloji (2018 programı) yazıldı;
+// İngilizce yalnızca 11'de, 12'de Matematik, Fizik, Kimya, Biyoloji ve Tarih (2018 programı) yazıldı;
 // beklenen programlar eksikse testten süzülmez.
 const beklenenMi = (sinif: number, ders: string) =>
-  sinif === 12 ? ['matematik', 'fizik', 'kimya', 'biyoloji'].includes(ders) : sinif === 11 || ders !== 'ingilizce'
+  sinif === 12 ? ['matematik', 'fizik', 'kimya', 'biyoloji', 'tarih'].includes(ders) : sinif === 11 || ders !== 'ingilizce'
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map(
     (ders) => [`${sinif}. sınıf ${ders.ad}`, programBul(ders.id, sinif)] as const,

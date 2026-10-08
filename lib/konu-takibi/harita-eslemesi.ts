@@ -233,6 +233,14 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   'ayt-mat-turev': ['mat12-turev', 'mat12-turev-uygulama'],
   'ayt-mat-integral': ['mat12-belirsiz-integral', 'mat12-belirli-integral'],
   'ayt-geo-cember-analitik': ['mat12-cember'],
+  // 12. sınıf Tarih (2018 programı): Millî Mücadele'den küreselleşmeye.
+  'tyt-tar-milli-mucadele': ['trh12-mondros', 'trh12-hazirlik', 'trh12-tbmm', 'trh12-dogu-guney', 'trh12-bati', 'trh12-diplomasi'],
+  'tyt-tar-ataturkculuk': ['trh12-ilkeler', 'trh12-siyasi', 'trh12-hukuk', 'trh12-egitim', 'trh12-toplumsal', 'trh12-ekonomi'],
+  'ayt-tar-iki-savas-arasi': ['trh12-ic-politika', 'trh12-dis-politika', 'trh12-iki-savas-dunya'],
+  'ayt-tar-ikinci-dunya': ['trh12-ikinci-seyir', 'trh12-ikinci-turkiye', 'trh12-ikinci-sonuc'],
+  'ayt-tar-soguk-savas': ['trh12-bloklar', 'trh12-sogukdogu', 'trh12-tr-1945-1960'],
+  'ayt-tar-toplumsal-devrim': ['trh12-yumusama', 'trh12-ortadogu-petrol', 'trh12-tr-1960-1980'],
+  'ayt-tar-xxi-yuzyil': ['trh12-sscb', 'trh12-asya-kuresel', 'trh12-balkan-ortadogu', 'trh12-ab-turkiye', 'trh12-tr-1980-sonrasi'],
 
   // --- AYT Fizik ---------------------------------------------------------
   'ayt-fiz-vektor': ['fzk9-vektor'],

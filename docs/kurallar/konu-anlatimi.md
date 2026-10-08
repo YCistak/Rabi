@@ -26,6 +26,12 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - **Biyoloji 12** (`12-biyoloji.ts`): Genden Proteine, Bitki Biyolojisi, Canlılar ve
     Çevre. Enerji ünitesi (10'da) ile bitki hormonları/hareketleri (11'de) tekrar
     yazılmaz; `icerik.test.ts` bunu konu adlarından denetler.
+- **12. sınıf Tarih (2018 programı):** `12-tarih.ts` (+ `12-tarih-t1/t2/t3/t5/t7.ts`,
+  kalıp `12-tarih-yardimci.ts`); 30 deste, tema adları 2018 ünitelerinden (Millî
+  Mücadele … XXI. Yüzyılın Eşiği). 1. ünite (1908-1918) 11'de kartlı, tekrar yok;
+  Çağdaş Türk ve Dünya Tarihi ünitelerinin 20. yüzyıl konuları aynı destelerde
+  birleşik. Tarihler ve olay sırası kartlarda tek tek doğrulandı; emin olunmayan
+  ayrıntı yazılmadı. `icerik.test.ts` `beklenenMi` 12'de Matematik + Tarih.
 - Konu ölçüsü `lib/konu/maarif/iskelet.json`, `scripts/maarif-cek.mjs` ile
   tymm.meb.gov.tr'den çekilir; **elle düzenlenmez**. `maarif.test.ts` kelime
   örtüşmesiyle denetler (kısaltırken konuyu tanıtan kelimeyi atma); Türk Dili ve

@@ -112,6 +112,13 @@ describe('Maarif tablosu', () => {
     for (const k of yok) expect(eslemeSinifi(HARITA_ESLEMESI[k.id] ?? []), k.id).toBeNull()
   })
 
+  it('12. sınıf Tarih destelerine eşli konular Maarif\'te yine "henüz yok"', () => {
+    for (const id of ['tyt-tar-milli-mucadele', 'tyt-tar-ataturkculuk', 'ayt-tar-iki-savas-arasi', 'ayt-tar-xxi-yuzyil']) {
+      expect(HARITA_ESLEMESI[id]?.length, id).toBeGreaterThan(0)
+      expect(maarifSinifi(id), id).toBe(HENUZ_YOK)
+    }
+  })
+
   it('12. sınıf Matematik destelerine eşli konular Maarif\'te yine "henüz yok"', () => {
     for (const id of ['ayt-mat-diziler', 'ayt-mat-trig-formul', 'ayt-mat-turev', 'ayt-geo-cember-analitik']) {
       expect(HARITA_ESLEMESI[id]?.length, id).toBeGreaterThan(0)
