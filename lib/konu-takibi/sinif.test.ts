@@ -118,6 +118,10 @@ describe('Maarif tablosu', () => {
       expect(maarifSinifi(id), id).toBe(HENUZ_YOK)
     }
     expect(eslemeSinifi(['mat12-limit'])).toBeNull()
+    for (const id of ['ayt-biy-genden-proteine', 'ayt-biy-bitki', 'ayt-biy-canlilar-cevre']) {
+      expect(HARITA_ESLEMESI[id]?.every((d) => d.startsWith('byl12-')), id).toBe(true)
+      expect(maarifSinifi(id), id).toBe(HENUZ_YOK)
+    }
   })
 
   it('eşli konu destelerinin sınıfını alıyor', () => {

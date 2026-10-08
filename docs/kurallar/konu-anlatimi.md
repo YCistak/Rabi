@@ -23,6 +23,9 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   nanoteknoloji (`kim9/11-nano`), sürdürülebilirlik/yeşil kimya (`kim9-yesil`,
   `kim11-mikroplastik`) ve hidrojen üretimi (`kim11-yesil-hidrojen`) 9–11'de var,
   12'de yazılmaz; Nernst hesabı ve yakıt pili (Fen Lisesi) yok.
+- **Biyoloji 12** (`12-biyoloji.ts`): Genden Proteine, Bitki Biyolojisi, Canlılar ve
+    Çevre. Enerji ünitesi (10'da) ile bitki hormonları/hareketleri (11'de) tekrar
+    yazılmaz; `icerik.test.ts` bunu konu adlarından denetler.
 - Konu ölçüsü `lib/konu/maarif/iskelet.json`, `scripts/maarif-cek.mjs` ile
   tymm.meb.gov.tr'den çekilir; **elle düzenlenmez**. `maarif.test.ts` kelime
   örtüşmesiyle denetler (kısaltırken konuyu tanıtan kelimeyi atma); Türk Dili ve

@@ -339,6 +339,28 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   'ayt-biy-uriner': ['byl11-bosaltim-homeo'],
   'ayt-biy-komunite': ['byl10-etkilesim', 'byl10-suksesyon', 'byl10-populasyon'],
   'ayt-biy-enerji': ['byl10-fotosentez', 'byl10-kemosentez', 'byl10-solunum', 'byl10-fermantasyon'],
+  // 12. sınıf (2018 programı) desteleri. Enerji ünitesi 10'un destelerinde kaldı.
+  'ayt-biy-genden-proteine': [
+    'byl12-nukleik-kesif',
+    'byl12-nukleik-yapi',
+    'byl12-genetik-organizasyon',
+    'byl12-dna-eslenme',
+    'byl12-transkripsiyon',
+    'byl12-translasyon',
+    'byl12-biyoteknoloji',
+    'byl12-biyotek-uygulama',
+  ],
+  'ayt-biy-bitki': [
+    'byl12-bitki-doku',
+    'byl12-kok-govde-yaprak',
+    'byl12-su-emilim',
+    'byl12-ksilem',
+    'byl12-floem',
+    'byl12-cicek',
+    'byl12-dollenme',
+    'byl12-cimlenme',
+  ],
+  'ayt-biy-canlilar-cevre': ['byl12-cevre-genetik', 'byl12-yapay-secilim'],
 
   // --- AYT Edebiyat ------------------------------------------------------
   'ayt-edb-guzel-sanatlar': ['trk9-edebiyat'],

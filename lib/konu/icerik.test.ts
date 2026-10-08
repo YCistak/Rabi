@@ -26,10 +26,10 @@ const METIN_SINIRI = 240
 const KART_TABANI = 6
 const KART_SINIRI = 16
 
-// İngilizce yalnızca 11'de, 12'de Matematik, Fizik ve Kimya (2018 programı) yazıldı;
+// İngilizce yalnızca 11'de, 12'de Matematik, Fizik, Kimya ve Biyoloji (2018 programı) yazıldı;
 // beklenen programlar eksikse testten süzülmez.
 const beklenenMi = (sinif: number, ders: string) =>
-  sinif === 12 ? ['matematik', 'fizik', 'kimya'].includes(ders) : sinif === 11 || ders !== 'ingilizce'
+  sinif === 12 ? ['matematik', 'fizik', 'kimya', 'biyoloji'].includes(ders) : sinif === 11 || ders !== 'ingilizce'
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map(
     (ders) => [`${sinif}. sınıf ${ders.ad}`, programBul(ders.id, sinif)] as const,
@@ -152,6 +152,24 @@ describe('12. sınıf Kimya (2018 programı)', () => {
     // Lewis (9), nanoteknoloji (9, 11) ve sürdürülebilirlik/yeşil kimya (9, 11) zaten haritada.
     const adlar = tumKonular(kimya).map((k) => k.ad.toLocaleLowerCase('tr'))
     for (const yasak of ['lewis', 'nano', 'sürdürülebilir', 'yeşil']) {
+      expect(adlar.filter((ad) => ad.includes(yasak)), yasak).toEqual([])
+    }
+  })
+})
+
+describe('12. sınıf Biyoloji (2018 programı)', () => {
+  const biyoloji = programBul('biyoloji', 12)!
+
+  it('her konuda tek Rabi notu var', () => {
+    for (const konu of tumKonular(biyoloji)) {
+      expect(konu.kartlar.filter((kart) => kart.not !== undefined), `${konu.ad}: Rabi notu`).toHaveLength(1)
+    }
+  })
+
+  it('9–11 haritasında kartı olan konular tekrar yazılmadı', () => {
+    // Enerji ünitesi (fotosentez, kemosentez, solunum) 10'da, bitki hormonları ve hareketleri 11'de.
+    const adlar = tumKonular(biyoloji).map((k) => k.ad.toLocaleLowerCase('tr'))
+    for (const yasak of ['besin sentezi', 'kemosentez', 'hücresel solunum', 'fermantasyon', 'hormon', 'tepki']) {
       expect(adlar.filter((ad) => ad.includes(yasak)), yasak).toEqual([])
     }
   })

@@ -190,7 +190,9 @@ describe('AYT\'de TYT ile ortak konuların haritası', () => {
     expect(HARITA_ESLEMESI['ayt-mat-integral']).toEqual(['mat12-belirsiz-integral', 'mat12-belirli-integral'])
     expect(HARITA_ESLEMESI['ayt-mat-limit']).toEqual(['mat12-limit'])
     expect(HARITA_ESLEMESI['ayt-kim-enerji-kaynaklari']).toEqual(['kim12-fosil', 'kim12-alternatif'])
-    for (const id of ['ayt-biy-genden-proteine']) {
+    expect(HARITA_ESLEMESI['ayt-biy-genden-proteine']).toContain('byl12-dna-eslenme')
+    expect(HARITA_ESLEMESI['ayt-biy-bitki']).toContain('byl12-floem')
+    for (const id of ['ayt-fel-ilk-cag']) {
       expect(HARITA_ESLEMESI[id], id).toBeUndefined()
     }
   })
@@ -198,7 +200,7 @@ describe('AYT\'de TYT ile ortak konuların haritası', () => {
 
 describe('haritaDurumu — otomatik aşama', () => {
   it('eşlemesi olmayan konuda null', () => {
-    expect(haritaDurumu('ayt-biy-genden-proteine', {})).toBeNull()
+    expect(haritaDurumu('ayt-fel-ilk-cag', {})).toBeNull()
     expect(haritaDurumu('olmayan-konu', {})).toBeNull()
   })
 
