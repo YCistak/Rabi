@@ -57,7 +57,7 @@ Mini tur, ilgili ekran **ilk kez** açıldığında bir kez çalışır (`miniTu
 | Denemeler | Denemeler açılınca (form kapalıyken), ana turda görülmediyse | Deneme ekle (elle ya da fotoğrafla okut) |
 | Konu Haritası | Harita sekmesi açılınca | Patikanın başı: yeşil kitap, turuncu kitap |
 | Pomodoro | Pomodoro açılınca, sayaç işlemiyorken | İki mod · Çalışma ayarları · Odak kilidi |
-| Yapılacaklar | Yapılacaklar açılınca | Görev ekle · Görevlerin (işaretle, Pomodoro ile başlat) |
+| Yapılacaklar | Yapılacaklar açılınca | "+"ya dokun · Görevin adı · Saat ekle · Pomodoro ile çalış · Kaydet · Görevlerin (işaretle, Pomodoro ile başlat) |
 | İstatistik | İstatistik açılınca, ana turda görülmediyse | Deneme türü · Son net · En çok ilerleyenler · Güçlü/zayıf · Karşılaştır |
 | Oyunlar | Oyunlar sekmesi açılınca | Tanıtım oyunu kartı · Hazırlık · Başlat · Bir işlem · Sonuç |
 | Oyun Bankası | Oyun Bankası açılınca | Yanlışların · Liste · Genel test · Öğrendim |
@@ -65,6 +65,15 @@ Mini tur, ilgili ekran **ilk kez** açıldığında bir kez çalışır (`miniTu
 - **Denemeler** ve **İstatistik** mini turları ana turla örtüşür: ana turu (sürüm 2) bitirende ikisi de görülmüş sayılır. Eski turu bitirmiş kullanıcı da artık önce yeni ana turu gördüğünden (mini turlar ana tur bitmeden başlamaz) bu iki mini tur pratikte bir daha çıkmaz. Denemeler tek adımlı: mini turlar kayıt eklettirmiyor (turun geçici verisi yalnızca ana turda yazılıyor).
 - **İstatistik** ve **Oyun Bankası** gerçek veri olmadan boş durum çiziyor; tur kendi örnek verisini gösteriyor (İstatistik'te alana göre iki örnek deneme ve gerekiyorsa geçici eşi — `istatistikTuruDenemeleri`; bankada üç örnek soru — tur başlarken kuruluyor). Örnekler yalnızca bellekte, tur bitince siliniyor.
 - **Pomodoro** turu sayaç işlerken (tam ekran sahne) ya da Yapılacaklar'dan "Pomodoro ile başlat" ile gelinmişken başlamıyor; bir sonraki boş ziyarette çıkıyor. İlk girişteki odak kilidi tanıtımı (Android) tur bitene kadar bekliyor.
+- **Yapılacaklar** turu görev eklemeyi **gösterir, eklettirmez** (yanlış soru eklemedeki kullanıcı kararıyla aynı, 2026-10). Altı adım:
+  1. `gorev-ekle` — "+" (`data-tanitim="gorev-ekle"`) dokunmalı: "+ düğmesine dokun; görev ekleme sayfası açılsın." Turda dolu günde de basılabilir.
+  2. `gorev-ad` — "Ne yapacağını yaz." (başlık + kutu)
+  3. `gorev-saat` — "İstersen saat ver; 5 dk önce hatırlatırım."
+  4. `gorev-pomodoro` — "Açarsan görevden tek dokunuşla sayaç başlar."
+  5. `gorev-kaydet` — "Kaydet’e dokununca görev listene eklenir." (turda soluk çizilmez)
+  6. `gorev-liste-bilgi` — "Bitince işaretle. Pomodoro ile çalış’ı açtığın görevi satırdan başlat." → "Turu Bitir".
+
+  2–5 bilgi adımı (`GOREV_FORMU_ADIMLARI`, kısa balon): yazı ya da seçim beklenmez, İleri ile geçilir. Rehber bu adımlarda hedefe dokunmayı ve odağı kilitler: klavye açılmaz, Kaydet'e basılamaz; form da kendiliğinden odak vermez ("Saat ekle"nin seçicisi yalnız dokunuşla açılır). Ekleme sayfası turda kullanıcının dokunuşuna değil **adıma** bağlıdır (`gorevFormuTurdaAcik`): son alandan İleri, Geri ya da tur bitişi sayfayı kaydetmeden kaldırır. Kayıt üç kat kapalı: hiçbir adım `kayit` beklemez, ekranın `kaydet`i `tanitim` varken hiçbir şey yapmaz, `AppShell` turda görev listesine boş yazıcı verir (`gorevYazilabilir`). Geri (balon ya da Android tuşu, karar `adim-geri`): ilk alandan "+"ya döner ve sayfa kapanır, öteki alanlardan bir önceki alana, listeden Kaydet adımına (sayfa yeniden, boş açılır). ✕ ya da aşağı kaydırma (`GOREV_VAZGEC`) "+" adımına döndürür.
 - **Oyunlar** turunda eski "Süre ve skor" adımı kalktı (beş adıma sığmak için): rehber geri sayımdan sonra doğrudan soruyla geri geliyor ve demo sayacı o sırada işliyor. Ana sayfadaki ders kutucuğundan gelindiyse de ızgara ilk adımda görünüyor.
 
 Ana tur açıkken mini tur başlamaz ve ana tur bitmeden hiçbiri başlamaz. **Mevcut kullanıcı:** ana tur sürümlüdür (`ANA_TUR_SURUMU`, şu an 2). Kayıtlı sürümü (`rabi_ana_tur_surumu`) güncelden küçük olan kurulu kullanıcı — eski `rabi_ana_tur_tamamlandi` ya da `rabi_tanitim_tamamlandi` anahtarı `true` olsa da — yeni ana turu **bir kez** görür; bitirince sürüm yazılır ve bir daha çıkmaz (kullanıcı istedi, 2026-10). Ana turu bitirince Denemeler ve İstatistik mini turları görülmüş sayılır; mini turlar (Pomodoro, Yapılacaklar, İstatistik, Oyunlar, Oyun Bankası) o ekranları ilk ziyaretinde bir kez görür. Eski (46 adımlı) ana tur Denemeler ve Harita turlarını zaten görülmüş saydıysa onlar çıkmaz.
@@ -77,7 +86,7 @@ Ana tur açıkken mini tur başlamaz ve ana tur bitmeden hiçbiri başlamaz. **M
 | Denemeler | `rabi_deneme_turu_tamamlandi` |
 | Konu Haritası | `rabi_harita_turu_tamamlandi` |
 | Pomodoro | `rabi-mini-tur-pomodoro-v1` |
-| Yapılacaklar | `rabi-mini-tur-yapilacaklar-v1` |
+| Yapılacaklar | `rabi-mini-tur-yapilacaklar-v2` (v1 `ESKI_ANAHTARLAR`da) |
 | İstatistik | `rabi-mini-tur-istatistik-v1` |
 | Oyunlar | `rabi-mini-tur-oyunlar-v1` |
 | Oyun Bankası | `rabi-mini-tur-oyun-bankasi-v1` |
