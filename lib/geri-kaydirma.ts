@@ -301,11 +301,3 @@ export function useGeriKaydirma(
     }
   }, [])
 }
-
-/**
- * Saklanan bir ekran görüntüsü. Sekmeler arası kaydırma da komşu sekmeyi
- * yandan gösterirken bunu kullanıyor (`sekme-kaydirma.ts`).
- */
-export function ekranGoruntusu(anahtar: string): HTMLElement | undefined {
-  return goruntuler.get(anahtar)
-}
