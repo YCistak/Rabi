@@ -67,15 +67,18 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   Her açılışta ayarlardaki sınıfla açılır (`haritaSinifiBul` → `haritaAcilisSinifi`);
   ekran içi sınıf değişimi o ziyaretlik; mezunda son seçim kalır; 12. sınıf öğrencisi
   11'de açılır. `sinifDersleri` boş programları haritada gizler.
-- **Sınıf patikanın üstünde sekme** (`SinifSekmesi`, `lib/konu/sinif-sekmesi.ts`):
-  `9 · 10 · 11 · 12` hep görünür, altında seçili dersin o sınıftaki ilerleme yüzdesi
-  (ders yoksa çizgi), kendi sınıfında "sen" işareti; seçici içinde gizli sınıf fark
-  edilmiyordu. "Çalıştığın program" kartı yalnız dersi seçtirir. Ders yeni sınıfta
-  yoksa sınıfın ilk dersine geçilir ve bunu kısa bir satır söyler (`sinifDegisimi`).
-- **12 sekmede pasif** (`sinifPasifMi`: hiçbir dersi yazılmamış sınıf), "Yakında"
-  rozetli, boş ekrana götürmez. `KonuSinifi` 9–11; 12 yalnız sekmenin tipi
-  (`HaritaSinifi`); kartlar yazılınca `KONU_SINIFLARI`na eklenir, sekme kendiliğinden
-  açılır. Kilitli "yapım aşamasında" kartı yalnız eski kayıtta seçim 12 kaldıysa diye
+- **Sınıf ve ders tek kart + alt pencere** (kullanıcı seçti, 2026-10;
+  `components/konu/harita-secimi.tsx`, tasarım "Tek başlık + alt sayfa"): patikanın
+  üstünde yalnız "10. sınıf · Kimya" kartı (ders emojisi, ilerleme, turuncu ok);
+  basınca alttan pencere. Pencerede önce `SINIF` (seçili turuncu dolgu, yüzde =
+  sınıfın ders ortalaması `sinifOrtalamasi`), sonra o sınıfın dersleri gri grupta
+  beyaz satırlar; seçili ders turuncu kenar + `--primary-soft`. Sınıfa basmak yalnız
+  listeyi değiştirir, seçim derse basınca biter; bakılan sınıfta seçili ders yoksa
+  `pencereBilgisi` satırı. **"sen" işareti yok** (kullanıcı kaldırttı). Emojiler
+  `OlcekliEmoji` ile (kullanıcı istedi; hizalı satırda ham emoji telefona göre kayar).
+- **12 pencerede pasif** (`sinifPasifMi`: hiçbir dersi yazılmamış sınıf), "Yakında"
+  rozetli, boş ekrana götürmez. `KonuSinifi` 9–11; 12 yalnız `HaritaSinifi`; kartlar
+  yazılınca `KONU_SINIFLARI`na eklenir, hücre kendiliğinden açılır. Kilitli "yapım aşamasında" kartı yalnız eski kayıtta seçim 12 kaldıysa diye
   duruyor.
 - **Konu Takibi yönlendirmesi şerit bırakır:** "Haritaya git" sınıfı değiştirir; kendi
   sınıfından farklıysa patikanın üstünde kapatılabilir şerit ("Trigonometri için 10.

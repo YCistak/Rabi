@@ -46,8 +46,9 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
     iskelette yok; 2018 sınıflarıyla durur.
   - Varsayılan sekme öğrencinin sınıfı, mezun 12, bilinmeyen 9 (`varsayilanSinif`);
     oturumdan dönen sekme pasifse varsayılan, o da pasifse ilk açık sekme.
-- **Sınıf sekmesi** haritanın sınıf sekmesinin dili: yüzde = o sınıftaki görünen
-  bütün satırların dairelerinin ortalaması (`sinifSekmeleri`), kendi sınıfında "sen".
+- **Sınıf sekmesi** gri dörtlü segment (haritanın eski sınıf sekmesinin dili): yüzde
+  = o sınıftaki görünen bütün satırların dairelerinin ortalaması (`sinifSekmeleri`),
+  kendi sınıfında "sen".
 - **"Haritada çalıştım" elle işaretlenmez:** `harita-eslemesi.ts`teki açık tablo YKS
   konusunu harita konularına bağlar; aşama haritanın kaydından (`konuTamam`) hesaplanır,
   "Haritaya git" o konunun kartıyla açar (`acilacakKonu`, sınıf farklı olsa da).
