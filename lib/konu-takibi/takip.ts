@@ -360,7 +360,12 @@ export type SinifSekmesi = {
   pasif: boolean
   /** Öğrencinin kendi sınıfı — küçük "sen" işareti. */
   sen: boolean
-  /** Eski programda (12/mezun) haritası yazılmamış sınıf (12): açık, "harita yok". */
+  /**
+   * Eski programda (12/mezun) 12, görünen satırlarından hiçbiri haritaya eşli
+   * değilse: açık, "harita yok". Sabit "harita yok" yanlış olurdu: 12'nin AYT
+   * Matematik'i `mat12-*` destelerine, 2018'de 12'de okunan bazı konular
+   * (XX. yüzyıl başları) 9–11 destelerine eşli.
+   */
   haritasiz: boolean
   /** Maarif öğrencisinde (9–11) 12: programı yayımlanmadı, pasif ve "Yakında". */
   yakinda: boolean
@@ -384,7 +389,10 @@ export function sinifSekmeleri(
       yuzde: bos ? null : Math.round((toplam / satirlar.length) * 100),
       pasif: bos,
       sen: sinif === buYilSinif,
-      haritasiz: !maarif && sinif === HARITASIZ_SINIF,
+      haritasiz:
+        !maarif &&
+        sinif === HARITASIZ_SINIF &&
+        !satirlar.some((s) => satirKimlikleri(s).some((id) => HARITA_ESLEMESI[id] !== undefined)),
       yakinda,
     }
   })

@@ -19,17 +19,21 @@
  * ayrı YKS başlığını birlikte anlatıyor). Tabloda olmayan konunun haritada
  * karşılığı yok; o konuda aşama hiç gösterilmiyor.
  *
- * 12. sınıfın harita kartları henüz yazılmadı (`lib/konu/index.ts` →
- * `HARITA_SINIFLARI`); AYT'nin türev, integral, organik kimya gibi
- * başlıkları bu yüzden eşlenmedi. Kartlar yazılınca buraya eklenir.
+ * 12. sınıfta yalnız Matematik'in kartları yazıldı (2018 programı,
+ * `lib/konu/icerik/12-matematik.ts`); AYT Matematik'in diziler, toplam-fark,
+ * limit, türev, integral ve çemberin analitiği başlıkları `mat12-*`
+ * destelerine bağlı. Öteki derslerin 12. sınıf başlıkları (organik kimya,
+ * Cumhuriyet edebiyatı…) kartları yazılınca eklenir. `mat12-*` desteleri
+ * Maarif öğrencisinin sınıf atamasını değiştirmez (`sinif.ts` →
+ * `eslemeSinifi` yalnız 9–11 öneklerini okur): o konular Maarif'te yine
+ * "henüz yok".
  *
  * AYT'de TYT ile içeriği örtüşen konular da aynı harita konularına bağlı
  * (AYT Enerji ve Hareket ↔ TYT İş, Güç ve Enerji): kayıt tek, harita
  * konusu TYT'den ya da AYT'den gidilerek bitirilmiş olsun iki satırda da
  * dolu görünüyor. Bakılıp **eşlenmeyenler**: İkinci Dereceden Denklemler
  * (Karesel Fonksiyon destesi diskriminant ve kök-katsayıya yalnızca birer
- * kartla değiniyor), Toplam-Fark Formülleri (11. sınıf trigonometri
- * destelerinde yok), Divan ve Geçiş Dönemi Edebiyatı (Mesnevi ve Dîvânu
+ * kartla değiniyor), Divan ve Geçiş Dönemi Edebiyatı (Mesnevi ve Dîvânu
  * Lugâti't-Türk desteleri konunun bir parçası), Sığa ve Alternatif Akım
  * (birer kart), Coğrafya'nın Türkiye'de tarım, sanayi ve çevre konuları
  * (11. sınıf desteleri Türkiye'ye özgü değil, genel kavramlar), Eşlik ve
@@ -216,6 +220,13 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   'ayt-mat-logaritma': ['mat11-ustel', 'mat11-ustel-ters', 'mat11-log', 'mat11-ustel-log-denklem'],
   'ayt-geo-analitik': ['mat10-nokta', 'mat10-dogru'],
   'ayt-geo-donusum': ['mat9-donusum'],
+  // 12. sınıf (2018 programı) desteleri.
+  'ayt-mat-trig-formul': ['mat12-toplam-fark'],
+  'ayt-mat-diziler': ['mat12-dizi', 'mat12-aritmetik', 'mat12-geometrik'],
+  'ayt-mat-limit': ['mat12-limit'],
+  'ayt-mat-turev': ['mat12-turev', 'mat12-turev-uygulama'],
+  'ayt-mat-integral': ['mat12-belirsiz-integral', 'mat12-belirli-integral'],
+  'ayt-geo-cember-analitik': ['mat12-cember'],
 
   // --- AYT Fizik ---------------------------------------------------------
   'ayt-fiz-vektor': ['fzk9-vektor'],

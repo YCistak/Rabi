@@ -28,7 +28,11 @@ export type YksSinif = 9 | 10 | 11 | 12
 
 export const YKS_SINIFLARI: readonly YksSinif[] = [9, 10, 11, 12]
 
-/** Haritası yazılmamış sınıf — sekmede "harita yok" ya da Maarif'te "Yakında". */
+/**
+ * Haritası (Maarif'te programı) olmayan sınıf — Maarif'te "Yakında". Eski
+ * programda 12 açık; harita yalnız Matematik'te var, sekmedeki "harita yok"
+ * görünen satırlardan hiçbiri haritaya eşli değilse yazılır (`takip.ts`).
+ */
 export const HARITASIZ_SINIF: YksSinif = 12
 
 /** Maarif 9–11'de karşılığı olmayan konu: 12. sınıf programı henüz yok, gösterilmiyor. */
@@ -49,7 +53,13 @@ export function ogrenciMufredati(buYilSinif: number): Mufredat {
   return Number.isFinite(buYilSinif) && buYilSinif >= 12 ? 'eski' : 'maarif'
 }
 
-/** Harita destesi kimliğinin sınıf öneki: `mat9-…`, `fzk10-…`, `trh11-…`. */
+/**
+ * Harita destesi kimliğinin sınıf öneki: `mat9-…`, `fzk10-…`, `trh11-…`.
+ *
+ * 12 (`mat12-…`) bilerek okunmuyor: 12. sınıf desteleri 2018 programından ve
+ * Maarif öğrencisine "bu konu 12'de" demiyor (Maarif'in 12'si yayımlanmadı).
+ * Yalnız 12 destesine eşli konu Maarif'te `MAARIF_SINIF`a düşüyor.
+ */
 const DESTE_ONEKI = /^[a-z]+(9|10|11)-/
 
 /**
@@ -676,9 +686,9 @@ export const ESKI_SINIF: Readonly<Record<string, YksSinif>> = {
 }
 
 /**
- * Konunun Maarif'teki yeri: önce harita eşlemesi (destelerin öneki; elle
- * yazılmıyor, yoksa eşleme değişince iki tablo birbirini tutmazdı), yoksa
- * `MAARIF_SINIF`. İkisinde de yoksa "henüz yok" — test bu durumu zaten
+ * Konunun Maarif'teki yeri: önce harita eşlemesi (destelerin 9–11 öneki;
+ * elle yazılmıyor, yoksa eşleme değişince iki tablo birbirini tutmazdı), yoksa
+ * `MAARIF_SINIF` — yalnız 12 destesine eşli konular da buraya düşer. İkisinde de yoksa "henüz yok" — test bu durumu zaten
  * kırıyor, bu yalnızca çalışma anındaki emniyet.
  */
 export function maarifSinifi(konuId: string): SinifYeri {

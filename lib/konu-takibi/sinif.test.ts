@@ -85,27 +85,40 @@ describe('Maarif tablosu', () => {
     expect(eksik.map((k) => k.id)).toEqual([])
   })
 
-  it('tablo eşli bir konuyu ezmiyor ve listede olmayan kimlik taşımıyor', () => {
+  it('tablo 9–11 destesine eşli bir konuyu ezmiyor ve listede olmayan kimlik taşımıyor', () => {
     const kimlikler = new Set(tumYksKonulari().map((k) => k.id))
     for (const id of Object.keys(MAARIF_SINIF)) {
       expect(kimlikler.has(id), id).toBe(true)
-      expect(HARITA_ESLEMESI[id], id).toBeUndefined()
+      // Yalnız 12. sınıf (2018) destesine eşli konu tabloda kalır: önek okunmuyor.
+      expect(eslemeSinifi(HARITA_ESLEMESI[id] ?? []), id).toBeNull()
     }
   })
 
-  it('eşli her konunun destelerinden bir sınıf okunuyor ve Maarif sınıfı o', () => {
+  it('eşli her konunun Maarif sınıfı: 9–11 destesi varsa ondan, yalnız 12 destesiyse tablodan', () => {
     for (const [id, desteler] of Object.entries(HARITA_ESLEMESI)) {
       const sinif = eslemeSinifi(desteler)
-      expect(sinif, id).not.toBeNull()
-      expect(maarifSinifi(id), id).toBe(sinif)
+      if (sinif === null) {
+        expect(desteler.every((d) => d.startsWith('mat12-')), id).toBe(true)
+        expect(maarifSinifi(id), id).toBe(MAARIF_SINIF[id])
+      } else {
+        expect(maarifSinifi(id), id).toBe(sinif)
+      }
     }
   })
 
-  it('Maarif 12 vermiyor; "henüz yok" olan hiçbir konu haritaya eşli değil', () => {
+  it('Maarif 12 vermiyor; "henüz yok" olan hiçbir konu 9–11 haritasına eşli değil', () => {
     const yok = tumYksKonulari().filter((k) => maarifSinifi(k.id) === HENUZ_YOK)
     expect(yok.length).toBeGreaterThan(0)
     for (const k of tumYksKonulari()) expect(maarifSinifi(k.id), k.id).not.toBe(12)
-    for (const k of yok) expect(HARITA_ESLEMESI[k.id], k.id).toBeUndefined()
+    for (const k of yok) expect(eslemeSinifi(HARITA_ESLEMESI[k.id] ?? []), k.id).toBeNull()
+  })
+
+  it('12. sınıf Matematik destelerine eşli konular Maarif\'te yine "henüz yok"', () => {
+    for (const id of ['ayt-mat-diziler', 'ayt-mat-trig-formul', 'ayt-mat-turev', 'ayt-geo-cember-analitik']) {
+      expect(HARITA_ESLEMESI[id]?.length, id).toBeGreaterThan(0)
+      expect(maarifSinifi(id), id).toBe(HENUZ_YOK)
+    }
+    expect(eslemeSinifi(['mat12-limit'])).toBeNull()
   })
 
   it('eşli konu destelerinin sınıfını alıyor', () => {
@@ -211,11 +224,12 @@ describe('sinifSekmeleri — ekranın üstü', () => {
     }
   })
 
-  it('12 ve mezun (eski program): 12 açık ve haritasız, "Yakında" yok', () => {
+  it('12 ve mezun (eski program): 12 açık, "Yakında" yok; harita yalnız Matematik görünüyorsa var', () => {
     for (const ogrenci of [12, 13]) {
       const sekmeler = sinifSekmeleri('ea', ogrenci, BOS_TAKIP, {})
       expect(sekmeler.some((s) => s.yakinda)).toBe(false)
-      expect(sekmeler.find((s) => s.sinif === 12)).toMatchObject({ pasif: false, haritasiz: true, yuzde: 0 })
+      // EA'da AYT Matematik görünüyor ve 12. sınıf konuları mat12 destelerine eşli.
+      expect(sekmeler.find((s) => s.sinif === 12)).toMatchObject({ pasif: false, haritasiz: false, yuzde: 0 })
     }
   })
 

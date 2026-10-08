@@ -806,7 +806,8 @@ function DersEkrani({
  * sekmesinin (`konu-haritasi.tsx` → `SinifSekmesi`) görsel dili: aynı yuva,
  * aynı "sen" işareti, altında küçük yüzde. TYT/AYT ayrımı ve "Tümü" yok
  * (kullanıcı kaldırttı, 2026-10). 12 müfredata göre: 12. sınıf ve mezunda
- * (2018 programı) **açık**, haritası yok diye "harita yok" yazıyor; 9–11'de
+ * (2018 programı) **açık**; görünen satırların hiçbiri haritaya eşli değilse
+ * "harita yok" yazıyor (12'de harita yalnız Matematik'te); 9–11'de
  * (Maarif) haritadaki gibi pasif ve "Yakında" rozetli. Yüzde o sınıfın
  * satırlarındaki dairelerin ortalaması (`sinifSekmeleri`).
  */
