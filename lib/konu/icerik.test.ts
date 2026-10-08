@@ -29,7 +29,7 @@ const KART_SINIRI = 16
 // İngilizce yalnızca 11'de, 12'de yalnız Matematik (2018 programı) yazıldı;
 // beklenen programlar eksikse testten süzülmez.
 const beklenenMi = (sinif: number, ders: string) =>
-  sinif === 12 ? ders === 'matematik' : sinif === 11 || ders !== 'ingilizce'
+  sinif === 12 ? ders === 'matematik' || ders === 'tarih' : sinif === 11 || ders !== 'ingilizce'
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map(
     (ders) => [`${sinif}. sınıf ${ders.ad}`, programBul(ders.id, sinif)] as const,
