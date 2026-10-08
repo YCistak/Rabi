@@ -14,6 +14,11 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   şimdilik yalnız Matematik; öteki dersler eklenince `beklenenMi` (`icerik.test.ts`)
   genişler. Sekizinci ders `KonuDersId` + ders rengi ister. 11. sınıf soruları ayrı
   `11-<ders>-sorular.ts` (`sorulariBagla`), Edebiyat/Tarih/Coğrafya içerikte.
+- **12. sınıf Fizik (2018 programı):** `12-fizik.ts` + `12-fizik-sorular.ts`, 6 ünite
+  23 deste (`fzk12-*`). Düzgün çembersel hareket `fzk11-cembersel`de, 12'de yazılmaz;
+  BHH destesi `fzk10-periyodik`le örtüşür ama 2018'in konum-hız-ivme ve yay bağlama
+  kazanımlarını taşır. Programın "hesaplamaya girilmez" dediği yerde (görelilik,
+  Compton, girişim, eylemsizlik momenti) bağıntı yalnız değişken ilişkisi için verilir.
 - Konu ölçüsü `lib/konu/maarif/iskelet.json`, `scripts/maarif-cek.mjs` ile
   tymm.meb.gov.tr'den çekilir; **elle düzenlenmez**. `maarif.test.ts` kelime
   örtüşmesiyle denetler (kısaltırken konuyu tanıtan kelimeyi atma); Türk Dili ve
