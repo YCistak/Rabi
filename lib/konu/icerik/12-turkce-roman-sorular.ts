@@ -72,11 +72,11 @@ export const romanSoylevSorulari: Record<string, Omit<SoruKarti, 'id'>[]> = {
   'trk12-tiyatro-kurumlar': sorular([
     ['Darülbedayi 1914’te kuruldu.', true, 'Sonradan İstanbul Şehir Tiyatroları adını aldı.'],
     ['Halkevleri 1949’da açıldı.', false, 'Halkevleri 1932’de açıldı.'],
-    ['Ankara Sanat Tiyatrosu’nun kurucusu Genco Erkal’dır.', false, 'Ankara Sanat Tiyatrosu Cüneyt Gökçer’indir; Genco Erkal Dostlar Tiyatrosu’nu kurdu.'],
+    ['Ankara Sanat Tiyatrosu’nun kurucusu Genco Erkal’dır.', false, 'Ankara Sanat Tiyatrosu’nu Asaf Çiyiltepe kurdu; Genco Erkal Dostlar Tiyatrosu’nu kurdu.'],
     ['Devlet Konservatuvarı 1936’da Ankara’da açıldı.', true, 'Tiyatro ve müzik sanatçıları burada yetişti.'],
     ['Bir Adam Yaratmak, Orhan Asena’nın oyunudur.', false, 'Bir Adam Yaratmak (1938) Necip Fazıl’ındır.'],
   ], [
-    ['Dostlar Tiyatrosu’nu kim kurdu?', 'Genco Erkal', 'Cüneyt Gökçer', 'Cüneyt Gökçer 1955’te Ankara Sanat Tiyatrosu’nu kurdu.'],
+    ['Dostlar Tiyatrosu’nu kim kurdu?', 'Genco Erkal', 'Asaf Çiyiltepe', 'Asaf Çiyiltepe 1963’te Ankara Sanat Tiyatrosu’nu kurdu.'],
     ['Devlet Tiyatroları hangi yıl kuruldu?', '1949', '1936', '1936 Devlet Konservatuvarı’nın yılıdır.'],
     ['Darülbedayi’nin tanınmış yönetmeni kimdir?', 'Muhsin Ertuğrul', 'Haldun Taner', 'Haldun Taner oyun yazarıdır.'],
     ['Bir Adam Yaratmak kimin oyunudur?', 'Necip Fazıl', 'Güngör Dilmen', 'Oyun 1938 tarihlidir.'],

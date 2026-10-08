@@ -39,7 +39,7 @@ export const siirSorulari: Record<string, Omit<SoruKarti, 'id'>[]> = {
   ], [
     ['Sisler Bulvarı kimin kitabıdır?', 'Attila İlhan', 'Ahmed Arif', 'Sisler Bulvarı 1954’te çıktı.'],
     ['Memleketimden İnsan Manzaraları kimin eseridir?', 'Nâzım Hikmet', 'Ahmed Arif', 'Ahmed Arif’in tek kitabı Hasretinden Prangalar Eskittim’dir.'],
-    ['Şeyh Bedreddin Destanı hangi yıl yayımlandı?', '1936', '1939', 'Kuvâyi Milliye 1939’dadır.'],
+    ['Şeyh Bedreddin Destanı hangi yıl yayımlandı?', '1936', '1929', '1929, 835 Satır’ın yılıdır.'],
     ['Ahmed Arif’in şiir kitabı hangisidir?', 'Hasretinden Prangalar Eskittim', 'Sisler Bulvarı', 'Sisler Bulvarı Attila İlhan’ındır.'],
   ]),
   'trk12-siir-garip': sorular([
@@ -62,8 +62,8 @@ export const siirSorulari: Record<string, Omit<SoruKarti, 'id'>[]> = {
     ['İkinci Yeni’de sözcüklerin alışılmış sırası kesinlikle korunur.', false, 'Sözcük sırası sıkça bozulur.'],
   ], [
     ['Üvercinka kimin kitabıdır?', 'Cemal Süreya', 'Turgut Uyar', 'Üvercinka 1958’de çıktı.'],
-    ['Yerçekimli Karanfil kimin kitabıdır?', 'Edip Cansever', 'İlhan Berk', 'İlhan Berk’in kitabı Güzel Irmak’tır.'],
-    ['Güzel Irmak kimin kitabıdır?', 'İlhan Berk', 'Ece Ayhan', 'Ece Ayhan’ın kitabı Kınar Hanımın Denizleri’dir.'],
+    ['Yerçekimli Karanfil kimin kitabıdır?', 'Edip Cansever', 'İlhan Berk', 'İlhan Berk’in kitabı Galile Denizi’dir.'],
+    ['Galile Denizi kimin kitabıdır?', 'İlhan Berk', 'Ece Ayhan', 'Ece Ayhan’ın kitabı Kınar Hanımın Denizleri’dir.'],
     ['Hızırla Kırk Saat kimin kitabıdır?', 'Sezai Karakoç', 'Cemal Süreya', 'Cemal Süreya’nın kitabı Üvercinka’dır.'],
   ]),
   'trk12-siir-dini': sorular([
