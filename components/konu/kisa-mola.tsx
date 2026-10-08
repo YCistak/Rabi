@@ -80,7 +80,13 @@ export function KisaMola({
             }}
           />
           <div className="mola-maskot relative">
-            <div className="mola-suzul">
+            {/*
+              Dolgu gölge payı: süzülen katman (`will-change`) Android WebView'da
+              kendi kutusuna kırpılıyor. Uzanan poz görselin enini dolduruyor,
+              gölgesinin bulanıklığı kutudan taşıp dikdörtgen kesiliyordu; dar
+              pozlarda gölge kutuda kaldığı için görünmüyordu.
+            */}
+            <div className="mola-suzul -m-10 p-10">
               <Rabi
                 durum="normal"
                 poz={MOLA_POZLARI[secim % MOLA_POZLARI.length]}
