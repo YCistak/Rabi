@@ -12,13 +12,14 @@ describe('haritanın sınıfı', () => {
     expect(haritaSinifiBul(Number.NaN)).toBeNull()
   })
 
-  it('12. sınıfta Matematik, Fizik, Kimya, Biyoloji ve Tarih var (2018 programı)', () => {
+  it('12. sınıfta Matematik, Fizik, Kimya, Biyoloji, Tarih ve Coğrafya var (2018 programı)', () => {
     expect(HARITA_SINIFLARI).toEqual([9, 10, 11, 12])
-    expect(sinifDersleri(12).map((ders) => ders.id)).toEqual(['matematik', 'fizik', 'kimya', 'biyoloji', 'tarih'])
+    expect(sinifDersleri(12).map((ders) => ders.id)).toEqual(['matematik', 'fizik', 'kimya', 'biyoloji', 'tarih', 'cografya'])
     expect(programBul('matematik', 12)?.sinif).toBe(12)
     expect(programBul('fizik', 12)?.sinif).toBe(12)
     expect(programBul('kimya', 12)?.sinif).toBe(12)
     expect(programBul('biyoloji', 12)?.sinif).toBe(12)
     expect(programBul('tarih', 12)?.sinif).toBe(12)
+    expect(programBul('cografya', 12)?.sinif).toBe(12)
   })
 })

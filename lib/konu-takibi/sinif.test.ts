@@ -131,6 +131,13 @@ describe('Maarif tablosu', () => {
     }
   })
 
+  it('12. sınıf Coğrafya destelerine eşli konular Maarif\'te yine "henüz yok"', () => {
+    for (const id of ['ayt-cog-ulasim-ticaret', 'ayt-cog-jeopolitik', 'ayt-cog-ekstrem', 'ayt-cog-cevre']) {
+      expect(HARITA_ESLEMESI[id]?.length, id).toBeGreaterThan(0)
+      expect(maarifSinifi(id), id).toBe(HENUZ_YOK)
+    }
+  })
+
   it('eşli konu destelerinin sınıfını alıyor', () => {
     expect(maarifSinifi('tyt-trk-paragraf')).toBe(9)
     expect(maarifSinifi('tyt-trk-fiilimsi')).toBe(10)

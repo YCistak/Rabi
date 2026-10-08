@@ -619,7 +619,7 @@ export const ESKI_SINIF: Readonly<Record<string, YksSinif>> = {
   'ayt-cog-tarim': 11,
   'ayt-cog-maden-enerji': 11,
   'ayt-cog-sanayi': 11,
-  'ayt-cog-ulasim-ticaret': 11, // muhtemel
+  'ayt-cog-ulasim-ticaret': 12, // 2018: 12.2.7-12.2.17 (ulaşım, ticaret, turizm)
   'ayt-cog-kultur': 11, // muhtemel
   'ayt-cog-jeopolitik': 12,
   'ayt-cog-orgutler': 11, // muhtemel

@@ -26,10 +26,10 @@ const METIN_SINIRI = 240
 const KART_TABANI = 6
 const KART_SINIRI = 16
 
-// İngilizce yalnızca 11'de, 12'de Matematik, Fizik, Kimya, Biyoloji ve Tarih (2018 programı) yazıldı;
+// İngilizce yalnızca 11'de, 12'de Matematik, Fizik, Kimya, Biyoloji, Tarih ve Coğrafya (2018 programı) yazıldı;
 // beklenen programlar eksikse testten süzülmez.
 const beklenenMi = (sinif: number, ders: string) =>
-  sinif === 12 ? ['matematik', 'fizik', 'kimya', 'biyoloji', 'tarih'].includes(ders) : sinif === 11 || ders !== 'ingilizce'
+  sinif === 12 ? ['matematik', 'fizik', 'kimya', 'biyoloji', 'tarih', 'cografya'].includes(ders) : sinif === 11 || ders !== 'ingilizce'
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map(
     (ders) => [`${sinif}. sınıf ${ders.ad}`, programBul(ders.id, sinif)] as const,
@@ -170,6 +170,32 @@ describe('12. sınıf Biyoloji (2018 programı)', () => {
     // Enerji ünitesi (fotosentez, kemosentez, solunum) 10'da, bitki hormonları ve hareketleri 11'de.
     const adlar = tumKonular(biyoloji).map((k) => k.ad.toLocaleLowerCase('tr'))
     for (const yasak of ['besin sentezi', 'kemosentez', 'hücresel solunum', 'fermantasyon', 'hormon', 'tepki']) {
+      expect(adlar.filter((ad) => ad.includes(yasak)), yasak).toEqual([])
+    }
+  })
+})
+
+describe('12. sınıf Coğrafya (2018 programı)', () => {
+  const cografya = programBul('cografya', 12)!
+
+  it('2018 programının dört ünitesi var', () => {
+    expect(cografya.temalar.map((t) => t.ad)).toEqual([
+      'Doğal Sistemler',
+      'Beşerî Sistemler',
+      'Küresel Ortam: Bölgeler ve Ülkeler',
+      'Çevre ve Toplum',
+    ])
+  })
+
+  it('her konuda tek Rabi notu var', () => {
+    for (const konu of tumKonular(cografya)) {
+      expect(konu.kartlar.filter((kart) => kart.not !== undefined), `${konu.ad}: Rabi notu`).toHaveLength(1)
+    }
+  })
+
+  it('9–11 haritasında kartı olan iklim değişikliği ve afet türleri tekrar yazılmadı', () => {
+    const adlar = tumKonular(cografya).map((k) => k.ad.toLocaleLowerCase('tr'))
+    for (const yasak of ['iklim değişikliği', 'afet türleri', 'tektonik']) {
       expect(adlar.filter((ad) => ad.includes(yasak)), yasak).toEqual([])
     }
   })

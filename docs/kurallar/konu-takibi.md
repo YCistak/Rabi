@@ -64,6 +64,9 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   eşli; düzgün çembersel hareket 11'deki desteyle.
   Biyoloji 12: Genden Proteine, Bitki Biyolojisi, Canlılar ve Çevre `byl12-*`
     destelerine eşli (Maarif'te yine "henüz yok"); AYT Enerji 10'un destelerinde kalır.
+  Coğrafya (`cog12-*`): ulaşım-ticaret-turizm, jeopolitik, ekstrem doğa olayları ve
+  çevre başlıkları eşlendi; `ayt-cog-ulasim-ticaret` `ESKI_SINIF`ta 12 (2018: 12.2.7-17).
+  Küresel ve bölgesel örgütler eşlenmedi (12 destelerinde ayrı deste yok).
 - **Ders içi liste ve konu kartı** (tasarım D/K1a, kullanıcı onayladı 2026-10): satır tek
   dokunuşluk bir düğme; solda **dilimli halka** (harita · okul · soru üç dilim, haritasız
   konuda iki; dolu dilim ders renginde, yarım harita açık ton, bitince tam yeşil halka + tik,
