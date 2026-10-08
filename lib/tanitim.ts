@@ -220,7 +220,7 @@ export const ISTATISTIK_ADIMLARI: readonly TanitimAdimi[] = [
 */
 export const OYUN_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'demo-ac', hedef: 'demo-oyun', baslik: 'Kısa deneme', aciklama: 'Tanıtım oyunu kartına dokun; skor tanıtımda kalır.', tiklamali: true },
-  { kimlik: 'zorluk', hedef: 'demo-zorluk', etkilesimli: true, baslik: 'Hazırlık ekranı', aciklama: 'Tur modunu ve zorluğu seç; demo 10 dakika.', tiklamali: false },
+  { kimlik: 'zorluk', hedef: 'demo-zorluk', etkilesimli: true, baslik: 'Hazırlık ekranı', aciklama: 'Tur modunu seç; demo 10 dakika.', tiklamali: false },
   { kimlik: 'oyun-baslat', hedef: 'demo-baslat', baslik: 'Turu başlat', aciklama: 'Başlat’a dokun.', tiklamali: true },
   { kimlik: 'soru-bir', hedef: 'demo-soru', ekHedefler: ['demo-islem'], baslik: 'Bir işlemi çöz', aciklama: 'Sonucu yaz ve onayla; istersen pas geç.', tiklamali: true },
   { kimlik: 'sonuc', hedef: 'demo-sonuc', baslik: 'Sonucun', aciklama: 'Doğru ve yanlışların burada. Bilemediklerin Oyun Bankası’na düşer.', tiklamali: false },

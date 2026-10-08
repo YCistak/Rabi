@@ -1,11 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, ArrowRight, X } from 'lucide-react'
 import type { OyunTanimi } from '@/lib/oyunlar/tanim'
 import type { OyunId } from '@/lib/types'
 import { MODLAR, type OyunModu } from '@/lib/oyunlar/mod'
-import type { Zorluk } from '@/lib/oyunlar/ritim'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { vurgulariAyir } from '@/lib/metin'
 import { useGeriKatmani } from '@/lib/geri'
@@ -14,14 +13,14 @@ import { useTurAyari } from '@/components/tur-ayari-baglami'
 import { cn } from '@/lib/utils'
 import { Rabi } from '@/components/maskot/rabi'
 import { ModSecimi } from '@/components/mod-secimi'
-import { ZorlukSecimi } from '@/components/zorluk-secimi'
 import { dersVurgusu } from '@/components/ders-renkleri'
 import { GeriSayim } from '@/components/oyun-geri-sayim'
 import { OYUN_ORNEKLERI, type OyunOrnegi } from '@/components/oyun-ornekleri'
 
 /**
- * Turdan önceki ekran: **ayarlar**. Oradaki "Başlat" doğrudan geri sayımı
- * açıyor; arada nasıl oynandığını anlatan **tanıtım** yok.
+ * Turdan önceki ekran: **oyun modu penceresi** (`ModPenceresi`). Oradaki
+ * "Başla" doğrudan geri sayımı açıyor; arada nasıl oynandığını anlatan
+ * **tanıtım** yok.
  *
  * Bir süre ayarlardan sonra tanıtım geliyordu ("Devam" → kurallar → "Başla").
  * Kullanıcı kaldırılmasını istedi: tura girmek her seferinde iki ekran ve iki
@@ -38,7 +37,8 @@ import { OYUN_ORNEKLERI, type OyunOrnegi } from '@/components/oyun-ornekleri'
  * ikisi değişti — soru türü seçimi geri gelmedi (havuzun tamamı soruluyor) ve
  * kalan iki soru da **cevaplanmak zorunda değil**: ikisi de varsayılanıyla
  * geliyor, dokunulmazsa Sıradan/Orta bir tur açılıyor ve adım tek dokunuşla
- * geçiliyor. Zorluk da artık turu dondurmuyor, yalnızca başlangıcı seçiyor
+ * geçiliyor. Sonra zorluk sorusu da kalktı (kullanıcı istedi): pencerede
+ * yalnız mod var, tur hep ortadan başlıyor ve uyum gidişi belirliyor
  * (`lib/oyunlar/uyum.ts`).
  *
  * Tanıtımda "Bir daha gösterme" var (`ANAHTARLAR.tanitimGizli`); artık
@@ -77,7 +77,7 @@ export function OyunTanitim({
   const genelTestIlk = useGenelTestIlkMi()
   /* Ayarlar prop olarak gelmiyor: pencereyi çizen yirmi iki oyun dosyasının
      her birine aynı dört satırı yazmak gerekirdi (`tur-ayari-baglami.tsx`). */
-  const { mod, zorluk, setMod, setZorluk, secilebilir } = useTurAyari()
+  const { mod, setMod, secilebilir } = useTurAyari()
 
   /* Ayarlar yalnızca tur başlatan ekranda: turun içinden "?" ile açılan
      tanıtım kuralı okutuyor, ayar değiştirmiyor — başlamış bir turun modu
@@ -129,15 +129,10 @@ export function OyunTanitim({
   const ornekler = OYUN_ORNEKLERI[oyun.id]
 
   if (secimVar) {
-    return <TurAyariEkrani
-      oyun={oyun}
+    return <ModPenceresi
       demoVeri={demoVeri}
-      rekor={rekor}
       mod={mod}
       setMod={setMod}
-      zorluk={zorluk}
-      setZorluk={setZorluk}
-      dugmeMetni="Başlat"
       onDevam={() => { onSayimBasladi?.(); setSayiliyor(true) }}
       onKapat={onKapat}
     />
@@ -205,85 +200,80 @@ export function OyunTanitim({
 }
 
 /**
- * Tur ayarları tam ekran açılır: mod ve başlangıç zorluğu aynı yüzeyde.
- * Yalnızca seçimler kayar; geri düğmesi ve Başlat kısa telefonlarda da
- * görünür kalır. Oyun örneği ya da tanıtım bu ekrana girmez.
+ * Oyun modu penceresi (`tasarim/oyun-modu-penceresi.html`): oyun listesinin
+ * üstünde açılır pencere, tam ekran değil — tek bir seçim için bütün ekranı
+ * kaplamak, oyunu açan öğrenciyi başka bir sayfaya götürmüş gibi oluyordu.
+ *
+ * Yalnız mod seçiliyor; başlangıç zorluğu seçimi kaldırıldı (kullanıcı
+ * istedi), tur ortadan başlıyor ve uyum gidişi belirliyor (`uyum.ts`).
+ * Oyunun adı ve rekor da pencerede yok: tasarım tek soruya ("hangi mod")
+ * indirildi.
+ *
+ * Kapanış üç yoldan: ✕, karartılmış zemine dokunmak, geri tuşu
+ * (`useGeriKatmani`, `OyunTanitim`te). Hiçbiri sormuyor: kaybedilecek bir şey
+ * yok, seçim zaten saklanıyor.
  */
-function TurAyariEkrani({
-  oyun,
+function ModPenceresi({
   demoVeri = false,
-  rekor,
   mod,
   setMod,
-  zorluk,
-  setZorluk,
-  dugmeMetni,
   onDevam,
   onKapat,
 }: {
   demoVeri?: boolean
-  onSayimBasladi?: () => void
-  oyun: OyunTanimi
-  rekor: number
   mod: OyunModu
   setMod: (mod: OyunModu) => void
-  zorluk: Zorluk
-  setZorluk: (zorluk: Zorluk) => void
-  dugmeMetni: string
   onDevam: () => void
   onKapat: () => void
 }) {
   return (
     <div
-      className="tam-katman-girisi fixed inset-0 z-50 flex yuk-ekran justify-center bg-background"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="tur-ayari-basligi"
-      style={dersVurgusu(oyun.ders)}
+      className="katman-zemin fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-5 pt-[calc(1rem+var(--guvenli-ust))] pb-[calc(1rem+var(--guvenli-alt))]"
+      onClick={(olay) => {
+        // Yalnız zeminin kendisi: pencerenin içine dokunmak kabarıp buraya
+        // ulaşıyor ve kart seçmek pencereyi kapatırdı.
+        if (olay.target === olay.currentTarget) onKapat()
+      }}
     >
-      <div className="flex min-h-0 w-full max-w-md flex-col">
-        <header className="shrink-0 border-b border-border px-5 pb-4" style={{ paddingTop: 'calc(1rem + var(--guvenli-ust))' }}>
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={onKapat}
-              aria-label="Geri"
-              className="grid size-10 shrink-0 place-items-center rounded-lg border border-border bg-card text-foreground active:bg-muted"
-            >
-              <ArrowLeft size={20} aria-hidden />
-            </button>
-            <div className="min-w-0 flex-1">
-              <p className="text-[12px] font-semibold text-muted-foreground">Tur ayarları</p>
-              <h1 id="tur-ayari-basligi" className="mt-0.5 font-display text-[21px] font-extrabold leading-tight tracking-tight">
-                {oyun.ad}
-              </h1>
-            </div>
-          </div>
-          {rekor > 0 && (
-            <p className="mt-3 pl-[52px] text-[12px] font-semibold text-muted-foreground">
-              En iyi turun: <span className="rakam text-foreground">{rekor}</span>
-            </p>
-          )}
-        </header>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="mod-penceresi-basligi"
+        className="pencere-girisi relative flex max-h-full w-full max-w-[360px] flex-col overflow-y-auto rounded-[28px] bg-card px-[18px] pt-6 pb-5 golge-kart"
+      >
+        {/* Uygulamadaki pencerelerin kapatma düğmesi (Ayarlar, Soru ekle). */}
+        <button
+          type="button"
+          onClick={onKapat}
+          aria-label="Kapat"
+          className="absolute top-3.5 right-3.5 inline-flex size-9 items-center justify-center rounded-xl bg-muted/70 text-muted-foreground active:bg-muted"
+        >
+          <X size={16} strokeWidth={2.4} aria-hidden />
+        </button>
 
-        <div data-tanitim={demoVeri ? "demo-zorluk" : undefined} style={demoVeri ? { flex: "0 0 auto" } : undefined} className={cn("min-h-0 flex-1 overflow-y-auto px-5", demoVeri ? "py-2" : "py-5")}>
-          <ModSecimi kompakt={demoVeri} secili={mod} onSec={setMod} />
-          <div className={demoVeri ? "mt-2 border-t border-border pt-2" : "mt-6 border-t border-border pt-5"}>
-            <ZorlukSecimi secili={zorluk} onSec={setZorluk} />
-          </div>
+        <Rabi durum="normal" poz="oturan" boyut={80} className="mx-auto" etiket="oturmuş, turu bekliyor" />
+        <h2
+          id="mod-penceresi-basligi"
+          className="mt-2 text-center font-display text-[23px] font-black leading-tight tracking-tight"
+        >
+          Oyun modunu seç
+        </h2>
+
+        <div data-tanitim={demoVeri ? 'demo-zorluk' : undefined} className="mt-5">
+          <ModSecimi secili={mod} onSec={setMod} />
         </div>
 
-        <footer className={cn("shrink-0 border-t border-border bg-background px-5 pt-3", demoVeri && "mt-auto")} style={{ paddingBottom: 'calc(0.75rem + var(--guvenli-alt))' }}>
-          <button
-            type="button"
-            data-tanitim={demoVeri ? "demo-baslat" : undefined}
-            onClick={onDevam}
-            className="flex min-h-14 w-full items-center justify-center gap-2 rounded-xl bg-primary-parlak font-display text-[17px] font-extrabold text-white transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-          >
-            {dugmeMetni}
-            <span aria-hidden>→</span>
-          </button>
-        </footer>
+        {/* Konu sahnesindeki karar düğmelerinin dili (`sahne-dugme`): altta
+            kalın kenar, basınca gömülüyor. Kenar `--primary`, dolgunun koyusu. */}
+        <button
+          type="button"
+          data-tanitim={demoVeri ? 'demo-baslat' : undefined}
+          onClick={onDevam}
+          className="mt-5 mb-[5px] flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-primary-parlak font-display text-[18px] font-black text-white shadow-[0_5px_0_var(--primary)] transition-[transform,box-shadow] duration-75 active:translate-y-[3px] active:shadow-[0_2px_0_var(--primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        >
+          Başla
+          <ArrowRight size={20} strokeWidth={2.6} aria-hidden />
+        </button>
       </div>
     </div>
   )
