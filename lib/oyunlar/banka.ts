@@ -28,7 +28,8 @@ import { trigCevabi, trigKimligi, trigMetni, type TrigSorusu } from './trigonome
 import { BOZUKLUK_ADI, type BozuklukTuru } from './anlatim-havuzu'
 import { altSinir, ustSinir, type KokluSorusu } from './koklu'
 import type { BiyolojiSorusu } from './biyoloji'
-import type { OrganelSorusu } from './hucre-havuzu'
+import type { HucreKaydi, OrganelSorusu } from './hucre-havuzu'
+import { kayittanSoru } from './hucre'
 import type { SiraliOlay } from './sirala-havuzu'
 import { dogruSira, yilMetni, type SiralamaSorusu } from './sirala'
 import type { TuzakKurali } from './tuzak-havuzu'
@@ -126,9 +127,13 @@ export type BankaSorusu =
    * gerekiyor ve şıklar soruya ait, ortak bir listeden gelmiyor.
    */
   | { oyun: 'ortak' | 'siniflandirma'; biyoloji: BiyolojiSorusu }
-  // İpuçları da kayıtta: banka turunda kart yeniden açılıyor ve ipuçları
-  // olmadan oyun oynanamaz.
-  | { oyun: 'hucre'; hucre: OrganelSorusu }
+  /*
+    Kayıt havuz satırının kopyası, ama okunurken havuzdaki güncel hâli
+    kullanılıyor (`kayittanSoru`). Tip `HucreKaydi`: ipuçlu kart döneminden
+    kalan kayıtlarda `soru` yok, `ipuclari` var; kimlik ikisinde de organel
+    adı olduğu için eski kayıtlar yeni oyunda kaldığı yerden soruluyor.
+  */
+  | { oyun: 'hucre'; hucre: HucreKaydi }
   /**
    * Sıralama sorusu beş olayı birden taşıyor.
    *
@@ -495,11 +500,15 @@ export function bankaSorusuMetni(soru: BankaSorusu): string {
     case 'ortak':
     case 'siniflandirma':
       return soru.biyoloji.soru
-    // Üç ipucundan sonuncusu: listede okunacak olan, cevabı en çok anlatan.
-    // İlk ipucu tek başına birkaç organele birden uyduğu için tekrar ederken
-    // hiçbir şey öğretmezdi.
-    case 'hucre':
-      return soru.hucre.ipuclari[soru.hucre.ipuclari.length - 1]
+    // Havuzdaki güncel soru; havuzdan düşmüş eski bir kaydın elinde yalnızca
+    // ipuçları varsa sonuncusu — cevabı en çok anlatan o.
+    case 'hucre': {
+      const { ipuclari } = soru.hucre
+      return (
+        kayittanSoru(soru.hucre)?.soru ??
+        (ipuclari && ipuclari.length > 0 ? ipuclari[ipuclari.length - 1] : soru.hucre.organel)
+      )
+    }
     // Listede olaylar yılsız duruyor: yıl cevabın kendisi.
     case 'sirala':
       return soru.olaylar.map((o) => o.olay).join(' · ')

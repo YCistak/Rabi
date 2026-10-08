@@ -97,15 +97,9 @@ export const SORU_SURESI: Record<OyunId, number> = {
   koklu: 20,
   ortak: 14,
   siniflandirma: 14,
-  /**
-   * Organel Kartı'nın süresi mekaniğin kendisi.
-   *
-   * İpuçları sürenin ilk dörtte üçünü eşit üçe bölüyor (`hucre.ts`): on iki
-   * saniye, ipucu başına üç saniye ve sonda üç saniyelik karar payı demek.
-   * Dokuzdu; ipucular bir buçuk saniyede bir geliyor ve okunamıyordu.
-   * Süre değişirse ipucu ritmi de değişir.
-   */
-  hucre: 12,
+  // Hücre de artık tek soru + dört şık; biyolojinin öteki iki oyunuyla aynı
+  // süre. (İpuçlu kart döneminde 12 sn'ydi ve süre ipucu ritmini belirliyordu.)
+  hucre: 14,
   /**
    * Zaman Şeridi'nde süre **soru** başına ama soru beş kart.
    *

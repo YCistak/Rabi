@@ -327,9 +327,9 @@ export const OYUNLAR: OyunTanimi[] = [
     id: 'hucre',
     ders: 'biyoloji',
     ad: 'Hücre ve Organeller',
-    kisaAciklama: 'İpuçlarından organeli bul',
+    kisaAciklama: 'Organelleri görevleriyle tanı',
     ikon: '🧫',
-    ozet: `Kart üç saniyede bir yeni ipucu açar, sen organeli dört şıktan bulursun. Erken bilmek çok puan: **1. ipucuyla 3**, 2. ile 2, 3. ile 1.`,
+    ozet: `Hücrenin yapıları ve organelleri üzerine gelen soruyu dört şıktan cevaplarsın. Konu 9. sınıf “Hücre” ünitesi: ökaryot ve prokaryot hücre.`,
   },
   {
     id: 'sirala',

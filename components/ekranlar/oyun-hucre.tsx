@@ -3,22 +3,19 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
-import { Check, X } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
 import type { OrganelSorusu } from '@/lib/oyunlar/hucre-havuzu'
 import { HUCRE_HAVUZU } from '@/lib/oyunlar/hucre-havuzu'
 import {
-  IPUCU_SAYISI,
-  gorunenIpucu,
-  ipucuPuani,
+  kayittanSoru,
   turHazirla,
   type HucreOyunSorusu,
   type HucreSikki,
 } from '@/lib/oyunlar/hucre'
 import {
   guncelSeri,
-  kalanPas,
   rekorKirildiMi,
+  kalanPas,
   turOzeti,
   yanlisSayisi,
   type Cevap,
@@ -42,13 +39,12 @@ import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
-import { cn } from '@/lib/utils'
-import { type MaskotDurumu } from '@/components/maskot/rabi'
+import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
+import { OyunSikki, sikHali } from '@/components/oyun-sikki'
 import {
   Bildirim,
   EN_COK_YANLIS,
   KalanHapi,
-  KoseRabisi,
   OyunKabugu,
   TurSonu,
   YanlisKarti,
@@ -58,28 +54,20 @@ import {
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
 /**
- * Organel Kartı — mini oyun.
+ * Hücre ve Organeller — mini oyun.
  *
- * Ekranda arkası dönük bir kart var; arkasında cevap olan organel yazıyor.
- * Kart ipuçlarını kendisi veriyor ve her ipucu cevabı kolaylaştırdığı için
- * puanı azaltıyor (`lib/oyunlar/hucre.ts`).
+ * Bir soru cümlesi, dört şık, biri doğru: ekran Canlıları Sınıflandırma'nın
+ * (`oyun-biyoloji.tsx`) düzenini birebir izliyor — ortada yapboz tamamlayan
+ * Rabi, altında soru kartı, altında şıklar. Önceden arkası dönük bir kart üç
+ * saniyede bir ipucu açıyor, erken bilmek fazla puan getiriyordu; kullanıcı
+ * kartlı tasarım yerine düz soru istedi.
  *
- * Kart yalnızca **şık seçilirse** dönüyor. Süre dolduğunda dönmemesi bilinçli:
- * kartın açılması oyuncunun kararının karşılığı, süre dolması ise karar
- * vermemek. Doğru cevap yine de söyleniyor — ama kartın üstünde değil, geri
- * bildirim şeridinde.
+ * Ayrı ekran olarak kaldı, biyoloji ekranına katılmadı: veri şekli farklı
+ * (çeldiriciler bir ad listesinden seçiliyor) ve banka kaydı da ayrı dal.
  */
 
-/**
- * Cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms).
- *
- * Öteki oyunlardan uzun: kartın dönme animasyonu bitmeden ekran değişirse
- * oyuncu kartın arkasını hiç göremez.
- */
-const CEVAP_BEKLEMESI = 1700
-
-/** Kartın dönme süresi (ms) — sınıf adındaki `duration-500` ile aynı olmalı. */
-const DONME_SURESI = 500
+/** Cevaptan sonra bir sonraki soruya geçiş gecikmesi (ms) — biyoloji oyunlarıyla aynı. */
+const CEVAP_BEKLEMESI = 1300
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
@@ -94,26 +82,22 @@ function sirayiKur(akis: SoruAkisi<OrganelSorusu>): SoruAkisi<HucreOyunSorusu> {
   return akisiEsle(akis, (sorular) => turHazirla(sorular, Math.random, false))
 }
 
-/**
- * `secilen` süre dolduğunda ya da pas geçilince `null`: oyuncu bir şık
- * işaretlemedi, kart dönmüyor.
- */
-type GeriBildirim = {
-  secilen: string | null
-  dogruMu: boolean
-  pas: boolean
-  soru: OrganelSorusu
-  /** Cevabın kaçıncı ipucunda verildiği — puanı bu belirliyor. */
-  ipucu: number
-  kazanilanPuan: number
-}
+/** `secilen` süre dolduğunda `null`: oyuncu bir şık işaretlemedi. */
+type GeriBildirim = { secilen: string | null; dogruMu: boolean; pas: boolean; soru: OrganelSorusu }
 
-/** Banka kayıtlarından organel havuzu; kayıt ipuçlarını da taşıyor. */
+/**
+ * Banka kayıtlarından soru havuzu.
+ *
+ * Kayıt havuzdaki güncel soruya çevriliyor (`kayittanSoru`): ipuçlu kart
+ * döneminin kayıtları da böylece yeni biçimde soruluyor. Sorulamayan kayıt
+ * (havuzdan düşmüş, sorusu da yok) atlanıyor.
+ */
 function bankaHavuzu(kayitlar: readonly BankaKaydi[]): OrganelSorusu[] {
   const havuz: OrganelSorusu[] = []
   for (const kayit of kayitlar) {
     if (kayit.soru.oyun !== 'hucre') continue
-    havuz.push(kayit.soru.hucre)
+    const soru = kayittanSoru(kayit.soru.hucre)
+    if (soru) havuz.push(soru)
   }
   return havuz
 }
@@ -153,8 +137,6 @@ export function HucreOyunuEkrani({
   const [sira, setSira] = useState(0)
   const [cevaplar, setCevaplar] = useState<Cevap<OrganelSorusu>[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
-  /** Turun toplam puanı; doğru sayısından ayrı ilerliyor. */
-  const [puan, setPuan] = useState(0)
   /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
   const [elendi, setElendi] = useState<Eleme>(false)
 
@@ -177,10 +159,9 @@ export function HucreOyunuEkrani({
 
   const [sonuc, setSonuc] = useState<{
     ozet: TurOzeti<OrganelSorusu>
-    /** `ozet.yanlislar` ile aynı sırada: o kart pas mı geçildi. */
+    /** `ozet.yanlislar` ile aynı sırada: o soru pas mı geçildi. */
     paslar: boolean[]
     yeniRekor: boolean
-    puan: number
   } | null>(null)
 
   const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
@@ -193,8 +174,6 @@ export function HucreOyunuEkrani({
   const zamanlayiciRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const cevaplarRef = useRef<Cevap<OrganelSorusu>[]>([])
   cevaplarRef.current = cevaplar
-  const puanRef = useRef(0)
-  puanRef.current = puan
   const bittiRef = useRef(false)
 
   useGeriKatmani(asama !== 'tanitim' && !yardimAcik, onCik)
@@ -216,7 +195,6 @@ export function HucreOyunuEkrani({
     zorluguSifirla()
     setSira(0)
     setCevaplar([])
-    setPuan(0)
     setGeriBildirim(null)
     setSonuc(null)
     setElendi(false)
@@ -231,7 +209,6 @@ export function HucreOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
-        puan: puanRef.current,
         paslar: verilenler.filter((c) => !c.dogruMu).map((c) => c.pas === true),
         yeniRekor:
           !yarim &&
@@ -278,7 +255,6 @@ export function HucreOyunuEkrani({
   }
 
   const soru = sorular[zorluk][sira]
-  const sure = soruSuresi('hucre')
 
   /** `pas`: bedelsiz geçiş — zorluğu kaydırmıyor, Sıfır Tolerans'ta elemiyor. */
   const ilerle = (dogruMu: boolean, pas = false) => {
@@ -301,6 +277,39 @@ export function HucreOyunuEkrani({
       }
     }, CEVAP_BEKLEMESI)
   }
+
+  const cevapla = (sik: HucreSikki) => {
+    // Geri bildirim gösterilirken ikinci dokunuş yok sayılıyor; yoksa aynı
+    // soruya iki cevap yazılırdı.
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+
+    const dogruMu = sik.dogruMu
+    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu }])
+    setGeriBildirim({ secilen: sik.deger, dogruMu, pas: false, soru: soru.soru })
+    geriBildir(dogruMu)
+    ilerle(dogruMu)
+  }
+
+  /** Pas hakkı: doğrusu gösterilip geçiliyor; yanlış sesi ve titreşimi yok. */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false, pas: true }])
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: true, soru: soru.soru })
+    ilerle(false, true)
+  }
+
+  /** Süre dolması cevap vermemekle aynı: yanlış sayılıyor. */
+  const sureDoldu = useCallback(() => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false }])
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: false, soru: soru.soru })
+    geriBildir(false)
+    ilerle(false)
+    // `ilerle` ve `geriBildir` her renderda yeniden kuruluyor; sayaç yalnızca
+    // güncel olanı çağırsın diye bağımlılıklar bilerek dar tutuldu.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [asama, geriBildirim, soru])
 
   /** Tur saati bitti: yanlış değil, tur biter. */
   const turSuresiDoldu = () => {
@@ -327,86 +336,16 @@ export function HucreOyunuEkrani({
     onCik()
   }
 
-  /** Soru gerçekten oynanıyor mu — tur sayacı da ipucu saati de buna bakıyor. */
-  const soruAktif =
-    asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined
-
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
     yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
-    aktif: soruAktif,
-    sure,
+    aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
+    sure: soruSuresi('hucre'),
     anahtar: sira,
-    onBitti: () => sureDoldu(),
+    onBitti: sureDoldu,
   })
-
-  /** Şu an açık olan ipucu sayısı — cevap verilince donuyor (saat duruyor). */
-  const acikIpucu = useAcikIpucu(sure, soruAktif, `${turNo}-${sira}`)
-
-  const cevapla = (sik: HucreSikki) => {
-    // Geri bildirim gösterilirken ikinci dokunuş yok sayılıyor; yoksa aynı
-    // soruya iki cevap yazılırdı.
-    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
-
-    const dogruMu = sik.dogruMu
-    const kazanilan = dogruMu ? ipucuPuani(acikIpucu) : 0
-    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu }])
-    setPuan((onceki) => onceki + kazanilan)
-    setGeriBildirim({
-      secilen: sik.deger,
-      dogruMu,
-      pas: false,
-      soru: soru.soru,
-      ipucu: acikIpucu,
-      kazanilanPuan: kazanilan,
-    })
-    geriBildir(dogruMu)
-    ilerle(dogruMu)
-  }
-
-  /**
-   * Süre dolması cevap vermemekle aynı: yanlış sayılıyor, puan yok.
-   *
-   * Kart dönmüyor — `secilen` null kalıyor, çevirme koşulu da buna bakıyor.
-   */
-  const sureDoldu = useCallback(() => {
-    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
-    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false }])
-    setGeriBildirim({
-      secilen: null,
-      dogruMu: false,
-      pas: false,
-      soru: soru.soru,
-      ipucu: IPUCU_SAYISI,
-      kazanilanPuan: 0,
-    })
-    geriBildir(false)
-    ilerle(false)
-    // `ilerle` ve `geriBildir` her renderda yeniden kuruluyor; sayaç yalnızca
-    // güncel olanı çağırsın diye bağımlılıklar bilerek dar tutuldu.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asama, geriBildirim, soru])
-
-  /**
-   * Pas hakkı: süre dolması gibi kart dönmüyor ve puan yok, ama bedelsiz —
-   * yanlış sayılmıyor, yanlış sesi ve titreşimi yok.
-   */
-  const pasGec = () => {
-    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
-    if (kalanPas(cevaplarRef.current) <= 0) return
-    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false, pas: true }])
-    setGeriBildirim({
-      secilen: null,
-      dogruMu: false,
-      pas: true,
-      soru: soru.soru,
-      ipucu: acikIpucu,
-      kazanilanPuan: 0,
-    })
-    ilerle(false, true)
-  }
 
   const yardimAc = () => {
     setDuraklatilan(true)
@@ -419,8 +358,6 @@ export function HucreOyunuEkrani({
   }
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
-  /** Kart yalnızca şık seçildiyse dönüyor. */
-  const cevrildi = geriBildirim !== null && geriBildirim.secilen !== null
 
   const maskotDurumu: MaskotDurumu = geriBildirim && !geriBildirim.pas
     ? geriBildirim.dogruMu
@@ -445,7 +382,6 @@ export function HucreOyunuEkrani({
                 dogru: dogruSayisi,
                 yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
-                puan,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
@@ -469,19 +405,22 @@ export function HucreOyunuEkrani({
           soru && (
             <>
               <div className="flex flex-1 flex-col justify-center gap-3 py-2">
-                <Kart
-                  soru={soru.soru}
-                  acikIpucu={acikIpucu}
-                  cevrildi={cevrildi}
-                  dogruBilindiMi={geriBildirim?.dogruMu ?? false}
-                  maskotDurumu={maskotDurumu}
-                />
+                <div className="grid place-items-center">
+                  <Rabi durum={maskotDurumu} poz="yapboz" boyut={96} />
+                </div>
+
+                <div className="golge-kart rounded-[20px] bg-card px-4 py-3.5 text-center">
+                  <p className="font-display text-[16px] font-extrabold leading-snug tracking-tight">
+                    {soru.soru.soru}
+                  </p>
+                </div>
 
                 <div className="flex flex-col gap-2">
-                  {soru.siklar.map((sik) => (
+                  {soru.siklar.map((sik, i) => (
                     <SikDugmesi
                       key={sik.deger}
                       sik={sik}
+                      sira={i}
                       geriBildirim={geriBildirim}
                       onSec={() => cevapla(sik)}
                     />
@@ -493,17 +432,9 @@ export function HucreOyunuEkrani({
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
                   pas={geriBildirim.pas}
-                  baslik={
-                    geriBildirim.pas
-                      ? 'Pas geçtin'
-                      : geriBildirim.dogruMu
-                        ? `Doğru! +${geriBildirim.kazanilanPuan} puan`
-                        : 'Olmadı'
-                  }
+                  baslik={geriBildirim.pas ? 'Pas geçtin' : geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
                   aciklama={
-                    geriBildirim.dogruMu
-                      ? `${geriBildirim.ipucu}. ipucunda bildin`
-                      : `Doğrusu: ${geriBildirim.soru.organel}`
+                    geriBildirim.dogruMu ? undefined : `Doğrusu: ${geriBildirim.soru.organel}`
                   }
                 />
               )}
@@ -525,194 +456,31 @@ export function HucreOyunuEkrani({
 }
 
 /**
- * Kartın **kendi** saati: açık ipucu sayısı.
+ * Tek şık — bütün oyunların ortak düğmesi (`oyun-sikki.tsx`).
  *
- * İpucu sırası bir süre tur sayacından okunuyordu (`toplam - kalan`) ve oyun
- * varsayılan modda bozuktu. Sebep: o saat çoğu modda soruya ait değil.
- *
- * - Sıradan/Turbo'da saat **tura** ait (60/30 sn) ve sorudan soruya
- *   sıfırlanmıyor. `toplam - kalan` turun başından beri geçen süre olduğu için
- *   ilk sorular baştan sona tek ipucuyla kalıyor, turun sonundakiler üç ipucu
- *   birden açık başlıyordu.
- * - Rahat'ta sayaç hiç yok (`toplam` 0) ve `gorunenIpucu` bu durumda üç
- *   ipucunu birden veriyordu.
- * - Yalnızca Sıfır Tolerans'de saat soruya aitti; oyun yalnızca orada doğru
- *   çalışıyordu.
- *
- * Bu saat sorunun kendi süresini (`soruSuresi`) ölçüyor ve her soruda
- * sıfırlanıyor; turu bitiren saat hâlâ modun sayacı. İkisi ayrı çünkü ipucu
- * ritmi oyunun kuralı, tur süresi ise modun tercihi — Rahat modda tur saati
- * hiç yokken de kart ipuçlarını açmaya devam etmeli.
- *
- * `aktif` false iken duruyor ve biriken süre korunuyor: cevap geri bildirimi
- * ya da yardım penceresi açıkken geçen saniyeler oyuncudan götürülmemeli.
- * Zaman damgasıyla çalışıyor, saniye saymıyor — WebView arka planda
- * `setInterval`'ı kısıyor ve sayarak ilerleyen bir saat orada donardı.
- */
-function useAcikIpucu(sure: number, aktif: boolean, anahtar: string): number {
-  const [acik, setAcik] = useState(1)
-  const gecenRef = useRef(0)
-  const baslangicRef = useRef(0)
-
-  // Yeni soru: kart baştan, tek ipucuyla açılıyor.
-  useEffect(() => {
-    gecenRef.current = 0
-    setAcik(1)
-  }, [anahtar, sure])
-
-  useEffect(() => {
-    if (!aktif || sure <= 0) return
-
-    baslangicRef.current = Date.now() - gecenRef.current * 1000
-    const oku = () => {
-      gecenRef.current = (Date.now() - baslangicRef.current) / 1000
-      const yeni = gorunenIpucu(gecenRef.current, sure)
-      // Yalnızca değişince yazılıyor: saat saniyede dört kez okunuyor, her
-      // okumada state'e yazmak kartı boşuna yeniden çizerdi.
-      setAcik((onceki) => (onceki === yeni ? onceki : yeni))
-    }
-    oku()
-    const isaret = setInterval(oku, 250)
-    return () => clearInterval(isaret)
-  }, [aktif, anahtar, sure])
-
-  return acik
-}
-
-/**
- * Dönen kart.
- *
- * İki yüz aynı kutuda duruyor ve kutu Y ekseninde dönüyor; arka yüz baştan
- * 180° çevrili çizildiği için dönme bitince düz görünüyor. `backface-hidden`
- * olmadan iki yüz üst üste okunurdu.
- *
- * Yükseklik sabit: ipuçları açıldıkça kart büyüseydi altındaki şıklar her üç
- * saniyede bir aşağı kayar, dokunmak isabetsizleşirdi.
- */
-function Kart({
-  soru,
-  acikIpucu,
-  cevrildi,
-  dogruBilindiMi,
-  maskotDurumu,
-}: {
-  soru: OrganelSorusu
-  acikIpucu: number
-  cevrildi: boolean
-  dogruBilindiMi: boolean
-  maskotDurumu: MaskotDurumu
-}) {
-  return (
-    <div className="[perspective:1100px]">
-      <div
-        className={cn(
-          'relative h-[210px] w-full transition-transform ease-in-out [transform-style:preserve-3d]',
-          cevrildi && '[transform:rotateY(180deg)]',
-        )}
-        style={{ transitionDuration: `${DONME_SURESI}ms` }}
-      >
-        {/* Arka yüz: kartın kapalı hâli, ipuçlarını veren taraf. */}
-        <div className="golge-kart absolute inset-0 flex flex-col rounded-[20px] bg-card px-4 py-3.5 [backface-visibility:hidden]">
-          <div className="flex flex-none items-center gap-2">
-            <KoseRabisi durum={maskotDurumu} />
-            <span className="font-display text-[13px] font-extrabold text-muted-foreground">
-              Kartın arkasındaki organel hangisi?
-            </span>
-          </div>
-
-          <ul className="mt-2.5 flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto">
-            {soru.ipuclari.slice(0, acikIpucu).map((ipucu, sayi) => (
-              <li
-                key={ipucu}
-                className="flex gap-2 rounded-[13px] bg-muted/70 px-2.5 py-2 text-[12.5px] font-semibold leading-snug"
-              >
-                <span
-                  aria-hidden
-                  className="rakam mt-px grid h-4 w-4 shrink-0 place-items-center rounded-full bg-konu-biyoloji-ok text-[9.5px] font-extrabold text-white"
-                >
-                  {sayi + 1}
-                </span>
-                <span className="min-w-0">{ipucu}</span>
-              </li>
-            ))}
-          </ul>
-
-          {/* Kalan ipucu sayısı: "beklersem bir tane daha gelir" bilgisi
-              puan kararını verdiriyor, gizli kalmamalı. */}
-          <p className="mt-2 flex-none text-center text-[11px] font-extrabold text-muted-foreground">
-            {acikIpucu < IPUCU_SAYISI
-              ? `Şimdi bilirsen ${ipucuPuani(acikIpucu)} puan · ${IPUCU_SAYISI - acikIpucu} ipucu daha var`
-              : `Son ipucu · şimdi bilirsen ${ipucuPuani(acikIpucu)} puan`}
-          </p>
-        </div>
-
-        {/* Ön yüz: cevap. Baştan çevrili duruyor, kart dönünce düzeliyor.
-            Kart kapalıyken ekran okuyucudan da gizli: `backface-visibility`
-            yalnızca göze karşı çalışıyor, metin DOM'da duruyor. */}
-        <div
-          aria-hidden={!cevrildi}
-          className={cn(
-            'golge-kart absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-[20px] px-4 py-4 text-center',
-            '[backface-visibility:hidden] [transform:rotateY(180deg)]',
-            dogruBilindiMi ? 'bg-success text-white' : 'bg-ikincil text-white',
-          )}
-        >
-          <span className="text-[11px] font-extrabold uppercase tracking-wider opacity-85">
-            Kartın arkası
-          </span>
-          <b className="font-display text-[24px] font-extrabold leading-tight tracking-tight">
-            {soru.organel}
-          </b>
-          <span className="text-[12px] font-semibold leading-snug opacity-90">
-            {soru.aciklama}
-          </span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/**
- * Tek şık.
- *
- * Cevaptan sonra doğru şık her hâlükârda yeşile dönüyor: yanlış seçen oyuncu
- * hangisi olması gerektiğini aynı ekranda görüyor.
+ * Cevaptan sonra doğru şık her hâlükârda işaretleniyor: yanlış seçen oyuncu
+ * hangisi olması gerektiğini aynı ekranda görüyor. Yazı boyu öteki oyunlardan
+ * küçük: "Granülsüz endoplazmik retikulum" gibi adlar dar ekranda tek satıra
+ * sığsın diye.
  */
 function SikDugmesi({
   sik,
+  sira,
   geriBildirim,
   onSec,
 }: {
   sik: HucreSikki
+  sira: number
   geriBildirim: GeriBildirim | null
   onSec: () => void
 }) {
   const acikta = geriBildirim !== null
-  const secilen = acikta && geriBildirim.secilen === sik.deger
-  const dogruSecim = secilen && sik.dogruMu
-  const yanlisSecim = secilen && !sik.dogruMu
-  const isaretli = acikta && !secilen && sik.dogruMu
+  const hal = sikHali(acikta, acikta && geriBildirim.secilen === sik.deger, sik.dogruMu)
 
   return (
-    <button
-      type="button"
-      onClick={onSec}
-      disabled={acikta}
-      className={cn(
-        'golge-kart flex min-h-[46px] w-full items-center justify-center gap-2 rounded-[16px] border-2 px-3 py-2',
-        'font-display text-[14px] font-extrabold leading-snug transition',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        !acikta && 'border-border bg-card active:brightness-95',
-        dogruSecim && 'border-success bg-success text-white',
-        yanlisSecim && 'border-ikincil bg-ikincil text-white',
-        isaretli && 'border-success bg-card text-success',
-        acikta && !secilen && !sik.dogruMu && 'border-border bg-card opacity-45',
-      )}
-    >
-      <span className="min-w-0 break-words">{sik.metin}</span>
-      {(dogruSecim || isaretli) && <Check size={17} className="shrink-0" aria-hidden />}
-      {yanlisSecim && <X size={17} className="shrink-0" aria-hidden />}
-    </button>
+    <OyunSikki sira={sira} hal={hal} onSec={onSec} className="min-h-[52px] py-2 text-[15px]">
+      {sik.metin}
+    </OyunSikki>
   )
 }
 
@@ -726,7 +494,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
-  sonuc: { ozet: TurOzeti<OrganelSorusu>; paslar: boolean[]; yeniRekor: boolean; puan: number }
+  sonuc: { ozet: TurOzeti<OrganelSorusu>; paslar: boolean[]; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -750,14 +518,13 @@ function SonucGorunumu({
       bankaTuru={bankaTuru}
       mod={mod}
       elendi={elendi}
-      puan={{ deger: sonuc.puan, etiket: 'Puan' }}
       altBaslik={
         bankaTuru
           ? 'Banka soruları — genel testte doğru bilince düşerler.'
           : rekorCumlesi(ozet.dogru, rekor, yeniRekor, 'doğru')
       }
-      bolumBasligi="Açamadığın kartlar"
-      bolumAltYazisi="Görevleriyle birlikte — asıl öğrenme burada."
+      bolumBasligi="Karıştırdıkların"
+      bolumAltYazisi="Açıklamasıyla birlikte — asıl öğrenme burada."
       onTekrar={onTekrar}
       onCik={onCik}
     >
@@ -770,16 +537,12 @@ function SonucGorunumu({
               soru={hucredenBanka(yanlis)}
               bildir={bildir}
             >
-              <b className="block font-display text-[13.5px] font-extrabold leading-tight text-success">
-                {yanlis.organel}
+              <b className="block font-display text-[13.5px] font-extrabold leading-tight">
+                {yanlis.soru}
               </b>
-              {paslar[sira] && (
-                <span className="mt-0.5 block text-[11px] font-extrabold text-muted-foreground">
-                  Pas geçtin
-                </span>
-              )}
-              <span className="mt-0.5 block text-[11.5px] font-semibold leading-snug text-muted-foreground">
-                {yanlis.ipuclari[yanlis.ipuclari.length - 1]}
+              <span className="mt-1 block text-[12px] font-extrabold text-success">
+                {yanlis.organel}
+                {paslar[sira] && <span className="text-muted-foreground"> · Pas geçtin</span>}
               </span>
               <span className="mt-1.5 block border-t border-border pt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
                 {yanlis.aciklama}
