@@ -241,7 +241,7 @@ export const fizik12 = program('fizik', 12, 'Dönen tekerden lazere', [
       ),
       kart(
         'Bağlanma ve kurtulma',
-        'Yüzeyde duran cismin bağlanma enerjisi G · M · m / R’dir: cismi çekimden kurtarmak için gereken en küçük enerji.\nBu enerji hızla verilirse **v(kurtulma) = √(2GM / R)**, Dünya için ≈ 11,2 km/s',
+        'Yüzeydeki cismin bağlanma enerjisi G · M · m / R’dir.\nBu, cismi çekimden kurtarmak için gereken en küçük enerjidir.\nBu enerji hızla verilirse **v(kurtulma) = √(2GM / R)**, Dünya için ≈ 11,2 km/s',
       ),
       kart(
         'Uydular ve Ay',
@@ -602,7 +602,7 @@ export const fizik12 = program('fizik', 12, 'Dönen tekerden lazere', [
     konu('fzk12-doppler', 'Doppler Olayı', [
       kart(
         'Doppler olayı',
-        'Kaynak ile gözlemci birbirine göre hareket ederken gözlemcinin algıladığı frekans, kaynağın frekansından farklı olur.\nBu olay ses ve ışık dahil bütün dalgalarda görülür.',
+        'Kaynak ile gözlemci birbirine göre hareket ederken algılanan frekans değişir.\nGözlemci, kaynağın yaydığından farklı bir frekans duyar.\nBu olay ses ve ışık dahil bütün dalgalarda görülür.',
       ),
       kart(
         'Yaklaşan ve uzaklaşan kaynak',
@@ -646,7 +646,7 @@ export const fizik12 = program('fizik', 12, 'Dönen tekerden lazere', [
       ),
       kart(
         'Gözlemci hareket ederse',
-        'Duran kaynağa doğru giden gözlemci, birim zamanda daha çok dalga tepesiyle karşılaşır: frekansı yüksek algılar.\nKaynaktan uzaklaşan gözlemci düşük frekans algılar.',
+        'Duran kaynağa doğru giden gözlemci birim zamanda daha çok dalga tepesiyle karşılaşır.\nBu yüzden frekansı yüksek algılar.\nKaynaktan uzaklaşan gözlemci düşük frekans algılar.',
       ),
       kart(
         'Işıkta Doppler',
@@ -675,7 +675,7 @@ export const fizik12 = program('fizik', 12, 'Dönen tekerden lazere', [
     konu('fzk12-em-dalga', 'Elektromanyetik Dalgalar', [
       kart(
         'Maxwell’in teorisi',
-        'Maxwell, 1860’larda elektrik ve manyetizmayı tek bir teoride birleştirdi: elektromanyetik teorinin kurucusudur.\nTeoriden ışık hızını hesapladı; ışığın elektromanyetik dalga olduğunu gösterdi.',
+        'Maxwell, 1860’larda elektrik ve manyetizmayı tek bir teoride birleştirdi.\nElektromanyetik teorinin kurucusudur.\nTeoriden ışık hızını hesapladı; ışığın elektromanyetik dalga olduğunu gösterdi.',
       ),
       kart(
         'Nasıl oluşur?',
@@ -759,7 +759,7 @@ export const fizik12 = program('fizik', 12, 'Dönen tekerden lazere', [
       ),
       kart(
         'Rutherford modelinin sorunu',
-        'Çekirdek çevresinde dolanan elektron ivmelidir; klasik fiziğe göre ışıyıp enerji kaybetmeli ve çekirdeğe düşmeliydi.\nModel, atomun kararlılığını ve kesikli çizgi tayfını açıklayamadı.',
+        'Çekirdek çevresinde dolanan elektron ivmelidir.\nKlasik fiziğe göre ışıyıp enerji kaybetmeli ve çekirdeğe düşmeliydi.\nModel, atomun kararlılığını ve kesikli çizgi tayfını açıklayamadı.',
       ),
       kart(
         'Bohr’un varsayımları',
@@ -916,7 +916,7 @@ export const fizik12 = program('fizik', 12, 'Dönen tekerden lazere', [
       ),
       kart(
         'Elektrozayıf birleşme',
-        'Abdus Salam, Sheldon Glashow ve Steven Weinberg, elektromanyetik ve zayıf kuvvetin yüksek enerjide tek bir kuvvetin iki görünümü olduğunu gösterdi.\nBu çalışmayla 1979 Nobel Fizik Ödülü’nü aldılar.',
+        'Abdus Salam, Sheldon Glashow ve Steven Weinberg 1979 Nobel Fizik Ödülü’nü aldı.\nElektromanyetik ve zayıf kuvvetin yüksek enerjide tek kuvvetin iki yüzü olduğunu gösterdiler.',
       ),
       kart(
         'Higgs bozonu',
@@ -1468,11 +1468,11 @@ export const fizik12 = program('fizik', 12, 'Dönen tekerden lazere', [
       ),
       kart(
         'MR',
-        'Güçlü manyetik alan vücuttaki hidrojen çekirdeklerini hizalar.\nRadyo dalgasıyla uyarılan çekirdekler eski hâline dönerken sinyal yayar; dokuya göre değişen sinyalden görüntü kurulur.\nİyonlaştırıcı radyasyon yoktur.',
+        'Güçlü manyetik alan vücuttaki hidrojen çekirdeklerini hizalar.\nRadyo dalgasıyla uyarılan çekirdekler eski hâline dönerken sinyal yayar.\nDokuya göre değişen sinyalden görüntü kurulur.\nİyonlaştırıcı radyasyon yoktur.',
       ),
       kart(
         'PET',
-        'Hastaya şekere bağlanmış, pozitron yayan bir madde verilir.\nPozitron bir elektronla yok olunca zıt yönlü iki gama fotonu çıkar; algılayıcılar maddenin toplandığı yeri bulur.\nHücrelerin çalışmasını gösterir.',
+        'Hastaya şekere bağlanmış, pozitron yayan bir madde verilir.\nPozitron bir elektronla yok olunca zıt yönlü iki gama fotonu çıkar.\nAlgılayıcılar bunlardan maddenin toplandığı yeri bulur.\nHücrelerin çalışmasını gösterir.',
       ),
       kart(
         'Ultrason',
@@ -1584,7 +1584,7 @@ export const fizik12 = program('fizik', 12, 'Dönen tekerden lazere', [
       ),
       kart(
         'LED',
-        'Işık yayan diyottur. İleri yönde akım geçince elektronlar boşluklarla birleşir, aradaki enerji foton olarak çıkar.\nRengi yasak enerji aralığına bağlıdır: aralık büyükse mavi, küçükse kırmızı.',
+        'Işık yayan diyottur.\nİleri yönde akım geçince elektronlar boşluklarla birleşir, aradaki enerji foton olarak çıkar.\nRengi yasak enerji aralığına bağlıdır: aralık büyükse mavi, küçükse kırmızı.',
       ),
       kart(
         'LED nerede?',
