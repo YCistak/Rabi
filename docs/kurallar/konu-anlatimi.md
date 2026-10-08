@@ -14,6 +14,14 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   şimdilik yalnız Matematik; öteki dersler eklenince `beklenenMi` (`icerik.test.ts`)
   genişler. Sekizinci ders `KonuDersId` + ders rengi ister. 11. sınıf soruları ayrı
   `11-<ders>-sorular.ts` (`sorulariBagla`), Edebiyat/Tarih/Coğrafya içerikte.
+- **12. sınıf İngilizce (2018 programı):** `12-ingilizce-1…4.ts` (+ `-sorular`), MEB
+  Ortaöğretim İngilizce 9–12 programının 12th Grade bölümündeki on tema
+  (Music … Manners), temada iki konu = 20 deste. Tema adı programın İngilizcesi;
+  konu kapsamı programın Functions sütunundan. 11 (Maarif) desteleriyle çakışan
+  dil bilgisi (edilgen, gelecek, ikinci koşul, wish + past) tekrar yazılmadı;
+  past perfect yalnız haber anlatımı, wish + had V3 / would ise pişmanlık
+  bağlamında yeniden geçiyor. YDT'ye bağlanan harita eşlemesi yok (kartlar
+  işlev odaklı).
 - Konu ölçüsü `lib/konu/maarif/iskelet.json`, `scripts/maarif-cek.mjs` ile
   tymm.meb.gov.tr'den çekilir; **elle düzenlenmez**. `maarif.test.ts` kelime
   örtüşmesiyle denetler (kısaltırken konuyu tanıtan kelimeyi atma); Türk Dili ve

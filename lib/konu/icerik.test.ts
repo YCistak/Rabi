@@ -117,6 +117,24 @@ describe('12. sınıf Matematik (2018 programı)', () => {
   })
 })
 
+describe('12. sınıf İngilizce (2018 programı)', () => {
+  const ingilizce = programBul('ingilizce', 12)!
+
+  it('programın on teması, yirmi konusu dolu', () => {
+    expect(ingilizce.temalar.map((t) => t.ad)).toEqual([
+      'Music', 'Friendship', 'Human Rights', 'Coming Soon', 'Psychology',
+      'Favors', 'News Stories', 'Alternative Energy', 'Technology', 'Manners',
+    ])
+    expect(tumKonular(ingilizce)).toHaveLength(20)
+    for (const konu of tumKonular(ingilizce)) {
+      expect(konu.kartlar.length, `${konu.ad}: kart sayısı`).toBeGreaterThanOrEqual(11)
+      expect(konu.sorular.length, `${konu.ad}: soru sayısı`).toBeGreaterThan(konu.kartlar.length)
+      expect(konu.kartlar.filter((kart) => kart.not !== undefined), `${konu.ad}: Rabi notu`).toHaveLength(1)
+      expect(konu.kontroller, `${konu.ad}: kontrol`).toHaveLength(2)
+    }
+  })
+})
+
 describe('11. sınıf İngilizce kapsamı', () => {
   const ingilizce = programBul('ingilizce', 11)!
 
