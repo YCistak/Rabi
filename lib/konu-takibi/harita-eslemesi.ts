@@ -22,8 +22,9 @@
  * 12. sınıfta yalnız Matematik'in kartları yazıldı (2018 programı,
  * `lib/konu/icerik/12-matematik.ts`); AYT Matematik'in diziler, toplam-fark,
  * limit, türev, integral ve çemberin analitiği başlıkları `mat12-*`
- * destelerine bağlı. Öteki derslerin 12. sınıf başlıkları (organik kimya,
- * Cumhuriyet edebiyatı…) kartları yazılınca eklenir. `mat12-*` desteleri
+ * destelerine bağlı; AYT Kimya'nın 12. sınıf başlıkları `kim12-*`
+ * destelerine (`lib/konu/icerik/12-kimya.ts`). Öteki derslerin 12. sınıf
+ * başlıkları (Cumhuriyet edebiyatı…) kartları yazılınca eklenir. `mat12-*` desteleri
  * Maarif öğrencisinin sınıf atamasını değiştirmez (`sinif.ts` →
  * `eslemeSinifi` yalnız 9–11 öneklerini okur): o konular Maarif'te yine
  * "henüz yok".
@@ -271,6 +272,30 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
     'kim11-titrasyon',
   ],
   'ayt-kim-cozunurluk': ['kim11-molar-cozunurluk', 'kim11-kcc', 'kim11-cozunurluk-faktor'],
+  // 12. sınıf (2018 programı) desteleri. Enerji Kaynakları'nın nanoteknoloji ve
+  // sürdürülebilirlik kısmı 9–11 destelerinde; o desteler eklenmedi (Maarif
+  // sınıfını 11'e çekerdi), fosil ve alternatif destesi asıl içeriği anlatıyor.
+  'ayt-kim-elektrik': [
+    'kim12-redoks',
+    'kim12-hucre',
+    'kim12-potansiyel',
+    'kim12-pil',
+    'kim12-elektroliz',
+    'kim12-korozyon',
+  ],
+  'ayt-kim-karbon': ['kim12-organik', 'kim12-formul', 'kim12-allotrop', 'kim12-hibrit'],
+  'ayt-kim-organik': [
+    'kim12-alkan',
+    'kim12-alken',
+    'kim12-alkin',
+    'kim12-aromatik',
+    'kim12-fonksiyonel',
+    'kim12-alkol',
+    'kim12-karbonil',
+    'kim12-karboksilik',
+    'kim12-ester',
+  ],
+  'ayt-kim-enerji-kaynaklari': ['kim12-fosil', 'kim12-alternatif'],
 
   // --- AYT Biyoloji ------------------------------------------------------
   'ayt-biy-sinir': ['byl11-noron', 'byl11-sinaps', 'byl11-insan-sinir', 'byl11-refleks'],
