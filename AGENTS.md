@@ -25,6 +25,7 @@ kuralı oraya yazılır, buraya değil; yeni dosya açarsan aşağıdaki dizine 
 | [oyunlar.md](docs/kurallar/oyunlar.md) | mini oyunlar, efektler, Oyun Bankası, modlar, zorluk, tek tek oyunlar |
 | [konu-anlatimi.md](docs/kurallar/konu-anlatimi.md) | konu kartları, içerik yazımı, yoklama, Harita sekmesi |
 | [ana-sayfa.md](docs/kurallar/ana-sayfa.md) | YKS geri sayımı, başlıktaki tavşan, günün hâli cümlesi, kutucuklar |
+| [denemeler.md](docs/kurallar/denemeler.md) | deneme ekleme, deneme şablonları, seviye tespit sınıfı ve ders düzenleme |
 | [yanlis-soru.md](docs/kurallar/yanlis-soru.md) | yanlış soru ekleme, ders listesi, fotoğrafa çizim |
 | [yapilacaklar-ve-soru-takibi.md](docs/kurallar/yapilacaklar-ve-soru-takibi.md) | Yapılacaklar, Soru Takibi, ortak takvim bileşeni |
 | [konu-takibi.md](docs/kurallar/konu-takibi.md) | YKS Konu Takibi (sınıf → okul dersi işaretleme, haritayla eşleme) |

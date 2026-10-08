@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { AlertCircle, Camera, Check, X } from 'lucide-react'
+import { AlertCircle, Camera, Check, Pencil, X } from 'lucide-react'
 import { Alan, Buton, Etiket, Kart, Not, useKapatmaOnayi } from '@/components/ui'
 import {
   EklemeFormu,
@@ -10,17 +10,38 @@ import {
 } from '@/components/yanlis-soru-ekle'
 import { useGeriKatmani } from '@/lib/geri'
 import { katsayiYaz, net, netYaz, sonucGecerliMi } from '@/lib/hesap'
-import { secilebilirSablonlar, toplamSoru } from '@/lib/sablonlar'
+import { ALAN_KISA_ADI, secilebilirSablonlar, toplamSoru } from '@/lib/sablonlar'
+import {
+  alanGerekir,
+  hazirSeviyeSablonu,
+  SEVIYE_SINIFLARI,
+  seviyeSablonu,
+  varsayilanSeviyeSinifi,
+  type SeviyeSinifi,
+} from '@/lib/seviye-tespit'
 import { bugun, cn, yeniId } from '@/lib/utils'
-import type { Deneme, PuanTuru, Sablon, YanlisSoru } from '@/lib/types'
+import type { Deneme, PuanTuru, Sablon, SablonDers, YanlisSoru } from '@/lib/types'
 import { DenemeOkut } from '@/components/deneme-okut'
 import { bosDersGirisiGecerli, turBosDersi, turFormuSonuclari } from '@/lib/tanitim-veri'
 import { bosSifir } from '@/lib/bos-sifir'
 import { TarihSecici } from '@/components/tarih-secici'
+import { SeviyeDersleri } from '@/components/seviye-dersleri'
 
 const useYerlesimEtkisi = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
 type Giris = { dogru: string; yanlis: string }
+
+const ALANLAR = Object.keys(ALAN_KISA_ADI) as PuanTuru[]
+
+/** Tür, sınıf ve alan satırlarının düğmesi: üçü aynı dilde. */
+function secimDugmesi(secili: boolean): string {
+  return cn(
+    'flex h-11 shrink-0 snap-start items-center justify-center whitespace-nowrap rounded-[13px] border px-4 text-[12.5px] transition',
+    secili
+      ? 'border-[1.5px] border-primary-parlak bg-primary-soft font-extrabold text-primary'
+      : 'border-border bg-card font-bold text-muted-foreground active:bg-muted',
+  )
+}
 
 function bosGirisler(sablon: Sablon): Record<string, Giris> {
   return Object.fromEntries(sablon.dersler.map((d) => [d.id, { dogru: '', yanlis: '' }]))
@@ -38,6 +59,7 @@ export function YeniDenemeEkrani({
   denemeSayisi,
   setYanlisSorular,
   onKaydet,
+  onSeviyeDersleriKaydet,
   onVazgec,
   tanitim,
 }: {
@@ -48,6 +70,8 @@ export function YeniDenemeEkrani({
   duzenlenen: Deneme | null
   denemeSayisi: number
   setYanlisSorular: (guncelleyici: (onceki: YanlisSoru[]) => YanlisSoru[]) => void
+  /** "Dersleri düzenle": seçili sınıfın (11-12'de alanın) seviye tespit dersleri. */
+  onSeviyeDersleriKaydet: (sinif: SeviyeSinifi, alan: PuanTuru, dersler: SablonDers[]) => void
   onKaydet: (deneme: Deneme) => void
   onVazgec: () => void
   /**
@@ -69,11 +93,35 @@ export function YeniDenemeEkrani({
     girilmiş bir AYT denemesi bugün seçilemese de düzenlenebilmeli.
   */
   const secenekler = secilebilirSablonlar(sablonlar, sinif, puanTuru)
-  const ilkSablon = duzenlenen
-    ? (sablonlar.find((s) => s.id === duzenlenen.sablonId) ?? sablonlar[0])
-    : (secenekler.find((s) => s.id === varsayilanSablonId) ?? secenekler[0])
 
-  const [sablonId, setSablonId] = useState(ilkSablon.id)
+  // Tür satırında seçili düğme; seviye tespit tek düğme (`okul`).
+  const [sablonId, setSablonId] = useState(
+    () => (secenekler.find((s) => s.id === varsayilanSablonId) ?? secenekler[0]).id,
+  )
+  /*
+    Seviye tespit sınıfa göre (kullanıcı istedi, 2026-10): 9 eski biçim, 10'da
+    Felsefe ekleniyor, 11 ve 12 alanın AYT'si gibi. Varsayılan öğrencinin kendi
+    sınıfı. Turda 9: turun Okut adımındaki örnek kâğıt 9. sınıf seviye tespiti.
+    Alan Ayarlar'dan; seçilmemişse 11-12'de altta soruluyor.
+  */
+  const [seviyeSinifi, setSeviyeSinifi] = useState<SeviyeSinifi>(() =>
+    tanitim ? 9 : varsayilanSeviyeSinifi(sinif),
+  )
+  const [seciliAlan, setSeciliAlan] = useState<PuanTuru>(puanTuru ?? 'say')
+  const seviyeAlani = puanTuru ?? seciliAlan
+  const seviyeSecili = !duzenlenen && sablonId === 'okul'
+  const [derslerAcik, setDerslerAcik] = useState(false)
+
+  /*
+    Düzenlenen deneme şablonunu tam listeden buluyor — 10. sınıfta girilmiş
+    bir AYT denemesi bugün seçilemese de düzenlenebilmeli; düzenlenmiş seviye
+    tespit dersleri sonradan değişse de kendi şablonunda kalıyor.
+  */
+  const sablon = duzenlenen
+    ? (sablonlar.find((s) => s.id === duzenlenen.sablonId) ?? sablonlar[0])
+    : seviyeSecili
+      ? seviyeSablonu(sablonlar, seviyeSinifi, seviyeAlani)
+      : (sablonlar.find((s) => s.id === sablonId) ?? sablonlar[0])
   const turSeridi = useRef<HTMLDivElement>(null)
 
   /*
@@ -92,9 +140,9 @@ export function YeniDenemeEkrani({
   const [tarih, setTarih] = useState(duzenlenen?.tarih ?? bugun())
   const [ad, setAd] = useState(duzenlenen?.ad ?? '')
   const [girisler, setGirisler] = useState<Record<string, Giris>>(() => {
-    if (!duzenlenen) return bosGirisler(ilkSablon)
+    if (!duzenlenen) return bosGirisler(sablon)
     return Object.fromEntries(
-      ilkSablon.dersler.map((d) => {
+      sablon.dersler.map((d) => {
         const sonuc = duzenlenen.sonuclar.find((s) => s.dersId === d.id)
         return [
           d.id,
@@ -106,8 +154,6 @@ export function YeniDenemeEkrani({
       }),
     )
   })
-
-  const sablon = sablonlar.find((s) => s.id === sablonId) ?? sablonlar[0]
 
   /*
     Yanlış soru ekleme bu ekranın **içinde** bir katman olarak açılıyor,
@@ -125,9 +171,23 @@ export function YeniDenemeEkrani({
   useGeriKatmani(yanlisAcik && yanlisEkleme.bekleyen === null, () => setYanlisAcik(false))
   useGeriKatmani(yanlisEkleme.bekleyen !== null, yanlisEkleme.vazgec)
 
-  // Şablon değişince ders listesi değişir, girişler sıfırlanır
+  /*
+    Şablon değişince ders listesi değişir, girişler sıfırlanır. Seviye
+    tespitte sınıf değişince ya da dersler düzenlenince ortak derslere yazılan
+    sayılar kalıyor: 9'dan 10'a geçen kullanıcı ötekileri baştan yazmasın.
+  */
+  const oncekiSablon = useRef(sablon)
   useEffect(() => {
     if (duzenlenen) return
+    const onceki = oncekiSablon.current
+    oncekiSablon.current = sablon
+    if (onceki !== sablon && onceki.seviye && sablon.seviye) {
+      setGirisler((g) => ({
+        ...bosGirisler(sablon),
+        ...Object.fromEntries(sablon.dersler.flatMap((d) => (g[d.id] ? [[d.id, g[d.id]]] : []))),
+      }))
+      return
+    }
     setGirisler(bosGirisler(sablon))
   }, [sablon, duzenlenen])
 
@@ -286,18 +346,77 @@ export function YeniDenemeEkrani({
                 type="button"
                 aria-pressed={s.id === sablonId}
                 onClick={() => setSablonId(s.id)}
-                className={cn(
-                  'flex h-11 shrink-0 snap-start items-center justify-center whitespace-nowrap rounded-[13px] border px-4 text-[12.5px] transition',
-                  s.id === sablonId
-                    ? 'border-[1.5px] border-primary-parlak bg-primary-soft font-extrabold text-primary'
-                    : 'border-border bg-card font-bold text-muted-foreground active:bg-muted',
-                )}
+                className={secimDugmesi(s.id === sablonId)}
               >
-                {s.ad}
+                {/* Şablonun adı sınıfı taşıyor; sınıf altındaki satırda seçiliyor. */}
+                {s.id === 'okul' ? 'Seviye Tespit' : s.ad}
               </button>
             ))}
           </div>
         </div>
+      )}
+
+      {seviyeSecili && (
+        <div className="mb-4">
+          <div className="mb-1.5 flex items-center justify-between gap-3">
+            <Etiket className="mb-0">Sınıf</Etiket>
+            {!tanitim && (
+              <button
+                type="button"
+                onClick={() => setDerslerAcik(true)}
+                className="-my-1 inline-flex items-center gap-1 rounded-lg px-1.5 py-1 text-[12.5px] font-bold text-primary active:bg-muted"
+              >
+                <Pencil size={14} aria-hidden />
+                Dersleri düzenle
+              </button>
+            )}
+          </div>
+          <div className="grid grid-cols-4 gap-2">
+            {SEVIYE_SINIFLARI.map((s) => (
+              <button
+                key={s}
+                type="button"
+                aria-pressed={s === seviyeSinifi}
+                onClick={() => setSeviyeSinifi(s)}
+                className={cn(secimDugmesi(s === seviyeSinifi), 'px-0')}
+              >
+                {s}. sınıf
+              </button>
+            ))}
+          </div>
+          {/* 11-12'nin seviye tespiti alanın AYT'si; alan Ayarlar'da seçilmemişse burada. */}
+          {alanGerekir(seviyeSinifi) && puanTuru === null && (
+            <>
+              <Etiket className="mt-3">Alan</Etiket>
+              <div className="grid grid-cols-4 gap-2">
+                {ALANLAR.map((a) => (
+                  <button
+                    key={a}
+                    type="button"
+                    aria-pressed={a === seciliAlan}
+                    onClick={() => setSeciliAlan(a)}
+                    className={cn(secimDugmesi(a === seciliAlan), 'px-0')}
+                  >
+                    {ALAN_KISA_ADI[a]}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {derslerAcik && (
+        <SeviyeDersleri
+          sablon={sablon}
+          hazir={hazirSeviyeSablonu(seviyeSinifi, seviyeAlani)}
+          baslik={`${seviyeSinifi}. sınıf${alanGerekir(seviyeSinifi) ? ` ${ALAN_KISA_ADI[seviyeAlani]}` : ''}`}
+          onKaydet={(dersler) => {
+            onSeviyeDersleriKaydet(seviyeSinifi, seviyeAlani, dersler)
+            setDerslerAcik(false)
+          }}
+          onKapat={() => setDerslerAcik(false)}
+        />
       )}
 
       <div className="mb-4 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3">

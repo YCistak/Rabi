@@ -38,6 +38,7 @@ import {
 } from '@/lib/oyunlar/genel-test'
 import type { DersId } from '@/lib/oyunlar/tanim'
 import { sablonlariBirlestir } from '@/lib/sablonlar'
+import { seviyeDersleriniKaydet } from '@/lib/seviye-tespit'
 import { guncelTahmin, obpHesapla } from '@/lib/tahmin'
 import { egitimYili, gunlukToplam, ilerlemisSinif } from '@/lib/hesap'
 import { androidMu, iosMu } from '@/lib/platform'
@@ -62,7 +63,7 @@ import { CokmeSorusu } from '@/components/cokme-sorusu'
 import { cokmeTanitimKarari } from '@/lib/cokme-tanitim'
 import { useGuncelleme } from '@/lib/guncelleme-kolu'
 import { GuncellemeSeridi } from '@/components/guncelleme-seridi'
-import { bugun, cn, gunKaydir } from '@/lib/utils'
+import { bugun, cn, gunKaydir, yeniId } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import { haritaSinifiBul, programBul, type HaritaSinifi, type KonuDersId } from '@/lib/konu'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
@@ -1138,6 +1139,11 @@ function RabiUygulamasi() {
         denemeSayisi={gorunenDenemeler.length}
         setYanlisSorular={setYanlisSorular}
         onKaydet={denemeKaydet}
+        onSeviyeDersleriKaydet={(sinif, alan, dersler) =>
+          setSablonlar((kayitli) =>
+            seviyeDersleriniKaydet(kayitli, sinif, alan, dersler, new Set(denemeler.map((d) => d.sablonId)), yeniId()),
+          )
+        }
         onVazgec={() => (anaTurda ? tanitim.gonder({ tur: 'hedefe-dokun', hedef: DENEME_VAZGEC }) : setDenemeFormu(null))}
         tanitim={anaTurda ? {
           onOkutAcik: tanitim.setRehberGizli,
