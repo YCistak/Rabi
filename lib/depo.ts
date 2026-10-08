@@ -239,6 +239,9 @@ const ESKI_ANAHTARLAR = [
     kayıyor (`lib/oyunlar/uyum.ts`).
   */
   'rabi-oyun-zorlugu',
+  // Yapılacaklar mini turu v2'ye geçti (görev eklemeyi adım adım gösteriyor);
+  // v1 bayrağı artık okunmuyor ama eski kurulumlarda duruyor.
+  'rabi-mini-tur-yapilacaklar-v1',
 ]
 
 /**
