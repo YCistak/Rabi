@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { IslemOyunuEkrani } from '@/components/ekranlar/oyun-islem'
 import { TurAyariSaglayici } from '@/components/tur-ayari-baglami'
-import { DEMO_SORULAR, type TanitimZorlugu } from '@/lib/tanitim'
+import { DEMO_SORULAR } from '@/lib/tanitim'
 import type { OyunModu } from '@/lib/oyunlar/mod'
 import type { IslemSorusu } from '@/lib/oyunlar/islem'
 import type { BildirimKolu } from '@/components/hata-bildir'
@@ -45,17 +45,17 @@ export function DemoOyun({ bildir }: { bildir: BildirimKolu }) {
     oncekiAdim.current = adim?.kimlik
   }, [adim?.kimlik])
   const [mod, setMod] = useState<OyunModu>('siradan')
-  const [zorluk, setZorluk] = useState<TanitimZorlugu>('orta')
+  // Zorluk seçimi kalktı (oyunlardaki gibi); demo hep orta soruyla açılıyor.
   const sorular = useMemo<IslemSorusu[]>(() => {
-    const soru = DEMO_SORULAR[zorluk][0]
-    return [{ tur: zorluk === 'kolay' ? 'toplama' : 'carpma', metin: soru.metin.replace(' = ?', ''), sonuc: soru.cevap }]
-  }, [zorluk])
+    const soru = DEMO_SORULAR.orta[0]
+    return [{ tur: 'carpma', metin: soru.metin.replace(' = ?', ''), sonuc: soru.cevap }]
+  }, [])
   const basladi = useCallback(() => { gonder({ tur: 'hedefe-dokun', hedef: 'demo-baslat' }) }, [gonder])
   const adimKimligi = adim?.kimlik
   // Rehber yalnız Başlat adımında gizlenir: sayım başka bir adımda başlarsa
   // (olmamalı) gizlenen rehberi geri getirecek bir olay gelmez.
   const sayimBasladi = useCallback(() => { if (adimKimligi === 'oyun-baslat') setRehberGizli(true) }, [adimKimligi, setRehberGizli])
-  return <TurAyariSaglayici value={{ mod, setMod, zorluk, setZorluk, secilebilir: true }}>
+  return <TurAyariSaglayici value={{ mod, setMod, secilebilir: true }}>
     <IslemOyunuEkrani key={oyunNo}
       istatistik={{ enIyiDogru: 0, enIyiSeri: 0, oynananTur: 0, hatasizTur: 0, sonTarih: '', toplamDogru: 0, toplamYanlis: 0 }}
       sesAcik={false} bankaSorulari={BOS_BANKA} demoSorulari={sorular} onBasladi={basladi} onSayimBasladi={sayimBasladi} demoDuraklatildi={adim?.kimlik !== "soru-bir"}
