@@ -28,6 +28,11 @@
  * `eslemeSinifi` yalnız 9–11 öneklerini okur): o konular Maarif'te yine
  * "henüz yok".
  *
+ * Fizik 12 (`lib/konu/icerik/12-fizik.ts`, `fzk12-*`): AYT Fizik'in dönerek
+ * öteleme, Kepler, dalga mekaniği, atom, modern fizik ve teknoloji
+ * başlıkları; BHH ayrıca `fzk12-bhh`ye bağlı. Düzgün çembersel hareket
+ * 11'deki desteyle kalıyor.
+ *
  * AYT'de TYT ile içeriği örtüşen konular da aynı harita konularına bağlı
  * (AYT Enerji ve Hareket ↔ TYT İş, Güç ve Enerji): kayıt tek, harita
  * konusu TYT'den ya da AYT'den gidilerek bitirilmiş olsun iki satırda da
@@ -237,12 +242,31 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   'ayt-fiz-enerji-hareket': ['fzk10-is-guc', 'fzk10-mekanik'],
   // Periyodik Hareketler basit ve yay sarkacının periyodunu anlatıyor
   // (T = 2π√(L/g), T = 2π√(m/k)) — AYT'de BHH sorularının çekirdeği.
-  'ayt-fiz-bhh': ['fzk10-periyodik'],
+  'ayt-fiz-bhh': ['fzk10-periyodik', 'fzk12-bhh'],
   'ayt-fiz-iki-boyut': ['fzk11-iki-boyut'],
   'ayt-fiz-elektrik-alan': ['fzk11-elektrik-alan'],
   'ayt-fiz-induksiyon': ['fzk11-manyetik', 'fzk11-induksiyon'],
   'ayt-fiz-transformator': ['fzk11-transformator'],
   'ayt-fiz-cembersel': ['fzk11-cembersel'],
+  // 12. sınıf (2018 programı) desteleri. Düzgün çembersel hareket 11'de.
+  'ayt-fiz-donerek-oteleme': ['fzk12-donerek-oteleme', 'fzk12-acisal-momentum'],
+  'ayt-fiz-kepler': ['fzk12-kutle-cekim', 'fzk12-kepler'],
+  'ayt-fiz-dalga-mekanigi': ['fzk12-su-girisim', 'fzk12-isik-girisim', 'fzk12-doppler', 'fzk12-em-dalga'],
+  'ayt-fiz-atom': [
+    'fzk12-atom-model',
+    'fzk12-uyarilma',
+    'fzk12-buyuk-patlama',
+    'fzk12-radyoaktivite',
+    'fzk12-nukleer',
+  ],
+  'ayt-fiz-modern': ['fzk12-gorelilik', 'fzk12-siyah-cisim', 'fzk12-fotoelektrik', 'fzk12-compton'],
+  'ayt-fiz-modern-teknoloji': [
+    'fzk12-goruntuleme',
+    'fzk12-yari-iletken',
+    'fzk12-super-iletken',
+    'fzk12-nano',
+    'fzk12-laser',
+  ],
 
   // --- AYT Kimya ---------------------------------------------------------
   'ayt-kim-modern-atom': ['kim9-orbital'],

@@ -50,7 +50,7 @@ describe('haritanın sınıf sekmesi', () => {
 
   it('ders o sınıfta yoksa yüzde yok', () => {
     expect(sinifYuzdesi('ingilizce', 9, {})).toBeNull()
-    expect(sinifYuzdesi('fizik', 12, {})).toBeNull()
+    expect(sinifYuzdesi('ingilizce', 12, {})).toBeNull()
     expect(sinifYuzdesi('matematik', 12, {})).toBe(0)
     expect(sinifSekmeleri('ingilizce', {}, 11).map((s) => s.yuzde)).toEqual([null, null, 0, null])
   })
@@ -78,7 +78,7 @@ describe('haritanın sınıf sekmesi', () => {
 
   it('12\'ye geçişte Matematik kalıyor, başka ders Matematik\'e dönüyor', () => {
     expect(sinifDegisimi({ ders: 'matematik', sinif: 11 }, 12)).toEqual({ secim: { ders: 'matematik', sinif: 12 }, bilgi: null })
-    expect(sinifDegisimi({ ders: 'fizik', sinif: 11 }, 12)?.bilgi).toBe('Fizik 12. sınıfta yok; Matematik açıldı.')
+    expect(sinifDegisimi({ ders: 'ingilizce', sinif: 11 }, 12)?.bilgi).toBe('İngilizce 12. sınıfta yok; Matematik açıldı.')
   })
 
   it('yönlendirme şeridi yalnızca kendi sınıfından farklı bir sınıfa gidilince', () => {

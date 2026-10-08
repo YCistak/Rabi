@@ -59,6 +59,9 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   (Matematik eklendi: diziler, toplam-fark, limit, türev, integral, çemberin
   analitiği); yalnız `mat12-*` destesine eşli konu `MAARIF_SINIF`ta "henüz yok"
   kalır. `takip.test.ts` iki uçtaki kimlikleri denetler.
+  Fizik 12 eklendi: AYT Fizik'in dönerek öteleme, Kepler, BHH (`fzk12-bhh` ek),
+  dalga mekaniği, atom, modern fizik ve teknoloji satırları `fzk12-*` destelerine
+  eşli; düzgün çembersel hareket 11'deki desteyle.
 - **Ders içi liste ve konu kartı** (tasarım D/K1a, kullanıcı onayladı 2026-10): satır tek
   dokunuşluk bir düğme; solda **dilimli halka** (harita · okul · soru üç dilim, haritasız
   konuda iki; dolu dilim ders renginde, yarım harita açık ton, bitince tam yeşil halka + tik,
