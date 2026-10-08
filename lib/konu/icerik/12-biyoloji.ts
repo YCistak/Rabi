@@ -332,7 +332,7 @@ export const biyoloji12 = program('biyoloji', 12, 'Genden proteine, bitkiden yap
       ),
       kart(
         'Transkripsiyon',
-        '- **Yeri:** ökaryotta çekirdek, prokaryotta sitoplazma\n- **Enzim:** RNA polimeraz\n- **Kalıp:** genin yalnızca bir zinciri\n- **Ürün:** mRNA, tRNA ve rRNA',
+        '- **Yeri:** ökaryotta çekirdek (ayrıca mitokondri, kloroplast), prokaryotta sitoplazma\n- **Enzim:** RNA polimeraz\n- **Kalıp:** genin yalnızca bir zinciri\n- **Ürün:** mRNA, tRNA ve rRNA',
       ),
       kart(
         'Eşleşme kuralı',
@@ -429,7 +429,7 @@ export const biyoloji12 = program('biyoloji', 12, 'Genden proteine, bitkiden yap
       ),
       kart(
         'Sayı ilişkileri',
-        'n aminoasitlik protein için:\n- mRNA’da n + 1 kodon (durdurma dahil), 3(n + 1) nükleotit\n- Peptit bağı ve açığa çıkan su: n − 1\n- Gende (çift zincir) 6(n + 1) nükleotit',
+        'n aminoasitlik protein için:\n- mRNA’da en az n + 1 kodon (durdurma dahil), 3(n + 1) nükleotit\n- Peptit bağı ve açığa çıkan su: n − 1\n- Gende (çift zincir) en az 6(n + 1) nükleotit',
         undefined,
         { not: 'Durdurma kodonunu unutma: 100 aminoasit için 101 kodon, 303 mRNA nükleotidi.' },
       ),

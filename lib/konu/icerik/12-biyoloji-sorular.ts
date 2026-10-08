@@ -107,12 +107,12 @@ export const biyoloji12Sorulari: Record<string, Omit<SoruKarti, 'id'>[]> = {
     ['50 aminoasitlik bir polipeptit sentezinde 49 su molekülü açığa çıkar.', true, 'Her peptit bağında bir su çıkar: 50 − 1 = 49.'],
     ['Tek bir baz eklenmesi proteinde yalnızca bir aminoasidi değiştirir.', false, 'Okuma çerçevesi kayar; eklemeden sonraki kodonların hepsi değişir.'],
   ], [
-    ['200 aminoasitlik protein için mRNA’da kaç kodon vardır?', '201', '200', 'Durdurma kodonu da sayılır: 200 + 1.'],
+    ['200 aminoasitlik protein için mRNA’da en az kaç kodon vardır?', '201', '200', 'Durdurma kodonu da sayılır: 200 + 1.'],
     ['Son kodonu durdurma olan 99 kodonlu mRNA kaç aminoasit verir?', '98', '99', 'Durdurma kodonu aminoasit kodlamaz: 99 − 1 = 98.'],
     ['Aminoasidi ribozoma getiren molekül hangisidir?', 'tRNA', 'mRNA', 'mRNA kodonları taşır; aminoasidi tRNA getirir.'],
     ['Translasyon nerede gerçekleşir?', 'Ribozomda', 'Çekirdekçikte', 'Çekirdekçikte ribozom alt birimleri yapılır; protein ribozomda sentezlenir.'],
     ['Hangi değişim proteini genellikle daha çok bozar?', 'Bir baz eklenmesi', 'Bir baz yer değiştirmesi', 'Ekleme çerçeveyi kaydırır; yer değiştirme tek kodonu etkiler.'],
-    ['60 aminoasitlik proteinin geninde (çift zincir) kaç nükleotit vardır?', '366', '183', '61 kodon · 3 = 183 mRNA nükleotidi; çift zincirli gende 366.'],
+    ['60 aminoasitlik proteinin geninde (çift zincir) en az kaç nükleotit vardır?', '366', '183', '61 kodon · 3 = 183 mRNA nükleotidi; çift zincirli gende 366.'],
   ]),
   'byl12-biyoteknoloji': sorular([
     ['Yoğurt yapımı geleneksel biyoteknoloji örneğidir.', true, 'Sütü yoğurda çeviren bakterilerin fermantasyonudur; gen aktarımı yok.'],
@@ -183,7 +183,7 @@ export const biyoloji12Sorulari: Record<string, Omit<SoruKarti, 'id'>[]> = {
     ['Aşırı gübrelenen toprakta kök hücreleri su kazanır.', false, 'Toprak suyu derişikleşir; su kökten toprağa geçer.'],
   ], [
     ['Emici tüyler emilimi nasıl artırır?', 'Yüzey alanını artırır', 'Fotosentez yapar', 'Kök epidermisinin uzantılarıdır; temas alanını büyütür.'],
-    ['Su basmış toprakta ilk azalan hangisidir?', 'Mineral alımı', 'Toprak suyu', 'Toprakta su bol ama oksijen yok; aktif taşıma düşer.'],
+    ['Su basmış toprakta hangisi azalır?', 'Mineral alımı', 'Toprak suyu', 'Toprakta su bol ama oksijen yok; aktif taşıma düşer.'],
     ['Hücre çeperlerinden ve aralardan ilerleyen yol hangisidir?', 'Apoplast', 'Simplast', 'Simplast sitoplazmalardan ve plazmodezmlerden geçer.'],
     ['Baklagil köklerinde havadaki azotu bağlayan hangisidir?', 'Rhizobium bakterisi', 'Mikoriza mantarı', 'Mikoriza emilim alanını artırır; azotu nodüldeki bakteri bağlar.'],
     ['Gutasyonu oluşturan kuvvet hangisidir?', 'Kök basıncı', 'Terleme çekimi', 'Gece terleme düşüktür; suyu kök basıncı iter.'],
