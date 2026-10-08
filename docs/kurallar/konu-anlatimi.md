@@ -6,7 +6,13 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   İçerik `lib/konu/icerik/<sınıf>-<ders>.ts`; dosya başındaki yorum eski programdan
   neyin taşınmadığını yazar — yeni konu eklemeden oku. 9–11'de yedi ders tam, 11'de
   ayrıca İngilizce; 9–10 İngilizce yok. `icerik.test.ts` ders/sınıf çiftlerini
-  denetler. Sekizinci ders `KonuDersId` + ders rengi ister. 11. sınıf soruları ayrı
+  denetler.
+- **12. sınıf istisnası: 2018 programı.** Maarif'in 12'si yayımlanmadı; 12/mezun
+  2018 programını görüyor. `12-matematik.ts` tema adlarını 2018 ünitelerinden alır,
+  `maarif.test.ts` 12'yi denetlemez. 9–11 haritasında kartı olan 2018 konuları
+  (üstel-logaritma, trigonometrik denklem, dönüşümler) 12'de tekrar yazılmaz. 12'de
+  şimdilik yalnız Matematik; öteki dersler eklenince `beklenenMi` (`icerik.test.ts`)
+  genişler. Sekizinci ders `KonuDersId` + ders rengi ister. 11. sınıf soruları ayrı
   `11-<ders>-sorular.ts` (`sorulariBagla`), Edebiyat/Tarih/Coğrafya içerikte.
 - Konu ölçüsü `lib/konu/maarif/iskelet.json`, `scripts/maarif-cek.mjs` ile
   tymm.meb.gov.tr'den çekilir; **elle düzenlenmez**. `maarif.test.ts` kelime
@@ -65,18 +71,19 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   yıldızlarla aynı eşik. Süre ilk sorudan "Bitir"e. Yanlış listesi üçle kesilir.
 - **Harita sekmesi** alt menüde (kod `konu`), `KARTLAR`da yok; açılış karşılaması yok.
   Her açılışta ayarlardaki sınıfla açılır (`haritaSinifiBul` → `haritaAcilisSinifi`);
-  ekran içi sınıf değişimi o ziyaretlik; mezunda son seçim kalır; 12. sınıf öğrencisi
-  11'de açılır. `sinifDersleri` boş programları haritada gizler.
+  ekran içi sınıf değişimi o ziyaretlik; mezunda son seçim kalır; pasif sınıfın
+  öğrencisi içeriği olan en büyük sınıfta açılır (12 artık açık, 12'de açılır). `sinifDersleri` boş programları haritada gizler.
 - **Sınıf patikanın üstünde sekme** (`SinifSekmesi`, `lib/konu/sinif-sekmesi.ts`):
   `9 · 10 · 11 · 12` hep görünür, altında seçili dersin o sınıftaki ilerleme yüzdesi
   (ders yoksa çizgi), kendi sınıfında "sen" işareti; seçici içinde gizli sınıf fark
   edilmiyordu. "Çalıştığın program" kartı yalnız dersi seçtirir. Ders yeni sınıfta
   yoksa sınıfın ilk dersine geçilir ve bunu kısa bir satır söyler (`sinifDegisimi`).
-- **12 sekmede pasif** (`sinifPasifMi`: hiçbir dersi yazılmamış sınıf), "Yakında"
-  rozetli, boş ekrana götürmez. `KonuSinifi` 9–11; 12 yalnız sekmenin tipi
-  (`HaritaSinifi`); kartlar yazılınca `KONU_SINIFLARI`na eklenir, sekme kendiliğinden
-  açılır. Kilitli "yapım aşamasında" kartı yalnız eski kayıtta seçim 12 kaldıysa diye
-  duruyor.
+- **Pasif sınıf** (`sinifPasifMi`: hiçbir dersi yazılmamış sınıf) sekmede "Yakında"
+  rozetli, boş ekrana götürmez. 12, Matematik yazılınca `KONU_SINIFLARI`na girdi ve
+  sekme kendiliğinden açıldı (Maarif öğrencisi için de: harita sınıfa göre, müfredata
+  göre süzülmüyor). `HaritaSinifi` artık `KonuSinifi`nin eşi. 12'de ders şeridinde
+  yalnız Matematik; başka dersten 12'ye geçen `sinifDegisimi` ile Matematik'e düşer.
+  Kilitli "yapım aşamasında" kartı yalnız pasif sınıf seçili kalmışsa diye duruyor.
 - **Konu Takibi yönlendirmesi şerit bırakır:** "Haritaya git" sınıfı değiştirir; kendi
   sınıfından farklıysa patikanın üstünde kapatılabilir şerit ("Trigonometri için 10.
   sınıfa geçildi · Kendi sınıfıma dön", `yonlendirmeMetni`); sınıf elle değişince

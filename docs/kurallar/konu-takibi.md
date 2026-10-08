@@ -37,9 +37,11 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
 - **Sınıf ataması öğrencinin müfredatına göre** (kullanıcı istedi, 2026-10;
   `sinif.ts` → `sinifAtamasi(konu, buYilSinif)`):
   - **12. sınıf ve mezun** (2018 programı): `ESKI_SINIF`, her konu için 9–12. Harita
-    eşlemesine bakılmaz. 12 sekmesi açık, "harita yok"; 12'de harita aşaması yok.
+    eşlemesine bakılmaz. 12 sekmesi açık; harita aşaması eşli satırlarda var (AYT
+    Matematik'in 12. sınıf konuları `mat12-*`), sekmedeki "harita yok" yalnız
+    görünen satırların hiçbiri eşli değilse.
   - **9–11 ve bilinmeyen** (Maarif): eşliyse destelerin önekinden (çoğunluk, eşitlikte
-    en erken), değilse `MAARIF_SINIF`. Maarif 9–11'de karşılığı olmayan konu
+    en erken; `mat12-*` öneki okunmaz), değilse `MAARIF_SINIF`. Maarif 9–11'de karşılığı olmayan konu
     `HENUZ_YOK`: **hiçbir sekmede görünmez** ("Tümü" kalktığı için; Maarif 12
     yayımlanınca `MAARIF_SINIF`ta sınıf alır). 12 sekmesi haritadaki gibi pasif,
     "Yakında" rozetli. YDT bu yüzden Maarif öğrencisinde hiç çıkmaz. Felsefe/Din
@@ -53,8 +55,10 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   "Haritaya git" o konunun kartıyla açar (`acilacakKonu`, sınıf farklı olsa da).
   Birleşen satırda iki konunun eşlemesinin birleşimi sayılır. Eşleme yalnız kartlar
   konunun **asıl içeriğini** anlatıyorsa; tek kartta değinmek yetmez. Karşılığı
-  olmayan konuda aşama hiç gösterilmez. 12. sınıf kartları yazılınca tabloya eklenir;
-  `takip.test.ts` iki uçtaki kimlikleri denetler.
+  olmayan konuda aşama hiç gösterilmez. 12. sınıf kartları yazılınca tabloya eklenir
+  (Matematik eklendi: diziler, toplam-fark, limit, türev, integral, çemberin
+  analitiği); yalnız `mat12-*` destesine eşli konu `MAARIF_SINIF`ta "henüz yok"
+  kalır. `takip.test.ts` iki uçtaki kimlikleri denetler.
 - **İşaret satırda:** solda ilerleme dairesi (aşama sayısına göre yay; dokununca
   Bitirdim aç/kapa), sağda sabit genişlikte üç yuva — harita (salt okunur, boşken kesik
   kenarlı; karşılığı yoksa boş ama yer tutar), okul, soru (44 piksel dokunma alanı).
