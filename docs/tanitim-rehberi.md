@@ -107,7 +107,7 @@ Mini turlar için tablodaki ilgili anahtarı kaldır; ana tur tamamlanmışken i
 
 `npm run typecheck`, `npm test` ve `npm run build` proje doğrulamalarıdır. Tarayıcı senaryoları tur geçişlerini, tek soruluk demo/banka temizliğini, gerçek kayıtların korunmasını, mini tur kayıtlarının bağımsızlığını, yenilemeyi ve 44 piksel düğmeleri denetler.
 
-Capacitor aynı statik çıktıyı kullanır. Android geri tuşu etkin turu bitirip geçici veriyi temizler. Bu değişiklik Android cihazında doğrulanmadı; yeni uygulama paketine alınması için proje derleme ve Capacitor eşitleme süreci ayrıca çalıştırılmalıdır.
+Capacitor aynı statik çıktıyı kullanır. Android geri tuşu turu bitirmez, bir adım geri alır (sayımda yutulur). Bu değişiklik Android cihazında doğrulanmadı; yeni uygulama paketine alınması için proje derleme ve Capacitor eşitleme süreci ayrıca çalıştırılmalıdır.
 
 ## Geçiş ve oyun deneyimi
 
@@ -115,6 +115,6 @@ Animasyon ayarları `/tanitim-deneyi` sayfasında canlı değiştirilir. Çerçe
 
 Pomodoro mini turunda sayaç, ders ve ayar blokları tek çerçevede birlikte anlatılır; odak koruması ayrı kartta ve ayrı adımda gösterilir. Tarayıcıda da tanıtım satırı görünür, fakat cihaz izni istenmez veya koruma başlatılmaz.
 
-Tanıtım oyununun görünümü kopyalanmaz: gerçek oyun bileşeni kullanılır (Oyunlar mini turu). Hazırlık ekranında seçenekler ve başlangıç zorluğu birlikte görünür. Geri sayımda rehber ve karartma tamamen kaldırılır; sayım bitince rehber doğrudan soruyla geri gelir. Tanıtımın süresi 600 saniyedir. Oyun aşamasında balon kısa bir ipucuna dönüşür. Sonuç mevcut mini oyunun tam yerleşimini kullanır. Sonuçtan Geri denildiğinde oyun yeni bir deneme için sıfırlanır. Gerçek oyun modu, zorluk tercihi ve rekorlar değiştirilmez.
+Tanıtım oyununun görünümü kopyalanmaz: gerçek oyun bileşeni kullanılır (Oyunlar mini turu). Hazırlık ekranında seçenekler ve başlangıç zorluğu birlikte görünür. Geri sayımda rehber ve karartma tamamen kaldırılır; sayım bitince rehber doğrudan soruyla geri gelir. Rehberin gizliliği gizlendiği adıma bağlıdır (`lib/tanitim-rehber.ts`): adım ya da tur değişince kendiliğinden kalkar. Sayım sürerken Android geri tuşu yutulur (adım geri alınsaydı sayım sonundaki "oyun başladı" olayı uymaz, rehber hiç geri gelmez ve tur kilitlenirdi — 2026-10, Android). Rehber Başlat adımında `SAYIM_KORUMA_MS`ten (8 sn) uzun gizli kalırsa tur Hazırlık'a döner. Geçiş sürerken kullanıcı dokunuşları düşer (çift dokunuş koruması), oyundan/formdan gelen olaylar (`demo-baslat`, `oyun-bitti`, `kayit-eklendi`) sıraya alınıp geçiş bitince işlenir. Deneme formunda Okut açıkken geri tuşu önce Okut'u kapatır. Tanıtımın süresi 600 saniyedir. Oyun aşamasında balon kısa bir ipucuna dönüşür. Sonuç mevcut mini oyunun tam yerleşimini kullanır. Sonuçtan Geri denildiğinde oyun yeni bir deneme için sıfırlanır. Gerçek oyun modu, zorluk tercihi ve rekorlar değiştirilmez.
 
 Varsayılan süreler: adımlar arası bekleme 0 ms, çerçeve çizimi 700 ms, aydınlanma gecikmesi 450 ms, aydınlanma 550 ms, bilgi balonu geçişi 500 ms.
