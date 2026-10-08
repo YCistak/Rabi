@@ -19,17 +19,27 @@
  * ayrı YKS başlığını birlikte anlatıyor). Tabloda olmayan konunun haritada
  * karşılığı yok; o konuda aşama hiç gösterilmiyor.
  *
- * 12. sınıfın harita kartları henüz yazılmadı (`lib/konu/index.ts` →
- * `HARITA_SINIFLARI`); AYT'nin türev, integral, organik kimya gibi
- * başlıkları bu yüzden eşlenmedi. Kartlar yazılınca buraya eklenir.
+ * 12. sınıfta yalnız Matematik'in kartları yazıldı (2018 programı,
+ * `lib/konu/icerik/12-matematik.ts`); AYT Matematik'in diziler, toplam-fark,
+ * limit, türev, integral ve çemberin analitiği başlıkları `mat12-*`
+ * destelerine bağlı; AYT Kimya'nın 12. sınıf başlıkları `kim12-*`
+ * destelerine (`lib/konu/icerik/12-kimya.ts`). Öteki derslerin 12. sınıf
+ * başlıkları (Cumhuriyet edebiyatı…) kartları yazılınca eklenir. `mat12-*` desteleri
+ * Maarif öğrencisinin sınıf atamasını değiştirmez (`sinif.ts` →
+ * `eslemeSinifi` yalnız 9–11 öneklerini okur): o konular Maarif'te yine
+ * "henüz yok".
+ *
+ * Fizik 12 (`lib/konu/icerik/12-fizik.ts`, `fzk12-*`): AYT Fizik'in dönerek
+ * öteleme, Kepler, dalga mekaniği, atom, modern fizik ve teknoloji
+ * başlıkları; BHH ayrıca `fzk12-bhh`ye bağlı. Düzgün çembersel hareket
+ * 11'deki desteyle kalıyor.
  *
  * AYT'de TYT ile içeriği örtüşen konular da aynı harita konularına bağlı
  * (AYT Enerji ve Hareket ↔ TYT İş, Güç ve Enerji): kayıt tek, harita
  * konusu TYT'den ya da AYT'den gidilerek bitirilmiş olsun iki satırda da
  * dolu görünüyor. Bakılıp **eşlenmeyenler**: İkinci Dereceden Denklemler
  * (Karesel Fonksiyon destesi diskriminant ve kök-katsayıya yalnızca birer
- * kartla değiniyor), Toplam-Fark Formülleri (11. sınıf trigonometri
- * destelerinde yok), Divan ve Geçiş Dönemi Edebiyatı (Mesnevi ve Dîvânu
+ * kartla değiniyor), Divan ve Geçiş Dönemi Edebiyatı (Mesnevi ve Dîvânu
  * Lugâti't-Türk desteleri konunun bir parçası), Sığa ve Alternatif Akım
  * (birer kart), Coğrafya'nın Türkiye'de tarım, sanayi ve çevre konuları
  * (11. sınıf desteleri Türkiye'ye özgü değil, genel kavramlar), Eşlik ve
@@ -216,6 +226,21 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   'ayt-mat-logaritma': ['mat11-ustel', 'mat11-ustel-ters', 'mat11-log', 'mat11-ustel-log-denklem'],
   'ayt-geo-analitik': ['mat10-nokta', 'mat10-dogru'],
   'ayt-geo-donusum': ['mat9-donusum'],
+  // 12. sınıf (2018 programı) desteleri.
+  'ayt-mat-trig-formul': ['mat12-toplam-fark'],
+  'ayt-mat-diziler': ['mat12-dizi', 'mat12-aritmetik', 'mat12-geometrik'],
+  'ayt-mat-limit': ['mat12-limit'],
+  'ayt-mat-turev': ['mat12-turev', 'mat12-turev-uygulama'],
+  'ayt-mat-integral': ['mat12-belirsiz-integral', 'mat12-belirli-integral'],
+  'ayt-geo-cember-analitik': ['mat12-cember'],
+  // 12. sınıf Tarih (2018 programı): Millî Mücadele'den küreselleşmeye.
+  'tyt-tar-milli-mucadele': ['trh12-mondros', 'trh12-hazirlik', 'trh12-tbmm', 'trh12-dogu-guney', 'trh12-bati', 'trh12-diplomasi'],
+  'tyt-tar-ataturkculuk': ['trh12-ilkeler', 'trh12-siyasi', 'trh12-hukuk', 'trh12-egitim', 'trh12-toplumsal', 'trh12-ekonomi'],
+  'ayt-tar-iki-savas-arasi': ['trh12-ic-politika', 'trh12-dis-politika', 'trh12-iki-savas-dunya'],
+  'ayt-tar-ikinci-dunya': ['trh12-ikinci-seyir', 'trh12-ikinci-turkiye', 'trh12-ikinci-sonuc'],
+  'ayt-tar-soguk-savas': ['trh12-bloklar', 'trh12-sogukdogu', 'trh12-tr-1945-1960'],
+  'ayt-tar-toplumsal-devrim': ['trh12-yumusama', 'trh12-ortadogu-petrol', 'trh12-tr-1960-1980'],
+  'ayt-tar-xxi-yuzyil': ['trh12-sscb', 'trh12-asya-kuresel', 'trh12-balkan-ortadogu', 'trh12-ab-turkiye', 'trh12-tr-1980-sonrasi'],
 
   // --- AYT Fizik ---------------------------------------------------------
   'ayt-fiz-vektor': ['fzk9-vektor'],
@@ -226,12 +251,31 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   'ayt-fiz-enerji-hareket': ['fzk10-is-guc', 'fzk10-mekanik'],
   // Periyodik Hareketler basit ve yay sarkacının periyodunu anlatıyor
   // (T = 2π√(L/g), T = 2π√(m/k)) — AYT'de BHH sorularının çekirdeği.
-  'ayt-fiz-bhh': ['fzk10-periyodik'],
+  'ayt-fiz-bhh': ['fzk10-periyodik', 'fzk12-bhh'],
   'ayt-fiz-iki-boyut': ['fzk11-iki-boyut'],
   'ayt-fiz-elektrik-alan': ['fzk11-elektrik-alan'],
   'ayt-fiz-induksiyon': ['fzk11-manyetik', 'fzk11-induksiyon'],
   'ayt-fiz-transformator': ['fzk11-transformator'],
   'ayt-fiz-cembersel': ['fzk11-cembersel'],
+  // 12. sınıf (2018 programı) desteleri. Düzgün çembersel hareket 11'de.
+  'ayt-fiz-donerek-oteleme': ['fzk12-donerek-oteleme', 'fzk12-acisal-momentum'],
+  'ayt-fiz-kepler': ['fzk12-kutle-cekim', 'fzk12-kepler'],
+  'ayt-fiz-dalga-mekanigi': ['fzk12-su-girisim', 'fzk12-isik-girisim', 'fzk12-doppler', 'fzk12-em-dalga'],
+  'ayt-fiz-atom': [
+    'fzk12-atom-model',
+    'fzk12-uyarilma',
+    'fzk12-buyuk-patlama',
+    'fzk12-radyoaktivite',
+    'fzk12-nukleer',
+  ],
+  'ayt-fiz-modern': ['fzk12-gorelilik', 'fzk12-siyah-cisim', 'fzk12-fotoelektrik', 'fzk12-compton'],
+  'ayt-fiz-modern-teknoloji': [
+    'fzk12-goruntuleme',
+    'fzk12-yari-iletken',
+    'fzk12-super-iletken',
+    'fzk12-nano',
+    'fzk12-laser',
+  ],
 
   // --- AYT Kimya ---------------------------------------------------------
   'ayt-kim-modern-atom': ['kim9-orbital'],
@@ -260,6 +304,30 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
     'kim11-titrasyon',
   ],
   'ayt-kim-cozunurluk': ['kim11-molar-cozunurluk', 'kim11-kcc', 'kim11-cozunurluk-faktor'],
+  // 12. sınıf (2018 programı) desteleri. Enerji Kaynakları'nın nanoteknoloji ve
+  // sürdürülebilirlik kısmı 9–11 destelerinde; o desteler eklenmedi (Maarif
+  // sınıfını 11'e çekerdi), fosil ve alternatif destesi asıl içeriği anlatıyor.
+  'ayt-kim-elektrik': [
+    'kim12-redoks',
+    'kim12-hucre',
+    'kim12-potansiyel',
+    'kim12-pil',
+    'kim12-elektroliz',
+    'kim12-korozyon',
+  ],
+  'ayt-kim-karbon': ['kim12-organik', 'kim12-formul', 'kim12-allotrop', 'kim12-hibrit'],
+  'ayt-kim-organik': [
+    'kim12-alkan',
+    'kim12-alken',
+    'kim12-alkin',
+    'kim12-aromatik',
+    'kim12-fonksiyonel',
+    'kim12-alkol',
+    'kim12-karbonil',
+    'kim12-karboksilik',
+    'kim12-ester',
+  ],
+  'ayt-kim-enerji-kaynaklari': ['kim12-fosil', 'kim12-alternatif'],
 
   // --- AYT Biyoloji ------------------------------------------------------
   'ayt-biy-sinir': ['byl11-noron', 'byl11-sinaps', 'byl11-insan-sinir', 'byl11-refleks'],
@@ -279,6 +347,28 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   'ayt-biy-uriner': ['byl11-bosaltim-homeo'],
   'ayt-biy-komunite': ['byl10-etkilesim', 'byl10-suksesyon', 'byl10-populasyon'],
   'ayt-biy-enerji': ['byl10-fotosentez', 'byl10-kemosentez', 'byl10-solunum', 'byl10-fermantasyon'],
+  // 12. sınıf (2018 programı) desteleri. Enerji ünitesi 10'un destelerinde kaldı.
+  'ayt-biy-genden-proteine': [
+    'byl12-nukleik-kesif',
+    'byl12-nukleik-yapi',
+    'byl12-genetik-organizasyon',
+    'byl12-dna-eslenme',
+    'byl12-transkripsiyon',
+    'byl12-translasyon',
+    'byl12-biyoteknoloji',
+    'byl12-biyotek-uygulama',
+  ],
+  'ayt-biy-bitki': [
+    'byl12-bitki-doku',
+    'byl12-kok-govde-yaprak',
+    'byl12-su-emilim',
+    'byl12-ksilem',
+    'byl12-floem',
+    'byl12-cicek',
+    'byl12-dollenme',
+    'byl12-cimlenme',
+  ],
+  'ayt-biy-canlilar-cevre': ['byl12-cevre-genetik', 'byl12-yapay-secilim'],
 
   // --- AYT Edebiyat ------------------------------------------------------
   'ayt-edb-guzel-sanatlar': ['trk9-edebiyat'],
@@ -286,12 +376,40 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   'ayt-edb-soz-sanatlari': ['trk9-sanat'],
   'ayt-edb-anlatmaya-bagli': ['trk9-yapi', 'trk9-anlatici', 'trk9-hikaye'],
   'ayt-edb-masal-fabl': ['trk10-masal'],
-  'ayt-edb-ogretici': ['trk9-deneme', 'trk11-mektup', 'trk11-biyografi'],
-  'ayt-edb-tiyatro': ['trk9-tiyatro', 'trk11-karagoz', 'trk11-tiyatro'],
+  'ayt-edb-ogretici': ['trk9-deneme', 'trk11-mektup', 'trk11-biyografi', 'trk12-deneme', 'trk12-soylev'],
+  'ayt-edb-tiyatro': [
+    'trk9-tiyatro',
+    'trk11-karagoz',
+    'trk11-tiyatro',
+    'trk12-tiyatro-kurumlar',
+    'trk12-tiyatro-epik-absurt',
+  ],
   'ayt-edb-islamiyet-oncesi': ['trk10-destan', 'trk11-orhun'],
   'ayt-edb-halk': ['trk10-anonim'],
   'ayt-edb-halk-asik': ['trk11-asik'],
   'ayt-edb-milli': ['trk10-milli', 'trk10-milli-turler'],
+  // Cumhuriyet Dönemi: 12. sınıf Edebiyat'ın hikâye, şiir, roman ve tiyatro
+  // desteleri (2018 programı, `12-turkce*.ts`). Deneme ve söylev "Öğretici
+  // Metinler"e, dil/sözlük destesi (`trk12-dil-sozluk`) hiçbir başlığa eşlenmedi.
+  'ayt-edb-cumhuriyet': [
+    'trk12-hikaye-1923',
+    'trk12-hikaye-1960',
+    'trk12-siir-hece',
+    'trk12-siir-saf',
+    'trk12-siir-toplumcu',
+    'trk12-siir-garip',
+    'trk12-siir-ikinci-yeni',
+    'trk12-siir-dini',
+    'trk12-siir-1960-sonrasi',
+    'trk12-siir-halk',
+    'trk12-roman-1923',
+    'trk12-roman-toplumcu',
+    'trk12-roman-modern',
+    'trk12-roman-1980',
+    'trk12-roman-dunya',
+    'trk12-tiyatro-kurumlar',
+    'trk12-tiyatro-epik-absurt',
+  ],
 
   // --- AYT Coğrafya ------------------------------------------------------
   'ayt-cog-nufus-politika': ['cog9-nufus-politika'],
@@ -302,4 +420,10 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   // 9. sınıfın destesi sera etkisi, Kyoto ve Türkiye'ye etkileri; 11.'nin
   // azaltım, uyum ve iklim adaleti. İkisi birlikte konunun tamamı.
   'ayt-cog-iklim-degisimi': ['cog9-iklim-degisim', 'cog11-iklim'],
+  // 12. sınıf (2018 programı) desteleri. Küresel ve Bölgesel Örgütler eşlenmedi:
+  // 12 destelerinde BM/NATO/AB örgütleri ayrı bir deste değil (AB ve KEİ birer kart).
+  'ayt-cog-ulasim-ticaret': ['cog12-ulasim-faktor', 'cog12-ulasim-turkiye', 'cog12-turkiye-ticaret', 'cog12-turizm-sembol', 'cog12-turizm-ekonomi'],
+  'ayt-cog-jeopolitik': ['cog12-konum-etki', 'cog12-turkiye-jeopolitik', 'cog12-jeopolitik-bolge'],
+  'ayt-cog-ekstrem': ['cog12-ekstrem'],
+  'ayt-cog-cevre': ['cog12-cevre-sinir', 'cog12-cevre-politika', 'cog12-orgut-anlasma'],
 }

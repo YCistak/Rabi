@@ -6,8 +6,53 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   İçerik `lib/konu/icerik/<sınıf>-<ders>.ts`; dosya başındaki yorum eski programdan
   neyin taşınmadığını yazar — yeni konu eklemeden oku. 9–11'de yedi ders tam, 11'de
   ayrıca İngilizce; 9–10 İngilizce yok. `icerik.test.ts` ders/sınıf çiftlerini
-  denetler. Sekizinci ders `KonuDersId` + ders rengi ister. 11. sınıf soruları ayrı
+  denetler.
+- **12. sınıf istisnası: 2018 programı.** Maarif'in 12'si yayımlanmadı; 12/mezun
+  2018 programını görüyor. `12-matematik.ts` tema adlarını 2018 ünitelerinden alır,
+  `maarif.test.ts` 12'yi denetlemez. 9–11 haritasında kartı olan 2018 konuları
+  (üstel-logaritma, trigonometrik denklem, dönüşümler) 12'de tekrar yazılmaz. 12'de
+  şimdilik yalnız Matematik; öteki dersler eklenince `beklenenMi` (`icerik.test.ts`)
+  genişler. Sekizinci ders `KonuDersId` + ders rengi ister. 11. sınıf soruları ayrı
   `11-<ders>-sorular.ts` (`sorulariBagla`), Edebiyat/Tarih/Coğrafya içerikte.
+- **12. sınıf Fizik (2018 programı):** `12-fizik.ts` + `12-fizik-sorular.ts`, 6 ünite
+  23 deste (`fzk12-*`). Düzgün çembersel hareket `fzk11-cembersel`de, 12'de yazılmaz;
+  BHH destesi `fzk10-periyodik`le örtüşür ama 2018'in konum-hız-ivme ve yay bağlama
+  kazanımlarını taşır. Programın "hesaplamaya girilmez" dediği yerde (görelilik,
+  Compton, girişim, eylemsizlik momenti) bağıntı yalnız değişken ilişkisi için verilir.
+- **12. sınıf Kimya** (`12-kimya.ts`, 2018'in dört ünitesi): Lewis (`kim9-lewis`),
+  nanoteknoloji (`kim9/11-nano`), sürdürülebilirlik/yeşil kimya (`kim9-yesil`,
+  `kim11-mikroplastik`) ve hidrojen üretimi (`kim11-yesil-hidrojen`) 9–11'de var,
+  12'de yazılmaz; Nernst hesabı ve yakıt pili (Fen Lisesi) yok.
+- **Biyoloji 12** (`12-biyoloji.ts`): Genden Proteine, Bitki Biyolojisi, Canlılar ve
+    Çevre. Enerji ünitesi (10'da) ile bitki hormonları/hareketleri (11'de) tekrar
+    yazılmaz; `icerik.test.ts` bunu konu adlarından denetler.
+- **12. sınıf Tarih (2018 programı):** `12-tarih.ts` (+ `12-tarih-t1/t2/t3/t5/t7.ts`,
+  kalıp `12-tarih-yardimci.ts`); 30 deste, tema adları 2018 ünitelerinden (Millî
+  Mücadele … XXI. Yüzyılın Eşiği). 1. ünite (1908-1918) 11'de kartlı, tekrar yok;
+  Çağdaş Türk ve Dünya Tarihi ünitelerinin 20. yüzyıl konuları aynı destelerde
+  birleşik. Tarihler ve olay sırası kartlarda tek tek doğrulandı; emin olunmayan
+  ayrıntı yazılmadı. `icerik.test.ts` `beklenenMi` 12'de Matematik + Tarih.
+- **12. sınıf Coğrafya (2018 programı):** `12-cografya.ts` (+ `12-cografya-t1…t4.ts`,
+  kalıp `12-cografya-yardimci.ts`); 4 ünite, 29 deste (Doğal Sistemler, Beşerî
+  Sistemler, Küresel Ortam: Bölgeler ve Ülkeler, Çevre ve Toplum). Tema adları ve
+  kazanımlar (12.1.1 … 12.4.4) MEB ölçme-değerlendirme tablosundan. Rakam, yıl ve
+  anlaşma tarihleri tek tek doğrulandı; emin olunmayan ayrıntı yazılmadı. Örgütler
+  (BM, NATO, AB) ayrı deste değil. `icerik.test.ts` `beklenenMi` 12'de Coğrafya'yı da sayar.
+- **12. sınıf İngilizce (2018 programı):** `12-ingilizce-1…4.ts` (+ `-sorular`), MEB
+  Ortaöğretim İngilizce 9–12 programının 12th Grade bölümündeki on tema
+  (Music … Manners), temada iki konu = 20 deste. Tema adı programın İngilizcesi;
+  konu kapsamı programın Functions sütunundan. 11 (Maarif) desteleriyle çakışan
+  dil bilgisi (edilgen, gelecek, ikinci koşul, wish + past) tekrar yazılmadı;
+  past perfect yalnız haber anlatımı, wish + had V3 / would ise pişmanlık
+  bağlamında yeniden geçiyor. YDT'ye bağlanan harita eşlemesi yok (kartlar
+  işlev odaklı).
+- **12. sınıf Türk Dili ve Edebiyatı** (`12-turkce*.ts`, ders kimliği `turkce`, konu
+  kimlikleri `trk12-*`, 2018 programı): temalar programın ünite adları (Giriş, Hikâye,
+  Şiir, Roman, Tiyatro, Deneme, Söylev). Kalıp 12-Matematik'ten farklı: kartlar ve hızlı
+  kontrol `edebiyatKonusu` (`12-turkce-yardimci.ts`) ile, sorular `*-sorular.ts`
+  dosyalarında `sorular()` ile. **Yazar–eser–yıl eşleşmesi yalnız emin olunandan yazılır**;
+  program metni doğrulanamadığından makale, eleştiri ve röportaj desteleri yok. 11'de
+  kartı olan Orhun, Âşık geleneği ve Küçürek Hikâye tekrarlanmaz (`icerik.test.ts`).
 - Konu ölçüsü `lib/konu/maarif/iskelet.json`, `scripts/maarif-cek.mjs` ile
   tymm.meb.gov.tr'den çekilir; **elle düzenlenmez**. `maarif.test.ts` kelime
   örtüşmesiyle denetler (kısaltırken konuyu tanıtan kelimeyi atma); Türk Dili ve
@@ -65,8 +110,8 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   yıldızlarla aynı eşik. Süre ilk sorudan "Bitir"e. Yanlış listesi üçle kesilir.
 - **Harita sekmesi** alt menüde (kod `konu`), `KARTLAR`da yok; açılış karşılaması yok.
   Her açılışta ayarlardaki sınıfla açılır (`haritaSinifiBul` → `haritaAcilisSinifi`);
-  ekran içi sınıf değişimi o ziyaretlik; mezunda son seçim kalır; 12. sınıf öğrencisi
-  11'de açılır. `sinifDersleri` boş programları haritada gizler.
+  ekran içi sınıf değişimi o ziyaretlik; mezunda son seçim kalır; pasif sınıfın
+  öğrencisi içeriği olan en büyük sınıfta açılır (12 artık açık, 12'de açılır). `sinifDersleri` boş programları haritada gizler.
 - **Sınıf ve ders tek kart + alt pencere** (kullanıcı seçti, 2026-10;
   `components/konu/harita-secimi.tsx`, tasarım "Tek başlık + alt sayfa"): patikanın
   üstünde yalnız "10. sınıf · Kimya" kartı (ders emojisi, ilerleme, turuncu ok);
@@ -76,10 +121,10 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   listeyi değiştirir, seçim derse basınca biter; bakılan sınıfta seçili ders yoksa
   `pencereBilgisi` satırı. **"sen" işareti yok** (kullanıcı kaldırttı). Emojiler
   `OlcekliEmoji` ile (kullanıcı istedi; hizalı satırda ham emoji telefona göre kayar).
-- **12 pencerede pasif** (`sinifPasifMi`: hiçbir dersi yazılmamış sınıf), "Yakında"
-  rozetli, boş ekrana götürmez. `KonuSinifi` 9–11; 12 yalnız `HaritaSinifi`; kartlar
-  yazılınca `KONU_SINIFLARI`na eklenir, hücre kendiliğinden açılır. Kilitli "yapım aşamasında" kartı yalnız eski kayıtta seçim 12 kaldıysa diye
-  duruyor.
+- **Pasif sınıf** (`sinifPasifMi`: hiçbir dersi yazılmamış sınıf) pencerede "Yakında"
+  rozetli, boş ekrana götürmez. 12, 8 dersle (2018 programı) `KONU_SINIFLARI`na girdi ve
+  hücre kendiliğinden açıldı; `HaritaSinifi` artık `KonuSinifi`nin eşi. Kilitli "yapım
+  aşamasında" kartı yalnız içeriği boşalan sınıf ya da eski kayıt için duruyor.
 - **Konu Takibi yönlendirmesi şerit bırakır:** "Haritaya git" sınıfı değiştirir; kendi
   sınıfından farklıysa patikanın üstünde kapatılabilir şerit ("Trigonometri için 10.
   sınıfa geçildi · Kendi sınıfıma dön", `yonlendirmeMetni`); sınıf elle değişince

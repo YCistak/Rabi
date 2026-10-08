@@ -1,0 +1,123 @@
+import { tema } from '../tip'
+import { edebiyatKonusu } from './12-turkce-yardimci'
+
+/** Şiir ünitesi (2018 programı, 12. sınıf): Cumhuriyet Dönemi şiir çizgileri. */
+export const siirTemalari = [
+  tema('trk12-t3', 'Şiir', [
+    edebiyatKonusu({
+      id: 'trk12-siir-hece', ad: 'Hececiler ve Millî Şiir Çizgisi',
+      kartlar: [
+        ['Hece ölçüsü', 'Her dizede hece sayısı eşittir (7, 8, 11 gibi).\nOn birli ölçü genellikle 6+5 ya da 4+4+3 duraklıdır.'],
+        ['Beş Hececiler', 'Faruk Nafiz Çamlıbel, Orhan Seyfi Orhon, Yusuf Ziya Ortaç, Halit Fahri Ozansoy, Enis Behiç Koryürek.\nHece ölçüsüyle yazan bu beş şair böyle anılır.'],
+        ['Dil ve konu', 'Sade Türkçe, Anadolu manzarası, aşk ve yurt sevgisi öne çıkar.\nHalk edebiyatının biçimlerinden yararlanılır.'],
+        ['Faruk Nafiz Çamlıbel', 'Çoban Çeşmesi (1926) kitabı ve Han Duvarları şiiriyle tanınır.\nAnadolu’yu ve hece ölçüsünü şiire taşıdı.'],
+        ['Arif Nihat Asya', 'Millî duyguları işleyen şairlerdendir.\nBayrak ve vatan sevgisi şiirlerinde sık geçer; “bayrak şairi” diye anılır.'],
+        ['Aynı çizgide öteki şairler', 'Orhan Şaik Gökyay, Niyazi Yıldırım Gençosmanoğlu ve Bekir Sıtkı Erdoğan bu çizgide anılır.\nDizeleri hece ölçülü ve yalın dillidir.'],
+        ['Karşısındaki akım', '1941’de Garip akımı ölçüyü ve uyağı bıraktı.\nBu yüzden Hececiler ile Garipçiler karşıt çizgide durur.'],
+      ],
+      not: 'Hececileri tanımanın ilk ipucu hece ölçüsü ve sade Türkçedir.', notKarti: 3,
+      kontrol: ['Beş Hececilerin ortak ölçüsü hangisidir?', 'Hece ölçüsü', 'Aruz ölçüsü', 'Hececiler halk şiirindeki hece ölçüsüyle yazar.', 3],
+    }),
+    edebiyatKonusu({
+      id: 'trk12-siir-saf', ad: 'Saf Şiir ve Bireysel Eğilimler',
+      kartlar: [
+        ['Saf şiir nedir?', 'Fransız şair Paul Valéry ile anılan anlayıştır.\nŞiirde anlamdan çok ses, ahenk ve çağrışım önemlidir.'],
+        ['Türkçedeki kaynağı', 'Ahmet Haşim’in sembolist şiiri bu anlayışı besledi.\nCumhuriyet’te bu çizgiyi başka şairler sürdürdü.'],
+        ['Yedi Meşale', 'Yedi Meşale 1928’de çıkan ortak kitaptır.\nAralarında Ziya Osman Saba, Sabri Esat Siyavuşgil ve Kenan Hulusi Koray vardır.'],
+        ['Ziya Osman Saba', 'Sebil ve Güvercinler (1943) kitabıyla tanınır.\nSade ve içli bir dille günlük yaşamın küçük ayrıntılarını anlatır.'],
+        ['Cahit Sıtkı Tarancı', 'Ömrümde Sükût (1933) ilk kitabıdır.\nOtuz Beş Yaş şiirinde ömrün yarısına gelmenin hüznünü anlatır.'],
+        ['Ahmet Hamdi Tanpınar', 'Şiirinde zaman, rüya ve İstanbul-Bursa hatıraları öne çıkar.\nNe İçindeyim Zamanın onun tanınmış şiirlerindendir.'],
+        ['Dıranas ve Necatigil', 'Ahmet Muhip Dıranas içli ve ölçülü bir lirizm kurdu.\nBehçet Necatigil Evler ve Kareler Aklar gibi kitaplarında gündelik yaşamı işledi.'],
+        ['Nasıl okunur?', 'Saf şiirde soru “ne diyor?”dan çok “nasıl söylüyor?”dur.\nSes, ritim ve imge birlikte okunur.'],
+      ],
+      not: 'Yedi Meşale 1928’de çıktı; Garip (1941) ile karıştırma, Garip’ten öncedir.', notKarti: 3,
+      kontrol: ['Saf şiirde öne çıkan nedir?', 'Ses ve ahenk', 'Toplumsal ileti', 'Saf şiirde anlamdan çok ses, ahenk ve çağrışım önemlidir.', 1],
+    }),
+    edebiyatKonusu({
+      id: 'trk12-siir-toplumcu', ad: 'Toplumcu Gerçekçi Şiir',
+      kartlar: [
+        ['Toplumcu gerçekçilik', 'Şiir toplumsal sorunları ve emekçi insanı anlatma görevi taşır.\nSanat toplumsal yarar gözetir.'],
+        ['Nâzım Hikmet', '1902–1963 arasında yaşadı.\nSerbest nazmı yerleştirdi; dizeleri basamaklı yazıp konuşma dilini kullandı.'],
+        ['İlk kitapları', '- **835 Satır:** 1929\n- **Jokond ile Si-Ya-U:** 1929\n- **Şeyh Bedreddin Destanı:** 1936'],
+        ['Kuvâyi Milliye', 'Kuvâyi Milliye, 1939–1941 arasında hapiste yazıldı; Millî Mücadele’yi halkın gözüyle anlatır.\nKahramanı tek kişi değil halktır.'],
+        ['İnsan Manzaraları', 'Memleketimden İnsan Manzaraları 1940’larda hapiste yazıldı.\nTürkiye’nin farklı insanlarını geniş bir panoda anlatır.'],
+        ['Ahmed Arif', 'Hasretinden Prangalar Eskittim (1968) onun tek şiir kitabıdır.\nDoğu Anadolu halk söyleyişinden beslenir.'],
+        ['Attila İlhan', 'Sisler Bulvarı (1954) ve Ben Sana Mecburum (1960) kitaplarıyla tanınır.\nİlk şiirlerinde toplumcu bir eğilim görülür.'],
+        ['Dil ve konu', 'Konuşma dili ve halk söyleyişi öne çıkar.\nKonular işçi, köylü, savaş ve özgürlüktür.'],
+      ],
+      not: 'Nâzım’da serbest nazım ve konuşma dili birlikte gelir; ölçü ve uyak şart değildir.', notKarti: 3,
+      kontrol: ['Kuvâyi Milliye kimin eseridir?', 'Nâzım Hikmet', 'Attila İlhan', 'Nâzım Hikmet Millî Mücadele’yi destan olarak yazdı.', 4],
+    }),
+    edebiyatKonusu({
+      id: 'trk12-siir-garip', ad: 'Garip Akımı',
+      kartlar: [
+        ['Garip’in doğuşu', '1941’de Orhan Veli, Oktay Rifat ve Melih Cevdet’in ortak kitabı Garip çıktı.\nÖnsözde yeni şiir anlayışı açıklandı.'],
+        ['Üç şair', '- **Orhan Veli Kanık:** 1914–1950\n- **Oktay Rifat:** 1914–1988\n- **Melih Cevdet Anday:** 1915–2002'],
+        ['Anlayış', 'Şiir sokaktaki insanın duygusunu ve günlük yaşamını anlatmalıdır.\nAmaç şiiri süsten ve kalıptan arındırmaktır.'],
+        ['Biçim', '- **Ölçü ve uyak:** Kullanılmaz.\n- **Söz sanatları ve imge:** Gereksiz süs sayılır.\nDizeler serbest ve düzyazıya yakındır.'],
+        ['Dil ve konu', 'Konuşma dili ve gündelik sözcükler kullanılır.\nİroni ve mizah yaygındır.'],
+        ['Orhan Veli’nin kitapları', '- **Garip:** 1941\n- **Vazgeçemediğim:** 1945\n- **Destan Gibi:** 1946\n- **Yenisi:** 1947'],
+        ['İstanbul’u Dinliyorum', 'Orhan Veli’nin en bilinen şiirlerindendir.\nKent, duyulan seslerle anlatılır.'],
+        ['Sonraki yollar', 'Oktay Rifat, Perçemli Sokak (1956) ile İkinci Yeni’ye yaklaştı.\nMelih Cevdet’in ilk kitabı Rahatı Kaçan Ağaç’tır (1946). Orhan Veli 1950’de öldü.'],
+      ],
+      not: 'Garip’te şiir sokaktaki insana iner: dil konuşma dilidir, süs ve kalıp reddedilir.', notKarti: 3,
+      kontrol: ['Garip kitabı hangi yıl çıktı?', '1941', '1950', 'Garip 1941’de; Orhan Veli ise 1950’de öldü.', 1],
+    }),
+    edebiyatKonusu({
+      id: 'trk12-siir-ikinci-yeni', ad: 'İkinci Yeni',
+      kartlar: [
+        ['Doğuşu', '1950’lerde Garip’in yalın şiirine tepki olarak ortaya çıktı.\nGarip’ten sonra gelen yeni hareket olduğu için “İkinci Yeni” denildi.'],
+        ['Anlayış', 'Şiir yalnız anlam iletmez; çağrışımla ve imgeyle kurulur.\nAnlam kapalı, çok katmanlı ve yoruma açıktır.'],
+        ['İmge ve çağrışım', 'Dize düz anlamla değil, sözcükler arasındaki çağrışımla kurulur.\nOkur anlamı kendisi tamamlar.'],
+        ['Dil', 'Sözcüklerin alışılmış sırası bozulur.\nSıra dışı sözcük birleşimleri, bilinçaltı ve rüya öğeleri kullanılır; ölçü ve uyak aranmaz.'],
+        ['Cemal Süreya', 'Üvercinka (1958) ve Göçebe kitaplarını yazdı.\nAşk ve şaşırtıcı imgeler şiirinde belirgindir.'],
+        ['Turgut Uyar', 'Dünyanın En Güzel Arabistanı (1959) kitabıyla tanınır.\nGünlük yaşamı çağrışım yüklü bir dille anlatır.'],
+        ['Cansever ve Ayhan', '- **Edip Cansever:** Yerçekimli Karanfil (1957)\n- **Ece Ayhan:** Kınar Hanımın Denizleri (1959)'],
+        ['Berk ve Karakoç', '- **İlhan Berk:** Galile Denizi (1958)\n- **Sezai Karakoç:** Körfez (1959)'],
+      ],
+      not: 'İkinci Yeni’de dize düz anlamla değil, sözcükler arasındaki çağrışımla kurulur.', notKarti: 3,
+      kontrol: ['İkinci Yeni’de dize neyle kurulur?', 'Çağrışım ve imge', 'Açık anlatım', 'İkinci Yeni’de anlam kapalıdır, çağrışımla kurulur.', 3],
+    }),
+    edebiyatKonusu({
+      id: 'trk12-siir-dini', ad: 'Dinî Değerler ve Metafizik Şiir',
+      kartlar: [
+        ['Anlayış', 'Bu çizgide şiir inanç, gelenek ve metafizik sorularla kurulur.\nİslam medeniyeti, tasavvuf ve ölüm teması yaygındır.'],
+        ['Necip Fazıl Kısakürek', '1904–1983 arasında yaşadı.\nÖrümcek Ağı (1925) ve Kaldırımlar (1928) kitaplarıyla şiire başladı.'],
+        ['Çile', 'Çile (1962) Necip Fazıl’ın şiirlerini bir araya getirir.\nMetafizik arayış ve inanç bu kitapta öne çıkar.'],
+        ['Büyük Doğu', '1943’te Büyük Doğu dergisini çıkardı.\nDergi düşünce ve edebiyatı inançla birleştirdi.'],
+        ['Sezai Karakoç', 'İlk şiir kitabı Körfez 1959’da, Hızırla Kırk Saat 1967’de çıktı.\nMonna Rosa şiirinde aşk ve inanç iç içedir.'],
+        ['Diriliş', 'Sezai Karakoç 1960’ta Diriliş dergisini çıkardı.\nDiriliş çizgisi medeniyet, inanç ve şiiri birlikte düşünür.'],
+        ['Cahit Zarifoğlu', '1940–1987 arasında yaşadı.\nMavera dergisinin (1976) kurucuları arasındadır; şiirinde çocuk ve inanç duygusu öne çıkar.'],
+      ],
+      not: 'Necip Fazıl’da bunalımdan inanca yürüyüş var: Kaldırımlar’dan Çile’ye.', notKarti: 3,
+      kontrol: ['Büyük Doğu dergisini kim çıkardı?', 'Necip Fazıl', 'Sezai Karakoç', 'Büyük Doğu 1943’te Necip Fazıl’ın çıkardığı dergidir.', 4],
+    }),
+    edebiyatKonusu({
+      id: 'trk12-siir-1960-sonrasi', ad: '1960 ve 1980 Sonrası Şiir',
+      kartlar: [
+        ['1960 sonrası', '1960’tan sonra toplumsal tartışmalar şiire yansıdı.\nToplumcu şiir yeniden güçlendi.'],
+        ['İsmet Özel', 'Geceleyin Bir Koşu (1966) ve Evet, İsyan (1969) kitaplarıyla öne çıktı.\nİlk dönemde toplumcu bir şiir yazdı.'],
+        ['Gülten Akın', 'Kırmızı Karanfil (1971) kitabıyla tanınır.\nDizelerinde yoksul insan ve kadın yazgısı öne çıkar.'],
+        ['1980 sonrası', '1980’den sonra şiirde tek bir egemen akım yoktur.\nBireysel sesler, farklı biçimler ve çok seslilik öne çıkar.'],
+        ['Özellikleri', '- **Konu:** Kent, birey ve gündelik yaşam.\n- **Biçim:** Ölçü ve uyak aranmaz; dizeler düzyazıya yaklaşır.'],
+        ['Tanınmış şairler', 'Haydar Ergülen, Küçük İskender ve Ahmet Telli bu dönemin tanınmış şairlerindendir.\nHer birinin sesi ve konusu kendine özgüdür.'],
+      ],
+      not: '1980 sonrasında tek akım değil, çok sayıda bireysel ses vardır.', notKarti: 3,
+      kontrol: ['Geceleyin Bir Koşu kimin kitabıdır?', 'İsmet Özel', 'Gülten Akın', 'Gülten Akın’ın tanınmış kitabı Kırmızı Karanfil’dir.', 2],
+    }),
+    edebiyatKonusu({
+      id: 'trk12-siir-halk', ad: 'Cumhuriyet Dönemi Halk Şiiri',
+      kartlar: [
+        ['Gelenek sürdü', 'Cumhuriyet’te âşık geleneği saz ve hece ölçüsüyle sürdü.\nŞiirler çoğu kez koşma, semai ve destan biçimindedir.'],
+        ['Âşık Veysel', '1894’te Sivas’ın Sivrialan köyünde doğdu, 1973’te öldü.\nÇocukken gözlerini kaybetti ve saz çalmayı öğrendi.'],
+        ['Veysel’in şiirleri', 'Uzun İnce Bir Yoldayım, Kara Toprak ve Dostlar Beni Hatırlasın en bilinenleridir.\nToprak, yol ve ölüm teması sık işlenir.'],
+        ['Abdurrahim Karakoç', 'Mihriban ve Hasretinle Yandı Gönlüm şiirleriyle tanınır.\nHece ölçüsünü ve halk söyleyişini yaşadığı döneme taşıdı.'],
+        ['Âşık Mahzuni Şerif', '1940–2002 arasında yaşadı.\nToplumsal eleştiri ve protesto şiirleriyle öne çıkar.'],
+        ['Halkevleri', 'Halkevleri 1932’de açıldı.\nHalk kültürünü derleyip tanıtan kurumlardı; âşıklar bu ortamlarda görünür oldu.'],
+        ['Okuma ipucu', 'Halk şiirinde yalın dil, hece ölçüsü ve uyak düzeni birlikte aranır.\nKonu çoğunlukla toplumsal ve insani duygulardır.'],
+      ],
+      not: 'Âşık Veysel’de toprak, yol ve ölüm; yalın bir halk söyleyişiyle verilir.', notKarti: 3,
+      kontrol: ['Uzun İnce Bir Yoldayım kimin şiiridir?', 'Âşık Veysel', 'Abdurrahim Karakoç', 'Karakoç’un tanınmış şiiri Mihriban’dır.', 3],
+    }),
+  ]),
+]

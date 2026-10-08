@@ -33,6 +33,28 @@ import { biyoloji11Sorulari } from './icerik/11-biyoloji-sorular'
 import { fizik11Sorulari } from './icerik/11-fizik-sorular'
 import { kimya11Sorulari } from './icerik/11-kimya-sorular'
 import { matematik11Sorulari } from './icerik/11-matematik-sorular'
+import { matematik12 } from './icerik/12-matematik'
+import { matematik12Sorulari } from './icerik/12-matematik-sorular'
+import { fizik12 } from './icerik/12-fizik'
+import { fizik12Sorulari } from './icerik/12-fizik-sorular'
+import { kimya12 } from './icerik/12-kimya'
+import { kimya12Sorulari } from './icerik/12-kimya-sorular'
+import { biyoloji12 } from './icerik/12-biyoloji'
+import { biyoloji12Sorulari } from './icerik/12-biyoloji-sorular'
+import { tarih12 } from './icerik/12-tarih'
+import { cografya12 } from './icerik/12-cografya'
+import { ingilizce12Temalar1 } from './icerik/12-ingilizce-1'
+import { ingilizce12Sorulari1 } from './icerik/12-ingilizce-1-sorular'
+import { ingilizce12Temalar2 } from './icerik/12-ingilizce-2'
+import { ingilizce12Sorulari2 } from './icerik/12-ingilizce-2-sorular'
+import { ingilizce12Temalar3 } from './icerik/12-ingilizce-3'
+import { ingilizce12Sorulari3 } from './icerik/12-ingilizce-3-sorular'
+import { ingilizce12Temalar4 } from './icerik/12-ingilizce-4'
+import { ingilizce12Sorulari4 } from './icerik/12-ingilizce-4-sorular'
+import { turkce12 } from './icerik/12-turkce'
+import { girisHikayeSorulari } from './icerik/12-turkce-hikaye-sorular'
+import { siirSorulari } from './icerik/12-turkce-siir-sorular'
+import { romanSoylevSorulari } from './icerik/12-turkce-roman-sorular'
 
 export type {
   AkisGorseli,
@@ -87,20 +109,22 @@ export const KONU_DERSLERI: KonuDersTanimi[] = [
   { id: 'ingilizce', ad: 'İngilizce', ikon: '🌐', aile: 'dil' },
 ]
 
-/** Programın kapsadığı sınıflar. */
-export const KONU_SINIFLARI: KonuSinifi[] = [9, 10, 11]
+/**
+ * Programın kapsadığı sınıflar. 12'de yalnız Matematik yazıldı (2018
+ * programı); öteki dersler 12'de `sinifDersleri` ile gizleniyor.
+ */
+export const KONU_SINIFLARI: KonuSinifi[] = [9, 10, 11, 12]
 
 /**
- * Haritanın sınıf seçicisindeki sınıflar: içeriği olanlar ve **12**.
+ * Haritanın sınıf sekmesindeki sınıflar: `9 · 10 · 11 · 12`, hep görünür.
  *
- * 12. sınıfın kartları henüz yazılmadı; seçici onu yine de gösteriyor ve
- * seçilince harita "yapım aşamasında" diye kapalı duruyor. Kullanıcı istedi:
- * 12. sınıf öğrencisi kendi sınıfını listede hiç görmeyince bölümün kendisine
- * ait olmadığını düşünüyordu. `KonuSinifi` 9–11 kalıyor — içerik tipleri
- * olmayan bir sınıfı taşımasın.
+ * 12 kartları yazılmadan önce de sekmede duruyordu (kullanıcı istedi: 12.
+ * sınıf öğrencisi kendi sınıfını listede görmeyince bölümün kendisine ait
+ * olmadığını düşünüyordu). Matematik 12 yazılınca `KONU_SINIFLARI`na girdi;
+ * ad, ekranların "haritadaki sınıf" diye okuduğu yerlerde kalıyor.
  */
-export type HaritaSinifi = KonuSinifi | 12
-export const HARITA_SINIFLARI: HaritaSinifi[] = [...KONU_SINIFLARI, 12]
+export type HaritaSinifi = KonuSinifi
+export const HARITA_SINIFLARI: HaritaSinifi[] = [...KONU_SINIFLARI]
 
 /**
  * Kullanıcının kayıtlı sınıfından haritanın açılacağı sınıf.
@@ -117,7 +141,7 @@ export function haritaSinifiBul(buYilSinif: number): HaritaSinifi | null {
 function sorulariBagla(program: DersProgrami, havuz: Record<string, Omit<SoruKarti, 'id'>[]>): DersProgrami {
   const konuKimlikleri = new Set(program.temalar.flatMap((tema) => tema.konular.map((konu) => konu.id)))
   for (const kimlik of Object.keys(havuz)) {
-    if (!konuKimlikleri.has(kimlik)) throw new Error(`Bilinmeyen 11. sınıf konu kimliği: ${kimlik}`)
+    if (!konuKimlikleri.has(kimlik)) throw new Error(`Bilinmeyen ${program.sinif}. sınıf konu kimliği: ${kimlik}`)
   }
   return {
     ...program,
@@ -125,7 +149,7 @@ function sorulariBagla(program: DersProgrami, havuz: Record<string, Omit<SoruKar
       ...tema,
       konular: tema.konular.map((konu) => {
         const sorular = havuz[konu.id]
-        if (!sorular?.length) throw new Error(`11. sınıf soruları eksik: ${konu.id}`)
+        if (!sorular?.length) throw new Error(`${program.sinif}. sınıf soruları eksik: ${konu.id}`)
         const baslangic = [...konu.id].reduce((toplam, harf) => toplam + harf.charCodeAt(0), 0) % sorular.length
         // Her konunun ilk sorusunun aynı biçimde ve aynı cevapta başlamasını önler.
         const sirali = [...sorular.slice(baslangic), ...sorular.slice(0, baslangic)]
@@ -174,6 +198,21 @@ const PROGRAMLAR: Record<string, DersProgrami> = {
     { ...ingilizce11Sorulari1, ...ingilizce11Sorulari2,
       ...ingilizce11Sorulari3, ...ingilizce11Sorulari4 },
   ),
+  'matematik-12': sorulariBagla(matematik12, matematik12Sorulari),
+  'fizik-12': sorulariBagla(fizik12, fizik12Sorulari),
+  'kimya-12': sorulariBagla(kimya12, kimya12Sorulari),
+  'biyoloji-12': sorulariBagla(biyoloji12, biyoloji12Sorulari),
+  'tarih-12': tarih12,
+  'cografya-12': cografya12,
+  'ingilizce-12': sorulariBagla(
+    program('ingilizce', 12, 'Müzikten davranış kurallarına, 2018 programı', [
+      ...ingilizce12Temalar1, ...ingilizce12Temalar2, ...ingilizce12Temalar3,
+      ...ingilizce12Temalar4,
+    ]),
+    { ...ingilizce12Sorulari1, ...ingilizce12Sorulari2, ...ingilizce12Sorulari3,
+      ...ingilizce12Sorulari4 },
+  ),
+  'turkce-12': sorulariBagla(turkce12, { ...girisHikayeSorulari, ...siirSorulari, ...romanSoylevSorulari }),
 }
 
 /** İçeriği henüz yazılmamış ders/sınıf için `null` döner; ekran bunu yazıyla karşılar. */
@@ -181,7 +220,7 @@ export function programBul(ders: KonuDersId, sinif: HaritaSinifi): DersProgrami 
   return PROGRAMLAR[`${ders}-${sinif}`] ?? null
 }
 
-/** Kısmi sınıf eklemelerinde boş ders seçeneği gösterilmez. 12'de liste boş. */
+/** Kısmi sınıf eklemelerinde boş ders seçeneği gösterilmez. 12'de yalnız Matematik. */
 export function sinifDersleri(sinif: HaritaSinifi): KonuDersTanimi[] {
   return KONU_DERSLERI.filter((ders) => programBul(ders.id, sinif) !== null)
 }

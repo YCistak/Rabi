@@ -37,9 +37,11 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
 - **Sınıf ataması öğrencinin müfredatına göre** (kullanıcı istedi, 2026-10;
   `sinif.ts` → `sinifAtamasi(konu, buYilSinif)`):
   - **12. sınıf ve mezun** (2018 programı): `ESKI_SINIF`, her konu için 9–12. Harita
-    eşlemesine bakılmaz. 12 sekmesi açık, "harita yok"; 12'de harita aşaması yok.
+    eşlemesine bakılmaz. 12 sekmesi açık; harita aşaması eşli satırlarda var (AYT
+    Matematik'in 12. sınıf konuları `mat12-*`), sekmedeki "harita yok" yalnız
+    görünen satırların hiçbiri eşli değilse.
   - **9–11 ve bilinmeyen** (Maarif): eşliyse destelerin önekinden (çoğunluk, eşitlikte
-    en erken), değilse `MAARIF_SINIF`. Maarif 9–11'de karşılığı olmayan konu
+    en erken; `mat12-*` öneki okunmaz), değilse `MAARIF_SINIF`. Maarif 9–11'de karşılığı olmayan konu
     `HENUZ_YOK`: **hiçbir sekmede görünmez** ("Tümü" kalktığı için; Maarif 12
     yayımlanınca `MAARIF_SINIF`ta sınıf alır). 12 sekmesi haritadaki gibi pasif,
     "Yakında" rozetli. YDT bu yüzden Maarif öğrencisinde hiç çıkmaz. Felsefe/Din
@@ -51,34 +53,55 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   kendi sınıfında "sen".
 - **"Haritada çalıştım" elle işaretlenmez:** `harita-eslemesi.ts`teki açık tablo YKS
   konusunu harita konularına bağlar; aşama haritanın kaydından (`konuTamam`) hesaplanır,
-  "Haritaya git" o konunun kartıyla açar (`acilacakKonu`, sınıf farklı olsa da).
+  "Haritada pekiştir" o konunun kartıyla açar (`acilacakKonu`, sınıf farklı olsa da).
   Birleşen satırda iki konunun eşlemesinin birleşimi sayılır. Eşleme yalnız kartlar
   konunun **asıl içeriğini** anlatıyorsa; tek kartta değinmek yetmez. Karşılığı
-  olmayan konuda aşama hiç gösterilmez. 12. sınıf kartları yazılınca tabloya eklenir;
-  `takip.test.ts` iki uçtaki kimlikleri denetler.
-- **İşaret satırda:** solda ilerleme dairesi (aşama sayısına göre yay; dokununca
-  Bitirdim aç/kapa), sağda sabit genişlikte üç yuva — harita (salt okunur, boşken kesik
-  kenarlı; karşılığı yoksa boş ama yer tutar), okul, soru (44 piksel dokunma alanı).
-  Simgeler lucide, emoji değil; dolu hâl ders renginde dolgu, boş hâl kenarlık. Ada
-  dokunmak kompakt ayrıntıyı açar (harita durumu + "Haritaya git", toplu eylem, işaret
-  günleri). Bir konu en çok üç dokunuş.
+  olmayan konuda aşama hiç gösterilmez. 12. sınıf kartları yazılınca tabloya eklenir
+  (Matematik eklendi: diziler, toplam-fark, limit, türev, integral, çemberin
+  analitiği; Kimya eklendi: AYT'nin dört 12. sınıf başlığı `kim12-*`; Tarih: Millî Mücadele, Atatürkçülük ve AYT Tarih'in beş konusu `trh12-*`); yalnız `mat12-*`/`trh12-*` destesine eşli konu `MAARIF_SINIF`ta "henüz yok"
+  kalır. `takip.test.ts` iki uçtaki kimlikleri denetler.
+  Fizik 12 eklendi: AYT Fizik'in dönerek öteleme, Kepler, BHH (`fzk12-bhh` ek),
+  dalga mekaniği, atom, modern fizik ve teknoloji satırları `fzk12-*` destelerine
+  eşli; düzgün çembersel hareket 11'deki desteyle.
+  Biyoloji 12: Genden Proteine, Bitki Biyolojisi, Canlılar ve Çevre `byl12-*`
+    destelerine eşli (Maarif'te yine "henüz yok"); AYT Enerji 10'un destelerinde kalır.
+  Coğrafya (`cog12-*`): ulaşım-ticaret-turizm, jeopolitik, ekstrem doğa olayları ve
+  çevre başlıkları eşlendi; `ayt-cog-ulasim-ticaret` `ESKI_SINIF`ta 12 (2018: 12.2.7-17).
+  Küresel ve bölgesel örgütler eşlenmedi (12 destelerinde ayrı deste yok).
+  12. sınıf Edebiyat (`trk12-*`): AYT "Cumhuriyet Dönemi Türk Edebiyatı" hikâye, şiir,
+  roman ve tiyatro desteleriyle, "Öğretici Metinler" deneme ve söylev desteleriyle,
+  "Tiyatro" iki tiyatro desteyle eşli; dil/sözlük destesi hiçbir başlığa eşli değil.
+- **Ders içi liste ve konu kartı** (tasarım D/K1a, kullanıcı onayladı 2026-10): satır tek
+  dokunuşluk bir düğme; solda **dilimli halka** (harita · okul · soru üç dilim, haritasız
+  konuda iki; dolu dilim ders renginde, yarım harita açık ton, bitince tam yeşil halka + tik,
+  aşamalar tamamsa ortada soluk tik), ortada ad + **tek satır durum** ("Okulda gördün · soru
+  çözdün", "Bitti · 20 Eyl", "Aşamalar tamam · bitirmeye hazır", "Başlamadın"), sağda ok.
+  Başlıkta ders halkası + "N. sınıf · b/n bitti"; bölüm başlığında "b/n bitti" + ince çubuk;
+  altta halka açıklaması. Satıra dokunmak alttan **konu kartı** açar: bölüm · sıra, konu adı,
+  önceki/sonraki/kapat, yan yana üç karo **Okul · Soru · Bitti**. İşaretli karo ders renginde
+  dolu (Bitti yeşil), içinde tik ve işaret günü ("8 Eki"), boşta "Dokun"; dokununca zıplar
+  (`.karo-pop`). Aşamalar bağımsız, kayıt şeması aynı. Kart açıkken bildirim üstte çıkar.
+  Her karo dokunuşu Geri al'lı bildirim verir ("Okulda öğrendim · bugün", "X işareti kaldırıldı").
+  Haritası olan konuda kartta **"Haritada pekiştir"** (eski "Haritaya git"/"Tekrar et" yerine).
+  Eski satırdaki ilerleme dairesi + sağdaki okul/soru yuvaları ve ayrıntı satırı kalktı,
+  geri getirme.
 - **Bitirdim engellenmez ve sormaz:** eksik aşamada pencere değil Geri al'lı bildirim
   ("Bitti · eksik: okul, soru"). Konfeti yalnız dersin **o sınıftaki** son konusu
   bitince.
-- **"Bu ve önceki konuları okulda işlendi say"** (`oncekiOkulsuzlar`): görünen liste
-  (seçili sınıf, o ders), yalnız aynı bölüm, yalnız okul aşaması, bildirimde Geri al.
-- **Özet tek segmentli çubuk** (bitti › soru › okul › kalan, her konu en ileri
-  aşamasında) + tek satır sayı, seçili sınıfa göre ("10. sınıf · …"); yüzde ve büyük
-  halka yok. **Tempo satırı kaldırıldı:** sınıf görünümü sınav takvimiyle konuşmuyor
-  (10. sınıfın kalan konusunu YKS'ye kalan güne bölmek anlamsız).
-- **Öneri müfredat sırasında, seçili sınıfın içinde** (`siradakiKonu`,
-  `devamKonusu`): ders içi Sıradaki, bitmemiş **ve** aşamaları tamamlanmamış ilk satır
-  (harita karşılığı yoksa harita sayılmaz). Girişteki tek "Devam et" kartı seçili
-  sınıfta en son dokunulan dersin (bitirmek de dokunuş) Sıradaki'si. "En son
-  işaretlenen yarım konu" kuralına dönme: öneri takılıyor ve zıplıyordu (TestFlight
-  geri bildirimi). Aşamaları tamam ama bitmemiş konu (`bitirmeyeHazir`) öneri olmaz;
-  dairesi dolu, ortada ders renginde soluk tik. Hiç işaret yokken ipucu ve lejant —
-  ayar değil, kayıt boşluğundan türetilir.
+- **Toplu "bu ve önceki konuları okulda işlendi say" kalktı:** kullanıcı 2026-10'da
+  kaldırttı, geri getirme (`oncekiOkulsuzlar` ve testi silindi). Toplu okul yazımı yalnız
+  hızlı başlangıçta (`okuluTopluYaz`).
+- **Giriş ekranı (tasarım C):** sınıf sekmesi, altında iki sütunlu ders kartları (`DersKarti`: ders
+  simgeli ilerleme halkası, ad, "x/y bitti"). **Girişte öneri kutusu ("Bugün sırada"/"Devam et") yok:**
+  kullanıcı 2026-10'da kaldırttı, geri getirme. Girişte sınıf özeti çubuğu ve kartta
+  "Sıradaki" satırı da yok: ilerleme sekmede yüzde, kartta halka + sayı olarak bir kez
+  yazılır; tekrar ekleme. Halka dolumu bitti 1, soru 0,66, okul 0,33 ağırlıklı (yalnız görsel).
+- **Ders ekranında özet başlıkta:** ders halkası + "N. sınıf · b/n bitti"; yüzde ve segmentli
+  çubuk yok. **Tempo satırı kaldırıldı:** sınıf görünümü sınav takvimiyle konuşmuyor.
+- **Ders içinde öneri ("Sıradaki") kartı yok:** kullanıcı 2026-10'da kaldırttı (girişteki
+  "Bugün sırada" gibi), geri getirme. `siradakiKonu`/`devamKonusu` lib'de duruyor ama ekranda
+  kullanılmıyor. Aşamaları tamam ama bitmemiş konu (`bitirmeyeHazir`) satırda soluk tikle
+  ve "bitirmeye hazır" yazısıyla belli olur. Halka açıklaması her zaman altta.
 - **Hızlı başlangıç** (yalnız 12/mezun): seçili sınıfta hiç işaret yokken bir kez "N.
   sınıfta neredeyim?"; seçenek o sınıfın her dersinde ilk ⌊n × oran⌋ satırı okulda
   işlendi yazar. Bayrak `rabi-konu-takibi-hizli-baslangic` sürüm 2, sınıf tutar;
@@ -88,7 +111,7 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   (`rabi-konu-takibi-sekme`), açık ders ve liste kaydırması `sessionStorage`'da
   (oturumluk).
 - **Tanıtım turu** "Konu konu işaretle" adımı `data-tanitim="konu-takibi"` bloğunu
-  aydınlatır: sınıf sekmesi + Devam et + ilk kullanım ipucu. Turda ekran öğrencinin
+  aydınlatır: sınıf sekmesi + ilk kullanım ipucu. Turda ekran öğrencinin
   sınıfında, ders kapalı açılır.
 - **Binom AYT'de**, kimliği `tyt-mat-binom` kalır; taşınan konu kimliğini korur
   (`TASINAN_KONULAR`, `takip.test.ts`).

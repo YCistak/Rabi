@@ -360,7 +360,12 @@ export type SinifSekmesi = {
   pasif: boolean
   /** Öğrencinin kendi sınıfı — küçük "sen" işareti. */
   sen: boolean
-  /** Eski programda (12/mezun) haritası yazılmamış sınıf (12): açık, "harita yok". */
+  /**
+   * Eski programda (12/mezun) 12, görünen satırlarından hiçbiri haritaya eşli
+   * değilse: açık, "harita yok". Sabit "harita yok" yanlış olurdu: 12'nin AYT
+   * Matematik'i `mat12-*` destelerine, 2018'de 12'de okunan bazı konular
+   * (XX. yüzyıl başları) 9–11 destelerine eşli.
+   */
   haritasiz: boolean
   /** Maarif öğrencisinde (9–11) 12: programı yayımlanmadı, pasif ve "Yakında". */
   yakinda: boolean
@@ -384,7 +389,10 @@ export function sinifSekmeleri(
       yuzde: bos ? null : Math.round((toplam / satirlar.length) * 100),
       pasif: bos,
       sen: sinif === buYilSinif,
-      haritasiz: !maarif && sinif === HARITASIZ_SINIF,
+      haritasiz:
+        !maarif &&
+        sinif === HARITASIZ_SINIF &&
+        !satirlar.some((s) => satirKimlikleri(s).some((id) => HARITA_ESLEMESI[id] !== undefined)),
       yakinda,
     }
   })
@@ -412,30 +420,12 @@ export function konuBloklari<S extends TakipSatiri>(ders: { konular: readonly S[
 // Toplu işaret
 // ---------------------------------------------------------------------------
 
-/**
- * "Bu ve önceki konuları okulda işlendi say"ın dokunacağı satırlar: ekranda
- * bu satırın üstünde duran (liste zaten seçili sınıfın, o dersin
- * satırları), **aynı bölümdeki**, okul aşaması boş olanlar — bu satır dahil.
- * İlk kullanımda okulda işlenmiş yirmi-kırk konuyu tek tek girmek yerine
- * tek dokunuş. Bölüm sınırı şart: Geometri'nin ilk konusunda basan öğrenci,
- * Matematik'in bütün konularını okulda işlemiş olmayabilir.
- */
-export function oncekiOkulsuzlar<S extends TakipSatiri>(ders: { konular: readonly S[] }, satirId: string, takip: YksTakip): S[] {
-  const liste = ders.konular
-  const sira = liste.findIndex((k) => k.id === satirId)
-  if (sira === -1) return []
-  const bolum = liste[sira].bolum
-  return liste
-    .slice(0, sira + 1)
-    .filter((k) => k.bolum === bolum && !birlesikKayit(satirKimlikleri(k), takip).okul)
-}
-
 /** Satırların bütün kayıt kimlikleri — toplu yazımın girdisi. */
 export function satirlarinKimlikleri(satirlar: readonly TakipSatiri[]): string[] {
   return satirlar.flatMap((s) => [...satirKimlikleri(s)])
 }
 
-/** Birden çok konunun okul aşamasını işaretler ya da kaldırır (toplu eylem ve geri alması). */
+/** Birden çok konunun okul aşamasını işaretler ya da kaldırır (hızlı başlangıç ve geri alması). */
 export function okuluTopluYaz(takip: YksTakip, konuIdleri: readonly string[], acik: boolean, bugun: string): YksTakip {
   return konuIdleri.reduce((t, id) => asamaYaz(t, id, 'okul', acik, bugun), takip)
 }

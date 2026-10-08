@@ -27,8 +27,14 @@ export type KonuDersId =
   | 'cografya'
   | 'ingilizce'
 
-/** Programın kapsadığı sınıflar; İngilizce içerik yalnızca 11. sınıfta var. */
-export type KonuSinifi = 9 | 10 | 11
+/**
+ * Programın kapsadığı sınıflar; İngilizce içerik yalnızca 11. sınıfta var.
+ *
+ * 12'de yalnız Matematik var ve o program 2018 programının 12. sınıfı:
+ * Maarif'in 12. sınıfı yayımlanmadı, 12. sınıf ve mezunlar 2018 programını
+ * görüyor (`icerik/12-matematik.ts`).
+ */
+export type KonuSinifi = 9 | 10 | 11 | 12
 
 /**
  * Kart görsellerinde kullanılabilecek renkler.

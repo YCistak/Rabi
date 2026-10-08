@@ -13,7 +13,7 @@ import {
 } from './sinif-sekmesi'
 
 /** Bir programın ilk `adet` konusunu bitirilmiş (soruları geçilmiş) yazar. */
-function bitir(ders: 'matematik' | 'tarih', sinif: 9 | 10 | 11, adet: number): KonuIlerlemeleri {
+function bitir(ders: 'matematik' | 'tarih', sinif: 9 | 10 | 11 | 12, adet: number): KonuIlerlemeleri {
   const program = programBul(ders, sinif)!
   let ilerlemeler: KonuIlerlemeleri = {}
   for (const konu of tumKonular(program).slice(0, adet)) {
@@ -28,11 +28,11 @@ function bitir(ders: 'matematik' | 'tarih', sinif: 9 | 10 | 11, adet: number): K
 }
 
 describe('haritanın sınıf sekmesi', () => {
-  it('dört sekme 9–12 sırasında; 12 pasif, ötekiler açık', () => {
+  it('dört sekme 9–12 sırasında; Matematik 12 yazıldığı için hepsi açık', () => {
     const sekmeler = sinifSekmeleri('matematik', {}, 10)
     expect(sekmeler.map((s) => s.sinif)).toEqual([9, 10, 11, 12])
-    expect(sekmeler.map((s) => s.pasif)).toEqual([false, false, false, true])
-    expect(sinifPasifMi(12)).toBe(true)
+    expect(sekmeler.map((s) => s.pasif)).toEqual([false, false, false, false])
+    expect(sinifPasifMi(12)).toBe(false)
   })
 
   it('"sen" işareti yalnızca kullanıcının sınıfında, mezunda hiçbirinde', () => {
@@ -50,16 +50,23 @@ describe('haritanın sınıf sekmesi', () => {
     expect(sinifYuzdesi('matematik', 9, {})).toBe(0)
   })
 
-  it('ders o sınıfta yoksa ya da sınıf pasifse yüzde yok', () => {
+  it('ders o sınıfta yoksa yüzde yok', () => {
     expect(sinifYuzdesi('ingilizce', 9, {})).toBeNull()
-    expect(sinifYuzdesi('matematik', 12, {})).toBeNull()
-    expect(sinifSekmeleri('ingilizce', {}, 11).map((s) => s.yuzde)).toEqual([null, null, 0, null])
+    expect(sinifYuzdesi('ingilizce', 10, {})).toBeNull()
+    expect(sinifYuzdesi('ingilizce', 12, {})).toBe(0)
+    expect(sinifYuzdesi('matematik', 12, {})).toBe(0)
+    expect(sinifSekmeleri('ingilizce', {}, 11).map((s) => s.yuzde)).toEqual([null, null, 0, 0])
   })
 
-  it('açılış sınıfı kullanıcının sınıfı; 12 içeriği olan en büyük sınıfa düşüyor', () => {
+  it('12. sınıf Matematik yüzdesi 12\'nin kendi konularından', () => {
+    const toplam = tumKonular(programBul('matematik', 12)!).length
+    expect(sinifYuzdesi('matematik', 12, bitir('matematik', 12, 1))).toBe(Math.round((1 / toplam) * 100))
+  })
+
+  it('açılış sınıfı kullanıcının sınıfı; 12. sınıf öğrencisi 12\'de açılıyor', () => {
     expect(haritaAcilisSinifi(9)).toBe(9)
     expect(haritaAcilisSinifi(11)).toBe(11)
-    expect(haritaAcilisSinifi(12)).toBe(11)
+    expect(haritaAcilisSinifi(12)).toBe(12)
     expect(haritaAcilisSinifi(null)).toBeNull()
   })
 
@@ -72,27 +79,30 @@ describe('haritanın sınıf sekmesi', () => {
     expect(sinifDegisimi({ ders: 'turkce', sinif: 11 }, 10)?.bilgi).toBeNull()
   })
 
-  it('pasif sınıfa geçilmiyor', () => {
-    expect(sinifDegisimi({ ders: 'matematik', sinif: 11 }, 12)).toBeNull()
+  it('12\'ye geçişte ders kalıyor; 12\'den İngilizcenin olmadığı 10\'a inince Matematik açılıyor', () => {
+    expect(sinifDegisimi({ ders: 'matematik', sinif: 11 }, 12)).toEqual({ secim: { ders: 'matematik', sinif: 12 }, bilgi: null })
+    expect(sinifDegisimi({ ders: 'ingilizce', sinif: 11 }, 12)).toEqual({ secim: { ders: 'ingilizce', sinif: 12 }, bilgi: null })
+    expect(sinifDegisimi({ ders: 'ingilizce', sinif: 12 }, 10)?.bilgi).toBe('İngilizce 10. sınıfta yok; Matematik açıldı.')
   })
 
   it('yönlendirme şeridi yalnızca kendi sınıfından farklı bir sınıfa gidilince', () => {
     expect(yonlendirmeMetni('Trigonometri', 10, 11)).toBe('Trigonometri için 10. sınıfa geçildi')
     expect(yonlendirmeMetni('Trigonometri', 10, 10)).toBeNull()
     expect(yonlendirmeMetni('Trigonometri', 10, null)).toBeNull()
-    // 12. sınıf öğrencisinin haritası 11'de açılıyor; 11'e gitmek yönlendirme değil.
-    expect(yonlendirmeMetni('Türev', 11, 12)).toBeNull()
+    // 12. sınıf öğrencisinin haritası 12'de açılıyor.
+    expect(yonlendirmeMetni('Türev', 12, 12)).toBeNull()
+    expect(yonlendirmeMetni('Logaritma', 11, 12)).toBe('Logaritma için 11. sınıfa geçildi')
     expect(yonlendirmeMetni('Kümeler', 9, 12)).toBe('Kümeler için 9. sınıfa geçildi')
   })
 })
 
 describe('haritanın seçim penceresi', () => {
-  it('sınıf yüzdesi o sınıftaki derslerin ortalaması; 12 boş', () => {
+  it('sınıf yüzdesi o sınıftaki derslerin ortalaması; 12 dolu', () => {
     const dersSayisi = sinifDersleri(9).length
     const mat = Math.round((2 / tumKonular(programBul('matematik', 9)!).length) * 100)
     expect(sinifOrtalamasi(9, bitir('matematik', 9, 2))).toBe(Math.round(mat / dersSayisi))
     expect(sinifOrtalamasi(9, {})).toBe(0)
-    expect(sinifOrtalamasi(12, {})).toBeNull()
+    expect(sinifOrtalamasi(12, {})).toBe(0) // 12 artık dolu (8 ders)
   })
 
   it('bakılan sınıfta seçili ders yoksa söylüyor, varsa ya da aynı sınıfsa susuyor', () => {

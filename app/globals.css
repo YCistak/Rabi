@@ -2598,3 +2598,24 @@ body {
   from { opacity: 0; scale: 0.96; }
   to { opacity: 1; scale: 1; }
 }
+
+/*
+  Konu kartındaki karo (Okul · Soru · Bitti) işaretlenince hafifçe zıplıyor:
+  dokunuşun karşılığı hemen görünsün, dolgu rengi de geçiş yaparken göz
+  karoda kalsın. Süre `ZIPLAMA_SURESI` (konu-takibi.tsx) ile aynı.
+*/
+@keyframes karoZipla {
+  0% { transform: scale(0.9); }
+  60% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.karo-pop {
+  animation: karoZipla 340ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .karo-pop {
+    animation: none;
+  }
+}

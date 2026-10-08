@@ -17,7 +17,6 @@ import {
   takibiCoz,
   devamKonusu,
   okuluTopluYaz,
-  oncekiOkulsuzlar,
   sonIsaretGunu,
   toplamOzet,
   bitirmeyeHazir,
@@ -181,22 +180,45 @@ describe('AYT\'de TYT ile ortak konuların haritası', () => {
   })
 
   it('AYT satırında harita dolu sayılıyor: aşama ve özet', () => {
-    const ilerleme = tamamla({}, 'fzk10-periyodik')
+    const ilerleme = tamamla(tamamla({}, 'fzk10-periyodik'), 'fzk12-bhh')
     expect(konuDurumu('ayt-fiz-bhh', BOS_TAKIP, ilerleme).dolu).toBe(1)
     expect(dersOzeti(yksDersBul('ayt-fizik')!, BOS_TAKIP, ilerleme).harita).toBe(1)
   })
 
-  it('12. sınıf konuları eşlenmiyor', () => {
-    for (const id of ['ayt-mat-turev', 'ayt-mat-integral', 'ayt-mat-limit', 'ayt-kim-organik', 'ayt-biy-genden-proteine']) {
+  it('12. sınıf: Matematik mat12 destelerine eşli, kartı yazılmamış dersler eşlenmiyor', () => {
+    expect(HARITA_ESLEMESI['ayt-mat-turev']).toEqual(['mat12-turev', 'mat12-turev-uygulama'])
+    expect(HARITA_ESLEMESI['ayt-mat-integral']).toEqual(['mat12-belirsiz-integral', 'mat12-belirli-integral'])
+    expect(HARITA_ESLEMESI['ayt-mat-limit']).toEqual(['mat12-limit'])
+    expect(HARITA_ESLEMESI['ayt-kim-enerji-kaynaklari']).toEqual(['kim12-fosil', 'kim12-alternatif'])
+    expect(HARITA_ESLEMESI['ayt-biy-genden-proteine']).toContain('byl12-dna-eslenme')
+    expect(HARITA_ESLEMESI['ayt-biy-bitki']).toContain('byl12-floem')
+    for (const id of ['ayt-fel-ilk-cag']) {
       expect(HARITA_ESLEMESI[id], id).toBeUndefined()
     }
   })
 })
 
+describe('12. sınıf Edebiyat eşlemesi', () => {
+  it('Cumhuriyet Dönemi 12. sınıf hikâye, şiir, roman ve tiyatro desteleriyle eşli', () => {
+    const desteler = HARITA_ESLEMESI['ayt-edb-cumhuriyet'] ?? []
+    expect(desteler.length).toBeGreaterThan(0)
+    for (const deste of desteler) expect(deste.startsWith('trk12-'), deste).toBe(true)
+    expect(HARITA_ESLEMESI['ayt-edb-ogretici']).toEqual(expect.arrayContaining(['trk12-deneme', 'trk12-soylev']))
+  })
+})
+
 describe('haritaDurumu — otomatik aşama', () => {
   it('eşlemesi olmayan konuda null', () => {
-    expect(haritaDurumu('ayt-mat-turev', {})).toBeNull()
+    expect(haritaDurumu('ayt-fel-ilk-cag', {})).toBeNull()
     expect(haritaDurumu('olmayan-konu', {})).toBeNull()
+  })
+
+  it('12. sınıf Matematik konusu mat12 destelerinden hesaplanıyor', () => {
+    expect(haritaDurumu('ayt-mat-turev', {})).toMatchObject({ durum: 'yok', biten: 0, toplam: 2 })
+    const yarim = tamamla({}, 'mat12-turev')
+    expect(haritaDurumu('ayt-mat-turev', yarim)).toMatchObject({ durum: 'basladi', biten: 1 })
+    expect(haritaDurumu('ayt-mat-turev', tamamla(yarim, 'mat12-turev-uygulama'))?.durum).toBe('tamam')
+    expect(haritaKonumu('mat12-cember')?.sinif).toBe(12)
   })
 
   it('hiç dokunulmamışsa yok', () => {
@@ -542,23 +564,9 @@ describe('devamKonusu — en son dokunulan dersin sıradakisi', () => {
 })
 
 describe('toplu okul işareti', () => {
-  const mat = yksDersBul('tyt-matematik')!
-
-  it('bu ve önceki konular, yalnızca okulu boş olanlar', () => {
-    const takip = asamaYaz(BOS_TAKIP, 'tyt-mat-basamak', 'okul', true, '2026-09-01')
-    const ids = oncekiOkulsuzlar(mat, 'tyt-mat-ebob-ekok', takip).map((k) => k.id)
-    expect(ids).toEqual(['tyt-mat-temel-kavramlar', 'tyt-mat-bolunebilme', 'tyt-mat-ebob-ekok'])
-  })
-
-  it('bölüm sınırını geçmiyor', () => {
-    const geo = mat.konular.find((k) => k.bolum === 'Geometri')!
-    const ids = oncekiOkulsuzlar(mat, geo.id, BOS_TAKIP).map((k) => k.id)
-    expect(ids).toEqual([geo.id])
-  })
-
   it('yazıp geri alınca kayıt eski hâline dönüyor, önceki gün korunuyor', () => {
     const once = asamaYaz(BOS_TAKIP, 'tyt-mat-basamak', 'okul', true, '2026-09-01')
-    const ids = oncekiOkulsuzlar(mat, 'tyt-mat-ebob-ekok', once).map((k) => k.id)
+    const ids = ['tyt-mat-ebob-ekok', 'tyt-mat-bolunebilme']
     const sonra = okuluTopluYaz(once, ids, true, BUGUN)
     expect(sonra.konular['tyt-mat-ebob-ekok']).toEqual({ okul: BUGUN })
     expect(sonra.konular['tyt-mat-basamak']).toEqual({ okul: '2026-09-01' })

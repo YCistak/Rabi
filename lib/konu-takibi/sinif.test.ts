@@ -21,7 +21,6 @@ import {
   BOS_TAKIP,
   asamaYaz,
   konuBloklari,
-  oncekiOkulsuzlar,
   satirlarinKimlikleri,
   sinifSekmeleri,
   type YksTakip,
@@ -85,27 +84,58 @@ describe('Maarif tablosu', () => {
     expect(eksik.map((k) => k.id)).toEqual([])
   })
 
-  it('tablo eşli bir konuyu ezmiyor ve listede olmayan kimlik taşımıyor', () => {
+  it('tablo 9–11 destesine eşli bir konuyu ezmiyor ve listede olmayan kimlik taşımıyor', () => {
     const kimlikler = new Set(tumYksKonulari().map((k) => k.id))
     for (const id of Object.keys(MAARIF_SINIF)) {
       expect(kimlikler.has(id), id).toBe(true)
-      expect(HARITA_ESLEMESI[id], id).toBeUndefined()
+      // Yalnız 12. sınıf (2018) destesine eşli konu tabloda kalır: önek okunmuyor.
+      expect(eslemeSinifi(HARITA_ESLEMESI[id] ?? []), id).toBeNull()
     }
   })
 
-  it('eşli her konunun destelerinden bir sınıf okunuyor ve Maarif sınıfı o', () => {
+  it('eşli her konunun Maarif sınıfı: 9–11 destesi varsa ondan, yalnız 12 destesiyse tablodan', () => {
     for (const [id, desteler] of Object.entries(HARITA_ESLEMESI)) {
       const sinif = eslemeSinifi(desteler)
-      expect(sinif, id).not.toBeNull()
-      expect(maarifSinifi(id), id).toBe(sinif)
+      if (sinif === null) {
+        expect(desteler.every((d) => /^[a-z]+12-/.test(d)), id).toBe(true)
+        expect(maarifSinifi(id), id).toBe(MAARIF_SINIF[id])
+      } else {
+        expect(maarifSinifi(id), id).toBe(sinif)
+      }
     }
   })
 
-  it('Maarif 12 vermiyor; "henüz yok" olan hiçbir konu haritaya eşli değil', () => {
+  it('Maarif 12 vermiyor; "henüz yok" olan hiçbir konu 9–11 haritasına eşli değil', () => {
     const yok = tumYksKonulari().filter((k) => maarifSinifi(k.id) === HENUZ_YOK)
     expect(yok.length).toBeGreaterThan(0)
     for (const k of tumYksKonulari()) expect(maarifSinifi(k.id), k.id).not.toBe(12)
-    for (const k of yok) expect(HARITA_ESLEMESI[k.id], k.id).toBeUndefined()
+    for (const k of yok) expect(eslemeSinifi(HARITA_ESLEMESI[k.id] ?? []), k.id).toBeNull()
+  })
+
+  it('12. sınıf Tarih destelerine eşli konular Maarif\'te yine "henüz yok"', () => {
+    for (const id of ['tyt-tar-milli-mucadele', 'tyt-tar-ataturkculuk', 'ayt-tar-iki-savas-arasi', 'ayt-tar-xxi-yuzyil']) {
+      expect(HARITA_ESLEMESI[id]?.length, id).toBeGreaterThan(0)
+      expect(maarifSinifi(id), id).toBe(HENUZ_YOK)
+    }
+  })
+
+  it('12. sınıf Matematik destelerine eşli konular Maarif\'te yine "henüz yok"', () => {
+    for (const id of ['ayt-mat-diziler', 'ayt-mat-trig-formul', 'ayt-mat-turev', 'ayt-geo-cember-analitik']) {
+      expect(HARITA_ESLEMESI[id]?.length, id).toBeGreaterThan(0)
+      expect(maarifSinifi(id), id).toBe(HENUZ_YOK)
+    }
+    expect(eslemeSinifi(['mat12-limit'])).toBeNull()
+    for (const id of ['ayt-biy-genden-proteine', 'ayt-biy-bitki', 'ayt-biy-canlilar-cevre']) {
+      expect(HARITA_ESLEMESI[id]?.every((d) => d.startsWith('byl12-')), id).toBe(true)
+      expect(maarifSinifi(id), id).toBe(HENUZ_YOK)
+    }
+  })
+
+  it('12. sınıf Coğrafya destelerine eşli konular Maarif\'te yine "henüz yok"', () => {
+    for (const id of ['ayt-cog-ulasim-ticaret', 'ayt-cog-jeopolitik', 'ayt-cog-ekstrem', 'ayt-cog-cevre']) {
+      expect(HARITA_ESLEMESI[id]?.length, id).toBeGreaterThan(0)
+      expect(maarifSinifi(id), id).toBe(HENUZ_YOK)
+    }
   })
 
   it('eşli konu destelerinin sınıfını alıyor', () => {
@@ -211,11 +241,12 @@ describe('sinifSekmeleri — ekranın üstü', () => {
     }
   })
 
-  it('12 ve mezun (eski program): 12 açık ve haritasız, "Yakında" yok', () => {
+  it('12 ve mezun (eski program): 12 açık, "Yakında" yok; harita yalnız Matematik görünüyorsa var', () => {
     for (const ogrenci of [12, 13]) {
       const sekmeler = sinifSekmeleri('ea', ogrenci, BOS_TAKIP, {})
       expect(sekmeler.some((s) => s.yakinda)).toBe(false)
-      expect(sekmeler.find((s) => s.sinif === 12)).toMatchObject({ pasif: false, haritasiz: true, yuzde: 0 })
+      // EA'da AYT Matematik görünüyor ve 12. sınıf konuları mat12 destelerine eşli.
+      expect(sekmeler.find((s) => s.sinif === 12)).toMatchObject({ pasif: false, haritasiz: false, yuzde: 0 })
     }
   })
 
@@ -231,7 +262,7 @@ describe('sinifSekmeleri — ekranın üstü', () => {
   })
 })
 
-describe('konuBloklari ve oncekiOkulsuzlar — sınıfın ders listesi', () => {
+describe('konuBloklari — sınıfın ders listesi', () => {
   const mat = (ogrenci: number, sinif: 9 | 10 | 11 | 12) =>
     sinifDersleri(sinif, 'say', ogrenci).find((d) => d.id === 'matematik')!
 
@@ -239,13 +270,9 @@ describe('konuBloklari ve oncekiOkulsuzlar — sınıfın ders listesi', () => {
     expect(konuBloklari(mat(MAARIF, 9)).map((b) => b.bolum)).toEqual([null, 'Geometri'])
   })
 
-  it('"bu ve öncekiler" yalnız o sınıfın, aynı bölümün önceki satırları', () => {
-    const on = mat(ESKI, 10)
-    const satirlar = oncekiOkulsuzlar(on, 'tyt-mat-polinom', BOS_TAKIP)
-    expect(satirlar.map((s) => s.id)).toEqual(['tyt-mat-carpanlara-ayirma', 'tyt-mat-fonksiyon', 'tyt-mat-polinom'])
-    // Birleşen satırlar iki kimliği de yazıyor.
+  it('birleşen satırlar iki kimliği de yazıyor', () => {
+    const satirlar = mat(ESKI, 10).konular.filter((s) => s.id === 'tyt-mat-fonksiyon' || s.id === 'tyt-mat-polinom')
     expect(satirlarinKimlikleri(satirlar)).toEqual([
-      'tyt-mat-carpanlara-ayirma',
       'tyt-mat-fonksiyon',
       'ayt-mat-fonksiyon',
       'tyt-mat-polinom',
@@ -254,7 +281,7 @@ describe('konuBloklari ve oncekiOkulsuzlar — sınıfın ders listesi', () => {
     expect(satirlar.every((s) => sinifAtamasi(s.id, ESKI) === 10)).toBe(true)
   })
 
-  it('Maarif\'te görünmeyen konu listede yok', () => {
-    expect(oncekiOkulsuzlar(mat(MAARIF, 10), 'tyt-mat-polinom', BOS_TAKIP)).toEqual([])
+  it('Maarif\'te görünmeyen konu 10. sınıf listesinde yok', () => {
+    expect(mat(MAARIF, 10).konular.some((s) => s.id === 'tyt-mat-polinom')).toBe(false)
   })
 })
