@@ -37,6 +37,7 @@ import { matematik12 } from './icerik/12-matematik'
 import { matematik12Sorulari } from './icerik/12-matematik-sorular'
 import { turkce12 } from './icerik/12-turkce'
 import { girisHikayeSorulari } from './icerik/12-turkce-hikaye-sorular'
+import { siirSorulari } from './icerik/12-turkce-siir-sorular'
 
 export type {
   AkisGorseli,
@@ -181,7 +182,7 @@ const PROGRAMLAR: Record<string, DersProgrami> = {
       ...ingilizce11Sorulari3, ...ingilizce11Sorulari4 },
   ),
   'matematik-12': sorulariBagla(matematik12, matematik12Sorulari),
-  'turkce-12': sorulariBagla(turkce12, { ...girisHikayeSorulari }),
+  'turkce-12': sorulariBagla(turkce12, { ...girisHikayeSorulari, ...siirSorulari }),
 }
 
 /** İçeriği henüz yazılmamış ders/sınıf için `null` döner; ekran bunu yazıyla karşılar. */
